@@ -1,5 +1,6 @@
-// Part of object.c, the field object, compiled only through it.
-// Showing a found item, and Reveal's sparkles on hidden things.
+/// @file
+/// Part of object.c, the field object, compiled only through it.
+/// Showing a found item, and Reveal's sparkles on hidden things.
 
 #include "../object_internal.h"
 
@@ -7,9 +8,9 @@ STATIC_ASSERT(offsetof(struct ObjectRuntime, velocityY) == 0x28);
 STATIC_ASSERT(offsetof(struct ObjectRuntime, flags) == 0x55);
 STATIC_ASSERT(offsetof(struct ObjectRuntime, animation) == 0x50);
 
-// An actor as these effects see it.
+/// An actor as these effects see it.
 struct EffectObj {
-  s32 scriptWord; // the encoded script pointer
+  s32 scriptWord; ///< the encoded script pointer
   u8 pad0[0x24];
   s32 velocityY;
   u8 pad1[0x1c];
@@ -17,27 +18,27 @@ struct EffectObj {
   u8 pad2[4];
   struct AnimationObject *animation;
   u8 pad3[24];
-  void (*updateHook)(union FieldObject *object); // frame hook at offset 0x6c
+  void (*updateHook)(union FieldObject *object); ///< frame hook at offset 0x6c
 };
 
 STATIC_ASSERT(sizeof(struct EffectObj) == 0x70);
 STATIC_ASSERT(offsetof(struct EffectObj, updateHook) == 0x6c);
 
-// ObjectSystem_Initialize allocates 64 ObjectRuntime records in heap slot 5.
+/// ObjectSystem_Initialize allocates 64 ObjectRuntime records in heap slot 5.
 #define EFFECT_OBJECT_COUNT 64
 #ifdef UBFIX
 #define EFFECT_OBJECT_POOL ((struct EffectObj *)gObjectSlots)
 #else
-// UB: gObjectSlots and gEventWork are separate globals. The named pool load
-// changes register allocation and shrinks StartRandomParticleEmitter from
-// 0x158 to 0x156 bytes (English, 2026-10-16); keep the native read here.
+/// UB: gObjectSlots and gEventWork are separate globals. The named pool load
+/// changes register allocation and shrinks StartRandomParticleEmitter from
+/// 0x158 to 0x156 bytes (English, 2026-10-16); keep the native read here.
 #define EFFECT_OBJECT_POOL (*(struct EffectObj **)((u8 *)&gEventWork - 88))
 #endif
 #define SPARKLE_OBJECT_ID 285
 
-// Keeps the party leader off the markers: a leader within 16 pixels of a
-// marker cell's centre is moved 20 pixels from that centre, in the direction
-// it stood, and loses its move target.
+/// Keeps the party leader off the markers: a leader within 16 pixels of a
+/// marker cell's centre is moved 20 pixels from that centre, in the direction
+/// it stood, and loses its move target.
 void Marker_MoveLeaderAway(void) {
   struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);
   struct MarkerSlot *marker = ((struct FieldWork *)gEventWork)->markers;
@@ -76,10 +77,10 @@ void Marker_MoveLeaderAway(void) {
   }
 }
 
-// Starts the particle script and its first child at priority 1, if the spawn
-// succeeded. Allocation failure leaves the effect absent.
-// Sharing the offset and spawn as well changes literal/argument load order in
-// both emitters, without changing their sizes (English, 2026-10-16).
+/// Starts the particle script and its first child at priority 1, if the spawn
+/// succeeded. Allocation failure leaves the effect absent.
+/// Sharing the offset and spawn as well changes literal/argument load order in
+/// both emitters, without changing their sizes (English, 2026-10-16).
 static inline void Object_InitializeSparkle(struct ObjectRuntime *obj) {
   if (obj != 0) {
     // Draw the sparkle at priority 1.
@@ -90,8 +91,8 @@ static inline void Object_InitializeSparkle(struct ObjectRuntime *obj) {
   }
 }
 
-// Each frame of a found item's picture: one time in ten, a sparkle appears
-// within 16 pixels of it.
+/// Each frame of a found item's picture: one time in ten, a sparkle appears
+/// within 16 pixels of it.
 void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
   struct ObjectRuntime *emitter = (struct ObjectRuntime *)fieldObject;
   union PolarOffsetPosition position;
@@ -115,9 +116,9 @@ void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
   Object_InitializeSparkle(obj);
 }
 
-// Shows the picture of item (0 for none) at the centre of the cell 16 pixels
-// in front of character actor, 16 pixels up, with sparkles. While Reveal is
-// active, its sparkles are cleared first. Returns the picture's actor, or 0.
+/// Shows the picture of item (0 for none) at the centre of the cell 16 pixels
+/// in front of character actor, 16 pixels up, with sparkles. While Reveal is
+/// active, its sparkles are cleared first. Returns the picture's actor, or 0.
 struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
   struct EffectObj *picture;
 
@@ -196,14 +197,14 @@ struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
   return picture;
 }
 
-// Destroys object if there is one.
+/// Destroys object if there is one.
 void Object_DestroyIfPresent(void *object) {
   if (object != 0)
     ObjectDispatch_ReleaseFar(object);
 }
 
-// Raises a found item's picture to 36 pixels above the party leader, who
-// holds it up (animation 28) facing the screen.
+/// Raises a found item's picture to 36 pixels above the party leader, who
+/// holds it up (animation 28) facing the screen.
 void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object) {
   struct ObjectRuntime *leader;
 
@@ -222,9 +223,9 @@ void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object) {
   leader->angle = 0x4000;
 }
 
-// Shows a found item's picture: flags bit 0 adds sparkles and bit 1 raises it
-// above the leader, with waits of 60 and 80 frames around that when both are
-// set. The leader then returns to animation 1.
+/// Shows a found item's picture: flags bit 0 adds sparkles and bit 1 raises it
+/// above the leader, with waits of 60 and 80 frames around that when both are
+/// set. The leader then returns to animation 1.
 void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags) {
   void *leader;
 
@@ -250,8 +251,8 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags) {
   }
 }
 
-// Shows the picture of item 36 pixels above the party leader for 80 frames;
-// flags bit 0 adds sparkles and bit 1 raises it as a found item.
+/// Shows the picture of item 36 pixels above the party leader for 80 frames;
+/// flags bit 0 adds sparkles and bit 1 raises it as a found item.
 void BattleFx_StartEffectObject22(s32 item, s32 flags) {
   struct FieldActor *leader = ObjectTable_Get(gGameState.selectedActor);
   void *iconBuffer = Runtime_AllocateHeapBlock(17, 0x608);
@@ -292,7 +293,7 @@ void BattleFx_StartEffectObject22(s32 item, s32 flags) {
 #if defined(PARTICLES_PAUSE_FOR_MENU)
 #define MENU_OPEN_OFFSET 0xcca // in gEventWork: non-zero while a menu is open
 
-// While Reveal is active, destroys all its sparkles.
+/// While Reveal is active, destroys all its sparkles.
 void BattleFx_ClearRandomParticles(void) {
   if (((struct FieldWork *)gEventWork)->revealActive != 0) {
     struct EffectObj *effect = EFFECT_OBJECT_POOL;
@@ -311,8 +312,8 @@ void BattleFx_ClearRandomParticles(void) {
 
 #endif
 
-// Each frame of a Reveal marker: one time in ten, a sparkle appears within 16
-// pixels of it.
+/// Each frame of a Reveal marker: one time in ten, a sparkle appears within 16
+/// pixels of it.
 void RevealMarker_EmitSparkles(union FieldObject *fieldObject) {
   const struct FieldActor *source = (const struct FieldActor *)fieldObject;
   union PolarOffsetPosition position;
@@ -336,7 +337,7 @@ void RevealMarker_EmitSparkles(union FieldObject *fieldObject) {
   Object_InitializeSparkle(obj);
 }
 
-// Returns 1 while Reveal is active, else 0.
+/// Returns 1 while Reveal is active, else 0.
 s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
   s16 revealState;
   u32 isActive = 0;
@@ -350,10 +351,10 @@ s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
   return isActive;
 }
 
-// Reveal: marks with sparkles the hidden things within 8 cells across and 5
-// down of the leader: map places 100 to 239 with no marker actor, whose search
-// event (kind 3) gives an item, coins, a Psynergy stone or a mimic (types 0
-// to 3 and 5) and has not been found yet.
+/// Reveal: marks with sparkles the hidden things within 8 cells across and 5
+/// down of the leader: map places 100 to 239 with no marker actor, whose search
+/// event (kind 3) gives an item, coins, a Psynergy stone or a mimic (types 0
+/// to 3 and 5) and has not been found yet.
 void FieldEffect_SpawnNearbyMarkers(void) {
   u8 *markerData;
   struct ObjectRuntime *actor;

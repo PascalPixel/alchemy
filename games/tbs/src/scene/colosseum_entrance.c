@@ -26,7 +26,7 @@
 #include "flags.h"
 #include "songs.h"
 
-// Forward declarations.
+/// Forward declarations.
 static void ColosseumEntrance_ApplyArrivalState(void);
 static void ColosseumEntrance_ShowMessageAndPause(s32 speaker);
 static void ColosseumEntrance_FaceDirection(s32 actor, s32 facing);
@@ -41,8 +41,8 @@ static void ColosseumEntrance_WalkToWestExit(void);
 static void ColosseumEntrance_CelebrateBothWins(void);
 static void ColosseumEntrance_InitializeContestants(void);
 
-// Turn over ten frames by calling ColosseumEntrance_FaceDirection
-// through the inline helper.
+/// Turn over ten frames by calling ColosseumEntrance_FaceDirection
+/// through the inline helper.
 static inline void ColosseumEntrance_Turn(s32 actor, s32 facing) {
   /* FAKEMATCH: forwarding inline for Event_CrowdRecognizesIsaac's
    * one call (call.h's Call2 did the same); called directly
@@ -51,15 +51,15 @@ static inline void ColosseumEntrance_Turn(s32 actor, s32 facing) {
   ColosseumEntrance_FaceDirection(actor, facing);
 }
 
-// The attendant by the trials (ColosseumEntrance1, entrances 5 and 69).
+/// The attendant by the trials (ColosseumEntrance1, entrances 5 and 69).
 enum { TRIAL_ATTENDANT = 17 };
 
-// The finals' waiting room (ColosseumEntrance1, entrance 12): an official and
-// the seven warriors who cleared the trials, as they introduce themselves.
+/// The finals' waiting room (ColosseumEntrance1, entrance 12): an official and
+/// the seven warriors who cleared the trials, as they introduce themselves.
 enum {
   FINALS_OFFICIAL = 8,
-  MORGAN = 12, // the highest-ranked
-  AZART = 13,  // the second-best
+  MORGAN = 12, ///< the highest-ranked
+  AZART = 13,  ///< the second-best
   GALAHAD = 14,
   SATRAGE = 15,
   DEKKA = 16,
@@ -67,7 +67,7 @@ enum {
   BUFORD = 18
 };
 
-// Select the entrance table for this colosseum area.
+/// Select the entrance table for this colosseum area.
 const struct SceneEntrance *ColosseumEntrance_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -80,13 +80,13 @@ const struct SceneEntrance *ColosseumEntrance_GetEntrances(void) {
   return gColosseumEntranceEntrancesOther;
 }
 
-// This scene has no additional region table.
+/// This scene has no additional region table.
 const struct SceneRegion *ColosseumEntrance_GetRegions(void) { return 0; }
 
-// Return the shared colosseum exits.
+/// Return the shared colosseum exits.
 const u32 *ColosseumEntrance_GetExits(void) { return gColosseumEntranceExits; }
 
-// Select actors for the current area and stage of Colosso.
+/// Select actors for the current area and stage of Colosso.
 const struct ScenePlacement *ColosseumEntrance_GetPlacements(void) {
   const struct ScenePlacement *table;
 
@@ -133,7 +133,7 @@ const struct ScenePlacement *ColosseumEntrance_GetPlacements(void) {
   return table;
 }
 
-// Select interactions for this area and arrival.
+/// Select interactions for this area and arrival.
 const struct SceneEvent *ColosseumEntrance_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -152,8 +152,8 @@ const struct SceneEvent *ColosseumEntrance_GetEvents(void) {
   return gColosseumEntranceEventsOther;
 }
 
-// Outside the gates: during the trials, a man asks whether the party hopes to
-// get in to see Colosso; on the finals day the colosseum is already full.
+/// Outside the gates: during the trials, a man asks whether the party hopes to
+/// get in to see Colosso; on the finals day the colosseum is already full.
 static void Event_DiscussSeating(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_BABI_SAVED)) {
@@ -166,8 +166,8 @@ static void Event_DiscussSeating(void) {
   Engine_EventEnd();
 }
 
-// Outside the gates: the Lucky Guess makes the battles better; on the finals
-// day, a good spot costs too much.
+/// Outside the gates: the Lucky Guess makes the battles better; on the finals
+/// day, a good spot costs too much.
 static void Event_DiscussLuckyGuessSeats(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_BABI_SAVED)) {
@@ -181,8 +181,8 @@ static void Event_DiscussLuckyGuessSeats(void) {
   Engine_EventEnd();
 }
 
-// Outside the gates: a bettor put it all on a warrior no one picked; on the
-// finals day a scalper, busy with a customer, asks if the party wants seats.
+/// Outside the gates: a bettor put it all on a warrior no one picked; on the
+/// finals day a scalper, busy with a customer, asks if the party wants seats.
 static void Event_DiscussLuckyGuessWinnings(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
@@ -200,8 +200,8 @@ static void Event_DiscussLuckyGuessWinnings(void) {
   Engine_EventEnd();
 }
 
-// The Lucky Guess man explains the game; on the finals day he recognizes Isaac
-// and refuses him, as finalists may not play (0x3c0: said once).
+/// The Lucky Guess man explains the game; on the finals day he recognizes Isaac
+/// and refuses him, as finalists may not play (0x3c0: said once).
 static void Event_OfferLuckyGuess(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_BABI_SAVED) != 0) {
@@ -232,8 +232,8 @@ static void Event_OfferLuckyGuess(void) {
   Engine_EventEnd();
 }
 
-// Azart, the second-best, will not lose to someone who skipped the trials; then
-// he goes back to pacing.
+/// Azart, the second-best, will not lose to someone who skipped the trials;
+/// then he goes back to pacing.
 static void Event_TalkToAzart(void) {
   struct FieldActor *contestant;
 
@@ -261,7 +261,7 @@ static void Event_TalkToAzart(void) {
   Engine_EventEnd();
 }
 
-// Galahad, the third seed, jumps: "Waah! Don't frighten me!"
+/// Galahad, the third seed, jumps: "Waah! Don't frighten me!"
 static void Event_TalkToGalahad(void) {
   Engine_EventBegin();
   Actor_SetAttachedEffect(GALAHAD, 0x102);
@@ -273,7 +273,7 @@ static void Event_TalkToGalahad(void) {
   Engine_EventEnd();
 }
 
-// Satrage, the fourth-ranked, opens his eyes and names himself.
+/// Satrage, the fourth-ranked, opens his eyes and names himself.
 static void Event_TalkToSatrage(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgColosseumWhoHaveComeQuestionMe);
@@ -287,8 +287,8 @@ static void Event_TalkToSatrage(void) {
   Engine_EventEnd();
 }
 
-// Dekka psyches himself up; the first time, Navampa explains he will not
-// answer (0x3c1).
+/// Dekka psyches himself up; the first time, Navampa explains he will not
+/// answer (0x3c1).
 static void Event_TalkToDekka(void) {
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(DEKKA, 2);
@@ -311,7 +311,7 @@ static void Event_TalkToDekka(void) {
   Engine_EventEnd();
 }
 
-// Navampa of Gondowan, the sixth-ranked, introduces himself.
+/// Navampa of Gondowan, the sixth-ranked, introduces himself.
 static void Event_TalkToNavampa(void) {
   Engine_EventBegin();
   Engine_ActorFaceEachOther(NAVAMPA, ACTOR_PARTY_LEADER, 20);
@@ -326,7 +326,7 @@ static void Event_TalkToNavampa(void) {
   Engine_EventEnd();
 }
 
-// Buford, the seventh seed: anyone could win today.
+/// Buford, the seventh seed: anyone could win today.
 static void Event_TalkToBuford(void) {
   Engine_EventBegin();
   Engine_ActorFaceEachOther(BUFORD, ACTOR_PARTY_LEADER, 20);
@@ -343,7 +343,7 @@ static void Event_TalkToBuford(void) {
   Engine_EventEnd();
 }
 
-// The official asks whether Isaac is ready for the finals.
+/// The official asks whether Isaac is ready for the finals.
 static void Event_AskIfReadyForFinals(void) {
   Engine_EventBegin();
   Engine_ActorFaceEachOther(FINALS_OFFICIAL, ACTOR_PARTY_LEADER, 20);
@@ -355,9 +355,9 @@ static void Event_AskIfReadyForFinals(void) {
   Engine_EventEnd();
 }
 
-// Outside the gates on the finals day, the crowd recognizes Isaac as Babi's
-// pick, and a guide takes the party in; if Isaac will not fight, his
-// companions talk him round.
+/// Outside the gates on the finals day, the crowd recognizes Isaac as Babi's
+/// pick, and a guide takes the party in; if Isaac will not fight, his
+/// companions talk him round.
 static void Event_CrowdRecognizesIsaac(void) {
   // The native sequence reuses this word for actor handles and the reply.
   s32 actorOrAnswer;
@@ -582,9 +582,9 @@ static void Event_CrowdRecognizesIsaac(void) {
   Engine_EventEnd();
 }
 
-// Stepping forward in the waiting room: asked whether he is ready, Isaac can
-// still wait; if he is, the warriors grumble, line up by rank and march out to
-// the finals.
+/// Stepping forward in the waiting room: asked whether he is ready, Isaac can
+/// still wait; if he is, the warriors grumble, line up by rank and march out to
+/// the finals.
 static void Event_FinalsBegin(void) {
   struct FieldActor *actor;
   const s32 *script;
@@ -709,15 +709,15 @@ static void Event_FinalsBegin(void) {
   }
 }
 
-// Stepping back from the line arms the question again (scene flags 0x234 and
-// 0x235).
+/// Stepping back from the line arms the question again (scene flags 0x234 and
+/// 0x235).
 static void Event_RearmFinalsStart(void) {
   Engine_GameFlagClear(FLAG_SCENE_TEMP_35);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_34);
 }
 
-// The trial attendant: before both trials have been watched, the screen goes
-// to the next warrior's trial; afterwards he talks about the techniques.
+/// The trial attendant: before both trials have been watched, the screen goes
+/// to the next warrior's trial; afterwards he talks about the techniques.
 static void Event_TalkToTrialAttendant(void) {
   s32 clearedTrialSeen;
 
@@ -750,7 +750,7 @@ static void Event_TalkToTrialAttendant(void) {
   Engine_EventEnd();
 }
 
-// Arriving at entrance 7: a warrior strains at the trial, gives up and runs.
+/// Arriving at entrance 7: a warrior strains at the trial, gives up and runs.
 static void ColosseumEntrance_ShowFailedTrial(void) {
   struct FieldActor *actor;
   s32 facing;
@@ -860,8 +860,8 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   Engine_EventEnd();
 }
 
-// Back from a trial: the attendant says the warrior failed, or after the second
-// trial that he cleared it.
+/// Back from a trial: the attendant says the warrior failed, or after the
+/// second trial that he cleared it.
 static void ColosseumEntrance_ExplainTrial(void) {
   Engine_EventBegin();
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
@@ -885,8 +885,8 @@ static void ColosseumEntrance_ExplainTrial(void) {
   Engine_EventEnd();
 }
 
-// Arriving at entrance 70: a warrior heaves the trial object up in jolts and
-// drops it, shaking the ground: he clears the trial.
+/// Arriving at entrance 70: a warrior heaves the trial object up in jolts and
+/// drops it, shaking the ground: he clears the trial.
 static void ColosseumEntrance_ShowClearedTrial(void) {
   u32 counter;
   struct FieldActor *trialEffect;
@@ -1005,7 +1005,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Engine_EventEnd();
 }
 
-// Sets up the halls by the arrival, or the gates outside by Colosso's stage.
+/// Sets up the halls by the arrival, or the gates outside by Colosso's stage.
 s32 ColosseumEntrance_Initialize(void) {
   s32 scene = gGameState.scene;
 
@@ -1017,8 +1017,8 @@ s32 ColosseumEntrance_Initialize(void) {
   return 0;
 }
 
-// Each arrival in the halls has its own scene: the trials, the briefing before
-// the finals, the passages to the stages and the congratulations after them.
+/// Each arrival in the halls has its own scene: the trials, the briefing before
+/// the finals, the passages to the stages and the congratulations after them.
 static void ColosseumEntrance_ApplyArrivalState(void) {
   s32 entrance;
 
@@ -1084,19 +1084,19 @@ static void ColosseumEntrance_ApplyArrivalState(void) {
   }
 }
 
-// Show the current message and leave a short pause.
+/// Show the current message and leave a short pause.
 static void ColosseumEntrance_ShowMessageAndPause(s32 speaker) {
   Engine_EventShowMessage(speaker, 0);
   Engine_EventWait(10);
 }
 
-// Turn an actor to the given facing over ten frames.
+/// Turn an actor to the given facing over ten frames.
 static void ColosseumEntrance_FaceDirection(s32 actor, s32 facing) {
   Engine_ActorFaceDirection(actor, (u16)facing, 10);
 }
 
-// Outside: once Colosso is over, the tiles by the gates change; before that,
-// actor 16 takes child value 2, and on the finals day a cell pair changes.
+/// Outside: once Colosso is over, the tiles by the gates change; before that,
+/// actor 16 takes child value 2, and on the finals day a cell pair changes.
 static void ColosseumEntrance_UpdateEntranceCells(void) {
   s32 column, row;
 
@@ -1115,15 +1115,15 @@ static void ColosseumEntrance_UpdateEntranceCells(void) {
   }
 }
 
-// Place the three companions behind Isaac for the officials' briefing.
+/// Place the three companions behind Isaac for the officials' briefing.
 static inline void ColosseumEntrance_PositionPartyForBriefing(void) {
   Actor_SetPosition(GARET, PIXELS(792), PIXELS(136));
   Actor_SetPosition(IVAN, PIXELS(824), PIXELS(136));
   Actor_SetPosition(MIA, PIXELS(808), PIXELS(152));
 }
 
-// Before the first match: only Isaac may enter the finals, so the officials
-// seat his companions by the stage, where they can cheer him on.
+/// Before the first match: only Isaac may enter the finals, so the officials
+/// seat his companions by the stage, where they can cheer him on.
 static void ColosseumEntrance_ExplainPartySupport(void) {
   s32 flag;
 
@@ -1321,7 +1321,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Engine_EventRequestExit(64);
 }
 
-// An official leads Isaac east to the next stage.
+/// An official leads Isaac east to the next stage.
 static void ColosseumEntrance_EscortToEastExit(void) {
   struct FieldActor *escort;
 
@@ -1356,7 +1356,7 @@ static void ColosseumEntrance_EscortToEastExit(void) {
   }
 }
 
-// Arriving in the waiting room: the official tells the warriors to prepare.
+/// Arriving in the waiting room: the official tells the warriors to prepare.
 static void ColosseumEntrance_AnnounceFinals(void) {
   struct FieldActor *contestant;
 
@@ -1402,7 +1402,7 @@ static void ColosseumEntrance_AnnounceFinals(void) {
   Engine_EventEnd();
 }
 
-// Isaac walks east alone to the next stage.
+/// Isaac walks east alone to the next stage.
 static void ColosseumEntrance_WalkToEastExit(void) {
   Engine_EventBegin();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -1420,7 +1420,7 @@ static void ColosseumEntrance_WalkToEastExit(void) {
   }
 }
 
-// After the first match: the officials congratulate Isaac and lead him on.
+/// After the first match: the officials congratulate Isaac and lead him on.
 static void ColosseumEntrance_CelebrateAdvancement(void) {
   const s32 *actions;
 
@@ -1470,7 +1470,7 @@ static void ColosseumEntrance_CelebrateAdvancement(void) {
   Engine_EventRequestExit(67);
 }
 
-// An official leads Isaac west to the next stage.
+/// An official leads Isaac west to the next stage.
 static void ColosseumEntrance_EscortToWestExit(void) {
   struct FieldActor *escort;
 
@@ -1501,7 +1501,7 @@ static void ColosseumEntrance_EscortToWestExit(void) {
   Engine_EventRequestExit(21);
 }
 
-// Isaac walks west alone to the next stage.
+/// Isaac walks west alone to the next stage.
 static void ColosseumEntrance_WalkToWestExit(void) {
   Engine_EventBegin();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -1515,7 +1515,7 @@ static void ColosseumEntrance_WalkToWestExit(void) {
   Engine_EventRequestExit(22);
 }
 
-// After the second match: one more win and Isaac is the champion.
+/// After the second match: one more win and Isaac is the champion.
 static void ColosseumEntrance_CelebrateBothWins(void) {
   const s32 *actions;
 
@@ -1565,7 +1565,7 @@ static void ColosseumEntrance_CelebrateBothWins(void) {
   Engine_EventRequestExit(64);
 }
 
-// The warriors' child values and their waiting actions in the waiting room.
+/// The warriors' child values and their waiting actions in the waiting room.
 static void ColosseumEntrance_InitializeContestants(void) {
   Engine_ActorSetChildValue(MORGAN, 3);
   Engine_ActorSetChildValue(AZART, 0);

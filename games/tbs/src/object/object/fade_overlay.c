@@ -1,5 +1,6 @@
-// Part of object.c, the field object, compiled only through it.
-// The fade overlay drawn on the ground beside an actor.
+/// @file
+/// Part of object.c, the field object, compiled only through it.
+/// The fade overlay drawn on the ground beside an actor.
 
 #include "../object_internal.h"
 
@@ -10,10 +11,10 @@ struct FadeView {
 };
 #endif
 
-// Each frame of the fade overlay: on each of the two cells beside the actor
-// (left and right of it), where the ground one or two cells south rises above
-// the actor's floor, draws a semi-transparent 16-pixel-wide sprite of colour 1
-// at the height of that ground.
+/// Each frame of the fade overlay: on each of the two cells beside the actor
+/// (left and right of it), where the ground one or two cells south rises above
+/// the actor's floor, draws a semi-transparent 16-pixel-wide sprite of colour 1
+/// at the height of that ground.
 void FadeOverlay_DrawMarks(void) {
   struct FadeOverlayWork *work = WORK_SLOT(36);
 #ifdef UBFIX
@@ -90,8 +91,8 @@ void FadeOverlay_DrawMarks(void) {
   }
 }
 
-// Starts the fade overlay on object (the party leader when NULL): loads its
-// solid tiles, sets the blending and draws it each frame.
+/// Starts the fade overlay on object (the party leader when NULL): loads its
+/// solid tiles, sets the blending and draws it each frame.
 void BattleFx_StartFadeOverlay(void *object) {
   struct FadeOverlayWork *work;
   u8 *tiles;
@@ -115,10 +116,10 @@ void BattleFx_StartFadeOverlay(void *object) {
   work->actor = object;
 }
 
-// Suspends the fade overlay.
+/// Suspends the fade overlay.
 void FadeOverlay_Suspend(void) {
   Scheduler_SuspendTasks(FadeOverlay_DrawMarks);
 }
 
-// Resumes the fade overlay.
+/// Resumes the fade overlay.
 void FadeOverlay_Resume(void) { Scheduler_ResumeTasks(FadeOverlay_DrawMarks); }

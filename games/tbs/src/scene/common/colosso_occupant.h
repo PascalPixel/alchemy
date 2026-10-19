@@ -4,9 +4,9 @@
 
 // The Colosso finals' three courses (Colosso Log, River and Wall).
 
-// Return the placed actor standing one cell, or else two cells, ahead of the
-// actor the player moves (straight ahead in the nearest of the four
-// directions), or 0 when there is none.
+/// Return the placed actor standing one cell, or else two cells, ahead of the
+/// actor the player moves (straight ahead in the nearest of the four
+/// directions), or 0 when there is none.
 void *Colosso_FindActorAhead(void) {
   struct FieldActor *record;
   s32 facing;

@@ -47,7 +47,7 @@
 // fought as encounter table 53 slot 0, the "Ape", and the last is the Killer
 // Ape of slot 1. Logs (sprites 0xcd and 0xcf) can be pushed into the river.
 
-// The first area.
+/// The first area.
 enum MogallForest1Actor {
   ACTOR_FIRST_AREA_RIVER_LOG = ACTOR_FIRST_PLACED + 1,
   ACTOR_FIRST_AREA_NORTH_APE,
@@ -56,24 +56,24 @@ enum MogallForest1Actor {
   ACTOR_FIRST_AREA_NORTH_HIDEOUT,
   ACTOR_FIRST_AREA_HOSTILE_HIDEOUT,
   ACTOR_FIRST_AREA_EAST_HIDEOUT,
-  ACTOR_NUT // a Nut floating over the river, caught with Catch
+  ACTOR_NUT ///< a Nut floating over the river, caught with Catch
 };
 
-// The second area.
+/// The second area.
 enum MogallForest2Actor {
   ACTOR_SECOND_AREA_LOG = ACTOR_FIRST_PLACED,
   ACTOR_SECOND_AREA_RIVER_LOG = ACTOR_FIRST_PLACED + 2,
-  ACTOR_SECOND_AREA_OBSTACLE, // sprite 0x125, moved with Move
+  ACTOR_SECOND_AREA_OBSTACLE, ///< sprite 0x125, moved with Move
   ACTOR_SECOND_AREA_NORTH_APE,
   ACTOR_SECOND_AREA_EAST_APE,
   ACTOR_SECOND_AREA_SOUTH_APE,
   ACTOR_SECOND_AREA_NORTH_HIDEOUT,
   ACTOR_SECOND_AREA_EAST_HIDEOUT,
   ACTOR_SECOND_AREA_SOUTH_HIDEOUT,
-  ACTOR_QUARTZ // Venus Djinni 2
+  ACTOR_QUARTZ ///< Venus Djinni 2
 };
 
-// The third area.
+/// The third area.
 enum MogallForest3Actor {
   ACTOR_THIRD_AREA_LOG = ACTOR_FIRST_PLACED,
   ACTOR_THIRD_AREA_RIVER_LOG_1,
@@ -83,15 +83,15 @@ enum MogallForest3Actor {
   ACTOR_THIRD_AREA_HOSTILE_APE,
   ACTOR_THIRD_AREA_CENTRAL_APE,
   ACTOR_THIRD_AREA_WEST_APE,
-  ACTOR_THIRD_AREA_EAST_APE, // later the Killer Ape
+  ACTOR_THIRD_AREA_EAST_APE, ///< later the Killer Ape
   ACTOR_THIRD_AREA_HOSTILE_HIDEOUT,
   ACTOR_THIRD_AREA_CENTRAL_HIDEOUT,
   ACTOR_THIRD_AREA_WEST_HIDEOUT,
   ACTOR_THIRD_AREA_EAST_HIDEOUT
 };
 
-// Kept until the party leaves the forest: each ape once it has come out
-// (or, for two, moved on to a second hiding place) and each rolled log.
+/// Kept until the party leaves the forest: each ape once it has come out
+/// (or, for two, moved on to a second hiding place) and each rolled log.
 enum {
   FLAG_FIRST_AREA_NORTH_APE_OUT = 0x300,
   FLAG_FIRST_AREA_HOSTILE_APE_OUT,
@@ -112,7 +112,7 @@ enum {
   FLAG_PSYNERGY_STONE = 0x350
 };
 
-// Scene flag, kept while the party stays in the area.
+/// Scene flag, kept while the party stays in the area.
 enum { FLAG_SOUTH_OBSTACLE_SETTLED = FLAG_SCENE_TEMP_00 + 0x14 };
 
 enum {
@@ -143,12 +143,12 @@ enum {
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-// Talking to Quartz in the second area: the Djinni battle (Djinni 2).
+/// Talking to Quartz in the second area: the Djinni battle (Djinni 2).
 static void MogallForest_StartDjinnBattle(void) {
   Field_RequestDjinnBattle(18, DJINNI_QUARTZ);
 }
 
-// Jump the leader to an unobstructed fixed-point position and restore motion.
+/// Jump the leader to an unobstructed fixed-point position and restore motion.
 static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   u8 *motionFlags = &leader->motionFlags;
@@ -182,7 +182,7 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
   return 0;
 }
 
-// Script command: the actor shows the part its timer names.
+/// Script command: the actor shows the part its timer names.
 static s32
 MogallForest_CopyTimerToChild(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -190,7 +190,7 @@ MogallForest_CopyTimerToChild(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-// Clear the actor sprite flags when its script requests it.
+/// Clear the actor sprite flags when its script requests it.
 static s32
 MogallForest_ClearActorSpriteFlags(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -198,7 +198,7 @@ MogallForest_ClearActorSpriteFlags(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-// Hop an actor to a pixel destination with the requested vertical speed.
+/// Hop an actor to a pixel destination with the requested vertical speed.
 static void MogallForest_HopActorTo(s32 actorId, s32 targetX, s32 targetZ,
                                     s32 verticalSpeed) {
   struct FieldActor *actor;
@@ -217,7 +217,7 @@ static void MogallForest_HopActorTo(s32 actorId, s32 targetX, s32 targetZ,
   actor->gravity = PIXELS(1);
 }
 
-// Scatter a complete ring of rising puffs around an actor.
+/// Scatter a complete ring of rising puffs around an actor.
 static void MogallForest_SpawnPuffRing(s32 id) {
   struct Vector3 velocity;
   struct EffectOptions options;
@@ -247,8 +247,8 @@ static void MogallForest_SpawnPuffRing(s32 id) {
   }
 }
 
-// The camera goes to the ape's hiding place, which bursts in a ring of
-// puffs, and the ape shows itself.
+/// The camera goes to the ape's hiding place, which bursts in a ring of
+/// puffs, and the ape shows itself.
 static void MogallForest_ApeComesOut(s32 actorId, s32 drawParameter) {
   s32 cameraSpeed = PIXELS(2);
   s32 cameraAcceleration = PIXELS(1) / 4;
@@ -261,7 +261,7 @@ static void MogallForest_ApeComesOut(s32 actorId, s32 drawParameter) {
   Engine_ActorSetChildValue(actorId, drawParameter);
 }
 
-// The ape turns to the leader, hops and gestures down the way to go.
+/// The ape turns to the leader, hops and gestures down the way to go.
 static inline void MogallForest_ApePointsTheWay(s32 guideId) {
   Engine_CameraFollowActor(guideId, 1);
   Engine_ActorFaceEachOther(guideId, ACTOR_PARTY_LEADER, 0);
@@ -271,7 +271,7 @@ static inline void MogallForest_ApePointsTheWay(s32 guideId) {
   Engine_EventWait(60);
 }
 
-// The entrances of the current area.
+/// The entrances of the current area.
 const struct SceneEntrance *MogallForest_GetEntrances(void) {
   s16 selector = gGameState.scene;
 
@@ -287,13 +287,13 @@ const struct SceneEntrance *MogallForest_GetEntrances(void) {
   return gMogallForestEntrancesOther;
 }
 
-// The forest has no clipping regions.
+/// The forest has no clipping regions.
 const struct SceneRegion *MogallForest_GetRegions(void) { return NULL; }
 
-// The exits, shared by the three areas.
+/// The exits, shared by the three areas.
 const u32 *MogallForest_GetExits(void) { return gMogallForest_Exits; }
 
-// The actors of the current area.
+/// The actors of the current area.
 const struct ScenePlacement *MogallForest_GetPlacements(void) {
   s16 selector = gGameState.scene;
 
@@ -309,8 +309,8 @@ const struct ScenePlacement *MogallForest_GetPlacements(void) {
   return gMogallForestPlacementsOther;
 }
 
-// Pushing a log in the first area (walking into trigger 20): the river log
-// pushed to row 26 rolls into the water and can be crossed.
+/// Pushing a log in the first area (walking into trigger 20): the river log
+/// pushed to row 26 rolls into the water and can be crossed.
 static void MogallForest_FirstArea_PushLog(void) {
   struct StagedActorProbe probe;
 
@@ -335,7 +335,7 @@ static void MogallForest_FirstArea_PushLog(void) {
   Engine_EventEnd();
 }
 
-// Walking north into trigger 25: the leader jumps north across the log.
+/// Walking north into trigger 25: the leader jumps north across the log.
 static void MogallForest_FirstArea_JumpNorth(void) {
   struct FieldPosition position;
 #if TBS_PATCH_1
@@ -352,8 +352,8 @@ static void MogallForest_FirstArea_JumpNorth(void) {
   MogallForest_TryJumpLeaderTo(&position);
 }
 
-// Walking south into trigger 26: the leader jumps onto the log, which
-// bobs under the weight.
+/// Walking south into trigger 26: the leader jumps onto the log, which
+/// bobs under the weight.
 static void MogallForest_FirstArea_JumpSouth(void) {
   struct FieldPosition position;
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -389,8 +389,8 @@ static void MogallForest_FirstArea_JumpSouth(void) {
   }
 }
 
-// Searching the sign (trigger 27): "The broken sign reads: North: Fuchin
-// Temple / South: Mogall Prairie..."
+/// Searching the sign (trigger 27): "The broken sign reads: North: Fuchin
+/// Temple / South: Mogall Prairie..."
 static void MogallForest_ReadBrokenSign(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -398,8 +398,8 @@ static void MogallForest_ReadBrokenSign(void) {
   Engine_EventEnd();
 }
 
-// Force on the north hiding place in the first area: the ape comes out,
-// points the way and hops off south.
+/// Force on the north hiding place in the first area: the ape comes out,
+/// points the way and hops off south.
 static void MogallForest_FirstArea_NorthApeShowsWay(void) {
   struct FieldActor *creature;
 
@@ -434,8 +434,8 @@ static void MogallForest_FirstArea_NorthApeShowsWay(void) {
   Engine_EventEnd();
 }
 
-// Force on the hostile ape's hiding place: it comes out angry, leaps at the
-// leader and the battle with the Ape begins (encounter table 53, slot 0).
+/// Force on the hostile ape's hiding place: it comes out angry, leaps at the
+/// leader and the battle with the Ape begins (encounter table 53, slot 0).
 static void MogallForest_FirstArea_ApeAttacks(void) {
   struct FieldActor *creature;
 
@@ -474,8 +474,8 @@ static void MogallForest_FirstArea_ApeAttacks(void) {
   Engine_EventEnd();
 }
 
-// Force on the east hiding place in the first area: the ape comes out,
-// points the way and hops off east.
+/// Force on the east hiding place in the first area: the ape comes out,
+/// points the way and hops off east.
 static void MogallForest_FirstArea_EastApeShowsWay(void) {
   struct FieldActor *creature;
 
@@ -509,7 +509,7 @@ static void MogallForest_FirstArea_EastApeShowsWay(void) {
   Engine_EventEnd();
 }
 
-// Catch on the Nut floating over the river: it is caught and found.
+/// Catch on the Nut floating over the river: it is caught and found.
 static void MogallForest_CatchNut(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(ACTOR_NUT, 0, 0);
@@ -519,9 +519,9 @@ static void MogallForest_CatchNut(void) {
   Engine_EventEnd();
 }
 
-// Pushing a log in the second area (walking into trigger 20): the log at row
-// 23 changes the ground beside it; the river log pushed to column 35 rolls
-// into the water.
+/// Pushing a log in the second area (walking into trigger 20): the log at row
+/// 23 changes the ground beside it; the river log pushed to column 35 rolls
+/// into the water.
 static void MogallForest_SecondArea_PushLog(void) {
   struct StagedActorProbe probe;
   s32 destinationColumn;
@@ -565,7 +565,7 @@ static void MogallForest_SecondArea_PushLog(void) {
   Engine_EventEnd();
 }
 
-// Mark the obstacle cell and clear the cells it could have moved from.
+/// Mark the obstacle cell and clear the cells it could have moved from.
 static inline void MogallForest_UpdateObstacleFootprint(s32 column, s32 row) {
   StagedActor_FillGridAttributeRectangle(2, column, row, 1, 1, 255);
   StagedActor_FillGridAttributeRectangle(2, column + 1, row, 1, 1, 0);
@@ -574,8 +574,8 @@ static inline void MogallForest_UpdateObstacleFootprint(s32 column, s32 row) {
   StagedActor_FillGridAttributeRectangle(2, column, row - 1, 1, 1, 0);
 }
 
-// Move on the second area's obstacle: its footprint follows it, and at
-// (36, 24) it sinks two pixels into place.
+/// Move on the second area's obstacle: its footprint follows it, and at
+/// (36, 24) it sinks two pixels into place.
 static void MogallForest_SecondArea_UpdateMovableObstacle(void) {
   s32 column;
   s32 row;
@@ -598,8 +598,8 @@ static void MogallForest_SecondArea_UpdateMovableObstacle(void) {
   Engine_EventEnd();
 }
 
-// Force on the north hiding place in the second area: the ape points the
-// way and hops off south.
+/// Force on the north hiding place in the second area: the ape points the
+/// way and hops off south.
 static void MogallForest_SecondArea_NorthApeShowsWay(void) {
   struct FieldActor *creature;
 
@@ -629,8 +629,8 @@ static void MogallForest_SecondArea_NorthApeShowsWay(void) {
   Engine_EventEnd();
 }
 
-// Force on the east hiding place in the second area: the ape points the way
-// and hops off east.
+/// Force on the east hiding place in the second area: the ape points the way
+/// and hops off east.
 static void MogallForest_SecondArea_EastApeShowsWay(void) {
   struct FieldActor *creature;
 
@@ -670,8 +670,8 @@ static void MogallForest_SecondArea_EastApeShowsWay(void) {
   Engine_EventEnd();
 }
 
-// Force on the south hiding place the first time: the ape bolts to another
-// hiding place nearby.
+/// Force on the south hiding place the first time: the ape bolts to another
+/// hiding place nearby.
 static void MogallForest_SecondArea_SouthApeHidesAgain(void) {
   struct FieldActor *creature;
 
@@ -690,7 +690,7 @@ static void MogallForest_SecondArea_SouthApeHidesAgain(void) {
   Engine_EventEnd();
 }
 
-// Force on its new hiding place: the ape points the way and hops off west.
+/// Force on its new hiding place: the ape points the way and hops off west.
 static void MogallForest_SecondArea_SouthApeShowsWay(void) {
   struct FieldActor *creature;
 
@@ -732,8 +732,8 @@ static void MogallForest_SecondArea_SouthApeShowsWay(void) {
   Engine_EventEnd();
 }
 
-// Pushing a log in the third area (walking into trigger 20): each river
-// log rolls into the water at its column (42 and 40) and can be crossed.
+/// Pushing a log in the third area (walking into trigger 20): each river
+/// log rolls into the water at its column (42 and 40) and can be crossed.
 static void MogallForest_ThirdArea_PushLog(void) {
   struct StagedActorProbe probe;
   s32 landed;
@@ -778,8 +778,8 @@ static void MogallForest_ThirdArea_PushLog(void) {
   Engine_EventEnd();
 }
 
-// Walking west into trigger 25: the leader jumps onto the second river log,
-// which bobs under the weight.
+/// Walking west into trigger 25: the leader jumps onto the second river log,
+/// which bobs under the weight.
 static void MogallForest_ThirdArea_JumpWest(void) {
   struct FieldActor *leader;
   u8 *motionFlags;
@@ -821,7 +821,7 @@ static void MogallForest_ThirdArea_JumpWest(void) {
   }
 }
 
-// Move on the third area's north obstacle: at (45, 6) it sinks into place.
+/// Move on the third area's north obstacle: at (45, 6) it sinks into place.
 static void MogallForest_ThirdArea_UpdateNorthObstacle(void) {
   s32 column;
   s32 row;
@@ -845,7 +845,7 @@ static void MogallForest_ThirdArea_UpdateNorthObstacle(void) {
   Engine_EventEnd();
 }
 
-// Move on the south obstacle: on row 27 it sinks into place and stays.
+/// Move on the south obstacle: on row 27 it sinks into place and stays.
 static void MogallForest_ThirdArea_UpdateSouthObstacle(void) {
 
   s32 column;
@@ -872,8 +872,8 @@ static void MogallForest_ThirdArea_UpdateSouthObstacle(void) {
   Engine_EventEnd();
 }
 
-// Force on the third area's hostile hiding place: the ape leaps at the
-// leader and the battle with the Ape begins.
+/// Force on the third area's hostile hiding place: the ape leaps at the
+/// leader and the battle with the Ape begins.
 static void MogallForest_ThirdArea_ApeAttacks(void) {
 
   struct FieldActor *creature;
@@ -910,8 +910,8 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
   Engine_EventEnd();
 }
 
-// Force on the central hiding place: the ape points the way and hops off
-// south.
+/// Force on the central hiding place: the ape points the way and hops off
+/// south.
 static void MogallForest_ThirdArea_CentralApeShowsWay(void) {
   struct FieldActor *creature;
 
@@ -949,7 +949,7 @@ static void MogallForest_ThirdArea_CentralApeShowsWay(void) {
   Engine_EventEnd();
 }
 
-// Force on the west hiding place: the ape points the way and hops off west.
+/// Force on the west hiding place: the ape points the way and hops off west.
 static void MogallForest_ThirdArea_WestApeShowsWay(void) {
   struct FieldActor *creature;
 
@@ -987,8 +987,8 @@ static void MogallForest_ThirdArea_WestApeShowsWay(void) {
   Engine_EventEnd();
 }
 
-// Force on the east hiding place the first time: the ape bolts to another
-// hiding place to the south.
+/// Force on the east hiding place the first time: the ape bolts to another
+/// hiding place to the south.
 static void MogallForest_ThirdArea_EastApeHidesAgain(void) {
   struct FieldActor *creature;
 
@@ -1006,7 +1006,7 @@ static void MogallForest_ThirdArea_EastApeHidesAgain(void) {
   Engine_EventEnd();
 }
 
-// Force on its new hiding place: the ape points the way and hops off south.
+/// Force on its new hiding place: the ape points the way and hops off south.
 static void MogallForest_ThirdArea_EastApeShowsWay(void) {
   struct FieldActor *creature;
 
@@ -1047,8 +1047,8 @@ static void MogallForest_ThirdArea_EastApeShowsWay(void) {
   Engine_EventEnd();
 }
 
-// Touching trigger 22 in the third area, once: the ape appears again,
-// turns to the party and leads it south to a hiding place.
+/// Touching trigger 22 in the third area, once: the ape appears again,
+/// turns to the party and leads it south to a hiding place.
 static void MogallForest_ApeLeadsToKillerApe(void) {
   struct FieldActor *creature;
 
@@ -1080,9 +1080,9 @@ static void MogallForest_ApeLeadsToKillerApe(void) {
   Engine_EventEnd();
 }
 
-// Touching trigger 23 until it is beaten: the hiding place shakes twice and
-// out comes the Killer Ape, a fifth again as big, to fight (encounter table
-// 53, slot 1); the party returns to entrance 15.
+/// Touching trigger 23 until it is beaten: the hiding place shakes twice and
+/// out comes the Killer Ape, a fifth again as big, to fight (encounter table
+/// 53, slot 1); the party returns to entrance 15.
 static void MogallForest_KillerApeAttacks(void) {
   struct Vector3 velocity;
   struct Vector3 *emissionVelocity;
@@ -1154,7 +1154,7 @@ static void MogallForest_KillerApeAttacks(void) {
   Engine_EventEnd();
 }
 
-// The events of the current area.
+/// The events of the current area.
 const struct SceneEvent *MogallForest_GetEvents(void) {
   s16 selector = gGameState.scene;
 
@@ -1170,9 +1170,9 @@ const struct SceneEvent *MogallForest_GetEvents(void) {
   return gMogallForestEventsOther;
 }
 
-// On entering an area: the first time, an ape peeks out and hides (the
-// first area); apes already out stay gone, rolled logs and moved obstacles
-// stay put; back from the Killer Ape (entrance 15) it is marked beaten.
+/// On entering an area: the first time, an ape peeks out and hides (the
+/// first area); apes already out stay gone, rolled logs and moved obstacles
+/// stay put; back from the Killer Ape (entrance 15) it is marked beaten.
 s32 MogallForest_Initialize(void) {
   struct FieldActor *actor;
   s32 sceneId;
@@ -1457,7 +1457,7 @@ s32 MogallForest_Initialize(void) {
 // Shared source is included here in ROM order.
 #include "common/object_orbit.h"
 
-// Pixel step by direction: X in the upper halfword, Z in the lower.
+/// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {

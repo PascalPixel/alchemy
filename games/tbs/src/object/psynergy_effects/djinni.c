@@ -1,18 +1,19 @@
-// Part of psynergy_effects.c, compiled only through it.
-// A Djinni's hop before its battle, joining the party, the effect slots.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// A Djinni's hop before its battle, joining the party, the effect slots.
 
 #include "../psynergy_effects_internal.h"
 
-// Update hook shared by the Djinni battle-start and Mercury afterimages.
+/// Update hook shared by the Djinni battle-start and Mercury afterimages.
 void ObjectMotion_MoveHalfwayTowardTarget(union FieldObject *fieldObject) {
   BattleFx_MoveAfterimageHalfway(fieldObject);
 }
 
 #define DJINNI_CLONE_MAX 8 // afterimages of the leaping Djinni
 
-// A Djinni's battle start: the Djinni (actor id) bounces twice, turns to face
-// the leader, hops back 16 pixels three times, then leaps 64 pixels at the
-// party trailing eight afterimages tinted for its element.
+/// A Djinni's battle start: the Djinni (actor id) bounces twice, turns to face
+/// the leader, hops back 16 pixels three times, then leaps 64 pixels at the
+/// party trailing eight afterimages tinted for its element.
 void Djinn_RunBattleStartHop(s32 djinniId) {
   struct FieldActor *djinni;
   struct FieldActor *copy;
@@ -115,11 +116,11 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   FieldEvent_End();
 }
 
-// A Djinni joins the party: djinn (0 to 19) of element goes to the member with
-// the fewest Djinn, or to no one and only its flag while FLAG_DJINN_TUTORIAL
-// is set. Unless slot is -1, the Djinni's actor slot first plays its
-// element's capture effect and is freed. Ends with "<Djinni> joined
-// <member>.".
+/// A Djinni joins the party: djinn (0 to 19) of element goes to the member with
+/// the fewest Djinn, or to no one and only its flag while FLAG_DJINN_TUTORIAL
+/// is set. Unless slot is -1, the Djinni's actor slot first plays its
+/// element's capture effect and is freed. Ends with "<Djinni> joined
+/// <member>.".
 void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   struct FieldWork *work;
   s32 owner;
@@ -159,11 +160,11 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   }
 }
 
-// Puts a Djinni's actor back where its battle started from: for a pending
-// Djinni battle (pendingDjinnEvent 300 to 380, FLAG_KEEP_PARTY_POSITION set,
-// the battle over) the scene actor placed for that Djinni (condition = its
-// flag) goes back to its placement, or 32 pixels north of the leader when the
-// event has 0x800 set.
+/// Puts a Djinni's actor back where its battle started from: for a pending
+/// Djinni battle (pendingDjinnEvent 300 to 380, FLAG_KEEP_PARTY_POSITION set,
+/// the battle over) the scene actor placed for that Djinni (condition = its
+/// flag) goes back to its placement, or 32 pixels north of the leader when the
+/// event has 0x800 set.
 void FieldObject_PlaceSceneActors(void) {
   s32 flags = gGameState.pendingDjinnEvent & 0xf000;
   u32 event = gGameState.pendingDjinnEvent & 0xfff;
@@ -199,12 +200,12 @@ void FieldObject_PlaceSceneActors(void) {
   }
 }
 
-// Settles a pending Djinni battle as a scene loads. The field calls it with
-// shown 0 while it builds the scene and with shown nonzero once the scene is
-// on screen. After a won battle (sceneChangeReason above 0) the second call
-// makes the Djinni join the party (Djinn_JoinParty); otherwise
-// the first call sets flag 128 + the Djinni's number and drops the event. An
-// event of kind 0x1000 instead sets its flag when sceneChangeReason is 1.
+/// Settles a pending Djinni battle as a scene loads. The field calls it with
+/// shown 0 while it builds the scene and with shown nonzero once the scene is
+/// on screen. After a won battle (sceneChangeReason above 0) the second call
+/// makes the Djinni join the party (Djinn_JoinParty); otherwise
+/// the first call sets flag 128 + the Djinni's number and drops the event. An
+/// event of kind 0x1000 instead sets its flag when sceneChangeReason is 1.
 void Djinn_ResolvePendingEvent(s32 shown) {
   struct GameState *st = &gGameState;
   s16 *pending = &st->pendingDjinnEvent;
@@ -252,11 +253,11 @@ void Djinn_ResolvePendingEvent(s32 shown) {
   gGameState.pendingDjinnEvent = 0;
 }
 
-// Scheduler callback: updates the 24 effect slots.
+/// Scheduler callback: updates the 24 effect slots.
 void BattleFx_UpdateAllSlots(void) { FieldFx_UpdateSceneSlots(); }
 
-// Allocates and clears the effect slots (heap block 56) and starts their
-// update callback.
+/// Allocates and clears the effect slots (heap block 56) and starts their
+/// update callback.
 void BattleFx_InitializeSlots(void) {
   void *work;
 
@@ -265,8 +266,8 @@ void BattleFx_InitializeSlots(void) {
   Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllSlots, 3200);
 }
 
-// Stops the effect slots: removes their callback, frees every slot still in
-// use and releases their heap block.
+/// Stops the effect slots: removes their callback, frees every slot still in
+/// use and releases their heap block.
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct EffectSlot *slot;
@@ -282,15 +283,15 @@ void BattleFx_ClearActiveSlotsAndScheduleUpdates(void) {
   WaitFrames(1);
 }
 
-// Per-frame update: spins an object 1/8 turn a frame.
+/// Per-frame update: spins an object 1/8 turn a frame.
 void BattleFx_AdvanceSpinAngle(union FieldObject *fieldObject) {
   struct MotionObject *object = (struct MotionObject *)fieldObject;
   object->angle += 0x2000;
 }
 
-// Effect slot callback of a Jupiter Djinni's light particles: each circles
-// its centre while it widens for 60 frames, circles 40, drifts toward a point
-// 20 pixels over the leader for 40, closes in for 60 and is freed.
+/// Effect slot callback of a Jupiter Djinni's light particles: each circles
+/// its centre while it widens for 60 frames, circles 40, drifts toward a point
+/// 20 pixels over the leader for 40, closes in for 60 and is freed.
 void BattleFx_RunAngledApproachPhases(struct EffectSlot *particle) {
   struct MotionObject *target;
   struct EffectVector position;

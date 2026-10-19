@@ -1,10 +1,11 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Effect slots: the particles Psynergy effects move and draw.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Effect slots: the particles Psynergy effects move and draw.
 
 #include "../psynergy_effects_internal.h"
 
-// Updates one effect slot: counts its age, runs its callback (after any
-// delay), moves it and draws it.
+/// Updates one effect slot: counts its age, runs its callback (after any
+/// delay), moves it and draws it.
 void EffectSlot_Update(struct EffectSlot *effect) {
   if (effect->active != 0) {
     effect->age++;
@@ -22,9 +23,9 @@ void EffectSlot_Update(struct EffectSlot *effect) {
   }
 }
 
-// Draws an effect slot's sprite at its screen position and scale, when it is
-// near the screen. With flag 4 the slot's z also lifts it (0x1fc pixels
-// less z).
+/// Draws an effect slot's sprite at its screen position and scale, when it is
+/// near the screen. With flag 4 the slot's z also lifts it (0x1fc pixels
+/// less z).
 void BattleFx_DrawScaledObject(struct EffectSlot *object) {
   struct AnimationObject *sprite;
   s32 offset;
@@ -46,9 +47,9 @@ void BattleFx_DrawScaledObject(struct EffectSlot *object) {
     Object_ApplyProjectedPlacementFar(sprite, &position, &scale, 0);
 }
 
-// Moves an effect slot toward its target, turning at most maxTurnStep a
-// frame when limitTurnStep is set and speeding up by acceleration to maxSpeed.
-// A slot that stops at its target lands on it once within 8 pixels.
+/// Moves an effect slot toward its target, turning at most maxTurnStep a
+/// frame when limitTurnStep is set and speeding up by acceleration to maxSpeed.
+/// A slot that stops at its target lands on it once within 8 pixels.
 void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
   s32 deltaX;
   s32 deltaZ;
@@ -102,9 +103,9 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
   effect->z += Iwram_MulQ16(Trig_Sin(angle), speed);
 }
 
-// Returns nonzero while an effect slot that stops at its target still has
-// one (it has not arrived), 0 once it has arrived or when it never stops.
-// A plain != changes the English instructions at the same extent.
+/// Returns nonzero while an effect slot that stops at its target still has
+/// one (it has not arrived), 0 once it has arrived or when it never stops.
+/// A plain != changes the English instructions at the same extent.
 u32 EffectSlot_HasPendingTarget(struct EffectSlot *effect) {
   u32 targetX;
 
@@ -115,7 +116,7 @@ u32 EffectSlot_HasPendingTarget(struct EffectSlot *effect) {
   return ((0u - targetX) | targetX) >> 31;
 }
 
-// Places an effect slot at (x, z), at rest with no target.
+/// Places an effect slot at (x, z), at rest with no target.
 void EffectSlot_SetPosition(struct EffectSlot *effect, s32 x, s32 z) {
   effect->targetX = EFFECT_NO_TARGET;
   effect->targetZ = EFFECT_NO_TARGET;
@@ -124,12 +125,12 @@ void EffectSlot_SetPosition(struct EffectSlot *effect, s32 x, s32 z) {
   effect->speed = 0;
 }
 
-// Sets the animation of an effect slot's sprite.
+/// Sets the animation of an effect slot's sprite.
 void EffectSlot_SetObjectMode(struct EffectSlot *effect, s32 mode) {
   AnimationObjects_SelectAnimationFar(effect->object, mode);
 }
 
-// Gives an effect slot its per-frame callback, starting at state 0.
+/// Gives an effect slot its per-frame callback, starting at state 0.
 void EffectSlot_SetCallback(struct EffectSlot *effect,
                             EffectCallback callback) {
   effect->callback = callback;
@@ -138,8 +139,8 @@ void EffectSlot_SetCallback(struct EffectSlot *effect,
   effect->state = 0;
 }
 
-// Fills an effect slot with a new sprite of kind at (x, z): stopping at its
-// target, top speed 2, acceleration and scale 1, drawn, animation 1.
+/// Fills an effect slot with a new sprite of kind at (x, z): stopping at its
+/// target, top speed 2, acceleration and scale 1, drawn, animation 1.
 void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
   s32 unit;
   struct AnimationObject *object;
@@ -175,7 +176,7 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
   EffectSlot_SetObjectMode(effect, 1);
 }
 
-// Frees an effect slot and its sprite.
+/// Frees an effect slot and its sprite.
 void BattleFx_ClearOwnedSlot(struct EffectSlot *slot) {
   if (slot->object)
     ResourceObject_ReleaseFar(slot->object);

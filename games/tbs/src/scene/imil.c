@@ -41,29 +41,29 @@
 #include "character_ids.h"
 #include "songs.h"
 
-// Imil's two maps share actor numbers; each is named on the map it is proved.
+/// Imil's two maps share actor numbers; each is named on the map it is proved.
 enum ImilActor {
   // Town
-  ACTOR_COLD_VILLAGER = 8, // shivering and sneezing in the snow
+  ACTOR_COLD_VILLAGER = 8, ///< shivering and sneezing in the snow
   ACTOR_GREETER = 9,
   ACTOR_COUNTING_CHILD = 10,
   ACTOR_SNOWMAN = 11,
   // Interiors
-  ACTOR_OLD_WOMAN = 8, // the old couple's house
+  ACTOR_OLD_WOMAN = 8, ///< the old couple's house
   ACTOR_OLD_MAN = 9,
   ACTOR_WEAPON_MERCHANT = 12,
   ACTOR_ARMOR_MERCHANT = 13,
-  ACTOR_ITEM_SHOP_CHILD = 14, // minds the shop while the mother is sick
+  ACTOR_ITEM_SHOP_CHILD = 14, ///< minds the shop while the mother is sick
   ACTOR_ITEM_MERCHANT = 15,
   ACTOR_INNKEEPER = 16,
   ACTOR_RESTAURANT_OWNER = 18,
-  ACTOR_APPRENTICE = 19, // Mia's apprentices, the first in the sanctum
+  ACTOR_APPRENTICE = 19, ///< Mia's apprentices, the first in the sanctum
   ACTOR_SECOND_APPRENTICE = 20
 };
 
-// The town's own flags, kept while the party is there.
+/// The town's own flags, kept while the party is there.
 enum ImilTownFlag {
-  // Which map layer the leader walks on, from where he stands.
+  /// Which map layer the leader walks on, from where he stands.
   FLAG_IMIL_MAP_LAYER_0 = FLAG_SCENE_TEMP_00,
   FLAG_IMIL_MAP_LAYER_1 = FLAG_SCENE_TEMP_01,
   FLAG_IMIL_SNOWMAN_ON_CHIMNEY = FLAG_SCENE_TEMP_03
@@ -76,7 +76,7 @@ enum ImilTownFlag {
 #define IMIL_OPEN_SHOP ((s32 (*)())Engine_ShopOpen)
 #endif
 
-// Forward declarations.
+/// Forward declarations.
 static void Imil_MeetMiaAtOldCouplesHouse(void);
 static void Imil_MiaCastsPlyOnOldMan(void);
 static void Imil_SpawnAmbientEffects(void);
@@ -86,10 +86,10 @@ static void Imil_ShowFirstArrival(void);
 static void Imil_MiaSaysFarewellToApprentices(void);
 static void Imil_RunIceSlide(void);
 
-// View the table as signed halfwords.
+/// View the table as signed halfwords.
 extern s32 gImil_ArcOrigin[];
 
-// A sick person shivers: a quick squash, then a pause, longer for the old man.
+/// A sick person shivers: a quick squash, then a pause, longer for the old man.
 static s32 Imil_UpdateShiver(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   switch (actor->timer) {
@@ -122,7 +122,7 @@ static s32 Imil_UpdateShiver(struct ScriptInterpreter *interpreter) {
 // Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
-// Imil is two maps: the town and its interiors.
+/// Imil is two maps: the town and its interiors.
 const struct SceneEntrance *Imil_GetEntrances(void) {
   if (gGameState.scene == (s32)&SceneId_Imil2) {
     return gImil_InteriorEntrances;
@@ -130,14 +130,14 @@ const struct SceneEntrance *Imil_GetEntrances(void) {
   return gImil_TownEntrances;
 }
 
-// Imil has no scene regions.
+/// Imil has no scene regions.
 struct SceneRegion *Imil_GetRegions(void) { return NULL; }
 
-// Return Imil's exits.
+/// Return Imil's exits.
 u32 *Imil_GetExits(void) { return gImil_Exits; }
 
-// Once the epidemic is cured (flag 0x881), the townspeople are well again and
-// the old man is up and about.
+/// Once the epidemic is cured (flag 0x881), the townspeople are well again and
+/// the old man is up and about.
 const struct ScenePlacement *Imil_GetPlacements(void) {
   struct ScenePlacement *script;
 
@@ -162,10 +162,10 @@ const struct ScenePlacement *Imil_GetPlacements(void) {
   return gImil_TownPlacements;
 }
 
-// Stepping onto the ice starts a slide.
+/// Stepping onto the ice starts a slide.
 static void Imil_StartIceSlide(void) { Imil_RunIceSlide(); }
 
-// The town's or the interiors' conversations and Psynergy targets.
+/// The town's or the interiors' conversations and Psynergy targets.
 const struct SceneEvent *Imil_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_Imil2) {
     return gImil_InteriorEvents;
@@ -173,8 +173,8 @@ const struct SceneEvent *Imil_GetEvents(void) {
   return gImil_TownEvents;
 }
 
-// The cold villager sneezes and shivers, waiting for Mia; once she travels
-// with the party (flag 3), he says that even her healing can't help them all.
+/// The cold villager sneezes and shivers, waiting for Mia; once she travels
+/// with the party (flag 3), he says that even her healing can't help them all.
 static void Imil_TalkToColdVillager(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
@@ -190,8 +190,8 @@ static void Imil_TalkToColdVillager(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the cold villager: Mia should be here by now, or, once she
-// has joined the party, he can't understand why she left.
+/// Mind Read on the cold villager: Mia should be here by now, or, once she
+/// has joined the party, he can't understand why she left.
 static void Imil_ReadColdVillagerMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
@@ -203,7 +203,7 @@ static void Imil_ReadColdVillagerMind(void) {
   Engine_EventEnd();
 }
 
-// A villager turns to the leader and asks whether he is new in Imil.
+/// A villager turns to the leader and asks whether he is new in Imil.
 static void Imil_GreetVisitor(void) {
   Engine_EventBegin();
   Engine_ActorFaceActor(ACTOR_GREETER, ACTOR_PARTY_LEADER, 10);
@@ -212,8 +212,8 @@ static void Imil_GreetVisitor(void) {
   Engine_EventEnd();
 }
 
-// The counting child stops, turns to the leader and goes back to
-// counting.
+/// The counting child stops, turns to the leader and goes back to
+/// counting.
 static void Imil_TalkToCountingChild(void) {
   Engine_EventBegin();
 
@@ -246,9 +246,9 @@ static void Imil_TalkToCountingChild(void) {
   Engine_EventEnd();
 }
 
-// The old man moans for help until the old woman hurries to fetch Mia; after
-// Mia's healing he feels much better, and once the town is cured he asks
-// whether the party really thought he would die.
+/// The old man moans for help until the old woman hurries to fetch Mia; after
+/// Mia's healing he feels much better, and once the town is cured he asks
+/// whether the party really thought he would die.
 static void Imil_TalkToOldMan(void) {
 
   struct FieldActor *oldMan;
@@ -303,8 +303,8 @@ static void Imil_TalkToOldMan(void) {
   }
 }
 
-// Once the epidemic is cured, the weapon merchant asks whether the party
-// wants weapons.
+/// Once the epidemic is cured, the weapon merchant asks whether the party
+/// wants weapons.
 static void Imil_AskAboutWeapons(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MSGNO(MsgImilDoWantWeapons));
@@ -312,7 +312,7 @@ static void Imil_AskAboutWeapons(void) {
   Engine_EventEnd();
 }
 
-// Once the epidemic is cured, the restaurant owner offers the menu.
+/// Once the epidemic is cured, the restaurant owner offers the menu.
 static void Imil_AskAboutRestaurantMenu(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MSGNO(MsgImilDoWantSeeRestaurantMenu));
@@ -320,8 +320,8 @@ static void Imil_AskAboutRestaurantMenu(void) {
   Engine_EventEnd();
 }
 
-// Mia's second apprentice asks whether the party has visited the old couple,
-// where Mia went; once Mia has joined, she says everyone counts on her.
+/// Mia's second apprentice asks whether the party has visited the old couple,
+/// where Mia went; once Mia has joined, she says everyone counts on her.
 static void Imil_TalkToSecondApprentice(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
@@ -336,8 +336,8 @@ static void Imil_TalkToSecondApprentice(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the second apprentice: Mia had a bad feeling, or, once she has
-// joined, they must help her.
+/// Mind Read on the second apprentice: Mia had a bad feeling, or, once she has
+/// joined, they must help her.
 static void Imil_ReadSecondApprenticeMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
@@ -349,8 +349,8 @@ static void Imil_ReadSecondApprenticeMind(void) {
   Engine_EventEnd();
 }
 
-// Once the epidemic is cured, the old woman asks what happened at the
-// lighthouse.
+/// Once the epidemic is cured, the old woman asks what happened at the
+/// lighthouse.
 static void Imil_TalkToOldWoman(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MSGNO(MsgImilHappenedInLighthouseNortheast));
@@ -359,8 +359,8 @@ static void Imil_TalkToOldWoman(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the old woman: about Mia's clan, her husband's exaggerating,
-// or Mia running all over town.
+/// Mind Read on the old woman: about Mia's clan, her husband's exaggerating,
+/// or Mia running all over town.
 static void Imil_ReadOldWomanMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_IMIL_MET_MIA) != 0) {
@@ -374,10 +374,10 @@ static void Imil_ReadOldWomanMind(void) {
   Engine_EventEnd();
 }
 
-// After Mia's visit, speaking across the bed reaches the old man.
+/// After Mia's visit, speaking across the bed reaches the old man.
 static void Imil_TalkToOldManInBed(void) { Imil_TalkToOldMan(); }
 
-// Mind Read on the counting child: admiration for Mia.
+/// Mind Read on the counting child: admiration for Mia.
 static void Imil_ReadCountingChildMind(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MSGNO(MsgImilMiaIsAGoodGirlI));
@@ -385,8 +385,8 @@ static void Imil_ReadCountingChildMind(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on Mia's apprentice: she will do her best, or, once Mia has
-// joined, she feels grown up.
+/// Mind Read on Mia's apprentice: she will do her best, or, once Mia has
+/// joined, she feels grown up.
 static void Imil_ReadApprenticeMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
@@ -398,8 +398,8 @@ static void Imil_ReadApprenticeMind(void) {
   Engine_EventEnd();
 }
 
-// Walking north into a door, everyone stops, the door opens and the leader
-// walks in; door 6 has its own sound and a slower walk.
+/// Walking north into a door, everyone stops, the door opens and the leader
+/// walks in; door 6 has its own sound and a slower walk.
 static void Imil_OpenDoorAndExit(void) {
   struct EventWork *event;
   struct FieldActor *actor;
@@ -442,8 +442,8 @@ static void Imil_OpenDoorAndExit(void) {
   Engine_EventEnd();
 }
 
-// Across the counter, the leader facing north, the weapon shop opens once the
-// town is cured; before, the sick merchant says the shop is closed.
+/// Across the counter, the leader facing north, the weapon shop opens once the
+/// town is cured; before, the sick merchant says the shop is closed.
 static void Imil_TalkToWeaponMerchant(void) {
   s32 facing;
 
@@ -477,8 +477,8 @@ static void Imil_TalkToWeaponMerchant(void) {
   }
 }
 
-// Across the counter, the leader facing north, the armor shop opens once the
-// town is cured; before, the merchant is too sick for business.
+/// Across the counter, the leader facing north, the armor shop opens once the
+/// town is cured; before, the merchant is too sick for business.
 static void Imil_TalkToArmorMerchant(void) {
   s32 facing;
 
@@ -512,8 +512,9 @@ static void Imil_TalkToArmorMerchant(void) {
   }
 }
 
-// The item shop: once the town is cured the mother sells again; before, her
-// child minds the counter while she is sick, or talks of the lumberjack father.
+/// The item shop: once the town is cured the mother sells again; before, her
+/// child minds the counter while she is sick, or talks of the lumberjack
+/// father.
 static void Imil_TalkToItemMerchant(void) {
   s32 facing;
 
@@ -552,8 +553,8 @@ static void Imil_TalkToItemMerchant(void) {
   }
 }
 
-// Across the counter, the leader facing north, the inn opens; otherwise the
-// innkeeper talks of the two groups of travellers, or of the party's leaving.
+/// Across the counter, the leader facing north, the inn opens; otherwise the
+/// innkeeper talks of the two groups of travellers, or of the party's leaving.
 static void Imil_TalkToInnkeeper(void) {
   struct FieldActor *leader;
 
@@ -575,9 +576,9 @@ static void Imil_TalkToInnkeeper(void) {
   }
 }
 
-// Across the counter, the leader facing north, Mia's apprentice offers the
-// sanctum, the first time saying she can act as healer; otherwise she talks of
-// Mia.
+/// Across the counter, the leader facing north, Mia's apprentice offers the
+/// sanctum, the first time saying she can act as healer; otherwise she talks of
+/// Mia.
 static void Imil_TalkToApprentice(void) {
   struct FieldActor *leader;
 
@@ -608,8 +609,8 @@ static void Imil_TalkToApprentice(void) {
   }
 }
 
-// The town gets its rising effects, map layers and snowman, and the first
-// arrival walks in; each interior restores its people for the town's state.
+/// The town gets its rising effects, map layers and snowman, and the first
+/// arrival walks in; each interior restores its people for the town's state.
 s32 Imil_Initialize(void) {
   struct FieldActor *leader;
   s32 entrance;
@@ -732,9 +733,9 @@ s32 Imil_Initialize(void) {
   return 0;
 }
 
-// After hearing where Mia went, the party finds her at the old couple's
-// house. She heals the old man with Ply when the Mercury Lighthouse flashes;
-// Mia runs out and the party follows her.
+/// After hearing where Mia went, the party finds her at the old couple's
+/// house. She heals the old man with Ply when the Mercury Lighthouse flashes;
+/// Mia runs out and the party follows her.
 static void Imil_MeetMiaAtOldCouplesHouse(void) {
   struct FieldActor *leader;
   const s32 *table;
@@ -905,7 +906,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Engine_EventEnd();
 }
 
-// Move an unused effect around its stored origin until its timer expires.
+/// Move an unused effect around its stored origin until its timer expires.
 UNUSED static void Imil_UpdateCountdownArc(struct FieldActor *actor) {
   s32 buf[3];
   s32 *b;
@@ -931,7 +932,7 @@ UNUSED static void Imil_UpdateCountdownArc(struct FieldActor *actor) {
   }
 }
 
-// Sway an unused actor and occasionally emit a rising spark.
+/// Sway an unused actor and occasionally emit a rising spark.
 UNUSED static void Imil_SwayAndSpark(struct FieldActor *actor) {
   s32 pos[3];
   struct FieldActor *spark;
@@ -960,13 +961,13 @@ UNUSED static void Imil_SwayAndSpark(struct FieldActor *actor) {
   }
 }
 
-// The old man bobs and speaks as the healing reaches him.
+/// The old man bobs and speaks as the healing reaches him.
 static void Imil_OldManBobsAndSpeaks(void) {
   Actor_SetActionScript(ACTOR_OLD_MAN, gImil_BobScript);
   Engine_EventShowMessage(ACTOR_OLD_MAN, 0);
 }
 
-// Mia casts Ply on the old man.
+/// Mia casts Ply on the old man.
 static void Imil_MiaCastsPlyOnOldMan(void) {
   u8 *work;
 
@@ -980,7 +981,7 @@ static void Imil_MiaCastsPlyOnOldMan(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-// Reset a rising effect's motion, sprite priority, and initial scale.
+/// Reset a rising effect's motion, sprite priority, and initial scale.
 static void Imil_InitializeRisingEffect(struct FieldActor *work) {
   struct AnimationObject *sprite;
 
@@ -998,7 +999,7 @@ static void Imil_InitializeRisingEffect(struct FieldActor *work) {
   work->scaleY = Q16_ONE / 2;
 }
 
-// Move and enlarge an ambient effect, then release it when its timer expires.
+/// Move and enlarge an ambient effect, then release it when its timer expires.
 static void Imil_UpdateRisingEffect(union FieldObject *object) {
   object->effect.x += (s16)object->effect.spin << 8;
   object->effect.y += PIXELS(1) / 2;
@@ -1010,7 +1011,7 @@ static void Imil_UpdateRisingEffect(union FieldObject *object) {
   }
 }
 
-// Initialize a newly created ambient effect for its one-second rise.
+/// Initialize a newly created ambient effect for its one-second rise.
 static inline void Imil_StartRisingEffect(union FieldObject *object) {
   if (object != NULL) {
     Imil_InitializeRisingEffect(&object->actor);
@@ -1020,7 +1021,7 @@ static inline void Imil_StartRisingEffect(union FieldObject *object) {
   }
 }
 
-// Effects rise at five places in the town, staggered over each second.
+/// Effects rise at five places in the town, staggered over each second.
 static void Imil_SpawnAmbientEffects(void) {
   // volatile: the type of &gFrameCount (tagged in frame.h); the six editions
   // build the same bytes without it
@@ -1055,8 +1056,8 @@ static void Imil_SpawnAmbientEffects(void) {
   }
 }
 
-// The leader walks on map layer 0 near the middle of town and on layer 1
-// elsewhere.
+/// The leader walks on map layer 0 near the middle of town and on layer 1
+/// elsewhere.
 static void Imil_UpdateMapLayerByLeaderPosition(void) {
   struct FieldActor *actor;
   s32 x;
@@ -1098,7 +1099,7 @@ static void Imil_UpdateMapLayerByLeaderPosition(void) {
   return;
 }
 
-// Moved onto the chimney, the snowman stays there and blocks its cell.
+/// Moved onto the chimney, the snowman stays there and blocks its cell.
 static void Imil_MoveSnowmanToChimney(void) {
   s32 a;
   s32 b;
@@ -1123,7 +1124,7 @@ static void Imil_MoveSnowmanToChimney(void) {
   Map_CopyCellAttributes(15, 6, 1, 1, a, b);
 }
 
-// Walking into the north path, the leader faces north and leaves the town.
+/// Walking into the north path, the leader faces north and leaves the town.
 static void Imil_LeaveNorth(void) {
   struct FieldActor *work;
 
@@ -1136,7 +1137,7 @@ static void Imil_LeaveNorth(void) {
   Engine_EventRequestExit(8);
 }
 
-// Arriving for the first time, the leader walks into town.
+/// Arriving for the first time, the leader walks into town.
 static void Imil_ShowFirstArrival(void) {
   Engine_EventBegin();
   Engine_EventOpenScreen();
@@ -1145,8 +1146,8 @@ static void Imil_ShowFirstArrival(void) {
   Engine_EventEnd();
 }
 
-// Once the town is cured, Mia says farewell to her two apprentices in the
-// sanctum before leaving with the party.
+/// Once the town is cured, Mia says farewell to her two apprentices in the
+/// sanctum before leaving with the party.
 static void Imil_MiaSaysFarewellToApprentices(void) {
 
   struct FieldActor *leader;
@@ -1302,7 +1303,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Engine_EventEnd();
 }
 
-// While sliding, the leader turns toward the held direction.
+/// While sliding, the leader turns toward the held direction.
 static void Imil_TurnSlidingActor(union FieldObject *object) {
   struct FieldActor *actor;
   s32 z;
@@ -1338,7 +1339,7 @@ static void Imil_TurnSlidingActor(union FieldObject *object) {
   ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)actor, 0x30);
 }
 
-// The leader slides along the ice until something stops him.
+/// The leader slides along the ice until something stops him.
 static void Imil_RunIceSlide(void) {
 
   struct FieldActor *subject;
@@ -1805,7 +1806,7 @@ u16 *gImil_DoorCellSteps[] = {
     gImil_DoorCellSteps5,
 };
 
-// Cell position (x, y) for each exit.
+/// Cell position (x, y) for each exit.
 s16 gImil_DoorCellPoints[][2] = {
     { 50, 24 }, { 57, 22 }, { 59, 13 }, { 54, 10 }, { 38, 8 }, { 34, 19 },
 };

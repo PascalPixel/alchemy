@@ -41,8 +41,8 @@
 #define SCENE_ALPINE_CROSSING ((s32)&SceneId_AlpineCrossingLamaTemple1)
 #define SCENE_LAMA_TEMPLE ((s32)&SceneId_AlpineCrossingLamaTemple2)
 
-// Lama Temple's actors. Garet, Ivan and Mia are placed in their own party
-// slots for Hama's farewell; the others count from ACTOR_FIRST_PLACED.
+/// Lama Temple's actors. Garet, Ivan and Mia are placed in their own party
+/// slots for Hama's farewell; the others count from ACTOR_FIRST_PLACED.
 enum LamaTempleActor {
   ACTOR_TEMPLE_HAMA = ACTOR_FIRST_PLACED,
   ACTOR_GREETING_MONK,
@@ -54,7 +54,7 @@ enum LamaTempleActor {
   ACTOR_TRAVELING_HEALER
 };
 
-// Alpine Crossing's actors.
+/// Alpine Crossing's actors.
 enum AlpineCrossingActor {
   ACTOR_HAMA = ACTOR_FIRST_PLACED,
   ACTOR_HSU,
@@ -77,11 +77,11 @@ enum AlpineCrossingEntrance {
   CROSSING_ENTRANCE_5 = 5
 };
 
-// The exit that takes the party from the rescue to Hama's farewell, at Lama
-// Temple's entrance 3.
+/// The exit that takes the party from the rescue to Hama's farewell, at Lama
+/// Temple's entrance 3.
 enum { CROSSING_EXIT_TO_FAREWELL = 6 };
 
-// Alpine Crossing's Psynergy puzzles, kept while the party stays.
+/// Alpine Crossing's Psynergy puzzles, kept while the party stays.
 enum {
   FLAG_PUDDLE_FROZEN = FLAG_SCENE_TEMP_00,
   FLAG_SPROUT_GROWN = FLAG_SCENE_TEMP_01
@@ -96,7 +96,7 @@ enum {
   ANIM_GROWN = 4
 };
 
-// Map triggers that the events below refer to.
+/// Map triggers that the events below refer to.
 enum {
   TRIGGER_TEMPLE_DOOR = 2,
   TRIGGER_TEMPLE_WALL_WRITING = 5,
@@ -106,18 +106,18 @@ enum {
   TRIGGER_STONE = 110
 };
 
-// The door of Hama's room, three cells wide and two high: each step copies
-// the next door picture onto it for five frames.
+/// The door of Hama's room, three cells wide and two high: each step copies
+/// the next door picture onto it for five frames.
 enum { DOOR_X = 67, DOOR_Y = 6 };
 
-// A search made while facing the given way.
+/// A search made while facing the given way.
 #define SEARCH_FACING(facing) (EVENT_SEARCH | EVENT_TOUCH_FACING | (facing))
 
-// The map object that draws the passage behind the false wall.
+/// The map object that draws the passage behind the false wall.
 enum { MAP_OBJECT_PASSAGE = 100 };
 
-// Draws the actor behind the background, on sprite priority 3 with automatic
-// priority off. The first worker from Xian runs it from his placement.
+/// Draws the actor behind the background, on sprite priority 3 with automatic
+/// priority off. The first worker from Xian runs it from his placement.
 static s32 Actor_DrawBehindScenery(struct ScriptInterpreter *interpreter) {
   union FieldObject *object = (union FieldObject *)interpreter;
   object->actor.priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -146,7 +146,7 @@ static s32 Leader_FaceFeizhi(union FieldObject *object) {
 #endif
 }
 
-// Returns the entrance table of the scene being entered.
+/// Returns the entrance table of the scene being entered.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   if (gGameState.scene == SCENE_ALPINE_CROSSING) {
     return gAlpineCrossing_Entrances;
@@ -154,13 +154,13 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLamaTemple_Entrances;
 }
 
-// Neither scene has regions.
+/// Neither scene has regions.
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
-// Both scenes share one exit table.
+/// Both scenes share one exit table.
 const u32 *Scene_GetExits(void) { return gAlpineCrossingLamaTemple_Exits; }
 
-// Returns the actor placements of the scene being entered.
+/// Returns the actor placements of the scene being entered.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == SCENE_ALPINE_CROSSING) {
     return gAlpineCrossing_Placements;
@@ -168,8 +168,8 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gLamaTemple_Placements;
 }
 
-// The eastward monk asks whether the party came from the east, across
-// Lamakan Desert, and otherwise whether it stopped in Xian.
+/// The eastward monk asks whether the party came from the east, across
+/// Lamakan Desert, and otherwise whether it stopped in Xian.
 static void LamaTemple_TalkToEastwardMonk(void) {
 
   Engine_EventBegin();
@@ -187,7 +187,7 @@ static void LamaTemple_TalkToEastwardMonk(void) {
   Engine_EventEnd();
 }
 
-// The meditating monk explains meditation.
+/// The meditating monk explains meditation.
 static void LamaTemple_TalkToMeditatingMonk(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgMountainDoKnowMeditation);
@@ -195,7 +195,7 @@ static void LamaTemple_TalkToMeditatingMonk(void) {
   Engine_EventEnd();
 }
 
-// The monk who praises Master Hama as the greatest master of Chi.
+/// The monk who praises Master Hama as the greatest master of Chi.
 static void LamaTemple_TalkToChiMonk(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgMountainDidKnowMasterHamaGreatest);
@@ -203,8 +203,8 @@ static void LamaTemple_TalkToChiMonk(void) {
   Engine_EventEnd();
 }
 
-// Walking north into the door of Hama's room slides it open and walks the
-// party leader through, into the room.
+/// Walking north into the door of Hama's room slides it open and walks the
+/// party leader through, into the room.
 static void LamaTemple_EnterHamasRoom(void) {
   Event_PlayCue(SE_188);
   Map_AnimateCells(gLamaTemple_DoorOpenCells, DOOR_X, DOOR_Y);
@@ -217,10 +217,10 @@ static void LamaTemple_EnterHamasRoom(void) {
   Engine_EventRequestExit(TRIGGER_TEMPLE_DOOR);
 }
 
-// Hama's farewell, once the party has freed Hsu: she thanks the Adepts,
-// Garet and Mia squabble over whose idea helping was, and Hama goes back to
-// her room. Ivan wonders aloud about what Hama told him, and the others walk
-// out ahead of the party leader. Mia's question is a yes or no choice.
+/// Hama's farewell, once the party has freed Hsu: she thanks the Adepts,
+/// Garet and Mia squabble over whose idea helping was, and Hama goes back to
+/// her room. Ivan wonders aloud about what Hama told him, and the others walk
+/// out ahead of the party leader. Mia's question is a yes or no choice.
 static void LamaTemple_RunHamasFarewell(void) {
   Engine_EventBegin();
   Actor_SetPosition(ACTOR_TEMPLE_HAMA, PIXELS(136), PIXELS(168));
@@ -415,7 +415,7 @@ static void LamaTemple_RunHamasFarewell(void) {
   Engine_EventEnd();
 }
 
-// Searching the temple wall reads its writing, the hint toward Reveal.
+/// Searching the temple wall reads its writing, the hint toward Reveal.
 static void LamaTemple_ReadWallWriting(void) {
 
   Engine_EventBegin();
@@ -424,9 +424,9 @@ static void LamaTemple_ReadWallWriting(void) {
   Engine_EventEnd();
 }
 
-// Puts the false wall back when Reveal's light ends (and on entry): the
-// wall's cell blocks the way again, the passage's map object is hidden and
-// the wall actor stands in front of it.
+/// Puts the false wall back when Reveal's light ends (and on entry): the
+/// wall's cell blocks the way again, the passage's map object is hidden and
+/// the wall actor stands in front of it.
 static void LamaTemple_ShowFalseWall(void) {
 
   Map_CopyCellAttributes(85, 9, 1, 1, 21, 9);
@@ -434,17 +434,17 @@ static void LamaTemple_ShowFalseWall(void) {
   Actor_SetPosition(ACTOR_FALSE_WALL, PIXELS(344), PIXELS(152));
 }
 
-// Reveal shows the passage behind the false wall: the cell's original
-// attributes (saved at (21, 73) on entry) come back, the passage's map object
-// returns to its place and the wall actor is put away.
+/// Reveal shows the passage behind the false wall: the cell's original
+/// attributes (saved at (21, 73) on entry) come back, the passage's map object
+/// returns to its place and the wall actor is put away.
 static void LamaTemple_RevealPassage(void) {
   Map_CopyCellAttributes(21, 73, 1, 1, 21, 9);
   MapObject_SetPosition(MAP_OBJECT_PASSAGE, -1, -1);
   Actor_SetPosition(ACTOR_FALSE_WALL, 0, 0);
 }
 
-// The traveling healer offers the sanctum's services when spoken to across
-// his counter, from the south; from any other side he only greets the party.
+/// The traveling healer offers the sanctum's services when spoken to across
+/// his counter, from the south; from any other side he only greets the party.
 static void LamaTemple_TalkToHealer(void) {
 
   u32 heading = Object_GetById(ACTOR_PARTY_LEADER)->facing;
@@ -459,10 +459,10 @@ static void LamaTemple_TalkToHealer(void) {
   Engine_EventEnd();
 }
 
-// When the party steps onto the road by the rockslide, once Feizhi has set
-// out after Hsu, she runs up behind it: she finds the boulders blocking the
-// Silk Road, cries out for Hsu and runs ahead along the path to look for
-// him, the party leader following part of the way.
+/// When the party steps onto the road by the rockslide, once Feizhi has set
+/// out after Hsu, she runs up behind it: she finds the boulders blocking the
+/// Silk Road, cries out for Hsu and runs ahead along the path to look for
+/// him, the party leader following part of the way.
 static void AlpineCrossing_FeizhiArrives(void) {
   struct FieldActor *leader;
 
@@ -526,8 +526,8 @@ static void AlpineCrossing_FeizhiArrives(void) {
   }
 }
 
-// Feizhi, before Xian hears of the accident, asks whether she should return
-// to Xian; either way she decides to keep looking for Hsu.
+/// Feizhi, before Xian hears of the accident, asks whether she should return
+/// to Xian; either way she decides to keep looking for Hsu.
 static void AlpineCrossing_TalkToFeizhi(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgMountainDoDoWarriorShouldReturn);
@@ -543,8 +543,8 @@ static void AlpineCrossing_TalkToFeizhi(void) {
   Engine_EventEnd();
 }
 
-// Master Hama, kneeling by Hsu, asks if he is hurt; he is unhurt but cannot
-// move, and none of them knows how to free him.
+/// Master Hama, kneeling by Hsu, asks if he is hurt; he is unhurt but cannot
+/// move, and none of them knows how to free him.
 static void AlpineCrossing_HamaReachesHsu(void) {
   Engine_EventBegin();
   // Reveal Hsu's position before Hama and Feizhi discuss freeing him.
@@ -581,10 +581,10 @@ static void AlpineCrossing_HamaReachesHsu(void) {
   GameFlag_Set(FLAG_HAMA_REACHED_HSU);
 }
 
-// Lift on the boulder: it floats, and Hama and Feizhi pull Hsu free in two
-// heaves of two tugs each, asking the leader in between to hold on. Hsu is
-// free; they will ask Master Feh to tend him and clear the road, and the
-// scene fades out to Hama's farewell at Lama Temple.
+/// Lift on the boulder: it floats, and Hama and Feizhi pull Hsu free in two
+/// heaves of two tugs each, asking the leader in between to hold on. Hsu is
+/// free; they will ask Master Feh to tend him and clear the road, and the
+/// scene fades out to Hama's farewell at Lama Temple.
 static void AlpineCrossing_LiftBoulder(void) {
 
   Engine_EventBegin();
@@ -704,7 +704,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Engine_EventRequestExit(CROSSING_EXIT_TO_FAREWELL);
 }
 
-// Searching the signpost: "North: Altin Mine. West: Lama Temple."
+/// Searching the signpost: "North: Altin Mine. West: Lama Temple."
 static void AlpineCrossing_ReadSignpost(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -712,16 +712,16 @@ static void AlpineCrossing_ReadSignpost(void) {
   Engine_EventEnd();
 }
 
-// Reveal shows the path hidden at (5, 13): the revealed cells, kept at
-// (5, 28), are copied there with their attributes.
+/// Reveal shows the path hidden at (5, 13): the revealed cells, kept at
+/// (5, 28), are copied there with their attributes.
 static void AlpineCrossing_RevealPath(void) {
   Map_CopyCellsTo(5, 28, 5, 13, 1, 2);
   Map_CopyCellAttributes(5, 28, 1, 2, 5, 13);
   Engine_EventWait(1);
 }
 
-// When Reveal's light ends, the plain cells kept at (6, 28) cover the path
-// again.
+/// When Reveal's light ends, the plain cells kept at (6, 28) cover the path
+/// again.
 static void AlpineCrossing_HidePath(void) {
   Map_CopyCellsTo(6, 28, 5, 13, 1, 2);
   Map_CopyCellAttributes(6, 28, 1, 2, 5, 13);
@@ -746,8 +746,8 @@ static s32 Pillar_SortAgainstLeader(union FieldObject *object) {
   }
 }
 
-// As Frost reaches the puddle, a leader standing north of it sees the pillar
-// rise in front of the background.
+/// As Frost reaches the puddle, a leader standing north of it sees the pillar
+/// rise in front of the background.
 static void AlpineCrossing_PrepareFrost(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldActor *puddle = Object_GetById(ACTOR_PUDDLE);
@@ -757,10 +757,10 @@ static void AlpineCrossing_PrepareFrost(void) {
   }
 }
 
-// Frost freezes the puddle into a pillar the party can climb: it stops
-// blocking movement and moving, sorts itself against the leader each frame,
-// and the cells beside it (and their copy at (20, 18)) become walkable.
-// Also run on entry while the pillar is already frozen.
+/// Frost freezes the puddle into a pillar the party can climb: it stops
+/// blocking movement and moving, sorts itself against the leader each frame,
+/// and the cells beside it (and their copy at (20, 18)) become walkable.
+/// Also run on entry while the pillar is already frozen.
 static void AlpineCrossing_FreezePuddle(void) {
   Engine_EventBegin();
 
@@ -784,9 +784,9 @@ static void AlpineCrossing_FreezePuddle(void) {
   Engine_EventEnd();
 }
 
-// Growth grows the sprout into a vine the party can climb: the two cells
-// above it take the climbable attributes kept at (14, 6). Also run on entry
-// while the vine is already grown.
+/// Growth grows the sprout into a vine the party can climb: the two cells
+/// above it take the climbable attributes kept at (14, 6). Also run on entry
+/// while the vine is already grown.
 static void AlpineCrossing_GrowSprout(void) {
   Engine_EventBegin();
   Map_CopyCellAttributes(14, 6, 1, 2, 21, 11);
@@ -795,7 +795,7 @@ static void AlpineCrossing_GrowSprout(void) {
   Engine_EventEnd();
 }
 
-// Returns the event table of the scene being entered.
+/// Returns the event table of the scene being entered.
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.scene == SCENE_ALPINE_CROSSING) {
     return gAlpineCrossing_Events;
@@ -803,8 +803,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gLamaTemple_Events;
 }
 
-// Sets up whichever scene is being entered and runs its arrival events.
-// Returns 0.
+/// Sets up whichever scene is being entered and runs its arrival events.
+/// Returns 0.
 s32 Scene_Initialize(void) {
   s32 entrance;
 
@@ -902,13 +902,13 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// The first worker's placement script: draw him behind the background.
+/// The first worker's placement script: draw him behind the background.
 s32 gAlpineCrossing_WorkerPlacementScript[] = {
     SC_CALL(Actor_DrawBehindScenery),
     SC_END,
 };
 
-// Feizhi's run down the path toward Hsu, walking, then standing.
+/// Feizhi's run down the path toward Hsu, walking, then standing.
 s32 gAlpineCrossing_FeizhiPath[] = {
     SC_ARG(ANIM_WALK),
     SC_MOVE(PIXELS(392), 0, PIXELS(232)),
@@ -927,7 +927,7 @@ s32 gAlpineCrossing_FeizhiPath[] = {
     SC_END,
 };
 
-// The party leader follows Feizhi most of the way.
+/// The party leader follows Feizhi most of the way.
 s32 gAlpineCrossing_LeaderPath[] = {
     SC_ARG(ANIM_WALK),
     SC_MOVE(PIXELS(392), 0, PIXELS(232)),
@@ -944,7 +944,7 @@ s32 gAlpineCrossing_LeaderPath[] = {
     SC_END,
 };
 
-// Hsu, pinned under the boulder, struggles now and then.
+/// Hsu, pinned under the boulder, struggles now and then.
 s32 gAlpineCrossing_HsuStruggle[] = {
     SC_ARG(ANIM_STAND),
     SC_ARG(ANIM_HSU_STRUGGLE),
@@ -959,7 +959,7 @@ s32 gAlpineCrossing_HsuStruggle[] = {
     SC_END,
 };
 
-// The door of Hama's room sliding open, and shut again.
+/// The door of Hama's room sliding open, and shut again.
 u16 gLamaTemple_DoorOpenCells[] = {
     MAP_CELL_STEP(66, 46, 3, 2, 5),
     MAP_CELL_STEP(63, 46, 3, 2, 5),

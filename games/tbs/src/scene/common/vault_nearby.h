@@ -1,5 +1,6 @@
-// Vault, before and after the thieves are caught: the two villagers who walk
-// about together (actors 14 and 15).
+/// @file
+/// Vault, before and after the thieves are caught: the two villagers who walk
+/// about together (actors 14 and 15).
 #include "types.h"
 #include "field_obj.h"
 

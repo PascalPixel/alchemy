@@ -1,10 +1,11 @@
 #ifndef ALCHEMY_FIELD_INTERNAL_H
 #define ALCHEMY_FIELD_INTERNAL_H
 
-// What every part of the field object shares: its includes and the few
-// names more than one part uses. field.c includes it before the parts, and
-// each part includes it too, so that a part read on its own still resolves.
-// It places no bytes.
+/// @file
+/// What every part of the field object shares: its includes and the few
+/// names more than one part uses. field.c includes it before the parts, and
+/// each part includes it too, so that a part read on its own still resolves.
+/// It places no bytes.
 
 #include "unit/field/facing.h"
 #include "unit/field/object_script.h"
@@ -76,17 +77,17 @@
 #include "songs.h"
 #include "macros.h"
 
-// Animation script commands. A script is pairs of bytes, a command and its
-// argument; a command below 239 shows that frame for `arg` frames at normal
-// speed (the timer counts sixteenths, less AnimationEntry.step each frame).
+/// Animation script commands. A script is pairs of bytes, a command and its
+/// argument; a command below 239 shows that frame for `arg` frames at normal
+/// speed (the timer counts sixteenths, less AnimationEntry.step each frame).
 enum AnimationCommand {
-  ANIM_CMD_END = 239,      // blank the layer and stop its script
-  ANIM_CMD_SET_KIND = 240, // use facing table `arg`
-  ANIM_CMD_HOLD = 241,     // stay on this command and frame for good
-  ANIM_CMD_WAIT = 245,     // keep the current frame `arg` frames longer
-  ANIM_CMD_JUMP = 253,     // continue at script position `arg`
-  ANIM_CMD_PLAY = 254,     // switch to animation `arg`
-  ANIM_CMD_BLANK = 255     // show nothing for `arg`
+  ANIM_CMD_END = 239,      ///< blank the layer and stop its script
+  ANIM_CMD_SET_KIND = 240, ///< use facing table `arg`
+  ANIM_CMD_HOLD = 241,     ///< stay on this command and frame for good
+  ANIM_CMD_WAIT = 245,     ///< keep the current frame `arg` frames longer
+  ANIM_CMD_JUMP = 253,     ///< continue at script position `arg`
+  ANIM_CMD_PLAY = 254,     ///< switch to animation `arg`
+  ANIM_CMD_BLANK = 255     ///< show nothing for `arg`
 };
 
 enum {
@@ -96,7 +97,7 @@ enum {
   ANIMATION_NORMAL_STEP = 16
 };
 
-// A movement target coordinate that is not set.
+/// A movement target coordinate that is not set.
 #define TARGET_UNSET ((s32)0x80000000)
 
 #endif

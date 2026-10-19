@@ -1,5 +1,6 @@
-// Gondowan Cave: the soldiers guarding the bridge to Gondowan, Iodem waiting
-// there on the way to Babi Lighthouse, and the cave's moving puzzles.
+/// @file
+/// Gondowan Cave: the soldiers guarding the bridge to Gondowan, Iodem waiting
+/// there on the way to Babi Lighthouse, and the cave's moving puzzles.
 #include "game_state.h"
 #include "global_cells.h"
 #include "scene_ids.h"
@@ -30,19 +31,19 @@
 #include "songs.h"
 #include "event.h"
 
-// The first room's actors: the soldiers who guard the bridge, and Iodem.
+/// The first room's actors: the soldiers who guard the bridge, and Iodem.
 #define SOLDIER_1 8
 #define SOLDIER_2 9
 #define SOLDIER_3 10
 #define IODEM 11
 
-// The third room's actors: two objects the party moves, and the one that
-// stands in for the second once it has moved.
+/// The third room's actors: two objects the party moves, and the one that
+/// stands in for the second once it has moved.
 #define FIRST_OBJECT 8
 #define SECOND_OBJECT 9
 #define SECOND_OBJECT_MOVED 10
 
-// The leap event also runs after the shared staged-actor movement.
+/// The leap event also runs after the shared staged-actor movement.
 static void Event_MoveSecondObject(void);
 static void GondowanCave_RunSpinningLeap(s32 actorId);
 
@@ -56,7 +57,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId);
 #include "item_ids.h"
 #include "objcmd.h"
 
-// Select the entrance bounds for the current cave section.
+/// Select the entrance bounds for the current cave section.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -72,13 +73,13 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gGondowanCaveEntrancesOther;
 }
 
-// This overlay has no clipping regions.
+/// This overlay has no clipping regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-// All cave sections share the exit table.
+/// All cave sections share the exit table.
 const u32 *Scene_GetExits(void) { return gGondowanCaveExits; }
 
-// Iodem waits in the first room once he is on his way to Babi Lighthouse.
+/// Iodem waits in the first room once he is on his way to Babi Lighthouse.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -97,7 +98,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gGondowanCavePlacementsOther;
 }
 
-// Each room's events, with Iodem's in the first room when he is there.
+/// Each room's events, with Iodem's in the first room when he is there.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -116,9 +117,9 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gGondowanCaveEventsOther;
 }
 
-// Walking back (trigger 10) with Iodem in the party: he steps out and
-// asks why Isaac is going back. Yes: he waits here for the party's return.
-// No: he rejoins the party and Isaac steps away from the trigger.
+/// Walking back (trigger 10) with Iodem in the party: he steps out and
+/// asks why Isaac is going back. Yes: he waits here for the party's return.
+/// No: he rejoins the party and Isaac steps away from the trigger.
 static void Event_IodemAsksWhyTurningBack(void) {
   struct FieldActor *leader;
 
@@ -170,9 +171,9 @@ static void Event_IodemAsksWhyTurningBack(void) {
   }
 }
 
-// Talking to Iodem where he waits, or walking up to him (trigger 11): "I've
-// been waiting for you, Isaac! We should go to Babi Lighthouse soon." He
-// joins the party again.
+/// Talking to Iodem where he waits, or walking up to him (trigger 11): "I've
+/// been waiting for you, Isaac! We should go to Babi Lighthouse soon." He
+/// joins the party again.
 static void Event_IodemRejoins(void) {
   EV_BEGIN();
   OBJ_FACE(IODEM, ACTOR_PARTY_LEADER, 0);
@@ -197,9 +198,9 @@ static void Event_IodemRejoins(void) {
   EV_END();
 }
 
-// Talking to the first soldier: "Do you wish to cross into Gondowan?" Yes:
-// "I won't stop you, but I wouldn't go unless I had business there." No:
-// "That's a good idea. They wouldn't let you into Babi Lighthouse, anyway."
+/// Talking to the first soldier: "Do you wish to cross into Gondowan?" Yes:
+/// "I won't stop you, but I wouldn't go unless I had business there." No:
+/// "That's a good idea. They wouldn't let you into Babi Lighthouse, anyway."
 static void Event_SoldierAsksAboutCrossing(void) {
   s32 firstMessage;
 
@@ -220,9 +221,9 @@ static void Event_SoldierAsksAboutCrossing(void) {
   }
 }
 
-// Mind Read on the second soldier: once flag 0x950 is set and until Iodem
-// waits here, he grumbles that guard duty made him miss all of Colosso;
-// before, that the warriors fight while he guards the bridge.
+/// Mind Read on the second soldier: once flag 0x950 is set and until Iodem
+/// waits here, he grumbles that guard duty made him miss all of Colosso;
+/// before, that the warriors fight while he guards the bridge.
 static void Event_ReadSoldierMind(void) {
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0 &&
       Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0)
@@ -232,8 +233,8 @@ static void Event_ReadSoldierMind(void) {
   MESSAGE_PUT(SOLDIER_2, 0);
 }
 
-// Leaving the third room by its first exit (trigger 1). With temporary flag
-// 0x204 set, the puzzle's saved flags return to one arrangement first.
+/// Leaving the third room by its first exit (trigger 1). With temporary flag
+/// 0x204 set, the puzzle's saved flags return to one arrangement first.
 static void Event_LeaveThroughEntrance(void) {
   struct EventWork *event;
 
@@ -253,12 +254,12 @@ static void Event_LeaveThroughEntrance(void) {
   EV_END();
 }
 
-// Walking into the second object from the east or the west (triggers 10
-// and 11): look at what is ahead, which starts the push.
+/// Walking into the second object from the east or the west (triggers 10
+/// and 11): look at what is ahead, which starts the push.
 static void Event_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
-// Move on the first object: from column 30 or less it spins and leaps across,
-// freeing the cell where it stood.
+/// Move on the first object: from column 30 or less it spins and leaps across,
+/// freeing the cell where it stood.
 static void Event_MoveFirstObject(void) {
   Object_GetById(FIRST_OBJECT);
   EV_BEGIN();
@@ -274,22 +275,22 @@ static void Event_MoveFirstObject(void) {
   EV_END();
 }
 
-// Pushing the second object (trigger 50): it moves a step, then may have
-// reached its place.
+/// Pushing the second object (trigger 50): it moves a step, then may have
+/// reached its place.
 static void Event_PushSecondObject(void) {
   StagedActor_AdvancePair();
   Event_MoveSecondObject();
 }
 
-// Hide the second object and show the one that stands in for it in its place.
+/// Hide the second object and show the one that stands in for it in its place.
 static inline void GondowanCave_PlaceMovedSecondObject(s32 animation) {
   OBJ_POS_SET(SECOND_OBJECT, 0, 0);
   OBJ_POS_SET(SECOND_OBJECT_MOVED, 696, 288);
   OBJ_MODE(SECOND_OBJECT_MOVED, animation);
 }
 
-// Move on the second object, and after each push: past column 42 it drops
-// into its place for good.
+/// Move on the second object, and after each push: past column 42 it drops
+/// into its place for good.
 static void Event_MoveSecondObject(void) {
   EV_BEGIN();
   if ((Object_GetById(SECOND_OBJECT)->x.fixed >> 20) > 42) {
@@ -305,15 +306,15 @@ static void Event_MoveSecondObject(void) {
   EV_END();
 }
 
-// Unused empty actor callback retained with the overlay's routines.
+/// Unused empty actor callback retained with the overlay's routines.
 static UNUSED void GondowanCave_UnusedActorCallback(void) {}
 
-// Rotate the sprite during the airborne part of the leap.
+/// Rotate the sprite during the airborne part of the leap.
 static void GondowanCave_RotateLeapingObject(union FieldObject *fieldObject) {
   fieldObject->actor.sprite->rotation -= 0x400;
 }
 
-// Wait at most forty frames for the actor to descend to the height limit.
+/// Wait at most forty frames for the actor to descend to the height limit.
 static void GondowanCave_WaitForDescent(struct FieldActor *actor,
                                         s32 heightLimit) {
   s32 framesRemaining = 40;
@@ -327,8 +328,8 @@ static void GondowanCave_WaitForDescent(struct FieldActor *actor,
   }
 }
 
-// The object spins in place, leaps and lands with a shake and a ring of dust,
-// then comes to rest a little further on.
+/// The object spins in place, leaps and lands with a shake and a ring of dust,
+/// then comes to rest a little further on.
 static void GondowanCave_RunSpinningLeap(s32 actorId) {
   struct FieldActor *actor;
   u32 stepIndex;
@@ -381,14 +382,14 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   OBJ_MODE(actorId, 2);
 }
 
-// Unused empty scene callback retained with the overlay's routines.
+/// Unused empty scene callback retained with the overlay's routines.
 static UNUSED void GondowanCave_UnusedSceneCallback(void) {}
 
-// Lift on the third room's actor 11 also takes away actor 12 beside it.
+/// Lift on the third room's actor 11 also takes away actor 12 beside it.
 static void Event_LiftObject(void) { Engine_ActorSetPosition(12, 0, 0); }
 
-// The first room keeps Iodem out of sight while he travels with the party;
-// the third puts the moved objects where the party left them.
+/// The first room keeps Iodem out of sight while he travels with the party;
+/// the third puts the moved objects where the party left them.
 s32 Scene_Initialize(void) {
   struct FieldActor *actor;
 
@@ -431,8 +432,8 @@ s32 gEffectScript2[] = {
     SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
-// Pack signed pixel steps with X in the upper halfword and Z in the lower.
-// Shift the unsigned representation so westward steps remain defined C.
+/// Pack signed pixel steps with X in the upper halfword and Z in the lower.
+/// Shift the unsigned representation so westward steps remain defined C.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {
@@ -610,7 +611,7 @@ struct SceneEvent gGondowanCaveEvents2[] = {
     { SCENE_EVENTS_END },
 };
 
-// Temporary flag 0x205 ends Move on the second object.
+/// Temporary flag 0x205 ends Move on the second object.
 struct SceneEvent gGondowanCaveEvents3[] = {
     { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughEntrance) },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },

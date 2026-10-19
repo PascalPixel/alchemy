@@ -1,13 +1,14 @@
-// Altin, the mining village flooded by the water the hydros statues in the
-// mine spew. Two scenes share this overlay:
-//
-// - the village itself, where the water drops in three stages as the party
-//   drains the mine, a water beast spits water at the houses until the
-//   party drives it off, and the shopkeepers wait for their shops to dry;
-// - the houses and the inn, where families sheltering from the flood go
-//   home as the water recedes.
-//
-// A third, empty set of tables serves any other scene number.
+/// @file
+/// Altin, the mining village flooded by the water the hydros statues in the
+/// mine spew. Two scenes share this overlay:
+///
+/// - the village itself, where the water drops in three stages as the party
+///   drains the mine, a water beast spits water at the houses until the
+///   party drives it off, and the shopkeepers wait for their shops to dry;
+/// - the houses and the inn, where families sheltering from the flood go
+///   home as the water recedes.
+///
+/// A third, empty set of tables serves any other scene number.
 
 #include "game_state.h"
 #include "version.h"
@@ -45,33 +46,33 @@
 #define SCENE_ALTIN_VILLAGE ((s32)&SceneId_Altin1)
 #define SCENE_ALTIN_HOUSES ((s32)&SceneId_Altin2)
 
-// The village's actors.
+/// The village's actors.
 enum AltinVillageActor {
   ACTOR_GREETING_VILLAGER = 8,
   ACTOR_CURIOUS_VILLAGER = 9,
   ACTOR_THIRSTY_VILLAGER = 14,
-  // Villagers who come back as the water recedes.
+  /// Villagers who come back as the water recedes.
   ACTOR_RETURNING_VILLAGER_A = 15,
   ACTOR_RETURNING_VILLAGER_B = 16,
   ACTOR_RETURNING_VILLAGER_C = 17,
   ACTOR_WATER_BEAST = 18,
   ACTOR_MOVABLE_BLOCK = 19,
-  // The armor and item sellers, waiting outside while their shops are
-  // under water.
+  /// The armor and item sellers, waiting outside while their shops are
+  /// under water.
   ACTOR_FLOODED_ARMOR_SELLER = 20,
   ACTOR_FLOODED_ITEM_SELLER = 21,
-  // Three ground sprites drawn under the party.
+  /// Three ground sprites drawn under the party.
   ACTOR_FIRST_GROUND_SPRITE = 22,
   ACTOR_SECOND_GROUND_SPRITE = 23,
   ACTOR_THIRD_GROUND_SPRITE = 24
 };
 
-// The houses' actors.
+/// The houses' actors.
 enum AltinHouseActor {
-  // The family sheltering in the inn's Room One until the first drop.
+  /// The family sheltering in the inn's Room One until the first drop.
   ACTOR_ROOM_ONE_GUEST = 8,
   ACTOR_ROOM_ONE_SECOND_GUEST = 9,
-  // The family in Room Two, until the second drop.
+  /// The family in Room Two, until the second drop.
   ACTOR_ROOM_TWO_GUEST = 10,
   ACTOR_ROOM_TWO_SECOND_GUEST = 11,
   ACTOR_KISSING_VILLAGER = 14,
@@ -83,7 +84,7 @@ enum AltinHouseActor {
   ACTOR_MINE_WORKER = 21
 };
 
-// The village's water level, set on entry from the mine's drain flags.
+/// The village's water level, set on entry from the mine's drain flags.
 enum {
   FLAG_WATER_DROPPED_ONCE = FLAG_SCENE_TEMP_40,
   FLAG_WATER_DROPPED_TWICE = FLAG_SCENE_TEMP_41,
@@ -99,7 +100,7 @@ enum {
 
 enum {
   ENTRANCE_FROM_MINE = 3,
-  // The door triggers are numbered from 2 in the village's event table.
+  /// The door triggers are numbered from 2 in the village's event table.
   FIRST_DOOR_TRIGGER = 2,
   DOOR_MINE = 1,
   DOOR_WITH_WINDOW = 3,
@@ -132,14 +133,14 @@ enum { SPRITE_SPRAY = 222, ANIM_BEAST_SPIT = 3 };
 
 enum { TRIGGER_NEAR_BEAST = 20 };
 
-// The highest actor slot.
+/// The highest actor slot.
 enum { ACTOR_LAST_PLACED = 65 };
 
 static void Village_ApplyWaterLevel(void);
 static void Houses_PlaceSheltering(void);
 static void Beast_SpawnSpray(void);
 
-// Returns the entrance table of the scene being entered.
+/// Returns the entrance table of the scene being entered.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -152,15 +153,15 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gAltinOther_Entrances;
 }
 
-// Neither scene has regions.
+/// Neither scene has regions.
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
-// Both scenes share one exit table.
+/// Both scenes share one exit table.
 const u32 *Scene_GetExits(void) { return gAltin_Exits; }
 
-// Returns the actor placements of the scene being entered. Some villagers
-// only turn back after talking once the flood is over or their family has
-// gone home.
+/// Returns the actor placements of the scene being entered. Some villagers
+/// only turn back after talking once the flood is over or their family has
+/// gone home.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s32 scene = gGameState.scene;
   if (scene == SCENE_ALTIN_VILLAGE) {
@@ -182,7 +183,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gAltinOther_Placements;
 }
 
-// Returns the event table of the scene being entered.
+/// Returns the event table of the scene being entered.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -195,8 +196,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gAltinOther_Events;
 }
 
-// A villager asks whether this is the party's first visit; either way, the
-// flood has changed Altin.
+/// A villager asks whether this is the party's first visit; either way, the
+/// flood has changed Altin.
 static void Village_AskAboutFirstVisit(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgAltinYourFirstTimeVisitAltin);
@@ -213,7 +214,7 @@ static void Village_AskAboutFirstVisit(void) {
   Engine_EventEnd();
 }
 
-// A villager asks whether the slain hydros creatures gushed water.
+/// A villager asks whether the slain hydros creatures gushed water.
 static void Village_AskAboutHydros(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgAltinDidSeeWaterGushingOut);
@@ -221,9 +222,9 @@ static void Village_AskAboutHydros(void) {
   Engine_EventEnd();
 }
 
-// While the beasts live, this villager complains that their water cannot be
-// drunk, and the first time the camera pans to the water beast spitting at
-// the houses. Once the statues are gone, he asks for help rebuilding.
+/// While the beasts live, this villager complains that their water cannot be
+/// drunk, and the first time the camera pans to the water beast spitting at
+/// the houses. Once the statues are gone, he asks for help rebuilding.
 static void Village_TalkToThirstyVillager(void) {
 
   struct FieldActor *beast;
@@ -258,7 +259,7 @@ static void Village_TalkToThirstyVillager(void) {
   Engine_EventEnd();
 }
 
-// A villager asks whether the party really found ruins deep in the mine.
+/// A villager asks whether the party really found ruins deep in the mine.
 static void Village_AskAboutRuins(void) {
 
   Engine_EventBegin();
@@ -267,7 +268,7 @@ static void Village_AskAboutRuins(void) {
   Engine_EventEnd();
 }
 
-// A guest asks whether the party is who the girl from Xian was looking for.
+/// A guest asks whether the party is who the girl from Xian was looking for.
 static void Houses_AskAboutXianGirl(void) {
 
   Engine_EventBegin();
@@ -276,8 +277,8 @@ static void Houses_AskAboutXianGirl(void) {
   Engine_EventEnd();
 }
 
-// A guest asks whether the party seeks the way west, and points to the
-// bottom of the mine.
+/// A guest asks whether the party seeks the way west, and points to the
+/// bottom of the mine.
 static void Houses_AskAboutWayWest(void) {
 
   Engine_EventBegin();
@@ -286,7 +287,7 @@ static void Houses_AskAboutWayWest(void) {
   Engine_EventEnd();
 }
 
-// A grateful villager thanks the party with a kiss.
+/// A grateful villager thanks the party with a kiss.
 static void Houses_AskAboutMonsters(void) {
 
   Engine_EventBegin();
@@ -295,7 +296,7 @@ static void Houses_AskAboutMonsters(void) {
   Engine_EventEnd();
 }
 
-// A miner asks whether the remaining beasts are deep below.
+/// A miner asks whether the remaining beasts are deep below.
 static void Houses_AskAboutMineBeasts(void) {
 
   Engine_EventBegin();
@@ -304,8 +305,8 @@ static void Houses_AskAboutMineBeasts(void) {
   Engine_EventEnd();
 }
 
-// Returns whether the party leader faces north, toward a shop counter: its
-// facing lies strictly between northwest and northeast, measured in 16 bits.
+/// Returns whether the party leader faces north, toward a shop counter: its
+/// facing lies strictly between northwest and northeast, measured in 16 bits.
 static s32 Leader_FacesCounter(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -315,8 +316,8 @@ static s32 Leader_FacesCounter(void) {
   return 0;
 }
 
-// The weapon seller: until the water drains he cannot sell; afterwards he
-// opens his shop when spoken to across the counter.
+/// The weapon seller: until the water drains he cannot sell; afterwards he
+/// opens his shop when spoken to across the counter.
 static void Houses_TalkToWeaponSeller(void) {
 
   if (Engine_GameFlagIsSet(FLAG_WATER_DRAINED) == 0) {
@@ -342,9 +343,9 @@ static void Houses_TalkToWeaponSeller(void) {
   Engine_EventEnd();
 }
 
-// The armor seller, in either scene: outside, while his shop is under water,
-// he laments; once it has dried after the second drop, he sells across his
-// counter in the houses.
+/// The armor seller, in either scene: outside, while his shop is under water,
+/// he laments; once it has dried after the second drop, he sells across his
+/// counter in the houses.
 static void Altin_TalkToArmorSeller(void) {
 
   if (Engine_GameFlagIsSet(FLAG_WATER_DROPPED_TWICE) == 0) {
@@ -369,7 +370,7 @@ static void Altin_TalkToArmorSeller(void) {
   Engine_EventEnd();
 }
 
-// The item seller, the same way: she reopens after the first drop.
+/// The item seller, the same way: she reopens after the first drop.
 static void Altin_TalkToItemSeller(void) {
   if (Engine_GameFlagIsSet(FLAG_WATER_DROPPED_ONCE) == 0) {
     Engine_EventBegin();
@@ -393,8 +394,8 @@ static void Altin_TalkToItemSeller(void) {
   Engine_EventEnd();
 }
 
-// The innkeeper opens the inn across the counter, and otherwise talks about
-// the flood or, once it is over, the temple west of the mine.
+/// The innkeeper opens the inn across the counter, and otherwise talks about
+/// the flood or, once it is over, the temple west of the mine.
 static void Houses_TalkToInnkeeper(void) {
   struct FieldActor *leader;
 
@@ -418,9 +419,9 @@ static void Houses_TalkToInnkeeper(void) {
   Engine_EventEnd();
 }
 
-// Walking north into one of the village's doors: everyone stops, the door
-// opens and the party leader walks in. The mine's wide door is redrawn in
-// two halves by hand; the others play their opening pictures.
+/// Walking north into one of the village's doors: everyone stops, the door
+/// opens and the party leader walks in. The mine's wide door is redrawn in
+/// two halves by hand; the others play their opening pictures.
 static void Village_EnterDoor(void) {
   u32 actorId;
   struct EventWork *event;
@@ -491,7 +492,7 @@ static void Village_EnterDoor(void) {
   Engine_EventEnd();
 }
 
-// Walking north into a doorway without a door: the leader walks out.
+/// Walking north into a doorway without a door: the leader walks out.
 static void Village_WalkThroughDoorway(void) {
   struct EventWork *work;
 
@@ -506,9 +507,9 @@ static void Village_WalkThroughDoorway(void) {
   Engine_EventEnd();
 }
 
-// Update callback of the hopping water beast: once a second it leaps up,
-// falls back with a splash that shakes the screen briefly, and stands while
-// on the ground.
+/// Update callback of the hopping water beast: once a second it leaps up,
+/// falls back with a splash that shakes the screen briefly, and stands while
+/// on the ground.
 static void Beast_Hop(union FieldObject *fieldObject) {
   struct WaterActor *beast = (struct WaterActor *)fieldObject;
   if (beast->shakeFrames != 0) {
@@ -541,7 +542,7 @@ static void Beast_Hop(union FieldObject *fieldObject) {
     beast->timer = 0;
 }
 
-// The water beast hops away across the flood and dives in with a splash.
+/// The water beast hops away across the flood and dives in with a splash.
 static void Beast_HopAway(void) {
   struct WaterActor *beast;
 
@@ -562,8 +563,8 @@ static void Beast_HopAway(void) {
   Engine_ActorSetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
 }
 
-// After Move: remembers whether the block now stands in map column 22, the
-// spot it is pushed to.
+/// After Move: remembers whether the block now stands in map column 22, the
+/// spot it is pushed to.
 static void Village_CheckBlockMoved(void) {
   struct FieldActor *block = Object_GetById(ACTOR_MOVABLE_BLOCK);
 
@@ -574,8 +575,8 @@ static void Village_CheckBlockMoved(void) {
   }
 }
 
-// Works out the village's water level from the mine's drain flags, then sets
-// up whichever scene is being entered. Returns 0.
+/// Works out the village's water level from the mine's drain flags, then sets
+/// up whichever scene is being entered. Returns 0.
 s32 Scene_Initialize(void) {
   s16 scene;
 
@@ -603,10 +604,10 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// Sets up the village: the map half showing the current water level (the
-// cells kept in four 32 by 32 blocks), the villagers and sellers present at
-// that level, the water beast with its spray while it remains, and the
-// pushed block. Then redraws the map around the leader.
+/// Sets up the village: the map half showing the current water level (the
+/// cells kept in four 32 by 32 blocks), the villagers and sellers present at
+/// that level, the water beast with its spray while it remains, and the
+/// pushed block. Then redraws the map around the leader.
 static void Village_ApplyWaterLevel(void) {
   struct FieldActor *leader;
 
@@ -678,9 +679,9 @@ static void Village_ApplyWaterLevel(void) {
   Engine_TaskWait(1);
 }
 
-// Sets up the houses: the families still sheltering in the inn's rooms, the
-// weapon seller waiting there until the water drains, and the shopkeepers
-// kept from wandering.
+/// Sets up the houses: the families still sheltering in the inn's rooms, the
+/// weapon seller waiting there until the water drains, and the shopkeepers
+/// kept from wandering.
 static void Houses_PlaceSheltering(void) {
   struct FieldActor *actor;
 
@@ -712,8 +713,8 @@ static void Houses_PlaceSheltering(void) {
   }
 }
 
-// Gives a new spray particle its look: standing still, drawn on sprite
-// priority 1 and at 0.3 scale.
+/// Gives a new spray particle its look: standing still, drawn on sprite
+/// priority 1 and at 0.3 scale.
 static void Spray_Initialize(struct SprayActor *spray) {
   spray->motionFlags = 0;
   spray->sprite->image.priority = 1;
@@ -723,9 +724,9 @@ static void Spray_Initialize(struct SprayActor *spray) {
   spray->scaleY = WATER_SPRAY_START_SCALE;
 }
 
-// Update callback of a spray particle: it drifts sideways with a random
-// wobble, rising and stretching for a few frames and then falling and
-// growing, sometimes changing frame, until its life runs out.
+/// Update callback of a spray particle: it drifts sideways with a random
+/// wobble, rising and stretching for a few frames and then falling and
+/// growing, sometimes changing frame, until its life runs out.
 static void Spray_Drift(union FieldObject *fieldObject) {
   struct WaterActor *spray = (struct WaterActor *)fieldObject;
   spray->x += WATER_SPRAY_LATERAL_STEP(
@@ -751,8 +752,8 @@ static void Spray_Drift(union FieldObject *fieldObject) {
   }
 }
 
-// Scheduler task while the water beast spits: every fourth frame a spray
-// particle starts from its spout, living 20 frames.
+/// Scheduler task while the water beast spits: every fourth frame a spray
+/// particle starts from its spout, living 20 frames.
 static void Beast_SpawnSpray(void) {
   struct WaterActor *spray;
   if ((gFrameCount & 3) == 0) {
@@ -769,8 +770,8 @@ static void Beast_SpawnSpray(void) {
   }
 }
 
-// Stepping near the water beast: the camera pans to it, it stops spitting,
-// turns to the party, cries out and hops away into the flood.
+/// Stepping near the water beast: the camera pans to it, it stops spitting,
+/// turns to the party, cries out and hops away into the flood.
 static void Village_ScareOffBeast(void) {
   Engine_EventBegin();
   Camera_SetSpeed(0x6666, 0xccc);
@@ -798,7 +799,7 @@ static void Village_ScareOffBeast(void) {
   Engine_EventEnd();
 }
 
-// The cook from Xian paces between his pots, nodding over each.
+/// The cook from Xian paces between his pots, nodding over each.
 s32 gAltinHouses_CookScript[] = {
     SC_ADD(SW_COLLISION, 128),
     SC_SET(SW_SPEED, 0x26666),
@@ -1155,8 +1156,8 @@ struct SceneEvent gAltinHouses_Events[] = {
 };
 // clang-format on
 
-// The opening pictures of the village's doors, two cells square. The mine's
-// door (the second) is wider and redrawn by hand instead.
+/// The opening pictures of the village's doors, two cells square. The mine's
+/// door (the second) is wider and redrawn by hand instead.
 u16 gAltinVillage_MineDoorCells[] = {
     MAP_CELL_STEP(42, 33, 2, 2, 0),
     MAP_CELL_STEP(42, 35, 2, 2, 5),
@@ -1201,7 +1202,7 @@ u16 gAltinVillage_DoorCellsE[] = {
     MAP_CELL_STEPS_END,
 };
 
-// Each door trigger's opening picture and cell, from trigger 2.
+/// Each door trigger's opening picture and cell, from trigger 2.
 struct DoorAnim gAltinVillage_Doors[] = {
     {gAltinVillage_DoorCellsA, 41, 5},  {gAltinVillage_MineDoorCells, 51, 6},
     {gAltinVillage_DoorCellsC, 57, 17}, {gAltinVillage_DoorCellsD, 39, 17},

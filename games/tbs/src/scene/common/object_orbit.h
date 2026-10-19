@@ -5,8 +5,8 @@
 // garden, Mogall Forest and Vale: a Nut floating where it lies, until it is
 // taken.
 
-// The Nut's callback, each frame: it sways up to two pixels either side of its
-// spot and dips up to two pixels below it, at a random pace.
+/// The Nut's callback, each frame: it sways up to two pixels either side of its
+/// spot and dips up to two pixels below it, at a random pace.
 static s32 SceneEffect_UpdateOrbitPosition(s32 *p) {
   s16 *q = (s16 *)p[20];
   s32 a, b;
@@ -22,8 +22,8 @@ static s32 SceneEffect_UpdateOrbitPosition(s32 *p) {
   return 0;
 }
 
-// Draw actor id as the Nut's icon and start it floating, 32 pixels up unless
-// the party returns to where it was.
+/// Draw actor id as the Nut's icon and start it floating, 32 pixels up unless
+/// the party returns to where it was.
 void Scene_FloatNut(s32 id) {
   OrbitingSceneObject *actor;
   OrbitingSceneObjectSprite *sprite;

@@ -1,13 +1,14 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Ground particles, motes, sparkles and lightning on the field.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Ground particles, motes, sparkles and lightning on the field.
 
 #include "../psynergy_effects_internal.h"
 
-// Scheduler callback: animates the ground particles. Each plays a 16-frame
-// animation (gFieldFx_GroundParticleFrames, 5 halfwords a frame: x and y
-// offsets, tile, shape and size) on a random spot of ground within 128 pixels
-// of the leader, then starts again elsewhere. They freeze while flag 0x166 is
-// set.
+/// Scheduler callback: animates the ground particles. Each plays a 16-frame
+/// animation (gFieldFx_GroundParticleFrames, 5 halfwords a frame: x and y
+/// offsets, tile, shape and size) on a random spot of ground within 128 pixels
+/// of the leader, then starts again elsewhere. They freeze while flag 0x166 is
+/// set.
 void FieldFx_UpdateGroundParticles(void) {
   struct MapScrollWork *view = gMapWork[0];
   struct GroundParticleWork *work = gMapWork[21];
@@ -54,9 +55,9 @@ void FieldFx_UpdateGroundParticles(void) {
   }
 }
 
-// Scheduler callback for the storm: every 150 to 550 frames lightning flashes
-// the palette three times (5 frames apart) with a thunderclap, louder with
-// loud set. Flag 0x166 holds the next flash back.
+/// Scheduler callback for the storm: every 150 to 550 frames lightning flashes
+/// the palette three times (5 frames apart) with a thunderclap, louder with
+/// loud set. Flag 0x166 holds the next flash back.
 void FieldFx_UpdateLightning(void) {
   struct FieldBlendWork *work = gFieldBlendWork[0];
   struct BattleEffectBuffers *target = gFieldBlendWork[2];
@@ -98,9 +99,9 @@ void FieldFx_UpdateLightning(void) {
   }
 }
 
-// Starts the ground particles (FieldFx_UpdateGroundParticles) with sound 170:
-// loads their tiles and puts 32 of them under the leader with staggered
-// timers, drawn semi-transparent.
+/// Starts the ground particles (FieldFx_UpdateGroundParticles) with sound 170:
+/// loads their tiles and puts 32 of them under the leader with staggered
+/// timers, drawn semi-transparent.
 void FieldFx_StartGroundParticles(void) {
   struct GroundParticleWork *work;
   s32 *leader;
@@ -146,17 +147,17 @@ void FieldFx_StartGroundParticles(void) {
   Scheduler_AddOrUpdateCallback(FieldFx_UpdateGroundParticles, 0xc80);
 }
 
-// A particle's first word, seen as a value or a link.
+/// A particle's first word, seen as a value or a link.
 union DustWord {
   u32 value;
   void *link;
 };
 
-// Scheduler callback: the floating motes. Each mote appears on the ground
-// within 128 pixels of the leader (at most 8 new ones a frame), rises a pixel
-// a frame, ever faster for its last 90 frames, jittering sideways and
-// changing tiles as it ages, and lasts 120 frames or until it leaves the
-// screen. They freeze while flag 0x166 is set.
+/// Scheduler callback: the floating motes. Each mote appears on the ground
+/// within 128 pixels of the leader (at most 8 new ones a frame), rises a pixel
+/// a frame, ever faster for its last 90 frames, jittering sideways and
+/// changing tiles as it ages, and lasts 120 frames or until it leaves the
+/// screen. They freeze while flag 0x166 is set.
 void FieldMotes_Update(void) {
   struct GroundParticleWork *work = WORK_SLOT(29);
   struct MapScrollWork *map = WORK_SLOT(8);
@@ -221,8 +222,8 @@ void FieldMotes_Update(void) {
   }
 }
 
-// Starts the floating motes (FieldMotes_Update): loads their tiles and puts
-// 32 of them under the leader with staggered timers, drawn semi-transparent.
+/// Starts the floating motes (FieldMotes_Update): loads their tiles and puts
+/// 32 of them under the leader with staggered timers, drawn semi-transparent.
 void FieldMotes_Start(void) {
   struct GroundParticleWork *work;
   struct GroundParticle *mote;
@@ -269,11 +270,11 @@ void FieldMotes_Start(void) {
   Scheduler_AddOrUpdateCallback(FieldMotes_Update, 0xc80);
 }
 
-// Scheduler callback: the sparkles. Now and then (1 frame in 256) a sparkle
-// appears on the ground within 128 pixels of the leader, and up to three more
-// follow on the same spot, each 4 frames shorter. Each plays
-// gFieldFx_SparkleFrames, flipping every other frame. No new bursts start
-// while the work's stopped is set; flag 0x166 freezes them.
+/// Scheduler callback: the sparkles. Now and then (1 frame in 256) a sparkle
+/// appears on the ground within 128 pixels of the leader, and up to three more
+/// follow on the same spot, each 4 frames shorter. Each plays
+/// gFieldFx_SparkleFrames, flipping every other frame. No new bursts start
+/// while the work's stopped is set; flag 0x166 freezes them.
 void FieldEffect_UpdateSparkles(void) {
   struct GroundParticleWork *work;
   u32 spawned;
@@ -364,8 +365,8 @@ void FieldEffect_UpdateSparkles(void) {
   } while (i < FIELD_WEATHER_PARTICLE_COUNT);
 }
 
-// Starts the sparkles (FieldEffect_UpdateSparkles): loads their tiles and
-// clears the 32 sparkles.
+/// Starts the sparkles (FieldEffect_UpdateSparkles): loads their tiles and
+/// clears the 32 sparkles.
 void FieldEffect_InitSparkles(void) {
   u32 size = 0x410;
   struct GroundParticleWork *work = Runtime_AllocateBlock(29, size);
@@ -415,9 +416,9 @@ void FieldEffect_InitSparkles(void) {
   Scheduler_AddOrUpdateCallback(FieldEffect_UpdateSparkles, 0xc80);
 }
 
-// Starts the storm's lightning (FieldFx_UpdateLightning): builds the dark
-// (0x10003) and lit (0x10005) palettes and their 12-step fade, and arms the
-// first flash in 600 frames, repeating.
+/// Starts the storm's lightning (FieldFx_UpdateLightning): builds the dark
+/// (0x10003) and lit (0x10005) palettes and their 12-step fade, and arms the
+/// first flash in 600 frames, repeating.
 void FieldFx_StartLightning(void) {
   struct FieldBlendWork *work;
   struct BattleEffectBuffers *buffers;
@@ -434,7 +435,7 @@ void FieldFx_StartLightning(void) {
   Scheduler_AddOrUpdateCallback(FieldFx_UpdateLightning, 0xc80);
 }
 
-// Stops the lightning: no flash for 0x7fff frames, and none after.
+/// Stops the lightning: no flash for 0x7fff frames, and none after.
 void FieldFx_StopLightning(void) {
   struct FieldBlendWork *state =
       Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
@@ -442,7 +443,7 @@ void FieldFx_StopLightning(void) {
   state->enabled = 0;
 }
 
-// One last flash of lightning in 12 frames, then no more.
+/// One last flash of lightning in 12 frames, then no more.
 void FieldFx_LastLightning(void) {
   struct FieldBlendWork *state =
       Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
@@ -450,7 +451,7 @@ void FieldFx_LastLightning(void) {
   state->enabled = 0;
 }
 
-// Restarts the lightning: the next flash in 128 frames, repeating.
+/// Restarts the lightning: the next flash in 128 frames, repeating.
 void FieldFx_ResumeLightning(void) {
   struct FieldBlendWork *state =
       Runtime_AllocateBlock(30, sizeof(struct FieldBlendWork));
@@ -458,8 +459,8 @@ void FieldFx_ResumeLightning(void) {
   state->enabled = 1;
 }
 
-// Flashes the palette once, 120 frames from now, from palette from to palette
-// to (BattleFx_BuildBuffer modes), with the storm's flash callback.
+/// Flashes the palette once, 120 frames from now, from palette from to palette
+/// to (BattleFx_BuildBuffer modes), with the storm's flash callback.
 void BattleFx_StartBufferBlend(s32 from, s32 to) {
   struct FieldBlendWork *work;
   struct BattleEffectBuffers *buffers;

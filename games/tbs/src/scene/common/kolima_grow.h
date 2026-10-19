@@ -1,11 +1,12 @@
-// Kolima, its forest bridge and the forest's tree: an effect (object 26) that
-// stretches as it travels.
+/// @file
+/// Kolima, its forest bridge and the forest's tree: an effect (object 26) that
+/// stretches as it travels.
 #include "script.h"
 #include "types.h"
 #include "field_obj.h"
 
-// An object script call: widen the object by 0x1eb8 (about 0.12) a frame, and
-// release it once it has reached its destination.
+/// An object script call: widen the object by 0x1eb8 (about 0.12) a frame, and
+/// release it once it has reached its destination.
 static s32
 SceneEffect_AdvanceAngleUntilIdle(struct ScriptInterpreter *interpreter) {
   struct FieldActor *streak = (struct FieldActor *)interpreter;

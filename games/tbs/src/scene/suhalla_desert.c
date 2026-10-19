@@ -1,10 +1,11 @@
-// The Suhalla Desert in three scenes. Sandstorms rise as the party nears
-// them; one that catches the leader spins the party and, unless Douse stops
-// it and its monster is fought, carries the party off to the world map. In
-// the second scene one storm gives chase, and Reveal shows what the sand
-// hides. Travelling with the party, Iodem warns of the storms, and, once he
-// has heard the wounded soldiers in Suhalla, asks whether to search on for
-// Sheba or press on to Lalivero.
+/// @file
+/// The Suhalla Desert in three scenes. Sandstorms rise as the party nears
+/// them; one that catches the leader spins the party and, unless Douse stops
+/// it and its monster is fought, carries the party off to the world map. In
+/// the second scene one storm gives chase, and Reveal shows what the sand
+/// hides. Travelling with the party, Iodem warns of the storms, and, once he
+/// has heard the wounded soldiers in Suhalla, asks whether to search on for
+/// Sheba or press on to Lalivero.
 
 #include "script.h"
 #include "flags.h"
@@ -52,34 +53,34 @@
 // party away.
 // FLAG_SCENE_TEMP_18: a byte, the storm that caught the leader.
 
-// Storms doused in the first and second scenes, one flag per storm from the
-// first; each storm stays away once doused.
+/// Storms doused in the first and second scenes, one flag per storm from the
+/// first; each storm stays away once doused.
 enum {
   FLAG_FIRST_SCENE_STORM_DOUSED = 0x301,
   FLAG_SECOND_SCENE_STORM_DOUSED = 0x311,
-  // A storm has risen: the sand haze stays faded in.
+  /// A storm has risen: the sand haze stays faded in.
   FLAG_STORMS_RISEN = 0x340
 };
 
-// The actors this scene's code names, by their place in the placement tables.
+/// The actors this scene's code names, by their place in the placement tables.
 enum {
-  STORM_FIRST = 8, // the storms are actors 8 to 12
+  STORM_FIRST = 8, ///< the storms are actors 8 to 12
   STORM_FOURTH = 11,
   STORM_LAST = 12,
-  STORM_CHASING = 12, // in the second scene the last storm gives chase
+  STORM_CHASING = 12, ///< in the second scene the last storm gives chase
   IODEM = 13,
-  REVEALED_OBJECT = 14, // in the second scene, seen with Reveal
+  REVEALED_OBJECT = 14, ///< in the second scene, seen with Reveal
   DJINNI = 15
 };
 
-// Frames a caught party spins before the storm carries it away.
+/// Frames a caught party spins before the storm carries it away.
 enum { STORM_CAPTURE_FRAMES = 180 };
 
-// Where a storm drops the party on the world map: the second scene's fourth
-// storm drops it elsewhere.
+/// Where a storm drops the party on the world map: the second scene's fourth
+/// storm drops it elsewhere.
 enum { WORLD_MAP_STORM_DROP = 27, WORLD_MAP_STORM_DROP_FOURTH = 77 };
 
-// Forward declarations.
+/// Forward declarations.
 static void SuhallaDesert_SetUpFirstSceneStorms(void);
 static void SuhallaDesert_SetUpSecondSceneStorms(void);
 
@@ -114,12 +115,12 @@ struct FieldGlobals {
 
 void QueueSceneSound(s32 cue);
 
-// Talking to the Djinni starts its battle.
+/// Talking to the Djinni starts its battle.
 static void Event_FightDjinni(void) {
   Field_RequestDjinnBattle(DJINNI, DJINNI_FLASH);
 }
 
-// A storm's placement script: clears its sprite and collision flags.
+/// A storm's placement script: clears its sprite and collision flags.
 static s32 SuhallaDesert_ClearActorSpriteAndCollisionFlags(
     struct ScriptInterpreter *interpreter) {
   u8 *actorBytes = (u8 *)interpreter;
@@ -128,7 +129,7 @@ static s32 SuhallaDesert_ClearActorSpriteAndCollisionFlags(
   return 0;
 }
 
-// A storm's placement script: toggles its single-sprite storage.
+/// A storm's placement script: toggles its single-sprite storage.
 static s32
 SuhallaDesert_ToggleActorActive(struct ScriptInterpreter *interpreter) {
   u8 *actorBytes = (u8 *)interpreter;
@@ -136,7 +137,7 @@ SuhallaDesert_ToggleActorActive(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Where the party can enter each of the three scenes.
+/// Where the party can enter each of the three scenes.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 selector = gGameState.scene;
 
@@ -152,13 +153,13 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSuhallaDesertEntrancesOther;
 }
 
-// The Suhalla Desert has no regions.
+/// The Suhalla Desert has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-// Where each exit of the three scenes leads.
+/// Where each exit of the three scenes leads.
 const u32 *Scene_GetExits(void) { return gSuhallaDesertExits; }
 
-// The storms, Iodem, and in the second scene the Djinni and what Reveal shows.
+/// The storms, Iodem, and in the second scene the Djinni and what Reveal shows.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 selector = gGameState.scene;
 
@@ -174,8 +175,8 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gSuhallaDesertPlacementsOther;
 }
 
-// Each frame while caught: spins the leader, and counts down to raising event
-// 99, the storm carrying the party away.
+/// Each frame while caught: spins the leader, and counts down to raising event
+/// 99, the storm carrying the party away.
 static void SuhallaDesert_UpdateCaptureTimer(void) {
   struct SelectedActorFacing *selectedActor;
   struct StateMarkerWork *requests;
@@ -197,8 +198,8 @@ static void SuhallaDesert_UpdateCaptureTimer(void) {
   FieldGameFlag_SetByte(FLAG_SCENE_TEMP_10, remainingFrames);
 }
 
-// The leader walks into a storm: drawn to its centre and lifted, the party
-// spins until Douse stops the storm or it carries them away.
+/// The leader walks into a storm: drawn to its centre and lifted, the party
+/// spins until Douse stops the storm or it carries them away.
 static void SuhallaDesert_CatchInStorm(s32 stormId) {
   s32 stormIdCopy;
   s32 captureActive;
@@ -244,36 +245,36 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
   }
 }
 
-// The leader walks into the first storm of the scene.
+/// The leader walks into the first storm of the scene.
 static void Event_CaughtByFirstStorm(void) {
   SuhallaDesert_CatchInStorm(STORM_FIRST);
 }
 
-// The leader walks into the second storm.
+/// The leader walks into the second storm.
 static void Event_CaughtBySecondStorm(void) {
   SuhallaDesert_CatchInStorm(STORM_FIRST + 1);
 }
 
-// The leader walks into the third storm.
+/// The leader walks into the third storm.
 static void Event_CaughtByThirdStorm(void) {
   SuhallaDesert_CatchInStorm(STORM_FIRST + 2);
 }
 
-// The leader walks into the fourth storm.
+/// The leader walks into the fourth storm.
 static void Event_CaughtByFourthStorm(void) {
   SuhallaDesert_CatchInStorm(STORM_FIRST + 3);
 }
 
-// The leader walks into the first scene's fifth storm, or the chasing storm
-// reaches the moving leader.
+/// The leader walks into the first scene's fifth storm, or the chasing storm
+/// reaches the moving leader.
 static void Event_CaughtByFifthStorm(void) {
   SuhallaDesert_CatchInStorm(STORM_FIRST + 4);
 }
 
-// As the party nears a storm it rises, growing to full size with the sand
-// haze fading in the first time. The first time a storm rises with Iodem in
-// the party, he steps out and warns of the sandstorms: "If we don't get past
-// here, we'll never make it to Babi Lighthouse."
+/// As the party nears a storm it rises, growing to full size with the sand
+/// haze fading in the first time. The first time a storm rises with Iodem in
+/// the party, he steps out and warns of the sandstorms: "If we don't get past
+/// here, we'll never make it to Babi Lighthouse."
 static void SuhallaDesert_RaiseStorm(s32 stormId) {
   s32 frame;
   s32 nextFrame;
@@ -356,36 +357,36 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   Engine_EventEnd();
 }
 
-// The party nears the first storm.
+/// The party nears the first storm.
 static void Event_FirstStormRises(void) {
   SuhallaDesert_RaiseStorm(STORM_FIRST);
 }
 
-// The party nears the second storm.
+/// The party nears the second storm.
 static void Event_SecondStormRises(void) {
   SuhallaDesert_RaiseStorm(STORM_FIRST + 1);
 }
 
-// The party nears the third storm.
+/// The party nears the third storm.
 static void Event_ThirdStormRises(void) {
   SuhallaDesert_RaiseStorm(STORM_FIRST + 2);
 }
 
-// The party nears the fourth storm.
+/// The party nears the fourth storm.
 static void Event_FourthStormRises(void) {
   SuhallaDesert_RaiseStorm(STORM_FIRST + 3);
 }
 
-// The party nears the fifth storm.
+/// The party nears the fifth storm.
 static void Event_FifthStormRises(void) {
   SuhallaDesert_RaiseStorm(STORM_FIRST + 4);
 }
 
-// Near the second scene's way out to the world map, once Iodem has heard the
-// wounded soldiers: he steps out of the party. "Sheba is nowhere to be found.
-// Should we search the desert once more or press on to Lalivero?" Whatever the
-// answer, Iodem decides to go on to Tolbi's guard gate ahead and leave the
-// search to its soldiers, and rejoins the party.
+/// Near the second scene's way out to the world map, once Iodem has heard the
+/// wounded soldiers: he steps out of the party. "Sheba is nowhere to be found.
+/// Should we search the desert once more or press on to Lalivero?" Whatever the
+/// answer, Iodem decides to go on to Tolbi's guard gate ahead and leave the
+/// search to its soldiers, and rejoins the party.
 static void Event_IodemAsksWhetherToPressOn(void) {
   struct FieldActor *leader;
 
@@ -435,9 +436,9 @@ static void Event_IodemAsksWhetherToPressOn(void) {
   }
 }
 
-// The chasing storm's script: it follows the leader, throwing up sand every
-// eight frames, and catches a moving leader it comes within 8 pixels of
-// (event 55).
+/// The chasing storm's script: it follows the leader, throwing up sand every
+/// eight frames, and catches a moving leader it comes within 8 pixels of
+/// (event 55).
 static s32 SuhallaDesert_ChaseLeader(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   struct EffectOptions options;
@@ -492,8 +493,8 @@ static s32 SuhallaDesert_ChaseLeader(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// In the second scene, until the chasing storm has been doused: it appears
-// behind the party and gives chase.
+/// In the second scene, until the chasing storm has been doused: it appears
+/// behind the party and gives chase.
 static void Event_StormGivesChase(void) {
   if (GameFlag_IsSet(FLAG_SUHALLA_DESERT_CHASING_STORM_DOUSED) == 0) {
     GameFlag_Set(FLAG_SCENE_TEMP_0E);
@@ -502,16 +503,16 @@ static void Event_StormGivesChase(void) {
   }
 }
 
-// Douse cast at the storm that caught the leader: sets the Psynergy effect's
-// child option (its meaning unknown).
+/// Douse cast at the storm that caught the leader: sets the Psynergy effect's
+/// child option (its meaning unknown).
 static void Event_DouseCastAtStorm(void) {
   u8 *state = gEffectWork;
   ((struct BattleFxScene *)state)->childOption = 1;
 }
 
-// Douse stops the storm that caught the leader: it is doused for good, and
-// the monster in it attacks. The second scene's fourth and chasing storms
-// hold other monsters.
+/// Douse stops the storm that caught the leader: it is doused for good, and
+/// the monster in it attacks. The second scene's fourth and chasing storms
+/// hold other monsters.
 static void Event_DouseStorm(s32 unused, s32 stormId) {
   struct GameState *state;
 
@@ -546,8 +547,8 @@ static void Event_DouseStorm(s32 unused, s32 stormId) {
   Object_GetById(gGameState.selectedActor)->motionFlags = 3;
 }
 
-// The spinning runs out: the storm rises into the sky with the party, the
-// screen closes, and the party lands on the world map.
+/// The spinning runs out: the storm rises into the sky with the party, the
+/// screen closes, and the party lands on the world map.
 static void Event_StormCarriesPartyAway(void) {
   s32 stormId;
   struct FieldActor *selectedActor;
@@ -584,8 +585,8 @@ static void Event_StormCarriesPartyAway(void) {
   }
 }
 
-// While Reveal lasts: one palette color pulses, brightening and dimming over
-// 64 frames.
+/// While Reveal lasts: one palette color pulses, brightening and dimming over
+/// 64 frames.
 static void SuhallaDesert_PulseRevealPalette(void) {
   u16 brightnessFrame = gFrameCount & 63;
   s32 color;
@@ -597,8 +598,8 @@ static void SuhallaDesert_PulseRevealPalette(void) {
   SUHALLA_REVEAL_PALETTE_COLOR = ((u32)color << 16) >> 16;
 }
 
-// Reveal ends, or a scene is entered: in the second scene, what Reveal showed
-// is hidden again and the pulsing color is put back.
+/// Reveal ends, or a scene is entered: in the second scene, what Reveal showed
+/// is hidden again and the pulsing color is put back.
 static s32 Event_RevealEnds(void) {
   s32 removalResult;
 
@@ -616,8 +617,8 @@ static s32 Event_RevealEnds(void) {
   }
 }
 
-// Reveal in the second scene: the hidden object appears at 248, 712, map
-// cells and the map object at 100 change, and a palette color pulses.
+/// Reveal in the second scene: the hidden object appears at 248, 712, map
+/// cells and the map object at 100 change, and a palette color pulses.
 static s32 Event_RevealStarts(void) {
   if (gGameState.scene == (s32)&SceneId_SuhallaDesert2) {
     Object_GetById(REVEALED_OBJECT)->priorityFlags = 2;
@@ -632,8 +633,8 @@ static s32 Event_RevealStarts(void) {
   }
 }
 
-// The third scene's exits, or the storms, Iodem, treasure and Reveal of the
-// first two.
+/// The third scene's exits, or the storms, Iodem, treasure and Reveal of the
+/// first two.
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_SuhallaDesert3) {
     return gSuhallaDesertEvents3;
@@ -641,8 +642,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gSuhallaDesertEventsOther;
 }
 
-// Sets a scene up as the party enters: a capture goes on spinning, Reveal's
-// color is saved, and the first two scenes set up their storms.
+/// Sets a scene up as the party enters: a capture goes on spinning, Reveal's
+/// color is saved, and the first two scenes set up their storms.
 s32 Scene_Initialize(void) {
   u8 *map;
 
@@ -672,11 +673,11 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// The first scene's storms on entry: a doused storm counts as risen, the
-// others start small (unless the party is coming back to where it stood),
-// and the sand haze is faded in if a storm has risen before.
-// Trial: sharing the blend tail through an ordinary inline shrinks this
-// function from 0x144 to 0x138 bytes in tbs-en; retain the original body.
+/// The first scene's storms on entry: a doused storm counts as risen, the
+/// others start small (unless the party is coming back to where it stood),
+/// and the sand haze is faded in if a storm has risen before.
+/// Trial: sharing the blend tail through an ordinary inline shrinks this
+/// function from 0x144 to 0x138 bytes in tbs-en; retain the original body.
 static void SuhallaDesert_SetUpFirstSceneStorms(void) {
   struct FieldActor *actor;
   s32 stormId;
@@ -716,11 +717,11 @@ static void SuhallaDesert_SetUpFirstSceneStorms(void) {
                       0x20000);
 }
 
-// The second scene's storms on entry, as the first scene's; the fourth storm's
-// first sprite part takes parameter 10, and once the chasing storm has been
-// doused it is gone for good.
-// Trial: the same blend-tail inline shrinks this function from 0x158 to
-// 0x14c bytes in tbs-en; retain the original body.
+/// The second scene's storms on entry, as the first scene's; the fourth storm's
+/// first sprite part takes parameter 10, and once the chasing storm has been
+/// doused it is gone for good.
+/// Trial: the same blend-tail inline shrinks this function from 0x158 to
+/// 0x14c bytes in tbs-en; retain the original body.
 static void SuhallaDesert_SetUpSecondSceneStorms(void) {
   struct FieldActor *actor;
   struct AnimationObject *sprite;

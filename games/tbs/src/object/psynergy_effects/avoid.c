@@ -1,10 +1,11 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Avoid.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Avoid.
 
 #include "../psynergy_effects_internal.h"
 
-// End of the effect: switches the caster's display flags between 3 and 1 on
-// a 5-frame cycle.
+/// End of the effect: switches the caster's display flags between 3 and 1 on
+/// a 5-frame cycle.
 void FieldFx_BlinkAvoidCaster(void) {
   struct ArcEffectObject *caster;
   struct AnimationObject *rec;
@@ -25,8 +26,8 @@ void FieldFx_BlinkAvoidCaster(void) {
   }
 }
 
-// The caster during the effect: sheds a pair of falling arcs every 5 frames
-// (7 on the world map), and spins in phase 1.
+/// The caster during the effect: sheds a pair of falling arcs every 5 frames
+/// (7 on the world map), and spins in phase 1.
 void BattleFx_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
   struct ArcEffectObject *caster = (struct ArcEffectObject *)fieldObject;
   s16 phase;
@@ -46,8 +47,8 @@ void BattleFx_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
     caster->angle += 0xc00;
 }
 
-// Avoid (or the Sacred Feather) has worn off: "Avoid's effects wore off." (or
-// "Sacred Feather's ...").
+/// Avoid (or the Sacred Feather) has worn off: "Avoid's effects wore off." (or
+/// "Sacred Feather's ...").
 void FieldEvent_ShowStatusMessage(void) {
   gGameState.avoidDistance = 0;
   if (gGameState.avoidByItem == 0) {
@@ -59,12 +60,12 @@ void FieldEvent_ShowStatusMessage(void) {
   UiText_ShowPositionedMessageAndWaitFar(MsgItemWoreOff, 1);
 }
 
-// Abilities: Avoid (field kind 16), and the Sacred Feather.
-//
-// The caster spins shedding falling arcs and flashes 20 times, then blinks for
-// 55 frames; encounters are kept away (avoidDistance 0x9600000) until it wears
-// off, and the game says "Monsters won't attack so often now.". FLAG_ITEM_USE
-// marks it as cast from the Sacred Feather.
+/// Abilities: Avoid (field kind 16), and the Sacred Feather.
+///
+/// The caster spins shedding falling arcs and flashes 20 times, then blinks for
+/// 55 frames; encounters are kept away (avoidDistance 0x9600000) until it wears
+/// off, and the game says "Monsters won't attack so often now.". FLAG_ITEM_USE
+/// marks it as cast from the Sacred Feather.
 void FieldFx_RunAvoid(void) {
   struct BattleFxScene *scene;
   struct ArcEffectObject *object;

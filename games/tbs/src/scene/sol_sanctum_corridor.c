@@ -23,23 +23,23 @@
 // A corridor of Sol Sanctum, scene 15: two exits to scene 16 and nothing
 // else.
 
-// Where the party can enter the corridor.
+/// Where the party can enter the corridor.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumCorridorEntrances;
 }
 
-// No regions.
+/// No regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-// Where each exit leads.
+/// Where each exit leads.
 const u32 *Scene_GetExits(void) { return gSolSanctumCorridorExits; }
 
-// Nobody is placed here.
+/// Nobody is placed here.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   return gSolSanctumCorridorPlacements;
 }
 
-// The two exits.
+/// The two exits.
 const struct SceneEvent *Scene_GetEvents(void) {
   return gSolSanctumCorridorEvents;
 }

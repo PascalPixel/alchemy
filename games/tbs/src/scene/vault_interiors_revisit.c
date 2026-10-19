@@ -23,16 +23,16 @@
 #include "item_ids.h"
 #include "flags.h"
 
-// The townspeople, named by what they say on the party's return.
+/// The townspeople, named by what they say on the party's return.
 enum {
-  ACTOR_GEM_OWNER = 8, // a cat ate his precious stone
+  ACTOR_GEM_OWNER = 8, ///< a cat ate his precious stone
   ACTOR_GEM_OWNERS_WIFE = 9,
-  ACTOR_CHILD = 11,           // "Daddy hasn't been paying attention"
-  ACTOR_COLOSSO_HUSBAND = 12, // would like to see Colosso once more
+  ACTOR_CHILD = 11,           ///< "Daddy hasn't been paying attention"
+  ACTOR_COLOSSO_HUSBAND = 12, ///< would like to see Colosso once more
   ACTOR_COLOSSO_WIFE = 13,
-  ACTOR_MAYOR = 16, // before the theft was solved, his wife called him that
+  ACTOR_MAYOR = 16, ///< before the theft was solved, his wife called him that
   ACTOR_MAYORS_WIFE = 17,
-  ACTOR_COOK = 23, // did some cooking and has bones to spare
+  ACTOR_COOK = 23, ///< did some cooking and has bones to spare
   ACTOR_VAULT_BONE_GIVER = 18,
   ACTOR_VAULT_WEAPON_MERCHANT = 19,
   ACTOR_VAULT_ARMOR_MERCHANT = 20,
@@ -44,24 +44,24 @@ enum {
   VAULT_INN = 1
 };
 
-// Set once the mayor has told Isaac the thieves escaped from jail.
+/// Set once the mayor has told Isaac the thieves escaped from jail.
 enum { FLAG_WELCOMED_BACK = FLAG_SCENE_TEMP_00 + 0x100 };
 
 // Shared scene routines stay in their linked order.
 #include "common/vault_spotflag.h"
 
-// Return the arrival positions for the revisited houses and shops.
+/// Return the arrival positions for the revisited houses and shops.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gVaultInteriorsRevisit_Entrances;
 }
 
-// This scene has no region table.
+/// This scene has no region table.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-// Returns the exits to the surrounding Vault map.
+/// Returns the exits to the surrounding Vault map.
 const u32 *Scene_GetExits(void) { return gVaultInteriorsRevisit_Exits; }
 
-// Applies view conditions to the placements before the field spawns them.
+/// Applies view conditions to the placements before the field spawns them.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   struct ScenePlacement *placements = gVaultInteriorsRevisit_Placements;
 
@@ -69,7 +69,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return placements;
 }
 
-// The actor stands still and says the selected message.
+/// The actor stands still and says the selected message.
 static void VaultInteriorsRevisit_ShowStandingActorDialogue(s32 actor) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(actor, ANIM_STAND);
@@ -77,35 +77,35 @@ static void VaultInteriorsRevisit_ShowStandingActorDialogue(s32 actor) {
   Engine_EventEnd();
 }
 
-// Face the leader and show this resident's dialogue while standing still.
+/// Face the leader and show this resident's dialogue while standing still.
 static inline void VaultInteriorsRevisit_FaceAndSpeak(s32 actor, s32 message) {
   Engine_EventSetMessage(message);
   Engine_ActorFaceEachOther(actor, ACTOR_PARTY_LEADER, 2);
   VaultInteriorsRevisit_ShowStandingActorDialogue(actor);
 }
 
-// The wife thought she saw the cat paw the gemstone on the table, and then
-// the treasure was gone.
+/// The wife thought she saw the cat paw the gemstone on the table, and then
+/// the treasure was gone.
 static void Event_WifeSawCatTakeGem(void) {
   VaultInteriorsRevisit_FaceAndSpeak(ACTOR_GEM_OWNERS_WIFE,
                                      MsgVaultThoughtSawCatGetUp);
 }
 
-// The child points out Dodonpa's henchmen never attacked: maybe the thieves
-// weren't from Lunpa after all.
+/// The child points out Dodonpa's henchmen never attacked: maybe the thieves
+/// weren't from Lunpa after all.
 static void Event_ChildDoubtsThievesWereFromLunpa(void) {
   VaultInteriorsRevisit_FaceAndSpeak(ACTOR_CHILD,
                                      MsgVaultDodonpasHenchmenNeverAttackedUs);
 }
 
-// The husband would like to see Colosso in Tolbi once more before he dies.
+/// The husband would like to see Colosso in Tolbi once more before he dies.
 static void Event_HusbandLongsForColosso(void) {
   VaultInteriorsRevisit_FaceAndSpeak(ACTOR_COLOSSO_HUSBAND,
                                      MsgVaultItsNearTimeForColosso);
 }
 
-// The mayor welcomes Isaac back: the thieves he caught escaped from jail.
-// Asked whether the party has met them, a yes and a no get different warnings.
+/// The mayor welcomes Isaac back: the thieves he caught escaped from jail.
+/// Asked whether the party has met them, a yes and a no get different warnings.
 static void Event_WelcomeIsaacBack(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultIsaacYouveComeBackVault);
@@ -128,20 +128,20 @@ static void Event_WelcomeIsaacBack(void) {
   Engine_EventEnd();
 }
 
-// After the welcome: those thieves really wanted revenge, so take care.
+/// After the welcome: those thieves really wanted revenge, so take care.
 static void Event_WarnOfThievesRevenge(void) {
   VaultInteriorsRevisit_FaceAndSpeak(ACTOR_MAYOR,
                                      MsgVaultThoseGuysReallyWantedRevenge);
 }
 
-// The cook has useless bones left from cooking and asks if the party wants
-// some.
+/// The cook has useless bones left from cooking and asks if the party wants
+/// some.
 static void Event_OfferLeftoverBones(void) {
   VaultInteriorsRevisit_FaceAndSpeak(ACTOR_COOK, MsgVaultDidSomeCookingNowIve);
 }
 
-// The bone giver offers leftover bones from dinner (again, once one was
-// taken); a yes gets a Bone if there is room, a no a nod.
+/// The bone giver offers leftover bones from dinner (again, once one was
+/// taken); a yes gets a Bone if there is room, a no a nod.
 static void Event_OfferBones(void) {
   Engine_EventBegin();
   Engine_ActorFaceEachOther(ACTOR_VAULT_BONE_GIVER, ACTOR_PARTY_LEADER, 0);
@@ -182,8 +182,8 @@ static void Event_OfferBones(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the mayor before the welcome: he notices and welcomes Isaac
-// back.
+/// Mind Read on the mayor before the welcome: he notices and welcomes Isaac
+/// back.
 static void Event_ReadMindAndWelcomeIsaacBack(void) {
   u8 *paused;
   u8 unpaused = 0;
@@ -203,8 +203,8 @@ static void Event_ReadMindAndWelcomeIsaacBack(void) {
 // Shared Bone-item dialogue follows the actor conversations.
 #include "common/vault_bone.h"
 
-// Across the counter the weapon shop opens; from elsewhere the merchant talks
-// of a river of fire beyond Mt. Aleph.
+/// Across the counter the weapon shop opens; from elsewhere the merchant talks
+/// of a river of fire beyond Mt. Aleph.
 static void Event_TalkToWeaponMerchant(void) {
   u32 leaderFacing;
 
@@ -221,8 +221,8 @@ static void Event_TalkToWeaponMerchant(void) {
   Engine_EventEnd();
 }
 
-// Across the counter the armor shop opens; from elsewhere the merchant says
-// the eruption split the continent in two.
+/// Across the counter the armor shop opens; from elsewhere the merchant says
+/// the eruption split the continent in two.
 static void Event_TalkToArmorMerchant(void) {
   u32 leaderFacing;
 
@@ -239,8 +239,8 @@ static void Event_TalkToArmorMerchant(void) {
   Engine_EventEnd();
 }
 
-// Across the counter the item shop opens; from elsewhere the merchant has had
-// few customers lately.
+/// Across the counter the item shop opens; from elsewhere the merchant has had
+/// few customers lately.
 static void Event_TalkToItemMerchant(void) {
   u32 leaderFacing;
 
@@ -257,8 +257,8 @@ static void Event_TalkToItemMerchant(void) {
   Engine_EventEnd();
 }
 
-// Across the counter the inn opens; from elsewhere the innkeeper complains
-// that no one comes, what with the volcano.
+/// Across the counter the inn opens; from elsewhere the innkeeper complains
+/// that no one comes, what with the volcano.
 static void Event_TalkToInnkeeper(void) {
   u32 leaderFacing;
 
@@ -275,8 +275,8 @@ static void Event_TalkToInnkeeper(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the bone giver: hungry while cooking, or, once a Bone was
-// given, wondering whether "he" has a calcium deficiency.
+/// Mind Read on the bone giver: hungry while cooking, or, once a Bone was
+/// given, wondering whether "he" has a calcium deficiency.
 static void Event_ReadBoneGiverMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_VAULT_BONE_RECEIVED) == 0) {
@@ -288,12 +288,12 @@ static void Event_ReadBoneGiverMind(void) {
   Engine_EventEnd();
 }
 
-// Returns the talk, Psynergy, search and exit event table.
+/// Returns the talk, Psynergy, search and exit event table.
 const struct SceneEvent *Scene_GetEvents(void) {
   return gVaultInteriorsRevisit_Events;
 }
 
-// Initializes the selected interior: lowers actor 8 or starts the spot check.
+/// Initializes the selected interior: lowers actor 8 or starts the spot check.
 s32 Scene_Initialize(void) {
   s32 entrance;
   s32 clearedState;

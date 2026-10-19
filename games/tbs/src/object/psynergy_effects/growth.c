@@ -1,5 +1,6 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Growth.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Growth.
 
 #include "../psynergy_effects_internal.h"
 
@@ -9,10 +10,10 @@
 #define GROWTH_FALL_LAST 4         // five falling objects, 0 to 4
 
 struct BurstParticleVector {
-  s32 values[3]; // x, y, z
+  s32 values[3]; ///< x, y, z
 };
 
-// A particle sprite's attributes.
+/// A particle sprite's attributes.
 struct BurstParticleVisual {
   u8 reserved00[5];
   u8 flagsALow : 5;
@@ -39,10 +40,10 @@ struct BurstParticleVisualGroup {
   struct BurstParticleVisual child;
 };
 
-// Abilities: Growth (field kind 12), cast on a target.
-//
-// Particles round the target, which takes the sprite priority of the ground
-// under it.
+/// Abilities: Growth (field kind 12), cast on a target.
+///
+/// Particles round the target, which takes the sprite priority of the ground
+/// under it.
 void FieldFx_RunGrowthOnTarget(s32 unused) {
   struct FieldActor *target;
 
@@ -60,10 +61,10 @@ void FieldFx_RunGrowthOnTarget(s32 unused) {
   }
 }
 
-// Abilities: Growth (field kind 12), cast with no target.
-//
-// The particles, then five falling objects 4 to 10 pixels round the effect's
-// position.
+/// Abilities: Growth (field kind 12), cast with no target.
+///
+/// The particles, then five falling objects 4 to 10 pixels round the effect's
+/// position.
 void FieldFx_RunGrowth(void) {
   struct BattleFxScene *work = gEffectWork;
   struct BurstParticleVector pos;
@@ -97,9 +98,9 @@ void FieldFx_RunGrowth(void) {
   BattleFx_PrepareBufferInterpolation();
 }
 
-// Sends 24 particles, one every 2 frames, from in front of the caster to
-// points round the effect's position. They start 10 pixels up facing south,
-// 24 pixels up facing north, and 10 pixels up and 10 ahead otherwise.
+/// Sends 24 particles, one every 2 frames, from in front of the caster to
+/// points round the effect's position. They start 10 pixels up facing south,
+/// 24 pixels up facing north, and 10 pixels up and 10 ahead otherwise.
 void BattleEffect_SpawnBurstParticleField(void) {
   struct BattleFxScene *work;
   struct FieldActor *caster;

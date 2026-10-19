@@ -1,22 +1,23 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Force.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Force.
 
 #include "../psynergy_effects_internal.h"
 
-// Abilities: Force (field kind 4), cast on a target.
+/// Abilities: Force (field kind 4), cast on a target.
 void FieldFx_RunForceOnTarget(s32 unused) { FieldFx_RunForce(); }
 
-// Writes the position 16 pixels above the actor.
+/// Writes the position 16 pixels above the actor.
 static __inline__ void
 BattleFx_GetPositionAboveActor(struct FieldActor *obj,
                                struct EffectVector *pos) {
   SET_POSITION(pos, obj->x.fixed, obj->y.fixed + ABOVE, obj->z.fixed);
 }
 
-// Abilities: Force (field kind 4).
-//
-// A shot appears in front of the caster, grows and flies forward with three
-// afterimages; what it hits (scene->child) is pushed 16 pixels.
+/// Abilities: Force (field kind 4).
+///
+/// A shot appears in front of the caster, grows and flies forward with three
+/// afterimages; what it hits (scene->child) is pushed 16 pixels.
 void FieldFx_RunForce(void) {
   struct FieldActor *target;
   s32 eventTarget;

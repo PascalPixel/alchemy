@@ -1,18 +1,19 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Move: a hand pushes the target, steered with the d-pad.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Move: a hand pushes the target, steered with the d-pad.
 
 #include "../psynergy_effects_internal.h"
 
-// Returns the direction of the d-pad (0x10000 a full turn): right 0, down
-// 0x4000, left 0x8000, up 0xc000; 0xffff when none or a diagonal is held.
+/// Returns the direction of the d-pad (0x10000 a full turn): right 0, down
+/// 0x4000, left 0x8000, up 0xc000; 0xffff when none or a diagonal is held.
 s32 Input_GetDpadAngle(u32 unused) {
   // Indexed by the right, left, up and down bits.
   return gBattleFx_CyclePatternWords[(gKeysHeld >> 4) & 15];
 }
 
-// Per-frame update of a broken item's main fragment: turns it toward the
-// object it is linked to, at most 1/16 turn a frame, and sheds a particle
-// (object 0x11d) round it.
+/// Per-frame update of a broken item's main fragment: turns it toward the
+/// object it is linked to, at most 1/16 turn a frame, and sheds a particle
+/// (object 0x11d) round it.
 void BattleFx_UpdateItemBreakFragment(union FieldObject *fieldObject) {
   struct FieldActor *source = (struct FieldActor *)fieldObject;
   struct FieldActor *target;
@@ -52,13 +53,13 @@ void BattleFx_UpdateItemBreakFragment(union FieldObject *fieldObject) {
 
 #define MOVE_CELL_MASK 0xfff00000 // a 16-pixel tile
 
-// Abilities: Move (field kind 1), cast on a target.
-//
-// Puts the pushing hand beside the target and pushes the target 16 pixels the
-// way the d-pad points, for as long as the player pushes; A, B, L or R end it.
-// Where the target cannot go, an error sound plays every 16 frames. When the
-// push would run into the caster, the caster blocks it or, when the tile beyond
-// is free, is pushed along too.
+/// Abilities: Move (field kind 1), cast on a target.
+///
+/// Puts the pushing hand beside the target and pushes the target 16 pixels the
+/// way the d-pad points, for as long as the player pushes; A, B, L or R end it.
+/// Where the target cannot go, an error sound plays every 16 frames. When the
+/// push would run into the caster, the caster blocks it or, when the tile
+/// beyond is free, is pushed along too.
 void BattleFx_SteerPushedTarget(s32 targetId) {
   struct EffectVector position;
   struct EffectVector beyond;
@@ -230,8 +231,8 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
   UpdateRisingParticleBurst(pusher);
 }
 
-// Effect slot callback of a particle that flies 30 pixels out from where it
-// started, comes back and is freed.
+/// Effect slot callback of a particle that flies 30 pixels out from where it
+/// started, comes back and is freed.
 void BattleFx_UpdateOrbitAndReturn(struct EffectSlot *slot) {
   // Forward state-1 fallthrough keeps the callback extent but changes native
   // instructions; retain the immediate retry until a plain form matches.
@@ -278,10 +279,10 @@ next_state:
     BattleFx_ClearOwnedSlot(slot);
 }
 
-// Abilities: Move (field kind 1), cast with no target.
-//
-// Shows the broken item beside the caster for 30 frames, then turns it into
-// particles.
+/// Abilities: Move (field kind 1), cast with no target.
+///
+/// Shows the broken item beside the caster for 30 frames, then turns it into
+/// particles.
 void FieldFx_RunMove(void) {
   s32 work[3];
   struct BattleFxScene *scene;
@@ -306,9 +307,9 @@ void FieldFx_RunMove(void) {
   UpdateRisingParticleBurst(object);
 }
 
-// Spawns the broken item (object 215) 16 pixels above object and moves it 16
-// pixels the way object faces (to the nearest quarter turn), with 8
-// particles round it. Returns the item, or 0.
+/// Spawns the broken item (object 215) 16 pixels above object and moves it 16
+/// pixels the way object faces (to the nearest quarter turn), with 8
+/// particles round it. Returns the item, or 0.
 void *BattleFx_StartItemBreak(void *object) {
   struct MotionObject *source = object;
   struct MotionObject *parent;
@@ -357,8 +358,8 @@ void *BattleFx_StartItemBreak(void *object) {
   return parent;
 }
 
-// Per-frame update: grows an object's scale by 1/16 a frame up to full size
-// and fixes its position.
+/// Per-frame update: grows an object's scale by 1/16 a frame up to full size
+/// and fixes its position.
 void BattleFx_SnapScaleToFull(struct MotionObject *obj) {
   s32 next;
   s32 scale;
@@ -377,8 +378,8 @@ void BattleFx_SnapScaleToFull(struct MotionObject *obj) {
   }
 }
 
-// Per-frame update: the object spins as it rises for 31 frames, shrinks, and
-// bursts into 8 particles.
+/// Per-frame update: the object spins as it rises for 31 frames, shrinks, and
+/// bursts into 8 particles.
 void UpdateRisingParticleBurst(void *object) {
   struct MotionObject *src = object;
   struct MotionObject *child;

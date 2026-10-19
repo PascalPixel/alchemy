@@ -9,8 +9,8 @@ struct SpriteNumber {
 
 // Mercury and Venus Lighthouses' aeries.
 
-// Return the placed actor drawn with sprite 0xf2 nearest the leader, within
-// 640 pixels, or 0.
+/// Return the placed actor drawn with sprite 0xf2 nearest the leader, within
+/// 640 pixels, or 0.
 s32 SceneActor_FindNearestSlotOfKindF2(void) {
   struct EventWork *work = gEventWork;
   struct FieldActor **slot;

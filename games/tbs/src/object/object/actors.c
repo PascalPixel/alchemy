@@ -1,11 +1,12 @@
-// Part of object.c, the field object, compiled only through it.
-// The party's sprites, placing a scene's actors, and the actor table.
+/// @file
+/// Part of object.c, the field object, compiled only through it.
+/// The party's sprites, placing a scene's actors, and the actor table.
 
 #include "../object_internal.h"
 
-// Returns the sprite of character, which is the character itself except that
-// FLAG_CHILDHOOD gives characters 0 and 1 sprites 0x12 and 0x13, and flag 0x21
-// gives character 0 sprite 0x11.
+/// Returns the sprite of character, which is the character itself except that
+/// FLAG_CHILDHOOD gives characters 0 and 1 sprites 0x12 and 0x13, and flag 0x21
+/// gives character 0 sprite 0x11.
 s32 Party_RemapCharacterIdByFlags(s32 character) {
   s32 sprite;
 
@@ -25,8 +26,8 @@ s32 Party_RemapCharacterIdByFlags(s32 character) {
   return sprite;
 }
 
-// Returns the sprite of character as Party_RemapCharacterIdByFlags would with
-// FLAG_CHILDHOOD set to childhood (as recorded in a save file's summary).
+/// Returns the sprite of character as Party_RemapCharacterIdByFlags would with
+/// FLAG_CHILDHOOD set to childhood (as recorded in a save file's summary).
 s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
   s32 sprite;
 
@@ -46,14 +47,14 @@ s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
 
 extern const struct ScenePlacement gField_DefaultPlacements[2];
 
-// Creates the actors of a scene's placement table (ended by sprite -1), and
-// records the table among the scene's tables. Sprites 0 to 7 are the party's
-// characters and take their own actor slot; other placements take the actor
-// slots from slot on, one each, up to slot 65. A placement whose condition
-// does not hold is skipped, and so, outside the world map, is one with a
-// condition from 48 to 127 whose condition + 80 does not hold. An actor that
-// already exists is only moved back to its place, unless the party keeps its
-// position.
+/// Creates the actors of a scene's placement table (ended by sprite -1), and
+/// records the table among the scene's tables. Sprites 0 to 7 are the party's
+/// characters and take their own actor slot; other placements take the actor
+/// slots from slot on, one each, up to slot 65. A placement whose condition
+/// does not hold is skipped, and so, outside the world map, is one with a
+/// condition from 48 to 127 whose condition + 80 does not hold. An actor that
+/// already exists is only moved back to its place, unless the party keeps its
+/// position.
 void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
   struct FieldWork *work;
   struct ObjectRuntime *object;
@@ -144,7 +145,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
   }
 }
 
-// Destroys the actor in slot index, if there is one.
+/// Destroys the actor in slot index, if there is one.
 void ObjectTable_DestroyAtIndex(s32 actorIndex) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   void *object = ObjectTable_Get(actorIndex);
@@ -165,11 +166,12 @@ void ObjectTable_DestroyAtIndex(s32 actorIndex) {
   }
 }
 
-// Creates a scene's actors on entering it: the party leader where the game
-// state puts it, then the scene's placement table from actor slot 8, and the
-// camera that follows the leader. A leader entering above ground where its cell
-// and the cell north of it have collision code 0xfd is raised by the ground
-// height of the cell north of it less 32 pixels, and takes movement mode 1.
+/// Creates a scene's actors on entering it: the party leader where the game
+/// state puts it, then the scene's placement table from actor slot 8, and the
+/// camera that follows the leader. A leader entering above ground where its
+/// cell and the cell north of it have collision code 0xfd is raised by the
+/// ground height of the cell north of it less 32 pixels, and takes movement
+/// mode 1.
 void ObjectTable_ResetForObject(struct ScenePlacement *table) {
   struct FieldWork *work;
   struct ScenePlacement *entry;
@@ -232,8 +234,8 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
   work->camera = camera;
 }
 
-// Returns the slot after the last placed actor (8 when there is none), or -1
-// when slot 65 is occupied. Earlier holes are not reused by this append scan.
+/// Returns the slot after the last placed actor (8 when there is none), or -1
+/// when slot 65 is occupied. Earlier holes are not reused by this append scan.
 s32 ObjectTable_FindLastActiveId(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   s32 lastActorIndex = ACTOR_FIRST_PLACED - 1;
@@ -255,7 +257,7 @@ s32 ObjectTable_FindLastActiveId(void) {
   return lastActorIndex;
 }
 
-// Returns the address of actor slot index in the event work.
+/// Returns the address of actor slot index in the event work.
 UNUSED void *ObjectTable_GetSlotAddress(u32 actorIndex) {
   return (u8 *)gEventWork + 0x14 + actorIndex * sizeof(void *);
 }
@@ -268,8 +270,8 @@ UNUSED void *ObjectTable_GetSlotAddress(u32 actorIndex) {
 
 #define PLACED_MAX 58 // actor slots 8 to 65
 
-// Gives each placement with condition 0 a condition saying whether it lies
-// within the map's view bounds, so that only those inside appear.
+/// Gives each placement with condition 0 a condition saying whether it lies
+/// within the map's view bounds, so that only those inside appear.
 void Scene_AssignViewFlags(struct ScenePlacement *entry) {
   struct MapScrollWork *view = gMapWork[0];
 
@@ -296,8 +298,8 @@ void Scene_AssignViewFlags(struct ScenePlacement *entry) {
   }
 }
 
-// Destroys the placed actors far from the view's centre: more than 160 pixels
-// to either side, 200 pixels north or 100 pixels south. Actors at (0, 0) stay.
+/// Destroys the placed actors far from the view's centre: more than 160 pixels
+/// to either side, 200 pixels north or 100 pixels south. Actors at (0, 0) stay.
 void BattleEffect_ClearOutOfBoundsObjects(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   struct ObjectRuntime *camera;
@@ -352,8 +354,8 @@ void BattleEffect_ClearOutOfBoundsObjects(void) {
   }
 }
 
-// Destroys every placed actor and places the scene's actors again from its
-// first placement table after the leader's.
+/// Destroys every placed actor and places the scene's actors again from its
+/// first placement table after the leader's.
 void BattleEffect_ClearAllObjects(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   struct ScenePlacement *placements;
@@ -377,7 +379,7 @@ void BattleEffect_ClearAllObjects(void) {
     Event_SpawnObjectTable(placements, ObjectTable_FindLastActiveId());
 }
 
-// Empties all 66 actor slots, without destroying the actors.
+/// Empties all 66 actor slots, without destroying the actors.
 void ObjectTable_ClearAll(void) {
   struct FieldWork *work;
   struct FieldActor *emptyActor;
@@ -392,8 +394,8 @@ void ObjectTable_ClearAll(void) {
   } while (actorIndex >= 0);
 }
 
-// Returns the actor in slot index (0 to 65), or NULL. Indices up to 191 read
-// past the actor slots into the rest of the event work; larger ones give NULL.
+/// Returns the actor in slot index (0 to 65), or NULL. Indices up to 191 read
+/// past the actor slots into the rest of the event work; larger ones give NULL.
 void *ObjectTable_Get(u32 actorIndex) {
   u8 *workBytes = (u8 *)gEventWork;
   u32 slotOffset;
@@ -413,10 +415,10 @@ void *ObjectTable_Get(u32 actorIndex) {
 #endif
 }
 
-// Saves up to 32 actors (only the party's 8 on the world map) into
-// gObjectSnapshots, with each one's animation, sprite flags and priority, so
-// that ObjectTable_Restore can put them back. The 32 bytes before
-// gObjectSnapshots list the saved slots, ended by 255.
+/// Saves up to 32 actors (only the party's 8 on the world map) into
+/// gObjectSnapshots, with each one's animation, sprite flags and priority, so
+/// that ObjectTable_Restore can put them back. The 32 bytes before
+/// gObjectSnapshots list the saved slots, ended by 255.
 void ObjectTable_Snapshot(void) {
   struct ObjectRuntime *snapshot = gObjectSnapshots;
   u8 *animations = (u8 *)&gObjectSnapshots[32];
@@ -464,8 +466,8 @@ void ObjectTable_Snapshot(void) {
     *indices++ = 255;
 }
 
-// Puts back the actors ObjectTable_Snapshot saved, and moves the camera to the
-// party leader's height.
+/// Puts back the actors ObjectTable_Snapshot saved, and moves the camera to the
+/// party leader's height.
 void ObjectTable_Restore(void) {
   struct ObjectRuntime *snapshot = gObjectSnapshots;
   u8 *indices = (u8 *)gObjectSnapshots - 32;

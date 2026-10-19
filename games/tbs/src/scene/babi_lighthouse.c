@@ -1,12 +1,13 @@
-// Babi Lighthouse, the lighthouse Babi is building on old ruins near
-// Lalivero. Four scenes share this overlay:
-//
-// - room 1, the stone door Sheba's kidnappers went through, where Iodem and
-//   Faran ask the party to follow them; a switch only Reveal shows opens it;
-// - room 2, inside, where the party drops between floors, with a Djinni;
-// - room 3, where the kidnappers knocked down four men on their way, with two
-//   blocks on ledges and a sprout for Growth;
-// - the building site outside, with its workers and a block to move.
+/// @file
+/// Babi Lighthouse, the lighthouse Babi is building on old ruins near
+/// Lalivero. Four scenes share this overlay:
+///
+/// - room 1, the stone door Sheba's kidnappers went through, where Iodem and
+///   Faran ask the party to follow them; a switch only Reveal shows opens it;
+/// - room 2, inside, where the party drops between floors, with a Djinni;
+/// - room 3, where the kidnappers knocked down four men on their way, with two
+///   blocks on ledges and a sprout for Growth;
+/// - the building site outside, with its workers and a block to move.
 
 #include "game_state.h"
 #include "version.h"
@@ -50,8 +51,8 @@
 #include "songs.h"
 #include "item_ids.h"
 
-// Room 1, before the stone door: the door's two halves, Iodem, the man who
-// saw the kidnappers go through, two more onlookers and Faran.
+/// Room 1, before the stone door: the door's two halves, Iodem, the man who
+/// saw the kidnappers go through, two more onlookers and Faran.
 enum {
   ACTOR_LEFT_DOOR = 8,
   ACTOR_RIGHT_DOOR = 9,
@@ -62,11 +63,11 @@ enum {
   ACTOR_FARAN = 14
 };
 
-// Room 2's Djinni.
+/// Room 2's Djinni.
 enum { ACTOR_DJINNI = 8 };
 
-// Room 3: the two blocks on the ledges, the sprout for Growth and the four
-// men the kidnappers knocked down on their way in.
+/// Room 3: the two blocks on the ledges, the sprout for Growth and the four
+/// men the kidnappers knocked down on their way in.
 enum {
   ACTOR_LEFT_BLOCK = 8,
   ACTOR_RIGHT_BLOCK = 9,
@@ -74,25 +75,25 @@ enum {
   ACTOR_FIRST_FALLEN_MAN = 11
 };
 
-// The building site outside: four workers and the block for Move and Carry.
+/// The building site outside: four workers and the block for Move and Carry.
 enum { ACTOR_SITE_BLOCK = 12 };
 
-// The lighthouse keeps two flags in the area flags from 0x300.
+/// The lighthouse keeps two flags in the area flags from 0x300.
 enum {
-  // Growth has grown room 3's sprout into a vine.
+  /// Growth has grown room 3's sprout into a vine.
   FLAG_GROWTH_PASSAGE_OPEN = 0x300,
-  // The party is on the far side of room 1's stone door.
+  /// The party is on the far side of room 1's stone door.
   FLAG_BEYOND_DOOR = 0x301
 };
 
-// A chest searched while facing the given way.
+/// A chest searched while facing the given way.
 #define SEARCH_CHEST_FACING(facing)                                            \
   (SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | (facing))
 
 static void BabiLighthouse_CloseTruthDoor(void);
 static void BabiLighthouse_RefreshMovableBlockTiles(void);
 
-// Unused: a signed division nothing calls.
+/// Unused: a signed division nothing calls.
 static __inline__ s32 UNUSED Entrance_Divide(s32 dividend, s32 divisor) {
   return dividend / divisor;
 }
@@ -104,7 +105,7 @@ static __inline__ s32 UNUSED Entrance_Divide(s32 dividend, s32 divisor) {
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-// Talking to the Djinni in room 2 starts the battle for Djinni 66.
+/// Talking to the Djinni in room 2 starts the battle for Djinni 66.
 static void BabiLighthouse_StartDjinnBattle(void) {
   Field_RequestDjinnBattle(ACTOR_DJINNI, DJINNI_LUFF);
 }
@@ -113,8 +114,8 @@ static void BabiLighthouse_StartDjinnBattle(void) {
 #include "common/object_waitidle.h"
 #include "common/effect_advance.h"
 
-// Arriving by falling from the floor above: the leader drops in, lands with
-// a thud that shakes the screen and throws up a ring of dust, and is startled.
+/// Arriving by falling from the floor above: the leader drops in, lands with
+/// a thud that shakes the screen and throws up a ring of dust, and is startled.
 static void BabiLighthouse_LandWithParticles(void) {
   u32 particle;
   struct FieldActor *leader;
@@ -164,8 +165,8 @@ static void BabiLighthouse_LandWithParticles(void) {
   Engine_EventEnd();
 }
 
-// Arriving at one of room 2's drop entrances: the leader drops in and falls
-// on, out through the given exit.
+/// Arriving at one of room 2's drop entrances: the leader drops in and falls
+/// on, out through the given exit.
 static void BabiLighthouse_FallToExit(s32 exit) {
   struct FieldActor *leader;
 
@@ -195,7 +196,7 @@ static void BabiLighthouse_FallToExit(s32 exit) {
   Engine_EventEnd();
 }
 
-// Returns the entrance table of the scene being entered.
+/// Returns the entrance table of the scene being entered.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -211,7 +212,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gBabiLighthouse_EntrancesOther;
 }
 
-// Only room 3 has regions.
+/// Only room 3 has regions.
 const struct SceneRegion *Scene_GetRegions(void) {
   if (gGameState.scene == (s32)&SceneId_BabiLighthouse3) {
     return gBabiLighthouse_Regions3;
@@ -219,10 +220,10 @@ const struct SceneRegion *Scene_GetRegions(void) {
   return 0;
 }
 
-// The four scenes share one exit table.
+/// The four scenes share one exit table.
 u8 *BabiLighthouse_GetExits(void) { return gBabiLighthouse_Exits; }
 
-// Returns the actor placements of the scene being entered.
+/// Returns the actor placements of the scene being entered.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -238,8 +239,8 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gBabiLighthouse_PlacementsOther;
 }
 
-// After Move on one of room 3's blocks, or a push: a leader left standing on
-// a block's ledge cell jumps off it, and the blocks' cells are redrawn.
+/// After Move on one of room 3's blocks, or a push: a leader left standing on
+/// a block's ledge cell jumps off it, and the blocks' cells are redrawn.
 static void BabiLighthouse_JumpFromLedge(void) {
   struct FieldActor *leader;
 
@@ -270,7 +271,7 @@ static void BabiLighthouse_JumpFromLedge(void) {
   Engine_EventEnd();
 }
 
-// Walking into one of room 3's blocks pushes it.
+/// Walking into one of room 3's blocks pushes it.
 static void BabiLighthouse_AdvancePairAndJump(void) {
   Engine_EventBegin();
   StagedActor_AdvancePair();
@@ -278,8 +279,8 @@ static void BabiLighthouse_AdvancePairAndJump(void) {
   Engine_EventEnd();
 }
 
-// Walking south off room 3's ledge: pushes the block below on the leader's
-// side if it stands at the ledge's foot, and otherwise climbs down.
+/// Walking south off room 3's ledge: pushes the block below on the leader's
+/// side if it stands at the ledge's foot, and otherwise climbs down.
 static void BabiLighthouse_ClimbDownOrAdvancePair(void) {
   struct FieldActor *block = Object_GetById(ACTOR_RIGHT_BLOCK);
 
@@ -302,7 +303,7 @@ static void BabiLighthouse_ClimbDownOrAdvancePair(void) {
   Field_ClimbDown();
 }
 
-// Raises the leader, then closes the screen before a room transition.
+/// Raises the leader, then closes the screen before a room transition.
 static void BabiLighthouse_RiseAndCloseScreen(void) {
   Camera_MoveTo(-1, -1, -1, 0);
   FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, 0);
@@ -310,7 +311,7 @@ static void BabiLighthouse_RiseAndCloseScreen(void) {
   Engine_EventWaitForScreen();
 }
 
-// Raises the leader and takes exit 11 without preparing an extra effect.
+/// Raises the leader and takes exit 11 without preparing an extra effect.
 static void BabiLighthouse_RiseToExit(void) {
   Engine_EventBegin();
   BabiLighthouse_RiseAndCloseScreen();
@@ -318,7 +319,7 @@ static void BabiLighthouse_RiseToExit(void) {
   Engine_EventEnd();
 }
 
-// Prepares one effect, raises the leader, then takes exit 12.
+/// Prepares one effect, raises the leader, then takes exit 12.
 static void BabiLighthouse_RisePastSingleEffect(void) {
   Engine_EventBegin();
   OverlayObject_PrepareObject(PIXELS(464), 0, PIXELS(290), 223);
@@ -327,7 +328,7 @@ static void BabiLighthouse_RisePastSingleEffect(void) {
   Engine_EventEnd();
 }
 
-// Prepares two effects, raises the leader, then takes exit 13.
+/// Prepares two effects, raises the leader, then takes exit 13.
 static void BabiLighthouse_RisePastPairedEffects(void) {
   Engine_EventBegin();
   OverlayObject_PrepareObject(PIXELS(143), 0, PIXELS(290), 223);
@@ -337,7 +338,7 @@ static void BabiLighthouse_RisePastPairedEffects(void) {
   Engine_EventEnd();
 }
 
-// Raises the leader and takes exit 15 without preparing an extra effect.
+/// Raises the leader and takes exit 15 without preparing an extra effect.
 static void BabiLighthouse_RiseToAlternateExit(void) {
   Engine_EventBegin();
   BabiLighthouse_RiseAndCloseScreen();
@@ -345,7 +346,7 @@ static void BabiLighthouse_RiseToAlternateExit(void) {
   Engine_EventEnd();
 }
 
-// Searching room 2's door: "It seems to be locked."
+/// Searching room 2's door: "It seems to be locked."
 static void BabiLighthouse_InspectLockedDoor(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -353,7 +354,7 @@ static void BabiLighthouse_InspectLockedDoor(void) {
   Engine_EventEnd();
 }
 
-// A companion walks back to the leader and rejoins the party.
+/// A companion walks back to the leader and rejoins the party.
 static inline void BabiLighthouse_RegroupPartyMember(s32 actorId) {
   struct FieldActor *leader;
 
@@ -366,10 +367,10 @@ static inline void BabiLighthouse_RegroupPartyMember(s32 actorId) {
   Actor_SetPosition(actorId, 0, 0);
 }
 
-// Walking up to room 1's stone door the first time: Faran asks whether the
-// kidnappers really went through it; the onlookers argue, and Iodem,
-// arriving with the party, tells who they are, and Faran, doubting them,
-// asks them to prove they can follow by opening the door.
+/// Walking up to room 1's stone door the first time: Faran asks whether the
+/// kidnappers really went through it; the onlookers argue, and Iodem,
+/// arriving with the party, tells who they are, and Faran, doubting them,
+/// asks them to prove they can follow by opening the door.
 static void BabiLighthouse_DiscussPursuit(void) {
   // Bring the party to the witnesses gathered around the sealed door.
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED);
@@ -628,9 +629,9 @@ static void BabiLighthouse_DiscussPursuit(void) {
   Engine_EventEnd();
 }
 
-// The door opens before Iodem and Faran the first time: everyone marvels,
-// the door closes again, and the party says those without Psynergy cannot
-// follow; Iodem and Faran leave Sheba's rescue to them.
+/// The door opens before Iodem and Faran the first time: everyone marvels,
+/// the door closes again, and the party says those without Psynergy cannot
+/// follow; Iodem and Faran leave Sheba's rescue to them.
 static void BabiLighthouse_ExplainTruthDoor(void) {
   // Everyone reacts to the opened door before trying to follow the party.
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN);
@@ -899,8 +900,8 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_EventEnd();
 }
 
-// Reveal shows the door's switch, flipped one way or the other as the door
-// stands.
+/// Reveal shows the door's switch, flipped one way or the other as the door
+/// stands.
 static void BabiLighthouse_RefreshTruthDoorTiles(void) {
   if (Engine_GameFlagIsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
     Map_CopyCellsLayered(36, 78, 1, 2, 17, 78);
@@ -909,13 +910,13 @@ static void BabiLighthouse_RefreshTruthDoorTiles(void) {
   }
 }
 
-// Reveal's light ends and the switch is hidden again.
+/// Reveal's light ends and the switch is hidden again.
 static void BabiLighthouse_HideTruthDoorSwitch(void) {
   Map_CopyCellsLayered(32, 78, 1, 2, 17, 78);
 }
 
-// The stone door's halves slide open (SE_GATE_MOVE); the first time, Iodem
-// and Faran see it.
+/// The stone door's halves slide open (SE_GATE_MOVE); the first time, Iodem
+/// and Faran see it.
 static void BabiLighthouse_OpenTruthDoor(void) {
   if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
     GameFlag_Set(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN);
@@ -933,8 +934,8 @@ static void BabiLighthouse_OpenTruthDoor(void) {
   }
 }
 
-// Walking through the open door: it slides shut behind the party, now on its
-// other side.
+/// Walking through the open door: it slides shut behind the party, now on its
+/// other side.
 static void BabiLighthouse_CloseTruthDoor(void) {
   if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) != 0) {
     GameFlag_Clear(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN);
@@ -954,9 +955,9 @@ static void BabiLighthouse_CloseTruthDoor(void) {
   }
 }
 
-// Searching the door's switch: under Reveal's light it is flipped and the
-// door opens; otherwise it reads "The truth of this door is open to those
-// seeing with their true heart."
+/// Searching the door's switch: under Reveal's light it is flipped and the
+/// door opens; otherwise it reads "The truth of this door is open to those
+/// seeing with their true heart."
 static void BabiLighthouse_InspectTruthDoorSwitch(void) {
   u8 *work = (u8 *)gEventWork;
   s16 *revealActive;
@@ -981,8 +982,8 @@ static void BabiLighthouse_InspectTruthDoorSwitch(void) {
   Engine_EventEnd();
 }
 
-// Finds the staged actor one direction-table step ahead, including terrain
-// height.
+/// Finds the staged actor one direction-table step ahead, including terrain
+/// height.
 static struct StagedActor *
 BabiLighthouse_FindActorAhead(struct StagedActor *actor) {
   s32 position[3];
@@ -1003,14 +1004,14 @@ BabiLighthouse_FindActorAhead(struct StagedActor *actor) {
   return StagedActor_FindAtTile(target, actor);
 }
 
-// Carry's first phase on the building site's block sets the effect's
-// childOption; what that changes is not known.
+/// Carry's first phase on the building site's block sets the effect's
+/// childOption; what that changes is not known.
 static void BabiLighthouse_EnableChildOption(void) {
   ((struct BattleFxScene *)gEffectWork)->childOption = 1;
 }
 
-// After Move or Carry on the building site's block: in its cell at (20, 12)
-// it settles at a height of 48 pixels.
+/// After Move or Carry on the building site's block: in its cell at (20, 12)
+/// it settles at a height of 48 pixels.
 static void BabiLighthouse_UpdateMovedBlock(void) {
   struct FieldActor *block = Object_GetById(ACTOR_SITE_BLOCK);
   s32 column = block->x.fixed >> 20;
@@ -1031,10 +1032,10 @@ static void BabiLighthouse_UpdateMovedBlock(void) {
   }
 }
 
-// Advances the staged pair only when the actor ahead is less than eight pixels
-// away vertically.
-// Trial: inverting the empty success arm changes two branch instructions
-// (three text bytes in tbs-en); retain the existing branch order.
+/// Advances the staged pair only when the actor ahead is less than eight pixels
+/// away vertically.
+/// Trial: inverting the empty success arm changes two branch instructions
+/// (three text bytes in tbs-en); retain the existing branch order.
 static void BabiLighthouse_AdvanceNearbyPair(void) {
   struct StagedActor *leader =
       (struct StagedActor *)Object_GetById(ACTOR_PARTY_LEADER);
@@ -1060,8 +1061,8 @@ static void BabiLighthouse_AdvanceNearbyPair(void) {
   StagedActor_AdvancePair();
 }
 
-// Tries vertical climbing first, then advances the staged pair when
-// appropriate.
+/// Tries vertical climbing first, then advances the staged pair when
+/// appropriate.
 static void BabiLighthouse_ClimbOrAdvancePair(void) {
   struct StagedActor *leader =
       (struct StagedActor *)Object_GetById(ACTOR_PARTY_LEADER);
@@ -1084,7 +1085,7 @@ static void BabiLighthouse_ClimbOrAdvancePair(void) {
   }
 }
 
-// Returns the event table of the scene being entered.
+/// Returns the event table of the scene being entered.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -1100,7 +1101,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gBabiLighthouse_EventsOther;
 }
 
-// Growth on room 3's sprout: it grows into a vine the party can climb.
+/// Growth on room 3's sprout: it grows into a vine the party can climb.
 static void BabiLighthouse_OpenGrowthPassage(void) {
 
   Map_CopyCellAttributes(82, 7, 1, 2, 18, 7);
@@ -1108,7 +1109,7 @@ static void BabiLighthouse_OpenGrowthPassage(void) {
   Engine_GameFlagSet(FLAG_GROWTH_PASSAGE_OPEN);
 }
 
-// Redraws room 3's ledge cells, then blocks the cells under its two blocks.
+/// Redraws room 3's ledge cells, then blocks the cells under its two blocks.
 static void BabiLighthouse_RefreshMovableBlockTiles(void) {
   struct FieldActor *leftBlock = Object_GetById(ACTOR_LEFT_BLOCK);
 
@@ -1130,8 +1131,8 @@ static void BabiLighthouse_RefreshMovableBlockTiles(void) {
 }
 
 #if TBS_PATCH_2
-// Update callback of room 3's blocks (TBS_PATCH_2 and later): each is drawn
-// in front of the leader when nearer the screen, and on its layer otherwise.
+/// Update callback of room 3's blocks (TBS_PATCH_2 and later): each is drawn
+/// in front of the leader when nearer the screen, and on its layer otherwise.
 static void BabiLighthouse_MatchLeaderPriority(union FieldObject *fieldObject) {
   struct AnimationObject *sprite;
   struct FieldActor *actor;
@@ -1176,9 +1177,9 @@ struct RowActor {
   u16 delay;
 };
 
-// Sets up the scene being entered: Retreat leads back to room 3; the site's
-// block, room 3's blocks, vine and fallen men, room 2's arrivals by falling,
-// and room 1's door and onlookers are restored. Returns 0.
+/// Sets up the scene being entered: Retreat leads back to room 3; the site's
+/// block, room 3's blocks, vine and fallen men, room 2's arrivals by falling,
+/// and room 1's door and onlookers are restored. Returns 0.
 s32 BabiLighthouse_SetupScene(void) {
   struct FieldActor *actor;
   struct RowActor *row;
@@ -1353,7 +1354,7 @@ s32 BabiLighthouse_SetupScene(void) {
   return 0;
 }
 
-// Pixel step by direction: X in the upper halfword, Z in the lower.
+/// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {

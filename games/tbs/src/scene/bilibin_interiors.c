@@ -1,5 +1,6 @@
-// Bilibin's shops, inn and dining room before and after Kolima's curse ends.
-// The event table keeps the two sets of conversations in their native order.
+/// @file
+/// Bilibin's shops, inn and dining room before and after Kolima's curse ends.
+/// The event table keeps the two sets of conversations in their native order.
 
 #include "unit/scene/bilibin_interiors.h"
 #include "flags.h"
@@ -30,9 +31,9 @@ enum {
   BILIBIN_INN = 2
 };
 
-// Actor slots follow the placement rows, starting at ACTOR_FIRST_PLACED.
+/// Actor slots follow the placement rows, starting at ACTOR_FIRST_PLACED.
 enum {
-  BILIBIN_MIA_ADMIRER = 10, // wants to see "that angelic" Mia again
+  BILIBIN_MIA_ADMIRER = 10, ///< wants to see "that angelic" Mia again
   BILIBIN_WEAPON_SHOPKEEPER = 16,
   BILIBIN_ARMOR_SHOPKEEPER = 17,
   BILIBIN_ITEM_SHOPKEEPER = 18,
@@ -44,24 +45,24 @@ enum {
   BILIBIN_DINER = 27
 };
 
-// Returns the entrances for the rooms in this overlay.
+/// Returns the entrances for the rooms in this overlay.
 const struct SceneEntrance *BilibinInteriors_GetEntrances(void) {
   return gBilibinInteriorsEntrances;
 }
 
-// These rooms have no exit-region table.
+/// These rooms have no exit-region table.
 const struct SceneRegion *BilibinInteriors_GetRegions(void) { return 0; }
 
-// Returns the destination table used by the rooms' numbered exits.
+/// Returns the destination table used by the rooms' numbered exits.
 const u32 *BilibinInteriors_GetExits(void) { return gBilibinInteriorsExits; }
 
-// Marks placements outside the current room's view before actors are spawned.
+/// Marks placements outside the current room's view before actors are spawned.
 const struct ScenePlacement *BilibinInteriors_GetPlacements(void) {
   ScenePlacement_ClipToView(gBilibinInteriorsPlacements);
   return gBilibinInteriorsPlacements;
 }
 
-// Opens the weapon shop from across the counter; otherwise discusses Kolima.
+/// Opens the weapon shop from across the counter; otherwise discusses Kolima.
 static void Event_TalkToWeaponShopkeeper(void) {
   u32 leaderFacing;
 
@@ -82,7 +83,7 @@ static void Event_TalkToWeaponShopkeeper(void) {
   Engine_EventEnd();
 }
 
-// Opens the item shop from across the counter, or talks about the curse.
+/// Opens the item shop from across the counter, or talks about the curse.
 static void Event_TalkToItemShopkeeper(void) {
   u32 leaderFacing;
 
@@ -103,12 +104,12 @@ static void Event_TalkToItemShopkeeper(void) {
   Engine_EventEnd();
 }
 
-// Returns both story stages' events; conditions choose the current dialogue.
+/// Returns both story stages' events; conditions choose the current dialogue.
 const struct SceneEvent *BilibinInteriors_GetEvents(void) {
   return gBilibinInteriorsEvents;
 }
 
-// Opens the armor shop across the counter, or asks about seeing the ocean.
+/// Opens the armor shop across the counter, or asks about seeing the ocean.
 static void Event_TalkToArmorShopkeeper(void) {
   u32 leaderFacing;
 
@@ -132,7 +133,7 @@ static void Event_TalkToArmorShopkeeper(void) {
   Engine_EventEnd();
 }
 
-// The chef cannot concentrate on cooking while his hometown is cursed.
+/// The chef cannot concentrate on cooking while his hometown is cursed.
 static void Event_TalkToWorriedChef(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinImReallyWorriedAboutKolima);
@@ -142,7 +143,7 @@ static void Event_TalkToWorriedChef(void) {
   Engine_EventEnd();
 }
 
-// A diner's growling stomach leads into a yes/no question about the sound.
+/// A diner's growling stomach leads into a yes/no question about the sound.
 static void Event_TalkToHungryDiner(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinGrrr);
@@ -158,7 +159,7 @@ static void Event_TalkToHungryDiner(void) {
   Engine_EventEnd();
 }
 
-// Asks whether a tree spirit can curse a person, then turns back to the table.
+/// Asks whether a tree spirit can curse a person, then turns back to the table.
 static void Event_AskAboutTreeSpirit(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinDoBelieveTreeSpiritCan);
@@ -173,7 +174,7 @@ static void Event_AskAboutTreeSpirit(void) {
   Engine_EventEnd();
 }
 
-// Asks whether Kolima's holy tree survived.
+/// Asks whether Kolima's holy tree survived.
 static void Event_AskAboutHolyTree(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinDoKnowIfHolyTree);
@@ -181,7 +182,7 @@ static void Event_AskAboutHolyTree(void) {
   Engine_EventEnd();
 }
 
-// Asks whether the party knows what silk is.
+/// Asks whether the party knows what silk is.
 static void Event_AskAboutSilk(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinDoKnowSilk);
@@ -189,7 +190,7 @@ static void Event_AskAboutSilk(void) {
   Engine_EventEnd();
 }
 
-// Opens the inn across the counter, or discusses the curse in Kolima.
+/// Opens the inn across the counter, or discusses the curse in Kolima.
 static void Event_TalkToInnkeeper(void) {
   u32 leaderFacing;
 
@@ -209,7 +210,7 @@ static void Event_TalkToInnkeeper(void) {
   Engine_EventEnd();
 }
 
-// The chef calls out orders once, then refers diners to the waitress.
+/// The chef calls out orders once, then refers diners to the waitress.
 static void Event_TalkToBusyChef(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(0x300) == 0) {
@@ -234,7 +235,7 @@ static void Event_TalkToBusyChef(void) {
   Engine_EventEnd();
 }
 
-// The kitchen worker complains about the chef's renewed energy.
+/// The kitchen worker complains about the chef's renewed energy.
 static void Event_TalkToKitchenWorker(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinReallyThinkHeadChefHas);
@@ -245,7 +246,7 @@ static void Event_TalkToKitchenWorker(void) {
   Engine_EventEnd();
 }
 
-// The waitress works through serving water and laying the silverware.
+/// The waitress works through serving water and laying the silverware.
 static void Event_TalkToWaitress(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinLetsSeeServeThemWater);
@@ -256,7 +257,7 @@ static void Event_TalkToWaitress(void) {
   Engine_EventEnd();
 }
 
-// A satisfied diner asks whether the party enjoys the food.
+/// A satisfied diner asks whether the party enjoys the food.
 static void Event_TalkAboutMeal(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinWasSomeMealDontJust);
@@ -264,8 +265,8 @@ static void Event_TalkAboutMeal(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the villager who admires Mia: with Mia in the party (flags 0 to
-// 7 say who is), even frozen Imil must feel warm with her around.
+/// Mind Read on the villager who admires Mia: with Mia in the party (flags 0 to
+/// 7 say who is), even frozen Imil must feel warm with her around.
 static void Event_ReadMiaAdmirersMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
@@ -277,8 +278,8 @@ static void Event_ReadMiaAdmirersMind(void) {
   Engine_EventEnd();
 }
 
-// The rooms open through a window; the diner at the dining room table is drawn
-// at sprite priority 2, never by the automatic priority.
+/// The rooms open through a window; the diner at the dining room table is drawn
+/// at sprite priority 2, never by the automatic priority.
 s32 BilibinInteriors_Initialize(void) {
   struct FieldActor *actor;
   u8 *record;

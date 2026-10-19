@@ -36,7 +36,7 @@
 #include "flags.h"
 #include "songs.h"
 
-// Forward declarations.
+/// Forward declarations.
 static void Event_DoraSendsIsaacToThePlaza(void);
 static void ValeStorm_SetStormCellAttributes(void);
 static void ValeStorm_ApplyRock12Collision(void);
@@ -69,7 +69,7 @@ s32 Math_RemainderUnsigned(s32, s32);
 static s32 sShakeDone;
 static s32 sShakeShift;
 
-// Choose a new random heading whenever the actor countdown expires.
+/// Choose a new random heading whenever the actor countdown expires.
 static s32
 ValeStorm_RerollHeadingOnCountdown(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -88,33 +88,33 @@ ValeStorm_RerollHeadingOnCountdown(struct ScriptInterpreter *interpreter) {
 // Shared source is included here in ROM order.
 #include "common/object_pulse.h"
 
-// Return the entrances to the paths outside on the stormy night.
+/// Return the entrances to the paths outside on the stormy night.
 struct SceneEntrance *ValeStorm_GetEntrances(void) {
   return gValeStorm_Entrances;
 }
 
-// The paths have no scene regions.
+/// The paths have no scene regions.
 struct SceneRegion *ValeStorm_GetRegions(void) { return NULL; }
 
-// Return the storm scene exit table.
+/// Return the storm scene exit table.
 u32 *ValeStorm_GetExits(void) { return gValeStorm_Exits; }
 
-// Return the storm scene actor placements.
+/// Return the storm scene actor placements.
 struct ScenePlacement *ValeStorm_GetPlacements(void) {
   return gValeStorm_Placements;
 }
 
-// Return the storm scene event bindings.
+/// Return the storm scene event bindings.
 struct SceneEvent *ValeStorm_GetEvents(void) { return gValeStorm_Events; }
 
-// Walking onto the upper path: its collision cells change, remembered in
-// FLAG_SCENE_TEMP_10.
+/// Walking onto the upper path: its collision cells change, remembered in
+/// FLAG_SCENE_TEMP_10.
 static void Event_SetPathCellOverride(void) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_10);
   Map_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
-// Walking off the upper path restores its collision cells.
+/// Walking off the upper path restores its collision cells.
 static void Event_ClearPathCellOverride(void) {
   Engine_GameFlagClear(FLAG_SCENE_TEMP_10);
   Map_CopyCellAttributes(40, 89, 7, 4, 10, 84);
@@ -123,7 +123,7 @@ static void Event_ClearPathCellOverride(void) {
 // Shared source is included here in ROM order.
 #include "common/vale.h"
 
-// Animate the doorway before taking backdrop exit 11.
+/// Animate the doorway before taking backdrop exit 11.
 UNUSED static void ValeStorm_OpenBackdropExit11(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps0, 45, 11);
@@ -132,25 +132,25 @@ UNUSED static void ValeStorm_OpenBackdropExit11(void) {
   Vale_RequestBackdropExit(11);
 }
 
-// Play the exit cue and take backdrop exit 1.
+/// Play the exit cue and take backdrop exit 1.
 static void Event_LeaveByExit1(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropExit(1);
 }
 
-// Play the exit cue and take backdrop exit 3.
+/// Play the exit cue and take backdrop exit 3.
 static void Event_LeaveByExit3(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropExit(3);
 }
 
-// Play the exit cue and take backdrop exit 4.
+/// Play the exit cue and take backdrop exit 4.
 static void Event_LeaveByExit4(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropExit(4);
 }
 
-// Let Garet leave before taking backdrop exit 2.
+/// Let Garet leave before taking backdrop exit 2.
 static void Event_LeaveByExit2(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN) != 0 &&
@@ -160,7 +160,7 @@ static void Event_LeaveByExit2(void) {
   Vale_RequestBackdropExit(2);
 }
 
-// Animate the doorway and take backdrop exit 5.
+/// Animate the doorway and take backdrop exit 5.
 static void Event_LeaveByExit5(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps1, 54, 32);
@@ -169,8 +169,8 @@ static void Event_LeaveByExit5(void) {
   Vale_RequestBackdropExit(5);
 }
 
-// Isaac's first time at the door of exit 6: a villager runs out and shoves
-// him ("Huh? Isaac?"); afterwards the door opens as usual.
+/// Isaac's first time at the door of exit 6: a villager runs out and shoves
+/// him ("Huh? Isaac?"); afterwards the door opens as usual.
 static void Event_LeaveByExit6(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_06) == 0) {
     Event_PlayCue(SE_DOOR_OPEN);
@@ -187,7 +187,7 @@ static void Event_LeaveByExit6(void) {
   }
 }
 
-// Animate the doorway and take backdrop exit 7.
+/// Animate the doorway and take backdrop exit 7.
 static void Event_LeaveByExit7(void) {
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_05) == 0) {
     Engine_AudioPlayCue(SE_DOOR_OPEN);
@@ -198,7 +198,7 @@ static void Event_LeaveByExit7(void) {
   Vale_RequestBackdropExit(7);
 }
 
-// Animate the doorway and take backdrop exit 8.
+/// Animate the doorway and take backdrop exit 8.
 static void Event_LeaveByExit8(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps2, 49, 69);
@@ -207,7 +207,7 @@ static void Event_LeaveByExit8(void) {
   Vale_RequestBackdropExit(8);
 }
 
-// Animate the doorway and take backdrop exit 9.
+/// Animate the doorway and take backdrop exit 9.
 static void Event_LeaveByExit9(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps3, 52, 76);
@@ -216,7 +216,7 @@ static void Event_LeaveByExit9(void) {
   Vale_RequestBackdropExit(9);
 }
 
-// Animate the doorway and take backdrop exit 10.
+/// Animate the doorway and take backdrop exit 10.
 static void Event_LeaveByExit10(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_CellSteps1, 35, 74);
@@ -225,7 +225,7 @@ static void Event_LeaveByExit10(void) {
   Vale_RequestBackdropExit(10);
 }
 
-// Animate the doorway and take backdrop exit 12.
+/// Animate the doorway and take backdrop exit 12.
 static void Event_LeaveByExit12(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_CellSteps1, 35, 73);
@@ -234,7 +234,7 @@ static void Event_LeaveByExit12(void) {
   Vale_RequestBackdropExit(12);
 }
 
-// Animate the doorway and take backdrop exit 13.
+/// Animate the doorway and take backdrop exit 13.
 static void Event_LeaveByExit13(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_CellSteps2, 38, 72);
@@ -243,9 +243,9 @@ static void Event_LeaveByExit13(void) {
   Vale_RequestBackdropExit(13);
 }
 
-// Arriving on the stormy night: restore the fallen rocks, the river scene and
-// the Boulder from their flags, start the storm, and play the scene with Dora
-// and Kyle on the first arrival by entrance 15.
+/// Arriving on the stormy night: restore the fallen rocks, the river scene and
+/// the Boulder from their flags, start the storm, and play the scene with Dora
+/// and Kyle on the first arrival by entrance 15.
 s32 ValeStorm_Initialize(void) {
   BattleFx_SetQueuedSoundAndPlay(SE_170);
   Engine_ActorSetPosition(23, 0, 0);
@@ -449,8 +449,8 @@ s32 ValeStorm_Initialize(void) {
   return 0;
 }
 
-// Dora and Kyle come out into the storm with Isaac ("Kyle... Will they be able
-// to stop the Boulder?") and send him to the plaza while they go to help.
+/// Dora and Kyle come out into the storm with Isaac ("Kyle... Will they be able
+/// to stop the Boulder?") and send him to the plaza while they go to help.
 static void Event_DoraSendsIsaacToThePlaza(void) {
   s32 message;
 
@@ -542,8 +542,8 @@ static void Event_DoraSendsIsaacToThePlaza(void) {
   Engine_EventEnd();
 }
 
-// Walking past: rock 11 falls across the path, and Garet, once with Isaac,
-// says they cannot get around it.
+/// Walking past: rock 11 falls across the path, and Garet, once with Isaac,
+/// says they cannot get around it.
 static void Event_Rock11Falls(void) {
   struct FieldActor *rock;
   struct FieldActor *leader;
@@ -601,7 +601,7 @@ static void Event_Rock11Falls(void) {
   }
 }
 
-// Apply the collision cells left by rock 11.
+/// Apply the collision cells left by rock 11.
 static void ValeStorm_SetStormCellAttributes(void) {
   Map_CopyCellAttributes(29, 64, 1, 1, 21, 57);
   Map_CopyCellAttributes(29, 64, 1, 1, 21, 58);
@@ -610,7 +610,7 @@ static void ValeStorm_SetStormCellAttributes(void) {
   Map_CopyCellAttributes(28, 20, 1, 1, 20, 57);
 }
 
-// Walking past: rock 12 falls down the path.
+/// Walking past: rock 12 falls down the path.
 static void Event_Rock12Falls(void) {
   struct FieldActor *rock;
   struct FieldActor *leader;
@@ -665,7 +665,7 @@ static void Event_Rock12Falls(void) {
   }
 }
 
-// Apply the collision cells left by rock 12.
+/// Apply the collision cells left by rock 12.
 static void ValeStorm_ApplyRock12Collision(void) {
   Map_CopyCellAttributes(29, 23, 1, 1, 15, 53);
   Map_CopyCellAttributes(29, 23, 1, 1, 14, 53);
@@ -677,7 +677,7 @@ static void ValeStorm_ApplyRock12Collision(void) {
   Map_CopyCellAttributes(13, 55, 1, 1, 15, 55);
 }
 
-// Walking past: rock 13 falls down the path.
+/// Walking past: rock 13 falls down the path.
 static void Event_Rock13Falls(void) {
   if (GameFlag_IsSet(0x312) == 0) {
     Engine_EventBegin();
@@ -730,7 +730,7 @@ static void Event_Rock13Falls(void) {
   }
 }
 
-// Apply the collision cells left by rock 13.
+/// Apply the collision cells left by rock 13.
 static void ValeStorm_ApplyRock13Collision(void) {
   Map_CopyCellAttributes(29, 22, 1, 1, 3, 42);
   Map_CopyCellAttributes(29, 21, 1, 1, 2, 42);
@@ -738,7 +738,7 @@ static void ValeStorm_ApplyRock13Collision(void) {
   Map_CopyCellAttributes(23, 20, 3, 1, 2, 43);
 }
 
-// Walking past: rock 14 falls down the path.
+/// Walking past: rock 14 falls down the path.
 static void Event_Rock14Falls(void) {
   struct FieldActor *rock;
   struct FieldActor *leader;
@@ -789,7 +789,7 @@ static void Event_Rock14Falls(void) {
   }
 }
 
-// Apply the collision cells left by rock 14.
+/// Apply the collision cells left by rock 14.
 static void ValeStorm_ApplyRock14Collision(void) {
   Map_CopyCellAttributes(29, 20, 1, 1, 26, 71);
   Map_CopyCellAttributes(29, 20, 1, 1, 26, 70);
@@ -798,7 +798,7 @@ static void ValeStorm_ApplyRock14Collision(void) {
   Map_CopyCellAttributes(28, 22, 1, 1, 27, 72);
 }
 
-// Stop the leader at exit 6 for the first villager conversation.
+/// Stop the leader at exit 6 for the first villager conversation.
 static void ValeStorm_MeetVillagerAtExit6(void) {
   s32 message;
 
@@ -829,7 +829,7 @@ static void ValeStorm_MeetVillagerAtExit6(void) {
   Engine_EventEnd();
 }
 
-// Isaac hears Garet struggling with his things ("Ugh... Hrnghhh...").
+/// Isaac hears Garet struggling with his things ("Ugh... Hrnghhh...").
 static void Event_HearGaretStruggling(void) {
   if (GameFlag_IsSet(FLAG_VALE_STORM_HEARD_GARET) == 0) {
     if (GameFlag_IsSet(FLAG_VALE_STORM_GARET_JOINED) == 0) {
@@ -848,8 +848,8 @@ static void Event_HearGaretStruggling(void) {
   }
 }
 
-// Walking away from him, Garet calls after Isaac, asking whether he will just
-// leave him there.
+/// Walking away from him, Garet calls after Isaac, asking whether he will just
+/// leave him there.
 static void Event_GaretCallsAfterIsaac(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_JOINED) == 0 &&
       Engine_GameFlagIsSet(FLAG_VALE_STORM_HEARD_GARET) != 0) {
@@ -862,8 +862,8 @@ static void Event_GaretCallsAfterIsaac(void) {
   }
 }
 
-// Talking to Garet: whether to leave his things behind, or, after the river,
-// the Boulder.
+/// Talking to Garet: whether to leave his things behind, or, after the river,
+/// the Boulder.
 static void Event_TalkToGaret(void) {
   if (GameFlag_IsSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN) != 0) {
     Engine_EventBegin();
@@ -883,7 +883,7 @@ static void Event_TalkToGaret(void) {
   }
 }
 
-// Resolve the belongings conversation and bring Garet into the party.
+/// Resolve the belongings conversation and bring Garet into the party.
 static void ValeStorm_RunCallOutSequence(void) {
   struct FieldActor *leader;
   s32 agreedToLeaveBelongings;
@@ -923,7 +923,7 @@ static void ValeStorm_RunCallOutSequence(void) {
   Engine_GameFlagSet(FLAG_VALE_STORM_GARET_JOINED);
 }
 
-// Garet catches up ("Hey! Isaac!") and joins Isaac.
+/// Garet catches up ("Hey! Isaac!") and joins Isaac.
 static void Event_GaretJoinsIsaac(void) {
   struct FieldActor *actor;
   s32 message;
@@ -971,7 +971,7 @@ static void Event_GaretJoinsIsaac(void) {
   }
 }
 
-// Garet warns that the path north leads to Mt. Aleph.
+/// Garet warns that the path north leads to Mt. Aleph.
 static void Event_WarnAboutMtAleph(void) {
   struct FieldActor *leader;
   struct FieldActor *initialLeader;
@@ -1004,7 +1004,7 @@ static void Event_WarnAboutMtAleph(void) {
   Engine_EventEnd();
 }
 
-// Bring Garet out to discuss a blocked path, then return him to Isaac.
+/// Bring Garet out to discuss a blocked path, then return him to Isaac.
 static void ValeStorm_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   struct FieldActor *leaderAtStart;
   s32 speed = PIXELS(1);
@@ -1036,8 +1036,8 @@ static void ValeStorm_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   Engine_ActorSetPosition(22, 0, 0);
 }
 
-// The Boulder falls toward Vale while the elders hold it with their Psynergy
-// ("Ahhh! The Boulder! It's falling!").
+/// The Boulder falls toward Vale while the elders hold it with their Psynergy
+/// ("Ahhh! The Boulder! It's falling!").
 static void Event_WatchBoulderFall(void) {
   u32 i;
   struct FieldActor *movingActor;
@@ -1213,7 +1213,7 @@ static void Event_WatchBoulderFall(void) {
   }
 }
 
-// Apply an animation parameter to each active entry of a single sprite.
+/// Apply an animation parameter to each active entry of a single sprite.
 static void Storm_SetActorFrameMode(struct FieldActor *actor, s32 mode) {
   if ((actor->spriteStorageKind & 0xf) == 1) {
     struct AnimationObject *animation = actor->sprite;
@@ -1240,7 +1240,7 @@ static void Storm_SetActorFrameMode(struct FieldActor *actor, s32 mode) {
   }
 }
 
-// Alternate four actors between the normal and flashing parameters.
+/// Alternate four actors between the normal and flashing parameters.
 UNUSED static void ValeStorm_FlashBoulderSceneAnimationEntries(void) {
   if (((gFrameCount >> sShakeShift) & 3) != 0) {
     Storm_SetActorFrameMode(Object_GetById(32), 1);
@@ -1255,8 +1255,8 @@ UNUSED static void ValeStorm_FlashBoulderSceneAnimationEntries(void) {
   }
 }
 
-// At the river, Jenna cries out for her brother as the villagers try to save
-// Felix ("Oh no! My brother!").
+/// At the river, Jenna cries out for her brother as the villagers try to save
+/// Felix ("Oh no! My brother!").
 static void Event_WitnessRiverRescue(void) {
   const s32 *pulseScript;
 
@@ -1497,7 +1497,7 @@ static void Event_WitnessRiverRescue(void) {
   Engine_EventEnd();
 }
 
-// Send the searchers along the river and ask Isaac to help.
+/// Send the searchers along the river and ask Isaac to help.
 static void ValeStorm_RunRiverSearch(void) {
   struct FieldActor *villager;
   s32 random;
@@ -1637,7 +1637,7 @@ static void ValeStorm_RunRiverSearch(void) {
   Actor_SetPosition(22, 0, 0);
 }
 
-// A villager at the river talks of rescuing Felix.
+/// A villager at the river talks of rescuing Felix.
 static void Event_TalkAboutRescuingFelix(void) {
   s32 facing = FACING_SOUTHEAST;
   const s32 *pulseScript;
@@ -1673,8 +1673,8 @@ static void Event_TalkAboutRescuingFelix(void) {
   Engine_EventEnd();
 }
 
-// Jenna comes back to the river ("Mom! Dad! We're back!"), and the
-// scene ends with the Boulder sweeping down it.
+/// Jenna comes back to the river ("Mom! Dad! We're back!"), and the
+/// scene ends with the Boulder sweeping down it.
 static void Event_GatherAfterRiverRescue(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -1786,7 +1786,7 @@ static void Event_GatherAfterRiverRescue(void) {
   }
 }
 
-// Place an actor and its motion targets at the supplied coordinates.
+/// Place an actor and its motion targets at the supplied coordinates.
 static __inline__ void ValeStorm_PlaceActor(struct FieldActor *object,
                                             s32 horizontalPosition,
                                             s32 groundPosition) {
@@ -1798,7 +1798,7 @@ static __inline__ void ValeStorm_PlaceActor(struct FieldActor *object,
   object->targetZ = groundPosition;
 }
 
-// Shake the scene at the impact cue and wait for the beat.
+/// Shake the scene at the impact cue and wait for the beat.
 static __inline__ void ValeStorm_PlayImpactBeat(s32 shakeAmplitude,
                                                 s32 frames) {
   Map_SetShake(shakeAmplitude, shakeAmplitude, Q16_ONE);
@@ -1806,7 +1806,7 @@ static __inline__ void ValeStorm_PlayImpactBeat(s32 shakeAmplitude,
   Event_Wait(frames);
 }
 
-// Follow the boulder downriver, then restore the riverbank actors.
+/// Follow the boulder downriver, then restore the riverbank actors.
 static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   struct AnimationObject *actorVisual;
   struct AnimationObject *groupVisual;
@@ -2155,7 +2155,7 @@ struct PairWork {
   u16 vramBlock;
 };
 
-// Flash the scene layers before fading back to the storm palette.
+/// Flash the scene layers before fading back to the storm palette.
 static void ValeStorm_FlashLightning(void) {
   Engine_TaskWait(20);
   GameFlag_Set(0x166);
@@ -2181,7 +2181,7 @@ static void ValeStorm_FlashLightning(void) {
   Map_ClearLayerEntryFlag(5);
 }
 
-// Track the boulder and pulse its glow with the movement script phases.
+/// Track the boulder and pulse its glow with the movement script phases.
 static void ValeStorm_UpdatePulsingGlow(void) {
   struct FieldActor *source;
   struct FieldActor *glow;
@@ -2238,7 +2238,7 @@ static void ValeStorm_UpdatePulsingGlow(void) {
   }
 }
 
-// Alternate the glow vertical offset on successive frames.
+/// Alternate the glow vertical offset on successive frames.
 static void ValeStorm_FlickerGlowOffset(void) {
   struct FieldActor *actor = Object_GetById(27);
   u32 frame = gFrameCount;
@@ -2251,7 +2251,7 @@ static void ValeStorm_FlickerGlowOffset(void) {
   }
 }
 
-// A villager who cannot move asks Isaac to get help ("I can't move...").
+/// A villager who cannot move asks Isaac to get help ("I can't move...").
 static void Event_VillagerAsksForHelp(void) {
   struct FieldActor *villager;
   struct FieldActor *leader;
@@ -2311,7 +2311,7 @@ static void Event_VillagerAsksForHelp(void) {
   Engine_EventEnd();
 }
 
-// Have Garet leave Isaac at the restored riverbank.
+/// Have Garet leave Isaac at the restored riverbank.
 static void ValeStorm_GaretLeavesIsaac(void) {
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
@@ -2344,7 +2344,7 @@ static void ValeStorm_GaretLeavesIsaac(void) {
   GameFlag_Set(FLAG_VALE_STORM_GARET_LEFT);
 }
 
-// Redraw the riverbank cells after the boulder has passed.
+/// Redraw the riverbank cells after the boulder has passed.
 static void ValeStorm_RebuildRiverbank(void) {
   Map_CopyCellsTo(16, 96, 11, 73, 6, 3);
   Map_CopyCellsTo(16, 96, 34, 68, 14, 10);
@@ -2364,8 +2364,8 @@ static void ValeStorm_RebuildRiverbank(void) {
   Engine_MapRedraw();
 }
 
-// On the stormy night, a monster attacks on the paths (encounter 2 of table
-// 12).
+/// On the stormy night, a monster attacks on the paths (encounter 2 of table
+/// 12).
 static void Event_FightThirdMonster(void) {
   struct EventWork *state;
 
@@ -2379,7 +2379,7 @@ static void Event_FightThirdMonster(void) {
   Engine_EventEnd();
 }
 
-// On the stormy night, another monster attacks (encounter 3 of table 12).
+/// On the stormy night, another monster attacks (encounter 3 of table 12).
 static void Event_FightFourthMonster(void) {
   struct EventWork *state;
 
@@ -2393,7 +2393,7 @@ static void Event_FightFourthMonster(void) {
   Engine_EventEnd();
 }
 
-// Flash the actor palette and emit paired effects at the shake interval.
+/// Flash the actor palette and emit paired effects at the shake interval.
 static void ValeStorm_FlashPaletteAndSpawnEffects(struct FieldActor *actor) {
   s32 spawnInterval;
 
@@ -2412,7 +2412,7 @@ static void ValeStorm_FlashPaletteAndSpawnEffects(struct FieldActor *actor) {
   }
 }
 
-// Cycle six palettes and emit paired effects at the shake interval.
+/// Cycle six palettes and emit paired effects at the shake interval.
 static void ValeStorm_CyclePaletteAndSpawnEffects(struct FieldActor *actor) {
   s32 paletteFrame;
   s32 spawnInterval;
@@ -2428,7 +2428,7 @@ static void ValeStorm_CyclePaletteAndSpawnEffects(struct FieldActor *actor) {
   }
 }
 
-// Cycle six actor palettes on alternate frames.
+/// Cycle six actor palettes on alternate frames.
 static void ValeStorm_CycleObjectPalettes(struct FieldActor *actor) {
   s32 paletteFrame;
 
@@ -2442,7 +2442,7 @@ static void ValeStorm_CycleObjectPalettes(struct FieldActor *actor) {
 // Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 
-// Create the two linked effects that travel in opposite vertical directions.
+/// Create the two linked effects that travel in opposite vertical directions.
 static void ValeStorm_SpawnEffectPair(struct FieldActor *parent) {
   struct FieldActor *pair[2];
   struct FieldActor *child;
@@ -2496,7 +2496,7 @@ static void ValeStorm_SpawnEffectPair(struct FieldActor *parent) {
 // Shared source is included here in ROM order.
 #include "common/effect_psynergy.h"
 
-// Update the four boulder scene actors until the final reaction stops.
+/// Update the four boulder scene actors until the final reaction stops.
 static void ValeStorm_UpdateBoulderSceneEffects(void) {
   ValeStorm_CyclePaletteAndSpawnEffects(Object_GetById(32));
   ValeStorm_CyclePaletteAndSpawnEffects(Object_GetById(33));
@@ -2506,12 +2506,12 @@ static void ValeStorm_UpdateBoulderSceneEffects(void) {
   }
 }
 
-// Cycle the boulder sprite palette.
+/// Cycle the boulder sprite palette.
 static void ValeStorm_CycleBoulderPalette(void) {
   ValeStorm_CycleObjectPalettes(Object_GetById(19));
 }
 
-// Keep Garet and actor 8 at the leader sprite priority.
+/// Keep Garet and actor 8 at the leader sprite priority.
 static void ValeStorm_CopyLeaderSpritePriority(void) {
   struct AnimationObject *sourceSprite;
   struct AnimationObject *targetSprite;
@@ -2529,14 +2529,14 @@ static void ValeStorm_CopyLeaderSpritePriority(void) {
 #endif
 }
 
-// The door won't open: the impact knocked it off its hinges.
+/// The door won't open: the impact knocked it off its hinges.
 static void Event_SearchBrokenDoor(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgValeDoorWontOpen, 1);
   Engine_EventEnd();
 }
 
-// Searching the chest of valuables.
+/// Searching the chest of valuables.
 static void Event_SearchValuablesChest(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgValeSChestValuables, 1);

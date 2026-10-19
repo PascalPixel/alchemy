@@ -1,12 +1,13 @@
-// Part of psynergy_effects.c, compiled only through it.
-// The swelling arcs over the caster.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// The swelling arcs over the caster.
 
 #include "../psynergy_effects_internal.h"
 
-// Per-frame update of arc A: over 32 frames it swells and shrinks again
-// (scale sin(frame / 64 turn)) while it rises a pixel a frame on the object
-// it follows, 9 pixels in front of it and up to 5 pixels further while
-// small.
+/// Per-frame update of arc A: over 32 frames it swells and shrinks again
+/// (scale sin(frame / 64 turn)) while it rises a pixel a frame on the object
+/// it follows, 9 pixels in front of it and up to 5 pixels further while
+/// small.
 void FieldFx_UpdateScaledArcObjectA(union FieldObject *fieldObject) {
   // A shared inline kernel with a constant inversion argument changes both
   // arc updates from 0x58 to 0x5c bytes in the forced native English build.
@@ -30,8 +31,8 @@ void FieldFx_UpdateScaledArcObjectA(union FieldObject *fieldObject) {
   arc->z.fixed = anchor->z.fixed + (0x10000 - scale) * 5 + 0x90000;
 }
 
-// Per-frame update of arc B: arc A upside down, 16 pixels in front of the
-// object and up to 5 pixels nearer while small.
+/// Per-frame update of arc B: arc A upside down, 16 pixels in front of the
+/// object and up to 5 pixels nearer while small.
 void FieldFx_UpdateScaledArcObjectB(union FieldObject *fieldObject) {
   struct FieldActor *arc = (struct FieldActor *)fieldObject;
   struct FieldActor *anchor;
@@ -53,8 +54,8 @@ void FieldFx_UpdateScaledArcObjectB(union FieldObject *fieldObject) {
   arc->z.fixed = anchor->z.fixed - (0x10000 - scale) * 5 + 0x100000;
 }
 
-// A sprite as the arcs set it up: its three OAM attributes and its
-// bookkeeping.
+/// A sprite as the arcs set it up: its three OAM attributes and its
+/// bookkeeping.
 struct ArcSprite {
   u8 pad00[4];
   u16 y : 8;
@@ -62,7 +63,7 @@ struct ArcSprite {
   u16 doubleSize : 1;
   u16 mode : 2;
   u16 mosaic : 1;
-  u16 color : 1; // 1 = 256 colours
+  u16 color : 1; ///< 1 = 256 colours
   u16 shape : 2;
   u16 x : 9;
   u16 unused : 3;
@@ -73,7 +74,7 @@ struct ArcSprite {
   u16 priority : 2;
   u16 palette : 4;
   u8 pad0a[18];
-  u8 slot; // VRAM block
+  u8 slot; ///< VRAM block
   u8 active : 1;
   u8 displayFlags : 7;
   u8 pad1e[8];
@@ -82,8 +83,8 @@ struct ArcSprite {
   struct AnimationEntry *child;
 };
 
-// Spawns the two swelling arcs (object 26) on an object, A and B (B upside
-// down); they follow it for 32 frames.
+/// Spawns the two swelling arcs (object 26) on an object, A and B (B upside
+/// down); they follow it for 32 frames.
 void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *source = scene->mainObject;
@@ -128,8 +129,8 @@ void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked) {
   arcs[1]->priorityFlags = 2;
 }
 
-// Per-frame update: flashes an object between sprite param 7 and 0 every 2
-// frames and spawns the swelling arcs on it every 16.
+/// Per-frame update: flashes an object between sprite param 7 and 0 every 2
+/// frames and spawns the swelling arcs on it every 16.
 void BattleFx_FlickerObjectAndTick(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   if ((gFrameCount & 2) != 0) {
@@ -142,8 +143,8 @@ void BattleFx_FlickerObjectAndTick(union FieldObject *fieldObject) {
   }
 }
 
-// Per-frame update: cycles an object through sprite params 0 to 5, one step
-// every 2 frames, and spawns the swelling arcs on it every 16.
+/// Per-frame update: cycles an object through sprite params 0 to 5, one step
+/// every 2 frames, and spawns the swelling arcs on it every 16.
 void FieldFx_CycleObjectValueByCounter(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   if ((gFrameCount & 1) != 0) {

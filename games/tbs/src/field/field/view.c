@@ -1,10 +1,11 @@
-// Part of field.c, the field object, compiled only through it.
-// Screen shake, the copied BG row drawer and the ground plane scanlines.
+/// @file
+/// Part of field.c, the field object, compiled only through it.
+/// Screen shake, the copied BG row drawer and the ground plane scanlines.
 
 #include "../field_internal.h"
 
-// Shakes the screen: sets the map's x and y shake amplitude and its decay
-// (16.16), leaving any negative value unchanged.
+/// Shakes the screen: sets the map's x and y shake amplitude and its decay
+/// (16.16), leaving any negative value unchanged.
 void Map_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay) {
   struct MapScrollWork *work;
 
@@ -20,8 +21,8 @@ void Map_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay) {
   }
 }
 
-// Waits until the screen shake has died down (both amplitudes under 1/256
-// pixel), at most 300 frames, then stops it.
+/// Waits until the screen shake has died down (both amplitudes under 1/256
+/// pixel), at most 300 frames, then stops it.
 void Map_WaitForShakeToSettle(void) {
   struct MapScrollWork *work;
   s32 waitedFrames;
@@ -35,9 +36,9 @@ void Map_WaitForShakeToSettle(void) {
   work->shakeDecay = 0;
 }
 
-// Copies TileMap_DrawRows (ARM code) to the heap and runs it once: it draws
-// the rows that lines describes (32 bytes a row) into pixels, from the tiles
-// in the BG tile buffer's second half and the map in the decode buffer.
+/// Copies TileMap_DrawRows (ARM code) to the heap and runs it once: it draws
+/// the rows that lines describes (32 bytes a row) into pixels, from the tiles
+/// in the BG tile buffer's second half and the map in the decode buffer.
 void TileMap_DrawRowsFromRam(s32 lines, s32 pixels) {
   u8 *base;
 
@@ -53,11 +54,11 @@ void TileMap_DrawRowsFromRam(s32 lines, s32 pixels) {
   Runtime_ReleaseHeapBlock(49);
 }
 
-// Builds the world map ground plane's per-scanline terms for the camera's
-// pitch (depth is its cotangent): for each of the 160 lines, where its ray
-// meets the ground, the line's width scale and its distance, or zeros above
-// the horizon. Transform_UpdateVertices turns these into the affine
-// parameters each frame.
+/// Builds the world map ground plane's per-scanline terms for the camera's
+/// pitch (depth is its cotangent): for each of the 160 lines, where its ray
+/// meets the ground, the line's width scale and its distance, or zeros above
+/// the horizon. Transform_UpdateVertices turns these into the affine
+/// parameters each frame.
 void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
                                  struct MapScanline *scanline) {
   s32 groundPoint[3];

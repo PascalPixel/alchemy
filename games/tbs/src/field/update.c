@@ -11,8 +11,8 @@
 #define TARGET_UNSET ((s32)0x80000000) // no movement target
 #define TURN_MAX 0x1000                // the most an object turns in one frame
 
-// Calls a resident IWRAM routine at its absolute address, which this code
-// still reaches when it runs from its copy in RAM.
+/// Calls a resident IWRAM routine at its absolute address, which this code
+/// still reaches when it runs from its copy in RAM.
 #define IWRAM_ENTRY(type, offset) ((type)(IwramIrqMain + (offset)))
 #define IwramSqrt IWRAM_ENTRY(s32 (*)(s32 value), Iwram_SqrtOffset)
 #define IwramRatioMulQ14                                                       \
@@ -20,16 +20,16 @@
 
 extern struct ScriptMotionObject *gObjectSlots;
 
-// Far-call stubs copied to RAM together with this code (updfar.s).
+/// Far-call stubs copied to RAM together with this code (updfar.s).
 s32 ArcTan2FarArm(s32 z, s32 x);
 s32 IwramSqrtFarArm(s32 value);
 s32 IwramRatioMulQ14FarArm(s32 divisor, s32 value);
 
-// Advances the eight script-driven objects by one frame. For each live one:
-// run its hook, then its script (unless it waits or is paused); steer it
-// towards its target, or brake it when it has none; apply gravity and
-// bounce off the ground; detect arrival at the target; and turn it to face
-// the way it moves. Copied to RAM and run from there.
+/// Advances the eight script-driven objects by one frame. For each live one:
+/// run its hook, then its script (unless it waits or is paused); steer it
+/// towards its target, or brake it when it has none; apply gravity and
+/// bounce off the ground; detect arrival at the target; and turn it to face
+/// the way it moves. Copied to RAM and run from there.
 void Object_UpdateAll(void) {
   struct ScriptMotionObject *object;
   s32 y;

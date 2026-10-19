@@ -1,26 +1,27 @@
-// Part of field.c, the field object, compiled only through it.
-// A debug sprite viewer.
+/// @file
+/// Part of field.c, the field object, compiled only through it.
+/// A debug sprite viewer.
 
 #include "../field_internal.h"
 
-// One animation layer the sprite viewer edits.
+/// One animation layer the sprite viewer edits.
 struct UiIconColumn {
-  s16 number;    // sprite number
-  s16 animation; // animation shown
-  u8 on;         // layer shown
+  s16 number;    ///< sprite number
+  s16 animation; ///< animation shown
+  u8 on;         ///< layer shown
   s8 priority;
   s8 param;
 };
 
-// A debug sprite viewer, which never returns. It shows a sprite (with up to
-// three more animation layers) once for each of its facings, in a ring.
-// Start with the direction pad moves the ring; otherwise up and down choose
-// a layer and left and right what to edit: 0 the animation, 1 the sprite
-// number (ten at a time with Start), 2 the priority, 3 the draw parameter,
-// changed with L and R. A restarts the animation, or in the other modes
-// turns a layer on or off. Pressing Start toggles the shadows; B turns the
-// ring when it is rebuilt with Start held. Select reloads the far-call
-// resources (the alternate set unless B is held) and starts over.
+/// A debug sprite viewer, which never returns. It shows a sprite (with up to
+/// three more animation layers) once for each of its facings, in a ring.
+/// Start with the direction pad moves the ring; otherwise up and down choose
+/// a layer and left and right what to edit: 0 the animation, 1 the sprite
+/// number (ten at a time with Start), 2 the priority, 3 the draw parameter,
+/// changed with L and R. A restarts the animation, or in the other modes
+/// turns a layer on or off. Pressing Start toggles the shadows; B turns the
+/// ring when it is rebuilt with Start held. Select reloads the far-call
+/// resources (the alternate set unless B is held) and starts over.
 void Ui_RunIconMonitor(void) {
   struct UiIconColumn layers[4];
   struct AnimationMetadata *spriteMetadata;
@@ -313,8 +314,8 @@ next:
   }
 }
 
-// Finds the next sprite with an image, stepping in direction (1 or -1)
-// and wrapping within 0-511, that has an image.
+/// Finds the next sprite with an image, stepping in direction (1 or -1)
+/// and wrapping within 0-511, that has an image.
 s32 Ui_FindNextSpriteWithImage(s32 spriteId, s32 direction) {
   for (;;) {
     spriteId += direction;
@@ -338,9 +339,9 @@ s32 Ui_FindNextSpriteWithImage(s32 spriteId, s32 direction) {
   }
 }
 
-// Lays out the sprite viewer's ring around pixel (x, z): one position per
-// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite
-// pairs for kind 20), 56 pixels out (40 for kind 20). B held turns the ring.
+/// Lays out the sprite viewer's ring around pixel (x, z): one position per
+/// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite
+/// pairs for kind 20), 56 pixels out (40 for kind 20). B held turns the ring.
 void Map_BuildProbeRing(s32 centerX, s32 centerY,
                         struct SpritePlacement *positions) {
   struct SpritePlacement *pairedPositions;
@@ -447,8 +448,8 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
   }
 }
 
-// Defines name(slot, value), which sets field of entry slot (0-3) in each of
-// the first ten sprites to value.
+/// Defines name(slot, value), which sets field of entry slot (0-3) in each of
+/// the first ten sprites to value.
 #define UI_DEFINE_SET_GRID_COLUMN(name, field)                                 \
   void name(s32 layerIndex, s32 value) {                                       \
     struct AnimationObject *spriteGroup = gSpriteObjects;                      \
@@ -461,13 +462,13 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
     }                                                                          \
   }
 
-// Set the draw parameter or the priority of one layer of the viewer's ten
-// sprites.
+/// Set the draw parameter or the priority of one layer of the viewer's ten
+/// sprites.
 UI_DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnParameter, param)
 UI_DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnPriority, priority)
 
-// Starts animationIndex on layerIndex of each of the viewer's ten sprites,
-// each one 16 timer units behind the last.
+/// Starts animationIndex on layerIndex of each of the viewer's ten sprites,
+/// each one 16 timer units behind the last.
 void Ui_FillGridColumnFromMetadata(s32 layerIndex, s32 animationIndex) {
   s32 spriteIndex;
   struct AnimationObject *spriteGroup;
@@ -498,7 +499,7 @@ void Ui_FillGridColumnFromMetadata(s32 layerIndex, s32 animationIndex) {
   } while (spriteIndex <= 9);
 }
 
-// Sets spriteId on layerIndex of each of the viewer's ten sprites.
+/// Sets spriteId on layerIndex of each of the viewer's ten sprites.
 void Ui_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
   struct AnimationObject *spriteGroup = gSpriteObjects;
   s32 spriteIndex;
@@ -514,8 +515,8 @@ void Ui_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
   }
 }
 
-// Each frame in the sprite viewer: places each copy of the sprite at its
-// ring position, facing the way that position stands for.
+/// Each frame in the sprite viewer: places each copy of the sprite at its
+/// ring position, facing the way that position stands for.
 void Battle_PlaceActorsByFormationKind(void) {
   struct AnimationObject *sprite = WORK_SLOT(4);
   u32 facingKind = sprite->entries[0]->kind;

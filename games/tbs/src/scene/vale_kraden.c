@@ -34,7 +34,7 @@
 // FLAG_SCENE_TEMP_42: the cottage's gate stands open since Kraden went in.
 
 enum ValeKradenActor {
-  // "It's a huge rock that Isaac's strength can't even budge."
+  /// "It's a huge rock that Isaac's strength can't even budge."
   ACTOR_WEST_ROCK = 9,
   ACTOR_EAST_ROCK = 10,
   ACTOR_ROCKSLIDE_SURVIVOR = 11,
@@ -48,23 +48,23 @@ enum ValeKradenActor {
 // Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
-// Return the cottage area's entrance positions.
+/// Return the cottage area's entrance positions.
 const struct SceneEntrance *ValeKraden_GetEntrances(void) {
   return gValeKraden_Entrances;
 }
 
-// This area has no scene regions.
+/// This area has no scene regions.
 const struct SceneRegion *ValeKraden_GetRegions(void) { return NULL; }
 
-// Return the cottage area's exits.
+/// Return the cottage area's exits.
 const u32 *ValeKraden_GetExits(void) { return gValeKraden_Exits; }
 
-// Return the cottage residents and story actors.
+/// Return the cottage residents and story actors.
 const struct ScenePlacement *ValeKraden_GetPlacements(void) {
   return gValeKraden_Placements;
 }
 
-// Select events for the current visit to Vale.
+/// Select events for the current visit to Vale.
 const struct SceneEvent *ValeKraden_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
     return gValeKraden_EventsAfterKalay;
@@ -75,21 +75,21 @@ const struct SceneEvent *ValeKraden_GetEvents(void) {
   return gValeKraden_Events;
 }
 
-// Finish the party's nod together before the next line of dialogue.
+/// Finish the party's nod together before the next line of dialogue.
 static __inline__ void ValeKraden_NodTogether(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
 }
 
-// Turn all three party members toward the strangers.
+/// Turn all three party members toward the strangers.
 static __inline__ void ValeKraden_FacePartySouth(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(JENNA, FACING_SOUTH, 0);
 }
 
-// Start a companion walking back to Isaac's current pixel position.
+/// Start a companion walking back to Isaac's current pixel position.
 static __inline__ void ValeKraden_WalkTowardLeader(s32 companionId) {
   struct FieldActor *leader;
 
@@ -101,8 +101,8 @@ static __inline__ void ValeKraden_WalkTowardLeader(s32 companionId) {
   }
 }
 
-// The child at the fence asks whether Isaac hears the growls beyond it; once
-// the party has left Vale, he means to climb it someday.
+/// The child at the fence asks whether Isaac hears the growls beyond it; once
+/// the party has left Vale, he means to climb it someday.
 static void Event_TalkToFenceOnlooker(void) {
   s32 message;
 
@@ -129,8 +129,8 @@ static void Event_TalkToFenceOnlooker(void) {
   Engine_EventEnd();
 }
 
-// Talking to Kraden outside his cottage: he talks Isaac, Garet and Jenna into a
-// secret look at Sol Sanctum, then goes inside to prepare.
+/// Talking to Kraden outside his cottage: he talks Isaac, Garet and Jenna into
+/// a secret look at Sol Sanctum, then goes inside to prepare.
 static void Event_KradenPlansSanctumVisit(void) {
   struct FieldActor *leader;
   s32 x, z;
@@ -357,8 +357,8 @@ static void Event_KradenPlansSanctumVisit(void) {
   }
 }
 
-// Arriving by entrance 10, from the cottage: Kraden comes out ready ("This is
-// our best bet."), and everyone joins Isaac for Mt. Aleph.
+/// Arriving by entrance 10, from the cottage: Kraden comes out ready ("This is
+/// our best bet."), and everyone joins Isaac for Mt. Aleph.
 static void Event_KradenSetsOff(void) {
   struct FieldActor *actor;
   s32 facing;
@@ -422,7 +422,7 @@ static void Event_KradenSetsOff(void) {
   Engine_EventEnd();
 }
 
-// Walking into the cottage: the gate opens unless Kraden left it open.
+/// Walking into the cottage: the gate opens unless Kraden left it open.
 static void Event_EnterCottage(void) {
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_42) == 0) {
     Engine_AudioPlayCue(SE_DOOR_OPEN);
@@ -432,8 +432,8 @@ static void Event_EnterCottage(void) {
   Engine_EventRequestExit(3);
 }
 
-// Walking past the two strangers: Isaac, Garet and Jenna overhear Saturos and
-// Menardi, confront them and are warned off.
+/// Walking past the two strangers: Isaac, Garet and Jenna overhear Saturos and
+/// Menardi, confront them and are warned off.
 static void Event_MeetSaturosAndMenardi(void) {
   struct FieldActor *actor;
   s32 x, z;
@@ -639,8 +639,8 @@ static void Event_MeetSaturosAndMenardi(void) {
   Engine_EventEnd();
 }
 
-// Walking up to the cottage: Kraden paces, wondering aloud who the strangers
-// were and what they know of Sol Sanctum and the Elemental Stars.
+/// Walking up to the cottage: Kraden paces, wondering aloud who the strangers
+/// were and what they know of Sol Sanctum and the Elemental Stars.
 static void Event_OverhearKraden(void) {
   struct FieldActor *leader;
 
@@ -723,8 +723,8 @@ static void Event_OverhearKraden(void) {
   }
 }
 
-// Place the actors for the storm or for the day, and play the arrival from
-// the cottage.
+/// Place the actors for the storm or for the day, and play the arrival from
+/// the cottage.
 s32 ValeKraden_Initialize(void) {
   struct FieldActor *actor;
   s32 debrisRow;
@@ -808,8 +808,8 @@ s32 ValeKraden_Initialize(void) {
   return 0;
 }
 
-// The man hurt in the rockslide asks whether he will die: yes, and he gives up;
-// no, and he finds he is unhurt and runs off to the plaza.
+/// The man hurt in the rockslide asks whether he will die: yes, and he gives
+/// up; no, and he finds he is unhurt and runs off to the plaza.
 static void Event_TalkToRockslideSurvivor(void) {
   struct FieldActor *leader;
   s32 message;
@@ -894,7 +894,7 @@ static void Event_TalkToRockslideSurvivor(void) {
   }
 }
 
-// On the stormy night, a monster attacks by the broken fence.
+/// On the stormy night, a monster attacks by the broken fence.
 static void Event_FightFirstMonster(void) {
   struct EventWork *work;
 
@@ -910,7 +910,7 @@ static void Event_FightFirstMonster(void) {
   Engine_EventEnd();
 }
 
-// On the stormy night, a second monster attacks by the broken fence.
+/// On the stormy night, a second monster attacks by the broken fence.
 static void Event_FightSecondMonster(void) {
   struct EventWork *work;
 
@@ -926,8 +926,8 @@ static void Event_FightSecondMonster(void) {
   Engine_EventEnd();
 }
 
-// After the party has reached Kalay, a villager at the cottage asks Isaac about
-// his memories of it.
+/// After the party has reached Kalay, a villager at the cottage asks Isaac
+/// about his memories of it.
 static void Event_TalkToCottageVisitor(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeMemoriesOfThisCottage);
@@ -935,7 +935,7 @@ static void Event_TalkToCottageVisitor(void) {
   Engine_EventEnd();
 }
 
-// Lead the party away from the broken fence, then leave the map.
+/// Lead the party away from the broken fence, then leave the map.
 s32 gValeKraden_RockslideSurvivorEscapeActions[] = {
     SC_ARG(2), SC_MOVE(PIXELS(72), 0, PIXELS(294)),
     SC_SYNC,   SC_MOVE(PIXELS(77), 0, PIXELS(329)),
@@ -944,7 +944,7 @@ s32 gValeKraden_RockslideSurvivorEscapeActions[] = {
     SC_END,
 };
 
-// Alternate the survivor's width and height while he lies by the fence.
+/// Alternate the survivor's width and height while he lies by the fence.
 s32 gValeKraden_RockslideSurvivorSwayActions[] = {
     SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_ADD(SW_SCALE_X, Q16_ONE / 32),
@@ -964,7 +964,7 @@ s32 gValeKraden_RockslideSurvivorSwayActions[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-// Keep a linked actor facing its current target.
+/// Keep a linked actor facing its current target.
 s32 gValeKraden_FaceTargetActions[] = {
     SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),

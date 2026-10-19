@@ -43,16 +43,16 @@
 enum { ENTRANCE_FROM_WORLD_MAP = 4 };
 
 enum {
-  RIVER_LOG = 10, // actors 8 to 10 are the logs
-  TRET = 11,      // "Hroom!"
+  RIVER_LOG = 10, ///< actors 8 to 10 are the logs
+  TRET = 11,      ///< "Hroom!"
   LAUREL = 12,
-  // The domes of Psynergy, one over each member; Mia's only with Mia.
+  /// The domes of Psynergy, one over each member; Mia's only with Mia.
   LEADER_BARRIER = 13,
   IVAN_BARRIER = 14,
   MIA_BARRIER = 15,
   GARET_BARRIER = 16,
-  // The sparkles of Tret's glamour on the ground, gone once the curse is
-  // lifted.
+  /// The sparkles of Tret's glamour on the ground, gone once the curse is
+  /// lifted.
   FIRST_GROUND_SPARKLE = 17,
   LAST_GROUND_SPARKLE = 21
 };
@@ -71,8 +71,8 @@ extern s32 gKolimaForestBridge_SparkleSoundOn;
 // Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
-// The end of a dome's growing: if a sparkle has burst on a dome, the dome
-// takes its next pose.
+/// The end of a dome's growing: if a sparkle has burst on a dome, the dome
+/// takes its next pose.
 static s32
 KolimaForestBridge_FlashHitBarriers(struct ScriptInterpreter *interpreter) {
   u8 *object = (u8 *)interpreter;
@@ -84,9 +84,9 @@ KolimaForestBridge_FlashHitBarriers(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Each frame: a ground sparkle's timer runs on at random, and the sparkle
-// shows its bright frame (7) while the timer is past 1000, its dim one (10)
-// before; at 1200 the timer starts over.
+/// Each frame: a ground sparkle's timer runs on at random, and the sparkle
+/// shows its bright frame (7) while the timer is past 1000, its dim one (10)
+/// before; at 1200 the timer starts over.
 static s32
 KolimaForestBridge_TwinkleGroundSparkle(struct ScriptInterpreter *interpreter) {
   u8 *object = (u8 *)interpreter;
@@ -103,28 +103,28 @@ KolimaForestBridge_TwinkleGroundSparkle(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Where the party enters from the clearing and the world map.
+/// Where the party enters from the clearing and the world map.
 const struct SceneEntrance *KolimaForestBridge_GetEntrances(void) {
   return gKolimaForestBridge_Entrances;
 }
 
-// The bridge has no regions.
+/// The bridge has no regions.
 const struct SceneRegion *KolimaForestBridge_GetRegions(void) { return 0; }
 
-// The paths to the clearing and the world map.
+/// The paths to the clearing and the world map.
 const u32 *KolimaForestBridge_GetExits(void) {
   return gKolimaForestBridge_Exits;
 }
 
-// The party's companions, the logs, Tret, Laurel, the domes and the ground
-// sparkles.
+/// The party's companions, the logs, Tret, Laurel, the domes and the ground
+/// sparkles.
 const struct ScenePlacement *KolimaForestBridge_GetPlacements(void) {
   return gKolimaForestBridge_Placements;
 }
 
-// Walking into a log: it rolls ahead until something stops it. The river
-// log, stopped at the bank (cell column 20), tips over with a splash and
-// floats in the water; its cells become ground the party can cross.
+/// Walking into a log: it rolls ahead until something stops it. The river
+/// log, stopped at the bank (cell column 20), tips over with a splash and
+/// floats in the water; its cells become ground the party can cross.
 static void KolimaForestBridge_PushLog(void) {
   struct StagedActorProbe res;
   Engine_EventBegin();
@@ -154,14 +154,15 @@ static void KolimaForestBridge_PushLog(void) {
 // Shared source is included here in ROM order.
 #include "common/kolima_jump.h"
 
-// The logs, the jump east from the bank and the two paths.
+/// The logs, the jump east from the bank and the two paths.
 const struct SceneEvent *KolimaForestBridge_GetEvents(void) {
   return gKolimaForestBridge_Events;
 }
 
-// On entry a log already in the river floats there again and the logs mark
-// the cells they cover. From the world map, before the curse has been seen, the
-// party sees it fall; once the curse is lifted the ground sparkles are gone.
+/// On entry a log already in the river floats there again and the logs mark
+/// the cells they cover. From the world map, before the curse has been seen,
+/// the party sees it fall; once the curse is lifted the ground sparkles are
+/// gone.
 s32 KolimaForestBridge_Initialize(void) {
   FieldScene_RedrawActorFootprint(RIVER_LOG);
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00) != 0) {
@@ -187,14 +188,14 @@ s32 KolimaForestBridge_Initialize(void) {
   return 0;
 }
 
-// The party, on the bridge, sees the curse fall. Ivan notices sparkly stuff
-// on the ground; sparkles rain from the sky, the party sinks under them, and
-// domes of Psynergy rise around each member before the sparkles reach them.
-// They argue over whose Psynergy it was, the sparkles fall again and the
-// domes rise again, and Tret and Laurel speak: Tret turned Kolima's people
-// into trees for cutting him, and only his gentle side, deep in the forest,
-// can save them. Lines and choices for Mia are skipped when she is not in
-// the party.
+/// The party, on the bridge, sees the curse fall. Ivan notices sparkly stuff
+/// on the ground; sparkles rain from the sky, the party sinks under them, and
+/// domes of Psynergy rise around each member before the sparkles reach them.
+/// They argue over whose Psynergy it was, the sparkles fall again and the
+/// domes rise again, and Tret and Laurel speak: Tret turned Kolima's people
+/// into trees for cutting him, and only his gentle side, deep in the forest,
+/// can save them. Lines and choices for Mia are skipped when she is not in
+/// the party.
 static void KolimaForestBridge_WitnessForestCurse(void) {
   struct FieldActor *record;
   s32 *party;
@@ -1011,13 +1012,13 @@ static void KolimaForestBridge_WitnessForestCurse(void) {
   Engine_EventEnd();
 }
 
-// Show the next line, then leave time for the next beat.
+/// Show the next line, then leave time for the next beat.
 static void KolimaForestBridge_ShowMessageAndWait(s32 speaker, s32 frames) {
   Engine_EventShowMessage(speaker, 0);
   Engine_EventWait(frames);
 }
 
-// Turn an actor at once, then leave time for the next beat.
+/// Turn an actor at once, then leave time for the next beat.
 static void KolimaForestBridge_FaceActorAndWait(s32 actorId, s32 facing,
                                                 s32 waitFrames) {
   Engine_ActorFaceDirection(actorId, facing, 0);
@@ -1027,8 +1028,8 @@ static void KolimaForestBridge_FaceActorAndWait(s32 actorId, s32 facing,
 // Shared source is included here in ROM order.
 #include "common/kolima_grow.h"
 
-// Every eighth frame a sparkle of Tret's glamour (object 26) falls toward
-// the party, with its tinkle while the rain is at its height.
+/// Every eighth frame a sparkle of Tret's glamour (object 26) falls toward
+/// the party, with its tinkle while the rain is at its height.
 static void KolimaForestBridge_SpawnCurseSparkle(void) {
   struct FieldActor *sparkle;
   struct AnimationObject *sprite;
@@ -1065,8 +1066,8 @@ static void KolimaForestBridge_SpawnCurseSparkle(void) {
 // Shared source is included here in ROM order.
 #include "common/kolima_blink.h"
 
-// The end of a sparkle's fall: one that lands on a dome (the domes' area,
-// which differs with Mia) bursts with a sound, and the domes are told.
+/// The end of a sparkle's fall: one that lands on a dome (the domes' area,
+/// which differs with Mia) bursts with a sound, and the domes are told.
 static s32
 KolimaForestBridge_BurstOnBarrier(struct ScriptInterpreter *interpreter) {
   struct FieldActor *arg0 = (struct FieldActor *)interpreter;
@@ -1107,8 +1108,8 @@ s32 gKolimaForestBridge_BarrierHit __attribute__((section(".bss")));
 s32 gKolimaForestBridge_MiaInParty __attribute__((section(".bss")));
 s32 gKolimaForestBridge_SparkleSoundOn __attribute__((section(".bss")));
 
-// Each frame the domes flicker: two show on even frames and two on odd,
-// the hidden ones lifted 500 pixels out of sight.
+/// Each frame the domes flicker: two show on even frames and two on odd,
+/// the hidden ones lifted 500 pixels out of sight.
 static void KolimaForestBridge_FlickerBarriers(void) {
   struct FieldActor *p;
 
@@ -1150,7 +1151,7 @@ static void KolimaForestBridge_FlickerBarriers(void) {
   }
 }
 
-// Pixel step by direction: X in the upper halfword, Z in the lower.
+/// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {
@@ -1177,7 +1178,7 @@ s32 gStagedActor_FootprintBounds[] = {
 };
 // clang-format on
 
-// Garet, Ivan and Mia walk to their places beside the leader.
+/// Garet, Ivan and Mia walk to their places beside the leader.
 s32 gKolimaForestBridge_GaretAction[] = {
     SC_ARG(2), SC_MOVE(PIXELS(234), 0, PIXELS(576)),
     SC_SYNC,   SC_SET(SW_FACING, FACING_NORTHEAST),
@@ -1196,8 +1197,8 @@ s32 gKolimaForestBridge_MiaAction[] = {
     SC_ARG(1), SC_END,
 };
 
-// The glamour presses the party down: each squashes and wobbles until
-// released.
+/// The glamour presses the party down: each squashes and wobbles until
+/// released.
 s32 gKolimaForestBridge_SquashAction[] = {
     SC_ADD(SW_SCALE_X, -0x4000), SC_ADD(SW_SCALE_Y, 0x2000),  SC_WAIT(2),
     SC_ADD(SW_SCALE_X, 0x2000),  SC_ADD(SW_SCALE_Y, -0x1000), SC_WAIT(2),
@@ -1213,7 +1214,7 @@ s32 gKolimaForestBridge_RestoreScaleAction[] = {
     SC_END,
 };
 
-// A dome grows from a tenth of its size over 70 frames.
+/// A dome grows from a tenth of its size over 70 frames.
 s32 gKolimaForestBridge_BarrierGrowAction[] = {
     SC_SET(SW_SCALE_X, 0x1999),
     SC_SET(SW_SCALE_Y, 0x1999),
@@ -1227,7 +1228,7 @@ s32 gKolimaForestBridge_BarrierGrowAction[] = {
     SC_END,
 };
 
-// A dome sinks and shrinks away over 90 frames.
+/// A dome sinks and shrinks away over 90 frames.
 s32 gKolimaForestBridge_BarrierShrinkAction[] = {
     SC_ARG(1),
     SC_ADD(SW_Z, -0x1999),
@@ -1257,15 +1258,15 @@ struct SceneEntrance gKolimaForestBridge_Entrances[] = {
     {SCENE_TABLE_END},
 };
 
-// Exit 1 to the clearing (scene 41) and exit 4 to the world map (scene 2).
-// Exits 2 and 3, which no event uses, lead into this map (scene 40).
+/// Exit 1 to the clearing (scene 41) and exit 4 to the world map (scene 2).
+/// Exits 2 and 3, which no event uses, lead into this map (scene 40).
 u32 gKolimaForestBridge_Exits[] = {
     SCENE_EXITS(40),      SCENE_EXIT(1, 41, 1), SCENE_EXIT(2, 40, 1),
     SCENE_EXIT(3, 40, 1), SCENE_EXIT(4, 2, 8),  SCENE_EXITS_END,
 };
 
-// Garet, Ivan and Mia for the curse; the three logs; Tret and Laurel; the
-// four domes; and the five ground sparkles.
+/// Garet, Ivan and Mia for the curse; the three logs; Tret and Laurel; the
+/// four domes; and the five ground sparkles.
 // clang-format off
 struct ScenePlacement gKolimaForestBridge_Placements[] = {
     { 1, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
@@ -1319,7 +1320,7 @@ s32 gKolimaForestBridge_SparkleScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-// A sparkle bursts on a dome: it doubles in size and is gone.
+/// A sparkle bursts on a dome: it doubles in size and is gone.
 s32 gKolimaForestBridge_SparkleBurstScript[] = {
     SC_SET(SW_SCALE_X, 0x20000),
     SC_SET(SW_SCALE_Y, 0x20000),

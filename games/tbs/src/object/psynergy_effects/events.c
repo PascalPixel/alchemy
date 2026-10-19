@@ -1,5 +1,6 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Event commands: waits, received items, questions and destinations.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Event commands: waits, received items, questions and destinations.
 
 #include "../psynergy_effects_internal.h"
 
@@ -16,9 +17,9 @@
 #define GIFT_RECEIVED_MESSAGE_MODE 3
 #endif
 
-// Shows "Isaac got <item>." for an item the party has just received. The
-// German release has its own sentence for the Black Orb. flags are the
-// message window flags of UiText_ShowPositionedMessageAndWait.
+/// Shows "Isaac got <item>." for an item the party has just received. The
+/// German release has its own sentence for the Black Orb. flags are the
+/// message window flags of UiText_ShowPositionedMessageAndWait.
 static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
 #if (LANGUAGE == LANGUAGE_GERMAN)
   if (item == ITEM_BLACK_ORB) {
@@ -30,9 +31,9 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
   UiText_ShowPositionedMessageAndWaitFar(MsgColossoIsaacGotItem, flags);
 }
 
-// Debug only: while debug mode is on, R makes every event wait
-// (FieldEvent_WaitFrames) end at once and L restores normal waits. Runs as a
-// scheduler callback for the length of an event (FieldEvent_Begin).
+/// Debug only: while debug mode is on, R makes every event wait
+/// (FieldEvent_WaitFrames) end at once and L restores normal waits. Runs as a
+/// scheduler callback for the length of an event (FieldEvent_Begin).
 void Event_UpdateDebugSkip(void) {
   struct FieldWork *runtime = (struct FieldWork *)gEventWork;
 
@@ -46,17 +47,17 @@ void Event_UpdateDebugSkip(void) {
   }
 }
 
-// The event command "wait": waits the requested frames, unless debug fast
-// forward (Event_UpdateDebugSkip) is on.
+/// The event command "wait": waits the requested frames, unless debug fast
+/// forward (Event_UpdateDebugSkip) is on.
 void FieldEvent_WaitFrames(s32 frames) {
   if (((struct FieldWork *)gEventWork)->fastForward == 0 && frames != 0) {
     WaitFrames(frames);
   }
 }
 
-// Stops the leader where it stands: no horizontal velocity, the normal walking
-// speed (1.0) and acceleration (0.5), no destination, and the standing pose,
-// or the climbing pose (12) while the leader is on a climbable wall.
+/// Stops the leader where it stands: no horizontal velocity, the normal walking
+/// speed (1.0) and acceleration (0.5), no destination, and the standing pose,
+/// or the climbing pose (12) while the leader is on a climbable wall.
 void Leader_StopMoving(void) {
   struct ObjectRuntime *object;
 
@@ -74,9 +75,9 @@ void Leader_StopMoving(void) {
   ObjectDispatch_SelectAnimationFar(object, 1);
 }
 
-// The event command "begin event": closes any timed notice, stops the leader,
-// resets the message and timing state, and starts the debug fast-forward
-// callback with the leader as the message speaker.
+/// The event command "begin event": closes any timed notice, stops the leader,
+/// resets the message and timing state, and starts the debug fast-forward
+/// callback with the leader as the message speaker.
 void FieldEvent_Begin(void) {
   struct FieldWork *runtime = (struct FieldWork *)gEventWork;
 
@@ -99,22 +100,22 @@ void FieldEvent_Begin(void) {
   runtime->messageWindow = 0;
 }
 
-// Ends an event: stops the debug fast-forward callback, gives the camera back
-// to the leader and refreshes the lure cap.
+/// Ends an event: stops the debug fast-forward callback, gives the camera back
+/// to the leader and refreshes the lure cap.
 void FieldEvent_End(void) {
   Scheduler_RemoveCallback(Event_UpdateDebugSkip);
   Camera_FollowActor(gGameState.selectedActor, 1);
   GameFlag_RefreshLureCapFar();
 }
 
-// Does nothing; nothing calls it.
+/// Does nothing; nothing calls it.
 UNUSED void Event_NoOpHookA(void) {}
 
-// An empty hook the event layer calls; it does nothing in the released game.
+/// An empty hook the event layer calls; it does nothing in the released game.
 void Event_NoOpHook(void) {}
 
-// Respawns the scene's actors from a placement table and waits one frame for
-// them to appear.
+/// Respawns the scene's actors from a placement table and waits one frame for
+/// them to appear.
 void Event_RunObjectHookAndWait(struct ScenePlacement *table) {
   Event_NoOpHook();
   ObjectTable_ResetForObject(table);
@@ -122,20 +123,20 @@ void Event_RunObjectHookAndWait(struct ScenePlacement *table) {
   ObjectTable_Get(gGameState.selectedActor);
 }
 
-// Spawns the actors of a placement table after the last actor in use.
+/// Spawns the actors of a placement table after the last actor in use.
 void Event_CallWithLastActiveObjectId(struct ScenePlacement *table) {
   Event_SpawnObjectTable(table, ObjectTable_FindLastActiveId());
 }
 
-// Sets the scene's event table, which the field checks as the leader moves.
+/// Sets the scene's event table, which the field checks as the leader moves.
 void Event_SetSceneEvents(const struct SceneEvent *events) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
 
   work->events = events;
 }
 
-// Adds unit to the party. With announce nonzero it also shows "<name> joined
-// your party." (Party_ShowJoinedMessage, which receives announce too).
+/// Adds unit to the party. With announce nonzero it also shows "<name> joined
+/// your party." (Party_ShowJoinedMessage, which receives announce too).
 void Event_PrepareObjectAndApplyValue(s32 unit, s32 announce) {
   UnitGetFar(unit);
   Party_AddActiveOwnerFar(unit);
@@ -144,17 +145,17 @@ void Event_PrepareObjectAndApplyValue(s32 unit, s32 announce) {
   }
 }
 
-// Adds two units to the party and announces them together.
+/// Adds two units to the party and announces them together.
 void Event_PrepareTwoObjectsAndApply(s32 first, s32 second) {
   Party_AddActiveOwnerFar(first);
   Party_AddActiveOwnerFar(second);
   Party_ShowPairJoinedMessageFar(first, second);
 }
 
-// Checks an L or R button shortcut, packed as the member in bits 10 to 13 and
-// the Psynergy in bits 0 to 9. Returns 0 if it can still be cast, -1 for no
-// such party member, -2 when that member is not in the party and -3 when the
-// member no longer knows the Psynergy.
+/// Checks an L or R button shortcut, packed as the member in bits 10 to 13 and
+/// the Psynergy in bits 0 to 9. Returns 0 if it can still be cast, -1 for no
+/// such party member, -2 when that member is not in the party and -3 when the
+/// member no longer knows the Psynergy.
 s32 Event_ValidatePackedId(u32 shortcut) {
   s32 member = (shortcut >> 10) & 0xf;
   s32 ability = shortcut & 0x3ff;
@@ -168,7 +169,7 @@ s32 Event_ValidatePackedId(u32 shortcut) {
   return 0;
 }
 
-// Clears each button shortcut whose Psynergy can no longer be cast.
+/// Clears each button shortcut whose Psynergy can no longer be cast.
 void Event_ClearInvalidPackedValues(void) {
   if (Event_ValidatePackedId(gGameState.firstShortcut) != 0)
     gGameState.firstShortcut = 0;
@@ -176,9 +177,9 @@ void Event_ClearInvalidPackedValues(void) {
     gGameState.secondShortcut = 0;
 }
 
-// Takes unit out of the party, fully restoring its HP and PP and curing its
-// poison. If no member left standing has HP, the leader is given 1 HP so the
-// party is never left all down.
+/// Takes unit out of the party, fully restoring its HP and PP and curing its
+/// poison. If no member left standing has HP, the leader is given 1 HP so the
+/// party is never left all down.
 void Party_RemoveOwnerRestored(s32 unit) {
   struct BattleUnit *vitals;
   s32 partyIndex;
@@ -206,10 +207,10 @@ void Party_RemoveOwnerRestored(s32 unit) {
   }
 }
 
-// Checks whether the party can carry one more of item: each member carries at
-// most 30 of one item. When they are all full, says "Isaac's party cannot
-// carry any more <item>s..." and "Isaac threw the <item> as far away as
-// possible." and returns -1; otherwise returns 0.
+/// Checks whether the party can carry one more of item: each member carries at
+/// most 30 of one item. When they are all full, says "Isaac's party cannot
+/// carry any more <item>s..." and "Isaac threw the <item> as far away as
+/// possible." and returns -1; otherwise returns 0.
 s32 Party_CheckItemLimit(s32 item) {
   s32 partyCount;
   s32 heldQuantity = 0;
@@ -230,11 +231,11 @@ s32 Party_CheckItemLimit(s32 item) {
   return 0;
 }
 
-// The event command "give item": gives item to the first party member with
-// room for it and says so. When every bag is full, the player picks an item
-// to drop to make room, or drops the new item instead (not allowed for an
-// indispensable one). Returns the member who received the item, or -1 when
-// it was left behind.
+/// The event command "give item": gives item to the first party member with
+/// room for it and says so. When every bag is full, the player picks an item
+/// to drop to make room, or drops the new item instead (not allowed for an
+/// indispensable one). Returns the member who received the item, or -1 when
+/// it was left behind.
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   // A for/continue retry loop shrinks native English 0x1c4 -> 0x1a8;
   // retain the original backedges until a plain form matches.
@@ -329,21 +330,21 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   return owner;
 }
 
-// Gives item to one party member. Returns unit, or -1 if its bag is full.
+/// Gives item to one party member. Returns unit, or -1 if its bag is full.
 s32 Inventory_TryAddAndReturnOwner(s32 item, s32 unused, s32 unit) {
   if (Inventory_AddItemFar(unit, item) >= 0)
     return unit;
   return -1;
 }
 
-// Does nothing.
+/// Does nothing.
 void Inventory_NoOpCallback(void) {}
 
-// Does nothing.
+/// Does nothing.
 void Inventory_ReservedNoOp(void) {}
 
-// Waits, at most 90 frames, for an actor's animation to stop being animation:
-// the actor has finished a one-off animation such as a nod.
+/// Waits, at most 90 frames, for an actor's animation to stop being animation:
+/// the actor has finished a one-off animation such as a nod.
 void Actor_WaitForAnimationEnd(s32 actor, s32 animation) {
   struct ObjectRuntime *actorObject = ObjectTable_Get(actor);
 
@@ -362,10 +363,10 @@ void Actor_WaitForAnimationEnd(s32 actor, s32 animation) {
   }
 }
 
-// The event command "choose yes or no": once the message on screen has been
-// read, asks yes or no below it, or above it when the message windows reach
-// past row 15 or forceBottom is set. The speaker nods (animation 3) at yes
-// and shakes its head (animation 4) at no. Returns 0 for yes, 1 for no.
+/// The event command "choose yes or no": once the message on screen has been
+/// read, asks yes or no below it, or above it when the message windows reach
+/// past row 15 or forceBottom is set. The speaker nods (animation 3) at yes
+/// and shakes its head (animation 4) at no. Returns 0 for yes, 1 for no.
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   s32 sprite = Scene_FindActorPlacement(work->speaker)->sprite;
@@ -413,14 +414,14 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   return answer;
 }
 
-// Asks yes or no at the top of the screen, or at the bottom with atBottom
-// set. Returns 0 for yes, 1 for no.
+/// Asks yes or no at the top of the screen, or at the bottom with atBottom
+/// set. Returns 0 for yes, 1 for no.
 s32 Menu_AskYesNo(s32 atBottom) {
   return Menu_RunConfirmSelectionFar(atBottom, 0, 0, 0);
 }
 
-// Teaches unit the Psynergy ability and says "<unit> learned <ability>." with
-// its jingle, waiting for the player to read it.
+/// Teaches unit the Psynergy ability and says "<unit> learned <ability>." with
+/// its jingle, waiting for the player to read it.
 void Party_LearnAbility(s32 unit, s32 ability) {
   // Declared without parameters: unit and ability pass through in r0 and r1.
   Unit_LearnPsynergyFar();
@@ -430,7 +431,7 @@ void Party_LearnAbility(s32 unit, s32 ability) {
   UiText_ShowPositionedMessageAndWaitFar(MsgAbilityLearned, 3);
 }
 
-// The event command "open screen": starts the event's screen transition.
+/// The event command "open screen": starts the event's screen transition.
 void Event_StartScreenTransition(void) {
   struct FieldWork *runtime = (struct FieldWork *)gEventWork;
 
@@ -438,7 +439,7 @@ void Event_StartScreenTransition(void) {
   runtime->transitionActive = 1;
 }
 
-// The event command "close screen": finishes the event's screen transition.
+/// The event command "close screen": finishes the event's screen transition.
 void Event_FinishScreenTransition(void) {
   struct FieldWork *runtime = (struct FieldWork *)gEventWork;
 
@@ -446,20 +447,20 @@ void Event_FinishScreenTransition(void) {
   runtime->transitionActive = 0;
 }
 
-// The event command "wait for screen": waits as long as the transition runs.
+/// The event command "wait for screen": waits as long as the transition runs.
 void Event_WaitTransitionFrames(void) {
   WaitFrames(((struct FieldWork *)gEventWork)->transitionFrames);
 }
 
-// Makes the event leave for entrance entrance of scene scene.
+/// Makes the event leave for entrance entrance of scene scene.
 void Event_SetDestination(s32 scene, s32 entrance) {
   ((struct FieldWork *)gEventWork)->exit = 999;
   gGameState.scene = scene;
   gGameState.entrance = entrance;
 }
 
-// Makes the event leave and records scene and entrance as the saved
-// destination.
+/// Makes the event leave and records scene and entrance as the saved
+/// destination.
 void Event_SetSavedDestination(u16 scene, u16 entrance) {
   struct FieldWork *state = (struct FieldWork *)gEventWork;
   state->exit = 999;
@@ -467,8 +468,8 @@ void Event_SetSavedDestination(u16 scene, u16 entrance) {
   gGameState.savedEntrance = entrance;
 }
 
-// The event command "request exit": sets the field's exit request (999 leaves
-// for gGameState's scene and entrance).
+/// The event command "request exit": sets the field's exit request (999 leaves
+/// for gGameState's scene and entrance).
 void Event_SetExitRequest(u16 request) {
   struct FieldWork *state = (struct FieldWork *)gEventWork;
   state->exit = request;

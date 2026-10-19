@@ -1,5 +1,6 @@
-// Part of psynergy_effects.c, compiled only through it.
-// The world map screen: place markers, the cursor and the place name.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// The world map screen: place markers, the cursor and the place name.
 
 #include "../psynergy_effects_internal.h"
 
@@ -13,23 +14,23 @@
 #define WORLD_MAP_MARKER_ALLOCATION_SIZE 32
 #endif
 
-// The world map screen's work, kept in gMapCellBuffer.
+/// The world map screen's work, kept in gMapCellBuffer.
 struct WorldMapWork {
-  u16 vramBlock;           // VRAM block of the markers' tiles
-  u16 windowSlot;          // a second VRAM block, returned at the end
-  union FieldCoordinate x; // the cursor, in pixels
+  u16 vramBlock;           ///< VRAM block of the markers' tiles
+  u16 windowSlot;          ///< a second VRAM block, returned at the end
+  union FieldCoordinate x; ///< the cursor, in pixels
   union FieldCoordinate z;
   u8 padding0c[6];
-  s16 shown; // the marker whose name is shown (-1: none)
+  s16 shown; ///< the marker whose name is shown (-1: none)
   u8 padding14[4];
-  s32 speed; // the cursor's speed
+  s32 speed; ///< the cursor's speed
   struct UiWindow *window;
   struct AnimationSpritePart markers[67];
 };
 
-// Sets up the world map screen: the marker tiles and their OAM entries, the
-// cursor where the leader is on the map (or mid-screen when the place is not
-// on it), and the place-name window.
+/// Sets up the world map screen: the marker tiles and their OAM entries, the
+/// cursor where the leader is on the map (or mid-screen when the place is not
+/// on it), and the place-name window.
 void BattleFx_SetupResourcesAndWindow(void) {
   u32 *oam;
   u32 *markerTiles;
@@ -90,7 +91,7 @@ void BattleFx_SetupResourcesAndWindow(void) {
 }
 
 #if TBS_PATCH_2
-// The cursor snaps to the nearest place when the d-pad is released.
+/// The cursor snaps to the nearest place when the d-pad is released.
 #define WORLD_MAP_CURSOR_SNAPS 1
 #define WORLD_MAP_NAME_RANGE 64 // squared distance that shows a place's name
 #define WORLD_MAP_NAME_LEFT 3   // how far left of its marker the name goes
@@ -100,8 +101,8 @@ void BattleFx_SetupResourcesAndWindow(void) {
 #define WORLD_MAP_NAME_LEFT 1
 #endif
 
-// Closes the world map screen: returns its VRAM blocks and removes the
-// place-name window.
+/// Closes the world map screen: returns its VRAM blocks and removes the
+/// place-name window.
 void BattleFx_CleanupResourcesAndWindow(void) {
   struct WorldMapWork *work = (struct WorldMapWork *)gMapCellBuffer;
 
@@ -110,9 +111,9 @@ void BattleFx_CleanupResourcesAndWindow(void) {
   UiWork_FinalizeFar(work->window, 2);
 }
 
-// Scheduler callback of the world map screen: shows a marker at each place
-// whose flag is set, moves the cursor with the d-pad (to the current place
-// while L or R is held) and shows the name of the marker nearest the cursor.
+/// Scheduler callback of the world map screen: shows a marker at each place
+/// whose flag is set, moves the cursor with the d-pad (to the current place
+/// while L or R is held) and shows the name of the marker nearest the cursor.
 void Map_UpdateWorldMapMarkers(void) {
   s32 leader;
   const s32 *place;
@@ -324,10 +325,10 @@ void Map_UpdateWorldMapMarkers(void) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend, 0x20000);
 }
 
-// Shows the world map screen from the world map (event mode 3): closes the
-// screen, pauses the map's animations, draws the map picture on BG1 and runs
-// Map_UpdateWorldMapMarkers until A or B, then puts everything back. Says
-// "This place doesn't seem to be on the map..." when it is not.
+/// Shows the world map screen from the world map (event mode 3): closes the
+/// screen, pauses the map's animations, draws the map picture on BG1 and runs
+/// Map_UpdateWorldMapMarkers until A or B, then puts everything back. Says
+/// "This place doesn't seem to be on the map..." when it is not.
 void Map_ShowWorldMap(s32 picture) {
   struct MapState *map = WORK_SLOT(8);
   struct FieldWork *field =
@@ -392,8 +393,8 @@ void Map_ShowWorldMap(s32 picture) {
   field->camera->movementState = 0;
 }
 
-// On the world map, shows only the scene actors within 320 pixels sideways,
-// 600 above and 400 below the camera.
+/// On the world map, shows only the scene actors within 320 pixels sideways,
+/// 600 above and 400 below the camera.
 void Field_UpdateObjectVisibilityBounds(void) {
   struct ObjectRuntime *object;
   s32 x;
@@ -432,7 +433,7 @@ void Field_UpdateObjectVisibilityBounds(void) {
   } while (id <= 65);
 }
 
-// On the world map, zooms the view out (0x9d89) while L is held, then back.
+/// On the world map, zooms the view out (0x9d89) while L is held, then back.
 void BattleFx_RunVisibilityTransition(void) {
   struct FieldWork *field =
       Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));

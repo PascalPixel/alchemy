@@ -58,20 +58,20 @@ static void Garden_OpenPalaceGate(void);
 // Shared scene code, included where the ROM places it.
 #include "common/object_facing.h"
 
-// Where the party can enter the garden.
+/// Where the party can enter the garden.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gMcCoyPalaceGardenEntrances;
 }
 
-// The garden has no regions.
+/// The garden has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-// Where each exit leads.
+/// Where each exit leads.
 const u32 *Scene_GetExits(void) { return gMcCoyPalaceGardenExits; }
 
-// The garden's people. Once McCoy has turned the party away, the east guard
-// turns back after talking, and once the curse is lifted McCoy faces the
-// party.
+/// The garden's people. Once McCoy has turned the party away, the east guard
+/// turns back after talking, and once the curse is lifted McCoy faces the
+/// party.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_McCoyPalaceGarden) {
     if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_BARRICADE_HINT) != 0)
@@ -83,7 +83,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gMcCoyPalaceGardenPlacementsOther;
 }
 
-// Catch on the nut floating over the garden: the party gets it.
+/// Catch on the nut floating over the garden: the party gets it.
 static void Event_CatchFloatingNut(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(ACTOR_FLOATING_NUT, 0, 0);
@@ -93,7 +93,7 @@ static void Event_CatchFloatingNut(void) {
   Engine_EventEnd();
 }
 
-// Searching the dry well.
+/// Searching the dry well.
 static void Event_SearchWell(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
@@ -101,7 +101,7 @@ static void Event_SearchWell(void) {
   Engine_EventEnd();
 }
 
-// What the party can talk to, search and catch in the garden.
+/// What the party can talk to, search and catch in the garden.
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_McCoyPalaceGarden) {
     return gMcCoyPalaceGardenEvents;
@@ -109,7 +109,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gMcCoyPalaceGardenEventsOther;
 }
 
-// The north worker asks whether the party has seen the barricade.
+/// The north worker asks whether the party has seen the barricade.
 static void Event_TalkToNorthWorker(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinHaveYouSeenBarricadeWe);
@@ -117,7 +117,7 @@ static void Event_TalkToNorthWorker(void) {
   Engine_EventEnd();
 }
 
-// McCoy asks whether the palace work makes him responsible for the curse.
+/// McCoy asks whether the palace work makes him responsible for the curse.
 static void Event_TalkToMcCoy(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinTellingMeImResponsibleFor);
@@ -125,7 +125,7 @@ static void Event_TalkToMcCoy(void) {
   Engine_EventEnd();
 }
 
-// The young west guard asks whether he can become a warrior like them.
+/// The young west guard asks whether he can become a warrior like them.
 static void Event_TalkToWestGuard(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinDoThinkCanBecomeAs);
@@ -133,9 +133,9 @@ static void Event_TalkToWestGuard(void) {
   Engine_EventEnd();
 }
 
-// The east guard: until he lets them in, he asks whether they are brave
-// enough to meet McCoy and, on yes, opens the gate and walks in with his
-// partner; after, he scolds them once for keeping McCoy waiting.
+/// The east guard: until he lets them in, he asks whether they are brave
+/// enough to meet McCoy and, on yes, opens the gate and walks in with his
+/// partner; after, he scolds them once for keeping McCoy waiting.
 static void Event_TalkToEastGuard(void) {
   Engine_EventBegin();
   // Once admitted, the party only receives the guard's current reminder.
@@ -220,7 +220,8 @@ static void Event_TalkToEastGuard(void) {
   Engine_EventEnd();
 }
 
-// Walking into the palace gate: it opens if still shut and the leader walks in.
+/// Walking into the palace gate: it opens if still shut and the leader walks
+/// in.
 static void Event_EnterPalace(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) == 0) {
@@ -235,8 +236,8 @@ static void Event_EnterPalace(void) {
   Engine_EventEnd();
 }
 
-// Sets the garden up: the west worker drawn in front, and the guards, McCoy and
-// the arrest as the story stands.
+/// Sets the garden up: the west worker drawn in front, and the guards, McCoy
+/// and the arrest as the story stands.
 s32 Scene_Initialize(void) {
   struct EventWork *work = gEventWork;
   struct FieldActor *actor;
@@ -254,9 +255,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// The guards stand where the party left them; once the curse is lifted,
-// McCoy waits in the garden and, the first time, the guards arrest the
-// party.
+/// The guards stand where the party left them; once the curse is lifted,
+/// McCoy waits in the garden and, the first time, the guards arrest the
+/// party.
 static void Garden_ApplyProgress(void) {
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
     Engine_GameFlagClear(FLAG_SCENE_TEMP_00);
@@ -287,9 +288,9 @@ static void Garden_ApplyProgress(void) {
   }
 }
 
-// Kolima's curse is lifted: the guards stop the party, ask whether they
-// broke the holy tree's curse until they answer yes, and march them into
-// the palace to McCoy.
+/// Kolima's curse is lifted: the guards stop the party, ask whether they
+/// broke the holy tree's curse until they answer yes, and march them into
+/// the palace to McCoy.
 static void Event_GuardsArrestParty(void) {
 
   // Bring the leader into view before the guards interrupt.
@@ -376,7 +377,7 @@ static void Event_GuardsArrestParty(void) {
   Engine_EventEnd();
 }
 
-// The palace gate swings open.
+/// The palace gate swings open.
 static void Garden_OpenPalaceGate(void) {
   Engine_AudioPlayCue(SE_188);
   Engine_MapAnimateCells(gPalaceGateOpenSteps, 52, 11);
@@ -387,12 +388,12 @@ static void Garden_OpenPalaceGate(void) {
 #include "common/object_orbit.h"
 
 // clang-format off
-// The gate opening: three steps of cells, 5 frames each.
+/// The gate opening: three steps of cells, 5 frames each.
 u16 gPalaceGateOpenSteps[] = {
     MAP_CELL_STEP(34, 25, 1, 3, 5), MAP_CELL_STEP(35, 25, 1, 3, 5), MAP_CELL_STEP(36, 25, 1, 3, 5), MAP_CELL_STEPS_END,
 };
 
-// A guard turns to keep facing the party.
+/// A guard turns to keep facing the party.
 s32 gGuardWatchesParty[] = {
     SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),

@@ -60,16 +60,16 @@ enum JailSprite {
 
 enum { CELL_COLLISION_FLAGS = 0x14 };
 
-// Returns the entrances from Vault, Lunpa and the revisited Vault.
+/// Returns the entrances from Vault, Lunpa and the revisited Vault.
 const struct SceneEntrance *Scene_GetEntrances(void) { return gJailEntrances; }
 
-// This scene has no exit regions.
+/// This scene has no exit regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-// Returns the exits back to the three surrounding scene states.
+/// Returns the exits back to the three surrounding scene states.
 const u32 *Scene_GetExits(void) { return gJailExits; }
 
-// The revisit entrance replaces the thieves with the lone prisoner.
+/// The revisit entrance replaces the thieves with the lone prisoner.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.entrance == JAIL_ENTRANCE_FROM_VAULT_REVISIT) {
     return gJailPrisonerPlacements;
@@ -77,7 +77,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gJailThiefPlacements;
 }
 
-// Selects the events belonging to the same entrance-dependent occupants.
+/// Selects the events belonging to the same entrance-dependent occupants.
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.entrance == JAIL_ENTRANCE_FROM_VAULT_REVISIT) {
     return gJailPrisonerEvents;
@@ -85,8 +85,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gJailThiefEvents;
 }
 
-// The jailed leader glares at each of his men and snaps "Shut yer yaps!",
-// then turns to the party: they got us this time, but you'll pay for this.
+/// The jailed leader glares at each of his men and snaps "Shut yer yaps!",
+/// then turns to the party: they got us this time, but you'll pay for this.
 static void Event_LeaderSilencesThieves(void) {
   Engine_EventBegin();
 
@@ -115,8 +115,8 @@ static void Event_LeaderSilencesThieves(void) {
   Engine_EventEnd();
 }
 
-// The left thief wishes they had escaped to the cave northeast of the Goma
-// Range.
+/// The left thief wishes they had escaped to the cave northeast of the Goma
+/// Range.
 static void Event_LeftThiefRegretsEscape(void) {
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
@@ -126,7 +126,7 @@ static void Event_LeftThiefRegretsEscape(void) {
   Engine_EventEnd();
 }
 
-// The right thief shakes his head: they should have skipped town sooner.
+/// The right thief shakes his head: they should have skipped town sooner.
 static void Event_RightThiefRegretsStaying(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
@@ -136,7 +136,7 @@ static void Event_RightThiefRegretsStaying(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the leader: he'll be out of this jail before you know it.
+/// Mind Read on the leader: he'll be out of this jail before you know it.
 static void Event_ReadLeaderMind(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultThiefLeaderThoughts);
@@ -144,7 +144,7 @@ static void Event_ReadLeaderMind(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the left thief: will he ever run free again?
+/// Mind Read on the left thief: will he ever run free again?
 static void Event_ReadLeftThiefMind(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultLeftThiefThoughts);
@@ -152,7 +152,7 @@ static void Event_ReadLeftThiefMind(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the right thief: is this for stealing Hammet's Shaman's Rod?
+/// Mind Read on the right thief: is this for stealing Hammet's Shaman's Rod?
 static void Event_ReadRightThiefMind(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultRightThiefThoughts);
@@ -160,13 +160,13 @@ static void Event_ReadRightThiefMind(void) {
   Engine_EventEnd();
 }
 
-// The party steps out of the jail into Vault.
+/// The party steps out of the jail into Vault.
 static void Event_LeaveForVault(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventRequestExit(JAIL_EXIT_TO_VAULT);
 }
 
-// Sets the transition and the collision flags of the entrance's occupants.
+/// Sets the transition and the collision flags of the entrance's occupants.
 s32 Scene_Initialize(void) {
   s16 entrance;
 

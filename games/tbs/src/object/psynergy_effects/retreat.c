@@ -1,12 +1,13 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Retreat.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Retreat.
 
 #include "../psynergy_effects_internal.h"
 
 // The scene owns PSYNERGY_EFFECT_SLOT_COUNT particle slots.
 
-// Per-frame update: spins by 0x1000 + timer * 0x50 a frame, speeding up
-// (timer counts up) until timer * 0x50 reaches 0x1000.
+/// Per-frame update: spins by 0x1000 + timer * 0x50 a frame, speeding up
+/// (timer counts up) until timer * 0x50 reaches 0x1000.
 void FieldFx_UpdateSpinAngle(union FieldObject *fieldObject) {
   struct FieldActor *obj = (struct FieldActor *)fieldObject;
   u32 step;
@@ -17,8 +18,8 @@ void FieldFx_UpdateSpinAngle(union FieldObject *fieldObject) {
     obj->timer = obj->timer + 1;
 }
 
-// Per-frame update: spins 1/8 turn a frame as it shrinks, rising a pixel a
-// frame; released once its scale falls below 0x3000.
+/// Per-frame update: spins 1/8 turn a frame as it shrinks, rising a pixel a
+/// frame; released once its scale falls below 0x3000.
 void BattleFx_UpdateDescendingObject(union FieldObject *fieldObject) {
   struct FieldActor *obj = (struct FieldActor *)fieldObject;
   u32 scale;
@@ -32,9 +33,9 @@ void BattleFx_UpdateDescendingObject(union FieldObject *fieldObject) {
     obj->spriteStorageKind = 0;
 }
 
-// Effect slot callback: a particle flies 120 pixels from the main object's
-// screen position (8 pixels lower) in a direction within 1/8 turn of up the
-// screen. In state 1 it flies again on arrival; in state 2 it is freed.
+/// Effect slot callback: a particle flies 120 pixels from the main object's
+/// screen position (8 pixels lower) in a direction within 1/8 turn of up the
+/// screen. In state 1 it flies again on arrival; in state 2 it is freed.
 void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot) {
   struct EffectVector pos;
   struct FieldActor *main;
@@ -80,9 +81,10 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot) {
   }
 }
 
-// Abilities: Retreat (field kind 15).
-//
-// Spins the main object and shrinks it while 24 particles fly out, one a frame.
+/// Abilities: Retreat (field kind 15).
+///
+/// Spins the main object and shrinks it while 24 particles fly out, one a
+/// frame.
 void FieldFx_RunRetreat(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *obj = scene->mainObject;
@@ -150,10 +152,10 @@ void FieldFx_RunRetreat(void) {
   WaitFrames(10);
 }
 
-// Per-frame update of a falling arc: grows toward full size as it falls 2
-// pixels a frame on the object it follows, 9 pixels in front of it and up
-// to 5 pixels further while small; released 10 pixels above the ground (4
-// on the clear screen).
+/// Per-frame update of a falling arc: grows toward full size as it falls 2
+/// pixels a frame on the object it follows, 9 pixels in front of it and up
+/// to 5 pixels further while small; released 10 pixels above the ground (4
+/// on the clear screen).
 void BattleFx_UpdateDescendingParticlePositiveArc(
     union FieldObject *fieldObject) {
   // One shared inline kernel with constant inversion grows the positive and
@@ -185,8 +187,8 @@ void BattleFx_UpdateDescendingParticlePositiveArc(
   particle->z.fixed = source->z.fixed + ((0x10000 - scale) * 5) + 0x90000;
 }
 
-// As BattleFx_UpdateDescendingParticlePositiveArc for the arc drawn upside
-// down, 16 pixels in front of the object and up to 5 pixels nearer.
+/// As BattleFx_UpdateDescendingParticlePositiveArc for the arc drawn upside
+/// down, 16 pixels in front of the object and up to 5 pixels nearer.
 void BattleFx_UpdateDescendingParticleNegativeArc(
     union FieldObject *fieldObject) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
@@ -246,7 +248,7 @@ struct DescendingArcSprite {
   struct AnimationEntry *frame;
 };
 
-// Spawns a pair of falling arcs (one upside down) on arc.
+/// Spawns a pair of falling arcs (one upside down) on arc.
 void BattleFx_SpawnDescendingArcParticles(struct FieldActor *arc) {
   struct FieldActor *source = arc;
   struct BattleFxScene *scene = gEffectWork;

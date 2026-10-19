@@ -1,10 +1,11 @@
-// Part of field.c, the field object, compiled only through it.
-// Object script commands: waits, jumps, flags, moves and work values.
+/// @file
+/// Part of field.c, the field object, compiled only through it.
+/// Object script commands: waits, jumps, flags, moves and work values.
 
 #include "../field_internal.h"
 
-// SC_WAIT(n): waits n frames; this frame counts as the first. Returns 0 to
-// end the object's commands for this frame.
+/// SC_WAIT(n): waits n frames; this frame counts as the first. Returns 0 to
+/// end the object's commands for this frame.
 s32 Script_Wait(struct ScriptInterpreter *interpreter) {
   s16 commandCursor = interpreter->cursor;
 
@@ -13,9 +14,9 @@ s32 Script_Wait(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-// SC_SYNC: waits until the object arrives at its target, or until a solid
-// object has blocked it for 60 frames (delay is the blocked count, which
-// the update raises). Returns 1 (run on) once it has, 0 (wait) until then.
+/// SC_SYNC: waits until the object arrives at its target, or until a solid
+/// object has blocked it for 60 frames (delay is the blocked count, which
+/// the update raises). Returns 1 (run on) once it has, 0 (wait) until then.
 s32 Script_WaitForArrival(struct ScriptInterpreter *interpreter) {
   if (interpreter->delay > 0x3B) {
     interpreter->delay = 0;
@@ -29,9 +30,9 @@ s32 Script_WaitForArrival(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-// SC_CALL(fn): calls fn with the object. A non-zero result waits and calls
-// it again next frame; zero moves on, past the command unless fn moved the
-// cursor itself.
+/// SC_CALL(fn): calls fn with the object. A non-zero result waits and calls
+/// it again next frame; zero moves on, past the command unless fn moved the
+/// cursor itself.
 s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter) {
   s16 initialCursor = interpreter->cursor;
   ScriptCommand callback =
@@ -44,9 +45,9 @@ s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Returns the cursor just past the script's label key (SC_LABEL or SC_TO,
-// matched without the bit that tells them apart), searching its first 1024
-// words, or 0 (the start) when key is 0 or not found. Clears the wait.
+/// Returns the cursor just past the script's label key (SC_LABEL or SC_TO,
+/// matched without the bit that tells them apart), searching its first 1024
+/// words, or 0 (the start) when key is 0 or not found. Clears the wait.
 s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 labelKey) {
   u32 *scriptWords;
   s32 wordIndex;
@@ -70,8 +71,8 @@ s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 labelKey) {
   return 0;
 }
 
-// SC_LOOP(n, to): jumps to label to until it has done so n - 1 times, then
-// moves on; with n = SC_FOREVER it always jumps.
+/// SC_LOOP(n, to): jumps to label to until it has done so n - 1 times, then
+/// moves on; with n = SC_FOREVER it always jumps.
 s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter) {
   const s32 *arguments;
   s32 repeatLimit;
@@ -98,14 +99,14 @@ s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// SC_JUMP(to): jumps to label to.
+/// SC_JUMP(to): jumps to label to.
 s32 Script_JumpToLabel(struct ScriptInterpreter *interpreter) {
   interpreter->cursor = Script_FindLabel(
       interpreter, interpreter->script[interpreter->cursor + 1]);
   return 1;
 }
 
-// SC_IF(to): jumps to label to when the last test was true.
+/// SC_IF(to): jumps to label to when the last test was true.
 s32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter) {
   s32 commandCursor = interpreter->cursor;
   const s32 *script = interpreter->script;
@@ -119,7 +120,7 @@ s32 Script_JumpIfTrue(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// SC_IFNOT(to): jumps to label to when the last test was false.
+/// SC_IFNOT(to): jumps to label to when the last test was false.
 s32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter) {
   s32 commandCursor = interpreter->cursor;
   const s32 *script = interpreter->script;
@@ -133,7 +134,7 @@ s32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// SC_END: hands the object back to the idle script. Returns 0.
+/// SC_END: hands the object back to the idle script. Returns 0.
 s32 Script_End(struct ScriptInterpreter *interpreter) {
   s32 result;
 
@@ -142,7 +143,7 @@ s32 Script_End(struct ScriptInterpreter *interpreter) {
   return result;
 }
 
-// SC_FLAG_CHECK(f): tests game flag f.
+/// SC_FLAG_CHECK(f): tests game flag f.
 s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
   interpreter->conditionResult =
       GameFlag_TestFar(interpreter->script[interpreter->cursor + 1]);
@@ -150,8 +151,8 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Defines a flag command: stores the flag's current value in conditionResult,
-// then changes the flag with change.
+/// Defines a flag command: stores the flag's current value in conditionResult,
+/// then changes the flag with change.
 #define SCRIPT_DEFINE_FLAG_COMMAND(name, change)                               \
   s32 name(struct ScriptInterpreter *interpreter) {                            \
     s32 flagId;                                                                \
@@ -163,11 +164,11 @@ s32 Script_TestFlag(struct ScriptInterpreter *interpreter) {
     return 1;                                                                  \
   }
 
-// SC_FLAG_ON(f) and SC_FLAG_OFF(f): test game flag f, then set or clear it.
+/// SC_FLAG_ON(f) and SC_FLAG_OFF(f): test game flag f, then set or clear it.
 SCRIPT_DEFINE_FLAG_COMMAND(Script_SetFlagAndTest, GameFlag_SetBitFar)
 SCRIPT_DEFINE_FLAG_COMMAND(Script_ClearFlagAndTest, GameFlag_ClearBitFar)
 
-// SC_FLAG_REV(f): tests game flag f, then flips it.
+/// SC_FLAG_REV(f): tests game flag f, then flips it.
 s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter) {
   s32 flagId;
   s32 previousFlagValue;
@@ -184,7 +185,7 @@ s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// SC_ARG(v): switches the object's sprites to animation v.
+/// SC_ARG(v): switches the object's sprites to animation v.
 s32 Script_SetAnimation(struct ScriptInterpreter *interpreter) {
   ObjectDispatch_SelectAnimation(interpreter,
                                  interpreter->script[interpreter->cursor + 1]);
@@ -192,27 +193,27 @@ s32 Script_SetAnimation(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// SC_FREE: releases the object. Returns 0.
+/// SC_FREE: releases the object. Returns 0.
 s32 Script_FreeObject(struct ScriptInterpreter *interpreter) {
   ObjectDispatch_Release((struct DispatchObject *)interpreter);
   return 0;
 }
 
-// SC_NOP(v): does nothing with its operand.
+/// SC_NOP(v): does nothing with its operand.
 s32 Script_Nop(struct ScriptInterpreter *interpreter) {
   interpreter->cursor += 2;
   return 1;
 }
 
-// SC_SE(n): sends sound command n (a sound effect).
+/// SC_SE(n): sends sound command n (a sound effect).
 s32 Script_PlaySound(struct ScriptInterpreter *interpreter) {
   AudioCommand_PlayFar(interpreter->script[interpreter->cursor + 1]);
   interpreter->cursor += 2;
   return 1;
 }
 
-// Returns -1 when an object at position values would overlap a solid
-// object (bit 0 of unk59), each radius less 2 pixels; otherwise 0.
+/// Returns -1 when an object at position values would overlap a solid
+/// object (bit 0 of unk59), each radius less 2 pixels; otherwise 0.
 s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values) {
   s32 objectIndex;
   u8 *collisionFlags;
@@ -232,8 +233,8 @@ s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values) {
   return 0;
 }
 
-// Returns the first solid object that an object at position values would
-// overlap, as ScriptObject_CheckOverlap tests, or NULL.
+/// Returns the first solid object that an object at position values would
+/// overlap, as ScriptObject_CheckOverlap tests, or NULL.
 struct ScriptObjectEntry *
 ScriptObject_FindOverlappingEntry(struct ScriptObjectEntry *object,
                                   s32 *values) {
@@ -255,7 +256,7 @@ ScriptObject_FindOverlappingEntry(struct ScriptObjectEntry *object,
   return NULL;
 }
 
-// Reads three coordinate words and applies the selected positioning operation.
+/// Reads three coordinate words and applies the selected positioning operation.
 static __inline__ s32 Script_ApplyPositionCommand(
     struct ScriptInterpreter *interpreter,
     void (*applyPosition)(struct ObjectRuntime *object, s32 x, s32 y, s32 z)) {
@@ -277,18 +278,18 @@ static __inline__ s32 Script_ApplyPositionCommand(
   return 1;
 }
 
-// SC_POS(x, y, z): places the object at (x, y, z) and stops it.
+/// SC_POS(x, y, z): places the object at (x, y, z) and stops it.
 s32 Script_SetPositionAndResetMotion(struct ScriptInterpreter *interpreter) {
   return Script_ApplyPositionCommand(interpreter,
                                      Object_SetPositionAndResetMotion);
 }
 
-// SC_MOVE(x, y, z): sends the object towards (x, y, z).
+/// SC_MOVE(x, y, z): sends the object towards (x, y, z).
 s32 Script_ApplyAbsolutePosition(struct ScriptInterpreter *interpreter) {
   return Script_ApplyPositionCommand(interpreter, Object_SetMoveTarget);
 }
 
-// SC_MOVE_BY(x, y, z): sends the object towards its position plus (x, y, z).
+/// SC_MOVE_BY(x, y, z): sends the object towards its position plus (x, y, z).
 s32 Script_ApplyRelativePosition(struct ScriptInterpreter *interpreter) {
   struct ScriptObjectRuntime *object =
       (struct ScriptObjectRuntime *)interpreter;
@@ -305,8 +306,8 @@ s32 Script_ApplyRelativePosition(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// SC_FACE_LINK: stores the angle from the object to its linked object in
-// scriptValue.
+/// SC_FACE_LINK: stores the angle from the object to its linked object in
+/// scriptValue.
 s32 Script_StoreAngleToLinkedObject(struct ScriptInterpreter *interpreter) {
   struct ScriptObjectRuntime *object =
       (struct ScriptObjectRuntime *)interpreter;
@@ -320,7 +321,7 @@ s32 Script_StoreAngleToLinkedObject(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// SC_MOVE_LINK: sends the object towards its linked object.
+/// SC_MOVE_LINK: sends the object towards its linked object.
 s32 Script_ApplyLinkedObjectPosition(struct ScriptInterpreter *interpreter) {
   struct ScriptObjectRuntime *object =
       (struct ScriptObjectRuntime *)interpreter;
@@ -334,8 +335,8 @@ s32 Script_ApplyLinkedObjectPosition(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// SC_MOVE_LOCAL(a, b): sends the object towards its position plus an offset
-// that is never filled in; the operands are skipped unread.
+/// SC_MOVE_LOCAL(a, b): sends the object towards its position plus an offset
+/// that is never filled in; the operands are skipped unread.
 s32 Script_ApplyLocalOffsetPosition(struct ScriptInterpreter *interpreter) {
   struct ScriptObjectRuntime *object =
       (struct ScriptObjectRuntime *)interpreter;
@@ -354,11 +355,11 @@ s32 Script_ApplyLocalOffsetPosition(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// SC_CAMERA: keeps the camera object on its leader (linkedObject), clamped
-// to 120 pixels inside the map's left and right edges and a band above and
-// below the leader. It closes an eighth of the distance a frame, at most
-// its speed limit, and a quarter of a large height difference; when action
-// is set it jumps there at once.
+/// SC_CAMERA: keeps the camera object on its leader (linkedObject), clamped
+/// to 120 pixels inside the map's left and right edges and a band above and
+/// below the leader. It closes an eighth of the distance a frame, at most
+/// its speed limit, and a quarter of a large height difference; when action
+/// is set it jumps there at once.
 s32 Camera_FollowLeaderInBounds(struct ScriptInterpreter *interpreter) {
   struct ObjectRuntime *cameraObject = (struct ObjectRuntime *)interpreter;
 
@@ -442,9 +443,9 @@ s32 Camera_FollowLeaderInBounds(struct ScriptInterpreter *interpreter) {
 extern u8 IwramSqrt[];
 s32 _call_via_r3(s32, s32, s32, s32);
 
-// SC_APPROACH_LINK: follows the linked object at its speed. More than 16
-// pixels away it walks to 16 pixels short of it (animation 2) and runs on;
-// within 16 it stands (animation 1) and waits for the next frame.
+/// SC_APPROACH_LINK: follows the linked object at its speed. More than 16
+/// pixels away it walks to 16 pixels short of it (animation 2) and runs on;
+/// within 16 it stands (animation 1) and waits for the next frame.
 s32 Object_ApproachLinkedObject(struct ScriptInterpreter *interpreter) {
   struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
 
@@ -484,11 +485,11 @@ s32 Object_ApproachLinkedObject(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-// SC_WANDER(base, range, limit): walks to a random point base to base +
-// range away, within 90 degrees either side of its heading (scriptValue),
-// that no solid object or wall blocks, with clear ground 8 pixels further at
-// 45 degrees either side, and within limit pixels of home. After seven
-// failed tries it turns around (turnedBack) and waits for the next frame.
+/// SC_WANDER(base, range, limit): walks to a random point base to base +
+/// range away, within 90 degrees either side of its heading (scriptValue),
+/// that no solid object or wall blocks, with clear ground 8 pixels further at
+/// 45 degrees either side, and within limit pixels of home. After seven
+/// failed tries it turns around (turnedBack) and waits for the next frame.
 s32 Object_Wander(struct ScriptInterpreter *interpreter) {
   struct ScriptObjectRuntime *object =
       (struct ScriptObjectRuntime *)interpreter;
@@ -580,9 +581,9 @@ retry:
   return 1;
 }
 
-// SC_WANDER_HOME(base, range, limit): wanders as SC_WANDER does, testing
-// more ground around the point, while it is within limit pixels of home;
-// outside that, or when no point works, it heads back towards home.
+/// SC_WANDER_HOME(base, range, limit): wanders as SC_WANDER does, testing
+/// more ground around the point, while it is within limit pixels of home;
+/// outside that, or when no point works, it heads back towards home.
 s32 ScriptObject_WanderNearHome(struct ScriptInterpreter *interpreter) {
   struct ScriptObjectRuntime *object =
       (struct ScriptObjectRuntime *)interpreter;
@@ -712,8 +713,8 @@ enum ScriptOperandOperation {
   SCRIPT_OPERAND_COMPARE
 };
 
-// Defines the handler for a 32-bit work value: set it, add to it, or compare
-// it (into comparisonResult).
+/// Defines the handler for a 32-bit work value: set it, add to it, or compare
+/// it (into comparisonResult).
 #define SCRIPT_DEFINE_OPERAND_WORD(name, field)                                \
   void name(struct ScriptOperands *operands, s32 operation, s32 value) {       \
     if (operation == SCRIPT_OPERAND_SET) {                                     \
@@ -727,7 +728,7 @@ enum ScriptOperandOperation {
     operands->comparisonResult = operands->field == value;                     \
   }
 
-// The same for an address: an add steps by value words (value * 4 bytes).
+/// The same for an address: an add steps by value words (value * 4 bytes).
 #define SCRIPT_DEFINE_OPERAND_ADDRESS(name, field)                             \
   void name(struct ScriptOperands *operands, s32 operation, s32 value) {       \
     if (operation == SCRIPT_OPERAND_SET) {                                     \
@@ -741,7 +742,7 @@ enum ScriptOperandOperation {
     operands->comparisonResult = operands->field == value;                     \
   }
 
-// The same for an 8- or 16-bit value: a compare narrows value to its type.
+/// The same for an 8- or 16-bit value: a compare narrows value to its type.
 #define SCRIPT_DEFINE_OPERAND_NARROW(name, field, type)                        \
   void name(struct ScriptOperands *operands, s32 operation, s32 value) {       \
     if (operation == SCRIPT_OPERAND_SET) {                                     \
@@ -753,12 +754,12 @@ enum ScriptOperandOperation {
     }                                                                          \
   }
 
-// The work value handlers, one for each entry of enum ScriptWork (see
-// gScript_OperandHandlerTable in operand.c); each names the object field it
-// sets, adds to or compares.
+/// The work value handlers, one for each entry of enum ScriptWork (see
+/// gScript_OperandHandlerTable in operand.c); each names the object field it
+/// sets, adds to or compares.
 SCRIPT_DEFINE_OPERAND_ADDRESS(Script_SetOrCompareAddress, scriptAddress)
 
-// Work value SW_CURSOR: sets, adds to or compares the script cursor.
+/// Work value SW_CURSOR: sets, adds to or compares the script cursor.
 void Script_SetOrCompareCursor(struct ScriptOperands *operands, s32 operation,
                                s32 value) {
   if (operation == SCRIPT_OPERAND_SET) {
@@ -776,7 +777,7 @@ SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareX, word08)
 SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareY, word0c)
 SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareZ, word10)
 
-// Work value SW_RADIUS: sets, adds to or compares the object's radius.
+/// Work value SW_RADIUS: sets, adds to or compares the object's radius.
 void Script_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
                                s32 value) {
   if (operation == SCRIPT_OPERAND_SET) {
@@ -816,7 +817,7 @@ SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrCompareSteeringFlags, byte5a, u8)
 SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrComparePaused, byte5b, u8)
 SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrCompareRepeatCount, byte5d, u8)
 
-// Work value SW_WAIT: sets, adds to or compares the wait counter.
+/// Work value SW_WAIT: sets, adds to or compares the wait counter.
 void Script_SetOrCompareHalfword5e(struct ScriptOperands *work, s32 operation,
                                    s32 value) {
   if (operation == SCRIPT_OPERAND_SET) {
@@ -839,8 +840,8 @@ SCRIPT_DEFINE_OPERAND_WORD(Script_SetOrCompareUpdateAddress, word6c)
 SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrCompareByte62, byte62, u8)
 SCRIPT_DEFINE_OPERAND_NARROW(Script_SetOrCompareByte63, byte63, u8)
 
-// Reads the two words after the command (a work value number and a value)
-// and passes operation to that value's handler.
+/// Reads the two words after the command (a work value number and a value)
+/// and passes operation to that value's handler.
 static __inline__ s32
 Script_ApplyOperandCommand(struct ScriptOperands *operands, s32 operation) {
   s16 commandCursor = operands->cursor;
@@ -854,21 +855,21 @@ Script_ApplyOperandCommand(struct ScriptOperands *operands, s32 operation) {
   return 1;
 }
 
-// SC_SET(w, v): sets work value w to v.
+/// SC_SET(w, v): sets work value w to v.
 s32 Script_ApplyOperandSet(struct ScriptInterpreter *interpreter) {
   struct ScriptOperands *operands = (struct ScriptOperands *)interpreter;
 
   return Script_ApplyOperandCommand(operands, SCRIPT_OPERAND_SET);
 }
 
-// SC_ADD(w, v): adds v to work value w.
+/// SC_ADD(w, v): adds v to work value w.
 s32 Script_ApplyOperandAdd(struct ScriptInterpreter *interpreter) {
   struct ScriptOperands *operands = (struct ScriptOperands *)interpreter;
 
   return Script_ApplyOperandCommand(operands, SCRIPT_OPERAND_ADD);
 }
 
-// SC_CMP(w, v): tests whether work value w equals v.
+/// SC_CMP(w, v): tests whether work value w equals v.
 s32 Script_ApplyOperandCompare(struct ScriptInterpreter *interpreter) {
   struct ScriptOperands *operands = (struct ScriptOperands *)interpreter;
 

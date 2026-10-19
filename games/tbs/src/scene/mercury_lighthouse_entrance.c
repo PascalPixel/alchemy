@@ -1,5 +1,6 @@
-// Mercury Lighthouse's entrance: Mia's doorway scene, the Ply mechanism,
-// and the rising pillars used to cross the interior pools.
+/// @file
+/// Mercury Lighthouse's entrance: Mia's doorway scene, the Ply mechanism,
+/// and the rising pillars used to cross the interior pools.
 
 #include "script.h"
 #include "animspr.h"
@@ -52,42 +53,42 @@
 #include "songs.h"
 #include "item_ids.h"
 
-// The entrance's actors. Mia stands in her own party slot; the Lizard Man is
-// the monster she cannot get past (encounter table 36 fights him as "Lizard
-// Man"); the Ply target is the invisible actor Ply is cast on.
+/// The entrance's actors. Mia stands in her own party slot; the Lizard Man is
+/// the monster she cannot get past (encounter table 36 fights him as "Lizard
+/// Man"); the Ply target is the invisible actor Ply is cast on.
 enum MercuryLighthouseEntranceActor {
   ACTOR_LIZARD_MAN = ACTOR_FIRST_PLACED,
   ACTOR_PLY_TARGET = ACTOR_FIRST_PLACED + 8
 };
 
-// Entrances with a scene of their own.
+/// Entrances with a scene of their own.
 enum MercuryLighthouseEntranceEntrance {
-  ENTRANCE_DROP_FROM_ABOVE = 6, // the leader drops in from above
+  ENTRANCE_DROP_FROM_ABOVE = 6, ///< the leader drops in from above
   ENTRANCE_RISE_FROM_CHANNELS = 25,
   ENTRANCE_BEFORE_LIZARD_MAN = 30,
-  ENTRANCE_AFTER_LIZARD_MAN = 31 // the return from the Lizard Man battle
+  ENTRANCE_AFTER_LIZARD_MAN = 31 ///< the return from the Lizard Man battle
 };
 
-// Exits the events take: the doorway scenes at entrances 30 and 31, and on
-// to Mercury Lighthouse after rising from the channels.
+/// Exits the events take: the doorway scenes at entrances 30 and 31, and on
+/// to Mercury Lighthouse after rising from the channels.
 enum MercuryLighthouseEntranceExit {
   EXIT_TO_LIZARD_MAN = 20,
   EXIT_AFTER_RISING = 50,
   EXIT_TO_DOORWAY = 63
 };
 
-// Scene flags, kept while the party stays here.
+/// Scene flags, kept while the party stays here.
 enum {
   FLAG_MIA_GOES_IN_SEEN = FLAG_SCENE_TEMP_50,
   FLAG_DROP_FROM_ABOVE_SEEN = FLAG_SCENE_TEMP_00 + 0x51,
-  // The Lizard Man has stepped into the leader's column.
+  /// The Lizard Man has stepped into the leader's column.
   FLAG_LIZARD_MAN_STEPPED_ASIDE = FLAG_SCENE_TEMP_05
 };
 
-// The chests: an unnamed item (0x4c) and a chest whose find kind is 5.
+/// The chests: an unnamed item (0x4c) and a chest whose find kind is 5.
 enum { FLAG_CHEST_ITEM_4C = 0xf65, FLAG_CHEST_EF0 = 0xef0 };
 
-// Forward declarations.
+/// Forward declarations.
 static void MercuryLighthouseEntrance_LizardManBlocksMia(void);
 static void MercuryLighthouseEntrance_MiaEntersLighthouse(void);
 
@@ -97,8 +98,8 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void);
 #include "common/object_staged_actor.h"
 #include "common/mercury_lighthouse_sparks.h"
 
-// The sound of the Lizard Man's sidestep, played by all three step scripts
-// as he lands.
+/// The sound of the Lizard Man's sidestep, played by all three step scripts
+/// as he lands.
 static s32
 MercuryLighthouseEntrance_PlayStepSound(struct ScriptInterpreter *interpreter) {
   Engine_AudioPlayCue(SE_118);
@@ -134,51 +135,51 @@ MercuryLighthouseEntrance_MiaWatchesLeader(union FieldObject *fieldObject) {
 // Shared source is included here in ROM order.
 #include "common/mercury_lighthouse_palette_cycle.h"
 
-// Touching trigger 21 once Ply has worked: rising sparks keep appearing
-// while the leader stands on the pillar.
+/// Touching trigger 21 once Ply has worked: rising sparks keep appearing
+/// while the leader stands on the pillar.
 static void MercuryLighthouseEntrance_SpawnTimedRiseEffect(void) {
   MercuryLighthouse_SparkleAtLeader();
 }
 
-// Touching trigger 31 once Ply has worked: the raised pillar is let go.
+/// Touching trigger 31 once Ply has worked: the raised pillar is let go.
 static void MercuryLighthouseEntrance_ReleaseRaisedPillar(void) {
   MercuryLighthouse_LoseLights();
 }
 
-// Walking into trigger 11, 21 or 31 once Ply has worked: one step across
-// the water pillars in the pressed direction.
+/// Walking into trigger 11, 21 or 31 once Ply has worked: one step across
+/// the water pillars in the pressed direction.
 static void MercuryLighthouseEntrance_TryPillarStep(void) {
   MercuryLighthouse_HopAcrossPool();
 }
 
-// Touching trigger 11 once Ply has worked: the pillar underfoot rises to its
-// full height.
+/// Touching trigger 11 once Ply has worked: the pillar underfoot rises to its
+/// full height.
 static void MercuryLighthouseEntrance_RaiseTouchedPillar(void) {
   MercuryLighthouse_ChargeLights();
 }
 
-// The entrance positions and camera bounds.
+/// The entrance positions and camera bounds.
 const struct SceneEntrance *MercuryLighthouseEntrance_GetEntrances(void) {
   return gMercuryLighthouseEntrance_Entrances;
 }
 
-// This overlay has no clipping regions.
+/// This overlay has no clipping regions.
 const struct SceneRegion *MercuryLighthouseEntrance_GetRegions(void) {
   return NULL;
 }
 
-// The exit destinations.
+/// The exit destinations.
 const u32 *MercuryLighthouseEntrance_GetExits(void) {
   return gMercuryLighthouseEntrance_Exits;
 }
 
-// Mia, the Lizard Man, the actors at the doorway and the Ply target.
+/// Mia, the Lizard Man, the actors at the doorway and the Ply target.
 const struct ScenePlacement *MercuryLighthouseEntrance_GetPlacements(void) {
   return gMercuryLighthouseEntrance_Placements;
 }
 
-// Searching the inscription (trigger 1): "He who honors the heart of the
-// goddess..."
+/// Searching the inscription (trigger 1): "He who honors the heart of the
+/// goddess..."
 static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -189,29 +190,29 @@ static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
 // Shared source is included here in ROM order.
 #include "common/mercury_lighthouse_risedrop.h"
 
-// Walking north into trigger 67: the leader rises to the southern landing.
+/// Walking north into trigger 67: the leader rises to the southern landing.
 static void MercuryLighthouseEntrance_RiseToSouthernLanding(void) {
   MercuryLighthouse_LeaveThroughPassage(17);
 }
 
-// Walking north into trigger 68: the leader rises to the northern landing.
+/// Walking north into trigger 68: the leader rises to the northern landing.
 static void MercuryLighthouseEntrance_RiseToNorthernLanding(void) {
   MercuryLighthouse_LeaveThroughPassage(18);
 }
 
-// Walking north into trigger 69: the leader rises to the middle landing.
+/// Walking north into trigger 69: the leader rises to the middle landing.
 static void MercuryLighthouseEntrance_RiseToMiddleLanding(void) {
   MercuryLighthouse_LeaveThroughPassage(19);
 }
 
-// The touch, search, talk and Psynergy events.
+/// The touch, search, talk and Psynergy events.
 const struct SceneEvent *MercuryLighthouseEntrance_GetEvents(void) {
   return gMercuryLighthouseEntrance_Events;
 }
 
-// Ply on the Ply target, from cell (12, 32) only: the room dims, fifteen
-// sparks rise from the pool, the lights start to cycle and the pillar
-// triggers come into play.
+/// Ply on the Ply target, from cell (12, 32) only: the room dims, fifteen
+/// sparks rise from the pool, the lights start to cycle and the pillar
+/// triggers come into play.
 static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   s32 leaderColumn;
   s32 leaderRow;
@@ -273,22 +274,22 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   }
 }
 
-// Touching trigger 10 by the doorway: the scene starts again at the
-// doorway, where Mia goes in if she has not yet.
+/// Touching trigger 10 by the doorway: the scene starts again at the
+/// doorway, where Mia goes in if she has not yet.
 static void MercuryLighthouseEntrance_ReturnToDoorway(void) {
   Engine_EventRequestExit(EXIT_TO_DOORWAY);
 }
 
-// Touching trigger 40 or 42 while the Lizard Man stands aside: he steps back
-// in front of the doorway.
+/// Touching trigger 40 or 42 while the Lizard Man stands aside: he steps back
+/// in front of the doorway.
 static void MercuryLighthouseEntrance_LizardManReturnsToCentre(void) {
   Engine_GameFlagClear(FLAG_LIZARD_MAN_STEPPED_ASIDE);
   Actor_SetActionScript(ACTOR_LIZARD_MAN,
                         gMercuryLighthouseEntrance_LizardManStepCentre);
 }
 
-// Touching trigger 41 while he stands in the doorway: the Lizard Man steps
-// into the leader's way, west from column 7 and east otherwise.
+/// Touching trigger 41 while he stands in the doorway: the Lizard Man steps
+/// into the leader's way, west from column 7 and east otherwise.
 static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
   struct FieldActor *leader;
   s32 leaderX;
@@ -307,9 +308,9 @@ static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
   }
 }
 
-// Talking to the Lizard Man, Mind Read on him, or walking north into
-// trigger 40 or 41: he stirs and the battle begins. The party returns to
-// the doorway afterwards.
+/// Talking to the Lizard Man, Mind Read on him, or walking north into
+/// trigger 40 or 41: he stirs and the battle begins. The party returns to
+/// the doorway afterwards.
 static void MercuryLighthouseEntrance_FightLizardMan(void) {
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(ACTOR_LIZARD_MAN, 2);
@@ -326,8 +327,8 @@ static void MercuryLighthouseEntrance_FightLizardMan(void) {
 // Shared source is included here in ROM order.
 #include "common/mercury_lighthouse_arrive.h"
 
-// On entering: the lights, the Retreat point and the pillar routes Ply has
-// opened, then the scene of the entrance taken.
+/// On entering: the lights, the Retreat point and the pillar routes Ply has
+/// opened, then the scene of the entrance taken.
 s32 MercuryLighthouseEntrance_Initialize(void) {
   struct EffectOptions options;
   s32 velocity[3];
@@ -480,9 +481,9 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   return 0;
 }
 
-// Entrance 30, unless resuming: Mia tries to get past the Lizard Man in the
-// doorway, who steps across to block her each time; then she waits, watching
-// the leader come up.
+/// Entrance 30, unless resuming: Mia tries to get past the Lizard Man in the
+/// doorway, who steps across to block her each time; then she waits, watching
+/// the leader come up.
 static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   s32 paceCycle;
   struct FieldActor *mia;
@@ -562,8 +563,8 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
   Engine_EventEnd();
 }
 
-// Entrance 31, back from the Lizard Man battle and once only: Mia nods to
-// the leader and goes on into the lighthouse.
+/// Entrance 31, back from the Lizard Man battle and once only: Mia nods to
+/// the leader and goes on into the lighthouse.
 static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
   struct FieldActor *actor;
 
@@ -599,7 +600,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
 // Shared source is included here in ROM order.
 #include "common/mercury_lighthouse_lights.h"
 
-// Spawns the short-lived rising effect at an actor's position.
+/// Spawns the short-lived rising effect at an actor's position.
 static void OverlayObject_SpawnKind24AtObject(struct FieldActor *source) {
   struct FieldActor *effect = Engine_ObjectCreate(
       24, source->x.fixed, source->y.fixed, source->z.fixed);
@@ -637,7 +638,7 @@ s32 gEffectScript2[] = {
     SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
-// Pixel step by direction: X in the upper halfword, Z in the lower.
+/// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {
@@ -869,7 +870,7 @@ struct SceneEvent gMercuryLighthouseEntrance_Events[] = {
     { SCENE_EVENTS_END },
 };
 
-// Each spark pulses in size four times, then is released.
+/// Each spark pulses in size four times, then is released.
 s32 gMercuryLighthouseEntrance_SparkBurstScript[] = {
     SC_SET(SW_SCALE_Y, 0x10000),
     SC_SET(SW_SCALE_X, 0x10000),

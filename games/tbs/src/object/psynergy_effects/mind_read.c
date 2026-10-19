@@ -1,28 +1,29 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Mind Read: scanline waves, shifting colours and flowing particles.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Mind Read: scanline waves, shifting colours and flowing particles.
 
 #include "../psynergy_effects_internal.h"
 
-// Work slot 22 of the wave effect, 0x298 bytes (RunSceneTransitionEffect).
+/// Work slot 22 of the wave effect, 0x298 bytes (RunSceneTransitionEffect).
 struct WaveFxWork {
-  u16 lines[2][162]; // each scanline's offset, two pages written in turn
-  u16 phase;         // the wave's phase
-  u8 page;           // the page being written
-  s8 red;            // the hue as a colour (red, green, blue, 4 to 11 each)
+  u16 lines[2][162]; ///< each scanline's offset, two pages written in turn
+  u16 phase;         ///< the wave's phase
+  u8 page;           ///< the page being written
+  s8 red;            ///< the hue as a colour (red, green, blue, 4 to 11 each)
   s8 green;
   s8 blue;
-  u16 hue;      // hue, 0 to 359 degrees
-  u16 sourceId; // the caster
-  u16 targetId; // the target
-  u8 delay;     // frames before it starts
-  u8 counter;   // particle spawn cycle (0 to 60)
+  u16 hue;      ///< hue, 0 to 359 degrees
+  u16 sourceId; ///< the caster
+  u16 targetId; ///< the target
+  u8 delay;     ///< frames before it starts
+  u8 counter;   ///< particle spawn cycle (0 to 60)
 };
 
-// Abilities: Mind Read (field kind 2).
-//
-// Starts the wave effect of caster sourceId on target targetId: fades the
-// palettes toward a hue that shifts with the frame counter, and starts its
-// per-frame update (FieldFx_UpdateMindReadWave) after 8 frames.
+/// Abilities: Mind Read (field kind 2).
+///
+/// Starts the wave effect of caster sourceId on target targetId: fades the
+/// palettes toward a hue that shifts with the frame counter, and starts its
+/// per-frame update (FieldFx_UpdateMindReadWave) after 8 frames.
 void RunSceneTransitionEffect(s32 x, s32 y) {
   struct WaveFxWork *work;
 
@@ -41,8 +42,8 @@ void RunSceneTransitionEffect(s32 x, s32 y) {
   Scheduler_AddOrUpdateCallback(FieldFx_UpdateMindReadWave, 0xc80);
 }
 
-// Stops the wave effect: restores the caster's colours and the palettes and
-// releases the effect's work.
+/// Stops the wave effect: restores the caster's colours and the palettes and
+/// releases the effect's work.
 void BattleFx_FinishSceneAndReleaseHeapBlock(void) {
   void *work;
 
@@ -55,11 +56,11 @@ void BattleFx_FinishSceneAndReleaseHeapBlock(void) {
   Runtime_ReleaseHeapBlock(22);
 }
 
-// Scheduler callback of the wave effect: once its delay has run out, writes
-// the next page of scanline offsets (a sine wave of 4 pixels either way),
-// steps the colour fade and the hue, keeps the caster's colours lit, and
-// every 60 frames sends three particles (object 281) from the target to the
-// caster, with sound 130.
+/// Scheduler callback of the wave effect: once its delay has run out, writes
+/// the next page of scanline offsets (a sine wave of 4 pixels either way),
+/// steps the colour fade and the hue, keeps the caster's colours lit, and
+/// every 60 frames sends three particles (object 281) from the target to the
+/// caster, with sound 130.
 void FieldFx_UpdateMindReadWave(void) {
   struct WaveFxWork *work = gBattleBgFxWork;
   u16 *line;
@@ -136,8 +137,8 @@ void FieldFx_UpdateMindReadWave(void) {
 
 #define MIND_READ_GREY RGB(28, 28, 28)
 
-// Scheduler callback: restarts the HBlank DMA that writes BG0's horizontal
-// scroll for each scanline from the wave's shown page.
+/// Scheduler callback: restarts the HBlank DMA that writes BG0's horizontal
+/// scroll for each scanline from the wave's shown page.
 void BattleFx_ArmBg0HBlankDma(void) {
   struct WaveFxWork *work = gBattleBgFxWork;
   if (!work->delay) {
@@ -152,8 +153,8 @@ void BattleFx_ArmBg0HBlankDma(void) {
   }
 }
 
-// Moves the wave's hue on 4 degrees and works out its colour, each channel
-// 4 to 11.
+/// Moves the wave's hue on 4 degrees and works out its colour, each channel
+/// 4 to 11.
 void BattleFx_AdvanceHueCycle(void) {
   struct WaveFxWork *work = gBattleBgFxWork;
   s32 r = 0;
@@ -188,16 +189,16 @@ void BattleFx_AdvanceHueCycle(void) {
   }
 }
 
-// Works out red, green and blue (0 to 31 each, 16.16) for a hue in degrees
-// (16.16).
+/// Works out red, green and blue (0 to 31 each, 16.16) for a hue in degrees
+/// (16.16).
 void FieldFx_ComputeHueChannels(s32 hue, s32 *r, s32 *g, s32 *b) {
   *r = BattleFx_HueChannelRamp(hue + (120 << 16), 0, 31 << 16);
   *g = BattleFx_HueChannelRamp(hue, 0, 31 << 16);
   *b = BattleFx_HueChannelRamp(hue - (120 << 16), 0, 31 << 16);
 }
 
-// One colour channel's strength at a hue angle: rising from 0 to 60 degrees,
-// high from 60 to 180, falling from 180 to 240, low elsewhere.
+/// One colour channel's strength at a hue angle: rising from 0 to 60 degrees,
+/// high from 60 to 180, falling from 180 to 240, low elsewhere.
 s32 BattleFx_HueChannelRamp(s32 angle, s32 low, s32 high) {
   angle = Fixed_Remainder(angle, 360 << 16);
   if (angle < 60 << 16)
@@ -209,7 +210,7 @@ s32 BattleFx_HueChannelRamp(s32 angle, s32 low, s32 high) {
   return low;
 }
 
-// The 16.16 remainder of value divided by divisor (0 for a zero divisor).
+/// The 16.16 remainder of value divided by divisor (0 for a zero divisor).
 s32 Fixed_Remainder(s32 value, s32 divisor) {
   s32 quot;
 
@@ -222,8 +223,8 @@ s32 Fixed_Remainder(s32 value, s32 divisor) {
   return value - Iwram_MulQ16(quot & 0xffff0000, divisor);
 }
 
-// Per-frame update: once the object has arrived (no destination left), runs
-// the script for untargeted objects.
+/// Per-frame update: once the object has arrived (no destination left), runs
+/// the script for untargeted objects.
 void BattleFx_SetCallbackWhenTargetUnset(union FieldObject *fieldObject) {
   struct ObjectRuntime *object = (struct ObjectRuntime *)fieldObject;
   s32 targetY;
@@ -240,8 +241,8 @@ void BattleFx_SetCallbackWhenTargetUnset(union FieldObject *fieldObject) {
   }
 }
 
-// Turns colours 1 and 3 to 12 of BG palette 15 grey and starts the BG0
-// scanline scroll (BattleFx_ArmBg0HBlankDma).
+/// Turns colours 1 and 3 to 12 of BG palette 15 grey and starts the BG0
+/// scanline scroll (BattleFx_ArmBg0HBlankDma).
 void Ui_FillBank15PaletteGrey(void) {
   volatile u16 *p;
 
@@ -271,7 +272,7 @@ void Ui_FillBank15PaletteGrey(void) {
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg0HBlankDma, 0x480);
 }
 
-// Stops the BG0 scanline scroll and restores BG palette 15.
+/// Stops the BG0 scanline scroll and restores BG palette 15.
 void Ui_SetBank15PaletteAndClearRenderMode(void) {
   void *work;
 

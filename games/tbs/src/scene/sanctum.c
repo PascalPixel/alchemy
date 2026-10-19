@@ -45,10 +45,10 @@
 // that leaving the village cannot be undone; 01 marks the visit after a
 // refusal, which skips the account of Sol Sanctum.
 
-// The first placed actor is the sanctum's healer: the Great Healer in Vale,
-// the town's healer elsewhere. At the quest (entrances 20 and 21) Dora says
-// "Mother would never doubt your courage", the Wise One appears, and a copy
-// of the healer draws its afterimage.
+/// The first placed actor is the sanctum's healer: the Great Healer in Vale,
+/// the town's healer elsewhere. At the quest (entrances 20 and 21) Dora says
+/// "Mother would never doubt your courage", the Wise One appears, and a copy
+/// of the healer draws its afterimage.
 enum {
   ACTOR_HEALER = ACTOR_FIRST_PLACED,
   ACTOR_DORA = ACTOR_FIRST_PLACED + 3,
@@ -56,7 +56,7 @@ enum {
   ACTOR_HEALER_AFTERIMAGE
 };
 
-// Forward declarations.
+/// Forward declarations.
 static void Sanctum_RequestQuestAcceptance(void);
 static void Sanctum_ReceiveWiseOnesMission(void);
 static void Sanctum_ShowHealerAfterimage(void);
@@ -72,10 +72,10 @@ static void Sanctum_RestoreCeremonyFloor(void);
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 44 to 42 bytes in tbs-en.
 #ifdef UBFIX
-// Face the actor whose ID this callback stores in the timer field.
+/// Face the actor whose ID this callback stores in the timer field.
 static void Sanctum_FaceActorNamedByTimer(union FieldObject *fieldObject) {
 #else
-// Face the actor whose ID this callback stores in the timer field.
+/// Face the actor whose ID this callback stores in the timer field.
 static s32 Sanctum_FaceActorNamedByTimer(union FieldObject *fieldObject) {
 #endif
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
@@ -91,16 +91,16 @@ static s32 Sanctum_FaceActorNamedByTimer(union FieldObject *fieldObject) {
 #endif
 }
 
-// Return the entrances shared by all Sanctum visits.
+/// Return the entrances shared by all Sanctum visits.
 struct SceneEntrance *Sanctum_GetEntrances(void) { return gSanctum_Entrances; }
 
-// The Sanctum has no region table.
+/// The Sanctum has no region table.
 struct SceneRegion *Sanctum_GetRegions(void) { return NULL; }
 
-// Return the Sanctum exit connections.
+/// Return the Sanctum exit connections.
 u32 *Sanctum_GetExits(void) { return gSanctum_Exits; }
 
-// Choose the actors for the current entrance.
+/// Choose the actors for the current entrance.
 struct ScenePlacement *Sanctum_GetPlacements(void) {
   switch (gGameState.entrance) {
   case 1:
@@ -126,7 +126,7 @@ struct ScenePlacement *Sanctum_GetPlacements(void) {
   }
 }
 
-// Choose interactions for the entrance and current story flags.
+/// Choose interactions for the entrance and current story flags.
 struct SceneEvent *Sanctum_GetEvents(void) {
   switch (gGameState.entrance) {
   case 10:
@@ -157,8 +157,8 @@ struct SceneEvent *Sanctum_GetEvents(void) {
   return gSanctum_SceneTableA;
 }
 
-// Talking to the attendant (actor 9) in Vale's Sanctum: about the golden statue
-// and the healer.
+/// Talking to the attendant (actor 9) in Vale's Sanctum: about the golden
+/// statue and the healer.
 static void Event_TalkAboutGoldenStatue(void) {
   Engine_EventBegin();
 
@@ -179,7 +179,7 @@ static void Event_TalkAboutGoldenStatue(void) {
   Engine_EventEnd();
 }
 
-// Reading the attendant's mind (actor 9): about the statue and Psynergy.
+/// Reading the attendant's mind (actor 9): about the statue and Psynergy.
 static void Event_ReadMindAboutGoldenStatue(void) {
 
   Engine_EventBegin();
@@ -202,8 +202,8 @@ static void Event_ReadMindAboutGoldenStatue(void) {
   Engine_EventEnd();
 }
 
-// Talking to the Great Healer after refusing: "Are you sure?" Changing his
-// mind, Isaac accepts after all.
+/// Talking to the Great Healer after refusing: "Are you sure?" Changing his
+/// mind, Isaac accepts after all.
 static void Event_ReconsiderQuest(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSanctumAreYouSure);
@@ -265,8 +265,8 @@ static void Event_ReconsiderQuest(void) {
 #define SANCTUM_NEW_FRIENDS_SPEAKER 1
 #endif
 
-// Talking to actor 9 after the party grows: "Isaac, are your new friends
-// Adepts?"
+/// Talking to actor 9 after the party grows: "Isaac, are your new friends
+/// Adepts?"
 static void Event_AskAboutNewAdepts(void) {
   Engine_EventBegin();
 #if TBS_PATCH_1
@@ -286,8 +286,8 @@ static void Event_AskAboutNewAdepts(void) {
   Engine_EventEnd();
 }
 
-// Talking to actor 10 after the party has left Vale: does Isaac feel a change
-// in his Psynergy?
+/// Talking to actor 10 after the party has left Vale: does Isaac feel a change
+/// in his Psynergy?
 static void Event_AskAboutPsynergyChanges(void) {
 
   Engine_EventBegin();
@@ -304,7 +304,7 @@ static void Event_AskAboutPsynergyChanges(void) {
   Engine_EventEnd();
 }
 
-// Prepare the current visit and start its opening scene.
+/// Prepare the current visit and start its opening scene.
 s32 Sanctum_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
@@ -342,8 +342,8 @@ s32 Sanctum_Initialize(void) {
   return 0;
 }
 
-// Walking toward the door after refusing: the Great Healer warns "Once you
-// step outside the village, you cannot take back your decision."
+/// Walking toward the door after refusing: the Great Healer warns "Once you
+/// step outside the village, you cannot take back your decision."
 static void Event_WarnBeforeLeaving(void) {
   Engine_EventBegin();
   Engine_CameraSetSpeed(PIXELS(1), PIXELS(1) / 8);
@@ -360,8 +360,8 @@ static void Event_WarnBeforeLeaving(void) {
   Engine_EventEnd();
 }
 
-// Leaving after refusing: the room turns sepia, "And so the world began
-// drifting...", and the game offers to start again.
+/// Leaving after refusing: the room turns sepia, "And so the world began
+/// drifting...", and the game offers to start again.
 static void Event_LeaveAfterRefusing(void) {
   struct BattleEffectBuffers *paletteWork;
 
@@ -403,10 +403,10 @@ static void Event_LeaveAfterRefusing(void) {
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 66 to 64 bytes in tbs-en.
 #ifdef UBFIX
-// Keep this actor at the party leader's drawing priority.
+/// Keep this actor at the party leader's drawing priority.
 static void Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
 #else
-// Keep this actor at the party leader's drawing priority.
+/// Keep this actor at the party leader's drawing priority.
 static s32 Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
 #endif
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
@@ -421,7 +421,7 @@ static s32 Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
 #endif
 }
 
-// Have the party and four witnesses nod, waiting for the final witness.
+/// Have the party and four witnesses nod, waiting for the final witness.
 static inline void Sanctum_NodCeremonyGroup(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
@@ -431,7 +431,7 @@ static inline void Sanctum_NodCeremonyGroup(void) {
   Engine_ActorSetAnimationAndWait(10, 3);
 }
 
-// Start the six group motions and wait for the final witness.
+/// Start the six group motions and wait for the final witness.
 static inline void Sanctum_StartCeremonyGroupMotion(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Engine_ActorStartRepeatedMotion(GARET, 1);
@@ -441,7 +441,7 @@ static inline void Sanctum_StartCeremonyGroupMotion(void) {
   Engine_ActorRunRepeatedMotion(10, 1);
 }
 
-// Show the same foreground reaction on the party and four witnesses.
+/// Show the same foreground reaction on the party and four witnesses.
 static inline void Sanctum_ShowCeremonyGroupEmotes(void) {
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
@@ -451,7 +451,7 @@ static inline void Sanctum_ShowCeremonyGroupEmotes(void) {
   Actor_ShowEmote(10, EMOTE_IN_FRONT | 2, 0);
 }
 
-// Discuss Sol Sanctum and ask Isaac to accept the quest.
+/// Discuss Sol Sanctum and ask Isaac to accept the quest.
 static void Sanctum_RequestQuestAcceptance(void) {
   u32 effectIndex;
 
@@ -974,7 +974,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
   Engine_EventEnd();
 }
 
-// Bring in the Wise One and prepare the party for its mission.
+/// Bring in the Wise One and prepare the party for its mission.
 static void Sanctum_ReceiveWiseOnesMission(void) {
 
   u32 sparkIndex;
@@ -1349,7 +1349,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_ActorSetAnimation(12, 3);
 }
 
-// Copy the healer into the afterimage actor.
+/// Copy the healer into the afterimage actor.
 static void Sanctum_ShowHealerAfterimage(void) {
   u32 entryIndex;
   struct FieldActor *afterimage;
@@ -1384,14 +1384,14 @@ static void Sanctum_ShowHealerAfterimage(void) {
   sprite->image.priority = 2;
 }
 
-// Hide the healer's afterimage actor.
+/// Hide the healer's afterimage actor.
 static void Sanctum_HideHealerAfterimage(void) {
   struct FieldActor *state = Object_GetById(ACTOR_HEALER_AFTERIMAGE);
   state->update = 0;
   Engine_ActorSetPosition(ACTOR_HEALER_AFTERIMAGE, 0, 0);
 }
 
-// Cycle the afterimage through four offsets from the healer.
+/// Cycle the afterimage through four offsets from the healer.
 static void Sanctum_UpdateHealerAfterimage(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct FieldActor *healer;
@@ -1416,7 +1416,7 @@ static void Sanctum_UpdateHealerAfterimage(union FieldObject *fieldObject) {
   }
 }
 
-// Advance an effect around its linked actor on an elliptical path.
+/// Advance an effect around its linked actor on an elliptical path.
 static void Sanctum_UpdateOrbitingEffect(union FieldObject *fieldObject) {
   struct FieldActor *effect = (struct FieldActor *)fieldObject;
   struct FieldActor *anchor = effect->linkedObject;
@@ -1438,7 +1438,7 @@ static void Sanctum_UpdateOrbitingEffect(union FieldObject *fieldObject) {
   *angle = (*angle + effect->work);
 }
 
-// Create an orbiting effect with the requested angular step.
+/// Create an orbiting effect with the requested angular step.
 static void Sanctum_SpawnOrbitingEffect(s32 ownerId, s32 angleStep) {
   s32 orbitStep;
   struct FieldActor *owner;
@@ -1483,7 +1483,7 @@ static void Sanctum_SpawnOrbitingEffect(s32 ownerId, s32 angleStep) {
 #define CURSOR_X 64
 #endif
 
-// Offer the refusal ending's restart choices and return the selection.
+/// Offer the refusal ending's restart choices and return the selection.
 static s32 Sanctum_ChooseRestartOption(void) {
   s32 slot;
   struct MenuSprite cursor;
@@ -1529,7 +1529,7 @@ static s32 Sanctum_ChooseRestartOption(void) {
 
 s32 Math_RemainderUnsigned(s32 value, s32 modulus);
 
-// Have Isaac and Garet act out the events at Sol Sanctum.
+/// Have Isaac and Garet act out the events at Sol Sanctum.
 static void Sanctum_ReenactSolSanctum(void) {
 
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
@@ -1767,7 +1767,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   Engine_EventWait(60);
 }
 
-// Show an item icon rising from the supplied fixed-point position.
+/// Show an item icon rising from the supplied fixed-point position.
 static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
                                   s32 fixedZ) {
   struct FieldActor *icon;
@@ -1800,7 +1800,7 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
   }
 }
 
-// Move a spark upward, cycle its scale, and expire its lifetime.
+/// Move a spark upward, cycle its scale, and expire its lifetime.
 static void Sanctum_UpdateRisingSpark(union FieldObject *object) {
   struct FieldActor *spark = &object->actor;
   s32 scale;
@@ -1830,7 +1830,7 @@ static void Sanctum_UpdateRisingSpark(union FieldObject *object) {
     Engine_ObjectSetScript(spark, gSanctum_SparkEndScript);
 }
 
-// Create a short-lived spark beside the specified actor.
+/// Create a short-lived spark beside the specified actor.
 static void Sanctum_SpawnActorSpark(s32 id) {
   struct FieldActor *actor;
   struct FieldActor *spark;
@@ -1860,7 +1860,7 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   sprite->image.priority = actor->sprite->image.priority;
 }
 
-// Restore the two floor rectangles changed during the ceremony.
+/// Restore the two floor rectangles changed during the ceremony.
 static void Sanctum_RestoreCeremonyFloor(void) {
   {
     Map_CopyCellsTo(0, 64, 11, 68, 3, 2);
@@ -1871,7 +1871,7 @@ static void Sanctum_RestoreCeremonyFloor(void) {
   Engine_TaskWait(1);
 }
 
-// Test whether the leader is facing toward the healer.
+/// Test whether the leader is facing toward the healer.
 static s32 Sanctum_IsLeaderFacingHealer(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -1881,8 +1881,8 @@ static s32 Sanctum_IsLeaderFacingHealer(void) {
   return 0;
 }
 
-// Talking to the healer: healing from the front, otherwise words that follow
-// the story.
+/// Talking to the healer: healing from the front, otherwise words that follow
+/// the story.
 static void Event_TalkToHealer(void) {
   if (Sanctum_IsLeaderFacingHealer() != 0) {
     Engine_SanctumOpen(ACTOR_HEALER);
@@ -1900,8 +1900,8 @@ static void Event_TalkToHealer(void) {
   Engine_EventEnd();
 }
 
-// Talking to the healer on a later visit: healing from the front, otherwise
-// words for this visit.
+/// Talking to the healer on a later visit: healing from the front, otherwise
+/// words for this visit.
 static void Event_TalkToHealerOnVisit(void) {
   s32 entrance;
 
@@ -1940,7 +1940,7 @@ static void Event_TalkToHealerOnVisit(void) {
   Engine_EventEnd();
 }
 
-// Talking to this sanctum's healer: about the curse, lifted or not.
+/// Talking to this sanctum's healer: about the curse, lifted or not.
 static void Event_TalkAboutCurse(void) {
   if (Sanctum_IsLeaderFacingHealer() != 0) {
     Engine_SanctumOpen(ACTOR_HEALER);
@@ -1956,8 +1956,8 @@ static void Event_TalkAboutCurse(void) {
   Engine_EventEnd();
 }
 
-// Talking to this sanctum's healer: about the monsters, and the party's help
-// in Altin.
+/// Talking to this sanctum's healer: about the monsters, and the party's help
+/// in Altin.
 static void Event_TalkAboutAltinMonsters(void) {
   if (Sanctum_IsLeaderFacingHealer() != 0) {
     Engine_SanctumOpen(ACTOR_HEALER);
@@ -1972,7 +1972,7 @@ static void Event_TalkAboutAltinMonsters(void) {
   Engine_EventEnd();
 }
 
-// Talking to this sanctum's healer, come from Xian.
+/// Talking to this sanctum's healer, come from Xian.
 static void Event_TalkAboutJourneyFromXian(void) {
   if (Sanctum_IsLeaderFacingHealer() != 0) {
     Engine_SanctumOpen(ACTOR_HEALER);

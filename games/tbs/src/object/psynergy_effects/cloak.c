@@ -1,14 +1,15 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Cloak.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Cloak.
 
 #include "../psynergy_effects_internal.h"
 
 #define CLOAK_TILE 0xfb  // the tile attribute Cloak can stay hidden on
 #define CLOAK_END 0x2092 // field command when Cloak can no longer hide
 
-// Scheduler callback of Cloak: when the tile under the leader is not
-// CLOAK_TILE, requests CLOAK_END. On the world map (event mode 3) it reads
-// the 32-pixel gMapBlocks, elsewhere the 16-pixel terrain map.
+/// Scheduler callback of Cloak: when the tile under the leader is not
+/// CLOAK_TILE, requests CLOAK_END. On the world map (event mode 3) it reads
+/// the 32-pixel gMapBlocks, elsewhere the 16-pixel terrain map.
 void FieldFx_CheckCloakTile(void) {
 #ifndef UBFIX
   u32 slot;
@@ -71,8 +72,8 @@ void FieldFx_CheckCloakTile(void) {
     field->command = CLOAK_END;
 }
 
-// Ends Cloak: stops the tile check and makes the leader blink back into
-// sight, clearing cloaked.
+/// Ends Cloak: stops the tile check and makes the leader blink back into
+/// sight, clearing cloaked.
 void FieldFx_EndCloak(void) {
   struct ObjectRuntime *obj;
   struct AnimationObject *anim;
@@ -112,17 +113,17 @@ void FieldFx_EndCloak(void) {
   gGameState.cloaked = 0;
 }
 
-// Starts the Cloak tile check if the leader is hidden.
+/// Starts the Cloak tile check if the leader is hidden.
 void FieldFx_ResumeCloakCheck(void) {
   if (gGameState.cloaked != 0) {
     Scheduler_AddOrUpdateCallback(FieldFx_CheckCloakTile, 0xc80);
   }
 }
 
-// Abilities: Cloak (field kind 10).
-//
-// The leader blinks 10 times and hides (cloaked set), and the tile check
-// starts; where the leader cannot hide it shows again at once.
+/// Abilities: Cloak (field kind 10).
+///
+/// The leader blinks 10 times and hides (cloaked set), and the tile check
+/// starts; where the leader cannot hide it shows again at once.
 void FieldFx_StartCloak(void) {
   struct FieldWork *field = (struct FieldWork *)gEventWork;
   struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);

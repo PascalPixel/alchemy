@@ -20,35 +20,35 @@
 #include "songs.h"
 #include "fixed_math.h"
 
-// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another place group, and other places use the numbers for their own.
+/// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+/// enters another place group, and other places use the numbers for their own.
 #define FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN 0x350
 
 // The Sol Sanctum room that holds a Psynergy Stone, scene 13.
 
-// Where the party can enter the room.
+/// Where the party can enter the room.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumPsynergyStoneEntrances;
 }
 
-// The room has no regions.
+/// The room has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-// Where its one exit leads.
+/// Where its one exit leads.
 const u32 *Scene_GetExits(void) { return gSolSanctumPsynergyStoneExits; }
 
-// Nobody is placed here.
+/// Nobody is placed here.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   return gSolSanctumPsynergyStonePlacements;
 }
 
-// The exit and the psynergy stone.
+/// The exit and the psynergy stone.
 const struct SceneEvent *Scene_GetEvents(void) {
   return gSolSanctumPsynergyStoneEvents;
 }
 
-// The room opens through a window. After the eruption it rumbles and shakes
-// gently, as the rest of the sanctum does.
+/// The room opens through a window. After the eruption it rumbles and shakes
+/// gently, as the rest of the sanctum does.
 s32 Scene_Initialize(void) {
   s32 shakeX = PIXELS(1);
   s32 shakeY = PIXELS(1);

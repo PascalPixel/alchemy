@@ -1,6 +1,7 @@
-// Colosso Log, River and Wall, and Crossbone Isle's platform rooms: an actor
-// drawn as an item's menu icon, such as the two items at a Colosso course's
-// finish or the Red Key on Crossbone Isle.
+/// @file
+/// Colosso Log, River and Wall, and Crossbone Isle's platform rooms: an actor
+/// drawn as an item's menu icon, such as the two items at a Colosso course's
+/// finish or the Red Key on Crossbone Isle.
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -18,9 +19,9 @@
 #include "dma.h"
 #include "io_reg.h"
 
-// Replace the picture of actor id, when it has a sprite of its own, with the
-// icon of item: the icon's tiles, decoded into heap block 17, are loaded into
-// the sprite's VRAM block and its animation is stopped.
+/// Replace the picture of actor id, when it has a sprite of its own, with the
+/// icon of item: the icon's tiles, decoded into heap block 17, are loaded into
+/// the sprite's VRAM block and its animation is stopped.
 void Colosso_ShowItemIcon(s32 id, s32 item) {
   struct FieldActor *obj;
   s32 one;

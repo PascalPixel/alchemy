@@ -44,45 +44,45 @@
 
 enum { KALAY_CALLBACK_PRIORITY = 3200 };
 
-// Kalay's maps share actor numbers; each is named on the map it is proved.
+/// Kalay's maps share actor numbers; each is named on the map it is proved.
 enum KalayActor {
   // Town
-  ACTOR_LATE_TOURIST = 14, // the one the tour guides are missing
+  ACTOR_LATE_TOURIST = 14, ///< the one the tour guides are missing
   ACTOR_TOLBI_EMIGRANT = 19,
-  ACTOR_HEAD_GUIDE = 20, // the Colosso tour's guides
+  ACTOR_HEAD_GUIDE = 20, ///< the Colosso tour's guides
   ACTOR_SECOND_GUIDE = 21,
   ACTOR_WEAPON_MERCHANT = 22,
   ACTOR_ARMOR_MERCHANT = 23,
   ACTOR_ITEM_MERCHANT = 24,
   ACTOR_TOWN_NUT = 26,
-  // Hammet's palace gate
+  /// Hammet's palace gate
   ACTOR_PALACE_GUARD = 8,
   ACTOR_SECOND_PALACE_GUARD = 9,
-  // The cave by the palace's secret passage
+  /// The cave by the palace's secret passage
   ACTOR_CAVE_GUARD = 8,
   ACTOR_WAGON = 9,
   ACTOR_HAMMET = 10,
   ACTOR_BUNZA = 11,
   ACTOR_CAVE_NUT = 12,
   // The tunnel
-  ACTOR_FIRST_BLOCK = 8, // the blocks that open the two passages
+  ACTOR_FIRST_BLOCK = 8, ///< the blocks that open the two passages
   ACTOR_SECOND_BLOCK = 9,
   ACTOR_FROST_TARGET = 11,
   ACTOR_TUNNEL_DJINNI = 12
 };
 
-// The tunnel's own flags, kept while the party is there.
+/// The tunnel's own flags, kept while the party is there.
 enum KalayTunnelFlag {
-  FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER = FLAG_SCENE_TEMP_00, // the fade overlay
+  FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER = FLAG_SCENE_TEMP_00, ///< the fade overlay
   FLAG_TUNNEL_FROST_TARGET_FROZEN = FLAG_SCENE_TEMP_01,
-  // Each block's particles have started their sound.
+  /// Each block's particles have started their sound.
   FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_02,
   FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED = FLAG_SCENE_TEMP_03,
   FLAG_TUNNEL_FIRST_PASSAGE_OPEN = 0x302,
   FLAG_TUNNEL_SECOND_PASSAGE_OPEN = 0x303
 };
 
-// Forward declarations.
+/// Forward declarations.
 static void Kalay_PrepareTown(void);
 static void Kalay_PreparePalaceGate(void);
 static void Kalay_PrepareCave(void);
@@ -99,19 +99,19 @@ static void Kalay_UpdateTunnelEmitters(void);
 static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z);
 static void Kalay_UpdateNutOrbit(void);
 
-// Clear the flag a guide's script sets when it is done.
+/// Clear the flag a guide's script sets when it is done.
 static __inline__ void Kalay_ClearScriptDone(struct FieldActor *actor) {
   s32 completed = 0;
 
   actor->timer = completed;
 }
 
-// Talking to the Mars Djinni in the tunnel adds it to the party.
+/// Talking to the Mars Djinni in the tunnel adds it to the party.
 static void Kalay_RecruitDjinn(void) {
   Djinn_JoinParty(ACTOR_TUNNEL_DJINNI, ELEMENT_MARS, 3);
 }
 
-// While the tour waits, a tourist now and then nods, shakes his head or turns.
+/// While the tour waits, a tourist now and then nods, shakes his head or turns.
 static s32 Kalay_UpdateTouristFidget(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   u32 action;
@@ -143,8 +143,8 @@ static s32 Kalay_UpdateTouristFidget(struct ScriptInterpreter *interpreter) {
 // Shared source, included in link order.
 #include "common/object_heading.h"
 
-// Kalay is six maps: the town, the palace gate, the cave by the palace's
-// secret passage, two more maps and the tunnel with the two blocks.
+/// Kalay is six maps: the town, the palace gate, the cave by the palace's
+/// secret passage, two more maps and the tunnel with the two blocks.
 const struct SceneEntrance *Kalay_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -169,13 +169,13 @@ const struct SceneEntrance *Kalay_GetEntrances(void) {
   return gKalay_NoEntrances;
 }
 
-// Kalay has no scene regions.
+/// Kalay has no scene regions.
 const struct SceneRegion *Kalay_GetRegions(void) { return NULL; }
 
-// The numbered exits of all six maps.
+/// The numbered exits of all six maps.
 u8 *Kalay_GetExits(void) { return (u8 *)gKalay_Exits; }
 
-// The people of the town, palace gate, cave and tunnel.
+/// The people of the town, palace gate, cave and tunnel.
 const struct ScenePlacement *Kalay_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -194,7 +194,7 @@ const struct ScenePlacement *Kalay_GetPlacements(void) {
   return gKalay_NoPlacements;
 }
 
-// Searching the town well: the party peers in, and it is very clean.
+/// Searching the town well: the party peers in, and it is very clean.
 static void Kalay_SearchWell(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
@@ -202,7 +202,7 @@ static void Kalay_SearchWell(void) {
   Engine_EventEnd();
 }
 
-// Catch pulls in the Nut floating in the cave.
+/// Catch pulls in the Nut floating in the cave.
 static void Kalay_CatchCaveNut(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(ACTOR_CAVE_NUT, 0, 0);
@@ -212,7 +212,7 @@ static void Kalay_CatchCaveNut(void) {
   Engine_EventEnd();
 }
 
-// The conversations, exits and Psynergy targets of each map.
+/// The conversations, exits and Psynergy targets of each map.
 const struct SceneEvent *Kalay_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -237,7 +237,7 @@ const struct SceneEvent *Kalay_GetEvents(void) {
   return gKalay_NoEvents;
 }
 
-// A man tells why he moved to Kalay: he left Tolbi, afraid of Babi.
+/// A man tells why he moved to Kalay: he left Tolbi, afraid of Babi.
 static void Kalay_TalkAboutLeavingHome(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayCameKalayBecauseDidntLike);
@@ -245,8 +245,8 @@ static void Kalay_TalkAboutLeavingHome(void) {
   Engine_EventEnd();
 }
 
-// Spoken to from any side but the north, the cave guard asks whether the
-// party wants to go into the cave, and turns it away either way.
+/// Spoken to from any side but the north, the cave guard asks whether the
+/// party wants to go into the cave, and turns it away either way.
 static void Kalay_AskAboutCaveAccess(void) {
   struct FieldActor *leader;
   u32 relativeFacing;
@@ -273,7 +273,7 @@ static void Kalay_AskAboutCaveAccess(void) {
   }
 }
 
-// In the tunnel, a man asks whether Layana was too hard on the party.
+/// In the tunnel, a man asks whether Layana was too hard on the party.
 static void Kalay_TalkAboutLayana(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayLayanaWasVeryHardOn);
@@ -281,8 +281,8 @@ static void Kalay_TalkAboutLayana(void) {
   Engine_EventEnd();
 }
 
-// Across the counter, the leader facing north, the weapon shop opens; from
-// elsewhere the merchant grumbles that Hammet sells his best weapons away.
+/// Across the counter, the leader facing north, the weapon shop opens; from
+/// elsewhere the merchant grumbles that Hammet sells his best weapons away.
 static void Kalay_TalkToWeaponMerchant(void) {
   struct FieldActor *leader;
   u32 relativeFacing;
@@ -299,8 +299,8 @@ static void Kalay_TalkToWeaponMerchant(void) {
   }
 }
 
-// Across the counter, the leader facing west to north, the armor shop opens;
-// from elsewhere the merchant asks whether the party found its weapons.
+/// Across the counter, the leader facing west to north, the armor shop opens;
+/// from elsewhere the merchant asks whether the party found its weapons.
 static void Kalay_TalkToArmorMerchant(void) {
   struct FieldActor *leader;
   u32 relativeFacing;
@@ -317,8 +317,8 @@ static void Kalay_TalkToArmorMerchant(void) {
   }
 }
 
-// Across the counter, the leader facing east, the item shop opens; from
-// elsewhere the merchant praises Lady Layana.
+/// Across the counter, the leader facing east, the item shop opens; from
+/// elsewhere the merchant praises Lady Layana.
 static void Kalay_TalkToItemMerchant(void) {
   struct FieldActor *leader;
   u32 relativeFacing;
@@ -335,8 +335,8 @@ static void Kalay_TalkToItemMerchant(void) {
   }
 }
 
-// Walking north into a house door, everyone stops, the door opens and the
-// leader walks in.
+/// Walking north into a house door, everyone stops, the door opens and the
+/// leader walks in.
 static void Kalay_OpenDoorAndExit(void) {
   struct EventWork *event;
   struct FieldActor *actor;
@@ -372,7 +372,7 @@ static void Kalay_OpenDoorAndExit(void) {
   Engine_EventEnd();
 }
 
-// The palace door opens in two frames.
+/// The palace door opens in two frames.
 static __inline__ void Kalay_AnimatePalaceDoor(void) {
   Event_PlayCue(SE_188);
   Map_CopyCellsTo(36, 23, 43, 12, 2, 2);
@@ -381,7 +381,7 @@ static __inline__ void Kalay_AnimatePalaceDoor(void) {
   Engine_TaskWait(5);
 }
 
-// Walking north into the palace door, it opens and the leader walks in.
+/// Walking north into the palace door, it opens and the leader walks in.
 static void Kalay_EnterPalace(void) {
   Engine_EventBegin();
   Kalay_AnimatePalaceDoor();
@@ -396,10 +396,10 @@ static void Kalay_EnterPalace(void) {
   Engine_EventEnd();
 }
 
-// Leaving town (triggers 9 and 10) after hearing of the Colosso tour, the
-// party watches the tour group stop: the guides count everyone, pace back and
-// forth while the tourists grumble, give up on the missing man and lead the
-// group off. The late tourist then runs after it. Otherwise the party leaves.
+/// Leaving town (triggers 9 and 10) after hearing of the Colosso tour, the
+/// party watches the tour group stop: the guides count everyone, pace back and
+/// forth while the tourists grumble, give up on the missing man and lead the
+/// group off. The late tourist then runs after it. Otherwise the party leaves.
 static void Kalay_WatchTourGroupDeparture(void) {
   s32 message;
   struct FieldActor *headWait;
@@ -859,8 +859,8 @@ static void Kalay_WatchTourGroupDeparture(void) {
   Engine_EventEnd();
 }
 
-// Touching trigger 10 in the tunnel stops the fade overlay following the
-// leader.
+/// Touching trigger 10 in the tunnel stops the fade overlay following the
+/// leader.
 static void Kalay_StopTrackingLeader(void) {
   if (GameFlag_IsSet(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER) != 0) {
     gActorEffectWork->actor = NULL;
@@ -868,7 +868,7 @@ static void Kalay_StopTrackingLeader(void) {
   }
 }
 
-// Touching trigger 11 in the tunnel makes the fade overlay follow the leader.
+/// Touching trigger 11 in the tunnel makes the fade overlay follow the leader.
 static void Kalay_StartTrackingLeader(void) {
   struct FadeOverlayWork *work;
 
@@ -879,7 +879,7 @@ static void Kalay_StartTrackingLeader(void) {
   }
 }
 
-// Trigger 19 in the tunnel: the leader's depth priority follows his position.
+/// Trigger 19 in the tunnel: the leader's depth priority follows his position.
 static void Kalay_EnableLeaderAutomaticPriority(void) {
   u8 *priorityFlags;
   s32 flags;
@@ -890,7 +890,7 @@ static void Kalay_EnableLeaderAutomaticPriority(void) {
   *priorityFlags = flags;
 }
 
-// Trigger 18 in the tunnel: the leader's depth priority stays fixed.
+/// Trigger 18 in the tunnel: the leader's depth priority stays fixed.
 static void Kalay_DisableLeaderAutomaticPriority(void) {
   u8 *priorityFlags;
   s32 flags;
@@ -901,7 +901,7 @@ static void Kalay_DisableLeaderAutomaticPriority(void) {
   *priorityFlags = flags;
 }
 
-// Catch pulls in the Nut circling in the town.
+/// Catch pulls in the Nut circling in the town.
 static void Kalay_CatchTownNut(void) {
   Scheduler_RemoveCallback(Kalay_UpdateNutOrbit);
   Engine_TaskWait(1);
@@ -911,7 +911,7 @@ static void Kalay_CatchTownNut(void) {
   Engine_PartyGiveItem(ITEM_NUT, 0);
 }
 
-// Every map of Kalay sets flag 0x87a, then prepares its own people and cells.
+/// Every map of Kalay sets flag 0x87a, then prepares its own people and cells.
 s32 Kalay_Initialize(void) {
   s32 scene;
 
@@ -931,8 +931,8 @@ s32 Kalay_Initialize(void) {
   return 0;
 }
 
-// Once Lunpa's trade has reopened, Hammet's palace flags (0x321 and 0x912 to
-// 0x915) are set. Until it is caught, the Nut circles above the town.
+/// Once Lunpa's trade has reopened, Hammet's palace flags (0x321 and 0x912 to
+/// 0x915) are set. Until it is caught, the Nut circles above the town.
 static void Kalay_PrepareTown(void) {
   OrbitingSceneObject *nut;
   s32 found;
@@ -978,8 +978,8 @@ static void Kalay_PrepareTown(void) {
   }
 }
 
-// The palace flags as in the town; walking up to the gate the first time,
-// Ivan introduces himself to the guards.
+/// The palace flags as in the town; walking up to the gate the first time,
+/// Ivan introduces himself to the guards.
 static void Kalay_PreparePalaceGate(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
     Engine_GameFlagSet(0x321);
@@ -997,8 +997,8 @@ static void Kalay_PreparePalaceGate(void) {
   }
 }
 
-// The cave's Nut floats until caught, the guard turns after flag 0x915,
-// and arriving through entrance 10 brings Hammet back by wagon.
+/// The cave's Nut floats until caught, the guard turns after flag 0x915,
+/// and arriving through entrance 10 brings Hammet back by wagon.
 static void Kalay_PrepareCave(void) {
   struct FieldActor *guard;
 
@@ -1014,8 +1014,8 @@ static void Kalay_PrepareCave(void) {
   }
 }
 
-// The fifth map opens with a window transition. After flag 0x915 its passage
-// cells are open; entrances 1 to 3 start sound 170.
+/// The fifth map opens with a window transition. After flag 0x915 its passage
+/// cells are open; entrances 1 to 3 start sound 170.
 static void Kalay_StartWindowTransition(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (Engine_GameFlagIsSet(0x915) != 0) {
@@ -1032,8 +1032,8 @@ static void Kalay_StartWindowTransition(void) {
   }
 }
 
-// The tunnel: the fade overlay follows the leader unless he came in by
-// entrance 4; pushed blocks, frozen target and opened passages are restored.
+/// The tunnel: the fade overlay follows the leader unless he came in by
+/// entrance 4; pushed blocks, frozen target and opened passages are restored.
 static void Kalay_PrepareTunnel(void) {
   s32 resumedScene;
   struct FieldActor *actor;
@@ -1183,7 +1183,7 @@ static void Kalay_PrepareTunnel(void) {
   }
 }
 
-// All eight tourists start fidgeting.
+/// All eight tourists start fidgeting.
 static void Kalay_StartTouristsFidgeting(void) {
   Kalay_StartTouristFidgeting(27);
   Kalay_StartTouristFidgeting(28);
@@ -1195,7 +1195,7 @@ static void Kalay_StartTouristsFidgeting(void) {
   Kalay_StartTouristFidgeting(34);
 }
 
-// A tourist starts fidgeting after a random pause.
+/// A tourist starts fidgeting after a random pause.
 static void Kalay_StartTouristFidgeting(s32 actorId) {
   struct FieldActor *actor;
   u32 random;
@@ -1207,7 +1207,7 @@ static void Kalay_StartTouristFidgeting(s32 actorId) {
   Engine_ObjectSetScript(actor, (s32)gKalay_TouristFidgetScript);
 }
 
-// The guides speed up and start pacing in turn.
+/// The guides speed up and start pacing in turn.
 static void Kalay_StartGuidesPacing(void) {
   gKalay_DanceStep = 0;
   Actor_SetSpeed(ACTOR_HEAD_GUIDE, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -1216,7 +1216,7 @@ static void Kalay_StartGuidesPacing(void) {
                              KALAY_CALLBACK_PRIORITY);
 }
 
-// Each guide paces in turn, starting when the other finishes.
+/// Each guide paces in turn, starting when the other finishes.
 static void Kalay_AlternateGuidesPacing(void) {
   switch (gKalay_DanceStep) {
   case 0:
@@ -1253,10 +1253,10 @@ static void Kalay_AlternateGuidesPacing(void) {
   }
 }
 
-// At the palace gate the guards turn the party away until they recognize
-// Ivan, tanned and grown, and learn that he does not know Hammet is a
-// prisoner. Ivan insists his friends hear everything, and the guards open the
-// door for the party.
+/// At the palace gate the guards turn the party away until they recognize
+/// Ivan, tanned and grown, and learn that he does not know Hammet is a
+/// prisoner. Ivan insists his friends hear everything, and the guards open the
+/// door for the party.
 static void Kalay_IvanMeetsPalaceGuards(void) {
   struct FieldActor *actor;
 
@@ -1436,10 +1436,10 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Engine_EventEnd();
 }
 
-// Arriving through the cave's entrance 10, Hammet comes home by Bunza's wagon
-// with the party. Hammet explains the secret passage to the palace and asks
-// Bunza to take the party round through the town, so the passage stays
-// secret; the cave guard opens it, Hammet goes in and the party rides off.
+/// Arriving through the cave's entrance 10, Hammet comes home by Bunza's wagon
+/// with the party. Hammet explains the secret passage to the palace and asks
+/// Bunza to take the party round through the town, so the passage stays
+/// secret; the cave guard opens it, Hammet goes in and the party rides off.
 static void Kalay_HammetReturnsToPalace(void) {
   u8 *leaderPhase;
   u32 random;
@@ -1733,7 +1733,7 @@ static void Kalay_HammetReturnsToPalace(void) {
 // Shared source, included in link order.
 #include "common/object_findcell.h"
 
-// In the tunnel, walking into a block pushes it one tile when there is room.
+/// In the tunnel, walking into a block pushes it one tile when there is room.
 static void Kalay_PushTunnelBlock(void) {
   struct FieldPosition destination;
   struct FieldActor *leader;
@@ -1783,8 +1783,8 @@ static void Kalay_PushTunnelBlock(void) {
   }
 }
 
-// Once a block is pushed far enough west, its passage opens step by step and
-// the frost target appears for the first.
+/// Once a block is pushed far enough west, its passage opens step by step and
+/// the frost target appears for the first.
 static void Kalay_UpdateTunnelPassages(void) {
   struct FieldActor *firstBlock;
   struct FieldActor *secondBlock;
@@ -1949,7 +1949,7 @@ static void Kalay_UpdateTunnelParticle(struct ScriptInterpreter *interpreter) {
 #endif
 }
 
-// Particles stream from each block while its passage is closed.
+/// Particles stream from each block while its passage is closed.
 static void Kalay_UpdateTunnelEmitters(void) {
   struct FieldActor *firstEmitter;
   struct FieldActor *secondEmitter;
@@ -1982,7 +1982,7 @@ static void Kalay_UpdateTunnelEmitters(void) {
   }
 }
 
-// Create a short-lived particle with random position and velocity offsets.
+/// Create a short-lived particle with random position and velocity offsets.
 static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
   s32 depth;
   struct FieldActor *particle;
@@ -2020,7 +2020,7 @@ static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
   }
 }
 
-// The town Nut circles its spot and rocks as it goes.
+/// The town Nut circles its spot and rocks as it goes.
 static void Kalay_UpdateNutOrbit(void) {
   OrbitingSceneObject *effect =
       (OrbitingSceneObject *)Object_GetById(ACTOR_TOWN_NUT);
@@ -2039,7 +2039,7 @@ static void Kalay_UpdateNutOrbit(void) {
                         ((u32)(Engine_RandomNext() << 9) >> 16) + 0x400;
 }
 
-// Frost on the target sinks it into the floor, clearing its cells.
+/// Frost on the target sinks it into the floor, clearing its cells.
 static void Kalay_FreezeFrostTarget(void) {
   struct FieldActor *effect = Object_GetById(ACTOR_FROST_TARGET);
 

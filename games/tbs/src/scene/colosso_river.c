@@ -70,7 +70,7 @@
   ((s32 (*)(s32, s32))Scene_GiveAndEquipItem)
 #endif
 
-// Forward declarations.
+/// Forward declarations.
 static void ColossoRiver_ExplainFinalsRules(s32 guide);
 static void ColossoRiver_ShowRoundIntroduction(s32 round);
 static void ColossoRiver_ShowMatchResult(s32 result);
@@ -81,49 +81,49 @@ static void ColossoRiver_PushObjectAhead(void);
 
 typedef void (*SceneTask)(void);
 
-// The course's actors, by the guide's and attendants' explanations: four
-// stages (the Rock Challenge, the Pipeworks, the Broken Bridge and the Lumber
-// Water Crossing Area) lead to the arena where the two warriors fight.
+/// The course's actors, by the guide's and attendants' explanations: four
+/// stages (the Rock Challenge, the Pipeworks, the Broken Bridge and the Lumber
+/// Water Crossing Area) lead to the arena where the two warriors fight.
 enum {
-  OPPONENT = 8, // the warrior racing Isaac to the arena
-  ROCK_A = 9,   // the Rock Challenge's three rocks
+  OPPONENT = 8, ///< the warrior racing Isaac to the arena
+  ROCK_A = 9,   ///< the Rock Challenge's three rocks
   ROCK_B = 10,
   ROCK_C = 11,
-  PIPEWORKS_BLOCK = 12, // pushed west to let water into the Pipeworks
-  PIPE_WEST = 13,       // the Pipeworks' two pipes, a kind of scale
+  PIPEWORKS_BLOCK = 12, ///< pushed west to let water into the Pipeworks
+  PIPE_WEST = 13,       ///< the Pipeworks' two pipes, a kind of scale
   PIPE_EAST = 14,
   GROWTH_PLANT = 15,
-  BRIDGE_OPERATOR = 16, // works the Broken Bridge
-  LOG_NORTH_SOUTH = 17, // the Lumber Water Crossing Area's two logs
+  BRIDGE_OPERATOR = 16, ///< works the Broken Bridge
+  LOG_NORTH_SOUTH = 17, ///< the Lumber Water Crossing Area's two logs
   LOG_EAST_WEST = 18,
-  GUIDE = 19, // explains the finals
+  GUIDE = 19, ///< explains the finals
   ROCK_ATTENDANT = 20,
   PIPEWORKS_ATTENDANT = 21,
   BRIDGE_ATTENDANT = 22,
   LUMBER_ATTENDANT = 23,
-  PRIZE_A = 24, // the arena's Iron Shield and Padded Gloves
+  PRIZE_A = 24, ///< the arena's Iron Shield and Padded Gloves
   PRIZE_B = 25
 };
 
 // Shared Colosso routines (scene/common/colosso_*.c).
 
-// Return the course entrance table.
+/// Return the course entrance table.
 struct SceneEntrance *ColossoRiver_GetEntrances(void) {
   return gColossoRiver_Entrances;
 }
 
-// The course has no region table.
+/// The course has no region table.
 const struct SceneRegion *ColossoRiver_GetRegions(void) { return 0; }
 
-// Return the course exit table.
+/// Return the course exit table.
 u32 *ColossoRiver_GetExits(void) { return gColossoRiver_Exits; }
 
-// Return the course actor placements.
+/// Return the course actor placements.
 struct ScenePlacement *ColossoRiver_GetPlacements(void) {
   return gColossoRiver_Placements;
 }
 
-// Advance the bridge animation and its walkable collision cells.
+/// Advance the bridge animation and its walkable collision cells.
 static void ColossoRiver_UpdateBrokenBridge(void) {
   switch ((u32)gColossoRiver_Countdown) {
   case 66:
@@ -153,7 +153,7 @@ static void ColossoRiver_UpdateBrokenBridge(void) {
   gColossoRiver_Countdown--;
 }
 
-// Stop the bridge task and restore its closed frame.
+/// Stop the bridge task and restore its closed frame.
 static void ColossoRiver_ResetBrokenBridge(void) {
   SceneTask task;
 
@@ -163,13 +163,13 @@ static void ColossoRiver_ResetBrokenBridge(void) {
   task();
 }
 
-// Start the bridge's repeating opening sequence.
+/// Start the bridge's repeating opening sequence.
 static void ColossoRiver_StartBrokenBridge(void) {
   gColossoRiver_Countdown = 66;
   FieldScheduler_AddCallback(ColossoRiver_UpdateBrokenBridge, 0xC80);
 }
 
-// Wait for the crossing window, bounded by one bridge cycle.
+/// Wait for the crossing window, bounded by one bridge cycle.
 static void ColossoRiver_WaitForBridgeOpening(void) {
   s32 i;
 
@@ -186,8 +186,8 @@ static void ColossoRiver_WaitForBridgeOpening(void) {
   }
 }
 
-// After a rock is moved: a rock resting on the floor becomes a step (the
-// second rock's column is kept in byte flag 0x310).
+/// After a rock is moved: a rock resting on the floor becomes a step (the
+/// second rock's column is kept in byte flag 0x310).
 static void Event_SettleRocks(void) {
 
   struct FieldActor *actor;
@@ -220,15 +220,15 @@ static void Event_SettleRocks(void) {
   }
 }
 
-// Walking into a rock pushes it one cell.
+/// Walking into a rock pushes it one cell.
 static void Event_PushRock(void) {
 
   ColossoRiver_PushObjectAhead();
   Event_SettleRocks();
 }
 
-// Growth on the plant: it grows and its cell becomes walkable (0x303 keeps it
-// grown).
+/// Growth on the plant: it grows and its cell becomes walkable (0x303 keeps it
+/// grown).
 static void Event_GrowPlant(void) {
   {
 
@@ -237,8 +237,8 @@ static void Event_GrowPlant(void) {
   Engine_GameFlagSet(0x303);
 }
 
-// Douse on the west pipe: the camera turns to the Pipeworks and the two pipes
-// rise as it fills (0x301).
+/// Douse on the west pipe: the camera turns to the Pipeworks and the two pipes
+/// rise as it fills (0x301).
 static void Event_DousePipe(void) {
   struct FieldActor *actor;
   s32 none;
@@ -266,7 +266,7 @@ static void Event_DousePipe(void) {
   Engine_EventEnd();
 }
 
-// Move the leader and a course object together between cell centers.
+/// Move the leader and a course object together between cell centers.
 static void ColossoRiver_MoveActorPairByOffset(s32 actorId, s32 dx, s32 dz) {
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -305,8 +305,8 @@ static void ColossoRiver_MoveActorPairByOffset(s32 actorId, s32 dx, s32 dz) {
   Engine_EventEnd();
 }
 
-// Walking into the north-south log rolls it, with the leader, to the other
-// bank.
+/// Walking into the north-south log rolls it, with the leader, to the other
+/// bank.
 static void Event_RollLogNorthSouth(void) {
   struct FieldActor *actor;
   s32 row;
@@ -325,8 +325,8 @@ static void Event_RollLogNorthSouth(void) {
   Map_CopyCellAttributes(64, 24, 3, 1, 64, row);
 }
 
-// Walking into the east-west log rolls it, with the leader, the way the pad
-// is held.
+/// Walking into the east-west log rolls it, with the leader, the way the pad
+/// is held.
 static void Event_RollLogEastWest(void) {
   struct FieldActor *actor;
   s32 column;
@@ -368,7 +368,7 @@ static void Event_RollLogEastWest(void) {
   Map_CopyCellAttributes(63, 25, 1, 3, column, 9);
 }
 
-// Run the five frames that show water entering the Pipeworks channel.
+/// Run the five frames that show water entering the Pipeworks channel.
 static inline void ColossoRiver_AnimatePipeworksWater(void) {
   Map_CopyCells(96, 29, 1, 3, 34, 38);
   Engine_EventWait(3);
@@ -381,8 +381,8 @@ static inline void ColossoRiver_AnimatePipeworksWater(void) {
   Map_CopyCells(100, 29, 1, 3, 34, 38);
 }
 
-// Pushing the Pipeworks block west: water runs into the channel, and the first
-// time the pipes rise (0x302, 0x301).
+/// Pushing the Pipeworks block west: water runs into the channel, and the first
+/// time the pipes rise (0x302, 0x301).
 static void Event_PushPipeworksBlock(void) {
   s32 leaderId;
   struct FieldActor *leader;
@@ -454,13 +454,13 @@ static void Event_PushPipeworksBlock(void) {
   Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
 }
 
-// Mark the course flag used by this unused event.
+/// Mark the course flag used by this unused event.
 UNUSED static void ColossoRiver_SetCourseFlag(void) { Engine_GameFlagSet(768); }
 
-// Reaching the arena: the leader takes a prize (the Iron Shield if first, the
-// Padded Gloves if second), and he and his opponent face off and fight.
-// FLAG_SCENE_TEMP_11 says the arena was already reached; the arena's touch
-// works while FLAG_SCENE_TEMP_10 is clear.
+/// Reaching the arena: the leader takes a prize (the Iron Shield if first, the
+/// Padded Gloves if second), and he and his opponent face off and fight.
+/// FLAG_SCENE_TEMP_11 says the arena was already reached; the arena's touch
+/// works while FLAG_SCENE_TEMP_10 is clear.
 static void Event_ReachArena(void) {
   s32 approach;
   s32 n;
@@ -503,7 +503,7 @@ static void Event_ReachArena(void) {
   GameFlag_Set(FLAG_KEEP_MUSIC);
 }
 
-// Walking into something: a rock is pushed, anything else is checked.
+/// Walking into something: a rock is pushed, anything else is checked.
 static void Event_PushRockOrCheckAhead(void) {
 
   if (Colosso_FindActorAhead() == 0) {
@@ -513,11 +513,11 @@ static void Event_PushRockOrCheckAhead(void) {
   }
 }
 
-// Return the course event table.
+/// Return the course event table.
 struct SceneEvent *ColossoRiver_GetEvents(void) { return gColossoRiver_Events; }
 
-// Back from the battle: the two warriors stand in the arena as the result is
-// shown.
+/// Back from the battle: the two warriors stand in the arena as the result is
+/// shown.
 static void ColossoRiver_RestoreMatchResult(s32 result) {
 
   Engine_ActorDestroy(PRIZE_A);
@@ -541,7 +541,7 @@ static void ColossoRiver_RestoreMatchResult(s32 result) {
   Engine_EventEnd();
 }
 
-// Mark actors standing in the course's finish terrain.
+/// Mark actors standing in the course's finish terrain.
 static void ColossoRiver_MarkCourseTerrain(s32 actor) {
   struct FieldActor *courseActor;
   s32 column;
@@ -557,8 +557,8 @@ static void ColossoRiver_MarkCourseTerrain(s32 actor) {
   }
 }
 
-// Restores the stages as they were left, then by the arrival: the race (1 and
-// 2), the guide's explanation (3), or the match won (4) or lost (5).
+/// Restores the stages as they were left, then by the arrival: the race (1 and
+/// 2), the guide's explanation (3), or the match won (4) or lost (5).
 s32 ColossoRiver_Initialize(void) {
   struct FieldActor *actor;
   s32 hit;
@@ -677,8 +677,8 @@ s32 ColossoRiver_Initialize(void) {
   return 0;
 }
 
-// The guide shows the party the first finals course: the race through the
-// stages to the arena, the prizes there, and where the companions cheer from.
+/// The guide shows the party the first finals course: the race through the
+/// stages to the arena, the prizes there, and where the companions cheer from.
 static void ColossoRiver_ExplainFinalsRules(s32 guide) {
   struct FieldActor *actor;
   s32 x;
@@ -809,8 +809,8 @@ static void ColossoRiver_ExplainFinalsRules(s32 guide) {
   Engine_EventEnd();
 }
 
-// The Rock Challenge's attendant: the first time, a warrior shows how to push
-// the rocks into steps; then the objective.
+/// The Rock Challenge's attendant: the first time, a warrior shows how to push
+/// the rocks into steps; then the objective.
 static void Event_TalkToRockAttendant(s32 scene) {
   s32 path;
 
@@ -868,7 +868,7 @@ static void Event_TalkToRockAttendant(s32 scene) {
   }
 }
 
-// Move a Pipeworks actor with the speed used throughout its demonstration.
+/// Move a Pipeworks actor with the speed used throughout its demonstration.
 static inline void ColossoRiver_SetPipeHeight(struct FieldActor *actor,
                                               s32 height) {
   actor->motionFlags = 0;
@@ -877,8 +877,8 @@ static inline void ColossoRiver_SetPipeHeight(struct FieldActor *actor,
   Engine_ObjectSetPosition(actor, actor->x.fixed, height, actor->z.fixed);
 }
 
-// The Pipeworks' attendant: a marker shows how the pipes rise and fall like
-// scales; then the objective.
+/// The Pipeworks' attendant: a marker shows how the pipes rise and fall like
+/// scales; then the objective.
 static void Event_TalkToPipeworksAttendant(s32 attendant) {
   s32 path;
   struct FieldActor *second;
@@ -939,8 +939,8 @@ static void Event_TalkToPipeworksAttendant(s32 attendant) {
   }
 }
 
-// The Broken Bridge's attendant: a warrior times his crossing; then the
-// objective.
+/// The Broken Bridge's attendant: a warrior times his crossing; then the
+/// objective.
 static void Event_TalkToBridgeAttendant(s32 scene) {
   s32 path;
 
@@ -986,8 +986,8 @@ static void Event_TalkToBridgeAttendant(s32 scene) {
   }
 }
 
-// The Lumber Water Crossing Area's attendant: a warrior rolls a log across;
-// then the objective.
+/// The Lumber Water Crossing Area's attendant: a warrior rolls a log across;
+/// then the objective.
 static void Event_TalkToLumberAttendant(s32 scene) {
   s32 path;
 
@@ -1046,17 +1046,17 @@ static void Event_TalkToLumberAttendant(s32 scene) {
   Engine_EventEnd();
 }
 
-// Set the leader's movement speed for the shared Colosso dialogue.
+/// Set the leader's movement speed for the shared Colosso dialogue.
 static inline void InitializeActorZero(void) {
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
 }
 
-// Set an attendant's movement speed for the shared Colosso dialogue.
+/// Set an attendant's movement speed for the shared Colosso dialogue.
 static inline void InitializeSelectedActor(s32 actorId) {
   Engine_ActorSetSpeed(actorId, PIXELS(1), PIXELS(1) / 2);
 }
 
-// Advance to the next message in the current explanation.
+/// Advance to the next message in the current explanation.
 static __inline__ void AdvanceMessage(s32 amount) {
   gEventWork->message += amount;
 }
@@ -1066,7 +1066,7 @@ static __inline__ void AdvanceMessage(s32 amount) {
 #include "common/item_equip.h"
 #include "common/colosso_task.h"
 
-// Select a presentation script and reset its playback state.
+/// Select a presentation script and reset its playback state.
 static void ColossoRiver_SelectPresentationScript(u32 mode, u32 param) {
   const s16 *script;
 
@@ -1097,7 +1097,7 @@ static void ColossoRiver_SelectPresentationScript(u32 mode, u32 param) {
   gColosso_LetteringPosition = 0;
 }
 
-// The match opens: portraits of the warriors and the round announced.
+/// The match opens: portraits of the warriors and the round announced.
 static void ColossoRiver_ShowRoundIntroduction(s32 round) {
   if (round == 0) {
     Engine_EventBegin();
@@ -1144,7 +1144,7 @@ static void ColossoRiver_ShowRoundIntroduction(s32 round) {
   }
 }
 
-// The result: the winner's portrait and fanfare, then the course closes.
+/// The result: the winner's portrait and fanfare, then the course closes.
 static void ColossoRiver_ShowMatchResult(s32 result) {
 
   s32 kind;
@@ -1198,7 +1198,7 @@ static void ColossoRiver_ShowMatchResult(s32 result) {
 #include "common/colosso_marker.h"
 #include "common/colosso_item_icon.h"
 
-// Write eight hexadecimal digits and a terminating null.
+/// Write eight hexadecimal digits and a terminating null.
 UNUSED static void Text_WriteU32AsHex(u8 *buf, u32 value) {
   s32 i;
 
@@ -1212,10 +1212,10 @@ UNUSED static void Text_WriteU32AsHex(u8 *buf, u32 value) {
   }
 }
 
-// Provide the empty callback retained by the original event sequence.
+/// Provide the empty callback retained by the original event sequence.
 static void ColossoRiver_NoOp(void) {}
 
-// Mark the shared stage state ready for the waiting event.
+/// Mark the shared stage state ready for the waiting event.
 UNUSED static void ColossoRiver_MarkStageReady(void) {
   s16 *ready = (s16 *)gSceneState;
   u16 nine = 9;
@@ -1223,7 +1223,7 @@ UNUSED static void ColossoRiver_MarkStageReady(void) {
   *ready = nine;
 }
 
-// Wait until the stage's setup task reports readiness.
+/// Wait until the stage's setup task reports readiness.
 static void ColossoRiver_WaitForStageReady(void) {
   s16 *ready = (s16 *)gSceneState;
 
@@ -1232,7 +1232,7 @@ static void ColossoRiver_WaitForStageReady(void) {
   }
 }
 
-// Occasionally spawn an animated effect around the finish item.
+/// Occasionally spawn an animated effect around the finish item.
 static void ColossoRiver_SpawnRandomEffect(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   s32 position[3];
@@ -1268,7 +1268,7 @@ static void ColossoRiver_SpawnRandomEffect(union FieldObject *fieldObject) {
   }
 }
 
-// Present the collected item above its collector and signal completion.
+/// Present the collected item above its collector and signal completion.
 static s32
 ColossoRiver_PlaceFinishItemAboveActor(struct ScriptInterpreter *interpreter) {
   struct FieldActor *collector = (struct FieldActor *)interpreter;
@@ -1283,7 +1283,7 @@ ColossoRiver_PlaceFinishItemAboveActor(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-// Move to the selected finish item and present it to the party.
+/// Move to the selected finish item and present it to the party.
 static s32 ColossoRiver_CollectFinishItem(s32 firstItem, s32 secondItem) {
 
   struct ColossoGaugeWork *work = (struct ColossoGaugeWork *)gColossoWork;
@@ -1357,7 +1357,7 @@ static s32 ColossoRiver_CollectFinishItem(s32 firstItem, s32 secondItem) {
 #include "common/colosso_scene_state.h"
 #include "common/object_findslot.h"
 
-// Check the next cell and push its object one step if clear.
+/// Check the next cell and push its object one step if clear.
 static void ColossoRiver_PushObjectAhead(void) {
 
   struct FieldActor *subject;
@@ -1514,7 +1514,7 @@ s32 gColossoRiver_ScriptB[] = {
     SC_END,
 };
 
-// Pixel steps by direction: X in the upper halfword, Z in the lower.
+/// Pixel steps by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(x, z) ((u32)(x) << 16 | (u16)(z))
 
 u32 gColossoRiver_DirectionSteps[] = {

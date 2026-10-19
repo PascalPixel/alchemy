@@ -1,11 +1,12 @@
-// Part of psynergy_effects.c, compiled only through it.
-// A Jupiter Djinni joining the party.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// A Jupiter Djinni joining the party.
 
 #include "../psynergy_effects_internal.h"
 
-// A Jupiter Djinni joins the party: it bounces three times, spins, leaps out
-// of sight and bursts into 24 light particles that circle and close in on
-// the leader, who turns to the camera and plays animation 28.
+/// A Jupiter Djinni joins the party: it bounces three times, spins, leaps out
+/// of sight and bursts into 24 light particles that circle and close in on
+/// the leader, who turns to the camera and plays animation 28.
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct EffectVector position;
   struct MotionObject *djinni;
@@ -71,8 +72,8 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 
-// A spinning object: its angle, and at 0x64 the frames its spin has been
-// speeding up for (BattleFx_AdvanceAngleWithRamp), read signed.
+/// A spinning object: its angle, and at 0x64 the frames its spin has been
+/// speeding up for (BattleFx_AdvanceAngleWithRamp), read signed.
 struct RampedSpinObject {
   u8 unk00[6];
   u16 angle;
@@ -80,8 +81,8 @@ struct RampedSpinObject {
   s16 rampFrames;
 };
 
-// Per-frame update: makes an object pulse, switching its scale between the
-// two values of gBattleFx_PulseScales every 4 frames.
+/// Per-frame update: makes an object pulse, switching its scale between the
+/// two values of gBattleFx_PulseScales every 4 frames.
 void BattleFx_SetObjectAlternatingWords(union FieldObject *fieldObject) {
   u8 *object = (u8 *)fieldObject;
   u32 *table = gBattleFx_PulseScales;
@@ -91,8 +92,8 @@ void BattleFx_SetObjectAlternatingWords(union FieldObject *fieldObject) {
   ((struct MotionObject *)object)->scaleY = scale;
 }
 
-// Per-frame update: spins an object ever faster, from 1/16 turn a frame up to
-// 1/8.
+/// Per-frame update: spins an object ever faster, from 1/16 turn a frame up to
+/// 1/8.
 void BattleFx_AdvanceAngleWithRamp(union FieldObject *fieldObject) {
   void *obj = (void *)fieldObject;
   struct RampedSpinObject *spin = obj;
@@ -105,14 +106,14 @@ void BattleFx_AdvanceAngleWithRamp(union FieldObject *fieldObject) {
   }
 }
 
-// Spins and shrinks an object by 0x1c0 a frame, then releases it.
+/// Spins and shrinks an object by 0x1c0 a frame, then releases it.
 DEFINE_SHRINK_AND_DESTROY(BattleFx_ShrinkObjectAndDestroySlow, 0xFFFFFE40)
 
-// Effect slot callback of a Mars Djinni's sparks. States 0 and 1 repeat: the
-// spark flies 120 pixels up the screen (give or take 3/32 turn) from its
-// origin and starts over. Set to 2, it stops where it arrives; 40 frames
-// later, states 3 and 4 swarm it round a point 20 pixels over the leader.
-// Set to 5, it is freed once it arrives.
+/// Effect slot callback of a Mars Djinni's sparks. States 0 and 1 repeat: the
+/// spark flies 120 pixels up the screen (give or take 3/32 turn) from its
+/// origin and starts over. Set to 2, it stops where it arrives; 40 frames
+/// later, states 3 and 4 swarm it round a point 20 pixels over the leader.
+/// Set to 5, it is freed once it arrives.
 void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
   struct Object *owner;
   struct EffectVector position;

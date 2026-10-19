@@ -71,7 +71,7 @@
   ((s32 (*)())Engine_ActorSetAnimationAndWait)
 #endif
 
-// Forward declarations.
+/// Forward declarations.
 static void MercuryLighthouse_OpenGateWithMovedBlock(void);
 static void MercuryLighthouse_OpenStairGateWithMovedBlock(void);
 static void MercuryLighthouse_SyncBlockFlags(void);
@@ -93,7 +93,7 @@ static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem);
 // Sprite 0xe0 is a statue: Mia says "This statue wasn't here before" of the
 // one blocking her on the first.
 
-// The first map: Mia, the statue that blocks her and the channel blocks.
+/// The first map: Mia, the statue that blocks her and the channel blocks.
 enum MercuryLighthouse1Actor {
   ACTOR_STATUE_BLOCKING_MIA = ACTOR_FIRST_PLACED,
   ACTOR_CHANNEL_BLOCK_1,
@@ -101,8 +101,8 @@ enum MercuryLighthouse1Actor {
   ACTOR_CHANNEL_BLOCK_3
 };
 
-// The second map: the stair and fountain blocks, the statue for the gate's
-// floor switch and Sleet, Mercury Djinni 1.
+/// The second map: the stair and fountain blocks, the statue for the gate's
+/// floor switch and Sleet, Mercury Djinni 1.
 enum MercuryLighthouse2Actor {
   ACTOR_STAIR_BLOCK = ACTOR_FIRST_PLACED,
   ACTOR_FOUNTAIN_BLOCK = ACTOR_FIRST_PLACED + 2,
@@ -110,8 +110,8 @@ enum MercuryLighthouse2Actor {
   ACTOR_SLEET
 };
 
-// The third map: the sliding statue and where it lands below, the blocks
-// of the stone-door room, the five blocks of the crossing and one more.
+/// The third map: the sliding statue and where it lands below, the blocks
+/// of the stone-door room, the five blocks of the crossing and one more.
 enum MercuryLighthouse3Actor {
   ACTOR_FALLEN_STATUE = ACTOR_FIRST_PLACED,
   ACTOR_SLIDING_STATUE,
@@ -122,9 +122,9 @@ enum MercuryLighthouse3Actor {
   ACTOR_GAP_BLOCK
 };
 
-// The fourth map: Garet, Ivan and Mia in their own party slots, the statue
-// at the door, the Ply target, the statue by the waterfall, the statue on
-// the lift and the people at the fountain.
+/// The fourth map: Garet, Ivan and Mia in their own party slots, the statue
+/// at the door, the Ply target, the statue by the waterfall, the statue on
+/// the lift and the people at the fountain.
 enum MercuryLighthouse4Actor {
   ACTOR_DOOR_STATUE = ACTOR_FIRST_PLACED + 2,
   ACTOR_PLY_TARGET,
@@ -133,34 +133,34 @@ enum MercuryLighthouse4Actor {
   ACTOR_FIRST_VISITOR
 };
 
-// Puzzle states kept until the party leaves the lighthouse.
+/// Puzzle states kept until the party leaves the lighthouse.
 enum {
   FLAG_STAIRS_RAISED = 0x302,
   FLAG_FOUNTAIN_RUNNING = 0x306,
-  FLAG_FOUNTAIN_SHOWN = 0x307, // the camera has shown it start once
+  FLAG_FOUNTAIN_SHOWN = 0x307, ///< the camera has shown it start once
   FLAG_CHANNEL_1_OPEN = 0x310,
   FLAG_CHANNEL_2_OPEN = 0x311,
   FLAG_CHANNEL_3_OPEN = 0x312,
-  FLAG_CHANNEL_313 = 0x313, // cleared with the three, never set here
+  FLAG_CHANNEL_313 = 0x313, ///< cleared with the three, never set here
   FLAG_DOOR_ROOM_BLOCK_PUSHED = 0x318,
-  // The door switch block's column: each opens a different stone door.
+  /// The door switch block's column: each opens a different stone door.
   FLAG_DOOR_SWITCH_BLOCK_AT_47 = 0x319,
   FLAG_DOOR_SWITCH_BLOCK_AT_48 = 0x31a,
   FLAG_DOOR_SWITCH_BLOCK_AT_53 = 0x31b,
-  // Two flags per crossing block for its two resting columns, then the last.
+  /// Two flags per crossing block for its two resting columns, then the last.
   FLAG_FIRST_CROSSING_BLOCK = 0x330,
   FLAG_LAST_CROSSING_BLOCK_WEST = 0x338,
   FLAG_LAST_CROSSING_BLOCK_EAST = 0x339,
   FLAG_GAP_BLOCK_PLACED = 0x348
 };
 
-// Scene flags, kept while the party stays on the map.
+/// Scene flags, kept while the party stays on the map.
 enum {
   FLAG_HERMES_WATER_TAKEN = FLAG_SCENE_TEMP_00,
   FLAG_LEADER_ON_FLOOR_SWITCH = FLAG_SCENE_TEMP_00 + 0x56
 };
 
-// The chests: a Sleep Bomb, a Psy Crystal and a Nut.
+/// The chests: a Sleep Bomb, a Psy Crystal and a Nut.
 enum {
   FLAG_CHEST_SLEEP_BOMB = 0xf64,
   FLAG_CHEST_PSY_CRYSTAL = 0xf66,
@@ -180,7 +180,7 @@ enum {
 #include "common/effect_spawn.h"
 #include "common/object_staged_actor.h"
 
-// Talking to Sleet: the Djinni battle (Djinni 21, Mercury Djinni 1).
+/// Talking to Sleet: the Djinni battle (Djinni 21, Mercury Djinni 1).
 static void MercuryLighthouse_StartDjinnBattle(void) {
   Field_RequestDjinnBattle(ACTOR_SLEET, DJINNI_SLEET);
 }
@@ -191,7 +191,7 @@ struct LeaderEffectWork {
   struct FieldActor *target;
 };
 
-// Suppress the leader's effect target while crossing the patched floor region.
+/// Suppress the leader's effect target while crossing the patched floor region.
 static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   struct LeaderEffectWork *effectWork =
@@ -209,7 +209,7 @@ static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
 #include "common/mercury_lighthouse_sparks.h"
 #include "common/mercury_lighthouse_palette_cycle.h"
 
-// Select the entrance rows for the current lighthouse scene.
+/// Select the entrance rows for the current lighthouse scene.
 const struct SceneEntrance *MercuryLighthouse_GetEntrances(void) {
   s16 selector = gGameState.scene;
 
@@ -225,13 +225,13 @@ const struct SceneEntrance *MercuryLighthouse_GetEntrances(void) {
   return gMercuryLighthouseEntrancesOther;
 }
 
-// These lighthouse scenes have no placement-clipping regions.
+/// These lighthouse scenes have no placement-clipping regions.
 const struct SceneRegion *MercuryLighthouse_GetRegions(void) { return NULL; }
 
-// Return the packed exits shared by the lighthouse scenes.
+/// Return the packed exits shared by the lighthouse scenes.
 const u32 *MercuryLighthouse_GetExits(void) { return gMercuryLighthouse_Exits; }
 
-// Select the actors and obstacles for the current lighthouse scene.
+/// Select the actors and obstacles for the current lighthouse scene.
 const struct ScenePlacement *MercuryLighthouse_GetPlacements(void) {
   s16 selector = gGameState.scene;
 
@@ -250,36 +250,36 @@ const struct ScenePlacement *MercuryLighthouse_GetPlacements(void) {
   return gMercuryLighthousePlacementsOther;
 }
 
-// On the first map, as in the entrance hall, once Ply has worked there:
-// touching trigger 21 keeps rising sparks appearing on the pillar.
+/// On the first map, as in the entrance hall, once Ply has worked there:
+/// touching trigger 21 keeps rising sparks appearing on the pillar.
 static void MercuryLighthouse_SpawnTimedRiseEffect(void) {
   MercuryLighthouse_SparkleAtLeader();
 }
 
-// Touching trigger 31 or 32: the raised pillar is let go.
+/// Touching trigger 31 or 32: the raised pillar is let go.
 static void MercuryLighthouse_ReleaseRaisedPillar(void) {
   MercuryLighthouse_LoseLights();
 }
 
-// Walking into trigger 11, 21 or 31: one step across the water pillars.
+/// Walking into trigger 11, 21 or 31: one step across the water pillars.
 static void MercuryLighthouse_TryPillarStep(void) {
   MercuryLighthouse_HopAcrossPool();
 }
 
-// Touching trigger 11: the pillar underfoot rises to its full height.
+/// Touching trigger 11: the pillar underfoot rises to its full height.
 static void MercuryLighthouse_RaiseTouchedPillar(void) {
   MercuryLighthouse_ChargeLights();
 }
 
-// Searching trigger 10 at the lighthouse's foot: "Strange forces are at
-// work..."
+/// Searching trigger 10 at the lighthouse's foot: "Strange forces are at
+/// work..."
 static void MercuryLighthouse_InspectBlockedPassage(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgMercuryLighthouseStrangeForcesBlockWay, 1);
   Engine_EventEnd();
 }
 
-// Select the puzzle interactions and dialogue for the current scene.
+/// Select the puzzle interactions and dialogue for the current scene.
 const struct SceneEvent *MercuryLighthouse_GetEvents(void) {
   s16 selector = gGameState.scene;
 
@@ -298,25 +298,25 @@ const struct SceneEvent *MercuryLighthouse_GetEvents(void) {
 // Shared source is included here in ROM order.
 #include "common/mercury_lighthouse_risedrop.h"
 
-// Walking north into trigger 53 on the third map: the leader rises through
-// exit 3 (the trigger less 50), as the entrance hall's risers do.
+/// Walking north into trigger 53 on the third map: the leader rises through
+/// exit 3 (the trigger less 50), as the entrance hall's risers do.
 static void MercuryLighthouse_ExitWithSparks(void) {
   MercuryLighthouse_LeaveThroughPassage(gEventWork->touchedTrigger - 50);
 }
 
-// Walking north into trigger 63 on the third map: the same, through exit 13.
+/// Walking north into trigger 63 on the third map: the same, through exit 13.
 static void MercuryLighthouse_ExitAfterSparkStep(void) {
   MercuryLighthouse_LeaveThroughPassage(gEventWork->touchedTrigger - 50);
 }
 
-// Walking north into trigger 55 at the foot: the same, through exit 5.
+/// Walking north into trigger 55 at the foot: the same, through exit 5.
 static void MercuryLighthouse_LeaveWithSparkTrail(void) {
   MercuryLighthouse_LeaveThroughPassage(gEventWork->touchedTrigger - 50);
 }
 
-// With all three channel blocks in place the floor shakes, the screen fades
-// and the party is carried down to the entrance hall (exit 13); moving one
-// out again clears the flag.
+/// With all three channel blocks in place the floor shakes, the screen fades
+/// and the party is carried down to the entrance hall (exit 13); moving one
+/// out again clears the flag.
 static void MercuryLighthouse_ExitWhenChannelsOpen(void) {
   if (GameFlag_IsSet(FLAG_CHANNEL_1_OPEN) != 0 &&
       GameFlag_IsSet(FLAG_CHANNEL_2_OPEN) != 0 &&
@@ -338,9 +338,9 @@ static void MercuryLighthouse_ExitWhenChannelsOpen(void) {
   }
 }
 
-// Pushing a channel block (walking into trigger 25) on the first map: each
-// block opens one channel when it reaches its place, and the water runs on
-// through the ones before it.
+/// Pushing a channel block (walking into trigger 25) on the first map: each
+/// block opens one channel when it reaches its place, and the water runs on
+/// through the ones before it.
 static void MercuryLighthouse_MoveChannelBlocks(void) {
   struct StagedActorProbe probe;
   s32 column;
@@ -403,8 +403,8 @@ static void MercuryLighthouse_MoveChannelBlocks(void) {
   Engine_EventEnd();
 }
 
-// Touching trigger 2, 3 or 4 once the stairs are raised, or 46: the leader
-// is carried to the landing in a trail of sparkles.
+/// Touching trigger 2, 3 or 4 once the stairs are raised, or 46: the leader
+/// is carried to the landing in a trail of sparkles.
 static void MercuryLighthouse_WalkLeaderIn(void) {
   struct EventWork *eventWork;
 
@@ -435,8 +435,8 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
   Engine_EventEnd();
 }
 
-// Pushing the gate statue (walking into trigger 10) while the gate is shut:
-// it moves a step, and may come to rest on the floor switch.
+/// Pushing the gate statue (walking into trigger 10) while the gate is shut:
+/// it moves a step, and may come to rest on the floor switch.
 static void MercuryLighthouse_PushGateSwitchBlock(void) {
   Engine_EventBegin();
   StagedActor_AdvancePair();
@@ -444,8 +444,8 @@ static void MercuryLighthouse_PushGateSwitchBlock(void) {
   MercuryLighthouse_OpenGateWithMovedBlock();
 }
 
-// Move on the gate statue, or after a push: resting on the floor switch at
-// (5, 13), it sinks two pixels and the gate opens for good.
+/// Move on the gate statue, or after a push: resting on the floor switch at
+/// (5, 13), it sinks two pixels and the gate opens for good.
 static void MercuryLighthouse_OpenGateWithMovedBlock(void) {
   s32 column;
   s32 row;
@@ -471,8 +471,8 @@ static void MercuryLighthouse_OpenGateWithMovedBlock(void) {
   Engine_EventEnd();
 }
 
-// Touching trigger 12 while the gate is shut: standing on the floor switch
-// sinks the leader two pixels and opens the gate.
+/// Touching trigger 12 while the gate is shut: standing on the floor switch
+/// sinks the leader two pixels and opens the gate.
 static void MercuryLighthouse_PressGateFloorSwitch(void) {
   s32 x;
   s32 z;
@@ -496,7 +496,7 @@ static void MercuryLighthouse_PressGateFloorSwitch(void) {
   }
 }
 
-// Touching trigger 10 or 13: stepping off the switch closes the gate again.
+/// Touching trigger 10 or 13: stepping off the switch closes the gate again.
 static void MercuryLighthouse_CloseFloorSwitch(void) {
   struct FieldActor *leader;
 
@@ -514,7 +514,7 @@ static void MercuryLighthouse_CloseFloorSwitch(void) {
   }
 }
 
-// Animate the fountain's map strips between the requested steps.
+/// Animate the fountain's map strips between the requested steps.
 static void MercuryLighthouse_AnimateFountainTiles(s32 delayFrames,
                                                    s32 firstStep, s32 endStep) {
   u32 step;
@@ -543,7 +543,7 @@ static void MercuryLighthouse_AnimateFountainTiles(s32 delayFrames,
   Map_CopyCellAttributes(42, 52, 4, 5, 42, 33);
 }
 
-// Restore the fountain's map strips after moving its block away.
+/// Restore the fountain's map strips after moving its block away.
 static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
   u32 step;
   s32 destinationColumn;
@@ -584,12 +584,12 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
   Engine_MapRenderWaitForValues();
 }
 
-// Emit the scheduled spray at the fountain's fixed position.
+/// Emit the scheduled spray at the fountain's fixed position.
 static void MercuryLighthouse_SprayAtFountain(void) {
   SceneEffect_SpawnRandomEveryFourFrames(0x2b20000, 0, 0x2480000);
 }
 
-// Open the fountain row by row and start its continuous spray.
+/// Open the fountain row by row and start its continuous spray.
 static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
   struct EffectOptions *effectOptions;
   s32 row;
@@ -655,7 +655,7 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
   Engine_MapRenderWaitForValues();
 }
 
-// Restore the fountain tiles and stop its continuous spray.
+/// Restore the fountain tiles and stop its continuous spray.
 static void MercuryLighthouse_StopFountainSpray(void) {
   struct EffectOptions *effectOptions;
   s32 row;
@@ -694,10 +694,10 @@ static void MercuryLighthouse_StopFountainSpray(void) {
   Engine_TaskRemoveCallback(MercuryLighthouse_SprayAtFountain);
 }
 
-// Pushing a block on the second map (walking into trigger 1 or 45): the
-// stair block raises the stairs at column 11 and lowers them anywhere else;
-// the fountain block starts the fountain at row 40, the first time with the
-// camera watching, and stops it at row 42.
+/// Pushing a block on the second map (walking into trigger 1 or 45): the
+/// stair block raises the stairs at column 11 and lowers them anywhere else;
+/// the fountain block starts the fountain at row 40, the first time with the
+/// camera watching, and stops it at row 42.
 static void MercuryLighthouse_MoveStairAndFountainBlocks(void) {
   struct StagedActorProbe probe;
   s32 blockId;
@@ -759,8 +759,8 @@ static void MercuryLighthouse_MoveStairAndFountainBlocks(void) {
   Engine_EventEnd();
 }
 
-// Pushing the fallen statue (walking into trigger 10 or 12) while the stair
-// gate is shut: it moves a step and may come to rest on the floor switch.
+/// Pushing the fallen statue (walking into trigger 10 or 12) while the stair
+/// gate is shut: it moves a step and may come to rest on the floor switch.
 static void MercuryLighthouse_PushStairSwitchBlock(void) {
   Engine_EventBegin();
   StagedActor_AdvancePair();
@@ -768,8 +768,8 @@ static void MercuryLighthouse_PushStairSwitchBlock(void) {
   MercuryLighthouse_OpenStairGateWithMovedBlock();
 }
 
-// Move on the fallen statue, or after a push: resting on the switch at
-// (10, 23), it sinks two pixels and the stair gate opens for good.
+/// Move on the fallen statue, or after a push: resting on the switch at
+/// (10, 23), it sinks two pixels and the stair gate opens for good.
 static void MercuryLighthouse_OpenStairGateWithMovedBlock(void) {
   s32 column = Object_GetById(ACTOR_FALLEN_STATUE)->x.fixed / 0x100000;
   s32 row = Object_GetById(ACTOR_FALLEN_STATUE)->z.fixed / 0x100000;
@@ -789,8 +789,8 @@ static void MercuryLighthouse_OpenStairGateWithMovedBlock(void) {
   Engine_EventEnd();
 }
 
-// Touching trigger 12 while the stair gate is shut: standing on its switch
-// opens it.
+/// Touching trigger 12 while the stair gate is shut: standing on its switch
+/// opens it.
 static void MercuryLighthouse_PressStairFloorSwitch(void) {
   s32 x;
   s32 z;
@@ -817,7 +817,7 @@ static void MercuryLighthouse_PressStairFloorSwitch(void) {
   Engine_EventEnd();
 }
 
-// Touching trigger 10: stepping off the switch closes the stair gate.
+/// Touching trigger 10: stepping off the switch closes the stair gate.
 static void MercuryLighthouse_ReleaseStairFloorSwitch(void) {
   struct FieldActor *leader;
 
@@ -835,16 +835,17 @@ static void MercuryLighthouse_ReleaseStairFloorSwitch(void) {
   }
 }
 
-// Choose the random speed component used by stone-door particles.
-// Sharing a centered-velocity helper with other sprays shrinks the fountain
-// from 0x150 to 0x128 bytes and grows this door from 0x27c to 0x284 in English.
+/// Choose the random speed component used by stone-door particles.
+/// Sharing a centered-velocity helper with other sprays shrinks the fountain
+/// from 0x150 to 0x128 bytes and grows this door from 0x27c to 0x284 in
+/// English.
 static __inline__ s32 MercuryLighthouse_RandomDoorParticleSpeed(void) {
   u32 drift = Engine_RandomNext();
 
   return ((drift << 3) >> 16) * 0x3333;
 }
 
-// Open the selected stone door with particles along its moving edge.
+/// Open the selected stone door with particles along its moving edge.
 static void MercuryLighthouse_OpenStoneDoor(s32 side) {
   struct EffectOptions options;
   u32 particleIndex;
@@ -904,7 +905,7 @@ static void MercuryLighthouse_OpenStoneDoor(s32 side) {
   }
 }
 
-// Restore the selected stone door's tiles with trailing particles.
+/// Restore the selected stone door's tiles with trailing particles.
 static void MercuryLighthouse_CloseStoneDoor(s32 side) {
   struct EffectOptions options;
   u32 particleIndex, row;
@@ -946,8 +947,8 @@ static void MercuryLighthouse_CloseStoneDoor(s32 side) {
   }
 }
 
-// The camera turns to the sliding statue, which moves on only for the door
-// switch block positions recorded; returns 1 when it slides off its ledge.
+/// The camera turns to the sliding statue, which moves on only for the door
+/// switch block positions recorded; returns 1 when it slides off its ledge.
 static s32 MercuryLighthouse_StartStatueSlide(void) {
   s32 cellX;
   s32 cellZ;
@@ -985,7 +986,7 @@ static s32 MercuryLighthouse_StartStatueSlide(void) {
   return 0;
 }
 
-// Sparkles rise from the sliding statue as it moves.
+/// Sparkles rise from the sliding statue as it moves.
 static void MercuryLighthouse_SprayAboveStatue(void) {
   struct FieldActor *pillar = Object_GetById(ACTOR_SLIDING_STATUE);
   u32 random = Engine_RandomNext();
@@ -996,7 +997,7 @@ static void MercuryLighthouse_SprayAboveStatue(void) {
   SceneEffect_SpawnRandomEveryFourFrames(pillar->x.fixed, particleY, particleZ);
 }
 
-// The slide scripts start the sparkles as the statue sets off.
+/// The slide scripts start the sparkles as the statue sets off.
 static s32
 MercuryLighthouse_StartStatueSpray(struct ScriptInterpreter *interpreter) {
   s32 priority = 0xc80;
@@ -1018,10 +1019,10 @@ static s32 MercuryLighthouse_StopStatueSpray(void) {
   return 0;
 }
 
-// Pushing a block in the stone-door room (walking into trigger 40) on the
-// third map: the door switch block opens a different stone door at each
-// column, and at column 48, once the statue is in place, the statue slides
-// out and falls to the floor below.
+/// Pushing a block in the stone-door room (walking into trigger 40) on the
+/// third map: the door switch block opens a different stone door at each
+/// column, and at column 48, once the statue is in place, the statue slides
+/// out and falls to the floor below.
 static void MercuryLighthouse_MoveStoneDoorBlocks(void) {
   struct StagedActorProbe probe;
   s32 destinationColumn;
@@ -1118,8 +1119,8 @@ static void MercuryLighthouse_MoveStoneDoorBlocks(void) {
   Engine_EventEnd();
 }
 
-// Pushing a crossing block (walking into trigger 47): it moves a step and
-// where the blocks rest is saved.
+/// Pushing a crossing block (walking into trigger 47): it moves a step and
+/// where the blocks rest is saved.
 static void MercuryLighthouse_PushAndSaveBlockPositions(void) {
   Engine_EventBegin();
   StagedActor_AdvancePair();
@@ -1127,8 +1128,8 @@ static void MercuryLighthouse_PushAndSaveBlockPositions(void) {
   Engine_EventEnd();
 }
 
-// Move on a crossing block, or after a push: each block's column is saved
-// in its pair of flags, and the last opens the crossing at column 57 or 59.
+/// Move on a crossing block, or after a push: each block's column is saved
+/// in its pair of flags, and the last opens the crossing at column 57 or 59.
 static void MercuryLighthouse_SyncBlockFlags(void) {
   s32 blockIndex;
   s32 positionFlag;
@@ -1169,7 +1170,7 @@ static void MercuryLighthouse_SyncBlockFlags(void) {
   Engine_EventEnd();
 }
 
-// Move on the gap block: at column 28 it fills the gap for good.
+/// Move on the gap block: at column 28 it fills the gap for good.
 static void MercuryLighthouse_OpenMovedBlockCrossing(void) {
   s32 column;
 
@@ -1187,8 +1188,8 @@ static void MercuryLighthouse_OpenMovedBlockCrossing(void) {
   Engine_EventEnd();
 }
 
-// Rotate the selected palette range once every eight frames. Write the saved
-// first color at the end before shifting, preserving the palette access order.
+/// Rotate the selected palette range once every eight frames. Write the saved
+/// first color at the end before shifting, preserving the palette access order.
 static inline void MercuryLighthouse_RotatePaletteRange(u16 *colors,
                                                         u32 colorCount) {
   u32 colorIndex;
@@ -1212,15 +1213,15 @@ static inline void MercuryLighthouse_RotatePaletteRange(u16 *colors,
   }
 }
 
-// While the lighthouse door is shut its light shimmers: background palette
-// 2, colors 8 to 15, rotates every eight frames.
+/// While the lighthouse door is shut its light shimmers: background palette
+/// 2, colors 8 to 15, rotates every eight frames.
 static void MercuryLighthouse_CycleEntrancePalette(void) {
   MercuryLighthouse_RotatePaletteRange((u16 *)&BG_PLTT_COLOR(2, 8), 8);
 }
 
-// Talking to Mia at the lighthouse's foot, or Mind Read on her, before the
-// door is open: "Somebody...is here." She asks whether the party hears it,
-// says only Alex can enter besides her, and that the statue blocks her way.
+/// Talking to Mia at the lighthouse's foot, or Mind Read on her, before the
+/// door is open: "Somebody...is here." She asks whether the party hears it,
+/// says only Alex can enter besides her, and that the statue blocks her way.
 static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   struct FieldActor *mia;
 
@@ -1270,7 +1271,7 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   Engine_EventEnd();
 }
 
-// Talking to Mia again: "This statue is blocking the entrance."
+/// Talking to Mia again: "This statue is blocking the entrance."
 static void MercuryLighthouse_MiaDiscussesBlockedEntrance(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
@@ -1280,7 +1281,7 @@ static void MercuryLighthouse_MiaDiscussesBlockedEntrance(void) {
   Engine_EventEnd();
 }
 
-// The door's light brightens to white as it opens.
+/// The door's light brightens to white as it opens.
 static void MercuryLighthouse_FadePaletteToWhite(void) {
   // Palette RAM is hardware (its volatile is source, not a device): volatile
   // makes each read of palette RAM a load of its own: the native reads every
@@ -1317,9 +1318,9 @@ static void MercuryLighthouse_FadePaletteToWhite(void) {
   } while (whiteColors <= 7);
 }
 
-// Move on the door statue: once it stands at column 51 Mia asks whether the
-// party did that, learns of Psynergy, and uses Ply to open the door; she goes
-// in, and Garet and Ivan rejoin the leader.
+/// Move on the door statue: once it stands at column 51 Mia asks whether the
+/// party did that, learns of Psynergy, and uses Ply to open the door; she goes
+/// in, and Garet and Ivan rejoin the leader.
 static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
   struct FieldActor *actor;
   s32 column;
@@ -1481,13 +1482,13 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
   Engine_EventEnd();
 }
 
-// The waterfall shimmers: background palette 6, colors 1 to 7, rotates every
-// eight frames.
+/// The waterfall shimmers: background palette 6, colors 1 to 7, rotates every
+/// eight frames.
 static void MercuryLighthouse_CycleWaterfallPalette(void) {
   MercuryLighthouse_RotatePaletteRange((u16 *)&BG_PLTT_COLOR(6, 1), 7);
 }
 
-// The waterfall's colors fade to black as it stops.
+/// The waterfall's colors fade to black as it stops.
 static void MercuryLighthouse_FadePaletteToBlack(void) {
   // Palette RAM is hardware (its volatile is source, not a device): volatile
   // makes each read of palette RAM a load of its own: the native reads every
@@ -1523,8 +1524,8 @@ static void MercuryLighthouse_FadePaletteToBlack(void) {
   } while (blackColors != 7);
 }
 
-// Raise an actor into the passage with sparks for 48 ticks, two frames each.
-// Its upward displacement accelerates by about 0.1 pixel per tick.
+/// Raise an actor into the passage with sparks for 48 ticks, two frames each.
+/// Its upward displacement accelerates by about 0.1 pixel per tick.
 static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
   struct EffectOptions options;
   struct EffectOptions *effectOptions;
@@ -1564,10 +1565,10 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
   }
 }
 
-// Ply on the waterfall statue: the waterfall darkens and stops, sparkles
-// rise and the way behind it opens. Once Saturos is beaten the leader rises
-// through it alone to the aerie (exit 9); before that Mia rises first and
-// the party follows, out to the world map (exit 8).
+/// Ply on the waterfall statue: the waterfall darkens and stops, sparkles
+/// rise and the way behind it opens. Once Saturos is beaten the leader rises
+/// through it alone to the aerie (exit 9); before that Mia rises first and
+/// the party follows, out to the world map (exit 8).
 static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   struct EffectOptions *effectOptions;
   s32 rowOffset;
@@ -1784,8 +1785,8 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   }
 }
 
-// Searching trigger 42 at the foot: "Fountain of Healing / Water of Hermes:
-// It brings rejuvenation to all that lives."
+/// Searching trigger 42 at the foot: "Fountain of Healing / Water of Hermes:
+/// It brings rejuvenation to all that lives."
 static void MercuryLighthouse_ReadHermesFountainInscription(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1793,7 +1794,7 @@ static void MercuryLighthouse_ReadHermesFountainInscription(void) {
   Engine_EventEnd();
 }
 
-// Searching trigger 20 on the second or third map: the door is locked tight.
+/// Searching trigger 20 on the second or third map: the door is locked tight.
 static void MercuryLighthouse_InspectLockedDoor(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1801,9 +1802,9 @@ static void MercuryLighthouse_InspectLockedDoor(void) {
   Engine_EventEnd();
 }
 
-// Searching the fountain (trigger 5) before taking its water: it seems dry,
-// or once Saturos is beaten flows with water; carrying an Empty Bottle, the
-// item menu then opens.
+/// Searching the fountain (trigger 5) before taking its water: it seems dry,
+/// or once Saturos is beaten flows with water; carrying an Empty Bottle, the
+/// item menu then opens.
 static void MercuryLighthouse_InspectHealingFountain(void) {
 
   Engine_EventBegin();
@@ -1823,9 +1824,9 @@ static void MercuryLighthouse_InspectHealingFountain(void) {
   Engine_EventEnd();
 }
 
-// Using the Empty Bottle at the fountain (event 0xb904: the bottle's item
-// number and kind 4) once Saturos is beaten: the bottle becomes Hermes'
-// Water, once a visit.
+/// Using the Empty Bottle at the fountain (event 0xb904: the bottle's item
+/// number and kind 4) once Saturos is beaten: the bottle becomes Hermes'
+/// Water, once a visit.
 static void MercuryLighthouse_FillHermesWaterBottle(void) {
   Engine_EventBegin();
   Engine_AudioPlayCue(MUS_TREASURE_FOUND);
@@ -1838,9 +1839,9 @@ static void MercuryLighthouse_FillHermesWaterBottle(void) {
   Engine_EventEnd();
 }
 
-// Walking south into trigger 15 on the first or second map: on the first
-// the leader steps to the hole and drops into the entrance hall (exit 8,
-// its entrance 6); on the second the motion runs alone.
+/// Walking south into trigger 15 on the first or second map: on the first
+/// the leader steps to the hole and drops into the entrance hall (exit 8,
+/// its entrance 6); on the second the motion runs alone.
 static void MercuryLighthouse_EnterRisingPassage(void) {
   Engine_EventBegin();
   if (gGameState.scene == (s32)&SceneId_MercuryLighthouse1) {
@@ -1866,7 +1867,7 @@ static void MercuryLighthouse_EnterRisingPassage(void) {
 // Shared source is included here in ROM order.
 #include "common/mercury_lighthouse_arrive.h"
 
-// Reveal the stair's map rows with particles along their edges.
+/// Reveal the stair's map rows with particles along their edges.
 static void SceneEffect_SpawnParticleRowsAndDrawTiles(void) {
   struct EffectOptions options;
   u32 particleIndex, row;
@@ -1894,7 +1895,7 @@ static void SceneEffect_SpawnParticleRowsAndDrawTiles(void) {
   }
 }
 
-// Restore the stair tiles in three particle-covered steps.
+/// Restore the stair tiles in three particle-covered steps.
 static void MercuryLighthouse_OpenThreeStepStair(void) {
   struct EffectOptions options;
   struct EffectOptions *effectOptions;
@@ -1929,7 +1930,7 @@ static void MercuryLighthouse_OpenThreeStepStair(void) {
   }
 }
 
-// Emit particles around the leader once every four frames.
+/// Emit particles around the leader once every four frames.
 static void SceneEffect_SpawnParticleEveryFourthFrame(void) {
   struct EffectOptions options;
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -1954,7 +1955,7 @@ static void SceneEffect_SpawnParticleEveryFourthFrame(void) {
   }
 }
 
-// Emit particles at a fixed point once every four frames.
+/// Emit particles at a fixed point once every four frames.
 static void SceneEffect_SpawnRandomEveryFourFrames(s32 x, s32 y, s32 z) {
   struct EffectOptions options;
   s32 framePhase = gFrameCount & 3;
@@ -1977,7 +1978,7 @@ static void SceneEffect_SpawnRandomEveryFourFrames(s32 x, s32 y, s32 z) {
   }
 }
 
-// Emit a stationary particle near the supplied position.
+/// Emit a stationary particle near the supplied position.
 static void SceneEffect_SpawnWithRandomOffset(s32 x, s32 y, s32 z) {
   struct EffectOptions options;
 
@@ -1995,7 +1996,7 @@ static void SceneEffect_SpawnWithRandomOffset(s32 x, s32 y, s32 z) {
   }
 }
 
-// Emit a short burst with velocities spreading along the supplied angle.
+/// Emit a short burst with velocities spreading along the supplied angle.
 static void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 angle) {
   struct EffectOptions options;
   s32 velocity[3];
@@ -2028,7 +2029,7 @@ static void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 angle) {
   } while (particleIndex <= 11);
 }
 
-// Restore each lighthouse scene's puzzle state and entrance sequence.
+/// Restore each lighthouse scene's puzzle state and entrance sequence.
 s32 MercuryLighthouse_Initialize(void) {
   u32 blockIndex;
   s32 positionFlag;
@@ -2432,10 +2433,10 @@ s32 MercuryLighthouse_Initialize(void) {
   return 0;
 }
 
-// Move on the statue blocking Mia, before she has joined: once it stands at
-// column 48, "You've saved me again, haven't you!" She asks whether the
-// party has business in the lighthouse and presses until it says yes, then
-// joins with Fizz.
+/// Move on the statue blocking Mia, before she has joined: once it stands at
+/// column 48, "You've saved me again, haven't you!" She asks whether the
+/// party has business in the lighthouse and presses until it says yes, then
+/// joins with Fizz.
 static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   s32 firstMessage;
   s32 blockColumn;
@@ -2536,8 +2537,8 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Engine_EventEnd();
 }
 
-// Entrance 15 at the foot: the leader rides the lift up beside its statue,
-// hops off onto the landing, and the lift goes back down.
+/// Entrance 15 at the foot: the leader rides the lift up beside its statue,
+/// hops off onto the landing, and the lift goes back down.
 static void MercuryLighthouse_RideLift(void) {
   struct MapLayerScroll *liftLayer;
   s32 liftSpeed;
@@ -2625,7 +2626,7 @@ static void MercuryLighthouse_RideLift(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 }
 
-// Mia casts Ply on the Ply target, moved onto the door.
+/// Mia casts Ply on the Ply target, moved onto the door.
 static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
   struct BattleFxScene *effectWork;
   u8 flags;
@@ -2641,7 +2642,7 @@ static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
   Engine_PsynergyLowerHands();
 }
 
-// Replace one inventory item in the owner and slot that contain it.
+/// Replace one inventory item in the owner and slot that contain it.
 static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem) {
   s32 owner = PartyInventory_FindOwner(oldItem);
 
@@ -2657,7 +2658,7 @@ static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem) {
 // Shared source is included here in ROM order.
 #include "common/mercury_lighthouse_lights.h"
 
-// Create the rising effect at the source actor and set its sprite priority.
+/// Create the rising effect at the source actor and set its sprite priority.
 static void OverlayObject_SpawnKind24AtObject(struct FieldActor *source) {
   struct FieldActor *effect;
   struct AnimationObject *sprite;
@@ -2700,8 +2701,8 @@ s32 gEffectScript2[] = {
     SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
-// Pixel step by direction: X in the upper halfword, Z in the lower. Pack
-// negative steps through unsigned words rather than left-shifting a negative.
+/// Pixel step by direction: X in the upper halfword, Z in the lower. Pack
+/// negative steps through unsigned words rather than left-shifting a negative.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((u32)(dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {

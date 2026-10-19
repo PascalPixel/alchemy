@@ -40,7 +40,7 @@
 #include "songs.h"
 #include "item_ids.h"
 
-// Forward declarations.
+/// Forward declarations.
 static void SolSanctumElementalStarRoom_BagJupiterStar(void);
 static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void);
 static void SolSanctumElementalStarRoom_DemandElementalStars(void);
@@ -73,7 +73,7 @@ struct ObjectRuntime;
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-// Advance through the current dialogue's consecutive messages.
+/// Advance through the current dialogue's consecutive messages.
 static __inline__ void SolSanctumElementalStarRoom_SkipMessages(s32 amount) {
   gEventWork->message += amount;
 }
@@ -81,33 +81,33 @@ static __inline__ void SolSanctumElementalStarRoom_SkipMessages(s32 amount) {
 // Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
-// Return the Elemental Star room entrances.
+/// Return the Elemental Star room entrances.
 struct SceneEntrance *SolSanctumElementalStarRoom_GetEntrances(void) {
   return gSolSanctumElementalStarRoom_Entrances;
 }
 
-// This room has no additional scene regions.
+/// This room has no additional scene regions.
 struct SceneRegion *SolSanctumElementalStarRoom_GetRegions(void) {
   return NULL;
 }
 
-// Return the room's exits.
+/// Return the room's exits.
 u32 *SolSanctumElementalStarRoom_GetExits(void) {
   return gSolSanctumElementalStarRoom_Exits;
 }
 
-// Return the room's actor placements.
+/// Return the room's actor placements.
 struct ScenePlacement *SolSanctumElementalStarRoom_GetPlacements(void) {
   return gSolSanctumElementalStarRoom_Placements;
 }
 
-// Return the star, dialogue, and boundary interactions.
+/// Return the star, dialogue, and boundary interactions.
 struct SceneEvent *SolSanctumElementalStarRoom_GetEvents(void) {
   return gSolSanctumElementalStarRoom_Events;
 }
 
-// Searching the Venus Star's pedestal: the room flashes, new crossings open
-// between the pedestals, and the star goes into a Mythril Bag.
+/// Searching the Venus Star's pedestal: the room flashes, new crossings open
+/// between the pedestals, and the star goes into a Mythril Bag.
 static void Event_BagVenusStar(void) {
   u32 i;
   s32 itemOwner;
@@ -207,7 +207,7 @@ static void Event_BagVenusStar(void) {
   Engine_EventEnd();
 }
 
-// Searching the Mercury Star's pedestal: as the Venus Star.
+/// Searching the Mercury Star's pedestal: as the Venus Star.
 static void Event_BagMercuryStar(void) {
   u32 i;
   s32 itemOwner;
@@ -307,8 +307,8 @@ static void Event_BagMercuryStar(void) {
   Engine_EventEnd();
 }
 
-// Searching the Jupiter Star's pedestal: the star is bagged, then Saturos and
-// Menardi appear, take Jenna and Kraden hostage, and Alex takes the stars.
+/// Searching the Jupiter Star's pedestal: the star is bagged, then Saturos and
+/// Menardi appear, take Jenna and Kraden hostage, and Alex takes the stars.
 static void Event_BagJupiterStarAndMeetSaturos(void) {
   Engine_EventBegin();
   SolSanctumElementalStarRoom_BagJupiterStar();
@@ -322,7 +322,7 @@ static void Event_BagJupiterStarAndMeetSaturos(void) {
   SolSanctumElementalStarRoom_LineUpFollowers();
 }
 
-// Reveal the Jupiter crossings and place the star in a mythril bag.
+/// Reveal the Jupiter crossings and place the star in a mythril bag.
 static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   u32 i;
   s32 itemOwner;
@@ -396,7 +396,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   Engine_MessageShowCentered(MsgSolSanctumJupiterStarBagged, 1);
 }
 
-// Bring Isaac and Garet back to discover Jenna and Kraden's captors.
+/// Bring Isaac and Garet back to discover Jenna and Kraden's captors.
 static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void) {
   struct FieldActor *leader;
 
@@ -452,7 +452,7 @@ static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void) {
   Engine_EventWait(40);
 }
 
-// Reveal the masked intruder while the captors demand the stars.
+/// Reveal the masked intruder while the captors demand the stars.
 static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   u8 *motionFlags;
   u8 *spriteFlags;
@@ -618,7 +618,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
 }
 
-// Have the captors offer a guarantee for their hostages' safety.
+/// Have the captors offer a guarantee for their hostages' safety.
 static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
   Actor_FaceDirection(JENNA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 0);
@@ -716,7 +716,7 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
   Actor_FaceDirection(ACTOR_FELIX_MASKED, FACING_NORTHWEST + FACING_STEP, 40);
 }
 
-// Reveal Felix's identity and let Isaac decide how to hand over the stars.
+/// Reveal Felix's identity and let Isaac decide how to hand over the stars.
 static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   struct FieldActor *actor;
   struct FieldActor *other;
@@ -904,7 +904,7 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   Engine_ActorSetAnimation(GARET, ANIM_STAND);
 }
 
-// Have Alex collect the stars and return the party to the final pedestal.
+/// Have Alex collect the stars and return the party to the final pedestal.
 static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   u32 i;
   struct FieldActor *actor;
@@ -1085,7 +1085,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   PartyInventory_Discard(223);
 }
 
-// Arrange the captors and hostages after the exchange.
+/// Arrange the captors and hostages after the exchange.
 static void SolSanctumElementalStarRoom_LineUpFollowers(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -1136,8 +1136,8 @@ static void SolSanctumElementalStarRoom_LineUpFollowers(void) {
   Engine_EventEnd();
 }
 
-// Searching the Mars Star's pedestal: Isaac takes the last star and the room
-// begins to shake.
+/// Searching the Mars Star's pedestal: Isaac takes the last star and the room
+/// begins to shake.
 static void Event_TakeMarsStar(void) {
   u8 pass;
   s32 itemOwner;
@@ -1210,7 +1210,7 @@ static void Event_TakeMarsStar(void) {
   Engine_EventRequestExit(2);
 }
 
-// Talking to Kraden: about the stars still to bag, or the hostages.
+/// Talking to Kraden: about the stars still to bag, or the hostages.
 static void Event_TalkToKraden(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX)) {
@@ -1228,7 +1228,7 @@ static void Event_TalkToKraden(void) {
   Engine_EventEnd();
 }
 
-// Talking to Jenna, or reading her mind: about the stars, or Felix alive.
+/// Talking to Jenna, or reading her mind: about the stars, or Felix alive.
 static void Event_TalkToJenna(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX)) {
@@ -1246,7 +1246,7 @@ static void Event_TalkToJenna(void) {
   Engine_EventEnd();
 }
 
-// Talking to Saturos: he demands the last star.
+/// Talking to Saturos: he demands the last star.
 static void Event_TalkToSaturos(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSolSanctumSaturosBringTheFinalStar);
@@ -1254,7 +1254,7 @@ static void Event_TalkToSaturos(void) {
   Engine_EventEnd();
 }
 
-// Talking to Menardi, or reading her mind: she demands the last one.
+/// Talking to Menardi, or reading her mind: she demands the last one.
 static void Event_TalkToMenardi(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSolSanctumMenardiBringTheFinalGem);
@@ -1262,7 +1262,7 @@ static void Event_TalkToMenardi(void) {
   Engine_EventEnd();
 }
 
-// Talking to Felix: "..."
+/// Talking to Felix: "..."
 static void Event_TalkToFelix(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSolSanctumFelixSilence);
@@ -1270,7 +1270,7 @@ static void Event_TalkToFelix(void) {
   Engine_EventEnd();
 }
 
-// Talking to Alex: only one star is left.
+/// Talking to Alex: only one star is left.
 static void Event_TalkToAlex(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSolSanctumAlexOnlyOneLeft);
@@ -1278,8 +1278,8 @@ static void Event_TalkToAlex(void) {
   Engine_EventEnd();
 }
 
-// Heading out before the stars are bagged: "There aren't any Elemental Stars
-// out there!"
+/// Heading out before the stars are bagged: "There aren't any Elemental Stars
+/// out there!"
 static void Event_KradenStopsPartyLeaving(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSolSanctumNoStarsOutThere);
@@ -1287,10 +1287,10 @@ static void Event_KradenStopsPartyLeaving(void) {
   Engine_EventEnd();
 }
 
-// Walking into trigger 10 or 11: the way ahead is checked as on any field.
+/// Walking into trigger 10 or 11: the way ahead is checked as on any field.
 static void Event_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
-// Show a pedestal while Kraden describes it, then return to the party.
+/// Show a pedestal while Kraden describes it, then return to the party.
 static inline void
 SolSanctumElementalStarRoom_ShowPedestal(s32 cameraX, s32 cameraZ, s32 actorX,
                                          s32 actorZ, s32 speaker) {
@@ -1305,7 +1305,7 @@ SolSanctumElementalStarRoom_ShowPedestal(s32 cameraX, s32 cameraZ, s32 actorX,
   Engine_CameraWaitForMove();
 }
 
-// Introduce the room, explain the Elemental Stars, and give out mythril bags.
+/// Introduce the room, explain the Elemental Stars, and give out mythril bags.
 static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   u16 i;
   u8 *leaderMotion;
@@ -1965,7 +1965,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_EventEnd();
 }
 
-// Restore pedestal state and run the first-arrival scene when needed.
+/// Restore pedestal state and run the first-arrival scene when needed.
 s32 SolSanctumElementalStarRoom_Initialize(void) {
   s32 ringActor;
 
@@ -2027,14 +2027,14 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
   return 0;
 }
 
-// Show the current message and wait the requested number of frames.
+/// Show the current message and wait the requested number of frames.
 static void SolSanctumElementalStarRoom_ShowMessageAndWait(s32 speaker,
                                                            s32 frames) {
   Engine_EventShowMessage(speaker, 0);
   Engine_EventWait(frames);
 }
 
-// Animate a star's icon and replace its owner's mythril bag with the star.
+/// Animate a star's icon and replace its owner's mythril bag with the star.
 static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
                                                    s32 z) {
   GlyphTransfer *glyph;
@@ -2070,7 +2070,7 @@ static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
   return owner;
 }
 
-// Make inventory room and give the party four bags, preserving the dialogue.
+/// Make inventory room and give the party four bags, preserving the dialogue.
 static void SolSanctumElementalStarRoom_GiveMythrilBags(void) {
   struct EventWork *work = gEventWork;
   s16 savedMessage = work->message;
@@ -2098,7 +2098,7 @@ static void SolSanctumElementalStarRoom_GiveMythrilBags(void) {
   work->message = savedMessage;
 }
 
-// Emit sparks while Alex disappears and reappears.
+/// Emit sparks while Alex disappears and reappears.
 static void SolSanctumElementalStarRoom_AnimateAlexTeleport(void) {
   struct EffectOptions options;
   struct EffectOptions *effectOptions;

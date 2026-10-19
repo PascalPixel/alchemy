@@ -17,7 +17,7 @@
 
 enum { SOL_SANCTUM_RING_MAX = 10 };
 
-// Legacy actor view used only while setting up the sprite flags.
+/// Legacy actor view used only while setting up the sprite flags.
 struct SolSanctumRingObject {
   u8 pad00[8];
   s32 x;
@@ -56,11 +56,11 @@ struct SolSanctumRingList {
   u16 count;
 };
 
-// A scene callback, the lights' work in work slot 33. Every third frame each
-// light grows to its largest scale and shrinks to a tenth; at the smallest it
-// vanishes for 24 steps while its drift carries on, and comes back where the
-// drift has taken it. Its drift is a random speed on each axis, as its tables
-// allow, turned into a sine swing.
+/// A scene callback, the lights' work in work slot 33. Every third frame each
+/// light grows to its largest scale and shrinks to a tenth; at the smallest it
+/// vanishes for 24 steps while its drift carries on, and comes back where the
+/// drift has taken it. Its drift is a random speed on each axis, as its tables
+/// allow, turned into a sine swing.
 static void SolSanctum_UpdateRing(void) {
   struct SolSanctumRingList *list =
       Runtime_AllocateBlock(33, sizeof(struct SolSanctumRingList));
@@ -188,8 +188,8 @@ static void SolSanctum_UpdateRing(void) {
   }
 }
 
-// Start the floating lights: count actors (at most 10) from first, each drawn
-// translucent and starting at its largest scale.
+/// Start the floating lights: count actors (at most 10) from first, each drawn
+/// translucent and starting at its largest scale.
 void SolSanctum_StartFloatingLights(s32 first, u32 count) {
   // The actors are read through struct SolSanctumRingObject, the plain-C view
   // this site matches with (scene/README.md): it keeps the sprite-flags address

@@ -1,13 +1,14 @@
-// Part of field.c, the field object, compiled only through it.
-// Field objects: the object pool, dissolving sprites, starting scripts.
+/// @file
+/// Part of field.c, the field object, compiled only through it.
+/// Field objects: the object pool, dissolving sprites, starting scripts.
 
 #include "../field_internal.h"
 
-// One step of dissolving a sprite pixel by pixel. In each 8x8 tile (256
-// colours) one pixel is cleared, in gMap_TileDissolveOrder's order; each
-// tile runs one step ahead of the last, and only tiles whose step is 64-127
-// clear a pixel. obj is the sprite (struct AnimationObject), pos the step
-// (0-127).
+/// One step of dissolving a sprite pixel by pixel. In each 8x8 tile (256
+/// colours) one pixel is cleared, in gMap_TileDissolveOrder's order; each
+/// tile runs one step ahead of the last, and only tiles whose step is 64-127
+/// clear a pixel. obj is the sprite (struct AnimationObject), pos the step
+/// (0-127).
 void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
   u16 *tile;
   s32 tileCount;
@@ -50,7 +51,7 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
   }
 }
 
-// Dissolves a sprite pixel by pixel, four steps a frame, over 32 frames.
+/// Dissolves a sprite pixel by pixel, four steps a frame, over 32 frames.
 void Map_RenderAnimatedTileFramesForObject(u8 *sprite) {
   u32 step;
 
@@ -66,7 +67,7 @@ void Map_RenderAnimatedTileFramesForObject(u8 *sprite) {
   } while (step <= 127);
 }
 
-// Dissolves count sprites together, pixel by pixel, over 32 frames.
+/// Dissolves count sprites together, pixel by pixel, over 32 frames.
 void Map_RenderAllAnimatedTileFrames(u8 **sprites, s32 count) {
   u8 **firstSprite;
   u8 **spriteCursor;
@@ -98,9 +99,9 @@ void Map_RenderAllAnimatedTileFrames(u8 **sprites, s32 count) {
   } while (step <= 0x7fU);
 }
 
-// Writes the object's screen position, in pixels, to screenPosition[0..1] and
-// returns 0 when it is on or near the screen; otherwise writes 0, 0 and
-// returns -1.
+/// Writes the object's screen position, in pixels, to screenPosition[0..1] and
+/// returns 0 when it is on or near the screen; otherwise writes 0, 0 and
+/// returns -1.
 s32 Map_GetScreenRelativePosition(struct ObjectRuntime *object,
                                   s32 *screenPosition) {
   struct MapScrollWork *mapWork = gMapWork[0];
@@ -133,9 +134,9 @@ s32 Map_GetScreenRelativePosition(struct ObjectRuntime *object,
   return -1;
 }
 
-// Sets up the object system: allocates and zeroes the 64 objects and
-// registers the per-frame updates. Mode 4 moves objects with
-// Object_UpdateAllMotion; modes 3 and 4 use the fixed camera.
+/// Sets up the object system: allocates and zeroes the 64 objects and
+/// registers the per-frame updates. Mode 4 moves objects with
+/// Object_UpdateAllMotion; modes 3 and 4 use the fixed camera.
 void ObjectSystem_Initialize(s32 controlMode) {
   struct ObjectSystemWork *objectSystem;
   struct ObjectRuntime *objectPool;
@@ -161,13 +162,13 @@ void ObjectSystem_Initialize(s32 controlMode) {
   objectSystem->fill = 0;
 }
 
-// Does nothing.
+/// Does nothing.
 UNUSED void ResourceTable_ReservedNoOpC0C4(void) {}
 
-// Does nothing.
+/// Does nothing.
 UNUSED void ResourceTable_ReservedNoOp2(void) {}
 
-// Returns the first of the 64 objects not in use (with no script), or 0.
+/// Returns the first of the 64 objects not in use (with no script), or 0.
 void *ObjectDispatch_FindFreeObject(void) {
   struct ObjectRuntime *object = gObjectSlots;
   void *freeObject = 0;
@@ -184,7 +185,7 @@ void *ObjectDispatch_FindFreeObject(void) {
   return freeObject;
 }
 
-// Releases an object's sprites and zeroes it, freeing it.
+/// Releases an object's sprites and zeroes it, freeing it.
 void ObjectDispatch_Release(struct DispatchObject *object) {
   s32 spritesRemaining;
   void **sprites;
@@ -208,9 +209,9 @@ void ObjectDispatch_Release(struct DispatchObject *object) {
   }
 }
 
-// Creates a field object at (x, y, z), in 16.16 pixels, or returns 0 when
-// none is free. id / 4096 is the kind (0: one sprite, 2: two sprites, id
-// and id + 1) and the low 12 bits the sprite's animation id.
+/// Creates a field object at (x, y, z), in 16.16 pixels, or returns 0 when
+/// none is free. id / 4096 is the kind (0: one sprite, 2: two sprites, id
+/// and id + 1) and the low 12 bits the sprite's animation id.
 struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
                                          s32 z) {
   struct ObjectRuntime *object;
@@ -281,7 +282,7 @@ struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
   return object;
 }
 
-// Gives an object a script and starts it from the top.
+/// Gives an object a script and starts it from the top.
 void ObjectDispatch_Initialize(struct DispatchObject *object,
                                const s32 *script) {
   if (object != 0) {
@@ -293,8 +294,8 @@ void ObjectDispatch_Initialize(struct DispatchObject *object,
   }
 }
 
-// Defines name(object, value), which calls apply(sprite, value) on an
-// object's one sprite, or on each sprite of its group.
+/// Defines name(object, value), which calls apply(sprite, value) on an
+/// object's one sprite, or on each sprite of its group.
 #define OBJECT_DISPATCH_DEFINE_APPLY(name, object_type, apply)                 \
   void name(object_type rawObject, s32 value) {                                \
     struct DispatchObject *object;                                             \
@@ -322,17 +323,17 @@ void ObjectDispatch_Initialize(struct DispatchObject *object,
     }                                                                          \
   }
 
-// Switches all of an object's sprites to animation value.
+/// Switches all of an object's sprites to animation value.
 OBJECT_DISPATCH_DEFINE_APPLY(ObjectDispatch_SelectAnimation, void *,
                              AnimationObjects_SelectAnimation)
 
-// Sets the animation speed (timer step) of all of an object's sprites.
+/// Sets the animation speed (timer step) of all of an object's sprites.
 OBJECT_DISPATCH_DEFINE_APPLY(ObjectDispatch_SetAnimationSpeed,
                              struct DispatchObject *,
                              AnimationObjects_SetActiveTimerSteps)
 
-// Both of the above: switches all of an object's sprites to animation and
-// sets their timer step to step.
+/// Both of the above: switches all of an object's sprites to animation and
+/// sets their timer step to step.
 void ObjectDispatch_SetAnimationAndSpeed(struct DispatchObject *object,
                                          s32 animation, s32 step) {
   void **sprites;
@@ -359,16 +360,16 @@ void ObjectDispatch_SetAnimationAndSpeed(struct DispatchObject *object,
   }
 }
 
-// Sets the rotation of an object's sprite, when it has just one.
+/// Sets the rotation of an object's sprite, when it has just one.
 void ObjectDispatch_SetChildRotation(struct DispatchObject *object,
                                      u32 rotation) {
   if (object != 0 && (object->kind & 0xf) == 1)
     object->target.child->rotation = rotation;
 }
 
-// Gives a one-sprite object's first layer animation id animId and restarts
-// its layers.
-// A negative animationId does nothing.
+/// Gives a one-sprite object's first layer animation id animId and restarts
+/// its layers.
+/// A negative animationId does nothing.
 void Animation_SetIndexAndInitObjects(void *rawDispatchObject,
                                       s32 animationId) {
   struct DispatchObject *object = rawDispatchObject;
@@ -383,8 +384,8 @@ void Animation_SetIndexAndInitObjects(void *rawDispatchObject,
   }
 }
 
-// Adds a layer of animation id animId to a one-sprite object's sprite.
-// A negative animId does nothing.
+/// Adds a layer of animation id animId to a one-sprite object's sprite.
+/// A negative animId does nothing.
 void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object,
                                           s32 animationId) {
   if (object != 0 && (object->kind & 0xf) == 1) {
@@ -394,43 +395,43 @@ void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object,
   }
 }
 
-// Starts an object on the script that approaches its linked object
-// (SC_APPROACH_LINK), linked to linkedObjectHandle. The functions below start
-// the engine's other scripts (object_script.c).
+/// Starts an object on the script that approaches its linked object
+/// (SC_APPROACH_LINK), linked to linkedObjectHandle. The functions below start
+/// the engine's other scripts (object_script.c).
 void ObjectDispatch_StartApproachLink(struct DispatchObject *object,
                                       s32 linkedObjectHandle) {
   ObjectDispatch_Initialize(object, gObjectDispatch_ApproachLinkScript);
   object->argument = linkedObjectHandle;
 }
 
-// Starts an object on the script that runs SC_KEY_COUNT every frame.
+/// Starts an object on the script that runs SC_KEY_COUNT every frame.
 void ObjectDispatch_StartKeyCheck(struct DispatchObject *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_KeyCheckScript);
 }
 
-// Starts an object on the script that moves it by the keys (SC_KEYS).
+/// Starts an object on the script that moves it by the keys (SC_KEYS).
 void ObjectDispatch_StartMoveByKeys(struct DispatchObject *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_KeysScript);
 }
 
-// Starts an object on the player control script (SC_PLAYER).
+/// Starts an object on the player control script (SC_PLAYER).
 void ObjectDispatch_StartPlayerControl(struct DispatchObject *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_PlayerScript);
 }
 
-// Starts an object on the world map control script (SC_WORLD).
+/// Starts an object on the world map control script (SC_WORLD).
 void ObjectDispatch_StartWorldMapControl(struct DispatchObject *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_WorldMapScript);
 }
 
-// Starts an object on the idle script (a lone SC_END).
+/// Starts an object on the idle script (a lone SC_END).
 void ObjectDispatch_StartIdle(struct DispatchObject *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_EndScript);
 }
 
-// Starts an object on the camera script (SC_CAMERA). With a leader to
-// follow, it also gets a speed limit of 4 pixels a frame and an
-// acceleration of 0.5 (value30 and value34 are those fields).
+/// Starts an object on the camera script (SC_CAMERA). With a leader to
+/// follow, it also gets a speed limit of 4 pixels a frame and an
+/// acceleration of 0.5 (value30 and value34 are those fields).
 void ObjectDispatch_StartCamera(struct DispatchObject *object,
                                 s32 linkedObjectHandle) {
   ObjectDispatch_Initialize(object, gObjectDispatch_CameraScript);
@@ -442,7 +443,7 @@ void ObjectDispatch_StartCamera(struct DispatchObject *object,
   }
 }
 
-// Waits until the object's script reaches SC_END (0x10), at most 300 frames.
+/// Waits until the object's script reaches SC_END (0x10), at most 300 frames.
 void ObjectDispatch_WaitForValue16(void *rawObject) {
   struct ScriptInterpreter *interpreter = rawObject;
   s32 waitedFrames;
@@ -458,7 +459,7 @@ void ObjectDispatch_WaitForValue16(void *rawObject) {
   }
 }
 
-// Sets the flags of a one-sprite object's sprite (bit 0: draw its shadow).
+/// Sets the flags of a one-sprite object's sprite (bit 0: draw its shadow).
 void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *object,
                                         u32 flags) {
   if (object != NULL) {
@@ -467,7 +468,7 @@ void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *object,
   }
 }
 
-// Sets the OAM blend mode of a one-sprite object's sprite.
+/// Sets the OAM blend mode of a one-sprite object's sprite.
 void ObjectDispatch_SetChildBlendMode(struct DispatchObject *object, u32 mode) {
   if (object != 0 && object->kind == 1) {
     struct AnimationObject *sprite = object->target.child;
@@ -475,8 +476,8 @@ void ObjectDispatch_SetChildBlendMode(struct DispatchObject *object, u32 mode) {
   }
 }
 
-// Makes the fixed camera draw a one-sprite object at its own scale instead of
-// scaling it by distance.
+/// Makes the fixed camera draw a one-sprite object at its own scale instead of
+/// scaling it by distance.
 void ObjectDispatch_SetChildFixedScale(struct DispatchObject *object,
                                        u32 fixedScale) {
   if (object != 0 && object->kind == 1) {
@@ -485,15 +486,15 @@ void ObjectDispatch_SetChildFixedScale(struct DispatchObject *object,
   }
 }
 
-// Sets the draw parameter of a one-sprite object's layers (see
-// ObjectGroup_SetChildValueUnlessFifteen).
+/// Sets the draw parameter of a one-sprite object's layers (see
+/// ObjectGroup_SetChildValueUnlessFifteen).
 void Animation_ApplyChildValues(struct DispatchObject *object, u32 param) {
   if (object != NULL && object->kind == 1)
     ObjectGroup_SetChildValueUnlessFifteen(object->target.child, param);
 }
 
-// Suspends the object camera updates, starts the palette back to normal and,
-// a frame later, shows BG0 and the sprites with BG1-3 hidden.
+/// Suspends the object camera updates, starts the palette back to normal and,
+/// a frame later, shows BG0 and the sprites with BG1-3 hidden.
 void Graphics_EnableObjLayerAndCallbacks(void) {
   Scheduler_SuspendTasks(ObjectSystem_UpdateCamera);
   Scheduler_SuspendTasks(ObjectSystem_UpdateCameraFixed);
@@ -505,7 +506,7 @@ void Graphics_EnableObjLayerAndCallbacks(void) {
       DISPCNT_OBJ_ON;
 }
 
-// Resumes the object camera updates and hides BG1-3 and the sprites.
+/// Resumes the object camera updates and hides BG1-3 and the sprites.
 void ObjectDispatch_StopCallbacksAndHideLayers(void) {
   Scheduler_ResumeTasks(ObjectSystem_UpdateCamera);
   Scheduler_ResumeTasks(ObjectSystem_UpdateCameraFixed);
@@ -513,7 +514,7 @@ void ObjectDispatch_StopCallbacksAndHideLayers(void) {
       ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON);
 }
 
-// Returns 1.
+/// Returns 1.
 UNUSED s32 ObjectDispatch_ReturnTrue(void) { return 1; }
 
 #undef OBJECT_DISPATCH_DEFINE_APPLY

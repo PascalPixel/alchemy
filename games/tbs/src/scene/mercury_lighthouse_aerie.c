@@ -33,16 +33,16 @@
 #include "songs.h"
 #include "ability_ids.h"
 
-// The aerie's actors. The party and Jenna stand in their own slots. The
-// speakers are known from the text: Kraden ("It's all right, Jenna."), Felix
-// ("Jenna, please... Just do as she says"), Saturos (Menardi: "Oh,
-// Saturos..."), Menardi (Saturos: "Menardi... Wait!") and Alex (Mia:
-// "Alex!"). Saturos is fought as encounter table 36, slot 2.
+/// The aerie's actors. The party and Jenna stand in their own slots. The
+/// speakers are known from the text: Kraden ("It's all right, Jenna."), Felix
+/// ("Jenna, please... Just do as she says"), Saturos (Menardi: "Oh,
+/// Saturos..."), Menardi (Saturos: "Menardi... Wait!") and Alex (Mia:
+/// "Alex!"). Saturos is fought as encounter table 36, slot 2.
 enum MercuryLighthouseAerieActor {
-  ACTOR_BEACON_FLAME = ACTOR_FIRST_PLACED, // flickers and sheds sparks
+  ACTOR_BEACON_FLAME = ACTOR_FIRST_PLACED, ///< flickers and sheds sparks
   ACTOR_LIFT_STATUE,
-  ACTOR_FIRST_PLATFORM = ACTOR_FIRST_PLACED + 6, // six, sprite 0xf2
-  // The two platforms that stand on the lift and go up and down with it.
+  ACTOR_FIRST_PLATFORM = ACTOR_FIRST_PLACED + 6, ///< six, sprite 0xf2
+  /// The two platforms that stand on the lift and go up and down with it.
   ACTOR_LIFT_PLATFORM_1 = ACTOR_FIRST_PLATFORM + 3,
   ACTOR_LIFT_PLATFORM_2,
   ACTOR_KRADEN = ACTOR_FIRST_PLACED + 12,
@@ -52,19 +52,19 @@ enum MercuryLighthouseAerieActor {
   ACTOR_ALEX
 };
 
-// Scene flags, kept while the party stays on the aerie.
+/// Scene flags, kept while the party stays on the aerie.
 enum {
-  // The leader stands on a platform, which has dipped under the weight.
+  /// The leader stands on a platform, which has dipped under the weight.
   FLAG_ON_PLATFORM = FLAG_SCENE_TEMP_50,
   FLAG_LIFT_UP = FLAG_SCENE_TEMP_00 + 0x51,
-  // Set on every arrival but the first: Jenna, Kraden, Felix and Menardi
-  // are placed only before it.
+  /// Set on every arrival but the first: Jenna, Kraden, Felix and Menardi
+  /// are placed only before it.
   FLAG_HOSTAGES_GONE = FLAG_SCENE_TEMP_00 + 0x53
 };
 
 enum { FLAG_PSYNERGY_STONE = 0x350 };
 
-// Forward declarations.
+/// Forward declarations.
 static void MercuryLighthouseAerie_PartyArrives(void);
 static void MercuryLighthouseAerie_SettlePlatforms(void);
 static void MercuryLighthouseAerie_AlexAppears(void);
@@ -88,20 +88,20 @@ struct ActorTable {
 #include "common/effect_spawn.h"
 #include "objcmd.h"
 
-// The entrance positions and camera bounds.
+/// The entrance positions and camera bounds.
 const struct SceneEntrance *MercuryLighthouseAerie_GetEntrances(void) {
   return gMercuryLighthouseAerieEntrances;
 }
 
-// The aerie has no clipping regions.
+/// The aerie has no clipping regions.
 const struct SceneRegion *MercuryLighthouseAerie_GetRegions(void) { return 0; }
 
-// One exit: the lift down to the lighthouse's foot.
+/// One exit: the lift down to the lighthouse's foot.
 const u32 *MercuryLighthouseAerie_GetExits(void) {
   return gMercuryLighthouseAerieExits;
 }
 
-// The actors; only the first arrival places Jenna, Kraden, Felix and Menardi.
+/// The actors; only the first arrival places Jenna, Kraden, Felix and Menardi.
 const struct ScenePlacement *MercuryLighthouseAerie_GetPlacements(void) {
   if (gGameState.entrance != 1) {
     Engine_GameFlagSet(FLAG_HOSTAGES_GONE);
@@ -109,15 +109,15 @@ const struct ScenePlacement *MercuryLighthouseAerie_GetPlacements(void) {
   return gMercuryLighthouseAeriePlacements;
 }
 
-// The touch and search events.
+/// The touch and search events.
 const struct SceneEvent *MercuryLighthouseAerie_GetEvents(void) {
   return gMercuryLighthouseAerieEvents;
 }
 
-// On arriving: the beacon flickers and the six platforms sit 50 pixels down;
-// the first arrival (entrance 1) plays the party's arrival, the return from
-// the Saturos battle (entrance 2) Alex's scene, and arriving by the lift
-// (entrance 5) leaves the lift up.
+/// On arriving: the beacon flickers and the six platforms sit 50 pixels down;
+/// the first arrival (entrance 1) plays the party's arrival, the return from
+/// the Saturos battle (entrance 2) Alex's scene, and arriving by the lift
+/// (entrance 5) leaves the lift up.
 s32 MercuryLighthouseAerie_Initialize(void) {
   u32 i;
   s32 actor;
@@ -189,9 +189,9 @@ s32 MercuryLighthouseAerie_Initialize(void) {
   return 0;
 }
 
-// Entrance 1, unless resuming: the Adepts of lit elements regain their PP;
-// the aerie shakes, the camera pans across and in a flash the party stands
-// at the top. Isaac shakes his head and the others gather on him.
+/// Entrance 1, unless resuming: the Adepts of lit elements regain their PP;
+/// the aerie shakes, the camera pans across and in a flash the party stands
+/// at the top. Isaac shakes his head and the others gather on him.
 static void MercuryLighthouseAerie_PartyArrives(void) {
   struct FieldActor *leader;
 
@@ -290,8 +290,8 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
 #include "common/object_distance.h"
 #include "common/object_nearest.h"
 
-// Walking into trigger 10 or 11: if nothing is in the way the leader jumps
-// two cells ahead, off any platform and onto the next.
+/// Walking into trigger 10 or 11: if nothing is in the way the leader jumps
+/// two cells ahead, off any platform and onto the next.
 static void MercuryLighthouseAerie_JumpToPlatform(void) {
   struct FieldActor *actor;
   s32 position[3];
@@ -324,8 +324,8 @@ static void MercuryLighthouseAerie_JumpToPlatform(void) {
   }
 }
 
-// Touching trigger 10 when not already on one: the platform underfoot dips
-// with the leader and bobs back up.
+/// Touching trigger 10 when not already on one: the platform underfoot dips
+/// with the leader and bobs back up.
 static void MercuryLighthouseAerie_StepOntoPlatform(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -363,8 +363,8 @@ static void MercuryLighthouseAerie_StepOntoPlatform(void) {
   Engine_EventEnd();
 }
 
-// Touching trigger 11: the leader walks normally again and the platforms
-// stop following.
+/// Touching trigger 11: the leader walks normally again and the platforms
+/// stop following.
 static void MercuryLighthouseAerie_SettlePlatforms(void) {
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 3;
   Object_GetById(ACTOR_FIRST_PLATFORM)->motionFlags = 4;
@@ -375,11 +375,11 @@ static void MercuryLighthouseAerie_SettlePlatforms(void) {
   Object_GetById(ACTOR_FIRST_PLATFORM + 5)->motionFlags = 4;
 }
 
-// Touching trigger 5 before the confrontation: Garet sees "It's too late! The
-// lighthouse has already been lit!" Mia learns the party is from Vale; Jenna
-// calls out, and Felix, Menardi and Saturos face the party. Menardi leaves
-// with Jenna, Kraden and Felix for the next lighthouse, and Saturos fights
-// alone (encounter table 36, slot 2).
+/// Touching trigger 5 before the confrontation: Garet sees "It's too late! The
+/// lighthouse has already been lit!" Mia learns the party is from Vale; Jenna
+/// calls out, and Felix, Menardi and Saturos face the party. Menardi leaves
+/// with Jenna, Kraden and Felix for the next lighthouse, and Saturos fights
+/// alone (encounter table 36, slot 2).
 static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   struct FieldActor *actor;
 
@@ -809,10 +809,10 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_EventEnd();
 }
 
-// Entrance 2, back from the battle, unless resuming: "Isaac, we got him!"
-// Alex appears and explains that the lighthouse bound Saturos' fire
-// Psynergy and lent Mia endless power. Saturos stands again; the two warp
-// over to the lift and ride it down, and the party regroups on the leader.
+/// Entrance 2, back from the battle, unless resuming: "Isaac, we got him!"
+/// Alex appears and explains that the lighthouse bound Saturos' fire
+/// Psynergy and lent Mia endless power. Saturos stands again; the two warp
+/// over to the lift and ride it down, and the party regroups on the leader.
 static void MercuryLighthouseAerie_AlexAppears(void) {
 
   Engine_EventBegin();
@@ -1355,8 +1355,8 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_EventEnd();
 }
 
-// Touching trigger 6 while the lift is down: the camera watches it rise with
-// its statue.
+/// Touching trigger 6 while the lift is down: the camera watches it rise with
+/// its statue.
 static void MercuryLighthouseAerie_CallLift(void) {
   struct MapLayerScroll *lift;
 
@@ -1385,8 +1385,8 @@ static void MercuryLighthouseAerie_CallLift(void) {
   Engine_EventEnd();
 }
 
-// Touching trigger 12: the leader steps onto the lift and rides it down to
-// the lighthouse's foot (exit 1).
+/// Touching trigger 12: the leader steps onto the lift and rides it down to
+/// the lighthouse's foot (exit 1).
 static void MercuryLighthouseAerie_RideLiftDown(void) {
   Engine_EventBegin();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -1400,7 +1400,7 @@ static void MercuryLighthouseAerie_RideLiftDown(void) {
   Engine_EventEnd();
 }
 
-// Saturos and Alex warp out in a column of sparkles and vanish.
+/// Saturos and Alex warp out in a column of sparkles and vanish.
 static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   struct EffectOptions options;
   struct EffectOptions *effectOptions;
@@ -1457,7 +1457,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   Engine_ActorSetPosition(ACTOR_ALEX, 0, 0);
 }
 
-// Saturos and Alex warp in where they have been placed.
+/// Saturos and Alex warp in where they have been placed.
 static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
   struct EffectOptions options;
   struct EffectOptions *effectOptions;
@@ -1518,8 +1518,8 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ALEX), 1);
 }
 
-// MercuryLighthouseAerie_LowerLift passes its lift as a third
-// argument, which this function does not take.
+/// MercuryLighthouseAerie_LowerLift passes its lift as a third
+/// argument, which this function does not take.
 static void MercuryLighthouseAerie_FindLiftRiders(s32 *out, s32 y) {
   struct ActorTable *table;
   u32 slot;
@@ -1539,7 +1539,7 @@ static void MercuryLighthouseAerie_FindLiftRiders(s32 *out, s32 y) {
   }
 }
 
-// The lift sinks with everything standing on it, speeding up.
+/// The lift sinks with everything standing on it, speeding up.
 static void MercuryLighthouseAerie_LowerLift(void) {
   s32 ids[5];
   struct MapLayerScroll *lift;
@@ -1580,7 +1580,7 @@ static void MercuryLighthouseAerie_LowerLift(void) {
     Object_GetById(ids[i])->motionFlags = 0;
 }
 
-// The lift rises with everything standing on it, slowing at the top.
+/// The lift rises with everything standing on it, slowing at the top.
 static void MercuryLighthouseAerie_RaiseLift(void) {
   s32 ids[5];
   struct MapLayerScroll *lift;
@@ -1621,7 +1621,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
   Engine_TaskWait(2);
 }
 
-// Alex casts Ply on the statue; nothing calls it.
+/// Alex casts Ply on the statue; nothing calls it.
 UNUSED static void MercuryLighthouseAerie_AlexCastsPly(void) {
   Engine_PsynergyBegin(ABILITY_PLY, 1);
   Engine_PsynergySetTarget(ACTOR_ALEX, ACTOR_LIFT_STATUE);
@@ -1631,8 +1631,8 @@ UNUSED static void MercuryLighthouseAerie_AlexCastsPly(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-// A beacon spark's update: it swings round the flame, its angle stepping
-// back each frame.
+/// A beacon spark's update: it swings round the flame, its angle stepping
+/// back each frame.
 static void SceneEffect_UpdateArcPosition(union FieldObject *fieldObject) {
   struct OverlayObject *object = (struct OverlayObject *)fieldObject;
   struct OverlayObject *parent;
@@ -1662,9 +1662,9 @@ struct BeaconSpark {
   void (*update)();
 };
 
-// Every frame: while the view is near the top the beacon flame flickers
-// between two sizes, and every 16 frames it throws off a spark that swings
-// round it.
+/// Every frame: while the view is near the top the beacon flame flickers
+/// between two sizes, and every 16 frames it throws off a spark that swings
+/// round it.
 static void MercuryLighthouseAerie_FlickerBeacon(void) {
   struct FieldActor *beacon;
   struct BeaconSpark *spark;

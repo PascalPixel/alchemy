@@ -1,14 +1,15 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Running a field Psynergy by its kind, and helpers its effects share.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Running a field Psynergy by its kind, and helpers its effects share.
 
 #include "../psynergy_effects_internal.h"
 
 // The dispatchers use the common effect scene. Individual update hooks use
 // their actor or EffectSlot contract; neither is a scene-script callback.
 
-// Runs one step of the current Psynergy effect: 0 casts it with no target,
-// 1 casts it on its target (secondObjectId), 2 finishes it and 3 runs its
-// kind's extra handler.
+/// Runs one step of the current Psynergy effect: 0 casts it with no target,
+/// 1 casts it on its target (secondObjectId), 2 finishes it and 3 runs its
+/// kind's extra handler.
 void Field_DispatchTypeHandler(s32 kind) {
   if (kind == 0)
     BattleFx_Run();
@@ -22,8 +23,8 @@ void Field_DispatchTypeHandler(s32 kind) {
 
 void _call_via_r3(s32, s32);
 
-// Casts the current Psynergy effect with no target: runs the body of its
-// kind (scene->fieldKind).
+/// Casts the current Psynergy effect with no target: runs the body of its
+/// kind (scene->fieldKind).
 void BattleFx_Run(void) {
   struct BattleFxScene *scene;
   struct FieldWork *runtime;
@@ -107,8 +108,8 @@ void BattleFx_Run(void) {
   }
 }
 
-// Casts the current Psynergy effect on its target (secondObjectId): runs the
-// handler of its kind.
+/// Casts the current Psynergy effect on its target (secondObjectId): runs the
+/// handler of its kind.
 void BattleFx_DispatchRequestKind(void) {
   struct BattleFxScene *scene = *(gWorkSlot + HEAP_SLOT_FX);
   struct FieldWork *runtime = *(gWorkSlot + HEAP_SLOT_EVENT);
@@ -179,8 +180,8 @@ void BattleFx_DispatchRequestKind(void) {
   }
 }
 
-// Finishes the current effect when it is Mind Read: ends the effect and lets
-// its target move again, unless the target is the object kept stopped.
+/// Finishes the current effect when it is Mind Read: ends the effect and lets
+/// its target move again, unless the target is the object kept stopped.
 void BattleFx_ClearChildValueOnMismatch(void) {
   struct BattleFxScene *scene = gEffectWork;
 
@@ -192,7 +193,7 @@ void BattleFx_ClearChildValueOnMismatch(void) {
   }
 }
 
-// The extra handler of Reveal, Cloak and Avoid: what each does when it ends.
+/// The extra handler of Reveal, Cloak and Avoid: what each does when it ends.
 void FieldEvent_RunTypeHandler(void) {
   u32 kind;
 
@@ -210,11 +211,11 @@ void FieldEvent_RunTypeHandler(void) {
   }
 }
 
-// Runs the event tied to an effect: a result below 0x10000 is a message,
-// shown at target; a larger one is a routine, called with param and target
-// (through r3). Afterwards, with FLAG_NOTHING_HAPPENS set, says "But nothing
-// happens.".
-// Returns 0.
+/// Runs the event tied to an effect: a result below 0x10000 is a message,
+/// shown at target; a larger one is a routine, called with param and target
+/// (through r3). Afterwards, with FLAG_NOTHING_HAPPENS set, says "But nothing
+/// happens.".
+/// Returns 0.
 s32 Field_RunEventAction(void *event, s32 param, s32 target) {
   s32 script;
 
@@ -239,8 +240,8 @@ s32 Field_RunEventAction(void *event, s32 param, s32 target) {
   return 0;
 }
 
-// Per-frame update: sets every part of an object's sprite to param
-// frame % 6, which cycles its colours.
+/// Per-frame update: sets every part of an object's sprite to param
+/// frame % 6, which cycles its colours.
 void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject) {
   struct ObjectRuntime *owner = (struct ObjectRuntime *)fieldObject;
   s32 kind;
@@ -276,8 +277,8 @@ void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject) {
   }
 }
 
-// Sends an object toward the point magnitude (16.16 pixels) away from it in
-// direction angle.
+/// Sends an object toward the point magnitude (16.16 pixels) away from it in
+/// direction angle.
 void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
                                                 s32 magnitude, s32 angle) {
   s32 pos[3];
@@ -291,7 +292,7 @@ void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
 
 // From here on objects are passed in each function's own view of them.
 
-// Counts the free blocks (owner 0xff) of the 512 resource blocks.
+/// Counts the free blocks (owner 0xff) of the 512 resource blocks.
 s32 ResourceTable_CountFreeBlocks(void) {
   u8 *marker = gResourceBlockOwners;
   s32 freeCount = 0;
@@ -306,11 +307,11 @@ s32 ResourceTable_CountFreeBlocks(void) {
   return freeCount;
 }
 
-// Makes sourceSprite share sharedSprite's VRAM block, releasing its own;
-// with no sharedSprite it keeps its block. Retains the shared cache entry and
-// returns the sprite whose block is shared from now on (sharedSprite, or
-// sourceSprite when there was none), or NULL for no sourceSprite. Chains of
-// afterimages pass one block along this way.
+/// Makes sourceSprite share sharedSprite's VRAM block, releasing its own;
+/// with no sharedSprite it keeps its block. Retains the shared cache entry and
+/// returns the sprite whose block is shared from now on (sharedSprite, or
+/// sourceSprite when there was none), or NULL for no sourceSprite. Chains of
+/// afterimages pass one block along this way.
 struct AnimationObject *
 Sprite_ShareVramCache(struct AnimationObject *sourceSprite,
                       struct AnimationObject *sharedSprite) {
@@ -333,9 +334,9 @@ Sprite_ShareVramCache(struct AnimationObject *sourceSprite,
   return shared;
 }
 
-// Creates an object for an effect, at the caster's ground height, with
-// sprite priority 0 and animation 1. An object without animation is released
-// and NULL returned.
+/// Creates an object for an effect, at the caster's ground height, with
+/// sprite priority 0 and animation 1. An object without animation is released
+/// and NULL returned.
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   struct BattleFxScene *work = gEffectWork;
   struct ObjectRuntime *object;
@@ -357,8 +358,8 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   return object;
 }
 
-// Sets the movement state and animation timer steps of every object but the
-// player's and except.
+/// Sets the movement state and animation timer steps of every object but the
+/// player's and except.
 void ObjectGroup_SetActionForOthers(struct ObjectRuntime *except, s32 state,
                                     s32 value) {
   s16 *player;

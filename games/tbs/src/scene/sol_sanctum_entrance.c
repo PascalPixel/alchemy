@@ -27,9 +27,9 @@
 #include "songs.h"
 #include "item_ids.h"
 
-// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another place group, and other places use the numbers for their own.
-// The column each movable block stands in, east or west of its pair.
+/// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+/// enters another place group, and other places use the numbers for their own.
+/// The column each movable block stands in, east or west of its pair.
 #define FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_EAST 0x300
 #define FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_WEST 0x301
 #define FLAG_SOL_SANCTUM_OUTER_LEFT_BLOCK_EAST 0x302
@@ -47,7 +47,7 @@
 #define FLAG_SOL_SANCTUM_INNER_BLOCK_6_EAST 0x31a
 #define FLAG_SOL_SANCTUM_INNER_BLOCK_6_WEST 0x31b
 
-// Forward declarations.
+/// Forward declarations.
 static void SolSanctumEntrance_ApplyEntryState(void);
 static void SolSanctumEntrance_RestoreInteriorState(void);
 static void SolSanctumEntrance_IntroduceSanctum(void);
@@ -60,7 +60,7 @@ s32 gSolSanctumEntrance_RumbleTimer __attribute__((section(".bss")));
 
 void InitializeSceneRecordBuffer();
 
-// Select the entrance table for the current sanctum map.
+/// Select the entrance table for the current sanctum map.
 const struct SceneEntrance *SolSanctumEntrance_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -73,15 +73,15 @@ const struct SceneEntrance *SolSanctumEntrance_GetEntrances(void) {
   return gSolSanctumEntranceEntrancesOther;
 }
 
-// The sanctum entrance maps have no region table.
+/// The sanctum entrance maps have no region table.
 const struct SceneRegion *SolSanctumEntrance_GetRegions(void) { return 0; }
 
-// Return the shared sanctum exit routes.
+/// Return the shared sanctum exit routes.
 const u32 *SolSanctumEntrance_GetExits(void) {
   return gSolSanctumEntrance_Exits;
 }
 
-// Select the actors for the current map and puzzle room.
+/// Select the actors for the current map and puzzle room.
 const struct ScenePlacement *SolSanctumEntrance_GetPlacements(void) {
   struct ScenePlacement *table;
   s32 firstBlockEntrance = 11;
@@ -106,7 +106,7 @@ const struct ScenePlacement *SolSanctumEntrance_GetPlacements(void) {
   return gSolSanctumEntrancePlacementsOther;
 }
 
-// Select the interactions for the current map and puzzle room.
+/// Select the interactions for the current map and puzzle room.
 const struct SceneEvent *SolSanctumEntrance_GetEvents(void) {
   s32 firstBlockEntrance = 11;
 
@@ -128,7 +128,7 @@ const struct SceneEvent *SolSanctumEntrance_GetEvents(void) {
   return gSolSanctumEntranceEventsOther;
 }
 
-// Walking up to the sanctum's door: it slides open and the leader walks in.
+/// Walking up to the sanctum's door: it slides open and the leader walks in.
 static void Event_OpenDoorAndEnter(void) {
   s32 width;
   s32 height;
@@ -156,10 +156,10 @@ static void Event_OpenDoorAndEnter(void) {
   Engine_EventEnd();
 }
 
-// Searching the first minotaur relief: "The right eye is sparkling, but
-// there's a hole where the left eye should be.", or both eyes sparkle once
-// the Small Jewel is set. Holding the jewel sets the event work's unk172;
-// what reads it is not known.
+/// Searching the first minotaur relief: "The right eye is sparkling, but
+/// there's a hole where the left eye should be.", or both eyes sparkle once
+/// the Small Jewel is set. Holding the jewel sets the event work's unk172;
+/// what reads it is not known.
 static void Event_InspectFirstMinotaurRelief(void) {
 
   Engine_EventBegin();
@@ -178,7 +178,7 @@ static void Event_InspectFirstMinotaurRelief(void) {
   Engine_EventEnd();
 }
 
-// The room shakes as stone shifts; the leader looks around and jumps.
+/// The room shakes as stone shifts; the leader looks around and jumps.
 static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
   Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Engine_EventWait(20);
@@ -195,9 +195,9 @@ static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
   Engine_EventWait(40);
 }
 
-// Using the Small Jewel on the first relief: the leader "set the small gem
-// into the empty socket.", "You hear the sound of shifting stone." and a
-// passage opens.
+/// Using the Small Jewel on the first relief: the leader "set the small gem
+/// into the empty socket.", "You hear the sound of shifting stone." and a
+/// passage opens.
 static void Event_SetFirstSmallJewel(void) {
   s32 message;
   s32 oneCell;
@@ -233,7 +233,7 @@ static void Event_SetFirstSmallJewel(void) {
   }
 }
 
-// Searching the second minotaur relief, as the first.
+/// Searching the second minotaur relief, as the first.
 static void Event_InspectSecondMinotaurRelief(void) {
 
   struct EventWork *work;
@@ -259,8 +259,8 @@ static void Event_InspectSecondMinotaurRelief(void) {
   Engine_EventEnd();
 }
 
-// Using the Small Jewel on the second relief: as the first, and the inner
-// doorway opens.
+/// Using the Small Jewel on the second relief: as the first, and the inner
+/// doorway opens.
 static void Event_SetSecondSmallJewel(void) {
   s32 message;
 
@@ -288,7 +288,7 @@ static void Event_SetSecondSmallJewel(void) {
   }
 }
 
-// Remember which of a movable block's two destination columns it occupies.
+/// Remember which of a movable block's two destination columns it occupies.
 static inline void SolSanctumEntrance_RecordBlockColumn(s32 column,
                                                         s32 flagBase,
                                                         s32 leftColumn,
@@ -302,7 +302,7 @@ static inline void SolSanctumEntrance_RecordBlockColumn(s32 column,
   }
 }
 
-// Moving the outer left block with Move: the column it stops in is saved.
+/// Moving the outer left block with Move: the column it stops in is saved.
 static void Event_OuterLeftBlockMoved(void) {
   struct FieldActor *block = Object_GetById(ACTOR_OUTER_LEFT_BLOCK);
   s32 column;
@@ -315,7 +315,7 @@ static void Event_OuterLeftBlockMoved(void) {
       column, FLAG_SOL_SANCTUM_OUTER_LEFT_BLOCK_EAST, 93, 95);
 }
 
-// Moving the outer right block with Move: the column it stops in is saved.
+/// Moving the outer right block with Move: the column it stops in is saved.
 static void Event_OuterRightBlockMoved(void) {
   struct FieldActor *block = Object_GetById(ACTOR_OUTER_RIGHT_BLOCK);
   s32 column;
@@ -333,8 +333,8 @@ static void Event_OuterRightBlockMoved(void) {
   }
 }
 
-// Moving an inner block with Move: the column it stops in is saved and the
-// floor under all six is set again.
+/// Moving an inner block with Move: the column it stops in is saved and the
+/// floor under all six is set again.
 static void Event_InnerBlock1Moved(void) {
   struct FieldActor *block = Object_GetById(ACTOR_INNER_BLOCK_1);
   s32 column;
@@ -348,7 +348,7 @@ static void Event_InnerBlock1Moved(void) {
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
-// As Event_InnerBlock1Moved, for the second block.
+/// As Event_InnerBlock1Moved, for the second block.
 static void Event_InnerBlock2Moved(void) {
   struct FieldActor *block = Object_GetById(ACTOR_INNER_BLOCK_2);
   s32 column;
@@ -362,7 +362,7 @@ static void Event_InnerBlock2Moved(void) {
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
-// As Event_InnerBlock1Moved, for the third block.
+/// As Event_InnerBlock1Moved, for the third block.
 static void Event_InnerBlock3Moved(void) {
   struct FieldActor *block = Object_GetById(ACTOR_INNER_BLOCK_3);
   s32 column;
@@ -376,7 +376,7 @@ static void Event_InnerBlock3Moved(void) {
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
-// As Event_InnerBlock1Moved, for the fourth block.
+/// As Event_InnerBlock1Moved, for the fourth block.
 static void Event_InnerBlock4Moved(void) {
   struct FieldActor *block = Object_GetById(ACTOR_INNER_BLOCK_4);
   s32 column;
@@ -390,7 +390,7 @@ static void Event_InnerBlock4Moved(void) {
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
-// As Event_InnerBlock1Moved, for the fifth block.
+/// As Event_InnerBlock1Moved, for the fifth block.
 static void Event_InnerBlock5Moved(void) {
   struct FieldActor *block = Object_GetById(ACTOR_INNER_BLOCK_5);
   s32 column;
@@ -404,7 +404,7 @@ static void Event_InnerBlock5Moved(void) {
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
-// As Event_InnerBlock1Moved, for the sixth block.
+/// As Event_InnerBlock1Moved, for the sixth block.
 static void Event_InnerBlock6Moved(void) {
   struct FieldActor *block = Object_GetById(ACTOR_INNER_BLOCK_6);
   s32 column;
@@ -420,7 +420,8 @@ static void Event_InnerBlock6Moved(void) {
 // Shared source is included here in ROM order.
 #include "common/object_findcell.h"
 
-// Walking into a block: the leader pushes it one cell, and its column is saved.
+/// Walking into a block: the leader pushes it one cell, and its column is
+/// saved.
 static void Event_PushBlock(void) {
   struct FieldActor *leader;
   struct FieldActor *block;
@@ -485,7 +486,7 @@ static void Event_PushBlock(void) {
   }
 }
 
-// Restore the outdoor or interior state for this entrance.
+/// Restore the outdoor or interior state for this entrance.
 s32 SolSanctumEntrance_Initialize(void) {
   s32 scene = gGameState.scene;
 
@@ -497,7 +498,7 @@ s32 SolSanctumEntrance_Initialize(void) {
   return 0;
 }
 
-// Restore the approach's rumbling, collision and actor positions.
+/// Restore the approach's rumbling, collision and actor positions.
 static void SolSanctumEntrance_ApplyEntryState(void) {
   // Retreat does not work here (flag 0x144).
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
@@ -520,7 +521,7 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
   }
 }
 
-// Restore opened passages and the current room's block positions.
+/// Restore opened passages and the current room's block positions.
 static void SolSanctumEntrance_RestoreInteriorState(void) {
   s32 entrance;
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -605,7 +606,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   }
 }
 
-// Introduce Kraden's first visit to Sol Sanctum.
+/// Introduce Kraden's first visit to Sol Sanctum.
 static void SolSanctumEntrance_IntroduceSanctum(void) {
   struct FieldActor *leader;
 
@@ -688,7 +689,7 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Engine_EventEnd();
 }
 
-// Survey the room while Kraden explains the hidden-passage puzzle.
+/// Survey the room while Kraden explains the hidden-passage puzzle.
 static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   struct FieldActor *leader;
 
@@ -892,7 +893,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Engine_EventEnd();
 }
 
-// Show the inner statues that Kraden cannot reach.
+/// Show the inner statues that Kraden cannot reach.
 static void SolSanctumEntrance_InspectInnerStatues(void) {
   struct FieldActor *leader;
 
@@ -946,7 +947,7 @@ static void SolSanctumEntrance_InspectInnerStatues(void) {
   Engine_EventEnd();
 }
 
-// Restore block collision cells and, on entry, the saved actors.
+/// Restore block collision cells and, on entry, the saved actors.
 static void SolSanctumEntrance_RestoreInnerBlockCells(s32 placeActors) {
   // Clear all six destinations before restoring occupied cells.
   Map_CopyCellAttributes(122, 20, 1, 1, 100, 32);
@@ -1035,14 +1036,14 @@ static void SolSanctumEntrance_RestoreInnerBlockCells(s32 placeActors) {
   }
 }
 
-// Searching the door beside the way in: "The door is tightly locked."
+/// Searching the door beside the way in: "The door is tightly locked."
 static void Event_DoorTightlyLocked(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
   Engine_EventEnd();
 }
 
-// After the eruption the approach rumbles now and then, and each shake fades.
+/// After the eruption the approach rumbles now and then, and each shake fades.
 static void SolSanctumEntrance_UpdateEruptionRumbles(void) {
   s32 randomValue;
   s32 *timer;
@@ -1301,7 +1302,7 @@ struct SceneEvent gSolSanctumEntranceEvents1Entrances14To16[] = {
 };
 // clang-format on
 
-// Push step by direction: X in the upper halfword, Z in the lower (pixels).
+/// Push step by direction: X in the upper halfword, Z in the lower (pixels).
 #define PUSH_STEP(x, z) (((x) << 16) | ((z) & 0xffff))
 
 s32 gSolSanctumPushSteps[] = {

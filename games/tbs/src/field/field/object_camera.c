@@ -1,17 +1,18 @@
-// Part of field.c, the field object, compiled only through it.
-// The object cameras, which place every object's sprite each frame.
+/// @file
+/// Part of field.c, the field object, compiled only through it.
+/// The object cameras, which place every object's sprite each frame.
 
 #include "../field_internal.h"
 
-// A map cell's word, as the camera reads it.
+/// A map cell's word, as the camera reads it.
 struct ObjectCameraTile {
-  u32 block : 12;   // the block (metatile) number
-  u32 layer : 2;    // if not 0, the layer of an object standing on it, + 1
-  u32 priority : 2; // if not 0, the priority of an object standing on it
+  u32 block : 12;   ///< the block (metatile) number
+  u32 layer : 2;    ///< if not 0, the layer of an object standing on it, + 1
+  u32 priority : 2; ///< if not 0, the priority of an object standing on it
   u32 unk10 : 16;
 };
 
-// A field object, as the camera reads it.
+/// A field object, as the camera reads it.
 struct ObjectCameraObject {
   u32 active;
   u16 unk04;
@@ -27,7 +28,7 @@ struct ObjectCameraObject {
   u8 flags;
   u8 unk24[0x2c];
   void *sprite;
-  u8 kind; // 1: one sprite, 2: up to four
+  u8 kind; ///< 1: one sprite, 2: up to four
   u8 unk55[7];
   u8 held;
   u8 unk5d[0x13];
@@ -39,17 +40,17 @@ struct ObjectCameraPoint {
   s32 z;
 };
 
-// The fixed camera.
+/// The fixed camera.
 struct ObjectCameraFixed {
   struct ObjectCameraPoint eye;
   struct ObjectCameraPoint target;
-  struct ObjectCameraPoint *eyeOverride;    // when set, used as the eye
-  struct ObjectCameraPoint *targetOverride; // when set, used as the target
+  struct ObjectCameraPoint *eyeOverride;    ///< when set, used as the eye
+  struct ObjectCameraPoint *targetOverride; ///< when set, used as the target
 };
 
-// Each frame, with the scrolling camera: places every object's sprite on the
-// screen. An object on or near the screen takes its layer and priority from
-// the cell under it; one off screen gives up its VRAM cache entry.
+/// Each frame, with the scrolling camera: places every object's sprite on the
+/// screen. An object on or near the screen takes its layer and priority from
+/// the cell under it; one off screen gives up its VRAM cache entry.
 void ObjectSystem_UpdateCamera(void) {
   /* FAKEMATCH(dead): an unused local for the room the native frame keeps for
    * three points above the position; without it, 2 of 267 instructions differ
@@ -176,13 +177,14 @@ void ObjectSystem_UpdateCamera(void) {
   Runtime_ReleaseHeapBlock(HEAP_SLOT_FRAME_SCRATCH);
 }
 
-// Returns 1.
+/// Returns 1.
 UNUSED s32 ObjectCamera_ReturnTrue(void) { return 1; }
 
-// Each frame, with the fixed camera: places every object's sprite, from the
-// 64th object down, facing them by the angle from the eye to the target.
-// While battle commands are chosen (flag 363, set by
-// BattlePresentation_BuildActions) it uses the fixed view matrix and 1.0 scale.
+/// Each frame, with the fixed camera: places every object's sprite, from the
+/// 64th object down, facing them by the angle from the eye to the target.
+/// While battle commands are chosen (flag 363, set by
+/// BattlePresentation_BuildActions) it uses the fixed view matrix and 1.0
+/// scale.
 void ObjectSystem_UpdateCameraFixed(void) {
   s32 i;
   struct ObjectCameraFixed *camera;

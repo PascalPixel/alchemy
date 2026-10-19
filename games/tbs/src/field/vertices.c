@@ -7,8 +7,8 @@
 
 #define VISIBLE_SCANLINES 160 // visible scanlines
 
-// An eight-byte runtime entry contains the ldr/bx instructions and a target
-// word. Entries this routine does not call keep their target word opaque.
+/// An eight-byte runtime entry contains the ldr/bx instructions and a target
+/// word. Entries this routine does not call keep their target word opaque.
 struct RuntimeUnusedEntry {
   u32 stub;
   u32 target;
@@ -24,8 +24,8 @@ struct RuntimeMathUnaryEntry {
   s32 (*target)(s32 angle);
 };
 
-// The runtime table's prefix through Trig_Cos, in its assembly order. This
-// routine runs from a RAM copy and calls the target words, not the ROM stubs.
+/// The runtime table's prefix through Trig_Cos, in its assembly order. This
+/// routine runs from a RAM copy and calls the target words, not the ROM stubs.
 struct RuntimeMathTable {
   struct RuntimeUnusedEntry preceding[8];
   struct RuntimeMathBinaryEntry atan2;
@@ -50,9 +50,9 @@ struct Position {
   s32 z;
 };
 
-// One scanline of the world map's ground plane. WorldMap_BuildScanlineTable
-// fills x (the line's width scale) and z (its depth); the rest caches the
-// rotation terms this routine computes from them for the current angle.
+/// One scanline of the world map's ground plane. WorldMap_BuildScanlineTable
+/// fills x (the line's width scale) and z (its depth); the rest caches the
+/// rotation terms this routine computes from them for the current angle.
 struct ScanVertex {
   s32 x;
   s32 z;
@@ -62,7 +62,7 @@ struct ScanVertex {
   s16 v;
 };
 
-// One background's affine registers, BG2PA to BG2Y.
+/// One background's affine registers, BG2PA to BG2Y.
 struct BgAffine {
   s16 pa;
   s16 pb;
@@ -72,12 +72,12 @@ struct BgAffine {
   s32 y;
 };
 
-// Builds the world map's per-scanline affine table for one frame: the ground
-// plane seen from eye towards target. line points at the 160 scanlines'
-// ground terms, whose rotation terms stay cached while the yaw
-// (gScanlineAngle) is unchanged;
-// affine receives each line's parameters twice, for BG2 and then BG3, as the
-// HBlank DMA writes both. Copied to RAM and run from there.
+/// Builds the world map's per-scanline affine table for one frame: the ground
+/// plane seen from eye towards target. line points at the 160 scanlines'
+/// ground terms, whose rotation terms stay cached while the yaw
+/// (gScanlineAngle) is unchanged;
+/// affine receives each line's parameters twice, for BG2 and then BG3, as the
+/// HBlank DMA writes both. Copied to RAM and run from there.
 void Transform_UpdateVertices(struct Position *eye, struct Position *target,
                               struct ScanVertex *line,
                               struct BgAffine *affine) {

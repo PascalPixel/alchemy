@@ -35,27 +35,27 @@ static void TalkToIodemAboutTheShip(void);
 enum {
   ENTRANCE_WORLD_MAP_SOUTH = 20,
   ENTRANCE_WORLD_MAP_NORTH = 21,
-  // Arriving from Venus Lighthouse's aerie: 90 also plays the talk about the
-  // ship the party saw from the lighthouse.
+  /// Arriving from Venus Lighthouse's aerie: 90 also plays the talk about the
+  /// ship the party saw from the lighthouse.
   ENTRANCE_FROM_AERIE = 90,
   ENTRANCE_FROM_AERIE_QUIETLY = 91
 };
 
-// The actors this scene's code moves, by their place in the placement tables.
+/// The actors this scene's code moves, by their place in the placement tables.
 enum {
-  SOLDIER_WEST = 8, // Tolbi's soldiers, wounded on the first visit
+  SOLDIER_WEST = 8, ///< Tolbi's soldiers, wounded on the first visit
   SOLDIER_EAST = 9,
-  MOURNER = 10, // sobs for Sheba (gLaliveroMournerSobs)
+  MOURNER = 10, ///< sobs for Sheba (gLaliveroMournerSobs)
   WANDERER_EAST = 11,
   WANDERER_WEST = 17,
-  WHARF_GUARD = 18, // keeps the door to Babi's ship
+  WHARF_GUARD = 18, ///< keeps the door to Babi's ship
   IODEM = 22,
-  TORCH = 23,             // the Mars Djinni
-  NORTH_EXIT_SPRITE = 24, // placed after Venus Lighthouse
+  TORCH = 23,             ///< the Mars Djinni
+  NORTH_EXIT_SPRITE = 24, ///< placed after Venus Lighthouse
   ACTOR_BLACK_ORB = 25
 };
 
-// The door at trigger 6 is a gate two cells wide.
+/// The door at trigger 6 is a gate two cells wide.
 enum { GATE_TRIGGER = 6 };
 
 enum {
@@ -65,22 +65,22 @@ enum {
   ITEM_ICON_TILE_BYTES = 128
 };
 
-// Torch, Mars Djinni 6, joins the party.
+/// Torch, Mars Djinni 6, joins the party.
 static void TalkToTorch(void) { Djinn_JoinParty(TORCH, 2, 6); }
 
-// Where the party can enter Lalivero.
+/// Where the party can enter Lalivero.
 const struct SceneEntrance *Lalivero_GetEntrances(void) {
   return gLaliveroEntrances;
 }
 
-// Lalivero has no regions.
+/// Lalivero has no regions.
 const struct SceneRegion *Lalivero_GetRegions(void) { return NULL; }
 
-// Where each exit leads.
+/// Where each exit leads.
 const u32 *Lalivero_GetExits(void) { return gLaliveroExits; }
 
-// The townsfolk, who stand differently once the party is back from Venus
-// Lighthouse.
+/// The townsfolk, who stand differently once the party is back from Venus
+/// Lighthouse.
 const struct ScenePlacement *Lalivero_GetPlacements(void) {
   if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE) != 0) {
     return gLaliveroPlacementsAfterLighthouse;
@@ -88,8 +88,8 @@ const struct ScenePlacement *Lalivero_GetPlacements(void) {
   return gLaliveroPlacements;
 }
 
-// The villager mourning Sheba stops sobbing to answer, faces north again and
-// goes back to sobbing.
+/// The villager mourning Sheba stops sobbing to answer, faces north again and
+/// goes back to sobbing.
 static void TalkToMourner(s32 actor) {
   void Actor_FaceDirection();
 
@@ -106,8 +106,8 @@ static void TalkToMourner(s32 actor) {
   Actor_SetActionScript(actor, gLaliveroMournerSobs);
 }
 
-// After Venus Lighthouse: a villager asks whether the party is leaving
-// Lalivero, and answers yes or no.
+/// After Venus Lighthouse: a villager asks whether the party is leaving
+/// Lalivero, and answers yes or no.
 static void TalkToVillagerAskingIfLeaving(s32 actor) {
   s32 message = MsgLaliveroLeavingLalivero;
   Engine_EventSetMessage(message);
@@ -121,8 +121,8 @@ static void TalkToVillagerAskingIfLeaving(s32 actor) {
   Engine_EventShowMessage(actor, 0);
 }
 
-// Once Iodem has given the Black Orb, the guard at the wharf door lets the
-// party through and steps aside.
+/// Once Iodem has given the Black Orb, the guard at the wharf door lets the
+/// party through and steps aside.
 static void TalkToWharfGuard(void) {
 
   Engine_GameFlagSet(FLAG_LALIVERO_WHARF_OPEN);
@@ -134,8 +134,8 @@ static void TalkToWharfGuard(void) {
   Engine_EventWait(10);
 }
 
-// The leader walks into a doorway: the door (or the gate) swings open, the
-// leader steps in and the exit of the touched trigger is taken.
+/// The leader walks into a doorway: the door (or the gate) swings open, the
+/// leader steps in and the exit of the touched trigger is taken.
 static void EnterDoor(void) {
   s32 door = gEventWork->touchedTrigger;
   s32 x = gLaliveroDoorCells[door][0];
@@ -155,7 +155,7 @@ static void EnterDoor(void) {
   Engine_EventRequestExit(door);
 }
 
-// An exit with no door: leave by the touched trigger's exit.
+/// An exit with no door: leave by the touched trigger's exit.
 static void TakeTouchedExit(void) {
   struct EventWork *work = gEventWork;
   s16 *trigger = (s16 *)&work->touchedTrigger;
@@ -165,9 +165,9 @@ static void TakeTouchedExit(void) {
   Engine_EventRequestExit(exit);
 }
 
-// The first visit, arriving from the world map: the party and Iodem find
-// Tolbi's soldiers beaten in the street. Seven attackers took Sheba to the
-// ruins under Babi Lighthouse, and Faran followed them.
+/// The first visit, arriving from the world map: the party and Iodem find
+/// Tolbi's soldiers beaten in the street. Seven attackers took Sheba to the
+/// ruins under Babi Lighthouse, and Faran followed them.
 static void WatchWoundedSoldiers(void) {
   struct FieldActor *leader;
 
@@ -358,10 +358,10 @@ static void WatchWoundedSoldiers(void) {
   Engine_EventEnd();
 }
 
-// Trigger 50 after Venus Lighthouse, until Iodem has spoken: Garet stops
-// the leader, Iodem comes out of his house and tells the party that the
-// misty island they saw may be Lemuria, which could save Babi, and gives them
-// the Black Orb that sails Babi's ship.
+/// Trigger 50 after Venus Lighthouse, until Iodem has spoken: Garet stops
+/// the leader, Iodem comes out of his house and tells the party that the
+/// misty island they saw may be Lemuria, which could save Babi, and gives them
+/// the Black Orb that sails Babi's ship.
 static void ReceiveBlackOrb(void) {
   struct FieldActor *leader;
 
@@ -654,8 +654,8 @@ static void ReceiveBlackOrb(void) {
   Engine_EventEnd();
 }
 
-// The ship the party saw from the lighthouse was not Babi's but, Garet
-// guesses, Saturos's.
+/// The ship the party saw from the lighthouse was not Babi's but, Garet
+/// guesses, Saturos's.
 static void TalkToIodemAboutTheShip(void) {
   Engine_EventSetMessage(MsgLaliveroThoughtShipWeSawAt);
   Engine_EventWait(20);
@@ -696,8 +696,8 @@ static void TalkToIodemAboutTheShip(void) {
   Event_ShowMessage(IVAN, 0);
 }
 
-// Trigger 51 at the town exit: Garet turns the leader back toward Babi's
-// ship and the wharf the guard was keeping.
+/// Trigger 51 at the town exit: Garet turns the leader back toward Babi's
+/// ship and the wharf the guard was keeping.
 static void TurnBackFromTheGate(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLaliveroWhereGoingArentWeTaking);
@@ -706,8 +706,8 @@ static void TurnBackFromTheGate(void) {
   Engine_EventEnd();
 }
 
-// What the party can talk to, touch and search, which changes once they are
-// back from Venus Lighthouse.
+/// What the party can talk to, touch and search, which changes once they are
+/// back from Venus Lighthouse.
 const struct SceneEvent *Lalivero_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE) != 0) {
     return gLaliveroEventsAfterLighthouse;
@@ -715,9 +715,9 @@ const struct SceneEvent *Lalivero_GetEvents(void) {
   return gLaliveroEvents;
 }
 
-// Sets Lalivero up as the party enters: the Black Orb prop, the wounded
-// soldiers of the first visit (and its cutscene), or the north exit closed
-// after Venus Lighthouse.
+/// Sets Lalivero up as the party enters: the Black Orb prop, the wounded
+/// soldiers of the first visit (and its cutscene), or the north exit closed
+/// after Venus Lighthouse.
 s32 Lalivero_Initialize(void) {
   union FieldObject *object;
   struct AnimationObject *sprite;
@@ -810,8 +810,8 @@ s32 Lalivero_Initialize(void) {
   return 0;
 }
 
-// The mourner's sobbing: the sprite squashes and stretches twice, then
-// rests 80 frames.
+/// The mourner's sobbing: the sprite squashes and stretches twice, then
+/// rests 80 frames.
 s32 gLaliveroMournerSobs[] = {
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x10000),

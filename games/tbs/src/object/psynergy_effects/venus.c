@@ -1,13 +1,14 @@
-// Part of psynergy_effects.c, compiled only through it.
-// A Venus Djinni joining the party.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// A Venus Djinni joining the party.
 
 #include "../psynergy_effects_internal.h"
 
-// A Venus Djinni joins the party: it hops twice, spins and leaps, then
-// shrinks away; the leader turns to the camera and plays animation 28 while
-// 24 particles rise round it (BattleFx_UpdateRadialSpread). Then 24 motes
-// spiral down onto the leader from 120 pixels above
-// (BattleFx_UpdateDescendingOrbitObject) and 8 sparks burst from the leader.
+/// A Venus Djinni joins the party: it hops twice, spins and leaps, then
+/// shrinks away; the leader turns to the camera and plays animation 28 while
+/// 24 particles rise round it (BattleFx_UpdateRadialSpread). Then 24 motes
+/// spiral down onto the leader from 120 pixels above
+/// (BattleFx_UpdateDescendingOrbitObject) and 8 sparks burst from the leader.
 void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   struct CaptureObject *leader;
   struct CaptureObject *djinni;
@@ -140,10 +141,10 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 
-// Effect slot callback of a Mercury Djinni's droplets: each falls from 100
-// pixels above to a random point near the leader (state 0), then darts
-// between random points 12 pixels apart (states 1 and 2, a sound each time)
-// until the sequence sets state 3, which frees it.
+/// Effect slot callback of a Mercury Djinni's droplets: each falls from 100
+/// pixels above to a random point near the leader (state 0), then darts
+/// between random points 12 pixels apart (states 1 and 2, a sound each time)
+/// until the sequence sets state 3, which frees it.
 void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect) {
   struct ObjectRuntime *source;
   struct EffectVector position;
@@ -198,8 +199,8 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect) {
   }
 }
 
-// Per-frame update of an afterimage: closes half the distance to the object
-// it is linked to.
+/// Per-frame update of an afterimage: closes half the distance to the object
+/// it is linked to.
 void BattleFx_HalveDistanceToTarget(union FieldObject *fieldObject) {
   BattleFx_MoveAfterimageHalfway(fieldObject);
 }

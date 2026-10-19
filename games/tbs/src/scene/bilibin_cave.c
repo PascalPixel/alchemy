@@ -1,7 +1,8 @@
-// The cave that leads past Bilibin, in three sections walked in turn: the
-// entrance section (BilibinCave3) with a Growth plant, the middle section
-// (BilibinCave2) with Reveal and Douse, and the exit section (BilibinCave1),
-// a puzzle of Douse, Frost and pushed actors.
+/// @file
+/// The cave that leads past Bilibin, in three sections walked in turn: the
+/// entrance section (BilibinCave3) with a Growth plant, the middle section
+/// (BilibinCave2) with Reveal and Douse, and the exit section (BilibinCave1),
+/// a puzzle of Douse, Frost and pushed actors.
 
 #include "script.h"
 #include "game_state.h"
@@ -33,29 +34,29 @@
 #include "flags.h"
 #include "songs.h"
 
-// The entry points dispatch to the section-specific setup routines below.
+/// The entry points dispatch to the section-specific setup routines below.
 static void BilibinCave_RestoreGrowthSection(void);
 static void BilibinCave_RestoreDouseSection(void);
 static void BilibinCave_RestoreIcePuzzleSection(void);
 static void BilibinCave_EmptyActorSetupHook(s32 actorId);
 
-// Actors of the entrance section, named by the Psynergy that works on them.
+/// Actors of the entrance section, named by the Psynergy that works on them.
 enum { GROWTH_TARGET = 8 };
 
-// Actors of the middle section.
+/// Actors of the middle section.
 enum { MIDDLE_DOUSE_TARGET = 9 };
 
-// Actors of the exit section.
+/// Actors of the exit section.
 enum {
   EXIT_DOUSE_TARGET = 8,
-  PUSHED_ACTOR_A = 11, // moved by Move or pushed
+  PUSHED_ACTOR_A = 11, ///< moved by Move or pushed
   PUSHED_ACTOR_B = 12,
-  FROST_TARGET_A = 15, // walkable once the Douse target is gone
+  FROST_TARGET_A = 15, ///< walkable once the Douse target is gone
   FROST_TARGET_B = 16,
-  FROST_TARGET_C = 17 // changes as a pushed actor reaches cell (35, 23)
+  FROST_TARGET_C = 17 ///< changes as a pushed actor reaches cell (35, 23)
 };
 
-// Clear the scripted actor's sprite flags and complete this script command.
+/// Clear the scripted actor's sprite flags and complete this script command.
 static s32 BilibinCave_ClearScriptedActorSpriteFlags(
     struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -63,7 +64,7 @@ static s32 BilibinCave_ClearScriptedActorSpriteFlags(
   return 0;
 }
 
-// Select the entrance bounds for the current cave section.
+/// Select the entrance bounds for the current cave section.
 const struct SceneEntrance *BilibinCave_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -79,13 +80,13 @@ const struct SceneEntrance *BilibinCave_GetEntrances(void) {
   return gBilibinCaveEntrancesOther;
 }
 
-// No clipping-region table is supplied by this overlay.
+/// No clipping-region table is supplied by this overlay.
 const struct SceneRegion *BilibinCave_GetRegions(void) { return NULL; }
 
-// Return the packed exits connecting the three cave sections.
+/// Return the packed exits connecting the three cave sections.
 const u32 *BilibinCave_GetExits(void) { return gBilibinCaveExits; }
 
-// Each cave section has its own movable actors and obstacles.
+/// Each cave section has its own movable actors and obstacles.
 const struct ScenePlacement *BilibinCave_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -101,7 +102,7 @@ const struct ScenePlacement *BilibinCave_GetPlacements(void) {
   return gBilibinCavePlacementsOther;
 }
 
-// Pair the section's placements with their touch and Psynergy handlers.
+/// Pair the section's placements with their touch and Psynergy handlers.
 const struct SceneEvent *BilibinCave_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -117,17 +118,17 @@ const struct SceneEvent *BilibinCave_GetEvents(void) {
   return gBilibinCaveEventsOther;
 }
 
-// Replace the crossing cell with the attributes at source cell (1, 0).
+/// Replace the crossing cell with the attributes at source cell (1, 0).
 static void Event_AlterCrossingCell(void) {
   Map_CopyCellAttributes(1, 0, 1, 1, 21, 14);
 }
 
-// Restore the crossing cell from source cell (0, 0).
+/// Restore the crossing cell from source cell (0, 0).
 static void Event_RestoreCrossingCell(void) {
   Map_CopyCellAttributes(0, 0, 1, 1, 21, 14);
 }
 
-// Replace the narrow tile strip and its two-row collision rectangle.
+/// Replace the narrow tile strip and its two-row collision rectangle.
 static void Event_RevealHiddenPath(void) {
   {
     s32 width = 1;
@@ -143,7 +144,7 @@ static void Event_RevealHiddenPath(void) {
   }
 }
 
-// Restore the strip's tiles and its one-row collision rectangle.
+/// Restore the strip's tiles and its one-row collision rectangle.
 static void Event_HideRevealedPath(void) {
   {
     s32 width = 1;
@@ -159,7 +160,7 @@ static void Event_HideRevealedPath(void) {
   }
 }
 
-// Douse on the middle section's target: it disappears, for good.
+/// Douse on the middle section's target: it disappears, for good.
 static void Event_DouseMiddleSectionTarget(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(MIDDLE_DOUSE_TARGET, 0, 0);
@@ -167,8 +168,8 @@ static void Event_DouseMiddleSectionTarget(void) {
   Engine_EventEnd();
 }
 
-// Douse on the exit section's target: it disappears, and the first Frost
-// target settles into a surface the party can walk over.
+/// Douse on the exit section's target: it disappears, and the first Frost
+/// target settles into a surface the party can walk over.
 static void Event_DouseExitSectionTarget(void) {
   Engine_EventBegin();
   Actor_SetPosition(EXIT_DOUSE_TARGET, 0, 0);
@@ -183,7 +184,7 @@ static void Event_DouseExitSectionTarget(void) {
   Engine_EventEnd();
 }
 
-// Clear a Frost target's child effect, then play its freezing animation.
+/// Clear a Frost target's child effect, then play its freezing animation.
 static inline void BilibinCave_FreezeTarget(s32 actor) {
   Engine_EventBegin();
   Engine_ActorSetChildValue(actor, 0);
@@ -193,24 +194,24 @@ static inline void BilibinCave_FreezeTarget(s32 actor) {
   Engine_EventEnd();
 }
 
-// Frost on the first target, before the Douse target is gone.
+/// Frost on the first target, before the Douse target is gone.
 static void Event_FreezeFirstTarget(void) {
   BilibinCave_FreezeTarget(FROST_TARGET_A);
 }
 
-// Frost on the second target.
+/// Frost on the second target.
 static void Event_FreezeSecondTarget(void) {
   BilibinCave_FreezeTarget(FROST_TARGET_B);
 }
 
-// Frost on the third target, while 0x302 is set.
+/// Frost on the third target, while 0x302 is set.
 static void Event_FreezeThirdTarget(void) {
   BilibinCave_FreezeTarget(FROST_TARGET_C);
 }
 
-// After a push or Move: while either pushed actor stands on cell (35, 23)
-// (0x303 and 0x304), the third Frost target changes with a sound, and 0x302
-// says so; when both leave, it changes back.
+/// After a push or Move: while either pushed actor stands on cell (35, 23)
+/// (0x303 and 0x304), the third Frost target changes with a sound, and 0x302
+/// says so; when both leave, it changes back.
 static void BilibinCave_UpdateFrostTargetFromMovableActors(void) {
   struct FieldActor *firstActor;
   struct FieldActor *secondActor;
@@ -257,27 +258,27 @@ static void BilibinCave_UpdateFrostTargetFromMovableActors(void) {
   }
 }
 
-// Growth on the entrance section's target: the plant grows and its cell's
-// collision changes; 0x305 keeps it grown.
+/// Growth on the entrance section's target: the plant grows and its cell's
+/// collision changes; 0x305 keeps it grown.
 static void Event_GrowPlant(void) {
 
   Map_CopyCellAttributes(31, 0, 1, 1, 8, 13);
   Engine_GameFlagSet(0x305);
 }
 
-// Enable the map-work byte while crossing this touch trigger.
+/// Enable the map-work byte while crossing this touch trigger.
 static void Event_SetMapTriggerFlag(void) {
   struct MapState *map = gMapWork[0];
   map->unk17 = 1;
 }
 
-// Clear the same map-work byte at the opposing trigger.
+/// Clear the same map-work byte at the opposing trigger.
 static void Event_ClearMapTriggerFlag(void) {
   struct MapState *map = gMapWork[0];
   map->unk17 = 0;
 }
 
-// Restore the current section's saved puzzle state.
+/// Restore the current section's saved puzzle state.
 s32 BilibinCave_Initialize(void) {
   s16 variant = gGameState.scene;
 
@@ -291,7 +292,7 @@ s32 BilibinCave_Initialize(void) {
   return 0;
 }
 
-// Restore the collision change already made by Growth.
+/// Restore the collision change already made by Growth.
 static void BilibinCave_RestoreGrowthSection(void) {
   if (Engine_GameFlagIsSet(0x305) != 0) {
 
@@ -300,7 +301,7 @@ static void BilibinCave_RestoreGrowthSection(void) {
   }
 }
 
-// Open section 2 and restore its Douse target.
+/// Open section 2 and restore its Douse target.
 static void BilibinCave_RestoreDouseSection(void) {
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -316,13 +317,13 @@ static void BilibinCave_RestoreDouseSection(void) {
   }
 }
 
-// Clear the drawing flags of an actor used by the cave's animations.
+/// Clear the drawing flags of an actor used by the cave's animations.
 static inline void BilibinCave_ClearActorSpriteFlags(s32 actorId) {
   struct FieldActor *actor = Actor_Get(actorId);
   Engine_ActorSetSpriteFlags(actor, 0);
 }
 
-// Initialize section 1's animated actors and persistent puzzle states.
+/// Initialize section 1's animated actors and persistent puzzle states.
 static void BilibinCave_RestoreIcePuzzleSection(void) {
   struct FieldActor *actor;
   s32 destinationCellX;
@@ -407,7 +408,7 @@ static void BilibinCave_RestoreIcePuzzleSection(void) {
 // The shared cell lookup retains its position before the push handler.
 #include "common/object_findcell.h"
 
-// Push the actor ahead only when its next cell and movement probe are clear.
+/// Push the actor ahead only when its next cell and movement probe are clear.
 static void Event_PushActorAhead(void) {
   struct FieldActor *leader;
   struct FieldActor *target;
@@ -473,7 +474,7 @@ static void Event_PushActorAhead(void) {
   BilibinCave_UpdateFrostTargetFromMovableActors();
 }
 
-// The original setup invokes this empty hook for every animated actor.
+/// The original setup invokes this empty hook for every animated actor.
 static void BilibinCave_EmptyActorSetupHook(s32 actorId) {}
 
 s32 gBilibinCave_ClearSpriteScript[] = {
@@ -638,7 +639,7 @@ struct SceneEvent gBilibinCaveEvents1[] = {
 };
 // clang-format on
 
-// Pack signed pixel steps with X in the upper halfword and Z in the lower.
+/// Pack signed pixel steps with X in the upper halfword and Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 
 s32 gBilibinCave_PushSteps[] = {

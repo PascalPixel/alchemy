@@ -1,6 +1,7 @@
-// Bilibin's village, river crossing and raised warehouse approach.
-// Town dialogue changes with the tree curse; the river route includes a rescue
-// and Jill's reward for helping the stranded villager.
+/// @file
+/// Bilibin's village, river crossing and raised warehouse approach.
+/// Town dialogue changes with the tree curse; the river route includes a rescue
+/// and Jill's reward for helping the stranded villager.
 
 #include "game_state.h"
 #include "flags.h"
@@ -34,7 +35,7 @@
 #include "songs.h"
 #include "item_ids.h"
 
-// Forward declarations.
+/// Forward declarations.
 static void Bilibin_RestoreVillageActors(void);
 static void Bilibin_UpdateVillageBlockCells(void);
 static void Bilibin_RestoreRiverActors(void);
@@ -44,24 +45,24 @@ static void Bilibin_UpdateRiverEffect(void);
 static void Bilibin_SpawnRiverEffect(struct FieldActor *actor);
 static void Bilibin_UpdateRaisedBlockCells(void);
 
-// Actors of the village (Bilibin1), numbered from its placement rows.
+/// Actors of the village (Bilibin1), numbered from its placement rows.
 enum {
-  TREE_MAN = 9,        // the cursed traveler, a tree at the village entrance
-  VILLAGE_BLOCK = 20,  // the block moved with Move
-  FORMER_TREE_MAN = 21 // the same man once the curse is lifted
+  TREE_MAN = 9,        ///< the cursed traveler, a tree at the village entrance
+  VILLAGE_BLOCK = 20,  ///< the block moved with Move
+  FORMER_TREE_MAN = 21 ///< the same man once the curse is lifted
 };
 
-// Actors of the river south of the village (Bilibin3).
+/// Actors of the river south of the village (Bilibin3).
 enum {
   RIVER_BLOCK = 8,
-  JILL_TREE = 11, // Jill as a tree, about to be swept downstream
-  // Jill's two friends: with her they were the "Gang of Three".
+  JILL_TREE = 11, ///< Jill as a tree, about to be swept downstream
+  /// Jill's two friends: with her they were the "Gang of Three".
   GANG_MEMBER_WEST = 12,
   GANG_MEMBER_EAST = 13,
   JILL = 14
 };
 
-// Actors of the warehouse approach (Bilibin2).
+/// Actors of the warehouse approach (Bilibin2).
 enum { RAISED_BLOCK = 8, GUST = 9 };
 
 struct SpawnCounter {
@@ -73,7 +74,7 @@ struct SpawnCounter gBilibin_RiverEffectTimer;
 // Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
-// Selects the entrance positions for the current part of Bilibin.
+/// Selects the entrance positions for the current part of Bilibin.
 const struct SceneEntrance *Bilibin_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -89,7 +90,7 @@ const struct SceneEntrance *Bilibin_GetEntrances(void) {
   return (const struct SceneEntrance *)gBilibinEntrancesOther;
 }
 
-// Only the raised approach supplies exit-region boxes.
+/// Only the raised approach supplies exit-region boxes.
 const struct SceneRegion *Bilibin_GetRegions(void) {
   if (gGameState.scene == (s32)&SceneId_Bilibin2) {
     return (const struct SceneRegion *)gBilibinRegions2;
@@ -97,13 +98,13 @@ const struct SceneRegion *Bilibin_GetRegions(void) {
   return 0;
 }
 
-// Returns the packed exit destinations shared by the three maps.
+/// Returns the packed exit destinations shared by the three maps.
 const u32 *Bilibin_GetExits(void) { return gBilibinExits; }
 
-// Gust, Jupiter Djinni 0, joins the party on the warehouse approach.
+/// Gust, Jupiter Djinni 0, joins the party on the warehouse approach.
 static void Event_GustJoins(void) { Djinn_JoinParty(GUST, ELEMENT_JUPITER, 0); }
 
-// Selects the village, river or raised-approach actors.
+/// Selects the village, river or raised-approach actors.
 const struct ScenePlacement *Bilibin_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -119,7 +120,7 @@ const struct ScenePlacement *Bilibin_GetPlacements(void) {
   return gBilibinPlacementsOther;
 }
 
-// Reads the two-part description of the deep well.
+/// Reads the two-part description of the deep well.
 static void Event_InspectWell(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
@@ -127,7 +128,7 @@ static void Event_InspectWell(void) {
   Engine_EventEnd();
 }
 
-// Selects the dialogue, searches and interactions for the current map.
+/// Selects the dialogue, searches and interactions for the current map.
 const struct SceneEvent *Bilibin_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -143,29 +144,29 @@ const struct SceneEvent *Bilibin_GetEvents(void) {
   return gBilibinEventsOther;
 }
 
-// Reads the sign restricting entry without permission.
+/// Reads the sign restricting entry without permission.
 static void Event_ReadRestrictedAreaSign(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgBilibinAreaOffLimitsThoseWithout, 1);
   Engine_EventEnd();
 }
 
-// Reads McCoy's warning on the hidden warehouse.
+/// Reads McCoy's warning on the hidden warehouse.
 static void Event_ReadWarehouseSign(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgBilibinMccoysHiddenWarehouseDoNot, 1);
   Engine_EventEnd();
 }
 
-// Describes the human shape shared by the river's transformed villagers.
+/// Describes the human shape shared by the river's transformed villagers.
 static void Event_InspectHumanShapedTree(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgBilibinThereTreeLooksLikePerson, 1);
   Engine_EventEnd();
 }
 
-// The tree at the village entrance almost looks like a man; looked at again,
-// like a living person. 0x301 remembers the first look while in the village.
+/// The tree at the village entrance almost looks like a man; looked at again,
+/// like a living person. 0x301 remembers the first look while in the village.
 static void Event_ExamineTreeMan(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinItsTreeButAlmostLooks);
@@ -177,7 +178,7 @@ static void Event_ExamineTreeMan(void) {
   Engine_EventEnd();
 }
 
-// Asks whether the party saw the strange tree at the entrance.
+/// Asks whether the party saw the strange tree at the entrance.
 static void Event_AskAboutEntranceTree(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinDidSeeTreeAtEntrance);
@@ -185,7 +186,7 @@ static void Event_AskAboutEntranceTree(void) {
   Engine_EventEnd();
 }
 
-// Asks whether the party tried the route southeast from Bilibin.
+/// Asks whether the party tried the route southeast from Bilibin.
 static void Event_AskAboutSoutheastRoute(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinHaveTriedHeadingSoutheastFrom);
@@ -193,8 +194,8 @@ static void Event_AskAboutSoutheastRoute(void) {
   Engine_EventEnd();
 }
 
-// Once the curse is lifted, the man who was the entrance tree asks whether the
-// party can believe it.
+/// Once the curse is lifted, the man who was the entrance tree asks whether the
+/// party can believe it.
 static void Event_AskAboutBeingATree(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinWasTurnedIntoTreeFor);
@@ -202,7 +203,7 @@ static void Event_AskAboutBeingATree(void) {
   Engine_EventEnd();
 }
 
-// Asks whether the party are the three warriors who broke the curse.
+/// Asks whether the party are the three warriors who broke the curse.
 static void Event_AskAboutCurseBreakers(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinCurseWasBrokenThanksEfforts);
@@ -210,7 +211,7 @@ static void Event_AskAboutCurseBreakers(void) {
   Engine_EventEnd();
 }
 
-// Asks whether the party has visited Imil to the north.
+/// Asks whether the party has visited Imil to the north.
 static void Event_AskAboutImil(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinHaveEverBeenVillageImil);
@@ -218,9 +219,9 @@ static void Event_AskAboutImil(void) {
   Engine_EventEnd();
 }
 
-// Walking into a door: everyone stops, the door opens and the leader walks
-// through it. Doors 3 to 8 lead into the houses and shops, door 9 into the
-// Sanctum, whose door sounds and is stepped through differently.
+/// Walking into a door: everyone stops, the door opens and the leader walks
+/// through it. Doors 3 to 8 lead into the houses and shops, door 9 into the
+/// Sanctum, whose door sounds and is stepped through differently.
 static void Event_OpenDoorAndLeave(void) {
 
   u32 actorSlot;
@@ -274,9 +275,9 @@ static void Event_OpenDoorAndLeave(void) {
   Engine_EventEnd();
 }
 
-// Move on Jill, a tree caught in the river: from cell column 6, by the bank,
-// the leader pulls her ashore in three tugs, and she thanks the party for
-// saving her from being washed downstream.
+/// Move on Jill, a tree caught in the river: from cell column 6, by the bank,
+/// the leader pulls her ashore in three tugs, and she thanks the party for
+/// saving her from being washed downstream.
 static void Event_PullJillFromRiver(void) {
   struct FieldActor *leader;
   struct FieldActor *jillTree;
@@ -329,12 +330,12 @@ static void Event_PullJillFromRiver(void) {
   }
 }
 
-// Checks the blocked direction before allowing another movement step.
+/// Checks the blocked direction before allowing another movement step.
 static void Event_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
-// Back on the riverbank once the curse is lifted, Jill and her friends
-// recognize the party: "Remember me? I was that tree!" She gives the leader a
-// Hard Nut in thanks.
+/// Back on the riverbank once the curse is lifted, Jill and her friends
+/// recognize the party: "Remember me? I was that tree!" She gives the leader a
+/// Hard Nut in thanks.
 static void Event_JillGivesHardNut(void) {
   struct FieldActor *leader;
   struct FieldActor *westMember;
@@ -433,7 +434,7 @@ static void Event_JillGivesHardNut(void) {
   Engine_EventEnd();
 }
 
-// Restores the current map's actors, collision cells and opening transition.
+/// Restores the current map's actors, collision cells and opening transition.
 s32 Bilibin_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gGameState.scene == (s32)&SceneId_Bilibin1) {
@@ -447,7 +448,7 @@ s32 Bilibin_Initialize(void) {
   return 0;
 }
 
-// Restores the village population and entrance-dependent actor positions.
+/// Restores the village population and entrance-dependent actor positions.
 static void Bilibin_RestoreVillageActors(void) {
 
   struct FieldActor *actor;
@@ -484,8 +485,8 @@ static void Bilibin_RestoreVillageActors(void) {
   }
 }
 
-// Updates collision cells around the movable block and moves an overlapping
-// leader clear.
+/// Updates collision cells around the movable block and moves an overlapping
+/// leader clear.
 static void Bilibin_UpdateVillageBlockCells(void) {
   s32 leaderRow;
   s32 leaderColumn;
@@ -527,8 +528,8 @@ static void Bilibin_UpdateVillageBlockCells(void) {
   }
 }
 
-// Sets up the river: before the curse is lifted, Jill and her friends are
-// trees here; afterwards they are people again on the bank.
+/// Sets up the river: before the curse is lifted, Jill and her friends are
+/// trees here; afterwards they are people again on the bank.
 static void Bilibin_RestoreRiverActors(void) {
   struct FieldActor *jillTree;
   s32 populationState;
@@ -600,7 +601,7 @@ static void Bilibin_RestoreRiverActors(void) {
   Bilibin_UpdateRiverBlockCells();
 }
 
-// Restores ten river cells, then clears the movable block's current cell.
+/// Restores ten river cells, then clears the movable block's current cell.
 static void Bilibin_UpdateRiverBlockCells(void) {
   struct FieldActor *actor;
   s32 blockColumn;
@@ -621,7 +622,7 @@ static void Bilibin_UpdateRiverBlockCells(void) {
   Map_CopyCellAttributes(0, 0, 1, 1, blockColumn, blockRow);
 }
 
-// Restores the block cells and starts the raised arrivals above floor height.
+/// Restores the block cells and starts the raised arrivals above floor height.
 static void Bilibin_RestoreRaisedEntrance(void) {
   struct FieldActor *leader;
 
@@ -643,8 +644,8 @@ static void Bilibin_RestoreRaisedEntrance(void) {
 // Shared source is included here in ROM order.
 #include "common/object_findcell.h"
 
-// Pushing a block: it slides one cell ahead with the leader behind it, if the
-// cell is free.
+/// Pushing a block: it slides one cell ahead with the leader behind it, if the
+/// cell is free.
 static void Event_PushBlock(void) {
   struct FieldActor *leader;
   struct FieldActor *block;
@@ -693,8 +694,8 @@ static void Event_PushBlock(void) {
   }
 }
 
-// Runs every frame in the river: while the controlled actor is west of x 142
-// and below 8 pixels high, an effect appears at it every thirty frames.
+/// Runs every frame in the river: while the controlled actor is west of x 142
+/// and below 8 pixels high, an effect appears at it every thirty frames.
 static void Bilibin_UpdateRiverEffect(void) {
   struct FieldActor *actor;
 
@@ -711,7 +712,7 @@ static void Bilibin_UpdateRiverEffect(void) {
   }
 }
 
-// Spawns the semi-transparent effect, which frees itself after thirty frames.
+/// Spawns the semi-transparent effect, which frees itself after thirty frames.
 static void Bilibin_SpawnRiverEffect(struct FieldActor *actor) {
   struct FieldActor *effect;
   struct AnimationObject *sprite;
@@ -735,7 +736,7 @@ static void Bilibin_SpawnRiverEffect(struct FieldActor *actor) {
   sprite->image.priority = 3;
 }
 
-// Updates the two passage cells according to the movable block's current row.
+/// Updates the two passage cells according to the movable block's current row.
 static void Bilibin_UpdateRaisedBlockCells(void) {
   struct FieldActor *block;
 
@@ -1061,7 +1062,7 @@ u32 gBilibin_RiverBlockCells[] = {
 };
 // clang-format on
 
-// Pixel step by direction: X in the upper halfword, Z in the lower.
+/// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gBilibin_FacingCellSteps[] = {

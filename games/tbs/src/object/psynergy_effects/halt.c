@@ -1,12 +1,13 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Halt.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Halt.
 
 #include "../psynergy_effects_internal.h"
 
-// Effect slot callback: state 0 heads for a point 40 to 70 pixels from where
-// the particle appeared; state 1 waits to arrive, then goes on to 2; state 2
-// heads for a point 4 pixels round 8 pixels above the effect's position on
-// screen; state 3 frees the slot on arrival.
+/// Effect slot callback: state 0 heads for a point 40 to 70 pixels from where
+/// the particle appeared; state 1 waits to arrive, then goes on to 2; state 2
+/// heads for a point 4 pixels round 8 pixels above the effect's position on
+/// screen; state 3 frees the slot on arrival.
 void BattleFx_UpdateRadialCamera(struct EffectSlot *effect) {
   // A for/continue retry grows the native English callback 0x100 -> 0x104.
   // Retain the immediate state-1-to-state-2 transition on arrival.
@@ -56,8 +57,8 @@ top:
     BattleFx_ClearOwnedSlot(effect);
 }
 
-// Pauses the target (scene->child) and runs
-// BattleEffect_RunFallbackObjectTransition.
+/// Pauses the target (scene->child) and runs
+/// BattleEffect_RunFallbackObjectTransition.
 void BattleFx_MarkChildAndRunFallbackTransition(s32 unused) {
   struct FieldActor *target = ((struct BattleFxScene *)gEffectWork)->child;
 
@@ -65,8 +66,8 @@ void BattleFx_MarkChildAndRunFallbackTransition(s32 unused) {
   BattleEffect_RunFallbackObjectTransition();
 }
 
-// Throws an object from the caster to the effect's position over 10 frames
-// and scatters it into 16 particles.
+/// Throws an object from the caster to the effect's position over 10 frames
+/// and scatters it into 16 particles.
 void BattleEffect_RunFallbackObjectTransition(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct MotionObject *caster = scene->mainObject;
@@ -144,8 +145,8 @@ void BattleEffect_RunFallbackObjectTransition(void) {
   BattleFx_PrepareBufferInterpolation();
 }
 
-// Per-frame update of a paused object: gives its sprite one of the table's
-// eight params at random.
+/// Per-frame update of a paused object: gives its sprite one of the table's
+/// eight params at random.
 void BattleEffect_SetRandomTableValueOnObject(union FieldObject *fieldObject) {
   void *object = (void *)fieldObject;
   s8 *table = gBattleFx_RandomChildValues;
@@ -153,8 +154,8 @@ void BattleEffect_SetRandomTableValueOnObject(union FieldObject *fieldObject) {
   Animation_ApplyChildValuesFar(object, table[(u32)(random * 8) >> 16]);
 }
 
-// Pauses object id, keeping its per-frame update and, if it is animated, its
-// first animation's param in gGameState.
+/// Pauses object id, keeping its per-frame update and, if it is animated, its
+/// first animation's param in gGameState.
 void BattleEffect_PauseObject(s32 actorId) {
   struct FieldActor *object;
   struct AnimationEntry *entry;
@@ -175,8 +176,8 @@ void BattleEffect_PauseObject(s32 actorId) {
   }
 }
 
-// Resumes object id with the update and param kept by
-// BattleEffect_PauseObject.
+/// Resumes object id with the update and param kept by
+/// BattleEffect_PauseObject.
 void BattleFx_ResumeObject(s32 actorId) {
   struct FieldActor *object = ObjectTable_Get(actorId);
   if (object != 0) {
@@ -191,8 +192,8 @@ void BattleFx_ResumeObject(s32 actorId) {
   }
 }
 
-// Returns id, or -1 (no target) when the current effect's definition has
-// flags 0xff.
+/// Returns id, or -1 (no target) when the current effect's definition has
+/// flags 0xff.
 s32 BattleFx_FilterObjectIdByFlags(s32 id) {
   if (BattleFx_GetFlags(id) == 0xff)
     return -1;

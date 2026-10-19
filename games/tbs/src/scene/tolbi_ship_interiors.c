@@ -43,11 +43,11 @@
 // enters another place group, and other places use the numbers for their own.
 #define FLAG_TOLBI_SHIP_ROWER_CHOSEN 0x300    // a passenger follows the party
 #define FLAG_TOLBI_SHIP_MONSTERS_ABOARD 0x301 // the hold's stairs are barred
-// "There's a huge sea monster on the ship!": the deck shakes until the
-// Kraken is defeated (tolbi_ship_deck.c reads it too).
+/// "There's a huge sea monster on the ship!": the deck shakes until the
+/// Kraken is defeated (tolbi_ship_deck.c reads it too).
 #define FLAG_TOLBI_SHIP_KRAKEN_ABOARD 0x302
 
-// Operations shared by the cabin, passenger hold and rowing-deck events.
+/// Operations shared by the cabin, passenger hold and rowing-deck events.
 enum ShipSceneCommand {
   SHIP_FACE_PARTY_EAST_AND_WEST,
   SHIP_FACE_PARTY,
@@ -77,19 +77,19 @@ enum ShipSceneCommand {
   SHIP_PLACE_FOLLOWERS_AND_MONSTERS
 };
 
-// The warriors bound for Colosso in the hold while the ship waits at Kalay
-// (gTolbiShipInteriors_HoldPlacements): Ouranos, who "can't stand water", and
-// his friend Sean.
+/// The warriors bound for Colosso in the hold while the ship waits at Kalay
+/// (gTolbiShipInteriors_HoldPlacements): Ouranos, who "can't stand water", and
+/// his friend Sean.
 enum TolbiShipInteriorsActor {
   HOLD_OURANOS = 13,
   HOLD_SEAN = 14,
 };
 
-// A speaker: the actor, and in the top four bits where the message window
-// opens beside them.
+/// A speaker: the actor, and in the top four bits where the message window
+/// opens beside them.
 #define SPEAKER(actor, window) ((window) << 12 | (actor))
 
-// Defined below, in the order of the ROM.
+/// Defined below, in the order of the ROM.
 static void TolbiShipInteriors_StepBesideLeader(s32 passengerId);
 static s32 TolbiShipInteriors_IsSpotFree(s32 bucket);
 static s32 TolbiShipInteriors_GetChosenOarsman(void);
@@ -138,8 +138,8 @@ static void TolbiShipInteriors_DismissReplacementRowers(void);
 static void TolbiShipInteriors_SwapRowerSelections(s32 firstSeatFlags,
                                                    s32 secondSeatFlags);
 
-// An action-script call: stands the actor still at the origin, with no velocity
-// and no target. Returns 0.
+/// An action-script call: stands the actor still at the origin, with no
+/// velocity and no target. Returns 0.
 static s32
 TolbiShipInteriors_ResetActor(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -153,8 +153,8 @@ TolbiShipInteriors_ResetActor(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-// Bobs the actor between the floor and 8 pixels up by a random amount each
-// frame. Returns 1.
+/// Bobs the actor between the floor and 8 pixels up by a random amount each
+/// frame. Returns 1.
 static s32 TolbiShipInteriors_Bob(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   s16 verticalMotionDirection;
@@ -181,8 +181,8 @@ static s32 TolbiShipInteriors_Bob(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Now and then (two chances in 64) turns the actor to face south-southeast or
-// south-southwest. Returns 1.
+/// Now and then (two chances in 64) turns the actor to face south-southeast or
+/// south-southwest. Returns 1.
 static s32
 TolbiShipInteriors_LookAround(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -198,8 +198,8 @@ TolbiShipInteriors_LookAround(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Counts the frames of a pause in riseCounter and moves the pacing actor to its
-// next step after 80 frames.
+/// Counts the frames of a pause in riseCounter and moves the pacing actor to
+/// its next step after 80 frames.
 static void TolbiShipInteriors_WaitThenAdvance(struct FieldActor *actor) {
   u8 *counter = &actor->riseCounter;
   s32 frame = *counter + 1;
@@ -210,8 +210,8 @@ static void TolbiShipInteriors_WaitThenAdvance(struct FieldActor *actor) {
   }
 }
 
-// Counts down the actor's walking time in riseBaseY. Returns 1 once the time is
-// up or the actor has reached its target, else 0.
+/// Counts down the actor's walking time in riseBaseY. Returns 1 once the time
+/// is up or the actor has reached its target, else 0.
 static s32 TolbiShipInteriors_HasArrived(struct FieldActor *actor) {
   s32 remaining = actor->riseBaseY;
 
@@ -227,9 +227,9 @@ static s32 TolbiShipInteriors_HasArrived(struct FieldActor *actor) {
   return 0;
 }
 
-// The update of a crewman who paces between two spots in the cabin, looking
-// about at each, and signals actor 9 through riseEnabled at three points of the
-// round. While actor 8 is paused he sends no signals. work holds the step.
+/// The update of a crewman who paces between two spots in the cabin, looking
+/// about at each, and signals actor 9 through riseEnabled at three points of
+/// the round. While actor 8 is paused he sends no signals. work holds the step.
 static void TolbiShipInteriors_PaceCabin(union FieldObject *fieldObject) {
   struct FieldActor *obj = (struct FieldActor *)fieldObject;
   struct FieldActor *leader;
@@ -299,9 +299,9 @@ static void TolbiShipInteriors_PaceCabin(union FieldObject *fieldObject) {
   }
 }
 
-// The update of the actor who watches the pacing crewman: turns north-northeast
-// at the first signal, shrugs at the second if still turned, and faces east at
-// the third. Does nothing while paused.
+/// The update of the actor who watches the pacing crewman: turns
+/// north-northeast at the first signal, shrugs at the second if still turned,
+/// and faces east at the third. Does nothing while paused.
 static void TolbiShipInteriors_WatchPacer(union FieldObject *fieldObject) {
   struct FieldActor *watcher = (struct FieldActor *)fieldObject;
   struct FieldActor *pacer;
@@ -324,8 +324,8 @@ static void TolbiShipInteriors_WatchPacer(union FieldObject *fieldObject) {
   }
 }
 
-// An action-script call: lays the actor flat on the floor, drawn underfoot at
-// priority 1 with its parts hidden. Returns 1.
+/// An action-script call: lays the actor flat on the floor, drawn underfoot at
+/// priority 1 with its parts hidden. Returns 1.
 static s32 TolbiShipInteriors_LayFlat(struct ScriptInterpreter *interpreter) {
   struct FieldActor *work = (struct FieldActor *)interpreter;
   struct AnimationObject *sprite = work->sprite;
@@ -339,7 +339,7 @@ static s32 TolbiShipInteriors_LayFlat(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// The entrances of the room the scene shows.
+/// The entrances of the room the scene shows.
 s32 TolbiShipInteriors_SelectEntrances(void) {
   if (gGameState.scene == (s32)&SceneId_TolbiShipInteriors) {
     return (s32)gTolbiShipInteriors_Entrances;
@@ -347,17 +347,17 @@ s32 TolbiShipInteriors_SelectEntrances(void) {
   return (s32)gTolbiShipInteriors_EntrancesOther;
 }
 
-// The ship's interiors have no regions.
+/// The ship's interiors have no regions.
 s32 TolbiShipInteriors_GetRegions(void) { return 0; }
 
-// The scene's exits.
+/// The scene's exits.
 s32 TolbiShipInteriors_GetExits(void) {
   return (s32)&gTolbiShipInteriors_Exits;
 }
 
-// Picks the placements for the room entered and the voyage's stage. Some stages
-// change who turns to face the party when talked to (talkFacing) in the shared
-// tables.
+/// Picks the placements for the room entered and the voyage's stage. Some
+/// stages change who turns to face the party when talked to (talkFacing) in the
+/// shared tables.
 s32 TolbiShipInteriors_SelectPlacements(void) {
   u8 *placementBytes;
 
@@ -452,7 +452,7 @@ s32 TolbiShipInteriors_SelectPlacements(void) {
   return (s32)placementBytes;
 }
 
-// Choose the room's interactions for the current stage of the voyage.
+/// Choose the room's interactions for the current stage of the voyage.
 struct SceneEvent *TolbiShipInteriors_SelectEvents(void) {
   s32 entrance = gGameState.entrance;
 
@@ -494,8 +494,8 @@ struct SceneEvent *TolbiShipInteriors_SelectEvents(void) {
   return gTolbiShipInteriors_EventsOther;
 }
 
-// Once the warriors want to see the captain, actor 10 asks whether the party
-// wants to join them in forcing the launch.
+/// Once the warriors want to see the captain, actor 10 asks whether the party
+/// wants to join them in forcing the launch.
 static void TolbiShipInteriors_TalkToCaptainsCabinActor10(void) {
   Engine_EventBegin();
   Battle_ResetEffectCounter();
@@ -521,8 +521,8 @@ static void TolbiShipInteriors_TalkToCaptainsCabinActor10(void) {
   Engine_EventEnd();
 }
 
-// Actor 12 in the captain's cabin asks whether the party came to ask the
-// captain to set sail.
+/// Actor 12 in the captain's cabin asks whether the party came to ask the
+/// captain to set sail.
 static void TolbiShipInteriors_TalkToCaptainsCabinActor12(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiShipYouCameAskCaptainSet);
@@ -530,10 +530,10 @@ static void TolbiShipInteriors_TalkToCaptainsCabinActor12(void) {
   Engine_EventEnd();
 }
 
-// The captain, by the voyage's stage: too late to hire mercenaries, then his
-// bad luck at losing his lucky anchor, then uncertain what might happen, and
-// under sail the news of an injured oarsman. After finding the Anchor Charm,
-// talking to him also sets the event work's unk172 request.
+/// The captain, by the voyage's stage: too late to hire mercenaries, then his
+/// bad luck at losing his lucky anchor, then uncertain what might happen, and
+/// under sail the news of an injured oarsman. After finding the Anchor Charm,
+/// talking to him also sets the event work's unk172 request.
 static void TolbiShipInteriors_TalkToCaptain(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) {
@@ -560,9 +560,9 @@ static void TolbiShipInteriors_TalkToCaptain(void) {
   Engine_EventEnd();
 }
 
-// A passenger in the hold while the ship waits. Once the party has agreed to
-// protect the ship, she worries the proud warriors won't like being told to
-// row, and asks the party.
+/// A passenger in the hold while the ship waits. Once the party has agreed to
+/// protect the ship, she worries the proud warriors won't like being told to
+/// row, and asks the party.
 static void TolbiShipInteriors_TalkToWaitingPassenger8(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
@@ -588,8 +588,8 @@ static void TolbiShipInteriors_TalkToWaitingPassenger8(void) {
   Engine_EventEnd();
 }
 
-// Another waiting passenger: "Are you going to row?" once the party has agreed
-// to protect the ship.
+/// Another waiting passenger: "Are you going to row?" once the party has agreed
+/// to protect the ship.
 static void TolbiShipInteriors_TalkToWaitingPassenger10(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
@@ -602,7 +602,7 @@ static void TolbiShipInteriors_TalkToWaitingPassenger10(void) {
   Engine_EventEnd();
 }
 
-// Walk the rower back to the leader and hide its separate scene actor.
+/// Walk the rower back to the leader and hide its separate scene actor.
 static inline void TolbiShipInteriors_RejoinParty(s32 rowerId) {
   struct FieldActor *leader;
 
@@ -616,10 +616,10 @@ static inline void TolbiShipInteriors_RejoinParty(s32 rowerId) {
   Engine_ActorSetPosition(rowerId, 0, 0);
 }
 
-// Passenger 8 under sail, when an oar needs a rower. If someone has already
-// been chosen this round, the chosen passenger steps beside the
-// leader and follows them out; otherwise the party may ask passenger 8 to row
-// at the open seat.
+/// Passenger 8 under sail, when an oar needs a rower. If someone has already
+/// been chosen this round, the chosen passenger steps beside the
+/// leader and follows them out; otherwise the party may ask passenger 8 to row
+/// at the open seat.
 static void TolbiShipInteriors_AskPassenger8ToRow(void) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWER_CHOSEN) != 0) {
     s32 rowerId = TolbiShipInteriors_GetChosenOarsman();
@@ -646,7 +646,7 @@ static void TolbiShipInteriors_AskPassenger8ToRow(void) {
   }
 }
 
-// The same for passenger 10.
+/// The same for passenger 10.
 static void TolbiShipInteriors_AskPassenger10ToRow(void) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWER_CHOSEN) != 0) {
     s32 rowerId = TolbiShipInteriors_GetChosenOarsman();
@@ -673,8 +673,8 @@ static void TolbiShipInteriors_AskPassenger10ToRow(void) {
   }
 }
 
-// The same for passenger 11, who is too seasick to talk once the ship is at
-// anchor.
+/// The same for passenger 11, who is too seasick to talk once the ship is at
+/// anchor.
 static void TolbiShipInteriors_AskPassenger11ToRow(void) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
     Engine_EventBegin();
@@ -708,8 +708,8 @@ static void TolbiShipInteriors_AskPassenger11ToRow(void) {
   }
 }
 
-// The same for passenger 12, written out in full rather than through
-// TolbiShipInteriors_AskToRow.
+/// The same for passenger 12, written out in full rather than through
+/// TolbiShipInteriors_AskToRow.
 static void TolbiShipInteriors_AskPassenger12ToRow(void) {
   s32 rowerId;
   struct FieldActor *actor;
@@ -753,7 +753,7 @@ static void TolbiShipInteriors_AskPassenger12ToRow(void) {
   Engine_EventEnd();
 }
 
-// The same for passenger 9, written out in full.
+/// The same for passenger 9, written out in full.
 static void TolbiShipInteriors_AskPassenger9ToRow(void) {
   s32 rowerId;
   struct FieldActor *actor;
@@ -797,7 +797,7 @@ static void TolbiShipInteriors_AskPassenger9ToRow(void) {
   Engine_EventEnd();
 }
 
-// The same for passenger 13.
+/// The same for passenger 13.
 static void TolbiShipInteriors_AskPassenger13ToRow(void) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWER_CHOSEN) != 0) {
     s32 rowerId = TolbiShipInteriors_GetChosenOarsman();
@@ -824,7 +824,7 @@ static void TolbiShipInteriors_AskPassenger13ToRow(void) {
   }
 }
 
-// The same for passenger 14.
+/// The same for passenger 14.
 static void TolbiShipInteriors_AskPassenger14ToRow(void) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWER_CHOSEN) != 0) {
     s32 rowerId = TolbiShipInteriors_GetChosenOarsman();
@@ -851,7 +851,7 @@ static void TolbiShipInteriors_AskPassenger14ToRow(void) {
   }
 }
 
-// The same for passenger 15.
+/// The same for passenger 15.
 static void TolbiShipInteriors_AskPassenger15ToRow(void) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWER_CHOSEN) != 0) {
     s32 rowerId = TolbiShipInteriors_GetChosenOarsman();
@@ -878,7 +878,7 @@ static void TolbiShipInteriors_AskPassenger15ToRow(void) {
   }
 }
 
-// The same for passenger 16.
+/// The same for passenger 16.
 static void TolbiShipInteriors_AskPassenger16ToRow(void) {
   s32 rowerId;
 
@@ -909,7 +909,7 @@ static void TolbiShipInteriors_AskPassenger16ToRow(void) {
   }
 }
 
-// Find a placed actor within twelve pixels of the requested floor position.
+/// Find a placed actor within twelve pixels of the requested floor position.
 static struct FieldActor *TolbiShipInteriors_FindActorNear(s32 x, s32 z) {
   struct EventWork *work;
   struct FieldActor **actor;
@@ -940,9 +940,9 @@ static struct FieldActor *TolbiShipInteriors_FindActorNear(s32 x, s32 z) {
   return 0;
 }
 
-// The chosen oarsman steps out beside the leader, on the leader's right if that
-// spot is free, else on the left, else behind, and turns the way the leader
-// faces.
+/// The chosen oarsman steps out beside the leader, on the leader's right if
+/// that spot is free, else on the left, else behind, and turns the way the
+/// leader faces.
 static void TolbiShipInteriors_StepBesideLeader(s32 passengerId) {
   struct FieldActor *leader;
   struct FieldActor *leaderPosition;
@@ -994,8 +994,8 @@ static void TolbiShipInteriors_StepBesideLeader(s32 passengerId) {
 
 enum { CabinSpeakerRequest = 0xa01b };
 
-// Returns 1 when the spot next to the leader in the given sixteenth of a turn
-// holds no actor and no wall, else 0.
+/// Returns 1 when the spot next to the leader in the given sixteenth of a turn
+/// holds no actor and no wall, else 0.
 static s32 TolbiShipInteriors_IsSpotFree(s32 bucket) {
   struct FieldActor *obj = Object_GetById(0);
   u32 offset = gTolbiShipInteriors_TurnSteps[bucket];
@@ -1020,8 +1020,8 @@ static s32 TolbiShipInteriors_IsSpotFree(s32 bucket) {
   return 1;
 }
 
-// Returns the passenger chosen to row at the open seat, which the attacks
-// fought off number.
+/// Returns the passenger chosen to row at the open seat, which the attacks
+/// fought off number.
 static s32 TolbiShipInteriors_GetChosenOarsman(void) {
   s32 ret = 0;
 
@@ -1037,8 +1037,8 @@ static s32 TolbiShipInteriors_GetChosenOarsman(void) {
   return TolbiShipInteriors_FindFirstSetFlag(ret, 1);
 }
 
-// A passenger at the oars, by the round they were chosen in: Kaja's men are
-// worried, monsters are everywhere, or the ship is starting to list.
+/// A passenger at the oars, by the round they were chosen in: Kaja's men are
+/// worried, monsters are everywhere, or the ship is starting to list.
 static void TolbiShipInteriors_TalkToRower18(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS))
@@ -1051,7 +1051,7 @@ static void TolbiShipInteriors_TalkToRower18(void) {
   Engine_EventEnd();
 }
 
-// The same for rower 19.
+/// The same for rower 19.
 static void TolbiShipInteriors_TalkToRower19(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + 1))
@@ -1064,7 +1064,7 @@ static void TolbiShipInteriors_TalkToRower19(void) {
   Engine_EventEnd();
 }
 
-// The same for rower 20.
+/// The same for rower 20.
 static void TolbiShipInteriors_TalkToRower20(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + 2))
@@ -1077,7 +1077,7 @@ static void TolbiShipInteriors_TalkToRower20(void) {
   Engine_EventEnd();
 }
 
-// Rower 21 asks how many monsters are out there.
+/// Rower 21 asks how many monsters are out there.
 static void TolbiShipInteriors_TalkToRower21(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + 3))
@@ -1088,7 +1088,7 @@ static void TolbiShipInteriors_TalkToRower21(void) {
   Engine_EventEnd();
 }
 
-// The same as rower 18, for rower 22.
+/// The same as rower 18, for rower 22.
 static void TolbiShipInteriors_TalkToRower22(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + 4))
@@ -1101,7 +1101,7 @@ static void TolbiShipInteriors_TalkToRower22(void) {
   Engine_EventEnd();
 }
 
-// The same for rower 23.
+/// The same for rower 23.
 static void TolbiShipInteriors_TalkToRower23(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + 5))
@@ -1114,7 +1114,7 @@ static void TolbiShipInteriors_TalkToRower23(void) {
   Engine_EventEnd();
 }
 
-// The same for rower 24.
+/// The same for rower 24.
 static void TolbiShipInteriors_TalkToRower24(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + 6))
@@ -1127,7 +1127,7 @@ static void TolbiShipInteriors_TalkToRower24(void) {
   Engine_EventEnd();
 }
 
-// As rower 21, for rower 25.
+/// As rower 21, for rower 25.
 static void TolbiShipInteriors_TalkToRower25(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + 7))
@@ -1138,8 +1138,8 @@ static void TolbiShipInteriors_TalkToRower25(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on a rower: "Just hurry up and slay that beast!", by the round they
-// were chosen in.
+/// Mind Read on a rower: "Just hurry up and slay that beast!", by the round
+/// they were chosen in.
 static void TolbiShipInteriors_ReadRower18Mind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS))
@@ -1152,7 +1152,7 @@ static void TolbiShipInteriors_ReadRower18Mind(void) {
   Engine_EventEnd();
 }
 
-// The same for rower 19.
+/// The same for rower 19.
 static void TolbiShipInteriors_ReadRower19Mind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + 1))
@@ -1165,7 +1165,7 @@ static void TolbiShipInteriors_ReadRower19Mind(void) {
   Engine_EventEnd();
 }
 
-// The same for rower 20.
+/// The same for rower 20.
 static void TolbiShipInteriors_ReadRower20Mind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + 2))
@@ -1178,7 +1178,7 @@ static void TolbiShipInteriors_ReadRower20Mind(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on rower 21: there are so many monsters at sea.
+/// Mind Read on rower 21: there are so many monsters at sea.
 static void TolbiShipInteriors_ReadRower21Mind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + 3))
@@ -1189,7 +1189,7 @@ static void TolbiShipInteriors_ReadRower21Mind(void) {
   Engine_EventEnd();
 }
 
-// As rower 18, for rower 22.
+/// As rower 18, for rower 22.
 static void TolbiShipInteriors_ReadRower22Mind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + 4))
@@ -1202,7 +1202,7 @@ static void TolbiShipInteriors_ReadRower22Mind(void) {
   Engine_EventEnd();
 }
 
-// The same for rower 23.
+/// The same for rower 23.
 static void TolbiShipInteriors_ReadRower23Mind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + 5))
@@ -1215,7 +1215,7 @@ static void TolbiShipInteriors_ReadRower23Mind(void) {
   Engine_EventEnd();
 }
 
-// The same for rower 24.
+/// The same for rower 24.
 static void TolbiShipInteriors_ReadRower24Mind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + 6))
@@ -1228,7 +1228,7 @@ static void TolbiShipInteriors_ReadRower24Mind(void) {
   Engine_EventEnd();
 }
 
-// As rower 21, for rower 25.
+/// As rower 21, for rower 25.
 static void TolbiShipInteriors_ReadRower25Mind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + 7))
@@ -1239,9 +1239,9 @@ static void TolbiShipInteriors_ReadRower25Mind(void) {
   Engine_EventEnd();
 }
 
-// Asks a passenger to row. On yes they walk to the leader and leave with them,
-// and the seat's flag for this passenger (seatFlag) and
-// FLAG_TOLBI_SHIP_ROWER_CHOSEN are set; on no the next message refuses.
+/// Asks a passenger to row. On yes they walk to the leader and leave with them,
+/// and the seat's flag for this passenger (seatFlag) and
+/// FLAG_TOLBI_SHIP_ROWER_CHOSEN are set; on no the next message refuses.
 static void TolbiShipInteriors_AskToRow(s32 speaker, s32 question,
                                         s32 seatFlag) {
   struct FieldActor *leader;
@@ -1268,9 +1268,9 @@ static void TolbiShipInteriors_AskToRow(s32 speaker, s32 question,
   Engine_EventEnd();
 }
 
-// The travelling priest. From in front of him (the leader facing roughly east)
-// he opens his sanctum; otherwise he talks by the voyage's stage. Under sail,
-// until the ship is docked, he is actor 17, else actor 15.
+/// The travelling priest. From in front of him (the leader facing roughly east)
+/// he opens his sanctum; otherwise he talks by the voyage's stage. Under sail,
+/// until the ship is docked, he is actor 17, else actor 15.
 static void TolbiShipInteriors_TalkToPriest(void) {
   struct FieldActor *leader;
 
@@ -1307,9 +1307,9 @@ static void TolbiShipInteriors_TalkToPriest(void) {
   }
 }
 
-// Talking to one of the monsters in the hold (actors 36 to 38) starts the
-// battle with them: group 62, its variant and the entrance the party comes back
-// to chosen by how far the voyage has gone.
+/// Talking to one of the monsters in the hold (actors 36 to 38) starts the
+/// battle with them: group 62, its variant and the entrance the party comes
+/// back to chosen by how far the voyage has gone.
 static void TolbiShipInteriors_FightMonstersInHold(void) {
 
   Engine_EventBegin();
@@ -1333,8 +1333,8 @@ static void TolbiShipInteriors_FightMonstersInHold(void) {
   Engine_EventEnd();
 }
 
-// While the monsters are aboard: "Where are you going, Isaac? Slay
-// the beasts and save my mates!" The leader is walked back from the stairs.
+/// While the monsters are aboard: "Where are you going, Isaac? Slay
+/// the beasts and save my mates!" The leader is walked back from the stairs.
 static void TolbiShipInteriors_TurnBackFromStairs(void) {
   if (GameFlag_IsSet(FLAG_TOLBI_SHIP_MONSTERS_ABOARD) != 0) {
     Engine_EventBegin();
@@ -1347,8 +1347,8 @@ static void TolbiShipInteriors_TurnBackFromStairs(void) {
   }
 }
 
-// Once the warriors have gone to the captain, the three crewmen
-// wonder what could have happened to the replacement ship.
+/// Once the warriors have gone to the captain, the three crewmen
+/// wonder what could have happened to the replacement ship.
 static void TolbiShipInteriors_WatchCrewWonderAtDelay(void) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0)
     return;
@@ -1382,10 +1382,10 @@ static void TolbiShipInteriors_WatchCrewWonderAtDelay(void) {
   Engine_EventEnd();
 }
 
-// Once the party has heard of the delay at Kalay: Ouranos threatens to go
-// ashore if the ship doesn't sail. Actor 12 can't say when it will, so Sean
-// and Ouranos set off to make the captain set sail, and actor 12 ("I don't
-// want any violence!") hurries after them past the party.
+/// Once the party has heard of the delay at Kalay: Ouranos threatens to go
+/// ashore if the ship doesn't sail. Actor 12 can't say when it will, so Sean
+/// and Ouranos set off to make the captain set sail, and actor 12 ("I don't
+/// want any violence!") hurries after them past the party.
 static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
   s32 actor12Speaker;
   s32 seanSpeaker;
@@ -1510,7 +1510,7 @@ static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
   }
 }
 
-// The passengers pressure the captain to launch despite the missing anchor.
+/// The passengers pressure the captain to launch despite the missing anchor.
 static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   s32 actor12Speech;
   s32 actor11Speech;
@@ -1756,7 +1756,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   GameFlag_Set(FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL);
 }
 
-// Return the captain's lucky anchor and agree to protect the ship.
+/// Return the captain's lucky anchor and agree to protect the ship.
 static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   struct FieldActor *actor;
   s32 requestA;
@@ -2002,7 +2002,7 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   Engine_EventEnd();
 }
 
-// Restore the room or play the event selected by this entrance.
+/// Restore the room or play the event selected by this entrance.
 s32 TolbiShipInteriors_ApplyEntryState(void) {
   Engine_TaskWait(1);
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
@@ -2161,7 +2161,7 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
   return 0;
 }
 
-// Restore the cabin's actors after the anchor and departure conversations.
+/// Restore the cabin's actors after the anchor and departure conversations.
 static void TolbiShipInteriors_SetUpCabin(void) {
   struct FieldActor *actor;
   struct FieldActor *other;
@@ -2216,7 +2216,7 @@ static void TolbiShipInteriors_SetUpCabin(void) {
   }
 }
 
-// Restore the passenger hold after recruitment and departure events.
+/// Restore the passenger hold after recruitment and departure events.
 static void TolbiShipInteriors_SetUpHold(void) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
     Engine_ActorSetPosition(8, 0, 0);
@@ -2258,7 +2258,7 @@ static void TolbiShipInteriors_SetUpHold(void) {
   }
 }
 
-// Restore the rowing deck and introduce a newly recruited replacement.
+/// Restore the rowing deck and introduce a newly recruited replacement.
 static void TolbiShipInteriors_SetUpRowingDeck(void) {
   Engine_TaskWait(1);
   TolbiShipInteriors_SetSeatActorCollision();
@@ -2308,7 +2308,7 @@ static void TolbiShipInteriors_SetUpRowingDeck(void) {
   }
 }
 
-// Set collision bit 3 on the eight actors surrounding the rowing seats.
+/// Set collision bit 3 on the eight actors surrounding the rowing seats.
 static void TolbiShipInteriors_SetSeatActorCollision(void) {
   u32 actorId;
 
@@ -2319,7 +2319,7 @@ static void TolbiShipInteriors_SetSeatActorCollision(void) {
   }
 }
 
-// Put each recruited rower at its seat and hide the original occupant.
+/// Put each recruited rower at its seat and hide the original occupant.
 static void TolbiShipInteriors_PlaceFoundActors(s32 gated) {
   s32 actor;
 
@@ -2353,7 +2353,8 @@ static void TolbiShipInteriors_PlaceFoundActors(s32 gated) {
   }
 }
 
-// The crew explains the missing replacements and asks the party to find rowers.
+/// The crew explains the missing replacements and asks the party to find
+/// rowers.
 static void TolbiShipInteriors_AskForReplacementOarsmen(void) {
   struct FieldActor *actor;
   s32 mode;
@@ -2482,7 +2483,7 @@ static void TolbiShipInteriors_AskForReplacementOarsmen(void) {
   GameFlag_Set(FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT);
 }
 
-// Raise the anchor charm and announce the ship's first departure.
+/// Raise the anchor charm and announce the ship's first departure.
 static void TolbiShipInteriors_CastOff(void) {
   struct FieldActor *anchorCharm;
 
@@ -2510,7 +2511,7 @@ static void TolbiShipInteriors_CastOff(void) {
   TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCENE, 11, 0);
 }
 
-// Announce departure after a replacement rower has joined the crew.
+/// Announce departure after a replacement rower has joined the crew.
 static void TolbiShipInteriors_AnnounceDeparture(void) {
   Engine_EventBegin();
   TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_CAPTAINS_CABIN, 1, 1);
@@ -2521,7 +2522,7 @@ static void TolbiShipInteriors_AnnounceDeparture(void) {
   TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCENE, 11, 0);
 }
 
-// Call the first passenger to the rowing deck.
+/// Call the first passenger to the rowing deck.
 static void TolbiShipInteriors_CallActorSixteenToRow(void) {
   Engine_EventBegin();
   TolbiShipInteriors_RunSceneCommand(SHIP_RESET_CAMERA, 0, 0);
@@ -2540,7 +2541,7 @@ static void TolbiShipInteriors_CallActorSixteenToRow(void) {
   TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCENE, 12, 0);
 }
 
-// Call a replacement rower back to the rowing deck.
+/// Call a replacement rower back to the rowing deck.
 static void TolbiShipInteriors_CallActorEighteenToRow(void) {
   Engine_EventBegin();
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -2558,7 +2559,7 @@ static void TolbiShipInteriors_CallActorEighteenToRow(void) {
   TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCENE, 12, 0);
 }
 
-// Restore the rowing deck for the current set of selected passengers.
+/// Restore the rowing deck for the current set of selected passengers.
 static void TolbiShipInteriors_ShowRowing(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(9, 5);
@@ -2607,7 +2608,7 @@ static void TolbiShipInteriors_ShowRowing(void) {
   }
 }
 
-// Ask the crew about the monsters before returning belowdecks.
+/// Ask the crew about the monsters before returning belowdecks.
 static void TolbiShipInteriors_AskAboutMonsters(void) {
   Engine_EventBegin();
   TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_CAPTAINS_CABIN, 1, 1);
@@ -2620,7 +2621,7 @@ static void TolbiShipInteriors_AskAboutMonsters(void) {
   TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCENE, 14, 0);
 }
 
-// Announce the ship's next turn and return control to the rowing deck.
+/// Announce the ship's next turn and return control to the rowing deck.
 static void TolbiShipInteriors_AnnounceTurn(void) {
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
@@ -2633,7 +2634,7 @@ static void TolbiShipInteriors_AnnounceTurn(void) {
   TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCENE, 15, 0);
 }
 
-// Stage the first monster encounter with the original rowers.
+/// Stage the first monster encounter with the original rowers.
 static void TolbiShipInteriors_StartFirstAttack(void) {
   const s32 *entryScript;
 
@@ -2655,7 +2656,7 @@ static void TolbiShipInteriors_StartFirstAttack(void) {
   Engine_EventEnd();
 }
 
-// Restore the original rowers after the first monster attack.
+/// Restore the original rowers after the first monster attack.
 static void TolbiShipInteriors_EndFirstAttack(void) {
   Engine_EventBegin();
   TolbiShipInteriors_RunSceneCommand(SHIP_RESET_CAMERA, 1, 0);
@@ -2666,7 +2667,7 @@ static void TolbiShipInteriors_EndFirstAttack(void) {
   Engine_EventEnd();
 }
 
-// Introduce the selected passenger and lead them to the open rowing seat.
+/// Introduce the selected passenger and lead them to the open rowing seat.
 static void TolbiShipInteriors_IntroduceReplacementOarsman(s32 seat) {
   s32 rowerId;
   struct FieldActor *actor;
@@ -2776,8 +2777,8 @@ static void TolbiShipInteriors_IntroduceReplacementOarsman(s32 seat) {
   }
 }
 
-// Create the visible anchor charm once a visit (FLAG_SCENE_TEMP_00 records it)
-// and retain it for departure events.
+/// Create the visible anchor charm once a visit (FLAG_SCENE_TEMP_00 records it)
+/// and retain it for departure events.
 static struct FieldActor *TolbiShipInteriors_PlaceAnchorCharm(void) {
   s32 set = GameFlag_IsSet(FLAG_SCENE_TEMP_00);
   struct FieldActor *object;
@@ -2803,7 +2804,7 @@ static struct FieldActor *TolbiShipInteriors_PlaceAnchorCharm(void) {
   return object;
 }
 
-// Restore each replacement rower or the original occupant of that seat.
+/// Restore each replacement rower or the original occupant of that seat.
 static void TolbiShipInteriors_InstallRowingDeckActors(u32 action) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) {
     s32 rowerId = TolbiShipInteriors_FindFirstSetFlag(0, 0);
@@ -2857,7 +2858,7 @@ static void TolbiShipInteriors_InstallRowingDeckActors(u32 action) {
                                      action);
 }
 
-// Apply the seated pose and rowing action assigned to this rower.
+/// Apply the seated pose and rowing action assigned to this rower.
 static void TolbiShipInteriors_PoseSceneActor(s32 id) {
   switch (id) {
   case 19:
@@ -2890,25 +2891,25 @@ static void TolbiShipInteriors_PoseSceneActor(s32 id) {
   }
 }
 
-// Shows the current message from a speaker and waits 10 frames.
+/// Shows the current message from a speaker and waits 10 frames.
 static void TolbiShipInteriors_Say(s32 speaker) {
   Engine_EventShowMessage(speaker, 0);
   Engine_EventWait(10);
 }
 
-// Turns an actor to a facing over 10 frames.
+/// Turns an actor to a facing over 10 frames.
 static void TolbiShipInteriors_Turn(s32 actorId, u16 facing) {
   Engine_ActorFaceDirection(actorId, facing, 10);
 }
 
-// Place an actor at pixel coordinates and set its initial heading.
+/// Place an actor at pixel coordinates and set its initial heading.
 static void TolbiShipInteriors_PlaceActor(s32 actorId, s32 x, s32 z,
                                           s32 facing) {
   Engine_ActorSetPosition(actorId, x << 16, z << 16, facing);
   Object_GetById(actorId)->facing = facing;
 }
 
-// Move the camera, optionally wait or redraw, then honor the packed delay.
+/// Move the camera, optionally wait or redraw, then honor the packed delay.
 static void TolbiShipInteriors_MoveCameraAndWait(s32 x, s32 y, s32 z,
                                                  u32 flags) {
   u32 selected;
@@ -2922,8 +2923,8 @@ static void TolbiShipInteriors_MoveCameraAndWait(s32 x, s32 y, s32 z,
   Engine_EventWait(selected);
 }
 
-// Reuse the voyage's actor, camera, transition and selection operations.
-// Each command names how it interprets the two arguments below.
+/// Reuse the voyage's actor, camera, transition and selection operations.
+/// Each command names how it interprets the two arguments below.
 static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
   u32 slot;
 
@@ -3196,7 +3197,7 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
   }
 }
 
-// Find the selected passenger or rowing-deck actor for a seat's flag group.
+/// Find the selected passenger or rowing-deck actor for a seat's flag group.
 static s32 TolbiShipInteriors_FindFirstSetFlag(u32 group, s32 alternate) {
   s32 flag = 0;
   s32 id = 8;
@@ -3227,7 +3228,7 @@ static s32 TolbiShipInteriors_FindFirstSetFlag(u32 group, s32 alternate) {
   return 0;
 }
 
-// Hide the four passengers who are already filling rowing seats.
+/// Hide the four passengers who are already filling rowing seats.
 static void TolbiShipInteriors_HideSelectedPassengers(void) {
   TolbiShipInteriors_HideSelectedPassenger(8,
                                            FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS);
@@ -3239,7 +3240,7 @@ static void TolbiShipInteriors_HideSelectedPassengers(void) {
                                            FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS);
 }
 
-// Hide the passenger whose selection flag is set in this seat's flag group.
+/// Hide the passenger whose selection flag is set in this seat's flag group.
 static void TolbiShipInteriors_HideSelectedPassenger(s32 actorId,
                                                      s32 firstFlag) {
   unsigned int i = 0;
@@ -3255,7 +3256,7 @@ static void TolbiShipInteriors_HideSelectedPassenger(s32 actorId,
   } while (i <= 8);
 }
 
-// Stage the next monster encounter with one replacement rower.
+/// Stage the next monster encounter with one replacement rower.
 static void TolbiShipInteriors_StartSecondAttack(void) {
   s32 firstRower;
   const s32 *rowerScript;
@@ -3280,7 +3281,7 @@ static void TolbiShipInteriors_StartSecondAttack(void) {
   Engine_EventEnd();
 }
 
-// Gather the party after the crew reports monsters belowdecks.
+/// Gather the party after the crew reports monsters belowdecks.
 static void TolbiShipInteriors_ReportMonstersBelowdecks(void) {
   struct FieldActor *actor;
   s32 message;
@@ -3344,7 +3345,7 @@ static void TolbiShipInteriors_ReportMonstersBelowdecks(void) {
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
 }
 
-// The crew checks on the party after the monster fight, then resumes rowing.
+/// The crew checks on the party after the monster fight, then resumes rowing.
 static void TolbiShipInteriors_ReactToMonsterAttack(void) {
   const s32 *action;
 
@@ -3435,7 +3436,7 @@ static void TolbiShipInteriors_ReactToMonsterAttack(void) {
   Engine_EventRequestExit(4);
 }
 
-// Restore one replacement rower after the next monster attack.
+/// Restore one replacement rower after the next monster attack.
 static void TolbiShipInteriors_EndSecondAttack(void) {
   s32 handle = TolbiShipInteriors_FindFirstSetFlag(0, 0);
 
@@ -3450,7 +3451,7 @@ static void TolbiShipInteriors_EndSecondAttack(void) {
   Engine_EventEnd();
 }
 
-// Stage the next monster encounter with two replacement rowers.
+/// Stage the next monster encounter with two replacement rowers.
 static void TolbiShipInteriors_StartThirdAttack(void) {
   s32 secondRower;
   s32 firstRower;
@@ -3480,7 +3481,7 @@ static void TolbiShipInteriors_StartThirdAttack(void) {
   Engine_EventEnd();
 }
 
-// Restore two replacement rowers after the next monster attack.
+/// Restore two replacement rowers after the next monster attack.
 static void TolbiShipInteriors_EndThirdAttack(void) {
   s32 handle = TolbiShipInteriors_FindFirstSetFlag(0, 0);
   s32 other = TolbiShipInteriors_FindFirstSetFlag(1, 0);
@@ -3498,7 +3499,7 @@ static void TolbiShipInteriors_EndThirdAttack(void) {
   Engine_EventEnd();
 }
 
-// The party notices the ship rocking and discusses the rowers' progress.
+/// The party notices the ship rocking and discusses the rowers' progress.
 static void TolbiShipInteriors_NoticeShipRocking(void) {
   s32 secondRower;
   s32 thirdRower;
@@ -3624,7 +3625,7 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   Engine_EventEnd();
 }
 
-// Play the intermittent voyage cue and restore its effect after ten frames.
+/// Play the intermittent voyage cue and restore its effect after ten frames.
 static void TolbiShipInteriors_ShakeWhileKrakenAboard(void) {
   s32 value;
   s32 *timer = &gTolbiShipInteriors_ShakeTimer;
@@ -3644,7 +3645,7 @@ static void TolbiShipInteriors_ShakeWhileKrakenAboard(void) {
   }
 }
 
-// Play the short cabin exchange before returning to the voyage.
+/// Play the short cabin exchange before returning to the voyage.
 static void TolbiShipInteriors_ShowCabinBeforeKraken(void) {
   Engine_EventBegin();
   TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_CAPTAINS_CABIN, 1, 0);
@@ -3659,7 +3660,7 @@ static void TolbiShipInteriors_ShowCabinBeforeKraken(void) {
   TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCENE, 21, 0);
 }
 
-// Rest the rowers at the island and play the selected passengers' responses.
+/// Rest the rowers at the island and play the selected passengers' responses.
 static void TolbiShipInteriors_ReachIsland(void) {
   s32 fourthRower;
   s32 secondRower;
@@ -3784,7 +3785,7 @@ static void TolbiShipInteriors_ReachIsland(void) {
   Engine_EventEnd();
 }
 
-// Return the replacement rowers to their seats and exchange their selections.
+/// Return the replacement rowers to their seats and exchange their selections.
 static void TolbiShipInteriors_DismissReplacementRowers(void) {
   s32 firstRower;
   s32 fourthRower;
@@ -3860,7 +3861,7 @@ static void TolbiShipInteriors_DismissReplacementRowers(void) {
   Engine_EventRequestExit(10);
 }
 
-// Exchange the chosen passengers between two rowing seats.
+/// Exchange the chosen passengers between two rowing seats.
 static void TolbiShipInteriors_SwapRowerSelections(s32 firstSeatFlags,
                                                    s32 secondSeatFlags) {
   s32 firstPassenger = 0;
@@ -3889,8 +3890,8 @@ static void TolbiShipInteriors_SwapRowerSelections(s32 firstSeatFlags,
   Engine_GameFlagSet(firstSeatFlags + secondPassenger);
 }
 
-// The step beside the leader for each of the 16 facings: the high 16 bits are
-// x, the low 16 bits z.
+/// The step beside the leader for each of the 16 facings: the high 16 bits are
+/// x, the low 16 bits z.
 #define TURN_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gTolbiShipInteriors_TurnSteps[] = {
@@ -3900,7 +3901,7 @@ s32 gTolbiShipInteriors_TurnSteps[] = {
     TURN_STEP(0, -16), TURN_STEP(0, -16), TURN_STEP(0, -16), TURN_STEP(16, 0),
 };
 
-// The warriors walk out of the hold.
+/// The warriors walk out of the hold.
 s32 gTolbiShipInteriors_LeaveHold[] = {
     SC_ARG(2), SC_MOVE(PIXELS(168), 0, PIXELS(500)),
     SC_SYNC,   SC_MOVE(PIXELS(168), 0, PIXELS(584)),
@@ -3908,7 +3909,7 @@ s32 gTolbiShipInteriors_LeaveHold[] = {
     SC_END,
 };
 
-// Those gathered in the cabin walk out.
+/// Those gathered in the cabin walk out.
 s32 gTolbiShipInteriors_LeaveCabin[] = {
     SC_SET(SW_SPEED, PIXELS(1)),
     SC_SET(SW_ACCEL, PIXELS(1) / 2),
@@ -3921,7 +3922,7 @@ s32 gTolbiShipInteriors_LeaveCabin[] = {
     SC_END,
 };
 
-// The Anchor Charm swells and shrinks twice as the captain raises it.
+/// The Anchor Charm swells and shrinks twice as the captain raises it.
 s32 gTolbiShipInteriors_AnchorCharmPulse[] = {
     SC_SET(SW_SCALE_X, 11 * Q16_ONE / 8),
     SC_SET(SW_SCALE_Y, 11 * Q16_ONE / 8),
@@ -3939,28 +3940,28 @@ s32 gTolbiShipInteriors_AnchorCharmPulse[] = {
     SC_END,
 };
 
-// The party's followers walk into the leader by the rowing deck's stairs.
+/// The party's followers walk into the leader by the rowing deck's stairs.
 s32 gTolbiShipInteriors_FollowersRejoinByStairs[] = {
     SC_ARG(2), SC_MOVE(PIXELS(434), 0, PIXELS(166)),
     SC_SYNC,   SC_CALL(TolbiShipInteriors_ResetActor),
     SC_END,
 };
 
-// The same, in the middle of the rowing deck.
+/// The same, in the middle of the rowing deck.
 s32 gTolbiShipInteriors_FollowersRejoinMidDeck[] = {
     SC_ARG(2), SC_MOVE(PIXELS(438), 0, PIXELS(300)),
     SC_SYNC,   SC_CALL(TolbiShipInteriors_ResetActor),
     SC_END,
 };
 
-// The same, by the first row of seats.
+/// The same, by the first row of seats.
 s32 gTolbiShipInteriors_FollowersRejoinBySeats[] = {
     SC_ARG(2), SC_MOVE(PIXELS(432), 0, PIXELS(168)),
     SC_SYNC,   SC_CALL(TolbiShipInteriors_ResetActor),
     SC_END,
 };
 
-// Squashes and stretches the actor over and over: a shiver.
+/// Squashes and stretches the actor over and over: a shiver.
 s32 gTolbiShipInteriors_Shiver[] = {
     SC_SET(SW_SCALE_X, Q16_ONE),
     SC_SET(SW_SCALE_Y, Q16_ONE),
@@ -3979,21 +3980,21 @@ s32 gTolbiShipInteriors_Shiver[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-// A monster in the hold bobs in place.
+/// A monster in the hold bobs in place.
 s32 gTolbiShipInteriors_MonsterBob[] = {
     SC_SET(SW_MOTION, 0),
     SC_SET(0x24, 0),
     SC_CALL(TolbiShipInteriors_Bob),
 };
 
-// A rower walks up the stairs and is freed.
+/// A rower walks up the stairs and is freed.
 s32 gTolbiShipInteriors_LeaveByStairs[] = {
     SC_ARG(2), SC_MOVE(PIXELS(408), 0, PIXELS(132)),
     SC_SYNC,   SC_MOVE(PIXELS(444), 0, PIXELS(132)),
     SC_SYNC,   SC_FREE,
 };
 
-// A rower steps into the aisle.
+/// A rower steps into the aisle.
 s32 gTolbiShipInteriors_StepIntoAisle[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(416), 0, PIXELS(186)),
@@ -4001,26 +4002,26 @@ s32 gTolbiShipInteriors_StepIntoAisle[] = {
     SC_END,
 };
 
-// A passenger glances about at random.
+/// A passenger glances about at random.
 s32 gTolbiShipInteriors_LookAroundScript[] = {
     SC_CALL(TolbiShipInteriors_LookAround),
 };
 
-// Lies flat on the floor of the hold.
+/// Lies flat on the floor of the hold.
 s32 gTolbiShipInteriors_LieFlatScript[] = {
     SC_CALL(TolbiShipInteriors_LayFlat),
 };
 
-// The Anchor Charm's object, once placed this visit.
+/// The Anchor Charm's object, once placed this visit.
 struct FieldActor *gTolbiShipInteriors_AnchorObject = 0;
 
-// The other scenes have no entrances.
+/// The other scenes have no entrances.
 struct SceneEntrance gTolbiShipInteriors_EntrancesOther[] = {
     {SCENE_TABLE_END},
 };
 
-// The hold (entrances 1, 2, 11 and 30), a side room (3), the rowing deck (4, 12
-// and 15 to 24 but 22) and the cabin (5, 10, 13, 14 and 22).
+/// The hold (entrances 1, 2, 11 and 30), a side room (3), the rowing deck (4,
+/// 12 and 15 to 24 but 22) and the cabin (5, 10, 13, 14 and 22).
 struct SceneEntrance gTolbiShipInteriors_Entrances[] = {
     {1, CONDITION_ALWAYS, 152, 0, 584, FACING_NORTH, 0, 30, 380, 270, 620, 0},
     {2, CONDITION_ALWAYS, 160, 0, 552, FACING_EAST, 0, 30, 380, 270, 620, 0},
@@ -4046,7 +4047,7 @@ struct SceneEntrance gTolbiShipInteriors_Entrances[] = {
     {SCENE_TABLE_END},
 };
 
-// The rooms' exits.
+/// The rooms' exits.
 u32 gTolbiShipInteriors_Exits[] = {
     SCENE_EXITS(111),        SCENE_EXIT(1, 109, 1),   SCENE_EXIT(2, 111, 4),
     SCENE_EXIT(3, 109, 2),   SCENE_EXIT(4, 111, 2),   SCENE_EXIT(5, 109, 3),
@@ -4057,7 +4058,7 @@ u32 gTolbiShipInteriors_Exits[] = {
     SCENE_EXITS_END,
 };
 
-// No actors.
+/// No actors.
 struct ScenePlacement gTolbiShipInteriors_PlacementsNone[] = {
     {SCENE_TABLE_END},
 };
@@ -4073,8 +4074,8 @@ struct ScenePlacement gTolbiShipInteriors_CabinPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-// The cabin once the warriors have come to see the captain, with the party's
-// followers.
+/// The cabin once the warriors have come to see the captain, with the party's
+/// followers.
 struct ScenePlacement gTolbiShipInteriors_CabinPlacementsWarriors[] = {
     { 0x2e, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(482), 0, PIXELS(604), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -4097,21 +4098,21 @@ struct ScenePlacement gTolbiShipInteriors_CabinPlacementsWarriors[] = {
     { SCENE_TABLE_END },
 };
 
-// The cabin once the ship has reached Tolbi.
+/// The cabin once the ship has reached Tolbi.
 struct ScenePlacement gTolbiShipInteriors_CabinPlacementsArrived[] = {
     { 0x2e, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(462), 0, PIXELS(612), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
-// The hold before the party hears of the delay at Kalay.
+/// The hold before the party hears of the delay at Kalay.
 struct ScenePlacement gTolbiShipInteriors_HoldPlacementsEmpty[] = {
     { 0xf4, CONDITION_ALWAYS, (s32)gTolbiShipInteriors_LieFlatScript,
         PIXELS(150), 0, PIXELS(528), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
-// The hold while the ship waits at Kalay, and after it reaches Tolbi.
+/// The hold while the ship waits at Kalay, and after it reaches Tolbi.
 struct ScenePlacement gTolbiShipInteriors_HoldPlacements[] = {
     { 0x9d, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(184), 0, PIXELS(504), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -4136,7 +4137,7 @@ struct ScenePlacement gTolbiShipInteriors_HoldPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-// The hold at sea, once the passengers row.
+/// The hold at sea, once the passengers row.
 struct ScenePlacement gTolbiShipInteriors_HoldPlacementsAtSea[] = {
     { 0xab, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(138), 0, PIXELS(446), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -4165,9 +4166,9 @@ struct ScenePlacement gTolbiShipInteriors_HoldPlacementsAtSea[] = {
     { SCENE_TABLE_END },
 };
 
-// The rowing deck: the crew (actors 8 and 9), the oarsmen at the seats (10 to
-// 17), the passengers who may take a seat (18 to 26) and eight actors beside
-// the seats (28 to 35).
+/// The rowing deck: the crew (actors 8 and 9), the oarsmen at the seats (10 to
+/// 17), the passengers who may take a seat (18 to 26) and eight actors beside
+/// the seats (28 to 35).
 struct ScenePlacement gTolbiShipInteriors_RowingDeckPlacements[] = {
     { 0x93, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(438), 0, PIXELS(152), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -4228,7 +4229,7 @@ struct ScenePlacement gTolbiShipInteriors_RowingDeckPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-// The party's followers, placed for a scene.
+/// The party's followers, placed for a scene.
 struct ScenePlacement gTolbiShipInteriors_PartyFollowerPlacements[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
@@ -4239,7 +4240,7 @@ struct ScenePlacement gTolbiShipInteriors_PartyFollowerPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-// The monsters of each attack, beside the seats.
+/// The monsters of each attack, beside the seats.
 struct ScenePlacement gTolbiShipInteriors_FirstAttackMonsters[] = {
     { 0xbd, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(474), 0, PIXELS(300), FACING_WEST, TALK_KEEP_FACING, 0 },
@@ -4270,14 +4271,14 @@ struct ScenePlacement gTolbiShipInteriors_ThirdAttackMonsters[] = {
     { SCENE_TABLE_END },
 };
 
-// The side room, and the cutscenes.
+/// The side room, and the cutscenes.
 struct SceneEvent gTolbiShipInteriors_EventsOther[] = {
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { SEARCH(SEARCH_BARREL), 100, 0xf92, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SCENE_EVENTS_END },
 };
 
-// The hold while the ship waits at Kalay, and after it reaches Tolbi.
+/// The hold while the ship waits at Kalay, and after it reaches Tolbi.
 struct SceneEvent gTolbiShipInteriors_HoldEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
@@ -4306,7 +4307,7 @@ struct SceneEvent gTolbiShipInteriors_HoldEvents[] = {
     { SCENE_EVENTS_END },
 };
 
-// The hold at sea: talking to a passenger asks them to row.
+/// The hold at sea: talking to a passenger asks them to row.
 struct SceneEvent gTolbiShipInteriors_HoldEventsChoosingRowers[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
@@ -4343,7 +4344,7 @@ struct SceneEvent gTolbiShipInteriors_HoldEventsChoosingRowers[] = {
     { SCENE_EVENTS_END },
 };
 
-// The hold while the ship waits off the island.
+/// The hold while the ship waits off the island.
 struct SceneEvent gTolbiShipInteriors_HoldEventsAtIsland[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
@@ -4371,8 +4372,8 @@ struct SceneEvent gTolbiShipInteriors_HoldEventsAtIsland[] = {
     { SCENE_EVENTS_END },
 };
 
-// The cabin, from the wait at Kalay until the ship reaches Tolbi. The Anchor
-// Charm is given back to the captain here.
+/// The cabin, from the wait at Kalay until the ship reaches Tolbi. The Anchor
+/// Charm is given back to the captain here.
 struct SceneEvent gTolbiShipInteriors_CabinEvents[] = {
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
     { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToCaptain) },
@@ -4399,7 +4400,7 @@ struct SceneEvent gTolbiShipInteriors_CabinEvents[] = {
     { SCENE_EVENTS_END },
 };
 
-// The cabin while the ship waits off the island.
+/// The cabin while the ship waits off the island.
 struct SceneEvent gTolbiShipInteriors_CabinEventsAtIsland[] = {
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWeMayHaveTakenTheWrong) },
@@ -4410,7 +4411,7 @@ struct SceneEvent gTolbiShipInteriors_CabinEventsAtIsland[] = {
     { SCENE_EVENTS_END },
 };
 
-// The cabin once the ship has reached Tolbi.
+/// The cabin once the ship has reached Tolbi.
 struct SceneEvent gTolbiShipInteriors_CabinEventsArrived[] = {
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhenTheWatersAreThisDangerous) },
@@ -4419,7 +4420,7 @@ struct SceneEvent gTolbiShipInteriors_CabinEventsArrived[] = {
     { SCENE_EVENTS_END },
 };
 
-// The rowing deck.
+/// The rowing deck.
 struct SceneEvent gTolbiShipInteriors_RowingDeckEvents[] = {
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
     { EVENT_TALK, 8, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipInteriorsWeCanLeaveAsSoonAs) },
@@ -4457,8 +4458,8 @@ struct SceneEvent gTolbiShipInteriors_RowingDeckEvents[] = {
     { SCENE_EVENTS_END },
 };
 
-// The rowing deck while monsters are aboard: talking to one (actors 36 to 38)
-// fights it.
+/// The rowing deck while monsters are aboard: talking to one (actors 36 to 38)
+/// fights it.
 struct SceneEvent gTolbiShipInteriors_RowingDeckEventsMonstersAboard[] = {
     { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TurnBackFromStairs) },
     { EVENT_TALK, 36, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_FightMonstersInHold) },
@@ -4503,7 +4504,7 @@ struct SceneEvent gTolbiShipInteriors_RowingDeckEventsMonstersAboard[] = {
     { SCENE_EVENTS_END },
 };
 
-// The rowing deck while the Kraken rocks the ship.
+/// The rowing deck while the Kraken rocks the ship.
 struct SceneEvent gTolbiShipInteriors_RowingDeckEventsKrakenAboard[] = {
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 19 },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsImagineTheSizeOfThatBeast) },
@@ -4541,7 +4542,7 @@ struct SceneEvent gTolbiShipInteriors_RowingDeckEventsKrakenAboard[] = {
     { SCENE_EVENTS_END },
 };
 
-// The rowing deck once the ship has reached Tolbi.
+/// The rowing deck once the ship has reached Tolbi.
 struct SceneEvent gTolbiShipInteriors_RowingDeckEventsArrived[] = {
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIDontThinkAnyoneWillBe) },
@@ -4560,5 +4561,5 @@ struct SceneEvent gTolbiShipInteriors_RowingDeckEventsArrived[] = {
 };
 // clang-format on
 
-// Frames left of the Kraken's current jolt; at 0 another may start.
+/// Frames left of the Kraken's current jolt; at 0 another may start.
 s32 gTolbiShipInteriors_ShakeTimer;

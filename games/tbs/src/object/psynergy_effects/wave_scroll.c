@@ -1,12 +1,13 @@
-// Part of psynergy_effects.c, compiled only through it.
-// The wavy background: scanline scroll offsets fed by HBlank DMA.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// The wavy background: scanline scroll offsets fed by HBlank DMA.
 
 #include "../psynergy_effects_internal.h"
 
-// Scheduler callback for the wavy background: restarts DMA 0 each frame to
-// copy the current page's BG1 to BG3 scroll offsets into the scroll registers
-// one scanline at a time. The first line is written directly; the DMA writes
-// three words at each HBlank from then on.
+/// Scheduler callback for the wavy background: restarts DMA 0 each frame to
+/// copy the current page's BG1 to BG3 scroll offsets into the scroll registers
+/// one scanline at a time. The first line is written directly; the DMA writes
+/// three words at each HBlank from then on.
 void DisplayScroll_ArmHBlankDma(void) {
   volatile u16 *dma;
   struct DisplayScrollWork *state;
@@ -37,9 +38,9 @@ void DisplayScroll_ArmHBlankDma(void) {
   Dma_Set(source, destination, control, (volatile u32 *)dma);
 }
 
-// Scheduler callback for the wavy background: fills the hidden page with each
-// scanline's BG3, BG2 and BG1 offsets, the scroll plus a sine wave for x and
-// for y (an axis with no step stays flat), then shows that page.
+/// Scheduler callback for the wavy background: fills the hidden page with each
+/// scanline's BG3, BG2 and BG1 offsets, the scroll plus a sine wave for x and
+/// for y (an axis with no step stays flat), then shows that page.
 void DisplayScroll_BuildAndSwapHBlankPage(void) {
   struct DisplayScrollWork *work = gHBlankScrollWork;
   s32 x3 = (s16)gBgScroll[3].x;
@@ -118,7 +119,7 @@ void DisplayScroll_BuildAndSwapHBlankPage(void) {
 // The shared source that starts the wavy background, at its place in the ROM.
 #include "../../scene/common/scroll_initialize_hblank_dma.h"
 
-// Stops the wavy background: removes its two callbacks and stops DMA 0.
+/// Stops the wavy background: removes its two callbacks and stops DMA 0.
 void DisplayScroll_DisarmHBlankDma(void) {
   volatile u16 *dma0;
 

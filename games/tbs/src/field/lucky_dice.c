@@ -23,8 +23,8 @@
 #include "songs.h"
 #include "macros.h"
 
-// Starts the Lucky Dice minigame: leaves only the backdrop on screen, starts
-// song MUS_009 and plays until the player quits. Returns 0.
+/// Starts the Lucky Dice minigame: leaves only the backdrop on screen, starts
+/// song MUS_009 and plays until the player quits. Returns 0.
 s32 Runtime_BlankDisplayAndRun(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   AudioCommand_PlayFar(MUS_009);
@@ -32,9 +32,9 @@ s32 Runtime_BlankDisplayAndRun(void) {
   return 0;
 }
 
-// Puts the 3D camera back at its scene defaults: at the origin, unturned,
-// pitched to 152 and 510 units away, following nothing. Recomputes the eye
-// and sets the projection's focal length (250), near plane and far plane.
+/// Puts the 3D camera back at its scene defaults: at the origin, unturned,
+/// pitched to 152 and 510 units away, following nothing. Recomputes the eye
+/// and sets the projection's focal length (250), near plane and far plane.
 void Camera_ResetSceneDefaults(void) {
   struct BattleCamera *camera = gCameraWork;
   s32 offset[3];
@@ -68,7 +68,7 @@ void Camera_ResetSceneDefaults(void) {
   Projection_Set(focalLength, nearPlane, 0x7fff0000);
 }
 
-// Multiplies two 8.8 fixed-point values, rounding toward zero.
+/// Multiplies two 8.8 fixed-point values, rounding toward zero.
 UNUSED s32 FixedPoint_Multiply8_8(s32 leftValue, s32 rightValue) {
   /* FAKEMATCH(temporary): the product built in its own variable from a copy
    * of right, then rounded into another; as product = left * right adjusted
@@ -90,7 +90,7 @@ UNUSED s32 FixedPoint_Multiply8_8(s32 leftValue, s32 rightValue) {
   return (s16)(roundedProduct >> 8);
 }
 
-// Divides two 8.8 fixed-point values.
+/// Divides two 8.8 fixed-point values.
 UNUSED s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
 // UB: a signed numerator may be negative. All s16 values times 256 fit.
 #ifdef UBFIX
@@ -100,7 +100,7 @@ UNUSED s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
 #endif
 }
 
-// The reciprocal of an 8.8 fixed-point value.
+/// The reciprocal of an 8.8 fixed-point value.
 UNUSED s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 
 #include "resource.h"
@@ -170,14 +170,14 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 #define DICE_KIND_X 0x280
 #endif
 
-// The used prefix of Lucky Dice's 0x618-byte work block (heap slot 45):
-// its sprites and windows. The allocation extends beyond these members.
+/// The used prefix of Lucky Dice's 0x618-byte work block (heap slot 45):
+/// its sprites and windows. The allocation extends beyond these members.
 struct LuckyDiceSprites {
-  u8 filler[200];                  // Lucky Dice never touches these bytes
-  struct OamShadow obj[128];       // copied to OAM each frame
-  struct UiWindow *coinsWindow;    // the player's coins
-  struct UiWindow *winningsWindow; // the winnings of the last throw
-  struct UiWindow *helpWindow;     // the Throw and Quit buttons
+  u8 filler[200];                  ///< Lucky Dice never touches these bytes
+  struct OamShadow obj[128];       ///< copied to OAM each frame
+  struct UiWindow *coinsWindow;    ///< the player's coins
+  struct UiWindow *winningsWindow; ///< the winnings of the last throw
+  struct UiWindow *helpWindow;     ///< the Throw and Quit buttons
 };
 
 #include "version.h"
@@ -189,17 +189,17 @@ struct LuckyDiceSprites {
 #define DICE_RESULT_COUNT 4
 #define DICE_BET_PER_LEVEL 10
 
-// What the Lucky Dice screen is doing.
+/// What the Lucky Dice screen is doing.
 enum LuckyDiceState {
-  LUCKY_DICE_AIM,    // the dice wait to be thrown; Up and Down raise them
-  LUCKY_DICE_ROLL,   // the dice fly, bounce and settle
-  LUCKY_DICE_RESULT, // the four numbers and the result are shown
-  LUCKY_DICE_PAYOUT  // the winnings move into the coins
+  LUCKY_DICE_AIM,    ///< the dice wait to be thrown; Up and Down raise them
+  LUCKY_DICE_ROLL,   ///< the dice fly, bounce and settle
+  LUCKY_DICE_RESULT, ///< the four numbers and the result are shown
+  LUCKY_DICE_PAYOUT  ///< the winnings move into the coins
 };
 
-// Copies count RGB555 colours from source to destination with each channel
-// multiplied by scale (16.16: 0 is black, 0x10000 unchanged), for fades.
-// Returns 0.
+/// Copies count RGB555 colours from source to destination with each channel
+/// multiplied by scale (16.16: 0 is black, 0x10000 unchanged), for fades.
+/// Returns 0.
 s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
                                s32 count) {
   s32 remaining;
@@ -235,12 +235,12 @@ s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
   return 0;
 }
 
-// Runs the Lucky Dice minigame until the player quits or cannot afford a
-// throw. Each throw costs ten coins per level of the party's average. Two
-// dice are thrown onto a board of six rows; each die's face and the row it
-// stops in give four numbers. Four of a kind pays 5 times the bet (15 or 25
-// times when it matches one of the two lucky numbers shown at the top),
-// three of a kind 3 times, two pairs twice and one pair the bet back.
+/// Runs the Lucky Dice minigame until the player quits or cannot afford a
+/// throw. Each throw costs ten coins per level of the party's average. Two
+/// dice are thrown onto a board of six rows; each die's face and the row it
+/// stops in give four numbers. Four of a kind pays 5 times the bet (15 or 25
+/// times when it matches one of the two lucky numbers shown at the top),
+/// three of a kind 3 times, two pairs twice and one pair the bet back.
 void LuckyDice_Run(void) {
   u16 bgPalette[256];
   s32 spriteDepth[DICE_RESULT_COUNT]; // the two dice, then their shadows

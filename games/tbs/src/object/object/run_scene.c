@@ -1,5 +1,6 @@
-// Part of object.c, the field object, compiled only through it.
-// Running a field scene until the party leaves it, and its entrance.
+/// @file
+/// Part of object.c, the field object, compiled only through it.
+/// Running a field scene until the party leaves it, and its entrance.
 
 #include "../object_internal.h"
 
@@ -8,12 +9,12 @@ struct MenuCtrl {
   u16 wait;
 };
 
-// Runs the current field scene, which the party entered by entrance, until it
-// leaves; returns the exit kind it left by (for Scene_TakeExit), or 999 when
-// the party fell outside battle. Sets the scene up (map, actors, encounters,
-// return points), runs its initialization, fades it in, then runs the field
-// loop: the party walks (Field_ProcessStep each frame) until a request is
-// made, and then the requests are handled until none is left.
+/// Runs the current field scene, which the party entered by entrance, until it
+/// leaves; returns the exit kind it left by (for Scene_TakeExit), or 999 when
+/// the party fell outside battle. Sets the scene up (map, actors, encounters,
+/// return points), runs its initialization, fades it in, then runs the field
+/// loop: the party walks (Field_ProcessStep each frame) until a request is
+/// made, and then the requests are handled until none is left.
 s32 Field_RunScene(s32 entrance) {
   struct FieldWork *work;
   struct FieldActor *actor;
@@ -361,7 +362,7 @@ done:
   return result;
 }
 
-// A field actor (struct FieldActor), seen with its position as one vector.
+/// A field actor (struct FieldActor), seen with its position as one vector.
 struct Object {
   u8 pad0[6];
   u16 angle;
@@ -372,10 +373,10 @@ struct Object {
   struct AnimationObject *sprite;
 };
 
-// Returns the collision code of the map cell 16 pixels ahead of the party
-// leader when there is something to search there: a tile code from 242 to 247
-// whose ground is no more than 64 pixels above the leader, or a code the
-// scene has a search event for. Returns 0 otherwise.
+/// Returns the collision code of the map cell 16 pixels ahead of the party
+/// leader when there is something to search there: a tile code from 242 to 247
+/// whose ground is no more than 64 pixels above the leader, or a code the
+/// scene has a search event for. Returns 0 otherwise.
 s32 Object_GetTriggerTileAheadOfCurrent(void) {
   u8 *workBytes;
   u8 *mapBytes;
@@ -422,9 +423,9 @@ s32 Object_GetTriggerTileAheadOfCurrent(void) {
   return result;
 }
 
-// Places the party at the entrance it came in by (the first matching entry, or
-// the scene's first one) unless it keeps its position, and sets the map's
-// scroll bounds, at least a screen (240 x 160 pixels) wide and tall.
+/// Places the party at the entrance it came in by (the first matching entry, or
+/// the scene's first one) unless it keeps its position, and sets the map's
+/// scroll bounds, at least a screen (240 x 160 pixels) wide and tall.
 void Scene_ApplyEntrance(void) {
   struct MapScrollWork *map = gMapWork[0];
   s32 entrance = gGameState.entrance;

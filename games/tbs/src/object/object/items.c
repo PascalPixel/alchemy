@@ -1,15 +1,16 @@
-// Part of object.c, the field object, compiled only through it.
-// Using an item on the field.
+/// @file
+/// Part of object.c, the field object, compiled only through it.
+/// Using an item on the field.
 
 #include "../object_internal.h"
 
-// An item's own field routine, which the scene's item event may name.
+/// An item's own field routine, which the scene's item event may name.
 typedef s32 (*BattleItemCallback)(s32 item, s32 actor, s32 slot);
 
-// Returns the scene's item event (kind 4) for item that applies to what the
-// leader faces, or 0 (item 0 matches any item). The event's trigger names an
-// actor (control flag 0x10) or a tile code, and may also require the leader
-// to face within 0x17ff of a direction.
+/// Returns the scene's item event (kind 4) for item that applies to what the
+/// leader faces, or 0 (item 0 matches any item). The event's trigger names an
+/// actor (control flag 0x10) or a tile code, and may also require the leader
+/// to face within 0x17ff of a direction.
 s32 Field_FindItemEvent(s32 item) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   const struct SceneEvent *event = work->events;
@@ -48,12 +49,12 @@ s32 Field_FindItemEvent(s32 item) {
   return 0;
 }
 
-// Uses an item on the field. packedItem holds the item (bits 0 to 9) and the
-// character using it (bits 10 to 13; 15 for the character carrying most of
-// it); slot is its inventory slot. The scene's item event for what the leader
-// faces runs if there is one; otherwise an item with a field action uses it
-// (Retreat asks first and leaves the scene). FLAG_NOTHING_HAPPENS still set
-// afterwards says "But nothing happens."; FLAG_ITEM_USED_UP removes the item.
+/// Uses an item on the field. packedItem holds the item (bits 0 to 9) and the
+/// character using it (bits 10 to 13; 15 for the character carrying most of
+/// it); slot is its inventory slot. The scene's item event for what the leader
+/// faces runs if there is one; otherwise an item with a field action uses it
+/// (Retreat asks first and leaves the scene). FLAG_NOTHING_HAPPENS still set
+/// afterwards says "But nothing happens."; FLAG_ITEM_USED_UP removes the item.
 s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
   s32 itemId;
@@ -182,11 +183,11 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   return result;
 }
 
-// Returns the scene's Psynergy event (kind 5) for Psynergy of the given
-// group that applies to what the leader faces, or NULL; stores the actor the
-// Psynergy would target in *target. eventFlags gives the event's phase and
-// kind (0x70000005 for any phase). The event may apply to any target
-// (control flag 0x80), to an actor (0x10) or to a tile code.
+/// Returns the scene's Psynergy event (kind 5) for Psynergy of the given
+/// group that applies to what the leader faces, or NULL; stores the actor the
+/// Psynergy would target in *target. eventFlags gives the event's phase and
+/// kind (0x70000005 for any phase). The event may apply to any target
+/// (control flag 0x80), to an actor (0x10) or to a tile code.
 void *BattleFx_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   const struct SceneEvent *event = work->events;
@@ -228,10 +229,10 @@ void *BattleFx_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
   return NULL;
 }
 
-// Runs the scene's events for Psynergy without paying its PP or showing its
-// usual effect (phases 3 and 2, around the event's own effect), as for a
-// Psynergy that ends by itself: packed holds the Psynergy (bits 0 to 9) and
-// its user (bits 10 to 13).
+/// Runs the scene's events for Psynergy without paying its PP or showing its
+/// usual effect (phases 3 and 2, around the event's own effect), as for a
+/// Psynergy that ends by itself: packed holds the Psynergy (bits 0 to 9) and
+/// its user (bits 10 to 13).
 s32 Field_RunPsynergyEvents(s32 packed) {
   s32 target;
   s32 abilityId;

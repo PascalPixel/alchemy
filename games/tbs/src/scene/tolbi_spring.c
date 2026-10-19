@@ -40,7 +40,7 @@
 #include "songs.h"
 #include "common/colosso_story_flags.h"
 
-// Forward declarations.
+/// Forward declarations.
 static void TolbiSpring_RiseAndFadeIn(void);
 static void TolbiSpring_OfferLuckyWheels(s32 spoken);
 static s32 TolbiSpring_RunSpringGame(void);
@@ -50,19 +50,19 @@ static s32 TolbiSpring_RunToss(s32 tossKind);
 
 enum SpringTossKind { SPRING_TOSS_COIN, SPRING_TOSS_MEDAL };
 
-// The game room's actors, numbered in the order of its placement table from 8.
+/// The game room's actors, numbered in the order of its placement table from 8.
 enum TolbiSpringGameRoomActor {
   TOLBI_SPRING_WHEELS_ATTENDANT = 8,
   TOLBI_SPRING_DICE_ATTENDANT = 9,
   TOLBI_SPRING_WHEELS_PRIZE_SIGN = 14,
   TOLBI_SPRING_WHEELS_RULES_SIGN = 15,
-  TOLBI_SPRING_SOLDIER = 17, // "poor soldiers like us"; gone after Colosso
+  TOLBI_SPRING_SOLDIER = 17, ///< "poor soldiers like us"; gone after Colosso
 };
 
-// The spring's own actors, numbered the same way.
+/// The spring's own actors, numbered the same way.
 enum TolbiSpringActor {
-  TOLBI_SPRING_MEDAL_SEEKER = 27, // "Do you have a Lucky Medal?"
-  TOLBI_SPRING_SPRING = 80,       // searched to toss a coin or medal
+  TOLBI_SPRING_MEDAL_SEEKER = 27, ///< "Do you have a Lucky Medal?"
+  TOLBI_SPRING_SPRING = 80,       ///< searched to toss a coin or medal
 };
 
 // FLAG_SCENE_TEMP_00 is set once the spring has risen and faded in.
@@ -89,24 +89,24 @@ struct SpringObstacle {
   u8 unk16[2];
 };
 
-// Write the spring scene's blend control register.
+/// Write the spring scene's blend control register.
 static __inline__ void Io_SetBlendControl(s32 value) { REG_BLDCNT = value; }
 
-// Write the spring scene's blend coefficients.
+/// Write the spring scene's blend coefficients.
 static __inline__ void Io_SetBlendAlpha(s32 value) { REG_BLDALPHA = value; }
 
-// Return the spring and game-room entrances.
+/// Return the spring and game-room entrances.
 const struct SceneEntrance *TolbiSpring_GetEntrances(void) {
   return gTolbiSpring_Entrances;
 }
 
-// These rooms have no region table.
+/// These rooms have no region table.
 const struct SceneRegion *TolbiSpring_GetRegions(void) { return NULL; }
 
-// Return the spring and game-room exit connections.
+/// Return the spring and game-room exit connections.
 const u32 *TolbiSpring_GetExits(void) { return gTolbiSpring_Exits; }
 
-// Select the actors for the spring or its nearby games.
+/// Select the actors for the spring or its nearby games.
 const struct ScenePlacement *TolbiSpring_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_TolbiSpring2) {
     return gTolbiSpringPlacements2;
@@ -114,7 +114,7 @@ const struct ScenePlacement *TolbiSpring_GetPlacements(void) {
   return gTolbiSpringPlacementsOther;
 }
 
-// Ask whether the party has a Lucky Medal.
+/// Ask whether the party has a Lucky Medal.
 static void TolbiSpring_AskAboutLuckyMedal(s32 actorId) {
   s32 question = MsgTolbiLuckyMedal;
   Engine_EventSetMessage(question);
@@ -128,7 +128,7 @@ static void TolbiSpring_AskAboutLuckyMedal(s32 actorId) {
   Engine_EventShowMessage(actorId, 0);
 }
 
-// Ask whether this is the party's first Lucky Dice game.
+/// Ask whether this is the party's first Lucky Dice game.
 static void TolbiSpring_AskAboutFirstDiceGame(s32 actorId) {
   s32 question = MsgTolbiYerFirstTime;
   Engine_EventSetMessage(question);
@@ -142,7 +142,7 @@ static void TolbiSpring_AskAboutFirstDiceGame(s32 actorId) {
   Engine_EventShowMessage(actorId, 0);
 }
 
-// Reveal the spring once, then position the leader to toss into it.
+/// Reveal the spring once, then position the leader to toss into it.
 static void TolbiSpring_TossCoinOrMedal(void) {
   s32 leader = gGameState.selectedActor;
 
@@ -157,7 +157,7 @@ static void TolbiSpring_TossCoinOrMedal(void) {
   Engine_EventEnd();
 }
 
-// Read the Lucky Wheels rules sign.
+/// Read the Lucky Wheels rules sign.
 static void TolbiSpring_ReadLuckyWheelsRules(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiLuckyWheelsRulesPullLever);
@@ -165,7 +165,7 @@ static void TolbiSpring_ReadLuckyWheelsRules(void) {
   Engine_EventEnd();
 }
 
-// Read the Lucky Wheels prize sign.
+/// Read the Lucky Wheels prize sign.
 static void TolbiSpring_ReadLuckyWheelsPrizes(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiLuckyWheelsPrizesPrizesDetermined);
@@ -173,12 +173,12 @@ static void TolbiSpring_ReadLuckyWheelsPrizes(void) {
   Engine_EventEnd();
 }
 
-// Start the Lucky Wheels attendant's offer.
+/// Start the Lucky Wheels attendant's offer.
 static void TolbiSpring_TalkToWheelsAttendant(void) {
   TolbiSpring_OfferLuckyWheels(0);
 }
 
-// Select interactions for the spring or the game attendants.
+/// Select interactions for the spring or the game attendants.
 const struct SceneEvent *TolbiSpring_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_TolbiSpring2) {
     return gTolbiSpringEvents2;
@@ -186,7 +186,7 @@ const struct SceneEvent *TolbiSpring_GetEvents(void) {
   return gTolbiSpringEventsOther;
 }
 
-// Prepare the spring or settle rewards from the nearby games.
+/// Prepare the spring or settle rewards from the nearby games.
 s32 TolbiSpring_Initialize(void) {
   s32 coinChange;
   s8 *wonPrizes;
@@ -293,14 +293,14 @@ s32 TolbiSpring_Initialize(void) {
   return 0;
 }
 
-// Display one frame of the spring's opening or closing prize animation.
+/// Display one frame of the spring's opening or closing prize animation.
 static inline void TolbiSpring_ShowPrizeFrame(s32 sourceColumn, s32 sourceRow) {
   Map_CopyCellsTo(sourceColumn, sourceRow, 70, 0, 3, 8);
   Engine_AudioPlayCue(SE_CAST);
   Engine_EventWait(8);
 }
 
-// Animate the spring's prize reveal, give the item, and close it.
+/// Animate the spring's prize reveal, give the item, and close it.
 static void TolbiSpring_RevealPrize(s32 item) {
   Engine_EventBegin();
   Engine_EventWait(30);
@@ -351,7 +351,7 @@ static void TolbiSpring_RevealPrize(s32 item) {
   Engine_EventEnd();
 }
 
-// Raise the spring's displayed layer and blend it into view.
+/// Raise the spring's displayed layer and blend it into view.
 static void TolbiSpring_RiseAndFadeIn(void) {
   u8 *springLayer = gMapWork[0];
   const u16 *alphaSteps;
@@ -372,7 +372,7 @@ static void TolbiSpring_RiseAndFadeIn(void) {
   }
 }
 
-// Check tickets and inventory space before sending the party to Lucky Wheels.
+/// Check tickets and inventory space before sending the party to Lucky Wheels.
 static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
   s32 tickets = PartyInventory_CountItem(ITEM_GAME_TICKET);
   s32 room;
@@ -427,7 +427,7 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
   Event_SetNextDestination((s32)&SceneId_TolbiSpring1, 12);
 }
 
-// Offer Lucky Dice and save the coin total for the return visit.
+/// Offer Lucky Dice and save the coin total for the return visit.
 static void TolbiSpring_OfferLuckyDice(void) {
   u32 cost;
   u32 coins;
@@ -479,7 +479,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
 #define TOSS_WIDTH 10
 #endif
 
-// Choose a coin or medal, run its toss, and award the resulting prize.
+/// Choose a coin or medal, run its toss, and award the resulting prize.
 static s32 TolbiSpring_RunSpringGame(void) {
   s32 choice = 0;
   s32 text;
@@ -754,7 +754,7 @@ struct Half {
   u16 v;
 };
 
-// Choose an item variant in the prize category, avoiding its last variant.
+/// Choose an item variant in the prize category, avoiding its last variant.
 static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category) {
   s32 previousVariant;
   s32 variant;
@@ -778,7 +778,7 @@ static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category) {
   return gTolbiSpring_LuckyWheelsPrizeItems[category * 3 + variant];
 }
 
-// Copy three coordinates and set the actor's facing, child value and colors.
+/// Copy three coordinates and set the actor's facing, child value and colors.
 static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
                                            s32 facing, s32 colorVariant,
                                            s32 childValue) {
@@ -824,7 +824,7 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
   }
 }
 
-// Set whether the specified actor draws its sprite.
+/// Set whether the specified actor draws its sprite.
 static void TolbiSpring_SetSpriteStorageKind(s32 actorId, s32 storageKind) {
   struct FieldActor *actor = Object_GetById(actorId);
 
@@ -847,7 +847,7 @@ static s32 sTossFrame;
 static s32 sTossEnded;
 static s32 sTossResult;
 
-// Advance the toss, obstacles, collisions and displayed trail each frame.
+/// Advance the toss, obstacles, collisions and displayed trail each frame.
 static void TolbiSpring_UpdateTossSimulation(void) {
   struct SpringTossMotion *toss;
   struct SpringObstacle *obstacle;
@@ -1250,7 +1250,7 @@ static void TolbiSpring_UpdateTossSimulation(void) {
   }
 }
 
-// Reset four obstacles and schedule the spring simulation.
+/// Reset four obstacles and schedule the spring simulation.
 static void TolbiSpring_InitializeTossSimulation(void) {
   struct SpringTossMotion *toss = &sToss;
   s32 obstacleIndex = 0;
@@ -1300,7 +1300,7 @@ static void TolbiSpring_InitializeTossSimulation(void) {
   }
 }
 
-// Launch the chosen coin or medal and wait for its final prize ring.
+/// Launch the chosen coin or medal and wait for its final prize ring.
 static s32 TolbiSpring_RunToss(s32 tossKind) {
   struct SpringTossMotion *toss;
 
@@ -1483,7 +1483,7 @@ const struct SceneEvent gTolbiSpringEvents2[] = {
     { SCENE_EVENTS_END },
 };
 
-// BLDALPHA steps.
+/// BLDALPHA steps.
 const u16 gTolbiSpring_AlphaSteps[] = {
     0x90a, 0xa08, 0xb06, 0xc04, 0xd03, 0xe02, 0xf01, 0x1000,
 };

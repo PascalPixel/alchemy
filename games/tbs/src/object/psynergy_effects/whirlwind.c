@@ -1,13 +1,14 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Whirlwind.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Whirlwind.
 
 #include "../psynergy_effects_internal.h"
 
-// A FieldActor seen with the halfword at 0x64 unsigned and the one at 0x66
-// signed, as the bytes read them (FieldActor's own types change the code).
+/// A FieldActor seen with the halfword at 0x64 unsigned and the one at 0x66
+/// signed, as the bytes read them (FieldActor's own types change the code).
 struct OrbitEffect {
   u8 unk00[6];
-  u16 angle; // the way it heads, or its angle round the anchor
+  u16 angle; ///< the way it heads, or its angle round the anchor
   s32 x;
   s32 y;
   s32 z;
@@ -16,19 +17,19 @@ struct OrbitEffect {
   u8 unk2c[28];
   s32 speed;
   u8 unk4c[24];
-  u16 timer;                  // frames so far
-  s16 pause;                  // frames left of a sharp turn
-  struct OrbitEffect *anchor; // what it circles
+  u16 timer;                  ///< frames so far
+  s16 pause;                  ///< frames left of a sharp turn
+  struct OrbitEffect *anchor; ///< what it circles
   void (*update)(union FieldObject *object);
 };
 
-// The shared effect-spawning source, at its place in the ROM.
+/// The shared effect-spawning source, at its place in the ROM.
 #define EFFECT_SPAWN_RESIDENT
 #include "../../scene/common/effect_spawn.h"
 #undef EFFECT_SPAWN_RESIDENT
 
-// Per-frame update of a particle: moves by its velocity, slowing its x and z
-// velocity a little, and changes its scale and spin.
+/// Per-frame update of a particle: moves by its velocity, slowing its x and z
+/// velocity a little, and changes its scale and spin.
 void FieldFx_UpdateParticleMotionAndScale(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
 
@@ -42,8 +43,8 @@ void FieldFx_UpdateParticleMotionAndScale(union FieldObject *object) {
   effect->sprite->rotation += effect->spin;
 }
 
-// Spawns 17 particles that spread from origin in a flat ring, their x
-// velocity 1.5 times their z velocity.
+/// Spawns 17 particles that spread from origin in a flat ring, their x
+/// velocity 1.5 times their z velocity.
 void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin) {
   struct EffectOptions opt;
   s32 vel[3];
@@ -68,9 +69,9 @@ void BattleFx_SpawnRadialParticleRing(struct MotionObject *origin) {
   } while (i <= 16);
 }
 
-// Per-frame update: wanders away from the anchor, 2 to 3 pixels a frame,
-// now and then turning sharply; after 101 frames it hands over to the
-// common particle script.
+/// Per-frame update: wanders away from the anchor, 2 to 3 pixels a frame,
+/// now and then turning sharply; after 101 frames it hands over to the
+/// common particle script.
 void BattleFx_WanderAroundAnchor(union FieldObject *fieldObject) {
   struct OrbitEffect *effect = (struct OrbitEffect *)fieldObject;
   s32 len;
@@ -97,8 +98,8 @@ void BattleFx_WanderAroundAnchor(union FieldObject *fieldObject) {
                                  gBattleFx_CommonParticleScript);
 }
 
-// Per-frame update: circles the anchor at 8 pixels; after 121 frames it
-// starts to wander (BattleFx_WanderAroundAnchor).
+/// Per-frame update: circles the anchor at 8 pixels; after 121 frames it
+/// starts to wander (BattleFx_WanderAroundAnchor).
 void BattleFx_CircleAnchor(union FieldObject *fieldObject) {
   struct OrbitEffect *effect = (struct OrbitEffect *)fieldObject;
   struct OrbitEffect *anchor;
@@ -125,8 +126,8 @@ void BattleFx_CircleAnchor(union FieldObject *fieldObject) {
   }
 }
 
-// Per-frame update: shrinks the object; below half size, puts its position
-// back and removes the update.
+/// Per-frame update: shrinks the object; below half size, puts its position
+/// back and removes the update.
 void BattleFx_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject) {
   struct MotionObject *obj = (struct MotionObject *)fieldObject;
   s32 scale;
@@ -140,14 +141,15 @@ void BattleFx_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject) {
   }
 }
 
-// Abilities: Whirlwind, Gale (field kind 14), cast on a target.
+/// Abilities: Whirlwind, Gale (field kind 14), cast on a target.
 void FieldFx_RunWhirlwindOnTarget(s32 unused) { FieldFx_RunWhirlwind(); }
 
-// Abilities: Whirlwind, Gale (field kind 14).
-//
-// An orb is carried from the caster to 4 pixels above the effect's position
-// over 10 frames, growing from 0.25. Without scene->enabled the target shrinks,
-// and 16 particles appear round the orb, one every 6 frames, and circle it.
+/// Abilities: Whirlwind, Gale (field kind 14).
+///
+/// An orb is carried from the caster to 4 pixels above the effect's position
+/// over 10 frames, growing from 0.25. Without scene->enabled the target
+/// shrinks, and 16 particles appear round the orb, one every 6 frames, and
+/// circle it.
 void FieldFx_RunWhirlwind(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *src = scene->mainObject;

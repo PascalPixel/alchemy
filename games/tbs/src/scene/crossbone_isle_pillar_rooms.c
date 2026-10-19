@@ -1,6 +1,7 @@
-// Crossbone Isle's pillar rooms: pillars to push, jump across, Move and Carry,
-// the switch that raises the water in room 3, and the pools Frost freezes in
-// room 5.
+/// @file
+/// Crossbone Isle's pillar rooms: pillars to push, jump across, Move and Carry,
+/// the switch that raises the water in room 3, and the pools Frost freezes in
+/// room 5.
 #include "script.h"
 #include "game_state.h"
 #include "map_scroll.h"
@@ -52,11 +53,11 @@
 #include "macros.h"
 
 #define WATER_ACTOR 16
-// Room 3: the water has been raised.
+/// Room 3: the water has been raised.
 #define WATER_RAISED_FLAG FLAG_SCENE_TEMP_00
-// Room 4 keeps FLAG_SCENE_TEMP_00 to 03 for its four pillars' footprints.
-// Room 5: FLAG_SCENE_TEMP_00 to 02 the three pools are frozen, 03 the leader
-// stood on the third when Frost began, 04 the sinking pillar has sunk.
+/// Room 4 keeps FLAG_SCENE_TEMP_00 to 03 for its four pillars' footprints.
+/// Room 5: FLAG_SCENE_TEMP_00 to 02 the three pools are frozen, 03 the leader
+/// stood on the third when Frost began, 04 the sinking pillar has sunk.
 #define FIRST_FROZEN_POOL_FLAG FLAG_SCENE_TEMP_00
 #define LEADER_ON_THIRD_POOL_FLAG FLAG_SCENE_TEMP_03
 #define PILLAR_SUNK_FLAG FLAG_SCENE_TEMP_04
@@ -77,8 +78,8 @@ struct MapCellFields {
 // Shared source is included here in ROM order.
 #include "common/map_panel.h"
 
-// Wait up to sixty frames for landing, then stop vertical movement on the
-// ground.
+/// Wait up to sixty frames for landing, then stop vertical movement on the
+/// ground.
 static void
 CrossboneIslePillarRooms_SettleActorOnGround(struct FieldActor *actor) {
   s32 remainingFrames = 60;
@@ -99,8 +100,8 @@ CrossboneIslePillarRooms_SettleActorOnGround(struct FieldActor *actor) {
   actor->y.fixed = actor->terrainHeight;
 }
 
-// Wait until the actor reaches the ground or height limit, then stop its
-// descent.
+/// Wait until the actor reaches the ground or height limit, then stop its
+/// descent.
 static void
 CrossboneIslePillarRooms_StopAtGroundOrHeight(struct FieldActor *actor,
                                               s32 limit) {
@@ -124,7 +125,7 @@ CrossboneIslePillarRooms_StopAtGroundOrHeight(struct FieldActor *actor,
   actor->targetY = ACTOR_NO_TARGET;
 }
 
-// Find the actor's footprint dimensions, grid position, and map-layer origin.
+/// Find the actor's footprint dimensions, grid position, and map-layer origin.
 static s32
 CrossboneIslePillarRooms_QueryFootprint(s32 id, u32 *width, u32 *depth,
                                         struct StagedActorProbe *probe,
@@ -185,7 +186,7 @@ CrossboneIslePillarRooms_QueryFootprint(s32 id, u32 *width, u32 *depth,
   return 1;
 }
 
-// Draw the raised pillar's footprint and put its actor under the leader.
+/// Draw the raised pillar's footprint and put its actor under the leader.
 static s32 CrossboneIslePillarRooms_DrawRaisedFootprint(s32 actorId) {
   struct FieldActor *actor = Object_GetById(actorId);
   u32 width, depth;
@@ -218,7 +219,7 @@ static s32 CrossboneIslePillarRooms_DrawRaisedFootprint(s32 actorId) {
   return 1;
 }
 
-// Redraw all seven pillars at the raised water level.
+/// Redraw all seven pillars at the raised water level.
 static inline void CrossboneIslePillarRooms_DrawRaisedPillars(void) {
   CrossboneIslePillarRooms_DrawRaisedFootprint(9);
   CrossboneIslePillarRooms_DrawRaisedFootprint(10);
@@ -229,8 +230,8 @@ static inline void CrossboneIslePillarRooms_DrawRaisedPillars(void) {
   CrossboneIslePillarRooms_DrawRaisedFootprint(15);
 }
 
-// Restore the ground tiles and collision attributes under the actor's
-// footprint.
+/// Restore the ground tiles and collision attributes under the actor's
+/// footprint.
 static s32 CrossboneIslePillarRooms_RestoreGroundFootprint(s32 actorId) {
   struct FieldActor *actor = Object_GetById(actorId);
   u32 width, depth;
@@ -258,7 +259,7 @@ static s32 CrossboneIslePillarRooms_RestoreGroundFootprint(s32 actorId) {
   return 1;
 }
 
-// Read one map cell through DMA, waiting until the transfer finishes.
+/// Read one map cell through DMA, waiting until the transfer finishes.
 static void CrossboneIslePillarRooms_ReadMapCell(s32 layer, s32 x, s32 y,
                                                  struct MapCellFields *dst) {
   struct MapState *map = gMapWork[0];
@@ -277,7 +278,7 @@ static void CrossboneIslePillarRooms_ReadMapCell(s32 layer, s32 x, s32 y,
   }
 }
 
-// Copy the cell's layer, kind, height, and event without replacing its tile.
+/// Copy the cell's layer, kind, height, and event without replacing its tile.
 static void CrossboneIslePillarRooms_SetCellAttributes(s32 layer, s32 x, s32 y,
                                                        struct MapCell *source) {
   struct MapCellFields *src = (struct MapCellFields *)source;
@@ -296,8 +297,8 @@ static void CrossboneIslePillarRooms_SetCellAttributes(s32 layer, s32 x, s32 y,
   }
 }
 
-// Find the next terrain ledge and stop the falling actor at its projected
-// height.
+/// Find the next terrain ledge and stop the falling actor at its projected
+/// height.
 static s32 CrossboneIslePillarRooms_LowerActorToLedge(s32 id, s32 far) {
   struct FieldActor *actor = Object_GetById(id);
   s32 found;
@@ -361,7 +362,7 @@ static s32 CrossboneIslePillarRooms_LowerActorToLedge(s32 id, s32 far) {
   return found;
 }
 
-// Shrink the pillar and lower its height for up to thirty-two frames.
+/// Shrink the pillar and lower its height for up to thirty-two frames.
 static void CrossboneIslePillarRooms_ShrinkPillar(s32 index) {
   struct FieldActor *actor = Object_GetById(index);
   u32 elapsedFrames;
@@ -383,7 +384,7 @@ static void CrossboneIslePillarRooms_ShrinkPillar(s32 index) {
   }
 }
 
-// Spawn the unused particle near the leader once every four frames.
+/// Spawn the unused particle near the leader once every four frames.
 UNUSED static void CrossboneIslePillarRooms_SpawnUnusedLeaderParticle(void) {
 
   struct FieldActor *leader;
@@ -416,7 +417,8 @@ UNUSED static void CrossboneIslePillarRooms_SpawnUnusedLeaderParticle(void) {
   }
 }
 
-// Jump two cells forward when both the intervening and landing cells permit it.
+/// Jump two cells forward when both the intervening and landing cells permit
+/// it.
 static s32 CrossboneIslePillarRooms_TryJumpAcrossPillar(void) {
   struct FieldActor *leader;
   u8 *flags;
@@ -488,8 +490,8 @@ static s32 CrossboneIslePillarRooms_TryJumpAcrossPillar(void) {
   return 0;
 }
 
-// Move the particle while damping its velocity, growing it, and advancing
-// rotation.
+/// Move the particle while damping its velocity, growing it, and advancing
+/// rotation.
 static void
 CrossboneIslePillarRooms_UpdateDampedParticle(union FieldObject *object) {
   s32 velocityX;
@@ -510,7 +512,7 @@ CrossboneIslePillarRooms_UpdateDampedParticle(union FieldObject *object) {
   object->effect.sprite->rotation += object->effect.spin;
 }
 
-// Apply the actor timer's low four bits to its child sprite value.
+/// Apply the actor timer's low four bits to its child sprite value.
 static s32 CrossboneIslePillarRooms_SetChildValueFromTimer(
     struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -518,7 +520,7 @@ static s32 CrossboneIslePillarRooms_SetChildValueFromTimer(
   return 0;
 }
 
-// Select the entrance table for the current pillar room.
+/// Select the entrance table for the current pillar room.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -540,13 +542,13 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gCrossboneIslePillarRoomsEntrancesOther;
 }
 
-// These rooms have no separate region table.
+/// These rooms have no separate region table.
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
-// Return the shared exits for the pillar rooms.
+/// Return the shared exits for the pillar rooms.
 const u32 *Scene_GetExits(void) { return gCrossboneIslePillarRoomsExits; }
 
-// Select the actor placements for the current pillar room.
+/// Select the actor placements for the current pillar room.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -565,8 +567,8 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gCrossboneIslePillarRoomsPlacementsOther;
 }
 
-// Walking into a pillar in room 1: jump two cells across it where the cells
-// allow, otherwise push it.
+/// Walking into a pillar in room 1: jump two cells across it where the cells
+/// allow, otherwise push it.
 static void Event_JumpOrPushPillar(void) {
   EV_BEGIN();
   if (CrossboneIslePillarRooms_TryJumpAcrossPillar() == 0)
@@ -574,7 +576,7 @@ static void Event_JumpOrPushPillar(void) {
   EV_END();
 }
 
-// Walking into a pillar in rooms 2 and 3: push it if the cell beyond is clear.
+/// Walking into a pillar in rooms 2 and 3: push it if the cell beyond is clear.
 static void Event_PushPillar(void) {
   struct StagedActorProbe out;
 
@@ -604,8 +606,8 @@ static s32 sProbePosition[3];
 static u8 sShakenScroll[12];
 static s32 sShakeChance;
 
-// Randomly substitute the shifted background scroll during the water
-// transition.
+/// Randomly substitute the shifted background scroll during the water
+/// transition.
 static void CrossboneIslePillarRooms_JitterBackgroundScroll(void) {
   u32 line = REG_VCOUNT;
   u32 *src = &((u32 *)gBgScroll)[1];
@@ -624,14 +626,14 @@ static void CrossboneIslePillarRooms_JitterBackgroundScroll(void) {
 
 #define DMA3 ((volatile u32 *)0x040000d4)
 
-// Wait until the DMA channel clears its enable bit.
+/// Wait until the DMA channel clears its enable bit.
 static __inline__ void Dma_Wait(volatile u32 *dma) {
   while (dma[2] & 0x80000000)
     ;
 }
 
-// Copy the three background scroll pairs and shift their vertical offsets by
-// 192 pixels.
+/// Copy the three background scroll pairs and shift their vertical offsets by
+/// 192 pixels.
 static void CrossboneIslePillarRooms_PrepareWaterScroll(void) {
   u32 *destination;
   const u32 *source;
@@ -648,8 +650,8 @@ static void CrossboneIslePillarRooms_PrepareWaterScroll(void) {
   coordinates[5] += 0xc0;
 }
 
-// Reveal the alternate water tiles through a gradually randomized scroll
-// transition.
+/// Reveal the alternate water tiles through a gradually randomized scroll
+/// transition.
 static void CrossboneIslePillarRooms_AnimateWaterLevel(void) {
   s32 waterRaised;
 
@@ -691,8 +693,8 @@ static void CrossboneIslePillarRooms_AnimateWaterLevel(void) {
   Engine_TaskWait(30);
 }
 
-// Searching the switch in room 3: "Isaac flipped the switch." The water rises,
-// or drains, and the pillars stand higher or lower with it.
+/// Searching the switch in room 3: "Isaac flipped the switch." The water rises,
+/// or drains, and the pillars stand higher or lower with it.
 static void Event_FlipWaterSwitch(void) {
   s32 waterRaised;
   struct FieldActor *water;
@@ -748,7 +750,7 @@ static void Event_FlipWaterSwitch(void) {
   EV_END();
 }
 
-// Match a nearby actor's draw priority when it is behind the comparison actor.
+/// Match a nearby actor's draw priority when it is behind the comparison actor.
 static s32
 CrossboneIslePillarRooms_SyncPriorityIfBehind(struct FieldActor *actor,
                                               struct FieldActor *front) {
@@ -773,8 +775,8 @@ CrossboneIslePillarRooms_SyncPriorityIfBehind(struct FieldActor *actor,
   return result;
 }
 
-// Match the comparison actor's draw priority when it overlaps the actor in
-// front.
+/// Match the comparison actor's draw priority when it overlaps the actor in
+/// front.
 static s32
 CrossboneIslePillarRooms_SyncPriorityIfAhead(struct FieldActor *front,
                                              struct FieldActor *actor) {
@@ -802,13 +804,13 @@ CrossboneIslePillarRooms_SyncPriorityIfAhead(struct FieldActor *front,
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 320 to 316 bytes in tbs-en.
 #ifdef UBFIX
-// Keep each moving pillar's priority and collision flags consistent with the
-// leader.
+/// Keep each moving pillar's priority and collision flags consistent with the
+/// leader.
 static void
 CrossboneIslePillarRooms_UpdateActorPriority(union FieldObject *fieldObject) {
 #else
-// Keep each moving pillar's priority and collision flags consistent with the
-// leader.
+/// Keep each moving pillar's priority and collision flags consistent with the
+/// leader.
 static s32
 CrossboneIslePillarRooms_UpdateActorPriority(union FieldObject *fieldObject) {
 #endif
@@ -859,8 +861,8 @@ CrossboneIslePillarRooms_UpdateActorPriority(union FieldObject *fieldObject) {
 #endif
 }
 
-// Sort the four pillars by height and depth, carrying their saved cell state
-// with them.
+/// Sort the four pillars by height and depth, carrying their saved cell state
+/// with them.
 static void CrossboneIslePillarRooms_SortPillarActors(void) {
   u32 i;
   u32 j;
@@ -922,8 +924,8 @@ struct PillarActor {
   u8 motionFlags;
 };
 
-// Move or Carry on one of room 4's pillars, and after each push there: the
-// pillars settle, and their footprints follow them.
+/// Move or Carry on one of room 4's pillars, and after each push there: the
+/// pillars settle, and their footprints follow them.
 static void Event_MovePillar(void) {
   u32 id;
   struct PillarActor *actor;
@@ -1012,8 +1014,8 @@ static void Event_MovePillar(void) {
   CrossboneIslePillarRooms_SortPillarActors();
 }
 
-// Walking into a pillar in room 4: jump across if possible, otherwise push
-// it, and the pillars settle.
+/// Walking into a pillar in room 4: jump across if possible, otherwise push
+/// it, and the pillars settle.
 static void Event_JumpOrPushRoom4Pillar(void) {
   EV_BEGIN();
 #if TBS_PATCH_3
@@ -1033,11 +1035,11 @@ static void Event_JumpOrPushRoom4Pillar(void) {
   EV_END();
 }
 
-// Walking north at room 4's ladder: climb up.
+/// Walking north at room 4's ladder: climb up.
 static void Event_ClimbUp(void) { Field_ClimbUp(); }
 
-// Walking south at room 4's ladder: push the pillar below, jump, or climb
-// down.
+/// Walking south at room 4's ladder: push the pillar below, jump, or climb
+/// down.
 static void Event_PushOrClimbDown(void) {
   struct FieldActor *leader = Object_GetById(0);
   s32 pos[3];
@@ -1053,16 +1055,16 @@ static void Event_PushOrClimbDown(void) {
   }
 }
 
-// Stepping on trigger 40 in room 4: the fade overlay follows the leader, and
-// the leader's rise counter starts.
+/// Stepping on trigger 40 in room 4: the fade overlay follows the leader, and
+/// the leader's rise counter starts.
 static void Event_StartRising(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   ((struct FadeOverlayWork *)WORK_SLOT(36))->actor = leader;
   leader->riseCounter = 1;
 }
 
-// Stepping on trigger 41 in room 4: the overlay lets the leader go, and the
-// rise counter stops.
+/// Stepping on trigger 41 in room 4: the overlay lets the leader go, and the
+/// rise counter stops.
 static void Event_StopRising(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -1073,12 +1075,12 @@ static void Event_StopRising(void) {
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 54 to 52 bytes in tbs-en.
 #ifdef UBFIX
-// Keep the frozen pool's underfoot flag consistent with the leader's height and
-// depth.
+/// Keep the frozen pool's underfoot flag consistent with the leader's height
+/// and depth.
 static void CrossboneIslePillarRooms_UpdateFrozenPoolPriority(
     union FieldObject *fieldObject) {
 #else
-// Put the frozen pool under the leader when it is behind and below the leader.
+/// Put the frozen pool under the leader when it is behind and below the leader.
 static s32 CrossboneIslePillarRooms_UpdateFrozenPoolPriority(
     union FieldObject *fieldObject) {
 #endif
@@ -1098,8 +1100,8 @@ static s32 CrossboneIslePillarRooms_UpdateFrozenPoolPriority(
 #endif
 }
 
-// Remember the frozen pool, install its priority callback, and start its
-// flicker script.
+/// Remember the frozen pool, install its priority callback, and start its
+/// flicker script.
 static void CrossboneIslePillarRooms_FreezePool(s32 id) {
   struct FieldActor *actor;
 
@@ -1118,17 +1120,17 @@ static void CrossboneIslePillarRooms_FreezePool(s32 id) {
   EV_END();
 }
 
-// Frost on the first pool in room 5: it freezes into a pillar of ice.
+/// Frost on the first pool in room 5: it freezes into a pillar of ice.
 static void Event_FreezeFirstPool(void) {
   CrossboneIslePillarRooms_FreezePool(11);
 }
 
-// Frost on the second pool in room 5.
+/// Frost on the second pool in room 5.
 static void Event_FreezeSecondPool(void) {
   CrossboneIslePillarRooms_FreezePool(12);
 }
 
-// Frost begins on the third pool: note whether the leader stands on it.
+/// Frost begins on the third pool: note whether the leader stands on it.
 static void Event_FrostBeginsOnThirdPool(void) {
   struct FieldActor *leader;
   struct FieldActor *pillar;
@@ -1146,8 +1148,8 @@ static void Event_FrostBeginsOnThirdPool(void) {
   }
 }
 
-// Later in the same Frost: the third pool shrinks back, and the pillar beside
-// it (actor 14) rises 32 pixels.
+/// Later in the same Frost: the third pool shrinks back, and the pillar beside
+/// it (actor 14) rises 32 pixels.
 static void Event_FrostRaisesPillar(void) {
   struct FieldActor *pillar;
 
@@ -1163,7 +1165,7 @@ static void Event_FrostRaisesPillar(void) {
   Map_CopyCellAttributes(20, 14, 1, 1, 22, 16);
 }
 
-// Emit growing, rotating particles during the third pool's Frost sequence.
+/// Emit growing, rotating particles during the third pool's Frost sequence.
 static void CrossboneIslePillarRooms_SpawnFrostParticle(void) {
   struct EffectOptions options;
   struct EffectOptions *settings;
@@ -1205,11 +1207,11 @@ static void CrossboneIslePillarRooms_SpawnFrostParticle(void) {
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 172 to 168 bytes in tbs-en.
 #ifdef UBFIX
-// Emit a randomized particle from the thawing pool every eight frames.
+/// Emit a randomized particle from the thawing pool every eight frames.
 static void
 CrossboneIslePillarRooms_SpawnThawParticle(union FieldObject *fieldObject) {
 #else
-// Emit a randomized particle from the thawing pool every eight frames.
+/// Emit a randomized particle from the thawing pool every eight frames.
 static s32
 CrossboneIslePillarRooms_SpawnThawParticle(union FieldObject *fieldObject) {
 #endif
@@ -1249,8 +1251,8 @@ CrossboneIslePillarRooms_SpawnThawParticle(union FieldObject *fieldObject) {
 #endif
 }
 
-// Frost ends on the third pool: unless the leader stood on it, it freezes,
-// and a frozen second pool thaws back to water.
+/// Frost ends on the third pool: unless the leader stood on it, it freezes,
+/// and a frozen second pool thaws back to water.
 static void Event_FreezeThirdPool(void) {
   s32 set;
 
@@ -1293,7 +1295,7 @@ static void Event_FreezeThirdPool(void) {
   }
 }
 
-// Move begins on room 5's sinking pillar: its cell is cleared.
+/// Move begins on room 5's sinking pillar: its cell is cleared.
 static void Event_StartMovingSinkingPillar(void) {
   struct FieldActor *pillar = Object_GetById(10);
   s32 x;
@@ -1308,8 +1310,8 @@ static void Event_StartMovingSinkingPillar(void) {
   EV_END();
 }
 
-// Move on room 5's sinking pillar, and after each push: once it reaches
-// column 16 it sinks two pixels into place for good.
+/// Move on room 5's sinking pillar, and after each push: once it reaches
+/// column 16 it sinks two pixels into place for good.
 static void Event_MoveSinkingPillar(void) {
   struct FieldActor *pillar;
   s32 alreadyLowered;
@@ -1332,7 +1334,7 @@ static void Event_MoveSinkingPillar(void) {
   EV_END();
 }
 
-// Walking into room 5's sinking pillar: push it if the cell beyond is clear.
+/// Walking into room 5's sinking pillar: push it if the cell beyond is clear.
 static void Event_PushSinkingPillar(void) {
   struct StagedActorProbe probe;
 
@@ -1347,7 +1349,7 @@ static void Event_PushSinkingPillar(void) {
   EV_END();
 }
 
-// Select the event table for the current pillar room.
+/// Select the event table for the current pillar room.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -1369,7 +1371,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gCrossboneIslePillarRoomsEventsOther;
 }
 
-// Prepare the lowered actor's collision and draw priority below the leader.
+/// Prepare the lowered actor's collision and draw priority below the leader.
 static void CrossboneIslePillarRooms_PrepLoweredActor(s32 id) {
   struct FieldActor *actor = Object_GetById(id);
 
@@ -1380,8 +1382,8 @@ static void CrossboneIslePillarRooms_PrepLoweredActor(s32 id) {
   actor->sprite->image.priority = 2;
 }
 
-// Restore a previously frozen pillar's mode, map cell, priority hook, and
-// script.
+/// Restore a previously frozen pillar's mode, map cell, priority hook, and
+/// script.
 static void CrossboneIslePillarRooms_RestoreFlaggedPillar(s32 actorId) {
   struct FieldActor *actor;
 
@@ -1400,7 +1402,7 @@ static void CrossboneIslePillarRooms_RestoreFlaggedPillar(s32 actorId) {
   }
 }
 
-// Use terrain layer 2 and install the moving pillar's priority callback.
+/// Use terrain layer 2 and install the moving pillar's priority callback.
 static void CrossboneIslePillarRooms_InitializePillarPriority(s32 id) {
   struct FieldActor *actor = Object_GetById(id);
 
@@ -1414,7 +1416,7 @@ static void CrossboneIslePillarRooms_InitializePillarPriority(s32 id) {
 #endif
 }
 
-// Match the leader's draw priority to a nearby pillar in front.
+/// Match the leader's draw priority to a nearby pillar in front.
 static void CrossboneIslePillarRooms_UpdateLeaderPriority(void) {
   struct FieldActor *hero = Object_GetById(ACTOR_PARTY_LEADER);
   u32 selector;
@@ -1438,8 +1440,8 @@ static void CrossboneIslePillarRooms_UpdateLeaderPriority(void) {
   }
 }
 
-// Restore each room's pillar footprints, water state, and persistent puzzle
-// state.
+/// Restore each room's pillar footprints, water state, and persistent puzzle
+/// state.
 s32 Scene_Initialize(void) {
   struct FieldActor *actor;
   u32 i;
@@ -1562,7 +1564,7 @@ s32 gEffectScript2[] = {
     SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
-// Pixel step by direction: X in the upper halfword, Z in the lower.
+/// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {

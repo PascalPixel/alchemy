@@ -26,24 +26,24 @@
 
 // FLAG_SCENE_TEMP_01: Growth has made the sprout grow.
 
-// Arriving by this entrance also marks Babi's audience as held.
+/// Arriving by this entrance also marks Babi's audience as held.
 enum { ENTRANCE_90 = 90 };
 
-// The sprout at 72, 144, the last of the placements.
+/// The sprout at 72, 144, the last of the placements.
 enum { SPROUT = 16 };
 
-// Where the party can enter Suhalla.
+/// Where the party can enter Suhalla.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSuhallaEntrances;
 }
 
-// Suhalla has no regions.
+/// Suhalla has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-// Where each exit leads.
+/// Where each exit leads.
 const u32 *Scene_GetExits(void) { return gSuhallaExits; }
 
-// The townsfolk, who stand elsewhere after Babi's audience.
+/// The townsfolk, who stand elsewhere after Babi's audience.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gSuhallaPlacementsLater;
@@ -51,7 +51,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gSuhallaPlacements;
 }
 
-// A villager asks "Are you trying to get to Lalivero?" and answers yes or no.
+/// A villager asks "Are you trying to get to Lalivero?" and answers yes or no.
 static void Event_AskIfGoingToLalivero(s32 actorId) {
   s32 firstMessage = MsgSuhallaTryingGetLalivero;
   Engine_EventSetMessage(firstMessage);
@@ -65,8 +65,8 @@ static void Event_AskIfGoingToLalivero(s32 actorId) {
   Engine_EventShowMessage(actorId, 0);
 }
 
-// After Babi's audience a villager asks whether the sandstorm brought the
-// party to Suhalla, and answers yes or no.
+/// After Babi's audience a villager asks whether the sandstorm brought the
+/// party to Suhalla, and answers yes or no.
 static void Event_AskIfBroughtBySandstorm(s32 actorId) {
   s32 firstMessage = MsgSuhallaBroughtSuhallaSandstorm;
   Engine_EventSetMessage(firstMessage);
@@ -80,15 +80,15 @@ static void Event_AskIfBroughtBySandstorm(s32 actorId) {
   Engine_EventShowMessage(actorId, 0);
 }
 
-// Growth on the sprout: the plant grows, and its map cell takes the
-// attributes of the grown plant's cell.
+/// Growth on the sprout: the plant grows, and its map cell takes the
+/// attributes of the grown plant's cell.
 static void Event_GrowSprout(void) {
   Map_CopyCellAttributes(25, 9, 1, 1, 4, 9);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
 }
 
-// The leader walks north into a doorway: the door opens, the leader steps
-// through and the party leaves by that exit.
+/// The leader walks north into a doorway: the door opens, the leader steps
+/// through and the party leaves by that exit.
 static void Event_EnterDoor(void) {
   struct EventWork *work = gEventWork;
   s32 exitTrigger = work->touchedTrigger;
@@ -103,7 +103,7 @@ static void Event_EnterDoor(void) {
   Engine_EventRequestExit(exitTrigger);
 }
 
-// The same through the wide door of trigger 2.
+/// The same through the wide door of trigger 2.
 static void Event_EnterWideDoor(void) {
   struct EventWork *work = gEventWork;
   s32 exitTrigger = work->touchedTrigger;
@@ -117,8 +117,8 @@ static void Event_EnterWideDoor(void) {
   Engine_EventRequestExit(exitTrigger);
 }
 
-// The doors, the townsfolk, the treasure and the sprout, before or after
-// Babi's audience.
+/// The doors, the townsfolk, the treasure and the sprout, before or after
+/// Babi's audience.
 const struct SceneEvent *Scene_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gSuhallaEventsLater;
@@ -126,8 +126,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gSuhallaEvents;
 }
 
-// Sets Suhalla up as the party enters, with the sprout grown if Growth was
-// used on it.
+/// Sets Suhalla up as the party enters, with the sprout grown if Growth was
+/// used on it.
 s32 Scene_Initialize(void) {
   struct EventWork *work;
 
@@ -210,7 +210,7 @@ struct ScenePlacement gSuhallaPlacementsLater[] = {
     { SCENE_TABLE_END },
 };
 
-// The cell each door's opening is drawn at, by trigger.
+/// The cell each door's opening is drawn at, by trigger.
 s16 gSuhallaDoorCells[][2] = {
     { 0, 0 }, { 8, 7 }, { 15, 5 }, { 5, 16 }, { 13, 15 }, { 18, 16 },
 };

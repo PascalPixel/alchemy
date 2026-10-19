@@ -1,6 +1,7 @@
-// Tolbi's interiors: the houses, inns, shops and sanctum of the festival
-// town. Like the town outside, the rooms change with the Colosso story
-// flags: the festival, finals day and the quiet after Colosso.
+/// @file
+/// Tolbi's interiors: the houses, inns, shops and sanctum of the festival
+/// town. Like the town outside, the rooms change with the Colosso story
+/// flags: the festival, finals day and the quiet after Colosso.
 
 #include "game_state.h"
 #include "unit/scene/tolbi_interiors.h"
@@ -31,7 +32,7 @@
 #define TOLBI_INTERIORS_SOUTH_ROOM_CAMERA_MAX_Z 936
 #endif
 
-// The shop rows and door triggers used by the room event tables below.
+/// The shop rows and door triggers used by the room event tables below.
 enum {
   TOLBI_INTERIORS_WEAPON_SHOP = 26,
   TOLBI_INTERIORS_ARMOR_SHOP = 27,
@@ -40,8 +41,8 @@ enum {
   TOLBI_INTERIORS_ACTOR_SLOT_END = 66
 };
 
-// Asks a yes/no question, then answers with the message after the question
-// for yes or the one after that for no.
+/// Asks a yes/no question, then answers with the message after the question
+/// for yes or the one after that for no.
 static inline void TolbiInteriors_AskYesNo(s32 question, s32 speaker) {
   Engine_EventSetMessage(question);
   Engine_EventOpenMessage(speaker, 0);
@@ -54,16 +55,16 @@ static inline void TolbiInteriors_AskYesNo(s32 question, s32 speaker) {
   Engine_EventShowMessage(speaker, 0);
 }
 
-// The scene's entrances.
+/// The scene's entrances.
 u8 *TolbiInteriors_GetEntrances(void) { return gTolbiInteriorsEntrances; }
 
-// The interiors have no regions.
+/// The interiors have no regions.
 s32 TolbiInteriors_GetRegions(void) { return 0; }
 
-// The scene's exits.
+/// The scene's exits.
 u8 *TolbiInteriors_GetExits(void) { return gTolbiInteriorsExits; }
 
-// After Colosso the rooms hold a different crowd.
+/// After Colosso the rooms hold a different crowd.
 s32 TolbiInteriors_SelectPlacements(void) {
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
     return (s32)gTolbiInteriorsPlacementsAfterColosso;
@@ -72,14 +73,14 @@ s32 TolbiInteriors_SelectPlacements(void) {
 }
 
 #if TBS_PATCH_4
-// The Spanish and Italian editions add a question on finals day: was Babi
-// missing at all, since he showed himself at the finals?
+/// The Spanish and Italian editions add a question on finals day: was Babi
+/// missing at all, since he showed himself at the finals?
 static void TolbiInteriors_AskWhetherBabiWasMissing(s32 speaker) {
   TolbiInteriors_AskYesNo(MsgTolbiInteriorsBabiShowedHimselfAtFinals, speaker);
 }
 #endif
 
-// Picks the event table for the current point in the Colosso story.
+/// Picks the event table for the current point in the Colosso story.
 u8 *TolbiInteriors_SelectEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
     return gTolbiInteriorsEventsAfterColosso;
@@ -90,7 +91,7 @@ u8 *TolbiInteriors_SelectEvents(void) {
   return gTolbiInteriorsEventsFestival;
 }
 
-// Leaves through a window transition of 24 frames. No event uses it.
+/// Leaves through a window transition of 24 frames. No event uses it.
 UNUSED static void TolbiInteriors_ExitThroughWindow(void) {
   struct EventWork *work = gEventWork;
 
@@ -99,8 +100,8 @@ UNUSED static void TolbiInteriors_ExitThroughWindow(void) {
   Engine_EventRequestExit();
 }
 
-// Walking into one of the four doors at triggers 14 to 17: every placed
-// actor stops, the door opens and the leader walks through it.
+/// Walking into one of the four doors at triggers 14 to 17: every placed
+/// actor stops, the door opens and the leader walks through it.
 static void TolbiInteriors_EnterDoor(void) {
   u32 actorId;
   struct FieldActor *actor;
@@ -129,10 +130,10 @@ static void TolbiInteriors_EnterDoor(void) {
   Engine_EventRequestExit(*trigger);
 }
 
-// After Colosso, entering by entrance 19: a woman finds something on the
-// floor ("Hey, what's this?"), is startled to see the party and hides it in
-// the barrel behind the trash pile. The thing is a Lucky Medal, found later in
-// that barrel.
+/// After Colosso, entering by entrance 19: a woman finds something on the
+/// floor ("Hey, what's this?"), is startled to see the party and hides it in
+/// the barrel behind the trash pile. The thing is a Lucky Medal, found later in
+/// that barrel.
 static void TolbiInteriors_WatchWomanHideMedal(void) {
   struct FieldActor *sparkle;
 
@@ -200,8 +201,8 @@ static void TolbiInteriors_WatchWomanHideMedal(void) {
   Engine_EventEnd();
 }
 
-// After Colosso, entering by entrance 16: three sailors argue about their
-// captain, who won't sail the ship.
+/// After Colosso, entering by entrance 16: three sailors argue about their
+/// captain, who won't sail the ship.
 static void TolbiInteriors_WatchSailorsArgue(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiHeWontSailShipEven);
@@ -230,11 +231,11 @@ static void TolbiInteriors_WatchSailorsArgue(void) {
   Engine_EventEnd();
 }
 
-// Sets up the rooms on entry. After Colosso: a row of three map cells takes
-// new attributes, two of the sailors are drawn at a fixed priority, the medal
-// woman stands where she hid the medal, the two short scenes play once each
-// on their entrances, and the would-be warrior and actor 36 have left once
-// the docks refunded the tickets.
+/// Sets up the rooms on entry. After Colosso: a row of three map cells takes
+/// new attributes, two of the sailors are drawn at a fixed priority, the medal
+/// woman stands where she hid the medal, the two short scenes play once each
+/// on their entrances, and the would-be warrior and actor 36 have left once
+/// the docks refunded the tickets.
 s32 TolbiInteriors_ApplyEntryState(void) {
   s32 clearedPriorityFlags;
   struct FieldActor *actor;
@@ -278,8 +279,8 @@ s32 TolbiInteriors_ApplyEntryState(void) {
   return 0;
 }
 
-// The item shopkeeper: from across the counter (the leader facing west) opens
-// shop 28; from elsewhere talks about the finals.
+/// The item shopkeeper: from across the counter (the leader facing west) opens
+/// shop 28; from elsewhere talks about the finals.
 static void TolbiInteriors_TalkToItemShopkeeper(s32 speaker) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_WEST) {
@@ -295,8 +296,8 @@ static void TolbiInteriors_TalkToItemShopkeeper(s32 speaker) {
   }
 }
 
-// The weapon shopkeeper: across the counter (the leader facing north)
-// opens the shop; otherwise talks about Colosso.
+/// The weapon shopkeeper: across the counter (the leader facing north)
+/// opens the shop; otherwise talks about Colosso.
 static void TolbiInteriors_TalkToWeaponShopkeeper(s32 speaker) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
@@ -315,8 +316,8 @@ static void TolbiInteriors_TalkToWeaponShopkeeper(s32 speaker) {
   }
 }
 
-// The armor shopkeeper: across the counter (the leader facing north)
-// opens the shop; otherwise talks about the finals.
+/// The armor shopkeeper: across the counter (the leader facing north)
+/// opens the shop; otherwise talks about the finals.
 static void TolbiInteriors_TalkToArmorShopkeeper(s32 speaker) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
@@ -335,14 +336,14 @@ static void TolbiInteriors_TalkToArmorShopkeeper(s32 speaker) {
   }
 }
 
-// The chef asks whether the party watched Colosso, which he missed.
+/// The chef asks whether the party watched Colosso, which he missed.
 static void TolbiInteriors_TalkToChef(s32 speaker) {
   Engine_EventBegin();
   TolbiInteriors_AskYesNo(MsgTolbiLookLikeWarrior, speaker);
   Engine_EventEnd();
 }
 
-// After Colosso, a waiter grumbles about the chef's bad mood.
+/// After Colosso, a waiter grumbles about the chef's bad mood.
 static void TolbiInteriors_TalkToWaiter(s32 speaker) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiGrrrChefInBadMood);
@@ -350,16 +351,16 @@ static void TolbiInteriors_TalkToWaiter(s32 speaker) {
   Engine_EventEnd();
 }
 
-// During the festival, a resident offers the party a bed.
+/// During the festival, a resident offers the party a bed.
 static void TolbiInteriors_TalkToHost(s32 speaker) {
   Engine_EventBegin();
   TolbiInteriors_AskYesNo(MsgTolbiWantStay, speaker);
   Engine_EventEnd();
 }
 
-// The woman who hid the Lucky Medal. Until the party takes it from the
-// barrel she teases; once it is gone she greets them, startled, the first
-// time, and then claims she is fine.
+/// The woman who hid the Lucky Medal. Until the party takes it from the
+/// barrel she teases; once it is gone she greets them, startled, the first
+/// time, and then claims she is fine.
 static void TolbiInteriors_TalkToMedalWoman(s32 speaker) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_TOLBI_INTERIORS_MEDAL_TAKEN) == 0) {
@@ -379,7 +380,7 @@ static void TolbiInteriors_TalkToMedalWoman(s32 speaker) {
   Engine_EventEnd();
 }
 
-// Mind Read on the medal woman gives the hiding place away.
+/// Mind Read on the medal woman gives the hiding place away.
 static void TolbiInteriors_ReadMedalWomanMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_INTERIORS_MEDAL_MISSED) == 0) {
@@ -391,7 +392,7 @@ static void TolbiInteriors_ReadMedalWomanMind(void) {
   Engine_EventEnd();
 }
 
-// The angry sailor complains the ships won't sail after Colosso.
+/// The angry sailor complains the ships won't sail after Colosso.
 static void TolbiInteriors_TalkToAngrySailor(s32 speaker) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiGrrrScamWhyWontThey);
@@ -400,15 +401,15 @@ static void TolbiInteriors_TalkToAngrySailor(s32 speaker) {
   Engine_EventEnd();
 }
 
-// After Colosso, the would-be warrior asks whether the party remembers him.
+/// After Colosso, the would-be warrior asks whether the party remembers him.
 static void TolbiInteriors_TalkToWouldBeWarrior(s32 speaker) {
   Engine_EventBegin();
   TolbiInteriors_AskYesNo(MsgTolbiWarriorRemember, speaker);
   Engine_EventEnd();
 }
 
-// The priest: across the counter (the leader facing north) opens the
-// sanctum; otherwise talks about the festival.
+/// The priest: across the counter (the leader facing north) opens the
+/// sanctum; otherwise talks about the festival.
 static void TolbiInteriors_TalkToPriest(s32 speaker) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
@@ -427,7 +428,7 @@ static void TolbiInteriors_TalkToPriest(s32 speaker) {
   }
 }
 
-// An actor that squashes and stretches twice, then rests 40 frames.
+/// An actor that squashes and stretches twice, then rests 40 frames.
 s32 gTolbiInteriorsSquashStretch[] = {
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x10000),

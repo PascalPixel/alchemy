@@ -4,8 +4,8 @@
 // Babi Lighthouse, Crossbone Isle, Tret's interiors, the Tunnel Ruins and Venus
 // Lighthouse.
 
-// An effect's update hook: move by its velocity, which loses an eighteenth of
-// its x and a sixteenth of its z each frame, and grow and spin at its rates.
+/// An effect's update hook: move by its velocity, which loses an eighteenth of
+/// its x and a sixteenth of its z each frame, and grow and spin at its rates.
 static void Effect_AdvanceMotion(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
 

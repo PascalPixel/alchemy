@@ -1,14 +1,15 @@
-// Part of field.c, the field object, compiled only through it.
-// Timed map effects: tile animation, the blend script, palette cycles.
+/// @file
+/// Part of field.c, the field object, compiled only through it.
+/// Timed map effects: tile animation, the blend script, palette cycles.
 
 #include "../field_internal.h"
 
-// Each frame: runs the 16 tile animation channels. A channel script is
-// groups of four halfwords (source tile, count, destination tile, frames to
-// wait) that copy tiles into VRAM; 0xfeNN jumps to halfword offset NN * 2,
-// 0xfeff stops, and 0xffff loops to the start.
-// The retries stay gotos: as an inner for (;;) loop with continue and break,
-// loop.c reshapes the channel loop.
+/// Each frame: runs the 16 tile animation channels. A channel script is
+/// groups of four halfwords (source tile, count, destination tile, frames to
+/// wait) that copy tiles into VRAM; 0xfeNN jumps to halfword offset NN * 2,
+/// 0xfeff stops, and 0xffff loops to the start.
+/// The retries stay gotos: as an inner for (;;) loop with continue and break,
+/// loop.c reshapes the channel loop.
 void MapAnimation_Update(void) {
   // Each channel is written (mapState->anim + channelIndex): as
   // mapState->anim[channelIndex], 78 of 119 instructions differ in tbs-en, and
@@ -72,7 +73,7 @@ void MapAnimation_Update(void) {
   }
 }
 
-// Resumes tile animation channel no.
+/// Resumes tile animation channel no.
 void Map_ClearLayerEntryFlag(u32 channelIndex) {
   struct MapState *mapState = gMapWork[0];
   struct MapAnimation *channel = &mapState->anim[channelIndex];
@@ -80,7 +81,7 @@ void Map_ClearLayerEntryFlag(u32 channelIndex) {
   channel->paused = 0;
 }
 
-// Pauses tile animation channel no.
+/// Pauses tile animation channel no.
 void Map_SetLayerEntryFlag(u32 channelIndex) {
   struct MapState *mapState = gMapWork[0];
   struct MapAnimation *channel = &mapState->anim[channelIndex];
@@ -88,8 +89,8 @@ void Map_SetLayerEntryFlag(u32 channelIndex) {
   channel->paused = 1;
 }
 
-// Starts the tile animation channels a map's animation script lists: each
-// 0xfdNN marker starts channel NN & 15 there (paused when bit 7 is set).
+/// Starts the tile animation channels a map's animation script lists: each
+/// 0xfdNN marker starts channel NN & 15 there (paused when bit 7 is set).
 void MapAnimation_StartChannels(const u16 *script) {
   struct MapState *mapState;
   s32 channelsStarted;
@@ -119,23 +120,23 @@ void MapAnimation_StartChannels(const u16 *script) {
     Scheduler_AddOrUpdateCallback(MapAnimation_Update, 0xc80);
 }
 
-// Suspends the tile animations, unless a BG1 animation is running.
+/// Suspends the tile animations, unless a BG1 animation is running.
 void Map_EnableUpdateCallback(void) {
   if (((struct MapScrollWork *)gMapWork[0])->animationActive == 0)
     Scheduler_SuspendTasks(MapAnimation_Update);
 }
 
-// Resumes the tile animations, unless a BG1 animation is running.
+/// Resumes the tile animations, unless a BG1 animation is running.
 void Map_DisableUpdateCallback(void) {
   if (((struct MapScrollWork *)gMapWork[0])->animationActive == 0)
     Scheduler_ResumeTasks(MapAnimation_Update);
 }
 
-// Each frame: runs the map's blend script. A 0x3NNN command sets BLDCNT;
-// any other sets BLDALPHA (or BLDY when not alpha blending) and waits the
-// halfword after it in frames; 0xfeNN jumps, 0xfeff stops and 0xffff loops.
-// The retries stay gotos: as a for (;;) loop with continue, loop.c hoists
-// blendControl's address and 118 bytes of tbs-en's code change.
+/// Each frame: runs the map's blend script. A 0x3NNN command sets BLDCNT;
+/// any other sets BLDALPHA (or BLDY when not alpha blending) and waits the
+/// halfword after it in frames; 0xfeNN jumps, 0xfeff stops and 0xffff loops.
+/// The retries stay gotos: as a for (;;) loop with continue, loop.c hoists
+/// blendControl's address and 118 bytes of tbs-en's code change.
 void DisplayBlend_RunScript(void) {
   struct MapState *mapState = gMapWork[0];
   struct BlendScriptState *blend;
@@ -188,7 +189,7 @@ again:
   blend->delay = delayOrJumpIndex + 0xffff;
 }
 
-// Starts a map's blend script, unless it is empty.
+/// Starts a map's blend script, unless it is empty.
 void DisplayBlend_StartScript(u16 *script) {
   struct BlendScriptState *blend;
   s32 hasScript;
@@ -210,18 +211,18 @@ void DisplayBlend_StartScript(u16 *script) {
     Scheduler_AddOrUpdateCallback(DisplayBlend_RunScript, 0xc80);
 }
 
-// Suspends the blend script.
+/// Suspends the blend script.
 void DisplayBlend_EnableRunScript(void) {
   Scheduler_SuspendTasks(DisplayBlend_RunScript);
 }
 
-// Resumes the blend script.
+/// Resumes the blend script.
 void DisplayBlend_DisableRunScript(void) {
   Scheduler_ResumeTasks(DisplayBlend_RunScript);
 }
 
-// Allocates the palette cycling queue (heap slot 28) with its four entries
-// cleared.
+/// Allocates the palette cycling queue (heap slot 28) with its four entries
+/// cleared.
 UNUSED void PaletteQueue_Initialize(void) {
   struct PaletteSnapshotWork *paletteCycles;
   struct PaletteSnapshot *cycle;
@@ -244,9 +245,9 @@ UNUSED void PaletteQueue_Initialize(void) {
   paletteCycles->count = 0;
 }
 
-// Adds a palette cycle: colorCount colours of background palette paletteBank
-// from firstColor, rotated by one every delay + 1 frames. Returns 0, or -1 when
-// all four cycles are taken.
+/// Adds a palette cycle: colorCount colours of background palette paletteBank
+/// from firstColor, rotated by one every delay + 1 frames. Returns 0, or -1
+/// when all four cycles are taken.
 UNUSED s32 PaletteQueue_Add(s16 paletteBank, s16 firstColor, s16 delay,
                             s16 colorCount) {
   struct PaletteSnapshotWork *paletteQueue;
@@ -273,19 +274,19 @@ UNUSED s32 PaletteQueue_Add(s16 paletteBank, s16 firstColor, s16 delay,
   return 0;
 }
 
-// Stops the palette cycles and frees their queue (heap slot 28).
+/// Stops the palette cycles and frees their queue (heap slot 28).
 UNUSED void PaletteQueue_Stop(void) {
   Scheduler_RemoveCallback(PaletteQueue_StepCycles);
   Runtime_ReleaseHeapBlock(28);
 }
 
-// Starts running the palette cycles each frame.
+/// Starts running the palette cycles each frame.
 UNUSED void PaletteQueue_Start(void) {
   Scheduler_AddOrUpdateCallback(PaletteQueue_StepCycles, 0xc80);
 }
 
-// Each frame: advances each palette cycle whose timer has run out by one
-// colour, writing the rotated colours back to the palette.
+/// Each frame: advances each palette cycle whose timer has run out by one
+/// colour, writing the rotated colours back to the palette.
 void PaletteQueue_StepCycles(void) {
   struct PaletteSnapshotWork *paletteQueue = gPaletteWork;
   u8 cycleIndex;

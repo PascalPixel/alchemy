@@ -30,29 +30,29 @@
 // home...").
 
 enum ValeInteriorsActor {
-  // "Isaac, please take care of my grandson, Garet."
+  /// "Isaac, please take care of my grandson, Garet."
   ACTOR_GARETS_GRANDFATHER = 8,
-  // "Grandma! What's the matter? Are you choking?"
+  /// "Grandma! What's the matter? Are you choking?"
   ACTOR_GARETS_GRANDMOTHER = 9,
-  // "I'm proud of you, Garet. My own son...on such an important quest!"
+  /// "I'm proud of you, Garet. My own son...on such an important quest!"
   ACTOR_GARETS_FATHER = 10,
-  // "As mothers, Dora and I will always worry about you."
+  /// "As mothers, Dora and I will always worry about you."
   ACTOR_GARETS_MOTHER = 11,
   ACTOR_ITEM_SHOPKEEPER = 20,
   ACTOR_WEAPON_SHOPKEEPER = 21,
   ACTOR_ARMOR_SHOPKEEPER = 22,
-  // Three sprites drifting up from Garet's sleeping grandfather.
+  /// Three sprites drifting up from Garet's sleeping grandfather.
   ACTOR_FIRST_DRIFTING_SPRITE = 23
 };
 
-// Forward declarations.
+/// Forward declarations.
 static void Event_GaretComesHome(void);
 static void ValeInteriors_SpawnDriftingSprite(void);
 
 // Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
-// Move and grow the sprite, using timer/work as signed 8.8 pixel steps.
+/// Move and grow the sprite, using timer/work as signed 8.8 pixel steps.
 static s32
 ValeInteriors_AdvanceDriftingSprite(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -67,22 +67,22 @@ ValeInteriors_AdvanceDriftingSprite(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-// Return the entrance positions and view bounds for the Vale interiors.
+/// Return the entrance positions and view bounds for the Vale interiors.
 struct SceneEntrance *ValeInteriors_GetEntrances(void) {
   return gValeInteriors_Entrances;
 }
 
-// This overlay has no separate region table.
+/// This overlay has no separate region table.
 struct SceneRegion *ValeInteriors_GetRegions(void) { return NULL; }
 
-// On the stormy night, the doors lead out into the storm.
+/// On the stormy night, the doors lead out into the storm.
 u32 *ValeInteriors_GetExits(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0)
     return gValeInteriors_StormExits;
   return gValeInteriors_Exits;
 }
 
-// Prepare placements for the first departure or the later return to Vale.
+/// Prepare placements for the first departure or the later return to Vale.
 struct ScenePlacement *ValeInteriors_GetPlacements(void) {
   struct ScenePlacement *table;
 
@@ -97,7 +97,7 @@ struct ScenePlacement *ValeInteriors_GetPlacements(void) {
   return table;
 }
 
-// Select dialogue and triggers for the current visit to Vale.
+/// Select dialogue and triggers for the current visit to Vale.
 struct SceneEvent *ValeInteriors_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0)
     return gValeInteriors_StormEvents;
@@ -108,7 +108,7 @@ struct SceneEvent *ValeInteriors_GetEvents(void) {
   return gValeInteriors_Events;
 }
 
-// A villager asks whether Isaac knew Kraden came to Vale to study Mt. Aleph.
+/// A villager asks whether Isaac knew Kraden came to Vale to study Mt. Aleph.
 static void Event_AskAboutKradensStudies(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeKradenCameToStudyMt);
@@ -117,7 +117,7 @@ static void Event_AskAboutKradensStudies(void) {
   Engine_EventEnd();
 }
 
-// A villager asks Isaac to help scare Kraden's visitors.
+/// A villager asks Isaac to help scare Kraden's visitors.
 static void Event_AskToScareVisitors(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeLetsScareKradensVisitors);
@@ -126,8 +126,8 @@ static void Event_AskToScareVisitors(void) {
   Engine_EventEnd();
 }
 
-// After the party has left Vale, the item shopkeeper gives Isaac a Herb as a
-// farewell gift, and afterwards urges him to save Jenna.
+/// After the party has left Vale, the item shopkeeper gives Isaac a Herb as a
+/// farewell gift, and afterwards urges him to save Jenna.
 static void ValeInteriors_GiveFarewellHerb(void) {
   s32 gift;
 
@@ -149,7 +149,7 @@ static void ValeInteriors_GiveFarewellHerb(void) {
   Engine_EventEnd();
 }
 
-// A villager tells of the culprits' strange powers and asks about them.
+/// A villager tells of the culprits' strange powers and asks about them.
 static void Event_AskAboutCulpritsPowers(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeTheCulpritsHadStrangePowers);
@@ -157,8 +157,8 @@ static void Event_AskAboutCulpritsPowers(void) {
   Engine_EventEnd();
 }
 
-// Back from Kalay, Garet's father asks whether Isaac heard them talking about
-// Dora.
+/// Back from Kalay, Garet's father asks whether Isaac heard them talking about
+/// Dora.
 static void Event_AskAboutDora(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeDidYouHearAboutDora);
@@ -166,7 +166,7 @@ static void Event_AskAboutDora(void) {
   Engine_EventEnd();
 }
 
-// Garet's mother hopes the travelers did not get sick on the way.
+/// Garet's mother hopes the travelers did not get sick on the way.
 static void Event_WorryAboutTravelersHealth(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeHopeDidntGet);
@@ -174,7 +174,8 @@ static void Event_WorryAboutTravelersHealth(void) {
   Engine_EventEnd();
 }
 
-// Stop any lightning effect, close the window transition, and request the exit.
+/// Stop any lightning effect, close the window transition, and request the
+/// exit.
 static void ValeInteriors_RequestWindowExit(s32 exitId) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0)
     FieldFx_StopLightning();
@@ -186,33 +187,33 @@ static void ValeInteriors_RequestWindowExit(s32 exitId) {
   Engine_EventRequestExit(exitId);
 }
 
-// Leave through the doorway connected to exit 1.
+/// Leave through the doorway connected to exit 1.
 static void Event_LeaveByDoor1(void) { ValeInteriors_RequestWindowExit(1); }
 
-// Leave through the doorway connected to exit 2.
+/// Leave through the doorway connected to exit 2.
 static void Event_LeaveByDoor2(void) { ValeInteriors_RequestWindowExit(2); }
 
-// Leave through the doorway connected to exit 3.
+/// Leave through the doorway connected to exit 3.
 static void Event_LeaveByDoor3(void) { ValeInteriors_RequestWindowExit(3); }
 
-// Leave through the doorway connected to exit 4.
+/// Leave through the doorway connected to exit 4.
 static void Event_LeaveByDoor4(void) { ValeInteriors_RequestWindowExit(4); }
 
-// Leave through the doorway connected to exit 5.
+/// Leave through the doorway connected to exit 5.
 static void Event_LeaveByDoor5(void) { ValeInteriors_RequestWindowExit(5); }
 
-// Leave through the doorway connected to exit 6.
+/// Leave through the doorway connected to exit 6.
 static void Event_LeaveByDoor6(void) { ValeInteriors_RequestWindowExit(6); }
 
-// Leave through the doorway connected to exit 7.
+/// Leave through the doorway connected to exit 7.
 static void Event_LeaveByDoor7(void) { ValeInteriors_RequestWindowExit(7); }
 
-// Leave through the doorway connected to exit 8.
+/// Leave through the doorway connected to exit 8.
 static void Event_LeaveByDoor8(void) { ValeInteriors_RequestWindowExit(8); }
 
-// Arriving in a house: on the stormy night the residents are gone and lightning
-// flashes outside; back from Kalay, entering Garet's house the first time
-// plays his homecoming.
+/// Arriving in a house: on the stormy night the residents are gone and
+/// lightning flashes outside; back from Kalay, entering Garet's house the first
+/// time plays his homecoming.
 s32 ValeInteriors_Initialize(void) {
   struct FieldActor *actor;
   struct EventWork **eventSlot = &gEventWork;
@@ -266,7 +267,7 @@ s32 ValeInteriors_Initialize(void) {
   return 0;
 }
 
-// Open the weapon shop from the counter or speak to its owner.
+/// Open the weapon shop from the counter or speak to its owner.
 static void Event_TalkToWeaponShopkeeper(void) {
   struct FieldActor *leader;
 
@@ -292,7 +293,7 @@ static void Event_TalkToWeaponShopkeeper(void) {
   Engine_EventEnd();
 }
 
-// Open the armor shop from the counter or speak to its owner.
+/// Open the armor shop from the counter or speak to its owner.
 static void Event_TalkToArmorShopkeeper(void) {
   struct FieldActor *actor;
 
@@ -315,7 +316,7 @@ static void Event_TalkToArmorShopkeeper(void) {
   }
 }
 
-// Open the item shop or speak to its owner about the party's departure.
+/// Open the item shop or speak to its owner about the party's departure.
 static void Event_TalkToItemShopkeeper(void) {
   struct FieldActor *actor;
 
@@ -341,7 +342,7 @@ static void Event_TalkToItemShopkeeper(void) {
   }
 }
 
-// Garet's grandparents and father nod.
+/// Garet's grandparents and father nod.
 static inline void ValeInteriors_FamilyNods(void) {
   Engine_ActorSetAnimation(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
   Engine_ActorSetAnimation(ACTOR_GARETS_GRANDMOTHER, ANIM_NOD);
@@ -349,16 +350,16 @@ static inline void ValeInteriors_FamilyNods(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_NOD);
 }
 
-// Start the repeated motion before waiting for the requested animation.
+/// Start the repeated motion before waiting for the requested animation.
 static inline void ValeInteriors_PlayRepeatedAnimationAndWait(s32 actorId,
                                                               s32 animation) {
   Engine_ActorStartRepeatedMotion(actorId, 1);
   Engine_ActorSetAnimationAndWait(actorId, animation);
 }
 
-// Back from Kalay, Garet comes home: his grandfather dozes, his parents argue
-// over whether to look for him, and his grandmother spots him first. Garet
-// introduces Ivan and Mia, the family sees them off, and his father paces.
+/// Back from Kalay, Garet comes home: his grandfather dozes, his parents argue
+/// over whether to look for him, and his grandmother spots him first. Garet
+/// introduces Ivan and Mia, the family sees them off, and his father paces.
 static void Event_GaretComesHome(void) {
   struct FieldActor *driftingSprite;
   struct FieldActor *actor;
@@ -654,7 +655,8 @@ static void Event_GaretComesHome(void) {
   Engine_EventEnd();
 }
 
-// Restart one drifting sprite at frames 10, 20, and 30 of each 180-frame cycle.
+/// Restart one drifting sprite at frames 10, 20, and 30 of each 180-frame
+/// cycle.
 static void ValeInteriors_SpawnDriftingSprite(void) {
   s32 actorId;
   u32 cycleFrame;

@@ -1,5 +1,6 @@
-// Part of field.c, the field object, compiled only through it.
-// Player control: the configured keys and moving objects by the pad.
+/// @file
+/// Part of field.c, the field object, compiled only through it.
+/// Player control: the configured keys and moving objects by the pad.
 
 #include "../field_internal.h"
 
@@ -15,12 +16,12 @@
 #define WORLD_MAP_PROBE_RADIUS 0x80000
 #endif
 
-// Stores value as a halfword.
+/// Stores value as a halfword.
 static __inline__ void Field_StoreHalfword(s16 *address, s32 value) {
   *address = value;
 }
 
-// Stores value in the word that the object's unk6c points at.
+/// Stores value in the word that the object's unk6c points at.
 UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
   struct ObjectRuntime *object = rawObject;
 
@@ -28,11 +29,11 @@ UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
     *(s32 *)object->unk6c = value;
 }
 
-// Handles a shortcut key's assignment: its top two bits choose
-// what it requests (0 Psynergy, 1 an item) and
-// the low 14 bits which one. With flag 0x107 set, or in mode 3 (where L and
-// R give 0xfc88 and 0xfc87), it raises a fixed trigger instead. Returns the
-// request.
+/// Handles a shortcut key's assignment: its top two bits choose
+/// what it requests (0 Psynergy, 1 an item) and
+/// the low 14 bits which one. With flag 0x107 set, or in mode 3 (where L and
+/// R give 0xfc88 and 0xfc87), it raises a fixed trigger instead. Returns the
+/// request.
 u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 assignmentKind = encodedAssignment >> 14;
   u32 requestId = 0x3FFF & encodedAssignment;
@@ -60,9 +61,9 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
   return requestId;
 }
 
-// Checks the keys the player has configured: Select, A and Start set their
-// flag in the event work and return 1; the two shortcut keys pass on their
-// assignment (Field_RequestShortcut). Returns 0 when none is pressed.
+/// Checks the keys the player has configured: Select, A and Start set their
+/// flag in the event work and return 1; the two shortcut keys pass on their
+/// assignment (Field_RequestShortcut). Returns 0 when none is pressed.
 s32 Field_CheckConfiguredKeys(void) {
   struct FieldWork *fieldWork = (struct FieldWork *)gEventWork;
   s32 result = 0;
@@ -86,8 +87,8 @@ s32 Field_CheckConfiguredKeys(void) {
   return result;
 }
 
-// Returns 0 when two spheres overlap: at positions a and b (16.16 pixels)
-// with radii radiusA and radiusB (pixels); -1 otherwise.
+/// Returns 0 when two spheres overlap: at positions a and b (16.16 pixels)
+/// with radii radiusA and radiusB (pixels); -1 otherwise.
 s32 Runtime_CheckRadiusOverlap(s32 *firstPosition, s32 radiusA,
                                s32 *secondPosition, s32 radiusB) {
   const struct FieldPosition *firstPoint =
@@ -107,10 +108,10 @@ s32 Runtime_CheckRadiusOverlap(s32 *firstPosition, s32 radiusA,
   return -1;
 }
 
-// SC_PLAYER: moves the player on the field by the direction pad: walking or
-// running, sliding around walls, pushing movable objects, turning, playing
-// the matching animation and leaving footprints. Also checks the configured
-// keys. Returns 1.
+/// SC_PLAYER: moves the player on the field by the direction pad: walking or
+/// running, sliding around walls, pushing movable objects, turning, playing
+/// the matching animation and leaving footprints. Also checks the configured
+/// keys. Returns 1.
 s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
   struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
 
@@ -455,9 +456,9 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// SC_WORLD: moves the player on the world map by the direction pad, as
-// SC_PLAYER does on the field, and turns the world map camera with the pad.
-// Shallow water (terrain 6) leaves a ripple and terrain 9 hides the shadow.
+/// SC_WORLD: moves the player on the world map by the direction pad, as
+/// SC_PLAYER does on the field, and turns the world map camera with the pad.
+/// Shallow water (terrain 6) leaves a ripple and terrain 9 hides the shadow.
 s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
   struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
 
@@ -744,8 +745,8 @@ update_object:
   return 1;
 }
 
-// SC_KEY_COUNT: checks the configured keys (Field_CheckConfiguredKeys).
-// Returns 1.
+/// SC_KEY_COUNT: checks the configured keys (Field_CheckConfiguredKeys).
+/// Returns 1.
 s32 Field_CheckConfiguredKeysAndCount(struct ScriptInterpreter *interpreter) {
   struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
 
@@ -754,10 +755,10 @@ s32 Field_CheckConfiguredKeysAndCount(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// SC_KEYS: moves an object 8 pixels at a time by the direction pad, with up
-// and down changing its height (y) rather than its depth. Refuses steps
-// into an occupied cell, across a change of collision code, or onto ground
-// too high (up) or too low (down). Returns 1.
+/// SC_KEYS: moves an object 8 pixels at a time by the direction pad, with up
+/// and down changing its height (y) rather than its depth. Refuses steps
+/// into an occupied cell, across a change of collision code, or onto ground
+/// too high (up) or too low (down). Returns 1.
 s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
   struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
 

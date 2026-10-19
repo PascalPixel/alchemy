@@ -40,10 +40,10 @@
 #include "event.h"
 #include "item_ids.h"
 
-// The ruins' first scene (SceneId_TunnelRuins1), in the order of its
-// placements: two pairs of pillars to push or Move, three blocks, three bushes
-// for Whirlwind, two pillars that sink into the floor, and two puddles for
-// Frost, both placed with the first sinking pillar.
+/// The ruins' first scene (SceneId_TunnelRuins1), in the order of its
+/// placements: two pairs of pillars to push or Move, three blocks, three bushes
+/// for Whirlwind, two pillars that sink into the floor, and two puddles for
+/// Frost, both placed with the first sinking pillar.
 enum {
   ACTOR_FIRST_PILLAR_A = ACTOR_FIRST_PLACED,
   ACTOR_FIRST_PILLAR_B,
@@ -61,10 +61,10 @@ enum {
   ACTOR_PUDDLE_B
 };
 
-// The other ruins scenes: a pillar for Douse with a puddle for Frost, two
-// balance platforms with three blocks to Carry onto them, two statues that
-// vanish under Reveal, two pillars to push in the east, and five statues of
-// the lady to Move before the door.
+/// The other ruins scenes: a pillar for Douse with a puddle for Frost, two
+/// balance platforms with three blocks to Carry onto them, two statues that
+/// vanish under Reveal, two pillars to push in the east, and five statues of
+/// the lady to Move before the door.
 enum {
   ACTOR_DOUSE_PILLAR = ACTOR_FIRST_PLACED,
   ACTOR_DOUSE_PUDDLE,
@@ -84,7 +84,7 @@ enum {
   ACTOR_LADY_STATUE_E
 };
 
-// Sprites, as the sheets show them.
+/// Sprites, as the sheets show them.
 enum {
   SPRITE_PUDDLE = 227,
   SPRITE_BUSH = 248,
@@ -115,7 +115,7 @@ static void TunnelRuins_UpdateSecondPillarCells(void);
 static void TunnelRuins_UpdateBlockCells(void);
 static void TunnelRuins_MarkPushPillarCells(void);
 
-// Position record used by the shared radial-effect source below.
+/// Position record used by the shared radial-effect source below.
 struct Vec {
   s32 x;
   s32 y;
@@ -129,7 +129,7 @@ struct Vec {
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-// Refresh the actor presentation after its shrink script finishes.
+/// Refresh the actor presentation after its shrink script finishes.
 static s32
 TunnelRuins_RefreshActorAfterShrinking(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -137,8 +137,8 @@ TunnelRuins_RefreshActorAfterShrinking(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-// Later patches land at the tile center; the base release uses the target
-// pixel.
+/// Later patches land at the tile center; the base release uses the target
+/// pixel.
 static __inline__ s32 TunnelRuins_GetLandingPixel(s32 coordinate) {
 #if TBS_PATCH_1
   return ((coordinate >> 20) << 4) + 8;
@@ -147,8 +147,8 @@ static __inline__ s32 TunnelRuins_GetLandingPixel(s32 coordinate) {
 #endif
 }
 
-// The leader hops over the cell ahead to the target, when that cell is no
-// wall and the target is clear; returns 1 when there is no hop.
+/// The leader hops over the cell ahead to the target, when that cell is no
+/// wall and the target is clear; returns 1 when there is no hop.
 static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   u8 savedMotionFlags = actor->motionFlags;
@@ -189,7 +189,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
   return 1;
 }
 
-// Walking south into a gap: the leader hops 32 pixels across it.
+/// Walking south into a gap: the leader hops 32 pixels across it.
 static void Event_HopSouth(void) {
   struct FieldPosition target;
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -200,7 +200,7 @@ static void Event_HopSouth(void) {
   TunnelRuins_HopLeaderTo(&target);
 }
 
-// Walking north into a gap: the leader hops 32 pixels across it.
+/// Walking north into a gap: the leader hops 32 pixels across it.
 static void Event_HopNorth(void) {
   struct FieldPosition target;
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -211,7 +211,7 @@ static void Event_HopNorth(void) {
   TunnelRuins_HopLeaderTo(&target);
 }
 
-// The fade overlay follows the leader only south of a depth set per room.
+/// The fade overlay follows the leader only south of a depth set per room.
 static void TunnelRuins_UpdateTrackedActor(void) {
   struct FieldActor *leader;
   struct FadeOverlayWork *effectWork;
@@ -316,7 +316,7 @@ static s32 TunnelRuins_PuddleFollowsPillar(union FieldObject *fieldObject) {
 #endif
 }
 
-// Wait up to 60 frames for landing, then stop vertical motion at the terrain.
+/// Wait up to 60 frames for landing, then stop vertical motion at the terrain.
 static void TunnelRuins_WaitForActorToLand(struct FieldActor *actor) {
   s32 remainingFrames = 60;
   s32 terrainHeight;
@@ -345,8 +345,8 @@ static void TunnelRuins_WaitForActorToLand(struct FieldActor *actor) {
 // Shared source is included here in ROM order.
 #include "common/effect_advance.h"
 
-// Walking south off a step: the leader hops 12 pixels forward and slides 16
-// pixels down, kicking up dust behind.
+/// Walking south off a step: the leader hops 12 pixels forward and slides 16
+/// pixels down, kicking up dust behind.
 static void Event_HopDownStep(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   struct EffectOptions options;
@@ -402,7 +402,7 @@ static void Event_HopDownStep(void) {
 // Shared source is included here in ROM order.
 #include "common/effect_radial.h"
 
-// Select the entrance table for the current tunnel ruins scene.
+/// Select the entrance table for the current tunnel ruins scene.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gGameState.scene;
 
@@ -415,7 +415,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTunnelRuinsEntrancesOther;
 }
 
-// Return the region table only for the second ruins scene.
+/// Return the region table only for the second ruins scene.
 const struct SceneRegion *Scene_GetRegions(void) {
   if (gGameState.scene == (s32)&SceneId_TunnelRuins2) {
     return gTunnelRuinsRegions2;
@@ -423,10 +423,10 @@ const struct SceneRegion *Scene_GetRegions(void) {
   return 0;
 }
 
-// Return the tunnel ruins exit table.
+/// Return the tunnel ruins exit table.
 u32 *TunnelRuins_GetExits(void) { return gTunnelRuinsExits; }
 
-// Select the actor placements and prepare their scene state.
+/// Select the actor placements and prepare their scene state.
 struct ScenePlacement *SceneData_SelectAndApplyTableBySceneId(void) {
   struct ScenePlacement *table;
 
@@ -439,7 +439,7 @@ struct ScenePlacement *SceneData_SelectAndApplyTableBySceneId(void) {
   return table;
 }
 
-// Walking into the first pair of pillars pushes them along.
+/// Walking into the first pair of pillars pushes them along.
 static void Event_PushFirstPillars(void) {
   EV_BEGIN();
   Map_CopyCellAttributes(73, 38, 5, 5, 9, 38);
@@ -448,7 +448,7 @@ static void Event_PushFirstPillars(void) {
   EV_END();
 }
 
-// Walking west into a gap: the leader hops 32 pixels across it.
+/// Walking west into a gap: the leader hops 32 pixels across it.
 static void Event_HopWest(void) {
   struct FieldPosition target;
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -459,7 +459,7 @@ static void Event_HopWest(void) {
   TunnelRuins_HopLeaderTo(&target);
 }
 
-// Walking into the second pair of pillars pushes them along.
+/// Walking into the second pair of pillars pushes them along.
 static void Event_PushSecondPillars(void) {
   EV_BEGIN();
   Map_CopyCellAttributes(93, 30, 6, 5, 29, 30);
@@ -468,12 +468,12 @@ static void Event_PushSecondPillars(void) {
   EV_END();
 }
 
-// Walking south off a ledge: the leader jumps down.
+/// Walking south off a ledge: the leader jumps down.
 static void Event_JumpDownLedge(void) {
   FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, 0);
 }
 
-// Walking east into a gap: the leader hops 32 pixels across it.
+/// Walking east into a gap: the leader hops 32 pixels across it.
 static void Event_HopEast(void) {
   struct FieldPosition target;
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -484,7 +484,7 @@ static void Event_HopEast(void) {
   TunnelRuins_HopLeaderTo(&target);
 }
 
-// Walking into the blocks pushes the one in front along.
+/// Walking into the blocks pushes the one in front along.
 static void Event_PushBlocks(void) {
   EV_BEGIN();
   Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
@@ -494,8 +494,8 @@ static void Event_PushBlocks(void) {
   EV_END();
 }
 
-// Walking south at the blocks: the leader hops a gap if there is one, and
-// pushes the block in front otherwise.
+/// Walking south at the blocks: the leader hops a gap if there is one, and
+/// pushes the block in front otherwise.
 static void Event_HopSouthOrPushBlocks(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldPosition target;
@@ -508,9 +508,9 @@ static void Event_HopSouthOrPushBlocks(void) {
   }
 }
 
-// Whirlwind on bush A blows it away. Block C changes state with the bushes:
-// with one of bushes A and B gone its rise counter is 1 and its collision
-// bit 3 is set; with both gone, 0 and clear.
+/// Whirlwind on bush A blows it away. Block C changes state with the bushes:
+/// with one of bushes A and B gone its rise counter is 1 and its collision
+/// bit 3 is set; with both gone, 0 and clear.
 static void Event_BlowAwayBushA(void) {
   u8 *flags;
   u8 value;
@@ -528,7 +528,7 @@ static void Event_BlowAwayBushA(void) {
   }
 }
 
-// Whirlwind on bush B blows it away, as for bush A.
+/// Whirlwind on bush B blows it away, as for bush A.
 static void Event_BlowAwayBushB(void) {
   u8 *flags;
   u8 value;
@@ -546,12 +546,12 @@ static void Event_BlowAwayBushB(void) {
   }
 }
 
-// Whirlwind on bush C blows it away for good.
+/// Whirlwind on bush C blows it away for good.
 static void Event_BlowAwayBushC(void) {
   FLAG_SET(FLAG_TUNNEL_RUINS_BUSH_BLOWN_AWAY);
 }
 
-// Hops west as Event_HopWest, except from cell (32, 50).
+/// Hops west as Event_HopWest, except from cell (32, 50).
 static void Event_HopWestUnlessAtCell32x50(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -560,7 +560,7 @@ static void Event_HopWestUnlessAtCell32x50(void) {
   }
 }
 
-// Hops north as Event_HopNorth, except from cell (30, 52).
+/// Hops north as Event_HopNorth, except from cell (30, 52).
 static void Event_HopNorthUnlessAtCell30x52(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -569,7 +569,7 @@ static void Event_HopNorthUnlessAtCell30x52(void) {
   }
 }
 
-// Draw an impact frame of the passage and start a decaying vertical shake.
+/// Draw an impact frame of the passage and start a decaying vertical shake.
 static __inline__ void TunnelRuins_AnimateLoweringImpact(s32 sourceColumn,
                                                          s32 column, s32 row) {
   Engine_AudioPlayCue(SE_188);
@@ -578,9 +578,9 @@ static __inline__ void TunnelRuins_AnimateLoweringImpact(s32 sourceColumn,
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
 }
 
-// Moving sinking pillar A into column 46: it sinks 16 pixels into the floor
-// in a cloud of dust, puddle A appears on it, and the floor beside it changes
-// in two jolts that shake the screen.
+/// Moving sinking pillar A into column 46: it sinks 16 pixels into the floor
+/// in a cloud of dust, puddle A appears on it, and the floor beside it changes
+/// in two jolts that shake the screen.
 static void Event_SinkPillarA(void) {
   u32 i;
   struct FieldActor *overlay;
@@ -632,8 +632,8 @@ static void Event_SinkPillarA(void) {
   EV_END();
 }
 
-// Walking into sinking pillar A pushes it, and it sinks if it reaches column
-// 46 (until FLAG_TUNNEL_RUINS_PILLAR_A_SUNK).
+/// Walking into sinking pillar A pushes it, and it sinks if it reaches column
+/// 46 (until FLAG_TUNNEL_RUINS_PILLAR_A_SUNK).
 static void Event_PushSinkingPillarA(void) {
   EV_BEGIN();
   StagedActor_AdvancePair();
@@ -641,7 +641,7 @@ static void Event_PushSinkingPillarA(void) {
   Event_SinkPillarA();
 }
 
-// Frost on puddle A freezes it into a pillar of ice.
+/// Frost on puddle A freezes it into a pillar of ice.
 static void Event_FreezePuddleA(void) {
   u8 *flags;
 
@@ -653,8 +653,8 @@ static void Event_FreezePuddleA(void) {
   FLAG_SET(FLAG_SCENE_TEMP_00);
 }
 
-// Moving sinking pillar B into column 48 once Douse has soaked it: it sinks
-// as pillar A does, and puddle B appears on it.
+/// Moving sinking pillar B into column 48 once Douse has soaked it: it sinks
+/// as pillar A does, and puddle B appears on it.
 static void Event_SinkPillarB(void) {
   u32 i;
   struct FieldActor *overlay;
@@ -707,8 +707,8 @@ static void Event_SinkPillarB(void) {
   EV_END();
 }
 
-// Walking into sinking pillar B pushes it, and it sinks if it is soaked and
-// reaches column 48.
+/// Walking into sinking pillar B pushes it, and it sinks if it is soaked and
+/// reaches column 48.
 static void Event_PushSinkingPillarB(void) {
   EV_BEGIN();
   StagedActor_AdvancePair();
@@ -716,18 +716,18 @@ static void Event_PushSinkingPillarB(void) {
   Event_SinkPillarB();
 }
 
-// As Douse begins on sinking pillar B, water splashes on it.
+/// As Douse begins on sinking pillar B, water splashes on it.
 static void Event_DouseBeginsOnPillarB(void) {
   Actor_SetActionScript(ACTOR_SINKING_PILLAR_B, gTunnelRuins_DouseSplashScript);
 }
 
-// Douse soaks sinking pillar B, which sinks at once if it is in column 48.
+/// Douse soaks sinking pillar B, which sinks at once if it is in column 48.
 static void Event_DousePillarB(void) {
   FLAG_SET(FLAG_SCENE_TEMP_02);
   Event_SinkPillarB();
 }
 
-// Frost on puddle B freezes it into a pillar of ice.
+/// Frost on puddle B freezes it into a pillar of ice.
 static void Event_FreezePuddleB(void) {
   u8 *flags;
 
@@ -739,10 +739,10 @@ static void Event_FreezePuddleB(void) {
   FLAG_SET(FLAG_SCENE_TEMP_01);
 }
 
-// Searching the first statue: it speaks to the leader's soul of the lady
-// whose leave opens the way up Venus Lighthouse, or, once the statue at
-// Venus Lighthouse has answered (flag 0x982 or 0x983), that the path will not
-// open here.
+/// Searching the first statue: it speaks to the leader's soul of the lady
+/// whose leave opens the way up Venus Lighthouse, or, once the statue at
+/// Venus Lighthouse has answered (flag 0x982 or 0x983), that the path will not
+/// open here.
 static void Event_ReadFirstStatue(void) {
   EV_BEGIN();
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -755,14 +755,14 @@ static void Event_ReadFirstStatue(void) {
   EV_END();
 }
 
-// Moving the Douse pillar (until its puddle is frozen): nothing more
-// happens.
+/// Moving the Douse pillar (until its puddle is frozen): nothing more
+/// happens.
 static void Event_MoveDousePillar(void) {
   EV_BEGIN();
   EV_END();
 }
 
-// Walking into the Douse pillar pushes it along.
+/// Walking into the Douse pillar pushes it along.
 static void Event_PushDousePillar(void) {
   EV_BEGIN();
   StagedActor_AdvancePair();
@@ -770,8 +770,8 @@ static void Event_PushDousePillar(void) {
   Event_MoveDousePillar();
 }
 
-// As Douse begins on the pillar, water splashes on it and it is soaked; its
-// puddle follows it from then on.
+/// As Douse begins on the pillar, water splashes on it and it is soaked; its
+/// puddle follows it from then on.
 static void Event_DouseBeginsOnPillar(void) {
   struct FieldActor *puddle;
 
@@ -786,8 +786,8 @@ static void Event_DouseBeginsOnPillar(void) {
 #endif
 }
 
-// Frost on the pillar's puddle freezes it into a pillar of ice where it
-// stands.
+/// Frost on the pillar's puddle freezes it into a pillar of ice where it
+/// stands.
 static void Event_FreezeDousePuddle(void) {
   struct FieldActor *actor;
   s32 column;
@@ -840,9 +840,9 @@ static s32 TunnelRuins_RideBlockBelow(union FieldObject *fieldObject) {
 #endif
 }
 
-// The balance platforms move to the heights their weights give them (their
-// timers index gTunnelRuins_BalanceHeights), with sounds when wait is not 0;
-// whatever then stands less than 30 pixels down can be walked on.
+/// The balance platforms move to the heights their weights give them (their
+/// timers index gTunnelRuins_BalanceHeights), with sounds when wait is not 0;
+/// whatever then stands less than 30 pixels down can be walked on.
 static void TunnelRuins_SettleBalance(s32 wait) {
   u32 i;
 
@@ -881,8 +881,8 @@ static void TunnelRuins_SettleBalance(s32 wait) {
   WAIT(wait);
 }
 
-// A carried block drops onto the highest platform or block in its cell and
-// lands with a thud and a ring of dust.
+/// A carried block drops onto the highest platform or block in its cell and
+/// lands with a thud and a ring of dust.
 static void TunnelRuins_DropBlockOnStack(s32 actorId) {
   s32 highestHeight = -PIXELS(80);
   u32 i;
@@ -923,9 +923,9 @@ static void TunnelRuins_DropBlockOnStack(s32 actorId) {
   WAIT(30);
 }
 
-// Setting down a block with Carry: one dropped into a pit is gone; one set in
-// row 9 drops onto the balance platform below it, which sinks a step while
-// the other rises.
+/// Setting down a block with Carry: one dropped into a pit is gone; one set in
+/// row 9 drops onto the balance platform below it, which sinks a step while
+/// the other rises.
 static void Event_SetBlockOnBalance(void) {
   struct FieldActor savedPosition;
   s32 i;
@@ -1009,15 +1009,15 @@ static void Event_SetBlockOnBalance(void) {
   EV_END();
 }
 
-// Walking into a pushable object pushes it along.
+/// Walking into a pushable object pushes it along.
 static void Event_PushObject(void) {
   EV_BEGIN();
   StagedActor_AdvancePair();
   EV_END();
 }
 
-// Moving either east pillar: whether each stands a cell west of its place is
-// kept for the next visit.
+/// Moving either east pillar: whether each stands a cell west of its place is
+/// kept for the next visit.
 static void Event_MoveEastPillar(void) {
   EV_BEGIN();
 
@@ -1037,7 +1037,7 @@ static void Event_MoveEastPillar(void) {
   EV_END();
 }
 
-// Walking into an east pillar pushes it along, and its place is kept.
+/// Walking into an east pillar pushes it along, and its place is kept.
 static void Event_PushEastPillar(void) {
   EV_BEGIN();
   StagedActor_AdvancePair();
@@ -1045,8 +1045,8 @@ static void Event_PushEastPillar(void) {
   EV_END();
 }
 
-// The two false statues stand, blocking their cells: on entering their rooms
-// and at Reveal's phase 4.
+/// The two false statues stand, blocking their cells: on entering their rooms
+/// and at Reveal's phase 4.
 static void Event_ShowFalseStatues(void) {
   Map_CopyCellAttributes(72, 49, 1, 1, 8, 49);
   Map_CopyCellAttributes(113, 43, 1, 1, 49, 43);
@@ -1056,8 +1056,8 @@ static void Event_ShowFalseStatues(void) {
   OBJ_POS_SET(ACTOR_FALSE_STATUE_B, 792, 696);
 }
 
-// At Reveal's phase 5 the two false statues vanish and their cells can be
-// walked through.
+/// At Reveal's phase 5 the two false statues vanish and their cells can be
+/// walked through.
 static void Event_HideFalseStatues(void) {
   Map_CopyCellAttributes(8, 113, 1, 1, 8, 49);
   Map_CopyCellAttributes(49, 107, 1, 1, 49, 43);
@@ -1067,9 +1067,9 @@ static void Event_HideFalseStatues(void) {
   Actor_SetPosition(ACTOR_FALSE_STATUE_B, 0, 0);
 }
 
-// Moving a statue of the lady: with all five on their marks (cells (25, 49),
-// (23, 49), (25, 47), (23, 47) and (24, 48)) the camera turns to the door
-// as it opens; moving one off again closes it.
+/// Moving a statue of the lady: with all five on their marks (cells (25, 49),
+/// (23, 49), (25, 47), (23, 47) and (24, 48)) the camera turns to the door
+/// as it opens; moving one off again closes it.
 static void Event_MoveLadyStatue(void) {
   struct FieldActor *actor;
   s32 correctPositions;
@@ -1178,7 +1178,7 @@ static void Event_MoveLadyStatue(void) {
   EV_END();
 }
 
-// Walking into a statue of the lady pushes it along, then checks the door.
+/// Walking into a statue of the lady pushes it along, then checks the door.
 static void Event_PushLadyStatue(void) {
   EV_BEGIN();
   {
@@ -1189,7 +1189,7 @@ static void Event_PushLadyStatue(void) {
   EV_END();
 }
 
-// Searching the second statue: "The statue seems to speak to your soul..."
+/// Searching the second statue: "The statue seems to speak to your soul..."
 static void Event_ReadSecondStatue(void) {
   EV_BEGIN();
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1197,14 +1197,14 @@ static void Event_ReadSecondStatue(void) {
   EV_END();
 }
 
-// Searching the door: it is tightly locked.
+/// Searching the door: it is tightly locked.
 static void Event_SearchLockedDoor(void) {
   EV_BEGIN();
   Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
   EV_END();
 }
 
-// Select the event bindings for the current tunnel ruins scene.
+/// Select the event bindings for the current tunnel ruins scene.
 s32 TunnelRuins_SelectEvents(void) {
   if (gGameState.scene == (s32)&SceneId_TunnelRuins1) {
     return (s32)gTunnelRuinsEvents1;
@@ -1212,8 +1212,8 @@ s32 TunnelRuins_SelectEvents(void) {
   return (s32)gTunnelRuinsEventsOther;
 }
 
-// After the first pillars move: redraw their room's cells and mark the cells
-// the pillars stand on.
+/// After the first pillars move: redraw their room's cells and mark the cells
+/// the pillars stand on.
 static void TunnelRuins_UpdateFirstPillarCells(void) {
   s32 row;
 
@@ -1235,7 +1235,7 @@ static void TunnelRuins_UpdateFirstPillarCells(void) {
   }
 }
 
-// After the second pillars move: the same for their room.
+/// After the second pillars move: the same for their room.
 static void TunnelRuins_UpdateSecondPillarCells(void) {
   s32 row;
 
@@ -1257,8 +1257,8 @@ static void TunnelRuins_UpdateSecondPillarCells(void) {
   }
 }
 
-// After the blocks move: redraw their room's cells and mark the cells the
-// blocks stand on.
+/// After the blocks move: redraw their room's cells and mark the cells the
+/// blocks stand on.
 static void TunnelRuins_UpdateBlockCells(void) {
   struct FieldActor *actor;
   s32 column;
@@ -1283,7 +1283,7 @@ static void TunnelRuins_UpdateBlockCells(void) {
   Map_CopyCellAttributes(22, 52, 1, 1, column, (actor->z.fixed >> 20));
 }
 
-// Redraw the east pillars' row and mark the cells they stand on.
+/// Redraw the east pillars' row and mark the cells they stand on.
 static void TunnelRuins_MarkPushPillarCells(void) {
   Map_CopyCellAttributes(108, 19, 4, 1, 44, 19);
   StagedActor_FillGridAttributeRectangle(
@@ -1294,10 +1294,10 @@ static void TunnelRuins_MarkPushPillarCells(void) {
       Object_GetById(ACTOR_EAST_PILLAR_B)->z.fixed >> 20, 1, 1, 0xff);
 }
 
-// On entering a room: the puzzle as it was left, and the route the statue at
-// Venus Lighthouse chose (flag 0x982 or 0x983). Retreat leads back to the
-// first ruins' entrance 1, or from the other ruins' first rooms to Babi
-// Lighthouse.
+/// On entering a room: the puzzle as it was left, and the route the statue at
+/// Venus Lighthouse chose (flag 0x982 or 0x983). Retreat leads back to the
+/// first ruins' entrance 1, or from the other ruins' first rooms to Babi
+/// Lighthouse.
 s32 FieldScene_InitializeActorGroups(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gGameState.scene == (s32)&SceneId_TunnelRuins1 ||
@@ -1582,7 +1582,7 @@ s32 FieldScene_InitializeActorGroups(void) {
   return 0;
 }
 
-// Pixel step by direction: X in the upper halfword, Z in the lower.
+/// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {
@@ -1618,8 +1618,8 @@ s32 gEffectScript2[] = {
     SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
-// A balance platform's height by its weight (its timer): each block on it
-// takes it 16 pixels further down, and the other platform up as far.
+/// A balance platform's height by its weight (its timer): each block on it
+/// takes it 16 pixels further down, and the other platform up as far.
 u32 gTunnelRuins_BalanceHeights[] = {
     -PIXELS(16), -PIXELS(16), -PIXELS(32), -PIXELS(48),
     -PIXELS(64), -PIXELS(80), -PIXELS(80),
@@ -1639,13 +1639,13 @@ s32 gTunnelRuins_ShrinkScript[] = {
     SC_END,
 };
 
-// The bushes stand 8/5 as tall as their sprite.
+/// The bushes stand 8/5 as tall as their sprite.
 s32 gTunnelRuins_StretchScript[] = {
     SC_SET(SW_SCALE_Y, 8 * Q16_ONE / 5),
     SC_END,
 };
 
-// Douse: splashes on the pillar from frame 35 for 130 frames.
+/// Douse: splashes on the pillar from frame 35 for 130 frames.
 s32 gTunnelRuins_DouseSplashScript[] = {
     SC_WAIT(35),  SC_SET(SW_HOOK, (s32)TunnelRuins_SplashDousedPillar),
     SC_WAIT(130), SC_SET(SW_HOOK, 0),

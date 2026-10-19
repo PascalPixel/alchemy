@@ -1,19 +1,20 @@
-// Part of field.c, the field object, compiled only through it.
-// Drawing sprites: composing their layers and placing them on screen.
+/// @file
+/// Part of field.c, the field object, compiled only through it.
+/// Drawing sprites: composing their layers and placing them on screen.
 
 #include "../field_internal.h"
 
-// Draws one layer's frame into a sprite's pixel buffer (Render_DecodeFrame,
-// run from RAM) and uploads a finished buffer to sprite VRAM
-// (Tile_CopyStrided).
+/// Draws one layer's frame into a sprite's pixel buffer (Render_DecodeFrame,
+/// run from RAM) and uploads a finished buffer to sprite VRAM
+/// (Tile_CopyStrided).
 typedef void (*SpriteDrawFn)(const void *src, void *dst, s32 param);
 typedef void (*SpriteUploadFn)(const void *src, u32 w, u32 h, void *vram);
 
-// Advances a sprite's animation layers by one frame, picks each layer's frame
-// for the facing dir, and when any frame changed redraws the sprite: the
-// layers composed by priority into one pixel buffer, an optional outline,
-// and the result uploaded to the sprite's VRAM tiles. Returns 1 when layer
-// 0's frame for this facing is drawn mirrored.
+/// Advances a sprite's animation layers by one frame, picks each layer's frame
+/// for the facing dir, and when any frame changed redraws the sprite: the
+/// layers composed by priority into one pixel buffer, an optional outline,
+/// and the result uploaded to the sprite's VRAM tiles. Returns 1 when layer
+/// 0's frame for this facing is drawn mirrored.
 s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
   s32 mirrored;
   u32 size;
@@ -301,10 +302,10 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
   return mirrored;
 }
 
-// Positions a sprite's image (part 0) and shadow (part 1) on the screen: the
-// image centred on screenX and raised height above screenY, the shadow at
-// groundHeight. scale is the sprite's (x, y) scale (16.16); above 1.0 both
-// parts use the double-size affine mode.
+/// Positions a sprite's image (part 0) and shadow (part 1) on the screen: the
+/// image centred on screenX and raised height above screenY, the shadow at
+/// groundHeight. scale is the sprite's (x, y) scale (16.16); above 1.0 both
+/// parts use the double-size affine mode.
 void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
                                 s32 height, s32 screenY, s32 groundHeight,
                                 s32 *scale) {
@@ -342,12 +343,12 @@ void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
   shadow->y = y;
 }
 
-// Places a sprite for the scrolling camera and queues it for drawing. Position
-// holds screen x, height, screen y and ground height in 16.16 pixels; scale
-// holds its x/y factors and facing its angle. Builds an affine matrix when the
-// sprite is mirrored, scaled or rotated, queues the shadow (when the sprite
-// has one) and then the image in a draw slot by depth; an object 100 pixels
-// or more below the ground takes slot 1 instead, its shadow slot 0.
+/// Places a sprite for the scrolling camera and queues it for drawing. Position
+/// holds screen x, height, screen y and ground height in 16.16 pixels; scale
+/// holds its x/y factors and facing its angle. Builds an affine matrix when the
+/// sprite is mirrored, scaled or rotated, queues the shadow (when the sprite
+/// has one) and then the image in a draw slot by depth; an object 100 pixels
+/// or more below the ground takes slot 1 instead, its shadow slot 0.
 void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
                                     const struct SpritePlacement *position,
                                     const struct SpriteScale *scale,
@@ -432,12 +433,12 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
   }
 }
 
-// Places a sprite at 3D point for the fixed camera and queues it for drawing:
-// projected to the screen and scaled by its distance (unless useOwnScale
-// keeps its own scale), with an affine matrix as needed and its shadow on
-// the ground below. depth 0 sorts it by distance; any other value is its draw
-// slot. A sprite off screen gives up its VRAM cache entry unless
-// retainCacheEntry holds it.
+/// Places a sprite at 3D point for the fixed camera and queues it for drawing:
+/// projected to the screen and scaled by its distance (unless useOwnScale
+/// keeps its own scale), with an affine matrix as needed and its shadow on
+/// the ground below. depth 0 sorts it by distance; any other value is its draw
+/// slot. A sprite off screen gives up its VRAM cache entry unless
+/// retainCacheEntry holds it.
 void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
                                  s32 *scale, s32 facing, s32 depth) {
   s32 flip;
@@ -549,8 +550,8 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
   }
 }
 
-// Sets the draw parameter of each of a sprite's layers to value, except
-// layers whose parameter is 15, and marks the sprite for redrawing.
+/// Sets the draw parameter of each of a sprite's layers to value, except
+/// layers whose parameter is 15, and marks the sprite for redrawing.
 void ObjectGroup_SetChildValueUnlessFifteen(void *rawSprite, u32 value) {
   struct AnimationObject *sprite = rawSprite;
   if (sprite != 0) {

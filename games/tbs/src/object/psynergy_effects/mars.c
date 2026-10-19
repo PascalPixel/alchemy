@@ -1,13 +1,14 @@
-// Part of psynergy_effects.c, compiled only through it.
-// A Mars Djinni joining the party.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// A Mars Djinni joining the party.
 
 #include "../psynergy_effects_internal.h"
 
-// A Mars Djinni joins the party: it turns to the camera, bounces three times,
-// spins ever faster and shrinks away in a fountain of 24 sparks
-// (BattleEffect_UpdatePhasedRadialParticle). The leader turns to the camera
-// and plays animation 28, the sparks swarm the leader, who pulses for 100
-// frames, and the sparks vanish.
+/// A Mars Djinni joins the party: it turns to the camera, bounces three times,
+/// spins ever faster and shrinks away in a fountain of 24 sparks
+/// (BattleEffect_UpdatePhasedRadialParticle). The leader turns to the camera
+/// and plays animation 28, the sparks swarm the leader, who pulses for 100
+/// frames, and the sparks vanish.
 void Djinn_RunMarsJoinEffect(s32 djinniId) {
   struct EffectVector position;
   s32 scale;
@@ -122,12 +123,12 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 
-// Spins and shrinks an object by 0x400 a frame, then releases it.
+/// Spins and shrinks an object by 0x400 a frame, then releases it.
 DEFINE_SHRINK_AND_DESTROY(BattleFx_ShrinkObjectAndDestroyFast, 0xFFFFFC00)
 
-// Per-frame update of a Venus Djinni's falling motes: each circles the
-// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
-// pixel a frame, and is released 20 pixels above the leader's feet.
+/// Per-frame update of a Venus Djinni's falling motes: each circles the
+/// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
+/// pixel a frame, and is released 20 pixels above the leader's feet.
 void BattleFx_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
   struct DescendingOrbitObject *mote =
       (struct DescendingOrbitObject *)fieldObject;
@@ -154,10 +155,10 @@ void BattleFx_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
     ObjectDispatch_ReleaseFar(mote);
 }
 
-// Effect slot callback of a Venus Djinni's particles: each starts on screen
-// at a random point 10 to 20 pixels round the leader and flies 120 pixels up
-// the screen, over and over (states 0 and 1); set to 2, it is freed once it
-// arrives.
+/// Effect slot callback of a Venus Djinni's particles: each starts on screen
+/// at a random point 10 to 20 pixels round the leader and flies 120 pixels up
+/// the screen, over and over (states 0 and 1); set to 2, it is freed once it
+/// arrives.
 void BattleFx_UpdateRadialSpread(struct EffectSlot *effect) {
   struct EffectVector position;
   struct ObjectRuntime *source;

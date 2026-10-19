@@ -1,5 +1,6 @@
-// Hammet's palace in Kalay: Lady Layana hears that Hammet is still held in
-// Lunpa, and later welcomes him home.
+/// @file
+/// Hammet's palace in Kalay: Lady Layana hears that Hammet is still held in
+/// Lunpa, and later welcomes him home.
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/scene/hammet_palace.h"
@@ -26,27 +27,27 @@
 #include "songs.h"
 #include "event.h"
 
-// The palace's actors: the party keeps its slots, the rest follow the
-// placement table from 8.
+/// The palace's actors: the party keeps its slots, the rest follow the
+/// placement table from 8.
 #define LAYANA 8
 #define HAMMET 9
 #define SOLDIER_1 10 // the soldiers of Kalay in the meeting
 #define SOLDIER_2 11
 
-// Entrance setup and the two long conversations use the helpers below.
+/// Entrance setup and the two long conversations use the helpers below.
 static void HammetPalace_SetUpEntrance(void);
 static void HammetPalace_IvanReportsToLayana(void);
 static void HammetPalace_FacePartyOutward(s32 waitFrames);
 static void HammetPalace_FacePartyNorth(s32 waitFrames);
 static void HammetPalace_HammetsHomecoming(void);
 
-// Advance within the current conversation's consecutive message block.
+/// Advance within the current conversation's consecutive message block.
 static __inline__ void HammetPalace_AdvanceMessage(s32 amount) {
 
   gEventWork->message += amount;
 }
 
-// Select the palace's entrances, or the fallback table for this overlay.
+/// Select the palace's entrances, or the fallback table for this overlay.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -60,7 +61,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gHammetPalaceExits; }
 
-// Apply placement clipping before returning the palace's actor rows.
+/// Apply placement clipping before returning the palace's actor rows.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_HammetPalace) {
     FieldScene_PrepareActors(gHammetPalacePlacements);
@@ -69,7 +70,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gHammetPalacePlacementsOther;
 }
 
-// Select the palace's dialogue and doorway handlers.
+/// Select the palace's dialogue and doorway handlers.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -79,8 +80,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gHammetPalaceEventsOther;
 }
 
-// Talking to a resident (actor 13) before Hammet is rescued: "Lord Hammet
-// will be released soon. Right?"
+/// Talking to a resident (actor 13) before Hammet is rescued: "Lord Hammet
+/// will be released soon. Right?"
 static void Event_AskWhetherHammetWillBeReleased(void) {
   EV_BEGIN();
   MESSAGE_SET(MsgKalayLordHammetWillReleasedSoon);
@@ -88,8 +89,8 @@ static void Event_AskWhetherHammetWillBeReleased(void) {
   EV_END();
 }
 
-// Talking to a resident (actor 16) before Hammet is rescued: "Has the legacy
-// of Lord Hammet's silk trading come to an end?"
+/// Talking to a resident (actor 16) before Hammet is rescued: "Has the legacy
+/// of Lord Hammet's silk trading come to an end?"
 static void Event_AskWhetherSilkTradeHasEnded(void) {
   EV_BEGIN();
   MESSAGE_SET(MsgKalayHasLegacyLordHammetsSilk);
@@ -97,9 +98,9 @@ static void Event_AskWhetherSilkTradeHasEnded(void) {
   EV_END();
 }
 
-// Talking to Layana once the party has been to Lunpa: "Isaac, you sneaked into
-// Lunpa? That's far too dangerous!" She is glad Hammet is unhurt, but asks
-// the party not to go back, and to fulfill their quest.
+/// Talking to Layana once the party has been to Lunpa: "Isaac, you sneaked into
+/// Lunpa? That's far too dangerous!" She is glad Hammet is unhurt, but asks
+/// the party not to go back, and to fulfill their quest.
 static void Event_LayanaScoldsLunpaVisit(void) {
 
   EV_BEGIN();
@@ -116,8 +117,8 @@ static void Event_LayanaScoldsLunpaVisit(void) {
   EV_END();
 }
 
-// Walking north into a door (triggers 2, 3, 4 and 14): it opens, and Isaac
-// walks through it to the next room.
+/// Walking north into a door (triggers 2, 3, 4 and 14): it opens, and Isaac
+/// walks through it to the next room.
 static void Event_LeaveThroughDoor(void) {
 
   struct EventWork *work;
@@ -148,7 +149,7 @@ static void Event_LeaveThroughDoor(void) {
   EV_END();
 }
 
-// Open the palace with its window transition and run entrance-specific setup.
+/// Open the palace with its window transition and run entrance-specific setup.
 s32 Scene_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   if (gGameState.scene == (u32)&SceneId_HammetPalace) {
@@ -157,8 +158,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// Set up the room the party enters by: Layana and Hammet in the audience
-// hall (entrance 9), the opened door (10 and 11), or Ivan's report (20).
+/// Set up the room the party enters by: Layana and Hammet in the audience
+/// hall (entrance 9), the opened door (10 and 11), or Ivan's report (20).
 static void HammetPalace_SetUpEntrance(void) {
   struct FieldActor *actor;
   s32 facing;
@@ -214,11 +215,11 @@ static void HammetPalace_SetUpEntrance(void) {
   }
 }
 
-// Ivan brings the party to Layana: she had hoped Hammet came back with him.
-// The ransom was paid long ago, yet Dodonpa holds Hammet still; Layana will
-// not risk him by sending the soldiers, nor the party. She tells of the
-// prophecy, the Jupiter Adept who gave Hammet the Shaman's Rod and Ivan, and
-// what the rod is to find, then sends everyone back to their posts.
+/// Ivan brings the party to Layana: she had hoped Hammet came back with him.
+/// The ransom was paid long ago, yet Dodonpa holds Hammet still; Layana will
+/// not risk him by sending the soldiers, nor the party. She tells of the
+/// prophecy, the Jupiter Adept who gave Hammet the Shaman's Rod and Ivan, and
+/// what the rod is to find, then sends everyone back to their posts.
 static void HammetPalace_IvanReportsToLayana(void) {
 
   struct EventWork *work;
@@ -683,7 +684,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   EV_END();
 }
 
-// Turn the party outward from the group, then optionally wait.
+/// Turn the party outward from the group, then optionally wait.
 static void HammetPalace_FacePartyOutward(s32 waitFrames) {
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   OBJ_DIR(GARET, FACING_NORTHEAST, 0);
@@ -694,7 +695,7 @@ static void HammetPalace_FacePartyOutward(s32 waitFrames) {
   }
 }
 
-// Turn all four party members north toward Layana, then optionally wait.
+/// Turn all four party members north toward Layana, then optionally wait.
 static void HammetPalace_FacePartyNorth(s32 waitFrames) {
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   OBJ_DIR(GARET, FACING_NORTH, 0);
@@ -705,10 +706,10 @@ static void HammetPalace_FacePartyNorth(s32 waitFrames) {
   }
 }
 
-// Back with Hammet, the party walks into the audience hall: Hammet welcomes
-// them, Layana scolds Ivan for going to Lunpa against her word, and Ivan
-// decides to leave at once on the quest. Hammet sends them to Hesperia with
-// the Shaman's Rod, as the Jupiter Adept said.
+/// Back with Hammet, the party walks into the audience hall: Hammet welcomes
+/// them, Layana scolds Ivan for going to Lunpa against her word, and Ivan
+/// decides to leave at once on the quest. Hammet sends them to Hesperia with
+/// the Shaman's Rod, as the Jupiter Adept said.
 static void HammetPalace_HammetsHomecoming(void) {
 
   struct FieldActor *leader;

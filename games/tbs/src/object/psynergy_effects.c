@@ -1,19 +1,20 @@
-// The field Psynergy and event object: the commands scene scripts run (waits,
-// items, questions, destinations, actors, messages and the camera), moving
-// on the field (views, jumps and climbing), the field's weather and wavy
-// backgrounds, Djinn joining the party, each field Psynergy's effect, the
-// effect slots its particles use, and the world map screen.
-// psynergy_effects_internal.h holds the includes and the macros, types and
-// inline helpers more than one part uses; the code is in the files under
-// psynergy_effects/, included here in ROM order, each opening with what it
-// holds (head -2 psynergy_effects/*.c). The ROM shows one object; the parts
-// are ours, cut where one family ends and the next begins.
-//
-// A field Psynergy reaches its effect through its field kind, the type column
-// of games/tbs/src/game/actions.tsv; dispatch.c runs the kind's handlers.
-//
-// README.md in this folder gives the words, prefixes and spellings the parts
-// share.
+/// @file
+/// The field Psynergy and event object: the commands scene scripts run (waits,
+/// items, questions, destinations, actors, messages and the camera), moving
+/// on the field (views, jumps and climbing), the field's weather and wavy
+/// backgrounds, Djinn joining the party, each field Psynergy's effect, the
+/// effect slots its particles use, and the world map screen.
+/// psynergy_effects_internal.h holds the includes and the macros, types and
+/// inline helpers more than one part uses; the code is in the files under
+/// psynergy_effects/, included here in ROM order, each opening with what it
+/// holds (head -2 psynergy_effects/*.c). The ROM shows one object; the parts
+/// are ours, cut where one family ends and the next begins.
+///
+/// A field Psynergy reaches its effect through its field kind, the type column
+/// of games/tbs/src/game/actions.tsv; dispatch.c runs the kind's handlers.
+///
+/// README.md in this folder gives the words, prefixes and spellings the parts
+/// share.
 
 #include "psynergy_effects_internal.h"
 

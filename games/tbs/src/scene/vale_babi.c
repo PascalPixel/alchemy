@@ -44,7 +44,7 @@
 #include "flags.h"
 #include "fixed_math.h"
 
-// The arrival scenes are defined after the event handlers.
+/// The arrival scenes are defined after the event handlers.
 static void Event_DoraWakesIsaac(void);
 static void Event_HurryToThePlaza(void);
 static void ValeBabi_RestoreRoomPatch(void);
@@ -64,20 +64,20 @@ static void ValeBabi_DemonstrateCatch(void);
 // neighbour remarked how much Isaac has grown.
 
 enum ValeBabiActor {
-  // "Isaac, Dora, hurry! The Boulder could fall at any second!"
+  /// "Isaac, Dora, hurry! The Boulder could fall at any second!"
   ACTOR_DORA = 8,
   ACTOR_INNKEEPER = 13
 };
 
-// Return the entrances, among them the scenes played on arrival.
+/// Return the entrances, among them the scenes played on arrival.
 struct SceneEntrance *ValeBabi_GetEntrances(void) {
   return gValeBabi_Entrances;
 }
 
-// This part of Vale has no scene regions.
+/// This part of Vale has no scene regions.
 struct SceneRegion *ValeBabi_GetRegions(void) { return NULL; }
 
-// On the stormy night the exits lead into the storm.
+/// On the stormy night the exits lead into the storm.
 u32 *ValeBabi_GetExits(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     return gValeBabi_StormExits;
@@ -85,7 +85,7 @@ u32 *ValeBabi_GetExits(void) {
   return gValeBabi_Exits;
 }
 
-// Place Babi's scholars, or Vale's villagers as the story has left them.
+/// Place Babi's scholars, or Vale's villagers as the story has left them.
 struct ScenePlacement *ValeBabi_GetPlacements(void) {
   struct ScenePlacement *table;
 
@@ -101,7 +101,7 @@ struct ScenePlacement *ValeBabi_GetPlacements(void) {
   return table;
 }
 
-// A scholar asks whether the party knows Kraden.
+/// A scholar asks whether the party knows Kraden.
 static void Event_ScholarAsksAboutKraden(s32 speakerId) {
   s32 firstMessage = MsgValeFolksSeemKnow;
 
@@ -116,8 +116,8 @@ static void Event_ScholarAsksAboutKraden(s32 speakerId) {
   Engine_EventShowMessage(speakerId, 0);
 }
 
-// Babi's scholars talk differently once flag 0x950 is set (set in Babi's
-// palace); Vale's villagers follow the storm and the story.
+/// Babi's scholars talk differently once flag 0x950 is set (set in Babi's
+/// palace); Vale's villagers follow the storm and the story.
 struct SceneEvent *ValeBabi_GetEvents(void) {
   if (gGameState.entrance == 19) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
@@ -138,7 +138,7 @@ struct SceneEvent *ValeBabi_GetEvents(void) {
   return gValeBabi_Events;
 }
 
-// A villager calls "Hey, boy" and asks Isaac whether he has business here.
+/// A villager calls "Hey, boy" and asks Isaac whether he has business here.
 static void Event_AskIsaacHisBusiness(void) {
   Engine_EventBegin();
   Engine_ActorStartRepeatedMotion(16, 2);
@@ -161,8 +161,8 @@ static void Event_AskIsaacHisBusiness(void) {
   Engine_EventEnd();
 }
 
-// After the party has left Vale, a villager asks whether the masked man was
-// Felix.
+/// After the party has left Vale, a villager asks whether the masked man was
+/// Felix.
 static void Event_AskWhetherMaskedManWasFelix(void) {
   struct EventWork *work;
 
@@ -180,7 +180,7 @@ static void Event_AskWhetherMaskedManWasFelix(void) {
   Engine_EventEnd();
 }
 
-// Stop storm lightning before fading through the requested exit.
+/// Stop storm lightning before fading through the requested exit.
 static void ValeBabi_CloseScreenAndExit(s32 exitId) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     FieldFx_StopLightning();
@@ -191,74 +191,74 @@ static void ValeBabi_CloseScreenAndExit(s32 exitId) {
   Engine_EventRequestExit(exitId);
 }
 
-// Play the exit cue before leaving through trigger 1.
+/// Play the exit cue before leaving through trigger 1.
 static void Event_ExitNorthwestArea(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(1);
 }
 
-// Play the exit cue before leaving through trigger 2.
+/// Play the exit cue before leaving through trigger 2.
 static void Event_ExitNorthArea(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(2);
 }
 
-// Play the exit cue before leaving through trigger 3.
+/// Play the exit cue before leaving through trigger 3.
 static void Event_ExitNortheastArea(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(3);
 }
 
-// Play the exit cue before leaving through trigger 4.
+/// Play the exit cue before leaving through trigger 4.
 static void Event_ExitWestAreaSouth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(4);
 }
 
-// Play the alternate exit cue before leaving through trigger 5.
+/// Play the alternate exit cue before leaving through trigger 5.
 static void Event_ExitWestAreaNorth(void) {
   Engine_AudioPlayCue(SE_128);
   ValeBabi_CloseScreenAndExit(5);
 }
 
-// Play the exit cue before leaving through trigger 6.
+/// Play the exit cue before leaving through trigger 6.
 static void Event_ExitCenterAreaSouth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(6);
 }
 
-// Play the alternate exit cue before leaving through trigger 7.
+/// Play the alternate exit cue before leaving through trigger 7.
 static void Event_ExitCenterAreaNorth(void) {
   Engine_AudioPlayCue(SE_128);
   ValeBabi_CloseScreenAndExit(7);
 }
 
-// Play the exit cue before leaving through trigger 8.
+/// Play the exit cue before leaving through trigger 8.
 static void Event_ExitSouthwestArea(void) {
   Engine_AudioPlayCue(SE_129);
   ValeBabi_CloseScreenAndExit(8);
 }
 
-// Play the exit cue before leaving through trigger 9.
+/// Play the exit cue before leaving through trigger 9.
 static void Event_ExitSouthAreaWest(void) {
   Engine_AudioPlayCue(SE_129);
   ValeBabi_CloseScreenAndExit(9);
 }
 
-// Play the exit cue before leaving through trigger 10.
+/// Play the exit cue before leaving through trigger 10.
 static void Event_ExitSouthAreaSouth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(10);
 }
 
-// Play the exit cue before leaving through trigger 11.
+/// Play the exit cue before leaving through trigger 11.
 static void Event_ExitSoutheastArea(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(11);
 }
 
-// Arriving: set up the stormy night or the villagers of the story, and play
-// the scenes of entrances 19 to 22.
+/// Arriving: set up the stormy night or the villagers of the story, and play
+/// the scenes of entrances 19 to 22.
 s32 ValeBabi_Initialize(void) {
   struct FieldActor *actor;
 
@@ -326,9 +326,9 @@ s32 ValeBabi_Initialize(void) {
   return 0;
 }
 
-// Arriving by entrance 20 on the stormy night: Dora wakes Isaac ("The Mt.
-// Aleph Boulder is going to fall!"), makes him take his tunic, and leads him
-// out into the storm.
+/// Arriving by entrance 20 on the stormy night: Dora wakes Isaac ("The Mt.
+/// Aleph Boulder is going to fall!"), makes him take his tunic, and leads him
+/// out into the storm.
 static void Event_DoraWakesIsaac(void) {
   s32 firstMessage;
   struct AnimationObject *sprite;
@@ -475,10 +475,10 @@ static void Event_DoraWakesIsaac(void) {
   Engine_EventRequestExit(20);
 }
 
-// Select the hardware blend targets for the storm sequence.
+/// Select the hardware blend targets for the storm sequence.
 static __inline__ void SetBlendTarget(u32 value) { REG_BLDCNT = value; }
 
-// Set the packed hardware alpha coefficients.
+/// Set the packed hardware alpha coefficients.
 static __inline__ void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
 
 struct PairWork {
@@ -486,8 +486,8 @@ struct PairWork {
   u16 vramBlock;
 };
 
-// Arriving by entrance 21 on the stormy night: a villager calls to Isaac and
-// Dora to hurry; actor 10 shakes, falls and fades as they run to the plaza.
+/// Arriving by entrance 21 on the stormy night: a villager calls to Isaac and
+/// Dora to hurry; actor 10 shakes, falls and fades as they run to the plaza.
 static void Event_HurryToThePlaza(void) {
   struct FieldActor *actor;
   struct AnimationObject *sprite;
@@ -604,8 +604,8 @@ ramp:
   Engine_EventRequestExit(21);
 }
 
-// The innkeeper offers a room from behind the counter; elsewhere talks of the
-// travelers, the eruption, or, back from Kalay, welcomes Isaac home.
+/// The innkeeper offers a room from behind the counter; elsewhere talks of the
+/// travelers, the eruption, or, back from Kalay, welcomes Isaac home.
 static void Event_TalkToInnkeeper(void) {
   struct FieldActor *actor;
 
@@ -637,7 +637,7 @@ static void Event_TalkToInnkeeper(void) {
   }
 }
 
-// Back from Kalay, a neighbour remarks how much Isaac has grown.
+/// Back from Kalay, a neighbour remarks how much Isaac has grown.
 static void Event_NeighborSeesIsaacHasGrown(void) {
   Engine_EventBegin();
   Engine_ActorFaceActor(16, ACTOR_PARTY_LEADER, 10);
@@ -648,7 +648,7 @@ static void Event_NeighborSeesIsaacHasGrown(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the innkeeper: Dora would not let Isaac stay in Vale.
+/// Mind Read on the innkeeper: Dora would not let Isaac stay in Vale.
 static void Event_ReadInnkeepersThoughts(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeDoraWouldntLetHimStay);
@@ -657,7 +657,7 @@ static void Event_ReadInnkeepersThoughts(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the neighbour: Dora was struck with illness.
+/// Mind Read on the neighbour: Dora was struck with illness.
 static void Event_ReadThoughtsAboutDorasIllness(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeDoraWasStruckWithIllness);
@@ -666,8 +666,8 @@ static void Event_ReadThoughtsAboutDorasIllness(void) {
   Engine_EventEnd();
 }
 
-// Back from Kalay, Isaac visits Dora in her sickbed; she asks who told him she
-// was ill, then gets up to show she feels well.
+/// Back from Kalay, Isaac visits Dora in her sickbed; she asks who told him she
+/// was ill, then gets up to show she feels well.
 static void Event_VisitSickDora(void) {
   struct FieldActor *leader;
   s32 firstMessage;
@@ -776,8 +776,8 @@ static void Event_VisitSickDora(void) {
   Engine_EventEnd();
 }
 
-// Talking to Dora: in her sickbed she murmurs Kyle's name; once up, she tells
-// Isaac not to worry.
+/// Talking to Dora: in her sickbed she murmurs Kyle's name; once up, she tells
+/// Isaac not to worry.
 static void Event_TalkToDora(void) {
   s32 message;
 
@@ -800,14 +800,14 @@ static void Event_TalkToDora(void) {
   Engine_EventEnd();
 }
 
-// Restore the room's tiles and collision patch outside the storm sequence.
+/// Restore the room's tiles and collision patch outside the storm sequence.
 static void ValeBabi_RestoreRoomPatch(void) {
   Map_CopyCellsTo(22, 85, 25, 85, 2, 2);
   Map_CopyCellAttributes(25, 15, 2, 2, 25, 25);
 }
 
-// Arriving by entrance 22: the Mythril Bag rises and wobbles before Kraden's
-// sprite (0x1e, actor 18), with no text.
+/// Arriving by entrance 22: the Mythril Bag rises and wobbles before Kraden's
+/// sprite (0x1e, actor 18), with no text.
 static void Event_ShowMythrilBag(void) {
   struct FieldActor *actor;
   struct AnimationObject *sprite;
@@ -855,7 +855,7 @@ static void Event_ShowMythrilBag(void) {
   Engine_EventRequestExit(22);
 }
 
-// Flash between two palettes and emit a paired effect every sixteen frames.
+/// Flash between two palettes and emit a paired effect every sixteen frames.
 UNUSED static void
 ValeBabi_FlashPaletteAndSpawnPair(union FieldObject *object) {
   if ((gFrameCount & 2) != 0) {
@@ -868,7 +868,7 @@ ValeBabi_FlashPaletteAndSpawnPair(union FieldObject *object) {
   }
 }
 
-// Cycle six palettes on odd frames and periodically emit paired effects.
+/// Cycle six palettes on odd frames and periodically emit paired effects.
 static void ValeBabi_CyclePaletteAndSpawnPair(union FieldObject *object) {
   if ((gFrameCount & 1) != 0) {
     Engine_ObjectSetPartPalettes(&object->actor, (gFrameCount >> 1) % 6);
@@ -878,7 +878,7 @@ static void ValeBabi_CyclePaletteAndSpawnPair(union FieldObject *object) {
   }
 }
 
-// Advance deterministically through six palettes on odd frames.
+/// Advance deterministically through six palettes on odd frames.
 static void ValeBabi_CyclePaletteOnOddFrames(union FieldObject *object) {
   if ((gFrameCount & 1) != 0) {
     s32 slot = (gFrameCount >> 1) % 6;
@@ -890,7 +890,8 @@ static void ValeBabi_CyclePaletteOnOddFrames(union FieldObject *object) {
 // Shared vertical-effect callbacks precede their paired-effect creator.
 #include "common/effect_vertical.h"
 
-// Copy the parent's terrain height into two oppositely moving vertical effects.
+/// Copy the parent's terrain height into two oppositely moving vertical
+/// effects.
 static void ValeBabi_SpawnEffectPair(union FieldObject *object) {
   struct FieldActor *parent = &object->actor;
   struct FieldActor *pair[2];
@@ -946,17 +947,17 @@ static void ValeBabi_SpawnEffectPair(union FieldObject *object) {
 // Shared Psynergy setup precedes the scene's effect wrappers.
 #include "common/effect_psynergy.h"
 
-// Apply the cycling-palette update to actor 8.
+/// Apply the cycling-palette update to actor 8.
 UNUSED static void ValeBabi_CyclePaletteWithParticles(void) {
   ValeBabi_CyclePaletteAndSpawnPair((union FieldObject *)Object_GetById(8));
 }
 
-// Apply the cycling-palette update to actor 17.
+/// Apply the cycling-palette update to actor 17.
 UNUSED static void ValeBabi_CyclePaletteWithoutParticles(void) {
   ValeBabi_CyclePaletteOnOddFrames((union FieldObject *)Object_GetById(17));
 }
 
-// Catch's effect plays on Dora, then its objects are released.
+/// Catch's effect plays on Dora, then its objects are released.
 static void ValeBabi_DemonstrateCatch(void) {
   Engine_PsynergyBegin(ABILITY_CATCH, 1);
   Engine_PsynergySetTarget(ACTOR_DORA, 0x11);

@@ -1,5 +1,6 @@
-// Part of field.c, the field object, compiled only through it.
-// Sprites, their animation layers and the resource slots they draw from.
+/// @file
+/// Part of field.c, the field object, compiled only through it.
+/// Sprites, their animation layers and the resource slots they draw from.
 
 #include "../field_internal.h"
 
@@ -10,12 +11,12 @@ struct ResourceSlotNumber {
 
 extern struct ResourceSlotNumber gResourceSlot_NumberTable[];
 
-// Loads the frames of animation id number into resource slot slot's buffer:
-// the resource listed for it in gResourceSlot_NumberTable, decoded, its frame
-// offsets turned into pointers, and for variant 1-5 its pixel colours (those
-// up to 0xdf) remapped through that variant's conversion table. Returns the
-// image's size in pixels (width * height), or 0 when the slot or id is not
-// known.
+/// Loads the frames of animation id number into resource slot slot's buffer:
+/// the resource listed for it in gResourceSlot_NumberTable, decoded, its frame
+/// offsets turned into pointers, and for variant 1-5 its pixel colours (those
+/// up to 0xdf) remapped through that variant's conversion table. Returns the
+/// image's size in pixels (width * height), or 0 when the slot or id is not
+/// known.
 s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct AnimationMetadata *metadata;
   struct ObjectSystemWork *work;
@@ -82,7 +83,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   return metadata->width * metadata->height;
 }
 
-// Returns the buffer loaded into the resource slot with this tag, or 0.
+/// Returns the buffer loaded into the resource slot with this tag, or 0.
 s32 Animation_LookupValueByKey(s32 tag) {
   u32 i;
   struct ResourceSlot *slot = gMenuCtrlWork->slots;
@@ -94,10 +95,10 @@ s32 Animation_LookupValueByKey(s32 tag) {
   return 0;
 }
 
-// Resets each layer of a sprite from its animation's metadata: its facing
-// kind, frames, scripts and codec, with no frame shown and no script
-// running. The first layer also sets the sprite's size, scale and offsets.
-// Returns 0.
+/// Resets each layer of a sprite from its animation's metadata: its facing
+/// kind, frames, scripts and codec, with no frame shown and no script
+/// running. The first layer also sets the sprite's size, scale and offsets.
+/// Returns 0.
 s32 Animation_InitializeObjects(struct AnimationObject *sprite) {
   s32 i;
 
@@ -136,8 +137,8 @@ s32 Animation_InitializeObjects(struct AnimationObject *sprite) {
   return 0;
 }
 
-// Resets one animation layer from its animation's metadata, as
-// Animation_InitializeObjects does for each layer.
+/// Resets one animation layer from its animation's metadata, as
+/// Animation_InitializeObjects does for each layer.
 void Animation_InitWorkFromMetadata(struct AnimationEntry *layer) {
   void **frames;
   s32 zero;
@@ -162,10 +163,10 @@ void Animation_InitWorkFromMetadata(struct AnimationEntry *layer) {
   }
 }
 
-// Adds a layer of animation id to a sprite, in its first free layer of
-// four. The first layer also sets the sprite's size, scale and offsets.
-// Returns the layer, 0 when no layer record is free, or -1 when the sprite
-// has four layers already.
+/// Adds a layer of animation id to a sprite, in its first free layer of
+/// four. The first layer also sets the sprite's size, scale and offsets.
+/// Returns the layer, 0 when no layer record is free, or -1 when the sprite
+/// has four layers already.
 s32 ResourceMetadata_Register(struct AnimationObject *sprite, s32 id) {
   s32 layerHandle = (s32)sprite->entries[0];
   s32 freeIndex = 0;
@@ -203,8 +204,8 @@ s32 ResourceMetadata_Register(struct AnimationObject *sprite, s32 id) {
   return layerHandle;
 }
 
-// Removes the layer handle from a sprite and clears it, trimming the
-// sprite's layer count when no later layer remains.
+/// Removes the layer handle from a sprite and clears it, trimming the
+/// sprite's layer count when no later layer remains.
 void ResourceMetadata_Unregister(struct AnimationObject *sprite, s32 layer) {
   s32 laterLayers;
   u32 index;
@@ -230,8 +231,8 @@ void ResourceMetadata_Unregister(struct AnimationObject *sprite, s32 layer) {
   }
 }
 
-// Removes and clears a sprite's layer number no (0-3), trimming the sprite's
-// layer count when no later layer remains.
+/// Removes and clears a sprite's layer number no (0-3), trimming the sprite's
+/// layer count when no later layer remains.
 void ResourceMetadata_ReleaseSlot(struct AnimationObject *sprite, u32 index) {
   struct AnimationEntry *layer;
   s32 laterLayers;
@@ -254,8 +255,8 @@ void ResourceMetadata_ReleaseSlot(struct AnimationObject *sprite, u32 index) {
   }
 }
 
-// Starts the indexed animation on a layer when its metadata contains it.
-// Bit 7 preserves the command cursor and timer; it remains part of the index.
+/// Starts the indexed animation on a layer when its metadata contains it.
+/// Bit 7 preserves the command cursor and timer; it remains part of the index.
 void Animation_SetWorkEntry(struct AnimationEntry *layer, s32 animation) {
   s32 keepPlace;
   struct AnimationMetadata *metadata;
@@ -277,9 +278,9 @@ void Animation_SetWorkEntry(struct AnimationEntry *layer, s32 animation) {
   }
 }
 
-// Starts animation flags & 0x7f on every layer of a sprite (bit 7 keeps
-// each layer's place and timer), unless the sprite plays it already. The
-// first layer's animation also sets the sprite's offsets. Returns 0.
+/// Starts animation flags & 0x7f on every layer of a sprite (bit 7 keeps
+/// each layer's place and timer), unless the sprite plays it already. The
+/// first layer's animation also sets the sprite's offsets. Returns 0.
 s32 AnimationObjects_SelectAnimation(struct AnimationObject *sprite,
                                      s32 animation) {
   s32 keepPlace;
@@ -328,8 +329,8 @@ s32 AnimationObjects_SelectAnimation(struct AnimationObject *sprite,
   return 0;
 }
 
-// Sets each animated layer's timer to the given duration in frames.
-// Returns 0.
+/// Sets each animated layer's timer to the given duration in frames.
+/// Returns 0.
 s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *sprite,
                                           s32 frames) {
   u8 count = sprite->count;
@@ -351,8 +352,8 @@ s32 AnimationObjects_SetActiveFrameTimers(struct AnimationObject *sprite,
   return 0;
 }
 
-// Sets the timer step, the animation speed, of each animated layer of a
-// sprite (16 is normal speed).
+/// Sets the timer step, the animation speed, of each animated layer of a
+/// sprite (16 is normal speed).
 void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *sprite,
                                           s32 step) {
   u8 count = sprite->count;
@@ -368,10 +369,10 @@ void AnimationObjects_SetActiveTimerSteps(struct AnimationObject *sprite,
   }
 }
 
-// Allocates and zeroes the 64 sprites and 64 animation layers (from the
-// fixed blocks in mode 3, the heap otherwise), sets up the palette DMA,
-// loads the shadow tiles into VRAM cache entry 93 and puts the sprite tile
-// uploader in RAM.
+/// Allocates and zeroes the 64 sprites and 64 animation layers (from the
+/// fixed blocks in mode 3, the heap otherwise), sets up the palette DMA,
+/// loads the shadow tiles into VRAM cache entry 93 and puts the sprite tile
+/// uploader in RAM.
 void ObjectSystem_Configure(s32 mode) {
   void *sprites;
   void *layers;
@@ -400,9 +401,9 @@ void ObjectSystem_Configure(s32 mode) {
                    Tile_CopyStridedCodeSize);
 }
 
-// Takes a free animation layer record and starts it on animation id's first
-// animation. Returns the layer, or NULL when none is free or the id has no
-// image.
+/// Takes a free animation layer record and starts it on animation id's first
+/// animation. Returns the layer, or NULL when none is free or the id has no
+/// image.
 struct AnimationEntry *AnimationObject_Allocate(s32 id) {
   struct AnimationMetadata *metadata;
   struct AnimationEntry *candidate;
@@ -450,7 +451,7 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id) {
   return layer;
 }
 
-// Zeroes one animation layer (struct AnimationEntry); does nothing for NULL.
+/// Zeroes one animation layer (struct AnimationEntry); does nothing for NULL.
 void ResourceMetadata_ClearRecord(struct AnimationEntry *record) {
   if (record != 0) {
     Dma_Fill32(0, record, sizeof(*record));
@@ -459,9 +460,9 @@ void ResourceMetadata_ClearRecord(struct AnimationEntry *record) {
 
 // Creating and releasing animated sprites, and measuring animation lengths.
 
-// Creates a sprite for animation id, taking one of the 64 free sprites and a
-// VRAM cache entry for its tiles. Returns the sprite, or NULL when there is
-// no room or the id has no image.
+/// Creates a sprite for animation id, taking one of the 64 free sprites and a
+/// VRAM cache entry for its tiles. Returns the sprite, or NULL when there is
+/// no room or the id has no image.
 struct AnimationObject *ResourceObject_Create(s32 id) {
   struct AnimationMetadata *metadata;
   struct AnimationObject *sprite;
@@ -552,8 +553,8 @@ struct AnimationObject *ResourceObject_Create(s32 id) {
   return freeSprite;
 }
 
-// Releases a sprite: its VRAM cache entry (unless retainCacheEntry is set),
-// its four animation layers, and then zeroes its 56 bytes.
+/// Releases a sprite: its VRAM cache entry (unless retainCacheEntry is set),
+/// its four animation layers, and then zeroes its 56 bytes.
 void ResourceObject_Release(struct AnimationObject *sprite) {
   s32 remaining;
   struct AnimationEntry **layer;
@@ -571,9 +572,9 @@ void ResourceObject_Release(struct AnimationObject *sprite) {
   }
 }
 
-// Returns how long the first frameCount frames of animation number animation
-// of id last: the sum of the arguments of its frame, wait and blank commands,
-// up to frameCount of them or the first play, hold, jump or end command.
+/// Returns how long the first frameCount frames of animation number animation
+/// of id last: the sum of the arguments of its frame, wait and blank commands,
+/// up to frameCount of them or the first play, hold, jump or end command.
 s32 ResourceMetadata_SumCommandLengths(s32 id, u32 animation, s32 frameCount) {
   struct AnimationMetadata *metadata;
   u8 *script;

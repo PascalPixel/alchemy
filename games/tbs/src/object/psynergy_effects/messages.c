@@ -1,5 +1,6 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Messages shown at an actor, and the speaker's voice.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Messages shown at an actor, and the speaker's voice.
 
 #include "../psynergy_effects_internal.h"
 
@@ -11,13 +12,13 @@ struct WorkPointers {
 };
 #endif
 
-// The event command "open message": opens the event's current message in a
-// speech window next to the speaking actor, with the speaker's portrait
-// beside it when it has one, and moves on to the next message. The low 12
-// bits of actor are the speaker (0 to 7, a party member, speaks from the
-// leader); its high bits place the windows: 0x1000 portrait on the left,
-// 0x2000 on the right, 0x4000 message above the speaker, 0x8000 never above.
-// Returns the message window.
+/// The event command "open message": opens the event's current message in a
+/// speech window next to the speaking actor, with the speaker's portrait
+/// beside it when it has one, and moves on to the next message. The low 12
+/// bits of actor are the speaker (0 to 7, a party member, speaks from the
+/// leader); its high bits place the windows: 0x1000 portrait on the left,
+/// 0x2000 on the right, 0x4000 message above the speaker, 0x8000 never above.
+/// Returns the message window.
 struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
   struct UiRenderWork *win;
   struct FieldWork *work;
@@ -238,10 +239,10 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
   return handle;
 }
 
-// The event command "show message": opens the current message at actor
-// (UiText_OpenMessageAtObject) and waits until it has been read. The message
-// closes by itself after 600 frames, or at once while Select, L, R and A are
-// all held.
+/// The event command "show message": opens the current message at actor
+/// (UiText_OpenMessageAtObject) and waits until it has been read. The message
+/// closes by itself after 600 frames, or at once while Select, L, R and A are
+/// all held.
 void FieldEvent_ShowMessageAndWait(s32 actor, s32 flags) {
   s32 member;
   struct FieldWork *runtime = (struct FieldWork *)gEventWork;
@@ -275,16 +276,16 @@ void FieldEvent_ShowMessageAndWait(s32 actor, s32 flags) {
   WaitFrames(1);
 }
 
-// The event command "show message and wait": shows the message, then waits
-// wait frames.
+/// The event command "show message and wait": shows the message, then waits
+/// wait frames.
 void BattlePres_RunActionThenWaitIfModeZero(s32 actor, s32 flags, s32 wait) {
   FieldEvent_ShowMessageAndWait(actor, flags);
   FieldEvent_WaitFrames(wait);
 }
 
-// The event command "ask yes or no": opens the question at actor, lets the
-// leader answer, then shows the next message for yes or the one after it for
-// no. Returns 0 for yes, 1 for no.
+/// The event command "ask yes or no": opens the question at actor, lets the
+/// leader answer, then shows the next message for yes or the one after it for
+/// no. Returns 0 for yes, 1 for no.
 s32 FieldEvent_AskYesNoAndShowResponse(s32 actor, s32 flags) {
   s32 answer;
   struct FieldWork *runtime;
@@ -305,12 +306,12 @@ s32 FieldEvent_AskYesNoAndShowResponse(s32 actor, s32 flags) {
   return answer;
 }
 
-// Does nothing.
+/// Does nothing.
 void BattleEventRuntime_EmptyCallback(void) {}
 
-// Opens the event's current message for speaker, kept 32 pixels above or
-// below a point and on screen, waits until it has been read and moves on to
-// the next message.
+/// Opens the event's current message for speaker, kept 32 pixels above or
+/// below a point and on screen, waits until it has been read and moves on to
+/// the next message.
 void Event_ShowSpeakerMessage(s32 speaker) {
   // BUG: pos is never set, so the window goes wherever the stack's old
   // contents put it.
@@ -345,15 +346,15 @@ void Event_ShowSpeakerMessage(s32 speaker) {
   state->message++;
 }
 
-// Shows the current message near the screen point (x, y)
-// (Event_ShowMessageAtPosition).
+/// Shows the current message near the screen point (x, y)
+/// (Event_ShowMessageAtPosition).
 void ObjectTable_CallRefreshHook(s32 unused0, s32 unused1, s32 x, s32 y) {
   Event_ShowMessageAtPosition(unused0, unused1, x, y);
 }
 
-// Opens the event's current message 32 pixels above or below the screen
-// point (x, y), kept on screen, waits until it has been read and moves on to
-// the next message.
+/// Opens the event's current message 32 pixels above or below the screen
+/// point (x, y), kept on screen, waits until it has been read and moves on to
+/// the next message.
 void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
   struct FieldWork *state = (struct FieldWork *)gEventWork;
   s32 py = y;
@@ -379,7 +380,7 @@ void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
   state->message++;
 }
 
-// Closes the portrait of an actor's sprite, if it has one.
+/// Closes the portrait of an actor's sprite, if it has one.
 void ObjectTable_RunIfActive(s32 actor) {
   s32 sprite;
 
@@ -388,9 +389,9 @@ void ObjectTable_RunIfActive(s32 actor) {
     UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);
 }
 
-// The event command "show two messages and wait": two actors speak at once,
-// each message at its own (x, y) with its portrait at (portraitX, portraitY),
-// all in tiles. Waits for A, B, L or R, then closes both.
+/// The event command "show two messages and wait": two actors speak at once,
+/// each message at its own (x, y) with its portrait at (portraitX, portraitY),
+/// all in tiles. Waits for A, B, L or R, then closes both.
 void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
                                       s32 firstPortraitX, s32 firstPortraitY,
                                       s32 second, s32 secondX, s32 secondY,
@@ -435,9 +436,9 @@ void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
   WaitFrames(1);
 }
 
-// Sets the voice of the messages that follow to that of actor's sprite, at
-// the rate the message speed option picks (gUi_RenderResultValues). With
-// 0x80000000 the messages are silent.
+/// Sets the voice of the messages that follow to that of actor's sprite, at
+/// the rate the message speed option picks (gUi_RenderResultValues). With
+/// 0x80000000 the messages are silent.
 void Ui_SetMessageVoiceFromActor(s32 actor) {
   struct UiRenderWork *state = (struct UiRenderWork *)gWindowWork[0];
   u8 rate;

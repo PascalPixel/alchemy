@@ -1,14 +1,15 @@
-// Part of psynergy_effects.c, compiled only through it.
-// An effect's work: setting it up, its caster and target, cleaning up.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// An effect's work: setting it up, its caster and target, cleaning up.
 
 #include "../psynergy_effects_internal.h"
 
-// Scheduler callback: updates the 24 effect slots.
+/// Scheduler callback: updates the 24 effect slots.
 void BattleFx_UpdateAllEffectSlots(void) { FieldFx_UpdateSceneSlots(); }
 
-// Prepares the work of the Psynergy effect for ability (heap slot 56) and
-// loads its spark tiles. Called again while an effect resolves, it only
-// switches the ability.
+/// Prepares the work of the Psynergy effect for ability (heap slot 56) and
+/// loads its spark tiles. Called again while an effect resolves, it only
+/// switches the ability.
 void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
   struct FieldWork *ev = *(gWorkSlot + HEAP_SLOT_EVENT);
   struct MapScrollWork *map = *(gWorkSlot + 8);
@@ -49,9 +50,9 @@ void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
   Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllEffectSlots, 0xc80);
 }
 
-// Records the caster and the target of an effect. With no target, the effect
-// takes place 16 pixels in front of the caster (facing to the nearest
-// quarter turn).
+/// Records the caster and the target of an effect. With no target, the effect
+/// takes place 16 pixels in front of the caster (facing to the nearest
+/// quarter turn).
 void BattleFx_SetupObjectPair(s32 userId, s32 targetId) {
   struct ScriptMotionObject *user;
   struct ScriptMotionObject *target;
@@ -89,7 +90,7 @@ void BattleFx_SetupObjectPair(s32 userId, s32 targetId) {
   Vector_AddPolarOffset(0x100000, dir, &work->x);
 }
 
-// Stops the caster's per-frame hook and restores its colours.
+/// Stops the caster's per-frame hook and restores its colours.
 void EffectRuntime_StopCurrentObject(void) {
   struct BattleFxScene *work = gEffectWork;
   struct ScriptMotionObject *user = work->mainObject;
@@ -101,11 +102,11 @@ void EffectRuntime_StopCurrentObject(void) {
 
 #define SETUP_OBJECT_SLOTS ((struct ScriptMotionObject *)gObjectSlots)
 
-// Ends a Psynergy effect: frees the effect slots still in use and, unless
-// another effect is being resolved, waits (at most 30 frames) for the
-// swelling arcs to end, stops the slot callback, releases the effect's
-// tiles, restores the map's shake, plays the queued sound and releases the
-// effect's work.
+/// Ends a Psynergy effect: frees the effect slots still in use and, unless
+/// another effect is being resolved, waits (at most 30 frames) for the
+/// swelling arcs to end, stops the slot callback, releases the effect's
+/// tiles, restores the map's shake, plays the queued sound and releases the
+/// effect's work.
 void BattleEffect_CleanupSceneObjects(void) {
 #ifndef UBFIX
   struct BattleFxScene **sceneCell;
@@ -177,11 +178,11 @@ void BattleEffect_CleanupSceneObjects(void) {
   }
 }
 
-// Starts casting: the caster takes its casting pose (animation 20) and
-// stops. Unless the effect is silent the caster flashes with a sound; unless
-// it is quiet, the ability's name is shown while every other object stands
-// still. With flag 0x140 the caster's colours keep cycling and it
-// takes pose 21; otherwise the caster's hook stops.
+/// Starts casting: the caster takes its casting pose (animation 20) and
+/// stops. Unless the effect is silent the caster flashes with a sound; unless
+/// it is quiet, the ability's name is shown while every other object stands
+/// still. With flag 0x140 the caster's colours keep cycling and it
+/// takes pose 21; otherwise the caster's hook stops.
 void EventObject_Initialize(void) {
   s32 ability;
   s32 announcedAbility;
@@ -228,10 +229,10 @@ void EventObject_Initialize(void) {
   ((struct FieldWork *)renderState)->castStarted = 1;
 }
 
-// Saves the palettes for the effect (once, unless an effect is already
-// shown) and fades them toward one of the eight effect colours
-// (gBattleFx_TargetColors), picked by the frame counter or forced by flags
-// 0x148 to 0x14f, over 8 frames.
+/// Saves the palettes for the effect (once, unless an effect is already
+/// shown) and fades them toward one of the eight effect colours
+/// (gBattleFx_TargetColors), picked by the frame counter or forced by flags
+/// 0x148 to 0x14f, over 8 frames.
 void BattleEffect_InitializeSharedScene(void) {
   u8 *scene;
   struct BattleEffectBuffers *work;
@@ -269,8 +270,8 @@ void BattleEffect_InitializeSharedScene(void) {
   BattleFx_StartBufferInterpolation(8);
 }
 
-// Fades the palettes back from an effect's colours to the saved ones (or to
-// palette 0x10001 while an effect is shown) over 8 frames.
+/// Fades the palettes back from an effect's colours to the saved ones (or to
+/// palette 0x10001 while an effect is shown) over 8 frames.
 void BattleFx_PrepareBufferInterpolation(void) {
   s32 savedPalettes;
   u8 *field;
@@ -286,9 +287,9 @@ void BattleFx_PrepareBufferInterpolation(void) {
   BattleFx_StartBufferInterpolation(8);
 }
 
-// Converts a world position (16.16 pixels) to the screen: x and z receive
-// the screen's x and y and y becomes 0. The world map uses its perspective
-// projection.
+/// Converts a world position (16.16 pixels) to the screen: x and z receive
+/// the screen's x and y and y becomes 0. The world map uses its perspective
+/// projection.
 void Camera_WorldToScreen(struct EffectVector *position) {
 #ifdef UBFIX
   struct FieldWork *event = (struct FieldWork *)gEventWork;

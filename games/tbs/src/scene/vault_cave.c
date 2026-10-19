@@ -1,5 +1,6 @@
-// Vault's cave puzzles: movable switches, Frost targets, falling objects
-// and the rumbling mechanism restored when the party returns.
+/// @file
+/// Vault's cave puzzles: movable switches, Frost targets, falling objects
+/// and the rumbling mechanism restored when the party returns.
 
 #include "game_state.h"
 #include "unit/field/field.h"
@@ -36,7 +37,7 @@
 #include "macros.h"
 #include "item_ids.h"
 
-// Forward declarations.
+/// Forward declarations.
 static void VaultCave_ApplySouthernSwitchCells(void);
 static void VaultCave_UseUnderfootFrostPriorities(void);
 static void VaultCave_UseAutomaticFrostPriorities(void);
@@ -48,8 +49,8 @@ s32 Math_RemainderUnsigned();
 
 #define TILE(position) ((position) / 0x100000)
 
-// Scene flags. The six Frost targets of the second map keep their frozen
-// state in six flags in a row, read by index as well.
+/// Scene flags. The six Frost targets of the second map keep their frozen
+/// state in six flags in a row, read by index as well.
 enum {
   FLAG_WEST_UPPER_FROZEN = FLAG_SCENE_TEMP_00,
   FLAG_WEST_LOWER_FROZEN = FLAG_SCENE_TEMP_01,
@@ -57,12 +58,12 @@ enum {
   FLAG_EAST_UPPER_FROZEN = FLAG_SCENE_TEMP_03,
   FLAG_EAST_LOWER_FROZEN = FLAG_SCENE_TEMP_04,
   FLAG_FAR_EAST_FROZEN = FLAG_SCENE_TEMP_05,
-  // A falling object struck the northern block before it reached its switch.
+  /// A falling object struck the northern block before it reached its switch.
   FLAG_NORTH_BLOCK_STRUCK = FLAG_SCENE_TEMP_07,
   FLAG_WHIRLWIND_USED = FLAG_SCENE_TEMP_00 + 0x100
 };
 
-// Selects the cave map's entrance positions and camera bounds.
+/// Selects the cave map's entrance positions and camera bounds.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -78,10 +79,10 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gVaultCaveEntrancesOther;
 }
 
-// Returns the region boxes used by the cave exits.
+/// Returns the region boxes used by the cave exits.
 const struct SceneRegion *Scene_GetRegions(void) { return gVaultCaveRegions; }
 
-// Selects the current cave map's packed exit destinations.
+/// Selects the current cave map's packed exit destinations.
 const u32 *Scene_GetExits(void) {
   s16 scene = gGameState.scene;
 
@@ -97,7 +98,7 @@ const u32 *Scene_GetExits(void) {
   return gVaultCaveExitsOther;
 }
 
-// Selects the movable blocks, falling objects and Frost targets.
+/// Selects the movable blocks, falling objects and Frost targets.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -113,7 +114,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gVaultCavePlacementsOther;
 }
 
-// Finds a placed actor with collision enabled at the requested map cell.
+/// Finds a placed actor with collision enabled at the requested map cell.
 static struct FieldActor *VaultCave_FindCollidableActorAtCell(s32 column,
                                                               s32 row) {
   // UB: scene creation leaves unused actor slots NULL. The plain safe lookup
@@ -147,8 +148,8 @@ static struct FieldActor *VaultCave_FindCollidableActorAtCell(s32 column,
 }
 
 #ifdef UBFIX
-// The table stores Z then X as halfwords. Build its packed word without
-// reading a halfword array through an incompatible, more-aligned struct.
+/// The table stores Z then X as halfwords. Build its packed word without
+/// reading a halfword array through an incompatible, more-aligned struct.
 #define DIRECTION_STEP(heading)                                                \
   ((s32)(((u32)(u16)gVaultCave_DirectionSteps[(heading) * 2 + 1] << 16) |      \
          (u16)gVaultCave_DirectionSteps[(heading) * 2]))
@@ -161,7 +162,7 @@ struct DirectionSteps {
   (((struct DirectionSteps *)gVaultCave_DirectionSteps)->xz[heading])
 #endif
 
-// Pushes the faced block one cell unless another actor or terrain blocks it.
+/// Pushes the faced block one cell unless another actor or terrain blocks it.
 static void VaultCave_PushBlockAhead(void) {
   /* FAKEMATCH: DIRECTION_STEP reads the s16-pair table (x high, z low) as one
    * word per heading through an array reference, as native; through a plain s32
@@ -229,17 +230,17 @@ static void VaultCave_PushBlockAhead(void) {
   Object_SetMode(leader, 1);
 }
 
-// Whirlwind on the target in the second map blows it away for good.
+/// Whirlwind on the target in the second map blows it away for good.
 static void Event_UseWhirlwind(void) {
   Engine_GameFlagSet(FLAG_WHIRLWIND_USED);
 }
 
-// "The door is tightly locked."
+/// "The door is tightly locked."
 static void Event_ShowLockedDoor(void) {
   Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
 }
 
-// Selects the cave map's searches, movement checks and Psynergy callbacks.
+/// Selects the cave map's searches, movement checks and Psynergy callbacks.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -255,7 +256,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gVaultCaveEventsOther;
 }
 
-// Tests the southern block's cell, rounding fixed coordinates toward zero.
+/// Tests the southern block's cell, rounding fixed coordinates toward zero.
 static s32 VaultCave_IsSouthernBlockOnSwitch(void) {
   struct FieldActor *block = Object_GetById(9);
   s32 fixedZ = block->z.fixed;
@@ -278,7 +279,7 @@ static s32 VaultCave_IsSouthernBlockOnSwitch(void) {
   return 0;
 }
 
-// Finish the southern switch only after the block reaches its target cell.
+/// Finish the southern switch only after the block reaches its target cell.
 static inline void VaultCave_CompleteSouthernSwitch(void) {
   if (VaultCave_IsSouthernBlockOnSwitch() != 0) {
     GameFlag_Set(FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH);
@@ -287,8 +288,8 @@ static inline void VaultCave_CompleteSouthernSwitch(void) {
   }
 }
 
-// Pushing the southern block; once it rests on its switch, the puzzle chime
-// plays and the switch opens the way.
+/// Pushing the southern block; once it rests on its switch, the puzzle chime
+/// plays and the switch opens the way.
 static void Event_PushSouthernBlock(void) {
   if (GameFlag_IsSet(FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH) == 0) {
     VaultCave_PushBlockAhead();
@@ -296,31 +297,31 @@ static void Event_PushSouthernBlock(void) {
   }
 }
 
-// Restores the map cells and attributes of the completed southern switch.
+/// Restores the map cells and attributes of the completed southern switch.
 static void VaultCave_ApplySouthernSwitchCells(void) {
   Map_CopyCells(87, 50, 2, 4, 80, 50);
   Map_CopyCells(23, 52, 1, 2, 16, 52);
   Map_CopyCellAttributes(16, 52, 1, 1, 16, 53);
 }
 
-// Move on the southern block, with the same switch check.
+/// Move on the southern block, with the same switch check.
 static void Event_MoveSouthernBlock(void) {
   if (GameFlag_IsSet(FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH) == 0) {
     VaultCave_CompleteSouthernSwitch();
   }
 }
 
-// Unused empty function retained from this overlay.
+/// Unused empty function retained from this overlay.
 static void UNUSED VaultCave_UnusedNoOp(void) {}
 
-// Restores the map cells and attributes of the completed northern switch.
+/// Restores the map cells and attributes of the completed northern switch.
 static void VaultCave_ApplyNorthernSwitchCells(void) {
   Map_CopyCells(90, 9, 2, 3, 80, 9);
   Map_CopyCells(27, 10, 1, 2, 17, 10);
   Map_CopyCellAttributes(17, 10, 1, 1, 17, 11);
 }
 
-// Tests the northern block's cell with the same signed-coordinate rounding.
+/// Tests the northern block's cell with the same signed-coordinate rounding.
 static s32 VaultCave_IsNorthernBlockOnSwitch(void) {
   struct FieldActor *block = Object_GetById(10);
   s32 fixedZ = block->z.fixed;
@@ -343,7 +344,7 @@ static s32 VaultCave_IsNorthernBlockOnSwitch(void) {
   return 0;
 }
 
-// The northern switch also waits until the falling-object guard is clear.
+/// The northern switch also waits until the falling-object guard is clear.
 static inline void VaultCave_CompleteNorthernSwitch(void) {
   if (GameFlag_IsSet(FLAG_VAULT_CAVE_NORTH_BLOCK_ON_SWITCH) == 0) {
     if (VaultCave_IsNorthernBlockOnSwitch() != 0) {
@@ -356,25 +357,25 @@ static inline void VaultCave_CompleteNorthernSwitch(void) {
   }
 }
 
-// Pushing the northern block; it opens its switch only if no falling object
-// has struck it.
+/// Pushing the northern block; it opens its switch only if no falling object
+/// has struck it.
 static void Event_PushNorthernBlock(void) {
   VaultCave_PushBlockAhead();
   VaultCave_CompleteNorthernSwitch();
 }
 
-// Move on the southern block in the third map does nothing.
+/// Move on the southern block in the third map does nothing.
 static void Event_IgnoreMove(void) {}
 
-// Move on the northern block, with the same switch check.
+/// Move on the northern block, with the same switch check.
 static void Event_MoveNorthernBlock(void) {
   VaultCave_CompleteNorthernSwitch();
 }
 
-// Frost on the upper western target freezes it and changes its map cell;
-// arriving again re-freezes every target whose flag is set.
-// An ordinary shared Frost helper keeps the extents but saves r5-r7 instead
-// of r5 alone and changes the map-copy argument registers in native English.
+/// Frost on the upper western target freezes it and changes its map cell;
+/// arriving again re-freezes every target whose flag is set.
+/// An ordinary shared Frost helper keeps the extents but saves r5-r7 instead
+/// of r5 alone and changes the map-copy argument registers in native English.
 static void Event_FreezeWestUpperTarget(void) {
   struct FieldActor *target = Object_GetById(16);
 
@@ -389,7 +390,7 @@ static void Event_FreezeWestUpperTarget(void) {
   Engine_GameFlagSet(FLAG_WEST_UPPER_FROZEN);
 }
 
-// Frost on the lower western target.
+/// Frost on the lower western target.
 static void Event_FreezeWestLowerTarget(void) {
   struct FieldActor *target = Object_GetById(17);
 
@@ -404,7 +405,7 @@ static void Event_FreezeWestLowerTarget(void) {
   Engine_GameFlagSet(FLAG_WEST_LOWER_FROZEN);
 }
 
-// Frost on the lower target just east of it.
+/// Frost on the lower target just east of it.
 static void Event_FreezeInnerWestLowerTarget(void) {
   struct FieldActor *target = Object_GetById(18);
 
@@ -419,7 +420,7 @@ static void Event_FreezeInnerWestLowerTarget(void) {
   Engine_GameFlagSet(FLAG_INNER_WEST_LOWER_FROZEN);
 }
 
-// Frost on the upper eastern target.
+/// Frost on the upper eastern target.
 static void Event_FreezeEastUpperTarget(void) {
   struct FieldActor *target = Object_GetById(19);
 
@@ -435,7 +436,7 @@ static void Event_FreezeEastUpperTarget(void) {
   Engine_GameFlagSet(FLAG_EAST_UPPER_FROZEN);
 }
 
-// Frost on the lower eastern target.
+/// Frost on the lower eastern target.
 static void Event_FreezeEastLowerTarget(void) {
   struct FieldActor *target = Object_GetById(20);
 
@@ -451,7 +452,7 @@ static void Event_FreezeEastLowerTarget(void) {
   Engine_GameFlagSet(FLAG_EAST_LOWER_FROZEN);
 }
 
-// Frost on the far eastern target.
+/// Frost on the far eastern target.
 static void Event_FreezeFarEastTarget(void) {
   struct FieldActor *target = Object_GetById(21);
 
@@ -467,7 +468,7 @@ static void Event_FreezeFarEastTarget(void) {
   Engine_GameFlagSet(FLAG_FAR_EAST_FROZEN);
 }
 
-// Changes the Frost targets' draw priorities when the leader is above them.
+/// Changes the Frost targets' draw priorities when the leader is above them.
 static void VaultCave_UpdateFrostTargetPriorities(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -478,7 +479,7 @@ static void VaultCave_UpdateFrostTargetPriorities(void) {
   }
 }
 
-// Keeps all six Frost targets beneath the leader's feet.
+/// Keeps all six Frost targets beneath the leader's feet.
 static void VaultCave_UseUnderfootFrostPriorities(void) {
   s32 targetIndex;
   s32 actorSlot;
@@ -490,7 +491,7 @@ static void VaultCave_UseUnderfootFrostPriorities(void) {
   }
 }
 
-// Restores automatic draw priority for the same six targets.
+/// Restores automatic draw priority for the same six targets.
 static void VaultCave_UseAutomaticFrostPriorities(void) {
   s32 actorSlot = 16;
   s32 priority = ACTOR_PRIORITY_AUTOMATIC;
@@ -505,8 +506,8 @@ static void VaultCave_UseAutomaticFrostPriorities(void) {
   } while (remaining >= 0);
 }
 
-// Moves the third map layer through its phases, then fades the mechanism's
-// final map state.
+/// Moves the third map layer through its phases, then fades the mechanism's
+/// final map state.
 static void VaultCave_RunRumble(void) {
   struct MapLayerScroll *layer =
       &((struct MapScrollWork *)gMapWork[0])->layers[2];
@@ -556,8 +557,8 @@ static void VaultCave_RunRumble(void) {
   Engine_EventEnd();
 }
 
-// "Isaac flipped the switch." The first time, the switch turns, the cave
-// rumbles and shakes for eight seconds and the map changes as it fades.
+/// "Isaac flipped the switch." The first time, the switch turns, the cave
+/// rumbles and shakes for eight seconds and the map changes as it fades.
 static void Event_FlipSwitch(void) {
   s32 destinationRow;
   s32 destinationColumn;
@@ -583,7 +584,7 @@ static void Event_FlipSwitch(void) {
   }
 }
 
-// Resets a low falling object sharing the subject's cell and reports a hit.
+/// Resets a low falling object sharing the subject's cell and reports a hit.
 static s32 VaultCave_ResetFallingObjectAtActorCell(s32 subjectActorId) {
   struct FieldActor *subject = Object_GetById(subjectActorId);
   s32 fallingIndex = 0;
@@ -613,7 +614,7 @@ static s32 VaultCave_ResetFallingObjectAtActorCell(s32 subjectActorId) {
   return 0;
 }
 
-// Drops four objects on a repeating schedule and handles their landings.
+/// Drops four objects on a repeating schedule and handles their landings.
 static void VaultCave_UpdateTimedFallingObjects(void) {
   s32 fallingIndex;
   struct FieldActor *fallingActor;
@@ -663,8 +664,8 @@ static void VaultCave_UpdateTimedFallingObjects(void) {
   }
 }
 
-// Drops a random object every 64 frames, with reset height set by its Frost
-// target.
+/// Drops a random object every 64 frames, with reset height set by its Frost
+/// target.
 static void VaultCave_UpdateFrostControlledFallingObjects(void) {
 
   s32 fallingIndex;
@@ -713,7 +714,7 @@ static void VaultCave_UpdateFrostControlledFallingObjects(void) {
   }
 }
 
-// Offsets an actor's current position by a polar displacement.
+/// Offsets an actor's current position by a polar displacement.
 static void VaultCave_OffsetActorRadially(struct FieldActor *actor, s32 radius,
                                           s32 angle) {
   s32 destination[3];
@@ -727,7 +728,7 @@ static void VaultCave_OffsetActorRadially(struct FieldActor *actor, s32 radius,
                            destination[2]);
 }
 
-// Spawns up to four short-lived puffs around a landing object.
+/// Spawns up to four short-lived puffs around a landing object.
 static void VaultCave_SpawnPuffs(struct FieldActor *source) {
   struct FieldActor *puff;
   s32 puffIndex;
@@ -754,7 +755,7 @@ static void VaultCave_SpawnPuffs(struct FieldActor *source) {
   }
 }
 
-// Initializes six falling objects and starts their Frost-controlled updater.
+/// Initializes six falling objects and starts their Frost-controlled updater.
 static void VaultCave_StartFrostControlledFalls(void) {
   s32 actorSlot = 10;
   s32 remaining = 5;
@@ -775,7 +776,7 @@ static void VaultCave_StartFrostControlledFalls(void) {
                              TASK_PRIORITY_SCENE);
 }
 
-// Initializes four falling objects and starts their timed updater.
+/// Initializes four falling objects and starts their timed updater.
 static void VaultCave_StartTimedFalls(void) {
   s32 actorSlot = 11;
   s32 fallingIndex = 0;
@@ -797,7 +798,7 @@ static void VaultCave_StartTimedFalls(void) {
                              TASK_PRIORITY_SCENE);
 }
 
-// Restores each room's puzzles and actors, then sets the Retreat destination.
+/// Restores each room's puzzles and actors, then sets the Retreat destination.
 s32 Scene_Initialize(void) {
   ((struct FieldWork *)gEventWork)->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, 4);

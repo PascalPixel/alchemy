@@ -1,6 +1,7 @@
-// Fuchin Temple and the rooms that share its overlay: the temple grounds with
-// the waterfall grotto, Nyunpa's hall, Master Feh's school in Xian and Master
-// Hama's room in Lama Temple.
+/// @file
+/// Fuchin Temple and the rooms that share its overlay: the temple grounds with
+/// the waterfall grotto, Nyunpa's hall, Master Feh's school in Xian and Master
+/// Hama's room in Lama Temple.
 #include "game_state.h"
 #include "scene_ids.h"
 #include "unit/scene/fuchin_temple.h"
@@ -33,9 +34,9 @@
 #include "objcmd.h"
 #include "global_cells.h"
 
-// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another place group, and other places use the numbers for their own.
-// Nyunpa's test was declined; the students saw the training tree fall.
+/// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+/// enters another place group, and other places use the numbers for their own.
+/// Nyunpa's test was declined; the students saw the training tree fall.
 #define FLAG_NYUNPA_TEST_DECLINED 0x300
 #define FLAG_FEH_SCHOOL_SAW_TREE_FALL 0x301
 
@@ -43,7 +44,7 @@
 #define FALLS_MONK 9 // the monk beneath the falls, at the waterfall grotto
 #define HEALER 13
 
-// The second scene: Nyunpa's hall and Master Feh's school.
+/// The second scene: Nyunpa's hall and Master Feh's school.
 #define NYUNPA 8
 #define JUMPING_STUDENT 12
 #define FEIZHI 17
@@ -51,10 +52,10 @@
 #define TRAINING_TREE 19
 #define TRAINING_TREE_TARGET 20 // where Force strikes the tree
 
-// The second scene by entrance 3: Hama's room in Lama Temple.
+/// The second scene by entrance 3: Hama's room in Lama Temple.
 #define HAMA 8
 
-// Forward declarations.
+/// Forward declarations.
 static void FuchinTemple_FeizhiLeavesForHsu(void);
 static void FuchinTemple_FehSeesChi(void);
 static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ);
@@ -67,7 +68,7 @@ static void FuchinTemple_AnimateRevealLesson(void);
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-// Clear the scripted actor's sprite flags and complete the script command.
+/// Clear the scripted actor's sprite flags and complete the script command.
 static s32 FuchinTemple_ClearScriptedActorSpriteFlags(
     struct ScriptInterpreter *interpreter) {
   Engine_ActorSetSpriteFlags((struct FieldActor *)interpreter, 0);
@@ -91,7 +92,7 @@ static s32 FuchinTemple_FaceLeader(union FieldObject *object) {
 #endif
 }
 
-// Choose the outside entrance table or the shared interior entrances.
+/// Choose the outside entrance table or the shared interior entrances.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -105,7 +106,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gFuchinTempleExits; }
 
-// Select the room's actors and apply the post-lesson placement changes.
+/// Select the room's actors and apply the post-lesson placement changes.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_FuchinTemple1) {
     return gFuchinTemplePlacements1;
@@ -127,10 +128,10 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gFuchinTemplePlacements;
 }
 
-// Talking to the visitor from Kolima outside the temple: "How did you get
-// here? Is the bridge open again?" Yes cheers him ("Then I can go home to
-// Kolima now?") and is remembered; no means the party came through the
-// forest. Later talks go on to the tale of the forest.
+/// Talking to the visitor from Kolima outside the temple: "How did you get
+/// here? Is the bridge open again?" Yes cheers him ("Then I can go home to
+/// Kolima now?") and is remembered; no means the party came through the
+/// forest. Later talks go on to the tale of the forest.
 static void Event_VisitorAsksAboutBridge(void) {
   EV_BEGIN();
   MESSAGE_SET(MsgXianHowDidGetHereBridge);
@@ -147,10 +148,10 @@ static void Event_VisitorAsksAboutBridge(void) {
   EV_END();
 }
 
-// Talking to the monk (actor 12) outside the temple: "Isn't it noble of him
-// to try to save the world by becoming enlightened?" with up to two more
-// questions; once Nyunpa is gone, "Now, he truly is beyond the world's
-// concerns. Is he watching over us?"
+/// Talking to the monk (actor 12) outside the temple: "Isn't it noble of him
+/// to try to save the world by becoming enlightened?" with up to two more
+/// questions; once Nyunpa is gone, "Now, he truly is beyond the world's
+/// concerns. Is he watching over us?"
 static void Event_MonkSpeaksOfNyunpa(void) {
 
   EV_BEGIN();
@@ -173,9 +174,9 @@ static void Event_MonkSpeaksOfNyunpa(void) {
   }
 }
 
-// Talking to the monk beneath the falls once Nyunpa has offered the test: "I
-// have already heard of your test from Master Nyunpa. You may enter." He leaps
-// aside, and the way into the waterfall grotto opens.
+/// Talking to the monk beneath the falls once Nyunpa has offered the test: "I
+/// have already heard of your test from Master Nyunpa. You may enter." He leaps
+/// aside, and the way into the waterfall grotto opens.
 static void Event_MonkLetsPartyIntoGrotto(void) {
   struct FieldActor *monk;
   struct FieldActor *movingMonk;
@@ -215,9 +216,9 @@ static void Event_MonkLetsPartyIntoGrotto(void) {
   EV_END();
 }
 
-// Coming back out of the grotto (trigger 5): "Young master, did you complete
-// the test?" Then "Master Nyunpa is waiting for you... Proceed to the
-// temple." The way back is open again.
+/// Coming back out of the grotto (trigger 5): "Young master, did you complete
+/// the test?" Then "Master Nyunpa is waiting for you... Proceed to the
+/// temple." The way back is open again.
 static void Event_MonkAsksWhetherTestIsDone(void) {
   EV_BEGIN();
   Engine_GameFlagSet(FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST);
@@ -242,11 +243,11 @@ static void Event_MonkAsksWhetherTestIsDone(void) {
   EV_END();
 }
 
-// Talking to Nyunpa, or reading his mind: "Mmmm... Who is that? Who speaks to
-// my mind?" He reads the party's mind in turn, guesses that they follow
-// Saturos's group, warns of Mogall Forest and offers the test of the grotto.
-// Accepting it, he sends Isaac to the monk beneath the falls; refusing is
-// remembered, and the next talk asks again.
+/// Talking to Nyunpa, or reading his mind: "Mmmm... Who is that? Who speaks to
+/// my mind?" He reads the party's mind in turn, guesses that they follow
+/// Saturos's group, warns of Mogall Forest and offers the test of the grotto.
+/// Accepting it, he sends Isaac to the monk beneath the falls; refusing is
+/// remembered, and the next talk asks again.
 static void Event_NyunpaOffersTest(void) {
   s32 alreadyDeclinedTrial;
   struct FieldActor *nyunpa;
@@ -374,8 +375,8 @@ static void Event_NyunpaOffersTest(void) {
   EV_END();
 }
 
-// Reading Nyunpa's mind once the test is accepted: "You enjoy reading the
-// minds of others, do you not?"
+/// Reading Nyunpa's mind once the test is accepted: "You enjoy reading the
+/// minds of others, do you not?"
 static void Event_NyunpaFeelsMindRead(void) {
   EV_BEGIN();
   MESSAGE_SET(MsgXianEnjoyReadingMindsOthersDo);
@@ -383,8 +384,8 @@ static void Event_NyunpaFeelsMindRead(void) {
   EV_END();
 }
 
-// Talking to the student at the door (actor 9): "This is Master Feh's
-// school... You came to watch?"
+/// Talking to the student at the door (actor 9): "This is Master Feh's
+/// school... You came to watch?"
 static void Event_StudentWelcomesToSchool(void) {
   EV_BEGIN();
   MESSAGE_SET(MsgXianMasterFehsSchoolCameWatch);
@@ -392,8 +393,8 @@ static void Event_StudentWelcomesToSchool(void) {
   EV_END();
 }
 
-// Talking to the student who practises jumping: he lands, talks about jumping
-// (or Lama Temple, or Hsu), then jumps on.
+/// Talking to the student who practises jumping: he lands, talks about jumping
+/// (or Lama Temple, or Hsu), then jumps on.
 static void Event_TalkToJumpingStudent(void) {
   EV_BEGIN();
 
@@ -431,9 +432,9 @@ static void Event_TalkToJumpingStudent(void) {
   EV_END();
 }
 
-// Talking to the student by the training tree (actor 15): "Master Feh is very
-// busy. Do you still wish to see him?" Yes: if the tree falls to Chi from the
-// line, he will take the party to Feh.
+/// Talking to the student by the training tree (actor 15): "Master Feh is very
+/// busy. Do you still wish to see him?" Yes: if the tree falls to Chi from the
+/// line, he will take the party to Feh.
 static void Event_StudentAsksAboutFeh(void) {
   EV_BEGIN();
   MESSAGE_SET(MsgXianMasterFehVeryBusyDo);
@@ -441,7 +442,7 @@ static void Event_StudentAsksAboutFeh(void) {
   EV_END();
 }
 
-// Rotate the training tree through its westward arc and scatter particles.
+/// Rotate the training tree through its westward arc and scatter particles.
 static void FuchinTemple_ToppleTreeWest(void) {
   struct FieldActor *tree = Object_GetById(TRAINING_TREE);
   u32 turnStep;
@@ -468,8 +469,8 @@ static void FuchinTemple_ToppleTreeWest(void) {
                0xffff0000, 0x3333, 0, 0, 0);
 }
 
-// Rotate the training tree through the opposite arc and reverse its horizontal
-// scale.
+/// Rotate the training tree through the opposite arc and reverse its horizontal
+/// scale.
 static void FuchinTemple_ToppleTreeEast(void) {
   struct FieldActor *tree;
   u32 turnStep;
@@ -495,7 +496,7 @@ static void FuchinTemple_ToppleTreeEast(void) {
                0x3333, 0x6666, 0, 0, 0);
 }
 
-// Slide the training tree north in four steps, then scatter particles.
+/// Slide the training tree north in four steps, then scatter particles.
 static void FuchinTemple_ToppleTreeNorth(void) {
   struct FieldActor *tree = Object_GetById(TRAINING_TREE);
   u32 stepIndex = 0;
@@ -521,7 +522,7 @@ static void FuchinTemple_ToppleTreeNorth(void) {
                tree->z.fixed + (160 << 12), 0x00003333, 0, 0xffff0000, 0, 0);
 }
 
-// Slide the training tree south in four steps before the final displacement.
+/// Slide the training tree south in four steps before the final displacement.
 static void FuchinTemple_ToppleTreeSouth(void) {
   struct FieldActor *tree;
   u32 stepIndex;
@@ -555,7 +556,7 @@ static void FuchinTemple_ToppleTreeSouth(void) {
                particleSpeed, 0, 0x10000, 0, 0);
 }
 
-// Route the student around the tree according to the leader's facing.
+/// Route the student around the tree according to the leader's facing.
 static void FuchinTemple_StudentWalksAroundTree(void) {
   u32 leaderFacing;
   u32 quadrantLimit;
@@ -579,9 +580,9 @@ static void FuchinTemple_StudentWalksAroundTree(void) {
   }
 }
 
-// The student by the tree explains the rules: mode 0 when Psynergy felled it
-// but not from the line, 1 when Isaac pushed it by hand, 2 to praise a
-// warrior Feh has already seen. Then he sets the tree up again.
+/// The student by the tree explains the rules: mode 0 when Psynergy felled it
+/// but not from the line, 1 when Isaac pushed it by hand, 2 to praise a
+/// warrior Feh has already seen. Then he sets the tree up again.
 static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   s32 rulesMessage;
 
@@ -623,8 +624,8 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   OBJ_DIR(15, FACING_SOUTHEAST, 30);
 }
 
-// The students see the tree fall ("Look! The tree fell."), Feh doubts it
-// came from the line, and the student sets the tree up again.
+/// The students see the tree fall ("Look! The tree fell."), Feh doubts it
+/// came from the line, and the student sets the tree up again.
 static void FuchinTemple_StudentsSeeTreeFall(void) {
   struct FieldActor *tree;
 
@@ -679,7 +680,7 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
   Engine_GameFlagSet(FLAG_FEH_SCHOOL_SAW_TREE_FALL);
 }
 
-// Move on the training tree: it topples, and the students react.
+/// Move on the training tree: it topples, and the students react.
 static void Event_MoveTree(void) {
   EV_BEGIN();
 
@@ -699,8 +700,8 @@ static void Event_MoveTree(void) {
   EV_END();
 }
 
-// Walking into the training tree: Isaac pushes it over by hand. "You cannot
-// push it with your hands. Attack it with Chi."
+/// Walking into the training tree: Isaac pushes it over by hand. "You cannot
+/// push it with your hands. Attack it with Chi."
 static void Event_PushTreeByHand(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   u16 facing;
@@ -726,9 +727,9 @@ static void Event_PushTreeByHand(void) {
   EV_END();
 }
 
-// Force on the training tree: it topples. From too close it does not count;
-// from the line, the students call Feh out the first time, and later Feh
-// himself sees it.
+/// Force on the training tree: it topples. From too close it does not count;
+/// from the line, the students call Feh out the first time, and later Feh
+/// himself sees it.
 static void Event_ForceTree(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   u16 facing;
@@ -771,10 +772,10 @@ static void Event_ForceTree(void) {
   EV_END();
 }
 
-// The first time the tree falls from the line: "What did you do, warrior?"
-// A student runs for Master Feh; the door opens on its own and Feizhi storms
-// out, sure that Hsu is in danger. Feh will not believe her visions, and she
-// leaves alone to find Hsu. Feh then asks Isaac to show him his Chi.
+/// The first time the tree falls from the line: "What did you do, warrior?"
+/// A student runs for Master Feh; the door opens on its own and Feizhi storms
+/// out, sure that Hsu is in danger. Feh will not believe her visions, and she
+/// leaves alone to find Hsu. Feh then asks Isaac to show him his Chi.
 static void FuchinTemple_FeizhiLeavesForHsu(void) {
   struct FieldActor *actor;
 
@@ -1035,8 +1036,8 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Actor_SetActionScript(JUMPING_STUDENT, gFuchinTemple_JumpingStudentScript);
 }
 
-// Talking to Feh after the party declined: "Warrior, will you show me your
-// Chi?"
+/// Talking to Feh after the party declined: "Warrior, will you show me your
+/// Chi?"
 static void Event_FehAsksToSeeChi(void) {
 
   EV_BEGIN();
@@ -1055,9 +1056,9 @@ static void Event_FehAsksToSeeChi(void) {
   }
 }
 
-// The tree falls from the line with Feh watching: "Ya! The tree fell!" Feh
-// sees that it is not Chi, asks whether the party has been to Fuchin Temple,
-// and the school goes back to its training.
+/// The tree falls from the line with Feh watching: "Ya! The tree fell!" Feh
+/// sees that it is not Chi, asks whether the party has been to Fuchin Temple,
+/// and the school goes back to its training.
 static void FuchinTemple_FehSeesChi(void) {
   struct FieldActor *actor;
 
@@ -1265,8 +1266,8 @@ static void FuchinTemple_FehSeesChi(void) {
   FLAG_SET(FLAG_FEH_SAW_CHI);
 }
 
-// Talking to a student (actor 11) once Hsu is known to be trapped: "Water
-// monsters flooded Altin. Did you defeat them, warrior?"
+/// Talking to a student (actor 11) once Hsu is known to be trapped: "Water
+/// monsters flooded Altin. Did you defeat them, warrior?"
 static void Event_StudentAsksAboutAltin(void) {
   EV_BEGIN();
   MESSAGE_SET(MsgXianWaterMonstersFloodedAltinDid);
@@ -1274,8 +1275,8 @@ static void Event_StudentAsksAboutAltin(void) {
   EV_END();
 }
 
-// Walking north into the door Feh and Feizhi came out of (trigger 3): "It is
-// locked." until Feizhi has left; then it opens and Isaac walks through.
+/// Walking north into the door Feh and Feizhi came out of (trigger 3): "It is
+/// locked." until Feizhi has left; then it opens and Isaac walks through.
 static void Event_OpenLockedDoor(void) {
   EV_BEGIN();
   if (FLAG_CHECK(FLAG_FEIZHI_WENT_TO_HSU) == 0 &&
@@ -1294,9 +1295,9 @@ static void Event_OpenLockedDoor(void) {
   }
 }
 
-// Talking to the healer: across the counter from the south, the Sanctum's
-// services; from elsewhere, "I'm traveling around the world to spread good
-// will."
+/// Talking to the healer: across the counter from the south, the Sanctum's
+/// services; from elsewhere, "I'm traveling around the world to spread good
+/// will."
 static void Event_TalkToHealer(void) {
   struct FieldActor *leader;
   u32 facing;
@@ -1315,8 +1316,8 @@ static void Event_TalkToHealer(void) {
   EV_END();
 }
 
-// Reading Nyunpa's mind once he is enlightened: "Isaac... Is that you...? I
-// am... counting on you... to bring peace... to the world..."
+/// Reading Nyunpa's mind once he is enlightened: "Isaac... Is that you...? I
+/// am... counting on you... to bring peace... to the world..."
 static void Event_ReadNyunpasLastWish(void) {
   EV_BEGIN();
   Engine_ActorRunRepeatedMotion(NYUNPA, 2);
@@ -1325,7 +1326,7 @@ static void Event_ReadNyunpasLastWish(void) {
   EV_END();
 }
 
-// Select the outdoor, school, or lesson event table.
+/// Select the outdoor, school, or lesson event table.
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_FuchinTemple1) {
     return gFuchinTempleEvents1;
@@ -1336,7 +1337,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gFuchinTempleEvents;
 }
 
-// Emit a falling particle beside the leader during the grotto entrance fade.
+/// Emit a falling particle beside the leader during the grotto entrance fade.
 static void FuchinTemple_SpawnGrottoEntryParticle(void) {
   struct EffectOptions options;
   struct FieldActor *leader;
@@ -1365,22 +1366,22 @@ static void FuchinTemple_SpawnGrottoEntryParticle(void) {
     Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 1);
 }
 
-// Hop the leader one map cell north.
+/// Hop the leader one map cell north.
 static UNUSED void FuchinTemple_HopLeaderNorth(void) {
   FuchinTemple_HopLeaderByOffset(0, -32);
 }
 
-// Hop the leader one map cell south.
+/// Hop the leader one map cell south.
 static UNUSED void FuchinTemple_HopLeaderSouth(void) {
   FuchinTemple_HopLeaderByOffset(0, 32);
 }
 
-// Hop the leader one map cell west.
+/// Hop the leader one map cell west.
 static UNUSED void FuchinTemple_HopLeaderWest(void) {
   FuchinTemple_HopLeaderByOffset(-32, 0);
 }
 
-// Hop the leader by a pixel offset, waiting for the movement to finish.
+/// Hop the leader by a pixel offset, waiting for the movement to finish.
 static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ) {
   EV_BEGIN();
   OBJ_SPEED(ACTOR_PARTY_LEADER, 5 * PIXELS(1) / 2, 5 * PIXELS(1) / 4);
@@ -1392,8 +1393,8 @@ static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ) {
   EV_END();
 }
 
-// Stepping into the grotto's entrance (trigger 3): spray falls over Isaac as
-// the screen fades, and he enters the grotto.
+/// Stepping into the grotto's entrance (trigger 3): spray falls over Isaac as
+/// the screen fades, and he enters the grotto.
 static void Event_EnterWaterfallGrotto(void) {
   struct FieldActor *leader;
   SchedulerCallback particleTask;
@@ -1418,14 +1419,14 @@ static void Event_EnterWaterfallGrotto(void) {
   EV_END();
 }
 
-// Leaving by the first exit.
+/// Leaving by the first exit.
 static void Event_LeaveTemple(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventRequestExit(1);
 }
 
-// Walking north into the temple door (trigger 2): it opens, and Isaac walks
-// into Nyunpa's hall.
+/// Walking north into the temple door (trigger 2): it opens, and Isaac walks
+/// into Nyunpa's hall.
 static void Event_EnterNyunpasHall(void) {
   EV_BEGIN();
   SE(SE_188);
@@ -1440,9 +1441,9 @@ static void Event_EnterNyunpasHall(void) {
   EV_END();
 }
 
-// Back from the grotto: "Excellent, Isaac! I am glad to see you master the
-// secrets of Fuchin Temple!" Nyunpa names the power Ki, "force" in the
-// western world, and says it will show the monsters hiding in Mogall Forest.
+/// Back from the grotto: "Excellent, Isaac! I am glad to see you master the
+/// secrets of Fuchin Temple!" Nyunpa names the power Ki, "force" in the
+/// western world, and says it will show the monsters hiding in Mogall Forest.
 static void FuchinTemple_NyunpaTeachesKi(void) {
   struct FieldActor *nyunpa;
 
@@ -1543,9 +1544,9 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
   EV_END();
 }
 
-// Entering Hama's room: "So, Isaac, you and your Adept companions have finally
-// come." Hama tells Ivan he is a Jupiter Adept like her, teaches him Reveal
-// for crossing Lamakan Desert, and tells of Hsu, trapped on Silk Road.
+/// Entering Hama's room: "So, Isaac, you and your Adept companions have finally
+/// come." Hama tells Ivan he is a Jupiter Adept like her, teaches him Reveal
+/// for crossing Lamakan Desert, and tells of Hsu, trapped on Silk Road.
 static void FuchinTemple_RunHamasRevealLesson(void) {
   struct FieldActor *leader;
 
@@ -2094,9 +2095,9 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   FLAG_SET(FLAG_XIAN_HEARD_HSU_TRAPPED);
 }
 
-// Inside: Nyunpa meditates, or teaches Ki after the test; the school's tree
-// and students stand as the story left them; Hama teaches Reveal on the first
-// visit. Outside: the monk beneath the falls stands where the story left him.
+/// Inside: Nyunpa meditates, or teaches Ki after the test; the school's tree
+/// and students stand as the story left them; Hama teaches Reveal on the first
+/// visit. Outside: the monk beneath the falls stands where the story left him.
 s32 Scene_Initialize(void) {
   struct FieldActor *trainingTree;
   s32 heardHsuTrapped;
@@ -2176,7 +2177,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// Start the Mind Read demonstration for the requested caster and target.
+/// Start the Mind Read demonstration for the requested caster and target.
 static void FuchinTemple_BeginMindReadDemonstration(s32 caster, s32 target) {
   u8 *effectWork;
 
@@ -2190,14 +2191,14 @@ static void FuchinTemple_BeginMindReadDemonstration(s32 caster, s32 target) {
   Engine_TaskWait(1);
 }
 
-// Finish the demonstration's effect and lower the caster's hands.
+/// Finish the demonstration's effect and lower the caster's hands.
 static void FuchinTemple_FinishMindReadDemonstration(void) {
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_PsynergyPlayEffect(2);
   Engine_PsynergyLowerHands();
 }
 
-// Emit eight rising particles from Nyunpa, sounding every other shot.
+/// Emit eight rising particles from Nyunpa, sounding every other shot.
 static void FuchinTemple_SpawnNyunpasParticles(void) {
   struct EffectOptions options;
   struct FieldActor *nyunpa;
@@ -2220,7 +2221,8 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
   WAIT(60);
 }
 
-// Alternate the lesson's child effect from the frame counter, not player input.
+/// Alternate the lesson's child effect from the frame counter, not player
+/// input.
 static void FuchinTemple_AlternateLessonChildEffect(union FieldObject *object) {
   if ((*(u32 *)&gFrameCount >> 1) & 1) {
     ObjectGroup_SetChildValue((struct FieldActor *)object, 10);
@@ -2229,8 +2231,8 @@ static void FuchinTemple_AlternateLessonChildEffect(union FieldObject *object) {
   }
 }
 
-// Animate Hama and Ivan's lesson effects, fade the palette and clear the
-// callbacks.
+/// Animate Hama and Ivan's lesson effects, fade the palette and clear the
+/// callbacks.
 static void FuchinTemple_AnimateRevealLesson(void) {
   struct EffectOptions options;
   struct FieldActor *hama;

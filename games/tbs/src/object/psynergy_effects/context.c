@@ -1,11 +1,12 @@
-// Part of psynergy_effects.c, compiled only through it.
-// An actor's screen position, the encounter transition, context effects.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// An actor's screen position, the encounter transition, context effects.
 
 #include "../psynergy_effects_internal.h"
 
-// Finds where an actor is on screen: position[0] and position[1] receive its
-// x and y in pixels, y at the top of its sprite. Returns 0, or -1 if there is
-// no such actor.
+/// Finds where an actor is on screen: position[0] and position[1] receive its
+/// x and y in pixels, y at the top of its sprite. Returns 0, or -1 if there is
+/// no such actor.
 s32 Object_GetScreenPosition(s32 objectId, s32 *position) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
   s32 *camera;
@@ -34,12 +35,12 @@ s32 Object_GetScreenPosition(s32 objectId, s32 *position) {
   return 0;
 }
 
-// Does nothing.
+/// Does nothing.
 UNUSED void ObjectEffect_ReservedNoOp941DC(void) {}
 
-// Starts the transition into a random battle: plays the scene's battle cue
-// and the encounter sounds, closes the screen and flashes the backdrop white,
-// fading it to black over 16 frames.
+/// Starts the transition into a random battle: plays the scene's battle cue
+/// and the encounter sounds, closes the screen and flashes the backdrop white,
+/// fading it to black over 16 frames.
 s32 Field_StartEncounterTransition(s32 unused) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   s32 i;
@@ -72,9 +73,9 @@ s32 Field_StartEncounterTransition(s32 unused) {
   }
 }
 
-// Starts the leader's animation for leaving through an exit: centres it on
-// its tile, at the tile's south edge, stops it and plays animation over 18
-// frames. The leader's sprite gains a second part (metadata 27) for it.
+/// Starts the leader's animation for leaving through an exit: centres it on
+/// its tile, at the tile's south edge, stops it and plays animation over 18
+/// frames. The leader's sprite gains a second part (metadata 27) for it.
 void ObjectEffect_PrepareContextEffect(s32 animation) {
   u32 zero;
   u8 param;
@@ -100,22 +101,22 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   WaitFrames(18);
 }
 
-// Leaves through an exit of kind 0x20 (animation 26); flag 0x120 makes the
-// next scene play the matching arrival (ObjectEffect_RunPendingFlagEvent).
+/// Leaves through an exit of kind 0x20 (animation 26); flag 0x120 makes the
+/// next scene play the matching arrival (ObjectEffect_RunPendingFlagEvent).
 void ObjectEffect_BeginContextEffect26(void) {
   ObjectEffect_PrepareContextEffect(0x1A);
   GameFlag_SetBitFar(0x120);
 }
 
-// Leaves through an exit of kind 0x30 (animation 25), recorded in flag 0x121.
+/// Leaves through an exit of kind 0x30 (animation 25), recorded in flag 0x121.
 void ObjectEffect_BeginContextEffect25(void) {
   ObjectEffect_PrepareContextEffect(0x19);
   GameFlag_SetBitFar(0x121);
 }
 
-// Plays the leader's arrival animation through an exit: centred on its tile
-// at the tile's north edge, the leader plays animation for 30 frames, loses
-// the extra sprite part and walks 8 pixels south.
+/// Plays the leader's arrival animation through an exit: centred on its tile
+/// at the tile's north edge, the leader plays animation for 30 frames, loses
+/// the extra sprite part and walks 8 pixels south.
 void ObjectEffect_EndContextEffect(s32 animation) {
   s32 zero;
   s32 mask;
@@ -143,10 +144,10 @@ void ObjectEffect_EndContextEffect(s32 animation) {
   FieldObject_WaitForMoveFar(leader);
 }
 
-// Plays the leader's arrival for the way the last scene was left: through an
-// exit of kind 0x20 (flag 0x120, animation 24, returns 1) or 0x30 (flag
-// 0x121, animation 23, returns 2), or falling in from 160 pixels above
-// (flag 0x122, returns 3). Returns 0 when there is nothing to play.
+/// Plays the leader's arrival for the way the last scene was left: through an
+/// exit of kind 0x20 (flag 0x120, animation 24, returns 1) or 0x30 (flag
+/// 0x121, animation 23, returns 2), or falling in from 160 pixels above
+/// (flag 0x122, returns 3). Returns 0 when there is nothing to play.
 s32 ObjectEffect_RunPendingFlagEvent(void) {
   s32 result = 0;
   s32 flag = 0x120;

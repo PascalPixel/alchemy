@@ -1,12 +1,13 @@
-// Part of object.c, the field object, compiled only through it.
-// Scene changes: exits, returns from battle, the main loop, entering.
+/// @file
+/// Part of object.c, the field object, compiled only through it.
+/// Scene changes: exits, returns from battle, the main loop, entering.
 
 #include "../object_internal.h"
 
-// The scene overlay's exit table: a header word holding a scene id, then that
-// scene's exits, one packed word each (and a flag word after it when
-// EXIT_HAS_FLAG is set). Scene id EXIT_TABLE_END ends the exits of a scene and
-// the whole table.
+/// The scene overlay's exit table: a header word holding a scene id, then that
+/// scene's exits, one packed word each (and a flag word after it when
+/// EXIT_HAS_FLAG is set). Scene id EXIT_TABLE_END ends the exits of a scene and
+/// the whole table.
 #define EXIT_SCENE_MASK 0xfff
 #define EXIT_ENTRANCE(word) (((word) & 0xff000) >> 12)
 #define EXIT_KIND(word) (((word) & 0x0ff00000) >> 20)
@@ -14,11 +15,11 @@
 #define EXIT_TABLE_END 0x1ff
 #define EXIT_KIND_ANY 0xff
 
-// Chooses the scene and entrance to go to when the party leaves the current
-// scene. exitKind is the kind of exit Field_RunScene ended on; the scene's exit
-// table gives the first exit of that kind (or of any kind) whose flag, if it
-// has one, is not set. An exit of kind 0 or the end of the scene's exits falls
-// back to the scene of its first exit.
+/// Chooses the scene and entrance to go to when the party leaves the current
+/// scene. exitKind is the kind of exit Field_RunScene ended on; the scene's
+/// exit table gives the first exit of that kind (or of any kind) whose flag, if
+/// it has one, is not set. An exit of kind 0 or the end of the scene's exits
+/// falls back to the scene of its first exit.
 void Scene_TakeExit(s32 exitKind) {
   s16 currentScene;
   const u32 *exitTable;
@@ -80,13 +81,13 @@ void Scene_TakeExit(s32 exitKind) {
   }
 }
 
-// Chooses where the game continues after a battle or another scene that is
-// not a field map (see Game_ResetForNewGame). result is that scene's result:
-// -1 when the party was defeated, which revives the leader with 1 HP (and, with
-// FLAG_CHILDHOOD, fully heals the first two characters) and returns to the
-// defeat point, or to the last saved point when none is set. Any other result
-// goes to the next scene the event set, or to the default scene with the party
-// keeping its position.
+/// Chooses where the game continues after a battle or another scene that is
+/// not a field map (see Game_ResetForNewGame). result is that scene's result:
+/// -1 when the party was defeated, which revives the leader with 1 HP (and,
+/// with FLAG_CHILDHOOD, fully heals the first two characters) and returns to
+/// the defeat point, or to the last saved point when none is set. Any other
+/// result goes to the next scene the event set, or to the default scene with
+/// the party keeping its position.
 void Scene_ReturnFromBattle(s32 result) {
   struct BattleUnit *unit;
   s32 i;
@@ -145,16 +146,16 @@ void Scene_ReturnFromBattle(s32 result) {
   }
 }
 
-// Returns the group scene belongs to. The scenes of one place share a group,
-// which selects their music, area name and the flags kept while inside it.
+/// Returns the group scene belongs to. The scenes of one place share a group,
+/// which selects their music, area name and the flags kept while inside it.
 s32 BattleFx_GetResourceGroup(s32 scene) {
   return gField_SceneTable[scene].group;
 }
 
-// The minigames borrow the final two 16-colour background palettes.
+/// The minigames borrow the final two 16-colour background palettes.
 enum { MINIGAME_PALETTE_FIRST = 14, MINIGAME_PALETTE_BYTES = 64 };
 
-// Runs the Lucky Dice minigame, preserving BG palettes 14 and 15.
+/// Runs the Lucky Dice minigame, preserving BG palettes 14 and 15.
 static __inline__ s32 RunLuckyDice(s32 entrance) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
   void *saved = MemAlloc(MINIGAME_PALETTE_BYTES);
@@ -171,7 +172,7 @@ static __inline__ s32 RunLuckyDice(s32 entrance) {
   return result;
 }
 
-// Runs the slot machine, preserving BG palettes 14 and 15.
+/// Runs the slot machine, preserving BG palettes 14 and 15.
 static __inline__ s32 RunReelGame(s32 entrance) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
   void *saved = MemAlloc(MINIGAME_PALETTE_BYTES);
@@ -188,12 +189,12 @@ static __inline__ s32 RunReelGame(s32 entrance) {
   return result;
 }
 
-// The game's main loop, which never returns. mode chooses the first scene: 0
-// starts at the title screen with a fresh game state; in debug mode, 1 starts
-// in Isaac's home in Vale and 2 at the clear screen. Each pass resets the
-// runtime, then either runs a battle or minigame and picks the scene to return
-// to, or loads a field scene's code, starts its music and runs it until the
-// party takes an exit.
+/// The game's main loop, which never returns. mode chooses the first scene: 0
+/// starts at the title screen with a fresh game state; in debug mode, 1 starts
+/// in Isaac's home in Vale and 2 at the clear screen. Each pass resets the
+/// runtime, then either runs a battle or minigame and picks the scene to return
+/// to, or loads a field scene's code, starts its music and runs it until the
+/// party takes an exit.
 void Game_ResetForNewGame(s32 mode) {
   const struct SceneRecord *table;
   const struct SceneRecord *record;
@@ -280,7 +281,7 @@ void Game_ResetForNewGame(s32 mode) {
   }
 }
 
-// Loads the current scene's code into the overlay area.
+/// Loads the current scene's code into the overlay area.
 void Scene_LoadOverlay(s32 unused) {
   const struct SceneRecord *table;
 
@@ -290,12 +291,12 @@ void Scene_LoadOverlay(s32 unused) {
 
 #define SCENE_RECORD(id) (&gField_SceneTable[id])
 
-// Updates the flags and state that last for one scene or one group of scenes,
-// on entering the current scene. Unless keep is set (the party returns to
-// where it was, as after a battle), the flags of the last scene are cleared,
-// and on entering a new group so are the group's flags and step counters, the
-// location name is shown and the entrance becomes the point Retreat returns
-// to. Then the group's visited flag (0x180 + group) is set.
+/// Updates the flags and state that last for one scene or one group of scenes,
+/// on entering the current scene. Unless keep is set (the party returns to
+/// where it was, as after a battle), the flags of the last scene are cleared,
+/// and on entering a new group so are the group's flags and step counters, the
+/// location name is shown and the entrance becomes the point Retreat returns
+/// to. Then the group's visited flag (0x180 + group) is set.
 void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
   s32 group = SCENE_RECORD(gGameState.scene)->group;
   s32 flag;
@@ -336,8 +337,8 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
   GameFlag_RefreshLureCapFar();
 }
 
-// Starts the current scene's field music, chosen by
-// Scene_ResolveInteractionResult.
+/// Starts the current scene's field music, chosen by
+/// Scene_ResolveInteractionResult.
 void Audio_PlayCueFromEventWork(void) { AudioCommand_PlayFar(gGameState.cue); }
 
 #undef EXIT_SCENE_MASK

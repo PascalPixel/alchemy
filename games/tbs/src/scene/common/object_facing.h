@@ -5,8 +5,8 @@
 // Altin Peak, Bilibin, Imil, Kolima, McCoy's palace and garden, Sol Sanctum's
 // Elemental Star room, and Vale's Kraden, Babi, home and interiors scenes.
 
-// An object script call: an actor with a facing target turns towards it, at
-// most a sixteenth of a turn a frame.
+/// An object script call: an actor with a facing target turns towards it, at
+/// most a sixteenth of a turn a frame.
 static s32 Scene_TurnTowardTarget(struct ScriptInterpreter *interpreter) {
   struct FacingObject *obj = (struct FacingObject *)interpreter;
   s32 delta;

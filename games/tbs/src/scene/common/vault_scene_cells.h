@@ -1,5 +1,6 @@
-// Vault, before and after the thieves are caught: the doorway of exit 11,
-// which opens in two frames as the leader walks into it facing north.
+/// @file
+/// Vault, before and after the thieves are caught: the doorway of exit 11,
+/// which opens in two frames as the leader walks into it facing north.
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -19,7 +20,7 @@ enum {
   VAULT_DOOR_HALF_SIZE = 2
 };
 
-// The two square halves are stacked in the source map and drawn side by side.
+/// The two square halves are stacked in the source map and drawn side by side.
 static inline void Vault_DrawDoorwayFrame(s32 sourceColumn) {
   Map_CopyCellsTo(sourceColumn, 33, 34, 16, VAULT_DOOR_HALF_SIZE,
                   VAULT_DOOR_HALF_SIZE);
@@ -27,8 +28,8 @@ static inline void Vault_DrawDoorwayFrame(s32 sourceColumn) {
                   VAULT_DOOR_HALF_SIZE);
 }
 
-// Touch trigger 11, walking north: open the doorway, make its cells passable,
-// draw the leader behind the background and walk through exit 11.
+/// Touch trigger 11, walking north: open the doorway, make its cells passable,
+/// draw the leader behind the background and walk through exit 11.
 static void Vault_OpenDoorwayAndEnter(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;

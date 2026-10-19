@@ -1,14 +1,15 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Douse.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Douse.
 
 #include "../psynergy_effects_internal.h"
 
-// A FieldActor seen with the halfword at 0x5e (here its phase), which
-// FieldActor does not name.
+/// A FieldActor seen with the halfword at 0x5e (here its phase), which
+/// FieldActor does not name.
 struct Effect05Object {
   u8 reserved00[8];
   s32 x, y, z;
-  s32 altitude; // the height it falls to
+  s32 altitude; ///< the height it falls to
   s32 scaleX, scaleY;
   u8 reserved20[8];
   s32 velocityY;
@@ -21,12 +22,12 @@ struct Effect05Object {
   u8 reserved56[8];
   s16 phase;
   u8 reserved60[0xc];
-  void (*callback)(union FieldObject *object); // per-frame update
+  void (*callback)(union FieldObject *object); ///< per-frame update
 };
 
 struct Effect05State {
   s32 angle;
-  s32 x, y, z; // the ground under the orb's destination
+  s32 x, y, z; ///< the ground under the orb's destination
   struct Object *target;
   s32 initialized;
   u8 reserved18[8];
@@ -37,8 +38,8 @@ struct Effect05State {
   u8 alternate;
 };
 
-// Per-frame update of a falling particle: on reaching altitude, it scatters
-// three small particles.
+/// Per-frame update of a falling particle: on reaching altitude, it scatters
+/// three small particles.
 void FieldFx_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
   struct Effect05Object *particle = (struct Effect05Object *)fieldObject;
   s32 i;
@@ -76,8 +77,8 @@ void FieldFx_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
   }
 }
 
-// Per-frame update: drifts from side to side as it slowly falls, and is
-// released on reaching the ground.
+/// Per-frame update: drifts from side to side as it slowly falls, and is
+/// released on reaching the ground.
 void BattleFx_UpdateDriftingFallObject(union FieldObject *fieldObject) {
   struct ObjectRuntime *particle = (struct ObjectRuntime *)fieldObject;
   s32 drift;
@@ -91,15 +92,15 @@ void BattleFx_UpdateDriftingFallObject(union FieldObject *fieldObject) {
   }
 }
 
-// Abilities: Douse (field kind 5), cast on a target.
+/// Abilities: Douse (field kind 5), cast on a target.
 void FieldFx_RunDouseOnTarget(s32 unused) { FieldFx_RunDouse(); }
 
-// Abilities: Douse (field kind 5).
-//
-// An orb of light rises from 16 pixels above the target to 32 pixels above the
-// destination (80 with variant) over 10 frames, growing as it goes, rains
-// particles, and returns. With no destination yet, the destination is 16 pixels
-// from the target toward angle.
+/// Abilities: Douse (field kind 5).
+///
+/// An orb of light rises from 16 pixels above the target to 32 pixels above the
+/// destination (80 with variant) over 10 frames, growing as it goes, rains
+/// particles, and returns. With no destination yet, the destination is 16
+/// pixels from the target toward angle.
 void FieldFx_RunDouse(void) {
   struct EffectVector pos;
   struct EffectVector start;

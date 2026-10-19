@@ -62,18 +62,18 @@ static void Ripple_Stop(void);
 static void Curtain_Start(void);
 
 enum {
-  SHIP_NORTH = 8, // the ship, in two pieces of sprite 0x1f6
+  SHIP_NORTH = 8, ///< the ship, in two pieces of sprite 0x1f6
   SHIP_SOUTH = 9
 };
 
-// An entrance the table does not list; arriving by it hands the leader the
-// Black Orb.
+/// An entrance the table does not list; arriving by it hands the leader the
+/// Black Orb.
 enum { ENTRANCE_99 = 99 };
 
-// The sprite's two priority bits of a ship piece or a party actor: 9 sets
-// the first, any other the second. ACTOR_SPRITE reads actor->sprite through
-// an s32, so each store reloads it as the native does; read as the field,
-// the two stores share one load.
+/// The sprite's two priority bits of a ship piece or a party actor: 9 sets
+/// the first, any other the second. ACTOR_SPRITE reads actor->sprite through
+/// an s32, so each store reloads it as the native does; read as the field,
+/// the two stores share one load.
 #define ACTOR_SPRITE(actor)                                                    \
   ((struct AnimationObject *)*(s32 *)((u8 *)(actor) + 0x50))
 #define SET_PRIORITY(actor, n)                                                 \
@@ -82,45 +82,45 @@ enum { ENTRANCE_99 = 99 };
 
 s32 Math_DivideUnsigned();
 
-// Where the party can enter the harbor.
+/// Where the party can enter the harbor.
 const struct SceneEntrance *LemurianShip_GetEntrances(void) {
   return gLemurianShipEntrances;
 }
 
-// The harbor has no regions.
+/// The harbor has no regions.
 const struct SceneRegion *LemurianShip_GetRegions(void) { return NULL; }
 
-// Where its one exit leads.
+/// Where its one exit leads.
 const u32 *LemurianShip_GetExits(void) { return gLemurianShipExits; }
 
-// The ship's two pieces; the party's own actors fill the first three rows.
+/// The ship's two pieces; the party's own actors fill the first three rows.
 const struct ScenePlacement *LemurianShip_GetPlacements(void) {
   return gLemurianShipPlacements;
 }
 
-// Trigger 1, the way out: leave, clearing the backdrop color.
+/// Trigger 1, the way out: leave, clearing the backdrop color.
 static void LeaveTheShip(void) {
   Engine_EventRequestExit(gEventWork->touchedTrigger);
   Io_Write16(0, &PLTT_BACKDROP);
 }
 
-// Reveal (phase 5) stops the water's ripple; its end (phase 4) starts it
-// again.
+/// Reveal (phase 5) stops the water's ripple; its end (phase 4) starts it
+/// again.
 static void Ripple_StopForReveal(void) { Ripple_Stop(); }
 
-// Starts the two-axis ripple with its original frequencies and amplitudes.
+/// Starts the two-axis ripple with its original frequencies and amplitudes.
 static void Ripple_Start(void) {
   DisplayScroll_InitializeHBlankDma(0, 0x40000, 0x10000, 0x2000, 0x10000,
                                     0x8000, 0x4000);
 }
 
-// The exit, Reveal and trigger 10 before the water.
+/// The exit, Reveal and trigger 10 before the water.
 const struct SceneEvent *LemurianShip_GetEvents(void) {
   return gLemurianShipEvents;
 }
 
-// Every frame once the ship has risen: steps the ship's glowing colors
-// (6 palettes of 6 frames each) into palette 7.
+/// Every frame once the ship has risen: steps the ship's glowing colors
+/// (6 palettes of 6 frames each) into palette 7.
 static void ShipGlow_CyclePalette(void) {
   u16 *frame;
   s32 paletteIndex;
@@ -135,8 +135,8 @@ static void ShipGlow_CyclePalette(void) {
     *frame = 0;
 }
 
-// The update of a drop of spray: it rises and wobbles for its timer, then
-// falls back by gSprayFallScript.
+/// The update of a drop of spray: it rises and wobbles for its timer, then
+/// falls back by gSprayFallScript.
 static void Spray_Update(union FieldObject *fieldObject) {
   u8 *obj = (u8 *)fieldObject;
   u16 *wait = &((struct FieldActor *)obj)->timer;
@@ -163,7 +163,7 @@ static void Spray_Update(union FieldObject *fieldObject) {
   }
 }
 
-// Every 40 frames, the Black Orb's glow fades a step, down to 4.
+/// Every 40 frames, the Black Orb's glow fades a step, down to 4.
 static void OrbGlow_Fade(void) {
   s32 frame = gOrbGlowFadeFrames + 1;
 
@@ -176,7 +176,7 @@ static void OrbGlow_Fade(void) {
   }
 }
 
-// The map's scrolling layers, as the swell moves them.
+/// The map's scrolling layers, as the swell moves them.
 struct WaveMapLayer {
   s32 unk00[3];
   s32 y;
@@ -188,9 +188,9 @@ struct WaveMap {
   struct WaveMapLayer layers[8];
 };
 
-// Every frame while the ship rises and floats: the Black Orb's glow
-// pulses in the blend, the ship (layers 6 and 7) and everyone on deck bob
-// with the swell, and spray rises from the water.
+/// Every frame while the ship rises and floats: the Black Orb's glow
+/// pulses in the blend, the ship (layers 6 and 7) and everyone on deck bob
+/// with the swell, and spray rises from the water.
 static void Ship_UpdateSwell(void) {
   /* FAKEMATCH: volatile restores the form the bytes prove: blend lives at sp+18
    * and is loaded again with ldrh for the register write (a 20-byte frame for
@@ -264,8 +264,8 @@ static void Ship_UpdateSwell(void) {
   }
 }
 
-// Called by each member's boarding script as they step on deck: from then
-// on they bob with the ship.
+/// Called by each member's boarding script as they step on deck: from then
+/// on they bob with the ship.
 static s32 Leader_StepOnDeck(struct ScriptInterpreter *interpreter) {
   s32 *deckY;
   struct FieldActor *actor;
@@ -276,7 +276,7 @@ static s32 Leader_StepOnDeck(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-// Remembers Garet's boarding height for the swell callback.
+/// Remembers Garet's boarding height for the swell callback.
 static s32 Garet_StepOnDeck(struct ScriptInterpreter *interpreter) {
   s32 *deckY;
   struct FieldActor *actor;
@@ -287,7 +287,7 @@ static s32 Garet_StepOnDeck(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-// Remembers Mia's boarding height for the swell callback.
+/// Remembers Mia's boarding height for the swell callback.
 static s32 Mia_StepOnDeck(struct ScriptInterpreter *interpreter) {
   s32 *deckY;
   struct FieldActor *actor;
@@ -298,7 +298,7 @@ static s32 Mia_StepOnDeck(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-// Remembers Ivan's boarding height for the swell callback.
+/// Remembers Ivan's boarding height for the swell callback.
 static s32 Ivan_StepOnDeck(struct ScriptInterpreter *interpreter) {
   s32 *deckY;
   struct FieldActor *actor;
@@ -309,9 +309,9 @@ static s32 Ivan_StepOnDeck(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-// After the ship rises: the others step out and talk over the journey
-// while three questions shape their replies, everyone boards, and the ship
-// sails east as the curtains close and the game goes to the clear screen.
+/// After the ship rises: the others step out and talk over the journey
+/// while three questions shape their replies, everyone boards, and the ship
+/// sails east as the curtains close and the game goes to the clear screen.
 static void SetSail(void) {
   struct MapScrollWork *scroll;
   struct FieldActor *ship;
@@ -532,8 +532,8 @@ static void SetSail(void) {
   Event_SetDestination((s32)&SceneId_Title, 9);
 }
 
-// The water's ripple: two pages of per-line scroll offsets, swapped each
-// frame, built from a sine table.
+/// The water's ripple: two pages of per-line scroll offsets, swapped each
+/// frame, built from a sine table.
 struct ScrollWork {
   u16 pages[2][0x3c0];
   u8 page;
@@ -545,16 +545,16 @@ struct ScrollWork {
   s32 amplitude[2];
 };
 
-// One line's ripple offset.
+/// One line's ripple offset.
 static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base) {
   return (u16)(Iwram_MulQ16(gRippleSine[(angle >> 16) & 0xff], amplitude) /
                256) +
          base;
 }
 
-// Trigger 10, the leader at the water: the Black Orb glows, the water
-// lights up, spray rises and the ship comes up out of the sea 90 pixels,
-// then the party sets sail.
+/// Trigger 10, the leader at the water: the Black Orb glows, the water
+/// lights up, spray rises and the ship comes up out of the sea 90 pixels,
+/// then the party sets sail.
 static void RaiseTheShip(void) {
   struct WaveMap *map;
   s32 i;
@@ -652,8 +652,8 @@ static void RaiseTheShip(void) {
   SetSail();
 }
 
-// Sets the harbor up: the ship sunk 90 pixels, its pieces and the party
-// drawn behind the water layers, and the ripple running.
+/// Sets the harbor up: the ship sunk 90 pixels, its pieces and the party
+/// drawn behind the water layers, and the ripple running.
 s32 LemurianShip_SetupScene(void) {
   struct WaveMap *map;
   /* FAKEMATCH: volatile restores the form the bytes prove: cnt lives at sp+2
@@ -723,8 +723,8 @@ s32 LemurianShip_SetupScene(void) {
   return 0;
 }
 
-// Each HBlank: copies the next line of the current ripple page into the
-// background 3 scroll registers by DMA 0.
+/// Each HBlank: copies the next line of the current ripple page into the
+/// background 3 scroll registers by DMA 0.
 void DisplayScroll_ArmHBlankDma(void) {
   struct ScrollWork *work;
   u32 *source;
@@ -744,7 +744,7 @@ void DisplayScroll_ArmHBlankDma(void) {
   Dma_Set(source, destination, DMA_HBLANK_WORD_PER_LINE, (volatile u32 *)dma0);
 }
 
-// Each frame: builds the other ripple page and swaps it in.
+/// Each frame: builds the other ripple page and swaps it in.
 void DisplayScroll_BuildAndSwapHBlankPage(void) {
   struct ScrollWork *work;
   u16 *line;
@@ -783,7 +783,7 @@ void DisplayScroll_BuildAndSwapHBlankPage(void) {
 // Shared scene code, included where the ROM places it.
 #include "common/scroll_initialize_hblank_dma.h"
 
-// Takes the ripple's callbacks off and stops DMA 0.
+/// Takes the ripple's callbacks off and stops DMA 0.
 static void Ripple_Stop(void) {
   volatile u16 *reg;
 
@@ -795,8 +795,8 @@ static void Ripple_Stop(void) {
   reg[5];
 }
 
-// The curtains: three columns of eight 32 by 8 sprites that close in from
-// the sides as the ship sails.
+/// The curtains: three columns of eight 32 by 8 sprites that close in from
+/// the sides as the ship sails.
 struct CurtainSprite {
   u32 unused;
   u32 attributes;
@@ -807,7 +807,7 @@ static struct CurtainSprite sCurtainSprites[24];
 static s16 sCurtainGap;
 static s16 sCurtainVramSlot;
 
-// Every frame: moves the curtains a step closer.
+/// Every frame: moves the curtains a step closer.
 static void Curtain_Close(void) {
   u32 *entry;
   u32 tile;
@@ -845,8 +845,8 @@ static void Curtain_Close(void) {
     Runtime_PushSlotEntry(&sCurtainSprites[i], 255);
 }
 
-// Fills a 256-byte tile with color 1 and starts the curtains 48 pixels
-// open.
+/// Fills a 256-byte tile with color 1 and starts the curtains 48 pixels
+/// open.
 static void Curtain_Start(void) {
   u8 *tiles;
 

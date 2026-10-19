@@ -24,34 +24,34 @@
 // Isaac and Garet to come down the mountain.
 
 enum ValeEruptionActor {
-  // "Oooh, my grandson! Will Garet be safe in this eruption?!?"
+  /// "Oooh, my grandson! Will Garet be safe in this eruption?!?"
   ACTOR_GARETS_GRANDFATHER = ACTOR_FIRST_PLACED + 1,
-  // "They were hanging around here while I was on guard duty."
+  /// "They were hanging around here while I was on guard duty."
   ACTOR_GUARD = ACTOR_FIRST_PLACED + 5
 };
 
 static void Event_ReturnFromMtAleph(void);
 
-// Return where the party appears: the path down from Mt. Aleph.
+/// Return where the party appears: the path down from Mt. Aleph.
 struct SceneEntrance *ValeEruption_GetEntrances(void) {
   return gValeEruption_Entrances;
 }
 
-// The square has no scene regions.
+/// The square has no scene regions.
 struct SceneRegion *ValeEruption_GetRegions(void) { return NULL; }
 
-// Return the way back to Vale.
+/// Return the way back to Vale.
 u32 *ValeEruption_GetExits(void) { return gValeEruption_Exits; }
 
-// Return Garet and the villagers gathered before the sanctum.
+/// Return Garet and the villagers gathered before the sanctum.
 struct ScenePlacement *ValeEruption_GetPlacements(void) {
   return gValeEruption_Placements;
 }
 
-// The square has no events of its own: everything happens on arrival.
+/// The square has no events of its own: everything happens on arrival.
 struct SceneEvent *ValeEruption_GetEvents(void) { return gValeEruption_Events; }
 
-// Arriving by entrance 15, from the top of Mt. Aleph, plays the return.
+/// Arriving by entrance 15, from the top of Mt. Aleph, plays the return.
 s32 ValeEruption_Initialize(void) {
   if (gGameState.entrance == 15) {
     Event_ReturnFromMtAleph();
@@ -59,9 +59,9 @@ s32 ValeEruption_Initialize(void) {
   return 0;
 }
 
-// The volcano shakes the square while the villagers wonder where Isaac and
-// Garet are. The two come down the mountain, are welcomed, tell that Jenna and
-// Kraden were taken away, and follow the elders into the sanctum.
+/// The volcano shakes the square while the villagers wonder where Isaac and
+/// Garet are. The two come down the mountain, are welcomed, tell that Jenna and
+/// Kraden were taken away, and follow the elders into the sanctum.
 static void Event_ReturnFromMtAleph(void) {
   struct EventWork *work;
   const s32 *actionScript;
@@ -393,7 +393,7 @@ static void Event_ReturnFromMtAleph(void) {
   Engine_EventEnd();
 }
 
-// Isaac walks down from the path to the villagers before the sanctum.
+/// Isaac walks down from the path to the villagers before the sanctum.
 s32 gValeEruption_LeaderWalksDown[] = {
     SC_ARG(2), SC_MOVE(PIXELS(128), 0, PIXELS(378)),
     SC_SYNC,   SC_MOVE(PIXELS(203), 0, PIXELS(378)),
@@ -403,7 +403,7 @@ s32 gValeEruption_LeaderWalksDown[] = {
     SC_END,
 };
 
-// Garet follows him, stopping a little above.
+/// Garet follows him, stopping a little above.
 s32 gValeEruption_GaretWalksDown[] = {
     SC_ARG(2), SC_MOVE(PIXELS(128), 0, PIXELS(378)),
     SC_SYNC,   SC_MOVE(PIXELS(203), 0, PIXELS(378)),
@@ -412,7 +412,7 @@ s32 gValeEruption_GaretWalksDown[] = {
     SC_END,
 };
 
-// Isaac, then Garet, walk through the sanctum's door.
+/// Isaac, then Garet, walk through the sanctum's door.
 s32 gValeEruption_EnterSanctum[] = {
     SC_ARG(2), SC_MOVE(PIXELS(255), 0, PIXELS(452)),
     SC_SYNC,   SC_MOVE(PIXELS(255), 0, PIXELS(390)),
@@ -468,7 +468,7 @@ struct SceneEvent gValeEruption_Events[] = {
     {SCENE_EVENTS_END},
 };
 
-// The sanctum's door, two cells wide, opening in two steps.
+/// The sanctum's door, two cells wide, opening in two steps.
 u16 gValeEruption_SanctumDoorOpens[] = {
     MAP_CELL_STEP(0, 98, 2, 2, 2),
     MAP_CELL_STEP(2, 98, 2, 2, 2),

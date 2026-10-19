@@ -32,12 +32,12 @@
 #include "songs.h"
 #include "event.h"
 
-// Breeze, the Jupiter Djinni on the branch: Djinni 61 is the name message
-// "Breeze", and its placement is gone once its flag (FLAG_DJINNI_0 + 61) is
-// set.
+/// Breeze, the Jupiter Djinni on the branch: Djinni 61 is the name message
+/// "Breeze", and its placement is gone once its flag (FLAG_DJINNI_0 + 61) is
+/// set.
 enum { ACTOR_BREEZE = ACTOR_FIRST_PLACED, SPRITE_JUPITER_DJINNI = 0x5d };
 
-// Starts the scanline-dependent BG3 scroll callbacks.
+/// Starts the scanline-dependent BG3 scroll callbacks.
 static void TretTreeBranch_StartBg3Split(void);
 
 static u16 sTransferHeader[16];
@@ -46,29 +46,29 @@ static s32 sSplitLine;
 static u16 sHofsAtOrAfterSplit;
 static u16 sHofsBeforeSplit;
 
-// Talking to Breeze: the Djinni hops and its battle starts.
+/// Talking to Breeze: the Djinni hops and its battle starts.
 static void Event_TalkToBreeze(void) {
   Field_RequestDjinnBattle(ACTOR_BREEZE, DJINNI_BREEZE);
 }
 
-// Returns the branch entrances from the adjoining Tret rooms.
+/// Returns the branch entrances from the adjoining Tret rooms.
 const struct SceneEntrance *TretTreeBranch_GetEntrances(void) {
   return gTretTreeBranch_Entrances;
 }
 
-// Returns no region table for this overlay.
+/// Returns no region table for this overlay.
 const struct SceneRegion *TretTreeBranch_GetRegions(void) { return NULL; }
 
-// Returns the packed exits to the adjoining Tret scenes.
+/// Returns the packed exits to the adjoining Tret scenes.
 const u32 *TretTreeBranch_GetExits(void) { return gTretTreeBranch_Exits; }
 
-// Returns the branch's actor placement table.
+/// Returns the branch's actor placement table.
 const struct ScenePlacement *TretTreeBranch_GetPlacements(void) {
   return gTretTreeBranch_Placements;
 }
 
-// Moves the leader and camera by signed 16-pixel cell offsets, placing each
-// at the terrain height of its destination.
+/// Moves the leader and camera by signed 16-pixel cell offsets, placing each
+/// at the terrain height of its destination.
 static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
                                                        s32 cellOffsetZ) {
   struct EventWork *state = gEventWork;
@@ -104,38 +104,38 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
   }
 }
 
-// Touch trigger 10: the leader and camera move 80 pixels south at once.
+/// Touch trigger 10: the leader and camera move 80 pixels south at once.
 static void Event_ShiftSouthFiveCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 5);
 }
 
-// Touch trigger 11: the leader and camera move 80 pixels north at once.
+/// Touch trigger 11: the leader and camera move 80 pixels north at once.
 static void Event_ShiftNorthFiveCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -5);
 }
 
-// Touch trigger 12: the same 80-pixel move south as trigger 10.
+/// Touch trigger 12: the same 80-pixel move south as trigger 10.
 static void Event_ShiftSouthFiveCellsSecond(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 5);
 }
 
-// Touch trigger 13: the same 80-pixel move north as trigger 11.
+/// Touch trigger 13: the same 80-pixel move north as trigger 11.
 static void Event_ShiftNorthFiveCellsSecond(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -5);
 }
 
-// Touch trigger 14: the leader and camera move 96 pixels south at once.
+/// Touch trigger 14: the leader and camera move 96 pixels south at once.
 static void Event_ShiftSouthSixCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 6);
 }
 
-// Touch trigger 15: the leader and camera move 96 pixels north at once.
+/// Touch trigger 15: the leader and camera move 96 pixels north at once.
 static void Event_ShiftNorthSixCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -6);
 }
 
-// Walking into one of exits 1 to 8: the exit sound plays and the party
-// leaves by the exit touched.
+/// Walking into one of exits 1 to 8: the exit sound plays and the party
+/// leaves by the exit touched.
 static void Event_TakeTouchedExit(void) {
   struct EventWork *state = gEventWork;
   s16 *touchedExit;
@@ -145,7 +145,7 @@ static void Event_TakeTouchedExit(void) {
   Engine_EventRequestExit(*touchedExit);
 }
 
-// Selects the same mask and window parameters for Reveal and scene entry.
+/// Selects the same mask and window parameters for Reveal and scene entry.
 static inline void
 TretTreeBranch_SetRevealWindow(struct DisplayTransitionState *state) {
   state->mask = 0x3f3f;
@@ -153,8 +153,8 @@ TretTreeBranch_SetRevealWindow(struct DisplayTransitionState *state) {
   state->value = 10;
 }
 
-// Casting Reveal on the branch (its phase 2): the window transition and BG1's
-// blend over the rest of the screen are set again, as when the scene opened.
+/// Casting Reveal on the branch (its phase 2): the window transition and BG1's
+/// blend over the rest of the screen are set again, as when the scene opened.
 static void Event_CastReveal(void) {
   struct DisplayTransitionState *transition;
 
@@ -167,24 +167,24 @@ static void Event_CastReveal(void) {
   TretTreeBranch_SetRevealWindow(transition);
 }
 
-// Returns the touch, talk, exit and Reveal events for this branch.
+/// Returns the touch, talk, exit and Reveal events for this branch.
 const struct SceneEvent *TretTreeBranch_GetEvents(void) {
   return gTretTreeBranch_Events;
 }
 
-// Unused event hook: begins and immediately ends an event.
+/// Unused event hook: begins and immediately ends an event.
 static void UNUSED TretTreeBranch_RunEmptyEvent(void) {
   EV_BEGIN();
   EV_END();
 }
 
-// Unused empty hook; its original role is not established.
+/// Unused empty hook; its original role is not established.
 static void UNUSED TretTreeBranch_UnusedHookFirst(void) {}
 
-// Another unused empty hook with no established role.
+/// Another unused empty hook with no established role.
 static void UNUSED TretTreeBranch_UnusedHookSecond(void) {}
 
-// Unused exchange callback: puts held/repeated keys in the transfer header.
+/// Unused exchange callback: puts held/repeated keys in the transfer header.
 static void UNUSED TretTreeBranch_ExchangeInputPacket(void) {
   u16 *header = sTransferHeader;
 
@@ -193,8 +193,8 @@ static void UNUSED TretTreeBranch_ExchangeInputPacket(void) {
   SerialRuntime_PollAndTransfer(header, sTransferData);
 }
 
-// Initializes the backdrop transition and installs BG3's scanline scroll split.
-// Returns 0 for the overlay initialization entry point.
+/// Initializes the backdrop transition and installs BG3's scanline scroll
+/// split. Returns 0 for the overlay initialization entry point.
 s32 TretTreeBranch_Initialize(void) {
 #ifndef UBFIX
   u8 **eventSlot = (u8 **)&gEventWork;
@@ -221,7 +221,7 @@ s32 TretTreeBranch_Initialize(void) {
   return 0;
 }
 
-// HBlank selects BG3's horizontal offset for the next scanline.
+/// HBlank selects BG3's horizontal offset for the next scanline.
 static void TretTreeBranch_ApplyBg3ScrollAtScanline(void) {
   u16 *scrollOffset;
   u32 horizontalScroll;
@@ -235,8 +235,8 @@ static void TretTreeBranch_ApplyBg3ScrollAtScanline(void) {
   REG_BG3HOFS = horizontalScroll;
 }
 
-// Updates the split from the first map layer's pixel position. Before the
-// split, scroll subtracts one pixel for every four elapsed frames.
+/// Updates the split from the first map layer's pixel position. Before the
+/// split, scroll subtracts one pixel for every four elapsed frames.
 static void TretTreeBranch_UpdateBg3ScrollSplit(void) {
   struct MapLayerScroll *layer =
       &((struct MapScrollWork *)gMapWork[0])->layers[0];
@@ -247,7 +247,7 @@ static void TretTreeBranch_UpdateBg3ScrollSplit(void) {
   sHofsBeforeSplit = horizontalOffset - (gFrameCount >> 2);
 }
 
-// Run the BG3 scroll selection at every HBlank, updating the split each frame.
+/// Run the BG3 scroll selection at every HBlank, updating the split each frame.
 static void TretTreeBranch_StartBg3Split(void) {
   Runtime_SetIrqHandler(IRQ_HBLANK, 0, TretTreeBranch_ApplyBg3ScrollAtScanline);
   FieldScheduler_AddCallback(TretTreeBranch_UpdateBg3ScrollSplit,

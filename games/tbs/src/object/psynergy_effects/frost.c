@@ -1,9 +1,10 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Frost.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Frost.
 
 #include "../psynergy_effects_internal.h"
 
-// Per-frame update: flashes (animation 2) for 2 frames in every 8.
+/// Per-frame update: flashes (animation 2) for 2 frames in every 8.
 void BattleFx_UpdateOrbitingParticleMain(union FieldObject *fieldObject) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
   s32 frame = gFrameCount & 7;
@@ -14,7 +15,7 @@ void BattleFx_UpdateOrbitingParticleMain(union FieldObject *fieldObject) {
   }
 }
 
-// Per-frame update: shrinks by 1/16 a frame and is released at 1/16.
+/// Per-frame update: shrinks by 1/16 a frame and is released at 1/16.
 void BattleFx_UpdateOrbitingParticleFade(union FieldObject *fieldObject) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
   s32 scale;
@@ -29,8 +30,8 @@ void BattleFx_UpdateOrbitingParticleFade(union FieldObject *fieldObject) {
   }
 }
 
-// Both winding directions share the countdown and position update. timer is
-// initialized to 60; preserve its halfword narrowing before computing radius.
+/// Both winding directions share the countdown and position update. timer is
+/// initialized to 60; preserve its halfword narrowing before computing radius.
 static inline void FieldFx_UpdateSpiralParticle(union FieldObject *fieldObject,
                                                 s32 clockwise) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
@@ -60,19 +61,19 @@ static inline void FieldFx_UpdateSpiralParticle(union FieldObject *fieldObject,
   }
 }
 
-// Spirals anticlockwise at twice the frames left in pixels, then fades.
+/// Spirals anticlockwise at twice the frames left in pixels, then fades.
 void BattleFx_UpdateOrbitingParticleLeft(union FieldObject *fieldObject) {
   FieldFx_UpdateSpiralParticle(fieldObject, 0);
 }
 
-// Per-frame update: as BattleFx_UpdateOrbitingParticleLeft, clockwise.
+/// Per-frame update: as BattleFx_UpdateOrbitingParticleLeft, clockwise.
 void BattleFx_UpdateOrbitingParticleRight(union FieldObject *fieldObject) {
   FieldFx_UpdateSpiralParticle(fieldObject, 1);
 }
 
-// Abilities: Frost (field kind 6), cast on a target (scene->child).
-//
-// With childMode the target is left as it is and only the particles appear.
+/// Abilities: Frost (field kind 6), cast on a target (scene->child).
+///
+/// With childMode the target is left as it is and only the particles appear.
 void FieldFx_RunFrostOnTarget(s32 unused) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *target = scene->child;
@@ -86,10 +87,10 @@ void FieldFx_RunFrostOnTarget(s32 unused) {
   }
 }
 
-// Abilities: Frost (field kind 6).
-//
-// 16 particles spiral in on the effect's position and make the target flash 16
-// times; without childOption the target takes mode 2.
+/// Abilities: Frost (field kind 6).
+///
+/// 16 particles spiral in on the effect's position and make the target flash 16
+/// times; without childOption the target takes mode 2.
 void FieldFx_RunFrost(void) {
   s32 eventTarget;
   struct EffectVector pos;

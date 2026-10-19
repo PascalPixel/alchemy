@@ -1,5 +1,6 @@
-// The Kalay and Tolbi docks: tickets, boarding, the crossing's aftermath,
-// and the passengers waiting for the ship to leave again.
+/// @file
+/// The Kalay and Tolbi docks: tickets, boarding, the crossing's aftermath,
+/// and the passengers waiting for the ship to leave again.
 
 #include "game_state.h"
 #include "version.h"
@@ -34,24 +35,24 @@
 #include "songs.h"
 #include "item_ids.h"
 
-// The three maps share actor numbers; each is named on the map it is proved.
+/// The three maps share actor numbers; each is named on the map it is proved.
 enum KalayTolbiDocksActor {
   // Kalay docks
-  ACTOR_WORRIED_FATHER = 11, // his daughter waits on the Tolbi docks
-  ACTOR_GATEKEEPER = 12,     // takes the tickets at the gangway
+  ACTOR_WORRIED_FATHER = 11, ///< his daughter waits on the Tolbi docks
+  ACTOR_GATEKEEPER = 12,     ///< takes the tickets at the gangway
   ACTOR_DOCK_WORKER = 13,
   ACTOR_VENUS_DJINNI = 14,
   // Tolbi docks, after the crossing
-  ACTOR_ARRIVALS_GREETER = 8, // hears of the party's scary trip
+  ACTOR_ARRIVALS_GREETER = 8, ///< hears of the party's scary trip
   ACTOR_WAITING_DAUGHTER = 11,
-  ACTOR_FIRST_BLOCK = 14, // the two blocks Move pushes
+  ACTOR_FIRST_BLOCK = 14, ///< the two blocks Move pushes
   ACTOR_SECOND_BLOCK = 15,
-  // Tolbi docks, once the tour's passengers are stranded there
+  /// Tolbi docks, once the tour's passengers are stranded there
   ACTOR_ANGRY_PASSENGER = 10,
   ACTOR_STRANDED_PASSENGER = 11,
-  ACTOR_TOUR_GUIDE = 13, // refunded the angry passenger's ticket
-  ACTOR_BODYGUARD = 16,  // hired by the tour guides
-  // Ticket office
+  ACTOR_TOUR_GUIDE = 13, ///< refunded the angry passenger's ticket
+  ACTOR_BODYGUARD = 16,  ///< hired by the tour guides
+  /// Ticket office
   ACTOR_TICKET_SELLER = 8
 };
 
@@ -62,12 +63,12 @@ static void KalayTolbiDocks_UpdateBlockCells(void);
 static void KalayTolbiDocks_SettleBlock(s32 actorId);
 static void KalayTolbiDocks_GaretSeesTheKaragol(void);
 
-// Adds the Venus Djinni waiting at the Kalay docks.
+/// Adds the Venus Djinni waiting at the Kalay docks.
 static void KalayTolbiDocks_RecruitVenusDjinni(void) {
   Djinn_JoinParty(ACTOR_VENUS_DJINNI, ELEMENT_VENUS, 5);
 }
 
-// Selects the entrance positions for the departure, arrival or ticket office.
+/// Selects the entrance positions for the departure, arrival or ticket office.
 const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -83,14 +84,14 @@ const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void) {
   return gKalayTolbiDocks_NoEntrances;
 }
 
-// The docks have no scene regions.
+/// The docks have no scene regions.
 const struct SceneRegion *KalayTolbiDocks_GetRegions(void) { return NULL; }
 
-// The docks list no numbered exits.
+/// The docks list no numbered exits.
 u8 *KalayTolbiDocks_GetExits(void) { return gKalayTolbiDocks_Exits; }
 
-// Each map has its people before the ship sails, once it has gone and not
-// come back (flag 0x93e), and once the passengers are stranded (flag 0x950).
+/// Each map has its people before the ship sails, once it has gone and not
+/// come back (flag 0x93e), and once the passengers are stranded (flag 0x950).
 const struct ScenePlacement *KalayTolbiDocks_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -121,8 +122,8 @@ const struct ScenePlacement *KalayTolbiDocks_GetPlacements(void) {
   return gKalayTolbiDocks_NoPlacements;
 }
 
-// Stepping off the ship at Tolbi, the leader walks a few steps and a passenger
-// hurries over to stand beside the party.
+/// Stepping off the ship at Tolbi, the leader walks a few steps and a passenger
+/// hurries over to stand beside the party.
 static void KalayTolbiDocks_PassengerGreetsArrivals(void) {
   Engine_EventBegin();
   GameFlag_Set(FLAG_TOLBI_DOCKS_PASSENGER_MET_PARTY);
@@ -134,7 +135,7 @@ static void KalayTolbiDocks_PassengerGreetsArrivals(void) {
   Engine_EventEnd();
 }
 
-// Selects dialogue and interactions for the current port and voyage state.
+/// Selects dialogue and interactions for the current port and voyage state.
 const struct SceneEvent *KalayTolbiDocks_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -165,7 +166,7 @@ const struct SceneEvent *KalayTolbiDocks_GetEvents(void) {
   return gKalayTolbiDocks_NoEvents;
 }
 
-// A man on the Kalay docks asks whether the party wants to go to Tolbi.
+/// A man on the Kalay docks asks whether the party wants to go to Tolbi.
 static void KalayTolbiDocks_AskAboutTolbiCrossing(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayWantGoToTolbi);
@@ -173,9 +174,9 @@ static void KalayTolbiDocks_AskAboutTolbiCrossing(void) {
   Engine_EventEnd();
 }
 
-// The father asks whether the party is taking the ship. If it is, he asks it
-// to tell his daughter in Tolbi that the tickets were too expensive for her
-// mother to come; afterwards he repeats the message.
+/// The father asks whether the party is taking the ship. If it is, he asks it
+/// to tell his daughter in Tolbi that the tickets were too expensive for her
+/// mother to come; afterwards he repeats the message.
 static void KalayTolbiDocks_TalkToWorriedFather(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_KALAY_DOCKS_CARRYING_MESSAGE) == 0) {
@@ -195,8 +196,8 @@ static void KalayTolbiDocks_TalkToWorriedFather(void) {
   Engine_EventEnd();
 }
 
-// Spoken to on the shore after boarding, the gatekeeper asks the party to
-// board the ship when it is finished.
+/// Spoken to on the shore after boarding, the gatekeeper asks the party to
+/// board the ship when it is finished.
 static void KalayTolbiDocks_RemindBoardShip(void) {
 #if !TBS_PATCH_3
   ((void)Object_GetById(0));
@@ -217,9 +218,9 @@ static void KalayTolbiDocks_RemindBoardShip(void) {
   }
 }
 
-// The gatekeeper at the gangway. Facing him from the east, the party is asked
-// for its tickets: with one bought he steps aside, takes it and lets the
-// party aboard. Once aboard, he offers to let the party go ashore again.
+/// The gatekeeper at the gangway. Facing him from the east, the party is asked
+/// for its tickets: with one bought he steps aside, takes it and lets the
+/// party aboard. Once aboard, he offers to let the party go ashore again.
 static void KalayTolbiDocks_TalkToGatekeeper(void) {
   s32 ticketOwner;
   s32 ticketSlot;
@@ -278,8 +279,8 @@ static void KalayTolbiDocks_TalkToGatekeeper(void) {
   Engine_EventEnd();
 }
 
-// The dock worker explains the tickets: hand one over to board, give it to
-// the gatekeeper, or wait on board for the ship to sail.
+/// The dock worker explains the tickets: hand one over to board, give it to
+/// the gatekeeper, or wait on board for the ship to sail.
 static void KalayTolbiDocks_TalkToDockWorker(void) {
   Engine_EventBegin();
 
@@ -297,10 +298,10 @@ static void KalayTolbiDocks_TalkToDockWorker(void) {
   Engine_EventEnd();
 }
 
-// The ticket seller offers tickets for the four of them at 600 coins, with
-// the party's coins shown beside the question. Declining, the leader shakes
-// his head; without enough coins the seller refuses; otherwise the party gets
-// its ticket and pays.
+/// The ticket seller offers tickets for the four of them at 600 coins, with
+/// the party's coins shown beside the question. Declining, the leader shakes
+/// his head; without enough coins the seller refuses; otherwise the party gets
+/// its ticket and pays.
 static void KalayTolbiDocks_TalkToTicketSeller(void) {
   struct UiWindow *coinsWindow;
   struct GameState *state;
@@ -373,8 +374,8 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
   }
 }
 
-// A passenger at Tolbi has heard the party was attacked by a monster on the
-// crossing, and asks whether that is true.
+/// A passenger at Tolbi has heard the party was attacked by a monster on the
+/// crossing, and asks whether that is true.
 static void KalayTolbiDocks_AskAboutRoughCrossing(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayHearScaryTrip);
@@ -382,7 +383,7 @@ static void KalayTolbiDocks_AskAboutRoughCrossing(void) {
   Engine_EventEnd();
 }
 
-// A man at Tolbi asks whether the upset tourists got seasick.
+/// A man at Tolbi asks whether the upset tourists got seasick.
 static void KalayTolbiDocks_AskAboutSeasickTourists(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayTouristsLookUpset);
@@ -390,9 +391,9 @@ static void KalayTolbiDocks_AskAboutSeasickTourists(void) {
   Engine_EventEnd();
 }
 
-// The daughter at Tolbi looks for her parents among the passengers. If the
-// party carries her father's message she asks for it and thanks them once it
-// is given; otherwise she turns back to the sea.
+/// The daughter at Tolbi looks for her parents among the passengers. If the
+/// party carries her father's message she asks for it and thanks them once it
+/// is given; otherwise she turns back to the sea.
 static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED) != 0) {
@@ -433,8 +434,8 @@ static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
   }
 }
 
-// Walking north into the docks' door, the door opens and the leader walks
-// through it to the town.
+/// Walking north into the docks' door, the door opens and the leader walks
+/// through it to the town.
 static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   Engine_EventBegin();
   Event_PlayCue(SE_DOOR_OPEN);
@@ -454,8 +455,8 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   Engine_EventEnd();
 }
 
-// Prepares whichever of the three maps is entered. Entrance 90 sets flag 0x950,
-// which leaves the tour's passengers stranded on the Tolbi docks.
+/// Prepares whichever of the three maps is entered. Entrance 90 sets flag
+/// 0x950, which leaves the tour's passengers stranded on the Tolbi docks.
 s32 KalayTolbiDocks_Initialize(void) {
   if (gGameState.entrance == 90) {
     Engine_GameFlagSet(FLAG_COLOSSO_OVER);
@@ -470,9 +471,9 @@ s32 KalayTolbiDocks_Initialize(void) {
   return 0;
 }
 
-// On the first arrival at the Kalay docks, Garet runs to see the Karagol.
-// Coming back from the ship clears the shore leave, and once the tour has left
-// the gatekeeper stands at the gangway until the party goes ashore.
+/// On the first arrival at the Kalay docks, Garet runs to see the Karagol.
+/// Coming back from the ship clears the shore leave, and once the tour has left
+/// the gatekeeper stands at the gangway until the party goes ashore.
 static void KalayTolbiDocks_PrepareKalayDocks(void) {
   if (gGameState.entrance == 1) {
     if (GameFlag_IsSet(FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL) == 0) {
@@ -493,10 +494,10 @@ static void KalayTolbiDocks_PrepareKalayDocks(void) {
   }
 }
 
-// On the Tolbi docks the two blocks settle into the pier's cells. The
-// passenger who met the party stays beside the ship, and after the
-// confrontation the guide, the bodyguard and the two passengers keep where it
-// left them, the angry one still lying on the ground.
+/// On the Tolbi docks the two blocks settle into the pier's cells. The
+/// passenger who met the party stays beside the ship, and after the
+/// confrontation the guide, the bodyguard and the two passengers keep where it
+/// left them, the angry one still lying on the ground.
 static void KalayTolbiDocks_PrepareTolbiDocks(void) {
   struct FieldActor *actor;
   u8 zero;
@@ -542,13 +543,13 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
   }
 }
 
-// The ticket office opens with a window transition and no location name.
+/// The ticket office opens with a window transition and no location name.
 static void KalayTolbiDocks_PrepareTicketOffice(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
 }
 
-// After either block is moved, the pier's cells under both are rebuilt.
+/// After either block is moved, the pier's cells under both are rebuilt.
 static void KalayTolbiDocks_UpdateBlockCells(void) {
   s32 blockColumn;
   s32 otherBlockColumn;
@@ -564,7 +565,7 @@ static void KalayTolbiDocks_UpdateBlockCells(void) {
   KalayTolbiDocks_SettleBlock(ACTOR_SECOND_BLOCK);
 }
 
-// Stops a dock block's idle motion and sets its sprite priority.
+/// Stops a dock block's idle motion and sets its sprite priority.
 static void KalayTolbiDocks_SettleBlock(s32 actorId) {
   struct FieldActor *actor = Object_GetById(actorId);
 
@@ -574,11 +575,11 @@ static void KalayTolbiDocks_SettleBlock(s32 actorId) {
   actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 }
 
-// Garet runs to the edge of the Kalay docks: "Incredible! So this is the ocean
-// Kraden was talking about!" The man who asks travellers about Tolbi (actor 8)
-// walks over, shaking his head: the Karagol is surrounded by land, so it is
-// not a real ocean. Garet means to see a real one someday, nods with the
-// leader and rejoins the party.
+/// Garet runs to the edge of the Kalay docks: "Incredible! So this is the ocean
+/// Kraden was talking about!" The man who asks travellers about Tolbi (actor 8)
+/// walks over, shaking his head: the Karagol is surrounded by land, so it is
+/// not a real ocean. Garet means to see a real one someday, nods with the
+/// leader and rejoins the party.
 static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   struct FieldActor *actor;
 
@@ -667,11 +668,11 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Engine_EventEnd();
 }
 
-// Stepping onto the stranded Tolbi docks, the party watches the tour guide
-// tell an angry passenger his ticket was refunded. The passengers demand to
-// be taken home; when the angry one charges, the guides' hired bodyguard
-// steps in, and after a second try the passenger is knocked flat and the
-// bodyguard spins on the spot.
+/// Stepping onto the stranded Tolbi docks, the party watches the tour guide
+/// tell an angry passenger his ticket was refunded. The passengers demand to
+/// be taken home; when the angry one charges, the guides' hired bodyguard
+/// steps in, and after a second try the passenger is knocked flat and the
+/// bodyguard spins on the spot.
 static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   struct FieldActor *actor;
 

@@ -1,12 +1,13 @@
-// Part of field.c, the field object, compiled only through it.
-// The world map: its perspective view, its tiles and its BG1 animation.
+/// @file
+/// Part of field.c, the field object, compiled only through it.
+/// The world map: its perspective view, its tiles and its BG1 animation.
 
 #include "../field_internal.h"
 
-// Writes a halfword register (value first).
+/// Writes a halfword register (value first).
 static __inline__ void Io_Set16(s32 value, volatile u16 *reg) { *reg = value; }
 
-// Writes a halfword register (register first).
+/// Writes a halfword register (register first).
 static __inline__ void Io_Put16(volatile u16 *reg, s32 value) { *reg = value; }
 
 typedef s32 (*WorldMapPlaneFn)(void *camera, s32 *position, void *lines,
@@ -22,10 +23,10 @@ struct WorldMapCell {
 
 #define WORLD_MAP_CELLS ((struct WorldMapCell *)Ram_MapBlocks)
 
-// Loads world map tile `tile` into quarter (x & 1, y & 1) of a layer's block
-// buffer, decompressing it from the area's graphics, and with update set
-// also draws it into the layer's BG map. Returns 0 when that quarter already
-// shows the tile (and update is 0), else 1.
+/// Loads world map tile `tile` into quarter (x & 1, y & 1) of a layer's block
+/// buffer, decompressing it from the area's graphics, and with update set
+/// also draws it into the layer's BG map. Returns 0 when that quarter already
+/// shows the tile (and update is 0), else 1.
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   struct PerspectiveWork *perspective = gMapWork[0];
   u32 *tileOffsets = perspective->tiles;
@@ -79,10 +80,10 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
   return 1;
 }
 
-// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
-// camera work, the projection, the per-scanline ground plane routine in RAM
-// (Transform_UpdateVertices) and its first frame, and the per-frame view and
-// HBlank updates.
+/// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
+/// camera work, the projection, the per-scanline ground plane routine in RAM
+/// (Transform_UpdateVertices) and its first frame, and the per-frame view and
+/// HBlank updates.
 s32 Map_InitializePerspectiveScene(void) {
   struct PerspectiveWork *perspective;
   struct BattleCamera *camera;
@@ -224,8 +225,8 @@ s32 Map_InitializePerspectiveScene(void) {
     perspective->tileIds[tileIndex] = tileIndex;
 }
 
-// Puts world map tile (x / 16, y / 16) at cell (px / 16, py / 16) of the
-// tile id grid, and draws it at once when it is next to the view.
+/// Puts world map tile (x / 16, y / 16) at cell (px / 16, py / 16) of the
+/// tile id grid, and draws it at once when it is next to the view.
 void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
   struct PerspectiveWork *perspective;
   s32 *followedPosition;
@@ -257,9 +258,9 @@ void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
   }
 }
 
-// Loads the world map's palette and tiles for the area at (x, z): the second
-// set where the ground there is terrain kind 21. Fills the BG maps, and for
-// the second set swaps in its own tiles at ids 10-12 and 26-28.
+/// Loads the world map's palette and tiles for the area at (x, z): the second
+/// set where the ground there is terrain kind 21. Fills the BG maps, and for
+/// the second set swaps in its own tiles at ids 10-12 and 26-28.
 void WorldMap_LoadGraphics(s32 x, s32 z) {
   struct PerspectiveWork *perspective;
   u32 *resources;
@@ -324,9 +325,9 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   MemFree(buffer);
 }
 
-// HBlank setup each frame on the world map: copies the first scanline's BG2
-// and BG3 affine parameters, starts the HBlank DMA for the rest, and turns
-// the window on or off for the window's top and bottom.
+/// HBlank setup each frame on the world map: copies the first scanline's BG2
+/// and BG3 affine parameters, starts the HBlank DMA for the rest, and turns
+/// the window on or off for the window's top and bottom.
 void MapAnimation_ApplyAffineFrame(void) {
   struct MapAffinePair(*affinePages)[160] =
       ((struct MapFrameWork *)WORK_SLOT(7))->pages;
@@ -379,7 +380,7 @@ void MapAnimation_ApplyAffineFrame(void) {
   perspective->windowPending = 0;
 }
 
-// Copies one world map cell's two tile entries (top and bottom) to a BG map.
+/// Copies one world map cell's two tile entries (top and bottom) to a BG map.
 static __inline__ void WorldMap_CopyCellTiles(u8 *cellBytes, u8 *screenTile) {
   u32 metatileIndex = *(u16 *)cellBytes;
   u16 *metatileTiles = (u16 *)Ram_MapCellBuffer;
@@ -389,8 +390,8 @@ static __inline__ void WorldMap_CopyCellTiles(u8 *cellBytes, u8 *screenTile) {
   *(u16 *)(screenTile + 64) = *metatileTiles;
 }
 
-// Draws world map tileRow into the BG map: 32 cells, then 32
-// more a screen block on.
+/// Draws world map tileRow into the BG map: 32 cells, then 32
+/// more a screen block on.
 void Map_RenderPaletteMappedRow(u32 tileRow) {
   u8 *sourceCell;
   u8 *screenTile;
@@ -417,7 +418,7 @@ void Map_RenderPaletteMappedRow(u32 tileRow) {
   } while (cellsCopied <= 31);
 }
 
-// Draws world map tileColumn into the BG map: 64 cells down.
+/// Draws world map tileColumn into the BG map: 64 cells down.
 void Map_RenderPaletteMappedColumn(u32 tileColumn) {
   u8 *sourceCell;
   u8 *screenTile;
@@ -434,9 +435,9 @@ void Map_RenderPaletteMappedColumn(u32 tileColumn) {
   } while (cellsCopied <= 63);
 }
 
-// Each frame on the world map: loads tiles as the view moves, shakes and
-// follows the player, draws the BG row or column that scrolls into view,
-// moves the camera, and builds the ground plane's scanline table.
+/// Each frame on the world map: loads tiles as the view moves, shakes and
+/// follows the player, draws the BG row or column that scrolls into view,
+/// moves the camera, and builds the ground plane's scanline table.
 void WorldMap_UpdateView(void) {
   struct BattleCamera *camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   struct MapFrameWork *frameWork = WORK_SLOT(7);
@@ -524,7 +525,7 @@ void WorldMap_UpdateView(void) {
       affinePages[gFrameCount & 1]);
 }
 
-// Loads and draws the 2x2 world map tiles around the player in both layers.
+/// Loads and draws the 2x2 world map tiles around the player in both layers.
 void Map_UpdateCurrentTileBlock(void) {
   struct PerspectiveWork *perspective = gMapWork[0];
   s32 firstQuarterX = 0;
@@ -560,8 +561,8 @@ void Map_UpdateCurrentTileBlock(void) {
   }
 }
 
-// Loads the first of the 2x2 world map tiles around the player that is not
-// shown yet (at most one a frame), without drawing it.
+/// Loads the first of the 2x2 world map tiles around the player that is not
+/// shown yet (at most one a frame), without drawing it.
 void Map_PreloadCurrentTileBlock(void) {
   struct PerspectiveWork *perspective = gMapWork[0];
   s32 firstQuarterX = 0;
@@ -594,7 +595,7 @@ void Map_PreloadCurrentTileBlock(void) {
   }
 }
 
-// VBlank: shows BG1 and copies the decoded frame's tiles into VRAM.
+/// VBlank: shows BG1 and copies the decoded frame's tiles into VRAM.
 void MapAnimation_PresentFrame(void) {
   Io_Write16(BGCNT_PRIORITY(2) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6),
              &REG_BG1CNT);
@@ -602,8 +603,8 @@ void MapAnimation_PresentFrame(void) {
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
 }
 
-// Starts a full-screen BG1 animation on the world map: saves BG1's tiles,
-// decodes the first frame and hands the window and VBlank to it.
+/// Starts a full-screen BG1 animation on the world map: saves BG1's tiles,
+/// decodes the first frame and hands the window and VBlank to it.
 void MapAnimation_Start(void) {
   struct MapFrameWork *frameWork = WORK_SLOT(7);
   struct PerspectiveWork *perspective = WORK_SLOT(HEAP_SLOT_MAP);
@@ -621,15 +622,15 @@ void MapAnimation_Start(void) {
   gVBlankHook = MapAnimation_PresentFrame;
 }
 
-// VBlank: shows BG1 and copies the area's tiles back into VRAM.
+/// VBlank: shows BG1 and copies the area's tiles back into VRAM.
 void Map_ShowBg1FromBuffer(void) {
   Io_Write16(BGCNT_PRIORITY(1) | BGCNT_SCREEN_BASE(5), &REG_BG1CNT);
   Dma_Set(gBgTileBuffer, BG_CHAR_BLOCK(2),
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2000, REG_DMA3);
 }
 
-// Reloads the world map area's palette and tiles after a BG1 animation, puts
-// the default cells back and stops the animation.
+/// Reloads the world map area's palette and tiles after a BG1 animation, puts
+/// the default cells back and stops the animation.
 void Map_LoadAreaGraphics(void) {
   struct PerspectiveWork *perspective;
   u32 *graphicsResources;
@@ -665,7 +666,7 @@ void Map_LoadAreaGraphics(void) {
   WaitFrames(1);
 }
 
-// Puts the default world map cells back after a BG1 animation and stops it.
+/// Puts the default world map cells back after a BG1 animation and stops it.
 void Map_LoadDefaultCellsAndUpdateBlock(void) {
   struct PerspectiveWork *perspective = gMapWork[0];
   gVBlankHook = Map_ShowBg1FromBuffer;

@@ -1,16 +1,17 @@
-// Colosso Log and Colosso River: setting up a race against the rival, with
-// the race gauge at the top of the screen and the rival running a recorded
-// path (colosso_path_rival.h).
+/// @file
+/// Colosso Log and Colosso River: setting up a race against the rival, with
+/// the race gauge at the top of the screen and the rival running a recorded
+/// path (colosso_path_rival.h).
 #include "types.h"
 #include "field_obj.h"
 #include "field_event.h"
 #include "flags.h"
 
-// Start the race gauge (struct ColossoGaugeWork, in work slot 59): Isaac and
-// the rival as playerActor and rivalActor, a bar of segments pieces either
-// side, and the finish at pixel (finishX, finishZ) in 16.16, where the two
-// item actors stand. Unless the party returns to where it was, the rival is
-// put opposite Isaac across x = finishX.
+/// Start the race gauge (struct ColossoGaugeWork, in work slot 59): Isaac and
+/// the rival as playerActor and rivalActor, a bar of segments pieces either
+/// side, and the finish at pixel (finishX, finishZ) in 16.16, where the two
+/// item actors stand. Unless the party returns to where it was, the rival is
+/// put opposite Isaac across x = finishX.
 void Colosso_StartRaceGauge(s32 playerActor, s32 rivalActor, s32 segments,
                             s32 finishX, s32 finishZ, s32 finishItemActorA,
                             s32 finishItemActorB) {
@@ -64,9 +65,9 @@ void Colosso_StartRaceGauge(s32 playerActor, s32 rivalActor, s32 segments,
   Runtime_BumpFree((void *)handle);
 }
 
-// Decode the rival's recorded path (resource) after the gauge's work and,
-// unless the party returns to where it was, have the rival run it from the
-// start, mirrored across the finish; then start the rival's callback.
+/// Decode the rival's recorded path (resource) after the gauge's work and,
+/// unless the party returns to where it was, have the rival run it from the
+/// start, mirrored across the finish; then start the rival's callback.
 void Colosso_StartRival(s32 resource) {
   u8 *work = gColossoWork;
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;

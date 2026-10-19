@@ -1,46 +1,47 @@
-// Part of object.c, the field object, compiled only through it.
-// Random encounters, and each scene's music, place name and backdrop.
+/// @file
+/// Part of object.c, the field object, compiled only through it.
+/// Random encounters, and each scene's music, place name and backdrop.
 
 #include "../object_internal.h"
 
-// A field scene's encounter zones (gBattle_LocationRules, location_rules.s),
-// ended by scene -1.
+/// A field scene's encounter zones (gBattle_LocationRules, location_rules.s),
+/// ended by scene -1.
 struct BattleLocationRule {
   s16 scene;
-  s16 entrance;              // -1 for any entrance
-  s16 flag : 15;             // -1, or a flag that turns the rule off once set
-  s16 firstZoneOnGround : 1; // the first zone is for ground 0, not 1
-  s16 firstZone;             // the first of up to seven consecutive zones
+  s16 entrance;              ///< -1 for any entrance
+  s16 flag : 15;             ///< -1, or a flag that turns the rule off once set
+  s16 firstZoneOnGround : 1; ///< the first zone is for ground 0, not 1
+  s16 firstZone;             ///< the first of up to seven consecutive zones
 };
 
 extern const struct BattleLocationRule gBattle_LocationRules[];
 
-// The world map's encounter zone for each kind of terrain
-// (gWorldMap_EncounterRules, zonedata.c), ended by kind -1.
+/// The world map's encounter zone for each kind of terrain
+/// (gWorldMap_EncounterRules, zonedata.c), ended by kind -1.
 typedef struct TerrainRule {
-  s16 kind;     // the terrain kind of the map block
-  s16 behavior; // the terrain's behavior, or -1 for any
-  s16 flag;     // -1, or a flag that turns the rule off once set
+  s16 kind;     ///< the terrain kind of the map block
+  s16 behavior; ///< the terrain's behavior, or -1 for any
+  s16 flag;     ///< -1, or a flag that turns the rule off once set
   s16 zone;
 } TerrainRule;
 
-// An encounter zone (encounter.tsv).
+/// An encounter zone (encounter.tsv).
 enum { ENCOUNTER_GROUP_COUNT = 8 };
 
 struct EncounterZone {
-  u16 rate;                           // the base encounter rate
-  u16 level;                          // the party level the zone is made for
-  u16 enemies[ENCOUNTER_GROUP_COUNT]; // the enemy groups that can appear
-  u8 weights[ENCOUNTER_GROUP_COUNT];  // each group's relative chance
+  u16 rate;                           ///< the base encounter rate
+  u16 level;                          ///< the party level the zone is made for
+  u16 enemies[ENCOUNTER_GROUP_COUNT]; ///< the enemy groups that can appear
+  u8 weights[ENCOUNTER_GROUP_COUNT];  ///< each group's relative chance
 };
 
-// Chooses the current scene's encounter zones, one for each kind of ground
-// the party can stand on (gEventWork->encounterGroups, read by
-// EffectRuntime_LookupByTableEntry), from the first rule matching the scene
-// and entrance. Ground 0 has none, and grounds 1 to 7 take consecutive zones
-// from the rule's first one. With useRules 0, or no matching rule, no ground
-// has encounters. Also resets the encounter counters and chooses the battle
-// backdrop.
+/// Chooses the current scene's encounter zones, one for each kind of ground
+/// the party can stand on (gEventWork->encounterGroups, read by
+/// EffectRuntime_LookupByTableEntry), from the first rule matching the scene
+/// and entrance. Ground 0 has none, and grounds 1 to 7 take consecutive zones
+/// from the rule's first one. With useRules 0, or no matching rule, no ground
+/// has encounters. Also resets the encounter counters and chooses the battle
+/// backdrop.
 void Encounter_SelectSceneZones(s32 useRules) {
   struct FieldWork *work;
   s32 scene;
@@ -88,8 +89,8 @@ void Encounter_SelectSceneZones(s32 useRules) {
   Battle_SelectSceneBackdrop();
 }
 
-// Returns the world map encounter zone for the terrain at pos (0 for none),
-// and chooses the battle backdrop for that terrain.
+/// Returns the world map encounter zone for the terrain at pos (0 for none),
+/// and chooses the battle backdrop for that terrain.
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
   s32 kind;
   TerrainRule *rule = gWorldMap_EncounterRules;
@@ -109,11 +110,11 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
   return zone;
 }
 
-// Advances the encounter counter for zone and returns the enemy group to
-// fight, or 0 for no battle. steps (16.16) scales how far the counter moves;
-// a battle starts once it reaches encounterThreshold. Flags 352 and 353 and
-// gGameState.cloaked prevent battles. Flag 351 skips the checks and the
-// counting and draws a group at once, from an entry this function never sets.
+/// Advances the encounter counter for zone and returns the enemy group to
+/// fight, or 0 for no battle. steps (16.16) scales how far the counter moves;
+/// a battle starts once it reaches encounterThreshold. Flags 352 and 353 and
+/// gGameState.cloaked prevent battles. Flag 351 skips the checks and the
+/// counting and draws a group at once, from an entry this function never sets.
 s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   struct FieldWork *work;
   struct EncounterZone *entry;
@@ -195,10 +196,10 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   return sum;
 }
 
-// Rolls a random battle on the encounter zone of the ground underfoot.
-// terrain: the terrain number, 0 for ordinary ground.
-// steps: the step weight, passed on to Encounter_SelectEnemyGroup.
-// Returns the enemy group to fight, or 0 for no battle.
+/// Rolls a random battle on the encounter zone of the ground underfoot.
+/// terrain: the terrain number, 0 for ordinary ground.
+/// steps: the step weight, passed on to Encounter_SelectEnemyGroup.
+/// Returns the enemy group to fight, or 0 for no battle.
 s32 Encounter_RollTerrain(u32 terrain, s32 steps) {
   u8 *zone;
 
@@ -206,20 +207,20 @@ s32 Encounter_RollTerrain(u32 terrain, s32 steps) {
   return Encounter_SelectEnemyGroup(zone[terrain], steps);
 }
 
-// Rolls a random battle on the world map, taking the zone from the tile at pos.
-// Returns the enemy group to fight, or 0 for no battle.
+/// Rolls a random battle on the world map, taking the zone from the tile at
+/// pos. Returns the enemy group to fight, or 0 for no battle.
 s32 Encounter_RollWorldMap(s32 pos, s32 steps) {
   return Encounter_SelectEnemyGroup(
       Encounter_ResolveWorldMapZoneAndBackdrop((void *)pos), steps);
 }
 
-// Returns the enemy group in slot (0 to 7) of zone; 14 halfwords make a zone.
+/// Returns the enemy group in slot (0 to 7) of zone; 14 halfwords make a zone.
 u16 Encounter_GetEnemyGroupAtSlot(s32 zone, s32 slot) {
   return gEncounter_EnemyGroupTable[zone * 14 + slot + 2];
 }
 
-// Returns the enemy group of Djinni battle djinni, which the table gives as
-// a zone and slot.
+/// Returns the enemy group of Djinni battle djinni, which the table gives as
+/// a zone and slot.
 s16 Encounter_GetDjinnEnemyGroup(s32 djinni) {
   u16 *zoneAndSlot;
 
@@ -232,20 +233,20 @@ s16 Encounter_GetDjinnEnemyGroup(s32 djinni) {
 #endif
 }
 
-// A rule choosing a scene's field music (gScene_InteractionRuleTable,
-// scene_rules.s), ended by id -1.
+/// A rule choosing a scene's field music (gScene_InteractionRuleTable,
+/// scene_rules.s), ended by id -1.
 struct SceneInteractionEntry {
-  s16 id;            // a scene, or a scene group
-  s16 entrance : 15; // -1 for any entrance
-  u16 idIsScene : 1; // 1 when id is a scene, 0 when it is a group
-  s16 flag;          // -1, or a flag that must be set
+  s16 id;            ///< a scene, or a scene group
+  s16 entrance : 15; ///< -1 for any entrance
+  u16 idIsScene : 1; ///< 1 when id is a scene, 0 when it is a group
+  s16 flag;          ///< -1, or a flag that must be set
   s16 music;
 };
 
 extern const struct SceneInteractionEntry gScene_InteractionRuleTable[];
 
-// Chooses the current scene's field music (gGameState.cue) from the first rule
-// matching the scene or its group and the entrance; MUS_018 when none does.
+/// Chooses the current scene's field music (gGameState.cue) from the first rule
+/// matching the scene or its group and the entrance; MUS_018 when none does.
 void Scene_ResolveInteractionResult(void) {
   s16 music = MUS_018;
   s16 scene = gGameState.scene;
@@ -277,19 +278,19 @@ void Scene_ResolveInteractionResult(void) {
   gGameState.cue = music;
 }
 
-// A rule naming the place a scene is in (gScene_AreaNameRules, scene_rules.s),
-// ended by id -1.
+/// A rule naming the place a scene is in (gScene_AreaNameRules, scene_rules.s),
+/// ended by id -1.
 struct SceneAreaNameRule {
-  s16 id;             // a scene, or a scene group
-  s16 entrance : 15;  // -1 for any entrance
-  u16 useSceneId : 1; // 1 when id is a scene, 0 when it is a group
-  s32 areaNameIndex;  // the place name
+  s16 id;             ///< a scene, or a scene group
+  s16 entrance : 15;  ///< -1 for any entrance
+  u16 useSceneId : 1; ///< 1 when id is a scene, 0 when it is a group
+  s32 areaNameIndex;  ///< the place name
 };
 
 extern const struct SceneAreaNameRule gScene_AreaNameRules[];
 
-// Returns the place name of scene and entrance, from the first rule matching
-// the scene or its group; 0 when none does.
+/// Returns the place name of scene and entrance, from the first rule matching
+/// the scene or its group; 0 when none does.
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance) {
   const struct SceneAreaNameRule *rule = gScene_AreaNameRules;
   s32 name = 0;
@@ -316,11 +317,11 @@ s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance) {
   return name;
 }
 
-// Sets the scene the party returns to after a defeat (gGameState.savedScene
-// and savedEntrance), from the first rule of gParty_PairResolveRules that
-// matches the current scene and entrance: {scene, entrance (-1 for any),
-// return scene, return entrance}, ended by scene -1. Without a match the
-// return point stays as it was.
+/// Sets the scene the party returns to after a defeat (gGameState.savedScene
+/// and savedEntrance), from the first rule of gParty_PairResolveRules that
+/// matches the current scene and entrance: {scene, entrance (-1 for any),
+/// return scene, return entrance}, ended by scene -1. Without a match the
+/// return point stays as it was.
 void Scene_SetDefeatReturnPoint(void) {
   s16 scene = gGameState.scene;
   s16 entrance = gGameState.entrance;
@@ -336,13 +337,13 @@ void Scene_SetDefeatReturnPoint(void) {
   }
 }
 
-// Returns the battle backdrop chosen for the current scene.
+/// Returns the battle backdrop chosen for the current scene.
 s16 Event_GetSpecialValue(void) { return gGameState.special; }
 
-// Chooses the battle backdrop for the current scene. gBattle_BackdropScenes
-// lists each backdrop (a word with bit 31 set) followed by the scenes that
-// use it, ended by 0; a scene takes the backdrop listed last before it, and a
-// scene not listed takes the last backdrop.
+/// Chooses the battle backdrop for the current scene. gBattle_BackdropScenes
+/// lists each backdrop (a word with bit 31 set) followed by the scenes that
+/// use it, ended by 0; a scene takes the backdrop listed last before it, and a
+/// scene not listed takes the last backdrop.
 void Battle_SelectSceneBackdrop(void) {
   s32 target = gGameState.scene;
   s32 *table = gBattle_BackdropScenes;
@@ -360,7 +361,7 @@ void Battle_SelectSceneBackdrop(void) {
   gGameState.special = backdrop;
 }
 
-// Chooses the battle backdrop for a world map terrain behavior.
+/// Chooses the battle backdrop for a world map terrain behavior.
 void Battle_SelectTerrainBackdrop(s32 behavior) {
   u16 backdrop;
 
@@ -389,10 +390,10 @@ void Battle_SelectTerrainBackdrop(s32 behavior) {
   gGameState.special = backdrop;
 }
 
-// Chooses the battle music for slot of zone (gGameState.sceneCue).
-// gEncounter_BattleMusic lists each song (with bit 15 set) followed by the
-// (zone << 4) + slot keys that use it, ended by 0; a key takes the song listed
-// last before it. Link battles always use MUS_018.
+/// Chooses the battle music for slot of zone (gGameState.sceneCue).
+/// gEncounter_BattleMusic lists each song (with bit 15 set) followed by the
+/// (zone << 4) + slot keys that use it, ended by 0; a key takes the song listed
+/// last before it. Link battles always use MUS_018.
 void BattleFx_SelectBattleCue(s32 zone, s32 slot) {
   u16 key = (zone << 4) + slot;
   const u16 *table = gEncounter_BattleMusic;

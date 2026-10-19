@@ -1,12 +1,13 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Lift.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Lift.
 
 #include "../psynergy_effects_internal.h"
 
-// Abilities: Lift (field kind 7), cast on a target.
-//
-// An object appears 32 pixels to either side, each moves 14 pixels in, and they
-// lift the target 32 pixels with them.
+/// Abilities: Lift (field kind 7), cast on a target.
+///
+/// An object appears 32 pixels to either side, each moves 14 pixels in, and
+/// they lift the target 32 pixels with them.
 void FieldFx_RunLiftOnTarget(s32 unused) {
   struct BattleFxScene *work;
   struct DispatchObject *caster;
@@ -64,11 +65,11 @@ void FieldFx_RunLiftOnTarget(s32 unused) {
   BattleFx_PrepareBufferInterpolation();
 }
 
-// Abilities: Lift (field kind 7), cast with no target.
+/// Abilities: Lift (field kind 7), cast with no target.
 DEFINE_ITEM_BREAK_EFFECT(FieldFx_RunLift, BattleFx_SpawnItemBreakMode3)
 
-// Spawns object 215 and grows it, spinning, from a quarter to full size over
-// 24 frames; angle is the way it faces once grown.
+/// Spawns object 215 and grows it, spinning, from a quarter to full size over
+/// 24 frames; angle is the way it faces once grown.
 struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
                                                   s32 angle) {
   struct MotionObject *fragment;
@@ -97,8 +98,8 @@ struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
   return fragment;
 }
 
-// Effect slot callback of a particle that scatters 25 pixels from its origin
-// in a random direction, then gathers beside the main object and is freed.
+/// Effect slot callback of a particle that scatters 25 pixels from its origin
+/// in a random direction, then gathers beside the main object and is freed.
 void BattleFx_UpdateRadialBurst(struct EffectSlot *slot) {
   // A for/continue retry keeps the same states but grows the native English
   // callback from 0xf8 to 0xfc bytes. State 1 must enter state 2 immediately.
@@ -154,8 +155,8 @@ again:
     BattleFx_ClearOwnedSlot(slot);
 }
 
-// A heavy impact: places object 0x11b 32 pixels below the source and scatters
-// 12 shards from it.
+/// A heavy impact: places object 0x11b 32 pixels below the source and scatters
+/// 12 shards from it.
 s32 SpawnHeavyImpactEffect(struct ScriptInterpreter *interpreter) {
   struct MotionObject *source = (struct MotionObject *)interpreter;
   struct EffectVector pos;

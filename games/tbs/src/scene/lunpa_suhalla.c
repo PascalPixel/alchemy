@@ -242,23 +242,23 @@ const struct SceneEvent gSuhallaGateHouseEvents[] = {
     {SCENE_EVENTS_END},
 };
 
-// Where the party can enter each building.
+/// Where the party can enter each building.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gInteriorEntrances;
 }
 
-// The buildings have no regions.
+/// The buildings have no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-// Where each door leads.
+/// Where each door leads.
 const u32 *Scene_GetExits(void) { return gInteriorExits; }
 
-// The townsfolk, shopkeepers and the counters.
+/// The townsfolk, shopkeepers and the counters.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   return gInteriorPlacements;
 }
 
-// The gate house's events, or the town's before and after it reopens.
+/// The gate house's events, or the town's before and after it reopens.
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.entrance == ROOM_SUHALLA_GATE_HOUSE) {
     return gSuhallaGateHouseEvents;
@@ -269,8 +269,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gInteriorSealedEvents;
 }
 
-// Across the counter after Lunpa reopens, a room at the inn; otherwise the
-// innkeeper offers a room or, while Lunpa is sealed, a bed at home.
+/// Across the counter after Lunpa reopens, a room at the inn; otherwise the
+/// innkeeper offers a room or, while Lunpa is sealed, a bed at home.
 static void Event_TalkToInnkeeper(void) {
   struct FieldActor *leader;
 
@@ -292,8 +292,8 @@ static void Event_TalkToInnkeeper(void) {
   Engine_EventEnd();
 }
 
-// The chef offers the story of taking meals to the fortress; either way
-// the party has heard of the prisoner.
+/// The chef offers the story of taking meals to the fortress; either way
+/// the party has heard of the prisoner.
 static void Event_TalkToChef(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaChefOffersStory);
@@ -302,7 +302,7 @@ static void Event_TalkToChef(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the chef, who pities the prisoner in the dungeon.
+/// Mind Read on the chef, who pities the prisoner in the dungeon.
 static void Event_ReadChefsThoughts(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaChefThinksOfPrisoner);
@@ -311,7 +311,7 @@ static void Event_ReadChefsThoughts(void) {
   Engine_EventEnd();
 }
 
-// The inn's clerk asks whether the party is Donpa's guest.
+/// The inn's clerk asks whether the party is Donpa's guest.
 static void Event_TalkToInnClerk(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaInnClerkAsksAboutGuest);
@@ -319,8 +319,8 @@ static void Event_TalkToInnClerk(void) {
   Engine_EventEnd();
 }
 
-// Across the counter, the sanctum; otherwise the priest talks about
-// Dodonpa.
+/// Across the counter, the sanctum; otherwise the priest talks about
+/// Dodonpa.
 static void Event_TalkToTemplePriest(void) {
   struct FieldActor *leader;
 
@@ -340,7 +340,7 @@ static void Event_TalkToTemplePriest(void) {
   }
 }
 
-// Mind Read on the item merchant.
+/// Mind Read on the item merchant.
 static void Event_ReadItemMerchantsThoughts(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
     Engine_EventBegin();
@@ -355,7 +355,7 @@ static void Event_ReadItemMerchantsThoughts(void) {
   }
 }
 
-// Across the counter, the item shop; otherwise small talk.
+/// Across the counter, the item shop; otherwise small talk.
 static void Event_TalkToItemMerchant(void) {
   struct FieldActor *leader;
 
@@ -375,7 +375,7 @@ static void Event_TalkToItemMerchant(void) {
   }
 }
 
-// Mind Read on the weapon merchant.
+/// Mind Read on the weapon merchant.
 static void Event_ReadWeaponMerchantsThoughts(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
     Engine_EventSetMessage(MsgLunpaWeaponMerchantReopenedThoughts);
@@ -386,8 +386,8 @@ static void Event_ReadWeaponMerchantsThoughts(void) {
   }
 }
 
-// After Lunpa reopens, across the counter, the weapon shop; otherwise
-// small talk.
+/// After Lunpa reopens, across the counter, the weapon shop; otherwise
+/// small talk.
 static void Event_TalkToWeaponMerchant(void) {
   struct FieldActor *leader;
   s32 facing;
@@ -409,7 +409,7 @@ static void Event_TalkToWeaponMerchant(void) {
   }
 }
 
-// Mind Read on the armor merchant.
+/// Mind Read on the armor merchant.
 static void Event_ReadArmorMerchantsThoughts(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
     Engine_EventSetMessage(MsgLunpaArmorMerchantReopenedThoughts);
@@ -420,8 +420,8 @@ static void Event_ReadArmorMerchantsThoughts(void) {
   }
 }
 
-// After Lunpa reopens, across the counter, the armor shop; otherwise
-// small talk.
+/// After Lunpa reopens, across the counter, the armor shop; otherwise
+/// small talk.
 static void Event_TalkToArmorMerchant(void) {
   struct FieldActor *leader;
   s32 facing;
@@ -443,8 +443,8 @@ static void Event_TalkToArmorMerchant(void) {
   }
 }
 
-// Sets the buildings up: the gate house is where a defeated party wakes,
-// and the counters are drawn behind their keepers.
+/// Sets the buildings up: the gate house is where a defeated party wakes,
+/// and the counters are drawn behind their keepers.
 s32 Scene_Initialize(void) {
   s16 entrance;
 
@@ -461,8 +461,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// The traveling priest: across the counter, the temple priest's sanctum;
-// otherwise his good will.
+/// The traveling priest: across the counter, the temple priest's sanctum;
+/// otherwise his good will.
 static void Event_TalkToTravelingPriest(void) {
   struct FieldActor *leader;
 

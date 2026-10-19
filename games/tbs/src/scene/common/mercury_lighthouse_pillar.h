@@ -30,7 +30,7 @@
 // put back at the heart. Touch trigger 31 takes the lights away, and Retreat
 // removes the column.
 
-// Raise the spark while its scale follows a half-sine pulse.
+/// Raise the spark while its scale follows a half-sine pulse.
 static s32
 SceneEffect_AdvanceAnchoredRiseFrame(struct ScriptInterpreter *interpreter) {
   struct FieldActor *effect = (struct FieldActor *)interpreter;
@@ -51,7 +51,7 @@ SceneEffect_AdvanceAnchoredRiseFrame(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Grow the moving light over the first sixteen script frames.
+/// Grow the moving light over the first sixteen script frames.
 static s32 OverlayObject_RampWords24And28Over16Frames(
     struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -66,7 +66,7 @@ static s32 OverlayObject_RampWords24And28Over16Frames(
   return 1;
 }
 
-// Expand the released light before its script removes it.
+/// Expand the released light before its script removes it.
 static s32
 OverlayObject_AdvanceScaleCounter(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -81,7 +81,7 @@ OverlayObject_AdvanceScaleCounter(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Follow the linked actor and alternate the light's animation parameter.
+/// Follow the linked actor and alternate the light's animation parameter.
 static s32
 MercuryLighthouse_FollowLeader(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -145,7 +145,7 @@ MercuryLighthouse_FollowLeader(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Place the two spark animations on the selected actor.
+/// Place the two spark animations on the selected actor.
 static void MercuryLighthouse_SpawnSparkPair(void) {
   struct FieldActor *point;
   struct FieldActor *spark;
@@ -185,10 +185,10 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
   Engine_AudioPlayCue(SE_130);
 }
 
-// Touch trigger 11, the pool's heart: the column of light appears over the
-// leader if it is not there, and grows a stage with each pair of sparks, half
-// a second apart, up to three lights. The column's cell is where a sinking
-// leader comes back to; flag 0x161 is set while the leader has lights.
+/// Touch trigger 11, the pool's heart: the column of light appears over the
+/// leader if it is not there, and grows a stage with each pair of sparks, half
+/// a second apart, up to three lights. The column's cell is where a sinking
+/// leader comes back to; flag 0x161 is set while the leader has lights.
 void MercuryLighthouse_ChargeLights(void) {
   struct MercuryLighthouseLights *state;
   struct FieldActor *leader;
@@ -243,8 +243,8 @@ void MercuryLighthouse_ChargeLights(void) {
 
 #define MAP_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 
-// Touch trigger 31: the leader loses their lights, and the column swells and
-// fades away.
+/// Touch trigger 31: the leader loses their lights, and the column swells and
+/// fades away.
 void MercuryLighthouse_LoseLights(void) {
   struct MercuryLighthouseLights *state =
       *(struct MercuryLighthouseLights **)WORK_SLOT(35);
@@ -266,12 +266,12 @@ void MercuryLighthouse_LoseLights(void) {
   }
 }
 
-// Pushing against the pool's edge (triggers 11, 21 and 31): the leader hops two
-// cells the way the pad points, unless the hop leads into the pool without a
-// light or is blocked. A hop into the pool spends a light, which flies ahead
-// to the landing cell; the column shrinks a stage, or goes with the last
-// light. Landing in the pool with no light under them, the leader sinks until
-// a key is pressed after half a second, and is put back at the heart.
+/// Pushing against the pool's edge (triggers 11, 21 and 31): the leader hops
+/// two cells the way the pad points, unless the hop leads into the pool without
+/// a light or is blocked. A hop into the pool spends a light, which flies ahead
+/// to the landing cell; the column shrinks a stage, or goes with the last
+/// light. Landing in the pool with no light under them, the leader sinks until
+/// a key is pressed after half a second, and is put back at the heart.
 void MercuryLighthouse_HopAcrossPool(void) {
   struct FieldWork *work;
   struct MercuryLighthouseLights *state;
@@ -390,8 +390,8 @@ void MercuryLighthouse_HopAcrossPool(void) {
   work->walkingDistance += Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
 }
 
-// Touch trigger 21: while the leader stands there, a sparkle rises from them
-// every 10 to 39 frames.
+/// Touch trigger 21: while the leader stands there, a sparkle rises from them
+/// every 10 to 39 frames.
 void MercuryLighthouse_SparkleAtLeader(void) {
   struct MercuryLighthouseLights *state;
   struct FieldActor *point;
@@ -407,7 +407,7 @@ void MercuryLighthouse_SparkleAtLeader(void) {
   }
 }
 
-// Retreat (PSYNERGY_IN_AREA(ABILITY_RETREAT, 1)): remove the column of light.
+/// Retreat (PSYNERGY_IN_AREA(ABILITY_RETREAT, 1)): remove the column of light.
 static void MercuryLighthouse_RemoveColumnOnRetreat(void) {
   struct MercuryLighthouseLights **published = Runtime_AllocateBlock(35, 4);
   struct MercuryLighthouseLights *state;

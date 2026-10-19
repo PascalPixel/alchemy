@@ -41,20 +41,20 @@
 // line drawing, and an LZ packer.
 //--------------------------------------------------------------------------
 
-// The sparks of the jackpot, kept in the map cell buffer.
+/// The sparks of the jackpot, kept in the map cell buffer.
 #define REEL_SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
 
-// The slot machine's own work block (struct ReelWork), beside the battle
-// effect blocks it borrows.
+/// The slot machine's own work block (struct ReelWork), beside the battle
+/// effect blocks it borrows.
 #define REEL_HEAP_SLOT 45
 
-// The paylines' canvas: 256 x 128 pixels of 8-bit colour, shown on BG2 from
-// its tile 212, where the third row of its map begins.
+/// The paylines' canvas: 256 x 128 pixels of 8-bit colour, shown on BG2 from
+/// its tile 212, where the third row of its map begins.
 #define REEL_CANVAS_SIZE (256 * 128)
 #define REEL_CANVAS_TILES (BG_CHAR_BLOCK(0) + 0x3500)
 
-// Plays the slot machine: blanks the screen, seeds the random numbers with the
-// play time and runs the game. Returns 0.
+/// Plays the slot machine: blanks the screen, seeds the random numbers with the
+/// play time and runs the game. Returns 0.
 s32 ReelGame_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   gRandomSeed = gGameState.playTime;
@@ -63,8 +63,8 @@ s32 ReelGame_Start(void) {
   return 0;
 }
 
-// Writes count RGB555 colours from src to dst scaled by scale (16.16, 0x10000
-// keeps them). Returns 0.
+/// Writes count RGB555 colours from src to dst scaled by scale (16.16, 0x10000
+/// keeps them). Returns 0.
 s32 Graphics_ScaleRgb555(u16 *src, u16 *dst, s32 scale, s32 count) {
   s32 n;
   u32 redMask;
@@ -100,9 +100,9 @@ s32 Graphics_ScaleRgb555(u16 *src, u16 *dst, s32 scale, s32 count) {
   return 0;
 }
 
-// A scheduler callback: on a frame whose canvas is ready (transferPending),
-// sends the canvas to its tiles in VRAM (REEL_CANVAS_TILES), then clears it
-// or fades it into trails as transferMode says.
+/// A scheduler callback: on a frame whose canvas is ready (transferPending),
+/// sends the canvas to its tiles in VRAM (REEL_CANVAS_TILES), then clears it
+/// or fades it into trails as transferMode says.
 void ReelGame_TransferCanvas(void) {
   struct BattleEffectWork *work;
   u8 *buf;
@@ -134,8 +134,8 @@ void ReelGame_TransferCanvas(void) {
   }
 }
 
-// Darkens the screen one step: lowers each channel of the 16 colours of BG
-// palette 10 and of OBJ colours 1 to 239 by 1.
+/// Darkens the screen one step: lowers each channel of the 16 colours of BG
+/// palette 10 and of OBJ colours 1 to 239 by 1.
 void Palette_DarkenSceneStep(void) {
   u16 *col;
   s32 i;
@@ -178,8 +178,8 @@ void Palette_DarkenSceneStep(void) {
   }
 }
 
-// Moves the first 64 BG colours one step toward the palette of resource; the
-// backdrop colour is not written back.
+/// Moves the first 64 BG colours one step toward the palette of resource; the
+/// backdrop colour is not written back.
 void Palette_StepTowardResource(s32 resource) {
   u16 dst[64];
   u16 *col = (u16 *)BG_PLTT;
@@ -212,8 +212,8 @@ void Palette_StepTowardResource(s32 resource) {
   Dma_Set(dst + 1, (void *)&BG_PLTT[1], (DMA_ENABLE << 16) | 63, REG_DMA3);
 }
 
-// Draws a line from (x0, y0) to (x1, y1) on the 256 x 128 8bpp canvas (32
-// tiles across), writing only over lower colour numbers.
+/// Draws a line from (x0, y0) to (x1, y1) on the 256 x 128 8bpp canvas (32
+/// tiles across), writing only over lower colour numbers.
 void ReelGame_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   s32 dx = x1 - x0;
   s32 dy = y1 - y0;
@@ -294,16 +294,16 @@ struct Reel {
 
 struct UiWindow;
 
-// The slot machine's states (ReelWork.state).
+/// The slot machine's states (ReelWork.state).
 enum ReelGameState {
-  REEL_BETTING = 0,        // Up and Down change the bet, A spins, B leaves
-  REEL_SPINNING = 1,       // the reels spin until R or time stops each
-  REEL_WON = 2,            // a payline won: a pause
-  REEL_SHOWING_WIN = 3,    // the win is shown until A
-  REEL_CHOOSING_HOLDS = 5, // choose reels to hold, or pull the lever
-  REEL_DONE = 10,          // the game ends
-  REEL_NO_WIN = 11,        // no payline won: A to choose holds
-  REEL_OUT_OF_SPINS = 20,  // the fourth spin lost: a pause, then the end
+  REEL_BETTING = 0,        ///< Up and Down change the bet, A spins, B leaves
+  REEL_SPINNING = 1,       ///< the reels spin until R or time stops each
+  REEL_WON = 2,            ///< a payline won: a pause
+  REEL_SHOWING_WIN = 3,    ///< the win is shown until A
+  REEL_CHOOSING_HOLDS = 5, ///< choose reels to hold, or pull the lever
+  REEL_DONE = 10,          ///< the game ends
+  REEL_NO_WIN = 11,        ///< no payline won: A to choose holds
+  REEL_OUT_OF_SPINS = 20,  ///< the fourth spin lost: a pause, then the end
 };
 
 struct ReelWork {
@@ -329,8 +329,8 @@ struct ReelWork {
 #endif
 };
 
-// gGameState seen from +12, the base the bytes load: wonPrizes is
-// gGameState.wonPrizes (through the field itself ReelGame_RunFrame differs 12)
+/// gGameState seen from +12, the base the bytes load: wonPrizes is
+/// gGameState.wonPrizes (through the field itself ReelGame_RunFrame differs 12)
 struct ReelSave {
   u8 unk000[0x120];
   s8 wonPrizes[16];
@@ -338,11 +338,11 @@ struct ReelSave {
 
 #include "../graphics/slots/reel_tables.h"
 
-// The slot machine's frame callback: reads the keys, runs the game's state
-// (betting, spinning and stopping the reels, scoring the paylines, choosing
-// reels to hold, showing a win) and builds all 128 sprites: the cursor, the
-// title letters of a win, the frame, the hold lamps, the spin counter, the
-// paylines, the reel symbols, the lever and the bottom bar.
+/// The slot machine's frame callback: reads the keys, runs the game's state
+/// (betting, spinning and stopping the reels, scoring the paylines, choosing
+/// reels to hold, showing a win) and builds all 128 sprites: the cursor, the
+/// title letters of a win, the frame, the hold lamps, the spin counter, the
+/// paylines, the reel symbols, the lever and the bottom bar.
 void ReelGame_RunFrame(void) {
   /* FAKEMATCH(volatile): the OAM shadow it builds is struct OamShadow, whose
    * words are volatile (oambuf.h), so loop.c keeps the offset givs of every
@@ -888,8 +888,8 @@ void ReelGame_RunFrame(void) {
           REG_DMA3);
 }
 
-// Sets up the bouncing title letters of a win, the brightness wave of the
-// screen's lines and the betting window, and starts at betting.
+/// Sets up the bouncing title letters of a win, the brightness wave of the
+/// screen's lines and the betting window, and starts at betting.
 void ReelGame_InitTitle(void) {
   struct ReelWork *state;
   struct BattleEffectWork *work;
@@ -946,11 +946,11 @@ void ReelGame_InitTitle(void) {
   UiText_DrawCharacterAtOffsetFar(message - 1, state->subWindow, 0, 0);
 }
 
-// The slot machine: loads its backgrounds, sprites and palettes, fills each of
-// the five reels with 21 random symbols (with eight placed symbols of rank 0
-// to 5), then runs until the player leaves: fading in, drawing the paylines
-// on the canvas while betting or winning, and the jackpot's sparks and
-// colour cycle while showing a win. Then fades out and frees its memory.
+/// The slot machine: loads its backgrounds, sprites and palettes, fills each of
+/// the five reels with 21 random symbols (with eight placed symbols of rank 0
+/// to 5), then runs until the player leaves: fading in, drawing the paylines
+/// on the canvas while betting or winning, and the jackpot's sparks and
+/// colour cycle while showing a win. Then fades out and frees its memory.
 void ReelGame_Run(void) {
   s32 picks[8];
   s32 litLines[7];
@@ -1277,15 +1277,15 @@ void ReelGame_Run(void) {
   }
 }
 
-// The LZ packer: a window of 1024 bytes, matches of up to PACK_MATCH_MAX
-// bytes at most PACK_DISTANCE_MAX back, and PACK_LOOKAHEAD bytes read ahead.
+/// The LZ packer: a window of 1024 bytes, matches of up to PACK_MATCH_MAX
+/// bytes at most PACK_DISTANCE_MAX back, and PACK_LOOKAHEAD bytes read ahead.
 #define PACK_WINDOW_MASK 0x3ff
 #define PACK_MATCH_MAX 272
 #define PACK_DISTANCE_MAX 63
 #define PACK_LOOKAHEAD 672
 
-// The LZ packer below: empties its 256 hash chains (one per byte value) and
-// numbers its 1024 window nodes.
+/// The LZ packer below: empties its 256 hash chains (one per byte value) and
+/// numbers its 1024 window nodes.
 void LzPack_ResetSlotBuckets(void) {
   s32 index;
   struct LzPackNode **bucket;
@@ -1300,7 +1300,7 @@ void LzPack_ResetSlotBuckets(void) {
   }
 }
 
-// Adds window position index to the chain of the byte it holds.
+/// Adds window position index to the chain of the byte it holds.
 void LzPack_InsertSlotNode(s32 index) {
   struct LzPackWork *work = gFlash_Handler3;
 
@@ -1312,7 +1312,7 @@ void LzPack_InsertSlotNode(s32 index) {
     work->nodes[index].next->prev = &work->nodes[index];
 }
 
-// Removes window position slot from its chain.
+/// Removes window position slot from its chain.
 void LzPack_RemoveSlotNode(s32 slot) {
   if (gFlash_Handler3->nodes[slot].prev != NULL) {
     if (gFlash_Handler3->nodes[slot].next != NULL)
@@ -1322,9 +1322,9 @@ void LzPack_RemoveSlotNode(s32 slot) {
   }
 }
 
-// Reads count more input bytes into the window from position start, dropping
-// the bytes they replace from their chains; past the end of the input the
-// positions are marked empty (-1).
+/// Reads count more input bytes into the window from position start, dropping
+/// the bytes they replace from their chains; past the end of the input the
+/// positions are marked empty (-1).
 void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
   s32 limit = count;
   s32 current = 0;
@@ -1377,8 +1377,8 @@ void LzPack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {
   }
 }
 
-// Appends the finished group (a flag byte and up to eight items) to the
-// output.
+/// Appends the finished group (a flag byte and up to eight items) to the
+/// output.
 void LzPack_CopyBufferedBytes(u8 *destination) {
   struct LzPackWork *work = gFlash_Handler3;
   s32 index;
@@ -1389,9 +1389,9 @@ void LzPack_CopyBufferedBytes(u8 *destination) {
   }
 }
 
-// Finds the longest earlier match (up to PACK_MATCH_MAX bytes, at most
-// PACK_DISTANCE_MAX back) for the bytes at window position start; matchLen
-// stays 1 for none.
+/// Finds the longest earlier match (up to PACK_MATCH_MAX bytes, at most
+/// PACK_DISTANCE_MAX back) for the bytes at window position start; matchLen
+/// stays 1 for none.
 static __inline__ void LzPack_FindWindowMatch(s32 start) {
   struct LzPackNode *node;
   s32 len;
@@ -1448,11 +1448,11 @@ static __inline__ void LzPack_FindWindowMatch(s32 start) {
   }
 }
 
-// Packs size bytes of input into dst with a small LZ scheme and returns the
-// packed size. Each group starts with a flag byte, a set bit marking a match:
-// two bytes of distance and length (lengths 2 to 16), or three for lengths up
-// to 272; a match is put off by one byte when the next position matches
-// further. A zero match ends the stream. Nothing in this game calls it.
+/// Packs size bytes of input into dst with a small LZ scheme and returns the
+/// packed size. Each group starts with a flag byte, a set bit marking a match:
+/// two bytes of distance and length (lengths 2 to 16), or three for lengths up
+/// to 272; a match is put off by one byte when the next position matches
+/// further. A zero match ends the stream. Nothing in this game calls it.
 UNUSED s32 LzPack_PackStream(const u8 *input, u8 *dst, s32 size) {
   s32 defer;
   s32 len;

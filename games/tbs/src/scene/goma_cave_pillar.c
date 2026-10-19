@@ -1,4 +1,5 @@
-// Goma Cave: the room with two pillars, a stump and the Djinni Forge.
+/// @file
+/// Goma Cave: the room with two pillars, a stump and the Djinni Forge.
 #include "script.h"
 #include "version.h"
 #include "global_cells.h"
@@ -48,7 +49,7 @@
 
 enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 
-// The room's actors, in placement order.
+/// The room's actors, in placement order.
 #define WEST_PILLAR 8
 #define STUMP 9
 #define EAST_PILLAR 10
@@ -58,16 +59,16 @@ enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 // Shared movement routines stay in their linked order.
 #include "common/object_staged_actor.h"
 
-// Talking to Forge: the man beside it jumps in surprise, and the battle with
-// the Djinni begins.
+/// Talking to Forge: the man beside it jumps in surprise, and the battle with
+/// the Djinni begins.
 static void Event_FightForge(void) {
   OBJ_EMOTE(WITNESS, EMOTE_IN_FRONT, 0);
   Engine_ActorJump(WITNESS, 2, 0);
   Field_RequestDjinnBattle(FORGE, DJINNI_FORGE);
 }
 
-// Advances the fragment's selected coordinate plane and keeps its targets in
-// step.
+/// Advances the fragment's selected coordinate plane and keeps its targets in
+/// step.
 static void GomaCavePillar_UpdateFragment(union FieldObject *fieldObject) {
   struct FieldActor *fragment = (struct FieldActor *)fieldObject;
   // The actor's speed and acceleration slots carry the two selected axis steps.
@@ -95,7 +96,7 @@ static void GomaCavePillar_UpdateFragment(union FieldObject *fieldObject) {
   }
 }
 
-// Applies child value 15 at the end of a fragment's lifetime.
+/// Applies child value 15 at the end of a fragment's lifetime.
 static s32
 GomaCavePillar_FinishFragment(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -103,7 +104,7 @@ GomaCavePillar_FinishFragment(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-// Creates a fragment with two axis rates, a script and packed plane/priority.
+/// Creates a fragment with two axis rates, a script and packed plane/priority.
 static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
                                          s32 secondRate,
                                          s32 scriptAndChildValue,
@@ -155,13 +156,13 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gGomaCavePillar_Placements;
 }
 
-// Copy the map cells for the west pillar on either side of its track.
+/// Copy the map cells for the west pillar on either side of its track.
 static inline void GomaCavePillar_CopyWestPillarCells(s32 sourceColumn) {
   Map_CopyCellAttributes(sourceColumn, 40, 6, 3, 18, 6);
 }
 
-// Move on the west pillar: it slides between its two places, and the map
-// cells follow it.
+/// Move on the west pillar: it slides between its two places, and the map
+/// cells follow it.
 static void Event_MoveWestPillar(void) {
   struct FieldActor *actor;
   s32 x;
@@ -182,8 +183,8 @@ static void Event_MoveWestPillar(void) {
   EV_END();
 }
 
-// While the stump teeters, dust falls from it: one fragment every eighth
-// frame, two on every sixteenth.
+/// While the stump teeters, dust falls from it: one fragment every eighth
+/// frame, two on every sixteenth.
 static void GomaCavePillar_SpawnStumpDust(void) {
   s32 framePhase;
   s32 fixedX;
@@ -251,9 +252,9 @@ static void GomaCavePillar_SpawnStumpDust(void) {
 
 s32 gGomaCavePillar_WitnessFrames;
 
-// Move on the stump: once it is pushed to the edge (column 25), it teeters
-// shedding dust, tips over and falls into the room below with a crash that
-// shakes the screen.
+/// Move on the stump: once it is pushed to the edge (column 25), it teeters
+/// shedding dust, tips over and falls into the room below with a crash that
+/// shakes the screen.
 static void Event_PushStumpOver(void) {
   s32 column;
   s32 zero;
@@ -341,8 +342,8 @@ static void Event_PushStumpOver(void) {
   EV_END();
 }
 
-// Once the east pillar reaches its place (cell 38, 14), it sinks two pixels
-// into the floor and six fragments fly out around it.
+/// Once the east pillar reaches its place (cell 38, 14), it sinks two pixels
+/// into the floor and six fragments fly out around it.
 static void GomaCavePillar_SettleEastPillar(void) {
   s32 x;
   s32 z;
@@ -381,14 +382,14 @@ static void GomaCavePillar_SettleEastPillar(void) {
   }
 }
 
-// Move on the east pillar.
+/// Move on the east pillar.
 static void Event_MoveEastPillar(void) {
   EV_BEGIN();
   GomaCavePillar_SettleEastPillar();
   EV_END();
 }
 
-// Walking into the east pillar pushes it a step.
+/// Walking into the east pillar pushes it a step.
 static void Event_PushEastPillar(void) {
   EV_BEGIN();
   StagedActor_AdvancePair();
@@ -396,8 +397,8 @@ static void Event_PushEastPillar(void) {
   EV_END();
 }
 
-// Walking west at the gap: the leader jumps across it. Later patches use the
-// shared forward jump.
+/// Walking west at the gap: the leader jumps across it. Later patches use the
+/// shared forward jump.
 static void Event_JumpGapWest(void) {
 #if TBS_PATCH_1
   Field_TryJumpForward();
@@ -440,8 +441,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gGomaCavePillar_Events;
 }
 
-// While the battle with Forge runs, the man reacts on a timer; once the
-// Djinni event is over, it raises event 99.
+/// While the battle with Forge runs, the man reacts on a timer; once the
+/// Djinni event is over, it raises event 99.
 static void GomaCavePillar_FidgetWhileForgeFights(void) {
   struct EventWork *work;
   s32 frame;
@@ -468,7 +469,7 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
     work->raisedTrigger = 99;
 }
 
-// Raised once Forge is caught: the man is amazed, then walks off.
+/// Raised once Forge is caught: the man is amazed, then walks off.
 static void Event_WitnessCheersForgeCaught(void) {
   Engine_TaskRemoveCallback(GomaCavePillar_FidgetWhileForgeFights);
   EV_BEGIN();
@@ -490,8 +491,8 @@ static void Event_WitnessCheersForgeCaught(void) {
   EV_END();
 }
 
-// Put the pillars and the stump where the party left them. Entrance 99 shows
-// the stump falling again; after a Djinni battle, the man's reaction starts.
+/// Put the pillars and the stump where the party left them. Entrance 99 shows
+/// the stump falling again; after a Djinni battle, the man's reaction starts.
 s32 Scene_Initialize(void) {
   struct FieldActor *actor;
   struct EventWork *work;
@@ -539,7 +540,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// One step per facing: X pixels in the high halfword, Z pixels in the low half.
+/// One step per facing: X pixels in the high halfword, Z pixels in the low
+/// half.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {

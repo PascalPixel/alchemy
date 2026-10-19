@@ -8,12 +8,12 @@
 // Field object scripts: the ones the engine starts itself, and the command
 // table.
 
-// Does nothing and returns to the idle script.
+/// Does nothing and returns to the idle script.
 const s32 gObjectDispatch_DefaultScript[] = {
     SC_END,
 };
 
-// The scripts below each repeat one command every frame.
+/// The scripts below each repeat one command every frame.
 const s32 gObjectDispatch_KeyCheckScript[] = {
     SC_KEY_COUNT,
     SC_WAIT(1),
@@ -54,7 +54,7 @@ const s32 gObjectDispatch_EndScript[] = {
     SC_END,
 };
 
-// The handler for each script command number; 0x24 onwards act as SC_END.
+/// The handler for each script command number; 0x24 onwards act as SC_END.
 const ScriptCommand gScriptObject_CommandTable[47] = {
     Script_Wait,                       // 0x00 SC_WAIT
     Script_WaitForArrival,             // 0x01 SC_SYNC

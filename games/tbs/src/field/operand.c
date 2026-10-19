@@ -4,7 +4,7 @@
 
 // Script work values: the handler SC_SET, SC_ADD and SC_CMP call for each.
 
-// The handler for each work value number (enum ScriptWork).
+/// The handler for each work value number (enum ScriptWork).
 const OperandFunc gScript_OperandHandlerTable[41] = {
     Script_SetOrCompareAddress,          // 0x00 SW_SCRIPT
     Script_SetOrCompareCursor,           // 0x01 SW_CURSOR

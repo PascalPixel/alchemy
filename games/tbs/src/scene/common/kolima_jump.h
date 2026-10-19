@@ -1,5 +1,6 @@
-// Kolima's forest bridge and river: the hop east onto actor 10 (the third
-// placement).
+/// @file
+/// Kolima's forest bridge and river: the hop east onto actor 10 (the third
+/// placement).
 #include "types.h"
 #include "engine_call.h"
 #include "field_obj.h"
@@ -7,10 +8,10 @@
 #include "game_state.h"
 #include "songs.h"
 
-// Hop the leader to the pixel of the 16.16 position request, unless something
-// blocks the way: the leader crouches, jumps (3 pixels a frame, rising at 4)
-// and lands while actor 10 plays its animation 7; the leader is then nudged a
-// pixel north-west twice and back. Returns 1 after a hop.
+/// Hop the leader to the pixel of the 16.16 position request, unless something
+/// blocks the way: the leader crouches, jumps (3 pixels a frame, rising at 4)
+/// and lands while actor 10 plays its animation 7; the leader is then nudged a
+/// pixel north-west twice and back. Returns 1 after a hop.
 static s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request) {
   struct StagedActorEffect *actor = (void *)Object_GetById(0);
   u8 *flags = &actor->motionFlags;
@@ -53,9 +54,9 @@ static s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request) {
   return 0;
 }
 
-// Touch trigger 11, walking east: hop 30 pixels east of the leader. The
-// patched editions hop from the centre of the moving character's cell, 40
-// pixels.
+/// Touch trigger 11, walking east: hop 30 pixels east of the leader. The
+/// patched editions hop from the centre of the moving character's cell, 40
+/// pixels.
 static void KolimaForest_HopEast(void) {
   u32 buf[3];
 #if !TBS_PATCH_1

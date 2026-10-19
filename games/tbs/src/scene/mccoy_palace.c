@@ -42,7 +42,7 @@
 // the reward visit is over. McCoy speaks as SPEAKER_PORTRAIT_RIGHT |
 // ACTOR_LORD_MCCOY, a speaker bit field_event.h does not name yet.
 
-// The palace's people and the reward room's chests.
+/// The palace's people and the reward room's chests.
 enum {
   ACTOR_KOLIMA_ASKER = 10,
   ACTOR_STARTLED_RESIDENT = 14,
@@ -58,7 +58,7 @@ enum {
   ACTOR_WATER_OF_LIFE_CHEST = 24
 };
 
-// Forward declarations.
+/// Forward declarations.
 static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
                                     s32 chestFlag);
 static void Event_AudienceWithMcCoy(void);
@@ -66,7 +66,7 @@ static void Event_EscortHintsAtBarricade(void);
 static void Event_McCoyRewardsParty(void);
 static void Event_PresentRewardChests(void);
 
-// The talkFacing bytes of placement rows 6 to 9: actors 14 to 17.
+/// The talkFacing bytes of placement rows 6 to 9: actors 14 to 17.
 struct PalacePlacementTalkFacingView {
   u8 unk000[166];
   u8 startledResident;
@@ -81,20 +81,20 @@ struct PalacePlacementTalkFacingView {
 // The shared facing callback precedes the scene's entry points.
 #include "common/object_facing.h"
 
-// Where the party can enter the palace.
+/// Where the party can enter the palace.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gMcCoyPalaceEntrances;
 }
 
-// The palace has no regions.
+/// The palace has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-// Where each door and stair leads.
+/// Where each door and stair leads.
 const u32 *Scene_GetExits(void) { return gMcCoyPalaceExits; }
 
-// The palace's people. Once the reward is taken, the startled resident,
-// the admirer, the Kolima watcher and the reward keeper turn differently
-// when talked to.
+/// The palace's people. Once the reward is taken, the startled resident,
+/// the admirer, the Kolima watcher and the reward keeper turn differently
+/// when talked to.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   struct ScenePlacement *placements;
 
@@ -121,7 +121,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gMcCoyPalacePlacementsOther;
 }
 
-// What the party can talk to and search in the palace.
+/// What the party can talk to and search in the palace.
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_McCoyPalace) {
     return gMcCoyPalaceEvents;
@@ -129,7 +129,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gMcCoyPalaceEventsOther;
 }
 
-// "Oh, are you willing to go to Kolima Forest?"
+/// "Oh, are you willing to go to Kolima Forest?"
 static void Event_AskAboutGoingToKolima(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinYouWillingGoKolimaForest);
@@ -137,8 +137,8 @@ static void Event_AskAboutGoingToKolima(void) {
   Engine_EventEnd();
 }
 
-// The resident in a nightgown screams ("AAAAH!!!"), then turns to the
-// party.
+/// The resident in a nightgown screams ("AAAAH!!!"), then turns to the
+/// party.
 static void Event_TalkToStartledResident(void) {
   Engine_EventBegin();
   Actor_ShowEmote(ACTOR_STARTLED_RESIDENT, EMOTE_IN_FRONT | 2, 0);
@@ -154,8 +154,8 @@ static void Event_TalkToStartledResident(void) {
   Engine_EventEnd();
 }
 
-// "You are a fine warrior." the first time; after, "It's very reckless
-// for such young warriors to face the holy tree..."
+/// "You are a fine warrior." the first time; after, "It's very reckless
+/// for such young warriors to face the holy tree..."
 static void Event_TalkToAdmirer(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinFineWarrior);
@@ -167,8 +167,8 @@ static void Event_TalkToAdmirer(void) {
   Engine_EventEnd();
 }
 
-// "I was watching from here. After all that fuss, you still went to
-// Kolima?"
+/// "I was watching from here. After all that fuss, you still went to
+/// Kolima?"
 static void Event_TalkToKolimaWatcher(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinWasWatchingFromHereAfter);
@@ -176,9 +176,9 @@ static void Event_TalkToKolimaWatcher(void) {
   Engine_EventEnd();
 }
 
-// The keeper of McCoy's treasures: while the party chooses, only one item;
-// after, the reward was the greatest; before, Bilibin's great treasures
-// go to whoever ends the curse.
+/// The keeper of McCoy's treasures: while the party chooses, only one item;
+/// after, the reward was the greatest; before, Bilibin's great treasures
+/// go to whoever ends the curse.
 static void Event_TalkToRewardKeeper(void) {
   Engine_EventBegin();
 
@@ -197,9 +197,9 @@ static void Event_TalkToRewardKeeper(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the admirer: "Sometimes, we need children to remind us of
-// our own responsibilities.", then "You looked very courageous walking
-// toward Kolima."
+/// Mind Read on the admirer: "Sometimes, we need children to remind us of
+/// our own responsibilities.", then "You looked very courageous walking
+/// toward Kolima."
 static void Event_ReadAdmirersThoughts(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinSometimesWeNeedChildrenRemind);
@@ -211,7 +211,7 @@ static void Event_ReadAdmirersThoughts(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the keeper of McCoy's treasures.
+/// Mind Read on the keeper of McCoy's treasures.
 static void Event_ReadRewardKeepersThoughts(void) {
   Engine_EventBegin();
 
@@ -230,9 +230,9 @@ static void Event_ReadRewardKeepersThoughts(void) {
   Engine_EventEnd();
 }
 
-// Walking through one of the palace's doors: it opens with a sound, the
-// leader walks through and the next room loads. The front door makes no
-// sound once the escort has opened it.
+/// Walking through one of the palace's doors: it opens with a sound, the
+/// leader walks through and the next room loads. The front door makes no
+/// sound once the escort has opened it.
 static void Event_WalkThroughDoor(void) {
   struct EventWork *work;
   s32 hideDoorLayers;
@@ -267,22 +267,22 @@ static void Event_WalkThroughDoor(void) {
   Map_SetLayerEntryFlag(2);
 }
 
-// "Isaac checked the chest... but it was empty."
+/// "Isaac checked the chest... but it was empty."
 static void McCoyPalace_ShowChestEmpty(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgBilibinIsaacCheckedChestButWas, 1);
   Engine_EventEnd();
 }
 
-// "The treasure chest is locked."
+/// "The treasure chest is locked."
 static void McCoyPalace_ShowChestLocked(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgBilibinTreasureChestLocked, 1);
   Engine_EventEnd();
 }
 
-// Searching a reward chest after the reward: the chosen one is empty, the
-// others locked.
+/// Searching a reward chest after the reward: the chosen one is empty, the
+/// others locked.
 static void McCoyPalace_ShowUnavailableChest(s32 chestFlag) {
   if (Engine_GameFlagIsSet(chestFlag) != 0) {
     McCoyPalace_ShowChestEmpty();
@@ -291,7 +291,7 @@ static void McCoyPalace_ShowUnavailableChest(s32 chestFlag) {
   }
 }
 
-// Searching the first reward chest: a Vial, while no reward is taken.
+/// Searching the first reward chest: a Vial, while no reward is taken.
 static void Event_SearchVialChest(void) {
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     McCoyPalace_ShowUnavailableChest(FLAG_SCENE_TEMP_10);
@@ -300,7 +300,7 @@ static void Event_SearchVialChest(void) {
   }
 }
 
-// Searching the second reward chest: a Potion, while no reward is taken.
+/// Searching the second reward chest: a Potion, while no reward is taken.
 static void Event_SearchPotionChest(void) {
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     McCoyPalace_ShowUnavailableChest(FLAG_SCENE_TEMP_11);
@@ -310,8 +310,8 @@ static void Event_SearchPotionChest(void) {
   }
 }
 
-// Searching the third reward chest: a Psy Crystal, while no reward is
-// taken.
+/// Searching the third reward chest: a Psy Crystal, while no reward is
+/// taken.
 static void Event_SearchPsyCrystalChest(void) {
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     McCoyPalace_ShowUnavailableChest(FLAG_SCENE_TEMP_12);
@@ -321,8 +321,8 @@ static void Event_SearchPsyCrystalChest(void) {
   }
 }
 
-// Searching the fourth reward chest: a Water of Life, while no reward is
-// taken.
+/// Searching the fourth reward chest: a Water of Life, while no reward is
+/// taken.
 static void Event_SearchWaterOfLifeChest(void) {
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     McCoyPalace_ShowUnavailableChest(FLAG_SCENE_TEMP_13);
@@ -332,8 +332,8 @@ static void Event_SearchWaterOfLifeChest(void) {
   }
 }
 
-// The chest opens and gives its item; with no room for it, the chest
-// closes again and the reward is still to choose.
+/// The chest opens and gives its item; with no room for it, the chest
+/// closes again and the reward is still to choose.
 static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
                                     s32 chestFlag) {
   s32 emitterHandle;
@@ -358,8 +358,8 @@ static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
   Engine_EventEnd();
 }
 
-// Leaving the reward room without a reward: "Please take your reward
-// before your depart!", and the escort walks the leader back.
+/// Leaving the reward room without a reward: "Please take your reward
+/// before your depart!", and the escort walks the leader back.
 static void Event_EscortAsksPartyToChoose(void) {
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) == 0) {
     if (Engine_GameFlagIsSet(0x322) != 0) {
@@ -378,8 +378,8 @@ static void Event_EscortAsksPartyToChoose(void) {
   }
 }
 
-// Leaving the reward room with a reward: "You are always welcome in the
-// palace of Lord McCoy.", and the escort leaves.
+/// Leaving the reward room with a reward: "You are always welcome in the
+/// palace of Lord McCoy.", and the escort leaves.
 static void Event_EscortSeesPartyOff(void) {
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     Engine_EventBegin();
@@ -405,7 +405,7 @@ static void Event_EscortSeesPartyOff(void) {
   }
 }
 
-// The four reward chests stand in a row.
+/// The four reward chests stand in a row.
 static __inline__ void McCoyPalace_PositionRewardChests(void) {
   Actor_SetPosition(ACTOR_VIAL_CHEST, PIXELS(616), PIXELS(728));
   Actor_SetPosition(ACTOR_POTION_CHEST, PIXELS(632), PIXELS(728));
@@ -413,15 +413,15 @@ static __inline__ void McCoyPalace_PositionRewardChests(void) {
   Engine_ActorSetPosition(ACTOR_WATER_OF_LIFE_CHEST, PIXELS(664), PIXELS(728));
 }
 
-// The cells before the chest row can be walked on.
+/// The cells before the chest row can be walked on.
 static __inline__ void McCoyPalace_OpenRewardChestRow(void) {
   Map_CopyCellAttributes(38, 55, 4, 1, 38, 45);
   Map_CopyCellAttributes(42, 55, 4, 1, 38, 46);
 }
 
-// Sets the palace up: McCoy's first audience, the escort at the door after
-// it, the reward audience once Kolima's curse is lifted, or the reward
-// chests where the party left them.
+/// Sets the palace up: McCoy's first audience, the escort at the door after
+/// it, the reward audience once Kolima's curse is lifted, or the reward
+/// chests where the party left them.
 s32 Scene_Initialize(void) {
   s32 rewardTaken;
   s32 curseLifted;
@@ -493,7 +493,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// Garet, Ivan and Mia get ready to walk up to McCoy.
+/// Garet, Ivan and Mia get ready to walk up to McCoy.
 static __inline__ void McCoyPalace_PrepareCompanionApproach(void) {
   Actor_SetSpeed(GARET, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_SetSpeed(IVAN, PIXELS(3) / 5, PIXELS(3) / 10);
@@ -503,11 +503,11 @@ static __inline__ void McCoyPalace_PrepareCompanionApproach(void) {
   Engine_ActorSetAnimation(MIA, ANIM_WALK);
 }
 
-// The first audience: the escort announces the party and McCoy asks them to
-// lift Kolima's curse. Refusing, he calls them too young and they leave;
-// coming back, they may change their minds. Accepting, McCoy gives the key
-// to the barricades, Garet bristles at being called children, and McCoy
-// takes the key back.
+/// The first audience: the escort announces the party and McCoy asks them to
+/// lift Kolima's curse. Refusing, he calls them too young and they leave;
+/// coming back, they may change their minds. Accepting, McCoy gives the key
+/// to the barricades, Garet bristles at being called children, and McCoy
+/// takes the key back.
 static void Event_AudienceWithMcCoy(void) {
   struct FieldActor *actor;
 
@@ -947,9 +947,9 @@ leave:
   Engine_EventEnd();
 }
 
-// At the front door after the audience: McCoy's escort is sorry the party
-// was rejected, asks them not to go to Kolima and lets slip that the
-// barricade may not need a key.
+/// At the front door after the audience: McCoy's escort is sorry the party
+/// was rejected, asks them not to go to Kolima and lets slip that the
+/// barricade may not need a key.
 static void Event_EscortHintsAtBarricade(void) {
   Engine_EventBegin();
   Engine_EventOpenScreen();
@@ -999,22 +999,22 @@ static void Event_EscortHintsAtBarricade(void) {
   Engine_EventEnd();
 }
 
-// Garet, Ivan and Mia turn to talk among themselves.
+/// Garet, Ivan and Mia turn to talk among themselves.
 static void McCoyPalace_FaceCompanionsForDiscussion(void) {
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(MIA, FACING_WEST, 0);
 }
 
-// Garet, Ivan and Mia face McCoy again.
+/// Garet, Ivan and Mia face McCoy again.
 static void McCoyPalace_FaceCompanionsForAudience(void) {
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
 }
 
-// Brought in after lifting Kolima's curse: McCoy thanks the party and sends
-// them to choose a reward.
+/// Brought in after lifting Kolima's curse: McCoy thanks the party and sends
+/// them to choose a reward.
 static void Event_McCoyRewardsParty(void) {
   struct FieldActor *viewCenter;
   struct FieldActor *actor;
@@ -1287,8 +1287,8 @@ static void Event_McCoyRewardsParty(void) {
   Engine_EventEnd();
 }
 
-// In the reward room: the escort shows the four chests and the keeper
-// explains that only one may be chosen.
+/// In the reward room: the escort shows the four chests and the keeper
+/// explains that only one may be chosen.
 static void Event_PresentRewardChests(void) {
   struct FieldActor *actor;
 

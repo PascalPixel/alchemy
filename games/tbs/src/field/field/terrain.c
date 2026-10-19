@@ -1,5 +1,6 @@
-// Part of field.c, the field object, compiled only through it.
-// Terrain: ground heights and the collision of cells and the world map.
+/// @file
+/// Part of field.c, the field object, compiled only through it.
+/// Terrain: ground heights and the collision of cells and the world map.
 
 #include "../field_internal.h"
 
@@ -11,16 +12,16 @@
 #define CURVE_HEIGHT_FIXED(sample) ((sample) << CURVE_VALUE_SHIFT)
 #endif
 
-// The terrain height functions (gMap_TerrainHeightFunctions): each takes a
-// cell's height samples after its kind byte and a pixel (x, y) within the
-// 16x16 cell, and returns the ground height there in 16.16 pixels. This one
-// is flat: the first sample everywhere.
+/// The terrain height functions (gMap_TerrainHeightFunctions): each takes a
+/// cell's height samples after its kind byte and a pixel (x, y) within the
+/// 16x16 cell, and returns the ground height there in 16.16 pixels. This one
+/// is flat: the first sample everywhere.
 s32 Curve_GetFirstSampleA(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   return CURVE_HEIGHT_FIXED(samples[0]);
 }
 
-// A slope along x: from sample 0 at x = 0 towards sample 1 at x = 16.
+/// A slope along x: from sample 0 at x = 0 towards sample 1 at x = 16.
 s32 Curve_LerpTwoSamples(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 startHeight;
@@ -34,7 +35,7 @@ s32 Curve_LerpTwoSamples(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   return startHeight + (heightDelta >> 4);
 }
 
-// A slope along y: from sample 0 at y = 0 towards sample 1 at y = 16.
+/// A slope along y: from sample 0 at y = 0 towards sample 1 at y = 16.
 s32 Curve_LerpTwoSamplesB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 startHeight;
@@ -48,8 +49,8 @@ s32 Curve_LerpTwoSamplesB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   return startHeight + (heightDelta >> 4);
 }
 
-// A step across the diagonal x + y = 15: sample 0 before it, sample 1 after
-// it and the higher of the two on it.
+/// A step across the diagonal x + y = 15: sample 0 before it, sample 1 after
+/// it and the higher of the two on it.
 s32 Curve_StepAtSummedPosition(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 firstHeight;
@@ -73,8 +74,8 @@ s32 Curve_StepAtSummedPosition(const u8 *heightBytes, s32 x, s32 y) {
   return secondHeight;
 }
 
-// A step across the diagonal x = y: sample 0 where y < x, sample 1 where
-// y > x and the higher of the two on it.
+/// A step across the diagonal x = y: sample 0 where y < x, sample 1 where
+/// y > x and the higher of the two on it.
 s32 Curve_StepAtDifferencePosition(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 firstHeight;
@@ -100,8 +101,8 @@ s32 Curve_StepAtDifferencePosition(const u8 *heightBytes, s32 x, s32 y) {
   return secondHeight;
 }
 
-// A slope that bends on the diagonal x + y = 15: from sample 0 at the top
-// left corner to sample 1 on the diagonal to sample 2 at the bottom right.
+/// A slope that bends on the diagonal x + y = 15: from sample 0 at the top
+/// left corner to sample 1 on the diagonal to sample 2 at the bottom right.
 s32 Curve_LerpThreeSamplesByRatio(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 firstHeight;
@@ -126,8 +127,8 @@ s32 Curve_LerpThreeSamplesByRatio(const u8 *heightBytes, s32 x, s32 y) {
   return height;
 }
 
-// A slope that bends on the diagonal x = y: from sample 0 at the top right
-// corner to sample 1 on the diagonal to sample 2 at the bottom left.
+/// A slope that bends on the diagonal x = y: from sample 0 at the top right
+/// corner to sample 1 on the diagonal to sample 2 at the bottom left.
 s32 Curve_LerpThreeSamplesAtDifference(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 firstHeight;
@@ -161,8 +162,8 @@ s32 Curve_LerpThreeSamplesAtDifference(const u8 *heightBytes, s32 x, s32 y) {
   return middleHeight + pixelDifference;
 }
 
-// A raised or sunken rounded square: sample 1 where gCurve_LerpWeightTable is
-// 1, sample 0 in the corners.
+/// A raised or sunken rounded square: sample 1 where gCurve_LerpWeightTable is
+/// 1, sample 0 in the corners.
 s32 Curve_LerpTwoSamplesByTable(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 startHeight;
@@ -172,7 +173,7 @@ s32 Curve_LerpTwoSamplesByTable(const u8 *heightBytes, s32 x, s32 y) {
                         gCurve_LerpWeightTable[x + (y * CURVE_FULL_STEPS)]);
 }
 
-// A step along x: sample 0 for x < 8, sample 1 from x = 8.
+/// A step along x: sample 0 for x < 8, sample 1 from x = 8.
 s32 Curve_StepAtHalf(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   u32 cellX = pixelX;
@@ -184,7 +185,7 @@ s32 Curve_StepAtHalf(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   return CURVE_HEIGHT_FIXED(heightSample);
 }
 
-// A step along y: sample 0 for y < 8, sample 1 from y = 8.
+/// A step along y: sample 0 for y < 8, sample 1 from y = 8.
 s32 Curve_StepAtHalfB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   u32 cellY = pixelY;
@@ -196,8 +197,8 @@ s32 Curve_StepAtHalfB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   return CURVE_HEIGHT_FIXED(heightSample);
 }
 
-// A slope along x that bends at the middle: sample 0 at x = 0, sample 1 at
-// x = 8, towards sample 2 at x = 16.
+/// A slope along x that bends at the middle: sample 0 at x = 0, sample 1 at
+/// x = 8, towards sample 2 at x = 16.
 s32 Curve_LerpThreeSamplesAtHalf(const u8 *heightBytes, s32 pixelX,
                                  s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
@@ -231,7 +232,7 @@ s32 Curve_LerpThreeSamplesAtHalf(const u8 *heightBytes, s32 pixelX,
   }
 }
 
-// An unsigned-sample slope along y that bends at the middle.
+/// An unsigned-sample slope along y that bends at the middle.
 s32 Curve_LerpThreeSamplesAtHalfB(const u8 *heightBytes, s32 pixelX,
                                   s32 pixelY) {
   const u8 *samples = heightBytes;
@@ -263,7 +264,7 @@ s32 Curve_LerpThreeSamplesAtHalfB(const u8 *heightBytes, s32 pixelX,
   return middleHeight + (tailDelta >> 3);
 }
 
-// The sample gCurve_SampleIndexTable picks for (x, y).
+/// The sample gCurve_SampleIndexTable picks for (x, y).
 s32 Curve_LookupSampleByTable(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   u32 cellX = pixelX;
@@ -272,7 +273,7 @@ s32 Curve_LookupSampleByTable(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
       samples[gCurve_SampleIndexTable[cellX + (cellY << 4)]]);
 }
 
-// The same, with the table mirrored left to right.
+/// The same, with the table mirrored left to right.
 s32 Curve_LookupSampleByTableReversed(const u8 *heightBytes, s32 pixelX,
                                       s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
@@ -283,13 +284,13 @@ s32 Curve_LookupSampleByTableReversed(const u8 *heightBytes, s32 pixelX,
                                       CURVE_FULL_STEPS - 1]]);
 }
 
-// Flat, as Curve_GetFirstSampleA.
+/// Flat, as Curve_GetFirstSampleA.
 s32 Curve_GetFirstSampleB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   return CURVE_HEIGHT_FIXED(samples[0]);
 }
 
-// Flat, as Curve_GetFirstSampleA.
+/// Flat, as Curve_GetFirstSampleA.
 s32 Curve_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   return CURVE_HEIGHT_FIXED(samples[0]);
@@ -297,8 +298,8 @@ s32 Curve_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 
 #undef CURVE_HEIGHT_FIXED
 
-// Returns the ground height of a layer at (x, y) in 16.16 pixels: the
-// height function of the cell's terrain kind applied to its samples.
+/// Returns the ground height of a layer at (x, y) in 16.16 pixels: the
+/// height function of the cell's terrain kind applied to its samples.
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y) {
   struct MapState *work = gMapWork[0];
   struct MapCell *cell;
@@ -325,8 +326,8 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y) {
 #endif
 }
 
-// Returns the terrain kind (the low four bits of the first collision byte)
-// of a layer's cell at (x, y) in 16.16 pixels.
+/// Returns the terrain kind (the low four bits of the first collision byte)
+/// of a layer's cell at (x, y) in 16.16 pixels.
 s32 Map_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
   struct MapState *state = gMapWork[0];
   struct MapCell *cells;
@@ -347,7 +348,7 @@ s32 Map_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
   return *(Ram_MapCollision + heightAttributeIndex * 4) & 15;
 }
 
-// Returns the collision code of a layer's cell at (x, y) in 16.16 pixels.
+/// Returns the collision code of a layer's cell at (x, y) in 16.16 pixels.
 s32 GetMapCellCollision(s32 layer, s32 x, s32 y) {
   struct MapState *state;
   struct MapCell *cell;
@@ -363,7 +364,7 @@ s32 GetMapCellCollision(s32 layer, s32 x, s32 y) {
   return cell->collisionCode;
 }
 
-// Sets the collision code of a layer's cell at (x, y) in 16.16 pixels.
+/// Sets the collision code of a layer's cell at (x, y) in 16.16 pixels.
 void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collisionCode) {
   struct MapState *state = gMapWork[0];
 
@@ -377,7 +378,7 @@ void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collisionCode) {
   }
 }
 
-// Returns the top two bits of the block word of the cell at pixel (x, y).
+/// Returns the top two bits of the block word of the cell at pixel (x, y).
 UNUSED s32 Map_GetCellHighFlags(s32 x, s32 y) {
   s32 cellX = x / 16;
   s32 cellY = y / 16;
@@ -387,9 +388,9 @@ UNUSED s32 Map_GetCellHighFlags(s32 x, s32 y) {
   return ((u8 *)&mapCell->metatileAndFlags)[1] >> 6;
 }
 
-// Returns whether an object can step to position: 2 when the cell there is
-// a wall (collision code 0xff), 1 when the ground is more than 8 pixels
-// higher than the object's, -1 when it is more than 12 pixels lower, else 0.
+/// Returns whether an object can step to position: 2 when the cell there is
+/// a wall (collision code 0xff), 1 when the ground is more than 8 pixels
+/// higher than the object's, -1 when it is more than 12 pixels lower, else 0.
 s32 Map_CheckObjectStep(struct ObjectRuntime *object,
                         struct FieldPosition *position) {
   struct MapState *mapState;
@@ -433,8 +434,8 @@ s32 Map_CheckObjectStep(struct ObjectRuntime *object,
   return 0;
 }
 
-// Returns 0 when the cell under position (its x, and y less its height) in
-// layer 2 is a wall (collision code 0xff), else -1.
+/// Returns 0 when the cell under position (its x, and y less its height) in
+/// layer 2 is a wall (collision code 0xff), else -1.
 s32 CheckMapPositionCellOccupied(struct WorldPosition *position) {
   s32 pixelX;
   s32 pixelY;
@@ -455,9 +456,9 @@ s32 CheckMapPositionCellOccupied(struct WorldPosition *position) {
   return (cell->collisionCode != 0xff) - 1;
 }
 
-// Returns the world map's collision value (1-15) at position: from the upper
-// collision layer where it has one, else the lower, else 7. Each layer is a
-// tile map of 4-bit collision pixels.
+/// Returns the world map's collision value (1-15) at position: from the upper
+/// collision layer where it has one, else the lower, else 7. Each layer is a
+/// tile map of 4-bit collision pixels.
 s32 GetWorldMapCollision(struct WorldPosition *position) {
   s32 halfPixelX = position->x >> 17;
   s32 y = position->y;
@@ -497,8 +498,8 @@ s32 GetWorldMapCollision(struct WorldPosition *position) {
   return 7;
 }
 
-// Returns 0 when the world map at position can be walked on (collision 5 to
-// 12), else -1.
+/// Returns 0 when the world map at position can be walked on (collision 5 to
+/// 12), else -1.
 s32 CheckWorldMapWalkable(s32 unused, struct WorldPosition *position) {
   if ((GetWorldMapCollision(position) - 5) <= 7U) {
     return 0;
@@ -506,9 +507,9 @@ s32 CheckWorldMapWalkable(s32 unused, struct WorldPosition *position) {
   return -1;
 }
 
-// Returns the world map's terrain behaviour at position from
-// gWorldMap_TerrainBehaviorTable, and stores the block's terrain kind in
-// terrainKind.
+/// Returns the world map's terrain behaviour at position from
+/// gWorldMap_TerrainBehaviorTable, and stores the block's terrain kind in
+/// terrainKind.
 s32 GetWorldMapTerrainBehavior(struct WorldPosition *position,
                                s32 *terrainKind) {
   s32 collisionKind = GetWorldMapCollision(position);

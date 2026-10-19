@@ -36,14 +36,14 @@
 #include "songs.h"
 #include "item_ids.h"
 
-// Forward declarations.
+/// Forward declarations.
 static void Kolima_WitnessForestCurse(void);
 static void Kolima_ShowMessageAndWait(s32 actorId, s32 waitFrames);
 static void Kolima_FaceActorAndWait(s32 actorId, s32 facing, s32 waitFrames);
 static void Kolima_SpawnCurseSparkle(void);
 static void Kolima_RestoreBridgeState(void);
 
-// Apply the deferred pose change requested by the falling-effect script.
+/// Apply the deferred pose change requested by the falling-effect script.
 static s32 Kolima_ApplyPendingPose(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   if (gKolima_PendingPose != 0) {
@@ -53,7 +53,7 @@ static s32 Kolima_ApplyPendingPose(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Alternate an ambient actor's child appearance with a random timer.
+/// Alternate an ambient actor's child appearance with a random timer.
 static s32 Kolima_UpdateTimedAppearance(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   s32 randomValue = Engine_RandomNext();
@@ -71,7 +71,7 @@ static s32 Kolima_UpdateTimedAppearance(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Replace the nine villagers' placement sprites with their cursed trees.
+/// Replace the nine villagers' placement sprites with their cursed trees.
 static void
 Kolima_InitializeCursedVillagers(struct ScenePlacement *placements) {
   struct ScenePlacement *villager = &placements[3];
@@ -93,7 +93,7 @@ Kolima_InitializeCursedVillagers(struct ScenePlacement *placements) {
   }
 }
 
-// Move, enlarge and release one bridge fragment after its lifetime.
+/// Move, enlarge and release one bridge fragment after its lifetime.
 static s32 Kolima_UpdateFallingDebris(struct ScriptInterpreter *interpreter) {
   struct FieldActor *debris = (struct FieldActor *)interpreter;
   debris->x.fixed += debris->velocityX;
@@ -114,7 +114,7 @@ static s32 Kolima_UpdateFallingDebris(struct ScriptInterpreter *interpreter) {
 // Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
-// Select the entrance table for the village, interior or bridge.
+/// Select the entrance table for the village, interior or bridge.
 const struct SceneEntrance *Kolima_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -127,7 +127,7 @@ const struct SceneEntrance *Kolima_GetEntrances(void) {
   return gKolimaEntrances;
 }
 
-// Return the interior's regions; the other maps have none.
+/// Return the interior's regions; the other maps have none.
 const struct SceneRegion *Kolima_GetRegions(void) {
   if (gGameState.scene == (s32)&SceneId_Kolima2) {
     return gKolimaRegions2;
@@ -135,10 +135,10 @@ const struct SceneRegion *Kolima_GetRegions(void) {
   return 0;
 }
 
-// Return the shared packed exit table.
+/// Return the shared packed exit table.
 const u32 *Kolima_GetExits(void) { return gKolimaExits; }
 
-// Select placements and apply tree sprites while the villagers are cursed.
+/// Select placements and apply tree sprites while the villagers are cursed.
 const struct ScenePlacement *Kolima_GetPlacements(void) {
   s32 scene = gGameState.scene;
 
@@ -154,7 +154,7 @@ const struct ScenePlacement *Kolima_GetPlacements(void) {
   return gKolimaPlacements;
 }
 
-// Offer sanctum services to a north-facing leader, or discuss the trees.
+/// Offer sanctum services to a north-facing leader, or discuss the trees.
 static void Kolima_TalkToHealer(void) {
   struct FieldActor *leader = Object_GetById(0);
   s32 facing = leader->facing;
@@ -168,10 +168,10 @@ static void Kolima_TalkToHealer(void) {
   Engine_EventEnd();
 }
 
-// Let the village's Djinni join the party.
+/// Let the village's Djinni join the party.
 static void Kolima_RecruitDjinni(void) { Djinn_JoinParty(27, 0, 1); }
 
-// Select the village or bridge event table.
+/// Select the village or bridge event table.
 const struct SceneEvent *Kolima_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_Kolima3) {
     return gKolimaEvents3;
@@ -179,7 +179,7 @@ const struct SceneEvent *Kolima_GetEvents(void) {
   return gKolimaEvents;
 }
 
-// Walk the leader northward through the selected exit.
+/// Walk the leader northward through the selected exit.
 static void Kolima_WalkThroughExit(s32 exitId) {
   Object_GetById(0)->motionFlags = 0;
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -189,7 +189,7 @@ static void Kolima_WalkThroughExit(s32 exitId) {
   Engine_EventRequestExit(exitId);
 }
 
-// Animate the touched map cells or leave through the southern exit.
+/// Animate the touched map cells or leave through the southern exit.
 static void Kolima_AnimateSwitchOrExit(void) {
   struct EventWork *work = gEventWork;
   s32 x = 0;
@@ -228,7 +228,7 @@ static void Kolima_AnimateSwitchOrExit(void) {
   Engine_EventEnd();
 }
 
-// Show the villager's crossing and the bridge collapsing into debris.
+/// Show the villager's crossing and the bridge collapsing into debris.
 static void Kolima_ShowBridgeCollapse(void) {
   u32 debrisIndex;
 
@@ -313,7 +313,7 @@ static void Kolima_ShowBridgeCollapse(void) {
   Engine_EventEnd();
 }
 
-// Restore the current map and play the first visit to cursed Kolima.
+/// Restore the current map and play the first visit to cursed Kolima.
 s32 Kolima_Initialize(void) {
   s16 scene;
   u32 actor;
@@ -373,7 +373,7 @@ s32 Kolima_Initialize(void) {
   return 0;
 }
 
-// Show a protective field on its assigned alternating frame.
+/// Show a protective field on its assigned alternating frame.
 static __inline__ void Kolima_SetProtectiveFieldHeight(s32 actorId,
                                                        s32 visibleOnOddFrames) {
   struct FieldActor *field = Object_GetById(actorId);
@@ -387,7 +387,7 @@ static __inline__ void Kolima_SetProtectiveFieldHeight(s32 actorId,
   }
 }
 
-// Alternate the four protective sprites between visible and hidden heights.
+/// Alternate the four protective sprites between visible and hidden heights.
 static void Kolima_AlternateProtectiveFieldHeights(void) {
   Kolima_SetProtectiveFieldHeight(19, 0);
   Kolima_SetProtectiveFieldHeight(20, 1);
@@ -395,7 +395,7 @@ static void Kolima_AlternateProtectiveFieldHeights(void) {
   Kolima_SetProtectiveFieldHeight(22, 1);
 }
 
-// Begin Mind Read on one of the villagers transformed into a tree.
+/// Begin Mind Read on one of the villagers transformed into a tree.
 static void Kolima_ReadVillagerThoughts(s32 actorId, s32 targetId) {
   Engine_PsynergyBegin(ABILITY_MIND_READ, 1);
   Engine_PsynergySetTarget(actorId, targetId);
@@ -404,14 +404,14 @@ static void Kolima_ReadVillagerThoughts(s32 actorId, s32 targetId) {
   Engine_TaskWait(1);
 }
 
-// Finish Mind Read and release its temporary scene objects.
+/// Finish Mind Read and release its temporary scene objects.
 static void Kolima_FinishReadingThoughts(void) {
   Engine_PsynergyPlayEffect(2);
   Engine_PsynergyLowerHands();
   BattleEffect_CleanupSceneObjects();
 }
 
-// Give the four companions the same nod, waiting on the final actor.
+/// Give the four companions the same nod, waiting on the final actor.
 static __inline__ void Kolima_NodTogether(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
   Engine_ActorSetAnimation(GARET, 3);
@@ -419,8 +419,8 @@ static __inline__ void Kolima_NodTogether(void) {
   Engine_ActorSetAnimationAndWait(IVAN, 3);
 }
 
-// Show the forest's curse, the party's protective Psynergy and the trees'
-// appeal.
+/// Show the forest's curse, the party's protective Psynergy and the trees'
+/// appeal.
 static void Kolima_WitnessForestCurse(void) {
   struct FieldActor *actor;
   s32 *partyLayout;
@@ -1313,13 +1313,13 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_EventEnd();
 }
 
-// Show the selected dialogue through an actor, then hold for its reaction.
+/// Show the selected dialogue through an actor, then hold for its reaction.
 static void Kolima_ShowMessageAndWait(s32 actorId, s32 waitFrames) {
   Engine_EventShowMessage(actorId, 0);
   Engine_EventWait(waitFrames);
 }
 
-// Turn an actor immediately, then leave time for the next scene beat.
+/// Turn an actor immediately, then leave time for the next scene beat.
 static void Kolima_FaceActorAndWait(s32 actorId, s32 facing, s32 waitFrames) {
   Engine_ActorFaceDirection(actorId, facing, 0);
   Engine_EventWait(waitFrames);
@@ -1328,7 +1328,7 @@ static void Kolima_FaceActorAndWait(s32 actorId, s32 facing, s32 waitFrames) {
 // Shared source is included here in ROM order.
 #include "common/kolima_grow.h"
 
-// Spawn a moving curse sparkle every eighth frame.
+/// Spawn a moving curse sparkle every eighth frame.
 static void Kolima_SpawnCurseSparkle(void) {
   struct FieldActor *sparkle;
   struct AnimationObject *sprite;
@@ -1368,7 +1368,7 @@ static void Kolima_SpawnCurseSparkle(void) {
 // Shared source is included here in ROM order.
 #include "common/kolima_blink.h"
 
-// Trigger a temporary pose when an effect enters the party's occupied area.
+/// Trigger a temporary pose when an effect enters the party's occupied area.
 static s32 Kolima_TriggerRegionScript(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   if (gKolima_MiaInParty != 0) {
@@ -1401,7 +1401,7 @@ s32 gKolima_PendingPose __attribute__((section(".bss")));
 s32 gKolima_MiaInParty __attribute__((section(".bss")));
 s32 gKolima_EffectActive __attribute__((section(".bss")));
 
-// Restore the bridge's villagers and collision after its collapse.
+/// Restore the bridge's villagers and collision after its collapse.
 static void Kolima_RestoreBridgeState(void) {
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     Engine_ActorSetPosition(8, 0, 0);

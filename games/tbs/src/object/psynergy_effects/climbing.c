@@ -1,21 +1,22 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Jumping and climbing on the field.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Jumping and climbing on the field.
 
 #include "../psynergy_effects_internal.h"
 
-// The map's cells (128 to a row), and the same cells seen one row south and
-// one row north: TILE_CELLS_SOUTH[i] is the cell below TILE_CELLS[i].
+/// The map's cells (128 to a row), and the same cells seen one row south and
+/// one row north: TILE_CELLS_SOUTH[i] is the cell below TILE_CELLS[i].
 #define TILE_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 #define TILE_CELLS_SOUTH ((struct MapCell *)(Ram_MapCellBuffer + 0x200))
 #define TILE_CELLS_NORTH ((struct MapCell *)(Ram_MapCellBuffer - 0x200))
 
-// The event command "leader check ahead": makes the leader jump two tiles
-// forward, over the tile in front, when the map allows it
-// (Map_CheckObjectStep). On a platform object (sprite 207 or 205) the platform
-// plays its animation 7 and the leader bobs down 2 pixels and back. Each jump
-// advances walking distance for PP/status progress, and the leader keeps
-// jumping while it lands on another jump spot (collision 0xf9). Returns 0
-// after a jump, -1 when the leader cannot jump.
+/// The event command "leader check ahead": makes the leader jump two tiles
+/// forward, over the tile in front, when the map allows it
+/// (Map_CheckObjectStep). On a platform object (sprite 207 or 205) the platform
+/// plays its animation 7 and the leader bobs down 2 pixels and back. Each jump
+/// advances walking distance for PP/status progress, and the leader keeps
+/// jumping while it lands on another jump spot (collision 0xf9). Returns 0
+/// after a jump, -1 when the leader cannot jump.
 s32 Field_TryJumpForward(void) {
   // An ordinary chained-attempt loop grows native English 0x228 -> 0x230.
   // Keep the landing retry, including its existing failure return behavior.
@@ -95,11 +96,11 @@ again:
   return result;
 }
 
-// Climbing down (the player presses down at a climbable wall). On the ground,
-// when the cell south of the leader's is the same climbable cell, the leader
-// turns round, grabs the wall and climbs down onto it (climbing pose 13). While
-// climbing, the leader lets go and drops to the ground. Returns 0, or -1 when
-// there is nothing to climb or the way is blocked.
+/// Climbing down (the player presses down at a climbable wall). On the ground,
+/// when the cell south of the leader's is the same climbable cell, the leader
+/// turns round, grabs the wall and climbs down onto it (climbing pose 13).
+/// While climbing, the leader lets go and drops to the ground. Returns 0, or -1
+/// when there is nothing to climb or the way is blocked.
 s32 Field_ClimbDown(void) {
   struct ObjectRuntime *object = Object_GetById(gGameState.selectedActor);
   s32 gridX =
@@ -163,11 +164,11 @@ failure:
   return -1;
 }
 
-// Climbing up (the player presses up at a climbable wall). On the ground, when
-// the cell north of the leader's is the same climbable cell, the leader jumps
-// onto the wall and holds on (climbing pose 12). While climbing, the leader
-// climbs over the top onto the ground. Returns 0, or -1 when there is nothing
-// to climb or the way is blocked.
+/// Climbing up (the player presses up at a climbable wall). On the ground, when
+/// the cell north of the leader's is the same climbable cell, the leader jumps
+/// onto the wall and holds on (climbing pose 12). While climbing, the leader
+/// climbs over the top onto the ground. Returns 0, or -1 when there is nothing
+/// to climb or the way is blocked.
 s32 Field_ClimbUp(void) {
   struct ObjectRuntime *object = Object_GetById(gGameState.selectedActor);
   s16 spriteFlags = 1;

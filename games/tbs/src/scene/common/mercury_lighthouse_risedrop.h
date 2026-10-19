@@ -1,12 +1,13 @@
-// Mercury Lighthouse and its entrance: leaving a floor through one of its
-// sparkling passages.
+/// @file
+/// Mercury Lighthouse and its entrance: leaving a floor through one of its
+/// sparkling passages.
 #include "types.h"
 #include "field_obj.h"
 #include "field_event.h"
 #include "songs.h"
 
-// Touch a passage: the leader moves north with the trail of sparks, vanishes,
-// and after half a second the screen fades and the party takes exit.
+/// Touch a passage: the leader moves north with the trail of sparks, vanishes,
+/// and after half a second the screen fades and the party takes exit.
 static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
   struct FieldActor *v = Object_GetById(ACTOR_PARTY_LEADER);
   Engine_EventBegin();
@@ -30,8 +31,8 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
   Engine_EventEnd();
 }
 
-// Unused: the leader moves north with the passages' sound and vanishes, then
-// is put at pixel (8 * a0 + 8, 0).
+/// Unused: the leader moves north with the passages' sound and vanishes, then
+/// is put at pixel (8 * a0 + 8, 0).
 static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 a0) {
   struct FieldActor *record;
 

@@ -20,8 +20,8 @@
 // all the same: in rom_main_04 .data follows scripts.o, and these tables would
 // move. So this file includes none of those headers.
 
-// The message of each searchable tile code from 242 to 247, as an offset from
-// MsgTileChecked and MsgTileResult.
+/// The message of each searchable tile code from 242 to 247, as an offset from
+/// MsgTileChecked and MsgTileResult.
 const u8 gField_TileMessageOffsets[6] = {
     2,  // a jar
     3,  // a barrel
@@ -31,8 +31,8 @@ const u8 gField_TileMessageOffsets[6] = {
     31, // a well
 };
 
-// {field Psynergy kind, range in pixels}, ended by -1; a kind not listed
-// reaches 16 pixels.
+/// {field Psynergy kind, range in pixels}, ended by -1; a kind not listed
+/// reaches 16 pixels.
 // clang-format off
 const s16 gBattleFx_TargetRangeByMode[25] = {
     3, 16,
@@ -50,10 +50,10 @@ const s16 gBattleFx_TargetRangeByMode[25] = {
     -1,
 };
 
-// The palette cycle of Animation_ChildPaletteCycle ((gFrameCount >> 1) & 7).
+/// The palette cycle of Animation_ChildPaletteCycle ((gFrameCount >> 1) & 7).
 const u8 gAnimation_ChildPaletteCycle[8] = {1, 2, 3, 4, 3, 2, 1, 0};
 
-// Grows from half size to full size, a step every 2 frames.
+/// Grows from half size to full size, a step every 2 frames.
 const s32 gBattleFx_ParticleEmitterScript[] = {
     SC_SET(SW_SCALE_X, 0x8000),
     SC_SET(SW_SCALE_Y, 0x8000),
@@ -72,7 +72,7 @@ const s32 gBattleFx_ParticleEmitterScript[] = {
     SC_END,
 };
 
-// Pulses twice, then rests, over and over.
+/// Pulses twice, then rests, over and over.
 const s32 gBattleFx_RisingPulseScript[] = {
     SC_WAIT(10),
     SC_SET(SW_SCALE_X, 0x16000),
@@ -104,7 +104,7 @@ const s32 gBattleFx_RisingPulseScript[] = {
     SC_END,
 };
 
-// Rises for 60 frames, then disappears.
+/// Rises for 60 frames, then disappears.
 const s32 gBattleFx_ParticleScript[] = {
     SC_ADD(SW_Y, -0x4000),
     SC_WAIT(1),
@@ -117,19 +117,19 @@ const s32 gBattleFx_MarkerParticleScript[] = {
     SC_FREE,
 };
 
-// The width of the bars of window transition mode 0, by progress.
+/// The width of the bars of window transition mode 0, by progress.
 const u8 gDisplayTransition_NoiseWidths[34] = {
     0, 1, 2, 2, 2, 2, 3, 3, 4, 4, 5, 6, 7, 8, 9, 11, 13,
     16, 18, 22, 26, 30, 36, 43, 51, 60, 72, 85, 101, 120, 143, 170, 202, 240,
 };
 
-// The wobble of the circle edge of window transition mode 8.
+/// The wobble of the circle edge of window transition mode 8.
 const s8 gDisplayTransition_EdgeOffsets[32] = {
     -4, -3, -3, -3, -2, -2, -1, 0, 0, 0, 1, 2, 2, 3, 3, 3,
     4, 3, 3, 3, 2, 2, 1, 0, 0, 0, -1, -2, -2, -3, -3, -3,
 };
 
-// 0 to 63 shuffled: the order in which the dissolve sets the pixels.
+/// 0 to 63 shuffled: the order in which the dissolve sets the pixels.
 const u8 gDisplayTransition_DitherTable[64] = {
     0, 12, 35, 3, 29, 39, 6, 7, 50, 59, 4, 11, 18, 40, 46, 31,
     16, 42, 47, 51, 20, 23, 43, 32, 8, 52, 17, 41, 54, 15, 63, 24,
@@ -137,7 +137,7 @@ const u8 gDisplayTransition_DitherTable[64] = {
     62, 45, 19, 60, 57, 49, 25, 55, 38, 14, 44, 13, 33, 37, 1, 21,
 };
 
-// Colour channel curves (0 to 31, to channels up to 0x7c00).
+/// Colour channel curves (0 to 31, to channels up to 0x7c00).
 const u16 gBattlePalette_ChannelCurve[32] = {
     0x0000, 0x020c, 0x042f, 0x066b, 0x08c0, 0x0b2f, 0x0db9, 0x105f,
     0x1322, 0x1603, 0x1903, 0x1c22, 0x1f63, 0x22c5, 0x264b, 0x29f4,
@@ -159,8 +159,8 @@ const u16 gBattlePalette_ChannelCurveContrast[32] = {
     0x729c, 0x7c00, 0x7c00, 0x7c00, 0x7c00, 0x7c00, 0x7c00, 0x7c00,
 };
 
-// Speaker definitions: {sprite, portrait (0xff for none), idle line flags}.
-// BattleFx_FindDefinition searches all 131; the last is the default.
+/// Speaker definitions: {sprite, portrait (0xff for none), idle line flags}.
+/// BattleFx_FindDefinition searches all 131; the last is the default.
 const struct BattleEffectEntry gBattleFx_DefinitionTable[131] = {
     {0, 16, 0x00},
     {1, 16, 0x00},
@@ -295,9 +295,9 @@ const struct BattleEffectEntry gBattleFx_DefinitionTable[131] = {
     {0, 16, 0x00},
 };
 
-// Squashes as many times as the variant (1 to 3): variant v starts at word
-// (3 - v) * 32 and runs to the end. field.h declares it const u8[], and
-// psynergy_effects.c adds (3 - v) << 7 bytes and reads it through an s32 *.
+/// Squashes as many times as the variant (1 to 3): variant v starts at word
+/// (3 - v) * 32 and runs to the end. field.h declares it const u8[], and
+/// psynergy_effects.c adds (3 - v) << 7 bytes and reads it through an s32 *.
 const s32 gObjectMotion_VariantScripts[97] = {
     // variant 3
     SC_ADD(SW_SCALE_X, -0x4000),
@@ -341,10 +341,10 @@ const s32 gObjectMotion_VariantScripts[97] = {
     SC_END,
 };
 
-// A child value by frame ((gFrameCount >> 1) & 3).
+/// A child value by frame ((gFrameCount >> 1) & 3).
 const u8 gObjectGroup_BlinkChildValues[4] = {7, 0, 0, 0};
 
-// Sine times 4096, 256 steps to a turn.
+/// Sine times 4096, 256 steps to a turn.
 const s16 gDisplayScroll_WaveSine[256] = {
     0, 100, 200, 301, 401, 501, 601, 700,
     799, 897, 995, 1092, 1189, 1284, 1379, 1474,
@@ -380,7 +380,7 @@ const s16 gDisplayScroll_WaveSine[256] = {
     -799, -700, -601, -501, -401, -301, -200, -100,
 };
 
-// {dx, dy, tile, shape, size} for each of 16 frames.
+/// {dx, dy, tile, shape, size} for each of 16 frames.
 const s16 gFieldFx_GroundParticleFrames[80] = {
     -8, -12, 20, 0, 1,
     -8, -12, 20, 0, 1,
@@ -400,7 +400,7 @@ const s16 gFieldFx_GroundParticleFrames[80] = {
     64, -160, 0, 2, 2,
 };
 
-// {dy, tile}
+/// {dy, tile}
 const struct SparkleFrame gFieldFx_SparkleFrames[32] = {
     {-2, 12},
     {-4, 12},
@@ -436,12 +436,12 @@ const struct SparkleFrame gFieldFx_SparkleFrames[32] = {
     {-120, 0},
 };
 
-// Two scales that alternate ((gFrameTick >> 2) & 1); nothing reads the third
-// word.
+/// Two scales that alternate ((gFrameTick >> 2) & 1); nothing reads the third
+/// word.
 const u32 gBattleFx_PulseScales[3] = {0x10000, 0xf851, 16};
 
-// [0] only frees the actor, +1 waits for it to arrive and frees it; +3 is
-// gBattleFx_SourceHoldScript, which follows.
+/// [0] only frees the actor, +1 waits for it to arrive and frees it; +3 is
+/// gBattleFx_SourceHoldScript, which follows.
 const s32 gBattleFx_CommonParticleScript[] = {
     SC_FREE,
     SC_SYNC,
@@ -462,8 +462,8 @@ const s32 gBattleFx_FragmentScript[] = {
     SC_FREE,
 };
 
-// An angle for each value of the right, left, up and down bits of the
-// +Control Pad; 0xffff for none.
+/// An angle for each value of the right, left, up and down bits of the
+/// +Control Pad; 0xffff for none.
 const u16 gBattleFx_CyclePatternWords[16] = {
     0xffff, 0x0000, 0x8000, 0xffff,
     0xc000, 0xffff, 0xffff, 0xc000,
@@ -473,13 +473,13 @@ const u16 gBattleFx_CyclePatternWords[16] = {
 
 const u8 gBattleFx_QuadrantModes[4] = {3, 1, 2, 1};
 
-// Word +4 is gBattleFx_HeavyImpactScript.
+/// Word +4 is gBattleFx_HeavyImpactScript.
 const s32 gBattleFx_BurstParticleObjectScript[] = {
     SC_WAIT(60),
     SC_FREE,
 };
 
-// The same four bytes as gBattleFx_QuadrantModes; nothing reads them.
+/// The same four bytes as gBattleFx_QuadrantModes; nothing reads them.
 const u8 gUnused_BattleFxBytes[4] = {3, 1, 2, 1};
 
 const s32 gBattleFx_HeavyImpactScript[] = {
@@ -488,7 +488,7 @@ const s32 gBattleFx_HeavyImpactScript[] = {
     SC_FREE,
 };
 
-// The three scripts of gEffectScripts.
+/// The three scripts of gEffectScripts.
 const s32 gBattleFx_ShortEffectScript[] = {
     SC_WAIT(24),
     SC_FREE,
@@ -506,13 +506,13 @@ const s32 gBattleFx_LongEffectScript[] = {
 
 const s8 gBattleFx_RandomChildValues[8] = {0, 0, 1, 2, 3, 4, 5, 6};
 
-// The brightness of the world map markers ((gFrameCount >> 1) & 31).
+/// The brightness of the world map markers ((gFrameCount >> 1) & 31).
 const u8 gWorldMap_MarkerBlendCycle[32] = {
     16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
     16, 15, 15, 14, 12, 10, 9, 9, 8, 9, 9, 10, 12, 14, 14, 15,
 };
 
-// An angle for each +Control Pad direction (eight of them); 0xffff for none.
+/// An angle for each +Control Pad direction (eight of them); 0xffff for none.
 const u16 gWorldMap_CursorDirectionAngles[16] = {
     0xffff, 0x0000, 0x8000, 0xffff,
     0xc000, 0xe000, 0xa000, 0xc000,

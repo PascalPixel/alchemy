@@ -41,8 +41,8 @@
 // Djinni Kite hides. Djinn_JoinParty(ACTOR_KITE, 3, 4) gives Jupiter Djinni 4,
 // and the fifth Jupiter Djinni the text names is Kite.
 
-// Kite is placement 8 of the second room; the objects moved with Move or
-// pushed are placements 9 to 11 of the second and third rooms.
+/// Kite is placement 8 of the second room; the objects moved with Move or
+/// pushed are placements 9 to 11 of the second and third rooms.
 #define ACTOR_KITE 8
 #define WESTERN_MOVABLE_OBJECT 9
 #define EASTERN_MOVABLE_OBJECT 10
@@ -52,7 +52,7 @@
 #define ACTOR_LANDING_TIMEOUT 60
 #define FIRST_DJINNI_ROUTE_TRIGGER 45
 
-// The flag of Kite, set once it is caught.
+/// The flag of Kite, set once it is caught.
 #define FLAG_KITE (FLAG_DJINNI_0 + 3 * 20 + 4)
 
 // FLAG_SCENE_TEMP_00 and _01: in the second room, the western and eastern
@@ -64,7 +64,7 @@
 // ledge and keeps away from the party. Both last while the party stays in the
 // cave.
 
-// Forward declarations.
+/// Forward declarations.
 static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row);
 static void ValeCave_ApplyEntryState(void);
 
@@ -73,10 +73,10 @@ static void ValeCave_ApplyEntryState(void);
 #include "common/effect_spawn.h"
 #include "common/object_staged_actor.h"
 
-// Reaching Kite: it joins the party.
+/// Reaching Kite: it joins the party.
 static void Event_TalkToKite(void) { Djinn_JoinParty(ACTOR_KITE, 3, 4); }
 
-// Wait for an actor to land, bounded by a one-second timeout.
+/// Wait for an actor to land, bounded by a one-second timeout.
 static void ValeCave_WaitForActorLanding(struct FieldActor *actor) {
   s32 framesRemaining = ACTOR_LANDING_TIMEOUT;
 
@@ -117,7 +117,7 @@ static s32 ValeCave_FaceActorTowardLeader(union FieldObject *fieldObject) {
   ((void (*)(union FieldObject *))ValeCave_FaceActorTowardLeader)
 #endif
 
-// Select entrance positions and camera bounds for the current cave room.
+/// Select entrance positions and camera bounds for the current cave room.
 const struct SceneEntrance *ValeCave_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -133,13 +133,13 @@ const struct SceneEntrance *ValeCave_GetEntrances(void) {
   return gValeCave_EntrancesOther;
 }
 
-// The cave rooms have no additional region table.
+/// The cave rooms have no additional region table.
 const struct SceneRegion *ValeCave_GetRegions(void) { return NULL; }
 
-// Return the shared packed exits for all cave rooms.
+/// Return the shared packed exits for all cave rooms.
 const u32 *ValeCave_GetExits(void) { return gValeCave_Exits; }
 
-// Select the current room's actors and movable objects.
+/// Select the current room's actors and movable objects.
 const struct ScenePlacement *ValeCave_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -155,17 +155,17 @@ const struct ScenePlacement *ValeCave_GetPlacements(void) {
   return gValeCave_Placements1;
 }
 
-// Reveal ends: the hidden tile is hidden again.
+/// Reveal ends: the hidden tile is hidden again.
 static void Event_HideRevealedTile(void) {
   Map_CopyCells(16, 15, 1, 1, 15, 15);
 }
 
-// Reveal shows a hidden tile in the first room.
+/// Reveal shows a hidden tile in the first room.
 static void Event_RevealHiddenTile(void) {
   Map_CopyCells(16, 17, 1, 1, 15, 15);
 }
 
-// Lower one object while emitting a particle each frame around its opening.
+/// Lower one object while emitting a particle each frame around its opening.
 static inline void
 ValeCave_SinkObjectWithParticles(s32 actorId, s32 baseX, s32 baseZ,
                                  struct EffectOptions *particleOptions) {
@@ -182,8 +182,8 @@ ValeCave_SinkObjectWithParticles(s32 actorId, s32 baseX, s32 baseZ,
   }
 }
 
-// Move on the western object: once over its hole, Isaac steps aside and the
-// object sinks into the floor in a cloud of dust.
+/// Move on the western object: once over its hole, Isaac steps aside and the
+/// object sinks into the floor in a cloud of dust.
 static void Event_MoveWestObjectIntoHole(void) {
   struct EffectOptions options;
   struct EffectOptions *particleOptions;
@@ -224,7 +224,7 @@ static void Event_MoveWestObjectIntoHole(void) {
   Engine_EventEnd();
 }
 
-// Move on the eastern object: once over its hole, it sinks into the floor.
+/// Move on the eastern object: once over its hole, it sinks into the floor.
 static void Event_MoveEastObjectIntoHole(void) {
   struct EffectOptions options;
   struct EffectOptions *particleOptions;
@@ -261,7 +261,7 @@ static void Event_MoveEastObjectIntoHole(void) {
   Engine_EventEnd();
 }
 
-// Pushing the eastern object: it moves a cell, and sinks if over its hole.
+/// Pushing the eastern object: it moves a cell, and sinks if over its hole.
 static void Event_PushEastObjectIntoHole(void) {
   Engine_EventBegin();
   StagedActor_AdvancePair();
@@ -269,7 +269,7 @@ static void Event_PushEastObjectIntoHole(void) {
   Event_MoveEastObjectIntoHole();
 }
 
-// Walking south off the ledge: Isaac hops down if the cell below is free.
+/// Walking south off the ledge: Isaac hops down if the cell below is free.
 static s32 Event_HopDownLedge(s32 unusedArgument) {
 
   union FieldCoordinate landingPosition[3];
@@ -312,8 +312,8 @@ static s32 Event_HopDownLedge(s32 unusedArgument) {
   return 0;
 }
 
-// Coming near Kite: the camera finds it; it notices the party and hops away
-// up the ledge.
+/// Coming near Kite: the camera finds it; it notices the party and hops away
+/// up the ledge.
 static void Event_KiteRunsOff(void) {
 
   struct FieldActor *djinni;
@@ -342,7 +342,7 @@ static void Event_KiteRunsOff(void) {
   }
 }
 
-// Coming near again: Kite runs behind the ledge and turns to watch the party.
+/// Coming near again: Kite runs behind the ledge and turns to watch the party.
 static void Event_KiteRunsBehindLedge(void) {
 
   struct FieldActor *djinni;
@@ -368,8 +368,8 @@ static void Event_KiteRunsBehindLedge(void) {
   }
 }
 
-// Walking around the ledge: Kite keeps to the far side of it, unless Halt has
-// stopped it.
+/// Walking around the ledge: Kite keeps to the far side of it, unless Halt has
+/// stopped it.
 static void Event_KiteKeepsAway(void) {
   struct FieldActor *djinni;
   struct FieldActor *leader;
@@ -402,15 +402,15 @@ static void Event_KiteKeepsAway(void) {
   }
 }
 
-// Halt on Kite: it stops where it stands.
+/// Halt on Kite: it stops where it stands.
 static void Event_HaltKite(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_KITE, 0);
   Engine_EventEnd();
 }
 
-// Pushing an object along the ledge: at its edge the object falls off,
-// opening the way.
+/// Pushing an object along the ledge: at its edge the object falls off,
+/// opening the way.
 static void Event_PushObjectOverEdge(void) {
   struct FieldActor *movedObject;
   s32 stationaryMotion;
@@ -457,7 +457,7 @@ static void Event_PushObjectOverEdge(void) {
   Engine_EventEnd();
 }
 
-// Pushing the western object east: it falls off the ledge, opening the way.
+/// Pushing the western object east: it falls off the ledge, opening the way.
 static void Event_PushObjectOffLedge(void) {
 
   struct FieldActor *pushedObject;
@@ -499,7 +499,7 @@ static void Event_PushObjectOffLedge(void) {
   Engine_EventEnd();
 }
 
-// Pushing the object north: it slides a cell, opening the way.
+/// Pushing the object north: it slides a cell, opening the way.
 static void Event_PushObjectNorth(void) {
   struct StagedActorProbe probe;
 
@@ -536,7 +536,7 @@ static void Event_PushObjectNorth(void) {
   Engine_EventEnd();
 }
 
-// Select the current room's touch, Psynergy and search bindings.
+/// Select the current room's touch, Psynergy and search bindings.
 const struct SceneEvent *ValeCave_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -552,7 +552,7 @@ const struct SceneEvent *ValeCave_GetEvents(void) {
   return gValeCave_EventsOther;
 }
 
-// Choose the entry transition and restore the room's puzzle state.
+/// Choose the entry transition and restore the room's puzzle state.
 s32 ValeCave_Initialize(void) {
   s32 *request = &gEventWork->startTransition;
 
@@ -568,7 +568,7 @@ s32 ValeCave_Initialize(void) {
   return 0;
 }
 
-// The first room's exits play the exit sound before leaving.
+/// The first room's exits play the exit sound before leaving.
 static void Event_LeaveRoom(void) {
   s32 exitId = gEventWork->touchedTrigger;
 
@@ -576,7 +576,7 @@ static void Event_LeaveRoom(void) {
   Engine_EventRequestExit(exitId);
 }
 
-// Rebuild the passage cells around the sliding object's saved side.
+/// Rebuild the passage cells around the sliding object's saved side.
 static void ValeCave_UpdateSlidingObjectPassage(void) {
   Map_CopyCellAttributes(0, 34, 13, 3, 23, 34);
 
@@ -592,7 +592,7 @@ static void ValeCave_UpdateSlidingObjectPassage(void) {
 // Shared source is included here in ROM order.
 #include "common/object_pairmove.h"
 
-// Walking east onto the sliding objects: they slide to the eastern end.
+/// Walking east onto the sliding objects: they slide to the eastern end.
 static void Event_SlideObjectsEast(void) {
 
   Engine_AudioPlayCue(SE_241);
@@ -604,7 +604,7 @@ static void Event_SlideObjectsEast(void) {
   Engine_AudioPlayCue(SE_289);
 }
 
-// Walking west onto the sliding objects: they slide back to the western end.
+/// Walking west onto the sliding objects: they slide back to the western end.
 static void Event_SlideObjectsWest(void) {
 
   Engine_AudioPlayCue(SE_241);
@@ -616,7 +616,7 @@ static void Event_SlideObjectsWest(void) {
   Engine_AudioPlayCue(SE_289);
 }
 
-// Center an actor on a map cell and give it underfoot priority.
+/// Center an actor on a map cell and give it underfoot priority.
 static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row) {
   struct FieldActor *actor = Object_GetById(actorId);
 
@@ -629,7 +629,7 @@ static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row) {
   }
 }
 
-// Restore the Djinni route and completed movable-object puzzles on entry.
+/// Restore the Djinni route and completed movable-object puzzles on entry.
 static void ValeCave_ApplyEntryState(void) {
   s32 northernObjectMoved;
 
@@ -712,7 +712,7 @@ static void ValeCave_ApplyEntryState(void) {
   }
 }
 
-// Touching the sliding objects restarts their animation.
+/// Touching the sliding objects restarts their animation.
 static void Event_TouchSlidingObjects(void) {
   Engine_ActorSetAnimation(SLIDING_OBJECT, 1);
   Engine_ActorSetAnimation(SLIDING_OBJECT, 2);

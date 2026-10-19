@@ -1,15 +1,16 @@
-// Part of object.c, the field object, compiled only through it.
-// Using Psynergy on the field.
+/// @file
+/// Part of object.c, the field object, compiled only through it.
+/// Using Psynergy on the field.
 
 #include "../object_internal.h"
 
-// Uses Psynergy on the field. code holds the Psynergy (bits 0 to 9), its
-// user (bits 10 to 13; 15 for character 0) and ACT_PACKED to use it without
-// paying PP. Checks it can be used here (Reveal not on the world map, Retreat
-// where it is not blocked, after asking), pays its PP, then plays its effect
-// between the scene's Psynergy events for what the leader faces: phase 1
-// before, phase 0 after and phase 5 while it plays. An event whose trigger
-// has flag 0x400 plays the effect itself.
+/// Uses Psynergy on the field. code holds the Psynergy (bits 0 to 9), its
+/// user (bits 10 to 13; 15 for character 0) and ACT_PACKED to use it without
+/// paying PP. Checks it can be used here (Reveal not on the world map, Retreat
+/// where it is not blocked, after asking), pays its PP, then plays its effect
+/// between the scene's Psynergy events for what the leader faces: phase 1
+/// before, phase 0 after and phase 5 while it plays. An event whose trigger
+/// has flag 0x400 plays the effect itself.
 s32 Field_UsePsynergy(u32 code) {
   s32 abilityId = ABILITY_ID(code);
   struct FieldWork *work = (struct FieldWork *)gEventWork;
@@ -126,8 +127,8 @@ s32 Field_UsePsynergy(u32 code) {
   return 0;
 }
 
-// Returns whether the scene has a Psynergy event, in any phase, for
-// Psynergy of group and what the leader faces.
+/// Returns whether the scene has a Psynergy event, in any phase, for
+/// Psynergy of group and what the leader faces.
 s32 BattleFx_HasMatchingEvent5(s32 group) {
   s32 target;
   s32 eventAddress =
@@ -135,7 +136,7 @@ s32 BattleFx_HasMatchingEvent5(s32 group) {
   return (u32)((-eventAddress) | eventAddress) >> 31;
 }
 
-// Returns whether the scene has an event for item and what the leader faces.
+/// Returns whether the scene has an event for item and what the leader faces.
 u32 BattleFx_HasTrigger(u16 item) {
   s32 eventAddress;
 

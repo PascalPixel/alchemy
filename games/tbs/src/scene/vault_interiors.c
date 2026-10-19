@@ -44,33 +44,33 @@
 #define VAULT_INTERIORS_ENTRY_ACTOR_Z PIXELS(464)
 #endif
 
-// The houses, shops and inn of Vault while Hammet's rod is missing. The
-// townspeople are named by what they say.
+/// The houses, shops and inn of Vault while Hammet's rod is missing. The
+/// townspeople are named by what they say.
 enum {
-  ACTOR_GEM_OWNER = 8, // a sparkling rock was blown here from the volcano
+  ACTOR_GEM_OWNER = 8, ///< a sparkling rock was blown here from the volcano
   ACTOR_GEM_OWNERS_WIFE = 9,
-  ACTOR_CHILD = 11, // "Hey, mister! Is it fun to see strange new places?"
-  ACTOR_MAYOR = 16, // Ivan's host; his wife calls him the mayor
+  ACTOR_CHILD = 11, ///< "Hey, mister! Is it fun to see strange new places?"
+  ACTOR_MAYOR = 16, ///< Ivan's host; his wife calls him the mayor
   ACTOR_MAYORS_WIFE = 17,
   ACTOR_BONE_GIVER = 18,
   ACTOR_WEAPON_MERCHANT = 19,
   ACTOR_ARMOR_MERCHANT = 20,
   ACTOR_ITEM_MERCHANT = 21,
   ACTOR_INNKEEPER = 23,
-  // The two guests at the inn the town suspects: the thieves' leader and one
-  // of his men.
+  /// The two guests at the inn the town suspects: the thieves' leader and one
+  /// of his men.
   ACTOR_SUSPECTED_LEADER = 24,
   ACTOR_SUSPECTED_THIEF = 25,
-  ACTOR_CRATE = 26 // pushed aside to open a passage
+  ACTOR_CRATE = 26 ///< pushed aside to open a passage
 };
 
-// Set while the two suspects run from the party, until the party steps aside
-// to talk it over.
+/// Set while the two suspects run from the party, until the party steps aside
+/// to talk it over.
 enum { FLAG_SUSPECTS_FLEEING = FLAG_SCENE_TEMP_00 + 0x100 };
 
-// The inn's loft (entrances 15 to 17), where the thieves hid the stolen goods.
+/// The inn's loft (entrances 15 to 17), where the thieves hid the stolen goods.
 enum {
-  ACTOR_ATTIC_ROOFER = 8, // tied up while fixing the roof
+  ACTOR_ATTIC_ROOFER = 8, ///< tied up while fixing the roof
   ACTOR_ATTIC_MAYOR = 9,
   ACTOR_THIEF_LEADER = 10,
   ACTOR_FIRST_THIEF = 11,
@@ -80,7 +80,7 @@ enum {
   ACTOR_THIRD_CHEST = 17
 };
 
-// Forward declarations.
+/// Forward declarations.
 static void VaultInteriors_IvanJoinsRodSearch(void);
 static void VaultInteriors_DiscussMindReading(void);
 static void VaultInteriors_AdvanceSuspectRoute(s32 actor, s32 expected,
@@ -103,18 +103,18 @@ static void VaultInteriors_EndMindRead(void);
 static void VaultInteriors_UpdateActorStops(void);
 static void VaultInteriors_StartActorStops(void);
 
-// Return the entrances for the Vault interiors overlay.
+/// Return the entrances for the Vault interiors overlay.
 struct SceneEntrance *Scene_GetEntrances(void) {
   return gVaultInteriors_Entrances;
 }
 
-// Return the trigger regions for the Vault interiors overlay.
+/// Return the trigger regions for the Vault interiors overlay.
 s16 *Scene_GetRegions(void) { return gVaultInteriors_Regions; }
 
-// Return the exits for the Vault interiors overlay.
+/// Return the exits for the Vault interiors overlay.
 u32 *Scene_GetExits(void) { return gVaultInteriors_Exits; }
 
-// Select the attic placements for entrances 15–17 and prepare the actors.
+/// Select the attic placements for entrances 15–17 and prepare the actors.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   struct ScenePlacement *table;
 
@@ -133,7 +133,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 }
 
 #if !TBS_PATCH_1
-// Jump to the requested destination when its collision check succeeds.
+/// Jump to the requested destination when its collision check succeeds.
 static s32 VaultInteriors_TryJumpTo(struct FixedPointPosition *pos) {
   struct FieldActor *leader;
   u8 *flags;
@@ -167,7 +167,7 @@ static s32 VaultInteriors_TryJumpTo(struct FixedPointPosition *pos) {
 }
 #endif
 
-// Facing north or south across the gap in the roof, the leader jumps it.
+/// Facing north or south across the gap in the roof, the leader jumps it.
 static void Event_JumpAcrossRoofGap(void) {
   s32 x;
   s32 z;
@@ -210,8 +210,8 @@ static void Event_JumpAcrossRoofGap(void) {
   }
 }
 
-// Once the crate has been moved aside to column 42, the passage behind it
-// opens.
+/// Once the crate has been moved aside to column 42, the passage behind it
+/// opens.
 static void Event_CheckCrateMoved(void) {
   struct FieldActor *crate;
 
@@ -224,8 +224,8 @@ static void Event_CheckCrateMoved(void) {
   Engine_EventEnd();
 }
 
-// Across the counter the weapon shop opens; otherwise the merchant lost
-// expensive goods too, or found the stolen weapons rusted in the cemetery.
+/// Across the counter the weapon shop opens; otherwise the merchant lost
+/// expensive goods too, or found the stolen weapons rusted in the cemetery.
 static void Event_TalkToWeaponMerchant(void) {
   s32 leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
@@ -243,8 +243,8 @@ static void Event_TalkToWeaponMerchant(void) {
   Engine_EventEnd();
 }
 
-// Across the counter the armor shop opens; otherwise the merchant wants the
-// thieves to pay, or advises preparing for the cave in the Goma Range.
+/// Across the counter the armor shop opens; otherwise the merchant wants the
+/// thieves to pay, or advises preparing for the cave in the Goma Range.
 static void Event_TalkToArmorMerchant(void) {
   s32 leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
@@ -262,8 +262,8 @@ static void Event_TalkToArmorMerchant(void) {
   Engine_EventEnd();
 }
 
-// Across the counter the inn opens; otherwise the innkeeper defends the
-// guests everyone suspects, or learns the goods were hidden in his loft.
+/// Across the counter the inn opens; otherwise the innkeeper defends the
+/// guests everyone suspects, or learns the goods were hidden in his loft.
 static void Event_TalkToInnkeeper(void) {
   s32 leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
@@ -284,7 +284,7 @@ static void Event_TalkToInnkeeper(void) {
 // Shared source is included here in ROM order.
 #include "common/vault_bone.h"
 
-// "We don't have time for that, Isaac!"
+/// "We don't have time for that, Isaac!"
 static void Event_GaretRefusesToLeave(void) {
 #if TBS_PATCH_1
   Leader_StopMoving();
@@ -293,7 +293,7 @@ static void Event_GaretRefusesToLeave(void) {
   Engine_EventShowMessage(GARET, 0);
 }
 
-// Isaac checks the barrel but doesn't find anything.
+/// Isaac checks the barrel but doesn't find anything.
 static void Event_SearchEmptyBarrel(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgVaultIsaacCheckedBarrel, 1);
@@ -301,7 +301,7 @@ static void Event_SearchEmptyBarrel(void) {
   Engine_EventEnd();
 }
 
-// Isaac checks the chest, but it is empty.
+/// Isaac checks the chest, but it is empty.
 static void Event_SearchEmptyChest(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgVaultIsaacCheckedChest, 1);
@@ -309,7 +309,7 @@ static void Event_SearchEmptyChest(void) {
   Engine_EventEnd();
 }
 
-// Choose the attic events or the town events before and after the theft.
+/// Choose the attic events or the town events before and after the theft.
 const struct SceneEvent *Scene_GetEvents(void) {
   switch (gGameState.entrance) {
   case 15:
@@ -323,7 +323,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gVaultInteriors_Events;
 }
 
-// Stand the speaker, face the leader, and show the selected message.
+/// Stand the speaker, face the leader, and show the selected message.
 static void VaultInteriors_StandAndShowMessage(s32 x) {
   Engine_ActorSetAnimation(x, ANIM_STAND);
   VaultInteriors_FaceEachOtherAndWait(x, 0, 2);
@@ -333,7 +333,7 @@ static void VaultInteriors_StandAndShowMessage(s32 x) {
 // Shared source is included here in ROM order.
 #include "common/vault_talk.h"
 
-// Face the leader and select the next reply when the answer is no.
+/// Face the leader and select the next reply when the answer is no.
 static void VaultInteriors_AskYesNoAndShowReply(s32 x) {
   VaultInteriors_FaceEachOtherAndWait(x, 0, 2);
   Engine_EventOpenMessage(x, 0);
@@ -343,7 +343,7 @@ static void VaultInteriors_AskYesNoAndShowReply(s32 x) {
   Engine_EventShowMessage(x, 0);
 }
 
-// The child: "Hey, mister! Is it fun to see strange new places?"
+/// The child: "Hey, mister! Is it fun to see strange new places?"
 static void Event_ChildAsksAboutTravel(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultMisterFunSeeStrangeNew);
@@ -352,7 +352,7 @@ static void Event_ChildAsksAboutTravel(void) {
   Engine_EventEnd();
 }
 
-// "Ivan has great powers. Wouldn't you like to know what they are?"
+/// "Ivan has great powers. Wouldn't you like to know what they are?"
 static void Event_OfferIvansSecret(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultIvanHasGreatPowersWouldnt);
@@ -361,8 +361,8 @@ static void Event_OfferIvansSecret(void) {
   Engine_EventEnd();
 }
 
-// Across the counter the item shop opens; otherwise "Did you just arrive in
-// town today?", or, after the thieves are jailed, the bridge is out.
+/// Across the counter the item shop opens; otherwise "Did you just arrive in
+/// town today?", or, after the thieves are jailed, the bridge is out.
 static void Event_TalkToItemMerchant(void) {
   s32 leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
@@ -379,8 +379,8 @@ static void Event_TalkToItemMerchant(void) {
   Engine_EventEnd();
 }
 
-// The gem owner's wife wishes their rocks were gems, or, after the thieves
-// are jailed, is glad they were caught before stealing the gem.
+/// The gem owner's wife wishes their rocks were gems, or, after the thieves
+/// are jailed, is glad they were caught before stealing the gem.
 static void Event_TalkAboutRocks(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -392,8 +392,8 @@ static void Event_TalkAboutRocks(void) {
   Engine_EventEnd();
 }
 
-// "Is it just me, or am I missing something?", or, after the thieves are
-// jailed, they hid the treasure in the loft and more in the cemetery.
+/// "Is it just me, or am I missing something?", or, after the thieves are
+/// jailed, they hid the treasure in the loft and more in the cemetery.
 static void Event_TalkAboutMissingThings(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0) {
@@ -405,8 +405,8 @@ static void Event_TalkAboutMissingThings(void) {
   Engine_EventEnd();
 }
 
-// The mayor asks for someone to help Ivan; once the party has agreed, he
-// thanks them the first time and asks them to look after Ivan after that.
+/// The mayor asks for someone to help Ivan; once the party has agreed, he
+/// thanks them the first time and asks them to look after Ivan after that.
 static void Event_MayorAsksHelpForIvan(void) {
   s32 thankedForHelpingFlag;
   thankedForHelpingFlag = FLAG_VAULT_MAYOR_THANKED_PARTY;
@@ -428,7 +428,7 @@ static void Event_MayorAsksHelpForIvan(void) {
   Engine_EventEnd();
 }
 
-// The three strangers have fooled the innkeeper and his wife.
+/// The three strangers have fooled the innkeeper and his wife.
 static void Event_WarnAboutThreeStrangers(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultThoseThreeStrangersSureHave);
@@ -436,8 +436,8 @@ static void Event_WarnAboutThreeStrangers(void) {
   Engine_EventEnd();
 }
 
-// The suspected leader cries "Ow! Stop it!" and runs to his next spot, chosen
-// by the way he faces and where he is on his route.
+/// The suspected leader cries "Ow! Stop it!" and runs to his next spot, chosen
+/// by the way he faces and where he is on his route.
 static void Event_SuspectedLeaderDodges(void) {
   struct FieldActor *suspect;
   s16 *routeState;
@@ -489,7 +489,7 @@ static void Event_SuspectedLeaderDodges(void) {
   Engine_EventEnd();
 }
 
-// Select a response script and advance the second suspect's route state.
+/// Select a response script and advance the second suspect's route state.
 static inline void
 VaultInteriors_ApplySecondSuspectRoute(struct FieldActor *actor, s32 scriptRow,
                                        s32 routePair, u16 routeDelta) {
@@ -498,7 +498,7 @@ VaultInteriors_ApplySecondSuspectRoute(struct FieldActor *actor, s32 scriptRow,
   actor->timer = actor->timer - routePair * 2 + routeDelta;
 }
 
-// The suspected thief cries "No! Leave me alone!" and runs to his next spot.
+/// The suspected thief cries "No! Leave me alone!" and runs to his next spot.
 static void Event_SuspectedThiefDodges(void) {
   struct FieldActor *actor;
   u32 facing;
@@ -546,7 +546,7 @@ static void Event_SuspectedThiefDodges(void) {
   Engine_EventEnd();
 }
 
-// "Did those thieves come from Lunpa?"
+/// "Did those thieves come from Lunpa?"
 static void Event_AskWhetherThievesCameFromLunpa(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultDidThoseThievesComeFrom);
@@ -554,7 +554,7 @@ static void Event_AskWhetherThievesCameFromLunpa(void) {
   Engine_EventEnd();
 }
 
-// The child's father worries about the prisoners from Lunpa.
+/// The child's father worries about the prisoners from Lunpa.
 static void Event_ChildWorriesAboutFather(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultMyFatherWorriedAboutThose);
@@ -562,7 +562,7 @@ static void Event_ChildWorriesAboutFather(void) {
   Engine_EventEnd();
 }
 
-// "I heard you defeated those thieves!"
+/// "I heard you defeated those thieves!"
 static void Event_AskAboutDefeatingThieves(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultHeardDefeatedThoseThieves);
@@ -570,9 +570,9 @@ static void Event_AskAboutDefeatingThieves(void) {
   Engine_EventEnd();
 }
 
-// After the thieves are jailed, the mayor thanks Isaac and gives the promised
-// Water of Life, if there is room; then asks whether the party is heading
-// beyond the Goma Range, and points them to the cave on the way to Bilibin.
+/// After the thieves are jailed, the mayor thanks Isaac and gives the promised
+/// Water of Life, if there is room; then asks whether the party is heading
+/// beyond the Goma Range, and points them to the cave on the way to Bilibin.
 static void Event_MayorGivesWaterOfLife(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_VAULT_WATER_OF_LIFE_RECEIVED) == 0) {
@@ -606,8 +606,8 @@ static void Event_MayorGivesWaterOfLife(void) {
   Engine_EventEnd();
 }
 
-// The bone giver offers leftover bones from dinner; a yes gets a Bone if
-// there is room, a no a nod.
+/// The bone giver offers leftover bones from dinner; a yes gets a Bone if
+/// there is room, a no a nod.
 static void Event_OfferBones(void) {
   Engine_EventBegin();
   VaultInteriors_FaceEachOtherAndWait(ACTOR_BONE_GIVER, ACTOR_PARTY_LEADER, 2);
@@ -645,7 +645,7 @@ static void Event_OfferBones(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the wife: let me see that rock, or maybe it is worthless.
+/// Mind Read on the wife: let me see that rock, or maybe it is worthless.
 static void Event_ReadMindOnRock(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -657,8 +657,8 @@ static void Event_ReadMindOnRock(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the child: what is the outside world like, or Father looks
-// sad.
+/// Mind Read on the child: what is the outside world like, or Father looks
+/// sad.
 static void Event_ReadChildMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -670,8 +670,8 @@ static void Event_ReadChildMind(void) {
   Engine_EventEnd();
 }
 
-// Mind Read: could they be thieves? Who can be trusted? Or nothing in the
-// house was worth stealing.
+/// Mind Read: could they be thieves? Who can be trusted? Or nothing in the
+/// house was worth stealing.
 static void Event_ReadMindOnThieves(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -683,8 +683,8 @@ static void Event_ReadMindOnThieves(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the mayor: "That tickles...", or the cave in the Goma Range is
-// dangerous, but the party will be okay.
+/// Mind Read on the mayor: "That tickles...", or the cave in the Goma Range is
+/// dangerous, but the party will be okay.
 static void Event_ReadMayorMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -696,9 +696,9 @@ static void Event_ReadMayorMind(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the bone giver: the master and his wife are blinded by money;
-// after the thieves are jailed, hungry while cooking, or, once a Bone was
-// given, wondering about calcium.
+/// Mind Read on the bone giver: the master and his wife are blinded by money;
+/// after the thieves are jailed, hungry while cooking, or, once a Bone was
+/// given, wondering about calcium.
 static void Event_ReadBoneGiverMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -712,9 +712,9 @@ static void Event_ReadBoneGiverMind(void) {
   Engine_EventEnd();
 }
 
-// Talking to Ivan at the mayor's: the first time, he reads the two's minds,
-// admits his strange powers and learns they are called Psynergy; then he asks
-// for help finding the rod. A yes has him join the party.
+/// Talking to Ivan at the mayor's: the first time, he reads the two's minds,
+/// admits his strange powers and learns they are called Psynergy; then he asks
+/// for help finding the rod. A yes has him join the party.
 static void Event_MeetIvan(void) {
 
   struct FieldActor *actor;
@@ -806,8 +806,8 @@ static void Event_MeetIvan(void) {
   Engine_EventEnd();
 }
 
-// Ivan thanks them, they exchange names, and he shows Isaac and Garet Mind
-// Read.
+/// Ivan thanks them, they exchange names, and he shows Isaac and Garet Mind
+/// Read.
 static void VaultInteriors_IvanJoinsRodSearch(void) {
   s32 message;
 
@@ -966,8 +966,8 @@ static void VaultInteriors_IvanJoinsRodSearch(void) {
   Engine_EventShowMessage(IVAN, 0);
 }
 
-// In the loft, Isaac cuts the roofer free; the three thieves arrive, boast of
-// Lunpa and Dodonpa, ask to be let go, and attack.
+/// In the loft, Isaac cuts the roofer free; the three thieves arrive, boast of
+/// Lunpa and Dodonpa, ask to be let go, and attack.
 static void Event_FreeRooferAndConfrontThieves(void) {
   s32 base;
 
@@ -1157,13 +1157,13 @@ static void Event_FreeRooferAndConfrontThieves(void) {
   Engine_EventEnd();
 }
 
-// The party walks through to entrance 11.
+/// The party walks through to entrance 11.
 static void Event_GoToEntrance11(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventRequestExit(11);
 }
 
-// The party climbs up into the inn's loft.
+/// The party climbs up into the inn's loft.
 static void Event_ClimbToAttic(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 728, 408);
@@ -1172,8 +1172,8 @@ static void Event_ClimbToAttic(void) {
   Engine_EventRequestExit(15);
 }
 
-// Leaving the loft before the thieves are confronted, the party hears the
-// roofer groan "Uhnn... Uhnn...".
+/// Leaving the loft before the thieves are confronted, the party hears the
+/// roofer groan "Uhnn... Uhnn...".
 static void Event_LeaveAttic(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 744, 408);
@@ -1188,8 +1188,8 @@ static void Event_LeaveAttic(void) {
   Engine_EventRequestExit(14);
 }
 
-// The suspects at the inn: "What do you want?", they spot that weird kid
-// with the party and run from him.
+/// The suspects at the inn: "What do you want?", they spot that weird kid
+/// with the party and run from him.
 static void Event_ApproachSuspects(void) {
 
   struct FieldActor *actor24;
@@ -1232,8 +1232,8 @@ static void Event_ApproachSuspects(void) {
   Engine_EventEnd();
 }
 
-// Stepping out, the party talks it over: Ivan can't read their minds while
-// they run; Garet tells Isaac to take the lead and corner them.
+/// Stepping out, the party talks it over: Ivan can't read their minds while
+/// they run; Garet tells Isaac to take the lead and corner them.
 static void Event_DiscussSuspiciousGuests(void) {
   struct FieldActor *actor24;
   struct FieldActor *actor25;
@@ -1314,14 +1314,14 @@ static void Event_DiscussSuspiciousGuests(void) {
   Engine_EventEnd();
 }
 
-// The party sets out to corner the two suspects.
+/// The party sets out to corner the two suspects.
 static void Event_BeginCorneringSuspects(void) {
   Engine_GameFlagSet(0x107);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_50);
   VaultInteriors_StartActorStops();
 }
 
-// Have the suspects react to the party's return and reset their route states.
+/// Have the suspects react to the party's return and reset their route states.
 static void VaultInteriors_ResetSuspectRoutes(void) {
   Engine_EventWait(30);
   Engine_ActorRunRepeatedMotion(ACTOR_SUSPECTED_LEADER, 1);
@@ -1355,8 +1355,8 @@ static void VaultInteriors_ResetSuspectRoutes(void) {
   Map_CopyCellAttributes(14, 48, 4, 1, 14, 44);
 }
 
-// Set the three party images to the priority used during the mind-reading
-// scene.
+/// Set the three party images to the priority used during the mind-reading
+/// scene.
 static inline void VaultInteriors_SetPartyImagePriority(void) {
   {
     struct AnimationObject *sprite = Object_GetById(ACTOR_PARTY_LEADER)->sprite;
@@ -1372,8 +1372,8 @@ static inline void VaultInteriors_SetPartyImagePriority(void) {
   }
 }
 
-// Once a suspect is cornered ("Uh-oh! I'm surrounded!"), Garet calls "Now,
-// Ivan!" and Ivan reads their minds.
+/// Once a suspect is cornered ("Uh-oh! I'm surrounded!"), Garet calls "Now,
+/// Ivan!" and Ivan reads their minds.
 static void Event_ReadCorneredSuspectsMinds(void) {
   s32 actor;
   struct EventWork *work;
@@ -1470,7 +1470,7 @@ static void Event_ReadCorneredSuspectsMinds(void) {
   Engine_EventEnd();
 }
 
-// Show the party's branching conversation about what Ivan learned.
+/// Show the party's branching conversation about what Ivan learned.
 static void VaultInteriors_DiscussMindReading(void) {
   s32 persistedWithQuestions;
 
@@ -1584,8 +1584,8 @@ static void VaultInteriors_DiscussMindReading(void) {
   Engine_ActorSetPosition(IVAN, 0, 0);
 }
 
-// The leader stepping on one of the route triggers 11 to 18 moves the
-// fleeing suspects on to their next spots.
+/// The leader stepping on one of the route triggers 11 to 18 moves the
+/// fleeing suspects on to their next spots.
 static void Event_AdvanceSuspectRoutes(void) {
   switch (gEventWork->touchedTrigger) {
   case 11:
@@ -1647,7 +1647,7 @@ static void Event_AdvanceSuspectRoutes(void) {
   }
 }
 
-// Install a route script only when the suspect is in its expected state.
+/// Install a route script only when the suspect is in its expected state.
 static void VaultInteriors_AdvanceSuspectRoute(s32 actor, s32 expected,
                                                s32 next, const s32 *actions) {
   struct FieldActor *suspect = Object_GetById(actor);
@@ -1661,8 +1661,8 @@ static void VaultInteriors_AdvanceSuspectRoute(s32 actor, s32 expected,
 // Shared source is included here in ROM order.
 #include "common/vault_spotflag.h"
 
-// On arrival: restores each room for the story so far, and plays the loft's
-// scenes: the tied-up roofer, the rematch, and the defeat or victory.
+/// On arrival: restores each room for the story so far, and plays the loft's
+/// scenes: the tied-up roofer, the rematch, and the defeat or victory.
 s32 Scene_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   switch (gGameState.entrance) {
@@ -1791,7 +1791,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// Keep both suspects facing the leader while they evade the party.
+/// Keep both suspects facing the leader while they evade the party.
 static void VaultInteriors_FaceSuspectsTowardLeader(void) {
   struct FieldActor *origin = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldActor *first = Object_GetById(ACTOR_SUSPECTED_LEADER);
@@ -1803,7 +1803,7 @@ static void VaultInteriors_FaceSuspectsTowardLeader(void) {
                            origin->x.fixed - second->x.fixed);
 }
 
-// Show the thieves' reaction after the party loses their battle.
+/// Show the thieves' reaction after the party loses their battle.
 static void VaultInteriors_LoseToThieves(void) {
   struct FieldActor *actor;
   s32 priorityFlags;
@@ -1858,7 +1858,7 @@ static void VaultInteriors_LoseToThieves(void) {
   Engine_EventEnd();
 }
 
-// Arrange the attic confrontation and restart the thieves' battle.
+/// Arrange the attic confrontation and restart the thieves' battle.
 static void VaultInteriors_ConfrontThievesAgain(void) {
 
   Actor_SetPosition(ACTOR_THIEF_LEADER, PIXELS(792), PIXELS(416));
@@ -1910,7 +1910,7 @@ static void VaultInteriors_ConfrontThievesAgain(void) {
   Field_RequestBattleFromEncounterTable(12, 5);
 }
 
-// Read Ivan's owned Venus Djinn count for the shared dialogue.
+/// Read Ivan's owned Venus Djinn count for the shared dialogue.
 static s32 VaultInteriors_GetIvanVenusDjinnCount(void) {
   return UnitGet(IVAN)->djinnOwnedCounts[ELEMENT_VENUS];
 }
@@ -1918,7 +1918,7 @@ static s32 VaultInteriors_GetIvanVenusDjinnCount(void) {
 // Shared source is included here in ROM order.
 #include "common/vault_djinn.h"
 
-// Stage the defeated thieves and gather the townspeople in the attic.
+/// Stage the defeated thieves and gather the townspeople in the attic.
 static void VaultInteriors_DefeatThieves(void) {
   struct FieldActor *actor;
   struct EventWork *work;
@@ -2126,7 +2126,7 @@ static void VaultInteriors_DefeatThieves(void) {
   Engine_EventEnd();
 }
 
-// Return the stolen goods and rod, thank the party, and clear the attic.
+/// Return the stolen goods and rod, thank the party, and clear the attic.
 static void VaultInteriors_ReturnStolenGoods(void) {
   struct FieldActor *temporaryActor;
   struct FieldActor *actor;
@@ -2556,7 +2556,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   Engine_EventEnd();
 }
 
-// Open the window transition and wait one frame after it finishes.
+/// Open the window transition and wait one frame after it finishes.
 static void VaultInteriors_OpenWindowTransition(void) {
   struct EventWork *state;
 
@@ -2567,27 +2567,27 @@ static void VaultInteriors_OpenWindowTransition(void) {
   Engine_EventWait(1);
 }
 
-// Show the selected actor message, then pause for the requested frames.
+/// Show the selected actor message, then pause for the requested frames.
 static void VaultInteriors_ShowMessageAndWait(s32 actorId, s32 waitFrames) {
   Engine_EventShowMessage(actorId, 0);
   Engine_EventWait(waitFrames);
 }
 
-// Face one actor toward another, then pause for the requested frames.
+/// Face one actor toward another, then pause for the requested frames.
 static void VaultInteriors_FaceActorAndWait(s32 actorId, s32 targetId,
                                             s32 waitFrames) {
   Engine_ActorFaceActor(actorId, targetId, 0);
   Engine_EventWait(waitFrames);
 }
 
-// Have two actors face each other, then pause for the requested frames.
+/// Have two actors face each other, then pause for the requested frames.
 static void VaultInteriors_FaceEachOtherAndWait(s32 firstId, s32 secondId,
                                                 s32 waitFrames) {
   Engine_ActorFaceEachOther(firstId, secondId, 0);
   Engine_EventWait(waitFrames);
 }
 
-// Wait for the animation to change before the following pause.
+/// Wait for the animation to change before the following pause.
 static void VaultInteriors_PlayAnimationAndWait(s32 actorId, s32 animation,
                                                 s32 waitFrames) {
   Engine_ActorSetAnimation(actorId, animation, waitFrames);
@@ -2595,7 +2595,7 @@ static void VaultInteriors_PlayAnimationAndWait(s32 actorId, s32 animation,
   Engine_EventWait(waitFrames);
 }
 
-// Begin Mind Read, choose its target, and show its opening effect.
+/// Begin Mind Read, choose its target, and show its opening effect.
 static void VaultInteriors_BeginMindRead(s32 casterId, s32 targetId) {
   Engine_PsynergyBegin(ABILITY_MIND_READ, 1);
   Engine_PsynergySetTarget(casterId, targetId);
@@ -2604,7 +2604,7 @@ static void VaultInteriors_BeginMindRead(s32 casterId, s32 targetId) {
   Engine_TaskWait(1);
 }
 
-// Finish Mind Read and release its scene effect objects.
+/// Finish Mind Read and release its scene effect objects.
 static void VaultInteriors_EndMindRead(void) {
   Engine_PsynergyPlayEffect(2);
   Engine_PsynergyLowerHands();
@@ -2614,7 +2614,7 @@ static void VaultInteriors_EndMindRead(void) {
 // Shared source is included here in ROM order.
 #include "common/vault_itemobj.h"
 
-// Find the route node containing the actor's position on the eight-pixel grid.
+/// Find the route node containing the actor's position on the eight-pixel grid.
 static struct VaultInteriorsStop *
 VaultInteriors_FindStopAtPosition(s32 *position) {
   s32 gridX = (position[0] - PIXELS(64)) >> 19;
@@ -2638,7 +2638,7 @@ VaultInteriors_FindStopAtPosition(s32 *position) {
   return result;
 }
 
-// Choose the outgoing connection nearest the requested facing.
+/// Choose the outgoing connection nearest the requested facing.
 static struct VaultInteriorsStop *
 VaultInteriors_SnapToNearestStop(struct VaultInteriorsStop *node,
                                  s16 *requestedFacing) {
@@ -2678,8 +2678,8 @@ VaultInteriors_SnapToNearestStop(struct VaultInteriorsStop *node,
   return &gVaultInteriors_Stops[stopIndex];
 }
 
-// Check whether an actor's destination or current position lies within eight
-// pixels.
+/// Check whether an actor's destination or current position lies within eight
+/// pixels.
 static s32 VaultInteriors_IsActorWithinEightPixels(s32 x, s32 z, s32 id) {
   struct FieldActor *actor = Engine_ActorLookup(id);
   s32 targetX = actor->targetX;
@@ -2700,8 +2700,8 @@ static s32 VaultInteriors_IsActorWithinEightPixels(s32 x, s32 z, s32 id) {
   return 0;
 }
 
-// Check whether an actor's destination or current position lies within sixteen
-// pixels.
+/// Check whether an actor's destination or current position lies within sixteen
+/// pixels.
 static s32 VaultInteriors_IsActorWithinSixteenPixels(s32 x, s32 z, s32 id) {
   struct FieldActor *actor = Engine_ActorLookup(id);
   s32 ax;
@@ -2720,7 +2720,7 @@ static s32 VaultInteriors_IsActorWithinSixteenPixels(s32 x, s32 z, s32 id) {
   return 0;
 }
 
-// Reject route stops occupied by the leader, Ivan, or either suspect.
+/// Reject route stops occupied by the leader, Ivan, or either suspect.
 static s32 VaultInteriors_CheckStopOccupancy(struct VaultInteriorsStop *stop) {
   s32 x;
   s32 z;
@@ -2739,15 +2739,15 @@ static s32 VaultInteriors_CheckStopOccupancy(struct VaultInteriorsStop *stop) {
   return 0;
 }
 
-// Set the actor's destination to the route stop's cell center.
+/// Set the actor's destination to the route stop's cell center.
 static void VaultInteriors_MoveActorToStop(struct FieldActor *actor,
                                            struct VaultInteriorsStop *stop) {
   Engine_ObjectSetPosition(actor, (stop->gridX << 19) + PIXELS(72), 0,
                            (stop->gridZ << 19) + PIXELS(632));
 }
 
-// Steer Ivan and both suspects through the graph and detect a sustained
-// cornering.
+/// Steer Ivan and both suspects through the graph and detect a sustained
+/// cornering.
 static void VaultInteriors_UpdateActorStops(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -2860,7 +2860,7 @@ static void VaultInteriors_UpdateActorStops(void) {
   }
 }
 
-// Arrange the chase, constrain its camera, and start the route callback.
+/// Arrange the chase, constrain its camera, and start the route callback.
 static void VaultInteriors_StartActorStops(void) {
   Engine_EventBegin();
   Camera_MoveTo(PIXELS(168), -1, PIXELS(656), 1);
@@ -2892,7 +2892,7 @@ static void VaultInteriors_StartActorStops(void) {
 }
 
 // clang-format off
-// A missing edge keeps both sentinel bytes; valid facings use the angle's high byte.
+/// A missing edge keeps both sentinel bytes; valid facings use the angle's high byte.
 #define NO_CONNECTION {255, 0xff, {0, 0}}
 #define CONNECTION(stop, direction) {stop, (direction) >> 8, {0, 0}}
 struct VaultInteriorsStop gVaultInteriors_Stops[] = {

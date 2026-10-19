@@ -31,13 +31,13 @@ enum {
   XIAN_INN = 5
 };
 
-// The room reached from Master Feh's school (scene 61's exit 4), where Master
-// Feh, Feizhi and Hsu wait once Hsu is back: its own actors and events.
+/// The room reached from Master Feh's school (scene 61's exit 4), where Master
+/// Feh, Feizhi and Hsu wait once Hsu is back: its own actors and events.
 enum { XIAN_INTERIORS_ENTRANCE_FROM_SCHOOL = 8 };
 
-// The actors placed in that room, as its dialogue shows them: Master Feh
-// says Feizhi's prediction came true, Feizhi welcomes the party, and Hsu was
-// injured on his way from Lama Temple.
+/// The actors placed in that room, as its dialogue shows them: Master Feh
+/// says Feizhi's prediction came true, Feizhi welcomes the party, and Hsu was
+/// injured on his way from Lama Temple.
 enum { ACTOR_FEH = ACTOR_FIRST_PLACED, ACTOR_FEIZHI, ACTOR_HSU };
 
 // Shared source is included here in ROM order.
@@ -47,18 +47,18 @@ enum { ACTOR_FEH = ACTOR_FIRST_PLACED, ACTOR_FEIZHI, ACTOR_HSU };
 #include "item_ids.h"
 #include "objcmd.h"
 
-// Return arrival positions for the homes, shops and recovery room.
+/// Return arrival positions for the homes, shops and recovery room.
 const struct SceneEntrance *XianInteriors_GetEntrances(void) {
   return gXianInteriors_Entrances;
 }
 
-// These interiors have no region table.
+/// These interiors have no region table.
 const struct SceneRegion *XianInteriors_GetRegions(void) { return NULL; }
 
-// Return the connections to Xian and the surrounding rooms.
+/// Return the connections to Xian and the surrounding rooms.
 const u32 *XianInteriors_GetExits(void) { return gXianInteriors_Exits; }
 
-// The room behind the school places only Master Feh, Feizhi and Hsu.
+/// The room behind the school places only Master Feh, Feizhi and Hsu.
 const struct ScenePlacement *XianInteriors_GetPlacements(void) {
   if (gGameState.entrance == XIAN_INTERIORS_ENTRANCE_FROM_SCHOOL) {
     return gXianInteriors_SchoolRoomPlacements;
@@ -67,13 +67,13 @@ const struct ScenePlacement *XianInteriors_GetPlacements(void) {
   return gXianInteriors_Placements;
 }
 
-// Read the leader's facing before a conversation changes actor state.
+/// Read the leader's facing before a conversation changes actor state.
 static inline u32 XianInteriors_GetLeaderFacing(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   return leader->facing;
 }
 
-// Open the weapon shop from its counter side, or discuss martial arts.
+/// Open the weapon shop from its counter side, or discuss martial arts.
 static void XianInteriors_TalkToWeaponMerchant(void) {
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
@@ -92,7 +92,7 @@ static void XianInteriors_TalkToWeaponMerchant(void) {
   Engine_EventEnd();
 }
 
-// Open the armor shop from its counter side, or discuss armor and kung fu.
+/// Open the armor shop from its counter side, or discuss armor and kung fu.
 static void XianInteriors_TalkToArmorMerchant(void) {
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
@@ -111,7 +111,7 @@ static void XianInteriors_TalkToArmorMerchant(void) {
   Engine_EventEnd();
 }
 
-// Open the item shop or ask whether the party will cross the desert.
+/// Open the item shop or ask whether the party will cross the desert.
 static void XianInteriors_TalkToItemMerchant(void) {
 
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
@@ -130,7 +130,7 @@ static void XianInteriors_TalkToItemMerchant(void) {
   Engine_EventEnd();
 }
 
-// Offer a room from the counter side, or discuss travel through Xian.
+/// Offer a room from the counter side, or discuss travel through Xian.
 static void XianInteriors_TalkToInnkeeper(void) {
 
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
@@ -149,7 +149,7 @@ static void XianInteriors_TalkToInnkeeper(void) {
   Engine_EventEnd();
 }
 
-// Ask the resident whether something is wrong on the Silk Road.
+/// Ask the resident whether something is wrong on the Silk Road.
 static void XianInteriors_AskAboutSilkRoad(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianSomethingWrongOnSilkRoad);
@@ -157,7 +157,7 @@ static void XianInteriors_AskAboutSilkRoad(void) {
   Engine_EventEnd();
 }
 
-// Ask what the party knows about the monsters in Altin.
+/// Ask what the party knows about the monsters in Altin.
 static void XianInteriors_AskAboutAltinMonsters(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianDidMonstersInAltinSpit);
@@ -165,8 +165,8 @@ static void XianInteriors_AskAboutAltinMonsters(void) {
   Engine_EventEnd();
 }
 
-// Feizhi, when the party helped free Hsu: "Oh, warrior! Welcome!", a look at
-// Hsu, then her thanks to the party and Master Hama.
+/// Feizhi, when the party helped free Hsu: "Oh, warrior! Welcome!", a look at
+/// Hsu, then her thanks to the party and Master Hama.
 static void XianInteriors_FeizhiThanksParty(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianWarriorWelcome);
@@ -179,7 +179,7 @@ static void XianInteriors_FeizhiThanksParty(void) {
   Engine_EventEnd();
 }
 
-// The room behind the school has its own events.
+/// The room behind the school has its own events.
 const struct SceneEvent *XianInteriors_GetEvents(void) {
   if (gGameState.entrance == XIAN_INTERIORS_ENTRANCE_FROM_SCHOOL) {
     return gXianInteriors_SchoolRoomEvents;
@@ -187,8 +187,8 @@ const struct SceneEvent *XianInteriors_GetEvents(void) {
   return gXianInteriors_Events;
 }
 
-// Places the interiors' effect objects; in the room behind the school, Hsu
-// takes his pose.
+/// Places the interiors' effect objects; in the room behind the school, Hsu
+/// takes his pose.
 s32 XianInteriors_Initialize(void) {
   s16 entrance;
 

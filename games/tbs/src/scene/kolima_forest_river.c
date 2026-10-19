@@ -33,31 +33,31 @@
 //
 // FLAG_SCENE_TEMP_01: the log is in the river.
 
-// Actors 8 to 10 are the logs; 10 is the one that can reach the river.
+/// Actors 8 to 10 are the logs; 10 is the one that can reach the river.
 enum { RIVER_LOG = 10 };
 
 // Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
-// Where the party enters from the clearing and the bend.
+/// Where the party enters from the clearing and the bend.
 const struct SceneEntrance *KolimaForestRiver_GetEntrances(void) {
   return gKolimaForestRiverEntrances;
 }
 
-// The river has no regions.
+/// The river has no regions.
 const struct SceneRegion *KolimaForestRiver_GetRegions(void) { return 0; }
 
-// The paths to the bend and back to the clearing.
+/// The paths to the bend and back to the clearing.
 const u32 *KolimaForestRiver_GetExits(void) { return gKolimaForestRiverExits; }
 
-// The three logs.
+/// The three logs.
 const struct ScenePlacement *KolimaForestRiver_GetPlacements(void) {
   return gKolimaForestRiverPlacements;
 }
 
-// Walking into a log: it rolls ahead until something stops it. The river
-// log, stopped at the bank (cell column 12), tips over with a splash and
-// floats in the water; its cells become ground the party can cross.
+/// Walking into a log: it rolls ahead until something stops it. The river
+/// log, stopped at the bank (cell column 12), tips over with a splash and
+/// floats in the water; its cells become ground the party can cross.
 static void KolimaForestRiver_PushLog(void) {
   struct StagedActorProbe result;
   Engine_EventBegin();
@@ -84,14 +84,14 @@ static void KolimaForestRiver_PushLog(void) {
 // Shared source is included here in ROM order.
 #include "common/kolima_jump.h"
 
-// The logs, the two paths and the jump east from the bank.
+/// The logs, the two paths and the jump east from the bank.
 const struct SceneEvent *KolimaForestRiver_GetEvents(void) {
   return gKolimaForestRiverEvents;
 }
 
-// On entry a log already in the river floats there again, the logs mark the
-// cells they cover, and the forest keeps its cursed colours until the curse
-// is lifted.
+/// On entry a log already in the river floats there again, the logs mark the
+/// cells they cover, and the forest keeps its cursed colours until the curse
+/// is lifted.
 s32 KolimaForestRiver_Initialize(void) {
   struct EventWork *work = gEventWork;
 
@@ -117,7 +117,7 @@ s32 KolimaForestRiver_Initialize(void) {
 // Shared source is included here in ROM order.
 #include "common/kolima_palette.h"
 
-// Pixel step by direction: X in the upper halfword, Z in the lower.
+/// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {
@@ -150,7 +150,7 @@ struct SceneEntrance gKolimaForestRiverEntrances[] = {
     { SCENE_TABLE_END },
 };
 
-// Exit 1 to the bend (scene 43), exit 2 to the clearing (scene 41).
+/// Exit 1 to the bend (scene 43), exit 2 to the clearing (scene 41).
 u32 gKolimaForestRiverExits[] = {
     SCENE_EXITS(42),
     SCENE_EXIT(1, 43, 1),
@@ -179,6 +179,6 @@ struct SceneEvent gKolimaForestRiverEvents[] = {
     {SCENE_EVENTS_END},
 };
 
-// The .bss order follows the first declarations (externs in field.h).
+/// The .bss order follows the first declarations (externs in field.h).
 u8 gKolimaPalette_First[1792] __attribute__((section(".bss")));
 u8 gKolimaPalette_Second[896] __attribute__((section(".bss")));

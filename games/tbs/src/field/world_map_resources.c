@@ -4,9 +4,9 @@
 
 // World map graphics: a palette and five tile sets for each of its two looks.
 
-// Each set is a palette and five tile sets; the loader takes the second set
-// when the cell it loads at has terrain kind 21. Not const: the loader reads
-// it through a u32 *.
+/// Each set is a palette and five tile sets; the loader takes the second set
+/// when the cell it loads at has terrain kind 21. Not const: the loader reads
+/// it through a u32 *.
 u32 gWorldMap_GraphicsResources[2][6] = {
     {
         (u32)&ResourceId_WorldMapPaletteA,

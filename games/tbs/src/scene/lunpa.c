@@ -36,8 +36,8 @@ enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-// How long an effect of common/effect_spawn.h lasts: 22, 44 or 126
-// frames, then it moves away and is freed.
+/// How long an effect of common/effect_spawn.h lasts: 22, 44 or 126
+/// frames, then it moves away and is freed.
 s32 gShortEffectScript[] = {
     SCRIPT_WAIT(1), SCRIPT_REPEAT(22, 0),
     SCRIPT_WAIT(1), SCRIPT_SET_POSITION(0, 0, 0),
@@ -62,7 +62,7 @@ const s32 *gEffectScripts[] = {
     gLongEffectScript,
 };
 
-// The town's entrances, or the gate's.
+/// The town's entrances, or the gate's.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s32 scene = gGameState.scene;
 
@@ -75,10 +75,10 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLunpaEntrances;
 }
 
-// Lunpa has no regions.
+/// Lunpa has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-// Where each exit of the town or the gate leads.
+/// Where each exit of the town or the gate leads.
 const u32 *Scene_GetExits(void) {
   s32 scene = gGameState.scene;
 
@@ -91,7 +91,7 @@ const u32 *Scene_GetExits(void) {
   return gLunpaExits;
 }
 
-// The townsfolk, or the gate's guards.
+/// The townsfolk, or the gate's guards.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s32 scene = gGameState.scene;
 
@@ -104,7 +104,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gLunpaPlacements;
 }
 
-// Catch on the nut floating over the town: the party gets it.
+/// Catch on the nut floating over the town: the party gets it.
 static void Event_CatchFloatingNut(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(ACTOR_FLOATING_NUT, 0, 0);
@@ -114,15 +114,15 @@ static void Event_CatchFloatingNut(void) {
   Engine_EventEnd();
 }
 
-// Restore the frozen pillar's three collision cells, including its sides.
+/// Restore the frozen pillar's three collision cells, including its sides.
 static inline void Lunpa_ApplyFrozenPuddleCollision(void) {
   Map_CopyCellAttributes(17, 4, 1, 1, 14, 4);
   Map_CopyCellAttributes(15, 3, 1, 1, 15, 4);
   Map_CopyCellAttributes(15, 3, 1, 1, 13, 4);
 }
 
-// Frost on the puddle Reveal shows: it freezes into a pillar the party can
-// stand on.
+/// Frost on the puddle Reveal shows: it freezes into a pillar the party can
+/// stand on.
 static void Event_FreezeHiddenPuddle(void) {
   struct FieldActor *pillar;
 
@@ -137,8 +137,8 @@ static void Event_FreezeHiddenPuddle(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_00);
 }
 
-// Every frame while the pillar stands: draw it under the leader once the
-// leader is on top.
+/// Every frame while the pillar stands: draw it under the leader once the
+/// leader is on top.
 static void Lunpa_UpdateIcePillarDrawOrder(void) {
   if (Object_GetById(ACTOR_PARTY_LEADER)->y.fixed >= PILLAR_TOP_HEIGHT) {
     Object_GetById(ACTOR_HIDDEN_PUDDLE)->priorityFlags |=
@@ -149,7 +149,7 @@ static void Lunpa_UpdateIcePillarDrawOrder(void) {
   }
 }
 
-// Draws the three map regions that make one frame of the hidden passage.
+/// Draws the three map regions that make one frame of the hidden passage.
 static inline void Lunpa_DrawHiddenPassageFrame(s32 sourceColumn,
                                                 s32 sourceRow) {
   Map_CopyCells(sourceColumn, sourceRow, 3, 4, 1, 14);
@@ -157,8 +157,8 @@ static inline void Lunpa_DrawHiddenPassageFrame(s32 sourceColumn,
   Map_CopyCells(sourceColumn + 6, sourceRow, 3, 4, 1, 46);
 }
 
-// Reveal: the psynergy stone's spot, the hidden switch's glint, the
-// puddle and, once opened, the passage show.
+/// Reveal: the psynergy stone's spot, the hidden switch's glint, the
+/// puddle and, once opened, the passage show.
 static void Event_RevealSecrets(void) {
   struct FieldActor *actor;
   s32 cellX;
@@ -204,7 +204,7 @@ static void Event_RevealSecrets(void) {
   GameFlag_Clear(FLAG_SCENE_TEMP_01);
 }
 
-// Reveal's end, and every entry to the town: the secrets hide again.
+/// Reveal's end, and every entry to the town: the secrets hide again.
 static void Event_HideSecrets(void) {
   struct FieldActor *puddle;
 
@@ -226,7 +226,7 @@ static void Event_HideSecrets(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_01);
 }
 
-// Searching the well.
+/// Searching the well.
 static void Event_SearchWell(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
@@ -234,7 +234,7 @@ static void Event_SearchWell(void) {
   Engine_EventEnd();
 }
 
-// The gate's events, or the town's before and after trade reopens.
+/// The gate's events, or the town's before and after trade reopens.
 const struct SceneEvent *Scene_GetEvents(void) {
   s32 scene = gGameState.scene;
 
@@ -249,7 +249,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gLunpaSealedEvents;
 }
 
-// The west guard of the town asks whether the party wants in.
+/// The west guard of the town asks whether the party wants in.
 static void Event_TalkToWestGuard(void) {
   Engine_EventBegin();
   Engine_ActorShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | 2, 60);
@@ -258,8 +258,8 @@ static void Event_TalkToWestGuard(void) {
   Engine_EventEnd();
 }
 
-// The east guard: wants authorization, or once the guards suspect Kalay,
-// asks twice whether the party came from there.
+/// The east guard: wants authorization, or once the guards suspect Kalay,
+/// asks twice whether the party came from there.
 static void Event_TalkToEastGuard(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY) == 0) {
@@ -280,7 +280,7 @@ static void Event_TalkToEastGuard(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the east guard.
+/// Mind Read on the east guard.
 static void Event_ReadEastGuardsThoughts(void) {
   s32 thoughts;
 
@@ -299,7 +299,7 @@ static void Event_ReadEastGuardsThoughts(void) {
   }
 }
 
-// Asks how long the party has been in Lunpa.
+/// Asks how long the party has been in Lunpa.
 static void Event_AskAboutLengthOfStay(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaVillagerAAsksHowLong);
@@ -307,7 +307,7 @@ static void Event_AskAboutLengthOfStay(void) {
   Engine_EventEnd();
 }
 
-// Asks whether Dodonpa kidnapped Hammet for ransom.
+/// Asks whether Dodonpa kidnapped Hammet for ransom.
 static void Event_AskAboutHammetsKidnapping(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaVillagerCAsksAboutKidnapping);
@@ -315,7 +315,7 @@ static void Event_AskAboutHammetsKidnapping(void) {
   Engine_EventEnd();
 }
 
-// Asks whether the party wants to see Donpa.
+/// Asks whether the party wants to see Donpa.
 static void Event_AskAboutSeeingDonpa(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaVillagerGAsksAboutDonpa);
@@ -323,7 +323,7 @@ static void Event_AskAboutSeeingDonpa(void) {
   Engine_EventEnd();
 }
 
-// Shivers and complains that the weather has become colder.
+/// Shivers and complains that the weather has become colder.
 static void Event_ComplainAboutCold(void) {
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(ACTOR_VILLAGER_B, 3);
@@ -332,7 +332,7 @@ static void Event_ComplainAboutCold(void) {
   Engine_EventEnd();
 }
 
-// Offers to explain the commotion at the fortress.
+/// Offers to explain the commotion at the fortress.
 static void Event_AskAboutFortressCommotion(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaVillagerDAsksAboutCommotion);
@@ -340,8 +340,8 @@ static void Event_AskAboutFortressCommotion(void) {
   Engine_EventEnd();
 }
 
-// The gate's left guard: hears someone while the party is cloaked; after
-// trade reopens, nearly recognizes Hammet with the party.
+/// The gate's left guard: hears someone while the party is cloaked; after
+/// trade reopens, nearly recognizes Hammet with the party.
 static void Event_TalkToLeftGuard(void) {
   s32 recognitionMessageBase;
 
@@ -362,7 +362,7 @@ static void Event_TalkToLeftGuard(void) {
   Engine_EventShowMessage(ACTOR_LEFT_GUARD, 0);
 }
 
-// The gate's right guard.
+/// The gate's right guard.
 static void Event_TalkToRightGuard(void) {
   if (gGameState.cloaked != 0) {
     Engine_EventSetMessage(MsgLunpaRightGuardFeelsCreepy);
@@ -374,9 +374,9 @@ static void Event_TalkToRightGuard(void) {
   Engine_EventShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
 
-// Mind Read on the left guard: before the cave reunion he thinks the man
-// with the party looks like that merchant, and Mind Read is cut short the
-// first time as he turns to look.
+/// Mind Read on the left guard: before the cave reunion he thinks the man
+/// with the party looks like that merchant, and Mind Read is cut short the
+/// first time as he turns to look.
 static void Event_ReadLeftGuardsThoughts(void) {
   s32 recognizedHammet;
 
@@ -403,7 +403,7 @@ static void Event_ReadLeftGuardsThoughts(void) {
   Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
 }
 
-// Mind Read on the right guard.
+/// Mind Read on the right guard.
 static void Event_ReadRightGuardsThoughts(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
     Engine_EventSetMessage(MsgLunpaRightGuardReopenedThoughts);
@@ -413,8 +413,8 @@ static void Event_ReadRightGuardsThoughts(void) {
   Engine_EventShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
 
-// Every frame at the gate after trade reopens: stepping up to row 10
-// raises Garet's warning (trigger TRIGGER_FORTRESS_APPROACH).
+/// Every frame at the gate after trade reopens: stepping up to row 10
+/// raises Garet's warning (trigger TRIGGER_FORTRESS_APPROACH).
 static void Lunpa_WatchForFortressApproach(void) {
   s32 leaderRow = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed / CELL_SIZE;
 
@@ -424,8 +424,8 @@ static void Lunpa_WatchForFortressApproach(void) {
   }
 }
 
-// Garet reminds the leader they cannot go into the fortress, and the
-// leader steps back.
+/// Garet reminds the leader they cannot go into the fortress, and the
+/// leader steps back.
 static void Event_GaretTurnsLeaderBack(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -440,7 +440,7 @@ static void Event_GaretTurnsLeaderBack(void) {
   Engine_EventEnd();
 }
 
-// The leader walks into a doorway: the door opens and the leader goes in.
+/// The leader walks into a doorway: the door opens and the leader goes in.
 static void Event_EnterDoor(void) {
   struct FieldWork *fieldWork;
   struct FieldActor *placedActor;
@@ -473,7 +473,7 @@ static void Event_EnterDoor(void) {
   Engine_EventEnd();
 }
 
-// The hidden passage to the jail, once opened and while Reveal shows it.
+/// The hidden passage to the jail, once opened and while Reveal shows it.
 static void Event_EnterHiddenPassage(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_02) != 0) {
     if (GameFlag_IsSet(FLAG_SCENE_TEMP_01) == 0) {
@@ -487,7 +487,7 @@ static void Event_EnterHiddenPassage(void) {
   }
 }
 
-// Through the fortress door, out of the gate's top.
+/// Through the fortress door, out of the gate's top.
 static void Event_EnterFortress(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_42);
   Engine_EventBegin();
@@ -506,17 +506,17 @@ static void Event_EnterFortress(void) {
   Engine_EventEnd();
 }
 
-// Unused original callback: the leader looks at what is ahead.
+/// Unused original callback: the leader looks at what is ahead.
 static void UNUSED Lunpa_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
-// Reveal's sound when it uncovers something.
+/// Reveal's sound when it uncovers something.
 UNUSED static void Lunpa_PlayRevealCue(void) {
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01) == 0) {
     Engine_AudioPlayCue(MUS_TREASURE_FOUND);
   }
 }
 
-// Searching the switch Reveal shows: the passage opens in five steps.
+/// Searching the switch Reveal shows: the passage opens in five steps.
 static void Event_PressHiddenSwitch(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_01) != 0) {
     return;
@@ -541,15 +541,15 @@ static void Event_PressHiddenSwitch(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_02);
 }
 
-// Copy one open or blocked source cell across the three-cell gateway.
+/// Copy one open or blocked source cell across the three-cell gateway.
 static inline void Lunpa_CopyGatewayCollision(s32 sourceColumn, s32 sourceRow) {
   Map_CopyCellAttributes(sourceColumn, sourceRow, 1, 1, 7, 11);
   Map_CopyCellAttributes(sourceColumn, sourceRow, 1, 1, 8, 11);
   Map_CopyCellAttributes(sourceColumn, sourceRow, 1, 1, 9, 11);
 }
 
-// Coming close uncloaked, the guards step in front of the fortress door
-// and the gateway closes.
+/// Coming close uncloaked, the guards step in front of the fortress door
+/// and the gateway closes.
 static void Event_GuardsBlockGate(void) {
   if (gGameState.cloaked == 0) {
     Engine_EventBegin();
@@ -574,17 +574,17 @@ static void Event_GuardsBlockGate(void) {
   }
 }
 
-// Unused original callback that does nothing.
+/// Unused original callback that does nothing.
 static void UNUSED Lunpa_DoNothing(void) {}
 
-// Cloak: the gateway closes behind the guards.
+/// Cloak: the gateway closes behind the guards.
 static void Event_CastCloak(void) {
   Lunpa_CopyGatewayCollision(6, 11);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_41);
 }
 
-// Raised when the guards spot the party: they recognize the man with them,
-// and march the party back down to the gate's foot.
+/// Raised when the guards spot the party: they recognize the man with them,
+/// and march the party back down to the gate's foot.
 static void Event_GuardsCatchParty(void) {
   struct FieldActor *leader;
   s32 warningMessageBase;
@@ -644,10 +644,10 @@ static void Event_GuardsCatchParty(void) {
   FieldScheduler_AddCallback(Lunpa_WatchForUncloakedParty, TASK_PRIORITY_SCENE);
 }
 
-// The gateway opens again.
+/// The gateway opens again.
 static void Lunpa_ReopenGateway(void) { Lunpa_CopyGatewayCollision(7, 12); }
 
-// Cloak fades: if the leader is still among the guards, they are caught.
+/// Cloak fades: if the leader is still among the guards, they are caught.
 static void Event_CloakFades(void) {
   struct FieldWork *fieldWork;
   struct FieldActor *leader;
@@ -669,8 +669,8 @@ static void Event_CloakFades(void) {
   Engine_GameFlagClear(FLAG_SCENE_TEMP_44);
 }
 
-// Every frame at the gate: an uncloaked leader in front of the guards is
-// spotted.
+/// Every frame at the gate: an uncloaked leader in front of the guards is
+/// spotted.
 static void Lunpa_WatchForUncloakedParty(void) {
   struct FieldWork *fieldWork;
   struct FieldActor *leader;
@@ -685,7 +685,7 @@ static void Lunpa_WatchForUncloakedParty(void) {
   }
 }
 
-// Every 16 frames while the leader is thrown: a puff of dust.
+/// Every 16 frames while the leader is thrown: a puff of dust.
 static void Lunpa_KickUpLeaderDust(void) {
   struct FieldActor *leader;
   s32 dustAngle;
@@ -701,8 +701,8 @@ static void Lunpa_KickUpLeaderDust(void) {
   }
 }
 
-// Entering the gate after being caught inside: the guards throw the
-// leader out and down the steps.
+/// Entering the gate after being caught inside: the guards throw the
+/// leader out and down the steps.
 static void Event_GuardsThrowLeaderOut(void) {
   Engine_EventBegin();
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(160), PIXELS(128));
@@ -780,8 +780,8 @@ static void Event_GuardsThrowLeaderOut(void) {
   Engine_EventEnd();
 }
 
-// Entering the gate after sneaking out of the fortress: the leader casts
-// Cloak and slips around the guards.
+/// Entering the gate after sneaking out of the fortress: the leader casts
+/// Cloak and slips around the guards.
 static void Event_LeaderSneaksOut(void) {
   Engine_EventBegin();
   Engine_EventOpenScreen();
@@ -809,9 +809,9 @@ static void Event_LeaderSneaksOut(void) {
   Engine_EventEnd();
 }
 
-// Sets either map up: Reveal's secrets hidden and the floating nut in the
-// town; at the gate, the thrown-out or sneaking-out scene, the watchers
-// and the fortress visit flags cleared.
+/// Sets either map up: Reveal's secrets hidden and the floating nut in the
+/// town; at the gate, the thrown-out or sneaking-out scene, the watchers
+/// and the fortress visit flags cleared.
 s32 Scene_Initialize(void) {
   struct FieldActor *puddle;
 

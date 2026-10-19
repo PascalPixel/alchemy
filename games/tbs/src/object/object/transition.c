@@ -1,12 +1,13 @@
-// Part of object.c, the field object, compiled only through it.
-// Window transitions and dissolves between scenes.
+/// @file
+/// Part of object.c, the field object, compiled only through it.
+/// Window transitions and dissolves between scenes.
 
 #include "../object_internal.h"
 
-// Each frame, before drawing: turns windows 0 and 1 on, writes the first four
-// values of the shown page into WININ, WINOUT, WIN0H and WIN1H, and has DMA 0
-// copy the rest into WIN0H and WIN1H one word each HBlank, so that every line
-// of the screen gets its own window edges.
+/// Each frame, before drawing: turns windows 0 and 1 on, writes the first four
+/// values of the shown page into WININ, WINOUT, WIN0H and WIN1H, and has DMA 0
+/// copy the rest into WIN0H and WIN1H one word each HBlank, so that every line
+/// of the screen gets its own window edges.
 void BattleFx_StartWindowHBlankDma(void) {
   struct DisplayTransitionState *work = gDisplayTransition;
   u16 *scanlineData = work->pages[work->page];
@@ -45,15 +46,15 @@ struct TransitionShape {
 
 extern struct TransitionShape gDisplayTransition_Shapes[];
 
-// Each frame of a window transition: advances its value toward its end (and
-// at the end turns the windows off, or moves to the next mode), then builds
-// the next page of window edges, WININ and WINOUT first and then a
-// (left << 8 | right) pair for each of the 160 lines. Bit 5 of the value says
-// whether the transition opens or closes; its low 5 bits are its progress.
-// Modes: 0 random bars, 1 a shape from gDisplayTransition_Shapes, 2 random
-// horizontal noise, 3 a circle at the screen's centre, 4 vertical blinds,
-// 7 and 9 an ellipse around the party leader (7 flickers), 8 a wobbling
-// ellipse around a point, 77 a flatter ellipse around the leader.
+/// Each frame of a window transition: advances its value toward its end (and
+/// at the end turns the windows off, or moves to the next mode), then builds
+/// the next page of window edges, WININ and WINOUT first and then a
+/// (left << 8 | right) pair for each of the 160 lines. Bit 5 of the value says
+/// whether the transition opens or closes; its low 5 bits are its progress.
+/// Modes: 0 random bars, 1 a shape from gDisplayTransition_Shapes, 2 random
+/// horizontal noise, 3 a circle at the screen's centre, 4 vertical blinds,
+/// 7 and 9 an ellipse around the party leader (7 flickers), 8 a wobbling
+/// ellipse around a point, 77 a flatter ellipse around the leader.
 void DisplayTransition_UpdateScanlineTable(void) {
   struct DisplayTransitionState *state;
   struct TransitionSpan *span;
@@ -503,8 +504,8 @@ void DisplayTransition_UpdateScanlineTable(void) {
   state->page ^= 1;
 }
 
-// Starts window transition mode at value 0, with no duration: the caller
-// moves it.
+/// Starts window transition mode at value 0, with no duration: the caller
+/// moves it.
 void DisplayTransition_InitializeBattleEffectState(s32 mode) {
   struct DisplayTransitionState *state =
       Runtime_AllocateBlock(31, sizeof(*state));
@@ -518,13 +519,13 @@ void DisplayTransition_InitializeBattleEffectState(s32 mode) {
   Scheduler_AddOrUpdateCallback(BattleFx_StartWindowHBlankDma, 0x480);
 }
 
-// Suspends the window transition's two callbacks.
+/// Suspends the window transition's two callbacks.
 void DisplayTransition_SuspendCallbacks(void) {
   Scheduler_SuspendTasks(&DisplayTransition_UpdateScanlineTable);
   Scheduler_SuspendTasks(&BattleFx_StartWindowHBlankDma);
 }
 
-// Allocates the display transition state (heap block 31) and clears it.
+/// Allocates the display transition state (heap block 31) and clears it.
 struct DisplayTransitionState *DisplayTransition_AllocateAndClearState(void) {
   struct DisplayTransitionState *state;
 
@@ -533,10 +534,10 @@ struct DisplayTransitionState *DisplayTransition_AllocateAndClearState(void) {
   return state;
 }
 
-// Fades the screen in over frames frames. mode's high byte chooses how: 0
-// from black, 1 from the backdrop colour, 2 a window transition (its low
-// byte the mode), 3 a dissolve, 4 opening from the centre line (low byte 1
-// flickers).
+/// Fades the screen in over frames frames. mode's high byte chooses how: 0
+/// from black, 1 from the backdrop colour, 2 a window transition (its low
+/// byte the mode), 3 a dissolve, 4 opening from the centre line (low byte 1
+/// flickers).
 void DisplayTransition_Start(s32 mode, s32 frames) {
   struct DisplayTransitionWindow *display;
   s32 variant;
@@ -623,8 +624,8 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
                       0x20000);
 }
 
-// Fades the screen out over frames frames, as DisplayTransition_Start fades
-// it in.
+/// Fades the screen out over frames frames, as DisplayTransition_Start fades
+/// it in.
 void DisplayTransition_Finish(s32 mode, s32 frames) {
   s32 variant;
   s32 transitionKind;
@@ -693,8 +694,8 @@ void DisplayTransition_Finish(s32 mode, s32 frames) {
   }
 }
 
-// Clears the map's display-control bits for backgrounds 3, 2 and 1
-// (0x0800, 0x0400 and 0x0200) for each argument that is set.
+/// Clears the map's display-control bits for backgrounds 3, 2 and 1
+/// (0x0800, 0x0400 and 0x0200) for each argument that is set.
 void DisplayState_ClearFlags(s32 clearBg3, s32 clearBg2, s32 clearBg1) {
   struct DisplayTransitionWindow *state;
 
@@ -712,8 +713,8 @@ void DisplayState_ClearFlags(s32 clearBg3, s32 clearBg2, s32 clearBg1) {
   }
 }
 
-// Each frame of the centre-line transition: moves the value toward its end
-// and sets the two lines where the screen switches between shown and blank.
+/// Each frame of the centre-line transition: moves the value toward its end
+/// and sets the two lines where the screen switches between shown and blank.
 void DisplayTransition_Update(void) {
   struct DisplayTransitionFrame *state = *Ram_DisplayWork;
   struct DisplayTransitionWindow *display =
@@ -749,7 +750,7 @@ void DisplayTransition_Update(void) {
   }
 }
 
-// As DisplayTransition_Update, but the lines flicker every other frame.
+/// As DisplayTransition_Update, but the lines flicker every other frame.
 void DisplayTransition_UpdateFromCentre(void) {
   struct DisplayTransitionFrame *state = *Ram_DisplayWork;
   struct DisplayTransitionWindow *window =
@@ -788,9 +789,9 @@ void DisplayTransition_UpdateFromCentre(void) {
   }
 }
 
-// The VCount interrupt of the centre-line transition: switches the display
-// to mode 2 (nothing shown) at the first line and back to mode 0 at the
-// second.
+/// The VCount interrupt of the centre-line transition: switches the display
+/// to mode 2 (nothing shown) at the first line and back to mode 0 at the
+/// second.
 void DisplayTransition_UpdateScanline(void) {
   u32 scanline;
   struct DisplayTransitionWindow *state;
@@ -835,9 +836,9 @@ again:
   }
 }
 
-// Each frame of the dissolve: moves the value toward its end and sets two
-// more of the solid tile's 64 pixels, in the order of
-// gDisplayTransition_DitherTable, to colour 15 (or 0 when closing).
+/// Each frame of the dissolve: moves the value toward its end and sets two
+/// more of the solid tile's 64 pixels, in the order of
+/// gDisplayTransition_DitherTable, to colour 15 (or 0 when closing).
 void DisplayTransition_UpdateFrame(void) {
   struct DisplayTransitionFrame *state = *Ram_DisplayWork;
   s32 ditherIndex;
@@ -882,8 +883,8 @@ void DisplayTransition_UpdateFrame(void) {
                       (DMA_ENABLE | DMA_32BIT) << 16 | 0x8);
 }
 
-// Fills background screen block 4 with tile 0 in palette 15 and, unless color
-// is -1, makes tile 0 solid color.
+/// Fills background screen block 4 with tile 0 in palette 15 and, unless color
+/// is -1, makes tile 0 solid color.
 void DisplayTransition_FillTilemapAndSolidTile(s32 color) {
   struct DisplayTransitionState *work = gDisplayTransition;
   Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 0x500);
@@ -901,7 +902,7 @@ void DisplayTransition_FillTilemapAndSolidTile(s32 color) {
   }
 }
 
-// Starts a dissolve of the given mode and waits 120 frames.
+/// Starts a dissolve of the given mode and waits 120 frames.
 void DisplayTransition_InitializeState(s32 value) {
   struct DisplayTransitionState *state;
 

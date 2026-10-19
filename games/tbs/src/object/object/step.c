@@ -1,5 +1,6 @@
-// Part of object.c, the field object, compiled only through it.
-// Field requests and each step of the leader: exits, encounters, damage.
+/// @file
+/// Part of object.c, the field object, compiled only through it.
+/// Field requests and each step of the leader: exits, encounters, damage.
 
 #include "../object_internal.h"
 
@@ -13,18 +14,18 @@ struct StepOwner {
 };
 #endif
 
-// The collision codes of map cells that mean something when stepped on.
+/// The collision codes of map cells that mean something when stepped on.
 enum StepTileEvent {
-  STEP_EVENT_FIRST = 1, // 1 to 239: the scene's step events
+  STEP_EVENT_FIRST = 1, ///< 1 to 239: the scene's step events
   STEP_EVENT_LAST = 239,
-  STEP_TERRAIN_FIRST = 240, // 240 and 241: ground with its own encounters
+  STEP_TERRAIN_FIRST = 240, ///< 240 and 241: ground with its own encounters
   STEP_TERRAIN_LAST = 241,
-  STEP_EVENT_HAZARD = 250, // ground that hurts the party over time
-  STEP_WARP_FIRST = 252,   // 252 to 254: warps
+  STEP_EVENT_HAZARD = 250, ///< ground that hurts the party over time
+  STEP_WARP_FIRST = 252,   ///< 252 to 254: warps
   STEP_WARP_LAST = 254
 };
 
-// Clears the field's twelve pending requests (see struct FieldWork).
+/// Clears the field's twelve pending requests (see struct FieldWork).
 void Field_ClearRequests(void) {
   s16 noRequest;
   struct FieldWork *work;
@@ -44,8 +45,8 @@ void Field_ClearRequests(void) {
   work->event = 0;
 }
 
-// Returns the sum of the field's twelve pending requests (counting the actor
-// event request twice): non-zero while any request is pending.
+/// Returns the sum of the field's twelve pending requests (counting the actor
+/// event request twice): non-zero while any request is pending.
 s32 Field_CountRequests(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
 
@@ -55,8 +56,8 @@ s32 Field_CountRequests(void) {
          work->event;
 }
 
-// Returns the collision code of the map cell 16 pixels ahead of the party
-// leader (a world map block on the world map), or 0 without a leader.
+/// Returns the collision code of the map cell 16 pixels ahead of the party
+/// leader (a world map block on the world map), or 0 without a leader.
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *work;
   struct ObjectRuntime *leader;
@@ -116,11 +117,11 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   return tile[2];
 }
 
-// Takes the exit of the first of the scene's exit regions that contains the
-// position (x, y, z) and whose condition holds: records the region's exit
-// value for Field_RunScene, plays the exit sound and starts leaving the scene.
-// A do/while or while scan changes register allocation (51 text bytes in
-// tbs-en, 2026-10-16); keep the sentinel backedge until that form matches.
+/// Takes the exit of the first of the scene's exit regions that contains the
+/// position (x, y, z) and whose condition holds: records the region's exit
+/// value for Field_RunScene, plays the exit sound and starts leaving the scene.
+/// A do/while or while scan changes register allocation (51 text bytes in
+/// tbs-en, 2026-10-16); keep the sentinel backedge until that form matches.
 void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   s32 exitValue;
   struct FieldWork *work;
@@ -167,11 +168,11 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   }
 }
 
-// Handles one step of the party leader onto the cell at (x, y, z) of map
-// layer: records step events and warps, takes exits, and while walking
-// advances the encounter counter, regenerates PP, hurts the party with poison
-// and hazardous ground, and wears Avoid off. When this hurts the party, the
-// leader flinches and characters who fall are listed in the field work.
+/// Handles one step of the party leader onto the cell at (x, y, z) of map
+/// layer: records step events and warps, takes exits, and while walking
+/// advances the encounter counter, regenerates PP, hurts the party with poison
+/// and hazardous ground, and wears Avoid off. When this hurts the party, the
+/// leader flinches and characters who fall are listed in the field work.
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): the party read through struct StepOwner, the prefix
    * of struct BattleUnit this reads, whose own alias set keeps the party-load
@@ -324,8 +325,8 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   }
 }
 
-// Gives each character in the party amount PP (PP regenerates as the party
-// walks).
+/// Gives each character in the party amount PP (PP regenerates as the party
+/// walks).
 void BattleParty_ApplyDrain(s32 amount, s32 unused) {
   s32 partyCount = Party_CountActiveOwnersFar();
   s32 partyIndex;
@@ -334,10 +335,10 @@ void BattleParty_ApplyDrain(s32 amount, s32 unused) {
     Unit_AddPpFar(gGameState.activeOwners[partyIndex], amount);
 }
 
-// Changes each party member's HP by amount, or by that percentage of maximum
-// HP when percent is set. A percentage that truncates to zero falls back to
-// the positive magnitude of amount. Damage flashes and plays an impact sound;
-// healing plays the recovery sound.
+/// Changes each party member's HP by amount, or by that percentage of maximum
+/// HP when percent is set. A percentage that truncates to zero falls back to
+/// the positive magnitude of amount. Damage flashes and plays an impact sound;
+/// healing plays the recovery sound.
 void BattleParty_ApplyHealthDelta(s32 amount, s32 percent) {
   s32 partyCount;
   s32 partyIndex;
@@ -372,9 +373,9 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 percent) {
   }
 }
 
-// Hurts each poisoned character in the party: poison takes a twentieth of
-// their maximum HP and venom a tenth (at least 1). Returns 0 when nobody was
-// hurt, else the worst status found (1 poison, 2 venom), after a flash.
+/// Hurts each poisoned character in the party: poison takes a twentieth of
+/// their maximum HP and venom a tenth (at least 1). Returns 0 when nobody was
+/// hurt, else the worst status found (1 poison, 2 venom), after a flash.
 s32 BattleParty_ApplyStatusDamage(void) {
   s32 worstPoison = 0;
   s32 partyCount = Party_CountActiveOwnersFar();
@@ -415,9 +416,9 @@ s32 BattleParty_ApplyStatusDamage(void) {
   return worstPoison;
 }
 
-// Starts an event or menu on the world map: ends any colour ratio transition
-// in progress, sets the camera's movement state to 1 and resumes the map's
-// animation. Elsewhere it does nothing.
+/// Starts an event or menu on the world map: ends any colour ratio transition
+/// in progress, sets the camera's movement state to 1 and resumes the map's
+/// animation. Elsewhere it does nothing.
 void Battle_SetObjectFlag5bWhenMode3(void) {
   struct FieldWork *work;
   struct DisplayTransitionState *transition;
@@ -436,8 +437,8 @@ void Battle_SetObjectFlag5bWhenMode3(void) {
   }
 }
 
-// Ends what Battle_SetObjectFlag5bWhenMode3 started: on the world map, reloads
-// the area's graphics and sets the camera's movement state back to 0.
+/// Ends what Battle_SetObjectFlag5bWhenMode3 started: on the world map, reloads
+/// the area's graphics and sets the camera's movement state back to 0.
 void Battle_ClearObjectFlag5bWhenMode3(void) {
   struct FieldWork *work;
 

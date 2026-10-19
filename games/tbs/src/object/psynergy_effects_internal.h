@@ -1,10 +1,11 @@
 #ifndef ALCHEMY_PSYNERGY_EFFECTS_INTERNAL_H
 #define ALCHEMY_PSYNERGY_EFFECTS_INTERNAL_H
 
-// What every part of psynergy_effects.c shares: its includes and the macros and
-// types more than one part uses. psynergy_effects.c includes it before the
-// parts, and each part includes it too, so that a part read on its own
-// resolves. It places no bytes.
+/// @file
+/// What every part of psynergy_effects.c shares: its includes and the macros
+/// and types more than one part uses. psynergy_effects.c includes it before the
+/// parts, and each part includes it too, so that a part read on its own
+/// resolves. It places no bytes.
 
 #include "vram_tab.h"
 #include "unit/object/object.h"
@@ -95,14 +96,14 @@
 #include "macros.h"
 #include "ability_ids.h"
 
-// The effect slots of a Psynergy effect's scene (gEffectWork->slots).
+/// The effect slots of a Psynergy effect's scene (gEffectWork->slots).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
 
-// gGameState.pendingDjinnEvent of Djinni 0 (requests.c, djinni.c).
+/// gGameState.pendingDjinnEvent of Djinni 0 (requests.c, djinni.c).
 #define DJINNI_0 300
 
-// A FieldActor seen with its position as one vector, to pass it whole. The
-// gaps are FieldActor fields this view does not use.
+/// A FieldActor seen with its position as one vector, to pass it whole. The
+/// gaps are FieldActor fields this view does not use.
 struct Object {
   u8 pad0[6];
   u16 angle;
@@ -113,8 +114,8 @@ struct Object {
   struct AnimationObject *sprite;
 };
 
-// Per-frame update of an afterimage: closes half the distance to the object
-// it is linked to, on all three axes.
+/// Per-frame update of an afterimage: closes half the distance to the object
+/// it is linked to, on all three axes.
 static inline void
 BattleFx_MoveAfterimageHalfway(union FieldObject *fieldObject) {
   struct FieldActor *afterimage = (struct FieldActor *)fieldObject;
@@ -125,7 +126,7 @@ BattleFx_MoveAfterimageHalfway(union FieldObject *fieldObject) {
   afterimage->z.fixed += (target->z.fixed - afterimage->z.fixed) / 2;
 }
 
-// Runs the update of each of the 24 effect slots.
+/// Runs the update of each of the 24 effect slots.
 static __inline__ void FieldFx_UpdateSceneSlots(void) {
   struct EffectSlot *slot;
   s32 remainingSlots;
@@ -139,8 +140,8 @@ static __inline__ void FieldFx_UpdateSceneSlots(void) {
   } while (remainingSlots >= 0);
 }
 
-// A FieldActor seen with the halfword at 0x64 unsigned and the one at 0x66
-// signed, as the bytes read them (FieldActor's own types change the code).
+/// A FieldActor seen with the halfword at 0x64 unsigned and the one at 0x66
+/// signed, as the bytes read them (FieldActor's own types change the code).
 struct DescendingOrbitObject {
   u8 unk00[8];
   s32 x;
@@ -151,8 +152,8 @@ struct DescendingOrbitObject {
   s16 angle;
 };
 
-// A FieldActor seen with the halfword at 0x5e (lifetime), which FieldActor
-// does not name.
+/// A FieldActor seen with the halfword at 0x5e (lifetime), which FieldActor
+/// does not name.
 struct CaptureObject {
   u8 unk00[8];
   s32 x;
@@ -178,9 +179,9 @@ struct CaptureObject {
   void (*callback)(union FieldObject *object);
 };
 
-// Defines a per-frame update that spins an object 1/8 turn a frame while its
-// scale changes by step, releasing the object once the scale falls below
-// 0x3000.
+/// Defines a per-frame update that spins an object 1/8 turn a frame while its
+/// scale changes by step, releasing the object once the scale falls below
+/// 0x3000.
 #define DEFINE_SHRINK_AND_DESTROY(name, step)                                  \
   void name(union FieldObject *fieldObject) {                                  \
     void *obj = fieldObject;                                                   \
@@ -210,8 +211,8 @@ struct WaveFxSprite {
   u8 palette;
 };
 
-// A FieldActor seen with the halfword at 0x5e (its lifetime), which
-// FieldActor does not name.
+/// A FieldActor seen with the halfword at 0x5e (its lifetime), which
+/// FieldActor does not name.
 struct ItemBreakFragmentObject {
   u8 reserved00[72];
   s32 gravity;
@@ -221,9 +222,9 @@ struct ItemBreakFragmentObject {
   u16 lifetime;
 };
 
-// Both item fragments and Lift shed the same short-lived falling particle.
-// Spawn and choose its position at the call site: combining the spawn here
-// moves the kind load after the coordinate loads in the native English build.
+/// Both item fragments and Lift shed the same short-lived falling particle.
+/// Spawn and choose its position at the call site: combining the spawn here
+/// moves the kind load after the coordinate loads in the native English build.
 static inline void
 BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
   if (fragment != NULL) {
@@ -236,12 +237,12 @@ BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
   }
 }
 
-// The shards DEFINE_ITEM_BREAK_EFFECT's effects scatter.
+/// The shards DEFINE_ITEM_BREAK_EFFECT's effects scatter.
 #define ITEM_BREAK_SHARD_MAX 24
 
-// Defines an effect cast with no target: spawn makes an object 16 pixels
-// above the effect's position and 32 pixels to either side; each moves 24
-// pixels its way, then 24 shards scatter 8 to 32 pixels.
+/// Defines an effect cast with no target: spawn makes an object 16 pixels
+/// above the effect's position and 32 pixels to either side; each moves 24
+/// pixels its way, then 24 shards scatter 8 to 32 pixels.
 #define DEFINE_ITEM_BREAK_EFFECT(name, spawn)                                  \
   void name(void) {                                                            \
     struct BattleFxScene *work;                                                \
@@ -293,8 +294,8 @@ BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
 
 #define ABOVE (16 << 16) // 16 pixels up
 
-// A FieldActor seen with the halfword at 0x5e (its lifetime), which
-// FieldActor does not name.
+/// A FieldActor seen with the halfword at 0x5e (its lifetime), which
+/// FieldActor does not name.
 struct SparkObject {
   u8 unk00[8];
   s32 x;
@@ -304,15 +305,15 @@ struct SparkObject {
   s32 scaleX;
   s32 scaleY;
   u8 unk20[24];
-  s32 anchorX; // centre of the sway (FieldActor's targetX)
+  s32 anchorX; ///< centre of the sway (FieldActor's targetX)
   u8 unk3c[12];
-  s32 gravity; // as in FieldActor
+  s32 gravity; ///< as in FieldActor
   u8 unk4c[9];
-  u8 motionFlags; // as in FieldActor
+  u8 motionFlags; ///< as in FieldActor
   u8 unk56[8];
   u16 lifetime;
   u8 unk60[4];
-  s16 phase; // phase of the sway (128 frames a cycle)
+  s16 phase; ///< phase of the sway (128 frames a cycle)
   u8 unk66[6];
   void (*update)(union FieldObject *object);
 };

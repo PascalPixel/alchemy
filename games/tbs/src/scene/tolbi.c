@@ -1,7 +1,8 @@
-// Tolbi, the town of the Colosso festival. The town has three moods, chosen
-// by story flags: the festival during the trials, finals day, and the quiet
-// after Colosso has ended. Each mood has its own event table; the actors and
-// their scripts are shared.
+/// @file
+/// Tolbi, the town of the Colosso festival. The town has three moods, chosen
+/// by story flags: the festival during the trials, finals day, and the quiet
+/// after Colosso has ended. Each mood has its own event table; the actors and
+/// their scripts are shared.
 
 #include "unit/scene/tolbi.h"
 #include "unit/object/object.h"
@@ -32,19 +33,19 @@
 
 static void Tolbi_FreezePuddle(void);
 
-// Talking to Ember, the Mars Djinni hiding in town, makes it join the party.
-// Its index among the Mars Djinn is 4, the fifth Mars name in the game text.
+/// Talking to Ember, the Mars Djinni hiding in town, makes it join the party.
+/// Its index among the Mars Djinn is 4, the fifth Mars name in the game text.
 static void Tolbi_JoinEmber(void) {
   Djinn_JoinParty(TOLBI_EMBER, ELEMENT_MARS, 4);
 }
 
 #include "common/object_distance.h"
 
-// Stops a running child when the target is close by and ahead of it, or
-// always when force is set; otherwise starts the child running again.
-// The child stops when the target is within one facing step of where it
-// looks; for the party leader, within two steps either side.
-// Returns 1 when the child stopped.
+/// Stops a running child when the target is close by and ahead of it, or
+/// always when force is set; otherwise starts the child running again.
+/// The child stops when the target is within one facing step of where it
+/// looks; for the party leader, within two steps either side.
+/// Returns 1 when the child stopped.
 static s32 Tolbi_KidStopForTarget(struct TolbiKid *kid, struct TolbiKid *target,
                                   s32 range, s32 force) {
   s32 stopped = 0;
@@ -131,20 +132,20 @@ static s32 Tolbi_UpdateKid(union FieldObject *fieldObject) {
 #endif
 }
 
-// The scene's entrances.
+/// The scene's entrances.
 u8 *Tolbi_GetEntrances(void) { return (u8 *)gTolbiEntrances; }
 
-// Tolbi has no regions.
+/// Tolbi has no regions.
 s32 Tolbi_GetRegions(void) { return 0; }
 
-// The scene's exits.
+/// The scene's exits.
 u8 *Tolbi_GetExits(void) { return (u8 *)gTolbiExits; }
 
-// The scene's actor placements.
+/// The scene's actor placements.
 u8 *Tolbi_GetPlacements(void) { return (u8 *)gTolbiPlacements; }
 
-// Growth on the sprout: the grown plant no longer blocks the party, and its
-// map cell becomes climbable.
+/// Growth on the sprout: the grown plant no longer blocks the party, and its
+/// map cell becomes climbable.
 static void Tolbi_GrowSprout(void) {
   struct FieldActor *sprout;
 
@@ -158,34 +159,34 @@ static void Tolbi_GrowSprout(void) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
 }
 
-// Reveal uncovers the hidden chest: its map cell is drawn in and the chest
-// moves into place.
+/// Reveal uncovers the hidden chest: its map cell is drawn in and the chest
+/// moves into place.
 static void Tolbi_RevealHiddenChest(void) {
   Map_CopyCellAttributes(3, 32, 1, 1, 3, 26);
   MapObject_SetPosition(TOLBI_HIDDEN_CHEST, PIXELS(56), PIXELS(424));
 }
 
-// When Reveal wears off, the chest's cell is covered again and the chest
-// moves out of sight.
+/// When Reveal wears off, the chest's cell is covered again and the chest
+/// moves out of sight.
 static void Tolbi_HideRevealedChest(void) {
   Map_CopyCellAttributes(2, 25, 1, 1, 3, 26);
   MapObject_SetPosition(TOLBI_HIDDEN_CHEST, -1, -1);
 }
 
-// The first sign at Tolbi Spring: face away and toss a coin in.
+/// The first sign at Tolbi Spring: face away and toss a coin in.
 static void Tolbi_ReadSpringSign(void) {
   Engine_EventSetMessage(MsgTolbiFaceAwayTolbi);
   Engine_EventShowMessage(-1, 0);
 }
 
-// The second sign at Tolbi Spring: a Lucky Medal wins better prizes.
+/// The second sign at Tolbi Spring: a Lucky Medal wins better prizes.
 static void Tolbi_ReadLuckyMedalSign(void) {
   Engine_EventSetMessage(MsgTolbiTossLuckyMedal);
   Engine_EventShowMessage(-1, 0);
 }
 
-// Talking to the older brother, or reading his mind. He stops running while
-// he speaks, then turns back the way he was going.
+/// Talking to the older brother, or reading his mind. He stops running while
+/// he speaks, then turns back the way he was going.
 static void Tolbi_TalkToOlderBrother(void) {
   struct EventWork *work = gEventWork;
   struct TolbiKid *kid;
@@ -223,7 +224,7 @@ static void Tolbi_TalkToOlderBrother(void) {
   Engine_EventEnd();
 }
 
-// Talking to the younger sibling, or reading the child's mind, as above.
+/// Talking to the younger sibling, or reading the child's mind, as above.
 static void Tolbi_TalkToYoungerSibling(void) {
   struct EventWork *work = gEventWork;
   struct TolbiKid *kid;
@@ -261,7 +262,7 @@ static void Tolbi_TalkToYoungerSibling(void) {
   Engine_EventEnd();
 }
 
-// Picks the event table for Tolbi's current mood.
+/// Picks the event table for Tolbi's current mood.
 u8 *Tolbi_SelectEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
     return (u8 *)gTolbiEventsAfterColosso;
@@ -272,8 +273,8 @@ u8 *Tolbi_SelectEvents(void) {
   return (u8 *)gTolbiEventsFestival;
 }
 
-// A townsperson asks whether someone can live to be more than 100 years old;
-// either way the talk turns to Babi, who is older still.
+/// A townsperson asks whether someone can live to be more than 100 years old;
+/// either way the talk turns to Babi, who is older still.
 static void Tolbi_AskAboutLivingPastHundred(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiSomeoneLiveMore);
@@ -281,8 +282,8 @@ static void Tolbi_AskAboutLivingPastHundred(void) {
   Engine_EventEnd();
 }
 
-// The father asks whether children really do love souvenirs, and owns up to
-// loving them himself.
+/// The father asks whether children really do love souvenirs, and owns up to
+/// loving them himself.
 static void Tolbi_TalkToFather(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiChildrenLoveSouvenirs);
@@ -290,8 +291,8 @@ static void Tolbi_TalkToFather(void) {
   Engine_EventEnd();
 }
 
-// The mother turns to her crying child, "Be patient, little guy.", then back
-// to promise better sweets later on.
+/// The mother turns to her crying child, "Be patient, little guy.", then back
+/// to promise better sweets later on.
 static void Tolbi_TalkToMother(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiPatientLittleGuy);
@@ -302,7 +303,7 @@ static void Tolbi_TalkToMother(void) {
   Engine_EventEnd();
 }
 
-// The crying child turns, stamps twice and wails for sweets.
+/// The crying child turns, stamps twice and wails for sweets.
 static void Tolbi_TalkToCryingChild(void) {
   Engine_EventBegin();
   Actor_FaceDirection(TOLBI_CRYING_CHILD, FACING_SOUTH, 0);
@@ -312,8 +313,8 @@ static void Tolbi_TalkToCryingChild(void) {
   Engine_EventEnd();
 }
 
-// During the festival the scalper sleeps under the archway: the inns are
-// full.
+/// During the festival the scalper sleeps under the archway: the inns are
+/// full.
 static void Tolbi_TalkToSleepingScalper(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiInnsFullStaying);
@@ -321,8 +322,8 @@ static void Tolbi_TalkToSleepingScalper(void) {
   Engine_EventEnd();
 }
 
-// After Colosso, actor 12 asks whether the party was in the finals. The
-// question is anchored to the father, who has left town by then.
+/// After Colosso, actor 12 asks whether the party was in the finals. The
+/// question is anchored to the father, who has left town by then.
 static void Tolbi_AskWhetherPartyWasInFinals(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiFinalsWerent);
@@ -330,7 +331,7 @@ static void Tolbi_AskWhetherPartyWasInFinals(void) {
   Engine_EventEnd();
 }
 
-// After Colosso, the snack vendor gives the party her leftover corn, once.
+/// After Colosso, the snack vendor gives the party her leftover corn, once.
 static void Tolbi_TalkToSnackVendor(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_TOLBI_CORN_GIVEN) == 0) {
@@ -348,8 +349,8 @@ static void Tolbi_TalkToSnackVendor(void) {
   Engine_EventEnd();
 }
 
-// Walking into one of the town's doors: the door opens, the leader steps in
-// (except at the seventh door) and the scene changes to the door's exit.
+/// Walking into one of the town's doors: the door opens, the leader steps in
+/// (except at the seventh door) and the scene changes to the door's exit.
 static void Tolbi_EnterDoor(void) {
   struct EventWork *work = gEventWork;
   u32 actorId;
@@ -379,8 +380,8 @@ static void Tolbi_EnterDoor(void) {
   Engine_EventEnd();
 }
 
-// The update of actor 14: gives it the leader's sprite priority every frame,
-// for both of its sprite parts.
+/// The update of actor 14: gives it the leader's sprite priority every frame,
+/// for both of its sprite parts.
 static void Tolbi_CopyLeaderPriority(union FieldObject *object) {
   s32 priority;
 
@@ -392,8 +393,8 @@ static void Tolbi_CopyLeaderPriority(union FieldObject *object) {
   }
 }
 
-// Sets up the scene on entry: the running children, actor 14's update, and
-// everything the flags have already changed.
+/// Sets up the scene on entry: the running children, actor 14's update, and
+/// everything the flags have already changed.
 s32 Tolbi_ApplyEntryState(s32 unused) {
   struct FieldActor *actor;
   void (*kidUpdate)(union FieldObject *);
@@ -455,8 +456,8 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   return 0;
 }
 
-// The gambler at the spring's gate asks whether the party wants to test its
-// luck. On yes he steps aside for good and the way to Tolbi Spring opens.
+/// The gambler at the spring's gate asks whether the party wants to test its
+/// luck. On yes he steps aside for good and the way to Tolbi Spring opens.
 static void Tolbi_TalkToGambler(void) {
   Engine_EventBegin();
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 304, 312);
@@ -480,21 +481,21 @@ static void Tolbi_TalkToGambler(void) {
   Engine_EventEnd();
 }
 
-// The gate to Tolbi Spring, once the gambler has stepped aside.
+/// The gate to Tolbi Spring, once the gambler has stepped aside.
 static void Tolbi_EnterSpring(void) {
   Engine_EventRequestExit(30);
   Engine_EventEnd();
 }
 
-// Leaves by the exit numbered as the trigger the party walked into.
+/// Leaves by the exit numbered as the trigger the party walked into.
 static void Tolbi_RequestTouchedExit(void) {
   s16 *trigger = &gEventWork->touchedTrigger;
 
   Engine_EventRequestExit(*trigger);
 }
 
-// During the festival, two soldiers searching for the missing Babi stop the
-// party and show his picture. They leave either way the party answers.
+/// During the festival, two soldiers searching for the missing Babi stop the
+/// party and show his picture. They leave either way the party answers.
 static void Tolbi_MeetSearchingSoldiers(void) {
   s32 firstMsg;
 
@@ -597,8 +598,8 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   Engine_EventEnd();
 }
 
-// Frost on the puddle: the frozen pillar is drawn underfoot and stops
-// following the terrain, and its map cell becomes solid.
+/// Frost on the puddle: the frozen pillar is drawn underfoot and stops
+/// following the terrain, and its map cell becomes solid.
 static void Tolbi_FreezePuddle(void) {
   struct FieldActor *puddle = Object_GetById(TOLBI_PUDDLE);
   if (puddle != 0) {
@@ -613,14 +614,14 @@ static void Tolbi_FreezePuddle(void) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
 }
 
-// The action script of a mirrored actor: flips its sprite and passes 7 on.
+/// The action script of a mirrored actor: flips its sprite and passes 7 on.
 s32 gTolbiMirroredActor[] = {
     SC_SET(SW_SCALE_X, -0x10000),
     SC_ARG(7),
     SC_END,
 };
 
-// The older brother runs a loop of eight points around the plaza.
+/// The older brother runs a loop of eight points around the plaza.
 s32 gTolbiOlderBrotherRun[] = {
     SC_ARG(2),
     SC_SET(SW_SPEED, 0xcccc),
@@ -645,7 +646,7 @@ s32 gTolbiOlderBrotherRun[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-// The younger sibling runs the same loop half a lap ahead.
+/// The younger sibling runs the same loop half a lap ahead.
 s32 gTolbiYoungerSiblingRun[] = {
     SC_ARG(2),
     SC_SET(SW_SPEED, 0xcccc),
@@ -755,7 +756,7 @@ struct ScenePlacement gTolbiPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-// During the festival, before the finals.
+/// During the festival, before the finals.
 struct SceneEvent gTolbiEventsFestival[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), TOLBI_SPROUT, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Tolbi_GrowSprout) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
@@ -824,7 +825,7 @@ struct SceneEvent gTolbiEventsFestival[] = {
     { SCENE_EVENTS_END },
 };
 
-// On finals day.
+/// On finals day.
 struct SceneEvent gTolbiEventsFinalsDay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), TOLBI_SPROUT, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Tolbi_GrowSprout) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
@@ -891,7 +892,7 @@ struct SceneEvent gTolbiEventsFinalsDay[] = {
     { SCENE_EVENTS_END },
 };
 
-// After Colosso has ended.
+/// After Colosso has ended.
 struct SceneEvent gTolbiEventsAfterColosso[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), TOLBI_SPROUT, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Tolbi_GrowSprout) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
@@ -945,14 +946,14 @@ struct SceneEvent gTolbiEventsAfterColosso[] = {
 };
 // clang-format on
 
-// How a door opens: two frames of cells copied over the closed door.
+/// How a door opens: two frames of cells copied over the closed door.
 u16 gTolbiDoorOpening[] = {
     MAP_CELL_STEP(39, 32, 1, 2, 6),
     MAP_CELL_STEP(40, 32, 1, 2, 6),
     MAP_CELL_STEPS_END,
 };
 
-// The doors, in the order of their triggers 1 to 9, by map cell.
+/// The doors, in the order of their triggers 1 to 9, by map cell.
 struct MapCellAnim gTolbiDoors[] = {
     {gTolbiDoorOpening, 48, 6},  {gTolbiDoorOpening, 63, 4},
     {gTolbiDoorOpening, 71, 8},  {gTolbiDoorOpening, 71, 4},

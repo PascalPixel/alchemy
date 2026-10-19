@@ -45,9 +45,9 @@
 // gKolimaForestBendRecords), so they survive a battle.
 
 enum {
-  SHORT_LOG = 8, // slides between x 72 and x 104
+  SHORT_LOG = 8, ///< slides between x 72 and x 104
   FLOODGATE_SWITCH = 9,
-  SIGN = 10 // "Do not touch Floodgate Switch!"
+  SIGN = 10 ///< "Do not touch Floodgate Switch!"
 };
 
 struct BendLog;
@@ -55,29 +55,29 @@ static void KolimaForestBend_MarkShortLogCells(void);
 static void KolimaForestBend_CreateLogs(struct BendLog *log);
 static void KolimaForestBend_RollLog(struct BendLog *logs);
 
-// Where the party enters from the river and from Tret's tree.
+/// Where the party enters from the river and from Tret's tree.
 const struct SceneEntrance *KolimaForestBend_GetEntrances(void) {
   return gKolimaForestBendEntrances;
 }
 
-// The bend has no regions.
+/// The bend has no regions.
 const struct SceneRegion *KolimaForestBend_GetRegions(void) { return 0; }
 
-// The paths back to the river and on to Tret's tree.
+/// The paths back to the river and on to Tret's tree.
 const u32 *KolimaForestBend_GetExits(void) { return gKolimaForestBendExits; }
 
-// The short log, the switch and the sign.
+/// The short log, the switch and the sign.
 const struct ScenePlacement *KolimaForestBend_GetPlacements(void) {
   return gKolimaForestBendPlacements;
 }
 
-// The logs, the switch, the sign, the jump and the chest.
+/// The logs, the switch, the sign, the jump and the chest.
 const struct SceneEvent *KolimaForestBend_GetEvents(void) {
   return gKolimaForestBendEvents;
 }
 
-// Walking into a log: it rolls ahead, and the cells of the logs are marked
-// again where they now lie.
+/// Walking into a log: it rolls ahead, and the cells of the logs are marked
+/// again where they now lie.
 static void KolimaForestBend_PushLog(void) {
   KolimaForestBend_RollLog(gKolimaForestBendRecords);
   Map_CopyCellAttributes(0, 0x40, 0x20, 0x20, 0, 0);
@@ -85,12 +85,12 @@ static void KolimaForestBend_PushLog(void) {
   KolimaForestBend_MarkShortLogCells();
 }
 
-// Walking south into the gap: the leader jumps across.
+/// Walking south into the gap: the leader jumps across.
 static void KolimaForestBend_JumpSouth(void) { Field_TryJumpForward(); }
 
-// A log's record in gSceneState, from gKolimaForestBend_DefaultRecords: its
-// sprite, its first cell and whether it runs north to south (vertical) or
-// west to east, then its actor once it is made. A sprite of -1 ends the list.
+/// A log's record in gSceneState, from gKolimaForestBend_DefaultRecords: its
+/// sprite, its first cell and whether it runs north to south (vertical) or
+/// west to east, then its actor once it is made. A sprite of -1 ends the list.
 struct BendLog {
   s16 sprite;
   s16 x;
@@ -102,8 +102,8 @@ struct BendLog {
 // Shared source is included here in ROM order.
 #include "common/map_panel.h"
 
-// Gives the short log's column of cells its collision: column 4 at the
-// west place, column 6 at the east.
+/// Gives the short log's column of cells its collision: column 4 at the
+/// west place, column 6 at the east.
 static void KolimaForestBend_MarkShortLogCells(void) {
   if (*(s16 *)gKolimaForestBendReturned == 1) {
     Map_CopyCellAttributes(0, 0, 1, 4, 4, 9);
@@ -112,9 +112,9 @@ static void KolimaForestBend_MarkShortLogCells(void) {
   }
 }
 
-// Draws the river at its level and sets each log to match: high water floats
-// the logs 26 pixels up over their own cells, low water lays them on the
-// riverbed.
+/// Draws the river at its level and sets each log to match: high water floats
+/// the logs 26 pixels up over their own cells, low water lays them on the
+/// riverbed.
 static void KolimaForestBend_DrawWaterLevel(void) {
   struct FieldActor *piece;
   s16 *record = gKolimaForestBendRecords;
@@ -173,7 +173,7 @@ static void KolimaForestBend_DrawWaterLevel(void) {
   KolimaForestBend_MarkShortLogCells();
 }
 
-// HBlank callback: selects the captured shake scroll above the split line.
+/// HBlank callback: selects the captured shake scroll above the split line.
 static void KolimaForestBend_ShakeLines(void) {
   u16 line;
   u32 *source;
@@ -196,7 +196,7 @@ static void KolimaForestBend_ShakeLines(void) {
   *destination = *source;
 }
 
-// Captures three background scroll pairs and adds the vertical shake offset.
+/// Captures three background scroll pairs and adds the vertical shake offset.
 static void KolimaForestBend_CaptureShakeScroll(void) {
   u32 *destination;
   const u32 *source;
@@ -213,10 +213,10 @@ static void KolimaForestBend_CaptureShakeScroll(void) {
   scroll[5] += 0xb0;
 }
 
-// Searching the floodgate switch: "Isaac flipped the switch." The camera
-// turns to the floodgate, which opens or closes; the ground rumbles and the
-// top of the screen shakes harder for 100 frames, and the river rises or
-// falls.
+/// Searching the floodgate switch: "Isaac flipped the switch." The camera
+/// turns to the floodgate, which opens or closes; the ground rumbles and the
+/// top of the screen shakes harder for 100 frames, and the river rises or
+/// falls.
 static void KolimaForestBend_FlipFloodgateSwitch(void) {
   s32 nextShakeChance;
 
@@ -314,7 +314,7 @@ static void KolimaForestBend_FlipFloodgateSwitch(void) {
   Engine_EventEnd();
 }
 
-// Walking west into the short log: the leader shoves it west to x 72.
+/// Walking west into the short log: the leader shoves it west to x 72.
 static void KolimaForestBend_PushShortLogWest(void) {
 
   Engine_EventBegin();
@@ -340,7 +340,7 @@ static void KolimaForestBend_PushShortLogWest(void) {
   Engine_EventEnd();
 }
 
-// Walking east into the short log: the leader shoves it east to x 104.
+/// Walking east into the short log: the leader shoves it east to x 104.
 static void KolimaForestBend_PushShortLogEast(void) {
 
   Engine_EventBegin();
@@ -366,10 +366,10 @@ static void KolimaForestBend_PushShortLogEast(void) {
   Engine_EventEnd();
 }
 
-// On entry: the logs' records come back from gSceneState, or on a first visit
-// from the defaults with the water high; the logs are made and the river is
-// drawn at its level. The forest keeps its cursed colours until the curse is
-// lifted.
+/// On entry: the logs' records come back from gSceneState, or on a first visit
+/// from the defaults with the water high; the logs are made and the river is
+/// drawn at its level. The forest keeps its cursed colours until the curse is
+/// lifted.
 s32 KolimaForestBend_Initialize(void) {
   struct FieldActor *actor;
 
@@ -400,7 +400,7 @@ s32 KolimaForestBend_Initialize(void) {
   return 0;
 }
 
-// Makes each log at the middle of its four cells, standing on the ground.
+/// Makes each log at the middle of its four cells, standing on the ground.
 static void KolimaForestBend_CreateLogs(struct BendLog *entry) {
   struct FieldActor *actor;
   s32 height;
@@ -436,7 +436,7 @@ static void KolimaForestBend_CreateLogs(struct BendLog *entry) {
   }
 }
 
-// Writes a collision code into the four cells of each log.
+/// Writes a collision code into the four cells of each log.
 void State_StampRecordCells(s16 *records, s32 value) {
 
   s16 *record = records;
@@ -460,7 +460,7 @@ void State_StampRecordCells(s16 *records, s32 value) {
   } while (record[0] != -1);
 }
 
-// The log lying across the cell, or none.
+/// The log lying across the cell, or none.
 static const struct TileRun *
 KolimaForestBend_FindLogAt(const struct TileRun *run, s32 x, s32 y) {
   while (run->id != -1) {
@@ -481,8 +481,8 @@ KolimaForestBend_FindLogAt(const struct TileRun *run, s32 x, s32 y) {
   return 0;
 }
 
-// Whether four cells from the one given, across or down, are free for a log:
-// none is marked 0xff or holds a wall.
+/// Whether four cells from the one given, across or down, are free for a log:
+/// none is marked 0xff or holds a wall.
 static s32 KolimaForestBend_CheckLogFits(s32 x, s32 z, s32 mode) {
   s32 i;
 
@@ -502,8 +502,8 @@ static s32 KolimaForestBend_CheckLogFits(s32 x, s32 z, s32 mode) {
   return 0;
 }
 
-// Finds the log ahead of the leader and rolls it on, a cell at a time, up to
-// eleven cells or until a cell is not free; the leader follows its shove.
+/// Finds the log ahead of the leader and rolls it on, a cell at a time, up to
+/// eleven cells or until a cell is not free; the leader follows its shove.
 static void KolimaForestBend_RollLog(struct BendLog *runs) {
   struct FieldActor *actor;
   struct BendLog *run;
@@ -578,8 +578,8 @@ static void KolimaForestBend_RollLog(struct BendLog *runs) {
 // Shared source is included here in ROM order.
 #include "common/kolima_palette.h"
 
-// The logs on a first visit, as struct BendLog: sprite 0xcd runs north to
-// south and 0xcf west to east.
+/// The logs on a first visit, as struct BendLog: sprite 0xcd runs north to
+/// south and 0xcf west to east.
 // clang-format off
 u32 gKolimaForestBend_DefaultRecords[] = {
     0xb00cd, 0x10009, 0, 0xc00cf, 12, 0, 0x1100cf, 12,
@@ -600,7 +600,7 @@ struct SceneEntrance gKolimaForestBendEntrances[] = {
     { SCENE_TABLE_END },
 };
 
-// Exit 1 to the river (scene 42), exit 2 to Tret's tree (scene 44).
+/// Exit 1 to the river (scene 42), exit 2 to Tret's tree (scene 44).
 u32 gKolimaForestBendExits[] = {
     SCENE_EXITS(43),
     SCENE_EXIT(1, 42, 2),

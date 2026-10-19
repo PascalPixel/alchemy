@@ -1,10 +1,11 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Reveal.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Reveal.
 
 #include "../psynergy_effects_internal.h"
 
-// Passes value (as animation timer steps) to every one of the 64 objects
-// whose first sprite part shows sprite 200.
+/// Passes value (as animation timer steps) to every one of the 64 objects
+/// whose first sprite part shows sprite 200.
 void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
   struct ObjectRuntime *object = gObjectSlots;
   s32 remainingActors = 63;
@@ -28,10 +29,10 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
   } while (remainingActors >= 0);
 }
 
-// Scheduler callback of the timed effect (kind 8): asks for it to end once
-// the leader is 60 pixels from its centre or its time has run out. The
-// centre and the time are in the event work from 0xcb8 on
-// (FieldFx_RunReveal).
+/// Scheduler callback of the timed effect (kind 8): asks for it to end once
+/// the leader is 60 pixels from its centre or its time has run out. The
+/// centre and the time are in the event work from 0xcb8 on
+/// (FieldFx_RunReveal).
 void FieldEffect_WatchLeaderDistance(void) {
   struct FieldWork *work;
   struct ObjectRuntime *actor;
@@ -59,10 +60,10 @@ void FieldEffect_WatchLeaderDistance(void) {
   }
 }
 
-// Abilities: Reveal (field kind 8).
-//
-// Starts a screen transition centred on the leader, runs the matching event if
-// there is one, and puts markers round the leader.
+/// Abilities: Reveal (field kind 8).
+///
+/// Starts a screen transition centred on the leader, runs the matching event if
+/// there is one, and puts markers round the leader.
 void FieldFx_RunReveal(void) {
   struct FieldWork *field;
   struct DisplayTransitionState *transition;
@@ -110,8 +111,8 @@ void FieldFx_RunReveal(void) {
 
 #define REVEAL_END_EVENT 0x40000005 // Psynergy event, stage 4
 
-// Ends Reveal if it is running: stops its watch, brings the colours back
-// from black over 30 frames and runs stage 4 of the Psynergy event.
+/// Ends Reveal if it is running: stops its watch, brings the colours back
+/// from black over 30 frames and runs stage 4 of the Psynergy event.
 void ResetSceneTransitionEffect(void) {
 #ifdef UBFIX
   struct BattleFxScene *work = gEffectWork;

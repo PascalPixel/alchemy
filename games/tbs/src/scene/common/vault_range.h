@@ -1,12 +1,13 @@
-// Vault, before and after the thieves are caught: villagers who walk about
-// stop when someone is close in front of them.
+/// @file
+/// Vault, before and after the thieves are caught: villagers who walk about
+/// stop when someone is close in front of them.
 #include "types.h"
 #include "field_obj.h"
 
-// Stop the actor (paused, mode 1) when the target is nearer than range pixels
-// and lies ahead of it, within a sixteenth of a turn either side of its
-// heading; force stops it regardless. Returns 1 when it stopped. A target out
-// of range sets it walking again (mode 2).
+/// Stop the actor (paused, mode 1) when the target is nearer than range pixels
+/// and lies ahead of it, within a sixteenth of a turn either side of its
+/// heading; force stops it regardless. Returns 1 when it stopped. A target out
+/// of range sets it walking again (mode 2).
 s32 Vault_StopIfFacingNear(struct FieldActor *actor, struct FieldActor *target,
                            s32 range, s32 force) {
   s32 result = 0;

@@ -1,9 +1,10 @@
-// Part of field.c, the field object, compiled only through it.
-// Object motion, each frame, and the first object script commands.
+/// @file
+/// Part of field.c, the field object, compiled only through it.
+/// Object motion, each frame, and the first object script commands.
 
 #include "../field_internal.h"
 
-// SC_BASE: restarts the script at the next word, and returns 1 to run on.
+/// SC_BASE: restarts the script at the next word, and returns 1 to run on.
 s32 Script_SetBase(struct ScriptInterpreter *interpreter) {
   s32 zero;
 
@@ -14,22 +15,22 @@ s32 Script_SetBase(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// SC_B54_OFF: clears byte54 and moves on to the next command.
+/// SC_B54_OFF: clears byte54 and moves on to the next command.
 s32 Script_ClearByte54(struct ScriptInterpreter *interpreter) {
   interpreter->byte54 = 0;
   interpreter->cursor++;
   return 1;
 }
 
-// SC_B54_ON: sets byte54 and moves on to the next command.
+/// SC_B54_ON: sets byte54 and moves on to the next command.
 s32 Script_SetByte54(struct ScriptInterpreter *interpreter) {
   interpreter->byte54 = 1;
   interpreter->cursor++;
   return 1;
 }
 
-// Polls a field object's common movement state until it arrives, up to 600
-// frames. Actor, camera and effect-object views share this pointer boundary.
+/// Polls a field object's common movement state until it arrives, up to 600
+/// frames. Actor, camera and effect-object views share this pointer boundary.
 void FieldObject_WaitForMove(void *fieldObject) {
   s32 waitedFrames;
 
@@ -40,9 +41,9 @@ void FieldObject_WaitForMove(void *fieldObject) {
   }
 }
 
-// Returns 1 when the object has no movement target: none of its target
-// coordinates set, or for an object moved by the ground (any motion flag)
-// neither its target x nor z.
+/// Returns 1 when the object has no movement target: none of its target
+/// coordinates set, or for an object moved by the ground (any motion flag)
+/// neither its target x nor z.
 s32 Object_IsTargetUnset(struct ObjectRuntime *object) {
   s32 first;
   s32 second;
@@ -61,12 +62,12 @@ s32 Object_IsTargetUnset(struct ObjectRuntime *object) {
   return 1;
 }
 
-// value squared.
+/// value squared.
 static __inline__ s32 ObjectMotion_Square(s32 value) { return value * value; }
 
-// Advances all 64 field objects by one frame, as Object_UpdateAll does for
-// the eight script objects, with the field's extras: free flight in 3D,
-// terrain following, floating, and solid objects that refuse to overlap.
+/// Advances all 64 field objects by one frame, as Object_UpdateAll does for
+/// the eight script objects, with the field's extras: free flight in 3D,
+/// terrain following, floating, and solid objects that refuse to overlap.
 void Object_UpdateAllThumb(void) {
   struct ScriptMotionObject *object;
 #ifdef UBFIX
@@ -379,8 +380,8 @@ void Object_UpdateAllThumb(void) {
   }
 }
 
-// Places the object at (x, y, z), in 16.16 pixels, clears its movement target
-// and stops it.
+/// Places the object at (x, y, z), in 16.16 pixels, clears its movement target
+/// and stops it.
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
                                       s32 y, s32 z) {
   object->z = z;
@@ -392,12 +393,12 @@ void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
   SET_VELOCITY(object, 0, 0, 0);
 }
 
-// Sends an object towards (x, y, z), in 16.16 pixels. Within a pixel it
-// arrives at once. Unless it snaps to its target, the target is pulled in
-// by half its braking distance (speed limit squared over acceleration), or
-// to halfway when that is further, as the object coasts on. Picks the
-// axis to watch for arrival: the one with the furthest to go (y only for a
-// free-flying object).
+/// Sends an object towards (x, y, z), in 16.16 pixels. Within a pixel it
+/// arrives at once. Unless it snaps to its target, the target is pulled in
+/// by half its braking distance (speed limit squared over acceleration), or
+/// to halfway when that is further, as the object coasts on. Picks the
+/// axis to watch for arrival: the one with the furthest to go (y only for a
+/// free-flying object).
 void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
   s32 dx;
   s32 distance;
@@ -460,7 +461,7 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
   }
 }
 
-// Copies Object_UpdateAll (ARM code) to the heap, runs it once and frees it.
+/// Copies Object_UpdateAll (ARM code) to the heap, runs it once and frees it.
 UNUSED void Object_RunUpdateAllFromHeap(void) {
   void (*updateObjects)(void);
 
@@ -469,9 +470,9 @@ UNUSED void Object_RunUpdateAllFromHeap(void) {
   MemFree(updateObjects);
 }
 
-// Advances the first 14 objects' motion by one frame, without running their
-// scripts: steering towards a target or braking, gravity and bouncing,
-// arrival, and turning to face the direction of travel.
+/// Advances the first 14 objects' motion by one frame, without running their
+/// scripts: steering towards a target or braking, gravity and bouncing,
+/// arrival, and turning to face the direction of travel.
 void Object_UpdateAllMotion(void) {
   struct ScriptMotionObject *object;
   s32 objectsRemaining;

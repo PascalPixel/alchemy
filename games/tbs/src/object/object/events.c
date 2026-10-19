@@ -1,11 +1,12 @@
-// Part of object.c, the field object, compiled only through it.
-// Finding and running a scene's events: talking, touching, searching.
+/// @file
+/// Part of object.c, the field object, compiled only through it.
+/// Finding and running a scene's events: talking, touching, searching.
 
 #include "../object_internal.h"
 
-// Returns the placement of actor id in the scene's placement tables, or NULL:
-// for a party character (0 to 7) the row with its sprite, and for a placed
-// actor (8 on) the row it was created from, counting the placed rows in order.
+/// Returns the placement of actor id in the scene's placement tables, or NULL:
+/// for a party character (0 to 7) the row with its sprite, and for a placed
+/// actor (8 on) the row it was created from, counting the placed rows in order.
 struct ScenePlacement *Scene_FindActorPlacement(s32 id) {
   struct ScenePlacement *placement;
   s32 tableIndex;
@@ -51,8 +52,8 @@ found:
 #endif
 }
 
-// Returns whether an event condition holds: -1 always holds; a condition with
-// bit 0x1000 holds while that flag is set, any other while its flag is clear.
+/// Returns whether an event condition holds: -1 always holds; a condition with
+/// bit 0x1000 holds while that flag is set, any other while its flag is clear.
 s32 GameFlag_IsConditionActive(s32 condition) {
   s32 flagSet;
 
@@ -66,9 +67,9 @@ s32 GameFlag_IsConditionActive(s32 condition) {
   return flagSet == 0;
 }
 
-// Returns 1 for a search event (kind 3) that holds whatever its condition: one
-// with more flags than its kind, unless its result is a mimic battle (type
-// 0x005 in its top 12 bits).
+/// Returns 1 for a search event (kind 3) that holds whatever its condition: one
+/// with more flags than its kind, unless its result is a mimic battle (type
+/// 0x005 in its top 12 bits).
 u32 Event_SearchIgnoresCondition(s32 flags, s32 result) {
   u32 mimicDifference;
   s32 searchFlags;
@@ -87,10 +88,10 @@ u32 Event_SearchIgnoresCondition(s32 flags, s32 result) {
   return ignoresCondition;
 }
 
-// Returns the first of the scene's events of kind for target whose condition
-// holds, or NULL. Flag 0x200 also needs the leader to have pushed against it
-// for more than 12 frames (2 with flag 0x800); flag 0x400 needs the leader to
-// face within an eighth of a turn of the direction in the top four bits.
+/// Returns the first of the scene's events of kind for target whose condition
+/// holds, or NULL. Flag 0x200 also needs the leader to have pushed against it
+/// for more than 12 frames (2 with flag 0x800); flag 0x400 needs the leader to
+/// face within an eighth of a turn of the direction in the top four bits.
 struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 target) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   struct EffectDescriptor *event = (struct EffectDescriptor *)work->events;
@@ -145,11 +146,11 @@ struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 target) {
   return 0;
 }
 
-// Runs the scene's initialization again. Nothing calls this.
+/// Runs the scene's initialization again. Nothing calls this.
 UNUSED void Runtime_CallWorkBlockEntry(void) { gOverlayArea.initialize(); }
 
-// Returns the talk event of actor id: for the actor the party has stopped, its
-// kind 7 event if it has one.
+/// Returns the talk event of actor id: for the actor the party has stopped, its
+/// kind 7 event if it has one.
 s32 Scene_FindActorTalkEvent(s32 id) {
   struct EffectDescriptor *talkEvent = Scene_FindEvent(EVENT_TALK, id);
   s32 pausedActor = gGameState.pausedObject;
@@ -164,11 +165,11 @@ s32 Scene_FindActorTalkEvent(s32 id) {
   return (s32)talkEvent;
 }
 
-// Talks to actor id: shows its event's message or calls its event function,
-// with the actor stopped and turned as its placement says. For the actor the
-// party has stopped, its kind 7 event comes first; without one, a talk event
-// that is a function gives a random line from MsgPonderEllipsis ("...")
-// instead. Returns 0 when an event ran, -1 when there was none.
+/// Talks to actor id: shows its event's message or calls its event function,
+/// with the actor stopped and turned as its placement says. For the actor the
+/// party has stopped, its kind 7 event comes first; without one, a talk event
+/// that is a function gives a random line from MsgPonderEllipsis ("...")
+/// instead. Returns 0 when an event ran, -1 when there was none.
 s32 Scene_TalkToActor(s32 id) {
   struct ScenePlacement *placement = Scene_FindActorPlacement(id);
   s32 result = -1;
@@ -266,8 +267,8 @@ finish:
   return result;
 }
 
-// Runs the scene's raised event (kind 6) for value: its message or its
-// function. Returns 0 when an event ran, -1 when there was none.
+/// Runs the scene's raised event (kind 6) for value: its message or its
+/// function. Returns 0 when an event ran, -1 when there was none.
 s32 Scene_RunRaisedEvent(s32 value) {
   s32 result;
   s32 handled;
@@ -293,9 +294,9 @@ s32 Scene_RunRaisedEvent(s32 value) {
   return handled;
 }
 
-// Runs the touch event (kind 2) of what the leader touched, or else takes its
-// exit (kind 1): plays the exit's sound (and effect) and records where it
-// leads. Returns 0 when something ran, -1 when there was nothing.
+/// Runs the touch event (kind 2) of what the leader touched, or else takes its
+/// exit (kind 1): plays the exit's sound (and effect) and records where it
+/// leads. Returns 0 when something ran, -1 when there was nothing.
 s32 Scene_RunTouchOrExit(s32 value) {
   struct EffectDescriptor *touch;
   struct EffectDescriptor *exit;
@@ -344,8 +345,8 @@ s32 Scene_RunTouchOrExit(s32 value) {
   return handled;
 }
 
-// Runs the event of a tile the leader pushes against (codes 0xf9 and 0xfc to
-// 0xfe), once it has pushed for more than 12 frames; the count then restarts.
+/// Runs the event of a tile the leader pushes against (codes 0xf9 and 0xfc to
+/// 0xfe), once it has pushed for more than 12 frames; the count then restarts.
 s32 Field_RunPushTileEvent(s32 collisionCode) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   s32 leader = gGameState.selectedActor;
@@ -378,10 +379,10 @@ s32 Field_RunPushTileEvent(s32 collisionCode) {
   return 0;
 }
 
-// Searches the tile ahead with the given collision code. Codes 242 to 247 show
-// their two messages. Otherwise the scene's search event for the tile runs: a
-// function, a message, or a chest holding a Psynergy stone, a mimic, coins or
-// an item; with no event, "checked the ground" and "found nothing".
+/// Searches the tile ahead with the given collision code. Codes 242 to 247 show
+/// their two messages. Otherwise the scene's search event for the tile runs: a
+/// function, a message, or a chest holding a Psynergy stone, a mimic, coins or
+/// an item; with no event, "checked the ground" and "found nothing".
 s32 Field_SearchTile(s32 tile) {
   const struct SceneEvent *event;
   s32 leader;

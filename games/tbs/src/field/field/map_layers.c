@@ -1,9 +1,10 @@
-// Part of field.c, the field object, compiled only through it.
-// Layered maps: loading, drawing and scrolling, and copying cells.
+/// @file
+/// Part of field.c, the field object, compiled only through it.
+/// Layered maps: loading, drawing and scrolling, and copying cells.
 
 #include "../field_internal.h"
 
-// Remaps byteCount bytes in place through gRuntime_ByteRemapTable.
+/// Remaps byteCount bytes in place through gRuntime_ByteRemapTable.
 void Runtime_RemapBytesByTable(u8 *bytes, s32 byteCount) {
   s32 remaining;
   u8 *cursor;
@@ -21,14 +22,14 @@ void Runtime_RemapBytesByTable(u8 *bytes, s32 byteCount) {
   }
 }
 
-// Unpacks the staged block data into gMapBlocks. Byte 1 of the staged buffer
-// (Ram_MapCellBuffer) is the method, and the
-// 16-bit data follows from byte 2. size counts the method byte too (an even
-// size means no data). Methods:
-//   0: copy as it is
-//   1: all the high bytes, then all the low bytes; each value is XORed with
-//      the one before
-//   2: each value is XORed with the one before
+/// Unpacks the staged block data into gMapBlocks. Byte 1 of the staged buffer
+/// (Ram_MapCellBuffer) is the method, and the
+/// 16-bit data follows from byte 2. size counts the method byte too (an even
+/// size means no data). Methods:
+///   0: copy as it is
+///   1: all the high bytes, then all the low bytes; each value is XORed with
+///      the one before
+///   2: each value is XORed with the one before
 void Tilemap_DecodeStagedBuffer(s32 size) {
   u16 *destinationWords;
   u16 *sourceWords;
@@ -72,8 +73,8 @@ void Tilemap_DecodeStagedBuffer(s32 size) {
 
 typedef void (*TilemapConvertFn)(void *dst, const void *src, const void *saved);
 
-// Gives each map cell whose block number is 0xfff (a placeholder) a number
-// of its own, counting up from 0 in map order.
+/// Gives each map cell whose block number is 0xfff (a placeholder) a number
+/// of its own, counting up from 0 in map order.
 UNUSED void Tilemap_NumberPlaceholderBlocks(void) {
   u32 *cell = (u32 *)gMapCellBuffer;
   u32 remaining = 128 << 7;
@@ -95,8 +96,8 @@ UNUSED void Tilemap_NumberPlaceholderBlocks(void) {
   } while (remaining != 0);
 }
 
-// Converts the map's cells in place with Tile_ConvertMap, run from RAM, from
-// a saved copy of the staged buffer.
+/// Converts the map's cells in place with Tile_ConvertMap, run from RAM, from
+/// a saved copy of the staged buffer.
 void Tilemap_ConvertBuffer(void) {
   u8 *savedCells;
   TilemapConvertFn convertMap;
@@ -111,8 +112,8 @@ void Tilemap_ConvertBuffer(void) {
   MemFree(savedCells);
 }
 
-// Copies one tile column of a block (metatile) into a BG map: its top and
-// bottom tile entries, choosing the left or right half with tileHalf.
+/// Copies one tile column of a block (metatile) into a BG map: its top and
+/// bottom tile entries, choosing the left or right half with tileHalf.
 static __inline__ void Map_CopyMetatileHalfColumn(u32 *cell, u8 *screenMap,
                                                   u32 screenRowOffset,
                                                   u32 screenColumnOffset,
@@ -131,8 +132,8 @@ static __inline__ void Map_CopyMetatileHalfColumn(u32 *cell, u8 *screenMap,
   *(u16 *)(screenTile + 64) = *metatileEntry;
 }
 
-// Copies a whole block (metatile) into a BG map: its top two tile entries
-// and its bottom two, a map row (64 bytes) below.
+/// Copies a whole block (metatile) into a BG map: its top two tile entries
+/// and its bottom two, a map row (64 bytes) below.
 static __inline__ void Map_CopyMetatileToScreen(u32 *cell, u8 *screenMap,
                                                 u32 screenRowOffset,
                                                 u32 screenColumnOffset) {
@@ -180,11 +181,11 @@ struct LayeredSceneHeader {
   s32 script;
 };
 
-// Loads layered scene index from gMap_LayeredScenes: its blocks, collision,
-// cells, tile animations, blend script and event script; sets up the three
-// background layers' origins, parallax and wrap from the scene header; loads
-// the palette and tile graphics unless FLAG_KEEP_LAYER_GRAPHICS says they are
-// loaded; and starts the layer scrolling. Returns 2.
+/// Loads layered scene index from gMap_LayeredScenes: its blocks, collision,
+/// cells, tile animations, blend script and event script; sets up the three
+/// background layers' origins, parallax and wrap from the scene header; loads
+/// the palette and tile graphics unless FLAG_KEEP_LAYER_GRAPHICS says they are
+/// loaded; and starts the layer scrolling. Returns 2.
 s32 Map_LoadLayeredScene(s32 index) {
   struct LayeredSceneEntry *sceneResources;
   struct MapScrollWork *work;
@@ -337,8 +338,8 @@ s32 Map_LoadLayeredScene(s32 index) {
   return 2;
 }
 
-// Centres the camera on the point the map follows (origin: x, height, z),
-// or on (0, 0) when there is none, and scrolls the layers there.
+/// Centres the camera on the point the map follows (origin: x, height, z),
+/// or on (0, 0) when there is none, and scrolls the layers there.
 void Map_CenterOnFollowedPoint(void) {
   struct MapScrollWork *work = gMapWork[0];
   s32 x;
@@ -359,9 +360,9 @@ void Map_CenterOnFollowedPoint(void) {
   Map_UpdateLayerScroll();
 }
 
-// Draws a row of 16 blocks (32 tiles) of a layer's cells into its BG map
-// (screen block 5 + layer), starting at tile (tileX, tileY); the BG map
-// wraps every 32 tiles.
+/// Draws a row of 16 blocks (32 tiles) of a layer's cells into its BG map
+/// (screen block 5 + layer), starting at tile (tileX, tileY); the BG map
+/// wraps every 32 tiles.
 void Map_RenderMetatileRow(u32 layer, s32 tileX, s32 tileY) {
   u8 *screenMap = BG_SCREEN_BLOCK(5) + (layer << 11);
   u32 sourceRow = ((tileY / 2) & 0x7F) << 7;
@@ -390,8 +391,8 @@ void Map_RenderMetatileRow(u32 layer, s32 tileX, s32 tileY) {
   }
 }
 
-// Draws a column of 11 blocks of a layer's cells, one tile wide, into its BG
-// map, starting at tile (tileX, tileY).
+/// Draws a column of 11 blocks of a layer's cells, one tile wide, into its BG
+/// map, starting at tile (tileX, tileY).
 void Map_RenderMetatileColumn(u32 layer, s32 tileX, s32 tileY) {
   u8 *screenMap = BG_SCREEN_BLOCK(5) + (layer << 11);
   u32 sourceRow = ((tileY / 2) & 0x7F) << 7;
@@ -413,11 +414,11 @@ void Map_RenderMetatileColumn(u32 layer, s32 tileX, s32 tileY) {
   }
 }
 
-// Each frame on a layered map: centres the view on the point the map follows
-// (origin), clamped to the map's bounds and shaken by any decaying screen
-// shake; then scrolls each of the three layers by its parallax scale and
-// automatic scroll (wrapping at its period), draws the block column or row
-// that scrolls into view, and sets its BG scroll.
+/// Each frame on a layered map: centres the view on the point the map follows
+/// (origin), clamped to the map's bounds and shaken by any decaying screen
+/// shake; then scrolls each of the three layers by its parallax scale and
+/// automatic scroll (wrapping at its period), draws the block column or row
+/// that scrolls into view, and sets its BG scroll.
 void Map_UpdateLayerScroll(void) {
   struct MapScrollWork *work;
   struct MapLayerScroll *layer;
@@ -499,8 +500,8 @@ void Map_UpdateLayerScroll(void) {
   }
 }
 
-// Centres the view on (x, y) in 16.16 pixels, clamped to the map's bounds,
-// and redraws every enabled layer's BG map around it.
+/// Centres the view on (x, y) in 16.16 pixels, clamped to the map's bounds,
+/// and redraws every enabled layer's BG map around it.
 void Map_SetCameraCenter(s32 x, s32 y) {
   u32 layerIndex;
   u8 *screenMap;
@@ -557,14 +558,14 @@ void Map_SetCameraCenter(s32 x, s32 y) {
   }
 }
 
-// The top left of a layer's visible area, in cells.
+/// The top left of a layer's visible area, in cells.
 struct MapTilePos {
   s32 x, y;
 };
 
-// Copies the block numbers of a rectangle of cells from (srcX, srcY) to
-// (dstX, dstY), width by height cells, keeping each destination's
-// attributes, and redraws the copied cells that are on screen.
+/// Copies the block numbers of a rectangle of cells from (srcX, srcY) to
+/// (dstX, dstY), width by height cells, keeping each destination's
+/// attributes, and redraws the copied cells that are on screen.
 void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
                                  u32 width, u32 height) {
   /* FAKEMATCH(temporary): the chains of temporaries set the registers and the
@@ -655,10 +656,10 @@ struct MapCopyCommand {
 } __attribute__((packed, aligned(2)));
 typedef char MapCopyCommandSize[(sizeof(struct MapCopyCommand) == 10) ? 1 : -1];
 
-// Plays a map edit sequence (struct MapCopyCommand records, ended by a
-// source of 0xffff): copies each record's rectangle of block numbers to
-// (destinationX, destinationY) and waits its delay in frames. Doors and
-// other changing scenery are drawn this way.
+/// Plays a map edit sequence (struct MapCopyCommand records, ended by a
+/// source of 0xffff): copies each record's rectangle of block numbers to
+/// (destinationX, destinationY) and waits its delay in frames. Doors and
+/// other changing scenery are drawn this way.
 void Map_PlayMetatileCopySequence(u16 *sequence, s32 destinationX,
                                   u32 destinationY) {
   struct MapCopyCommand *copyCommand = (struct MapCopyCommand *)sequence;
@@ -709,10 +710,10 @@ void Map_PlayMetatileCopySequence(u16 *sequence, s32 destinationX,
 #define MAP_CELL_TILE_MASK 0x00000fff      // the block (metatile) number
 #define MAP_CELL_ATTRIBUTE_MASK 0xfffff000 // the cell's attributes
 
-// Copies a rectangle of cells (16x16 pixels each) as they are, from
-// (srcX, srcY) to (dstX, dstY), width by height cells. Where a copied cell
-// lies in a layer's visible area (16x12 cells), its block's 2x2 tiles go to
-// that layer's BG map in VRAM too.
+/// Copies a rectangle of cells (16x16 pixels each) as they are, from
+/// (srcX, srcY) to (dstX, dstY), width by height cells. Where a copied cell
+/// lies in a layer's visible area (16x12 cells), its block's 2x2 tiles go to
+/// that layer's BG map in VRAM too.
 void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
   s32 y = dstY;
@@ -830,9 +831,9 @@ void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
-// Copies only the attributes of a rectangle of cells, from (srcX, srcY) to
-// (dstX, dstY), width by height cells, keeping each destination cell's
-// block number.
+/// Copies only the attributes of a rectangle of cells, from (srcX, srcY) to
+/// (dstX, dstY), width by height cells, keeping each destination cell's
+/// block number.
 void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
   u32 *destinationCells = MAP_CELLS;
@@ -855,9 +856,9 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
-// Copies only the block numbers of a rectangle of cells, from (srcX, srcY)
-// to (dstX, dstY), width by height cells, keeping each destination cell's
-// attributes; cells in a visible area update the BG maps too.
+/// Copies only the block numbers of a rectangle of cells, from (srcX, srcY)
+/// to (dstX, dstY), width by height cells, keeping each destination cell's
+/// attributes; cells in a visible area update the BG maps too.
 void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
                            s32 dstY) {
   /* FAKEMATCH(temporary): the word and index temporaries set the registers and
@@ -954,8 +955,8 @@ void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
   }
 }
 
-// Sets which of BG1-BG3 the map shows (bits 9-11 of its display flags, as in
-// REG_DISPCNT) from layerFlags, keeping its other flags.
+/// Sets which of BG1-BG3 the map shows (bits 9-11 of its display flags, as in
+/// REG_DISPCNT) from layerFlags, keeping its other flags.
 void Map_SetShownLayers(u32 layerFlags) {
   struct MapState *mapState = gMapWork[0];
   u32 mask = layerFlags & (DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON);

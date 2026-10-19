@@ -1,5 +1,6 @@
-// Part of object.c, the field object, compiled only through it.
-// The colour buffer: palettes moved toward target colours.
+/// @file
+/// Part of object.c, the field object, compiled only through it.
+/// The colour buffer: palettes moved toward target colours.
 
 #include "../object_internal.h"
 
@@ -9,8 +10,8 @@
 #define COLOR_HALF 224
 #define COLOR_CHANNEL_COUNT (COLOR_MAX * 3)
 
-// Sets each of the 1344 colour channels of step to the amount to add each
-// frame for source to reach target in frames frames.
+/// Sets each of the 1344 colour channels of step to the amount to add each
+/// frame for source to reach target in frames frames.
 void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
                                  s32 frames) {
   s32 remainingChannels;
@@ -31,9 +32,9 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
   }
 }
 
-// Each frame (unless flag 0x152 is set): moves the colour buffer one step
-// toward its target, packs it into RGB555 and queues it for the BG and OBJ
-// palettes.
+/// Each frame (unless flag 0x152 is set): moves the colour buffer one step
+/// toward its target, packs it into RGB555 and queues it for the BG and OBJ
+/// palettes.
 void BattlePalette_UpdateBlend(void) {
   struct BattleEffectBuffers *work = gPaletteBufferWork;
   u16 *channelDelta = work->delta;
@@ -82,17 +83,17 @@ void BattlePalette_UpdateBlend(void) {
   }
 }
 
-// Curves mapping a 5-bit channel to the buffer's channel shifted up 10 bits.
+/// Curves mapping a 5-bit channel to the buffer's channel shifted up 10 bits.
 extern u16 gBattlePalette_ChannelCurve[];
 extern u16 gBattlePalette_ChannelCurveLight[];
 extern u16 gBattlePalette_ChannelCurveContrast[];
 
-// Builds colours for the colour buffer from the palette src into dst, which
-// holds each colour as B, G and R channels shifted up 10 bits. mode below
-// 0x8000 is one colour for all; PALETTE_TRANSFORM_FROM_SOURCE the backdrop
-// colour; the other PALETTE_TRANSFORM_* values transform each colour; any
-// other value is the address of a ready buffer to copy. half: 0 for all 448
-// colours, 1 for the BG's 224, 2 for the OBJ's 224.
+/// Builds colours for the colour buffer from the palette src into dst, which
+/// holds each colour as B, G and R channels shifted up 10 bits. mode below
+/// 0x8000 is one colour for all; PALETTE_TRANSFORM_FROM_SOURCE the backdrop
+/// colour; the other PALETTE_TRANSFORM_* values transform each colour; any
+/// other value is the address of a ready buffer to copy. half: 0 for all 448
+/// colours, 1 for the BG's 224, 2 for the OBJ's 224.
 void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
   u32 i;
   u32 colorCount = COLOR_MAX;
@@ -351,8 +352,8 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
   }
 }
 
-// Sets up the colour buffer (heap block 32) from the BG and OBJ palettes and
-// starts updating the palettes from it each frame.
+/// Sets up the colour buffer (heap block 32) from the BG and OBJ palettes and
+/// starts updating the palettes from it each frame.
 void BattleEffect_InitializeBuffers(void) {
   struct BattleEffectBuffers *work;
 
@@ -366,13 +367,13 @@ void BattleEffect_InitializeBuffers(void) {
   Scheduler_AddOrUpdateCallback(BattlePalette_UpdateBlend, 0xc8f);
 }
 
-// Stops the colour buffer and frees it.
+/// Stops the colour buffer and frees it.
 void BattlePalette_StopBlendAndReleaseBuffer(void) {
   Scheduler_RemoveCallback(&BattlePalette_UpdateBlend);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_PALBUF);
 }
 
-// Sets the colours the buffer moves toward (see BattleFx_BuildBuffer).
+/// Sets the colours the buffer moves toward (see BattleFx_BuildBuffer).
 void BattleFx_ApplyColorToTargetBuffer(s32 mode, s32 half) {
   struct BattleEffectBuffers *work = gPaletteBufferWork;
 
@@ -381,7 +382,7 @@ void BattleFx_ApplyColorToTargetBuffer(s32 mode, s32 half) {
   }
 }
 
-// Sets the colours the buffer shows now (see BattleFx_BuildBuffer).
+/// Sets the colours the buffer shows now (see BattleFx_BuildBuffer).
 void BattleFx_ApplyColorToSourceBuffer(s32 mode, s32 half) {
   struct BattleEffectBuffers *work = gPaletteBufferWork;
 
@@ -390,7 +391,7 @@ void BattleFx_ApplyColorToSourceBuffer(s32 mode, s32 half) {
   }
 }
 
-// Sets the buffer's source backdrop colour.
+/// Sets the buffer's source backdrop colour.
 void BattleFx_SetPrimaryBufferValue(u32 color) {
   struct BattleEffectBuffers *work = gPaletteBufferWork;
 
@@ -399,7 +400,7 @@ void BattleFx_SetPrimaryBufferValue(u32 color) {
   }
 }
 
-// Starts moving the shown colours to the target colours over frames frames.
+/// Starts moving the shown colours to the target colours over frames frames.
 void BattleFx_StartBufferInterpolation(s32 frames) {
   struct BattleEffectBuffers *work = gPaletteBufferWork;
 
@@ -411,7 +412,7 @@ void BattleFx_StartBufferInterpolation(s32 frames) {
   }
 }
 
-// Clamps a 5-bit colour channel to 0 to 31.
+/// Clamps a 5-bit colour channel to 0 to 31.
 s32 BattleFx_ClampRgb555Channel(s32 value) {
   if (value > 31)
     return 31;
@@ -420,7 +421,7 @@ s32 BattleFx_ClampRgb555Channel(s32 value) {
   return value;
 }
 
-// Clamps a colour channel shifted up 10 bits to at most 31 << 10.
+/// Clamps a colour channel shifted up 10 bits to at most 31 << 10.
 s32 BattleFx_ClampRgb555Component(s32 value) {
   if (value > 31744)
     value = 31744;

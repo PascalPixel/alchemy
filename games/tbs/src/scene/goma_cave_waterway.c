@@ -1,4 +1,5 @@
-// Goma Cave: the waterway rooms, where a stump leaps away under Move.
+/// @file
+/// Goma Cave: the waterway rooms, where a stump leaps away under Move.
 #include "game_state.h"
 #include "unit/scene/goma_cave_waterway.h"
 #include "unit/scene/common/effect_spawn.h"
@@ -32,7 +33,7 @@
 
 #define STUMP 8
 
-// Forward declarations.
+/// Forward declarations.
 static void GomaCaveWaterway_LeapStump(s32 no);
 
 // Shared source is included here in ROM order.
@@ -57,8 +58,8 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gGomaCaveWaterwayPlacementsOther;
 }
 
-// Move on the stump: from column 24 it spins, leaps away and lies where it
-// lands.
+/// Move on the stump: from column 24 it spins, leaps away and lies where it
+/// lands.
 static void Event_MoveStump(void) {
   struct FieldActor *stump;
   struct FieldActor *landed;
@@ -83,8 +84,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gGomaCaveWaterwayEventsOther;
 }
 
-// Arriving by entrance 5 shows no place name; otherwise the stump lies
-// where the party moved it.
+/// Arriving by entrance 5 shows no place name; otherwise the stump lies
+/// where the party moved it.
 s32 Scene_Initialize(void) {
   struct FieldActor *stump;
 
@@ -107,7 +108,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// The leaping stump's update hook turns its sprite a fixed amount per frame.
+/// The leaping stump's update hook turns its sprite a fixed amount per frame.
 static void GomaCaveWaterway_SpinStump(RotatingEffectWork *work) {
   RotatingEffectRecord *record = work->record;
 
@@ -145,8 +146,8 @@ struct Vector {
 
 void Effect_Spawn();
 
-// The stump spins in place, leaps and lands with a shake and a ring of dust,
-// then comes to rest a little further on.
+/// The stump spins in place, leaps and lands with a shake and a ring of dust,
+/// then comes to rest a little further on.
 static void GomaCaveWaterway_LeapStump(s32 no) {
   union SceneActor *work;
   u32 cnt;

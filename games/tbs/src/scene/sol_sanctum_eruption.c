@@ -38,7 +38,7 @@
 #include "songs.h"
 #include "item_ids.h"
 
-// Forward declarations.
+/// Forward declarations.
 static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId);
 static void SolSanctumEruption_ThrowEruptionRing(void);
 static void SolSanctumEruption_ResetEmberEmission(void);
@@ -76,28 +76,28 @@ struct PairWork {
   u16 vramBlock;
 };
 
-// Return the arrival positions for the collapsing star chamber.
+/// Return the arrival positions for the collapsing star chamber.
 struct SceneEntrance *SolSanctumEruption_GetEntrances(void) {
   return gSolSanctumEruption_Entrances;
 }
 
-// This scene has no separate trigger-region table.
+/// This scene has no separate trigger-region table.
 struct SceneRegion *SolSanctumEruption_GetRegions(void) { return NULL; }
 
-// Return the scene destinations for the collapsing chamber.
+/// Return the scene destinations for the collapsing chamber.
 u32 *SolSanctumEruption_GetExits(void) { return gSolSanctumEruption_Exits; }
 
-// Return the hostages, antagonists and eruption effects.
+/// Return the hostages, antagonists and eruption effects.
 struct ScenePlacement *SolSanctumEruption_GetPlacements(void) {
   return gSolSanctumEruption_Placements;
 }
 
-// Return the scene event table, which has no scripted interactions.
+/// Return the scene event table, which has no scripted interactions.
 struct SceneEvent *SolSanctumEruption_GetEvents(void) {
   return gSolSanctumEruption_Events;
 }
 
-// Stage Saturos, Menardi, Alex and Felix around Jenna and Kraden.
+/// Stage Saturos, Menardi, Alex and Felix around Jenna and Kraden.
 static inline void SolSanctumEruption_PlaceHostageGroup(void) {
   Actor_SetPosition(JENNA, PIXELS(475), PIXELS(332));
   Actor_SetPosition(ACTOR_KRADEN, PIXELS(491), PIXELS(332));
@@ -107,7 +107,8 @@ static inline void SolSanctumEruption_PlaceHostageGroup(void) {
   Actor_SetPosition(ACTOR_ALEX, PIXELS(479), PIXELS(362));
 }
 
-// Play Saturos taking the hostages before the Wise One rescues Isaac and Garet.
+/// Play Saturos taking the hostages before the Wise One rescues Isaac and
+/// Garet.
 static void SolSanctumEruption_PlayHostageScene(void) {
   void Actor_ShowEmote();
   void ColorBuffer_ApplyTarget();
@@ -477,7 +478,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Party_RemoveOwnerRestored(5);
 }
 
-// Lift one departing actor and shrink it together with the paired effect.
+/// Lift one departing actor and shrink it together with the paired effect.
 static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
   struct FieldActor *actor;
   struct FieldActor *departureEffect;
@@ -519,13 +520,13 @@ static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
   Actor_SetPosition(ACTOR_TELEPORT_GLOW, 0, 0);
 }
 
-// Unused empty callback.
+/// Unused empty callback.
 UNUSED static void SolSanctumEruption_UnusedCallbackA(void) {}
 
-// Unused empty callback.
+/// Unused empty callback.
 UNUSED static void SolSanctumEruption_UnusedCallbackB(void) {}
 
-// Start the hostage scene only for arrival ten.
+/// Start the hostage scene only for arrival ten.
 s32 SolSanctumEruption_Initialize(void) {
   if (gGameState.entrance == 10) {
     FieldEffect_InitSparkles();
@@ -534,7 +535,7 @@ s32 SolSanctumEruption_Initialize(void) {
   return 0;
 }
 
-// Keep a flying ember sprite rotated a quarter-turn from its facing.
+/// Keep a flying ember sprite rotated a quarter-turn from its facing.
 static s32
 SolSanctumEruption_AlignEmberToHeading(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -542,7 +543,7 @@ SolSanctumEruption_AlignEmberToHeading(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Launch sixteen rocks outward, then reset their actors for ember emission.
+/// Launch sixteen rocks outward, then reset their actors for ember emission.
 static void SolSanctumEruption_ThrowEruptionRing(void) {
   struct FieldActor *actor;
   struct FieldActor *spun;
@@ -595,7 +596,7 @@ static void SolSanctumEruption_ThrowEruptionRing(void) {
   }
 }
 
-// Reset the sixteen ember slots and their emission timers.
+/// Reset the sixteen ember slots and their emission timers.
 static void SolSanctumEruption_ResetEmberEmission(void) {
   s32 *stateSlot;
   u32 emberIndex;
@@ -610,7 +611,7 @@ static void SolSanctumEruption_ResetEmberEmission(void) {
   }
 }
 
-// Retire landed embers and launch the next free one at the current frequency.
+/// Retire landed embers and launch the next free one at the current frequency.
 static void SolSanctumEruption_StepEmbers(void) {
   struct GroundParticleWork *sparkles;
   s32 shakePixels;
@@ -700,7 +701,7 @@ static void SolSanctumEruption_StepEmbers(void) {
   }
 }
 
-// Vary the ember emission interval and its duration.
+/// Vary the ember emission interval and its duration.
 static void SolSanctumEruption_UpdateEmberFrequency(void) {
   u32 emissionLevel;
 
@@ -734,7 +735,7 @@ static void SolSanctumEruption_UpdateEmberFrequency(void) {
   }
 }
 
-// End the Wise One's palette animation and clear its attached effect.
+/// End the Wise One's palette animation and clear its attached effect.
 static inline void SolSanctumEruption_FinishMaterialization(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_WISE_ONE, 3);
   Engine_TaskRemoveCallback(SolSanctumEruption_UpdateWiseOnePalette);
@@ -742,7 +743,7 @@ static inline void SolSanctumEruption_FinishMaterialization(void) {
   Actor_SetChildValue(ACTOR_WISE_ONE, 0);
 }
 
-// Show the collapsing chamber, the remaining star and the Wise One rescue.
+/// Show the collapsing chamber, the remaining star and the Wise One rescue.
 static void SolSanctumEruption_PlayWiseOneRescue(void) {
   struct GroundParticleWork *sparkles;
   struct FieldActor *wiseOne;
@@ -1374,7 +1375,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   GameFlag_Set(0x100);
 }
 
-// Place an actor before the star and draw it above the chamber floor.
+/// Place an actor before the star and draw it above the chamber floor.
 static void SolSanctumEruption_PlaceBeforeStar(s32 actor) {
   struct FieldActor *object;
 
@@ -1384,7 +1385,7 @@ static void SolSanctumEruption_PlaceBeforeStar(s32 actor) {
   Engine_ActorSetSpritePriority(actor, 3);
 }
 
-// Select the first collapsing tile patch and redraw the map.
+/// Select the first collapsing tile patch and redraw the map.
 static void SolSanctumEruption_DrawFirstCollapseTiles(s32 alternate) {
   if (alternate != 0) {
     s32 cellSize;
@@ -1403,7 +1404,7 @@ static void SolSanctumEruption_DrawFirstCollapseTiles(s32 alternate) {
   Engine_MapRedraw();
 }
 
-// Select the second collapsing tile patch and redraw the map.
+/// Select the second collapsing tile patch and redraw the map.
 static void SolSanctumEruption_DrawSecondCollapseTiles(s32 alternate) {
   if (alternate != 0) {
     s32 patchSize;
@@ -1419,7 +1420,7 @@ static void SolSanctumEruption_DrawSecondCollapseTiles(s32 alternate) {
   Engine_MapRedraw();
 }
 
-// Randomly alternate the first tile patch on even frames.
+/// Randomly alternate the first tile patch on even frames.
 static void SolSanctumEruption_FlickerFirstCollapseTiles(void) {
   if ((gFrameCount & 1) == 0) {
     if ((u32)Math_RemainderUnsigned(Engine_RandomNext(), 100) > 50) {
@@ -1430,7 +1431,7 @@ static void SolSanctumEruption_FlickerFirstCollapseTiles(void) {
   }
 }
 
-// Randomly alternate the second tile patch on even frames.
+/// Randomly alternate the second tile patch on even frames.
 static void SolSanctumEruption_FlickerSecondCollapseTiles(void) {
   if ((gFrameCount & 1) == 0) {
     if ((u32)Math_RemainderUnsigned(Engine_RandomNext(), 100) > 50) {
@@ -1441,7 +1442,7 @@ static void SolSanctumEruption_FlickerSecondCollapseTiles(void) {
   }
 }
 
-// Stage and raise ten arc effects at one of the four chamber positions.
+/// Stage and raise ten arc effects at one of the four chamber positions.
 static void SolSanctumEruption_RaiseElementalArcs(u32 mode) {
   void Actor_ShowEmote(s32, s32, s32);
   void ColorBuffer_ApplyTarget(s32, s32);
@@ -1550,7 +1551,7 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 mode) {
   Engine_ColorBufferInterpolate(40);
 }
 
-// Stretch each active arc for eight frames, then lift it out of view.
+/// Stretch each active arc for eight frames, then lift it out of view.
 static void SolSanctumEruption_UpdateElementalArcs(void) {
 
   u32 arcIndex;
@@ -1579,7 +1580,7 @@ static void SolSanctumEruption_UpdateElementalArcs(void) {
   }
 }
 
-// Fade out, move the camera and its focus actor, then fade back in.
+/// Fade out, move the camera and its focus actor, then fade back in.
 static void SolSanctumEruption_FadeCameraTo(s32 x, s32 z) {
   struct FieldActor *center;
 
@@ -1604,7 +1605,7 @@ static void SolSanctumEruption_FadeCameraTo(s32 x, s32 z) {
   Engine_TaskWait(30);
 }
 
-// Restore eight corner-cell attributes from the chamber templates.
+/// Restore eight corner-cell attributes from the chamber templates.
 static void SolSanctumEruption_RestoreCornerCellAttributes(void) {
 
   Map_CopyCellAttributes(14, 8, 1, 1, 10, 0);
@@ -1617,7 +1618,7 @@ static void SolSanctumEruption_RestoreCornerCellAttributes(void) {
   Map_CopyCellAttributes(43, 28, 1, 1, 44, 28);
 }
 
-// Fade the object palette into or out of the materialization tint.
+/// Fade the object palette into or out of the materialization tint.
 static void SolSanctumEruption_SetMaterializationTint(s32 enabled, s32 frames,
                                                       s32 waitFrames) {
   if (enabled == 1) {
@@ -1633,7 +1634,7 @@ static void SolSanctumEruption_SetMaterializationTint(s32 enabled, s32 frames,
   }
 }
 
-// Flash the palette and spawn paired vertical effects every sixteen frames.
+/// Flash the palette and spawn paired vertical effects every sixteen frames.
 static void
 SolSanctumEruption_FlashMaterializingActor(struct FieldActor *actor) {
   if ((gFrameCount & 2) != 0) {
@@ -1646,7 +1647,7 @@ SolSanctumEruption_FlashMaterializingActor(struct FieldActor *actor) {
   }
 }
 
-// Cycle six palettes while spawning the actor's vertical effects.
+/// Cycle six palettes while spawning the actor's vertical effects.
 static void SolSanctumEruption_CycleActorPalette(struct FieldActor *actor) {
   if (gFrameCount & 1) {
     Engine_ObjectSetPartPalettes(actor,
@@ -1660,7 +1661,7 @@ static void SolSanctumEruption_CycleActorPalette(struct FieldActor *actor) {
 // Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 
-// Create two vertical effects sharing the parent position and cached tiles.
+/// Create two vertical effects sharing the parent position and cached tiles.
 static void SolSanctumEruption_SpawnEffectPair(struct FieldActor *parent) {
   struct FieldActor *pair[2];
   struct FieldActor *child;
@@ -1710,7 +1711,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct FieldActor *parent) {
 // Shared source is included here in ROM order.
 #include "common/effect_psynergy.h"
 
-// Advance the Wise One palette cycle.
+/// Advance the Wise One palette cycle.
 static void SolSanctumEruption_UpdateWiseOnePalette(void) {
   SolSanctumEruption_CycleActorPalette(Object_GetById(ACTOR_WISE_ONE));
 }

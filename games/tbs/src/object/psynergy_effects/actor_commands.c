@@ -1,9 +1,10 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Event commands on actors: placing, moving and animating them.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Event commands on actors: placing, moving and animating them.
 
 #include "../psynergy_effects_internal.h"
 
-// Returns an actor, or NULL if it does not exist.
+/// Returns an actor, or NULL if it does not exist.
 struct FieldActor *Object_GetById(s32 actor) {
   struct FieldActor *object = ObjectTable_Get(actor);
 
@@ -12,8 +13,8 @@ struct FieldActor *Object_GetById(s32 actor) {
   return object;
 }
 
-// The event command "set actor speed": its top speed and acceleration, 16.16
-// pixels per frame.
+/// The event command "set actor speed": its top speed and acceleration, 16.16
+/// pixels per frame.
 void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit,
                                      s32 acceleration) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
@@ -24,8 +25,8 @@ void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit,
   }
 }
 
-// Gives an actor an action script (ObjectMotion_SetActionCallback) and lets
-// it run.
+/// Gives an actor an action script (ObjectMotion_SetActionCallback) and lets
+/// it run.
 void ObjectMotion_EnableActionAndSetCallback(u32 objectId, s32 action) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
@@ -37,8 +38,8 @@ void ObjectMotion_EnableActionAndSetCallback(u32 objectId, s32 action) {
   }
 }
 
-// The event command "stop actor": stops its action and puts it back under
-// event control (dispatch script 6).
+/// The event command "stop actor": stops its action and puts it back under
+/// event control (dispatch script 6).
 void ObjectMotion_EnableActionAndResetMotion(u32 objectId) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
   u8 enabled;
@@ -50,7 +51,7 @@ void ObjectMotion_EnableActionAndResetMotion(u32 objectId) {
   }
 }
 
-// Makes an actor follow another (the linked action script).
+/// Makes an actor follow another (the linked action script).
 void Object_LinkObjectAndSetCallback(u32 objectId, u32 linkedObjectId) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
@@ -62,8 +63,8 @@ void Object_LinkObjectAndSetCallback(u32 objectId, u32 linkedObjectId) {
   }
 }
 
-// Waits, at most 300 frames, for an actor's script to reach its end
-// (command 0x10).
+/// Waits, at most 300 frames, for an actor's script to reach its end
+/// (command 0x10).
 void Object_RefreshSelectorById(u32 objectId) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
@@ -71,8 +72,8 @@ void Object_RefreshSelectorById(u32 objectId) {
     ObjectDispatch_WaitForValue16Far(object);
 }
 
-// Start a built-in action or supplied script, then wait up to 300 frames for
-// its script to end. Scene script calls use Actor_RunActionScriptAndWait.
+/// Start a built-in action or supplied script, then wait up to 300 frames for
+/// its script to end. Scene script calls use Actor_RunActionScriptAndWait.
 void Object_SetActionCallbackAndRefreshById(u32 objectId, s32 action) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
@@ -85,8 +86,8 @@ void Object_SetActionCallbackAndRefreshById(u32 objectId, s32 action) {
   }
 }
 
-// The event command "set actor destination": the actor heads for (x, z), in
-// pixels, keeping its current animation.
+/// The event command "set actor destination": the actor heads for (x, z), in
+/// pixels, keeping its current animation.
 void ObjectMotion_ResetAndSetPosition(u32 objectId, s32 x, s32 z) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
@@ -97,8 +98,9 @@ void ObjectMotion_ResetAndSetPosition(u32 objectId, s32 x, s32 z) {
   }
 }
 
-// The event command "move actor and wait": as ObjectMotion_ResetAndSetPosition,
-// then waits (at most 600 frames) for the actor to arrive.
+/// The event command "move actor and wait": as
+/// ObjectMotion_ResetAndSetPosition, then waits (at most 600 frames) for the
+/// actor to arrive.
 void ObjectMotion_SetPositionAndCommit(u32 objectId, s32 x, s32 z) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
@@ -110,8 +112,8 @@ void ObjectMotion_SetPositionAndCommit(u32 objectId, s32 x, s32 z) {
   }
 }
 
-// The event command "walk actor to": the actor walks (animation 2) toward
-// (x, z), in pixels.
+/// The event command "walk actor to": the actor walks (animation 2) toward
+/// (x, z), in pixels.
 void ObjectMotion_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
@@ -123,8 +125,8 @@ void ObjectMotion_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z) {
   }
 }
 
-// The event command "walk actor to and wait": walks the actor to (x, z), in
-// pixels, waits for it to arrive and stands it still (animation 1).
+/// The event command "walk actor to and wait": walks the actor to (x, z), in
+/// pixels, waits for it to arrive and stands it still (animation 1).
 void ObjectMotion_SetPositionAndReset(u32 objectId, s32 x, s32 z) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
@@ -138,9 +140,9 @@ void ObjectMotion_SetPositionAndReset(u32 objectId, s32 x, s32 z) {
   }
 }
 
-// The event command "center actor and walk": walks the actor sideways to the
-// middle of its 16-pixel column, sets its sprite priority to priority
-// (ObjectMotion_SetActionVariant), then sends it zOffset pixels along z.
+/// The event command "center actor and walk": walks the actor sideways to the
+/// middle of its 16-pixel column, sets its sprite priority to priority
+/// (ObjectMotion_SetActionVariant), then sends it zOffset pixels along z.
 void ObjectMotion_CenterOnColumn(u32 objectId, s32 priority, s32 zOffset) {
   struct ObjectRuntime *object;
   s16 pixelX;
@@ -169,8 +171,8 @@ void ObjectMotion_CenterOnColumn(u32 objectId, s32 priority, s32 zOffset) {
   }
 }
 
-// The event command "set actor destination offset": the actor heads
-// (xOffset, zOffset) pixels from where it stands.
+/// The event command "set actor destination offset": the actor heads
+/// (xOffset, zOffset) pixels from where it stands.
 void ObjectMotion_OffsetPositionAndResetMotion(u32 objectId, s32 xOffset,
                                                s32 zOffset) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
@@ -183,8 +185,8 @@ void ObjectMotion_OffsetPositionAndResetMotion(u32 objectId, s32 xOffset,
   }
 }
 
-// Walks the actor (animation 2) (xOffset, zOffset) pixels from where it
-// stands.
+/// Walks the actor (animation 2) (xOffset, zOffset) pixels from where it
+/// stands.
 void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 xOffset,
                                          s32 zOffset) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
@@ -198,8 +200,8 @@ void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 xOffset,
   }
 }
 
-// Walks the actor (xOffset, zOffset) pixels, waits for it to arrive and
-// stands it still.
+/// Walks the actor (xOffset, zOffset) pixels, waits for it to arrive and
+/// stands it still.
 void ObjectMotion_CommitPositionAndActivate(u32 objectId, s32 xOffset,
                                             s32 zOffset) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
@@ -211,9 +213,9 @@ void ObjectMotion_CommitPositionAndActivate(u32 objectId, s32 xOffset,
   }
 }
 
-// Places an actor on the leader and sends it walking (xOffset, zOffset)
-// pixels away at speed 0.6 and acceleration 0.3, through the launch script;
-// the actor then takes action action.
+/// Places an actor on the leader and sends it walking (xOffset, zOffset)
+/// pixels away at speed 0.6 and acceleration 0.3, through the launch script;
+/// the actor then takes action action.
 void Motion_LaunchFromFocusedObject(u32 objectId, s32 xOffset, s32 zOffset,
                                     s32 action) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
@@ -235,8 +237,8 @@ void Motion_LaunchFromFocusedObject(u32 objectId, s32 xOffset, s32 zOffset,
   }
 }
 
-// The event command "wait for actor": waits (at most 600 frames) for the actor
-// to arrive and stands it still.
+/// The event command "wait for actor": waits (at most 600 frames) for the actor
+/// to arrive and stands it still.
 void ObjectMotion_CommitCurrentPositionAndActivate(u32 objectId) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
@@ -246,9 +248,9 @@ void ObjectMotion_CommitCurrentPositionAndActivate(u32 objectId) {
   }
 }
 
-// The event command "set actor position": puts the actor at (x, z), 16.16
-// pixels, at rest. An actor that follows the ground (flag 1) keeps its height
-// above the terrain at the new place.
+/// The event command "set actor position": puts the actor at (x, z), 16.16
+/// pixels, at rest. An actor that follows the ground (flag 1) keeps its height
+/// above the terrain at the new place.
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
   struct ObjectRuntime *object;
   s32 terrainHeight;
@@ -283,8 +285,8 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
   }
 }
 
-// Puts the actor at (x, y, z), 16.16 pixels, at rest; an actor that follows
-// the ground (flag 1) is raised by the terrain height there.
+/// Puts the actor at (x, y, z), 16.16 pixels, at rest; an actor that follows
+/// the ground (flag 1) is raised by the terrain height there.
 void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
   struct ObjectRuntime *object;
   s32 terrainHeight;
@@ -317,8 +319,8 @@ void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
   }
 }
 
-// The event command "set actor animation" (1 stands, 2 walks, 3 nods, 4 shakes
-// the head and so on).
+/// The event command "set actor animation" (1 stands, 2 walks, 3 nods, 4 shakes
+/// the head and so on).
 void Object_SetModeById(u32 objectId, s32 animation) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
@@ -326,8 +328,8 @@ void Object_SetModeById(u32 objectId, s32 animation) {
     ObjectDispatch_SelectAnimationFar(object, animation);
 }
 
-// Sets the animation timer steps of each of an actor's sprites
-// (AnimationObjects_SetActiveTimerSteps).
+/// Sets the animation timer steps of each of an actor's sprites
+/// (AnimationObjects_SetActiveTimerSteps).
 void Object_SetActionById(u32 objectId, s32 steps) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
@@ -335,7 +337,7 @@ void Object_SetActionById(u32 objectId, s32 steps) {
     ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, steps);
 }
 
-// Waits, at most 90 frames, for an actor's animation to change.
+/// Waits, at most 90 frames, for an actor's animation to change.
 void ObjectMotion_WaitForAnimationChange(u32 objectId) {
   struct ObjectRuntime *object;
   struct AnimationObject *sprite;
@@ -358,18 +360,18 @@ void ObjectMotion_WaitForAnimationChange(u32 objectId) {
   }
 }
 
-// The event command "set actor animation and wait": plays the animation and
-// waits for it to end.
+/// The event command "set actor animation and wait": plays the animation and
+/// waits for it to end.
 void Motion_SetModeAndWaitAnimation(u32 objectId, s32 animation) {
   Object_SetModeById(objectId, animation);
   ObjectMotion_WaitForAnimationChange(objectId);
 }
 
-// Does nothing.
+/// Does nothing.
 void ObjectMotion_NoOp(void) {}
 
-// The event command "actor jump": throws the actor upward at speed pixels per
-// frame with a jump sound (a higher one above 5), then waits frames frames.
+/// The event command "actor jump": throws the actor upward at speed pixels per
+/// frame with a jump sound (a higher one above 5), then waits frames frames.
 void ObjectMotion_Launch(u32 objectId, s32 speed, s32 frames) {
   struct ObjectRuntime *object;
   u8 *objectFlags;
@@ -392,8 +394,8 @@ void ObjectMotion_Launch(u32 objectId, s32 speed, s32 frames) {
   }
 }
 
-// The event command "start repeated motion": the actor squashes and springs
-// back count times (1 to 3), through gObjectMotion_VariantScripts.
+/// The event command "start repeated motion": the actor squashes and springs
+/// back count times (1 to 3), through gObjectMotion_VariantScripts.
 void ObjectMotion_SetVariantCallback(u32 objectId, s32 count) {
   struct ObjectRuntime *object;
 
@@ -409,16 +411,16 @@ void ObjectMotion_SetVariantCallback(u32 objectId, s32 count) {
   }
 }
 
-// The event command "run repeated motion": as ObjectMotion_SetVariantCallback,
-// then waits for it to end.
+/// The event command "run repeated motion": as ObjectMotion_SetVariantCallback,
+/// then waits for it to end.
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 count) {
   ObjectMotion_SetVariantCallback(objectId, count);
   Object_RefreshSelectorById(objectId);
 }
 
-// Moves a dust puff of FieldFx_SpawnBurstParticle: it drifts with its x and
-// z velocity (kept in speed and acceleration), which drag slows by 1/18 and
-// 1/16 each frame, and rises 1/64 pixel a frame.
+/// Moves a dust puff of FieldFx_SpawnBurstParticle: it drifts with its x and
+/// z velocity (kept in speed and acceleration), which drag slows by 1/18 and
+/// 1/16 each frame, and rises 1/64 pixel a frame.
 void FieldFx_UpdateParticleLinearMotion(union FieldObject *fieldObject) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
   s32 velocityX;
@@ -447,10 +449,10 @@ void FieldFx_UpdateParticleLinearMotion(union FieldObject *fieldObject) {
   particle->acceleration = (velocityZ - (roundedZ >> 4));
 }
 
-// Kicks up a dust puff (object 222) where source stands: it flies off toward
-// the back at 0.5 to 1.4 pixels a frame and sideways at up to 1.4, with one
-// of two animations. A nonzero param is given to its sprite parts
-// (ObjectGroup_SetChildValue).
+/// Kicks up a dust puff (object 222) where source stands: it flies off toward
+/// the back at 0.5 to 1.4 pixels a frame and sideways at up to 1.4, with one
+/// of two animations. A nonzero param is given to its sprite parts
+/// (ObjectGroup_SetChildValue).
 void FieldFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
   struct FieldActor *object;
   struct AnimationObject *child;
@@ -490,11 +492,11 @@ void FieldFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
   }
 }
 
-// Makes an actor jump down off a ledge in front of it (the field runs it for
-// the leader when the player presses down at a ledge): it shows pose for 10
-// frames, hops, spins round while sinking 28 pixels with a dust puff every
-// other frame (none when param is -1), then jumps 16 pixels forward and lands.
-// The landing plays the queued sound (BattleFx_PlayQueuedSound).
+/// Makes an actor jump down off a ledge in front of it (the field runs it for
+/// the leader when the player presses down at a ledge): it shows pose for 10
+/// frames, hops, spins round while sinking 28 pixels with a dust puff every
+/// other frame (none when param is -1), then jumps 16 pixels forward and lands.
+/// The landing plays the queued sound (BattleFx_PlayQueuedSound).
 void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
   s32 nextY;
   s32 startZ;
@@ -551,8 +553,8 @@ void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
   }
 }
 
-// The event command "actor face actor": turns the first actor at once to face
-// the second, then waits wait frames.
+/// The event command "actor face actor": turns the first actor at once to face
+/// the second, then waits wait frames.
 void ObjectMotion_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
   struct ObjectRuntime *first;
   struct ObjectRuntime *second;
@@ -565,8 +567,8 @@ void ObjectMotion_SetAngleToward(s32 firstId, s32 secondId, s32 wait) {
   }
 }
 
-// The event command "actors face each other": turns two actors toward each
-// other, then waits wait frames.
+/// The event command "actors face each other": turns two actors toward each
+/// other, then waits wait frames.
 void Object_LinkPair(s32 firstId, s32 secondId, s32 wait) {
   void *first = ObjectTable_Get(firstId);
   void *second = ObjectTable_Get(secondId);
@@ -577,8 +579,8 @@ void Object_LinkPair(s32 firstId, s32 secondId, s32 wait) {
   }
 }
 
-// Turns two actors to face each other, at most 1/16 turn a frame each, until
-// both do (at most 60 frames).
+/// Turns two actors to face each other, at most 1/16 turn a frame each, until
+/// both do (at most 60 frames).
 void FacingObject_TurnPairToFaceEachOther(struct FacingObject *firstObject,
                                           struct FacingObject *secondObject) {
   struct ObjectRuntime *first = (struct ObjectRuntime *)firstObject;
@@ -630,7 +632,7 @@ struct ObjectSlotTable {
 STATIC_ASSERT(offsetof(struct ObjectSlotTable, slots) == 0x14);
 #endif
 
-// The event command "destroy actor": releases the actor and frees its slot.
+/// The event command "destroy actor": releases the actor and frees its slot.
 void ObjectTable_DestroyById(s32 index) {
   void *object = ObjectTable_Get(index);
 #ifdef UBFIX
@@ -652,12 +654,12 @@ void ObjectTable_DestroyById(s32 index) {
   }
 }
 
-// Does nothing.
+/// Does nothing.
 UNUSED void ObjectTable_DestroyNoOp(void) {}
 
-// The event command "set actor sprite param": gives every sprite part of the
-// actor param (ObjectGroup_SetChildValue). With bit 0x100 set the actor
-// blinks instead (ObjectGroup_ApplyIndexedChildValue, every frame).
+/// The event command "set actor sprite param": gives every sprite part of the
+/// actor param (ObjectGroup_SetChildValue). With bit 0x100 set the actor
+/// blinks instead (ObjectGroup_ApplyIndexedChildValue, every frame).
 void ObjectGroup_ConfigureChildValue(s32 objectId, s32 param) {
   s32 blink;
   struct DispatchObject *object;
@@ -675,8 +677,8 @@ void ObjectGroup_ConfigureChildValue(s32 objectId, s32 param) {
   }
 }
 
-// Per-frame hook of a blinking actor: sets its sprite parts' param from
-// gObjectGroup_BlinkChildValues (7 for two frames out of eight, otherwise 0).
+/// Per-frame hook of a blinking actor: sets its sprite parts' param from
+/// gObjectGroup_BlinkChildValues (7 for two frames out of eight, otherwise 0).
 void ObjectGroup_ApplyIndexedChildValue(union FieldObject *fieldObject) {
   struct DispatchObject *object = (struct DispatchObject *)fieldObject;
 
@@ -703,8 +705,8 @@ void ObjectGroup_ApplyIndexedChildValue(union FieldObject *fieldObject) {
   }
 }
 
-// Sets the param byte of every animated part of an actor's sprite. Scenes set
-// 0 or 15, and alternate the two to make an actor flash.
+/// Sets the param byte of every animated part of an actor's sprite. Scenes set
+/// 0 or 15, and alternate the two to make an actor flash.
 void ObjectGroup_SetChildValue(struct FieldActor *actor, s32 param) {
   struct DispatchObject *object = (struct DispatchObject *)actor;
 
@@ -727,9 +729,9 @@ void ObjectGroup_SetChildValue(struct FieldActor *actor, s32 param) {
   }
 }
 
-// Links an actor to the actor in the low 8 bits of targetId and starts script
-// on it. Unless ACTOR_LINK_KEEP_MOTION is set it takes action 40 and the
-// target's top speed with twice its acceleration, to keep up with it.
+/// Links an actor to the actor in the low 8 bits of targetId and starts script
+/// on it. Unless ACTOR_LINK_KEEP_MOTION is set it takes action 40 and the
+/// target's top speed with twice its acceleration, to keep up with it.
 void Object_SetTargetAndCallback(u32 objectId, s32 targetId,
                                  const void *script) {
   struct ObjectRuntime *follower = ObjectTable_Get(objectId);
@@ -747,9 +749,9 @@ void Object_SetTargetAndCallback(u32 objectId, s32 targetId,
   }
 }
 
-// Script step that turns an actor toward the angle kept in its action: the
-// whole way when within 1/16 turn, otherwise 1/32 turn. Returns the turn
-// made, 0 once the actor faces that way.
+/// Script step that turns an actor toward the angle kept in its action: the
+/// whole way when within 1/16 turn, otherwise 1/32 turn. Returns the turn
+/// made, 0 once the actor faces that way.
 s32 ObjectMotion_StepAngle(struct ObjectRuntime *object) {
   s32 delta = 0;
 
@@ -768,8 +770,8 @@ s32 ObjectMotion_StepAngle(struct ObjectRuntime *object) {
   return delta;
 }
 
-// Clears an actor's destination, puts it under event control and stands it
-// still.
+/// Clears an actor's destination, puts it under event control and stands it
+/// still.
 void Object_ResetTargetAndSetMode1(u32 objectId) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
@@ -782,9 +784,9 @@ void Object_ResetTargetAndSetMode1(u32 objectId) {
   }
 }
 
-// The event command "actor face direction": the actor turns toward angle
-// (0x10000 a full turn; ObjectMotion_StepAngle), then the event waits wait
-// frames.
+/// The event command "actor face direction": the actor turns toward angle
+/// (0x10000 a full turn; ObjectMotion_StepAngle), then the event waits wait
+/// frames.
 void ObjectMotion_ArmCallback(s32 objectId, s32 angle, s32 wait) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
@@ -796,8 +798,8 @@ void ObjectMotion_ArmCallback(s32 objectId, s32 angle, s32 wait) {
   }
 }
 
-// The event command "set actor sprite priority": fixes the priority of the
-// actor's sprite, which then no longer follows its depth.
+/// The event command "set actor sprite priority": fixes the priority of the
+/// actor's sprite, which then no longer follows its depth.
 void ObjectMotion_SetActionVariant(s32 objectId, s32 priority) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
@@ -810,8 +812,8 @@ void ObjectMotion_SetActionVariant(s32 objectId, s32 priority) {
   }
 }
 
-// Makes the target actor's sprite show the source actor's graphics (its VRAM
-// block and tile).
+/// Makes the target actor's sprite show the source actor's graphics (its VRAM
+/// block and tile).
 void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId) {
   struct ObjectRuntime *object;
   struct AnimationObject *sprite;
@@ -829,16 +831,16 @@ void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId) {
   sprite->image.tile = tile;
 }
 
-// Does nothing.
+/// Does nothing.
 UNUSED void ObjectVisual_ReservedNoOp(void) {}
 
-// The event command "set message": the number of the event's next message.
+/// The event command "set message": the number of the event's next message.
 void Event_SetMessageId(s32 message) {
   ((struct FieldWork *)gEventWork)->message = message;
 }
 
-// Returns the sprite (the first animation's id) of the actor in the low 12
-// bits of actor, or -1 if there is no such animated actor.
+/// Returns the sprite (the first animation's id) of the actor in the low 12
+/// bits of actor, or -1 if there is no such animated actor.
 s32 ObjectTable_ReadActiveValue(s32 actor) {
 #ifdef UBFIX
   struct FieldWork *state = (struct FieldWork *)gEventWork;
@@ -863,7 +865,7 @@ s32 ObjectTable_ReadActiveValue(s32 actor) {
   return sprite;
 }
 
-// Returns the first scene actor (8 to 65) showing sprite, or -1.
+/// Returns the first scene actor (8 to 65) showing sprite, or -1.
 s32 ObjectTable_FindActiveByValue(s32 sprite) {
   struct FieldWork *state = (struct FieldWork *)gEventWork;
   s32 result = -1;

@@ -54,28 +54,28 @@
 static void HeatGauge_SetHeld(u16 held);
 
 enum {
-  // FLAG_SCENE_TEMP_00: a collapse, a pit or the monster is under way.
+  /// FLAG_SCENE_TEMP_00: a collapse, a pit or the monster is under way.
   FLAG_HAZARDS_PAUSED = FLAG_SCENE_TEMP_00,
-  // FLAG_SCENE_TEMP_01: Reveal shows the pits.
+  /// FLAG_SCENE_TEMP_01: Reveal shows the pits.
   FLAG_SECRETS_REVEALED = FLAG_SCENE_TEMP_01,
-  FLAG_HEAT_QUARTER = 0x300, // the gauge has passed a quarter
+  FLAG_HEAT_QUARTER = 0x300, ///< the gauge has passed a quarter
   FLAG_HEAT_HALF = 0x301,
   FLAG_HEAT_THREE_QUARTERS = 0x302,
-  // Who has complained since the gauge last passed a mark: one per member,
-  // in the order of their actors.
+  /// Who has complained since the gauge last passed a mark: one per member,
+  /// in the order of their actors.
   FLAG_GARET_COMPLAINED = 0x303,
   FLAG_IVAN_COMPLAINED = 0x304,
   FLAG_MIA_COMPLAINED = 0x305
 };
 
 enum {
-  SAND_MONSTER = 8, // sprite 0xc3; talking to it starts a battle
-  FIRST_PIT = 9,    // 9 to 12: the pits Reveal shows (sprite 0xc1)
+  SAND_MONSTER = 8, ///< sprite 0xc3; talking to it starts a battle
+  FIRST_PIT = 9,    ///< 9 to 12: the pits Reveal shows (sprite 0xc1)
   LAST_PIT = 12,
-  SMOG = 13 // the Jupiter Djinni
+  SMOG = 13 ///< the Jupiter Djinni
 };
 
-// The sand monster's fight and the pits' battles come from encounter zone 53.
+/// The sand monster's fight and the pits' battles come from encounter zone 53.
 enum { LAMAKAN_ENCOUNTERS = 53 };
 
 #define NULL ((void *)0)
@@ -84,7 +84,7 @@ enum { LAMAKAN_ENCOUNTERS = 53 };
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-// Smog, Jupiter Djinni 3, joins the party.
+/// Smog, Jupiter Djinni 3, joins the party.
 static void TalkToSmog(void) { Djinn_JoinParty(SMOG, 3, 3); }
 
 // Shared scene code, included where the ROM places it.
@@ -126,7 +126,7 @@ static s32 Leader_SpraySand(union FieldObject *fieldObject) {
 #endif
 }
 
-// Where the party can enter each of the four maps.
+/// Where the party can enter each of the four maps.
 const struct SceneEntrance *LamakanDesert_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -145,14 +145,14 @@ const struct SceneEntrance *LamakanDesert_GetEntrances(void) {
   return gLamakanDesertEntrancesOther;
 }
 
-// The desert has no regions.
+/// The desert has no regions.
 const struct SceneRegion *LamakanDesert_GetRegions(void) { return 0; }
 
-// All four desert maps share the packed exit table.
+/// All four desert maps share the packed exit table.
 const u32 *LamakanDesert_GetExits(void) { return gLamakanDesertExits; }
 
-// The pits and the monster of each map. Arriving at the third map's
-// entrance 5, the way back from the monster's battle, marks it beaten.
+/// The pits and the monster of each map. Arriving at the third map's
+/// entrance 5, the way back from the monster's battle, marks it beaten.
 const struct ScenePlacement *LamakanDesert_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_LamakanDesert3) {
     if (gGameState.entrance == 5) {
@@ -174,7 +174,7 @@ const struct ScenePlacement *LamakanDesert_GetPlacements(void) {
   return gLamakanDesertPlacementsOther;
 }
 
-// Trigger 9: back out to the world map.
+/// Trigger 9: back out to the world map.
 static void LeaveForTheWorldMap(void) {
   // Flags 0x8b2 and 0x8b3 are set together the first time; what reads them
   // is not known.
@@ -190,14 +190,14 @@ static void LeaveForTheWorldMap(void) {
   Engine_EventEnd();
 }
 
-// The desert's triggers, the same on every map.
+/// The desert's triggers, the same on every map.
 const struct SceneEvent *LamakanDesert_GetEvents(void) {
   return gLamakanDesertEvents;
 }
 
-// Reveal's end (phase 4), and every entry: the pits and Smog vanish under
-// the sand again (cells 70, 68 or 69, 99 over the saved patches), the chests
-// hide and the heat haze shimmers.
+/// Reveal's end (phase 4), and every entry: the pits and Smog vanish under
+/// the sand again (cells 70, 68 or 69, 99 over the saved patches), the chests
+/// hide and the heat haze shimmers.
 static s32 Reveal_HideSecrets(void) {
   // Declared s32 but returns no value: the native ends pop {r1}; bx r1
   // without setting r0.
@@ -263,8 +263,8 @@ static s32 Reveal_HideSecrets(void) {
   }
 }
 
-// Reveal (phase 5): the saved patches of sand come back, the pits and the
-// monster stand where they are, the chests show and the haze stops.
+/// Reveal (phase 5): the saved patches of sand come back, the pits and the
+/// monster stand where they are, the chests show and the haze stops.
 static s32 Reveal_ShowSecrets(void) {
   s32 i;
 
@@ -329,8 +329,8 @@ static s32 Reveal_ShowSecrets(void) {
   }
 }
 
-// Talking to the sand monster: its battle, returning to the third map's
-// entrance 5.
+/// Talking to the sand monster: its battle, returning to the third map's
+/// entrance 5.
 static void FightSandMonster(void) {
   Engine_ActorRunRepeatedMotion(SAND_MONSTER, 2);
   Event_SetNextDestination((s32)&SceneId_LamakanDesert3, 5);
@@ -338,9 +338,9 @@ static void FightSandMonster(void) {
   Field_RequestBattleFromEncounterTable(LAMAKAN_ENCOUNTERS, 5);
 }
 
-// Raised trigger 1, 2 or 3 as the heat gauge passes a quarter, a half and
-// three quarters: Garet, Ivan or Mia, picked at random (three tries for
-// one who has not spoken yet), complains about the heat.
+/// Raised trigger 1, 2 or 3 as the heat gauge passes a quarter, a half and
+/// three quarters: Garet, Ivan or Mia, picked at random (three tries for
+/// one who has not spoken yet), complains about the heat.
 static void ComplainAboutHeat(s32 mark) {
   s32 tries;
   s32 quarter;
@@ -369,9 +369,9 @@ static void ComplainAboutHeat(s32 mark) {
   Engine_EventEnd();
 }
 
-// Every frame: raises triggers 1 to 3 as the gauge passes each quarter,
-// and clears each mark and the complaints when the gauge drops back below
-// it. Nothing is raised while Reveal is showing the pits.
+/// Every frame: raises triggers 1 to 3 as the gauge passes each quarter,
+/// and clears each mark and the complaints when the gauge drops back below
+/// it. Nothing is raised while Reveal is showing the pits.
 static void HeatGauge_RaiseQuarterTriggers(void) {
   struct EventWork *work = gEventWork;
   s32 percent = gGameState.hazardSteps * 100 / gGameState.hazardLimit;
@@ -410,7 +410,7 @@ static void HeatGauge_RaiseQuarterTriggers(void) {
   }
 }
 
-// The distance in whole pixels between two x, z positions.
+/// The distance in whole pixels between two x, z positions.
 static s32 DistanceInPixels(s32 *firstPosition, s32 *secondPosition) {
   s32 dx = (*secondPosition++ - *firstPosition++) >> 16;
   s32 dz = (*secondPosition - firstPosition[1]) >> 16;
@@ -420,15 +420,15 @@ static s32 DistanceInPixels(s32 *firstPosition, s32 *secondPosition) {
   return Iwram_Sqrt(squaredDeltaX + squaredDeltaZ);
 }
 
-// A recovery point: where a collapsed leader comes to.
+/// A recovery point: where a collapsed leader comes to.
 struct SafePoint {
   s32 x;
   s32 z;
 };
 
-// Trigger 20, raised when the heat gauge fills: the leader drops at the
-// nearest recovery point of the map, lies collapsed while the gauge drains
-// 5 steps a frame, then gets up.
+/// Trigger 20, raised when the heat gauge fills: the leader drops at the
+/// nearest recovery point of the map, lies collapsed while the gauge drains
+/// 5 steps a frame, then gets up.
 static void CollapseFromHeat(void) {
   u8 *work;
   s32 frames;
@@ -563,8 +563,8 @@ static void CollapseFromHeat(void) {
   HeatGauge_SetHeld(0);
 }
 
-// Walking on sand (triggers 21 and 100 to 107): each moving frame adds a
-// step of heat and kicks up dust, faster on the run.
+/// Walking on sand (triggers 21 and 100 to 107): each moving frame adds a
+/// step of heat and kicks up dust, faster on the run.
 static void HeatGauge_CountStep(void) {
   struct FieldActor *actor;
   struct EventWork *event;
@@ -613,8 +613,8 @@ static void HeatGauge_CountStep(void) {
   }
 }
 
-// Trigger 22, stepping near a hidden pit: the leader looks at the nearest
-// pit, is pulled backwards into it and a battle begins.
+/// Trigger 22, stepping near a hidden pit: the leader looks at the nearest
+/// pit, is pulled backwards into it and a battle begins.
 static void FallIntoPit(void) {
   struct FieldActor *target;
   struct FieldActor *actor;
@@ -688,8 +688,8 @@ static void FallIntoPit(void) {
   Field_RequestBattleFromEncounterTable(LAMAKAN_ENCOUNTERS, 4);
 }
 
-// Trigger 30, on a slope of sand: the sand carries the leader south 1.5
-// pixels a frame, and at a ledge the leader hops down 8 pixels.
+/// Trigger 30, on a slope of sand: the sand carries the leader south 1.5
+/// pixels a frame, and at a ledge the leader hops down 8 pixels.
 static void SlideDownDune(void) {
   struct FieldActor *center;
   s32 id;
@@ -762,8 +762,8 @@ static void SlideDownDune(void) {
   actor->z.fixed += 0x18000;
 }
 
-// Trigger 40 on the third map, until the monster is beaten: the leader
-// stops and backs away as the monster rises out of the sand.
+/// Trigger 40 on the third map, until the monster is beaten: the leader
+/// stops and backs away as the monster rises out of the sand.
 static void MeetSandMonster(void) {
   s32 paused;
   struct FieldActor *record;
@@ -825,9 +825,9 @@ static void MeetSandMonster(void) {
   }
 }
 
-// Entering the desert: the heat gauge (600 steps) starts on the first three
-// maps, the patches Reveal uncovers are saved to the spare cells at 64, 126
-// or 64, 124, and the secrets are hidden.
+/// Entering the desert: the heat gauge (600 steps) starts on the first three
+/// maps, the patches Reveal uncovers are saved to the spare cells at 64, 126
+/// or 64, 124, and the secrets are hidden.
 s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
   s32 v5;
 
@@ -873,7 +873,7 @@ s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
   return 0;
 }
 
-// The monster sinks back to its spot; nothing calls this.
+/// The monster sinks back to its spot; nothing calls this.
 static UNUSED void SandMonster_Return(void) {
   Actor_SetSpeed(SAND_MONSTER, 0x8000, 0x4000);
   Engine_ActorSetAnimation(SAND_MONSTER, 1);
@@ -881,9 +881,9 @@ static UNUSED void SandMonster_Return(void) {
   Engine_ActorSetAnimation(SAND_MONSTER, 2);
 }
 
-// Every frame: draws the heat gauge. It sits 8 pixels lower while held,
-// slides away while flag 0x104 is set, its bar shrinks as the heat grows,
-// and its colors turn redder (flickering greener past 60 of 120).
+/// Every frame: draws the heat gauge. It sits 8 pixels lower while held,
+/// slides away while flag 0x104 is set, its bar shrinks as the heat grows,
+/// and its colors turn redder (flickering greener past 60 of 120).
 static void HeatGauge_Draw(void) {
   u8 *buffer;
   s32 tile;
@@ -1035,7 +1035,7 @@ struct Half {
   u16 v;
 };
 
-// Loads the gauge's tiles, claims VRAM for them and starts drawing it.
+/// Loads the gauge's tiles, claims VRAM for them and starts drawing it.
 void HeatGauge_Start(void) {
   s32 slot;
   u16 *slotAddress;
@@ -1053,7 +1053,7 @@ void HeatGauge_Start(void) {
   FieldScheduler_AddCallback(HeatGauge_Draw, 0xc76);
 }
 
-// While held (1), the gauge stays on screen.
+/// While held (1), the gauge stays on screen.
 static void HeatGauge_SetHeld(u16 value) { gLamakanDesert_SandPhase = value; }
 
 const s32 gEffectScript0[] = {
@@ -1072,7 +1072,7 @@ const s32 gEffectScript2[] = {
 };
 
 // clang-format off
-// Each map's recovery points, as x, z pairs.
+/// Each map's recovery points, as x, z pairs.
 const s32 gLamakanDesertRecoveryPoints1[] = {
     PIXELS(384), PIXELS(128),
     PIXELS(288), PIXELS(688),
@@ -1234,8 +1234,8 @@ struct SceneEvent gLamakanDesertEvents[] = {
 };
 // clang-format on
 
-// The gauge: how full it is (0 to 120), how far it has slid onto the
-// screen, and a flash as it fills.
+/// The gauge: how full it is (0 to 120), how far it has slid onto the
+/// screen, and a flash as it fills.
 s16 gHeatGaugeLevel = 0;
 
 s16 gHeatGaugeSlide = 0;

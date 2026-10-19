@@ -1,12 +1,13 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Carry: two hands lift the target, move it with the d-pad and drop it.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Carry: two hands lift the target, move it with the d-pad and drop it.
 
 #include "../psynergy_effects_internal.h"
 
 STATIC_ASSERT(sizeof(struct EffectVector) == 0x0c);
 
-// Per-frame update: drops one particle round the lifted object, 8 to 24
-// pixels above it and 0 to 48 pixels away in a random direction.
+/// Per-frame update: drops one particle round the lifted object, 8 to 24
+/// pixels above it and 0 to 48 pixels away in a random direction.
 void BattleFx_SpawnFallingParticles(void) {
   struct FieldActor *liftedObject;
   struct EffectVector position;
@@ -27,8 +28,8 @@ void BattleFx_SpawnFallingParticles(void) {
 
 #define CARRY_SHARD_MAX 20 // shards
 
-// Tests the target's move with its terrain reference raised 16 pixels.
-// Restore the reference before returning the collision result.
+/// Tests the target's move with its terrain reference raised 16 pixels.
+/// Restore the reference before returning the collision result.
 static __inline__ s32
 BattleFx_CheckRaisedTargetCollision(struct FieldActor *target,
                                     struct EffectVector *position) {
@@ -40,11 +41,11 @@ BattleFx_CheckRaisedTargetCollision(struct FieldActor *target,
   return collision;
 }
 
-// Abilities: Carry (field kind 11), cast on a target.
-//
-// Two hands lift it to 24 pixels above the ground; the d-pad moves it 16 pixels
-// at a time and A, B, L or R drops it where it is. Where the way is blocked a
-// buzzer sounds.
+/// Abilities: Carry (field kind 11), cast on a target.
+///
+/// Two hands lift it to 24 pixels above the ground; the d-pad moves it 16
+/// pixels at a time and A, B, L or R drops it where it is. Where the way is
+/// blocked a buzzer sounds.
 void BattleFx_SteerLiftedTarget(s32 targetId) {
   struct BattleFxScene *work;
   struct FieldActor *src;
@@ -261,12 +262,12 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   }
 }
 
-// Abilities: Carry (field kind 11), cast with no target.
+/// Abilities: Carry (field kind 11), cast with no target.
 DEFINE_ITEM_BREAK_EFFECT(FieldFx_RunCarry, BattleFx_SpawnItemBreakMode1)
 
-// Spawns object 215 with the item break sound, in animation 1, and grows it,
-// spinning, from a quarter to full size over 24 frames; angle is the way it
-// faces once grown.
+/// Spawns object 215 with the item break sound, in animation 1, and grows it,
+/// spinning, from a quarter to full size over 24 frames; angle is the way it
+/// faces once grown.
 struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
                                                   s32 angle) {
   struct MotionObject *fragment;

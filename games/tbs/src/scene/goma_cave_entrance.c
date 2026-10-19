@@ -1,5 +1,6 @@
-// Goma Cave's entrance: the stump caught in ivy, the two pillars, and Ivan,
-// who rejoins the party and blows the ivy away with Whirlwind.
+/// @file
+/// Goma Cave's entrance: the stump caught in ivy, the two pillars, and Ivan,
+/// who rejoins the party and blows the ivy away with Whirlwind.
 #include "unit/scene/goma_cave_entrance.h"
 #include "version.h"
 #include "unit/scene/common/effect_spawn.h"
@@ -35,15 +36,15 @@
 #include "event.h"
 #include "item_ids.h"
 
-// The room's actors: Garet and Ivan take their party slots, the rest follow
-// the placement table from 8.
+/// The room's actors: Garet and Ivan take their party slots, the rest follow
+/// the placement table from 8.
 #define STUMP 8
 #define WEST_PILLAR 9
 #define EAST_PILLAR 10
 #define STUMP_IVY 15 // the ivy holding the stump
 #define IVY 16
 
-// Private scene actions used by the reunion sequence.
+/// Private scene actions used by the reunion sequence.
 static void GomaCaveEntrance_WhirlwindOnStumpIvy(void);
 static void GomaCaveEntrance_LeapStump(s32 id);
 static void GomaCaveEntrance_GiveShamansRod(void);
@@ -52,7 +53,7 @@ static void GomaCaveEntrance_GiveShamansRod(void);
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-// A legacy actor view that also reads sprite rotation as a signed halfword.
+/// A legacy actor view that also reads sprite rotation as a signed halfword.
 struct Actor {
   u8 pad00[8];
   s32 x;
@@ -94,7 +95,7 @@ struct Item_387 {
   u8 equippable;
 };
 
-// Show the next message over the speaker, then pause.
+/// Show the next message over the speaker, then pause.
 static void GomaCaveEntrance_SayThenWait(s32 actorId, s32 frames) {
   MESSAGE_PUT(actorId, 0);
   WAIT(frames);
@@ -112,8 +113,8 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gGomaCaveEntrancePlacements;
 }
 
-// Move on the west pillar, and after each push: the pillar stands on one of
-// three columns, and the map cells and flags follow it.
+/// Move on the west pillar, and after each push: the pillar stands on one of
+/// three columns, and the map cells and flags follow it.
 static void Event_MoveWestPillar(void) {
   struct FieldActor *pillar;
   s32 column;
@@ -133,8 +134,8 @@ static void Event_MoveWestPillar(void) {
   }
 }
 
-// Move on the east pillar: once it reaches column 23 it settles into the floor
-// and can be walked over.
+/// Move on the east pillar: once it reaches column 23 it settles into the floor
+/// and can be walked over.
 static void Event_MoveEastPillar(void) {
   struct FieldActor *pillar;
   s32 column;
@@ -151,8 +152,8 @@ static void Event_MoveEastPillar(void) {
   }
 }
 
-// Walking into the west pillar from the west (trigger 5) or the east
-// (trigger 6): the leader leans on it and pushes it one step.
+/// Walking into the west pillar from the west (trigger 5) or the east
+/// (trigger 6): the leader leans on it and pushes it one step.
 static void Event_PushWestPillar(void) {
   struct EventWork *work;
   s32 offsetX;
@@ -177,13 +178,13 @@ static void Event_PushWestPillar(void) {
   EV_END();
 }
 
-// Reserved overlay hook; no current scene calls it.
+/// Reserved overlay hook; no current scene calls it.
 UNUSED static void GomaCaveEntrance_NoOpA(void) {}
 
-// A second reserved hook, also unused by the scene.
+/// A second reserved hook, also unused by the scene.
 UNUSED static void GomaCaveEntrance_NoOpB(void) {}
 
-// Whirlwind on the other ivy: it is blown away for good.
+/// Whirlwind on the other ivy: it is blown away for good.
 static void Event_BlowAwayIvy(void) {
   EV_BEGIN();
   Engine_GameFlagSet(FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY);
@@ -194,8 +195,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gGomaCaveEntranceEvents;
 }
 
-// Put the stump and pillars where the party left them, and the stump's ivy
-// away once Ivan has blown it off.
+/// Put the stump and pillars where the party left them, and the stump's ivy
+/// away once Ivan has blown it off.
 s32 Scene_Initialize(void) {
   struct FieldActor *movedObject;
   s32 v5;
@@ -249,10 +250,10 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// Move on the stump while the ivy holds it: Garet says their Psynergy is not
-// strong enough. Once the thieves in Vault are jailed, Ivan turns up, blows
-// the ivy away with Whirlwind and asks to join the party, and gets back the
-// Shaman's Rod.
+/// Move on the stump while the ivy holds it: Garet says their Psynergy is not
+/// strong enough. Once the thieves in Vault are jailed, Ivan turns up, blows
+/// the ivy away with Whirlwind and asks to join the party, and gets back the
+/// Shaman's Rod.
 static void Event_IvanRejoins(void) {
   struct FieldActor *leader;
 
@@ -458,8 +459,8 @@ static void Event_IvanRejoins(void) {
   }
 }
 
-// Move on the freed stump: from row 11 it spins, leaps away and lies where it
-// lands.
+/// Move on the freed stump: from row 11 it spins, leaps away and lies where it
+/// lands.
 static void Event_MoveStump(void) {
   s32 depth;
   struct OverlayActorState *state;
@@ -478,7 +479,7 @@ static void Event_MoveStump(void) {
   EV_END();
 }
 
-// Ivan casts Whirlwind on the stump's ivy, and the scene waits for it.
+/// Ivan casts Whirlwind on the stump's ivy, and the scene waits for it.
 static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
   u8 *effectWork;
 
@@ -497,7 +498,7 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
   EffectRuntime_StopCurrentObject();
 }
 
-// The leaping stump's update hook turns its sprite a fixed amount per frame.
+/// The leaping stump's update hook turns its sprite a fixed amount per frame.
 static void GomaCaveEntrance_SpinStump(union FieldObject *fieldObject) {
   struct FieldActor *obj = (struct FieldActor *)fieldObject;
   struct AnimationObject *state = obj->sprite;
@@ -509,8 +510,8 @@ static void GomaCaveEntrance_SpinStump(union FieldObject *fieldObject) {
 // Shared height-wait code stays at its native position in the overlay.
 #include "common/object_waitdown.h"
 
-// The stump spins in place, leaps and lands with a shake and a ring of dust,
-// then comes to rest a little further on.
+/// The stump spins in place, leaps and lands with a shake and a ring of dust,
+/// then comes to rest a little further on.
 static void GomaCaveEntrance_LeapStump(s32 id) {
   struct Vec dir;
   struct EffectOptions params;
@@ -567,8 +568,8 @@ static void GomaCaveEntrance_LeapStump(s32 id) {
 // Shared inventory equipment code stays at its native overlay position.
 #include "common/item_equip.h"
 
-// Give Ivan the Shaman's Rod and equip it. With his items full, he drops
-// another to make room; later patches stop dropping items whose byte 3 is 8.
+/// Give Ivan the Shaman's Rod and equip it. With his items full, he drops
+/// another to make room; later patches stop dropping items whose byte 3 is 8.
 static void GomaCaveEntrance_GiveShamansRod(void) {
   struct Member_387 *member;
   struct Item_387 *item;

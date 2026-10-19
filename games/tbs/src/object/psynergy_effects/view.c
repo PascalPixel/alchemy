@@ -1,14 +1,15 @@
-// Part of psynergy_effects.c, compiled only through it.
-// The view bounds, zoom transitions and objects linked to an actor.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// The view bounds, zoom transitions and objects linked to an actor.
 
 #include "../psynergy_effects_internal.h"
 
-// The high byte of the first sprite part's OAM attribute 2.
-// Bits 2 and 3 are its priority.
+/// The high byte of the first sprite part's OAM attribute 2.
+/// Bits 2 and 3 are its priority.
 #define SPRITE_ATTR2_HIGH(sprite) (((u8 *)(sprite))[9])
 
-// The event command "set view bounds": the camera keeps the screen inside
-// these map coordinates (Camera_MoveWithinMapBounds).
+/// The event command "set view bounds": the camera keeps the screen inside
+/// these map coordinates (Camera_MoveWithinMapBounds).
 void Map_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
   struct MapScrollWork *work = gMapWork[0];
 
@@ -63,8 +64,8 @@ s32 FieldFx_StepRatioTransition(void) {
   }
 }
 
-// Starts a zoom to zoom (16.16) over frames frames, on the world map (event
-// mode 3) only.
+/// Starts a zoom to zoom (16.16) over frames frames, on the world map (event
+/// mode 3) only.
 void BattleFx_ScheduleRatioTransition(s32 zoom, s32 frames) {
   struct PerspectiveWork *work = gMapWork[0];
   s32 inverse;
@@ -88,8 +89,8 @@ void BattleFx_ScheduleRatioTransition(s32 zoom, s32 frames) {
 #endif
 }
 
-// Waits for a zoom transition to end (on the world map only, at most 300
-// frames).
+/// Waits for a zoom transition to end (on the world map only, at most 300
+/// frames).
 void Event_WaitForZoomTransition(void) {
   s32 frames;
   struct PerspectiveWork *work = gMapWork[0];
@@ -140,10 +141,10 @@ s32 BattleFx_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
 #endif
 }
 
-// The event command "actor show emote": shows an emote bubble (object 21)
-// over an actor, then waits wait frames. The low 4 bits of emote pick the
-// bubble's animation (6 also plays sound 110); with 0x100 the bubble takes
-// sprite priority 1, otherwise the actor's.
+/// The event command "actor show emote": shows an emote bubble (object 21)
+/// over an actor, then waits wait frames. The low 4 bits of emote pick the
+/// bubble's animation (6 also plays sound 110); with 0x100 the bubble takes
+/// sprite priority 1, otherwise the actor's.
 void BattleFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
   struct FieldActor *target;
 
@@ -202,11 +203,11 @@ void BattleFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
   }
 }
 
-// The event command "actor set attached effect": with mode (the low 2 bits)
-// 0 removes the object attached to an actor; 1 attaches one (object 209,
-// animation 1) that stays until removed; 2 shows a one-off one (animation 2)
-// that ends by itself. With 0x100 the object takes sprite priority 1,
-// otherwise the actor's.
+/// The event command "actor set attached effect": with mode (the low 2 bits)
+/// 0 removes the object attached to an actor; 1 attaches one (object 209,
+/// animation 1) that stays until removed; 2 shows a one-off one (animation 2)
+/// that ends by itself. With 0x100 the object takes sprite priority 1,
+/// otherwise the actor's.
 void BattleFx_ConfigureLinkedObject(s32 actor, s32 flags) {
   struct FieldActor *object = ObjectTable_Get(actor);
   struct FieldActor *effect;

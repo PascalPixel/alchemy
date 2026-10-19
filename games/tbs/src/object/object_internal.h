@@ -1,10 +1,11 @@
 #ifndef ALCHEMY_OBJECT_INTERNAL_H
 #define ALCHEMY_OBJECT_INTERNAL_H
 
-// What every part of object.c shares: its includes and the macros and
-// types more than one part uses. object.c includes it before the parts, and
-// each part includes it too, so that a part read on its own resolves. It
-// places no bytes.
+/// @file
+/// What every part of object.c shares: its includes and the macros and
+/// types more than one part uses. object.c includes it before the parts, and
+/// each part includes it too, so that a part read on its own resolves. It
+/// places no bytes.
 
 #include "unit/object/battle_cue.h"
 #include "unit/object/zonedata.h"
@@ -95,11 +96,11 @@
 #include "macros.h"
 #include "ability_ids.h"
 
-// Field_RunScene's result when the scene was not left (scene.c, run_scene.c).
+/// Field_RunScene's result when the scene was not left (scene.c, run_scene.c).
 #define EXIT_NONE 999
 
-// Scene ids above the field maps, which Game_ResetForNewGame runs without a
-// map.
+/// Scene ids above the field maps, which Game_ResetForNewGame runs without a
+/// map.
 enum {
   SCENE_BLANK = 0x1fb,
   SCENE_REEL_GAME = 0x1fc,
@@ -107,8 +108,8 @@ enum {
   SCENE_BATTLE = 0x1fe
 };
 
-// The polar-offset routine walks three array elements. Named coordinates
-// remain useful to callers; the union gives that array real storage.
+/// The polar-offset routine walks three array elements. Named coordinates
+/// remain useful to callers; the union gives that array real storage.
 union PolarOffsetPosition {
   struct EffectVector vector;
   s32 coordinates[3];
@@ -116,7 +117,7 @@ union PolarOffsetPosition {
 
 STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 
-// A scene region's bounds, in pixels, as 16.16 fixed point.
+/// A scene region's bounds, in pixels, as 16.16 fixed point.
 #define REGION_FIXED(value) ((s32)((u32)(s32)(value) << 16))
 
 // A field Psynergy or item use, packed into one value (items.c, psynergy.c).
@@ -131,11 +132,11 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 #define FLAG_PSYNERGY_EFFECT 0x140 // play the usual effect
 #define FLAG_PSYNERGY_TARGET 0x141 // aim the effect at the target
 
-// The flags of a Psynergy event (kind 5) in the given phase.
+/// The flags of a Psynergy event (kind 5) in the given phase.
 #define PSYNERGY_EV(phase) ((phase) << 28 | EVENT_PSYNERGY)
 #define PSYNERGY_EV_ANY PSYNERGY_EV(7) // any phase
 
-// Shows message m with the user's and the Psynergy's names, and waits.
+/// Shows message m with the user's and the Psynergy's names, and waits.
 #define PSYNERGY_MESSAGE(who, act, m)                                          \
   (UiWork_PushValueSlotFar((who), 1), UiWork_PushValueSlotFar((act), 4),       \
    UiText_ShowPositionedMessageAndWaitFar((m), 1))

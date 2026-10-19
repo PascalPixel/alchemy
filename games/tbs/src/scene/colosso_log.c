@@ -69,7 +69,7 @@
   ((s32 (*)())Scene_GiveAndEquipItem)
 #endif
 
-// Forward declarations.
+/// Forward declarations.
 static void ColossoLog_PlayPostBattleReunion(s32 battleResult);
 static void ColossoLog_IntroduceFinalCourse(s32 guideId);
 static void ColossoLogRollingStage_RunScriptedTransition(s32 mode);
@@ -80,39 +80,39 @@ static void ColossoLog_PushActorAhead(void);
 
 typedef void (*SceneTaskEntry)(void);
 
-// The third course's actors, by the guide's and attendants' explanations: the
-// Scales of Justice, the Stepping-Stone Stage, the Wall Wedge, the Free-Climb
-// Area, the Moving Sidewalk Stage and another log-rolling area lead to the
-// arena. The Wall Wedge's moving wall is actors 18 to 27; actors 15 to 17 are
-// rocks that settle where they fall (FLAG_SCENE_TEMP_14 to _16).
+/// The third course's actors, by the guide's and attendants' explanations: the
+/// Scales of Justice, the Stepping-Stone Stage, the Wall Wedge, the Free-Climb
+/// Area, the Moving Sidewalk Stage and another log-rolling area lead to the
+/// arena. The Wall Wedge's moving wall is actors 18 to 27; actors 15 to 17 are
+/// rocks that settle where they fall (FLAG_SCENE_TEMP_14 to _16).
 enum {
-  OPPONENT = 8,        // the warrior racing Isaac to the arena
-  FROST_TARGET = 9,    // on the eastern pan
-  SCALE_PAN_WEST = 10, // the Scales of Justice
+  OPPONENT = 8,        ///< the warrior racing Isaac to the arena
+  FROST_TARGET = 9,    ///< on the eastern pan
+  SCALE_PAN_WEST = 10, ///< the Scales of Justice
   SCALE_PAN_EAST = 11,
-  SCALE_WEIGHT = 12, // pushed onto the western pan
+  SCALE_WEIGHT = 12, ///< pushed onto the western pan
   STONE = 13,
   WALL_OPERATOR = 28,
   GROWTH_PLANT = 29,
   SIDEWALK_BLOCK = 30,
-  LONG_LOG = 31, // the log-rolling area's long log
-  GUIDE = 32,    // explains the third course
+  LONG_LOG = 31, ///< the log-rolling area's long log
+  GUIDE = 32,    ///< explains the third course
   SCALES_ATTENDANT = 33,
   STEPPING_STONE_ATTENDANT = 34,
   WALL_WEDGE_ATTENDANT = 35,
   FREE_CLIMB_ATTENDANT = 36,
   MOVING_SIDEWALK_ATTENDANT = 37,
   LOG_ROLLING_ATTENDANT = 38,
-  PRIZE_A = 39, // the arena's Claymore and Hunter's Sword
+  PRIZE_A = 39, ///< the arena's Claymore and Hunter's Sword
   PRIZE_B = 40
 };
 
-// Set the leader speed for the shared solo-party placement routine.
+/// Set the leader speed for the shared solo-party placement routine.
 static inline void InitializeActorZero(void) {
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
 }
 
-// Set a companion speed for the shared solo-party placement routine.
+/// Set a companion speed for the shared solo-party placement routine.
 static inline void InitializeSelectedActor(s32 actorId) {
   Engine_ActorSetSpeed(actorId, PIXELS(1), PIXELS(1) / 2);
 }
@@ -121,23 +121,23 @@ extern s32 gColossoParticleCount;
 
 // Shared Colosso routines (scene/common/colosso_*.c).
 
-// Return the course entrance placements.
+/// Return the course entrance placements.
 struct SceneEntrance *ColossoLog_GetEntrances(void) {
   return gColossoLogEntrances;
 }
 
-// The course has no region table.
+/// The course has no region table.
 const struct SceneRegion *ColossoLog_GetRegions(void) { return 0; }
 
-// Return the course exit connections.
+/// Return the course exit connections.
 u32 *ColossoLog_GetExits(void) { return gColossoLogExits; }
 
-// Return the course actor placements.
+/// Return the course actor placements.
 struct ScenePlacement *ColossoLog_GetPlacements(void) {
   return gColossoLogPlacements;
 }
 
-// Cycle the moving wall and raise the opening event beneath the rider.
+/// Cycle the moving wall and raise the opening event beneath the rider.
 static void ColossoLogRollingStage_SceneTask(void) {
   struct EventWork *work = gEventWork;
   struct FieldActor *actor = Object_GetById(gGameState.selectedActor);
@@ -176,7 +176,7 @@ static void ColossoLogRollingStage_SceneTask(void) {
 
 // Function from another file; its callers use no declaration (implicit int).
 
-// Reset the moving wall to its first displayed pattern.
+/// Reset the moving wall to its first displayed pattern.
 static void ColossoLogRollingStage_ResetAndRunSceneTask(void) {
   SceneTaskEntry entry;
 
@@ -187,12 +187,12 @@ static void ColossoLogRollingStage_ResetAndRunSceneTask(void) {
   entry();
 }
 
-// Resume cycling the moving wall.
+/// Resume cycling the moving wall.
 static void ColossoLogRollingStage_StartSceneTask(void) {
   FieldScheduler_AddCallback(ColossoLogRollingStage_SceneTask, 0xC80);
 }
 
-// Wait for the wall pattern used by the tutorial, with a bounded timeout.
+/// Wait for the wall pattern used by the tutorial, with a bounded timeout.
 static void ColossoLogRollingStage_WaitForSceneTask(void) {
   s32 polls;
 
@@ -208,8 +208,8 @@ static void ColossoLogRollingStage_WaitForSceneTask(void) {
   }
 }
 
-// On the Moving Sidewalk, until 0x363 is set, the belt carries the controlled
-// actor and the camera west.
+/// On the Moving Sidewalk, until 0x363 is set, the belt carries the controlled
+/// actor and the camera west.
 static void Event_RideMovingSidewalk(void) {
   struct EventWork *work = gEventWork;
   struct GameState *state = &gGameState;
@@ -224,7 +224,7 @@ static void Event_RideMovingSidewalk(void) {
   }
 }
 
-// Growth on the plant: it grows and opens a shortcut (0x360).
+/// Growth on the plant: it grows and opens a shortcut (0x360).
 static void Event_GrowPlant(void) {
   Engine_GameFlagSet(0x360);
   {
@@ -233,15 +233,15 @@ static void Event_GrowPlant(void) {
   }
 }
 
-// Move a scale pan vertically at the shared speed and acceleration.
+/// Move a scale pan vertically at the shared speed and acceleration.
 static inline void ColossoLog_MoveOnScales(struct FieldActor *pan, s32 height) {
   pan->acceleration = PIXELS(2) / 5;
   pan->speed = PIXELS(4) / 5;
   Engine_ObjectSetPosition(pan, pan->x.fixed, height, pan->z.fixed);
 }
 
-// Frost on the target on the eastern pan: it freezes and the Scales of Justice
-// tip, the western pan down and the eastern pan up (0x362).
+/// Frost on the target on the eastern pan: it freezes and the Scales of Justice
+/// tip, the western pan down and the eastern pan up (0x362).
 static void Event_FreezeOnScales(void) {
   struct FieldActor *object;
 
@@ -260,8 +260,8 @@ static void Event_FreezeOnScales(void) {
   Map_CopyCellAttributes(14, 12, 1, 1, 9, 12);
 }
 
-// Stepping onto the western pan, unless the scales are frozen: it sinks with
-// the rider as the eastern pan rises (0x367).
+/// Stepping onto the western pan, unless the scales are frozen: it sinks with
+/// the rider as the eastern pan rises (0x367).
 static void Event_StepOnScales(void) {
   s32 actor;
   s32 lowered;
@@ -298,7 +298,7 @@ static void Event_StepOnScales(void) {
   }
 }
 
-// Stepping off the western pan: the scales swing back.
+/// Stepping off the western pan: the scales swing back.
 static void Event_StepOffScales(void) {
   struct FieldActor *object;
 
@@ -320,8 +320,8 @@ static void Event_StepOffScales(void) {
   Engine_GameFlagClear(0x367);
 }
 
-// When the weight reaches the western pan, it sinks the pan and the eastern
-// pan rises (0x368).
+/// When the weight reaches the western pan, it sinks the pan and the eastern
+/// pan rises (0x368).
 static void Event_SetWeightOnScales(void) {
   struct FieldActor *probe;
   struct FieldActor *log;
@@ -352,14 +352,14 @@ static void Event_SetWeightOnScales(void) {
   }
 }
 
-// Walking into the weight pushes it, perhaps onto the scales.
+/// Walking into the weight pushes it, perhaps onto the scales.
 static void Event_PushWeight(void) {
   ColossoLog_PushActorAhead();
   Event_SetWeightOnScales();
 }
 
-// After Move on the stone: its column is kept (byte flag 0x370) and its cell
-// rebuilt.
+/// After Move on the stone: its column is kept (byte flag 0x370) and its cell
+/// rebuilt.
 static void Event_MoveStone(void) {
   struct FieldActor *actor;
   s32 x;
@@ -371,13 +371,13 @@ static void Event_MoveStone(void) {
   Map_CopyCellAttributes(17, 11, 1, 1, x, 11);
 }
 
-// Move on this rock needs nothing more.
+/// Move on this rock needs nothing more.
 static void Event_IgnoreMove(void) {}
 
-// Walking into a rock pushes it.
+/// Walking into a rock pushes it.
 static void Event_PushRock(void) { ColossoLog_PushActorAhead(); }
 
-// A rock resting on the floor becomes a step (FLAG_SCENE_TEMP_14 to _16).
+/// A rock resting on the floor becomes a step (FLAG_SCENE_TEMP_14 to _16).
 static void Event_SettleRocks(void) {
   struct FieldActor *actor;
   s32 slot;
@@ -402,7 +402,7 @@ static void Event_SettleRocks(void) {
   }
 }
 
-// Change the eastern end collision according to the rider facing.
+/// Change the eastern end collision according to the rider facing.
 static void ColossoLog_UpdateEastEndCollision(void) {
   struct FieldActor *actor;
   s32 x;
@@ -421,7 +421,7 @@ static void ColossoLog_UpdateEastEndCollision(void) {
   }
 }
 
-// Reject blocked cells and cells occupied by one of the three obstacles.
+/// Reject blocked cells and cells occupied by one of the three obstacles.
 static s32 ColossoLogRollingStage_CheckObstacleDestination(s32 x, s32 z) {
   struct FieldActor *actor;
 
@@ -445,7 +445,7 @@ static s32 ColossoLogRollingStage_CheckObstacleDestination(s32 x, s32 z) {
   return 0;
 }
 
-// Check all four cells covered by the long rolling log.
+/// Check all four cells covered by the long rolling log.
 static s32 ColossoLogRollingStage_CheckPathClearance(s32 x, s32 z) {
   if (ColossoLogRollingStage_CheckObstacleDestination(x, z - PIXELS(24)) != 0 ||
       ColossoLogRollingStage_CheckObstacleDestination(x, z - PIXELS(8)) != 0 ||
@@ -456,9 +456,9 @@ static s32 ColossoLogRollingStage_CheckPathClearance(s32 x, s32 z) {
   return 0;
 }
 
-// Walking into the long log rolls it, with the leader, the way the pad is held
-// until something stops it; at the east end it drops into place and the path
-// is made (0x369). Away from the log, a rock ahead is pushed instead.
+/// Walking into the long log rolls it, with the leader, the way the pad is held
+/// until something stops it; at the east end it drops into place and the path
+/// is made (0x369). Away from the log, a rock ahead is pushed instead.
 static void Event_RollLongLog(void) {
   struct FieldActor *rider;
   struct FieldActor *log;
@@ -574,7 +574,7 @@ far:
   Event_SettleRocks();
 }
 
-// Display the activated moving sidewalk and play its arrival sounds.
+/// Display the activated moving sidewalk and play its arrival sounds.
 static s32
 ColossoLog_ShowActivatedSidewalkLayer(struct ScriptInterpreter *interpreter) {
   Map_SetLayerEntryFlag(1);
@@ -584,8 +584,8 @@ ColossoLog_ShowActivatedSidewalkLayer(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-// Force on the Moving Sidewalk's block: it slides away and the belt carries
-// no one any more (0x363).
+/// Force on the Moving Sidewalk's block: it slides away and the belt carries
+/// no one any more (0x363).
 static void Event_ForceSidewalkBlock(void) {
   struct FieldActor *effect;
   s32 moveRate;
@@ -600,8 +600,8 @@ static void Event_ForceSidewalkBlock(void) {
   Engine_GameFlagSet(0x363);
 }
 
-// Halt on the wall operator: the Wall Wedge stops at its next open pattern
-// (0x361).
+/// Halt on the wall operator: the Wall Wedge stops at its next open pattern
+/// (0x361).
 static void Event_HaltWall(void) {
   BattleEffect_PauseObject(WALL_OPERATOR);
   Engine_GameFlagSet(0x361);
@@ -612,7 +612,7 @@ static void Event_HaltWall(void) {
   Engine_TaskRemoveCallback(ColossoLogRollingStage_SceneTask);
 }
 
-// The rider passes through the moving wall's northern opening.
+/// The rider passes through the moving wall's northern opening.
 static void Event_PassNorthWallOpening(void) {
   struct FieldActor *actor;
 #ifndef UBFIX
@@ -640,7 +640,7 @@ static void Event_PassNorthWallOpening(void) {
   FieldObject_WaitForMove(actor);
 }
 
-// The rider passes through the moving wall's southern opening.
+/// The rider passes through the moving wall's southern opening.
 static void Event_PassSouthWallOpening(void) {
   struct FieldActor *actor;
 #ifndef UBFIX
@@ -672,10 +672,10 @@ static void Event_PassSouthWallOpening(void) {
   FieldBattleFx_RunRisingObjectSequence(*actorId, 6, 0);
 }
 
-// Unused scene-event callback with no behavior.
+/// Unused scene-event callback with no behavior.
 UNUSED static void ColossoLogRollingStage_NoopSceneEventHook(void) {}
 
-// Offer to practise the course with a selected solo competitor.
+/// Offer to practise the course with a selected solo competitor.
 UNUSED static void ColossoLog_RunCompetitorTalk(s32 competitorId) {
   struct EventWork *work;
   s32 actorId;
@@ -708,10 +708,10 @@ UNUSED static void ColossoLog_RunCompetitorTalk(s32 competitorId) {
   }
 }
 
-// Reaching the arena: the leader takes a prize (the Claymore if first, the
-// Hunter's Sword if second), and he and his opponent face off and fight.
-// FLAG_SCENE_TEMP_11 says the arena was already reached; the arena's touch
-// works while FLAG_SCENE_TEMP_10 is clear.
+/// Reaching the arena: the leader takes a prize (the Claymore if first, the
+/// Hunter's Sword if second), and he and his opponent face off and fight.
+/// FLAG_SCENE_TEMP_11 says the arena was already reached; the arena's touch
+/// works while FLAG_SCENE_TEMP_10 is clear.
 static void Event_ReachArena(void) {
   s32 place;
   s32 i;
@@ -751,14 +751,14 @@ static void Event_ReachArena(void) {
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
 }
 
-// Walking into something: unless it is an actor, it is checked.
+/// Walking into something: unless it is an actor, it is checked.
 static void Event_CheckAhead(void) {
   if (Colosso_FindActorAhead() == 0) {
     Engine_LeaderCheckAhead();
   }
 }
 
-// Walking into something: the weight is pushed, anything else is checked.
+/// Walking into something: the weight is pushed, anything else is checked.
 static void Event_PushWeightOrCheckAhead(void) {
   if (Colosso_FindActorAhead() == 0) {
     Engine_LeaderCheckAhead();
@@ -767,11 +767,11 @@ static void Event_PushWeightOrCheckAhead(void) {
   }
 }
 
-// Return the course event table.
+/// Return the course event table.
 struct SceneEvent *ColossoLog_GetEvents(void) { return gColossoLogEvents; }
 
-// Restore obstacle progress, then enter practice, introduction or battle
-// aftermath.
+/// Restore obstacle progress, then enter practice, introduction or battle
+/// aftermath.
 s32 ColossoLog_Initialize(void) {
   struct FieldActor *actor;
   s32 i;
@@ -986,7 +986,7 @@ s32 ColossoLog_Initialize(void) {
   return 0;
 }
 
-// Advance a reunion particle using its signed small-step velocity fields.
+/// Advance a reunion particle using its signed small-step velocity fields.
 static s32 ColossoLogRollingStage_AdvanceParticleMotion(
     struct ScriptInterpreter *interpreter) {
   SceneParticle *particle = (SceneParticle *)interpreter;
@@ -999,7 +999,7 @@ static s32 ColossoLogRollingStage_AdvanceParticleMotion(
   return 0;
 }
 
-// Show one of three reunion particles at its scheduled point in the cycle.
+/// Show one of three reunion particles at its scheduled point in the cycle.
 static void ColossoLogRollingStage_SpawnPeriodicParticle(void) {
   SceneParticle *particle;
   SceneParticle *source;
@@ -1050,7 +1050,7 @@ static void ColossoLogRollingStage_SpawnPeriodicParticle(void) {
   Actor_SetActionScript(kind, gColossoParticleKinds);
 }
 
-// Reunite the party after the battle and play the resting conversation.
+/// Reunite the party after the battle and play the resting conversation.
 static void ColossoLog_PlayPostBattleReunion(s32 battleResult) {
   struct FieldActor *actor;
   const s32 *leaderScaleScript;
@@ -1253,7 +1253,7 @@ static void ColossoLog_PlayPostBattleReunion(s32 battleResult) {
   Engine_EventEnd();
 }
 
-// Stage the party behind the guide for the introduction to the third finals.
+/// Stage the party behind the guide for the introduction to the third finals.
 static void ColossoLog_IntroduceFinalCourse(s32 guideId) {
   s32 guideZ;
   s32 guideX;
@@ -1321,8 +1321,8 @@ static void ColossoLog_IntroduceFinalCourse(s32 guideId) {
   Engine_EventEnd();
 }
 
-// The Scales of Justice's attendant: the first time, the pans are shown; then
-// the objective.
+/// The Scales of Justice's attendant: the first time, the pans are shown; then
+/// the objective.
 static void Event_TalkToScalesAttendant(s32 guideId) {
   struct FieldActor *pan1;
   struct FieldActor *pan2;
@@ -1387,8 +1387,8 @@ static void Event_TalkToScalesAttendant(s32 guideId) {
   Engine_EventEnd();
 }
 
-// The Stepping-Stone Stage's attendant: the first time, a warrior finds the
-// way; then the objective.
+/// The Stepping-Stone Stage's attendant: the first time, a warrior finds the
+/// way; then the objective.
 static void Event_TalkToSteppingStoneAttendant(s32 guideId) {
   s32 promptResult;
   s32 x;
@@ -1442,8 +1442,8 @@ static void Event_TalkToSteppingStoneAttendant(s32 guideId) {
   Engine_EventEnd();
 }
 
-// The Wall Wedge's attendant: the first time, a warrior times his way through
-// the moving wall; then that its operator will cheer for Isaac.
+/// The Wall Wedge's attendant: the first time, a warrior times his way through
+/// the moving wall; then that its operator will cheer for Isaac.
 static void Event_TalkToWallWedgeAttendant(s32 guideId) {
   struct EventWork *work;
   s32 promptResult;
@@ -1504,8 +1504,8 @@ static void Event_TalkToWallWedgeAttendant(s32 guideId) {
   }
 }
 
-// The Free-Climb Area's attendant: the first time, a warrior climbs across;
-// then the objective.
+/// The Free-Climb Area's attendant: the first time, a warrior climbs across;
+/// then the objective.
 static void Event_TalkToFreeClimbAttendant(s32 guideId) {
   s32 result;
   struct FieldActor *actor;
@@ -1567,7 +1567,7 @@ static void Event_TalkToFreeClimbAttendant(s32 guideId) {
   }
 }
 
-// Start a scripted pixel destination while preserving the actor height.
+/// Start a scripted pixel destination while preserving the actor height.
 static void ColossoLogRollingStage_PositionActor(s32 selector, s32 x, s32 z) {
   struct FieldActor *actor;
 
@@ -1579,7 +1579,7 @@ static void ColossoLogRollingStage_PositionActor(s32 selector, s32 x, s32 z) {
   }
 }
 
-// Move to a scripted pixel destination, wait, then restore the idle mode.
+/// Move to a scripted pixel destination, wait, then restore the idle mode.
 static void ColossoLogRollingStage_PositionAndActivateActor(s32 selector, s32 x,
                                                             s32 z) {
   struct FieldActor *actor;
@@ -1594,8 +1594,8 @@ static void ColossoLogRollingStage_PositionAndActivateActor(s32 selector, s32 x,
   }
 }
 
-// The Moving Sidewalk Stage's attendant: the first time, a warrior walks
-// against the belt; then the objective.
+/// The Moving Sidewalk Stage's attendant: the first time, a warrior walks
+/// against the belt; then the objective.
 static void Event_TalkToMovingSidewalkAttendant(s32 guideId) {
   s32 i;
   s32 result;
@@ -1653,8 +1653,8 @@ static void Event_TalkToMovingSidewalkAttendant(s32 guideId) {
   }
 }
 
-// The log-rolling area's attendant: the first time, a marker traces the log's
-// route; then the objective.
+/// The log-rolling area's attendant: the first time, a marker traces the log's
+/// route; then the objective.
 static void Event_TalkToLogRollingAttendant(s32 actor) {
   s32 state;
 
@@ -1700,7 +1700,7 @@ static void Event_TalkToLogRollingAttendant(s32 actor) {
 #include "common/item_equip.h"
 #include "common/colosso_task.h"
 
-// Select the portrait task script and clear its movement state.
+/// Select the portrait task script and clear its movement state.
 static void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter) {
   s32 handler;
 
@@ -1735,7 +1735,7 @@ static void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter) {
   gColosso_LetteringPosition = 0;
 }
 
-// Play the countdown portraits and the start-of-race transition.
+/// Play the countdown portraits and the start-of-race transition.
 static void ColossoLogRollingStage_RunScriptedTransition(s32 mode) {
   if (mode == 0) {
     Engine_EventBegin();
@@ -1788,7 +1788,7 @@ static void ColossoLogRollingStage_RunScriptedTransition(s32 mode) {
   Engine_GameFlagSet(0x123);
 }
 
-// Unused portrait countdown for a signed number of seconds.
+/// Unused portrait countdown for a signed number of seconds.
 UNUSED static void FieldScene_RunScene3bcSequenceA(s32 countdown) {
   s32 actorId;
 
@@ -1841,7 +1841,7 @@ UNUSED static void FieldScene_RunScene3bcSequenceA(s32 countdown) {
 #include "common/colosso_marker.h"
 #include "common/colosso_item_icon.h"
 
-// Write eight hexadecimal digits followed by a terminator.
+/// Write eight hexadecimal digits followed by a terminator.
 UNUSED static void WriteU32AsHex(u8 *hexText, u32 value) {
   s32 digitIndex;
 
@@ -1855,17 +1855,17 @@ UNUSED static void WriteU32AsHex(u8 *hexText, u32 value) {
   }
 }
 
-// Scene hook with no behavior.
+/// Scene hook with no behavior.
 static void ColossoLogRollingStage_NoopSceneHook(void) {}
 
-// Mark the rival path recorder as finished.
+/// Mark the rival path recorder as finished.
 UNUSED static void ColossoLog_MarkRivalFinished(void) {
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;
 
   recorder->mode = 9;
 }
 
-// Wait until the rival path recorder reaches its finished mode.
+/// Wait until the rival path recorder reaches its finished mode.
 static void ColossoLog_WaitForRivalToFinish(void) {
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;
 
@@ -1874,7 +1874,7 @@ static void ColossoLog_WaitForRivalToFinish(void) {
   }
 }
 
-// Occasionally scatter an effect around a moving source actor.
+/// Occasionally scatter an effect around a moving source actor.
 static void
 ColossoLogRollingStage_SpawnRandomSceneEffect(union FieldObject *fieldObject) {
   StageEffect *source = (StageEffect *)fieldObject;
@@ -1912,7 +1912,7 @@ ColossoLogRollingStage_SpawnRandomSceneEffect(union FieldObject *fieldObject) {
   }
 }
 
-// Raise the linked item actor and clear the source link.
+/// Raise the linked item actor and clear the source link.
 static s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(
     struct ScriptInterpreter *interpreter) {
   LinkedStageEffect *source = (LinkedStageEffect *)interpreter;
@@ -1928,7 +1928,7 @@ static s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(
   return 0;
 }
 
-// Move to the available finish item, equip it and announce it.
+/// Move to the available finish item, equip it and announce it.
 static s32 ColossoLog_CollectFinishEquipment(s32 firstItem, s32 secondItem) {
   struct ColossoGaugeWork *work = (struct ColossoGaugeWork *)gColossoWork;
   struct FieldActor *actor;
@@ -1991,8 +1991,8 @@ static s32 ColossoLog_CollectFinishEquipment(s32 firstItem, s32 secondItem) {
 #include "common/colosso_scene_state.h"
 #include "common/object_findslot.h"
 
-// Push a neighboring actor one cell when its destination and overhead are
-// clear.
+/// Push a neighboring actor one cell when its destination and overhead are
+/// clear.
 static void ColossoLog_PushActorAhead(void) {
   struct FieldActor *subject;
   struct FieldActor *target;
@@ -2178,7 +2178,7 @@ s32 gColossoLinkedEffect[] = {
     SC_END,
 };
 
-// Pixel step by direction: X in the upper halfword, Z in the lower.
+/// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(x, z) ((u32)(x) << 16 | (u16)(z))
 
 u32 gStagedActor_DirectionSteps[] = {

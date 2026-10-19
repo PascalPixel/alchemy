@@ -1,4 +1,5 @@
-// Goma Cave: the room the stump in the room above falls into.
+/// @file
+/// Goma Cave: the room the stump in the room above falls into.
 #include "unit/scene/goma_cave_pond.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -22,12 +23,12 @@
 #include "flags.h"
 #include "event.h"
 
-// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another place group, and other places use the numbers for their own.
-// The stump has been pushed over into the room below (goma_cave_pillar.c).
+/// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+/// enters another place group, and other places use the numbers for their own.
+/// The stump has been pushed over into the room below (goma_cave_pillar.c).
 #define FLAG_GOMA_CAVE_STUMP_FELL 0x300
 
-// The stump the party pushes over in the room above, lying in this room.
+/// The stump the party pushes over in the room above, lying in this room.
 #define FALLEN_STUMP 8
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -44,8 +45,8 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 
 const struct SceneEvent *Scene_GetEvents(void) { return gGomaCavePondEvents; }
 
-// Once the stump in the room above has been pushed over, it lies fallen
-// here: put it in place and copy the map cells it covers.
+/// Once the stump in the room above has been pushed over, it lies fallen
+/// here: put it in place and copy the map cells it covers.
 s32 Scene_Initialize(void) {
   struct EventWork *work;
 

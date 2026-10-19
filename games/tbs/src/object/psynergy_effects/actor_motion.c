@@ -1,18 +1,19 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Actor scripts: moving, turning and the built-in actions.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Actor scripts: moving, turning and the built-in actions.
 
 #include "../psynergy_effects_internal.h"
 
-// Script step: clears an object's sprite flags and its collision flags.
+/// Script step: clears an object's sprite flags and its collision flags.
 s32 Object_ClearChildAndCollisionFlags(void *obj) {
   ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
   ((struct ScriptObjectRuntime *)obj)->flags59 = 0;
   return 0;
 }
 
-// Script step of action 5: follows the linked object. While at least action
-// pixels away the object walks toward it (a step of 16 / action of the
-// distance, in 16-pixel units); closer, it stands.
+/// Script step of action 5: follows the linked object. While at least action
+/// pixels away the object walks toward it (a step of 16 / action of the
+/// distance, in 16-pixel units); closer, it stands.
 s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object) {
   s32 step;
   struct ObjectRuntime *target;
@@ -50,8 +51,8 @@ s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object) {
   return 1;
 }
 
-// Script step of action 6: turns the object toward its linked object, at most
-// 1/16 turn a frame.
+/// Script step of action 6: turns the object toward its linked object, at most
+/// 1/16 turn a frame.
 s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object) {
   s16 turnStep;
   u16 currentAngle;
@@ -75,9 +76,9 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object) {
   return 1;
 }
 
-// Starts an actor's action script: 1 to 4 the fixed action scripts, 5 follow
-// the linked object, 6 face the leader, 7 reset. Any other value is itself
-// the script to run.
+/// Starts an actor's action script: 1 to 4 the fixed action scripts, 5 follow
+/// the linked object, 6 face the leader, 7 reset. Any other value is itself
+/// the script to run.
 void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action) {
   switch ((action - 1)) {
   case 0:
@@ -108,9 +109,9 @@ void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action) {
   ObjectDispatch_InitializeFar((struct DispatchObject *)object, action);
 }
 
-// Finds the nearest animated object to self within 40 pixels and 48 pixels of
-// height, ignoring objects more than 3/16 turn to either side once they are
-// over 23 pixels away. Returns it if it shows sprite, otherwise NULL.
+/// Finds the nearest animated object to self within 40 pixels and 48 pixels of
+/// height, ignoring objects more than 3/16 turn to either side once they are
+/// over 23 pixels away. Returns it if it shows sprite, otherwise NULL.
 struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
                                                      s32 sprite) {
   struct ObjectRuntime *entry;

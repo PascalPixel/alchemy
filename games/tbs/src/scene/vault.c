@@ -40,30 +40,31 @@
 
 enum { VAULT_DRIFT_RATE = PIXELS(1) / 10 };
 
-// Vault after Mt. Aleph's eruption, while Hammet's Shaman's Rod is missing
-// and after the party has jailed the thieves. The townspeople are named by
-// what they say.
+/// Vault after Mt. Aleph's eruption, while Hammet's Shaman's Rod is missing
+/// and after the party has jailed the thieves. The townspeople are named by
+/// what they say.
 enum {
-  ACTOR_GREETER = 8,           // "Welcome to Vault"
-  ACTOR_ERUPTION_WITNESS = 9,  // "Wasn't the eruption of Mt. Aleph incredible?"
-  ACTOR_THEFT_GOSSIP = 11,     // folks got robbed during the eruption
-  ACTOR_HAMMET_GOSSIP = 10,    // Master Hammet had his precious rod stolen
-  ACTOR_IVAN_GOSSIP = 12,      // Hammet's servant can't return to Kalay
-  ACTOR_TRAVELER_WATCHER = 13, // "Those travelers left in a big hurry."
-  // The two who walk in circles.
+  ACTOR_GREETER = 8, ///< "Welcome to Vault"
+  /// "Wasn't the eruption of Mt. Aleph incredible?"
+  ACTOR_ERUPTION_WITNESS = 9,
+  ACTOR_THEFT_GOSSIP = 11,     ///< folks got robbed during the eruption
+  ACTOR_HAMMET_GOSSIP = 10,    ///< Master Hammet had his precious rod stolen
+  ACTOR_IVAN_GOSSIP = 12,      ///< Hammet's servant can't return to Kalay
+  ACTOR_TRAVELER_WATCHER = 13, ///< "Those travelers left in a big hurry."
+  /// The two who walk in circles.
   ACTOR_FIRST_WALKER = 14,
   ACTOR_SECOND_WALKER = 15,
-  ACTOR_WATCHMAN = 16,          // "Nobody's stealing anything on my watch!"
-  ACTOR_LOITERING_THIEF = 17,   // "Are you accusing us of stealing...?"
-  ACTOR_STRANDED_TRAVELER = 18, // was leaving town when the volcano erupted
+  ACTOR_WATCHMAN = 16,          ///< "Nobody's stealing anything on my watch!"
+  ACTOR_LOITERING_THIEF = 17,   ///< "Are you accusing us of stealing...?"
+  ACTOR_STRANDED_TRAVELER = 18, ///< was leaving town when the volcano erupted
   ACTOR_VAULT_DOG = 19,
-  ACTOR_ROOFER = 20,          // a fiery rock burnt a hole through the roof
-  ACTOR_ROOF_COMPLAINER = 21, // "He should be fixing the roof now"
+  ACTOR_ROOFER = 20,          ///< a fiery rock burnt a hole through the roof
+  ACTOR_ROOF_COMPLAINER = 21, ///< "He should be fixing the roof now"
   ACTOR_VAULT_VENUS_DJINNI = 23,
   VAULT_VENUS_DJINNI_INDEX = 4
 };
 
-// Forward declarations.
+/// Forward declarations.
 static void Vault_ShowStandingActorMessage(s32 actor);
 static void Vault_ShowMessageAndWait(s32 actor, s32 delay);
 static void Vault_FaceActorAndWait(s32 actor, s32 cue, s32 delay);
@@ -112,23 +113,23 @@ static s32 Vault_UpdateRoofComplainerProximity(union FieldObject *fieldObject) {
 #endif
 }
 
-// Return the town's entrance positions.
+/// Return the town's entrance positions.
 struct SceneEntrance *Scene_GetEntrances(void) { return gVault_Entrances; }
 
-// The town has no regions.
+/// The town has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-// Return the town's exits.
+/// Return the town's exits.
 u32 *Scene_GetExits(void) { return gVault_Exits; }
 
-// Select placements before or after the thieves are captured.
+/// Select placements before or after the thieves are captured.
 struct ScenePlacement *Scene_GetPlacements(void) {
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0)
     return gVault_PlacementsAfterThieves;
   return gVault_Placements;
 }
 
-// Count the Venus Djinn that must leave Ivan before he leaves the party.
+/// Count the Venus Djinn that must leave Ivan before he leaves the party.
 static int Vault_GetIvanVenusDjinnCount(void) {
   return UnitGet(IVAN)->djinnOwnedCounts[ELEMENT_VENUS];
 }
@@ -136,10 +137,10 @@ static int Vault_GetIvanVenusDjinnCount(void) {
 // Shared source is included here in ROM order.
 #include "common/vault_djinn.h"
 
-// Exits 1 and 2 (triggers 20 and 21): while Ivan is helping search for the
-// rod and the thieves are free, he walks out to the gate, says he is still
-// worried about the rod and will wait in Vault, leaves any Venus Djinni with
-// Isaac and leaves the party.
+/// Exits 1 and 2 (triggers 20 and 21): while Ivan is helping search for the
+/// rod and the thieves are free, he walks out to the gate, says he is still
+/// worried about the rod and will wait in Vault, leaves any Venus Djinni with
+/// Isaac and leaves the party.
 static void Event_IvanStaysBehind(void) {
   struct FieldActor *actor;
   struct EventWork *eventWork;
@@ -184,7 +185,7 @@ static void Event_IvanStaysBehind(void) {
   Engine_EventEnd();
 }
 
-// Isaac peers into the well and hears water rumbling down there.
+/// Isaac peers into the well and hears water rumbling down there.
 static void Event_PeerIntoWell(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
@@ -192,14 +193,14 @@ static void Event_PeerIntoWell(void) {
   Engine_EventEnd();
 }
 
-// Select interactions before or after the thieves are captured.
+/// Select interactions before or after the thieves are captured.
 struct SceneEvent *Scene_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0)
     return gVault_EventsAfterThieves;
   return gVault_Events;
 }
 
-// Ask the current question and select its ordinary or alternate reply.
+/// Ask the current question and select its ordinary or alternate reply.
 static inline void Vault_AskYesNoAndShowReply(s32 speaker) {
   Engine_EventOpenMessage(speaker, 0);
   if (Engine_EventChooseYesNo(0, 0) != 0) {
@@ -210,8 +211,8 @@ static inline void Vault_AskYesNoAndShowReply(s32 speaker) {
   Engine_EventShowMessage(speaker, 0);
 }
 
-// "Wasn't the eruption of Mt. Aleph incredible?" Yes: too terrified to sleep
-// for days. No: aren't you courageous!
+/// "Wasn't the eruption of Mt. Aleph incredible?" Yes: too terrified to sleep
+/// for days. No: aren't you courageous!
 static void Event_AskAboutEruption(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultWasntEruptionMtAlephIncredible);
@@ -225,9 +226,9 @@ static void Event_AskAboutEruption(void) {
   Engine_EventEnd();
 }
 
-// Travelers left town in a big hurry: did the party see them? Yes: two women
-// and four men, the girl and old man unhappy to be there. No: maybe they left
-// earlier.
+/// Travelers left town in a big hurry: did the party see them? Yes: two women
+/// and four men, the girl and old man unhappy to be there. No: maybe they left
+/// earlier.
 static void Event_AskAboutFleeingTravelers(void) {
 
   Engine_EventBegin();
@@ -238,8 +239,8 @@ static void Event_AskAboutFleeingTravelers(void) {
   Engine_EventEnd();
 }
 
-// One of the thieves: "Are you accusing us of stealing Hammet's treasured
-// Shaman's Rod?" Either answer gets a denial.
+/// One of the thieves: "Are you accusing us of stealing Hammet's treasured
+/// Shaman's Rod?" Either answer gets a denial.
 static void Event_ThiefDeniesTheft(void) {
 
   Engine_EventBegin();
@@ -249,8 +250,8 @@ static void Event_ThiefDeniesTheft(void) {
   Engine_EventEnd();
 }
 
-// "Off on an adventure, are you?" Yes: impressive for youngsters. No: see the
-// Sanctum while you're here.
+/// "Off on an adventure, are you?" Yes: impressive for youngsters. No: see the
+/// Sanctum while you're here.
 static void Event_AskAboutAdventure(void) {
 
   Engine_EventBegin();
@@ -260,7 +261,7 @@ static void Event_AskAboutAdventure(void) {
   Engine_EventEnd();
 }
 
-// Some folks got robbed during the chaos of the eruption.
+/// Some folks got robbed during the chaos of the eruption.
 static void Event_TalkOfEruptionThefts(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultGuessFolksGot);
@@ -268,8 +269,8 @@ static void Event_TalkOfEruptionThefts(void) {
   Engine_EventEnd();
 }
 
-// The watchman: nobody steals on his watch, the thieves must be from out of
-// town.
+/// The watchman: nobody steals on his watch, the thieves must be from out of
+/// town.
 static void Event_WatchmanSuspectsOutsiders(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultNobodysStealingAnything);
@@ -277,7 +278,7 @@ static void Event_WatchmanSuspectsOutsiders(void) {
   Engine_EventEnd();
 }
 
-// The dog stops and barks.
+/// The dog stops and barks.
 static void Event_TalkToDog(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultRuffRrruff);
@@ -287,8 +288,8 @@ static void Event_TalkToDog(void) {
   Engine_EventEnd();
 }
 
-// The first walker stops: poor Ivan was left at the mayor's to look for the
-// stolen rod.
+/// The first walker stops: poor Ivan was left at the mayor's to look for the
+/// stolen rod.
 static void Event_PityIvan(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_FIRST_WALKER);
   s16 savedFacing = actor->facing;
@@ -305,8 +306,8 @@ static void Event_PityIvan(void) {
   actor->timer &= 1;
 }
 
-// The second walker stops: Hammet's caravan left as soon as the eruption
-// stopped.
+/// The second walker stops: Hammet's caravan left as soon as the eruption
+/// stopped.
 static void Event_TalkOfHammetsCaravan(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_SECOND_WALKER);
   s16 savedFacing = actor->facing;
@@ -323,7 +324,7 @@ static void Event_TalkOfHammetsCaravan(void) {
   actor->timer &= 1;
 }
 
-// The roofer should be fixing the roof, but is probably in back slacking off.
+/// The roofer should be fixing the roof, but is probably in back slacking off.
 static void Event_LookForRoofer(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultFixingRoofCant);
@@ -334,7 +335,7 @@ static void Event_LookForRoofer(void) {
   Engine_EventEnd();
 }
 
-// Stop an actor, face the leader and show the current message.
+/// Stop an actor, face the leader and show the current message.
 static void Vault_ShowStandingActorMessage(s32 actor) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(actor, ANIM_STAND);
@@ -346,7 +347,7 @@ static void Vault_ShowStandingActorMessage(s32 actor) {
 // Shared source is included here in ROM order.
 #include "common/vault_talk.h"
 
-// After the thieves are jailed: "So, you're hitting the road again?"
+/// After the thieves are jailed: "So, you're hitting the road again?"
 static void Event_AskAboutLeavingAgain(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultYoureHittingRoadAgain);
@@ -355,7 +356,7 @@ static void Event_AskAboutLeavingAgain(void) {
   Engine_EventEnd();
 }
 
-// "It's great that you caught those thieves!"
+/// "It's great that you caught those thieves!"
 static void Event_PraiseThievesCapture(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultGreatCaughtThieves);
@@ -363,8 +364,8 @@ static void Event_PraiseThievesCapture(void) {
   Engine_EventEnd();
 }
 
-// Ivan went out to Lunpa, or, with Ivan in the party, rescuing Hammet must
-// have been impossible.
+/// Ivan went out to Lunpa, or, with Ivan in the party, rescuing Hammet must
+/// have been impossible.
 static void Event_TalkAboutIvan(void) {
   struct EventWork *workspace;
   Engine_EventBegin();
@@ -378,8 +379,8 @@ static void Event_TalkAboutIvan(void) {
   Engine_EventEnd();
 }
 
-// The eruption devastated the roads; once the southern bridge is repaired,
-// you can head toward Kalay.
+/// The eruption devastated the roads; once the southern bridge is repaired,
+/// you can head toward Kalay.
 static void Event_TalkOfDamagedRoads(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultEruptionDevastatedRoads);
@@ -387,8 +388,8 @@ static void Event_TalkOfDamagedRoads(void) {
   Engine_EventEnd();
 }
 
-// The first walker hopes Ivan didn't go to Lunpa alone, or, with Ivan in the
-// party, asks when he joined up with Isaac.
+/// The first walker hopes Ivan didn't go to Lunpa alone, or, with Ivan in the
+/// party, asks when he joined up with Isaac.
 static void Event_AskWhetherIvanWentToLunpa(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_FIRST_WALKER);
   s16 savedFacing = actor->facing;
@@ -407,7 +408,7 @@ static void Event_AskWhetherIvanWentToLunpa(void) {
   actor->timer &= 1;
 }
 
-// The second walker: everyone is grateful the party captured the thieves.
+/// The second walker: everyone is grateful the party captured the thieves.
 static void Event_ThankForCapturingThieves(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_SECOND_WALKER);
   s16 savedFacing = actor->facing;
@@ -424,8 +425,8 @@ static void Event_ThankForCapturingThieves(void) {
   actor->timer &= 1;
 }
 
-// "Those men you captured... They're in jail now?" Yes: the prison hadn't been
-// used in a long time. No: they're upset; maybe go see them.
+/// "Those men you captured... They're in jail now?" Yes: the prison hadn't been
+/// used in a long time. No: they're upset; maybe go see them.
 static void Event_AskAboutPrisoners(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultThoseMenCapturedTheyreIn);
@@ -435,7 +436,7 @@ static void Event_AskAboutPrisoners(void) {
   Engine_EventEnd();
 }
 
-// "Are you the ones who captured the thieves?" Either answer is praised.
+/// "Are you the ones who captured the thieves?" Either answer is praised.
 static void Event_AskWhoCapturedThieves(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultOnesWhoCapturedThieves);
@@ -444,8 +445,8 @@ static void Event_AskWhoCapturedThieves(void) {
   Engine_EventEnd();
 }
 
-// The dog barks; carrying a Bone before it has shown the passage lets the
-// party give it one.
+/// The dog barks; carrying a Bone before it has shown the passage lets the
+/// party give it one.
 static void Event_TalkToDogAfterCapture(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultRuffRrruff2);
@@ -463,7 +464,7 @@ static void Event_TalkToDogAfterCapture(void) {
   Engine_EventEnd();
 }
 
-// "Thank you for the other day. Are you leaving town already?"
+/// "Thank you for the other day. Are you leaving town already?"
 static void Event_ThankBeforeDeparture(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultThankForOtherDayLeaving);
@@ -474,8 +475,8 @@ static void Event_ThankBeforeDeparture(void) {
   Engine_EventEnd();
 }
 
-// Mind Read: stealing during an eruption is unforgivable, or how should the
-// prisoners be punished?
+/// Mind Read: stealing during an eruption is unforgivable, or how should the
+/// prisoners be punished?
 static void Event_ReadMindOnTheft(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0)
@@ -486,8 +487,8 @@ static void Event_ReadMindOnTheft(void) {
   Engine_EventEnd();
 }
 
-// Mind Read: the strange travelers headed for the northeast of the Goma
-// Range, or the only way out is the cave in the Goma Range.
+/// Mind Read: the strange travelers headed for the northeast of the Goma
+/// Range, or the only way out is the cave in the Goma Range.
 static void Event_ReadMindOnTravelers(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -499,8 +500,8 @@ static void Event_ReadMindOnTravelers(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the first walker: the three creeps at the inn stole the rod,
-// or where did Ivan go (when did they join him, with Ivan in the party)?
+/// Mind Read on the first walker: the three creeps at the inn stole the rod,
+/// or where did Ivan go (when did they join him, with Ivan in the party)?
 static void Event_ReadMindOnIvan(void) {
   Object_GetById(ACTOR_FIRST_WALKER)->timer |= 2;
   Engine_EventBegin();
@@ -516,8 +517,8 @@ static void Event_ReadMindOnIvan(void) {
   Object_GetById(ACTOR_FIRST_WALKER)->timer &= 1;
 }
 
-// Mind Read on the second walker: riches can't save you from a volcano, or the
-// party must be stronger than they look.
+/// Mind Read on the second walker: riches can't save you from a volcano, or the
+/// party must be stronger than they look.
 static void Event_ReadMindOnWealth(void) {
   Object_GetById(ACTOR_SECOND_WALKER)->timer |= 2;
   Engine_EventBegin();
@@ -530,8 +531,8 @@ static void Event_ReadMindOnWealth(void) {
   Object_GetById(ACTOR_SECOND_WALKER)->timer &= 1;
 }
 
-// Mind Read on the watchman: everyone knows the three at the inn stole the
-// rod, or he feels much better with them behind bars.
+/// Mind Read on the watchman: everyone knows the three at the inn stole the
+/// rod, or he feels much better with them behind bars.
 static void Event_ReadMindOnSuspects(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0)
@@ -542,9 +543,9 @@ static void Event_ReadMindOnSuspects(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the dog: humans value money over their lives; after the
-// thieves are jailed, bring a bone for something useful, and once fed, a
-// careful search will reveal a passage.
+/// Mind Read on the dog: humans value money over their lives; after the
+/// thieves are jailed, bring a bone for something useful, and once fed, a
+/// careful search will reveal a passage.
 static void Event_ReadDogMind(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_VAULT_DOG);
   actor->paused = 1;
@@ -563,7 +564,7 @@ static void Event_ReadDogMind(void) {
   actor->paused = 0;
 }
 
-// Mind Read: that sneak is wasting time instead of fixing the roof.
+/// Mind Read: that sneak is wasting time instead of fixing the roof.
 static void Event_ReadMindOnRoofer(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultSneakWastingTime);
@@ -574,7 +575,7 @@ static void Event_ReadMindOnRoofer(void) {
 // Shared source is included here in ROM order.
 #include "common/vault_toggle.h"
 
-// Walk to the exit threshold and request the room's transition.
+/// Walk to the exit threshold and request the room's transition.
 static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkTo(ACTOR_PARTY_LEADER, x, y);
@@ -582,28 +583,28 @@ static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
   Engine_EventRequestExit(continuation);
 }
 
-// Open and enter the southeastern house.
+/// Open and enter the southeastern house.
 static void Event_EnterSoutheastHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVault_Scene5Cells, 56, 19);
   Vault_WalkThroughExit(408, 320, 5);
 }
 
-// Open and enter the house east of the town's center.
+/// Open and enter the house east of the town's center.
 static void Event_EnterCentralEastHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVault_Scene6Cells, 50, 18);
   Vault_WalkThroughExit(312, 304, 6);
 }
 
-// Open and enter the central house.
+/// Open and enter the central house.
 static void Event_EnterCentralHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVault_Scene7Cells, 44, 17);
   Vault_WalkThroughExit(216, 288, 7);
 }
 
-// Enter the northeastern doorway behind its foreground tiles.
+/// Enter the northeastern doorway behind its foreground tiles.
 static void Event_EnterNortheastHouse(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
@@ -616,7 +617,7 @@ static void Event_EnterNortheastHouse(void) {
   Vault_WalkThroughExit(376, 224, 8);
 }
 
-// Enter the northern doorway behind its foreground tiles.
+/// Enter the northern doorway behind its foreground tiles.
 static void Event_EnterNorthHouse(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
@@ -629,7 +630,7 @@ static void Event_EnterNorthHouse(void) {
   Vault_WalkThroughExit(296, 176, 9);
 }
 
-// Open and enter the northwestern house.
+/// Open and enter the northwestern house.
 static void Event_EnterNorthwestHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVault_Scene10Cells, 38, 6);
@@ -639,7 +640,7 @@ static void Event_EnterNorthwestHouse(void) {
 // Shared source is included here in ROM order.
 #include "common/vault_scene_cells.h"
 
-// The jail door opens and the party walks in, drawn behind the doorway.
+/// The jail door opens and the party walks in, drawn behind the doorway.
 static void Event_EnterJail(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
@@ -652,13 +653,13 @@ static void Event_EnterJail(void) {
   Vault_WalkThroughExit(72, 160, 12);
 }
 
-// The party walks through the doorless entrance into the interiors (exit 13).
+/// The party walks through the doorless entrance into the interiors (exit 13).
 static void Event_EnterPassage(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vault_WalkThroughExit(152, 264, 13);
 }
 
-// Move an actor through a jump and wait up to sixty frames for it to settle.
+/// Move an actor through a jump and wait up to sixty frames for it to settle.
 static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
                                      s32 verticalSpeed) {
   struct FieldActor *actor = Object_GetById(actorId);
@@ -679,8 +680,8 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
   actor->gravity = PIXELS(1);
 }
 
-// Isaac rings the bell; the first time, the Venus Djinni hiding nearby jumps
-// out and comes to the bell.
+/// Isaac rings the bell; the first time, the Venus Djinni hiding nearby jumps
+/// out and comes to the bell.
 static void Event_RingBell(void) {
   Engine_EventBegin();
   Event_PlayCue(SE_100);
@@ -700,8 +701,8 @@ static void Event_RingBell(void) {
   Engine_EventEnd();
 }
 
-// Given a Bone, the dog runs to the hidden passage and jumps there three
-// times.
+/// Given a Bone, the dog runs to the hidden passage and jumps there three
+/// times.
 static void Event_GiveBoneToDog(void) {
   PartyInventory_Discard(ITEM_BONE);
   Engine_EventBegin();
@@ -724,9 +725,9 @@ static void Event_GiveBoneToDog(void) {
   Engine_EventEnd();
 }
 
-// On arrival: restores the dog's and the Djinni's places, sets the walkers
-// and the roof complainer stopping near the leader, and, while Ivan waits in
-// Vault for the party, has him greet the two and rejoin.
+/// On arrival: restores the dog's and the Djinni's places, sets the walkers
+/// and the roof complainer stopping near the leader, and, while Ivan waits in
+/// Vault for the party, has him greet the two and rejoin.
 s32 Scene_Initialize(void) {
   s32 suspectsMindRead;
   struct FieldActor *actor;
@@ -862,21 +863,21 @@ s32 Scene_Initialize(void) {
 #include "common/object_distance.h"
 #include "common/vault_range.h"
 
-// Show the current message and pause before continuing the scene.
+/// Show the current message and pause before continuing the scene.
 static void Vault_ShowMessageAndWait(s32 actor, s32 delay) {
   Engine_EventShowMessage(actor, 0);
   Engine_EventWait(delay);
 }
 
-// Face another actor and pause before continuing the conversation.
+/// Face another actor and pause before continuing the conversation.
 static void Vault_FaceActorAndWait(s32 actor, s32 cue, s32 delay) {
   Engine_ActorFaceEachOther(actor, cue, 0);
   Engine_EventWait(delay);
 }
 
-// Apply drift and gradually damp both rates toward zero.
-// This custom update uses speed/acceleration as its two drift rates and mirrors
-// the resulting position into the actor's target coordinates.
+/// Apply drift and gradually damp both rates toward zero.
+/// This custom update uses speed/acceleration as its two drift rates and
+/// mirrors the resulting position into the actor's target coordinates.
 static void Vault_UpdateDriftingEffect(union FieldObject *fieldObject) {
   struct FieldActor *effect = (struct FieldActor *)fieldObject;
   s32 horizontalRate;
@@ -901,7 +902,7 @@ static void Vault_UpdateDriftingEffect(union FieldObject *fieldObject) {
   effect->acceleration = verticalRate - Math_Divide(verticalRate, 28);
 }
 
-// Spawn a drifting sprite near the dog, sharing its drawing priority.
+/// Spawn a drifting sprite near the dog, sharing its drawing priority.
 UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   struct FieldActor *anchor;
   struct FieldActor *effect;

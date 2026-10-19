@@ -1,9 +1,9 @@
 #include "unit/field/curve_data.h"
 #include "types.h"
 
-// Height-curve tables, indexed by (row << 4) + column within a 16x16 cell.
-// The weight for Curve_LerpTwoSamplesByTable: 1 inside a rounded square, 0 at
-// the corners.
+/// Height-curve tables, indexed by (row << 4) + column within a 16x16 cell.
+/// The weight for Curve_LerpTwoSamplesByTable: 1 inside a rounded square, 0 at
+/// the corners.
 // clang-format off
 const u8 gCurve_LerpWeightTable[256] = {
     0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
@@ -24,8 +24,8 @@ const u8 gCurve_LerpWeightTable[256] = {
     0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0,
 };
 
-// The sample Curve_LookupSampleByTable reads at each position: 0, 1 or 2,
-// split along two diagonals.
+/// The sample Curve_LookupSampleByTable reads at each position: 0, 1 or 2,
+/// split along two diagonals.
 const u8 gCurve_SampleIndexTable[256] = {
     1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

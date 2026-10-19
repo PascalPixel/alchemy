@@ -43,14 +43,14 @@
 #include "songs.h"
 #include "item_ids.h"
 
-// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another place group, and other places use the numbers for their own.
-// The floor switches have slid the walls aside.
+/// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+/// enters another place group, and other places use the numbers for their own.
+/// The floor switches have slid the walls aside.
 #define FLAG_VENUS_LIGHTHOUSE_WALL_MOVED 0x300
 #define FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED 0x306
 #define FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED 0x307
-// The gates the sunken blocks opened: one block, three blocks (and which of
-// two sets of sockets they sank into) and the pillar room's four.
+/// The gates the sunken blocks opened: one block, three blocks (and which of
+/// two sets of sockets they sank into) and the pillar room's four.
 #define FLAG_VENUS_LIGHTHOUSE_GATE_OPEN 0x301
 #define FLAG_VENUS_LIGHTHOUSE_SOCKETS_A 0x302
 #define FLAG_VENUS_LIGHTHOUSE_SOCKETS_B 0x303
@@ -81,7 +81,7 @@
 #define VENUS_DESCENT_COLLISION_WIDTH 5
 #endif
 
-// Forward declarations.
+/// Forward declarations.
 struct DirXZ;
 static void VenusLighthouse_StepActorWithDust(struct DirXZ *direction);
 static void VenusLighthouse_AnimatePairedTileWaves(void);
@@ -97,10 +97,10 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void);
 // block's number (0 to 3): that block is set down in its place.
 // FLAG_SCENE_TEMP_01: the leader stands on the floor switch.
 
-// Actors the events name, by room. Outside the entrance: the man who tells of
-// the attack and the scholar waiting to go in. In the room with the floor
-// switch: the scholar by the door, the block Move pushes to the wall and the
-// block that holds the switch down.
+/// Actors the events name, by room. Outside the entrance: the man who tells of
+/// the attack and the scholar waiting to go in. In the room with the floor
+/// switch: the scholar by the door, the block Move pushes to the wall and the
+/// block that holds the switch down.
 enum {
   ACTOR_ENTRANCE_MAN = 8,
   ACTOR_ENTRANCE_SCHOLAR = 11,
@@ -115,7 +115,7 @@ struct DirXZ {
   s32 z;
 };
 
-// The shared radial-effect helper uses this module-provided vector type.
+/// The shared radial-effect helper uses this module-provided vector type.
 struct Vec {
   s32 x;
   s32 y;
@@ -127,10 +127,10 @@ union VecView {
   s16 h[6];
 };
 
-// Set the requested bits without changing the other flags.
+/// Set the requested bits without changing the other flags.
 static __inline__ void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
 
-// Set up a passage effect's motion, collision and child value.
+/// Set up a passage effect's motion, collision and child value.
 static void VenusLighthouse_ConfigurePassageEffect(struct FieldActor *object,
                                                    s32 childValue) {
   object->motionFlags = 0;
@@ -139,7 +139,7 @@ static void VenusLighthouse_ConfigurePassageEffect(struct FieldActor *object,
   ObjectGroup_SetChildValue(object, childValue);
 }
 
-// Create a blended passage effect behind the actors.
+/// Create a blended passage effect behind the actors.
 static struct FieldActor *
 VenusLighthouse_CreateBlendedPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   struct FieldActor *effect;
@@ -154,7 +154,7 @@ VenusLighthouse_CreateBlendedPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   return 0;
 }
 
-// Create a passage effect that preserves the overlapping actors' draw order.
+/// Create a passage effect that preserves the overlapping actors' draw order.
 static struct FieldActor *
 VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   struct FieldActor *object;
@@ -178,8 +178,8 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 #include "common/object_distance.h"
 #include "common/object_findslot.h"
 
-// Push the adjacent block only when its destination and overhead space are
-// clear.
+/// Push the adjacent block only when its destination and overhead space are
+/// clear.
 static void VenusLighthouse_PushAdjacentBlock(void) {
   s32 targetPosition[3];
   struct StagedActor *leader;
@@ -258,7 +258,7 @@ static void VenusLighthouse_PushAdjacentBlock(void) {
   Object_SetMode(leader, 1);
 }
 
-// Fill collision codes in a rectangular area of the requested map layer.
+/// Fill collision codes in a rectangular area of the requested map layer.
 static UNUSED s32 StagedActor_FillGridAttributeRectangle(u32 layerIndex, s32 x,
                                                          s32 z, u32 width,
                                                          u32 height,
@@ -287,7 +287,7 @@ static UNUSED s32 StagedActor_FillGridAttributeRectangle(u32 layerIndex, s32 x,
   return 0;
 }
 
-// Restore child values encoded in the placed actors' script timers.
+/// Restore child values encoded in the placed actors' script timers.
 static void VenusLighthouse_RestoreScriptedChildValues(void) {
   struct FieldActor **actors = gEventWork->placedActors;
   struct FieldActor *actor;
@@ -300,7 +300,7 @@ static void VenusLighthouse_RestoreScriptedChildValues(void) {
   }
 }
 
-// Apply the current script timer's child value and advance the script.
+/// Apply the current script timer's child value and advance the script.
 static s32
 VenusLighthouse_UpdateChildFromTimer(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -367,7 +367,7 @@ static s32 VenusLighthouse_EmitRisingParticles(union FieldObject *fieldObject) {
 #endif
 }
 
-// Clear the scripted actor's sprite flags and advance its script.
+/// Clear the scripted actor's sprite flags and advance its script.
 static s32 VenusLighthouse_ClearScriptedSpriteFlags(
     struct ScriptInterpreter *interpreter) {
   void *actor = (void *)interpreter;
@@ -420,8 +420,8 @@ VenusLighthouse_EmitPassageSparkTrail(union FieldObject *fieldObject) {
 #endif
 }
 
-// Walking north into a sparkling passage: the leader dissolves in sparks and
-// comes out at the passage's exit.
+/// Walking north into a sparkling passage: the leader dissolves in sparks and
+/// comes out at the passage's exit.
 static void Event_EnterSparklingPassage(void) {
   struct FieldActor *leader;
   struct EventWork *eventWork;
@@ -450,7 +450,7 @@ static void Event_EnterSparklingPassage(void) {
   Engine_EventEnd();
 }
 
-// Bring the leader out of a sparkling passage on a fresh entrance.
+/// Bring the leader out of a sparkling passage on a fresh entrance.
 static void VenusLighthouse_ArriveThroughSparkPassage(void) {
   struct FieldActor *leader;
 
@@ -484,13 +484,13 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
   }
 }
 
-// Stepping onto this spot makes the leader the actor the room's effect
-// follows.
+/// Stepping onto this spot makes the leader the actor the room's effect
+/// follows.
 static void Event_SetLeaderAsEffectTarget(void) {
   gActorEffectWork->actor = Object_GetById(ACTOR_PARTY_LEADER);
 }
 
-// Stepping onto this spot: the room's effect follows no one.
+/// Stepping onto this spot: the room's effect follows no one.
 static void Event_ClearEffectTarget(void) { gActorEffectWork->actor = NULL; }
 
 // Shared source is included here in ROM order.
@@ -498,7 +498,7 @@ static void Event_ClearEffectTarget(void) { gActorEffectWork->actor = NULL; }
 #include "common/object_waitidle.h"
 #include "common/effect_advance.h"
 
-// Drop the leader onto the floor and emit the radial landing dust.
+/// Drop the leader onto the floor and emit the radial landing dust.
 static void VenusLighthouse_LandWithRadialDust(void) {
   struct FieldActor *leader;
   u32 particleIndex;
@@ -597,7 +597,7 @@ static s32 VenusLighthouse_EmitGateParticles(union FieldObject *fieldObject) {
 #endif
 }
 
-// Create a scripted gate effect at the supplied pixel coordinates.
+/// Create a scripted gate effect at the supplied pixel coordinates.
 static struct FieldActor *
 VenusLighthouse_CreateScriptedGateEffect(s32 x, s32 z, const s32 *script) {
   struct FieldActor *effect;
@@ -629,8 +629,8 @@ VenusLighthouse_CreateScriptedGateEffect(s32 x, s32 z, const s32 *script) {
   return effect;
 }
 
-// Walking into a one-tile gap: the leader jumps it if the far side is clear.
-// Returns 1 after a jump, 0 when there was none.
+/// Walking into a one-tile gap: the leader jumps it if the far side is clear.
+/// Returns 1 after a jump, 0 when there was none.
 static s32 Event_JumpAcrossGap(void) {
   struct FieldActor *leader;
   struct FieldPosition landing;
@@ -700,7 +700,7 @@ static s32 Event_JumpAcrossGap(void) {
   return 0;
 }
 
-// Select the entrance rows for the current Venus Lighthouse scene.
+/// Select the entrance rows for the current Venus Lighthouse scene.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -722,13 +722,13 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gVenusLighthouseEntrancesOther;
 }
 
-// These scenes supply no placement-clipping regions.
+/// These scenes supply no placement-clipping regions.
 s32 SceneData_ReturnZero(void) { return 0; }
 
-// Return the packed exits shared by the lighthouse scenes.
+/// Return the packed exits shared by the lighthouse scenes.
 u8 *SceneData_GetPrimaryTable(void) { return gVenusLighthousePrimaryTable; }
 
-// Select and clip the placement rows using the original scene dispatch.
+/// Select and clip the placement rows using the original scene dispatch.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   struct ScenePlacement *placements;
   s16 scene;
@@ -765,15 +765,15 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gVenusLighthousePlacementsOther;
 }
 
-// Searching a locked door: "The door is tightly locked."
+/// Searching a locked door: "The door is tightly locked."
 static void Event_SearchLockedDoor(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
   Engine_EventEnd();
 }
 
-// Talking to the man at the entrance (or reading his mind): "Venus
-// Lighthouse was attacked by strange wanderers...", and he flickers away.
+/// Talking to the man at the entrance (or reading his mind): "Venus
+/// Lighthouse was attacked by strange wanderers...", and he flickers away.
 static void Event_HearOfTheAttack(void) {
   u32 flickersLeft;
   u32 flickerDelay;
@@ -800,7 +800,7 @@ static void Event_HearOfTheAttack(void) {
   Engine_EventEnd();
 }
 
-// Talking to the scholar who has waited to see inside Venus Lighthouse.
+/// Talking to the scholar who has waited to see inside Venus Lighthouse.
 static void Event_TalkToWaitingScholar(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVenusIveWaitedLongSeeIts);
@@ -810,8 +810,8 @@ static void Event_TalkToWaitingScholar(void) {
   Engine_EventEnd();
 }
 
-// Carry on the block Move could not push past the wall: once it is set down
-// beyond, it stays there (FLAG_VENUS_LIGHTHOUSE_BLOCK_CARRIED).
+/// Carry on the block Move could not push past the wall: once it is set down
+/// beyond, it stays there (FLAG_VENUS_LIGHTHOUSE_BLOCK_CARRIED).
 static void Event_CarryBlockPastWall(void) {
   struct FieldActor *block;
 
@@ -823,8 +823,8 @@ static void Event_CarryBlockPastWall(void) {
   Engine_EventEnd();
 }
 
-// Searching a relief: "There are words carved into the relief..." and its
-// words; each relief has its own message, except in English, which keeps one.
+/// Searching a relief: "There are words carved into the relief..." and its
+/// words; each relief has its own message, except in English, which keeps one.
 static void Event_ReadRelief(void) {
   s32 message;
 #if TBS_PATCH_LEVEL != 1
@@ -842,7 +842,7 @@ static void Event_ReadRelief(void) {
   Engine_EventEnd();
 }
 
-// Reveal fading: the hidden path disappears again.
+/// Reveal fading: the hidden path disappears again.
 static void Event_HidePath(void) {
   s32 column;
   s32 row;
@@ -862,7 +862,7 @@ static void Event_HidePath(void) {
   Map_CopyCellsTo(121, 55, 110, 55, 3, 3);
 }
 
-// Reveal: the hidden path appears and can be walked on.
+/// Reveal: the hidden path appears and can be walked on.
 static void Event_RevealPath(void) {
   s32 column;
   s32 row;
@@ -882,8 +882,8 @@ static void Event_RevealPath(void) {
   Map_CopyCellsTo(117, 55, 110, 55, 3, 3);
 }
 
-// Walking off the ledge before the floor switch is held down: the leader jumps
-// down to the floor below and shakes his head.
+/// Walking off the ledge before the floor switch is held down: the leader jumps
+/// down to the floor below and shakes his head.
 static void Event_JumpDown(void) {
   struct FieldActor *leader;
   s32 landingQuarterZ;
@@ -922,8 +922,8 @@ static void Event_JumpDown(void) {
   Engine_EventEnd();
 }
 
-// Searching the statue: "The statue speaks to Isaac's soul..."; the room
-// flashes and the path it opens changes, and the camera shows it.
+/// Searching the statue: "The statue speaks to Isaac's soul..."; the room
+/// flashes and the path it opens changes, and the camera shows it.
 static void Event_SearchStatue(void) {
   struct FieldWork *work;
 
@@ -997,8 +997,8 @@ static void Event_SearchStatue(void) {
   work->busy = 0;
 }
 
-// Move on the block by the wall: once it reaches the wall, Garet comes out,
-// "Hmmm. We can't push the block farther than this.", the first time only.
+/// Move on the block by the wall: once it reaches the wall, Garet comes out,
+/// "Hmmm. We can't push the block farther than this.", the first time only.
 static void Event_MoveBlockTowardWall(void) {
   struct FieldActor *actor;
   struct FieldActor *leader;
@@ -1057,7 +1057,7 @@ static void Event_MoveBlockTowardWall(void) {
   }
 }
 
-// Pushing the block by the wall: as Move, with Garet's remark at the wall.
+/// Pushing the block by the wall: as Move, with Garet's remark at the wall.
 static void Event_PushBlockTowardWall(void) {
 
   Engine_EventBegin();
@@ -1067,8 +1067,8 @@ static void Event_PushBlockTowardWall(void) {
   Event_MoveBlockTowardWall();
 }
 
-// Move on the block by the floor switch: on the switch it sinks in and holds
-// it down.
+/// Move on the block by the floor switch: on the switch it sinks in and holds
+/// it down.
 static void Event_MoveBlockOntoSwitch(void) {
   struct FieldActor *block;
   s32 switchHeight;
@@ -1088,7 +1088,7 @@ static void Event_MoveBlockOntoSwitch(void) {
   Engine_EventEnd();
 }
 
-// Standing on the floor switch presses it; stepping off releases it.
+/// Standing on the floor switch presses it; stepping off releases it.
 static void Event_StepOnFloorSwitch(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   s32 x = leader->x.part.pixel;
@@ -1115,8 +1115,8 @@ static void Event_StepOnFloorSwitch(void) {
   }
 }
 
-// Talking to the scholar by the door: he explored once it opened, until
-// Kraden and the others appeared; the camera looks at the door.
+/// Talking to the scholar by the door: he explored once it opened, until
+/// Kraden and the others appeared; the camera looks at the door.
 static void Event_TalkToScholarByDoor(void) {
   struct FieldWork *work;
 
@@ -1136,8 +1136,8 @@ static void Event_TalkToScholarByDoor(void) {
   Engine_EventEnd();
 }
 
-// Stepping onto the hole in the floor: the leader looks down, falls through
-// and lands in the room below.
+/// Stepping onto the hole in the floor: the leader looks down, falls through
+/// and lands in the room below.
 static void Event_FallThroughFloor(void) {
   struct FieldActor *leader;
   struct FieldActor *leaderActor;
@@ -1202,8 +1202,8 @@ static void Event_FallThroughFloor(void) {
   Engine_EventEnd();
 }
 
-// Move on one of the three blocks in a row: the floor under each block is
-// solid again and the nearer block draws in front.
+/// Move on one of the three blocks in a row: the floor under each block is
+/// solid again and the nearer block draws in front.
 static void Event_MoveDepthBlock(void) {
 
   u32 blockIndex;
@@ -1233,7 +1233,7 @@ static void Event_MoveDepthBlock(void) {
   Engine_EventEnd();
 }
 
-// Pushing one of the three blocks in a row.
+/// Pushing one of the three blocks in a row.
 static void Event_PushDepthBlock(void) {
 
   Engine_EventBegin();
@@ -1243,8 +1243,8 @@ static void Event_PushDepthBlock(void) {
   Engine_EventEnd();
 }
 
-// Move or Carry starting on one of the two blocks by the gap: their tiles
-// are marked before they move.
+/// Move or Carry starting on one of the two blocks by the gap: their tiles
+/// are marked before they move.
 static void Event_LiftCarryBlock(void) {
   u32 blockIndex;
   struct FieldActor *block;
@@ -1257,8 +1257,8 @@ static void Event_LiftCarryBlock(void) {
   } while (blockIndex <= 1);
 }
 
-// Move on one of the two blocks by the gap: blocks still above the floor are
-// solid again.
+/// Move on one of the two blocks by the gap: blocks still above the floor are
+/// solid again.
 static void Event_MoveCarryBlock(void) {
   u32 blockIndex;
   struct FieldActor *block;
@@ -1273,7 +1273,7 @@ static void Event_MoveCarryBlock(void) {
   } while (blockIndex <= 1);
 }
 
-// Walking into a gap or a block by it: jump the gap, else push the block.
+/// Walking into a gap or a block by it: jump the gap, else push the block.
 static void Event_JumpOrPushCarryBlock(void) {
 
   Engine_EventBegin();
@@ -1285,7 +1285,7 @@ static void Event_JumpOrPushCarryBlock(void) {
   Engine_EventEnd();
 }
 
-// Fix a block at its destination and restore the cell beneath it.
+/// Fix a block at its destination and restore the cell beneath it.
 static void VenusLighthouse_FixBlockAtDestination(struct FieldActor *block) {
   s32 column;
   s32 row;
@@ -1297,7 +1297,8 @@ static void VenusLighthouse_FixBlockAtDestination(struct FieldActor *block) {
   Map_CopyCellAttributes(9, 24, 1, 1, column, row);
 }
 
-// Remove a fallen Carry block, or restore collision under the remaining blocks.
+/// Remove a fallen Carry block, or restore collision under the remaining
+/// blocks.
 static void VenusLighthouse_ReleaseFallenCarryBlock(struct FieldActor *block) {
   struct AnimationObject *sprite;
   s32 zero;
@@ -1319,8 +1320,8 @@ static void VenusLighthouse_ReleaseFallenCarryBlock(struct FieldActor *block) {
   }
 }
 
-// Carry on one of the two blocks: set down in its place it stays fixed;
-// dropped into the gap it falls through the floor.
+/// Carry on one of the two blocks: set down in its place it stays fixed;
+/// dropped into the gap it falls through the floor.
 static void Event_CarryBlockAcrossGap(void) {
   struct FieldActor *block;
 
@@ -1342,8 +1343,8 @@ static void Event_CarryBlockAcrossGap(void) {
   Engine_EventEnd();
 }
 
-// Stepping on the floor switch: the wall slides aside in a cloud of dust, the
-// first time only, and the party goes on through the next exit.
+/// Stepping on the floor switch: the wall slides aside in a cloud of dust, the
+/// first time only, and the party goes on through the next exit.
 static void Event_StepOnWallSwitch(void) {
   struct EffectOptions options;
   struct MapLayerScroll *scrollLayer;
@@ -1416,8 +1417,8 @@ static void Event_StepOnWallSwitch(void) {
   }
 }
 
-// Move on the block before the gate: in its socket it sinks in and the gate
-// opens, the first time only.
+/// Move on the block before the gate: in its socket it sinks in and the gate
+/// opens, the first time only.
 static void Event_MoveGateBlock(void) {
   u8 *flags;
   s32 row;
@@ -1495,8 +1496,8 @@ static void Event_MoveGateBlock(void) {
   Engine_EventEnd();
 }
 
-// Walking into the gap or the block before the gate: jump the gap, else push
-// the block, which may sink into its socket.
+/// Walking into the gap or the block before the gate: jump the gap, else push
+/// the block, which may sink into its socket.
 static void Event_JumpOrPushGateBlock(void) {
 
   Engine_EventBegin();
@@ -1508,8 +1509,8 @@ static void Event_JumpOrPushGateBlock(void) {
   Event_MoveGateBlock();
 }
 
-// Move on one of the three blocks: a block on a free socket sinks in, and
-// with all three sunk the gate opens.
+/// Move on one of the three blocks: a block on a free socket sinks in, and
+/// with all three sunk the gate opens.
 static void Event_MoveSwitchBlock(void) {
   struct FieldActor *occlusionEffect = 0;
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -1631,8 +1632,8 @@ static void Event_MoveSwitchBlock(void) {
   Engine_EventEnd();
 }
 
-// Walking into the gap or one of the three blocks: jump the gap, else push the
-// block, which may sink into a socket.
+/// Walking into the gap or one of the three blocks: jump the gap, else push the
+/// block, which may sink into a socket.
 static void Event_JumpOrPushSwitchBlock(void) {
   Engine_EventBegin();
   if (Event_JumpAcrossGap() == 0) {
@@ -1666,7 +1667,7 @@ VenusLighthouse_FollowSupportingBlockHeight(union FieldObject *fieldObject) {
 #endif
 }
 
-// Move the floating supports to the heights selected by their timers.
+/// Move the floating supports to the heights selected by their timers.
 static void VenusLighthouse_LowerFloatingBlocks(s32 waitFrames) {
   struct FieldActor *westSupport = Object_GetById(8);
   struct FieldActor *eastSupport = Object_GetById(9);
@@ -1701,7 +1702,7 @@ static void VenusLighthouse_LowerFloatingBlocks(s32 waitFrames) {
   Engine_EventWait(waitFrames);
 }
 
-// Move a floating block atop the highest support in its map cell.
+/// Move a floating block atop the highest support in its map cell.
 static void VenusLighthouse_StackFloatingBlock(s32 blockId) {
 
   struct FieldActor *candidate;
@@ -1741,7 +1742,7 @@ static void VenusLighthouse_StackFloatingBlock(s32 blockId) {
   Engine_EventWait(30);
 }
 
-// Stop a floating block and reset its vertical motion and timer.
+/// Stop a floating block and reset its vertical motion and timer.
 static __inline__ void FloatingBlock_Settle(struct FieldActor *block,
                                             s32 resetValue) {
   block->targetY = ACTOR_NO_TARGET;
@@ -1751,7 +1752,7 @@ static __inline__ void FloatingBlock_Settle(struct FieldActor *block,
   block->timer = resetValue;
 }
 
-// Copy all three fixed-point position components without changing motion.
+/// Copy all three fixed-point position components without changing motion.
 static __inline__ void Actor_CopyPosition(struct FieldActor *destination,
                                           struct FieldActor *source) {
   destination->x.fixed = source->x.fixed;
@@ -1759,8 +1760,8 @@ static __inline__ void Actor_CopyPosition(struct FieldActor *destination,
   destination->z.fixed = source->z.fixed;
 }
 
-// Carry on one of the four floating blocks: it settles where it is set down
-// and the platforms under the blocks rise or sink to their weight.
+/// Carry on one of the four floating blocks: it settles where it is set down
+/// and the platforms under the blocks rise or sink to their weight.
 static void Event_CarryFloatingBlock(void) {
   struct FieldActor savedPosition;
   struct FieldActor *firstPassageEffect = NULL;
@@ -1862,7 +1863,7 @@ static void Event_CarryFloatingBlock(void) {
   Engine_EventEnd();
 }
 
-// Pushing a block in the pillar room.
+/// Pushing a block in the pillar room.
 static void Event_PushPuzzleBlock(void) {
 
   Engine_EventBegin();
@@ -1870,8 +1871,8 @@ static void Event_PushPuzzleBlock(void) {
   Engine_EventEnd();
 }
 
-// Stepping on the west floor switch: the west wall slides aside, the first
-// time only, and the party goes on through the next exit.
+/// Stepping on the west floor switch: the west wall slides aside, the first
+/// time only, and the party goes on through the next exit.
 static void Event_StepOnWestWallSwitch(void) {
   struct EffectOptions options;
   struct MapLayerScroll *scrollLayer;
@@ -1936,8 +1937,8 @@ static void Event_StepOnWestWallSwitch(void) {
   }
 }
 
-// Stepping on the east floor switch: the east wall slides aside, the first
-// time only, and the party goes on through the next exit.
+/// Stepping on the east floor switch: the east wall slides aside, the first
+/// time only, and the party goes on through the next exit.
 static void Event_StepOnEastWallSwitch(void) {
   struct EffectOptions options;
   struct MapLayerScroll *scrollLayer;
@@ -2001,8 +2002,8 @@ static void Event_StepOnEastWallSwitch(void) {
   }
 }
 
-// Move on one of the four blocks in the pillar room: on a free socket it sinks
-// in, and with all four sunk the gate opens.
+/// Move on one of the four blocks in the pillar room: on a free socket it sinks
+/// in, and with all four sunk the gate opens.
 static void Event_MovePillarSwitchBlock(void) {
   struct FieldActor *occlusionEffect;
   struct FieldActor *block;
@@ -2151,8 +2152,8 @@ static void Event_MovePillarSwitchBlock(void) {
   Event_End();
 }
 
-// Walking into the gap or a pillar-room block: jump the gap, else push the
-// block, which may sink into a socket.
+/// Walking into the gap or a pillar-room block: jump the gap, else push the
+/// block, which may sink into a socket.
 static void Event_JumpOrPushPillarBlock(void) {
 
   Engine_EventBegin();
@@ -2169,8 +2170,8 @@ static void Event_JumpOrPushPillarBlock(void) {
   Event_MovePillarSwitchBlock();
 }
 
-// Walking south into the passage: the leader rises out of the room to the
-// floor above.
+/// Walking south into the passage: the leader rises out of the room to the
+/// floor above.
 static void Event_EnterRisingPassage(void) {
   Engine_EventBegin();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -2184,7 +2185,8 @@ static void Event_EnterRisingPassage(void) {
   Engine_EventEnd();
 }
 
-// Select the puzzle interactions and dialogue for the current lighthouse scene.
+/// Select the puzzle interactions and dialogue for the current lighthouse
+/// scene.
 const struct SceneEvent *Scene_GetEvents(void) {
   s32 scene = gGameState.scene;
 
@@ -2209,7 +2211,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gVenusLighthouseEvents2;
 }
 
-// Prepare a stationary actor with the room's initial collision and draw state.
+/// Prepare a stationary actor with the room's initial collision and draw state.
 static void VenusLighthouse_PrepareStandingActor(s32 actorId) {
   struct FieldActor *actor;
   s32 collisionFlags;
@@ -2229,7 +2231,7 @@ static void VenusLighthouse_PrepareStandingActor(s32 actorId) {
   }
 }
 
-// Visit the four pillar actors through the object lookup service.
+/// Visit the four pillar actors through the object lookup service.
 static void VenusLighthouse_VisitPillarActors(void) {
   u32 actorId;
 
@@ -2240,7 +2242,7 @@ static void VenusLighthouse_VisitPillarActors(void) {
   } while (actorId <= 18);
 }
 
-// Restore puzzle progress, actors and entrance effects for all six scenes.
+/// Restore puzzle progress, actors and entrance effects for all six scenes.
 s32 Scene_RunEntrySetup(void) {
   struct FieldActor *actor;
   s32 scene;
@@ -2748,8 +2750,8 @@ s32 Scene_RunEntrySetup(void) {
   return 0;
 }
 
-// Standing on this floor carries the party north in a trail of dust; at a
-// ledge they drop down.
+/// Standing on this floor carries the party north in a trail of dust; at a
+/// ledge they drop down.
 static void Event_DriftNorth(void) {
   struct DirXZ args;
 
@@ -2758,7 +2760,7 @@ static void Event_DriftNorth(void) {
   VenusLighthouse_StepActorWithDust(&args);
 }
 
-// As Event_DriftNorth, south.
+/// As Event_DriftNorth, south.
 static void Event_DriftSouth(void) {
   struct DirXZ args;
 
@@ -2767,7 +2769,7 @@ static void Event_DriftSouth(void) {
   VenusLighthouse_StepActorWithDust(&args);
 }
 
-// As Event_DriftNorth, west.
+/// As Event_DriftNorth, west.
 static void Event_DriftWest(void) {
   struct DirXZ args;
 
@@ -2776,7 +2778,7 @@ static void Event_DriftWest(void) {
   VenusLighthouse_StepActorWithDust(&args);
 }
 
-// As Event_DriftNorth, east.
+/// As Event_DriftNorth, east.
 static void Event_DriftEast(void) {
   struct DirXZ args;
 
@@ -2785,7 +2787,8 @@ static void Event_DriftEast(void) {
   VenusLighthouse_StepActorWithDust(&args);
 }
 
-// Follow the selected actor through the passage, adjusting for walls and drops.
+/// Follow the selected actor through the passage, adjusting for walls and
+/// drops.
 static void VenusLighthouse_StepActorWithDust(struct DirXZ *direction) {
   s32 actorId;
   struct FieldActor *viewCenter;
@@ -2870,7 +2873,7 @@ static void VenusLighthouse_StepActorWithDust(struct DirXZ *direction) {
   actor->z.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z * 3, 15);
 }
 
-// Choose the particle scales and spin used by the tile-wave animations.
+/// Choose the particle scales and spin used by the tile-wave animations.
 static __inline__ void Rubble_SetScaleAndSpin(struct EffectOptions *options) {
   options->startScaleX =
       ((u32)(Engine_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
@@ -2879,7 +2882,7 @@ static __inline__ void Rubble_SetScaleAndSpin(struct EffectOptions *options) {
   options->spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
 }
 
-// Animate the two tile waves before taking the linked passage exit.
+/// Animate the two tile waves before taking the linked passage exit.
 static void VenusLighthouse_AnimatePairedTileWaves(void) {
   struct EffectOptions options;
   u32 extraBursts;
@@ -2933,7 +2936,7 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
   Engine_EventEnd();
 }
 
-// Emit the scheduled particles at the supplied passage coordinates.
+/// Emit the scheduled particles at the supplied passage coordinates.
 static void VenusLighthouse_SpawnRandomParticles(s32 x, s32 z) {
   struct EffectOptions options;
 
@@ -2954,17 +2957,17 @@ static void VenusLighthouse_SpawnRandomParticles(s32 x, s32 z) {
   }
 }
 
-// Emit the western passage's scheduled particles.
+/// Emit the western passage's scheduled particles.
 static void VenusLighthouse_EmitWestPassageParticles(void) {
   VenusLighthouse_SpawnRandomParticles(432, 32);
 }
 
-// Emit the eastern passage's scheduled particles.
+/// Emit the eastern passage's scheduled particles.
 static void VenusLighthouse_EmitEastPassageParticles(void) {
   VenusLighthouse_SpawnRandomParticles(0x230, 44);
 }
 
-// Animate the western tile wave and start its lingering particle task.
+/// Animate the western tile wave and start its lingering particle task.
 static void VenusLighthouse_AnimateWestTileWave(void) {
   struct EffectOptions options;
   u32 extraBursts;
@@ -3024,7 +3027,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   Engine_EventEnd();
 }
 
-// Animate the eastern tile wave and start its lingering particle task.
+/// Animate the eastern tile wave and start its lingering particle task.
 static void VenusLighthouse_AnimateEastTileWave(void) {
   struct EffectOptions options;
   u32 extraBursts;
@@ -3121,7 +3124,7 @@ static s32 VenusLighthouse_UpdateRisingSpray(union FieldObject *fieldObject) {
 #endif
 }
 
-// Land the leader on the spray, then raise both toward the exit.
+/// Land the leader on the spray, then raise both toward the exit.
 static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   u32 riseFrame;
   struct FieldActor *leader;
@@ -3204,7 +3207,7 @@ struct TrackSprite {
   struct TrackAnimation *animations[4];
 };
 
-// Select the block's push script from its direction, support shape and socket.
+/// Select the block's push script from its direction, support shape and socket.
 static s32
 VenusLighthouse_DispatchPushScript(struct ScriptInterpreter *interpreter) {
   struct FieldActor *block = (struct FieldActor *)interpreter;

@@ -31,7 +31,7 @@
 #include "heap_state.h"
 #include "macros.h"
 
-// Scene sequences and the mast's per-frame updates.
+/// Scene sequences and the mast's per-frame updates.
 static void TolbiShipMast_SetupHiddenLeaderLookout(void);
 static void TolbiShipMast_SetupVisibleLeaderLookout(void);
 static void TolbiShipMast_AnnounceClearCourse(void);
@@ -52,7 +52,7 @@ s32 gTolbiShipMast_CameraCenter[2] __attribute__((section(".bss")));
 s32 gTolbiShipMast_CameraOrigin[2] __attribute__((section(".bss")));
 s32 gTolbiShipMast_SwayX __attribute__((section(".bss")));
 
-// Keeps the effect actor relative to the saved camera origin and rotates it.
+/// Keeps the effect actor relative to the saved camera origin and rotates it.
 static s32
 TolbiShipMast_FollowCameraAndRotate(struct ScriptInterpreter *interpreter) {
   struct FieldActor *object = (struct FieldActor *)interpreter;
@@ -68,7 +68,7 @@ TolbiShipMast_FollowCameraAndRotate(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-// A random sample of 6 or 9 turns the lookout to either side of north.
+/// A random sample of 6 or 9 turns the lookout to either side of north.
 static s32
 TolbiShipMast_RandomizeLookoutFacing(struct ScriptInterpreter *interpreter) {
   struct FieldActor *object = (struct FieldActor *)interpreter;
@@ -87,7 +87,7 @@ TolbiShipMast_RandomizeLookoutFacing(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Grows both axes by the same amount until the actor reaches full scale.
+/// Grows both axes by the same amount until the actor reaches full scale.
 static void TolbiShipMast_GrowActorScale(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   if (actor->scaleX < Q16_ONE) {
@@ -96,7 +96,7 @@ static void TolbiShipMast_GrowActorScale(union FieldObject *fieldObject) {
   }
 }
 
-// Randomly reverses horizontal drift and vertical bobbing at their limits.
+/// Randomly reverses horizontal drift and vertical bobbing at their limits.
 static s32 TolbiShipMast_SwayActor(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   s16 *state = &actor->timer;
@@ -140,7 +140,7 @@ static s32 TolbiShipMast_SwayActor(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Shrinks both axes; once small enough, clears the actor's position and speed.
+/// Shrinks both axes; once small enough, clears the actor's position and speed.
 static s32
 TolbiShipMast_ShrinkAndStopActor(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -161,33 +161,33 @@ TolbiShipMast_ShrinkAndStopActor(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Returns the entrances from the ship's deck and scripted sequences.
+/// Returns the entrances from the ship's deck and scripted sequences.
 const struct SceneEntrance *TolbiShipMast_GetEntrances(void) {
   return gTolbiShipMast_Entrances;
 }
 
-// Returns the ladder's three-dimensional activation region.
+/// Returns the ladder's three-dimensional activation region.
 const struct SceneRegion *TolbiShipMast_GetRegions(void) {
   return gTolbiShipMast_Regions;
 }
 
-// Returns exits to the deck and the continuing ship scenes.
+/// Returns exits to the deck and the continuing ship scenes.
 const u32 *TolbiShipMast_GetExits(void) { return gTolbiShipMast_Exits; }
 
-// Returns the lookout's initial placement table.
+/// Returns the lookout's initial placement table.
 const struct ScenePlacement *TolbiShipMast_GetPlacements(void) {
   return gTolbiShipMast_Placements;
 }
 
-// Returns the ladder, lookout dialogue and Anchor Charm search events.
+/// Returns the ladder, lookout dialogue and Anchor Charm search events.
 const struct SceneEvent *TolbiShipMast_GetEvents(void) {
   return gTolbiShipMast_Events;
 }
 
-// Touching the ladder starts the descent.
+/// Touching the ladder starts the descent.
 static void TolbiShipMast_ClimbDownLadder(void) { Field_ClimbDown(); }
 
-// Gives the Anchor Charm once either discovery flag permits the search.
+/// Gives the Anchor Charm once either discovery flag permits the search.
 static void TolbiShipMast_FindAnchorCharm(void) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED) != 0 ||
       Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
@@ -199,7 +199,7 @@ static void TolbiShipMast_FindAnchorCharm(void) {
   }
 }
 
-// Starts the ship sway when allowed, then runs this entrance's mast sequence.
+/// Starts the ship sway when allowed, then runs this entrance's mast sequence.
 s32 TolbiShipMast_Initialize(void) {
   struct FieldActor *leader;
 
@@ -262,7 +262,7 @@ s32 TolbiShipMast_Initialize(void) {
   return 0;
 }
 
-// Frames the lookout with the leader moved out of view, then announces course.
+/// Frames the lookout with the leader moved out of view, then announces course.
 static void TolbiShipMast_SetupHiddenLeaderLookout(void) {
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
@@ -276,7 +276,7 @@ static void TolbiShipMast_SetupHiddenLeaderLookout(void) {
   Engine_EventEnd();
 }
 
-// Keeps the leader visible for the course announcement.
+/// Keeps the leader visible for the course announcement.
 static void TolbiShipMast_SetupVisibleLeaderLookout(void) {
   struct FieldActor *leader;
 
@@ -292,7 +292,8 @@ static void TolbiShipMast_SetupVisibleLeaderLookout(void) {
   Engine_EventEnd();
 }
 
-// The lookout scans both sides, announces a clear course and leaves by exit 10.
+/// The lookout scans both sides, announces a clear course and leaves by
+/// exit 10.
 static void TolbiShipMast_AnnounceClearCourse(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_EventOpenScreen();
@@ -314,7 +315,7 @@ static void TolbiShipMast_AnnounceClearCourse(void) {
   Engine_EventRequestExit(10);
 }
 
-// Stages four approaching actors and the lookout's "Avast!" reaction.
+/// Stages four approaching actors and the lookout's "Avast!" reaction.
 static void TolbiShipMast_RunAvastScene(void) {
   s32 *placement = ((struct MapScrollWork *)gMapWork[0])->origin;
   struct FieldActor *actor;
@@ -399,7 +400,7 @@ static void TolbiShipMast_RunAvastScene(void) {
   Engine_EventEnd();
 }
 
-// Clears the movement left by a drifting script before its staged approach.
+/// Clears the movement left by a drifting script before its staged approach.
 static inline void TolbiShipMast_StopDriftingActor(struct FieldActor *actor) {
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetY = ACTOR_NO_TARGET;
@@ -408,7 +409,7 @@ static inline void TolbiShipMast_StopDriftingActor(struct FieldActor *actor) {
   actor->riseBaseY = 0;
 }
 
-// Give each of the seven approaching actors its own random drift and bob.
+/// Give each of the seven approaching actors its own random drift and bob.
 static inline void TolbiShipMast_InitializeDriftingGroup(void) {
   TolbiShipMast_InitializeDriftingActor(9);
   TolbiShipMast_InitializeDriftingActor(10);
@@ -419,7 +420,7 @@ static inline void TolbiShipMast_InitializeDriftingGroup(void) {
   TolbiShipMast_InitializeDriftingActor(15);
 }
 
-// Stop the drifting actions and give the group its departure walking speed.
+/// Stop the drifting actions and give the group its departure walking speed.
 static inline void TolbiShipMast_PrepareGroupDeparture(void) {
   Engine_ActorStop(9);
   Engine_ActorStop(10);
@@ -437,7 +438,7 @@ static inline void TolbiShipMast_PrepareGroupDeparture(void) {
   Actor_SetSpeed(15, PIXELS(3), 3 * PIXELS(1) / 2);
 }
 
-// Repeats actor 9's approach before the lookout reports monsters.
+/// Repeats actor 9's approach before the lookout reports monsters.
 static void TolbiShipMast_ShowMonsters(void) {
   struct FieldActor *approachingActor;
   struct FieldActor *leader;
@@ -524,7 +525,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   Engine_EventEnd();
 }
 
-// Initializes a drifting actor, retaining the random draws' original order.
+/// Initializes a drifting actor, retaining the random draws' original order.
 static void TolbiShipMast_InitializeDriftingActor(s32 actorId) {
   struct FieldActor *actor;
   u32 randomValue;
@@ -547,7 +548,7 @@ static void TolbiShipMast_InitializeDriftingActor(s32 actorId) {
   Actor_SetActionScript(actorId, gTolbiShipMast_DriftActions);
 }
 
-// Moves the drifting group aside, then stages the two landing actors.
+/// Moves the drifting group aside, then stages the two landing actors.
 static void TolbiShipMast_RunLandingSequence(void) {
   u32 frame;
   struct FieldActor *actor;
@@ -648,7 +649,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   Engine_EventEnd();
 }
 
-// Walks the seven actors away, then the lookout announces land.
+/// Walks the seven actors away, then the lookout announces land.
 static void TolbiShipMast_AnnounceLand(void) {
   Engine_EventBegin();
   Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
@@ -697,7 +698,7 @@ static void TolbiShipMast_AnnounceLand(void) {
   Engine_EventEnd();
 }
 
-// Adds horizontal and vertical sway to the camera origin each frame.
+/// Adds horizontal and vertical sway to the camera origin each frame.
 static void TolbiShipMast_UpdateSway(void) {
   s32 *position = ((struct MapScrollWork *)gMapWork[0])->origin;
   s32 swayX = Engine_MathCos(gTolbiShipMast_SwayX);
@@ -714,8 +715,8 @@ static void TolbiShipMast_UpdateSway(void) {
   gTolbiShipMast_SwayY &= 0xffff;
 }
 
-// How evenly the chosen passengers row: the values of those at the west seats
-// (the first and third filled) less those at the east seats.
+/// How evenly the chosen passengers row: the values of those at the west seats
+/// (the first and third filled) less those at the east seats.
 static s32 TolbiShipMast_GetRowingBalance(void) {
   s32 westSeats;
   s32 eastSeats;
@@ -727,7 +728,7 @@ static s32 TolbiShipMast_GetRowingBalance(void) {
   return westSeats - eastSeats;
 }
 
-// The rowing value of the passenger chosen for a seat, or 0 while it is empty.
+/// The rowing value of the passenger chosen for a seat, or 0 while it is empty.
 static s32 TolbiShipMast_GetSeatRowValue(u32 seat) {
   s32 firstFlag = 0;
   u32 passenger;
@@ -942,8 +943,8 @@ struct SceneEvent gTolbiShipMast_Events[] = {
     { SCENE_EVENTS_END },
 };
 
-// Each passenger's rowing value, in the order of their actors in the hold
-// from 8.
+/// Each passenger's rowing value, in the order of their actors in the hold
+/// from 8.
 u32 gTolbiShipMast_PassengerRowValues[] = {
     7, 5, 8, 4, 9, 12, 6, 3,
     0,

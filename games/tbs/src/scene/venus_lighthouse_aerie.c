@@ -58,13 +58,13 @@
 #include "flags.h"
 #include "item_ids.h"
 
-// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another place group, and other places use the numbers for their own.
-// Plus the party member (0 to 3) who carried the Shaman's Rod when it was
-// handed over before the aerie's first battle; a defeat gives it back.
+/// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+/// enters another place group, and other places use the numbers for their own.
+/// Plus the party member (0 to 3) who carried the Shaman's Rod when it was
+/// handed over before the aerie's first battle; a defeat gives it back.
 #define FLAG_SHAMANS_ROD_OWNER 0x345
 
-// Forward declarations.
+/// Forward declarations.
 static void Event_SteadyPillars(void);
 static void VenusLighthouseAerie_EnterAndConfrontAntagonists(void);
 static void VenusLighthouseAerie_ShowPartyMember(s32 actor, s32 shown);
@@ -105,7 +105,7 @@ s32 Math_RemainderUnsigned(s32, s32);
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-// Pulse the actor scale around the countdown, then choose its next pause.
+/// Pulse the actor scale around the countdown, then choose its next pause.
 static s32
 VenusLighthouseAerie_PulseActorScale(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -138,7 +138,7 @@ VenusLighthouseAerie_PulseActorScale(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Move a particle, damp its horizontal velocity and update its scale and spin.
+/// Move a particle, damp its horizontal velocity and update its scale and spin.
 static void
 VenusLighthouseAerie_UpdateDriftingParticle(union FieldObject *object) {
   s32 velocityX = object->effect.velocity.x;
@@ -155,8 +155,8 @@ VenusLighthouseAerie_UpdateDriftingParticle(union FieldObject *object) {
   object->effect.sprite->rotation += object->effect.spin;
 }
 
-// Turn the falling actor sprite until its rotation leaves the negative
-// half-turn.
+/// Turn the falling actor sprite until its rotation leaves the negative
+/// half-turn.
 static void
 VenusLighthouseAerie_StepSpriteRotation(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
@@ -174,20 +174,20 @@ VenusLighthouseAerie_StepSpriteRotation(union FieldObject *fieldObject) {
 // Shared source is included here in ROM order.
 #include "common/object_heading.h"
 
-// Return the aerie arrival positions.
+/// Return the aerie arrival positions.
 const struct SceneEntrance *VenusLighthouseAerie_GetEntrances(void) {
   return gVenusLighthouseAerieEntrances;
 }
 
-// The aerie has no separate trigger-region table.
+/// The aerie has no separate trigger-region table.
 const struct SceneRegion *VenusLighthouseAerie_GetRegions(void) { return 0; }
 
-// Return the aerie scene destinations.
+/// Return the aerie scene destinations.
 const u32 *VenusLighthouseAerie_GetExits(void) {
   return gVenusLighthouseAerieExits;
 }
 
-// Return the platforms, antagonists, companions and beacon effects.
+/// Return the platforms, antagonists, companions and beacon effects.
 const struct ScenePlacement *VenusLighthouseAerie_GetPlacements(void) {
   return gVenusLighthouseAeriePlacements;
 }
@@ -196,8 +196,8 @@ const struct ScenePlacement *VenusLighthouseAerie_GetPlacements(void) {
 #include "common/object_distance.h"
 #include "common/object_nearest.h"
 
-// Walking off the edge of a pillar: if the ground two tiles ahead is clear,
-// the leader jumps across to it.
+/// Walking off the edge of a pillar: if the ground two tiles ahead is clear,
+/// the leader jumps across to it.
 static void Event_JumpToNextPillar(void) {
   struct FieldActor *actor;
   union {
@@ -234,9 +234,9 @@ static void Event_JumpToNextPillar(void) {
   }
 }
 
-// Landing on a pillar: it dips under the leader and springs back up.
-// FLAG_SCENE_TEMP_50 is set while the leader stands on a pillar, so this runs
-// once per landing.
+/// Landing on a pillar: it dips under the leader and springs back up.
+/// FLAG_SCENE_TEMP_50 is set while the leader stands on a pillar, so this runs
+/// once per landing.
 static void Event_LandOnPillar(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldActor *pillar;
@@ -275,8 +275,8 @@ static void Event_LandOnPillar(void) {
   Engine_EventEnd();
 }
 
-// Stepping back onto the floor, and before each jump: the leader walks and
-// falls normally again and the six pillars stand still.
+/// Stepping back onto the floor, and before each jump: the leader walks and
+/// falls normally again and the six pillars stand still.
 static void Event_SteadyPillars(void) {
   s32 flags;
 
@@ -291,12 +291,12 @@ static void Event_SteadyPillars(void) {
   Object_GetById(ACTOR_LAST_PILLAR)->motionFlags = flags;
 }
 
-// Return the pillar and confrontation triggers.
+/// Return the pillar and confrontation triggers.
 const struct SceneEvent *VenusLighthouseAerie_GetEvents(void) {
   return gVenusLighthouseAerieEvents;
 }
 
-// Restore the platforms and run the scene selected by the arrival.
+/// Restore the platforms and run the scene selected by the arrival.
 s32 VenusLighthouseAerie_Initialize(void) {
   s32 mirroredScale;
   u32 pillarId;
@@ -374,18 +374,18 @@ s32 VenusLighthouseAerie_Initialize(void) {
   return clear;
 }
 
-// Show the selected speaker message, then pause for ten frames.
+/// Show the selected speaker message, then pause for ten frames.
 static void VenusLighthouseAerie_ShowMessage(s32 speaker) {
   Engine_EventShowMessage(speaker, 0);
   Engine_EventWait(10);
 }
 
-// Turn one actor and wait ten frames.
+/// Turn one actor and wait ten frames.
 static void VenusLighthouseAerie_FaceActor(s32 actor, s32 facing) {
   Engine_ActorFaceDirection(actor, facing, 10);
 }
 
-// Bring the party onto the aerie and reveal the argument over Sheba.
+/// Bring the party onto the aerie and reveal the argument over Sheba.
 static void VenusLighthouseAerie_EnterAndConfrontAntagonists(void) {
   struct FieldActor *arrivalPlatform;
   struct FieldActor *leader;
@@ -670,7 +670,7 @@ static void VenusLighthouseAerie_EnterAndConfrontAntagonists(void) {
   Engine_EventEnd();
 }
 
-// Show or hide one companion, setting its movement speed when shown.
+/// Show or hide one companion, setting its movement speed when shown.
 static void VenusLighthouseAerie_ShowPartyMember(s32 actorId, s32 shown) {
   struct FieldActor *member;
 
@@ -686,9 +686,9 @@ static void VenusLighthouseAerie_ShowPartyMember(s32 actorId, s32 shown) {
   }
 }
 
-// Walking up to Saturos and Menardi: they promise not to harm Sheba for the
-// Shaman's Rod, Felix carries it over, they will not let her go, and the
-// battle begins.
+/// Walking up to Saturos and Menardi: they promise not to harm Sheba for the
+/// Shaman's Rod, Felix carries it over, they will not let her go, and the
+/// battle begins.
 static void Event_ConfrontSaturosAndMenardi(void) {
   s32 rodOwner;
   struct FieldActor *object;
@@ -1100,7 +1100,7 @@ static void Event_ConfrontSaturosAndMenardi(void) {
   GameFlag_Set(0x350);
 }
 
-// Flash an actor palette and emit paired effects every fifteenth frame.
+/// Flash an actor palette and emit paired effects every fifteenth frame.
 static void VenusLighthouseAerie_FlashActorPalette(struct FieldActor *actor) {
   if (*(s32 *)&gFrameCount & 2) {
     Engine_ObjectSetPartPalettes(actor, 7);
@@ -1112,7 +1112,7 @@ static void VenusLighthouseAerie_FlashActorPalette(struct FieldActor *actor) {
   }
 }
 
-// Cycle the actor palette and emit paired effects every fifteenth frame.
+/// Cycle the actor palette and emit paired effects every fifteenth frame.
 static void VenusLighthouseAerie_CycleActorPalette(struct FieldActor *actor) {
   if (gFrameCount & 1) {
     Engine_ObjectSetPartPalettes(actor,
@@ -1126,7 +1126,8 @@ static void VenusLighthouseAerie_CycleActorPalette(struct FieldActor *actor) {
 // Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 
-// Spawn two vertical effects using the parent position and shared cached tiles.
+/// Spawn two vertical effects using the parent position and shared cached
+/// tiles.
 static void
 VenusLighthouseAerie_SpawnLinkedPairEffects(struct FieldActor *parent) {
   struct FieldActor *pair[2];
@@ -1181,12 +1182,12 @@ VenusLighthouseAerie_SpawnLinkedPairEffects(struct FieldActor *parent) {
 // Shared source is included here in ROM order.
 #include "common/effect_psynergy.h"
 
-// Advance Sheba's palette cycle.
+/// Advance Sheba's palette cycle.
 static void VenusLighthouseAerie_UpdateShebaPalette(void) {
   VenusLighthouseAerie_CycleActorPalette(Object_GetById(SHEBA));
 }
 
-// Build the horizontal velocity for an elliptical radial particle burst.
+/// Build the horizontal velocity for an elliptical radial particle burst.
 static inline void VenusLighthouseAerie_AimBurst(s32 velocity[3], s32 angle) {
   s32 sine;
   s32 cosine;
@@ -1201,7 +1202,7 @@ static inline void VenusLighthouseAerie_AimBurst(s32 velocity[3], s32 angle) {
   velocity[0] = cosine;
 }
 
-// Give Felix, Sheba and the party the same reaction, then wait after Mia.
+/// Give Felix, Sheba and the party the same reaction, then wait after Mia.
 static inline void VenusLighthouseAerie_ShowGroupEmote(s32 emote,
                                                        s32 waitFrames) {
   Actor_ShowEmote(ACTOR_FELIX, emote, 0);
@@ -1212,7 +1213,7 @@ static inline void VenusLighthouseAerie_ShowGroupEmote(s32 emote,
   Actor_ShowEmote(MIA, emote, waitFrames);
 }
 
-// Show the Venus Star lighting the beacon and the antagonists combining.
+/// Show the Venus Star lighting the beacon and the antagonists combining.
 static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   struct EffectOptions menardiBurst;
   s32 velocity[3];
@@ -1749,7 +1750,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   GameFlag_Set(0x351);
 }
 
-// Flash the object palette white, then restore the transformation colour.
+/// Flash the object palette white, then restore the transformation colour.
 static void VenusLighthouseAerie_FlashScreen(void) {
   Engine_AudioPlayCue(SE_187);
   Engine_ColorBufferApplyTarget(0x7fff, 1);
@@ -1760,7 +1761,7 @@ static void VenusLighthouseAerie_FlashScreen(void) {
   Engine_TaskWait(1);
 }
 
-// Orbit a particle around the upper beam and keep its target at that position.
+/// Orbit a particle around the upper beam and keep its target at that position.
 static void
 VenusLighthouseAerie_UpdateUpperOrbit(union FieldObject *fieldObject) {
   struct FieldActor *effect = &fieldObject->actor;
@@ -1775,7 +1776,7 @@ VenusLighthouseAerie_UpdateUpperOrbit(union FieldObject *fieldObject) {
   effect->timer -= 0x800;
 }
 
-// Orbit a particle around the rising beam using its rise counter as a radius.
+/// Orbit a particle around the rising beam using its rise counter as a radius.
 static void
 VenusLighthouseAerie_UpdateRisingOrbit(union FieldObject *fieldObject) {
   struct FieldActor *actor = &fieldObject->actor;
@@ -1804,7 +1805,7 @@ VenusLighthouseAerie_UpdateRisingOrbit(union FieldObject *fieldObject) {
   }
 }
 
-// Emit rising particles around the upper beam at the current beacon stage.
+/// Emit rising particles around the upper beam at the current beacon stage.
 static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
   struct FieldActor *center;
   struct FieldActor *effect;
@@ -1843,7 +1844,7 @@ static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
   }
 }
 
-// Test whether all three movement targets are unset.
+/// Test whether all three movement targets are unset.
 static __inline__ s32 Actor_IsParked(struct FieldActor *actor) {
   if (actor->targetX == ACTOR_NO_TARGET && actor->targetY == actor->targetX &&
       actor->targetZ == actor->targetY) {
@@ -1852,7 +1853,7 @@ static __inline__ s32 Actor_IsParked(struct FieldActor *actor) {
   return 0;
 }
 
-// Pulse and slide Saturos and Menardi while their beam flags are active.
+/// Pulse and slide Saturos and Menardi while their beam flags are active.
 static void VenusLighthouseAerie_UpdateBeamActors(void) {
   struct FieldActor *saturos;
   struct FieldActor *menardi;
@@ -1897,7 +1898,7 @@ static void VenusLighthouseAerie_UpdateBeamActors(void) {
   }
 }
 
-// Play the antagonists' defeat, the party discussion and the beacon eruption.
+/// Play the antagonists' defeat, the party discussion and the beacon eruption.
 static void VenusLighthouseAerie_FinishSaturosAndMenardiBattle(void) {
   Engine_EventBegin();
   VenusLighthouseAerie_ShowSaturosAndMenardiFall();
@@ -1906,8 +1907,8 @@ static void VenusLighthouseAerie_FinishSaturosAndMenardiBattle(void) {
   Engine_EventEnd();
 }
 
-// A look back from the world map: Felix cries out as Sheba clings to the
-// broken aerie, then the world map returns with its music still playing.
+/// A look back from the world map: Felix cries out as Sheba clings to the
+/// broken aerie, then the world map returns with its music still playing.
 static void VenusLighthouseAerie_ShowShebaInDanger(void) {
   Engine_EventBegin();
   VenusLighthouseAerie_RestorePartyOnBrokenAerie();
@@ -1923,7 +1924,7 @@ static void VenusLighthouseAerie_ShowShebaInDanger(void) {
   Engine_EventEnd();
 }
 
-// Stage the broken aerie for the fall sequence and the party escape.
+/// Stage the broken aerie for the fall sequence and the party escape.
 static void VenusLighthouseAerie_StageShebasFall(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -2009,7 +2010,7 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   Engine_EventRequestExit(AERIE_EXIT_AFTER_SHEBAS_FALL);
 }
 
-// Show Saturos and Menardi falling into the beacon after their final defeat.
+/// Show Saturos and Menardi falling into the beacon after their final defeat.
 static void VenusLighthouseAerie_ShowSaturosAndMenardiFall(void) {
   struct FieldActor *actor;
 
@@ -2112,7 +2113,7 @@ static void VenusLighthouseAerie_ShowSaturosAndMenardiFall(void) {
   Engine_EventWait(160);
 }
 
-// Let the party discuss the battle while Felix and Sheba remain on the aerie.
+/// Let the party discuss the battle while Felix and Sheba remain on the aerie.
 static void VenusLighthouseAerie_DiscussSaturosAndMenardiDefeat(void) {
   s32 answerAccepted;
   s32 garetSpeaker;
@@ -2227,7 +2228,7 @@ static void VenusLighthouseAerie_DiscussSaturosAndMenardiDefeat(void) {
 static s32 sTransitionTimer;
 static s32 sTransitionStep;
 
-// Raise the beacon effects and split the aerie beneath the group.
+/// Raise the beacon effects and split the aerie beneath the group.
 static void VenusLighthouseAerie_EruptBeacon(void) {
   struct FieldActor *lower;
   struct FieldActor *middle;
@@ -2435,7 +2436,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Engine_EventWaitForScreen();
 }
 
-// Place the party on the broken platform and resume its falling effects.
+/// Place the party on the broken platform and resume its falling effects.
 static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
   struct FieldActor *actor;
 
@@ -2510,7 +2511,7 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
   Engine_TaskWait(60);
 }
 
-// Show Felix urging Sheba to hold on at the edge of the platform.
+/// Show Felix urging Sheba to hold on at the edge of the platform.
 static void VenusLighthouseAerie_TryToPreventFall(void) {
   Engine_EventSetMessage(MsgVenusNoooo);
   VenusLighthouseAerie_ShowMessage(ACTOR_FELIX);
@@ -2534,7 +2535,7 @@ static void VenusLighthouseAerie_TryToPreventFall(void) {
   VenusLighthouseAerie_ShowMessage(SHEBA);
 }
 
-// Show Sheba falling, Felix jumping after her and the party escaping.
+/// Show Sheba falling, Felix jumping after her and the party escaping.
 static void VenusLighthouseAerie_PlayShebasFall(void) {
   struct FieldActor *actor;
   s32 stepPending;
@@ -2844,7 +2845,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Engine_EventWait(80);
 }
 
-// Clear all movement targets and velocities and reset the actor timer.
+/// Clear all movement targets and velocities and reset the actor timer.
 static void VenusLighthouseAerie_StopActorMotion(struct FieldActor *actor) {
   actor->targetX = ACTOR_NO_TARGET;
   actor->targetY = ACTOR_NO_TARGET;
@@ -2855,7 +2856,7 @@ static void VenusLighthouseAerie_StopActorMotion(struct FieldActor *actor) {
   actor->timer = 0;
 }
 
-// Advance the beacon rise sequence, its flashes and orbiting particles.
+/// Advance the beacon rise sequence, its flashes and orbiting particles.
 static void VenusLighthouseAerie_UpdateBeaconRise(void) {
   struct FieldActor *center;
   struct FieldActor *effect;
@@ -2974,7 +2975,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
   VenusLighthouseAerie_AdvanceActorRise(Actor_Get(SHEBA));
 }
 
-// Raise an enabled actor according to its gated rise counter.
+/// Raise an enabled actor according to its gated rise counter.
 static void VenusLighthouseAerie_AdvanceActorRise(struct FieldActor *actor) {
   if (actor->riseEnabled != 0) {
     u8 counter = actor->riseCounter;
@@ -2991,7 +2992,7 @@ static void VenusLighthouseAerie_AdvanceActorRise(struct FieldActor *actor) {
   }
 }
 
-// Emit particles beside the lower beam and link each to its source actor.
+/// Emit particles beside the lower beam and link each to its source actor.
 static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   union FieldObject *center;
   struct FieldActor *effect;
@@ -3043,7 +3044,7 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   sprite->image.priority = center->actor.sprite->image.priority;
 }
 
-// Move a linked particle along its horizontal ellipse and preserve its target.
+/// Move a linked particle along its horizontal ellipse and preserve its target.
 static void
 VenusLighthouseAerie_UpdateOrbitingEffect(union FieldObject *object) {
   struct FieldActor *anchor;

@@ -1,10 +1,11 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Ply.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Ply.
 
 #include "../psynergy_effects_internal.h"
 
-// Per-frame update: sways 4 pixels either side of anchorX, once every 128
-// frames.
+/// Per-frame update: sways 4 pixels either side of anchorX, once every 128
+/// frames.
 void BattleFx_SwayParticle(union FieldObject *fieldObject) {
   struct SparkObject *obj = (struct SparkObject *)fieldObject;
   s16 *phase;
@@ -15,9 +16,9 @@ void BattleFx_SwayParticle(union FieldObject *fieldObject) {
   *phase = (*phase + 128) % 128;
 }
 
-// Per-frame update: spirals in on a point 10 pixels above the effect's
-// position, at a radius of as many pixels as frames are left; released when
-// timer reaches 0.
+/// Per-frame update: spirals in on a point 10 pixels above the effect's
+/// position, at a radius of as many pixels as frames are left; released when
+/// timer reaches 0.
 void BattleFx_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
   struct BattleFxScene *scene = gEffectWork;
@@ -46,9 +47,9 @@ void BattleFx_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
   }
 }
 
-// Per-frame update: sways 6 pixels either side (a 64-frame cycle) 16 pixels
-// above the effect's position, and every 3 frames sheds a spark that sways
-// as it slowly falls. With phase -1 it stays where it is.
+/// Per-frame update: sways 6 pixels either side (a 64-frame cycle) 16 pixels
+/// above the effect's position, and every 3 frames sheds a spark that sways
+/// as it slowly falls. With phase -1 it stays where it is.
 void BattleFx_RunSparkEmitter(union FieldObject *fieldObject) {
   struct SparkObject *emitter = (struct SparkObject *)fieldObject;
   struct BattleFxScene *scene;
@@ -85,18 +86,18 @@ void BattleFx_RunSparkEmitter(union FieldObject *fieldObject) {
   }
 }
 
-// Abilities: Ply, Ply Well, Pure Ply (field kind 3), cast on a target.
-//
-// Runs FieldFx_RunPly, then stops the caster's hook.
+/// Abilities: Ply, Ply Well, Pure Ply (field kind 3), cast on a target.
+///
+/// Runs FieldFx_RunPly, then stops the caster's hook.
 void FieldFx_RunPlyOnTarget(s32 unused) {
   FieldFx_RunPly();
   EffectRuntime_StopCurrentObject();
 }
 
-// Abilities: Ply, Ply Well, Pure Ply (field kind 3).
-//
-// Eight particles spiral into the centre, where one appears, sheds sparks and
-// flies far away.
+/// Abilities: Ply, Ply Well, Pure Ply (field kind 3).
+///
+/// Eight particles spiral into the centre, where one appears, sheds sparks and
+/// flies far away.
 void FieldFx_RunPly(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *target = scene->mainObject;

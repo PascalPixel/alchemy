@@ -29,31 +29,31 @@
 // lie in the grass for the party to push, and a Nut circles out of reach
 // until Catch pulls it in.
 
-// Actors 8 to 10 are the logs; 11 is the Nut.
+/// Actors 8 to 10 are the logs; 11 is the Nut.
 enum { NUT = 11 };
 
 // Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
-// Where the party enters from the bridge and the river.
+/// Where the party enters from the bridge and the river.
 const struct SceneEntrance *KolimaForestClearing_GetEntrances(void) {
   return gKolimaForestClearing_Entrances;
 }
 
-// The clearing has no regions.
+/// The clearing has no regions.
 const struct SceneRegion *KolimaForestClearing_GetRegions(void) { return 0; }
 
-// The paths to the river and back to the bridge.
+/// The paths to the river and back to the bridge.
 const u32 *KolimaForestClearing_GetExits(void) {
   return gKolimaForestClearing_Exits;
 }
 
-// The three logs and the Nut.
+/// The three logs and the Nut.
 const struct ScenePlacement *KolimaForestClearing_GetPlacements(void) {
   return gKolimaForestClearing_Placements;
 }
 
-// Walking into a log: it rolls ahead until something stops it.
+/// Walking into a log: it rolls ahead until something stops it.
 static void KolimaForestClearing_PushLog(void) {
   struct StagedActorProbe result;
   Engine_EventBegin();
@@ -62,7 +62,7 @@ static void KolimaForestClearing_PushLog(void) {
   Engine_EventEnd();
 }
 
-// Catch on the circling Nut: it vanishes and the party finds a Nut.
+/// Catch on the circling Nut: it vanishes and the party finds a Nut.
 static void KolimaForestClearing_CatchNut(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(NUT, 0, 0);
@@ -72,13 +72,13 @@ static void KolimaForestClearing_CatchNut(void) {
   Engine_EventEnd();
 }
 
-// The logs, the Nut and the two paths.
+/// The logs, the Nut and the two paths.
 const struct SceneEvent *KolimaForestClearing_GetEvents(void) {
   return gKolimaForestClearing_Events;
 }
 
-// On entry the Nut circles until it is caught, the logs mark the cells they
-// cover, and the forest keeps its cursed colours until the curse is lifted.
+/// On entry the Nut circles until it is caught, the logs mark the cells they
+/// cover, and the forest keeps its cursed colours until the curse is lifted.
 s32 KolimaForestClearing_Initialize(void) {
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -98,7 +98,7 @@ s32 KolimaForestClearing_Initialize(void) {
 #include "common/kolima_palette.h"
 #include "common/object_orbit.h"
 
-// Pixel step by direction: X in the upper halfword, Z in the lower.
+/// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
 s32 gStagedActor_DirectionSteps[] = {
@@ -131,7 +131,7 @@ struct SceneEntrance gKolimaForestClearing_Entrances[] = {
     { SCENE_TABLE_END },
 };
 
-// Exit 1 to the river (scene 42), exit 2 to the bridge (scene 40).
+/// Exit 1 to the river (scene 42), exit 2 to the bridge (scene 40).
 u32 gKolimaForestClearing_Exits[] = {
     SCENE_EXITS(41),
     SCENE_EXIT(1, 42, 1),
@@ -139,8 +139,8 @@ u32 gKolimaForestClearing_Exits[] = {
     SCENE_EXITS_END,
 };
 
-// Until the third patch the Nut's placement tested flag 0xfd0, not the flag
-// catching it sets.
+/// Until the third patch the Nut's placement tested flag 0xfd0, not the flag
+/// catching it sets.
 struct ScenePlacement gKolimaForestClearing_Placements[] = {
     { 0xcd, CONDITION_ALWAYS, 7,
         PIXELS(360), 0, PIXELS(368), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -169,6 +169,6 @@ struct SceneEvent gKolimaForestClearing_Events[] = {
     {SCENE_EVENTS_END},
 };
 
-// The .bss order follows the first declarations (externs in field.h).
+/// The .bss order follows the first declarations (externs in field.h).
 u8 gKolimaPalette_First[1792] __attribute__((section(".bss")));
 u8 gKolimaPalette_Second[896] __attribute__((section(".bss")));

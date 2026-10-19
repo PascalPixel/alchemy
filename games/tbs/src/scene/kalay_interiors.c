@@ -1,5 +1,6 @@
-// Kalay's homes, inn, dining rooms and sanctum. The inn changes when the
-// Colosso tour group leaves; room entrances select their shared actor tables.
+/// @file
+/// Kalay's homes, inn, dining rooms and sanctum. The inn changes when the
+/// Colosso tour group leaves; room entrances select their shared actor tables.
 
 #include "game_state.h"
 #include "scene_ids.h"
@@ -25,16 +26,16 @@
 #include "flags.h"
 #include "songs.h"
 
-// The inn's rooms are entered through entrances 9 to 15 and 17.
+/// The inn's rooms are entered through entrances 9 to 15 and 17.
 enum KalayInteriorsActor {
-  ACTOR_INNKEEPER = 8,  // in the inn
-  ACTOR_PRIEST = 8,     // in the sanctum
-  ACTOR_TOUR_GUIDE = 12 // in the inn's dining room
+  ACTOR_INNKEEPER = 8,  ///< in the inn
+  ACTOR_PRIEST = 8,     ///< in the sanctum
+  ACTOR_TOUR_GUIDE = 12 ///< in the inn's dining room
 };
 
 static void KalayInteriors_ApplyRoomState(void);
 
-// Selects the entrance table for the rooms or sanctum in this scene.
+/// Selects the entrance table for the rooms or sanctum in this scene.
 const struct SceneEntrance *KalayInteriors_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -47,13 +48,13 @@ const struct SceneEntrance *KalayInteriors_GetEntrances(void) {
   return gKalayInteriors_NoEntrances;
 }
 
-// The rooms have no scene regions.
+/// The rooms have no scene regions.
 const struct SceneRegion *KalayInteriors_GetRegions(void) { return NULL; }
 
-// Returns the combined destinations of the rooms' numbered exits.
+/// Returns the combined destinations of the rooms' numbered exits.
 u8 *KalayInteriors_GetExits(void) { return gKalayInteriors_Exits; }
 
-// The inn rooms share a placement table, clipped to the current view.
+/// The inn rooms share a placement table, clipped to the current view.
 const struct ScenePlacement *KalayInteriors_GetPlacements(void) {
   s32 scene = gGameState.scene;
 
@@ -85,7 +86,7 @@ const struct ScenePlacement *KalayInteriors_GetPlacements(void) {
   return gKalayInteriors_NoPlacements;
 }
 
-// Selects room dialogue with the same entrance grouping as the placements.
+/// Selects room dialogue with the same entrance grouping as the placements.
 const struct SceneEvent *KalayInteriors_GetEvents(void) {
   s32 scene = gGameState.scene;
 
@@ -112,8 +113,9 @@ const struct SceneEvent *KalayInteriors_GetEvents(void) {
   return gKalayInteriors_NoEvents;
 }
 
-// The tour guide in the inn's dining room: "Please finish eating if you are
-// taking the tour! We'll be leaving soon!" Now the party has heard of the tour.
+/// The tour guide in the inn's dining room: "Please finish eating if you are
+/// taking the tour! We'll be leaving soon!" Now the party has heard of the
+/// tour.
 static void KalayInteriors_TalkToTourGuide(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayPleaseFinishEatingIfTaking);
@@ -122,8 +124,8 @@ static void KalayInteriors_TalkToTourGuide(void) {
   Engine_EventEnd();
 }
 
-// A resident asks whether the party knows the continent south of Tolbi, and
-// answers either way.
+/// A resident asks whether the party knows the continent south of Tolbi, and
+/// answers either way.
 static void KalayInteriors_AskAboutSouthernContinent(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayDoKnowAboutContinentSouth);
@@ -131,9 +133,9 @@ static void KalayInteriors_AskAboutSouthernContinent(void) {
   Engine_EventEnd();
 }
 
-// Spoken to across the counter, the leader facing west, the innkeeper offers a
-// room. From any other side he asks whether the party is going to Tolbi too,
-// or, once the tour has left, says how empty the inn feels.
+/// Spoken to across the counter, the leader facing west, the innkeeper offers a
+/// room. From any other side he asks whether the party is going to Tolbi too,
+/// or, once the tour has left, says how empty the inn feels.
 static void KalayInteriors_TalkToInnkeeper(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -155,8 +157,8 @@ static void KalayInteriors_TalkToInnkeeper(void) {
   }
 }
 
-// Spoken to across the counter, the leader facing north, the priest offers the
-// sanctum's services; from elsewhere he says Kalay is a peaceful place.
+/// Spoken to across the counter, the leader facing north, the priest offers the
+/// sanctum's services; from elsewhere he says Kalay is a peaceful place.
 static void KalayInteriors_TalkToPriest(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -172,7 +174,7 @@ static void KalayInteriors_TalkToPriest(void) {
   }
 }
 
-// Stops the room actors, opens the selected door and walks the leader out.
+/// Stops the room actors, opens the selected door and walks the leader out.
 static void KalayInteriors_OpenDoorAndExit(void) {
   struct EventWork *work = gEventWork;
   u32 slot;
@@ -231,7 +233,7 @@ static void KalayInteriors_OpenDoorAndExit(void) {
   Engine_EventEnd();
 }
 
-// Sets the opening transition and restores room-specific actors and tiles.
+/// Sets the opening transition and restores room-specific actors and tiles.
 s32 KalayInteriors_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   if (gGameState.scene == (s32)&SceneId_KalayInteriors1) {
@@ -240,8 +242,8 @@ s32 KalayInteriors_Initialize(void) {
   return 0;
 }
 
-// Once the Colosso tour has left, its guests are gone from the inn, and two
-// residents from the houses. Entrance 3 instead redraws a rectangle of cells.
+/// Once the Colosso tour has left, its guests are gone from the inn, and two
+/// residents from the houses. Entrance 3 instead redraws a rectangle of cells.
 static void KalayInteriors_ApplyRoomState(void) {
   s16 entrance = gGameState.entrance;
 
@@ -399,8 +401,8 @@ struct SceneEvent gKalayInteriors_NoEvents[] = {
     { SCENE_EVENTS_END },
 };
 
-// A bare flag as a condition holds while that flag is clear: these lines are
-// spoken before the Colosso tour leaves, the next ones after.
+/// A bare flag as a condition holds while that flag is clear: these lines are
+/// spoken before the Colosso tour leaves, the next ones after.
 struct SceneEvent gKalayInteriors_HouseEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },

@@ -1,11 +1,12 @@
-// Part of psynergy_effects.c, compiled only through it.
-// Battles and destinations an event requests, and the queued sound.
+/// @file
+/// Part of psynergy_effects.c, compiled only through it.
+/// Battles and destinations an event requests, and the queued sound.
 
 #include "../psynergy_effects_internal.h"
 
 #define AERIE 98 // encounter table fought before the Aerie's storm
-// Sets up a battle with enemy group slot of encounter table zone. On the
-// world map (mode 3) the terrain under the leader picks the battle backdrop.
+/// Sets up a battle with enemy group slot of encounter table zone. On the
+/// world map (mode 3) the terrain under the leader picks the battle backdrop.
 void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   s32 zone = zoneNo;
   s32 slot = slotNo;
@@ -22,9 +23,9 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   BattleFx_SelectBattleCue(zone, slot);
 }
 
-// Sets up the battle with Djinni no. The low 8 bits of flag are the Djinni's
-// actor, which hops first unless DJINN_NO_HOP is set. Djinn are numbered 20
-// to an element (Djinn_ResolvePendingEvent).
+/// Sets up the battle with Djinni no. The low 8 bits of flag are the Djinni's
+/// actor, which hops first unless DJINN_NO_HOP is set. Djinn are numbered 20
+/// to an element (Djinn_ResolvePendingEvent).
 void Field_RequestDjinnBattle(s32 flag, s32 no) {
   struct FieldWork *field;
   struct GameState *gameState;
@@ -48,19 +49,19 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   BattleFx_SelectBattleCue(0, 0);
 }
 
-// Sets the scene and entrance that the field goes to next.
+/// Sets the scene and entrance that the field goes to next.
 void Event_SetNextDestination(s32 scene, s32 entrance) {
   gGameState.nextScene = scene;
   gGameState.nextEntrance = entrance;
 }
 
-// Sets where the party wakes up after losing a battle.
+/// Sets where the party wakes up after losing a battle.
 void Event_SetDefeatDestination(s32 scene, s32 entrance) {
   gGameState.defeatScene = scene;
   gGameState.defeatEntrance = entrance;
 }
 
-// Makes the event leave for entrance entrance of scene scene.
+/// Makes the event leave for entrance entrance of scene scene.
 void Event_RequestDestination(u16 scene, u16 entrance) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   gGameState.scene = scene;
@@ -68,8 +69,8 @@ void Event_RequestDestination(u16 scene, u16 entrance) {
   work->exit = 999;
 }
 
-// Plays SE_298, then soundId (SE_289 for -1), and remembers
-// soundId for BattleFx_PlayQueuedSound.
+/// Plays SE_298, then soundId (SE_289 for -1), and remembers
+/// soundId for BattleFx_PlayQueuedSound.
 void BattleFx_SetQueuedSoundAndPlay(s32 soundId) {
   ((struct FieldWork *)gEventWork)->queuedSound = soundId;
   if ((s16)soundId == -1) {
@@ -79,7 +80,7 @@ void BattleFx_SetQueuedSoundAndPlay(s32 soundId) {
   AudioCommand_PlayFar(soundId);
 }
 
-// Plays the sound BattleFx_SetQueuedSoundAndPlay remembered, if any.
+/// Plays the sound BattleFx_SetQueuedSoundAndPlay remembered, if any.
 void BattleFx_PlayQueuedSound(void) {
   s16 soundId = ((struct FieldWork *)gEventWork)->queuedSound;
 

@@ -18,22 +18,22 @@ extern u8 gWindowWork[];
 // FLAG_SCENE_TEMP_01 once Frost has frozen the puddle; both reset when the
 // party leaves the town.
 
-// Actors, numbered in the order of the placement table from 8.
+/// Actors, numbered in the order of the placement table from 8.
 enum TolbiActor {
   TOLBI_SPROUT = 8,
   TOLBI_PUDDLE = 9,
-  TOLBI_PLAYER_COPY = 14, // copies the leader's sprite priority every frame
+  TOLBI_PLAYER_COPY = 14, ///< copies the leader's sprite priority every frame
   TOLBI_OLDER_BROTHER = 16,
   TOLBI_YOUNGER_SIBLING = 17,
   TOLBI_SNACK_VENDOR = 19,
-  // A family at the festival: the father ("the wife doesn't go in for that
-  // sort of thing"), the mother and their child, who cries for sweets ("Mom,
-  // you said you were all out of money").
+  /// A family at the festival: the father ("the wife doesn't go in for that
+  /// sort of thing"), the mother and their child, who cries for sweets ("Mom,
+  /// you said you were all out of money").
   TOLBI_FATHER = 24,
   TOLBI_MOTHER = 25,
   TOLBI_CRYING_CHILD = 26,
-  // Sleeps under the archway during the festival; on finals day he sells
-  // seats ("Today is a big day for us scalpers").
+  /// Sleeps under the archway during the festival; on finals day he sells
+  /// seats ("Today is a big day for us scalpers").
   TOLBI_SCALPER = 27,
   TOLBI_GAMBLER = 28,
   TOLBI_SOLDIER_A = 29,
@@ -42,28 +42,28 @@ enum TolbiActor {
   TOLBI_MISSING_PERSON_POSTER = 32,
 };
 
-// Map objects the party can search.
+/// Map objects the party can search.
 enum TolbiMapObject {
   TOLBI_BARREL = 100,
   TOLBI_JAR = 101,
   TOLBI_HIDDEN_CHEST = 102,
 };
 
-// A word of the event work, at offset 0x1f4, that is set to the poster
-// before the yes/no choice under the "Missing Person" window. What reads it
-// is not yet traced.
+/// A word of the event work, at offset 0x1f4, that is set to the poster
+/// before the yes/no choice under the "Missing Person" window. What reads it
+/// is not yet traced.
 #define EVENT_WORK_1F4 (*(s32 *)((u8 *)gEventWork + 0x1f4))
 
-// The window state the running children consult before they widen their
-// stopping range. RENDER_MODE_OFFSET is the edition's offset of this byte in
-// the UI render work.
+/// The window state the running children consult before they widen their
+/// stopping range. RENDER_MODE_OFFSET is the edition's offset of this byte in
+/// the UI render work.
 struct TolbiUiWork {
   u8 unknown[RENDER_MODE_OFFSET];
   u8 renderMode;
 };
 
-// A running child, as its update reads it: the field actor's facing,
-// position, paused byte and the word the scene keeps the child's flags in.
+/// A running child, as its update reads it: the field actor's facing,
+/// position, paused byte and the word the scene keeps the child's flags in.
 struct TolbiKid {
   u8 unknown00[6];
   u16 facing;
@@ -74,10 +74,10 @@ struct TolbiKid {
   u16 kidFlags;
 };
 
-// TolbiKid.kidFlags
+/// TolbiKid.kidFlags
 enum {
-  KID_CHASES_YOUNGER = 1, // set on the older brother, who runs after actor 17
-  KID_TALKING = 2,        // set while the party talks to this child
+  KID_CHASES_YOUNGER = 1, ///< set on the older brother, who runs after actor 17
+  KID_TALKING = 2,        ///< set while the party talks to this child
 };
 
 #endif

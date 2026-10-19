@@ -1,11 +1,12 @@
-// Part of object.c, the field object, compiled only through it.
-// The actor a field action aims at, and the helpers that follow it.
+/// @file
+/// Part of object.c, the field object, compiled only through it.
+/// The actor a field action aims at, and the helpers that follow it.
 
 #include "../object_internal.h"
 
-// Returns how far, in pixels, a field Psynergy of the given kind reaches:
-// gBattleFx_TargetRangeByMode pairs kinds with ranges, ended by -1, and a kind
-// not listed reaches 16 pixels.
+/// Returns how far, in pixels, a field Psynergy of the given kind reaches:
+/// gBattleFx_TargetRangeByMode pairs kinds with ranges, ended by -1, and a kind
+/// not listed reaches 16 pixels.
 s32 Field_GetPsynergyTargetRange(s32 kind) {
   s16 *rangeEntry = gBattleFx_TargetRangeByMode;
   s32 range = 16;
@@ -23,10 +24,10 @@ s32 Field_GetPsynergyTargetRange(s32 kind) {
   return range;
 }
 
-// Returns the actor nearest to actor id that it could talk to, or -1: within
-// 48 pixels of height and 32 pixels of distance and, beyond 11 pixels, within
-// 0x2fff of the direction it faces. Actors with flag 8 are skipped, and those
-// with flag 4 count as 10/13 as far.
+/// Returns the actor nearest to actor id that it could talk to, or -1: within
+/// 48 pixels of height and 32 pixels of distance and, beyond 11 pixels, within
+/// 0x2fff of the direction it faces. Actors with flag 8 are skipped, and those
+/// with flag 4 count as 10/13 as far.
 s32 Field_FindNearbyTalkTarget(s32 id) {
   struct ObjectRuntime *source;
   struct ObjectRuntime *candidate;
@@ -94,10 +95,10 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
   return nearestActor;
 }
 
-// Returns the actor nearest in front of actor id that a field Psynergy of the
-// given kind can reach, or -1. The direction is rounded to a quarter turn and
-// the distance measured on the ground; kind sets the range, the height
-// allowed and the width of the cone.
+/// Returns the actor nearest in front of actor id that a field Psynergy of the
+/// given kind can reach, or -1. The direction is rounded to a quarter turn and
+/// the distance measured on the ground; kind sets the range, the height
+/// allowed and the width of the cone.
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   struct ObjectRuntime *source;
   struct ObjectRuntime *candidate;
@@ -189,9 +190,9 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   return nearestActor;
 }
 
-// If actor target exists, plays sound 124, gives it animation 4 and, 12 frames
-// later, shows itemId in front of actor with sparkles. Returns the picture's
-// encoded actor pointer, or 0 when the target or picture is absent.
+/// If actor target exists, plays sound 124, gives it animation 4 and, 12 frames
+/// later, shows itemId in front of actor with sparkles. Returns the picture's
+/// encoded actor pointer, or 0 when the target or picture is absent.
 s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 actor, s32 target, s32 itemId) {
   void *targetActor;
   s32 emitter;
@@ -207,9 +208,9 @@ s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 actor, s32 target, s32 itemId) {
   return emitter;
 }
 
-// Gives every part of a motion object's sprite (but those at palette 15)
-// palette - 1, or for palette 0 the next palette of a cycle that changes every
-// 2 frames.
+/// Gives every part of a motion object's sprite (but those at palette 15)
+/// palette - 1, or for palette 0 the next palette of a cycle that changes every
+/// 2 frames.
 void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette) {
   struct AnimationObject *sprite;
   struct AnimationEntry **entrySlot;
@@ -240,8 +241,8 @@ void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette) {
   }
 }
 
-// Clears the field's busy flag and, while Reveal is active, ends it: Reveal
-// used with ACT_PACKED runs its ending events.
+/// Clears the field's busy flag and, while Reveal is active, ends it: Reveal
+/// used with ACT_PACKED runs its ending events.
 void Battle_ResetEffectCounter(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
 

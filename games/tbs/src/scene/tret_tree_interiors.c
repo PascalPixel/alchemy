@@ -39,17 +39,17 @@
 #include "songs.h"
 #include "event.h"
 
-// Tret's face, the first actor placed after the party, and a second Tret
-// actor placed at the same spot. Both speak Tret's lines: the face as he
-// attacks, the second after the battle.
+/// Tret's face, the first actor placed after the party, and a second Tret
+/// actor placed at the same spot. Both speak Tret's lines: the face as he
+/// attacks, the second after the battle.
 enum {
   ACTOR_TRET = ACTOR_FIRST_PLACED,
   ACTOR_TRET_SPEAKER,
   SPRITE_TRET_FACE = 0x37
 };
 
-// The speaker of a message; every speaker in this scene has
-// SPEAKER_WINDOW_BELOW.
+/// The speaker of a message; every speaker in this scene has
+/// SPEAKER_WINDOW_BELOW.
 #define SPEAKER(actor) (SPEAKER_WINDOW_BELOW | (actor))
 
 // The scene's temporary flags: FLAG_SCENE_TEMP_00 to _14 are set the first
@@ -63,7 +63,7 @@ enum {
 #define TRET_TINT_CHANNEL_MAX 31
 #define TRET_TINT_END 99
 
-// Forward declarations.
+/// Forward declarations.
 static void TretPalette_SaveSceneColors(void);
 static void TretPalette_UpdateSceneTint(void);
 static void TretTreeInteriors_PlayGesture(s32 gesture);
@@ -84,27 +84,27 @@ static s16 *sLastFloorEntrance;
 #include "item_ids.h"
 #include "objcmd.h"
 
-// Return the interior entrance and landing positions.
+/// Return the interior entrance and landing positions.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTretTreeInteriorsEntrances;
 }
 
-// Return the upper exit regions for the tree interior.
+/// Return the upper exit regions for the tree interior.
 const struct SceneRegion *Scene_GetRegions(void) {
   return gTretTreeInteriorsRegions;
 }
 
-// Return the interior's packed exits.
+/// Return the interior's packed exits.
 const u32 *Scene_GetExits(void) { return gTretTreeInteriorsExits; }
 
-// Return the staged party and Tret actors.
+/// Return the staged party and Tret actors.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   return gTretTreeInteriorsPlacements;
 }
 
-// Stepping on a cracked floor tile: the first step cracks it further and sets
-// its temporary flag; the next step breaks it, and the leader spins and falls
-// through, to land at the given entrance.
+/// Stepping on a cracked floor tile: the first step cracks it further and sets
+/// its temporary flag; the next step breaks it, and the leader spins and falls
+/// through, to land at the given entrance.
 static void TretTreeInteriors_StepOnCrackedFloor(s32 floorFlag,
                                                  s32 sourceColumn,
                                                  s32 sourceRow, s32 entrance) {
@@ -155,126 +155,126 @@ static void TretTreeInteriors_StepOnCrackedFloor(s32 floorFlag,
     FLAG_SET(0x122);
 }
 
-// Cracked floor over the upper middle northwest landing.
+/// Cracked floor over the upper middle northwest landing.
 static void Event_FloorGivesWayToUpperMiddleNorthwest(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_00, 64, 35, 21);
 }
 
-// Cracked floor over the upper middle northeast landing.
+/// Cracked floor over the upper middle northeast landing.
 static void Event_FloorGivesWayToUpperMiddleNortheast(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_01, 65, 35, 22);
 }
 
-// Cracked floor over the upper middle west upper landing.
+/// Cracked floor over the upper middle west upper landing.
 static void Event_FloorGivesWayToUpperMiddleWestUpper(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_02, 66, 35, 23);
 }
 
-// Cracked floor over the upper middle west lower landing.
+/// Cracked floor over the upper middle west lower landing.
 static void Event_FloorGivesWayToUpperMiddleWestLower(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_03, 67, 35, 24);
 }
 
-// Cracked floor over the upper middle southwest upper landing.
+/// Cracked floor over the upper middle southwest upper landing.
 static void Event_FloorGivesWayToUpperMiddleSouthwestUpper(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_04, 68, 35, 25);
 }
 
-// Cracked floor over the upper middle south upper landing.
+/// Cracked floor over the upper middle south upper landing.
 static void Event_FloorGivesWayToUpperMiddleSouthUpper(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_05, 69, 35, 26);
 }
 
-// Cracked floor over the upper middle southwest lower landing.
+/// Cracked floor over the upper middle southwest lower landing.
 static void Event_FloorGivesWayToUpperMiddleSouthwestLower(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_06, 70, 35, 27);
 }
 
-// Cracked floor over the upper middle south lower landing.
+/// Cracked floor over the upper middle south lower landing.
 static void Event_FloorGivesWayToUpperMiddleSouthLower(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_07, 71, 35, 28);
 }
 
-// Cracked floor over the upper middle southeast lower landing.
+/// Cracked floor over the upper middle southeast lower landing.
 static void Event_FloorGivesWayToUpperMiddleSoutheastLower(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_08, 72, 35, 29);
 }
 
-// Cracked floor over the upper right northwest landing.
+/// Cracked floor over the upper right northwest landing.
 static void Event_FloorGivesWayToUpperRightNorthwest(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_09, 73, 35, 31);
 }
 
-// Cracked floor over the upper right northeast landing.
+/// Cracked floor over the upper right northeast landing.
 static void Event_FloorGivesWayToUpperRightNortheast(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_0A, 74, 35, 32);
 }
 
-// Cracked floor over the lower middle center landing.
+/// Cracked floor over the lower middle center landing.
 static void Event_FloorGivesWayToLowerMiddleCenter(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_0B, 79, 35, 50);
 }
 
-// Cracked floor over the lower middle northwest landing.
+/// Cracked floor over the lower middle northwest landing.
 static void Event_FloorGivesWayToLowerMiddleNorthwest(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_0C, 75, 35, 51);
 }
 
-// Cracked floor over the lower middle north landing.
+/// Cracked floor over the lower middle north landing.
 static void Event_FloorGivesWayToLowerMiddleNorth(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_0D, 76, 35, 52);
 }
 
-// Cracked floor over the lower middle northeast landing.
+/// Cracked floor over the lower middle northeast landing.
 static void Event_FloorGivesWayToLowerMiddleNortheast(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_0E, 77, 35, 53);
 }
 
-// Cracked floor over the lower middle west landing.
+/// Cracked floor over the lower middle west landing.
 static void Event_FloorGivesWayToLowerMiddleWestA(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_0F, 78, 35, 54);
 }
 
-// Cracked floor over the lower middle east landing.
+/// Cracked floor over the lower middle east landing.
 static void Event_FloorGivesWayToLowerMiddleEast(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_10, 80, 35, 55);
 }
 
-// A second cracked floor over the same lower middle west landing.
+/// A second cracked floor over the same lower middle west landing.
 static void Event_FloorGivesWayToLowerMiddleWestB(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_11, 81, 35, 56);
 }
 
-// Cracked floor over the lower middle southwest landing.
+/// Cracked floor over the lower middle southwest landing.
 static void Event_FloorGivesWayToLowerMiddleSouthwest(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_12, 82, 35, 57);
 }
 
-// Cracked floor over the lower middle south landing.
+/// Cracked floor over the lower middle south landing.
 static void Event_FloorGivesWayToLowerMiddleSouth(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_13, 83, 35, 58);
 }
 
-// Cracked floor over the lower middle southeast landing.
+/// Cracked floor over the lower middle southeast landing.
 static void Event_FloorGivesWayToLowerMiddleSoutheast(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_14, 84, 35, 59);
 }
 
-// Walking off a cracked floor tile lets the next step on it count again.
+/// Walking off a cracked floor tile lets the next step on it count again.
 static void Event_ResetFloorLatchWhenClear(void) {
   if (Engine_LeaderCheckAhead() == 0)
     *sLastFloorEntrance = -1;
 }
 
-// Return the floor, story, Reveal and search event bindings.
+/// Return the floor, story, Reveal and search event bindings.
 const struct SceneEvent *Scene_GetEvents(void) {
   return gTretTreeInteriorsEvents;
 }
 
-// Walking up to Tret (touch trigger 40, until FLAG_TRET_DEFEATED): he roars
-// "Hm... HROOOM!!!", the party gathers in front of him, and he scorns them
-// ("You hoped to find my kindly self?") before the battle with him starts.
-// The battle returns to entrance 19.
+/// Walking up to Tret (touch trigger 40, until FLAG_TRET_DEFEATED): he roars
+/// "Hm... HROOOM!!!", the party gathers in front of him, and he scorns them
+/// ("You hoped to find my kindly self?") before the battle with him starts.
+/// The battle returns to entrance 19.
 static void Event_FightTret(void) {
   s32 hasMia;
   struct FieldActor *leader;
@@ -353,12 +353,12 @@ static void Event_FightTret(void) {
   EV_END();
 }
 
-// After the battle: a passage opens beside Tret, who comes to ("Oh...
-// Mmmmm..."), thanks the party and says good-bye. Garet and Ivan stop him and
-// he asks whether they need something; answering no earns the leader a
-// scolding. Tret learns he turned the people of Kolima into trees, tries to
-// free them in a swirl of sparks but cannot, and the party resolve to heal
-// him. Sets FLAG_TRET_DEFEATED.
+/// After the battle: a passage opens beside Tret, who comes to ("Oh...
+/// Mmmmm..."), thanks the party and says good-bye. Garet and Ivan stop him and
+/// he asks whether they need something; answering no earns the leader a
+/// scolding. Tret learns he turned the people of Kolima into trees, tries to
+/// free them in a swirl of sparks but cannot, and the party resolve to heal
+/// him. Sets FLAG_TRET_DEFEATED.
 static void TretTreeInteriors_PlayPostBattleConversation(void) {
   s32 hasMia;
   struct FieldActor *partyActor;
@@ -564,7 +564,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   EV_END();
 }
 
-// Restore the post-battle map and optionally play its conversation.
+/// Restore the post-battle map and optionally play its conversation.
 static void TretTreeInteriors_ApplyPostBattleState(s32 playRecoveryScene) {
   if (playRecoveryScene != 0 && FLAG_CHECK(FLAG_KEEP_PARTY_POSITION) == 0)
     TretTreeInteriors_PlayPostBattleConversation();
@@ -587,7 +587,7 @@ static void TretTreeInteriors_ApplyPostBattleState(s32 playRecoveryScene) {
   }
 }
 
-// Restore the room, tint and entry fall before continuing its story event.
+/// Restore the room, tint and entry fall before continuing its story event.
 s32 TretTreeInteriors_EnterRoom(void) {
   struct FieldActor *tret;
   struct FieldActor *actor;
@@ -670,14 +670,14 @@ s32 TretTreeInteriors_EnterRoom(void) {
   return 0;
 }
 
-// Save background palettes 0 to 13 as the base for Tret's scene tint.
+/// Save background palettes 0 to 13 as the base for Tret's scene tint.
 static void TretPalette_SaveSceneColors(void) {
   Dma_Set((const void *)BG_PLTT, gPaletteBufferWork->palette,
           (DMA_ENABLE | DMA_32BIT) << 16 | 112, REG_DMA3);
 }
 
-// Tint background colours 16 to 78 every thirty-two frames, leaving
-// palette 4's last colour alone. Each later palette receives a weaker tint.
+/// Tint background colours 16 to 78 every thirty-two frames, leaving
+/// palette 4's last colour alone. Each later palette receives a weaker tint.
 static void TretPalette_UpdateSceneTint(void) {
   u16 *sourceColors;
   u16 *destinationColors;
@@ -746,7 +746,7 @@ static void TretPalette_UpdateSceneTint(void) {
     gTretTreeInteriors_TintIndex = 0;
 }
 
-// Play a Tret animation sequence with its original pauses.
+/// Play a Tret animation sequence with its original pauses.
 static void TretTreeInteriors_PlayGesture(s32 gesture) {
   switch (gesture) {
   case 0:
@@ -819,7 +819,7 @@ static void TretTreeInteriors_PlayGesture(s32 gesture) {
   Engine_TaskWait(12);
 }
 
-// Move a fading spark outward from its saved origin, then release it.
+/// Move a fading spark outward from its saved origin, then release it.
 static void TretTreeInteriors_UpdateSwirlSpark(union FieldObject *fieldObject) {
   struct FieldActor *spark = (struct FieldActor *)fieldObject;
   struct FieldPosition position;
@@ -850,7 +850,7 @@ static void TretTreeInteriors_UpdateSwirlSpark(union FieldObject *fieldObject) {
   }
 }
 
-// Emit five shrinking waves of fading sparks from the saved origin.
+/// Emit five shrinking waves of fading sparks from the saved origin.
 static void TretTreeInteriors_SpawnSwirlSparks(void) {
   struct FieldActor *spark;
   u32 frame;
@@ -911,7 +911,7 @@ static void TretTreeInteriors_SpawnSwirlSparks(void) {
   }
 }
 
-// Restore each enabled single-cell patch whose puzzle flag is set.
+/// Restore each enabled single-cell patch whose puzzle flag is set.
 static void TretTreeInteriors_ApplyFlaggedMapPatches(void) {
   s32 patchOffset;
 
@@ -926,7 +926,7 @@ static void TretTreeInteriors_ApplyFlaggedMapPatches(void) {
   }
 }
 
-// Stop the scene tint while Reveal is active.
+/// Stop the scene tint while Reveal is active.
 static void Event_CastReveal(void) {
   Engine_TaskRemoveCallback(TretPalette_UpdateSceneTint);
 }
@@ -934,7 +934,7 @@ static void Event_CastReveal(void) {
 // Shared source is included here in ROM order.
 #include "common/effect_advance.h"
 
-// Drop the leader into the room with a ring of landing particles.
+/// Drop the leader into the room with a ring of landing particles.
 static void TretTreeInteriors_RunLandingDustScene(void) {
   struct EffectOptions options;
   struct FieldPosition velocity;
@@ -1008,9 +1008,9 @@ s32 gEffectScript2[] = {
     SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
-// The cracked floors redrawn when the room is restored: floor flag, whether
-// it is redrawn (not the four that start cracked), source cell x/y,
-// destination cell x/y.
+/// The cracked floors redrawn when the room is restored: floor flag, whether
+/// it is redrawn (not the four that start cracked), source cell x/y,
+/// destination cell x/y.
 // clang-format off
 s16 gTretTreeInteriors_MapPatches[] = {
     FLAG_SCENE_TEMP_00, 1, 64, 35, 113, 6,

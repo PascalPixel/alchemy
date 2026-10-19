@@ -47,7 +47,7 @@
 // rescued; 0x313, the attendant has told Donpa's story; 0x314, Donpa has
 // shown his reward; 0x350 to 0x35c, the cell doors the Cell Key opened.
 
-// The outer rooms (map 1).
+/// The outer rooms (map 1).
 enum {
   OUTER_ENTRANCE_GUARD = 12,
   OUTER_FIRST_SENTRY = 13,
@@ -57,13 +57,13 @@ enum {
   OUTER_SECOND_SENTRY = 21
 };
 
-// The guard rooms and Donpa's chamber (map 2).
+/// The guard rooms and Donpa's chamber (map 2).
 enum {
   GUARD_ROOM_CELL_KEY = 8,
   GUARD_ROOM_FIRST_PATROL = 9,
   GUARD_ROOM_SECOND_PATROL = 10,
   GUARD_ROOM_HALL_GUARD = 11,
-  // The three guards who fight together.
+  /// The three guards who fight together.
   GUARD_ROOM_GUARD_A = 12,
   GUARD_ROOM_GUARD_B = 13,
   GUARD_ROOM_GUARD_C = 14,
@@ -75,7 +75,7 @@ enum {
   GUARD_ROOM_DJINNI = 26
 };
 
-// The column room (map 3).
+/// The column room (map 3).
 enum {
   COLUMN_ROOM_FIRST_SWITCH_COVER = 8,
   COLUMN_ROOM_PASSAGE_COVER = 9,
@@ -83,7 +83,7 @@ enum {
   COLUMN_ROOM_COLUMN = 12
 };
 
-// The rescue room (map 4).
+/// The rescue room (map 4).
 enum {
   RESCUE_MONSTER = 11,
   RESCUE_HAMMET = 12,
@@ -92,8 +92,8 @@ enum {
   RESCUE_MONSTER_PART = 15
 };
 
-// Triggers: the cell doors count from DOOR_TRIGGER_FIRST in each map, and a
-// watching guard raises one of the TRIGGER_*_SPOTTED triggers.
+/// Triggers: the cell doors count from DOOR_TRIGGER_FIRST in each map, and a
+/// watching guard raises one of the TRIGGER_*_SPOTTED triggers.
 enum {
   TRIGGER_LOCKED_DOOR = 99,
   TRIGGER_SEALED_DOOR = 98,
@@ -106,24 +106,24 @@ enum {
   TRIGGER_SENTRIES_SPOTTED
 };
 
-// Reveal's phases: the hidden things show, and hide again.
+/// Reveal's phases: the hidden things show, and hide again.
 enum { REVEAL_SHOWN = 5, REVEAL_FADED = 4 };
 
-// Where a party caught by a guard is sent: the gate below the fortress.
+/// Where a party caught by a guard is sent: the gate below the fortress.
 enum { EXIT_THROWN_OUT = 60 };
 
-// Where the party comes back after the three guards' battle and after the
-// monster's.
+/// Where the party comes back after the three guards' battle and after the
+/// monster's.
 enum {
   GUARD_ROOM_ENTRANCE_AFTER_BATTLE = 31,
   RESCUE_ENTRANCE_AFTER_BATTLE = 4
 };
 
-// What a guard close to the cloaked leader requests of Cloak.
+/// What a guard close to the cloaked leader requests of Cloak.
 enum { CLOAK_NEAR_GUARD = 0x2000 | ABILITY_CLOAK };
 
-// The first of the flags that remember which cell doors the Cell Key opened,
-// per map: one for each door trigger from DOOR_TRIGGER_FIRST.
+/// The first of the flags that remember which cell doors the Cell Key opened,
+/// per map: one for each door trigger from DOOR_TRIGGER_FIRST.
 enum {
   RESCUE_DOOR_FLAG = 0x350,
   COLUMN_ROOM_DOOR_FLAG = 0x355,
@@ -131,10 +131,10 @@ enum {
   OUTER_DOOR_FLAG = 0x35a
 };
 
-// The native paired patrol computes this layer offset in floating point.
+/// The native paired patrol computes this layer offset in floating point.
 #define PAIRED_PATROL_LAYER_ORIGIN_X (136.0 * 65536)
 
-// Forward declarations.
+/// Forward declarations.
 static s32 LunpaFortress_TryCollectDisplayedItem(s32 actorId, s32 itemId);
 static void LunpaFortress_CheckSecondEntranceSentry(void);
 static s32 LunpaFortress_CanGuardSeeLeader(s32 actorId);
@@ -156,7 +156,7 @@ static void LunpaFortress_RestoreRescueRoomDoors(void);
 // Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
-// Where the party can enter each map.
+/// Where the party can enter each map.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gGameState.scene;
 
@@ -172,10 +172,10 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLunpaFortressEntrancesOther;
 }
 
-// The fortress has no regions.
+/// The fortress has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-// Where each exit leads, by map.
+/// Where each exit leads, by map.
 const u32 *Scene_GetExits(void) {
   s16 sceneId = gGameState.scene;
 
@@ -189,7 +189,7 @@ const u32 *Scene_GetExits(void) {
   return gLunpaFortressExitsOther;
 }
 
-// The guards, residents and objects of each map.
+/// The guards, residents and objects of each map.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 sceneId = gGameState.scene;
 
@@ -211,7 +211,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gLunpaFortressPlacementsOther;
 }
 
-// What the party can talk to, search and use Psynergy on, by map.
+/// What the party can talk to, search and use Psynergy on, by map.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 sceneId = gGameState.scene;
 
@@ -227,7 +227,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gLunpaFortressEventsOther;
 }
 
-// The column sinks into the floor: the party can walk over it.
+/// The column sinks into the floor: the party can walk over it.
 static void LunpaFortress_LowerColumn(void) {
   struct FieldActor *columnActor;
 
@@ -241,10 +241,10 @@ static void LunpaFortress_LowerColumn(void) {
   }
 }
 
-// Pushing the column: it slides one cell along.
+/// Pushing the column: it slides one cell along.
 static void Event_PushColumn(void) { StagedActor_AdvancePair(); }
 
-// The column, pushed onto its hole, slides in and sinks.
+/// The column, pushed onto its hole, slides in and sinks.
 static void Event_ColumnSinks(void) {
   OBJ_SPEED(COLUMN_ROOM_COLUMN, 0x10000, 0x8000);
   Actor_SetDestination(COLUMN_ROOM_COLUMN, 248, 376);
@@ -255,8 +255,8 @@ static void Event_ColumnSinks(void) {
   FLAG_SET(FLAG_LUNPA_FORTRESS_COLUMN_LOWERED);
 }
 
-// Move on the column: once it is past row 22, over its hole, the room shakes
-// and it sinks.
+/// Move on the column: once it is past row 22, over its hole, the room shakes
+/// and it sinks.
 static void Event_MoveColumn(void) {
   struct FieldActor *columnActor;
 
@@ -276,13 +276,13 @@ static void Event_MoveColumn(void) {
   }
 }
 
-// The column stays sunk in its hole.
+/// The column stays sunk in its hole.
 static void LunpaFortress_RestoreLoweredColumn(void) {
   OBJ_POS_SET(COLUMN_ROOM_COLUMN, 248, 376);
   LunpaFortress_LowerColumn();
 }
 
-// Draws a rescue room cell door open.
+/// Draws a rescue room cell door open.
 static void LunpaFortress_OpenRescueRoomDoor(s32 doorIndex) {
   s32 doorCellX = gRescueRoomDoorCells[doorIndex * 2];
   s32 doorCellY = gRescueRoomDoorCells[doorIndex * 2 + 1];
@@ -292,8 +292,8 @@ static void LunpaFortress_OpenRescueRoomDoor(s32 doorIndex) {
   Map_CopyCells(doorCellX, doorCellY - 0x30, 1, 1, doorCellX, doorCellY - 0x2e);
 }
 
-// Facing a rescue room cell door with the Cell Key: it opens with a rumble.
-// After Hammet's rescue the fifth, Dodonpa's cell, stays shut.
+/// Facing a rescue room cell door with the Cell Key: it opens with a rumble.
+/// After Hammet's rescue the fifth, Dodonpa's cell, stays shut.
 static void Event_UnlockRescueRoomDoor(void) {
   struct EventWork *fieldWork;
   s32 doorTrigger;
@@ -313,8 +313,8 @@ static void Event_UnlockRescueRoomDoor(void) {
   }
 }
 
-// Draws a column room cell door open and lets the party through; the middle
-// door opens two cells.
+/// Draws a column room cell door open and lets the party through; the middle
+/// door opens two cells.
 static void LunpaFortress_OpenColumnRoomDoor(s32 doorIndex) {
   s32 doorCellX;
   s32 doorCellY;
@@ -332,7 +332,7 @@ static void LunpaFortress_OpenColumnRoomDoor(s32 doorIndex) {
                            doorCellY - 43);
 }
 
-// Facing a column room cell door with the Cell Key: it opens with a rumble.
+/// Facing a column room cell door with the Cell Key: it opens with a rumble.
 static void Event_UnlockColumnRoomDoor(void) {
   struct EventWork *fieldWork;
   s32 doorTrigger;
@@ -348,7 +348,7 @@ static void Event_UnlockColumnRoomDoor(void) {
   }
 }
 
-// Draws a guard room cell door open.
+/// Draws a guard room cell door open.
 static void LunpaFortress_OpenGuardRoomDoor(s32 doorIndex) {
   s32 doorCellX = gGuardRoomDoorCells[doorIndex * 2];
   s32 doorCellY = gGuardRoomDoorCells[doorIndex * 2 + 1];
@@ -358,7 +358,7 @@ static void LunpaFortress_OpenGuardRoomDoor(s32 doorIndex) {
   Map_CopyCells(doorCellX, doorCellY - 0x3f, 1, 1, doorCellX, doorCellY - 0x3e);
 }
 
-// Facing a guard room cell door with the Cell Key: it opens with a rumble.
+/// Facing a guard room cell door with the Cell Key: it opens with a rumble.
 static void Event_UnlockGuardRoomDoor(void) {
   struct EventWork *fieldWork;
   s32 doorTrigger;
@@ -374,7 +374,7 @@ static void Event_UnlockGuardRoomDoor(void) {
   }
 }
 
-// Draws an outer room cell door open and lets the party through.
+/// Draws an outer room cell door open and lets the party through.
 static void LunpaFortress_OpenOuterDoor(s32 doorIndex) {
   // BUG: the third door's trigger and flag (OUTER_DOOR_FLAG + 2) ask for
   // index 2, past the two doors gOuterDoorCells holds.
@@ -387,7 +387,7 @@ static void LunpaFortress_OpenOuterDoor(s32 doorIndex) {
                                doorCellY - 0x3e);
 }
 
-// Facing an outer room cell door with the Cell Key: it opens with a rumble.
+/// Facing an outer room cell door with the Cell Key: it opens with a rumble.
 static void Event_UnlockOuterDoor(void) {
   struct EventWork *fieldWork;
   s32 doorTrigger;
@@ -403,20 +403,20 @@ static void Event_UnlockOuterDoor(void) {
   }
 }
 
-// Searching a cell door without the Cell Key: "The door is tightly locked."
+/// Searching a cell door without the Cell Key: "The door is tightly locked."
 static void Event_SearchLockedDoor(void) {
   if (Engine_PartyInventoryFindOwner(ITEM_CELL_KEY) == -1) {
     Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
   }
 }
 
-// Searching the door no key opens.
+/// Searching the door no key opens.
 static void Event_SearchSealedDoor(void) {
   Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
 }
 
-// Unused: four items set out on actors 8 to 11, each
-// taken once, with flags 0xf2a to 0xf2d.
+/// Unused: four items set out on actors 8 to 11, each
+/// taken once, with flags 0xf2a to 0xf2d.
 static void UNUSED LunpaFortress_TryCollectActorEightItem(void) {
   if (LunpaFortress_TryCollectDisplayedItem(8, 8) != 0) {
     Engine_GameFlagSet(0xf2a);
@@ -441,8 +441,8 @@ static void UNUSED LunpaFortress_TryCollectActorElevenItem(void) {
   }
 }
 
-// Gives the item an actor shows, with its effect; with no room for it, the
-// actor shows the item is left behind. Returns whether it was given.
+/// Gives the item an actor shows, with its effect; with no room for it, the
+/// actor shows the item is left behind. Returns whether it was given.
 static s32 LunpaFortress_TryCollectDisplayedItem(s32 actorId, s32 itemId) {
   s32 itemGiven = 0;
   s32 itemEffect;
@@ -462,7 +462,7 @@ static s32 LunpaFortress_TryCollectDisplayedItem(s32 actorId, s32 itemId) {
   return itemGiven;
 }
 
-// Unused callbacks that do nothing.
+/// Unused callbacks that do nothing.
 static void UNUSED LunpaFortress_DoNothingA(void) {}
 
 static void UNUSED LunpaFortress_DoNothingB(void) {}
@@ -471,8 +471,8 @@ static void UNUSED LunpaFortress_DoNothingC(void) {}
 
 static void UNUSED LunpaFortress_DoNothingD(void) {}
 
-// Catch on the Cell Key hanging in the guard rooms, or talking to it: the
-// leader steps up and takes it.
+/// Catch on the Cell Key hanging in the guard rooms, or talking to it: the
+/// leader steps up and takes it.
 static void Event_TakeCellKey(void) {
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 264, 792);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
@@ -485,8 +485,8 @@ static void Event_TakeCellKey(void) {
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_CELL_KEY);
   Engine_ActorSetPosition(GUARD_ROOM_CELL_KEY, 0, 0);
 }
-// Where the patrolling pair cannot see the leader: the west end of their
-// corridor and the cells below its gap.
+/// Where the patrolling pair cannot see the leader: the west end of their
+/// corridor and the cells below its gap.
 static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   s32 leaderFixedZ = leader->z.fixed;
@@ -524,11 +524,11 @@ static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
 #define PATROL_RAISED_TRIGGER(work) ((work)[193])
 #endif
 
-// Every frame in the guard rooms: the pair patrolling the west corridor. They
-// stand still while flag 0x106 is set or Psynergy or an item is in use;
-// otherwise they walk, with map layer 2 shaking and following the first.
-// Close to a cloaked leader they request CLOAK_NEAR_GUARD; seeing an
-// uncloaked leader, they raise TRIGGER_PATROL_PAIR_SPOTTED.
+/// Every frame in the guard rooms: the pair patrolling the west corridor. They
+/// stand still while flag 0x106 is set or Psynergy or an item is in use;
+/// otherwise they walk, with map layer 2 shaking and following the first.
+/// Close to a cloaked leader they request CLOAK_NEAR_GUARD; seeing an
+/// uncloaked leader, they raise TRIGGER_PATROL_PAIR_SPOTTED.
 static void LunpaFortress_UpdatePairedGuardDetection(void) {
   struct FieldActor *firstGuard = Actor_Get(GUARD_ROOM_FIRST_PATROL);
   struct FieldActor *secondGuard = Actor_Get(GUARD_ROOM_SECOND_PATROL);
@@ -588,8 +588,8 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
   }
 }
 
-// Raised when the patrolling pair spots the leader: the first stops and
-// stares, and the second throws the party out.
+/// Raised when the patrolling pair spots the leader: the first stops and
+/// stares, and the second throws the party out.
 static void Event_PatrolPairThrowsPartyOut(void) {
   EV_BEGIN();
   Engine_ActorStop(GUARD_ROOM_FIRST_PATROL);
@@ -601,8 +601,8 @@ static void Event_PatrolPairThrowsPartyOut(void) {
   EV_END();
 }
 
-// Whether the leader and the hall patrol are in the two parallel corridors,
-// where the guard passes without seeing the leader.
+/// Whether the leader and the hall patrol are in the two parallel corridors,
+/// where the guard passes without seeing the leader.
 static s32 LunpaFortress_IsLeaderPassingPatrollingGuard(void) {
   struct FieldActor *leader = Object_GetById(0);
   struct FieldActor *guard = Object_GetById(GUARD_ROOM_HALL_PATROL);
@@ -636,9 +636,9 @@ static s32 LunpaFortress_IsLeaderPassingPatrollingGuard(void) {
   return 0;
 }
 
-// Every frame in the guard rooms: the patrol in the east hall, as
-// LunpaFortress_UpdatePairedGuardDetection; seeing the leader, it raises
-// TRIGGER_HALL_PATROL_SPOTTED.
+/// Every frame in the guard rooms: the patrol in the east hall, as
+/// LunpaFortress_UpdatePairedGuardDetection; seeing the leader, it raises
+/// TRIGGER_HALL_PATROL_SPOTTED.
 static void LunpaFortress_UpdateHallGuardDetection(void) {
 
   struct FieldActor *guard = Actor_Get(GUARD_ROOM_HALL_PATROL);
@@ -688,14 +688,14 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
   }
 }
 
-// Raised when the hall patrol spots the leader: it throws the party out.
+/// Raised when the hall patrol spots the leader: it throws the party out.
 static void Event_HallPatrolThrowsPartyOut(void) {
   LunpaFortress_GuardThrowsPartyOut(GUARD_ROOM_HALL_PATROL);
   EV_END();
 }
 
-// Where the outer rooms' patrol cannot see the leader: three stretches of
-// its rounds.
+/// Where the outer rooms' patrol cannot see the leader: three stretches of
+/// its rounds.
 static s32 LunpaFortress_IsLeaderInOuterPatrolSafeZone(void) {
   struct FieldActor *leader = Object_GetById(0);
   s32 leaderTileZ = leader->z.fixed / 0x100000;
@@ -713,9 +713,9 @@ static s32 LunpaFortress_IsLeaderInOuterPatrolSafeZone(void) {
   return 0;
 }
 
-// Every frame in the outer rooms: the patrolling guard, as
-// LunpaFortress_UpdatePairedGuardDetection; seeing the leader, it raises
-// TRIGGER_OUTER_PATROL_SPOTTED.
+/// Every frame in the outer rooms: the patrolling guard, as
+/// LunpaFortress_UpdatePairedGuardDetection; seeing the leader, it raises
+/// TRIGGER_OUTER_PATROL_SPOTTED.
 static void LunpaFortress_UpdateOuterGuardDetection(void) {
 
   struct FieldActor *guard = Actor_Get(OUTER_PATROL_GUARD);
@@ -763,14 +763,14 @@ static void LunpaFortress_UpdateOuterGuardDetection(void) {
   }
 }
 
-// Raised when the outer rooms' patrol spots the leader: it throws the party
-// out.
+/// Raised when the outer rooms' patrol spots the leader: it throws the party
+/// out.
 static void Event_OuterPatrolThrowsPartyOut(void) {
   LunpaFortress_GuardThrowsPartyOut(OUTER_PATROL_GUARD);
   EV_END();
 }
 
-// Whether the leader is outside the upper hall the guard there watches.
+/// Whether the leader is outside the upper hall the guard there watches.
 static s32 LunpaFortress_IsLeaderOutsideUpperHall(void) {
   struct FieldActor *leader = Object_GetById(0);
   s32 leaderTileZ = leader->z.fixed / 0x100000;
@@ -783,8 +783,8 @@ static s32 LunpaFortress_IsLeaderOutsideUpperHall(void) {
   return 1;
 }
 
-// Every frame in the upper hall: the guard who sees the uncloaked leader
-// raises TRIGGER_UPPER_HALL_SPOTTED.
+/// Every frame in the upper hall: the guard who sees the uncloaked leader
+/// raises TRIGGER_UPPER_HALL_SPOTTED.
 static void LunpaFortress_CheckUpperHallGuard(void) {
 
   struct EventWork *fieldWork;
@@ -805,15 +805,15 @@ static void LunpaFortress_CheckUpperHallGuard(void) {
   }
 }
 
-// Raised when the upper hall's guard spots the leader: he throws the party
-// out.
+/// Raised when the upper hall's guard spots the leader: he throws the party
+/// out.
 static void Event_UpperHallGuardThrowsPartyOut(void) {
   LunpaFortress_GuardThrowsPartyOut(OUTER_UPPER_HALL_GUARD);
   EV_END();
 }
 
-// Every frame past the entrance: the guard who sees the uncloaked leader
-// raises TRIGGER_ENTRANCE_GUARD_SPOTTED, once.
+/// Every frame past the entrance: the guard who sees the uncloaked leader
+/// raises TRIGGER_ENTRANCE_GUARD_SPOTTED, once.
 static void LunpaFortress_CheckEntranceGuard(void) {
 
   struct EventWork *fieldWork = gEventWork;
@@ -830,8 +830,8 @@ static void LunpaFortress_CheckEntranceGuard(void) {
   }
 }
 
-// Every frame past the entrance: either sentry who sees the uncloaked
-// leader raises TRIGGER_SENTRIES_SPOTTED, once for both.
+/// Every frame past the entrance: either sentry who sees the uncloaked
+/// leader raises TRIGGER_SENTRIES_SPOTTED, once for both.
 static void LunpaFortress_CheckFirstEntranceSentry(void) {
 
   struct EventWork *fieldWork;
@@ -849,7 +849,7 @@ static void LunpaFortress_CheckFirstEntranceSentry(void) {
   }
 }
 
-// The second sentry, as the first.
+/// The second sentry, as the first.
 static void LunpaFortress_CheckSecondEntranceSentry(void) {
 
   struct EventWork *fieldWork;
@@ -867,7 +867,7 @@ static void LunpaFortress_CheckSecondEntranceSentry(void) {
   }
 }
 
-// Whether the leader is in the guard's column, up to six cells away.
+/// Whether the leader is in the guard's column, up to six cells away.
 static s32 LunpaFortress_IsLeaderInGuardVerticalSight(s32 actorId) {
   struct FieldActor *guard = Object_GetById(actorId);
   struct FieldActor *leader = Object_GetById(0);
@@ -884,7 +884,7 @@ static s32 LunpaFortress_IsLeaderInGuardVerticalSight(s32 actorId) {
   return 0;
 }
 
-// Whether the leader is within a row of the guard, up to six cells away.
+/// Whether the leader is within a row of the guard, up to six cells away.
 static s32 LunpaFortress_IsLeaderInGuardHorizontalSight(s32 actorId) {
   struct FieldActor *guard = Object_GetById(actorId);
   struct FieldActor *leader = Object_GetById(0);
@@ -903,7 +903,7 @@ static s32 LunpaFortress_IsLeaderInGuardHorizontalSight(s32 actorId) {
   return 0;
 }
 
-// Whether a guard on screen sees the leader along his row or column.
+/// Whether a guard on screen sees the leader along his row or column.
 static s32 LunpaFortress_CanGuardSeeLeader(s32 actorId) {
   if (LunpaFortress_IsGuardNearViewCenter(actorId) == 0) {
     return 0;
@@ -919,8 +919,8 @@ static s32 LunpaFortress_CanGuardSeeLeader(s32 actorId) {
   }
 }
 
-// Whether the leader is within four cells, walking, of the cell below the
-// guard.
+/// Whether the leader is within four cells, walking, of the cell below the
+/// guard.
 static s32 LunpaFortress_IsLeaderNearGuard(s32 actorId) {
   struct FieldActor *guard = Object_GetById(actorId);
   struct FieldActor *leader = Object_GetById(0);
@@ -945,8 +945,8 @@ static s32 LunpaFortress_IsLeaderNearGuard(s32 actorId) {
   return 0;
 }
 
-// Whether the guard is on screen: within seven columns and five rows of the
-// view's center.
+/// Whether the guard is on screen: within seven columns and five rows of the
+/// view's center.
 static s32 LunpaFortress_IsGuardNearViewCenter(s32 actorId) {
   struct FieldActor *guard = Object_GetById(actorId);
   struct FieldActor *viewCenter = Engine_EventGetViewCenter();
@@ -970,8 +970,8 @@ static s32 LunpaFortress_IsGuardNearViewCenter(s32 actorId) {
   return 1;
 }
 
-// Every frame in the outer rooms: walking into the second cell door's
-// column with the Cell Key unlocks it.
+/// Every frame in the outer rooms: walking into the second cell door's
+/// column with the Cell Key unlocks it.
 static void LunpaFortress_CheckOuterDoorApproach(void) {
 
   struct FieldActor *leader = Object_GetById(0);
@@ -990,8 +990,8 @@ static void LunpaFortress_CheckOuterDoorApproach(void) {
   }
 }
 
-// Every frame in the guard rooms: walking east or west into the first cell
-// door's column with the Cell Key unlocks it.
+/// Every frame in the guard rooms: walking east or west into the first cell
+/// door's column with the Cell Key unlocks it.
 static void LunpaFortress_CheckGuardDoorApproach(void) {
 
   struct FieldActor *leader = Object_GetById(0);
@@ -1011,7 +1011,7 @@ static void LunpaFortress_CheckGuardDoorApproach(void) {
   }
 }
 
-// Unused: the first patrol asks who the party is and sends them out.
+/// Unused: the first patrol asks who the party is and sends them out.
 static void UNUSED LunpaFortress_FirstPatrolThrowsPartyOut(void) {
   EV_BEGIN();
   Engine_ActorSetDestinationOffset(GUARD_ROOM_FIRST_PATROL, 0, 0);
@@ -1033,8 +1033,8 @@ static void UNUSED LunpaFortress_FirstPatrolThrowsPartyOut(void) {
   EV_END();
 }
 
-// A guard who caught the party: "Who are you? How did you get in here?",
-// and the party is sent back to the gate below the fortress.
+/// A guard who caught the party: "Who are you? How did you get in here?",
+/// and the party is sent back to the gate below the fortress.
 static void LunpaFortress_GuardThrowsPartyOut(s32 actorId) {
   EV_BEGIN();
   EV_BEGIN();
@@ -1065,8 +1065,8 @@ static void LunpaFortress_GuardThrowsPartyOut(s32 actorId) {
   EV_END();
 }
 
-// A guard faces the leader with one of four challenges, chosen at random
-// when the map was entered.
+/// A guard faces the leader with one of four challenges, chosen at random
+/// when the map was entered.
 static void LunpaFortress_GuardChallengesParty(s32 actorId) {
 
   OBJ_FACE(actorId, ACTOR_PARTY_LEADER, 0);
@@ -1090,7 +1090,7 @@ static void LunpaFortress_GuardChallengesParty(s32 actorId) {
   }
 }
 
-// "Hey! Intruder!"
+/// "Hey! Intruder!"
 static void LunpaFortress_ActOutIntruderDialogue(s32 actorId) {
   s32 messageBase;
 
@@ -1107,7 +1107,7 @@ static void LunpaFortress_ActOutIntruderDialogue(s32 actorId) {
   MESSAGE_PUT(actorId, 0);
 }
 
-// "Huh? Who's that?"
+/// "Huh? Who's that?"
 static void LunpaFortress_ActOutWhosThereDialogue(s32 actorId) {
   s32 messageBase = MsgLunpaGuardWhosThat;
 
@@ -1121,7 +1121,7 @@ static void LunpaFortress_ActOutWhosThereDialogue(s32 actorId) {
   MESSAGE_PUT(actorId, 0);
 }
 
-// "Is my shift up already?", then he sees who it is.
+/// "Is my shift up already?", then he sees who it is.
 static void LunpaFortress_ActOutGuardShiftDialogue(s32 actorId) {
   s32 messageBase;
 
@@ -1140,7 +1140,7 @@ static void LunpaFortress_ActOutGuardShiftDialogue(s32 actorId) {
   MESSAGE_PUT(actorId, 0);
 }
 
-// "You scoundrel!"
+/// "You scoundrel!"
 static void LunpaFortress_ActOutScoundrelDialogue(s32 actorId) {
   s32 messageBase = MsgLunpaScoundrel;
 
@@ -1157,8 +1157,8 @@ static void LunpaFortress_ActOutScoundrelDialogue(s32 actorId) {
   MESSAGE_PUT(actorId, 0);
 }
 
-// Walking up to the west guard: he challenges the party to a battle, and is
-// gone after it.
+/// Walking up to the west guard: he challenges the party to a battle, and is
+/// gone after it.
 static void Event_FightWestGuard(void) {
 
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1173,8 +1173,8 @@ static void Event_FightWestGuard(void) {
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN);
 }
 
-// Walking up to the hall guard: he challenges the party to a battle, and is
-// gone after it.
+/// Walking up to the hall guard: he challenges the party to a battle, and is
+/// gone after it.
 static void Event_FightHallGuard(void) {
 
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1189,8 +1189,8 @@ static void Event_FightHallGuard(void) {
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_HALL_GUARD_BEATEN);
 }
 
-// Walking up to the three guards: "Who are you!?"; they argue, then fight
-// the party together. After the battle the party comes back to this room.
+/// Walking up to the three guards: "Who are you!?"; they argue, then fight
+/// the party together. After the battle the party comes back to this room.
 static void Event_FightThreeGuards(void) {
   s32 messageBase;
 
@@ -1252,7 +1252,7 @@ static void Event_FightThreeGuards(void) {
   FLAG_SET(FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN);
 }
 
-// The three guards lie beaten where they fought.
+/// The three guards lie beaten where they fought.
 static void LunpaFortress_PlaceThreeBeatenGuards(void) {
   EV_BEGIN();
   OBJ_POS_SET(GUARD_ROOM_GUARD_A, 688, 88);
@@ -1266,8 +1266,8 @@ static void LunpaFortress_PlaceThreeBeatenGuards(void) {
   Engine_EventOpenScreen();
 }
 
-// Walking up to the east guard: he challenges the party to a battle, and is
-// gone after it.
+/// Walking up to the east guard: he challenges the party to a battle, and is
+/// gone after it.
 static void Event_FightEastGuard(void) {
 
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1282,8 +1282,8 @@ static void Event_FightEastGuard(void) {
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN);
 }
 
-// Walking past the entrance guard, or seen by him: "Who are you?", and the
-// party is sent back to the gate below the fortress.
+/// Walking past the entrance guard, or seen by him: "Who are you?", and the
+/// party is sent back to the gate below the fortress.
 static void Event_EntranceGuardThrowsPartyOut(void) {
   EV_BEGIN();
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 0);
@@ -1308,8 +1308,8 @@ static void Event_EntranceGuardThrowsPartyOut(void) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_24);
 }
 
-// Walking between the sentries, or seen by them: "Who are you?", and the
-// party is sent back to the gate below the fortress.
+/// Walking between the sentries, or seen by them: "Who are you?", and the
+/// party is sent back to the gate below the fortress.
 static void Event_SentriesThrowPartyOut(void) {
   s32 challengeMessage;
 
@@ -1335,25 +1335,25 @@ static void Event_SentriesThrowPartyOut(void) {
   FLAG_SET(FLAG_SCENE_TEMP_25);
 }
 
-// The first switch's passage opens.
+/// The first switch's passage opens.
 static void LunpaFortress_OpenFirstSwitchPassage(void) {
   Map_CopyCells(2, 82, 1, 2, 21, 81);
   Map_CopyCellAttributes(21, 32, 1, 1, 21, 34);
 }
 
-// The second switch's passage opens.
+/// The second switch's passage opens.
 static void LunpaFortress_OpenSecondSwitchPassage(void) {
   Map_CopyCells(2, 84, 1, 2, 6, 55);
   Map_CopyCellAttributes(5, 9, 1, 1, 6, 10);
 }
 
-// The passage behind the second Whirlwind cover opens.
+/// The passage behind the second Whirlwind cover opens.
 static void LunpaFortress_OpenCoveredPassage(void) {
   Map_CopyCells(2, 86, 1, 2, 27, 62);
   Map_CopyCellAttributes(26, 16, 1, 1, 27, 17);
 }
 
-// A switch flips in two frames, then its passage opens.
+/// A switch flips in two frames, then its passage opens.
 static __inline__ void
 LunpaFortress_FlipHiddenSwitch(s32 cellX, s32 cellY,
                                void (*openPassage)(void)) {
@@ -1364,8 +1364,8 @@ LunpaFortress_FlipHiddenSwitch(s32 cellX, s32 cellY,
   openPassage();
 }
 
-// Searching the first switch while Reveal shows it: "You flipped the
-// switch." and its passage opens.
+/// Searching the first switch while Reveal shows it: "You flipped the
+/// switch." and its passage opens.
 static void Event_FlipFirstSwitch(void) {
   if (((struct FieldWork *)gEventWork)->revealActive != 0) {
     if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED) == 0) {
@@ -1379,8 +1379,8 @@ static void Event_FlipFirstSwitch(void) {
   }
 }
 
-// Searching the second switch while Reveal shows it: "You flipped the
-// switch." and its passage opens.
+/// Searching the second switch while Reveal shows it: "You flipped the
+/// switch." and its passage opens.
 static void Event_FlipSecondSwitch(void) {
   if (((struct FieldWork *)gEventWork)->revealActive != 0) {
     if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED) == 0) {
@@ -1394,7 +1394,7 @@ static void Event_FlipSecondSwitch(void) {
   }
 }
 
-// Reveal: both switches show and can be searched.
+/// Reveal: both switches show and can be searched.
 static void Event_RevealSwitches(void) {
   Map_CopyCells(5, 77, 1, 2, 17, 82);
   Map_CopyCells(5, 77, 1, 2, 3, 55);
@@ -1402,7 +1402,7 @@ static void Event_RevealSwitches(void) {
   Map_CopyCellAttributes(3, 8, 1, 1, 3, 10);
 }
 
-// Reveal's end: both switches hide again.
+/// Reveal's end: both switches hide again.
 static void Event_HideSwitches(void) {
   Map_CopyCells(8, 77, 1, 2, 17, 82);
   Map_CopyCells(8, 77, 1, 2, 3, 55);
@@ -1410,31 +1410,31 @@ static void Event_HideSwitches(void) {
   Map_CopyCellAttributes(2, 10, 1, 1, 3, 10);
 }
 
-// Whirlwind on what hides the first switch: it blows away.
+/// Whirlwind on what hides the first switch: it blows away.
 static void Event_BlowAwayFirstSwitchCover(void) {
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_UNCOVERED);
   Engine_GameFlagClear(FLAG_SCENE_TEMP_17);
   Engine_ActorSetPosition(COLUMN_ROOM_FIRST_SWITCH_COVER, 0, 0);
 }
 
-// Whirlwind on what hides the passage: it blows away and the passage opens.
+/// Whirlwind on what hides the passage: it blows away and the passage opens.
 static void Event_BlowAwayPassageCover(void) {
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_PASSAGE_UNCOVERED);
   LunpaFortress_OpenCoveredPassage();
   Engine_ActorSetPosition(COLUMN_ROOM_PASSAGE_COVER, 0, 0);
 }
 
-// Whirlwind on what hides the second switch: it blows away.
+/// Whirlwind on what hides the second switch: it blows away.
 static void Event_BlowAwaySecondSwitchCover(void) {
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_UNCOVERED);
   Engine_GameFlagClear(FLAG_SCENE_TEMP_18);
   Engine_ActorSetPosition(COLUMN_ROOM_SECOND_SWITCH_COVER, 0, 0);
 }
 
-// Unused callback that does nothing.
+/// Unused callback that does nothing.
 static void UNUSED LunpaFortress_DoNothingE(void) {}
 
-// Garet, Ivan and Mia step out of the leader and gather around Hammet.
+/// Garet, Ivan and Mia step out of the leader and gather around Hammet.
 static void LunpaFortress_GatherPartyAroundHammet(void) {
   struct FieldActor *leader;
 
@@ -1466,7 +1466,7 @@ static void LunpaFortress_GatherPartyAroundHammet(void) {
   WAIT(15);
 }
 
-// Dodonpa's lever: the room shakes, the floor opens and everyone startles.
+/// Dodonpa's lever: the room shakes, the floor opens and everyone startles.
 static void LunpaFortress_ActivateLeverTrap(void) {
   Map_SetShake(0x40000, 0x40000, 0x10000);
   SE(SE_141);
@@ -1484,7 +1484,7 @@ static void LunpaFortress_ActivateLeverTrap(void) {
   WAIT(60);
 }
 
-// The camera finds the monster Dodonpa has freed; it lumbers forward.
+/// The camera finds the monster Dodonpa has freed; it lumbers forward.
 static void LunpaFortress_RevealMonster(void) {
   Engine_CameraMoveToActor(RESCUE_MONSTER, 1);
   Engine_CameraWaitForMove();
@@ -1501,7 +1501,7 @@ static void LunpaFortress_RevealMonster(void) {
   WAIT(30);
 }
 
-// The party spreads out and faces the monster.
+/// The party spreads out and faces the monster.
 static void LunpaFortress_PositionPartyForMonster(void) {
   OBJ_SPEED(IVAN, 0x10000, 0x8000);
   OBJ_WALK(IVAN, 504, 216);
@@ -1518,10 +1518,10 @@ static void LunpaFortress_PositionPartyForMonster(void) {
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
 }
 
-// Walking into Hammet's cell. The first time, Hammet hears the party out
-// and recognizes Ivan, then Dodonpa arrives, gloats, pulls a lever and
-// frees a monster on them; after a lost battle, the scene goes straight to
-// the trap. Either way, the battle follows.
+/// Walking into Hammet's cell. The first time, Hammet hears the party out
+/// and recognizes Ivan, then Dodonpa arrives, gloats, pulls a lever and
+/// frees a monster on them; after a lost battle, the scene goes straight to
+/// the trap. Either way, the battle follows.
 static void Event_FindHammet(void) {
   s32 messageBase;
 
@@ -1787,10 +1787,10 @@ static void Event_FindHammet(void) {
   EV_END();
 }
 
-// After the battle: the monster has fallen on Dodonpa. The party may pull it
-// off him; they argue over his punishment until his father Donpa arrives,
-// who orders him locked up, thanks the party, and lets them leave with
-// Hammet.
+/// After the battle: the monster has fallen on Dodonpa. The party may pull it
+/// off him; they argue over his punishment until his father Donpa arrives,
+/// who orders him locked up, thanks the party, and lets them leave with
+/// Hammet.
 static void Event_DonpaJudgesDodonpa(void) {
   struct FieldActor *leader;
   s32 aftermathMessage;
@@ -2456,8 +2456,8 @@ static void Event_DonpaJudgesDodonpa(void) {
   EV_END();
 }
 
-// Mind Read on the second sentry: one of eight thoughts, chosen at random
-// when the map was entered; in one he looks around first.
+/// Mind Read on the second sentry: one of eight thoughts, chosen at random
+/// when the map was entered; in one he looks around first.
 static void Event_ReadSentrysThoughts(void) {
 
   switch (gLunpaFortressRandomPick) {
@@ -2505,7 +2505,7 @@ static void Event_ReadSentrysThoughts(void) {
   }
 }
 
-// The second sentry looks around, hearing someone he cannot see.
+/// The second sentry looks around, hearing someone he cannot see.
 static void Event_TalkToSentry(void) {
 
   s32 messageBase;
@@ -2528,9 +2528,9 @@ static void Event_TalkToSentry(void) {
   MESSAGE_PUT(OUTER_SECOND_SENTRY, 0);
 }
 
-// Donpa's attendant. Before the rescue the attendant hushes the party,
-// glances at the sleeping Donpa, asks a question and tells of Donpa and his
-// spoiled son; once told, only a line. After the rescue, Donpa is grateful.
+/// Donpa's attendant. Before the rescue the attendant hushes the party,
+/// glances at the sleeping Donpa, asks a question and tells of Donpa and his
+/// spoiled son; once told, only a line. After the rescue, Donpa is grateful.
 static void Event_TalkToAttendant(void) {
   s32 whisperMessage;
   s32 familyMessage;
@@ -2592,7 +2592,7 @@ static void Event_TalkToAttendant(void) {
   }
 }
 
-// Mind Read on Donpa's attendant.
+/// Mind Read on Donpa's attendant.
 static void Event_ReadAttendantsThoughts(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED)) {
     MESSAGE_SET(MsgLunpaDifficultDonpaRight);
@@ -2603,7 +2603,7 @@ static void Event_ReadAttendantsThoughts(void) {
   }
 }
 
-// Mind Read on Donpa.
+/// Mind Read on Donpa.
 static void Event_ReadDonpasThoughts(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED)) {
     MESSAGE_SET(MsgLunpaFatherStayAngry);
@@ -2614,8 +2614,8 @@ static void Event_ReadDonpasThoughts(void) {
   }
 }
 
-// Donpa: asleep before the rescue ("ZZZZ..."). After it, the first time,
-// he thanks the party and has his attendant show them his reward.
+/// Donpa: asleep before the rescue ("ZZZZ..."). After it, the first time,
+/// he thanks the party and has his attendant show them his reward.
 static void Event_TalkToDonpa(void) {
   s32 rewardMessage;
 
@@ -2675,43 +2675,43 @@ static void Event_TalkToDonpa(void) {
   }
 }
 
-// Talking to the Djinni in Donpa's room: it joins the party.
+/// Talking to the Djinni in Donpa's room: it joins the party.
 static void Event_DjinniJoins(void) {
   Engine_BattleFxRunPageEffectForSlot(GUARD_ROOM_DJINNI, 1, 5);
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_REWARD_TAKEN);
 }
 
-// The third of the beaten guards: "Owww! Hey! Don't hurt me again..."
+/// The third of the beaten guards: "Owww! Hey! Don't hurt me again..."
 static void Event_TalkToBeatenGuardC(void) {
   Engine_ActorRunRepeatedMotion(GUARD_ROOM_GUARD_C, 2);
   MESSAGE_SET(MsgLunpaOwwwDontHurt);
   MESSAGE_PUT(GUARD_ROOM_GUARD_C, 0);
 }
 
-// The second of the beaten guards: "We give up!", and Hammet is in the
-// cave.
+/// The second of the beaten guards: "We give up!", and Hammet is in the
+/// cave.
 static void Event_TalkToBeatenGuardB(void) {
   Engine_ActorRunRepeatedMotion(GUARD_ROOM_GUARD_B, 2);
   MESSAGE_SET(MsgLunpaRightRightGive);
   MESSAGE_PUT(GUARD_ROOM_GUARD_B, 0);
 }
 
-// The first of the beaten guards: "Who'd have thought they'd be so tough?"
+/// The first of the beaten guards: "Who'd have thought they'd be so tough?"
 static void Event_TalkToBeatenGuardA(void) {
   Engine_ActorRunRepeatedMotion(GUARD_ROOM_GUARD_A, 2);
   MESSAGE_SET(MsgLunpaGuysTougherThought);
   MESSAGE_PUT(GUARD_ROOM_GUARD_A, 0);
 }
 
-// "Do you know where Dodonpa is?"
+/// "Do you know where Dodonpa is?"
 static void Event_AskWhereDodonpaIs(void) {
   MESSAGE_SET(MsgLunpaKnowWhereDodonpa);
   Engine_EventAskYesNo(18, 0);
 }
 
-// A resident of the outer rooms, startled the first time ("Wh-Wh-Who goes
-// there!"), asks whether the party sneaked in in search of something; on yes,
-// promises to keep quiet.
+/// A resident of the outer rooms, startled the first time ("Wh-Wh-Who goes
+/// there!"), asks whether the party sneaked in in search of something; on yes,
+/// promises to keep quiet.
 static void Event_TalkToStartledResident(void) {
   s32 frightMessage;
   s32 purposeMessage;
@@ -2756,8 +2756,8 @@ static void Event_TalkToStartledResident(void) {
   }
 }
 
-// Mind Read on the startled resident: once they have promised, a thought
-// about Hammet; before, Mind Read stops and they talk instead.
+/// Mind Read on the startled resident: once they have promised, a thought
+/// about Hammet; before, Mind Read stops and they talk instead.
 static void Event_ReadStartledResidentsThoughts(void) {
 
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_26)) {
@@ -2772,11 +2772,11 @@ static void Event_ReadStartledResidentsThoughts(void) {
   }
 }
 
-// Unused callback that does nothing.
+/// Unused callback that does nothing.
 static void UNUSED LunpaFortress_DoNothingF(void) {}
 
-// Dodonpa behind bars begs his father's forgiveness; with the Cell Key, a
-// further line shows.
+/// Dodonpa behind bars begs his father's forgiveness; with the Cell Key, a
+/// further line shows.
 static void Event_TalkToJailedDodonpa(void) {
   s32 pleaMessage = MsgLunpaWrongTurnOver;
 
@@ -2787,15 +2787,15 @@ static void Event_TalkToJailedDodonpa(void) {
   }
 }
 
-// Mind Read on the jailed Dodonpa.
+/// Mind Read on the jailed Dodonpa.
 static void Event_ReadJailedDodonpasThoughts(void) {
   MESSAGE_SET(MsgLunpaCantBelieveWhen);
   MESSAGE_PUT(RESCUE_DODONPA, 0);
 }
 
-// Sets each map up: a random pick for the guards' lines, the doors already
-// opened, the watching guards and, in the rescue room, the scene after
-// the monster battle or Dodonpa jailed.
+/// Sets each map up: a random pick for the guards' lines, the doors already
+/// opened, the watching guards and, in the rescue room, the scene after
+/// the monster battle or Dodonpa jailed.
 s32 Scene_Initialize(void) {
   struct FieldActor *sceneActor;
 
@@ -2852,8 +2852,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// Sets the outer rooms up by entrance: the guards that watch each part, and
-// the cell doors already opened.
+/// Sets the outer rooms up by entrance: the guards that watch each part, and
+/// the cell doors already opened.
 static void LunpaFortress_InitializeOuterRooms(void) {
   LunpaFortress_RestoreOuterDoors();
   switch (gGameState.entrance) {
@@ -2908,9 +2908,9 @@ static void LunpaFortress_InitializeOuterRooms(void) {
   Engine_TaskWait(1);
 }
 
-// Sets the guard rooms up: beaten guards gone or lying where they fell, the
-// Cell Key gone once taken, the patrols by entrance and Donpa's attendant
-// by his reward's place.
+/// Sets the guard rooms up: beaten guards gone or lying where they fell, the
+/// Cell Key gone once taken, the patrols by entrance and Donpa's attendant
+/// by his reward's place.
 static void LunpaFortress_InitializeGuardRooms(void) {
   struct FieldActor *keyActor;
 
@@ -2993,8 +2993,8 @@ static void LunpaFortress_InitializeGuardRooms(void) {
   keyActor->scaleY = 0xc000;
 }
 
-// Sets the column room up: the doors, the column, the Whirlwind covers and
-// the switches as the party left them.
+/// Sets the column room up: the doors, the column, the Whirlwind covers and
+/// the switches as the party left them.
 static void LunpaFortress_InitializeColumnRoom(void) {
   struct FieldActor *sceneActor;
 
@@ -3050,7 +3050,7 @@ static void LunpaFortress_InitializeColumnRoom(void) {
   Engine_MapSetWorkFlagBits9To11(0xe00);
 }
 
-// The outer rooms' cell doors stay open.
+/// The outer rooms' cell doors stay open.
 static void LunpaFortress_RestoreOuterDoors(void) {
   if (Engine_GameFlagIsSet(OUTER_DOOR_FLAG)) {
     LunpaFortress_OpenOuterDoor(0);
@@ -3063,7 +3063,7 @@ static void LunpaFortress_RestoreOuterDoors(void) {
   }
 }
 
-// The guard rooms' cell doors stay open.
+/// The guard rooms' cell doors stay open.
 static void LunpaFortress_RestoreGuardRoomDoors(void) {
   if (Engine_GameFlagIsSet(GUARD_ROOM_DOOR_FLAG)) {
     LunpaFortress_OpenGuardRoomDoor(0);
@@ -3073,7 +3073,7 @@ static void LunpaFortress_RestoreGuardRoomDoors(void) {
   }
 }
 
-// The column room's cell doors stay open.
+/// The column room's cell doors stay open.
 static void LunpaFortress_RestoreColumnRoomDoors(void) {
   if (Engine_GameFlagIsSet(COLUMN_ROOM_DOOR_FLAG)) {
     LunpaFortress_OpenColumnRoomDoor(0);
@@ -3086,7 +3086,7 @@ static void LunpaFortress_RestoreColumnRoomDoors(void) {
   }
 }
 
-// The rescue room's cell doors stay open.
+/// The rescue room's cell doors stay open.
 static void LunpaFortress_RestoreRescueRoomDoors(void) {
   if (Engine_GameFlagIsSet(RESCUE_DOOR_FLAG)) {
     LunpaFortress_OpenRescueRoomDoor(0);
@@ -3105,9 +3105,9 @@ static void LunpaFortress_RestoreRescueRoomDoors(void) {
   }
 }
 
-// The shared source and field.h declarations lack const, but these three
-// tables occupy .rodata. Pixel steps pack X above Z in two halfwords.
-// Unsigned packing also defines the entries with negative X steps.
+/// The shared source and field.h declarations lack const, but these three
+/// tables occupy .rodata. Pixel steps pack X above Z in two halfwords.
+/// Unsigned packing also defines the entries with negative X steps.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((u32)(dz) & 0xffff))
 
 /* FAKEMATCH: the three section attributes below place non-const tables in
@@ -3311,8 +3311,8 @@ struct SceneEntrance gLunpaFortressEntrancesOther[] = {
     { SCENE_TABLE_END },
 };
 
-// Scenes 161 to 163 are the fortress's maps 2 to 4; field_scene.h has no names
-// for them yet, nor for scene 99.
+/// Scenes 161 to 163 are the fortress's maps 2 to 4; field_scene.h has no names
+/// for them yet, nor for scene 99.
 u32 gLunpaFortressExitsOther[] = {
     SCENE_EXITS(SCENE_WEST_LUNPA_CAVE),
     SCENE_EXIT(1, SCENE_WORLD_MAP, 49),

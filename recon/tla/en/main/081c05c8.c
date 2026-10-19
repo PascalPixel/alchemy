@@ -1,5 +1,5 @@
 // Draft, differ 20 of 11: the cut-off head of a work copy of the song start,
-// as ☀️'s Audio_PlaySound (games/common/src/sound/sound.c): the copy stops
+// as ☀️'s Audio_PlaySound (games/tbs/src/sound/audio.c): the copy stops
 // after the player slot's offset, and the listing's last four words are the
 // ARM 32x32 high multiply's Thumb entry (bx pc, umull, bx lr) that follows
 // it. A sound-library function: the draft compiles with the game profile,

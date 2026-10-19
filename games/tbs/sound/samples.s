@@ -95,37 +95,37 @@ Sound_Wave19:
 	.incbin "games/tbs/sound/sample/wave_19.pcm8.bin"
 	.global Sound_Wave20
 Sound_Wave20:
-	.incbin "games/common/sound/sample/wave_20.pcm8.bin"
+	.incbin "games/tbs/sound/sample/wave_20.pcm8.bin"
 	.global Sound_Wave21
 Sound_Wave21:
-	.incbin "games/common/sound/sample/wave_21.pcm8.bin"
+	.incbin "games/tbs/sound/sample/wave_21.pcm8.bin"
 	.global Sound_Wave22
 Sound_Wave22:
-	.incbin "games/common/sound/sample/wave_22.pcm8.bin"
+	.incbin "games/tbs/sound/sample/wave_22.pcm8.bin"
 	.global Sound_Wave23
 Sound_Wave23:
-	.incbin "games/common/sound/sample/wave_23.pcm8.bin"
+	.incbin "games/tbs/sound/sample/wave_23.pcm8.bin"
 	.global Sound_Wave24
 Sound_Wave24:
-	.incbin "games/common/sound/sample/wave_24.pcm8.bin"
+	.incbin "games/tbs/sound/sample/wave_24.pcm8.bin"
 	.global Sound_Wave25
 Sound_Wave25:
-	.incbin "games/common/sound/sample/wave_25.pcm8.bin"
+	.incbin "games/tbs/sound/sample/wave_25.pcm8.bin"
 	.global Sound_Wave26
 Sound_Wave26:
-	.incbin "games/common/sound/sample/wave_26.pcm8.bin"
+	.incbin "games/tbs/sound/sample/wave_26.pcm8.bin"
 	.global Sound_Wave27
 Sound_Wave27:
-	.incbin "games/common/sound/sample/wave_27.pcm8.bin"
+	.incbin "games/tbs/sound/sample/wave_27.pcm8.bin"
 	.global Sound_Wave28
 Sound_Wave28:
-	.incbin "games/common/sound/sample/wave_28.pcm8.bin"
+	.incbin "games/tbs/sound/sample/wave_28.pcm8.bin"
 	.global Sound_Wave29
 Sound_Wave29:
-	.incbin "games/common/sound/sample/wave_29.pcm8.bin"
+	.incbin "games/tbs/sound/sample/wave_29.pcm8.bin"
 	.global Sound_Wave30
 Sound_Wave30:
-	.incbin "games/common/sound/sample/wave_30.pcm8.bin"
+	.incbin "games/tbs/sound/sample/wave_30.pcm8.bin"
 	.global Sound_Wave31
 Sound_Wave31:
-	.incbin "games/common/sound/sample/wave_31.pcm8.bin"
+	.incbin "games/tbs/sound/sample/wave_31.pcm8.bin"

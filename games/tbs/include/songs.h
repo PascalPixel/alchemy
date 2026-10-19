@@ -2,9 +2,9 @@
 #define ALCHEMY_SONGS_H
 
 // Song and sound effect ids, indices into gSound_SongTable. MUS_ ids are
-// music and SE_ ids sound effects, as their sequences in sound/sequence and
-// games/common/sound/sequence are named. A sound whose meaning is shown has a
-// name; the others keep their number.
+// music and SE_ ids sound effects, as their sequences in sound/sequence are
+// named. A sound whose meaning is shown has a name; the others keep their
+// number.
 
 #define MUS_000 0
 #define MUS_001 1

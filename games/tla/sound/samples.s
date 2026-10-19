@@ -143,43 +143,43 @@ Sound_Wave35:
 	.incbin "games/tla/sound/sample/wave_35.pcm8.bin"
 	.global Sound_Wave36
 Sound_Wave36:
-	.incbin "games/common/sound/sample/wave_20.pcm8.bin"
+	.incbin "games/tla/sound/sample/wave_36.pcm8.bin"
 	.global Sound_Wave37
 Sound_Wave37:
-	.incbin "games/common/sound/sample/wave_21.pcm8.bin"
+	.incbin "games/tla/sound/sample/wave_37.pcm8.bin"
 	.global Sound_Wave38
 Sound_Wave38:
-	.incbin "games/common/sound/sample/wave_22.pcm8.bin"
+	.incbin "games/tla/sound/sample/wave_38.pcm8.bin"
 	.global Sound_Wave39
 Sound_Wave39:
-	.incbin "games/common/sound/sample/wave_23.pcm8.bin"
+	.incbin "games/tla/sound/sample/wave_39.pcm8.bin"
 	.global Sound_Wave40
 Sound_Wave40:
-	.incbin "games/common/sound/sample/wave_24.pcm8.bin"
+	.incbin "games/tla/sound/sample/wave_40.pcm8.bin"
 	.global Sound_Wave41
 Sound_Wave41:
-	.incbin "games/common/sound/sample/wave_25.pcm8.bin"
+	.incbin "games/tla/sound/sample/wave_41.pcm8.bin"
 	.global Sound_Wave42
 Sound_Wave42:
 	.incbin "games/tla/sound/sample/wave_42.pcm8.bin"
 	.global Sound_Wave43
 Sound_Wave43:
-	.incbin "games/common/sound/sample/wave_26.pcm8.bin"
+	.incbin "games/tla/sound/sample/wave_43.pcm8.bin"
 	.global Sound_Wave44
 Sound_Wave44:
-	.incbin "games/common/sound/sample/wave_27.pcm8.bin"
+	.incbin "games/tla/sound/sample/wave_44.pcm8.bin"
 	.global Sound_Wave45
 Sound_Wave45:
-	.incbin "games/common/sound/sample/wave_28.pcm8.bin"
+	.incbin "games/tla/sound/sample/wave_45.pcm8.bin"
 	.global Sound_Wave46
 Sound_Wave46:
-	.incbin "games/common/sound/sample/wave_29.pcm8.bin"
+	.incbin "games/tla/sound/sample/wave_46.pcm8.bin"
 	.global Sound_Wave47
 Sound_Wave47:
-	.incbin "games/common/sound/sample/wave_30.pcm8.bin"
+	.incbin "games/tla/sound/sample/wave_47.pcm8.bin"
 	.global Sound_Wave48
 Sound_Wave48:
-	.incbin "games/common/sound/sample/wave_31.pcm8.bin"
+	.incbin "games/tla/sound/sample/wave_48.pcm8.bin"
 	.global Sound_Wave49
 Sound_Wave49:
 	.incbin "games/tla/sound/sample/wave_49.pcm8.bin"

@@ -1,5 +1,5 @@
 // Draft, differ 48 of 28: the work copy of the sound initialization, as ☀️'s
-// Audio_Initialize (games/common/src/sound/sound.c). The listing starts at
+// Audio_Initialize (games/tbs/src/sound/audio.c). The listing starts at
 // the copy's second call: its first ten instructions (from 081c04cc) sit in
 // the pool words of 081c04ac's listing, so the draft compiles the whole
 // function and the comparison covers only the listing's part. A

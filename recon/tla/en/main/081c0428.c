@@ -1,5 +1,5 @@
 // Draft, differ 61 of 44: the work copy of the PCM key-to-frequency
-// interpolation, as ☀️'s Pcm_KeyToFrequency (games/common/src/sound/sound.c);
+// interpolation, as ☀️'s Pcm_KeyToFrequency (games/tbs/src/sound/audio.c);
 // its tables' pool words are zero in the copy. A sound-library function: the
 // draft compiles with the game profile, where the build routes the library
 // through old_agbcc. Other: register choice (r8 for the wave, where the

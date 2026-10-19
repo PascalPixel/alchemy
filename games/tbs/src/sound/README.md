@@ -8,14 +8,15 @@ links it.
 | --- | --- |
 | `sound.c` | the cue layer: playing a cue (a song, a sound effect, a fanfare or a fade), the music's volume, tempo and pitch ramps, the fanfare's return to the music, and the audio test |
 | `engine.c` | the driver: the sound hardware, the players and their tracks, the song commands and the CGB channels |
+| `audio.c` | the driver's library calls: starting, stopping, fading and resuming songs on the players, and the PCM key-to-frequency step |
+| `tables.c` | the driver's tables: the song command handlers and the frequency tables |
 | `empty_callback.c` | the driver's do-nothing callback |
 | `mixer.s`, `channel_update_entry.s`, `clear_buffer.s`, `umul_high.s` | the driver's handwritten ARM and Thumb routines, each proven in its header |
 
-`engine.c` is compiled with pret's `old_agbcc`, the sound route of the
-Makefile (`SOUND_C`), as pret builds its MusicPlayer2000 C; the rest with the
-game's compiler. The driver code and tables both games share are in
-`games/common/src/sound`, the songs and samples in `games/tbs/sound`, and the
-songs' names in `songs.h` (`MUS_`, `SE_`).
+`engine.c`, `audio.c` and `tables.c` are compiled with pret's `old_agbcc`, the
+sound route of the Makefile (`SOUND_C`), as pret builds its MusicPlayer2000 C;
+the rest with the game's compiler. The songs and samples are in
+`games/tbs/sound`, and the songs' names in `songs.h` (`MUS_`, `SE_`).
 Link order is in `games/tbs/objects.tsv`. The unit headers are in
 `games/tbs/include/unit/sound/`, the driver's structures in
 `games/common/include/sound`.

@@ -13,7 +13,6 @@ SECTIONS
         "*/games/tla/src/scene/islets/s1278.o"(.text)
         "*/resource_674_overlay.o"(.text.x0200929c)
         "*/resource_674_overlay.o"(.text.x020094e0)
-        "*/resource_674_overlay.o"(.text.x02009a68)
         "*/games/tla/src/scene/islets/s1bf4.o"(.text)
         "*/games/tla/src/scene/islets/s1cac.o"(.text)
         "*/resource_674_overlay.o"(.text.x02009cfc)

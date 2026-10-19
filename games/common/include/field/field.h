@@ -208,7 +208,7 @@ extern const u8 gFieldFx_SparkleTiles[];
 extern const u8 gField_TileMessageOffsets[];
 extern const u8 gFieldFx_MoteTiles[];
 extern s32 gFourObjectMotion_ResourceIds[];
-extern s32 gTolbiShipInteriors_CueTimer;
+extern s32 gTolbiShipInteriors_ShakeTimer;
 extern s16 *gKolimaForestBendLayout;
 extern s16 *gKolimaForestBendRecords;
 extern u16 *gKolimaForestBendReturned;
@@ -219,7 +219,7 @@ extern u32 gScanlineAngle;
 #ifndef OWN_gScanlinePitch
 extern u32 gScanlinePitch;
 #endif
-extern struct SceneEvent gBabiPalaceEvents2AfterColosso[];
+extern struct SceneEvent gBabiPalace_Events2AfterColosso[];
 extern const u8 gWorldMapPackedFrames[];
 extern const u8 gWorldMapPackedTiles[];
 extern const u8 gWorldMapPalettes[];

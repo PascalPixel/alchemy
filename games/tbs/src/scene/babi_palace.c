@@ -96,9 +96,9 @@ static __inline__ void BabiPalace_RestorePartyAndInventory(void) {
 // Returns the entrance table of the scene being entered.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   if (gGameState.scene == (s32)&SceneId_BabiPalace2) {
-    return gBabiPalaceEntrances2;
+    return gBabiPalace_Entrances2;
   }
-  return gBabiPalaceEntrancesOther;
+  return gBabiPalace_EntrancesOther;
 }
 
 // The palace has no regions; the table is empty.
@@ -111,15 +111,15 @@ s32 BabiPalace_GetExits(void) { return (s32)gBabiPalace_Exits; }
 // rescue, during the finals or after Colosso.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_BabiPalace2) {
-    return gBabiPalacePlacements2;
+    return gBabiPalace_Placements2;
   }
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
-    return gBabiPalacePlacementsAfterColosso;
+    return gBabiPalace_PlacementsAfterColosso;
   }
   if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
-    return gBabiPalacePlacementsColosso;
+    return gBabiPalace_PlacementsColosso;
   }
-  return gBabiPalacePlacementsOther;
+  return gBabiPalace_PlacementsOther;
 }
 
 // Asks a yes or no question; the answers are the two messages after it.
@@ -2269,20 +2269,20 @@ static void BabiPalace_ExamineWell(void) {
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_BabiPalace2) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
-      return gBabiPalaceEvents2AfterColosso;
+      return gBabiPalace_Events2AfterColosso;
     }
     if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
-      return gBabiPalaceEvents2Colosso;
+      return gBabiPalace_Events2Colosso;
     }
-    return gBabiPalaceEvents2;
+    return gBabiPalace_Events2;
   }
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
-    return gBabiPalaceEventsAfterColosso;
+    return gBabiPalace_EventsAfterColosso;
   }
   if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
-    return gBabiPalaceEventsColosso;
+    return gBabiPalace_EventsColosso;
   }
-  return gBabiPalaceEventsOther;
+  return gBabiPalace_EventsOther;
 }
 
 // Sets up the scene being entered: the doors, the Cloak Ball on show, and
@@ -2381,7 +2381,7 @@ s32 gBabiPalace_IndigestionScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-struct SceneEntrance gBabiPalaceEntrancesOther[] = {
+struct SceneEntrance gBabiPalace_EntrancesOther[] = {
     { 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 1, CONDITION_ALWAYS, 768, 0, 200, FACING_NORTH, 0, 512, 0, 1024, 224, 0 },
     { 2, CONDITION_ALWAYS, 728, 0, 88, FACING_EAST, 0, 512, 0, 1024, 224, 0 },
@@ -2427,7 +2427,7 @@ struct SceneEntrance gBabiPalaceEntrancesOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gBabiPalaceEntrances2[] = {
+struct SceneEntrance gBabiPalace_Entrances2[] = {
     { 0, CONDITION_ALWAYS, 264, 0, 440, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 1, CONDITION_ALWAYS, 264, 0, 424, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { 2, CONDITION_ALWAYS, 200, 0, 248, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -2485,7 +2485,7 @@ u32 gBabiPalace_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gBabiPalacePlacements2[] = {
+struct ScenePlacement gBabiPalace_Placements2[] = {
     { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(232), 0, PIXELS(248), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2493,7 +2493,7 @@ struct ScenePlacement gBabiPalacePlacements2[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gBabiPalacePlacementsOther[] = {
+struct ScenePlacement gBabiPalace_PlacementsOther[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { IVAN, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2535,7 +2535,7 @@ struct ScenePlacement gBabiPalacePlacementsOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gBabiPalacePlacementsColosso[] = {
+struct ScenePlacement gBabiPalace_PlacementsColosso[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { IVAN, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2559,7 +2559,7 @@ struct ScenePlacement gBabiPalacePlacementsColosso[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gBabiPalacePlacementsAfterColosso[] = {
+struct ScenePlacement gBabiPalace_PlacementsAfterColosso[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { IVAN, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2595,7 +2595,7 @@ struct ScenePlacement gBabiPalacePlacementsAfterColosso[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gBabiPalaceEventsOther[] = {
+struct SceneEvent gBabiPalace_EventsOther[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -2674,7 +2674,7 @@ struct SceneEvent gBabiPalaceEventsOther[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gBabiPalaceEventsColosso[] = {
+struct SceneEvent gBabiPalace_EventsColosso[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -2740,7 +2740,7 @@ struct SceneEvent gBabiPalaceEventsColosso[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gBabiPalaceEventsAfterColosso[] = {
+struct SceneEvent gBabiPalace_EventsAfterColosso[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
@@ -2815,7 +2815,7 @@ struct SceneEvent gBabiPalaceEventsAfterColosso[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gBabiPalaceEvents2[] = {
+struct SceneEvent gBabiPalace_Events2[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughAnimatedDoor) },
     { EVENT_TALK, ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceNormallyNoOnesAllowedIntoBabis) },
@@ -2826,7 +2826,7 @@ struct SceneEvent gBabiPalaceEvents2[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gBabiPalaceEvents2Colosso[] = {
+struct SceneEvent gBabiPalace_Events2Colosso[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughAnimatedDoor) },
     { EVENT_TALK, ACTOR_FIRST_GUARD, FLAG_BABI_PALACE_GUARD_GAVE_WORD, EVENT_SCRIPT(BabiPalace_PassOnBabisWord) },
@@ -2841,7 +2841,7 @@ struct SceneEvent gBabiPalaceEvents2Colosso[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gBabiPalaceEvents2AfterColosso[] = {
+struct SceneEvent gBabiPalace_Events2AfterColosso[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(BabiPalace_LeaveThroughAnimatedDoor) },
     { EVENT_TALK, ACTOR_FIRST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIveLostAllMyEnthusiasmSince) },

@@ -2129,7 +2129,7 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
   case 21:
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
       if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_KRAKEN_ABOARD) != 0) {
-        gTolbiShipInteriors_CueTimer = 0;
+        gTolbiShipInteriors_ShakeTimer = 0;
         FieldScheduler_AddCallback(TolbiShipInteriors_ShakeWhileKrakenAboard,
                                    0xc80);
         Engine_ActorSetAnimation(9, 5);
@@ -3615,7 +3615,7 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   Actor_SetActionScript(IVAN, action);
   Actor_RunActionScriptAndWait(3, action);
   GameFlag_Set(FLAG_TOLBI_SHIP_KRAKEN_ABOARD);
-  gTolbiShipInteriors_CueTimer = 0;
+  gTolbiShipInteriors_ShakeTimer = 0;
   FieldScheduler_AddCallback(TolbiShipInteriors_ShakeWhileKrakenAboard, 0xc80);
   TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_PARTY_FOLLOWERS, 0, 0);
   Engine_ActorDestroy(27);
@@ -3627,7 +3627,7 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
 // Play the intermittent voyage cue and restore its effect after ten frames.
 static void TolbiShipInteriors_ShakeWhileKrakenAboard(void) {
   s32 value;
-  s32 *timer = &gTolbiShipInteriors_CueTimer;
+  s32 *timer = &gTolbiShipInteriors_ShakeTimer;
   s32 remaining;
   if (*timer != 0) {
     remaining = *timer - 1;
@@ -4561,4 +4561,4 @@ struct SceneEvent gTolbiShipInteriors_RowingDeckEventsArrived[] = {
 // clang-format on
 
 // Frames left of the Kraken's current jolt; at 0 another may start.
-s32 gTolbiShipInteriors_CueTimer;
+s32 gTolbiShipInteriors_ShakeTimer;

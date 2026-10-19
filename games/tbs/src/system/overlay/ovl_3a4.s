@@ -1,12 +1,12 @@
 	.section .bss,"aw",%nobits
-	.global gAltinPeak_RiseTimer
-gAltinPeak_RiseTimer:
+	.global gAltinPeak_FlickerTimer
+gAltinPeak_FlickerTimer:
 	.space 4
-	.global gAltinPeak_LeafMode
-gAltinPeak_LeafMode:
+	.global gAltinPeak_SprayDirection
+gAltinPeak_SprayDirection:
 	.space 4
-	.global gAltinPeak_LeafOrigin
-gAltinPeak_LeafOrigin:
+	.global gAltinPeak_SprayOrigin
+gAltinPeak_SprayOrigin:
 	.space 12
 	.space 16
 	.global gAltinPeak_PaletteHold

@@ -157,9 +157,9 @@ enum { SPRITE_BOULDER = 200, SPRITE_SPRAY = 222 };
 
 // The spray's direction (0 east, 0x8000 west) and origin, and the water's
 // flicker timer.
-extern s32 gAltinPeak_LeafMode;
-extern s32 gAltinPeak_LeafOrigin[3];
-extern u16 gAltinPeak_RiseTimer;
+extern s32 gAltinPeak_SprayDirection;
+extern s32 gAltinPeak_SprayOrigin[3];
+extern u16 gAltinPeak_FlickerTimer;
 
 // Talking to the Djinni in room 7 makes it hop and starts the battle for
 // Djinni 23.
@@ -484,7 +484,7 @@ static void Water_FlickerOut(void) {
   volatile u16 *reg = &REG_DISPCNT;
   s16 v = *reg & 0xfdff;
 
-  if ((u32)(Engine_RandomNext() * 100) >> 16 >= gAltinPeak_RiseTimer) {
+  if ((u32)(Engine_RandomNext() * 100) >> 16 >= gAltinPeak_FlickerTimer) {
     s32 k = 0x200;
 
     v |= k;
@@ -527,11 +527,11 @@ static void AltinPeak_DrainFirstWater(void) {
   }
   // Flicker the water away while the timer counts to 100.
   Runtime_SetIrqHandler(1, 0, Water_FlickerOut);
-  gAltinPeak_RiseTimer = 0;
+  gAltinPeak_FlickerTimer = 0;
   do {
     Engine_TaskWait(1);
-    timer = gAltinPeak_RiseTimer + 1;
-    gAltinPeak_RiseTimer = timer;
+    timer = gAltinPeak_FlickerTimer + 1;
+    gAltinPeak_FlickerTimer = timer;
   } while ((u32)(timer << 16) <= 0x640000);
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(1, 0, 0);
@@ -563,11 +563,11 @@ static void AltinPeak_DrainSecondWater(void) {
   }
   // Flicker the water away while the timer counts to 100.
   Runtime_SetIrqHandler(1, 0, Water_FlickerOut);
-  gAltinPeak_RiseTimer = 0;
+  gAltinPeak_FlickerTimer = 0;
   do {
     Engine_TaskWait(1);
-    timer = gAltinPeak_RiseTimer + 1;
-    gAltinPeak_RiseTimer = timer;
+    timer = gAltinPeak_FlickerTimer + 1;
+    gAltinPeak_FlickerTimer = timer;
   } while ((u32)(timer << 16) <= 0x640000);
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(1, 0, 0);
@@ -600,11 +600,11 @@ static void AltinPeak_DrainThirdWater(void) {
   }
   // Flicker the water away while the timer counts to 100.
   Runtime_SetIrqHandler(1, 0, Water_FlickerOut);
-  gAltinPeak_RiseTimer = 0;
+  gAltinPeak_FlickerTimer = 0;
   do {
     Engine_TaskWait(1);
-    timer = gAltinPeak_RiseTimer + 1;
-    gAltinPeak_RiseTimer = timer;
+    timer = gAltinPeak_FlickerTimer + 1;
+    gAltinPeak_FlickerTimer = timer;
   } while ((u32)(timer << 16) <= 0x640000);
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(1, 0, 0);
@@ -1712,7 +1712,7 @@ static void AltinPeak_InitSpray(struct FieldActor *spray) {
 static void AltinPeak_DriftSpray(union FieldObject *object) {
   struct FieldActor *spray = &object->actor;
 
-  switch (gAltinPeak_LeafMode) {
+  switch (gAltinPeak_SprayDirection) {
   case 0:
     spray->x.fixed +=
         (spray->timer << 12) +
@@ -1725,7 +1725,7 @@ static void AltinPeak_DriftSpray(union FieldObject *object) {
     break;
   }
   if (spray->timer <= 3) {
-    switch (gAltinPeak_LeafMode) {
+    switch (gAltinPeak_SprayDirection) {
     case 0:
       spray->x.fixed += PIXELS(1) / 2;
       break;
@@ -1758,8 +1758,8 @@ static void AltinPeak_SpawnSpray(void) {
   if ((gFrameCount & 3) != 0)
     return;
   spray = (union FieldObject *)Engine_ObjectCreate(
-      SPRITE_SPRAY, gAltinPeak_LeafOrigin[0], gAltinPeak_LeafOrigin[1],
-      gAltinPeak_LeafOrigin[2]);
+      SPRITE_SPRAY, gAltinPeak_SprayOrigin[0], gAltinPeak_SprayOrigin[1],
+      gAltinPeak_SprayOrigin[2]);
   if (spray == NULL)
     return;
   spray->actor.timer = 30;
@@ -1773,8 +1773,8 @@ static void AltinPeak_SpawnSpray(void) {
 // A water beast starts spitting water from (x, y, z) toward facing (east, 0,
 // or west, 0x8000), with its sound (SE_170).
 static void AltinPeak_StartSpitting(s32 x, s32 y, s32 z, s32 facing) {
-  SET_VECTOR(gAltinPeak_LeafOrigin, x, y, z);
-  gAltinPeak_LeafMode = facing;
+  SET_VECTOR(gAltinPeak_SprayOrigin, x, y, z);
+  gAltinPeak_SprayDirection = facing;
 
   BattleFx_SetQueuedSoundAndPlay(SE_170);
   FieldScheduler_AddCallback(AltinPeak_SpawnSpray, TASK_PRIORITY_SCENE);

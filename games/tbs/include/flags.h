@@ -132,4 +132,16 @@
 #define FLAG_NYUNPA_TEST_DECLINED 0x300
 #define FLAG_FEH_SCHOOL_SAW_TREE_FALL 0x301
 
+// Crossbone Isle
+#define FLAG_CROSSBONE_ISLE_THIRD_BLOCK_LOWERED 0x300
+// The four blue doors in a row, then the red door.
+#define FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN 0x9c0
+#define FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN 0x9c4
+// Bane's three escapes in the block room.
+#define FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE 0x9c8
+#define FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE 0x9c9
+#define FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE 0x9ca
+// Crossbone Isle's pursuer room: a pursuer is after the leader.
+#define FLAG_SCENE_TEMP_20 0x220
+
 #endif

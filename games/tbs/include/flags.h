@@ -89,6 +89,12 @@
 // A monster was fought on the stormy night: Vale's music changes (song 23).
 #define FLAG_VALE_STORM_MONSTER_FOUGHT 0x900
 
+// Vale, around Isaac's house
+// Back from Kalay, Mind Read showed that Dora is ill.
+#define FLAG_READ_THOUGHTS_ABOUT_DORA 0x81c
+// Isaac visited Dora in her sickbed and she got up.
+#define FLAG_VISITED_SICK_DORA 0x81e
+
 // Vale, houses and shops
 // The item shopkeeper gave Isaac a Herb as a farewell gift.
 #define FLAG_VALE_FAREWELL_HERB_RECEIVED 0x81b

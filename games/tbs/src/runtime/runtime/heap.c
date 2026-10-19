@@ -1,5 +1,6 @@
-// Part of runtime.c, the runtime object, compiled only through it.
-// The heap: its two bump allocators and named slots.
+/// @file
+/// Part of runtime.c, the runtime object, compiled only through it.
+/// The heap: its two bump allocators and named slots.
 
 #include "../runtime_internal.h"
 
@@ -7,7 +8,7 @@
 // in EWRAM up to its end (0x02040000), and 62 named slots for long-lived
 // blocks (enum HeapSlot). Nothing is freed one block at a time.
 
-// Empties the heap and both pools.
+/// Empties the heap and both pools.
 void Runtime_InitializeHeap(void) {
   union HeapState *work = (union HeapState *)gWorkSlot;
 
@@ -16,23 +17,23 @@ void Runtime_InitializeHeap(void) {
   work->heap.nextEwram = gEwramHeap;
 }
 
-// Returns the IWRAM bytes left to allocate.
+/// Returns the IWRAM bytes left to allocate.
 s32 Runtime_GetRemainingIwram(void) {
   union HeapState *work = (union HeapState *)gWorkSlot;
 
   return (s32)(*(u8 (*)[]) & gCartridgeResetMarker) - (s32)work->heap.nextIwram;
 }
 
-// Returns the EWRAM bytes left to allocate.
+/// Returns the EWRAM bytes left to allocate.
 s32 Runtime_GetRemainingEwram(void) {
   union HeapState *work = (union HeapState *)gWorkSlot;
 
   return 0x02040000 - (s32)work->heap.nextEwram;
 }
 
-// Returns heap slot `kind`'s block, first allocating `size` bytes for it,
-// from IWRAM when they fit and EWRAM otherwise. Returns NULL when neither has
-// room.
+/// Returns heap slot `kind`'s block, first allocating `size` bytes for it,
+/// from IWRAM when they fit and EWRAM otherwise. Returns NULL when neither has
+/// room.
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size) {
   union HeapState *work;
   s32 alignedSize;
@@ -64,7 +65,7 @@ void *Runtime_AllocateHeapBlock(s32 kind, s32 size) {
   return (void *)cachedAddress;
 }
 
-// As Runtime_AllocateHeapBlock, but tries EWRAM first.
+/// As Runtime_AllocateHeapBlock, but tries EWRAM first.
 void *Runtime_AllocateBlock(s32 kind, s32 size) {
   union HeapState *work;
   u32 alignedSize;
@@ -96,8 +97,8 @@ void *Runtime_AllocateBlock(s32 kind, s32 size) {
   return (void *)cachedAddress;
 }
 
-// Allocates `size` bytes (rounded up to words), from IWRAM when they fit and
-// EWRAM otherwise. Returns NULL when neither has room.
+/// Allocates `size` bytes (rounded up to words), from IWRAM when they fit and
+/// EWRAM otherwise. Returns NULL when neither has room.
 void *MemAlloc(s32 size) {
   union HeapState *work = (union HeapState *)gWorkSlot;
   u32 nextAddress;
@@ -121,7 +122,7 @@ void *MemAlloc(s32 size) {
   return (void *)allocationAddress;
 }
 
-// As MemAlloc, but tries EWRAM first.
+/// As MemAlloc, but tries EWRAM first.
 void *Runtime_BumpAllocateAlternatePool(s32 size) {
   union HeapState *work = (union HeapState *)gWorkSlot;
   u32 alternateNextAddress;
@@ -145,5 +146,5 @@ void *Runtime_BumpAllocateAlternatePool(s32 size) {
   return (void *)allocationAddress;
 }
 
-// Reserved empty memory export; its historical purpose is not established.
+/// Reserved empty memory export; its historical purpose is not established.
 UNUSED void RuntimeMemory_ReservedNoOp(void) {}

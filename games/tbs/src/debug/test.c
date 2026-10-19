@@ -39,13 +39,13 @@ void Engine_EventSetMessage(s16 message);
 
 void Engine_AudioPlayCue(s32 cue);
 
-// The debug item browser covers IDs 0 through 269.
+/// The debug item browser covers IDs 0 through 269.
 #define DEBUG_ITEM_COUNT 270
 #define DEBUG_ITEM_ROW_STEP 10
 #define DEBUG_ITEM_PAGE_STEP 30
 
-// Recalculates the four heroes after a debug inventory or stat change.
-// Preserve the original Isaac, Garet, Mia, Ivan order.
+/// Recalculates the four heroes after a debug inventory or stat change.
+/// Preserve the original Isaac, Garet, Mia, Ivan order.
 static __inline__ void DebugMenu_RecalculateParty(void) {
   UnitCalc(ISAAC);
   UnitCalc(GARET);
@@ -53,20 +53,20 @@ static __inline__ void DebugMenu_RecalculateParty(void) {
   UnitCalc(IVAN);
 }
 
-// Returns the debug room entrance table through the scene entry ABI.
+/// Returns the debug room entrance table through the scene entry ABI.
 u8 *MenuTest_GetEntrances(void) { return (u8 *)gMenuTest_Entrances; }
 
-// Returns zero from this scene entry.
+/// Returns zero from this scene entry.
 s32 SceneData_ReturnZero(void) { return 0; }
 
-// Returns the debug room's packed exit table.
+/// Returns the debug room's packed exit table.
 u8 *MenuTest_GetExits(void) { return (u8 *)gMenuTest_Exits; }
 
-// Returns the debug actors and their fixed room positions.
+/// Returns the debug actors and their fixed room positions.
 u8 *MenuTest_GetPlacements(void) { return (u8 *)gMenuTest_Placements; }
 
 #if TBS_PATCH_1
-// Finishes pending UI work, displays a message, and waits one final frame.
+/// Finishes pending UI work, displays a message, and waits one final frame.
 static void SceneDialogue_ShowMessageAndWait(s32 messageId) {
   UiWork_FinalizePendingCore();
   UiText_OpenMessageWindow(messageId, 5, 0, 0x22);
@@ -76,8 +76,8 @@ static void SceneDialogue_ShowMessageAndWait(s32 messageId) {
   Engine_TaskWait(1);
 }
 
-// Browses sample dialogue with A/Down and Up; B closes the window.
-// Other held keys finish the current iteration without a wait.
+/// Browses sample dialogue with A/Down and Up; B closes the window.
+/// Other held keys finish the current iteration without a wait.
 static void DebugMenu_BrowseMessageRange(s32 messageId, s32 messageCount) {
   struct UiWindow *window;
   s32 messageIndex;
@@ -114,43 +114,43 @@ end:
   Engine_DebugFinalizeWindow(window, 2);
 }
 
-// Browses the weapon shop message range.
+/// Browses the weapon shop message range.
 static void DebugMenu_BrowseWeaponShopMessages(void) {
   DebugMenu_BrowseMessageRange(MsgWeaponShopWelcome,
                                MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-// Browses the armor shop message range.
+/// Browses the armor shop message range.
 static void DebugMenu_BrowseArmorShopMessages(void) {
   DebugMenu_BrowseMessageRange(MsgArmorShopWelcome,
                                MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-// Browses the item shop message range.
+/// Browses the item shop message range.
 static void DebugMenu_BrowseItemShopMessages(void) {
   DebugMenu_BrowseMessageRange(MsgItemShopWelcome,
                                MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-// Browses the sanctum message range.
+/// Browses the sanctum message range.
 static void DebugMenu_BrowseSanctumMessages(void) {
   DebugMenu_BrowseMessageRange(MsgSanctumWelcome,
                                MsgWarriorShopWelcome - MsgSanctumWelcome);
 }
 
-// Browses the warrior shop message range.
+/// Browses the warrior shop message range.
 static void DebugMenu_BrowseWarriorShopMessages(void) {
   DebugMenu_BrowseMessageRange(MsgWarriorShopWelcome,
                                MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-// Browses the warrior armor shop message range.
+/// Browses the warrior armor shop message range.
 static void DebugMenu_BrowseWarriorArmorShopMessages(void) {
   DebugMenu_BrowseMessageRange(MsgWarriorArmorShopWelcome,
                                MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-// Browses the warrior item shop message range.
+/// Browses the warrior item shop message range.
 static void DebugMenu_BrowseWarriorItemShopMessages(void) {
   DebugMenu_BrowseMessageRange(MsgWarriorItemShopWelcome,
                                MsgArmorShopWelcome - MsgWeaponShopWelcome);
@@ -158,7 +158,7 @@ static void DebugMenu_BrowseWarriorItemShopMessages(void) {
 #endif
 
 #if TBS_PATCH_2
-// Submits two sample messages, then waits for the battle message service.
+/// Submits two sample messages, then waits for the battle message service.
 static void DebugMenu_RunMessageTest(void) {
   Engine_EventSetMessage(MSGNO(MsgBattleAdditionalPsynergyHelp));
   Engine_EventSetMessage(MSGNO(MsgValeComeOnHurry));
@@ -166,43 +166,43 @@ static void DebugMenu_RunMessageTest(void) {
 }
 #endif
 
-// Runs the shop test's preset inventory, money and ailment setup.
+/// Runs the shop test's preset inventory, money and ailment setup.
 static void DebugMenu_RunPresetShop(void) {
   Battle_ApplyPresetItemsAndFlags(1);
 }
 
-// UNUSED: the original empty debug callback.
+/// UNUSED: the original empty debug callback.
 UNUSED static void DebugMenu_NoOp(void) {}
 
-// Opens the shop inventory selector and discards its selected owner and slot.
+/// Opens the shop inventory selector and discards its selected owner and slot.
 static void DebugMenu_TestItemSelection(void) {
   s32 selectedOwner;
   s32 selectedSlot;
   Shop_PickUnitItem(&selectedOwner, &selectedSlot);
 }
 
-// Opens Isaac's name editor.
+/// Opens Isaac's name editor.
 static void DebugMenu_EditIsaacName(void) { NameEntry_EditOwnerName(ISAAC); }
 
-// Leaves the test actor unchanged when targeted by Psynergy.
+/// Leaves the test actor unchanged when targeted by Psynergy.
 static void DebugMenu_IgnorePsynergy(void) {}
 
-// Sets the effect work's child-mode byte to one.
+/// Sets the effect work's child-mode byte to one.
 static void DebugMenu_EnableEffectChildMode(void) {
   ((struct BattleFxScene *)gEffectWork)->childMode = 1;
 }
 
 #if TBS_PATCH_3
-// Gives a Nut through the ordinary party gift and full-inventory dialogue.
+/// Gives a Nut through the ordinary party gift and full-inventory dialogue.
 static void DebugMenu_GiveItemToParty(void) {
   PartyInventory_GiveItem(ITEM_NUT, 0);
 }
 #endif
 
-// Returns the event table through the original encoded scene entry ABI.
+/// Returns the event table through the original encoded scene entry ABI.
 s32 MenuTest_GetEvents(void) { return (s32)gMenuTest_Events; }
 
-// Levels the four heroes to the current debug target, then raises it by ten.
+/// Levels the four heroes to the current debug target, then raises it by ten.
 static void DebugMenu_RaisePartyLevels(void) {
   s32 *targetLevel;
 
@@ -216,9 +216,9 @@ static void DebugMenu_RaisePartyLevels(void) {
   DebugMenu_RecalculateParty();
 }
 
-// Attempts each consumable grant in order, including calls after a bag fills.
-// A repeated-grant loop shrinks this native function from 0x626 to 0x12c;
-// retain the individual calls and their original insertion order.
+/// Attempts each consumable grant in order, including calls after a bag fills.
+/// A repeated-grant loop shrinks this native function from 0x626 to 0x12c;
+/// retain the individual calls and their original insertion order.
 static void DebugMenu_GiveConsumableTestStock(void) {
   UiText_ShowPositionedMessageAndWait(MsgDebugGotItem, 1);
   // Isaac's test inventory.
@@ -419,8 +419,8 @@ static void DebugMenu_GiveConsumableTestStock(void) {
   DebugMenu_RecalculateParty();
 }
 
-// Runs the Japanese text-buffer benchmark, then grants and sets test Djinn.
-// Ivan receives six Jupiter Djinn; the other heroes receive seven.
+/// Runs the Japanese text-buffer benchmark, then grants and sets test Djinn.
+/// Ivan receives six Jupiter Djinn; the other heroes receive seven.
 static void DebugMenu_GivePartyDjinn(void) {
   /* FAKEMATCH: never used in the international editions, which compile out the
    * benchmark that fills it; its 256 bytes are the native frame space no
@@ -503,10 +503,10 @@ static void DebugMenu_GivePartyDjinn(void) {
   DebugMenu_RecalculateParty();
 }
 
-// Reduces HP and PP, then poisons and haunts Isaac and binds and venoms Garet.
-// Named BattleUnit stores change address setup and store ordering in the
-// native build; retain the byte cursor for poison (0x131), haunt (0x140) and
-// restraint (0x130).
+/// Reduces HP and PP, then poisons and haunts Isaac and binds and venoms Garet.
+/// Named BattleUnit stores change address setup and store ordering in the
+/// native build; retain the byte cursor for poison (0x131), haunt (0x140) and
+/// restraint (0x130).
 static void DebugMenu_DamageAndAfflictParty(void) {
   u8 *record;
 
@@ -529,7 +529,7 @@ static void DebugMenu_DamageAndAfflictParty(void) {
   DebugMenu_RecalculateParty();
 }
 
-// Adds the test equipment in each owner's original inventory order.
+/// Adds the test equipment in each owner's original inventory order.
 static void DebugMenu_GiveEquipmentTestStock(void) {
   UiText_ShowPositionedMessageAndWait(MsgDebugGotSturdyEquipment, 1);
   // Isaac's test inventory.
@@ -573,8 +573,8 @@ static void DebugMenu_GiveEquipmentTestStock(void) {
   DebugMenu_RecalculateParty();
 }
 
-// Browses item definitions and gives the selected item while party bags allow
-// it.
+/// Browses item definitions and gives the selected item while party bags allow
+/// it.
 static void DebugMenu_SelectItem(void) {
   struct UiWindow *window;
   struct UiWindow *details;
@@ -666,13 +666,13 @@ static void DebugMenu_SelectItem(void) {
   Engine_DebugFinalizeWindow(details, 1);
 }
 
-// Opens the debug item browser.
+/// Opens the debug item browser.
 static void DebugMenu_OpenItemBrowser(void) { DebugMenu_SelectItem(); }
 
-// Adds the original treasure test stock, retaining duplicate tickets and
-// medals.
-// Sharing the duplicate grants through a counted loop shrinks this function
-// from 0x194 to 0x120; retain the original calls.
+/// Adds the original treasure test stock, retaining duplicate tickets and
+/// medals.
+/// Sharing the duplicate grants through a counted loop shrinks this function
+/// from 0x194 to 0x120; retain the original calls.
 static void DebugMenu_GiveTreasureTestStock(void) {
   UiText_ShowPositionedMessageAndWait(MsgDebugGotTreasure, 1);
   // Isaac's test inventory.
@@ -726,7 +726,7 @@ static void DebugMenu_GiveTreasureTestStock(void) {
   DebugMenu_RecalculateParty();
 }
 
-// Sets the debug party, stock counters and levels; returns zero.
+/// Sets the debug party, stock counters and levels; returns zero.
 s32 CommandTable_ConfigureCommandList(void) {
   // Assemble the test party before adding stock and setting levels.
   Party_RemoveActiveOwner(5);
@@ -763,18 +763,18 @@ s32 CommandTable_ConfigureCommandList(void) {
   return 0;
 }
 
-// Returns the icon browser's status to the event dispatcher.
+/// Returns the icon browser's status to the event dispatcher.
 static s32 DebugMenu_OpenIconBrowser(void) { return DebugMenu_BrowseIcons(); }
 
 #if !TBS_PATCH_1
-// Returns the Japanese character selector's status.
+/// Returns the Japanese character selector's status.
 static s32 DebugMenu_SelectCharacter(void) {
   return Menu_OpenCharacterSelector();
 }
 #endif
 
 #if !TBS_PATCH_3
-// Forwards the selected owner and shop confirmation status.
+/// Forwards the selected owner and shop confirmation status.
 static s32 DebugMenu_ConfirmShopAction(s32 unitId) {
   return Shop_ConfirmAct(unitId);
 }

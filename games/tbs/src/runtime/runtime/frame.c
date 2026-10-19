@@ -1,10 +1,11 @@
-// Part of runtime.c, the runtime object, compiled only through it.
-// Interrupt handlers, the frame wait, key repeat and the VBlank handler.
+/// @file
+/// Part of runtime.c, the runtime object, compiled only through it.
+/// Interrupt handlers, the frame wait, key repeat and the VBlank handler.
 
 #include "../runtime_internal.h"
 
-// Restarts the game from the cartridge entry point. The marker word it leaves
-// in IWRAM is cleared again by System_Initialize; nothing else reads it.
+/// Restarts the game from the cartridge entry point. The marker word it leaves
+/// in IWRAM is cleared again by System_Initialize; nothing else reads it.
 static __inline__ void System_SoftReset(void) {
   /* FAKEMATCH: the restart entry is called as returning s32, so its address is
    * built in r0 as the native does at both resets; through a void (*)(void)
@@ -16,7 +17,7 @@ static __inline__ void System_SoftReset(void) {
   reset();
 }
 
-// Sleeps in the BIOS Halt until the VBlank handler has run once.
+/// Sleeps in the BIOS Halt until the VBlank handler has run once.
 #define VBlankIntrWait()                                                       \
   {                                                                            \
     gVBlankDone &= ~1;                                                         \
@@ -26,10 +27,10 @@ static __inline__ void System_SoftReset(void) {
     } while (!(gVBlankDone & 1));                                              \
   }
 
-// Installs `handler` for interrupt `irq` and enables that interrupt, or with a
-// null handler disables it and installs the do-nothing handler. The three
-// display interrupts are also switched in DISPSTAT; for VCount, `vcount` is
-// the line it fires on.
+/// Installs `handler` for interrupt `irq` and enables that interrupt, or with a
+/// null handler disables it and installs the do-nothing handler. The three
+/// display interrupts are also switched in DISPSTAT; for VCount, `vcount` is
+/// the line it fires on.
 void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler) {
   if (irq <= IRQ_GAMEPAK) {
     u32 ime;
@@ -65,7 +66,7 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler) {
   }
 }
 
-// Frame counts used by the sleep transitions and the CPU-load peak display.
+/// Frame counts used by the sleep transitions and the CPU-load peak display.
 enum {
   SLEEP_IDLE_FRAMES = 3 * 60 * 60,
   SLEEP_COMBO_FRAMES = 3 * 60,
@@ -74,16 +75,16 @@ enum {
   CPU_LOAD_PEAK_FRAMES = 30
 };
 
-// The game's frame loop: runs `frames` frames and returns. Each frame runs the
-// scheduled main-loop tasks, builds the OAM list, measures CPU load for the
-// debug display, counts idle time for sleep, steps the debug pause, waits for
-// VBlank and then reads the keys. Holding L and R for three seconds, or three
-// idle minutes with idle sleep on, puts the system into Stop until L and R are
-// pressed again. A soft reset requested by the keypad interrupt happens here.
-//
-// Tasks may call WaitFrames deep inside their own call chains, so a caller
-// whose stack has grown below the frame-wait stack top has its stack copied
-// aside first, and the loop runs at that top; the copy is put back on return.
+/// The game's frame loop: runs `frames` frames and returns. Each frame runs the
+/// scheduled main-loop tasks, builds the OAM list, measures CPU load for the
+/// debug display, counts idle time for sleep, steps the debug pause, waits for
+/// VBlank and then reads the keys. Holding L and R for three seconds, or three
+/// idle minutes with idle sleep on, puts the system into Stop until L and R are
+/// pressed again. A soft reset requested by the keypad interrupt happens here.
+///
+/// Tasks may call WaitFrames deep inside their own call chains, so a caller
+/// whose stack has grown below the frame-wait stack top has its stack copied
+/// aside first, and the loop runs at that top; the copy is put back on return.
 void WaitFrames(s32 frames) {
   u8 *sp;
   u32 frameIndex;
@@ -277,18 +278,18 @@ void WaitFrames(s32 frames) {
   }
 }
 
-// Frames a key is held before it first repeats, and between later repeats
+/// Frames a key is held before it first repeats, and between later repeats
 #define INPUT_KEY_REPEAT_FIRST 19
 #define INPUT_KEY_REPEAT_NEXT 6
 
-// Restarts the key repeat delay, so held keys wait the full delay again.
+/// Restarts the key repeat delay, so held keys wait the full delay again.
 void Input_ResetKeyRepeat(void) { gKeyRepeatTimer = INPUT_KEY_REPEAT_FIRST; }
 
-// Runs once a frame after VBlank. When the repeat timer has run out, the held
-// keys repeat into gKeysRepeat. gKeysRepeatDirected is the same keys with at
-// most one D-pad direction: of several held directions it keeps the one
-// added last (gKeysDirection remembers it), and with all four it keeps none.
-// Last, the keys newly held since the previous frame go to gKeysPressed.
+/// Runs once a frame after VBlank. When the repeat timer has run out, the held
+/// keys repeat into gKeysRepeat. gKeysRepeatDirected is the same keys with at
+/// most one D-pad direction: of several held directions it keeps the one
+/// added last (gKeysDirection remembers it), and with all four it keeps none.
+/// Last, the keys newly held since the previous frame go to gKeysPressed.
 void Input_UpdateKeyRepeatAndDirection(void) {
   s32 delay = gKeyRepeatTimer;
   u32 keys;
@@ -359,11 +360,11 @@ void Input_UpdateKeyRepeatAndDirection(void) {
 #define SOUND_PRESET_COUNT 5
 #define SOUND_PRESET_SIZE 152
 
-// The VBlank interrupt handler. It trades the link cable payloads, steps the
-// music fades and the screen fade, and when the frame loop has finished a
-// frame copies its OAM list and BG scroll registers and flushes the queued
-// register writes. Then it runs the one-shot VBlank hook and the VBlank
-// tasks, reads the keypad and finally mixes the next sound buffer.
+/// The VBlank interrupt handler. It trades the link cable payloads, steps the
+/// music fades and the screen fade, and when the frame loop has finished a
+/// frame copies its OAM list and BG scroll registers and flushes the queued
+/// register writes. Then it runs the one-shot VBlank hook and the VBlank
+/// tasks, reads the keypad and finally mixes the next sound buffer.
 void System_VBlankHandler(void) {
   u32 keys;
   void (*hook)(void);
@@ -427,8 +428,8 @@ void System_VBlankHandler(void) {
   SoundDriver_EnterMixer();
 }
 
-// Copies the mixer code for sound preset `preset` (0 to 4; anything else is 0)
-// from ROM into its place in IWRAM. Always returns 0.
+/// Copies the mixer code for sound preset `preset` (0 to 4; anything else is 0)
+/// from ROM into its place in IWRAM. Always returns 0.
 s32 Sound_LoadPresetParameters(s32 preset) {
   s32 index;
 
@@ -441,15 +442,15 @@ s32 Sound_LoadPresetParameters(s32 preset) {
   return 0;
 }
 
-// Reserved empty sound export A in the runtime bank; no source caller.
+/// Reserved empty sound export A in the runtime bank; no source caller.
 UNUSED void Sound_ReservedNoOpA(void) {}
 
-// Reserved empty sound export B in the runtime bank; no source caller.
+/// Reserved empty sound export B in the runtime bank; no source caller.
 UNUSED void Sound_ReservedNoOpB(void) {}
 
-// The keypad interrupt: A+B+Select+Start was pressed, so ask the frame loop
-// for a soft reset and disarm the interrupt. During sleep the same interrupt
-// only wakes the CPU.
+/// The keypad interrupt: A+B+Select+Start was pressed, so ask the frame loop
+/// for a soft reset and disarm the interrupt. During sleep the same interrupt
+/// only wakes the CPU.
 void Input_HandleKeyInterrupt(void) {
   if (gSleepActive == 0) {
     Io_Write16(0xc3ff, &REG_KEYCNT);

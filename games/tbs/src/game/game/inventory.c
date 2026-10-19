@@ -1,16 +1,17 @@
-// Part of game.c, the game object, compiled only through it.
-// Items and inventories: equipping, adding, removing, breaking and counting.
+/// @file
+/// Part of game.c, the game object, compiled only through it.
+/// Items and inventories: equipping, adding, removing, breaking and counting.
 
 #include "../game_internal.h"
 
-// Returns item `item`'s definition; an inventory entry may be passed, its
-// equipped and quantity bits are ignored.
+/// Returns item `item`'s definition; an inventory entry may be passed, its
+/// equipped and quantity bits are ignored.
 struct ItemDefinition *Item_GetDirect(s32 item) {
   return gItem_DefinitionTable + (item & ITEM_ID_MASK);
 }
 
-// Returns whether the character can equip `item`: bit classId of the item's
-// equipMask. Units past the eight characters cannot.
+/// Returns whether the character can equip `item`: bit classId of the item's
+/// equipMask. Units past the eight characters cannot.
 s32 Item_CanOwnerEquipDirect(s32 owner, s32 item) {
   struct BattleUnit *unit = UnitGet(owner);
   struct ItemDefinition *itemDefinition = Item_GetDirect(item);
@@ -22,8 +23,8 @@ s32 Item_CanOwnerEquipDirect(s32 owner, s32 item) {
   return (equipMask >> unit->classId) & 1;
 }
 
-// Returns 1 for an item that is not equipment, and for equipment whether the
-// character can equip it.
+/// Returns 1 for an item that is not equipment, and for equipment whether the
+/// character can equip it.
 s32 Item_IsCompatibleWithOwner(s32 unit, s32 item) {
   if (Item_GetEquipmentGroup(item) == 0) {
     return 1;
@@ -31,8 +32,8 @@ s32 Item_IsCompatibleWithOwner(s32 unit, s32 item) {
   return Item_CanOwnerEquipDirect(unit, item);
 }
 
-// Returns what kind of thing an item is: 1 a weapon, 2 armor (types 2 to 5
-// and 9), 0 anything else.
+/// Returns what kind of thing an item is: 1 a weapon, 2 armor (types 2 to 5
+/// and 9), 0 anything else.
 s32 Item_GetEquipmentGroup(s32 itemId) {
   s32 group;
   struct ItemDefinition *item;
@@ -54,8 +55,8 @@ s32 Item_GetEquipmentGroup(s32 itemId) {
   return group;
 }
 
-// Returns how many of the item in `slot` the unit carries (0 for an empty
-// slot). The entry stores one less than the count.
+/// Returns how many of the item in `slot` the unit carries (0 for an empty
+/// slot). The entry stores one less than the count.
 s32 Inventory_GetQuantity(s32 owner, s32 slot) {
   s32 itemId;
 
@@ -70,7 +71,7 @@ s32 Inventory_GetQuantity(s32 owner, s32 slot) {
   return owner;
 }
 
-// Counts filled inventory slots up to the first empty slot.
+/// Counts filled inventory slots up to the first empty slot.
 s32 Inventory_Count(s32 owner) {
   struct BattleUnit *unit = UnitGet(owner);
   s32 count = 0;
@@ -85,8 +86,8 @@ s32 Inventory_Count(s32 owner) {
   return count;
 }
 
-// Returns 1 when the selected character or any party member has a free
-// inventory slot.
+/// Returns 1 when the selected character or any party member has a free
+/// inventory slot.
 s32 PartyInventory_HasSpace(void) {
   s16 owners[10];
   s32 ownerCount;
@@ -108,7 +109,7 @@ s32 PartyInventory_HasSpace(void) {
   return 0;
 }
 
-// Returns the number of free inventory slots across the party.
+/// Returns the number of free inventory slots across the party.
 s32 PartyInventory_CountFreeSlots(void) {
   s16 owners[10];
   s32 ownerCount = Party_ListActiveOwners(owners);
@@ -126,9 +127,9 @@ s32 PartyInventory_CountFreeSlots(void) {
   return freeSlots;
 }
 
-// Gives a unit one item, joining its first matching stack (up to 30) or
-// taking the first free slot. A full matching stack fails immediately, even
-// if another slot is free. Returns the slot, or -1 when there was no room.
+/// Gives a unit one item, joining its first matching stack (up to 30) or
+/// taking the first free slot. A full matching stack fails immediately, even
+/// if another slot is free. Returns the slot, or -1 when there was no room.
 s32 Inventory_AddItem(s32 owner, s32 itemId) {
   struct BattleUnit *unit = UnitGet(owner);
   struct ItemDefinition *item = Item_GetDirect(itemId);
@@ -171,8 +172,8 @@ s32 Inventory_AddItem(s32 owner, s32 itemId) {
   return -1;
 }
 
-// Gives the item to the first party member with room. Returns who took it,
-// or -1.
+/// Gives the item to the first party member with room. Returns who took it,
+/// or -1.
 s32 PartyInventory_Add(s32 itemId) {
   s16 owners[10];
   s32 ownerCount;
@@ -194,7 +195,7 @@ s32 PartyInventory_Add(s32 itemId) {
   return -1;
 }
 
-// Returns the first slot holding `itemId`, or -1.
+/// Returns the first slot holding `itemId`, or -1.
 s32 Inventory_Find(s32 owner, s32 itemId) {
   struct BattleUnit *inv = UnitGet(owner);
   s32 slot = 0;
@@ -209,7 +210,7 @@ s32 Inventory_Find(s32 owner, s32 itemId) {
   return -1;
 }
 
-// Returns who carries `itemId`, asking the selected character first, or -1.
+/// Returns who carries `itemId`, asking the selected character first, or -1.
 s32 PartyInventory_FindOwner(s32 itemId) {
   s16 owners[10];
   s32 ownerCount;
@@ -233,9 +234,9 @@ s32 PartyInventory_FindOwner(s32 itemId) {
   return -1;
 }
 
-// Equips the item in `slot`, replacing equipment of the same type. Type 6
-// items grant Psynergy and may coexist. Returns 0, -1 when the unit cannot
-// equip it, or -2 when the item it would replace is cursed on.
+/// Equips the item in `slot`, replacing equipment of the same type. Type 6
+/// items grant Psynergy and may coexist. Returns 0, -1 when the unit cannot
+/// equip it, or -2 when the item it would replace is cursed on.
 s32 Inventory_Equip(s32 owner, s32 slot) {
   struct BattleUnit *unit = UnitGet(owner);
   u32 inventoryEntry = unit->inventory[slot];
@@ -272,7 +273,7 @@ s32 Inventory_Equip(s32 owner, s32 slot) {
   return 0;
 }
 
-// Returns the slot of the equipped item of `type`, or -1.
+/// Returns the slot of the equipped item of `type`, or -1.
 s32 Inventory_FindEquipped(s32 owner, s32 type) {
   struct BattleUnit *base = UnitGet(owner);
   s32 index;
@@ -290,7 +291,7 @@ s32 Inventory_FindEquipped(s32 owner, s32 type) {
   return index;
 }
 
-// Returns the definition of the equipped item of `type`, or NULL.
+/// Returns the definition of the equipped item of `type`, or NULL.
 struct ItemDefinition *Inventory_GetEquippedDefinition(struct BattleUnit *unit,
                                                        s32 type) {
   s32 slot;
@@ -307,7 +308,7 @@ struct ItemDefinition *Inventory_GetEquippedDefinition(struct BattleUnit *unit,
   return 0;
 }
 
-// Returns the id of the equipped item of `type`, or 0.
+/// Returns the id of the equipped item of `type`, or 0.
 s32 Inventory_GetEquippedItem(struct BattleUnit *unit, s32 type) {
   s32 slot;
 
@@ -323,9 +324,9 @@ s32 Inventory_GetEquippedItem(struct BattleUnit *unit, s32 type) {
   return 0;
 }
 
-// Takes one item out of `slot`: a stack shrinks by one (returns 1), a last
-// item empties the slot and the inventory closes up (returns 2). Returns -1
-// for an empty slot. The unit's stats are recomputed either way.
+/// Takes one item out of `slot`: a stack shrinks by one (returns 1), a last
+/// item empties the slot and the inventory closes up (returns 2). Returns -1
+/// for an empty slot. The unit's stats are recomputed either way.
 s32 Inventory_Remove(s32 owner, s32 slot) {
   struct BattleUnit *unit = UnitGet(owner);
   u16 item = unit->inventory[slot];
@@ -345,8 +346,8 @@ s32 Inventory_Remove(s32 owner, s32 slot) {
   return result;
 }
 
-// Removes one item as Inventory_Remove does, and puts a rare item back into
-// circulation (its counter goes up by one) for the shops to sell.
+/// Removes one item as Inventory_Remove does, and puts a rare item back into
+/// circulation (its counter goes up by one) for the shops to sell.
 s32 Inventory_Discard(s32 owner, s32 slot) {
   s32 item = UnitGet(owner)->inventory[slot];
   s32 removalResult = Inventory_Remove(owner, slot);
@@ -358,8 +359,8 @@ s32 Inventory_Discard(s32 owner, s32 slot) {
   return removalResult;
 }
 
-// Returns whether the item in `slot` may be dropped: 0 yes, -1 the slot is
-// empty, -4 the item is indispensable, -3 it is equipped and cursed on.
+/// Returns whether the item in `slot` may be dropped: 0 yes, -1 the slot is
+/// empty, -4 the item is indispensable, -3 it is equipped and cursed on.
 s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
   struct BattleUnit *unit = UnitGet(owner);
   s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
@@ -378,7 +379,7 @@ s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
   return 0;
 }
 
-// Removes one `itemId` from whoever in the party carries it.
+/// Removes one `itemId` from whoever in the party carries it.
 s32 PartyInventory_Remove(s32 itemId) {
   s32 owner = PartyInventory_FindOwner(itemId);
 
@@ -388,7 +389,7 @@ s32 PartyInventory_Remove(s32 itemId) {
   return 0;
 }
 
-// Discards one `itemId` from whoever in the party carries it.
+/// Discards one `itemId` from whoever in the party carries it.
 s32 PartyInventory_Discard(s32 itemId) {
   s32 owner = PartyInventory_FindOwner(itemId);
 
@@ -398,7 +399,7 @@ s32 PartyInventory_Discard(s32 itemId) {
   return 0;
 }
 
-// Marks the item in `slot` broken. Returns -1 for an empty slot.
+/// Marks the item in `slot` broken. Returns -1 for an empty slot.
 s32 Inventory_Break(s32 owner, s32 slot) {
   struct BattleUnit *inv = UnitGet(owner);
   if (inv->inventory[slot] == 0) {
@@ -408,7 +409,7 @@ s32 Inventory_Break(s32 owner, s32 slot) {
   return 0;
 }
 
-// Repairs the item in `slot`. Returns -1 for an empty slot.
+/// Repairs the item in `slot`. Returns -1 for an empty slot.
 s32 Inventory_Repair(s32 owner, s32 slot) {
   struct BattleUnit *inv = UnitGet(owner);
   if (inv->inventory[slot] == 0) {
@@ -418,13 +419,13 @@ s32 Inventory_Repair(s32 owner, s32 slot) {
   return 0;
 }
 
-// Returns how the action an item performs when used picks its targets.
+/// Returns how the action an item performs when used picks its targets.
 u8 Item_GetTargetMode(s32 itemId) {
   return BattleAction_GetDirect(Item_GetDirect(itemId)->actionId)->targetMode;
 }
 
-// Adds `delta` to rare item counter `index`, kept between 0 and 99, and
-// returns the new count.
+/// Adds `delta` to rare item counter `index`, kept between 0 and 99, and
+/// returns the new count.
 s32 ItemCounter_Adjust(s32 index, s32 delta) {
   s32 counter_slot = index;
   u8 *data = gItemCounters;
@@ -448,8 +449,8 @@ s32 ItemCounter_Adjust(s32 index, s32 delta) {
   return index;
 }
 
-// Adds `delta` to the counter of a rare item; ordinary items have none.
-// Returns the new count, or 0.
+/// Adds `delta` to the counter of a rare item; ordinary items have none.
+/// Returns the new count, or 0.
 s32 Item_AdjustCounter(s32 itemId, s32 delta) {
   s32 itemIdMask = ITEM_ID_MASK;
   u8 counter;
@@ -462,8 +463,8 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
   return result;
 }
 
-// Counts matching nonstackable items, or the quantity in the first matching
-// stack.
+/// Counts matching nonstackable items, or the quantity in the first matching
+/// stack.
 s32 Inventory_CountItem(s32 owner, s32 itemId) {
   struct BattleUnit *unit = UnitGet(owner);
   s32 count = 0;
@@ -485,7 +486,7 @@ s32 Inventory_CountItem(s32 owner, s32 itemId) {
   return count;
 }
 
-// Returns how many of `itemId` the party carries.
+/// Returns how many of `itemId` the party carries.
 s32 PartyInventory_CountItem(s32 itemId) {
   u16 owners[16];
   s32 itemCount = 0;

@@ -1,5 +1,6 @@
-// Part of runtime.c, the runtime object, compiled only through it.
-// Power-up, the cartridge's language, the build stamp and code loading.
+/// @file
+/// Part of runtime.c, the runtime object, compiled only through it.
+/// Power-up, the cartridge's language, the build stamp and code loading.
 
 #include "../runtime_internal.h"
 
@@ -7,10 +8,10 @@
 #define SYSTEM_HALT_ON_GAMEPAK_IRQ 1
 #endif
 
-// Powers the game up: stops any HBlank DMA left running, sets the cartridge
-// wait states, clears IWRAM, installs the interrupt handlers and the resident
-// IWRAM code, loads the window graphics and the sound driver, then starts a
-// new game. It never returns.
+/// Powers the game up: stops any HBlank DMA left running, sets the cartridge
+/// wait states, clears IWRAM, installs the interrupt handlers and the resident
+/// IWRAM code, loads the window graphics and the sound driver, then starts a
+/// new game. It never returns.
 void System_Initialize(void) {
   {
     volatile u16 *dma0 = REG_DMA0;
@@ -49,7 +50,7 @@ void System_Initialize(void) {
   Game_ResetForNewGameFar(0);
 }
 
-// Waits out frames forever; the frame loop still runs the scheduled tasks.
+/// Waits out frames forever; the frame loop still runs the scheduled tasks.
 void Runtime_IdleForever(void) {
   for (;;) {
     (void)gKeysPressed;
@@ -67,8 +68,8 @@ enum CartridgeLanguage {
   CARTRIDGE_LANGUAGE_ITALIAN
 };
 
-// Returns the language of this cartridge from the header's game code letter:
-// 0 English, 1 German, 2 French, 3 Spanish, 4 Italian.
+/// Returns the language of this cartridge from the header's game code letter:
+/// 0 English, 1 German, 2 French, 3 Spanish, 4 Italian.
 s32 System_GetLanguage(void) {
   s32 language;
 
@@ -93,32 +94,32 @@ s32 System_GetLanguage(void) {
 }
 #endif
 
-// Reserved empty export A in the runtime far-call table; no source caller.
+/// Reserved empty export A in the runtime far-call table; no source caller.
 UNUSED void RuntimeDispatch_ReservedNoOpA(void) {}
 
-// Reserved empty export B in the runtime far-call table; no source caller.
+/// Reserved empty export B in the runtime far-call table; no source caller.
 UNUSED void RuntimeDispatch_ReservedNoOpB(void) {}
 
-// Reserved empty export C in the runtime far-call table; no source caller.
+/// Reserved empty export C in the runtime far-call table; no source caller.
 UNUSED void RuntimeDispatch_ReservedNoOpC(void) {}
 
-// Reserved empty export D in the runtime far-call table; no source caller.
+/// Reserved empty export D in the runtime far-call table; no source caller.
 UNUSED void RuntimeDispatch_ReservedNoOpD(void) {}
 
-// Reserved empty export E in the runtime far-call table; no source caller.
+/// Reserved empty export E in the runtime far-call table; no source caller.
 UNUSED void RuntimeDispatch_ReservedNoOpE(void) {}
 
-// An exported stub that ignores its arguments and reports 0.
+/// An exported stub that ignores its arguments and reports 0.
 s32 RuntimeDispatch_ReturnZero(s32 unused0, const u8 *unused1) { return 0; }
 
-// The build stamp's twelve digit characters copied to IWRAM, and a zero word
-// after them that ends the string.
+/// The build stamp's twelve digit characters copied to IWRAM, and a zero word
+/// after them that ends the string.
 struct BuildStampCopy {
   u32 digits[3];
   u32 terminator;
 };
 
-// Copies the build stamp resource into high IWRAM at power-on.
+/// Copies the build stamp resource into high IWRAM at power-on.
 void System_CopyBuildStamp(void) {
   const void *stamp;
   struct BuildStampCopy *copy;
@@ -129,21 +130,21 @@ void System_CopyBuildStamp(void) {
   copy->terminator = 0;
 }
 
-// An exported stub that does nothing with its argument.
+/// An exported stub that does nothing with its argument.
 void RuntimeDispatch_NoOpHook(s32 unused) {}
 
-// Returns the ROM address of resource `index` from the resource directory.
+/// Returns the ROM address of resource `index` from the resource directory.
 void *Resource_GetTableEntry(s32 index) {
   return Resource_DirectoryTable[index];
 }
 
-// Resolves the Thumb long branches (BL pairs) of a block of code whose branch
-// offsets are stored from the start of the block. A BL is two halfwords: the
-// first carries the marker bits 0xf000 and the high eleven bits of the offset,
-// the second the marker 0xf800 and the low eleven bits of the halfword offset.
-// Each pair's offset is reduced by the pair's own position in the block, which
-// turns it into the pc-relative offset the CPU expects. `byteLength` is the
-// code size.
+/// Resolves the Thumb long branches (BL pairs) of a block of code whose branch
+/// offsets are stored from the start of the block. A BL is two halfwords: the
+/// first carries the marker bits 0xf000 and the high eleven bits of the offset,
+/// the second the marker 0xf800 and the low eleven bits of the halfword offset.
+/// Each pair's offset is reduced by the pair's own position in the block, which
+/// turns it into the pc-relative offset the CPU expects. `byteLength` is the
+/// code size.
 void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
   s32 entryCount;
   s32 entryIndex;
@@ -205,9 +206,9 @@ void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
   }
 }
 
-// Loads the compressed code resource `index` to `destination` and resolves
-// its long branches there, with a RAM copy of the ARM routine that does what
-// Code_ResolveLongBranches does.
+/// Loads the compressed code resource `index` to `destination` and resolves
+/// its long branches there, with a RAM copy of the ARM routine that does what
+/// Code_ResolveLongBranches does.
 void Resource_LoadCode(u32 index, void *destination) {
   void (*patchBranches)(void *, s32);
   s32 codeSize;
@@ -219,13 +220,13 @@ void Resource_LoadCode(u32 index, void *destination) {
   MemFree(patchBranches);
 }
 
-// The handler of every interrupt nobody has claimed.
+/// The handler of every interrupt nobody has claimed.
 void Runtime_IgnoreInterrupt(void) {}
 
-// Copies the resident code to IWRAM, points the BIOS interrupt vector at its
-// dispatcher, installs the default handler table and enables the VBlank and
-// keypad interrupts (and, outside Japan and England, the cartridge-removed
-// interrupt, which halts the game).
+/// Copies the resident code to IWRAM, points the BIOS interrupt vector at its
+/// dispatcher, installs the default handler table and enables the VBlank and
+/// keypad interrupts (and, outside Japan and England, the cartridge-removed
+/// interrupt, which halts the game).
 void Runtime_InstallIwramAndIrqs(void) {
   u8 *iwram;
 

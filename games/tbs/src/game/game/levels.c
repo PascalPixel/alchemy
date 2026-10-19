@@ -1,10 +1,11 @@
-// Part of game.c, the game object, compiled only through it.
-// Actions and Psynergy lists, characters, experience and levelling up.
+/// @file
+/// Part of game.c, the game object, compiled only through it.
+/// Actions and Psynergy lists, characters, experience and levelling up.
 
 #include "../game_internal.h"
 
-// Returns the definition of action `actionId` (its low 14 bits); an id
-// outside the table gives the first.
+/// Returns the definition of action `actionId` (its low 14 bits); an id
+/// outside the table gives the first.
 struct BattleAct *BattleAction_GetDirect(s32 actionId) {
   u32 entryIndex;
 
@@ -15,7 +16,7 @@ struct BattleAct *BattleAction_GetDirect(s32 actionId) {
   return &gBattleAction_DefinitionTable[entryIndex];
 }
 
-// Returns 1 when `actionId` is in the unit's action list.
+/// Returns 1 when `actionId` is in the unit's action list.
 s32 Unit_KnowsAction(s32 owner, s32 actionId) {
   struct BattleUnit *unit = UnitGet(owner);
   struct OwnerActionSlot *entry;
@@ -36,8 +37,8 @@ s32 Unit_KnowsAction(s32 owner, s32 actionId) {
   return 0;
 }
 
-// Marks on an action list entry: learned from the class, or granted by an
-// equipped item. Plain entries were taught for good.
+/// Marks on an action list entry: learned from the class, or granted by an
+/// equipped item. Plain entries were taught for good.
 enum { OWNER_ACTION_CLASS = 0x8000, OWNER_ACTION_ITEM = 0x4000 };
 
 // Slots are four-byte records, not a flat halfword array. The native view
@@ -49,9 +50,9 @@ enum { OWNER_ACTION_CLASS = 0x8000, OWNER_ACTION_ITEM = 0x4000 };
 #define PSYNERGY_ACTION_AT(slots, index) (((u16 *)(slots))[(index) * 2])
 #endif
 
-// Rebuilds a character's Psynergy list: drops the actions its class and items
-// gave, closes up the list, adds every class action learned by its level and
-// the action of each equipped item that grants one, and closes it up again.
+/// Rebuilds a character's Psynergy list: drops the actions its class and items
+/// gave, closes up the list, adds every class action learned by its level and
+/// the action of each equipped item that grants one, and closes it up again.
 s32 Unit_RefreshPsynergy(s32 owner) {
   struct BattleUnit *unit;
   struct OwnerActionSlot *abilities;
@@ -159,7 +160,7 @@ s32 Unit_RefreshPsynergy(s32 owner) {
   return 0;
 }
 
-// Scratch for Owner_LevelUp.
+/// Scratch for Owner_LevelUp.
 struct LevelUpWork {
   s32 classIndex;
   s32 level;
@@ -167,9 +168,9 @@ struct LevelUpWork {
   u8 unk0c[0x20];
 };
 
-// Teaches a character action `value` for good (or makes a class action
-// permanent), then rebuilds its list. Returns the action's place in the list,
-// or -1 when the list is full.
+/// Teaches a character action `value` for good (or makes a class action
+/// permanent), then rebuilds its list. Returns the action's place in the list,
+/// or -1 when the list is full.
 s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   struct BattleUnit *state = UnitGet(stateIndex);
   s32 key = value & OWNER_ACTION_ID_MASK;
@@ -217,15 +218,15 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   return index;
 }
 
-// Levels the character up once if it has the experience. Returns `gains`
-// filled with the gains, or NULL.
+/// Levels the character up once if it has the experience. Returns `gains`
+/// filled with the gains, or NULL.
 struct LevelUpResult *Unit_CheckLevelUp(s32 owner,
                                         struct LevelUpResult *gains) {
   return Unit_TryLevelUp(owner, gains);
 }
 
-// Returns character `index`'s definition: growth curves, starting level and
-// equipment.
+/// Returns character `index`'s definition: growth curves, starting level and
+/// equipment.
 struct CharacterDefinition *Character_GetDefinition(s32 index) {
   struct CharacterDefinition *base;
 
@@ -233,9 +234,9 @@ struct CharacterDefinition *Character_GetDefinition(s32 index) {
   return &base[index];
 }
 
-// Sets up all eight characters for a new game: names from the message table,
-// starting equipment equipped, class and elements worked out, and levels
-// raised to their starting level.
+/// Sets up all eight characters for a new game: names from the message table,
+/// starting equipment equipped, class and elements worked out, and levels
+/// raised to their starting level.
 void Party_InitCharacters(void) {
   struct BattleUnit *unit;
   struct CharacterDefinition *character;
@@ -290,11 +291,11 @@ void Party_InitCharacters(void) {
   }
 }
 
-// Unused reserved entry; keep its place in the far-call table.
+/// Unused reserved entry; keep its place in the far-call table.
 UNUSED void Owner_LevelNoOp(void) {}
 
-// Returns the experience a character needs for `level` (0 for level 0 and
-// below); -1 for an enemy or a level above 99.
+/// Returns the experience a character needs for `level` (0 for level 0 and
+/// below); -1 for an enemy or a level above 99.
 u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {
   struct BattleUnit *unit = UnitGet(owner);
 
@@ -309,10 +310,10 @@ u32 Unit_GetExperienceForLevel(s32 owner, s32 level) {
   return -1;
 }
 
-// Raises a character one level (up to 99), adding to each base stat the
-// growth between the two points of its growth curve around the new level
-// (one point every 20 levels), a twentieth of it per level with a random
-// part. The gains go to `gains`, which is returned.
+/// Raises a character one level (up to 99), adding to each base stat the
+/// growth between the two points of its growth curve around the new level
+/// (one point every 20 levels), a twentieth of it per level with a random
+/// part. The gains go to `gains`, which is returned.
 struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *gains) {
   struct BattleUnit *unit;
   struct LevelUpWork *work;
@@ -389,8 +390,8 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *gains) {
   return gains;
 }
 
-// Levels the character up once if its experience reaches the next level.
-// Returns `gains` filled with the gains, or NULL.
+/// Levels the character up once if its experience reaches the next level.
+/// Returns `gains` filled with the gains, or NULL.
 struct LevelUpResult *Unit_TryLevelUp(s32 owner, struct LevelUpResult *gains) {
   struct BattleUnit *unit;
 
@@ -403,8 +404,8 @@ struct LevelUpResult *Unit_TryLevelUp(s32 owner, struct LevelUpResult *gains) {
   return 0;
 }
 
-// Levels character `owner` up one level at a time until `targetLevel`, then
-// recomputes its stats.
+/// Levels character `owner` up one level at a time until `targetLevel`, then
+/// recomputes its stats.
 void Unit_LevelUpTo(s32 owner, s32 targetLevel) {
   // Each level's gains are discarded.
   struct LevelUpResult gains;

@@ -17,49 +17,49 @@
 #include "battle_unit.h"
 #include "flags.h"
 
-// Expose the test-room entrance table to the scene loader.
+/// Expose the test-room entrance table to the scene loader.
 u8 *TestRooms_GetEntrances(void) { return (u8 *)gTestRooms_Entrances; }
 
-// The test rooms need no additional scene data.
+/// The test rooms need no additional scene data.
 s32 SceneData_ReturnZero(void) { return 0; }
 
-// Expose the links to the other test rooms.
+/// Expose the links to the other test rooms.
 u8 *TestRooms_GetExits(void) { return (u8 *)gTestRooms_Exits; }
 
-// Place one Djinni of each element in the test room.
+/// Place one Djinni of each element in the test room.
 u8 *TestRooms_GetPlacements(void) { return (u8 *)gTestRooms_Placements; }
 
-// Grant the first Djinni of an element, then clear its found flag for testing.
+/// Grant the first Djinni of an element, then clear its found flag for testing.
 static __inline__ void TestRooms_GiveDjinniForTesting(s32 actorId,
                                                       s32 element) {
   Djinn_JoinParty(actorId, element, 0);
   Engine_GameFlagClear(FLAG_DJINNI_0 + element * 20);
 }
 
-// Receive Flint from the corresponding test-room actor.
+/// Receive Flint from the corresponding test-room actor.
 static void TestRooms_ReceiveFlint(void) {
   TestRooms_GiveDjinniForTesting(8, ELEMENT_VENUS);
 }
 
-// Receive Fizz from the corresponding test-room actor.
+/// Receive Fizz from the corresponding test-room actor.
 static void TestRooms_ReceiveFizz(void) {
   TestRooms_GiveDjinniForTesting(9, ELEMENT_MERCURY);
 }
 
-// Receive Forge from the corresponding test-room actor.
+/// Receive Forge from the corresponding test-room actor.
 static void TestRooms_ReceiveForge(void) {
   TestRooms_GiveDjinniForTesting(10, ELEMENT_MARS);
 }
 
-// Receive Gust from the corresponding test-room actor.
+/// Receive Gust from the corresponding test-room actor.
 static void TestRooms_ReceiveGust(void) {
   TestRooms_GiveDjinniForTesting(11, ELEMENT_JUPITER);
 }
 
-// Bind each Djinni actor to its test grant callback.
+/// Bind each Djinni actor to its test grant callback.
 u8 *TestRooms_GetEvents(void) { return (u8 *)gTestRooms_Events; }
 
-// The test room needs no scripted scene initialization.
+/// The test room needs no scripted scene initialization.
 s32 Scene_RunEmptyScene(void) { return 0; }
 
 u32 gTestRooms_EntrancesHead[] = {

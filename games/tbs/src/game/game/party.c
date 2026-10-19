@@ -1,5 +1,6 @@
-// Part of game.c, the game object, compiled only through it.
-// Enemy units, the active party, coins and counters, and summons.
+/// @file
+/// Part of game.c, the game object, compiled only through it.
+/// Enemy units, the active party, coins and counters, and summons.
 
 #include "../game_internal.h"
 
@@ -13,9 +14,9 @@
 #define ENEMY_SUFFIX_LAST 25
 #endif
 
-// Fills battle unit `unitId` (0x80 to 0x86) with enemy `enemyId`: stats,
-// name with its suffix letter, the items it carries, rewards and elements.
-// Enemies 158 to 171 fight on side 2. Returns 0 for an id out of range.
+/// Fills battle unit `unitId` (0x80 to 0x86) with enemy `enemyId`: stats,
+/// name with its suffix letter, the items it carries, rewards and elements.
+/// Enemies 158 to 171 fight on side 2. Returns 0 for an id out of range.
 s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
   struct BattleUnit *unit;
   const struct EnemyDefinition *enemy;
@@ -105,7 +106,7 @@ s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
 // The party: flags 0 to 7 say who is in it, and gGameState.activeOwners
 // lists them in order.
 
-// Returns the number of party members.
+/// Returns the number of party members.
 s32 Party_CountActiveOwners(void) {
   s32 owner;
   s32 count;
@@ -120,7 +121,7 @@ s32 Party_CountActiveOwners(void) {
   return count;
 }
 
-// Adds character `owner` to the end of the party. Returns the party size.
+/// Adds character `owner` to the end of the party. Returns the party size.
 s32 Party_AddActiveOwner(s32 owner) {
   s32 partySize = Party_CountActiveOwners();
   s32 partyIndex;
@@ -136,7 +137,7 @@ s32 Party_AddActiveOwner(s32 owner) {
   return partySize + 1;
 }
 
-// Takes character `owner` out of the party. Returns the party size.
+/// Takes character `owner` out of the party. Returns the party size.
 s32 Party_RemoveActiveOwner(s32 owner) {
   s32 partySize = Party_CountActiveOwners();
   s32 removedIndex;
@@ -153,8 +154,8 @@ s32 Party_RemoveActiveOwner(s32 owner) {
   return Party_CountActiveOwners();
 }
 
-// Writes the party members to `owners`, ending with 0xff, and returns how
-// many there are.
+/// Writes the party members to `owners`, ending with 0xff, and returns how
+/// many there are.
 s32 Party_ListActiveOwners(s16 *owners) {
   s32 count = 0;
 
@@ -174,8 +175,8 @@ s32 Party_ListActiveOwners(s16 *owners) {
   return count;
 }
 
-// Adds `amount` to the party's coins, kept between 0 and 999999, and returns
-// the new total.
+/// Adds `amount` to the party's coins, kept between 0 and 999999, and returns
+/// the new total.
 s32 Party_AdjustCoins(s32 amount) {
   s32 value;
   struct GameState *work;
@@ -200,8 +201,8 @@ struct TradeFlags {
   u32 flags;
 };
 
-// Each adds `amount` to a game state counter, kept between 0 and `max`, and
-// returns the new value.
+/// Each adds `amount` to a game state counter, kept between 0 and `max`, and
+/// returns the new value.
 #define PARTY_DEFINE_ADJUST(name, field, max)                                  \
   s32 name(s32 amount) {                                                       \
     s32 value;                                                                 \
@@ -220,8 +221,8 @@ struct TradeFlags {
 PARTY_DEFINE_ADJUST(Party_AdjustShopCredit, shopCredit, 999999)
 PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, shopGifts, 28)
 
-// Writes the summons whose bit is set in the first word of the party's Djinn
-// table to `output`, in menu order, ending with 32. Returns how many.
+/// Writes the summons whose bit is set in the first word of the party's Djinn
+/// table to `output`, in menu order, ending with 32. Returns how many.
 s32 Summon_ListLearned(u8 *output) {
   u8 *source = gSummon_OrderList;
   u8 *end = gSummon_OrderList + 15;
@@ -239,7 +240,7 @@ s32 Summon_ListLearned(u8 *output) {
   return count;
 }
 
-// Returns summon `summonId`'s definition, or NULL past the sixteenth.
+/// Returns summon `summonId`'s definition, or NULL past the sixteenth.
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId) {
   if (summonId > 15)
     return NULL;

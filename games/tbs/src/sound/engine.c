@@ -2,9 +2,9 @@
 #include "types.h"
 #include "../../include/system/io_reg.h"
 
-// Taking the entry address folds its slot into a literal address. Direct
-// indexing adds an address-adjustment instruction with the library compiler.
-// Detaches a note through the command table entry installed by the driver.
+/// Taking the entry address folds its slot into a literal address. Direct
+/// indexing adds an address-adjustment instruction with the library compiler.
+/// Detaches a note through the command table entry installed by the driver.
 void AudioCommand_InvokeSlot34(struct SoundNote *note) {
   void (*detachNote)(struct SoundNote *) =
       (void (*)(struct SoundNote *)) *
@@ -13,7 +13,7 @@ void AudioCommand_InvokeSlot34(struct SoundNote *note) {
   detachNote(note);
 }
 
-// Clears a 64-byte player or track prefix through the driver command table.
+/// Clears a 64-byte player or track prefix through the driver command table.
 void AudioCommand_InvokeSlot35(void *block) {
   void (*clearWork)(void *) =
       (void (*)(void *)) * (&gSound_CommandTable[SOUND_COMMAND_CLEAR_WORK]);
@@ -46,8 +46,8 @@ void CgbChannel_Mute(u8 channel);
 
 extern const u8 gSound_Cgb3LevelCodes[];
 
-// Resets the sound hardware, clears mixer state and installs the default PCM
-// driver.
+/// Resets the sound hardware, clears mixer state and installs the default PCM
+/// driver.
 void AudioEngine_Initialize(struct SoundWork *work) {
   u32 zero;
 
@@ -85,8 +85,8 @@ void AudioEngine_Initialize(struct SoundWork *work) {
   work->lock = SOUND_LOCK;
 }
 
-// Sets the PCM frame length and Timer 0 reload, starting playback at scanline
-// 159.
+/// Sets the PCM frame length and Timer 0 reload, starting playback at scanline
+/// 159.
 void AudioEngine_SetPcmRate(u32 mode) {
   struct SoundWork *work = SOUND_WORK;
   u32 frameSamples;
@@ -112,8 +112,8 @@ void AudioEngine_SetPcmRate(u32 mode) {
   REG_TM0CNT_H = 0x80;
 }
 
-// Applies the supplied reverb, channel-count, volume, bias and sample-rate
-// fields.
+/// Applies the supplied reverb, channel-count, volume, bias and sample-rate
+/// fields.
 void AudioEngine_SetMode(u32 mode) {
   struct SoundWork *work = SOUND_WORK;
   u32 modeField;
@@ -154,8 +154,8 @@ void AudioEngine_SetMode(u32 mode) {
   work->lock = SOUND_LOCK;
 }
 
-// Silences every PCM and CGB note while holding the sound work lock.
-// Splitting the counter or typed iterators changes the native EN registers.
+/// Silences every PCM and CGB note while holding the sound work lock.
+/// Splitting the counter or typed iterators changes the native EN registers.
 void AudioEngine_StopAllChannels(void) {
   struct SoundWork *work = SOUND_WORK;
   s32 channelCounter;
@@ -187,7 +187,7 @@ void AudioEngine_StopAllChannels(void) {
   work->lock = SOUND_LOCK;
 }
 
-// Stops both FIFO transfers and clears their sample buffers.
+/// Stops both FIFO transfers and clears their sample buffers.
 void AudioEngine_SuspendDirectSound(void) {
   struct SoundWork *work = SOUND_WORK;
   u32 zero;
@@ -205,7 +205,7 @@ void AudioEngine_SuspendDirectSound(void) {
   Bios_CpuSet(&zero, work->buffers, CPU_SET_SRC_FIXED | CPU_SET_32BIT | 0x318);
 }
 
-// Restarts both FIFO transfers and releases the suspended-work lock.
+/// Restarts both FIFO transfers and releases the suspended-work lock.
 void AudioEngine_ResumeDirectSound(void) {
   struct SoundWork *work = SOUND_WORK;
   u32 lock = work->lock;
@@ -218,8 +218,8 @@ void AudioEngine_ResumeDirectSound(void) {
   work->lock = lock - 10;
 }
 
-// Deactivates up to sixteen tracks and links the player into the mixer tick
-// chain.
+/// Deactivates up to sixteen tracks and links the player into the mixer tick
+/// chain.
 void MusicPlayer_Initialize(struct SoundPlayer *player,
                             struct SoundTrack *tracks, u8 trackCount) {
   struct SoundWork *work;
@@ -255,7 +255,7 @@ void MusicPlayer_Initialize(struct SoundPlayer *player,
   player->lock = SOUND_LOCK;
 }
 
-// Starts a song when its priority permits, resetting its tracks and tempo.
+/// Starts a song when its priority permits, resetting its tracks and tempo.
 void MusicPlayer_StartSong(struct SoundPlayer *player,
                            const struct SequenceHeader *header) {
   s32 trackIndex;
@@ -311,7 +311,7 @@ start:
   player->lock = SOUND_LOCK;
 }
 
-// Pauses this player and stops all of its tracks.
+/// Pauses this player and stops all of its tracks.
 void MusicPlayer_Stop(struct SoundPlayer *player) {
   s32 tracksRemaining;
   struct SoundTrack *track;
@@ -330,8 +330,8 @@ void MusicPlayer_Stop(struct SoundPlayer *player) {
   player->lock = SOUND_LOCK;
 }
 
-// Advances a due fade step, updating active track volumes or stopping the
-// player.
+/// Advances a due fade step, updating active track volumes or stopping the
+/// player.
 void MusicPlayer_StepFade(struct SoundPlayer *player) {
   s32 tracksRemaining;
   struct SoundTrack *track;
@@ -381,8 +381,8 @@ void MusicPlayer_StepFade(struct SoundPlayer *player) {
   }
 }
 
-// Recalculates dirty stereo volumes and pitch from track settings and
-// modulation.
+/// Recalculates dirty stereo volumes and pitch from track settings and
+/// modulation.
 void MusicTrack_CalcOutput(struct SoundPlayer *player,
                            struct SoundTrack *track) {
   u32 volume;
@@ -418,7 +418,7 @@ void MusicTrack_CalcOutput(struct SoundPlayer *player,
   track->flags &= ~(SOUND_TRACK_VOLUME_DIRTY | SOUND_TRACK_PITCH_DIRTY);
 }
 
-// Converts a key and fractional pitch to a CGB tone or noise-register value.
+/// Converts a key and fractional pitch to a CGB tone or noise-register value.
 s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine) {
   s32 lowerFrequency;
   s32 upperFrequency;
@@ -454,7 +454,7 @@ s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine) {
          2048;
 }
 
-// Disables one CGB channel using its envelope or wave-control register.
+/// Disables one CGB channel using its envelope or wave-control register.
 void CgbChannel_Mute(u8 channel) {
   switch (channel) {
   case 1:
@@ -475,9 +475,9 @@ void CgbChannel_Mute(u8 channel) {
   }
 }
 
-// Chooses stereo routing and derives peak and sustain levels for a CGB note.
-// Sharing the peak calculation and removing these jumps shortens EN by four
-// bytes.
+/// Chooses stereo routing and derives peak and sustain levels for a CGB note.
+/// Sharing the peak calculation and removing these jumps shortens EN by four
+/// bytes.
 void CgbNote_UpdatePanEnvelope(struct CgbNote *note) {
   u32 right = note->outRight;
   u32 left = note->outLeft;
@@ -503,8 +503,8 @@ scale:
   note->panBits &= note->channelBits;
 }
 
-// Steps CGB note envelopes and writes changed pitch, volume and trigger
-// registers.
+/// Steps CGB note envelopes and writes changed pitch, volume and trigger
+/// registers.
 void Cgb_UpdateChannels(void) {
   s32 channel;
   s32 extraEnvelopeTick;
@@ -741,8 +741,8 @@ void Cgb_UpdateChannels(void) {
   }
 }
 
-// Sets the tempo multiplier and updates the number of ticks advanced per
-// frame.
+/// Sets the tempo multiplier and updates the number of ticks advanced per
+/// frame.
 void MusicPlayer_SetPitchAndUpdateFrequency(struct SoundPlayer *player,
                                             u16 scale) {
   if (player->lock == SOUND_LOCK) {
@@ -753,7 +753,7 @@ void MusicPlayer_SetPitchAndUpdateFrequency(struct SoundPlayer *player,
   }
 }
 
-// Sets the volume scale of active tracks selected by the bit mask.
+/// Sets the volume scale of active tracks selected by the bit mask.
 void MusicPlayer_SetVolume(struct SoundPlayer *player, u16 mask, u16 volume) {
   s32 tracksRemaining;
   struct SoundTrack *track;
@@ -779,7 +779,7 @@ void MusicPlayer_SetVolume(struct SoundPlayer *player, u16 mask, u16 volume) {
   player->lock = SOUND_LOCK;
 }
 
-// Sets the semitone and fractional pitch offsets of selected active tracks.
+/// Sets the semitone and fractional pitch offsets of selected active tracks.
 void MusicPlayer_SetPitch(struct SoundPlayer *player, u16 mask, s16 pitch) {
   s32 tracksRemaining;
   struct SoundTrack *track;
@@ -806,7 +806,7 @@ void MusicPlayer_SetPitch(struct SoundPlayer *player, u16 mask, s16 pitch) {
   player->lock = SOUND_LOCK;
 }
 
-// Sets the stereo pan offset of selected active tracks.
+/// Sets the stereo pan offset of selected active tracks.
 void MusicPlayer_SetPan(struct SoundPlayer *player, u16 mask, s8 pan) {
   s32 tracksRemaining;
   struct SoundTrack *track;
@@ -832,8 +832,8 @@ void MusicPlayer_SetPan(struct SoundPlayer *player, u16 mask, s8 pan) {
   player->lock = SOUND_LOCK;
 }
 
-// Resets the LFO phase and amount, marking the affected output for
-// recalculation.
+/// Resets the LFO phase and amount, marking the affected output for
+/// recalculation.
 void MusicTrack_ClearModulation(struct SoundTrack *track) {
   track->lfoPhase = 0;
   track->modAmount = 0;
@@ -843,8 +843,8 @@ void MusicTrack_ClearModulation(struct SoundTrack *track) {
     track->flags |= SOUND_TRACK_UPDATE_VOLUME;
 }
 
-// Sets modulation depth on selected active tracks, resetting zero-depth
-// modulation.
+/// Sets modulation depth on selected active tracks, resetting zero-depth
+/// modulation.
 void MusicPlayer_SetModulationDepth(struct SoundPlayer *player,
                                     s32 selectedTracks, s32 depthArgument) {
   u16 mask = selectedTracks;
@@ -875,7 +875,7 @@ void MusicPlayer_SetModulationDepth(struct SoundPlayer *player,
   player->lock = SOUND_LOCK;
 }
 
-// Sets LFO speed on selected active tracks, resetting modulation when stopped.
+/// Sets LFO speed on selected active tracks, resetting modulation when stopped.
 void MusicPlayer_SetLfoSpeed(struct SoundPlayer *player, u32 selectedTracks,
                              u32 speedArgument) {
   u16 mask = selectedTracks;
@@ -906,8 +906,8 @@ void MusicPlayer_SetLfoSpeed(struct SoundPlayer *player, u32 selectedTracks,
   player->lock = SOUND_LOCK;
 }
 
-// Executes a work-byte operation and consumes a branch address for
-// comparisons.
+/// Executes a work-byte operation and consumes a branch address for
+/// comparisons.
 void MusicTrack_OperateWorkByte(struct SoundPlayer *player,
                                 struct SoundTrack *track) {
   u32 operation;
@@ -999,7 +999,7 @@ skip:
   track->cursor += 4;
 }
 
-// Reads an extended-command index and invokes its handler.
+/// Reads an extended-command index and invokes its handler.
 void MusicTrack_DispatchStreamCommand(struct SoundPlayer *player,
                                       struct SoundTrack *track) {
   s32 command;
@@ -1019,7 +1019,7 @@ union PackedWord {
   } part;
 };
 
-// Finishes a track through the base command table entry.
+/// Finishes a track through the base command table entry.
 void Runtime_CallWorkEntryWithArgs(struct SoundPlayer *player,
                                    struct SoundTrack *track) {
   SoundCommand finishSequence = *(&gSound_CommandTable[SOUND_COMMAND_FINISH]);
@@ -1027,7 +1027,7 @@ void Runtime_CallWorkEntryWithArgs(struct SoundPlayer *player,
   finishSequence(player, track);
 }
 
-// Reads an unaligned little-endian voice target address from the sequence.
+/// Reads an unaligned little-endian voice target address from the sequence.
 void MusicTrack_ReadVoiceTarget(struct SoundPlayer *player,
                                 struct SoundTrack *track) {
   const u8 *source = track->cursor;
@@ -1041,63 +1041,63 @@ void MusicTrack_ReadVoiceTarget(struct SoundPlayer *player,
   track->cursor = source + 4;
 }
 
-// Reads the voice kind from the sequence.
+/// Reads the voice kind from the sequence.
 void MusicTrack_SetVoiceKind(struct SoundPlayer *player,
                              struct SoundTrack *track) {
   track->voice.kind = *track->cursor;
   track->cursor++;
 }
 
-// Reads the voice attack rate from the sequence.
+/// Reads the voice attack rate from the sequence.
 void MusicTrack_SetVoiceAttack(struct SoundPlayer *player,
                                struct SoundTrack *track) {
   track->voice.attack = *track->cursor;
   track->cursor++;
 }
 
-// Reads the voice decay rate from the sequence.
+/// Reads the voice decay rate from the sequence.
 void MusicTrack_SetVoiceDecay(struct SoundPlayer *player,
                               struct SoundTrack *track) {
   track->voice.decay = *track->cursor;
   track->cursor++;
 }
 
-// Reads the voice sustain level from the sequence.
+/// Reads the voice sustain level from the sequence.
 void MusicTrack_SetVoiceSustain(struct SoundPlayer *player,
                                 struct SoundTrack *track) {
   track->voice.sustain = *track->cursor;
   track->cursor++;
 }
 
-// Reads the voice release rate from the sequence.
+/// Reads the voice release rate from the sequence.
 void MusicTrack_SetVoiceRelease(struct SoundPlayer *player,
                                 struct SoundTrack *track) {
   track->voice.release = *track->cursor;
   track->cursor++;
 }
 
-// Reads the note tail volume from the sequence.
+/// Reads the note tail volume from the sequence.
 void MusicTrack_SetTailLevel(struct SoundPlayer *player,
                              struct SoundTrack *track) {
   track->tailLevel = *track->cursor;
   track->cursor++;
 }
 
-// Reads the note tail duration from the sequence.
+/// Reads the note tail duration from the sequence.
 void MusicTrack_SetTailLength(struct SoundPlayer *player,
                               struct SoundTrack *track) {
   track->tailLength = *track->cursor;
   track->cursor++;
 }
 
-// Reads the hardware note length from the sequence.
+/// Reads the hardware note length from the sequence.
 void MusicTrack_SetVoiceLength(struct SoundPlayer *player,
                                struct SoundTrack *track) {
   track->voice.length = *track->cursor;
   track->cursor++;
 }
 
-// Reads the voice pan or CGB sweep setting from the sequence.
+/// Reads the voice pan or CGB sweep setting from the sequence.
 void MusicTrack_SetVoicePanOrSweep(struct SoundPlayer *player,
                                    struct SoundTrack *track) {
   track->voice.panOrSweep = *track->cursor;

@@ -1,10 +1,11 @@
-// Part of game.c, the game object, compiled only through it.
-// Djinn: definitions, setting and standby, and their counts.
+/// @file
+/// Part of game.c, the game object, compiled only through it.
+/// Djinn: definitions, setting and standby, and their counts.
 
 #include "../game_internal.h"
 
-// Returns the definition of Djinn `index` (0 to 19) of element `group` (0 to
-// 3); anything out of range gives the first.
+/// Returns the definition of Djinn `index` (0 to 19) of element `group` (0 to
+/// 3); anything out of range gives the first.
 const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index) {
   s32 entry;
 
@@ -15,9 +16,9 @@ const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index) {
   return &gDjinn_DefinitionTable[entry];
 }
 
-// Gives a newly found Djinn to the party member holding the fewest Djinn who
-// has room in that element, puts it on standby and sets its found flag.
-// Returns who got it, -1 if it was found before or -2 when nobody has room.
+/// Gives a newly found Djinn to the party member holding the fewest Djinn who
+/// has room in that element, puts it on standby and sets its found flag.
+/// Returns who got it, -1 if it was found before or -2 when nobody has room.
 s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn) {
   s32 flag = djinn + element * 20 + FLAG_DJINNI_0;
   s32 leastLoadedOwner = 0;
@@ -54,8 +55,8 @@ s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn) {
   return leastLoadedOwner;
 }
 
-// Gives Djinn `djinnIndex` of `element` to a unit. Returns -1 when the unit
-// holds ten of the element or has it already.
+/// Gives Djinn `djinnIndex` of `element` to a unit. Returns -1 when the unit
+/// holds ten of the element or has it already.
 s32 Djinn_AddToOwner(s32 owner, s32 element, s32 djinnIndex) {
   struct BattleUnit *unit = UnitGet(owner);
 
@@ -68,8 +69,8 @@ s32 Djinn_AddToOwner(s32 owner, s32 element, s32 djinnIndex) {
   return 0;
 }
 
-// Returns 1 when the unit holds the Djinn and it is neither set nor waiting
-// on the standby and recovery list.
+/// Returns 1 when the unit holds the Djinn and it is neither set nor waiting
+/// on the standby and recovery list.
 s32 Djinn_IsReady(s32 owner, s32 element, s32 djinnIndex) {
   struct BattleUnit *unit = UnitGet(owner);
   struct DjinnRecoveryList *recoveryList;
@@ -102,15 +103,15 @@ s32 Djinn_IsReady(s32 owner, s32 element, s32 djinnIndex) {
   return 0;
 }
 
-// Returns 1 when the Djinn is set on the unit.
+/// Returns 1 when the Djinn is set on the unit.
 u32 Djinn_IsActive(s32 owner, s32 element, s32 djinnIndex) {
   s32 activeBit = UnitGet(owner)->djinnActive[element] & (1 << djinnIndex);
 
   return (u32)(-activeBit | activeBit) >> 31;
 }
 
-// Sets a ready Djinn on the unit and works out its class again. Returns 1
-// when it was set.
+/// Sets a ready Djinn on the unit and works out its class again. Returns 1
+/// when it was set.
 s32 Djinn_Activate(s32 owner, s32 element, s32 djinnIndex) {
   struct BattleUnit *unit = UnitGet(owner);
   s32 isReady = Djinn_IsReady(owner, element, djinnIndex);
@@ -127,8 +128,8 @@ s32 Djinn_Activate(s32 owner, s32 element, s32 djinnIndex) {
   return isReady;
 }
 
-// Takes a set Djinn off the unit and works out its class again. Returns 1
-// when it was set.
+/// Takes a set Djinn off the unit and works out its class again. Returns 1
+/// when it was set.
 u32 Djinn_Deactivate(s32 owner, s32 element, s32 djinnIndex) {
   struct BattleUnit *unit = UnitGet(owner);
   u32 wasActive = Djinn_IsActive(owner, element, djinnIndex);
@@ -141,8 +142,8 @@ u32 Djinn_Deactivate(s32 owner, s32 element, s32 djinnIndex) {
   return wasActive;
 }
 
-// Takes the Djinn off its side's standby and recovery list. Returns 1 when
-// it was there.
+/// Takes the Djinn off its side's standby and recovery list. Returns 1 when
+/// it was there.
 s32 DjinnRecovery_Remove(s32 owner, s32 element, s32 djinnIndex) {
   struct DjinnRecoveryList *recoveryList;
   s32 removed = 0;
@@ -165,8 +166,8 @@ s32 DjinnRecovery_Remove(s32 owner, s32 element, s32 djinnIndex) {
   return removed;
 }
 
-// Puts the owner's Djinn at the end of
-// its side's list on standby (turns -1). Returns the list.
+/// Puts the owner's Djinn at the end of
+/// its side's list on standby (turns -1). Returns the list.
 u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinnIndex) {
   struct DjinnRecoveryList *recoveryList;
   s32 entryIndex;
@@ -183,8 +184,8 @@ u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinnIndex) {
   return (u32 *)&recoveryList->count;
 }
 
-// Moves a Djinni from one unit to another, keeping it set or on standby.
-// Returns -1 when the source lacks it or the target has no room.
+/// Moves a Djinni from one unit to another, keeping it set or on standby.
+/// Returns -1 when the source lacks it or the target has no room.
 s32 Djinn_Transfer(s32 source, s32 element, s32 djinnIndex, s32 target) {
   struct BattleUnit *sourceUnit = UnitGet(source);
   u32 wasActive;
@@ -208,8 +209,8 @@ s32 Djinn_Transfer(s32 source, s32 element, s32 djinnIndex, s32 target) {
   return -1;
 }
 
-// Counts the party's Djinn on standby, by element into `counts` when it is
-// given. Returns the total.
+/// Counts the party's Djinn on standby, by element into `counts` when it is
+/// given. Returns the total.
 s32 DjinnRecovery_CountStandby(u8 *counts) {
   s32 standbyCount = 0;
   struct DjinnRecoveryTable *recoveryTable = Djinn_GetRecoveryTable(0);
@@ -242,13 +243,13 @@ s32 DjinnRecovery_CountStandby(u8 *counts) {
   return standbyCount;
 }
 
-// Returns the ability ID used when the Djinni is unleashed.
+/// Returns the ability ID used when the Djinni is unleashed.
 s32 Djinn_GetAbilityId(u32 group, u32 index) {
   return Djinn_GetDefinition(group, index)->abilityId;
 }
 
-// Returns how many Djinn of `element` the party holds, or of all
-// elements for -1.
+/// Returns how many Djinn of `element` the party holds, or of all
+/// elements for -1.
 s32 Party_SumDjinnCounts(s32 element) {
   u16 owners[16];
   s32 djinnCount = 0;

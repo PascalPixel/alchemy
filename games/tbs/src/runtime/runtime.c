@@ -1,28 +1,29 @@
-// The runtime object: what every other part of the game stands on. Power-up
-// and the interrupt handlers, the frame wait and VBlank, input, the register
-// write queue, fades, the sprite lists and VRAM cache, the task scheduler,
-// maths, debug text, the heap, the 3D transform, saving and the link cable.
-//
-// runtime_internal.h holds what every part shares (its includes); the code
-// is in the files under runtime/, included here in the order it has in the
-// ROM. Camelot's own files are not recoverable: the ROM shows one object, and
-// these parts are ours, cut where one family ends and the next begins.
-// README.md in this folder gives the words and prefixes the parts use. Where
-// to start:
-//
-//   Power-up        system.c: System_Initialize
-//   Frames          frame.c: WaitFrames, System_VBlankHandler,
-//                   Runtime_SetIrqHandler; scheduler.c:
-//                   Scheduler_AddOrUpdateCallback
-//   Screen          fade.c: Fade_Start; render.c: Render_BuildOamList;
-//                   vram_cache.c: VramCache_Load
-//   Memory          heap.c: Runtime_AllocateHeapBlock, MemAlloc
-//   3D              transform.c: SceneTransform_ApplyRotationTranslation,
-//                   Render_ProjectPoint
-//   Saving          save.c: SaveState_WriteRecord,
-//                   SaveState_ReadRecordPayload
-//   Link cable      serial.c: SerialRuntime_Initialize,
-//                   SerialRuntime_ExchangePayloads
+/// @file
+/// The runtime object: what every other part of the game stands on. Power-up
+/// and the interrupt handlers, the frame wait and VBlank, input, the register
+/// write queue, fades, the sprite lists and VRAM cache, the task scheduler,
+/// maths, debug text, the heap, the 3D transform, saving and the link cable.
+///
+/// runtime_internal.h holds what every part shares (its includes); the code
+/// is in the files under runtime/, included here in the order it has in the
+/// ROM. Camelot's own files are not recoverable: the ROM shows one object, and
+/// these parts are ours, cut where one family ends and the next begins.
+/// README.md in this folder gives the words and prefixes the parts use. Where
+/// to start:
+///
+///   Power-up        system.c: System_Initialize
+///   Frames          frame.c: WaitFrames, System_VBlankHandler,
+///                   Runtime_SetIrqHandler; scheduler.c:
+///                   Scheduler_AddOrUpdateCallback
+///   Screen          fade.c: Fade_Start; render.c: Render_BuildOamList;
+///                   vram_cache.c: VramCache_Load
+///   Memory          heap.c: Runtime_AllocateHeapBlock, MemAlloc
+///   3D              transform.c: SceneTransform_ApplyRotationTranslation,
+///                   Render_ProjectPoint
+///   Saving          save.c: SaveState_WriteRecord,
+///                   SaveState_ReadRecordPayload
+///   Link cable      serial.c: SerialRuntime_Initialize,
+///                   SerialRuntime_ExchangePayloads
 
 #include "runtime_internal.h"
 

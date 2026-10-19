@@ -32,38 +32,38 @@
 #include "macros.h"
 #include "songs.h"
 
-// A sprite of the "Press Start" prompt, linked into a render slot each frame:
-// OAM attributes 0 to 2 with the position split out.
+/// A sprite of the "Press Start" prompt, linked into a render slot each frame:
+/// OAM attributes 0 to 2 with the position split out.
 struct IntroSprite {
-  u32 next; // the render slot link
+  u32 next; ///< the render slot link
   u8 y;
-  u8 attr0High; // shape and mode bits of attribute 0
+  u8 attr0High; ///< shape and mode bits of attribute 0
   u16 x : 9;
-  u16 attr1High : 7; // flip and size bits of attribute 1
+  u16 attr1High : 7; ///< flip and size bits of attribute 1
   s32 tile;
 };
 
-// The title intro's state, in heap slot 43.
+/// The title intro's state, in heap slot 43.
 struct IntroWork {
-  s32 backRows;  // rows of the far background copied in as it scrolls
-  s32 frontRows; // rows of the near background copied in
+  s32 backRows;  ///< rows of the far background copied in as it scrolls
+  s32 frontRows; ///< rows of the near background copied in
   s32 frame;
   s32 tick;
   s32 state;
-  s32 rise; // how far the sprites have risen
+  s32 rise; ///< how far the sprites have risen
   union {
     struct OamShadow objects[120];
     struct {
-      u8 introObjects[0x68]; // objects[0] to [12], still the intro's
+      u8 introObjects[0x68]; ///< objects[0] to [12], still the intro's
       struct IntroSprite sprites[8];
     } prompt;
   } area;
 };
 
-// The x of each of the six columns of intro sprites
+/// The x of each of the six columns of intro sprites
 const u8 gTitle_IntroSpriteColumns[] = {96, 136, 140, 160, 168, 184};
 
-// The prompt's blend level over its 60-frame pulse
+/// The prompt's blend level over its 60-frame pulse
 // clang-format off
 const u8 gTitle_PromptBlendLevels[60] = {
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
@@ -73,26 +73,26 @@ const u8 gTitle_PromptBlendLevels[60] = {
 };
 // clang-format on
 
-// Entry `i` of the intro's OAM shadow
+/// Entry `i` of the intro's OAM shadow
 #define INTRO_OBJ(i) (work->area.objects[i])
 
-// Brings `v` into 0..255 by whole turns of 256
+/// Brings `v` into 0..255 by whole turns of 256
 #define WRAP_TO_BYTE(v)                                                        \
   while ((v) > 255)                                                            \
     (v) -= 256;                                                                \
   while ((v) < 0)                                                              \
   (v) += 256
 
-// Sets x and y to the top left of a sprite of half-width `half` centred on
-// column `column`, between slopeBaseY at x = 104 and slopeTopY at x = 184.
+/// Sets x and y to the top left of a sprite of half-width `half` centred on
+/// column `column`, between slopeBaseY at x = 104 and slopeTopY at x = 184.
 #define PLACE_ON_SLOPE(column, half)                                           \
   x = gTitle_IntroSpriteColumns[column] - (half);                              \
   y = (slopeTopY - slopeBaseY) * ((x + (half)) - 104) / 80 + slopeBaseY -      \
       (half);                                                                  \
   WRAP_TO_BYTE(y)
 
-// Writes OAM entries i to i + 3: four sprites of `size` pixels, mirrored into
-// the four quarters of one picture at (x, y)
+/// Writes OAM entries i to i + 3: four sprites of `size` pixels, mirrored into
+/// the four quarters of one picture at (x, y)
 #define MIRRORED_QUAD(i, size, shape, tile)                                    \
   INTRO_OBJ(i).attr01 = ((x + 4) << 16) | y | ((shape) + 0x00002400);          \
   INTRO_OBJ((i) + 1).attr01 =                                                  \
@@ -106,9 +106,9 @@ const u8 gTitle_PromptBlendLevels[60] = {
   INTRO_OBJ((i) + 2).attr2 = (tile);                                           \
   INTRO_OBJ((i) + 3).attr2 = (tile)
 
-// A VBlank task of the title intro: places the rising sprites along the
-// slope of the scrolling background, alternating two sets every other frame
-// so twice as many show, hides the rest and copies the list to OAM.
+/// A VBlank task of the title intro: places the rising sprites along the
+/// slope of the scrolling background, alternating two sets every other frame
+/// so twice as many show, hides the rest and copies the list to OAM.
 void Title_UpdateIntroSprites(void) {
   /* FAKEMATCH: the OAM shadow it builds is struct OamShadow, volatile words
    * (tag in oambuf.h): without the qualifier differ 205, 471 instructions for
@@ -168,8 +168,8 @@ void Title_UpdateIntroSprites(void) {
   Dma_Set(&INTRO_OBJ(0), OAM, (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
 }
 
-// Loads the title intro's two scrolling backgrounds and its sprite tiles,
-// builds their maps and sets the blending and windows.
+/// Loads the title intro's two scrolling backgrounds and its sprite tiles,
+/// builds their maps and sets the blending and windows.
 void Title_LoadIntroBackgrounds(void) {
   struct IntroWork *work;
   u8 *resourceData;
@@ -284,11 +284,11 @@ void Title_LoadIntroBackgrounds(void) {
 #define PROMPT_Y 124
 #endif
 
-// Plays the title intro: the backgrounds scroll down and the sprites rise
-// until frame 278 (A or Start skips ahead), then the screen flashes white
-// into the title picture. With `prompt` set the "Press Start" prompt pulses
-// for up to a minute, otherwise the picture stays five seconds. Returns 1
-// when A or Start was pressed on the title picture.
+/// Plays the title intro: the backgrounds scroll down and the sprites rise
+/// until frame 278 (A or Start skips ahead), then the screen flashes white
+/// into the title picture. With `prompt` set the "Press Start" prompt pulses
+/// for up to a minute, otherwise the picture stays five seconds. Returns 1
+/// when A or Start was pressed on the title picture.
 s32 Title_ShowIntro(s32 prompt) {
   struct IntroWork *work;
   s32 result;
@@ -485,13 +485,13 @@ s32 Title_ShowIntro(s32 prompt) {
   return result;
 }
 
-// Unused palette entry retained in the far-call table.
+/// Unused palette entry retained in the far-call table.
 UNUSED void Title_NoOpPalette(void) {}
 
-// Shows the Nintendo logo with its jingle. With `mode` 0 it fades in and
-// holds two seconds; otherwise it waits a second, fades in, holds three
-// seconds and fades out, faster once skipped. Returns -1 when A or Start
-// skipped it.
+/// Shows the Nintendo logo with its jingle. With `mode` 0 it fades in and
+/// holds two seconds; otherwise it waits a second, fades in, holds three
+/// seconds and fades out, faster once skipped. Returns -1 when A or Start
+/// skipped it.
 s32 Title_ShowSplashScreen(s32 mode) {
   s32 result;
   u8 *resourceData;
@@ -578,8 +578,8 @@ s32 Title_ShowSplashScreen(s32 mode) {
   return result;
 }
 
-// Shows the Camelot logo for two seconds, cycling its four frames of tiles.
-// A or Start ends it early. Returns 0.
+/// Shows the Camelot logo for two seconds, cycling its four frames of tiles.
+/// A or Start ends it early. Returns 0.
 s32 Title_ShowAnimatedSplash(void) {
   s32 result;
   u32 workIndex;
@@ -634,15 +634,15 @@ s32 Title_ShowAnimatedSplash(void) {
   return result;
 }
 
-// Unused color entry retained in the far-call table.
+/// Unused color entry retained in the far-call table.
 UNUSED void Graphics_NoOpColor(void) {}
 
 // The palette fade (struct PaletteFade) keeps the saved palettes, the
 // colour components shown now, the target components and each one's step.
 
-// Computes each of the 1536 colour components' change per frame from the
-// current components to the target (nothing when `frames` is not
-// positive).
+/// Computes each of the 1536 colour components' change per frame from the
+/// current components to the target (nothing when `frames` is not
+/// positive).
 void PaletteFade_ComputeSteps(s16 *sourceComponents, s16 *targetComponents,
                               s16 *componentSteps, s32 frames) {
   s32 remaining;
@@ -663,9 +663,9 @@ void PaletteFade_ComputeSteps(s16 *sourceComponents, s16 *targetComponents,
   }
 }
 
-// A task that steps the palette fade each frame: adds the step to every
-// colour component until the fade is done, packs the components into the
-// spare RGB555 copy of the palettes and queues both halves for VBlank.
+/// A task that steps the palette fade each frame: adds the step to every
+/// colour component until the fade is done, packs the components into the
+/// spare RGB555 copy of the palettes and queues both halves for VBlank.
 void PaletteFade_Update(void) {
   struct PaletteFade *work = (struct PaletteFade *)gPaletteBufferWork;
   u16 *componentSteps = work->delta;
@@ -708,13 +708,13 @@ void PaletteFade_Update(void) {
                       (DMA_ENABLE | DMA_32BIT) << 16 | 0x80);
 }
 
-// Transforms 512 source colours into destination components (three
-// per colour, each in the high bits of a halfword). `mode` picks the
-// transform: a colour below 0x8000 fills every colour with it; 0x8000 takes
-// that colour from source[0]; 0x10000 to 0x10007 are the whole-palette filters
-// (plain, grey, sepia and the others); the TINT, BLEND and SPLIT flags carry
-// a colour in their low bits; anything else is the address of components to
-// copy. paletteHalf 1 does only the background palettes, 2 only the sprites'.
+/// Transforms 512 source colours into destination components (three
+/// per colour, each in the high bits of a halfword). `mode` picks the
+/// transform: a colour below 0x8000 fills every colour with it; 0x8000 takes
+/// that colour from source[0]; 0x10000 to 0x10007 are the whole-palette filters
+/// (plain, grey, sepia and the others); the TINT, BLEND and SPLIT flags carry
+/// a colour in their low bits; anything else is the address of components to
+/// copy. paletteHalf 1 does only the background palettes, 2 only the sprites'.
 void Palette_Transform(u32 mode, u16 *source, u16 *destination,
                        s32 paletteHalf) {
   u32 colorIndex;
@@ -972,8 +972,8 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
   }
 }
 
-// Allocates the palette fade, saves both hardware palettes in it as the
-// starting colours and schedules PaletteFade_Update.
+/// Allocates the palette fade, saves both hardware palettes in it as the
+/// starting colours and schedules PaletteFade_Update.
 void PaletteFade_Init(void) {
   struct PaletteFade *buffer;
   s32 callbackPriority;
@@ -990,14 +990,14 @@ void PaletteFade_Init(void) {
   Scheduler_AddOrUpdateCallback(PaletteFade_Update, callbackPriority);
 }
 
-// Stops the palette fade and frees its buffers.
+/// Stops the palette fade and frees its buffers.
 void PaletteFade_Release(void) {
   Scheduler_RemoveCallback(&PaletteFade_Update);
   Runtime_ReleaseHeapBlock(0x20);
 }
 
-// Sets the fade target by transforming the saved background and/or sprite
-// palettes through the requested mode.
+/// Sets the fade target by transforming the saved background and/or sprite
+/// palettes through the requested mode.
 void PaletteFade_SetTarget(s32 mode, s32 paletteHalf) {
   struct PaletteFade *fade = (struct PaletteFade *)gPaletteBufferWork;
 
@@ -1005,7 +1005,7 @@ void PaletteFade_SetTarget(s32 mode, s32 paletteHalf) {
     Palette_Transform(mode, fade->palette, fade->target, paletteHalf);
 }
 
-// Sets the colours shown now by transforming the saved palettes.
+/// Sets the colours shown now by transforming the saved palettes.
 void PaletteFade_SetCurrent(s32 mode, s32 paletteHalf) {
   struct PaletteFade *fade = (struct PaletteFade *)gPaletteBufferWork;
 
@@ -1013,7 +1013,7 @@ void PaletteFade_SetCurrent(s32 mode, s32 paletteHalf) {
     Palette_Transform(mode, fade->palette, fade->current, paletteHalf);
 }
 
-// Replaces the first saved colour, the backdrop.
+/// Replaces the first saved colour, the backdrop.
 void PaletteFade_SetBackdrop(s32 color) {
   struct PaletteFade *fade = (struct PaletteFade *)gPaletteBufferWork;
 
@@ -1021,7 +1021,7 @@ void PaletteFade_SetBackdrop(s32 color) {
     fade->palette[0] = color;
 }
 
-// Starts fading the shown colours to the target over the requested frames.
+/// Starts fading the shown colours to the target over the requested frames.
 void PaletteFade_Start(s32 frames) {
   struct PaletteFade *fade = (struct PaletteFade *)gPaletteBufferWork;
 
@@ -1033,7 +1033,7 @@ void PaletteFade_Start(s32 frames) {
   }
 }
 
-// Clamps a five-bit colour channel to 0..31.
+/// Clamps a five-bit colour channel to 0..31.
 s32 Graphics_ClampRgb555Channel(s32 value) {
   if (value > 31)
     return 31;
@@ -1042,8 +1042,8 @@ s32 Graphics_ClampRgb555Channel(s32 value) {
   return value;
 }
 
-// Caps a colour component at 0x7c00, the largest a five-bit channel shifted
-// into the high bits reaches. There is no lower bound.
+/// Caps a colour component at 0x7c00, the largest a five-bit channel shifted
+/// into the high bits reaches. There is no lower bound.
 s32 Graphics_ClampRgb555Component(s32 value) {
   if (value > 0x7c00)
     value = 0x7c00;
@@ -1053,7 +1053,7 @@ s32 Graphics_ClampRgb555Component(s32 value) {
 // The response curves of Palette_Transform's filters. Like the
 // declarations in palbuf.h they are not const: as const the code differs.
 
-// Maps a channel (0..31) to a component (0..31 << 10)
+/// Maps a channel (0..31) to a component (0..31 << 10)
 // clang-format off
 u16 gPalette_ChannelCurve[32] = {
     0, 524, 1071, 1643, 2240, 2863, 3513, 4191,
@@ -1062,7 +1062,7 @@ u16 gPalette_ChannelCurve[32] = {
     21015, 22386, 23808, 25283, 26812, 28397, 30041, 31744
 };
 
-// A brighter curve
+/// A brighter curve
 u16 gPalette_ChannelCurveLight[32] = {
     0, 613, 1247, 1902, 2580, 3281, 4005, 4753,
     5526, 6324, 7148, 7999, 8876, 9782, 10716, 11680,
@@ -1070,7 +1070,7 @@ u16 gPalette_ChannelCurveLight[32] = {
     21801, 23101, 24440, 25818, 27237, 28697, 30199, 31744
 };
 
-// A high-contrast curve (25 and above are full)
+/// A high-contrast curve (25 and above are full)
 u16 gPalette_ChannelCurveContrast[32] = {
     0, 360, 759, 1201, 1689, 2226, 2817, 3466,
     4178, 4957, 5808, 6738, 7752, 8856, 10058, 11365,

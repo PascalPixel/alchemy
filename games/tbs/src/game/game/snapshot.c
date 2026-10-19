@@ -1,9 +1,10 @@
-// Part of game.c, the game object, compiled only through it.
-// Equipping a given item, and the equipment put aside for the Colosso.
+/// @file
+/// Part of game.c, the game object, compiled only through it.
+/// Equipping a given item, and the equipment put aside for the Colosso.
 
 #include "../game_internal.h"
 
-// Gives a unit `itemId` and equips every exactly matching inventory entry.
+/// Gives a unit `itemId` and equips every exactly matching inventory entry.
 void Inventory_AddAndEquip(s32 owner, s32 itemId) {
   struct BattleUnit *unit = UnitGet(owner);
   u16 *entry;
@@ -19,14 +20,14 @@ void Inventory_AddAndEquip(s32 owner, s32 itemId) {
   } while (slot < INVENTORY_SLOTS);
 }
 
-// The party's equipment, put aside while the Colosso takes it away; the
-// sentinel marks the snapshot as taken.
+/// The party's equipment, put aside while the Colosso takes it away; the
+/// sentinel marks the snapshot as taken.
 #define INVENTORY_SNAPSHOT_SENTINEL 0x6774
 
-// Saves the first four characters' inventories, shortcuts and party order,
-// then keeps only the Psynergy-granting items, gives Isaac the Short
-// Sword, sets FLAG_INVENTORY_SNAPSHOT and restores everyone. Nothing
-// happens when a snapshot is already saved, apart from the restore.
+/// Saves the first four characters' inventories, shortcuts and party order,
+/// then keeps only the Psynergy-granting items, gives Isaac the Short
+/// Sword, sets FLAG_INVENTORY_SNAPSHOT and restores everyone. Nothing
+/// happens when a snapshot is already saved, apart from the restore.
 void InventorySnapshot_Save(void) {
   u16 *save;
   struct BattleUnit *unit;
@@ -73,8 +74,8 @@ void InventorySnapshot_Save(void) {
   Party_RestoreHpPp(1);
 }
 
-// Gives back the inventories, shortcuts and party order InventorySnapshot_Save
-// put aside.
+/// Gives back the inventories, shortcuts and party order InventorySnapshot_Save
+/// put aside.
 void InventorySnapshot_Restore(void) {
   s32 owner;
   u16 *source = gInventorySnapshot;

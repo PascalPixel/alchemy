@@ -1,9 +1,10 @@
 #ifndef ALCHEMY_RUNTIME_INTERNAL_H
 #define ALCHEMY_RUNTIME_INTERNAL_H
 
-// What every part of the runtime object shares: its includes and the library
-// call two parts make. runtime.c includes it before the parts, and each part
-// includes it too, so that a part read on its own still resolves.
+/// @file
+/// What every part of the runtime object shares: its includes and the library
+/// call two parts make. runtime.c includes it before the parts, and each part
+/// includes it too, so that a part read on its own still resolves.
 
 #include "unit/runtime/runtime.h"
 #include "battle.h"
@@ -58,8 +59,8 @@
 #include "savedata.h"
 #include "songs.h"
 
-// The compiler library's call through r3, which render.c and save.c use to
-// run code copied to RAM with four arguments.
+/// The compiler library's call through r3, which render.c and save.c use to
+/// run code copied to RAM with four arguments.
 s32 _call_via_r3(s32, s32, s32, s32);
 
 #endif

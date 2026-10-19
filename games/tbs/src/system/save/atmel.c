@@ -4,7 +4,7 @@
 
 extern FlashWaitProc gFlash_Handler3;
 
-// Erases the Atmel chip and waits for completion with its configured timing.
+/// Erases the Atmel chip and waits for completion with its configured timing.
 u16 EraseAtmelFlashChip(void) {
   u8 savedCode[64];
   u16 result;
@@ -31,7 +31,7 @@ u16 EraseAtmelFlashChip(void) {
   return result;
 }
 
-// Erases one small Atmel sector by programming every byte to 0xff.
+/// Erases one small Atmel sector by programming every byte to 0xff.
 u16 EraseAtmelFlashSector(u16 sector) {
   struct FlashSetupInfo *info = &gFlash_ChipAtmelLayout;
   u8 *cursor;
@@ -60,8 +60,8 @@ u16 EraseAtmelFlashSector(u16 sector) {
   return result;
 }
 
-// Erases thirty-two small sectors, trying each sector at most twice.
-// Both structured retry-loop trials add four bytes to the native EN body.
+/// Erases thirty-two small sectors, trying each sector at most twice.
+/// Both structured retry-loop trials add four bytes to the native EN body.
 u16 EraseAtmelFlashBlock(u16 sector) {
   u8 savedCode[64];
   u16 result;
@@ -100,8 +100,8 @@ advanceSector:
   return result;
 }
 
-// Programs a small Atmel sector with interrupts disabled, then polls its last
-// byte.
+/// Programs a small Atmel sector with interrupts disabled, then polls its last
+/// byte.
 u16 ProgramAtmelFlashSector(u32 sector, const u8 *source) {
   const u8 *input;
   volatile u8 *destination;
@@ -135,8 +135,9 @@ u16 ProgramAtmelFlashSector(u32 sector, const u8 *source) {
 
 extern u16 gFlashNumRemainingBytes;
 
-// Programs an Atmel block in small sectors, trying each sector at most twice.
-// The ordinary decrementing retry loop shortens the native EN body by 16 bytes.
+/// Programs an Atmel block in small sectors, trying each sector at most twice.
+/// The ordinary decrementing retry loop shortens the native EN body by 16
+/// bytes.
 u16 ProgramAtmelFlashBlock(u16 sector, u8 *source) {
   u8 savedCode[64];
   u16 result;

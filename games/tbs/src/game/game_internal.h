@@ -1,9 +1,10 @@
 #ifndef ALCHEMY_GAME_INTERNAL_H
 #define ALCHEMY_GAME_INTERNAL_H
 
-// What every part of the game object shares: its includes and the inventory
-// helper two parts use. game.c includes it before the parts, and each part
-// includes it too, so that a part read on its own still resolves.
+/// @file
+/// What every part of the game object shares: its includes and the inventory
+/// helper two parts use. game.c includes it before the parts, and each part
+/// includes it too, so that a part read on its own still resolves.
 
 #include "unit/game/game.h"
 #include "unit/runtime/runtime.h"
@@ -55,8 +56,8 @@
 #include "macros.h"
 #include "item_ids.h"
 
-// Keeps occupied slots in order and clears the unused inventory tail, for
-// Inventory_Remove (inventory.c) and InventorySnapshot_Save (snapshot.c).
+/// Keeps occupied slots in order and clears the unused inventory tail, for
+/// Inventory_Remove (inventory.c) and InventorySnapshot_Save (snapshot.c).
 static inline void Inventory_CompactSlots(s16 *inventory) {
   s32 usedSlots = 0;
   s32 slot;

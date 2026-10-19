@@ -46,28 +46,28 @@
 #define BROWSER_ROW_STEP 10
 #define BROWSER_PAGE_STEP 30
 
-// Returns the level-test room entrance table.
+/// Returns the level-test room entrance table.
 u8 *ItemLevel_GetEntrances(void) { return (u8 *)gItemLevelEntrances; }
 
-// Returns zero from this scene entry.
+/// Returns zero from this scene entry.
 s32 SceneData_ReturnZero(void) { return 0; }
 
-// Returns the packed level-test exit table.
+/// Returns the packed level-test exit table.
 u8 *ItemLevel_GetExits(void) { return (u8 *)gItemLevelExits; }
 
-// Returns the level-test actor placements.
+/// Returns the level-test actor placements.
 u8 *ItemLevel_GetPlacements(void) { return (u8 *)gItemLevelPlacements; }
 
 #if TBS_PATCH_1
-// Sets the test message before displaying the first emote on actor 13.
-// The emote's actual type remains unnamed.
+/// Sets the test message before displaying the first emote on actor 13.
+/// The emote's actual type remains unnamed.
 static void ItemLevel_ShowMessageThenEmote(void) {
   Engine_EventSetMessage(MsgDebugWontStopYou);
   Actor_ShowEmote(13, 0x102, 0);
   Engine_EventShowMessage(13, 0);
 }
 
-// Displays the other test emote before setting actor 13's message.
+/// Displays the other test emote before setting actor 13's message.
 static void ItemLevel_ShowEmoteThenMessage(void) {
   Actor_ShowEmote(13, 0x105, 0);
   Engine_EventSetMessage(MsgDebugWontStopYou);
@@ -75,10 +75,10 @@ static void ItemLevel_ShowEmoteThenMessage(void) {
 }
 #endif
 
-// Returns the room's event table through the scene entry ABI.
+/// Returns the room's event table through the scene entry ABI.
 u8 *ItemLevel_GetEvents(void) { return (u8 *)gItemLevelEvents; }
 
-// Raises one owner's level by amount, then recalculates that unit.
+/// Raises one owner's level by amount, then recalculates that unit.
 static void ItemLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
   struct BattleUnit *unit = UnitGet(ownerId);
 
@@ -86,7 +86,7 @@ static void ItemLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
   UnitCalc(ownerId);
 }
 
-// Applies the level change to the owners returned by the active-party service.
+/// Applies the level change to the owners returned by the active-party service.
 static void ItemLevel_AdjustPartyLevels(s32 amount) {
   u16 ownerIds[16];
   u16 *owner;
@@ -103,8 +103,8 @@ static void ItemLevel_AdjustPartyLevels(s32 amount) {
   }
 }
 
-// Displays the selected owner's level and changes all active owners.
-// B closes the window and recalculates the original four heroes.
+/// Displays the selected owner's level and changes all active owners.
+/// B closes the window and recalculates the original four heroes.
 static void ItemLevel_RunLevelEditor(void) {
   struct BattleUnit *unit;
   struct UiWindow *window;
@@ -160,10 +160,10 @@ static void ItemLevel_RunLevelEditor(void) {
   }
 }
 
-// Browses nonempty item definitions and gives the selected item to the party.
-// Preserve independent key tests and the direction-specific empty-icon scans.
-// Ordinary while scans grow the native function from 0x29c to 0x2a0;
-// retain its current polling edges.
+/// Browses nonempty item definitions and gives the selected item to the party.
+/// Preserve independent key tests and the direction-specific empty-icon scans.
+/// Ordinary while scans grow the native function from 0x29c to 0x2a0;
+/// retain its current polling edges.
 static void ItemLevel_SelectItem(void) {
   struct UiWindow *window;
   struct UiWindow *details;
@@ -284,10 +284,10 @@ static void ItemLevel_SelectItem(void) {
 }
 
 #if TBS_PATCH_1
-// Browses ability names and descriptions, skipping unavailable entries.
-// B closes the sole window created by this browser.
-// Ordinary while scans grow the native function from 0x248 to 0x260;
-// retain the original polling edges.
+/// Browses ability names and descriptions, skipping unavailable entries.
+/// B closes the sole window created by this browser.
+/// Ordinary while scans grow the native function from 0x248 to 0x260;
+/// retain the original polling edges.
 static void ItemLevel_SelectAbility(void) {
   struct UiWindow *window;
 #ifndef UBFIX
@@ -400,15 +400,15 @@ static void ItemLevel_SelectAbility(void) {
 }
 #endif
 
-// Requests a window-style exit with variant one over 24 frames.
+/// Requests a window-style exit with variant one over 24 frames.
 UNUSED static void ItemLevel_RequestExit(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   gEventWork->transitionFrames = 24;
   Engine_EventRequestExit();
 }
 
-// Starts the window transition and edition-specific actor scale/animation
-// setup. Returns zero through the exported scene entry.
+/// Starts the window transition and edition-specific actor scale/animation
+/// setup. Returns zero through the exported scene entry.
 s32 FieldScene_RunEntrySetup(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gEventWork->transitionFrames = 24;
@@ -425,7 +425,7 @@ s32 FieldScene_RunEntrySetup(void) {
 }
 
 #if !TBS_PATCH_1
-// Runs the Japanese animation test, then moves actor 11 to its test position.
+/// Runs the Japanese animation test, then moves actor 11 to its test position.
 static void ItemLevel_RunMotionTest(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(10, 2);
@@ -437,7 +437,7 @@ static void ItemLevel_RunMotionTest(void) {
 #endif
 
 #if TBS_PATCH_1
-// Displays the three character-set caption rows in a debug window.
+/// Displays the three character-set caption rows in a debug window.
 static void ItemLevel_ShowGlyphCaptions(void) {
   struct UiWindow *window;
   /* FAKEMATCH: an unread 32-byte text buffer, the native frame's 32 extra
@@ -451,17 +451,17 @@ static void ItemLevel_ShowGlyphCaptions(void) {
 }
 #endif
 
-// Sets the effect work's child-mode byte to one.
+/// Sets the effect work's child-mode byte to one.
 static void ItemLevel_EnableEffectChildMode(void) {
   struct BattleFxScene *effect = (struct BattleFxScene *)gEffectWork;
 
   effect->childMode = 1;
 }
 
-// Returns the icon browser's status to the event dispatcher.
+/// Returns the icon browser's status to the event dispatcher.
 static int ItemLevel_OpenIconBrowser(void) { return DebugMenu_BrowseIcons(); }
 
-// Returns the entry-glyph browser's status to the event dispatcher.
+/// Returns the entry-glyph browser's status to the event dispatcher.
 static int ItemLevel_OpenGlyphBrowser(void) {
   return DebugMenu_BrowseEntryGlyphs();
 }

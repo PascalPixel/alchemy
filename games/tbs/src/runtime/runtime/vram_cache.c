@@ -1,5 +1,6 @@
-// Part of runtime.c, the runtime object, compiled only through it.
-// The sprite VRAM cache: blocks, entries and loading pictures.
+/// @file
+/// Part of runtime.c, the runtime object, compiled only through it.
+/// The sprite VRAM cache: blocks, entries and loading pictures.
 
 #include "../runtime_internal.h"
 
@@ -8,9 +9,9 @@
 // cache entries owns each block. An entry whose offset is 0xffff is free; one
 // whose size is 16 or less holds no VRAM.
 
-// Finds the first run of free blocks that holds `size` bytes and gives it to
-// entry `id`. Returns its byte offset in sprite VRAM, or -1 when no run is
-// long enough.
+/// Finds the first run of free blocks that holds `size` bytes and gives it to
+/// entry `id`. Returns its byte offset in sprite VRAM, or -1 when no run is
+/// long enough.
 s32 VramCache_AllocateBlocks(u32 id, u32 size) {
   u32 blocks;
   s32 ret;
@@ -50,7 +51,7 @@ s32 VramCache_AllocateBlocks(u32 id, u32 size) {
   return ret;
 }
 
-// Returns the length, in blocks, of the longest run of free blocks.
+/// Returns the length, in blocks, of the longest run of free blocks.
 s32 VramCache_GetLongestFreeRun(void) {
   s32 run = 0;
   u8 *owner = gResourceBlockOwners;
@@ -70,8 +71,8 @@ s32 VramCache_GetLongestFreeRun(void) {
   return longestRun;
 }
 
-// Frees every block entry `id` owns. Returns -1 when it freed any (or `id` is
-// out of range) and 0 when the entry owned none.
+/// Frees every block entry `id` owns. Returns -1 when it freed any (or `id` is
+/// out of range) and 0 when the entry owned none.
 s32 VramCache_FreeBlocks(s32 id) {
   s32 cleared = 0;
   s32 remaining;
@@ -96,7 +97,7 @@ s32 VramCache_FreeBlocks(s32 id) {
   return 0;
 }
 
-// Frees cache entry `no`: its blocks go back and the entry is marked free.
+/// Frees cache entry `no`: its blocks go back and the entry is marked free.
 s32 Resource_ResetEntry(u32 no) {
   struct VramBlockCacheEntry *entry = &gVramBlockCache[no];
 
@@ -110,7 +111,7 @@ s32 Resource_ResetEntry(u32 no) {
   return 0;
 }
 
-// Gives back entry `no`'s blocks but keeps the entry taken, with size 1.
+/// Gives back entry `no`'s blocks but keeps the entry taken, with size 1.
 s32 VramCache_ReleaseVram(u32 no) {
   struct VramBlockCacheEntry *entry = &gVramBlockCache[no];
 
@@ -126,10 +127,10 @@ s32 VramCache_ReleaseVram(u32 no) {
   return 0;
 }
 
-// Gives cache entry `no` `size` bytes of sprite VRAM and copies `src` there.
-// An entry that already holds VRAM of the same size keeps it. A null `src`
-// copies nothing and (void *)-1 clears the memory. Returns the first sprite
-// tile number (32-byte units), or 0 when there was no room.
+/// Gives cache entry `no` `size` bytes of sprite VRAM and copies `src` there.
+/// An entry that already holds VRAM of the same size keeps it. A null `src`
+/// copies nothing and (void *)-1 clears the memory. Returns the first sprite
+/// tile number (32-byte units), or 0 when there was no room.
 s32 VramCache_Load(u32 no, u32 size, const void *src) {
   struct VramBlockCacheEntry *entry;
   s32 offset;
@@ -170,7 +171,7 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
   return 0;
 }
 
-// Frees every block and every cache entry.
+/// Frees every block and every cache entry.
 void VramCache_Reset(void) {
   u32 limit = VRAM_BLOCK_COUNT - 1;
   u8 *p = gResourceBlockOwners;
@@ -195,8 +196,8 @@ void VramCache_Reset(void) {
   }
 }
 
-// Returns the number of the first free cache entry, or VRAM_CACHE_ENTRY_COUNT
-// when all are taken.
+/// Returns the number of the first free cache entry, or VRAM_CACHE_ENTRY_COUNT
+/// when all are taken.
 s32 Resource_FindFreeEntry(void) {
   s32 ret = VRAM_CACHE_ENTRY_COUNT;
   s32 no;
@@ -211,8 +212,8 @@ s32 Resource_FindFreeEntry(void) {
   return ret;
 }
 
-// Takes a free cache entry, gives it `size` bytes of sprite VRAM and returns
-// its number.
+/// Takes a free cache entry, gives it `size` bytes of sprite VRAM and returns
+/// its number.
 s32 VramCache_AllocEntry(s32 size) {
   s32 no;
 
@@ -221,8 +222,8 @@ s32 VramCache_AllocEntry(s32 size) {
   return no;
 }
 
-// Copies `src` again into entry `no`'s VRAM, keeping its size. Returns the
-// first sprite tile number.
+/// Copies `src` again into entry `no`'s VRAM, keeping its size. Returns the
+/// first sprite tile number.
 s32 VramCache_Reload(s32 no, s32 src) {
   return VramCache_Load(no, gVramBlockCache[no].size, (const void *)src);
 }

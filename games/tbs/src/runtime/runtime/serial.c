@@ -1,5 +1,6 @@
-// Part of runtime.c, the runtime object, compiled only through it.
-// The link cable: payload exchange, block transfers and the link test.
+/// @file
+/// Part of runtime.c, the runtime object, compiled only through it.
+/// The link cable: payload exchange, block transfers and the link test.
 
 #include "../runtime_internal.h"
 
@@ -16,9 +17,9 @@ enum {
   SERIAL_IDLE_HALFWORD = 0xfefe
 };
 
-// Resets the serial port into multiplayer mode, installs the serial and
-// timer 3 interrupt handlers, sets up the packet buffers and starts the
-// per-frame exchange.
+/// Resets the serial port into multiplayer mode, installs the serial and
+/// timer 3 interrupt handlers, sets up the packet buffers and starts the
+/// per-frame exchange.
 void SerialRuntime_Initialize(void) {
   u32 interruptEnable;
   volatile u16 *ime;
@@ -75,7 +76,7 @@ void SerialRuntime_Initialize(void) {
   IRQ_UNLOCK(interruptEnable);
 }
 
-// Lets the timer start transfers again once a link mode is set.
+/// Lets the timer start transfers again once a link mode is set.
 void SerialRuntime_EnableTransferTimer(void) {
   struct SerialRuntime *state = &gSerialRuntime;
 
@@ -83,7 +84,7 @@ void SerialRuntime_EnableTransferTimer(void) {
     state->transferEnabled = 1;
 }
 
-// Disables the serial and timer interrupts and stops the transfer timer.
+/// Disables the serial and timer interrupts and stops the transfer timer.
 void SerialRuntime_DisableTransfer(void) {
   struct SerialRuntime *state;
 
@@ -97,10 +98,10 @@ void SerialRuntime_DisableTransfer(void) {
   state->transferEnabled = 0;
 }
 
-// Looks for the link partner and, once connected, does one exchange (as
-// SerialRuntime_ExchangePayloads). When this console is the parent (SIOCNT
-// reports multiplayer mode with no error) it arms timer 3 to clock the
-// transfers. Returns the link status (see SerialRuntime_ExchangePayloads).
+/// Looks for the link partner and, once connected, does one exchange (as
+/// SerialRuntime_ExchangePayloads). When this console is the parent (SIOCNT
+/// reports multiplayer mode with no error) it arms timer 3 to clock the
+/// transfers. Returns the link status (see SerialRuntime_ExchangePayloads).
 s32 SerialRuntime_PollAndTransfer(void *send, void *receive) {
   volatile u32 *siocnt;
   u32 control;
@@ -151,8 +152,8 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive) {
   return result;
 }
 
-// As SerialRuntime_PollAndTransfer, without exchanging data: the frame loop
-// calls it, the VBlank handler does the exchange.
+/// As SerialRuntime_PollAndTransfer, without exchanging data: the frame loop
+/// calls it, the VBlank handler does the exchange.
 s32 SerialRuntime_PollStatus(void) {
   volatile u32 *siocnt;
   u32 control;
@@ -193,12 +194,12 @@ s32 SerialRuntime_PollStatus(void) {
   return result;
 }
 
-// Once connected (phase 1), gathers the received payloads into `receive` and
-// builds the next packet from `send`. Returns the link status:
-//   bits 0 to 7  : the consoles heard from this frame (bit 7 also when parent)
-//   bits 8 to 15 : the consoles heard from since the link began
-//   0x1000       : this console is the parent
-//   0x2000       : SIOCNT's multiplayer id is 2 or more
+/// Once connected (phase 1), gathers the received payloads into `receive` and
+/// builds the next packet from `send`. Returns the link status:
+///   bits 0 to 7  : the consoles heard from this frame (bit 7 also when parent)
+///   bits 8 to 15 : the consoles heard from since the link began
+///   0x1000       : this console is the parent
+///   0x2000       : SIOCNT's multiplayer id is 2 or more
 s32 SerialRuntime_ExchangePayloads(void *send, void *receive) {
   volatile u32 *siocnt;
   u32 control;
@@ -222,10 +223,10 @@ s32 SerialRuntime_ExchangePayloads(void *send, void *receive) {
   return result;
 }
 
-// Builds the packet to send in sendBuffer[0]: [0] the sequence number, [1]
-// the consoles not yet heard from, [2] the checksum and [4] the 24-byte
-// payload. The checksum is the complement of the sum of the first 28 bytes
-// as halfwords. Then restarts the send position and the timer.
+/// Builds the packet to send in sendBuffer[0]: [0] the sequence number, [1]
+/// the consoles not yet heard from, [2] the checksum and [4] the 24-byte
+/// payload. The checksum is the complement of the sum of the first 28 bytes
+/// as halfwords. Then restarts the send position and the timer.
 void SerialRuntime_PrepareSendPacket(void *payload) {
   /* FAKEMATCH: volatile keeps the second load of sr->sendBuffer[0], as the
    * bytes do; through a plain pointer CSE reuses the first (differ 8, 48
@@ -277,9 +278,9 @@ void SerialRuntime_PrepareSendPacket(void *payload) {
     REG_TM3CNT_H = TIMER_ENABLE | TIMER_INTR_ENABLE;
 }
 
-// Swaps in the packets the interrupt handler finished, then copies the
-// payload of each one whose checksum is good to `payload` (24 bytes per
-// console). Returns the mask of consoles heard from this frame.
+/// Swaps in the packets the interrupt handler finished, then copies the
+/// payload of each one whose checksum is good to `payload` (24 bytes per
+/// console). Returns the mask of consoles heard from this frame.
 u8 SerialRuntime_CollectReceivedPayloads(void *payload) {
   u8 flags[8];
   s32 i;
@@ -318,12 +319,12 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload) {
   return gSerialRuntime.currentMask;
 }
 
-// The serial and timer 3 interrupt: each one moves a halfword. It sends the
-// next halfword of the outgoing packet (0xfefe between packets) and stores the
-// halfword received from each console; a console's fourteenth halfword
-// completes its packet.
-// Measured plain do/while for the two receive channels adds 50 bytes to this
-// function in tbs-en, so the matching single-backedge form remains.
+/// The serial and timer 3 interrupt: each one moves a halfword. It sends the
+/// next halfword of the outgoing packet (0xfefe between packets) and stores the
+/// halfword received from each console; a console's fourteenth halfword
+/// completes its packet.
+/// Measured plain do/while for the two receive channels adds 50 bytes to this
+/// function in tbs-en, so the matching single-backedge form remains.
 void SerialRuntime_HandleTransferInterrupt(void) {
   struct SerialRuntime *sendState;
   struct SerialRuntime *receiveState;
@@ -393,15 +394,15 @@ receive_loop:
   }
 }
 
-// Stops the per-frame exchange and removes the link interrupt handlers.
+/// Stops the per-frame exchange and removes the link interrupt handlers.
 void SerialRuntime_RemoveIrqHandlers(void) {
   gSerialExchangeActive = 0;
   Runtime_SetIrqHandler(IRQ_SERIAL, 0, 0);
   Runtime_SetIrqHandler(IRQ_TIMER3, 0, 0);
 }
 
-// Waits until every status bit in `mask` is set, then returns this console's
-// multiplayer id.
+/// Waits until every status bit in `mask` is set, then returns this console's
+/// multiplayer id.
 u32 SerialRuntime_WaitForStatusMask(s32 mask) {
   if ((mask & gLinkStatus) != mask) {
     do {
@@ -411,8 +412,8 @@ u32 SerialRuntime_WaitForStatusMask(s32 mask) {
   return (REG_SIOCNT << 0x1A) >> 0x1E;
 }
 
-// Starts sending `size` bytes from `source` to the partner in 20-byte blocks.
-// Returns -1 when a send is already running, 0 otherwise.
+/// Starts sending `size` bytes from `source` to the partner in 20-byte blocks.
+/// Returns -1 when a send is already running, 0 otherwise.
 s32 SerialRuntime_BeginSend(void *source, s32 size) {
   struct SerialTransferState *state = &gSerialTransfer;
   u32 savedInterruptMaster;
@@ -429,8 +430,8 @@ s32 SerialRuntime_BeginSend(void *source, s32 size) {
   return 0;
 }
 
-// Starts receiving the partner's blocks into `destination`. Returns -1 when
-// a receive is already running, 0 otherwise.
+/// Starts receiving the partner's blocks into `destination`. Returns -1 when
+/// a receive is already running, 0 otherwise.
 s32 SerialRuntime_BeginReceive(void *destination) {
   struct SerialTransferState *state = &gSerialTransfer;
   u32 savedInterruptMaster;
@@ -447,8 +448,8 @@ s32 SerialRuntime_BeginReceive(void *destination) {
   return 0;
 }
 
-// Each waits a frame at a time until `pending` is 0, giving up after 600000
-// frames: the send, then the receive.
+/// Each waits a frame at a time until `pending` is 0, giving up after 600000
+/// frames: the send, then the receive.
 #define SERIAL_DEFINE_WAIT(name, pending)                                      \
   void name(void) {                                                            \
     u32 count = 0;                                                             \
@@ -461,13 +462,13 @@ s32 SerialRuntime_BeginReceive(void *destination) {
     }                                                                          \
   }
 
-// Waits for the current send, up to the protocol's frame timeout.
+/// Waits for the current send, up to the protocol's frame timeout.
 SERIAL_DEFINE_WAIT(SerialRuntime_WaitForSend, gSerialSendSource)
-// Waits for the current receive, up to the protocol's frame timeout.
+/// Waits for the current receive, up to the protocol's frame timeout.
 SERIAL_DEFINE_WAIT(SerialRuntime_WaitForReceive, gSerialReceiveDest)
 
-// Waits until both the send and the receive have finished, giving up after
-// 600000 frames.
+/// Waits until both the send and the receive have finished, giving up after
+/// 600000 frames.
 void SerialRuntime_WaitForTransfers(void) {
   u32 count;
 
@@ -480,7 +481,7 @@ void SerialRuntime_WaitForTransfers(void) {
   }
 }
 
-// Returns bit 0 while a send runs and bit 1 while a receive runs.
+/// Returns bit 0 while a send runs and bit 1 while a receive runs.
 s32 SerialRuntime_GetActiveTransfers(void) {
   s32 flags;
 
@@ -494,17 +495,17 @@ s32 SerialRuntime_GetActiveTransfers(void) {
   return flags;
 }
 
-// Clears the block transfer state.
+/// Clears the block transfer state.
 void BattleLink_ResetTransferState(void) { SerialRuntime_ResetTransferState(); }
 
 struct OneCell {
   u16 v;
 };
 
-// Runs each VBlank after the exchange: moves the bulk transfer on by one
-// 20-byte block each way. The receiver acknowledges each block's sequence
-// number; when the sender sees an acknowledgement behind its own count it
-// rewinds and sends the missed blocks again.
+/// Runs each VBlank after the exchange: moves the bulk transfer on by one
+/// 20-byte block each way. The receiver acknowledges each block's sequence
+/// number; when the sender sees an acknowledgement behind its own count it
+/// rewinds and sends the missed blocks again.
 void SerialRuntime_StepBlockTransfer(void) {
   /* FAKEMATCH: gSerialSendSize and gSerialBlockSequence are volatile
    * (serial_runtime.h), so every access here is a load or store of its own.
@@ -618,14 +619,14 @@ void SerialRuntime_StepBlockTransfer(void) {
 
 extern const u8 Rom_Start[];
 
-// An empty routine the link test calls to waste time.
+/// An empty routine the link test calls to waste time.
 void SerialTest_Delay(void) {}
 
-// A link cable test left in the game: it shows a row of tiles, receives
-// blocks into the map cell buffer and shows them as tiles, and sends a part
-// of the ROM when A or B is held. It never returns.
-// Measured outer receive loop with an inner completion break changes 9 text
-// bytes in tbs-en: the key-address load is hoisted and the restart retargeted.
+/// A link cable test left in the game: it shows a row of tiles, receives
+/// blocks into the map cell buffer and shows them as tiles, and sends a part
+/// of the ROM when A or B is held. It never returns.
+/// Measured outer receive loop with an inner completion break changes 9 text
+/// bytes in tbs-en: the key-address load is hoisted and the restart retargeted.
 void SerialTest_Run(void) {
   u16 *tile;
   s32 value;

@@ -9,7 +9,7 @@ extern FlashWaitProc gFlash_Handler3;
 
 u16 _call_via_r3(s32 mode, u8 *address, u8 expected, FlashWaitProc wait);
 
-// Issues the chip-erase command and waits for an erased byte.
+/// Issues the chip-erase command and waits for an erased byte.
 u16 EraseFlashChip(void) {
   u8 savedCode[64];
   u16 result;
@@ -34,8 +34,8 @@ u16 EraseFlashChip(void) {
   return result;
 }
 
-// Erases one of sixteen sectors, restoring the cartridge wait setting
-// afterward.
+/// Erases one of sixteen sectors, restoring the cartridge wait setting
+/// afterward.
 u16 EraseFlashSector(u16 sector) {
   u8 savedCode[64];
   u16 result;
@@ -77,7 +77,7 @@ u16 EraseFlashSector(u16 sector) {
   return result;
 }
 
-// Issues a byte-program command and waits for its destination to match.
+/// Issues a byte-program command and waits for its destination to match.
 u16 ProgramFlashByte(u8 *source, u8 *destination) {
   FlashWaitProc *wait;
 
@@ -91,7 +91,7 @@ u16 ProgramFlashByte(u8 *source, u8 *destination) {
 
 extern u16 gFlashNumRemainingBytes;
 
-// Erases and verifies a sector with retries, then programs its bytes.
+/// Erases and verifies a sector with retries, then programs its bytes.
 u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
   u8 ramCode[96];
   u16 status;
@@ -176,7 +176,7 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
   return status;
 }
 
-// Returns how many bytes remain when the first non-erased byte is found.
+/// Returns how many bytes remain when the first non-erased byte is found.
 s32 CountRemainingErasedFlashBytes(u8 *cursor) {
   s32 remaining;
 
@@ -187,7 +187,7 @@ s32 CountRemainingErasedFlashBytes(u8 *cursor) {
   return remaining;
 }
 
-// Converts a nonzero erased-byte remainder into the flash verification error.
+/// Converts a nonzero erased-byte remainder into the flash verification error.
 s32 RunFlashEraseVerifier(u8 *sector, s32 (*verify)(u8 *)) {
   if (verify(sector) != 0)
     return 0x8004;

@@ -29,8 +29,8 @@
 #include "frame.h"
 #include "flags.h"
 
-// Credits text uses six 32-pixel sprites across each 192-pixel line. Its
-// 32 tile rows form a ring, with sixteen rows visible at a time.
+/// Credits text uses six 32-pixel sprites across each 192-pixel line. Its
+/// 32 tile rows form a ring, with sixteen rows visible at a time.
 #define CREDITS_LINE_PIXELS 192
 #define CREDITS_VISIBLE_ROWS 16
 #define CREDITS_COLUMNS 6
@@ -42,9 +42,9 @@
 #define CREDITS_BORDER_SPRITES 24
 #define CREDITS_OAM_ENTRIES 128
 
-// Fill 30 KB of 256-color tiles with color 1 and clear 128 palette colors.
-// alternate: 0 selects the first half (VRAM 0x06000000, palette 0-127).
-//      1 selects the second half (VRAM 0x06008000, palette 128-255, fill 129).
+/// Fill 30 KB of 256-color tiles with color 1 and clear 128 palette colors.
+/// alternate: 0 selects the first half (VRAM 0x06000000, palette 0-127).
+///      1 selects the second half (VRAM 0x06008000, palette 128-255, fill 129).
 void Graphics_ClearCharacterBlockAndPalette(s32 alternate) {
   u32 fillColor;
   void *tileDestination;
@@ -66,7 +66,7 @@ void Graphics_ClearCharacterBlockAndPalette(s32 alternate) {
 
 typedef s32 (*PackedDecoder)(const u8 *source, void *destination, u32 fill);
 
-// Battle backgrounds shown in the credits; 0 clears the display.
+/// Battle backgrounds shown in the credits; 0 clears the display.
 // clang-format off
 const u32 gDisplayScroll_SlideResources[] = {
     (u32)&ResourceId_ValeStormBackdrop,
@@ -105,8 +105,8 @@ const u32 gDisplayScroll_SlideResources[] = {
 };
 // clang-format on
 
-// Loads a credits backdrop into one of the two tile/palette halves. A zero
-// resource clears that half; the second half offsets its palette indices.
+/// Loads a credits backdrop into one of the two tile/palette halves. A zero
+/// resource clears that half; the second half offsets its palette indices.
 void Graphics_LoadCharacterBlockAndPalette(u32 resourceId, s32 alternate) {
   const u8 *resourceData;
   u32 paletteDestination;
@@ -137,8 +137,8 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resourceId, s32 alternate) {
                       (DMA_ENABLE | DMA_32BIT) << 16 | 0x40);
 }
 
-// Builds the 512 tilemap words surrounding a sliding credits backdrop:
-// blank margins, 240 consecutive tile pairs, then a zero-filled tail.
+/// Builds the 512 tilemap words surrounding a sliding credits backdrop:
+/// blank margins, 240 consecutive tile pairs, then a zero-filled tail.
 void DisplayScroll_BuildHblankWordTable(u32 *destination) {
   s32 remaining;
   u32 blankTiles = 0x01FF01FF;
@@ -168,7 +168,7 @@ void DisplayScroll_BuildHblankWordTable(u32 *destination) {
   } while (remaining >= 0);
 }
 
-// Slides both backdrop layers one pixel left every fourth frame.
+/// Slides both backdrop layers one pixel left every fourth frame.
 void DisplayScroll_StepPositionEveryFourFrames(void) {
   if ((gFrameTick & 3) == 0) {
     u32 decrement = 0xffff;
@@ -178,8 +178,8 @@ void DisplayScroll_StepPositionEveryFourFrames(void) {
   }
 }
 
-// Crossfades the credits backdrop sequence through alternating tile banks,
-// then restores the display for the following screen.
+/// Crossfades the credits backdrop sequence through alternating tile banks,
+/// then restores the display for the following screen.
 s32 DisplayScroll_RunSlideshow(void) {
   u32 slide;
   s32 alpha;
@@ -238,14 +238,14 @@ struct DisplayScrollObject {
   u32 attr2;
 };
 
-// The credits reuse a flash-library work word.
+/// The credits reuse a flash-library work word.
 extern u16 gFlash_Handler3;
 
-// 128 entries sent to OAM, also stored in flash-library work space.
+/// 128 entries sent to OAM, also stored in flash-library work space.
 #define SCROLL_OBJECTS                                                         \
   (*(struct DisplayScrollObject **)&gFlashNumRemainingBytes)
 
-// Blank credits line
+/// Blank credits line
 static const u8 sBlankCreditLine[] = "";
 
 // These labels are translated credits content, not gameplay patch selectors.
@@ -263,7 +263,7 @@ static const u8 sBlankCreditLine[] = "";
 #define CREDITS_ARTWORK_LABEL "Artwork"
 #endif
 
-// Credits text, one row per line, terminated by 0.
+/// Credits text, one row per line, terminated by 0.
 // clang-format off
 const void *gDisplayScroll_LineTable[] = {
     sBlankCreditLine,
@@ -882,8 +882,8 @@ const void *gDisplayScroll_LineTable[] = {
 
 #include "../display/glyph_widths.h"
 
-// Moves the sixteen visible credits rows through the 32-row tile ring and
-// copies their sprites to OAM. End-of-text holds the scroll position.
+/// Moves the sixteen visible credits rows through the 32-row tile ring and
+/// copies their sprites to OAM. End-of-text holds the scroll position.
 void DisplayScroll_UpdateObjects(void) {
   u32 frame = gFlash_Handler3;
   u32 scrollWithinTile = frame & 7;
@@ -910,8 +910,8 @@ void DisplayScroll_UpdateObjects(void) {
     gFlash_Handler3++;
 }
 
-// Renders a new line into the tile-ring row sixteen rows ahead of the
-// visible top. A null table entry latches the end-of-text state.
+/// Renders a new line into the tile-ring row sixteen rows ahead of the
+/// visible top. A null table entry latches the end-of-text state.
 void DisplayScroll_RenderEnteringLine(void) {
   u32 scrollPosition;
   s32 lineIndex;
@@ -930,8 +930,8 @@ void DisplayScroll_RenderEnteringLine(void) {
   }
 }
 
-// Allocates the credits sprites, builds the blank border and text rows,
-// clears the tile ring and schedules scrolling and line rendering.
+/// Allocates the credits sprites, builds the blank border and text rows,
+/// clears the tile ring and schedules scrolling and line rendering.
 void DisplayScroll_InitObjectTable(void) {
   // Sharing the three border-strip loops through an ordinary inline helper
   // changes registers at the same 0x178-byte native English extent.
@@ -979,9 +979,9 @@ void DisplayScroll_InitObjectTable(void) {
                            row * CREDITS_LINE_TILES, 1);
 }
 
-// Centers, right-aligns or left-aligns one credits line in a 192-pixel row.
-// Rasterizes its glyphs and shadow, packs 4-bit pixels and uploads 24 tiles.
-// Returns -1 at the null end marker, otherwise zero.
+/// Centers, right-aligns or left-aligns one credits line in a 192-pixel row.
+/// Rasterizes its glyphs and shadow, packs 4-bit pixels and uploads 24 tiles.
+/// Returns -1 at the null end marker, otherwise zero.
 s32 DisplayScroll_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   u8 *linePixels = Runtime_BumpAllocateAlternatePool(CREDITS_BUFFER_BYTES);
   s32 startX = 0;

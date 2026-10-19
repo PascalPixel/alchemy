@@ -1,5 +1,6 @@
-// Part of runtime.c, the runtime object, compiled only through it.
-// The task scheduler: per-frame and VBlank routines in order.
+/// @file
+/// Part of runtime.c, the runtime object, compiled only through it.
+/// The task scheduler: per-frame and VBlank routines in order.
 
 #include "../runtime_internal.h"
 
@@ -10,7 +11,7 @@ typedef s32 (*KeyCallbackFn)(void);
 // The task scheduler: up to 20 routines run each frame by WaitFrames or each
 // VBlank, kept sorted by their order value (see SCHEDULER_KEY_MAIN_LOOP).
 
-// Empties the task table.
+/// Empties the task table.
 void Scheduler_ResetTaskTable(void) {
   struct SchedulerTask *task = gSchedulerTaskTable;
   s32 remaining;
@@ -28,7 +29,7 @@ void Scheduler_ResetTaskTable(void) {
   gSchedulerReady = 1;
 }
 
-// Copies `byteCount` bytes a word at a time.
+/// Copies `byteCount` bytes a word at a time.
 void Scheduler_CopyWords(u32 *destination, u32 *source, u32 byteCount) {
   u32 index;
   byteCount >>= 2;
@@ -36,8 +37,8 @@ void Scheduler_CopyWords(u32 *destination, u32 *source, u32 byteCount) {
     *destination++ = *source++;
 }
 
-// Bubble-sorts the task table by order, highest first, so each pass runs its
-// tasks from the highest order down.
+/// Bubble-sorts the task table by order, highest first, so each pass runs its
+/// tasks from the highest order down.
 void Scheduler_SortTasks(void) {
   /* FAKEMATCH: the declaration initializer repeats the first pass's assignment;
    * the native loads the table before the loop and again at the top of every
@@ -64,7 +65,7 @@ void Scheduler_SortTasks(void) {
   }
 }
 
-// Returns the table index of the task running `callback`, or -1.
+/// Returns the table index of the task running `callback`, or -1.
 s32 Scheduler_FindCallback(SchedulerCallback callback) {
   s32 result;
   struct SchedulerTask *task;
@@ -84,9 +85,9 @@ s32 Scheduler_FindCallback(SchedulerCallback callback) {
   return result;
 }
 
-// Schedules `callback` with `order`, or gives a task already running it the
-// new order, and re-sorts the table. Returns the task's index, or -1 when
-// the table is full.
+/// Schedules `callback` with `order`, or gives a task already running it the
+/// new order, and re-sorts the table. Returns the task's index, or -1 when
+/// the table is full.
 s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order) {
   u32 savedInterruptState;
   s32 index;
@@ -122,13 +123,13 @@ s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order) {
   return index;
 }
 
-// Empty scheduler callback; it leaves all runtime state unchanged.
+/// Empty scheduler callback; it leaves all runtime state unchanged.
 void Scheduler_Idle(void) {}
 
-// Alternate empty scheduler callback with the same no-op behavior.
+/// Alternate empty scheduler callback with the same no-op behavior.
 void Scheduler_EmptyCallback(void) {}
 
-// Unschedules the task running `callback`. Returns its old index, or -1.
+/// Unschedules the task running `callback`. Returns its old index, or -1.
 s32 Scheduler_RemoveCallback(SchedulerCallback callback) {
   struct SchedulerTask *task;
   u32 savedInterruptMaster;
@@ -150,9 +151,9 @@ s32 Scheduler_RemoveCallback(SchedulerCallback callback) {
   return result;
 }
 
-// Suspends the task running `callback`, or every task when `callback` is null,
-// by making the high byte of its order odd. Returns the last index changed,
-// or -1.
+/// Suspends the task running `callback`, or every task when `callback` is null,
+/// by making the high byte of its order odd. Returns the last index changed,
+/// or -1.
 s32 Scheduler_SuspendTasks(SchedulerCallback callback) {
   struct SchedulerTask *task;
   u32 savedInterruptMaster;
@@ -174,9 +175,9 @@ s32 Scheduler_SuspendTasks(SchedulerCallback callback) {
   return result;
 }
 
-// Suspends every task whose routine is in an overlay (EWRAM, 0x02xxxxxx)
-// unless the task is marked to keep running (flag bit 0). The menus do this
-// while they are open. Returns the last index changed, or -1.
+/// Suspends every task whose routine is in an overlay (EWRAM, 0x02xxxxxx)
+/// unless the task is marked to keep running (flag bit 0). The menus do this
+/// while they are open. Returns the last index changed, or -1.
 s32 Scheduler_SuspendOverlayTasks(void) {
   struct SchedulerTask *task;
   u32 savedInterruptMaster;
@@ -196,8 +197,8 @@ s32 Scheduler_SuspendOverlayTasks(void) {
   return result;
 }
 
-// Sets the flags of the task running `callback`; bit 0 keeps it running while
-// the overlay tasks are suspended. Returns its index, or -1.
+/// Sets the flags of the task running `callback`; bit 0 keeps it running while
+/// the overlay tasks are suspended. Returns its index, or -1.
 s32 Scheduler_SetTaskFlags(SchedulerCallback callback, u32 mask) {
   struct SchedulerTask *task;
   u32 savedInterruptMaster;
@@ -218,8 +219,8 @@ s32 Scheduler_SetTaskFlags(SchedulerCallback callback, u32 mask) {
   return result;
 }
 
-// Resumes the task running `callback`, or every task when `callback` is null.
-// Returns the last index changed, or -1.
+/// Resumes the task running `callback`, or every task when `callback` is null.
+/// Returns the last index changed, or -1.
 s32 Scheduler_ResumeTasks(SchedulerCallback callback) {
   struct SchedulerTask *task;
   u32 savedInterruptMaster;
@@ -239,8 +240,8 @@ s32 Scheduler_ResumeTasks(SchedulerCallback callback) {
   return result;
 }
 
-// Resumes every task whose routine is in an overlay. Returns the last index
-// changed, or -1.
+/// Resumes every task whose routine is in an overlay. Returns the last index
+/// changed, or -1.
 s32 Scheduler_ResumeOverlayTasks(void) {
   struct SchedulerTask *task;
   u32 savedInterruptMaster;
@@ -260,9 +261,9 @@ s32 Scheduler_ResumeOverlayTasks(void) {
   return result;
 }
 
-// Runs one pass of the scheduler: every task whose order's high byte matches
-// `key`'s (SCHEDULER_KEY_MAIN_LOOP or SCHEDULER_KEY_VBLANK), in table order.
-// Nothing runs until Scheduler_ResetTaskTable has set the table up.
+/// Runs one pass of the scheduler: every task whose order's high byte matches
+/// `key`'s (SCHEDULER_KEY_MAIN_LOOP or SCHEDULER_KEY_VBLANK), in table order.
+/// Nothing runs until Scheduler_ResetTaskTable has set the table up.
 void Scheduler_RunPass(s32 key) {
   struct SchedulerTask *task = gSchedulerTaskTable;
   s32 remaining;

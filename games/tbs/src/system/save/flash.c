@@ -5,8 +5,8 @@
 
 typedef u8 (*FlashByteRead)(u8 *address);
 
-// Enters flash ID mode, waits for the chip and reads its device and
-// manufacturer IDs.
+/// Enters flash ID mode, waits for the chip and reads its device and
+/// manufacturer IDs.
 s32 ReadFlashId(void) {
   struct {
     u8 buffer[64];
@@ -56,8 +56,8 @@ extern u32 gFlash_Handler1;
 extern u32 gEraseFlashSector;
 extern u16 *gFlash_Handler4;
 
-// Selects matching chip handlers, falling back to the final table entry when
-// unknown.
+/// Selects matching chip handlers, falling back to the final table entry when
+/// unknown.
 s32 IdentifyFlash(void) {
   u16 missing;
   u16 id;
@@ -89,7 +89,7 @@ extern u8 gFlashTimeoutFlag;
 extern u8 gFlashTimerNum;
 extern u16 *gFlashTimerReg;
 
-// Counts down the active flash timeout and marks its expiration.
+/// Counts down the active flash timeout and marks its expiration.
 void FlashTimerIntr(void) {
   if (gFlashTimerCount != 0) {
     s32 ticksRemaining = gFlashTimerCount;
@@ -102,7 +102,7 @@ void FlashTimerIntr(void) {
   }
 }
 
-// Selects a hardware timer and returns its timeout interrupt callback.
+/// Selects a hardware timer and returns its timeout interrupt callback.
 s32 SetFlashTimerIntr(u8 timerIndex, void (**callback)(void)) {
   if (timerIndex > 3)
     return 1;
@@ -114,7 +114,7 @@ s32 SetFlashTimerIntr(u8 timerIndex, void (**callback)(void)) {
 
 extern u16 gFlashSavedIme;
 
-// Starts the selected operation timeout, saving the interrupt-enable state.
+/// Starts the selected operation timeout, saving the interrupt-enable state.
 void StartFlashTimer(u8 timingIndex) {
   u16 *timing = (u16 *)((u8 *)gFlash_Handler4 + timingIndex * 6);
   u16 *timerRegister;
@@ -135,7 +135,7 @@ void StartFlashTimer(u8 timingIndex) {
   gFlashTimerReg = timerRegister;
 }
 
-// Stops the flash timer and restores the saved interrupt-enable state.
+/// Stops the flash timer and restores the saved interrupt-enable state.
 void StopFlashTimer(void) {
   u16 **savedTimerAddress = &gFlashTimerReg;
   u16 *timerRegister = *savedTimerAddress;
@@ -152,11 +152,11 @@ void StopFlashTimer(void) {
   REG_IME = gFlashSavedIme;
 }
 
-// Reads one byte; copied into RAM so the cartridge can be polled during a
-// write.
+/// Reads one byte; copied into RAM so the cartridge can be polled during a
+/// write.
 u8 ReadFlashByte(u8 *source) { return *source; }
 
-// Copies the byte reader to RAM and installs its Thumb entry point.
+/// Copies the byte reader to RAM and installs its Thumb entry point.
 void CopyFlashReadRoutineToRam(void *destination) {
   u16 *destinationCode = destination;
   u16 *sourceCode;
@@ -175,8 +175,8 @@ void CopyFlashReadRoutineToRam(void *destination) {
 
 void StartFlashTimer(u8 index);
 
-// Polls for the expected byte until success or timeout, returning an operation
-// error.
+/// Polls for the expected byte until success or timeout, returning an operation
+/// error.
 u16 WaitForFlashWrite(u8 timingIndex, volatile u8 *address, u8 expected) {
   u16 result = 0;
 
@@ -196,7 +196,7 @@ u16 WaitForFlashWrite(u8 timingIndex, volatile u8 *address, u8 expected) {
   return result;
 }
 
-// Copies flash bytes into RAM; this routine executes from a RAM copy.
+/// Copies flash bytes into RAM; this routine executes from a RAM copy.
 void ReadFlashCore(const u8 *source, u8 *destination, u32 size) {
   u32 remaining = size - 1;
 
@@ -209,7 +209,7 @@ void ReadFlashCore(const u8 *source, u8 *destination, u32 size) {
 
 typedef void (*FlashReadCore)(const u8 *source, u8 *destination, u32 size);
 
-// Copies the RAM reader and reads a range using the standard sector geometry.
+/// Copies the RAM reader and reads a range using the standard sector geometry.
 void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size) {
   u16 code[64];
   u16 *sourceCode;
@@ -232,8 +232,8 @@ void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size) {
        destination, size);
 }
 
-// Returns the first differing byte in the right buffer, or NULL when all bytes
-// match.
+/// Returns the first differing byte in the right buffer, or NULL when all bytes
+/// match.
 u8 *VerifyFlashCore(u8 *left, u8 *right, u16 size) {
   u16 index = size - 1;
 
@@ -253,8 +253,8 @@ u8 *VerifyFlashCore(u8 *left, u8 *right, u16 size) {
 
 typedef u8 *(*FlashVerifyCore)(u8 *source, u8 *flash, u16 size);
 
-// Copies the verifier to RAM and compares a standard flash sector with source
-// data.
+/// Copies the verifier to RAM and compares a standard flash sector with source
+/// data.
 s32 Flash_VerifySector(u16 sector, s32 source) {
   u16 code[128];
   u16 *sourceCode;

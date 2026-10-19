@@ -1,5 +1,6 @@
-// Part of game.c, the game object, compiled only through it.
-// Element levels and classes.
+/// @file
+/// Part of game.c, the game object, compiled only through it.
+/// Element levels and classes.
 
 #include "../game_internal.h"
 
@@ -10,14 +11,14 @@ struct ElementLevelBonus {
 
 extern struct ElementLevelBonus gElement_PowerResistByLevel[16];
 
-// Returns the class series selected by the primary and secondary elements.
+/// Returns the class series selected by the primary and secondary elements.
 s32 Class_GetSeries(s32 primaryElement, s32 secondaryElement) {
   return gOwner_FourColumnValues[(primaryElement * 4) + secondaryElement];
 }
 
-// Writes ten times each element level to `output`: an enemy's from its
-// element preset, a character's from the Djinn set on it (`source` is its
-// Djinn bits) plus its own element bonus.
+/// Writes ten times each element level to `output`: an enemy's from its
+/// element preset, a character's from the Djinn set on it (`source` is its
+/// Djinn bits) plus its own element bonus.
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
   s32 i;
   s32 *cursor;
@@ -55,7 +56,7 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
   return 0;
 }
 
-// Returns a unit's level in `element` (0 to 3).
+/// Returns a unit's level in `element` (0 to 3).
 s32 Unit_GetElementLevel(s32 owner, s32 element) {
   struct BattleUnit *unit = UnitGet(owner);
   s32 elementLevels[4];
@@ -69,7 +70,7 @@ s32 Unit_GetElementLevel(s32 owner, s32 element) {
   return result;
 }
 
-// Returns the element an enemy attacks with, from its element preset.
+/// Returns the element an enemy attacks with, from its element preset.
 s32 Enemy_GetAttackElement(struct BattleUnit *unit) {
   const struct EnemyDefinition *enemy =
       (const struct EnemyDefinition *)Enemy_GetDefinition(unit->classId);
@@ -145,10 +146,10 @@ u32 Unit_CalcBaseElements(s32 owner, s16 destination[4][2]) {
   }
 }
 
-// Returns the class a character has with `djinn` set: the series is chosen by
-// its two strongest elements, and the class is the last of the series whose
-// element requirements it meets. Isaac and Garet as children and Jenna have
-// fixed classes.
+/// Returns the class a character has with `djinn` set: the series is chosen by
+/// its two strongest elements, and the class is the last of the series whose
+/// element requirements it meets. Isaac and Garet as children and Jenna have
+/// fixed classes.
 s32 Class_Determine(s32 character, const u8 *djinn) {
   s32 levels[4];
   s32 primary;
@@ -206,13 +207,13 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
   return result;
 }
 
-// Returns the definition of class `classId`.
+/// Returns the definition of class `classId`.
 struct ClassDefinition *Class_GetDefinition(s32 classId) {
   return &gClass_DefinitionTable[classId];
 }
 
-// Works out a character's class again after its Djinn change, then its
-// Psynergy list and its base elements.
+/// Works out a character's class again after its Djinn change, then its
+/// Psynergy list and its base elements.
 void Unit_UpdateClass(s32 ownerId) {
   struct BattleUnit *owner = UnitGet(ownerId);
 

@@ -1,10 +1,11 @@
-// Part of runtime.c, the runtime object, compiled only through it.
-// Random numbers, angles and square roots.
+/// @file
+/// Part of runtime.c, the runtime object, compiled only through it.
+/// Random numbers, angles and square roots.
 
 #include "../runtime_internal.h"
 
-// Advances the game's random number generator (the C library's classic
-// linear congruential one) and returns 16 bits of it.
+/// Advances the game's random number generator (the C library's classic
+/// linear congruential one) and returns 16 bits of it.
 u32 Random16(void) {
   enum { MULTIPLIER = 0x41c64e6d, INCREMENT = 0x3039 };
   u32 value = gRandomSeed * MULTIPLIER + INCREMENT;
@@ -13,10 +14,10 @@ u32 Random16(void) {
   return (value << 8) >> 16;
 }
 
-// Moves the point `position` by `radius` in direction `angle` on the ground
-// plane: x by the cosine, z by the sine. The point is any three s32
-// coordinates x, y, z in a row (struct FieldPosition, struct EffectVector and
-// others), so it takes a plain pointer.
+/// Moves the point `position` by `radius` in direction `angle` on the ground
+/// plane: x by the cosine, z by the sine. The point is any three s32
+/// coordinates x, y, z in a row (struct FieldPosition, struct EffectVector and
+/// others), so it takes a plain pointer.
 void Vector_AddPolarOffset(s32 radius, s32 angle, void *position) {
   s32 *coordinate = position;
 
@@ -25,9 +26,9 @@ void Vector_AddPolarOffset(s32 radius, s32 angle, void *position) {
   *coordinate += Iwram_MulQ16(radius, Trig_Sin(angle));
 }
 
-// Returns the angle of the vector (x, y), in 1/65536 turns, measured from
-// the y axis: 0 along +y, 0x4000 along +x. It binary-searches the tangent
-// table to 1/256 of a quarter turn.
+/// Returns the angle of the vector (x, y), in 1/65536 turns, measured from
+/// the y axis: 0 along +y, 0x4000 along +x. It binary-searches the tangent
+/// table to 1/256 of a quarter turn.
 s32 ArcTan2(s32 x, s32 y) {
   const u16 *table;
   s32 value;
@@ -108,7 +109,7 @@ s32 ArcTan2(s32 x, s32 y) {
   return (u16)result;
 }
 
-// Returns the integer square root of `value`, a bit at a time.
+/// Returns the integer square root of `value`, a bit at a time.
 s32 Math_IntegerSqrt(s32 value) {
   s32 trial;
   s32 remainder;
@@ -129,8 +130,8 @@ s32 Math_IntegerSqrt(s32 value) {
   return result;
 }
 
-// Square root of a 16.16 fixed-point value, in 16.16.
+/// Square root of a 16.16 fixed-point value, in 16.16.
 s32 FixedSqrt(s32 value) { return Iwram_Sqrt(value) << 8; }
 
-// Returns the address of the basic sprite palettes.
+/// Returns the address of the basic sprite palettes.
 s32 Palette_GetBasicObjColors(void) { return (s32)gSystem_BasicColorPalette; }

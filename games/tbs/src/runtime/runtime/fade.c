@@ -1,5 +1,6 @@
-// Part of runtime.c, the runtime object, compiled only through it.
-// Screen fades through the blend registers.
+/// @file
+/// Part of runtime.c, the runtime object, compiled only through it.
+/// Screen fades through the blend registers.
 
 #include "../runtime_internal.h"
 
@@ -11,9 +12,9 @@ enum {
   FADE_LEVEL_MAX = 16
 };
 
-// Steps the screen fade once a frame from VBlank: sets BLDCNT to brighten or
-// darken the chosen layers and moves BLDY one step from the start level to
-// the target level.
+/// Steps the screen fade once a frame from VBlank: sets BLDCNT to brighten or
+/// darken the chosen layers and moves BLDY one step from the start level to
+/// the target level.
 void Fade_Update(void) {
   if (gBlendDuration != 0) {
     {
@@ -61,8 +62,8 @@ void Fade_Update(void) {
 //   gBlendLayers     : the BLDCNT layers the fade covers
 //   gBlendFramesLeft : frames until the fade ends
 
-// Fades BG1 to BG3, the sprites and the backdrop (0x3e) from the current
-// target brightness to `level` over `frames` frames.
+/// Fades BG1 to BG3, the sprites and the backdrop (0x3e) from the current
+/// target brightness to `level` over `frames` frames.
 #define FADE_DEFINE_BLEND(name, brighten, level)                               \
   void name(s32 frames) {                                                      \
     gBlendBrighten = brighten;                                                 \
@@ -73,24 +74,24 @@ void Fade_Update(void) {
     gBlendFramesLeft = gBlendDuration;                                         \
   }
 
-// Fades out to black.
+/// Fades out to black.
 FADE_DEFINE_BLEND(Fade_ToBlack, 0, FADE_LEVEL_MAX)
 
-// Fades in from black.
+/// Fades in from black.
 FADE_DEFINE_BLEND(Fade_FromBlack, 0, 0)
 
-// Fades out to white.
+/// Fades out to white.
 FADE_DEFINE_BLEND(Fade_ToWhite, 1, FADE_LEVEL_MAX)
 
-// Fades in from white.
+/// Fades in from white.
 FADE_DEFINE_BLEND(Fade_FromWhite, 1, 0)
 
-// Starts a fade of any layers.
-//   bright : 0 toward black, 1 toward white
-//   layer  : the BLDCNT layers to fade (low six bits)
-//   start  : the starting brightness; above 16, the current target
-//   target : the brightness to end at
-//   frames : how long the fade takes
+/// Starts a fade of any layers.
+///   bright : 0 toward black, 1 toward white
+///   layer  : the BLDCNT layers to fade (low six bits)
+///   start  : the starting brightness; above 16, the current target
+///   target : the brightness to end at
+///   frames : how long the fade takes
 void Fade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 frames) {
   gBlendBrighten = bright;
   gBlendLayers = layer & FADE_LAYER_MASK;
@@ -103,7 +104,7 @@ void Fade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 frames) {
   gBlendFramesLeft = (gBlendDuration = frames);
 }
 
-// Waits until the running fade has finished.
+/// Waits until the running fade has finished.
 void Fade_Wait(void) {
   if (gBlendDuration != 0) {
     do {

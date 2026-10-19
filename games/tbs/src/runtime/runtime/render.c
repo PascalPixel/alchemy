@@ -1,12 +1,13 @@
-// Part of runtime.c, the runtime object, compiled only through it.
-// The frame's sprite lists: affine matrices, depth slots and the OAM build.
+/// @file
+/// Part of runtime.c, the runtime object, compiled only through it.
+/// The frame's sprite lists: affine matrices, depth slots and the OAM build.
 
 #include "../runtime_internal.h"
 
 extern u8 IwramClearWords[];
 
-// Starts a new frame of sprites: frees the affine matrices and empties the
-// 256 depth slots sprites are linked into.
+/// Starts a new frame of sprites: frees the affine matrices and empties the
+/// 256 depth slots sprites are linked into.
 void Render_ResetFrame(void) {
   gObjAffineCount = 0;
   _call_via_r3(((u32)&gRenderSlotHeads), 0x400, ((u32)&gObjAffineCount),
@@ -17,9 +18,9 @@ typedef void (*OamBuildRoutine)(void *work);
 
 enum { OBJ_AFFINE_MATRIX_COUNT = 32, RENDER_DEPTH_SLOT_COUNT = 256 };
 
-// Hands out the next OAM affine matrix for a sprite drawn with `source`'s
-// scale and rotation and fills it in. Returns the matrix number, or 0 when
-// all 32 are taken.
+/// Hands out the next OAM affine matrix for a sprite drawn with `source`'s
+/// scale and rotation and fills it in. Returns the matrix number, or 0 when
+/// all 32 are taken.
 s32 AffineMatrix_BuildForEffect(struct AffineTransform *source) {
   union AffineMatrix *matrix;
   s16 *coefficient;
@@ -69,8 +70,8 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source) {
   return index;
 }
 
-// Links a sprite entry into depth slot `slot` (clamped to 0..255) for this
-// frame. The entry's first word becomes its link to the next entry.
+/// Links a sprite entry into depth slot `slot` (clamped to 0..255) for this
+/// frame. The entry's first word becomes its link to the next entry.
 void Runtime_PushSlotEntry(void *slotEntry, s32 slot) {
   void **head;
   void *previousHead;
@@ -85,8 +86,8 @@ void Runtime_PushSlotEntry(void *slotEntry, s32 slot) {
   *(void **)slotEntry = previousHead;
 }
 
-// Builds this frame's OAM list in `work` from the sprites linked into the
-// depth slots, with a RAM copy of the ARM builder.
+/// Builds this frame's OAM list in `work` from the sprites linked into the
+/// depth slots, with a RAM copy of the ARM builder.
 void Render_BuildOamList(void *work) {
   OamBuildRoutine routine;
 

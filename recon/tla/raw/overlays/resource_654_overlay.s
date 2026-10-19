@@ -320,48 +320,6 @@ Func_02000568:
 	.4byte gPartyState
 .L_02008614:
 	.4byte 0xffff8000
-	.section .text.x0200863c,"ax",%progbits
-	.balign 4
-	.global Func_0200063c
-	.thumb_func
-Func_0200063c:
-	push {r5, r6, r7, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	ldr r3, [r3, #32]
-	movs r2, #132
-	lsls r2, r2, #1
-	adds r7, r3, r2
-	adds r2, #56
-	sub sp, #8
-	adds r6, r3, r2
-	movs r3, #18
-	movs r2, #6
-	str r3, [sp, #0]
-	movs r3, #56
-	str r2, [sp, #4]
-	bl Func_02003998
-	movs r5, #0
-.L_02008660:
-	ldr r3, [r7, #12]
-	ldr r2, .L_02008684
-	movs r0, #1
-	adds r3, r3, r2
-	str r3, [r7, #12]
-	ldr r3, [r6, #12]
-	adds r3, r3, r2
-	str r3, [r6, #12]
-	bl WaitFrames
-	adds r3, r5, #1
-	lsls r3, r3, #24
-	lsrs r5, r3, #24
-	cmp r5, #15
-	bls .L_02008660
-	add sp, #8
-	pop {r5, r6, r7, pc}
-	.2byte 0x0000
-.L_02008684:
-	.4byte 0xffffe000
 	.section .text.x02008688,"ax",%progbits
 	.global Func_02000688
 	.thumb_func

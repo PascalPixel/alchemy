@@ -37,7 +37,7 @@ The field menu's four icons reach the menu object through the far-call table
 
 | Icon | Function | Part |
 | --- | --- | --- |
-| 1 Psynergy | `Menu_OpenConfirmPrompt` | `psynergy.c` |
+| 1 Psynergy | `PsynergyMenu_Run` | `psynergy.c` |
 | 2 Djinn | `DjinnMenu_Run` | `djinn.c` |
 | 3 Item | `RunAssetSelectionScreen` | `item.c` |
 | 4 Status | `ActionMenu_Open` | `status.c` |

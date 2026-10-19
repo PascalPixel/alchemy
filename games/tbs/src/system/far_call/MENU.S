@@ -5,7 +5,7 @@
 	.global FarCall_MenuTable
 FarCall_MenuTable:
 	export RunAssetSelectionScreenFar, RunAssetSelectionScreen
-	export Menu_OpenConfirmPromptFar, Menu_OpenConfirmPrompt
+	export PsynergyMenu_RunFar, PsynergyMenu_Run
 	export Menu_OpenActionFlow, ActionMenu_Open
 	export Menu_OpenCharacterSelectorFar, Menu_OpenCharacterSelector
 	overlay_veneer UiIcon_CreateWithResourceVariant

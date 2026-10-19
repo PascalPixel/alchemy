@@ -7,7 +7,7 @@ s32 Menu_SelectTopEntry(s32);
 s32 UiWork_CloseAndRelease(void);
 s32 DjinnMenu_Open(void);
 s32 Object_GetTriggerTileAheadOfCurrentFar(void);
-s32 Menu_OpenConfirmPromptFar(void);
+s32 PsynergyMenu_RunFar(void);
 s32 Func_080f8000(void);
 s32 Func_080f8010(void);
 void UiWindow_OpenMode1AndWaitFrame(void);
@@ -33,7 +33,7 @@ loop:
     *(u16 *)(state + 0x162) = ret;
     break;
   case 1:
-    ret = Menu_OpenConfirmPromptFar();
+    ret = PsynergyMenu_RunFar();
     if (ret == -1)
       goto loop;
     break;

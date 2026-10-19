@@ -141,7 +141,7 @@ s32 InventoryMenu_ItemNamePageReturnTrue(void);
 void InventoryMenu_ItemNamePageNoOp(void);
 s32 ItemMenu_RunList(s32 paneIndex);
 
-s32 Menu_OpenConfirmPrompt(void);
+s32 PsynergyMenu_Run(void);
 s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction);
 s32 PsynergyMenu_ClassifySelectedPsynergy(void);
 s32 PsynergyMenu_SelectPartySlot(s32 partySlot);

@@ -1349,7 +1349,7 @@ s32 Menu_RunTopSelection(void) {
       ((struct EventWork *)state)->facingTrigger = ret;
       break;
     case 1:
-      ret = Menu_OpenConfirmPromptFar();
+      ret = PsynergyMenu_RunFar();
       if (ret == -1)
         continue;
       break;

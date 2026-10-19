@@ -7,9 +7,9 @@ Resource_FarCall007:
 	.thumb_func
 Func_080f8000:
 	overlay_veneer Func_080f94a4
-	.global Menu_OpenConfirmPromptFar
+	.global PsynergyMenu_RunFar
 	.thumb_func
-Menu_OpenConfirmPromptFar:
+PsynergyMenu_RunFar:
 	overlay_veneer Func_080fcab8
 	.global Func_080f8010
 	.thumb_func

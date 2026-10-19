@@ -38,7 +38,7 @@
 // Psynergy to use on the field, it is recorded in the event work's
 // psynergyRequest (owner << 10 | Psynergy) and 1 is returned; -1 when the
 // player backs out.
-s32 Menu_OpenConfirmPrompt(void) {
+s32 PsynergyMenu_Run(void) {
 #if TBS_PATCH_2
   void *saved = Runtime_BumpAllocateAlternatePool(PSYNERGY_PROMPT_TILES_SIZE);
 #endif

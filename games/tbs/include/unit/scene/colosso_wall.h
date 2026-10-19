@@ -38,7 +38,7 @@ const struct SceneRegion *Scene_GetRegions(void);
 const u32 *Scene_GetExits(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
-s32 ColossoWall_ApplyEntryState(void);
+s32 ColossoWall_Initialize(void);
 // FieldScene_BuildDescriptorAndInstallTask is called before its definition with
 // no prototype in scope.
 extern const u8 gColossoWall_RollLogScript[];

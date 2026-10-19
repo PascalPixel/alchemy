@@ -767,7 +767,7 @@ static void ColossoWall_StageBattleResult(s32 result) {
 }
 
 // Restore obstacle progress and set up the selected course entrance.
-s32 ColossoWall_ApplyEntryState(void) {
+s32 ColossoWall_Initialize(void) {
   struct FieldActor *actor;
   s32 x;
   s32 obstacleId;

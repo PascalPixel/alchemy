@@ -113,8 +113,8 @@ struct SceneEntrance *ColossoRiver_GetEntrances(void) {
   return gColossoRiver_Entrances;
 }
 
-// Supply the scene entry table's default result.
-s32 get_default_result(void) { return 0; }
+// The course has no region table.
+const struct SceneRegion *ColossoRiver_GetRegions(void) { return 0; }
 
 // Return the course exit table.
 u32 *ColossoRiver_GetExits(void) { return gColossoRiver_Exits; }
@@ -558,7 +558,7 @@ static void ColossoRiver_MarkCourseTerrain(s32 actor) {
 
 // Restores the stages as they were left, then by the arrival: the race (1 and
 // 2), the guide's explanation (3), or the match won (4) or lost (5).
-s32 ColossoRiver_ApplyEntryState(void) {
+s32 ColossoRiver_Initialize(void) {
   struct FieldActor *actor;
   s32 hit;
   s32 x;

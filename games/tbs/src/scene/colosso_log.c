@@ -127,8 +127,8 @@ struct SceneEntrance *ColossoLog_GetEntrances(void) {
   return gColossoLogEntrances;
 }
 
-// Return the scene protocol default.
-s32 ColossoLog_ReturnZero(void) { return 0; }
+// The course has no region table.
+const struct SceneRegion *ColossoLog_GetRegions(void) { return 0; }
 
 // Return the course exit connections.
 u32 *ColossoLog_GetExits(void) { return gColossoLogExits; }

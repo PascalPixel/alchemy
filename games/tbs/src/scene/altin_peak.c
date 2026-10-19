@@ -85,6 +85,22 @@ enum { ENTRANCE_AFTER_BATTLE = 99 };
 // The log the party talks to in rooms 3, 5, 6 and 7, and room 7's Djinni.
 enum { ACTOR_LOG = 8, ACTOR_DJINNI = 14 };
 
+// The rooms' puzzles, kept while the party stays in the mine.
+enum {
+  // Frost has frozen the room's first puddle.
+  FLAG_PUDDLE_FROZEN = FLAG_SCENE_TEMP_00,
+  // Frost has frozen room 1's wide puddle or room 7's second.
+  FLAG_SECOND_PUDDLE_FROZEN = FLAG_SCENE_TEMP_01,
+  // Frost has frozen room 7's third puddle.
+  FLAG_THIRD_PUDDLE_FROZEN = FLAG_SCENE_TEMP_04,
+  // Garet has come out to look at room 9's falling-rock sign.
+  FLAG_GARET_WATCHING_ROCKS = FLAG_SCENE_TEMP_05
+};
+
+// A chest searched while facing the given way.
+#define SEARCH_CHEST_FACING(facing)                                            \
+  (SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | (facing))
+
 // The leader's jump animations.
 enum { ANIM_LEADER_JUMP = 22, ANIM_LEADER_LEAP = 7 };
 
@@ -323,7 +339,7 @@ static void Mine_FreezeRoom1Puddle(void) {
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
+  Engine_GameFlagSet(FLAG_PUDDLE_FROZEN);
 }
 
 // Frost on room 1's wide puddle, three cells across: the cells take the
@@ -336,7 +352,7 @@ static void Mine_FreezeRoom1WidePuddle(void) {
   if (puddle != 0) {
     puddle->motionFlags = ACTOR_FALLS;
   }
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
+  Engine_GameFlagSet(FLAG_SECOND_PUDDLE_FROZEN);
 }
 
 // Freeze the first room 7 puddle and restore its ice-pillar collision.
@@ -350,7 +366,7 @@ static void Mine_FreezeRoom7Puddle(void) {
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
+  Engine_GameFlagSet(FLAG_PUDDLE_FROZEN);
 }
 
 // Freeze the room 5 puddle and restore its ice-pillar collision.
@@ -364,7 +380,7 @@ static void Mine_FreezeRoom5Puddle(void) {
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
+  Engine_GameFlagSet(FLAG_PUDDLE_FROZEN);
 }
 
 // Freeze the room 6 puddle and restore its ice-pillar collision.
@@ -378,7 +394,7 @@ static void Mine_FreezeRoom6Puddle(void) {
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
+  Engine_GameFlagSet(FLAG_PUDDLE_FROZEN);
 }
 
 // Freeze the second room 7 puddle and save its scene flag.
@@ -392,7 +408,7 @@ static void Mine_FreezeRoom7SecondPuddle(void) {
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
+  Engine_GameFlagSet(FLAG_SECOND_PUDDLE_FROZEN);
 }
 
 // Freeze the third room 7 puddle and save its scene flag.
@@ -406,7 +422,7 @@ static void Mine_FreezeRoom7ThirdPuddle(void) {
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_04);
+  Engine_GameFlagSet(FLAG_THIRD_PUDDLE_FROZEN);
 }
 
 // Interrupt handler while the water layer vanishes: each time, background 1
@@ -549,14 +565,14 @@ static void Mine_DrainThirdWater(void) {
 
 // Toggle the room 3 switch cells and save the resulting state.
 static void AltinPeak_ToggleRoom3SwitchCells(void) {
-  if (GameFlag_IsSet(0x323) != 0) {
+  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_ROOM_3_SWITCH) != 0) {
     Map_CopyCellAttributes(2, 0, 1, 1, 24, 80);
     Map_CopyCellsTo(2, 1, 24, 11, 1, 2);
-    GameFlag_Clear(0x323);
+    GameFlag_Clear(FLAG_ALTIN_PEAK_ROOM_3_SWITCH);
   } else {
     Map_CopyCellAttributes(0, 0, 1, 1, 24, 80);
     Map_CopyCellsTo(0, 1, 24, 11, 1, 2);
-    GameFlag_Set(0x323);
+    GameFlag_Set(FLAG_ALTIN_PEAK_ROOM_3_SWITCH);
   }
 }
 
@@ -573,14 +589,14 @@ static void AltinPeak_FlipRoom3Switch(void) {
 
 // Toggle the room 5 switch cells and save the resulting state.
 static void AltinPeak_ToggleRoom5SwitchCells(void) {
-  if (GameFlag_IsSet(0x325) != 0) {
+  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_ROOM_5_SWITCH) != 0) {
     Map_CopyCellAttributes(12, 72, 1, 1, 11, 73);
     Map_CopyCellsTo(48, 32, 11, 4, 1, 2);
-    GameFlag_Clear(0x325);
+    GameFlag_Clear(FLAG_ALTIN_PEAK_ROOM_5_SWITCH);
   } else {
     Map_CopyCellAttributes(10, 72, 1, 1, 11, 73);
     Map_CopyCellsTo(49, 32, 11, 4, 1, 2);
-    GameFlag_Set(0x325);
+    GameFlag_Set(FLAG_ALTIN_PEAK_ROOM_5_SWITCH);
   }
 }
 
@@ -600,14 +616,14 @@ static void AltinPeak_FlipRoom6Switch(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
   Event_PlayCue(SE_125);
-  if (GameFlag_IsSet(0x326) != 0) {
+  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_ROOM_6_SWITCH) != 0) {
     Map_CopyCellAttributes(15, 93, 1, 1, 16, 92);
     Map_CopyCellsTo(47, 29, 16, 28, 1, 2);
-    GameFlag_Clear(0x326);
+    GameFlag_Clear(FLAG_ALTIN_PEAK_ROOM_6_SWITCH);
   } else {
     Map_CopyCellAttributes(17, 93, 1, 1, 16, 92);
     Map_CopyCellsTo(46, 29, 16, 28, 1, 2);
-    GameFlag_Set(0x326);
+    GameFlag_Set(FLAG_ALTIN_PEAK_ROOM_6_SWITCH);
   }
   Engine_TaskWait(20);
   BattleFx_PlayQueuedSound();
@@ -619,14 +635,14 @@ static void AltinPeak_FlipRoom7Switch(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
   Event_PlayCue(SE_125);
-  if (GameFlag_IsSet(0x327) != 0) {
+  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_ROOM_7_SWITCH) != 0) {
     Map_CopyCellAttributes(28, 82, 1, 1, 29, 81);
     Map_CopyCellsTo(47, 28, 29, 17, 1, 2);
-    GameFlag_Clear(0x327);
+    GameFlag_Clear(FLAG_ALTIN_PEAK_ROOM_7_SWITCH);
   } else {
     Map_CopyCellAttributes(30, 82, 1, 1, 29, 81);
     Map_CopyCellsTo(46, 28, 29, 17, 1, 2);
-    GameFlag_Set(0x327);
+    GameFlag_Set(FLAG_ALTIN_PEAK_ROOM_7_SWITCH);
   }
   Engine_TaskWait(20);
   BattleFx_PlayQueuedSound();
@@ -797,7 +813,7 @@ static void AltinPeak_RunRollingEscape(s32 logStartDelay) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
   leader->timer = 0;
   Actor_SetActionScript(ACTOR_PARTY_LEADER, gAltinPeak_LeaderRideScript);
-  if (GameFlag_IsSet(0x205) != 0) {
+  if (GameFlag_IsSet(FLAG_GARET_WATCHING_ROCKS) != 0) {
     Actor_SetPosition(GARET, PIXELS(878), PIXELS(528));
     actor = Actor_Get(GARET);
     actor->facing = FACING_SOUTH + FACING_STEP;
@@ -847,13 +863,13 @@ static void AltinPeak_RunRollingEscape(s32 logStartDelay) {
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   // Return Garet to the party if the warning sign brought him into the scene.
   Engine_EventWait(120);
-  if (GameFlag_IsSet(0x205) != 0) {
+  if (GameFlag_IsSet(FLAG_GARET_WATCHING_ROCKS) != 0) {
     Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkTo(GARET, 824, 558);
   }
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 854, 584);
-  if (GameFlag_IsSet(0x205) != 0) {
+  if (GameFlag_IsSet(FLAG_GARET_WATCHING_ROCKS) != 0) {
     Engine_ActorSetAnimation(GARET, 1);
     Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   }
@@ -864,7 +880,7 @@ static void AltinPeak_RunRollingEscape(s32 logStartDelay) {
   Engine_CameraWaitForMove();
   Event_PlayCue(SE_148);
   Engine_EventWait(240);
-  if (GameFlag_IsSet(0x205) != 0) {
+  if (GameFlag_IsSet(FLAG_GARET_WATCHING_ROCKS) != 0) {
     Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
     Camera_MoveTo(PIXELS(854), 0, PIXELS(584), 1);
     Engine_CameraWaitForMove();
@@ -879,7 +895,7 @@ static void AltinPeak_RunRollingEscape(s32 logStartDelay) {
     Actor_SetPosition(GARET, 0, 0);
   }
   Audio_PlayCueFromEventWork();
-  GameFlag_Set(0x908);
+  GameFlag_Set(FLAG_ALTIN_PEAK_BOULDER_FALLEN);
 }
 
 // Read the warning and let Garet trigger the falling-rock scene.
@@ -890,9 +906,11 @@ static void AltinPeak_ReadFallingRockSign(void) {
   Engine_EventBegin();
   message = MsgAltinWatchFallingRocks;
   Engine_MessageShowCentered(message, 1);
-  if (GameFlag_IsSet(0x908) == 0 && GameFlag_IsSet(0xf14) == 0) {
+  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_BOULDER_FALLEN) == 0 &&
+      GameFlag_IsSet(0xf14) == 0) {
+    // 0xf14: the Orb of Force's chest in Fuchin Falls, not yet opened.
     // Bring Garet out to inspect the warning and demonstrate the danger.
-    GameFlag_Set(0x205);
+    GameFlag_Set(FLAG_GARET_WATCHING_ROCKS);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 790, 140);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 780, 140);
@@ -1161,7 +1179,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Engine_CameraWaitForMove();
   FieldObject_SetTargetAndCallback(
       10, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER, gAltinPeak_ActorScript);
-  Engine_GameFlagSet(0x904);
+  Engine_GameFlagSet(FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN);
   Engine_EventEnd();
 }
 
@@ -1247,7 +1265,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Engine_CameraMoveTo(actor->actor.x.fixed, actor->actor.y.fixed,
                       actor->actor.z.fixed, 1);
   Engine_CameraWaitForMove();
-  GameFlag_Set(0x905);
+  GameFlag_Set(FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN);
   Engine_EventEnd();
 }
 
@@ -1307,7 +1325,7 @@ static void AltinPeak_ApplyEntryState(void) {
   opened = Engine_GameFlagIsSet(FLAG_ALTIN_MINE_FIRST_DRAIN);
   if (opened == 0) {
     Engine_ActorSetChildValue(10, 2);
-    flag = Engine_GameFlagIsSet(0x905);
+    flag = Engine_GameFlagIsSet(FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN);
     if (flag != 0) {
       Engine_ActorSetAnimation(9, 0);
       actor = Object_GetById(9);
@@ -1323,7 +1341,7 @@ static void AltinPeak_ApplyEntryState(void) {
       AltinPeak_StartLeafGust(PIXELS(130), 0, PIXELS(168), 0);
       return;
     }
-    if (Engine_GameFlagIsSet(0x904) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN) == 0) {
       return;
     }
     Engine_ActorSetAnimation(9, 0);
@@ -1343,7 +1361,7 @@ static void AltinPeak_ApplyEntryState(void) {
     Map_CopyCellAttributes(0, 0, 1, 2, 3, 14);
     map->flags &= 0xfdff;
     AltinPeak_MarkActorTerrainCell(8);
-    if (Engine_GameFlagIsSet(0x200) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_PUDDLE_FROZEN) != 0) {
       Engine_ActorSetAnimation(8, 5);
       Map_CopyCellAttributes(7, 13, 1, 1, 9, 13);
       actor = Object_GetById(8);
@@ -1351,7 +1369,7 @@ static void AltinPeak_ApplyEntryState(void) {
       actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     }
     AltinPeak_MarkActorTerrainCell(9);
-    if (Engine_GameFlagIsSet(0x201) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_SECOND_PUDDLE_FROZEN) != 0) {
       Engine_ActorSetAnimation(9, 5);
       Map_CopyCellAttributes(29, 1, 3, 1, 17, 13);
       actor = Object_GetById(9);
@@ -1368,7 +1386,8 @@ static void AltinPeak_RestoreAreaThree(void) {
     Actor_SetPosition(9, 0, 0);
   } else {
     AltinPeak_StartPaletteAnim();
-    if (GameFlag_IsSet(0x109) == 0 && gGameState.entrance == 99) {
+    if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0 &&
+        gGameState.entrance == 99) {
       AltinPeak_ReopenAfterSecondBeast();
     } else {
       Map_CopyCellAttributes(38, 24, 1, 2, 37, 24);
@@ -1380,7 +1399,7 @@ static void AltinPeak_RestoreAreaThree(void) {
       }
     }
   }
-  if (GameFlag_IsSet(0x323) != 0) {
+  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_ROOM_3_SWITCH) != 0) {
     Map_CopyCellAttributes(0, 0, 1, 1, 24, 80);
     Map_CopyCellsTo(0, 1, 24, 11, 1, 2);
   } else {
@@ -1412,7 +1431,7 @@ static void AltinPeak_RestoreAreaFive(void) {
     ((struct MapScrollWork *)gMapWork[0])->flags &= ~0x200;
     Actor_SetPosition(10, 0, 0);
   } else {
-    if (GameFlag_IsSet(0x109) == 0) {
+    if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       if (gGameState.entrance == 99) {
         AltinPeak_ReopenAfterThirdBeast();
       }
@@ -1425,7 +1444,7 @@ static void AltinPeak_RestoreAreaFive(void) {
     }
   }
   AltinPeak_MarkActorTerrainCell(9);
-  if (GameFlag_IsSet(0x200) != 0) {
+  if (GameFlag_IsSet(FLAG_PUDDLE_FROZEN) != 0) {
     Engine_ActorSetAnimation(9, 5);
     Map_CopyCellAttributes(23, 13, 1, 1, 25, 13);
     {
@@ -1433,7 +1452,7 @@ static void AltinPeak_RestoreAreaFive(void) {
       actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT | actor->priorityFlags;
     }
   }
-  if (GameFlag_IsSet(0x325) != 0) {
+  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_ROOM_5_SWITCH) != 0) {
     Map_CopyCellAttributes(10, 72, 1, 1, 11, 73);
     Map_CopyCellsTo(49, 32, 11, 4, 1, 2);
   } else {
@@ -1447,12 +1466,12 @@ static void AltinPeak_RestoreAreaSix(void) {
   struct FieldActor *pillar;
 
   if (gGameState.entrance == 2) {
-    if (GameFlag_IsSet(0x109) == 0) {
+    if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       Actor_SetPosition(8, PIXELS(358), PIXELS(104));
     }
   }
   AltinPeak_MarkActorTerrainCell(9);
-  if (GameFlag_IsSet(0x200) != 0) {
+  if (GameFlag_IsSet(FLAG_PUDDLE_FROZEN) != 0) {
     pillar = Actor_Get(9);
     Engine_ActorSetAnimation(9, 5);
     Map_CopyCellAttributes(45, 41, 1, 1, 43, 41);
@@ -1463,7 +1482,7 @@ static void AltinPeak_RestoreAreaSix(void) {
   if (GameFlag_IsSet(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
     ((struct MapScrollWork *)gMapWork[0])->flags &= ~0x200;
   }
-  if (GameFlag_IsSet(0x326) != 0) {
+  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_ROOM_6_SWITCH) != 0) {
     Map_CopyCellAttributes(17, 93, 1, 1, 16, 92);
     Map_CopyCellsTo(46, 29, 16, 28, 1, 2);
   } else {
@@ -1480,7 +1499,7 @@ static void AltinPeak_RestoreAreaSeven(void) {
   Engine_ActorSetSpriteFlags((s32)actor, 0);
   Mine_MoveRoom7Block();
   AltinPeak_MarkActorTerrainCell(9);
-  if (GameFlag_IsSet(0x200) != 0) {
+  if (GameFlag_IsSet(FLAG_PUDDLE_FROZEN) != 0) {
     Engine_ActorSetAnimation(9, 5);
     Map_CopyCellAttributes(0, 0, 1, 1, 26, 26);
     {
@@ -1489,7 +1508,7 @@ static void AltinPeak_RestoreAreaSeven(void) {
     }
   }
   AltinPeak_MarkActorTerrainCell(11);
-  if (GameFlag_IsSet(0x201) != 0) {
+  if (GameFlag_IsSet(FLAG_SECOND_PUDDLE_FROZEN) != 0) {
     Engine_ActorSetAnimation(11, 5);
     Map_CopyCellAttributes(1, 0, 1, 1, 17, 10);
     {
@@ -1498,7 +1517,7 @@ static void AltinPeak_RestoreAreaSeven(void) {
     }
   }
   AltinPeak_MarkActorTerrainCell(12);
-  if (GameFlag_IsSet(0x204) != 0) {
+  if (GameFlag_IsSet(FLAG_THIRD_PUDDLE_FROZEN) != 0) {
     Engine_ActorSetAnimation(12, 5);
     Map_CopyCellAttributes(1, 0, 1, 1, 26, 15);
     {
@@ -1508,7 +1527,7 @@ static void AltinPeak_RestoreAreaSeven(void) {
   }
   FieldScheduler_AddCallback(AltinPeak_UpdateFrostPillarPriority,
                              TASK_PRIORITY_SCENE);
-  if (GameFlag_IsSet(0x327) != 0) {
+  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_ROOM_7_SWITCH) != 0) {
     Map_CopyCellAttributes(30, 82, 1, 1, 29, 81);
     Map_CopyCellsTo(46, 28, 29, 17, 1, 2);
   } else {
@@ -1531,12 +1550,12 @@ static void AltinPeak_PlaceFlaggedActors(void) {
   actor->sprite->rotation = 0x8000;
   Object_GetById(12)->motionFlags = 0;
   Object_GetById(12)->y.fixed = -PIXELS(28);
-  if (GameFlag_IsSet(0x908)) {
+  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_BOULDER_FALLEN)) {
     actor->x.fixed += PIXELS(14);
     actor->y.fixed += -PIXELS(8);
     actor->sprite->rotation = 0xc000;
   }
-  if (Engine_GameFlagIsSet(0x908)) {
+  if (Engine_GameFlagIsSet(FLAG_ALTIN_PEAK_BOULDER_FALLEN)) {
     Map_CopyCellsTo(25, 36, 43, 36, 11, 9);
     Map_CopyCellAttributes(25, 35, 10, 5, 43, 35);
     Engine_MapRedraw();
@@ -1773,7 +1792,7 @@ static void AltinPeak_ReopenAfterSecondBeast(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(9, 0, 0);
   Engine_ActorSetPosition(8, PIXELS(328), PIXELS(424));
-  Engine_GameFlagSet(0x323);
+  Engine_GameFlagSet(FLAG_ALTIN_PEAK_ROOM_3_SWITCH);
   AltinPeak_ToggleRoom3SwitchCells();
   Engine_MapRedraw();
   Engine_TaskWait(1);
@@ -1790,7 +1809,7 @@ static void AltinPeak_ReopenAfterThirdBeast(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(10, 0, 0);
   Engine_ActorSetPosition(8, PIXELS(488), PIXELS(138));
-  Engine_GameFlagSet(0x325);
+  Engine_GameFlagSet(FLAG_ALTIN_PEAK_ROOM_5_SWITCH);
   AltinPeak_ToggleRoom5SwitchCells();
   Engine_MapRedraw();
   Engine_TaskWait(1);
@@ -2702,7 +2721,7 @@ struct ScenePlacement gAltinPeakPlacements7[] = {
         TALK_KEEP_FACING, 0},
     {0x127, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(520), 0, PIXELS(632), FACING_SOUTH,
         TALK_KEEP_FACING, 0},
-    {0x5b, 0x47, ACTOR_STAND, PIXELS(56), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY, 0},
+    {0x5b, FLAG_DJINNI_0 + 23, ACTOR_STAND, PIXELS(56), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY, 0},
     {SCENE_TABLE_END},
 };
 
@@ -2748,8 +2767,8 @@ struct SceneEvent gAltinPeakEventsOther[] = {
 
 struct SceneEvent gAltinPeakEvents1[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
-    {EVENT_TOUCH, 10, 0x904, EVENT_SCRIPT(AltinPeak_ShowFirstBeastRoute)},
-    {EVENT_TOUCH, 11, 0x905, EVENT_SCRIPT(AltinPeak_ShowSecondBeastRoute)},
+    {EVENT_TOUCH, 10, FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN, EVENT_SCRIPT(AltinPeak_ShowFirstBeastRoute)},
+    {EVENT_TOUCH, 11, FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN, EVENT_SCRIPT(AltinPeak_ShowSecondBeastRoute)},
     {EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Mine_FightRoom1Beast)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40a, CONDITION_ALWAYS,
         EVENT_SCRIPT(Mine_FightRoom1Beast)},
@@ -2758,9 +2777,9 @@ struct SceneEvent gAltinPeakEvents1[] = {
 
 struct SceneEvent gAltinPeakEvents1Drained[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, 0x200,
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 8, FLAG_PUDDLE_FROZEN,
         EVENT_SCRIPT(Mine_FreezeRoom1Puddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x201, EVENT_SCRIPT(Mine_FreezeRoom1WidePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, FLAG_SECOND_PUDDLE_FROZEN, EVENT_SCRIPT(Mine_FreezeRoom1WidePuddle)},
     {SCENE_EVENTS_END},
 };
 
@@ -2780,7 +2799,7 @@ struct SceneEvent gAltinPeakEvents3[] = {
         EVENT_SCRIPT(Mine_FightRoom3Beast)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 10, CONDITION_ALWAYS, 0},
     {SEARCH(SEARCH_UNNAMED), 83, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FlipRoom3Switch)},
-    {SEARCH(SEARCH_CHEST), 100, 0xf76, FIND_ITEM(0xc0)},
+    {SEARCH(SEARCH_CHEST), 100, FLAG_ALTIN_PEAK_COOKIE, FIND_ITEM(0xc0)},
     {SCENE_EVENTS_END},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
     {SEARCH(SEARCH_CHEST), 100, 0xf05, FIND_ITEM(0xb4)},
@@ -2800,15 +2819,16 @@ struct SceneEvent gAltinPeakEvents4[] = {
 
 struct SceneEvent gAltinPeakEvents5[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x200, EVENT_SCRIPT(Mine_FreezeRoom5Puddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(Mine_FreezeRoom5Puddle)},
     {EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Mine_FightRoom5Beast)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40a, CONDITION_ALWAYS,
         EVENT_SCRIPT(Mine_FightRoom5Beast)},
     {EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Mine_RideLog)},
     {SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FlipRoom5Switch)},
-    {0x2413, 100, 0xf77, FIND_ITEM(0x7b)},
-    {0x413, 100, 0xf77, FIND_ITEM(0x7b)},
-    {0xe413, 100, 0xf77, FIND_ITEM(0x7b)},
+    // The Dragon Shield's chest opens only from its west side.
+    {SEARCH_CHEST_FACING(FACING_SOUTHEAST), 100, FLAG_ALTIN_PEAK_DRAGON_SHIELD, FIND_ITEM(0x7b)},
+    {SEARCH_CHEST_FACING(FACING_EAST), 100, FLAG_ALTIN_PEAK_DRAGON_SHIELD, FIND_ITEM(0x7b)},
+    {SEARCH_CHEST_FACING(FACING_NORTHEAST), 100, FLAG_ALTIN_PEAK_DRAGON_SHIELD, FIND_ITEM(0x7b)},
     {SCENE_EVENTS_END},
 };
 
@@ -2819,7 +2839,7 @@ struct SceneEvent gAltinPeakEvents6[] = {
     {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
     {EVENT_EXIT, 5, CONDITION_ALWAYS, 5},
     {EVENT_EXIT, 6, CONDITION_ALWAYS, 6},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x200, EVENT_SCRIPT(Mine_FreezeRoom6Puddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(Mine_FreezeRoom6Puddle)},
     {EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Mine_RideLog)},
     {SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FlipRoom6Switch)},
     {SEARCH(SEARCH_CHEST), 100, 0xef2, 0x500002},
@@ -2830,7 +2850,7 @@ struct SceneEvent gAltinPeakEvents7[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
-    {SEARCH(SEARCH_CHEST), 101, 0xf07, FIND_ITEM(0xba)},
+    {SEARCH(SEARCH_CHEST), 101, FLAG_ALTIN_PEAK_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL)},
     {EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Mine_TalkToDjinni)},
     {EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Mine_RideLog)},
     {SEARCH(SEARCH_UNNAMED), 50, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FlipRoom7Switch)},
@@ -2839,10 +2859,10 @@ struct SceneEvent gAltinPeakEvents7[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Mine_MoveRoom7Block)},
     {TOUCH_WALKING_INTO(FACING_EAST), 12, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltinPeak_PushRoom7Block)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, 0x200, EVENT_SCRIPT(Mine_FreezeRoom7Puddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x201,
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 9, FLAG_PUDDLE_FROZEN, EVENT_SCRIPT(Mine_FreezeRoom7Puddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, FLAG_SECOND_PUDDLE_FROZEN,
         EVENT_SCRIPT(Mine_FreezeRoom7SecondPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, 0x204,
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, FLAG_THIRD_PUDDLE_FROZEN,
         EVENT_SCRIPT(Mine_FreezeRoom7ThirdPuddle)},
     {SCENE_EVENTS_END},
 };
@@ -2854,7 +2874,8 @@ struct SceneEvent gAltinPeakEvents8[] = {
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
     {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
     {EVENT_EXIT, 5, CONDITION_ALWAYS, 5},
-    {SEARCH(SEARCH_CHEST), 100, 0xf78, FIND_ITEM(ITEM_LUCKY_MEDAL)},
+    {SEARCH(SEARCH_CHEST), 100, FLAG_ALTIN_PEAK_LUCKY_MEDAL,
+     FIND_ITEM(ITEM_LUCKY_MEDAL)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 8, CONDITION_ALWAYS, 0},
     {SCENE_EVENTS_END},
 };
@@ -2867,7 +2888,7 @@ struct SceneEvent gAltinPeakEvents9[] = {
     {EVENT_EXIT, 5, CONDITION_ALWAYS, 5},
     {SEARCH(SEARCH_UNNAMED), 12, CONDITION_ALWAYS,
      EVENT_SCRIPT(AltinPeak_ReadFallingRockSign)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), 11, 0x908,
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), 11, FLAG_ALTIN_PEAK_BOULDER_FALLEN,
      EVENT_SCRIPT(AltinPeak_ForceRollingEscape)},
     {SCENE_EVENTS_END},
 };
@@ -2875,7 +2896,7 @@ struct SceneEvent gAltinPeakEvents9[] = {
 struct SceneEvent gAltinPeakEvents10[] = {
     {EVENT_TOUCH, 10, FLAG_HYDROS_STATUES_DEFEATED,
      EVENT_SCRIPT(AltinPeak_StartHydrosBattle)},
-    {SEARCH(SEARCH_CHEST), 100, 0xf08, FIND_ITEM(0xcb)},
+    {SEARCH(SEARCH_CHEST), 100, FLAG_ALTIN_PEAK_LIFTING_GEM, FIND_ITEM(0xcb)},
     {SCENE_EVENTS_END},
 };
 
@@ -2886,7 +2907,7 @@ struct SceneEvent gAltinPeakEvents11[] = {
     {EVENT_EXIT, 4, CONDITION_ALWAYS, 4},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 8, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, 0},
-    {SEARCH(SEARCH_CHEST), 100, 0xf79, FIND_ITEM(ITEM_VIAL)},
+    {SEARCH(SEARCH_CHEST), 100, FLAG_ALTIN_PEAK_VIAL, FIND_ITEM(ITEM_VIAL)},
     {SCENE_EVENTS_END},
 };
 

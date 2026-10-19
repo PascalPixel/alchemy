@@ -94,6 +94,25 @@
 #define FLAG_SCENE_TEMP_41 0x241
 #define FLAG_SCENE_TEMP_42 0x242
 
+// Altin Peak, numbered by its rooms (SceneId_AltinPeak1 to 11)
+// A room's floor switch has been flipped from its first position.
+#define FLAG_ALTIN_PEAK_ROOM_3_SWITCH 0x323
+#define FLAG_ALTIN_PEAK_ROOM_5_SWITCH 0x325
+#define FLAG_ALTIN_PEAK_ROOM_6_SWITCH 0x326
+#define FLAG_ALTIN_PEAK_ROOM_7_SWITCH 0x327
+// Room 1's water beast has been seen hopping along its first and its second
+// route.
+#define FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN 0x904
+#define FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN 0x905
+// Room 9's boulder has fallen and rolled down after the party leader.
+#define FLAG_ALTIN_PEAK_BOULDER_FALLEN 0x908
+#define FLAG_ALTIN_PEAK_COOKIE 0xf76        // room 3's chest
+#define FLAG_ALTIN_PEAK_DRAGON_SHIELD 0xf77 // room 5's chest
+#define FLAG_ALTIN_PEAK_LUCKY_MEDAL 0xf78   // room 8's chest
+#define FLAG_ALTIN_PEAK_VIAL 0xf79          // room 11's chest
+#define FLAG_ALTIN_PEAK_PSY_CRYSTAL 0xf07   // room 7's chest
+#define FLAG_ALTIN_PEAK_LIFTING_GEM 0xf08   // room 10's chest
+
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
 #define FLAG_SCENE_TEMP_00 0x200

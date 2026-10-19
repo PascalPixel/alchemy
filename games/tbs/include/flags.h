@@ -117,7 +117,7 @@
 #define FLAG_MET_INVISIBLE_BABI 0x960 // Babi has asked for his draught
 // Babi has called the party back once as it made to leave without him.
 #define FLAG_BABI_CALLED_PARTY_BACK 0x961
-// The party has brought Babi his Mystic Draught and found him in the cave.
+// The party has saved Babi in Altmiller Cave with his Mystic Draught.
 #define FLAG_BABI_RESCUED 0x962
 #define FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT 0xf30 // behind the rocks' wall
 #define FLAG_ALTMILLER_CAVE_VIAL 0xf9c           // room 3's chest
@@ -131,6 +131,29 @@
 // The party has opened the door before Iodem and Faran, who stay behind.
 #define FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN 0x989
 #define FLAG_BABI_LIGHTHOUSE_LUCKY_PEPPER 0xfbc // the building site's chest
+
+// Babi Palace
+#define FLAG_COLOSSO_OVER 0x950 // the Colosso finals have been fought
+#define FLAG_WON_COLOSSO 0x951  // the party won the finals
+// The attendant has offered the beds for the night before the finals.
+#define FLAG_BABI_PALACE_FINALS_REST_OFFERED 0x966
+// While set, the beds can be used during the finals.
+#define FLAG_BABI_PALACE_FINALS_BEDS_OPEN 0x967
+// Sheba has felt the party read her mind.
+#define FLAG_SHEBA_NOTICED_MIND_READ 0x968
+// While set, the beds can be used before the finals.
+#define FLAG_BABI_PALACE_BEDS_OPEN 0x969
+#define FLAG_BABI_PALACE_FIRST_NIGHT 0x96a // the party has slept there once
+// The soldiers have come back from Altmiller Cave to Iodem without Babi.
+#define FLAG_IODEM_HEARD_SOLDIERS 0x96b
+// A courtyard guard has passed on Babi's word to go to the colosseum.
+#define FLAG_BABI_PALACE_GUARD_GAVE_WORD 0x96c
+// The other courtyard guard has thanked the party for saving Babi.
+#define FLAG_BABI_PALACE_GUARD_THANKED_PARTY 0x96d
+// Babi and Iodem have spoken with the party after Colosso.
+#define FLAG_BABI_SPOKE_AFTER_COLOSSO 0x96f
+#define FLAG_BABI_PALACE_CLOAK_BALL 0xf31  // lent by Babi after Colosso
+#define FLAG_BABI_PALACE_LUCKY_MEDAL 0xf9f // in a barrel
 
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.

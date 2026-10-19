@@ -185,7 +185,7 @@ s32 Func_08124cc4(s32 side) {
         result = 1;
       }
       count = list->count;
-      /* FAKEMATCH(one-pass block): the count is read before i steps; as
+      /* FAKEMATCH(one-pass): the count is read before i steps; as
        * i++; timedEntry++; } while (i < list->count);, 2 of 149 instructions
        * differ in tla-en. */
       do {

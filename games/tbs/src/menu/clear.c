@@ -122,20 +122,18 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out);
 static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 Clear_ComputePasswordCrc16(u32 byteCount, u8 *data);
 
-// Returns the clear menu's entrance table through the scene entry ABI.
-u8 *SceneData_GetScriptTable(void) { return gClear_ScriptTable; }
+// The file select overlay's scene tables, for the scene loader: one entrance,
+// the exit, and no placements or events.
+u8 *Clear_GetEntrances(void) { return (u8 *)gClear_Entrances; }
 
 // Returns zero from this menu entry.
 s32 SceneData_ReturnZero(void) { return 0; }
 
-// Returns the clear menu's packed exit table.
-u8 *SceneData_GetMessageTable(void) { return gClear_MessageTable; }
+u8 *Clear_GetExits(void) { return (u8 *)gClear_Exits; }
 
-// Returns the empty actor placement table.
-u8 *SceneData_GetActorTable(void) { return gClear_ActorTable; }
+u8 *Clear_GetPlacements(void) { return (u8 *)gClear_Placements; }
 
-// Returns the empty event table.
-u8 *SceneData_GetEffectTable(void) { return gClear_EffectTable; }
+u8 *Clear_GetEvents(void) { return (u8 *)gClear_Events; }
 
 // Loads the Golden Sun logo, maps its tiles and resets background scroll.
 static void Clear_LoadBackground(void) {
@@ -983,8 +981,8 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   }
 
   for (i = 0; i != 4; i++) {
-    struct PasswordOwner *owner =
-        UnitGet(((const struct { s32 id[4]; } *)gClear_PasswordMembers)->id[i]);
+    struct PasswordOwner *owner = (struct PasswordOwner *)UnitGet(
+        ((const struct { s32 id[4]; } *)gClear_PasswordMembers)->id[i]);
     struct PasswordStats *stats = &owner->stats;
 
     if (stats->baseHp > 1999) {
@@ -1043,7 +1041,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     outputIndex = 39;
     bitOffset = 0;
     for (i = 0; i != 4; i++) {
-      struct PasswordOwner *owner = UnitGet(
+      struct PasswordOwner *owner = (struct PasswordOwner *)UnitGet(
           ((const struct { s32 id[4]; } *)gClear_PasswordMembers)->id[i]);
 
       for (n = 0; n != 15; n++) {
@@ -1065,7 +1063,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     outputIndex = 107;
     bitOffset = -1;
     for (i = 0; i != 4; i++) {
-      struct PasswordOwner *owner = UnitGet(
+      struct PasswordOwner *owner = (struct PasswordOwner *)UnitGet(
           ((const struct { s32 id[4]; } *)gClear_PasswordMembers)->id[i]);
       s32 m;
 
@@ -1221,20 +1219,20 @@ static u16 Clear_ComputePasswordCrc16(u32 byteCount, u8 *data) {
   return ~crc;
 }
 
-struct SceneEntrance gClear_ScriptTable[] = {
+struct SceneEntrance gClear_Entrances[] = {
     {0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
-u32 gClear_MessageTable[] = {
+u32 gClear_Exits[] = {
     SCENE_EXITS(511),
 };
 
-struct ScenePlacement gClear_ActorTable[] = {
+struct ScenePlacement gClear_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEvent gClear_EffectTable[] = {
+struct SceneEvent gClear_Events[] = {
     {SCENE_EVENTS_END},
 };
 

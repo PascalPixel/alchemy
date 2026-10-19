@@ -4,18 +4,18 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *SceneData_GetScriptTable(void);
+u8 *Clear_GetEntrances(void);
 s32 SceneData_ReturnZero(void);
-u8 *SceneData_GetMessageTable(void);
-u8 *SceneData_GetActorTable(void);
-u8 *SceneData_GetEffectTable(void);
+u8 *Clear_GetExits(void);
+u8 *Clear_GetPlacements(void);
+u8 *Clear_GetEvents(void);
 extern const u16 gClear_CodeSequence[];
 extern const u16 gClear_ExtraCodeSequence[];
 s32 SaveMenu_Run(void);
-extern struct SceneEntrance gClear_ScriptTable[];
-extern u32 gClear_MessageTable[];
-extern struct ScenePlacement gClear_ActorTable[];
-extern struct SceneEvent gClear_EffectTable[];
+extern struct SceneEntrance gClear_Entrances[];
+extern u32 gClear_Exits[];
+extern struct ScenePlacement gClear_Placements[];
+extern struct SceneEvent gClear_Events[];
 extern s16 gClear_BlendFrame;
 extern s16 gClear_CodeUnlocked;
 extern s16 gClear_ExtraCodeUnlocked;

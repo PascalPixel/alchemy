@@ -688,7 +688,7 @@ static s32 LinkLobby_EnterBattle(void) {
   // Suspend peer polling while transferring the party and entering battle.
   if (!failed) {
     savedWork = Runtime_AllocateBlock(54, 0x7c8);
-    Engine_TaskRemoveCallback(LinkLobby_PollPeerReady);
+    Engine_TaskRemoveCallback((SchedulerCallback)LinkLobby_PollPeerReady);
     Map_ClearLayerEntryFlag(5);
     Engine_TaskWait(8);
     Map_SetLayerEntryFlag(5);
@@ -718,8 +718,9 @@ static s32 LinkLobby_EnterBattle(void) {
         Runtime_ReleaseHeapBlock(54);
         LinkLobby_WriteSlotValue(0);
         LinkLobby_WriteSlotValue(4);
-        FieldScheduler_AddCallback(LinkLobby_PollPeerReady, 0xc80);
-        Scheduler_SetTaskFlags(LinkLobby_PollPeerReady, 1);
+        FieldScheduler_AddCallback((SchedulerCallback)LinkLobby_PollPeerReady,
+                                   0xc80);
+        Scheduler_SetTaskFlags((SchedulerCallback)LinkLobby_PollPeerReady, 1);
         Engine_GameFlagClear(FLAG_SCENE_TEMP_01);
         Engine_GameFlagClear(FLAG_SCENE_TEMP_02);
         Engine_GameFlagClear(0x303);
@@ -1325,7 +1326,7 @@ s32 LinkLobby_RunRoundResult(void) {
     LinkLobby_WriteSlotValue(4);
   }
   // Resume polling and restore the party unless continuing a monster run.
-  callback = LinkLobby_PollPeerReady;
+  callback = (SchedulerCallback)LinkLobby_PollPeerReady;
   FieldScheduler_AddCallback(callback, 0xc80);
   Scheduler_SetTaskFlags(callback, 1);
   if (gGameState.entrance != 8 || !Engine_GameFlagIsSet(0x173)) {

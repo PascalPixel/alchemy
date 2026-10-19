@@ -7,9 +7,8 @@
 // and lies ahead of it, within a sixteenth of a turn either side of its
 // heading; force stops it regardless. Returns 1 when it stopped. A target out
 // of range sets it walking again (mode 2).
-s32 SceneActor_CheckFacingAndRange(struct FieldActor *actor,
-                                   struct FieldActor *target, s32 range,
-                                   s32 force) {
+s32 Vault_StopIfFacingNear(struct FieldActor *actor, struct FieldActor *target,
+                           s32 range, s32 force) {
   s32 result = 0;
   s32 *targetPosition = &target->x.fixed;
   s32 *actorPosition = &actor->x.fixed;

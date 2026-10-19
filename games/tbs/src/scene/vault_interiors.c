@@ -653,7 +653,7 @@ static void Event_ReadMindOnRock(void) {
   } else {
     Engine_EventSetMessage(MsgVaultIfRockWorthlessMaybeThats);
   }
-  SceneActor_RunActorCommandWithFlag91(ACTOR_GEM_OWNERS_WIFE);
+  Vault_ShowThought(ACTOR_GEM_OWNERS_WIFE);
   Engine_EventEnd();
 }
 
@@ -666,7 +666,7 @@ static void Event_ReadChildMind(void) {
   } else {
     Engine_EventSetMessage(MsgVaultFatherLooksSadWorryingLike);
   }
-  SceneActor_RunActorCommandWithFlag91(ACTOR_CHILD);
+  Vault_ShowThought(ACTOR_CHILD);
   Engine_EventEnd();
 }
 
@@ -679,7 +679,7 @@ static void Event_ReadMindOnThieves(void) {
   } else {
     Engine_EventSetMessage(MsgVaultGuessNothingInOurHouse);
   }
-  SceneActor_RunActorCommandWithFlag91(12);
+  Vault_ShowThought(12);
   Engine_EventEnd();
 }
 
@@ -692,7 +692,7 @@ static void Event_ReadMayorMind(void) {
   } else {
     Engine_EventSetMessage(MsgVaultCaveInGomaRangeDangerous);
   }
-  SceneActor_RunActorCommandWithFlag91(ACTOR_MAYOR);
+  Vault_ShowThought(ACTOR_MAYOR);
   Engine_EventEnd();
 }
 
@@ -708,7 +708,7 @@ static void Event_ReadBoneGiverMind(void) {
   } else {
     Engine_EventSetMessage(MsgVaultHeReallyLikesBonesWonder);
   }
-  SceneActor_RunActorCommandWithFlag91(ACTOR_BONE_GIVER);
+  Vault_ShowThought(ACTOR_BONE_GIVER);
   Engine_EventEnd();
 }
 
@@ -1694,8 +1694,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_BONE_GIVER, PIXELS(568), PIXELS(648));
       Actor_SetBuiltinAction(ACTOR_BONE_GIVER, ACTOR_ACTION_IDLE);
       Actor_FaceDirection(ACTOR_BONE_GIVER, FACING_SOUTH, 0);
-      OverlayObject_ConfigureObject22WithResource17(ITEM_BONE, PIXELS(568),
-                                                    PIXELS(16), PIXELS(672));
+      Vault_PlaceItemIcon(ITEM_BONE, PIXELS(568), PIXELS(16), PIXELS(672));
       Task_AddCallback(Vault_UpdateBoneProximityFlag, TASK_PRIORITY_SCENE);
     } else if (Engine_GameFlagIsSet(FLAG_VAULT_SUSPECTS_MIND_READ) != 0) {
       Engine_ActorSetPosition(ACTOR_BONE_GIVER, 0, 0);
@@ -2521,7 +2520,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
     if (VaultInteriors_GetIvanVenusDjinnCount() != 0) {
       Engine_EventSetMessage(MsgVaultWaitDontWantTakeYour);
       Event_ShowMessage(IVAN, 0);
-      OverlayObject_RunObject2WhenFlagged();
+      Vault_ReturnIsaacsDjinni();
     }
     Party_RemoveOwnerRestored(IVAN);
     *slot = saved;

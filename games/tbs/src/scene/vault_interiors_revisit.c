@@ -311,8 +311,7 @@ s32 Scene_Initialize(void) {
   } else if (entrance == 7 || entrance == 11) {
     // Show the Bone lying in the room, and track whether the leader stands
     // beside it (FLAG_SCENE_TEMP_50).
-    OverlayObject_ConfigureObject22WithResource17(ITEM_BONE, PIXELS(568),
-                                                  PIXELS(16), PIXELS(672));
+    Vault_PlaceItemIcon(ITEM_BONE, PIXELS(568), PIXELS(16), PIXELS(672));
     FieldScheduler_AddCallback(Vault_UpdateBoneProximityFlag,
                                TASK_PRIORITY_SCENE);
   }

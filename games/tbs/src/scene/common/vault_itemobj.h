@@ -8,8 +8,7 @@
 // sprite's own animation is stopped (flags and count 0, 16-colour, palette 0),
 // the object stays put (motionFlags 0), and the icon's tiles, decoded into heap
 // block 17, are loaded into the sprite's VRAM block.
-void OverlayObject_ConfigureObject22WithResource17(s32 item, s32 fixed_x,
-                                                   s32 fixed_y, s32 fixed_z) {
+void Vault_PlaceItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z) {
   u8 *object;
   u8 *sprite;
   u8 *field;

@@ -15,9 +15,9 @@
 // void differs in 13 bytes of the 152-byte function. Keep the unused
 // native result in matching builds.
 #ifdef UBFIX
-static void SceneActor_UpdateProximityToLeader(union FieldObject *fieldObject) {
+static void Vault_UpdateWalkingVillager(union FieldObject *fieldObject) {
 #else
-static s32 SceneActor_UpdateProximityToLeader(union FieldObject *fieldObject) {
+static s32 Vault_UpdateWalkingVillager(union FieldObject *fieldObject) {
 #endif
   struct FieldActor *self = (struct FieldActor *)fieldObject;
   u8 **globals = gWindowWork;
@@ -34,7 +34,7 @@ static s32 SceneActor_UpdateProximityToLeader(union FieldObject *fieldObject) {
   } else {
     partner = Object_GetById(14);
   }
-  if (SceneActor_CheckFacingAndRange(self, partner, 32, 0) != 0) {
+  if (Vault_StopIfFacingNear(self, partner, 32, 0) != 0) {
 #ifdef UBFIX
     return;
 #else
@@ -51,7 +51,7 @@ static s32 SceneActor_UpdateProximityToLeader(union FieldObject *fieldObject) {
     }
   }
 
-  SceneActor_CheckFacingAndRange(self, player, range, force);
+  Vault_StopIfFacingNear(self, player, range, force);
 #ifdef UBFIX
   return;
 #else

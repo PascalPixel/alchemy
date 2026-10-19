@@ -104,7 +104,7 @@ static s32 Vault_UpdateRoofComplainerProximity(union FieldObject *fieldObject) {
     selector = 26;
     flag = 1;
   }
-  SceneActor_CheckFacingAndRange(entity, leader, selector, flag);
+  Vault_StopIfFacingNear(entity, leader, selector, flag);
 #ifdef UBFIX
   return;
 #else
@@ -174,7 +174,7 @@ static void Event_IvanStaysBehind(void) {
   if (Vault_GetIvanVenusDjinnCount() != 0) {
     Engine_EventSetMessage(MsgVaultWaitDontWantTakeYour);
     Event_ShowMessage(IVAN, 0);
-    OverlayObject_RunObject2WhenFlagged();
+    Vault_ReturnIsaacsDjinni();
     Engine_TaskWait(20);
   }
   Party_RemoveOwnerRestored(IVAN);
@@ -482,7 +482,7 @@ static void Event_ReadMindOnTheft(void) {
     Engine_EventSetMessage(MsgVaultManShouldStealFromAnother);
   else
     Engine_EventSetMessage(MsgVaultHowPunishPrisoners);
-  SceneActor_RunActorCommandWithFlag91(ACTOR_THEFT_GOSSIP);
+  Vault_ShowThought(ACTOR_THEFT_GOSSIP);
   Engine_EventEnd();
 }
 
@@ -495,7 +495,7 @@ static void Event_ReadMindOnTravelers(void) {
   } else {
     Engine_EventSetMessage(MsgVaultWithRoadOutOnlyWay);
   }
-  SceneActor_RunActorCommandWithFlag91(ACTOR_TRAVELER_WATCHER);
+  Vault_ShowThought(ACTOR_TRAVELER_WATCHER);
   Engine_EventEnd();
 }
 
@@ -511,7 +511,7 @@ static void Event_ReadMindOnIvan(void) {
     if (Engine_GameFlagIsSet(FLAG_IN_PARTY(IVAN)) != 0)
       ++gEventWork->message;
   }
-  SceneActor_RunActorCommandWithFlag91(ACTOR_FIRST_WALKER);
+  Vault_ShowThought(ACTOR_FIRST_WALKER);
   Engine_EventEnd();
   Object_GetById(ACTOR_FIRST_WALKER)->timer &= 1;
 }
@@ -525,7 +525,7 @@ static void Event_ReadMindOnWealth(void) {
     Engine_EventSetMessage(MsgVaultSupposeDoesntMatterHowRich);
   else
     Engine_EventSetMessage(MsgVaultMustStrongerThanLookHave);
-  SceneActor_RunActorCommandWithFlag91(ACTOR_SECOND_WALKER);
+  Vault_ShowThought(ACTOR_SECOND_WALKER);
   Engine_EventEnd();
   Object_GetById(ACTOR_SECOND_WALKER)->timer &= 1;
 }
@@ -538,7 +538,7 @@ static void Event_ReadMindOnSuspects(void) {
     Engine_EventSetMessage(MsgVaultEveryoneKnowsThoseThreeAt);
   else
     Engine_EventSetMessage(MsgVaultFeelMuchBetter);
-  SceneActor_RunActorCommandWithFlag91(ACTOR_WATCHMAN);
+  Vault_ShowThought(ACTOR_WATCHMAN);
   Engine_EventEnd();
 }
 
@@ -567,7 +567,7 @@ static void Event_ReadDogMind(void) {
 static void Event_ReadMindOnRoofer(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultSneakWastingTime);
-  SceneActor_RunActorCommandWithFlag91(ACTOR_ROOF_COMPLAINER);
+  Vault_ShowThought(ACTOR_ROOF_COMPLAINER);
   Engine_EventEnd();
 }
 
@@ -748,18 +748,16 @@ s32 Scene_Initialize(void) {
   actor = Object_GetById(ACTOR_FIRST_WALKER);
   actor->timer = lowBit;
 #ifdef UBFIX
-  actor->update = SceneActor_UpdateProximityToLeader;
+  actor->update = Vault_UpdateWalkingVillager;
 #else
-  actor->update =
-      (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
+  actor->update = (void (*)(union FieldObject *))Vault_UpdateWalkingVillager;
 #endif
   actor = Object_GetById(ACTOR_SECOND_WALKER);
   actor->timer = zero;
 #ifdef UBFIX
-  actor->update = SceneActor_UpdateProximityToLeader;
+  actor->update = Vault_UpdateWalkingVillager;
 #else
-  actor->update =
-      (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
+  actor->update = (void (*)(union FieldObject *))Vault_UpdateWalkingVillager;
 #endif
   if (Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE) != 0) {
     Actor_SetPosition(ACTOR_VAULT_DOG, PIXELS(216), PIXELS(392));

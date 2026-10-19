@@ -5,8 +5,7 @@
 
 struct FieldActor;
 
-s32 SceneActor_CheckFacingAndRange(struct FieldActor *actor,
-                                   struct FieldActor *target, s32 range,
-                                   s32 force);
+s32 Vault_StopIfFacingNear(struct FieldActor *actor, struct FieldActor *target,
+                           s32 range, s32 force);
 
 #endif

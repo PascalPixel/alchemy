@@ -3,7 +3,6 @@
 
 #include "types.h"
 
-void OverlayObject_ConfigureObject22WithResource17(s32 a, s32 fixed_x,
-                                                   s32 fixed_y, s32 fixed_z);
+void Vault_PlaceItemIcon(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 
 #endif

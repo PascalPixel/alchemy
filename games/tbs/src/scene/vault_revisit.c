@@ -532,10 +532,9 @@ s32 Scene_Initialize(void) {
   // Resume the two walking villagers' proximity reactions.
   actor = Object_GetById(ACTOR_FIRST_WALKER);
 #ifdef UBFIX
-  actor->update = SceneActor_UpdateProximityToLeader;
+  actor->update = Vault_UpdateWalkingVillager;
 #else
-  actor->update =
-      (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
+  actor->update = (void (*)(union FieldObject *))Vault_UpdateWalkingVillager;
 #endif
   {
     struct FieldActor *actor = Object_GetById(ACTOR_FIRST_WALKER);
@@ -545,10 +544,9 @@ s32 Scene_Initialize(void) {
   mode = 0;
   actor = Object_GetById(ACTOR_SECOND_WALKER);
 #ifdef UBFIX
-  actor->update = SceneActor_UpdateProximityToLeader;
+  actor->update = Vault_UpdateWalkingVillager;
 #else
-  actor->update =
-      (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
+  actor->update = (void (*)(union FieldObject *))Vault_UpdateWalkingVillager;
 #endif
   Object_GetById(ACTOR_SECOND_WALKER)->timer = mode;
   // Restore the dog's clue position and the bell's current Djinni position.

@@ -1,5 +1,5 @@
 // Draft, differ 4 of 107: the facing check of 6a8, written as ☀️'s
-// SceneActor_CheckFacingAndRange (vault_range.h) with ⚓️'s early exit on unk63
+// Vault_StopIfFacingNear (vault_range.h) with ⚓️'s early exit on unk63
 // and the event work's count over 120. The native loads the facing between the
 // right and left angles (adds r1; ldrh; adds r4), this form after both. Tried:
 // the four masks in eight other orders (14 to 86), three minutes of permute

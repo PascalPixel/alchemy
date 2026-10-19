@@ -23,12 +23,13 @@ in perspective, and what the ground is like under a point. Scenes (in
 | `layered.tsv`, `remap*.tsv`, `scenes.s` | the layered map table, the byte remap table and the scene table |
 
 The headers are in `games/tbs/include/unit/field/`, one for each file; the
-field object's functions are declared in `field.h`. The objects' link order
+field object's functions are declared in
+[`unit/field/field.h`](../../include/unit/field/field.h). The objects' link order
 is their rows of `games/tbs/objects.tsv`. In the ROM `field.c` is one
 object; its split into parts is ours, cut where one family ends and the next
 begins, and `head -3 field/*.c` says what each part holds.
 
-## Words used here
+## Words
 
 - **object**: one of the 64 field objects in `gObjectSlots` (`struct
   ObjectRuntime`). The same memory is also read as a `DispatchObject`,
@@ -97,9 +98,10 @@ equivalent; those sites keep it, untagged, with their measure in a comment:
 
 Two comment markers are fixed: `// DEAD: why` for code the ROM keeps that
 cannot change the result, and `/* FAKEMATCH(kind): ... */` for a device that
-steers the compiler (AGENTS.md, S2).
+steers the compiler towards the original instructions, with the number of
+instructions that differ without it.
 
-## Changing things
+## How to change things
 
 - The player's walking and running speeds are set early in
   `FieldObject_UpdatePlayerControl` and `Object_MoveOnWorldMap`
@@ -110,7 +112,10 @@ steers the compiler (AGENTS.md, S2).
   `object_motion.c` for the first three) and a row of
   `gScriptObject_CommandTable` in `object_script.c`, with its macro in
   `objcmd.h`.
-- Limits: 64 objects, 64 sprites of up to four layers, 8 resource slots,
-  16 tile animation channels and 4 palette cycles.
 - Build and check with `make tbs-en`, and `make compare-editions` for a
   change meant to match: all twelve editions must stay OK.
+
+## Limits
+
+- 64 objects, 64 sprites of up to four layers, 8 resource slots, 16 tile
+  animation channels and 4 palette cycles.

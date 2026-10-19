@@ -9,19 +9,22 @@
 // BattleFx_ShieldSheet, 0x17f BattleFx_PinkBurstSheet, 0x17b
 // BattleFx_GlowOrbSheet and 0x160 BattleFx_PaletteRampImage.
 
-// Near miss: differ 70 of 553 (draft 551).
+// Near miss: differ 62 of 553 (draft 553; 2026-10-19, was 70 with 551).
 
-// Left: the palette choice. The native tests mode 0, then 3, then 1, and
-// loads the glow palette's id in both the mode-3 and the mode-1 branch;
-// agscc merges those two branches into one (two instructions fewer), which
-// moves the literal pool and every pool offset after it. The rest is
-// order residue (the RAM base and the canvas one slot apart, the ramp's
-// 0x2580 before its first load).
+// The palette choice: the native tests mode 0, then 3, then 1, and loads the
+// glow palette's id in both the mode-3 and the mode-1 branch; agscc merges
+// those two branches into one (two instructions fewer) unless the tagged
+// empty asm keeps them apart. Left: order (the RAM base and the arguments'
+// spills, the canvas before the base, about a dozen single swaps of a load
+// with its neighbour, the pool offsets that follow them) and one register
+// swap (r0 and r1) in the shard set-up.
 
 // Tried (2026-10-15):
 // - mode == 3 || mode == 1 in one test: 95; the choice nested under
 // mode != 0: 70 (no change).
 // - greedy declaration-order sweep, two passes: no gain.
+// - 2026-10-19: the mode-3 palette behind a one-pass block (still merged,
+// 70); an empty one-pass block before the first statement (70, no gain).
 
 #include "types.h"
 #include "battle_display.h"
@@ -101,8 +104,14 @@ void SummonFx_RunCanvasEffect(struct BattleEffectArgument *effect, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_ShieldSheet, work->sheet, 1, 1);
   if (mode == 0)
     palette = (s32)&ResourceId_PinkBurstSheet;
-  else if (mode == 3)
+  else if (mode == 3) {
     palette = (s32)&ResourceId_GlowOrbSheet;
+    /* FAKEMATCH(empty asm): the empty asm keeps the mode-3 branch apart from
+     * the identical mode-1 branch, which the native loads on its own; as one
+     * merged branch, 70 of 553 instructions differ in tla-en (this draft:
+     * 62). */
+    asm("");
+  }
   else if (mode == 1)
     palette = (s32)&ResourceId_GlowOrbSheet;
   else

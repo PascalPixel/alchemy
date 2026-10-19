@@ -6,6 +6,8 @@
 #include "b5_context.h"
 #include "fx_scene.h"
 
+// Vale and the world map: the particles that rise around a glowing actor.
+
 // Attach two rising particles to the actor, sharing the effect's cached tiles.
 void WorldMap_CreateLinkedEffects(struct FieldActor *parent) {
   struct FieldActor *pair[2];

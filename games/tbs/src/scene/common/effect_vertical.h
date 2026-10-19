@@ -4,6 +4,11 @@
 #include "field_scene.h"
 #include "fixed_math.h"
 
+// Vale and its home, storm and Babi scenes, Sol Sanctum's eruption, the world
+// map and Venus Lighthouse's aerie: the pair of rising particles that
+// WorldMap_CreateLinkedEffects attaches to a glowing actor, each an update
+// hook that lives 32 frames.
+
 // Rise beside the linked actor, expanding and shrinking over half a sine wave.
 static void Effect_AnimateVerticalPositive(union FieldObject *object) {
   struct FieldActor *self = &object->actor;

@@ -232,7 +232,7 @@ void SceneEffect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style) {
   gColosso_MarkerBlink = 0;
   gColosso_MarkerSteps = 0;
 
-  FieldScheduler_AddCallback(Colosso_UpdateMarker, 0xc80);
+  FieldScheduler_AddCallback(Colosso_UpdateMarker, TASK_PRIORITY_SCENE);
 }
 
 // Glide the pointer to screen pixel (x, y) over duration frames.
@@ -244,7 +244,7 @@ void SceneState_StartMarkerMove(u32 x, u32 y, u32 duration) {
   gColosso_MarkerSteps = duration;
   gColosso_MarkerStep = 0;
 
-  FieldScheduler_AddCallback(Colosso_UpdateMarker, 0xc80);
+  FieldScheduler_AddCallback(Colosso_UpdateMarker, TASK_PRIORITY_SCENE);
 }
 
 // Hide the pointer and free its VRAM block.

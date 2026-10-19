@@ -231,5 +231,5 @@ void SolSanctum_SetupElementalRings(s32 first, u32 count) {
     } while (i != count);
   }
   list->count = count;
-  FieldScheduler_AddCallback(SolSanctum_UpdateRing, 0xc80);
+  FieldScheduler_AddCallback(SolSanctum_UpdateRing, TASK_PRIORITY_SCENE);
 }

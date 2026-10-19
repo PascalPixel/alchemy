@@ -4,7 +4,7 @@
 #include "../psynergy_effects_internal.h"
 
 // Abilities: Force (field kind 4), cast on a target.
-void BattleFx_CallEffect04(s32 unused) { RunBattleEffect04(); }
+void FieldFx_RunForceOnTarget(s32 unused) { FieldFx_RunForce(); }
 
 // Writes the position 16 pixels above the actor.
 static __inline__ void
@@ -17,7 +17,7 @@ BattleFx_GetPositionAboveActor(struct FieldActor *obj,
 //
 // A shot appears in front of the caster, grows and flies forward with three
 // afterimages; what it hits (scene->child) is pushed 16 pixels.
-void RunBattleEffect04(void) {
+void FieldFx_RunForce(void) {
   struct FieldActor *target;
   s32 eventTarget;
   struct FieldActor *copies[4];

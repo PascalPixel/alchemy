@@ -1,4 +1,4 @@
-// Near miss, differ 4 of 130 (2026-10-15), ported from ☀️'s RunBattleEffect07
+// Near miss, differ 4 of 130 (2026-10-15), ported from ☀️'s FieldFx_RunLift
 // (DEFINE_ITEM_BREAK_EFFECT) with ⚓️'s fragment object 673 and its script
 // gData_080f0e78. In the fragment loop the listing starts the 0x100000 lift
 // before it loads work->y and starts the object id (movs r0, #209) before it

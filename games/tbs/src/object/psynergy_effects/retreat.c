@@ -83,7 +83,7 @@ void BattleFx_UpdateRadialLaunch(struct EffectSlot *slot) {
 // Abilities: Retreat (field kind 15).
 //
 // Spins the main object and shrinks it while 24 particles fly out, one a frame.
-void BattleFx_RunEffect15(void) {
+void FieldFx_RunRetreat(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *obj = scene->mainObject;
   struct EffectVector pos;

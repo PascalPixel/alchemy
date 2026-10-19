@@ -23,17 +23,17 @@ void BattleFx_DispatchRequestKind(void);
 void BattleFx_ClearChildValueOnMismatch(void);
 void FieldEvent_RunTypeHandler(void);
 
-void BattleFx_RunItemBreakSequence(void);
+void FieldFx_RunMove(void);
 void Func_080ddea8(void);
 void Func_080df6f4(void);
 void Func_080de21c(void);
-void RunBattleEffect05(void);
-void RunBattleEffect14(void);
-void BattleFx_RunOrbitingParticles(void);
-void RunBattleEffect03(void);
-void BattleFx_RunBurstParticles(void);
+void FieldFx_RunDouse(void);
+void FieldFx_RunWhirlwind(void);
+void FieldFx_RunFrost(void);
+void FieldFx_RunPly(void);
+void FieldFx_RunGrowth(void);
 void Func_080e03cc(void);
-void BattleFx_RunEffect15(void);
+void FieldFx_RunRetreat(void);
 void BattleFx_RunEffect16(void);
 void Func_080decb8(void);
 void Func_080dd820(void);
@@ -64,12 +64,12 @@ void Func_080dc978(s32 sourceId, s32 targetId);
 void Func_080dd054(s32 targetId);
 void Func_080ddda0(s32 targetId);
 void Func_080df1fc(s32 targetId);
-void BattleFx_CallEffect04(s32 targetId);
-void BattleFx_CallEffect05(s32 targetId);
-void BattleFx_StartOrbitingParticles(s32 targetId);
+void FieldFx_RunForceOnTarget(s32 targetId);
+void FieldFx_RunDouseOnTarget(s32 targetId);
+void FieldFx_RunFrostOnTarget(s32 targetId);
 void Func_080dda30(s32 targetId);
-void BattleFx_CallEffect03AndStop(s32 targetId);
-void BattleFx_CallEffect14(s32 targetId);
+void FieldFx_RunPlyOnTarget(s32 targetId);
+void FieldFx_RunWhirlwindOnTarget(s32 targetId);
 void BattleFx_CallEffect13(s32 targetId);
 void Func_080e0978(s32 targetId);
 void BattleFx_CallEffect23(s32 targetId);
@@ -118,7 +118,7 @@ void BattleFx_Run(void) {
   s32 objectId;
 
   if (animation == FIELD_FX_PUSH)
-    BattleFx_RunItemBreakSequence();
+    FieldFx_RunMove();
   else if (animation == 7)
     Func_080ddea8();
   else if (animation == 11)
@@ -126,19 +126,19 @@ void BattleFx_Run(void) {
   else if (animation == 4)
     Func_080de21c();
   else if (animation == 5)
-    RunBattleEffect05();
+    FieldFx_RunDouse();
   else if (animation == 14)
-    RunBattleEffect14();
+    FieldFx_RunWhirlwind();
   else if (animation == 6)
-    BattleFx_RunOrbitingParticles();
+    FieldFx_RunFrost();
   else if (animation == 3)
-    RunBattleEffect03();
+    FieldFx_RunPly();
   else if (animation == 12)
-    BattleFx_RunBurstParticles();
+    FieldFx_RunGrowth();
   else if (animation == 13)
     Func_080e03cc();
   else if (animation == 15)
-    BattleFx_RunEffect15();
+    FieldFx_RunRetreat();
   else if (animation == 16)
     BattleFx_RunEffect16();
   else if (animation == 10)
@@ -224,17 +224,17 @@ void BattleFx_DispatchRequestKind(void) {
   else if (animation == 11)
     Func_080df1fc(targetId);
   else if (animation == 4)
-    BattleFx_CallEffect04(targetId);
+    FieldFx_RunForceOnTarget(targetId);
   else if (animation == 5)
-    BattleFx_CallEffect05(targetId);
+    FieldFx_RunDouseOnTarget(targetId);
   else if (animation == 6)
-    BattleFx_StartOrbitingParticles(targetId);
+    FieldFx_RunFrostOnTarget(targetId);
   else if (animation == 12)
     Func_080dda30(targetId);
   else if (animation == 3)
-    BattleFx_CallEffect03AndStop(targetId);
+    FieldFx_RunPlyOnTarget(targetId);
   else if (animation == 14)
-    BattleFx_CallEffect14(targetId);
+    FieldFx_RunWhirlwindOnTarget(targetId);
   else if (animation == 13)
     BattleFx_CallEffect13(targetId);
   else if (animation == 16)
@@ -244,7 +244,7 @@ void BattleFx_DispatchRequestKind(void) {
   else if (animation == 10)
     Func_080decb8();
   else if (animation == 15)
-    BattleFx_RunEffect15();
+    FieldFx_RunRetreat();
   else if (animation == 8)
     Func_080dd820();
   else if (animation == 23)

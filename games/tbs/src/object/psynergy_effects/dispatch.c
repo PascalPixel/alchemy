@@ -38,31 +38,31 @@ void BattleFx_Run(void) {
 
   switch (kind) {
   case FIELD_KIND_MOVE:
-    BattleFx_RunItemBreakSequence();
+    FieldFx_RunMove();
     return;
   case FIELD_KIND_LIFT:
-    RunBattleEffect07();
+    FieldFx_RunLift();
     return;
   case FIELD_KIND_CARRY:
-    RunBattleEffect11();
+    FieldFx_RunCarry();
     return;
   case FIELD_KIND_FORCE:
-    RunBattleEffect04();
+    FieldFx_RunForce();
     return;
   case FIELD_KIND_DOUSE:
-    RunBattleEffect05();
+    FieldFx_RunDouse();
     return;
   case FIELD_KIND_WHIRLWIND:
-    RunBattleEffect14();
+    FieldFx_RunWhirlwind();
     return;
   case FIELD_KIND_FROST:
-    BattleFx_RunOrbitingParticles();
+    FieldFx_RunFrost();
     return;
   case FIELD_KIND_PLY:
-    RunBattleEffect03();
+    FieldFx_RunPly();
     return;
   case FIELD_KIND_GROWTH:
-    BattleFx_RunBurstParticles();
+    FieldFx_RunGrowth();
     return;
   case FIELD_KIND_CATCH:
     FieldFx_RunCatch();
@@ -93,13 +93,13 @@ void BattleFx_Run(void) {
     RunSceneTransitionEffect(scene->firstObjectId, targetId);
     return;
   case FIELD_KIND_REVEAL:
-    RunBattleEffect08();
+    FieldFx_RunReveal();
     return;
   case FIELD_KIND_CLOAK:
     FieldFx_StartCloak();
     return;
   case FIELD_KIND_RETREAT:
-    BattleFx_RunEffect15();
+    FieldFx_RunRetreat();
     return;
   case FIELD_KIND_AVOID:
     FieldFx_RunAvoid();
@@ -129,19 +129,19 @@ void BattleFx_DispatchRequestKind(void) {
     BattleFx_SteerPushedTarget(targetId);
     break;
   case FIELD_KIND_LIFT:
-    BattleEffect_RunTargetedItemBreak(targetId);
+    FieldFx_RunLiftOnTarget(targetId);
     break;
   case FIELD_KIND_CARRY:
     BattleFx_SteerLiftedTarget(targetId);
     break;
   case FIELD_KIND_FORCE:
-    BattleFx_CallEffect04(targetId);
+    FieldFx_RunForceOnTarget(targetId);
     break;
   case FIELD_KIND_DOUSE:
-    BattleFx_CallEffect05(targetId);
+    FieldFx_RunDouseOnTarget(targetId);
     break;
   case FIELD_KIND_FROST:
-    BattleFx_StartOrbitingParticles(targetId);
+    FieldFx_RunFrostOnTarget(targetId);
     break;
   case FIELD_KIND_GROWTH:
     FieldFx_RunGrowthOnTarget(targetId);
@@ -156,22 +156,22 @@ void BattleFx_DispatchRequestKind(void) {
     BattleFx_MarkChildAndRunFallbackTransition(targetId);
     break;
   case FIELD_KIND_PLY:
-    BattleFx_CallEffect03AndStop(targetId);
+    FieldFx_RunPlyOnTarget(targetId);
     break;
   case FIELD_KIND_WHIRLWIND:
-    BattleFx_CallEffect14(targetId);
+    FieldFx_RunWhirlwindOnTarget(targetId);
     break;
   case FIELD_KIND_CATCH:
     FieldFx_RunCatchOnTarget(targetId);
     break;
   case FIELD_KIND_REVEAL:
-    RunBattleEffect08();
+    FieldFx_RunReveal();
     break;
   case FIELD_KIND_CLOAK:
     FieldFx_StartCloak();
     break;
   case FIELD_KIND_RETREAT:
-    BattleFx_RunEffect15();
+    FieldFx_RunRetreat();
     break;
   case FIELD_KIND_AVOID:
     FieldFx_RunAvoid();

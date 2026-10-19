@@ -55,8 +55,8 @@ void BattleFx_SelectBattleCue(s32 zone, s32 slot);
 #endif
 void BattleFx_ShrinkObjectAndDestroySlow(union FieldObject *object);
 void BattleFx_ShrinkObjectAndDestroyFast(union FieldObject *object);
-void RunBattleEffect07(void);
-void RunBattleEffect11(void);
+void FieldFx_RunLift(void);
+void FieldFx_RunCarry(void);
 
 // One of the scene's events (the same 12 bytes as struct SceneEvent).
 struct EffectDescriptor {

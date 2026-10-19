@@ -92,7 +92,7 @@ void BattleFx_UpdateDriftingFallObject(union FieldObject *fieldObject) {
 }
 
 // Abilities: Douse (field kind 5), cast on a target.
-void BattleFx_CallEffect05(s32 unused) { RunBattleEffect05(); }
+void FieldFx_RunDouseOnTarget(s32 unused) { FieldFx_RunDouse(); }
 
 // Abilities: Douse (field kind 5).
 //
@@ -100,7 +100,7 @@ void BattleFx_CallEffect05(s32 unused) { RunBattleEffect05(); }
 // destination (80 with variant) over 10 frames, growing as it goes, rains
 // particles, and returns. With no destination yet, the destination is 16 pixels
 // from the target toward angle.
-void RunBattleEffect05(void) {
+void FieldFx_RunDouse(void) {
   struct EffectVector pos;
   struct EffectVector start;
   struct EffectVector end;

@@ -1,5 +1,5 @@
 // Near miss, differ 4 of 137 (2026-10-18; 8 on 2026-10-15), The Broken Seal's
-// RunBattleEffect08: Reveal. ⚓️
+// FieldFx_RunReveal: Reveal. ⚓️
 // centres the transition on the caster from the effect scene, clears the
 // active flag as ☀️'s non-English editions do, finds the Reveal event
 // through Func_080ce31c/Func_080ce458 and schedules the watch only while the

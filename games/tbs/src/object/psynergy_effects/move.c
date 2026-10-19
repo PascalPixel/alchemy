@@ -282,7 +282,7 @@ next_state:
 //
 // Shows the broken item beside the caster for 30 frames, then turns it into
 // particles.
-void BattleFx_RunItemBreakSequence(void) {
+void FieldFx_RunMove(void) {
   s32 work[3];
   struct BattleFxScene *scene;
   void *object;

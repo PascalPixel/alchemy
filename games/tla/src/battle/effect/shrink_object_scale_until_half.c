@@ -13,7 +13,7 @@
 #define Object_SetPositionAndResetMotionFar                                    \
   ((s32 (*)(void *, s32, s32, s32))Object_SetPositionAndResetMotionFar)
 
-s32 RunBattleEffect14();
+s32 FieldFx_RunWhirlwind();
 
 void BattleFx_ShrinkObjectScaleUntilHalf(struct ObjectRuntime *object) {
   s32 scale;
@@ -27,4 +27,4 @@ void BattleFx_ShrinkObjectScaleUntilHalf(struct ObjectRuntime *object) {
   }
 }
 
-void BattleFx_CallEffect14(void) { RunBattleEffect14(); }
+void FieldFx_RunWhirlwindOnTarget(void) { FieldFx_RunWhirlwind(); }

@@ -37,7 +37,7 @@ void ObjectGroup_ApplyRandomChildValues(void);
 void UpdateRisingParticleBurst(void *effect);
 void BattleFx_PrepareBufferInterpolation(void);
 
-void BattleEffect_RunTargetedItemBreak(void) {
+void FieldFx_RunLiftOnTarget(void) {
   struct BattleEffectScene *scene;
   void *mainObject;
   void *child;

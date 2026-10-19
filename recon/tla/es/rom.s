@@ -3394,8 +3394,8 @@ Func_080debd8:
 Field_FindNearbyTalkTarget:
 	.incbin "baserom.gba", 0x000e7cac, 0x000000cc
 	.section .rom.000e7ddc, "ax"
-	.global RunBattleEffect05
-RunBattleEffect05:
+	.global FieldFx_RunDouse
+FieldFx_RunDouse:
 	.incbin "baserom.gba", 0x000e7ddc, 0x0000038c
 	.section .rom.000e81f0, "ax"
 	.global Func_080df1fc
@@ -3414,8 +3414,8 @@ Func_080df8e0:
 	.section .rom.000e8c30, "ax"
 	.incbin "baserom.gba", 0x000e8c30, 0x00000098
 	.section .rom.000e8cf4, "ax"
-	.global RunBattleEffect14
-RunBattleEffect14:
+	.global FieldFx_RunWhirlwind
+FieldFx_RunWhirlwind:
 	.incbin "baserom.gba", 0x000e8cf4, 0x000002fc
 	.section .rom.000e9014, "ax"
 	.balign 4

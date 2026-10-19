@@ -262,7 +262,7 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
 }
 
 // Abilities: Carry (field kind 11), cast with no target.
-DEFINE_ITEM_BREAK_EFFECT(RunBattleEffect11, BattleFx_SpawnItemBreakMode1)
+DEFINE_ITEM_BREAK_EFFECT(FieldFx_RunCarry, BattleFx_SpawnItemBreakMode1)
 
 // Spawns object 215 with the item break sound, in animation 1, and grows it,
 // spinning, from a quarter to full size over 24 frames; angle is the way it

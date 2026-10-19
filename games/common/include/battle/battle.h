@@ -48,7 +48,7 @@ s8 BattleFx_GetResourceGroup(s32 effect_index);
 void BattleFx_PrepareBufferInterpolation(void);
 void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode);
 void BattleFx_DoNothing(void);
-void BattleFx_RunOrbitingParticles(void);
+void FieldFx_RunFrost(void);
 void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                                   s32 mode);
 void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode);
@@ -69,7 +69,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
 void BattleUnit_ResetGuardLevels(void);
 void Camera_InitDefaultTransform(void);
 void EffectSlot_UpdateMotion(struct EffectSlot *effect);
-void RunBattleEffect05(void);
+void FieldFx_RunDouse(void);
 s32 BattleClass_IsSmall(s32 index);
 void BattlePres_SetActorModesFar(u16 *, s32);
 void Map_RenderAllAnimatedTileFramesFar(void **, s32);
@@ -259,7 +259,7 @@ s16 *Scene_FindActorPlacement(s16 action);
 s32 BattleActor_RemoveFromLists(s32);
 void BattleFx_ApplyColorToSourceBuffer(s32 value, s32 mode);
 void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half);
-void BattleFx_CallEffect14(void);
+void FieldFx_RunWhirlwindOnTarget(void);
 u16 Encounter_GetEnemyGroupAtSlot(s32 arg0, s32 arg1);
 s32 BattleFx_HasMatchingEvent5(s32 effectId);
 void BattleFx_IntegrateVector2(s32 *vector, s32 damping, s32 gravity);

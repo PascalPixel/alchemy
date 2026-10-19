@@ -31,7 +31,7 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
 // Scheduler callback of the timed effect (kind 8): asks for it to end once
 // the leader is 60 pixels from its centre or its time has run out. The
 // centre and the time are in the event work from 0xcb8 on
-// (RunBattleEffect08).
+// (FieldFx_RunReveal).
 void FieldEffect_WatchLeaderDistance(void) {
   struct FieldWork *work;
   struct ObjectRuntime *actor;
@@ -63,7 +63,7 @@ void FieldEffect_WatchLeaderDistance(void) {
 //
 // Starts a screen transition centred on the leader, runs the matching event if
 // there is one, and puts markers round the leader.
-void RunBattleEffect08(void) {
+void FieldFx_RunReveal(void) {
   struct FieldWork *field;
   struct DisplayTransitionState *transition;
   struct FieldActor *target;

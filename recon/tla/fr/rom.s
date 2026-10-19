@@ -2307,8 +2307,8 @@ Func_080debd8:
 Func_080decb8:
 	.incbin "baserom.gba", 0x000e3cac, 0x000000cc
 	.section .rom.000e3ddc, "ax"
-	.global RunBattleEffect05
-RunBattleEffect05:
+	.global FieldFx_RunDouse
+FieldFx_RunDouse:
 	.incbin "baserom.gba", 0x000e3ddc, 0x0000038c
 	.section .rom.000e41f0, "ax"
 	.global Func_080df1fc
@@ -2327,8 +2327,8 @@ Func_080df8e0:
 	.section .rom.000e4c30, "ax"
 	.incbin "baserom.gba", 0x000e4c30, 0x00000098
 	.section .rom.000e4cf4, "ax"
-	.global RunBattleEffect14
-RunBattleEffect14:
+	.global FieldFx_RunWhirlwind
+FieldFx_RunWhirlwind:
 	.incbin "baserom.gba", 0x000e4cf4, 0x000002fc
 	.section .rom.000e5014, "ax"
 	.balign 4

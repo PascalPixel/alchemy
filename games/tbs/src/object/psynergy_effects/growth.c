@@ -64,7 +64,7 @@ void FieldFx_RunGrowthOnTarget(s32 unused) {
 //
 // The particles, then five falling objects 4 to 10 pixels round the effect's
 // position.
-void BattleFx_RunBurstParticles(void) {
+void FieldFx_RunGrowth(void) {
   struct BattleFxScene *work = gEffectWork;
   struct BurstParticleVector pos;
   struct BurstParticleVector *p;

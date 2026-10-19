@@ -87,9 +87,9 @@ void BattleFx_RunSparkEmitter(union FieldObject *fieldObject) {
 
 // Abilities: Ply, Ply Well, Pure Ply (field kind 3), cast on a target.
 //
-// Runs RunBattleEffect03, then stops the caster's hook.
-void BattleFx_CallEffect03AndStop(s32 unused) {
-  RunBattleEffect03();
+// Runs FieldFx_RunPly, then stops the caster's hook.
+void FieldFx_RunPlyOnTarget(s32 unused) {
+  FieldFx_RunPly();
   EffectRuntime_StopCurrentObject();
 }
 
@@ -97,7 +97,7 @@ void BattleFx_CallEffect03AndStop(s32 unused) {
 //
 // Eight particles spiral into the centre, where one appears, sheds sparks and
 // flies far away.
-void RunBattleEffect03(void) {
+void FieldFx_RunPly(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *target = scene->mainObject;
   struct FieldActor *object;

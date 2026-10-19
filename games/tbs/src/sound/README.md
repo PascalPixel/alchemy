@@ -49,4 +49,4 @@ Link order is in `games/tbs/objects.tsv`. The unit headers are in
 - The driver's command table is called through a pointer read from the
   table's entry (`*(&gSound_CommandTable[n])`); indexing it directly adds an
   instruction with `old_agbcc`.
-- `engine.c` keeps the `goto`s its matching forms need.
+- `engine.c` keeps the labelled jumps its matching forms need.

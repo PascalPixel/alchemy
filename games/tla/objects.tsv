@@ -1004,7 +1004,6 @@ main	rom_main_02	recon/tla/es/rom	.rom.0003aab0	es
 main	rom_main_02	recon/tla/de/rom	.rom.0003aa8a	de
 main	rom_main_02	recon/tla/de/rom	.rom.0003aa8c	de
 main	rom_main_02	recon/tla/raw/0803aae4	.text	en
-main	rom_main_02	recon/tla/raw/0803ac60	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.0003aa84	ja
 main	rom_main_02	recon/tla/ja/rom	.rom.0003ac3c	ja
 main	rom_main_02	games/tla/src/graphics/text/render_wide	.text	en de es fr it

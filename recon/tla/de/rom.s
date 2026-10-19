@@ -691,7 +691,7 @@ Func_0803a8fc:
 	.type UiText_RenderWideStringAtOffset, %function
 	.thumb_func
 UiText_RenderWideStringAtOffset:
-	.incbin "baserom.gba", 0x0003aa8c, 0x000001f0
+	.incbin "baserom.gba", 0x0003aa8c, 0x0000017c
 	.section .rom.0003ae60, "ax"
 	.incbin "baserom.gba", 0x0003ae60, 0x0000016c
 	.section .rom.0003afcc, "ax"

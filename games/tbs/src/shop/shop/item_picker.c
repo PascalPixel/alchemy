@@ -85,7 +85,7 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
   UiWork_FinalizeFar(partyWindow, 2);
   UiWork_FinalizeFar(shop->itemWindow, 2);
   WaitFrames(1);
-  Inn_Cleanup();
+  Shop_ReleaseCursorWork();
   return result;
 }
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_ITALIAN

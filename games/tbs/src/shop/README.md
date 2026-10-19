@@ -31,7 +31,7 @@ crosses folders.
 
 - **work block**: `struct ShopRuntime`, heap slot `HEAP_SLOT_MENU`, reached as
   `gMenuWork` while a counter is open; `Shop_InitializeCursorWork` sets it up
-  and `Inn_Cleanup` releases it for every counter.
+  and `Shop_ReleaseCursorWork` releases it for every counter.
 - **stock row**: a row of `sStockTable` (`artifacts.c`), one per shop: up to
   24 item ids from column 0, ending with 0; up to 8 artifacts from column 24;
   and the shop's type in column 32 (`SHOP_STOCK_` names the columns).

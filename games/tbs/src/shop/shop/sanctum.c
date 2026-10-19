@@ -172,7 +172,7 @@ s32 Shop_ConfirmAct(s32 unitId) {
   UiMessage_ShowResolvedAndWait(MsgSanctumFarewell);
   UiWork_FinalizeFar(shop->moneyWindow, 2);
   UiWork_FinalizeFar(listWindow, 2);
-  Inn_Cleanup();
+  Shop_ReleaseCursorWork();
   return 0;
 }
 

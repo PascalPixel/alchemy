@@ -88,7 +88,7 @@ void Func_08108148(void) {
 }
 
 // Closes the shop: stops the cursor's callback, frees its tiles and the work.
-// The Broken Seal's Inn_Cleanup.
+// The Broken Seal's Shop_ReleaseCursorWork.
 void Func_0810824c(void) {
   struct ShopRuntime *state;
 

@@ -69,7 +69,7 @@ void Shop_InitializeCursorWork(void) {
 
 // Stops the shared cursor task and releases the shop, sanctum or inn menu
 // resources.
-void Inn_Cleanup(void) {
+void Shop_ReleaseCursorWork(void) {
   struct ShopRuntime *state;
 
   state = gMenuWork;
@@ -149,7 +149,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   }
   UiMessage_ShowAndWait(MsgShopFarewell);
   UiWork_FinalizeFar(window, 2);
-  Inn_Cleanup();
+  Shop_ReleaseCursorWork();
   return 0;
 }
 

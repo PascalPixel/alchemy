@@ -13,7 +13,7 @@ struct ShopCursor;
 s32 Shop_ListAvailableArtifacts(void);
 void Shop_StepCursor(void);
 void Shop_InitializeCursorWork(void);
-void Inn_Cleanup(void);
+void Shop_ReleaseCursorWork(void);
 s32 Shop_Run(s32 stockRow, s32 keeperId);
 s32 Battle_ApplyPresetItemsAndFlags(s32 unused);
 void AudioCommand_WaitForStateByteClear(void);

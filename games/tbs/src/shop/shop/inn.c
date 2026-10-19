@@ -85,7 +85,7 @@ s32 Inn_CheckIn(s32 innId, s32 objectId) {
   }
 
   UiWork_FinalizeFar(innkeeperWindow, 2);
-  Inn_Cleanup();
+  Shop_ReleaseCursorWork();
   return 0;
 }
 

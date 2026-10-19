@@ -755,10 +755,6 @@ Func_0803c274:
 	.thumb_func
 UiWork_AnimateSpriteSlots:
 	.incbin "baserom.gba", 0x0003c548, 0x00000464
-	.section .rom.0003cb72, "ax"
-	.incbin "baserom.gba", 0x0003cb72, 0x00000002
-	.section .rom.0003cbfe, "ax"
-	.incbin "baserom.gba", 0x0003cbfe, 0x00000002
 	.section .rom.0003cd60, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0003cd60, 0x00000054

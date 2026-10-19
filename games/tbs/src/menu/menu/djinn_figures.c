@@ -94,7 +94,7 @@ void FourObjectMotion_UpdateBottomRow(void) {
   struct SpriteScale scale;
   struct SpritePlacement placement;
 
-  Link_DrawShiftedTilePairFar(0x06002500);
+  Link_DrawShiftedTilePairFar(MENU_PAGE_ARROW_VRAM);
   objectIndex = 0;
   do {
     struct AnimationObject *object = menu->objects[objectIndex];

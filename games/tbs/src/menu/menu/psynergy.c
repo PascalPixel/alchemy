@@ -57,7 +57,7 @@ s32 Menu_OpenConfirmPrompt(void) {
   ItemMenu_Init(0, 3, 0, 7);
   state->messageWindow = UiWindow_CreateFar(13, 0, 17, 3, 2);
   Palette_LightenBankHighlight(14);
-  Link_DrawShiftedTilePairFar(0x06002500);
+  Link_DrawShiftedTilePairFar(MENU_PAGE_ARROW_VRAM);
 #if TBS_PATCH_2
   Scheduler_EnableOverlayCallbacksWithFlags();
   Iwram_CopyWords(saved, PSYNERGY_PROMPT_TILES, PSYNERGY_PROMPT_TILES_SIZE);

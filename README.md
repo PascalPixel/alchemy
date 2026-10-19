@@ -4,33 +4,31 @@ Alchemy is a decompilation of the Game Boy Advance games ☀️ **Golden Sun: Th
 
 ## What that means
 
-Camelot wrote Golden Sun as source code and compiled it into `0`'s and `1`'s on a game cartridge. That source was never released, and Alchemy tries to recover that source code by guessing what it was based on the `0`'s and `1`'s on the game cartridge. 
+Camelot wrote Golden Sun as source code and compiled it into the `0`s and `1`s on a game cartridge. That source was never released, so Alchemy writes it again: C code that compiles back into exactly the same `0`s and `1`s.
 
-Like guessing the exact ingredients in a cake by making new cakes and seeing if it tastes the same. It's mad. And it's working.
+It’s like working out a cake’s exact recipe by baking new cakes until one tastes identical. It’s mad. And it’s working.
 
 With the source you can read exactly how Golden Sun works, from the damage formulas to every cutscene, and change it: rebalance it, translate it, add scenes, or build editors and ports on top of it.
 
-## What it isn't
+## What you get
 
-- **Not a remake, a mod or a PC port.** It builds exactly the games Camelot shipped, unchanged, and that is all it will ever be. Mods and ports belong in projects of their own, built from it.
-- **Not new content.** Every picture, song and line of dialogue is Camelot's, taken from the cartridge into editable files. No art, music or writing in it is AI-generated.
-- **Not a download.** There's no installer, `.exe` or ROM image. The repository holds the source code, music, and images, and the build recreates the original ROMs exactly.
+Alchemy builds the games Camelot shipped, byte for byte, in all six languages. Every picture, song and line of dialogue is Camelot’s own, taken from the cartridge into files you can open and edit. There’s nothing to download and play: the repository holds the source, and the build turns it back into the original games. Remakes, mods and ports can grow from it in projects of their own.
 
-## How it's made
+## How it’s made
 
-Alchemy is a hobby project I started in July 2026 to enjoy making things again after a burnout. I build it with AI coding assistants: they propose C code, the build compares it with the cartridge, and keep what matches. I direct the work, decide how the code is organized and named, and fix what is broken, or stuck.
+Alchemy is a hobby project I started in July 2026 to enjoy making things again after a burnout. I build it with AI coding assistants. They propose C code, the build compares it with the cartridge, and only what matches stays. I direct the work: what to tackle next, how the code is organized and named, and what counts as finished. When something is broken or stuck, that’s where I dig in.
 
 ## Where it stands
 
-- **The Broken Seal** builds entirely from this repository, in all six languages. No ROM is needed.
-- **The Lost Age** is in progress. It builds too, but the parts not yet rewritten still come from your own cartridge dump.
+- **The Broken Seal** builds entirely from this repository, in all six languages. No ROM needed.
+- **The Lost Age** builds too and is well on its way. The parts not yet rewritten still come from your own cartridge dump.
 
 <img src="https://raw.githubusercontent.com/PascalPixel/alchemy/progress/PROGRESS_CHART.png" width="838" alt="How much of each game's code and data is rebuilt, day by day since 16 July 2026" />
 <img src="https://raw.githubusercontent.com/PascalPixel/alchemy/progress/PROGRESS.png" width="838" alt="A map of the project's files by size" />
 
 ## Try it
 
-[INSTALL.md](INSTALL.md) has the few commands to build it on Linux, macOS or Windows. It builds these ROMs, so anyone with their own cartridge dumps can check the result:
+[INSTALL.md](INSTALL.md) has the few commands to build it on Linux, macOS or Windows. Anyone with their own cartridges can check the result against these hashes:
 
 | Language | The Broken Seal                            | The Lost Age                               |
 | -------- | ------------------------------------------ | ------------------------------------------ |
@@ -40,6 +38,8 @@ Alchemy is a hobby project I started in July 2026 to enjoy making things again a
 | Spanish  | `de0bdc889594b012cad213ca83707feb81ada28b` | `a2e3e80036195343c2713410ac14f4e329e3f40d` |
 | French   | `42f3b262c16cfc5bde1fa2b25016fb74046de1b3` | `f14855c0f8c87a95cc52189e8e3b2bd9df186322` |
 | Italian  | `ca45e04b26b2f040ac63e679a459d21869f5f28d` | `57f1d005666b81645e55412658427e27099c5907` |
+
+To find your way around the code, start with the battle effects: [their guide](games/tbs/src/effect/README.md) shows how to find the code behind any move and change it.
 
 ## Acknowledgements
 

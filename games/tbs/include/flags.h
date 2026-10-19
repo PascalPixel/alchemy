@@ -76,6 +76,15 @@
 #define FLAG_KALAY_COLOSSO_TOUR_LEFT 0x911 // the tour group has left town
 #define FLAG_KALAY_TOWN_NUT_CAUGHT 0x916   // the Nut circling in the town
 
+// Imil
+// Mia's second apprentice told the party Mia went to the old couple's house.
+#define FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE 0x82a
+// Mia healed the old man, and the party saw the Mercury Lighthouse lit.
+#define FLAG_IMIL_MET_MIA 0x82b
+// Her apprentice told the party she can act as its healer in the sanctum.
+#define FLAG_IMIL_APPRENTICE_OFFERED_HEALING 0x82d
+#define FLAG_IMIL_MIA_SAID_FAREWELL 0x82e // to her two apprentices
+
 // Kalay and Tolbi docks
 #define FLAG_KALAY_DOCKS_TICKET_BOUGHT 0x8a5
 // The father on the Kalay docks asked the party to take a message to his

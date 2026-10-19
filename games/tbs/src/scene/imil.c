@@ -37,6 +37,36 @@
 #include "palbuf.h"
 #include "map.h"
 #include "macros.h"
+#include "flags.h"
+#include "songs.h"
+
+// Imil's two maps share actor numbers; each is named on the map it is proved.
+enum ImilActor {
+  // Town
+  ACTOR_COLD_VILLAGER = 8, // shivering and sneezing in the snow
+  ACTOR_GREETER = 9,
+  ACTOR_COUNTING_CHILD = 10,
+  ACTOR_SNOWMAN = 11,
+  // Interiors
+  ACTOR_OLD_WOMAN = 8, // the old couple's house
+  ACTOR_OLD_MAN = 9,
+  ACTOR_WEAPON_MERCHANT = 12,
+  ACTOR_ARMOR_MERCHANT = 13,
+  ACTOR_ITEM_SHOP_CHILD = 14, // minds the shop while the mother is sick
+  ACTOR_ITEM_MERCHANT = 15,
+  ACTOR_INNKEEPER = 16,
+  ACTOR_RESTAURANT_OWNER = 18,
+  ACTOR_APPRENTICE = 19, // Mia's apprentices, the first in the sanctum
+  ACTOR_SECOND_APPRENTICE = 20
+};
+
+// The town's own flags, kept while the party is there.
+enum ImilTownFlag {
+  // Which map layer the leader walks on, from where he stands.
+  FLAG_IMIL_MAP_LAYER_0 = FLAG_SCENE_TEMP_00,
+  FLAG_IMIL_MAP_LAYER_1 = FLAG_SCENE_TEMP_01,
+  FLAG_IMIL_SNOWMAN_ON_CHIMNEY = FLAG_SCENE_TEMP_03
+};
 
 // Keep native call forms while UBFIX uses the declared void contracts.
 #ifdef UBFIX
@@ -46,20 +76,20 @@
 #endif
 
 // Forward declarations.
-static void Imil_MeetMiaAtSickMansHouse(void);
-static void Imil_CastPsynergyAtActorNine(void);
+static void Imil_MeetMiaAtOldCouplesHouse(void);
+static void Imil_MiaCastsPlyOnOldMan(void);
 static void Imil_SpawnAmbientEffects(void);
 static void Imil_UpdateMapLayerByLeaderPosition(void);
 static void Imil_MoveSnowmanToChimney(void);
 static void Imil_ShowFirstArrival(void);
-static void Imil_SayFarewellToHealerStudent(void);
+static void Imil_MiaSaysFarewellToApprentices(void);
 static void Imil_RunIceSlide(void);
 
 // View the table as signed halfwords.
 extern s32 gImil_ArcOrigin[];
 
-// Wobble the sick actor's scale and vary the pause between movements.
-static s32 Imil_UpdateSickActorWobble(struct ScriptInterpreter *interpreter) {
+// A sick person shivers: a quick squash, then a pause, longer for the old man.
+static s32 Imil_UpdateShiver(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   switch (actor->timer) {
   case 6:
@@ -91,26 +121,27 @@ static s32 Imil_UpdateSickActorWobble(struct ScriptInterpreter *interpreter) {
 // Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
-// Select the town or interior entrance table.
+// Imil is two maps: the town and its interiors.
 const struct SceneEntrance *Imil_GetEntrances(void) {
   if (gGameState.scene == (s32)&SceneId_Imil2) {
-    return gImilEntrances2;
+    return gImil_InteriorEntrances;
   }
-  return gImilEntrancesOther;
+  return gImil_TownEntrances;
 }
 
-// Imil has no additional scene region table.
+// Imil has no scene regions.
 struct SceneRegion *Imil_GetRegions(void) { return NULL; }
 
 // Return Imil's exits.
 u32 *Imil_GetExits(void) { return gImil_Exits; }
 
-// Select actor placements and restore the recovered villagers.
+// Once the epidemic is cured (flag 0x881), the townspeople are well again and
+// the old man is up and about.
 const struct ScenePlacement *Imil_GetPlacements(void) {
   struct ScenePlacement *script;
 
   if (gGameState.scene == ((s32)&SceneId_Imil2)) {
-    script = gImilPlacements2;
+    script = gImil_InteriorPlacements;
     FieldScene_PrepareActors(script);
     if (Engine_GameFlagIsSet(0x881) != 0) {
       /* FAKEMATCH: retain row 10's talk-facing byte access (10 * 24 + 22).
@@ -125,24 +156,25 @@ const struct ScenePlacement *Imil_GetPlacements(void) {
   }
 
   if (Engine_GameFlagIsSet(0x881) != 0) {
-    return gImilPlacementsFlag881;
+    return gImil_TownPlacementsCured;
   }
-  return gImilPlacements;
+  return gImil_TownPlacements;
 }
 
-// Start the movement handler for an ice-slide trigger.
-static void Imil_HandleIceSlide(void) { Imil_RunIceSlide(); }
+// Stepping onto the ice starts a slide.
+static void Imil_StartIceSlide(void) { Imil_RunIceSlide(); }
 
-// Select the town or interior interaction table.
+// The town's or the interiors' conversations and Psynergy targets.
 const struct SceneEvent *Imil_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_Imil2) {
-    return gImilEvents2;
+    return gImil_InteriorEvents;
   }
-  return gImilEventsOther;
+  return gImil_TownEvents;
 }
 
-// Discuss the villager's cold and Mia's care.
-static void Imil_TalkToSickVillager(void) {
+// The cold villager sneezes and shivers, waiting for Mia; once she travels
+// with the party (flag 3), he says that even her healing can't help them all.
+static void Imil_TalkToColdVillager(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(3) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilEvenIfMiaHealsUs));
@@ -157,204 +189,217 @@ static void Imil_TalkToSickVillager(void) {
   Engine_EventEnd();
 }
 
-// Read the sick villager's thoughts about Mia.
-static void Imil_ReadSickVillagerMind(void) {
+// Mind Read on the cold villager: Mia should be here by now, or, once she
+// has joined the party, he can't understand why she left.
+static void Imil_ReadColdVillagerMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(3) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilCantUnderstandWhyAnyOne));
   } else {
     Engine_EventSetMessage(MSGNO(MsgImilMiaShouldHereByNow));
   }
-  Engine_EventShowMessage(8, 0);
+  Engine_EventShowMessage(ACTOR_COLD_VILLAGER, 0);
   Engine_EventEnd();
 }
 
-// Have the villager ask whether Isaac is new to Imil.
+// A villager turns to the leader and asks whether he is new in Imil.
 static void Imil_GreetVisitor(void) {
   Engine_EventBegin();
-  Engine_ActorFaceActor(9, ACTOR_PARTY_LEADER, 10);
+  Engine_ActorFaceActor(ACTOR_GREETER, ACTOR_PARTY_LEADER, 10);
   Engine_EventSetMessage(MSGNO(MsgImilHiNewInImil));
-  Engine_EventAskYesNo(9, 0);
+  Engine_EventAskYesNo(ACTOR_GREETER, 0);
   Engine_EventEnd();
 }
 
-// Let the counting child react to Isaac before resuming counting.
+// The counting child stops, turns to the leader and goes back to
+// counting.
 static void Imil_TalkToCountingChild(void) {
   Engine_EventBegin();
 
   if (GameFlag_IsSet(0x881) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilCountingAfterDeparture));
-    Event_ShowMessage(10, 0);
-    Actor_SetAttachedEffect(10, 258);
+    Event_ShowMessage(ACTOR_COUNTING_CHILD, 0);
+    Actor_SetAttachedEffect(ACTOR_COUNTING_CHILD, EMOTE_IN_FRONT | 2);
     Engine_EventWait(40);
-    Engine_ActorSetAnimation(10, 1);
+    Engine_ActorSetAnimation(ACTOR_COUNTING_CHILD, ANIM_STAND);
     Engine_EventWait(20);
-    Actor_FaceActor(10, ACTOR_PARTY_LEADER, 20);
-    Event_AskYesNo(10, 0);
-    Actor_FaceDirection(10, FACING_SOUTHEAST + FACING_STEP, 10);
-    Engine_ActorSetAnimation(10, 9);
+    Actor_FaceActor(ACTOR_COUNTING_CHILD, ACTOR_PARTY_LEADER, 20);
+    Event_AskYesNo(ACTOR_COUNTING_CHILD, 0);
+    Actor_FaceDirection(ACTOR_COUNTING_CHILD, FACING_SOUTHEAST + FACING_STEP,
+                        10);
+    Engine_ActorSetAnimation(ACTOR_COUNTING_CHILD, 9);
   } else {
     Engine_EventSetMessage(MSGNO(MsgImilOneTwoThreeFour));
-    Event_ShowMessage(10, 0);
-    Actor_SetAttachedEffect(10, 258);
+    Event_ShowMessage(ACTOR_COUNTING_CHILD, 0);
+    Actor_SetAttachedEffect(ACTOR_COUNTING_CHILD, EMOTE_IN_FRONT | 2);
     Engine_EventWait(40);
-    Engine_ActorSetAnimation(10, 1);
+    Engine_ActorSetAnimation(ACTOR_COUNTING_CHILD, ANIM_STAND);
     Engine_EventWait(20);
-    Actor_FaceActor(10, ACTOR_PARTY_LEADER, 20);
-    Event_ShowMessage(10, 0);
-    Actor_FaceDirection(10, FACING_SOUTHEAST + FACING_STEP, 10);
-    Engine_ActorSetAnimation(10, 9);
+    Actor_FaceActor(ACTOR_COUNTING_CHILD, ACTOR_PARTY_LEADER, 20);
+    Event_ShowMessage(ACTOR_COUNTING_CHILD, 0);
+    Actor_FaceDirection(ACTOR_COUNTING_CHILD, FACING_SOUTHEAST + FACING_STEP,
+                        10);
+    Engine_ActorSetAnimation(ACTOR_COUNTING_CHILD, 9);
   }
 
   Engine_EventEnd();
 }
 
-// Show the patient's illness, improvement, or recovery.
-static void Imil_TalkToSickMan(void) {
+// The old man moans for help until the old woman hurries to fetch Mia; after
+// Mia's healing he feels much better, and once the town is cured he asks
+// whether the party really thought he would die.
+static void Imil_TalkToOldMan(void) {
 
-  struct FieldActor *patient;
-  struct FieldActor *caretaker;
+  struct FieldActor *oldMan;
+  struct FieldActor *oldWoman;
 
   if (GameFlag_IsSet(2177) != 0) {
     Engine_EventBegin();
-    Actor_FaceActor(9, 0, 0);
+    Actor_FaceActor(ACTOR_OLD_MAN, 0, 0);
     Engine_EventWait(10);
     Engine_EventSetMessage(MsgMercuryReallySayDie);
-    Event_AskYesNo(9, 0);
+    Event_AskYesNo(ACTOR_OLD_MAN, 0);
     Engine_EventEnd();
   } else {
-    if (GameFlag_IsSet(2091) != 0) {
+    if (GameFlag_IsSet(FLAG_IMIL_MET_MIA) != 0) {
       Engine_EventBegin();
-      Engine_ActorSetAnimation(9, 7);
+      Engine_ActorSetAnimation(ACTOR_OLD_MAN, 7);
       Engine_MapAnimateCells(gImil_CellStepsA, 10, 69);
       Engine_EventSetMessage(MsgMercuryFeelMuchBetter);
-      Event_ShowMessage(9, 0);
-      Engine_ActorSetAnimation(9, 8);
+      Event_ShowMessage(ACTOR_OLD_MAN, 0);
+      Engine_ActorSetAnimation(ACTOR_OLD_MAN, 8);
       Map_AnimateCells(gImil_CellStepsB, 10, 69);
       Engine_EventEnd();
     } else {
       Engine_EventBegin();
-      patient = Object_GetById(9);
-      patient->timer = 10;
-      Actor_SetActionScript(9, gImil_ActorScriptA);
+      oldMan = Object_GetById(ACTOR_OLD_MAN);
+      oldMan->timer = 10;
+      Actor_SetActionScript(ACTOR_OLD_MAN, gImil_ShiverScript);
       Engine_EventSetMessage(MsgMercuryOoohHelpMe);
-      Engine_EventShowMessage(9, 0);
-      Engine_ActorStop(8);
-      Actor_ShowEmote(8, 256, 40);
-      Actor_FaceDirection(8, FACING_NORTH + FACING_STEP, 10);
-      Engine_ActorStartRepeatedMotion(8, 2);
-      Event_ShowMessageAndWait(8, 0, 20);
-      Actor_SetActionScript(0, gImil_ActorScriptC);
-      Actor_SetSpeed(8, PIXELS(8) / 5, PIXELS(4) / 5);
-      Actor_RunActionScriptAndWait(8, gImil_ActorScriptB);
+      Engine_EventShowMessage(ACTOR_OLD_MAN, 0);
+      Engine_ActorStop(ACTOR_OLD_WOMAN);
+      Actor_ShowEmote(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT, 40);
+      Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_NORTH + FACING_STEP, 10);
+      Engine_ActorStartRepeatedMotion(ACTOR_OLD_WOMAN, 2);
+      Event_ShowMessageAndWait(ACTOR_OLD_WOMAN, 0, 20);
+      Actor_SetActionScript(ACTOR_PARTY_LEADER, gImil_LeaderStepAsideScript);
+      Actor_SetSpeed(ACTOR_OLD_WOMAN, PIXELS(8) / 5, PIXELS(4) / 5);
+      Actor_RunActionScriptAndWait(ACTOR_OLD_WOMAN, gImil_CaretakerHurryScript);
       Engine_EventWait(40);
-      Engine_ActorJump(8, 2, 0);
-      Engine_ActorStartRepeatedMotion(8, 2);
-      Engine_ActorSetAttachedEffect(8, 258);
+      Engine_ActorJump(ACTOR_OLD_WOMAN, 2, 0);
+      Engine_ActorStartRepeatedMotion(ACTOR_OLD_WOMAN, 2);
+      Engine_ActorSetAttachedEffect(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT | 2);
       Engine_EventWait(60);
-      Event_ShowMessageAndWait(8, 0, 10);
-      Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 20);
-      Engine_ActorStartRepeatedMotion(8, 2);
-      Engine_EventShowMessage(8, 0);
-      caretaker = Object_GetById(8);
-      caretaker->collisionFlags ^= 0x2;
+      Event_ShowMessageAndWait(ACTOR_OLD_WOMAN, 0, 10);
+      Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTHEAST + FACING_STEP, 20);
+      Engine_ActorStartRepeatedMotion(ACTOR_OLD_WOMAN, 2);
+      Engine_EventShowMessage(ACTOR_OLD_WOMAN, 0);
+      oldWoman = Object_GetById(ACTOR_OLD_WOMAN);
+      oldWoman->collisionFlags ^= 0x2;
       GameFlag_Set(0x82c);
       Engine_EventEnd();
     }
   }
 }
 
-// Ask whether Isaac wants weapons.
+// Once the epidemic is cured, the weapon merchant asks whether the party
+// wants weapons.
 static void Imil_AskAboutWeapons(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MSGNO(MsgImilDoWantWeapons));
-  Engine_EventAskYesNo(12, 0);
+  Engine_EventAskYesNo(ACTOR_WEAPON_MERCHANT, 0);
   Engine_EventEnd();
 }
 
-// Ask whether Isaac wants to see the restaurant menu.
+// Once the epidemic is cured, the restaurant owner offers the menu.
 static void Imil_AskAboutRestaurantMenu(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MSGNO(MsgImilDoWantSeeRestaurantMenu));
-  Engine_EventAskYesNo(18, 0);
+  Engine_EventAskYesNo(ACTOR_RESTAURANT_OWNER, 0);
   Engine_EventEnd();
 }
 
-// Discuss Mia and the old couple who need her help.
-static void Imil_AskAboutMia(void) {
+// Mia's second apprentice asks whether the party has visited the old couple,
+// where Mia went; once Mia has joined, she says everyone counts on her.
+static void Imil_TalkToSecondApprentice(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(3) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilEveryoneCountsOnMiaThats));
-    Engine_EventShowMessage(20, 0);
+    Engine_EventShowMessage(ACTOR_SECOND_APPRENTICE, 0);
   } else {
     Engine_EventSetMessage(MsgImilHaveVisitedOldCoupleWho);
-    Engine_EventAskYesNo(20, 0);
-    Engine_GameFlagSet(0x82a);
+    Engine_EventAskYesNo(ACTOR_SECOND_APPRENTICE, 0);
+    Engine_GameFlagSet(FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE);
     Engine_GameFlagSet(0x82c);
   }
   Engine_EventEnd();
 }
 
-// Read the neighbor's thoughts about Mia's responsibilities.
-static void Imil_ReadMiaNeighborMind(void) {
+// Mind Read on the second apprentice: Mia had a bad feeling, or, once she has
+// joined, they must help her.
+static void Imil_ReadSecondApprenticeMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(3) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilWeHaveDoWhateverWe));
   } else {
     Engine_EventSetMessage(MSGNO(MsgImilMiaWasSayingSheHas));
   }
-  Engine_EventShowMessage(20, 0);
+  Engine_EventShowMessage(ACTOR_SECOND_APPRENTICE, 0);
   Engine_EventEnd();
 }
 
-// Discuss what happened at the lighthouse.
-static void Imil_DiscussLighthouse(void) {
+// Once the epidemic is cured, the old woman asks what happened at the
+// lighthouse.
+static void Imil_TalkToOldWoman(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MSGNO(MsgImilHappenedInLighthouseNortheast));
-  Event_ShowMessage(8, 0);
-  Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 10);
+  Event_ShowMessage(ACTOR_OLD_WOMAN, 0);
+  Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTHEAST + FACING_STEP, 10);
   Engine_EventEnd();
 }
 
-// Read the caretaker's thoughts about Mia and the patient.
-static void Imil_ReadCaretakerMind(void) {
+// Mind Read on the old woman: about Mia's clan, her husband's exaggerating,
+// or Mia running all over town.
+static void Imil_ReadOldWomanMind(void) {
   Engine_EventBegin();
-  if (Engine_GameFlagIsSet(0x82b) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_IMIL_MET_MIA) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilMiaClanOnceLivedHere));
   } else if (Engine_GameFlagIsSet(0x82c) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilHesAlwaysExaggeratingThingsBut));
   } else {
     Engine_EventSetMessage(MSGNO(MsgImilMiaRunningAroundTownCaring));
   }
-  Engine_EventShowMessage(8, 0);
+  Engine_EventShowMessage(ACTOR_OLD_WOMAN, 0);
   Engine_EventEnd();
 }
 
-// Run the patient's dialogue from the interior event table.
-static void Imil_TalkToSickManAtHome(void) { Imil_TalkToSickMan(); }
+// After Mia's visit, speaking across the bed reaches the old man.
+static void Imil_TalkToOldManInBed(void) { Imil_TalkToOldMan(); }
 
-// Read the child's admiration for Mia.
+// Mind Read on the counting child: admiration for Mia.
 static void Imil_ReadCountingChildMind(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MSGNO(MsgImilMiaIsAGoodGirlI));
-  Engine_EventShowMessage(10, 0);
+  Engine_EventShowMessage(ACTOR_COUNTING_CHILD, 0);
   Engine_EventEnd();
 }
 
-// Read the healer student's hopes and worries.
-static void Imil_ReadHealerStudentMind(void) {
+// Mind Read on Mia's apprentice: she will do her best, or, once Mia has
+// joined, she feels grown up.
+static void Imil_ReadApprenticeMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(3) != 0) {
     Engine_EventSetMessage(MSGNO(MsgImilFeelLikeGrownUpWhen));
   } else {
     Engine_EventSetMessage(MSGNO(MsgImilTheseFolkOkayTheyDont));
   }
-  Engine_EventShowMessage(19, 0);
+  Engine_EventShowMessage(ACTOR_APPRENTICE, 0);
   Engine_EventEnd();
 }
 
-// Animate the touched door and move Isaac through its exit.
-static void Imil_RunExitDoor(void) {
+// Walking north into a door, everyone stops, the door opens and the leader
+// walks in; door 6 has its own sound and a slower walk.
+static void Imil_OpenDoorAndExit(void) {
   struct EventWork *event;
   struct FieldActor *actor;
   u32 i;
@@ -370,48 +415,49 @@ static void Imil_RunExitDoor(void) {
   }
   exit = (s16)(event->touchedTrigger - 50);
   if (exit == 6) {
-    Engine_AudioPlayCue(188);
+    Engine_AudioPlayCue(SE_188);
   } else {
-    Engine_AudioPlayCue(158);
+    Engine_AudioPlayCue(SE_DOOR_OPEN);
   }
   {
-    s32 x = gImil_ExitCellPoints[exit - 1][0];
-    s32 y = gImil_ExitCellPoints[exit - 1][1];
+    s32 x = gImil_DoorCellPoints[exit - 1][0];
+    s32 y = gImil_DoorCellPoints[exit - 1][1];
 
-    Engine_MapAnimateCells(gImil_ExitCellSteps[exit - 1], x, y);
+    Engine_MapAnimateCells(gImil_DoorCellSteps[exit - 1], x, y);
   }
-  Actor_SetSpeed(0, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (exit == 6) {
-    Actor_SetSpeed(0, PIXELS(1) / 5, PIXELS(1) / 10);
-    Engine_ActorSetAnimation(0, 2);
-    Engine_ActorSetSpritePriority(0, 3);
-    Actor_SetDestinationOffset(0, 0, -8);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+    Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
+    Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
   } else {
-    Object_GetById(0)->motionFlags = 0;
-    Actor_CenterAndWalk(0, 3, -16);
+    Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
+    Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
   }
   Engine_EventWait(16);
   Engine_EventRequestExit(exit);
   Engine_EventEnd();
 }
 
-// Open the weapon shop across the counter or discuss the shopkeeper's illness.
-static void Imil_RunWeaponShop(void) {
+// Across the counter, the leader facing north, the weapon shop opens once the
+// town is cured; before, the sick merchant says the shop is closed.
+static void Imil_TalkToWeaponMerchant(void) {
   s32 facing;
 
-  facing = (s16)Object_GetById(0)->facing;
+  facing = (s16)Object_GetById(ACTOR_PARTY_LEADER)->facing;
   if (Engine_GameFlagIsSet(0x881) != 0) {
     if ((u32)((facing << 16) + 0x5fff0000) <= 0x3ffe0000) {
-      Engine_ShopOpen(10, 12);
+      Engine_ShopOpen(10, ACTOR_WEAPON_MERCHANT);
       return;
     }
     Engine_EventBegin();
-    Engine_ActorFaceActor(12, 0, 0);
+    Engine_ActorFaceActor(ACTOR_WEAPON_MERCHANT, 0, 0);
     Engine_EventWait(10);
     Engine_EventSetMessage(MsgMercuryCatchUpLostOpportunity);
-    Engine_EventShowMessage(12, 0);
-    Actor_FaceDirection(12, FACING_SOUTH, 10);
+    Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
+    Actor_FaceDirection(ACTOR_WEAPON_MERCHANT, FACING_SOUTH, 10);
     Engine_EventEnd();
   } else {
     if ((u32)((facing << 16) + 0x5fff0000) <= 0x3ffe0000) {
@@ -420,9 +466,9 @@ static void Imil_RunWeaponShop(void) {
       Camera_MoveTo(PIXELS(426), -1, PIXELS(492), 1);
       Engine_CameraWaitForMove();
       Engine_EventWait(20);
-      Actor_RunActionScriptAndWait(12, gImil_TurnScript);
+      Actor_RunActionScriptAndWait(ACTOR_WEAPON_MERCHANT, gImil_BobScript);
       Engine_EventSetMessage(MsgMercuryStoreClosedUntilWell);
-      Engine_EventShowMessage(12, 0);
+      Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
       Engine_CameraMoveTo(PIXELS(426), -1, PIXELS(616), 1);
       Engine_CameraWaitForMove();
       Engine_EventEnd();
@@ -430,22 +476,23 @@ static void Imil_RunWeaponShop(void) {
   }
 }
 
-// Open the armor shop across the counter or discuss the shopkeeper's illness.
-static void Imil_RunArmorShop(void) {
+// Across the counter, the leader facing north, the armor shop opens once the
+// town is cured; before, the merchant is too sick for business.
+static void Imil_TalkToArmorMerchant(void) {
   s32 facing;
 
-  facing = (s16)Object_GetById(0)->facing;
+  facing = (s16)Object_GetById(ACTOR_PARTY_LEADER)->facing;
   if (Engine_GameFlagIsSet(0x881) != 0) {
     if ((u32)((facing << 16) + 0x5fff0000) <= 0x3ffe0000) {
-      Engine_ShopOpen(11, 13);
+      Engine_ShopOpen(11, ACTOR_ARMOR_MERCHANT);
       return;
     }
     Engine_EventBegin();
-    Engine_ActorFaceActor(13, 0, 0);
+    Engine_ActorFaceActor(ACTOR_ARMOR_MERCHANT, 0, 0);
     Engine_EventWait(10);
     Engine_EventSetMessage(MsgMercuryShameStoreClosed);
-    Engine_EventShowMessage(13, 0);
-    Actor_FaceDirection(13, FACING_SOUTH, 10);
+    Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
+    Actor_FaceDirection(ACTOR_ARMOR_MERCHANT, FACING_SOUTH, 10);
     Engine_EventEnd();
   } else {
     if ((u32)((facing << 16) + 0x5fff0000) <= 0x3ffe0000) {
@@ -454,9 +501,9 @@ static void Imil_RunArmorShop(void) {
       Camera_MoveTo(PIXELS(426), -1, PIXELS(492), 1);
       Engine_CameraWaitForMove();
       Engine_EventWait(20);
-      Actor_RunActionScriptAndWait(13, gImil_TurnScript);
+      Actor_RunActionScriptAndWait(ACTOR_ARMOR_MERCHANT, gImil_BobScript);
       Engine_EventSetMessage(MsgMercuryTooSickBusiness);
-      Engine_EventShowMessage(13, 0);
+      Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
       Engine_CameraMoveTo(PIXELS(426), -1, PIXELS(616), 1);
       Engine_CameraWaitForMove();
       Engine_EventEnd();
@@ -464,27 +511,28 @@ static void Imil_RunArmorShop(void) {
   }
 }
 
-// Open the item shop or discuss the shopkeeper and her daughter.
-static void Imil_RunItemShop(void) {
+// The item shop: once the town is cured the mother sells again; before, her
+// child minds the counter while she is sick, or talks of the lumberjack father.
+static void Imil_TalkToItemMerchant(void) {
   s32 facing;
 
-  facing = (s16)Object_GetById(0)->facing;
+  facing = (s16)Object_GetById(ACTOR_PARTY_LEADER)->facing;
   if (Engine_GameFlagIsSet(0x881) != 0) {
     if ((u32)((facing << 16) + 0x5fff0000) <= 0x3ffe0000) {
-      Engine_ShopOpen(12, 15);
+      Engine_ShopOpen(12, ACTOR_ITEM_MERCHANT);
       return;
     }
     Engine_EventBegin();
-    Engine_ActorFaceActor(15, 0, 0);
+    Engine_ActorFaceActor(ACTOR_ITEM_MERCHANT, 0, 0);
     Engine_EventSetMessage(MsgMercuryRecoveredThanksFountain);
-    Engine_EventShowMessage(15, 0);
-    Actor_FaceDirection(15, FACING_SOUTH, 0);
+    Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
+    Actor_FaceDirection(ACTOR_ITEM_MERCHANT, FACING_SOUTH, 0);
     Engine_EventEnd();
   } else {
     if ((u32)((facing << 16) + 0x5fff0000) <= 0x3ffe0000) {
       Engine_EventBegin();
       Engine_EventSetMessage(MsgMercuryMomsSickGetWhatever);
-      Engine_EventShowMessage(14, 0);
+      Engine_EventShowMessage(ACTOR_ITEM_SHOP_CHILD, 0);
       /* FAKEMATCH: called through a cast to the value-returning call the bytes
        * show; called by its void prototype, the two argument moves swap (differ
        * 2). Forced tbs-en on 2026-10-16 confirms the two argument moves swap
@@ -494,89 +542,96 @@ static void Imil_RunItemShop(void) {
       IMIL_OPEN_SHOP(12, 14);
       Engine_EventEnd();
     } else {
-      Engine_ActorFaceActor(14, 0, 10);
+      Engine_ActorFaceActor(ACTOR_ITEM_SHOP_CHILD, 0, 10);
       Engine_EventSetMessage(MsgMercuryDadLumberjack);
-      Engine_EventShowMessage(14, 0);
-      Actor_FaceDirection(14, FACING_SOUTH + FACING_STEP, 10);
+      Engine_EventShowMessage(ACTOR_ITEM_SHOP_CHILD, 0);
+      Actor_FaceDirection(ACTOR_ITEM_SHOP_CHILD, FACING_SOUTH + FACING_STEP,
+                          10);
     }
   }
 }
 
-// Open the inn across the counter or speak with its keeper.
-static void Imil_VisitInn(void) {
+// Across the counter, the leader facing north, the inn opens; otherwise the
+// innkeeper talks of the two groups of travellers, or of the party's leaving.
+static void Imil_TalkToInnkeeper(void) {
   struct FieldActor *leader;
 
-  leader = Object_GetById(0);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   if ((u16)(leader->facing + 0x5fff) <= 0x3ffe) {
-    Engine_InnOpen(4, 16);
+    Engine_InnOpen(4, ACTOR_INNKEEPER);
   } else {
     Engine_EventBegin();
-    Actor_FaceActor(16, ACTOR_PARTY_LEADER, 10);
+    Actor_FaceActor(ACTOR_INNKEEPER, ACTOR_PARTY_LEADER, 10);
     if (GameFlag_IsSet(0x881) != 0) {
       Engine_EventSetMessage(MSGNO(MsgImilItsAlmostTimeForLeave));
-      Event_AskYesNo(16, 0);
+      Event_AskYesNo(ACTOR_INNKEEPER, 0);
     } else {
       Engine_EventSetMessage(MSGNO(MsgImilWhyHaveTwoGroupsTravelers));
-      Event_ShowMessage(16, 0);
+      Event_ShowMessage(ACTOR_INNKEEPER, 0);
     }
-    Actor_FaceDirection(16, FACING_SOUTHEAST + FACING_STEP, 10);
+    Actor_FaceDirection(ACTOR_INNKEEPER, FACING_SOUTHEAST + FACING_STEP, 10);
     Engine_EventEnd();
   }
 }
 
-// Open the sanctum or discuss the student's work in Mia's absence.
-static void Imil_VisitSanctum(void) {
+// Across the counter, the leader facing north, Mia's apprentice offers the
+// sanctum, the first time saying she can act as healer; otherwise she talks of
+// Mia.
+static void Imil_TalkToApprentice(void) {
   struct FieldActor *leader;
 
-  leader = Object_GetById(0);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   if ((u16)(leader->facing + 0x5fff) <= 0x3ffe) {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x82d) == 0) {
+    if (GameFlag_IsSet(FLAG_IMIL_APPRENTICE_OFFERED_HEALING) == 0) {
       Engine_EventSetMessage(MSGNO(MsgImilMayOnlyStudentButCan));
-      Event_ShowMessage(19, 0);
-      GameFlag_Set(0x82d);
+      Event_ShowMessage(ACTOR_APPRENTICE, 0);
+      GameFlag_Set(FLAG_IMIL_APPRENTICE_OFFERED_HEALING);
     }
     Engine_EventEnd();
-    Engine_SanctumOpen(19);
+    Engine_SanctumOpen(ACTOR_APPRENTICE);
   } else {
     Engine_EventBegin();
     if (GameFlag_IsSet(0x881) != 0) {
       Engine_EventSetMessage(MSGNO(MsgImilMiaGoingOnJourneyWith));
-      Event_ShowMessage(19, 0);
+      Event_ShowMessage(ACTOR_APPRENTICE, 0);
     } else if (GameFlag_IsSet(3) != 0) {
       Engine_EventSetMessage(MSGNO(MsgImilAmHealerWhileMiaOut));
-      Event_ShowMessage(19, 0);
+      Event_ShowMessage(ACTOR_APPRENTICE, 0);
     } else {
       Engine_EventSetMessage(MSGNO(MsgImilLookingForMia));
-      (void)Event_AskYesNo(19, 0);
-      Actor_FaceDirection(19, FACING_SOUTHEAST + FACING_STEP, 10);
+      (void)Event_AskYesNo(ACTOR_APPRENTICE, 0);
+      Actor_FaceDirection(ACTOR_APPRENTICE, FACING_SOUTHEAST + FACING_STEP, 10);
     }
     Engine_EventEnd();
   }
 }
 
-// Restore villagers, shop interiors, and the arrival scenes.
+// The town gets its rising effects, map layers and snowman, and the first
+// arrival walks in; each interior restores its people for the town's state.
 s32 Imil_Initialize(void) {
   struct FieldActor *leader;
   s32 entrance;
 
   if (gGameState.scene == (s32)&SceneId_Imil1) {
-    leader = Object_GetById(0);
+    leader = Object_GetById(ACTOR_PARTY_LEADER);
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    Engine_ActorSetAnimation(10, 9);
-    if (GameFlag_IsSet(0x109)) {
-      Engine_GameFlagClear(0x200);
-      Engine_GameFlagClear(0x201);
+    Engine_ActorSetAnimation(ACTOR_COUNTING_CHILD, 9);
+    if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
+      Engine_GameFlagClear(FLAG_IMIL_MAP_LAYER_0);
+      Engine_GameFlagClear(FLAG_IMIL_MAP_LAYER_1);
     }
     leader->timer = 0;
     leader->work = 0;
-    Task_AddCallback(Imil_SpawnAmbientEffects, 0xc80);
-    FieldScheduler_AddCallback(Imil_UpdateMapLayerByLeaderPosition, 0xc80);
-    Engine_ActorSetSpritePriority(11, 1);
-    if (Engine_GameFlagIsSet(0x203)) {
+    Task_AddCallback(Imil_SpawnAmbientEffects, TASK_PRIORITY_SCENE);
+    FieldScheduler_AddCallback(Imil_UpdateMapLayerByLeaderPosition,
+                               TASK_PRIORITY_SCENE);
+    Engine_ActorSetSpritePriority(ACTOR_SNOWMAN, 1);
+    if (Engine_GameFlagIsSet(FLAG_IMIL_SNOWMAN_ON_CHIMNEY)) {
       Imil_MoveSnowmanToChimney();
     }
-    if (!Engine_GameFlagIsSet(0x109) && gGameState.entrance == 9) {
+    if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) &&
+        gGameState.entrance == 9) {
       Imil_ShowFirstArrival();
     }
   } else if (gGameState.scene == (s32)&SceneId_Imil2) {
@@ -592,17 +647,19 @@ s32 Imil_Initialize(void) {
         Map_CopyCellsTo(3, 125, 9, 69, 3, 3);
         Engine_MapRedraw();
         Engine_TaskWait(1);
-        Actor_SetBuiltinAction(8, 2);
+        Actor_SetBuiltinAction(ACTOR_OLD_WOMAN, 2);
         Engine_ActorSetPosition(10, 0, 0);
-      } else if (Engine_GameFlagIsSet(0x82c) && Engine_GameFlagIsSet(0x82a)) {
+      } else if (Engine_GameFlagIsSet(0x82c) &&
+                 Engine_GameFlagIsSet(FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE)) {
         Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
-        Engine_ActorSetPosition(9, PIXELS(174), PIXELS(164));
-        Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
-        Engine_ActorSetAnimation(9, 5);
-        Actor_SetPosition(8, PIXELS(168), PIXELS(152));
-        Object_GetById(8)->facing = FACING_SOUTHEAST + FACING_STEP;
-        if (!Engine_GameFlagIsSet(0x82b)) {
-          Imil_MeetMiaAtSickMansHouse();
+        Engine_ActorSetPosition(ACTOR_OLD_MAN, PIXELS(174), PIXELS(164));
+        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_OLD_MAN), 0);
+        Engine_ActorSetAnimation(ACTOR_OLD_MAN, 5);
+        Actor_SetPosition(ACTOR_OLD_WOMAN, PIXELS(168), PIXELS(152));
+        Object_GetById(ACTOR_OLD_WOMAN)->facing =
+            FACING_SOUTHEAST + FACING_STEP;
+        if (!Engine_GameFlagIsSet(FLAG_IMIL_MET_MIA)) {
+          Imil_MeetMiaAtOldCouplesHouse();
         }
       } else {
         Map_CopyCellAttributes(10, 7, 1, 1, 10, 8);
@@ -610,60 +667,63 @@ s32 Imil_Initialize(void) {
         Engine_MapRedraw();
         Engine_TaskWait(1);
         if (Engine_GameFlagIsSet(0x82c)) {
-          Engine_ActorSetPosition(8, PIXELS(149), PIXELS(116));
-          Object_GetById(8)->facing = 0;
-          Object_GetById(9)->work = 0;
-          Actor_SetActionScript(9, gImil_ActorScriptA);
+          Engine_ActorSetPosition(ACTOR_OLD_WOMAN, PIXELS(149), PIXELS(116));
+          Object_GetById(ACTOR_OLD_WOMAN)->facing = 0;
+          Object_GetById(ACTOR_OLD_MAN)->work = 0;
+          Actor_SetActionScript(ACTOR_OLD_MAN, gImil_ShiverScript);
         } else {
-          Actor_SetBuiltinAction(8, 2);
+          Actor_SetBuiltinAction(ACTOR_OLD_WOMAN, 2);
         }
       }
     } else if (entrance == 2) {
       if (!Engine_GameFlagIsSet(0x881)) {
         Object_GetById(11)->work = 1;
-        Actor_SetActionScript(11, gImil_ActorScriptA);
+        Actor_SetActionScript(11, gImil_ShiverScript);
       }
     } else if (entrance == 4) {
       if (Engine_GameFlagIsSet(0x881)) {
-        Actor_SetPosition(12, PIXELS(364), PIXELS(578));
-        Engine_ActorSetSpritePriority(12, 2);
-        Object_GetById(12)->collisionFlags |= 4;
+        Actor_SetPosition(ACTOR_WEAPON_MERCHANT, PIXELS(364), PIXELS(578));
+        Engine_ActorSetSpritePriority(ACTOR_WEAPON_MERCHANT, 2);
+        Object_GetById(ACTOR_WEAPON_MERCHANT)->collisionFlags |= 4;
         Map_CopyCellsTo(6, 125, 22, 88, 3, 3);
-        Actor_SetPosition(13, PIXELS(492), PIXELS(578));
-        Engine_ActorSetSpritePriority(13, 2);
-        Object_GetById(13)->collisionFlags |= 4;
+        Actor_SetPosition(ACTOR_ARMOR_MERCHANT, PIXELS(492), PIXELS(578));
+        Engine_ActorSetSpritePriority(ACTOR_ARMOR_MERCHANT, 2);
+        Object_GetById(ACTOR_ARMOR_MERCHANT)->collisionFlags |= 4;
         Map_CopyCellsTo(9, 125, 28, 88, 3, 3);
       } else {
-        Object_GetById(12)->scaleX = -Q16_ONE;
-        Engine_ActorSetSpriteFlags(Object_GetById(12), 0);
-        Engine_ActorSetAnimation(12, 5);
-        Engine_ActorSetSpriteFlags(Object_GetById(13), 0);
-        Engine_ActorSetAnimation(13, 5);
+        Object_GetById(ACTOR_WEAPON_MERCHANT)->scaleX = -Q16_ONE;
+        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_WEAPON_MERCHANT), 0);
+        Engine_ActorSetAnimation(ACTOR_WEAPON_MERCHANT, 5);
+        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ARMOR_MERCHANT), 0);
+        Engine_ActorSetAnimation(ACTOR_ARMOR_MERCHANT, 5);
       }
     } else if (entrance == 3) {
       if (Engine_GameFlagIsSet(0x881)) {
-        Actor_SetPosition(15, PIXELS(460), PIXELS(258));
-        Engine_ActorSetSpritePriority(15, 2);
-        Object_GetById(15)->collisionFlags |= 4;
-        Engine_ActorSetPosition(14, PIXELS(408), PIXELS(264));
-        Object_GetById(14)->facing = FACING_EAST + FACING_STEP;
+        Actor_SetPosition(ACTOR_ITEM_MERCHANT, PIXELS(460), PIXELS(258));
+        Engine_ActorSetSpritePriority(ACTOR_ITEM_MERCHANT, 2);
+        Object_GetById(ACTOR_ITEM_MERCHANT)->collisionFlags |= 4;
+        Engine_ActorSetPosition(ACTOR_ITEM_SHOP_CHILD, PIXELS(408),
+                                PIXELS(264));
+        Object_GetById(ACTOR_ITEM_SHOP_CHILD)->facing =
+            FACING_EAST + FACING_STEP;
         Map_CopyCellsTo(12, 125, 26, 70, 3, 3);
       } else {
-        Actor_SetPosition(14, PIXELS(460), PIXELS(258));
-        Engine_ActorSetSpritePriority(14, 2);
-        Object_GetById(14)->collisionFlags |= 4;
-        Object_GetById(15)->scaleX = -Q16_ONE;
-        Engine_ActorSetSpriteFlags(Object_GetById(15), 0);
-        Engine_ActorSetAnimation(15, 5);
+        Actor_SetPosition(ACTOR_ITEM_SHOP_CHILD, PIXELS(460), PIXELS(258));
+        Engine_ActorSetSpritePriority(ACTOR_ITEM_SHOP_CHILD, 2);
+        Object_GetById(ACTOR_ITEM_SHOP_CHILD)->collisionFlags |= 4;
+        Object_GetById(ACTOR_ITEM_MERCHANT)->scaleX = -Q16_ONE;
+        Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ITEM_MERCHANT), 0);
+        Engine_ActorSetAnimation(ACTOR_ITEM_MERCHANT, 5);
       }
     } else if (entrance == 7) {
       if (Engine_GameFlagIsSet(0x881)) {
-        Object_GetById(20)->facing = FACING_SOUTHEAST + FACING_STEP;
-        if (!Engine_GameFlagIsSet(0x82e)) {
-          Actor_SetPosition(20, PIXELS(650), PIXELS(161));
-          Imil_SayFarewellToHealerStudent();
+        Object_GetById(ACTOR_SECOND_APPRENTICE)->facing =
+            FACING_SOUTHEAST + FACING_STEP;
+        if (!Engine_GameFlagIsSet(FLAG_IMIL_MIA_SAID_FAREWELL)) {
+          Actor_SetPosition(ACTOR_SECOND_APPRENTICE, PIXELS(650), PIXELS(161));
+          Imil_MiaSaysFarewellToApprentices();
         } else {
-          Actor_SetPosition(20, PIXELS(644), PIXELS(166));
+          Actor_SetPosition(ACTOR_SECOND_APPRENTICE, PIXELS(644), PIXELS(166));
         }
       }
     }
@@ -671,8 +731,10 @@ s32 Imil_Initialize(void) {
   return 0;
 }
 
-// Introduce Mia as she tends the sick man and hears about the lighthouse.
-static void Imil_MeetMiaAtSickMansHouse(void) {
+// After hearing where Mia went, the party finds her at the old couple's
+// house. She heals the old man with Ply when the Mercury Lighthouse flashes;
+// Mia runs out and the party follows her.
+static void Imil_MeetMiaAtOldCouplesHouse(void) {
   struct FieldActor *leader;
   const s32 *table;
   struct EventWork *work;
@@ -692,101 +754,101 @@ static void Imil_MeetMiaAtSickMansHouse(void) {
   Actor_SetSpeed(IVAN, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 142, 221);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
-  leader = Object_GetById(0);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetPosition(GARET, leader->x.fixed, leader->z.fixed);
   }
-  leader = Object_GetById(0);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetPosition(IVAN, leader->x.fixed, leader->z.fixed);
   }
   Actor_WalkTo(GARET, 150, 234);
   Actor_WalkToAndWait(IVAN, 134, 234);
-  Engine_ActorSetAnimation(GARET, 1);
+  Engine_ActorSetAnimation(GARET, ANIM_STAND);
   FieldObject_SetTargetAndCallback(0, ACTOR_LINK_KEEP_MOTION | 3,
-                                   gImil_PrimaryScript);
+                                   gImil_FaceTargetScript);
   FieldObject_SetTargetAndCallback(1, ACTOR_LINK_KEEP_MOTION | 3,
-                                   gImil_PrimaryScript);
+                                   gImil_FaceTargetScript);
   FieldObject_SetTargetAndCallback(2, ACTOR_LINK_KEEP_MOTION | 3,
-                                   gImil_PrimaryScript);
+                                   gImil_FaceTargetScript);
   Engine_CameraWaitForMove();
-  table = gImil_TurnScript;
-  Actor_SetActionScript(9, table);
+  table = gImil_BobScript;
+  Actor_SetActionScript(ACTOR_OLD_MAN, table);
   Engine_EventWait(40);
-  Actor_SetAttachedEffect(MIA, 0x102);
+  Actor_SetAttachedEffect(MIA, EMOTE_IN_FRONT | 2);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(MIA, 1);
-  // Mia checks on the patient while the party enters the house.
+  // Mia checks on the oldMan while the party enters the house.
   Engine_EventSetMessage(MSGNO(MsgImilHowFeeling));
   Event_ShowMessageAndWait(MIA, 0, 20);
-  Actor_SetActionScript(9, table);
-  Event_ShowMessageAndWait(9, 0, 20);
+  Actor_SetActionScript(ACTOR_OLD_MAN, table);
+  Event_ShowMessageAndWait(ACTOR_OLD_MAN, 0, 20);
   Actor_FaceDirection(MIA, FACING_WEST, 20);
-  Actor_FaceDirection(8, 0, 10);
-  Engine_ActorSetAnimationAndWait(8, 4);
-  Event_ShowMessageAndWait(8, 0, 40);
-  Engine_ActorSetAnimationAndWait(MIA, 3);
+  Actor_FaceDirection(ACTOR_OLD_WOMAN, 0, 10);
+  Engine_ActorSetAnimationAndWait(ACTOR_OLD_WOMAN, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(ACTOR_OLD_WOMAN, 0, 40);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_EventWait(10);
   Actor_FaceDirection(MIA, FACING_SOUTH, 0);
-  Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_OLD_WOMAN, FACING_SOUTHEAST + FACING_STEP, 20);
   Event_ShowMessageAndWait(MIA, 0, 10);
-  Actor_SetActionScript(9, table);
+  Actor_SetActionScript(ACTOR_OLD_MAN, table);
 
-  // Play the healing effect, then let the patient respond.
-  Imil_CastPsynergyAtActorNine();
-  Actor_ShowEmote(MIA, 0x101, 60);
+  // Play the healing effect, then let the oldMan respond.
+  Imil_MiaCastsPlyOnOldMan();
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 60);
   Event_ShowMessageAndWait(MIA, 0, 40);
-  Event_ShowMessageAndWait(9, 0, 20);
-  Actor_ShowEmote(8, 0x105, 60);
-  Engine_ActorSetAnimation(9, 7);
+  Event_ShowMessageAndWait(ACTOR_OLD_MAN, 0, 20);
+  Actor_ShowEmote(ACTOR_OLD_WOMAN, EMOTE_IN_FRONT | 5, 60);
+  Engine_ActorSetAnimation(ACTOR_OLD_MAN, 7);
   Map_AnimateCells(gImil_CellStepsA, 10, 69);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(MIA, 2);
-  Engine_ActorSetAnimationAndWait(MIA, 4);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ActorRunRepeatedMotion(9, 1);
+  Engine_ActorRunRepeatedMotion(ACTOR_OLD_MAN, 1);
   Engine_EventWait(40);
-  Engine_ActorSetAnimation(9, 8);
+  Engine_ActorSetAnimation(ACTOR_OLD_MAN, 8);
   Map_AnimateCells(gImil_CellStepsB, 10, 69);
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(MIA, 3);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_EventWait(20);
-  Actor_FaceDirection(8, 0, 20);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Event_ShowMessageAndWait(8, 0, 10);
-  Actor_ShowEmote(MIA, 0x101, 30);
+  Actor_FaceDirection(ACTOR_OLD_WOMAN, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_OLD_WOMAN, ANIM_NOD);
+  Event_ShowMessageAndWait(ACTOR_OLD_WOMAN, 0, 10);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 30);
   Actor_FaceDirection(MIA, FACING_WEST, 10);
-  Engine_ActorSetAnimation(MIA, 4);
+  Engine_ActorSetAnimation(MIA, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(MIA, 0, 10);
-  Engine_ActorSetAnimationAndWait(8, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_OLD_WOMAN, ANIM_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(MIA, 3);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_EventWait(40);
   Actor_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
-  Object_GetById(3)->timer = 0;
-  Actor_SetActionScript(MIA, gImil_MiaScriptA);
-  while (Object_GetById(3)->timer == 0) {
+  Object_GetById(MIA)->timer = 0;
+  Actor_SetActionScript(MIA, gImil_MiaCheckRoomScript);
+  while (Object_GetById(MIA)->timer == 0) {
     Engine_TaskWait(1);
   }
   Camera_MoveTo(PIXELS(140), -1, PIXELS(198), 1);
-  Object_RefreshSelectorById(3);
-  Actor_ShowEmote(MIA, 0x101, 80);
+  Object_RefreshSelectorById(MIA);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 80);
   Event_ShowMessageAndWait(MIA, 0, 40);
   Engine_ActorRunRepeatedMotion(MIA, 1);
   Engine_EventWait(10);
   Event_ShowMessage(MIA, 0);
-  Event_PlayCue(131);
+  Event_PlayCue(SE_131);
   // The lighthouse interrupts the visit; Mia leaves and the party follows.
   ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
   ColorBuffer_ApplyTarget(0x207e9f, 0);
   Engine_ColorBufferInterpolate(10);
   Engine_TaskWait(1);
-  Event_PlayCue(220);
+  Event_PlayCue(SE_220);
   Engine_TaskWait(40);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
-  Actor_SetAttachedEffect(MIA, 0x102);
+  Actor_SetAttachedEffect(MIA, EMOTE_IN_FRONT | 2);
   Engine_EventWait(20);
   Actor_FaceDirection(MIA, 0, 10);
   Actor_SetSpeed(MIA, PIXELS(2), PIXELS(1));
@@ -794,20 +856,20 @@ static void Imil_MeetMiaAtSickMansHouse(void) {
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(MIA, 2);
   Event_ShowMessage(MIA, 0);
-  Engine_ActorSetAnimationAndWait(MIA, 4);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(MIA, 0, 20);
-  Actor_SetAttachedEffect(MIA, 0x102);
+  Actor_SetAttachedEffect(MIA, EMOTE_IN_FRONT | 2);
   Engine_EventWait(40);
   Event_ShowMessageAndWait(MIA, 0, 40);
-  Actor_ShowEmote(MIA, 0x100, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 0, 40);
   Event_ShowMessage(MIA, 0);
   Engine_ActorStop(ACTOR_PARTY_LEADER);
   Engine_ActorStop(GARET);
   Engine_ActorStop(IVAN);
   Actor_SetSpeed(MIA, PIXELS(3), PIXELS(3) / 2);
-  Object_GetById(3)->timer = 0;
-  Actor_SetActionScript(MIA, gImil_MiaScriptB);
-  while (Object_GetById(3)->timer == 0) {
+  Object_GetById(MIA)->timer = 0;
+  Actor_SetActionScript(MIA, gImil_MiaRunOutScript);
+  while (Object_GetById(MIA)->timer == 0) {
     Engine_TaskWait(1);
   }
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -816,29 +878,29 @@ static void Imil_MeetMiaAtSickMansHouse(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4), PIXELS(2));
   Actor_SetSpeed(GARET, PIXELS(4), PIXELS(2));
   Actor_SetSpeed(IVAN, PIXELS(4), PIXELS(2));
-  Event_PlayCue(152);
-  Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Object_GetById(1)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Object_GetById(2)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Event_PlayCue(SE_152);
+  Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Object_GetById(GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Object_GetById(IVAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_SetDestination(ACTOR_PARTY_LEADER, 132, 206);
   Actor_SetDestination(GARET, 136, 221);
   Actor_SetDestination(IVAN, 122, 238);
-  Object_RefreshSelectorById(3);
+  Object_RefreshSelectorById(MIA);
   Engine_EventWait(80);
-  Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
-  Object_GetById(1)->steeringFlags |= ACTOR_FACES_MOTION;
-  Object_GetById(2)->steeringFlags |= ACTOR_FACES_MOTION;
+  Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+  Object_GetById(GARET)->steeringFlags |= ACTOR_FACES_MOTION;
+  Object_GetById(IVAN)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-  table = gImil_PrimaryScript2;
+  table = gImil_FollowMiaOutScript;
   Actor_SetActionScript(GARET, table);
-  Actor_RunActionScriptAndWait(2, table);
+  Actor_RunActionScriptAndWait(IVAN, table);
   Engine_EventWait(20);
   work = gEventWork;
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   work->transitionFrames = 24;
-  Engine_GameFlagSet(0x82b);
+  Engine_GameFlagSet(FLAG_IMIL_MET_MIA);
   Engine_EventEnd();
 }
 
@@ -897,20 +959,20 @@ UNUSED static void Imil_SwayAndSpark(struct FieldActor *actor) {
   }
 }
 
-// Animate the patient's response and show the current message.
-static void Imil_ShowActorNineTurnMessage(void) {
-  Actor_SetActionScript(9, gImil_TurnScript);
-  Engine_EventShowMessage(9, 0);
+// The old man bobs and speaks as the healing reaches him.
+static void Imil_OldManBobsAndSpeaks(void) {
+  Actor_SetActionScript(ACTOR_OLD_MAN, gImil_BobScript);
+  Engine_EventShowMessage(ACTOR_OLD_MAN, 0);
 }
 
-// Play Mia's healing effect with the patient's response callback.
-static void Imil_CastPsynergyAtActorNine(void) {
+// Mia casts Ply on the old man.
+static void Imil_MiaCastsPlyOnOldMan(void) {
   u8 *work;
 
   Engine_PsynergyBegin(93, 1);
   work = gEffectWork;
   Engine_PsynergySetTarget(3, 9);
-  *(s32 *)(work + 36) = (s32)Imil_ShowActorNineTurnMessage;
+  *(s32 *)(work + 36) = (s32)Imil_OldManBobsAndSpeaks;
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);
   Engine_PsynergyLowerHands();
@@ -957,7 +1019,7 @@ static inline void Imil_StartRisingEffect(union FieldObject *object) {
   }
 }
 
-// Stagger five ambient effects over the repeating frame cycle.
+// Effects rise at five places in the town, staggered over each second.
 static void Imil_SpawnAmbientEffects(void) {
   // volatile: the type of &gFrameCount (tagged in frame.h); the six editions
   // build the same bytes without it
@@ -992,7 +1054,8 @@ static void Imil_SpawnAmbientEffects(void) {
   }
 }
 
-// Select map-layer state from the leader's position and zone flags.
+// The leader walks on map layer 0 near the middle of town and on layer 1
+// elsewhere.
 static void Imil_UpdateMapLayerByLeaderPosition(void) {
   struct FieldActor *actor;
   s32 x;
@@ -1002,11 +1065,11 @@ static void Imil_UpdateMapLayerByLeaderPosition(void) {
   s32 otherZoneFlag;
   struct MapState *map;
 
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   x = actor->x.fixed;
   column = x >> 19;
-  zoneFlag = 0x200;
-  otherZoneFlag = 0x201;
+  zoneFlag = FLAG_IMIL_MAP_LAYER_0;
+  otherZoneFlag = FLAG_IMIL_MAP_LAYER_1;
   if ((u32)(column - 24) <= 7 ||
       ((u32)((actor->z.fixed >> 19) - 36) <= 9 && (u32)(column - 22) <= 9)) {
     isSet = Engine_GameFlagIsSet(zoneFlag);
@@ -1034,13 +1097,13 @@ static void Imil_UpdateMapLayerByLeaderPosition(void) {
   return;
 }
 
-// Update the collision cell when the snowman reaches the chimney.
+// Moved onto the chimney, the snowman stays there and blocks its cell.
 static void Imil_MoveSnowmanToChimney(void) {
   s32 a;
   s32 b;
 
 #if TBS_PATCH_3
-  struct FieldActor *actor = Object_GetById(11);
+  struct FieldActor *actor = Object_GetById(ACTOR_SNOWMAN);
 
   a = actor->x.fixed >> 20;
   if (a != 15)
@@ -1048,31 +1111,31 @@ static void Imil_MoveSnowmanToChimney(void) {
   b = actor->z.fixed >> 20;
   if (b != 7)
     return;
-  Engine_GameFlagSet(0x203);
-  Engine_ActorSetSpritePriority(11, 3);
+  Engine_GameFlagSet(FLAG_IMIL_SNOWMAN_ON_CHIMNEY);
+  Engine_ActorSetSpritePriority(ACTOR_SNOWMAN, 3);
 #else
-  Engine_GameFlagSet(0x203);
-  Engine_ActorSetSpritePriority(11, 3);
+  Engine_GameFlagSet(FLAG_IMIL_SNOWMAN_ON_CHIMNEY);
+  Engine_ActorSetSpritePriority(ACTOR_SNOWMAN, 3);
   a = 15;
   b = 7;
 #endif
   Map_CopyCellAttributes(15, 6, 1, 1, a, b);
 }
 
-// Face Isaac north and leave through the ice-slide entrance.
-static void Imil_EnterIceSlide(void) {
+// Walking into the north path, the leader faces north and leaves the town.
+static void Imil_LeaveNorth(void) {
   struct FieldActor *work;
 
   Engine_EventBegin();
-  work = Object_GetById(0);
+  work = Object_GetById(ACTOR_PARTY_LEADER);
   work->facing = FACING_NORTH;
-  Engine_AudioPlayCue(123);
+  Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventRequestExit(8);
 }
 
-// Walk Isaac into town on his first arrival.
+// Arriving for the first time, the leader walks into town.
 static void Imil_ShowFirstArrival(void) {
   Engine_EventBegin();
   Engine_EventOpenScreen();
@@ -1081,8 +1144,9 @@ static void Imil_ShowFirstArrival(void) {
   Engine_EventEnd();
 }
 
-// Let Mia say farewell before leaving Imil with the party.
-static void Imil_SayFarewellToHealerStudent(void) {
+// Once the town is cured, Mia says farewell to her two apprentices in the
+// sanctum before leaving with the party.
+static void Imil_MiaSaysFarewellToApprentices(void) {
 
   struct FieldActor *leader;
   struct EventWork *work;
@@ -1090,7 +1154,7 @@ static void Imil_SayFarewellToHealerStudent(void) {
   Engine_EventBegin();
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
-  Engine_ActorWalkTo(0, 690, 200);
+  Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 690, 200);
 
   Camera_GetEventObject()->motionFlags = 0;
   Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
@@ -1100,135 +1164,144 @@ static void Imil_SayFarewellToHealerStudent(void) {
   work->transitionFrames = 48;
   Engine_EventOpenScreen();
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_SetSpeed(MIA, PIXELS(3) / 5, PIXELS(3) / 10);
-  leader = Object_GetById(0);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetPosition(MIA, leader->x.fixed, leader->z.fixed);
   }
   Actor_WalkToAndWait(MIA, 673, 183);
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
-  Engine_ActorStartRepeatedMotion(19, 2);
-  Engine_ActorRunRepeatedMotion(20, 2);
+  Engine_ActorStartRepeatedMotion(ACTOR_APPRENTICE, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_SECOND_APPRENTICE, 2);
   Engine_EventWait(40);
   Engine_EventSetMessage(MSGNO(MsgImilMia));
-  Event_ShowMessageAndWait(19, 0, 10);
+  Event_ShowMessageAndWait(ACTOR_APPRENTICE, 0, 10);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 40);
-  Engine_ActorSetAnimationAndWait(MIA, 3);
-  Actor_SetAttachedEffect(20, 0x102);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
+  Actor_SetAttachedEffect(ACTOR_SECOND_APPRENTICE, EMOTE_IN_FRONT | 2);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(0x4014, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_SECOND_APPRENTICE, 0,
+                           10);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 40);
-  Engine_ActorSetAnimationAndWait(MIA, 4);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(0x2003, 0, 10);
-  Engine_ActorSetAnimationAndWait(20, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_APPRENTICE, ANIM_NOD);
   Engine_EventWait(20);
-  Actor_SetAttachedEffect(19, 0x102);
+  Actor_SetAttachedEffect(ACTOR_APPRENTICE, EMOTE_IN_FRONT | 2);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(19, 0, 10);
+  Event_ShowMessageAndWait(ACTOR_APPRENTICE, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Actor_FaceDirection(MIA, FACING_NORTHEAST + FACING_STEP, 10);
   Actor_FaceDirection(MIA, FACING_SOUTHEAST, 40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 40);
-  Engine_ActorRunRepeatedMotion(20, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_SECOND_APPRENTICE, 2);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(0x4014, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_SECOND_APPRENTICE, 0,
+                           20);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 20);
-  Engine_ActorSetAnimationAndWait(MIA, 3);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_EventWait(60);
-  Actor_ShowEmote(MIA, 0x105, 60);
-  Actor_ShowEmote(19, 0x101, 0);
-  Actor_ShowEmote(20, 0x101, 60);
-  Engine_ActorRunRepeatedMotion(19, 1);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(ACTOR_APPRENTICE, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(ACTOR_SECOND_APPRENTICE, EMOTE_IN_FRONT | 1, 60);
+  Engine_ActorRunRepeatedMotion(ACTOR_APPRENTICE, 1);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(19, 0, 10);
+  Event_ShowMessageAndWait(ACTOR_APPRENTICE, 0, 10);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 40);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 40);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 20);
   Actor_FaceDirection(MIA, FACING_SOUTHWEST, 80);
   Event_ShowMessageAndWait(0x2003, 0, 20);
-  Actor_FaceDirection(20, FACING_NORTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(19, FACING_SOUTHWEST + FACING_STEP, 40);
-  Actor_FaceDirection(19, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(20, FACING_SOUTHEAST + FACING_STEP, 20);
-  Actor_SetSpeed(20, PIXELS(1), PIXELS(1) / 2);
+  Actor_FaceDirection(ACTOR_SECOND_APPRENTICE, FACING_NORTHEAST + FACING_STEP,
+                      0);
+  Actor_FaceDirection(ACTOR_APPRENTICE, FACING_SOUTHWEST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_APPRENTICE, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_SECOND_APPRENTICE, FACING_SOUTHEAST + FACING_STEP,
+                      20);
+  Actor_SetSpeed(ACTOR_SECOND_APPRENTICE, PIXELS(1), PIXELS(1) / 2);
   // Let the student approach Mia before she rejoins the party.
-  Object_GetById(20)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(20, 656, 166);
+  Object_GetById(ACTOR_SECOND_APPRENTICE)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkToAndWait(ACTOR_SECOND_APPRENTICE, 656, 166);
   Engine_EventWait(1);
-  Object_GetById(20)->steeringFlags |= ACTOR_FACES_MOTION;
+  Object_GetById(ACTOR_SECOND_APPRENTICE)->steeringFlags |= ACTOR_FACES_MOTION;
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(0x4014, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_SECOND_APPRENTICE, 0,
+                           10);
   Engine_ActorRunRepeatedMotion(MIA, 2);
   Engine_EventWait(40);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 10);
   Event_ShowMessageAndWait(0x2003, 0, 40);
   Actor_FaceDirection(MIA, FACING_SOUTHEAST, 20);
-  Event_ShowMessageAndWait(0x4003, 0, 10);
-  Actor_SetAttachedEffect(19, 0x102);
-  Actor_SetAttachedEffect(20, 0x102);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | MIA, 0, 10);
+  Actor_SetAttachedEffect(ACTOR_APPRENTICE, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_SECOND_APPRENTICE, EMOTE_IN_FRONT | 2);
   Engine_EventWait(40);
   Actor_FaceDirection(MIA, FACING_NORTH, 20);
-  Engine_ActorSetAnimation(MIA, 4);
+  Engine_ActorSetAnimation(MIA, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(0x2003, 0, 20);
-  Engine_ActorRunRepeatedMotion(19, 1);
-  Event_ShowMessageAndWait(19, 0, 10);
+  Engine_ActorRunRepeatedMotion(ACTOR_APPRENTICE, 1);
+  Event_ShowMessageAndWait(ACTOR_APPRENTICE, 0, 10);
   Actor_FaceDirection(MIA, FACING_SOUTHEAST, 40);
   Actor_FaceDirection(MIA, FACING_NORTH, 20);
-  Engine_ActorSetAnimationAndWait(MIA, 3);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(20, 1);
-  Event_ShowMessageAndWait(0x4014, 0, 20);
+  Engine_ActorRunRepeatedMotion(ACTOR_SECOND_APPRENTICE, 1);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_SECOND_APPRENTICE, 0,
+                           20);
   Engine_ActorRunRepeatedMotion(MIA, 1);
   Engine_EventWait(20);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 20);
-  Engine_ActorSetAnimationAndWait(MIA, 3);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Event_ShowMessageAndWait(0x2003, 0, 80);
-  Actor_ShowEmote(19, 0x105, 0);
-  Actor_ShowEmote(20, 0x105, 60);
-  Engine_ActorSetAnimationAndWait(19, 4);
-  Event_ShowMessageAndWait(19, 0, 10);
-  Engine_ActorSetAnimation(20, 4);
-  Event_ShowMessageAndWait(0x4014, 0, 20);
-  Actor_ShowEmote(MIA, 0x102, 60);
+  Actor_ShowEmote(ACTOR_APPRENTICE, EMOTE_IN_FRONT | 5, 0);
+  Actor_ShowEmote(ACTOR_SECOND_APPRENTICE, EMOTE_IN_FRONT | 5, 60);
+  Engine_ActorSetAnimationAndWait(ACTOR_APPRENTICE, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(ACTOR_APPRENTICE, 0, 10);
+  Engine_ActorSetAnimation(ACTOR_SECOND_APPRENTICE, ANIM_SHAKE_HEAD);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_SECOND_APPRENTICE, 0,
+                           20);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 60);
   Event_ShowMessageAndWait(0x2003, 0, 40);
-  Engine_ActorSetAnimationAndWait(19, 3);
-  Event_ShowMessageAndWait(19, 0, 10);
+  Engine_ActorSetAnimationAndWait(ACTOR_APPRENTICE, ANIM_NOD);
+  Event_ShowMessageAndWait(ACTOR_APPRENTICE, 0, 10);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 20);
-  Engine_ActorSetAnimationAndWait(20, 3);
-  Event_ShowMessageAndWait(0x4014, 0, 10);
+  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_APPRENTICE, ANIM_NOD);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_SECOND_APPRENTICE, 0,
+                           10);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 60);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 20);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 20);
   Actor_FaceDirection(MIA, FACING_NORTH, 40);
-  Engine_ActorSetAnimationAndWait(MIA, 3);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Event_ShowMessageAndWait(0x2003, 0, 10);
-  Engine_ActorSetAnimation(19, 3);
-  Engine_ActorSetAnimationAndWait(20, 3);
+  Engine_ActorSetAnimation(ACTOR_APPRENTICE, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_APPRENTICE, ANIM_NOD);
   Engine_EventWait(40);
   Actor_FaceDirection(MIA, FACING_SOUTHEAST, 20);
-  Event_ShowMessageAndWait(0x4003, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | MIA, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(20);
   Actor_WalkToAndWait(MIA, 688, 200);
   Actor_SetPosition(MIA, 0, 0);
-  Object_GetById(20)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(20, 644, 166);
+  Object_GetById(ACTOR_SECOND_APPRENTICE)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkToAndWait(ACTOR_SECOND_APPRENTICE, 644, 166);
   Engine_EventWait(1);
   // Restore the student's steering after the farewell walk.
   /* FAKEMATCH: retain the byte access to steeringFlags; the direct field
    * form swaps the following gGameState load and constant move (two
    * instructions differ in tbs-en, 2026-10-16). */
-  *(u8 *)(((s32)Object_GetById(20)) + 90) |= ACTOR_FACES_MOTION;
+  *(u8 *)(((s32)Object_GetById(ACTOR_SECOND_APPRENTICE)) + 90) |=
+      ACTOR_FACES_MOTION;
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  GameFlag_Set(0x82e);
-  GameFlag_Clear(0x82d);
+  GameFlag_Set(FLAG_IMIL_MIA_SAID_FAREWELL);
+  GameFlag_Clear(FLAG_IMIL_APPRENTICE_OFFERED_HEALING);
   Engine_EventEnd();
 }
 
-// Turn the sliding actor toward the held-key heading while its timer permits.
+// While sliding, the leader turns toward the held direction.
 static void Imil_TurnSlidingActor(union FieldObject *object) {
   struct FieldActor *actor;
   s32 z;
@@ -1264,7 +1337,7 @@ static void Imil_TurnSlidingActor(union FieldObject *object) {
   ObjectDispatch_ApplyValueToChildren((struct DispatchObject *)actor, 0x30);
 }
 
-// Follow ice cells until blocked, then return control to the leader.
+// The leader slides along the ice until something stops him.
 static void Imil_RunIceSlide(void) {
 
   struct FieldActor *subject;
@@ -1367,7 +1440,7 @@ s16 gImil_SwayHeadings[] = {
     FACING_SOUTH, FACING_EAST, FACING_WEST, FACING_SOUTH, -1, FACING_EAST, FACING_WEST, -1,
 };
 
-s32 gImilPlacementData[] = {
+s32 gImil_ColdVillagerScript[] = {
     SC_SET(SW_SCALE_X, Q16_ONE),
     SC_SET(SW_SCALE_Y, Q16_ONE),
     SC_ADD(SW_SCALE_X, -5 * Q16_ONE / 16),
@@ -1385,12 +1458,12 @@ s32 gImilPlacementData[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gImil_ActorScriptA[] = {
-    SC_CALL(Imil_UpdateSickActorWobble),
+s32 gImil_ShiverScript[] = {
+    SC_CALL(Imil_UpdateShiver),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gImil_ActorScriptB[] = {
+s32 gImil_CaretakerHurryScript[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(136), 0, PIXELS(192)),
     SC_SYNC,
@@ -1403,7 +1476,7 @@ s32 gImil_ActorScriptB[] = {
     SC_END,
 };
 
-s32 gImil_ActorScriptC[] = {
+s32 gImil_LeaderStepAsideScript[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(155), 0, PIXELS(135)),
     SC_SYNC,
@@ -1421,7 +1494,7 @@ s32 gImil_ActorScriptC[] = {
     SC_END,
 };
 
-s32 gImil_TurnScript[] = {
+s32 gImil_BobScript[] = {
     SC_ADD(SW_SCALE_Y, 3 * Q16_ONE / 8),
     SC_WAIT(2),
     SC_ADD(SW_SCALE_Y, -3 * Q16_ONE / 16),
@@ -1441,7 +1514,7 @@ s32 gImil_SparkScript[] = {
     SC_FREE,
 };
 
-s32 gImil_MiaScriptA[] = {
+s32 gImil_MiaCheckRoomScript[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(177), 0, PIXELS(136)),
     SC_SYNC,
@@ -1456,7 +1529,7 @@ s32 gImil_MiaScriptA[] = {
     SC_END,
 };
 
-s32 gImil_MiaScriptB[] = {
+s32 gImil_MiaRunOutScript[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(165), 0, PIXELS(207)),
     SC_SYNC,
@@ -1470,12 +1543,12 @@ s32 gImil_MiaScriptB[] = {
     SC_END,
 };
 
-s32 gImil_PrimaryScript[] = {
+s32 gImil_FaceTargetScript[] = {
     SC_CALL(OverlayObject_UpdateFacingTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gImil_PrimaryScript2[] = {
+s32 gImil_FollowMiaOutScript[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(132), 0, PIXELS(206)),
     SC_SYNC,
@@ -1484,7 +1557,7 @@ s32 gImil_PrimaryScript2[] = {
     SC_END,
 };
 
-struct SceneEntrance gImilEntrancesOther[] = {
+struct SceneEntrance gImil_TownEntrances[] = {
     { 0, CONDITION_ALWAYS, 380, 0, 433, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 1, CONDITION_ALWAYS, 288, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { 2, CONDITION_ALWAYS, 480, 0, 280, FACING_WEST, 0, -1, -1, -1, -1, 0 },
@@ -1498,7 +1571,7 @@ struct SceneEntrance gImilEntrancesOther[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gImilEntrances2[] = {
+struct SceneEntrance gImil_InteriorEntrances[] = {
     { 0, CONDITION_ALWAYS, 136, 0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { 1, CONDITION_ALWAYS, 144, 0, 242, FACING_NORTH, 0, 32, 52, 256, 280, 0 },
     { 2, CONDITION_ALWAYS, 143, 0, 596, FACING_NORTH, 0, 42, 424, 256, 631, 0 },
@@ -1534,8 +1607,8 @@ u32 gImil_Exits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gImilPlacements[] = {
-    { 0x6c, CONDITION_ALWAYS, (s32)gImilPlacementData,
+struct ScenePlacement gImil_TownPlacements[] = {
+    { 0x6c, CONDITION_ALWAYS, (s32)gImil_ColdVillagerScript,
         PIXELS(99), 0, PIXELS(234), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0x6b, CONDITION_ALWAYS, ACTOR_WANDER,
         PIXELS(376), 0, PIXELS(408), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
@@ -1546,7 +1619,7 @@ struct ScenePlacement gImilPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gImilPlacementsFlag881[] = {
+struct ScenePlacement gImil_TownPlacementsCured[] = {
     { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(99), 0, PIXELS(234), FACING_NORTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0x6b, CONDITION_ALWAYS, ACTOR_WANDER,
@@ -1558,7 +1631,7 @@ struct ScenePlacement gImilPlacementsFlag881[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gImilPlacements2[] = {
+struct ScenePlacement gImil_InteriorPlacements[] = {
     { 0x6f, 0x0, ACTOR_STAND,
         PIXELS(111), 0, PIXELS(215), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0x67, 0x0, ACTOR_STAND,
@@ -1596,24 +1669,24 @@ struct ScenePlacement gImilPlacements2[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gImilEventsOther[] = {
+struct SceneEvent gImil_TownEvents[] = {
     { EVENT_EXIT, 60, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 61, CONDITION_ALWAYS, 12 },
-    { PSYNERGY_ON_ACTOR(0x8c), 11, 0x200, EVENT_SCRIPT(Imil_MoveSnowmanToChimney) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 51, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RunExitDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 52, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RunExitDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RunExitDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 54, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RunExitDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 55, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RunExitDoor) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 56, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RunExitDoor) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_EnterIceSlide) },
-    { EVENT_TOUCH, 90, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_HandleIceSlide) },
-    { EVENT_TALK, 8, 0x881, EVENT_SCRIPT(Imil_TalkToSickVillager) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, FLAG_IMIL_MAP_LAYER_0, EVENT_SCRIPT(Imil_MoveSnowmanToChimney) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 51, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 52, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 54, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 55, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 56, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_LeaveNorth) },
+    { EVENT_TOUCH, 90, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_StartIceSlide) },
+    { EVENT_TALK, 8, 0x881, EVENT_SCRIPT(Imil_TalkToColdVillager) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgImilTheMercuryLighthouseIsShiningMia) },
     { EVENT_TALK, 9, 0x881, EVENT_SCRIPT(Imil_GreetVisitor) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgImilImilWillBeFineDiseaseIs) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToCountingChild) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x881, EVENT_SCRIPT(Imil_ReadSickVillagerMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x881, EVENT_SCRIPT(Imil_ReadColdVillagerMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgImilMiaWasOnlyInImilTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x881, MSGNO(MsgImilWeveHadALotOfStrangers) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgImilDontWorryAboutUsMiaWell) },
@@ -1625,40 +1698,40 @@ struct SceneEvent gImilEventsOther[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gImilEvents2[] = {
+struct SceneEvent gImil_InteriorEvents[] = {
     { EVENT_TALK, 8, 0x82c, MSGNO(MsgImilTheresBeenAnEpidemicGoingAround) },
-    { EVENT_TALK, 8, 0x82b, MSGNO(MsgImilGetMiaHurry) },
-    { EVENT_TALK, 8, 0x881, EVENT_SCRIPT(Imil_DiscussLighthouse) },
+    { EVENT_TALK, 8, FLAG_IMIL_MET_MIA, MSGNO(MsgImilGetMiaHurry) },
+    { EVENT_TALK, 8, 0x881, EVENT_SCRIPT(Imil_TalkToOldWoman) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgImilThatFountainWaterReallyMadeGrandpa) },
-    { EVENT_TALK, 9, 0x82c, EVENT_SCRIPT(Imil_TalkToSickMan) },
-    { EVENT_TALK, 9, 0x82b, MSGNO(MsgImilItHurts) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToSickMan) },
-    { EVENT_TALK, 10, IF_FLAG_SET(0x82b), EVENT_SCRIPT(Imil_TalkToSickManAtHome) },
+    { EVENT_TALK, 9, 0x82c, EVENT_SCRIPT(Imil_TalkToOldMan) },
+    { EVENT_TALK, 9, FLAG_IMIL_MET_MIA, MSGNO(MsgImilItHurts) },
+    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToOldMan) },
+    { EVENT_TALK, 10, IF_FLAG_SET(FLAG_IMIL_MET_MIA), EVENT_SCRIPT(Imil_TalkToOldManInBed) },
     { EVENT_TALK, 11, 0x881, MSGNO(MsgImilCoughTheEpidemicHasHitAlmost) },
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgImilItsNiceThatTheFountainCan) },
     { EVENT_TALK, 12, 0x881, EVENT_SCRIPT(Imil_AskAboutWeapons) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RunWeaponShop) },
+    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToWeaponMerchant) },
     { EVENT_TALK, 13, 0x881, MSGNO(MsgImilWereClosedSorryIGetA) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RunArmorShop) },
+    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToArmorMerchant) },
     { EVENT_TALK, 15, 0x881, MSGNO(MsgImilIfYouWantToBuyAnything) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RunItemShop) },
-    { EVENT_TALK, 14, 0x881, EVENT_SCRIPT(Imil_RunItemShop) },
+    { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToItemMerchant) },
+    { EVENT_TALK, 14, 0x881, EVENT_SCRIPT(Imil_TalkToItemMerchant) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgImilImSoHappyThatMommyIs) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_VisitInn) },
+    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToInnkeeper) },
     { EVENT_TALK, 17, 0x881, MSGNO(MsgImilWereTheOnlyInnThatStays) },
     { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgImilThankGoodnessTheTownIsBack) },
     { EVENT_TALK, 18, 0x881, EVENT_SCRIPT(Imil_AskAboutRestaurantMenu) },
     { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgImilImGladTheBeaconHasBeen) },
-    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_VisitSanctum) },
-    { EVENT_TALK, 20, 0x881, EVENT_SCRIPT(Imil_AskAboutMia) },
+    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_TalkToApprentice) },
+    { EVENT_TALK, 20, 0x881, EVENT_SCRIPT(Imil_TalkToSecondApprentice) },
     { EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgImilIWillBeAKindGirl) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x881, EVENT_SCRIPT(Imil_ReadCaretakerMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x881, EVENT_SCRIPT(Imil_ReadOldWomanMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgImilGrandpasAllBetterNowThanksTo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x409, 0x82c, EVENT_SCRIPT(Imil_TalkToSickMan) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x82b, MSGNO(MsgImilOoohIDontFeelSoGood) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x409, 0x82c, EVENT_SCRIPT(Imil_TalkToOldMan) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_IMIL_MET_MIA, MSGNO(MsgImilOoohIDontFeelSoGood) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x881, MSGNO(MsgImilMiaIsAGoodGirlI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgImilNowMiaCanLeaveTheVillage) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(0x82b), EVENT_SCRIPT(Imil_ReadCountingChildMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(FLAG_IMIL_MET_MIA), EVENT_SCRIPT(Imil_ReadCountingChildMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x881, MSGNO(MsgImilHerPalmsShineWithABlue) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgImilThatBlueLightFromHerHands) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x881, MSGNO(MsgImilWhoAreThesePeopleTheyMust) },
@@ -1675,12 +1748,12 @@ struct SceneEvent gImilEvents2[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgImilTheyCameToOurVillageAnd) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, 0x881, MSGNO(MsgImilWeDontGetToEatMany) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgImilINeverToldMiaThatI) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x881, EVENT_SCRIPT(Imil_ReadHealerStudentMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, 0x881, EVENT_SCRIPT(Imil_ReadApprenticeMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgImilMiasGoingToDefendTheHonor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0x881, EVENT_SCRIPT(Imil_ReadMiaNeighborMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, 0x881, EVENT_SCRIPT(Imil_ReadSecondApprenticeMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgImilImSorryMiaButICant) },
-    { 0xc403, 10, 0x881, EVENT_SCRIPT(Imil_RunWeaponShop) },
-    { 0xc403, 11, 0x881, EVENT_SCRIPT(Imil_RunArmorShop) },
+    { 0xc403, 10, 0x881, EVENT_SCRIPT(Imil_TalkToWeaponMerchant) },
+    { 0xc403, 11, 0x881, EVENT_SCRIPT(Imil_TalkToArmorMerchant) },
     { SEARCH(SEARCH_CHEST), 100, 0xf26, FIND_ITEM(0xb9) },
     { SEARCH(SEARCH_BARREL), 101, 0xf62, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { SEARCH(SEARCH_OVEN), 102, 0xf63, FIND_ITEM(0xc4) },
@@ -1697,42 +1770,42 @@ struct SceneEvent gImilEvents2[] = {
     { SCENE_EVENTS_END },
 };
 
-u16 gImil_ExitCellStep5[] = {
+u16 gImil_DoorCellSteps5[] = {
     MAP_CELL_STEP(40, 37, 4, 2, 5), MAP_CELL_STEP(40, 39, 4, 2, 5), MAP_CELL_STEPS_END,
     MAP_CELL_STEP(35, 35, 2, 2, 5), MAP_CELL_STEP(33, 35, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 gImil_ExitCellStep4[] = {
+u16 gImil_DoorCellSteps4[] = {
     MAP_CELL_STEP(35, 37, 2, 2, 5), MAP_CELL_STEP(33, 37, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 gImil_ExitCellStep1[] = {
+u16 gImil_DoorCellSteps1[] = {
     MAP_CELL_STEP(35, 43, 2, 2, 5), MAP_CELL_STEP(33, 43, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 gImil_ExitCellStep0[] = {
+u16 gImil_DoorCellSteps0[] = {
     MAP_CELL_STEP(35, 39, 2, 2, 5), MAP_CELL_STEP(33, 39, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 gImil_ExitCellStep2[] = {
+u16 gImil_DoorCellSteps2[] = {
     MAP_CELL_STEP(42, 48, 2, 2, 5), MAP_CELL_STEP(40, 48, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 gImil_ExitCellStep3[] = {
+u16 gImil_DoorCellSteps3[] = {
     MAP_CELL_STEP(42, 46, 2, 2, 5), MAP_CELL_STEP(40, 46, 2, 2, 5), MAP_CELL_STEPS_END,
 };
 
-u16 *gImil_ExitCellSteps[] = {
-    gImil_ExitCellStep0,
-    gImil_ExitCellStep1,
-    gImil_ExitCellStep2,
-    gImil_ExitCellStep3,
-    gImil_ExitCellStep4,
-    gImil_ExitCellStep5,
+u16 *gImil_DoorCellSteps[] = {
+    gImil_DoorCellSteps0,
+    gImil_DoorCellSteps1,
+    gImil_DoorCellSteps2,
+    gImil_DoorCellSteps3,
+    gImil_DoorCellSteps4,
+    gImil_DoorCellSteps5,
 };
 
 // Cell position (x, y) for each exit.
-s16 gImil_ExitCellPoints[][2] = {
+s16 gImil_DoorCellPoints[][2] = {
     { 50, 24 }, { 57, 22 }, { 59, 13 }, { 54, 10 }, { 38, 8 }, { 34, 19 },
 };
 // clang-format on

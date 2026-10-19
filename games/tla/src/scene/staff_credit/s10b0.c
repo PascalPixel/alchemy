@@ -1,5 +1,5 @@
-// The spark pair and the random particle the world map (overlay 64b) also
-// has, under this overlay's names.
+/// The spark pair and the random particle the world map (overlay 64b) also
+/// has, under this overlay's names.
 #define Func_020039f4 Func_020010b0
 #define Func_02003aac Func_02001168
 #define Func_02004b30 Func_02001fcc

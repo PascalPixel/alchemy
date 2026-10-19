@@ -1,7 +1,7 @@
 #include "types.h"
 #include "input.h"
 
-// The two secret button codes: unlocked, held and progress of each.
+/// The two secret button codes: unlocked, held and progress of each.
 extern s16 gData_020024f6;
 extern s16 gData_020024f8;
 extern s16 gData_020024fa;
@@ -13,9 +13,9 @@ extern const u16 gData_02002418[];
 
 void Func_02002408(s32 cue);
 
-// Follows the two secret button codes: each held key that matches the next
-// key of a sequence advances it, a wrong key starts it again, and the end of
-// the sequence unlocks the code with a sound.
+/// Follows the two secret button codes: each held key that matches the next
+/// key of a sequence advances it, a wrong key starts it again, and the end of
+/// the sequence unlocks the code with a sound.
 void Func_020001f4(void) {
   if (gData_020024f6 == 0) {
     /* FAKEMATCH: the held keys are read through a volatile pointer pinned to

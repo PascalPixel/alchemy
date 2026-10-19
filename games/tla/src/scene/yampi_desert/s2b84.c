@@ -4,9 +4,9 @@
 void Func_02001c5c(void);
 void Func_02002764(void);
 
-// Func_02002318's counterpart for actors 21 and 22 in Room 5: after flag
-// 0x88b actor 21 is placed facing 0x4000; otherwise, until flag 0x109, it
-// is placed and given the update Func_02002764.
+/// Func_02002318's counterpart for actors 21 and 22 in Room 5: after flag
+/// 0x88b actor 21 is placed facing 0x4000; otherwise, until flag 0x109, it
+/// is placed and given the update Func_02002764.
 void Func_02002b84(void) {
   struct ObjectRuntime *leader = (struct ObjectRuntime *)Object_GetById(21);
   struct ObjectRuntime *object;

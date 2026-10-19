@@ -24,8 +24,8 @@ void Func_020010e0(void);
 struct ObjectRuntime *Func_020010e8(void);
 void Func_02001108(s32 value);
 
-// Once flag 0x9d0 is set, the camera pans over object 23, who greets the
-// party, turns, talks and walks to its place; flag 0x9b1 is set.
+/// Once flag 0x9d0 is set, the camera pans over object 23, who greets the
+/// party, turns, talks and walks to its place; flag 0x9b1 is set.
 void Func_020003e4(void) {
   if (GameFlag_Test(0x9d0)) {
     Func_02001010();

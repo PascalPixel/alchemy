@@ -2,8 +2,8 @@
 
 void Func_08172b00(s32 a0, s32 a1);
 
-// Abilities: Core (kind 236).
+/// Abilities: Core (kind 236).
 void BattleFx_RunCore(s32 a0) { Func_08172b00(a0, 0); }
 
-// Abilities: Cannon (kind 246).
+/// Abilities: Cannon (kind 246).
 void BattleFx_RunCannon(s32 a0) { Func_08172b00(a0, 1); }

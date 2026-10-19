@@ -9,9 +9,9 @@ void Func_02002940(s32 layer);
 void Func_02000b10(struct ObjectRuntime *object);
 void Func_02000b58(struct ObjectRuntime *object);
 
-// Toggles flag 0xa68 and with it which of two layer pairs is shown: four
-// rounds of a random colour value, then one pair's blend scripts and layer
-// fields set and the other's cleared, while the object blinks.
+/// Toggles flag 0xa68 and with it which of two layer pairs is shown: four
+/// rounds of a random colour value, then one pair's blend scripts and layer
+/// fields set and the other's cleared, while the object blinks.
 void Func_02000b68(s32 unused, s32 id) {
   struct ObjectRuntime *object = Object_GetById(id);
   s32 i;

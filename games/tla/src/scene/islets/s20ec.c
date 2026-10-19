@@ -16,9 +16,9 @@ void Func_020020ec(s32 x, s32 z, s32 layers, s32 value) {
   }
 }
 
-// Records objects 12 and 13's positions; with them on cells (7, 29) and
-// (7, 28), clears layer 2's collision under object 12, and with them on
-// (12, 25) and (12, 26), under object 13.
+/// Records objects 12 and 13's positions; with them on cells (7, 29) and
+/// (7, 28), clears layer 2's collision under object 12, and with them on
+/// (12, 25) and (12, 26), under object 13.
 void Func_02002144(void) {
   struct ObjectRuntime *object;
   s32 *x0;

@@ -1,8 +1,8 @@
 #include "types.h"
 #include "macros.h"
 
-// Two triangles of a strip: three vertex indices and a texture coordinate
-// pair for each corner.
+/// Two triangles of a strip: three vertex indices and a texture coordinate
+/// pair for each corner.
 struct StripTriangle {
   u8 vertex[3];
   u8 unk03;
@@ -15,8 +15,8 @@ struct StripQuad {
   struct StripTriangle lower;
 };
 
-// Builds count quads of a vertex strip two vertices apart, each width texels
-// wide and height texels tall, and ends the list with an empty triangle.
+/// Builds count quads of a vertex strip two vertices apart, each width texels
+/// wide and height texels tall, and ends the list with an empty triangle.
 void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height, s32 count) {
   s32 i;
 

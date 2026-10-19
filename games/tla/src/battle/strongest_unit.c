@@ -7,9 +7,9 @@
 struct BattleUnit *UnitGet(s32 unitId);
 u32 BattleRandomFar(void);
 
-// Picks a random living target on one side: the party (target codes 0x100 +
-// slot) when party is set, otherwise the enemies (0x180 + slot); 0 when none
-// lives. No ☀️ twin found.
+/// Picks a random living target on one side: the party (target codes 0x100 +
+/// slot) when party is set, otherwise the enemies (0x180 + slot); 0 when none
+/// lives. No ☀️ twin found.
 s32 Func_0811f4d4(s32 party) {
   struct BattleWork *work;
   u16 targets[6];
@@ -35,9 +35,9 @@ s32 Func_0811f4d4(s32 party) {
   return targets[(count * BattleRandomFar()) >> 16];
 }
 
-// Finds the living unit with the highest Attack on unitId's side (the party
-// for ids 0 to 7, else the enemies), other than unitId itself; unitId when no
-// other lives. No ☀️ twin found.
+/// Finds the living unit with the highest Attack on unitId's side (the party
+/// for ids 0 to 7, else the enemies), other than unitId itself; unitId when no
+/// other lives. No ☀️ twin found.
 s32 Func_0811f5a4(u32 unitId) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   u32 best = unitId;

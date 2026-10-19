@@ -4,8 +4,8 @@ void Func_0200143c(void);
 void Func_02001944(s32 actor, s32 id);
 void Func_0200245c(s32 actor);
 
-// Restores six of the scene's map edits and actors 16 to 22 from flags 0x938 to
-// 0x93e, then runs the pending step of one of flags 0x228 to 0x22e.
+/// Restores six of the scene's map edits and actors 16 to 22 from flags 0x938 to
+/// 0x93e, then runs the pending step of one of flags 0x228 to 0x22e.
 void Func_02002498(void) {
   Object_GetById(gPartyState.currentOwner)->priorityFlags |= 32;
   Func_02002dc8(gData_02003010);

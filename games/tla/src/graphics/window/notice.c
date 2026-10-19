@@ -21,14 +21,14 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
 extern u8 MsgDebugEntryName;
 
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The Spanish and Italian far-call tables use different entry names for
-// Scene_GetAreaNameIndex.
+/// The Spanish and Italian far-call tables use different entry names for
+/// Scene_GetAreaNameIndex.
 s32 Func_080c8638(s32 scene, s32 entrance);
 #define Scene_GetAreaNameIndexFar Func_080c8638
 #endif
 void UiText_DrawResource(s32 resource, struct UiWindow *window, s32 x, s32 y);
 
-// Open the area-name window, then close it after ninety frames.
+/// Open the area-name window, then close it after ninety frames.
 void UiTimedNotice_Create(void) {
   struct TimedNoticeWork *work;
   s32 height;

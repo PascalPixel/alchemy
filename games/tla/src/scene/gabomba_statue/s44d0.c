@@ -45,8 +45,8 @@ void Func_020044d0(s32 value) {
   }
 }
 
-// Redraws side A once; with the statues ready, moves their offset down by
-// 0x333 a frame for twenty frames, then clears it.
+/// Redraws side A once; with the statues ready, moves their offset down by
+/// 0x333 a frame for twenty frames, then clears it.
 void Func_02004530(void) {
   struct SceneState *state = &gSceneState;
   /* FAKEMATCH(pin): the count in r6, which leaves r5 to the state; as a plain

@@ -2,7 +2,7 @@
 #include "io_reg.h"
 #include "input.h"
 
-// The frame state's byte 2, set while the audio test runs.
+/// The frame state's byte 2, set while the audio test runs.
 struct SoundFrameState {
   u8 unk00[2];
   u8 unk02;
@@ -21,15 +21,15 @@ struct AudioTestCues {
   s32 cue[3];
 };
 
-// The three cues the test starts with: the object's .rodata, which the
-// object list places after Audio_EmptyCallback, as ☀️'s sound.c has its
-// .rodata in the sound tail.
+/// The three cues the test starts with: the object's .rodata, which the
+/// object list places after Audio_EmptyCallback, as ☀️'s sound.c has its
+/// .rodata in the sound tail.
 static const struct AudioTestCues sAudioTestCues = {{0, 80, 100}};
 
-// Runs the audio test's three cue selectors and five mixer presets forever,
-// as ☀️'s AudioTest_RunParameterController (games/tbs/src/sound/sound.c),
-// here from preset 3, with the frame state's byte 2 set, a clip timer of 2
-// and the commands 0, 78 and 390.
+/// Runs the audio test's three cue selectors and five mixer presets forever,
+/// as ☀️'s AudioTest_RunParameterController (games/tbs/src/sound/sound.c),
+/// here from preset 3, with the frame state's byte 2 set, a clip timer of 2
+/// and the commands 0, 78 and 390.
 void Func_081c1014(void) {
   /* FAKEMATCH(temporary): the cues' address loaded before sp is copied for
    * the array, through an empty asm on it (barrier); as s32 cues[3] = {0,

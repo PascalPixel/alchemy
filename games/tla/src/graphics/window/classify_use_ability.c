@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// classify_use_ability.c
-// Items: summon-selection menu and battle item-use eligibility.
-//--------------------------------------------------------------------------
+/// @file
+/// Items: summon-selection menu and battle item-use eligibility.
 
 #include "battle_system.h"
 #include "item.h"
@@ -13,12 +11,10 @@
 
 #define BATTLE_OK 0x80 // flags: usable in battle.
 
-//--------------------------------------------------------------------------
-// Determine whether an item can be used in battle.
-// Returns: 0 usable / 1 unusable / 2 unavailable in battle.
-// unit: character index.
-// item: carried item value.
-//--------------------------------------------------------------------------
+/// Determine whether an item can be used in battle.
+/// Returns: 0 usable / 1 unusable / 2 unavailable in battle.
+/// unit: character index.
+/// item: carried item value.
 s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
   s32 ret;
   struct ItemDefinition *def;

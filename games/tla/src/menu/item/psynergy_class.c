@@ -17,16 +17,16 @@ struct PsynergyMenuState {
 
 struct BattleAct *BattleActGet(s32 action);
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The Spanish and Italian far-call tables reach BattleFx_HasMatchingEvent5
-// through this stub (as selrow.c).
+/// The Spanish and Italian far-call tables reach BattleFx_HasMatchingEvent5
+/// through this stub (as selrow.c).
 s32 Func_080c84f8(s32 type);
 #else
 s32 BattleFx_HasMatchingEvent5Far(s32 type);
 #endif
 
-// How the selected psynergy is used: 0 acts at once, 1 picks a target,
-// 2 cannot be used here. The Broken Seal's
-// PsynergyMenu_ClassifySelectedPsynergy.
+/// How the selected psynergy is used: 0 acts at once, 1 picks a target,
+/// 2 cannot be used here. The Broken Seal's
+/// PsynergyMenu_ClassifySelectedPsynergy.
 s32 Func_080fcf14(void) {
   struct PsynergyMenuState *menu;
   struct BattleAct *psynergy;

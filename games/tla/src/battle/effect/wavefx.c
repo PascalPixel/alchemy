@@ -28,7 +28,7 @@ void BattleFx_FinishSceneAndReleaseHeapBlock(void) {
 
 void BattleFx_ArmBg0HBlankDma(void);
 
-// Gray BG palette 15 colors 1 and 3-12, then start scanline scrolling.
+/// Gray BG palette 15 colors 1 and 3-12, then start scanline scrolling.
 void Ui_FillBank15PaletteGrey(void) {
   volatile u16 *p;
 

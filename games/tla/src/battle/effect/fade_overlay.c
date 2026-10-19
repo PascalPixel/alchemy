@@ -10,9 +10,9 @@
 
 void Func_080d1840(void);
 
-// Clears the overlay tiles to colour 1, sets the blend registers and starts
-// Func_080d1840 at priority 0x480 on a 28-byte work block whose last word is
-// the object (the selected owner's when none is given).
+/// Clears the overlay tiles to colour 1, sets the blend registers and starts
+/// Func_080d1840 at priority 0x480 on a 28-byte work block whose last word is
+/// the object (the selected owner's when none is given).
 void BattleFx_StartFadeOverlay(void *object) {
   u32 *work;
   u8 *tiles;
@@ -33,8 +33,8 @@ void BattleFx_StartFadeOverlay(void *object) {
   work[6] = (u32)object;
 }
 
-// Suspends the fade overlay's drawing callback.
+/// Suspends the fade overlay's drawing callback.
 void FadeOverlay_Suspend(void) { Scheduler_SuspendTasks(Func_080d1840); }
 
-// Resumes the fade overlay's drawing callback.
+/// Resumes the fade overlay's drawing callback.
 void FadeOverlay_Resume(void) { Scheduler_ResumeTasks(Func_080d1840); }

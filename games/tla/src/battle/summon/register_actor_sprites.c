@@ -7,7 +7,7 @@ struct BattleSpriteSlots {
   s16 spriteSlots[6];
 };
 
-// The actor sprite slot buffers, 0x4000 bytes a slot.
+/// The actor sprite slot buffers, 0x4000 bytes a slot.
 extern u8 Data_02018000[];
 
 struct BattleUnit *UnitGet(s32 unit);
@@ -16,11 +16,11 @@ s32 BattleClass_GetSprite(s32 index);
 s32 BattleClass_GetPalette(s32 index);
 s32 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 
-// Loads the battle sprites of a unit into free sprite slots: one slot, or
-// two neighbouring ones for a wide sprite. A few sprites load a second part
-// into the next free slots. Returns the first slot in bits 12 and up with
-// the sprite value below, or 0 when a load fails. The Broken Seal's function
-// of the same name, keyed by the enemy id, with seven two-part sprites.
+/// Loads the battle sprites of a unit into free sprite slots: one slot, or
+/// two neighbouring ones for a wide sprite. A few sprites load a second part
+/// into the next free slots. Returns the first slot in bits 12 and up with
+/// the sprite value below, or 0 when a load fails. The Broken Seal's function
+/// of the same name, keyed by the enemy id, with seven two-part sprites.
 s32 SummonSlot_RegisterActorSprites(s32 unit) {
   s32 pass;
   struct BattleSpriteSlots *table =

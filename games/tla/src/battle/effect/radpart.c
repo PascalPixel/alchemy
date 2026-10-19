@@ -40,8 +40,8 @@ void Object_SetMode(void *object, s32 mode);
 void Shop_InitEffectFar(void);
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void);
 
-// Ends a heavy impact: object id spins, leaps and vanishes in 24 sparks that
-// circle and then close on the current owner, which turns and takes mode 28.
+/// Ends a heavy impact: object id spins, leaps and vanishes in 24 sparks that
+/// circle and then close on the current owner, which turns and takes mode 28.
 void Djinn_RunJupiterJoinEffect(s32 id) {
   struct EffectVector position;
   struct MotionObject *object;
@@ -137,8 +137,8 @@ void BattleFx_SpinUpAngle(void *obj) {
   }
 }
 
-// Spins an object 1/8 turn and shrinks it by 0x1c0 a frame, destroying it once
-// its scale falls below 0x3000.
+/// Spins an object 1/8 turn and shrinks it by 0x1c0 a frame, destroying it once
+/// its scale falls below 0x3000.
 void BattleFx_ShrinkObjectAndDestroySlow(void *obj) {
   /* FAKEMATCH: the step is pinned to r1 and used by an empty asm before the
    * scales load, so its literal loads first, as the native's does; without

@@ -9,8 +9,8 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void GameFlag_SetBit(s32 flag);
 void Func_020014bc(s32 mode, s32 cue);
 
-// In room 1 or 2, targets actor 15 or 14, runs Func_020014bc and sets flag
-// 0x200.
+/// In room 1 or 2, targets actor 15 or 14, runs Func_020014bc and sets flag
+/// 0x200.
 void Func_020019e8(s32 mode, s32 cue) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
   struct PartyState *party = &gPartyState;
@@ -36,8 +36,8 @@ void Func_020019e8(s32 mode, s32 cue) {
   GameFlag_SetBit(0x200);
 }
 
-// In room 1 or 2, targets actor 16 or 10, runs Func_020014bc and sets flag
-// 0x201.
+/// In room 1 or 2, targets actor 16 or 10, runs Func_020014bc and sets flag
+/// 0x201.
 void Func_02001a38(s32 mode, s32 cue) {
   struct MagmaRockWork *work = Ram_HeapSlots->effectWork;
   struct PartyState *party = &gPartyState;

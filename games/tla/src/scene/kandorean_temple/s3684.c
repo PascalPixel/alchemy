@@ -4,7 +4,7 @@ void Func_02000cd8(s32 id, s32 dy, s32 scale);
 extern s32 gData_020062a0;
 extern s32 gData_020062a4;
 
-// The leader and actor 13 rise into view while actor 15 scales.
+/// The leader and actor 13 rise into view while actor 15 scales.
 void Func_02003684(void) {
   struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
   struct ObjectRuntime *first = Object_GetById(13);
@@ -55,7 +55,7 @@ rise:
   Func_020051c8();
 }
 
-// As Func_02003684, for actors 14 and 16 at another place.
+/// As Func_02003684, for actors 14 and 16 at another place.
 void Func_020037e0(void) {
   struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
   struct ObjectRuntime *first = Object_GetById(14);
@@ -105,7 +105,7 @@ rise:
   Func_020051c8();
 }
 
-// Actor 13 rises out of view while actor 15 scales, then the scene moves on.
+/// Actor 13 rises out of view while actor 15 scales, then the scene moves on.
 void Func_0200393c(void) {
   struct ObjectRuntime *object = Object_GetById(13);
 
@@ -128,7 +128,7 @@ rise:
   Func_020052f8(6);
 }
 
-// As Func_0200393c, for actors 14 and 16.
+/// As Func_0200393c, for actors 14 and 16.
 void Func_020039a8(void) {
   struct ObjectRuntime *object = Object_GetById(14);
 

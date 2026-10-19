@@ -33,15 +33,15 @@ s32 Field_FindNearbyTalkTarget(s32 owner);
 struct SceneEventEntry *Func_080ccd78(s32 kind, s32 target);
 void EventRuntime_RunMessage(s32 actor, s32 message);
 
-// The field's push and button handler for keys, idle while
-// gPartyState.pendingThird is set. After the leader has pushed for more than
-// 12 frames: key 0x20 on a 0x80 push raises the leader
-// (BattleFx_RunRisingObjectSequence(owner, 6, 0)); key 0x80 runs
-// Func_080d4d08; key 0x40 runs Func_080d50f8 or Func_080d53b8 by the push kind
-// and clears the push state when it returns 0; key 2 with Func_080cdc74 runs
-// the nearby talk target's kind 8 event and then the kind 9 event for keys
-// (messages under 0x10000, otherwise a routine called with keys and the
-// target). Always returns 0.
+/// The field's push and button handler for keys, idle while
+/// gPartyState.pendingThird is set. After the leader has pushed for more than
+/// 12 frames: key 0x20 on a 0x80 push raises the leader
+/// (BattleFx_RunRisingObjectSequence(owner, 6, 0)); key 0x80 runs
+/// Func_080d4d08; key 0x40 runs Func_080d50f8 or Func_080d53b8 by the push kind
+/// and clears the push state when it returns 0; key 2 with Func_080cdc74 runs
+/// the nearby talk target's kind 8 event and then the kind 9 event for keys
+/// (messages under 0x10000, otherwise a routine called with keys and the
+/// target). Always returns 0.
 s32 Func_080cd680(s32 keys) {
   struct EventWorkView *work = Ram_HeapSlots->eventWork;
   s32 owner = gPartyState.currentOwner;

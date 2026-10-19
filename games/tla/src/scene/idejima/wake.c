@@ -45,8 +45,8 @@ wait:
   FelixWake_EndStep();
 }
 
-// The leader wakes, step by step at each button press, and is asked about
-// injuries; the scene ends by clearing flag 0x12f and setting flag 0x844.
+/// The leader wakes, step by step at each button press, and is asked about
+/// injuries; the scene ends by clearing flag 0x12f and setting flag 0x844.
 void Func_02002c64(void) {
   s32 answer;
   s32 leader;

@@ -14,9 +14,9 @@ void AudioEngine_SetFixedPcmRate(u32 mode);
 
 void Func_081c0c18(void) {}
 
-// Initializes the sound engine and sets the music state to its defaults:
-// full volume and pitch, steps of 4 and the eight player volumes cleared, as
-// The Broken Seal's.
+/// Initializes the sound engine and sets the music state to its defaults:
+/// full volume and pitch, steps of 4 and the eight player volumes cleared, as
+/// The Broken Seal's.
 void Audio_InitializeRuntimeDefaults(void) {
   s16 *playerVolume;
   s32 remaining;

@@ -51,8 +51,8 @@ void Func_02003bf0(void) {
   Func_02003a08(376, 288);
 }
 
-// Fades the screen in and runs Func_02002d64 each frame for up to 160 frames,
-// or until A, B or Start is held, then fades out.
+/// Fades the screen in and runs Func_02002d64 each frame for up to 160 frames,
+/// or until A, B or Start is held, then fades out.
 void Func_02003c14(void) {
   u32 i;
 

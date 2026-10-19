@@ -38,8 +38,8 @@ u8 *Func_020003f8(void) {
   }
 }
 
-// The world map's render mode 8 start: with flag 0x147 a blank message is
-// shown first, the event work's counters are cleared.
+/// The world map's render mode 8 start: with flag 0x147 a blank message is
+/// shown first, the event work's counters are cleared.
 void Func_02000458(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 

@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// output_acquire_free.c
-// Display: free list of sprite outputs (RenderOutput).
-//--------------------------------------------------------------------------
+/// @file
+/// Display: free list of sprite outputs (RenderOutput).
 
 #include "types.h"
 #include "edition.h"
@@ -10,9 +8,7 @@
 
 #define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)
 
-//--------------------------------------------------------------------------
-// Remove the first entry from the free list, or return NULL if empty.
-//--------------------------------------------------------------------------
+/// Remove the first entry from the free list, or return NULL if empty.
 struct RenderOutput *RenderOutput_AcquireFree(void) {
   struct UiRenderWork *work = UI_WORK;
   struct RenderOutput *out = work->freeOutputs.head;
@@ -26,9 +22,7 @@ struct RenderOutput *RenderOutput_AcquireFree(void) {
   return out;
 }
 
-//--------------------------------------------------------------------------
-// Return an entry to the free-list tail; reject entries outside outputs[].
-//--------------------------------------------------------------------------
+/// Return an entry to the free-list tail; reject entries outside outputs[].
 void RenderOutput_ReleaseFree(struct RenderOutput *out) {
   struct UiRenderWork *work = UI_WORK;
 
@@ -42,9 +36,7 @@ void RenderOutput_ReleaseFree(struct RenderOutput *out) {
   }
 }
 
-//--------------------------------------------------------------------------
-// Link all 64 outputs[] entries into the free list.
-//--------------------------------------------------------------------------
+/// Link all 64 outputs[] entries into the free list.
 void UiWork_InitFreeList(void) {
   s32 n;
   struct UiRenderWork *work;

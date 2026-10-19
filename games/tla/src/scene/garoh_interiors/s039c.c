@@ -89,8 +89,8 @@ void Func_0200049c(void) {
   GameFlag_SetBit(0x91a);
 }
 
-// Returns the room's table, chosen by flag 0x91B, the scene and, in the
-// first room, the entrance.
+/// Returns the room's table, chosen by flag 0x91B, the scene and, in the
+/// first room, the entrance.
 const u8 *Func_020004f0(void) {
   s32 moved = GameFlag_Test(0x91b);
   struct PartyState *party = &gPartyState;

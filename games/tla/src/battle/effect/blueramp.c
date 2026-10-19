@@ -14,8 +14,8 @@ static __inline__ void CopyWords_(void *destination, const void *source,
   Iwram_CopyWords(destination, source, size);
 }
 
-// Turns the background canvas into a blue ramp, row by row from the top, each
-// column starting after its own random delay.
+/// Turns the background canvas into a blue ramp, row by row from the top, each
+/// column starting after its own random delay.
 void Graphics_ConvertBackgroundToBlueRamp(void) {
   s32 i, x, y, row, end, speed;
   s32 red, green, blue;

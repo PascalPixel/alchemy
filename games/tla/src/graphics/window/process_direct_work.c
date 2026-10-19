@@ -7,9 +7,9 @@ void Func_08039f94(struct UiWindow *window, s32 save_position);
 void UiWork_DrawByAttributes(struct UiWindow *window);
 void UiWindow_EraseBorderRect(s32 x, s32 y, s32 width, s32 height);
 
-// Steps each window's open or close animation: an open window moves toward
-// its geometry and is drawn when it arrives; a closing one is erased frame
-// by frame and cleared when its duration is reached.
+/// Steps each window's open or close animation: an open window moves toward
+/// its geometry and is drawn when it arrives; a closing one is erased frame
+/// by frame and cleared when its duration is reached.
 void UiWork_ProcessDirectWork(void) {
   struct UiRenderWork *state =
       (struct UiRenderWork *)Ram_HeapSlots->windowTiles;

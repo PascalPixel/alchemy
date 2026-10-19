@@ -8,8 +8,8 @@
 
 extern u8 gMapShapeGrid[];
 
-// Copies a rectangle of map cells as they are, with their shape grid bytes,
-// from (srcX, srcY) to (dstX, dstY), width by height cells.
+/// Copies a rectangle of map cells as they are, with their shape grid bytes,
+/// from (srcX, srcY) to (dstX, dstY), width by height cells.
 void Func_0802b590(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
                    s32 dstY) {
   u32 *cells = (u32 *)Ram_MapCellBuffer;

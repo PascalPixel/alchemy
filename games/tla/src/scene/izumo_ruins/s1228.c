@@ -1,7 +1,7 @@
 #include "izumo_ruins.h"
 
-// Outside the first room, sets the high byte of map cell (50, 13) on layer 2 to
-// 0xff; then starts the room's effect.
+/// Outside the first room, sets the high byte of map cell (50, 13) on layer 2 to
+/// 0xff; then starts the room's effect.
 void Func_020011d4(void) {
   if (gPartyState.scene == (s32)&SceneId_Ov67FRoom1) {
     Func_02001518(gData_02001654);

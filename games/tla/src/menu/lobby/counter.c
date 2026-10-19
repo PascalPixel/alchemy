@@ -20,7 +20,7 @@ void Func_02001a64(s32 message);
 void Func_02001ab4(s32 skip);
 void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
 
-// The lobby clerk: offers the link battle, or reports on the one waiting.
+/// The lobby clerk: offers the link battle, or reports on the one waiting.
 s32 Func_02000bb0(void) {
   s32 answer;
   s32 msg;

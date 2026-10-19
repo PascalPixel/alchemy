@@ -1,5 +1,6 @@
-// The staff credits: the battle backdrops shown behind them and the lines
-// that scroll past, as The Broken Seal's slides.c has them.
+/// @file
+/// The staff credits: the battle backdrops shown behind them and the lines
+/// that scroll past, as The Broken Seal's slides.c has them.
 
 #include "types.h"
 #include "edition.h"
@@ -36,8 +37,8 @@ extern char ResourceId_ForestBackdrop;
 extern char ResourceId_VioletSkyBackdrop;
 extern char ResourceId_DuskCloudsBackdrop;
 
-// The Broken Seal's slideshow backdrops less one, ending in 0. Nothing
-// reads this list.
+/// The Broken Seal's slideshow backdrops less one, ending in 0. Nothing
+/// reads this list.
 // clang-format off
 const u32 gDisplayScroll_UnusedSlideResources[] = {
     (u32)&ResourceId_ValeStormBackdrop,
@@ -74,8 +75,8 @@ const u32 gDisplayScroll_UnusedSlideResources[] = {
     0
 };
 
-// The backdrops the slideshow fades between, in turn; 0 ends the list,
-// and the table has room for 25.
+/// The backdrops the slideshow fades between, in turn; 0 ends the list,
+/// and the table has room for 25.
 const u32 gDisplayScroll_SlideResources[25] = {
     (u32)&ResourceId_ValeStormBackdrop,
     (u32)&ResourceId_SolSanctumBackdrop,
@@ -103,8 +104,8 @@ const u32 gDisplayScroll_SlideResources[25] = {
 
 static const u8 sBlankLine[] = "";
 
-// Ends a section of the credits: the scroll stops on it, and a section's
-// start is found by counting these marks.
+/// Ends a section of the credits: the scroll stops on it, and a section's
+/// start is found by counting these marks.
 #define CREDITS_SECTION_END ((const void *)255)
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
@@ -124,7 +125,7 @@ static const u8 sBlankLine[] = "";
 #define RODRIGUEZ "Rodr`guez"
 #endif
 
-// The staff credits, one line each, ending in 0.
+/// The staff credits, one line each, ending in 0.
 const void *gDisplayScroll_LineTable[] = {
     sBlankLine,
 #if (LANGUAGE == LANGUAGE_JAPANESE)

@@ -27,7 +27,7 @@ void Func_02004bb4(void) {
   Func_02005e1c();
 }
 
-// The placement table for the current room.
+/// The placement table for the current room.
 s32 *Func_02004c00(void) {
   s16 scene = gPartyState.scene;
 

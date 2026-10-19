@@ -12,11 +12,11 @@ extern char ResourceId_DesertBackdrop;
 s32 Party_CountActiveOwnersFar(void);
 s32 GameFlag_Test(s32 flag);
 
-// The battle music table: each song as 0x8000 | song, followed by the
-// encounters that use it as (zone << 4) + slot, ended by 0.
+/// The battle music table: each song as 0x8000 | song, followed by the
+/// encounters that use it as (zone << 4) + slot, ended by 0.
 extern const s16 Data_080efd1c[];
 
-// Chooses the battle backdrop for a terrain; the ship deck's is the default.
+/// Chooses the battle backdrop for a terrain; the ship deck's is the default.
 void Func_080ca514(s32 terrain) {
   u16 value;
 
@@ -62,11 +62,11 @@ s32 Func_080ca5a0(s32 owner) {
   return 0;
 }
 
-// Chooses the battle music for slot of zone (gPartyState.sceneCue), as ☀️'s
-// function of the same name: a key takes the song listed last before it in
-// Data_080efd1c, and flag 0x16c's battles always use music 79. With no song
-// found, it is 56 while ownerOverride is set and flag 0x8df clear, else 50
-// when owner 4 is active, 750 when owner 0 is, 49 when owner 5 is, or 50.
+/// Chooses the battle music for slot of zone (gPartyState.sceneCue), as ☀️'s
+/// function of the same name: a key takes the song listed last before it in
+/// Data_080efd1c, and flag 0x16c's battles always use music 79. With no song
+/// found, it is 56 while ownerOverride is set and flag 0x8df clear, else 50
+/// when owner 4 is active, 750 when owner 0 is, 49 when owner 5 is, or 50.
 void BattleFx_SelectBattleCue(s32 zone, s32 slot) {
   s16 key = (zone << 4) + slot;
   const s16 *table = Data_080efd1c;

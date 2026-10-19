@@ -82,7 +82,7 @@ void Func_020006ac(void) {
 
 void Func_02000724(void) { GameFlag_ClearBit(0xa0e); }
 
-// Actor 22 rises in a shower of sparks: one every other frame for 32 frames.
+/// Actor 22 rises in a shower of sparks: one every other frame for 32 frames.
 void Func_02000734(void) {
   struct EffectParams params;
   /* FAKEMATCH: the parameter block's pointer pinned to r6, where the native

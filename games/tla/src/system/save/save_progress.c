@@ -21,8 +21,8 @@ void UiText_DrawResource(s32 resource, struct UiWindow *window, s32 x, s32 y);
 void Audio_SetMusicVolumeTargetAndStepFar(s32 target, s32 step);
 void Audio_PlayCue(s32 cue);
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// Spanish and Italian far-call tables name the entry to the same routine
-// differently.
+/// Spanish and Italian far-call tables name the entry to the same routine
+/// differently.
 void Func_080c8688(void);
 #define Func_080c8698 Func_080c8688
 #else
@@ -40,7 +40,7 @@ void Func_080c8698(void);
 #define COPYING_X 84
 #endif
 
-// Open the progress screen: 0 saves, 1 erases, 2 copies.
+/// Open the progress screen: 0 saves, 1 erases, 2 copies.
 struct UiWindow *SaveProgress_Open(u32 kind) {
   struct UiWindow *window;
   void *tiles;
@@ -71,7 +71,7 @@ struct UiWindow *SaveProgress_Open(u32 kind) {
   return window;
 }
 
-// Close the progress screen.
+/// Close the progress screen.
 struct UiWindow *SaveProgress_Close(struct UiWindow *window) {
   WaitFrames(10);
   Func_080c8698();

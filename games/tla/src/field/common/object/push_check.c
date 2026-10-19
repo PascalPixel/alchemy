@@ -10,15 +10,15 @@ void Vector_AddPolarOffset(s32 length, s32 angle, s32 *position);
 struct ObjectRuntime *Func_080eaf28(s32 *position, s32 mode);
 s32 Func_08020210(struct ObjectRuntime *object, s32 *position);
 
-// Whether the object 16 pixels in front of the current owner, along its
-// facing rounded to a quarter turn, can be pushed on by 16 pixels: 1 when
-// nothing solid stands on the cell beyond it or above it and its terrain
-// test passes there, else 0. Func_080cdd80, after it, makes the push.
-// The Japanese edition has no test against the paused object and stays on
-// its scaffold: with the branch below it differs by one reordered row (the
-// angle's argument copy issued after the next position load, differ 4).
-// The Spanish and Italian far-call tables name this function's slot
-// Func_080eab98, so those two editions keep it on their scaffold too (S4).
+/// Whether the object 16 pixels in front of the current owner, along its
+/// facing rounded to a quarter turn, can be pushed on by 16 pixels: 1 when
+/// nothing solid stands on the cell beyond it or above it and its terrain
+/// test passes there, else 0. Func_080cdd80, after it, makes the push.
+/// The Japanese edition has no test against the paused object and stays on
+/// its scaffold: with the branch below it differs by one reordered row (the
+/// angle's argument copy issued after the next position load, differ 4).
+/// The Spanish and Italian far-call tables name this function's slot
+/// Func_080eab98, so those two editions keep it on their scaffold too (S4).
 s32 Func_080cdc74(void) {
   s32 position[3];
   s32 above[3];

@@ -5,8 +5,8 @@ extern u32 gFrameCount;
 extern u16 gData_02003dbc;
 extern u16 gData_02003dbe;
 
-// Sets the layer blend, switching its alpha every two frames unless
-// gData_02003dbe is set.
+/// Sets the layer blend, switching its alpha every two frames unless
+/// gData_02003dbe is set.
 void Func_0200005c(void) {
   u16 *blend;
   u16 blink;

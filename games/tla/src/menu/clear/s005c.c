@@ -28,8 +28,8 @@ static __inline__ void Decode_(void *source, void *destination) {
   Func_020021f8(source, destination);
 }
 
-// The logo background, as ☀️'s Clear_LoadBackground and overlay 649's
-// Func_02000490, then the party leader's motion flags cleared.
+/// The logo background, as ☀️'s Clear_LoadBackground and overlay 649's
+/// Func_02000490, then the party leader's motion flags cleared.
 void Func_0200005c(void) {
   u8 *res;
   s32 id;
@@ -109,9 +109,9 @@ scroll_pair:
   }
 }
 
-// As ☀️'s Clear_UpdateBlend: queues an alpha blend of BG0 and the sprites over
-// the rest whose first weight rises by one every second frame (the second
-// weight 16 less), and removes the callback once the first weight passes 15.
+/// As ☀️'s Clear_UpdateBlend: queues an alpha blend of BG0 and the sprites over
+/// the rest whose first weight rises by one every second frame (the second
+/// weight 16 less), and removes the callback once the first weight passes 15.
 void Func_0200015c(void) {
   s32 frame;
   u32 level;

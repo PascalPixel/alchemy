@@ -5,10 +5,10 @@
 #include "static_assert.h"
 #include "render_input.h"
 
-// A field effect's sprite, drawn by Func_080eb01c: an OAM entry linked into
-// the bucket of its depth, with the screen position (16.16), scale (16.16)
-// and angle it is placed from. Func_080eaf98 fills one; a depth of -1 hides
-// it. The pivot is the pixel of the picture that sits on the position.
+/// A field effect's sprite, drawn by Func_080eb01c: an OAM entry linked into
+/// the bucket of its depth, with the screen position (16.16), scale (16.16)
+/// and angle it is placed from. Func_080eaf98 fills one; a depth of -1 hides
+/// it. The pivot is the pixel of the picture that sits on the position.
 struct EffectSprite {
   struct EffectSprite *next;
   struct RenderOam oam;

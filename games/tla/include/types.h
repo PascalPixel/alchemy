@@ -13,9 +13,9 @@ typedef unsigned long long u64;
 #define NULL ((void *)0)
 
 #ifdef MODERN
-// the modern build places code and data where its own compiler puts them:
-// a fixed address is the linked name, called through a register as at a
-// fixed address, so that code copied into RAM still reaches it
+/// the modern build places code and data where its own compiler puts them:
+/// a fixed address is the linked name, called through a register as at a
+/// fixed address, so that code copied into RAM still reaches it
 #define FIXED_LINKED(linked)                                                   \
   ({                                                                           \
     extern char modern_##linked[] __asm__(#linked);                            \

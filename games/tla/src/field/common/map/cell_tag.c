@@ -1,9 +1,9 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-// Finds the tag (key, value) in the 4-byte entries at gMapCollision, or adds
-// it at the first free entry (key 0xff), and returns its index. Func_080eabd0
-// gives a raised cell's shape this index.
+/// Finds the tag (key, value) in the 4-byte entries at gMapCollision, or adds
+/// it at the first free entry (key 0xff), and returns its index. Func_080eabd0
+/// gives a raised cell's shape this index.
 s32 Func_080eab98(s32 unused, s32 key, s32 value) {
   u8 *entry = Ram_MapCollision;
   s8 tagValue;

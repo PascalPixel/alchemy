@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// wait_twelve_frames_then_set_field.c
-// Battle effects: sparks after approaching the target (type 3).
-//--------------------------------------------------------------------------
+/// @file
+/// Battle effects: sparks after approaching the target (type 3).
 
 #include "types.h"
 #include "system.h"
@@ -10,10 +8,8 @@
 void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
 s32 BattleFx_RunSparkGroups(void *, s32);
 
-//--------------------------------------------------------------------------
-// Jump the user toward the first target and emit type 3 sparks after 12 frames.
-// effect: effect arguments.
-//--------------------------------------------------------------------------
+/// Jump the user toward the first target and emit type 3 sparks after 12 frames.
+/// effect: effect arguments.
 void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect) {
   // Jump 3/4 of the distance at displacement / 24, with initial vertical
   // speed 7.2.

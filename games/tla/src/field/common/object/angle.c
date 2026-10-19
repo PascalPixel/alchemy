@@ -13,15 +13,15 @@ void ObjectMotion_ArmCallback(s32 id, s32 value, s32 mode);
 void Func_080d3378(struct ObjectRuntime *source, s32 attribute);
 void Event_NoOp(void);
 
-// An object rises out of the ground: it plays `mode` for 10 frames, is placed
-// on its cell's centre line raised 12 pixels, then climbs 2 pixels a frame for
-// 14 frames to cue 217, dropping a particle of kind `particle` every other
-// frame (none for -1), and is then let fall back, waiting up to 180 frames for
-// it to land unless `particle` has flag 0x1000. No ☀️ twin found. The landing
-// wait matches only as a guarded do-while: as while (y > ground) {
-// WaitFrames(1); if (++i >= 180) break; } agscc keeps the test at the top and
-// jumps back to it (differ 18), where the native has the test copied below the
-// body as loop rotation would place it.
+/// An object rises out of the ground: it plays `mode` for 10 frames, is placed
+/// on its cell's centre line raised 12 pixels, then climbs 2 pixels a frame for
+/// 14 frames to cue 217, dropping a particle of kind `particle` every other
+/// frame (none for -1), and is then let fall back, waiting up to 180 frames for
+/// it to land unless `particle` has flag 0x1000. No ☀️ twin found. The landing
+/// wait matches only as a guarded do-while: as while (y > ground) {
+/// WaitFrames(1); if (++i >= 180) break; } agscc keeps the test at the top and
+/// jumps back to it (differ 18), where the native has the test copied below the
+/// body as loop rotation would place it.
 void BattleFx_RunRisingObjectSequence(s32 id, s32 mode, s32 particle) {
   struct ObjectRuntime *object = Object_GetById(id);
   s32 z = object->z;

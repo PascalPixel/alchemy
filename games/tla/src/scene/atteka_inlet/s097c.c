@@ -26,8 +26,8 @@ void Func_020010d0(s32 a, s32 b);
 struct ObjectRuntime *Func_020010e8(void);
 void Func_02001108(s32 value);
 
-// Object 24 calls out to the party, jumps down to it and talks with object
-// 23; flag 0x9ad is set.
+/// Object 24 calls out to the party, jumps down to it and talks with object
+/// 23; flag 0x9ad is set.
 void Func_0200097c(void) {
   s32 angle;
 

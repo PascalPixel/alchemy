@@ -10,7 +10,7 @@
 // ⚓️. The devices below hold the first value behind a barrier and keep the
 // later stores in order.
 
-// Writes the window, display and blend registers, all at once.
+/// Writes the window, display and blend registers, all at once.
 void Graphics_ApplyWindowBlendRegisters(void) {
   /* FAKEMATCH(fixed register): the work pointer kept in r2; as a plain local
    * with the barriers below it takes r0 and the address r2, 62 of 55
@@ -58,7 +58,7 @@ void Graphics_ApplyWindowBlendRegisters(void) {
   REG_BLDALPHA = work->bldalpha;
 }
 
-// Writes background 2's scale (BG2PA and BG2PD) and its reference point.
+/// Writes background 2's scale (BG2PA and BG2PD) and its reference point.
 void Display_ApplyBg2Affine(void) {
   /* FAKEMATCH(fixed register): the work pointer kept in r2; as a plain local
    * with the barriers below, 32 of 30 instructions differ in tla-en (8 as
@@ -89,7 +89,7 @@ void Display_ApplyBg2Affine(void) {
   REG_BG2Y = work->bg2y;
 }
 
-// Writes background 2's reference point.
+/// Writes background 2's reference point.
 void Display_ApplyBg2Reference(void) {
   /* FAKEMATCH(fixed register): the work pointer kept in r2; as a plain local
    * with the devices below, 26 of 20 instructions differ in tla-en (4 as

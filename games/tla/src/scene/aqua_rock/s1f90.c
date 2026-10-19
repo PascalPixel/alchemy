@@ -43,9 +43,9 @@ void Func_02001f90(s32 arg0) {
   Func_02002a18(arg0);
 }
 
-// Every other frame, emits particle 7 (5 on every other such frame) from the
-// object, 26 pixels up, swaying with the frame count and drifting by a random
-// amount.
+/// Every other frame, emits particle 7 (5 on every other such frame) from the
+/// object, 26 pixels up, swaying with the frame count and drifting by a random
+/// amount.
 s32 Func_02002030(struct ObjectRuntime *object) {
   s32 params[10];
 

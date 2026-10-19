@@ -30,7 +30,7 @@ void Event_FinishScreenTransition(void);
 void Func_0200517c(const void *data, s32 a, s32 b);
 void Func_020052c4(s32 value);
 
-// Return the table for the current room.
+/// Return the table for the current room.
 const void *Func_02000440(void) {
   s16 scene = gPartyState.scene;
 
@@ -69,9 +69,9 @@ static __inline__ void CenterOnColumn_(s32 id, s32 column, s32 dz) {
   ObjectMotion_CenterOnColumn(id, column, dz);
 }
 
-// 6A6's Func_02000e54 for this overlay: clears the motion of every object
-// from 8 to 63, shows the picture the event work's index names and moves the
-// party's current owner to it.
+/// 6A6's Func_02000e54 for this overlay: clears the motion of every object
+/// from 8 to 63, shows the picture the event work's index names and moves the
+/// party's current owner to it.
 void Func_020004cc(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   s32 index;

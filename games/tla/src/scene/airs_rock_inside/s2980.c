@@ -1,7 +1,7 @@
 #include "airs_rock_inside.h"
 
-// When the controlled object steps onto a new cell, saves the 1 by 3 cells
-// below it at (73, 72) and stamps the cells kept at (72, 72) in their place.
+/// When the controlled object steps onto a new cell, saves the 1 by 3 cells
+/// below it at (73, 72) and stamps the cells kept at (72, 72) in their place.
 void Func_02002980(void) {
   struct FieldActor *object = Object_GetById(Func_02005f84());
   s32 x = object->x >> 20;
@@ -21,7 +21,7 @@ void Func_02002980(void) {
   }
 }
 
-// As Func_02002980, one row nearer.
+/// As Func_02002980, one row nearer.
 void Func_02002a14(void) {
   struct FieldActor *object = Object_GetById(Func_02005f84());
   s32 x = object->x >> 20;

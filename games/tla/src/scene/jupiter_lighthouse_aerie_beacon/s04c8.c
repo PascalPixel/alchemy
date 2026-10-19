@@ -21,8 +21,8 @@ static inline struct ObjectRuntime *Object_Create(s32 type, s32 x, s32 y,
   return Func_0200576c(type, x, y, z);
 }
 
-// Every third frame, or every frame once flag 0x201 is set, spawns a particle
-// at a random height above object 31 that circles it (Func_02000090).
+/// Every third frame, or every frame once flag 0x201 is set, spawns a particle
+/// at a random height above object 31 that circles it (Func_02000090).
 void Func_020004c8(void) {
   struct ObjectRuntime *center;
   struct ObjectRuntime *effect;

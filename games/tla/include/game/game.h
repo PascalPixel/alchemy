@@ -1,7 +1,8 @@
 #ifndef GAME_H
 #define GAME_H
 
-// GAME
+/// @file
+/// GAME
 
 #include "types.h"
 #include "edition.h"

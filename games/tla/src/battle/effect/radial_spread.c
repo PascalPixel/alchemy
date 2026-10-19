@@ -19,9 +19,9 @@ void Camera_WorldToScreen(struct EffectVector *position);
 void Audio_PlayCue(s32 cue);
 void BattleFx_ClearOwnedSlot(struct EffectSlot *slot);
 
-// Places a spark at random around the current owner and sends it 120 pixels
-// along angle 0xc000. Each time EffectSlot_HasPendingTarget returns 0, state 1
-// starts it over and state 2 clears its slot.
+/// Places a spark at random around the current owner and sends it 120 pixels
+/// along angle 0xc000. Each time EffectSlot_HasPendingTarget returns 0, state 1
+/// starts it over and state 2 clears its slot.
 void BattleFx_UpdateRadialSpread(struct EffectSlot *effect) {
   struct EffectVector position;
   struct ObjectRuntime *source;

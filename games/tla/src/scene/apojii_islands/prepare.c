@@ -9,8 +9,8 @@ struct MapBits {
   u8 high : 4;
 };
 
-// The overlay's entry: sets the map mode and screen effect 0x202, then starts
-// each room's own setup.
+/// The overlay's entry: sets the map mode and screen effect 0x202, then starts
+/// each room's own setup.
 s32 Func_02000fb8(void) {
   s32 *effect;
   s16 scene;

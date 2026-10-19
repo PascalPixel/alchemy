@@ -23,9 +23,9 @@ STATIC_ASSERT(sizeof(struct SchedulerTask) == 8);
 STATIC_ASSERT(offsetof(struct SchedulerTask, state) == 4);
 STATIC_ASSERT(offsetof(struct SchedulerTask, mask) == 6);
 
-// A task's order: the high byte picks the pass that runs it, the low byte
-// ranks it within the pass (higher runs first). An odd high byte means the
-// task is suspended, so no pass matches it.
+/// A task's order: the high byte picks the pass that runs it, the low byte
+/// ranks it within the pass (higher runs first). An odd high byte means the
+/// task is suspended, so no pass matches it.
 #define SCHEDULER_KEY_VBLANK 0x480
 #define SCHEDULER_KEY_MAIN_LOOP 0xc80
 

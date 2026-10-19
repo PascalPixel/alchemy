@@ -16,9 +16,9 @@ struct UnitBaseStats {
 
 struct BattleUnit *UnitGet(s32 unitId);
 
-// Raises a unit's base HP by half and base Attack and Defense by a quarter (at
-// least 7/10 of the old values, at most 16383 and 999), from a copy of its base
-// block, then recalculates its stats. No ☀️ twin found.
+/// Raises a unit's base HP by half and base Attack and Defense by a quarter (at
+/// least 7/10 of the old values, at most 16383 and 999), from a copy of its base
+/// block, then recalculates its stats. No ☀️ twin found.
 void Func_08127a0c(s32 unitId) {
   struct UnitBaseStats *saved = Runtime_BumpAllocateAlternatePool(36);
   struct BattleUnit *unit = UnitGet(unitId);

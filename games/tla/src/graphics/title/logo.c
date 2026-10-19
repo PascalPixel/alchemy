@@ -1,11 +1,12 @@
-// Two tables Func_081a6b50, which places the title logo, reads beside the
-// logo's pieces. Their meaning is not yet known; their shape is.
+/// @file
+/// Two tables Func_081a6b50, which places the title logo, reads beside the
+/// logo's pieces. Their meaning is not yet known; their shape is.
 
 #include "types.h"
 
-// Rows of five: a first tile, a count of columns, a duration in frames and
-// an x and y offset. The animation steps a row at a time and stops at the
-// row whose first value is -1.
+/// Rows of five: a first tile, a count of columns, a duration in frames and
+/// an x and y offset. The animation steps a row at a time and stops at the
+/// row whose first value is -1.
 // clang-format off
 const s16 gData_081a8378[] = {
        0, 3, 3,  0,  0,
@@ -47,8 +48,8 @@ const s16 gData_081a8378[] = {
     -1, -1, -1,
 };
 
-// Rows of three: an x and y position and a duration in frames, ending in a
-// row of -1.
+/// Rows of three: an x and y position and a duration in frames, ending in a
+/// row of -1.
 const s16 gData_081a84e6[] = {
     101, 150, 1,
     103, 150, 1,

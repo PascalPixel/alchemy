@@ -66,8 +66,8 @@ void Func_02001d28(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 void Func_02000534(void);
 void Func_02000570(void);
 
-// The rooms' setup: the leader's sprite priority, the two rooms' actors and
-// the sprite of actor 10, by the story flags.
+/// The rooms' setup: the leader's sprite priority, the two rooms' actors and
+/// the sprite of actor 10, by the story flags.
 s32 Func_02000624(void) {
   struct FieldSprite *sprite;
   void *event;

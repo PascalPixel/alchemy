@@ -26,8 +26,8 @@ static inline void MadraCatacombs_Wait(s32 frames) {
   WaitFrames(frames);
 }
 
-// Places actors 10 to 19 in two columns, then sends actors 20 to 29 to them one
-// each.
+/// Places actors 10 to 19 in two columns, then sends actors 20 to 29 to them one
+/// each.
 void Func_02000958(void) {
   u32 i;
   /* FAKEMATCH: the native keeps the counter in r5 and the actor in r6; unpinned

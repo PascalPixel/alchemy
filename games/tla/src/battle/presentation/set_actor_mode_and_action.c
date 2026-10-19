@@ -38,8 +38,8 @@ void *GetMotionRecord(struct MotionObject *object, s32 record_index);
 
 #define ICON_MAX 14
 
-// Cycles the status icon over the slot's conditions every 80 frames, and
-// switches at once when the shown condition ends.
+/// Cycles the status icon over the slot's conditions every 80 frames, and
+/// switches at once when the shown condition ends.
 void BattleStatusIcon_Cycle(struct BattleObj *slot) {
   struct StatusIconEntry *icon;
   struct StatusIconRecord *rec;

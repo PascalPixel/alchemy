@@ -15,8 +15,8 @@ struct ChildRecord {
   struct RecordChild *entries[4];
 };
 
-// Sets the first child's value of each of the object's records and clears the
-// others, hiding every child's frame.
+/// Sets the first child's value of each of the object's records and clears the
+/// others, hiding every child's frame.
 void BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 value) {
   s32 index = 0;
   s32 child_index;

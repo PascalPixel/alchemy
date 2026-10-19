@@ -3,8 +3,8 @@
 void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndCommit(s32 actor, s32 x, s32 z);
 
-// While the leader is no further than z 653, moves the leader to (376, 668)
-// with bit 0 of its byte 90 cleared for the move.
+/// While the leader is no further than z 653, moves the leader to (376, 668)
+/// with bit 0 of its byte 90 cleared for the move.
 void Func_02003b08(void) {
   u8 *flags;
   u8 bit;

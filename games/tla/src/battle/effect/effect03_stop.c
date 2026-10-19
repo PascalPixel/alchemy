@@ -25,14 +25,14 @@ s32 Resource_ResetEntry(u32 entry);
 void BattleFx_UpdateShrinkingOrbitObject(struct ObjectRuntime *particle);
 void Func_080de8d0(struct ObjectRuntime *object);
 
-// Effect 3 cast on a target: runs effect 3, then stops the caster's hook.
+/// Effect 3 cast on a target: runs effect 3, then stops the caster's hook.
 void FieldFx_RunPlyOnTarget(void) {
   FieldFx_RunPly();
   EffectRuntime_StopCurrentObject();
 }
 
-// Eight particles spiral in on the main object, one a frame; then a centre
-// object flashes for 60 frames, emits sparks and flies off.
+/// Eight particles spiral in on the main object, one a frame; then a centre
+/// object flashes for 60 frames, emits sparks and flies off.
 void FieldFx_RunPly(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct ObjectRuntime *target = scene->mainObject;

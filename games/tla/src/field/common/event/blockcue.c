@@ -50,8 +50,8 @@ void Func_080e42d4(void) {
     event->cue = 0x208b;
 }
 
-// The heap slot (a byte offset into Ram_HeapSlots) that holds the RAM copy of
-// the ARM frame decoder while a picture is drawn.
+/// The heap slot (a byte offset into Ram_HeapSlots) that holds the RAM copy of
+/// the ARM frame decoder while a picture is drawn.
 #define HEAP_SLOT_FRAME_DECODER 80
 
 // How a picture's frames are stored.
@@ -72,13 +72,13 @@ typedef void (*FrameDecoder)(const void *source, void *destination, s32 mode);
 
 extern const u8 BattleFx_DecodeFrameCode[];
 extern const u8 BattleFx_DecodeFrameCopyEnd[];
-// The decoder with its tables and work area (constants.ld). The block is
-// larger than the copy, which stops before the work area.
+/// The decoder with its tables and work area (constants.ld). The block is
+/// larger than the copy, which stops before the work area.
 extern u8 BattleFx_DecodeFrameBlockSize[];
 
-// Draws the current frame of a picture into a cleared buffer of the given
-// size. The ARM frame decoder runs from RAM: when no copy is loaded yet, this
-// loads one for the call and releases it afterwards.
+/// Draws the current frame of a picture into a cleared buffer of the given
+/// size. The ARM frame decoder runs from RAM: when no copy is loaded yet, this
+/// loads one for the call and releases it afterwards.
 void Func_080e43a4(struct FrameSource *source, void *buffer, s32 size) {
   s32 decoderLoaded = 1;
   FrameDecoder decode = Ram_HeapSlots->unk4c[1];

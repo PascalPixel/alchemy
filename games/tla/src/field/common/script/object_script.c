@@ -6,9 +6,9 @@
 // table and the work value handlers SC_SET, SC_ADD and SC_CMP call.
 //--------------------------------------------------------------------------
 
-// A command handler takes the object and returns nonzero to go on with
-// the script this frame, zero to stop. The handlers take different views
-// of the object, so the type leaves the parameters unspecified.
+/// A command handler takes the object and returns nonzero to go on with
+/// the script this frame, zero to stop. The handlers take different views
+/// of the object, so the type leaves the parameters unspecified.
 typedef s32 (*ScriptCommandFn)();
 
 struct ScriptOperands;
@@ -142,8 +142,8 @@ void Script_SetOrCompareByte62(struct ScriptOperands *state, s32 operation,
 void Script_SetOrCompareByte63(struct ScriptOperands *state, s32 operation,
                                s32 value);
 
-// Each runs one control command every frame: the command, SC_WAIT(1),
-// SC_LOOP(SC_FOREVER, SC_TOP).
+/// Each runs one control command every frame: the command, SC_WAIT(1),
+/// SC_LOOP(SC_FOREVER, SC_TOP).
 const s32 gData_0802f098[] = {
     SC_CMD_25,
     SC_WAIT(1),
@@ -238,7 +238,7 @@ const s32 gObjectDispatch_EndScript[] = {
     SC_END,
 };
 
-// The handler of each command. 0x31 to 0x35 repeat SC_END's.
+/// The handler of each command. 0x31 to 0x35 repeat SC_END's.
 const ScriptCommandFn gData_0802f204[54] = {
     Script_Wait,            // 0x00 SC_WAIT
     Script_WaitForArrival,                 // 0x01 SC_SYNC
@@ -296,7 +296,7 @@ const ScriptCommandFn gData_0802f204[54] = {
     Script_End,               // 0x35
 };
 
-// The handler of each work value (enum ScriptWork in objcmd.h).
+/// The handler of each work value (enum ScriptWork in objcmd.h).
 const OperandFunc gScript_OperandHandlerTable[41] = {
     Script_SetOrCompareAddress,          // 0x00 SW_SCRIPT
     Script_SetOrCompareCursor,           // 0x01 SW_CURSOR

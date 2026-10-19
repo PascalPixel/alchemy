@@ -24,8 +24,8 @@ void Func_02003364(void) {
 void Func_020026a0(void);
 void Func_02002b84(void);
 
-// Room 5's setup: from entrances other than 1 and 2 it places actors 11 to
-// 20 and copies the map cells flags 0x88c and 0x8ed select.
+/// Room 5's setup: from entrances other than 1 and 2 it places actors 11 to
+/// 20 and copies the map cells flags 0x88c and 0x8ed select.
 void Func_02003404(void) {
   Func_02004180(0);
   Func_02003820(gData_020047ec);

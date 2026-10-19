@@ -4,7 +4,7 @@
 
 extern u16 gFlashNumRemainingBytes;
 
-// Erases a standard sector and programs bytes until completion or an error.
+/// Erases a standard sector and programs bytes until completion or an error.
 u16 ProgramFlashSector(u16 sector, u8 *source) {
   u8 savedCode[64];
   u16 result;

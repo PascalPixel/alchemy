@@ -49,8 +49,8 @@ void Func_0200298c(s32 id) {
   ObjectMotion_SetActionVariant(id, 1);
 }
 
-// The scene that opens with MsgWhatSTheMatter; either answer to its prompt
-// steps the event's message number.
+/// The scene that opens with MsgWhatSTheMatter; either answer to its prompt
+/// steps the event's message number.
 void Func_020029ac(void) {
   ((void (*)())Func_0200560c)();
   Call1((void (*)())Func_02005784, 0);

@@ -32,9 +32,9 @@ s32 Func_02004f2c(s32 id, s32 emote, s32 frames);
 void Func_02004f54(void);
 void Func_02004fcc(s32 value);
 
-// Object 10 turns to the leader, talks and walks to its place while the camera
-// follows; flag 0x9de is set, and object 9's script decides whether two
-// words of gData_0200646c are copied into place.
+/// Object 10 turns to the leader, talks and walks to its place while the camera
+/// follows; flag 0x9de is set, and object 9's script decides whether two
+/// words of gData_0200646c are copied into place.
 void Func_02001048(void) {
   struct ObjectRuntime *object = Object_GetById(9);
 

@@ -1,8 +1,6 @@
-//--------------------------------------------------------------------------
-// resource_obj.c
-// Resources: create/release animated sprite objects and calculate frame
-// durations.
-//--------------------------------------------------------------------------
+/// @file
+/// Resources: create/release animated sprite objects and calculate frame
+/// durations.
 
 #include "edition.h"
 #include "resource.h"
@@ -12,8 +10,8 @@
 
 struct ResourceObjectWork {
   u8 unk00[16];
-  u8 resource; // VRAM cache index.
-  u8 flags;    // Bit 0: do not return the VRAM cache entry.
+  u8 resource; ///< VRAM cache index.
+  u8 flags;    ///< Bit 0: do not return the VRAM cache entry.
   u8 unk12[22];
   void *children[4];
 };
@@ -27,8 +25,8 @@ void ResourceMetadata_ClearRecord(void *destination);
 #include "vram_tab.h"
 #include "ram_buffer.h"
 
-// The sprite as ResourceObject_Create fills it: the image's three attribute
-// words, its layout, then the shadow's three words.
+/// The sprite as ResourceObject_Create fills it: the image's three attribute
+/// words, its layout, then the shadow's three words.
 struct ResourceSprite {
   u32 imageAttributes[3];
   s32 scale;
@@ -51,11 +49,9 @@ struct ResourceSprite {
 
 s32 ResourceMetadata_Register(struct ResourceSprite *sprite, s32 id);
 
-//--------------------------------------------------------------------------
-// Create an animated sprite object for animation id, as ☀️'s function of
-// the same name. Use one of 64 free objects and a VRAM cache entry.
-// Return the object, or NULL on failure.
-//--------------------------------------------------------------------------
+/// Create an animated sprite object for animation id, as ☀️'s function of
+/// the same name. Use one of 64 free objects and a VRAM cache entry.
+/// Return the object, or NULL on failure.
 struct ResourceObject *ResourceObject_Create(s32 id) {
   struct AnimationMetadata *metadata;
   struct ResourceSprite *sprite;
@@ -152,11 +148,9 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
   return (struct ResourceObject *)freeSprite;
 }
 
-//--------------------------------------------------------------------------
-// Release an object.
-// Return the VRAM cache entry unless flags bit 0 is set, release four children,
-// and zero the 56-byte workspace.
-//--------------------------------------------------------------------------
+/// Release an object.
+/// Return the VRAM cache entry unless flags bit 0 is set, release four children,
+/// and zero the 56-byte workspace.
 void ResourceObject_Release(struct ResourceObjectWork *work) {
   volatile u32 zero;
   s32 n;
@@ -182,11 +176,9 @@ void ResourceObject_Release(struct ResourceObjectWork *work) {
 #include "types.h"
 #include "scene.h"
 
-//--------------------------------------------------------------------------
-// Sum the first cnt frame durations of animation id's entry no.
-// Commands are two bytes (command, value); 254, 241, 253, and 239 terminate.
-// Add values for commands 245, 255, and commands <= 238.
-//--------------------------------------------------------------------------
+/// Sum the first cnt frame durations of animation id's entry no.
+/// Commands are two bytes (command, value); 254, 241, 253, and 239 terminate.
+/// Add values for commands 245, 255, and commands <= 238.
 s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt) {
   struct AnimationMetadata *info;
   u8 *p;

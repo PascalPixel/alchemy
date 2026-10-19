@@ -4,9 +4,9 @@
 #include "object_runtime.h"
 #include "ram_buffer.h"
 
-// Writes the object's position on screen, in pixels, to position[0] and
-// position[1]; an animated object is raised by its frame box. Returns -1 when
-// the object does not exist.
+/// Writes the object's position on screen, in pixels, to position[0] and
+/// position[1]; an animated object is raised by its frame box. Returns -1 when
+/// the object does not exist.
 s32 Func_080d5bec(s32 objectId, s32 *position) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
   s32 *camera;

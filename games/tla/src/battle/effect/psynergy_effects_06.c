@@ -19,5 +19,5 @@ void BattleFx_PrepareBufferInterpolation(void);
 void WaitFrames(s32 frames);
 s32 EventRuntime_GetControlledOwner(void);
 
-// Runs field effect 18 (Func_080e5d5c) for the request dispatcher.
+/// Runs field effect 18 (Func_080e5d5c) for the request dispatcher.
 void BattleFx_CallEffect18(void) { Func_080e5d5c(); }

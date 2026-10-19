@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-// Heap-slot 0x9c workspace: eight slots and 128 nodes.
+/// Heap-slot 0x9c workspace: eight slots and 128 nodes.
 struct Work9cNode {
   struct Work9cNode *next;
   s32 x;

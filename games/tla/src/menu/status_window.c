@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-// The character menu work block, as this function reads it.
+/// The character menu work block, as this function reads it.
 struct State080a8088 {
   u8 unk000[0x28];
   s32 handle;
@@ -22,10 +22,10 @@ void *SideObject_CreateFar(s32, s32, s32, s32, s32, s32);
 void Menu_SpawnIconEntries(struct State080a8088 *state, s32 handle);
 void Func_080ff370(s32, s32, s32); // draws the status ailments
 
-// Creates the status window and its side object the first time, spawns the
-// icon entries in mode 3, then draws the status ailments (with 0x100 when the
-// window was just made). ☀️'s version also creates eight entry objects; ⚓️'s
-// does not. The work block is ⚓️'s (window 0x28, object 0x170, mode 0x21c).
+/// Creates the status window and its side object the first time, spawns the
+/// icon entries in mode 3, then draws the status ailments (with 0x100 when the
+/// window was just made). ☀️'s version also creates eight entry objects; ⚓️'s
+/// does not. The work block is ⚓️'s (window 0x28, object 0x170, mode 0x21c).
 void Menu_CreateWindowAndEntryObjects(s32 resource) {
   s32 created;
   s32 handle;

@@ -17,9 +17,9 @@ void Map_EnableUpdateCallback(void);
 void Map_DisableUpdateCallback(void);
 u32 Random16Far(void);
 
-// On most frames, moves the object to a random spot: x 176 to 431 pixels, y and
-// z up to 31 and 127 pixels past the leader's. Then it keeps its action as the
-// previous one and sets mode 9 after action 212, mode 10 otherwise.
+/// On most frames, moves the object to a random spot: x 176 to 431 pixels, y and
+/// z up to 31 and 127 pixels past the leader's. Then it keeps its action as the
+/// previous one and sets mode 9 after action 212, mode 10 otherwise.
 void Func_020004d4(struct FieldActor *object) {
   struct FieldActor *leader = Object_GetById(gPartyState.currentOwner);
   struct ObjectRuntime *self = (struct ObjectRuntime *)object;

@@ -19,7 +19,7 @@ static __inline__ void FillWords_(void *destination, s32 size, u32 value) {
   Iwram_FillWords(destination, size, value);
 }
 
-// The battle effect work, as far as the canvas transfer reads it.
+/// The battle effect work, as far as the canvas transfer reads it.
 struct CanvasWork {
   u8 unk0000[0x7780];
   s32 transferMode;
@@ -35,8 +35,8 @@ void ColorBuffer_Darken(void *source, s32 amount, void *destination, s32 size);
 void ColorBuffer_Brighten(void *source, s32 amount, void *destination,
                           s32 size);
 
-// The frame callback that copies the effect canvas to BG character block 1
-// when a transfer is pending, in the way the transfer mode asks for.
+/// The frame callback that copies the effect canvas to BG character block 1
+/// when a transfer is pending, in the way the transfer mode asks for.
 void BattleFx_ProcessPendingGraphicsTransfer(void) {
   struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
   void *source = Ram_HeapSlots->battleFxWork[1];
@@ -81,8 +81,8 @@ void BattleFx_ProcessPendingGraphicsTransfer(void) {
   }
 }
 
-// When a transfer is pending, copies the 0x1000-byte canvas at work 0x6780
-// to the stamp's tiles (the pointer at work 0x7b74), then clears it.
+/// When a transfer is pending, copies the 0x1000-byte canvas at work 0x6780
+/// to the stamp's tiles (the pointer at work 0x7b74), then clears it.
 void BattleFx_ProcessPendingStampTransfer(void) {
   u8 *work = Ram_HeapSlots->battleFxWork[0];
   u32 ime;
@@ -100,8 +100,8 @@ void BattleFx_ProcessPendingStampTransfer(void) {
   }
 }
 
-// The same callback for the 0x7800-byte canvas in the map cell buffer, copied
-// to BG character block 2.
+/// The same callback for the 0x7800-byte canvas in the map cell buffer, copied
+/// to BG character block 2.
 void BattleFx_FlushPendingGraphicsTransfer(void) {
   struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
   void *source = Ram_MapCellBuffer;
@@ -140,7 +140,7 @@ void BattleFx_FlushPendingGraphicsTransfer(void) {
   }
 }
 
-// The same for the canvas in the second effect work block.
+/// The same for the canvas in the second effect work block.
 void BattleFx_ProcessPendingBlock2Transfer(void) {
   struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
   void *source;

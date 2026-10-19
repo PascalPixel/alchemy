@@ -9,9 +9,9 @@ void UiWork_ResetCounters(s32 x);
 void UiWork_DrawByAttributes(struct UiWindow *window);
 void UiWork_WaitWindowDuration(void *work);
 
-// Opens the first free window at x, y with width and height; attrs bits 8,
-// 32, 64, 128 and 0x100 become window flags, and bit 2 draws it at once
-// instead of waiting for it to open.
+/// Opens the first free window at x, y with width and height; attrs bits 8,
+/// 32, 64, 128 and 0x100 become window flags, and bit 2 draws it at once
+/// instead of waiting for it to open.
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 attrs) {
   struct UiWindow *slot;

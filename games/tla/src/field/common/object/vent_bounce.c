@@ -1,10 +1,11 @@
-// The motion of an object a vent throws out, shared by overlays 678 and 67C.
-// The including file has its overlay's local header (struct VentWork,
-// VENT_WORK, DIFF) and names the two functions: VENT_TOUCHING and
-// VENT_BOUNCE.
+/// @file
+/// The motion of an object a vent throws out, shared by overlays 678 and 67C.
+/// The including file has its overlay's local header (struct VentWork,
+/// VENT_WORK, DIFF) and names the two functions: VENT_TOUCHING and
+/// VENT_BOUNCE.
 
-// Whether object a rests on object b: within 0xc0000 of it in x and 0x80000
-// in z, and up to 0xfffff above it.
+/// Whether object a rests on object b: within 0xc0000 of it in x and 0x80000
+/// in z, and up to 0xfffff above it.
 s32 VENT_TOUCHING(struct ObjectRuntime *a, struct ObjectRuntime *b) {
   if (DIFF(a->x, b->x) < 0xc0000) {
     if ((u32)(a->y - b->y - 1) <= 0xffffe) {
@@ -15,9 +16,9 @@ s32 VENT_TOUCHING(struct ObjectRuntime *a, struct ObjectRuntime *b) {
   return 0;
 }
 
-// Moves the object by its velocities, slows it in x and z, grows and spins
-// its sprite, and stops its fall in z when it lands on the leader or on one
-// of the objects the vent work lists.
+/// Moves the object by its velocities, slows it in x and z, grows and spins
+/// its sprite, and stops its fall in z when it lands on the leader or on one
+/// of the objects the vent work lists.
 void VENT_BOUNCE(struct ObjectRuntime *object) {
   struct VentWork *work = VENT_WORK;
   struct ObjectRuntime *other = Object_GetById(gPartyState.currentOwner);

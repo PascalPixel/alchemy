@@ -36,8 +36,8 @@ u32 SaveState_FindLatestSequence(s32 recordId) {
   return latestSequence;
 }
 
-// Reads the summary of the latest save in each of the three files, clearing
-// it first; returns how many files have one.
+/// Reads the summary of the latest save in each of the three files, clearing
+/// it first; returns how many files have one.
 s32 SaveState_LoadSummaryRecords(void) {
   struct SaveWorkspace *work = Ram_HeapSlots->serialWork;
   struct SaveSummary *summary;

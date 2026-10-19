@@ -12,11 +12,11 @@ struct Panel_02001804 {
 
 void Func_020021f8(s32 source, void *work);
 
-// Unpacks source into a scratch block, then writes a 16 by 8 block of tiles
-// at the panel's cell into the BG map at 0x06002000 and into the window
-// tilemap's shadow: palette 15, the tile of each cell the row times the
-// panel's stride plus the column. The loops are the listing's: no loop pass
-// touches them, so the tile is rebuilt and the mask reloaded on every pass.
+/// Unpacks source into a scratch block, then writes a 16 by 8 block of tiles
+/// at the panel's cell into the BG map at 0x06002000 and into the window
+/// tilemap's shadow: palette 15, the tile of each cell the row times the
+/// panel's stride plus the column. The loops are the listing's: no loop pass
+/// touches them, so the tile is rebuilt and the mask reloaded on every pass.
 void Func_02001804(struct Panel_02001804 *panel, s32 sourceArg) {
   /* FAKEMATCH(pin): the shadow pointer in r5; as a plain local, 7 of 53
    * instructions differ in tla-en. */

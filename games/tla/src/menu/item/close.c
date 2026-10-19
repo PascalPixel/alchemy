@@ -96,7 +96,7 @@ s32 ItemMenu_SelectMember(s32 pane) {
 }
 
 #if LANGUAGE != LANGUAGE_JAPANESE
-// "L+A: Arrange items"; the next message is "R: View equipment".
+/// "L+A: Arrange items"; the next message is "R: View equipment".
 extern u8 MsgArrangeItemsHelp[];
 
 s32 UiWindow_UpdateOrCreate(void **window, s32 x, s32 y, s32 width, s32 height,
@@ -118,13 +118,13 @@ void Audio_PlayCue(s32 cue);
 s32 ItemMenu_CountItems(s32 owner);
 s32 Func_08104c00(s32 *selection, s32 count, s32 columns);
 
-// The party member row of the item menu, as The Broken Seal's
-// ItemMenu_RunOwnerSelection: moving shows each member's items and status,
-// holding R their equipment; L + A sorts the member's items, a new order each
-// press; A chooses a member who has items and B backs out. The members are
-// paged four at a time by Func_08104c00, which moves the selection and says
-// what to redraw (2 for a new page). Returns the chosen member's id, or -1.
-// Japanese, which draws the key names as separate strings, keeps its scaffold.
+/// The party member row of the item menu, as The Broken Seal's
+/// ItemMenu_RunOwnerSelection: moving shows each member's items and status,
+/// holding R their equipment; L + A sorts the member's items, a new order each
+/// press; A chooses a member who has items and B backs out. The members are
+/// paged four at a time by Func_08104c00, which moves the selection and says
+/// what to redraw (2 for a new page). Returns the chosen member's id, or -1.
+/// Japanese, which draws the key names as separate strings, keeps its scaffold.
 s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s32 selection = menu->paneIndex[0];

@@ -29,5 +29,5 @@ void BattleFx_RunVisibilityTransition(void) {
   }
 }
 
-// Returns the flag entry table, 20-byte entries ended by a zero flag.
+/// Returns the flag entry table, 20-byte entries ended by a zero flag.
 const u8 *FlagEntries_GetTable(void) { return gData_080f1140; }

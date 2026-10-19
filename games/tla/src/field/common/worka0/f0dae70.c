@@ -1,6 +1,6 @@
 #include "worka0.h"
 
-// Returns the slot among WORK_A4's eight that holds id, or NULL.
+/// Returns the slot among WORK_A4's eight that holds id, or NULL.
 struct WorkA4Slot *Func_080dae70(s32 id) {
   struct WorkA4 *work = WORK_A4;
   struct WorkA4Slot *found = NULL;

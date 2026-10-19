@@ -1,7 +1,7 @@
 #include "object_dispatch.h"
 #include "animspr.h"
 
-// Points an object at its script and clears its script state.
+/// Points an object at its script and clears its script state.
 void ObjectDispatch_Initialize(struct DispatchObject *object,
                                const s32 *script) {
   if (object != 0) {

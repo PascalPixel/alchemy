@@ -1,7 +1,7 @@
 #include "types.h"
 
-// Fills the 32x30 tilemap at screen block 31: the upper 15 rows from tile
-// 0x210 on, the lower 15 from tile 48 on, each row repeating 16 tiles.
+/// Fills the 32x30 tilemap at screen block 31: the upper 15 rows from tile
+/// 0x210 on, the lower 15 from tile 48 on, each row repeating 16 tiles.
 void BattleFx_BuildRepeatingTilemap(void) {
   u16 *dst = (u16 *)0x0600f800;
   s32 y;

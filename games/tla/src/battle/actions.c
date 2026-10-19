@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// actions.c
-// Battle: build turn actions and convert formation positions.
-//--------------------------------------------------------------------------
+/// @file
+/// Battle: build turn actions and convert formation positions.
 
 #include "types.h"
 #include "edition.h"
@@ -24,10 +22,8 @@ void GameFlag_ClearBit(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 
-//--------------------------------------------------------------------------
-// Copy BG palette banks 15 to 14 and 5 to 4, adjusting brightness.
-// offset: amount added to each RGB component, clamped to 0-31.
-//--------------------------------------------------------------------------
+/// Copy BG palette banks 15 to 14 and 5 to 4, adjusting brightness.
+/// offset: amount added to each RGB component, clamped to 0-31.
 void Palette_CopyBanksWithBrightnessOffset(s32 offset) {
   s32 n;
   s32 bank;
@@ -76,12 +72,10 @@ void Palette_CopyBanksWithBrightnessOffset(s32 offset) {
   } while (n <= 1);
 }
 
-//--------------------------------------------------------------------------
-// Build this turn's actions and sort them by descending priority.
-// Collect ally commands and either link opponents' or enemies' actions.
-// Return the action count, or a negative value on cancellation or link failure.
-// acts: action list, up to 20 entries.
-//--------------------------------------------------------------------------
+/// Build this turn's actions and sort them by descending priority.
+/// Collect ally commands and either link opponents' or enemies' actions.
+/// Return the action count, or a negative value on cancellation or link failure.
+/// acts: action list, up to 20 entries.
 s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts) {
   struct BattleUnit *unit;
   struct BattleWork *work;
@@ -160,10 +154,8 @@ finish:
   return cnt;
 }
 
-//--------------------------------------------------------------------------
-// Return the unit ID at a formation position.
-// slot: low 4 bits are the position; 0x80 selects the enemy formation.
-//--------------------------------------------------------------------------
+/// Return the unit ID at a formation position.
+/// slot: low 4 bits are the position; 0x80 selects the enemy formation.
 s16 Battle_GetTaggedSlotValue(s32 slot) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
 
@@ -172,11 +164,9 @@ s16 Battle_GetTaggedSlotValue(s32 slot) {
   return work->partyUnits[slot & 0xf];
 }
 
-//--------------------------------------------------------------------------
-// Return a unit's formation position, or -1 if absent.
-// Allies use 0x100 | position; enemies use 0x180 | position.
-// id: unit ID (0-7 allies, all others enemies).
-//--------------------------------------------------------------------------
+/// Return a unit's formation position, or -1 if absent.
+/// Allies use 0x100 | position; enemies use 0x180 | position.
+/// id: unit ID (0-7 allies, all others enemies).
 s32 Battle_FindTaggedSlotByValue(u32 id) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   s32 i;

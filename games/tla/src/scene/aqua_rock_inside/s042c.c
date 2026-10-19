@@ -1,8 +1,8 @@
 #include "local.h"
 
-// When object 10 reaches row 12, or object 11 column 51, stops its motion,
-// lifts it one pixel and sets its flag; object 10 also redraws two blocks of
-// row 12.
+/// When object 10 reaches row 12, or object 11 column 51, stops its motion,
+/// lifts it one pixel and sets its flag; object 10 also redraws two blocks of
+/// row 12.
 void Func_0200042c(s32 unused, s32 id) {
   struct ObjectRuntime *object = Object_GetById(id);
 

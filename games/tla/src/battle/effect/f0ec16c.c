@@ -4,8 +4,8 @@
 
 s32 EventRuntime_GetControlledOwner(void);
 
-// Moves the controlled object to (x, z) converted by fixed scale factors
-// (x / 853, z / 640 after offsets) and puts the camera on it.
+/// Moves the controlled object to (x, z) converted by fixed scale factors
+/// (x / 853, z / 640 after offsets) and puts the camera on it.
 void Func_080ec16c(s32 x, s32 z) {
   s32 owner = EventRuntime_GetControlledOwner();
   s32 *camera = *(s32 **)Ram_HeapSlots->mapWork;

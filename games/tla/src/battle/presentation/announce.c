@@ -9,8 +9,8 @@ void UiText_DrawQuantity(s32 value, s32 slot);
 void UiText_ShowMessageAndWaitCoreFar(s32 message);
 void BattlePresentation_WaitForAdvance(void);
 
-// Announces each enemy that appears, then who strikes first. The Broken
-// Seal's BattleIntro_AnnounceEncounter.
+/// Announces each enemy that appears, then who strikes first. The Broken
+/// Seal's BattleIntro_AnnounceEncounter.
 void Func_08118bcc(s32 enemyCount) {
   s16 enemies[8];
   struct BattleWork *battle;

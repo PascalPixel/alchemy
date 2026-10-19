@@ -22,9 +22,9 @@ static __inline__ s32 BattlePres_FillWords(void *destination, s32 size,
   return Iwram_FillWords(destination, size, value);
 }
 
-// Sends the 256x128 8bpp canvas to VRAM 0x06003500 on the frames its transfer
-// is pending, then clears or fades it; a scheduler callback, as The Broken
-// Seal's.
+/// Sends the 256x128 8bpp canvas to VRAM 0x06003500 on the frames its transfer
+/// is pending, then clears or fades it; a scheduler callback, as The Broken
+/// Seal's.
 void BattlePres_ProcessPendingTileTransfer(void) {
   struct BattleFxTransferWork *work;
   u8 *buf;

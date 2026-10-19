@@ -17,9 +17,9 @@ struct AnimatedSprite {
   struct SpriteFrames *frames;
 };
 
-// Steps the sprite through a four-frame cycle on the actor's timer, as
-// overlay 68c's Func_02001398 does, but leaves the next frame alone on the
-// fourth step.
+/// Steps the sprite through a four-frame cycle on the actor's timer, as
+/// overlay 68c's Func_02001398 does, but leaves the next frame alone on the
+/// fourth step.
 void Func_080e9e8c(struct FieldActor *object) {
   struct AnimatedSprite *sprite = (struct AnimatedSprite *)object->sprite;
   struct SpriteFrames *frames = sprite->frames;
@@ -59,7 +59,7 @@ s32 ArcTan2(s32 y, s32 x);
 s32 Trig_Sin(s32 angle);
 s32 Trig_Cos(s32 angle);
 
-// Approach the target by speed; clamp to it on overshoot.
+/// Approach the target by speed; clamp to it on overshoot.
 void Motion_StepTowardTarget(struct Chase *chase, s32 speed) {
   s32 dx = chase->targetX - chase->x;
   s32 dz = chase->targetZ - chase->z;

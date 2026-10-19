@@ -13,7 +13,7 @@ void Func_020048a4(s32 actor, s32 flags);
 void Func_0200494c(s32 a);
 void Motion_SetVarCbAndRefresh(s32 id, s32 variant);
 
-// Talking to one of the party: each answers with its own message.
+/// Talking to one of the party: each answers with its own message.
 void Func_02000970(s32 actor) {
   Func_020047d4();
   Func_0200494c(0);

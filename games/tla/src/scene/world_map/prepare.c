@@ -19,8 +19,8 @@ void Func_02004e30(s32 cue);
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-// The djinn tutorial, as The Broken Seal's WorldMap_ShowDjinnTutorial. With
-// flag 0x175 set each message is offset by MsgDjinnGiveTutorialB less A.
+/// The djinn tutorial, as The Broken Seal's WorldMap_ShowDjinnTutorial. With
+/// flag 0x175 set each message is offset by MsgDjinnGiveTutorialB less A.
 void Func_020011fc(void) {
   Func_02004db0();
   Func_02004df8(0x10000, 6);

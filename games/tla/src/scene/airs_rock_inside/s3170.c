@@ -4,8 +4,8 @@ s32 Func_02000690(u32 layer, s32 x, s32 y);
 void Func_02005efc(s32 countdown);
 void ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 
-// When layer 1's cell at the leader's x and z - 1 reads 30, runs the four
-// steps 65, 66, 67 and 62 and moves the leader to (312, 792).
+/// When layer 1's cell at the leader's x and z - 1 reads 30, runs the four
+/// steps 65, 66, 67 and 62 and moves the leader to (312, 792).
 void Func_02003170(void) {
   struct FieldActor *leader = Object_GetById(gPartyState.currentOwner);
   s32 width;

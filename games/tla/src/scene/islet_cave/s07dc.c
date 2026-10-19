@@ -14,8 +14,8 @@ static __inline__ void Func_02001234_(s32 a, s32 b, s32 c, s32 d, s32 e,
   Func_02001234(a, b, c, d, e, f);
 }
 
-// Readies object id: when the flag is set, places it at (x, z) in cells;
-// marks it, then calls Func_02001234 with the cell to the left of it.
+/// Readies object id: when the flag is set, places it at (x, z) in cells;
+/// marks it, then calls Func_02001234 with the cell to the left of it.
 void Func_020007dc(s32 id, s32 a, s32 b, s32 x, s32 z, s32 unused, s32 flag) {
   struct ObjectRuntime *object = Object_GetById(id);
 
@@ -36,7 +36,7 @@ void Func_020007dc(s32 id, s32 a, s32 b, s32 x, s32 z, s32 unused, s32 flag) {
   }
 }
 
-// As Func_020007dc, with the cell above the object.
+/// As Func_020007dc, with the cell above the object.
 void Func_02000848(s32 id, s32 a, s32 bArg, s32 x, s32 z, s32 unused,
                    s32 flag) {
   struct ObjectRuntime *object;

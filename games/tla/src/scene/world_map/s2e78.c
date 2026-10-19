@@ -40,8 +40,8 @@ static __inline__ void Func_02004d08_(s32 actor, s32 value, s32 frames) {
   Func_02004d08(actor, value, frames);
 }
 
-// The leader is hidden and released, the screen fades and the camera moves;
-// once a key is held the scene changes to SceneId_Ov667.
+/// The leader is hidden and released, the screen fades and the camera moves;
+/// once a key is held the scene changes to SceneId_Ov667.
 void Func_02002e00(void) {
   Object_GetById(gPartyState.currentOwner)->scaleX = 0;
   ObjectDispatch_SetSingleChildFlags(Object_GetById(gPartyState.currentOwner),

@@ -12,13 +12,13 @@ void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32 sprite);
 void UiWork_FinalizePendingCoreFar(void);
 void Object_WaitUntilChildValueDiffers(s32 actor, s32 value);
 
-// The event command "choose yes or no", as ☀️'s
-// Event_AskYesNoWithActorAnimation (games/tbs/src/object/psynergy_effects.c):
-// waits for the message, asks yes or no below it or above it when the message
-// windows reach past row 15, and the speaker nods (animation 3) at yes and
-// shakes its head (4) at no. ⚓️ drops the wait for released keys, waits
-// (2 - event mode) * 3 frames, passes the name and its width and a third value
-// to the menu, and skips the animation wait in event mode 2.
+/// The event command "choose yes or no", as ☀️'s
+/// Event_AskYesNoWithActorAnimation (games/tbs/src/object/psynergy_effects.c):
+/// waits for the message, asks yes or no below it or above it when the message
+/// windows reach past row 15, and the speaker nods (animation 3) at yes and
+/// shakes its head (4) at no. ⚓️ drops the wait for released keys, waits
+/// (2 - event mode) * 3 frames, passes the name and its width and a third value
+/// to the menu, and skips the animation wait in event mode 2.
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   u8 *work = Ram_HeapSlots->eventWork;
   s32 sprite = *Scene_FindActorPlacement(*(s32 *)(work + 0x1e0));

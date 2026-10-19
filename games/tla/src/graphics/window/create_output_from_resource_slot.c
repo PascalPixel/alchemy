@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// create_output_from_resource_slot.c
-// Display: place an ability icon in a window as a sprite.
-//--------------------------------------------------------------------------
+/// @file
+/// Display: place an ability icon in a window as a sprite.
 
 #include "battle.h"
 #include "debug.h"
@@ -18,13 +16,11 @@
 #include "resource.h"
 #include "vram_tab.h"
 
-//--------------------------------------------------------------------------
-// Load the icon into a free VRAM cache slot and draw a 16x16 sprite.
-// Do nothing if no slot is free.
-// input: destination window.
-// x, y: position within the window, in pixels.
-// ability: ability index.
-//--------------------------------------------------------------------------
+/// Load the icon into a free VRAM cache slot and draw a 16x16 sprite.
+/// Do nothing if no slot is free.
+/// input: destination window.
+/// x, y: position within the window, in pixels.
+/// ability: ability index.
 s32 Ui_CreateOutputFromResourceSlot(struct RenderInput *input, s32 x, s32 y,
                                     s32 ability) {
   s32 slot;

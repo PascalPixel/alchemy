@@ -236,7 +236,7 @@ L_0200854a:
   return;
 }
 
-// Object 10's talk, and its exchange of the party's item 0x1c4 for item 0x1c5.
+/// Object 10's talk, and its exchange of the party's item 0x1c4 for item 0x1c5.
 void Func_02000568(void) {
   struct ObjectRuntime *leader;
   struct ObjectRuntime *object;

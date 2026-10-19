@@ -20,9 +20,9 @@ void Func_02004fcc(s32 value);
 void Func_02004fdc(void);
 void Func_02004ff4(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
-// Unless Func_02004dec(2, ...) holds, copies map cell (36, 23) to (38, 25),
-// moves a leader standing on that cell aside, and sets flag 0x30a, or 0x9bf
-// once flag 0x927 is set.
+/// Unless Func_02004dec(2, ...) holds, copies map cell (36, 23) to (38, 25),
+/// moves a leader standing on that cell aside, and sets flag 0x30a, or 0x9bf
+/// once flag 0x927 is set.
 void Func_02000b6c(void) {
   struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
 

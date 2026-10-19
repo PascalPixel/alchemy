@@ -1,7 +1,8 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
-// GRAPHICS
+/// @file
+/// GRAPHICS
 
 #include "types.h"
 #include "edition.h"

@@ -16,9 +16,9 @@ void ResourceMetadata_ClearRecordFar(void *record);
 // slot's name (Func_080dbe08) and give Func_080d3b28 to other code; those two
 // editions keep it on their scaffold (S4).
 #if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_ITALIAN)
-// Gives an actor's sprite a still picture: resource, drawn by Func_08038248
-// into a cleared 128-byte buffer, or a blank one when bit 15 is set, loaded
-// into the sprite's VRAM block as its tile.
+/// Gives an actor's sprite a still picture: resource, drawn by Func_08038248
+/// into a cleared 128-byte buffer, or a blank one when bit 15 is set, loaded
+/// into the sprite's VRAM block as its tile.
 void Func_080d3b28(u32 id, s32 resource) {
   struct ObjectRuntime *object = Object_GetById(id);
   struct FieldSprite *sprite;

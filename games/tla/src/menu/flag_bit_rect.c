@@ -9,9 +9,9 @@ s32 Func_08040798(s32 selection);
 s32 Func_08043690(void);
 s32 Func_080400e8(void);
 
-// Runs the save screen's selection until a choice completes: saving (refused
-// while flag 0x17c or 0x17d is set), sleep mode or the options. Returns -1
-// when the screen is cancelled and 0 otherwise.
+/// Runs the save screen's selection until a choice completes: saving (refused
+/// while flag 0x17c or 0x17d is set), sleep mode or the options. Returns -1
+/// when the screen is cancelled and 0 otherwise.
 s32 Func_0804e0d0(void) {
   s32 selection = 0;
 

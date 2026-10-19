@@ -1,6 +1,7 @@
-// A character's HP and PP, drawn as two rows of current and maximum figures,
-// and the right-aligned number writer the international editions draw them
-// with.
+/// @file
+/// A character's HP and PP, drawn as two rows of current and maximum figures,
+/// and the right-aligned number writer the international editions draw them
+/// with.
 
 #include "battle.h"
 #include "debug.h"
@@ -17,15 +18,15 @@
 #include "battle_unit.h"
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-// The pixels the field allows each digit. The Latin font's digits are 7
-// pixels wide, so the digits themselves take a pixel less each.
+/// The pixels the field allows each digit. The Latin font's digits are 7
+/// pixels wide, so the digits themselves take a pixel less each.
 #define FIELD_PIXELS_PER_DIGIT 8
 
-// Returns how many decimal digits number has, but at least 2: 0-99 give 2,
-// 100-999 give 3, 1000-9999 give 4. The count starts with the units digit,
-// adds one for each division by ten that leaves 10 or more, then adds the
-// leading digit; a number under 10 has its one digit counted as both, which
-// is where the minimum of 2 comes from.
+/// Returns how many decimal digits number has, but at least 2: 0-99 give 2,
+/// 100-999 give 3, 1000-9999 give 4. The count starts with the units digit,
+/// adds one for each division by ten that leaves 10 or more, then adds the
+/// leading digit; a number under 10 has its one digit counted as both, which
+/// is where the minimum of 2 comes from.
 static inline s32 CountDigitsAtLeastTwo(s32 number) {
   s32 count;
 
@@ -41,26 +42,26 @@ static inline s32 CountDigitsAtLeastTwo(s32 number) {
   return count;
 }
 
-// Draws number right-aligned in a field that ends at pixel column x and
-// allows 8 pixels for each digit, at least two digits wide.
-//
-// The international editions draw a character's HP and PP with it
-// (Ui_DrawValuePairRows). The Japanese editions draw those figures in
-// four-character fields padded with spaces, which keeps the digits in line
-// because the Japanese font's space is as wide as a digit (7 pixels). The
-// Latin font's space is 5 pixels, so here each figure gets a field as wide
-// as its digits instead.
-//
-// The number writer draws the digits 7 pixels apart, so a number ends about
-// a pixel per digit before x: 99 ends 2 pixels before it, 100 ends 3. A
-// number under 10 draws as a 5-pixel space and its digit, and ends 4 pixels
-// before x.
-//
-// number: the value to draw, 0 or more
-// window: the window to draw in, its struct RenderInput pointer held as an
-//         s32, as its callers hold it
-// x:      the field's right edge, in pixels within the window
-// y:      the pixel row of the text, within the window
+/// Draws number right-aligned in a field that ends at pixel column x and
+/// allows 8 pixels for each digit, at least two digits wide.
+///
+/// The international editions draw a character's HP and PP with it
+/// (Ui_DrawValuePairRows). The Japanese editions draw those figures in
+/// four-character fields padded with spaces, which keeps the digits in line
+/// because the Japanese font's space is as wide as a digit (7 pixels). The
+/// Latin font's space is 5 pixels, so here each figure gets a field as wide
+/// as its digits instead.
+///
+/// The number writer draws the digits 7 pixels apart, so a number ends about
+/// a pixel per digit before x: 99 ends 2 pixels before it, 100 ends 3. A
+/// number under 10 draws as a 5-pixel space and its digit, and ends 4 pixels
+/// before x.
+///
+/// number: the value to draw, 0 or more
+/// window: the window to draw in, its struct RenderInput pointer held as an
+///         s32, as its callers hold it
+/// x:      the field's right edge, in pixels within the window
+/// y:      the pixel row of the text, within the window
 void UiText_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y) {
   s32 width = CountDigitsAtLeastTwo(number);
 
@@ -73,14 +74,14 @@ void UiText_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y) {
 
 #endif
 
-// Draws a character's HP and PP into window as two rows, "HP current/maximum"
-// at pixel row 40 and "PP current/maximum" at row 48. Current HP is drawn in
-// colour 4 when it is below a quarter of maximum HP and in colour 2 at 0;
-// then the colour goes back to 15, the default text colour.
-//
-// unit:   the character whose figures are drawn
-// window: the window to draw in, its struct RenderInput pointer held as an
-//         s32
+/// Draws a character's HP and PP into window as two rows, "HP current/maximum"
+/// at pixel row 40 and "PP current/maximum" at row 48. Current HP is drawn in
+/// colour 4 when it is below a quarter of maximum HP and in colour 2 at 0;
+/// then the colour goes back to 15, the default text colour.
+///
+/// unit:   the character whose figures are drawn
+/// window: the window to draw in, its struct RenderInput pointer held as an
+///         s32
 void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 window) {
   // Each figure in turn, as an s16. Read straight from unit, the figures
   // compile differently.

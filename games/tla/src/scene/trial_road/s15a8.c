@@ -77,8 +77,8 @@ void Func_020017e0(void) {
   Func_02005998(13, 4 - count);
 }
 
-// When the object stands in column 8, sets flag 0x9fc, stops its motion and
-// lifts it one pixel.
+/// When the object stands in column 8, sets flag 0x9fc, stops its motion and
+/// lifts it one pixel.
 void Func_0200185c(s32 a, s32 id) {
   struct ObjectRuntime *object = Object_GetById(id);
 

@@ -4,8 +4,8 @@
 #include "scene_ids.h"
 #include "field_event.h"
 
-// Import stubs: the event runtime's begin and end, and the pending
-// actions' resolution.
+/// Import stubs: the event runtime's begin and end, and the pending
+/// actions' resolution.
 void Func_02000fcc(void);
 void Func_02000fd4(void);
 void Func_0200104c(s32 skip);
@@ -13,9 +13,9 @@ void Func_0200043c(void *cells, s32 index);
 extern u32 gData_0200117c[];
 extern u32 gData_020011cc[];
 
-// For each of cells 0 to 3 of gData_0200117c whose flag (0x303 to 0x306) is
-// still clear, calls Func_0200043c and sets the flag; the event runtime is
-// begun before the first and ended after the last.
+/// For each of cells 0 to 3 of gData_0200117c whose flag (0x303 to 0x306) is
+/// still clear, calls Func_0200043c and sets the flag; the event runtime is
+/// begun before the first and ended after the last.
 void Func_020005ac(void) {
   s16 count = 0;
 
@@ -54,9 +54,9 @@ void Func_020005ac(void) {
     Func_02000fd4();
 }
 
-// For each of cells 0 to 2 of gData_020011cc whose flag (0x30a to 0x30c) is
-// still clear, calls Func_0200043c and sets the flag; the event runtime is
-// begun before the first and ended after the last.
+/// For each of cells 0 to 2 of gData_020011cc whose flag (0x30a to 0x30c) is
+/// still clear, calls Func_0200043c and sets the flag; the event runtime is
+/// begun before the first and ended after the last.
 void Func_02000684(void) {
   s16 count = 0;
 
@@ -99,9 +99,9 @@ void Func_02000728(void) {
 
 struct FieldActor *Object_GetById(s32 id);
 
-// Called through the scene table with an object id: in each of the first
-// four rooms, sets a flag when object 8 to 11 is at a given x; object 11 at
-// a given x and z in the second room runs Func_02000728 instead.
+/// Called through the scene table with an object id: in each of the first
+/// four rooms, sets a flag when object 8 to 11 is at a given x; object 11 at
+/// a given x and z in the second room runs Func_02000728 instead.
 void Func_02000760(s32 unused, s32 id) {
   struct FieldActor *object = Object_GetById(id);
 

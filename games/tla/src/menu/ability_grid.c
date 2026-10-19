@@ -18,13 +18,13 @@ void UiWork_Finalize(struct RenderInput *window, s32 release);
 s32 Party_FindOwnerWithActionFar(s32 action);
 void *UnitGet(s32 owner);
 
-// The pressed keys, read again at each test.
+/// The pressed keys, read again at each test.
 #define KEYS_PRESSED (((volatile struct InputState *)&gInput)->pressed)
 
-// The debug ability grid, drawn by Func_0804128c: the cursor moves over four
-// columns of nine abilities (gData_080aa170); A, L and R give the chosen
-// ability, packed with its owner, to slot 0, 1 or 2 and set units 4 to 7 to
-// 500 PP; B cancels. Returns the slot, or -1.
+/// The debug ability grid, drawn by Func_0804128c: the cursor moves over four
+/// columns of nine abilities (gData_080aa170); A, L and R give the chosen
+/// ability, packed with its owner, to slot 0, 1 or 2 and set units 4 to 7 to
+/// 500 PP; B cancels. Returns the slot, or -1.
 s32 Func_08041350(void) {
   s32 row = 0;
   u8 *work;

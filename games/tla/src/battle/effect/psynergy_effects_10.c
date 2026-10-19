@@ -57,8 +57,8 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void WaitFrames(s32 frames);
 s32 Trig_Sin(s32 angle);
 
-// Per-frame callback: until done, moves the effect object down 2.5 pixels
-// and shrinks it by 1/64 each frame, marking done at frame 8.
+/// Per-frame callback: until done, moves the effect object down 2.5 pixels
+/// and shrinks it by 1/64 each frame, marking done at frame 8.
 void BattleFx_SinkAndShrinkObject(void) {
   struct RiseWork *work = Ram_HeapSlots->battleFxWork[0];
 

@@ -55,7 +55,7 @@ void Func_020009a4(void) {
   }
 }
 
-// Return the table for the current room.
+/// Return the table for the current room.
 const void *Func_020009dc(void) {
   s16 scene = gPartyState.scene;
 

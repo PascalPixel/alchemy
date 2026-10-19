@@ -15,19 +15,19 @@ struct ObjectRuntime;
 
 #define HEAP_SLOT_VIEW_MOVE 92
 
-// Directions a view move swings in.
+/// Directions a view move swings in.
 #define VIEW_MOVE_X 1
 #define VIEW_MOVE_Z 2
 
 struct ViewMoveWork {
-  s32 x; // the view centre's position when the move began
+  s32 x; ///< the view centre's position when the move began
   s32 y;
   s32 z;
-  s32 savedMinX; // the map's view bounds when the move began
+  s32 savedMinX; ///< the map's view bounds when the move began
   s32 savedMaxX;
   s32 savedMinZ;
   s32 savedMaxZ;
-  s16 edgeX; // -1 beside the low edge, 1 beside the high edge, else 0
+  s16 edgeX; ///< -1 beside the low edge, 1 beside the high edge, else 0
   s16 edgeZ;
   struct ObjectRuntime *objects[8];
   u16 spriteOffsets[8];

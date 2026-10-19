@@ -24,7 +24,7 @@ struct MapLayerFlags {
  * temporary swaps the two registers (differ 24). */
 #define MAP_LAYER_FLAGS(map) (*(volatile u16 *)&(map)->flags)
 
-// Clear the flags for each map layer.
+/// Clear the flags for each map layer.
 void Map_ClearLayerFlags(s32 layer0, s32 layer1, s32 layer2) {
   struct MapLayerFlags *map;
   u16 flags;
@@ -52,8 +52,8 @@ void Map_ClearLayerFlags(s32 layer0, s32 layer1, s32 layer2) {
   }
 }
 
-// Steps the transition's value toward its end and opens the window from the
-// top and bottom edges by that many lines.
+/// Steps the transition's value toward its end and opens the window from the
+/// top and bottom edges by that many lines.
 void DisplayTransition_Update(void) {
   struct DisplayTransitionState *state;
   struct MapViewWork *window;
@@ -101,8 +101,8 @@ void DisplayTransition_Update(void) {
   }
 }
 
-// As DisplayTransition_Update, but the window opens from the centre, on
-// alternate frames only.
+/// As DisplayTransition_Update, but the window opens from the centre, on
+/// alternate frames only.
 void DisplayTransition_UpdateFromCentre(void) {
   struct DisplayTransitionState *state;
   struct MapViewWork *window;
@@ -160,8 +160,8 @@ void DisplayTransition_UpdateFromCentre(void) {
     dispcnt = REG_DISPCNT;                                                     \
   } while (0)
 
-// The VCount interrupt: switches the display to mode 2 at the window's first
-// line and back to mode 0 at its second.
+/// The VCount interrupt: switches the display to mode 2 at the window's first
+/// line and back to mode 0 at its second.
 void DisplayTransition_UpdateScanline(void) {
   u32 line;
   struct MapViewWork *state;

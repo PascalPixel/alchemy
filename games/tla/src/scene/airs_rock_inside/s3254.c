@@ -18,8 +18,8 @@ static inline void ClearLayer2Shape(s32 x, s32 z) {
   Func_02005df4(x, z, 2, 0);
 }
 
-// Runs each room's list on entering it; room 7 also clears two cells' shapes
-// and room 9 stops object 10's timer.
+/// Runs each room's list on entering it; room 7 also clears two cells' shapes
+/// and room 9 stops object 10's timer.
 void Func_02003254(void) {
   s16 scene = gPartyState.scene;
 

@@ -11,7 +11,7 @@ struct WaveFxScroll {
   u8 delay;
 };
 
-// Apply BG0 scanline scrolling with HBlank DMA.
+/// Apply BG0 scanline scrolling with HBlank DMA.
 void BattleFx_ArmBg0HBlankDma(void) {
   struct WaveFxScroll *work = Ram_HeapSlots->unk4c[3];
 
@@ -36,8 +36,8 @@ void BattleFx_ArmBg0HBlankDma(void) {
   }
 }
 
-// One colour channel's level (0 to 31) at a hue in degrees: rising from 0
-// to 60, full from 60 to 180, falling from 180 to 240, else 0.
+/// One colour channel's level (0 to 31) at a hue in degrees: rising from 0
+/// to 60, full from 60 to 180, falling from 180 to 240, else 0.
 s32 BattleFx_HueChannelRamp(s16 hue) {
   s32 level = 0;
   s16 angle = hue;
@@ -58,10 +58,10 @@ struct WaveFxWork {
   u8 red;
   u8 green;
   u8 blue;
-  u16 hue; // Degrees.
+  u16 hue; ///< Degrees.
 };
 
-// Advance hue by four degrees and calculate its color.
+/// Advance hue by four degrees and calculate its color.
 void BattleFx_AdvanceHueCycle(void) {
   struct WaveFxWork *work = Ram_HeapSlots->unk4c[3];
   s16 r;

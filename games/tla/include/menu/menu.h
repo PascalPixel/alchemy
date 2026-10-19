@@ -1,7 +1,8 @@
 #ifndef MENU_H
 #define MENU_H
 
-// MENU
+/// @file
+/// MENU
 
 #include "types.h"
 #include "edition.h"

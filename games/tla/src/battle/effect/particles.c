@@ -20,8 +20,8 @@ struct ParticleTimer {
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct FallVector *pos);
 
-// Each frame: one falling particle 8 to 24 pixels above the lifted object,
-// 0 to 48 pixels out in a random direction.
+/// Each frame: one falling particle 8 to 24 pixels above the lifted object,
+/// 0 to 48 pixels out in a random direction.
 void BattleFx_SpawnFallingParticles(void) {
   struct ObjectRuntime *src;
   struct FallVector pos;

@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// table_run_if_active.c
-// Field: finish the speaker display.
-//--------------------------------------------------------------------------
+/// @file
+/// Field: finish the speaker display.
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -18,10 +16,8 @@ s32 UiWork_IsIdleFar(s32 window);
 void UiWork_FinalizePendingCoreFar(void);
 void WaitFrames(s32 frames);
 
-//--------------------------------------------------------------------------
-// If the actor has graphics, use its graphics ID as speaker and end the window.
-// id: actor ID.
-//--------------------------------------------------------------------------
+/// If the actor has graphics, use its graphics ID as speaker and end the window.
+/// id: actor ID.
 void ObjectTable_RunIfActive(s32 id) {
   s32 no;
 
@@ -30,11 +26,11 @@ void ObjectTable_RunIfActive(s32 id) {
     UiWork_FinalizeEntityMatchingLocalizedIdFar(no);
 }
 
-// The event command "show two messages and wait", as ☀️'s function of the
-// same name: two actors speak at once, each message at its own (x, y) with
-// its portrait at (portraitX, portraitY), all in tiles. ⚓️ adds delay: when
-// it is nonzero, the second message waits for the first to finish, checking
-// every delay frames. Waits for A, B, L or R, then closes both.
+/// The event command "show two messages and wait", as ☀️'s function of the
+/// same name: two actors speak at once, each message at its own (x, y) with
+/// its portrait at (portraitX, portraitY), all in tiles. ⚓️ adds delay: when
+/// it is nonzero, the second message waits for the first to finish, checking
+/// every delay frames. Waits for A, B, L or R, then closes both.
 void Battle_ShowPairedUnitWorkAndWait(s32 first, s32 firstX, s32 firstY,
                                       s32 firstPortraitX, s32 firstPortraitY,
                                       s32 second, s32 secondX, s32 secondY,

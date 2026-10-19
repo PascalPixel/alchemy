@@ -10,9 +10,9 @@ void Func_02000b10(struct ObjectRuntime *object);
 void Func_02000b58(struct ObjectRuntime *object);
 void Func_02001d98(struct ObjectRuntime *object);
 
-// Sets flag 0xa69 after four rounds of a random colour value, runs the
-// blend scripts, then moves the camera to object 15, starts its update and
-// plays cue 623 six times.
+/// Sets flag 0xa69 after four rounds of a random colour value, runs the
+/// blend scripts, then moves the camera to object 15, starts its update and
+/// plays cue 623 six times.
 void Func_02001224(s32 unused, s32 id) {
   struct ObjectRuntime *object = Object_GetById(id);
   s32 i;

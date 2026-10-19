@@ -19,5 +19,5 @@ void BattleFx_PrepareBufferInterpolation(void);
 void WaitFrames(s32 frames);
 s32 EventRuntime_GetControlledOwner(void);
 
-// Effect 20 cast on a target: runs the effect, ignoring the target.
+/// Effect 20 cast on a target: runs the effect, ignoring the target.
 void BattleFx_CallEffect20(void) { Func_080e68d0(); }

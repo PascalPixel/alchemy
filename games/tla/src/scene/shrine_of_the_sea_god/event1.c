@@ -10,8 +10,8 @@ void Func_02003ad8(s32 a);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 
-// The leader is placed at y -50 and map layer 1 moved by -50; then both move
-// by 0x8000 in y a frame for 100 frames as a screen transition starts.
+/// The leader is placed at y -50 and map layer 1 moved by -50; then both move
+/// by 0x8000 in y a frame for 100 frames as a screen transition starts.
 void Func_02000ce8(void) {
   struct ShrineOfTheSeaGodMapWork *map =
       (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
@@ -73,8 +73,8 @@ loop:
   Func_020039e0();
 }
 
-// The leader turns, then moves with map layer 1 by -0x8000 in y a frame for
-// 100 frames; at frame 90 the screen transition finishes.
+/// The leader turns, then moves with map layer 1 by -0x8000 in y a frame for
+/// 100 frames; at frame 90 the screen transition finishes.
 void Func_02000e38(void) {
   struct ShrineOfTheSeaGodMapWork *map =
       (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;

@@ -4,7 +4,7 @@
 #include "io_reg.h"
 #include "types.h"
 
-// DMA channel registers (DMAxSAD, DMAxDAD, DMAxCNT).
+/// DMA channel registers (DMAxSAD, DMAxDAD, DMAxCNT).
 struct DmaRegisters {
   u32 source;
   u32 destination;
@@ -27,13 +27,13 @@ struct DmaRegisters {
             (volatile u32 *)0x040000d4);                                       \
   }
 
-// Dma_Fill32 with the caller's word, a volatile local the function declares
-// at its own scope: the word takes that place in the frame (in
-// Map_InitializePerspectiveScene sp+28, where Dma_Fill32's inner word lands
-// at sp+16), and a function that fills several blocks keeps one word for
-// all of them and forms its address once.
-// The fill word is local to the function. Repeated fills reuse that one word,
-// assigning its value before each transfer.
+/// Dma_Fill32 with the caller's word, a volatile local the function declares
+/// at its own scope: the word takes that place in the frame (in
+/// Map_InitializePerspectiveScene sp+28, where Dma_Fill32's inner word lands
+/// at sp+16), and a function that fills several blocks keeps one word for
+/// all of them and forms its address once.
+/// The fill word is local to the function. Repeated fills reuse that one word,
+/// assigning its value before each transfer.
 #define Dma_Fill32Cell(cell, value, destination, size)                         \
   {                                                                            \
     (cell) = (value);                                                          \
@@ -42,7 +42,7 @@ struct DmaRegisters {
             (volatile u32 *)0x040000d4);                                       \
   }
 
-// pret's CpuFill32: repeats one word through the BIOS CpuSet service.
+/// pret's CpuFill32: repeats one word through the BIOS CpuSet service.
 #define Cpu_Fill32(value, destination, size)                                   \
   {                                                                            \
     volatile u32 fill_ = (value);                                              \

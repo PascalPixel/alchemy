@@ -23,8 +23,8 @@ void BattleFx_PlotCanvasPixel(s32 x, s32 y, s32 color) {
   canvas[map[(y << 6) + x]] = color;
 }
 
-// Draws a line of half canvas pixels from x0, y0 to x1, y1, Bresenham's
-// way: one pixel per step along the longer axis.
+/// Draws a line of half canvas pixels from x0, y0 to x1, y1, Bresenham's
+/// way: one pixel per step along the longer axis.
 void BattleFx_DrawHalfCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   s32 dx = x1 - x0;
   s32 dy;
@@ -73,8 +73,8 @@ void BattleFx_DrawHalfCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   }
 }
 
-// Draws a circle of the given radius round (cx, cy) on the half canvas, by
-// the midpoint method: each step plots the eight symmetric points.
+/// Draws a circle of the given radius round (cx, cy) on the half canvas, by
+/// the midpoint method: each step plots the eight symmetric points.
 void BattleFx_DrawHalfCanvasCircle(s32 cx, s32 cy, s32 radius, s32 color) {
   s32 x = radius;
   s32 y = 0;

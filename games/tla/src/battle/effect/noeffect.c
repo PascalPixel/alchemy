@@ -8,9 +8,9 @@
 
 void Animation_ApplyChildArgumentFar(void *, s32);
 
-// Creates entryCount sprites of one resource in the effect work's object
-// slots, each showing its own animation at the given priority (The Broken
-// Seal's BattleFx_SpawnObjects).
+/// Creates entryCount sprites of one resource in the effect work's object
+/// slots, each showing its own animation at the given priority (The Broken
+/// Seal's BattleFx_SpawnObjects).
 void BattleFx_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -34,9 +34,9 @@ void BattleFx_SpawnObjects(s32 entryCount, s32 kind, u32 variant) {
 
 void BattleFx_DoNothing(void) {}
 
-// Restarts DMA channel 0 as an H-blank transfer of the effect work's line
-// table into BG2X, one word a line (The Broken Seal's
-// BattleFx_ArmBg2AffineHBlankDma).
+/// Restarts DMA channel 0 as an H-blank transfer of the effect work's line
+/// table into BG2X, one word a line (The Broken Seal's
+/// BattleFx_ArmBg2AffineHBlankDma).
 void BattleFx_ArmBg2AffineHBlankDma(void) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
@@ -60,7 +60,7 @@ void BattleFx_ArmBg2AffineHBlankDma(void) {
           (volatile u32 *)channel);
 }
 
-// BattleFx_ArmBg2AffineHBlankDma for BG1HOFS and BG1VOFS: the line table moves layer 1.
+/// BattleFx_ArmBg2AffineHBlankDma for BG1HOFS and BG1VOFS: the line table moves layer 1.
 void BattleFx_ArmBg1HBlankDma(void) {
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];

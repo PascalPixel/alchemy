@@ -37,9 +37,9 @@ void Func_080cb8a4(void);
 void UiText_DrawQuantity(s32 value, s32 slot);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 flags);
 
-// The caster during Avoid (BattleFx_RunEffect16): sheds a pair of falling
-// arcs every 5 frames (7 in scene Ov64a), and spins in phase 1, as ☀️'s
-// function of the same name.
+/// The caster during Avoid (BattleFx_RunEffect16): sheds a pair of falling
+/// arcs every 5 frames (7 in scene Ov64a), and spins in phase 1, as ☀️'s
+/// function of the same name.
 void BattleFx_UpdatePairedArcSpawner(struct ArcEffectObject *caster) {
   s16 phase;
   s32 elapsedFrames;
@@ -96,7 +96,7 @@ void Animation_ApplyChildValuesFar(void *object, s32 value);
 void Audio_PlayCue(s32 cue);
 void WaitFrames(s32 frames);
 
-// Psynergy effect 16: the user spins, rains arc particles, then flashes.
+/// Psynergy effect 16: the user spins, rains arc particles, then flashes.
 void BattleFx_RunEffect16(void) {
   struct ArcScene *scene;
   struct ArcEffectObject *object;

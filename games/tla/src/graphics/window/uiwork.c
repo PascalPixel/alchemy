@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// uiwork.c
-// Windows: message-channel cleanup and the table of message substitutions.
-//--------------------------------------------------------------------------
+/// @file
+/// Windows: message-channel cleanup and the table of message substitutions.
 
 #include "battle.h"
 #include "debug.h"
@@ -18,9 +16,7 @@
 #include "edition.h"
 #include "ram_buffer.h"
 
-//--------------------------------------------------------------------------
-// Clear the eight-entry table of values substituted into messages.
-//--------------------------------------------------------------------------
+/// Clear the eight-entry table of values substituted into messages.
 void UiWork_ClearValueNameTables(void) {
   s32 no;
   struct UiRenderWork *work;
@@ -38,10 +34,8 @@ void UiWork_ClearValueNameTables(void) {
   } while (no != 8);
 }
 
-//--------------------------------------------------------------------------
-// Insert value of type kind in a free entry.
-// Do nothing if the table is full.
-//--------------------------------------------------------------------------
+/// Insert value of type kind in a free entry.
+/// Do nothing if the table is full.
 void UiWork_PushValueSlot(u32 value, u32 kind) {
   struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
   u32 no = 0;

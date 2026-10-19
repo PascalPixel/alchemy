@@ -2,8 +2,8 @@
 #include "edition.h"
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-// The character a cell of the password grid stands for, in the Japanese
-// font's codes: kana, the voiced ones with the dakuten mark in the high byte.
+/// The character a cell of the password grid stands for, in the Japanese
+/// font's codes: kana, the voiced ones with the dakuten mark in the high byte.
 void Func_02000a70(s32 cell, u16 *text) {
   /* FAKEMATCH: the dakuten mark is pinned to r2 as a halfword: the native loads
    * it before it copies the cell for the add, where plainly the copy comes
@@ -35,9 +35,9 @@ void Func_02000a70(s32 cell, u16 *text) {
   }
 }
 #else
-// The character a cell of the password grid stands for, in the font's
-// codes: capitals without I and O, the digits 2 to 9, small letters without
-// l and o, then symbols.
+/// The character a cell of the password grid stands for, in the font's
+/// codes: capitals without I and O, the digits 2 to 9, small letters without
+/// l and o, then symbols.
 void Func_02000a70(s32 cell, u16 *text) {
   text[1] = 0;
   text[2] = 0;

@@ -10,10 +10,10 @@ s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 void Object_SetPartAttribute(struct FieldActor *object, s32 value);
 
-// Circles the object around the centre in words 68 and 76, twice as wide
-// as it is deep, the radius growing with its height, one step of 256 per
-// lap, and blinks the part attribute every other frame. Overlay 663's
-// Func_020008ac is the same function.
+/// Circles the object around the centre in words 68 and 76, twice as wide
+/// as it is deep, the radius growing with its height, one step of 256 per
+/// lap, and blinks the part attribute every other frame. Overlay 663's
+/// Func_020008ac is the same function.
 void Effect_CircleAndBlink(struct FieldActor *object) {
   s32 radius = object->y;
   s32 step = WORD_AT(object, 48);

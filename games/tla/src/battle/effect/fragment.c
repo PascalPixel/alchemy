@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// fragment.c
-// Effects: motion of the main object in an item-breaking effect.
-//--------------------------------------------------------------------------
+/// @file
+/// Effects: motion of the main object in an item-breaking effect.
 
 #include "types.h"
 #include "edition.h"
@@ -19,21 +17,21 @@ struct ItemBreakFragmentPosition {
 
 struct ItemBreakFragmentSource {
   u8 reserved00[6];
-  u16 angle; // Facing angle (0x10000 is one turn).
+  u16 angle; ///< Facing angle (0x10000 is one turn).
   s32 x;
   s32 y;
   s32 z;
   u8 reserved14[70];
   u8 flag5a;
   u8 reserved5b[13];
-  struct ItemBreakFragmentSource *target; // Facing target.
+  struct ItemBreakFragmentSource *target; ///< Facing target.
 };
 
 struct ItemBreakFragmentObject {
   u8 reserved00[72];
-  s32 field48; // Gravity (same offset as gravity).
+  s32 field48; ///< Gravity (same offset as gravity).
   u8 reserved4c[9];
-  u8 mode55; // Same offset as motionFlags.
+  u8 mode55; ///< Same offset as motionFlags.
   u8 reserved56[8];
   u16 field5e;
 };
@@ -43,12 +41,10 @@ extern s32 ArcTan2(s32, s32);
 extern void Vector_AddPolarOffset(s32, s32, struct ItemBreakFragmentPosition *);
 extern struct ItemBreakFragmentObject *Object_Spawn(s32, s32, s32, s32);
 
-//--------------------------------------------------------------------------
-// Update the broken item's main object.
-// If a facing target exists, turn toward it by at most 0x1000 (22.5 degrees),
-// then emit one fragment particle nearby.
-// src: main object.
-//--------------------------------------------------------------------------
+/// Update the broken item's main object.
+/// If a facing target exists, turn toward it by at most 0x1000 (22.5 degrees),
+/// then emit one fragment particle nearby.
+/// src: main object.
 void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src) {
   struct ItemBreakFragmentSource *target;
   struct ItemBreakFragmentPosition pos;

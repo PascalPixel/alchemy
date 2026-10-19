@@ -24,8 +24,8 @@ s32 Object_GetById();
 s32 ObjectMotion_ResetAndSetPosition();
 void Func_020018e0(s32 a, s32 b);
 
-// The guardian speaks, then the party leaves for overlay 664's fourth room.
-// Overlay 6af's Func_02000a8c is the same scene for actor 8.
+/// The guardian speaks, then the party leaves for overlay 664's fourth room.
+/// Overlay 6af's Func_02000a8c is the same scene for actor 8.
 void Func_0200130c(void) {
   s32 leader;
 

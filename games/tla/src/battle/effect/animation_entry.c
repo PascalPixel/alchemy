@@ -2,8 +2,8 @@
 #include "animspr.h"
 #include "ram_buffer.h"
 
-// Takes the first free animation entry of the 64 and clears it for use. With
-// none free it clears the entry at address 0.
+/// Takes the first free animation entry of the 64 and clears it for use. With
+/// none free it clears the entry at address 0.
 struct AnimationEntry *AnimationObject_AllocateEmpty(void) {
   struct AnimationEntry *entry = Ram_HeapSlots->unk0c[0];
   struct AnimationEntry *found = NULL;

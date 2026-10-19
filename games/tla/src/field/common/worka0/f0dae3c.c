@@ -1,6 +1,6 @@
 #include "worka0.h"
 
-// Returns the first of WORK_A4's eight slots with no chain, or NULL.
+/// Returns the first of WORK_A4's eight slots with no chain, or NULL.
 struct WorkA4Slot *Func_080dae3c(void) {
   struct WorkA4 *work = WORK_A4;
   struct WorkA4Slot *found = NULL;

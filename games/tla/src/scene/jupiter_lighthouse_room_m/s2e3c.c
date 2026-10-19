@@ -13,7 +13,7 @@ void Func_0200474c();
 void Func_020049ac();
 void Func_02004774(s32 x, s32 z, s32 a, s32 b);
 
-// The scene's map preparation.
+/// The scene's map preparation.
 s32 Func_02002e3c(void) {
   struct FieldActor *object;
 

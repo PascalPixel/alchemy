@@ -2,9 +2,9 @@
 
 void Object_SetSpritePriority(struct ShamanVillageObject *object, s32 priority);
 
-// Swings an object about x = 168: left of it the object speeds up rightward and
-// grows, right of it leftward and shrinks. It takes sprite priority 1 while it
-// moves right, 2 otherwise, and spins.
+/// Swings an object about x = 168: left of it the object speeds up rightward and
+/// grows, right of it leftward and shrinks. It takes sprite priority 1 while it
+/// moves right, 2 otherwise, and spins.
 void Func_02000508(struct ShamanVillageObject *object) {
   object->x += object->field44;
   object->y += object->field48;

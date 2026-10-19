@@ -4,8 +4,8 @@
 void Func_02001c5c(void);
 void Func_02002208(void);
 
-// Readies actors 16 and 17 and the room's callbacks; actor 17 becomes the
-// followed actor (gData_0200480c).
+/// Readies actors 16 and 17 and the room's callbacks; actor 17 becomes the
+/// followed actor (gData_0200480c).
 void Func_02002318(void) {
   struct ObjectRuntime *leader = (struct ObjectRuntime *)Object_GetById(16);
   struct ObjectRuntime *object;

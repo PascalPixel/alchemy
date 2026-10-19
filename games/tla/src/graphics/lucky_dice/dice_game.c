@@ -1,13 +1,14 @@
-// The casino's dice game (Func_081b83c4, not C yet). Its one table, after
-// its code, is gLuckyDice_FaceTiles again: the die face tile at each step
-// of its roll.
+/// @file
+/// The casino's dice game (Func_081b83c4, not C yet). Its one table, after
+/// its code, is gLuckyDice_FaceTiles again: the die face tile at each step
+/// of its roll.
 
 #include "types.h"
 
-// Scores four dice for the dice game: 5 when all four match, otherwise by
-// the number of matching pairs: 2 for one, 3 for two, 4 for three, 0 for
-// none. The matched values are collected in a local array the score never
-// reads (the native's frame and stores keep it).
+/// Scores four dice for the dice game: 5 when all four match, otherwise by
+/// the number of matching pairs: 2 for one, 3 for two, 4 for three, 0 for
+/// none. The matched values are collected in a local array the score never
+/// reads (the native's frame and stores keep it).
 s32 Func_081b834c(s32 *dice) {
   s32 matches[2];
   s32 score;

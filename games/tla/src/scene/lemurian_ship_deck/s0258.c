@@ -22,8 +22,8 @@ void Func_02000258(void) {
     gData_020024b4 = 0;
 }
 
-// Bobs the object returned by Func_02002074 and the first map layer's word 12
-// together on a sine wave, its phase advancing 0x200 a frame.
+/// Bobs the object returned by Func_02002074 and the first map layer's word 12
+/// together on a sine wave, its phase advancing 0x200 a frame.
 void Func_02000288(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[0];
   struct ObjectRuntime *object = Func_02002074();

@@ -4,9 +4,9 @@ extern s32 gData_02007e24;
 
 void Func_02001dd4(void);
 
-// Unless flag 123 is set, readies object 8: before flag 0x288 it raises it
-// 0x88000 with motion 5, after it grounds it with motion 3; then schedules
-// Func_02001dd4.
+/// Unless flag 123 is set, readies object 8: before flag 0x288 it raises it
+/// 0x88000 with motion 5, after it grounds it with motion 3; then schedules
+/// Func_02001dd4.
 void Func_02001eb0(void) {
   if (!GameFlag_Test(123)) {
     struct ObjectRuntime *object = Object_GetById(8);

@@ -1,14 +1,10 @@
-//--------------------------------------------------------------------------
-// format_hex.c
-// Text: format a number as a hexadecimal string.
-//--------------------------------------------------------------------------
+/// @file
+/// Text: format a number as a hexadecimal string.
 
 #include "types.h"
 
-//--------------------------------------------------------------------------
-// Write the lowest count digits of value (up to five), most significant first,
-// to out as uppercase hexadecimal, without a terminating zero.
-//--------------------------------------------------------------------------
+/// Write the lowest count digits of value (up to five), most significant first,
+/// to out as uppercase hexadecimal, without a terminating zero.
 void Text_FormatHex(u32 value, u32 count, u8 *out) {
   u8 buf[8];
   u32 i;

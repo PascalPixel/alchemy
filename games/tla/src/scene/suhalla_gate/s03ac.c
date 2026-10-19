@@ -17,8 +17,8 @@ static __inline__ void ObjectMotion_SetPositionAndReset_(s32 id, s32 x, s32 z) {
   ObjectMotion_SetPositionAndReset(id, x, z);
 }
 
-// After the "Waahhh" message, places the leader and the camera, runs actor
-// 8's motions and sends the party to Suhalla Gate 1, entrance 99.
+/// After the "Waahhh" message, places the leader and the camera, runs actor
+/// 8's motions and sends the party to Suhalla Gate 1, entrance 99.
 void Func_020003ac(void) {
   Func_02000988();
   Func_02000a70(0);

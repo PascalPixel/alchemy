@@ -11,12 +11,12 @@
 // Func_080eb594 copies the canvas into its tiles on command, and
 // BattleFx_EndCanvasSprite ends it.
 
-// The heap slots (byte offsets into Ram_HeapSlots) it takes.
+/// The heap slots (byte offsets into Ram_HeapSlots) it takes.
 #define HEAP_SLOT_CANVAS_SPRITE 240
 #define HEAP_SLOT_CANVAS 96
 #define HEAP_SLOT_CANVAS_MAP 180
 
-// The canvas: 64x64 pixels of 8 bits, in 8x8 tiles.
+/// The canvas: 64x64 pixels of 8 bits, in 8x8 tiles.
 #define CANVAS_WIDTH 64
 #define CANVAS_SIZE 0x1000
 
@@ -25,7 +25,7 @@
 #define CANVAS_SPRITE_256_COLORS 2 // rebuilt each frame, in 256 colours
 #define CANVAS_SPRITE_KEPT 3       // drawn as the effect left it
 
-// What Func_080eb594 does with the canvas in the next frame.
+/// What Func_080eb594 does with the canvas in the next frame.
 #define CANVAS_UPLOAD_AND_CLEAR 1
 #define CANVAS_UPLOAD 2
 #define CANVAS_UPLOAD_AND_FADE1 3
@@ -38,7 +38,7 @@ struct CanvasSpriteWork {
   u8 unk28[0x78];
   s32 drawnFrames;
   s32 frame;
-  s32 x; // whole pixels
+  s32 x; ///< whole pixels
   s32 y;
   s32 scaleX;
   s32 scaleY;

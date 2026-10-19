@@ -1,8 +1,6 @@
-//--------------------------------------------------------------------------
-// render.c
-// Display: save/restore transforms and build rotation, translation, scale,
-// and camera matrices.
-//--------------------------------------------------------------------------
+/// @file
+/// Display: save/restore transforms and build rotation, translation, scale,
+/// and camera matrices.
 
 #include "battle.h"
 #include "debug.h"
@@ -30,19 +28,15 @@
 
 #define MTX_DMA ((DMA_ENABLE | DMA_32BIT) << 16 | 12) // DMA for one matrix.
 
-// The Lost Age obtains cosine by looking up sine ninety degrees ahead.
+/// The Lost Age obtains cosine by looking up sine ninety degrees ahead.
 #define COS(a) Trig_Sin((a) + 0x4000)
 
 #include "ram_buffer.h"
 
-//--------------------------------------------------------------------------
-// Do nothing.
-//--------------------------------------------------------------------------
+/// Do nothing.
 void Render_EmptyHook(void) {}
 
-//--------------------------------------------------------------------------
-// Allocate matrix-save storage and initialize the current matrix to identity.
-//--------------------------------------------------------------------------
+/// Allocate matrix-save storage and initialize the current matrix to identity.
 void Render_ResetTransformState(void) {
   gTransformStackTop = Runtime_AllocateBlock(8, sizeof(gTransform));
   gTransformStackDepth = 0;
@@ -50,17 +44,13 @@ void Render_ResetTransformState(void) {
   Transform_ResetCurrent();
 }
 
-//--------------------------------------------------------------------------
-// Reset the save pointer to the start of the workspace.
-//--------------------------------------------------------------------------
+/// Reset the save pointer to the start of the workspace.
 void SceneTransform_RewindStack(void) {
   gTransformStackTop = Ram_HeapSlots->transformStack;
   gTransformStackDepth = 0;
 }
 
-//--------------------------------------------------------------------------
-// Save the current matrix (one level deep).
-//--------------------------------------------------------------------------
+/// Save the current matrix (one level deep).
 void Transform_Push(void) {
   if (gTransformStackDepth <= 0) {
     Dma_Set(gTransform, gTransformStackTop, MTX_DMA, REG_DMA3);
@@ -69,21 +59,15 @@ void Transform_Push(void) {
   }
 }
 
-//--------------------------------------------------------------------------
-// Copy the current matrix into dst.
-//--------------------------------------------------------------------------
+/// Copy the current matrix into dst.
 void Transform_Store(void *dst) { Dma_Set(gTransform, dst, MTX_DMA, REG_DMA3); }
 
-//--------------------------------------------------------------------------
-// Make src the current matrix.
-//--------------------------------------------------------------------------
+/// Make src the current matrix.
 void Transform_Load(const void *src) {
   Dma_Set(src, gTransform, MTX_DMA, REG_DMA3);
 }
 
-//--------------------------------------------------------------------------
-// Restore the saved matrix.
-//--------------------------------------------------------------------------
+/// Restore the saved matrix.
 void Transform_Pop(void) {
   if (gTransformStackDepth > 0) {
     --gTransformStackDepth;
@@ -92,18 +76,14 @@ void Transform_Pop(void) {
   }
 }
 
-//--------------------------------------------------------------------------
-// Set the current matrix to identity.
-//--------------------------------------------------------------------------
+/// Set the current matrix to identity.
 void SceneTransform_ResetMatrix(void) {
   CAMELOT_ASM("the fixed-register identity store of transform.h")
   Transform_ResetCurrent();
 }
 
-//--------------------------------------------------------------------------
-// Apply rotations around the X, Y, and Z axes.
-// ang: the three axis angles.
-//--------------------------------------------------------------------------
+/// Apply rotations around the X, Y, and Z axes.
+/// ang: the three axis angles.
 void SceneTransform_ApplyRotation(s32 *ang) {
   s32 sx, cx, sy, cy, sz, cz;
   s32 m[12];
@@ -132,8 +112,8 @@ void SceneTransform_ApplyRotation(s32 *ang) {
   Iwram_TransformMatrix(m);
 }
 
-// The identity store of transform.h's Transform_SetIdentity in ⚓️'s order,
-// the 1.0 built before the zeros, as ⚓️'s Transform_ResetCurrent builds it.
+/// The identity store of transform.h's Transform_SetIdentity in ⚓️'s order,
+/// the 1.0 built before the zeros, as ⚓️'s Transform_ResetCurrent builds it.
 static __inline__ void Render_SetIdentity(void *matrix) {
   CAMELOT_ASM("three stmia no C store or copy compiles to")
   __asm__ volatile(
@@ -147,7 +127,7 @@ static __inline__ void Render_SetIdentity(void *matrix) {
       : "r0", "r1", "r2", "r3", "r4", "memory");
 }
 
-// Applies a rotation about the X axis.
+/// Applies a rotation about the X axis.
 void SceneTransform_ApplyPitch(s32 ang) {
   s32 m[12];
   s32 sin, cos;
@@ -163,7 +143,7 @@ void SceneTransform_ApplyPitch(s32 ang) {
   Iwram_TransformMatrix(m);
 }
 
-// Applies a rotation about the Y axis.
+/// Applies a rotation about the Y axis.
 void SceneTransform_ApplyYaw(s32 ang) {
   s32 m[12];
   s32 sin, cos;
@@ -179,7 +159,7 @@ void SceneTransform_ApplyYaw(s32 ang) {
   Iwram_TransformMatrix(m);
 }
 
-// Makes the current matrix a rotation about the Y axis.
+/// Makes the current matrix a rotation about the Y axis.
 void Func_080150ac(s32 ang) {
   s32 *m = gTransform;
   s32 sin, cos;
@@ -194,7 +174,7 @@ void Func_080150ac(s32 ang) {
   m[6] = sin;
 }
 
-// Applies a rotation about the Z axis.
+/// Applies a rotation about the Z axis.
 void Func_080150e4(s32 ang) {
   s32 m[12];
   s32 sin, cos;
@@ -210,7 +190,7 @@ void Func_080150e4(s32 ang) {
   Iwram_TransformMatrix(m);
 }
 
-// Applies a translation by pos, X, Y and Z in Q16.
+/// Applies a translation by pos, X, Y and Z in Q16.
 void SceneTransform_ApplyPosition(const s32 *pos) {
   s32 m[12];
 
@@ -222,7 +202,7 @@ void SceneTransform_ApplyPosition(const s32 *pos) {
   Iwram_TransformMatrix(m);
 }
 
-// Applies a translation by x, y and z in Q16.
+/// Applies a translation by x, y and z in Q16.
 void Func_08015160(s32 x, s32 y, s32 z) {
   s32 m[12];
 
@@ -234,14 +214,14 @@ void Func_08015160(s32 x, s32 y, s32 z) {
   Iwram_TransformMatrix(m);
 }
 
-// Sets the current matrix's translation to pos.
+/// Sets the current matrix's translation to pos.
 void SceneTransform_SetPosition(const s32 *pos) {
   gTransform[9] = pos[0];
   gTransform[10] = pos[1];
   gTransform[11] = pos[2];
 }
 
-// Applies a scale by scale's X, Y and Z factors in Q16.
+/// Applies a scale by scale's X, Y and Z factors in Q16.
 void Func_080151ac(const s32 *scale) {
   s32 m[12];
 
@@ -253,7 +233,7 @@ void Func_080151ac(const s32 *scale) {
   Iwram_TransformMatrix(m);
 }
 
-// Applies a scale by x, y and z in Q16.
+/// Applies a scale by x, y and z in Q16.
 void Func_080151e4(s32 x, s32 y, s32 z) {
   s32 m[12];
 
@@ -265,7 +245,7 @@ void Func_080151e4(s32 x, s32 y, s32 z) {
   Iwram_TransformMatrix(m);
 }
 
-// Applies the same scale on all three axes.
+/// Applies the same scale on all three axes.
 void Func_0801521c(s32 scale) {
   s32 m[12];
 
@@ -276,9 +256,7 @@ void Func_0801521c(s32 scale) {
   m[8] = scale;
   Iwram_TransformMatrix(m);
 }
-//--------------------------------------------------------------------------
-// Apply rotation and translation together.
-//--------------------------------------------------------------------------
+/// Apply rotation and translation together.
 void SceneTransform_ApplyRotationTranslation(s32 *ang, s32 *pos) {
   s32 sx, cx, sy, cy, sz, cz;
   s32 m[12];
@@ -307,10 +285,8 @@ void SceneTransform_ApplyRotationTranslation(s32 *ang, s32 *pos) {
   Iwram_TransformMatrix(m);
 }
 
-//--------------------------------------------------------------------------
-// Apply rotation, scaling by row, and translation together.
-// scale: scale factors for rows 1-3 of the rotation matrix.
-//--------------------------------------------------------------------------
+/// Apply rotation, scaling by row, and translation together.
+/// scale: scale factors for rows 1-3 of the rotation matrix.
 void SceneTransform_ApplyScaledRotation(s32 *ang, s32 *pos, s32 *scale) {
   s32 sx, cx, sy, cy, sz, cz;
   s32 s;

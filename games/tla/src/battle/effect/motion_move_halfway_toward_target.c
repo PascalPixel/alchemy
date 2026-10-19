@@ -1,14 +1,10 @@
-//--------------------------------------------------------------------------
-// motion_move_halfway_toward_target.c
-// Objects: follow a linked object.
-//--------------------------------------------------------------------------
+/// @file
+/// Objects: follow a linked object.
 
 #include "object_runtime.h"
 
-//--------------------------------------------------------------------------
-// Halve the distance to the linked object along x, y, and z.
-// obj: object to move.
-//--------------------------------------------------------------------------
+/// Halve the distance to the linked object along x, y, and z.
+/// obj: object to move.
 void ObjectMotion_MoveHalfwayTowardTarget(struct ObjectRuntime *obj) {
   struct ObjectRuntime *target = obj->linkedObject;
 

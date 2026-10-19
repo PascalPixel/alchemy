@@ -51,8 +51,8 @@ void Func_020008e8(void) {
   }
 }
 
-// Actor 30 offers a test of luck at the Spring of Lemuria; flag 0x908
-// records that the party took it.
+/// Actor 30 offers a test of luck at the Spring of Lemuria; flag 0x908
+/// records that the party took it.
 void Func_02000934(void) {
   if (Value1(GameFlag_Test, 0x908)) {
     Call3(ObjectMotion_SetAngleToward, 30, gPartyState.currentOwner, 0);

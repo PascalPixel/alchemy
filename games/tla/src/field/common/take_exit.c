@@ -6,10 +6,10 @@ s32 GameFlag_Test(s32 flag);
 
 extern struct SceneEntries gOverlayArea;
 
-// The scene overlay's exit table: a header word holding a scene id, then that
-// scene's exits, one packed word each (and a flag word after it when
-// EXIT_HAS_FLAG is set). Scene id EXIT_TABLE_END ends the exits of a scene and
-// the whole table.
+/// The scene overlay's exit table: a header word holding a scene id, then that
+/// scene's exits, one packed word each (and a flag word after it when
+/// EXIT_HAS_FLAG is set). Scene id EXIT_TABLE_END ends the exits of a scene and
+/// the whole table.
 #define EXIT_SCENE_MASK 0xfff
 #define EXIT_ENTRANCE(word) (((word) & 0xff000) >> 12)
 #define EXIT_KIND(word) (((word) & 0x0ff00000) >> 20)
@@ -18,12 +18,12 @@ extern struct SceneEntries gOverlayArea;
 #define EXIT_KIND_ANY 0xff
 #define EXIT_NONE 999 // Field_RunScene's result when the scene was not left
 
-// Chooses the scene and entrance to go to when the party leaves the current
-// scene, as ☀️'s function of the same name: exitKind is the kind of exit
-// Field_RunScene ended on, and the scene's exit table gives the first exit of
-// that kind (or of any kind) whose flag is not set. ⚓️ also takes an exit
-// whose flag word is -1. An exit of kind 0 or the end of the scene's exits
-// falls back to the scene of its first exit.
+/// Chooses the scene and entrance to go to when the party leaves the current
+/// scene, as ☀️'s function of the same name: exitKind is the kind of exit
+/// Field_RunScene ended on, and the scene's exit table gives the first exit of
+/// that kind (or of any kind) whose flag is not set. ⚓️ also takes an exit
+/// whose flag word is -1. An exit of kind 0 or the end of the scene's exits
+/// falls back to the scene of its first exit.
 void Scene_TakeExit(s32 exitKind) {
   s16 currentScene;
   const u32 *exitTable;

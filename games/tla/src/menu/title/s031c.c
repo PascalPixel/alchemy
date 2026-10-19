@@ -13,8 +13,8 @@ void WaitFrames(s32 frames);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
-// The title screen appears: the logo and its sprite row are loaded, the
-// blend fades the logo in over 17 steps and the screen transition opens.
+/// The title screen appears: the logo and its sprite row are loaded, the
+/// blend fades the logo in over 17 steps and the screen transition opens.
 void Func_0200031c(void) {
   s32 i;
 

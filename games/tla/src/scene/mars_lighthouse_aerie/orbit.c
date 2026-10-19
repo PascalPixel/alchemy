@@ -39,9 +39,9 @@ static inline struct OrbitEffect *CreateOrbitEffect(s32 x, s32 y, s32 z) {
   return Func_02005574(0x2a0, x, y, z);
 }
 
-// Every third frame, or every frame once flag 0x200 is set, starts a particle
-// circling actor 23 at a random height above it, as overlay 69e's
-// Func_020001a4 does under flag 0x201.
+/// Every third frame, or every frame once flag 0x200 is set, starts a particle
+/// circling actor 23 at a random height above it, as overlay 69e's
+/// Func_020001a4 does under flag 0x201.
 void Func_0200326c(void) {
   struct FieldActor *center;
   struct OrbitEffect *effect;

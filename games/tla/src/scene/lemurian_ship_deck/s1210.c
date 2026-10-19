@@ -68,8 +68,8 @@ void Func_0200208c(s32 frames);
 void Func_020020ac(s32 a);
 void Func_020020d4(s32 cue);
 
-// Once flag 7 is set, and only until flag 0x985 is: a scene of actor 7 and the
-// leader, which ends by setting flags 0x201 and 0x985.
+/// Once flag 7 is set, and only until flag 0x985 is: a scene of actor 7 and the
+/// leader, which ends by setting flags 0x201 and 0x985.
 void Func_0200128c(void) {
   struct ObjectRuntime *handle;
   void (*callback)(void);
@@ -159,9 +159,9 @@ void Func_02002054(s32 id, s32 a);
 void Func_0200205c(s32 speed, s32 acceleration);
 void Func_020020b4(s32 id, s32 dx, s32 dz, s32 angle);
 
-// Once flag 0x8ff is set, and only until flag 0x989 is: the crew talks
-// over the ship, the leader answers two prompts, and everyone leaves by
-// script gData_020020e4; it sets flag 0x981.
+/// Once flag 0x8ff is set, and only until flag 0x989 is: the crew talks
+/// over the ship, the leader answers two prompts, and everyone leaves by
+/// script gData_020020e4; it sets flag 0x981.
 void Func_020014c0(void) {
   if (Flag_IsSet(0x8ff) == 0)
     return;

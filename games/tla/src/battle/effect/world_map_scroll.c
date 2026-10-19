@@ -3,10 +3,10 @@
 #include "ram_buffer.h"
 #include "bg_scroll.h"
 
-// The world map cursor's position (x, then y, 16.16 pixels).
+/// The world map cursor's position (x, then y, 16.16 pixels).
 extern s32 *Data_0202a62c;
-// Set while the world map shows its alternative picture, which does not
-// scroll.
+/// Set while the world map shows its alternative picture, which does not
+/// scroll.
 extern s16 Data_0202a640;
 
 s32 FixedSqrt(s32 value);
@@ -16,13 +16,13 @@ void Func_080ecf74(u32 column, s32 row);
 #define SCROLL_X Ram_WorldMapScroll[0]
 #define SCROLL_Y Ram_WorldMapScroll[1]
 
-// The world map screen's scroll follows the cursor. The target puts the
-// cursor 120 by 80 pixels in (clamped to the map); unless the map is held the
-// scroll moves a quarter of the way there each frame, at most 8 pixels, and
-// stops when nearer than a quarter pixel. Each time the scroll crosses an
-// 8-pixel column or row, the new column (Func_080ed030) or row
-// (Func_080ecf74) of the picture is drawn; BG1 scrolls with it. All values
-// are 16.16 pixels.
+/// The world map screen's scroll follows the cursor. The target puts the
+/// cursor 120 by 80 pixels in (clamped to the map); unless the map is held the
+/// scroll moves a quarter of the way there each frame, at most 8 pixels, and
+/// stops when nearer than a quarter pixel. Each time the scroll crosses an
+/// 8-pixel column or row, the new column (Func_080ed030) or row
+/// (Func_080ecf74) of the picture is drawn; BG1 scrolls with it. All values
+/// are 16.16 pixels.
 void Func_080ed0a0(void) {
   s32 *cursor = Data_0202a62c;
   s32 x = *cursor++ - (120 << 16);

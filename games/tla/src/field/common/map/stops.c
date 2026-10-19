@@ -2,10 +2,10 @@
 
 extern const u16 gData_0802f064[];
 
-// Steps a number from 0 to 715 by delta: a step of one wraps around the
-// range, a larger step forward goes to the next stop above value and one back
-// to the last stop below it (gData_0802f064, ended by 0xffff, from which a
-// step forward wraps to 0). A delta of 0 returns value unchanged.
+/// Steps a number from 0 to 715 by delta: a step of one wraps around the
+/// range, a larger step forward goes to the next stop above value and one back
+/// to the last stop below it (gData_0802f064, ended by 0xffff, from which a
+/// step forward wraps to 0). A delta of 0 returns value unchanged.
 s32 Func_0802e444(s32 value, s32 delta) {
   s32 step;
 

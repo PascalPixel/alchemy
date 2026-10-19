@@ -1,5 +1,6 @@
-// The reel game. Most of its code is not C yet; its tables, which end the
-// bank, are The Broken Seal's.
+/// @file
+/// The reel game. Most of its code is not C yet; its tables, which end the
+/// bank, are The Broken Seal's.
 
 #include "types.h"
 #include "tla_edition.h"
@@ -25,10 +26,10 @@ struct ReelEffectWork {
   struct EffectStep particles[8];
 };
 
-// The slot machine's per-frame tail, split out of what is ☀️'s
-// ReelGame_RunFrame: while a win shows (state 3) it bounces the eight title
-// letters, then restarts the HBlank DMA of the scanline offsets into BLDY and
-// copies the frame's sprites to OAM.
+/// The slot machine's per-frame tail, split out of what is ☀️'s
+/// ReelGame_RunFrame: while a win shows (state 3) it bounces the eight title
+/// letters, then restarts the HBlank DMA of the scanline offsets into BLDY and
+/// copies the frame's sprites to OAM.
 void Func_081b3294(void) {
   struct ReelWork *work;
   struct ReelEffectWork *fx;

@@ -3,7 +3,7 @@
 extern u8 gOamBucketMasks[];
 extern void *gOamBuckets[];
 
-// Link entry at the head of its priority bucket (0-239).
+/// Link entry at the head of its priority bucket (0-239).
 void Func_080140d8(void *entry, s32 slot) {
   u8 *mask;
   void **buckets;
@@ -31,7 +31,7 @@ void Func_080140d8(void *entry, s32 slot) {
   }
 }
 
-// Link entry at the head of its priority bucket.
+/// Link entry at the head of its priority bucket.
 void Runtime_PushSlotEntry(void *entry, s32 slot) {
   u8 *mask;
   void **head;

@@ -119,9 +119,9 @@ void FieldFx_RunFrostOnTarget(void) {
 
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
-// Sixteen particles, one every three frames, orbit points scattered 2 to 6
-// pixels around the effect; the target then flashes eight times, takes the
-// orbiting particles' main update and runs its pending event.
+/// Sixteen particles, one every three frames, orbit points scattered 2 to 6
+/// pixels around the effect; the target then flashes eight times, takes the
+/// orbiting particles' main update and runs its pending event.
 void FieldFx_RunFrost(void) {
   struct OrbitingParticleVector pos;
   struct OrbitingParticleVector *p;

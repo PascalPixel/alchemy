@@ -62,7 +62,7 @@ struct RevealWork {
   s8 revealActive;
 };
 
-// Returns 1 while Reveal is active, else 0, as ☀️'s Field_IsRevealActive.
+/// Returns 1 while Reveal is active, else 0, as ☀️'s Field_IsRevealActive.
 s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
   s32 revealState;
   u32 isActive = 0;

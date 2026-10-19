@@ -9,8 +9,8 @@ void Func_0200092c(void) {
   WaitFrames(4);
 }
 
-// Copies a rectangle of cells from (x, y), then raises map layers 0 and 1 by
-// 0x2000 a frame for 16 frames.
+/// Copies a rectangle of cells from (x, y), then raises map layers 0 and 1 by
+/// 0x2000 a frame for 16 frames.
 void Func_0200094c(s32 x, s32 y) {
   struct ShrineOfTheSeaGodMapWork *map =
       (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;

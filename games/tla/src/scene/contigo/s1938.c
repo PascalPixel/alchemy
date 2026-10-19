@@ -8,8 +8,8 @@ void Func_0200403c(s32 value, s32 digits);
 void Field_SetDestination(s32 scene, s32 entrance);
 void Party_SetFields1eeAnd1f0(s32 scene, s32 entrance);
 
-// The lucky wheels attendant: checks the game tickets and free item slots, then
-// sends the player in.
+/// The lucky wheels attendant: checks the game tickets and free item slots, then
+/// sends the player in.
 void Func_02001938(s32 spoken) {
   s32 tickets = PartyInventory_CountItem(228);
   s32 room;

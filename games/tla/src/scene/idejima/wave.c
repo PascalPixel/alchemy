@@ -1,5 +1,6 @@
-// The water's wave scroll: each scanline's vertical offset for BG3 from the
-// back one of two line tables, streamed by DMA 0 at every HBlank.
+/// @file
+/// The water's wave scroll: each scanline's vertical offset for BG3 from the
+/// back one of two line tables, streamed by DMA 0 at every HBlank.
 #include "types.h"
 #include "io_reg.h"
 #include "dma.h"

@@ -9,8 +9,8 @@ extern u8 gData_02006c08[];
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 order);
 void Func_020036a8(void);
 
-// While the object system runs, the world map's blend is queued for the
-// next frames.
+/// While the object system runs, the world map's blend is queued for the
+/// next frames.
 void Func_020038e4(void) {
   if ((u16)Ram_HeapSlots->objectSystem->suspended == 0) {
     IO_WRITE_QUEUE_PUSH(0x4000050, 0x3f8e, 0x20000);

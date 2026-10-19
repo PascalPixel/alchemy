@@ -3,8 +3,8 @@
 void Func_02001464(void);
 void Func_0200155c(void);
 
-// Restores the scene from its flags: two map edits, actors 8 to 11 and two
-// scheduled tasks.
+/// Restores the scene from its flags: two map edits, actors 8 to 11 and two
+/// scheduled tasks.
 void Func_02002970(void) {
   struct LemurianShipObject *object;
 

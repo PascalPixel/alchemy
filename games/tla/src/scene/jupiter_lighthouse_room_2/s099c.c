@@ -27,9 +27,9 @@ void Func_02002324(const void *script, s32 a, s32 b, s32 c);
 s32 Scene_SetArrivalFlags();
 s32 Func_02000aa4();
 
-// The scene's set-up entry: screen effect 0x204, actors 13 and 14 at action
-// variant 3, the blend registers, the particles, and the map and actors by
-// flags 0xa02, 0xa00 and 0xa03 and the entrance.
+/// The scene's set-up entry: screen effect 0x204, actors 13 and 14 at action
+/// variant 3, the blend registers, the particles, and the map and actors by
+/// flags 0xa02, 0xa00 and 0xa03 and the entrance.
 s32 Func_02000854(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 

@@ -11,8 +11,8 @@
 #define DECODE_EUROPEAN
 #endif
 
-// The heap slot holding the message decoder while a message is decoded (slot
-// 50, addressed by its byte offset).
+/// The heap slot holding the message decoder while a message is decoded (slot
+/// 50, addressed by its byte offset).
 #define TEXT_DECODER_SLOT 200
 
 extern const u8 Text_DecodeSymbolCode[];
@@ -20,9 +20,9 @@ extern u8 Text_DecodeSymbolCodeSize[];
 
 void UiText_LookupMessage(struct TextReader *reader, s32 message);
 
-// Decodes message into text as a zero-terminated string of 16-bit codes, with
-// at most capacity entries, keeping style codes with their operands; as ☀️'s
-// function of the same name. capacity includes the terminating halfword.
+/// Decodes message into text as a zero-terminated string of 16-bit codes, with
+/// at most capacity entries, keeping style codes with their operands; as ☀️'s
+/// function of the same name. capacity includes the terminating halfword.
 void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity) {
   struct TextReader reader;
   void *original;

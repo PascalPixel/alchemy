@@ -1,8 +1,8 @@
 #include "types.h"
 #include "object_runtime.h"
 
-// Raises the object's scale in sixteenths to full size and commits its
-// position.
+/// Raises the object's scale in sixteenths to full size and commits its
+/// position.
 void BattleFx_SnapScaleToFull(struct ObjectRuntime *object) {
   s32 next;
   s32 scale;

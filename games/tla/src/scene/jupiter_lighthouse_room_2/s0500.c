@@ -24,9 +24,9 @@ static inline void CopyCells(s32 srcX, s32 srcY, s32 width, s32 height,
   Func_02002214(srcX, srcY, width, height, destX, destY);
 }
 
-// Actor id comes down: once it rests on the terrain (or after 30 frames) cue
-// 188 plays, and at cell (20, 39) it sets flag 0xa02 and copies map cells in
-// three steps, each with cue 167.
+/// Actor id comes down: once it rests on the terrain (or after 30 frames) cue
+/// 188 plays, and at cell (20, 39) it sets flag 0xa02 and copies map cells in
+/// three steps, each with cue 167.
 void Func_02000500(s32 unused, s32 id) {
   struct ObjectRuntime *object = Object_GetById(id);
   struct PartyState *party;

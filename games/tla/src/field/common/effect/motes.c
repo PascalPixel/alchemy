@@ -17,7 +17,7 @@
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The European far-call tables give the terrain height's entry another name.
+/// The European far-call tables give the terrain height's entry another name.
 s32 Func_08020190(s32 layer, s32 x, s32 z);
 #define Map_GetTerrainHeightFar Func_08020190
 #else
@@ -31,7 +31,7 @@ union MoteWord {
   void *link;
 };
 
-// One floating mote: its sprite's attribute words and its world position.
+/// One floating mote: its sprite's attribute words and its world position.
 struct Mote {
   union MoteWord link;
   u32 attr01;
@@ -44,7 +44,7 @@ struct Mote {
   u8 pad1e[2];
 };
 
-// Heap slot 0x74 while the motes run.
+/// Heap slot 0x74 while the motes run.
 struct MoteWork {
   s32 vramEntry;
   s32 tileBase;
@@ -54,9 +54,9 @@ struct MoteWork {
 
 void Func_080d6c60(void);
 
-// Starts the floating motes (Func_080d6c60), as ☀️'s function of the same
-// name with 64 of them: loads their tiles and puts each under the leader with
-// staggered timers, drawn semi-transparent.
+/// Starts the floating motes (Func_080d6c60), as ☀️'s function of the same
+/// name with 64 of them: loads their tiles and puts each under the leader with
+/// staggered timers, drawn semi-transparent.
 void FieldMotes_Start(void) {
   struct MoteWork *work;
   struct Mote *mote;

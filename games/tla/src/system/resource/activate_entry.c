@@ -6,8 +6,8 @@
 #include "io_reg.h"
 #include "iwram_call.h"
 
-// Frees a cache entry and the VRAM it holds; returns -1 for an index out of
-// range.
+/// Frees a cache entry and the VRAM it holds; returns -1 for an index out of
+/// range.
 s32 Resource_ResetEntry(u32 resourceIndex) {
   struct VramBlockCacheEntry *entry = &gResourceTableEntries[resourceIndex];
   u32 offset;
@@ -44,9 +44,9 @@ s32 VramCache_ReleaseVram(u32 resourceIndex) {
   return 0;
 }
 
-// Loads size bytes from src into the object VRAM of cache entry no, reusing
-// its blocks when the size is unchanged (src 0 loads nothing, -1 clears);
-// returns the tile number, or 0 when it does not fit.
+/// Loads size bytes from src into the object VRAM of cache entry no, reusing
+/// its blocks when the size is unchanged (src 0 loads nothing, -1 clears);
+/// returns the tile number, or 0 when it does not fit.
 s32 VramCache_Load(u32 no, u32 size, const void *src) {
   struct VramBlockCacheEntry *entry;
   s32 offset;

@@ -11,8 +11,8 @@ s32 Render_ProjectPoint(const void *point, s32 *screen);
 extern const u8 Data_0813b9a0[];
 extern u8 Data_0813b9a0CodeSize[];
 
-// Copies the ARM vertex kernel into a heap block and runs it: count packed
-// s8 vertices through the current transform into screen coordinates.
+/// Copies the ARM vertex kernel into a heap block and runs it: count packed
+/// s8 vertices through the current transform into screen coordinates.
 void Render_TransformVertices(s32 arg0, s32 arg1, s32 arg2) {
   void (*routine)(s32, s32, s32);
   u32 size;
@@ -29,8 +29,8 @@ void Render_TransformVertices(s32 arg0, s32 arg1, s32 arg2) {
   MemFree(routine);
 }
 
-// Projects count packed s8 vertices (four bytes each) through
-// Render_ProjectPoint into screen coordinates, four halfwords each.
+/// Projects count packed s8 vertices (four bytes each) through
+/// Render_ProjectPoint into screen coordinates, four halfwords each.
 void Render_ProjectVertices(s8 *vertices, s16 *screen, s32 count) {
   s32 point[3];
 
@@ -52,7 +52,7 @@ struct PoolEntry {
 
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 
-// Allocates count model entries plus a cleared one that ends the list.
+/// Allocates count model entries plus a cleared one that ends the list.
 struct PoolEntry *Render_AllocateModelList(s32 count) {
   struct PoolEntry *entries =
       Runtime_BumpAllocateAlternatePool((count + 1) * sizeof(struct PoolEntry));
@@ -76,8 +76,8 @@ struct Texture {
 u32 Runtime_GetRemainingIwram(void);
 void *MemAlloc(s32 size);
 
-// Copies a texture's pixels into a heap block when IWRAM has room for them;
-// returns 1 with copy set up, 0 when there is no room.
+/// Copies a texture's pixels into a heap block when IWRAM has room for them;
+/// returns 1 with copy set up, 0 when there is no room.
 s32 Render_CopyTextureToIwram(struct Texture *source, struct Texture *copy) {
   s32 size = (1 << source->logWidth) << source->logHeight;
   u32 pixels;
@@ -103,10 +103,10 @@ s32 Render_CopyTextureToIwram(struct Texture *source, struct Texture *copy) {
   return 1;
 }
 
-// One entry of a model list. Render_AllocateModelList allocates the list with a cleared
-// entry after the last.
+/// One entry of a model list. Render_AllocateModelList allocates the list with a cleared
+/// entry after the last.
 struct Model {
-  s32 kind; // the rasterizer kernel that draws it; 0 ends the list
+  s32 kind; ///< the rasterizer kernel that draws it; 0 ends the list
   s32 flags;
   const void *mesh;
   void *matrix;
@@ -116,13 +116,13 @@ struct Model {
   u8 frame;
 };
 
-// The texture stays where it is, even when IWRAM has room for a copy.
+/// The texture stays where it is, even when IWRAM has room for a copy.
 #define MODEL_TEXTURE_IN_PLACE 4
 
 typedef void (*ModelKernel)(struct Model *model);
 
-// The rasterizer kernels, ARM code that runs from IWRAM, with their sizes in
-// bytes and, for three of them, in DMA words.
+/// The rasterizer kernels, ARM code that runs from IWRAM, with their sizes in
+/// bytes and, for three of them, in DMA words.
 extern const u8 Data_08138fc8[];
 extern const u8 Data_081391c8[];
 extern const u8 Data_081393d8[];
@@ -149,18 +149,18 @@ extern u8 Data_081395f8CodeWords[];
 extern u8 Data_0813ae14CodeWords[];
 extern u8 Data_0813b2ecCodeWords[];
 
-// Copies a kernel whose DMA control is a word of its own. Kernels 8, 9 and 10
-// read it from the pool, one word each, two of them equal yet stored twice,
-// so it is a symbol of each kernel: written 0x84000000 | (size >> 2) the two
-// fold into one pool entry, and as a number the size is built in three
-// instructions.
+/// Copies a kernel whose DMA control is a word of its own. Kernels 8, 9 and 10
+/// read it from the pool, one word each, two of them equal yet stored twice,
+/// so it is a symbol of each kernel: written 0x84000000 | (size >> 2) the two
+/// fold into one pool entry, and as a number the size is built in three
+/// instructions.
 #define LOAD_KERNEL_WORDS(to, code, bytes, words)                              \
   {                                                                            \
     (to) = MemAlloc((u32)(bytes));                                             \
     Dma_Set((code), (to), 0x84000000 + (u32)(words), REG_DMA3);                \
   }
 
-// Copies the model's texture into IWRAM unless it is to stay in place.
+/// Copies the model's texture into IWRAM unless it is to stay in place.
 #define COPY_TEXTURE()                                                         \
   {                                                                            \
     if (!(model->flags & MODEL_TEXTURE_IN_PLACE) &&                            \
@@ -168,10 +168,10 @@ extern u8 Data_0813b2ecCodeWords[];
       model->texture = &copy;                                                  \
   }
 
-// Draws a list of models. A run of models of one kind loads that kind's
-// rasterizer into IWRAM once, and it is freed when the kind changes. Before
-// a textured model is drawn, its texture is copied into IWRAM where there is
-// room, and the copy is freed after the model is drawn.
+/// Draws a list of models. A run of models of one kind loads that kind's
+/// rasterizer into IWRAM once, and it is freed when the kind changes. Before
+/// a textured model is drawn, its texture is copied into IWRAM where there is
+/// room, and the copy is freed after the model is drawn.
 void Render_DrawModelList(struct Model *model) {
   ModelKernel code = NULL;
   s32 lastKind = 0;

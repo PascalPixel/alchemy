@@ -26,8 +26,8 @@ s32 Trig_Sin(s32 angle);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle,
                            struct OrbitVector *position);
 
-// Per-frame update: sways 4 pixels either side of the anchor, once every
-// 128 frames.
+/// Per-frame update: sways 4 pixels either side of the anchor, once every
+/// 128 frames.
 void BattleFx_SwayParticle(struct SwayObject *object) {
   s16 *phase = &object->phase;
   s32 amplitude = 0x40000;
@@ -37,8 +37,8 @@ void BattleFx_SwayParticle(struct SwayObject *object) {
   *phase = (*phase + 128) % 128;
 }
 
-// The particle circles 10 pixels above the scene's position, its radius in
-// pixels the frames it has left; at 0 it runs the common particle script.
+/// The particle circles 10 pixels above the scene's position, its radius in
+/// pixels the frames it has left; at 0 it runs the common particle script.
 void BattleFx_UpdateShrinkingOrbitObject(struct ObjectRuntime *object) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   struct OrbitVector pos;

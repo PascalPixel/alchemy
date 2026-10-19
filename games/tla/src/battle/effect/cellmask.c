@@ -1,7 +1,7 @@
 #include "types.h"
 
-// Clears the left (corner & 3) + 1 pixels of halfword corner >> 2 in the
-// 4bpp tile at (x, y) of a 26-tile-wide grid at VRAM 0x06000200.
+/// Clears the left (corner & 3) + 1 pixels of halfword corner >> 2 in the
+/// 4bpp tile at (x, y) of a 26-tile-wide grid at VRAM 0x06000200.
 void Tile_ClearLeftPixels(s32 x, s32 y, u32 corner) {
   u16 *cell = (u16 *)(0x06000200 + ((y * 26 + x) << 5));
 

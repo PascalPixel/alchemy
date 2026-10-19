@@ -18,16 +18,14 @@
 #include "edition.h"
 #include "text/msg_ids.h"
 
-// The portion of the save record (SaveSummary) read here.
+/// The portion of the save record (SaveSummary) read here.
 struct NumberRow {
   u8 unk00[0x28];
-  s8 values[4]; // Djinn count for each element.
+  s8 values[4]; ///< Djinn count for each element.
 };
 
-//--------------------------------------------------------------------------
-// Draw four two-digit numbers 24 pixels apart at y = 16.
-// win: destination; do nothing if zero.
-//--------------------------------------------------------------------------
+/// Draw four two-digit numbers 24 pixels apart at y = 16.
+/// win: destination; do nothing if zero.
 void UiText_DrawFourNumbersInRow(struct RenderInput *win,
                                  struct NumberRow *row) {
   s32 i;
@@ -71,11 +69,9 @@ void UiText_DrawNumberInWindow(s32, s32, s32, s32, s32);
 #define SUMMARY_COINS_X 48
 #endif
 
-//--------------------------------------------------------------------------
-// win: destination; do nothing if zero.
-// rec: save record (SaveSummary).
-//      +16 name, +28 level, +29 class, +32 play time, +36 coins.
-//--------------------------------------------------------------------------
+/// win: destination; do nothing if zero.
+/// rec: save record (SaveSummary).
+///      +16 name, +28 level, +29 class, +32 play time, +36 coins.
 void StatusMenu_DrawCharacterSummary(s32 win, u8 *rec) {
   u32 buf[4]; // Formatted play time.
   s32 y;

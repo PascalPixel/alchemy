@@ -101,8 +101,8 @@ DEFINE_EFFECT_KIND(BattleFx_RunProjectileVolleyMode16,
 DEFINE_EFFECT_KIND(BattleFx_RunProjectileVolleyMode17,
                    BattleFx_RunProjectileVolley, 17)
 
-// Named, as The Broken Seal names it, for Ice Blessing; here kind 402 is Ice
-// Breath and Blue Dragon.
+/// Named, as The Broken Seal names it, for Ice Blessing; here kind 402 is Ice
+/// Breath and Blue Dragon.
 DEFINE_EFFECT_KIND(BattleFx_RunIceBlessing, BattleFx_RunProjectileVolley, 10)
 
 DEFINE_EFFECT_KIND(BattleFx_RunProjectileVolleyMode18,

@@ -1,8 +1,8 @@
 #include "types.h"
 #include "effect_slot.h"
 
-// Reports an unfinished target only for effects that stop on arrival.
-// A plain != adds two bytes to the English function.
+/// Reports an unfinished target only for effects that stop on arrival.
+/// A plain != adds two bytes to the English function.
 u32 EffectSlot_HasPendingTarget(struct EffectSlot *effect) {
   u32 value;
 

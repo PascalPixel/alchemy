@@ -12,8 +12,8 @@ struct BattleFxFadeWork {
 
 void ColorBuffer_Halve(void *source, void *destination, s32 size);
 
-// Frame callback: when a transfer is pending, writes the canvas to BG
-// character block 1 at half brightness.
+/// Frame callback: when a transfer is pending, writes the canvas to BG
+/// character block 1 at half brightness.
 void BattleFx_TransferHalvedCanvas(void) {
   struct BattleFxFadeWork *work =
       (struct BattleFxFadeWork *)Ram_HeapSlots->battleFxWork[0];

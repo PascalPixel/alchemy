@@ -138,8 +138,8 @@ static __inline__ void I_ObjectMotion_CommitPositionAndActivate(s32 id, s32 x,
   ObjectMotion_CommitPositionAndActivate(id, x, z);
 }
 
-// The scene in which actor 4 meets 5, 6, 7 and 28 and the group is placed for
-// the arrival; arg selects one of its two layouts.
+/// The scene in which actor 4 meets 5, 6, 7 and 28 and the group is placed for
+/// the arrival; arg selects one of its two layouts.
 void Func_02000cac(s32 arg) {
   struct ObjectRuntime *object;
   s32 angle;

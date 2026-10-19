@@ -440,8 +440,8 @@ void Func_02004a0c(struct SpawnObject *object, s32 mode);
 void Func_02004a14(struct SpawnObject *object, const void *script);
 void Func_02004a74(struct SpawnObject *object, s32 priority);
 
-// Spawns object type 0x1e8 at x, y, z with its sprite turned to value and
-// its timer set.
+/// Spawns object type 0x1e8 at x, y, z with its sprite turned to value and
+/// its timer set.
 void Func_02001b9c(s32 x, s32 y, s32 z, s16 value, s32 timer) {
   struct SpawnObject *object;
   struct FieldSprite *sprite;

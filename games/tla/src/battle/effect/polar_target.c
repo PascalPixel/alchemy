@@ -29,7 +29,7 @@ void Func_080e87c4(void);
 
 void BattleFx_FinishSceneAndReleaseHeapBlock(void);
 
-// unk26a from party_state.h.
+/// unk26a from party_state.h.
 struct PartyPauseView {
   u8 unk000[0x26a];
   s16 pausedObject;
@@ -52,7 +52,7 @@ void BattleFx_ClearChildValueOnMismatch(void) {
   }
 }
 
-// Additional processing for each type.
+/// Additional processing for each type.
 void FieldEvent_RunTypeHandler(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
 

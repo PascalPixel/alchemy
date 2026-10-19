@@ -10,7 +10,7 @@ void Func_0200316c(void) {
   }
 }
 
-// Clears actors 8 to 14 after flag 0x8b3, or places them after flag 0x8f0.
+/// Clears actors 8 to 14 after flag 0x8b3, or places them after flag 0x8f0.
 void Func_020031b4(void) {
   s32 angleA;
   s32 angleB;

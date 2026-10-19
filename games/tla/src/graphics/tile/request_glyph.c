@@ -13,16 +13,16 @@ s32 Ui_CountIconTableEntries(void);
 
 u8 *BattleActGet(s32);
 
-// Builds the icon of a battle action's item, as ☀️'s Ability_RequestGlyph.
+/// Builds the icon of a battle action's item, as ☀️'s Ability_RequestGlyph.
 void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                           s32 reuse) {
   UiIcon_BuildItemIconTiles(*(u16 *)(BattleActGet(action) + 4), withBase, slot,
                             tile, reuse);
 }
 
-// Builds item icon glyph, over the icon frame when withBase is set, and loads
-// it into *cacheSlot (a free slot unless reuse is set). Returns the tile in
-// *tileOut. As ☀️'s function of the same name.
+/// Builds item icon glyph, over the icon frame when withBase is set, and loads
+/// it into *cacheSlot (a free slot unless reuse is set). Returns the tile in
+/// *tileOut. As ☀️'s function of the same name.
 void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
                                s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;

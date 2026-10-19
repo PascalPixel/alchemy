@@ -3,8 +3,8 @@
 void Func_02001474(void);
 void Func_02001a9c(void);
 
-// Sets up the scene by flags 0x93f, 0x9e4 and 0x22f: actor 64, actors 8 to 13
-// and the camera.
+/// Sets up the scene by flags 0x93f, 0x9e4 and 0x22f: actor 64, actors 8 to 13
+/// and the camera.
 void Func_02002820(void) {
   struct LemurianShipObject *object;
 

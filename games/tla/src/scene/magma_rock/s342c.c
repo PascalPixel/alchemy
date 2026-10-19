@@ -15,9 +15,9 @@ struct SpriteAttributes {
 
 struct ObjectRuntime *Object_GetById(s32 id);
 
-// Moves the object by its velocity, slows its x and z velocity, grows its
-// scale, turns its sprite, then gives the sprite the current owner's sprite
-// priority.
+/// Moves the object by its velocity, slows its x and z velocity, grows its
+/// scale, turns its sprite, then gives the sprite the current owner's sprite
+/// priority.
 void Func_0200342c(struct ObjectRuntime *object) {
   s32 vx = object->bounce;
   s32 vz;

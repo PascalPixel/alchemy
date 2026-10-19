@@ -45,8 +45,8 @@ static inline void GondowanCliffs_ObjEmote(s32 actor, s32 emote) {
   Func_020012ac(actor, emote);
 }
 
-// The scene that asks where the party intends to go, to help recover the black
-// orb.
+/// The scene that asks where the party intends to go, to help recover the black
+/// orb.
 void Func_020007d8(void) {
   Func_0200120c();
   Func_020012e4(0);

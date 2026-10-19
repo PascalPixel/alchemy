@@ -5,17 +5,17 @@
 #include "resource.h"
 #include "ram_buffer.h"
 
-// Set while the world map shows its alternative picture.
+/// Set while the world map shows its alternative picture.
 extern s16 Data_0202a640;
 extern char ResourceId_Data023, ResourceId_Data024;
 
 #define BG_VRAM 0x06000000
 
-// Draws one row of the world map picture on BG1, from a column to the right
-// edge of the map (at most 31 tiles; Japanese always draws 32), for
-// scrolling: decodes the picture's row into the cell buffer, which holds 24
-// rows and wraps, and copies its cells into the 32-column screen from tile
-// 256, wrapping at column 32.
+/// Draws one row of the world map picture on BG1, from a column to the right
+/// edge of the map (at most 31 tiles; Japanese always draws 32), for
+/// scrolling: decodes the picture's row into the cell buffer, which holds 24
+/// rows and wraps, and copies its cells into the 32-column screen from tile
+/// 256, wrapping at column 32.
 void Func_080ecf74(u32 column, s32 row) {
   s32 resource = (s32)&ResourceId_Data024;
   u32 *graphics;

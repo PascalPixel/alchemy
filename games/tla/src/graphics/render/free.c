@@ -15,11 +15,11 @@
 
 void Func_08039754(struct UiChannelSlot *channel);
 
-// Starts a channel typing the decoded text at entry into the battle message
-// window, as ☀️'s UiText_StartBattleMessage. A channel that already serves a
-// finished window continues below its last line (scrolling up once both lines
-// are used) unless keepPosition is set. Returns the channel, or NULL when all
-// three are busy.
+/// Starts a channel typing the decoded text at entry into the battle message
+/// window, as ☀️'s UiText_StartBattleMessage. A channel that already serves a
+/// finished window continues below its last line (scrolling up once both lines
+/// are used) unless keepPosition is set. Returns the channel, or NULL when all
+/// three are busy.
 struct UiChannelSlot *UiText_StartBattleMessage(struct UiWindow *window,
                                                 s32 entry, s32 keepPosition) {
   struct UiChannelSlot *slot;

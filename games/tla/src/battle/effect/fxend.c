@@ -6,8 +6,8 @@
 void Func_080eb6a0(void);
 void Func_080eb594(void);
 
-// Ends the canvas sprite: stops its draw and upload callbacks, waits a
-// frame and frees its sprite work, canvas and pixel map.
+/// Ends the canvas sprite: stops its draw and upload callbacks, waits a
+/// frame and frees its sprite work, canvas and pixel map.
 void BattleFx_EndCanvasSprite(void) {
   Scheduler_RemoveCallback(Func_080eb6a0);
   Scheduler_RemoveCallback(Func_080eb594);

@@ -5,8 +5,8 @@
 // terrain behaviour, and the small tables after them.
 //--------------------------------------------------------------------------
 
-// Each height function reads only the arguments it needs, so the type
-// leaves them unspecified.
+/// Each height function reads only the arguments it needs, so the type
+/// leaves them unspecified.
 typedef s32 (*TerrainHeightFn)();
 
 s32 Curve_GetFirstSampleA();
@@ -26,8 +26,8 @@ s32 Curve_LookupSampleByTableReversed();
 s32 Func_0802d414();
 s32 Func_0802d438();
 
-// The height functions: the low four bits of a cell's first collision
-// byte choose one, called with (the remaining samples, x and z in the cell).
+/// The height functions: the low four bits of a cell's first collision
+/// byte choose one, called with (the remaining samples, x and z in the cell).
 const TerrainHeightFn gMap_TerrainHeightHandlers[16] = {
     Curve_GetFirstSampleA,
     Curve_LerpTwoSamples,
@@ -47,9 +47,9 @@ const TerrainHeightFn gMap_TerrainHeightHandlers[16] = {
     Func_0802d438,
 };
 
-// The world map's terrain behaviour, read at a selector plus a row: 0x10
-// when the block word's top bit is set, 0x20 for terrain kinds above 40,
-// 0x30 for kinds 12 and 15 and 0x40 for kind 36.
+/// The world map's terrain behaviour, read at a selector plus a row: 0x10
+/// when the block word's top bit is set, 0x20 for terrain kinds above 40,
+/// 0x30 for kinds 12 and 15 and 0x40 for kind 36.
 // clang-format off
 const u8 gWorldMap_TerrainBehaviorTable[80] = {
     0, 8, 8, 8, 10, 1, 7, 1, 1, 2, 1, 1, 1, 1, 0, 0,
@@ -59,26 +59,26 @@ const u8 gWorldMap_TerrainBehaviorTable[80] = {
     0, 9, 9, 9, 9, 11, 11, 11, 11, 12, 11, 11, 11, 11, 0, 0, // 0x40
 };
 
-// Eight colours (BGR555).
+/// Eight colours (BGR555).
 const u16 gData_0802f054[8] = {
     0x0000, 0x7c00, 0x03e0, 0x001f, 0x1ce7, 0x3def, 0x7fff, 0x000f,
 };
 
-// Stops for a number from 0 to 715 that steps by one or skips: a skip
-// forward goes to the next stop above it, back to the last stop below.
-// 0xffff ends the list.
+/// Stops for a number from 0 to 715 that steps by one or skips: a skip
+/// forward goes to the next stop above it, back to the last stop below.
+/// 0xffff ends the list.
 const u16 gData_0802f064[10] = {
     0, 16, 243, 247, 250, 490, 526, 642, 671, 0xffff,
 };
 // clang-format on
 
-// Eight directions at a radius of 40 (x, y).
+/// Eight directions at a radius of 40 (x, y).
 const s8 gWorldMap_DirectionOffsets[8][2] = {
     {0, -40}, {28, -28}, {40, 0},  {28, 28},
     {0, 40},  {-28, 28}, {-40, 0}, {-28, -28},
 };
 
-// Two 1.0s (Q16).
+/// Two 1.0s (Q16).
 const u32 gWorldMap_UnitScale[2] = {
     0x10000,
     0x10000,

@@ -1,7 +1,7 @@
 #include "local.h"
 
-// Clears the effect table, takes a free VRAM entry for it with a 0x200-byte
-// block and no source, then schedules Func_020015f8.
+/// Clears the effect table, takes a free VRAM entry for it with a 0x200-byte
+/// block and no source, then schedules Func_020015f8.
 void Func_020017bc(void) {
   /* FAKEMATCH: through a local pointer the resident clear's entry loads before
    * the size is finished, as in the native (direct: differ 2). */

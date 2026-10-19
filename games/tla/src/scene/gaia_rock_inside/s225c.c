@@ -30,10 +30,10 @@ void Func_02004fcc(s32 value);
 void Func_02004fdc(void);
 void Func_02005014(s32 cue);
 
-// Three scene events of one shape, for objects 8 and 12, 9 and 12, and 8 and
-// 14: the first object shakes with random vertical speeds, and while the flag
-// of its event (0x9bd, 0x9be, 0x9bc) is clear it moves, two map copies open
-// the way and the partner returns to the leader.
+/// Three scene events of one shape, for objects 8 and 12, 9 and 12, and 8 and
+/// 14: the first object shakes with random vertical speeds, and while the flag
+/// of its event (0x9bd, 0x9be, 0x9bc) is clear it moves, two map copies open
+/// the way and the partner returns to the leader.
 void Func_0200225c(void) {
   struct ObjectRuntime *object;
   struct ObjectRuntime *partner;

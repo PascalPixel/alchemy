@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// dispatch_type_handler.c
-// Field Psynergy: the dispatchers that run each animation
-//--------------------------------------------------------------------------
+/// @file
+/// Field Psynergy: the dispatchers that run each animation
 
 #include "types.h"
 #include "ram_buffer.h"
@@ -10,12 +8,12 @@
 #include "object_runtime.h"
 #include "edition.h"
 
-// The Psynergy animations (BattleFxScene.animation) the dispatchers name.
-// The Broken Seal has 1-16; ⚓️ adds 17-30.
+/// The Psynergy animations (BattleFxScene.animation) the dispatchers name.
+/// The Broken Seal has 1-16; ⚓️ adds 17-30.
 enum FieldPsynergyAnimation {
-  FIELD_FX_PUSH = 1,  // pushes the target the way the pad points
-  FIELD_FX_WAVE = 2,  // the hue wave from the caster to the target
-  FIELD_FX_PAUSE = 9, // stops an object in its tracks
+  FIELD_FX_PUSH = 1,  ///< pushes the target the way the pad points
+  FIELD_FX_WAVE = 2,  ///< the hue wave from the caster to the target
+  FIELD_FX_PAUSE = 9, ///< stops an object in its tracks
 };
 
 void BattleFx_Run(void);
@@ -84,11 +82,9 @@ void BattleFx_CallEffect22(s32 targetId);
 void BattleFx_CallEffect21(s32 targetId);
 void BattleFx_CallEffect18(s32 targetId);
 
-//--------------------------------------------------------------------------
-// Runs the animation's handler for kind: 0 runs it with no target chosen, 1
-// on the chosen target (secondObjectId), 2 finishes it and 3 runs the kind's
-// extra step.
-//--------------------------------------------------------------------------
+/// Runs the animation's handler for kind: 0 runs it with no target chosen, 1
+/// on the chosen target (secondObjectId), 2 finishes it and 3 runs the kind's
+/// extra step.
 void Field_DispatchTypeHandler(s32 kind) {
   if (kind == 0)
     BattleFx_Run();
@@ -108,8 +104,8 @@ void Field_DispatchTypeHandler(s32 kind) {
 // three editions keep both dispatchers on their scaffold (S4).
 #if (LANGUAGE != LANGUAGE_SPANISH) && (LANGUAGE != LANGUAGE_FRENCH) &&                    \
     (LANGUAGE != LANGUAGE_ITALIAN)
-// Run the field Psynergy animation the scene names, with no target chosen
-// yet: each kind runs its effect to the end.
+/// Run the field Psynergy animation the scene names, with no target chosen
+/// yet: each kind runs its effect to the end.
 void BattleFx_Run(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   u8 *event = Ram_HeapSlots->eventWork;
@@ -208,8 +204,8 @@ void BattleFx_Run(void) {
   }
 }
 
-// Run the field Psynergy animation the scene names on the target the player
-// chose (BattleFxScene.secondObjectId).
+/// Run the field Psynergy animation the scene names on the target the player
+/// chose (BattleFxScene.secondObjectId).
 void BattleFx_DispatchRequestKind(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   u8 *event = Ram_HeapSlots->eventWork;

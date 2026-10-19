@@ -2,7 +2,7 @@
 #include "resource.h"
 #include "vram_tab.h"
 
-// Frees every VRAM block and every cache entry.
+/// Frees every VRAM block and every cache entry.
 void VramCache_Reset(void) {
   u32 count;
   /* FAKEMATCH: ⚓️ loads the block owners' address between the first two
@@ -33,8 +33,8 @@ void VramCache_Reset(void) {
   }
 }
 
-// Returns the first free cache entry, or VRAM_CACHE_ENTRY_COUNT when all are
-// in use.
+/// Returns the first free cache entry, or VRAM_CACHE_ENTRY_COUNT when all are
+/// in use.
 s32 Resource_FindFreeEntry(void) {
   s32 ret = VRAM_CACHE_ENTRY_COUNT;
   s32 no;

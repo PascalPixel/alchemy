@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// object.c
-// Objects: create and release field objects, and render them each frame.
-//--------------------------------------------------------------------------
+/// @file
+/// Objects: create and release field objects, and render them each frame.
 
 #include "battle.h"
 #include "field.h"
@@ -24,10 +22,8 @@
 
 #include "ram_buffer.h"
 
-//--------------------------------------------------------------------------
-// Return an unused object (one without a script) from the 64 slots.
-// Return 0 if none are free.
-//--------------------------------------------------------------------------
+/// Return an unused object (one without a script) from the 64 slots.
+/// Return 0 if none are free.
 void *ObjectDispatch_FindFreeObject(void) {
   struct ObjectRuntime *obj = Ram_HeapSlots->scriptObjects;
   void *ret = 0;
@@ -44,10 +40,8 @@ void *ObjectDispatch_FindFreeObject(void) {
   return ret;
 }
 
-//--------------------------------------------------------------------------
-// Release the object's graphics and zero the object to free it.
-// obj: object.
-//--------------------------------------------------------------------------
+/// Release the object's graphics and zero the object to free it.
+/// obj: object.
 void ObjectDispatch_Release(struct DispatchObject *obj) {
   volatile u32 zero;
   volatile u32 *src;

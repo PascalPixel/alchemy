@@ -12,8 +12,8 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
                                  s32 initialVelocityY);
 void Func_08138008(struct BattlePresentationWork *work);
 
-// The actor announces its attack, walks up to its target and plays the
-// attack's effect on it. Returns -1 when either id is not a battle object.
+/// The actor announces its attack, walks up to its target and plays the
+/// attack's effect on it. Returns -1 when either id is not a battle object.
 s32 BattlePres_RunApproachAction(struct BattleActionRecord *input) {
   struct BattlePresentationWork work;
 

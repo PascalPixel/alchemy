@@ -15,13 +15,13 @@ s32 Field_FindNearbyTalkTarget(s32 id);
 s32 Func_080d99b8(s32 first, s32 second);
 void Func_080da060(s32 index, s32 first, s32 second, s32 wobble);
 
-// The heap slot 0xa0 work's per-frame callback (Func_080d9b08 adds it).
-// Unless flag 260 is set, once the event work's counter passes 12 it picks
-// the event work's cue: with render mode 0 the slot linking the leader's
-// nearby talk target sets 0xfc83 when Func_080d99b8 accepts its two ends, and
-// render mode 4 sets 0xfc84. Then every active slot wobbles: the amplitude
-// decays by 0.95 a frame until it drops to 0x1998, and Func_080da060 redraws
-// the slot with the sine of its angle times it.
+/// The heap slot 0xa0 work's per-frame callback (Func_080d9b08 adds it).
+/// Unless flag 260 is set, once the event work's counter passes 12 it picks
+/// the event work's cue: with render mode 0 the slot linking the leader's
+/// nearby talk target sets 0xfc83 when Func_080d99b8 accepts its two ends, and
+/// render mode 4 sets 0xfc84. Then every active slot wobbles: the amplitude
+/// decays by 0.95 a frame until it drops to 0x1998, and Func_080da060 redraws
+/// the slot with the sine of its angle times it.
 void Func_080d9d40(void) {
   struct WobbleEvent *event = Ram_HeapSlots->eventWork;
   struct WorkA0 *work = WORK_A0;

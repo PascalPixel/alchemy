@@ -2,15 +2,15 @@
 
 void Func_0814b9e8(s32 effect, s32 mode);
 
-// Abilities: Balm (kind 230).
+/// Abilities: Balm (kind 230).
 void BattleFx_RunBalm(s32 effect) { Func_0814b9e8(effect, 0); }
 
 void Func_0814b9e8(s32 effect, s32 mode);
 
-// Abilities: Tinder (kind 231).
+/// Abilities: Tinder (kind 231).
 void BattleFx_RunTinder(s32 effect) { Func_0814b9e8(effect, 1); }
 
 void Func_0814b9e8(s32 effect, s32 mode);
 
-// Abilities: Phoenix, Regen Dance (kind 436).
+/// Abilities: Phoenix, Regen Dance (kind 436).
 void BattleFx_RunPhoenix(s32 effect) { Func_0814b9e8(effect, 2); }

@@ -9,7 +9,7 @@ void BattleFx_BeginCanvasLayer(s32 layer);
 void Func_0815585c(struct CanvasJob *job, s32 flags, s32 *b, s32 *a);
 void BattleFx_EndCanvasLayer(void);
 
-// Abilities: Kite (kind 217).
+/// Abilities: Kite (kind 217).
 void BattleFx_RunKite(struct CanvasJob *job) {
   s32 b[3];
   s32 a[3];

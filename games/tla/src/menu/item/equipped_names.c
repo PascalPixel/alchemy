@@ -4,9 +4,9 @@
 
 void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 
-// Writes the name of each equipped item of the inventory into window, on the
-// row of its equipment slot: item type 1 on the first row, 4 on the second,
-// 3 on the third and 2 on the fourth.
+/// Writes the name of each equipped item of the inventory into window, on the
+/// row of its equipment slot: item type 1 on the first row, 4 on the second,
+/// 3 on the third and 2 on the fourth.
 void ItemMenu_DrawEquippedItemNames(s32 window, u16 *items) {
   s32 i;
   s32 item;

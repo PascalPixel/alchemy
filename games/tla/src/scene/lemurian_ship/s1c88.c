@@ -2,8 +2,8 @@
 
 void Func_02001944(s32 actor, s32 target);
 
-// Places actors 10 and 11 as flags 0x930 and 0x931 say, then runs the pending
-// step of flag 0x220 or 0x221.
+/// Places actors 10 and 11 as flags 0x930 and 0x931 say, then runs the pending
+/// step of flag 0x220 or 0x221.
 void Func_02001c88(void) {
   s32 flag;
 

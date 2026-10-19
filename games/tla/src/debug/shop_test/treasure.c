@@ -12,7 +12,7 @@ static __inline__ void Inventory_AddItemAgain(s32 owner, s32 item) {
   Inventory_AddItem(owner, item);
 }
 
-// Coins and equipment for owners 4 to 7, then owners 0 to 3 leave the party.
+/// Coins and equipment for owners 4 to 7, then owners 0 to 3 leave the party.
 void Func_020003b8(void) {
   s32 i;
 

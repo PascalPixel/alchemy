@@ -9,8 +9,8 @@ void Func_020030c8(s32 id, s32 emote);
 void Func_02003030(s32 x, s32 z, s32 a, s32 b);
 void Func_020030e8(s32 a);
 
-// The leader turns to angle 0x4000 and takes mode 22, shows emote 0x102, then
-// turns to 0xc000 and takes mode 5 and action 24.
+/// The leader turns to angle 0x4000 and takes mode 22, shows emote 0x102, then
+/// turns to 0xc000 and takes mode 5 and action 24.
 void Func_02000b3c(void) {
   struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
 

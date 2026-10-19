@@ -24,7 +24,7 @@ struct PartyState {
   s16 special;
   u8 unk1f8[2];
   s16 map;
-  s32 x; // the party's position on entering, as ☀️'s gGameState
+  s32 x; ///< the party's position on entering, as ☀️'s gGameState
   s32 y;
   s32 z;
   s32 heading;
@@ -49,7 +49,7 @@ struct PartyState {
   u16 keys238;
   u16 keys23a;
   u8 unk23c[2];
-  s16 returnCue; // the music to play on returning, -1 for the scene's own
+  s16 returnCue; ///< the music to play on returning, -1 for the scene's own
   u16 packedEvents[2];
   u8 unk244[7];
   u8 battleRule24b;
@@ -65,9 +65,9 @@ struct PartyState {
   s32 avoidDistance;
   s8 avoidByItem;
   u8 savedByte;
-  s16 pausedObject; // the object field Psynergy has stopped, -1 for none
+  s16 pausedObject; ///< the object field Psynergy has stopped, -1 for none
   s8 pendingThird;
-  s8 cloaked; // Cloak: the leader is hidden
+  s8 cloaked; ///< Cloak: the leader is hidden
   u8 unk26e[2];
   u32 savedCallback;
   u8 counter274;

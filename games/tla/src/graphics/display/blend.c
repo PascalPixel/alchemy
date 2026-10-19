@@ -1,8 +1,6 @@
-//--------------------------------------------------------------------------
-// blend.c
-// Display: configure brightness fades to white or black and wait for
-// completion.
-//--------------------------------------------------------------------------
+/// @file
+/// Display: configure brightness fades to white or black and wait for
+/// completion.
 
 #include "battle.h"
 #include "debug.h"
@@ -25,10 +23,8 @@
 //   gBlendLayers: BLDCNT target layers (the four helpers below use 0x3e:
 //   BG1-3, OBJ, and backdrop). gBlendFramesLeft: remaining frame count.
 
-//--------------------------------------------------------------------------
-// Fade out to black.
-// frames: fade duration in frames.
-//--------------------------------------------------------------------------
+/// Fade out to black.
+/// frames: fade duration in frames.
 void Fade_ToBlack(s32 frames) {
   gBlendBrighten = 0;
   gBlendLayers = 0x3e;
@@ -38,9 +34,7 @@ void Fade_ToBlack(s32 frames) {
   gBlendFramesLeft = gBlendDuration;
 }
 
-//--------------------------------------------------------------------------
-// Fade in from black.
-//--------------------------------------------------------------------------
+/// Fade in from black.
 void Fade_FromBlack(s32 frames) {
   gBlendBrighten = 0;
   gBlendLayers = 0x3e;
@@ -50,9 +44,7 @@ void Fade_FromBlack(s32 frames) {
   gBlendFramesLeft = gBlendDuration;
 }
 
-//--------------------------------------------------------------------------
-// Fade out to white.
-//--------------------------------------------------------------------------
+/// Fade out to white.
 void Fade_ToWhite(s32 frames) {
   gBlendBrighten = 1;
   gBlendLayers = 0x3e;
@@ -62,9 +54,7 @@ void Fade_ToWhite(s32 frames) {
   gBlendFramesLeft = gBlendDuration;
 }
 
-//--------------------------------------------------------------------------
-// Fade in from white.
-//--------------------------------------------------------------------------
+/// Fade in from white.
 void Fade_FromWhite(s32 frames) {
   gBlendBrighten = 1;
   gBlendLayers = 0x3e;
@@ -74,14 +64,12 @@ void Fade_FromWhite(s32 frames) {
   gBlendFramesLeft = gBlendDuration;
 }
 
-//--------------------------------------------------------------------------
-// Configure a fade.
-// bright: 0 for black; 1 for white.
-// layer: BLDCNT target layers, in the low six bits.
-// start: initial brightness; values above 16 use the current target brightness.
-// target: target brightness.
-// frames: fade duration in frames.
-//--------------------------------------------------------------------------
+/// Configure a fade.
+/// bright: 0 for black; 1 for white.
+/// layer: BLDCNT target layers, in the low six bits.
+/// start: initial brightness; values above 16 use the current target brightness.
+/// target: target brightness.
+/// frames: fade duration in frames.
 void Fade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 frames) {
   gBlendBrighten = bright;
   gBlendLayers = layer & 0x3f;
@@ -94,9 +82,7 @@ void Fade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 frames) {
   gBlendFramesLeft = (gBlendDuration = frames);
 }
 
-//--------------------------------------------------------------------------
-// Wait for the fade to finish.
-//--------------------------------------------------------------------------
+/// Wait for the fade to finish.
 void Fade_Wait(void) {
   if (gBlendDuration != 0) {
     do {
@@ -112,8 +98,8 @@ void Render_ResetFrame(void) {
   Iwram_ClearWords(gOamBucketMasks, 32);
 }
 
-// Takes the next of the 32 sprite affine matrices and fills it with the
-// rotation and scale of source; returns its index, or 31 when all are taken.
+/// Takes the next of the 32 sprite affine matrices and fills it with the
+/// rotation and scale of source; returns its index, or 31 when all are taken.
 s32 AffineMatrix_BuildForEffect(struct AffineTransform *source) {
   union AffineMatrix *matrix;
   s16 *coefficient;

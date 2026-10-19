@@ -1,14 +1,10 @@
-//--------------------------------------------------------------------------
-// adjust_palette_bank.c
-// Menu: make brightness-adjusted copies of BG palettes.
-//--------------------------------------------------------------------------
+/// @file
+/// Menu: make brightness-adjusted copies of BG palettes.
 
 #include "types.h"
 
-//--------------------------------------------------------------------------
-// Add d to the 16 colors' RGB components in BG palettes 15, 5, and 7, clamping
-// to 0-31; write palettes 14, 4, and 6. Palette 7 uses -12 instead of d.
-//--------------------------------------------------------------------------
+/// Add d to the 16 colors' RGB components in BG palettes 15, 5, and 7, clamping
+/// to 0-31; write palettes 14, 4, and 6. Palette 7 uses -12 instead of d.
 void Graphics_AdjustPaletteBank(s32 d) {
   s32 n;
   s32 bank;

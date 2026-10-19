@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// draw_draw_quantity_pair_with_cue.c
-// Messages: teach an ability and display the learning message.
-//--------------------------------------------------------------------------
+/// @file
+/// Messages: teach an ability and display the learning message.
 
 #include "types.h"
 #include "edition.h"
@@ -13,11 +11,9 @@ void Audio_PlayCue(s32);
 void UiText_DrawQuantity(s32, s32);
 void UiText_ShowPositionedMessageAndWaitFar(void *, s32);
 
-//--------------------------------------------------------------------------
-// Teach the ability, play a sound, show a message, and wait for advancement.
-// unit: character ID (message name 1).
-// ability: ability ID (message ability 4).
-//--------------------------------------------------------------------------
+/// Teach the ability, play a sound, show a message, and wait for advancement.
+/// unit: character ID (message name 1).
+/// ability: ability ID (message ability 4).
 void UiText_DrawQuantityPairWithCue(s32 unit, s32 ability) {
   // Declared without arguments, but unit and ability pass through in r0 and r1.
   Unit_LearnPsynergyFar();

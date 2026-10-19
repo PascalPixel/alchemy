@@ -1,8 +1,8 @@
 #include "lemurian_ship.h"
 
-// When actor 8 or 9 stands on its switch cell (column 35 or 29, row 9), lowers
-// it, edits the map and sets flag 0x202 or 0x203; once both are set, the last
-// map edit sets flag 0x982.
+/// When actor 8 or 9 stands on its switch cell (column 35 or 29, row 9), lowers
+/// it, edits the map and sets flag 0x202 or 0x203; once both are set, the last
+/// map edit sets flag 0x982.
 void Func_02000e2c(void) {
   struct LemurianShipObject *object;
   struct LemurianShipObject *leader;

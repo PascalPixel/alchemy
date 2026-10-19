@@ -7,10 +7,10 @@ void Camera_FollowActor(u16 actor, s32 value);
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 z);
 void WaitFrames(s32 frames);
 
-// The event's object keeps stepping a cell at a time in the direction it was
-// pushed (its cell against the one Func_02000bfc stored in its action) while
-// the next cell's layer 1 attribute is 50 and its layer 2 attribute is not 255,
-// then settles on the middle of its cell.
+/// The event's object keeps stepping a cell at a time in the direction it was
+/// pushed (its cell against the one Func_02000bfc stored in its action) while
+/// the next cell's layer 1 attribute is 50 and its layer 2 attribute is not 255,
+/// then settles on the middle of its cell.
 void Func_02000c64(s32 unused, s32 actorArg) {
   u8 *work = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *object;

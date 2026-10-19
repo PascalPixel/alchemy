@@ -42,9 +42,9 @@ static __inline__ void SetObjectValue(s32 id, s32 value) {
   Func_02000ba4(id, v);
 }
 
-// Sets the event route to 0x204. In the first room, gives objects 9 to 14 their
-// values and priority bits, and under flag 0x200 runs Func_02000494. Under flag
-// 0x201, runs a screen transition and Func_02000408, then clears the flag.
+/// Sets the event route to 0x204. In the first room, gives objects 9 to 14 their
+/// values and priority bits, and under flag 0x200 runs Func_02000494. Under flag
+/// 0x201, runs a screen transition and Func_02000408, then clears the flag.
 s32 Func_02000740(void) {
   ((struct AnemosInnerSanctumEntranceEventWork *)Ram_HeapSlots->eventWork)
       ->route = 0x204;

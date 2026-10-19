@@ -43,9 +43,9 @@ void Func_02000634(s32 value);
 void Func_0200063c(s32 value);
 void Func_02000644(s32 cue);
 
-// ☀️'s Title_Run with ⚓️'s entrances: at entrance 10 the title is revealed
-// and waits up to 3600 frames for a key before the title scene starts again
-// at entrance 2; entrances 8, 1, 2 and 3 each lead to their own scene.
+/// ☀️'s Title_Run with ⚓️'s entrances: at entrance 10 the title is revealed
+/// and waits up to 3600 frames for a key before the title scene starts again
+/// at entrance 2; entrances 8, 1, 2 and 3 each lead to their own scene.
 s32 Func_0200005c(void) {
   s32 wait;
   s32 limit;
@@ -168,9 +168,9 @@ void Title_LoadSprites(s32 unused) {
   MemFree(buffer);
 }
 
-// ☀️'s Title_RevealSpriteRow: rebuilds the row of 18 sprites under the logo
-// and pushes those the reveal has reached, hiding the two newest on odd
-// frames, then counts the reveal on.
+/// ☀️'s Title_RevealSpriteRow: rebuilds the row of 18 sprites under the logo
+/// and pushes those the reveal has reached, hiding the two newest on odd
+/// frames, then counts the reveal on.
 void Func_02000278(void) {
   u32 *w;
   struct TitleSprite *p;

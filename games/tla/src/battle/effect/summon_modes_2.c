@@ -3,8 +3,8 @@
 
 void Func_081823a8(struct BattleEffectArgument *effect, s32 mode);
 
-// Abilities: Djinn Stun (kind 465).
+/// Abilities: Djinn Stun (kind 465).
 DEFINE_EFFECT_KIND(BattleFx_RunDjinnStun, Func_081823a8, 0)
 
-// Abilities: Mystic Call (kind 466).
+/// Abilities: Mystic Call (kind 466).
 DEFINE_EFFECT_KIND(BattleFx_RunMysticCall, Func_081823a8, 1)

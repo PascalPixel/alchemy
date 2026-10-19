@@ -9,13 +9,13 @@
 #include "battle_summon.h"
 #include "types.h"
 
-// The summons in the order the menus list them.
+/// The summons in the order the menus list them.
 extern u8 gSummon_OrderList[29];
 
 u32 *Djinn_GetRecoveryTable();
 
-// Lists the summons, in the game's order, whose bit is set in the state's
-// first word, ends the list with 32 and returns how many it listed.
+/// Lists the summons, in the game's order, whose bit is set in the state's
+/// first word, ends the list with 32 and returns how many it listed.
 s32 Summon_ListLearned(u8 *output) {
   u8 *source = gSummon_OrderList;
   u8 *end = gSummon_OrderList + 28;

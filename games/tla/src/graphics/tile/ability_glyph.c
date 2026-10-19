@@ -33,9 +33,9 @@ void Ability_LoadGlyph(s32 action, s32 with_base, s32 *slot, s32 *tile,
                                tile, reuse);
 }
 
-// Builds Psynergy icon glyph, over the icon frame when withBase is set, and
-// loads it into *cacheSlot (a free slot unless reuse is set). Returns the tile
-// in *tileOut. As ☀️'s function of the same name.
+/// Builds Psynergy icon glyph, over the icon frame when withBase is set, and
+/// loads it into *cacheSlot (a free slot unless reuse is set). Returns the tile
+/// in *tileOut. As ☀️'s function of the same name.
 void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
                                   s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;

@@ -11,8 +11,8 @@ void ObjectDispatch_SetAnimationSpeed(struct ObjectRuntime *object,
                                          s32 value);
 void Func_020022bc(s32 a);
 
-// Once the leader stands at height 32 or more, it rises and spins for 110
-// frames.
+/// Once the leader stands at height 32 or more, it rises and spins for 110
+/// frames.
 void Func_02000454(void) {
   struct ObjectRuntime *object = Object_GetById(gPartyState.currentOwner);
   s32 i;

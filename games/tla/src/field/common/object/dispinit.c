@@ -24,8 +24,8 @@ void Func_08023510(struct DispatchObject *object, s32 argument) {
   object->argument = argument;
 }
 
-// Starts the dispatch script for the party state's render mode, waiting a
-// frame first in mode 9.
+/// Starts the dispatch script for the party state's render mode, waiting a
+/// frame first in mode 9.
 void Func_08023524(struct DispatchObject *object) {
   const s32 *script;
   struct PartyState *party = &gPartyState;

@@ -31,16 +31,16 @@ static inline void PlaceActor(s32 id, s32 x, s32 z) {
   Func_0200195c(id, x, z);
 }
 
-// One hop of object 12 by (dx, dz).
+/// One hop of object 12 by (dx, dz).
 static inline void Hop(s32 dx, s32 dz) {
   ObjectMotion_Launch(12, 5, 0);
   ObjectMotion_CommitPositionAndActivate(12, dx, dz);
   FieldEvent_WaitFrames(3);
 }
 
-// Once (flag 0x96c): object 12 spins for 30 frames while it grows from half
-// scale, then hops thirteen times while the leader follows, and object 13
-// takes Func_02000048 as its update.
+/// Once (flag 0x96c): object 12 spins for 30 frames while it grows from half
+/// scale, then hops thirteen times while the leader follows, and object 13
+/// takes Func_02000048 as its update.
 void Func_02000110(void) {
   struct ObjectRuntime *object;
   s32 i;

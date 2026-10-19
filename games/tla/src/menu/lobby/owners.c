@@ -1,7 +1,7 @@
 #include "types.h"
 #include "party_state.h"
 
-// Writes up to three active party owners to out, ending the list with 0xff.
+/// Writes up to three active party owners to out, ending the list with 0xff.
 void Func_02000538(u16 *out) {
   struct PartyState *party;
   s32 count = Party_CountActiveOwners();

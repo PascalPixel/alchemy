@@ -34,8 +34,8 @@ void Func_02000904(void);
 void Func_020012e8(struct ObjectRuntime *object, s32 mode);
 void Func_02001408(s32 cue);
 
-// Places the four actors from their tables, resets the ride and installs
-// its task.
+/// Places the four actors from their tables, resets the ride and installs
+/// its task.
 void Func_020010f4(void) {
   struct SpringRide *ride = &gData_02001760;
   s32 i = 0;
@@ -82,7 +82,7 @@ next:
   Scheduler_AddOrUpdateCallback((SchedulerCallback)Func_02000904, 0x483);
 }
 
-// Runs the spring ride from one side until it ends, and returns its result.
+/// Runs the spring ride from one side until it ends, and returns its result.
 s32 Func_02001184(s32 side) {
   struct SpringRide *ride;
 

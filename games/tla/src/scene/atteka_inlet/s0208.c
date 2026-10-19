@@ -25,8 +25,8 @@ void Func_020010b8(s32 id, s32 value);
 s32 Func_020010c8(s32 id, s32 emote, s32 frames);
 void Func_02001108(s32 value);
 
-// Once flag 0x9d0 is set and while flag 0x9b2 is clear, objects 9 and 10 are
-// placed, jump in and talk, four cells of the map change and flag 0x9b0 is set.
+/// Once flag 0x9d0 is set and while flag 0x9b2 is clear, objects 9 and 10 are
+/// placed, jump in and talk, four cells of the map change and flag 0x9b0 is set.
 void Func_02000208(void) {
   if (GameFlag_Test(0x9d0) && !GameFlag_Test(0x9b2)) {
     Func_02001010();

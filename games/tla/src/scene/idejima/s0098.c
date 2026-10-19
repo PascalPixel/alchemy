@@ -56,7 +56,7 @@ void Event_PrepareObjectAndApplyValue();
 void Motion_SetModeAndWaitAnimation();
 void ObjectMotion_Launch();
 
-// A scene of actor 8 and the leader that ends by setting flag 0x863.
+/// A scene of actor 8 and the leader that ends by setting flag 0x863.
 void Func_020000f0(void) {
   s32 message;
   struct ObjectRuntime *actor;
@@ -113,7 +113,7 @@ void Func_020000f0(void) {
   Engine_EventEnd();
 }
 
-// A scene of actor 5 and the leader that ends by setting flag 0x864.
+/// A scene of actor 5 and the leader that ends by setting flag 0x864.
 void Func_020002b4(void) {
   struct ObjectRuntime *actor;
   struct ObjectRuntime *leader;

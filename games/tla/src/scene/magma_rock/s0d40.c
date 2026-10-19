@@ -21,8 +21,8 @@ void Func_0200015c(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                    s32 velocityZ, u32 flags,
                    struct MagmaRockEffectConfig *config);
 
-// Every fourth frame, spawns effect 403 at the object with a random z offset
-// and z velocity.
+/// Every fourth frame, spawns effect 403 at the object with a random z offset
+/// and z velocity.
 void Func_02000d40(struct ObjectRuntime *object) {
   u32 frame = gFrameCount;
 

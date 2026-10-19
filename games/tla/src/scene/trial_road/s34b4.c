@@ -1,7 +1,7 @@
 #include "trial_road.h"
 #include "text/msg_ids.h"
 
-// The byte at 0x5a of an actor, as the field its bit 0 is set through.
+/// The byte at 0x5a of an actor, as the field its bit 0 is set through.
 struct ActorSolid {
   u8 unk00[0x5a];
   u8 solid : 8;

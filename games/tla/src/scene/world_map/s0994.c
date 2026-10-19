@@ -35,7 +35,7 @@ void Event_FinishScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 void Func_0200050c(void);
 
-// Gather at the player character's position.
+/// Gather at the player character's position.
 static __inline__ void Actor_JoinLeader(s32 actor) {
   struct ObjectRuntime *leader;
 
@@ -86,7 +86,7 @@ static __inline__ void Func_02004d08_(s32 actor, s32 value, s32 frames) {
   Func_02004d08(actor, value, frames);
 }
 
-// Back to the map: actor 8's position is kept in the party state.
+/// Back to the map: actor 8's position is kept in the party state.
 void Func_02000918(void) {
   struct EventDestination *work = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *leader = Object_GetById(8);

@@ -27,7 +27,7 @@ s32 Runtime_BlankDisplayAndRunScene(void) {
   return 0;
 }
 
-// The Broken Seal's Camera_ResetSceneDefaults, with the camera tilted to 147.
+/// The Broken Seal's Camera_ResetSceneDefaults, with the camera tilted to 147.
 void Camera_ResetSceneDefaultsB(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
   struct FixedPointPosition local;

@@ -14,12 +14,12 @@ void EventRuntime_Wait(s32 frames);
 void Object_Destroy(struct ObjectRuntime *object);
 void BattleFx_SpinObject(void);
 
-// An event sequence, the arrival counterpart of Func_080e3698. The actor
-// spins (BattleFx_SpinObject) at zero width and its sprite is hidden while
-// object 280 grows on it for 32 frames; object 280 then snaps to 1.5 by 1
-// (cue 136, mode 6) while the actor widens back from half size over 16 frames
-// and shows again. Object 280 is destroyed and the actor's update and facing
-// are restored.
+/// An event sequence, the arrival counterpart of Func_080e3698. The actor
+/// spins (BattleFx_SpinObject) at zero width and its sprite is hidden while
+/// object 280 grows on it for 32 frames; object 280 then snaps to 1.5 by 1
+/// (cue 136, mode 6) while the actor widens back from half size over 16 frames
+/// and shows again. Object 280 is destroyed and the actor's update and facing
+/// are restored.
 void Func_080e37e0(s32 actor) {
   struct ObjectRuntime *object = Object_GetById(actor);
   s32 angle = object->angle;

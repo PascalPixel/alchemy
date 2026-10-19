@@ -39,7 +39,7 @@ s32 Shop_CanServe(s32 entry_id, s32 kind) {
   return result;
 }
 
-// The sanctum's view of the shop work (heap slot 220).
+/// The sanctum's view of the shop work (heap slot 220).
 struct ShopRuntime {
   u8 unk000[0x4ca];
   s16 partyMemberIds[8];
@@ -49,8 +49,8 @@ struct ShopRuntime {
   s8 partyAction;
 };
 
-// Counts the party members who need the selected sanctum service, as ☀️'s
-// Shop_CountUnits.
+/// Counts the party members who need the selected sanctum service, as ☀️'s
+/// Shop_CountUnits.
 s32 Shop_CountUnits(void) {
   struct ShopRuntime *shop;
   s32 eligibleCount;

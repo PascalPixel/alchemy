@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// random16.c
-// Battle: random numbers and damage/recovery calculations.
-//--------------------------------------------------------------------------
+/// @file
+/// Battle: random numbers and damage/recovery calculations.
 
 #include "types.h"
 #include "battle.h"
@@ -14,9 +12,7 @@
 #include "battle_random.h"
 #include "battle_type.h"
 
-//--------------------------------------------------------------------------
-// Battle linear congruential generator; return seed bits 8-23.
-//--------------------------------------------------------------------------
+/// Battle linear congruential generator; return seed bits 8-23.
 u32 BattleRandom(void) {
   s32 seed;
 
@@ -25,20 +21,16 @@ u32 BattleRandom(void) {
   return (u32)(seed << 8) >> 16;
 }
 
-//--------------------------------------------------------------------------
-// Random number from 0 to 99.
-//--------------------------------------------------------------------------
+/// Random number from 0 to 99.
 u32 BattleRandomPercent(void) { return (BattleRandom() * 100) >> 16; }
 
-//--------------------------------------------------------------------------
-// Attack damage (BattleAtkCalc).
-// Multiply (atk - def + add * 2) / 2 by the elemental difference multiplier.
-// 256 is unity; the difference has half BattlePowerCalc's effect (128-384).
-// atk: attack.
-// def: defense (clamp atk - def to zero).
-// add: ability power.
-// bonus: elemental difference (power - resistance).
-//--------------------------------------------------------------------------
+/// Attack damage (BattleAtkCalc).
+/// Multiply (atk - def + add * 2) / 2 by the elemental difference multiplier.
+/// 256 is unity; the difference has half BattlePowerCalc's effect (128-384).
+/// atk: attack.
+/// def: defense (clamp atk - def to zero).
+/// add: ability power.
+/// bonus: elemental difference (power - resistance).
 s32 Battle_CalcAttackDamage(s32 atk, s32 def, s32 add, s32 bonus) {
   s32 dmg;
   s32 val;
@@ -56,13 +48,11 @@ s32 Battle_CalcAttackDamage(s32 atk, s32 def, s32 add, s32 bonus) {
   return dmg;
 }
 
-//--------------------------------------------------------------------------
-// Psynergy power (BattlePowerCalc).
-// Multiply power by rate and the elemental multiplier (0-512, with 256 unity).
-// power: power.
-// bonus: elemental difference (power - resistance).
-// rate: multiplier, with 256 unity.
-//--------------------------------------------------------------------------
+/// Psynergy power (BattlePowerCalc).
+/// Multiply power by rate and the elemental multiplier (0-512, with 256 unity).
+/// power: power.
+/// bonus: elemental difference (power - resistance).
+/// rate: multiplier, with 256 unity.
 s32 Battle_CalcPsynergyPower(s32 power, s32 bonus, s32 rate) {
   s32 val;
 
@@ -72,13 +62,11 @@ s32 Battle_CalcPsynergyPower(s32 power, s32 bonus, s32 rate) {
   return val >> 16;
 }
 
-//--------------------------------------------------------------------------
-// Recovery amount (BattleRecoveryCalc).
-// Derive the multiplier (256 is unity) from twice the elemental power above
-// 100, then apply it to power and rate. power: power. element: user's elemental
-// power (100: unity, >=200: double, <=0: zero). rate: multiplier, with 256
-// unity.
-//--------------------------------------------------------------------------
+/// Recovery amount (BattleRecoveryCalc).
+/// Derive the multiplier (256 is unity) from twice the elemental power above
+/// 100, then apply it to power and rate. power: power. element: user's elemental
+/// power (100: unity, >=200: double, <=0: zero). rate: multiplier, with 256
+/// unity.
 s32 Battle_CalcRecovery(s32 power, s32 element, s32 rate) {
   s32 val;
   u32 prod;
@@ -93,11 +81,9 @@ s32 Battle_CalcRecovery(s32 power, s32 element, s32 rate) {
 
 s32 Enemy_GetAttackElement(void *state);
 
-//--------------------------------------------------------------------------
-// Return the unit's attack element (4 means no element).
-// Enemies use their species' element; allies use their equipped weapon's
-// element. id: unit ID.
-//--------------------------------------------------------------------------
+/// Return the unit's attack element (4 means no element).
+/// Enemies use their species' element; allies use their equipped weapon's
+/// element. id: unit ID.
 s32 Item_GetEquippedElement(s32 id) {
   struct ItemDefinition *item;
   struct BattleUnit *unit;

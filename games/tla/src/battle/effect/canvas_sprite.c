@@ -9,17 +9,17 @@
 #define BG_VRAM ((void *)0x06000000)
 #define TILE_SIZE 32
 
-// The canvas in words, as one 32-bit DMA.
+/// The canvas in words, as one 32-bit DMA.
 #define CANVAS_DMA ((DMA_ENABLE | DMA_32BIT) << 16 | CANVAS_SIZE / 4)
 
 void ColorBuffer_MapToFadeStep1(u8 *buffer, s32 count);
 void ColorBuffer_MapToFadeStep2(u8 *buffer, s32 count);
 void ColorBuffer_MapToFadeStep3(u8 *buffer, s32 count);
 
-// The canvas's frame callback: counts the frame and carries out the command
-// the effect left for it, copying the canvas into the sprite's tiles (or to
-// the start of BG VRAM), and clearing or fading it after the copy. Case 2
-// comes before case 1: its body comes first in the ROM.
+/// The canvas's frame callback: counts the frame and carries out the command
+/// the effect left for it, copying the canvas into the sprite's tiles (or to
+/// the start of BG VRAM), and clearing or fading it after the copy. Case 2
+/// comes before case 1: its body comes first in the ROM.
 void Func_080eb594(void) {
   struct CanvasSpriteWork *work = Ram_HeapSlots->unkec[1];
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];

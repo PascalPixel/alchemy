@@ -1,7 +1,8 @@
-// Fills BG0's scanline scroll table with a jittered sine wave and streams it
-// to BG0HOFS by HBlank DMA 0. Each overlay that has it includes this body
-// after naming the function (WAVE_SCROLL) and its 160-line table
-// (WAVE_SCROLL_LINES).
+/// @file
+/// Fills BG0's scanline scroll table with a jittered sine wave and streams it
+/// to BG0HOFS by HBlank DMA 0. Each overlay that has it includes this body
+/// after naming the function (WAVE_SCROLL) and its 160-line table
+/// (WAVE_SCROLL_LINES).
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"

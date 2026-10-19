@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// adjust_value_without_limit.c
-// Windows: expand a message into a string without a length limit.
-//--------------------------------------------------------------------------
+/// @file
+/// Windows: expand a message into a string without a length limit.
 
 #include "types.h"
 #include "scene.h"
@@ -12,15 +10,13 @@
 
 void UiText_BuildRenderEntries(s32 key, s32 mode);
 
-//--------------------------------------------------------------------------
-// Expand message into buf without an upper length bound.
-//--------------------------------------------------------------------------
+/// Expand message into buf without an upper length bound.
 void Ui_AdjustValueWithoutLimit(s32 message, s32 buf) {
   UiText_DecodeMessage(message, buf, 0x7fffffff);
 }
 
-// Builds message key's text entries and copies them to destination, at most
-// capacity - 1 characters and a terminator; returns the characters copied.
+/// Builds message key's text entries and copies them to destination, at most
+/// capacity - 1 characters and a terminator; returns the characters copied.
 s32 UiText_CopyMessageString(s32 key, u16 *destination, u32 capacity) {
   struct UiRenderWork *work;
   u32 count;

@@ -7,8 +7,8 @@
 
 void Func_02000a60(s32 id, s32 a);
 
-// The scene's start entry: the screen effect 0x209, then the actors of
-// rooms 1 and 2.
+/// The scene's start entry: the screen effect 0x209, then the actors of
+/// rooms 1 and 2.
 s32 Func_0200086c(void) {
   s32 scene;
 

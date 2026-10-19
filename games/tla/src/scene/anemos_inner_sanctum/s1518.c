@@ -21,9 +21,9 @@ void Func_02003450(s32 countdown);
 void Func_02003488(s32 a);
 void Func_020034b8(s32 cue);
 
-// Centres the party leader on its cell and raises actor 8 (in Ov6B0Room4) or
-// actor 9 with cue 198, 4 pixels at once and then 128 more, before the screen
-// transition finishes.
+/// Centres the party leader on its cell and raises actor 8 (in Ov6B0Room4) or
+/// actor 9 with cue 198, 4 pixels at once and then 128 more, before the screen
+/// transition finishes.
 void Func_02001518(void) {
   struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
   struct ObjectRuntime *object;

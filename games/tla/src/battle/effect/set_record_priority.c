@@ -16,8 +16,8 @@ struct FxRecord {
 struct FxSlot *GetBattleObjectSlotFar(s32 objectId);
 struct FxRecord *GetMotionRecordFar(void *object, s32 record_index);
 
-// Sets the OBJ priority of every motion record of the battle object, unless
-// its slot is hidden.
+/// Sets the OBJ priority of every motion record of the battle object, unless
+/// its slot is hidden.
 void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
   struct FxSlot *slot = GetBattleObjectSlotFar(objectId);
   struct FxRecord *record;

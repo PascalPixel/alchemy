@@ -4,7 +4,7 @@
 #include "animspr.h"
 #include "system.h"
 
-// ⚓️'s animation group: the number last applied and its entries.
+/// ⚓️'s animation group: the number last applied and its entries.
 struct AnimationGroup {
   u8 unk00[0x18];
   u8 lastNo;
@@ -12,8 +12,8 @@ struct AnimationGroup {
   struct AnimationEntry *entries[4];
 };
 
-// Waits, at most 90 frames, for an actor's animation to change or for its
-// first entry's script to reach code 241.
+/// Waits, at most 90 frames, for an actor's animation to change or for its
+/// first entry's script to reach code 241.
 void ObjectMotion_WaitForAnimationChange(u32 objectId) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
   struct AnimationGroup *group;

@@ -6,8 +6,8 @@ u32 Audio_UmulHigh32(u32 left, u32 right);
 extern u8 gSound_PcmPitchCodes[];
 extern u32 gSound_PcmFrequencySteps[];
 
-// Interpolates adjacent key frequencies and scales them by the wave sample
-// frequency.
+/// Interpolates adjacent key frequencies and scales them by the wave sample
+/// frequency.
 s32 Pcm_KeyToFrequency(void *wave, u8 key, u8 pitch) {
   u32 keyIndex;
   u32 pitchScale;
@@ -34,10 +34,10 @@ s32 Pcm_KeyToFrequency(void *wave, u8 key, u8 pitch) {
           Audio_UmulHigh32(upperFrequency - lowerFrequency, pitchScale));
 }
 
-// Provides the empty callback retained by the sound driver.
+/// Provides the empty callback retained by the sound driver.
 void Audio_NoopStub(void) {}
 
-// The sound data's symbols supply the player count and maximum track count.
+/// The sound data's symbols supply the player count and maximum track count.
 extern char Sound_PlayerCount[];
 extern char Sound_MaxLines[];
 #define SOUND_PLAYER_COUNT ((u16)(u32)Sound_PlayerCount)
@@ -78,7 +78,7 @@ void CgbChannel_Mute(u8 channel);
 s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine);
 extern SoundCommand gSound_CommandTable[36];
 
-// Clears the paused flag while holding the player lock.
+/// Clears the paused flag while holding the player lock.
 void Audio_ResumePlayer(struct SoundPlayer *player) {
   if (player->lock == SOUND_LOCK) {
     player->lock++;
@@ -87,7 +87,7 @@ void Audio_ResumePlayer(struct SoundPlayer *player) {
   }
 }
 
-// Starts a fade under the player lock, resuming the player for fade-ins.
+/// Starts a fade under the player lock, resuming the player for fade-ins.
 static __inline__ void MusicPlayer_SetFadeParameters(struct SoundPlayer *player,
                                                      u16 period, u16 volume) {
   if (player->lock == SOUND_LOCK) {
@@ -101,13 +101,13 @@ static __inline__ void MusicPlayer_SetFadeParameters(struct SoundPlayer *player,
   }
 }
 
-// Begins a fade that stops and clears tracks when its volume reaches zero.
+/// Begins a fade that stops and clears tracks when its volume reaches zero.
 void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed) {
   MusicPlayer_SetFadeParameters(player, speed, SOUND_FADE_FULL_VOLUME);
 }
 
-// Copies the RAM mixer, initializes both audio paths and configures every
-// player.
+/// Copies the RAM mixer, initializes both audio paths and configures every
+/// player.
 void Audio_Initialize(void) {
   s32 playerIndex;
 
@@ -127,10 +127,10 @@ void Audio_Initialize(void) {
   }
 }
 
-// Runs one mixer frame through the driver entry point.
+/// Runs one mixer frame through the driver entry point.
 void AudioEngine_RunMixer(void) { AudioEngine_RunMixerTick(); }
 
-// Starts the song on the player selected by its song-table entry.
+/// Starts the song on the player selected by its song-table entry.
 void Audio_PlaySound(u16 songId) {
   const struct PlayerSlot *slots = gSound_PlayerSlots;
   const struct SongEntry *songs = gSound_SongTable;
@@ -139,7 +139,7 @@ void Audio_PlaySound(u16 songId) {
   MusicPlayer_StartSong(slots[song->slot].player, song->header);
 }
 
-// Starts the song unless its selected player is already playing it.
+/// Starts the song unless its selected player is already playing it.
 void Audio_PlaySoundIfInactive(u16 songId) {
   const struct PlayerSlot *slots = gSound_PlayerSlots;
   const struct SongEntry *songs = gSound_SongTable;
@@ -153,7 +153,7 @@ void Audio_PlaySoundIfInactive(u16 songId) {
     MusicPlayer_StartSong(player, song->header);
 }
 
-// Starts a different or finished song, or resumes the same paused song.
+/// Starts a different or finished song, or resumes the same paused song.
 void Audio_PlayOrResumeSound(u16 songId) {
   const struct PlayerSlot *slots = gSound_PlayerSlots;
   const struct SongEntry *songs = gSound_SongTable;
@@ -168,7 +168,7 @@ void Audio_PlayOrResumeSound(u16 songId) {
     Audio_ResumePlayer(player);
 }
 
-// Stops the selected player only when it holds this song.
+/// Stops the selected player only when it holds this song.
 void Audio_StopSound(u16 songId) {
   const struct PlayerSlot *slots = gSound_PlayerSlots;
   const struct SongEntry *songs = gSound_SongTable;
@@ -179,7 +179,7 @@ void Audio_StopSound(u16 songId) {
     MusicPlayer_Stop(player);
 }
 
-// Resumes the selected player only when it holds this song.
+/// Resumes the selected player only when it holds this song.
 void Audio_ResumeSound(u16 songId) {
   const struct PlayerSlot *slots = gSound_PlayerSlots;
   const struct SongEntry *songs = gSound_SongTable;
@@ -190,7 +190,7 @@ void Audio_ResumeSound(u16 songId) {
     Audio_ResumePlayer(player);
 }
 
-// Stops every configured song player.
+/// Stops every configured song player.
 void Audio_StopAllPlayers(void) {
   s32 playerIndex;
 
@@ -198,12 +198,12 @@ void Audio_StopAllPlayers(void) {
     MusicPlayer_Stop(gSound_PlayerSlots[playerIndex].player);
 }
 
-// Resumes this player through the shared pause-state operation.
+/// Resumes this player through the shared pause-state operation.
 void MusicPlayer_Resume(struct SoundPlayer *player) {
   Audio_ResumePlayer(player);
 }
 
-// Resumes every configured song player.
+/// Resumes every configured song player.
 void Audio_ResumeAllPlayers(void) {
   s32 playerIndex;
 
@@ -211,23 +211,23 @@ void Audio_ResumeAllPlayers(void) {
     Audio_ResumePlayer(gSound_PlayerSlots[playerIndex].player);
 }
 
-// Begins the standard stop-and-clear fade.
+/// Begins the standard stop-and-clear fade.
 void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed) {
   MusicPlayer_BeginFadeOut(player, speed);
 }
 
-// Begins a fade that preserves track state for later resumption.
+/// Begins a fade that preserves track state for later resumption.
 void MusicPlayer_FadeOutPause(struct SoundPlayer *player, u16 speed) {
   MusicPlayer_SetFadeParameters(player, speed,
                                 SOUND_FADE_FULL_VOLUME | SOUND_FADE_PAUSE);
 }
 
-// Starts a fade from zero volume and resumes the player.
+/// Starts a fade from zero volume and resumes the player.
 void MusicPlayer_FadeIn(struct SoundPlayer *player, u16 speed) {
   MusicPlayer_SetFadeParameters(player, speed, SOUND_FADE_IN);
 }
 
-// Initializes active tracks still carrying their reset flag.
+/// Initializes active tracks still carrying their reset flag.
 void MusicPlayer_ResetActiveTracks(struct SoundPlayer *player) {
   s32 count = player->trackCount;
   struct SoundTrack *track = player->tracks;
@@ -249,8 +249,8 @@ void MusicPlayer_ResetActiveTracks(struct SoundPlayer *player) {
   }
 }
 
-// Resets CGB hardware, installs its command handlers and clears four channel
-// records.
+/// Resets CGB hardware, installs its command handlers and clears four channel
+/// records.
 void CgbAudio_Initialize(struct CgbNote *notes) {
   struct SoundWork *work;
   u32 lock;

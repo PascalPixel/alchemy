@@ -28,7 +28,7 @@ extern u8 *gUiIcon_ItemIconPointers[];
 
 void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 layer);
 
-// Decodes item code's icon (the first icon for code 0) into the glyph work.
+/// Decodes item code's icon (the first icon for code 0) into the glyph work.
 void Ui_PrepareTransferForItem(s32 code) {
   GlyphTransfer *state = Ram_HeapSlots->glyphWork;
   struct ItemDefinition *item = Item_Get(0x1ff & code);

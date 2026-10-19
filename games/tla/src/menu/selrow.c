@@ -2,8 +2,8 @@
 #include "edition.h"
 
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// Spanish and Italian builds use a different name for this far call,
-// as in shop.c.
+/// Spanish and Italian builds use a different name for this far call,
+/// as in shop.c.
 s32 Func_080c8638(s32 scene, s32 entrance);
 #else
 s32 Scene_GetAreaNameIndexFar(s32 scene, s32 entrance);

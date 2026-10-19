@@ -14,8 +14,8 @@ void Func_02002304(void);
 void Func_02002fd4(void);
 void Func_020031a8(s32 a);
 
-// The scene's start entry: the two scene callbacks, then by entrance the
-// scene that runs (2 and 4 also set the saved scene and entrance).
+/// The scene's start entry: the two scene callbacks, then by entrance the
+/// scene that runs (2 and 4 also set the saved scene and entrance).
 s32 Func_02002ec8(void) {
   s32 entrance;
 

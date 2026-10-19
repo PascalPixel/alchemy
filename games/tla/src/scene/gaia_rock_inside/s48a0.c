@@ -18,9 +18,9 @@ extern s8 gData_020053fc[][2];
 
 void Func_02004e0c(s32 x, s32 z, s32 width, s32 height, s32 cellX, s32 cellZ);
 
-// From the third state on, for each of the two map layers: Func_02004e0c
-// with the state's origin plus the layer's cell, a 15 by 10 size and the
-// layer's cell plus one.
+/// From the third state on, for each of the two map layers: Func_02004e0c
+/// with the state's origin plus the layer's cell, a 15 by 10 size and the
+/// layer's cell plus one.
 void Func_020048a0(void) {
   s32 state = *(s32 *)(gData_020023c4 + 0x288);
   s8 *origin = gData_020053fc[state];

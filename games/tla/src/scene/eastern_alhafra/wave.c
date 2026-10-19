@@ -15,8 +15,8 @@ void Scheduler_AddOrUpdateCallback();
 // BG1's wave: each frame the finished table of scanline offsets is handed to
 // an HBlank DMA, while the other table is filled for the next frame.
 
-// Starts DMA 0 copying the finished table into BG1's horizontal offset at
-// each HBlank, with ☀️'s DMA 0 stop sequence.
+/// Starts DMA 0 copying the finished table into BG1's horizontal offset at
+/// each HBlank, with ☀️'s DMA 0 stop sequence.
 void Func_02000a44(void) {
   u16 *line = gData_020056e0[gData_020054f0[0] ^ 1];
   volatile u16 *channel;
@@ -37,8 +37,8 @@ void Func_02000a44(void) {
   Dma_Set(line, (void *)0x04000016, 0xa2600001, (volatile u32 *)channel);
 }
 
-// Fills the other table: each of the 160 lines takes layer 2's scroll plus a
-// sine of the frame count less the line.
+/// Fills the other table: each of the 160 lines takes layer 2's scroll plus a
+/// sine of the frame count less the line.
 void Func_02000a98(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapWork->layers[2];
   u16 *line;

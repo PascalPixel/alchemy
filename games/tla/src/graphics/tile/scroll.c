@@ -3,8 +3,8 @@
 
 extern u32 gFrameTick;
 
-// Fills the HBlank word table: 32 words of 0x01ff01ff, 240 rising steps,
-// 48 more of 0x01ff01ff and 192 zeros.
+/// Fills the HBlank word table: 32 words of 0x01ff01ff, 240 rising steps,
+/// 48 more of 0x01ff01ff and 192 zeros.
 void DisplayScroll_BuildHblankWordTable(u32 *table) {
   s32 i;
   u32 value;

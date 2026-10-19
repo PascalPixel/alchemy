@@ -7,9 +7,9 @@
 extern const u16 gData_0802f380[][6];
 extern char ResourceId_Map000;
 
-// Decodes the palette resource of a map's header row (its second halfword)
-// and copies its 224 colors to destination, keeping the current backdrop
-// color in the first entry.
+/// Decodes the palette resource of a map's header row (its second halfword)
+/// and copies its 224 colors to destination, keeping the current backdrop
+/// color in the first entry.
 void Func_0802a650(s32 map, void *destination) {
   /* FAKEMATCH: the table address is a word local added after the row offset,
    * as in Map_GetHeaderSize; the native loads it before it scales the row. An

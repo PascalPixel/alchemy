@@ -14,9 +14,9 @@ void ObjectDispatch_SetSpritePriorityFar(struct ObjectRuntime *object,
 extern const u8 gData_080effd8[];
 extern const u8 gData_080f0074[];
 
-// Places the object 36 pixels above the controlled owner, gives it its
-// sprite priority and, three frames on, the descent script, and turns the
-// owner to face a quarter turn.
+/// Places the object 36 pixels above the controlled owner, gives it its
+/// sprite priority and, three frames on, the descent script, and turns the
+/// owner to face a quarter turn.
 void Func_080cf350(struct ObjectRuntime *object) {
   struct ObjectRuntime *owner;
 

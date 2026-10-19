@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// act_run_entries.c
-// Battle presentation: apply the action's effects to each target.
-//--------------------------------------------------------------------------
+/// @file
+/// Battle presentation: apply the action's effects to each target.
 
 #include "types.h"
 #include "battle.h"
@@ -12,11 +10,9 @@
 
 void BattlePresentation_WaitForAdvance(void);
 
-//--------------------------------------------------------------------------
-// Clear highlights, apply each target's effect, and run the events.
-// With no targets, only wait for message advancement.
-// plan: action and target information.
-//--------------------------------------------------------------------------
+/// Clear highlights, apply each target's effect, and run the events.
+/// With no targets, only wait for message advancement.
+/// plan: action and target information.
 s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused) {
   s32 i;
 

@@ -35,8 +35,8 @@ void UiText_DrawStringInWindow(u8 *text, s32 arg1, u32 x, u32 y) {
 #if (LANGUAGE != LANGUAGE_JAPANESE) // The Japanese scaffold has no label for
                              // UiText_FormatNumber yet.
 
-// The number writers format the value in a 16-byte buffer and draw it with
-// the matching string writer.
+/// The number writers format the value in a 16-byte buffer and draw it with
+/// the matching string writer.
 void UiText_DrawNumber(s32 value, s32 width, s32 output, s32 x, s32 y) {
   u8 data[16];
   /* FAKEMATCH: the value is pinned to the r4 it takes: the native loads the

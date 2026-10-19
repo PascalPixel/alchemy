@@ -9,8 +9,8 @@ void FieldEvent_WaitFrames(s32 frames);
 void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 void Object_LinkObjectAndSetCallback(s32 actor, s32 target);
 
-// Actor 8 is placed and given its script while the screen flashes, and three
-// map cells change.
+/// Actor 8 is placed and given its script while the screen flashes, and three
+/// map cells change.
 void Func_02000964(void) {
   struct ObjectRuntime *object = Object_GetById(8);
 

@@ -18,9 +18,9 @@ void Func_02004f0c(s32 message);
 void Func_02004f14(s32 id, s32 value);
 void Func_02004fcc(s32 value);
 
-// Talking to object 10 while its byte at 0x60 is at most 2: once flag 0x9ac is
-// set it says one of two lines, by whether any of flags 0x9bc to 0x9bf is set;
-// before that it turns to the leader and speaks.
+/// Talking to object 10 while its byte at 0x60 is at most 2: once flag 0x9ac is
+/// set it says one of two lines, by whether any of flags 0x9bc to 0x9bf is set;
+/// before that it turns to the leader and speaks.
 void Func_020011c8(void) {
   if (*((u8 *)Object_GetById(10) + 96) > 2)
     return;

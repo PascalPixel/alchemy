@@ -1,4 +1,5 @@
-// Sine-driven glow for colors 8 through 11 of background palette 14.
+/// @file
+/// Sine-driven glow for colors 8 through 11 of background palette 14.
 
 #include "edition.h"
 #include "types.h"
@@ -6,8 +7,8 @@
 
 extern u32 gFrameTick;
 
-// Updates four RGB555 colors with an eight-frame phase offset between them.
-// For s = sin / 16384, red is 22 + 2s, green 16 + s, and blue 20 + s.
+/// Updates four RGB555 colors with an eight-frame phase offset between them.
+/// For s = sin / 16384, red is 22 + 2s, green 16 + s, and blue 20 + s.
 void PaletteGlow_UpdateSine(void) {
   s32 *tick;
   volatile u16 *pal;

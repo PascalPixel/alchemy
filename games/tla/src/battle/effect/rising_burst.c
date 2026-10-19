@@ -10,8 +10,8 @@ void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
                                                 s32 magnitude, s32 angle);
 void Object_Destroy(struct ObjectRuntime *object);
 
-// The object spins as it rises for 31 frames, shrinks, and bursts into 8
-// particles (object 673), as ☀️'s UpdateRisingParticleBurst.
+/// The object spins as it rises for 31 frames, shrinks, and bursts into 8
+/// particles (object 673), as ☀️'s UpdateRisingParticleBurst.
 void UpdateRisingParticleBurst(void *object) {
   struct ObjectRuntime *src = object;
   struct ObjectRuntime *child;

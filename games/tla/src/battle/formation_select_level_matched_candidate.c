@@ -4,13 +4,13 @@
 #include "mem.h"
 #include "system.h"
 
-// One kept formation: its record and its average level, -1 while empty.
+/// One kept formation: its record and its average level, -1 while empty.
 struct FormationCandidate {
   s16 recordId;
   s32 score : 16;
 };
 
-// The enemy flags (0x600 + id) cleared before every search.
+/// The enemy flags (0x600 + id) cleared before every search.
 extern const u16 Data_08130c5c[];
 
 struct BattleUnit *UnitGet(s32 unitId);
@@ -20,11 +20,11 @@ void GameFlag_SetBit(s32 flag);
 void GameFlag_ClearBit(s32 flag);
 s32 Func_08127588(s32 formation);
 
-// As The Broken Seal's function of the same name: keeps up to thirty-two
-// eligible formations near the party's adjusted average level, chooses one
-// randomly and returns its level adjustment through outMargin. This game first
-// sets flags from others, clears the enemy flags of Data_08130c5c, sets flags
-// 71, 230 and 117, and searches 660 formations.
+/// As The Broken Seal's function of the same name: keeps up to thirty-two
+/// eligible formations near the party's adjusted average level, chooses one
+/// randomly and returns its level adjustment through outMargin. This game first
+/// sets flags from others, clears the enemy flags of Data_08130c5c, sets flags
+/// 71, 230 and 117, and searches 660 formations.
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   s32 matchCount = 0;
   struct FormationCandidate *pool = Runtime_BumpAllocateAlternatePool(128);

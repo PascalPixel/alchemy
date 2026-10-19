@@ -1,17 +1,13 @@
-//--------------------------------------------------------------------------
-// setup_transition_at_pair_midpoint.c
-// Battle presentation: center the camera between two objects.
-//--------------------------------------------------------------------------
+/// @file
+/// Battle presentation: center the camera between two objects.
 
 #include "types.h"
 #include "motobj.h"
 #include "battle_display.h"
 
-//--------------------------------------------------------------------------
-// Center the camera on two objects' midpoint in x and z.
-// a, b: object IDs.
-// zoom: scale in percent.
-//--------------------------------------------------------------------------
+/// Center the camera on two objects' midpoint in x and z.
+/// a, b: object IDs.
+/// zoom: scale in percent.
 void BattlePres_SetupTransitionAtPairMidpoint(s32 a, s32 b, s32 zoom) {
   struct MotionObject *obj_a = BattleObjGet(a)->object;
   struct MotionObject *obj_b = BattleObjGet(b)->object;

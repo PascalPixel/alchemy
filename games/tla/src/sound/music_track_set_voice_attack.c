@@ -1,4 +1,5 @@
-// TBS original: games/tbs/src/sound/tail.c
+/// @file
+/// TBS original: games/tbs/src/sound/tail.c
 #include "audio_engine.h"
 
 void MusicTrack_SetVoiceAttack(struct SoundPlayer *player,

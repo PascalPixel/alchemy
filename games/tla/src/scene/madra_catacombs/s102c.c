@@ -5,9 +5,9 @@ struct ObjectRuntime *Object_GetById(s32 id);
 s32 GameFlag_Test(s32 flag);
 void Func_02000958(void);
 
-// Mirrors actors 8 and 9 and puts them on the ground; once flag 0x8c9 is set,
-// each steps 12 pixels outward unless flag 0x109 is set too, and Func_02000958
-// runs.
+/// Mirrors actors 8 and 9 and puts them on the ground; once flag 0x8c9 is set,
+/// each steps 12 pixels outward unless flag 0x109 is set too, and Func_02000958
+/// runs.
 void Func_0200102c(void) {
   struct ObjectRuntime *left = Object_GetById(8);
   struct ObjectRuntime *right = Object_GetById(9);

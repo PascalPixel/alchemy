@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// call_icon_routine.c
-// Menu: reload the selected character's graphics.
-//--------------------------------------------------------------------------
+/// @file
+/// Menu: reload the selected character's graphics.
 
 #include "battle.h"
 #include "debug.h"
@@ -15,11 +13,9 @@
 #include "system.h"
 #include "types.h"
 
-//--------------------------------------------------------------------------
-// Load the character's graphics into slot 0.
-// menu: calling menu (unused).
-// unit: character ID.
-//--------------------------------------------------------------------------
+/// Load the character's graphics into slot 0.
+/// menu: calling menu (unused).
+/// unit: character ID.
 void PsynergyMenu_CallIconRoutineWithValue(s32 menu, s32 unit) {
   Ui_LoadCharacterEntryForSlotFar(0, unit, 0);
 }

@@ -13,8 +13,8 @@ void Func_02003edc();
 void ObjectMotion_Launch();
 void PartyInventory_GiveItem();
 
-// When object 19 stands in its target area, actor 9 and the leader react and
-// the party is given item 0x1c4.
+/// When object 19 stands in its target area, actor 9 and the leader react and
+/// the party is given item 0x1c4.
 void Func_02001db0(void) {
   struct ObjectRuntime *object = Object_GetById(19);
   struct ObjectRuntime *leader;

@@ -33,7 +33,7 @@ s32 Camera_ApplyTransformByFlag(void) {
   }
 }
 
-// BattleObjGet, as the native expands it here.
+/// BattleObjGet, as the native expands it here.
 static __inline__ struct BattleObj *BattleObject_FindSlot(s32 id) {
   u8 *work = (u8 *)Ram_HeapSlots->battleWork;
   struct BattleObj *slots = ((struct BattleWork *)work)->slots;
@@ -46,7 +46,7 @@ static __inline__ struct BattleObj *BattleObject_FindSlot(s32 id) {
   return &slots[work[id]];
 }
 
-// Projects a battle object's position to the screen, in projected.
+/// Projects a battle object's position to the screen, in projected.
 s32 BattleMotion_ProjectPosition(s32 id, s32 *projected) {
   struct MotionObject *object = BattleObject_FindSlot(id)->object;
   struct MotionRecordScale *record = GetMotionRecord(object, 0);

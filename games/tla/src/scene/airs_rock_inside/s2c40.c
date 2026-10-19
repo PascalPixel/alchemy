@@ -3,9 +3,9 @@
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 
-// Circles the object around its centre (fields 68 and 76) on an ellipse twice
-// as wide as deep, the radius growing with its height; it rises by field 72
-// each frame and switches its part attribute between 0 and 9 every two frames.
+/// Circles the object around its centre (fields 68 and 76) on an ellipse twice
+/// as wide as deep, the radius growing with its height; it rises by field 72
+/// each frame and switches its part attribute between 0 and 9 every two frames.
 void Func_02002c40(struct FieldActor *object) {
   s32 y = object->y;
   s32 phase;

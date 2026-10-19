@@ -41,7 +41,7 @@ s32 Func_02001400(void) {
   UiText_ShowPositionedMessageAndWait(MsgMonsterBattleResults, 1);
 }
 
-// Draws value, at most 999, as three digits from right to left.
+/// Draws value, at most 999, as three digits from right to left.
 void Func_02001414(s32 value) {
   s32 i;
 

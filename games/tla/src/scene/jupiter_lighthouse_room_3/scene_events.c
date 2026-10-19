@@ -1,7 +1,7 @@
 #include "local.h"
 
-// Sets flag 0xa04 or 0xa05 when the object stands on cell (20, 36) or
-// (32, 36), then waits up to 30 frames for it to land and lifts it there.
+/// Sets flag 0xa04 or 0xa05 when the object stands on cell (20, 36) or
+/// (32, 36), then waits up to 30 frames for it to land and lifts it there.
 void Func_02000134(s32 unused, s32 id) {
   struct ObjectRuntime *object = Object_GetById(id);
   s32 placed = 0;

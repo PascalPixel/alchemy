@@ -14,7 +14,7 @@ extern const u8 gData_0200578c[];
 extern const u8 gData_020057bc[];
 extern const u8 gData_020057e0[];
 
-// Each room's table, as ☀️'s Scene_GetEntrances picks one.
+/// Each room's table, as ☀️'s Scene_GetEntrances picks one.
 const u8 *Func_020003c8(void) {
   s16 scene = gPartyState.scene;
 

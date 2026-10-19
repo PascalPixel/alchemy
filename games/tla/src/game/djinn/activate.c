@@ -19,8 +19,8 @@ struct TradeOfferTable {
   struct TradeOfferList list;
 };
 
-// Whether the djinn can be set: it is owned, fewer than ten are set, it is
-// not set already, and no trade offer holds it unless the offer has run out.
+/// Whether the djinn can be set: it is owned, fewer than ten are set, it is
+/// not set already, and no trade offer holds it unless the offer has run out.
 s32 Djinn_IsReady(s32 owner, s32 index, s32 bit) {
   struct OwnerDjinnState *state = UnitGet(owner);
   struct TradeOfferList *table;

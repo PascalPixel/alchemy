@@ -23,10 +23,10 @@ struct TlaBattleObj {
 
 struct BattleUnit *UnitGet(s32 unitId);
 
-// Builds a battle object's status icon flags from its unit: poison
-// (1) or deadly poison (2), delusion (0x20), stun (4, not for nine large
-// enemies), Psy Seal (8), haunt (0x40), sleep (0x10) and the Grim Reaper's
-// countdown (bit 6 + count); an object marked visible keeps its flags.
+/// Builds a battle object's status icon flags from its unit: poison
+/// (1) or deadly poison (2), delusion (0x20), stun (4, not for nine large
+/// enemies), Psy Seal (8), haunt (0x40), sleep (0x10) and the Grim Reaper's
+/// countdown (bit 6 + count); an object marked visible keeps its flags.
 void BattleUnit_BuildStatusFlags(s32 id, struct TlaBattleObj *output) {
   u32 flags = 0;
 

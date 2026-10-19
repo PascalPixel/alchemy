@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// decode_staged_buffer.c
-// Map: unpack decoded block data into gMapBlocks.
-//--------------------------------------------------------------------------
+/// @file
+/// Map: unpack decoded block data into gMapBlocks.
 
 #include "types.h"
 extern u32 gMapBlocks[];
@@ -11,13 +9,11 @@ extern u32 gMapBlocks[];
 #include "iwram_call.h"
 extern u8 gMapCellBuffer[];
 
-//--------------------------------------------------------------------------
-// Decoded buffer [1] selects the method; halfword data starts at [2].
-// size: length including the method byte (even means no data).
-// Method 0: copy unchanged.
-// Method 1: high bytes followed by low bytes; reconstruct by XOR with prior
-// values. Method 2: reconstruct by XOR with prior values.
-//--------------------------------------------------------------------------
+/// Decoded buffer [1] selects the method; halfword data starts at [2].
+/// size: length including the method byte (even means no data).
+/// Method 0: copy unchanged.
+/// Method 1: high bytes followed by low bytes; reconstruct by XOR with prior
+/// values. Method 2: reconstruct by XOR with prior values.
 void Tilemap_DecodeStagedBuffer(s32 size) {
   u16 *dst;
   u16 *src;
@@ -71,8 +67,8 @@ static inline s32 CopyWords(void *destination, const void *source, s32 size) {
   return Iwram_CopyWordsEntry(destination, source, size);
 }
 
-// Converts the map cell buffer's 32 KB in place with the ARM routine copied
-// to RAM, keeping a copy of the buffer for it to read.
+/// Converts the map cell buffer's 32 KB in place with the ARM routine copied
+/// to RAM, keeping a copy of the buffer for it to read.
 void Tilemap_ConvertBuffer(void) {
   u8 *saved;
   ConvertFn routine;

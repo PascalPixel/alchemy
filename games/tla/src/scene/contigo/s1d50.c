@@ -8,7 +8,7 @@ extern const u8 gData_02004980[];
 extern const u8 gData_020049c4[];
 extern const u8 gData_02006030[];
 
-// The reunion scene that opens with "Glad you kept your promise".
+/// The reunion scene that opens with "Glad you kept your promise".
 void Func_02001d50(void) {
   struct ContigoObject *object;
   s32 answer;

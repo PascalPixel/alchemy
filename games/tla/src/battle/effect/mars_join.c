@@ -44,11 +44,11 @@ void BattleFx_SpinUpAngle(void *obj);
 void BattleFx_ShrinkObjectAndDestroySlow(void *obj);
 void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect);
 
-// A Mars Djinni joins the party: it turns to the camera, bounces three times,
-// spins ever faster and shrinks away in a fountain of 24 sparks
-// (BattleEffect_UpdatePhasedRadialParticle). The leader turns to the camera
-// and plays animation 28, the sparks swarm the leader, who pulses for 100
-// frames, and the sparks vanish.
+/// A Mars Djinni joins the party: it turns to the camera, bounces three times,
+/// spins ever faster and shrinks away in a fountain of 24 sparks
+/// (BattleEffect_UpdatePhasedRadialParticle). The leader turns to the camera
+/// and plays animation 28, the sparks swarm the leader, who pulses for 100
+/// frames, and the sparks vanish.
 void Djinn_RunMarsJoinEffect(s32 djinniId) {
   s8 *objectPointer;
   struct EffectVector position;
@@ -172,8 +172,8 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 
-// Spins an object 1/8 turn and shrinks it by 0x400 a frame, destroying it once
-// its scale falls below 0x3000.
+/// Spins an object 1/8 turn and shrinks it by 0x400 a frame, destroying it once
+/// its scale falls below 0x3000.
 void BattleFx_ShrinkObjectAndDestroyFast(void *obj) {
   /* FAKEMATCH: the step is pinned to r1 and used by an empty asm before the
    * scales load, so its literal loads first, as the native's does; without

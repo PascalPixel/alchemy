@@ -116,10 +116,10 @@ void Func_02001324(s32 x, s32 z, s32 c, s32 d, s32 e, s32 f) {
   Func_02003148(c, d, e + 64, f, 1, 1);
 }
 
-// No one holding item 222: MsgIfYouDo, once (flag 0xa2f). Someone holding it
-// (and flag 0xa30 set, outside the Japanese edition): MsgYouWhoHold and the
-// message after it, the camera moves on and Func_0200080c runs, then flag
-// 0xa2e is set. Each opens as Func_020010e4 does.
+/// No one holding item 222: MsgIfYouDo, once (flag 0xa2f). Someone holding it
+/// (and flag 0xa30 set, outside the Japanese edition): MsgYouWhoHold and the
+/// message after it, the camera moves on and Func_0200080c runs, then flag
+/// 0xa2e is set. Each opens as Func_020010e4 does.
 void Func_020013a0(void) {
   if (PartyInventory_FindOwner(222) == -1) {
     if (!Value1((s32 (*)())GameFlag_Test, 0xa2f)) {

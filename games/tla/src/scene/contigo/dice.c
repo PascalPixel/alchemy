@@ -26,7 +26,7 @@ void Func_02004144(s32 speaker, s32 flags);
 void Func_02004204(s32 skip);
 void Func_0200422c(void);
 
-// The dice game attendant: the fee is ten coins a level.
+/// The dice game attendant: the fee is ten coins a level.
 void Func_02001abc(void) {
   u32 price = Func_0200404c() * 10;
 
@@ -62,7 +62,7 @@ void Func_02001abc(void) {
   Func_02004074();
 }
 
-// The Super Lucky Dice attendant: the same check without the fee shown.
+/// The Super Lucky Dice attendant: the same check without the fee shown.
 void Func_02001b84(void) {
   u32 price = Func_0200404c() * 10;
 

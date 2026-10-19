@@ -1,15 +1,11 @@
-//--------------------------------------------------------------------------
-// dead_check.c
-// Battle: identify effects that apply additional effects to defeated targets.
-//--------------------------------------------------------------------------
+/// @file
+/// Battle: identify effects that apply additional effects to defeated targets.
 
 #include "types.h"
 
-//--------------------------------------------------------------------------
-// Return 1 if the additional effect applies even when the target is defeated.
-// Drain effects return damage dealt to the user.
-// effect: effect ID.
-//--------------------------------------------------------------------------
+/// Return 1 if the additional effect applies even when the target is defeated.
+/// Drain effects return damage dealt to the user.
+/// effect: effect ID.
 s32 BattleEffectDeadCheck(s32 effect) {
   switch (effect) {
   case 31: // Drain HP.

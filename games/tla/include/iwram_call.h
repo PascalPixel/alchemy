@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-// Fixed addresses of the routines resident in IWRAM.
+/// Fixed addresses of the routines resident in IWRAM.
 #define Iwram_ClearWordsEntry                                                  \
   FIXED_ADDRESS((s32 (*)(void *destination, s32 size)), 0x03000258,            \
                 IwramClearWords)
@@ -18,8 +18,8 @@
   FIXED_ADDRESS((s32 (*)(s32 value)), 0x030002d4, IwramSqrt)
 #define Iwram_TransformMatrixEntry                                             \
   FIXED_ADDRESS((void (*)(const s32 *matrix)), 0x030003c8, IwramTransformMatrix)
-// Reads all three word-aligned coordinates before writing the result. Input
-// may be an array or a record's coordinate prefix; output may overlap it.
+/// Reads all three word-aligned coordinates before writing the result. Input
+/// may be an array or a record's coordinate prefix; output may overlap it.
 #define Iwram_TransformVectorEntry                                             \
   FIXED_ADDRESS((void (*)(const void *vector, s32 *result)), 0x03000354,       \
                 IwramTransformVector)
@@ -36,7 +36,7 @@
   FIXED_ADDRESS((s32 (*)(void *destination, const void *source, s32 size)),    \
                 0x03000730, IwramCopyWords)
 
-// This game calls the fixed entries directly.
+/// This game calls the fixed entries directly.
 #define Iwram_ClearWords Iwram_ClearWordsEntry
 #define Iwram_FillWords Iwram_FillWordsEntry
 #define Iwram_RatioMulQ14 Iwram_RatioMulQ14Entry

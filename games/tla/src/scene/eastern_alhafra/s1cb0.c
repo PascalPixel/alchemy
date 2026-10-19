@@ -85,8 +85,8 @@ static __inline__ void UiText_OpenMessageAtObject_(s32 actor, s32 flags) {
   UiText_OpenMessageAtObject(actor, f);
 }
 
-// The scene that opens with MsgHeyThatBlock: either answer to the prompt
-// steps the event to its next message.
+/// The scene that opens with MsgHeyThatBlock: either answer to the prompt
+/// steps the event to its next message.
 void Func_02001cb0(void) {
   ((void (*)())Func_02004a94)();
   Call1((void (*)())Func_02004be4, 0);
@@ -193,8 +193,8 @@ void Func_02001cb0(void) {
   ((void (*)())Func_02004a9c)();
 }
 
-// Only once flag 0x8a7 is set: the scene that opens with MsgIStillJust, which
-// sets flag 0x905 and ends by sending the party to SceneId_Ov667, entrance 81.
+/// Only once flag 0x8a7 is set: the scene that opens with MsgIStillJust, which
+/// sets flag 0x905 and ends by sending the party to SceneId_Ov667, entrance 81.
 void Func_02002048(void) {
   if (Value1((s32 (*)())GameFlag_Test, 0x8a7) == 0)
     return;
@@ -461,9 +461,9 @@ void Func_02002048(void) {
   ((void (*)())Func_02004a9c)();
 }
 
-// Only once flag 0x8a7 is set: the scene that opens with MsgBriggs2, which sets
-// flags 0x90f and 0x97f and ends by sending the party to SceneId_Ov668Room1,
-// entrance 99.
+/// Only once flag 0x8a7 is set: the scene that opens with MsgBriggs2, which sets
+/// flags 0x90f and 0x97f and ends by sending the party to SceneId_Ov668Room1,
+/// entrance 99.
 void Func_02002a08(void) {
   struct MapWork *map;
   s32 i;
@@ -715,8 +715,8 @@ scroll:
   Call2((void (*)())Func_02004ba4, (s32)&SceneId_Ov668Room1, 99);
 }
 
-// The scene that opens with MsgWhatYouLet; either answer to each of its two
-// prompts steps the event's message number, by 1 and then by 2.
+/// The scene that opens with MsgWhatYouLet; either answer to each of its two
+/// prompts steps the event's message number, by 1 and then by 2.
 void Func_02003274(void) {
   ((void (*)())Func_02004a94)();
   Call1((void (*)())Func_02004be4, 0);

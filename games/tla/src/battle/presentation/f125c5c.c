@@ -8,8 +8,8 @@
 
 extern const u8 gData_0812cc74[];
 
-// Copies this frame's BG2CNT word and starts the HBlank DMA of the BG2 lines
-// and the affine block, while the background view is in mode 2.
+/// Copies this frame's BG2CNT word and starts the HBlank DMA of the BG2 lines
+/// and the affine block, while the background view is in mode 2.
 void BattlePres_UpdateHBlankScroll(void) {
   struct BattleAffineHdma *records;
   u16 *record;
@@ -58,8 +58,8 @@ void BattlePres_AdvanceTransitionTimer(void) {
   BattlePres_SetupTransitionScene(0, 0, 0, 0x64);
 }
 
-// Draws the transition's two rows of tiles, closing in from row 13 as the
-// timer runs; the lower row takes the vertically flipped tiles.
+/// Draws the transition's two rows of tiles, closing in from row 13 as the
+/// timer runs; the lower row takes the vertically flipped tiles.
 void BattlePres_DrawTransitionRows(void) {
   u32 i;
   s32 frame;

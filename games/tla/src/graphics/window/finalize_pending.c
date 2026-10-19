@@ -7,8 +7,8 @@
 
 s32 Audio_Check(void);
 
-// Ends a message wait (clearing the channel's countdown and returning 1) when
-// the window's voice has finished or A, B or a shoulder button is held.
+/// Ends a message wait (clearing the channel's countdown and returning 1) when
+/// the window's voice has finished or A, B or a shoulder button is held.
 s32 UiWork_CheckCancelByInput(struct UiChannelSlot *ch) {
   struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
   s32 cancel = 0;
@@ -35,9 +35,9 @@ s32 UiWork_CheckCancelByInput(struct UiChannelSlot *ch) {
   return 0;
 }
 
-// As UiWork_CheckCancelByInput, but on newly pressed A, B or shoulder buttons
-// (the pending presses in a window mode); while B is held the wait ends only
-// at countdown 1, and otherwise the countdown is set to 2.
+/// As UiWork_CheckCancelByInput, but on newly pressed A, B or shoulder buttons
+/// (the pending presses in a window mode); while B is held the wait ends only
+/// at countdown 1, and otherwise the countdown is set to 2.
 s32 UiWork_CheckCancelByModeInput(struct UiChannelSlot *ch) {
   /* FAKEMATCH: the work is pinned to the r6 the native keeps it in; with the
    * barrier below and no pin it takes r5 and the channel r6 (differ 14). */

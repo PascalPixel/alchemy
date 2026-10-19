@@ -1,14 +1,10 @@
-//--------------------------------------------------------------------------
-// check_status_or_special_id.c
-// Battle: test whether an ability uses PP.
-//--------------------------------------------------------------------------
+/// @file
+/// Battle: test whether an ability uses PP.
 
 #include "battle_system.h"
 
-//--------------------------------------------------------------------------
-// Return 1 for PP-consuming abilities; Psy Drain returns 1 regardless of PP.
-// abilityId: ability ID.
-//--------------------------------------------------------------------------
+/// Return 1 for PP-consuming abilities; Psy Drain returns 1 regardless of PP.
+/// abilityId: ability ID.
 u32 Ability_IsPsynergy(s32 abilityId) {
   u8 pp;
 

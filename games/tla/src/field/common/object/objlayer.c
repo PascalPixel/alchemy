@@ -35,10 +35,10 @@ struct IconOwner {
 
 void Func_08038248(s32 id);
 
-// Shows icon id on its owner's 16 by 16 sprite: Func_08038248 prepares the
-// icon in heap slot 68, whose tiles at +0x400 go to the sprite's VRAM cache
-// slot, and the sprite is reset to scale 1.0, 16-colour palette 0. No ☀️ twin
-// found.
+/// Shows icon id on its owner's 16 by 16 sprite: Func_08038248 prepares the
+/// icon in heap slot 68, whose tiles at +0x400 go to the sprite's VRAM cache
+/// slot, and the sprite is reset to scale 1.0, 16-colour palette 0. No ☀️ twin
+/// found.
 void Func_0802372c(struct IconOwner *owner, s32 id) {
   struct IconSprite *sprite;
   u8 *buffer;
@@ -86,8 +86,8 @@ void Func_0802386c(void);
 void ObjectSystem_UpdateCameraFixed(void);
 
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// Spanish and Italian builds use different names for these two far calls,
-// as in shop.c.
+/// Spanish and Italian builds use different names for these two far calls,
+/// as in shop.c.
 void Func_080c8368(s32, s32);
 void BattleFx_ApplyColorToSourceBufferFar(s32);
 #endif

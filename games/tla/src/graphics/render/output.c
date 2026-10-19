@@ -34,9 +34,9 @@ struct RenderOutput *RenderOutput_CreateWithTransform(s32 arg0,
   return result;
 }
 
-// Loads the character entry for the key into the given side, or into a free
-// one (resource id 999) when the side is 2 or more, and creates its output
-// with that side's palette (14 + side).
+/// Loads the character entry for the key into the given side, or into a free
+/// one (resource id 999) when the side is 2 or more, and creates its output
+/// with that side's palette (14 + side).
 struct RenderOutput *CreateSideObject(s32 objectKind, s32 position, s32 side,
                                       s32 arg3, s32 arg4, s32 arg5) {
   struct UiRenderWork *state =

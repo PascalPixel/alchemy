@@ -2,8 +2,8 @@
 #include "motobj.h"
 #include "objdisp.h"
 
-// This game's battle object: The Broken Seal's BattleObj with its last
-// halfword split into the fade flag and a visible flag.
+/// This game's battle object: The Broken Seal's BattleObj with its last
+/// halfword split into the fade flag and a visible flag.
 struct TlaBattleObj {
   struct MotionObject *object;
   u16 resource;
@@ -29,11 +29,11 @@ extern const s32 Data_0812cacc[];
 struct MotionObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 s32 ArcTan2(s32 y, s32 x);
 
-// Resets a battle actor, making its object when it has none: scale 0xe666,
-// the anchors cleared unless keep is set, no sprite, animation, effect or
-// state, facing ArcTan2(0, 0) + 0x8000, visible, then the actor object
-// script. The tail of The Broken Seal's BattleObjMake, for an actor without
-// a unit.
+/// Resets a battle actor, making its object when it has none: scale 0xe666,
+/// the anchors cleared unless keep is set, no sprite, animation, effect or
+/// state, facing ArcTan2(0, 0) + 0x8000, visible, then the actor object
+/// script. The tail of The Broken Seal's BattleObjMake, for an actor without
+/// a unit.
 void BattleObj_Reset(struct TlaBattleObj *actor, s32 keep) {
   struct MotionObject *object;
   s32 facingAngle;

@@ -19,8 +19,8 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
 
 void Menu_CenterResourceEntries(s32, s32, s32);
 
-// Lays the entries out in a row three cells apart from x, on row y, and
-// opens the menu's window after them.
+/// Lays the entries out in a row three cells apart from x, on row y, and
+/// opens the menu's window after them.
 void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resourceBase) {
   struct ResourceMenuWork *work;
   s32 i;

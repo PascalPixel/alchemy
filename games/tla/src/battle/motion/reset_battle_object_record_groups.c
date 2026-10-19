@@ -85,7 +85,7 @@ void BattleMotion_DestroyAllSlotObjects(void) {
   } while (i <= 0xD);
 }
 
-// Writes a battle object's anchor to out, at height 0.
+/// Writes a battle object's anchor to out, at height 0.
 s32 Battle_GetWorkEntryPair(s32 no, struct FixedPointPosition *out) {
   struct BattleWork *state = Ram_HeapSlots->battleWork;
   /* FAKEMATCH: the native sets the return value between the two stores and the

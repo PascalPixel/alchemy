@@ -1,11 +1,11 @@
 #include "types.h"
 #include "party_state.h"
 
-// A world map encounter rule, ended by kind -1.
+/// A world map encounter rule, ended by kind -1.
 struct TerrainRule {
-  s16 kind;     // the terrain kind of the map block, 0 to 19
-  s16 behavior; // the terrain's behavior, or -1 for any
-  s16 flag;     // -1, or a flag the rule needs set
+  s16 kind;     ///< the terrain kind of the map block, 0 to 19
+  s16 behavior; ///< the terrain's behavior, or -1 for any
+  s16 flag;     ///< -1, or a flag the rule needs set
   s16 zone;
 };
 
@@ -16,10 +16,10 @@ s32 GetWorldMapTerrainBehaviorFar(void *position, s32 *kind);
 s32 GameFlag_Test(s32 flag);
 void Func_080ca514(s32 behavior);
 
-// Returns the world map encounter zone for the terrain at position (0 for
-// none) and chooses the battle backdrop for that terrain, as ☀️'s function of
-// the same name. ⚓️ has no encounters in render mode 8, reads its second rule
-// table in render mode 7, and a rule's flag must be set for it to apply.
+/// Returns the world map encounter zone for the terrain at position (0 for
+/// none) and chooses the battle backdrop for that terrain, as ☀️'s function of
+/// the same name. ⚓️ has no encounters in render mode 8, reads its second rule
+/// table in render mode 7, and a rule's flag must be set for it to apply.
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
   struct TerrainRule *rule = gData_080eedbc;
   s32 behavior;

@@ -29,7 +29,7 @@ s32 Runtime_BlankDisplayAndRun(void) {
   return 0;
 }
 
-// Resets the scene camera and its projection, as The Broken Seal's.
+/// Resets the scene camera and its projection, as The Broken Seal's.
 void Camera_ResetSceneDefaults(void) {
   struct BattleCamera *state = Ram_HeapSlots->cameraWork;
   struct FixedPointPosition local;

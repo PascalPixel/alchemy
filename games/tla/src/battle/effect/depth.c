@@ -28,20 +28,20 @@ struct DepthMap {
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 void Func_080eb01c(void *work);
 
-// Returns the object's sprite priority when kind is 0xc000, else 0.
+/// Returns the object's sprite priority when kind is 0xc000, else 0.
 s32 Func_080db9a8(struct ObjectRuntime *object, s32 kind) {
   if (kind == 0xc000)
     return ((struct DepthPart *)object->animation)->priority;
   return 0;
 }
 
-// Returns the 2-bit OBJ priority of the object's animation record.
+/// Returns the 2-bit OBJ priority of the object's animation record.
 s32 BattleFx_GetObjectPriority(struct ObjectRuntime *object) {
   return ((struct DepthPart *)object->animation)->priority;
 }
 
-// Returns the object's sort depth: from its projected z on the world map
-// (mode 3), otherwise from its y and z against the map's scroll.
+/// Returns the object's sort depth: from its projected z on the world map
+/// (mode 3), otherwise from its y and z against the map's scroll.
 s32 BattleFx_GetObjectDepth(struct ObjectRuntime *object) {
   s32 point[3];
   s32 screen[3];

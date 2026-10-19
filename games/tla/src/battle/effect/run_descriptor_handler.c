@@ -1,15 +1,15 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-// A scene event as the event finder (Func_080ccd78) returns it.
+/// A scene event as the event finder (Func_080ccd78) returns it.
 struct TouchEvent {
   s32 flags;
   u8 target;
   u8 unk05;
   s16 condition;
-  // A message number below 0x10000, else a function; read as a union
-  // member, so a store to the field work does not let it stay in a
-  // register.
+  /// A message number below 0x10000, else a function; read as a union
+  /// member, so a store to the field work does not let it stay in a
+  /// register.
   union {
     s32 result;
   } u;
@@ -47,10 +47,10 @@ s32 Scene_RunRaisedEvent(s32 id) {
   return result;
 }
 
-// Runs the touch event (kind 2) of what the leader touched, or else takes its
-// exit (kind 1): plays the exit's sound (and effect) and records where it
-// leads. Returns 0 when something ran, -1 when there was nothing; as ☀️'s
-// Scene_RunTouchOrExit.
+/// Runs the touch event (kind 2) of what the leader touched, or else takes its
+/// exit (kind 1): plays the exit's sound (and effect) and records where it
+/// leads. Returns 0 when something ran, -1 when there was nothing; as ☀️'s
+/// Scene_RunTouchOrExit.
 s32 Scene_RunTouchOrExit(s32 value) {
   struct TouchEvent *event;
   s32 handled;

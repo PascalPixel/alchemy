@@ -33,8 +33,8 @@ static inline struct ContigoGlow *Contigo_Create(s32 type, s32 x, s32 y,
   return Func_02003fec(type, x, y, z);
 }
 
-// The glow that grows over actor 17 and sinks away again, then the scene goes
-// on.
+/// The glow that grows over actor 17 and sinks away again, then the scene goes
+/// on.
 void Func_02000af4(void) {
   struct ContigoGlow *effect;
   u32 i;

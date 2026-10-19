@@ -4,7 +4,7 @@
 
 void Func_02002d40(void);
 
-// A halfword of the party state that has no field name yet.
+/// A halfword of the party state that has no field name yet.
 #define PARTY_STATE_U16(offset) (*(u16 *)((u8 *)&gPartyState + (offset)))
 
 void Func_020035b8(void) {
@@ -20,8 +20,8 @@ static inline void Scene_StoreU16(u16 *field, s32 value) {
   *field = value;
 }
 
-// Room 8's setup. Entered at entrance 4 (not in the Japanese edition), it
-// sets the party state's pair at 0x260 to the room whose flag is set.
+/// Room 8's setup. Entered at entrance 4 (not in the Japanese edition), it
+/// sets the party state's pair at 0x260 to the room whose flag is set.
 void Func_020035d8(void) {
   struct ObjectRuntime *object = (struct ObjectRuntime *)Object_GetById(64);
   s32 scene;

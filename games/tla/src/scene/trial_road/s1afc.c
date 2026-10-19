@@ -44,9 +44,9 @@ void Func_02001afc(void) {
 
 void Func_02001bdc(void) { Func_020042f0(gData_02007734); }
 
-// Copies two blocks of map cells, sets byte 98 of objects 16 to 18 and clears
-// their collision flags; then runs Func_02000d70, and Func_020006b4 and
-// Func_0200062c for object 15.
+/// Copies two blocks of map cells, sets byte 98 of objects 16 to 18 and clears
+/// their collision flags; then runs Func_02000d70, and Func_020006b4 and
+/// Func_0200062c for object 15.
 void Func_02001bec(void) {
   Map_CopyCells(11, 22, 11, 8, 11, 64);
   Map_CopyCells(79, 22, 11, 8, 79, 64);

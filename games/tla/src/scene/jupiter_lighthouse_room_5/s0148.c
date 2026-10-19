@@ -32,8 +32,8 @@ void Object_SetPartAttribute(struct OrbitEffect *object, s32 value);
 struct OrbitEffect *Func_02002828(s32 type, s32 x, s32 y, s32 z);
 void Func_02002820(struct OrbitEffect *object, const void *script);
 
-// Circles the object around actor 23, as overlay 6a5's Func_02000090 circles
-// actor 31.
+/// Circles the object around actor 23, as overlay 6a5's Func_02000090 circles
+/// actor 31.
 void Func_02000148(struct FieldActor *self) {
   struct FieldActor *centre = Object_GetById(23);
   u16 angle = self->timer;
@@ -65,8 +65,8 @@ static inline struct OrbitEffect *CreateOrbitEffect(s32 x, s32 y, s32 z) {
   return Func_02002828(0x2a0, x, y, z);
 }
 
-// Every third frame, or every frame once flag 0x201 is set, starts a particle
-// circling actor 23 at a random height above it.
+/// Every third frame, or every frame once flag 0x201 is set, starts a particle
+/// circling actor 23 at a random height above it.
 void Func_020001a4(void) {
   struct FieldActor *center;
   struct OrbitEffect *effect;

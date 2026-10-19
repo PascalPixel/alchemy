@@ -17,8 +17,8 @@ void UiMessage_ShowAndWait(s32 message) {
     WaitFrames(1);
 }
 
-// Builds the render entries of a message and queues them in the window;
-// returns 0 when the message is empty or there is no window.
+/// Builds the render entries of a message and queues them in the window;
+/// returns 0 when the message is empty or there is no window.
 s32 UiText_OpenEntryMessage(s32 window, s32 argument) {
   struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
   s32 entry;

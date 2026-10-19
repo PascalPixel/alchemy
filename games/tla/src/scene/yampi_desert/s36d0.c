@@ -15,7 +15,7 @@ void Func_02002ebc(void);
 void Func_02003da0(s32 unused, s32 value);
 void Func_02003e3c(s32 a, s32 b, s32 c, s32 d, s32 e);
 
-// Room 10's setup.
+/// Room 10's setup.
 void Func_0200371c(void) {
   ((struct SceneEventWork *)Ram_HeapSlots->eventWork)->screenEffect = 0x209;
   GameFlag_SetBit(0x144);

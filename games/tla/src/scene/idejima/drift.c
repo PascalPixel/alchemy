@@ -21,8 +21,8 @@ struct FadePalette {
 
 void Func_020032f0(s32, s32);
 
-// Copies colours 128 to 191 of heap block 32 over colours 0 to 63, clears
-// colour 0 and calls Func_020032f0(0x10000, 0).
+/// Copies colours 128 to 191 of heap block 32 over colours 0 to 63, clears
+/// colour 0 and calls Func_020032f0(0x10000, 0).
 void Func_0200161c(void) {
   /* FAKEMATCH: the palette pinned to r0, where ⚓️ keeps it and the counter in
    * r4; unpinned the two registers swap (differ 14). */

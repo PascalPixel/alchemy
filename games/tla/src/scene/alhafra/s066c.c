@@ -16,9 +16,9 @@ s32 ObjectMotion_SetSpeedParameters();
 s32 Motion_SetModeAndWaitAnimation();
 extern u8 MsgAlhafra92[];
 
-// Talking to the actor: once flag 0x8b9 is set it says its last line;
-// otherwise it asks a yes-or-no question. A nonzero answer ends with another
-// line; the other sets the flag, and the actor and the leader step aside.
+/// Talking to the actor: once flag 0x8b9 is set it says its last line;
+/// otherwise it asks a yes-or-no question. A nonzero answer ends with another
+/// line; the other sets the flag, and the actor and the leader step aside.
 void Func_0200066c(s32 actor) {
   s32 message = (s32)MsgAlhafra92;
 

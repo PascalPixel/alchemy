@@ -34,8 +34,8 @@ void UiWork_SetAltFlagAndClearTable(s32 alt) {
 
 void Func_08041c50(void) {}
 
-// Draws a divider from (x1, y1) to (x2, y2), one of which must agree,
-// joining it to the frame and divider tiles already on the tilemap.
+/// Draws a divider from (x1, y1) to (x2, y2), one of which must agree,
+/// joining it to the frame and divider tiles already on the tilemap.
 void UiWindow_DrawDividerLine(struct UiWindow *win, u32 x1, u32 y1, u32 x2,
                               u32 y2) {
   struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;

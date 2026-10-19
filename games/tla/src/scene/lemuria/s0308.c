@@ -18,9 +18,9 @@ extern u8 MsgEveryoneSpoilsMe;
 extern u8 MsgWeAreThe;
 extern u8 MsgAreThereOther;
 
-// Actor 18's talk: one message, and Object_LinkPair with the party leader,
-// while the event work's halfword at 0x166 is 0, another once it is set; the
-// actor's angle is restored after.
+/// Actor 18's talk: one message, and Object_LinkPair with the party leader,
+/// while the event work's halfword at 0x166 is 0, another once it is set; the
+/// actor's angle is restored after.
 void Func_02000308(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *object = Object_GetById(18);
@@ -46,7 +46,7 @@ void Func_02000308(void) {
   WaitFrames(1);
 }
 
-// The same for actor 19.
+/// The same for actor 19.
 void Func_02000398(void) {
   u8 *work = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *object = Object_GetById(19);

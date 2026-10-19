@@ -27,8 +27,8 @@ void Func_020010b8(s32 id, s32 value);
 void Func_020010f0(s32 value);
 void Func_02001108(s32 value);
 
-// Object 18 comes to the party leader and asks whether to set out, as in
-// Func_02000120; after a no the leader steps back.
+/// Object 18 comes to the party leader and asks whether to set out, as in
+/// Func_02000120; after a no the leader steps back.
 void Func_02000640(void) {
   struct ObjectRuntime *object;
 

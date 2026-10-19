@@ -34,10 +34,10 @@ s32 Func_081a6724(void);
 void Func_081a6ea0(void);
 void Ui_LoadWindowGraphics(void);
 
-// Runs the title sequence's opening pictures in turn (Func_081a6154's steps
-// 0 to 2 between the pictures of Func_081a6638 and Func_081a6724), fading
-// out early when a key cuts one short and running Func_081a6ea0 when all
-// finish, then restores the display and the CPU-load flag it saved.
+/// Runs the title sequence's opening pictures in turn (Func_081a6154's steps
+/// 0 to 2 between the pictures of Func_081a6638 and Func_081a6724), fading
+/// out early when a key cuts one short and running Func_081a6ea0 when all
+/// finish, then restores the display and the CPU-load flag it saved.
 s32 Func_081a71c8(void) {
   /* FAKEMATCH(volatile): the saved flag lives in a stack byte across the
    * calls; as a plain u8 local, 28 of 78 instructions differ in tla-en. */
@@ -83,15 +83,15 @@ s32 Func_081a71c8(void) {
 // The Japanese and German title screens differ and stay on their scaffolds.
 
 struct TitleSprite {
-  u32 next; // the render slot link
+  u32 next; ///< the render slot link
   u8 y;
-  u8 attr0High; // shape and mode bits of attribute 0
+  u8 attr0High; ///< shape and mode bits of attribute 0
   u16 x : 9;
-  u16 attr1High : 7; // flip and size bits of attribute 1
+  u16 attr1High : 7; ///< flip and size bits of attribute 1
   s32 tile;
 };
 
-// The title screen's state, in heap slot 172.
+/// The title screen's state, in heap slot 172.
 struct TitleScreenWork {
   u8 unk00[16];
   struct TitleSprite sprites[8];
@@ -106,12 +106,12 @@ void Fade_FromWhite(s32 frames);
 void Fade_Wait(void);
 void Func_080140d8(void *entry, s32 slot);
 
-// The title screen, as the end of The Broken Seal's Title_RunIntro: fades to
-// white, shows Title_ScreenPicture on BG2 (its map numbered from tile 0x1a0,
-// two blank columns a row) and, with prompt set, loads the five prompt
-// sprites. After the fade from white it holds 660 frames, or 5400 with the
-// prompt; after the first 120 the prompt's three sprites blink by
-// Data_081a873e's levels, and A or Start ends it early, returning 1 (else 0).
+/// The title screen, as the end of The Broken Seal's Title_RunIntro: fades to
+/// white, shows Title_ScreenPicture on BG2 (its map numbered from tile 0x1a0,
+/// two blank columns a row) and, with prompt set, loads the five prompt
+/// sprites. After the fade from white it holds 660 frames, or 5400 with the
+/// prompt; after the first 120 the prompt's three sprites blink by
+/// Data_081a873e's levels, and A or Start ends it early, returning 1 (else 0).
 s32 Func_081a729c(s32 prompt) {
   s32 blankTile = 0x1ff;
   s32 result = 0;
@@ -266,6 +266,6 @@ column:
   return result;
 }
 
-// An empty entry the far-call table keeps, as The Broken Seal's.
+/// An empty entry the far-call table keeps, as The Broken Seal's.
 void Title_NoOpPalette(void) {}
 #endif

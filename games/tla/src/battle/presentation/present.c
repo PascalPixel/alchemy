@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// present.c
-// Battle presentation: toggle translucency on unit graphics.
-//--------------------------------------------------------------------------
+/// @file
+/// Battle presentation: toggle translucency on unit graphics.
 
 #include "types.h"
 #include "battle_party.h"
@@ -24,7 +22,7 @@ struct ActorSpriteRecord {
   struct ActorSpritePart part[2];
 };
 
-// Sets the OBJ mode of both sprite parts of each of the actor's records.
+/// Sets the OBJ mode of both sprite parts of each of the actor's records.
 void BattlePres_SetActorRecordMode(s32 actorId, s32 mode) {
   struct BattleObj *slot = BattleObjGet(actorId);
   struct MotionObject *object;
@@ -67,10 +65,8 @@ void BattlePres_SetActorRecordMode(s32 actorId, s32 mode) {
   }
 }
 
-//--------------------------------------------------------------------------
-// Make all unit graphics except except translucent (OBJ mode 1).
-// except: unit ID to leave unchanged.
-//--------------------------------------------------------------------------
+/// Make all unit graphics except except translucent (OBJ mode 1).
+/// except: unit ID to leave unchanged.
 void BattlePres_SetOtherActorRecordModes(s32 except) {
   s16 list[14];
   s32 cnt = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);
@@ -82,9 +78,7 @@ void BattlePres_SetOtherActorRecordModes(s32 except) {
   }
 }
 
-//--------------------------------------------------------------------------
-// Restore normal rendering (OBJ mode 0) for all units.
-//--------------------------------------------------------------------------
+/// Restore normal rendering (OBJ mode 0) for all units.
 void BattlePres_ClearAllActorRecordModes(void) {
   s16 list[14];
   s32 cnt = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, list);

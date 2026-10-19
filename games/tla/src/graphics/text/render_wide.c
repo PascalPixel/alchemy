@@ -6,12 +6,12 @@
 
 s32 Func_0803c274(struct UiWindow *window, u32 c, s32 x, s32 y, s32 flags);
 
-// Draws a string of 16-bit character codes straight into the UI tilemap, as
-// tiles, inside a window at tile (offsetX, offsetY) of its interior, writing
-// both the work block's copy and VRAM, as ☀️'s function of the same name. A
-// NULL buffer draws the decoded text in UiRenderWork.entries. ⚓️ reads the
-// window's position signed and passes offsetX & 7 where ☀️ passes the VRAM
-// base. Not in tla-ja, which keeps an older layout.
+/// Draws a string of 16-bit character codes straight into the UI tilemap, as
+/// tiles, inside a window at tile (offsetX, offsetY) of its interior, writing
+/// both the work block's copy and VRAM, as ☀️'s function of the same name. A
+/// NULL buffer draws the decoded text in UiRenderWork.entries. ⚓️ reads the
+/// window's position signed and passes offsetX & 7 where ☀️ passes the VRAM
+/// base. Not in tla-ja, which keeps an older layout.
 void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
                                         const struct UiWindow *work,
                                         s32 offsetX, s32 offsetY) {
@@ -53,9 +53,9 @@ void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
   }
 }
 
-// Draws a string of wide (16-bit) codes into the window, one glyph per cell,
-// skipping the control codes and their arguments; code 3 starts a new line.
-// With no text, the render work's own entries are drawn, closed with a 0.
+/// Draws a string of wide (16-bit) codes into the window, one glyph per cell,
+/// skipping the control codes and their arguments; code 3 starts a new line.
+/// With no text, the render work's own entries are drawn, closed with a 0.
 void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
                                      s32 y) {
   struct UiRenderWork *work;

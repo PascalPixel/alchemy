@@ -49,8 +49,8 @@ s32 Func_02000c80(void) {
   return 0;
 }
 
-// Unless flag 0x8ff is set: the crew sights the ship from the deck and the
-// leader is asked about it. Either way flag 0x980 is set.
+/// Unless flag 0x8ff is set: the crew sights the ship from the deck and the
+/// leader is asked about it. Either way flag 0x980 is set.
 void Func_02000ce0(void) {
   s32 answer;
   s32 owner;

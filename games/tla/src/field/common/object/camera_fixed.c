@@ -22,8 +22,8 @@ struct CameraPoint {
 struct FixedCamera {
   struct CameraPoint eye;
   struct CameraPoint target;
-  struct CameraPoint *eyeOverride;    // when set, used as the eye
-  struct CameraPoint *targetOverride; // when set, used as the target
+  struct CameraPoint *eyeOverride;    ///< when set, used as the eye
+  struct CameraPoint *targetOverride; ///< when set, used as the target
 };
 
 struct PlacedObject {
@@ -42,8 +42,8 @@ struct PlacedObject {
   u8 unk55[0x2b];
 };
 
-// The decoder's block: its code, tables and work area (constants.ld). Only
-// the code and tables are copied.
+/// The decoder's block: its code, tables and work area (constants.ld). Only
+/// the code and tables are copied.
 extern u8 Render_DecodeFrameCode[];
 extern u8 Render_DecodeFrameCopyEnd[];
 extern u8 Render_DecodeFrameBlockSize[];
@@ -56,9 +56,9 @@ void Func_0802254c(void *sprite, s32 *point, const s32 *scale, s32 facing,
 
 s32 ObjectCamera_ReturnTrue(void) { return 1; }
 
-// Places an object's sprite (kind 1, unless flag 0x10 hides it) or each of its
-// group's four sprites (kind 2), turned by angle. While battle commands are
-// chosen (flag 363) the sprites are drawn at 1.0 scale.
+/// Places an object's sprite (kind 1, unless flag 0x10 hides it) or each of its
+/// group's four sprites (kind 2), turned by angle. While battle commands are
+/// chosen (flag 363) the sprites are drawn at 1.0 scale.
 void Func_08023d80(struct PlacedObject *object, s32 angle) {
   const s32 *scale = object->scale;
   s32 *point;
@@ -89,9 +89,9 @@ void Func_08023d80(struct PlacedObject *object, s32 angle) {
   }
 }
 
-// Each frame, with the fixed camera: places every active object, from the
-// 64th down. While battle commands are chosen (flag 363) it uses the fixed
-// view matrix and turns the objects by an eighth of a turn less.
+/// Each frame, with the fixed camera: places every active object, from the
+/// 64th down. While battle commands are chosen (flag 363) it uses the fixed
+/// view matrix and turns the objects by an eighth of a turn less.
 void ObjectSystem_UpdateCameraFixed(void) {
   struct FixedCamera *camera = Ram_HeapSlots->cameraWork;
   struct ObjectSystemWork *system = Ram_HeapSlots->objectSystem;

@@ -6,7 +6,7 @@ struct BattleEffectCounterState {
   s16 counters[12];
 };
 
-// Returns 0.
+/// Returns 0.
 s32 Func_080caf6c(void) { return 0; }
 
 void BattleFx_ResetCounters(void) {
@@ -41,8 +41,8 @@ s32 BattleFx_SumCounters(void) {
 s32 GameFlag_Test(s32 flag);
 s32 Party_FindOwnerWithActionFar(s32 action);
 
-// Sets event work byte 0xd39 when flag 0x8df is set and a party member
-// has action 153; clears it otherwise.
+/// Sets event work byte 0xd39 when flag 0x8df is set and a party member
+/// has action 153; clears it otherwise.
 void Func_080cb05c(void) {
   u8 *work = Ram_HeapSlots->eventWork;
 

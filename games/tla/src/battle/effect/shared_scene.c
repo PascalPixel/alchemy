@@ -6,17 +6,17 @@
 s32 GameFlag_Test(s32 flag);
 void Field_BeginColorTransition(s32 frames, s32 color);
 
-// The eight tints a field Psynergy washes the screen in (BGR555, fxdata.c).
+/// The eight tints a field Psynergy washes the screen in (BGR555, fxdata.c).
 extern const u32 gData_080f3954[8];
 
-// Flags 0x148-0x14f each force one tint, the last set one winning.
+/// Flags 0x148-0x14f each force one tint, the last set one winning.
 #define FLAG_TINT_FIRST 0x148
 
-// Tint the field for a Psynergy animation: a tint chosen by the frame counter
-// (so each cast looks a little different), fixed for some animations, and
-// forced by the tint flags; then fade towards it over eight frames. ☀️'s
-// function of the same name also copies the palettes; ⚓️ leaves the copy to
-// Field_BeginColorTransition (palfade.c).
+/// Tint the field for a Psynergy animation: a tint chosen by the frame counter
+/// (so each cast looks a little different), fixed for some animations, and
+/// forced by the tint flags; then fade towards it over eight frames. ☀️'s
+/// function of the same name also copies the palettes; ⚓️ leaves the copy to
+/// Field_BeginColorTransition (palfade.c).
 void BattleEffect_InitializeSharedScene(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   s32 tint;

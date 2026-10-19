@@ -17,8 +17,8 @@ void Func_080d4330(s32 key);
  * reads are combined into one test of 0x305 (differ 52). */
 #define HELD (*(volatile u32 *)&gInput.held)
 
-// Opens the message at the object and waits for its window; after ten
-// seconds, or with Select, R, L and A held, the text is finished at once.
+/// Opens the message at the object and waits for its window; after ten
+/// seconds, or with Select, R, L and A held, the text is finished at once.
 void Func_080d3fb0(s32 object, s32 message) {
   s32 masked;
   struct EventWork *work = Ram_HeapSlots->eventWork;
@@ -88,7 +88,7 @@ void EventRuntime_Noop(void) {}
 
 s32 UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, s32 mode);
 
-// Opens the next message for the speaker and waits until its window is idle.
+/// Opens the next message for the speaker and waits until its window is idle.
 void Func_080d40dc(s32 speaker) {
   // BUG: the position is never set; the window is placed from whatever the
   // two registers hold.

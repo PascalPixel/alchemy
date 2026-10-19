@@ -10,8 +10,8 @@ void Func_08016180(void);
 
 void Func_08016bd8(void) {}
 
-// The serial link test: sends the cartridge's first bytes or those at 0x1000
-// while A or B is held, and receives into the map cell buffer.
+/// The serial link test: sends the cartridge's first bytes or those at 0x1000
+/// while A or B is held, and receives into the map cell buffer.
 void SerialTest_Run(void) {
   u16 *tile;
   s32 value;

@@ -7,9 +7,9 @@
 void Object_SetModeById(s32 id, s32 mode);
 void Func_02000db0(void);
 
-// The scene's first entry: sets screen effect 256 and event mode 2, puts
-// objects 16 to 19 in mode 5 and 30 to 33 in mode 6, and runs
-// Func_02000db0 when the party came in by entrance 99.
+/// The scene's first entry: sets screen effect 256 and event mode 2, puts
+/// objects 16 to 19 in mode 5 and 30 to 33 in mode 6, and runs
+/// Func_02000db0 when the party came in by entrance 99.
 s32 Func_02000688(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   /* FAKEMATCH: the effect's address pinned to r3 and an empty asm holding

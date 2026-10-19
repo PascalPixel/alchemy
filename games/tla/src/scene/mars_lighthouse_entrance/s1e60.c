@@ -6,8 +6,8 @@ void Func_02001ae0(void);
 void Func_02001cbc(void);
 void Func_02001f90(struct ObjectRuntime *object);
 
-// Stops the object and sets its sprite part, then restarts its script at
-// gData_020056a0. Overlays 6ab, 6ac and 6ad have the same function.
+/// Stops the object and sets its sprite part, then restarts its script at
+/// gData_020056a0. Overlays 6ab, 6ac and 6ad have the same function.
 void Func_02001e1c(struct ObjectRuntime *object, s32 part) {
   s32 zero = 0;
 

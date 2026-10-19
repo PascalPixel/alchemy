@@ -4,8 +4,8 @@
 s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 
-// Swings the object along an arc beside its linked object, drawing it behind
-// (priority 2) while its z is short of 0x108 and in front (priority 1) after.
+/// Swings the object along an arc beside its linked object, drawing it behind
+/// (priority 2) while its z is short of 0x108 and in front (priority 1) after.
 void Func_020005a0(struct ObjectRuntime *object) {
   struct ObjectRuntime *parent;
   u16 *pangle = (u16 *)&object->action;

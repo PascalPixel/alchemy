@@ -65,8 +65,8 @@ static __inline__ void AddCallback(void (*callback)(void), s32 priority) {
   Scheduler_AddOrUpdateCallback(callback, priority);
 }
 
-// The scene run from entrance 10: the crew takes its places on deck and the
-// leader is asked to take the tiller; it ends by setting flag 0x8de.
+/// The scene run from entrance 10: the crew takes its places on deck and the
+/// leader is asked to take the tiller; it ends by setting flag 0x8de.
 void Func_020002cc(void) {
   s32 angle;
   s32 turn;
@@ -188,7 +188,7 @@ void Func_020002cc(void) {
   Call1((void (*)())Func_0200207c, 10);
 }
 
-// Sends actor id to actor 4's spot at a run.
+/// Sends actor id to actor 4's spot at a run.
 static inline void RunToActor4(s32 id) {
   struct ObjectRuntime *target;
 
@@ -202,9 +202,9 @@ static inline void RunToActor4(s32 id) {
   Call3((void (*)())Func_02001fc4, id, 0, 0);
 }
 
-// The scene run from entrance 20: the camera frames actors 4 to 9 around the
-// spot, two callbacks start the bobbing, and after the exchange of looks and
-// emotes the four actors run to actor 4.
+/// The scene run from entrance 20: the camera frames actors 4 to 9 around the
+/// spot, two callbacks start the bobbing, and after the exchange of looks and
+/// emotes the four actors run to actor 4.
 void Func_020006e4(void) {
   Func_02001f5c();
   Call1((void (*)())Func_020020ac, 0);

@@ -11,8 +11,8 @@
 #include "runtime_interfaces.h"
 #include "owner_state.h"
 
-// A rate for the effect id: 20 to 75 for the ids listed, otherwise a
-// negative value (-60, -90 and -70 for three ids, -100 by default).
+/// A rate for the effect id: 20 to 75 for the ids listed, otherwise a
+/// negative value (-60, -90 and -70 for three ids, -100 by default).
 s32 Func_080b0514(s32 effect_id) {
   s32 battle_result;
   u32 entry_index;
@@ -124,14 +124,14 @@ s32 Battle_IsReviveEffect(s32 effect_id) {
 s32 Unit_GetElementLevel(s32 unitId, s32 element);
 u32 BattleRandomPercent(void);
 
-// Rolls whether effect `effectId` takes hold on `target`, as The Broken Seal's
-// function of the same name: it fails at once when there is nothing for it to
-// do; the chance is the base rate, plus three times the caster's lead over the
-// target in the element, less half the target's luck, plus 25 against a
-// weakness, times `successScale` percent. This game adds effects 90 and 91,
-// decided by the target's enemy id; a target with 40 luck or more shrugs off
-// effects 18, 19, 26 to 28, 34, 80 and 82, and a character 82; effects 80 and
-// 85 get three tries as 67 does.
+/// Rolls whether effect `effectId` takes hold on `target`, as The Broken Seal's
+/// function of the same name: it fails at once when there is nothing for it to
+/// do; the chance is the base rate, plus three times the caster's lead over the
+/// target in the element, less half the target's luck, plus 25 against a
+/// weakness, times `successScale` percent. This game adds effects 90 and 91,
+/// decided by the target's enemy id; a target with 40 luck or more shrugs off
+/// effects 18, 19, 26 to 28, 34, 80 and 82, and a character 82; effects 80 and
+/// 85 get three tries as 67 does.
 s32 BattleFx_RollSuccess(s32 caster, s32 target, s32 resistanceCategory,
                          s32 effectId, s32 successScale) {
   u8 *state = UnitGet(target);

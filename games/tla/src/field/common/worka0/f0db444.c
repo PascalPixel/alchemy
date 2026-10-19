@@ -4,9 +4,9 @@
 struct ObjectRuntime *Object_GetById(s32 id);
 void Func_080daecc(s32 id, s32 a1);
 
-// Starts an object's chain (Func_080daecc). An object with no motion flags is
-// first moved -16 pixels in z and 64 pixels in y; one with motion
-// flags starts it only when force is set.
+/// Starts an object's chain (Func_080daecc). An object with no motion flags is
+/// first moved -16 pixels in z and 64 pixels in y; one with motion
+/// flags starts it only when force is set.
 void Func_080db444(s32 id, s32 force) {
   struct ObjectRuntime *object = Object_GetById(id);
   s32 y;

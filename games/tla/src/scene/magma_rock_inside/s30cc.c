@@ -37,8 +37,8 @@ static inline void Call0(void (*f)()) {
   f();
 }
 
-// Reading the Blaze tablet shows its inscription; the first time (flag 0x9fa
-// clear) the scene with actor 5 follows.
+/// Reading the Blaze tablet shows its inscription; the first time (flag 0x9fa
+/// clear) the scene with actor 5 follows.
 void Func_020030cc(void) {
   struct ObjectRuntime *object;
 

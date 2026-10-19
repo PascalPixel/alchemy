@@ -8,12 +8,12 @@
 // The menus declare them without const, so they are not const here either.
 //--------------------------------------------------------------------------
 
-// The cursor's bob, indexed by (gFrameCount >> 1) & 7
+/// The cursor's bob, indexed by (gFrameCount >> 1) & 7
 u8 gUiMenu_CursorBobX[9] = {0, 1, 1, 2, 2, 1, 1, 0, 0};
 u8 gUiMenu_CursorBobY[9] = {0,    0xff, 0xff, 0xfe, 0xfe,
                             0xff, 0xff, 0,    0}; // 0, -1, -1, -2 ...
 
-// List orders, each ending in 0xff; ⚓️ adds entries 10 and 11
+/// List orders, each ending in 0xff; ⚓️ adds entries 10 and 11
 u8 gMenu_ListOrderDefault[13] = {0, 1, 4, 3, 2, 5, 10, 6, 7, 8, 9, 11, 0xff};
 u8 gMenu_ListOrderMode2[13] = {1, 4, 3, 2, 5, 10, 6, 7, 8, 9, 11, 0, 0xff};
 // clang-format off
@@ -27,7 +27,7 @@ u8 gMenu_ListOrderMode0[24] = {
 };
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH)
-// The item commands' cursor x, three columns a row
+/// The item commands' cursor x, three columns a row
 s32 gItemMenu_CommandColumnXTable[6] = {
     86, 117, 166,
     86, 117, 166,

@@ -3,7 +3,7 @@
 
 void WaitFrames(s32 frames);
 
-// Waits up to 120 frames, stopping early when a button is pressed.
+/// Waits up to 120 frames, stopping early when a button is pressed.
 void Event_WaitTwoSecondsOrPress(void) {
   u32 i;
 

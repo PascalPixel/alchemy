@@ -23,10 +23,10 @@ s32 Func_020004e0(void) {
   return 0;
 }
 
-// Actor 14's talk. Flag 0x10f follows Func_020004e0's item check (it stays
-// set while flag 0x301 or Func_02000a90 holds). Once 0x10f is set and
-// neither holds, a yes moves actor 14 and the leader, and if Func_02000a90
-// then holds, places actor 16 and sets flag 0x301.
+/// Actor 14's talk. Flag 0x10f follows Func_020004e0's item check (it stays
+/// set while flag 0x301 or Func_02000a90 holds). Once 0x10f is set and
+/// neither holds, a yes moves actor 14 and the leader, and if Func_02000a90
+/// then holds, places actor 16 and sets flag 0x301.
 void Func_02000524(void) {
   s32 message;
 

@@ -17,9 +17,9 @@ void UiWork_Finalize(void *window, s32 mode);
 void Func_02000704(s32 levels);
 void Func_02000e78(s32 cue);
 
-// The level-raising window, ☀️'s debug EV11_TALK: shows the current
-// member's name and level, raises every active member 5 levels on Start or
-// Select and 1 on A, and closes on B.
+/// The level-raising window, ☀️'s debug EV11_TALK: shows the current
+/// member's name and level, raises every active member 5 levels on Start or
+/// Select and 1 on A, and closes on B.
 void Func_02000748(void) {
   u8 *unit = UnitGet(gPartyState.currentOwner);
   void *window = UiWindow_Create(0, 0, 30, 9, 2);

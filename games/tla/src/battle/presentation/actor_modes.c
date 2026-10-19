@@ -13,9 +13,9 @@
 void BattlePres_ClearAllActorRecordModes(void);
 void Graphics_AdvancePaletteCycle(void);
 
-// Mode 0 clears every actor's OBJ mode and stops the palette cycle. Any other
-// mode starts the cycle: every actor takes mode & 1, and the actors listed
-// (up to 14, ended by 0xff) take the other.
+/// Mode 0 clears every actor's OBJ mode and stops the palette cycle. Any other
+/// mode starts the cycle: every actor takes mode & 1, and the actors listed
+/// (up to 14, ended by 0xff) take the other.
 void BattlePres_SetActorModes(u16 *actors, s32 mode) {
   s16 activeActors[14];
   struct BattleWork *battle = Ram_HeapSlots->battleWork;

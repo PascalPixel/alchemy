@@ -4,7 +4,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-// Heap-slot 0xa0 workspace: eight slots and 128 nodes.
+/// Heap-slot 0xa0 workspace: eight slots and 128 nodes.
 struct WorkA0Node {
   struct WorkA0Node *next;
   s32 x;
@@ -18,7 +18,7 @@ struct WorkA0Slot {
   s16 first;
   s16 second;
   u8 unk04[4];
-  s32 amplitude; // the wobble's size, decaying each frame
+  s32 amplitude; ///< the wobble's size, decaying each frame
   u8 unk0c[4];
   s32 angle;
   struct WorkA0Node *tail;
@@ -34,11 +34,11 @@ struct WorkA0 {
 
 #define WORK_A0 ((struct WorkA0 *)Ram_HeapSlots->unk84[7])
 
-// Heap-slot 0xa4 workspace.
+/// Heap-slot 0xa4 workspace.
 struct WorkA4Slot {
   s16 id;
   u8 unk02[22];
-  struct ChainLink *root; // the first link Func_080daecc hangs; NULL if free
+  struct ChainLink *root; ///< the first link Func_080daecc hangs; NULL if free
 };
 
 struct WorkA4Item {

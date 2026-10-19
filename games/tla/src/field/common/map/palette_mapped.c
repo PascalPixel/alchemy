@@ -3,7 +3,7 @@
 
 extern u8 gMapBlocks[];
 
-// Copies one world map cell's two tile entries (top and bottom) to a BG map.
+/// Copies one world map cell's two tile entries (top and bottom) to a BG map.
 static __inline__ void CopyWorldMapTileColumn(u8 *cellBytes, u8 *screenTile) {
   u32 metatileIndex = *(u16 *)cellBytes;
   u16 *metatileTiles = (u16 *)Ram_MapCellBuffer;
@@ -13,8 +13,8 @@ static __inline__ void CopyWorldMapTileColumn(u8 *cellBytes, u8 *screenTile) {
   *(u16 *)(screenTile + 64) = *metatileTiles;
 }
 
-// Draws world map tile row tileRow (two screen rows) into the BG map at
-// 0x06004000, from the 32 by 32 cell grid in gMapBlocks.
+/// Draws world map tile row tileRow (two screen rows) into the BG map at
+/// 0x06004000, from the 32 by 32 cell grid in gMapBlocks.
 void Map_RenderPaletteMappedRow(u32 tileRow) {
   u8 *cellBytes;
   u8 *screenTile;
@@ -62,8 +62,8 @@ void Map_RenderPaletteMappedRow(u32 tileRow) {
   } while (column <= 31);
 }
 
-// Draws world map tile column tileColumn (two screen columns) into the BG map
-// at 0x06004000.
+/// Draws world map tile column tileColumn (two screen columns) into the BG map
+/// at 0x06004000.
 void Map_RenderPaletteMappedColumn(u32 tileColumn) {
   u8 *cellBytes;
   u8 *screenTile;

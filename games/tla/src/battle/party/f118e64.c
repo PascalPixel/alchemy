@@ -44,8 +44,8 @@ s32 Djinn_IsReadyFar(s32 owner, s32 element, s32 djinn);
 struct TradeOfferState *Djinn_GetRecoveryTableFar(s32 side);
 void DjinnRecovery_AddStandbyFar(s32 owner, s32 element, s32 djinn);
 
-// Adds to the trade offers every djinn an active owner can offer that is
-// not offered yet; owners above 7 offer on the second side.
+/// Adds to the trade offers every djinn an active owner can offer that is
+/// not offered yet; owners above 7 offer on the second side.
 void Func_08118eb0(void) {
   u16 owners[10];
   s32 count;

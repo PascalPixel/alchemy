@@ -10,8 +10,8 @@ s32 Math_Cosine(s32 angle);
 s32 Math_Sine(s32 angle);
 void Object_SetPartAttribute(struct FieldActor *object, s32 value);
 
-// Circles the object around the centre in words 68 and 76, the radius
-// growing with its height, one step of 256 per lap.
+/// Circles the object around the centre in words 68 and 76, the radius
+/// growing with its height, one step of 256 per lap.
 void Func_02000840(struct FieldActor *object) {
   s32 radius = object->y;
   s32 step = WORD_AT(object, 48);
@@ -32,8 +32,8 @@ void Func_02000840(struct FieldActor *object) {
   WORD_AT(object, 48)++;
 }
 
-// The same circle on a smaller radius, twice as wide, blinking the part
-// attribute every other frame.
+/// The same circle on a smaller radius, twice as wide, blinking the part
+/// attribute every other frame.
 void Func_020008ac(struct FieldActor *object) {
   s32 radius = object->y;
   s32 step = WORD_AT(object, 48);

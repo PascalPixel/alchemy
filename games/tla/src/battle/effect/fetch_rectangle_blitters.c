@@ -3,11 +3,11 @@
 
 void BattleFx_LoadBlitter(s32 slot, s32 flags);
 
-// The Broken Seal's BattleFx_FetchRectangleBlitters: builds the two usual
-// routines that draw onto the 128x128 canvas, clipped, mirrored when flip is
-// nonzero. out[0] keeps the higher colour index (heap slot 26), out[1] adds
-// the colours (slot 47). BattleFx_LoadBlitter takes each slot's heap offset and the
-// blitter flags.
+/// The Broken Seal's BattleFx_FetchRectangleBlitters: builds the two usual
+/// routines that draw onto the 128x128 canvas, clipped, mirrored when flip is
+/// nonzero. out[0] keeps the higher colour index (heap slot 26), out[1] adds
+/// the colours (slot 47). BattleFx_LoadBlitter takes each slot's heap offset and the
+/// blitter flags.
 void BattleFx_FetchRectangleBlitters(s32 flip, void **out) {
   /* FAKEMATCH: never read: the native frame keeps 4 bytes below the saved
    * registers, which this 3-byte local explains (without it the frame

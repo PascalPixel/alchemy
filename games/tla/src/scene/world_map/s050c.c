@@ -10,11 +10,11 @@ s32 Unit_AddPp();
 void Func_02003c3c(void);
 void Func_02004a1c(void);
 
-// Sets render mode 7, clears object 8's child flags, then adds up the PP of
-// the active party; when it is 0, the current owner gets 1 PP back. The loop
-// is the listing's goto loop, which the loop pass leaves alone (gPartyState
-// reloaded each pass); its first test reads pp, which still holds the
-// index's 0.
+/// Sets render mode 7, clears object 8's child flags, then adds up the PP of
+/// the active party; when it is 0, the current owner gets 1 PP back. The loop
+/// is the listing's goto loop, which the loop pass leaves alone (gPartyState
+/// reloaded each pass); its first test reads pp, which still holds the
+/// index's 0.
 void Func_0200050c(void) {
   s32 count;
   /* FAKEMATCH(pin): the PP total in r6; as a plain local, 19 of 42

@@ -3,8 +3,8 @@
 void Func_02002b54(s32 x, s32 z, s32 layer, s32 value);
 s32 Func_02002c3c(s32 x, s32 z, s32 layer, s32 value);
 
-// Copies the map cells and sets the cell values that flags 0xa10 to 0xa15 call
-// for.
+/// Copies the map cells and sets the cell values that flags 0xa10 to 0xa15 call
+/// for.
 void Func_020002f0(void) {
   /* FAKEMATCH: every call goes through the call layer; called directly, the
    * coordinates and flags are shared in saved registers (differ 117). */

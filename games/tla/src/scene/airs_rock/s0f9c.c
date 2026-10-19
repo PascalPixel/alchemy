@@ -4,9 +4,9 @@
 
 void Object_SetSpritePriority(struct ObjectRuntime *object, s32 priority);
 
-// Moves the object: left of x 320 it speeds up rightward and grows, past it
-// it speeds up leftward and shrinks; its priority follows its direction and
-// its sprite spins.
+/// Moves the object: left of x 320 it speeds up rightward and grows, past it
+/// it speeds up leftward and shrinks; its priority follows its direction and
+/// its sprite spins.
 void Func_02000f9c(struct ObjectRuntime *object) {
   s32 scale;
 

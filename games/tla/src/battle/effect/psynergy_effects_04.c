@@ -19,5 +19,5 @@ void BattleFx_PrepareBufferInterpolation(void);
 void WaitFrames(s32 frames);
 s32 EventRuntime_GetControlledOwner(void);
 
-// Psynergy effect 23 cast on a target: runs its effect.
+/// Psynergy effect 23 cast on a target: runs its effect.
 void BattleFx_CallEffect23(void) { Func_080e4a34(); }

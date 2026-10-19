@@ -9,8 +9,8 @@ struct ShakeWork {
   s32 phase;
 };
 
-// Scheduler callback: turns the camera by the effect's delta, the whole
-// delta on phase 1 and half of it on the frames in between.
+/// Scheduler callback: turns the camera by the effect's delta, the whole
+/// delta on phase 1 and half of it on the frames in between.
 void Camera_ApplyPhasedDelta(void) {
   struct ShakeWork *work = (struct ShakeWork *)Ram_HeapSlots->battleFxWork[0];
   struct ShakeWork *camera = Ram_HeapSlots->cameraWork;

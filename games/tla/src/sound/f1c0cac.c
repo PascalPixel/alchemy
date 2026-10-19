@@ -1,9 +1,9 @@
 #include "audio_engine.h"
 #include "audio_engine_symbols.h"
 
-// The interrupt handler clears unk03 every frame after the sound
-// update, reading it first as only a volatile access survives; while it is
-// set, sound commands are ignored.
+/// The interrupt handler clears unk03 every frame after the sound
+/// update, reading it first as only a volatile access survives; while it is
+/// set, sound commands are ignored.
 struct SoundFrameState {
   u8 unk00[3];
   u8 unk03;
@@ -35,11 +35,11 @@ void MusicPlayer_SetPitch(struct SoundPlayer *player, u16 mask, s16 pitch);
 
 s32 Func_081c0cac(s32 cue) { return 3; }
 
-// Plays sound command id: 78 fades the music out, 390 and 395 fade players
-// 3 and 5, 100 to 699 are songs started on their table's player (7 takes
-// the first idle one of 7 down to 4), 80 to 99 play over silenced music,
-// and the rest (79 aside) become the background music, as The Broken Seal's
-// with ⚓️'s ranges.
+/// Plays sound command id: 78 fades the music out, 390 and 395 fade players
+/// 3 and 5, 100 to 699 are songs started on their table's player (7 takes
+/// the first idle one of 7 down to 4), 80 to 99 play over silenced music,
+/// and the rest (79 aside) become the background music, as The Broken Seal's
+/// with ⚓️'s ranges.
 void AudioCommand_Play(s32 id) {
   s32 flags;
   s32 player;
@@ -105,9 +105,9 @@ void AudioCommand_Play(s32 id) {
   }
 }
 
-// Steps the music volume toward its target and the pitch toward its target,
-// each by its step, after the jingle's restore delay runs out, as The Broken
-// Seal's without the DMA restart tick.
+/// Steps the music volume toward its target and the pitch toward its target,
+/// each by its step, after the jingle's restore delay runs out, as The Broken
+/// Seal's without the DMA restart tick.
 void MusicPlayer_StepVolumeAndPitchTowardTargets(void) {
   s32 delta;
 

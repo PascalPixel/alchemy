@@ -1,7 +1,7 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-// Item menu workspace (known fields only).
+/// Item menu workspace (known fields only).
 struct InventoryMenuState {
   u8 unk000[0x24];
   s32 itemWindow;
@@ -23,7 +23,7 @@ extern char ResourceId_MenuSmallDownArrowTiles;
 s32 Resource_FindFreeEntry(void);
 void VramBlock_LoadResourceFar(s32 slot, s32 size, s32 resource);
 
-// Load two page arrows into free tile slots.
+/// Load two page arrows into free tile slots.
 void Resource_LoadPairedBlocks(void) {
   struct InventoryMenuState *state = Ram_HeapSlots->menuRuntime;
   s32 value = Resource_FindFreeEntry();
@@ -49,7 +49,7 @@ struct MenuResult {
 s32 UnitGet(s32 owner);
 s32 ItemMenu_CountItems(s32 owner);
 
-// Split the selected slot owner's items into pages of five rows.
+/// Split the selected slot owner's items into pages of five rows.
 s32 ItemMenu_PageResult(struct MenuResult *result, s32 index) {
   s32 encoded;
   struct InventoryMenuState *menu = Ram_HeapSlots->menuRuntime;

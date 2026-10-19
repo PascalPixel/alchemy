@@ -99,8 +99,8 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
 
 s32 BattleParty_PrepareReserveOwners(u16 *owners);
 
-// As BattleParty_ListLivingUnits, with the reserve owners listed after the
-// active ones.
+/// As BattleParty_ListLivingUnits, with the reserve owners listed after the
+/// active ones.
 s32 Func_0811a24c(s32 sideMask, u16 *unitIds) {
   u16 members[10];
   u16 *base;

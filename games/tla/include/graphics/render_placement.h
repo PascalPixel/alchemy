@@ -4,7 +4,7 @@
 #include "types.h"
 #include "static_assert.h"
 
-// A sprite's screen position and its two vertical offsets, in 16.16 pixels.
+/// A sprite's screen position and its two vertical offsets, in 16.16 pixels.
 struct SpritePlacement {
 #ifdef UBFIX
   union {
@@ -24,8 +24,8 @@ struct SpritePlacement {
 #endif
 };
 
-// UB: the legacy renderer walks across the scalar members as an array.
-// UBFIX supplies a real array; an always-on union changes producer scheduling.
+/// UB: the legacy renderer walks across the scalar members as an array.
+/// UBFIX supplies a real array; an always-on union changes producer scheduling.
 static inline const s32 *
 SpritePlacement_ReadValues(const struct SpritePlacement *placement) {
 #ifdef UBFIX
@@ -43,7 +43,7 @@ static inline s32 *SpritePlacement_Values(struct SpritePlacement *placement) {
 #endif
 }
 
-// Horizontal and vertical sprite scale; 0x10000 is the original size.
+/// Horizontal and vertical sprite scale; 0x10000 is the original size.
 struct SpriteScale {
   union {
     struct {

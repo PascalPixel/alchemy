@@ -17,7 +17,7 @@ static __inline__ void Blend_WriteAlpha(s32 value) {
     Blend_WriteAlpha(value);                                                   \
   } while (0)
 
-// Fades the second target out and the first in over 16 steps of four frames.
+/// Fades the second target out and the first in over 16 steps of four frames.
 void Func_02000510(void) {
   s32 i;
 
@@ -37,7 +37,7 @@ loop:
   gData_0200308c = 1;
 }
 
-// The reverse fade, in steps of three frames.
+/// The reverse fade, in steps of three frames.
 void Func_02000550(void) {
   s32 i;
 

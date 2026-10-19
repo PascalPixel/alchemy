@@ -1,16 +1,12 @@
-//--------------------------------------------------------------------------
-// release_battle_object_records.c
-// Battle: release an object's graphics.
-//--------------------------------------------------------------------------
+/// @file
+/// Battle: release an object's graphics.
 
 #include "types.h"
 #include "motobj.h"
 #include "resource.h"
 
-//--------------------------------------------------------------------------
-// Release all graphics owned by the object and mark it as having none.
-// no: object ID.
-//--------------------------------------------------------------------------
+/// Release all graphics owned by the object and mark it as having none.
+/// no: object ID.
 void ReleaseBattleObjectRecords(s32 no) {
   struct BattleObj *slot;
   struct MotionObject *obj;

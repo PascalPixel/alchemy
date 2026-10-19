@@ -4,7 +4,7 @@
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The European far-call tables give the terrain height's entry another name.
+/// The European far-call tables give the terrain height's entry another name.
 s32 Func_08020190(s32 layer, s32 x, s32 z);
 #define Map_GetTerrainHeightFar Func_08020190
 #else
@@ -12,14 +12,14 @@ s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 #endif
 
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The Spanish and Italian far-call tables reach this function through
-// another slot (Func_080c8320), under that slot's name; Func_080d6b90 is
-// DisplayTransition_InitializeBattleEffectState's there.
+/// The Spanish and Italian far-call tables reach this function through
+/// another slot (Func_080c8320), under that slot's name; Func_080d6b90 is
+/// DisplayTransition_InitializeBattleEffectState's there.
 #define Func_080d6b90 Func_080d7408
 #endif
 
-// One rising particle: its sprite's attribute words, world position, drift
-// and frames left.
+/// One rising particle: its sprite's attribute words, world position, drift
+/// and frames left.
 struct RisingParticle {
   u32 sprite[3];
   s32 posX;
@@ -30,7 +30,7 @@ struct RisingParticle {
   u8 unk1e[2];
 };
 
-// Heap slot 0x74 while the rising particles run.
+/// Heap slot 0x74 while the rising particles run.
 struct RisingParticleWork {
   s32 vramEntry;
   s32 tile;
@@ -48,11 +48,11 @@ void Func_080d69f4(void);
 
 extern const u8 gData_080f385e[];
 
-// Starts Func_080d69f4's rising particles: allocates and clears heap slot
-// 0x74, decodes the particle tiles into VRAM, sets each of the 64 particles'
-// sprite words and places it on the ground at a random point of the strip
-// (x 288 to 488 pixels, z 60 to 80), staggering their timers by 2 frames, and
-// schedules the update.
+/// Starts Func_080d69f4's rising particles: allocates and clears heap slot
+/// 0x74, decodes the particle tiles into VRAM, sets each of the 64 particles'
+/// sprite words and places it on the ground at a random point of the strip
+/// (x 288 to 488 pixels, z 60 to 80), staggering their timers by 2 frames, and
+/// schedules the update.
 void Func_080d6b90(void) {
   struct RisingParticleWork *work = Runtime_AllocateBlock(116, 0x814);
   struct RisingParticle *particle = work->particles;

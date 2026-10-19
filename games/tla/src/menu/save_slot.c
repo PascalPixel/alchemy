@@ -10,12 +10,12 @@ extern s8 gMenu_SaveSlotActionByPosition[];
 s32 Func_080432a4(void);
 void Menu_CenterResourceEntries(s32, s32, s32);
 
-// Offers the actions the save records allow (plus two optional entries
-// behind EWRAM flags) and maps the chosen position to an action, as ☀️'s
-// Menu_SelectSaveSlotAction. The Lost Age's second optional entry is 31, and
-// with the first option off, action 4 becomes 5. A module of its own: in
-// the Japanese edition it follows Menu_AnimateSelectionToEntry, which is
-// still scaffolded there.
+/// Offers the actions the save records allow (plus two optional entries
+/// behind EWRAM flags) and maps the chosen position to an action, as ☀️'s
+/// Menu_SelectSaveSlotAction. The Lost Age's second optional entry is 31, and
+/// with the first option off, action 4 becomes 5. A module of its own: in
+/// the Japanese edition it follows Menu_AnimateSelectionToEntry, which is
+/// still scaffolded there.
 s32 Menu_SelectSaveSlotAction(void) {
   s32 type;
   s32 ret;

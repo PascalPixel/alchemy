@@ -18,7 +18,7 @@ extern const u8 gUiText_NumberWord7[];
 extern const u8 gUiText_NumberWord8[];
 extern const u8 gUiText_NumberWord9[];
 
-// {singular, plural}: window.c reads [(kind & 7) * 2 + plural]
+/// {singular, plural}: window.c reads [(kind & 7) * 2 + plural]
 // clang-format off
 const u8 *const gUiText_NumberWords[16] = {
     gUiText_NumberWord9, gUiText_NumberWord8, // Punkt, Punkte

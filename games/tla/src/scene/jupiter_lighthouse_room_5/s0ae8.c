@@ -21,9 +21,9 @@ void Func_02002860(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 void Func_020001a4(void);
 
-// Scene preparation: the event value 0x204, actor 22 placed while flag 0xa22
-// is set (cleared once 0xa23 is), actors 23 and 24 placed, and with flag
-// 0xa00 two more and the particle callback.
+/// Scene preparation: the event value 0x204, actor 22 placed while flag 0xa22
+/// is set (cleared once 0xa23 is), actors 23 and 24 placed, and with flag
+/// 0xa00 two more and the particle callback.
 s32 Func_02000ae8(void) {
   struct ObjectRuntime *object;
   s32 angle;

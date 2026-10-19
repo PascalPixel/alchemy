@@ -4,8 +4,8 @@
 #include "ram_buffer.h"
 
 struct PairScene {
-  u16 angle;  // Four directions.
-  u16 angle8; // Eight directions.
+  u16 angle;  ///< Four directions.
+  u16 angle8; ///< Eight directions.
   s32 x;
   s32 y;
   s32 z;

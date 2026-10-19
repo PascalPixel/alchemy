@@ -22,8 +22,8 @@
 
 void BattleMotion_ReservedNoOp83B0();
 
-// The actor walks three quarters of the way to its target, at a speed that
-// covers the distance in about travelDivisor frames.
+/// The actor walks three quarters of the way to its target, at a speed that
+/// covers the distance in about travelDivisor frames.
 void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
                                  s32 initialVelocityY) {
   struct BattleObj *actorSlot = BattleObjGet(actorId);

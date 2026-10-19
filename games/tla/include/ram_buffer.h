@@ -11,14 +11,14 @@
 #define Ram_IwramHeapEnd                                                       \
   FIXED_ADDRESS((u8 *), 0x03006fc0, IwramSoundMixWorkspace)
 
-// Overlay 693's Func_02000c14 reads the frame counter at a constant address.
-// Each test reloads the address; using the symbol combines the two loads.
+/// Overlay 693's Func_02000c14 reads the frame counter at a constant address.
+/// Each test reloads the address; using the symbol combines the two loads.
 #define Ram_FrameCount FIXED_ADDRESS((u32 *), 0x0300122c, gFrameCount)
 
-// The world map screen's scroll (x, then y, 16.16 pixels). Func_080ed0a0
-// reads it at constant addresses: the y word loads from its own literal, or
-// as the x word's address plus 4 where that is live, which only constants
-// give.
+/// The world map screen's scroll (x, then y, 16.16 pixels). Func_080ed0a0
+/// reads it at constant addresses: the y word loads from its own literal, or
+/// as the x word's address plus 4 where that is live, which only constants
+/// give.
 #define Ram_WorldMapScroll FIXED_ADDRESS((s32 *), 0x0202a630, Data_0202a630)
 
 struct BattleWork;

@@ -14,9 +14,9 @@ extern s16 gData_02003e02[];
 s32 Func_02001084(s16 *table);
 void Func_02000fcc(struct ObjectRuntime *object);
 
-// Picks the cell table for the room and entrance, finds the target in it and,
-// in modes 2 and 3, sets the target's byte 99 to 4 or 2 and makes it blink
-// with Func_02000fcc.
+/// Picks the cell table for the room and entrance, finds the target in it and,
+/// in modes 2 and 3, sets the target's byte 99 to 4 or 2 and makes it blink
+/// with Func_02000fcc.
 void Func_02001110(s32 mode) {
   struct MagmaRockWork *work;
   s16 *table = gData_02003d9e;

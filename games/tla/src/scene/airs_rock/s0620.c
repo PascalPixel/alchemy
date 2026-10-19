@@ -13,9 +13,9 @@ s32 GameFlag_ClearBit();
 s32 Func_02003b80();
 s32 Func_02003bd0();
 
-// Object 11's column sets or clears flag 0x311 and writes the low byte of the
-// cell value Func_02000348 returns (its high byte 0xff when the object is
-// away) into two places; with the leader 208 pixels up a block copy follows.
+/// Object 11's column sets or clears flag 0x311 and writes the low byte of the
+/// cell value Func_02000348 returns (its high byte 0xff when the object is
+/// away) into two places; with the leader 208 pixels up a block copy follows.
 void Func_02000620(void) {
   struct ObjectRuntime *object;
   struct ObjectRuntime *leader;

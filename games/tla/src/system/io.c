@@ -112,7 +112,7 @@ typedef void (*QueueFlushRoutine)(struct IoWriteQueue *queue, u32 count);
 extern u8 Resource_ExecuteTransferCode[];
 extern u8 Resource_ExecuteTransferSize[];
 
-// Runs the queued I/O writes with the transfer routine copied to the stack.
+/// Runs the queued I/O writes with the transfer routine copied to the stack.
 void IoWriteQueue_FlushPending(void) {
   struct IoWriteQueue *queue;
   u32 count;

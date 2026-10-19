@@ -15,7 +15,7 @@ u32 GameFlag_SetByte(u32 flag, u8 value) {
   return flag;
 }
 
-// Increment the byte holding eight flags, saturating at 255.
+/// Increment the byte holding eight flags, saturating at 255.
 s32 Func_08016d7c(s32 flag) {
   u8 *bytes = gGameFlagBytes;
 
@@ -28,7 +28,7 @@ s32 Func_08016d7c(s32 flag) {
   return bytes[flag];
 }
 
-// Decrement the byte holding eight flags, saturating at 0.
+/// Decrement the byte holding eight flags, saturating at 0.
 s32 Func_08016d98(s32 flag) {
   u8 *bytes = gGameFlagBytes;
 

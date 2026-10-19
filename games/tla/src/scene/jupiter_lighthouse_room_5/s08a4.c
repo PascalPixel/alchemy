@@ -34,9 +34,9 @@ void Motion_SetModeAndWaitAnimation(s32 actor, s32 mode);
 void ObjectMotion_CommitPositionAndActivate(s32 actor, s32 dx, s32 dz);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
 
-// Once flag 0xa24 is set and neither 0xa23 nor 0xa22 is, actor 4 turns
-// about, actor 22 rises in sparks and talks with it, then joins it; flags
-// 0xa25, 0x161 and 0x144 are set.
+/// Once flag 0xa24 is set and neither 0xa23 nor 0xa22 is, actor 4 turns
+/// about, actor 22 rises in sparks and talks with it, then joins it; flags
+/// 0xa25, 0x161 and 0x144 are set.
 void Func_020008a4(void) {
   s32 angle;
 

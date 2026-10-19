@@ -19,11 +19,11 @@ s32 UiWindow_UpdateOrCreate(struct RenderInput **handle, s32 x, s32 y, s32 w,
 struct RenderOutput *
 UiIcon_CreateWithResourceVariant(struct RenderInput *window, s32 x, s32 y);
 
-// Opens the menu's top-left window (13 by 5 tiles) with a divider, puts the
-// hand cursor in it, hidden, and adds the up and down arrow icons at its right
-// edge when a VRAM entry is free. Returns the window. The twin of ☀️'s
-// UiMenu_CreateCursor (games/tbs/src/menu/menu.c), which has no divider or
-// arrows.
+/// Opens the menu's top-left window (13 by 5 tiles) with a divider, puts the
+/// hand cursor in it, hidden, and adds the up and down arrow icons at its right
+/// edge when a VRAM entry is free. Returns the window. The twin of ☀️'s
+/// UiMenu_CreateCursor (games/tbs/src/menu/menu.c), which has no divider or
+/// arrows.
 struct RenderInput *Func_080f88d0(struct OwnerMenuState *work) {
   struct RenderInput *window;
   struct RenderOutput *icon;

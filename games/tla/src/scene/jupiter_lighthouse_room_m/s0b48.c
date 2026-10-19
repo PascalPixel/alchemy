@@ -36,7 +36,7 @@ static __inline__ void ObjSpeed(s32 id, s32 speed, s32 acceleration) {
     ObjPlace(id, (x) << 16, (z) << 16, angle_);                                \
   }
 
-// Sets four actors' speeds, places them and starts their action scripts.
+/// Sets four actors' speeds, places them and starts their action scripts.
 void Func_02000b48(void) {
   ObjSpeed(26, 0x30000, 0x18000);
   ObjSpeed(27, 0x30000, 0x18000);

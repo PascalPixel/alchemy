@@ -1,8 +1,8 @@
 #include "types.h"
 #include "fixed_math.h"
 
-// Writes count RGB555 colours from source to destination brightened by
-// 16 - cos(angle) / 4096 on each channel, each clamped at 31.
+/// Writes count RGB555 colours from source to destination brightened by
+/// 16 - cos(angle) / 4096 on each channel, each clamped at 31.
 void Func_081b810c(u16 *source, u16 *destination, u32 count, s32 angle) {
   s32 add;
   u32 i;

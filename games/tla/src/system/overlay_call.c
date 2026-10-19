@@ -40,8 +40,8 @@ void *Func_080ccd78(s32 group, s32 id);
 
 s32 Func_080cce84(void) { return ((s32 (*)(void))gOverlayArea[1])(); }
 
-// Finds the talk event of object id; when the party has stopped that object,
-// an event of kind 7 comes first.
+/// Finds the talk event of object id; when the party has stopped that object,
+/// an event of kind 7 comes first.
 void *Func_080cce94(s32 id) {
   /* FAKEMATCH: the search's result waits in r0 and is copied after the
      stopped object's load; held in a plain local it is copied right after

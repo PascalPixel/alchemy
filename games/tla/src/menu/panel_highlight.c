@@ -33,8 +33,8 @@ void UiPanel_SetRectHighlight(struct UiPanel *panel, s32 x, s32 y, s32 width,
                          style);
 }
 
-// Highlights the cell of a four-column grid at index's column and row's line,
-// with style 14 when selected and 15 otherwise.
+/// Highlights the cell of a four-column grid at index's column and row's line,
+/// with style 14 when selected and 15 otherwise.
 void UiPanel_HighlightGridCell(struct UiPanel *panel, s32 index, s32 row,
                                s32 selected) {
   s32 style = ((0u - selected) | selected) >> 31;

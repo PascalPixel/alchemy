@@ -18,12 +18,12 @@ struct EventWork {
   s16 countdown;
   u16 unk15a;
   u8 unk15c[8];
-  u16 encounterEnemyGroup; // the next battle's enemy group, 0 for none
+  u16 encounterEnemyGroup; ///< the next battle's enemy group, 0 for none
   s16 unk166;
   u8 unk168[2];
   u16 unk16a;
   u8 unk16c[0x18];
-  s16 blockedSteps; // refused key moves in a row
+  s16 blockedSteps; ///< refused key moves in a row
   u16 heldKeys;
   u8 unk188[2];
   s8 controlMode;

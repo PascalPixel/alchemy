@@ -1,16 +1,12 @@
-//--------------------------------------------------------------------------
-// animation_modes.c
-// Effects: burst effect entry points.
-//--------------------------------------------------------------------------
+/// @file
+/// Effects: burst effect entry points.
 
 #include "effect_step.h"
 
 void BattleFx_RunBurstScene(struct EffectStep *, s32);
 
-//--------------------------------------------------------------------------
-// Each entry passes a burst type to BattleFx_RunBurstScene.
-// step: effect arguments.
-//--------------------------------------------------------------------------
+/// Each entry passes a burst type to BattleFx_RunBurstScene.
+/// step: effect arguments.
 void BattleFx_RunGust(struct EffectStep *step) {
   if (step->variant == 0) {
     BattleFx_RunBurstScene(step, 6);

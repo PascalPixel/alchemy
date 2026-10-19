@@ -1,18 +1,14 @@
-//--------------------------------------------------------------------------
-// classify_entry_kind.c
-// Battle: ability target-selection categories.
-//--------------------------------------------------------------------------
+/// @file
+/// Battle: ability target-selection categories.
 
 #include "types.h"
 #include "battle_system.h"
 #include "scene.h"
 
-//--------------------------------------------------------------------------
-// Classify an ability's effect for target selection.
-// 0 other, 1 restore HP, 2 restore PP, 3 cure poison, 4 cure an ailment,
-// 5 revive, 6 cure all ailments.
-// act: ability data.
-//--------------------------------------------------------------------------
+/// Classify an ability's effect for target selection.
+/// 0 other, 1 restore HP, 2 restore PP, 3 cure poison, 4 cure an ailment,
+/// 5 revive, 6 cure all ailments.
+/// act: ability data.
 s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
   s32 val;
   s32 type;

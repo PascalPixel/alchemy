@@ -7,7 +7,7 @@
 #error multiple game editions selected
 #endif
 
-// Compile-time language selectors.
+/// Compile-time language selectors.
 #define LANGUAGE_JAPANESE 0
 #define LANGUAGE_ENGLISH 1
 #define LANGUAGE_GERMAN 2

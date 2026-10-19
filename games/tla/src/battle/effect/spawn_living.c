@@ -40,7 +40,7 @@ void BattleBackground_LoadFar(s32, s32, s32);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 
-// Spawns the battle objects of each unit in the list that has HP left.
+/// Spawns the battle objects of each unit in the list that has HP left.
 void BattleFx_SelectLivingTargets(struct FxPartyList *party) {
   s16 list[14];
   s32 count = 0;

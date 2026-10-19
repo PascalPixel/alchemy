@@ -50,7 +50,7 @@ extern const u8 gData_02003650[];
 extern const u8 gData_02003734[];
 extern const u8 gData_02003790[];
 
-// A scene of actor 6 and the leader that ends by setting flag 0x865.
+/// A scene of actor 6 and the leader that ends by setting flag 0x865.
 void Func_0200049c(void) {
   struct ObjectRuntime *leader;
 
@@ -132,8 +132,8 @@ void Func_02000664(void) {
   }
 }
 
-// The three scenes of actors 8, 5 and 6 with the leader, each run once:
-// flags 0x863, 0x864 and 0x865 record them.
+/// The three scenes of actors 8, 5 and 6 with the leader, each run once:
+/// flags 0x863, 0x864 and 0x865 record them.
 void Func_020006a8(void) {
   struct ObjectRuntime *leader;
 

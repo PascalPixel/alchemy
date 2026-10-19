@@ -5,7 +5,7 @@
 #include "text/msg_ids.h"
 #include "edition.h"
 
-// The rows of a page of the item list.
+/// The rows of a page of the item list.
 #define PAGE_ROWS 5
 
 // The page icons, the item names, the "no items" message and the Attack and
@@ -58,8 +58,8 @@ void UiText_DrawStringAtOffsetFar(const void *text, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x,
                                   s32 y);
 
-// Draws one page of the member's items into window: five names a page, or
-// "no items", then the member's name, Attack and Defense.
+/// Draws one page of the member's items into window: five names a page, or
+/// "no items", then the member's name, Attack and Defense.
 s32 Func_081000e0(s32 window, s32 unused, struct MenuResult *state) {
   struct InventoryMenuState *menu = Ram_HeapSlots->menuRuntime;
   struct BattleUnit *unit;

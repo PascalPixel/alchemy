@@ -31,8 +31,8 @@ void Func_02000e68(s32 unused, s32 id) {
 
 void GameFlag_SetBit(s32 flag);
 
-// Rooms 2 and 3: by where object id stands, sets flags 0x303 to 0x305 and
-// makes the rooms' Func_02001848 calls.
+/// Rooms 2 and 3: by where object id stands, sets flags 0x303 to 0x305 and
+/// makes the rooms' Func_02001848 calls.
 void Func_02000f10(s32 unused, s32 id) {
   struct ObjectRuntime *object = Object_GetById(id);
 

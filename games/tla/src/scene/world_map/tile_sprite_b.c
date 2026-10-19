@@ -59,8 +59,8 @@ s32 Func_020003a8(struct ObjectRuntime *object) {
   return 0;
 }
 
-// With flag 0x200 set the object is released, takes acceleration and speed
-// limit 0x1000 and is sent to an offset of its position.
+/// With flag 0x200 set the object is released, takes acceleration and speed
+/// limit 0x1000 and is sent to an offset of its position.
 s32 Func_020003b4(struct ObjectRuntime *object) {
   s32 x, z;
 

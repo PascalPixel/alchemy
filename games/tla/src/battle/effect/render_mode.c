@@ -1,16 +1,12 @@
-//--------------------------------------------------------------------------
-// render_mode.c
-// Battle effects: particle effect entry points.
-//--------------------------------------------------------------------------
+/// @file
+/// Battle effects: particle effect entry points.
 
 #include "types.h"
 #include "battle.h"
 #include "battle_effect_work.h"
 
-//--------------------------------------------------------------------------
-// Each entry passes a particle type (color and count) to
-// BattleFx_RunTargetMotes. effect: effect arguments.
-//--------------------------------------------------------------------------
+/// Each entry passes a particle type (color and count) to
+/// BattleFx_RunTargetMotes. effect: effect arguments.
 void BattleFx_RunTaint(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
     BattleFx_RunTargetMotes(effect, 0);

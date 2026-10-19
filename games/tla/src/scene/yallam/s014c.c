@@ -4,9 +4,9 @@
 // Japanese has no stop beside the leader: its function stays on the
 // overlay's scaffold, with a draft.
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-// Stops the object (mode 2) when the leader is within 11 of it; otherwise
-// lets it face object 10 or 9 by bit 0 of its action word and, failing that,
-// the leader, forced when bit 1 is set and event word 352 or tile byte 4 is.
+/// Stops the object (mode 2) when the leader is within 11 of it; otherwise
+/// lets it face object 10 or 9 by bit 0 of its action word and, failing that,
+/// the leader, forced when bit 1 is set and event word 352 or tile byte 4 is.
 s32 Func_0200014c(struct ObjectRuntime *object) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
   u8 *event = Ram_HeapSlots->eventWork;

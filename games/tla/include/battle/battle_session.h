@@ -26,18 +26,18 @@ struct BattleObj {
   s16 fading;
 };
 
-// BattleActionRecord.command and BattlePlan's copy of it: what a unit does
-// on its turn.
+/// BattleActionRecord.command and BattlePlan's copy of it: what a unit does
+/// on its turn.
 enum BattleCommand {
   CMD_ATTACK = 0,
   CMD_PSYNERGY = 1,
   CMD_ITEM = 2,
   CMD_DEFEND = 3,
-  CMD_ABILITY = 4, // an enemy's ability
+  CMD_ABILITY = 4, ///< an enemy's ability
   CMD_DJINN = 5,
   CMD_SUMMON = 6,
-  CMD_DEFEND2 = 7, // an enemy's Total Defense (effect 47)
-  CMD_NONE = 8,    // nothing this turn
+  CMD_DEFEND2 = 7, ///< an enemy's Total Defense (effect 47)
+  CMD_NONE = 8,    ///< nothing this turn
   CMD_FLEE = 99
 };
 

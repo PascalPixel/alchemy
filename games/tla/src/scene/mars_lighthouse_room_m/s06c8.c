@@ -6,11 +6,11 @@ extern s16 gData_02003a82;
 
 void Func_02003178(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
-// Moves the Func_0200080c cells for a new state: the cells of the old index
-// (gData_02003a80) are put back with (0, 122, 3, 3), gData_02003a7e becomes 0
-// for an odd state and 16 for an even one, the index becomes (state - 20) / 2
-// and its cells are set with (0, 125, 3, 3). Sound 560 plays when the low bit
-// of the state changes.
+/// Moves the Func_0200080c cells for a new state: the cells of the old index
+/// (gData_02003a80) are put back with (0, 122, 3, 3), gData_02003a7e becomes 0
+/// for an odd state and 16 for an even one, the index becomes (state - 20) / 2
+/// and its cells are set with (0, 125, 3, 3). Sound 560 plays when the low bit
+/// of the state changes.
 void Func_020006c8(s32 state) {
   s32 next;
   s32 odd;
@@ -66,9 +66,9 @@ void Func_020006c8(s32 state) {
     Call6((void (*)())Func_02003178, 0, 125, 3, 3, 8, 67);
 }
 
-// Calls Func_02003178 with (0, 125, 3, 3) for four places, steps
-// gData_02003a7e through 12 and 8 to 0, then calls it with (0, 122, 3, 3) for
-// the same places.
+/// Calls Func_02003178 with (0, 125, 3, 3) for four places, steps
+/// gData_02003a7e through 12 and 8 to 0, then calls it with (0, 122, 3, 3) for
+/// the same places.
 void Func_0200080c(void) {
   Call6((void (*)())Func_02003178, 0, 125, 3, 3, 17, 67);
   Call6((void (*)())Func_02003178, 0, 125, 3, 3, 8, 72);

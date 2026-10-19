@@ -37,8 +37,8 @@ void UnitRatio(s32 ownerId) {
   }
 }
 
-// Sets the unit's HP, clamped to 0..maxHp, and recomputes its HP and PP
-// gauges inline.
+/// Sets the unit's HP, clamped to 0..maxHp, and recomputes its HP and PP
+/// gauges inline.
 void Unit_SetHp(struct BattleUnit *unit, s32 hp) {
   s32 value;
 

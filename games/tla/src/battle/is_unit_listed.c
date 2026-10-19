@@ -1,15 +1,11 @@
-//--------------------------------------------------------------------------
-// is_unit_listed.c
-// Battle: test whether a unit is in a battle formation.
-//--------------------------------------------------------------------------
+/// @file
+/// Battle: test whether a unit is in a battle formation.
 
 #include "types.h"
 #include "battle_party.h"
 
-//--------------------------------------------------------------------------
-// Return 1 if the unit is in its side's formation.
-// id: unit ID (0-7 allies, all others enemies).
-//--------------------------------------------------------------------------
+/// Return 1 if the unit is in its side's formation.
+/// id: unit ID (0-7 allies, all others enemies).
 u32 BattleParty_IsUnitListed(u32 id) {
   u16 list[8];
   s32 side;

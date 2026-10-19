@@ -10,9 +10,9 @@ void Func_02001670(struct ObjectRuntime *object) {
 void Func_020015e8(struct ObjectRuntime *object);
 void Func_02001630(struct ObjectRuntime *object);
 
-// Scatters objects 17 to 21 under cue 184, lines them up 32 pixels apart
-// at z 824, then settles them under cue 298 and leaves object 21 rocking;
-// sets flags 0x109 and 0x955 and clears 0x12f.
+/// Scatters objects 17 to 21 under cue 184, lines them up 32 pixels apart
+/// at z 824, then settles them under cue 298 and leaves object 21 rocking;
+/// sets flags 0x109 and 0x955 and clears 0x12f.
 void Func_0200169c(void) {
   s32 i;
 

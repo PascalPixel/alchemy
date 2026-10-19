@@ -4,10 +4,10 @@
 #include "io_reg.h"
 #include "display_transition.h"
 
-// Each frame, before drawing: turns windows 0 and 1 on, writes the first four
-// values of the shown page into WININ, WINOUT, WIN0H and WIN1H, and has DMA 0
-// copy the rest into WIN0H and WIN1H one word each HBlank, as ☀️'s
-// BattleFx_StartWindowHBlankDma does.
+/// Each frame, before drawing: turns windows 0 and 1 on, writes the first four
+/// values of the shown page into WININ, WINOUT, WIN0H and WIN1H, and has DMA 0
+/// copy the rest into WIN0H and WIN1H one word each HBlank, as ☀️'s
+/// BattleFx_StartWindowHBlankDma does.
 void BattleFx_StartWindowHBlankDma(void) {
   struct DisplayTransitionState *work;
   u16 *src;

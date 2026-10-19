@@ -3,7 +3,7 @@
 #include "party_state.h"
 #include "input.h"
 
-// The requests the configured keys raise, named as in ☀️'s FieldWork.
+/// The requests the configured keys raise, named as in ☀️'s FieldWork.
 struct EventPrompt {
   u8 unk000[0x15a];
   u16 menu;
@@ -49,11 +49,11 @@ s32 Func_08026dd0(u32 value) {
   return code;
 }
 
-// Checks the keys the player has configured, as ☀️'s function of the same
-// name: the menu, examine and start keys set their request and return 1, the
-// two shortcut keys pass on their assignment (Func_08026dd0). While a second
-// event is pending, any of the five requests command 0x209b instead. Returns
-// 0 when none is pressed.
+/// Checks the keys the player has configured, as ☀️'s function of the same
+/// name: the menu, examine and start keys set their request and return 1, the
+/// two shortcut keys pass on their assignment (Func_08026dd0). While a second
+/// event is pending, any of the five requests command 0x209b instead. Returns
+/// 0 when none is pressed.
 s32 Field_CheckConfiguredKeys(void) {
   struct EventPrompt *work = Ram_HeapSlots->eventWork;
   s32 result = 0;

@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// get_wide_string_width.c
-// Text: measure a 16-bit string's display width in pixels.
-//--------------------------------------------------------------------------
+/// @file
+/// Text: measure a 16-bit string's display width in pixels.
 
 #include "edition.h"
 #include "glyph.h"
@@ -15,15 +13,13 @@
 #define WIDE_WIDTH_FIXED 1
 #endif
 
-// Glyph n in the font.
+/// Glyph n in the font.
 #define FONT_GLYPH(n)                                                          \
   ((const struct FontGlyph *)((n) * sizeof(struct FontGlyph) +                 \
                               (const u8 *)gUiText_Glyphs))
 
-//--------------------------------------------------------------------------
-// Spaces take four pixels; characters up to 0xff use their glyph width;
-// higher characters take ten. Voicing marks 0xde and 0xdf add no width.
-//--------------------------------------------------------------------------
+/// Spaces take four pixels; characters up to 0xff use their glyph width;
+/// higher characters take ten. Voicing marks 0xde and 0xdf add no width.
 s32 UiText_GetWideStringWidth(u16 *text) {
   s32 width;
   u16 *p;

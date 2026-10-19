@@ -3,8 +3,8 @@
 #include "mem.h"
 #include "battle_display.h"
 
-// Allocates the battle camera (heap slot 48) and sets its starting view: the
-// values The Broken Seal's battle start sets inline after its own allocation.
+/// Allocates the battle camera (heap slot 48) and sets its starting view: the
+/// values The Broken Seal's battle start sets inline after its own allocation.
 void BattleCamera_Create(void) {
   struct BattleCamera *camera =
       Runtime_AllocateBlock(48, sizeof(struct BattleCamera));

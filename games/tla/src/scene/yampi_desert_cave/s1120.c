@@ -3,9 +3,9 @@
 
 struct ObjectRuntime *Object_GetById(s32 id);
 
-// Func_02001120's counterpart: the leader's terrain becomes 2, and in rooms 1
-// and 3 the same calls run with their first and last pairs swapped, each
-// followed by more.
+/// Func_02001120's counterpart: the leader's terrain becomes 2, and in rooms 1
+/// and 3 the same calls run with their first and last pairs swapped, each
+/// followed by more.
 void Func_02001040(void) {
   Object_GetById(gPartyState.currentOwner)->terrainId = 2;
   if (gPartyState.scene == (s32)&SceneId_Ov662Room1) {

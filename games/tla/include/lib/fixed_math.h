@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-// One in the engine's signed 16.16 fixed-point format.
+/// One in the engine's signed 16.16 fixed-point format.
 #define Q16_ONE (1 << 16)
 
 s32 Trig_Sin(s32 angle);

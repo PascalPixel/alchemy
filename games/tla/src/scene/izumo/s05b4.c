@@ -9,8 +9,8 @@ static inline s32 GameFlag_Test_(s32 flag) {
   return GameFlag_Test(flag);
 }
 
-// The ring of stones: one line after the flag is set, otherwise the full talk
-// and its answer.
+/// The ring of stones: one line after the flag is set, otherwise the full talk
+/// and its answer.
 void Func_020004bc(s32 actor) {
   Func_02000d00();
   Func_02000dd0(0);
@@ -76,7 +76,7 @@ void Func_020005b4(s32 actor) {
   Func_02000d08();
 }
 
-// Every fourth frame, colours 1 to 14 of palettes 3, 4 and 5 rotate up by one.
+/// Every fourth frame, colours 1 to 14 of palettes 3, 4 and 5 rotate up by one.
 void Func_0200060c(void) {
   volatile u16 *palette;
   s16 saved;

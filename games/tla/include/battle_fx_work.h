@@ -7,9 +7,9 @@
 
 struct BattleEffectArgument;
 
-// The battle effect scenes' work (heap slot 23), as The Lost Age lays it
-// out: The Broken Seal's BattleEffectWork with the particles moved ahead of
-// the sheet and 0xc4 more bytes ahead of the actor timers.
+/// The battle effect scenes' work (heap slot 23), as The Lost Age lays it
+/// out: The Broken Seal's BattleEffectWork with the particles moved ahead of
+/// the sheet and 0xc4 more bytes ahead of the actor timers.
 struct BattleFxWork {
   struct EffectStep particles[64];
   u8 sheet[0x6980];

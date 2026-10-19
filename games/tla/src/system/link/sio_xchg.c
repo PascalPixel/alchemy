@@ -1,19 +1,15 @@
-//--------------------------------------------------------------------------
-// sio_xchg.c
-// Link: exchange per-frame data and assemble outgoing packets.
-//--------------------------------------------------------------------------
+/// @file
+/// Link: exchange per-frame data and assemble outgoing packets.
 
 #include "serial_runtime.h"
 #include "dma.h"
 #include "io_reg.h"
 
-//--------------------------------------------------------------------------
-// In phase 1, collect incoming data in receive and build the next packet from
-// send. Return link status: Bits 0-7: currentMask (also set bit 7 in mode 8).
-// Bits 8-15: receivedMask.
-// 0x1000: parent.
-// 0x2000: SIOCNT multiplayer ID is at least 2.
-//--------------------------------------------------------------------------
+/// In phase 1, collect incoming data in receive and build the next packet from
+/// send. Return link status: Bits 0-7: currentMask (also set bit 7 in mode 8).
+/// Bits 8-15: receivedMask.
+/// 0x1000: parent.
+/// 0x2000: SIOCNT multiplayer ID is at least 2.
 s32 SerialRuntime_ExchangePayloads(void *send, void *receive) {
   volatile u32 *siocnt;
   u32 cnt;
@@ -36,9 +32,7 @@ s32 SerialRuntime_ExchangePayloads(void *send, void *receive) {
   return ret;
 }
 
-//--------------------------------------------------------------------------
-// Build the outgoing packet in sendBuffer[0], using the same format as above.
-//--------------------------------------------------------------------------
+/// Build the outgoing packet in sendBuffer[0], using the same format as above.
 void SerialRuntime_PrepareSendPacket(void *payload) {
   volatile struct SerialRuntime *sr;
   u32 i;

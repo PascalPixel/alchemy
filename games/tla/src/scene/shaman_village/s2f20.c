@@ -15,9 +15,9 @@ extern s16 gData_02005204[];
 
 void Func_02002a20(void);
 
-// Starts the mode task: keeps the mode and its parameter, schedules
-// Func_02002a20 and picks the script the mode runs, then rewinds the
-// task's timer and position.
+/// Starts the mode task: keeps the mode and its parameter, schedules
+/// Func_02002a20 and picks the script the mode runs, then rewinds the
+/// task's timer and position.
 void Func_02002f20(s32 modeArg, s32 paramArg) {
   /* FAKEMATCH: the parameter pointer and the two pins copy the arguments into
    * r5 and r6 after both store addresses load, as the native does; as plain

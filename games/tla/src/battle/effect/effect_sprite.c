@@ -2,12 +2,12 @@
 #include "iwram_call.h"
 #include "effect_sprite.h"
 
-// The width and height of each OAM shape and size, in pixels.
+/// The width and height of each OAM shape and size, in pixels.
 extern const u8 gData_080f3bc4[][2];
 
-// Fills an effect sprite: OAM attributes 0 and 1 as given (no affine matrix,
-// 256 colours), the tiles, unscaled and unrotated at depth 255, and the
-// picture's size from its shape, pivoted at (pivotX, pivotY).
+/// Fills an effect sprite: OAM attributes 0 and 1 as given (no affine matrix,
+/// 256 colours), the tiles, unscaled and unrotated at depth 255, and the
+/// picture's size from its shape, pivoted at (pivotX, pivotY).
 void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
                    u32 attributes, s32 tile) {
   u32 *words;

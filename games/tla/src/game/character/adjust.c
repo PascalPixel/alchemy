@@ -2,8 +2,8 @@
 
 void UnitRatio(s32);
 
-// Adds delta to the PP of unit owner, clamped to 0..maxPp, recomputes its
-// gauges and returns the new PP.
+/// Adds delta to the PP of unit owner, clamped to 0..maxPp, recomputes its
+/// gauges and returns the new PP.
 s16 Unit_AddPp(s32 owner, s32 delta) {
   struct BattleUnit *state = UnitGet(owner);
   s32 cur = state->pp;

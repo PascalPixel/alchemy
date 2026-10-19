@@ -16,7 +16,7 @@ struct ItemMenuUseWork {
   s16 messageOffset;
 };
 
-// "You recovered all HP!", the first of the item use results.
+/// "You recovered all HP!", the first of the item use results.
 extern const u8 MsgItemUseResult[];
 
 s32 Func_08100738(s32 slot, s32 owner, s32 target);
@@ -27,10 +27,10 @@ void RenderOutput_RedrawSavedRectFar(void *window);
 void InventoryMenu_ShowModalMessage(const u8 *message, s32 a, s32 b);
 void UnitCalcFar(s32 unit);
 
-// Uses the selected item from the owner in pane 0 on the member in pane 1, as
-// The Broken Seal's ItemMenu_Use. On failure plays the error sound, shows why
-// in the info window and returns -1; otherwise plays the item's animation,
-// recalculates both members and returns 1.
+/// Uses the selected item from the owner in pane 0 on the member in pane 1, as
+/// The Broken Seal's ItemMenu_Use. On failure plays the error sound, shows why
+/// in the info window and returns -1; otherwise plays the item's animation,
+/// recalculates both members and returns 1.
 s32 ItemMenu_Use(void) {
   struct ItemMenuUseWork *menu;
   s32 result;

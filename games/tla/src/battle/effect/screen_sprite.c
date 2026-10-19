@@ -10,7 +10,7 @@ struct ScreenSprite {
 void Camera_WorldToScreen(s32 *position);
 void Func_080eb01c(struct ScreenSprite *sprite);
 
-// Places sprite at the screen position of world position and draws it.
+/// Places sprite at the screen position of world position and draws it.
 void EffectSprite_DrawAtWorldPosition(struct ScreenSprite *sprite, s32 *position) {
   s32 screen[3];
 

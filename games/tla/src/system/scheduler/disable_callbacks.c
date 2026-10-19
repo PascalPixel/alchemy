@@ -4,7 +4,7 @@
 #include "system.h"
 #include "irqlock.h"
 
-// Keyed callbacks return a value (the target address is left in r0).
+/// Keyed callbacks return a value (the target address is left in r0).
 typedef s32 (*KeyCallbackFn)(void);
 
 s32 Scheduler_ResumeTasks(SchedulerCallback callback) {

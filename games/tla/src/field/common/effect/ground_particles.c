@@ -33,7 +33,7 @@ void Func_080d64f0(void);
 s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||                      \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The European far-call tables give the terrain height's entry another name.
+/// The European far-call tables give the terrain height's entry another name.
 s32 Func_08020190(s32 layer, s32 x, s32 z);
 #define Map_GetTerrainHeightFar Func_08020190
 #else
@@ -41,9 +41,9 @@ s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 #endif
 extern const u8 gData_080f3798[];
 
-// Starts the ground particles: 64 sprites placed at the leader's position on
-// the terrain, their tiles decoded into VRAM, the blend set, and
-// Func_080d64f0 scheduled at priority 0x480 to move them.
+/// Starts the ground particles: 64 sprites placed at the leader's position on
+/// the terrain, their tiles decoded into VRAM, the blend set, and
+/// Func_080d64f0 scheduled at priority 0x480 to move them.
 void Func_080d690c(void) {
   struct GroundParticleWork *work;
   s32 *leader;

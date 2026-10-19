@@ -27,8 +27,8 @@ u32 Random16Far(void);
 struct ObjectRuntime *Func_02003fc0(s32 kind, s32 x, s32 y, s32 z);
 void Func_02003fb8(struct ObjectRuntime *object, const void *script);
 
-// Spawns an object of kind 285 at each of the fifteen cells of
-// gData_020042b4, twice, each moved by -2 to +1 pixels at random.
+/// Spawns an object of kind 285 at each of the fifteen cells of
+/// gData_020042b4, twice, each moved by -2 to +1 pixels at random.
 void Func_02000f24(void) {
   u32 pass;
   u32 i;

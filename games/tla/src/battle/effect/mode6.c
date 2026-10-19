@@ -1,7 +1,7 @@
 #include "types.h"
 #include "io_reg.h"
 
-// BG2 back to one texel per pixel across.
+/// BG2 back to one texel per pixel across.
 void Graphics_ResetBg2Pa(void) {
   /* FAKEMATCH: the native loads the halfword from the pool before it starts the
    * register address; the plain store starts the address first (one reordered
@@ -16,7 +16,7 @@ void Graphics_ResetBg2Pa(void) {
   REG_BG2PA = value;
 }
 
-// BG2 at half a texel per pixel across: twice as wide.
+/// BG2 at half a texel per pixel across: twice as wide.
 void Graphics_SetBg2AffineScaleHalf(void) {
   /* FAKEMATCH: as in Graphics_ResetBg2Pa, the pooled halfword is loaded before
    * the register address is started (differ 2 without the pin and its barrier).

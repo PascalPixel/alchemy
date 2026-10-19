@@ -9,7 +9,7 @@ struct ScriptInterpreter;
 
 typedef s32 (*ScriptCommand)(struct ScriptInterpreter *);
 
-// The prefix that command handlers read from a field object's 0x70-byte slot.
+/// The prefix that command handlers read from a field object's 0x70-byte slot.
 struct ScriptInterpreter {
   const s32 *script;
   s16 cursor;
@@ -32,7 +32,7 @@ STATIC_ASSERT(offsetof(struct ScriptInterpreter, repeatCount) == 0x5d);
 STATIC_ASSERT(offsetof(struct ScriptInterpreter, lookupResult) == 0x5e);
 STATIC_ASSERT(offsetof(struct ScriptInterpreter, delay) == 0x60);
 
-// Raw fields of the full slot, addressed by the set/add/compare commands.
+/// Raw fields of the full slot, addressed by the set/add/compare commands.
 struct ScriptOperands {
   u32 scriptAddress;
   u16 cursor;

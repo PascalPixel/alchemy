@@ -17,8 +17,8 @@ void Func_02000f50(s32 value) {
   Func_02001a1c();
 }
 
-// Whether owner is one of the first three active owners, or the first four
-// while flag 370 is clear; an 0xff entry ends the list.
+/// Whether owner is one of the first three active owners, or the first four
+/// while flag 370 is clear; an 0xff entry ends the list.
 s32 Func_02000f6c(s32 owner) {
   s32 count = Party_CountActiveOwners();
   s32 limit = 3;

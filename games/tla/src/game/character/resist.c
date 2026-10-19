@@ -12,7 +12,7 @@
 #include "battle_unit.h"
 #include "runtime_interfaces.h"
 
-// One of the 48 element presets an enemy record names.
+/// One of the 48 element presets an enemy record names.
 struct ElementPreset {
   u32 element;
   u8 digits[4];
@@ -25,8 +25,8 @@ extern const struct ElementPreset gData_080c6684[];
 
 struct OwnerGrowthRecord *Character_GetDefinition(s32 index);
 
-// Each element's value, ten per digit: an enemy's from the preset its record
-// names, a character's from its djinn counts plus its growth record's bonus.
+/// Each element's value, ten per digit: an enemy's from the preset its record
+/// names, a character's from its djinn counts plus its growth record's bonus.
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
   if (record > 7) {
     const struct ElementPreset *table;
@@ -77,8 +77,8 @@ s32 Unit_GetElementLevel(s32 owner, s32 index) {
   return result;
 }
 
-// The element of the preset the unit's enemy record names; an id past the
-// table's end reads the first preset.
+/// The element of the preset the unit's enemy record names; an id past the
+/// table's end reads the first preset.
 s32 Enemy_GetAttackElement(void *state) {
   struct BattleUnit *unit = state;
   u8 preset = Enemy_GetDefinition(unit->enemyId)[42];

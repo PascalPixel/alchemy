@@ -45,8 +45,8 @@ void BattleFx_RunMeteorBlow(s32 *arg);
 extern void (*gData_08197aa0[])(s32 *script);
 extern u8 gMapCellBuffer[];
 
-// Runs the battle effect of mode *arg (1 to 29; 0 and 11 the default one)
-// with the effect's three work blocks taken.
+/// Runs the battle effect of mode *arg (1 to 29; 0 and 11 the default one)
+/// with the effect's three work blocks taken.
 void BattleFx_RunSceneEffect(s32 *arg) {
   struct FxRunWork *work;
 
@@ -158,8 +158,8 @@ void BattleFx_RunSceneEffect(s32 *arg) {
   Runtime_ReleaseHeapBlock(100);
 }
 
-// Runs one battle effect script: takes the effect's three work blocks, calls
-// the handler its first word selects, then gives the blocks back.
+/// Runs one battle effect script: takes the effect's three work blocks, calls
+/// the handler its first word selects, then gives the blocks back.
 void BattleFx_RunTableEffect(s32 *script) {
   struct FxRunWork *work;
 

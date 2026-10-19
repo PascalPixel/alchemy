@@ -31,7 +31,7 @@ struct FieldSprite {
   u16 partPriority : 2;
   u16 secondPalette : 4;
   u8 unk26[2];
-  void *record; // released by ResourceMetadata_ClearRecordFar
+  void *record; ///< released by ResourceMetadata_ClearRecordFar
 };
 
 #endif

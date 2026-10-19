@@ -8,8 +8,8 @@ extern const u8 gData_02002fcc[];
 void Func_020015c8(void);
 void PartyInventory_Remove(s32 item);
 
-// "How did all these monsters get on board?": the scene that clears the ship
-// and sets its flags.
+/// "How did all these monsters get on board?": the scene that clears the ship
+/// and sets its flags.
 void Func_02001650(void) {
   Func_02002c68();
   Func_02002da8(0);

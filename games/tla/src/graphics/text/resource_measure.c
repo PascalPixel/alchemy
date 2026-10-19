@@ -10,8 +10,8 @@ void UiText_MeasureResourceEntries(s32 no, s32 *x, s32 *y) {
   UiText_MeasureEntryDimensions(UiText_BuildRenderEntries(no, 0), x, y, 0);
 }
 
-// Builds the render entries of message no and fits its window on screen,
-// passing flags to UiWindow_FitOnScreen; returns 0 when the message is empty.
+/// Builds the render entries of message no and fits its window on screen,
+/// passing flags to UiWindow_FitOnScreen; returns 0 when the message is empty.
 #define DEFINE_GET_RESOURCE_DIMENSIONS(name, flags)                            \
   s32 name(s32 no, s32 *x, s32 *y, u32 *width, u32 *height) {                  \
     struct UiRenderWork *work;                                                 \

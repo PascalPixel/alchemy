@@ -7,7 +7,7 @@
 
 #define VIEW_MOVE_WORK_SIZE 0x1920
 
-// The sway's amplitude (16.16 pixels) and how it ramps.
+/// The sway's amplitude (16.16 pixels) and how it ramps.
 #define SWAY_START 0x20000
 #define SWAY_PEAK 0x60000
 #define SWAY_RAMP 0x2666 // 0.15 pixels a frame
@@ -31,9 +31,9 @@ void BattleFx_SetObjectTickMode(void *object, s32 mode);
 void BattleFx_PrepareBufferInterpolation(void);
 void WaitFrames(s32 frames);
 
-// Sways the view up and down the screen: the swing grows from 2 to 6 pixels,
-// holds for 10 frames, shrinks back to 2 and stops; then the map's view
-// bounds come back.
+/// Sways the view up and down the screen: the swing grows from 2 to 6 pixels,
+/// holds for 10 frames, shrinks back to 2 and stops; then the map's view
+/// bounds come back.
 void BattleFx_RunViewSway(void) {
   struct EffectScene *scene;
   s32 phase;
@@ -90,14 +90,14 @@ void BattleFx_RunViewSway(void) {
   Runtime_ReleaseHeapBlock(HEAP_SLOT_VIEW_MOVE);
 }
 
-// A cycle of 96 colour levels (31 down to 0, 32 at 0, then 0 up to 31),
-// read a third of a turn apart for red, green and blue.
+/// A cycle of 96 colour levels (31 down to 0, 32 at 0, then 0 up to 31),
+/// read a third of a turn apart for red, green and blue.
 extern const u8 gData_080f0fe0[];
 
-// The colour of field Psynergy kind 24's glow (Func_080e9940) for a step of
-// its 24-step cycle and a brightness level (7 is neutral): three channels of
-// the wave, each raised or lowered by the level and held to 0..31, packed as
-// RGB555. ⚓️'s form of ☀️'s GraphicsPalette_SetTintChannelsFromCounters.
+/// The colour of field Psynergy kind 24's glow (Func_080e9940) for a step of
+/// its 24-step cycle and a brightness level (7 is neutral): three channels of
+/// the wave, each raised or lowered by the level and held to 0..31, packed as
+/// RGB555. ⚓️'s form of ☀️'s GraphicsPalette_SetTintChannelsFromCounters.
 s32 Func_080e989c(s32 counter, s32 level) {
   s16 phase;
   s16 bias;

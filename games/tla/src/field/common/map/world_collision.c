@@ -11,8 +11,8 @@ struct WorldMapBlock {
 
 extern struct WorldMapBlock gMapBlocks[];
 
-// Reads byte 2 of the world map block under position: blocks are 32 pixels
-// square on a 32 by 32 grid, positions are Q16 pixels.
+/// Reads byte 2 of the world map block under position: blocks are 32 pixels
+/// square on a 32 by 32 grid, positions are Q16 pixels.
 s32 Func_0802da88(struct WorldPosition *position) {
   s32 z = position->y;
   s32 x = position->x;

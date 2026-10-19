@@ -53,12 +53,12 @@ struct BobPairObject {
   u8 y;
 };
 
-// The frame counter, advanced by the vblank interrupt.
+/// The frame counter, advanced by the vblank interrupt.
 extern volatile u32 gFrameTick;
 extern const u8 gUi_PairBobOffsets[];
 
-// Bobs the object and the one after it by the same step of an eight-step
-// table, advanced every four frames.
+/// Bobs the object and the one after it by the same step of an eight-step
+/// table, advanced every four frames.
 void Func_08045018(struct BobPairObject *object) {
   s32 value;
 

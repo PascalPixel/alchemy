@@ -28,8 +28,8 @@ void Func_02002a50(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
 void Func_02002a78(s32 x, s32 z, s32 a, s32 b);
 void Func_02002ab8(s32 actor, s32 x, s32 z);
 
-// The room's setup: actors 13 and 14 by flags 0xa0a and 0xa0b (with the map
-// cells copied when set), then the terrain under each.
+/// The room's setup: actors 13 and 14 by flags 0xa0a and 0xa0b (with the map
+/// cells copied when set), then the terrain under each.
 s32 Func_02000604(void) {
   struct ObjectRuntime *object;
 

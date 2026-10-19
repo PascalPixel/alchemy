@@ -9,15 +9,15 @@
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The European far-call tables give the terrain height's entry another name.
+/// The European far-call tables give the terrain height's entry another name.
 s32 Func_08020190(s32 layer, s32 x, s32 z);
 #define Map_GetTerrainHeightFar Func_08020190
 #else
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 #endif
 
-// One of Func_080d6674's particles: its sprite's attribute words, its world
-// position and its frames left.
+/// One of Func_080d6674's particles: its sprite's attribute words, its world
+/// position and its frames left.
 struct SparkParticle {
   u32 sprite[3];
   s32 posX;
@@ -28,7 +28,7 @@ struct SparkParticle {
   u8 unk1e[2];
 };
 
-// Heap slot 0x74 while the particles run.
+/// Heap slot 0x74 while the particles run.
 struct SparkParticleWork {
   s32 vramEntry;
   s32 tile;
@@ -45,11 +45,11 @@ void Func_080d2c64(s32 cue);
 
 extern const u8 Data_080f3901[];
 
-// Starts Func_080d6674's particles: allocates and clears heap slot 0x74,
-// decodes the particle tiles into VRAM, sets each of the 64 particles' sprite
-// words and places it on the ground at the map's focus with a timer of
-// (i & 11) + 1, turns on alpha blending of all layers at 16/16, schedules the
-// update and, when asked, plays cue 137 (Func_080d2c64).
+/// Starts Func_080d6674's particles: allocates and clears heap slot 0x74,
+/// decodes the particle tiles into VRAM, sets each of the 64 particles' sprite
+/// words and places it on the ground at the map's focus with a timer of
+/// (i & 11) + 1, turns on alpha blending of all layers at 16/16, schedules the
+/// update and, when asked, plays cue 137 (Func_080d2c64).
 void Func_080d6f34(s32 withCue) {
   struct SparkParticleWork *work = Runtime_AllocateBlock(116, 0x814);
   struct SparkParticle *particle = work->particles;

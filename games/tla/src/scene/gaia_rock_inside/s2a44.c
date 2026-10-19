@@ -13,7 +13,7 @@ extern const u8 gData_020060f8[];
 extern const u8 gData_02006164[];
 extern const u8 gData_020061a0[];
 
-// Returns the current room's table.
+/// Returns the current room's table.
 const u8 *Func_02002a44(void) {
   if (gPartyState.scene == (s32)&SceneId_Ov681Room2)
     return gData_02006038;

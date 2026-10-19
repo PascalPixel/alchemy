@@ -17,7 +17,7 @@ void Func_0200122c(void);
 void Func_02001304(void);
 void Func_02001388(void);
 
-// Edition-specific link handshake values (each word is four ASCII characters).
+/// Edition-specific link handshake values (each word is four ASCII characters).
 // clang-format off
 u32 gLinkLobby_SlotValues[] = {
 #if (LANGUAGE == LANGUAGE_JAPANESE)

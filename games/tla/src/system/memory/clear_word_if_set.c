@@ -1,14 +1,10 @@
-//--------------------------------------------------------------------------
-// clear_word_if_set.c
-// Memory: zero a nonzero word.
-//--------------------------------------------------------------------------
+/// @file
+/// Memory: zero a nonzero word.
 
 #include "types.h"
 #include "scene.h"
 
-//--------------------------------------------------------------------------
-// Clear *p if nonzero and return p.
-//--------------------------------------------------------------------------
+/// Clear *p if nonzero and return p.
 s32 *Runtime_ClearWordIfSet(s32 *p) {
   if (*p != 0) {
     *p = 0;

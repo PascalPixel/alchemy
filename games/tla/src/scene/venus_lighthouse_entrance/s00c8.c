@@ -8,7 +8,7 @@ void FieldEvent_WaitFrames(s32 frames);
 void VenusLighthouseEntrance_StopSparks(void);
 void VenusLighthouseEntrance_UpdateSparkTrail(void);
 
-// The spark trail while the actor steps 96 out and 96 back.
+/// The spark trail while the actor steps 96 out and 96 back.
 void Func_020000c8(s32 actor) {
   struct ObjectRuntime *object = Object_GetById(actor);
 

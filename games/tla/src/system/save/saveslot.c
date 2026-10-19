@@ -21,8 +21,8 @@ s32 Func_08042f10(s32 slot, void *buffer);
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 position);
 void Audio_PlayCue(s32 cue);
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// Spanish and Italian far-call tables name the entry to the same routine
-// differently.
+/// Spanish and Italian far-call tables name the entry to the same routine
+/// differently.
 void Object_BuildRecordSnapshotFar(void);
 #define ObjectTable_SnapshotFar Object_BuildRecordSnapshotFar
 #else
@@ -31,7 +31,7 @@ void ObjectTable_SnapshotFar(void);
 s32 UiWork_IsComplete(void);
 void UiWork_FinalizePendingCore(void);
 
-// Save to the file specified by index.
+/// Save to the file specified by index.
 s32 SaveState_SaveToSlot(u32 slot) {
   s32 result = 0;
   s32 found;

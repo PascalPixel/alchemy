@@ -1,16 +1,12 @@
-//--------------------------------------------------------------------------
-// load_and_decompress.c
-// Resources: decompress a resource with a palette.
-//--------------------------------------------------------------------------
+/// @file
+/// Resources: decompress a resource with a palette.
 
 #include "resource.h"
 #include "iwram_call.h"
 
-//--------------------------------------------------------------------------
-// Decompress resource id into dst. If the first 128 bytes are a palette,
-// copy_pal copies it to the start of BG palettes; skip_pal skips it on
-// decoding.
-//--------------------------------------------------------------------------
+/// Decompress resource id into dst. If the first 128 bytes are a palette,
+/// copy_pal copies it to the start of BG palettes; skip_pal skips it on
+/// decoding.
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skip_pal, s32 copy_pal) {
   u8 *res = Resource_GetTableEntry(id);
 

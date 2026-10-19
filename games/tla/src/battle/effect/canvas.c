@@ -9,7 +9,7 @@
 #include "battle_display.h"
 #include "bg_scroll.h"
 
-// The battle effect work, as far as the canvas layer reads it.
+/// The battle effect work, as far as the canvas layer reads it.
 struct CanvasWork {
   u8 unk0000[0x77a0];
   s32 savedBg1X;
@@ -43,9 +43,9 @@ static __inline__ s32 ClearWords_(void *destination, s32 size) {
   return Iwram_ClearWords(destination, size);
 }
 
-// Opens the effect canvas layer: BG2 becomes a 2x-wide 128x128 canvas of
-// 16x16 characters, blended over the battle background, whose palette
-// starts fading.
+/// Opens the effect canvas layer: BG2 becomes a 2x-wide 128x128 canvas of
+/// 16x16 characters, blended over the battle background, whose palette
+/// starts fading.
 void BattleFx_OpenCanvasLayer(s32 bgControl) {
   struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
@@ -187,8 +187,8 @@ void BattleFx_BeginTiledCanvasFilled(s32 bg_control) {
   }
 }
 
-// Closes the effect canvas layer: BG1 back where it was, BG2 and its
-// characters cleared, then the background palette faded back in.
+/// Closes the effect canvas layer: BG1 back where it was, BG2 and its
+/// characters cleared, then the background palette faded back in.
 void BattleFx_EndCanvasLayer(void) {
   struct CanvasWork *work = (struct CanvasWork *)Ram_HeapSlots->battleFxWork[0];
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
@@ -236,8 +236,8 @@ void BattleFx_EndCanvasLayer(void) {
   WaitFrames(1);
 }
 
-// Hides the canvas layer: marks the background view, queues DISPCNT 0x1541,
-// fades the background palette back and queues BG1's control word.
+/// Hides the canvas layer: marks the background view, queues DISPCNT 0x1541,
+/// fades the background palette back and queues BG1's control word.
 void BattleFx_HideBg1AndRestoreBackdrop(void) {
   struct BattleWork *battle;
   s32 *flag;

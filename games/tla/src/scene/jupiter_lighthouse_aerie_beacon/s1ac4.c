@@ -29,10 +29,10 @@ void Func_02001ac4(s32 a0, s32 a1) {
   Call2(Object_SetModeById, a1, 1);
 }
 
-// Restores each active member's HP to its maximum and recomputes both
-// gauges, as ☀️'s Party_RestoreHpPp does with HP and PP; with
-// clearStatus 1 it also clears poison and haunt. Nested inside
-// Func_02001bc4, which calls it with its frame in r9.
+/// Restores each active member's HP to its maximum and recomputes both
+/// gauges, as ☀️'s Party_RestoreHpPp does with HP and PP; with
+/// clearStatus 1 it also clears poison and haunt. Nested inside
+/// Func_02001bc4, which calls it with its frame in r9.
 void Func_02001b04(s32 clearStatus) {
   /* FAKEMATCH: a nested function's static chain spill. Func_02001bc4 passes its
    * frame base in r9, and function.c stores it to the first frame slot before

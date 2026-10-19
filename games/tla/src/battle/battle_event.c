@@ -24,7 +24,7 @@ s32 BattlePres_SetActorModeAndAction(s32 id);
 s32 BattleActor_RemoveFromLists(s32 unitId);
 u32 BattleEventRuntime_Reset(void);
 
-// Runs the queued battle events in order, then resets the queue.
+/// Runs the queued battle events in order, then resets the queue.
 u32 BattleEv_DispatchQueued(void) {
   struct BattleWork *work;
   struct BattleEventState *runtime;

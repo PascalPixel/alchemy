@@ -26,9 +26,9 @@ static inline s32 Vram_Load(s32 block, s32 size, const void *data) {
   return VramCache_Load(block, size, data);
 }
 
-// Decodes the lettering sheet, sends one graphic's palette to OBJ palette 15
-// and loads its 0x400 bytes of tiles into a VRAM block of its own. Graphic 8
-// has a palette of its own and graphic 4's tiles.
+/// Decodes the lettering sheet, sends one graphic's palette to OBJ palette 15
+/// and loads its 0x400 bytes of tiles into a VRAM block of its own. Graphic 8
+/// has a palette of its own and graphic 4's tiles.
 void Func_02002fb0(s32 graphic) {
   u8 *buffer =
       Runtime_BumpAllocateAlternatePool((224 + LETTERING_PALETTE_ROWS) * 32);

@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// run_selection_with_cursor_object.c
-// Menu: flag list (move the cursor and press A to toggle).
-//--------------------------------------------------------------------------
+/// @file
+/// Menu: flag list (move the cursor and press A to toggle).
 
 #include "battle.h"
 #include "debug.h"
@@ -20,10 +18,8 @@
 void UiTextResource_Initialize(struct Object_0801c0dc *obj, s32 *slot);
 void UiTextResource_SetPosition(struct Obj *obj, s32 arg1, s32 arg2);
 
-//--------------------------------------------------------------------------
-// Show 16x16 flags per page and accept input until closed.
-// Start on page 8. Always return 0.
-//--------------------------------------------------------------------------
+/// Show 16x16 flags per page and accept input until closed.
+/// Start on page 8. Always return 0.
 s32 Menu_RunSelectionWithCursorObject(void) {
   u8 obj[12]; // Cursor object.
   s32 cur[2]; // Cursor column and row.

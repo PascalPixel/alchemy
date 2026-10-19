@@ -29,11 +29,11 @@ void UiText_DrawCharacterAtOffsetFar(s32 message, struct RenderInput *window,
                                      s32 x, s32 y);
 void Func_0810bf98(struct RenderInput *window, s32 x, s32 y, s32 unit);
 
-// Shows how many of an item the member already carries ("You have"/none) and
-// draws the member's inventory icons through Func_0810bf98 at (8, 8); the twin
-// of ☀️'s Shop_DrawUnitItem (games/tbs/src/shop/shop.c), whose icon loop ⚓️
-// moved into that helper. It matches with the twin's quantityOffset local
-// (differ 10 with the offset inside the read).
+/// Shows how many of an item the member already carries ("You have"/none) and
+/// draws the member's inventory icons through Func_0810bf98 at (8, 8); the twin
+/// of ☀️'s Shop_DrawUnitItem (games/tbs/src/shop/shop.c), whose icon loop ⚓️
+/// moved into that helper. It matches with the twin's quantityOffset local
+/// (differ 10 with the offset inside the read).
 void Func_081095b0(struct RenderInput *window, s32 unitId, s32 itemId) {
   u8 *unitBytes;
   s32 slot;

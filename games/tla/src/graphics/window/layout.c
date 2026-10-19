@@ -16,8 +16,8 @@
 extern u8 Tile_BuildMetatilesCode[];
 extern u8 Tile_BuildMetatilesCodeSize[];
 
-// Fills the 0x140-byte row buffer with blank tiles, or builds it from the
-// window tiles' map through the metatile routine copied to RAM.
+/// Fills the 0x140-byte row buffer with blank tiles, or builds it from the
+/// window tiles' map through the metatile routine copied to RAM.
 void UiWindow_FillFromScene(void *dst) {
   u8 *scene = Ram_HeapSlots->windowTiles;
 

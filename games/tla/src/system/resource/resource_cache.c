@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// resource_cache.c
-// Resources: cache allocating OBJ VRAM in blocks.
-//--------------------------------------------------------------------------
+/// @file
+/// Resources: cache allocating OBJ VRAM in blocks.
 
 #include "resource.h"
 #include "vram_tab.h"
@@ -14,17 +12,15 @@
 // There are 96 cache entries; byte offset 0xffff marks a free entry.
 // Entries with size <= 16 do not own VRAM.
 
-//--------------------------------------------------------------------------
-// Copy src into cache no again, retaining its current size.
-// Return the OBJ tile index.
-//--------------------------------------------------------------------------
+/// Copy src into cache no again, retaining its current size.
+/// Return the OBJ tile index.
 s32 VramCache_Reload(s32 no, s32 src) {
   return VramCache_Load(no, gResourceTableEntries[no].size, (const void *)src);
 }
 
-// Takes the next of the 32 sprite affine matrices and fills it with a
-// rotation by angle and the scales; returns its index, or 31 when all are
-// taken. The body is AffineMatrix_BuildForEffect's.
+/// Takes the next of the 32 sprite affine matrices and fills it with a
+/// rotation by angle and the scales; returns its index, or 31 when all are
+/// taken. The body is AffineMatrix_BuildForEffect's.
 s32 AffineMatrix_Build(s32 angle, s32 x_scale, s32 y_scale) {
   union AffineMatrix *matrix;
   s16 *coefficient;

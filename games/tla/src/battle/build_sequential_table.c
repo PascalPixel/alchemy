@@ -1,16 +1,12 @@
-//--------------------------------------------------------------------------
-// build_sequential_table.c
-// Tiles: build a map of consecutive byte values.
-//--------------------------------------------------------------------------
+/// @file
+/// Tiles: build a map of consecutive byte values.
 
 #include "types.h"
 #include "iwram_call.h"
 #include "scene.h"
 
-//--------------------------------------------------------------------------
-// Write consecutive bytes 0-255 followed by 0-223,
-// then fill the remaining 544 bytes with 0xff (1024 bytes total).
-//--------------------------------------------------------------------------
+/// Write consecutive bytes 0-255 followed by 0-223,
+/// then fill the remaining 544 bytes with 0xff (1024 bytes total).
 void Graphics_BuildSequentialTileTable(s32 *dst) {
   s32 v;
   s32 n;

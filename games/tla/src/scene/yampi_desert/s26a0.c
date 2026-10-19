@@ -4,9 +4,9 @@
 void Func_02001c5c(void);
 void Func_020023cc(void);
 
-// Func_02002318's counterpart for actors 21 and 22: actor 22 becomes the
-// followed actor, and until flag 0x109 actor 21 is placed and given the
-// update Func_020023cc.
+/// Func_02002318's counterpart for actors 21 and 22: actor 22 becomes the
+/// followed actor, and until flag 0x109 actor 21 is placed and given the
+/// update Func_020023cc.
 void Func_020026a0(void) {
   struct ObjectRuntime *leader = (struct ObjectRuntime *)Object_GetById(21);
   struct ObjectRuntime *object;

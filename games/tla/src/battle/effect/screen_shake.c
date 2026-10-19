@@ -5,8 +5,8 @@
 extern u32 gCameraSceneParameters[];
 u32 Random16(void);
 
-// While shakeFrames lasts, moves BG1 and the projection centre up or down
-// by a random offset within range; then restores them.
+/// While shakeFrames lasts, moves BG1 and the projection centre up or down
+/// by a random offset within range; then restores them.
 void Camera_ApplyVerticalShake(s32 range) {
   u8 *fx = Ram_HeapSlots->battleFxWork[0];
   s32 *timer;

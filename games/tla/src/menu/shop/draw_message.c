@@ -23,10 +23,8 @@ void RenderOutput_ClearListFar();
 #define RenderOutput_ClearListFar ((void (*)(s32))RenderOutput_ClearListFar)
 #endif
 
-//--------------------------------------------------------------------------
-// Redraw win and write message from the top left; do nothing if win is 0.
-// The Japanese edition waits one frame after redrawing.
-//--------------------------------------------------------------------------
+/// Redraw win and write message from the top left; do nothing if win is 0.
+/// The Japanese edition waits one frame after redrawing.
 void Shop_DrawMsg(s32 win, s32 message) {
   if (win != 0) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)

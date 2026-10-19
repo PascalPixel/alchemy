@@ -1,5 +1,5 @@
-// The two countdown choices the world map (overlay 64b) also has, under this
-// overlay's names.
+/// The two countdown choices the world map (overlay 64b) also has, under this
+/// overlay's names.
 #define Func_02003600 Func_02000cbc
 #define Func_02003654 Func_02000d10
 #define Func_02004e30 Func_020020b4

@@ -9,7 +9,7 @@ void ObjectMotion_EnableActionAndSetCallback(s32 actor, const void *script);
 void Object_LinkObjectAndSetCallback(s32 actor, s32 other);
 extern const u8 gData_02004274[];
 
-// The room's setup: flags, the objects' places and the scene state.
+/// The room's setup: flags, the objects' places and the scene state.
 void Func_02002f1c(void) {
   struct ObjectRuntime *object;
   struct ObjectRuntime *other;

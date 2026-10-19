@@ -8,9 +8,9 @@ extern u8 gMapShapeGrid[];
 typedef s32 (*TerrainHeightFn)(u8 *shape, s32 x, s32 z);
 extern TerrainHeightFn gMap_TerrainHeightHandlers[16];
 
-// The height of the ground at (px, pz) (16.16 pixels) on the given layer,
-// less base; a layer past 2 reads the shape grid. With no map, or while the
-// event mode is 3, it is 0.
+/// The height of the ground at (px, pz) (16.16 pixels) on the given layer,
+/// less base; a layer past 2 reads the shape grid. With no map, or while the
+/// event mode is 3, it is 0.
 s32 Func_0802d71c(s32 px, s32 pz, s32 layer, s32 base) {
   s32 x = px >> 16;
   s32 z = pz >> 16;
@@ -35,11 +35,11 @@ s32 Func_0802d71c(s32 px, s32 pz, s32 layer, s32 base) {
   return gMap_TerrainHeightHandlers[*code++ & 15](code, x & 15, z & 15) - base;
 }
 
-// How the ground at (px, pz) (16.16 pixels) on the given layer stands to
-// height: 2 when the cell has no tile, 1 when the ground rises more than 8
-// pixels above it, -1 when it falls more than 12 below, else 0. A layer past
-// 2 reads the cell buffer and shape grid. With no map, or while the event
-// mode is 3, every point is level (0).
+/// How the ground at (px, pz) (16.16 pixels) on the given layer stands to
+/// height: 2 when the cell has no tile, 1 when the ground rises more than 8
+/// pixels above it, -1 when it falls more than 12 below, else 0. A layer past
+/// 2 reads the cell buffer and shape grid. With no map, or while the event
+/// mode is 3, every point is level (0).
 s32 Func_0802d7b0(s32 px, s32 pz, s32 layer, s32 height) {
   s32 x = px >> 16;
   s32 z = pz >> 16;
@@ -77,9 +77,9 @@ s32 Func_0802d7b0(s32 px, s32 pz, s32 layer, s32 height) {
   return 0;
 }
 
-// As Func_0802d7b0 for the point position (16.16 pixels, read as its
-// whole-pixel halves) on the object's layer (the byte at 34), against the
-// object's height (the word at 20).
+/// As Func_0802d7b0 for the point position (16.16 pixels, read as its
+/// whole-pixel halves) on the object's layer (the byte at 34), against the
+/// object's height (the word at 20).
 s32 Func_0802d87c(u8 *object, s16 *position) {
   s32 x = position[1];
   s32 z = position[5];
@@ -117,9 +117,9 @@ s32 Func_0802d87c(u8 *object, s16 *position) {
   return 0;
 }
 
-// As Func_0802d87c, against the object's word at 12 and with no -1: 2 when
-// the cell has no tile, 1 when the ground rises more than 8 pixels above
-// it, else 0.
+/// As Func_0802d87c, against the object's word at 12 and with no -1: 2 when
+/// the cell has no tile, 1 when the ground rises more than 8 pixels above
+/// it, else 0.
 s32 Func_0802d958(u8 *object, s16 *position) {
   s32 x = position[1];
   s32 z = position[5];

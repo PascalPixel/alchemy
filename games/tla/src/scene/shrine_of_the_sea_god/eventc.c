@@ -1,8 +1,8 @@
 #include "shrine_of_the_sea_god.h"
 #include "call.h"
 
-// Actor 14, linked to the leader, walks to (280, 432); then flags 0x876 and
-// 0x877 are set.
+/// Actor 14, linked to the leader, walks to (280, 432); then flags 0x876 and
+/// 0x877 are set.
 void Func_020024e4(void) {
   struct ShrineOfTheSeaGodObject *object = Object_GetById(13);
   s32 angle;

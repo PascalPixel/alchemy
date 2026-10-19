@@ -46,7 +46,7 @@ void Func_020045d8(void) {
   }
 }
 
-// Side B's twin of Func_02004530: the offset moves up instead.
+/// Side B's twin of Func_02004530: the offset moves up instead.
 void Func_02004620(void) {
   struct SceneState *state = &gSceneState;
   /* FAKEMATCH(pin): the count in r6, as in Func_02004530; as a plain local,

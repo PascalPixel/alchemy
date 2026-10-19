@@ -5,7 +5,7 @@
 
 extern const u8 gData_02000744[];
 
-// The pressed keys, read again at each test.
+/// The pressed keys, read again at each test.
 #define KEYS_PRESSED (((volatile struct InputState *)&gInput)->pressed)
 
 u8 *UnitGet(s32 owner);
@@ -22,8 +22,8 @@ void WaitFrames(s32 frames);
 void Func_0200017c(s32 delta);
 void Func_0200073c(s32 cue);
 
-// The pressed keys under a mask, for the last test of a group: the next
-// test loads gInput's address again.
+/// The pressed keys under a mask, for the last test of a group: the next
+/// test loads gInput's address again.
 static inline u32 Input_PressedFenced(u32 mask) {
   u32 keys = KEYS_PRESSED & mask;
 
@@ -35,8 +35,8 @@ static inline u32 Input_PressedFenced(u32 mask) {
   return keys;
 }
 
-// The debug room's level raiser: Start or Select raises the party's levels
-// by 5 and A by 1; B closes the window and recalculates the four units.
+/// The debug room's level raiser: Start or Select raises the party's levels
+/// by 5 and A by 1; B closes the window and recalculates the four units.
 void Func_020001a8(void) {
   u8 *record;
   void *win;

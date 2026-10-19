@@ -1,7 +1,7 @@
 #include "trial_road.h"
 
-// While the party's render mode is 0, clears the map cell flag under the
-// object.
+/// While the party's render mode is 0, clears the map cell flag under the
+/// object.
 void Func_02000728(s32 a, s32 id) {
   struct PartyState *party = &gPartyState;
   u8 mode;
@@ -23,7 +23,7 @@ void Func_02000728(s32 a, s32 id) {
   }
 }
 
-// While the party's render mode is 0, sets the map cell flag under the object.
+/// While the party's render mode is 0, sets the map cell flag under the object.
 void Func_02000748(s32 a, s32 id) {
   struct PartyState *party = &gPartyState;
   u8 mode;

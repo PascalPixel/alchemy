@@ -7,8 +7,8 @@ void Func_0813f8d4(void);
 void BattleFx_TransferHalvedCanvas(void);
 void BattleFx_DimBackgroundStep(void);
 
-// Ends the light-streak backdrop: removes its three callbacks, clears the
-// canvas in VRAM and frees heap blocks 96 and 92.
+/// Ends the light-streak backdrop: removes its three callbacks, clears the
+/// canvas in VRAM and frees heap blocks 96 and 92.
 void BattleFx_EndElementStreaks(void) {
   Scheduler_RemoveCallback(Func_0813f8d4);
   Scheduler_RemoveCallback(BattleFx_TransferHalvedCanvas);

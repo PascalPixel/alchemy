@@ -19,9 +19,9 @@ s32 Resource_DecodeByteLzInRam(const void *source, void *destination);
 #define DATA018_TILE_BYTES 0x9c00
 #endif
 
-// Blanks the display, loads resource 0x18's palette into the BG palette with
-// colour 0 black, and unpacks its tiles through the map cell buffer into BG
-// character block 0.
+/// Blanks the display, loads resource 0x18's palette into the BG palette with
+/// colour 0 black, and unpacks its tiles through the map cell buffer into BG
+/// character block 0.
 void Func_081a6030(void) {
   u8 *source;
   u8 *cells;

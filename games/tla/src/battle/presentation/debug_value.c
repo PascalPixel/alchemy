@@ -9,9 +9,9 @@ struct DebugBattleWork {
 
 void WaitFrames(s32 frames);
 
-// A debug choice of a battle value: with Start held, the d-pad and L/R step
-// the battle work's word at 0x854 (by 1, 10 and 100) until A takes it; Select
-// held picks 544 and R held 399; otherwise value comes back unchanged.
+/// A debug choice of a battle value: with Start held, the d-pad and L/R step
+/// the battle work's word at 0x854 (by 1, 10 and 100) until A takes it; Select
+/// held picks 544 and R held 399; otherwise value comes back unchanged.
 s32 Func_081269f8(s32 value) {
   if (gInput.held & 8) {
     while (1) {

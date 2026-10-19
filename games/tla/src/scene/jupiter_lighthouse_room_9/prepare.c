@@ -12,8 +12,8 @@ void Func_0200130c(s32 kind, s32 x, s32 z, s32 a, s32 b);
 void Func_02001a28(s32 dx, s32 dz, s32 effect);
 void Func_02000460(s32 mode);
 
-// The scene's set-up: screen effect 0x204, actor 64's action variant 3 and
-// actor 8 held still, then Func_0200130c and Func_02001a28 by the entrance.
+/// The scene's set-up: screen effect 0x204, actor 64's action variant 3 and
+/// actor 8 held still, then Func_0200130c and Func_02001a28 by the entrance.
 s32 Func_02000290(void) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
 

@@ -29,16 +29,16 @@ void Func_08029810(struct FieldActor *object) {
 }
 
 #if defined(TLA_EDITION_ES) || defined(TLA_EDITION_IT)
-// Spanish and Italian builds use a different name for this far call, as in
-// objlayer.c.
+/// Spanish and Italian builds use a different name for this far call, as in
+/// objlayer.c.
 s32 BattleFx_WaitForArcGroupsFar(s32 arg);
 #else
 s32 Func_080c8828(s32 arg);
 #endif
 
-// When one of three party key sets is pressed: plays cue 113 if the far call
-// accepts the argument, else posts event request 0x208b and returns 1 while
-// flag 0x146 is clear.
+/// When one of three party key sets is pressed: plays cue 113 if the far call
+/// accepts the argument, else posts event request 0x208b and returns 1 while
+/// flag 0x146 is clear.
 s32 Func_08029838(s32 arg) {
   struct EventWork *work = Ram_HeapSlots->eventWork;
   /* FAKEMATCH: the flag lives in r0, where the native also returns the early

@@ -73,7 +73,7 @@ extern const u16 gData_08128836[];
 
 s32 Inventory_FindEquippedFar(s32 owner, s32 kind);
 
-// The value of the owner's equipped weapon from its class's table, or 0.
+/// The value of the owner's equipped weapon from its class's table, or 0.
 s32 BattleUnit_LookupWeaponValueByClass(s32 owner) {
   struct OwnerInventoryState *unit = UnitGet(owner);
   s32 slot = Inventory_FindEquippedFar(owner, 1);

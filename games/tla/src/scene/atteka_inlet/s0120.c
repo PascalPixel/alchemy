@@ -23,9 +23,9 @@ void Func_020010a8(s32 id, s32 value);
 void Func_020010f0(s32 value);
 void Func_02001108(s32 value);
 
-// Object 18 asks whether to set out: a yes sets the owner override and, once
-// flag 0x9d0 is set, flags 0x8df and 0x9b2; a no counts the refusal and
-// object 18 walks back to the party leader.
+/// Object 18 asks whether to set out: a yes sets the owner override and, once
+/// flag 0x9d0 is set, flags 0x8df and 0x9b2; a no counts the refusal and
+/// object 18 walks back to the party leader.
 void Func_02000120(void) {
   struct ObjectRuntime *object;
 

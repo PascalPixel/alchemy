@@ -45,8 +45,8 @@ void Func_0200093c(void) {
   Func_02004718();
 }
 
-// Sends object id from column 11 to x 152, then from column 10 to x 200,
-// both at z 792, through Func_02004bf8.
+/// Sends object id from column 11 to x 152, then from column 10 to x 200,
+/// both at z 792, through Func_02004bf8.
 void Func_0200096c(s32 unused, s32 id) {
   struct ObjectRuntime *object = Object_GetById(id);
 

@@ -34,7 +34,7 @@ s32 BattleParty_ListActorIds(s32 groups, u16 *dst) {
 
 struct BattleUnit *UnitGet(s32 unitId);
 
-// As BattleParty_ListActorIds, listing only the actors whose HP is not 0.
+/// As BattleParty_ListActorIds, listing only the actors whose HP is not 0.
 s32 Func_0811a39c(s32 groups, u16 *dst) {
   struct BattleWork *order;
   s32 count;

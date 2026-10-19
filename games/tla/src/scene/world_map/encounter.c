@@ -3,7 +3,7 @@
 #include "party_state.h"
 #include "edition.h"
 
-// The world map's event work, as far as the encounter events read it.
+/// The world map's event work, as far as the encounter events read it.
 struct EncounterWork {
   u8 unk000[0x194];
   s32 bias;

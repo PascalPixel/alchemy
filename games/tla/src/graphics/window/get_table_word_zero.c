@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// get_table_word_zero.c
-// Windows: return the first entry of the fixed tile table.
-//--------------------------------------------------------------------------
+/// @file
+/// Windows: return the first entry of the fixed tile table.
 
 #include "battle.h"
 #include "debug.h"
@@ -21,19 +19,15 @@
 extern u8 Tile_Decompress4bppCode[];
 extern u8 Tile_Decompress4bppCodeSize[];
 
-//--------------------------------------------------------------------------
-// Return gUi_FixedTileBlocks[0], treating every no value as zero.
-//--------------------------------------------------------------------------
+/// Return gUi_FixedTileBlocks[0], treating every no value as zero.
 s32 Ui_GetTableWordZero(s32 no) {
   if (no != 0)
     no = 0;
   return gUi_FixedTileBlocks[no];
 }
 
-//--------------------------------------------------------------------------
-// Copies the 4bpp decompression routine to RAM and runs it on the stream
-// whose address the work holds at 0x604, decoding into the work.
-//--------------------------------------------------------------------------
+/// Copies the 4bpp decompression routine to RAM and runs it on the stream
+/// whose address the work holds at 0x604, decoding into the work.
 void Func_08045564(u8 *work) {
   void (*routine)(void *, void *);
 

@@ -16,8 +16,8 @@ extern u8 gData_020023c4[];
 #define GAIA_ROCK_INSIDE_PATH                                                  \
   ((struct GaiaRockInsidePath *)(gData_020023c4 + 0x288))
 
-// The direction from the current node whose link is 251 or the next node:
-// 0x4000, 0x8000, 0 or 0xc000 for the four links in turn, or -1 if none is.
+/// The direction from the current node whose link is 251 or the next node:
+/// 0x4000, 0x8000, 0 or 0xc000 for the four links in turn, or -1 if none is.
 s32 Func_02004904(void) {
   struct GaiaRockInsidePath *path = GAIA_ROCK_INSIDE_PATH;
   s32 current = path->current;

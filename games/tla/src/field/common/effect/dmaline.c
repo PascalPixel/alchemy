@@ -14,7 +14,7 @@ struct DmaFxPages {
   u8 page;
 };
 
-// Per frame: write the current page's first entry; HBlank DMA handles the rest.
+/// Per frame: write the current page's first entry; HBlank DMA handles the rest.
 void Func_080d5ff8(void) {
   struct DmaFxPages *work = Ram_HeapSlots->unk84[1];
   u32 *line = work->pages[work->page].lines;

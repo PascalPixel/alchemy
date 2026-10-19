@@ -17,8 +17,8 @@ struct EntryIconMenu {
   struct RenderOutput *entryIcons[32];
 };
 
-// Places each of the 32 entry icons on the grid. The Broken Seal's
-// Menu_PlaceEntryObjectsInGrid.
+/// Places each of the 32 entry icons on the grid. The Broken Seal's
+/// Menu_PlaceEntryObjectsInGrid.
 void Func_081005e4(s32 originX, s32 originY, s32 phase) {
   s32 i;
   struct RenderOutput *obj;

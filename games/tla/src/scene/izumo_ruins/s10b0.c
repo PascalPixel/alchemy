@@ -10,8 +10,8 @@ u8 *Func_020010b0(void) {
   return gData_02001754;
 }
 
-// Starts the effect for this scene's room, then, for a first argument of 1,
-// runs Func_02000f30 on the effect work's object.
+/// Starts the effect for this scene's room, then, for a first argument of 1,
+/// runs Func_02000f30 on the effect work's object.
 void Func_020010f0(s32 aArg, s32 b) {
   struct IzumoRuinsEffectWork *work = Ram_HeapSlots->effectWork;
   struct PartyState *party = &gPartyState;

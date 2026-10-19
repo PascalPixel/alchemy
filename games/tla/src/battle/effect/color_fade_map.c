@@ -9,9 +9,9 @@
 #include "types.h"
 #include "ram_buffer.h"
 
-// Copies a width by height block of colour indices onto the battle canvas
-// through its cell map at x, y, skipping zeros; nothing is drawn when the block
-// starts off the map or its far edge passes cell 63.
+/// Copies a width by height block of colour indices onto the battle canvas
+/// through its cell map at x, y, skipping zeros; nothing is drawn when the block
+/// starts off the map or its far edge passes cell 63.
 void BattleFx_DrawCanvasBlock(const u8 *src, s32 x, s32 y, s32 width, s32 height) {
   u16 *map = Ram_HeapSlots->canvasMap;
   u8 *canvas = Ram_HeapSlots->battleFxWork[1];

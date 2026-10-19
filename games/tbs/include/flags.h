@@ -97,6 +97,28 @@
 #define FLAG_SCENE_TEMP_50                                                     \
   0x250 // Vault interiors: the leader is beside the Bone
 
+// Venus Lighthouse
+// The man at the entrance has told of the attack and is gone.
+#define FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD 0x981
+// The path the statue opened: the first or the second of its two.
+#define FLAG_VENUS_LIGHTHOUSE_FIRST_PATH 0x982
+#define FLAG_VENUS_LIGHTHOUSE_SECOND_PATH 0x983
+// Garet has said the block by the wall can go no farther.
+#define FLAG_VENUS_LIGHTHOUSE_BLOCK_AT_WALL 0x986
+// Carry has set that block down beyond the wall.
+#define FLAG_VENUS_LIGHTHOUSE_BLOCK_CARRIED 0x987
+// The floor switches have slid the walls aside.
+#define FLAG_VENUS_LIGHTHOUSE_WALL_MOVED 0x300
+#define FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED 0x306
+#define FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED 0x307
+// The gates the sunken blocks opened: one block, three blocks (and which of
+// two sets of sockets they sank into) and the pillar room's four.
+#define FLAG_VENUS_LIGHTHOUSE_GATE_OPEN 0x301
+#define FLAG_VENUS_LIGHTHOUSE_SOCKETS_A 0x302
+#define FLAG_VENUS_LIGHTHOUSE_SOCKETS_B 0x303
+#define FLAG_VENUS_LIGHTHOUSE_THREE_BLOCK_GATE_OPEN 0x304
+#define FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN 0x308
+
 // Venus Lighthouse aerie
 // Set where Retreat does nothing (items.c skips the Retreat item's move).
 #define FLAG_NO_RETREAT 0x144

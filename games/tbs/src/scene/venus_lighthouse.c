@@ -76,6 +76,12 @@ static void VenusLighthouse_AnimateWestTileWave(void);
 static void VenusLighthouse_AnimateEastTileWave(void);
 static void VenusLighthouse_RaiseLeaderWithSpray(void);
 
+// The lighthouse's scene flags:
+// FLAG_SCENE_TEMP_00: in the room with the floor switch, the block holds the
+// switch down; in the room of floating blocks, FLAG_SCENE_TEMP_00 plus a
+// block's number (0 to 3): that block is set down in its place.
+// FLAG_SCENE_TEMP_01: the leader stands on the floor switch.
+
 struct DirXZ {
   s32 x;
   s32 unused;
@@ -387,8 +393,9 @@ VenusLighthouse_EmitPassageSparkTrail(union FieldObject *fieldObject) {
 #endif
 }
 
-// Step into the sparkling passage and take the touched exit.
-static void VenusLighthouse_LeaveThroughSparkPassage(void) {
+// Walking north into a sparkling passage: the leader dissolves in sparks and
+// comes out at the passage's exit.
+static void Event_EnterSparklingPassage(void) {
   struct FieldActor *leader;
   struct EventWork *eventWork;
 
@@ -450,15 +457,14 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
   }
 }
 
-// Allow the leader to be the current actor-effect target.
-static void VenusLighthouse_EnableLeaderEffectTarget(void) {
+// Stepping onto this spot makes the leader the actor the room's effect
+// follows.
+static void Event_SetLeaderAsEffectTarget(void) {
   gActorEffectWork->actor = Object_GetById(ACTOR_PARTY_LEADER);
 }
 
-// Clear the current actor-effect target as the leader leaves its region.
-static void VenusLighthouse_ClearLeaderEffectTarget(void) {
-  gActorEffectWork->actor = NULL;
-}
+// Stepping onto this spot: the room's effect follows no one.
+static void Event_ClearEffectTarget(void) { gActorEffectWork->actor = NULL; }
 
 // Shared source is included here in ROM order.
 #include "common/object_depth.h"
@@ -596,8 +602,9 @@ VenusLighthouse_CreateScriptedGateEffect(s32 x, s32 z, const s32 *script) {
   return effect;
 }
 
-// Jump across an unoccupied gap when the next landing cell is clear.
-static s32 VenusLighthouse_TryJumpAcrossGap(void) {
+// Walking into a one-tile gap: the leader jumps it if the far side is clear.
+// Returns 1 after a jump, 0 when there was none.
+static s32 Event_JumpAcrossGap(void) {
   struct FieldActor *leader;
   struct FieldPosition landing;
   u8 *motionFlags;
@@ -731,15 +738,16 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gVenusLighthousePlacementsOther;
 }
 
-// Explain that the inspected door is tightly locked.
-static void VenusLighthouse_InspectLockedDoor(void) {
+// Searching a locked door: "The door is tightly locked."
+static void Event_SearchLockedDoor(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
   Engine_EventEnd();
 }
 
-// Hear the report of the attack, then fade the injured scholar from view.
-static void VenusLighthouse_HearAttackReport(void) {
+// Talking to the man at the entrance (or reading his mind): "Venus
+// Lighthouse was attacked by strange wanderers...", and he flickers away.
+static void Event_HearOfTheAttack(void) {
   u32 flickersLeft;
   u32 flickerDelay;
 
@@ -759,14 +767,14 @@ static void VenusLighthouse_HearAttackReport(void) {
     }
     flickersLeft--;
   } while (flickersLeft != 0);
-  Engine_GameFlagSet(0x981);
+  Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD);
   Engine_ActorSetPosition(8, 0, 0);
   Map_CopyCellAttributes(7, 17, 2, 1, 7, 16);
   Engine_EventEnd();
 }
 
-// Have the injured scholar explain why he cannot explore the lighthouse.
-static void VenusLighthouse_DiscussScholarsInjuries(void) {
+// Talking to the scholar who has waited to see inside Venus Lighthouse.
+static void Event_TalkToWaitingScholar(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVenusIveWaitedLongSeeIts);
   Engine_EventShowMessageAndWait(11, 0, 20);
@@ -775,21 +783,22 @@ static void VenusLighthouse_DiscussScholarsInjuries(void) {
   Engine_EventEnd();
 }
 
-// Record when Carry has moved the block beyond its stopping boundary.
-static void VenusLighthouse_RecordCarriedBlockExit(void) {
+// Carry on the block Move could not push past the wall: once it is set down
+// beyond, it stays there (FLAG_VENUS_LIGHTHOUSE_BLOCK_CARRIED).
+static void Event_CarryBlockPastWall(void) {
   struct FieldActor *block;
 
   block = Object_GetById(12);
   Engine_EventBegin();
   if (block->x.fixed >> 20 == 54 || block->z.fixed >> 20 == 6) {
-    Engine_GameFlagSet(0x987);
+    Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_BLOCK_CARRIED);
   }
   Engine_EventEnd();
 }
 
-// Read the relief selected by the facing trigger, preserving the English
-// variant.
-static void SceneDialogue_ReadRelief(void) {
+// Searching a relief: "There are words carved into the relief..." and its
+// words; each relief has its own message, except in English, which keeps one.
+static void Event_ReadRelief(void) {
   s32 message;
 #if TBS_PATCH_LEVEL != 1
   struct EventWork *work = gEventWork;
@@ -806,8 +815,8 @@ static void SceneDialogue_ReadRelief(void) {
   Engine_EventEnd();
 }
 
-// Restore the collision and visible tiles outside the revealed path.
-static void VenusLighthouse_HideRevealPath(void) {
+// Reveal fading: the hidden path disappears again.
+static void Event_HidePath(void) {
   s32 column;
   s32 row;
 
@@ -826,8 +835,8 @@ static void VenusLighthouse_HideRevealPath(void) {
   Map_CopyCellsTo(121, 55, 110, 55, 3, 3);
 }
 
-// Show the revealed path's collision and visible tiles.
-static void VenusLighthouse_ShowRevealPath(void) {
+// Reveal: the hidden path appears and can be walked on.
+static void Event_RevealPath(void) {
   s32 column;
   s32 row;
 
@@ -846,8 +855,9 @@ static void VenusLighthouse_ShowRevealPath(void) {
   Map_CopyCellsTo(117, 55, 110, 55, 3, 3);
 }
 
-// Jump toward the lower platform and finish its landing reaction.
-static void VenusLighthouse_JumpToLowerPlatform(void) {
+// Walking off the ledge before the floor switch is held down: the leader jumps
+// down to the floor below and shakes his head.
+static void Event_JumpDown(void) {
   struct FieldActor *leader;
   s32 landingQuarterZ;
 
@@ -885,8 +895,9 @@ static void VenusLighthouse_JumpToLowerPlatform(void) {
   Engine_EventEnd();
 }
 
-// Hear the statue and alternate the ancient route it reveals.
-static void VenusLighthouse_ConsultPathStatue(void) {
+// Searching the statue: "The statue speaks to Isaac's soul..."; the room
+// flashes and the path it opens changes, and the camera shows it.
+static void Event_SearchStatue(void) {
   struct FieldWork *work;
 
   work = (struct FieldWork *)gEventWork;
@@ -905,18 +916,18 @@ static void VenusLighthouse_ConsultPathStatue(void) {
   Engine_ColorBufferInterpolate(60);
   Engine_EventWait(70);
   // The first consultation selects a route; later consultations alternate it.
-  if (GameFlag_IsSet(0x982) == 0) {
-    if (GameFlag_IsSet(0x983) == 0) {
+  if (GameFlag_IsSet(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH) == 0) {
+    if (GameFlag_IsSet(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH) == 0) {
       if ((gFrameCount & 1) != 0) {
-        GameFlag_Set(0x982);
+        GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH);
       } else {
-        GameFlag_Set(0x983);
+        GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH);
       }
     }
   }
-  if (GameFlag_IsSet(0x982) == 0) {
-    GameFlag_Set(0x982);
-    GameFlag_Clear(0x983);
+  if (GameFlag_IsSet(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH) == 0) {
+    GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH);
+    GameFlag_Clear(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH);
     Map_CopyCellsTo(103, 27, 89, 27, 7, 8);
     Map_CopyCellsTo(41, 90, 27, 92, 3, 2);
     Map_CopyCellsTo(41, 90, 29, 93, 3, 2);
@@ -930,8 +941,8 @@ static void VenusLighthouse_ConsultPathStatue(void) {
     Map_CopyCellsTo(41, 96, 27, 96, 3, 2);
     Map_CopyCellsTo(41, 96, 29, 97, 3, 2);
   } else {
-    GameFlag_Set(0x983);
-    GameFlag_Clear(0x982);
+    GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH);
+    GameFlag_Clear(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH);
     Map_CopyCellsTo(111, 27, 89, 27, 7, 8);
     Map_CopyCellsTo(41, 90, 25, 91, 3, 2);
     Map_CopyCellsTo(41, 90, 25, 93, 3, 2);
@@ -959,8 +970,9 @@ static void VenusLighthouse_ConsultPathStatue(void) {
   work->busy = 0;
 }
 
-// Have Garet suggest Carry after the block can be pushed no farther.
-static void VenusLighthouse_GaretSuggestsCarry(void) {
+// Move on the block by the wall: once it reaches the wall, Garet comes out,
+// "Hmmm. We can't push the block farther than this.", the first time only.
+static void Event_MoveBlockTowardWall(void) {
   struct FieldActor *actor;
   struct FieldActor *leader;
   s32 conversationFlag;
@@ -969,7 +981,7 @@ static void VenusLighthouse_GaretSuggestsCarry(void) {
   s32 emote;
   s32 garetX;
 
-  conversationFlag = 0x986;
+  conversationFlag = FLAG_VENUS_LIGHTHOUSE_BLOCK_AT_WALL;
   walkSpeed = 0xcccc;
   walkAcceleration = 0x6666;
   emote = 0x100;
@@ -1018,18 +1030,19 @@ static void VenusLighthouse_GaretSuggestsCarry(void) {
   }
 }
 
-// Push the block, then let Garet explain how Carry could move it farther.
-static void VenusLighthouse_PushBlockAndDiscussCarry(void) {
+// Pushing the block by the wall: as Move, with Garet's remark at the wall.
+static void Event_PushBlockTowardWall(void) {
 
   Engine_EventBegin();
   VenusLighthouse_PushAdjacentBlock();
   Engine_EventWait(20);
   Engine_EventEnd();
-  VenusLighthouse_GaretSuggestsCarry();
+  Event_MoveBlockTowardWall();
 }
 
-// Sink the moved block into the floor switch and update the gate tiles.
-static void VenusLighthouse_SinkBlockOnFloorSwitch(void) {
+// Move on the block by the floor switch: on the switch it sinks in and holds
+// it down.
+static void Event_MoveBlockOntoSwitch(void) {
   struct FieldActor *block;
   s32 switchHeight;
 
@@ -1048,8 +1061,8 @@ static void VenusLighthouse_SinkBlockOnFloorSwitch(void) {
   Engine_EventEnd();
 }
 
-// Press or release the floor switch beneath the leader.
-static void VenusLighthouse_UpdateLeaderFloorSwitch(void) {
+// Standing on the floor switch presses it; stepping off releases it.
+static void Event_StepOnFloorSwitch(void) {
   struct FieldActor *leader = Object_GetById(0);
   s32 x = leader->x.part.pixel;
   s32 z = leader->z.part.pixel;
@@ -1075,8 +1088,9 @@ static void VenusLighthouse_UpdateLeaderFloorSwitch(void) {
   }
 }
 
-// Discuss the newly opened door and turn the camera toward it.
-static void VenusLighthouse_DiscussNewlyOpenedDoor(void) {
+// Talking to the scholar by the door: he explored once it opened, until
+// Kraden and the others appeared; the camera looks at the door.
+static void Event_TalkToScholarByDoor(void) {
   struct FieldWork *work;
 
   work = (struct FieldWork *)gEventWork;
@@ -1095,8 +1109,9 @@ static void VenusLighthouse_DiscussNewlyOpenedDoor(void) {
   Engine_EventEnd();
 }
 
-// Stage the leader's descent through the opening and take its exit.
-static void VenusLighthouse_DescendThroughFloorOpening(void) {
+// Stepping onto the hole in the floor: the leader looks down, falls through
+// and lands in the room below.
+static void Event_FallThroughFloor(void) {
   struct FieldActor *leader;
   struct FieldActor *leaderActor;
   s32 zero;
@@ -1160,8 +1175,9 @@ static void VenusLighthouse_DescendThroughFloorOpening(void) {
   Engine_EventEnd();
 }
 
-// Restore the depth blocks' collision footprints and relative draw order.
-static void VenusLighthouse_UpdateDepthBlockCollision(void) {
+// Move on one of the three blocks in a row: the floor under each block is
+// solid again and the nearer block draws in front.
+static void Event_MoveDepthBlock(void) {
 
   u32 blockIndex;
   struct FieldActor *block;
@@ -1190,18 +1206,19 @@ static void VenusLighthouse_UpdateDepthBlockCollision(void) {
   Engine_EventEnd();
 }
 
-// Push a depth block and rebuild the affected collision cells.
-static void VenusLighthouse_PushDepthBlock(void) {
+// Pushing one of the three blocks in a row.
+static void Event_PushDepthBlock(void) {
 
   Engine_EventBegin();
   Map_CopyCellAttributes(19, 44, 4, 1, 12, 44);
   VenusLighthouse_PushAdjacentBlock();
-  VenusLighthouse_UpdateDepthBlockCollision();
+  Event_MoveDepthBlock();
   Engine_EventEnd();
 }
 
-// Mark the two Carry blocks' occupied cells before they move.
-static void VenusLighthouse_MarkCarryBlockCollision(void) {
+// Move or Carry starting on one of the two blocks by the gap: their tiles
+// are marked before they move.
+static void Event_LiftCarryBlock(void) {
   u32 blockIndex;
   struct FieldActor *block;
 
@@ -1213,8 +1230,9 @@ static void VenusLighthouse_MarkCarryBlockCollision(void) {
   } while (blockIndex <= 1);
 }
 
-// Restore collision under the Carry blocks that remain above the lower level.
-static void VenusLighthouse_RestoreCarryBlockCollision(void) {
+// Move on one of the two blocks by the gap: blocks still above the floor are
+// solid again.
+static void Event_MoveCarryBlock(void) {
   u32 blockIndex;
   struct FieldActor *block;
 
@@ -1228,14 +1246,14 @@ static void VenusLighthouse_RestoreCarryBlockCollision(void) {
   } while (blockIndex <= 1);
 }
 
-// Jump across the gap or push a Carry block and restore its collision.
-static void VenusLighthouse_JumpOrPushCarryBlock(void) {
+// Walking into a gap or a block by it: jump the gap, else push the block.
+static void Event_JumpOrPushCarryBlock(void) {
 
   Engine_EventBegin();
-  if (VenusLighthouse_TryJumpAcrossGap() == 0) {
-    VenusLighthouse_MarkCarryBlockCollision();
+  if (Event_JumpAcrossGap() == 0) {
+    Event_LiftCarryBlock();
     VenusLighthouse_PushAdjacentBlock();
-    VenusLighthouse_RestoreCarryBlockCollision();
+    Event_MoveCarryBlock();
   }
   Engine_EventEnd();
 }
@@ -1270,12 +1288,13 @@ static void VenusLighthouse_ReleaseFallenCarryBlock(struct FieldActor *block) {
     block->z.fixed = zero;
     Engine_ObjectDispatchRelease(passageEffect);
   } else {
-    VenusLighthouse_RestoreCarryBlockCollision();
+    Event_MoveCarryBlock();
   }
 }
 
-// Settle the two Carry blocks at their destinations or remove fallen ones.
-static void VenusLighthouse_SettleCarriedBlocks(void) {
+// Carry on one of the two blocks: set down in its place it stays fixed;
+// dropped into the gap it falls through the floor.
+static void Event_CarryBlockAcrossGap(void) {
   struct FieldActor *block;
 
   Engine_EventBegin();
@@ -1296,8 +1315,9 @@ static void VenusLighthouse_SettleCarriedBlocks(void) {
   Engine_EventEnd();
 }
 
-// Press the switch that scrolls the sliding wall and opens the next route.
-static void VenusLighthouse_ActivateSlidingWall(void) {
+// Stepping on the floor switch: the wall slides aside in a cloud of dust, the
+// first time only, and the party goes on through the next exit.
+static void Event_StepOnWallSwitch(void) {
   struct EffectOptions options;
   struct MapLayerScroll *scrollLayer;
   struct FieldActor *leader;
@@ -1314,10 +1334,10 @@ static void VenusLighthouse_ActivateSlidingWall(void) {
   leader->y.fixed = 0;
   if (column >= 308 && column <= 315 && leaderZ >= 532 && leaderZ < 540) {
     leader->y.fixed = -0x20000;
-    if (!GameFlag_IsSet(0x300)) {
+    if (!GameFlag_IsSet(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
       Engine_EventBegin();
       Engine_AudioPlayCue(SE_161);
-      GameFlag_Set(0x300);
+      GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED);
       Map_CopyCellsTo(26, 33, 19, 33, 1, 1);
       Engine_EventWait(30);
       Engine_AudioPlayCue(SE_239);
@@ -1369,8 +1389,9 @@ static void VenusLighthouse_ActivateSlidingWall(void) {
   }
 }
 
-// Sink the gate's block into its socket and open the passage.
-static void VenusLighthouse_OpenGateWithSunkenBlock(void) {
+// Move on the block before the gate: in its socket it sinks in and the gate
+// opens, the first time only.
+static void Event_MoveGateBlock(void) {
   u8 *flags;
   s32 row;
   s32 column;
@@ -1400,7 +1421,7 @@ static void VenusLighthouse_OpenGateWithSunkenBlock(void) {
     } else {
       // Sink an unsolved block only when both of its target cell coordinates
       // match.
-      gateOpened = Engine_GameFlagIsSet(0x301);
+      gateOpened = Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_GATE_OPEN);
       if (gateOpened != 0) {
       } else {
         if ((leader->z.fixed >> 20) <= 45) {
@@ -1439,27 +1460,29 @@ static void VenusLighthouse_OpenGateWithSunkenBlock(void) {
         Engine_AudioPlayCue(SE_DOOR_OPEN);
         Engine_MapAnimateCells(gVenusPushCells, 110, 41);
         Map_CopyCellAttributes(46, 41, 1, 1, column, 42);
-        Engine_GameFlagSet(0x301);
+        Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_GATE_OPEN);
       }
     }
   }
   Engine_EventEnd();
 }
 
-// Jump across the gap or push the gate block, then resolve its socket.
-static void VenusLighthouse_JumpOrPushGateBlock(void) {
+// Walking into the gap or the block before the gate: jump the gap, else push
+// the block, which may sink into its socket.
+static void Event_JumpOrPushGateBlock(void) {
 
   Engine_EventBegin();
-  if (VenusLighthouse_TryJumpAcrossGap() == 0) {
+  if (Event_JumpAcrossGap() == 0) {
     Map_CopyCellAttributes(109, 43, 7, 5, 45, 43);
     VenusLighthouse_PushAdjacentBlock();
   }
   Engine_EventEnd();
-  VenusLighthouse_OpenGateWithSunkenBlock();
+  Event_MoveGateBlock();
 }
 
-// Settle the three blocks into clear sockets and open their gate when complete.
-static void VenusLighthouse_SettlePushedBlocks(void) {
+// Move on one of the three blocks: a block on a free socket sinks in, and
+// with all three sunk the gate opens.
+static void Event_MoveSwitchBlock(void) {
   struct FieldActor *occlusionEffect = 0;
   struct FieldActor *leader = Object_GetById(0);
   struct FieldActor *block;
@@ -1543,7 +1566,7 @@ static void VenusLighthouse_SettlePushedBlocks(void) {
     if (occlusionEffect != 0) {
       Engine_ObjectDispatchRelease(occlusionEffect);
     }
-    if (Engine_GameFlagIsSet(0x304)) {
+    if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_THREE_BLOCK_GATE_OPEN)) {
       Engine_EventEnd();
       return;
     }
@@ -1566,11 +1589,11 @@ static void VenusLighthouse_SettlePushedBlocks(void) {
         Map_CopyCellAttributes(45, 37, 1, 1, 45, 38);
         if (Object_GetById(9)->x.fixed >> 20 == gVenusSwitchCells[0].x &&
             Object_GetById(9)->z.fixed >> 20 == gVenusSwitchCells[0].z) {
-          Engine_GameFlagSet(0x302);
+          Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_SOCKETS_A);
         } else {
-          Engine_GameFlagSet(0x303);
+          Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_SOCKETS_B);
         }
-        Engine_GameFlagSet(0x304);
+        Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_THREE_BLOCK_GATE_OPEN);
         break;
       }
       Engine_TaskWait(1);
@@ -1579,15 +1602,16 @@ static void VenusLighthouse_SettlePushedBlocks(void) {
   Engine_EventEnd();
 }
 
-// Jump or push a switch block, then resolve the occupied sockets.
-static void VenusLighthouse_JumpOrPushSwitchBlock(void) {
+// Walking into the gap or one of the three blocks: jump the gap, else push the
+// block, which may sink into a socket.
+static void Event_JumpOrPushSwitchBlock(void) {
   Engine_EventBegin();
-  if (VenusLighthouse_TryJumpAcrossGap() == 0) {
+  if (Event_JumpAcrossGap() == 0) {
     Map_CopyCellAttributes(108, 39, 13, 7, 44, 39);
     VenusLighthouse_PushAdjacentBlock();
   }
   Engine_EventEnd();
-  VenusLighthouse_SettlePushedBlocks();
+  Event_MoveSwitchBlock();
 }
 
 // Keep a stacked block sixteen pixels above its supporting actor.
@@ -1706,8 +1730,9 @@ static __inline__ void Actor_CopyPosition(struct FieldActor *destination,
   destination->z.fixed = source->z.fixed;
 }
 
-// Settle a carried floating block and rebalance its supporting platforms.
-static void VenusLighthouse_ResolveFloatingBlock(void) {
+// Carry on one of the four floating blocks: it settles where it is set down
+// and the platforms under the blocks rise or sink to their weight.
+static void Event_CarryFloatingBlock(void) {
   struct FieldActor savedPosition;
   struct FieldActor *firstPassageEffect = NULL;
   struct FieldActor *secondPassageEffect = NULL;
@@ -1808,16 +1833,17 @@ static void VenusLighthouse_ResolveFloatingBlock(void) {
   Engine_EventEnd();
 }
 
-// Push a puzzle block through the event-controlled movement routine.
-static void VenusLighthouse_PushPuzzleBlock(void) {
+// Pushing a block in the pillar room.
+static void Event_PushPuzzleBlock(void) {
 
   Engine_EventBegin();
   VenusLighthouse_PushAdjacentBlock();
   Engine_EventEnd();
 }
 
-// Activate the western sliding-wall switch and follow its opening animation.
-static void VenusLighthouse_ActivateWestSlidingWall(void) {
+// Stepping on the west floor switch: the west wall slides aside, the first
+// time only, and the party goes on through the next exit.
+static void Event_StepOnWestWallSwitch(void) {
   struct EffectOptions options;
   struct MapLayerScroll *scrollLayer;
   struct FieldActor *leader;
@@ -1834,7 +1860,7 @@ static void VenusLighthouse_ActivateWestSlidingWall(void) {
   leader->y.fixed = 0;
   if (column >= 532 && column <= 539 && leaderZ >= 324 && leaderZ < 332) {
     leader->y.fixed = -0x20000;
-    if (!Engine_GameFlagIsSet(0x306)) {
+    if (!Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
       Engine_EventBegin();
       Map_CopyCellsTo(63, 29, 33, 20, 1, 1);
       Engine_AudioPlayCue(SE_161);
@@ -1881,8 +1907,9 @@ static void VenusLighthouse_ActivateWestSlidingWall(void) {
   }
 }
 
-// Activate the eastern sliding-wall switch and follow its opening animation.
-static void VenusLighthouse_ActivateEastSlidingWall(void) {
+// Stepping on the east floor switch: the east wall slides aside, the first
+// time only, and the party goes on through the next exit.
+static void Event_StepOnEastWallSwitch(void) {
   struct EffectOptions options;
   struct MapLayerScroll *scrollLayer;
   struct FieldActor *leader;
@@ -1899,7 +1926,7 @@ static void VenusLighthouse_ActivateEastSlidingWall(void) {
   leader->y.fixed = 0;
   if (column >= 788 && column <= 795 && leaderZ >= 324 && leaderZ < 332) {
     leader->y.fixed = -0x20000;
-    if (!Engine_GameFlagIsSet(0x307)) {
+    if (!Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED)) {
       Engine_EventBegin();
       Map_CopyCellsTo(63, 29, 49, 20, 1, 1);
       Engine_AudioPlayCue(SE_161);
@@ -1945,8 +1972,9 @@ static void VenusLighthouse_ActivateEastSlidingWall(void) {
   }
 }
 
-// Settle the four pillar-room blocks and open the paired gate when complete.
-static void VenusLighthouse_SettlePillarSwitchBlocks(void) {
+// Move on one of the four blocks in the pillar room: on a free socket it sinks
+// in, and with all four sunk the gate opens.
+static void Event_MovePillarSwitchBlock(void) {
   struct FieldActor *occlusionEffect;
   struct FieldActor *block;
   struct FieldActor *otherBlock;
@@ -2047,7 +2075,7 @@ static void VenusLighthouse_SettlePillarSwitchBlocks(void) {
       }
     }
     Engine_ObjectDispatchRelease(occlusionEffect);
-    if (GameFlag_IsSet(0x308)) {
+    if (GameFlag_IsSet(FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN)) {
       Event_End();
       return;
     }
@@ -2067,7 +2095,8 @@ static void VenusLighthouse_SettlePillarSwitchBlocks(void) {
       Camera_WaitForMove();
       firstGateEffect =
           (struct SwitchEffect *)VenusLighthouse_CreateScriptedGateEffect(
-              136, 0x308, gVenusFirstGateScript);
+              136, FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN,
+              gVenusFirstGateScript);
       Event_Wait(30);
       Camera_SetSpeed(0x6666, 0xccc);
       Camera_MoveTo(0xd80000, -1, 0x2780000, 1);
@@ -2082,7 +2111,7 @@ static void VenusLighthouse_SettlePillarSwitchBlocks(void) {
           Event_Wait(30);
           Map_AnimateCells(gVenusGateCells, 77, 35);
           Map_CopyCellAttributes(13, 35, 1, 1, 13, 36);
-          GameFlag_Set(0x308);
+          GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN);
           break;
         }
         Task_Wait(1);
@@ -2092,11 +2121,12 @@ static void VenusLighthouse_SettlePillarSwitchBlocks(void) {
   Event_End();
 }
 
-// Jump or push a pillar-room block, then resolve its socket.
-static void VenusLighthouse_JumpOrPushPillarBlock(void) {
+// Walking into the gap or a pillar-room block: jump the gap, else push the
+// block, which may sink into a socket.
+static void Event_JumpOrPushPillarBlock(void) {
 
   Engine_EventBegin();
-  if (VenusLighthouse_TryJumpAcrossGap() == 0) {
+  if (Event_JumpAcrossGap() == 0) {
     {
       Map_CopyCellAttributes(69, 48, 4, 2, 5, 48);
     }
@@ -2106,11 +2136,12 @@ static void VenusLighthouse_JumpOrPushPillarBlock(void) {
     VenusLighthouse_PushAdjacentBlock();
   }
   Engine_EventEnd();
-  VenusLighthouse_SettlePillarSwitchBlocks();
+  Event_MovePillarSwitchBlock();
 }
 
-// Approach the rising passage and take its upper exit.
-static void VenusLighthouse_EnterRisingPassage(void) {
+// Walking south into the passage: the leader rises out of the room to the
+// floor above.
+static void Event_EnterRisingPassage(void) {
   Engine_EventBegin();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x208, 0x2c8);
@@ -2196,7 +2227,7 @@ s32 Scene_RunEntrySetup(void) {
   // Restore the outdoor scholars and each interior puzzle by its entrance.
   if (scene == (s32)&SceneId_VenusLighthouse1) {
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    if (!Engine_GameFlagIsSet(0x981))
+    if (!Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD))
       VenusLighthouse_PrepareStandingActor(8);
     else
       Map_CopyCellAttributes(7, 17, 2, 1, 7, 16);
@@ -2223,7 +2254,7 @@ s32 Scene_RunEntrySetup(void) {
       break;
     case 20:
     case 21:
-      if (Engine_GameFlagIsSet(0x982)) {
+      if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH)) {
         Map_CopyCellsTo(103, 27, 89, 27, 7, 8);
         Map_CopyCellsTo(41, 90, 27, 92, 3, 2);
         Map_CopyCellsTo(41, 90, 29, 93, 3, 2);
@@ -2237,7 +2268,7 @@ s32 Scene_RunEntrySetup(void) {
         Map_CopyCellsTo(41, 96, 27, 96, 3, 2);
         Map_CopyCellsTo(41, 96, 29, 97, 3, 2);
       } else {
-        if (!Engine_GameFlagIsSet(0x983))
+        if (!Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH))
           break;
         Map_CopyCellsTo(111, 27, 89, 27, 7, 8);
         Map_CopyCellsTo(41, 90, 25, 91, 3, 2);
@@ -2266,7 +2297,7 @@ s32 Scene_RunEntrySetup(void) {
     case 9:
     case 10:
     case 11:
-      if (Engine_GameFlagIsSet(0x987)) {
+      if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_BLOCK_CARRIED)) {
         Actor_SetPosition(12, 218 << 18, 176 << 15);
         actor = Object_GetById(12);
         actor->y.fixed = -0x180000;
@@ -2291,7 +2322,7 @@ s32 Scene_RunEntrySetup(void) {
     case 9:
     case 10:
       actor = Object_GetById(11);
-      VenusLighthouse_RestoreCarryBlockCollision();
+      Event_MoveCarryBlock();
       if (actor->x.fixed >> 20 == 8)
         VenusLighthouse_FixBlockAtDestination(actor);
       actor = Object_GetById(12);
@@ -2313,7 +2344,7 @@ s32 Scene_RunEntrySetup(void) {
       actor = Object_GetById(10);
       actor->motionFlags = 0;
       actor->update = SceneActor_SetFlagBitByRelativeDepth;
-      VenusLighthouse_UpdateDepthBlockCollision();
+      Event_MoveDepthBlock();
       break;
     case 11:
     case 12:
@@ -2323,7 +2354,7 @@ s32 Scene_RunEntrySetup(void) {
       BattleFx_SetQueuedSoundAndPlay(SE_170);
       BattleFx_StartFadeOverlay(0);
       Engine_TaskWait(2);
-      if (Engine_GameFlagIsSet(0x300)) {
+      if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
         Map_CopyCellsTo(111, 5, 117, 5, 5, 2);
         Map_CopyCellsTo(111, 10, 117, 10, 5, 2);
         Map_CopyCellsTo(111, 7, 111, 5, 5, 2);
@@ -2359,7 +2390,7 @@ s32 Scene_RunEntrySetup(void) {
       actor = Object_GetById(9);
       actor->motionFlags = 0;
       actor->collisionFlags = 0;
-      if (Engine_GameFlagIsSet(0x301)) {
+      if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_GATE_OPEN)) {
         Engine_TaskWait(1);
         Map_CopyCellsTo(124, 41, 110, 41, 1, 2);
         Map_CopyCellAttributes(46, 41, 1, 1, 46, 42);
@@ -2382,7 +2413,7 @@ s32 Scene_RunEntrySetup(void) {
             (void (*)(union FieldObject *))VenusLighthouse_EmitGateParticles;
 #endif
       }
-      VenusLighthouse_OpenGateWithSunkenBlock();
+      Event_MoveGateBlock();
       break;
     case 11:
       gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
@@ -2410,7 +2441,7 @@ s32 Scene_RunEntrySetup(void) {
           REG_BLDCNT = zero;
         } while (0);
       }
-      if (Engine_GameFlagIsSet(0x300)) {
+      if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
         Map_CopyCellsTo(15, 96, 9, 96, 3, 3);
         Map_CopyCellsTo(12, 96, 15, 96, 3, 3);
         Map_CopyCellsTo(5, 50, 15, 32, 3, 4);
@@ -2442,14 +2473,14 @@ s32 Scene_RunEntrySetup(void) {
     case 14:
     case 20:
       BattleFx_SetQueuedSoundAndPlay(SE_170);
-      if (Engine_GameFlagIsSet(0x306)) {
+      if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
         Map_CopyCells(53, 12, 3, 13, 26, 12);
         Map_CopyCellsTo(81, 41, 89, 14, 9, 2);
         Engine_TaskWait(1);
         FieldScheduler_AddCallback(VenusLighthouse_EmitWestPassageParticles,
                                    0xc80);
       }
-      if (Engine_GameFlagIsSet(0x307)) {
+      if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED)) {
         Map_CopyCells(58, 12, 3, 13, 34, 12);
         Map_CopyCellsTo(81, 41, 97, 14, 5, 2);
         Engine_TaskWait(1);
@@ -2478,11 +2509,11 @@ s32 Scene_RunEntrySetup(void) {
       Object_GetById(9)->motionFlags = 0;
       Object_GetById(10)->motionFlags = 0;
       Object_GetById(11)->motionFlags = 0;
-      if (Engine_GameFlagIsSet(0x304)) {
+      if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_THREE_BLOCK_GATE_OPEN)) {
         Engine_TaskWait(1);
         Map_CopyCellsTo(111, 59, 109, 37, 1, 2);
         Map_CopyCellAttributes(45, 37, 1, 1, 45, 38);
-        if (Engine_GameFlagIsSet(0x302)) {
+        if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_SOCKETS_A)) {
           Actor_SetPosition(9, 194 << 18, 166 << 18);
           Actor_SetPosition(10, 210 << 18, 166 << 18);
           Actor_SetPosition(11, 194 << 18, 174 << 18);
@@ -2517,7 +2548,7 @@ s32 Scene_RunEntrySetup(void) {
             (void (*)(union FieldObject *))VenusLighthouse_EmitGateParticles;
 #endif
       }
-      VenusLighthouse_SettlePushedBlocks();
+      Event_MoveSwitchBlock();
       break;
     case 6:
       BattleFx_SetQueuedSoundAndPlay(SE_170);
@@ -2537,7 +2568,8 @@ s32 Scene_RunEntrySetup(void) {
           column = actor->x.fixed >> 20;
           if (column == 13) {
             row = actor->z.fixed >> 20;
-            if (row == 7 && Engine_GameFlagIsSet(blockIndex + 0x200)) {
+            if (row == 7 &&
+                Engine_GameFlagIsSet(blockIndex + FLAG_SCENE_TEMP_00)) {
               actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
               actor->collisionFlags = 0;
               actor->motionFlags = 0;
@@ -2603,7 +2635,7 @@ s32 Scene_RunEntrySetup(void) {
       Object_GetById(20)->y.fixed = -0x108000;
       DisplayBlend_EnableRunScript();
       Io_Write16(0, &REG_BLDCNT);
-      if (Engine_GameFlagIsSet(0x306)) {
+      if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
         BattleFx_SetQueuedSoundAndPlay(SE_170);
         Map_CopyCellsTo(36, 81, 32, 81, 3, 2);
         Map_CopyCellsTo(36, 83, 36, 81, 3, 2);
@@ -2612,7 +2644,7 @@ s32 Scene_RunEntrySetup(void) {
         Map_CopyCellsTo(63, 29, 33, 20, 1, 1);
         Map_CopyCellsTo(20, 56, 36, 17, 3, 4);
       }
-      if (Engine_GameFlagIsSet(0x307)) {
+      if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED)) {
         Map_CopyCellsTo(44, 81, 48, 81, 3, 2);
         Map_CopyCellsTo(44, 83, 44, 81, 3, 2);
         Map_CopyCellAttributes(44, 17, 3, 1, 48, 17);
@@ -2639,7 +2671,7 @@ s32 Scene_RunEntrySetup(void) {
       Object_GetById(16)->motionFlags = 0;
       Object_GetById(17)->motionFlags = 0;
       Object_GetById(18)->motionFlags = 0;
-      if (Engine_GameFlagIsSet(0x308)) {
+      if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN)) {
         Engine_TaskWait(1);
         Map_CopyCellsTo(95, 56, 77, 35, 1, 2);
         Map_CopyCellAttributes(13, 35, 1, 1, 13, 36);
@@ -2677,15 +2709,16 @@ s32 Scene_RunEntrySetup(void) {
             (void (*)(union FieldObject *))VenusLighthouse_EmitGateParticles;
 #endif
       }
-      VenusLighthouse_SettlePillarSwitchBlocks();
+      Event_MovePillarSwitchBlock();
       break;
     }
   }
   return 0;
 }
 
-// Move the selected actor north through the dusty passage.
-static void VenusLighthouse_StepNorthThroughDust(void) {
+// Standing on this floor carries the party north in a trail of dust; at a
+// ledge they drop down.
+static void Event_DriftNorth(void) {
   struct DirXZ args;
 
   args.x = 0;
@@ -2693,8 +2726,8 @@ static void VenusLighthouse_StepNorthThroughDust(void) {
   VenusLighthouse_StepActorWithDust(&args);
 }
 
-// Move the selected actor south through the dusty passage.
-static void VenusLighthouse_StepSouthThroughDust(void) {
+// As Event_DriftNorth, south.
+static void Event_DriftSouth(void) {
   struct DirXZ args;
 
   args.x = 0;
@@ -2702,8 +2735,8 @@ static void VenusLighthouse_StepSouthThroughDust(void) {
   VenusLighthouse_StepActorWithDust(&args);
 }
 
-// Move the selected actor west through the dusty passage.
-static void VenusLighthouse_StepWestThroughDust(void) {
+// As Event_DriftNorth, west.
+static void Event_DriftWest(void) {
   struct DirXZ args;
 
   args.x = -1;
@@ -2711,8 +2744,8 @@ static void VenusLighthouse_StepWestThroughDust(void) {
   VenusLighthouse_StepActorWithDust(&args);
 }
 
-// Move the selected actor east through the dusty passage.
-static void VenusLighthouse_StepEastThroughDust(void) {
+// As Event_DriftNorth, east.
+static void Event_DriftEast(void) {
   struct DirXZ args;
 
   args.x = 1;
@@ -2954,7 +2987,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   Engine_CameraWaitForMove();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_EventWait(60);
-  Engine_GameFlagSet(0x306);
+  Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED);
   Engine_EventRequestExit(19);
   Engine_EventEnd();
 }
@@ -3010,7 +3043,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   Engine_CameraWaitForMove();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_EventWait(60);
-  Engine_GameFlagSet(0x307);
+  Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED);
   Engine_EventRequestExit(20);
   Engine_EventEnd();
 }
@@ -3986,7 +4019,7 @@ struct ScenePlacement gVenusLighthousePlacementsOther[] = {
 };
 
 struct ScenePlacement gVenusLighthousePlacements1[] = {
-    { 0x98, 0x981, ACTOR_STAND,
+    { 0x98, FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD, ACTOR_STAND,
         PIXELS(128), 0, PIXELS(268), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x70, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(352), 0, PIXELS(300), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -4113,14 +4146,14 @@ struct SceneEvent gVenusLighthouseEvents1[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_HearAttackReport) },
+    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HearOfTheAttack) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIodemBeHappyTheEntranceTo) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseOhhhHowCouldTheyAttackMere) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_DiscussScholarsInjuries) },
+    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWaitingScholar) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseHowHowDidTheyOpenThe) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseTheyAreAlreadyHeadedForBabi) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseBabisSoldiersAreAllColossoVictors) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_HearAttackReport) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HearOfTheAttack) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseUhnnnIfOnlyICouldMove) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseTheirPowersWereSoStrangeWho) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIMustGetInsideVenusLighthouse) },
@@ -4155,33 +4188,33 @@ struct SceneEvent gVenusLighthouseEvents2[] = {
     { 0x21, 30, CONDITION_ALWAYS, 30 },
     { 0x21, 31, CONDITION_ALWAYS, 31 },
     { 0x21, 32, CONDITION_ALWAYS, 32 },
-    { EVENT_TOUCH, 45, 0x200, EVENT_SCRIPT(VenusLighthouse_JumpToLowerPlatform) },
-    { EVENT_TOUCH, 46, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_UpdateLeaderFloorSwitch) },
-    { 0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_PushBlockAndDiscussCarry) },
+    { EVENT_TOUCH, 45, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_JumpDown) },
+    { EVENT_TOUCH, 46, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnFloorSwitch) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 50, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlockTowardWall) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseKradenToldThemToStopBut) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseKradenWentInsideButThenCame) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_DiscussNewlyOpenedDoor) },
+    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToScholarByDoor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIfKradenHadntBeenThereWe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseKradenSaidSomethingAboutThisBeing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgVenusLighthouseIWonderWhatMysteriesTheStatue) },
-    { SEARCH(SEARCH_UNNAMED), 35, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
+    { SEARCH(SEARCH_UNNAMED), 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
 #if !TBS_PATCH_1
-    { SEARCH(SEARCH_UNNAMED), 36, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
-    { SEARCH(SEARCH_UNNAMED), 37, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
-    { SEARCH(SEARCH_UNNAMED), 38, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
-    { SEARCH(SEARCH_UNNAMED), 39, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
+    { SEARCH(SEARCH_UNNAMED), 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
+    { SEARCH(SEARCH_UNNAMED), 37, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
+    { SEARCH(SEARCH_UNNAMED), 38, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
+    { SEARCH(SEARCH_UNNAMED), 39, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
 #endif
 #if TBS_PATCH_LEVEL != 1
-    { SEARCH(SEARCH_UNNAMED), 40, CONDITION_ALWAYS, EVENT_SCRIPT(SceneDialogue_ReadRelief) },
+    { SEARCH(SEARCH_UNNAMED), 40, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRelief) },
 #endif
-    { SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ConsultPathStatue) },
+    { SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchStatue) },
     { SEARCH(SEARCH_CHEST), 100, 0xf37, FIND_ITEM(0xa1) },
     { SEARCH(SEARCH_CHEST), 101, 0xf38, FIND_ITEM(0xce) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_GaretSuggestsCarry) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, 0x200, EVENT_SCRIPT(VenusLighthouse_SinkBlockOnFloorSwitch) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 12, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_RecordCarriedBlockExit) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ShowRevealPath) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_HideRevealPath) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveBlockTowardWall) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_MoveBlockOntoSwitch) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryBlockPastWall) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RevealPath) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HidePath) },
     { SCENE_EVENTS_END },
 };
 
@@ -4205,32 +4238,32 @@ struct SceneEvent gVenusLighthouseEvents3[] = {
     { EVENT_EXIT, 17, CONDITION_ALWAYS, 17 },
     { 0x31, 18, CONDITION_ALWAYS, 18 },
     { 0x21, 19, CONDITION_ALWAYS, 19 },
-    { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_StepSouthThroughDust) },
-    { EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_DescendThroughFloorOpening) },
-    { 0x202, 31, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_PushDepthBlock) },
-    { 0x202, 32, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_PushDepthBlock) },
-    { EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ClearLeaderEffectTarget) },
-    { EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_EnableLeaderEffectTarget) },
-    { 0x202, 45, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_JumpOrPushCarryBlock) },
+    { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftSouth) },
+    { EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FallThroughFloor) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushDepthBlock) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushDepthBlock) },
+    { EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClearEffectTarget) },
+    { EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetLeaderAsEffectTarget) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 45, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushCarryBlock) },
     { SEARCH(SEARCH_CHEST), 100, 0xf34, FIND_ITEM(0xa2) },
     { SEARCH(SEARCH_UNNAMED), 110, 0x350, FIND_PSYNERGY_STONE },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_UpdateDepthBlockCollision) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_UpdateDepthBlockCollision) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_UpdateDepthBlockCollision) },
-    { 0x10008c15, 11, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_MarkCarryBlockCollision) },
-    { 0x10008c15, 12, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_MarkCarryBlockCollision) },
-    { 0x10009315, 11, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_MarkCarryBlockCollision) },
-    { 0x10009315, 12, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_MarkCarryBlockCollision) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_RestoreCarryBlockCollision) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_RestoreCarryBlockCollision) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 11, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_SettleCarriedBlocks) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 12, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_SettleCarriedBlocks) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveDepthBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveDepthBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveDepthBlock) },
+    { 0x10008c15, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LiftCarryBlock) },
+    { 0x10008c15, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LiftCarryBlock) },
+    { 0x10009315, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LiftCarryBlock) },
+    { 0x10009315, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LiftCarryBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveCarryBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveCarryBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryBlockAcrossGap) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryBlockAcrossGap) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gVenusLighthouseEvents4[] = {
     { 0x31, 1, CONDITION_ALWAYS, 1 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_LeaveThroughSparkPassage) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSparklingPassage) },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { 0x31, 4, CONDITION_ALWAYS, 4 },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
@@ -4239,10 +4272,10 @@ struct SceneEvent gVenusLighthouseEvents4[] = {
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
-    { EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ActivateSlidingWall) },
-    { 0x202, 36, 0x301, EVENT_SCRIPT(VenusLighthouse_JumpOrPushGateBlock) },
-    { SEARCH(SEARCH_UNNAMED), 25, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_InspectLockedDoor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x301, EVENT_SCRIPT(VenusLighthouse_OpenGateWithSunkenBlock) },
+    { EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnWallSwitch) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 36, FLAG_VENUS_LIGHTHOUSE_GATE_OPEN, EVENT_SCRIPT(Event_JumpOrPushGateBlock) },
+    { SEARCH(SEARCH_UNNAMED), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_VENUS_LIGHTHOUSE_GATE_OPEN, EVENT_SCRIPT(Event_MoveGateBlock) },
     { SCENE_EVENTS_END },
 };
 
@@ -4250,14 +4283,14 @@ struct SceneEvent gVenusLighthouseEvents5[] = {
     { 0x21, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_LeaveThroughSparkPassage) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_LeaveThroughSparkPassage) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSparklingPassage) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSparklingPassage) },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
     { 0x21, 7, CONDITION_ALWAYS, 7 },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 9 },
     { 0x21, 10, CONDITION_ALWAYS, 10 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_LeaveThroughSparkPassage) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSparklingPassage) },
     { 0x21, 12, CONDITION_ALWAYS, 12 },
     { 0x21, 13, CONDITION_ALWAYS, 13 },
     { EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
@@ -4265,14 +4298,14 @@ struct SceneEvent gVenusLighthouseEvents5[] = {
     { EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
     { 0x31, 17, CONDITION_ALWAYS, 17 },
     { EVENT_EXIT, 18, CONDITION_ALWAYS, 18 },
-    { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_StepSouthThroughDust) },
-    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_StepSouthThroughDust) },
-    { 0x202, 35, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_JumpOrPushSwitchBlock) },
-    { SEARCH(SEARCH_UNNAMED), 25, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_InspectLockedDoor) },
+    { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftSouth) },
+    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftSouth) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushSwitchBlock) },
+    { SEARCH(SEARCH_UNNAMED), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor) },
     { SEARCH(SEARCH_CHEST), 100, 0xf35, FIND_ITEM(0x52) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_SettlePushedBlocks) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_SettlePushedBlocks) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_SettlePushedBlocks) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveSwitchBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveSwitchBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveSwitchBlock) },
     { SCENE_EVENTS_END },
 };
 
@@ -4294,35 +4327,35 @@ struct SceneEvent gVenusLighthouseEvents6[] = {
     { EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
     { EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
     { 0x31, 17, CONDITION_ALWAYS, 17 },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 18, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_EnterRisingPassage) },
-    { 0x202, 35, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_PushPuzzleBlock) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 36, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_TryJumpAcrossGap) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 36, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_TryJumpAcrossGap) },
-    { 0x202, 36, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_PushPuzzleBlock) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 37, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_TryJumpAcrossGap) },
-    { 0x202, 37, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_PushPuzzleBlock) },
-    { EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ActivateWestSlidingWall) },
-    { EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ActivateEastSlidingWall) },
-    { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_StepSouthThroughDust) },
-    { EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_StepNorthThroughDust) },
-    { EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_StepWestThroughDust) },
-    { EVENT_TOUCH, 33, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_StepEastThroughDust) },
-    { 0x202, 45, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_JumpOrPushPillarBlock) },
-    { SEARCH(SEARCH_UNNAMED), 25, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_InspectLockedDoor) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 18, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterRisingPassage) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPuzzleBlock) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpAcrossGap) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpAcrossGap) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 36, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPuzzleBlock) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 37, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpAcrossGap) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 37, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPuzzleBlock) },
+    { EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnWestWallSwitch) },
+    { EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnEastWallSwitch) },
+    { EVENT_TOUCH, 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftSouth) },
+    { EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftNorth) },
+    { EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftWest) },
+    { EVENT_TOUCH, 33, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DriftEast) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 45, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushPillarBlock) },
+    { SEARCH(SEARCH_UNNAMED), 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor) },
     { SEARCH(SEARCH_CHEST), 100, 0xf36, FIND_ITEM(0x9) },
     { SEARCH(SEARCH_UNNAMED), 110, 0x351, FIND_PSYNERGY_STONE },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, 0 },
-    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 10, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ResolveFloatingBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 11, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ResolveFloatingBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 12, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ResolveFloatingBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 13, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_ResolveFloatingBlock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_SettlePillarSwitchBlocks) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_SettlePillarSwitchBlocks) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_SettlePillarSwitchBlocks) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT_SCRIPT(VenusLighthouse_SettlePillarSwitchBlocks) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryFloatingBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryFloatingBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryFloatingBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CarryFloatingBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MovePillarSwitchBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MovePillarSwitchBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MovePillarSwitchBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 18, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MovePillarSwitchBlock) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

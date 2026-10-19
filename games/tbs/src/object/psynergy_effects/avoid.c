@@ -3,8 +3,6 @@
 
 #include "../psynergy_effects_internal.h"
 
-#define ITEM_SACRED_FEATHER 236 // Sacred Feather
-
 // End of the effect: switches the caster's display flags between 3 and 1 on
 // a 5-frame cycle.
 void FieldFx_BlinkAvoidCaster(void) {
@@ -123,5 +121,3 @@ void FieldFx_RunAvoid(void) {
   Resource_ResetEntry(scene->arcTileSlot);
   UiText_ShowPositionedMessageAndWaitFar(MsgMonstersAttackLess, 1);
 }
-
-#undef ITEM_SACRED_FEATHER

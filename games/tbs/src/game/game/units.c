@@ -420,8 +420,8 @@ void UnitCalc(s32 owner) {
   MemFree(stats);
 }
 
-// Sets FLAG_LURE_CAP when any party member has the Lure Cap (item 164, the one
-// item with equipment effect 27) equipped, and clears it otherwise.
+// Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item
+// with equipment effect 27) equipped, and clears it otherwise.
 void GameFlag_RefreshLureCap(void) {
   s32 partySize;
   s32 partyIndex;
@@ -606,8 +606,8 @@ void Party_EndChildhood(void) {
     Unit_UpdateGauges(unit);
 
     for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
-      if ((unit->inventory[slot] & ITEM_ID_MASK) == 15) {
-        unit->inventory[slot] = 16;
+      if ((unit->inventory[slot] & ITEM_ID_MASK) == ITEM_MACHETE) {
+        unit->inventory[slot] = ITEM_SHORT_SWORD;
         Inventory_Equip(owner, slot);
         break;
       }

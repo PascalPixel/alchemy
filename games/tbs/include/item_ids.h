@@ -2,6 +2,9 @@
 #define ALCHEMY_ITEM_IDS_H
 
 enum ItemId {
+  ITEM_MACHETE = 0x0f,
+  ITEM_SHORT_SWORD = 0x10,
+  ITEM_LURE_CAP = 0xa4,
   ITEM_NUT = 0xb5,
   ITEM_VIAL = 0xb6,
   ITEM_POTION = 0xb7,
@@ -23,6 +26,7 @@ enum ItemId {
   ITEM_BONE = 0xe7,
   ITEM_ANCHOR_CHARM = 0xe8,
   ITEM_CELL_KEY = 0xea,
+  ITEM_SACRED_FEATHER = 0xec,
   ITEM_BLACK_ORB = 0xf2
 };
 

@@ -32,20 +32,20 @@ extern const struct SceneEntrance gTolbiShipDeckEntrances[];
 extern const s16 gTolbiShipDeckRegions[];
 extern const u32 gTolbiShipDeckExits[];
 extern const struct ScenePlacement gTolbiShipDeckPlacements[];
-extern const struct ScenePlacement gTolbiShipDeckPlacementsFlag911[];
-extern const struct ScenePlacement gTolbiShipDeckPlacementsFlag927[];
-extern const struct ScenePlacement gTolbiShipDeckPlacementsFlag928[];
+extern const struct ScenePlacement gTolbiShipDeckPlacementsWaiting[];
+extern const struct ScenePlacement gTolbiShipDeckPlacementsRowing[];
+extern const struct ScenePlacement gTolbiShipDeckPlacementsAtSea[];
 extern const struct ScenePlacement gTolbiShipDeck_CrewScript[];
 extern const struct ScenePlacement gTolbiShipDeck_ClosingCrewScript[];
 extern const struct ScenePlacement gTolbiShipDeck_CrewScriptB[];
 extern const struct ScenePlacement gTolbiShipDeck_CrewScriptC[];
 extern const struct ScenePlacement gTolbiShipDeck_CrewScriptD[];
 extern const struct ScenePlacement gTolbiShipDeck_CrewScriptE[];
-extern const struct ScenePlacement gTolbiShipDeckPlacementsFlag93e[];
+extern const struct ScenePlacement gTolbiShipDeckPlacementsArrived[];
 extern const struct SceneEvent gTolbiShipDeckEvents[];
-extern const struct SceneEvent gTolbiShipDeckEventsFlag928[];
-extern const struct SceneEvent gTolbiShipDeckEventsFlag93e[];
-extern const struct SceneEvent gTolbiShipDeckEventsFlag8a0[];
+extern const struct SceneEvent gTolbiShipDeckEventsAtSea[];
+extern const struct SceneEvent gTolbiShipDeckEventsArrived[];
+extern const struct SceneEvent gTolbiShipDeckEventsAtIsland[];
 extern const s32 gTolbiShipDeckRowerStrokes[];
 
 #endif

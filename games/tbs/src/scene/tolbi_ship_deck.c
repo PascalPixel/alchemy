@@ -79,6 +79,20 @@ s32 Math_RemainderUnsigned(s32, s16);
 // opens beside them (4, SPEAKER_WINDOW_ABOVE, is above).
 #define SPEAKER(actor, window) ((window) << 12 | (actor))
 
+// Who is who on deck. At Kalay (gTolbiShipDeckPlacementsWaiting) the captain
+// asks Kaja, the deck's fighter, how the oarsmen are ("Say, Kaja, how are the
+// oarsmen doing?"). At sea gTolbiShipDeck_CrewScript places Kaja and the
+// warriors Ouranos and Sean, who help him guard the deck ("That'll be me,
+// Ouranos, and Sean on deck").
+enum TolbiShipDeckActor {
+  KALAY_CREWMAN = 20, // denies everything: "I didn't do anything..."
+  KALAY_CAPTAIN = 22,
+  KALAY_KAJA = 23,
+  SEA_KAJA = 20,
+  SEA_OURANOS = 21,
+  SEA_SEAN = 22,
+};
+
 // Shared code, included where it sits in the ROM.
 #include "common/object_pulse.h"
 
@@ -102,13 +116,13 @@ struct DivingMonster {
 
 #define DIVER(obj) ((struct DivingMonster *)(obj))
 
-// The update of a sea monster hovering by actor 21's side of the deck while the
+// The update of a sea monster hovering by Ouranos's side of the deck while the
 // monsters attack. It drifts and bobs at random; one frame in a hundred it
-// dives at actor 21, who turns and jumps (sometimes with an emote), then it
+// dives at Ouranos, who turns and jumps (sometimes with an emote), then it
 // returns to its side. DivingMonster.rightSide picks which side it returns to.
 // Returns 1 to keep running.
 static s32
-TolbiShipDeck_HoverAndDiveAtActor21(struct ScriptInterpreter *interpreter) {
+TolbiShipDeck_HoverAndDiveAtOuranos(struct ScriptInterpreter *interpreter) {
   struct FieldActor *obj = (struct FieldActor *)interpreter;
   if (DIVER(obj)->step != 0) {
     switch (DIVER(obj)->step) {
@@ -127,14 +141,14 @@ TolbiShipDeck_HoverAndDiveAtActor21(struct ScriptInterpreter *interpreter) {
         DIVER(obj)->step++;
         Event_PlayCue(SE_146);
         if (DIVER(obj)->rightSide != 0)
-          Actor_FaceDirection(21, 0xd000, 0);
+          Actor_FaceDirection(SEA_OURANOS, 0xd000, 0);
         else
-          Actor_FaceDirection(21, 0xb000, 0);
+          Actor_FaceDirection(SEA_OURANOS, 0xb000, 0);
         if (((u32)Engine_RandomNext() << 2) >> 16 != 0) {
-          Actor_Get(21)->velocityY = 0x20000;
+          Actor_Get(SEA_OURANOS)->velocityY = 0x20000;
         } else {
-          Actor_ShowEmote(21, 0x103, 0);
-          Actor_Get(21)->velocityY = 0x60000;
+          Actor_ShowEmote(SEA_OURANOS, 0x103, 0);
+          Actor_Get(SEA_OURANOS)->velocityY = 0x60000;
         }
       }
       break;
@@ -195,9 +209,9 @@ TolbiShipDeck_HoverAndDiveAtActor21(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// The same for the monster that dives at actor 22.
+// The same for the monster that dives at Sean.
 static s32
-TolbiShipDeck_HoverAndDiveAtActor22(struct ScriptInterpreter *interpreter) {
+TolbiShipDeck_HoverAndDiveAtSean(struct ScriptInterpreter *interpreter) {
   struct FieldActor *obj = (struct FieldActor *)interpreter;
   if (DIVER(obj)->step != 0) {
     switch (DIVER(obj)->step) {
@@ -216,14 +230,14 @@ TolbiShipDeck_HoverAndDiveAtActor22(struct ScriptInterpreter *interpreter) {
         DIVER(obj)->step++;
         Event_PlayCue(SE_146);
         if (DIVER(obj)->rightSide != 0)
-          Actor_FaceDirection(22, 0xd000, 0);
+          Actor_FaceDirection(SEA_SEAN, 0xd000, 0);
         else
-          Actor_FaceDirection(22, 0xb000, 0);
+          Actor_FaceDirection(SEA_SEAN, 0xb000, 0);
         if (((u32)Engine_RandomNext() << 2) >> 16 != 0) {
-          Actor_Get(22)->velocityY = 0x20000;
+          Actor_Get(SEA_SEAN)->velocityY = 0x20000;
         } else {
-          Actor_ShowEmote(22, 0x103, 0);
-          Actor_Get(22)->velocityY = 0x60000;
+          Actor_ShowEmote(SEA_SEAN, 0x103, 0);
+          Actor_Get(SEA_SEAN)->velocityY = 0x60000;
         }
       }
       break;
@@ -355,11 +369,11 @@ static s32 TolbiShipDeck_LookAround(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// The update of a monster on deck that, at random, leaps at actor 21: it jumps
+// The update of a monster on deck that, at random, leaps at Ouranos: it jumps
 // to him, he turns and jumps back (sometimes with an emote), and it lands on
 // one of two spots chosen by riseEnabled. The actor's timer holds the step.
 // Returns 1.
-static s32 TolbiShipDeck_LeapAtActor21(struct ScriptInterpreter *interpreter) {
+static s32 TolbiShipDeck_LeapAtOuranos(struct ScriptInterpreter *interpreter) {
   struct FieldActor *obj = (struct FieldActor *)interpreter;
   switch (obj->timer) {
   case 0:
@@ -386,15 +400,15 @@ static s32 TolbiShipDeck_LeapAtActor21(struct ScriptInterpreter *interpreter) {
       obj->timer++;
       Engine_AudioPlayCue(SE_152);
       if (obj->riseEnabled != 0) {
-        Actor_FaceDirection(21, 0xb000, 0);
+        Actor_FaceDirection(SEA_OURANOS, 0xb000, 0);
       } else {
-        Actor_FaceDirection(21, 0x5000, 0);
+        Actor_FaceDirection(SEA_OURANOS, 0x5000, 0);
       }
       if (((u32)Engine_RandomNext() << 2) >> 16 != 0) {
-        Object_GetById(21)->velocityY = 0x20000;
+        Object_GetById(SEA_OURANOS)->velocityY = 0x20000;
       } else {
-        Actor_ShowEmote(21, 0x103, 0);
-        Object_GetById(21)->velocityY = 0x60000;
+        Actor_ShowEmote(SEA_OURANOS, 0x103, 0);
+        Object_GetById(SEA_OURANOS)->velocityY = 0x60000;
       }
     }
     break;
@@ -428,8 +442,8 @@ static s32 TolbiShipDeck_LeapAtActor21(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// The same for the monster that leaps at actor 22.
-static s32 TolbiShipDeck_LeapAtActor22(struct ScriptInterpreter *interpreter) {
+// The same for the monster that leaps at Sean.
+static s32 TolbiShipDeck_LeapAtSean(struct ScriptInterpreter *interpreter) {
   struct FieldActor *obj = (struct FieldActor *)interpreter;
   switch (obj->timer) {
   case 0:
@@ -456,15 +470,15 @@ static s32 TolbiShipDeck_LeapAtActor22(struct ScriptInterpreter *interpreter) {
       obj->timer++;
       Engine_AudioPlayCue(SE_152);
       if (obj->riseEnabled != 0) {
-        Actor_FaceDirection(22, 0xd000, 0);
+        Actor_FaceDirection(SEA_SEAN, 0xd000, 0);
       } else {
-        Engine_ActorFaceDirection(22, FACING_EAST, 0);
+        Engine_ActorFaceDirection(SEA_SEAN, FACING_EAST, 0);
       }
       if (((u32)Engine_RandomNext() << 2) >> 16 != 0) {
-        Object_GetById(22)->velocityY = 0x20000;
+        Object_GetById(SEA_SEAN)->velocityY = 0x20000;
       } else {
-        Actor_ShowEmote(22, 0x103, 0);
-        Object_GetById(22)->velocityY = 0x60000;
+        Actor_ShowEmote(SEA_SEAN, 0x103, 0);
+        Object_GetById(SEA_SEAN)->velocityY = 0x60000;
       }
     }
     break;
@@ -547,33 +561,33 @@ u8 *TolbiShipDeck_GetPlacements(void) {
   s32 underSail;
 
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI))
-    return gTolbiShipDeckPlacementsFlag93e;
+    return gTolbiShipDeckPlacementsArrived;
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWING))
-    return gTolbiShipDeckPlacementsFlag927;
+    return gTolbiShipDeckPlacementsRowing;
   underSail = Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED);
   if (underSail != 0)
-    return gTolbiShipDeckPlacementsFlag928;
+    return gTolbiShipDeckPlacementsAtSea;
   if (Engine_GameFlagIsSet(0x911)) {
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED)) {
-      STORE_CONST(gTolbiShipDeckPlacementsFlag911[13].talkFacing) = underSail;
-      STORE_CONST(gTolbiShipDeckPlacementsFlag911[17].talkFacing) = 2;
-      STORE_CONST(gTolbiShipDeckPlacementsFlag911[18].talkFacing) = 2;
+      STORE_CONST(gTolbiShipDeckPlacementsWaiting[13].talkFacing) = underSail;
+      STORE_CONST(gTolbiShipDeckPlacementsWaiting[17].talkFacing) = 2;
+      STORE_CONST(gTolbiShipDeckPlacementsWaiting[18].talkFacing) = 2;
     } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN)) {
-      STORE_CONST(gTolbiShipDeckPlacementsFlag911[17].talkFacing) = 1;
-      STORE_CONST(gTolbiShipDeckPlacementsFlag911[18].talkFacing) = 1;
+      STORE_CONST(gTolbiShipDeckPlacementsWaiting[17].talkFacing) = 1;
+      STORE_CONST(gTolbiShipDeckPlacementsWaiting[18].talkFacing) = 1;
     }
-    return gTolbiShipDeckPlacementsFlag911;
+    return gTolbiShipDeckPlacementsWaiting;
   }
   return gTolbiShipDeckPlacements;
 }
 
 u8 *TolbiShipDeck_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI))
-    return gTolbiShipDeckEventsFlag93e;
+    return gTolbiShipDeckEventsArrived;
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND))
-    return gTolbiShipDeckEventsFlag8a0;
+    return gTolbiShipDeckEventsAtIsland;
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED))
-    return gTolbiShipDeckEventsFlag928;
+    return gTolbiShipDeckEventsAtSea;
   return gTolbiShipDeckEvents;
 }
 
@@ -712,124 +726,124 @@ static void TolbiShipDeck_GoBelowWhileFacingWest(void) {
 #endif
 
 // At Kalay, once the party has heard of the delay (flag 0x911): the crew wonder
-// what happened to the replacement ship and decide to set sail anyway; actor 20
-// runs off through the second door. Plays once.
+// what happened to the replacement ship and decide to set sail anyway; the
+// crewman runs off through the second door. Plays once.
 static void TolbiShipDeck_WatchCrewDecideToSail(void) {
   struct FieldActor *record;
 
   if (GameFlag_IsSet(0x911) != 0) {
     Engine_EventBegin();
     Battle_ResetEffectCounter();
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 20, 10);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, KALAY_CREWMAN, 10);
     Camera_SetSpeed(0x19999, 0x3333);
     Camera_MoveTo(PIXELS(190), -1, PIXELS(708), 1);
     Engine_CameraWaitForMove();
     Engine_EventWait(40);
-    Engine_ActorRunRepeatedMotion(22, 1);
+    Engine_ActorRunRepeatedMotion(KALAY_CAPTAIN, 1);
     Engine_EventSetMessage(MsgTolbiShipWonderCouldHaveHappened);
-    TolbiShipDeck_Say(SPEAKER(22, 4));
-    Actor_ShowEmote(20, 0x102, 60);
-    Engine_ActorStartRepeatedMotion(20, 2);
-    TolbiShipDeck_Say(20);
-    Engine_ActorRunRepeatedMotion(22, 1);
-    Actor_FaceDirection(22, 0x5000, 0);
-    TolbiShipDeck_Say(SPEAKER(22, 4));
-    Engine_ActorRunRepeatedMotion(20, 1);
-    TolbiShipDeck_Turn(20, 0xb000);
-    TolbiShipDeck_Say(20);
-    TolbiShipDeck_Turn(23, 0x3000);
-    Engine_ActorSetAnimation(23, 3);
-    TolbiShipDeck_Say(SPEAKER(23, 4));
-    Actor_ShowEmote(22, 0x101, 40);
-    Actor_FaceDirection(22, FACING_WEST, 20);
-    TolbiShipDeck_Say(SPEAKER(22, 4));
-    TolbiShipDeck_Turn(23, FACING_EAST);
-    Engine_ActorSetAnimationAndWait(23, 4);
-    TolbiShipDeck_Say(SPEAKER(23, 4));
-    Actor_ShowEmote(20, 0x100, 40);
-    Engine_ActorStartRepeatedMotion(20, 2);
-    TolbiShipDeck_Say(20);
-    Engine_ActorSetAnimationAndWait(22, 3);
-    TolbiShipDeck_Say(SPEAKER(22, 4));
-    TolbiShipDeck_Turn(20, 0xd000);
-    Engine_ActorSetAnimation(23, 3);
-    Engine_ActorSetAnimationAndWait(20, 3);
+    TolbiShipDeck_Say(SPEAKER(KALAY_CAPTAIN, 4));
+    Actor_ShowEmote(KALAY_CREWMAN, 0x102, 60);
+    Engine_ActorStartRepeatedMotion(KALAY_CREWMAN, 2);
+    TolbiShipDeck_Say(KALAY_CREWMAN);
+    Engine_ActorRunRepeatedMotion(KALAY_CAPTAIN, 1);
+    Actor_FaceDirection(KALAY_CAPTAIN, 0x5000, 0);
+    TolbiShipDeck_Say(SPEAKER(KALAY_CAPTAIN, 4));
+    Engine_ActorRunRepeatedMotion(KALAY_CREWMAN, 1);
+    TolbiShipDeck_Turn(KALAY_CREWMAN, 0xb000);
+    TolbiShipDeck_Say(KALAY_CREWMAN);
+    TolbiShipDeck_Turn(KALAY_KAJA, 0x3000);
+    Engine_ActorSetAnimation(KALAY_KAJA, 3);
+    TolbiShipDeck_Say(SPEAKER(KALAY_KAJA, 4));
+    Actor_ShowEmote(KALAY_CAPTAIN, 0x101, 40);
+    Actor_FaceDirection(KALAY_CAPTAIN, FACING_WEST, 20);
+    TolbiShipDeck_Say(SPEAKER(KALAY_CAPTAIN, 4));
+    TolbiShipDeck_Turn(KALAY_KAJA, FACING_EAST);
+    Engine_ActorSetAnimationAndWait(KALAY_KAJA, 4);
+    TolbiShipDeck_Say(SPEAKER(KALAY_KAJA, 4));
+    Actor_ShowEmote(KALAY_CREWMAN, 0x100, 40);
+    Engine_ActorStartRepeatedMotion(KALAY_CREWMAN, 2);
+    TolbiShipDeck_Say(KALAY_CREWMAN);
+    Engine_ActorSetAnimationAndWait(KALAY_CAPTAIN, 3);
+    TolbiShipDeck_Say(SPEAKER(KALAY_CAPTAIN, 4));
+    TolbiShipDeck_Turn(KALAY_CREWMAN, 0xd000);
+    Engine_ActorSetAnimation(KALAY_KAJA, 3);
+    Engine_ActorSetAnimationAndWait(KALAY_CREWMAN, 3);
     Engine_EventWait(60);
-    Actor_ShowEmote(22, 0x106, 40);
-    TolbiShipDeck_Turn(22, 0x5000);
+    Actor_ShowEmote(KALAY_CAPTAIN, 0x106, 40);
+    TolbiShipDeck_Turn(KALAY_CAPTAIN, 0x5000);
     Engine_EventSetMessage(MsgTolbiShipTheresNothingWeCanDo);
-    Engine_ActorStartRepeatedMotion(22, 1);
-    TolbiShipDeck_Say(SPEAKER(22, 4));
-    Actor_ShowEmote(20, 0x101, 40);
-    Engine_ActorStartRepeatedMotion(20, 2);
-    TolbiShipDeck_Say(20);
-    Actor_ShowEmote(22, 0x108, 20);
-    Event_ShowMessageAndWait(SPEAKER(22, 4), 0, 20);
-    Actor_ShowEmote(23, 0x102, 60);
-    TolbiShipDeck_Say(SPEAKER(23, 4));
-    TolbiShipDeck_Turn(22, FACING_WEST);
-    Engine_ActorSetAnimationAndWait(22, 3);
-    Event_ShowMessageAndWait(SPEAKER(22, 4), 0, 20);
-    Actor_ShowEmote(20, 0x102, 40);
-    Engine_ActorStartRepeatedMotion(20, 2);
-    TolbiShipDeck_Say(20);
-    TolbiShipDeck_Turn(22, 0x5000);
-    Engine_ActorSetAnimation(22, 4);
-    TolbiShipDeck_Say(22);
-    Actor_FaceDirection(20, 0xb000, 0);
-    Actor_FaceDirection(23, 0x3000, 40);
-    Actor_FaceDirection(23, FACING_EAST, 0);
-    Actor_FaceDirection(20, 0xd000, 20);
-    Engine_ActorRunRepeatedMotion(22, 2);
+    Engine_ActorStartRepeatedMotion(KALAY_CAPTAIN, 1);
+    TolbiShipDeck_Say(SPEAKER(KALAY_CAPTAIN, 4));
+    Actor_ShowEmote(KALAY_CREWMAN, 0x101, 40);
+    Engine_ActorStartRepeatedMotion(KALAY_CREWMAN, 2);
+    TolbiShipDeck_Say(KALAY_CREWMAN);
+    Actor_ShowEmote(KALAY_CAPTAIN, 0x108, 20);
+    Event_ShowMessageAndWait(SPEAKER(KALAY_CAPTAIN, 4), 0, 20);
+    Actor_ShowEmote(KALAY_KAJA, 0x102, 60);
+    TolbiShipDeck_Say(SPEAKER(KALAY_KAJA, 4));
+    TolbiShipDeck_Turn(KALAY_CAPTAIN, FACING_WEST);
+    Engine_ActorSetAnimationAndWait(KALAY_CAPTAIN, 3);
+    Event_ShowMessageAndWait(SPEAKER(KALAY_CAPTAIN, 4), 0, 20);
+    Actor_ShowEmote(KALAY_CREWMAN, 0x102, 40);
+    Engine_ActorStartRepeatedMotion(KALAY_CREWMAN, 2);
+    TolbiShipDeck_Say(KALAY_CREWMAN);
+    TolbiShipDeck_Turn(KALAY_CAPTAIN, 0x5000);
+    Engine_ActorSetAnimation(KALAY_CAPTAIN, 4);
+    TolbiShipDeck_Say(KALAY_CAPTAIN);
+    Actor_FaceDirection(KALAY_CREWMAN, 0xb000, 0);
+    Actor_FaceDirection(KALAY_KAJA, 0x3000, 40);
+    Actor_FaceDirection(KALAY_KAJA, FACING_EAST, 0);
+    Actor_FaceDirection(KALAY_CREWMAN, 0xd000, 20);
+    Engine_ActorRunRepeatedMotion(KALAY_CAPTAIN, 2);
     Engine_EventWait(20);
-    TolbiShipDeck_Say(SPEAKER(22, 4));
-    Actor_SetAttachedEffect(23, 0x102);
-    Actor_SetAttachedEffect(20, 0x102);
+    TolbiShipDeck_Say(SPEAKER(KALAY_CAPTAIN, 4));
+    Actor_SetAttachedEffect(KALAY_KAJA, 0x102);
+    Actor_SetAttachedEffect(KALAY_CREWMAN, 0x102);
     Engine_EventWait(40);
-    Engine_ActorSetAnimationAndWait(22, 3);
-    TolbiShipDeck_Say(SPEAKER(22, 4));
+    Engine_ActorSetAnimationAndWait(KALAY_CAPTAIN, 3);
+    TolbiShipDeck_Say(SPEAKER(KALAY_CAPTAIN, 4));
     Camera_SetSpeed(0xcccc, 0x1999);
     Camera_MoveTo(PIXELS(182), -1, PIXELS(760), 1);
-    Actor_SetSpeed(23, 0xcccc, 0x6666);
-    Actor_SetActionScript(23, gTolbiShipDeck_PresentationActionsA);
-    Actor_SetSpeed(22, 0xcccc, 0x6666);
-    Actor_SetActionScript(22, gTolbiShipDeck_PresentationActionsB);
-    Actor_SetSpeed(20, 0xcccc, 0x6666);
-    Actor_WalkToAndWait(20, 182, 0x2f8);
-    Engine_ActorStartRepeatedMotion(20, 2);
-    Actor_ShowEmote(20, 0x100, 60);
-    TolbiShipDeck_Turn(20, 0xd000);
-    Event_ShowMessageAndWait(20, 0, 20);
-    Engine_ActorSetAnimationAndWait(20, 3);
-    Engine_ActorJump(20, 4, 0);
-    Actor_FaceDirection(20, 0x3000, 40);
+    Actor_SetSpeed(KALAY_KAJA, 0xcccc, 0x6666);
+    Actor_SetActionScript(KALAY_KAJA, gTolbiShipDeck_PresentationActionsA);
+    Actor_SetSpeed(KALAY_CAPTAIN, 0xcccc, 0x6666);
+    Actor_SetActionScript(KALAY_CAPTAIN, gTolbiShipDeck_PresentationActionsB);
+    Actor_SetSpeed(KALAY_CREWMAN, 0xcccc, 0x6666);
+    Actor_WalkToAndWait(KALAY_CREWMAN, 182, 0x2f8);
+    Engine_ActorStartRepeatedMotion(KALAY_CREWMAN, 2);
+    Actor_ShowEmote(KALAY_CREWMAN, 0x100, 60);
+    TolbiShipDeck_Turn(KALAY_CREWMAN, 0xd000);
+    Event_ShowMessageAndWait(KALAY_CREWMAN, 0, 20);
+    Engine_ActorSetAnimationAndWait(KALAY_CREWMAN, 3);
+    Engine_ActorJump(KALAY_CREWMAN, 4, 0);
+    Actor_FaceDirection(KALAY_CREWMAN, 0x3000, 40);
     Camera_SetSpeed(0x10000, 0x2000);
     Camera_MoveTo(PIXELS(216), -1, PIXELS(790), 1);
     {
-      struct FieldActor *record = Object_GetById(20);
+      struct FieldActor *record = Object_GetById(KALAY_CREWMAN);
       record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
     }
-    Actor_SetSpeed(20, 0x13333, 0x9999);
-    Actor_WalkToAndWait(20, 182, 0x30e);
-    Actor_WalkToAndWait(20, 192, 0x328);
-    Actor_WalkToAndWait(20, 216, 0x328);
-    TolbiShipDeck_Turn(20, 0xd000);
-    Engine_ActorRunRepeatedMotion(20, 2);
+    Actor_SetSpeed(KALAY_CREWMAN, 0x13333, 0x9999);
+    Actor_WalkToAndWait(KALAY_CREWMAN, 182, 0x30e);
+    Actor_WalkToAndWait(KALAY_CREWMAN, 192, 0x328);
+    Actor_WalkToAndWait(KALAY_CREWMAN, 216, 0x328);
+    TolbiShipDeck_Turn(KALAY_CREWMAN, 0xd000);
+    Engine_ActorRunRepeatedMotion(KALAY_CREWMAN, 2);
     TolbiShipDeck_OpenSecondDoor();
-    Actor_WalkToAndWait(20, 216, 0x31e);
-    Actor_SetPosition(20, 0, 0);
-    record = Object_GetById(20);
+    Actor_WalkToAndWait(KALAY_CREWMAN, 216, 0x31e);
+    Actor_SetPosition(KALAY_CREWMAN, 0, 0);
+    record = Object_GetById(KALAY_CREWMAN);
     record->scaleX = 0x10000;
-    record = Object_GetById(20);
+    record = Object_GetById(KALAY_CREWMAN);
     record->scaleY = 0x10000;
     GameFlag_Set(FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY);
     Engine_EventEnd();
   }
 }
 
-// Approaching from the east side of the door: actor 20 comes out, protests "I
-// didn't do anything..." and slips away round the party to the bow. Runs until
-// the party has confronted the crewman.
+// Approaching from the east side of the door: the crewman comes out, protests
+// "I didn't do anything..." and slips away round the party to the bow. Runs
+// until the party has confronted the crewman.
 static void TolbiShipDeck_CatchCrewmanFromEast(void) {
   u8 bits;
 
@@ -838,36 +852,36 @@ static void TolbiShipDeck_CatchCrewmanFromEast(void) {
       Engine_EventBegin();
       Battle_ResetEffectCounter();
       TolbiShipDeck_ConfrontCrewman();
-      Actor_SetSpeed(20, 0x6666, 0x3333);
-      Object_GetById(20)->steeringFlags &= ~ACTOR_FACES_MOTION;
-      Actor_WalkToAndWait(20, 232, 0x330);
+      Actor_SetSpeed(KALAY_CREWMAN, 0x6666, 0x3333);
+      Object_GetById(KALAY_CREWMAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
+      Actor_WalkToAndWait(KALAY_CREWMAN, 232, 0x330);
       Engine_EventWait(1);
       bits = 1;
       {
-        u8 *record = (s32)Object_GetById(20);
+        u8 *record = (s32)Object_GetById(KALAY_CREWMAN);
         u8 value = record[90];
 
         record[90] = value | bits;
       }
       Engine_EventWait(20);
-      Engine_ActorStartRepeatedMotion(20, 2);
-      TolbiShipDeck_Say(20);
-      Actor_SetSpeed(20, 0x13333, 0x9999);
-      Object_GetById(20)->steeringFlags &= ~ACTOR_FACES_MOTION;
-      Actor_WalkToAndWait(20, 244, 0x324);
+      Engine_ActorStartRepeatedMotion(KALAY_CREWMAN, 2);
+      TolbiShipDeck_Say(KALAY_CREWMAN);
+      Actor_SetSpeed(KALAY_CREWMAN, 0x13333, 0x9999);
+      Object_GetById(KALAY_CREWMAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
+      Actor_WalkToAndWait(KALAY_CREWMAN, 244, 0x324);
       Engine_EventWait(1);
       {
-        struct FieldActor *record = Object_GetById(20);
+        struct FieldActor *record = Object_GetById(KALAY_CREWMAN);
 
         bits |= record->steeringFlags;
         record->steeringFlags = bits;
       }
       Engine_EventWait(20);
-      Actor_SetSpeed(20, 0x33333, 0x19999);
-      Actor_WalkToAndWait(20, 248, 0x30a);
-      Actor_WalkToAndWait(20, 248, 0x2bc);
-      Actor_SetPosition(20, PIXELS(246), PIXELS(512));
-      Actor_FaceDirection(20, FACING_EAST, 0);
+      Actor_SetSpeed(KALAY_CREWMAN, 0x33333, 0x19999);
+      Actor_WalkToAndWait(KALAY_CREWMAN, 248, 0x30a);
+      Actor_WalkToAndWait(KALAY_CREWMAN, 248, 0x2bc);
+      Actor_SetPosition(KALAY_CREWMAN, PIXELS(246), PIXELS(512));
+      Actor_FaceDirection(KALAY_CREWMAN, FACING_EAST, 0);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 60);
       Engine_EventEnd();
     }
@@ -883,36 +897,36 @@ static void TolbiShipDeck_CatchCrewmanFromWest(void) {
       Engine_EventBegin();
       Battle_ResetEffectCounter();
       TolbiShipDeck_ConfrontCrewman();
-      Actor_SetSpeed(20, 0x6666, 0x3333);
-      Object_GetById(20)->steeringFlags &= ~ACTOR_FACES_MOTION;
-      Actor_WalkToAndWait(20, 202, 0x330);
+      Actor_SetSpeed(KALAY_CREWMAN, 0x6666, 0x3333);
+      Object_GetById(KALAY_CREWMAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
+      Actor_WalkToAndWait(KALAY_CREWMAN, 202, 0x330);
       Engine_EventWait(1);
       bits = 1;
       {
-        u8 *record = (s32)Object_GetById(20);
+        u8 *record = (s32)Object_GetById(KALAY_CREWMAN);
         u8 value = record[90];
 
         record[90] = value | bits;
       }
       Engine_EventWait(20);
-      Engine_ActorStartRepeatedMotion(20, 2);
-      TolbiShipDeck_Say(20);
-      Actor_SetSpeed(20, 0x13333, 0x9999);
-      Object_GetById(20)->steeringFlags &= ~ACTOR_FACES_MOTION;
-      Actor_WalkToAndWait(20, 192, 0x324);
+      Engine_ActorStartRepeatedMotion(KALAY_CREWMAN, 2);
+      TolbiShipDeck_Say(KALAY_CREWMAN);
+      Actor_SetSpeed(KALAY_CREWMAN, 0x13333, 0x9999);
+      Object_GetById(KALAY_CREWMAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
+      Actor_WalkToAndWait(KALAY_CREWMAN, 192, 0x324);
       Engine_EventWait(1);
       {
-        struct FieldActor *record = Object_GetById(20);
+        struct FieldActor *record = Object_GetById(KALAY_CREWMAN);
 
         bits |= record->steeringFlags;
         record->steeringFlags = bits;
       }
       Engine_EventWait(20);
-      Actor_SetSpeed(20, 0x33333, 0x19999);
-      Actor_WalkToAndWait(20, 180, 0x30a);
-      Actor_WalkToAndWait(20, 180, 0x2bc);
-      Actor_SetPosition(20, PIXELS(246), PIXELS(512));
-      Actor_FaceDirection(20, FACING_EAST, 0);
+      Actor_SetSpeed(KALAY_CREWMAN, 0x33333, 0x19999);
+      Actor_WalkToAndWait(KALAY_CREWMAN, 180, 0x30a);
+      Actor_WalkToAndWait(KALAY_CREWMAN, 180, 0x2bc);
+      Actor_SetPosition(KALAY_CREWMAN, PIXELS(246), PIXELS(512));
+      Actor_FaceDirection(KALAY_CREWMAN, FACING_EAST, 0);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 60);
       Engine_EventEnd();
     }
@@ -920,7 +934,7 @@ static void TolbiShipDeck_CatchCrewmanFromWest(void) {
 }
 
 // The start both of those share: the camera pans to the door, which opens, and
-// actor 20 steps out and denies everything. Records the confrontation.
+// the crewman steps out and denies everything. Records the confrontation.
 static void TolbiShipDeck_ConfrontCrewman(void) {
   Camera_SetSpeed(0x19999, 0x3333);
   Camera_MoveTo(PIXELS(216), -1, PIXELS(824), 1);
@@ -929,18 +943,18 @@ static void TolbiShipDeck_ConfrontCrewman(void) {
   TolbiShipDeck_OpenSecondDoor();
   Map_CopyCellsTo(30, 108, 13, 108, 1, 2);
   Engine_EventWait(10);
-  Actor_SetPosition(20, PIXELS(216), PIXELS(800));
-  Actor_SetSpeed(20, 0x13333, 0x9999);
-  Actor_WalkToAndWait(20, 216, 0x32e);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, 20, 10);
-  Engine_ActorSetAnimationAndWait(20, 4);
-  Engine_ActorStartRepeatedMotion(20, 2);
-  Actor_ShowEmote(20, 0x100, 20);
-  Actor_FaceActor(20, ACTOR_PARTY_LEADER, 20);
-  Engine_ActorStartRepeatedMotion(20, 2);
+  Actor_SetPosition(KALAY_CREWMAN, PIXELS(216), PIXELS(800));
+  Actor_SetSpeed(KALAY_CREWMAN, 0x13333, 0x9999);
+  Actor_WalkToAndWait(KALAY_CREWMAN, 216, 0x32e);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, KALAY_CREWMAN, 10);
+  Engine_ActorSetAnimationAndWait(KALAY_CREWMAN, 4);
+  Engine_ActorStartRepeatedMotion(KALAY_CREWMAN, 2);
+  Actor_ShowEmote(KALAY_CREWMAN, 0x100, 20);
+  Actor_FaceActor(KALAY_CREWMAN, ACTOR_PARTY_LEADER, 20);
+  Engine_ActorStartRepeatedMotion(KALAY_CREWMAN, 2);
   Engine_EventSetMessage(MsgTolbiShipDidntDoAnything);
-  Event_ShowMessageAndWait(20, 0, 20);
-  Engine_ActorShowEmote(20, 0x102, 0);
+  Event_ShowMessageAndWait(KALAY_CREWMAN, 0, 20);
+  Engine_ActorShowEmote(KALAY_CREWMAN, 0x102, 0);
   GameFlag_Set(FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED);
 }
 
@@ -1154,7 +1168,7 @@ static void TolbiShipDeck_SetUpUnderSail(void) {
   Engine_EventEnd();
 }
 
-// After the Kraken: as under sail, with actor 22 at the helm.
+// After the Kraken: as under sail, with Sean at the helm.
 static void TolbiShipDeck_SetUpAfterKraken(void) {
   struct FieldActor *record;
 
@@ -1243,7 +1257,7 @@ static void TolbiShipDeck_DepartFromKalay(void) {
   TolbiShipDeck_AnnouncePreparationsReady(23, 21);
 }
 
-// Entrance 10 with the party aboard: actor 20 brings word to actor 23.
+// Entrance 10 with the party aboard: Kaja brings word to actor 23.
 static void TolbiShipDeck_DepartWithParty(void) {
   struct FieldActor *record;
 
@@ -1703,45 +1717,45 @@ static void TolbiShipDeck_ThankForKraken(void) {
   Engine_EventBegin();
   Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScript);
   Engine_TaskWait(1);
-  Actor_SetPosition(20, PIXELS(182), PIXELS(618));
+  Actor_SetPosition(SEA_KAJA, PIXELS(182), PIXELS(618));
   Actor_SetPosition(23, PIXELS(238), PIXELS(626));
-  Actor_SetPosition(22, PIXELS(268), PIXELS(678));
-  record = Object_GetById(22);
+  Actor_SetPosition(SEA_SEAN, PIXELS(268), PIXELS(678));
+  record = Object_GetById(SEA_SEAN);
   record->facing = 0;
-  Actor_SetActionScript(22, gTolbiShipDeck_LeadActionsC);
+  Actor_SetActionScript(SEA_SEAN, gTolbiShipDeck_LeadActionsC);
   {
-    struct FieldActor *record = Object_GetById(21);
+    struct FieldActor *record = Object_GetById(SEA_OURANOS);
     record->collisionFlags = 128 | record->collisionFlags;
   }
-  Actor_SetSpeed(21, 0xcccc, 0x6666);
-  Actor_SetActionScript(21, gTolbiShipDeck_LeadActionsB);
+  Actor_SetSpeed(SEA_OURANOS, 0xcccc, 0x6666);
+  Actor_SetActionScript(SEA_OURANOS, gTolbiShipDeck_LeadActionsB);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(20);
-  Actor_SetSpeed(20, 0x19999, 0xcccc);
-  Actor_WalkToAndWait(20, 182, 0x224);
-  TolbiShipDeck_Turn(20, FACING_EAST);
+  Actor_SetSpeed(SEA_KAJA, 0x19999, 0xcccc);
+  Actor_WalkToAndWait(SEA_KAJA, 182, 0x224);
+  TolbiShipDeck_Turn(SEA_KAJA, FACING_EAST);
   TolbiShipDeck_Turn(0, FACING_WEST);
-  Engine_ActorRunRepeatedMotion(20, 1);
+  Engine_ActorRunRepeatedMotion(SEA_KAJA, 1);
   Engine_EventSetMessage(MsgTolbiShipThankIsaacDidGoodAgainst);
-  TolbiShipDeck_Say(20);
+  TolbiShipDeck_Say(SEA_KAJA);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
   Engine_EventWait(40);
-  Actor_FaceDirection(20, 0x5000, 20);
-  Actor_ShowEmote(20, 0x105, 60);
-  Event_ShowMessageAndWait(20, 0, 40);
-  TolbiShipDeck_Turn(20, FACING_EAST);
-  TolbiShipDeck_Say(20);
+  Actor_FaceDirection(SEA_KAJA, 0x5000, 20);
+  Actor_ShowEmote(SEA_KAJA, 0x105, 60);
+  Event_ShowMessageAndWait(SEA_KAJA, 0, 40);
+  TolbiShipDeck_Turn(SEA_KAJA, FACING_EAST);
+  TolbiShipDeck_Say(SEA_KAJA);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-  Engine_ActorSetAnimationAndWait(20, 3);
-  Actor_WalkToAndWait(20, 182, 0x258);
-  Actor_WalkToAndWait(20, 216, 0x258);
-  TolbiShipDeck_Turn(20, FACING_NORTH);
+  Engine_ActorSetAnimationAndWait(SEA_KAJA, 3);
+  Actor_WalkToAndWait(SEA_KAJA, 182, 0x258);
+  Actor_WalkToAndWait(SEA_KAJA, 216, 0x258);
+  TolbiShipDeck_Turn(SEA_KAJA, FACING_NORTH);
   TolbiShipDeck_OpenFirstDoor();
   Engine_EventWait(10);
-  Actor_WalkToAndWait(20, 216, 0x244);
-  Actor_SetPosition(20, 0, 0);
+  Actor_WalkToAndWait(SEA_KAJA, 216, 0x244);
+  Actor_SetPosition(SEA_KAJA, 0, 0);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   GameFlag_Set(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED);
   GameFlag_Clear(FLAG_TOLBI_SHIP_KRAKEN_ABOARD);
@@ -2372,7 +2386,7 @@ static void TolbiShipDeck_Turn(s32 a, s32 b) {
   Engine_ActorFaceDirection(a, b, 10);
 }
 
-// Entrance 19: the ship reaches Tolbi and the crew talk it over before actor 20
+// Entrance 19: the ship reaches Tolbi and the crew talk it over before Kaja
 // goes below.
 static void TolbiShipDeck_ArriveAtTolbi(void) {
   Engine_EventBegin();
@@ -2725,13 +2739,13 @@ const s32 gTolbiShipDeck_LeadActionsB[] = {
 const s32 gTolbiShipDeck_CrewActionsA[] = {
     SC_SET(SW_MOTION, 0), SC_SET(0x23, 0),
     SC_SET(0x24, 0),      SC_SET(0x27, 0),
-    SC_SET(0x17, 0),      SC_CALL(TolbiShipDeck_HoverAndDiveAtActor21),
+    SC_SET(0x17, 0),      SC_CALL(TolbiShipDeck_HoverAndDiveAtOuranos),
 };
 
 const s32 gTolbiShipDeck_CrewActionsB[] = {
     SC_SET(SW_MOTION, 0), SC_SET(0x23, 0),
     SC_SET(0x24, 0),      SC_SET(0x27, 0),
-    SC_SET(0x17, 0),      SC_CALL(TolbiShipDeck_HoverAndDiveAtActor22),
+    SC_SET(0x17, 0),      SC_CALL(TolbiShipDeck_HoverAndDiveAtSean),
 };
 
 const s32 gTolbiShipDeck_CrewActionsC[] = {
@@ -2768,12 +2782,12 @@ const s32 gTolbiShipDeck_SailorActions[] = {
 
 const s32 gTolbiShipDeck_DeckActionsB[] = {
     SC_SET(0x23, 0),
-    SC_CALL(TolbiShipDeck_LeapAtActor21),
+    SC_CALL(TolbiShipDeck_LeapAtOuranos),
 };
 
 const s32 gTolbiShipDeck_DeckActionsA[] = {
     SC_SET(0x23, 0),
-    SC_CALL(TolbiShipDeck_LeapAtActor22),
+    SC_CALL(TolbiShipDeck_LeapAtSean),
 };
 
 const s32 gTolbiShipDeck_DeckActionsC[] = {
@@ -2877,7 +2891,7 @@ const struct ScenePlacement gTolbiShipDeckPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-const struct ScenePlacement gTolbiShipDeckPlacementsFlag911[] = {
+const struct ScenePlacement gTolbiShipDeckPlacementsWaiting[] = {
     { 0xe1, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(132), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
     { 0xe1, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2921,7 +2935,7 @@ const struct ScenePlacement gTolbiShipDeckPlacementsFlag911[] = {
     { SCENE_TABLE_END },
 };
 
-const struct ScenePlacement gTolbiShipDeckPlacementsFlag927[] = {
+const struct ScenePlacement gTolbiShipDeckPlacementsRowing[] = {
     { 0xe1, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(216), 0, PIXELS(657), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
     { 0xe1, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2949,7 +2963,7 @@ const struct ScenePlacement gTolbiShipDeckPlacementsFlag927[] = {
     { SCENE_TABLE_END },
 };
 
-const struct ScenePlacement gTolbiShipDeckPlacementsFlag928[] = {
+const struct ScenePlacement gTolbiShipDeckPlacementsAtSea[] = {
     { 0xe1, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(132), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
     { 0xe1, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3067,7 +3081,7 @@ const struct ScenePlacement gTolbiShipDeck_CrewScriptE[] = {
     { SCENE_TABLE_END },
 };
 
-const struct ScenePlacement gTolbiShipDeckPlacementsFlag93e[] = {
+const struct ScenePlacement gTolbiShipDeckPlacementsArrived[] = {
     { 0xe1, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(132), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
     { 0xe1, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3168,7 +3182,7 @@ const struct SceneEvent gTolbiShipDeckEvents[] = {
     { SCENE_EVENTS_END },
 };
 
-const struct SceneEvent gTolbiShipDeckEventsFlag928[] = {
+const struct SceneEvent gTolbiShipDeckEventsAtSea[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
 #if !TBS_PATCH_2
     { TOUCH_WALKING_INTO(FACING_WEST), 2, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
@@ -3185,7 +3199,7 @@ const struct SceneEvent gTolbiShipDeckEventsFlag928[] = {
     { SCENE_EVENTS_END },
 };
 
-const struct SceneEvent gTolbiShipDeckEventsFlag93e[] = {
+const struct SceneEvent gTolbiShipDeckEventsArrived[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
 #if !TBS_PATCH_2
     { TOUCH_WALKING_INTO(FACING_WEST), 2, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
@@ -3203,7 +3217,7 @@ const struct SceneEvent gTolbiShipDeckEventsFlag93e[] = {
     { SCENE_EVENTS_END },
 };
 
-const struct SceneEvent gTolbiShipDeckEventsFlag8a0[] = {
+const struct SceneEvent gTolbiShipDeckEventsAtIsland[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
 #if !TBS_PATCH_2
     { TOUCH_WALKING_INTO(FACING_WEST), 2, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },

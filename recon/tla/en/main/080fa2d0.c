@@ -1,7 +1,7 @@
 // First draft of Func_080fa2d0: uses the selected item from the owner in pane
 // 0 on the member in pane 1, the twin of ☀️'s ItemMenu_Use
 // (games/tbs/src/menu/menu.c) in its TBS_PATCH_1 form. On failure plays sound
-// 114, shows why in the info window (Func_080f8ce8) and returns -1; otherwise
+// 114, shows why in the info window (InventoryMenu_ShowModalMessage) and returns -1; otherwise
 // plays the item's animation (Func_08100d40), recalculates both members and
 // returns 1. Near miss, differ 2 of 67, instruction order only: the native
 // loads selectedItems[0] before it starts the 0x1ff mask (ldrh r3; movs r0,
@@ -30,7 +30,7 @@ s32 Func_08100738(s32 slot, s32 owner, s32 target);
 void Func_08100d40(s32 item);
 void Audio_PlayCue(s32 cue);
 void RenderOutput_ClearListFar(void *window);
-void Func_080f8ce8(s32 message, s32 x, s32 y);
+void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y);
 void UnitCalcFar(s32 unit);
 
 s32 Func_080fa2d0(void) {
@@ -45,7 +45,7 @@ s32 Func_080fa2d0(void) {
   if (result == -1) {
     Audio_PlayCue(114);
     RenderOutput_ClearListFar(menu->infoWindow);
-    Func_080f8ce8(menu->messageOffset + (s32)MsgItemUseResult, result, result);
+    InventoryMenu_ShowModalMessage(menu->messageOffset + (s32)MsgItemUseResult, result, result);
     menu->completionFlag = 1;
     return result;
   }

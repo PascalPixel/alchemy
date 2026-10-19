@@ -3642,12 +3642,6 @@ Func_080eabd0:
 	.thumb_func
 Func_080cdc74:
 	.incbin "baserom.gba", 0x000f3ea8, 0x00000074
-	.section .rom.000f3f8c, "ax"
-	.global Func_080d3940
-	.type Func_080d3940, %function
-	.thumb_func
-Func_080d3940:
-	.incbin "baserom.gba", 0x000f3f8c, 0x00000084
 	.section .rom.000f4010, "ax"
 	.global Func_080d3a10
 	.type Func_080d3a10, %function
@@ -3656,19 +3650,6 @@ Func_080d3a10:
 	.global Func_080eb01c
 Func_080eb01c:
 	.incbin "baserom.gba", 0x000f4010, 0x0000027c
-	.section .rom.000f43c4, "ax"
-	.balign 4
-	.global Func_080eb3d0
-	.type Func_080eb3d0, %function
-	.thumb_func
-Func_080eb3d0:
-	.incbin "baserom.gba", 0x000f43c4, 0x000000d0
-	.section .rom.000f4588, "ax"
-	.global Func_080eb594
-	.type Func_080eb594, %function
-	.thumb_func
-Func_080eb594:
-	.incbin "baserom.gba", 0x000f4588, 0x0000010c
 	.section .rom.000f4694, "ax"
 	.global Func_080eb6a0
 	.type Func_080eb6a0, %function
@@ -3700,7 +3681,15 @@ EffectSlot_Initialize:
 	.section .rom.000f51c4, "ax"
 	.incbin "baserom.gba", 0x000f51c4, 0x000000c8
 	.section .rom.000f52ac, "ax"
-	.incbin "baserom.gba", 0x000f52ac, 0x000014d0
+	.incbin "baserom.gba", 0x000f52ac, 0x00000cbc
+	.section .rom.000f6024, "ax"
+	.global Func_080ed030
+	.type Func_080ed030, %function
+	.thumb_func
+Func_080ed030:
+	.incbin "baserom.gba", 0x000f6024, 0x00000070
+	.section .rom.000f6298, "ax"
+	.incbin "baserom.gba", 0x000f6298, 0x000004e4
 	.section .rom.000f8810, "ax"
 	.incbin "baserom.gba", 0x000f8810, 0x00000008
 	.section .rom.000fc978, "ax"
@@ -3764,14 +3753,8 @@ Func_080f89a4:
 	.thumb_func
 Func_080f8ab4:
 	.incbin "baserom.gba", 0x000feaa8, 0x00000108
-	.section .rom.000fecda, "ax"
-	.incbin "baserom.gba", 0x000fecda, 0x00000002
-	.section .rom.000fecdc, "ax"
-	.global Func_080f8ce8
-	.type Func_080f8ce8, %function
-	.thumb_func
-Func_080f8ce8:
-	.incbin "baserom.gba", 0x000fecdc, 0x00000258
+	.section .rom.000fedfc, "ax"
+	.incbin "baserom.gba", 0x000fedfc, 0x00000138
 	.section .rom.000fef90, "ax"
 	.incbin "baserom.gba", 0x000fef90, 0x0000016c
 	.section .rom.000ff2d0, "ax"

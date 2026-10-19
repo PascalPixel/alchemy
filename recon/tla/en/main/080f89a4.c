@@ -5,6 +5,8 @@
 // height is 114.5 less half the row, in 16.16. Near miss, differ 2 of 77,
 // instruction order only: the native copies &scale.y's base (mov r2, r8)
 // before the first scale load; here the load comes first.
+// 2026-10-19: the scale through a local pointer, pinned or behind a barrier, is
+// 31 to 47; four minutes of permuter found nothing.
 #include "types.h"
 #include "ram_buffer.h"
 #include "animspr.h"

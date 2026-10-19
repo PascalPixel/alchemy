@@ -72,3 +72,29 @@ void BattleFx_DrawHalfCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
     }
   }
 }
+
+// Draws a circle of the given radius round (cx, cy) on the half canvas, by
+// the midpoint method: each step plots the eight symmetric points.
+void BattleFx_DrawHalfCanvasCircle(s32 cx, s32 cy, s32 radius, s32 color) {
+  s32 x = radius;
+  s32 y = 0;
+
+  while (x >= y) {
+    BattleFx_PlotHalfCanvasPixel(cx + x, cy + y, color);
+    BattleFx_PlotHalfCanvasPixel(cx + x, cy - y, color);
+    BattleFx_PlotHalfCanvasPixel(cx - x, cy + y, color);
+    BattleFx_PlotHalfCanvasPixel(cx - x, cy - y, color);
+    BattleFx_PlotHalfCanvasPixel(cx + y, cy + x, color);
+    BattleFx_PlotHalfCanvasPixel(cx + y, cy - x, color);
+    BattleFx_PlotHalfCanvasPixel(cx - y, cy + x, color);
+    BattleFx_PlotHalfCanvasPixel(cx - y, cy - x, color);
+    radius = radius - y * 2 + 1;
+    if (radius < 0) {
+      s32 next = x - 1;
+
+      radius += next * 2;
+      x = next;
+    }
+    y++;
+  }
+}

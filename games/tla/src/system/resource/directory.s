@@ -45,8 +45,8 @@ Resource_DirectoryTable:
 	resource , Title_NintendoLogo
 	resource , Title_CamelotLogo
 	resource LogoOnBlack, Title_LogoOnBlackPicture
-	resource , Resource_Data023
-	resource , Resource_Data024
+	resource Data023, Resource_Data023
+	resource Data024, Resource_Data024
 	resource IntroTilesB, Resource_Data025
 	resource , Ui_Headings
 	resource , Battle_PurpleMoonBackdrop

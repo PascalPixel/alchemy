@@ -43,7 +43,7 @@ Func_080fa2d0:
 	adds r2, r6, #0
 	adds r0, r0, r3
 	adds r1, r6, #0
-	bl Func_080f8ce8
+	bl InventoryMenu_ShowModalMessage
 	movs r3, #128
 	lsls r3, r3, #2
 	adds r3, #30

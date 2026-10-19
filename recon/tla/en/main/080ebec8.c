@@ -3,6 +3,11 @@
 // reload in r3 between the unit two halves. A one-pass block on the speed store
 // orders the pair but gives the unit r3 (differ 12); reading the object first
 // swaps r2 and r3 and disturbs the zero kept in r8 (differ 30).
+// 2026-10-19: an empty volatile asm after the speed store, or a barrier on
+// unit, is 8 to 12; unit pinned to r2 with a barrier stays 4 (the 0x10000 is
+// hoisted above the asm); unit split by hand (128, then << 9) with the object
+// read between barriers orders the rows but shuffles registers (22 to 30);
+// permuter: nothing.
 #include "types.h"
 #include "effect_slot.h"
 #include "field_sprite.h"

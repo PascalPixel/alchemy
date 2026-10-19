@@ -3,6 +3,9 @@
 // 56 (adds r1, r1, r3; ldr r3, [pc]; subs r1, #56); here the subtraction comes
 // first. The mask belongs to the bit-field store, so no source value can carry
 // a barrier; splitting the sum from the subtraction changes nothing.
+// 2026-10-19: the mask as an explicit 0x1ff local behind a volatile barrier is
+// built by split constants instead of loaded (46); four minutes of permuter
+// found nothing.
 #include "types.h"
 #include "ram_buffer.h"
 #include "render_input.h"

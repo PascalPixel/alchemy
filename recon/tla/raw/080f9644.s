@@ -222,7 +222,7 @@ Func_080f9644:
 	adds r2, r5, #0
 	adds r0, r0, r3
 	movs r1, #0
-	bl Func_080f8ce8
+	bl InventoryMenu_ShowModalMessage
 	mov r3, r9
 	ldr r2, [r3, #20]
 	movs r5, #226
@@ -361,7 +361,7 @@ Func_080f9644:
 	movs r1, #0
 	adds r0, r0, r3
 	adds r2, r5, #0
-	bl Func_080f8ce8
+	bl InventoryMenu_ShowModalMessage
 	mov r3, r9
 	ldr r2, [r3, #20]
 	movs r3, #13
@@ -598,7 +598,7 @@ Func_080f9644:
 	movs r2, #13
 	ldr r0, .L_080f9e58
 	movs r1, #15
-	bl Func_080f8ce8
+	bl InventoryMenu_ShowModalMessage
 	movs r2, #128
 	lsls r2, r2, #2
 	adds r2, #30
@@ -867,7 +867,7 @@ Func_080f9644:
 .L_080f9d7c:
 	movs r1, #15
 	movs r2, #14
-	bl Func_080f8ce8
+	bl InventoryMenu_ShowModalMessage
 	b .L_080fa0a6
 .L_080f9d86:
 	ldrb r3, [r7]
@@ -882,7 +882,7 @@ Func_080f9644:
 	movs r2, #14
 	adds r0, r5, #0
 	movs r1, #15
-	bl Func_080f8ce8
+	bl InventoryMenu_ShowModalMessage
 	movs r3, #182
 	lsls r3, r3, #1
 	add r3, r9
@@ -903,7 +903,7 @@ Func_080f9644:
 	adds r0, r5, #7
 	movs r1, #14
 	movs r2, #14
-	bl Func_080f8ce8
+	bl InventoryMenu_ShowModalMessage
 	b .L_080fa0a6
 .L_080f9dd6:
 	movs r3, #0
@@ -1221,7 +1221,7 @@ Func_080f9644:
 	movs r2, #14
 	adds r0, r6, #0
 	movs r1, #15
-	bl Func_080f8ce8
+	bl InventoryMenu_ShowModalMessage
 	ldrh r0, [r5]
 	bl Item_Get
 	ldrb r2, [r0, #3]
@@ -1238,13 +1238,13 @@ Func_080f9644:
 	movs r1, #14
 .L_080fa088:
 	movs r2, #14
-	bl Func_080f8ce8
+	bl InventoryMenu_ShowModalMessage
 	b .L_080fa09a
 .L_080fa090:
 	ldr r0, .L_080fa2c4
 	movs r1, #15
 	movs r2, #14
-	bl Func_080f8ce8
+	bl InventoryMenu_ShowModalMessage
 .L_080fa09a:
 	mov r0, r8
 	bl MemFree
@@ -1286,7 +1286,7 @@ Func_080f9644:
 	movs r1, #0
 	ldr r0, .L_080fa2c8
 	adds r2, r5, #0
-	bl Func_080f8ce8
+	bl InventoryMenu_ShowModalMessage
 	movs r1, #1
 	mov r8, r1
 	b .L_080fa280
@@ -1329,7 +1329,7 @@ Func_080f9644:
 	movs r2, #8
 	adds r0, r5, #0
 	movs r1, #15
-	bl Func_080f8ce8
+	bl InventoryMenu_ShowModalMessage
 	movs r3, #182
 	lsls r3, r3, #1
 	add r3, r9
@@ -1350,7 +1350,7 @@ Func_080f9644:
 	adds r0, r5, #7
 	movs r1, #14
 	movs r2, #8
-	bl Func_080f8ce8
+	bl InventoryMenu_ShowModalMessage
 	b .L_080fa276
 .L_080fa18a:
 	movs r6, #128
@@ -1418,7 +1418,7 @@ Func_080f9644:
 	movs r2, #8
 	ldr r0, .L_080fa2cc
 	movs r1, #14
-	bl Func_080f8ce8
+	bl InventoryMenu_ShowModalMessage
 	bl Event_ClearInvalidPackedValuesFar
 	b .L_080fa276
 .L_080fa228:

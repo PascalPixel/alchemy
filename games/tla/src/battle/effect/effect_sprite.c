@@ -1,9 +1,3 @@
-// Near miss, differ 2 of 57 (2026-10-15). The shape is (attributes >> 30) |
-// (attributes >> 12), as the listing shifts. One pair: the listing loads the
-// size table's address before it starts the 15 mask; this masks first. A
-// table local, and single and paired barriers, measured no better. Rewritten
-// on effect_sprite.h's EffectSprite, whose OAM entry is common's RenderOam
-// (same differ).
 #include "types.h"
 #include "iwram_call.h"
 #include "effect_sprite.h"
@@ -27,7 +21,19 @@ void Func_080eaf98(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
   sprite->depth = 255;
   sprite->pivotX = pivotX;
   sprite->pivotY = pivotY;
-  shape = ((attributes >> 30) | (attributes >> 12)) & 15;
+  shape = (attributes >> 30) | (attributes >> 12);
+  {
+    /* FAKEMATCH(register): the 15 mask pinned to r2, where the native builds
+     * it, so the size table's address loads between the shape's orrs and the
+     * mask; as shape = (...) & 15, 2 of 57 instructions differ in tla-en. */
+    register u32 mask asm("r2") = 15;
+
+    /* FAKEMATCH(barrier): the empty asm of the pin above, reading the table's
+     * address and the shape; as shape = (...) & 15, 2 of 57 instructions
+     * differ in tla-en. */
+    asm("" : "+l"(mask) : "l"(gData_080f3bc4), "l"(shape));
+    shape &= mask;
+  }
   sprite->width = gData_080f3bc4[shape][0];
   sprite->height = gData_080f3bc4[shape][1];
   words = (u32 *)&sprite->oam;

@@ -44,7 +44,15 @@ Func_080c87a8:
 	.global Func_080c87b0
 	.thumb_func
 Func_080c87b0:
+.ifdef TLA_EDITION_ES
+	overlay_veneer Func_080eaf98
+.else
+.ifdef TLA_EDITION_IT
+	overlay_veneer Func_080eaf98
+.else
 	overlay_veneer Func_080d3940
+.endif
+.endif
 	.global Func_080c87b8
 	.thumb_func
 Func_080c87b8:

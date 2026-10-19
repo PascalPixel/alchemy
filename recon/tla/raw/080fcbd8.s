@@ -147,7 +147,7 @@ Func_080fcbd8:
 	ldr r0, .L_080fcd8c
 	mov r1, r8
 	mov r2, r8
-	bl Func_080f8ce8
+	bl InventoryMenu_ShowModalMessage
 	ldr r0, [r7, #48]
 	bl RenderOutput_RedrawSavedRectFar
 	b .L_080fcd26
@@ -160,7 +160,7 @@ Func_080fcbd8:
 	ldr r0, .L_080fcd90
 	mov r1, r8
 	mov r2, r8
-	bl Func_080f8ce8
+	bl InventoryMenu_ShowModalMessage
 	ldr r0, [r7, #48]
 	bl RenderOutput_RedrawSavedRectFar
 .L_080fcd26:
@@ -320,7 +320,7 @@ Func_080fcbd8:
 	movs r1, #0
 	adds r0, r0, r3
 	mov r2, r9
-	bl Func_080f8ce8
+	bl InventoryMenu_ShowModalMessage
 	b .L_080fce8a
 .L_080fce66:
 	movs r0, #114
@@ -337,7 +337,7 @@ Func_080fcbd8:
 	mov r1, r11
 	adds r0, r0, r3
 	mov r2, r11
-	bl Func_080f8ce8
+	bl InventoryMenu_ShowModalMessage
 .L_080fce8a:
 	movs r3, #1
 	negs r3, r3

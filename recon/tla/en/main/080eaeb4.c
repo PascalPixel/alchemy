@@ -2,6 +2,7 @@
 // shifted at each call, which gives the listing's r2 and r7. Left: in both
 // position copies the listing starts the call's 0x100000 or 0x200000 between
 // the stores and the next loads; this loads and stores the three words first.
+// 2026-10-19: three minutes of permuter: best 18.
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"

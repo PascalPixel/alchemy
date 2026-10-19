@@ -5,6 +5,7 @@
 // byte as in/out orders those rows, but flips the tie in the multiply block and
 // three later constants' registers (differ 30); a barrier after the load moves
 // sub sp ahead of it (differ 2).
+// 2026-10-19: three minutes of permuter found nothing.
 #include "types.h"
 #include "effect_slot.h"
 #include "iwram_call.h"

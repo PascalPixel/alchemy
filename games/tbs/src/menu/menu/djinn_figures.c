@@ -200,8 +200,8 @@ s32 FourObjectMotion_ReplaceSlot(s32 index, s32 resourceKind, s32 value) {
 FOUR_OBJECT_MOTION_DEFINE_RELEASE(FourObjectMotion_ClearSlotsAndScheduleAlt,
                                   FourObjectMotion_UpdateBottomRow)
 
-// Selects animation 1 for each party figure that exists.
-void Menu_EnableAllItemObjects(void) {
+// Starts the walking animation (1) of each party figure. Nothing calls it.
+UNUSED void Menu_StartPartyFiguresWalking(void) {
   struct InventoryMenuState *state = gMenuWork;
   s32 index;
 

@@ -108,9 +108,9 @@ void ItemMenu_RefreshOwner(s32 ownerId, s32 mode);
 void InventoryMenu_NoOp(void);
 void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target);
 s32 Inventory_RemoveFirstUnflagged(s32 owner);
-s32 ItemMenu_CmdCursorX(s32 column, s32 row);
-s32 ItemMenu_CmdCursorY(s32 column, s32 row);
-s32 ItemMenu_ChooseCmd(void);
+s32 ItemMenu_CommandCursorX(s32 column, s32 row);
+s32 ItemMenu_CommandCursorY(s32 column, s32 row);
+s32 ItemMenu_ChooseCommand(void);
 void ItemMenu_BuildCmd(s8 *commandStates);
 void ItemMenu_DrawCmd(const s8 *commandStates, struct UiWindow *window);
 s32 Item_ClassifyUseMode(s32 owner, s32 itemId);
@@ -231,7 +231,7 @@ void Item_PlayUseAnimation(u32 item);
 void Ability_PlayUseAnimation(s32 action);
 
 s32 Menu_ReservedStatusZero(void);
-s32 Menu_GetModuloOfSum(s32 arg0, s32 arg1);
+s32 Menu_WrapIndex(s32 value, s32 modulus);
 s32 Menu_SetFirstObjectRowCoordinates(s32 arg0);
 s32 ItemMenu_Run(void);
 s32 DjinnMenu_RunScreen(void);
@@ -246,19 +246,20 @@ typedef s32 MenuBackdropResult;
 MenuBackdropResult Menu_OpenBackdropScreen(void);
 s32 OwnerAction_DiffSlots(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
                           u16 *out, s32 *firstCount, s32 *secondCount);
-s32 Menu_ComputeEntryValues(void *table);
+s32 DjinnMenu_BuildLists(void *table);
 #ifdef UBFIX
 void DjinnMenu_DrawElementList(struct DjinnListTable *table);
 #endif
-s32 Menu_DrawAtWindowOffset(const struct UiWindow *win, s32 arg1, s32 arg2,
-                            s32 arg3, s32 arg4, s32 arg5);
+s32 UiWindow_SetInteriorPaletteBitRect(const struct UiWindow *window, s32 x,
+                                       s32 y, s32 width, s32 height,
+                                       s32 palette);
 void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette);
-void UiWindow_ApplyRectAtObjectOrigin(void *obj, s32 x, s32 y, s32 width,
-                                      s32 height, s32 palette);
+void UiWindow_SetInteriorRectPalette(void *window, s32 x, s32 y, s32 width,
+                                     s32 height, s32 palette);
 s32 DjinnMenu_ShowHelp(void);
 s32 DjinnMenu_SelectDjinn(s32 mode);
 s32 Djinn_ListOwnerEntries(u16 *out, s32 owner, s32 element);
-s32 Menu_RunPairedEntryAction(s32 mode, s32 param);
+s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex);
 s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y, s32 owner,
                               s32 give, s32 take, s32 mode, s32 page, s32 side);
 
@@ -269,7 +270,7 @@ void FourObjectMotion_InitializeBottomRow(s32 unused0, s32 unused1);
 s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative);
 s32 FourObjectMotion_SetSlotPhase(s32 index, s32 phase);
 s32 FourObjectMotion_ReplaceSlot(s32 index, s32 kind, s32 value);
-void Menu_EnableAllItemObjects(void);
+void Menu_StartPartyFiguresWalking(void);
 
 s32 OwnerAction_RunCompareLoop(u32 mode);
 s32 DjinnMenu_ShowOwnerStatus(void);

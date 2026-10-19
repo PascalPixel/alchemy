@@ -294,7 +294,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
     // (BattleFx_HasTriggerFar) closes the menu and is returned to the caller;
     // other usable items are used here.
     case ITEM_STEP_COMMAND:
-      command = ItemMenu_ChooseCmd();
+      command = ItemMenu_ChooseCommand();
       if (command == -1) {
         state = ITEM_STEP_ITEM;
         menu->completionFlag = 1;
@@ -1597,13 +1597,13 @@ s32 Inventory_RemoveFirstUnflagged(s32 ownerId) {
 
 // The x and y of the item command cursor on column and row of the command grid
 // (three commands to a row).
-s32 ItemMenu_CmdCursorX(s32 column, s32 row) {
+s32 ItemMenu_CommandCursorX(s32 column, s32 row) {
   if (column > 2 || row > 2 || column < 0 || row < 0)
     return 0;
   return gItemMenu_CommandColumnXTable[row * 3 + column];
 }
 
-s32 ItemMenu_CmdCursorY(s32 column, s32 row) {
+s32 ItemMenu_CommandCursorY(s32 column, s32 row) {
   s32 y;
 
   (void)column;
@@ -1626,7 +1626,7 @@ s32 ItemMenu_CmdCursorY(s32 column, s32 row) {
 // and Details, and without it on the bottom row, where Give also shows who can
 // equip it. The cursor starts on the command chosen last, or on the first
 // available one. Returns the command chosen, or -1 when the player backs out.
-s32 ItemMenu_ChooseCmd(void) {
+s32 ItemMenu_ChooseCommand(void) {
   struct InventoryMenuState *menu;
   s8 commandStorage[6];
   u16 *redrawFlag;
@@ -1695,8 +1695,8 @@ s32 ItemMenu_ChooseCmd(void) {
     commandIndex = row * 3 + column;
   }
 #if TBS_PATCH_1
-  cursorX = ItemMenu_CmdCursorX(column, row);
-  cursorY = ItemMenu_CmdCursorY(column, row);
+  cursorX = ItemMenu_CommandCursorX(column, row);
+  cursorY = ItemMenu_CommandCursorY(column, row);
   UiMenu_SlideCursor(cursorX, cursorY);
 #else
   UiMenu_SlideCursor(column * 40 + 86, row * 8 + 30);
@@ -1730,8 +1730,8 @@ s32 ItemMenu_ChooseCmd(void) {
       }
     }
 #if TBS_PATCH_1
-    cursorX = ItemMenu_CmdCursorX(column, row);
-    cursorY = ItemMenu_CmdCursorY(column, row);
+    cursorX = ItemMenu_CommandCursorX(column, row);
+    cursorY = ItemMenu_CommandCursorY(column, row);
     UiMenu_PositionCursor(cursorX, cursorY);
 #else
     UiMenu_PositionCursor(column * 40 + 86, row * 8 + 30);

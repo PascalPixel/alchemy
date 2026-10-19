@@ -41,8 +41,9 @@
 #define DJINN_PREVIEW_PP_X 56
 #endif
 
-// Returns (value + modulus) % modulus for the menu cursor wrap.
-s32 Menu_GetModuloOfSum(s32 value, s32 modulus) {
+// Wraps a cursor index that has stepped one past either end of modulus
+// entries: -1 becomes modulus - 1 and modulus becomes 0.
+s32 Menu_WrapIndex(s32 value, s32 modulus) {
   return (value + modulus) % modulus;
 }
 
@@ -305,7 +306,7 @@ s32 DjinnMenu_RunScreen(void) {
       UnitCalcFar(menu->shownOwner[1]);
       menu->cursor->active = ICON_HIDDEN;
       RenderOutput_ClearListFar(menu->listWindow);
-      Menu_ComputeEntryValues(menu->backdrop);
+      DjinnMenu_BuildLists(menu->backdrop);
       DJINN_RESELECT_PAIR_ENTRY(menu, listIndex);
       menu->cursor->active = ICON_SHOWN;
       step = DJINN_STEP_HANDLE_RESULT;
@@ -344,7 +345,7 @@ s32 DjinnMenu_RunScreen(void) {
                                  menu->pairIndex[1], menu->shownOwner[0]);
       UnitCalcFar(menu->shownOwner[0]);
       UnitCalcFar(menu->shownOwner[1]);
-      Menu_ComputeEntryValues(menu->backdrop);
+      DjinnMenu_BuildLists(menu->backdrop);
       DJINN_RESELECT_PAIR_ENTRY(menu, listIndex);
       menu->cursor->active = ICON_SHOWN;
       step = DJINN_STEP_SELECT_DJINN;
@@ -531,8 +532,9 @@ s32 OwnerAction_DiffSlots(struct OwnerActionSlot *before,
   return actionCount;
 }
 
-// Rebuilds each owner's packed Djinn entries and its list count.
-s32 Menu_ComputeEntryValues(void *table) {
+// Rebuilds the Djinn lists in table: each owner's packed Djinn entries and
+// their count.
+s32 DjinnMenu_BuildLists(void *table) {
   struct DjinnMenuWork *menu;
   s32 ownerIndex;
   u16 (*entries)[DJINN_LIST_ROWS];
@@ -627,14 +629,17 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
   ui->menuBusy = 0;
 }
 
-// Changes the palette of a rectangle relative to the window's tile origin.
-s32 Menu_DrawAtWindowOffset(const struct UiWindow *win, s32 arg1, s32 arg2,
-                            s32 arg3, s32 arg4, s32 arg5) {
-  UiWindow_SetPaletteBitRectFar((win)->x + arg1 + 1, (win)->y + arg2 + 1, arg3,
-                                arg4, arg5);
+// Sets the palette of a rectangle of window's interior, (x, y) and its size in
+// tiles from the interior's corner, through UiWindow_SetPaletteBitRectFar.
+s32 UiWindow_SetInteriorPaletteBitRect(const struct UiWindow *window, s32 x,
+                                       s32 y, s32 width, s32 height,
+                                       s32 palette) {
+  UiWindow_SetPaletteBitRectFar(window->x + x + 1, window->y + y + 1, width,
+                                height, palette);
 }
 
-// Changes only the palette bits of each tile in the rectangle.
+// Moves each tile of a screen rectangle (in tiles, clipped to the screen) that
+// shows palette 15 to palette.
 void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
   struct UiRenderWork *render;
   u16 *tileCursor;
@@ -675,11 +680,12 @@ void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
   }
 }
 
-// Applies a screen rectangle at the supplied object's window origin.
-void UiWindow_ApplyRectAtObjectOrigin(void *obj, s32 x, s32 y, s32 width,
-                                      s32 height, s32 palette) {
-  UiWindow_SetRectPalette(((struct UiWindow *)obj)->x + x + 1,
-                          ((struct UiWindow *)obj)->y + y + 1, width, height,
+// UiWindow_SetRectPalette on a rectangle of window's interior, (x, y) and its
+// size in tiles from the interior's corner.
+void UiWindow_SetInteriorRectPalette(void *window, s32 x, s32 y, s32 width,
+                                     s32 height, s32 palette) {
+  UiWindow_SetRectPalette(((struct UiWindow *)window)->x + x + 1,
+                          ((struct UiWindow *)window)->y + y + 1, width, height,
                           palette);
 }
 
@@ -711,7 +717,7 @@ s32 DjinnMenu_ShowHelp(void) {
   message++;
   UiText_DrawCharacterAtOffsetFar(message, menu->helpWindow, 0, 16);
   UiWindow_SetRectPalette(1, 1, 11, 3, 6);
-  UiWindow_ApplyRectAtObjectOrigin((void *)menu->listWindow, 0, 0, 28, 10, 6);
+  UiWindow_SetInteriorRectPalette((void *)menu->listWindow, 0, 0, 28, 10, 6);
   list = UiWindow_CreateFar(0, 9, 8, 10, 6);
   helpWindow = UiWindow_CreateFar(8, 12, 22, 7, 2);
   statusWindow = UiWindow_CreateFar(8, 9, 22, 3, 2);
@@ -728,21 +734,21 @@ s32 DjinnMenu_ShowHelp(void) {
     UiText_DrawResourceFar(selection + MsgDjinnInfoTopic, statusWindow, 0, 0);
     channel = (struct UiChannelSlot *)UiText_OpenEntryMessageFar(
         helpWindow, selection + MsgDjinnInfoText);
-    Menu_DrawAtWindowOffset(list, 0, previous, 6, 1, 15);
-    Menu_DrawAtWindowOffset(list, 0, selection, 6, 1, 14);
+    UiWindow_SetInteriorPaletteBitRect(list, 0, previous, 6, 1, 15);
+    UiWindow_SetInteriorPaletteBitRect(list, 0, selection, 6, 1, 14);
     previous = selection;
     for (;;) {
       UiMenu_PositionCursor(-12, (list->y + selection) * 8 + 8);
       WaitFrames(1);
       if (gKeysRepeat & (KEY_RIGHT | KEY_DOWN)) {
         selection++;
-        selection = Menu_GetModuloOfSum(selection, 7);
+        selection = Menu_WrapIndex(selection, 7);
         AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         break;
       }
       if (gKeysRepeat & (KEY_LEFT | KEY_UP)) {
         selection--;
-        selection = Menu_GetModuloOfSum(selection, 7);
+        selection = Menu_WrapIndex(selection, 7);
         AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         break;
       } else if (gKeysPressed & KEY_START) {
@@ -756,7 +762,7 @@ s32 DjinnMenu_ShowHelp(void) {
       } else if (gKeysPressed & KEY_A) {
         if (UiWork_IsCompleteFar()) {
           selection++;
-          selection = Menu_GetModuloOfSum(selection, 7);
+          selection = Menu_WrapIndex(selection, 7);
           AudioCommand_PlayFar(SE_MENU_CONFIRM);
           break;
         }
@@ -845,7 +851,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     for (i = 0; i < menu->ownerCount; i++) {
       if (status[ownerColumn] == 4) {
         ownerColumn++;
-        ownerColumn = Menu_GetModuloOfSum(ownerColumn, menu->ownerCount);
+        ownerColumn = Menu_WrapIndex(ownerColumn, menu->ownerCount);
       }
     }
   } else {
@@ -870,10 +876,10 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     sourceCursor = menu->selection[0];
     fromX = (u16)((u32)sourceCursor % (u32)10);
     fromY = (u16)((u32)sourceCursor / (u32)10);
-    Menu_DrawAtWindowOffset(menu->listWindow, fromX * 7 + 1, fromY + 2,
-                            DJINN_CURSOR_WIDTH, 1, 14);
-    UiWindow_ApplyRectAtObjectOrigin(menu->listWindow, fromX * 7 + 1, 2,
-                                     DJINN_CURSOR_WIDTH, 7, 6);
+    UiWindow_SetInteriorPaletteBitRect(menu->listWindow, fromX * 7 + 1,
+                                       fromY + 2, DJINN_CURSOR_WIDTH, 1, 14);
+    UiWindow_SetInteriorRectPalette(menu->listWindow, fromX * 7 + 1, 2,
+                                    DJINN_CURSOR_WIDTH, 7, 6);
     for (n = 0; n < menu->ownerCount; n++) {
       if (n == menu->selectedColumn[0]) {
         if (menu->pairEntries[0] & DJINN_ENTRY_IS_SET)
@@ -1032,8 +1038,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
 #endif
       }
       if (!(columnFlags[ownerColumn] & 1))
-        Menu_DrawAtWindowOffset(menu->listWindow, ownerColumn * 7 + 1,
-                                djinnRow + 2, DJINN_CURSOR_WIDTH, 1, 14);
+        UiWindow_SetInteriorPaletteBitRect(menu->listWindow,
+                                           ownerColumn * 7 + 1, djinnRow + 2,
+                                           DJINN_CURSOR_WIDTH, 1, 14);
       ((struct UiWork *)gWindowWork[0])->dirty = 1;
     }
     if (columnFlags[ownerColumn] & 1)
@@ -1357,8 +1364,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         redraw = 1;
       } else {
         result = 10;
-        Menu_DrawAtWindowOffset(menu->listWindow, ownerColumn * 7 + 1,
-                                djinnRow + 2, DJINN_CURSOR_WIDTH, 1, 15);
+        UiWindow_SetInteriorPaletteBitRect(menu->listWindow,
+                                           ownerColumn * 7 + 1, djinnRow + 2,
+                                           DJINN_CURSOR_WIDTH, 1, 15);
         AudioCommand_PlayFar(SE_MENU_CONFIRM);
         break;
       }
@@ -1367,8 +1375,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       if (columnFlags[ownerColumn] & 4)
         continue;
-      Menu_DrawAtWindowOffset(menu->listWindow, ownerColumn * 7 + 1,
-                              djinnRow + 2, DJINN_CURSOR_WIDTH, 1, 15);
+      UiWindow_SetInteriorPaletteBitRect(menu->listWindow, ownerColumn * 7 + 1,
+                                         djinnRow + 2, DJINN_CURSOR_WIDTH, 1,
+                                         15);
       if (columnFlags[ownerColumn] & 4)
         continue;
       if (columnFlags[ownerColumn] & 1) {
@@ -1383,7 +1392,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       count = backdrop->list.counts[ownerColumn];
       if (count == 0)
         count = 1;
-      djinnRow = Menu_GetModuloOfSum(djinnRow, count);
+      djinnRow = Menu_WrapIndex(djinnRow, count);
       savedRow = djinnRow;
       redraw = 2;
       continue;
@@ -1392,13 +1401,14 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       if (columnFlags[ownerColumn] & 4)
         continue;
-      Menu_DrawAtWindowOffset(menu->listWindow, ownerColumn * 7 + 1,
-                              djinnRow + 2, DJINN_CURSOR_WIDTH, 1, 15);
+      UiWindow_SetInteriorPaletteBitRect(menu->listWindow, ownerColumn * 7 + 1,
+                                         djinnRow + 2, DJINN_CURSOR_WIDTH, 1,
+                                         15);
       djinnRow++;
       count = backdrop->list.counts[ownerColumn];
       if (count == 0)
         count = 1;
-      djinnRow = Menu_GetModuloOfSum(djinnRow, count);
+      djinnRow = Menu_WrapIndex(djinnRow, count);
       if ((columnFlags[ownerColumn] & 1) && !(columnFlags[ownerColumn] & 4)) {
         columnFlags[ownerColumn] &= ~1;
         djinnRow = 0;
@@ -1412,15 +1422,16 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     if (repeat & KEY_LEFT) {
       AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       if (!(columnFlags[ownerColumn] & 4))
-        Menu_DrawAtWindowOffset(menu->listWindow, ownerColumn * 7 + 1,
-                                djinnRow + 2, DJINN_CURSOR_WIDTH, 1, 15);
+        UiWindow_SetInteriorPaletteBitRect(menu->listWindow,
+                                           ownerColumn * 7 + 1, djinnRow + 2,
+                                           DJINN_CURSOR_WIDTH, 1, 15);
       ownerColumn--;
-      ownerColumn = Menu_GetModuloOfSum(ownerColumn, menu->ownerCount);
+      ownerColumn = Menu_WrapIndex(ownerColumn, menu->ownerCount);
       if (mode == 0) {
         for (i = 0; i < menu->ownerCount; i++) {
           if (columnFlags[ownerColumn] == 4) {
             ownerColumn--;
-            ownerColumn = Menu_GetModuloOfSum(ownerColumn, menu->ownerCount);
+            ownerColumn = Menu_WrapIndex(ownerColumn, menu->ownerCount);
           }
         }
       }
@@ -1428,22 +1439,23 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       count = backdrop->list.counts[ownerColumn];
       if (count == 0)
         count = 1;
-      djinnRow = Menu_GetModuloOfSum(djinnRow, count);
+      djinnRow = Menu_WrapIndex(djinnRow, count);
       redraw = 2;
       continue;
     }
     if (repeat & KEY_RIGHT) {
       AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       if (!(columnFlags[ownerColumn] & 4))
-        Menu_DrawAtWindowOffset(menu->listWindow, ownerColumn * 7 + 1,
-                                djinnRow + 2, DJINN_CURSOR_WIDTH, 1, 15);
+        UiWindow_SetInteriorPaletteBitRect(menu->listWindow,
+                                           ownerColumn * 7 + 1, djinnRow + 2,
+                                           DJINN_CURSOR_WIDTH, 1, 15);
       ownerColumn++;
-      ownerColumn = Menu_GetModuloOfSum(ownerColumn, menu->ownerCount);
+      ownerColumn = Menu_WrapIndex(ownerColumn, menu->ownerCount);
       if (mode == 0) {
         for (i = 0; i < menu->ownerCount; i++) {
           if (columnFlags[ownerColumn] == 4) {
             ownerColumn++;
-            ownerColumn = Menu_GetModuloOfSum(ownerColumn, menu->ownerCount);
+            ownerColumn = Menu_WrapIndex(ownerColumn, menu->ownerCount);
           }
         }
       }
@@ -1451,7 +1463,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       count = backdrop->list.counts[ownerColumn];
       if (count == 0)
         count = 1;
-      djinnRow = Menu_GetModuloOfSum(djinnRow, count);
+      djinnRow = Menu_WrapIndex(djinnRow, count);
       redraw = 2;
     }
   }
@@ -1507,13 +1519,11 @@ s32 Djinn_ListOwnerEntries(u16 *entriesOut, s32 ownerId, s32 element) {
 }
 
 // Draws both sides of the give or trade preview for the selected page.
-s32 Menu_RunPairedEntryAction(s32 mode, s32 pageIndex) {
-  s32 sp14;
+s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex) {
   struct DjinnMenuWork *menu;
 
   menu = gMenuWork;
   if (mode == DJINN_COMPARE_TRADE) {
-    sp14 = mode;
     DjinnMenu_DrawStatPreview(menu->secondWindow, 0, 0, menu->pairOwner[1], 1,
                               mode, 2, pageIndex, 1);
     DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->pairOwner[0], mode, 1,

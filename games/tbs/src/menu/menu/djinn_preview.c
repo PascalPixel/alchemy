@@ -359,7 +359,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
 
       switch (page) {
       default:
-        Menu_RunPairedEntryAction(mode, 0);
+        DjinnMenu_DrawPairPreview(mode, 0);
         break;
       case 1:
         if (mode == DJINN_COMPARE_GIVE) {
@@ -445,7 +445,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
 
     if (redraw != 0) {
       redraw = 0;
-      confirmationChoice = Menu_GetModuloOfSum(confirmationChoice, 2);
+      confirmationChoice = Menu_WrapIndex(confirmationChoice, 2);
     }
     UiMenu_PositionCursor(confirmationChoice * 56 + 80, 16);
 
@@ -489,7 +489,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
       if (page <= 1) {
         selectedPages[page]--;
         selectedPages[page] =
-            Menu_GetModuloOfSum(selectedPages[page], pageCounts[page]);
+            Menu_WrapIndex(selectedPages[page], pageCounts[page]);
         AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         redraw = 1;
@@ -501,7 +501,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
         selectedPages[page]++;
         redraw = 1;
         selectedPages[page] =
-            Menu_GetModuloOfSum(selectedPages[page], pageCounts[page]);
+            Menu_WrapIndex(selectedPages[page], pageCounts[page]);
       }
     }
     WaitFrames(1);
@@ -624,7 +624,7 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
     FourObjectMotion_SetSlotPosition(0, 32, 200, 0);
     if (redraw) {
       redraw = 0;
-      phase = Menu_GetModuloOfSum(phase, 2);
+      phase = Menu_WrapIndex(phase, 2);
     }
     if ((frame & 3) == 0) {
       if (frame & 4)
@@ -644,8 +644,7 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
     }
     if (repeatedKeys & KEY_LEFT) {
       selectedPages[side]--;
-      selectedPages[side] =
-          Menu_GetModuloOfSum(selectedPages[side], counts[side]);
+      selectedPages[side] = Menu_WrapIndex(selectedPages[side], counts[side]);
       AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       redraw = 1;
@@ -654,8 +653,7 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
       AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       redraw = 1;
-      selectedPages[side] =
-          Menu_GetModuloOfSum(selectedPages[side], counts[side]);
+      selectedPages[side] = Menu_WrapIndex(selectedPages[side], counts[side]);
     }
     WaitFrames(1);
   }

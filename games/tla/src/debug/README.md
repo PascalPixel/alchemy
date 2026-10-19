@@ -1,0 +1,28 @@
+# The Lost Age: debug
+
+This folder holds The Lost Age's debug rooms, scene overlays built like every
+other scene: ☀️'s [Debug rooms](../../../tbs/src/debug/README.md) has the
+rest. This page says only what differs here.
+
+## What differs from ☀️
+
+- **Five rooms, not three**: `rooms/`, `level/`, `psynergy_test/`,
+  `psynergy_test_2/` and `shop_test/`, each a folder with its entry table
+  (`entry.s`), its import table (`import.s`), its scene tables and its code.
+  `presets.tsv` and `stream.c` sit beside them.
+- **Compiler.** K2's options on top of ☀️'s (`CFLAGS_tla` in the
+  `Makefile`): `-mthumb-split-constants`, `-mthumb-call-via-lr` and
+  `-mtune=arm9tdmi`, without `-mthumb-interwork`.
+- **Layout.** A room's code is split into files by function, several still
+  named by their offset in the overlay (`level/s004c.c`). Each overlay is
+  linked by its own script under `recon/tla/raw/overlays`, not by a shared
+  `overlay.ld`.
+
+## Status
+
+Functions not yet matched are drafts under `recon/tla/en/overlays`, by
+overlay and address. `make progress` gives the counts.
+
+## Evidence and open questions
+
+- XXX: what the second Psynergy test room tests that the first does not.

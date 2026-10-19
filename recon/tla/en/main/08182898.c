@@ -1,4 +1,4 @@
-// Draft (tla-en): listing 225 instructions, draft 225, common 221, differ 8.
+// Draft (tla-en): listing 225 instructions, draft 225, common 223, differ 4.
 // Written from the listing; called only by Func_0818284c (f18284c.c), which
 // opens the canvas and sets the blend before it. ☀️ has no twin: its nearest
 // shapes are BattleFx_RunFlare (0.55) and BattleFx_RunPrism.
@@ -18,6 +18,13 @@
 // 2026-10-15 (lane N2): rewritten with the work struct and named constants;
 // the same 225 instructions and differ 8. alchemy permute, 8 minutes, two
 // jobs: nothing below differ 15.
+// 2026-10-19 (run 33): two tagged devices fix the prologue and the first
+// preheader: differ 8 to 4. Left: the second preheader (the native loads the
+// hoisted heights table, then the bubble pointer, then i's 0; an asm on
+// bubble holding r2 orders bubble and i but lets the hoisted load fall after
+// bubble's, and a heights local loaded before it moves the reload registers:
+// differ 4 and 6) and the spilled frame before i * 8 (a pinned frame behind
+// an asm: the whole allocation moves, differ 90).
 // Resource ids 0x190 (BattleFx_BlueBeamSheet) and 0xfd (Resource_Data0FD)
 // need their names in system/resource/directory.s when this is adopted.
 #include "battle_effect.h"
@@ -78,8 +85,7 @@ void BattleFx_EndCanvasLayer(void);
 // targets flash one by one, eight frames apart, each with the hit sound.
 void Func_08182898(struct BattleEffectArgument *effect) {
   void *canvas = Ram_HeapSlots->battleFxWork[1];
-  struct BattleEffectWork *work =
-      (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  struct BattleEffectWork *work;
   /* FAKEMATCH: frame local. The blitter pair, of which this effect uses the
    * first: as a two-word array it is one DImode pseudo, and its spill takes
    * sp+12 and the unused sp+16 the native frame has. */
@@ -89,7 +95,18 @@ void Func_08182898(struct BattleEffectArgument *effect) {
   struct EffectStep *bubble;
 
   // Each frame the transfer callback copies the canvas and clears it.
-  Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
+  {
+    /* FAKEMATCH(pin): the callback pinned to r0 behind an empty asm that
+     * holds r1, with work loaded after it, so the pool load comes before
+     * work's; as Scheduler_AddOrUpdateCallback(BattleFx_..., 0xc80) with work
+     * set at its declaration, 2 of 225 instructions differ in tla-en. */
+    register void (*callback)(void) __asm__("r0") =
+        BattleFx_ProcessPendingGraphicsTransfer;
+
+    __asm__("" : "+l"(callback) : : "r1");
+    work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+    Scheduler_AddOrUpdateCallback(callback, 0xc80);
+  }
   work->transferMode = 2;
   work->transferValue = 50;
   BattleFx_LoadBlitter(HEAP_SLOT_BLITTER,
@@ -106,6 +123,10 @@ void Func_08182898(struct BattleEffectArgument *effect) {
     if (frame == 0) {
       struct EffectStep *spawn = gData_02015000;
 
+      /* FAKEMATCH(barrier): an empty asm on spawn that holds r4, so the spawn
+       * pointer's pool load comes before i's 0; as the plain loop, 2 of 225
+       * instructions differ in tla-en. */
+      __asm__("" : "+l"(spawn) : : "r4");
       for (i = 0; i != BUBBLE_COUNT; i++) {
         spawn->x = (Random16() & 127) << 16;
         spawn->y = ((Random16() & 127) + 120) << 16;

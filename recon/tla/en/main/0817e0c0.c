@@ -1,4 +1,4 @@
-// Draft (tla-en): listing 601 instructions, draft 600, common 528, differ 145.
+// Draft (tla-en): listing 601 instructions, draft 600, common 530, differ 141.
 // The body of effect kinds 311, 314, 326, 339, 433 and 457 (variant_j.c's
 // BattleFx_RunBoneCharge to BattleFx_RunLivingArmor pass modes 4, 1, 2, 3, 4 and 5). Written
 // from the listing on ☀️'s skeleton; its nearest ☀️ shape is
@@ -29,6 +29,8 @@
 // alchemy permute, 10 minutes, two jobs: 127 with the streak's ~0xff mask
 // forced into a temporary before the loop (not taken: a device for 18
 // rows of register choice).
+// 2026-10-19 (run 33): work declared before canvas (the native loads canvas
+// into r2 and work into r1 for r9): 145 to 141.
 // Resources 0x134 (Resource_Data134), 0xc2 (Resource_Data0C2), 0x181
 // (Resource_Data181), 0x13e (BattleFx_FlashBurstSheet), 0x186, 0x17d,
 // 0x17f, 0x184 and 0x148 need names in system/resource/directory.s when
@@ -153,9 +155,9 @@ void Func_0817e0c0(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition target;
   struct EffectPosition caster;
   struct EffectPosition screen;
-  void *canvas = Ram_HeapSlots->battleFxWork[1];
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  void *canvas = Ram_HeapSlots->battleFxWork[1];
   s32 frame;
   s32 *camera = Ram_HeapSlots->cameraWork;
   u8 *sparkCels = Ram_HeapSlots->unk64[0];

@@ -26,7 +26,7 @@ u32 BattleParty_IsUnitListed(u32 unitId) {
 
 // Counts standby Djinn owned by the selected unit's active battle side.
 // Optionally writes one count per element.
-s32 BattlePlacement_CountValidEntries(u32 unitId, u8 *counts) {
+s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts) {
   u16 unitIds[8];
   struct DjinnRecoveryList *recoveryList;
   s32 unitCount;
@@ -511,7 +511,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
 
     // Check whether enough Djinn of each element are on standby.
     summon = SummonDefinition_Get(request->parameter);
-    BattlePlacement_CountValidEntries(request->unitId, counts);
+    BattleParty_CountStandbyDjinn(request->unitId, counts);
     side = 0;
     if ((u16)request->unitId > ALLY_MAX)
       side = 1;

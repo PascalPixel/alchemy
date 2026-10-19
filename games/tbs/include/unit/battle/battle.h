@@ -188,7 +188,7 @@ void BattleEvent_Playback(void);
 u32 BattleEventRuntime_Reset(void);
 s32 BattleEventRuntime_WaitForReady(void);
 u32 BattleParty_IsUnitListed(u32 unitId);
-s32 BattlePlacement_CountValidEntries(u32 unitId, u8 *counts);
+s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts);
 s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
                             struct BattlePlan *plan);
 

@@ -32,4 +32,4 @@ s32 DjinnRecovery_TickTwentyFar(void);
 s32 DebugParty_LoadPresetFar(s32 preset);
 void BattleActor_CommitPlacementFar(void);
 s32 BattlePresentation_WaitForPromptAtFar(s32 x, s32 y);
-s32 BattlePlacement_CountValidEntriesFar(u32 unitId, u8 *counts);
+s32 BattleParty_CountStandbyDjinnFar(u32 unitId, u8 *counts);

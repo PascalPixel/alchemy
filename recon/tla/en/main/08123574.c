@@ -1,5 +1,5 @@
 // Near miss, differ 2 of 103 (4 plainly): The Broken Seal's
-// BattlePlacement_CountValidEntries. An empty barrier on the entry's timer
+// BattleParty_CountStandbyDjinn. An empty barrier on the entry's timer
 // puts its load before the -1 it is compared with, as the native. Left: the
 // native stores the spilled count address to its stack slot (str r2, [sp])
 // first in the loop's preheader, this draft after the zero for lr; sched2
@@ -26,7 +26,7 @@ struct PlacementTable {
 
 struct PlacementTable *Djinn_GetRecoveryTableFar(s32 owner);
 
-s32 BattlePlacement_CountValidEntries(u32 arg0, u8 *counts) {
+s32 BattleParty_CountStandbyDjinn(u32 arg0, u8 *counts) {
   u16 values[8];
   struct PlacementList *list;
   s32 total;

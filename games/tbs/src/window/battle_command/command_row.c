@@ -61,7 +61,7 @@ s32 Menu_RunCommandRow(s32 mode) {
     selectionUi->commandKinds[kindCount++] = 0;
     selectionUi->commandKinds[kindCount++] = 1;
     if (*((s32 *)Djinn_GetRecoveryTableFar(0)) != 0) {
-      BattlePlacement_CountValidEntriesFar(0, party);
+      BattleParty_CountStandbyDjinnFar(0, party);
       for (i = 0; i <= 3; i++)
         tradeCount += party[i];
       selectionUi->commandKinds[kindCount++] = 15;

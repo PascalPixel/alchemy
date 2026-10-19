@@ -193,7 +193,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
 
     for (;;) {
       if (commandIndex == 0) {
-        BattlePlacement_CountValidEntriesFar(0, state->cost[0]);
+        BattleParty_CountStandbyDjinnFar(0, state->cost[0]);
       } else {
         s32 k;
 

@@ -42,4 +42,4 @@ FarCall_BattleTable:
 	export BattleActor_CommitPlacementFar, BattleObjPut
 	overlay_veneer ReleaseBattleObjectRecords
 	export BattlePresentation_WaitForPromptAtFar, BattlePresentation_WaitForPromptAt
-	export BattlePlacement_CountValidEntriesFar, BattlePlacement_CountValidEntries
+	export BattleParty_CountStandbyDjinnFar, BattleParty_CountStandbyDjinn

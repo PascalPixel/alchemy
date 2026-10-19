@@ -262,7 +262,7 @@ void PartyStatusDraw(s32 flags) {
     flags = layout->flags;
   if (!(flags & PARTY_STATUS_SHOW_PP))
     flags &= ~PARTY_STATUS_SHOW_DJINN;
-  if (work->menuState == 0 || BattlePlacement_CountValidEntriesFar(0, 0) == 0)
+  if (work->menuState == 0 || BattleParty_CountStandbyDjinnFar(0, 0) == 0)
     flags &= ~PARTY_STATUS_SHOW_DJINN;
   if (flags == PARTY_STATUS_CLOSED) {
     UiWindow_EraseBorderRect(layout->x, layout->y, layout->width,
@@ -345,7 +345,7 @@ void PartyStatusDraw(s32 flags) {
 
     if (flags & PARTY_STATUS_SHOW_PP)
       row++;
-    BattlePlacement_CountValidEntriesFar(0, standbyDjinn);
+    BattleParty_CountStandbyDjinnFar(0, standbyDjinn);
     UiWindow_SetTilemapEntry(window, 0x5001, 0, row, 0);
     UiWindow_SetTilemapEntry(window, 0x5002, 2, row, 0);
     UiWindow_SetTilemapEntry(window, 0x5003, 0, row + 1, 0);

@@ -3374,12 +3374,6 @@ BattlePresentation_AppendLinkedActions:
 	.section .rom.0011f0a0, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0011f0a0, 0x000002a8
-	.section .rom.0011f4ec, "ax"
-	.global Func_0811f4d4
-	.type Func_0811f4d4, %function
-	.thumb_func
-Func_0811f4d4:
-	.incbin "baserom.gba", 0x0011f4ec, 0x000000d0
 	.section .rom.0011f684, "ax"
 	.balign 4
 	.global Func_0811f66c

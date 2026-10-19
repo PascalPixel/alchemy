@@ -5348,12 +5348,6 @@ main	rom_main_08	recon/tla/raw/0811f088	.text	en
 main	rom_main_08	recon/tla/ja/rom	.rom.0011f084	ja
 main	rom_main_08	games/tla/src/battle/motion/run_value_sequence	.text
 main	rom_main_08	games/tla/src/battle/actor	.text
-main	rom_main_08	recon/tla/it/rom	.rom.0011f4ec	it
-main	rom_main_08	recon/tla/fr/rom	.rom.0011f4ec	fr
-main	rom_main_08	recon/tla/es/rom	.rom.0011f4ec	es
-main	rom_main_08	recon/tla/de/rom	.rom.0011f4ec	de
-main	rom_main_08	recon/tla/raw/0811f4d4	.text	en
-main	rom_main_08	recon/tla/ja/rom	.rom.0011f4d0	ja
 main	rom_main_08	games/tla/src/battle/strongest_unit	.text
 main	rom_main_08	recon/tla/it/rom	.rom.0011f684	it
 main	rom_main_08	recon/tla/fr/rom	.rom.0011f684	fr

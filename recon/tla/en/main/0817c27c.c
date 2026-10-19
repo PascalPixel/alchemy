@@ -1,9 +1,16 @@
-// Draft (tla-en): listing 464 instructions, draft 461, differ 285.
+// Draft (tla-en): listing 464 instructions, draft 464, common 447, differ 34.
 // Written from the listing (☀️'s BattleFx_RunRushingStrike is only
 // a hint). A five-cell burst drawn on the actor's side for 30 frames;
 // at frame 18 256 particles (in gMapCellBuffer) scatter from it, drawn
 // from frame 18 on with sizes from gData_08197410.
-// Left:
+// 2026-10-19 (run 33): the native frame's unreferenced slot at sp+16 is the
+// second half of a blitter pair (tagged below): 285 to 34, with the frame,
+// canvas in r11, the allocation and the call sites all the native's. What
+// is left is 17 reordered pairs, each the native loading caster.y or a
+// pool word one row before the neighbouring constant (the draw calls'
+// widths and sheet offsets), the scheduling difference most ⚓️ near misses
+// share.
+// Earlier notes, from before the pair:
 // - the native frame is 40 bytes with an unreferenced slot at sp+16
 // between frame (sp+20) and draw (sp+12), as in 0817b9b8; canvas stays
 // in r11 and draw and sheet are spilled. Here the frame is 36 and canvas
@@ -93,17 +100,22 @@ void BattleFx_RunWhiplash(struct BattleEffectArgument *effect) {
   struct EffectPosition caster;
   s32 frame;
   struct EffectStep *spark;
-  DrawRectangle draw;
+  /* FAKEMATCH(frame): the blitter as a pair of which only the first is used;
+   * as one two-word DImode pseudo its spill takes sp+12 and the unused sp+16
+   * the native frame has. As a single DrawRectangle the frame is 36 bytes
+   * and the allocation moves (285 of 464 instructions differ in tla-en, 34
+   * with the pair). */
+  DrawRectangle draw[2];
   u8 *sparkCels = heap->unk64[0];
   s32 i;
 
   BattleFx_BeginCanvasLayer(1);
   if (effect->side == 0) {
     BattleFx_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_MAX, CLIP_XY));
-    draw = (DrawRectangle)heap->unk64[1];
+    draw[0] = (DrawRectangle)heap->unk64[1];
   } else {
     BattleFx_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_MAX, CLIP_XY | FLIP_X));
-    draw = (DrawRectangle)heap->unk64[1];
+    draw[0] = (DrawRectangle)heap->unk64[1];
   }
   Resource_LoadAndDecompress((s32)&ResourceId_Data134, sparkCels, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0F3, work->sheet, 0, 0);
@@ -120,43 +132,43 @@ void BattleFx_RunWhiplash(struct BattleEffectArgument *effect) {
     if (effect->side == 0) {
       switch (frame / 6) {
       case 0:
-        draw(canvas, work->sheet, caster.x / 2 - 48, caster.y - 120, 48, 96);
+        draw[0](canvas, work->sheet, caster.x / 2 - 48, caster.y - 120, 48, 96);
         break;
       case 1:
-        draw(canvas, work->sheet + 0x1200, caster.x / 2 - 38, caster.y - 120,
+        draw[0](canvas, work->sheet + 0x1200, caster.x / 2 - 38, caster.y - 120,
              38, 92);
         break;
       case 2:
-        draw(canvas, work->sheet + 0x1fa8, caster.x / 2 - 38, caster.y - 100,
+        draw[0](canvas, work->sheet + 0x1fa8, caster.x / 2 - 38, caster.y - 100,
              30, 76);
         break;
       case 3:
-        draw(canvas, work->sheet + 0x2890, caster.x / 2 - 64, caster.y - 88, 56,
+        draw[0](canvas, work->sheet + 0x2890, caster.x / 2 - 64, caster.y - 88, 56,
              96);
         break;
       case 4:
-        draw(canvas, work->sheet + 0x3d90, caster.x / 2 - 64, caster.y - 88, 56,
+        draw[0](canvas, work->sheet + 0x3d90, caster.x / 2 - 64, caster.y - 88, 56,
              88);
         break;
       }
     } else {
       switch (frame / 6) {
       case 0:
-        draw(canvas, work->sheet, caster.x / 2, caster.y - 120, 48, 96);
+        draw[0](canvas, work->sheet, caster.x / 2, caster.y - 120, 48, 96);
         break;
       case 1:
-        draw(canvas, work->sheet + 0x1200, caster.x / 2, caster.y - 120, 38,
+        draw[0](canvas, work->sheet + 0x1200, caster.x / 2, caster.y - 120, 38,
              92);
         break;
       case 2:
-        draw(canvas, work->sheet + 0x1fa8, caster.x / 2, caster.y - 100, 30,
+        draw[0](canvas, work->sheet + 0x1fa8, caster.x / 2, caster.y - 100, 30,
              76);
         break;
       case 3:
-        draw(canvas, work->sheet + 0x2890, caster.x / 2, caster.y - 88, 56, 96);
+        draw[0](canvas, work->sheet + 0x2890, caster.x / 2, caster.y - 88, 56, 96);
         break;
       case 4:
-        draw(canvas, work->sheet + 0x3d90, caster.x / 2, caster.y - 88, 56, 88);
+        draw[0](canvas, work->sheet + 0x3d90, caster.x / 2, caster.y - 88, 56, 88);
         break;
       }
     }
@@ -193,7 +205,7 @@ void BattleFx_RunWhiplash(struct BattleEffectArgument *effect) {
         if (spark->variant >= 0) {
           s32 size = (spark->variant >> 3) + 1;
 
-          draw(canvas, sparkCels + gData_08197410[size - 1],
+          draw[0](canvas, sparkCels + gData_08197410[size - 1],
                HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
           if (i & 1)
             BattleFxKernels_IntegrateVector2(spark, 60, -0x2000);

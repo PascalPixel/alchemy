@@ -1,5 +1,14 @@
-// Draft of BattleFx_RunFirePuppet, decompiled from the listing: differ 364 of
-// 543 (draft 535), the same 49 calls and control flow; allocation differs.
+// Draft of BattleFx_RunFirePuppet, decompiled from the listing: differ 272 of
+// 543 (draft 537), the same 49 calls and control flow; allocation differs.
+// 2026-10-19 (run 33), from 364: the arm's sweep written as length << 5 at
+// each use, so the native's two copies of it (sp+36 and sp+32) appear and
+// the frame is its 92 bytes: 317; frame declared after canvas, its slot
+// above camera's: 289; the segment's angle and vertex offset written as
+// j * length and j * 8, which loop.c reduces after the hoisted camera + 3 as
+// in the native's slot order: 272. psynergy permute (6 minutes from 272):
+// nothing better. Left: inside the segment loop the native keeps radiusX in
+// r6 and radiusY in r7 and saves wobble, width and the angle around the
+// calls (sp+16, 12, 8); here the allocation differs there.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -129,13 +138,13 @@ extern const u8 Data_081991e0[];  // its corners
 void BattleFx_RunFirePuppet(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
+  s32 frame;
   u8 *sprites;
   s32 *camera;
   struct PuppetTarget *target;
   struct EffectPosition pos;
   struct ModelTexture texture;
   struct RenderModel *model;
-  s32 frame;
   s32 endX;
   s32 endY;
   s32 i;
@@ -200,9 +209,6 @@ void BattleFx_RunFirePuppet(struct BattleEffectArgument *effect) {
     }
     if (frame > 15) {
       s32 length;
-      s32 sweep;
-      s32 angle;
-      s32 vertex;
       s32 j;
 
       length = frame * 44 - 704;
@@ -212,31 +218,29 @@ void BattleFx_RunFirePuppet(struct BattleEffectArgument *effect) {
       if (frame > 73) {
         length = 4680 - frame * 44;
       }
-      sweep = length << 5;
 
       // The arm's vertices, thicker at its root.
-      for (j = 0, angle = 0, vertex = 0; j != PUPPET_SEGMENTS;
-           j++, angle += length, vertex += 8) {
+      for (j = 0; j != PUPPET_SEGMENTS; j++) {
         s32 width = 50 - ((Trig_Sin(j * 862 + 4310) * 44) >> 16);
         s32 wobble = j * ((Trig_Sin((frame + j) << 11) << 4) >> 16) / 32;
         s32 outer = width + wobble;
         s32 radiusY = j + wobble + 32;
         s32 radiusX = wobble + 16;
-        s8 *corner = (s8 *)gMapCellBuffer + vertex;
+        s8 *corner = (s8 *)gMapCellBuffer + j * 8;
         s32 k;
 
         for (k = 0; k != 2; k++) {
-          corner[0] = ((radiusX * Trig_Cos(angle)) >> 16) - outer / 2 - 16;
-          corner[1] = -((radiusY * Trig_Sin(angle)) >> 16);
+          corner[0] = ((radiusX * Trig_Cos(j * length)) >> 16) - outer / 2 - 16;
+          corner[1] = -((radiusY * Trig_Sin(j * length)) >> 16);
           corner[2] = 0;
           radiusY += width;
           radiusX += width;
           corner += 4;
         }
         if (j == 32) {
-          endX = (((width / 2 + wobble + 16) * Trig_Cos(sweep)) >> 16) -
+          endX = (((width / 2 + wobble + 16) * Trig_Cos(length << 5)) >> 16) -
                  outer / 2 - 16;
-          endY = -(((width / 2 + wobble + 64) * Trig_Sin(sweep)) >> 16);
+          endY = -(((width / 2 + wobble + 64) * Trig_Sin(length << 5)) >> 16);
         }
       }
 
@@ -275,7 +279,7 @@ void BattleFx_RunFirePuppet(struct BattleEffectArgument *effect) {
       texture.pixels = work->sheet + 0x4000;
       model->shade = 0;
       Func_08015160(endX << 16, endY << 16, 0);
-      Func_080150e4(22384 - sweep);
+      Func_080150e4(22384 - (length << 5));
       Func_0801521c(length * 23 + 0x8000);
       Render_TransformVertices(Data_081991e0, Data_02011000, 4);
       Render_DrawModelList(model);

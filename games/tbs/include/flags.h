@@ -74,6 +74,7 @@
 // The inn's guests told the party about the Colosso tour to Tolbi.
 #define FLAG_KALAY_HEARD_OF_COLOSSO_TOUR 0x910
 #define FLAG_KALAY_COLOSSO_TOUR_LEFT 0x911 // the tour group has left town
+#define FLAG_KALAY_TOWN_NUT_CAUGHT 0x916   // the Nut circling in the town
 
 // Kalay and Tolbi docks
 #define FLAG_KALAY_DOCKS_TICKET_BOUGHT 0x8a5

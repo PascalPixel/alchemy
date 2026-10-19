@@ -1,8 +1,8 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.include "games/tbs/src/system/overlay.inc"
-	overlay_veneer MercuryLighthouseEntrance_ApplyEntryState
-	overlay_veneer SceneData_GetSceneTableA
-	overlay_veneer SceneData_GetSceneTableB
-	overlay_veneer SceneData_GetSceneTableC
-	overlay_veneer SceneData_GetSceneTableD
-	overlay_veneer SceneData_ReturnZero
+	overlay_veneer MercuryLighthouseEntrance_Initialize
+	overlay_veneer MercuryLighthouseEntrance_GetEntrances
+	overlay_veneer MercuryLighthouseEntrance_GetExits
+	overlay_veneer MercuryLighthouseEntrance_GetPlacements
+	overlay_veneer MercuryLighthouseEntrance_GetEvents
+	overlay_veneer MercuryLighthouseEntrance_GetRegions

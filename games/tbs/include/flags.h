@@ -274,6 +274,36 @@
 #define FLAG_MCCOY_PALACE_BARREL_ELIXIR 0xf55
 #define FLAG_MCCOY_PALACE_BARREL_SMOKE_BOMB 0xf56
 #define FLAG_MCCOY_PALACE_GARDEN_NUT_CAUGHT 0xfd2 // the floating nut
+// Mercury Lighthouse
+// Mia has told the party she senses someone inside the lighthouse.
+#define FLAG_MIA_SENSED_SOMEONE_INSIDE 0x870
+// The statue is moved and Mia's Ply has opened the lighthouse door.
+#define FLAG_MIA_OPENED_MERCURY_LIGHTHOUSE 0x871
+// Past the Lizard Man, Mia has gone on into the lighthouse.
+#define FLAG_MIA_ENTERED_MERCURY_LIGHTHOUSE 0x872
+#define FLAG_MIA_JOINED_PARTY 0x873 // rescued again, Mia joins with Fizz
+// The block rests on the floor switch and holds the gate open.
+#define FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN 0x874
+// Ply in the entrance hall: the lights cycle and the pillar routes open.
+#define FLAG_MERCURY_LIGHTHOUSE_PLY_ACTIVATED 0x875
+// All three channel blocks are in place and the water runs.
+#define FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN 0x876
+// The sliding statue has fallen through to the floor below.
+#define FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL 0x877
+// The block rests on the stair gate's floor switch and holds it open.
+#define FLAG_MERCURY_LIGHTHOUSE_STAIR_GATE_HELD_OPEN 0x878
+// The aerie's confrontation with Saturos, the battle and Alex's visit are
+// over; set with FLAG_SATUROS_BEATEN_AT_MERCURY.
+#define FLAG_MERCURY_AERIE_CONFRONTATION_DONE 0x880
+// Saturos is beaten at Mercury Lighthouse: the Hermes fountain at its foot
+// flows again.
+#define FLAG_SATUROS_BEATEN_AT_MERCURY 0x881
+
+// Mogall Forest
+#define FLAG_MOGALL_FOREST_FIRST_APE_SEEN 0x89c // an ape hides on arrival
+// The last guiding ape has led the party to the Killer Ape's hiding place.
+#define FLAG_MOGALL_FOREST_LED_TO_KILLER_APE 0x89d
+#define FLAG_MOGALL_FOREST_KILLER_APE_BEATEN 0x89e
 
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.

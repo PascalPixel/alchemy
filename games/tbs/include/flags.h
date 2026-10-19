@@ -70,7 +70,15 @@
 #define FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE 0x9a2
 #define FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED 0x9a5
 
-// Vault: its containers, set once each is searched
+// Vault: the stolen Shaman's Rod, and its containers, set once each is
+// searched
+// Set when the party agrees to help Ivan find the rod; while it is set and
+// the thieves are free, Ivan waits in Vault whenever the party leaves town.
+#define FLAG_VAULT_IVAN_JOINED_ROD_SEARCH 0x856
+// Set once Ivan has read the minds of the two cornered suspects.
+#define FLAG_VAULT_SUSPECTS_MIND_READ 0x853
+// Set as the three thieves are confronted in the attic, before the battle.
+#define FLAG_VAULT_THIEVES_CONFRONTED 0x854
 #define FLAG_VAULT_BOX_NUT 0xf4a
 
 // Vault interiors: their containers, set once each is searched

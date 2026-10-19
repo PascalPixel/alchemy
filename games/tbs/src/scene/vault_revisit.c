@@ -33,24 +33,25 @@
 // again.
 
 enum {
-  ACTOR_ADMIRER = 8,          // "You're the warriors who captured the thieves"
+  ACTOR_GREETER = 8, // Vault's greeter: "You're the warriors who captured..."
   ACTOR_LUNPA_GOSSIP = 11,    // rumors of thieves from Lunpa running wild
   ACTOR_MAYORS_VISITOR = 12,  // "I was just talking about you with our mayor"
   ACTOR_VOLCANO_WATCHER = 13, // if the volcano stays calm...
-  // The two who walk in circles by the well: "Hey, it's that warrior guy!"
+  // The two who walk in circles: "Hey, it's that warrior guy!"
   ACTOR_FIRST_WALKER = 14,
   ACTOR_SECOND_WALKER = 15, // "Grown-ups always get so scared"
-  ACTOR_JAIL_GOSSIP = 16,   // "Did you guys check out the jail?"
+  ACTOR_WATCHMAN = 16, // Vault's watchman: "Did you guys check out the jail?"
   ACTOR_VAULT_DOG = 18,
   ACTOR_VAULT_VENUS_DJINNI = 21,
   VAULT_VENUS_DJINNI_INDEX = 4,
   VAULT_PROXIMITY_REACTION_PAUSED = 2
 };
 
-// Scene flags: each Mind Read target first greets the party once.
+// Scene flags: what the townspeople have already said. A Mind Read before
+// someone has spoken plays the conversation first.
 enum {
   FLAG_WARRIOR_GUY_GREETED = FLAG_SCENE_TEMP_00 + 0x100,
-  FLAG_ADMIRER_RECOGNIZED_PARTY = FLAG_SCENE_TEMP_00 + 0x105,
+  FLAG_GREETER_RECOGNIZED_PARTY = FLAG_SCENE_TEMP_00 + 0x105,
   FLAG_PARTY_PRAISED = FLAG_SCENE_TEMP_00 + 0x106,
   FLAG_WALKER_SPOKE = FLAG_SCENE_TEMP_00 + 0x107,
   FLAG_ASKED_ABOUT_JAIL = FLAG_SCENE_TEMP_00 + 0x108
@@ -91,10 +92,10 @@ static void VaultRevisit_ShowStandingActorMessage(s32 actor) {
 // You've returned to Vault!"
 static void Event_RecognizeThiefCatchers(void) {
   Engine_EventBegin();
-  Engine_ActorFaceActor(ACTOR_ADMIRER, ACTOR_PARTY_LEADER, 2);
-  Engine_GameFlagSet(FLAG_ADMIRER_RECOGNIZED_PARTY);
+  Engine_ActorFaceActor(ACTOR_GREETER, ACTOR_PARTY_LEADER, 2);
+  Engine_GameFlagSet(FLAG_GREETER_RECOGNIZED_PARTY);
   Engine_EventSetMessage(MsgVaultWarriorsWhoCaptured);
-  Engine_EventShowMessage(ACTOR_ADMIRER, 0);
+  Engine_EventShowMessage(ACTOR_GREETER, 0);
   Engine_EventEnd();
 }
 
@@ -181,26 +182,26 @@ static void Event_WishEldersWereBrave(void) {
 static void Event_AskAboutJailbreak(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultGuysCheckJail);
-  Engine_ActorFaceEachOther(ACTOR_JAIL_GOSSIP, ACTOR_PARTY_LEADER, 2);
-  Engine_EventOpenMessage(ACTOR_JAIL_GOSSIP, 0);
+  Engine_ActorFaceEachOther(ACTOR_WATCHMAN, ACTOR_PARTY_LEADER, 2);
+  Engine_EventOpenMessage(ACTOR_WATCHMAN, 0);
   if (Engine_EventChooseYesNo(0, 0) != 0) {
     gEventWork->message += 1;
   }
-  Engine_EventShowMessage(ACTOR_JAIL_GOSSIP, 0);
+  Engine_EventShowMessage(ACTOR_WATCHMAN, 0);
   Engine_GameFlagSet(FLAG_ASKED_ABOUT_JAIL);
   Engine_EventEnd();
 }
 
-// Mind Read on the admirer before he has spoken: he turns and recognizes the
+// Mind Read on the greeter before he has spoken: he turns and recognizes the
 // party.
 static void Event_ReadMindAndRecognizeThiefCatchers(void) {
   Engine_EventBegin();
-  Engine_ActorRunRepeatedMotion(ACTOR_ADMIRER, 1);
+  Engine_ActorRunRepeatedMotion(ACTOR_GREETER, 1);
   Engine_EventWait(20);
-  Engine_ActorFaceActor(ACTOR_ADMIRER, ACTOR_PARTY_LEADER, 20);
-  Engine_GameFlagSet(FLAG_ADMIRER_RECOGNIZED_PARTY);
+  Engine_ActorFaceActor(ACTOR_GREETER, ACTOR_PARTY_LEADER, 20);
+  Engine_GameFlagSet(FLAG_GREETER_RECOGNIZED_PARTY);
   Engine_EventSetMessage(MsgVaultWarriorsWhoCaptured);
-  Engine_EventShowMessageAndWait(ACTOR_ADMIRER, 0, 20);
+  Engine_EventShowMessageAndWait(ACTOR_GREETER, 0, 20);
   Engine_EventEnd();
 }
 
@@ -268,7 +269,7 @@ static void Event_ReadMindOnScaredGrownUps(void) {
   }
 }
 
-// Mind Read on the jail gossip: before he has asked about the jail he asks
+// Mind Read on the watchman: before he has asked about the jail he asks
 // now; afterwards, the thieves must know the secret of the jail's lock.
 static void Event_ReadMindOnJailKey(void) {
   s32 requestHeard;
@@ -277,27 +278,27 @@ static void Event_ReadMindOnJailKey(void) {
   requestHeard = GameFlag_IsSet(FLAG_ASKED_ABOUT_JAIL);
   if (requestHeard == 0) {
     Engine_EventBegin();
-    Actor_Get(ACTOR_JAIL_GOSSIP)->paused = 1;
-    Engine_ActorSetAnimation(ACTOR_JAIL_GOSSIP, ANIM_STAND);
-    Engine_ActorRunRepeatedMotion(ACTOR_JAIL_GOSSIP, 1);
+    Actor_Get(ACTOR_WATCHMAN)->paused = 1;
+    Engine_ActorSetAnimation(ACTOR_WATCHMAN, ANIM_STAND);
+    Engine_ActorRunRepeatedMotion(ACTOR_WATCHMAN, 1);
     Engine_EventWait(20);
     Engine_EventSetMessage(MsgVaultGuysCheckJail);
-    Engine_ActorFaceEachOther(ACTOR_JAIL_GOSSIP, 0, 2);
-    Event_OpenMessage(ACTOR_JAIL_GOSSIP, 0);
+    Engine_ActorFaceEachOther(ACTOR_WATCHMAN, 0, 2);
+    Event_OpenMessage(ACTOR_WATCHMAN, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
       gEventWork->message++;
     }
-    Event_ShowMessage(ACTOR_JAIL_GOSSIP, 0);
-    Actor_Get(ACTOR_JAIL_GOSSIP)->paused = requestHeard;
-    Actor_SetBuiltinAction(ACTOR_JAIL_GOSSIP, 2);
+    Event_ShowMessage(ACTOR_WATCHMAN, 0);
+    Actor_Get(ACTOR_WATCHMAN)->paused = requestHeard;
+    Actor_SetBuiltinAction(ACTOR_WATCHMAN, 2);
     Engine_EventEnd();
     GameFlag_Set(FLAG_ASKED_ABOUT_JAIL);
   } else {
     Engine_EventSetMessage(MsgVaultNotLikeEasy);
-    Actor_Get(ACTOR_JAIL_GOSSIP)->paused = 1;
-    VaultRevisit_ShowStandingActorMessage(ACTOR_JAIL_GOSSIP);
+    Actor_Get(ACTOR_WATCHMAN)->paused = 1;
+    VaultRevisit_ShowStandingActorMessage(ACTOR_WATCHMAN);
     unpaused = 0;
-    Actor_Get(ACTOR_JAIL_GOSSIP)->paused = unpaused;
+    Actor_Get(ACTOR_WATCHMAN)->paused = unpaused;
   }
 }
 
@@ -414,8 +415,8 @@ static void Event_EnterNorthwestHouse(void) {
 #include "item_ids.h"
 #include "objcmd.h"
 
-// Open the west house and use its required sprite priority.
-static void Event_EnterWestHouse(void) {
+// The jail door opens and the party walks in, drawn behind the doorway.
+static void Event_EnterJail(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
 
@@ -656,11 +657,20 @@ struct SceneEntrance gVaultRevisit_Entrances[] = {
 };
 
 u32 gVaultRevisit_Exits[] = {
-    SCENE_EXITS(23),       SCENE_EXIT(1, 2, 3),    SCENE_EXIT(2, 2, 44),
-    SCENE_EXIT(5, 24, 5),  SCENE_EXIT(6, 24, 6),   SCENE_EXIT(7, 24, 7),
-    SCENE_EXIT(8, 24, 8),  SCENE_EXIT(9, 24, 9),   SCENE_EXIT(10, 24, 10),
-    SCENE_EXIT(11, 9, 11), SCENE_EXIT(12, 22, 10), SCENE_EXIT(13, 96, 10),
-    SCENE_EXIT(14, 98, 1), SCENE_EXITS_END,
+    SCENE_EXITS(SCENE_VAULT_REVISIT),
+    SCENE_EXIT(1, SCENE_WORLD_MAP, 3),
+    SCENE_EXIT(2, SCENE_WORLD_MAP, 44),
+    SCENE_EXIT(5, 24, 5),
+    SCENE_EXIT(6, 24, 6),
+    SCENE_EXIT(7, 24, 7),
+    SCENE_EXIT(8, 24, 8),
+    SCENE_EXIT(9, 24, 9),
+    SCENE_EXIT(10, 24, 10),
+    SCENE_EXIT(11, 9, 11),
+    SCENE_EXIT(12, SCENE_VAULT_JAIL, 10),
+    SCENE_EXIT(13, 96, 10),
+    SCENE_EXIT(14, 98, 1),
+    SCENE_EXITS_END,
 };
 
 // clang-format off
@@ -738,8 +748,8 @@ struct SceneEvent gVaultRevisit_Events[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthwestHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_OpenDoorwayAndEnter) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterWestHouse) },
-    { EVENT_TALK, ACTOR_ADMIRER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RecognizeThiefCatchers) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJail) },
+    { EVENT_TALK, ACTOR_GREETER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RecognizeThiefCatchers) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgVaultYouveProbablyAlreadyHeardButThe) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgVaultIWonderWhatHappenedToHammet) },
     { EVENT_TALK, ACTOR_LUNPA_GOSSIP, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkOfLunpaThieves) },
@@ -747,14 +757,14 @@ struct SceneEvent gVaultRevisit_Events[] = {
     { EVENT_TALK, ACTOR_VOLCANO_WATCHER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopeVolcanoStaysCalm) },
     { EVENT_TALK, ACTOR_FIRST_WALKER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_GreetWarriorGuy) },
     { EVENT_TALK, ACTOR_SECOND_WALKER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WishEldersWereBrave) },
-    { EVENT_TALK, ACTOR_JAIL_GOSSIP, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutJailbreak) },
+    { EVENT_TALK, ACTOR_WATCHMAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutJailbreak) },
     { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgVaultTheThievesEscapedButIThink) },
     { EVENT_TALK, ACTOR_VAULT_DOG, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToDog) },
     { EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgVaultThereYouSeeTheRoofRepairs) },
     { EVENT_TALK, ACTOR_VAULT_VENUS_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToVenusDjinni) },
     { SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RingBell) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, FLAG_ADMIRER_RECOGNIZED_PARTY, EVENT_SCRIPT(Event_ReadMindAndRecognizeThiefCatchers) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ADMIRER, CONDITION_ALWAYS, MSGNO(MsgVaultICantBelieveTheyreHereWhat) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, FLAG_GREETER_RECOGNIZED_PARTY, EVENT_SCRIPT(Event_ReadMindAndRecognizeThiefCatchers) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GREETER, CONDITION_ALWAYS, MSGNO(MsgVaultICantBelieveTheyreHereWhat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgVaultWhenThoseGuysFromKalayCame) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgVaultYeahSomeWarriorsFromKalayCame) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUNPA_GOSSIP, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnDodonpa) },
@@ -765,7 +775,7 @@ struct SceneEvent gVaultRevisit_Events[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_WALKER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnFeelingBrave) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_WALKER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnScaredGrownUps) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x410, FLAG_ASKED_ABOUT_JAIL, EVENT_SCRIPT(Event_ReadMindOnJailKey) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JAIL_GOSSIP, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnJailKey) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WATCHMAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnJailKey) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgVaultIKeepWonderingWasOurStatue) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_DOG, IF_FLAG_SET(FLAG_VAULT_DOG_SHOWN_PASSAGE), MSGNO(MsgVaultCarefulSearchWillRevealPassage) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_DOG, CONDITION_ALWAYS, MSGNO(MsgVaultIfYouBringMeSomeBones) },

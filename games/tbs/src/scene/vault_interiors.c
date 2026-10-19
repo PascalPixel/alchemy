@@ -1378,7 +1378,7 @@ static void VaultInteriors_ReadCorneredSuspectsMinds(void) {
   // Move the discussion away from the suspects while the screen is closed.
   VaultInteriors_DiscussMindReading();
   Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
-  GameFlag_Set(0x853);
+  GameFlag_Set(FLAG_VAULT_SUSPECTS_MIND_READ);
   {
     struct FieldActor *suspect = Object_GetById(24);
     s32 routeIndex = 5;
@@ -1601,13 +1601,14 @@ s32 Scene_Initialize(void) {
       OverlayObject_ConfigureObject22WithResource17(231, PIXELS(568),
                                                     PIXELS(16), PIXELS(672));
       Task_AddCallback(Vault_UpdateBoneProximityFlag, TASK_PRIORITY_SCENE);
-    } else if (Engine_GameFlagIsSet(0x853) != 0) {
+    } else if (Engine_GameFlagIsSet(FLAG_VAULT_SUSPECTS_MIND_READ) != 0) {
       Engine_ActorSetPosition(18, 0, 0);
     }
     break;
   case 12:
     if (Engine_GameFlagIsSet(0x109) != 0 && Engine_GameFlagIsSet(0x852) != 0 &&
-        Engine_GameFlagIsSet(0x853) == 0 && Engine_GameFlagIsSet(0x300) != 0) {
+        Engine_GameFlagIsSet(FLAG_VAULT_SUSPECTS_MIND_READ) == 0 &&
+        Engine_GameFlagIsSet(0x300) != 0) {
       Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
       Task_AddCallback(VaultInteriors_FaceSuspectsTowardLeader,
                        TASK_PRIORITY_SCENE);
@@ -1619,7 +1620,7 @@ s32 Scene_Initialize(void) {
     }
     if (Engine_GameFlagIsSet(0x852) != 0) {
       Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
-      if (Engine_GameFlagIsSet(0x853) == 0) {
+      if (Engine_GameFlagIsSet(FLAG_VAULT_SUSPECTS_MIND_READ) == 0) {
         Map_CopyCellAttributes(14, 50, 3, 1, 14, 44);
         break;
       }
@@ -3335,8 +3336,8 @@ struct SceneEvent gVaultInteriorsEvents[] = {
     { EVENT_TALK, 25, IF_FLAG_SET(FLAG_SCENE_TEMP_50), 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, IF_FLAG_SET(FLAG_SCENE_TEMP_50), 0 },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, IF_FLAG_SET(FLAG_SCENE_TEMP_50), 0 },
-    { EVENT_TALK, 24, 0x853, MSGNO(MsgVaultThatKidIvanHeCreepsMe) },
-    { EVENT_TALK, 25, 0x853, MSGNO(MsgVaultWeHaventDoneAnythingYoureA) },
+    { EVENT_TALK, 24, FLAG_VAULT_SUSPECTS_MIND_READ, MSGNO(MsgVaultThatKidIvanHeCreepsMe) },
+    { EVENT_TALK, 25, FLAG_VAULT_SUSPECTS_MIND_READ, MSGNO(MsgVaultWeHaventDoneAnythingYoureA) },
     { EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_MoveFirstSuspectAside) },
     { EVENT_TALK, 25, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_MoveSecondSuspectAside) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgVaultTheOtherSparklingRocksAllCrumbled) },

@@ -5,6 +5,10 @@ the artifact counter and the Game Ticket gifts, the sanctum's healing
 services, the inn, and the item picker that scenes and Psynergy use to choose
 a party member's item.
 
+See also: [Windows](../window/README.md), the windows and messages the
+counters are made of; [Menus](../menu/README.md), which share their work
+block; and [Game rules](../game/README.md), the items and their counters.
+
 ## Files
 
 | File | What it holds |
@@ -62,6 +66,37 @@ crosses folders.
 | `Inn_` | the inn |
 | `Battle_`, `BattleUnit_`, `BattleFx_`, `AudioCommand_`, `NodeChain_` | things the engine names elsewhere |
 
+## Design
+
+### Artifacts are counted, not stocked
+
+A shop's ordinary items are its row of `sStockTable`, always for sale. Its
+artifacts work differently: they are not kept per shop at all. Each rare item
+has one counter for the whole game (`Item_AdjustCounter`, in
+`../game/game/inventory.c`), and a shop's artifact list is built when it
+opens from every item of the shop's type whose counter is above zero
+([`shop/run.c`](shop/run.c)). The counters move with the items:
+
+- a shop's first visit adds one to the counter of each artifact in its row,
+  and sets flag `0x400 + stockRow` (`FLAG_SHOP_ARTIFACTS_STOCKED` plus the
+  row) so it never does so again (`EventTable_ApplyRowAbilities`);
+- buying one takes one away, once the purchase is complete;
+- a rare item the party drops, discards or sells goes back into circulation,
+  one up on its counter (`Inventory_Discard`, the item screen).
+
+So an artifact first stocked in one town is then sold by every shop of its
+type, and a rare item the party gives up turns up for sale again. The flag
+per row is what keeps a revisited shop from adding its artifacts a second
+time.
+
+### One work block for every counter
+
+Every counter (shop, sanctum, inn, artifact counter) uses the same heap
+block, `HEAP_SLOT_MENU`, as `struct ShopRuntime`: `Shop_InitializeCursorWork`
+takes it and `Shop_ReleaseCursorWork` gives it back. The field menu's screens
+use the same slot through their own views, so a counter and the field menu
+are never open together.
+
 ## How to change a counter
 
 - A shop's stock is its row of `sStockTable` in `artifacts.c`; each row's
@@ -78,3 +113,19 @@ crosses folders.
 - A shop sells at most 24 items and 8 artifacts, the columns of its stock
   row (`SHOP_STOCK_`).
 - A shop adds its artifacts once, remembered by flag `0x400 + stockRow`.
+
+## Evidence and open questions
+
+The counters are named for what the player meets at them; the stock row's
+columns (`SHOP_STOCK_`) from what `artifacts.c` reads at each place; the
+actions and services from the choices their windows offer in the English
+release.
+
+Still unknown:
+
+- XXX: the values of `shop->mode`, which the counters set as they change
+  screens and which picks the hand cursor's kind.
+- XXX: why rows 16, 17 and 18 are the warrior's shops (`shop->warriorShop`,
+  `shop/run.c`) by number rather than by a column of the row.
+- XXX: `EventTable_ApplyRowAbilities` and the other `EventTable_` names say
+  less than the functions do; they cross folders.

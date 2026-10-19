@@ -70,6 +70,19 @@
 #define FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE 0x9a2
 #define FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED 0x9a5
 
+// Alpine Crossing and Lama Temple
+#define FLAG_LAMA_TEMPLE_PSYNERGY_STONE 0x350 // the temple's Psynergy Stone
+// Feizhi has found the road blocked and run ahead to look for Hsu.
+#define FLAG_FEIZHI_SAW_ROCKSLIDE 0x8b0
+// Hama has reached Hsu and spoken with him and Feizhi.
+#define FLAG_HAMA_REACHED_HSU 0x8b1
+// Hsu was freed without the party: set with FLAG_HSU_RESCUED when the party
+// comes back from Lama Temple after Xian has heard of the accident. While it
+// is set, Xian's people do not thank the party for the rescue.
+#define FLAG_HSU_RESCUED_WITHOUT_PARTY 0x8b3
+#define FLAG_ALPINE_CROSSING_POWER_BREAD 0xf71 // the crossing's chest
+#define FLAG_LAMA_TEMPLE_WATER_OF_LIFE 0xf7a   // the temple's chest
+
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
 #define FLAG_SCENE_TEMP_00 0x200

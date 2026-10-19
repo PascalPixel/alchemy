@@ -21,14 +21,12 @@ void Func_02000b3c(void);
 struct FieldActor *Object_GetById(s32 id);
 
 static inline void *BumpAlloc(s32 size) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each size's
-   * constant */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return MemAlloc(size);
 }
 
 static inline void VramLoad(s32 entry, s32 size, void *source) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each size's
-   * constant */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   VramCache_Load(entry, size, source);
 }
 

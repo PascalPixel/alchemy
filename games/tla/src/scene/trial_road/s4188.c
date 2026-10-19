@@ -21,14 +21,12 @@ void Func_02005770(const void *source, void *destination);
 s32 Func_02005a40(void);
 
 static __inline__ void *Pool_Alloc(s32 size) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Runtime_BumpAllocateAlternatePool(size);
 }
 
 static __inline__ void Words_Clear(void *destination, s32 size) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Iwram_ClearWords(destination, size);
 }
 

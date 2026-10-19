@@ -103,8 +103,7 @@ void Func_02000230(s32 actor) {
 }
 
 static __inline__ void Actor_Turn(s32 id, s32 angle, s32 frames) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_ArmCallback(id, angle, frames);
 }
 

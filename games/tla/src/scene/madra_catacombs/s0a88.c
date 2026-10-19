@@ -69,20 +69,17 @@ void Func_02000c94(void);
 void Func_02000cf4(void);
 
 static __inline__ void Wait(s32 frames) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   WaitFrames(frames);
 }
 
 static __inline__ void Cue(s32 cue) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001214(cue);
 }
 
 static __inline__ void Camera_SetBounds(s32 a, s32 b, s32 c, s32 d) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(a, b, c, d);
 }
 

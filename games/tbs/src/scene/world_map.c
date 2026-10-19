@@ -2365,7 +2365,6 @@ UNUSED static void WorldMap_CycleActorPalettes(struct FieldActor *actor) {
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 #include "common/world_map_linked_effects.h"
 

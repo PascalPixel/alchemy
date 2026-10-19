@@ -67,88 +67,74 @@ extern u8 MsgNaribwe23;
 extern u8 MsgNaribwe45;
 
 static __inline__ s32 GameFlag_Test_(s32 flag) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_Test(flag);
 }
 
 static __inline__ void GameFlag_SetBit_(s32 flag) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   GameFlag_SetBit(flag);
 }
 
 static __inline__ void WaitFrames_(s32 frames) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   WaitFrames(frames);
 }
 
 static __inline__ void FieldEvent_WaitFrames_(s32 frames) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   FieldEvent_WaitFrames(frames);
 }
 
 static __inline__ struct ObjectRuntime *Object_GetById_(s32 id) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Object_GetById(id);
 }
 
 static __inline__ void Object_SetModeById_(u32 id, s32 mode) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Object_SetModeById(id, mode);
 }
 
 static __inline__ void ObjectMotion_SetSpeedParameters_(s32 id, s32 speed,
                                                         s32 acceleration) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void
 ObjectDispatch_SetSingleChildFlags_(struct ObjectRuntime *object, s32 flags) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectDispatch_SetSingleChildFlags(object, flags);
 }
 
 static __inline__ void UiText_OpenMessageAtObject_(s32 id, s32 flags) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   UiText_OpenMessageAtObject(id, flags);
 }
 
 static __inline__ s32 Event_AskYesNoWithActorAnimation_(s32 id, s32 flags) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Event_AskYesNoWithActorAnimation(id, flags);
 }
 
 static __inline__ void Event_FinishScreenTransition_(void) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Event_FinishScreenTransition();
 }
 
 static __inline__ void Event_WaitTransitionFrames_(void) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Event_WaitTransitionFrames();
 }
 
 static __inline__ void Func_02000574_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02000574(id, x, z);
 }
 
 static __inline__ void Func_020005bc_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020005bc(id, x, z);
 }
 

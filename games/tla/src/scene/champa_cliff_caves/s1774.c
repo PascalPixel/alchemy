@@ -16,15 +16,13 @@ void Func_0200351c(s32 actor, s32 value, s32 frames);
 void Func_0200356c(s32 scene, s32 entrance);
 
 static __inline__ void Func_020034d4_(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020034d4(actor, x, z);
 }
 
 static __inline__ void ObjectMotion_ArmCallback_(s32 actor, s32 angle,
                                                  s32 frames) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_ArmCallback(actor, angle, frames);
 }
 

@@ -14,40 +14,34 @@ void Func_02004204(s32 a);
 void Func_0200423c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
 static __inline__ s32 GameFlag_Test_(s32 flag) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_Test(flag);
 }
 
 static __inline__ void
 ObjectMotion_OffsetPositionAndResetMotion_(s32 id, s32 dx, s32 dz) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_OffsetPositionAndResetMotion(id, dx, dz);
 }
 
 static __inline__ void Func_020040d4_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020040d4(id, x, z);
 }
 
 static __inline__ void Func_0200417c_(s32 id, s32 a) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0200417c(id, a);
 }
 
 static __inline__ void Func_02004204_(s32 a) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004204(a);
 }
 
 static __inline__ void Func_0200423c_(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                       s32 g) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0200423c(a, b, c, d, e, f, g);
 }
 

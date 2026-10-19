@@ -30,27 +30,23 @@ void Func_02004e00(void);
 
 static __inline__ void ObjectMotion_SetSpeedParameters_(s32 actor, s32 speed,
                                                         s32 acceleration) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
 }
 
 static __inline__ void ObjectMotion_ArmCallback_(s32 actor, s32 angle,
                                                  s32 frames) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_ArmCallback(actor, angle, frames);
 }
 
 static __inline__ void Func_02004df8_(s32 value, s32 mode) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004df8(value, mode);
 }
 
 static __inline__ void Func_02004c90_(s32 actor, s32 x, s32 z, s32 angle) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004c90(actor, x, z, angle);
 }
 

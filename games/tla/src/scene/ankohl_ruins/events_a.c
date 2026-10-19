@@ -5,8 +5,7 @@ void Func_02002eec(s32 a);
 void Func_02002ebc(s32 a);
 
 static __inline__ void Actor_Start(s32 id, s32 a, s32 b) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002e7c(id, a, b);
 }
 

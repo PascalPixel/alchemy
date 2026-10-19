@@ -116,7 +116,6 @@ static s32 Kolima_UpdateFallingDebris(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
 /// Selects the entrance table for the village, interior or bridge.
@@ -1330,7 +1329,6 @@ static void Kolima_FaceActorAndWait(s32 actorId, s32 facing, s32 waitFrames) {
   Engine_EventWait(waitFrames);
 }
 
-// Shared source is included here in ROM order.
 #include "common/kolima_grow.h"
 
 /// Spawns a moving curse sparkle every eighth frame.
@@ -1370,7 +1368,6 @@ static void Kolima_SpawnCurseSparkle(void) {
   Engine_ObjectSetScript(sparkle, gKolima_Object26Script);
 }
 
-// Shared source is included here in ROM order.
 #include "common/kolima_blink.h"
 
 /// Triggers a temporary pose when an effect enters the party's occupied area.
@@ -1400,7 +1397,6 @@ static s32 Kolima_TriggerRegionScript(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-// Shared source is included here in ROM order.
 #include "common/kolima_forest_bridge_falling_effect.h"
 s32 gKolima_PendingPose __attribute__((section(".bss")));
 s32 gKolima_MiaInParty __attribute__((section(".bss")));

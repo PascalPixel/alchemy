@@ -69,7 +69,6 @@
 static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row);
 static void ValeCave_ApplyEntryState(void);
 
-// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 #include "common/object_staged_actor.h"
@@ -590,7 +589,6 @@ static void ValeCave_UpdateSlidingObjectPassage(void) {
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_pairmove.h"
 
 /// Walking east onto the sliding objects: they slide to the eastern end.

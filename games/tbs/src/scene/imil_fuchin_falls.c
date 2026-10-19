@@ -172,7 +172,6 @@ const struct ScenePlacement *ImilFuchinFalls_GetPlacements(void) {
   return gImilFuchinFalls_NoPlacements;
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_pairmove.h"
 
 /// Lets the platform settle before rebuilding its room's collision cells.

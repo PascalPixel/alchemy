@@ -66,18 +66,18 @@ void Func_02001cbc(void);
 s32 Func_020005a8(struct VenusActor *object);
 
 static inline s32 Venus_FlagCheck(s32 flag) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_Test(flag);
 }
 
 static inline void Venus_FlagSet(s32 flag) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Engine_GameFlagSet(flag);
 }
 
 static inline void Venus_CopyCells(s32 sx, s32 sy, s32 dx, s32 dy, s32 w,
                                    s32 h) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Engine_MapCopyCellsTo(sx, sy, dx, dy, w, h);
 }
 

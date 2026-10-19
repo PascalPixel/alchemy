@@ -65,26 +65,22 @@ void Func_020057ec(s32 a);
 void Func_020057c4(s32 exit);
 
 static __inline__ void Actor_SetSpeed(s32 id, s32 speed, s32 acceleration) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void Actor_Slide(s32 id, s32 x, s32 z, s32 speed) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0200571c(id, x, z, speed);
 }
 
 static __inline__ void Actor_Turn(s32 id, s32 angle, s32 frames) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_ArmCallback(id, angle, frames);
 }
 
 static __inline__ void Actor_Walk(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetPositionAndReset(id, x, z);
 }
 
@@ -96,8 +92,7 @@ static __inline__ void Func_02005774_(s32 id, s32 value) {
 }
 
 static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 

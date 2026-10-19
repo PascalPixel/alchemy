@@ -8,18 +8,18 @@ void Func_02003050(void);
 
 static inline void TundariaTower_02002fe8(s32 a0, s32 a1, s32 a2, s32 a3,
                                           s32 a4, s32 a5) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002fe8(a0, a1, a2, a3, a4, a5);
 }
 
 static inline void TundariaTower_02002fc0(s32 a0, s32 a1, s32 a2, s32 a3,
                                           s32 a4, s32 a5) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002fc0(a0, a1, a2, a3, a4, a5);
 }
 
 static inline void TundariaTower_GameFlag_SetBit(s32 a0) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   GameFlag_SetBit(a0);
 }
 

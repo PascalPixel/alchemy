@@ -423,7 +423,6 @@ static void Event_InnerBlock6Moved(void) {
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_findcell.h"
 
 /// Walking into a block: the leader pushes it one cell, and its column is

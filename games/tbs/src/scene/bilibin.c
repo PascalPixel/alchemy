@@ -72,7 +72,6 @@ struct SpawnCounter {
 
 struct SpawnCounter gBilibin_RiverEffectTimer;
 
-// Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
 /// Selects the entrance positions for the current part of Bilibin.
@@ -642,7 +641,6 @@ static void Bilibin_RestoreRaisedEntrance(void) {
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_findcell.h"
 
 /// Pushing a block: it slides one cell ahead with the leader behind it, if the

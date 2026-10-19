@@ -13,8 +13,7 @@ void Func_020033e0(s32 id, s32 x, s32 z);
 void Func_02003488(s32 a);
 
 static __inline__ void Func_020033e0_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020033e0(id, x, z);
 }
 

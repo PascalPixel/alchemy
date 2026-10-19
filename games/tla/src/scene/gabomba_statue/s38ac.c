@@ -15,14 +15,12 @@ void VramCache_Load(s32 handle, s32 size, void *source);
 void Func_020055cc(const u8 *data, void *buffer);
 
 static __inline__ void *Mem_Alloc(s32 size) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return MemAlloc(size);
 }
 
 static __inline__ void Vram_Load(s32 handle, s32 size, void *source) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   VramCache_Load(handle, size, source);
 }
 

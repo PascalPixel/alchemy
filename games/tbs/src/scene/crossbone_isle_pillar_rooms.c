@@ -71,12 +71,10 @@ struct MapCellFields {
   u8 event;
 };
 
-// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 #include "common/object_staged_actor.h"
 
-// Shared source is included here in ROM order.
 #include "common/map_panel.h"
 
 /// Waits up to sixty frames for landing, then stops vertical movement on the

@@ -104,23 +104,23 @@ static inline void JupiterLighthouseRoom6_BlendStart(s32 a, s32 b, s32 c, s32 d,
 }
 
 static inline s32 JupiterLighthouseRoom6_FlagCheck(s32 flag) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_Test(flag);
 }
 
 static inline void JupiterLighthouseRoom6_FlagSet(s32 flag) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   GameFlag_SetBit(flag);
 }
 
 static inline void JupiterLighthouseRoom6_ObjArm(s32 actor, s32 angle, s32 frames) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_ArmCallback(actor, angle, frames);
 }
 
 static inline void JupiterLighthouseRoom6_ObjSetPos(struct JupiterLighthouseRoom6Object *object,
                                           s32 x, s32 y, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Object_SetPositionAndResetMotion(object, x, y, z);
 }
 
@@ -140,33 +140,33 @@ void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
 
 static inline void JupiterLighthouseRoom6_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static inline void JupiterLighthouseRoom6_ObjSpeed(s32 actor, s32 speed,
                                          s32 acceleration) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
 }
 
 static inline void JupiterLighthouseRoom6_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetPositionAndReset(actor, x, z);
 }
 
 static inline void JupiterLighthouseRoom6_Wait(s32 frames) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   FieldEvent_WaitFrames(frames);
 }
 
 static inline void JupiterLighthouseRoom6_SePlay(s32 cue) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001bec(cue);
 }
 
 static inline void JupiterLighthouseRoom6_WaitFrames(s32 frames) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   WaitFrames(frames);
 }
 
@@ -179,17 +179,17 @@ static inline void JupiterLighthouseRoom6_WaitFrames(s32 frames) {
   }
 
 static inline void JupiterLighthouseRoom6_ObjEmoteWait(s32 actor, s32 emote) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001b84(actor, emote);
 }
 
 static inline void JupiterLighthouseRoom6_TaskAdd(void (*callback)(void), s32 priority) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Scheduler_AddOrUpdateCallback(callback, priority);
 }
 
 static inline void JupiterLighthouseRoom6_MessageOpen(s32 speaker, s32 flags) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   UiText_OpenMessageAtObject(speaker, flags);
 }
 
@@ -197,7 +197,7 @@ void Func_02001b0c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 static inline void JupiterLighthouseRoom6_MapPlay(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001b0c(a, b, c, d, e, f);
 }
 

@@ -27,8 +27,7 @@ void Func_02001120(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
 
 static inline void MapCopy(s32 srcX, s32 srcY, s32 width, s32 height, s32 destX,
                            s32 destY, s32 layer) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each stack
-   * argument in its own register */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001120(srcX, srcY, width, height, destX, destY, layer);
 }
 

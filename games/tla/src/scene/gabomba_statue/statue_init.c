@@ -30,14 +30,12 @@ void Func_0200582c(s32 index, s32 a, s32 b);
 void Func_020034ec(void) { Func_02001b38(); }
 
 static __inline__ void Map_CopyBlock(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02005674(a, b, c, d, e, f);
 }
 
 static __inline__ void Exit_Set(s32 index, s32 flag, s32 a, s32 b) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0200583c(index, flag, a, b);
 }
 

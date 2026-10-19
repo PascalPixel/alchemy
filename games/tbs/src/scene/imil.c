@@ -124,7 +124,6 @@ static s32 Imil_UpdateShiver(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
 /// Imil is two maps: the town and its interiors.

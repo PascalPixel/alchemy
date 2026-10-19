@@ -96,7 +96,6 @@ static inline s32 ValeHome_TurnAndWaitValue(s32 actor, s32 facing, s32 frames) {
 #define VALE_HOME_TURN_AND_WAIT ValeHome_TurnAndWaitValue
 #endif
 
-// Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
 /// Returns the village's entrance positions.
@@ -395,7 +394,6 @@ static void Event_PsynergyStoneIsGone(void) {
   Engine_EventEnd();
 }
 
-// Shared source is included here in ROM order.
 #include "common/vale.h"
 
 /// Opens a door's map cells and sends the leader through its threshold.
@@ -1360,7 +1358,6 @@ static void ValeHome_CyclePsynergyPalette(struct FieldActor *actor) {
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 
 /// Creates the two vertical Psynergy effects using the shared sprite tiles.
@@ -1414,7 +1411,6 @@ static void ValeHome_SpawnEffectPair(struct FieldActor *parent) {
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/effect_psynergy.h"
 
 /// Updates the levitating villager's Psynergy display.

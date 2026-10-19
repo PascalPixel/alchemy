@@ -16,15 +16,13 @@ void Func_02001128(s32 value);
 
 static __inline__ void Func_02000ff0_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02000ff0(a, b, c, d, e, f);
 }
 
 static __inline__ void ObjectMotion_CenterOnColumn_(s32 id, s32 column,
                                                     s32 offset) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_CenterOnColumn(id, column, offset);
 }
 

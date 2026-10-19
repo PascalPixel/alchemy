@@ -27,8 +27,7 @@ void Func_020045dc(s32 a);
 void Func_0200461c(s32 a);
 
 static __inline__ s32 Flag_Test(s32 flag) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_Test(flag);
 }
 

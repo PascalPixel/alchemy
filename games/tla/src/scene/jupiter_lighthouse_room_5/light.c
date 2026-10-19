@@ -20,14 +20,12 @@ void MemFree(void *block);
 void Func_02001888(void);
 
 static inline void *BumpAlloc(s32 size) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each size's
-   * constant */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return MemAlloc(size);
 }
 
 static inline void VramLoad(s32 entry, s32 size, void *source) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each size's
-   * constant */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   VramCache_Load(entry, size, source);
 }
 

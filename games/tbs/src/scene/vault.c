@@ -75,11 +75,9 @@ static void Vault_ShowStandingActorMessage(s32 actor);
 static void Vault_ShowMessageAndWait(s32 actor, s32 delay);
 static void Vault_FaceActorAndWait(s32 actor, s32 cue, s32 delay);
 
-// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-// Shared source is included here in ROM order.
 #include "common/vault_nearby.h"
 
 // The roof complainer walks about looking for the roofer and stops to face
@@ -140,7 +138,6 @@ static int Vault_GetIvanVenusDjinnCount(void) {
   return UnitGet(IVAN)->djinnOwnedCounts[ELEMENT_VENUS];
 }
 
-// Shared source is included here in ROM order.
 #include "common/vault_djinn.h"
 
 /// Exits 1 and 2 (triggers 20 and 21): while Ivan is helping search for the
@@ -350,7 +347,6 @@ static void Vault_ShowStandingActorMessage(s32 actor) {
   Engine_EventEnd();
 }
 
-// Shared source is included here in ROM order.
 #include "common/vault_talk.h"
 
 /// After the thieves are jailed, asks whether the party is leaving again.
@@ -582,7 +578,6 @@ static void Event_ReadMindOnRoofer(void) {
   Engine_EventEnd();
 }
 
-// Shared source is included here in ROM order.
 #include "common/vault_toggle.h"
 
 /// Walks to the exit threshold and request the room's transition.
@@ -647,7 +642,6 @@ static void Event_EnterNorthwestHouse(void) {
   Vault_WalkThroughExit(120, 144, 10);
 }
 
-// Shared source is included here in ROM order.
 #include "common/vault_scene_cells.h"
 
 /// The jail door opens and the party walks in, drawn behind the doorway.
@@ -869,7 +863,6 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_distance.h"
 #include "common/vault_range.h"
 

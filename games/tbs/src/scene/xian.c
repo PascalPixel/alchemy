@@ -50,7 +50,6 @@ struct PeriodicEffectConfig {
 
 void Effect_Spawn();
 
-// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
@@ -137,7 +136,6 @@ static void Xian_SpawnTrainingParticles(void) {
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_distance.h"
 
 /// Tracks a nearby target only within the actor's current facing sector.

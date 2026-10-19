@@ -37,27 +37,23 @@ void Func_020013f8(s32 value);
 void Func_02001448(s32 cue);
 
 static __inline__ void Func_020012a0_(const void *data, s32 a, s32 b) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020012a0(data, a, b);
 }
 
 static __inline__ void Func_020012a8_(s32 srcX, s32 srcY, s32 width, s32 height,
                                       s32 destX, s32 destY) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020012a8(srcX, srcY, width, height, destX, destY);
 }
 
 static __inline__ void Func_02001348_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001348(id, x, z);
 }
 
 static __inline__ void Offset_(s32 id, s32 dx, s32 dz) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_OffsetPositionAndResetMotion(id, dx, dz);
 }
 

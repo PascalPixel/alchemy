@@ -67,7 +67,7 @@ void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
 void ObjectMotion_SetPositionAndReset(s32 actor, s32 x, s32 z);
 
 static inline void MarsLighthouseAerie_ObjTurn(s32 id, s32 angle) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02005704(id, angle);
 }
 

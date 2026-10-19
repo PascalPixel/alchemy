@@ -100,29 +100,29 @@ void Func_02000b7c(void);
 void Event_StartScreenTransition(void);
 
 static inline void AlhafraInteriors_ObjTurn(s32 actor, s32 angle) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02000b4c(actor, angle);
 }
 
 static inline s32 AlhafraInteriors_FlagCheck(s32 flag) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_Test(flag);
 }
 
 static inline void AlhafraInteriors_FlagSet(s32 flag) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   GameFlag_SetBit(flag);
 }
 
 static inline void AlhafraInteriors_ObjArm(s32 actor, s32 angle, s32 frames) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_ArmCallback(actor, angle, frames);
 }
 
 static inline void
 AlhafraInteriors_ObjSetPos(struct AlhafraInteriorsObject *object, s32 x, s32 y,
                            s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Object_SetPositionAndResetMotion(object, x, y, z);
 }
 
@@ -142,33 +142,33 @@ void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
 
 static inline void AlhafraInteriors_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static inline void AlhafraInteriors_ObjSpeed(s32 actor, s32 speed,
                                              s32 acceleration) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
 }
 
 static inline void AlhafraInteriors_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetPositionAndReset(actor, x, z);
 }
 
 static inline void AlhafraInteriors_Wait(s32 frames) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   FieldEvent_WaitFrames(frames);
 }
 
 static inline void AlhafraInteriors_SePlay(s32 cue) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02000bdc(cue);
 }
 
 static inline void AlhafraInteriors_WaitFrames(s32 frames) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   WaitFrames(frames);
 }
 
@@ -181,23 +181,23 @@ static inline void AlhafraInteriors_WaitFrames(s32 frames) {
   }
 
 static inline void AlhafraInteriors_ObjEmoteWait(s32 actor, s32 emote) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02000b64(actor, emote);
 }
 
 static inline void AlhafraInteriors_TaskAdd(void (*callback)(void),
                                             s32 priority) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Scheduler_AddOrUpdateCallback(callback, priority);
 }
 
 static inline void AlhafraInteriors_MessagePut(s32 speaker, s32 flags) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02000b3c(speaker, flags);
 }
 
 static inline void AlhafraInteriors_MessageOpen(s32 speaker, s32 flags) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   UiText_OpenMessageAtObject(speaker, flags);
 }
 

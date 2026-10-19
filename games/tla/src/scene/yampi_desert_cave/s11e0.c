@@ -10,14 +10,12 @@ struct ObjectRuntime *Object_GetById(s32 id);
 void Func_020018a8(s32 id, s32 x, s32 z);
 
 static __inline__ s32 GameFlag_GetByte_(s32 flag) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as the scene layer of The Broken Seal does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_GetByte(flag);
 }
 
 static __inline__ void GameFlag_SetByte_(s32 flag, s32 value) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as the scene layer of The Broken Seal does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   GameFlag_SetByte(flag, value);
 }
 

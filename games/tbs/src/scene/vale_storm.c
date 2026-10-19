@@ -89,7 +89,6 @@ ValeStorm_RerollHeadingOnCountdown(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_pulse.h"
 
 /// Returns the entrances to the paths outside on the stormy night.
@@ -124,7 +123,6 @@ static void Event_ClearPathCellOverride(void) {
   Map_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
-// Shared source is included here in ROM order.
 #include "common/vale.h"
 
 /// Animates the doorway before taking backdrop exit 11.
@@ -2445,7 +2443,6 @@ static void ValeStorm_CycleObjectPalettes(struct FieldActor *actor) {
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 
 /// Creates the two linked effects that travel in opposite vertical directions.
@@ -2499,7 +2496,6 @@ static void ValeStorm_SpawnEffectPair(struct FieldActor *parent) {
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/effect_psynergy.h"
 
 /// Updates the four boulder scene actors until the final reaction stops.

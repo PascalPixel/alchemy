@@ -112,7 +112,7 @@ void Func_0200483c(struct ShamanVillageObject *object);
 void Event_StartScreenTransition(void);
 
 static inline void ShamanVillage_ObjTurn(s32 actor, s32 angle) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020049bc(actor, angle);
 }
 
@@ -123,23 +123,23 @@ static inline void ShamanVillage_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e,
 }
 
 static inline s32 ShamanVillage_FlagCheck(s32 flag) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_Test(flag);
 }
 
 static inline void ShamanVillage_FlagSet(s32 flag) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   GameFlag_SetBit(flag);
 }
 
 static inline void ShamanVillage_ObjArm(s32 actor, s32 angle, s32 frames) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_ArmCallback(actor, angle, frames);
 }
 
 static inline void ShamanVillage_ObjSetPos(struct ShamanVillageObject *object,
                                            s32 x, s32 y, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Object_SetPositionAndResetMotion(object, x, y, z);
 }
 
@@ -162,39 +162,39 @@ void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
 
 static inline void ShamanVillage_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static inline void ShamanVillage_ObjSpeed(s32 actor, s32 speed,
                                           s32 acceleration) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
 }
 
 static inline void ShamanVillage_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetPositionAndReset(actor, x, z);
 }
 
 static inline void ShamanVillage_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e,
                                          s32 f) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004844(a, b, c, d, e, f);
 }
 
 static inline void ShamanVillage_Wait(s32 frames) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   FieldEvent_WaitFrames(frames);
 }
 
 static inline void ShamanVillage_SePlay(s32 cue) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Engine_AudioPlayCue(cue);
 }
 
 static inline void ShamanVillage_WaitFrames(s32 frames) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   WaitFrames(frames);
 }
 
@@ -207,22 +207,22 @@ static inline void ShamanVillage_WaitFrames(s32 frames) {
   }
 
 static inline void ShamanVillage_ObjEmoteWait(s32 actor, s32 emote) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020049d4(actor, emote);
 }
 
 static inline void ShamanVillage_TaskAdd(void (*callback)(void), s32 priority) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Scheduler_AddOrUpdateCallback(callback, priority);
 }
 
 static inline void ShamanVillage_MessagePut(s32 speaker, s32 flags) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020049a4(speaker, flags);
 }
 
 static inline void ShamanVillage_MessageOpen(s32 speaker, s32 flags) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   UiText_OpenMessageAtObject(speaker, flags);
 }
 
@@ -241,17 +241,17 @@ void ObjectMotion_SetVariantCallback(s32 actor, s32 value);
 void ObjectMotion_ResetAndSetPositionInMode2(s32 actor, s32 x, s32 z);
 
 static inline void ShamanVillage_CamSpeed(s32 speed, s32 acceleration) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020049e4(speed, acceleration);
 }
 
 static inline void ShamanVillage_ObjWalk2(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_ResetAndSetPositionInMode2(actor, x, z);
 }
 
 static inline void ShamanVillage_ObjPlace(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004934(actor, x, z);
 }
 
@@ -279,12 +279,12 @@ static inline void ShamanVillage_ObjPlace(s32 actor, s32 x, s32 z) {
 void Func_0200493c(s32 actor, s32 x, s32 z, s32 angle);
 
 static inline void ShamanVillage_ObjPut(s32 actor, s32 x, s32 z, s32 angle) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0200493c(actor, x, z, angle);
 }
 
 static inline void ShamanVillage_MessageWait(s32 speaker, s32 a, s32 frames) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0200499c(speaker, a, frames);
 }
 

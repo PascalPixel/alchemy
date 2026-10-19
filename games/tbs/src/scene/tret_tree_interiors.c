@@ -79,10 +79,8 @@ static struct FieldPosition sSparkOrigin;
 static s32 sSparkFrame;
 static s16 *sLastFloorEntrance;
 
-// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 
-// Shared source is included here in ROM order.
 #include "common/effect_spawn.h"
 #include "ability_ids.h"
 #include "item_ids.h"
@@ -935,7 +933,6 @@ static void Event_CastReveal(void) {
   Engine_TaskRemoveCallback(TretPalette_UpdateSceneTint);
 }
 
-// Shared source is included here in ROM order.
 #include "common/effect_advance.h"
 
 /// Drops the leader into the room with a ring of landing particles.

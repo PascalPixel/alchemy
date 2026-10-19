@@ -107,7 +107,7 @@ void Func_02002c20(struct LemurianShipObject *object);
 void Event_StartScreenTransition(void);
 
 static inline void LemurianShip_ObjTurn(s32 actor, s32 angle) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002d30(actor, angle);
 }
 
@@ -118,23 +118,23 @@ static inline void LemurianShip_BlendStart(s32 a, s32 b, s32 c, s32 d, s32 e,
 }
 
 static inline s32 LemurianShip_FlagCheck(s32 flag) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_Test(flag);
 }
 
 static inline void LemurianShip_FlagSet(s32 flag) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   GameFlag_SetBit(flag);
 }
 
 static inline void LemurianShip_ObjArm(s32 actor, s32 angle, s32 frames) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_ArmCallback(actor, angle, frames);
 }
 
 static inline void LemurianShip_ObjSetPos(struct LemurianShipObject *object,
                                           s32 x, s32 y, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Object_SetPositionAndResetMotion(object, x, y, z);
 }
 
@@ -156,39 +156,39 @@ void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
 
 static inline void LemurianShip_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static inline void LemurianShip_ObjSpeed(s32 actor, s32 speed,
                                          s32 acceleration) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
 }
 
 static inline void LemurianShip_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetPositionAndReset(actor, x, z);
 }
 
 static inline void LemurianShip_MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e,
                                         s32 f) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002c30(a, b, c, d, e, f);
 }
 
 static inline void LemurianShip_Wait(s32 frames) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   FieldEvent_WaitFrames(frames);
 }
 
 static inline void LemurianShip_SePlay(s32 cue) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002de0(cue);
 }
 
 static inline void LemurianShip_WaitFrames(s32 frames) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   WaitFrames(frames);
 }
 
@@ -201,22 +201,22 @@ static inline void LemurianShip_WaitFrames(s32 frames) {
   }
 
 static inline void LemurianShip_ObjEmoteWait(s32 actor, s32 emote) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002d48(actor, emote);
 }
 
 static inline void LemurianShip_TaskAdd(void (*callback)(void), s32 priority) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Scheduler_AddOrUpdateCallback(callback, priority);
 }
 
 static inline void LemurianShip_MessagePut(s32 speaker, s32 flags) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002d20(speaker, flags);
 }
 
 static inline void LemurianShip_MessageOpen(s32 speaker, s32 flags) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   UiText_OpenMessageAtObject(speaker, flags);
 }
 
@@ -236,22 +236,22 @@ void Func_02002dd0(const void *script);
 void Func_02002dd8(void);
 
 static inline void LemurianShip_ObjCommit(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetPositionAndCommit(actor, x, z);
 }
 
 static inline void LemurianShip_CamSpeed(s32 speed, s32 acceleration) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002d58(speed, acceleration);
 }
 
 static inline void LemurianShip_ObjPlace(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002cd0(actor, x, z);
 }
 
 static inline void LemurianShip_CamSet(s32 a, s32 b, s32 c, s32 d) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002d68(a, b, c, d);
 }
 

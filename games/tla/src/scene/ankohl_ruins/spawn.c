@@ -8,8 +8,7 @@ void Object_SetPartAttribute(struct ObjectRuntime *object, s32 value);
 
 static __inline__ struct ObjectRuntime *Object_Create(s32 type, s32 x, s32 y,
                                                       s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps the argument copies, as ☀️'s
-   * scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Engine_ObjectCreate(type, x, y, z);
 }
 

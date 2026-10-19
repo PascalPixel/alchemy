@@ -92,61 +92,45 @@ void Func_02001e1c(struct ObjectRuntime *object, s32 part);
 
 static inline void Func_02004c20_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
                                   s32 a5) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each call's
-   * own constants; direct calls share registers or load the stack arguments one
-   * at a time */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004c20(a0, a1, a2, a3, a4, a5);
 }
 
 static inline void Func_02004c28_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
                                   s32 a5) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each call's
-   * own constants; direct calls share registers or load the stack arguments one
-   * at a time */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004c28(a0, a1, a2, a3, a4, a5);
 }
 
 static inline void Func_02004c30_(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4,
                                   s32 a5) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each call's
-   * own constants; direct calls share registers or load the stack arguments one
-   * at a time */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004c30(a0, a1, a2, a3, a4, a5);
 }
 
 static inline void Func_0200246c_(s32 index, s32 value) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each call's
-   * own constants; direct calls share registers or load the stack arguments one
-   * at a time */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0200246c(index, value);
 }
 
 static inline void Func_02004cd8_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each call's
-   * own constants; direct calls share registers or load the stack arguments one
-   * at a time */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004cd8(id, x, z);
 }
 
 static inline struct ObjectRuntime *Func_02004bd8_(s32 kind, s32 x, s32 y,
                                                    s32 z) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each call's
-   * own constants; direct calls share registers or load the stack arguments one
-   * at a time */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Func_02004bd8(kind, x, y, z);
 }
 
 static inline void Vector_AddPolar(s32 length, s32 angle, s32 *position) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each call's
-   * own constants; direct calls share registers or load the stack arguments one
-   * at a time */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Vector_AddPolarOffsetFar(length, angle, position);
 }
 
 static inline void Camera_SetBounds(s32 x, s32 y, s32 z, s32 use_setter) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep each call's
-   * own constants; direct calls share registers or load the stack arguments one
-   * at a time */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(x, y, z, use_setter);
 }
 

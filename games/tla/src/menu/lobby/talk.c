@@ -32,8 +32,7 @@ void ObjectMotion_SetAngleToward(s32 actor, s32 target, s32 frames);
 void UiText_ShowPositionedMessageAndWait(const u8 *message, s32 flags);
 
 static __inline__ s32 Flag_Test(s32 flag) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_Test(flag);
 }
 

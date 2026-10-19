@@ -12,14 +12,12 @@ void ObjectMotion_SetPositionAndCommit(s32 id, s32 x, s32 z);
 void FieldEvent_WaitFrames(s32 frames);
 
 static __inline__ void Actor_SetSpeed(s32 id, s32 speed, s32 acceleration) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetSpeedParameters(id, speed, acceleration);
 }
 
 static __inline__ void Actor_SetPosition(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetPositionAndCommit(id, x, z);
 }
 

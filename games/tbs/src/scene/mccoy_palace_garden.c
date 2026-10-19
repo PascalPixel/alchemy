@@ -56,7 +56,6 @@ static void Garden_ApplyProgress(void);
 static void Event_GuardsArrestParty(void);
 static void Garden_OpenPalaceGate(void);
 
-// Shared scene code, included where the ROM places it.
 #include "common/object_facing.h"
 
 /// Where the party can enter the garden.
@@ -385,7 +384,6 @@ static void Garden_OpenPalaceGate(void) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
 }
 
-// Shared scene code, included where the ROM places it.
 #include "common/object_orbit.h"
 
 // clang-format off

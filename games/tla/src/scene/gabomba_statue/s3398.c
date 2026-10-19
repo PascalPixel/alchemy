@@ -23,8 +23,7 @@ void Func_02003868(void);
 void Func_02005674(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 static __inline__ void Map_CopyBlock(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02005674(a, b, c, d, e, f);
 }
 

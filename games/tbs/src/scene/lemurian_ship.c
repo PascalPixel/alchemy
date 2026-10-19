@@ -783,7 +783,6 @@ void DisplayScroll_BuildAndSwapHBlankPage(void) {
   work->page ^= 1;
 }
 
-// Shared scene code, included where the ROM places it.
 #include "common/scroll_initialize_hblank_dma.h"
 
 /// Takes the ripple's callbacks off and stops DMA 0.

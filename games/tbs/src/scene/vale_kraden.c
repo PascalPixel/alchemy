@@ -46,7 +46,6 @@ enum ValeKradenActor {
   ACTOR_COTTAGE_VISITOR = 16
 };
 
-// Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
 /// Returns the cottage area's entrance positions.

@@ -62,8 +62,7 @@ void Func_02004ca0(struct ObjectRuntime *object, const void *data);
 void Func_02004df8(s32 id);
 
 static __inline__ struct ObjectRuntime *Create(s32 kind, s32 x, s32 y, s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Engine_ObjectCreate(kind, x, y, z);
 }
 

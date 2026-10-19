@@ -110,72 +110,72 @@ void Func_02003fa8(struct FieldActor *object, s32 mode);
 void Func_02003910(s32 id, u32 kind, s32 flag, s32 layer);
 
 static inline void Scene_TaskAdd(void (*callback)(void), s32 priority) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Scheduler_AddOrUpdateCallback(callback, priority);
 }
 
 static inline s32 Scene_FlagTest(s32 flag) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_Test(flag);
 }
 
 static inline void Scene_FlagSet(s32 flag) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   GameFlag_SetBit(flag);
 }
 
 static inline void Scene_FlagClear(s32 flag) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   GameFlag_ClearBit(flag);
 }
 
 static inline void Scene_ArmCallback(s32 id, s32 angle, s32 flags) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_ArmCallback(id, angle, flags);
 }
 
 static inline void Scene_Call4090(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004090(actor, x, z);
 }
 
 static inline void Scene_Call4098(s32 actor, s32 x, s32 z, s32 angle) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004098(actor, x, z, angle);
 }
 
 static inline void Scene_Call4000(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004000(a, b, c, d, e, f);
 }
 
 static inline void Scene_Call41d8(s32 a, s32 b, s32 c, s32 d) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020041d8(a, b, c, d);
 }
 
 static inline void Scene_SetSpeed(s32 id, s32 speed, s32 acceleration) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetSpeedParameters(id, speed, acceleration);
 }
 
 static inline void Scene_CamBounds(s32 x, s32 a, s32 z, s32 b) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(x, a, z, b);
 }
 
 static inline void Scene_SetPositionAndCommit(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetPositionAndCommit(id, x, z);
 }
 
 static inline void Scene_Call4178(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004178(a, b, c);
 }
 
 static inline void Scene_SetPositionAndReset(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetPositionAndReset(id, x, z);
 }
 

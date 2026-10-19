@@ -74,7 +74,6 @@ enum StarRoomActor {
 
 struct ObjectRuntime;
 
-// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
@@ -83,7 +82,6 @@ static __inline__ void SolSanctumElementalStarRoom_SkipMessages(s32 amount) {
   gEventWork->message += amount;
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
 /// Returns the Elemental Star room entrances.
@@ -2145,7 +2143,6 @@ static void SolSanctumElementalStarRoom_AnimateAlexTeleport(void) {
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ALEX), 1);
 }
 
-// Shared source is included here in ROM order.
 #include "common/sol_sanctum_elemental_star_ring_setup.h"
 
 s32 gEffectScript0[] = {

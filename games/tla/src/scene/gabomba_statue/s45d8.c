@@ -34,8 +34,7 @@ void Func_020044d0(s32 value);
 void WaitFrames(s32 frames);
 
 static __inline__ void Map_Copy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0200567c(a, b, c, d, e, f);
 }
 

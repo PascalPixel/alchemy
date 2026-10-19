@@ -6,15 +6,13 @@ void Func_0200432c(s32 id, s32 x, s32 z);
 void Func_0200423c(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 static __inline__ void Func_0200432c_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as the scene layer of The Broken Seal does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0200432c(id, x, z);
 }
 
 static __inline__ void Func_0200423c_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as the scene layer of The Broken Seal does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0200423c(a, b, c, d, e, f);
 }
 

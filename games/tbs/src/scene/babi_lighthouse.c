@@ -98,10 +98,8 @@ static __inline__ s32 UNUSED Entrance_Divide(s32 dividend, s32 divisor) {
   return dividend / divisor;
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
-// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
@@ -110,7 +108,6 @@ static void BabiLighthouse_StartDjinnBattle(void) {
   Field_RequestDjinnBattle(ACTOR_DJINNI, DJINNI_LUFF);
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_waitidle.h"
 #include "common/effect_advance.h"
 

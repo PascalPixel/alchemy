@@ -45,10 +45,8 @@ static void CrossboneIsle_LeaveClearedRoom(void);
 static void CrossboneIsle_RestoreIvy(void);
 static void CrossboneIsle_DrawBlockPuzzleFootprints(void);
 
-// Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
-// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
@@ -100,7 +98,6 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gCrossboneIslePlacementsOther;
 }
 
-// Shared source is included here in ROM order.
 #include "common/effect_advance.h"
 
 /// Emits a ring of effects around a moved block.
@@ -1818,7 +1815,6 @@ static void Event_SlideBlock16East(void) {
   Map_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_orbit.h"
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.

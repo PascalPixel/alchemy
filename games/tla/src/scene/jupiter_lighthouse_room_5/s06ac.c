@@ -51,14 +51,12 @@ u32 Random16Far(void);
 void Func_020029a8(s32 a0);
 
 static inline void Func_02002978_(s32 a0, s32 a1) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002978(a0, a1);
 }
 
 static inline void Func_02002980_(s32 a0, s32 a1) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02002980(a0, a1);
 }
 

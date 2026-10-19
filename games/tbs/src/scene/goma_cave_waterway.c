@@ -36,7 +36,6 @@
 // Forward declarations.
 static void GomaCaveWaterway_LeapStump(s32 no);
 
-// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
@@ -115,7 +114,6 @@ static void GomaCaveWaterway_SpinStump(RotatingEffectWork *work) {
   record->angle -= 0x800;
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_waitdown.h"
 
 /// The leaping stump's field object, as its fields or as its 112 bytes.

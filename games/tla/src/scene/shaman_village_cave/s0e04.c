@@ -14,7 +14,7 @@ void Func_02000a24(void);
 void Func_0200087c(void);
 
 static __inline__ void ShamanVillageCave_ObjPlace(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020010e8(id, x, z);
 }
 

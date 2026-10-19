@@ -1316,7 +1316,6 @@ static void Event_TalkToBoardWalkAttendant(s32 attendant) {
   Engine_EventEnd();
 }
 
-// Shared source is included here in ROM order.
 #include "common/colosso_solo.h"
 #include "common/item_equip.h"
 #include "common/colosso_task.h"
@@ -1457,7 +1456,6 @@ static void ColossoWall_ShowBattleResultLettering(s32 result) {
   Engine_EventWaitForScreen();
 }
 
-// Shared source is included here in ROM order.
 #include "common/colosso_marker.h"
 #include "common/colosso_item_icon.h"
 
@@ -1614,7 +1612,6 @@ static s32 ColossoWall_ApproachFinishAndTakeItem(s32 firstItem,
   return finishAlreadyReached;
 }
 
-// Shared source is included here in ROM order.
 #include "common/colosso_path_rival.h"
 
 /// Allocates the race work, record both competitors and installs the gauge
@@ -1682,7 +1679,6 @@ static void ColossoWall_StartRivalPath(s32 pathResource) {
   FieldScheduler_AddCallback(Colosso_UpdatePathRival, 0xc85);
 }
 
-// Shared source is included here in ROM order.
 #include "common/colosso_scene_state.h"
 #include "common/object_findslot.h"
 
@@ -1774,7 +1770,6 @@ static void ColossoWall_PushAdjacentObstacle(void) {
   Object_SetMode(pusher, 1);
 }
 
-// Shared source is included here in ROM order.
 #include "common/colosso_occupant.h"
 
 const u8 gColossoWall_RollLogScript[] = {2, 2, 3, 3};

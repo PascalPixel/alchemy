@@ -93,7 +93,6 @@ static __inline__ void LiftBlock(s32 column, u8 motionFlags) {
   Object_GetById(8)->y.fixed = PIXELS(32);
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
 /// Raised once the battle with Bane is won: Bane joins the party.
@@ -1152,7 +1151,6 @@ UNUSED static void CrossboneIslePlatformRooms_UpdateItemIcons(void) {
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/colosso_item_icon.h"
 
 /// Restores collected keys and already opened passages.

@@ -156,7 +156,6 @@ static void LunpaFortress_RestoreGuardRoomDoors(void);
 static void LunpaFortress_RestoreColumnRoomDoors(void);
 static void LunpaFortress_RestoreRescueRoomDoors(void);
 
-// Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
 /// Where the party can enter each map.

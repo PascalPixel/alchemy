@@ -20,14 +20,12 @@ void Func_02004df8(s32 value, s32 mode);
 
 static __inline__ void ObjectMotion_SetPositionAndCommit_(s32 actor, s32 x,
                                                           s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetPositionAndCommit(actor, x, z);
 }
 
 static __inline__ void Func_02004df8_(s32 value, s32 mode) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02004df8(value, mode);
 }
 

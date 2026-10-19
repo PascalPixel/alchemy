@@ -14,8 +14,7 @@ void Func_02005854(s32 sound);
 void Event_FinishScreenTransition(void);
 
 static __inline__ void Actor_Cue(s32 id, s32 value) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02005794(id, value);
 }
 

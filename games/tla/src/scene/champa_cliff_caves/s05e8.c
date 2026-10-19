@@ -13,8 +13,7 @@ void Func_020034d4(s32 a, s32 b, s32 c);
 
 static __inline__ void ObjectMotion_CommitPositionAndActivate_(s32 actor,
                                                                s32 dx, s32 dz) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_CommitPositionAndActivate(actor, dx, dz);
 }
 

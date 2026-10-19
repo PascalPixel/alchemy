@@ -43,12 +43,12 @@ void Func_02001958(void);
 
 static inline void YampiDesertCave_Call1848(s32 a, s32 b, s32 c, s32 d, s32 e,
                                             s32 f) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001848(a, b, c, d, e, f);
 }
 
 static inline void YampiDesertCave_Call1920(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001920(a, b, c);
 }
 

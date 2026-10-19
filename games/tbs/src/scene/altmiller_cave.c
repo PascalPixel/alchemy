@@ -159,7 +159,6 @@ enum {
 struct LightWheel gAltmillerCave_LightWheelState
     __attribute__((nocommon, aligned(4)));
 
-// Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
 /// Talking to the Djinni in room 4 starts the battle for Djinni 65.

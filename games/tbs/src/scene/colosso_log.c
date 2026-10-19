@@ -1700,7 +1700,6 @@ static void Event_TalkToLogRollingAttendant(s32 actor) {
   Engine_EventEnd();
 }
 
-// Shared source is included here in ROM order.
 #include "common/colosso_solo.h"
 #include "common/item_equip.h"
 #include "common/colosso_task.h"
@@ -1842,7 +1841,6 @@ UNUSED static void FieldScene_RunScene3bcSequenceA(s32 countdown) {
   Engine_EventWaitForScreen();
 }
 
-// Shared source is included here in ROM order.
 #include "common/colosso_marker.h"
 #include "common/colosso_item_icon.h"
 
@@ -1990,7 +1988,6 @@ static s32 ColossoLog_CollectFinishEquipment(s32 firstItem, s32 secondItem) {
   return rivalFinishedFirst;
 }
 
-// Shared source is included here in ROM order.
 #include "common/colosso_path_rival.h"
 #include "common/colosso_setup.h"
 #include "common/colosso_scene_state.h"
@@ -2080,7 +2077,6 @@ static void ColossoLog_PushActorAhead(void) {
   Object_SetMode(subject, 1);
 }
 
-// Shared source is included here in ROM order.
 #include "common/colosso_occupant.h"
 
 const s32 gColossoLog_Record30Script[] = {

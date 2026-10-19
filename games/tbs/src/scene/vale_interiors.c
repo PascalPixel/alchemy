@@ -51,7 +51,6 @@ enum ValeInteriorsActor {
 static void Event_GaretComesHome(void);
 static void ValeInteriors_SpawnDriftingSprite(void);
 
-// Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
 /// Moves and grows the sprite, using timer/work as signed 8.8 pixel steps.

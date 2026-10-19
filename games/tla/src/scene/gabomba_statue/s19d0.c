@@ -15,8 +15,7 @@ void FieldEvent_WaitFrames(s32 frames);
 void GameFlag_SetBit(s32 flag);
 
 static __inline__ void Camera_SetBounds(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 

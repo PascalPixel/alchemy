@@ -86,28 +86,24 @@ extern u8 gData_02001a90[];
 extern u8 gData_02001be0[];
 
 static __inline__ void Func_02001420_(s32 x, s32 z, s32 a, s32 b) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001420(x, z, a, b);
 }
 
 static __inline__ void Func_020015d0_(s32 x, s32 z, s32 a, s32 b) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_020015d0(x, z, a, b);
 }
 
 static __inline__ void Func_02001400_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters give each stack
-   * argument its own register; a direct call builds both in r3. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001400(a, b, c, d, e, f);
 }
 
 static __inline__ void Func_02001408_(s32 a, s32 b, s32 c, s32 d, s32 e,
                                       s32 f) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters give each stack
-   * argument its own register; a direct call builds both in r3. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001408(a, b, c, d, e, f);
 }
 

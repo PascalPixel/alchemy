@@ -693,7 +693,6 @@ s32 KolimaForestTree_Initialize(void) {
   return 0;
 }
 
-// Shared source is included here in ROM order.
 #include "common/kolima_grow.h"
 
 /// Spawns the growing sparks that repel the party leader.
@@ -928,7 +927,6 @@ static void KolimaForestTree_ReplaceInventoryItem(s32 oldItemId,
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/kolima_palette.h"
 
 s32 gKolimaForestTree_GaretApproachActions[] = {

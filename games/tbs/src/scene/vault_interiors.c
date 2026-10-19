@@ -284,7 +284,6 @@ static void Event_TalkToInnkeeper(void) {
   Engine_EventEnd();
 }
 
-// Shared source is included here in ROM order.
 #include "common/vault_bone.h"
 
 /// Garet refuses to leave. "We don't have time for that, Isaac!"
@@ -333,7 +332,6 @@ static void VaultInteriors_StandAndShowMessage(s32 x) {
   Engine_EventShowMessage(x, 0);
 }
 
-// Shared source is included here in ROM order.
 #include "common/vault_talk.h"
 
 /// Faces the leader and selects the next reply when the answer is no.
@@ -1666,7 +1664,6 @@ static void VaultInteriors_AdvanceSuspectRoute(s32 actor, s32 expected,
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/vault_spotflag.h"
 
 /// On arrival: restores each room for the story so far, and plays the loft's
@@ -1923,7 +1920,6 @@ static s32 VaultInteriors_GetIvanVenusDjinnCount(void) {
   return UnitGet(IVAN)->djinnOwnedCounts[ELEMENT_VENUS];
 }
 
-// Shared source is included here in ROM order.
 #include "common/vault_djinn.h"
 
 /// Stages the defeated thieves and gathers the townspeople in the attic.
@@ -2619,7 +2615,6 @@ static void VaultInteriors_EndMindRead(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-// Shared source is included here in ROM order.
 #include "common/vault_itemobj.h"
 
 /// Finds the route node containing the actor's position on the eight-pixel

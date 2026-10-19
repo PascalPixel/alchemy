@@ -128,10 +128,8 @@ struct Vec {
   s32 z;
 };
 
-// Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
-// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
@@ -252,7 +250,6 @@ static void TunnelRuins_UpdateTrackedActor(void) {
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_depth.h"
 
 // UB: calling this s32 function through a void update hook is incompatible.
@@ -349,7 +346,6 @@ static void TunnelRuins_WaitForActorToLand(struct FieldActor *actor) {
   actor->targetY = ACTOR_NO_TARGET;
 }
 
-// Shared source is included here in ROM order.
 #include "common/effect_advance.h"
 
 /// Walking south off a step: the leader hops 12 pixels forward and slides 16
@@ -406,7 +402,6 @@ static void Event_HopDownStep(void) {
   ((void (*)(union FieldObject *))TunnelRuins_RideBlockBelow)
 #endif
 
-// Shared source is included here in ROM order.
 #include "common/effect_radial.h"
 
 /// Selects the entrance table for the current tunnel ruins scene.

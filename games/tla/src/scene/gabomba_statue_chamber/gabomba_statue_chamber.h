@@ -108,7 +108,7 @@ void Func_02001d50(struct GabombaStatueChamberObject *object);
 void Event_StartScreenTransition(void);
 
 static inline void GabombaStatueChamber_ObjTurn(s32 actor, s32 angle) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001e70(actor, angle);
 }
 
@@ -119,25 +119,25 @@ static inline void GabombaStatueChamber_BlendStart(s32 a, s32 b, s32 c, s32 d,
 }
 
 static inline s32 GabombaStatueChamber_FlagCheck(s32 flag) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return GameFlag_Test(flag);
 }
 
 static inline void GabombaStatueChamber_FlagSet(s32 flag) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   GameFlag_SetBit(flag);
 }
 
 static inline void GabombaStatueChamber_ObjArm(s32 actor, s32 angle,
                                                s32 frames) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_ArmCallback(actor, angle, frames);
 }
 
 static inline void
 GabombaStatueChamber_ObjSetPos(struct GabombaStatueChamberObject *object, s32 x,
                                s32 y, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Object_SetPositionAndResetMotion(object, x, y, z);
 }
 
@@ -159,44 +159,44 @@ void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
 void Event_PrepareObjectAndApplyValue(s32 actor, s32 value);
 
 static inline void GabombaStatueChamber_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static inline void GabombaStatueChamber_ObjSpeed(s32 actor, s32 speed,
                                                  s32 acceleration) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
 }
 
 static inline void GabombaStatueChamber_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetPositionAndReset(actor, x, z);
 }
 
 static inline void GabombaStatueChamber_ObjPosSet(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001e10(actor, x, z);
 }
 
 static inline void GabombaStatueChamber_MapCopy(s32 a, s32 b, s32 c, s32 d,
                                                 s32 e, s32 f) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001d58(a, b, c, d, e, f);
 }
 
 static inline void GabombaStatueChamber_Wait(s32 frames) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   FieldEvent_WaitFrames(frames);
 }
 
 static inline void GabombaStatueChamber_SePlay(s32 cue) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001f10(cue);
 }
 
 static inline void GabombaStatueChamber_WaitFrames(s32 frames) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   WaitFrames(frames);
 }
 
@@ -209,23 +209,23 @@ static inline void GabombaStatueChamber_WaitFrames(s32 frames) {
   }
 
 static inline void GabombaStatueChamber_ObjEmoteWait(s32 actor, s32 emote) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001e90(actor, emote);
 }
 
 static inline void GabombaStatueChamber_TaskAdd(void (*callback)(void),
                                                 s32 priority) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Scheduler_AddOrUpdateCallback(callback, priority);
 }
 
 static inline void GabombaStatueChamber_MessagePut(s32 speaker, s32 flags) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001e60(speaker, flags);
 }
 
 static inline void GabombaStatueChamber_MessageOpen(s32 speaker, s32 flags) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   UiText_OpenMessageAtObject(speaker, flags);
 }
 

@@ -81,7 +81,6 @@ static void MercuryLighthouseAerie_FlickerBeacon(void);
 
 #define NULL ((void *)0)
 
-// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 
 /// The event work, seen for its table of the scene's 66 actor slots.
@@ -90,7 +89,6 @@ struct ActorTable {
   struct FieldActor *actors[66];
 };
 
-// Shared source is included here in ROM order.
 #include "common/effect_spawn.h"
 #include "objcmd.h"
 
@@ -292,7 +290,6 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Engine_EventEnd();
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_distance.h"
 #include "common/object_nearest.h"
 

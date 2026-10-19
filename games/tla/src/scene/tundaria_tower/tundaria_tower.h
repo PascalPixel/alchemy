@@ -85,14 +85,12 @@ void Func_02003110(s32 color, s32 b);
 void ObjectMotion_ResetAndSetPosition(s32 actor, s32 x, s32 z);
 
 static inline void TundariaTower_FadeTo(s32 color, s32 b) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer; as direct
-   * calls their constants are shared in registers. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02003108(color, b);
 }
 
 static inline void TundariaTower_FadeFrom(s32 color, s32 b) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer; as direct
-   * calls their constants are shared in registers. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02003110(color, b);
 }
 
@@ -103,8 +101,7 @@ static inline void TundariaTower_ObjPlace(s32 actor, s32 x, s32 z) {
 }
 
 static inline void TundariaTower_SetWork(s32 a, s32 b, s32 c) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer; as direct
-   * calls their constants are shared in registers. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02003000(a, b, c);
 }
 

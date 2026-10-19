@@ -1665,7 +1665,6 @@ static void SolSanctumEruption_CycleActorPalette(struct FieldActor *actor) {
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 
 /// Creates two vertical effects sharing the parent position and cached tiles.
@@ -1715,7 +1714,6 @@ static void SolSanctumEruption_SpawnEffectPair(struct FieldActor *parent) {
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/effect_psynergy.h"
 
 /// Advances the Wise One palette cycle.
@@ -1723,7 +1721,6 @@ static void SolSanctumEruption_UpdateWiseOnePalette(void) {
   SolSanctumEruption_CycleActorPalette(Object_GetById(ACTOR_WISE_ONE));
 }
 
-// Shared source is included here in ROM order.
 #include "common/sol_sanctum_elemental_star_ring_setup.h"
 
 s32 gEruption_ArcOriginsHead[] = {

@@ -81,14 +81,12 @@ enum { LAMAKAN_ENCOUNTERS = 53 };
 
 #define NULL ((void *)0)
 
-// Shared scene code, included where the ROM places it.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
 /// Smog, Jupiter Djinni 3, joins the party.
 static void TalkToSmog(void) { Djinn_JoinParty(SMOG, 3, 3); }
 
-// Shared scene code, included where the ROM places it.
 #include "common/object_waitdown.h"
 
 // The update a leader dragged into a pit runs: sand sounds every 8 frames

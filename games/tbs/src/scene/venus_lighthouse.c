@@ -177,12 +177,10 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   return 0;
 }
 
-// Shared source is included here in ROM order.
 #include "common/effect_spawn.h"
 #include "ability_ids.h"
 #include "objcmd.h"
 
-// Shared source is included here in ROM order.
 #include "common/object_distance.h"
 #include "common/object_findslot.h"
 
@@ -501,7 +499,6 @@ static void Event_SetLeaderAsEffectTarget(void) {
 /// Stepping onto this spot: the room's effect follows no one.
 static void Event_ClearEffectTarget(void) { gActorEffectWork->actor = NULL; }
 
-// Shared source is included here in ROM order.
 #include "common/object_depth.h"
 #include "common/object_waitidle.h"
 #include "common/effect_advance.h"
@@ -554,7 +551,6 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   Engine_EventEnd();
 }
 
-// Shared source is included here in ROM order.
 #include "common/effect_radial.h"
 
 // Emit shrinking particles around a moving gate effect every four frames.

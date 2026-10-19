@@ -10,8 +10,7 @@ void Func_02001f08(void);
 
 static __inline__ void Words_Copy(void *destination, const void *source,
                                   s32 size) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Iwram_CopyWords(destination, source, size);
 }
 

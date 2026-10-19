@@ -176,7 +176,6 @@ enum {
 #define MERCURY_LIGHTHOUSE_OFFSET_FIXED(value) ((value) << 16)
 #endif
 
-// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 #include "common/object_staged_actor.h"
@@ -207,7 +206,6 @@ static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
 }
 #endif
 
-// Shared source is included here in ROM order.
 #include "common/mercury_lighthouse_sparks.h"
 #include "common/mercury_lighthouse_palette_cycle.h"
 
@@ -297,7 +295,6 @@ const struct SceneEvent *MercuryLighthouse_GetEvents(void) {
   return gMercuryLighthouseEventsOther;
 }
 
-// Shared source is included here in ROM order.
 #include "common/mercury_lighthouse_risedrop.h"
 
 /// Walking north into trigger 53 on the third map: the leader rises through
@@ -1867,7 +1864,6 @@ static void MercuryLighthouse_EnterRisingPassage(void) {
   Engine_EventEnd();
 }
 
-// Shared source is included here in ROM order.
 #include "common/mercury_lighthouse_arrive.h"
 
 /// Reveal the stair's map rows with particles along their edges.
@@ -2658,7 +2654,6 @@ static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem) {
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/mercury_lighthouse_lights.h"
 
 /// Creates the rising effect at the source actor and sets its sprite priority.
@@ -2686,7 +2681,6 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *source) {
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/mercury_lighthouse_pillar.h"
 
 s32 gEffectScript0[] = {

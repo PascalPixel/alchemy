@@ -1066,7 +1066,6 @@ static __inline__ void AdvanceMessage(s32 amount) {
   gEventWork->message += amount;
 }
 
-// Shared source is included here in ROM order.
 #include "common/colosso_solo.h"
 #include "common/item_equip.h"
 #include "common/colosso_task.h"
@@ -1199,7 +1198,6 @@ static void ColossoRiver_ShowMatchResult(s32 result) {
   Engine_EventWaitForScreen();
 }
 
-// Shared source is included here in ROM order.
 #include "common/colosso_marker.h"
 #include "common/colosso_item_icon.h"
 
@@ -1356,7 +1354,6 @@ static s32 ColossoRiver_CollectFinishItem(s32 firstItem, s32 secondItem) {
   return flag;
 }
 
-// Shared source is included here in ROM order.
 #include "common/colosso_path_rival.h"
 #include "common/colosso_setup.h"
 #include "common/colosso_scene_state.h"
@@ -1446,7 +1443,6 @@ static void ColossoRiver_PushObjectAhead(void) {
   Object_SetMode(subject, 1);
 }
 
-// Shared source is included here in ROM order.
 #include "common/colosso_occupant.h"
 
 // clang-format off

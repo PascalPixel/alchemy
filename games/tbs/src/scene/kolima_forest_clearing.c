@@ -33,7 +33,6 @@
 /// Actors 8 to 10 are the logs; 11 is the Nut.
 enum { NUT = 11 };
 
-// Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
 /// Where the party enters from the bridge and the river.
@@ -95,7 +94,6 @@ s32 KolimaForestClearing_Initialize(void) {
   return 0;
 }
 
-// Shared source is included here in ROM order.
 #include "common/kolima_palette.h"
 #include "common/object_orbit.h"
 

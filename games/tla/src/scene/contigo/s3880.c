@@ -12,8 +12,7 @@ void Func_020040d4(s32 actor, s32 x, s32 z);
 
 static __inline__ void Func_0200400c_(s32 srcX, s32 srcY, s32 width, s32 height,
                                       s32 destX, s32 destY) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0200400c(srcX, srcY, width, height, destX, destY);
 }
 

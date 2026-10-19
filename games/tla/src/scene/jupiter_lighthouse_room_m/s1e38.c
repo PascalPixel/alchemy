@@ -8,8 +8,7 @@ void ObjectDispatch_SetSingleChildFlags(struct ObjectRuntime *object,
 void ObjectMotion_EnableActionAndSetCallback(s32 id, const void *script);
 
 static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_0200484c(id, x, z, angle);
 }
 

@@ -92,7 +92,6 @@ enum { FLAG_CHEST_ITEM_4C = 0xf65, FLAG_CHEST_EF0 = 0xef0 };
 static void MercuryLighthouseEntrance_LizardManBlocksMia(void);
 static void MercuryLighthouseEntrance_MiaEntersLighthouse(void);
 
-// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 #include "common/object_staged_actor.h"
@@ -132,7 +131,6 @@ MercuryLighthouseEntrance_MiaWatchesLeader(union FieldObject *fieldObject) {
 #endif
 }
 
-// Shared source is included here in ROM order.
 #include "common/mercury_lighthouse_palette_cycle.h"
 
 /// Touching trigger 21 once Ply has worked: rising sparks keep appearing
@@ -187,7 +185,6 @@ static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
   Engine_EventEnd();
 }
 
-// Shared source is included here in ROM order.
 #include "common/mercury_lighthouse_risedrop.h"
 
 /// Walking north into trigger 67: the leader rises to the southern landing.
@@ -324,7 +321,6 @@ static void MercuryLighthouseEntrance_FightLizardMan(void) {
   Engine_EventEnd();
 }
 
-// Shared source is included here in ROM order.
 #include "common/mercury_lighthouse_arrive.h"
 
 /// On entering: the lights, the Retreat point and the pillar routes Ply has
@@ -597,7 +593,6 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/mercury_lighthouse_lights.h"
 
 /// Spawns the short-lived rising effect at an actor's position.
@@ -620,7 +615,6 @@ static void OverlayObject_SpawnKind24AtObject(struct FieldActor *source) {
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/mercury_lighthouse_pillar.h"
 
 s32 gEffectScript0[] = {

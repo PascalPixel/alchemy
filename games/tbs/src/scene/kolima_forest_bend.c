@@ -100,7 +100,6 @@ struct BendLog {
   struct FieldActor *actor;
 };
 
-// Shared source is included here in ROM order.
 #include "common/map_panel.h"
 
 /// Gives the short log's column of cells its collision: column 4 at the
@@ -576,7 +575,6 @@ static void KolimaForestBend_RollLog(struct BendLog *runs) {
   Engine_EventEnd();
 }
 
-// Shared source is included here in ROM order.
 #include "common/kolima_palette.h"
 
 /// The logs on a first visit, as struct BendLog: sprite 0xcd runs north to

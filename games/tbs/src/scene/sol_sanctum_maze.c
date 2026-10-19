@@ -43,7 +43,6 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// The exits, and the Small Jewel's chest.
 const struct SceneEvent *Scene_GetEvents(void) { return gSolSanctumMazeEvents; }
 
-// Shared scene code, included where the ROM places it.
 #include "common/sol_sanctum_init_zoom.h"
 
 struct SceneEntrance gSolSanctumMazeEntrances[] = {

@@ -107,7 +107,6 @@ s32 Math_RemainderUnsigned(s32, s32);
 // FLAG_SCENE_TEMP_37: the light has lifted the party and flashed white.
 // FLAG_SCENE_TEMP_50: the leader stands on a pillar.
 
-// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
@@ -178,7 +177,6 @@ VenusLighthouseAerie_StepSpriteRotation(union FieldObject *fieldObject) {
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_heading.h"
 
 /// Returns the aerie arrival positions.
@@ -199,7 +197,6 @@ const struct ScenePlacement *VenusLighthouseAerie_GetPlacements(void) {
   return gVenusLighthouseAeriePlacements;
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_distance.h"
 #include "common/object_nearest.h"
 
@@ -1130,7 +1127,6 @@ static void VenusLighthouseAerie_CycleActorPalette(struct FieldActor *actor) {
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 
 /// Spawns two vertical effects using the parent position and shared cached
@@ -1186,7 +1182,6 @@ VenusLighthouseAerie_SpawnLinkedPairEffects(struct FieldActor *parent) {
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/effect_psynergy.h"
 
 /// Advances Sheba's palette cycle.

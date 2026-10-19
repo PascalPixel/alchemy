@@ -15,8 +15,7 @@ s32 Func_0200039c(void);
 s32 Func_02000578(void);
 
 static __inline__ void Flag_SetByte(s32 flag, s32 value) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   GameFlag_SetByte(flag, value);
 }
 

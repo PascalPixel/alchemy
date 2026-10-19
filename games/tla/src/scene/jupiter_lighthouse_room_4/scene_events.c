@@ -31,14 +31,12 @@ struct EventWorkLock {
 };
 
 static inline void MapCopy(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep the native
-   * registers */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001e00(a, b, c, d, e, f);
 }
 
 static inline void MapCopyAttr(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f) {
-  /* FAKEMATCH: as in ☀️'s scene layer, the inline parameters keep the native
-   * registers */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001df8(a, b, c, d, e, f);
 }
 

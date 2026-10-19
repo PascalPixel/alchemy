@@ -106,7 +106,6 @@ static u16 sSuhallaDesertSavedColor;
 
 #define SUHALLA_REVEAL_PALETTE_COLOR (*(volatile u16 *)0x0500019e)
 
-// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 

@@ -37,7 +37,6 @@
 /// Actors 8 to 10 are the logs; 10 is the one that can reach the river.
 enum { RIVER_LOG = 10 };
 
-// Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
 /// Where the party enters from the clearing and the bend.
@@ -82,7 +81,6 @@ static void KolimaForestRiver_PushLog(void) {
   Engine_EventEnd();
 }
 
-// Shared source is included here in ROM order.
 #include "common/kolima_jump.h"
 
 /// The logs, the two paths and the jump east from the bank.
@@ -115,7 +113,6 @@ s32 KolimaForestRiver_Initialize(void) {
   return 0;
 }
 
-// Shared source is included here in ROM order.
 #include "common/kolima_palette.h"
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.

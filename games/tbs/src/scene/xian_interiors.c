@@ -44,7 +44,6 @@ enum { XIAN_INTERIORS_ENTRANCE_FROM_SCHOOL = 8 };
 /// injured on his way from Lama Temple.
 enum { ACTOR_FEH = ACTOR_FIRST_PLACED, ACTOR_FEIZHI, ACTOR_HSU };
 
-// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 #include "ability_ids.h"

@@ -137,10 +137,8 @@ enum {
 #define MOGALL_FOREST_EAST_SHARED_SPRITE_CONDITION FLAG_THIRD_AREA_EAST_APE_OUT
 #endif
 
-// Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
-// Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
@@ -1456,7 +1454,6 @@ s32 MogallForest_Initialize(void) {
   return 0;
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_orbit.h"
 
 /// Pixel step by direction: X in the upper halfword, Z in the lower.

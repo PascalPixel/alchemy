@@ -32,40 +32,34 @@ static inline void Actor_JoinLeader(s32 actor) {
 
 static __inline__ void ObjectMotion_ArmCallback_(s32 actor, s32 angle,
                                                  s32 frames) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_ArmCallback(actor, angle, frames);
 }
 
 static __inline__ void Func_02000d48_(s32 actor, s32 dx, s32 dz, s32 angle) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02000d48(actor, dx, dz, angle);
 }
 
 static __inline__ void Func_02000d08_(s32 actor, s32 value, s32 frames) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02000d08(actor, value, frames);
 }
 
 static __inline__ void ObjectMotion_SetPositionAndCommit_(s32 actor, s32 x,
                                                           s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetPositionAndCommit(actor, x, z);
 }
 
 static __inline__ void ObjectMotion_SetPositionAndReset_(s32 actor, s32 x,
                                                          s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetPositionAndReset(actor, x, z);
 }
 
 static __inline__ void Func_02000ca8_(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02000ca8(actor, x, z);
 }
 

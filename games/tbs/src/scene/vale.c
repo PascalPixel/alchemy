@@ -107,7 +107,6 @@ enum HouseActor { ACTOR_BOARD = 23, ACTOR_LAST_BOARD = 24 };
 
 enum { ANIM_HAMMER = 11 };
 
-// Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
 /// Returns the plaza's entrances.
@@ -2531,7 +2530,6 @@ static void Event_RoofMended(void) {
   Engine_EventEnd();
 }
 
-// Shared source is included here in ROM order.
 #include "common/effect_psynergy.h"
 
 /// Cycles palettes on Garet and periodically spawn attached effects.
@@ -2826,7 +2824,6 @@ static void Vale_AdjustVillagerPriorityForLeaderHeight(void) {
   }
 }
 
-// Shared source is included here in ROM order.
 #include "common/object_orbit.h"
 
 static void Vale_FlashActorAndSpawnEffects(struct FieldActor *actor) {
@@ -2851,7 +2848,6 @@ static void Vale_CycleActorPalette(struct FieldActor *actor) {
     Engine_ObjectSetPartPalettes(actor, (gFrameCount >> 1) % 6);
 }
 
-// Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 #include "common/world_map_linked_effects.h"
 

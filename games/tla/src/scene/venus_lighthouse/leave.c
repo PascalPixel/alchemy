@@ -48,42 +48,42 @@ void VenusLighthouse_RunSetupStep(void);
 void SceneState_RunActor13AtColumn42Setup(void);
 
 static inline void Venus_MessageSet(s32 message) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001c1c(message);
 }
 
 static inline void Venus_ObjAttach(s32 actor, s32 target) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_FollowActor(actor, target);
 }
 
 static inline void Venus_Wait(s32 frames) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Engine_EventWait(frames);
 }
 
 static inline void Venus_ObjWalk(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetPositionAndReset(actor, x, z);
 }
 
 static inline void Venus_ObjTurn(s32 actor, s32 angle, s32 frames) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_ArmCallback(actor, angle, frames);
 }
 
 static inline void Venus_ObjModeWait(s32 actor, s32 mode) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Motion_SetModeAndWaitAnimation(actor, mode);
 }
 
 static inline void Venus_ObjWalk2(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_ResetAndSetPositionInMode2(actor, x, z);
 }
 
 static inline void Venus_ObjCommitHere(s32 actor) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_CommitCurrentPositionAndActivate(actor);
 }
 
@@ -97,93 +97,93 @@ static inline void Venus_Jump(s32 actor, s32 height, s32 frames) {
 }
 
 static inline void Venus_CamMove(s32 x, s32 y, s32 z, s32 mode) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Camera_MoveWithinMapBounds(x, y, z, mode);
 }
 
 static inline void Venus_ObjVar(s32 actor, s32 value) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Motion_SetVarCbAndRefresh(actor, value);
 }
 
 static inline void Venus_MessagePut(s32 actor, s32 value) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001c24(actor, value);
 }
 
 static inline void Venus_Se(s32 cue) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Engine_AudioPlayCue(cue);
 }
 
 static inline void Venus_ObjSetPos(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001be4(actor, x, z);
 }
 
 static inline void Venus_ObjEffect(s32 actor) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001cd4(actor);
 }
 
 static inline void Venus_ObjVariant(s32 actor, s32 value) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetVariantCallback(actor, value);
 }
 
 static inline void Venus_ObjLink(s32 first, s32 second, s32 distance) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Object_LinkPair(first, second, distance);
 }
 
 static inline void Venus_ObjSpeed(s32 actor, s32 speed, s32 acceleration) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
 }
 
 static inline void Venus_ObjFollow(s32 actor, s32 target) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Object_LinkObjectAndSetCallback(actor, target);
 }
 
 static inline void Venus_ObjCommit(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_CommitPositionAndActivate(actor, x, z);
 }
 
 static inline void Venus_ObjAnim(s32 actor, s32 animation) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Engine_ActorSetAnimation(actor, animation);
 }
 
 static inline void Venus_ObjPlace(s32 actor, s32 x, s32 z) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   ObjectMotion_ResetAndSetPosition(actor, x, z);
 }
 
 static inline void Venus_ObjEffectSet(s32 actor, s32 value) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001ccc(actor, value);
 }
 
 static inline void Venus_CopyCells(s32 srcX, s32 srcY, s32 destX, s32 destY,
                                    s32 width, s32 height) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Engine_MapCopyCellsTo(srcX, srcY, destX, destY, width, height);
 }
 
 static inline void Venus_FlagClr(s32 flag) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   GameFlag_ClearBit(flag);
 }
 
 static inline void Venus_PartyRemove(s32 owner) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Party_RemoveActiveOwner(owner);
 }
 
 static inline void Venus_Countdown(s32 value) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001c54(value);
 }
 

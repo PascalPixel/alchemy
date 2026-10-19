@@ -69,7 +69,6 @@ extern s32 gKolimaForestBridge_BarrierHit;
 extern s32 gKolimaForestBridge_MiaInParty;
 extern s32 gKolimaForestBridge_SparkleSoundOn;
 
-// Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
 /// The end of a dome's growing: if a sparkle has burst on a dome, the dome
@@ -152,7 +151,6 @@ static void KolimaForestBridge_PushLog(void) {
   Engine_EventEnd();
 }
 
-// Shared source is included here in ROM order.
 #include "common/kolima_jump.h"
 
 /// The logs, the jump east from the bank and the two paths.
@@ -1026,7 +1024,6 @@ static void KolimaForestBridge_FaceActorAndWait(s32 actorId, s32 facing,
   Engine_EventWait(waitFrames);
 }
 
-// Shared source is included here in ROM order.
 #include "common/kolima_grow.h"
 
 /// Every eighth frame a sparkle of Tret's glamour (object 26) falls toward
@@ -1064,7 +1061,6 @@ static void KolimaForestBridge_SpawnCurseSparkle(void) {
   Engine_ObjectSetScript(sparkle, gKolimaForestBridge_SparkleScript);
 }
 
-// Shared source is included here in ROM order.
 #include "common/kolima_blink.h"
 
 /// The end of a sparkle's fall: one that lands on a dome (the domes' area,
@@ -1103,7 +1099,6 @@ KolimaForestBridge_BurstOnBarrier(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-// Shared source is included here in ROM order.
 #include "common/kolima_forest_bridge_falling_effect.h"
 s32 gKolimaForestBridge_BarrierHit __attribute__((section(".bss")));
 s32 gKolimaForestBridge_MiaInParty __attribute__((section(".bss")));

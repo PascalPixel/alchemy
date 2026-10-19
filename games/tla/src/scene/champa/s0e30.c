@@ -11,7 +11,7 @@
 s32 UiText_OpenMessageAtObject();
 
 static __inline__ void Champa_MessageOpen(s32 speaker, s32 flags) {
-  /* FAKEMATCH: scene calls reach the engine through one inline layer. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   UiText_OpenMessageAtObject(speaker, flags);
 }
 

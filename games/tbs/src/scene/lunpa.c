@@ -33,7 +33,6 @@ static void Lunpa_WatchForUncloakedParty(void);
 
 enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 
-// Shared scene code, included where the ROM places it.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
@@ -868,7 +867,6 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-// Shared scene code, included where the ROM places it.
 #include "common/object_orbit.h"
 
 #define LUNPA_ENTRANCE(entrance, x, z, facing)                                 \

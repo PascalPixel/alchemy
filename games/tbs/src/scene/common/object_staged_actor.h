@@ -38,7 +38,6 @@
 extern s32 gStagedActor_DirectionSteps[];
 extern s32 gStagedActor_FootprintBounds[];
 
-// Shared source is included here in ROM order.
 #include "object_distance.h"
 
 /// Returns the placed actor on the cell of the 16.16 position and at its height

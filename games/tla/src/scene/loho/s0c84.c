@@ -16,8 +16,7 @@ void UiText_ShowPositionedMessageAndWait(s32 message, s32 mode);
 void Func_02001348(s32 id, s32 x, s32 z);
 
 static __inline__ void Func_02001348_(s32 id, s32 x, s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as ☀️'s scene layer does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   Func_02001348(id, x, z);
 }
 

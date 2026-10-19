@@ -42,7 +42,6 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gSolSanctumCorridorEvents;
 }
 
-// Shared scene code, included where the ROM places it.
 #include "common/sol_sanctum_init_zoom.h"
 
 struct SceneEntrance gSolSanctumCorridorEntrances[] = {

@@ -25,8 +25,7 @@ void Func_02001b38(struct ObjectRuntime *object, s32 priority);
 
 static __inline__ struct ObjectRuntime *ObjectCreate_(s32 kind, s32 x, s32 y,
                                                       s32 z) {
-  /* FAKEMATCH: forwarding through the inline keeps each call's own constants,
-   * as the scene layer of The Broken Seal does. */
+  /* FAKEMATCH: forwarded inline; see scene_call.h. */
   return Func_020041e4(kind, x, y, z);
 }
 #include "party_state.h"

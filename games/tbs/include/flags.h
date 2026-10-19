@@ -89,6 +89,30 @@
 // A monster was fought on the stormy night: Vale's music changes (song 23).
 #define FLAG_VALE_STORM_MONSTER_FOUGHT 0x900
 
+// Vale on the stormy night, the paths outside
+// The four rocks that fall across the paths (actors 11 to 14).
+#define FLAG_VALE_STORM_FIRST_ROCK_FELL 0x830
+#define FLAG_VALE_STORM_SECOND_ROCK_FELL 0x831
+#define FLAG_VALE_STORM_THIRD_ROCK_FELL 0x832
+#define FLAG_VALE_STORM_FOURTH_ROCK_FELL 0x833
+// A villager running out of his house shoved Isaac ("Huh? Isaac?").
+#define FLAG_VALE_STORM_BUMPED_INTO_VILLAGER 0x835
+// Isaac heard Garet struggling with his things ("Ugh... Hrnghhh...").
+#define FLAG_VALE_STORM_HEARD_GARET 0x836
+#define FLAG_VALE_STORM_GARET_JOINED 0x837
+#define FLAG_VALE_BOULDER_FELL 0x838
+// Isaac saw the villagers trying to pull Felix from the river.
+#define FLAG_VALE_STORM_SAW_RIVER_RESCUE 0x83a
+// Jenna came back to the river ("Mom! Dad! We're back!") and the scene there
+// ended with ValeStorm_ShowBoulderSweepingDownriver.
+#define FLAG_VALE_STORM_RIVER_GATHERING_SEEN 0x841
+// Garet ran off ("Isaac!"), leaving Isaac alone.
+#define FLAG_VALE_STORM_GARET_LEFT 0x842
+// Dora and Kyle sent Isaac to the plaza.
+#define FLAG_VALE_STORM_SENT_TO_PLAZA 0x87b
+#define FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT 0x87c
+#define FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT 0x87f
+
 // Vale, the village
 // On the stormy night, the villagers sent Isaac to aid the elders holding
 // back the Boulder.

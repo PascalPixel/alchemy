@@ -1,10 +1,13 @@
-// Near miss, differ 24 of 91 (2026-10-15), The Broken Seal's
+// Near miss, differ 8 of 91 (2026-10-19; was 24), The Broken Seal's
 // BattleFx_RunFlashingCallbackSequence: Cloak. ⚓️ takes the caster from the
 // effect scene, sets its mode directly and schedules the ground check at
 // 0x480 where ☀️ uses 0xc80.
-// Left: allocation. The native counts the flicker in r5 and keeps the 2 in
-// r6, which also stores blend = 2 after the loop; this swaps them, and the
-// stores after the loop come in another order.
+// The callback order through a local set before the stores after the loop
+// (found by psynergy permute, tagged) gives the native's allocation: the
+// flicker count in r5, the 2 in r6. Left: four loads one row late after the
+// loop (the check literal, the party state literal, the event work from the
+// stack, and the check copied to r0 for the call); a one-pass block round the
+// call and the party pointer, or the check set first, measured 12 and 56.
 // Tried: ☀️'s do/while with n reused as the zero after the loop, differ 59
 // (n then lives in a high register); a for loop and literal zeros, 24.
 #include "types.h"
@@ -61,6 +64,7 @@ void Func_080decb8(void) {
   struct AnimationEntry *entry = sprite->entries[0];
   u32 n;
   void (*check)(void);
+  u32 order;
 
   Audio_PlayCue(SE_CLOAK);
   Object_SetMode((struct ObjectRuntime *)caster, 0);
@@ -76,11 +80,15 @@ void Func_080decb8(void) {
     WaitFrames(2);
   }
 
+  /* FAKEMATCH(temporary): the callback order through a local set before the
+   * stores, which gives the flicker count r5 and the 2 r6; as a literal
+   * 0x480 in the call, 24 of 91 instructions differ in tla-en. */
+  order = 0x480;
   sprite->blend = 2;
   entry->param = 0;
   sprite->dirty = 1;
   check = FieldFx_CheckCloakTile;
-  Scheduler_AddOrUpdateCallback(check, 0x480);
+  Scheduler_AddOrUpdateCallback(check, order);
   gPartyState.cloaked = 1;
   check();
   if (event->psynergyRequest == CLOAK_END) {

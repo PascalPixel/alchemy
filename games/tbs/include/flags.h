@@ -89,6 +89,12 @@
 // A monster was fought on the stormy night: Vale's music changes (song 23).
 #define FLAG_VALE_STORM_MONSTER_FOUGHT 0x900
 
+// Vale, houses and shops
+// The item shopkeeper gave Isaac a Herb as a farewell gift.
+#define FLAG_VALE_FAREWELL_HERB_RECEIVED 0x81b
+// Back from Kalay, Garet surprised his family at home.
+#define FLAG_GARET_CAME_HOME 0x81d
+
 // Vale during the eruption
 // Isaac and Garet came down Mt. Aleph and followed the elders into the sanctum.
 #define FLAG_VALE_RETURNED_FROM_MT_ALEPH 0x879

@@ -2,7 +2,7 @@
 	.include "games/tbs/src/system/overlay.inc"
 	overlay_veneer ValeInteriors_Initialize
 	overlay_veneer ValeInteriors_GetEntrances
-	overlay_veneer ValeInteriors_SelectExits
-	overlay_veneer ValeInteriors_SelectPlacements
-	overlay_veneer ValeInteriors_SelectEvents
+	overlay_veneer ValeInteriors_GetExits
+	overlay_veneer ValeInteriors_GetPlacements
+	overlay_veneer ValeInteriors_GetEvents
 	overlay_veneer ValeInteriors_GetRegions

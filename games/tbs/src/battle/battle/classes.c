@@ -47,7 +47,7 @@ s32 BattleClass_IsSmall(s32 index) {
 
 // Returns the class's attack-effect kind, substituting one for zero or an
 // invalid class.
-u32 Battle_GetSpriteFlagNibble(u32 index) {
+u32 BattleClass_GetAttackEffect(u32 index) {
   u16 value;
 
   if (index > ENEMY_CLASS_LAST)

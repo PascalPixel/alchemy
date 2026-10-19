@@ -1378,7 +1378,7 @@ Func_0812381c:
 	lsls r0, r0, #1
 	adds r3, r2, r0
 	ldrh r0, [r3]
-	bl Battle_GetSpriteFlagNibble
+	bl BattleClass_GetAttackEffect
 	mov r1, r11
 	ldr r2, [r1]
 	movs r3, #128

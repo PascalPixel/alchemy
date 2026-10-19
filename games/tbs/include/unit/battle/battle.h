@@ -275,7 +275,7 @@ u32 BattleClass_GetDefeatSoundKind(s32 index);
 s32 BattleClass_GetSprite(s32 index);
 s32 BattleClass_GetPalette(s32 index);
 s32 BattleClass_IsSmall(s32 index);
-u32 Battle_GetSpriteFlagNibble(u32 index);
+u32 BattleClass_GetAttackEffect(u32 index);
 u32 Battle_GetSpriteFlagHighBits(u32 index);
 s32 Summon_IsEntrySecondaryFlagged(s32 index);
 s32 BattleClass_GetEffectHeight(s32 index);

@@ -557,7 +557,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     // An enemy's attack effect comes from its class.
     if (actor->classIndex == 0) {
       plan->presentationFlags =
-          Battle_GetSpriteFlagNibble(actor->classId) | STAGING_BY_ID_RANGE;
+          BattleClass_GetAttackEffect(actor->classId) | STAGING_BY_ID_RANGE;
     } else {
       plan->presentationFlags = 0;
       switch (actor->classId) {

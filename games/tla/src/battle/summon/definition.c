@@ -35,7 +35,7 @@ s32 BattleClass_IsSmall(s32 index) {
   return result;
 }
 
-u32 Battle_GetSpriteFlagNibble(u32 index) {
+u32 BattleClass_GetAttackEffect(u32 index) {
   /* FAKEMATCH: the result selection preserves the separate extract and
    * return-move order. */
   u32 value;

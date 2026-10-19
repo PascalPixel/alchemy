@@ -4,7 +4,7 @@ This folder holds The Broken Seal's battle code: a battle from its opening
 transition to its spoils, the commands the enemies choose, what each action
 does to its targets, and how the battle shows it. The effects drawn over a
 battle are in `../effect`; the command menu and the party's status window are
-in `../window`.
+in `../window`; the arithmetic of damage and success rates is in `../game`.
 
 ## Files
 
@@ -14,39 +14,26 @@ in `../window`.
 | `battle_internal.h` | the includes and the names two or more parts use; each part includes it too |
 | `battle/*.c` | the code, in 24 parts; never compiled on their own |
 | `battle_data.s`, `battle_vars.s`, `advarrow.s` | the battle's tables and pictures |
-| `*.tsv` | tables the build encodes: `actflags.tsv` each ability's effect and staging, `actstat.tsv` how each ability is shown, `formatn.tsv` the 380 enemy formations, `sprites.tsv` each enemy class's battle sprite, `presets.tsv` the debug party presets |
+| `battle_calc.s` | the fall-off tables: each damage and healing amount by the target's distance from the aimed one |
+| `*.tsv` | tables the build encodes: `actflags.tsv` each ability's effect and staging, `actstat.tsv` how each ability's outcome is shown, `formatn.tsv` the 380 enemy groups (formations), [`sprites.tsv`](sprites.tsv) each enemy class's battle sprite, `presets.tsv` the debug party presets |
+| [`../game/game/battle_calc.c`](../game/game/battle_calc.c) | damage and success rates: the attack, Psynergy and healing formulas, the element multiplier, the effect rolls and the weapon unleash |
 
-The functions are declared in `games/tbs/include/unit/battle/battle.h`. The
-object's link order is in `games/tbs/objects.tsv` (from `battle`); the order
-of the parts is in `battle.c`, and each part's first lines say what it holds:
+The functions are declared in
+[`unit/battle/battle.h`](../../include/unit/battle/battle.h). The object's
+link order is in `games/tbs/objects.tsv` (from `battle`); the order of the
+parts is in `battle.c`, and each part's first lines say what it holds:
 `head -3 battle/*.c` lists them.
 
-## How a battle runs
-
-`Battle_RunEncounter` (`encounter.c`) fights a whole battle. Each round:
-
-1. The actions are gathered: the party's from the command menu
-   (`BattlePresentation_BuildActions`, `round.c`), the enemies' from
-   `BattleCommand_SelectAutomatic` (`enemy_ai.c`) or the link opponent's, then
-   sorted into turn order. Under `FLAG_AUTO_BATTLE` the actions come from
-   `auto_battle.c` instead.
-2. Each action is announced and planned (`BattleCommand_BuildPlan`,
-   `plan.c`): its targets, hits, critical hits and how it is staged.
-3. It is staged (`BattlePresentation_DispatchAction`, `staging.c`): an
-   attack, a cast, an item, a summon or an escape, each with its effect from
-   `../effect`.
-4. Each target takes it (`BattleTargetExec`, `target_exec.c`). Nothing is
-   shown there: it queues battle events (the message's arguments, the
-   message, the hit, the downed unit), which `BattleEvent_Playback`
-   (`playback.c`) plays over frames while the effect runs, or
-   `BattleEv_DispatchQueued` (`events.c`) plays at once.
-5. The turn's end and the round's (`turn_end.c`): stat changes and statuses
-   count down, Djinn recover, poison and the Grim Reaper strike.
-
-## Words used here
+## Words
 
 - **unit** and **unit id**: a fighter, party (ids 0 to 7) or enemy (ids from
   `FIRST_ENEMY_UNIT`, 128); `UnitGetFar` returns its `struct BattleUnit`.
+- **ability** and **ability id**: everything a unit can do on its turn is an
+  ability, a row of `games/tbs/src/game/actions.tsv` (`struct BattleAct`,
+  `BattleActGet`) and the same row of `actflags.tsv`; both name the row in
+  their `ability` column.
+- **kind**: the low four bits of an ability's `flags` (`ABILITY_KIND_MASK`,
+  `enum AbilityKind`), which pick the formula its targets take.
 - **place**: a unit's position in `BattleWork.partyUnits` or `enemyIds`. A
   **place code** is a place with 0x100 for the party or 0x180 for the
   enemies (`PLACE_PARTY`, `PLACE_ENEMY`), as a command's target.
@@ -80,18 +67,117 @@ elsewhere keep its prefix: `Camera_`, `Palette_`, `Graphics_`, `Runtime_`,
 too little or the wrong thing (the `Summon_` getters read the enemy class
 table); renaming them crosses folders, so each is its own commit.
 
-## Plain-C spellings
+## Spellings
 
 Each site keeps the spelling it matches with:
 
 - An action slot's first halfword is cleared through a cast,
   `*(u16 *)&member->actionSlots[i] = 0`, where the field store loads its
-  zero differently (`debug.c`).
+  zero differently ([`battle/debug.c`](battle/debug.c)).
 - `BLEND_ALPHA(16, 16) - step` and `step + BLEND_ALPHA(0, 16)` where the
   macro's `|` form changes the code (`background.c`).
 - Work slots are read as `WORK_SLOT(n)`, as `gWorkSlot[n]`, or through
   `(void **)&gCameraWork` and `(void **)&gBattleWork` indexed past them,
   which is undefined behaviour with its defined form behind `UBFIX`.
 
-`FAKEMATCH(kind)` tags mark S2's devices, each with its measured difference
-in tbs-en: the instructions of the function that the plain form changes.
+`FAKEMATCH(kind)` tags mark the devices that steer the compiler towards the
+original instructions (an unused variable, a block that runs once), each with
+its measured difference in tbs-en: the instructions of the function that the
+plain form changes.
+
+## How a battle runs
+
+`Battle_RunEncounter` ([`battle/encounter.c`](battle/encounter.c)) fights a
+whole battle. Each round:
+
+1. The actions are gathered: the party's from the command menu
+   (`BattlePresentation_BuildActions`, `round.c`), the enemies' from
+   `BattleCommand_SelectAutomatic` (`enemy_ai.c`) or the link opponent's, then
+   sorted into turn order. Under `FLAG_AUTO_BATTLE` the actions come from
+   `auto_battle.c` instead.
+2. Each action is announced and planned (`BattleCommand_BuildPlan`,
+   `plan.c`): its targets, hits, critical hits and how it is staged.
+3. It is staged (`BattlePresentation_DispatchAction`, `staging.c`): an
+   attack, a cast, an item, a summon or an escape, each with its effect from
+   `../effect`.
+4. Each target takes it (`BattleTargetExec`, `target_exec.c`). Nothing is
+   shown there: it queues battle events (the message's arguments, the
+   message, the hit, the downed unit), which `BattleEvent_Playback`
+   (`playback.c`) plays over frames while the effect runs, or
+   `BattleEv_DispatchQueued` ([`battle/events.c`](battle/events.c)) plays at
+   once.
+5. The turn's end and the round's (`turn_end.c`): stat changes and statuses
+   count down, Djinn recover, poison and the Grim Reaper strike.
+
+## How an ability resolves
+
+Every command becomes an ability id, and the id is a row number in the
+ability tables. To change what an ability does, find its name in the
+`ability` column of `games/tbs/src/game/actions.tsv` and follow the steps
+below.
+
+1. **The command chooses the id** (`BattleCommand_BuildPlan`, `plan.c`):
+   - `CMD_ATTACK`: ability 1, Attack, unless the equipped weapon unleashes
+     (`RollWeaponUnleashFar`): then its row of `items.tsv` gives the
+     ability, `unleash_action`, at `unleash_chance` times 5 percent plus the
+     equipment's unleash bonus.
+   - `CMD_PSYNERGY`: the ability chosen in the menu; its `pp_cost` is paid
+     here.
+   - `CMD_DJINN`: `Djinn_GetAbilityIdFar(element, index)` reads the Djinni's
+     row of `games/tbs/src/game/djinn.tsv` (20 rows to an element, Venus
+     first) and returns its `ability` column: 300 + 20 × element + index.
+   - `CMD_ITEM`: the item's row of `games/tbs/src/game/items.tsv` gives the
+     ability in `action_id` (0, or a broken item, makes the user defend).
+     Its `use_type` says what using it costs: 1 one is used up, 2 it may
+     break, 4 it leaves an Empty Bottle (`ITEM_USE_` in
+     `battle_internal.h`); 3 is an item that teaches its ability while
+     equipped (`../game/game/levels.c`).
+   - `CMD_SUMMON`: the summon's row of `games/tbs/src/game/summons.tsv`
+     gives the ability, once enough Djinn of each element are on standby.
+   - `CMD_ABILITY`: an enemy's, one of `action0` to `action7` in its row of
+     `games/tbs/src/game/enemies.tsv`, chosen by `enemy_ai.c`.
+2. **The plan reads the ability's rows.** `BattleActGet` returns its row of
+   `actions.tsv` as a `struct BattleAct`: the `element` it strikes with (4
+   for none; Attack takes the weapon's), the `effect` that may add a second
+   or third blow or a critical hit, its `range` and `power`. Its row of
+   `actflags.tsv` (`gBattle_ActionFlags`) chooses the effect drawn
+   (`../effect`), and `actstat.tsv` (`gBattle_ActionStatus`) how the outcome
+   is staged.
+3. **Each target takes it** in `BattleTargetExec` (`target_exec.c`). First
+   the ability's `effect` is rolled (`BattleHitCheck`); then its kind picks
+   the formula:
+
+   | Kind (`flags & 15`) | Amount |
+   | --- | --- |
+   | 3 attack | `BattleAtkCalc(attack, defense, power, element bonus)` |
+   | 4 multiplied attack | `BattleAtkCalc(attack, defense, 0, element bonus) * power / 10` |
+   | 5 damage, 6 unleashed damage, 8 summon | `BattlePowerCalc(power, element bonus, 256)`; a summon adds 3 to 12 percent of the target's maximum HP |
+   | 2 effect | `BattlePowerCalc` as above, only when the effect lands |
+   | 10 PP damage | `BattlePowerCalc` as above, taken from PP |
+   | 1 heal HP, 11 heal PP | `BattleRecoveryCalc` from the healer's element power |
+
+   The element bonus is the actor's power in the ability's element less the
+   target's resistance to it. Each amount then falls off with the target's
+   distance from the aimed one (the tables in `battle_calc.s`), and Defend
+   reduces damage.
+
+The battle code calls the formulas by their far-call names, which
+`games/tbs/src/system/far_call/GAME.S` exports for the functions in
+[`../game/game/battle_calc.c`](../game/game/battle_calc.c):
+
+| Called as | Function | What it computes |
+| --- | --- | --- |
+| `BattleAtkCalc` | `Battle_CalcAttackDamage` | attack less defense, plus twice the power, times half the element multiplier |
+| `BattlePowerCalc` | `Battle_CalcPsynergyPower` | power times the element multiplier |
+| `BattleRecoveryCalc` | `Battle_CalcRecovery` | power times the multiplier for the healer's element power |
+| `BattleHitCheck` | `BattleFx_RollSuccess` | whether an effect takes hold: its base rate, the element lead, luck and weakness |
+| `RollWeaponUnleashFar` | `RollWeaponUnleash` | whether the weapon unleashes |
+
+## Limits
+
+- 519 abilities, ids 0 to 518: the plan reads `actflags.tsv` only for those
+  ids, and `actstat.tsv` up to 517.
+- A plan reaches at most 14 targets (`TARGET_MAX`, `plan.c`).
+- Party unit ids are 0 to 7 and enemy unit ids start at 128.
+- 380 enemy groups in `formatn.tsv`; the encounter zones in
+  `games/tbs/src/object/encounter.tsv` choose among them.

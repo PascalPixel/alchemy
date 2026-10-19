@@ -18,14 +18,14 @@ map screen, and the slot machine.
 | `battle_cue.c`, `zonedata.c` | the battle music of each encounter, and the world map's encounter zones and Djinni battles |
 | `location_rules.s`, `scene_rules.s` | the encounter zones, music and place names of field scenes |
 | `scripts.s`, `arcspark.s`, `swatch.s` | object scripts and pictures |
-| `encounter.tsv` | the encounter zones: rate, level, enemy groups and their weights |
+| `encounter.tsv` | the 104 encounter zones: rate, level, enemy groups and their weights, each row named by its place in the `zone` column |
 
 The prototypes are in `games/tbs/include/unit/object/`. Each part opens with
 a line saying what it holds: `head -2 object/*.c psynergy_effects/*.c` lists
 them all. The link order of the folder's objects is in
 `games/tbs/objects.tsv`.
 
-## Words used here
+## Words
 
 - **field work**: `struct FieldWork`, the field's state in `gEventWork`
   (heap slot `HEAP_SLOT_EVENT`): the actor slots, the scene's events and
@@ -79,21 +79,52 @@ measured; each keeps its spelling until it is:
 
 Measured ones:
 
-- `((16 - blend) << 8) | blend` in `world_map.c` is `BLEND_ALPHA(blend,
-  16 - blend)` with its operands swapped; the macro changes the registers.
+- `((16 - blend) << 8) | blend` in
+  [`psynergy_effects/world_map.c`](psynergy_effects/world_map.c) is
+  `BLEND_ALPHA(blend, 16 - blend)` with its operands swapped; the macro
+  changes the registers.
 
-`/* FAKEMATCH(kind): ... */` marks a device that steers the compiler, with
-the instructions that differ without it (AGENTS.md, S2).
+`/* FAKEMATCH(kind): ... */` marks a device that steers the compiler towards
+the original instructions (an unused variable, a block that runs once), with
+the number of instructions that differ without it.
 
-## Finding a field Psynergy
+## How to find a field Psynergy
 
-`Field_UsePsynergy` (`object/psynergy.c`) pays the PP, runs the scene's
-Psynergy events and plays the effect of the ability's field kind:
-`psynergy_effects/dispatch.c` runs the kind's handler, cast with no target
-(`BattleFx_Run`) or on one (`BattleFx_DispatchRequestKind`). Each kind's
+`Field_UsePsynergy` ([`object/psynergy.c`](object/psynergy.c)) pays the PP,
+runs the scene's Psynergy events and plays the effect of the ability's field
+kind: [`psynergy_effects/dispatch.c`](psynergy_effects/dispatch.c) runs the
+kind's handler, cast with no target (`BattleFx_Run`) or on one
+(`BattleFx_DispatchRequestKind`). Each kind's
 effect is the part named for it, such as `psynergy_effects/reveal.c`, and
 each of its entry points opens with the abilities that reach it:
 
 ```c
 // Abilities: Catch (field kind 13), cast on a target.
 ```
+
+## How to change a place's random battles
+
+A field scene's zones come from `gBattle_LocationRules`
+(`location_rules.s`): the first rule matching the scene and entrance gives
+the zone of ground 1, and grounds 2 to 7 take the zones after it. The world
+map's come from `gWorldMap_EncounterRules` (`zonedata.c`), by the terrain
+under the leader. The zone is a row of `encounter.tsv`, whose `zone` column
+names the place:
+
+- `rate` is how often battles come (0 for none), and `level` the party
+  level the zone is made for: each level the party's average is above it
+  raises the rate by 5, up to five levels, and with Avoid active such a
+  zone has no battles (`Encounter_SelectEnemyGroup`,
+  [`object/encounter.c`](object/encounter.c)).
+- `group0` to `group7` are enemy groups, rows of
+  `games/tbs/src/battle/formatn.tsv`, and `weight0` to `weight7` each
+  group's relative chance.
+
+Zones with rate 0 are fought only by slot: the scripted battles a scene
+asks for (`Field_RequestBattleFromEncounterTable`), the mimic chests (zone
+99) and the Djinni battles (zones 100 to 103, `gEncounter_AreaEntryTable`).
+
+## Limits
+
+- 104 encounter zones of eight groups each.
+- The field work holds 66 actor slots; the effect scene 24 effect slots.

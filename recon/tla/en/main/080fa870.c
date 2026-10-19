@@ -78,7 +78,7 @@ void UiWindow_DrawDividerLineFar(void *window, s32 x0, s32 y0, s32 x1, s32 y1);
 void UiWindow_ClearInteriorTilesFar(void *window, s32 x, s32 y, s32 width,
                                     s32 height);
 s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item);
-s32 ItemMenu_Count(s32 owner);
+s32 ItemMenu_CountItems(s32 owner);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, void *window, s32 x,
                                   s32 y);
 void UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
@@ -128,7 +128,7 @@ s32 Func_080fa870(s32 mode) {
         if (selection != menu->paneIndex[0]) {
           heldCount = InventoryMenu_GetItemQuantity(
               menu->ownerIds[selection], menu->selectedItems[0] & 0x1ff);
-          if (ItemMenu_Count(menu->ownerIds[selection]) == 15 &&
+          if (ItemMenu_CountItems(menu->ownerIds[selection]) == 15 &&
               heldCount == 0) {
             labelX = 0;
             label = (s32)MsgTradeForWhat;

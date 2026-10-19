@@ -1728,7 +1728,7 @@ s32 ItemMenu_SelectItem(void) {
     owner = UnitGetFar(menu->paneOwner[0]);
     for (iconIndex = 0; iconIndex <= 14; iconIndex++)
       savedInventory[iconIndex] = owner->inventory[iconIndex];
-    menu->itemCount = ItemMenu_Collect(owner, menu->items, 0);
+    menu->itemCount = ItemMenu_CollectItems(owner, menu->items, 0);
     InventoryMenu_SortByListOrder(menu->items, 0);
     Menu_BuildPageResult(&state, 0);
     RenderOutput_RedrawSavedRectFar(menu->equipWindow);

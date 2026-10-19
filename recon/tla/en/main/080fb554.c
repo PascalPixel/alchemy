@@ -1,6 +1,6 @@
 // Draft, differ 2 of 92 (English and Japanese; the other four editions place
 // the commands at other columns and need their own branch): The Broken Seal's
-// ItemMenu_DrawCmd. The native builds the disabled marker -1 around the first
+// ItemMenu_DrawCommands. The native builds the disabled marker -1 around the first
 // state load (movs r2, #1; movs r3, #0; ldrsb r3, [r5, r3]; negs r2, r2); this
 // form negates before the load. Assigning the marker first, a one-pass block or
 // an empty asm between the load and the marker, and comparing with -1 directly
@@ -25,7 +25,7 @@ enum {
 #define ITEM_TEXT_X 40
 
 // Draw six item commands; unavailable commands use color 14.
-void ItemMenu_DrawCmd(const s8 *command_states, s32 window) {
+void ItemMenu_DrawCommands(const s8 *command_states, s32 window) {
   s32 disabled;
   s32 value;
   u32 message;

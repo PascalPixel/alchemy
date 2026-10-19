@@ -167,7 +167,7 @@ Func_080fa870:
 	adds r3, r3, r1
 	adds r5, r0, #0
 	ldrh r0, [r6, r3]
-	bl ItemMenu_Count
+	bl ItemMenu_CountItems
 	cmp r0, #15
 	bne .L_080fa9d8
 	cmp r5, #0

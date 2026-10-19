@@ -100,7 +100,7 @@ s32 DjinnMenu_Run(void) {
   Link_DrawShiftedTilePairFar(UI_PAGE_ARROW_VRAM);
   menu->ownerCount = Party_ListActiveOwnersFar(menu->owners);
   Resource_LoadPairedBlocksIfAvailable();
-  ItemMenu_Init(0, 3, 0, 7);
+  ItemMenu_Initialize(0, 3, 0, 7);
   Menu_SetFirstObjectRowCoordinates(0);
   Palette_LightenBankHighlight(14);
   menu->helpWindow = UiWindow_CreateFar(13, 0, 17, 5, 2);

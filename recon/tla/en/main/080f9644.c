@@ -111,13 +111,13 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
     switch (state) {
     case 0:
       menu->selectedSlot = 0;
-      ItemMenu_SetMsgWin3();
-      ItemMenu_SetItemWin3();
+      ItemMenu_SetMessageWindowHeight3();
+      ItemMenu_SetItemWindowRow3();
       menu->selectedItemIcon->state = 13;
-      ItemMenu_DrawMsg(0, (s32)&Msg04103);
+      ItemMenu_DrawMessage(0, (s32)&Msg04103);
       RenderOutput_RedrawSavedRectFar(menu->infoWindow);
       UiText_DrawWorkValueWithLabel(menu->infoWindow);
-      command = ItemMenu_PrepOwner(0);
+      command = ItemMenu_SelectMember(0);
       if (command == -1) {
         selection = command = 0;
         ret = -1;
@@ -129,15 +129,15 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       break;
 
     case 1:
-      if (ItemMenu_Count(menu->itemOwner) == 0) {
+      if (ItemMenu_CountItems(menu->itemOwner) == 0) {
         state = 0;
         break;
       }
-      ItemMenu_SetMsgWin3();
-      ItemMenu_SetItemWin3();
+      ItemMenu_SetMessageWindowHeight3();
+      ItemMenu_SetItemWindowRow3();
       menu->selectedItemIcon->state = 13;
       menu->list.icon->state = 1;
-      ItemMenu_DrawMsg(0, (s32)&Msg04104);
+      ItemMenu_DrawMessage(0, (s32)&Msg04104);
       selection = ItemMenu_RunList(0);
       state = 0;
       if (selection == -1) {
@@ -173,7 +173,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
               menu->messageOffset + (s32)&Msg04384, 0, -1);
           menu->list.icon->state = 13;
           menu->itemCount =
-              ItemMenu_Collect(UnitGetFar(menu->itemOwner), menu->items, 0);
+              ItemMenu_CollectItems(UnitGetFar(menu->itemOwner), menu->items, 0);
           ItemMenu_DrawIcons(menu->items, 0);
           state = 0;
         }
@@ -204,8 +204,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 
     case 2:
       ItemMenu_HideAllIcons();
-      ItemMenu_SetMsgWin5();
-      ItemMenu_SetItemWin5();
+      ItemMenu_SetMessageWindowHeight5();
+      ItemMenu_SetItemWindowRow5();
       RenderOutput_RedrawSavedRectFar(menu->messageWindow);
       ItemMenu_DrawItemHead();
       UiText_DrawCharacterAtOffsetFar((s32)&Msg04106, menu->messageWindow,
@@ -227,7 +227,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           state = 1;
         }
         menu->itemCount =
-            ItemMenu_Collect(UnitGetFar(menu->itemOwner), menu->items, 0);
+            ItemMenu_CollectItems(UnitGetFar(menu->itemOwner), menu->items, 0);
         ItemMenu_DrawIcons(menu->items, 0);
         menu->completionFlag = 1;
       } else {
@@ -236,8 +236,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       break;
 
     case 6:
-      ItemMenu_SetMsgWin5();
-      ItemMenu_SetItemWin5();
+      ItemMenu_SetMessageWindowHeight5();
+      ItemMenu_SetItemWindowRow5();
       RenderOutput_RedrawSavedRectFar(menu->messageWindow);
       ItemMenu_DrawItemHead();
       UiText_DrawCharacterAtOffsetFar((s32)&Msg04107, menu->messageWindow,
@@ -284,7 +284,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           Func_08077240(menu->selectedItem & 0x1ff, 1);
         }
         UnitCalcFar(command);
-        ItemMenu_SetItemWin3();
+        ItemMenu_SetItemWindowRow3();
         ItemMenu_RefreshOwner(menu->itemOwner, 0);
         menu->selectedItemIcon->state = 13;
         menu->list.icon->state = 13;
@@ -310,7 +310,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         if (qty == 30) {
           aborted = 1;
         }
-        if (ItemMenu_Count(menu->targetOwner) == 15 && qty == 0) {
+        if (ItemMenu_CountItems(menu->targetOwner) == 15 && qty == 0) {
           state = 7;
           break;
         }
@@ -365,7 +365,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       if (aborted == 0) {
         menu->itemOwner = menu->targetOwner;
         menu->selectedItem &= 0x1ff;
-        ItemMenu_SetMsgWin6();
+        ItemMenu_SetMessageWindowHeight6();
         RenderOutput_RedrawSavedRectFar(menu->messageWindow);
         ItemMenu_DrawItemHead();
         result = ItemMenu_ConfirmEquip(0);
@@ -401,9 +401,9 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 
     case 7:
       aborted = 0;
-      ItemMenu_SetMsgWin3();
-      ItemMenu_SetItemWin3();
-      ItemMenu_DrawMsg(0, (s32)&Msg04108);
+      ItemMenu_SetMessageWindowHeight3();
+      ItemMenu_SetItemWindowRow3();
+      ItemMenu_DrawMessage(0, (s32)&Msg04108);
       selection = ItemMenu_RunList(1);
       if (selection == -1) {
         state = 6;
@@ -478,8 +478,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         UnitCalcFar(menu->targetOwner);
         Func_080772c0(menu->itemOwner);
         Func_080772c0(menu->targetOwner);
-        ItemMenu_SetMsgWin5();
-        ItemMenu_SetMsgWin6();
+        ItemMenu_SetMessageWindowHeight5();
+        ItemMenu_SetMessageWindowHeight6();
         ItemMenu_HidePageIcons();
         RenderOutput_RedrawSavedRectFar(menu->messageWindow);
         menu->itemOwner = menu->targetOwner;
@@ -488,7 +488,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         result = ItemMenu_ConfirmEquip(0);
         if (GameFlag_TestFar(0x150) == 0) {
           RenderOutput_ClearListFar(menu->infoWindow);
-          ItemMenu_SetItemWin5();
+          ItemMenu_SetItemWindowRow5();
           ItemMenu_RefreshOwner(menu->targetOwner, 1);
           if (result == 0) {
             ItemMenu_DrawEquipPreview(menu->targetOwner, menu->targetSlot, 0,
@@ -527,7 +527,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       Func_080772c0(menu->itemOwner);
       menu->list.icon->state = 13;
       menu->itemCount =
-          ItemMenu_Collect(UnitGetFar(menu->itemOwner), menu->items, 0);
+          ItemMenu_CollectItems(UnitGetFar(menu->itemOwner), menu->items, 0);
       ItemMenu_DrawIcons(menu->items, 0);
       WaitFrames(1);
       ItemMenu_DrawEquipPreview(menu->itemOwner, menu->selectedSlot, 0,
@@ -549,7 +549,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       Func_080772c0(menu->itemOwner);
       menu->list.icon->state = 13;
       menu->itemCount =
-          ItemMenu_Collect(UnitGetFar(menu->itemOwner), menu->items, 0);
+          ItemMenu_CollectItems(UnitGetFar(menu->itemOwner), menu->items, 0);
       ItemMenu_DrawIcons(menu->items, 0);
       WaitFrames(1);
       menu->equipPreview = 1;

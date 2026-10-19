@@ -31,7 +31,7 @@ s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
     item = Item_GetDirectFar(unit->inventory[slot]);
     if (item->useType == 1) {
       Inventory_RemoveFar(ownerId, slot);
-      menu->itemCount = ItemMenu_Collect(unit, menu->items, 0);
+      menu->itemCount = ItemMenu_CollectItems(unit, menu->items, 0);
     }
     if (item->useType == 4) {
       if (itemId == 0xb8)

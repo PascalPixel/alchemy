@@ -54,7 +54,7 @@ s32 PsynergyMenu_Run(void) {
   WaitFrames(1);
   UiWindow_InitializeWork(0);
   state->ownerCount = Party_ListActiveOwnersFar(state->ownerTable);
-  ItemMenu_Init(0, 3, 0, 7);
+  ItemMenu_Initialize(0, 3, 0, 7);
   state->messageWindow = UiWindow_CreateFar(13, 0, 17, 3, 2);
   Palette_LightenBankHighlight(14);
   Link_DrawShiftedTilePairFar(UI_PAGE_ARROW_VRAM);
@@ -138,7 +138,7 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
       s32 chosen;
 
       menu->paneRow[0] = 0;
-      ItemMenu_DrawMsg(0, MsgPsynergyChooseOwner);
+      ItemMenu_DrawMessage(0, MsgPsynergyChooseOwner);
       chosen = PsynergyMenu_SelectPartySlot(0);
       cancelled = -1;
       /* FAKEMATCH(dead): a redundant copy of -1 into cancelled and a test of
@@ -178,13 +178,13 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
         }
         switch (menu->mode) {
         case 0: // use
-          ItemMenu_DrawMsg(0, MsgPsynergyChooseAbility);
+          ItemMenu_DrawMessage(0, MsgPsynergyChooseAbility);
           break;
         case 1: // set the L shortcut
-          ItemMenu_DrawMsg(0, MsgPsynergyChooseForL);
+          ItemMenu_DrawMessage(0, MsgPsynergyChooseForL);
           break;
         case 2: // set the R shortcut
-          ItemMenu_DrawMsg(0, MsgPsynergyChooseForR);
+          ItemMenu_DrawMessage(0, MsgPsynergyChooseForR);
           break;
         }
         ItemMenu_PosCategory();
@@ -218,7 +218,7 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
 
     // Choose the member to use it on.
     case PSYNERGY_STEP_TARGET:
-      ItemMenu_DrawMsg(0, MsgPsynergyChooseTarget);
+      ItemMenu_DrawMessage(0, MsgPsynergyChooseTarget);
       chosenTarget = PsynergyMenu_SelectTarget(0);
       step = PSYNERGY_STEP_APPLY;
       if (chosenTarget == -1) {

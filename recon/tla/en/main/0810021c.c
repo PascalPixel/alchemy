@@ -57,7 +57,7 @@ s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height,
 void Menu_SpawnIconEntries(struct InventoryMenuState *menu, s32 window);
 void UiText_DrawCharacterAtOffsetFar(u8 *message, s32 window, s32 x, s32 y);
 s32 GameFlag_Test(s32 flag);
-s32 ItemMenu_Collect(struct BattleUnit *owner, u16 *items, s32 mode);
+s32 ItemMenu_CollectItems(struct BattleUnit *owner, u16 *items, s32 mode);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void InventoryMenu_SortByListOrder(u16 *items, s32 mode);
 s32 Func_080ff7b4(struct MenuResult *result, s32 index);
@@ -101,7 +101,7 @@ s32 Func_0810021c(void) {
     if (refresh) {
       if (refresh == 2) {
         owner = UnitGet(menu->paneOwner);
-        menu->itemCount = ItemMenu_Collect(owner, menu->items, 0);
+        menu->itemCount = ItemMenu_CollectItems(owner, menu->items, 0);
         RenderOutput_RedrawSavedRectFar(window);
         for (i = 0; i <= 14; i++)
           savedInventory[i] = owner->inventory[i];

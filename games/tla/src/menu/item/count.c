@@ -2,7 +2,7 @@
 #include "owner_state.h"
 
 // Count the nonempty slots in owner's inventory.
-s32 ItemMenu_Count(s32 owner_id) {
+s32 ItemMenu_CountItems(s32 owner_id) {
   s32 count = 0;
   struct OwnerInventoryState *state = UnitGet(owner_id);
   s32 i;

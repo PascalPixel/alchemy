@@ -26,7 +26,7 @@ void ItemMenu_RefreshEntry(s32 mode);
 
 void Menu_HideEmptyEntryIcons(const u16 *items);
 
-s32 ItemMenu_Collect(struct OwnerInventoryState *owner, u16 *items, s32 mode) {
+s32 ItemMenu_CollectItems(struct OwnerInventoryState *owner, u16 *items, s32 mode) {
   s32 count;
   s32 i;
 
@@ -74,7 +74,7 @@ void ItemMenu_DrawIcons(u16 *items, s32 style) {
 
 extern char MsgItemMenuEmpty[];
 
-s32 ItemMenu_Count(s32 owner_id);
+s32 ItemMenu_CountItems(s32 owner_id);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 s32 UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 
@@ -86,11 +86,11 @@ void ItemMenu_RefreshOwner(s32 ownerId, s32 mode) {
   menu = Ram_HeapSlots->menuRuntime;
   owner = UnitGet(ownerId);
   items = menu->items;
-  menu->itemCount = ItemMenu_Collect(owner, items, 0);
+  menu->itemCount = ItemMenu_CollectItems(owner, items, 0);
   RenderOutput_RedrawSavedRectFar(menu->itemWindow);
   ItemMenu_RefreshEntry(mode);
   ItemMenu_DrawIcons(items, 0);
-  if (ItemMenu_Count(ownerId) == 0)
+  if (ItemMenu_CountItems(ownerId) == 0)
     UiText_DrawCharacterAtOffsetFar((s32)MsgItemMenuEmpty, menu->itemWindow, 8,
                                     24);
 }

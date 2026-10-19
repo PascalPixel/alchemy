@@ -45,7 +45,7 @@ Func_080fcbd8:
 	strh r3, [r2]
 	ldr r1, .L_080fcd7c
 	movs r0, #0
-	bl ItemMenu_DrawMsg
+	bl ItemMenu_DrawMessage
 	movs r0, #0
 	bl Func_080fcf5c
 	movs r3, #1
@@ -100,12 +100,12 @@ Func_080fcbd8:
 	ldr r1, .L_080fcd84
 .L_080fcc96:
 	movs r0, #0
-	bl ItemMenu_DrawMsg
+	bl ItemMenu_DrawMessage
 	b .L_080fcca6
 .L_080fcc9e:
 	ldr r1, .L_080fcd88
 	movs r0, #0
-	bl ItemMenu_DrawMsg
+	bl ItemMenu_DrawMessage
 .L_080fcca6:
 	bl ItemMenu_PosCategory
 	movs r3, #128
@@ -169,7 +169,7 @@ Func_080fcbd8:
 .L_080fcd2a:
 	ldr r1, .L_080fcd94
 	movs r0, #0
-	bl ItemMenu_DrawMsg
+	bl ItemMenu_DrawMessage
 	movs r0, #0
 	bl Func_080fd2e8
 	movs r3, #1

@@ -68,7 +68,7 @@ Func_08100738:
 	adds r1, r2, r3
 	adds r0, r5, #0
 	movs r2, #0
-	bl ItemMenu_Collect
+	bl ItemMenu_CollectItems
 	ldr r1, [sp, #0]
 	movs r2, #133
 	lsls r2, r2, #2

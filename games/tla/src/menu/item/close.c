@@ -68,11 +68,11 @@ struct ItemMenuOwner {
 void RenderOutput_ClearListFar(void *window);
 void Func_080f8ab4(s32 x, s32 y);
 void *UnitGet(s32 unitId);
-s32 ItemMenu_Collect(void *owner, u16 *items, s32 mode);
+s32 ItemMenu_CollectItems(void *owner, u16 *items, s32 mode);
 s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items);
 void UiIcon_PrepareObject(void *icon);
 
-s32 ItemMenu_PrepOwner(s32 pane) {
+s32 ItemMenu_SelectMember(s32 pane) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuRuntime;
   s32 result = 0;
   s32 index;
@@ -88,7 +88,7 @@ s32 ItemMenu_PrepOwner(s32 pane) {
     Func_080f8ab4(index * 24 - 10, 16);
   }
   owner = UnitGet(menu->ownerIds[index]);
-  menu->itemCount = ItemMenu_Collect(owner, menu->items, 0);
+  menu->itemCount = ItemMenu_CollectItems(owner, menu->items, 0);
   result = ItemMenu_RunOwnerSelection(menu->ownerIds, menu->items);
   UiIcon_PrepareObject(menu->paneIcons[pane]);
   WaitFrames(1);
@@ -115,7 +115,7 @@ void Func_08104d5c(void *window, s32 selection, s32 count);
 void Func_080f8a44(s32 x, s32 y);
 void InventoryMenu_SortByListOrder(u16 *inventory, s32 order);
 void Audio_PlayCue(s32 cue);
-s32 ItemMenu_Count(s32 owner);
+s32 ItemMenu_CountItems(s32 owner);
 s32 Func_08104c00(s32 *selection, s32 count, s32 columns);
 
 // The party member row of the item menu, as The Broken Seal's
@@ -170,7 +170,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
       owner = UnitGet(ownerIds[selection]);
       if (showEquipment) {
         menu->itemCount =
-            ItemMenu_Collect(UnitGet(ownerIds[selection]), menu->items, 0);
+            ItemMenu_CollectItems(UnitGet(ownerIds[selection]), menu->items, 0);
         Func_080fa84c(ownerIds[selection]);
         Func_080f8170(window, ownerIds[selection], 0, 8);
       } else {
@@ -192,7 +192,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
         sortMode++;
         ItemMenu_RefreshOwner(ownerIds[selection], 0);
         Audio_PlayCue(112);
-      } else if (ItemMenu_Count(ownerIds[selection])) {
+      } else if (ItemMenu_CountItems(ownerIds[selection])) {
         Audio_PlayCue(112);
         result = ownerIds[selection];
         break;

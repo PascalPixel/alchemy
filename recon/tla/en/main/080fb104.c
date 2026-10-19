@@ -43,7 +43,7 @@ enum {
 void Func_080fb410(s8 *commandStates);
 void ItemMenu_HideAllIcons(void);
 void RenderOutput_RedrawSavedRectFar(void *window);
-void ItemMenu_SetMsgWin7(void);
+void ItemMenu_SetMessageWindowHeight7(void);
 void UiWindow_DrawDividerLineFar(void *window, s32 x0, s32 y0, s32 x1, s32 y1);
 void Func_080fc12c(void);
 void Func_080fb554(s8 *commandStates, void *window);
@@ -83,7 +83,7 @@ s32 Func_080fb104(void) {
     ItemMenu_HideAllIcons();
     RenderOutput_RedrawSavedRectFar(menu->listWindow);
     messageWindow = menu->messageWindow;
-    ItemMenu_SetMsgWin7();
+    ItemMenu_SetMessageWindowHeight7();
     RenderOutput_RedrawSavedRectFar(messageWindow);
     UiWindow_DrawDividerLineFar(messageWindow, 0, 3, 16, 3);
     Func_080fc12c();

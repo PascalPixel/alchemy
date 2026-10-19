@@ -1,5 +1,5 @@
 // First draft of Func_080fa368: sets up the item menu's first screen, the
-// twin of ☀️'s ItemMenu_Init (games/tbs/src/menu/menu.c): the cursor window
+// twin of ☀️'s ItemMenu_Initialize (games/tbs/src/menu/menu.c): the cursor window
 // with the party's figures (Func_080f88d0, Func_08104fe0), the info window
 // along the bottom and an 8 by 2 cursor grid. The parameters are not used.
 // Near miss, differ 2 of 48, instruction order only: the native loads the

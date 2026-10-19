@@ -721,8 +721,8 @@ void PsynergyMenu_PositionOwnerEntry(struct RenderOutput **slot, s32 index,
 
 // Places the icon at slotIndex (0 above 15) in a columns-wide grid of
 // 24x16 cells starting at (originX, originY), and shows it.
-void ItemMenu_PosOwner(struct RenderOutput **slot, s32 slotIndex, s32 originX,
-                       s32 originY, s32 columns) {
+void ItemMenu_PlaceIcon(struct RenderOutput **slot, s32 slotIndex, s32 originX,
+                        s32 originY, s32 columns) {
   struct RenderOutput *icon;
 
   if (slotIndex > 15)
@@ -754,7 +754,7 @@ void ItemMenu_RefreshEntry(s32 layout) {
   do {
     icon = *scan++;
     if (icon != NULL) {
-      ItemMenu_PosOwner(slot, index, 116, originY, MENU_ITEM_GRID_COLUMNS);
+      ItemMenu_PlaceIcon(slot, index, 116, originY, MENU_ITEM_GRID_COLUMNS);
     }
     index++;
     slot++;

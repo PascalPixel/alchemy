@@ -1,6 +1,6 @@
 // Near miss, differ 8 of 157: the item menu's command availability (use,
 // equip, give, drop, trade, remove) for the selected item, ☀️'s
-// ItemMenu_BuildCmd in games/tbs/src/menu/menu.c. Instruction order only:
+// ItemMenu_BuildCommands in games/tbs/src/menu/menu.c. Instruction order only:
 // four loads and stores (the selected item's halfword, the -1 store to the
 // drop slot, the 0x1ff mask's first move) sit one or two slots apart.
 #include "types.h"
@@ -22,7 +22,7 @@ struct InventoryMenuState {
 s32 Item_ClassifyUseMode(s32 owner, s32 item);
 s32 BattleFx_HasTriggerFar(s32 item);
 
-void ItemMenu_BuildCmd(s8 *commandStates) {
+void ItemMenu_BuildCommands(s8 *commandStates) {
   struct InventoryMenuState *menu;
   struct ItemDefinition *item;
 

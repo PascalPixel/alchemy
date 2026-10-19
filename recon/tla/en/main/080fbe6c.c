@@ -41,7 +41,7 @@ extern const u8 gMenu_QuantityTiles[];
 
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void ItemMenu_SetMsgWin7(void);
+void ItemMenu_SetMessageWindowHeight7(void);
 void RenderOutput_RedrawSavedRectFar(void *window);
 void RenderOutput_ClearListFar(void *window);
 s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item);
@@ -72,7 +72,7 @@ s32 Func_080fbe6c(s32 base, s32 range, s32 mode) {
   s32 ownerCount;
   struct QuantityIcon *arrow;
 
-  ItemMenu_SetMsgWin7();
+  ItemMenu_SetMessageWindowHeight7();
   RenderOutput_RedrawSavedRectFar(window);
   if (mode == 0)
     targetCount = InventoryMenu_GetItemQuantity(menu->paneOwner[1],

@@ -28,7 +28,7 @@ L0:
   return result;
 }
 
-void ItemMenu_DrawMsg(s32 unused, s32 message) {
+void ItemMenu_DrawMessage(s32 unused, s32 message) {
   struct ItemListMenu *menu;
 
   menu = Ram_HeapSlots->menuRuntime;

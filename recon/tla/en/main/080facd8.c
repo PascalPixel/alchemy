@@ -9,7 +9,7 @@
 // (differ 2 each, 2026-10-12). The permuter found nothing in four minutes
 // (2,374 candidates) on the form without the asm. The same pair is what is left
 // of PsynergyMenu_BuildPageResult (080fd80c): the native schedules a load ahead
-// of the first instruction of a constant. ItemMenu_Collect (080fad88) had it
+// of the first instruction of a constant. ItemMenu_CollectItems (080fad88) had it
 // too and matches with an empty one-pass block before its first loop.
 #include "types.h"
 #include "ram_buffer.h"

@@ -113,7 +113,7 @@ s32 ItemMenu_Run(void) {
   WaitFrames(1);
   UiWindow_InitializeWork(0);
   screen->partyCount = Party_ListActiveOwnersFar(screen->ownerIds);
-  ItemMenu_Init(0, 3, 0, 7);
+  ItemMenu_Initialize(0, 3, 0, 7);
   Resource_LoadPairedBlocks();
   Palette_LightenBankHighlight(14);
   Link_DrawShiftedTilePairFar(UI_PAGE_ARROW_VRAM);
@@ -243,14 +243,14 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
     // Choose whose items to look at.
     case ITEM_STEP_OWNER:
       menu->selectedSlots[0] = 0;
-      ItemMenu_SetMsgWin3();
-      ItemMenu_SetItemWin3();
+      ItemMenu_SetMessageWindowHeight3();
+      ItemMenu_SetItemWindowRow3();
       menu->selectedItemIcon->active = ICON_HIDDEN;
-      ItemMenu_DrawMsg(0, MsgWhoseItem);
+      ItemMenu_DrawMessage(0, MsgWhoseItem);
 #if TBS_PATCH_1
       RenderOutput_RedrawSavedRectFar(menu->infoWindow);
       UiText_DrawWorkValueWithLabel(menu->infoWindow);
-      command = ItemMenu_PrepOwner(0);
+      command = ItemMenu_SelectMember(0);
       if (command == -1) {
         selection = command = 0;
         menuResult = -1;
@@ -258,7 +258,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
 #else
       UiText_DrawWorkValueWithLabel(menu->infoWindow);
-      owner = ItemMenu_PrepOwner(0);
+      owner = ItemMenu_SelectMember(0);
       if (owner == -1) {
         chosen = selection = owner = 0;
         menuResult = -1;
@@ -272,15 +272,15 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 
     // Choose one of their items.
     case ITEM_STEP_ITEM:
-      if (ItemMenu_Count(menu->paneOwner[0]) == 0) {
+      if (ItemMenu_CountItems(menu->paneOwner[0]) == 0) {
         state = ITEM_STEP_OWNER;
         break;
       }
-      ItemMenu_SetMsgWin3();
-      ItemMenu_SetItemWin3();
+      ItemMenu_SetMessageWindowHeight3();
+      ItemMenu_SetItemWindowRow3();
       menu->selectedItemIcon->active = ICON_HIDDEN;
       menu->paneIcons[0]->active = ICON_SHOWN;
-      ItemMenu_DrawMsg(0, MsgWhichItem);
+      ItemMenu_DrawMessage(0, MsgWhichItem);
       selection = ItemMenu_RunList(0);
       state = ITEM_STEP_OWNER;
       if (selection == -1) {
@@ -329,8 +329,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           RenderOutput_RedrawSavedRectFar(menu->infoWindow);
 #endif
           menu->paneIcons[0]->active = ICON_HIDDEN;
-          menu->itemCount =
-              ItemMenu_Collect(UnitGetFar(menu->paneOwner[0]), menu->items, 0);
+          menu->itemCount = ItemMenu_CollectItems(
+              UnitGetFar(menu->paneOwner[0]), menu->items, 0);
           ItemMenu_DrawIcons(menu->items, 0);
           state = ITEM_STEP_OWNER;
         }
@@ -362,8 +362,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
     // Use the item on the party member chosen.
     case ITEM_STEP_USE:
       ItemMenu_HideAllIcons();
-      ItemMenu_SetMsgWin5();
-      ItemMenu_SetItemWin5();
+      ItemMenu_SetMessageWindowHeight5();
+      ItemMenu_SetItemWindowRow5();
       RenderOutput_RedrawSavedRectFar(menu->messageWindow);
       ItemMenu_DrawItemHead();
       UiText_DrawCharacterAtOffsetFar(MsgUseOnWhom, menu->messageWindow, 16,
@@ -392,8 +392,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           ItemMenu_TryBreak();
           state = ITEM_STEP_ITEM;
         }
-        menu->itemCount =
-            ItemMenu_Collect(UnitGetFar(menu->paneOwner[0]), menu->items, 0);
+        menu->itemCount = ItemMenu_CollectItems(UnitGetFar(menu->paneOwner[0]),
+                                                menu->items, 0);
         ItemMenu_DrawIcons(menu->items, 0);
         menu->completionFlag = 1;
       } else {
@@ -403,8 +403,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 
     // Give: choose to whom.
     case ITEM_STEP_TARGET:
-      ItemMenu_SetMsgWin5();
-      ItemMenu_SetItemWin5();
+      ItemMenu_SetMessageWindowHeight5();
+      ItemMenu_SetItemWindowRow5();
       RenderOutput_RedrawSavedRectFar(menu->messageWindow);
       ItemMenu_DrawItemHead();
       UiText_DrawCharacterAtOffsetFar(MsgGiveToWhom, menu->messageWindow, 16,
@@ -469,7 +469,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         }
         UnitCalcFar(owner);
 #endif
-        ItemMenu_SetItemWin3();
+        ItemMenu_SetItemWindowRow3();
         ItemMenu_RefreshOwner(menu->paneOwner[0], 0);
         menu->selectedItemIcon->active = ICON_HIDDEN;
         menu->paneIcons[0]->active = ICON_HIDDEN;
@@ -497,7 +497,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         if (heldCount == ITEM_STACK_MAX) {
           transferFailed = 1;
         }
-        if (ItemMenu_Count(menu->paneOwner[1]) == INVENTORY_SLOTS &&
+        if (ItemMenu_CountItems(menu->paneOwner[1]) == INVENTORY_SLOTS &&
             heldCount == 0) {
           state = ITEM_STEP_TRADE;
           break;
@@ -554,7 +554,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->paneOwner[0] = menu->paneOwner[1];
         menu->selectedItems[0] &= ITEM_ID_MASK;
 #if TBS_PATCH_1
-        ItemMenu_SetMsgWin6();
+        ItemMenu_SetMessageWindowHeight6();
 #endif
         RenderOutput_RedrawSavedRectFar(menu->messageWindow);
         ItemMenu_DrawItemHead();
@@ -596,9 +596,9 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
     // first and restored if any part of the swap fails.
     case ITEM_STEP_TRADE:
       transferFailed = 0;
-      ItemMenu_SetMsgWin3();
-      ItemMenu_SetItemWin3();
-      ItemMenu_DrawMsg(0, MsgSwapForWhat);
+      ItemMenu_SetMessageWindowHeight3();
+      ItemMenu_SetItemWindowRow3();
+      ItemMenu_DrawMessage(0, MsgSwapForWhat);
 #if TBS_PATCH_4
       if (ItemMenu_RunList(1) == -1) {
 #else
@@ -690,9 +690,9 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         UnitCalcFar(menu->paneOwner[1]);
         Unit_RefreshPsynergyFar(menu->paneOwner[0]);
         Unit_RefreshPsynergyFar(menu->paneOwner[1]);
-        ItemMenu_SetMsgWin5();
+        ItemMenu_SetMessageWindowHeight5();
 #if TBS_PATCH_1
-        ItemMenu_SetMsgWin6();
+        ItemMenu_SetMessageWindowHeight6();
         ItemMenu_HidePageIcons();
 #endif
         RenderOutput_RedrawSavedRectFar(menu->messageWindow);
@@ -702,7 +702,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         result = ItemMenu_ConfirmEquip(0);
         if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
           RenderOutput_ClearListFar(menu->infoWindow);
-          ItemMenu_SetItemWin5();
+          ItemMenu_SetItemWindowRow5();
           ItemMenu_RefreshOwner(menu->paneOwner[1], 1);
           if (result == 0) {
             ItemMenu_DrawEquipPreview(menu->paneOwner[1],
@@ -748,7 +748,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       Unit_RefreshPsynergyFar(menu->paneOwner[0]);
       menu->paneIcons[0]->active = ICON_HIDDEN;
       menu->itemCount =
-          ItemMenu_Collect(UnitGetFar(menu->paneOwner[0]), menu->items, 0);
+          ItemMenu_CollectItems(UnitGetFar(menu->paneOwner[0]), menu->items, 0);
       ItemMenu_DrawIcons(menu->items, 0);
       WaitFrames(1);
       ItemMenu_DrawEquipPreview(menu->paneOwner[0], menu->selectedSlots[0], 0,
@@ -773,7 +773,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       Unit_RefreshPsynergyFar(menu->paneOwner[0]);
       menu->paneIcons[0]->active = ICON_HIDDEN;
       menu->itemCount =
-          ItemMenu_Collect(UnitGetFar(menu->paneOwner[0]), menu->items, 0);
+          ItemMenu_CollectItems(UnitGetFar(menu->paneOwner[0]), menu->items, 0);
       ItemMenu_DrawIcons(menu->items, 0);
       WaitFrames(1);
       menu->equipPreview = 1;
@@ -855,7 +855,7 @@ s32 ItemMenu_Use(void) {
 // Sets up the item menu's first screen: the cursor window with the party's
 // figures, the info window along the bottom, and an 8 by 2 cursor grid. The
 // parameters are not used.
-void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns) {
+void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
   struct InventoryMenuState *menu = gMenuWork;
   s32 ownerIndex;
 
@@ -982,7 +982,7 @@ void ItemMenu_Close(void) {
 
 // Lets the player choose a party member in pane (0 or 1), starting from the
 // member chosen last. Returns the member's id, or -1 when the player backs out.
-s32 ItemMenu_PrepOwner(s32 pane) {
+s32 ItemMenu_SelectMember(s32 pane) {
   struct InventoryMenuState *menu = gMenuWork;
   s32 result = 0;
   s32 ownerIndex;
@@ -998,7 +998,7 @@ s32 ItemMenu_PrepOwner(s32 pane) {
     UiMenu_SlideCursor(ownerIndex * 24 - 10, 16);
   }
   unit = UnitGetFar(menu->ownerIds[ownerIndex]);
-  menu->itemCount = ItemMenu_Collect(unit, menu->items, 0);
+  menu->itemCount = ItemMenu_CollectItems(unit, menu->items, 0);
   result = ItemMenu_RunOwnerSelection(menu->ownerIds, menu->items);
   UiIcon_PrepareObject(menu->paneIcons[pane]);
   WaitFrames(1);
@@ -1061,8 +1061,8 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
       window = menu->statusWindow;
       unit = UnitGetFar(ownerIds[selection]);
       if (showEquipment) {
-        menu->itemCount =
-            ItemMenu_Collect(UnitGetFar(ownerIds[selection]), menu->items, 0);
+        menu->itemCount = ItemMenu_CollectItems(UnitGetFar(ownerIds[selection]),
+                                                menu->items, 0);
         ItemMenu_OpenCategory(ownerIds[selection]);
         Menu_DrawOwnerStatusPanel(window, ownerIds[selection], 0,
                                   STATUS_PANEL_STATS);
@@ -1085,7 +1085,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
         sortMode++;
         ItemMenu_RefreshOwner(ownerIds[selection], 0);
         AudioCommand_PlayFar(SE_MENU_CONFIRM);
-      } else if (ItemMenu_Count(ownerIds[selection])) {
+      } else if (ItemMenu_CountItems(ownerIds[selection])) {
         AudioCommand_PlayFar(SE_MENU_CONFIRM);
         result = ownerIds[selection];
         break;
@@ -1184,7 +1184,8 @@ s32 ItemMenu_SelectTarget(s32 mode) {
                                                         ITEM_ID_MASK);
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
-          if (ItemMenu_Count(menu->ownerIds[ownerIndex]) == INVENTORY_SLOTS &&
+          if (ItemMenu_CountItems(menu->ownerIds[ownerIndex]) ==
+                  INVENTORY_SLOTS &&
               heldCount == 0)
             UiText_DrawCharacterAtOffsetFar(MsgTradeForWhat, window, 0, 72);
           else if (heldCount != 0) {
@@ -1202,7 +1203,8 @@ s32 ItemMenu_SelectTarget(s32 mode) {
           } else {
             UiText_DrawCharacterAtOffsetFar(MsgNoneInStock, window, 16, 72);
           }
-          if (ItemMenu_Count(menu->ownerIds[ownerIndex]) == INVENTORY_SLOTS &&
+          if (ItemMenu_CountItems(menu->ownerIds[ownerIndex]) ==
+                  INVENTORY_SLOTS &&
               heldCount == 0)
             UiText_DrawCharacterAtOffsetFar(MsgTradeForWhat, window,
                                             ITEM_TRADE_PROMPT_X, 72);
@@ -1327,7 +1329,7 @@ s32 ItemMenu_IsSpecial(s32 itemId) {
 }
 
 // Clears the message window and writes message into it.
-void ItemMenu_DrawMsg(s32 unused, s32 message) {
+void ItemMenu_DrawMessage(s32 unused, s32 message) {
   struct InventoryMenuState *menu;
 
   menu = gMenuWork;
@@ -1349,7 +1351,7 @@ void Menu_HideEmptyEntryIcons(const u16 *items) {
 }
 
 // Returns how many of member ownerId's 15 inventory slots hold an item.
-s32 ItemMenu_Count(s32 ownerId) {
+s32 ItemMenu_CountItems(s32 ownerId) {
   s32 maskedItemId;
   s32 remainingSlots;
   s32 count;
@@ -1401,7 +1403,7 @@ s32 InventoryMenu_GetItemQuantity(s32 ownerId, s32 itemId) {
 
 // Copies the unit's items into the list items (32 entries), skipping empty
 // slots and clearing the rest. Returns how many there are. mode is not used.
-s32 ItemMenu_Collect(struct BattleUnit *unit, u16 *items, s32 mode) {
+s32 ItemMenu_CollectItems(struct BattleUnit *unit, u16 *items, s32 mode) {
   s32 itemCount;
   s32 slotIndex;
 
@@ -1456,11 +1458,11 @@ void ItemMenu_RefreshOwner(s32 ownerId, s32 mode) {
   menu = gMenuWork;
   owner = UnitGetFar(ownerId);
   items = menu->items;
-  menu->itemCount = ItemMenu_Collect(owner, items, 0);
+  menu->itemCount = ItemMenu_CollectItems(owner, items, 0);
   RenderOutput_RedrawSavedRectFar(menu->itemWindow);
   ItemMenu_RefreshEntry(mode);
   ItemMenu_DrawIcons(items, 0);
-  if (ItemMenu_Count(ownerId) == 0)
+  if (ItemMenu_CountItems(ownerId) == 0)
     UiText_DrawCharacterAtOffsetFar(MsgItemMenuEmpty, menu->itemWindow, 8, 24);
 }
 
@@ -1645,7 +1647,7 @@ s32 ItemMenu_ChooseCommand(void) {
   menu = gMenuWork;
   redraw = 1;
   commandStates = commandStorage;
-  ItemMenu_BuildCmd(commandStates);
+  ItemMenu_BuildCommands(commandStates);
   redrawFlag = &menu->flags;
   // Draw the item's name and the command grid, unless they are up already.
   if (*redrawFlag != 1) {
@@ -1654,11 +1656,11 @@ s32 ItemMenu_ChooseCommand(void) {
     ItemMenu_HideAllIcons();
     RenderOutput_RedrawSavedRectFar((void *)menu->listWindow);
     messageWindow = menu->messageWindow;
-    ItemMenu_SetMsgWin7();
+    ItemMenu_SetMessageWindowHeight7();
     RenderOutput_RedrawSavedRectFar((void *)messageWindow);
     UiWindow_DrawDividerLineFar(messageWindow, 0, 3, 16, 3);
     ItemMenu_DrawItemHead();
-    ItemMenu_DrawCmd(commandStates, messageWindow);
+    ItemMenu_DrawCommands(commandStates, messageWindow);
     MENU_RESET_INFO_WINDOW((void *)menu->infoWindow);
     MENU_DRAW_INFO_TEXT((menu->selectedItems[0] & ITEM_ID_MASK) +
                             MsgItemPlainName,
@@ -1801,7 +1803,7 @@ s32 ItemMenu_ChooseCommand(void) {
 // equipment the owner can wear and is not wearing, Remove for worn equipment
 // that is not cursed, Give with someone to give to, Drop unless the item is
 // indispensable, and neither for cursed equipment being worn.
-void ItemMenu_BuildCmd(s8 *commandStates) {
+void ItemMenu_BuildCommands(s8 *commandStates) {
   struct InventoryMenuState *menu;
   struct ItemDefinition *item;
 
@@ -1861,7 +1863,7 @@ void ItemMenu_BuildCmd(s8 *commandStates) {
 #define TEXT_COLOR_DISABLED 14
 
 // Writes the six command names into window, the disabled ones in grey.
-void ItemMenu_DrawCmd(const s8 *commandStates, struct UiWindow *window) {
+void ItemMenu_DrawCommands(const s8 *commandStates, struct UiWindow *window) {
   s32 disabled;
   s32 useState;
   u32 firstCommandMessage;
@@ -2318,42 +2320,42 @@ void ItemMenu_DrawStat(s32 statChange, s32 unused, struct UiWindow *window,
 }
 
 // Moves the item window to row 5 of the right-hand side.
-void ItemMenu_SetItemWin5(void) {
+void ItemMenu_SetItemWindowRow5(void) {
   UiWindow_SetBounds(
       (struct UiWindow *)((struct InventoryMenuState *)gMenuWork)->itemWindow,
       13, 5, 17, 10);
 }
 
 // Moves the item window to row 3 of the right-hand side.
-void ItemMenu_SetItemWin3(void) {
+void ItemMenu_SetItemWindowRow3(void) {
   UiWindow_SetBounds(
       (struct UiWindow *)((struct InventoryMenuState *)gMenuWork)->itemWindow,
       13, 3, 17, 10);
 }
 
 // Makes the message window, along the top right, 5 rows tall.
-void ItemMenu_SetMsgWin5(void) {
+void ItemMenu_SetMessageWindowHeight5(void) {
   UiWindow_SetBounds((struct UiWindow *)((struct InventoryMenuState *)gMenuWork)
                          ->messageWindow,
                      13, 0, 17, 5);
 }
 
 // Makes the message window 6 rows tall.
-void ItemMenu_SetMsgWin6(void) {
+void ItemMenu_SetMessageWindowHeight6(void) {
   UiWindow_SetBounds((struct UiWindow *)((struct InventoryMenuState *)gMenuWork)
                          ->messageWindow,
                      13, 0, 17, 6);
 }
 
 // Makes the message window 7 rows tall.
-void ItemMenu_SetMsgWin7(void) {
+void ItemMenu_SetMessageWindowHeight7(void) {
   UiWindow_SetBounds((struct UiWindow *)((struct InventoryMenuState *)gMenuWork)
                          ->messageWindow,
                      13, 0, 17, 7);
 }
 
 // Makes the message window 3 rows tall.
-void ItemMenu_SetMsgWin3(void) {
+void ItemMenu_SetMessageWindowHeight3(void) {
   UiWindow_SetBounds((struct UiWindow *)((struct InventoryMenuState *)gMenuWork)
                          ->messageWindow,
                      13, 0, 17, 3);
@@ -2380,7 +2382,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   changed = 1;
   receiverCount = 0;
   window = menu->messageWindow;
-  ItemMenu_SetMsgWin7();
+  ItemMenu_SetMessageWindowHeight7();
   RenderOutput_RedrawSavedRectFar(window);
   // How many each member holds now.
   if (dropMode == 0)
@@ -2659,7 +2661,7 @@ s32 ItemMenu_PageResult(struct MenuResult *result, s32 index) {
   s32 pageCount;
   s32 selected;
 
-  itemCount = ItemMenu_Count(menu->paneOwner[index]);
+  itemCount = ItemMenu_CountItems(menu->paneOwner[index]);
   unit = (s32)UnitGetFar(menu->paneOwner[index]);
   selected = menu->selectedIndexByOwner[menu->paneOwner[index]];
   if ((selected + 1) > itemCount) {
@@ -2801,7 +2803,7 @@ s32 ItemMenu_RunList(s32 paneIndex) {
 
   while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     owner = UnitGetFar(menu->paneOwner[paneIndex]);
-    menu->itemCount = ItemMenu_Collect(owner, menu->items, 0);
+    menu->itemCount = ItemMenu_CollectItems(owner, menu->items, 0);
     ItemMenu_DrawIcons(menu->items, 0);
     menu->selectedItemIcon->active = ICON_HIDDEN;
     ItemMenu_PageResult(&state, paneIndex);
@@ -2904,7 +2906,7 @@ s32 ItemMenu_RunList(s32 paneIndex) {
             menu->selectedOwner = menu->ownerIds[member];
             menu->paneOwner[paneIndex] = menu->ownerIds[member];
             menu->paneIndex[paneIndex] = member;
-            menu->itemCount = ItemMenu_Collect(
+            menu->itemCount = ItemMenu_CollectItems(
                 UnitGetFar(menu->paneOwner[paneIndex]), menu->items, 0);
           } while (menu->itemCount == 0);
           for (i = 0; i <= 3; i++) {

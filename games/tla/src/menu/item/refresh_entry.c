@@ -20,7 +20,7 @@ void ItemMenu_RefreshEntry(s32 layout) {
   do {
     object = *scan++;
     if (object != NULL) {
-      ItemMenu_PosOwner(slot, index, 0x74, originY, 5);
+      ItemMenu_PlaceIcon(slot, index, 0x74, originY, 5);
     }
     index++;
     slot++;

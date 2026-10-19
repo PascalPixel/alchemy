@@ -51,26 +51,26 @@ struct ItemMenuWindows {
 
 #define ITEM_MENU ((struct ItemMenuWindows *)Ram_HeapSlots->menuRuntime)
 
-void ItemMenu_SetItemWin5(void) {
+void ItemMenu_SetItemWindowRow5(void) {
   UiWindow_SetBounds(ITEM_MENU->itemWindow, 13, 5, 17, 10);
 }
 
-void ItemMenu_SetItemWin3(void) {
+void ItemMenu_SetItemWindowRow3(void) {
   UiWindow_SetBounds(ITEM_MENU->itemWindow, 13, 3, 17, 10);
 }
 
-void ItemMenu_SetMsgWin5(void) {
+void ItemMenu_SetMessageWindowHeight5(void) {
   UiWindow_SetBounds(ITEM_MENU->messageWindow, 13, 0, 17, 5);
 }
 
-void ItemMenu_SetMsgWin6(void) {
+void ItemMenu_SetMessageWindowHeight6(void) {
   UiWindow_SetBounds(ITEM_MENU->messageWindow, 13, 0, 17, 6);
 }
 
-void ItemMenu_SetMsgWin7(void) {
+void ItemMenu_SetMessageWindowHeight7(void) {
   UiWindow_SetBounds(ITEM_MENU->messageWindow, 13, 0, 17, 7);
 }
 
-void ItemMenu_SetMsgWin3(void) {
+void ItemMenu_SetMessageWindowHeight3(void) {
   UiWindow_SetBounds(ITEM_MENU->messageWindow, 13, 0, 17, 3);
 }

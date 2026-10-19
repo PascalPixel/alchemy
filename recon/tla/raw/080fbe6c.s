@@ -32,7 +32,7 @@ Func_080fbe6c:
 	adds r3, #240
 	ldr r7, [r3]
 	mov r10, r0
-	bl ItemMenu_SetMsgWin7
+	bl ItemMenu_SetMessageWindowHeight7
 	adds r0, r7, #0
 	bl RenderOutput_RedrawSavedRectFar
 	ldr r2, [sp, #20]

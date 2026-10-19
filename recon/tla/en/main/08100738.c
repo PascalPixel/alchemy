@@ -21,7 +21,7 @@ struct InventoryMenuState {
 
 struct BattleUnit *UnitGet(s32 owner);
 void Inventory_RemoveFar(s32 ownerId, s32 slot);
-s32 ItemMenu_Collect(struct BattleUnit *owner, u16 *items, s32 mode);
+s32 ItemMenu_CollectItems(struct BattleUnit *owner, u16 *items, s32 mode);
 s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
                                 s32 fixedScale);
 
@@ -42,7 +42,7 @@ s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
     item = Item_Get(unit->inventory[slot]);
     if (item->useType == 1) {
       Inventory_RemoveFar(ownerId, slot);
-      menu->itemCount = ItemMenu_Collect(unit, menu->items, 0);
+      menu->itemCount = ItemMenu_CollectItems(unit, menu->items, 0);
     }
     if (item->useType == 4) {
       if (itemId == 0xb8)

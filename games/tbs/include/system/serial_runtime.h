@@ -15,11 +15,15 @@
 /// A link cable packet: its sequence number, the consoles not yet heard from,
 /// its checksum and a 24-byte payload.
 struct SerialPacket {
-  u8 sequence;
+  u8 sequence; ///< SerialRuntime's sequence when the packet was built
+  /// The consoles heard from before but not this frame (receivedMask ^
+  /// currentMask); a receiver complements it once the checksum is good.
   u8 missingMask;
+  /// The complement of the sum of the packet's first 14 halfwords, taken with
+  /// this field 0.
   u16 checksum;
   u8 payload[24];
-  u8 reservedTail[4];
+  u8 reservedTail[4]; ///< past the 14 halfwords sent; never written
 };
 
 STATIC_ASSERT(sizeof(struct SerialPacket) == 32);
@@ -29,6 +33,8 @@ STATIC_ASSERT(offsetof(struct SerialPacket, checksum) == 2);
 STATIC_ASSERT(offsetof(struct SerialPacket, payload) == 4);
 STATIC_ASSERT(offsetof(struct SerialPacket, reservedTail) == 28);
 
+/// The serial data registers read as two words or four halfwords; no TBS code
+/// names this union.
 union SerialDataRegisters {
   u32 words[2];
   u16 halfwords[4];
@@ -37,23 +43,42 @@ union SerialDataRegisters {
 /// The link cable's runtime: its mode and phase, the consoles heard from, the
 /// send position and the packet buffers the interrupt handler fills.
 struct SerialRuntime {
+  /// SIOCNT's bits 7 and 3 when this console armed timer 3 to clock the
+  /// transfers: 8 then, else 0; 8 adds 0x80 to the link status.
   u8 mode;
-  u8 phase;
-  u8 receivedMask;
-  u8 currentMask;
+  u8 phase;        ///< 0 looking for the partner, 1 connected
+  u8 receivedMask; ///< the consoles heard from since the link began
+  u8 currentMask;  ///< the consoles heard from this frame
+  /// Set by the interrupt for each console and cleared each frame.
+  /// bits: 1 heard while isParent was set | 0 a packet completed
   u8 channelFlags[4];
+  /// Nonzero lets a new packet restart timer 3.
   u8 transferEnabled;
+  /// SIOCNT's bit 6, copied by each transfer interrupt; nonzero adds 0x1000
+  /// to the link status.
   u8 isParent;
-  u8 reserved0a;
+  u8 reserved0a; ///< not named by TBS code
+  /// The packet sequence number, counted up each frame once connected.
   u8 sequence;
-  u8 reserved0c[8];
+  u8 reserved0c[8]; ///< not named by TBS code
+  /// The halfword of sendBuffer[1] sent next; -1 between packets, when 0xfefe
+  /// is sent and the two send buffers swap.
   s32 sendIndex;
+  /// Each console's next halfword in its incomingBuffer; -1 after an idle
+  /// 0xfefe.
   s32 receiveIndex[2];
-  u8 reserved20[8];
+  u8 reserved20[8]; ///< not named by TBS code
+  /// The packet being built ([0]) and the packet being sent ([1]).
   u16 *sendBuffer[2];
+  /// Each console's packet being received; two are used.
   u16 *incomingBuffer[4];
+  /// Each console's last complete packet, swapped in by the interrupt.
   u16 *readyBuffer[4];
+  /// The packets the frame code checks and copies, swapped with readyBuffer
+  /// each frame.
   u16 *pendingBuffer[4];
+  /// The buffers' memory: two 32-byte send buffers, then 96 bytes a console
+  /// for its incoming, ready and pending packets.
   u8 storage[0x100];
 };
 
@@ -66,11 +91,17 @@ STATIC_ASSERT(offsetof(struct SerialRuntime, storage) == 0x60);
 /// A console's block transfer state, exchanged with the partner each VBlank:
 /// its block sequence, its status and flags, and a 20-byte block.
 struct SerialTransferState {
+  /// The sequence number of the block in payload; as receiver, the one it
+  /// expects with bit 7 set to ask for a resend; 1 when a transfer starts.
   u8 active;
+  /// 0x80 sending or 0x81 receiving when started; the receiver counts blocks
+  /// (status + 1, with bit 7) and sets 0 after the last.
   u8 status;
+  /// The receive state: 1 receiving, 2 the last block taken, 0 idle.
   u8 flags;
+  /// The send state: 1 a block with more to follow, 2 the last block, 0 idle.
   u8 peerFlags;
-  u8 payload[20];
+  u8 payload[20]; ///< one block of the data sent
 };
 
 STATIC_ASSERT(sizeof(struct SerialTransferState) == 24);

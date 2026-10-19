@@ -16,7 +16,7 @@ struct Vector3 {
       s32 y;
       s32 z;
     };
-    s32 coordinates[3];
+    s32 coordinates[3]; ///< x, y and z, as Vector3_Coordinates returns them
   };
 #else
   s32 x;

@@ -11,29 +11,44 @@
 /// A field effect: a small object on the field that moves at its velocity and
 /// grows and spins at its rates, run by its script and update hook.
 struct FieldEffect {
+  /// FieldActor's script pointer, cursor and facing; not named by this view.
   u8 unk00[8];
-  s32 x; ///< 16.16 fixed-point pixels
-  s32 y; ///< 16.16 fixed-point pixels
-  s32 z; ///< 16.16 fixed-point pixels
-  u8 unk14[4];
-  s32 scaleX; ///< 16.16 fixed point, 0x10000 full size
-  s32 scaleY; ///< 16.16 fixed point, 0x10000 full size
-  u8 unk20[3];
+  s32 x;       ///< 16.16 fixed-point pixels
+  s32 y;       ///< 16.16 fixed-point pixels
+  s32 z;       ///< 16.16 fixed-point pixels
+  u8 unk14[4]; ///< FieldActor's terrainHeight; not named by this view
+  s32 scaleX;  ///< 16.16 fixed point, 0x10000 full size
+  s32 scaleY;  ///< 16.16 fixed point, 0x10000 full size
+  u8 unk20[3]; ///< FieldActor's radius and terrainId; not named by this view
+  /// ActorPriorityFlag bits: the spawner clears ACTOR_PRIORITY_AUTOMATIC when
+  /// EFFECT_USE_PRIORITY sets the sprite's priority.
   u8 priorityFlags;
+  /// FieldActor's velocityX to velocityZ; effects move by velocity instead.
   u8 unk24[0x0c];
-  s32 scaleRateX; ///< 16.16 fixed point a frame
-  s32 scaleRateY; ///< 16.16 fixed point a frame
-  u8 unk38[0x0c];
-  struct Vector3 velocity; ///< 16.16 fixed-point pixels per frame
-  struct AnimationObject *sprite;
-  u8 unk54;
-  u8 motionFlags;
-  u8 unk56[3];
-  u8 collisionFlags;
+  /// Added to scaleX each frame by the update hooks, in 16.16 fixed point a
+  /// frame; zeroed by the spawner.
+  s32 scaleRateX;
+  s32 scaleRateY; ///< as scaleRateX, for scaleY
+  u8 unk38[0x0c]; ///< FieldActor's targetX to targetZ; not named by this view
+  /// Added to x, y and z each frame by the update hooks, in 16.16 fixed-point
+  /// pixels per frame; FieldActor's bounce, gravity and riseBaseY.
+  struct Vector3 velocity;
+  struct AnimationObject *sprite; ///< the sprite spin turns
+  u8 unk54;          ///< FieldActor's spriteStorageKind; not named by this view
+  u8 motionFlags;    ///< ActorMotionFlag bits; zeroed by the spawner
+  u8 unk56[3];       ///< FieldActor's unk56; not named by this view
+  u8 collisionFlags; ///< FieldActor's collisionFlags; not named by this view
+  /// FieldActor's steeringFlags to riseEnabled; not named by this view.
   u8 unk5a[0x0a];
-  u16 spin; ///< 1/65536 turns per frame
-  u8 unk66[2];
+  /// Added to the sprite's rotation each frame by the update hooks, in
+  /// 1/65536 turns per frame; Imil's rising effects keep a drift here instead.
+  u16 spin;
+  u8 unk66[2]; ///< FieldActor's work; not named by this view
+  /// Frames until a scene's update hook releases the effect: 20 for Altin
+  /// Peak's spray, 60 for Imil's rising effects.
   s32 countdown;
+  /// Called each frame while the effect is live: the spawner sets
+  /// BattleFx_UpdateObjectMotionScaleAndLinkedAngle, or options.update.
   void (*update)(union FieldObject *object);
 };
 
@@ -56,32 +71,35 @@ union FieldObject {
 #define SCRIPT_DELETE 27
 
 enum EffectSpawnFlags {
+  /// Picks one of gEffectScripts; the object's mode is this plus 1.
   EFFECT_SCRIPT_MASK = 0x0f,
-  EFFECT_USE_PALETTE = 0x10000,
-  EFFECT_USE_PRIORITY = 0x20000,
+  EFFECT_USE_PALETTE = 0x10000,  ///< options.palette, as its group child value
+  EFFECT_USE_PRIORITY = 0x20000, ///< options.priority, as the sprite's priority
+  /// Grows from the start scale, or full size, to the target scale over the
+  /// script's repeat count.
   EFFECT_SCALE_TO_TARGET = 0x40000,
-  EFFECT_USE_START_SCALE = 0x80000,
-  EFFECT_USE_TYPE = 0x100000,
-  EFFECT_USE_SCRIPT = 0x200000,
-  EFFECT_USE_ROTATION = 0x400000,
-  EFFECT_USE_SPIN = 0x800000,
-  EFFECT_USE_UPDATE = 0x1000000
+  EFFECT_USE_START_SCALE = 0x80000, ///< options.startScaleX and startScaleY
+  EFFECT_USE_TYPE = 0x100000,       ///< options.type, else object type 222
+  EFFECT_USE_SCRIPT = 0x200000,     ///< options.script, run in mode 1
+  EFFECT_USE_ROTATION = 0x400000,   ///< options.rotation, as the sprite's
+  EFFECT_USE_SPIN = 0x800000,       ///< options.spin
+  EFFECT_USE_UPDATE = 0x1000000     ///< options.update
 };
 
 /// The options of a spawned field effect, each used when its EFFECT_USE_ flag
 /// (or EFFECT_SCALE_TO_TARGET) is set.
 struct EffectOptions {
-  s32 priority;
-  s32 palette;
-  s32 startScaleX;  ///< 16.16 fixed point, 0x10000 full size
-  s32 startScaleY;  ///< 16.16 fixed point, 0x10000 full size
-  s32 targetScaleX; ///< 16.16 fixed point, 0x10000 full size
-  s32 targetScaleY; ///< 16.16 fixed point, 0x10000 full size
-  s16 type;
-  const s32 *script;
-  u16 rotation; ///< 1/65536 turns
-  u16 spin;     ///< 1/65536 turns per frame
-  void (*update)(union FieldObject *object);
+  s32 priority;      ///< the sprite's priority
+  s32 palette;       ///< passed to ObjectGroup_SetChildValue
+  s32 startScaleX;   ///< 16.16 fixed point, 0x10000 full size
+  s32 startScaleY;   ///< 16.16 fixed point, 0x10000 full size
+  s32 targetScaleX;  ///< 16.16 fixed point, 0x10000 full size
+  s32 targetScaleY;  ///< 16.16 fixed point, 0x10000 full size
+  s16 type;          ///< the object type to create; 222 without the flag
+  const s32 *script; ///< the object script, run in mode 1
+  u16 rotation;      ///< 1/65536 turns
+  u16 spin;          ///< 1/65536 turns per frame
+  void (*update)(union FieldObject *object); ///< replaces the update hook
 };
 
 STATIC_ASSERT(offsetof(struct EffectOptions, type) == 0x18);

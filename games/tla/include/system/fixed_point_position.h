@@ -4,10 +4,11 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// A position in three coordinates, each in 16.16 fixed point.
 struct FixedPointPosition {
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16.16 fixed point
+  s32 y; ///< 16.16 fixed point
+  s32 z; ///< 16.16 fixed point
 };
 
 STATIC_ASSERT(sizeof(struct FixedPointPosition) == 0x0c);

@@ -12,14 +12,18 @@
 /// portrait.
 struct InnRuntimeState {
   u8 padding000[0x0c];
-  struct UiWindow *window;
+  struct UiWindow *window; ///< the coins window: ShopRuntime's moneyWindow
   u8 padding010[0x380];
+  /// ShopRuntime's six cursor icon slots; not named by TBS code.
   u16 resourceEntries[6];
   u8 padding39c[8];
+  /// The innkeeper's animation, which picks the portrait: ShopRuntime's
+  /// keeperResource.
   u16 resourceId;
   u8 padding3a6[3];
-  u8 active;
+  u8 active; ///< ShopRuntime's shopType; the inn sets 1 when checking in
   u8 padding3aa[2];
+  /// ShopRuntime's warriorShop; the inn sets 1 for inn 5.
   u8 specialActive;
 };
 

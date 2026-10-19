@@ -11,18 +11,19 @@
 /// A palette cycle: a run of up to 16 background palette colours, saved and
 /// rotated by one colour every delay + 1 frames.
 struct PaletteSnapshot {
-  u16 *source;
-  u16 position;
-  u16 timer; ///< frames
-  s16 delay; ///< frames
-  u16 count;
-  u16 colors[16];
+  u16 *source;    ///< the first colour of the run, in BG palette RAM
+  u16 position;   ///< colours rotated so far, 0 to count - 1
+  u16 timer;      ///< frames until the next rotation
+  s16 delay;      ///< frames; the timer restarts from it
+  u16 count;      ///< colours in the run
+  u16 colors[16]; ///< the run's colours as saved when the cycle was added
 };
 
 /// The palette cycling queue (heap slot 28): four cycles and how many are in
 /// use.
 struct PaletteSnapshotWork {
   struct PaletteSnapshot entries[4];
+  /// Cycles in use, 0 to 4; PaletteQueue_StepCycles masks four to none.
   u16 count;
 };
 

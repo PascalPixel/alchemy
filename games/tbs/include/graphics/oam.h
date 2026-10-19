@@ -10,8 +10,8 @@
 
 /// How many OAM entries are in use, and the most that may be.
 struct OamUsage {
-  u16 used;
-  u16 limit;
+  u16 used;  ///< not named by TBS code
+  u16 limit; ///< not named by TBS code
 };
 
 STATIC_ASSERT(sizeof(struct OamUsage) == 4);

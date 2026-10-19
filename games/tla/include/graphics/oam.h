@@ -5,9 +5,10 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// How many OAM entries are in use, and the most that may be.
 struct OamUsage {
-  u16 used;
-  u16 limit;
+  u16 used;  ///< 32-bit words DMA copies to OAM each frame; 0 when reset
+  u16 limit; ///< 256 when reset
 };
 
 STATIC_ASSERT(sizeof(struct OamUsage) == 4);

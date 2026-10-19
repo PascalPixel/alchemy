@@ -4,6 +4,7 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// Three coordinates, x, y and z: a position, a velocity or a direction.
 struct Vector3 {
 #ifdef UBFIX
   union {
@@ -12,7 +13,7 @@ struct Vector3 {
       s32 y;
       s32 z;
     };
-    s32 coordinates[3];
+    s32 coordinates[3]; ///< x, y and z, as Vector3_Coordinates returns them
   };
 #else
   s32 x;
@@ -21,8 +22,9 @@ struct Vector3 {
 #endif
 };
 
-/// UB: transform routines index three coordinates from separate scalar members.
-/// UBFIX gives those routines a real array while preserving named components.
+/// Returns the vector's three coordinates as an array.
+// UB: transform routines index three coordinates from separate scalar members.
+// UBFIX gives those routines a real array while preserving named components.
 static inline const s32 *Vector3_Coordinates(const struct Vector3 *vector) {
 #ifdef UBFIX
   return vector->coordinates;

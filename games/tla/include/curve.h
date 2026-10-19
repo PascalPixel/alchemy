@@ -7,9 +7,10 @@ extern u8 gCurve_LerpWeightTable[];
 extern u8 gCurve_SampleIndexTable[];
 
 enum {
+  /// Turns a height sample, in 8-pixel units, into 16.16 fixed-point pixels.
   CURVE_VALUE_SHIFT = 19,
-  CURVE_HALF_STEPS = 8,
-  CURVE_FULL_STEPS = 16,
+  CURVE_HALF_STEPS = 8,  ///< pixels to the middle of a 16-pixel cell
+  CURVE_FULL_STEPS = 16, ///< pixels across a cell
 };
 
 s32 Curve_GetFirstSampleA(const s8 *samples);

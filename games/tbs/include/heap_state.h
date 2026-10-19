@@ -17,10 +17,12 @@ extern void *gWorkSlot[64];
 /// IWRAM addresses.
 union HeapState {
   struct {
-    void *nextEwram;
-    void *nextIwram;
-    void *blocks[62];
+    void *nextEwram;  ///< the EWRAM pool's next free byte, up to 0x02040000
+    void *nextIwram;  ///< the IWRAM pool's next free byte, up to the heap's end
+    void *blocks[62]; ///< heap slots 2 to 63; not named by TBS code
   } heap;
+  /// Each slot's block once allocated, else null; slots 0 and 1 are the pool
+  /// pointers.
   void *slots[64];
 };
 

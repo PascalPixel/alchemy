@@ -3800,8 +3800,8 @@ Func_080e8c9c:
 	.section .rom.000e92a8, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000e92a8, 0x00000514
-	.section .rom.000e9890, "ax"
-	.incbin "baserom.gba", 0x000e9890, 0x00000250
+	.section .rom.000e9934, "ax"
+	.incbin "baserom.gba", 0x000e9934, 0x000001ac
 	.section .rom.000e9ae8, "ax"
 	.balign 4
 	.global Func_080e9af4

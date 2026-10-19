@@ -89,3 +89,56 @@ void BattleFx_RunViewSway(void) {
   BattleFx_PrepareBufferInterpolation();
   Runtime_ReleaseHeapBlock(HEAP_SLOT_VIEW_MOVE);
 }
+
+// A cycle of 96 colour levels (31 down to 0, 32 at 0, then 0 up to 31),
+// read a third of a turn apart for red, green and blue.
+extern const u8 gData_080f0fe0[];
+
+// The colour of field Psynergy kind 24's glow (Func_080e9940) for a step of
+// its 24-step cycle and a brightness level (7 is neutral): three channels of
+// the wave, each raised or lowered by the level and held to 0..31, packed as
+// RGB555. ⚓️'s form of ☀️'s GraphicsPalette_SetTintChannelsFromCounters.
+s32 Func_080e989c(s32 counter, s32 level) {
+  s16 phase;
+  s16 bias;
+  s16 red;
+  s16 green;
+  s16 blue;
+  s16 redLevel;
+  s32 step;
+  const u8 *wave;
+
+  step = (counter + 12) % 24;
+  /* FAKEMATCH(barrier): a volatile empty asm on the step keeps its copy ahead
+   * of the table's address; as the plain step, 2 of 76 instructions differ in
+   * tla-en. */
+  asm volatile("" : "+l"(step));
+  wave = gData_080f0fe0;
+  /* FAKEMATCH(barrier): an empty asm taking the table's address puts its load
+   * before the step's shift; as the plain step, 2 of 76 instructions differ in
+   * tla-en. */
+  asm("" : "+l"(step) : "l"(wave));
+  phase = step * 4;
+  redLevel = wave[(s16)(phase % 96)];
+  /* FAKEMATCH(barrier): an empty asm taking the red level and the level reads
+   * the red byte before the bias; as red = wave[...] + bias, 2 of 76
+   * instructions differ in tla-en. */
+  asm("" : "+l"(level) : "l"(redLevel));
+  bias = level - 7;
+  red = redLevel + bias;
+  green = wave[(phase + 32) % 96] + bias;
+  blue = wave[(phase + 64) % 96] + bias;
+  if (red < 0)
+    red = 0;
+  if (red > 31)
+    red = 31;
+  if (green < 0)
+    green = 0;
+  if (green > 31)
+    green = 31;
+  if (blue < 0)
+    blue = 0;
+  if (blue > 31)
+    blue = 31;
+  return (blue << 10) | (green << 5) | red;
+}

@@ -2744,8 +2744,8 @@ Func_080e8db0:
 	.global BattleFx_ShiftRowsDown
 BattleFx_ShiftRowsDown:
 	.incbin "baserom.gba", 0x000ee244, 0x00000578
-	.section .rom.000ee890, "ax"
-	.incbin "baserom.gba", 0x000ee890, 0x00000518
+	.section .rom.000ee934, "ax"
+	.incbin "baserom.gba", 0x000ee934, 0x00000474
 	.section .rom.000eeda8, "ax"
 	.global Func_080e9db4
 	.type Func_080e9db4, %function

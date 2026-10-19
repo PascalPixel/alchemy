@@ -4182,16 +4182,15 @@ main	rom_main_05	recon/tla/de/rom	.rom.000f62b4	de
 main	rom_main_05	recon/tla/raw/080e92b4	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000e91f8	ja
 main	rom_main_05	games/tla/src/battle/effect/view_sway	.text
-main	rom_main_05	recon/tla/it/rom	.rom.000e9890	it
-main	rom_main_05	recon/tla/fr/rom	.rom.000ee890	fr
+main	rom_main_05	recon/tla/it/rom	.rom.000e9934	it
+main	rom_main_05	recon/tla/fr/rom	.rom.000ee934	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000eeda8	fr
-main	rom_main_05	recon/tla/es/rom	.rom.000f2890	es
+main	rom_main_05	recon/tla/es/rom	.rom.000f2934	es
 main	rom_main_05	recon/tla/es/rom	.rom.000f2da8	es
-main	rom_main_05	recon/tla/de/rom	.rom.000f689c	de
+main	rom_main_05	recon/tla/de/rom	.rom.000f6940	de
 main	rom_main_05	recon/tla/de/rom	.rom.000f6db4	de
-main	rom_main_05	recon/tla/raw/080e989c	.text	en
 main	rom_main_05	recon/tla/raw/080e9940	.text	en
-main	rom_main_05	recon/tla/ja/rom	.rom.000e97e0	ja
+main	rom_main_05	recon/tla/ja/rom	.rom.000e9884	ja
 main	rom_main_05	games/tla/src/battle/effect/psynergy_effects_09	.text	ja en it
 main	rom_main_05	recon/tla/it/rom	.rom.000e9ae8	it
 main	rom_main_05	recon/tla/it/rom	.rom.000e9da8	it

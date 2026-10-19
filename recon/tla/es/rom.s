@@ -3760,8 +3760,8 @@ Func_080e8c9c:
 	.section .rom.000f22a8, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x000f22a8, 0x00000514
-	.section .rom.000f2890, "ax"
-	.incbin "baserom.gba", 0x000f2890, 0x00000518
+	.section .rom.000f2934, "ax"
+	.incbin "baserom.gba", 0x000f2934, 0x00000474
 	.section .rom.000f2da8, "ax"
 	.global Func_080e9db4
 	.type Func_080e9db4, %function

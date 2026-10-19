@@ -2423,8 +2423,8 @@ Func_080e9090:
 	.thumb_func
 Func_080e92b4:
 	.incbin "baserom.gba", 0x000f62b4, 0x00000514
-	.section .rom.000f689c, "ax"
-	.incbin "baserom.gba", 0x000f689c, 0x00000250
+	.section .rom.000f6940, "ax"
+	.incbin "baserom.gba", 0x000f6940, 0x000001ac
 	.global BattleFx_CallEffect24
 	.type BattleFx_CallEffect24, %function
 	.thumb_func

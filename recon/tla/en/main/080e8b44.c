@@ -9,7 +9,9 @@
 // switch on the edge (29); the direction copied to a local behind a volatile
 // asm reading the event work (59); an asm "+r" on the direction reading the
 // event work (28; with the direction fixed in r11, 6); an asm "+l" on the
-// event work after its load (4, the phase's copy then moves down).
+// event work after its load (4, the phase's copy then moves down); on
+// 2026-10-19 an asm on the direction as "+h" reading the event work after
+// its load (28), and permute 4 min found nothing better.
 #include "types.h"
 #include "ram_buffer.h"
 #include "iwram_call.h"

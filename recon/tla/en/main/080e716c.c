@@ -2,10 +2,13 @@
 // or spawned (kind 489), takes a random item id from gData_080f0fc0's
 // sixteen (0x8001 when PartyInventory_FindRoomFar finds no room) or, past
 // 0xc000 of the roll, a 0x8000-flagged value scaled by the unit's level,
-// and is handed to BattleFx_DropObjectAtAnchor. One pair: the native loads gPartyState's
-// address before it saves the event work in r8 (ldr r3, =gPartyState;
-// mov r8, r2); this does it the other way. Measured: without the empty asm
-// barrier before the anchor's load, differ 4. Belongs between
+// and is handed to BattleFx_DropObjectAtAnchor. One pair: the native loads
+// gPartyState's address before it saves the event work in r8 (ldr r3,
+// =gPartyState; mov r8, r2); this does it the other way. Measured: without the
+// empty asm barrier before the anchor's load, differ 4; on 2026-10-19 the party
+// state through a pointer behind an asm taking it with the event work as
+// "+h" (2) or "+l" (26), an asm reading the event work after its load (66),
+// and permute 4 min found nothing better. Belongs between
 // anchor_drop.c's BattleFx_DropObjectAtAnchor and Func_080e7238.
 #include "types.h"
 #include "ram_buffer.h"

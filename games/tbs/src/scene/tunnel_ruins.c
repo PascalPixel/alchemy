@@ -37,6 +37,7 @@
 #include "field_runtime.h"
 #include "flags.h"
 #include "songs.h"
+#include "event.h"
 
 // The ruins' first scene (SceneId_TunnelRuins1), in the order of its
 // placements: two pairs of pillars to push or Move, three blocks, three bushes
@@ -161,7 +162,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
 
   if (FieldObject_CheckMovementCollision(actor, &adjacentTile) != 1 &&
       FieldObject_CheckMovementCollision(actor, target) == 0) {
-    Engine_EventBegin();
+    EV_BEGIN();
     Object_SetMode(actor, 6);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_152);
@@ -181,7 +182,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
     Engine_TaskWait(6);
 
     actor->motionFlags = savedMotionFlags;
-    Engine_EventEnd();
+    EV_END();
     return 0;
   }
   return 1;
@@ -350,7 +351,7 @@ static void Event_HopDownStep(void) {
   struct EffectOptions options;
   u32 i;
 
-  Engine_EventBegin();
+  EV_BEGIN();
   Object_SetMode(leader, 6);
   ObjectMotion_WaitForAnimationChange(0);
   Object_SetMode(leader, 1);
@@ -381,7 +382,7 @@ static void Event_HopDownStep(void) {
   }
   Engine_ActorSetSpriteFlags(leader, 1);
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  Engine_EventEnd();
+  EV_END();
 }
 
 #ifdef UBFIX
@@ -439,11 +440,11 @@ struct ScenePlacement *SceneData_SelectAndApplyTableBySceneId(void) {
 
 // Walking into the first pair of pillars pushes them along.
 static void Event_PushFirstPillars(void) {
-  Engine_EventBegin();
+  EV_BEGIN();
   Map_CopyCellAttributes(73, 38, 5, 5, 9, 38);
   StagedActor_AdvancePair();
   TunnelRuins_UpdateFirstPillarCells();
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Walking west into a gap: the leader hops 32 pixels across it.
@@ -459,11 +460,11 @@ static void Event_HopWest(void) {
 
 // Walking into the second pair of pillars pushes them along.
 static void Event_PushSecondPillars(void) {
-  Engine_EventBegin();
+  EV_BEGIN();
   Map_CopyCellAttributes(93, 30, 6, 5, 29, 30);
   StagedActor_AdvancePair();
   TunnelRuins_UpdateSecondPillarCells();
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Walking south off a ledge: the leader jumps down.
@@ -484,12 +485,12 @@ static void Event_HopEast(void) {
 
 // Walking into the blocks pushes the one in front along.
 static void Event_PushBlocks(void) {
-  Engine_EventBegin();
+  EV_BEGIN();
   Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
   Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
   StagedActor_AdvancePair();
   TunnelRuins_UpdateBlockCells();
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Walking south at the blocks: the leader hops a gap if there is one, and
@@ -513,8 +514,8 @@ static void Event_BlowAwayBushA(void) {
   u8 *flags;
   u8 value;
 
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
-  if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01) != 0) {
+  FLAG_SET(FLAG_SCENE_TEMP_00);
+  if (FLAG_CHECK(FLAG_SCENE_TEMP_01) != 0) {
     Object_GetById(ACTOR_BLOCK_C)->riseCounter = 0;
     Object_GetById(ACTOR_BLOCK_C)->collisionFlags &= 0xf7;
   } else {
@@ -531,8 +532,8 @@ static void Event_BlowAwayBushB(void) {
   u8 *flags;
   u8 value;
 
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
-  if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00) != 0) {
+  FLAG_SET(FLAG_SCENE_TEMP_01);
+  if (FLAG_CHECK(FLAG_SCENE_TEMP_00) != 0) {
     Object_GetById(ACTOR_BLOCK_C)->riseCounter = 0;
     Object_GetById(ACTOR_BLOCK_C)->collisionFlags &= 0xf7;
   } else {
@@ -546,7 +547,7 @@ static void Event_BlowAwayBushB(void) {
 
 // Whirlwind on bush C blows it away for good.
 static void Event_BlowAwayBushC(void) {
-  Engine_GameFlagSet(FLAG_TUNNEL_RUINS_BUSH_BLOWN_AWAY);
+  FLAG_SET(FLAG_TUNNEL_RUINS_BUSH_BLOWN_AWAY);
 }
 
 // Hops west as Event_HopWest, except from cell (32, 50).
@@ -588,10 +589,10 @@ static void Event_SinkPillarA(void) {
   struct EffectOptions options;
   struct EffectOptions *effectOptions;
 
-  Engine_EventBegin();
+  EV_BEGIN();
   actor = Object_GetById(ACTOR_SINKING_PILLAR_A);
   if ((actor->x.fixed >> 20) == 46) {
-    Engine_EventWait(30);
+    WAIT(30);
     overlay =
         OverlayObject_PrepareObject(PIXELS(744), 0, PIXELS(184), SPRITE_PILLAR);
     // The pillar sinks a pixel every three frames, raising dust around it.
@@ -613,29 +614,29 @@ static void Event_SinkPillarA(void) {
                    0, 0, 0, 0x90000, effectOptions);
     }
     Map_CopyCellAttributes(51, 8, 1, 1, 49, 8);
-    Engine_EventWait(30);
+    WAIT(30);
     Actor_Get(ACTOR_SINKING_PILLAR_A)->priorityFlags |=
         ACTOR_PRIORITY_UNDERFOOT;
-    Engine_ActorSetAnimation(ACTOR_SINKING_PILLAR_A, 3);
+    OBJ_MODE(ACTOR_SINKING_PILLAR_A, 3);
     Engine_ObjectDispatchRelease(overlay);
     Map_CopyCellAttributes(45, 4, 1, 1, 46, 8);
-    Actor_SetPosition(ACTOR_PUDDLE_A, PIXELS(744), PIXELS(136));
+    OBJ_POS_SET(ACTOR_PUDDLE_A, 744, 136);
     TunnelRuins_AnimateLoweringImpact(58, 49, 8);
-    Engine_EventWait(20);
+    WAIT(20);
     TunnelRuins_AnimateLoweringImpact(59, 49, 8);
     Engine_MapRenderWaitForValues();
-    Engine_EventWait(10);
-    GameFlag_Set(FLAG_TUNNEL_RUINS_PILLAR_A_SUNK);
+    WAIT(10);
+    FLAG_SET(FLAG_TUNNEL_RUINS_PILLAR_A_SUNK);
   }
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Walking into sinking pillar A pushes it, and it sinks if it reaches column
 // 46 (until FLAG_TUNNEL_RUINS_PILLAR_A_SUNK).
 static void Event_PushSinkingPillarA(void) {
-  Engine_EventBegin();
+  EV_BEGIN();
   StagedActor_AdvancePair();
-  Engine_EventEnd();
+  EV_END();
   Event_SinkPillarA();
 }
 
@@ -643,12 +644,12 @@ static void Event_PushSinkingPillarA(void) {
 static void Event_FreezePuddleA(void) {
   u8 *flags;
 
-  Engine_ActorSetAnimation(ACTOR_PUDDLE_A, 1);
+  OBJ_MODE(ACTOR_PUDDLE_A, 1);
   Engine_ActorSetChildValue(ACTOR_PUDDLE_A, 0);
-  Engine_ActorSetAnimation(ACTOR_PUDDLE_A, 2);
+  OBJ_MODE(ACTOR_PUDDLE_A, 2);
   flags = &Object_GetById(ACTOR_PUDDLE_A)->priorityFlags;
   *flags &= ~ACTOR_PRIORITY_UNDERFOOT;
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
+  FLAG_SET(FLAG_SCENE_TEMP_00);
 }
 
 // Moving sinking pillar B into column 48 once Douse has soaked it: it sinks
@@ -664,11 +665,11 @@ static void Event_SinkPillarB(void) {
   struct EffectOptions options;
   struct EffectOptions *effectOptions;
 
-  Engine_EventBegin();
+  EV_BEGIN();
   actor = Object_GetById(ACTOR_SINKING_PILLAR_B);
   if ((actor->x.fixed >> 20) == 48) {
-    if (GameFlag_IsSet(FLAG_SCENE_TEMP_02) != 0) {
-      Engine_EventWait(30);
+    if (FLAG_CHECK(FLAG_SCENE_TEMP_02) != 0) {
+      WAIT(30);
       overlay = OverlayObject_PrepareObject(PIXELS(770), 0, PIXELS(274), 223);
       effectOptions = &options;
       effectOptions->startScaleX = 3 * Q16_ONE / 5;
@@ -687,30 +688,30 @@ static void Event_SinkPillarB(void) {
         Effect_Spawn(effectX, 0, effectZ, 0, 0, 0, 0x90000, effectOptions);
       }
       Map_CopyCellAttributes(51, 8, 1, 1, 45, 14);
-      Engine_EventWait(30);
+      WAIT(30);
       Actor_Get(ACTOR_SINKING_PILLAR_B)->priorityFlags |=
           ACTOR_PRIORITY_UNDERFOOT;
-      Engine_ActorSetAnimation(ACTOR_SINKING_PILLAR_B, 3);
+      OBJ_MODE(ACTOR_SINKING_PILLAR_B, 3);
       Engine_ObjectDispatchRelease(overlay);
       Map_CopyCellAttributes(45, 4, 1, 1, 48, 14);
-      Actor_SetPosition(ACTOR_PUDDLE_B, PIXELS(776), PIXELS(232));
+      OBJ_POS_SET(ACTOR_PUDDLE_B, 776, 232);
       TunnelRuins_AnimateLoweringImpact(58, 45, 14);
-      Engine_EventWait(20);
+      WAIT(20);
       TunnelRuins_AnimateLoweringImpact(59, 45, 14);
       Engine_MapRenderWaitForValues();
-      Engine_EventWait(10);
-      GameFlag_Set(FLAG_TUNNEL_RUINS_PILLAR_B_SUNK);
+      WAIT(10);
+      FLAG_SET(FLAG_TUNNEL_RUINS_PILLAR_B_SUNK);
     }
   }
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Walking into sinking pillar B pushes it, and it sinks if it is soaked and
 // reaches column 48.
 static void Event_PushSinkingPillarB(void) {
-  Engine_EventBegin();
+  EV_BEGIN();
   StagedActor_AdvancePair();
-  Engine_EventEnd();
+  EV_END();
   Event_SinkPillarB();
 }
 
@@ -721,7 +722,7 @@ static void Event_DouseBeginsOnPillarB(void) {
 
 // Douse soaks sinking pillar B, which sinks at once if it is in column 48.
 static void Event_DousePillarB(void) {
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_02);
+  FLAG_SET(FLAG_SCENE_TEMP_02);
   Event_SinkPillarB();
 }
 
@@ -729,12 +730,12 @@ static void Event_DousePillarB(void) {
 static void Event_FreezePuddleB(void) {
   u8 *flags;
 
-  Engine_ActorSetAnimation(ACTOR_PUDDLE_B, 1);
+  OBJ_MODE(ACTOR_PUDDLE_B, 1);
   Engine_ActorSetChildValue(ACTOR_PUDDLE_B, 0);
-  Engine_ActorSetAnimation(ACTOR_PUDDLE_B, 2);
+  OBJ_MODE(ACTOR_PUDDLE_B, 2);
   flags = &Object_GetById(ACTOR_PUDDLE_B)->priorityFlags;
   *flags &= ~ACTOR_PRIORITY_UNDERFOOT;
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
+  FLAG_SET(FLAG_SCENE_TEMP_01);
 }
 
 // Searching the first statue: it speaks to the leader's soul of the lady
@@ -742,28 +743,28 @@ static void Event_FreezePuddleB(void) {
 // Venus Lighthouse has answered (flag 0x982 or 0x983), that the path will not
 // open here.
 static void Event_ReadFirstStatue(void) {
-  Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  if (Engine_GameFlagIsSet(0x982) != 0 || Engine_GameFlagIsSet(0x983) != 0) {
+  EV_BEGIN();
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
+  if (FLAG_CHECK(0x982) != 0 || FLAG_CHECK(0x983) != 0) {
     Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSpeaksAfterAnswer), 1);
   } else {
     Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSpeaksIsaacSoulYe), 1);
   }
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Moving the Douse pillar (until its puddle is frozen): nothing more
 // happens.
 static void Event_MoveDousePillar(void) {
-  Engine_EventBegin();
-  Engine_EventEnd();
+  EV_BEGIN();
+  EV_END();
 }
 
 // Walking into the Douse pillar pushes it along.
 static void Event_PushDousePillar(void) {
-  Engine_EventBegin();
+  EV_BEGIN();
   StagedActor_AdvancePair();
-  Engine_EventEnd();
+  EV_END();
   Event_MoveDousePillar();
 }
 
@@ -773,7 +774,7 @@ static void Event_DouseBeginsOnPillar(void) {
   struct FieldActor *puddle;
 
   Actor_SetActionScript(ACTOR_DOUSE_PILLAR, gTunnelRuins_DouseSplashScript);
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_03);
+  FLAG_SET(FLAG_SCENE_TEMP_03);
   puddle = Object_GetById(ACTOR_DOUSE_PUDDLE);
 #ifdef UBFIX
   puddle->update = TunnelRuins_PuddleFollowsPillar;
@@ -790,18 +791,18 @@ static void Event_FreezeDousePuddle(void) {
   s32 column;
   s32 row;
 
-  Engine_EventBegin();
+  EV_BEGIN();
   Engine_ActorSetSpritePriority(ACTOR_DOUSE_PUDDLE, 1);
-  Engine_ActorSetAnimation(ACTOR_DOUSE_PUDDLE, 1);
+  OBJ_MODE(ACTOR_DOUSE_PUDDLE, 1);
   Engine_ActorSetChildValue(ACTOR_DOUSE_PUDDLE, 0);
-  Engine_ActorSetAnimation(ACTOR_DOUSE_PUDDLE, 2);
+  OBJ_MODE(ACTOR_DOUSE_PUDDLE, 2);
 
   {
     u8 *flag = &Object_GetById(ACTOR_DOUSE_PUDDLE)->priorityFlags;
     *flag &= ~ACTOR_PRIORITY_UNDERFOOT;
   }
 
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_04);
+  FLAG_SET(FLAG_SCENE_TEMP_04);
 
   column = Object_GetById(ACTOR_DOUSE_PUDDLE)->x.fixed;
   row = Object_GetById(ACTOR_DOUSE_PUDDLE)->z.fixed >> 20;
@@ -813,7 +814,7 @@ static void Event_FreezeDousePuddle(void) {
   actor = Object_GetById(ACTOR_DOUSE_PILLAR);
   actor->update = ACTOR_UPDATE_IDLE;
 
-  Engine_EventEnd();
+  EV_END();
 }
 
 // UB: calling this s32 function through a void update hook is incompatible.
@@ -843,8 +844,8 @@ static s32 TunnelRuins_RideBlockBelow(union FieldObject *fieldObject) {
 static void TunnelRuins_SettleBalance(s32 wait) {
   u32 i;
 
-  Actor_SetSpeed(ACTOR_BALANCE_WEST, PIXELS(1) / 2, PIXELS(1) / 4);
-  Actor_SetSpeed(ACTOR_BALANCE_EAST, PIXELS(1) / 2, PIXELS(1) / 4);
+  OBJ_SPEED(ACTOR_BALANCE_WEST, PIXELS(1) / 2, PIXELS(1) / 4);
+  OBJ_SPEED(ACTOR_BALANCE_EAST, PIXELS(1) / 2, PIXELS(1) / 4);
   if (wait != 0) {
     Engine_AudioPlayCue(SE_180);
   }
@@ -875,7 +876,7 @@ static void TunnelRuins_SettleBalance(s32 wait) {
           Object_GetById(i + ACTOR_BALANCE_WEST)->z.fixed >> 20);
     }
   }
-  Engine_EventWait(wait);
+  WAIT(wait);
 }
 
 // A carried block drops onto the highest platform or block in its cell and
@@ -904,7 +905,7 @@ static void TunnelRuins_DropBlockOnStack(s32 actorId) {
     Object_GetById(actorId)->timer = candidateId;
   }
 
-  Engine_ActorSetSpeed(actorId, PIXELS(4), PIXELS(2));
+  OBJ_SPEED(actorId, PIXELS(4), PIXELS(2));
 
   {
     struct FieldActor *actor = Object_GetById(actorId);
@@ -917,7 +918,7 @@ static void TunnelRuins_DropBlockOnStack(s32 actorId) {
   Engine_ActorWaitForMove(actorId);
   Engine_AudioPlayCue(SE_188);
   SceneEffect_SpawnNineRadialEffects(actorId);
-  Engine_EventWait(30);
+  WAIT(30);
 }
 
 // Setting down a block with Carry: one dropped into a pit is gone; one set in
@@ -929,17 +930,17 @@ static void Event_SetBlockOnBalance(void) {
   s32 j;
   s32 settledIndex;
 
-  Engine_EventBegin();
+  EV_BEGIN();
   for (i = 0; i <= 2; i++) {
     if (Object_GetById(i + ACTOR_CARRY_BLOCK_A)->sprite->image.priority == 3 &&
-        GameFlag_IsSet(i + FLAG_SCENE_TEMP_00) == 0) {
+        FLAG_CHECK(i + FLAG_SCENE_TEMP_00) == 0) {
       TunnelRuins_WaitForActorToLand(Actor_Get(i + ACTOR_CARRY_BLOCK_A));
       Actor_SetPosition(i + ACTOR_CARRY_BLOCK_A, 0, 0);
-      GameFlag_Set(i + FLAG_SCENE_TEMP_00);
+      FLAG_SET(i + FLAG_SCENE_TEMP_00);
       break;
     }
     if ((Object_GetById(i + ACTOR_CARRY_BLOCK_A)->z.fixed >> 20) == 9 &&
-        GameFlag_IsSet(i + FLAG_SCENE_TEMP_00) == 0) {
+        FLAG_CHECK(i + FLAG_SCENE_TEMP_00) == 0) {
       Object_GetById(i + ACTOR_CARRY_BLOCK_A)->terrainHeight = 0;
       Object_GetById(i + ACTOR_CARRY_BLOCK_A)->velocityY = 0;
       Object_GetById(i + ACTOR_CARRY_BLOCK_A)->targetY = ACTOR_NO_TARGET;
@@ -948,7 +949,7 @@ static void Event_SetBlockOnBalance(void) {
       // The block set down takes the place of the first block not yet set.
       settledIndex = i;
       for (j = 0; j < i; j++) {
-        if (GameFlag_IsSet(FLAG_SCENE_TEMP_00 + j) == 0) {
+        if (FLAG_CHECK(FLAG_SCENE_TEMP_00 + j) == 0) {
           savedPosition.x.fixed =
               Object_GetById(i + ACTOR_CARRY_BLOCK_A)->x.fixed;
           savedPosition.y.fixed =
@@ -999,47 +1000,47 @@ static void Event_SetBlockOnBalance(void) {
       TunnelRuins_SettleBalance(40);
       Actor_Get(settledIndex + ACTOR_CARRY_BLOCK_A)->priorityFlags |=
           ACTOR_PRIORITY_UNDERFOOT;
-      GameFlag_Set(FLAG_SCENE_TEMP_00 + settledIndex);
+      FLAG_SET(FLAG_SCENE_TEMP_00 + settledIndex);
       break;
     }
   }
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Walking into a pushable object pushes it along.
 static void Event_PushObject(void) {
-  Engine_EventBegin();
+  EV_BEGIN();
   StagedActor_AdvancePair();
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Moving either east pillar: whether each stands a cell west of its place is
 // kept for the next visit.
 static void Event_MoveEastPillar(void) {
-  Engine_EventBegin();
+  EV_BEGIN();
 
   if ((Object_GetById(ACTOR_EAST_PILLAR_A)->x.fixed >> 20) == 45) {
-    Engine_GameFlagSet(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST);
+    FLAG_SET(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST);
   } else {
     Engine_GameFlagClear(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST);
   }
 
   if ((Object_GetById(ACTOR_EAST_PILLAR_B)->x.fixed >> 20) == 46) {
-    Engine_GameFlagSet(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST);
+    FLAG_SET(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST);
   } else {
     Engine_GameFlagClear(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST);
   }
 
   TunnelRuins_MarkPushPillarCells();
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Walking into an east pillar pushes it along, and its place is kept.
 static void Event_PushEastPillar(void) {
-  Engine_EventBegin();
+  EV_BEGIN();
   StagedActor_AdvancePair();
   Event_MoveEastPillar();
-  Engine_EventEnd();
+  EV_END();
 }
 
 // The two false statues stand, blocking their cells: on entering their rooms
@@ -1049,8 +1050,8 @@ static void Event_ShowFalseStatues(void) {
   Map_CopyCellAttributes(113, 43, 1, 1, 49, 43);
   MapObject_SetPosition(100, 0, 0);
   MapObject_SetPosition(101, 0, 0);
-  Actor_SetPosition(ACTOR_FALSE_STATUE_A, PIXELS(136), PIXELS(792));
-  Actor_SetPosition(ACTOR_FALSE_STATUE_B, PIXELS(792), PIXELS(696));
+  OBJ_POS_SET(ACTOR_FALSE_STATUE_A, 136, 792);
+  OBJ_POS_SET(ACTOR_FALSE_STATUE_B, 792, 696);
 }
 
 // At Reveal's phase 5 the two false statues vanish and their cells can be
@@ -1074,7 +1075,7 @@ static void Event_MoveLadyStatue(void) {
   s32 row;
 
   correctPositions = 0;
-  Engine_EventBegin();
+  EV_BEGIN();
   Map_CopyCellAttributes(83, 45, 11, 8, 19, 45);
   actor = Object_GetById(ACTOR_LADY_STATUE_A);
   column = actor->x.fixed;
@@ -1144,61 +1145,61 @@ static void Event_MoveLadyStatue(void) {
   }
   // The door moves only when the arrangement is completed or broken.
   if (correctPositions == 5) {
-    if (GameFlag_IsSet(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN) != 0) {
-      Engine_EventEnd();
+    if (FLAG_CHECK(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN) != 0) {
+      EV_END();
       return;
     }
-    Engine_EventWait(20);
+    WAIT(20);
     Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
     Camera_MoveTo(PIXELS(472), -1, PIXELS(780), 1);
     Engine_CameraWaitForMove();
-    Engine_EventWait(30);
-    GameFlag_Set(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN);
+    WAIT(30);
+    FLAG_SET(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN);
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Map_AnimateCells(gTunnelRuins_DoorOpenSteps, 32, 46);
     Map_CopyCellAttributes(24, 60, 1, 1, 32, 47);
-    Engine_EventWait(40);
+    WAIT(40);
   } else {
-    if (GameFlag_IsSet(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN) != 0) {
-      Engine_EventWait(20);
+    if (FLAG_CHECK(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN) != 0) {
+      WAIT(20);
       Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
       Camera_MoveTo(PIXELS(472), -1, PIXELS(780), 1);
       Engine_CameraWaitForMove();
-      Engine_EventWait(30);
+      WAIT(30);
       GameFlag_Clear(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN);
       Engine_AudioPlayCue(SE_159);
       Map_AnimateCells(gTunnelRuins_DoorCloseSteps, 32, 46);
       Map_CopyCellAttributes(31, 47, 1, 1, 32, 47);
-      Engine_EventWait(40);
+      WAIT(40);
     }
   }
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Walking into a statue of the lady pushes it along, then checks the door.
 static void Event_PushLadyStatue(void) {
-  Engine_EventBegin();
+  EV_BEGIN();
   {
     Map_CopyCellAttributes(83, 45, 11, 8, 19, 45);
   }
   StagedActor_AdvancePair();
   Event_MoveLadyStatue();
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Searching the second statue: "The statue seems to speak to your soul..."
 static void Event_ReadSecondStatue(void) {
-  Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  EV_BEGIN();
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSeemsSpeakYourSoul), 1);
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Searching the door: it is tightly locked.
 static void Event_SearchLockedDoor(void) {
-  Engine_EventBegin();
+  EV_BEGIN();
   Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Select the event bindings for the current tunnel ruins scene.
@@ -1307,7 +1308,7 @@ s32 FieldScene_InitializeActorGroups(void) {
     switch (gGameState.entrance) {
     case 1:
     case 2:
-      if (Engine_GameFlagIsSet(0x982)) {
+      if (FLAG_CHECK(0x982)) {
         Map_CopyCellsTo(121, 4, 74, 9, 5, 8);
         Map_CopyCellsTo(18, 83, 9, 73, 3, 2);
         Map_CopyCellsTo(18, 81, 9, 75, 3, 2);
@@ -1316,7 +1317,7 @@ s32 FieldScene_InitializeActorGroups(void) {
         Map_CopyCellsTo(18, 83, 11, 78, 3, 2);
         Map_CopyCellsTo(18, 83, 13, 79, 3, 2);
       } else {
-        if (!Engine_GameFlagIsSet(0x983))
+        if (!FLAG_CHECK(0x983))
           break;
         Map_CopyCellsTo(121, 13, 74, 9, 5, 8);
         Map_CopyCellsTo(18, 85, 11, 74, 3, 2);
@@ -1341,9 +1342,9 @@ s32 FieldScene_InitializeActorGroups(void) {
     case 5:
     case 6:
     case 7:
-      if (Engine_GameFlagIsSet(0x982))
+      if (FLAG_CHECK(0x982))
         Map_CopyCells(23, 17, 1, 2, 30, 8);
-      if (Engine_GameFlagIsSet(0x983))
+      if (FLAG_CHECK(0x983))
         Map_CopyCells(23, 17, 1, 2, 32, 10);
       break;
     case 8:
@@ -1362,43 +1363,43 @@ s32 FieldScene_InitializeActorGroups(void) {
     case 11:
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SINKING_PILLAR_A), 0);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SINKING_PILLAR_B), 0);
-      Engine_ActorSetAnimation(ACTOR_SINKING_PILLAR_A, 2);
+      OBJ_MODE(ACTOR_SINKING_PILLAR_A, 2);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PUDDLE_A), 0);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PUDDLE_B), 0);
       Engine_ActorSetChildValue(ACTOR_PUDDLE_A, 15);
       Engine_ActorSetChildValue(ACTOR_PUDDLE_B, 15);
-      if (Engine_GameFlagIsSet(FLAG_TUNNEL_RUINS_PILLAR_A_SUNK)) {
+      if (FLAG_CHECK(FLAG_TUNNEL_RUINS_PILLAR_A_SUNK)) {
         Map_CopyCellsTo(59, 8, 49, 8, 1, 3);
         Map_CopyCellAttributes(51, 8, 1, 1, 49, 8);
         Object_GetById(ACTOR_SINKING_PILLAR_A)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        Engine_ActorSetAnimation(ACTOR_SINKING_PILLAR_A, 3);
+        OBJ_MODE(ACTOR_SINKING_PILLAR_A, 3);
         Map_CopyCellAttributes(45, 4, 1, 1, 46, 8);
-        Actor_SetPosition(ACTOR_SINKING_PILLAR_A, PIXELS(744), PIXELS(136));
+        OBJ_POS_SET(ACTOR_SINKING_PILLAR_A, 744, 136);
         Object_GetById(ACTOR_SINKING_PILLAR_A)->y.fixed = -PIXELS(16);
-        Actor_SetPosition(ACTOR_PUDDLE_A, PIXELS(744), PIXELS(136));
+        OBJ_POS_SET(ACTOR_PUDDLE_A, 744, 136);
       }
-      if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00)) {
+      if (FLAG_CHECK(FLAG_SCENE_TEMP_00)) {
         Engine_ActorSetChildValue(ACTOR_PUDDLE_A, 0);
-        Engine_ActorSetAnimation(ACTOR_PUDDLE_A, 5);
+        OBJ_MODE(ACTOR_PUDDLE_A, 5);
       }
-      if (GameFlag_IsSet(FLAG_SCENE_TEMP_02))
-        Engine_ActorSetAnimation(ACTOR_SINKING_PILLAR_B, 2);
-      if (Engine_GameFlagIsSet(FLAG_TUNNEL_RUINS_PILLAR_B_SUNK)) {
+      if (FLAG_CHECK(FLAG_SCENE_TEMP_02))
+        OBJ_MODE(ACTOR_SINKING_PILLAR_B, 2);
+      if (FLAG_CHECK(FLAG_TUNNEL_RUINS_PILLAR_B_SUNK)) {
         Map_CopyCellsTo(59, 8, 45, 14, 1, 3);
         Map_CopyCellAttributes(51, 8, 1, 1, 45, 14);
         Object_GetById(ACTOR_SINKING_PILLAR_B)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        Engine_ActorSetAnimation(ACTOR_SINKING_PILLAR_B, 3);
+        OBJ_MODE(ACTOR_SINKING_PILLAR_B, 3);
         Map_CopyCellAttributes(45, 4, 1, 1, 48, 14);
-        Actor_SetPosition(ACTOR_SINKING_PILLAR_B, PIXELS(776), PIXELS(232));
+        OBJ_POS_SET(ACTOR_SINKING_PILLAR_B, 776, 232);
         Object_GetById(ACTOR_SINKING_PILLAR_B)->y.fixed = -PIXELS(16);
         Engine_ActorSetPosition(ACTOR_PUDDLE_B, PIXELS(776), PIXELS(232));
-        Engine_GameFlagSet(FLAG_SCENE_TEMP_02);
+        FLAG_SET(FLAG_SCENE_TEMP_02);
       }
-      if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01)) {
+      if (FLAG_CHECK(FLAG_SCENE_TEMP_01)) {
         Engine_ActorSetChildValue(ACTOR_PUDDLE_B, 0);
-        Engine_ActorSetAnimation(ACTOR_PUDDLE_B, 5);
+        OBJ_MODE(ACTOR_PUDDLE_B, 5);
       }
       break;
     case 12:
@@ -1431,10 +1432,10 @@ s32 FieldScene_InitializeActorGroups(void) {
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
       Engine_ActorSetChildValue(ACTOR_EAST_PILLAR_A, 6);
       Engine_ActorSetChildValue(ACTOR_EAST_PILLAR_B, 6);
-      if (Engine_GameFlagIsSet(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST))
-        Actor_SetPosition(ACTOR_EAST_PILLAR_A, PIXELS(728), PIXELS(312));
-      if (Engine_GameFlagIsSet(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST))
-        Actor_SetPosition(ACTOR_EAST_PILLAR_B, PIXELS(744), PIXELS(312));
+      if (FLAG_CHECK(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST))
+        OBJ_POS_SET(ACTOR_EAST_PILLAR_A, 728, 312);
+      if (FLAG_CHECK(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST))
+        OBJ_POS_SET(ACTOR_EAST_PILLAR_B, 744, 312);
       TunnelRuins_MarkPushPillarCells();
       break;
     case 6:
@@ -1446,10 +1447,10 @@ s32 FieldScene_InitializeActorGroups(void) {
       Engine_ActorSetChildValue(ACTOR_DOUSE_PUDDLE, 15);
       Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_DOUSE_PUDDLE), 0);
       Object_GetById(ACTOR_DOUSE_PUDDLE)->motionFlags = 0;
-      if (!Engine_GameFlagIsSet(FLAG_SCENE_TEMP_04))
+      if (!FLAG_CHECK(FLAG_SCENE_TEMP_04))
         break;
       Engine_ActorSetChildValue(ACTOR_DOUSE_PUDDLE, 0);
-      Engine_ActorSetAnimation(ACTOR_DOUSE_PUDDLE, 5);
+      OBJ_MODE(ACTOR_DOUSE_PUDDLE, 5);
       Engine_MapCopyCellAttributes(
           26, 8, 1, 1, Object_GetById(ACTOR_DOUSE_PUDDLE)->x.fixed >> 20,
           Object_GetById(ACTOR_DOUSE_PUDDLE)->z.fixed >> 20);
@@ -1458,7 +1459,7 @@ s32 FieldScene_InitializeActorGroups(void) {
       break;
     case 4:
     case 5:
-      if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
+      if (!FLAG_CHECK(FLAG_KEEP_PARTY_POSITION)) {
         Object_GetById(ACTOR_BALANCE_WEST)->motionFlags = 0;
         Object_GetById(ACTOR_BALANCE_EAST)->motionFlags = 0;
         Object_GetById(ACTOR_BALANCE_WEST)->y.fixed = -PIXELS(48);
@@ -1488,12 +1489,12 @@ s32 FieldScene_InitializeActorGroups(void) {
         Object_GetById(ACTOR_BALANCE_EAST)->y.fixed = -PIXELS(64);
         Object_GetById(ACTOR_BALANCE_WEST)->timer = 2;
         Object_GetById(ACTOR_BALANCE_EAST)->timer = 4;
-        Actor_SetPosition(ACTOR_CARRY_BLOCK_A, PIXELS(200), PIXELS(152));
+        OBJ_POS_SET(ACTOR_CARRY_BLOCK_A, 200, 152);
         Object_GetById(ACTOR_CARRY_BLOCK_A)->timer = ACTOR_BALANCE_EAST;
         Object_GetById(ACTOR_CARRY_BLOCK_A)->update = ACTOR_UPDATE_RIDE_BLOCK;
         Object_GetById(ACTOR_CARRY_BLOCK_A)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        Actor_SetPosition(ACTOR_CARRY_BLOCK_B, PIXELS(200), PIXELS(152));
+        OBJ_POS_SET(ACTOR_CARRY_BLOCK_B, 200, 152);
         Object_GetById(ACTOR_CARRY_BLOCK_B)->timer = ACTOR_CARRY_BLOCK_A;
         Object_GetById(ACTOR_CARRY_BLOCK_B)->update = ACTOR_UPDATE_RIDE_BLOCK;
         Object_GetById(ACTOR_CARRY_BLOCK_B)->priorityFlags |=
@@ -1503,10 +1504,10 @@ s32 FieldScene_InitializeActorGroups(void) {
         Object_GetById(ACTOR_CARRY_BLOCK_C)->update = ACTOR_UPDATE_RIDE_BLOCK;
         Object_GetById(ACTOR_CARRY_BLOCK_C)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        Engine_EventWait(2);
-        Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
-        Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
-        Engine_GameFlagSet(FLAG_SCENE_TEMP_02);
+        WAIT(2);
+        FLAG_SET(FLAG_SCENE_TEMP_00);
+        FLAG_SET(FLAG_SCENE_TEMP_01);
+        FLAG_SET(FLAG_SCENE_TEMP_02);
       }
       TunnelRuins_SettleBalance(0);
       break;
@@ -1514,11 +1515,11 @@ s32 FieldScene_InitializeActorGroups(void) {
     case 9:
     case 10:
     case 11:
-      if (Engine_GameFlagIsSet(0x982))
+      if (FLAG_CHECK(0x982))
         Map_CopyCells(10, 30, 1, 2, 16, 30);
-      if (Engine_GameFlagIsSet(0x983))
+      if (FLAG_CHECK(0x983))
         Map_CopyCells(10, 30, 1, 2, 22, 30);
-      Engine_GameFlagSet(0x973);
+      FLAG_SET(0x973);
       break;
     case 12:
       Map_CopyCellAttributes(8, 49, 1, 1, 8, 113);
@@ -1528,14 +1529,14 @@ s32 FieldScene_InitializeActorGroups(void) {
       break;
     case 13:
     case 14:
-      Engine_EventWait(1);
-      if (Engine_GameFlagIsSet(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN)) {
+      WAIT(1);
+      if (FLAG_CHECK(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN)) {
         Map_CopyCells(24, 59, 1, 2, 32, 46);
-        Actor_SetPosition(ACTOR_LADY_STATUE_A, PIXELS(408), PIXELS(792));
-        Actor_SetPosition(ACTOR_LADY_STATUE_B, PIXELS(376), PIXELS(792));
-        Actor_SetPosition(ACTOR_LADY_STATUE_C, PIXELS(408), PIXELS(760));
-        Actor_SetPosition(ACTOR_LADY_STATUE_D, PIXELS(376), PIXELS(760));
-        Actor_SetPosition(ACTOR_LADY_STATUE_E, PIXELS(392), PIXELS(776));
+        OBJ_POS_SET(ACTOR_LADY_STATUE_A, 408, 792);
+        OBJ_POS_SET(ACTOR_LADY_STATUE_B, 376, 792);
+        OBJ_POS_SET(ACTOR_LADY_STATUE_C, 408, 760);
+        OBJ_POS_SET(ACTOR_LADY_STATUE_D, 376, 760);
+        OBJ_POS_SET(ACTOR_LADY_STATUE_E, 392, 776);
       }
       Object_GetById(ACTOR_LADY_STATUE_A)->motionFlags &=
           ~ACTOR_FOLLOWS_TERRAIN;
@@ -1552,8 +1553,8 @@ s32 FieldScene_InitializeActorGroups(void) {
       Engine_ActorSetChildValue(ACTOR_LADY_STATUE_C, 4);
       Engine_ActorSetChildValue(ACTOR_LADY_STATUE_D, 10);
       Engine_ActorSetChildValue(ACTOR_LADY_STATUE_E, 0);
-      Engine_ActorSetAnimation(ACTOR_LADY_STATUE_A, 2);
-      Engine_ActorSetAnimation(ACTOR_LADY_STATUE_E, 2);
+      OBJ_MODE(ACTOR_LADY_STATUE_A, 2);
+      OBJ_MODE(ACTOR_LADY_STATUE_E, 2);
       Engine_MapCopyCellAttributes(
           20, 56, 1, 1, Object_GetById(ACTOR_LADY_STATUE_A)->x.fixed >> 20,
           Object_GetById(ACTOR_LADY_STATUE_A)->z.fixed >> 20);

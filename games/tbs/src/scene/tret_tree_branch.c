@@ -29,6 +29,7 @@
 #include "map_scroll.h"
 #include "flags.h"
 #include "songs.h"
+#include "event.h"
 
 // Breeze, the Jupiter Djinni on the branch: Djinni 61 is the name message
 // "Breeze", and its placement is gone once its flag (FLAG_DJINNI_0 + 61) is
@@ -142,7 +143,7 @@ static void Event_TakeTouchedExit(void) {
   struct EventWork *state = gEventWork;
   s16 *touchedExit;
 
-  Engine_AudioPlayCue(SE_MAP_EXIT);
+  SE(SE_MAP_EXIT);
   touchedExit = &state->touchedTrigger;
   Engine_EventRequestExit(*touchedExit);
 }
@@ -176,8 +177,8 @@ const struct SceneEvent *TretTreeBranch_GetEvents(void) {
 
 // Unused event hook: begins and immediately ends an event.
 static void UNUSED TretTreeBranch_RunEmptyEvent(void) {
-  Engine_EventBegin();
-  Engine_EventEnd();
+  EV_BEGIN();
+  EV_END();
 }
 
 // Unused empty hook; its original role is not established.

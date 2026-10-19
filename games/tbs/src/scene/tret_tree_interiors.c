@@ -36,6 +36,7 @@
 #include "flags.h"
 #include "map_scroll.h"
 #include "songs.h"
+#include "event.h"
 
 // Tret's face, the first actor placed after the party, and a second Tret
 // actor placed at the same spot. Both speak Tret's lines: the face as he
@@ -118,29 +119,29 @@ static void TretTreeInteriors_StepOnCrackedFloor(s32 floorFlag,
   if (entrance == *sLastFloorEntrance)
     return;
   *sLastFloorEntrance = entrance;
-  if (Engine_GameFlagIsSet(floorFlag) == 0) {
+  if (FLAG_CHECK(floorFlag) == 0) {
     Map_CopyCells(sourceColumn, sourceRow, 1, 1, destinationColumn,
                   destinationRow);
-    Engine_GameFlagSet(floorFlag);
+    FLAG_SET(floorFlag);
     return;
   }
   // On the next touch, replace the tile and spin the actor into the fall.
   *sLastFloorEntrance = -1;
   Map_CopyCells(sourceColumn, sourceRow + 1, 1, 1, destinationColumn,
                 destinationRow);
-  Engine_AudioPlayCue(SE_206);
-  Engine_EventBegin();
+  SE(SE_206);
+  EV_BEGIN();
   Event_SetDestination((s32)&SceneId_TretTreeInteriors, entrance);
-  Engine_ActorSetAnimation(selectedActorId, 27);
+  OBJ_MODE(selectedActorId, 27);
   Engine_ActorSetSpriteFlags(Object_GetById(selectedActorId), 0);
   Actor_SetAttachedEffect(selectedActorId, 0x101);
-  Engine_EventWait(30);
+  WAIT(30);
   Camera_MoveTo(-1, -1, -1, 0);
   actor->motionFlags = ACTOR_FALLS;
   actor->terrainHeight = -PIXELS(160);
   actor->gravity = 0x8000;
-  Engine_AudioPlayCue(SE_204);
-  Engine_EventWait(3);
+  SE(SE_204);
+  WAIT(3);
   actor->terrainId = 2;
   Engine_ActorSetSpritePriority(selectedActorId, 3);
   for (spinFrame = FLOOR_FALL_SPIN_FRAMES - 1; spinFrame >= 0; spinFrame--) {
@@ -149,7 +150,7 @@ static void TretTreeInteriors_StepOnCrackedFloor(s32 floorFlag,
     Engine_TaskWait(1);
   }
   if (entrance != 50)
-    Engine_GameFlagSet(0x122);
+    FLAG_SET(0x122);
 }
 
 // Cracked floor over the upper middle northwest landing.
@@ -276,16 +277,16 @@ static void Event_FightTret(void) {
   s32 hasMia;
   struct FieldActor *leader;
 
-  hasMia = Engine_GameFlagIsSet(3);
-  Engine_EventBegin();
-  Engine_AudioPlayCue(MUS_017);
-  Engine_EventSetMessage(MsgTretHmHrooom);
+  hasMia = FLAG_CHECK(3);
+  EV_BEGIN();
+  SE(MUS_017);
+  MESSAGE_SET(MsgTretHmHrooom);
   Engine_EventShowMessageAndWait(SPEAKER(ACTOR_TRET_SPEAKER), 0, 20);
-  Engine_AudioPlayCue(MUS_029);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-  Actor_SetSpeed(GARET, 0x10000, 0x8000);
-  Actor_SetSpeed(IVAN, 0x10000, 0x8000);
-  Engine_ActorSetSpeed(MIA, 0x10000, 0x8000);
+  SE(MUS_029);
+  OBJ_SPEED(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
+  OBJ_SPEED(GARET, 0x10000, 0x8000);
+  OBJ_SPEED(IVAN, 0x10000, 0x8000);
+  OBJ_SPEED(MIA, 0x10000, 0x8000);
   Object_GetById(MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Engine_ActorSetSpritePriority(MIA, 2);
   Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags &=
@@ -309,25 +310,25 @@ static void Event_FightTret(void) {
   Actor_SetActionScript(ACTOR_PARTY_LEADER, gTretTreeInteriors_TableActions0);
   Actor_SetActionScript(GARET, gTretTreeInteriors_TableActions1);
   Actor_RunActionScriptAndWait(IVAN, gTretTreeInteriors_TableActions2);
-  Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_FaceDirection(GARET, FACING_NORTH, 0);
-  Actor_FaceDirection(MIA, FACING_NORTH, 0);
-  Actor_FaceDirection(IVAN, FACING_NORTH, 40);
-  Engine_ActorSetAnimation(ACTOR_TRET, 11);
-  Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_TRET, 8);
-  Engine_EventWait(20);
+  WAIT(10);
+  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  OBJ_DIR(GARET, FACING_NORTH, 0);
+  OBJ_DIR(MIA, FACING_NORTH, 0);
+  OBJ_DIR(IVAN, FACING_NORTH, 40);
+  OBJ_MODE(ACTOR_TRET, 11);
+  WAIT(10);
+  OBJ_MODE(ACTOR_TRET, 8);
+  WAIT(20);
   TretTreeInteriors_PlayGesture(8);
   Event_ShowMessage(SPEAKER(ACTOR_TRET), 0);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorStartRepeatedMotion(MIA, 2);
   Engine_ActorStartRepeatedMotion(IVAN, 2);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 0);
-  Engine_ActorShowEmote(IVAN, EMOTE_IN_FRONT, 60);
+  OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
+  OBJ_EMOTE(GARET, EMOTE_IN_FRONT, 0);
+  OBJ_EMOTE(MIA, EMOTE_IN_FRONT, 0);
+  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT, 60);
   TretTreeInteriors_PlayGesture(11);
   Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET), 0, 10);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
@@ -339,15 +340,15 @@ static void Event_FightTret(void) {
   Actor_SetAttachedEffect(GARET, 0x102);
   Actor_SetAttachedEffect(MIA, 0x102);
   Engine_ActorSetAttachedEffect(IVAN, 0x102);
-  Engine_EventWait(40);
+  WAIT(40);
   TretTreeInteriors_PlayGesture(11);
-  Engine_EventShowMessage(SPEAKER(ACTOR_TRET), 0);
+  MESSAGE_PUT(SPEAKER(ACTOR_TRET), 0);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   gEventWork->transitionFrames = 64;
   Battle_SetStart(3);
   Event_SetNextDestination((s32)&SceneId_TretTreeInteriors, 19);
   Field_RequestBattleFromEncounterTable(36, 0);
-  Engine_EventEnd();
+  EV_END();
 }
 
 // After the battle: a passage opens beside Tret, who comes to ("Oh...
@@ -364,30 +365,30 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   const s32 *actions;
 
   // Restore the party positions before opening the post-battle conversation.
-  hasMia = GameFlag_IsSet(3);
+  hasMia = FLAG_CHECK(3);
   Object_GetById(MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   Engine_ActorSetSpritePriority(MIA, 2);
   Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags &=
       ~ACTOR_PRIORITY_AUTOMATIC;
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
   PartyInventory_FindOwner(ITEM_HERMES_WATER);
-  Event_PlayCue(MUS_017);
-  Engine_EventBegin();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-  Actor_SetSpeed(GARET, 0xcccc, 0x6666);
-  Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
-  Actor_SetSpeed(MIA, 0xcccc, 0x6666);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(166), PIXELS(80));
+  SE(MUS_017);
+  EV_BEGIN();
+  OBJ_SPEED(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
+  OBJ_SPEED(GARET, 0xcccc, 0x6666);
+  OBJ_SPEED(IVAN, 0xcccc, 0x6666);
+  OBJ_SPEED(MIA, 0xcccc, 0x6666);
+  OBJ_POS_SET(ACTOR_PARTY_LEADER, 166, 80);
   partyActor = Actor_Get(ACTOR_PARTY_LEADER);
   partyActor->facing = FACING_NORTH;
-  Actor_SetPosition(GARET, PIXELS(148), PIXELS(90));
+  OBJ_POS_SET(GARET, 148, 90);
   partyActor = Actor_Get(GARET);
   partyActor->facing = FACING_NORTH;
-  Actor_SetPosition(IVAN, PIXELS(182), PIXELS(90));
+  OBJ_POS_SET(IVAN, 182, 90);
   partyActor = Object_GetById(IVAN);
   partyActor->facing = FACING_NORTH;
   if (hasMia != 0) {
-    Actor_SetPosition(MIA, PIXELS(166), PIXELS(104));
+    OBJ_POS_SET(MIA, 166, 104);
     partyActor = Object_GetById(MIA);
     partyActor->facing = FACING_NORTH;
   }
@@ -397,14 +398,14 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   gEventWork->transitionFrames = 48;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  Engine_EventWait(20);
+  WAIT(20);
   Camera_SetSpeed(0x13333, 0x2666);
   Camera_MoveTo(PIXELS(168), -1, PIXELS(152), 1);
   Engine_CameraWaitForMove();
-  Engine_EventWait(10);
+  WAIT(10);
   // Open the passage beside Tret before continuing the conversation.
   openingColumn = 10;
-  Event_PlayCue(SE_MAP_EXIT);
+  SE(SE_MAP_EXIT);
   Map_CopyCellAttributes(26, 3, 1, 2, openingColumn, 8);
   Map_CopyCells(26, 38, 1, 1, openingColumn, 43);
   Engine_TaskWait(4);
@@ -415,83 +416,83 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   Map_CopyCells(26, 35, 1, 4, openingColumn, 40);
   Engine_TaskWait(80);
   // Tret comes to: "Oh... Mmmmm... What has happened to me?"
-  Engine_EventSetMessage(MsgTretMmmmm);
+  MESSAGE_SET(MsgTretMmmmm);
   Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET_SPEAKER), 0, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorStartRepeatedMotion(MIA, 2);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
-  Engine_EventWait(20);
+  WAIT(20);
   Camera_MoveTo(PIXELS(168), -1, PIXELS(90), 1);
   Engine_CameraWaitForMove();
-  Engine_EventWait(40);
+  WAIT(40);
   TretTreeInteriors_PlayGesture(1);
-  Engine_EventWait(60);
-  Event_PlayCue(MUS_021);
+  WAIT(60);
+  SE(MUS_021);
   TretTreeInteriors_PlayGesture(4);
   Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET_SPEAKER), 0, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 80);
+  OBJ_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
+  OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 1, 0);
+  OBJ_EMOTE(MIA, EMOTE_IN_FRONT | 1, 0);
+  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 1, 80);
   Event_ShowMessage(SPEAKER(ACTOR_TRET_SPEAKER), 0);
-  Engine_EventWait(40);
+  WAIT(40);
   Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET_SPEAKER), 0, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(MIA, ANIM_NOD);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
+  OBJ_MODE(GARET, ANIM_NOD);
+  OBJ_MODE(MIA, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
-  Engine_EventWait(20);
+  WAIT(20);
   Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET_SPEAKER), 0, 20);
   TretTreeInteriors_PlayGesture(0);
-  Engine_EventWait(40);
+  WAIT(40);
   Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET_SPEAKER), 0, 20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
   Actor_SetAttachedEffect(GARET, 0x102);
   Actor_SetAttachedEffect(MIA, 0x102);
   Actor_SetAttachedEffect(IVAN, 0x102);
-  Engine_EventWait(60);
+  WAIT(60);
   // Garet and Ivan will not let Tret die while they still need his help.
   Engine_ActorRunRepeatedMotion(GARET, 2);
-  Actor_FaceDirection(GARET, FACING_NORTHEAST, 10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
+  OBJ_DIR(GARET, FACING_NORTHEAST, 10);
+  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
   Event_ShowMessageAndWait(SPEAKER(GARET), 0, 10);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
+  OBJ_DIR(IVAN, FACING_NORTHWEST, 0);
   Event_ShowMessageAndWait(SPEAKER(IVAN), 0, 20);
   TretTreeInteriors_PlayGesture(0);
-  Engine_EventWait(40);
+  WAIT(40);
   Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET_SPEAKER), 0, 10);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorStartRepeatedMotion(MIA, 2);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Engine_ActorFaceDirection(GARET, FACING_NORTH, 0);
-  Actor_FaceDirection(IVAN, FACING_NORTH, 40);
+  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  OBJ_DIR(GARET, FACING_NORTH, 0);
+  OBJ_DIR(IVAN, FACING_NORTH, 40);
   TretTreeInteriors_PlayGesture(4);
   // "Do you need something?" Answering no: "What are you doing, Isaac! Now's
   // not the time to fool around!"
   Event_OpenMessage(SPEAKER(ACTOR_TRET_SPEAKER), 0);
-  Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+  OBJ_DIR(GARET, FACING_NORTHEAST, 0);
+  OBJ_DIR(IVAN, FACING_NORTHWEST, 0);
   if (Engine_EventChooseYesNo(0, 0) != 0) {
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 20);
-    Engine_ActorSetAnimation(GARET, ANIM_SHAKE_HEAD);
-    Engine_EventSetMessage(MsgTretDoingNowsNot);
+    OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 3, 20);
+    OBJ_MODE(GARET, ANIM_SHAKE_HEAD);
+    MESSAGE_SET(MsgTretDoingNowsNot);
     Event_ShowMessage(SPEAKER(GARET), 0);
-    Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 3, 10);
-    Engine_ActorSetAnimation(IVAN, ANIM_NOD);
+    OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 3, 10);
+    OBJ_MODE(IVAN, ANIM_NOD);
     Event_ShowMessage(SPEAKER(IVAN), 0);
   }
-  Engine_EventWait(20);
+  WAIT(20);
   TretTreeInteriors_PlayGesture(4);
-  Engine_EventSetMessage(MsgTretTurnedPeopleKolima);
+  MESSAGE_SET(MsgTretTurnedPeopleKolima);
   Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET_SPEAKER), 0, 20);
   Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET_SPEAKER), 0, 10);
   TretTreeInteriors_PlayGesture(0);
-  Engine_EventWait(20);
+  WAIT(20);
   // Tret tries to release the people of Kolima: the colours shift and sparks
   // swirl out from his face, then fade.
   ColorBuffer_ApplySource(0x10000, 0);
@@ -502,9 +503,9 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorStartRepeatedMotion(MIA, 2);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
-  Actor_FaceDirection(GARET, FACING_NORTH, 0);
-  Actor_FaceDirection(IVAN, FACING_NORTH, 20);
-  Engine_EventWait(20);
+  OBJ_DIR(GARET, FACING_NORTH, 0);
+  OBJ_DIR(IVAN, FACING_NORTH, 20);
+  WAIT(20);
   sSparkFrame = 0;
   {
     struct FieldPosition *origin = &sSparkOrigin;
@@ -514,13 +515,13 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
     origin->z = PIXELS(52);
   }
   Task_AddCallback(sparkTask, TASK_PRIORITY_SCENE);
-  Engine_EventWait(220);
+  WAIT(220);
   Engine_TaskRemoveCallback(sparkTask);
   ColorBuffer_ApplyTarget(0x10000, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_TaskWait(40);
   TretTreeInteriors_PlayGesture(4);
-  Engine_EventWait(20);
+  WAIT(20);
   // "I can't do it... My power no longer reaches Kolima..." His face sinks
   // away on "People of Kolima... Forgive me...", and the party resolve to
   // heal him.
@@ -528,14 +529,14 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   TretTreeInteriors_PlayGesture(0);
   Event_ShowMessage(SPEAKER(ACTOR_TRET_SPEAKER), 0);
   Actor_RunActionScriptAndWait(ACTOR_TRET, gTretTreeInteriors_ActionTable1);
-  Engine_EventWait(40);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 60);
+  WAIT(40);
+  OBJ_EMOTE(GARET, EMOTE_IN_FRONT | 2, 60);
   Event_ShowMessage(SPEAKER(GARET), 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 2, 10);
+  OBJ_EMOTE(IVAN, EMOTE_IN_FRONT | 2, 10);
   Event_ShowMessage(SPEAKER(IVAN), 0);
-  Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(IVAN, FACING_NORTHWEST, 10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
+  OBJ_DIR(GARET, FACING_NORTHEAST, 0);
+  OBJ_DIR(IVAN, FACING_NORTHWEST, 10);
+  OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Event_ShowMessageAndWait(SPEAKER(GARET), 0, 10);
   Engine_ActorRunRepeatedMotion(IVAN, 1);
@@ -544,9 +545,9 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
     Engine_ActorRunRepeatedMotion(MIA, 1);
     Engine_EventShowMessageAndWait(SPEAKER(MIA), 0, 10);
   }
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_ActorSetAnimation(GARET, ANIM_NOD);
-  Engine_ActorSetAnimation(MIA, ANIM_NOD);
+  OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_NOD);
+  OBJ_MODE(GARET, ANIM_NOD);
+  OBJ_MODE(MIA, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   actions = gTretTreeInteriors_ActionTable2;
   Actor_SetActionScript(GARET, actions);
@@ -554,21 +555,20 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
     Actor_SetActionScript(MIA, actions);
   }
   Actor_RunActionScriptAndWait(IVAN, actions);
-  Engine_EventWait(20);
+  WAIT(20);
   Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  GameFlag_Set(FLAG_TRET_DEFEATED);
+  FLAG_SET(FLAG_TRET_DEFEATED);
   FieldScheduler_AddCallback(TretPalette_UpdateSceneTint, TASK_PRIORITY_SCENE);
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Restore the post-battle map and optionally play its conversation.
 static void TretTreeInteriors_ApplyPostBattleState(s32 playRecoveryScene) {
-  if (playRecoveryScene != 0 &&
-      Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0)
+  if (playRecoveryScene != 0 && FLAG_CHECK(FLAG_KEEP_PARTY_POSITION) == 0)
     TretTreeInteriors_PlayPostBattleConversation();
 
   Engine_TaskWait(1);
-  if (Engine_GameFlagIsSet(FLAG_TRET_DEFEATED) != 0) {
+  if (FLAG_CHECK(FLAG_TRET_DEFEATED) != 0) {
     s32 openingColumn = 10;
     Map_CopyCells(121, 34, 3, 1, 93, openingColumn);
     {
@@ -612,11 +612,11 @@ s32 TretTreeInteriors_EnterRoom(void) {
   if (gGameState.entrance != 19)
     FieldScheduler_AddCallback(TretPalette_UpdateSceneTint,
                                TASK_PRIORITY_SCENE);
-  if (Engine_GameFlagIsSet(FLAG_TRET_DEFEATED)) {
+  if (FLAG_CHECK(FLAG_TRET_DEFEATED)) {
     Engine_ActorSetPosition(ACTOR_TRET_SPEAKER, 0, 0);
     Engine_ActorSetPosition(ACTOR_TRET, 0, 0);
   }
-  if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION))
+  if (FLAG_CHECK(FLAG_KEEP_PARTY_POSITION))
     TretTreeInteriors_ApplyFlaggedMapPatches();
   mapWork = WORK_SLOT(8);
   // Match the first layer's parallax offset and scale to the room bounds.
@@ -626,10 +626,10 @@ s32 TretTreeInteriors_EnterRoom(void) {
   layer->scaleX = 0xe666;
   layer->scaleY = 0xe666;
   // Four floors start out cracked through: the first step on them gives way.
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_0D);
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_0F);
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_13);
+  FLAG_SET(FLAG_SCENE_TEMP_01);
+  FLAG_SET(FLAG_SCENE_TEMP_0D);
+  FLAG_SET(FLAG_SCENE_TEMP_0F);
+  FLAG_SET(FLAG_SCENE_TEMP_13);
   Engine_TaskWait(1);
   TretTreeInteriors_ApplyPostBattleState(0);
   fieldWork = WORK_SLOT(HEAP_SLOT_EVENT);
@@ -643,7 +643,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
   // Entrance 19: back from the battle with Tret.
   if (entrance == 50 || entrance == 40 || entrance == 30 || entrance == 20) {
     Engine_EventOpenScreen();
-    Engine_ActorSetAnimation(selectedActorId, 27);
+    OBJ_MODE(selectedActorId, 27);
     Engine_ActorSetSpriteFlags(Object_GetById(selectedActorId), 0);
     Actor_SetAttachedEffect(selectedActorId, 0x101);
     Camera_MoveTo(-1, -1, -1, 0);
@@ -651,16 +651,16 @@ s32 TretTreeInteriors_EnterRoom(void) {
     actor->y.fixed = PIXELS(100);
     actor->terrainHeight = -PIXELS(160);
     actor->gravity = 0x8000;
-    Engine_AudioPlayCue(SE_204);
+    SE(SE_204);
     Event_SetDestination((s32)&SceneId_TretTreeInteriors, entrance - 10);
-    Engine_EventWait(20);
+    WAIT(20);
     actor->terrainId = 2;
     Engine_ActorSetSpritePriority(selectedActorId, 3);
-    Engine_EventWait(2);
+    WAIT(2);
     Engine_ActorSetAttachedEffect(selectedActorId, 0x100);
-    Engine_EventWait(8);
+    WAIT(8);
   } else if (entrance == 10) {
-    if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION))
+    if (!FLAG_CHECK(FLAG_KEEP_PARTY_POSITION))
       TretTreeInteriors_RunLandingDustScene();
   } else if (entrance == 19) {
     TretTreeInteriors_ApplyPostBattleState(1);
@@ -748,70 +748,70 @@ static void TretPalette_UpdateSceneTint(void) {
 static void TretTreeInteriors_PlayGesture(s32 gesture) {
   switch (gesture) {
   case 0:
-    Engine_ActorSetAnimation(ACTOR_TRET, 1);
+    OBJ_MODE(ACTOR_TRET, 1);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(ACTOR_TRET, 3);
+    OBJ_MODE(ACTOR_TRET, 3);
     break;
   case 1:
-    Engine_ActorSetAnimation(ACTOR_TRET, 1);
+    OBJ_MODE(ACTOR_TRET, 1);
     break;
   case 2:
-    Engine_ActorSetAnimation(ACTOR_TRET, 1);
+    OBJ_MODE(ACTOR_TRET, 1);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(ACTOR_TRET, 5);
+    OBJ_MODE(ACTOR_TRET, 5);
     break;
   case 3:
-    Engine_ActorSetAnimation(ACTOR_TRET, 1);
+    OBJ_MODE(ACTOR_TRET, 1);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(ACTOR_TRET, 4);
+    OBJ_MODE(ACTOR_TRET, 4);
     break;
   case 4:
-    Engine_ActorSetAnimation(ACTOR_TRET, 1);
+    OBJ_MODE(ACTOR_TRET, 1);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(ACTOR_TRET, 3);
+    OBJ_MODE(ACTOR_TRET, 3);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(ACTOR_TRET, 1);
+    OBJ_MODE(ACTOR_TRET, 1);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(ACTOR_TRET, 3);
+    OBJ_MODE(ACTOR_TRET, 3);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(ACTOR_TRET, 1);
+    OBJ_MODE(ACTOR_TRET, 1);
     break;
   case 5:
-    Engine_ActorSetAnimation(ACTOR_TRET, 1);
+    OBJ_MODE(ACTOR_TRET, 1);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(ACTOR_TRET, 2);
+    OBJ_MODE(ACTOR_TRET, 2);
     break;
   case 7:
-    Engine_ActorSetAnimation(ACTOR_TRET, 6);
+    OBJ_MODE(ACTOR_TRET, 6);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(ACTOR_TRET, 8);
+    OBJ_MODE(ACTOR_TRET, 8);
     break;
   case 8:
-    Engine_ActorSetAnimation(ACTOR_TRET, 6);
+    OBJ_MODE(ACTOR_TRET, 6);
     break;
   case 9:
-    Engine_ActorSetAnimation(ACTOR_TRET, 6);
+    OBJ_MODE(ACTOR_TRET, 6);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(ACTOR_TRET, 9);
+    OBJ_MODE(ACTOR_TRET, 9);
     break;
   case 10:
-    Engine_ActorSetAnimation(ACTOR_TRET, 6);
+    OBJ_MODE(ACTOR_TRET, 6);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(ACTOR_TRET, 10);
+    OBJ_MODE(ACTOR_TRET, 10);
     break;
   case 11:
-    Engine_ActorSetAnimation(ACTOR_TRET, 6);
+    OBJ_MODE(ACTOR_TRET, 6);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(ACTOR_TRET, 8);
+    OBJ_MODE(ACTOR_TRET, 8);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(ACTOR_TRET, 6);
+    OBJ_MODE(ACTOR_TRET, 6);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(ACTOR_TRET, 8);
+    OBJ_MODE(ACTOR_TRET, 8);
     Engine_TaskWait(6);
-    Engine_ActorSetAnimation(ACTOR_TRET, 6);
+    OBJ_MODE(ACTOR_TRET, 6);
     break;
   case 12:
-    Engine_ActorSetAnimation(ACTOR_TRET, 6);
+    OBJ_MODE(ACTOR_TRET, 6);
     break;
   }
   Engine_TaskWait(12);
@@ -871,7 +871,7 @@ static void TretTreeInteriors_SpawnSwirlSparks(void) {
   case 20:
   case 30:
   case 40:
-    Engine_AudioPlayCue(SE_220);
+    SE(SE_220);
     // Waves contain 6, 5, 4, 3 and 2 sparks. Divide degrees before
     // converting them to turns, preserving the original rounding.
     for (sparkIndex = 0; sparkIndex < 6 - wave; sparkIndex++) {
@@ -894,7 +894,7 @@ static void TretTreeInteriors_SpawnSwirlSparks(void) {
       }
     }
   case 44:
-    Engine_AudioPlayCue(SE_289);
+    SE(SE_289);
     /* FAKEMATCH: the counter pointer is taken again here so it is dead
      * across the spark loop, where the loop index takes its register.
      * Measured: without it, differ 36; with the division also written
@@ -913,7 +913,7 @@ static void TretTreeInteriors_ApplyFlaggedMapPatches(void) {
 
   for (patchOffset = 0; gTretTreeInteriors_MapPatches[patchOffset] != -1;
        patchOffset += 6) {
-    if (Engine_GameFlagIsSet(gTretTreeInteriors_MapPatches[patchOffset]) &&
+    if (FLAG_CHECK(gTretTreeInteriors_MapPatches[patchOffset]) &&
         gTretTreeInteriors_MapPatches[patchOffset + 1] != 0)
       Map_CopyCellsTo(gTretTreeInteriors_MapPatches[patchOffset + 2],
                       gTretTreeInteriors_MapPatches[patchOffset + 3],
@@ -941,7 +941,7 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
   s32 velocityX;
   s32 velocityZ;
 
-  Engine_EventBegin();
+  EV_BEGIN();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
@@ -951,10 +951,10 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  Engine_AudioPlayCue(SE_204);
+  SE(SE_204);
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  Engine_EventWait(24);
+  WAIT(24);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   // Spread particles around the leader while the landing effect finishes.
   particleOptions = &options;
@@ -977,16 +977,16 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
                      EFFECT_USE_PALETTE | 1,
                  particleOptions);
   }
-  Engine_AudioPlayCue(SE_188);
+  SE(SE_188);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
+  OBJ_MODE(ACTOR_PARTY_LEADER, 22);
   Map_SetShake(0x50000, 0x50000, 0x10000);
   Map_SetShake(-1, -1, 0xe666);
   Engine_MapWaitWorkValuesBelow256();
   Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
   Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x10000;
   Object_GetById(ACTOR_PARTY_LEADER)->bounce = 0x4000;
-  Engine_EventEnd();
+  EV_END();
 }
 
 s32 gEffectScript0[] = {

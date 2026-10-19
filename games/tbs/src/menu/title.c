@@ -1,3 +1,6 @@
+// The title overlay: the Golden Sun logo and its sprites revealed over the
+// title screen.
+
 #include "game_state.h"
 #include "vram_tab.h"
 #include "unit/menu/title.h"

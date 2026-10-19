@@ -93,7 +93,7 @@
 // use it). Returns the chosen member's id, or -1 when the player backs out.
 s32 Menu_OpenCharacterSelector(void) {
   struct CharacterMenuState *state =
-      Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0x0a70);
+      Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   s32 result;
   s32 index;
 
@@ -124,11 +124,10 @@ s32 CharacterSelector_Run(void) {
   struct CharacterMenuState *work = gMenuWork;
   s32 result = 0;
 
-  /* FAKEMATCH: the one-pass block ends the schedule after the work load, so the
-   * zero is stored before the slot offset, as native; the store without it, or
-   * with result declared first, differs 4 (the offset moves into the load's
-   * delay), a constant 0 store 14, two returns 26, the call result kept in
-   * result and tested, or a ?: on it, 19. */
+  /* FAKEMATCH(one-pass): the slot's clearing in a one-pass block, which ends
+   * the schedule after the work's load so that the zero is stored before the
+   * slot's offset is built; as a plain statement, 4 of 23 instructions differ
+   * in tbs-en. */
   do {
     work->selectedSlots[0] = result;
   } while (0);
@@ -145,7 +144,7 @@ s32 CharacterSelector_Run(void) {
 // the status pages, then puts everything back. Returns their result.
 s32 ActionMenu_Open(void) {
   struct CharacterMenuState *state =
-      Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0x0a70);
+      Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   void *palette = Runtime_BumpAllocateAlternatePool(64);
   void *tiles = Runtime_BumpAllocateAlternatePool(STATUS_SAVED_TILE_BYTES);
   s32 result;
@@ -187,7 +186,7 @@ s32 ActionMenu_Open(void) {
     state->rowX[index] = 130 + index * 32;
     state->rowY[index] = 128;
   }
-  Link_DrawShiftedTilePairFar(0x06002500);
+  Link_DrawShiftedTilePairFar(MENU_PAGE_ARROW_VRAM);
   // Run the pages.
   Menu_CancelSoundReset();
   state->page = 0;
@@ -1419,9 +1418,9 @@ s32 PsynergyMenu_DrawListPage(struct UiWindow *window, s32 unused,
   UiText_DrawCharacterAtOffsetFar(owner->classIndex + MsgClassName, window, 0,
                                   32);
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH
-  UiText_DrawStringAtOffsetFar(&gMenu_LvString, (void *)window, 0, 48);
+  UiText_DrawStringAtOffsetFar(gMenu_LvString, (void *)window, 0, 48);
 #else
-  UiText_DrawStringInWindowFar(&gMenu_LvString, window, 0, 48);
+  UiText_DrawStringInWindowFar(gMenu_LvString, window, 0, 48);
 #endif
   UiText_DrawNumberInWindowFar(owner->level, 2, window, 24, 48);
 
@@ -1460,7 +1459,7 @@ s32 PsynergyMenu_SelectAction(void) {
     }
   }
   Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
-  Menu_SpawnIconEntries(menu, menu->messageWindow);
+  Menu_SpawnIconEntries((struct InventoryMenuState *)menu, menu->messageWindow);
   UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp, menu->statusWindow,
                                   SWITCH_HELP_X, -24);
   UiText_DrawCharacterAtOffsetFar(MsgSwitchCharacterHelp + 2,
@@ -1672,7 +1671,7 @@ s32 Shop_DrawItemPage(struct UiWindow *window, s32 unused,
       } while (rowCount > rowIndex);
     }
   }
-  UiText_DrawStringAtOffsetFar((s32)unit->name, window, 40, 0);
+  UiText_DrawStringAtOffsetFar(unit->name, window, 40, 0);
   message = MsgStatLabel;
   UiText_DrawCharacterAtOffsetFar(message, window, 32, 16);
   UiText_DrawCharacterAtOffsetFar(message + 1, window, 32, 24);
@@ -1720,7 +1719,7 @@ s32 ItemMenu_SelectItem(void) {
                                   menu->statusWindow, 0, -24);
   ItemMenu_PosCategory();
   WaitFrames(1);
-  Menu_SpawnIconEntries(menu, menu->messageWindow);
+  Menu_SpawnIconEntries((struct InventoryMenuState *)menu, menu->messageWindow);
 
   done = 0;
   while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
@@ -2041,13 +2040,10 @@ s32 Menu_CreateEightEntryObjects(struct UiWindow *window) {
 
 // Shows enabled category icons down the left edge, sixteen pixels apart.
 void ItemMenu_ApplyFlags(const u8 *flags) {
-  // The y-field pointer is the loop's 18th real insn before combine; loop.c
-  // reduces the flags[index] giv only while its 17 reaches the insn count.
-  /* FAKEMATCH: the y-field pointer keeps the category flag index a counter, not
-   * a walking pointer, as native; entry->y = nextY in this loop, a for loop
-   * over categoryIcons[index], ++index in the test or the two tests nested
-   * differ 22, nextY as s16, u16 or s8 23 to 28, nextY += 16 before the
-   * sentinel store 2 (the add moves ahead of the call). */
+  /* FAKEMATCH(temporary): y stored through a pointer to the field, one more
+   * instruction in the loop before combine, which keeps the flag index a
+   * counter instead of a walking pointer as the ROM does; as
+   * entry->y = nextY, 11 of 33 instructions differ in tbs-en. */
   struct InventoryMenuState *menu;
   struct RenderOutput **slot;
   struct RenderOutput *entry;

@@ -43,7 +43,7 @@ s32 Menu_OpenConfirmPrompt(void) {
   void *saved = Runtime_BumpAllocateAlternatePool(PSYNERGY_PROMPT_TILES_SIZE);
 #endif
   struct PsynergyMenuState *state =
-      Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0xa70);
+      Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   s32 owner;
   s32 unused;
   s32 psynergy;
@@ -57,7 +57,7 @@ s32 Menu_OpenConfirmPrompt(void) {
   ItemMenu_Init(0, 3, 0, 7);
   state->messageWindow = UiWindow_CreateFar(13, 0, 17, 3, 2);
   Palette_LightenBankHighlight(14);
-  Link_DrawShiftedTilePairFar(0x06002500);
+  Link_DrawShiftedTilePairFar(MENU_PAGE_ARROW_VRAM);
 #if TBS_PATCH_2
   Scheduler_EnableOverlayCallbacksWithFlags();
   Iwram_CopyWords(saved, PSYNERGY_PROMPT_TILES, PSYNERGY_PROMPT_TILES_SIZE);
@@ -141,12 +141,10 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
       ItemMenu_DrawMsg(0, MsgPsynergyChooseOwner);
       chosen = PsynergyMenu_SelectPartySlot(0);
       cancelled = -1;
-      /* FAKEMATCH: the redundant cancellation copy ends the CSE block, so the
-       * cancellation and done constants take the native registers; XOR equality
-       * keeps the copy into useResult. Plain forms measured 2026-10-13, each
-       * differ 12 (r2 and r3 exchanged): chosen == -1 setting useResult to -1
-       * or to chosen, with either store first, the call tested directly, and
-       * chosen == cancelled. */
+      /* FAKEMATCH(dead): a redundant copy of -1 into cancelled and a test of
+       * equality as an XOR, which end the CSE block so that -1 and done's 1
+       * take the ROM's registers; as if (chosen == -1) setting done and
+       * useResult to -1, 6 of 317 instructions differ in tbs-en. */
       if (chosen == -1)
         cancelled = chosen;
       if (((u32)chosen ^ (u32)cancelled) == 0) {
@@ -168,12 +166,11 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
         {
           struct PsynergyMenuState *savedWork = menu;
 
-          /* FAKEMATCH: the discarded conditional restoration puts labels
-           * between the psynergyCount and mode loads, so reload_cse_move2add
-           * builds the mode offset from its own constant (movs #154, lsls #2)
-           * as the bytes do; both arms disappear. Plain forms measured
-           * 2026-10-13: without the block move2add makes it adds r2, #80 from
-           * the count offset (differ 51). */
+          /* FAKEMATCH(dead): menu cleared and restored under a test that is
+           * never true here, which puts labels between the psynergyCount and
+           * mode loads, so that the mode's offset is built from its own
+           * constant (movs #154, lsls #2) as the bytes do; without the two
+           * tests, 2 of 317 instructions differ in tbs-en. */
           if (done)
             menu = NULL;
           if (done)
@@ -334,9 +331,11 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
 // from the one chosen last, with each member's Psynergy shown as the cursor
 // passes. Returns the chosen member's id, or -1 when the player backs out.
 s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
-  /* FAKEMATCH: retain the original scalar tab/icon address lanes. Direct
-   * indexed owner fields change the 244-byte native object to 246 bytes and
-   * reorder loads around the cursor call. */
+  /* FAKEMATCH(temporary): the pane's tab, icon and owner reached through
+   * byte offsets from the work held in scalars, which keeps partySlot in its
+   * own register beside the icon's offset; as menu->paneIcon[partySlot],
+   * menu->tabIndex[partySlot] and menu->ownerTable[ownerIndex], 19 of 75
+   * instructions differ in tbs-en. */
   struct PsynergyMenuState *menu = gMenuWork;
   s32 tabOffset = partySlot + ((u8 *)menu->tabIndex - (u8 *)menu);
   s32 iconOffset = partySlot * sizeof(menu->paneIcon[0]) +
@@ -655,7 +654,8 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 ownerId) {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutNameL, window, 0, 0);
     if (wide == 0)
       UiText_DrawStringAtOffsetFar(
-          UnitGetFar(gGameState.firstShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT),
+          UnitGetFar(gGameState.firstShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT)
+              ->name,
           window, 80, 0);
   } else {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutEmptyL, window, 0, 0);
@@ -673,9 +673,10 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 ownerId) {
         gGameState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK, 4);
     UiText_DrawCharacterAtOffsetFar(MsgShortcutNameR, window, 0, 8);
     if (wide == 0)
-      UiText_DrawStringAtOffsetFar(UnitGetFar(gGameState.secondShortcut >>
-                                              PSYNERGY_SHORTCUT_OWNER_SHIFT),
-                                   window, 80, 8);
+      UiText_DrawStringAtOffsetFar(
+          UnitGetFar(gGameState.secondShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT)
+              ->name,
+          window, 80, 8);
     UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   } else {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutEmptyR, window, 0, 8);
@@ -720,7 +721,8 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 owner) {
               MsgAbilityName,
           window, 16, 0);
     UiText_DrawStringAtOffsetFar(
-        UnitGetFar(gGameState.firstShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT),
+        UnitGetFar(gGameState.firstShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT)
+            ->name,
         window, 80, 0);
   } else {
     UiText_DrawCharacterAtOffsetFar(MsgShortcutEmptyL, window, 24, 0);
@@ -750,7 +752,8 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 owner) {
               MsgAbilityName,
           window, 16, 8);
     UiText_DrawStringAtOffsetFar(
-        UnitGetFar(gGameState.secondShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT),
+        UnitGetFar(gGameState.secondShortcut >> PSYNERGY_SHORTCUT_OWNER_SHIFT)
+            ->name,
         window, 80, 8);
     UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
   } else {
@@ -849,12 +852,9 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
 // in the field; any other mode those first, then the rest.
 s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
                                 s32 mode) {
-  /* FAKEMATCH: the doubled zero store through the byte-offset cursor makes
-   * loop.c replace the counter with the pointer (274 bytes); a single indexed
-   * clear keeps the counter (266). Measured 2026-10-13: a single store through
-   * a pointer walking down from actions + 31, through the byte offset, or as a
-   * pre-decrement do-while differs 31 to 33; actions[n] = 0 from 31 down
-   * differs 43. */
+  /* FAKEMATCH(dead): each entry cleared twice through the byte-offset
+   * pointer, which makes loop.c replace the counter with the pointer as the
+   * ROM does; with a single store, 15 of 129 instructions differ in tbs-en. */
   s32 clearOffset;
   s32 passCount;
   s32 actionCount;

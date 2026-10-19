@@ -1,3 +1,7 @@
+// The Battle Arena overlay: the lobby where linked and monster battles
+// start, the exchange of the two parties, the attendant and the records of
+// wins.
+
 #include "unit/import.h"
 #include "unit/menu/lobby.h"
 #include "unit/object/object.h"
@@ -50,6 +54,15 @@
 #define LOBBY_SEND_TIMEOUT_FRAMES 600
 #define LOBBY_RECEIVE_TIMEOUT_FRAMES 900
 #define LOBBY_PEER_WAIT_FRAMES 25
+
+// The lobby's temporary flags:
+// FLAG_SCENE_TEMP_00: the attendant has asked the player to take part; every
+//   300th call of LinkLobby_PromptToParticipate clears it, to ask again.
+// FLAG_SCENE_TEMP_01: a linked partner is there (its signatures match).
+// FLAG_SCENE_TEMP_02: the player has agreed to a battle.
+// FLAG_SCENE_TEMP_03: the party is on its way into the battle.
+// FLAG_SCENE_TEMP_04: the attendant's next explanation is the party order.
+// FLAG_SCENE_TEMP_05: the link was lost, and the attendant has yet to say so.
 
 #define PEER_TAG(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
 
@@ -135,9 +148,9 @@ static s32 LinkLobby_PeerSlotMatches(s32 slot) {
   } else {
     Engine_GameFlagClear(0x303);
   }
-  /* FAKEMATCH: a loop that runs at most once places the test after the body as
-   * the ROM does. As an if around the body: differ 43; as an early return 0 on
-   * the failed test: differ 55. */
+  /* FAKEMATCH(one-pass): a loop left by break after its first pass, which
+   * places the test after the body as the ROM does; as an if around the body,
+   * 12 of 58 instructions differ in tbs-en. */
   while (serialPlayerId >= 0 && Engine_GameFlagIsSet(0x303)) {
     const s32 *expected = &gLinkLobby_SlotValues[slot];
 
@@ -282,9 +295,9 @@ static s32 LinkLobby_ReportDisconnection(void) {
 // Receives three unit records and a recovery table; returns the occupied count
 // or the original transfer failure. All size checks observe fresh serial reads.
 static s32 LinkLobby_ReceivePartyRecords(void) {
-  /* FAKEMATCH: gSerialReceivedSize is volatile (serial_runtime.h), so every
-   * read here is a load of its own. Measured on tbs-en: without the qualifier
-   * differ 69, 186 instructions for 189. */
+  /* FAKEMATCH(volatile): gSerialReceivedSize is volatile (serial_runtime.h),
+   * so every read here is a load of its own; without the qualifier, 24 of 190
+   * instructions differ in tbs-en. */
   u16 namePrefix[24];
   u32 size;
   void *heap;
@@ -469,10 +482,9 @@ static s32 LinkLobby_SendPartyRecords(void) {
     slotMap[i] = 0;
   }
   for (i = 0; i < ownerCount; i++) {
-    /* FAKEMATCH: a one-pass boundary keeps the send failure inline and gives
-     * the record copy's argument order; without it loop.c moves the failure out
-     * of the loop: differ 26 (all three of this function's blocks removed:
-     * differ 66). */
+    /* FAKEMATCH(one-pass): the record's send in a one-pass block, which keeps
+     * the send failure inside the loop and gives the copy's argument order;
+     * as a plain block, 3 of 255 instructions differ in tbs-en. */
     do {
       Iwram_CopyWords(heap, UnitGet(ownerIds[i]), size);
       heap[0x12a] = 2;
@@ -488,10 +500,9 @@ static s32 LinkLobby_SendPartyRecords(void) {
       Engine_TaskWait(1);
       if (--timeout < 0 ||
           (gLinkStatus & LOBBY_LINK_READY_MASK) != LOBBY_LINK_READY_MASK) {
-        /* FAKEMATCH: a one-pass boundary keeps this failure inline, so its -1
-         * is reloaded here and jump2 merges it into the offer's; moved out of
-         * the loop, it shifts every later reload register: differ 59 without
-         * the block. */
+        /* FAKEMATCH(one-pass): the retry limit's test in a one-pass block,
+         * which keeps this failure inside the loop, its -1 loaded here;
+         * without the block, 11 of 255 instructions differ in tbs-en. */
         do {
           if (++tries > LOBBY_TRANSFER_RETRY_LIMIT) {
             result = -1;
@@ -530,10 +541,9 @@ next:
   Runtime_BumpFree(heap);
   size = LOBBY_RECOVERY_RECORD_BYTES;
   heap = Runtime_BumpAllocateAlternatePool(size);
-  /* FAKEMATCH: a one-pass boundary gives the offer copy's argument order and
-   * keeps the recoveryList base's copy first after the call; as a plain call:
-   * differ 6.
-   */
+  /* FAKEMATCH(one-pass): the recovery table's copy in a one-pass block, which
+   * gives the copy's argument order and keeps the list base's copy first after
+   * the call; as a plain call, 8 of 255 instructions differ in tbs-en. */
   do {
     Iwram_CopyWords(heap, Djinn_GetRecoveryTable(0), size);
   } while (0);
@@ -588,12 +598,9 @@ static s32 LinkLobby_ExchangePartyRecords(void) {
   s32 receivedOwnerCount;
   s32 receiveFirst;
 
-  /* FAKEMATCH: the one-pass block keeps result's zero in r6 ahead of the
-   * receiveFirst call, as the listing loads it. Plain before the call, with the
-   * store moved ahead of the call too, as the declaration's initializer, or as
-   * gLinkExchangeState = result = 0 after it, the zero is scheduled after the
-   * call: differ 4; storing 0 and setting result apart after the call:
-   * differ 36. */
+  /* FAKEMATCH(one-pass): result's zero in a one-pass block, which loads it
+   * into r6 ahead of the call as the ROM does; as a plain statement, 4 of 63
+   * instructions differ in tbs-en. */
   do {
     result = 0;
   } while (0);
@@ -690,7 +697,7 @@ static s32 LinkLobby_EnterBattle(void) {
   // Suspend peer polling while transferring the party and entering battle.
   if (!failed) {
     savedWork = Runtime_AllocateBlock(54, 0x7c8);
-    Engine_TaskRemoveCallback(LinkLobby_PollPeerReady);
+    Engine_TaskRemoveCallback((SchedulerCallback)LinkLobby_PollPeerReady);
     Map_ClearLayerEntryFlag(5);
     Engine_TaskWait(8);
     Map_SetLayerEntryFlag(5);
@@ -720,8 +727,9 @@ static s32 LinkLobby_EnterBattle(void) {
         Runtime_ReleaseHeapBlock(54);
         LinkLobby_WriteSlotValue(0);
         LinkLobby_WriteSlotValue(4);
-        FieldScheduler_AddCallback(LinkLobby_PollPeerReady, 0xc80);
-        Scheduler_SetTaskFlags(LinkLobby_PollPeerReady, 1);
+        FieldScheduler_AddCallback((SchedulerCallback)LinkLobby_PollPeerReady,
+                                   0xc80);
+        Scheduler_SetTaskFlags((SchedulerCallback)LinkLobby_PollPeerReady, 1);
         Engine_GameFlagClear(FLAG_SCENE_TEMP_01);
         Engine_GameFlagClear(FLAG_SCENE_TEMP_02);
         Engine_GameFlagClear(0x303);
@@ -1237,9 +1245,9 @@ s32 LinkLobby_RunRoundResult(void) {
     Engine_EventWaitForScreen();
     LinkLobby_WriteSlotValue(5);
     Engine_ActorFaceActor(8, gGameState.selectedActor, 0);
-    /* FAKEMATCH: one scalar holds the row address, then its score. Reading
-     * linkTallies[3] twice, also through a u16 pointer local: differ 36;
-     * reading it once into score before the call: differ 10. */
+    /* FAKEMATCH(temporary): score holds the tally's address, then the tally;
+     * as gGameState.linkTallies[3] read at both uses, 19 of 393 instructions
+     * differ in tbs-en. */
     score = (u32)&gGameState.linkTallies[3];
     UiText_DrawQuantity(*(u16 *)score, 5);
     score = *(u16 *)score;
@@ -1279,8 +1287,9 @@ s32 LinkLobby_RunRoundResult(void) {
       gGameState.linkTallies[4]++;
       v = gGameState.linkTallies[7] + 1;
       gGameState.linkTallies[7] = v;
-      /* FAKEMATCH: reuse the other score branches' address slot. Through
-       * linkTallies[6] itself or a u16 pointer local: differ 8. */
+      /* FAKEMATCH(temporary): score holds the record's address, as in the
+       * other branches; as gGameState.linkTallies[6] at each use, 4 of 393
+       * instructions differ in tbs-en. */
       score = (u32)&gGameState.linkTallies[6];
       if (*(u16 *)score < (u16)v) {
         *(u16 *)score = v;
@@ -1326,7 +1335,7 @@ s32 LinkLobby_RunRoundResult(void) {
     LinkLobby_WriteSlotValue(4);
   }
   // Resume polling and restore the party unless continuing a monster run.
-  callback = LinkLobby_PollPeerReady;
+  callback = (SchedulerCallback)LinkLobby_PollPeerReady;
   FieldScheduler_AddCallback(callback, 0xc80);
   Scheduler_SetTaskFlags(callback, 1);
   if (gGameState.entrance != 8 || !Engine_GameFlagIsSet(0x173)) {

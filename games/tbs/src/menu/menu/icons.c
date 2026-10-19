@@ -75,8 +75,9 @@ s32 UiIcon_CreateStatChangeArrow(struct UiWindow *window, s32 x, s32 y,
   object = RenderOutput_CreateFar(resource, ICON_SPRITE_16X16, targetWindow,
                                   targetX, y);
   if (object == 0) {
-    /* FAKEMATCH: the redundant failure branch retains the argument
-     * lifetimes through CSE; plain return -1 changes 16 aligned rows. */
+    /* FAKEMATCH(dead): a test whose two arms both return -1, which emits
+     * nothing but keeps variant and x live across the call; as a plain
+     * return -1, 10 of 37 instructions differ in tbs-en. */
     if (variant || targetX)
       return -1;
     else
@@ -108,8 +109,9 @@ s32 UiIcon_DrawVariantWithTileOffset(struct UiWindow *window, s32 x, s32 y,
   object = RenderOutput_CreateFar(resource, ICON_SPRITE_16X16, targetWindow,
                                   targetX, y);
   if (object == 0) {
-    /* FAKEMATCH: the redundant failure branch retains the argument
-     * lifetimes through CSE; plain return -1 changes 22 aligned rows. */
+    /* FAKEMATCH(dead): a test whose two arms both return -1, which emits
+     * nothing but keeps variant and x live across the call; as a plain
+     * return -1, 13 of 41 instructions differ in tbs-en. */
     if (selectedVariant || x)
       return -1;
     else

@@ -106,7 +106,7 @@ s32 RunAssetSelectionScreen(void) {
   size = 0x2000;
   backup = Runtime_BumpAllocateAlternatePool(size);
 #endif
-  screen = Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0xa70);
+  screen = Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_MENU_CONTROL];
   ((struct ObjectSystemWork *)cache[0])->suspended = 1;
   UiWindow_DrawFrameFar(0, 0, 30, 20);
@@ -116,7 +116,7 @@ s32 RunAssetSelectionScreen(void) {
   ItemMenu_Init(0, 3, 0, 7);
   Resource_LoadPairedBlocks();
   Palette_LightenBankHighlight(14);
-  Link_DrawShiftedTilePairFar(0x06002500);
+  Link_DrawShiftedTilePairFar(MENU_PAGE_ARROW_VRAM);
   screen->messageWindow = UiWindow_CreateFar(13, 0, 17, 3, 2);
 #if TBS_PATCH_1
   // Save the window tiles the menu draws over, and fill them with colour 3.
@@ -174,10 +174,9 @@ typedef s32 (*ItemWordCopyFn)(void *dst, const void *src, s32 size);
 
 static __inline__ s32 Item_CopyWords(ItemWordCopyFn copy, void *dst,
                                      const void *src, s32 size) {
-  /* FAKEMATCH: needed to match: the copy routine as IwramIrqMain plus its
-   * offset, passed first; direct calls share the 332-byte size in r5 and move
-   * the routine to r6, and through Iwram_CopyWords the routine is loaded before
-   * the source and size (2 instructions reordered). */
+  /* FAKEMATCH(wrapper): the trade's unit copies call the routine through
+   * this helper, which takes its address first; through Iwram_CopyWords, 3 of
+   * 1269 instructions of ItemMenu_RunCommands differ in tbs-en. */
   return copy(dst, src, size);
 }
 
@@ -295,7 +294,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
     // (BattleFx_HasTriggerFar) closes the menu and is returned to the caller;
     // other usable items are used here.
     case ITEM_STEP_COMMAND:
-      command = ItemMenu_ChooseCmd();
+      command = ItemMenu_ChooseCommand();
       if (command == -1) {
         state = ITEM_STEP_ITEM;
         menu->completionFlag = 1;
@@ -1475,11 +1474,10 @@ UNUSED void InventoryMenu_NoOp(void) {}
 // the preview, making room first if it is full, and target is restored after.
 // mode 1 redraws only the lower part of the panel.
 void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
-  /* FAKEMATCH: Reusing the expired owner value for the saved unit keeps
-     owner in r8 and panelStyle in r10; a separate saved pointer swaps those
-     registers (44 aligned instructions differ). The type-6 buffer alias
-     preserves the native shared draw tail; without it the body adds
-     three instructions and seven aligned instructions differ. */
+  /* FAKEMATCH(temporary): the saved unit kept in owner once owner is no
+   * longer needed, and in Psynergy items' case also in buffer, which keeps
+   * owner in r8 and panelStyle in r10; as a separate void *saved in both
+   * cases, 22 of 172 instructions differ in tbs-en. */
   struct InventoryMenuState *menu = gMenuWork;
   s32 panelStyle = 0;
   struct BattleUnit *unit = UnitGetFar(owner);
@@ -1599,13 +1597,13 @@ s32 Inventory_RemoveFirstUnflagged(s32 ownerId) {
 
 // The x and y of the item command cursor on column and row of the command grid
 // (three commands to a row).
-s32 ItemMenu_CmdCursorX(s32 column, s32 row) {
+s32 ItemMenu_CommandCursorX(s32 column, s32 row) {
   if (column > 2 || row > 2 || column < 0 || row < 0)
     return 0;
   return gItemMenu_CommandColumnXTable[row * 3 + column];
 }
 
-s32 ItemMenu_CmdCursorY(s32 column, s32 row) {
+s32 ItemMenu_CommandCursorY(s32 column, s32 row) {
   s32 y;
 
   (void)column;
@@ -1628,7 +1626,7 @@ s32 ItemMenu_CmdCursorY(s32 column, s32 row) {
 // and Details, and without it on the bottom row, where Give also shows who can
 // equip it. The cursor starts on the command chosen last, or on the first
 // available one. Returns the command chosen, or -1 when the player backs out.
-s32 ItemMenu_ChooseCmd(void) {
+s32 ItemMenu_ChooseCommand(void) {
   struct InventoryMenuState *menu;
   s8 commandStorage[6];
   u16 *redrawFlag;
@@ -1697,8 +1695,8 @@ s32 ItemMenu_ChooseCmd(void) {
     commandIndex = row * 3 + column;
   }
 #if TBS_PATCH_1
-  cursorX = ItemMenu_CmdCursorX(column, row);
-  cursorY = ItemMenu_CmdCursorY(column, row);
+  cursorX = ItemMenu_CommandCursorX(column, row);
+  cursorY = ItemMenu_CommandCursorY(column, row);
   UiMenu_SlideCursor(cursorX, cursorY);
 #else
   UiMenu_SlideCursor(column * 40 + 86, row * 8 + 30);
@@ -1732,8 +1730,8 @@ s32 ItemMenu_ChooseCmd(void) {
       }
     }
 #if TBS_PATCH_1
-    cursorX = ItemMenu_CmdCursorX(column, row);
-    cursorY = ItemMenu_CmdCursorY(column, row);
+    cursorX = ItemMenu_CommandCursorX(column, row);
+    cursorY = ItemMenu_CommandCursorY(column, row);
     UiMenu_PositionCursor(cursorX, cursorY);
 #else
     UiMenu_PositionCursor(column * 40 + 86, row * 8 + 30);

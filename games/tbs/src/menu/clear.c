@@ -1,3 +1,7 @@
+// The file select overlay: the Golden Sun logo, the start menu (new game,
+// continue, copy and delete), the door to the Battle Arena and the transfer of
+// a save's data, by link or as a password.
+
 #include "scene_ids.h"
 #include "unit/menu/clear.h"
 #include "unit/object/object.h"
@@ -118,20 +122,18 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out);
 static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 Clear_ComputePasswordCrc16(u32 byteCount, u8 *data);
 
-// Returns the clear menu's entrance table through the scene entry ABI.
-u8 *SceneData_GetScriptTable(void) { return gClear_ScriptTable; }
+// The file select overlay's scene tables, for the scene loader: one entrance,
+// the exit, and no placements or events.
+u8 *Clear_GetEntrances(void) { return (u8 *)gClear_Entrances; }
 
 // Returns zero from this menu entry.
 s32 SceneData_ReturnZero(void) { return 0; }
 
-// Returns the clear menu's packed exit table.
-u8 *SceneData_GetMessageTable(void) { return gClear_MessageTable; }
+u8 *Clear_GetExits(void) { return (u8 *)gClear_Exits; }
 
-// Returns the empty actor placement table.
-u8 *SceneData_GetActorTable(void) { return gClear_ActorTable; }
+u8 *Clear_GetPlacements(void) { return (u8 *)gClear_Placements; }
 
-// Returns the empty event table.
-u8 *SceneData_GetEffectTable(void) { return gClear_EffectTable; }
+u8 *Clear_GetEvents(void) { return (u8 *)gClear_Events; }
 
 // Loads the Golden Sun logo, maps its tiles and resets background scroll.
 static void Clear_LoadBackground(void) {
@@ -507,8 +509,9 @@ menu_top:;
       }
       UiWork_FinalizePendingCore();
       if (Clear_GetSaveRecoveryBlockMask() != 0) {
-        /* FAKEMATCH: MsgSaveRecoveryFailed as MsgSaveDataCorrupted + 2, the
-         * native adds 2 to the register holding message 4 (186 by name). */
+        // MsgSaveRecoveryFailed, spelled as MsgSaveDataCorrupted + 2: the ROM
+        // adds 2 to the register holding the earlier message's number, and by
+        // name 108 of 921 instructions differ in tbs-en.
         UiText_ShowPositionedMessageAndWait(MsgSaveDataCorrupted + 2, 9);
         goto menu_top;
       }
@@ -794,10 +797,10 @@ menu_top:;
           }
           for (v7 = pageIndex * PASSWORD_SYMBOLS_PER_PAGE, pageGlyphIndex = 0;
                v7 != v6; v7++, pageGlyphIndex++) {
-            /* FAKEMATCH: the loop note ends the CSE path, which otherwise
-             * carries the glyph address into both draw calls for gcse to hoist
-             * out of the loop; the native rebuilds sp + 24 at each call.
-             * Without the block differ 336 on tbs-en, 16 instructions more */
+            /* FAKEMATCH(one-pass): the glyph's decoding in a one-pass block,
+             * which ends the CSE path so that each draw call rebuilds the
+             * glyph's address as the ROM does; without the block, 98 of 921
+             * instructions differ in tbs-en. */
             do {
               Clear_NameEntryCharacter(password[v7] & PASSWORD_SYMBOL_MASK,
                                        glyph);
@@ -814,9 +817,9 @@ menu_top:;
               s32 row;
 
               glyphColumn = (pageGlyphIndex % 10);
-              /* FAKEMATCH: an explicit libgcc call; written pageGlyphIndex / 10
-               * it differs 216 on tbs-en (220 on tbs-ja), 10 instructions more
-               */
+              /* FAKEMATCH(wrapper): the division written as a call to
+               * __divsi3; as pageGlyphIndex / 10, 45 of 921 instructions
+               * differ in tbs-en. */
               row = __divsi3(pageGlyphIndex, 10);
               UiText_DrawString(glyph, pageWindow, glyphColumn * 12 + 8,
                                 (row << 4) + 2);
@@ -978,8 +981,8 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   }
 
   for (i = 0; i != 4; i++) {
-    struct PasswordOwner *owner =
-        UnitGet(((const struct { s32 id[4]; } *)gClear_PasswordMembers)->id[i]);
+    struct PasswordOwner *owner = (struct PasswordOwner *)UnitGet(
+        ((const struct { s32 id[4]; } *)gClear_PasswordMembers)->id[i]);
     struct PasswordStats *stats = &owner->stats;
 
     if (stats->baseHp > 1999) {
@@ -1038,7 +1041,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     outputIndex = 39;
     bitOffset = 0;
     for (i = 0; i != 4; i++) {
-      struct PasswordOwner *owner = UnitGet(
+      struct PasswordOwner *owner = (struct PasswordOwner *)UnitGet(
           ((const struct { s32 id[4]; } *)gClear_PasswordMembers)->id[i]);
 
       for (n = 0; n != 15; n++) {
@@ -1060,7 +1063,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     outputIndex = 107;
     bitOffset = -1;
     for (i = 0; i != 4; i++) {
-      struct PasswordOwner *owner = UnitGet(
+      struct PasswordOwner *owner = (struct PasswordOwner *)UnitGet(
           ((const struct { s32 id[4]; } *)gClear_PasswordMembers)->id[i]);
       s32 m;
 
@@ -1074,8 +1077,9 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
             j = (owner->inventory[n] & 0xf800) >> 11;
           }
         }
-        /* FAKEMATCH: the unused 16-bitOffset copy leaves the shift hoisted
-         * above the sign test; without it 1095, used in both shifts 585. */
+        /* FAKEMATCH(dead): a halfword copy of the quantity nothing reads,
+         * which leaves the shift hoisted above the sign test; without it, 71
+         * of 485 instructions differ in tbs-en. */
         quantity = j;
         if (bitOffset < 0) {
           out[outputIndex] += (u16)j >> -bitOffset;
@@ -1215,20 +1219,20 @@ static u16 Clear_ComputePasswordCrc16(u32 byteCount, u8 *data) {
   return ~crc;
 }
 
-struct SceneEntrance gClear_ScriptTable[] = {
+struct SceneEntrance gClear_Entrances[] = {
     {0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
 
-u32 gClear_MessageTable[] = {
+u32 gClear_Exits[] = {
     SCENE_EXITS(511),
 };
 
-struct ScenePlacement gClear_ActorTable[] = {
+struct ScenePlacement gClear_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEvent gClear_EffectTable[] = {
+struct SceneEvent gClear_Events[] = {
     {SCENE_EVENTS_END},
 };
 

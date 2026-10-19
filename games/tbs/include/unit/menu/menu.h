@@ -49,8 +49,8 @@ void PsynergyMenu_RefreshOwnerEntriesDefault(void);
 void PsynergyMenu_RefreshOwnerEntries(s32 originX, s32 originY, s32 columns);
 void PsynergyMenu_PositionOwnerEntry(struct RenderOutput **slot, s32 index,
                                      s32 originX, s32 originY, s32 columns);
-void ItemMenu_PosOwner(struct RenderOutput **slot, s32 i, s32 x0, s32 y0,
-                       s32 cols);
+void ItemMenu_PosOwner(struct RenderOutput **slot, s32 slotIndex, s32 originX,
+                       s32 originY, s32 columns);
 void ItemMenu_RefreshEntry(s32 layout);
 void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y);
 s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode);
@@ -60,12 +60,12 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
 void Palette_LightenBankHighlight(s32 bank);
 void Menu_DrawPageIndicator(struct UiWindow *window, s32 itemCount,
                             s32 pageSize, s32 selectedPage, s32 rightEdge);
-void Render_SetTilemapFlagRect(const struct UiWindow *object, s32 x, s32 y,
+void Render_SetTilemapFlagRect(const struct UiWindow *window, s32 x, s32 y,
                                s32 width, s32 height, u32 palette);
 void Palette_CopyObjectBankToBackground14(void);
 void Menu_SetPageIcons(s32 pageSize, s32 first, struct UiWindow *window, s32 x,
                        s32 y);
-void UiText_DrawWorkValueWithLabel(struct UiWindow *work);
+void UiText_DrawWorkValueWithLabel(struct UiWindow *window);
 void UiWindow_SetBounds(struct UiWindow *window, s32 x, s32 y, s32 width,
                         s32 height);
 void UiWork_SetMenuBusy(void);
@@ -101,44 +101,45 @@ s32 ItemMenu_IsSpecial(s32 itemId);
 void ItemMenu_DrawMsg(s32 unused, s32 message);
 void Menu_HideEmptyEntryIcons(const u16 *items);
 s32 ItemMenu_Count(s32 ownerId);
-s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item);
-s32 ItemMenu_Collect(struct BattleUnit *owner, u16 *items, s32 mode);
-void ItemMenu_DrawIcons(u16 *items, s32 style);
+s32 InventoryMenu_GetItemQuantity(s32 ownerId, s32 itemId);
+s32 ItemMenu_Collect(struct BattleUnit *unit, u16 *items, s32 mode);
+void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle);
 void ItemMenu_RefreshOwner(s32 ownerId, s32 mode);
 void InventoryMenu_NoOp(void);
 void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target);
-s32 Inventory_RemoveFirstUnflagged(s32 owner);
-s32 ItemMenu_CmdCursorX(s32 column, s32 row);
-s32 ItemMenu_CmdCursorY(s32 column, s32 row);
-s32 ItemMenu_ChooseCmd(void);
+s32 Inventory_RemoveFirstUnflagged(s32 ownerId);
+s32 ItemMenu_CommandCursorX(s32 column, s32 row);
+s32 ItemMenu_CommandCursorY(s32 column, s32 row);
+s32 ItemMenu_ChooseCommand(void);
 void ItemMenu_BuildCmd(s8 *commandStates);
 void ItemMenu_DrawCmd(const s8 *commandStates, struct UiWindow *window);
-s32 Item_ClassifyUseMode(s32 owner, s32 itemId);
+s32 Item_ClassifyUseMode(s32 ownerId, s32 inventoryEntry);
 void ItemMenu_TryBreak(void);
 s32 ItemMenu_OpenDetail(s32 itemIndex);
 s32 Menu_SelectQuantity(s32 value);
-void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 item);
-void ItemMenu_DrawStat(s32 delta, s32 unused, struct UiWindow *window, s32 x,
-                       s32 y);
+void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry);
+void ItemMenu_DrawStat(s32 statChange, s32 unused, struct UiWindow *window,
+                       s32 x, s32 y);
 void ItemMenu_SetItemWin5(void);
 void ItemMenu_SetItemWin3(void);
 void ItemMenu_SetMsgWin5(void);
 void ItemMenu_SetMsgWin6(void);
 void ItemMenu_SetMsgWin7(void);
 void ItemMenu_SetMsgWin3(void);
-s32 ItemMenu_SelectGiveQuantity(s32 base, s32 range, s32 single);
+s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
+                                s32 dropMode);
 void ItemMenu_DrawItemHead(void);
-s32 ItemMenu_ConfirmDrop(s32 a0);
+s32 ItemMenu_ConfirmDrop(s32 item);
 s32 ItemMenu_ConfirmEquip(s32 unused);
 void Resource_LoadPairedBlocks(void);
 s32 ItemMenu_PageResult(struct MenuResult *result, s32 index);
-s32 ItemMenu_DrawItemDetailPage(struct UiWindow *window, void *work,
-                                struct MenuResult *state);
+s32 ItemMenu_DrawItemDetailPage(struct UiWindow *window, void *ownerWork,
+                                struct MenuResult *pageState);
 s32 ItemMenu_DrawNamePage(struct UiWindow *window, s32 unused,
-                          const struct MenuResult *state);
+                          const struct MenuResult *pageState);
 s32 InventoryMenu_ItemNamePageReturnTrue(void);
 void InventoryMenu_ItemNamePageNoOp(void);
-s32 ItemMenu_RunList(s32 pane);
+s32 ItemMenu_RunList(s32 paneIndex);
 
 s32 Menu_OpenConfirmPrompt(void);
 s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction);
@@ -148,21 +149,21 @@ s32 PsynergyMenu_SetupActionIcons(u16 *ownerIds, u16 *unused);
 void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId);
 s32 PsynergyMenu_ReturnTrue(void);
 void PsynergyMenu_NoOp(void);
-s32 PsynergyMenu_SelectTarget(s32 mode);
-s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
+s32 PsynergyMenu_SelectTarget(s32 targetMode);
+s32 PsynergyMenu_SetShortcut(s32 ownerId, s32 actionId, s32 shortcutIndex);
 s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 owner);
 void PsynergyMenu_CreateEntryGrid(void);
 void PsynergyMenu_CloseWindows(void);
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
-s32 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions,
+s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
                                 s32 mode);
 s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index);
 s32 PsynergyMenu_DrawDetailPage(struct UiWindow *window, s32 *work,
                                 struct MenuResult *state);
 s32 PsynergyMenu_DrawActionPage(struct UiWindow *window, s32 unused,
-                                const struct MenuResult *state);
-s32 PsynergyMenu_RunList(s32 pane);
-s32 PsynergyMenu_IsActionRestricted(s32 no);
+                                const struct MenuResult *pageState);
+s32 PsynergyMenu_RunList(s32 paneIndex);
+s32 PsynergyMenu_IsActionRestricted(s32 actionEntry);
 
 s32 Menu_OpenCharacterSelector(void);
 s32 CharacterSelector_Run(void);
@@ -187,8 +188,8 @@ void StatusMenu_ShowOwnerProgressMessage(struct UiWindow *destination,
 void CharacterMenu_DrawStatusAilments(struct UiWindow *window, s32 ownerId,
                                       s32 mode);
 void Runtime_RunBusyWaitDelay(void);
-void ItemMenu_DrawOwnerStatus(struct UiWindow *window, s32 owner, s32 flags);
-s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 id);
+void ItemMenu_DrawOwnerStatus(struct UiWindow *window, s32 ownerId, s32 flags);
+s32 CharacterMenu_BuildAvailability(u8 *ailments, s32 requested, s32 ownerId);
 s32 Menu_BuildPageResult(struct MenuResult *result, s32 index);
 void Menu_BuildPatternTiles(void);
 void PsynergyMenu_DrawRange(struct UiWindow *window, s32 x, s32 y, s32 range,
@@ -207,13 +208,13 @@ s32 ItemMenu_DrawEquipPage(struct UiWindow *window, s32 unused,
 s32 Shop_DrawItemPage(struct UiWindow *window, s32 unused,
                       struct MenuResult *state);
 s32 ItemMenu_SelectItem(void);
-s32 Menu_MoveGridCursor(s32 *arg0, s32 *arg1, s32 arg2);
+s32 Menu_MoveGridCursor(s32 *columnOut, s32 *rowOut, s32 direction);
 s32 Menu_ReservedStatusOne(void);
 void ItemMenu_DrawCategory(struct UiWindow *window, s32 ownerId, s32 mode);
 void ItemMenu_DrawEquippedItemNames(struct UiWindow *window, u16 *items);
-void Menu_PlaceEntryObjectsInGrid(s32 originX, s32 originY, s32 phase);
-void Menu_PlaceEntryObjectInGrid(struct RenderOutput *obj, s32 index,
-                                 s32 originX, s32 originY, s32 phase);
+void Menu_PlaceEntryObjectsInGrid(s32 originX, s32 originY, s32 columns);
+void Menu_PlaceEntryObjectInGrid(struct RenderOutput *icon, s32 index,
+                                 s32 originX, s32 originY, s32 columns);
 void ItemMenu_ArrangeCategoryItemIcons(u16 *items);
 void ItemMenu_PosCategory(void);
 s32 Menu_CreateEightEntryObjects(struct UiWindow *window);
@@ -231,11 +232,11 @@ void Item_PlayUseAnimation(u32 item);
 void Ability_PlayUseAnimation(s32 action);
 
 s32 Menu_ReservedStatusZero(void);
-s32 Menu_GetModuloOfSum(s32 arg0, s32 arg1);
-s32 Menu_SetFirstObjectRowCoordinates(s32 arg0);
+s32 Menu_WrapIndex(s32 value, s32 modulus);
+s32 Menu_SetFirstObjectRowCoordinates(s32 yOffset);
 s32 ItemMenu_Run(void);
 s32 DjinnMenu_RunScreen(void);
-void Graphics_AdjustPaletteBank(s32 d);
+void Graphics_AdjustPaletteBank(s32 brightnessDelta);
 #ifdef UBFIX
 typedef void MenuBackdropResult;
 #else
@@ -244,23 +245,26 @@ typedef s32 MenuBackdropResult;
 // The native wrapper forwards an implicit result; the defined interface is
 // void.
 MenuBackdropResult Menu_OpenBackdropScreen(void);
-s32 OwnerAction_DiffSlots(struct OwnerActionSlot *a, struct OwnerActionSlot *b,
-                          u16 *out, s32 *firstCount, s32 *secondCount);
-s32 Menu_ComputeEntryValues(void *table);
+s32 OwnerAction_DiffSlots(struct OwnerActionSlot *before,
+                          struct OwnerActionSlot *after, u16 *actionsOut,
+                          s32 *gainedCountOut, s32 *lostCountOut);
+s32 DjinnMenu_BuildLists(void *table);
 #ifdef UBFIX
 void DjinnMenu_DrawElementList(struct DjinnListTable *table);
 #endif
-s32 Menu_DrawAtWindowOffset(const struct UiWindow *win, s32 arg1, s32 arg2,
-                            s32 arg3, s32 arg4, s32 arg5);
+s32 UiWindow_SetInteriorPaletteBitRect(const struct UiWindow *window, s32 x,
+                                       s32 y, s32 width, s32 height,
+                                       s32 palette);
 void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette);
-void UiWindow_ApplyRectAtObjectOrigin(void *obj, s32 x, s32 y, s32 width,
-                                      s32 height, s32 palette);
+void UiWindow_SetInteriorRectPalette(void *window, s32 x, s32 y, s32 width,
+                                     s32 height, s32 palette);
 s32 DjinnMenu_ShowHelp(void);
 s32 DjinnMenu_SelectDjinn(s32 mode);
-s32 Djinn_ListOwnerEntries(u16 *out, s32 owner, s32 element);
-s32 Menu_RunPairedEntryAction(s32 mode, s32 param);
-s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y, s32 owner,
-                              s32 give, s32 take, s32 mode, s32 page, s32 side);
+s32 Djinn_ListOwnerEntries(u16 *entriesOut, s32 ownerId, s32 element);
+s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex);
+s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
+                              s32 ownerId, s32 removePairSlot, s32 addPairSlot,
+                              s32 previewMode, s32 page, s32 side);
 
 void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1);
 void FourObjectMotion_UpdateAllPositions(void);
@@ -268,14 +272,14 @@ void FourObjectMotion_UpdateBottomRow(void);
 void FourObjectMotion_InitializeBottomRow(s32 unused0, s32 unused1);
 s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative);
 s32 FourObjectMotion_SetSlotPhase(s32 index, s32 phase);
-s32 FourObjectMotion_ReplaceSlot(s32 index, s32 kind, s32 value);
-void Menu_EnableAllItemObjects(void);
+s32 FourObjectMotion_ReplaceSlot(s32 index, s32 resourceKind, s32 value);
+void Menu_StartPartyFiguresWalking(void);
 
 s32 OwnerAction_RunCompareLoop(u32 mode);
 s32 DjinnMenu_ShowOwnerStatus(void);
-s32 Djinn_MarkBalancedEntries(s8 *table, s32 self);
-s32 Djinn_CheckTurnBalance(s32 from, s32 to);
-void Djinn_CountTurns(u8 *counts);
+s32 Djinn_MarkBalancedEntries(s8 *requiresTrade, s32 sourceOwnerColumn);
+s32 Djinn_CheckTurnBalance(s32 sourceOwnerColumn, s32 targetOwnerColumn);
+void Djinn_CountTurns(u8 *ownedCounts);
 void Resource_LoadPairedBlocksIfAvailable(void);
 void Menu_ResetTwoResourceEntries(void);
 s32 UiIcon_LoadResourceIntoSlot(s32 resourceId, s32 slot);

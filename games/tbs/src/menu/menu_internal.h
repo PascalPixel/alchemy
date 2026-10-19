@@ -87,6 +87,18 @@ s32 _call_via_r3(void *, void *, s32, void *);
 // The target id of a Psynergy or item used on the whole party.
 #define MENU_TARGET_WHOLE_PARTY 9
 
+// The bytes of the menu work, heap block HEAP_SLOT_MENU.
+#define MENU_WORK_SIZE 0xa70
+
+// The two page arrows beside a paged list's page numbers: tiles 0x128 and
+// 0x129 of character block 0, which Link_DrawShiftedTilePairFar slides back
+// and forth each frame, and their tilemap entries in palette 15.
+#define MENU_PAGE_ARROW_TILE 0x128
+#define MENU_PAGE_ARROW_VRAM                                                   \
+  ((s32)BG_CHAR_BLOCK(0) + MENU_PAGE_ARROW_TILE * TILE_SIZE_4BPP)
+#define MENU_PAGE_ARROW_LEFT (0xf000 | MENU_PAGE_ARROW_TILE)
+#define MENU_PAGE_ARROW_RIGHT (0xf000 | (MENU_PAGE_ARROW_TILE + 1))
+
 // Inventory icons occupy five columns in the fifteen-slot list.
 #define MENU_ITEM_GRID_COLUMNS 5
 

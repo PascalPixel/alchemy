@@ -53,12 +53,12 @@ s32 Scheduler_EnableOverlayCallbacksWithFlags(void) {
   return Scheduler_SuspendOverlayTasks();
 }
 
-// Clears the whole menu work area (0x29c words) and sets its defaults: no
-// pane selected, one entry in each pane, and a 1x1 cursor grid.
+// Clears the whole menu work and sets its defaults: no pane selected, one
+// entry in each pane, and a 1x1 cursor grid.
 void UiWindow_InitializeWork(s32 unused) {
   struct InventoryMenuState *work = gMenuWork;
 
-  Dma_Fill32(0, work, 0x29c * 4);
+  Dma_Fill32(0, work, MENU_WORK_SIZE);
   work->paneIndex[0] = -1;
   work->paneCount[0] = 1;
   work->paneCount[1] = 1;
@@ -917,11 +917,9 @@ void Menu_CopyListOrder(s32 mode, u8 *order) {
   }
 }
 
-// The page indicator: the window font's digit tiles for pages 1, 2, ..., and
-// the two caps around them.
+// The page indicator: the window font's digit tiles for pages 1, 2, ...,
+// between the two page arrows.
 #define PAGE_LABEL_FIRST 49
-#define PAGE_CAP_LEFT 0xf128
-#define PAGE_CAP_RIGHT 0xf129
 
 // Moves a paged list's cursor and page with the d-pad's repeating keys.
 //
@@ -943,7 +941,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   if (count == 0)
     return result;
   // Animate the page arrows.
-  Link_DrawShiftedTilePairFar(0x06002500);
+  Link_DrawShiftedTilePairFar(MENU_PAGE_ARROW_VRAM);
   pages = count / pageSize;
   if (count % pageSize != 0)
     pages++;
@@ -1039,7 +1037,7 @@ void Palette_LightenBankHighlight(s32 bank) {
 }
 
 // Draws a paged list's page numbers on the top border of window, ending at
-// tile rightEdge: one digit per page between two caps, selectedPage in
+// tile rightEdge: one digit per page between the page arrows, selectedPage in
 // palette 14 and the others in palette 15. Draws nothing for a single page.
 void Menu_DrawPageIndicator(struct UiWindow *window, s32 itemCount,
                             s32 pageSize, s32 selectedPage, s32 rightEdge) {
@@ -1056,7 +1054,7 @@ void Menu_DrawPageIndicator(struct UiWindow *window, s32 itemCount,
 
   x -= pageCount;
   if (pageCount > 1) {
-    UiWindow_SetTilemapEntryFar(window, PAGE_CAP_LEFT, x - 1, -1, 0);
+    UiWindow_SetTilemapEntryFar(window, MENU_PAGE_ARROW_LEFT, x - 1, -1, 0);
 
     for (page = 0; page < pageCount; page++) {
       if (page == selectedPage)
@@ -1067,7 +1065,7 @@ void Menu_DrawPageIndicator(struct UiWindow *window, s32 itemCount,
       x++;
     }
 
-    UiWindow_SetTilemapEntryFar(window, PAGE_CAP_RIGHT, x, -1, 0);
+    UiWindow_SetTilemapEntryFar(window, MENU_PAGE_ARROW_RIGHT, x, -1, 0);
   }
 }
 
@@ -1233,5 +1231,3 @@ void UiPalette_SetColor4(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_LOW_HP); }
 #undef ICON_TILE_BYTES
 #undef CURSOR_BOB_STEP
 #undef PAGE_LABEL_FIRST
-#undef PAGE_CAP_LEFT
-#undef PAGE_CAP_RIGHT

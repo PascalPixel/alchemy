@@ -117,7 +117,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
       battle->defeatState = 1;
   }
   spoils->defeated++;
-  if (GameFlag_TestFar(0x173))
+  if (GameFlag_TestFar(FLAG_MONSTER_BATTLE))
     return 0;
   GameFlag_SetBitFar(unit->classId + 0x600);
   enemy = Enemy_GetDefinitionFar(unit->classId);

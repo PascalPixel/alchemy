@@ -199,7 +199,7 @@ static void SolSanctumEntrance_PlaceFirstSmallGem(void) {
       Engine_MapRedraw();
       SolSanctumEntrance_ReactToOpeningPassage();
       Engine_MessageShowCentered(message + 1, 1);
-      GameFlag_Set(0x143);
+      GameFlag_Set(FLAG_ITEM_USED_UP);
       GameFlag_Set(FLAG_SOL_SANCTUM_FIRST_GEM_PLACED);
       Engine_EventEnd();
     }
@@ -253,7 +253,7 @@ static void SolSanctumEntrance_PlaceSecondSmallGem(void) {
     Engine_MapRedraw();
     SolSanctumEntrance_ReactToOpeningPassage();
     Engine_MessageShowCentered(message + 1, 1);
-    GameFlag_Set(0x143);
+    GameFlag_Set(FLAG_ITEM_USED_UP);
     GameFlag_Set(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED);
     Engine_EventEnd();
   }

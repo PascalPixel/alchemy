@@ -65,7 +65,7 @@ void FieldEvent_ShowStatusMessage(void) {
 //
 // The caster spins shedding falling arcs and flashes 20 times, then blinks for
 // 55 frames; encounters are kept away (avoidDistance 0x9600000) until it wears
-// off, and the game says "Monsters won't attack so often now.". Flag 0x145
+// off, and the game says "Monsters won't attack so often now.". FLAG_ITEM_USE
 // marks it as cast from the Sacred Feather.
 void FieldFx_RunAvoid(void) {
   struct BattleFxScene *scene;
@@ -89,7 +89,7 @@ void FieldFx_RunAvoid(void) {
     *tileSlot = slot;
     VramCache_Load((s16)slot, 0x100, gBattleFx_ArcSparkTiles);
     gGameState.avoidDistance = 0x09600000;
-    gGameState.avoidByItem = GameFlag_TestFar(0x145);
+    gGameState.avoidByItem = GameFlag_TestFar(FLAG_ITEM_USE);
     Animation_ApplyChildValuesFar(object, zero);
     object->callback = BattleFx_UpdatePairedArcSpawner;
     object->phase = zero;

@@ -8,9 +8,31 @@
 #define FLAG_MERCURY_LIGHTHOUSE_LIT 0x111
 #define FLAG_MARS_LIGHTHOUSE_LIT 0x112
 #define FLAG_JUPITER_LIGHTHOUSE_LIT 0x113
+#define FLAG_NOT_ON_MAP 0x11c // the current place is not on the world map
+// Set before an action on the field; still set afterwards, nothing came of it
+// and the game says "But nothing happens.". An event that acts clears it.
+#define FLAG_NOTHING_HAPPENS 0x142
+#define FLAG_ITEM_USED_UP 0x143 // the item just used is removed afterwards
+#define FLAG_ITEM_USE 0x145     // the Psynergy comes from an item
+#define FLAG_DEBUG_BATTLE 0x162 // set before every debug battle
+// Set while the Lure Cap is worn: random encounters come twice as fast.
+#define FLAG_LURE_CAP 0x167
 #define FLAG_AUTO_BATTLE 0x16a
+#define FLAG_CHOOSING_COMMANDS 0x16b // set while the commands are chosen
 #define FLAG_LINK_BATTLE 0x16c
 #define FLAG_DJINN_TUTORIAL 0x16e
+// The link lobby's battle against a monster when no opponent is linked:
+// formations matched to the party's level, and no spoils.
+#define FLAG_MONSTER_BATTLE 0x173
+// Byte flags, read and written eight at a time.
+#define FLAG_LINK_PARTY_COUNT 0x3f0 // the members the linked opponent sent
+// Monster battles won in a row, added to the monsters' level; -1 after the
+// series ends.
+#define FLAG_MONSTER_BATTLE_WINS 0x3f8
+// Plus a row of the shop stock table: that place's artifacts are in stock.
+#define FLAG_SHOP_ARTIFACTS_STOCKED 0x400
+// Set while the Colosso holds the party's equipment (the inventory snapshot).
+#define FLAG_INVENTORY_SNAPSHOT 0x952
 #define FLAG_KEEP_PARTY_POSITION 0x109
 #define FLAG_SHOW_LOCATION_NAME 0x12f
 #define FLAG_KEEP_LAYER_GRAPHICS 0x170

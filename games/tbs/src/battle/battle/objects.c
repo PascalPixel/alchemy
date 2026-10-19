@@ -532,12 +532,13 @@ s32 Battle_GetWorkEntryPair(s32 place, struct FixedPointPosition *position) {
   return 0;
 }
 
-// Sets up the camera's view for projecting points; under flag 0x16b,
-// through the extra transform gCamera_FlagTransformWork first.
+// Sets up the camera's view for projecting points; under
+// FLAG_CHOOSING_COMMANDS, through the extra transform gCamera_FlagTransformWork
+// first.
 s32 Camera_ApplyTransformByFlag(void) {
   struct BattleCamera *camera = gCameraWork;
   Render_ResetTransformState();
-  if (GameFlag_TestFar(0x16b) != 0) {
+  if (GameFlag_TestFar(FLAG_CHOOSING_COMMANDS) != 0) {
     Iwram_TransformMatrix((s32 *)gCamera_FlagTransformWork);
     Transform_ApplyLookAt(camera->eye, camera->pos);
   } else {

@@ -3,7 +3,6 @@
 
 #include "../psynergy_effects_internal.h"
 
-#define FLAG_NOT_ON_MAP 0x11c // the current place is not on the world map
 #define WORLD_MAP_MARKER_TILE_BYTES 0x80
 
 // BUG: the original reserves 32 bytes but writes and uploads 128. The bump
@@ -453,7 +452,6 @@ void BattleFx_RunVisibilityTransition(void) {
   }
 }
 
-#undef FLAG_NOT_ON_MAP
 #undef WORLD_MAP_MARKER_TILE_BYTES
 #undef WORLD_MAP_MARKER_ALLOCATION_SIZE
 #undef WORLD_MAP_CURSOR_SNAPS

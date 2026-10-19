@@ -537,7 +537,7 @@ menu_top:;
       goto menu_top;
     }
     gGameState.selectedActor = 0;
-    if (GameFlag_IsSet(0x952) != 0) {
+    if (GameFlag_IsSet(FLAG_INVENTORY_SNAPSHOT) != 0) {
       InventorySnapshot_Restore();
       Party_RemoveActiveOwner(0);
       Party_RemoveActiveOwner(1);

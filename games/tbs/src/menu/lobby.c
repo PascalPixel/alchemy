@@ -231,7 +231,7 @@ static s32 LinkLobby_PollPeerReady(void) {
   }
   if ((GameFlag_IsSet(FLAG_SCENE_TEMP_01) ||
        GameFlag_IsSet(FLAG_SCENE_TEMP_02)) &&
-      !GameFlag_IsSet(0x173) && !LinkLobby_PeerSlotMatches(0) &&
+      !GameFlag_IsSet(FLAG_MONSTER_BATTLE) && !LinkLobby_PeerSlotMatches(0) &&
       sLinkLobbyWaitFrames > 24) {
     work->raisedTrigger = 2;
     GameFlag_Set(FLAG_SCENE_TEMP_05);
@@ -624,7 +624,7 @@ static s32 LinkLobby_ExchangePartyRecords(void) {
     if (result < 0)
       goto fail;
   }
-  FieldGameFlag_SetByte(0x3f0, receivedOwnerCount);
+  FieldGameFlag_SetByte(FLAG_LINK_PARTY_COUNT, receivedOwnerCount);
   result = receivedOwnerCount;
 check:
   if (receivedOwnerCount < 0) {
@@ -653,7 +653,7 @@ static s32 LinkLobby_EnterBattle(void) {
   window = 0;
   work = gEventWork;
   missedFrames = 0;
-  if (Engine_GameFlagIsSet(0x173)) {
+  if (Engine_GameFlagIsSet(FLAG_MONSTER_BATTLE)) {
     Engine_EventBegin();
   } else {
     // These exits return no value from the s32 handler.
@@ -701,7 +701,7 @@ static s32 LinkLobby_EnterBattle(void) {
     Map_ClearLayerEntryFlag(5);
     Engine_TaskWait(8);
     Map_SetLayerEntryFlag(5);
-    if (Engine_GameFlagIsSet(0x173)) {
+    if (Engine_GameFlagIsSet(FLAG_MONSTER_BATTLE)) {
       Engine_ActorFaceActor(8, gGameState.selectedActor, 0);
       Engine_EventSetMessage(MsgLobbyGoodLuck);
       Engine_EventOpenMessage(8, 0);
@@ -742,7 +742,7 @@ static s32 LinkLobby_EnterBattle(void) {
       Actor_SetSpeed(0, 0x8000, 0x4000);
       Engine_ActorWaitForMove(0);
     }
-    if (Engine_GameFlagIsSet(0x173)) {
+    if (Engine_GameFlagIsSet(FLAG_MONSTER_BATTLE)) {
       Event_SetNextDestination((s32)&SceneId_LinkLobby, 8);
       Event_SetDefeatDestination((s32)&SceneId_LinkLobby, 9);
     } else {
@@ -787,13 +787,13 @@ static s32 LinkLobby_ChooseBattleMode(void) {
   if (LinkLobby_PeerSlotMatches(0) == 0) {
     LinkLobby_WriteSlotValue(5);
     LinkLobby_InitializeSerial();
-    if (!GameFlag_IsSet(0x173)) {
+    if (!GameFlag_IsSet(FLAG_MONSTER_BATTLE)) {
       Engine_EventSetMessage(messageBase + 5);
       Engine_EventOpenMessage(8, 0);
       answer = Engine_EventChooseYesNo(0, 0);
       if (answer == 0) {
         FieldGameFlag_SetByte(1000, 0);
-        Engine_GameFlagSet(0x173);
+        Engine_GameFlagSet(FLAG_MONSTER_BATTLE);
         Engine_GameFlagClear(0x172);
         Engine_GameFlagClear(FLAG_LINK_BATTLE);
         Engine_GameFlagSet(FLAG_SCENE_TEMP_02);
@@ -801,7 +801,7 @@ static s32 LinkLobby_ChooseBattleMode(void) {
         gGameState.linkTallies[3] = answer;
         goto message;
       }
-      Engine_GameFlagClear(0x173);
+      Engine_GameFlagClear(FLAG_MONSTER_BATTLE);
       Engine_GameFlagSet(FLAG_LINK_BATTLE);
       LinkLobby_WriteSlotValue(0);
       messageId = messageBase + 6;
@@ -811,12 +811,12 @@ static s32 LinkLobby_ChooseBattleMode(void) {
       goto message;
     }
   } else {
-    if (GameFlag_IsSet(0x173)) {
+    if (GameFlag_IsSet(FLAG_MONSTER_BATTLE)) {
       LinkLobby_WriteSlotValue(0);
       Engine_EventSetMessage(MsgLobbyOpponentArrived);
       Engine_EventOpenMessage(8, 0);
       Engine_GameFlagClear(FLAG_SCENE_TEMP_02);
-      Engine_GameFlagClear(0x173);
+      Engine_GameFlagClear(FLAG_MONSTER_BATTLE);
     }
     if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02)) {
       messageId = messageBase + 3;
@@ -1199,7 +1199,7 @@ s32 LinkLobby_RunRoundResult(void) {
     LinkLobby_WriteSlotValue(5);
     gGameState.linkTallies[0]++;
     gGameState.linkTallies[3]++;
-    wins = (s8)FieldGameFlag_GetByte(0x3f8);
+    wins = (s8)FieldGameFlag_GetByte(FLAG_MONSTER_BATTLE_WINS);
     messageOffset = wins * 2 + 2;
     if (messageOffset > 14) {
       messageOffset = 14;
@@ -1219,10 +1219,10 @@ s32 LinkLobby_RunRoundResult(void) {
       if (wins > 90) {
         wins = 90;
       }
-      FieldGameFlag_SetByte(0x3f8, wins);
+      FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, wins);
     } else {
-      Engine_GameFlagClear(0x173);
-      FieldGameFlag_SetByte(0x3f8, -1);
+      Engine_GameFlagClear(FLAG_MONSTER_BATTLE);
+      FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
       UiText_DrawQuantity(gGameState.linkTallies[3], 5);
       score = gGameState.linkTallies[3];
       if (gGameState.linkTallies[2] < score) {
@@ -1261,8 +1261,8 @@ s32 LinkLobby_RunRoundResult(void) {
       Engine_EventOpenMessage(8, 0);
     }
     gGameState.linkTallies[3] = 0;
-    Engine_GameFlagClear(0x173);
-    FieldGameFlag_SetByte(0x3f8, -1);
+    Engine_GameFlagClear(FLAG_MONSTER_BATTLE);
+    FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
     LinkLobby_WriteSlotValue(0);
     Engine_EventEnd();
     // Linked battles update wins/losses and the consecutive-win record.
@@ -1308,7 +1308,7 @@ s32 LinkLobby_RunRoundResult(void) {
     Engine_EventWaitForScreen();
     LinkLobby_WriteSlotValue(0);
     LinkLobby_WriteSlotValue(4);
-    if ((v = Engine_GameFlagIsSet(0x173)) == 0) {
+    if ((v = Engine_GameFlagIsSet(FLAG_MONSTER_BATTLE)) == 0) {
       gGameState.linkTallies[5]++;
       gGameState.linkTallies[7] = v;
       LinkLobby_SaveBattleResults();
@@ -1319,7 +1319,7 @@ s32 LinkLobby_RunRoundResult(void) {
   } else {
     SerialRuntime_Initialize();
     Engine_GameFlagClear(0x172);
-    FieldGameFlag_SetByte(0x3f8, -1);
+    FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
     if (gGameState.idleSleepEnabled != 0) {
       Engine_EventBegin();
       Engine_EventOpenScreen();
@@ -1338,7 +1338,7 @@ s32 LinkLobby_RunRoundResult(void) {
   callback = (SchedulerCallback)LinkLobby_PollPeerReady;
   FieldScheduler_AddCallback(callback, 0xc80);
   Scheduler_SetTaskFlags(callback, 1);
-  if (gGameState.entrance != 8 || !Engine_GameFlagIsSet(0x173)) {
+  if (gGameState.entrance != 8 || !Engine_GameFlagIsSet(FLAG_MONSTER_BATTLE)) {
     Party_RestoreHpPp(1);
     BattlePlacement_UpdateTimedEntriesTwentyTimes();
   }

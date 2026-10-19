@@ -47,6 +47,7 @@
 #include "fx_scene.h"
 #include "fixed_math.h"
 #include "palbuf.h"
+#include "flags.h"
 
 // Forward declarations.
 static s32 WorldMap_ApplyMapRotation(struct ScriptInterpreter *interpreter);
@@ -544,7 +545,7 @@ s32 WorldMap_Initialize(void) {
     case 74:
     case 76:
     case 77:
-      Engine_GameFlagSet(0x11c);
+      Engine_GameFlagSet(FLAG_NOT_ON_MAP);
       if (FieldGameFlag_GetByte(0x2f8) != 0) {
         gGameState.movementMode = 2;
         FieldScheduler_AddCallback(WorldMap_UpdateAirborneTravelTimer, 0xc80);

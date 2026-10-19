@@ -130,7 +130,6 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 
 #define FLAG_PSYNERGY_NONE 0x17e   // Psynergy has no effect here
 #define FLAG_RETREAT_BLOCKED 0x144 // Retreat does not work here
-#define FLAG_ITEM_USE 0x145        // the Psynergy comes from an item
 #define FLAG_PSYNERGY_EFFECT 0x140 // play the usual effect
 #define FLAG_PSYNERGY_TARGET 0x141 // aim the effect at the target
 

@@ -209,7 +209,7 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   affine->y = y;
   groundEndLine = (Iwram_RatioMulQ14((s16)step, 0x4000 - y) >> 16) + 1;
   scanline = 0;
-  if (!GameFlag_TestFar(0x16b)) {
+  if (!GameFlag_TestFar(FLAG_CHOOSING_COMMANDS)) {
     for (; scanline < 16; scanline++)
       *line++ = 0x3f8e;
   }

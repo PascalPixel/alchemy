@@ -420,13 +420,13 @@ void UnitCalc(s32 owner) {
   MemFree(stats);
 }
 
-// Sets flag 0x167 when any party member has the Lure Cap (item 164, the one
+// Sets FLAG_LURE_CAP when any party member has the Lure Cap (item 164, the one
 // item with equipment effect 27) equipped, and clears it otherwise.
 void GameFlag_RefreshLureCap(void) {
   s32 partySize;
   s32 partyIndex;
 
-  GameFlag_ClearBit(0x167);
+  GameFlag_ClearBit(FLAG_LURE_CAP);
   partySize = Party_CountActiveOwners();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
     struct BattleUnit *unit;
@@ -445,7 +445,7 @@ void GameFlag_RefreshLureCap(void) {
           effectKind = effect->kind;
           effect++;
           if (effectKind == ITEM_EFFECT_27) {
-            GameFlag_SetBit(0x167);
+            GameFlag_SetBit(FLAG_LURE_CAP);
           }
         }
       }

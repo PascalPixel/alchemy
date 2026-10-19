@@ -600,7 +600,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
   BattleUnit_ResetGuardLevels();
   Palette_CopyBanksWithBrightnessOffset(8);
   // Set while the commands are chosen.
-  GameFlag_SetBitFar(0x16b);
+  GameFlag_SetBitFar(FLAG_CHOOSING_COMMANDS);
   encounterMode = &battle->encounterMode;
   Camera_ConfigureScene(0);
   UiWork_FinalizeSharedSlotFar();
@@ -654,7 +654,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
   }
 
 finish:
-  GameFlag_ClearBitFar(0x16b);
+  GameFlag_ClearBitFar(FLAG_CHOOSING_COMMANDS);
   Camera_InitDefaultTransform();
   gTransitionWork->targetYaw = YAW_PARTY_TURN;
   return count;

@@ -304,7 +304,7 @@ void EventTable_ApplyRowAbilities(s32 stockRow) {
   s32 artifactIndex;
   s32 initializedFlag;
 
-  initializedFlag = stockRow + 0x400;
+  initializedFlag = stockRow + FLAG_SHOP_ARTIFACTS_STOCKED;
   if (GameFlag_TestFar(initializedFlag) == 0) {
     GameFlag_SetBitFar(initializedFlag);
     artifactIndex = 0;

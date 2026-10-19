@@ -404,17 +404,17 @@ s32 Field_SearchTile(s32 tile) {
     if (event != NULL) {
       s32 flags = event->control;
 
-      // Bits 4 to 8 choose what the leader says on checking (flag 0x142 marks
-      // that it was said).
+      // Bits 4 to 8 choose what the leader says on checking; if the event
+      // leaves FLAG_NOTHING_HAPPENS set, the matching result line follows.
       condition = event->condition;
       messageOffset = (flags >> 4) & 31;
       if ((event->trigger & 0x400) == 0 && messageOffset != 0) {
         Leader_StopMoving();
         UiText_ShowPositionedMessageAndWaitFar(MsgTileChecked + messageOffset,
                                                1);
-        GameFlag_SetBitFar(0x142);
+        GameFlag_SetBitFar(FLAG_NOTHING_HAPPENS);
       } else {
-        GameFlag_ClearBitFar(0x142);
+        GameFlag_ClearBitFar(FLAG_NOTHING_HAPPENS);
       }
       searchResult = event->value;
       if ((searchResult & 0x0f000000) != 0 ||
@@ -423,7 +423,7 @@ s32 Field_SearchTile(s32 tile) {
           // A function.
           if (GameFlag_IsConditionActive(condition) != 0)
             ((void (*)(s32))event->value)(gGameState.selectedActor);
-          if (GameFlag_TestFar(0x142) != 0)
+          if (GameFlag_TestFar(FLAG_NOTHING_HAPPENS) != 0)
             UiText_ShowPositionedMessageAndWaitFar(
                 MsgTileResult + messageOffset, 1);
         } else {
@@ -552,7 +552,7 @@ s32 Field_SearchTile(s32 tile) {
       UiText_ShowPositionedMessageAndWaitFar(MsgCheckedGround, 1);
       UiText_ShowPositionedMessageAndWaitFar(MsgGroundDidntFindAnything, 1);
     }
-    GameFlag_ClearBitFar(0x142);
+    GameFlag_ClearBitFar(FLAG_NOTHING_HAPPENS);
   }
   return 0;
 }

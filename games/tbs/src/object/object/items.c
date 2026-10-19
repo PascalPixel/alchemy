@@ -52,8 +52,8 @@ s32 Field_FindItemEvent(s32 item) {
 // character using it (bits 10 to 13; 15 for the character carrying most of
 // it); slot is its inventory slot. The scene's item event for what the leader
 // faces runs if there is one; otherwise an item with a field action uses it
-// (Retreat asks first and leaves the scene). Flag 0x142 means nothing happened
-// and flag 0x143 that the item is used up.
+// (Retreat asks first and leaves the scene). FLAG_NOTHING_HAPPENS still set
+// afterwards says "But nothing happens."; FLAG_ITEM_USED_UP removes the item.
 s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
   s32 itemId;
@@ -106,8 +106,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   event = (const struct SceneEvent *)Field_FindItemEvent(itemId);
   if (event != 0 && event->value != 0) {
     // The scene's event: a message, or a function.
-    GameFlag_ClearBitFar(0x143);
-    GameFlag_ClearBitFar(0x142);
+    GameFlag_ClearBitFar(FLAG_ITEM_USED_UP);
+    GameFlag_ClearBitFar(FLAG_NOTHING_HAPPENS);
     if (!(event->trigger & 0x400)) {
       UiWork_PushValueSlotFar(actor, 1);
       UiWork_PushValueSlotFar(itemId, 2);
@@ -127,14 +127,14 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     // The item's own field action, if it has one.
     s32 actionId;
 
-    GameFlag_ClearBitFar(0x143);
-    GameFlag_SetBitFar(0x142);
+    GameFlag_ClearBitFar(FLAG_ITEM_USED_UP);
+    GameFlag_SetBitFar(FLAG_NOTHING_HAPPENS);
     actionId = Item_GetDirectFar(itemId)->actionId;
     work = (struct FieldWork *)gEventWork;
 
     if (actionId != 0) {
       GameFlag_SetBitFar(FLAG_ITEM_USE);
-      GameFlag_ClearBitFar(0x142);
+      GameFlag_ClearBitFar(FLAG_NOTHING_HAPPENS);
 
       if (actionId == ABILITY_RETREAT && !GameFlag_TestFar(0x144)) {
         UiWork_PushValueSlotFar(itemId, 2);
@@ -170,13 +170,13 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       BattleEffect_CleanupSceneObjects();
 
       if (Item_GetDirectFar(itemId)->useType & 1)
-        GameFlag_SetBitFar(0x143);
+        GameFlag_SetBitFar(FLAG_ITEM_USED_UP);
     }
   }
 
-  if (GameFlag_TestFar(0x142))
+  if (GameFlag_TestFar(FLAG_NOTHING_HAPPENS))
     UiText_ShowPositionedMessageAndWaitFar(MsgNothingHappens, 1);
-  if (GameFlag_TestFar(0x143))
+  if (GameFlag_TestFar(FLAG_ITEM_USED_UP))
     Inventory_RemoveFar(actor, slot);
   return result;
 }

@@ -124,7 +124,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     ownerStateDestination = gBattleOwnerStates;
     for (copyIndex = 0; copyIndex < LINK_OWNER_STATES_SIZE; copyIndex++)
       *ownerStateDestination++ = gActorSpriteSlots[copyIndex];
-    enemyCount = GameFlag_GetByteFar(0x3f0);
+    enemyCount = GameFlag_GetByteFar(FLAG_LINK_PARTY_COUNT);
     BattleParty_AssignMemberSlots();
     battle->battleType = FORMATION_SHUFFLED;
   }

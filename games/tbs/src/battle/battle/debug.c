@@ -295,7 +295,7 @@ restart:
       gGameState.special = (s32)&ResourceId_SuhallaGateBackdrop;
       if (encounter == DJINN_TUTORIAL_ENCOUNTER)
         GameFlag_SetBitFar(FLAG_DJINN_TUTORIAL);
-      GameFlag_SetBitFar(0x162);
+      GameFlag_SetBitFar(FLAG_DEBUG_BATTLE);
       Battle_RunEncounter(encounter);
       Ui_LoadWindowGraphics();
       DebugText_Clear();
@@ -304,7 +304,7 @@ restart:
       VramCache_Reset();
     }
   }
-  GameFlag_SetBitFar(0x162);
+  GameFlag_SetBitFar(FLAG_DEBUG_BATTLE);
   Battle_RunEncounter(DEBUG_FIRST_ENCOUNTER);
   goto restart;
 }

@@ -24,8 +24,6 @@ enum StepTileEvent {
   STEP_WARP_LAST = 254
 };
 
-#define STEP_FLAG_DOUBLE_SPEED 0x167
-
 // Clears the field's twelve pending requests (see struct FieldWork).
 void Field_ClearRequests(void) {
   s16 noRequest;
@@ -237,7 +235,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     // Encounters: the zone comes from the world map terrain, or from the
     // ground the leader stands on.
     encounterSpeed = leader->speedLimit;
-    if (GameFlag_TestFar(STEP_FLAG_DOUBLE_SPEED))
+    if (GameFlag_TestFar(FLAG_LURE_CAP))
       encounterSpeed <<= 1;
     if (work->mode == MODE_WORLD_MAP) {
       fullEncounterRate = 1;
@@ -449,5 +447,3 @@ void Battle_ClearObjectFlag5bWhenMode3(void) {
     work->camera->movementState = 0;
   }
 }
-
-#undef STEP_FLAG_DOUBLE_SPEED

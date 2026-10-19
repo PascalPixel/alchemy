@@ -323,7 +323,7 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
     GameFlag_ClearBitFar(0x144);
     GameFlag_ClearBitFar(0x161);
     GameFlag_ClearBitFar(0x123);
-    GameFlag_ClearBitFar(0x11c);
+    GameFlag_ClearBitFar(FLAG_NOT_ON_MAP);
     gGameState.returnCue = -1;
   }
   gGameState.sceneGroup = group;

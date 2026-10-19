@@ -117,7 +117,7 @@ static void ValeHome_UsePsynergyStone(void) {
   Engine_EventWait(10);
   Engine_MessageShowCentered(MsgValePartyPpRestored, 1);
   UiWork_FinalizePendingCore();
-  Engine_GameFlagClear(322);
+  Engine_GameFlagClear(FLAG_NOTHING_HAPPENS);
   Engine_EventEnd();
 }
 

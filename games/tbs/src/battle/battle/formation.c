@@ -103,7 +103,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   }
 
   targetLevel = levelTotal / unitCount;
-  targetLevel += (s8)GameFlag_GetByteFar(0x3f8);
+  targetLevel += (s8)GameFlag_GetByteFar(FLAG_MONSTER_BATTLE_WINS);
   if (targetLevel <= 0)
     targetLevel = 1;
   if (targetLevel > 99)
@@ -395,7 +395,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   levelAdjustment = 0;
   battle->summonCount = 0;
   enemyClasses = listBuffer;
-  if (GameFlag_TestFar(0x173))
+  if (GameFlag_TestFar(FLAG_MONSTER_BATTLE))
     recordId = BattleFormation_SelectLevelMatchedCandidate(&levelAdjustment);
   if (recordId < 0 || recordId >= FORMATION_COUNT)
     recordId = 1;

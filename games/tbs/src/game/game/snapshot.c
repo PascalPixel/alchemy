@@ -25,8 +25,8 @@ void Inventory_AddAndEquip(s32 owner, s32 itemId) {
 
 // Saves the first four characters' inventories, shortcuts and party order,
 // then keeps only the Psynergy-granting items (type 6), gives Isaac the Short
-// Sword (item 16), sets flag 0x952 and restores everyone. Nothing happens when
-// a snapshot is already saved, apart from the restore.
+// Sword (item 16), sets FLAG_INVENTORY_SNAPSHOT and restores everyone. Nothing
+// happens when a snapshot is already saved, apart from the restore.
 void InventorySnapshot_Save(void) {
   u16 *save;
   struct BattleUnit *unit;
@@ -68,7 +68,7 @@ void InventorySnapshot_Save(void) {
     save[1] = inventory[1];
 #endif
     Inventory_AddAndEquip(0, 16);
-    GameFlag_SetBit(0x952);
+    GameFlag_SetBit(FLAG_INVENTORY_SNAPSHOT);
   }
   Party_RestoreHpPp(1);
 }
@@ -108,7 +108,7 @@ void InventorySnapshot_Restore(void) {
 #endif
     source = gInventorySnapshot;
     *source = 0;
-    GameFlag_ClearBit(0x952);
+    GameFlag_ClearBit(FLAG_INVENTORY_SNAPSHOT);
   }
 }
 

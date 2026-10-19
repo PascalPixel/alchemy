@@ -49,6 +49,7 @@
 #include "battle_calc.h"
 #include "field_obj.h"
 #include "heap_state.h"
+#include "flags.h"
 
 // English menu entries 48..51 establish the four shop actions.
 enum ShopAction {

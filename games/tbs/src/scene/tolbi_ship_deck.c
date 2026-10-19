@@ -950,7 +950,7 @@ s32 TolbiShipDeck_Initialize(void) {
   u8 **base = ((u8 **)gMapWork);
   u8 *map = base[0] + 0x104;
 
-  Engine_GameFlagClear(0x11c);
+  Engine_GameFlagClear(FLAG_NOT_ON_MAP);
   *(s32 *)(base[19] + 0x1c0) = 0x209;
   *(s32 *)(map + 0x1c) = 0;
   sSwayAngleX = (u16)Engine_RandomNext();

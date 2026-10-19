@@ -77,8 +77,7 @@ static void WorldMap_RunOpeningRise(void);
 static void WorldMap_UpdateAirborneTravelTimer(void);
 static void WorldMap_PlayLighthouseTransition(s32 palette);
 
-// Battle-start kinds, as in battle/party/party.c.
-
+// The one actor placed for entrance 75, which travels north to exit 110.
 #define ACTOR 8
 
 enum {
@@ -1972,7 +1971,7 @@ static void WorldMap_MoveActorEightToExit(void) {
   Actor_SetPosition(ACTOR, PIXELS(4872), PIXELS(808));
   actor = Actor_Get(ACTOR);
   {
-    s32 value = 0xa000;
+    s32 value = FACING_NORTHWEST;
 
     actor->facing = value;
   }

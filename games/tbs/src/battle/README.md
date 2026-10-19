@@ -6,6 +6,9 @@ does to its targets, and how the battle shows it. The effects drawn over a
 battle are in `../effect`; the command menu and the party's status window are
 in `../window`; the arithmetic of damage and success rates is in `../game`.
 
+See also: [Battle effects](../effect/README.md), what is drawn while an
+action plays, and [Game rules](../game/README.md), the tables abilities read.
+
 ## Files
 
 | File | What it holds |
@@ -67,23 +70,44 @@ elsewhere keep its prefix: `Camera_`, `Palette_`, `Graphics_`, `Runtime_`,
 too little or the wrong thing (the `Summon_` getters read the enemy class
 table); renaming them crosses folders, so each is its own commit.
 
-## Spellings
+The spellings some sites keep to match, and the `FAKEMATCH` tags, are in
+[Matching](../MATCHING.md).
 
-Each site keeps the spelling it matches with:
+## Design
 
-- An action slot's first halfword is cleared through a cast,
-  `*(u16 *)&member->actionSlots[i] = 0`, where the field store loads its
-  zero differently ([`battle/debug.c`](battle/debug.c)).
-- `BLEND_ALPHA(16, 16) - step` and `step + BLEND_ALPHA(0, 16)` where the
-  macro's `|` form changes the code (`background.c`).
-- Work slots are read as `WORK_SLOT(n)`, as `gWorkSlot[n]`, or through
-  `(void **)&gCameraWork` and `(void **)&gBattleWork` indexed past them,
-  which is undefined behaviour with its defined form behind `UBFIX`.
+### Outcomes are worked out while the effect plays
 
-`FAKEMATCH(kind)` tags mark the devices that steer the compiler towards the
-original instructions (an unused variable, a block that runs once), each with
-its measured difference in tbs-en: the instructions of the function that the
-plain form changes.
+An effect is a function that keeps the CPU until it is over (see
+[Battle effects](../effect/README.md)), so the battle cannot show a hit or a
+message from its own code while the effect runs. It does that from a task
+instead. `BattlePresentation_DispatchAction` ([`battle/staging.c`](battle/staging.c))
+schedules `BattleEvent_Playback` ([`battle/playback.c`](battle/playback.c)),
+then runs the effect, then waits in `BattleEventRuntime_WaitForReady` until
+playback is done.
+
+Playback is idle until the effect says the blow lands: most effects call
+`EFFECT_SHOW_DAMAGE(hitSound)` at that frame (56 of the 66 parts do), which
+starts it with the hit's sound. If an effect never does, the wait after it
+starts playback instead. From then on, once a frame, the task works through
+the targets one at a time: it runs `BattleTargetExec` for the next target,
+which changes the target's HP, statuses and the rest and queues what should
+be shown, and then plays that target's queue over the following frames
+before it moves to the next.
+
+The queue (`struct BattleEventQueue`, up to 64 events) is the boundary
+between the rules and the show. `BattleTargetExec` never draws or waits; it
+pushes events with `BattleEvPush`: the names and numbers a message needs,
+then the message, then the flinch, the defeat, the status redraw, a sound.
+The order is the order the player sees them, and a message's arguments
+always come before it, because the message takes them from the window
+system's argument table when it is decoded. The same queue can also be
+played at once, without frames between events, by `BattleEv_DispatchQueued`,
+which is how outcomes outside an effect are shown: a cast that is blocked or
+lacks PP, for example (`staging.c`).
+
+So the effect decides when damage appears, the rules decide what it is, and
+neither waits for the other: the arithmetic of a later target happens while
+the effect is still drawing, and only once its turn in the queue comes.
 
 ## How a battle runs
 
@@ -181,3 +205,19 @@ The battle code calls the formulas by their far-call names, which
 - Party unit ids are 0 to 7 and enemy unit ids start at 128.
 - 380 enemy groups in `formatn.tsv`; the encounter zones in
   `games/tbs/src/object/encounter.tsv` choose among them.
+
+## Evidence and open questions
+
+The abilities, enemies and groups are named from the `ability`, `enemy` and
+label columns of their tables, which follow the English release's text; the
+formulas from what `battle_calc.c` computes; the event opcodes from what
+playback does with each.
+
+Still unknown:
+
+- XXX: several older names say too little or the wrong thing (the `Summon_`
+  getters read the enemy class table); renaming them crosses folders.
+- XXX: bits 0 and 1 of an ability's staging flags (`STAGING_ON_DOWNED`,
+  `STAGING_OTHER_SIDE`) are read but no row of `actflags.tsv` sets them.
+- XXX: what reaches `BattleEvent_Playback` for the ten effect parts that never
+  call `EFFECT_SHOW_DAMAGE`, beyond the wait after the effect.

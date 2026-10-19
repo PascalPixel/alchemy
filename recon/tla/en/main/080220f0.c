@@ -1,34 +1,25 @@
-// Draft of Render_ApplyProjectedPlacement: differ 214 of 258 (tla-en,
-// 2026-10-15; the earlier draft, The Broken Seal's C as it stands, was at
-// 332). The Broken Seal's function of the same name
-// (games/tbs/src/field/field.c) as The Lost Age reworked it: the object
-// keeps its shadow's sprite after its own fields (so the shared
-// AnimationObject does not fit), the shadow is an 8 by 4 sprite at a fixed
-// offset, the sprite's anchor turns with the object (sine and cosine of its
-// rotation), a zero scale draws nothing, and both sprites go into the depth
-// list by their depth (Func_080140d8). The twin's two unused arrays stay:
-// they make the native 64-byte frame.
+// Near miss of Render_ApplyProjectedPlacement: differ 8 of 258 (four
+// reordered pairs; 214 before this pass, 332 as The Broken Seal's C). The
+// Broken Seal's function of the same name (games/tbs/src/field/field.c) as The
+// Lost Age reworked it: the object keeps its shadow's sprite after its own
+// fields (so the shared AnimationObject does not fit), the shadow is an 8 by 4
+// sprite at a fixed offset, the sprite's anchor turns with the object (sine and
+// cosine of its rotation), a zero scale draws nothing, and both sprites go into
+// the depth list by their depth (Func_080140d8). The twin's two unused arrays
+// stay: they make the native 64-byte frame.
 
-// Left: allocation. The native keeps the flip in ip, the scales in r6 and
-// r5 and the ground height in r8, with x, y and z at sp+12, sp+8 and sp+4;
-// here the flip takes r6 and the spills sit one word higher, which moves
-// every register after it. Tried: the scales read before the position
-// (216), the transform declared first (216).
+// Left: the native copies the object to r0 for the frame call before it
+// loads scaleX, loads the flags byte before the shadow's height shift, and
+// reloads affine before building -4 but builds -63 before loading the
+// attribute byte; each the other way here. The allocation came from the
+// locals declared in the order of the native's spill slots (matrix at
+// sp+28 down to pz at sp+4) and the anchor products written value times
+// scale (differ 192 to 30), then the part pin below (8).
 
 #include "types.h"
+#include <affine.h>
 #include "animspr.h"
 #include "iwram_call.h"
-
-// games/tla/include/affine.h's transform, written out: the stale affine.h
-// beside these drafts would shadow it.
-struct AffineTransform {
-  u16 scaleX;
-  u16 scaleY;
-  u16 angle;
-  u16 unk06;
-};
-
-s32 AffineMatrix_BuildForEffect(struct AffineTransform *transform);
 
 // The Lost Age's animation object: The Broken Seal's fields with the
 // shadow's sprite moved after them.
@@ -63,27 +54,35 @@ s32 Trig_Cos(s32 angle);
 // scale[1]; the sprites go into the depth list by their depth.
 void Render_ApplyProjectedPlacement(struct PlacedObject *object, s32 *pos,
                                     s32 *scale, s32 mode) {
-  u32 halfWidth = object->width >> 1;
-  u32 halfHeight = object->height >> 1;
-  s32 scaleX = *scale++;
-  s32 px = *pos++;
-  s32 scaleY = *scale;
-  s32 py = *pos++;
-  s32 pz = *pos++;
-  s32 pw = *pos;
+  s32 matrix;
+  u32 halfWidth;
+  u32 halfHeight;
+  s32 affine;
+  s32 px;
+  s32 py;
+  s32 pz;
+  s32 pw;
+  s32 scaleX;
+  s32 scaleY;
   /* FAKEMATCH: unused, as in The Broken Seal: the two arrays supply 24
    * bytes of the native 64-byte frame. */
   s32 ground[3];
   s32 screen[3];
   s32 flip;
-  s32 affine;
-  s32 matrix;
   struct AffineTransform effect;
   s32 anchorX;
   s32 anchorY;
   s32 x;
   s32 y;
 
+  halfWidth = object->width >> 1;
+  halfHeight = object->height >> 1;
+  scaleX = *scale++;
+  scaleY = *scale;
+  px = *pos++;
+  py = *pos++;
+  pz = *pos++;
+  pw = *pos;
   flip = Func_08021a84(object, mode);
   if (flip == 0 && scaleX == 0x10000 && scaleY == scaleX &&
       object->rotation == 0) {
@@ -120,13 +119,13 @@ void Render_ApplyProjectedPlacement(struct PlacedObject *object, s32 *pos,
 
   // The anchor, scaled, and turned with the object.
   if (object->rotation == 0) {
-    anchorX = scaleX * object->offsetX;
-    anchorY = scaleY * ((object->height >> 1) - object->offsetY);
+    anchorX = object->offsetX * scaleX;
+    anchorY = ((object->height >> 1) - object->offsetY) * scaleY;
   } else {
     s32 sin = Trig_Sin(object->rotation);
     s32 cos = Trig_Cos(object->rotation);
-    s32 offsetX = scaleX * object->offsetX;
-    s32 offsetY = scaleY * ((object->height >> 1) - object->offsetY);
+    s32 offsetX = object->offsetX * scaleX;
+    s32 offsetY = ((object->height >> 1) - object->offsetY) * scaleY;
 
     anchorX = Iwram_MulQ16(cos, offsetX) + Iwram_MulQ16(sin, offsetY);
     anchorY = Iwram_MulQ16(cos, offsetY) - Iwram_MulQ16(sin, offsetX);
@@ -134,7 +133,10 @@ void Render_ApplyProjectedPlacement(struct PlacedObject *object, s32 *pos,
   x = (px >> 16) - halfWidth + ((anchorX + 0xffff) >> 16);
   y = ((pz - py) >> 16) - halfHeight - ((anchorY + 0xffff) >> 16);
   if (x < 240 && y < 160) {
-    struct AnimationSpritePart *part = &object->part;
+    /* FAKEMATCH: the part is pinned to the r0 the native addresses its
+     * attributes through (differ 192 without it: the stores go through r7 and
+     * the whole allocation shifts). */
+    register struct AnimationSpritePart *part asm("r0") = &object->part;
 
     part->x = x;
     part->y = y;

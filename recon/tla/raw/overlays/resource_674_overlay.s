@@ -3626,58 +3626,6 @@ Func_02002430:
 	.4byte gData_02005198
 .L_0200a4c4:
 	.4byte gData_02005190
-	.section .text.x0200a53c,"ax",%progbits
-	.global Func_0200253c
-	.thumb_func
-Func_0200253c:
-	push {r5, r6, r7, lr}
-	ldr r3, .L_0200a598
-	movs r2, #128
-	ldr r3, [r3]
-	ands r3, r2
-	cmp r3, #0
-	beq .L_0200a596
-	ldr r3, .L_0200a59c
-	movs r2, #133
-	lsls r2, r2, #2
-	adds r7, r3, r2
-	ldr r0, [r7]
-	ldr r5, .L_0200a5a0
-	bl Object_GetById
-	ldrh r3, [r5]
-	movs r2, #255
-	lsls r2, r2, #8
-	adds r2, #246
-	adds r3, r3, r2
-	movs r2, #200
-	lsls r3, r3, #16
-	lsls r2, r2, #16
-	adds r6, r0, #0
-	cmp r3, r2
-	bls .L_0200a596
-	bl Func_02003e64
-	adds r5, r6, #0
-	movs r0, #0
-	bl Func_02003fa4
-	adds r5, #85
-	movs r3, #0
-	strb r3, [r5]
-	movs r2, #148
-	ldr r0, [r7]
-	movs r1, #72
-	lsls r2, r2, #1
-	bl ObjectMotion_SetPositionAndReset
-	movs r3, #3
-	strb r3, [r5]
-	bl Func_02003e6c
-.L_0200a596:
-	pop {r5, r6, r7, pc}
-.L_0200a598:
-	.4byte gInput
-.L_0200a59c:
-	.4byte gPartyState
-.L_0200a5a0:
-	.4byte gSceneState
 	.section .text.x0200a830,"ax",%progbits
 	.global Func_02002830
 	.thumb_func

@@ -108,6 +108,12 @@
 #define FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS 0x917
 #define FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS 0x990
 #define FLAG_TOLBI_SHIP_REACHED_TOLBI 0x93e // "The ship has arrived safely"
+// Place flags (0x300 to 0x3ff), cleared when the party leaves the ship.
+#define FLAG_TOLBI_SHIP_ROWER_CHOSEN 0x300    // a passenger follows the party
+#define FLAG_TOLBI_SHIP_MONSTERS_ABOARD 0x301 // the hold's stairs are barred
+// "There's a huge sea monster on the ship!": the deck shakes until the
+// Kraken is defeated.
+#define FLAG_TOLBI_SHIP_KRAKEN_ABOARD 0x302
 
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
@@ -135,5 +141,7 @@
 #define FLAG_SCENE_TEMP_14 0x214 // Tret: lower middle southeast landing
 #define FLAG_SCENE_TEMP_50                                                     \
   0x250 // Vault interiors: the leader is beside the Bone
+#define FLAG_SCENE_TEMP_71 0x271 // Tolbi ship deck: the first door is open
+#define FLAG_SCENE_TEMP_72 0x272 // Tolbi ship deck: the second door is open
 
 #endif

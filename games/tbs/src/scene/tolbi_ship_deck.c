@@ -647,21 +647,21 @@ static void TolbiShipDeck_AskHeadedForColosso(void) {
   Engine_EventEnd();
 }
 
-// Opens the first door to below deck, once: flag 0x271 records it.
+// Opens the first door to below deck, once a visit.
 static void TolbiShipDeck_OpenFirstDoor(void) {
-  if (GameFlag_IsSet(0x271) == 0) {
+  if (GameFlag_IsSet(FLAG_SCENE_TEMP_71) == 0) {
     Event_PlayCue(158);
     Map_CopyCellsTo(30, 94, 13, 94, 1, 3);
-    GameFlag_Set(0x271);
+    GameFlag_Set(FLAG_SCENE_TEMP_71);
   }
 }
 
-// Opens the second door to below deck, once: flag 0x272 records it.
+// Opens the second door to below deck, once a visit.
 static void TolbiShipDeck_OpenSecondDoor(void) {
-  if (GameFlag_IsSet(0x272) == 0) {
+  if (GameFlag_IsSet(FLAG_SCENE_TEMP_72) == 0) {
     Event_PlayCue(158);
     Map_CopyCellsTo(30, 108, 13, 108, 1, 2);
-    GameFlag_Set(0x272);
+    GameFlag_Set(FLAG_SCENE_TEMP_72);
   }
 }
 
@@ -972,8 +972,8 @@ static void TolbiShipDeck_ApplyEntryState(void) {
 
   Engine_GameFlagSet(0x144);
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
-    Engine_GameFlagClear(0x271);
-    Engine_GameFlagClear(0x272);
+    Engine_GameFlagClear(FLAG_SCENE_TEMP_71);
+    Engine_GameFlagClear(FLAG_SCENE_TEMP_72);
   }
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
     TolbiShipDeck_CopyUnderwayCells();
@@ -1743,7 +1743,7 @@ static void TolbiShipDeck_ThankForKraken(void) {
   Actor_SetPosition(20, 0, 0);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   GameFlag_Set(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED);
-  GameFlag_Clear(0x302);
+  GameFlag_Clear(FLAG_TOLBI_SHIP_KRAKEN_ABOARD);
   Engine_EventEnd();
 }
 

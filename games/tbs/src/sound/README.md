@@ -4,6 +4,8 @@ This folder holds The Broken Seal's sound: the game's cue layer over the
 sound driver, and the driver itself, Nintendo's MusicPlayer2000 as this game
 links it.
 
+## Files
+
 | File | What it holds |
 | --- | --- |
 | `sound.c` | the cue layer: playing a cue (a song, a sound effect, a fanfare or a fade), the music's volume, tempo and pitch ramps, the fanfare's return to the music, and the audio test |
@@ -21,7 +23,7 @@ Link order is in `games/tbs/objects.tsv`. The unit headers are in
 `games/tbs/include/unit/sound/`, the driver's structures in
 `games/tbs/include/sound`.
 
-## Words used here
+## Words
 
 - **cue**: the number the game plays (`AudioCommand_Play`): a song, a sound
   effect, a fanfare that pauses the music and returns to it, or a fade

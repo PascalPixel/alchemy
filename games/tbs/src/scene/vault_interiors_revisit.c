@@ -30,6 +30,8 @@ enum {
   ACTOR_CHILD = 11,           // "Daddy hasn't been paying attention"
   ACTOR_COLOSSO_HUSBAND = 12, // would like to see Colosso once more
   ACTOR_COLOSSO_WIFE = 13,
+  ACTOR_MAYOR = 16, // before the theft was solved, his wife called him that
+  ACTOR_MAYORS_WIFE = 17,
   ACTOR_COOK = 23, // did some cooking and has bones to spare
   ACTOR_VAULT_BONE_GIVER = 18,
   ACTOR_VAULT_WEAPON_MERCHANT = 19,
@@ -42,7 +44,7 @@ enum {
   VAULT_INN = 1
 };
 
-// Set once the villager has told Isaac the thieves escaped from jail.
+// Set once the mayor has told Isaac the thieves escaped from jail.
 enum { FLAG_WELCOMED_BACK = FLAG_SCENE_TEMP_00 + 0x100 };
 
 // Shared scene routines stay in their linked order.
@@ -102,25 +104,25 @@ static void Event_HusbandLongsForColosso(void) {
                                      MsgVaultItsNearTimeForColosso);
 }
 
-// A villager welcomes Isaac back: the thieves he caught escaped from jail.
+// The mayor welcomes Isaac back: the thieves he caught escaped from jail.
 // Asked whether the party has met them, a yes and a no get different warnings.
 static void Event_WelcomeIsaacBack(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultIsaacYouveComeBackVault);
-  Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
-  Engine_ActorSetAnimation(16, 1);
-  Event_ShowMessageAndWait(16, 0, 20);
-  Engine_ActorSetAnimationAndWait(16, ANIM_SHAKE_HEAD);
+  Engine_ActorFaceEachOther(ACTOR_MAYOR, ACTOR_PARTY_LEADER, 2);
+  Engine_ActorSetAnimation(ACTOR_MAYOR, ANIM_STAND);
+  Event_ShowMessageAndWait(ACTOR_MAYOR, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_MAYOR, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(16, 0, 20);
-  Actor_ShowEmote(16, EMOTE_IN_FRONT | 2, 60);
-  Event_ShowMessageAndWait(16, 0, 30);
+  Event_ShowMessageAndWait(ACTOR_MAYOR, 0, 20);
+  Actor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | 2, 60);
+  Event_ShowMessageAndWait(ACTOR_MAYOR, 0, 30);
   // The negative answer advances to the next message before continuing.
-  Event_OpenMessage(16, 0);
+  Event_OpenMessage(ACTOR_MAYOR, 0);
   if (Engine_EventChooseYesNo(0, 0) != 0) {
     gEventWork->message++;
   }
-  Event_ShowMessageAndWait(16, 0, 20);
+  Event_ShowMessageAndWait(ACTOR_MAYOR, 0, 20);
   GameFlag_Set(FLAG_WELCOMED_BACK);
   GameFlag_Set(0x868);
   Engine_EventEnd();
@@ -128,7 +130,8 @@ static void Event_WelcomeIsaacBack(void) {
 
 // After the welcome: those thieves really wanted revenge, so take care.
 static void Event_WarnOfThievesRevenge(void) {
-  VaultInteriorsRevisit_FaceAndSpeak(16, MsgVaultThoseGuysReallyWantedRevenge);
+  VaultInteriorsRevisit_FaceAndSpeak(ACTOR_MAYOR,
+                                     MsgVaultThoseGuysReallyWantedRevenge);
 }
 
 // The cook has useless bones left from cooking and asks if the party wants
@@ -179,22 +182,22 @@ static void Event_OfferBones(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the villager before the welcome: he notices and welcomes Isaac
+// Mind Read on the mayor before the welcome: he notices and welcomes Isaac
 // back.
 static void Event_ReadMindAndWelcomeIsaacBack(void) {
   u8 *paused;
   u8 unpaused = 0;
 
   Engine_EventBegin();
-  Engine_ActorRunRepeatedMotion(16, 1);
+  Engine_ActorRunRepeatedMotion(ACTOR_MAYOR, 1);
   Engine_EventEnd();
   // Keep the actor paused through the conversation, then resume action 2.
-  paused = &Object_GetById(16)->paused;
+  paused = &Object_GetById(ACTOR_MAYOR)->paused;
   *paused = 1;
   Event_WelcomeIsaacBack();
-  paused = &Object_GetById(16)->paused;
+  paused = &Object_GetById(ACTOR_MAYOR)->paused;
   *paused = unpaused;
-  Actor_SetBuiltinAction(16, 2);
+  Actor_SetBuiltinAction(ACTOR_MAYOR, 2);
 }
 
 // Shared Bone-item dialogue follows the actor conversations.
@@ -386,41 +389,41 @@ struct SceneEvent gVaultInteriorsRevisit_Events[] = {
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 10 },
     { EVENT_EXIT, 7, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 12 },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgVaultWaahACatAteMyPrecious) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WifeSawCatTakeGem) },
+    { EVENT_TALK, ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultWaahACatAteMyPrecious) },
+    { EVENT_TALK, ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WifeSawCatTakeGem) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgVaultThePrisonersSaidTheyWantedTo) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ChildDoubtsThievesWereFromLunpa) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HusbandLongsForColosso) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgVaultTheWarriorsISawFightingAt) },
-    { EVENT_TALK, 16, FLAG_WELCOMED_BACK, EVENT_SCRIPT(Event_WelcomeIsaacBack) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WarnOfThievesRevenge) },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgVaultTheMayorsFamilyUrnIsOn) },
+    { EVENT_TALK, ACTOR_CHILD, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ChildDoubtsThievesWereFromLunpa) },
+    { EVENT_TALK, ACTOR_COLOSSO_HUSBAND, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HusbandLongsForColosso) },
+    { EVENT_TALK, ACTOR_COLOSSO_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultTheWarriorsISawFightingAt) },
+    { EVENT_TALK, ACTOR_MAYOR, FLAG_WELCOMED_BACK, EVENT_SCRIPT(Event_WelcomeIsaacBack) },
+    { EVENT_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WarnOfThievesRevenge) },
+    { EVENT_TALK, ACTOR_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultTheMayorsFamilyUrnIsOn) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgVaultThoseThievesYouGoToAll) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgVaultIHearThatABigFestival) },
-    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponMerchant) },
-    { EVENT_TALK, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorMerchant) },
-    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemMerchant) },
-    { EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
-    { EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgVaultWeDontGetALotOf) },
-    { EVENT_TALK, 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OfferLeftoverBones) },
-    { EVENT_TALK, 18, FLAG_SCENE_TEMP_50, EVENT_SCRIPT(Event_OfferBones) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgVaultIfIdKnownThisWasGoing) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgVaultMyHusbandSaysMyCatAte) },
+    { EVENT_TALK, ACTOR_VAULT_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponMerchant) },
+    { EVENT_TALK, ACTOR_VAULT_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorMerchant) },
+    { EVENT_TALK, ACTOR_VAULT_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemMerchant) },
+    { EVENT_TALK, ACTOR_VAULT_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
+    { EVENT_TALK, ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgVaultWeDontGetALotOf) },
+    { EVENT_TALK, ACTOR_COOK, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OfferLeftoverBones) },
+    { EVENT_TALK, ACTOR_VAULT_BONE_GIVER, FLAG_SCENE_TEMP_50, EVENT_SCRIPT(Event_OfferBones) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultIfIdKnownThisWasGoing) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultMyHusbandSaysMyCatAte) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgVaultWhyDoYouSupposeThoseThieves) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgVaultDaddyHasntBeenPayingAttentionSince) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgVaultWheneverMyWifeUsedToGo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgVaultLatelyMyHusbandsBeenGoingOn) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD, CONDITION_ALWAYS, MSGNO(MsgVaultDaddyHasntBeenPayingAttentionSince) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COLOSSO_HUSBAND, CONDITION_ALWAYS, MSGNO(MsgVaultWheneverMyWifeUsedToGo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COLOSSO_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultLatelyMyHusbandsBeenGoingOn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x410, FLAG_WELCOMED_BACK, EVENT_SCRIPT(Event_ReadMindAndWelcomeIsaacBack) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgVaultAsLongAsWeStayAlert) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgVaultWellBeSecuringItInA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYOR, CONDITION_ALWAYS, MSGNO(MsgVaultAsLongAsWeStayAlert) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultWellBeSecuringItInA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgVaultItsJustEmbarrassingThatWeLet) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgVaultILoveFestivalsIllBetColosso) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgVaultJustImagineHowTerribleItWould) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgVaultItsAGoodThingThatGiant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgVaultWhyKeepTheStoreOpenIf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgVaultWontAnyoneComeStayTheNight) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgVaultAfterYouveBeenInThisBusiness) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadBoneGiverMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultJustImagineHowTerribleItWould) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultItsAGoodThingThatGiant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultWhyKeepTheStoreOpenIf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgVaultWontAnyoneComeStayTheNight) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgVaultAfterYouveBeenInThisBusiness) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_BONE_GIVER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadBoneGiverMind) },
     { SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_FindBone) },
     { SEARCH(SEARCH_JAR), 100, FLAG_VAULT_INTERIORS_JAR_COINS, FIND_COINS(7) },
     { SEARCH(SEARCH_BARREL), 101, FLAG_VAULT_INTERIORS_BARREL_COINS, FIND_COINS(4) },

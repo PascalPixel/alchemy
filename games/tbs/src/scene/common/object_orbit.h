@@ -1,5 +1,12 @@
 #include "orbit.h"
+#include "flags.h"
 
+// Crossbone Isle, Kalay, Kolima's forest clearing, Lunpa, McCoy's palace
+// garden, Mogall Forest and Vale: a Nut floating where it lies, until it is
+// taken.
+
+// The Nut's callback, each frame: it sways up to two pixels either side of its
+// spot and dips up to two pixels below it, at a random pace.
 static s32 SceneEffect_UpdateOrbitPosition(s32 *p) {
   s16 *q = (s16 *)p[20];
   s32 a, b;
@@ -15,6 +22,8 @@ static s32 SceneEffect_UpdateOrbitPosition(s32 *p) {
   return 0;
 }
 
+// Draw actor id as the Nut's icon and start it floating, 32 pixels up unless
+// the party returns to where it was.
 void InitializeStagedActorSceneOrbitingEffect(s32 id) {
   OrbitingSceneObject *actor;
   OrbitingSceneObjectSprite *sprite;
@@ -29,11 +38,11 @@ void InitializeStagedActorSceneOrbitingEffect(s32 id) {
 
   zero = 0;
   sprite->state = zero;
-  Engine_ActorSetSpriteFlags(actor, zero);
+  Engine_ActorSetSpriteFlags((struct FieldActor *)actor, zero);
   actor->active = zero;
   actor->mode = zero;
 
-  if (Engine_GameFlagIsSet(0x109) == 0)
+  if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0)
     actor->y += 0x200000;
 
   actor->flags23 &= 0xfe;

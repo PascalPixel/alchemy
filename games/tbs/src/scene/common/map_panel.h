@@ -3,6 +3,13 @@
 #include "map.h"
 #include "io_reg.h"
 
+// Crossbone Isle's pillar rooms and Kolima's forest bend: drawing a stretch of
+// the map, in one of the states kept elsewhere in it (such as the water
+// raised or not), straight into the background's tile map.
+
+// Draw the width by height cells at cell (x, y) of the map into screen block 5
+// from cell (destX, destY), wrapped to 16 by 16 cells, in band plane (16 cell
+// rows each): each cell is its block's tiles from Ram_MapBlocks.
 static void Map_DrawCellPanel(s32 x, s32 y, s32 width, s32 height, s32 plane,
                               s32 destX, s32 destY) {
   u32 *cell = (u32 *)Ram_MapCellBuffer + (y * 128 + x);
@@ -27,13 +34,9 @@ static void Map_DrawCellPanel(s32 x, s32 y, s32 width, s32 height, s32 plane,
         dst = (u32 *)(BG_SCREEN_BLOCK(5) + 64) + index;
         *dst = *src;
 
-        /* FAKEMATCH: forced temporary: end takes the bound where the loop tests
-         * it, apart from the guard's destX + width, and the allocation follows
-         * the bytes. Plain forms measured 2026-10-13 in both scenes that
-         * include this file: ++col < destX + width differ 26 (the bound in r3
-         * instead of r2 and the block addresses loaded in another order); col++
-         * as its own expression differ 26; a for loop over col differ 26; end
-         * set once before the guard and tested by both differ 54. */
+        /* FAKEMATCH(temporary): end takes the bound where the loop tests it,
+         * apart from the guard's destX + width; as ++col < destX + width, 12
+         * of 80 instructions differ in tbs-en. */
       } while (end = destX + width, ++col < end);
     cell += 128 - width;
   }

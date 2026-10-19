@@ -1,19 +1,24 @@
+// Sol Sanctum's corridor and maze: the scenes' initialization.
 #include "types.h"
 #include "field_obj.h"
+#include "songs.h"
 
+// The scene opens in the window transition over 16 frames. Once Mt. Aleph has
+// erupted (flag 0x814), the rooms rumble (SE_141), the map shakes without end
+// and sparkles start.
 s32 Scene_InitSceneRequestAndCameraZoom(void) {
-  struct Resource37deSceneRuntime *runtime;
+  struct FieldWork *work;
 
-  s32 zoomX = 0x10000;
-  s32 zoomY = 0x10000;
-  s32 zoomZ = 0x10000;
+  s32 shakeX = 0x10000;
+  s32 shakeY = 0x10000;
+  s32 shakeDecay = 0x10000;
 
-  runtime = (struct Resource37deSceneRuntime *)gEventWork;
-  runtime->sceneRequest1c0 = 0x204;
-  runtime->sceneSetupWord1c8 = 0x10;
+  work = (struct FieldWork *)gEventWork;
+  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  work->transitionFrames = 16;
   if (Engine_GameFlagIsSet(0x814) != 0) {
-    QueueSceneSound(0x8D);
-    Engine_WorkSetValuesIfNonNegative(zoomX, zoomY, zoomZ);
+    QueueSceneSound(SE_141);
+    Engine_WorkSetValuesIfNonNegative(shakeX, shakeY, shakeDecay);
     InitializeSceneRecordBuffer();
   }
   return 0;

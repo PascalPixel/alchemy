@@ -1,6 +1,16 @@
+// Vault, before and after the thieves are caught: the two villagers who walk
+// about together (actors 14 and 15).
 #include "types.h"
 #include "field_obj.h"
 
+// The update hook of actors 14 and 15. Their timer holds two bits: bit 0
+// picks the partner (set for actor 14, whose partner is 15; clear for 15) and
+// bit 1 is set while the party talks to them. A villager stops when close to
+// and facing its partner, and otherwise when the leader is within 18 pixels in
+// front of it. While the window work's word at 376 or the render mode is set
+// the range is 26 pixels, and a villager being talked to stops whichever way
+// it faces.
+//
 // UB: update hooks return void. In tbs-en vault_revisit, plain
 // void differs in 13 bytes of the 152-byte function. Keep the unused
 // native result in matching builds.

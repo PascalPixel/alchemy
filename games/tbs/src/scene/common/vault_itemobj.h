@@ -1,34 +1,40 @@
+// Vault's interiors, before and after the thieves are caught: an item lying on
+// the floor, drawn as its menu icon (the Bone, at (568, 16, 672)).
 #include "types.h"
 #include "field_obj.h"
 #include "field_event.h"
 
-void OverlayObject_ConfigureObject22WithResource17(s32 a, s32 fixed_x,
+// Create object 22 at the 16.16 position and draw it as the item's icon: the
+// sprite's own animation is stopped (flags and count 0, 16-colour, palette 0),
+// the object stays put (motionFlags 0), and the icon's tiles, decoded into heap
+// block 17, are loaded into the sprite's VRAM block.
+void OverlayObject_ConfigureObject22WithResource17(s32 item, s32 fixed_x,
                                                    s32 fixed_y, s32 fixed_z) {
-  u8 *o;
-  u8 *q;
-  u8 *p;
-  u8 *v;
-  s32 z;
-  s32 m;
+  u8 *object;
+  u8 *sprite;
+  u8 *field;
+  u8 *icon;
+  s32 zero;
+  s32 mask;
 
-  z = 0;
-  o = (u8 *)Engine_ObjectCreate(22, fixed_x, fixed_y, fixed_z);
-  if (o != 0) {
-    q = (u8 *)((struct FieldActor *)o)->sprite;
-    p = q + 38;
-    *p = z;
-    p += 1;
-    *p = z;
-    m = 33;
-    m = -m;
-    q[5] &= m;
-    q[9] &= 15;
-    o[0x55] = z;
-    o[0x5c] = 1;
-    v = Engine_HeapAllocate(17, 0x608);
-    Engine_ItemLoadIcon(a);
-    v += 0x400;
-    Engine_VramLoad(q[28], 0x80, v);
+  zero = 0;
+  object = (u8 *)Engine_ObjectCreate(22, fixed_x, fixed_y, fixed_z);
+  if (object != 0) {
+    sprite = (u8 *)((struct FieldActor *)object)->sprite;
+    field = sprite + 38; // flags, then count
+    *field = zero;
+    field += 1;
+    *field = zero;
+    mask = 33;
+    mask = -mask; // ~32: image.fullColor
+    sprite[5] &= mask;
+    sprite[9] &= 15;     // image.palette
+    object[0x55] = zero; // motionFlags
+    object[0x5c] = 1;
+    icon = Engine_HeapAllocate(17, 0x608);
+    Engine_ItemLoadIcon(item);
+    icon += 0x400;
+    Engine_VramLoad(sprite[28], 0x80, icon); // sprite->slot
     Engine_HeapRelease(17);
   }
 }

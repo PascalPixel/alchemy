@@ -1,6 +1,13 @@
 #include "types.h"
 #include "field_obj.h"
 
+// Tunnel Ruins and Venus Lighthouse: blocks the leader can stand beside, behind
+// or on.
+
+// An update hook: draw the block under the actors (ACTOR_PRIORITY_UNDERFOOT)
+// unless the leader is north of it and no higher than its height plus their
+// distance and 4 pixels, that is, behind it rather than on it.
+//
 // UB: update hooks return void. In tbs-en venus_lighthouse, plain
 // void differs in 7 bytes (extent 70 to 68 bytes). Keep the
 // unused native result in matching builds.
@@ -17,16 +24,16 @@ SceneActor_SetFlagBitByRelativeDepth(union FieldObject *fieldObject) {
   u8 flag;
   ref = Object_GetById(ACTOR_PARTY_LEADER);
   fp = &actor->priorityFlags;
-  flag = *fp | 2;
+  flag = *fp | ACTOR_PRIORITY_UNDERFOOT;
   *fp = flag;
   if (ref->z.fixed < actor->z.fixed) {
     s32 lim = actor->z.fixed - ref->z.fixed;
     s32 ay;
-    lim += 0x00040000;
+    lim += PIXELS(4);
     ay = actor->y.fixed;
     ay += lim;
     if (ref->y.fixed <= ay) {
-      flag &= 0xfd;
+      flag &= ~ACTOR_PRIORITY_UNDERFOOT;
       *fp = flag;
     }
   }
@@ -37,6 +44,8 @@ SceneActor_SetFlagBitByRelativeDepth(union FieldObject *fieldObject) {
 #endif
 }
 
+// Unless actor first is south of actor second, swap their positions and wait a
+// frame.
 static void SceneActor_SwapPositionsByDepth(s32 first, s32 second) {
   struct FieldActor *a = Object_GetById(first);
   struct FieldActor *b = Object_GetById(second);

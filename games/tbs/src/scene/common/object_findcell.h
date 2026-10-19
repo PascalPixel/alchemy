@@ -1,6 +1,9 @@
 #include "types.h"
 #include "field_obj.h"
 
+// Bilibin, its cave, Kalay and Sol Sanctum's entrance.
+
+// Return the placed actor (8 to 65) standing on cell (x, z), or 0.
 static struct FieldActor *SceneActor_FindActorAtCell(s32 x, s32 z) {
   struct FieldActor **actors = gEventWork->placedActors - 8;
   u32 i;

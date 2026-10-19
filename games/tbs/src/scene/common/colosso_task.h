@@ -22,6 +22,29 @@
 #include "io_reg.h"
 #include "io_write_queue.h"
 
+// The Colosso finals' three courses (Colosso Log, River and Wall): the large
+// lettering a race starts with ("Match 1", "3", "2", "1", "Go!"), from the
+// pictures of games/tbs/src/graphics/colosso/lettering.tsv, in this order:
+// 0 Lend a Hand, 1 to 3 Match 1 to 3, 4 Won and Lose, 5 the 3 and the 2,
+// 6 the 1 and 7 Go. Each picture is 0x400 bytes of tiles after the palettes.
+//
+// The lettering moves by a script of 16-bit words, a command and its values:
+enum ColossoLetteringCommand {
+  // x, speed: put the lettering at x pixels from the centre, moving at speed
+  // 256ths of a pixel a frame
+  COLOSSO_LETTERING_PLACE = 0x4000,
+  // speed, frames: change the speed over that many frames
+  COLOSSO_LETTERING_ACCELERATE = 0x3000,
+  // scale, frames: grow or shrink to scale (256 is its own size)
+  COLOSSO_LETTERING_SCALE = 0x1000,
+  // weight, frames: fade to weight sixteenths over the screen
+  COLOSSO_LETTERING_FADE = 0x2000,
+  // frames: run the moves for that many frames before the next command
+  COLOSSO_LETTERING_WAIT = 0x7fff,
+  // remove the lettering and free its VRAM block
+  COLOSSO_LETTERING_END = -1
+};
+
 static __inline__ void Dma_Wait(volatile u32 *dma) {
   while (dma[2] & 0x80000000)
     ;
@@ -39,6 +62,9 @@ extern s16 gColosso_ModeTaskParam;
 extern s32 gColosso_ModeTaskPosition;
 extern s16 *gColosso_ModeTaskScript;
 
+// Load lettering picture id into the lettering's VRAM block (taken once) and
+// its palette into sprite palette 15. Picture 8 is picture 4 in another
+// palette.
 static void Colosso_LoadPortrait(s32 id) {
   u8 *buf;
   s32 off;
@@ -59,6 +85,14 @@ static void Colosso_LoadPortrait(s32 id) {
   Runtime_BumpFree(buf);
 }
 
+// The lettering's scene callback: run its script, move, scale and fade it, and
+// draw it as double-size affine sprites blended over the screen, in the shape
+// of gColosso_ModeTaskMode (gColosso_ModeTaskParam picks the second half of a
+// picture):
+// 1: four 32x16 pieces in a row (Match 1 to 3, Lend a Hand);
+// 2: one 32x32 piece (3, 2, 1);
+// 3: two 32x16 pieces (Won or Lose);
+// 4: Go!, one 64x32 piece, or two 32x16 in French.
 static void Colosso_UpdateModeTask(void) {
   u32 *write = gColosso_ModeTaskSprites;
   struct Sprite *sprite = (struct Sprite *)write;
@@ -72,33 +106,33 @@ commands:
   if (gColosso_ModeTaskTimer == 0) {
     {
       switch (*gColosso_ModeTaskScript++) {
-      case 0x4000:
+      case COLOSSO_LETTERING_PLACE:
         gColosso_ModeTaskPosition = *gColosso_ModeTaskScript++ << 8;
         gColosso_ModeMoveTarget = *gColosso_ModeTaskScript++;
         gColosso_ModeMoveDuration = 0;
         break;
-      case 0x3000:
+      case COLOSSO_LETTERING_ACCELERATE:
         gColosso_ModeMoveStart = gColosso_ModeMoveTarget;
         gColosso_ModeMoveTarget = *gColosso_ModeTaskScript++;
         gColosso_ModeMoveDuration = *gColosso_ModeTaskScript++;
         gColosso_ModeMoveStep = 0;
         break;
-      case 0x1000:
+      case COLOSSO_LETTERING_SCALE:
         gColosso_ModeScaleStart = gColosso_ModeScaleTarget;
         gColosso_ModeScaleTarget = *gColosso_ModeTaskScript++;
         gColosso_ModeScaleDuration = *gColosso_ModeTaskScript++;
         gColosso_ModeScaleStep = 0;
         break;
-      case 0x2000:
+      case COLOSSO_LETTERING_FADE:
         gColosso_ModeBlendStart = gColosso_ModeBlendTarget;
         gColosso_ModeBlendTarget = *gColosso_ModeTaskScript++;
         gColosso_ModeBlendDuration = *gColosso_ModeTaskScript++;
         gColosso_ModeBlendStep = 0;
         break;
-      case 0x7fff:
+      case COLOSSO_LETTERING_WAIT:
         gColosso_ModeTaskTimer = *gColosso_ModeTaskScript++;
         break;
-      case -1:
+      case COLOSSO_LETTERING_END:
         Engine_TaskRemoveCallback(Colosso_UpdateModeTask);
         Resource_ResetEntry(gColosso_PortraitSlot);
         return;

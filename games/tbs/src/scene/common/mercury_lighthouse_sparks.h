@@ -2,6 +2,12 @@
 #include "field_obj.h"
 #include "field_effect.h"
 
+// Mercury Lighthouse and its entrance: the trail of sparks the leader leaves
+// while passing between floors.
+
+// The leader's update hook while passing: each frame a small spark rises from a
+// point that sweeps across the leader's chest, in palette 7 or 5 by turns.
+//
 // UB: update hooks return void. In tbs-en mercury_lighthouse_entrance, plain
 // void differs in 21 bytes (extent 136 to 132 bytes). Keep the
 // unused native result in matching builds.

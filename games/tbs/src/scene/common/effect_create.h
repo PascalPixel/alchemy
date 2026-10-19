@@ -1,10 +1,15 @@
 #include "types.h"
 #include "field_obj.h"
 
+// Twenty-three scenes, most of those that spawn effects (effect_spawn.h): two
+// ways to place a still effect object of a given type at a 16.16 position.
+
+// Set the actor's sprite priority (0 in front of the backgrounds, 3 behind).
 static void SetEffectRecordMode(struct FieldActor *work, s32 mode) {
   work->sprite->image.priority = mode;
 }
 
+// A still, translucent effect in palette 14, at sprite priority 0.
 static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
   struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
@@ -20,6 +25,7 @@ static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
   return 0;
 }
 
+// A still effect in palette 15, at sprite priority 1, drawn under the actors.
 static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z,
                                                   s32 type) {
   struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);

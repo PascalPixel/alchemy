@@ -3,6 +3,11 @@
 #include "field_obj.h"
 #include "game_state.h"
 
+// Imil and Fuchin Falls, and Vale's cave.
+
+// Move the character the player controls (in mode 27) and actor id together
+// by (dx, dz) pixels to the centres of their cells, at a pixel a frame, as
+// when pushing it; the actor faces the way it goes.
 static void SceneActor_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
   struct FieldActor *actor;
   struct FieldActor *other;

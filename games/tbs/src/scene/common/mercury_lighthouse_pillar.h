@@ -20,6 +20,15 @@
 #include "heap_state.h"
 #include "keystate.h"
 #include "fixed_math.h"
+#include "songs.h"
+
+// Mercury Lighthouse and its entrance, once the pool is woken: standing at the
+// pool's heart (touch trigger 11) gives the leader three lights, shown as a
+// column of light over them. Each hop into the pool (the floor's region, its
+// collision code) spends one, and a light comes to hold the leader up where
+// they land. A hop within the pool with no light left sinks the leader, who is
+// put back at the heart. Touch trigger 31 takes the lights away, and Retreat
+// removes the column.
 
 // Raise the spark while its scale follows a half-sine pulse.
 static s32
@@ -121,9 +130,9 @@ MercuryLighthouse_FollowLeader(struct ScriptInterpreter *interpreter) {
   }
 
   // Alternate the light's draw parameter every two frames and redraw it.
-  /* FAKEMATCH: retain the scalar sprite-slot access while FieldActor exposes
-   * the single/group union. Plain actor->sprite swaps the movs r0, #1 and
-   * sprite load at tbs-en 0x531e; the typed scalar slot keeps their order. */
+  // The sprite slot is read by its offset, the plain-C form of actor->sprite
+  // this site matches with (scene/README.md): through FieldActor's
+  // single/group union the movs r0, #1 and the sprite load swap.
   {
     struct AnimationObject *sprite =
         *(struct AnimationObject **)((u8 *)actor +
@@ -173,10 +182,13 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
       sprite->flags = 0;
     }
   }
-  Engine_AudioPlayCue(130);
+  Engine_AudioPlayCue(SE_130);
 }
 
-// Raise the pillar one stage for each spark pair, then mark it complete.
+// Touch trigger 11, the pool's heart: the column of light appears over the
+// leader if it is not there, and grows a stage with each pair of sparks, half
+// a second apart, up to three lights. The column's cell is where a sinking
+// leader comes back to; flag 0x161 is set while the leader has lights.
 void MercuryLighthouseEntrance_RaisePillar(void) {
   struct MercuryLighthouseLights *state;
   struct FieldActor *leader;
@@ -201,9 +213,9 @@ void MercuryLighthouseEntrance_RaisePillar(void) {
       Engine_ObjectSetScript(obj, gMercuryLighthouse_PillarScript);
       obj->linkedObject = leader;
       obj->motionFlags = 4;
-      /* FAKEMATCH: retain the scalar height access. Plain obj->y.fixed
-       * subtraction moves the saved sprite reload after the height add/store
-       * at tbs-en 0x5498; the scalar coordinate keeps its original order. */
+      // The height is written by its offset, the plain-C form of obj->y.fixed
+      // this site matches with (scene/README.md): as the field, the sprite's
+      // reload moves after the add and store.
       *(s32 *)((u8 *)obj + offsetof(struct FieldActor, y)) += -PIXELS(1) / 2;
       if (sprite != 0) {
         sprite->flags = 0;
@@ -231,8 +243,8 @@ void MercuryLighthouseEntrance_RaisePillar(void) {
 
 #define MAP_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 
-// Reset the published light count and start the attached actor's release
-// script.
+// Touch trigger 31: the leader loses their lights, and the column swells and
+// fades away.
 void SceneState_ClearCurrentRecordAndReleaseTarget(void) {
   struct MercuryLighthouseLights *state =
       *(struct MercuryLighthouseLights **)WORK_SLOT(35);
@@ -254,7 +266,12 @@ void SceneState_ClearCurrentRecordAndReleaseTarget(void) {
   }
 }
 
-// Move between adjacent cells, spending a light when crossing into its region.
+// Pushing against the pool's edge (triggers 11, 21 and 31): the leader hops two
+// cells the way the pad points, unless the hop leads into the pool without a
+// light or is blocked. A hop into the pool spends a light, which flies ahead
+// to the landing cell; the column shrinks a stage, or goes with the last
+// light. Landing in the pool with no light under them, the leader sinks until
+// a key is pressed after half a second, and is put back at the heart.
 void MercuryLighthouse_RunActorMove(void) {
   struct FieldWork *work;
   struct MercuryLighthouseLights *state;
@@ -336,7 +353,7 @@ void MercuryLighthouse_RunActorMove(void) {
   }
   Object_SetMode(actor, 6);
   Engine_TaskWait(3);
-  Engine_AudioPlayCue(152);
+  Engine_AudioPlayCue(SE_152);
   Object_SetMode(actor, 7);
   actor->speed = 0x30000;
   actor->acceleration = 0x20000;
@@ -349,12 +366,12 @@ void MercuryLighthouse_RunActorMove(void) {
   if (to->collisionCode != state->terrainCode)
     Engine_ActorSetSpriteFlags(actor, 1);
   else
-    Engine_AudioPlayCue(215);
+    Engine_AudioPlayCue(SE_215);
   Engine_TaskWait(1);
   *flags = saved;
   if (to->collisionCode == state->terrainCode && state->stepEffect == NULL) {
     Object_SetMode(actor, 18);
-    Engine_AudioPlayCue(241);
+    Engine_AudioPlayCue(SE_241);
     for (i = 0;; i++) {
       if ((i & 15) == 0)
         OverlayObject_SpawnKind24AtObject(actor);
@@ -362,7 +379,7 @@ void MercuryLighthouse_RunActorMove(void) {
         break;
       Engine_TaskWait(1);
     }
-    Engine_AudioPlayCue(0x120);
+    Engine_AudioPlayCue(SE_288);
     Engine_TaskWait(1);
     actor->x.fixed = state->targetX;
     actor->z.fixed = state->targetZ;
@@ -373,7 +390,8 @@ void MercuryLighthouse_RunActorMove(void) {
   work->walkingDistance += Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
 }
 
-// Emit an effect at the selected actor after a randomized delay.
+// Touch trigger 21: while the leader stands there, a sparkle rises from them
+// every 10 to 39 frames.
 void MercuryLighthouse_TickSpawnTimer(void) {
   struct MercuryLighthouseLights *state;
   struct FieldActor *point;
@@ -389,7 +407,7 @@ void MercuryLighthouse_TickSpawnTimer(void) {
   }
 }
 
-// Remove the actor stored in the scene's published attachment slot.
+// Retreat (PSYNERGY_IN_AREA(ABILITY_RETREAT, 1)): remove the column of light.
 static void OverlayObject_ReleasePublishedAttachment(void) {
   struct MercuryLighthouseLights **published = Runtime_AllocateBlock(35, 4);
   struct MercuryLighthouseLights *state;

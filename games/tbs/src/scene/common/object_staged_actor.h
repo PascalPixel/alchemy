@@ -20,6 +20,19 @@
 #include "map_scroll.h"
 #include "field_event.h"
 #include "types.h"
+#include "songs.h"
+
+// Seventeen scenes with things the leader pushes (Altmiller Cave, Babi
+// Lighthouse, Crossbone Isle and its rooms, Goma Cave's pillar room, Gondowan
+// Cave, Kolima's forest bridge, clearing and river, Lunpa's fortress, Mercury
+// Lighthouse and its entrance, Mogall Forest, the Tunnel Ruins, Vale and its
+// cave): blocks pushed a cell at a time, and logs and other large things that
+// roll until they meet something, redrawn into the map where they stop.
+//
+// A large thing is one of six footprints, by its sprite's animation
+// (gStagedActor_FootprintKinds): its bounds in gStagedActor_FootprintBounds
+// are four words a footprint, the left, top, right and bottom edges in pixels
+// from its position.
 
 // Pixel step by direction: X in the upper halfword, Z in the lower.
 extern s32 gStagedActor_DirectionSteps[];
@@ -28,6 +41,8 @@ extern s32 gStagedActor_FootprintBounds[];
 // Shared source is included here in ROM order.
 #include "object_distance.h"
 
+// Return the placed actor on the cell of the 16.16 position and at its height
+// (in whole pixels), or 0. origin is not read.
 static struct StagedActor *StagedActor_FindAtTile(s32 *position,
                                                   struct StagedActor *origin) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
@@ -46,6 +61,10 @@ static struct StagedActor *StagedActor_FindAtTile(s32 *position,
   return 0;
 }
 
+// The leader pushes the block in front of them a cell on, unless something
+// solid is beyond it or on top of it, the ground beyond refuses it or it is
+// still moving: after a quarter second's push (mode 8) the block and the
+// leader slide one cell together, with SE_185.
 static void StagedActor_AdvancePair(void) {
   s32 dst[3];
   struct StagedActor *lead;
@@ -88,7 +107,8 @@ static void StagedActor_AdvancePair(void) {
   dst[1] = next->y;
   step <<= 16;
   dst[2] = next->z.value + step;
-  if (FieldObject_CheckMovementCollision(next, dst) > 0)
+  if (FieldObject_CheckMovementCollision((struct FieldActor *)next,
+                                         (struct FieldPosition *)dst) > 0)
     return;
 
   if (next->transitionBusy != 0)
@@ -97,7 +117,7 @@ static void StagedActor_AdvancePair(void) {
   Object_SetMode((struct FieldActor *)lead, 8);
   rate = 0x3333;
   Engine_TaskWait(15);
-  Engine_AudioPlayCue(185);
+  Engine_AudioPlayCue(SE_185);
   next->moveRateX = rate;
   next->moveRateZ = rate;
   Engine_ObjectSetPosition((struct FieldActor *)next, dst[0], dst[1], dst[2]);
@@ -119,6 +139,8 @@ static void StagedActor_AdvancePair(void) {
   Object_SetMode((struct FieldActor *)lead, 1);
 }
 
+// Set the collision code of a width by height rectangle of cells, from cell
+// (x, z), to value, on map layer 0 to 2, or (3 and up) in gMapCellBuffer.
 static s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
                                                   u32 width, u32 height,
                                                   s32 value) {
@@ -146,6 +168,8 @@ static s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
   return 0;
 }
 
+// The leader's movement callback while pushing a large thing: stop the leader
+// when another actor that is not a large thing, or a wall, is in the way.
 static s32 StagedActor_StopBlockedMotion(struct StagedActor *actor) {
   struct StagedActorProbePoint probe;
   u32 dir;
@@ -179,7 +203,8 @@ static s32 StagedActor_StopBlockedMotion(struct StagedActor *actor) {
   probe.y = actor->y;
   step <<= 16;
   probe.z = actor->z.value + step;
-  if (FieldObject_CheckMovementCollision(actor, (s32 *)&probe) > 0) {
+  if (FieldObject_CheckMovementCollision((struct FieldActor *)actor,
+                                         (struct FieldPosition *)&probe) > 0) {
     actor->velocityX = 0;
     actor->velocityZ = 0;
     actor->targetX = 0x80000000;
@@ -188,6 +213,9 @@ static s32 StagedActor_StopBlockedMotion(struct StagedActor *actor) {
   return 0;
 }
 
+// Return the large thing whose footprint covers the cell ahead of the leader
+// (the leader not standing in line with its first column or row), with the
+// leader's direction, its actor number and its footprint; or NULL.
 static u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot,
                                       s32 *footprint) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
@@ -240,6 +268,11 @@ static u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot,
   return NULL;
 }
 
+// Find where the large thing ahead of the leader would roll to: step its
+// footprint on, a cell at a time the way the leader faces, until a cell of it
+// meets something (a collision result of 2). Fills probe with the thing, its
+// footprint and that position; returns 0 when there is no thing or it cannot
+// move.
 static s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe) {
   s32 direction;
   s32 position[3];
@@ -302,7 +335,9 @@ static s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe) {
           position[0] +
           (gStagedActor_FootprintBounds[probe->footprintIndex * 4] << 16);
       for (column = 0; column < width; column++) {
-        if (FieldObject_CheckMovementCollision(actor, &probe->positionX) == 2) {
+        if (FieldObject_CheckMovementCollision(
+                (struct FieldActor *)actor,
+                (struct FieldPosition *)&probe->positionX) == 2) {
           goto found;
         }
         probe->positionX += 0x100000;
@@ -327,14 +362,16 @@ found:
   return 1;
 }
 
+// Roll the large thing to the position probe found: the leader pushes
+// (animation 8), the thing rolls (mode 3 or 2 by the direction) with SE_239
+// while the leader follows half a cell, and it stops with SE_288 and SE_213.
+// Its cells are blocked (collision 255) at its new place, through the map's
+// layer 1 offset, and its old place is given back what was under it.
 static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
-  /* FAKEMATCH: gMapWork[0] read as a u32 may alias the probe's s32 fields, so
-   * the load stays after the four stores of the incoming probe, as native.
-   * 2026-10-13: the plain gMapWork[0] (a void *) is scheduled above those
-   * stores (differ 6). With gMapWork declared u32[] (global_cells.h) the
-   * plain (struct MapScrollWork *)gMapWork[0] matches and, in all six
-   * editions, only DisplayBlend_StartScript changes; it matches again with
-   * the map work read into a local before the zero is stored. */
+  // gMapWork[0] is read as a u32, the plain-C form this site matches with
+  // (scene/README.md): a u32 may alias the probe's s32 fields, so the load
+  // stays after the probe's four stores; read as the void * it is, it is
+  // scheduled above them.
   struct MapScrollWork *workspace;
   struct StagedActor *actor;
   struct StagedActorProbePosition originalPosition;
@@ -410,7 +447,7 @@ static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
   else
     Object_SetMode((struct FieldActor *)actor, 2);
 
-  Engine_AudioPlayCue(239);
+  Engine_AudioPlayCue(SE_239);
   Engine_ObjectSetPosition((struct FieldActor *)actor, probe.positionX,
                            probe.positionY, probe.positionZ);
   Engine_ActorWaitForMove(0);
@@ -429,8 +466,8 @@ static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
   Engine_ActorSetAnimation(0, 1);
   ((struct StagedActor *)Object_GetById(0))->movementCallback = 0;
   FieldObject_WaitForMove(actor);
-  Engine_AudioPlayCue(288);
-  Engine_AudioPlayCue(213);
+  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_213);
 
   actor->x.value = probe.positionX;
   actor->z.value = probe.positionZ;
@@ -489,6 +526,8 @@ static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
   BattleFx_PlayQueuedSound();
 }
 
+// Block large thing id's cells (collision 255) where it stands, through the
+// map's layer 1 offset; returns 0 when its sprite is no large thing.
 static s32 FieldScene_RedrawActorFootprint(s32 id) {
   struct MapScrollWork *work = gMapWork[0];
   struct StagedActor *actor = (struct StagedActor *)Object_GetById(id);

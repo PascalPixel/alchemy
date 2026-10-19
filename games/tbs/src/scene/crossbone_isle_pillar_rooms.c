@@ -1,3 +1,6 @@
+// Crossbone Isle's pillar rooms: pillars to push, jump across, Move and Carry,
+// the switch that raises the water in room 3, and the pools Frost freezes in
+// room 5.
 #include "script.h"
 #include "game_state.h"
 #include "map_scroll.h"
@@ -44,11 +47,24 @@
 #include "object_effect.h"
 #include "fixed_math.h"
 #include "flags.h"
+#include "songs.h"
+#include "event.h"
 #include "macros.h"
 
 #define WATER_ACTOR 16
 // Room 3: the water has been raised.
 #define WATER_RAISED_FLAG FLAG_SCENE_TEMP_00
+// Room 4 keeps FLAG_SCENE_TEMP_00 to 03 for its four pillars' footprints.
+// Room 5: FLAG_SCENE_TEMP_00 to 02 the three pools are frozen, 03 the leader
+// stood on the third when Frost began, 04 the sinking pillar has sunk.
+#define FIRST_FROZEN_POOL_FLAG FLAG_SCENE_TEMP_00
+#define LEADER_ON_THIRD_POOL_FLAG FLAG_SCENE_TEMP_03
+#define PILLAR_SUNK_FLAG FLAG_SCENE_TEMP_04
+
+// A Psynergy event on an actor at one phase of the cast, as PSYNERGY_IN_AREA
+// is for an area.
+#define PSYNERGY_PHASE_ON_ACTOR(ability, phase)                                \
+  ((u32)(phase) << 28 | PSYNERGY_ON_ACTOR(ability))
 
 struct MapCellFields {
   u32 tile : 12;
@@ -455,10 +471,10 @@ static s32 CrossboneIslePillarRooms_TryJumpAcrossPillar(void) {
 #endif
     if (StagedActor_FindAtTile(position, (struct StagedActor *)leader) == 0 &&
         FieldObject_CheckMovementCollision(leader, position) == 0) {
-      Engine_EventBegin();
+      EV_BEGIN();
       Object_SetMode(leader, 6);
       Engine_TaskWait(6);
-      Engine_AudioPlayCue(152);
+      Engine_AudioPlayCue(SE_152);
       Object_SetMode(leader, 7);
       leader->speed = PIXELS(3);
       leader->acceleration = PIXELS(2);
@@ -470,7 +486,7 @@ static s32 CrossboneIslePillarRooms_TryJumpAcrossPillar(void) {
       Object_SetMode(leader, 6);
       Engine_ActorSetSpriteFlags(leader, 1);
       *flags = savedMotionFlags;
-      Engine_EventEnd();
+      EV_END();
       return 1;
     }
   }
@@ -508,7 +524,7 @@ static s32 CrossboneIslePillarRooms_SetChildValueFromTimer(
 }
 
 // Select the entrance table for the current pillar room.
-const struct SceneEntrance *CrossboneIslePillarRooms_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_CrossboneIslePillarRooms1) {
@@ -530,17 +546,13 @@ const struct SceneEntrance *CrossboneIslePillarRooms_GetEntrances(void) {
 }
 
 // These rooms have no separate region table.
-const struct SceneRegion *CrossboneIslePillarRooms_GetRegions(void) {
-  return 0;
-}
+const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 // Return the shared exits for the pillar rooms.
-const u32 *CrossboneIslePillarRooms_GetExits(void) {
-  return gCrossboneIslePillarRoomsExits;
-}
+const u32 *Scene_GetExits(void) { return gCrossboneIslePillarRoomsExits; }
 
 // Select the actor placements for the current pillar room.
-const struct ScenePlacement *CrossboneIslePillarRooms_GetPlacements(void) {
+const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_CrossboneIslePillarRooms1) {
@@ -558,22 +570,23 @@ const struct ScenePlacement *CrossboneIslePillarRooms_GetPlacements(void) {
   return gCrossboneIslePillarRoomsPlacementsOther;
 }
 
-// Try the two-cell jump before advancing the pushed actor pair.
-static void CrossboneIslePillarRooms_JumpOrPushPillar(void) {
-  Engine_EventBegin();
+// Walking into a pillar in room 1: jump two cells across it where the cells
+// allow, otherwise push it.
+static void Event_JumpOrPushPillar(void) {
+  EV_BEGIN();
   if (CrossboneIslePillarRooms_TryJumpAcrossPillar() == 0)
     StagedActor_AdvancePair();
-  Engine_EventEnd();
+  EV_END();
 }
 
-// Move the leader and redraw the selected pillar when a clear position exists.
-static void CrossboneIslePillarRooms_MoveToClearPillar(void) {
+// Walking into a pillar in rooms 2 and 3: push it if the cell beyond is clear.
+static void Event_PushPillar(void) {
   struct StagedActorProbe out;
 
-  Engine_EventBegin();
+  EV_BEGIN();
   if (StagedActor_FindClearPosition(&out) != 0)
     SceneActor_MoveAndRedraw(out);
-  Engine_EventEnd();
+  EV_END();
 }
 
 struct PillarPlacement {
@@ -645,7 +658,7 @@ static void CrossboneIslePillarRooms_PrepareWaterScroll(void) {
 static void CrossboneIslePillarRooms_AnimateWaterLevel(void) {
   s32 waterRaised;
 
-  waterRaised = Engine_GameFlagIsSet(0x200);
+  waterRaised = Engine_GameFlagIsSet(WATER_RAISED_FLAG);
   if (waterRaised == 0) {
     Map_DrawCellPanel(10, 19, 16, 5, waterRaised, 10, 31);
     Map_DrawCellPanel(10, 51, 16, 5, 1, 10, 31);
@@ -661,14 +674,14 @@ static void CrossboneIslePillarRooms_AnimateWaterLevel(void) {
                              0xc80);
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(1, 0, CrossboneIslePillarRooms_JitterBackgroundScroll);
-  Engine_AudioPlayCue(231);
+  Engine_AudioPlayCue(SE_231);
   sShakeChance = 0;
   do {
     Engine_TaskWait(1);
   } while (++sShakeChance <= 100);
   // Commit the water tiles, then remove both scroll callbacks.
-  Engine_AudioPlayCue(0x121);
-  if (Engine_GameFlagIsSet(0x200) == 0) {
+  Engine_AudioPlayCue(SE_289);
+  if (Engine_GameFlagIsSet(WATER_RAISED_FLAG) == 0) {
     Map_CopyCellsTo(0, 32, 32, 0, 32, 32);
     Map_CopyCellsTo(32, 32, 64, 0, 32, 32);
   } else {
@@ -683,46 +696,47 @@ static void CrossboneIslePillarRooms_AnimateWaterLevel(void) {
   Engine_TaskWait(30);
 }
 
-// Toggle the room's water level and update the seven pillar footprints.
-static void CrossboneIslePillarRooms_FlipWaterSwitch(void) {
+// Searching the switch in room 3: "Isaac flipped the switch." The water rises,
+// or drains, and the pillars stand higher or lower with it.
+static void Event_FlipWaterSwitch(void) {
   s32 waterRaised;
   struct FieldActor *water;
 
-  Engine_EventBegin();
+  EV_BEGIN();
   Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   Camera_MoveTo(PIXELS(281), -1, PIXELS(432), 1);
   Engine_CameraWaitForMove();
   Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
-  waterRaised = GameFlag_IsSet(WATER_RAISED_FLAG);
+  waterRaised = FLAG_CHECK(WATER_RAISED_FLAG);
   // Raise or drain the water before updating the pillar collision footprints.
   if (waterRaised == 0) {
-    Event_PlayCue(232);
+    SE(SE_232);
     Map_AnimateCells(gCrossboneIslePillarRooms_ShiftSteps1, 84, 24);
-    Engine_EventWait(30);
-    Event_PlayCue(240);
+    WAIT(30);
+    SE(SE_240);
     Engine_ActorSetSpritePriority(WATER_ACTOR, 1);
     Object_GetById(WATER_ACTOR)->motionFlags = waterRaised;
     water = Actor_Get(WATER_ACTOR);
     water->y.fixed = -PIXELS(32);
-    Actor_SetPosition(WATER_ACTOR, PIXELS(272), PIXELS(416));
-    Engine_ActorSetAnimation(WATER_ACTOR, 1);
+    OBJ_POS_SET(WATER_ACTOR, 272, 416);
+    OBJ_MODE(WATER_ACTOR, 1);
     Map_AnimateCells(gCrossboneIslePillarRooms_ShiftSteps3, 80, 24);
     Map_AnimateCells(gCrossboneIslePillarRooms_ShiftSteps5, 80, 28);
     Map_CopyCellsTo(65, 40, 16, 27, 2, 4);
     CrossboneIslePillarRooms_AnimateWaterLevel();
     CrossboneIslePillarRooms_DrawRaisedPillars();
     Map_CopyCellAttributes(24, 3, 1, 1, 24, 8);
-    GameFlag_Set(WATER_RAISED_FLAG);
+    FLAG_SET(WATER_RAISED_FLAG);
   } else {
-    Event_PlayCue(232);
+    SE(SE_232);
     Map_AnimateCells(gCrossboneIslePillarRooms_ShiftSteps2, 84, 24);
-    Engine_EventWait(30);
-    Event_PlayCue(230);
+    WAIT(30);
+    SE(SE_230);
     Object_GetById(WATER_ACTOR)->motionFlags = 0;
     water = Actor_Get(WATER_ACTOR);
     water->y.fixed = -PIXELS(32);
-    Actor_SetPosition(WATER_ACTOR, PIXELS(272), PIXELS(436));
-    Engine_ActorSetAnimation(WATER_ACTOR, 2);
+    OBJ_POS_SET(WATER_ACTOR, 272, 436);
+    OBJ_MODE(WATER_ACTOR, 2);
     Map_CopyCellsTo(65, 45, 16, 27, 2, 4);
     Map_AnimateCells(gCrossboneIslePillarRooms_ShiftSteps4, 80, 24);
     CrossboneIslePillarRooms_AnimateWaterLevel();
@@ -736,7 +750,7 @@ static void CrossboneIslePillarRooms_FlipWaterSwitch(void) {
     Map_CopyCellAttributes(24, 4, 1, 1, 24, 8);
     GameFlag_Clear(WATER_RAISED_FLAG);
   }
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Match a nearby actor's draw priority when it is behind the comparison actor.
@@ -913,8 +927,9 @@ struct PillarActor {
   u8 motionFlags;
 };
 
-// Settle moved pillars, restore their old cells, and record their new overlaps.
-static void CrossboneIslePillarRooms_UpdatePillarActors(void) {
+// Move or Carry on one of room 4's pillars, and after each push there: the
+// pillars settle, and their footprints follow them.
+static void Event_MovePillar(void) {
   u32 id;
   struct PillarActor *actor;
   u8 *flags;
@@ -946,7 +961,7 @@ static void CrossboneIslePillarRooms_UpdatePillarActors(void) {
     // Falling pillars either reach a ledge, shrink away, or settle on ground.
     if (*flags & 1) {
       if (GetMapCellCollision(2, actor->x, actor->z) == 50) {
-        Engine_AudioPlayCue(189);
+        Engine_AudioPlayCue(SE_189);
         // Both u8 accesses are alias set 0, and the view is no struct reference
         // (MEM_IN_STRUCT_P).
         /* FAKEMATCH: the u8 view keeps these flag updates out of the record's
@@ -960,7 +975,7 @@ static void CrossboneIslePillarRooms_UpdatePillarActors(void) {
       } else if (GetMapCellCollision(2, actor->x, actor->z) == 51) {
         CrossboneIslePillarRooms_StopAtGroundOrHeight(
             (struct FieldActor *)actor, 0);
-        Engine_AudioPlayCue(189);
+        Engine_AudioPlayCue(SE_189);
         actor->y = 0;
         actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
         CrossboneIslePillarRooms_ShrinkPillar(id);
@@ -1002,10 +1017,10 @@ static void CrossboneIslePillarRooms_UpdatePillarActors(void) {
   CrossboneIslePillarRooms_SortPillarActors();
 }
 
-// Try jumping first; otherwise push, settle the pillars, and restore the
-// leader's flags.
-static void CrossboneIslePillarRooms_PushPillar(void) {
-  Engine_EventBegin();
+// Walking into a pillar in room 4: jump across if possible, otherwise push
+// it, and the pillars settle.
+static void Event_JumpOrPushRoom4Pillar(void) {
+  EV_BEGIN();
 #if TBS_PATCH_3
   Object_GetById(0)->y.fixed = Map_GetTerrainHeight(
       Object_GetById(0)->terrainId, Object_GetById(0)->x.fixed,
@@ -1015,19 +1030,20 @@ static void CrossboneIslePillarRooms_PushPillar(void) {
     Object_GetById(0)->motionFlags &= 254;
     Object_GetById(0)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
     StagedActor_AdvancePair();
-    CrossboneIslePillarRooms_UpdatePillarActors();
+    Event_MovePillar();
     Object_GetById(ACTOR_PARTY_LEADER)->motionFlags |= ACTOR_FOLLOWS_TERRAIN;
     Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags |=
         ACTOR_PRIORITY_AUTOMATIC;
   }
-  Engine_EventEnd();
+  EV_END();
 }
 
-// Climb upward at the pillar-room ladder trigger.
-static void CrossboneIslePillarRooms_ClimbUp(void) { Field_ClimbUp(); }
+// Walking north at room 4's ladder: climb up.
+static void Event_ClimbUp(void) { Field_ClimbUp(); }
 
-// Push the pillar ahead, or try jumping before climbing downward.
-static void CrossboneIslePillarRooms_PushOrClimbDown(void) {
+// Walking south at room 4's ladder: push the pillar below, jump, or climb
+// down.
+static void Event_PushOrClimbDown(void) {
   struct FieldActor *leader = Object_GetById(0);
   s32 pos[3];
   s32 *p = pos;
@@ -1036,21 +1052,23 @@ static void CrossboneIslePillarRooms_PushOrClimbDown(void) {
   p[1] = leader->y.fixed;
   p[2] = leader->z.fixed + PIXELS(16);
   if (StagedActor_FindAtTile(p, leader) != NULL) {
-    CrossboneIslePillarRooms_PushPillar();
+    Event_JumpOrPushRoom4Pillar();
   } else if (CrossboneIslePillarRooms_TryJumpAcrossPillar() == 0) {
     Field_ClimbDown();
   }
 }
 
-// Track the leader in the fade overlay and enable the pillar riding counter.
-static void CrossboneIslePillarRooms_StartRidingPillar(void) {
+// Stepping on trigger 40 in room 4: the fade overlay follows the leader, and
+// the leader's rise counter starts.
+static void Event_StartRising(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   ((struct FadeOverlayWork *)WORK_SLOT(36))->actor = leader;
   leader->riseCounter = 1;
 }
 
-// Stop tracking the leader in the fade overlay and clear the riding counter.
-static void CrossboneIslePillarRooms_StopRidingPillar(void) {
+// Stepping on trigger 41 in room 4: the overlay lets the leader go, and the
+// rise counter stops.
+static void Event_StopRising(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
   ((struct FadeOverlayWork *)WORK_SLOT(36))->actor = NULL;
@@ -1091,7 +1109,7 @@ static void CrossboneIslePillarRooms_FreezePool(s32 id) {
   struct FieldActor *actor;
 
   actor = Object_GetById(id);
-  Engine_EventBegin();
+  EV_BEGIN();
 #ifdef UBFIX
   actor->update = CrossboneIslePillarRooms_UpdateFrozenPoolPriority;
 #else
@@ -1100,23 +1118,23 @@ static void CrossboneIslePillarRooms_FreezePool(s32 id) {
 #endif
   Map_CopyCellAttributes(20, 14, 1, 1, actor->x.fixed >> 20,
                          actor->z.fixed >> 20);
-  GameFlag_Set(id + 0x1f5);
+  FLAG_SET(FIRST_FROZEN_POOL_FLAG + id - 11);
   Actor_SetActionScript(id, gCrossboneIslePillarRooms_ActionTable);
-  Engine_EventEnd();
+  EV_END();
 }
 
-// Apply Frost to the first pool in room 5.
-static void CrossboneIslePillarRooms_FreezeFirstPool(void) {
+// Frost on the first pool in room 5: it freezes into a pillar of ice.
+static void Event_FreezeFirstPool(void) {
   CrossboneIslePillarRooms_FreezePool(11);
 }
 
-// Apply Frost to the second pool in room 5.
-static void CrossboneIslePillarRooms_FreezeSecondPool(void) {
+// Frost on the second pool in room 5.
+static void Event_FreezeSecondPool(void) {
   CrossboneIslePillarRooms_FreezePool(12);
 }
 
-// Record whether the leader shares pillar 13's cell before its effect proceeds.
-static void CrossboneIslePillarRooms_CheckLeaderOnPillar(void) {
+// Frost begins on the third pool: note whether the leader stands on it.
+static void Event_FrostBeginsOnThirdPool(void) {
   struct FieldActor *leader;
   struct FieldActor *pillar;
   u8 *effects;
@@ -1126,15 +1144,16 @@ static void CrossboneIslePillarRooms_CheckLeaderOnPillar(void) {
   effects = gEffectWork;
   if (pillar->x.fixed >> 20 == leader->x.fixed >> 20 &&
       pillar->z.fixed >> 20 == leader->z.fixed >> 20) {
-    Engine_GameFlagSet(0x203);
+    Engine_GameFlagSet(LEADER_ON_THIRD_POOL_FLAG);
     effects[53] = 1;
   } else {
-    Engine_GameFlagClear(0x203);
+    Engine_GameFlagClear(LEADER_ON_THIRD_POOL_FLAG);
   }
 }
 
-// Restore pillar 13's scale and raise pillar 14 to a height of 32 pixels.
-static void CrossboneIslePillarRooms_RaiseActorFourteen(void) {
+// Later in the same Frost: the third pool shrinks back, and the pillar beside
+// it (actor 14) rises 32 pixels.
+static void Event_FrostRaisesPillar(void) {
   struct FieldActor *pillar;
 
   pillar = Object_GetById(14);
@@ -1161,7 +1180,7 @@ static void CrossboneIslePillarRooms_SpawnFrostParticle(void) {
   if ((gFrameCount & 2) != 0)
     return;
   if ((gFrameCount & 7) == 0)
-    Engine_AudioPlayCue(136);
+    Engine_AudioPlayCue(SE_136);
 
   settings = &options;
   settings->palette = 10;
@@ -1235,105 +1254,106 @@ CrossboneIslePillarRooms_SpawnThawParticle(union FieldObject *fieldObject) {
 #endif
 }
 
-// Freeze the third pool and thaw the second one unless the leader occupies the
-// pillar.
-static void CrossboneIslePillarRooms_FreezeThirdPool(void) {
+// Frost ends on the third pool: unless the leader stood on it, it freezes,
+// and a frozen second pool thaws back to water.
+static void Event_FreezeThirdPool(void) {
   s32 set;
 
-  set = Engine_GameFlagIsSet(0x203);
+  set = Engine_GameFlagIsSet(LEADER_ON_THIRD_POOL_FLAG);
   if (set == 0) {
-    Engine_GameFlagSet(0x202);
-    Engine_EventBegin();
+    Engine_GameFlagSet(FIRST_FROZEN_POOL_FLAG + 2);
+    EV_BEGIN();
     Engine_CameraSetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
     Engine_CameraMoveTo(PIXELS(312), -1, PIXELS(184), 1);
     Engine_CameraWaitForMove();
-    Engine_EventWait(20);
+    WAIT(20);
     Map_CopyCellsTo(73, 10, 60, 10, 1, 2);
-    Engine_EventWait(20);
+    WAIT(20);
     // The third pool freezes while the previously frozen second pool thaws.
     FieldScheduler_AddCallback(CrossboneIslePillarRooms_SpawnFrostParticle,
                                0xc80);
-    Engine_EventWait(40);
-    if (GameFlag_IsSet(0x201) != 0) {
+    WAIT(40);
+    if (FLAG_CHECK(FIRST_FROZEN_POOL_FLAG + 1) != 0) {
 #ifdef UBFIX
       Object_GetById(12)->update = CrossboneIslePillarRooms_SpawnThawParticle;
 #else
       Object_GetById(12)->update = (void (*)(
           union FieldObject *))CrossboneIslePillarRooms_SpawnThawParticle;
 #endif
-      Engine_ActorSetAnimation(12, 6);
+      OBJ_MODE(12, 6);
       ObjectMotion_WaitForAnimationChange(12);
       Object_GetById(12)->update = (void (*)(union FieldObject *))set;
       Map_CopyCellAttributes(17, 13, 1, 1, 18, 13);
-      Engine_GameFlagClear(0x201);
+      Engine_GameFlagClear(FIRST_FROZEN_POOL_FLAG + 1);
       Engine_ActorSetChildValue(12, 0);
       Actor_SetBuiltinAction(12, ACTOR_ACTION_IDLE);
     } else {
-      Engine_EventWait(60);
+      WAIT(60);
     }
     Engine_TaskRemoveCallback(CrossboneIslePillarRooms_SpawnFrostParticle);
-    Engine_EventWait(20);
+    WAIT(20);
     Map_CopyCellsTo(72, 10, 60, 10, 1, 2);
-    Engine_EventWait(20);
-    Engine_EventEnd();
+    WAIT(20);
+    EV_END();
   }
 }
 
-// Clear the layer-2 grid attribute at actor 10's current cell.
-static void CrossboneIslePillarRooms_ClearActorTenCell(void) {
+// Move begins on room 5's sinking pillar: its cell is cleared.
+static void Event_StartMovingSinkingPillar(void) {
   struct FieldActor *pillar = Object_GetById(10);
   s32 x;
   s32 z;
 
-  Engine_EventBegin();
+  EV_BEGIN();
 
   x = pillar->x.fixed >> 20;
   z = pillar->z.fixed >> 20;
 
   StagedActor_FillGridAttributeRectangle(2, x, z, 1, 1, 0);
-  Engine_EventEnd();
+  EV_END();
 }
 
-// Restore collision under pillar 10 and lower it once it reaches column 16.
-static void CrossboneIslePillarRooms_SettleMovedPillar(void) {
+// Move on room 5's sinking pillar, and after each push: once it reaches
+// column 16 it sinks two pixels into place for good.
+static void Event_MoveSinkingPillar(void) {
   struct FieldActor *pillar;
   s32 alreadyLowered;
 
   pillar = Object_GetById(10);
-  Engine_EventBegin();
+  EV_BEGIN();
   StagedActor_FillGridAttributeRectangle(2, (pillar->x.fixed >> 20),
                                          (pillar->z.fixed >> 20), 1, 1, 255);
   if ((pillar->x.fixed >> 20) == 16) {
-    alreadyLowered = GameFlag_IsSet(0x204);
+    alreadyLowered = FLAG_CHECK(PILLAR_SUNK_FLAG);
     if (alreadyLowered == 0) {
-      Engine_EventWait(10);
-      Engine_AudioPlayCue(159);
+      WAIT(10);
+      Engine_AudioPlayCue(SE_159);
       pillar->motionFlags = alreadyLowered;
       pillar->terrainHeight = -PIXELS(2);
       pillar->y.fixed = -PIXELS(2);
-      Engine_GameFlagSet(0x204);
+      Engine_GameFlagSet(PILLAR_SUNK_FLAG);
     }
   }
-  Engine_EventEnd();
+  EV_END();
 }
 
-// Move to a clear pillar position or push and settle pillar 10.
-static void CrossboneIslePillarRooms_RunPushScene(void) {
+// Walking into room 5's sinking pillar: push it if the cell beyond is clear.
+static void Event_PushSinkingPillar(void) {
   struct StagedActorProbe probe;
 
-  Engine_EventBegin();
+  EV_BEGIN();
   if (StagedActor_FindClearPosition(&probe) != 0) {
     SceneActor_MoveAndRedraw(probe);
   } else {
-    CrossboneIslePillarRooms_ClearActorTenCell();
+    Event_StartMovingSinkingPillar();
     StagedActor_AdvancePair();
-    CrossboneIslePillarRooms_SettleMovedPillar();
+    Event_MoveSinkingPillar();
   }
-  Engine_EventEnd();
+  EV_END();
 }
 
 // Select the event table for the current pillar room.
-const struct SceneEvent *CrossboneIslePillarRooms_GetEvents(void) {
+const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_CrossboneIslePillarRooms1) {
@@ -1371,7 +1391,7 @@ static void CrossboneIslePillarRooms_RestoreFlaggedPillar(s32 actorId) {
   struct FieldActor *actor;
 
   actor = Object_GetById(actorId);
-  if (GameFlag_IsSet(actorId + 0x1f5) != 0) {
+  if (FLAG_CHECK(FIRST_FROZEN_POOL_FLAG + actorId - 11) != 0) {
     Object_SetMode(actor, 5);
 #ifdef UBFIX
     actor->update = CrossboneIslePillarRooms_UpdateFrozenPoolPriority;
@@ -1425,7 +1445,7 @@ static void CrossboneIslePillarRooms_UpdateLeaderPriority(void) {
 
 // Restore each room's pillar footprints, water state, and persistent puzzle
 // state.
-s32 CrossboneIslePillarRooms_Initialize(void) {
+s32 Scene_Initialize(void) {
   struct FieldActor *actor;
   u32 i;
   u32 id;
@@ -1450,7 +1470,8 @@ s32 CrossboneIslePillarRooms_Initialize(void) {
     FieldScene_RedrawActorFootprint(13);
     FieldScene_RedrawActorFootprint(14);
     FieldScene_RedrawActorFootprint(15);
-    if (Engine_GameFlagIsSet(0x109) != 0 && Engine_GameFlagIsSet(0x200) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0 &&
+        Engine_GameFlagIsSet(WATER_RAISED_FLAG) != 0) {
       Map_CopyCellsTo(79, 34, 84, 24, 1, 2);
       Map_CopyCellsTo(0, 32, 32, 0, 32, 32);
       Map_CopyCellsTo(32, 32, 64, 0, 32, 32);
@@ -1460,12 +1481,12 @@ s32 CrossboneIslePillarRooms_Initialize(void) {
   } else if (gGameState.scene == (s32)&SceneId_CrossboneIslePillarRooms4) {
     // Restore the four movable pillars and the leader's riding overlay.
     OverlayObject_CreateConfiguredObject(PIXELS(584), 0, PIXELS(200), 223);
-    if (Engine_GameFlagIsSet(0x109) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       Object_GetById(ACTOR_PARTY_LEADER)->riseCounter = 1;
     }
     BattleFx_StartFadeOverlay(0);
     if (Object_GetById(ACTOR_PARTY_LEADER)->riseCounter == 0) {
-      CrossboneIslePillarRooms_StopRidingPillar();
+      Event_StopRising();
     }
     CrossboneIslePillarRooms_InitializePillarPriority(8);
     CrossboneIslePillarRooms_InitializePillarPriority(9);
@@ -1478,15 +1499,15 @@ s32 CrossboneIslePillarRooms_Initialize(void) {
         entry[0] = 0;
         entry[1] = 0;
         entry[2] = 0;
-        entry[4] = i + 0x200;
+        entry[4] = i + FLAG_SCENE_TEMP_00;
         entry += 5;
       }
     }
-    CrossboneIslePillarRooms_UpdatePillarActors();
-    Engine_EventWait(1);
+    Event_MovePillar();
+    WAIT(1);
     FieldScheduler_AddCallback(CrossboneIslePillarRooms_UpdateLeaderPriority,
                                TASK_PRIORITY_SCENE);
-    if (Engine_GameFlagIsSet(0x109) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
       for (id = 8; id < 12; id++) {
         actor = Object_GetById(id);
         x = actor->x.fixed >> 20;
@@ -1501,7 +1522,7 @@ s32 CrossboneIslePillarRooms_Initialize(void) {
     }
   } else if (gGameState.scene == (s32)&SceneId_CrossboneIslePillarRooms5) {
     // Restore room 5's moved pillar, frozen pools, and raised pillar pair.
-    Engine_ActorSetAnimation(10, 2);
+    OBJ_MODE(10, 2);
     Engine_ActorSetChildValue(10, 6);
     FieldScene_RedrawActorFootprint(8);
     FieldScene_RedrawActorFootprint(9);
@@ -1509,7 +1530,7 @@ s32 CrossboneIslePillarRooms_Initialize(void) {
     Object_GetById(8)->motionFlags = 0;
     Object_GetById(9)->motionFlags = 0;
 #endif
-    CrossboneIslePillarRooms_SettleMovedPillar();
+    Event_MoveSinkingPillar();
     CrossboneIslePillarRooms_PrepLoweredActor(11);
     CrossboneIslePillarRooms_PrepLoweredActor(12);
     CrossboneIslePillarRooms_PrepLoweredActor(13);
@@ -1520,7 +1541,7 @@ s32 CrossboneIslePillarRooms_Initialize(void) {
     actor->update = 0;
     CrossboneIslePillarRooms_PrepLoweredActor(14);
     Object_GetById(14)->collisionFlags |= 8;
-    if (Engine_GameFlagIsSet(0x202) == 0) {
+    if (Engine_GameFlagIsSet(FIRST_FROZEN_POOL_FLAG + 2) == 0) {
       Object_GetById(13)->scaleX = 3 * Q16_ONE / 2;
       Object_GetById(13)->scaleY = 3 * Q16_ONE / 2;
       Object_GetById(13)->sprite->image.priority = 3;
@@ -1751,22 +1772,22 @@ struct SceneEvent gCrossboneIslePillarRoomsEventsOther[] = {
 struct SceneEvent gCrossboneIslePillarRoomsEvents1[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIslePillarRooms_JumpOrPushPillar) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushPillar) },
     { SEARCH(SEARCH_CHEST), 100, 0xec2, FIND_ITEM(ITEM_ANTIDOTE) },
     { SEARCH(SEARCH_CHEST), 101, 0xec3, FIND_ITEM(ITEM_NUT) },
     { SEARCH(SEARCH_CHEST), 102, 0xec4, FIND_COINS(111) },
     { SEARCH(SEARCH_CHEST), 103, 0xec5, FIND_ITEM(0xc2) },
-    { PSYNERGY_ON_ACTOR(0x8c), 8, CONDITION_ALWAYS, 0 },
-    { PSYNERGY_ON_ACTOR(0x8c), 9, CONDITION_ALWAYS, 0 },
-    { PSYNERGY_ON_ACTOR(0x8c), 10, CONDITION_ALWAYS, 0 },
-    { PSYNERGY_ON_ACTOR(0x8c), 11, CONDITION_ALWAYS, 0 },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, 0 },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, 0 },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, CONDITION_ALWAYS, 0 },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, CONDITION_ALWAYS, 0 },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gCrossboneIslePillarRoomsEvents2[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIslePillarRooms_MoveToClearPillar) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
     { SEARCH(SEARCH_CHEST), 100, 0xec6, FIND_ITEM(0xc4) },
     { SEARCH(SEARCH_CHEST), 101, 0xec7, FIND_ITEM(0x18) },
     { SEARCH(SEARCH_CHEST), 102, 0xec8, FIND_COINS(222) },
@@ -1777,38 +1798,38 @@ struct SceneEvent gCrossboneIslePillarRoomsEvents2[] = {
 struct SceneEvent gCrossboneIslePillarRoomsEvents3[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { 0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIslePillarRooms_MoveToClearPillar) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushPillar) },
     { 0x413, 100, 0xed2, FIND_COINS(555) },
     { 0xc413, 100, 0xed2, FIND_COINS(555) },
     { 0x413, 101, 0xed3, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { 0xe413, 101, 0xed3, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SEARCH(SEARCH_CHEST), 102, 0xed4, FIND_ITEM(0xb7) },
     { SEARCH(SEARCH_CHEST), 103, 0xed5, FIND_ITEM(0x62) },
-    { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIslePillarRooms_FlipWaterSwitch) },
+    { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FlipWaterSwitch) },
     { SCENE_EVENTS_END },
 };
 
 struct SceneEvent gCrossboneIslePillarRoomsEvents4[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { 0x202, 30, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIslePillarRooms_PushPillar) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIslePillarRooms_ClimbUp) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIslePillarRooms_PushOrClimbDown) },
-    { 0x202, 31, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIslePillarRooms_PushPillar) },
-    { EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIslePillarRooms_StartRidingPillar) },
-    { EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(CrossboneIslePillarRooms_StopRidingPillar) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushRoom4Pillar) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClimbUp) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushOrClimbDown) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpOrPushRoom4Pillar) },
+    { EVENT_TOUCH, 40, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StartRising) },
+    { EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StopRising) },
     { SEARCH(SEARCH_CHEST), 100, 0xeda, FIND_COINS(777) },
     { SEARCH(SEARCH_CHEST), 101, 0xedb, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { 0x413, 102, 0xedc, FIND_ITEM(0xba) },
     { SEARCH(SEARCH_CHEST), 103, 0xedd, FIND_ITEM(0x32) },
-    { PSYNERGY_ON_ACTOR(0x8c), 8, 0x200, EVENT_SCRIPT(CrossboneIslePillarRooms_UpdatePillarActors) },
-    { PSYNERGY_ON_ACTOR(0x8c), 9, 0x201, EVENT_SCRIPT(CrossboneIslePillarRooms_UpdatePillarActors) },
-    { PSYNERGY_ON_ACTOR(0x8c), 10, 0x202, EVENT_SCRIPT(CrossboneIslePillarRooms_UpdatePillarActors) },
-    { PSYNERGY_ON_ACTOR(0x8c), 11, 0x203, EVENT_SCRIPT(CrossboneIslePillarRooms_UpdatePillarActors) },
-    { PSYNERGY_ON_ACTOR(0x93), 8, 0x200, EVENT_SCRIPT(CrossboneIslePillarRooms_UpdatePillarActors) },
-    { PSYNERGY_ON_ACTOR(0x93), 9, 0x201, EVENT_SCRIPT(CrossboneIslePillarRooms_UpdatePillarActors) },
-    { PSYNERGY_ON_ACTOR(0x93), 10, 0x202, EVENT_SCRIPT(CrossboneIslePillarRooms_UpdatePillarActors) },
-    { PSYNERGY_ON_ACTOR(0x93), 11, 0x203, EVENT_SCRIPT(CrossboneIslePillarRooms_UpdatePillarActors) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Event_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, FLAG_SCENE_TEMP_02, EVENT_SCRIPT(Event_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, FLAG_SCENE_TEMP_03, EVENT_SCRIPT(Event_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 8, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 9, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Event_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 10, FLAG_SCENE_TEMP_02, EVENT_SCRIPT(Event_MovePillar) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CARRY), 11, FLAG_SCENE_TEMP_03, EVENT_SCRIPT(Event_MovePillar) },
     { SCENE_EVENTS_END },
 };
 // clang-format on
@@ -1816,25 +1837,25 @@ struct SceneEvent gCrossboneIslePillarRoomsEvents4[] = {
 struct SceneEvent gCrossboneIslePillarRoomsEvents5[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {0x202, 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(CrossboneIslePillarRooms_RunPushScene)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS,
+     EVENT_SCRIPT(Event_PushSinkingPillar)},
     {SEARCH(SEARCH_CHEST), 100, 0xede, FIND_COINS(888)},
     {SEARCH(SEARCH_CHEST), 101, 0xedf, FIND_ITEM(0xb7)},
     {SEARCH(SEARCH_CHEST), 102, 0xee0, FIND_ITEM(0x10c)},
     {SEARCH(SEARCH_CHEST), 103, 0xee1, FIND_ITEM(ITEM_SMOKE_BOMB)},
-    {0x10008c15, 10, 0x204,
-     EVENT_SCRIPT(CrossboneIslePillarRooms_ClearActorTenCell)},
-    {PSYNERGY_ON_ACTOR(0x8c), 10, 0x204,
-     EVENT_SCRIPT(CrossboneIslePillarRooms_SettleMovedPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, 0x200,
-     EVENT_SCRIPT(CrossboneIslePillarRooms_FreezeFirstPool)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, 0x201,
-     EVENT_SCRIPT(CrossboneIslePillarRooms_FreezeSecondPool)},
-    {0x10001815, 13, 0x202,
-     EVENT_SCRIPT(CrossboneIslePillarRooms_CheckLeaderOnPillar)},
-    {0x50001815, 13, 0x202,
-     EVENT_SCRIPT(CrossboneIslePillarRooms_RaiseActorFourteen)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, 0x202,
-     EVENT_SCRIPT(CrossboneIslePillarRooms_FreezeThirdPool)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, 1), 10, PILLAR_SUNK_FLAG,
+     EVENT_SCRIPT(Event_StartMovingSinkingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, PILLAR_SUNK_FLAG,
+     EVENT_SCRIPT(Event_MoveSinkingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 11, FIRST_FROZEN_POOL_FLAG,
+     EVENT_SCRIPT(Event_FreezeFirstPool)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 12, FIRST_FROZEN_POOL_FLAG + 1,
+     EVENT_SCRIPT(Event_FreezeSecondPool)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, 1), 13, FIRST_FROZEN_POOL_FLAG + 2,
+     EVENT_SCRIPT(Event_FrostBeginsOnThirdPool)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, 5), 13, FIRST_FROZEN_POOL_FLAG + 2,
+     EVENT_SCRIPT(Event_FrostRaisesPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), 13, FIRST_FROZEN_POOL_FLAG + 2,
+     EVENT_SCRIPT(Event_FreezeThirdPool)},
     {SCENE_EVENTS_END},
 };

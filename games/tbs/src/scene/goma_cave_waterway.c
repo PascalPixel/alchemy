@@ -1,3 +1,4 @@
+// Goma Cave: the waterway rooms, where a stump leaps away under Move.
 #include "game_state.h"
 #include "unit/scene/goma_cave_waterway.h"
 #include "unit/scene/common/effect_spawn.h"
@@ -23,9 +24,16 @@
 #include "call.h"
 #include "fixed_math.h"
 #include "objcmd.h"
+#include "flags.h"
+#include "songs.h"
+#include "event.h"
+#include "item_ids.h"
+#include "ability_ids.h"
+
+#define STUMP 8
 
 // Forward declarations.
-static void SceneEffect_RunActorBurst(s32 no);
+static void GomaCaveWaterway_LeapStump(s32 no);
 
 // Shared source is included here in ROM order.
 #include "common/effect_create.h"
@@ -40,7 +48,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
-const u32 *Scene_GetExits(void) { return gGomaCaveWaterway_Exits; }
+const u32 *Scene_GetExits(void) { return gGomaCaveWaterwayExits; }
 
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_GomaCaveWaterway2) {
@@ -49,20 +57,22 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gGomaCaveWaterwayPlacementsOther;
 }
 
-static void EV08_PSYNERGY(void) {
-  struct FieldActor *record;
-  struct FieldActor *target;
-  s32 value;
+// Move on the stump: from column 24 it spins, leaps away and lies where it
+// lands.
+static void Event_MoveStump(void) {
+  struct FieldActor *stump;
+  struct FieldActor *landed;
+  s32 column;
 
-  record = Object_GetById(8);
-  value = record->x.fixed / 0x100000;
-  if (value == 24) {
-    SceneEffect_RunActorBurst(8);
-    Object_GetById(8)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  stump = Object_GetById(STUMP);
+  column = stump->x.fixed / PIXELS(16);
+  if (column == 24) {
+    GomaCaveWaterway_LeapStump(STUMP);
+    Object_GetById(STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Map_CopyCellAttributes(19, 74, 9, 3, 19, 17);
-    target = Object_GetById(8);
-    Engine_ActorSetSpriteFlags((s32)target, 0);
-    Engine_GameFlagSet(0x864);
+    landed = Object_GetById(STUMP);
+    Engine_ActorSetSpriteFlags(landed, 0);
+    Engine_GameFlagSet(FLAG_GOMA_CAVE_WATERWAY_STUMP_MOVED);
   }
 }
 
@@ -73,21 +83,23 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gGomaCaveWaterwayEventsOther;
 }
 
-s32 FieldScene_PlaceActor8OnEntry(void) {
-  struct FieldActor *record;
+// Arriving by entrance 5 shows no place name; otherwise the stump lies
+// where the party moved it.
+s32 Scene_Initialize(void) {
+  struct FieldActor *stump;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gGameState.scene == (s32)&SceneId_GomaCaveWaterway1) {
     if (gGameState.entrance == 5) {
-      Engine_GameFlagClear(0x12f);
+      Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     } else {
-      Object_GetById(8)->collisionFlags |= 16;
-      if (Engine_GameFlagIsSet(0x864) != 0) {
-        Engine_ActorSetPosition(8, 0x15a0000, 0x1240000);
-        record = Object_GetById(8);
-        Engine_ActorSetSpriteFlags(record, 0);
-        Object_GetById(8)->priorityFlags |= 2;
-        Engine_ActorSetAnimation(8, 2);
+      Object_GetById(STUMP)->collisionFlags |= 16;
+      if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_WATERWAY_STUMP_MOVED) != 0) {
+        Engine_ActorSetPosition(STUMP, PIXELS(346), PIXELS(292));
+        stump = Object_GetById(STUMP);
+        Engine_ActorSetSpriteFlags(stump, 0);
+        Object_GetById(STUMP)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+        OBJ_MODE(STUMP, 2);
         Map_CopyCellAttributes(19, 74, 9, 3, 19, 17);
       }
     }
@@ -95,7 +107,8 @@ s32 FieldScene_PlaceActor8OnEntry(void) {
   return 0;
 }
 
-static void SceneEffect_RotateRecord(RotatingEffectWork *work) {
+// The leaping stump's update hook turns its sprite a fixed amount per frame.
+static void GomaCaveWaterway_SpinStump(RotatingEffectWork *work) {
   RotatingEffectRecord *record = work->record;
 
   record->angle -= 0x800;
@@ -132,7 +145,9 @@ struct Vector {
 
 void Effect_Spawn();
 
-static void SceneEffect_RunActorBurst(s32 no) {
+// The stump spins in place, leaps and lands with a shake and a ring of dust,
+// then comes to rest a little further on.
+static void GomaCaveWaterway_LeapStump(s32 no) {
   union SceneActor *work;
   u32 cnt;
   struct Vector vec;
@@ -149,17 +164,17 @@ static void SceneEffect_RunActorBurst(s32 no) {
     work->fields.x -= Trig_Cos(work->fields.sprite->angle) / 2;
     work->fields.field38 = 0x80000000;
   }
-  work->fields.callback = (u32)SceneEffect_RotateRecord;
-  Actor_SetSpeed(no, 0x30000, 0x18000);
+  work->fields.callback = (u32)GomaCaveWaterway_SpinStump;
+  OBJ_SPEED(no, PIXELS(3), 3 * PIXELS(1) / 2);
   Actor_SetDestination(no, 376, 288);
   work->fields.velocityY = 0xcccc;
   work->fields.mode = 3;
   work->fields.field22 = 0;
   Engine_ActorWaitForMove(no);
   SceneActor_WaitObjectBelowHeight(work, 0);
-  Engine_AudioPlayCue(188);
+  Engine_AudioPlayCue(SE_188);
   Map_SetShake(0x50000, 0x50000, 0x10000);
-  Engine_AudioPlayCue(141);
+  Engine_AudioPlayCue(SE_141);
   Map_SetShake(-1, -1, 0xe666);
   for (cnt = 0; cnt < 17; cnt++) {
     vec.x = Trig_Cos(cnt << 12);
@@ -183,8 +198,8 @@ static void SceneEffect_RunActorBurst(s32 no) {
   opt.fields.target34 = 0x13333;
   Effect_Spawn(work->fields.x, work->fields.y, work->fields.z, 0, 0, 0,
                0x1c0000, &opt.fields);
-  Engine_AudioPlayCue(154);
-  Engine_ActorSetAnimation(no, 3);
+  Engine_AudioPlayCue(SE_CAST);
+  OBJ_MODE(no, 3);
   Map_WaitWorkValuesBelow256();
 }
 
@@ -226,7 +241,7 @@ struct SceneEntrance gGomaCaveWaterwayEntrances2[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gGomaCaveWaterway_Exits[] = {
+u32 gGomaCaveWaterwayExits[] = {
     SCENE_EXITS(28),      SCENE_EXIT(1, 25, 2), SCENE_EXIT(2, 27, 1),
     SCENE_EXIT(3, 27, 2), SCENE_EXIT(4, 29, 1), SCENE_EXIT(5, 5, 11),
     SCENE_EXIT(0, 29, 0), SCENE_EXIT(1, 28, 4), SCENE_EXIT(2, 2, 40),
@@ -251,8 +266,9 @@ struct SceneEvent gGomaCaveWaterwayEventsOther[] = {
     {0x31, 6, CONDITION_ALWAYS, 2},
     {0x31, 7, CONDITION_ALWAYS, 3},
     {EVENT_EXIT, 8, CONDITION_ALWAYS, 4},
-    {SEARCH(SEARCH_CHEST), 100, 0xf28, FIND_ITEM(0xbf)},
-    {PSYNERGY_ON_ACTOR(0x8c), 8, 0x864, EVENT_SCRIPT(EV08_PSYNERGY)},
+    {SEARCH(SEARCH_CHEST), 100, 0xf28, FIND_ITEM(ITEM_POWER_BREAD)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), STUMP,
+     FLAG_GOMA_CAVE_WATERWAY_STUMP_MOVED, EVENT_SCRIPT(Event_MoveStump)},
     {SCENE_EVENTS_END},
 };
 

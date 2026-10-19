@@ -4,15 +4,15 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *SceneData_GetPrimaryTable(void);
-s32 SceneData_ReturnZero(void);
-u8 *SceneData_GetSecondaryTable(void);
-u8 *SceneData_GetTertiaryTable(void);
-u8 *SceneData_GetQuaternaryTable(void);
-s32 Scene_PlaceActor8OnGate300(void);
-extern struct SceneEntrance gGomaCavePond_SceneTable0[];
-extern u32 gGomaCavePond_SceneTable1[];
-extern struct ScenePlacement gGomaCavePond_SceneTable2[];
-extern struct SceneEvent gGomaCavePond_SceneTable3[];
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneRegion *Scene_GetRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ScenePlacement *Scene_GetPlacements(void);
+const struct SceneEvent *Scene_GetEvents(void);
+s32 Scene_Initialize(void);
+extern struct SceneEntrance gGomaCavePondEntrances[];
+extern u32 gGomaCavePondExits[];
+extern struct ScenePlacement gGomaCavePondPlacements[];
+extern struct SceneEvent gGomaCavePondEvents[];
 
 #endif

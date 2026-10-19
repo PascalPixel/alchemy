@@ -197,4 +197,62 @@
 #define FLAG_SCENE_TEMP_50                                                     \
   0x250 // Vault interiors: the leader is beside the Bone
 
+// Goma Cave
+#define FLAG_GOMA_CAVE_STUMP_FELL 0x300 // pushed over into the room below
+#define FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE 0x301 // sunk into its place
+#define FLAG_GOMA_CAVE_WEST_PILLAR_MOVED 0x302    // one step east of its start
+#define FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED 0x860
+#define FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP 0x861
+#define FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS 0x862
+#define FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE 0x863
+#define FLAG_GOMA_CAVE_WATERWAY_STUMP_MOVED 0x864
+// Ivan has blown the ivy off the stump and rejoined the party.
+#define FLAG_GOMA_CAVE_IVAN_REJOINED 0x865
+#define FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY 0x866
+#define FLAG_GOMA_CAVE_WITNESS_LEFT 0x869 // after the party caught Forge
+
+// Hammet's palace
+#define FLAG_IVAN_REPORTED_TO_LAYANA 0x912 // that Hammet is still in Lunpa
+#define FLAG_LAYANA_SCOLDED_LUNPA_VISIT 0x913
+#define FLAG_HAMMET_HOMECOMING_SEEN 0x914
+
+// Fuchin Temple and Master Feh's school
+// Nyunpa is enlightened, beyond words: he has passed away.
+#define FLAG_NYUNPA_ENLIGHTENED 0x88f
+// The visitor from Kolima heard that the bridge is open again.
+#define FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN 0x890
+#define FLAG_NYUNPA_TEST_ACCEPTED 0x891 // the test of the waterfall grotto
+#define FLAG_FUCHIN_FALLS_GROTTO_OPENED 0x892 // the monk stepped aside
+#define FLAG_NYUNPA_TAUGHT_FORCE 0x893        // the power the monks call Ki
+#define FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST 0x894
+#define FLAG_FEH_WAITS_TO_SEE_CHI 0x898
+#define FLAG_FEH_CHI_DEMONSTRATION_DECLINED 0x899
+#define FLAG_FEH_SAW_CHI 0x89b
+// Nyunpa's test was declined; the students saw the training tree fall.
+#define FLAG_NYUNPA_TEST_DECLINED 0x300
+#define FLAG_FEH_SCHOOL_SAW_TREE_FALL 0x301
+
+// Crossbone Isle
+#define FLAG_CROSSBONE_ISLE_THIRD_BLOCK_LOWERED 0x300
+// The four blue doors in a row, then the red door.
+#define FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN 0x9c0
+#define FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN 0x9c4
+// Bane's three escapes in the block room.
+#define FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE 0x9c8
+#define FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE 0x9c9
+#define FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE 0x9ca
+// The ivy in the first room: four flags from this one.
+#define FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY 0x8c4
+// The nine guarded rooms: one flag each from these, in room order.
+#define FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED 0x8c8
+#define FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED 0x8d2
+#define FLAG_CROSSBONE_ISLE_FINAL_GUARDS_DEFEATED 0x8d1
+// Crossbone Isle's pursuer room: a pursuer is after the leader.
+#define FLAG_SCENE_TEMP_20 0x220
+// Crossbone Isle's first room: its four plants have grown.
+#define FLAG_SCENE_TEMP_40 0x240
+#define FLAG_SCENE_TEMP_41 0x241
+#define FLAG_SCENE_TEMP_42 0x242
+#define FLAG_SCENE_TEMP_43 0x243
+
 #endif

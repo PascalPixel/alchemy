@@ -1,5 +1,17 @@
-// Draft of BattleFx_RunRisingDragon, decompiled from the listing: differ 773 of
+// Draft of BattleFx_RunRisingDragon, decompiled from the listing: differ 695 of
 // 884 (draft 877), the same 65 calls and control flow; allocation differs.
+// 2026-10-19 (run 33), from 773: the blitter as a pair (tagged below): 723;
+// blit declared before sprites and camera, then frame right after it, so
+// the spill slots run effect, work, canvas, the pair, frame, camera as the
+// native's: 701; the aggregates declared arcs, the three positions, endX,
+// endY, texture (the native's 148, 112-147, 104, 96, 88): 695. Every spill
+// slot but the caller-save ones at sp+8 to sp+16 now has the native's place.
+// Left: the native clears endX and endY with a zero register pair (a
+// DImode store, as an initializer would) after the scheduler call; a
+// block with the two arrays initialized there moves three other spills
+// (734). In the arc loops the native keeps &arcs[dragon * 2] in r11, j * 2
+// as an induction variable at sp+24, the height spilled at sp+40 and the
+// distance in r4 (caller-saved at sp+8); the allocation there differs.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -120,20 +132,24 @@ extern const u8 Data_081991e0[];   // its corners
 void BattleFx_RunRisingDragon(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
+  /* FAKEMATCH(frame): the blitter as a pair of which only the first is used;
+   * as one two-word DImode pseudo its spill takes sp+68 and the unused sp+72
+   * the native frame has. As a single DrawRectangle the frame is 160 bytes
+   * (773 of 884 instructions differ in tla-en, 723 with the pair). */
+  DrawRectangle blit[2];
+  s32 frame;
   u8 *sprites;
   s32 *camera;
-  DrawRectangle blit;
   void *caster;
+  s32 arcs[4];
   struct EffectPosition source;
   struct EffectPosition target;
   struct EffectPosition hit;
+  s32 endX[2];
+  s32 endY[2];
   struct ModelTexture texture;
   struct RenderModel *model;
   struct EffectStep *spark;
-  s32 arcs[4];
-  s32 endX[2];
-  s32 endY[2];
-  s32 frame;
   s32 dragon;
   s32 i;
   s32 j;
@@ -152,7 +168,7 @@ void BattleFx_RunRisingDragon(struct BattleEffectArgument *effect) {
                   BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                         COMPOSITE_FLIP_X));
   }
-  blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = 0x1010;
   work->transferMode = 2;
   work->transferValue = 50;
@@ -229,7 +245,7 @@ void BattleFx_RunRisingDragon(struct BattleEffectArgument *effect) {
       if (spark->variant >= 0) {
         s32 size = (spark->variant >> 3) + 2;
 
-        blit(canvas, sprites + gData_08197410[size - 1],
+        blit[0](canvas, sprites + gData_08197410[size - 1],
              HI(spark->x) - size / 2, HI(spark->y) - size, size, size * 2);
         BattleFxKernels_IntegrateVector2(spark, 60, 0x1000);
         spark->variant--;

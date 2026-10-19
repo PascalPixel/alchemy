@@ -85,7 +85,7 @@ as functions (`struct SceneEntries`). Each returns one of the scene's tables,
 or runs its setup.
 
 They are functions rather than pointers to tables so that a scene can answer
-differently as the story moves on: `Vault_SelectEvents` returns
+differently as the story moves on: Vault's `Scene_GetEvents` returns
 `gVault_EventsAfterThieves` once the thieves are in jail, and the engine
 needs no notion of story state at all. The same goes for placements, whose
 rows carry conditions, and for exits, whose rows can depend on a flag.

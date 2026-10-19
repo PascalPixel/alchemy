@@ -24,18 +24,17 @@ void Func_080cf350(struct ObjectRuntime *object) {
     return;
 
   {
-    /* FAKEMATCH(fixed-register variable, empty asm barrier): the owner
-     * pinned to r0 and held there by the barrier until after the motion
-     * byte's store, where the native copies it; as `owner =
-     * ObjectTable_Get(...)` ahead of the stores, 2 of 40 instructions differ
-     * in tla-en (the copy one instruction earlier). Store order, a result
-     * temporary, a barrier alone and a one-pass block were measured and
-     * differ. */
+    /* FAKEMATCH(pin): the owner kept in r0, where the call returns it, until
+     * after the motion byte's store; as an ordinary local, 2 of 40
+     * instructions differ in tla-en. */
     register struct ObjectRuntime *found asm("r0") =
         ObjectTable_Get(EventRuntime_GetControlledOwner());
     object->acceleration = 0x10000;
     object->speedLimit = 0x20000;
     object->motionFlags = 0;
+    /* FAKEMATCH(barrier): the owner's copy out of r0 held after the stores,
+     * as the native copies it; without the barrier, 2 of 40 instructions
+     * differ in tla-en. */
     __asm__ volatile("" : "+r"(found));
     owner = found;
   }

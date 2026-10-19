@@ -1,0 +1,34 @@
+# The Lost Age: graphics
+
+This folder holds The Lost Age's pictures and the code that draws with them,
+and much of what ☀️ keeps in its window folder: the windows
+(`window/`, 50 files), the message decoder and text (`text/`), glyphs,
+palettes and the display. ☀️'s [Graphics](../../../tbs/src/graphics/README.md)
+and [Windows](../../../tbs/src/window/README.md) explain how these work; this
+page says only what differs here.
+
+## What differs from ☀️
+
+- **Grouping.** ⚓️ keeps the window system and the message decoder under
+  `graphics/` (`window/`, `text/`), where ☀️ has a folder of their own; its
+  `window` folder holds one file. The pictures are grouped by what they show,
+  as in ☀️ (`battle_fx/`, `monster/`, `world_map/` and the rest), each built
+  from its PNG.
+- **Compilers.** Thumb files take K2's options on top of ☀️'s (`CFLAGS_tla`
+  in the `Makefile`): `-mthumb-split-constants`, `-mthumb-call-via-lr` and
+  `-mtune=arm9tdmi`, without `-mthumb-interwork`. `tile/metatile.c` is ARM
+  code, compiled with GCC 2.95.2 like ☀️'s ARM files (`ARM_C`).
+- **Assets.** ⚓️'s copies of pictures ☀️ also has are its own files under its
+  own resource numbers, so a ☀️ resource id does not name a ⚓️ picture.
+- **Names.** A function that does what its ☀️ twin does takes its name
+  (`UiText_BuildRenderEntries`), so ☀️'s guides apply to it as written.
+
+## Status
+
+Functions not yet matched are drafts under `recon/tla/en/main`, by address.
+`make progress` gives the counts.
+
+## Evidence and open questions
+
+- XXX: where ⚓️'s window object begins and ends, and so whether `window/`
+  and `text/` will move to their own folder as in ☀️.

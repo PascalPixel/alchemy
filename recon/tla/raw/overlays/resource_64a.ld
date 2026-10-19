@@ -13,7 +13,7 @@ SECTIONS
         "*/resource_64a_overlay.o"(.text.x02008b24)
         "*/resource_64a_overlay.o"(.text.x02008db4)
         "*/resource_64a_overlay.o"(.text.x02008e44)
-        "*/resource_64a_overlay.o"(.text.x02009804)
+        "*/games/tla/src/menu/clear/s1804.o"(.text)
         "*/resource_64a_overlay.o"(.text.x0200987c)
         "*/resource_64a_overlay.o"(.text.x020098e0)
         "*/resource_64a_overlay.o"(.text.x02009c7c)

@@ -240,6 +240,16 @@ graphics(void)
 	Buffer recordReference = {recordBytes, sizeof(recordBytes), 0};
 	equal(&records, &recordReference, "a label column writes nothing");
 	free(records.data);
+	textFile("names.tsv", "name:str4\tlevel:u8\tenemy\n"
+						  "\" A\\\"\"\t7\tFirst\n\"\\xff\"\t1\tSecond\n\"\"\t2\tThird\n");
+	RUN("graphics", true, "names.tsv", "names.table");
+	Buffer names = readFile("names.table");
+	uint8_t nameBytes[] = {' ', 'A', '"', 0, 7, 0xff, 0, 0, 0, 1, 0, 0, 0, 0, 2};
+	Buffer nameReference = {nameBytes, sizeof(nameBytes), 0};
+	equal(&names, &nameReference, "a string column is padded with zeros");
+	free(names.data);
+	textFile("long.tsv", "name:str2\n\"abc\"\n");
+	RUN("graphics", false, "long.tsv", "long.table");
 	RUN("graphics", false, "tiles.png", "tiles.4bpp", "-mwidth", "0");
 	Buffer preserved = readFile("tiles.4bpp");
 	equal(&tiles, &preserved, "invalid edits leave the previous output intact");

@@ -8,6 +8,43 @@
 #include "resource.h"
 
 /*
+ * A strN column holds a quoted string of at most N bytes, written in full and
+ * padded with zeros: "Vermin", "" or "\xff", with \\, \" and \xNN escapes.
+ */
+static void
+text(Buffer *out, const char *s, unsigned size)
+{
+	size_t len = strlen(s), start = out->len;
+	if (len < 2 || s[0] != '"' || s[len - 1] != '"')
+		fail("table string is not quoted");
+	for (size_t i = 1; i < len - 1; i++)
+	{
+		unsigned c = (unsigned char) s[i];
+		if (c == '\\')
+		{
+			char e = i + 1 < len - 1 ? s[++i] : 0;
+			if (e == 'x' && i + 2 < len - 1)
+			{
+				char digits[3] = {s[i + 1], s[i + 2], 0};
+				c = (unsigned) number(digits, 16, 255);
+				i += 2;
+			}
+			else if (e == '\\' || e == '"')
+				c = (unsigned char) e;
+			else
+				fail("unknown table string escape");
+		}
+		else if (c == '"')
+			fail("table string has an unescaped quote");
+		if (out->len - start >= size)
+			fail("table string is longer than its column");
+		byte(out, c);
+	}
+	while (out->len - start < size)
+		byte(out, 0);
+}
+
+/*
  * A final short record is allowed; once encountered, no later row may follow.
  * A column named without a type is a label for people, such as a name, and
  * writes nothing.
@@ -33,6 +70,12 @@ table(const Buffer *input)
 			if (!type)
 				continue;
 			type++;
+			if (!strncmp(type, "str", 3))
+			{
+				text(&out, trim(fields.items[i]),
+					 number(type + 3, 10, 65535));
+				continue;
+			}
 			bool sign = *type == 's';
 			if (!sign && *type != 'u')
 				fail("unknown table column type");

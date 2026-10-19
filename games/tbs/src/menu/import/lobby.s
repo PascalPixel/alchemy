@@ -58,7 +58,7 @@
 	.set import.Engine_EventOpenScreen, 1
 	.set import.Engine_EventWaitForScreen, 1
 	.set import.Engine_SanctumOpen, 1
-	.set import.BattlePlacement_UpdateTimedEntriesTwentyTimes, 1
+	.set import.DjinnRecovery_TickTwenty, 1
 	.set import.DebugParty_LoadPreset, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

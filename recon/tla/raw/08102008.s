@@ -918,9 +918,9 @@ Func_08102008:
 	movs r3, #0
 	add r2, r10
 	str r3, [r2]
-	bl BattlePlacement_UpdateTimedEntriesFar
-	bl BattlePlacement_UpdateTimedEntriesFar
-	bl BattlePlacement_UpdateTimedEntriesFar
+	bl DjinnRecovery_TickFar
+	bl DjinnRecovery_TickFar
+	bl DjinnRecovery_TickFar
 	movs r1, #0
 	movs r2, #7
 	movs r0, #4

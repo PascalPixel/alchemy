@@ -1340,7 +1340,7 @@ s32 LinkLobby_RunRoundResult(void) {
   Scheduler_SetTaskFlags(callback, 1);
   if (gGameState.entrance != 8 || !Engine_GameFlagIsSet(FLAG_MONSTER_BATTLE)) {
     Party_RestoreHpPp(1);
-    BattlePlacement_UpdateTimedEntriesTwentyTimes();
+    DjinnRecovery_TickTwenty();
   }
   return 0;
 }

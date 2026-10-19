@@ -326,10 +326,10 @@ Func_02001ab4:
 	.thumb_func
 Func_02001abc:
 	overlay_veneer Func_08108010
-	.global BattlePlacement_UpdateTimedEntriesTwentyTimes
+	.global DjinnRecovery_TickTwenty
 	.thumb_func
-BattlePlacement_UpdateTimedEntriesTwentyTimes:
-	overlay_veneer BattlePlacement_UpdateTimedEntriesTwentyTimesFar
+DjinnRecovery_TickTwenty:
+	overlay_veneer DjinnRecovery_TickTwentyFar
 	.global DebugParty_LoadPreset
 	.thumb_func
 DebugParty_LoadPreset:

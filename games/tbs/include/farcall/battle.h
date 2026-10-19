@@ -26,9 +26,9 @@ void BattlePres_SetActorModesFar(u16 *actors, s32 mode);
 void BattleEventRuntime_BeginPhaseFar(s32 cue);
 s32 Graphics_ScaleRgb555ClampedFar(u16 *source, u16 *destination, s32 scale,
                                    s32 count);
-s32 BattlePlacement_UpdateTimedEntriesFar(void);
+s32 DjinnRecovery_TickFar(void);
 s32 BattleMotion_GetSlotPaletteFar(s32 id);
-s32 BattlePlacement_UpdateTimedEntriesTwentyTimesFar(void);
+s32 DjinnRecovery_TickTwentyFar(void);
 s32 DebugParty_LoadPresetFar(s32 preset);
 void BattleActor_CommitPlacementFar(void);
 s32 BattlePresentation_WaitForPromptAtFar(s32 x, s32 y);

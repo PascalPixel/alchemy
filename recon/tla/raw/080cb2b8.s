@@ -258,7 +258,7 @@ Func_080cb2b8:
 	adds r0, r1, #0
 	movs r1, #0
 	bl BattleParty_ApplyDrain
-	bl BattlePlacement_UpdateTimedEntriesFar
+	bl DjinnRecovery_TickFar
 	cmp r0, #0
 	beq .L_080cb4a8
 	movs r0, #139

@@ -256,7 +256,7 @@ s32 Func_0200145c(void) {
   Func_02001944(callback, 1);
   if (gPartyState.entrance != 8 || !Flag_IsSet(0x173)) {
     Func_02001a04(1);
-    BattlePlacement_UpdateTimedEntriesTwentyTimes();
+    DjinnRecovery_TickTwenty();
   }
   return 0;
 }

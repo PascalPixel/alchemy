@@ -1884,7 +1884,7 @@ Func_0200145c:
 .L_020098a6:
 	movs r0, #1
 	bl Func_02001a04
-	bl BattlePlacement_UpdateTimedEntriesTwentyTimes
+	bl DjinnRecovery_TickTwenty
 .L_020098b0:
 	movs r0, #0
 	add sp, #8

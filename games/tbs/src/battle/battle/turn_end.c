@@ -188,7 +188,7 @@ s32 BattleUnit_TickAgilityModifier(s32 unitId) {
 
 // Ticks party Djinn recovery for living owners, then sets and removes every
 // expired entry. Returns one when any entry was removed.
-s32 BattlePlacement_UpdateTimedEntries(void) {
+s32 DjinnRecovery_Tick(void) {
   struct DjinnRecoveryList *list;
   struct DjinnRecoveryEntry *timedEntry;
   struct DjinnRecoveryEntry *expiredEntry;
@@ -231,13 +231,13 @@ s32 BattlePlacement_UpdateTimedEntries(void) {
 }
 
 // Advances party Djinn recovery twenty times, setting every expired Djinni.
-s32 BattlePlacement_UpdateTimedEntriesTwentyTimes(void) {
+s32 DjinnRecovery_TickTwenty(void) {
   s32 turns;
 
   turns = 19;
   do {
     turns--;
-    BattlePlacement_UpdateTimedEntries();
+    DjinnRecovery_Tick();
   } while (turns >= 0);
   return 0;
 }

@@ -261,7 +261,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
       amount = accumulatedDistance / 0x10000;
       work->walkingDistance = accumulatedDistance & 0xffff;
       BattleParty_ApplyDrain(amount, 0);
-      if (BattlePlacement_UpdateTimedEntriesFar())
+      if (DjinnRecovery_TickFar())
         AudioCommand_PlayFar(SE_139);
       Event_ClearInvalidPackedValues();
       partyHurt = BattleParty_ApplyStatusDamage();

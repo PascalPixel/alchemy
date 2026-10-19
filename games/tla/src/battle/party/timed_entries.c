@@ -96,7 +96,7 @@ s32 BattleUnit_TickAgilityModifier(s32 id) {
   return 0;
 }
 
-s32 BattlePlacement_UpdateTimedEntries(void) {
+s32 DjinnRecovery_Tick(void) {
   struct PlacementList *list;
   struct DjinnRecoveryEntry *timedEntry;
   struct DjinnRecoveryEntry *expiredEntry;
@@ -139,13 +139,13 @@ s32 BattlePlacement_UpdateTimedEntries(void) {
   return removed;
 }
 
-s32 BattlePlacement_UpdateTimedEntriesTwentyTimes(void) {
+s32 DjinnRecovery_TickTwenty(void) {
   s32 turns;
 
   turns = 19;
   do {
     turns--;
-    BattlePlacement_UpdateTimedEntries();
+    DjinnRecovery_Tick();
   } while (turns >= 0);
   return 0;
 }
@@ -161,7 +161,7 @@ void BattleEventRuntime_WaitForReady(void);
 void Func_08127308(s32 unitId, s32 element, s32 mode, s32 value);
 
 // Ticks one side's Djinn recovery at the round's end, as ☀️'s
-// BattlePlacement_UpdateTimedEntries with ⚓️'s presentation: an owner must be
+// DjinnRecovery_Tick with ⚓️'s presentation: an owner must be
 // in the battle; each Djinni that comes back plays its event (its icon, sound
 // 175, the flash and "... is set to ...!") before it is Set. Returns 1 when a
 // count fell, 2 when one was Set, else 0.

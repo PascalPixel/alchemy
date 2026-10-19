@@ -57,18 +57,18 @@ Func_081180e8:
 	.thumb_func
 ColorBuffer_ScaleFar:
 	overlay_veneer ColorBuffer_Scale
-	.global BattlePlacement_UpdateTimedEntriesFar
+	.global DjinnRecovery_TickFar
 	.thumb_func
-BattlePlacement_UpdateTimedEntriesFar:
-	overlay_veneer BattlePlacement_UpdateTimedEntries
+DjinnRecovery_TickFar:
+	overlay_veneer DjinnRecovery_Tick
 	.global BattleMotion_GetSlotPaletteFar
 	.thumb_func
 BattleMotion_GetSlotPaletteFar:
 	overlay_veneer BattleMotion_GetSlotPalette
-	.global BattlePlacement_UpdateTimedEntriesTwentyTimesFar
+	.global DjinnRecovery_TickTwentyFar
 	.thumb_func
-BattlePlacement_UpdateTimedEntriesTwentyTimesFar:
-	overlay_veneer BattlePlacement_UpdateTimedEntriesTwentyTimes
+DjinnRecovery_TickTwentyFar:
+	overlay_veneer DjinnRecovery_TickTwenty
 	.global DebugParty_LoadPresetFar
 	.thumb_func
 DebugParty_LoadPresetFar:

@@ -327,7 +327,7 @@ fled:
 finished:
   BattleParty_ResetActiveRuntimeFields();
   Battle_ReservedNoOpF674();
-  BattlePlacement_UpdateTimedEntries();
+  DjinnRecovery_Tick();
   Battle_SetStart(0);
   Scheduler_RemoveCallback(BattleActor_UpdateSpritePriorities);
   Runtime_ReleaseHeapBlock10();

@@ -93,6 +93,6 @@
 	.set import.Audio_PlayCueFromEventWork, 1
 	.set import.Engine_ShopOpen, 1
 	.set import.Engine_InnOpen, 1
-	.set import.BattlePlacement_UpdateTimedEntriesTwentyTimes, 1
+	.set import.DjinnRecovery_TickTwenty, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

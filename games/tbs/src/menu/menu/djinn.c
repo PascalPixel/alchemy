@@ -1088,9 +1088,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           UiWork_FinalizeFar(messageWindow, 1);
           DjinnMenu_DrawElementList(&backdrop->list);
           backdrop->tutorialTimer = 0;
-          BattlePlacement_UpdateTimedEntriesFar();
-          BattlePlacement_UpdateTimedEntriesFar();
-          BattlePlacement_UpdateTimedEntriesFar();
+          DjinnRecovery_TickFar();
+          DjinnRecovery_TickFar();
+          DjinnRecovery_TickFar();
           Djinn_DeactivateFar(0, 0, 0);
           DjinnRecovery_AddStandbyFar(0, 0, 0);
           UnitCalcFar(0);

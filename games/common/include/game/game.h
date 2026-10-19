@@ -64,7 +64,7 @@ extern struct ActionDefinition gBattleAction_DefinitionTable[];
 extern const u16 gDjinn_Definitions[][6];
 extern const u8 gEnemy_DefinitionTable[];
 extern u8 gGameFlagBytes[];
-void BattlePlacement_UpdateTimedEntriesTwentyTimesFar(void);
+void DjinnRecovery_TickTwentyFar(void);
 s32 Djinn_AddToOwnerFar(s32, s32, s32);
 void Event_ClearInvalidPackedValuesFar(s32);
 s32 Inventory_AddItemFar(s32, s32);

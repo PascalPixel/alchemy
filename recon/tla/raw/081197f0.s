@@ -974,7 +974,7 @@ Func_081197f0:
 .L_08119ff2:
 	bl BattleParty_ResetActiveRuntimeFields
 	bl Func_08124cc0
-	bl BattlePlacement_UpdateTimedEntries
+	bl DjinnRecovery_Tick
 	ldr r3, .L_0811a030
 	movs r1, #166
 	lsls r1, r1, #1

@@ -2775,10 +2775,10 @@ Func_081180e8:
 ColorBuffer_ScaleFar:
 	.incbin "baserom.gba", 0x001180f0, 0x00000008
 	.section .rom.001180f8, "ax"
-	.global BattlePlacement_UpdateTimedEntriesFar
-	.type BattlePlacement_UpdateTimedEntriesFar, %function
+	.global DjinnRecovery_TickFar
+	.type DjinnRecovery_TickFar, %function
 	.thumb_func
-BattlePlacement_UpdateTimedEntriesFar:
+DjinnRecovery_TickFar:
 	.incbin "baserom.gba", 0x001180f8, 0x00000008
 	.section .rom.00118100, "ax"
 	.global BattleMotion_GetSlotPaletteFar
@@ -2787,10 +2787,10 @@ BattlePlacement_UpdateTimedEntriesFar:
 BattleMotion_GetSlotPaletteFar:
 	.incbin "baserom.gba", 0x00118100, 0x00000008
 	.section .rom.00118108, "ax"
-	.global BattlePlacement_UpdateTimedEntriesTwentyTimesFar
-	.type BattlePlacement_UpdateTimedEntriesTwentyTimesFar, %function
+	.global DjinnRecovery_TickTwentyFar
+	.type DjinnRecovery_TickTwentyFar, %function
 	.thumb_func
-BattlePlacement_UpdateTimedEntriesTwentyTimesFar:
+DjinnRecovery_TickTwentyFar:
 	.incbin "baserom.gba", 0x00118108, 0x00000008
 	.section .rom.00118110, "ax"
 	.global DebugParty_LoadPresetFar

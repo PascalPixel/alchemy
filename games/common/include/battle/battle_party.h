@@ -59,8 +59,8 @@ s32 BattleUnit_TickSleep(s32 unitId);
 s32 Battle_AdvanceCounterAndCheckChance(s32 unitId);
 s32 BattleUnit_TickReflect(s32 unitId);
 s32 BattleUnit_TickAgilityModifier(s32 unitId);
-s32 BattlePlacement_UpdateTimedEntries(void);
-s32 BattlePlacement_UpdateTimedEntriesTwentyTimes(void);
+s32 DjinnRecovery_Tick(void);
+s32 DjinnRecovery_TickTwenty(void);
 #endif
 
 #endif

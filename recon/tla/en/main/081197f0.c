@@ -146,7 +146,7 @@ void Fade_Wait(void);
 s32 BattleParty_PrepareActiveOwners(u16 *owners);
 void Func_0811843c(void);
 void BattleParty_ResetActiveRuntimeFields(void);
-void BattlePlacement_UpdateTimedEntries(void);
+void DjinnRecovery_Tick(void);
 void Func_081263f0(void);
 
 s32 Func_081197f0(s32 enemyGroup) {
@@ -462,7 +462,7 @@ finished:
     Func_0811843c();
   BattleParty_ResetActiveRuntimeFields();
   Func_08124cc0();
-  BattlePlacement_UpdateTimedEntries();
+  DjinnRecovery_Tick();
   gPartyState.battleStart = 0;
   Scheduler_RemoveCallback(Func_0811b9fc);
   Func_081263f0();

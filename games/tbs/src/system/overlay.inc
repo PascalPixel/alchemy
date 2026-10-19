@@ -427,7 +427,7 @@
 	import AudioCommand_WaitForStateByteClear, AudioCommand_WaitForStateByteClearFar
 	import Inn_PlaySleep, Inn_PlaySleepFar
 @ Battle bank (far_call/BATTLE.S)
-	import BattlePlacement_UpdateTimedEntriesTwentyTimes, BattlePlacement_UpdateTimedEntriesTwentyTimesFar
+	import DjinnRecovery_TickTwenty, DjinnRecovery_TickTwentyFar
 	import DebugParty_LoadPreset, DebugParty_LoadPresetFar
 @ Scroll bank (far_call/SCROLL.S)
 	import ScrollFar_Entry00, DisplayScroll_RunSlideshowFar

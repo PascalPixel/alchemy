@@ -35,9 +35,9 @@ FarCall_BattleTable:
 	export BattlePres_SetActorModesFar, BattlePres_SetActorModes
 	export BattleEventRuntime_BeginPhaseFar, BattleEventRuntime_BeginPhase
 	export Graphics_ScaleRgb555ClampedFar, Graphics_ScaleRgb555Clamped
-	export BattlePlacement_UpdateTimedEntriesFar, BattlePlacement_UpdateTimedEntries
+	export DjinnRecovery_TickFar, DjinnRecovery_Tick
 	export BattleMotion_GetSlotPaletteFar, BattleMotion_GetSlotPalette
-	export BattlePlacement_UpdateTimedEntriesTwentyTimesFar, BattlePlacement_UpdateTimedEntriesTwentyTimes
+	export DjinnRecovery_TickTwentyFar, DjinnRecovery_TickTwenty
 	export DebugParty_LoadPresetFar, DebugParty_LoadPreset
 	export BattleActor_CommitPlacementFar, BattleObjPut
 	overlay_veneer ReleaseBattleObjectRecords

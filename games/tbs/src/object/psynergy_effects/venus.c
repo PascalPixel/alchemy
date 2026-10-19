@@ -37,7 +37,7 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   AudioCommand_PlayFar(SE_153);
   ObjectMotion_Launch(djinniId, 8, 22);
   AudioCommand_PlayFar(SE_140);
-  Runtime_SetWorkTripleIfNonNegativeFar(0x14ccc, 0x14ccc, 0x10000);
+  Map_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
   djinni->callback = BattleFx_ShrinkObjectAndDestroyFast;
   ObjectDispatch_ApplyArgumentToChildrenFar(djinni, 3);
   WaitFrames(90);
@@ -46,7 +46,7 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   ObjectDispatch_ApplyArgumentToChildrenFar(
       Object_GetById(gGameState.selectedActor), 28);
   WaitFrames(30);
-  Runtime_SetWorkTripleIfNonNegativeFar(0x19999, 0x19999, 0x10000);
+  Map_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
 
   position.x = djinni->x;
   position.y = djinni->y;
@@ -87,7 +87,7 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   }
 
   WaitFrames(20);
-  Runtime_SetWorkTripleIfNonNegativeFar(1, 1, 1);
+  Map_SetScreenShakeFar(1, 1, 1);
   WaitFrames(30);
 
   for (remaining = 0; remaining <= 23; remaining++) {

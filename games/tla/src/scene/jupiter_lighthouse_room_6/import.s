@@ -193,7 +193,7 @@ ObjectDispatch_SetSingleChildFlags:
 	.global Func_02001b1c
 	.thumb_func
 Func_02001b1c:
-	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
+	overlay_veneer Map_SetScreenShakeFar
 	.global Func_02001b24
 	.thumb_func
 Func_02001b24:

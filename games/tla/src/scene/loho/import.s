@@ -121,7 +121,7 @@ ObjectDispatch_SetSingleChildFlags:
 	.global Func_020012c8
 	.thumb_func
 Func_020012c8:
-	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
+	overlay_veneer Map_SetScreenShakeFar
 	.global UiText_ShowPositionedMessageAndWait
 	.thumb_func
 UiText_ShowPositionedMessageAndWait:

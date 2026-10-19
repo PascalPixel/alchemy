@@ -58,7 +58,7 @@ struct BlendWork {
 void Func_080eb01c(struct ShineSprite *sprite);
 void BattleFx_IntegrateVector2(struct ShineParticle *particle, s32 frames,
                                s32 flags);
-void Runtime_SetWorkTripleIfNonNegativeFar(s32 a, s32 b, s32 c);
+void Map_SetScreenShakeFar(s32 a, s32 b, s32 c);
 
 void Func_080e5a64(void) {
   struct ShineWork *work = (struct ShineWork *)Ram_HeapSlots->battleFxWork[0];
@@ -96,7 +96,7 @@ void Func_080e5a64(void) {
     if (work->timer == 8) {
       blend->scaleX = 0x2000;
       blend->scaleY = 0x2000;
-      Runtime_SetWorkTripleIfNonNegativeFar(0x14ccc, 0x14ccc, 0x10000);
+      Map_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
       Audio_PlayCue(567);
       work->sparkles = 1;
       work->fading = 1;
@@ -125,7 +125,7 @@ void Func_080e5a64(void) {
     break;
   case 3:
     if (work->timer == 0)
-      Runtime_SetWorkTripleIfNonNegativeFar(1, 1, 1);
+      Map_SetScreenShakeFar(1, 1, 1);
     if (work->timer == 10) {
       work->state++;
       work->timer = -1;

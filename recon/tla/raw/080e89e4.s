@@ -61,7 +61,7 @@ Func_080e89e4:
 	lsls r0, r0, #10
 	lsls r2, r2, #9
 	movs r1, #0
-	bl Runtime_SetWorkTripleIfNonNegativeFar
+	bl Map_SetScreenShakeFar
 	b .L_080e8b30
 .L_080e8a5a:
 	movs r3, #2
@@ -74,7 +74,7 @@ Func_080e89e4:
 	lsls r1, r1, #10
 	lsls r2, r2, #9
 	movs r0, #0
-	bl Runtime_SetWorkTripleIfNonNegativeFar
+	bl Map_SetScreenShakeFar
 	b .L_080e8b30
 .L_080e8a72:
 	ldr r3, .L_080e8b40

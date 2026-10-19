@@ -47,7 +47,7 @@ void Shop_RestoreSceneTilesFar(s32);
 void Shop_InitEffectFar(void);
 void EffectSlot_Initialize();
 void BattleFx_AdvanceSpinAngle();
-void Runtime_SetWorkTripleIfNonNegativeFar(s32, s32, s32);
+void Map_SetScreenShakeFar(s32, s32, s32);
 void Motion_SetTargetPositionFromMagnitudeAngle();
 
 struct PhasedRadialSequenceObject {

@@ -69,8 +69,8 @@ s32 Map_CheckObjectStepFar(struct ObjectRuntime *object,
 void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *obj,
                                            u32 flags);
 void ObjectDispatch_SetChildBlendModeFar(struct DispatchObject *obj, u32 mode);
-void Runtime_SetWorkTripleIfNonNegativeFar(s32 value0, s32 value1, s32 value2);
-void Map_WaitWorkValuesBelow256Far(void);
+void Map_SetScreenShakeFar(s32 value0, s32 value1, s32 value2);
+void Map_WaitForShakeToSettleFar(void);
 void Graphics_EnableObjLayerAndCallbacksFar(void);
 void ObjectDispatch_StopCallbacksAndHideLayersFar(void);
 s32 CheckMapPositionCellOccupiedFar(struct WorldPosition *position);

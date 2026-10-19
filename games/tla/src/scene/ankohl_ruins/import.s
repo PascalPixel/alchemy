@@ -161,7 +161,7 @@ Animation_SetStateFlags:
 	.global Func_02002e24
 	.thumb_func
 Func_02002e24:
-	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
+	overlay_veneer Map_SetScreenShakeFar
 	.ifndef TLA_EDITION_JA
 	.global Func_02002e2c
 	.thumb_func

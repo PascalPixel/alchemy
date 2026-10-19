@@ -229,7 +229,7 @@ Animation_SetStateFlags:
 	.global Func_02003368
 	.thumb_func
 Func_02003368:
-	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
+	overlay_veneer Map_SetScreenShakeFar
 	.global Func_02003370
 	.thumb_func
 Func_02003370:

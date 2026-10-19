@@ -374,7 +374,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   actor->sprite->rotation = 0x1000;
   Engine_AudioPlayCue(SE_CAST);
   OBJ_MODE(actorId, 3);
-  Map_WaitWorkValuesBelow256();
+  Map_WaitForShakeToSettle();
   WAIT(10);
   OBJ_MODE(actorId, 2);
 }

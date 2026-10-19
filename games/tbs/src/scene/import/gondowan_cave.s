@@ -14,7 +14,7 @@
 	.set import.Engine_ActorSetSpriteFlags, 1
 	.set import.Engine_ObjectSetBlendMode, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
-	.set import.Map_WaitWorkValuesBelow256, 1
+	.set import.Map_WaitForShakeToSettle, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1

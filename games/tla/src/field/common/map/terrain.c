@@ -52,7 +52,7 @@ u8 GetWorldMapTerrainBehavior(struct WorldPosition *position,
   return gWorldMap_TerrainBehaviorTable[flag + selector];
 }
 
-void Runtime_SetWorkTripleIfNonNegative(s32 value0, s32 value1, s32 value2) {
+void Map_SetScreenShake(s32 value0, s32 value1, s32 value2) {
   struct MapWork *work;
 
   work = Ram_HeapSlots->mapWork;
@@ -69,7 +69,7 @@ void Runtime_SetWorkTripleIfNonNegative(s32 value0, s32 value1, s32 value2) {
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
-void Map_WaitWorkValuesBelow256(void) {
+void Map_WaitForShakeToSettle(void) {
   s32 *work;
   s32 cnt;
 

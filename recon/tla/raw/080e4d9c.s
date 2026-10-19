@@ -550,7 +550,7 @@ Func_080e4d9c:
 	lsls r2, r2, #8
 	adds r2, #102
 	adds r0, r1, #0
-	bl Runtime_SetWorkTripleIfNonNegativeFar
+	bl Map_SetScreenShakeFar
 	movs r3, #168
 	lsls r3, r3, #5
 	movs r0, #168
@@ -604,7 +604,7 @@ Func_080e4d9c:
 	lsls r2, r2, #8
 	adds r0, r1, #0
 	adds r2, #102
-	bl Runtime_SetWorkTripleIfNonNegativeFar
+	bl Map_SetScreenShakeFar
 	movs r0, #168
 	lsls r0, r0, #5
 	movs r1, #168
@@ -684,7 +684,7 @@ Func_080e4d9c:
 	lsls r2, r2, #8
 	adds r2, #102
 	adds r0, r1, #0
-	bl Runtime_SetWorkTripleIfNonNegativeFar
+	bl Map_SetScreenShakeFar
 	movs r0, #145
 	bl Audio_PlayCue
 	movs r2, #0
@@ -1093,7 +1093,7 @@ Func_080e4d9c:
 	lsls r2, r2, #8
 	adds r0, r1, #0
 	adds r2, #102
-	bl Runtime_SetWorkTripleIfNonNegativeFar
+	bl Map_SetScreenShakeFar
 	movs r1, #168
 	lsls r1, r1, #5
 	adds r1, #10

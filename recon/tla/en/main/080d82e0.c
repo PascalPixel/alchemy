@@ -53,7 +53,7 @@ void Shop_RestoreSceneTilesFar(s32);
 void Shop_InitEffectFar(void);
 void EffectSlot_Initialize();
 void BattleFx_AdvanceSpinAngle();
-void Runtime_SetWorkTripleIfNonNegativeFar(s32, s32, s32);
+void Map_SetScreenShakeFar(s32, s32, s32);
 void Motion_SetTargetPositionFromMagnitudeAngle();
 
 struct PhasedRadialSequenceObject {
@@ -182,7 +182,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg) {
   Audio_PlayCue(153);
   ObjectMotion_Launch(arg, 8, 22);
   Audio_PlayCue(140);
-  Runtime_SetWorkTripleIfNonNegativeFar(0x14ccc, 0x14ccc, 0x10000);
+  Map_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
   djinni->callback = (void *)BattleFx_ShrinkObjectAndDestroyFast;
   Object_SetMode((struct ObjectRuntime *)djinni, 3);
   WaitFrames(90);
@@ -190,7 +190,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg) {
   WaitFrames(20);
   Object_SetMode(Object_GetById(gPartyState.currentOwner), 28);
   WaitFrames(30);
-  Runtime_SetWorkTripleIfNonNegativeFar(0x19999, 0x19999, 0x10000);
+  Map_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
 
   position[0] = djinni->x;
   position[1] = djinni->y;
@@ -228,7 +228,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg) {
   }
 
   WaitFrames(20);
-  Runtime_SetWorkTripleIfNonNegativeFar(1, 1, 1);
+  Map_SetScreenShakeFar(1, 1, 1);
   WaitFrames(30);
 
   for (remaining = 0; remaining <= 23; remaining++) {

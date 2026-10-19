@@ -5,8 +5,7 @@
 
 // Shakes the screen: sets the map's x and y shake amplitude and its decay
 // (16.16), leaving any negative value unchanged.
-void Runtime_SetWorkTripleIfNonNegative(s32 shakeX, s32 shakeY,
-                                        s32 shakeDecay) {
+void Map_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay) {
   struct MapScrollWork *work;
 
   work = gMapWork[0];
@@ -23,7 +22,7 @@ void Runtime_SetWorkTripleIfNonNegative(s32 shakeX, s32 shakeY,
 
 // Waits until the screen shake has died down (both amplitudes under 1/256
 // pixel), at most 300 frames, then stops it.
-void Map_WaitWorkValuesBelow256(void) {
+void Map_WaitForShakeToSettle(void) {
   struct MapScrollWork *work;
   s32 waitedFrames;
 

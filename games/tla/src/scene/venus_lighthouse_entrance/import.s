@@ -97,7 +97,7 @@ ObjectDispatch_SetSingleChildFlags:
 	.global Func_02002894
 	.thumb_func
 Func_02002894:
-	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
+	overlay_veneer Map_SetScreenShakeFar
 	.global Party_RemoveActiveOwner
 	.thumb_func
 Party_RemoveActiveOwner:

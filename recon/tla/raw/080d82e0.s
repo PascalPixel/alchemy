@@ -69,7 +69,7 @@ Func_080d82e0:
 	lsls r5, r5, #9
 	adds r2, r5, #0
 	adds r0, r1, #0
-	bl Runtime_SetWorkTripleIfNonNegativeFar
+	bl Map_SetScreenShakeFar
 	ldr r3, .L_080d8474
 	adds r0, r6, #0
 	str r3, [r6, #108]
@@ -93,7 +93,7 @@ Func_080d82e0:
 	ldr r1, .L_080d8478
 	adds r2, r5, #0
 	adds r0, r1, #0
-	bl Runtime_SetWorkTripleIfNonNegativeFar
+	bl Map_SetScreenShakeFar
 	ldr r3, [r6, #8]
 	mov r8, sp
 	str r3, [sp, #0]
@@ -159,7 +159,7 @@ Func_080d82e0:
 	movs r0, #1
 	movs r1, #1
 	movs r2, #1
-	bl Runtime_SetWorkTripleIfNonNegativeFar
+	bl Map_SetScreenShakeFar
 	movs r0, #30
 	bl WaitFrames
 	ldr r3, .L_080d8464

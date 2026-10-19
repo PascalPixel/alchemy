@@ -34,7 +34,7 @@ struct MapBounds {
 extern struct PartyState gPartyState;
 
 void Func_08020328(s32 map, struct MapBounds *bounds);
-void Runtime_SetWorkTripleIfNonNegativeFar(s32 shakeX, s32 shakeY, s32 decay);
+void Map_SetScreenShakeFar(s32 shakeX, s32 shakeY, s32 decay);
 
 // Opens the whole map to the view: keeps the view centre's position and the
 // map's view bounds for Func_080e8c9c to restore, notes which edges the view
@@ -60,21 +60,21 @@ void Func_080e89e4(s32 direction) {
 
   if (*(s32 *)map->unk0fc != 0) {
     if (direction & VIEW_MOVE_X) {
-      Runtime_SetWorkTripleIfNonNegativeFar(0x30000, 0, 0x10000);
+      Map_SetScreenShakeFar(0x30000, 0, 0x10000);
       return;
     }
     if (direction & VIEW_MOVE_Z) {
-      Runtime_SetWorkTripleIfNonNegativeFar(0, 0x30000, 0x10000);
+      Map_SetScreenShakeFar(0, 0x30000, 0x10000);
       return;
     }
   }
   if (event->controlMode == 3) {
     if (direction & VIEW_MOVE_X) {
-      Runtime_SetWorkTripleIfNonNegativeFar(0x30000, 0, 0x10000);
+      Map_SetScreenShakeFar(0x30000, 0, 0x10000);
       return;
     }
     if (direction & VIEW_MOVE_Z) {
-      Runtime_SetWorkTripleIfNonNegativeFar(0, 0x30000, 0x10000);
+      Map_SetScreenShakeFar(0, 0x30000, 0x10000);
       return;
     }
   }

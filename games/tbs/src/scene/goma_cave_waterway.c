@@ -200,7 +200,7 @@ static void GomaCaveWaterway_LeapStump(s32 no) {
                0x1c0000, &opt.fields);
   Engine_AudioPlayCue(SE_CAST);
   OBJ_MODE(no, 3);
-  Map_WaitWorkValuesBelow256();
+  Map_WaitForShakeToSettle();
 }
 
 s32 gEffectScript0[] = {

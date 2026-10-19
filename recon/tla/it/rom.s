@@ -4410,8 +4410,6 @@ Func_081197f0:
 	.incbin "baserom.gba", 0x00119808, 0x00000848
 	.section .rom.0011a4f6, "ax"
 	.incbin "baserom.gba", 0x0011a4f6, 0x0000011e
-	.section .rom.0011a738, "ax"
-	.incbin "baserom.gba", 0x0011a738, 0x0000008c
 	.section .rom.0011a7c4, "ax"
 	.global BattleObjMake
 	.type BattleObjMake, %function

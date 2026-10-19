@@ -5178,17 +5178,12 @@ main	rom_main_08	recon/tla/raw/0811a4de	.text	en
 main	rom_main_08	recon/tla/raw/0811a4e0	.text	en
 main	rom_main_08	recon/tla/ja/rom	.rom.0011a4da	ja
 main	rom_main_08	games/tla/src/battle/presentation/find_free_slot	.text
-main	rom_main_08	recon/tla/it/rom	.rom.0011a738	it
+main	rom_main_08	games/tla/src/battle/presentation/reset_actor	.text
 main	rom_main_08	recon/tla/it/rom	.rom.0011a7c4	it
-main	rom_main_08	recon/tla/fr/rom	.rom.0011a738	fr
 main	rom_main_08	recon/tla/fr/rom	.rom.0011a7c4	fr
-main	rom_main_08	recon/tla/es/rom	.rom.0011a738	es
 main	rom_main_08	recon/tla/es/rom	.rom.0011a7c4	es
-main	rom_main_08	recon/tla/de/rom	.rom.0011a738	de
 main	rom_main_08	recon/tla/de/rom	.rom.0011a7c4	de
-main	rom_main_08	recon/tla/raw/0811a720	.text	en
 main	rom_main_08	recon/tla/raw/0811a7ac	.text	en
-main	rom_main_08	recon/tla/ja/rom	.rom.0011a71c	ja
 main	rom_main_08	recon/tla/ja/rom	.rom.0011a7a8	ja
 main	rom_main_08	games/tla/src/battle/party/get_step_pair	.text
 main	rom_main_08	recon/tla/it/rom	.rom.0011b198	it

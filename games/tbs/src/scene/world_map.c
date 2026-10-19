@@ -52,7 +52,7 @@
 
 // Forward declarations.
 static s32 WorldMap_ApplyMapRotation(struct ScriptInterpreter *interpreter);
-static void WorldMap_GatherTravelersAndDepart(void);
+static void WorldMap_BoardBunzasWagon(void);
 static void WorldMap_DepartWithTravelers(void);
 static void WorldMap_ShakeTransferStartCamera(void);
 static void WorldMap_ShakeTransferLandingCamera(void);
@@ -540,7 +540,7 @@ s32 WorldMap_Initialize(void) {
     case 49:
       if (Engine_GameFlagIsSet(FLAG_PARTY_STAYED_IN_LUNPA) == 0 &&
           Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
-        WorldMap_GatherTravelersAndDepart();
+        WorldMap_BoardBunzasWagon();
       }
       break;
     case 64:
@@ -599,8 +599,12 @@ s32 WorldMap_Initialize(void) {
   return 0;
 }
 
-// Gather the travelers at their destination actor and leave together.
-static void WorldMap_GatherTravelersAndDepart(void) {
+// The actors placed at entrance 49: Bunza's wagon, Bunza and Hammet.
+enum { ACTOR_WAGON = 8, ACTOR_BUNZA = 11, ACTOR_HAMMET = 12 };
+
+// Out of West Lunpa Cave by wagon: Bunza and Hammet nod to each other and
+// climb aboard with the hero, and the wagon rolls off.
+static void WorldMap_BoardBunzasWagon(void) {
   struct FieldActor *record;
 
   Engine_EventBegin();
@@ -608,39 +612,41 @@ static void WorldMap_GatherTravelersAndDepart(void) {
   Engine_EventWaitForScreen();
   Battle_SetObjectFlag5bWhenMode3();
   GameFlag_Set(FLAG_PARTY_STAYED_IN_LUNPA);
-  Actor_SetPosition(11, PIXELS(5856), PIXELS(1180));
-  Actor_SetDestinationOffset(11, 24, 8);
-  Engine_ActorWaitForMove(11);
+  Actor_SetPosition(ACTOR_BUNZA, PIXELS(5856), PIXELS(1180));
+  Actor_SetDestinationOffset(ACTOR_BUNZA, 24, 8);
+  Engine_ActorWaitForMove(ACTOR_BUNZA);
   Engine_EventWait(60);
-  Actor_SetPosition(12, PIXELS(5856), PIXELS(1180));
-  Actor_SetDestinationOffset(12, 12, 24);
+  Actor_SetPosition(ACTOR_HAMMET, PIXELS(5856), PIXELS(1180));
+  Actor_SetDestinationOffset(ACTOR_HAMMET, 12, 24);
   Engine_EventWait(30);
-  Actor_FaceDirection(11, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_NORTH + FACING_STEP, 0);
   Engine_EventWait(60);
-  Engine_ActorSetAnimation(11, 3);
-  Engine_ActorSetAnimation(12, 3);
+  Engine_ActorSetAnimation(ACTOR_BUNZA, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_HAMMET, ANIM_NOD);
   Engine_EventWait(120);
-  Actor_SetPosition(8, PIXELS(5880), PIXELS(1208));
+  Actor_SetPosition(ACTOR_WAGON, PIXELS(5880), PIXELS(1208));
   Engine_EventWait(60);
-  Engine_ActorSetAnimation(12, 2);
-  record = Object_GetById(8);
+  Engine_ActorSetAnimation(ACTOR_HAMMET, ANIM_WALK);
+  record = Object_GetById(ACTOR_WAGON);
   if (record != 0) {
-    Actor_SetDestination(12, record->x.part.pixel, record->z.part.pixel);
+    Actor_SetDestination(ACTOR_HAMMET, record->x.part.pixel,
+                         record->z.part.pixel);
   }
-  Engine_ActorWaitForMove(12);
-  Actor_SetPosition(12, 0, 0);
+  Engine_ActorWaitForMove(ACTOR_HAMMET);
+  Actor_SetPosition(ACTOR_HAMMET, 0, 0);
   Engine_EventWait(60);
-  Engine_ActorSetAnimation(11, 2);
-  record = Object_GetById(8);
+  Engine_ActorSetAnimation(ACTOR_BUNZA, ANIM_WALK);
+  record = Object_GetById(ACTOR_WAGON);
   if (record != 0) {
-    Actor_SetDestination(11, record->x.part.pixel, record->z.part.pixel);
+    Actor_SetDestination(ACTOR_BUNZA, record->x.part.pixel,
+                         record->z.part.pixel);
   }
-  Engine_ActorWaitForMove(11);
-  Actor_SetPosition(11, 0, 0);
+  Engine_ActorWaitForMove(ACTOR_BUNZA);
+  Actor_SetPosition(ACTOR_BUNZA, 0, 0);
   Engine_EventWait(60);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  record = Object_GetById(8);
+  record = Object_GetById(ACTOR_WAGON);
   if (record != 0) {
     Actor_SetDestination(ACTOR_PARTY_LEADER, record->x.part.pixel,
                          record->z.part.pixel);
@@ -648,13 +654,13 @@ static void WorldMap_GatherTravelersAndDepart(void) {
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Engine_EventWait(60);
-  Actor_SetSpeed(8, PIXELS(1) / 2, PIXELS(1) / 4);
-  Actor_SetDestinationOffset(8, 56, 8);
-  Engine_ActorWaitForMove(8);
-  Actor_SetDestinationOffset(8, 40, 40);
-  Engine_ActorWaitForMove(8);
-  Actor_SetDestinationOffset(8, 8, 88);
-  Engine_ActorWaitForMove(8);
+  Actor_SetSpeed(ACTOR_WAGON, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetDestinationOffset(ACTOR_WAGON, 56, 8);
+  Engine_ActorWaitForMove(ACTOR_WAGON);
+  Actor_SetDestinationOffset(ACTOR_WAGON, 40, 40);
+  Engine_ActorWaitForMove(ACTOR_WAGON);
+  Actor_SetDestinationOffset(ACTOR_WAGON, 8, 88);
+  Engine_ActorWaitForMove(ACTOR_WAGON);
   Engine_EventCloseScreen();
   Engine_EventRequestExit(108);
   Engine_EventEnd();

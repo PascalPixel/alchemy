@@ -44,7 +44,7 @@ SECTIONS
         "*/games/tla/src/scene/contigo/s1a60.o"(.text)
         "*/games/tla/src/scene/contigo/dice.o"(.text)
         "*/games/tla/src/scene/contigo/scale.o"(.text)
-        "*/resource_694_overlay.o"(.text.x02009c5c)
+        "*/games/tla/src/scene/contigo/s1c5c.o"(.text)
         "*/games/tla/src/scene/contigo/event7.o"(.text)
         "*/games/tla/src/scene/contigo/s1d50.o"(.text)
         "*/games/tla/src/scene/contigo/return.o"(.text)

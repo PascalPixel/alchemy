@@ -1,5 +1,5 @@
-#ifndef WEST_LUNPA_CAVE_H
-#define WEST_LUNPA_CAVE_H
+#ifndef ALCHEMY_WEST_LUNPA_CAVE_H
+#define ALCHEMY_WEST_LUNPA_CAVE_H
 
 #include "types.h"
 #include "ability_ids.h"
@@ -28,14 +28,6 @@ enum CaveTrigger {
   TRIGGER_LOWERING_SWITCH = 3,
   TRIGGER_RAISING_SWITCH = 4,
   TRIGGER_BUNZA_HIDING_PLACE = 10
-};
-
-enum CaveFlag {
-  FLAG_CAVE_GATE_PROPPED = 0x200,
-  FLAG_CAVE_GATE_LOWERED = 0x201,
-  FLAG_CAVE_GATE_RAISED = 0x202,
-  FLAG_CAVE_NORTH_PILLAR = 0x203,
-  FLAG_CAVE_SOUTH_PILLAR = 0x204
 };
 
 enum CaveActor {

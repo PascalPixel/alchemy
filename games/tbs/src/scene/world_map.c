@@ -48,10 +48,11 @@
 #include "fixed_math.h"
 #include "palbuf.h"
 #include "flags.h"
+#include "songs.h"
 
 // Forward declarations.
 static s32 WorldMap_ApplyMapRotation(struct ScriptInterpreter *interpreter);
-static void WorldMap_GatherTravelersAndDepart(void);
+static void WorldMap_BoardBunzasWagon(void);
 static void WorldMap_DepartWithTravelers(void);
 static void WorldMap_ShakeTransferStartCamera(void);
 static void WorldMap_ShakeTransferLandingCamera(void);
@@ -65,7 +66,7 @@ static void WorldMap_CompleteTransfer(void);
 static void WorldMap_DisembarkCarriage(void);
 static void WorldMap_RunBlackOrbScene(void);
 static void WorldMap_ActivateSite138(s32 actor);
-static void WorldMap_StopLeaderLeavingShip(void);
+static void Event_StopLeavingShip(void);
 static void WorldMap_ShowEndingScene(void);
 static void WorldMap_StartTransitionEffect(void);
 static void WorldMap_UpdateTransitionEffect(void);
@@ -76,8 +77,7 @@ static void WorldMap_RunOpeningRise(void);
 static void WorldMap_UpdateAirborneTravelTimer(void);
 static void WorldMap_PlayLighthouseTransition(s32 palette);
 
-// Battle-start kinds, as in battle/party/party.c.
-
+// The one actor placed for entrance 75, which travels north to exit 110.
 #define ACTOR 8
 
 enum {
@@ -87,14 +87,39 @@ enum {
   FLAG_CONTACT_BLOCKED = 0x104
 };
 
-// Try the first wandering Djinn battle when the encounter threshold is near.
-static void WorldMap_TryDjinnBattleA(void) {
+// The Djinn met on the world map. The Venus Djinni is Flint, bobbing on the
+// map until the party meets him, and later Vine.
+enum {
+  ACTOR_VENUS_DJINNI = 8,
+  ACTOR_MARS_DJINNI = 9,
+  ACTOR_MERCURY_DJINNI = 10
+};
+
+// Djinn numbers, 20 to an element (Field_RequestDjinnBattle).
+enum { DJINNI_VINE = 3, DJINNI_HAIL = 24, DJINNI_CORONA = 42 };
+
+// The Djinni stays where it is instead of hopping first
+// (Field_RequestDjinnBattle's DJINN_NO_HOP).
+enum { DJINN_BATTLE_NO_HOP = 0x800 };
+
+// The world map's scene flags:
+// FLAG_SCENE_TEMP_00: the carried actor has landed on its guide.
+// FLAG_SCENE_TEMP_34: the Black Orb has been handed over.
+// FLAG_SCENE_TEMP_35: the map's ordinary placements are in use.
+// FLAG_SCENE_TEMP_F0: the party is up in the air.
+// FLAG_SCENE_TEMP_F1: the airborne journey is over.
+// FLAG_SCENE_TEMP_F8: a byte: frames left in the air.
+
+// Walking near Vine, or talking to him: once a battle is nearly due, half the
+// time Vine fights; otherwise the next step brings an ordinary battle.
+static void Event_MeetVine(void) {
   struct EventWork *work = gEventWork;
 
   if (gGameState.encounterSteps >=
       Math_Divide(work->encounterThreshold * 9, 10)) {
     if ((u32)Engine_RandomNext() < 0x8000) {
-      Field_RequestDjinnBattle(0x808, 3);
+      Field_RequestDjinnBattle(DJINN_BATTLE_NO_HOP | ACTOR_VENUS_DJINNI,
+                               DJINNI_VINE);
       work->encounterBias = 0;
     } else {
       gGameState.encounterSteps = work->encounterThreshold;
@@ -102,26 +127,30 @@ static void WorldMap_TryDjinnBattleA(void) {
   }
 }
 
-// Start the second wandering Djinn battle when its encounter threshold is near.
-static void WorldMap_TryDjinnBattleB(void) {
+// Walking near Corona, or talking to him: once a battle is nearly due, Corona
+// fights.
+static void Event_MeetCorona(void) {
   struct GameState *state = &gGameState;
   s32 *steps = &state->encounterSteps;
   struct EventWork *work = gEventWork;
 
   if (*steps >= Math_Divide(work->encounterThreshold * 9, 10)) {
-    Field_RequestDjinnBattle(0x809, 42);
+    Field_RequestDjinnBattle(DJINN_BATTLE_NO_HOP | ACTOR_MARS_DJINNI,
+                             DJINNI_CORONA);
     work->encounterBias = 0;
   }
 }
 
-// Start the third wandering Djinn battle when its encounter threshold is near.
-static void WorldMap_TryDjinnBattleC(void) {
+// Walking near Hail, or talking to him: once a battle is nearly due, Hail
+// fights.
+static void Event_MeetHail(void) {
   struct GameState *state = &gGameState;
   s32 *steps = &state->encounterSteps;
   struct EventWork *work = gEventWork;
 
   if (*steps >= Math_Divide(work->encounterThreshold * 9, 10)) {
-    Field_RequestDjinnBattle(0x80a, 24);
+    Field_RequestDjinnBattle(DJINN_BATTLE_NO_HOP | ACTOR_MERCURY_DJINNI,
+                             DJINNI_HAIL);
     work->encounterBias = 0;
   }
 }
@@ -157,7 +186,7 @@ static void WorldMap_PulseOrbAndSpawnSparks(union FieldObject *fieldObject) {
   y = actor->y.fixed;
   z = actor->z.fixed;
   spark = Engine_ObjectCreate(0x11d, x, y, z);
-  Engine_AudioPlayCue(0xf6);
+  Engine_AudioPlayCue(SE_246);
   if (spark == 0)
     return;
   spark->motionFlags = 0;
@@ -193,10 +222,10 @@ static void WorldMap_UpdateBobbingMarker(union FieldObject *fieldObject) {
 static s32
 WorldMap_InitializeFirstDjinni(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
-  if (Engine_GameFlagIsSet(0x30) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_DJINNI_0) != 0) {
     return 0;
   }
-  if (Engine_GameFlagIsSet(0x16E) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_DJINN_TUTORIAL) != 0) {
     return 0;
   }
   actor->update = WorldMap_UpdateBobbingMarker;
@@ -259,7 +288,7 @@ WorldMap_InitializeProgressMarker(struct ScriptInterpreter *interpreter) {
   Engine_ObjectSetPartPalettes(actor, 10);
   actor->collisionFlags = 0;
   if (Engine_GameFlagIsSet(0x8A0) != 0) {
-    Engine_GameFlagSet(0x2f1);
+    Engine_GameFlagSet(FLAG_SCENE_TEMP_F1);
     actor->x.fixed = 0;
     actor->y.fixed = 0;
   }
@@ -278,7 +307,8 @@ static s32 WorldMap_BlinkActorSprite(struct ScriptInterpreter *interpreter) {
 struct ScenePlacement *WorldMap_GetPlacements(void) {
   switch (gGameState.entrance) {
   case 49:
-    if (Engine_GameFlagIsSet(0x94f) == 0 && Engine_GameFlagIsSet(0x941) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_PARTY_STAYED_IN_LUNPA) == 0 &&
+        Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
       return gWorldMapPlacements49;
     }
     break;
@@ -308,7 +338,7 @@ struct ScenePlacement *WorldMap_GetPlacements(void) {
     break;
   }
 
-  Engine_GameFlagSet(0x235);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_35);
   return gWorldMapPlacements;
 }
 
@@ -326,7 +356,7 @@ static void WorldMap_SelectExitByX(s32 trigger, s32 exitBefore, s32 exitAfter) {
   } else {
     work->requestedExit = exitAfter;
   }
-  Engine_AudioPlayCue(0x7B);
+  Engine_AudioPlayCue(SE_MAP_EXIT);
 }
 
 // Choose a passage exit from the leader's north-south approach.
@@ -343,31 +373,32 @@ static void WorldMap_SelectExitByZ(s32 trigger, s32 exitBefore, s32 exitAfter) {
   } else {
     work->requestedExit = exitAfter;
   }
-  Engine_AudioPlayCue(0x7B);
+  Engine_AudioPlayCue(SE_MAP_EXIT);
 }
 
-// Select the exit for the horizontal passage.
-static void WorldMap_ChooseHorizontalPassageExit(void) {
+// Walking into a passage: the side the party comes from decides which exit
+// takes it through to the other side.
+static void Event_PassThroughWestEastPassage(void) {
   WorldMap_SelectExitByX(0x82, 6, 0x2F);
 }
 
-// Select the first north-south passage's exit.
-static void WorldMap_ChooseVerticalPassageExitA(void) {
+// As Event_PassThroughWestEastPassage, for a passage crossed north to south.
+static void Event_PassThroughFirstNorthSouthPassage(void) {
   WorldMap_SelectExitByZ(0x96, 0x2E, 0x0B);
 }
 
-// Select the second north-south passage's exit.
-static void WorldMap_ChooseVerticalPassageExitB(void) {
+// As Event_PassThroughFirstNorthSouthPassage.
+static void Event_PassThroughSecondNorthSouthPassage(void) {
   WorldMap_SelectExitByZ(0x74, 0x38, 0x15);
 }
 
-// Select the third north-south passage's exit.
-static void WorldMap_ChooseVerticalPassageExitC(void) {
+// As Event_PassThroughFirstNorthSouthPassage.
+static void Event_PassThroughThirdNorthSouthPassage(void) {
   WorldMap_SelectExitByZ(0x97, 0x19, 0x36);
 }
 
-// Select the fourth north-south passage's exit.
-static void WorldMap_ChooseVerticalPassageExitD(void) {
+// As Event_PassThroughFirstNorthSouthPassage.
+static void Event_PassThroughFourthNorthSouthPassage(void) {
 
   WorldMap_SelectExitByZ(0x7D, 0x3B, 0x1E);
 }
@@ -433,18 +464,19 @@ static void WorldMap_UpdateLocationContacts(void) {
   }
 }
 
-// Choose the travel event or its ordinary exit from current progress.
-static void WorldMap_EnterTransferRoute(void) {
+// Walking onto this spot: the first time the travel scene plays, later it is
+// an ordinary entrance.
+static void Event_EnterTransferRoute(void) {
   if (Engine_GameFlagIsSet(0x85a) == 0) {
     Engine_EventRequestExit(101);
   } else {
-    Engine_AudioPlayCue(123);
+    Engine_AudioPlayCue(SE_MAP_EXIT);
     Engine_EventRequestExit(3);
   }
 }
 
-// Leave through the east-facing boundary trigger.
-static void WorldMap_LeaveAtEastboundTrigger(void) {
+// Walking east off this edge of the map, once allowed.
+static void Event_LeaveEastward(void) {
 
   Engine_EventBegin();
   Engine_EventRequestExit(74);
@@ -471,12 +503,12 @@ s32 WorldMap_Initialize(void) {
     PartyInventory_Discard(242);
     Engine_EventRequestExit(112);
   } else {
-    Engine_GameFlagSet(0x144);
+    Engine_GameFlagSet(FLAG_NO_RETREAT);
     gEventWork->startTransition = 0x400;
     gEventWork->transitionFrames = 16;
     Engine_TaskWait(1);
     Engine_CameraSetSpeed(PIXELS(8), PIXELS(1));
-    Engine_GameFlagClear(0x12f);
+    Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     FieldScheduler_AddCallback(WorldMap_UpdateLocationContacts, 0xc80);
     if (Engine_GameFlagIsSet(0x90a) == 0) {
       FieldMap_SetWindowCellTile(128, 256, 176, 56);
@@ -490,24 +522,24 @@ s32 WorldMap_Initialize(void) {
       }
       break;
     case 33:
-      if (Engine_GameFlagIsSet(0x109) != 0) {
-        if (Engine_GameFlagIsSet(0x85d) == 0 &&
-            Engine_GameFlagIsSet(0x234) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
+        if (Engine_GameFlagIsSet(FLAG_BLACK_ORB_RETURNED) == 0 &&
+            Engine_GameFlagIsSet(FLAG_SCENE_TEMP_34) != 0) {
           gWorldMapTriggerActor = 55;
           Actor_SetPosition(55, PIXELS(6036), PIXELS(3400));
           Object_GetById(gWorldMapTriggerActor)->facing =
               FACING_SOUTHEAST + FACING_STEP;
           WorldMap_ActivateSite138(gWorldMapTriggerActor);
         }
-      } else if (Engine_GameFlagIsSet(0x85d) == 0 &&
+      } else if (Engine_GameFlagIsSet(FLAG_BLACK_ORB_RETURNED) == 0 &&
                  Engine_GameFlagIsSet(0x9b8) == 0) {
         WorldMap_RunBlackOrbScene();
       }
       break;
     case 49:
-      if (Engine_GameFlagIsSet(0x94f) == 0 &&
-          Engine_GameFlagIsSet(0x941) != 0) {
-        WorldMap_GatherTravelersAndDepart();
+      if (Engine_GameFlagIsSet(FLAG_PARTY_STAYED_IN_LUNPA) == 0 &&
+          Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+        WorldMap_BoardBunzasWagon();
       }
       break;
     case 64:
@@ -546,7 +578,7 @@ s32 WorldMap_Initialize(void) {
     case 76:
     case 77:
       Engine_GameFlagSet(FLAG_NOT_ON_MAP);
-      if (FieldGameFlag_GetByte(0x2f8) != 0) {
+      if (FieldGameFlag_GetByte(FLAG_SCENE_TEMP_F8) != 0) {
         gGameState.movementMode = 2;
         FieldScheduler_AddCallback(WorldMap_UpdateAirborneTravelTimer, 0xc80);
       }
@@ -566,48 +598,54 @@ s32 WorldMap_Initialize(void) {
   return 0;
 }
 
-// Gather the travelers at their destination actor and leave together.
-static void WorldMap_GatherTravelersAndDepart(void) {
+// The actors placed at entrance 49: Bunza's wagon, Bunza and Hammet.
+enum { ACTOR_WAGON = 8, ACTOR_BUNZA = 11, ACTOR_HAMMET = 12 };
+
+// Out of West Lunpa Cave by wagon: Bunza and Hammet nod to each other and
+// climb aboard with the hero, and the wagon rolls off.
+static void WorldMap_BoardBunzasWagon(void) {
   struct FieldActor *record;
 
   Engine_EventBegin();
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Battle_SetObjectFlag5bWhenMode3();
-  GameFlag_Set(0x94f);
-  Actor_SetPosition(11, PIXELS(5856), PIXELS(1180));
-  Actor_SetDestinationOffset(11, 24, 8);
-  Engine_ActorWaitForMove(11);
+  GameFlag_Set(FLAG_PARTY_STAYED_IN_LUNPA);
+  Actor_SetPosition(ACTOR_BUNZA, PIXELS(5856), PIXELS(1180));
+  Actor_SetDestinationOffset(ACTOR_BUNZA, 24, 8);
+  Engine_ActorWaitForMove(ACTOR_BUNZA);
   Engine_EventWait(60);
-  Actor_SetPosition(12, PIXELS(5856), PIXELS(1180));
-  Actor_SetDestinationOffset(12, 12, 24);
+  Actor_SetPosition(ACTOR_HAMMET, PIXELS(5856), PIXELS(1180));
+  Actor_SetDestinationOffset(ACTOR_HAMMET, 12, 24);
   Engine_EventWait(30);
-  Actor_FaceDirection(11, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(12, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_BUNZA, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_HAMMET, FACING_NORTH + FACING_STEP, 0);
   Engine_EventWait(60);
-  Engine_ActorSetAnimation(11, 3);
-  Engine_ActorSetAnimation(12, 3);
+  Engine_ActorSetAnimation(ACTOR_BUNZA, ANIM_NOD);
+  Engine_ActorSetAnimation(ACTOR_HAMMET, ANIM_NOD);
   Engine_EventWait(120);
-  Actor_SetPosition(8, PIXELS(5880), PIXELS(1208));
+  Actor_SetPosition(ACTOR_WAGON, PIXELS(5880), PIXELS(1208));
   Engine_EventWait(60);
-  Engine_ActorSetAnimation(12, 2);
-  record = Object_GetById(8);
+  Engine_ActorSetAnimation(ACTOR_HAMMET, ANIM_WALK);
+  record = Object_GetById(ACTOR_WAGON);
   if (record != 0) {
-    Actor_SetDestination(12, record->x.part.pixel, record->z.part.pixel);
+    Actor_SetDestination(ACTOR_HAMMET, record->x.part.pixel,
+                         record->z.part.pixel);
   }
-  Engine_ActorWaitForMove(12);
-  Actor_SetPosition(12, 0, 0);
+  Engine_ActorWaitForMove(ACTOR_HAMMET);
+  Actor_SetPosition(ACTOR_HAMMET, 0, 0);
   Engine_EventWait(60);
-  Engine_ActorSetAnimation(11, 2);
-  record = Object_GetById(8);
+  Engine_ActorSetAnimation(ACTOR_BUNZA, ANIM_WALK);
+  record = Object_GetById(ACTOR_WAGON);
   if (record != 0) {
-    Actor_SetDestination(11, record->x.part.pixel, record->z.part.pixel);
+    Actor_SetDestination(ACTOR_BUNZA, record->x.part.pixel,
+                         record->z.part.pixel);
   }
-  Engine_ActorWaitForMove(11);
-  Actor_SetPosition(11, 0, 0);
+  Engine_ActorWaitForMove(ACTOR_BUNZA);
+  Actor_SetPosition(ACTOR_BUNZA, 0, 0);
   Engine_EventWait(60);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
-  record = Object_GetById(8);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
+  record = Object_GetById(ACTOR_WAGON);
   if (record != 0) {
     Actor_SetDestination(ACTOR_PARTY_LEADER, record->x.part.pixel,
                          record->z.part.pixel);
@@ -615,13 +653,13 @@ static void WorldMap_GatherTravelersAndDepart(void) {
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
   Engine_EventWait(60);
-  Actor_SetSpeed(8, PIXELS(1) / 2, PIXELS(1) / 4);
-  Actor_SetDestinationOffset(8, 56, 8);
-  Engine_ActorWaitForMove(8);
-  Actor_SetDestinationOffset(8, 40, 40);
-  Engine_ActorWaitForMove(8);
-  Actor_SetDestinationOffset(8, 8, 88);
-  Engine_ActorWaitForMove(8);
+  Actor_SetSpeed(ACTOR_WAGON, PIXELS(1) / 2, PIXELS(1) / 4);
+  Actor_SetDestinationOffset(ACTOR_WAGON, 56, 8);
+  Engine_ActorWaitForMove(ACTOR_WAGON);
+  Actor_SetDestinationOffset(ACTOR_WAGON, 40, 40);
+  Engine_ActorWaitForMove(ACTOR_WAGON);
+  Actor_SetDestinationOffset(ACTOR_WAGON, 8, 88);
+  Engine_ActorWaitForMove(ACTOR_WAGON);
   Engine_EventCloseScreen();
   Engine_EventRequestExit(108);
   Engine_EventEnd();
@@ -655,7 +693,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Actor_SetSpeed(11, PIXELS(8) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(12, PIXELS(8) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(13, PIXELS(8) / 5, PIXELS(2) / 5);
-  Event_PlayCue(141);
+  Event_PlayCue(SE_141);
   Actor_SetActionScript(10, gTransferArrive10);
   Engine_EventWait(20);
   Actor_SetActionScript(11, gTransferArrive11);
@@ -663,7 +701,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Actor_SetActionScript(12, gTransferArrive12);
   Engine_EventWait(20);
   Actor_RunActionScriptAndWait(13, gTransferArrive13);
-  Event_PlayCue(0x121);
+  Event_PlayCue(SE_289);
   spriteActor = Object_GetById(ACTOR_PARTY_LEADER);
   if (spriteActor != 0) {
     Actor_SetPosition(GARET, spriteActor->x.fixed, spriteActor->z.fixed);
@@ -671,8 +709,8 @@ static void WorldMap_DepartWithTravelers(void) {
   Actor_WalkToAndWait(GARET, 5892, 1600);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 0);
-  Actor_ShowEmote(GARET, 0x101, 60);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 60);
   Actor_SetPosition(8, PIXELS(5848), PIXELS(1592));
   Engine_TaskWait(1);
   // The travelers decide to depart; gather the actors for the transfer.
@@ -684,7 +722,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 10);
-  Event_PlayCue(141);
+  Event_PlayCue(SE_141);
   Actor_SetActionScript(10, gTransferDepart10);
   Engine_EventWait(20);
   Actor_SetActionScript(11, gTransferDepart11);
@@ -694,7 +732,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 10);
   Actor_RunActionScriptAndWait(13, gTransferDepart13);
-  Event_PlayCue(0x121);
+  Event_PlayCue(SE_289);
   Engine_EventWait(20);
   Battle_ClearObjectFlag5bWhenMode3();
   Engine_ActorSetAnimation(10, 1);
@@ -714,7 +752,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(9, 2);
   Engine_EventWait(20);
-  Actor_SetAttachedEffect(9, 0x102);
+  Actor_SetAttachedEffect(9, EMOTE_IN_FRONT | 2);
   Engine_EventWait(60);
   Actor_FaceDirection(9, 0, 20);
   Engine_ActorStartRepeatedMotion(9, 3);
@@ -731,33 +769,33 @@ static void WorldMap_DepartWithTravelers(void) {
   Event_ShowMessageAndWait(0x2008, 0, 10);
   Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 60);
   Actor_FaceDirection(8, FACING_WEST, 10);
-  Actor_SetAttachedEffect(8, 0x102);
+  Actor_SetAttachedEffect(8, EMOTE_IN_FRONT | 2);
   Engine_EventWait(60);
   Actor_FaceDirection(9, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 40);
-  Actor_SetAttachedEffect(8, 0x102);
+  Actor_SetAttachedEffect(8, EMOTE_IN_FRONT | 2);
   Engine_EventWait(60);
   Engine_ActorStartRepeatedMotion(8, 2);
   Event_ShowMessageAndWait(0x2008, 0, 40);
   Engine_ActorRunRepeatedMotion(9, 1);
   Actor_FaceDirection(9, 0, 10);
   Event_ShowMessageAndWait(9, 0, 10);
-  Actor_ShowEmote(8, 0x105, 60);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | 5, 60);
   Event_ShowMessageAndWait(0x2008, 0, 10);
   Engine_ActorRunRepeatedMotion(8, 1);
   Engine_ActorSetAnimationAndWait(8, 3);
   Event_ShowMessageAndWait(0x2008, 0, 10);
-  Actor_ShowEmote(9, 0x101, 60);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | 1, 60);
   Event_ShowMessageAndWait(9, 0, 20);
   Engine_ActorSetAnimationAndWait(8, 3);
   Battle_ClearObjectFlag5bWhenMode3();
-  Event_PlayCue(107);
+  Event_PlayCue(SE_107);
   Camera_SetSpeed(PIXELS(4), PIXELS(4));
   // Focus on the departure effect before moving the group to the landing.
   WorldMap_ShakeTransferStartCamera();
-  Event_PlayCue(0x121);
-  Actor_ShowEmote(8, 0x100, 0);
-  Actor_ShowEmote(9, 0x100, 0);
+  Event_PlayCue(SE_289);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT, 0);
   Actor_FaceDirection(8, FACING_WEST, 0);
   Actor_FaceDirection(9, 0, 40);
   Actor_FaceDirection(8, FACING_NORTHWEST + FACING_STEP, 0);
@@ -796,7 +834,7 @@ static void WorldMap_DepartWithTravelers(void) {
   spriteActor->velocityY = PIXELS(6);
   spriteActor = Object_GetById(8);
   spriteActor->velocityY = PIXELS(6);
-  Event_PlayCue(145);
+  Event_PlayCue(SE_145);
   Camera_SetSpeed(PIXELS(4), PIXELS(4));
   WorldMap_ShakeTransferLandingCamera();
   WorldMap_ShakeTransferLandingCamera();
@@ -805,8 +843,8 @@ static void WorldMap_DepartWithTravelers(void) {
   Camera_MoveTo(PIXELS(5640), -1, PIXELS(1784), 1);
   Engine_CameraWaitForMove();
   Battle_SetObjectFlag5bWhenMode3();
-  Actor_SetAttachedEffect(9, 0x102);
-  Actor_SetAttachedEffect(8, 0x102);
+  Actor_SetAttachedEffect(9, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(8, EMOTE_IN_FRONT | 2);
   Engine_EventWait(60);
   Engine_TaskRemoveCallback(WorldMap_UpdateTransferredActorLanding);
   Engine_TaskWait(1);
@@ -824,7 +862,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Engine_ActorRunRepeatedMotion(8, 1);
   Actor_FaceDirection(8, FACING_WEST, 10);
   Event_ShowMessageAndWait(0x2008, 0, 10);
-  Actor_SetAttachedEffect(9, 0x102);
+  Actor_SetAttachedEffect(9, EMOTE_IN_FRONT | 2);
   Engine_EventWait(80);
   Engine_ActorSetAnimationAndWait(8, 3);
   Engine_EventWait(20);
@@ -836,7 +874,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Actor_WalkToAndWait(9, 5640, 1736);
   Actor_WalkToAndWait(9, 5640, 1752);
   Actor_SetPosition(9, 0, 0);
-  Event_PlayCue(141);
+  Event_PlayCue(SE_141);
   Actor_SetActionScript(10, gTransferReturn10);
   Actor_SetActionScript(11, gTransferReturn11);
   Engine_EventWait(40);
@@ -865,16 +903,16 @@ static void WorldMap_DepartWithTravelers(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Object_RefreshSelectorById(13);
-  Event_PlayCue(0x121);
+  Event_PlayCue(SE_289);
   Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   Camera_MoveTo(PIXELS(5880), -1, PIXELS(1608), 1);
   Engine_CameraWaitForMove();
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 80);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-  Engine_ActorSetAnimationAndWait(GARET, 3);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(GARET, 2);
+  Engine_ActorSetAnimation(GARET, ANIM_WALK);
   spriteActor = Object_GetById(ACTOR_PARTY_LEADER);
   if (spriteActor != 0) {
     Actor_SetDestination(GARET, spriteActor->x.part.pixel,
@@ -942,10 +980,10 @@ static void WorldMap_UpdateTransferredActorLanding(void) {
   actor->z.fixed = guide->z.fixed;
   if (actor->y.fixed < PIXELS(10)) {
     actor->y.fixed = PIXELS(10);
-    if (GameFlag_IsSet(0x200) == 0) {
-      Event_PlayCue(145);
+    if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) == 0) {
+      Event_PlayCue(SE_145);
       Object_SetMode(actor, 3);
-      GameFlag_Set(0x200);
+      GameFlag_Set(FLAG_SCENE_TEMP_00);
       actor->timer = 1;
     }
   }
@@ -1120,18 +1158,18 @@ static void WorldMap_ShowDjinnTutorial(void) {
   BattleFx_ScheduleRatioTransition(Q16_ONE, 6);
   Event_WaitForZoomTransition();
   Battle_SetObjectFlag5bWhenMode3();
-  Engine_ActorRunRepeatedMotion(8, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
   Engine_EventSetMessage(MsgWorldMapAfterBringingDjinniIntoYour);
-  Event_ShowMessage(8, 0);
+  Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   Engine_EventWait(30);
-  Event_PlayCue(111);
+  Event_PlayCue(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
   GameFlag_Clear(0x16f);
   GameFlag_Clear(0x171);
   ItemMenu_Open();
-  Engine_ActorJump(8, 4, 30);
+  Engine_ActorJump(ACTOR_VENUS_DJINNI, 4, 30);
   Engine_EventSetMessage(MsgWorldMapNextIllShowHowCan);
-  Event_ShowMessage(8, 0);
+  Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   GameFlag_Clear(0x16f);
   GameFlag_Set(0x171);
   ItemMenu_Open();
@@ -1139,11 +1177,9 @@ static void WorldMap_ShowDjinnTutorial(void) {
   Field_RequestBattleFromEncounterTable(12, 6);
 }
 
-#define DJINNI 8
-#define FLAG_DJINNI_MET 0x16e
-
-// Introduce the first Djinni and offer its battle tutorial.
-static void WorldMap_MeetFirstDjinni(void) {
+// Walking up to Flint: he joins the party and shows how Djinn are set and put
+// on standby; then comes the tutorial battle.
+static void Event_MeetFlint(void) {
   struct FieldActor *djinni;
   struct FieldActor *leader;
   s32 x;
@@ -1152,29 +1188,29 @@ static void WorldMap_MeetFirstDjinni(void) {
   s32 i;
 
   count = 0;
-  djinni = Object_GetById(DJINNI);
-  leader = Object_GetById(0);
+  djinni = Object_GetById(ACTOR_VENUS_DJINNI);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   x = (leader->x.fixed - PIXELS(5584)) / 2 + PIXELS(5584);
   z = (leader->z.fixed - PIXELS(1328)) / 2 + PIXELS(1328);
   // Introduce the Djinni and demonstrate how it joins the party.
-  if (!GameFlag_IsSet(FLAG_DJINNI_MET)) {
+  if (!GameFlag_IsSet(FLAG_DJINN_TUTORIAL)) {
     Party_RestoreHpPp(1);
-    GameFlag_Set(FLAG_DJINNI_MET);
+    GameFlag_Set(FLAG_DJINN_TUTORIAL);
     Event_Begin();
-    leader = Actor_Get(0);
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0)
-      Actor_SetPosition(DJINNI, leader->x.fixed, leader->z.fixed);
+      Actor_SetPosition(ACTOR_VENUS_DJINNI, leader->x.fixed, leader->z.fixed);
     Djinn_AddToOwner(0, 0, 0);
     DjinnRecovery_AddStandby(0, 0, 0);
     Battle_SetObjectFlag5bWhenMode3();
-    Actor_FaceActor(0, DJINNI, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_VENUS_DJINNI, 0);
     Event_Wait(10);
-    Actor_ShowEmote(0, 0x101, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 60);
     djinni->work = 1;
-    Actor_FaceActor(DJINNI, 0, 0);
+    Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
     Task_Wait(16);
     Event_SetMessage(MsgWorldMapOh);
-    Event_ShowMessage(DJINNI, 0);
+    Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Battle_ClearObjectFlag5bWhenMode3();
     BattleFx_ScheduleRatioTransition(6 * Q16_ONE / 5, 6);
     Event_WaitForZoomTransition();
@@ -1191,14 +1227,14 @@ static void WorldMap_MeetFirstDjinni(void) {
       djinni->scaleY += Q16_ONE / 32;
       Task_Wait(1);
     }
-    Actor_FaceActor(DJINNI, 0, 0);
-    Actor_FaceActor(0, DJINNI, 0);
+    Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_VENUS_DJINNI, 0);
     Task_Wait(16);
     djinni->update = 0;
     Engine_ObjectSetPartPalettes(djinni, 0);
     djinni->gravity = PIXELS(1);
-    Event_ShowMessage(DJINNI, 0);
-    Event_PlayCue(131);
+    Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
+    Event_PlayCue(SE_131);
     Engine_PsynergyBegin(140, 0);
     for (i = 59; i >= 0; i--) {
       if (gFrameCount & 2)
@@ -1211,24 +1247,24 @@ static void WorldMap_MeetFirstDjinni(void) {
     }
     BattleEffect_CleanupSceneObjects();
     Engine_ObjectSetPartPalettes(djinni, 0);
-    Actor_RunRepeatedMotion(DJINNI, 2);
-    Event_ShowMessage(DJINNI, 0);
-    Actor_ShowEmote(0, 0x102, 30);
-    Event_ShowMessage(DJINNI, 0);
-    Actor_ShowEmote(0, 0x101, 30);
-    Actor_WalkToAndWait(DJINNI, x >> 16, z >> 16);
-    Actor_SetAnimation(0, 22);
-    Event_ShowMessage(DJINNI, 0);
-    Actor_ShowEmote(0, 0x101, 40);
-    Actor_Jump(DJINNI, 4, 30);
+    Actor_RunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
+    Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 30);
+    Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 30);
+    Actor_WalkToAndWait(ACTOR_VENUS_DJINNI, x >> 16, z >> 16);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 22);
+    Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 40);
+    Actor_Jump(ACTOR_VENUS_DJINNI, 4, 30);
     UiWork_PushValueSlot(300, 4);
-    Event_ShowMessage(DJINNI, 0);
-    Actor_ShowEmote(0, 0x100, 30);
-    Event_ShowMessage(DJINNI, 0);
-    Actor_RunRepeatedMotion(0, 2);
-    Event_ShowMessage(DJINNI, 0);
-    Actor_Jump(DJINNI, 2, 30);
-    Event_ShowMessage(DJINNI, 0);
+    Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 30);
+    Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
+    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
+    Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
+    Actor_Jump(ACTOR_VENUS_DJINNI, 2, 30);
+    Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     i = 0;
     djinni->motionFlags = 0;
     FieldObject_SetPosition(djinni, x, PIXELS(16), z);
@@ -1236,8 +1272,8 @@ static void WorldMap_MeetFirstDjinni(void) {
       djinni->facing += FACING_STEP;
       Task_Wait(1);
     }
-    Actor_SetAnimation(0, 1);
-    Event_ShowMessage(DJINNI, 0);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+    Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     djinni->motionFlags = 2;
     djinni->velocityY = 0;
     djinni->terrainHeight = 0;
@@ -1245,66 +1281,67 @@ static void WorldMap_MeetFirstDjinni(void) {
       djinni->facing += FACING_STEP;
       Task_Wait(1);
     }
-    Actor_SetAnimation(0, 22);
-    Event_ShowMessage(DJINNI, 0);
-    Actor_ShowEmote(DJINNI, 0x102, 30);
-    Actor_FaceActor(DJINNI, 0, 0);
-    Actor_RunRepeatedMotion(DJINNI, 2);
-    Event_ShowMessage(DJINNI, 0);
-    Actor_Jump(DJINNI, 2, 30);
-    Event_OpenMessage(DJINNI, 0);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 22);
+    Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
+    Actor_ShowEmote(ACTOR_VENUS_DJINNI, EMOTE_IN_FRONT | 2, 30);
+    Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
+    Actor_RunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
+    Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
+    Actor_Jump(ACTOR_VENUS_DJINNI, 2, 30);
+    Event_OpenMessage(ACTOR_VENUS_DJINNI, 0);
+    // Each "No" makes Flint plead again; the seventh time he gives up asking.
     count = 0;
   plead:
     if (Event_ChooseYesNo(0, 0) == 1) {
-      Actor_Jump(DJINNI, 2, 20);
-      Actor_Jump(DJINNI, 2, 20);
+      Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
+      Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
       if (count == 6) {
         Event_SetMessage(MsgWorldMapMeanieDontCare);
-        Event_ShowMessage(DJINNI, 0);
+        Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
         goto listened;
       }
       Event_SetMessage(count + MsgWorldMapComePromiseWont);
-      Event_OpenMessage(DJINNI, 0);
+      Event_OpenMessage(ACTOR_VENUS_DJINNI, 0);
       count++;
       goto plead;
     }
-    Actor_SetAnimation(0, 22);
-    Actor_Jump(DJINNI, 2, 20);
-    Actor_Jump(DJINNI, 4, 20);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 22);
+    Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
+    Actor_Jump(ACTOR_VENUS_DJINNI, 4, 20);
     Event_SetMessage(MsgWorldMapSeeWontRegret);
-    Event_ShowMessage(DJINNI, 0);
+    Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   listened:
     UiWork_PushValueSlot(300, 4);
-    Event_PlayCue(81);
+    Event_PlayCue(MUS_081);
     count = MsgWorldMapAbilityVenusDjinni;
     Message_ShowCentered(count++, 3);
     Event_SetMessage(count);
-    Actor_Jump(DJINNI, 2, 20);
-    Event_ShowMessage(DJINNI, 0);
-    Event_PlayCue(9);
+    Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
+    Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
+    Event_PlayCue(MUS_009);
     WorldMap_ShowDjinnTutorial();
     Battle_ClearObjectFlag5bWhenMode3();
     return;
   }
   Event_Begin();
-  leader = Object_GetById(0);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0)
-    Actor_SetPosition(DJINNI, leader->x.fixed, leader->z.fixed);
+    Actor_SetPosition(ACTOR_VENUS_DJINNI, leader->x.fixed, leader->z.fixed);
   djinni->velocityY = PIXELS(10);
   FieldObject_SetPosition(djinni, x, 0, z);
   Event_Wait(30);
   Battle_SetObjectFlag5bWhenMode3();
-  Actor_FaceActor(DJINNI, 0, 0);
-  Actor_FaceActor(0, DJINNI, 0);
-  Actor_SetAnimation(0, 22);
+  Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_VENUS_DJINNI, 0);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, 22);
   // Offer the tutorial again, then demonstrate setting and standby.
   Event_SetMessage(MsgWorldMapSeeDjinnUseful);
-  Actor_Jump(DJINNI, 2, 20);
-  Actor_Jump(DJINNI, 2, 20);
-  Event_ShowMessage(DJINNI, 0);
-  Actor_RunRepeatedMotion(DJINNI, 2);
-  Event_ShowMessage(DJINNI, 0);
-  Event_PlayCue(111);
+  Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
+  Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
+  Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
+  Actor_RunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
+  Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
+  Event_PlayCue(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
   GameFlag_Set(0x16f);
   GameFlag_Clear(0x171);
@@ -1312,40 +1349,40 @@ static void WorldMap_MeetFirstDjinni(void) {
   Event_SetMessage(MsgWorldMapGoSetStandby);
   FieldObject_SetPosition(djinni, PIXELS(5584), 0, PIXELS(1328));
   Event_Wait(30);
-  Event_ShowMessage(DJINNI, 0);
-  Actor_FaceActor(DJINNI, 0, 0);
-  Event_ShowMessage(DJINNI, 0);
-  Event_OpenMessage(DJINNI, 0);
+  Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
+  Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
+  Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
+  Event_OpenMessage(ACTOR_VENUS_DJINNI, 0);
   if (Event_ChooseYesNo(0, 0) == 1) {
-    Actor_SetAnimation(0, 22);
-    Actor_RunRepeatedMotion(DJINNI, 2);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 22);
+    Actor_RunRepeatedMotion(ACTOR_VENUS_DJINNI, 2);
     Event_SetMessage(MsgWorldMapHmmmmExplainAgain);
-    Event_OpenMessage(DJINNI, 0);
+    Event_OpenMessage(ACTOR_VENUS_DJINNI, 0);
     if (Event_ChooseYesNo(0, 0) != 1) {
-      Event_ShowMessage(DJINNI, 0);
-      Actor_WalkToAndWait(DJINNI, x >> 16, z >> 16);
+      Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
+      Actor_WalkToAndWait(ACTOR_VENUS_DJINNI, x >> 16, z >> 16);
       WorldMap_ShowDjinnTutorial();
       Battle_ClearObjectFlag5bWhenMode3();
       return;
     }
   }
-  Actor_SetAnimation(0, 22);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, 22);
   Event_SetMessage(MsgWorldMapYeahWantLearn);
-  Actor_Jump(DJINNI, 2, 20);
-  Actor_Jump(DJINNI, 2, 20);
-  Actor_SetAnimationAndWait(0, 3);
-  Actor_ShowEmote(DJINNI, 0x100, 30);
-  Event_ShowMessage(DJINNI, 0);
+  Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
+  Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Actor_ShowEmote(ACTOR_VENUS_DJINNI, EMOTE_IN_FRONT, 30);
+  Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   GameFlag_Set(0x16f);
   GameFlag_Set(0x171);
   ItemMenu_Open();
-  Actor_Jump(DJINNI, 2, 20);
-  Event_ShowMessage(DJINNI, 0);
+  Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
+  Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   Battle_ClearObjectFlag5bWhenMode3();
-  Djinn_JoinParty(DJINNI, 0, 0);
-  Event_PlayCue(42);
+  Djinn_JoinParty(ACTOR_VENUS_DJINNI, 0, 0);
+  Event_PlayCue(MUS_042);
   Event_End();
-  GameFlag_Clear(FLAG_DJINNI_MET);
+  GameFlag_Clear(FLAG_DJINN_TUTORIAL);
   GameFlag_Clear(0x16f);
   GameFlag_Clear(0x171);
 }
@@ -1370,7 +1407,7 @@ static void WorldMap_DisembarkCarriage(void) {
   Engine_EventWait(20);
   Actor_SetPosition(10, PIXELS(5480), PIXELS(2104));
   Engine_TaskWait(1);
-  Event_PlayCue(141);
+  Event_PlayCue(SE_141);
   Actor_SetSpeed(10, PIXELS(8) / 5, PIXELS(2) / 5);
   Engine_ActorSetAnimation(10, 2);
   Actor_MoveToAndWait(10, 5485, 2136);
@@ -1380,15 +1417,15 @@ static void WorldMap_DisembarkCarriage(void) {
   Actor_MoveToAndWait(10, 5544, 2158);
   Actor_MoveToAndWait(10, 5608, 2168);
   Engine_ActorSetAnimation(10, 1);
-  Event_PlayCue(0x121);
+  Event_PlayCue(SE_289);
   Engine_EventWait(20);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(5592), PIXELS(2168));
   Engine_TaskWait(1);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 5576, 2168);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 40);
-  Event_PlayCue(141);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 40);
+  Event_PlayCue(SE_141);
   Engine_ActorSetAnimation(10, 2);
   Actor_MoveToAndWait(10, 5624, 2168);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
@@ -1400,7 +1437,7 @@ static void WorldMap_DisembarkCarriage(void) {
   Actor_MoveToAndWait(10, 5490, 2136);
   Actor_MoveToAndWait(10, 5480, 2104);
   Actor_SetPosition(10, 0, 0);
-  Event_PlayCue(0x121);
+  Event_PlayCue(SE_289);
   Engine_EventWait(40);
   Camera_MoveTo(PIXELS(5592), -1, PIXELS(2136), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1421,19 +1458,19 @@ static void WorldMap_RunBlackOrbScene(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Battle_SetObjectFlag5bWhenMode3();
-  leader = Object_GetById(0);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Engine_ActorSetPosition(gWorldMapTriggerActor, leader->x.fixed,
                             leader->z.fixed);
   }
   Actor_SetSpeed(gWorldMapTriggerActor, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(gWorldMapTriggerActor, 5992, 3448);
-  Engine_ActorFaceDirection(gWorldMapTriggerActor, 0, 20);
-  Engine_ActorShowEmote(gWorldMapTriggerActor, 0x100, 60);
+  Engine_ActorFaceDirection(gWorldMapTriggerActor, FACING_EAST, 20);
+  Engine_ActorShowEmote(gWorldMapTriggerActor, EMOTE_IN_FRONT, 60);
   Engine_ActorStartRepeatedMotion(gWorldMapTriggerActor, 2);
   Engine_EventSetMessage(MsgWorldMapLook);
   Engine_EventShowMessageAndWait(gWorldMapTriggerActor | 0x1000, 0, 10);
-  Engine_ActorFaceDirection(0, 0, 0);
+  Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Battle_ClearObjectFlag5bWhenMode3();
   BattleFx_ScheduleRatioTransition(7 * Q16_ONE / 5, 10);
   Engine_CameraSetSpeed(PIXELS(8), PIXELS(1));
@@ -1441,7 +1478,7 @@ static void WorldMap_RunBlackOrbScene(void) {
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
   Battle_SetObjectFlag5bWhenMode3();
-  Engine_ActorSetAttachedEffect(gWorldMapTriggerActor, 0x102);
+  Engine_ActorSetAttachedEffect(gWorldMapTriggerActor, EMOTE_IN_FRONT | 2);
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);
   Engine_EventShowMessageAndWait(gWorldMapTriggerActor | 0x3000, 0, 40);
@@ -1449,21 +1486,21 @@ static void WorldMap_RunBlackOrbScene(void) {
   Engine_ActorWalkToAndWait(gWorldMapTriggerActor, 6036, 3400);
   Engine_ActorFaceDirection(gWorldMapTriggerActor,
                             FACING_SOUTHEAST + FACING_STEP, 20);
-  Actor_SetSpeed(0, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetActionScript(0, gBlackOrbLeaderScript);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gBlackOrbLeaderScript);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);
   Engine_EventShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
-  while (Object_GetById(0)->timer == 0) {
+  while (Object_GetById(ACTOR_PARTY_LEADER)->timer == 0) {
     Engine_TaskWait(1);
   }
-  Actor_FaceDirection(0, FACING_SOUTH, 20);
-  Engine_ActorShowEmote(gWorldMapTriggerActor, 0x106, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
+  Engine_ActorShowEmote(gWorldMapTriggerActor, EMOTE_IN_FRONT | 6, 0);
   Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 2);
   Engine_EventShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
   Engine_ActorFaceDirection(gWorldMapTriggerActor, FACING_WEST, 10);
   Engine_EventShowMessage(gWorldMapTriggerActor, 0);
-  Engine_ActorFaceDirection(0, 0, 20);
+  Engine_ActorFaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 20);
   Object_GetById(gWorldMapTriggerActor)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(gWorldMapTriggerActor, 6028, 3400);
   Engine_EventWait(1);
@@ -1483,7 +1520,7 @@ static void WorldMap_RunBlackOrbScene(void) {
   Battle_ClearObjectFlag5bWhenMode3();
   BattleFx_ScheduleRatioTransition(Q16_ONE, 10);
   Engine_EventWait(20);
-  Engine_GameFlagSet(0x234);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_34);
   Engine_GameFlagSet(0x9bf);
   gGameState.savedScene = (s32)&SceneId_WorldMap;
   gGameState.savedEntrance = 78;
@@ -1499,7 +1536,7 @@ static void WorldMap_ActivateSite138(s32 actor) {
     if (gWorldMapEvents[i].control == EVENT_EXIT &&
         gWorldMapEvents[i].trigger == 138) {
       gWorldMapEvents[i].control = EVENT_TOUCH;
-      gWorldMapEvents[i].value = (u32)WorldMap_StopLeaderLeavingShip;
+      gWorldMapEvents[i].value = (u32)Event_StopLeavingShip;
     }
     if (gWorldMapEvents[i].control == SCENE_EVENTS_END)
       break;
@@ -1533,8 +1570,9 @@ static void WorldMap_RestoreExitTrigger(void) {
   }
 }
 
-// Remind Isaac to use the Black Orb on the ship.
-static void WorldMap_PromptBlackOrbUse(void) {
+// Talking to the one who gave the Black Orb (or reading his mind): "Now use
+// it... on the ship."
+static void Event_TalkAboutBlackOrb(void) {
   Engine_EventBegin();
   Actor_FaceActor(55, ACTOR_PARTY_LEADER, 0);
   Engine_EventSetMessage(MsgWorldMapNowUseOnShip);
@@ -1543,8 +1581,9 @@ static void WorldMap_PromptBlackOrbUse(void) {
   Engine_EventEnd();
 }
 
-// Stop Isaac from leaving before using the Black Orb.
-static void WorldMap_StopLeaderLeavingShip(void) {
+// Walking away from the shipwreck with the Black Orb: "(Hero), where you
+// going? I said to use the Orb on Babi's ship!", and the hero walks back.
+static void Event_StopLeavingShip(void) {
   Engine_EventBegin();
   Battle_SetObjectFlag5bWhenMode3();
   Engine_EventSetMessage(MsgWorldMapIsaacWhereGoingSaidUse);
@@ -1555,15 +1594,15 @@ static void WorldMap_StopLeaderLeavingShip(void) {
   Engine_EventEnd();
 }
 
-// Describe the shipwreck and record the interaction when the event is active.
-static void WorldMap_SearchShipwreck(void) {
+// Searching the shipwreck: "The wreckage of a ship scuttled off the coast."
+static void Event_SearchShipwreck(void) {
 
   Engine_EventBegin();
 #if !TBS_PATCH_3
   Battle_SetObjectFlag5bWhenMode3();
 #endif
   Engine_MessageShowCentered(MsgWorldMapWreckageShipScuttledOffCoast, 1);
-  if (Engine_GameFlagIsSet(0x234) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_34) != 0) {
     gEventWork->unk172 = 1;
   }
 #if !TBS_PATCH_3
@@ -1575,8 +1614,9 @@ static void WorldMap_SearchShipwreck(void) {
 #define SITE 55
 #define ITEM_BLACK_ORB 242
 
-// Animate the Black Orb and activate the ship.
-static void WorldMap_UseBlackOrb(void) {
+// Using the Black Orb on the shipwreck: nothing happens, the orb is taken back
+// and the party is to press on to Babi Lighthouse.
+static void Event_UseBlackOrb(void) {
   struct FieldActor *site;
   struct FieldActor *orb;
   struct FieldActor *leader;
@@ -1593,7 +1633,7 @@ static void WorldMap_UseBlackOrb(void) {
   Camera_MoveTo(PIXELS(6024), -1, PIXELS(3432), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   site = NULL;
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   leader->paused = 0;
   ObjectDispatch_InitFromTable6((struct DispatchObject *)leader);
   if (leader->z.fixed > PIXELS(3432)) {
@@ -1609,8 +1649,8 @@ static void WorldMap_UseBlackOrb(void) {
   }
   FieldObject_SetPosition(leader, PIXELS(5993), 0, PIXELS(3432));
   FieldObject_WaitForMove(leader);
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 40);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 40);
   Battle_SetObjectFlag5bWhenMode3();
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Event_Wait(20);
@@ -1659,7 +1699,7 @@ static void WorldMap_UseBlackOrb(void) {
   if (orb != NULL) {
     Engine_ObjectDispatchRelease(orb);
   }
-  Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
+  Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(40);
   Actor_Jump(gWorldMapTriggerActor, 6, 40);
   Event_ShowMessageAndWait(gWorldMapTriggerActor, 0, 20);
@@ -1699,7 +1739,7 @@ static void WorldMap_UseBlackOrb(void) {
   Event_Wait(20);
   Actor_SetAnimation(gWorldMapTriggerActor, 4);
   Event_ShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimationAndWait(gWorldMapTriggerActor, 3);
   Actor_SetAnimation(gWorldMapTriggerActor, 2);
   actor = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1714,8 +1754,8 @@ static void WorldMap_UseBlackOrb(void) {
   Event_Wait(20);
   WorldMap_RestoreExitTrigger();
   Engine_ActorDestroy(gWorldMapTriggerActor);
-  GameFlag_Clear(0x234);
-  GameFlag_Set(0x85d);
+  GameFlag_Clear(FLAG_SCENE_TEMP_34);
+  GameFlag_Set(FLAG_BLACK_ORB_RETURNED);
   Event_End();
 }
 
@@ -1758,27 +1798,27 @@ static void WorldMap_ShowEndingScene(void) {
   Engine_ActorRunRepeatedMotion(8, 2);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(8, 0, 20);
-  Actor_ShowEmote(JENNA, 0x107, 20);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 7, 20);
   Event_ShowMessageAndWait(JENNA, 0, 20);
-  Actor_ShowEmote(8, 0x105, 80);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | 5, 80);
   Event_ShowMessageAndWait(8, 0, 10);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Event_ShowMessageAndWait(JENNA, 0, 20);
-  Actor_ShowEmote(8, 0x105, 100);
-  Actor_ShowEmote(JENNA, 0x105, 40);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | 5, 100);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 5, 40);
   Event_ShowMessageAndWait(JENNA, 0, 20);
   Event_ShowMessageAndWait(8, 0, 10);
-  Actor_ShowEmote(JENNA, 0x102, 20);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 2, 20);
   Event_ShowMessageAndWait(JENNA, 0, 10);
-  Actor_SetAttachedEffect(8, 0x102);
+  Actor_SetAttachedEffect(8, EMOTE_IN_FRONT | 2);
   Engine_EventWait(80);
   Event_ShowMessageAndWait(8, 0, 20);
-  Actor_ShowEmote(JENNA, 0x105, 80);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 5, 80);
   Event_ShowMessageAndWait(8, 0, 120);
   Engine_ActorRunRepeatedMotion(JENNA, 1);
   Event_ShowMessageAndWait(JENNA, 0, 40);
   Event_ShowMessageAndWait(8, 0, 20);
-  Actor_ShowEmote(JENNA, 0x105, 40);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 5, 40);
   Event_ShowMessageAndWait(JENNA, 0, 120);
   // Bring the guide into the conversation and lead the group onward.
   Actor_SetSpeed(9, PIXELS(2) / 5, PIXELS(1) / 5);
@@ -1787,8 +1827,8 @@ static void WorldMap_ShowEndingScene(void) {
   Actor_WalkToAndWait(9, 7560, 3488);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(0x6009, 0, 20);
-  Actor_ShowEmote(8, 0x101, 0);
-  Actor_ShowEmote(JENNA, 0x101, 60);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 60);
   Engine_ActorSetAnimationAndWait(9, 3);
   Event_ShowMessage(0x6009, 0);
   Map_LoadDefaultCellsAndUpdateBlock();
@@ -1815,8 +1855,8 @@ static void WorldMap_ShowEndingScene(void) {
   } while (Object_GetById(5)->timer == 0);
   Engine_EventWait(20);
   Actor_FaceDirection(9, FACING_WEST, 20);
-  Actor_SetAttachedEffect(8, 0x102);
-  Actor_SetAttachedEffect(JENNA, 0x102);
+  Actor_SetAttachedEffect(8, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(JENNA, EMOTE_IN_FRONT | 2);
   Engine_EventWait(40);
   Battle_SetObjectFlag5bWhenMode3();
   Event_ShowTwoMessagesAndWait(5, 7, 13, 2, 12, 8, 9, 4, 4, 3, 0);
@@ -1840,7 +1880,7 @@ static void WorldMap_ShowEndingScene(void) {
   Engine_ActorStartRepeatedMotion(8, 2);
   Event_ShowMessageAndWait(8, 0, 60);
   Map_LoadDefaultCellsAndUpdateBlock();
-  Event_PlayCue(17);
+  Event_PlayCue(MUS_017);
   ColorBuffer_ApplyTarget(0, 0);
   Engine_ColorBufferInterpolate(120);
   Engine_TaskWait(120);
@@ -1850,7 +1890,7 @@ static void WorldMap_ShowEndingScene(void) {
 // Start the sparkling travel transition and fade out to its destination.
 static void WorldMap_StartTransitionEffect(void) {
   Engine_EventBegin();
-  Engine_AudioPlayCue(141);
+  Engine_AudioPlayCue(SE_141);
   Engine_ColorBufferApplySource(0, 0);
   Engine_ColorBufferApplyTarget(0, 0);
   Engine_ColorBufferInterpolate(1);
@@ -1876,7 +1916,7 @@ static void WorldMap_StartTransitionEffect(void) {
   Engine_ColorBufferInterpolate(80);
   Engine_TaskWait(90);
   Engine_EventRequestExit(109);
-  Engine_GameFlagSet(282);
+  Engine_GameFlagSet(FLAG_KEEP_MUSIC);
   Engine_EventEnd();
 }
 
@@ -1931,7 +1971,7 @@ static void WorldMap_MoveActorEightToExit(void) {
   Actor_SetPosition(ACTOR, PIXELS(4872), PIXELS(808));
   actor = Actor_Get(ACTOR);
   {
-    s32 value = 0xa000;
+    s32 value = FACING_NORTHWEST;
 
     actor->facing = value;
   }
@@ -2079,7 +2119,7 @@ static void WorldMap_UpdateAirborneTravelTimer(void) {
   scene = gEventWork;
   actor->facing = (gFrameCount << 12);
 
-  progress = FieldGameFlag_GetByte(0x2f8);
+  progress = FieldGameFlag_GetByte(FLAG_SCENE_TEMP_F8);
   if (progress != 0) {
     if (progress == 1) {
       scene->raisedTrigger = 99;
@@ -2087,7 +2127,7 @@ static void WorldMap_UpdateAirborneTravelTimer(void) {
       progress -= 1;
     }
   }
-  FieldGameFlag_SetByte(0x2f8, progress);
+  FieldGameFlag_SetByte(FLAG_SCENE_TEMP_F8, progress);
 }
 
 // Move the selected actor toward the travel marker and start its timer.
@@ -2099,17 +2139,17 @@ static void WorldMap_StartAirborneTravel(s32 targetActor) {
 
   id = gGameState.selectedActor;
   actor = Object_GetById(id);
-  alreadyTraveling = GameFlag_IsSet(0x2f0);
+  alreadyTraveling = GameFlag_IsSet(FLAG_SCENE_TEMP_F0);
   if (alreadyTraveling == 0) {
     Engine_EventBegin();
-    Actor_SetAttachedEffect(id, 0x101);
+    Actor_SetAttachedEffect(id, EMOTE_IN_FRONT | 1);
     Engine_ActorSetAnimation(id, 9);
     record = Object_GetById(targetActor);
     if (record != 0) {
       Actor_SetDestination(id, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(id);
-    Event_PlayCue(244);
+    Event_PlayCue(SE_244);
     FieldScheduler_AddCallback(WorldMap_UpdateAirborneTravelTimer, 0xc80);
     actor->motionFlags = alreadyTraveling;
     Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed + PIXELS(32),
@@ -2118,33 +2158,33 @@ static void WorldMap_StartAirborneTravel(s32 targetActor) {
     actor->velocityY = alreadyTraveling;
     actor->motionFlags = 4;
     gGameState.movementMode = 2;
-    GameFlag_Set(0x2f0);
-    FieldGameFlag_SetByte(0x2f8, 180);
+    GameFlag_Set(FLAG_SCENE_TEMP_F0);
+    FieldGameFlag_SetByte(FLAG_SCENE_TEMP_F8, 180);
     Engine_EventEnd();
     gEventWork->encounterEnemyGroup = 0; // drop any battle this step rolled
   }
 }
 
-// Start airborne travel toward the map's travel marker.
-static void WorldMap_EnterAirborneTravel(void) {
+// Walking onto the marker: the party is lifted up into the air.
+static void Event_EnterAirborneTravel(void) {
   WorldMap_StartAirborneTravel(54);
 }
 
-// Enable the shared travel effect's child option.
-static void WorldMap_ActivateTravelEffect(void) {
+// Starting to cast Douse on the marker.
+static void Event_StartDousingTravelMarker(void) {
   ((struct BattleFxScene *)gEffectWork)->childOption = 1;
 }
 
-// Stop the travel timer and request the associated battle.
-static void WorldMap_DouseTravelEffect(void) {
+// Douse on the marker: the party comes down and a battle begins.
+static void Event_DouseTravelMarker(void) {
   struct FieldActor *selectedActor;
 
   if (gEventWork->raisedTrigger == 99) {
     gEventWork->raisedTrigger = 0;
   }
-  Engine_GameFlagClear(0x2f0);
-  Engine_GameFlagSet(0x2f1);
-  FieldGameFlag_SetByte(0x2f8, 0);
+  Engine_GameFlagClear(FLAG_SCENE_TEMP_F0);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_F1);
+  FieldGameFlag_SetByte(FLAG_SCENE_TEMP_F8, 0);
   Field_RequestBattleFromEncounterTable(98, 5);
   Battle_SetStart(3);
   Field_RequestBattleFromEncounterTable(98, 7);
@@ -2152,15 +2192,16 @@ static void WorldMap_DouseTravelEffect(void) {
   selectedActor->motionFlags = 2;
 }
 
-// Move the traveler and marker together before leaving for the next scene.
-static void WorldMap_FinishAirborneTravel(void) {
+// When the time in the air runs out: the party and the marker fly off, and
+// the map reopens elsewhere.
+static void Event_FinishAirborneTravel(void) {
   struct FieldActor *actor = Actor_Get(gGameState.selectedActor);
   struct FieldActor *other = Actor_Get(54);
   s32 frames;
 
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
-  Event_PlayCue(219);
+  Event_PlayCue(SE_219);
   Engine_ActorSetSpriteFlags(actor, 0);
   other->motionFlags = 0;
   actor->motionFlags = 0;
@@ -2233,7 +2274,7 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   u8 *buffer = Runtime_BumpAllocateAlternatePool(0x4000);
 
   Engine_TaskWait(1);
-  Engine_GameFlagClear(0x109);
+  Engine_GameFlagClear(FLAG_KEEP_PARTY_POSITION);
   Map_ResumeAnimation();
   FieldResource_DecodeType01(gWorldMapPackedTiles, buffer);
   FieldResource_DecodeType01(gWorldMapPackedFrames, buffer + 0x1000);
@@ -2247,7 +2288,7 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   gEventWork->transitionFrames = 16;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  Engine_AudioPlayCue(246);
+  Engine_AudioPlayCue(SE_246);
 
   // Fade through the inward frames, hold, then reverse the animation.
   gWorldMapBlend = 0xe00;
@@ -2278,7 +2319,7 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   WORLD_MAP_QUEUE_TRANSITION_FRAME(buffer, 0x3a80);
   Map_LoadAreaGraphics();
   FieldScheduler_AddCallback(WorldMap_JitterTransitionCamera, 0xc80);
-  Engine_AudioPlayCue(141);
+  Engine_AudioPlayCue(SE_141);
   gWorldMapBlend = 0xd00;
   Engine_EventWait(4);
   gWorldMapBlend = 0xe00;
@@ -2753,11 +2794,11 @@ s32 gWorldMapPlacement3[] = {
 
 // clang-format off
 struct ScenePlacement gWorldMapPlacements[] = {
-    { 0x5a, 0x33, (s32)gWorldMapPlacement0,
+    { 0x5a, FLAG_DJINNI_0 + DJINNI_VINE, (s32)gWorldMapPlacement0,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x5c, 0x5a, ACTOR_STAND,
+    { 0x5c, FLAG_DJINNI_0 + DJINNI_CORONA, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0x5b, 0x48, ACTOR_STAND,
+    { 0x5b, FLAG_DJINNI_0 + DJINNI_HAIL, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0x105, CONDITION_ALWAYS, (s32)gWorldMapPlacement1,
         PIXELS(5678), 0, PIXELS(1200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -2845,7 +2886,7 @@ struct ScenePlacement gWorldMapPlacements[] = {
         PIXELS(6036), 0, PIXELS(3458), FACING_WEST, TALK_KEEP_FACING, 0 },
     { 0xa1, IF_FLAG_SET(0x8a0), (s32)gWorldMapPlacement1,
         PIXELS(4760), 0, PIXELS(440), FACING_NORTH, TALK_KEEP_FACING, 0 },
-    { 0x121, 0x2f1, (s32)gWorldMapPlacement3,
+    { 0x121, FLAG_SCENE_TEMP_F1, (s32)gWorldMapPlacement3,
         PIXELS(4392), 0, PIXELS(296), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0x39, CONDITION_ALWAYS, (s32)gWorldMapPlacement4,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -2950,19 +2991,19 @@ struct ScenePlacement gWorldMapPlacements73[] = {
 };
 
 struct SceneEvent gWorldMapEvents[] = {
-    { EVENT_TOUCH, 90, 0x30, EVENT_SCRIPT(WorldMap_MeetFirstDjinni) },
-    { EVENT_TOUCH, 95, 0x2f1, EVENT_SCRIPT(WorldMap_EnterAirborneTravel) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(WorldMap_TryDjinnBattleA) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(WorldMap_TryDjinnBattleB) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(WorldMap_TryDjinnBattleC) },
-    { EVENT_TOUCH, 92, 0x33, EVENT_SCRIPT(WorldMap_TryDjinnBattleA) },
-    { EVENT_TOUCH, 91, 0x5a, EVENT_SCRIPT(WorldMap_TryDjinnBattleB) },
-    { EVENT_TOUCH, 93, 0x48, EVENT_SCRIPT(WorldMap_TryDjinnBattleC) },
-    { SEARCH(SEARCH_UNNAMED), 96, CONDITION_ALWAYS, EVENT_SCRIPT(WorldMap_SearchShipwreck) },
-    { 0xf204, 96, 0x85d, EVENT_SCRIPT(WorldMap_UseBlackOrb) },
+    { EVENT_TOUCH, 90, FLAG_DJINNI_0, EVENT_SCRIPT(Event_MeetFlint) },
+    { EVENT_TOUCH, 95, FLAG_SCENE_TEMP_F1, EVENT_SCRIPT(Event_EnterAirborneTravel) },
+    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MeetVine) },
+    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MeetCorona) },
+    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MeetHail) },
+    { EVENT_TOUCH, 92, FLAG_DJINNI_0 + DJINNI_VINE, EVENT_SCRIPT(Event_MeetVine) },
+    { EVENT_TOUCH, 91, FLAG_DJINNI_0 + DJINNI_CORONA, EVENT_SCRIPT(Event_MeetCorona) },
+    { EVENT_TOUCH, 93, FLAG_DJINNI_0 + DJINNI_HAIL, EVENT_SCRIPT(Event_MeetHail) },
+    { SEARCH(SEARCH_UNNAMED), 96, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchShipwreck) },
+    { 0xf204, 96, FLAG_BLACK_ORB_RETURNED, EVENT_SCRIPT(Event_UseBlackOrb) },
     { SEARCH(SEARCH_GROUND), 100, 0xfcf, FIND_ITEM(0x103) },
-    { EVENT_TALK, 55, CONDITION_ALWAYS, EVENT_SCRIPT(WorldMap_PromptBlackOrbUse) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x437, CONDITION_ALWAYS, EVENT_SCRIPT(WorldMap_PromptBlackOrbUse) },
+    { EVENT_TALK, 55, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutBlackOrb) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x437, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutBlackOrb) },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
     { EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
     { EVENT_EXIT, 50, CONDITION_ALWAYS, 50 },
@@ -2976,13 +3017,13 @@ struct SceneEvent gWorldMapEvents[] = {
     { EVENT_EXIT, 61, CONDITION_ALWAYS, 61 },
     { EVENT_EXIT, 47, CONDITION_ALWAYS, 47 },
     { EVENT_EXIT, 111, CONDITION_ALWAYS, 1 },
-    { EVENT_TOUCH, 112, CONDITION_ALWAYS, EVENT_SCRIPT(WorldMap_EnterTransferRoute) },
+    { EVENT_TOUCH, 112, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterTransferRoute) },
     { EVENT_EXIT, 132, CONDITION_ALWAYS, 4 },
     { EVENT_EXIT, 133, CONDITION_ALWAYS, 40 },
     { EVENT_EXIT, 123, CONDITION_ALWAYS, 5 },
-    { EVENT_TOUCH, 130, CONDITION_ALWAYS, EVENT_SCRIPT(WorldMap_ChooseHorizontalPassageExit) },
+    { EVENT_TOUCH, 130, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PassThroughWestEastPassage) },
     { EVENT_EXIT, 119, CONDITION_ALWAYS, 7 },
-    { EVENT_TOUCH, 150, CONDITION_ALWAYS, EVENT_SCRIPT(WorldMap_ChooseVerticalPassageExitA) },
+    { EVENT_TOUCH, 150, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PassThroughFirstNorthSouthPassage) },
     { EVENT_EXIT, 144, CONDITION_ALWAYS, 8 },
     { EVENT_EXIT, 139, CONDITION_ALWAYS, 35 },
     { EVENT_EXIT, 140, CONDITION_ALWAYS, 48 },
@@ -2999,23 +3040,23 @@ struct SceneEvent gWorldMapEvents[] = {
     { EVENT_EXIT, 124, CONDITION_ALWAYS, 20 },
     { EVENT_EXIT, 115, CONDITION_ALWAYS, 34 },
     { EVENT_EXIT, 141, CONDITION_ALWAYS, 49 },
-    { EVENT_TOUCH, 116, CONDITION_ALWAYS, EVENT_SCRIPT(WorldMap_ChooseVerticalPassageExitB) },
+    { EVENT_TOUCH, 116, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PassThroughSecondNorthSouthPassage) },
     { EVENT_EXIT, 117, CONDITION_ALWAYS, 22 },
     { EVENT_EXIT, 126, CONDITION_ALWAYS, 23 },
     { EVENT_EXIT, 134, CONDITION_ALWAYS, 24 },
-    { EVENT_TOUCH, 151, CONDITION_ALWAYS, EVENT_SCRIPT(WorldMap_ChooseVerticalPassageExitC) },
+    { EVENT_TOUCH, 151, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PassThroughThirdNorthSouthPassage) },
     { EVENT_EXIT, 146, CONDITION_ALWAYS, 60 },
     { EVENT_EXIT, 135, CONDITION_ALWAYS, 26 },
     { EVENT_EXIT, 136, CONDITION_ALWAYS, 41 },
     { EVENT_EXIT, 114, CONDITION_ALWAYS, 27 },
     { EVENT_EXIT, 138, CONDITION_ALWAYS, 33 },
     { EVENT_EXIT, 131, CONDITION_ALWAYS, 31 },
-    { EVENT_TOUCH, 125, CONDITION_ALWAYS, EVENT_SCRIPT(WorldMap_ChooseVerticalPassageExitD) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 74, IF_FLAG_SET(0x8a0), EVENT_SCRIPT(WorldMap_LeaveAtEastboundTrigger) },
+    { EVENT_TOUCH, 125, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PassThroughFourthNorthSouthPassage) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 74, IF_FLAG_SET(0x8a0), EVENT_SCRIPT(Event_LeaveEastward) },
     { 0xc401, 75, CONDITION_ALWAYS, 75 },
-    { 0x10002115, 54, IF_FLAG_SET(0x2f0), EVENT_SCRIPT(WorldMap_ActivateTravelEffect) },
-    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 54, IF_FLAG_SET(0x2f0), EVENT_SCRIPT(WorldMap_DouseTravelEffect) },
-    { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(WorldMap_FinishAirborneTravel) },
+    { 0x10002115, 54, IF_FLAG_SET(FLAG_SCENE_TEMP_F0), EVENT_SCRIPT(Event_StartDousingTravelMarker) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 54, IF_FLAG_SET(FLAG_SCENE_TEMP_F0), EVENT_SCRIPT(Event_DouseTravelMarker) },
+    { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FinishAirborneTravel) },
     { SCENE_EVENTS_END },
 };
 

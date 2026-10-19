@@ -22,6 +22,13 @@ static u8 Garet_AsksAboutThingsToDo(void);
 static void Party_StaysBehind(void);
 static void Party_RidesWagon(void);
 
+// The cave's scene flags, the state of its gate puzzle:
+// FLAG_SCENE_TEMP_00: the gate puddle is frozen, propping the gate open.
+// FLAG_SCENE_TEMP_01: the lowering switch has lowered the gate.
+// FLAG_SCENE_TEMP_02: the gate is raised.
+// FLAG_SCENE_TEMP_03: the north puddle is frozen into a pillar.
+// FLAG_SCENE_TEMP_04: the south puddle is frozen into a pillar.
+
 // Entrances share the cave's camera bounds and arrival positions.
 const struct SceneEntrance *Scene_GetEntrances(void) { return gCaveEntrances; }
 
@@ -42,8 +49,8 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 // Route switches, Frost targets and the reunion trigger to their handlers.
 const struct SceneEvent *Scene_GetEvents(void) { return gCaveEvents; }
 
-// Clear the hidden puddle's sprite flags after Frost, if it still exists.
-static void WestLunpaCave_ResetHiddenPuddleSpriteFlags(void) {
+// Frost on the hidden puddle: it freezes, and no flag remembers it.
+static void Event_FreezeHiddenPuddle(void) {
   struct FieldActor *puddle;
 
   puddle = Object_GetById(ACTOR_HIDDEN_PUDDLE);
@@ -52,8 +59,8 @@ static void WestLunpaCave_ResetHiddenPuddleSpriteFlags(void) {
   }
 }
 
-// Restore the south pillar's automatic priority and mark its frozen terrain.
-static void WestLunpaCave_ApplySouthPillarFreeze(void) {
+// Frost on the south puddle: it rises as an ice pillar the party can climb.
+static void Event_FreezeSouthPuddle(void) {
   struct FieldActor *puddle;
 
   puddle = Actor_Get(ACTOR_SOUTH_PUDDLE);
@@ -62,7 +69,7 @@ static void WestLunpaCave_ApplySouthPillarFreeze(void) {
     puddle->motionFlags = 0;
   }
   Map_CopyCellAttributes(7, 32, 1, 1, 8, 32);
-  GameFlag_Set(FLAG_CAVE_SOUTH_PILLAR);
+  GameFlag_Set(FLAG_SCENE_TEMP_04);
 }
 
 // Animate the raised gate resting on the frozen pillar, then open collision.
@@ -89,32 +96,33 @@ static void Gate_DrawPropped(void) {
   Map_CopyCellAttributes(19, 17, 1, 1, 21, 14);
 }
 
-// Frost props the gate open; play the raising sequence only if still lowered.
-static void WestLunpaCave_PropGateWithFrozenPillar(void) {
+// Frost on the puddle under the gate: its pillar props the gate open, and if
+// the gate was down the player sees it rise and hears the puzzle solved.
+static void Event_FreezeGatePuddle(void) {
   struct FieldActor *pillar;
 
   pillar = Actor_Get(ACTOR_GATE_PUDDLE);
-  GameFlag_Set(FLAG_CAVE_GATE_PROPPED);
+  GameFlag_Set(FLAG_SCENE_TEMP_00);
   if (pillar != NULL) {
     Engine_ActorSetSpriteFlags(pillar, 0);
     pillar->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
-  if (GameFlag_IsSet(FLAG_CAVE_GATE_RAISED) == 0) {
+  if (GameFlag_IsSet(FLAG_SCENE_TEMP_02) == 0) {
     Event_PlayCue(SE_GATE_MOVE);
     Gate_DrawPropped();
     Event_PlayCue(MUS_PUZZLE_SOLVED);
-    GameFlag_Set(FLAG_CAVE_GATE_RAISED);
+    GameFlag_Set(FLAG_SCENE_TEMP_02);
   }
 }
 
-// Remember the north puddle's frozen state for the next scene load.
-static void WestLunpaCave_RecordNorthPillarFreeze(void) {
-  Engine_GameFlagSet(FLAG_CAVE_NORTH_PILLAR);
+// Frost on the north puddle: its pillar stays frozen when the party returns.
+static void Event_FreezeNorthPuddle(void) {
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_03);
 }
 
 // Lower the gate in four-frame steps and restore the blocked cell attributes.
 static void Gate_Lower(void) {
-  if (GameFlag_IsSet(FLAG_CAVE_GATE_RAISED) != 0) {
+  if (GameFlag_IsSet(FLAG_SCENE_TEMP_02) != 0) {
     Map_CopyCells(41, 86, 2, 6, 21, 57);
     Engine_TaskWait(4);
     Map_CopyCells(43, 86, 2, 6, 21, 57);
@@ -136,15 +144,16 @@ static void Gate_Lower(void) {
   Map_CopyCellAttributes(19, 17, 1, 1, 22, 15);
 }
 
-// The lowering switch has no effect while the frozen pillar props the gate.
-static void WestLunpaCave_LowerGateFromSwitch(void) {
-  if (GameFlag_IsSet(FLAG_CAVE_GATE_LOWERED) == 0) {
-    if (GameFlag_IsSet(FLAG_CAVE_GATE_PROPPED) == 0) {
+// Searching the lowering switch: the hero "flipped the switch." and the gate
+// comes down, unless it is down already or a frozen pillar props it open.
+static void Event_FlipLoweringSwitch(void) {
+  if (GameFlag_IsSet(FLAG_SCENE_TEMP_01) == 0) {
+    if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) == 0) {
       Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
       Event_PlayCue(SE_GATE_MOVE);
       Gate_Lower();
-      GameFlag_Set(FLAG_CAVE_GATE_LOWERED);
-      GameFlag_Clear(FLAG_CAVE_GATE_RAISED);
+      GameFlag_Set(FLAG_SCENE_TEMP_01);
+      GameFlag_Clear(FLAG_SCENE_TEMP_02);
     }
   }
 }
@@ -164,22 +173,23 @@ static void Gate_Raise(void) {
   Map_CopyCellAttributes(19, 17, 1, 1, 21, 14);
 }
 
-// Raise the gate once unless it is already raised or propped open.
-static void WestLunpaCave_RaiseGateFromSwitch(void) {
-  if (GameFlag_IsSet(FLAG_CAVE_GATE_PROPPED) == 0) {
-    if (GameFlag_IsSet(FLAG_CAVE_GATE_RAISED) == 0) {
+// Searching the raising switch: the hero "flipped the switch." and the gate
+// goes up, unless it is up already or propped open.
+static void Event_FlipRaisingSwitch(void) {
+  if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) == 0) {
+    if (GameFlag_IsSet(FLAG_SCENE_TEMP_02) == 0) {
       Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
       Event_PlayCue(SE_GATE_MOVE);
       Gate_Raise();
-      GameFlag_Set(FLAG_CAVE_GATE_RAISED);
-      GameFlag_Clear(FLAG_CAVE_GATE_LOWERED);
+      GameFlag_Set(FLAG_SCENE_TEMP_02);
+      GameFlag_Clear(FLAG_SCENE_TEMP_01);
     }
   }
 }
 
-// Reveal Bunza, let Hammet recognize him and stage their reunion below the
-// gate.
-static void WestLunpaCave_RunHammetBunzaReunion(void) {
+// Walking past Bunza's hiding place once Lunpa's trade has reopened: Bunza
+// steps out, Hammet knows his voice, and the reunion and the wagon talk follow.
+static void Event_HammetFindsBunza(void) {
   struct FieldActor *leader;
   s32 sighting;
   s32 recognition;
@@ -933,19 +943,19 @@ s32 Scene_Initialize(void) {
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_GATE_PUDDLE), 0);
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_NORTH_PUDDLE), 0);
     Object_GetById(ACTOR_NORTH_PUDDLE)->scaleY = 0xf333;
-    if (Engine_GameFlagIsSet(FLAG_CAVE_GATE_LOWERED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01) != 0) {
       Gate_Lower();
     }
-    if (Engine_GameFlagIsSet(FLAG_CAVE_GATE_RAISED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02) != 0) {
       Gate_Raise();
     }
-    if (Engine_GameFlagIsSet(FLAG_CAVE_GATE_PROPPED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00) != 0) {
       Gate_DrawPropped();
     }
-    if (Engine_GameFlagIsSet(FLAG_CAVE_NORTH_PILLAR) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_03) != 0) {
       Engine_ActorSetAnimation(ACTOR_NORTH_PUDDLE, PUDDLE_ANIM_FROZEN);
     }
-    if (Engine_GameFlagIsSet(FLAG_CAVE_SOUTH_PILLAR) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_04) != 0) {
       Engine_ActorSetAnimation(ACTOR_SOUTH_PUDDLE, PUDDLE_ANIM_FROZEN);
     }
   }
@@ -997,19 +1007,19 @@ const struct SceneEvent gCaveEvents[] = {
     { EVENT_EXIT, TRIGGER_WORLD_MAP_PASSAGE, CONDITION_ALWAYS, CAVE_EXIT_TO_WORLD_MAP },
     { EVENT_EXIT, TRIGGER_LUNPA_PASSAGE, CONDITION_ALWAYS, CAVE_EXIT_TO_LUNPA },
     { EVENT_TOUCH, TRIGGER_BUNZA_HIDING_PLACE, FLAG_LUNPA_CAVE_REUNION_SEEN,
-      EVENT_SCRIPT(WestLunpaCave_RunHammetBunzaReunion) },
+      EVENT_SCRIPT(Event_HammetFindsBunza) },
     { SEARCH(SEARCH_UNNAMED), TRIGGER_LOWERING_SWITCH, CONDITION_ALWAYS,
-      EVENT_SCRIPT(WestLunpaCave_LowerGateFromSwitch) },
+      EVENT_SCRIPT(Event_FlipLoweringSwitch) },
     { SEARCH(SEARCH_UNNAMED), TRIGGER_RAISING_SWITCH, CONDITION_ALWAYS,
-      EVENT_SCRIPT(WestLunpaCave_RaiseGateFromSwitch) },
+      EVENT_SCRIPT(Event_FlipRaisingSwitch) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_HIDDEN_PUDDLE, CONDITION_ALWAYS,
-      EVENT_SCRIPT(WestLunpaCave_ResetHiddenPuddleSpriteFlags) },
+      EVENT_SCRIPT(Event_FreezeHiddenPuddle) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SOUTH_PUDDLE, CONDITION_ALWAYS,
-      EVENT_SCRIPT(WestLunpaCave_ApplySouthPillarFreeze) },
+      EVENT_SCRIPT(Event_FreezeSouthPuddle) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_GATE_PUDDLE, CONDITION_ALWAYS,
-      EVENT_SCRIPT(WestLunpaCave_PropGateWithFrozenPillar) },
+      EVENT_SCRIPT(Event_FreezeGatePuddle) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_NORTH_PUDDLE, CONDITION_ALWAYS,
-      EVENT_SCRIPT(WestLunpaCave_RecordNorthPillarFreeze) },
+      EVENT_SCRIPT(Event_FreezeNorthPuddle) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

@@ -11866,48 +11866,6 @@ Func_02002068:
 	mov r10, r6
 	mov r11, r7
 	pop {r5, r6, r7, pc}
-	.section .text.x0200a17c,"ax",%progbits
-	.global Func_0200217c
-	.thumb_func
-Func_0200217c:
-	push {r5, r6, r7, lr}
-	adds r6, r0, #0
-	movs r0, #255
-	lsls r0, r0, #8
-	adds r0, #255
-	movs r5, #0
-	cmp r6, #0
-	beq .L_0200a1b4
-.L_0200a18c:
-	ldrb r3, [r1]
-	movs r4, #0
-	lsls r3, r3, #8
-	eors r0, r3
-.L_0200a194:
-	movs r3, #128
-	ldr r7, .L_0200a1bc
-	lsls r3, r3, #8
-	ands r3, r0
-	lsls r2, r0, #1
-	adds r4, #1
-	adds r0, r2, r7
-	cmp r3, #0
-	bne .L_0200a1a8
-	adds r0, r2, #0
-.L_0200a1a8:
-	cmp r4, #8
-	bne .L_0200a194
-	adds r5, #1
-	adds r1, #1
-	cmp r5, r6
-	bne .L_0200a18c
-.L_0200a1b4:
-	mvns r0, r0
-	lsls r0, r0, #16
-	lsrs r0, r0, #16
-	pop {r5, r6, r7, pc}
-.L_0200a1bc:
-	.4byte 0xffffefdf
 	.section .bss,"aw",%nobits
 	.global Data_0200274a
 Data_0200274a:

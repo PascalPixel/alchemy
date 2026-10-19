@@ -18,7 +18,7 @@ SECTIONS
         "*/resource_64a_overlay.o"(.text.x020098e0)
         "*/resource_64a_overlay.o"(.text.x02009c7c)
         "*/resource_64a_overlay.o"(.text.x0200a068)
-        "*/resource_64a_overlay.o"(.text.x0200a17c)
+        "*/games/tla/src/menu/clear/s217c.o"(.text)
         "*/games/tla/src/menu/clear/import.o"(.text)
         "*/games/tla/src/menu/clear/data.o"(.data)
         "*/games/tla/src/menu/clear/tilemap.o"(.rodata)

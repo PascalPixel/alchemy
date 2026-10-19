@@ -77,7 +77,7 @@ FarCall_WindowTable:
 	export UiTextResource_SetPositionFar, UiTextResource_SetPosition
 	export UiTextResource_ReleaseFar, UiTextResource_Release
 	overlay_veneer Menu_RunSelectionHook
-	overlay_veneer Item_CallHandler48
+	overlay_veneer Item_RemoveFromInventory
 	export Ui_PrepareTransferForItemFar, Ui_PrepareTransferForItem
 	export UiText_RenderWideStringAtOffsetFar, UiText_RenderWideStringAtOffset
 	overlay_veneer GraphicsPalette_SelectionNoOp

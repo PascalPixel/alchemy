@@ -61,9 +61,10 @@ void UiTimedNotice_CloseIfActive(void) {
   }
 }
 
-// Removes the inventory entry and returns 0; the first argument is unused.
-s32 Item_CallHandler48(s32 unused, s32 entry) {
-  PartyInventory_RemoveFar(entry);
+// Removes the item from the party's inventory and returns 0; the first
+// argument is unused.
+s32 Item_RemoveFromInventory(s32 unused, s32 itemId) {
+  PartyInventory_RemoveFar(itemId);
   return 0;
 }
 

@@ -352,7 +352,7 @@ u32 Menu_RunSelectionForValue(u32 value);
 void UiTimedNotice_Create(void);
 void UiTimedNotice_Tick(void);
 void UiTimedNotice_CloseIfActive(void);
-s32 Item_CallHandler48(s32 arg0, s32 arg1);
+s32 Item_RemoveFromInventory(s32 unused, s32 itemId);
 s32 Item_ReturnTrue(void);
 void OptionMenu_StepWindowHue(s32 arg0);
 void Debug_SelectAbilityPair(void);

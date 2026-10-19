@@ -47,8 +47,8 @@ void BattleFx_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
     caster->angle += 0xc00;
 }
 
-/// Avoid (or the Sacred Feather) has worn off: "Avoid's effects wore off." (or
-/// "Sacred Feather's ...").
+/// Avoid (or the Sacred Feather) has worn off, and the game says so.
+/// "Avoid's effects wore off." (or "Sacred Feather's ...").
 void FieldEvent_ShowStatusMessage(void) {
   gGameState.avoidDistance = 0;
   if (gGameState.avoidByItem == 0) {

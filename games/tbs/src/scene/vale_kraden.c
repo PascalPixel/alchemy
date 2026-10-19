@@ -34,7 +34,7 @@
 // FLAG_SCENE_TEMP_42: the cottage's gate stands open since Kraden went in.
 
 enum ValeKradenActor {
-  /// "It's a huge rock that Isaac's strength can't even budge."
+  /// The west rock. "It's a huge rock that Isaac's strength can't even budge."
   ACTOR_WEST_ROCK = 9,
   ACTOR_EAST_ROCK = 10,
   ACTOR_ROCKSLIDE_SURVIVOR = 11,
@@ -357,8 +357,9 @@ static void Event_KradenPlansSanctumVisit(void) {
   }
 }
 
-/// Arriving by entrance 10, from the cottage: Kraden comes out ready ("This is
-/// our best bet."), and everyone joins Isaac for Mt. Aleph.
+/// Arriving by entrance 10, from the cottage: Kraden comes out ready, and
+/// everyone joins Isaac for the mountain. "This is our best bet." The mountain
+/// is Mt. Aleph.
 static void Event_KradenSetsOff(void) {
   struct FieldActor *actor;
   s32 facing;

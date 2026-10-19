@@ -57,11 +57,11 @@ void Effect_Spawn();
 
 /// The actors, numbered from the placements (the first placed is actor 8).
 enum {
-  /// Shouts "Hoo-whaaa... Hachaaa!" and strikes the tree before him.
+  /// Strikes the tree before him with a shout. "Hoo-whaaa... Hachaaa!"
   ACTOR_KUNG_FU_STUDENT = 14,
   /// Feizhi, as at Alpine Crossing: looking for someone to take her west.
   ACTOR_FEIZHI = 17,
-  /// Carries water along the street: "You made me spill my water!"
+  /// Carries water along the street. "You made me spill my water!"
   ACTOR_WATER_CARRIER,
   /// The tree the student strikes; it jumps when hit.
   ACTOR_TRAINING_TREE,
@@ -236,6 +236,7 @@ const struct ScenePlacement *Xian_GetPlacements(void) {
   return gXian_Placements;
 }
 
+/// Asks about the young warriors' way here.
 /// "Young warriors, very gallant! You came through Mogall Forest?"
 static void Xian_AskAboutYoungWarriors(void) {
   Engine_EventBegin();
@@ -499,7 +500,8 @@ static void Xian_TalkToKungFuStudent(void) {
   }
 }
 
-/// Feizhi: "You are the warriors from the school... Are you strong warriors?"
+/// Talking to Feizhi.
+/// "You are the warriors from the school... Are you strong warriors?"
 static void Xian_TalkToFeizhi(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianWarriorsFromSchoolStrongWarriors);
@@ -602,9 +604,9 @@ static void Xian_OpenDoorAndLeave(void) {
   Engine_EventEnd();
 }
 
-/// Force on the training tree: it jumps, and the student cries "Wha-Wha-What
-/// happened? The tree jumped on its own!", the next time "...It jumped
-/// again... I am too tired...".
+/// Force on the training tree: it jumps, and the student cries out.
+/// "Wha-Wha-What happened? The tree jumped on its own!", the next time
+/// "...It jumped again... I am too tired...".
 static void Xian_StrikeTrainingTreeWithForce(void) {
   SchedulerCallback rotationCallback;
 

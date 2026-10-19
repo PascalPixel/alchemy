@@ -27,7 +27,7 @@
 enum {
   ACTOR_GEM_OWNER = 8, ///< a cat ate his precious stone
   ACTOR_GEM_OWNERS_WIFE = 9,
-  ACTOR_CHILD = 11,           ///< "Daddy hasn't been paying attention"
+  ACTOR_CHILD = 11,           ///< a child. "Daddy hasn't been paying attention"
   ACTOR_COLOSSO_HUSBAND = 12, ///< would like to see Colosso once more
   ACTOR_COLOSSO_WIFE = 13,
   ACTOR_MAYOR = 16, ///< before the theft was solved, his wife called him that
@@ -204,7 +204,7 @@ static void Event_ReadMindAndWelcomeIsaacBack(void) {
 #include "common/vault_bone.h"
 
 /// Across the counter the weapon shop opens; from elsewhere the merchant talks
-/// of a river of fire beyond Mt. Aleph.
+/// of a river of fire. It lies beyond Mt. Aleph.
 static void Event_TalkToWeaponMerchant(void) {
   u32 leaderFacing;
 
@@ -276,7 +276,8 @@ static void Event_TalkToInnkeeper(void) {
 }
 
 /// Mind Read on the bone giver: hungry while cooking, or, once a Bone was
-/// given, wondering whether "he" has a calcium deficiency.
+/// given, wondering about a calcium deficiency. The thought is whether "he" has
+/// one.
 static void Event_ReadBoneGiverMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_VAULT_BONE_RECEIVED) == 0) {

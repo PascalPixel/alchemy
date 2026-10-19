@@ -91,7 +91,7 @@ s32 Math_RemainderUnsigned(s32, s16);
 /// warriors Ouranos and Sean, who help him guard the deck ("That'll be me,
 /// Ouranos, and Sean on deck").
 enum TolbiShipDeckActor {
-  KALAY_CREWMAN = 20, ///< denies everything: "I didn't do anything..."
+  KALAY_CREWMAN = 20, ///< denies everything. "I didn't do anything..."
   KALAY_CAPTAIN = 22,
   KALAY_KAJA = 23,
   SEA_KAJA = 20,
@@ -850,7 +850,7 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
 }
 
 /// Approaching from the east side of the door: the crewman comes out, protests
-/// "I didn't do anything..." and slips away round the party to the bow. Runs
+/// and slips away round the party to the bow. "I didn't do anything..." Runs
 /// until the party has confronted the crewman.
 static void TolbiShipDeck_CatchCrewmanFromEast(void) {
   u8 bits;
@@ -1295,9 +1295,9 @@ static void TolbiShipDeck_DepartWithParty(void) {
   TolbiShipDeck_AnnouncePreparationsReady(20, 23);
 }
 
-/// The messenger comes up through the first door to report and the officer
-/// calls "Preparations... Ready!"; the scene moves on to the next stage of the
-/// voyage.
+/// The messenger comes up through the first door to report, the officer calls
+/// the ship ready, and the scene moves on to the next stage of the voyage.
+/// "Preparations... Ready!"
 static void TolbiShipDeck_AnnouncePreparationsReady(s32 a0, s32 a1) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_EventOpenScreen();
@@ -1324,7 +1324,7 @@ static void TolbiShipDeck_AnnouncePreparationsReady(s32 a0, s32 a1) {
   Engine_EventRequestExit(10);
 }
 
-/// Entrance 11: "Aye, Captain! Sea monsters!"
+/// Entrance 11: sea monsters are sighted. "Aye, Captain! Sea monsters!"
 static void TolbiShipDeck_SightSeaMonsters(void) {
   Engine_EventBegin();
   Event_CallWithLastActiveObjectId((s32)gTolbiShipDeck_CrewScript);
@@ -1347,8 +1347,8 @@ static void TolbiShipDeck_SightSeaMonsters(void) {
   Engine_EventRequestExit(11);
 }
 
-/// Entrance 12: the monsters leap aboard ("It's no use. It's too late!") and
-/// someone cries out.
+/// Entrance 12: the monsters leap aboard and someone cries out. "It's no use.
+/// It's too late!"
 static void TolbiShipDeck_MonstersBoard(void) {
   s32 zero;
   const s32 *shared;
@@ -1719,7 +1719,8 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Engine_EventEnd();
 }
 
-/// Entrance 16: "Thank you, Isaac. You did good against that Kraken."
+/// Entrance 16: Isaac is thanked for the Kraken.
+/// "Thank you, Isaac. You did good against that Kraken."
 static void TolbiShipDeck_ThankForKraken(void) {
   struct FieldActor *record;
 
@@ -1771,7 +1772,7 @@ static void TolbiShipDeck_ThankForKraken(void) {
   Engine_EventEnd();
 }
 
-/// Entrance 17: "Hey, I can see land!"
+/// Entrance 17: land is sighted. "Hey, I can see land!"
 static void TolbiShipDeck_SightLand(void) {
   struct FieldActor *record;
 
@@ -2561,8 +2562,9 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
   Engine_EventEnd();
 }
 
-/// Back on deck from the island: "How was it, Isaac? Did you explore the island
-/// thoroughly?" On yes, the crew make ready to sail and the scene moves on.
+/// Back on deck from the island: on yes, the crew make ready to sail and the
+/// scene moves on. "How was it, Isaac? Did you explore the island
+/// thoroughly?"
 static void TolbiShipDeck_ReturnFromIsland(void) {
   Engine_EventBegin();
   Event_CallWithLastActiveObjectId(gTolbiShipDeck_ClosingCrewScript);

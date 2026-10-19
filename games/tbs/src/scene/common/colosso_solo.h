@@ -28,8 +28,9 @@
 #define COLOSSO_CHEER_ROW 0x378
 #define COLOSSO_CHEER_SLOT(character) ((character) << 4)
 
-/// Scene flags, by stage number: a friend cheers at the stage (the guide says
-/// "Unfortunately, we have a full house."), and its description was heard.
+/// Scene flags, by stage number: a friend cheers at the stage, and its
+/// description was heard. When a friend cheers there, the guide says
+/// "Unfortunately, we have a full house."
 #define COLOSSO_STAGE_CHEERED 0x200
 #define COLOSSO_STAGE_DESCRIBED 0x208
 
@@ -134,9 +135,10 @@ void Colosso_RaiseTakePlaceOnPsynergy(void) {
 }
 
 /// Raised event 99: the nearest actor with animation 165 level with or below
-/// the friend on the map says "The match is about to begin. Please take your
-/// places.", and the friend's cell becomes their place to cheer from. The next
-/// friend then looks around, or, after Mia, the party leaves by exit 10.
+/// the friend on the map calls the competitors to their places, and the
+/// friend's cell becomes their place to cheer from. "The match is about to
+/// begin. Please take your places." The next friend then looks around, or,
+/// after Mia, the party leaves by exit 10.
 static void Colosso_TakePlaceForMatch(void) {
   struct EventWork *work = gEventWork;
   s32 speakerId = 8;
@@ -203,11 +205,11 @@ static void Colosso_TakePlaceForMatch(void) {
   Engine_EventEnd();
 }
 
-/// A stage's guide, talking to a friend who looks around alone: "Huh? Are you
-/// done cheering?" On "Yeah", "Then please wait here until the match begins.":
-/// the friend's cell becomes their place, and the next friend looks around, or,
-/// after Mia, the party leaves by exit 10. On "Nope", "Then cheer as best you
-/// can!"
+/// A stage's guide, talking to a friend who looks around alone, asks whether
+/// they are done cheering. "Huh? Are you done cheering?" On "Yeah", "Then
+/// please wait here until the match begins.": the friend's cell becomes their
+/// place, and the next friend looks around, or, after Mia, the party leaves by
+/// exit 10. On "Nope", "Then cheer as best you can!"
 void Colosso_AskDoneCheering(s32 id) {
   struct EventWork *work;
   s32 slot;
@@ -302,9 +304,9 @@ void Colosso_ClearCheeringSpots(void) {
   FieldGameFlag_SetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(MIA), 0);
 }
 
-/// A stage's guide: "This is stage N of the first finals match." (Colosso
-/// River; the second is Colosso Wall and the third Colosso Log). Returns what
-/// the guide does next:
+/// A stage's guide names the stage and decides what to do next. "This is stage
+/// N of the first finals match." (Colosso River; the second is Colosso Wall
+/// and the third Colosso Log). Returns what the guide does next:
 /// 0: describe the stage (yes to "Would you like to hear a description of this
 ///    stage?", asked the first time, or "Descriptions" afterwards);
 /// 1: no description, then offer a friend's cheering;
@@ -346,9 +348,9 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 competitor) {
   return Engine_EventChooseYesNo(0, 0);
 }
 
-/// A stage's guide, after describing the stage, says again "This is stage N of
-/// the first finals match." (or the second or third): the copy of that line
-/// after it in the text.
+/// A stage's guide, after describing the stage, names it again: the copy of
+/// that line after it in the text. "This is stage N of the first finals
+/// match." (or the second or third)
 void Colosso_RepeatStageNumber(s32 speaker, s32 competitor) {
   s32 scene;
   s32 message;

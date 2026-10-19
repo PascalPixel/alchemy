@@ -72,8 +72,8 @@ enum {
   ACTOR_DJINNI = 13
 };
 
-/// Room 6: the five colored lights and the five rocks, each in Babi's order:
-/// "blue, green, white, yellow, red", the rocks left to right.
+/// Room 6: the five colored lights and the five rocks, each in Babi's order,
+/// the rocks left to right. The order is "blue, green, white, yellow, red".
 enum {
   ACTOR_FIRST_LIGHT = 11,
   ACTOR_BLUE_LIGHT = ACTOR_FIRST_LIGHT,
@@ -581,12 +581,12 @@ static void AltmillerCave_SpinLights(void) {
   gAltmillerCave_LightWheel->ticks++;
 }
 
-/// Talking to one of room 6's rocks: "Isaac rotated the rock." Turning the
-/// leftmost rock, then the rightmost, brings out the ring of lights; then
-/// each time the rock matching the light at the top is turned, the ring
-/// spins to another light, and a wrong rock puts the lights away and starts
-/// over. After three lights matched the ring shrinks away, the wall bursts
-/// and the way to Babi's draught opens.
+/// Talking to one of room 6's rocks rotates it. "Isaac rotated the rock."
+/// Turning the leftmost rock, then the rightmost, brings out the ring of
+/// lights; then each time the rock matching the light at the top is turned,
+/// the ring spins to another light, and a wrong rock puts the lights away and
+/// starts over. After three lights matched the ring shrinks away, the wall
+/// bursts and the way to Babi's draught opens.
 static void AltmillerCave_TurnRock(s32 rock) {
   s32 correctRock = 0;
   s32 i;
@@ -1828,8 +1828,8 @@ static void AltmillerCave_RepeatRockOrder(void) {
   Engine_EventEnd();
 }
 
-/// Walking away from Babi once: "Wait... The draught is... on a table behind
-/// the door."
+/// Walking away from Babi once: the party is told where the draught is.
+/// "Wait... The draught is... on a table behind the door."
 static void AltmillerCave_BabiCallsPartyBack(void) {
   if (Engine_GameFlagIsSet(FLAG_MET_INVISIBLE_BABI) == 0)
     return;

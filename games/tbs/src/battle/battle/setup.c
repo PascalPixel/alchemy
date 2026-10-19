@@ -77,9 +77,9 @@ void BattlePresentation_UpdateCamera(void) {
   }
 }
 
-/// Announces the enemies at the start of a battle: "<enemy> appeared!" for
-/// each of the first enemyCount enemies, the last one's message a different
-/// line, then whether the party strikes first or is caught by surprise.
+/// Announces the enemies at the start of a battle, then whether the party
+/// strikes first or is caught by surprise. Each of the first enemyCount enemies
+/// gets `<enemy> appeared!`, the last one's message a different line.
 void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   s16 enemies[8];
   struct BattleWork *battle;

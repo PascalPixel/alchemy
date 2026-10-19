@@ -91,9 +91,10 @@ s32 PartyTalkMenu_Choose(s32 unused) {
   return row;
 }
 
-/// Shows "The <element> Djinni <name> joined <member>." with the element's
-/// Djinni portrait while the join fanfare (sound 81) plays, until it ends or A,
-/// B, L or R is pressed. `djinn` is the Djinni's number in its element.
+/// Shows that a Djinni joined a member while the join fanfare (sound 81)
+/// plays, until it ends or A, B, L or R is pressed. The message is
+/// `The <element> Djinni <name> joined <member>.`, with the element's Djinni
+/// portrait. `djinn` is the Djinni's number in its element.
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   struct UiRenderWork *work = (struct UiRenderWork *)*gWindowWork;
   s32 name;
@@ -165,8 +166,9 @@ s32 Party_LookupCharacterValueByFlag32(u32 index) {
   return gCharacter_ChildSpriteTable[index];
 }
 
-/// Shows "<member> joined your party." with the member's portrait while the
-/// join fanfare (sound 81) plays, until it ends or A, B, L or R is pressed.
+/// Shows that a member joined the party while the join fanfare (sound 81)
+/// plays, until it ends or A, B, L or R is pressed. The message is
+/// `<member> joined your party.`, with the member's portrait.
 void Party_ShowJoinedMessage(s32 member) {
   struct UiRenderWork *work = (struct UiRenderWork *)*gWindowWork;
   struct UiWindow *window = NULL;
@@ -205,8 +207,9 @@ void Party_ShowJoinedMessage(s32 member) {
   }
 }
 
-/// Shows "<first> and <second> joined your party." with both portraits while
-/// the join fanfare (sound 81) plays, until it ends or A, B, L or R is pressed.
+/// Shows that two members joined the party while the join fanfare (sound 81)
+/// plays, until it ends or A, B, L or R is pressed. The message is
+/// `<first> and <second> joined your party.`, with both portraits.
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   u8 *work = gWindowWork[0];
   struct UiWindow *window;

@@ -1,6 +1,6 @@
 /// @file
 /// Vault and its interiors: Ivan hands back Isaac's Djinni before he leaves
-/// the party ("Oh, wait, I don't want to take your Djinni.").
+/// the party. "Oh, wait, I don't want to take your Djinni."
 #include "types.h"
 #include "field_obj.h"
 #include "field_event.h"

@@ -291,8 +291,8 @@ static void Tolbi_TalkToFather(void) {
   Engine_EventEnd();
 }
 
-/// The mother turns to her crying child, "Be patient, little guy.", then back
-/// to promise better sweets later on.
+/// The mother turns to her crying child, then back to promise better sweets
+/// later on. "Be patient, little guy."
 static void Tolbi_TalkToMother(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiPatientLittleGuy);

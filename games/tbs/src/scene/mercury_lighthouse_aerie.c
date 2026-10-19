@@ -375,11 +375,11 @@ static void MercuryLighthouseAerie_SettlePlatforms(void) {
   Object_GetById(ACTOR_FIRST_PLATFORM + 5)->motionFlags = 4;
 }
 
-/// Touching trigger 5 before the confrontation: Garet sees "It's too late! The
-/// lighthouse has already been lit!" Mia learns the party is from Vale; Jenna
-/// calls out, and Felix, Menardi and Saturos face the party. Menardi leaves
-/// with Jenna, Kraden and Felix for the next lighthouse, and Saturos fights
-/// alone (encounter table 36, slot 2).
+/// Touching trigger 5 before the confrontation: Garet sees the lighthouse is
+/// lit. "It's too late! The lighthouse has already been lit!" Mia learns the
+/// party is from Vale; Jenna calls out, and Felix, Menardi and Saturos face
+/// the party. Menardi leaves with Jenna, Kraden and Felix for the next
+/// lighthouse, and Saturos fights alone (encounter table 36, slot 2).
 static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   struct FieldActor *actor;
 
@@ -809,10 +809,11 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_EventEnd();
 }
 
-/// Entrance 2, back from the battle, unless resuming: "Isaac, we got him!"
-/// Alex appears and explains that the lighthouse bound Saturos' fire
-/// Psynergy and lent Mia endless power. Saturos stands again; the two warp
-/// over to the lift and ride it down, and the party regroups on the leader.
+/// Entrance 2, back from the battle, unless resuming: Saturos is beaten, but
+/// not for long. "Isaac, we got him!" Alex appears and explains that the
+/// lighthouse bound Saturos' fire Psynergy and lent Mia endless power.
+/// Saturos stands again; the two warp over to the lift and ride it down, and
+/// the party regroups on the leader.
 static void MercuryLighthouseAerie_AlexAppears(void) {
 
   Engine_EventBegin();

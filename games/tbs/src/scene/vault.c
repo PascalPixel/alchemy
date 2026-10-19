@@ -40,26 +40,30 @@
 
 enum { VAULT_DRIFT_RATE = PIXELS(1) / 10 };
 
-/// Vault after Mt. Aleph's eruption, while Hammet's Shaman's Rod is missing
-/// and after the party has jailed the thieves. The townspeople are named by
-/// what they say.
+/// Vault after the eruption, while Hammet's Shaman's Rod is missing and after
+/// the party has jailed the thieves. The townspeople are named by what they
+/// say.
 enum {
-  ACTOR_GREETER = 8, ///< "Welcome to Vault"
-  /// "Wasn't the eruption of Mt. Aleph incredible?"
+  ACTOR_GREETER = 8, ///< greets the party. "Welcome to Vault"
+  /// Asks about the eruption. "Wasn't the eruption of Mt. Aleph incredible?"
   ACTOR_ERUPTION_WITNESS = 9,
-  ACTOR_THEFT_GOSSIP = 11,     ///< folks got robbed during the eruption
-  ACTOR_HAMMET_GOSSIP = 10,    ///< Master Hammet had his precious rod stolen
-  ACTOR_IVAN_GOSSIP = 12,      ///< Hammet's servant can't return to Kalay
-  ACTOR_TRAVELER_WATCHER = 13, ///< "Those travelers left in a big hurry."
+  ACTOR_THEFT_GOSSIP = 11,  ///< folks got robbed during the eruption
+  ACTOR_HAMMET_GOSSIP = 10, ///< Master Hammet had his precious rod stolen
+  ACTOR_IVAN_GOSSIP = 12,   ///< Hammet's servant can't return to Kalay
+  /// Speaks of travelers. "Those travelers left in a big hurry."
+  ACTOR_TRAVELER_WATCHER = 13,
   /// The two who walk in circles.
   ACTOR_FIRST_WALKER = 14,
   ACTOR_SECOND_WALKER = 15,
-  ACTOR_WATCHMAN = 16,          ///< "Nobody's stealing anything on my watch!"
-  ACTOR_LOITERING_THIEF = 17,   ///< "Are you accusing us of stealing...?"
+  /// Keeps watch. "Nobody's stealing anything on my watch!"
+  ACTOR_WATCHMAN = 16,
+  /// A thief. "Are you accusing us of stealing...?"
+  ACTOR_LOITERING_THIEF = 17,
   ACTOR_STRANDED_TRAVELER = 18, ///< was leaving town when the volcano erupted
   ACTOR_VAULT_DOG = 19,
-  ACTOR_ROOFER = 20,          ///< a fiery rock burnt a hole through the roof
-  ACTOR_ROOF_COMPLAINER = 21, ///< "He should be fixing the roof now"
+  ACTOR_ROOFER = 20, ///< a fiery rock burnt a hole through the roof
+  /// Complains of the roofer. "He should be fixing the roof now"
+  ACTOR_ROOF_COMPLAINER = 21,
   ACTOR_VAULT_VENUS_DJINNI = 23,
   VAULT_VENUS_DJINNI_INDEX = 4
 };
@@ -211,8 +215,8 @@ static inline void Vault_AskYesNoAndShowReply(s32 speaker) {
   Engine_EventShowMessage(speaker, 0);
 }
 
-/// "Wasn't the eruption of Mt. Aleph incredible?" Yes: too terrified to sleep
-/// for days. No: aren't you courageous!
+/// Asks about the eruption. "Wasn't the eruption of Mt. Aleph incredible?"
+/// Yes: too terrified to sleep for days. No: aren't you courageous!
 static void Event_AskAboutEruption(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultWasntEruptionMtAlephIncredible);
@@ -239,8 +243,8 @@ static void Event_AskAboutFleeingTravelers(void) {
   Engine_EventEnd();
 }
 
-/// One of the thieves: "Are you accusing us of stealing Hammet's treasured
-/// Shaman's Rod?" Either answer gets a denial.
+/// One of the thieves asks whether the party accuses them; either answer gets a
+/// denial. "Are you accusing us of stealing Hammet's treasured Shaman's Rod?"
 static void Event_ThiefDeniesTheft(void) {
 
   Engine_EventBegin();
@@ -250,8 +254,8 @@ static void Event_ThiefDeniesTheft(void) {
   Engine_EventEnd();
 }
 
-/// "Off on an adventure, are you?" Yes: impressive for youngsters. No: see the
-/// Sanctum while you're here.
+/// Asks whether the party is off on an adventure. "Off on an adventure, are
+/// you?" Yes: impressive for youngsters. No: see the Sanctum while you're here.
 static void Event_AskAboutAdventure(void) {
 
   Engine_EventBegin();
@@ -347,7 +351,8 @@ static void Vault_ShowStandingActorMessage(s32 actor) {
 // Shared source is included here in ROM order.
 #include "common/vault_talk.h"
 
-/// After the thieves are jailed: "So, you're hitting the road again?"
+/// After the thieves are jailed, asks whether the party is leaving again.
+/// "So, you're hitting the road again?"
 static void Event_AskAboutLeavingAgain(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultYoureHittingRoadAgain);
@@ -356,7 +361,7 @@ static void Event_AskAboutLeavingAgain(void) {
   Engine_EventEnd();
 }
 
-/// "It's great that you caught those thieves!"
+/// Praises the thieves' capture. "It's great that you caught those thieves!"
 static void Event_PraiseThievesCapture(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultGreatCaughtThieves);
@@ -425,8 +430,9 @@ static void Event_ThankForCapturingThieves(void) {
   actor->timer &= 1;
 }
 
-/// "Those men you captured... They're in jail now?" Yes: the prison hadn't been
-/// used in a long time. No: they're upset; maybe go see them.
+/// Asks about the prisoners. "Those men you captured... They're in jail now?"
+/// Yes: the prison hadn't been used in a long time. No: they're upset; maybe go
+/// see them.
 static void Event_AskAboutPrisoners(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultThoseMenCapturedTheyreIn);
@@ -436,7 +442,8 @@ static void Event_AskAboutPrisoners(void) {
   Engine_EventEnd();
 }
 
-/// "Are you the ones who captured the thieves?" Either answer is praised.
+/// Asks who captured the thieves; either answer is praised.
+/// "Are you the ones who captured the thieves?"
 static void Event_AskWhoCapturedThieves(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultOnesWhoCapturedThieves);
@@ -464,6 +471,7 @@ static void Event_TalkToDogAfterCapture(void) {
   Engine_EventEnd();
 }
 
+/// Thanks the party before it leaves.
 /// "Thank you for the other day. Are you leaving town already?"
 static void Event_ThankBeforeDeparture(void) {
   Engine_EventBegin();

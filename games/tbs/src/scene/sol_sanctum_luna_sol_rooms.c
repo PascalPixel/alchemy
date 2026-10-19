@@ -232,8 +232,8 @@ static inline void SolSanctumLunaSolRooms_FlashSavedStatueLights(s32 frames) {
   Engine_EventWait(frames);
 }
 
-/// Walking into the hall (trigger 11) the first time: "This is it! We've found
-/// it!" Kraden studies the symbols and asks the party to keep exploring.
+/// Walking into the hall (trigger 11) the first time: Kraden studies the
+/// symbols and asks the party to keep exploring. "This is it! We've found it!"
 static void Event_KradenFindsHall(void) {
   struct FieldActor *leader;
 
@@ -474,7 +474,7 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
 }
 
 /// Heading out of the hall (trigger 9) before the passage is found: Kraden
-/// hurries over: "That way leads out of the sanctum." After the eruption the
+/// hurries over. "That way leads out of the sanctum." After the eruption the
 /// room only fades back to its plain colours.
 static void Event_KradenStopsPartyLeaving(void) {
   struct FieldActor *kraden;
@@ -922,8 +922,8 @@ static void SolSanctumLunaSolRooms_AnimateSavedStatueLights(void) {
   Engine_EventRequestExit(5);
 }
 
-/// Walking up to Kraden (trigger 8) once all four seals are open: "Look, Isaac!
-/// The picture of Luna..." has changed to Sol.
+/// Walking up to Kraden (trigger 8) once all four seals are open: the picture
+/// of Luna has changed to Sol. "Look, Isaac! The picture of Luna..."
 static void Event_KradenSeesLunaPictureChange(void) {
   struct FieldActor *leader;
 
@@ -1428,8 +1428,9 @@ static void SolSanctumLunaSolRooms_ShowFloatingEye(void) {
   Engine_EventEnd();
 }
 
-/// Talking to Kraden: "Let me know what you find" once Isaac agreed to search,
-/// otherwise "Just wait over there."
+/// Talking to Kraden: his answer depends on whether Isaac agreed to search.
+/// "Let me know what you find" once Isaac agreed, otherwise "Just wait over
+/// there."
 static void Event_TalkToKraden(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ISAAC_SEARCHING_FOR_KRADEN) != 0) {

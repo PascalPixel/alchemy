@@ -39,7 +39,7 @@ enum AbilityId {
   ABILITY_ATALANTA = 0x18f,
   ABILITY_PROCNE = 0x190,
   ABILITY_THOR = 0x191,
-  /// An enemy that splits itself in two ("attempts to divide").
+  /// An enemy that splits itself in two. Its message: "attempts to divide".
   ABILITY_SPEED_SURGE = 0x1f7
 };
 

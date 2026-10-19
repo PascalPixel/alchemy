@@ -315,7 +315,7 @@ static void TolbiShipMast_AnnounceClearCourse(void) {
   Engine_EventRequestExit(10);
 }
 
-/// Stages four approaching actors and the lookout's "Avast!" reaction.
+/// Stages four approaching actors and the lookout's reaction. "Avast!"
 static void TolbiShipMast_RunAvastScene(void) {
   s32 *placement = ((struct MapScrollWork *)gMapWork[0])->origin;
   struct FieldActor *actor;

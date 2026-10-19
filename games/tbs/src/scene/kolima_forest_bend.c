@@ -47,7 +47,7 @@
 enum {
   SHORT_LOG = 8, ///< slides between x 72 and x 104
   FLOODGATE_SWITCH = 9,
-  SIGN = 10 ///< "Do not touch Floodgate Switch!"
+  SIGN = 10 ///< reads a warning. "Do not touch Floodgate Switch!"
 };
 
 struct BendLog;
@@ -213,10 +213,10 @@ static void KolimaForestBend_CaptureShakeScroll(void) {
   scroll[5] += 0xb0;
 }
 
-/// Searching the floodgate switch: "Isaac flipped the switch." The camera
-/// turns to the floodgate, which opens or closes; the ground rumbles and the
-/// top of the screen shakes harder for 100 frames, and the river rises or
-/// falls.
+/// Searching the floodgate switch flips it. "Isaac flipped the switch." The
+/// camera turns to the floodgate, which opens or closes; the ground rumbles
+/// and the top of the screen shakes harder for 100 frames, and the river rises
+/// or falls.
 static void KolimaForestBend_FlipFloodgateSwitch(void) {
   s32 nextShakeChance;
 

@@ -389,7 +389,7 @@ static void MogallForest_FirstArea_JumpSouth(void) {
   }
 }
 
-/// Searching the sign (trigger 27): "The broken sign reads: North: Fuchin
+/// Searching the sign (trigger 27). "The broken sign reads: North: Fuchin
 /// Temple / South: Mogall Prairie..."
 static void MogallForest_ReadBrokenSign(void) {
   Engine_EventBegin();

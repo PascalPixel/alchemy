@@ -271,8 +271,8 @@ static void MercuryLighthouse_RaiseTouchedPillar(void) {
   MercuryLighthouse_ChargeLights();
 }
 
-/// Searching trigger 10 at the lighthouse's foot: "Strange forces are at
-/// work..."
+/// Searching trigger 10 at the lighthouse's foot.
+/// "Strange forces are at work..."
 static void MercuryLighthouse_InspectBlockedPassage(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgMercuryLighthouseStrangeForcesBlockWay, 1);
@@ -1220,8 +1220,9 @@ static void MercuryLighthouse_CycleEntrancePalette(void) {
 }
 
 /// Talking to Mia at the lighthouse's foot, or Mind Read on her, before the
-/// door is open: "Somebody...is here." She asks whether the party hears it,
-/// says only Alex can enter besides her, and that the statue blocks her way.
+/// door is open: she senses someone. "Somebody...is here." She asks whether
+/// the party hears it, says only Alex can enter besides her, and that the
+/// statue blocks her way.
 static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   struct FieldActor *mia;
 
@@ -1271,7 +1272,7 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   Engine_EventEnd();
 }
 
-/// Talking to Mia again: "This statue is blocking the entrance."
+/// Talking to Mia again. "This statue is blocking the entrance."
 static void MercuryLighthouse_MiaDiscussesBlockedEntrance(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
@@ -1785,8 +1786,8 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   }
 }
 
-/// Searching trigger 42 at the foot: "Fountain of Healing / Water of Hermes:
-/// It brings rejuvenation to all that lives."
+/// Searching trigger 42 at the foot shows the fountain's sign. "Fountain of
+/// Healing / Water of Hermes: It brings rejuvenation to all that lives."
 static void MercuryLighthouse_ReadHermesFountainInscription(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -2434,9 +2435,9 @@ s32 MercuryLighthouse_Initialize(void) {
 }
 
 /// Move on the statue blocking Mia, before she has joined: once it stands at
-/// column 48, "You've saved me again, haven't you!" She asks whether the
-/// party has business in the lighthouse and presses until it says yes, then
-/// joins with Fizz.
+/// column 48, Mia thanks the party, asks whether it has business in the
+/// lighthouse and presses until it says yes, then joins with Fizz. "You've
+/// saved me again, haven't you!"
 static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   s32 firstMessage;
   s32 blockColumn;

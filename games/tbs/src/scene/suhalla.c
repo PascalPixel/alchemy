@@ -51,7 +51,8 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gSuhallaPlacements;
 }
 
-/// A villager asks "Are you trying to get to Lalivero?" and answers yes or no.
+/// A villager asks about Lalivero and answers yes or no.
+/// "Are you trying to get to Lalivero?"
 static void Event_AskIfGoingToLalivero(s32 actorId) {
   s32 firstMessage = MsgSuhallaTryingGetLalivero;
   Engine_EventSetMessage(firstMessage);

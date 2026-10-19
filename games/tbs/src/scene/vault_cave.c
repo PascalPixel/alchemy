@@ -235,7 +235,7 @@ static void Event_UseWhirlwind(void) {
   Engine_GameFlagSet(FLAG_WHIRLWIND_USED);
 }
 
-/// "The door is tightly locked."
+/// Searching the locked door. "The door is tightly locked."
 static void Event_ShowLockedDoor(void) {
   Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
 }
@@ -557,8 +557,9 @@ static void VaultCave_RunRumble(void) {
   Engine_EventEnd();
 }
 
-/// "Isaac flipped the switch." The first time, the switch turns, the cave
-/// rumbles and shakes for eight seconds and the map changes as it fades.
+/// Flips the switch. "Isaac flipped the switch." The first time, the switch
+/// turns, the cave rumbles and shakes for eight seconds and the map changes as
+/// it fades.
 static void Event_FlipSwitch(void) {
   s32 destinationRow;
   s32 destinationColumn;

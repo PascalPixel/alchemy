@@ -56,13 +56,15 @@ enum TolbiSpringGameRoomActor {
   TOLBI_SPRING_DICE_ATTENDANT = 9,
   TOLBI_SPRING_WHEELS_PRIZE_SIGN = 14,
   TOLBI_SPRING_WHEELS_RULES_SIGN = 15,
-  TOLBI_SPRING_SOLDIER = 17, ///< "poor soldiers like us"; gone after Colosso
+  /// A soldier, gone after Colosso. "poor soldiers like us"
+  TOLBI_SPRING_SOLDIER = 17,
 };
 
 /// The spring's own actors, numbered the same way.
 enum TolbiSpringActor {
-  TOLBI_SPRING_MEDAL_SEEKER = 27, ///< "Do you have a Lucky Medal?"
-  TOLBI_SPRING_SPRING = 80,       ///< searched to toss a coin or medal
+  /// Asks for a medal. "Do you have a Lucky Medal?"
+  TOLBI_SPRING_MEDAL_SEEKER = 27,
+  TOLBI_SPRING_SPRING = 80, ///< searched to toss a coin or medal
 };
 
 // FLAG_SCENE_TEMP_00 is set once the spring has risen and faded in.

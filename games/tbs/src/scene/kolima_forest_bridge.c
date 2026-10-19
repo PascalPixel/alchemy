@@ -44,7 +44,7 @@ enum { ENTRANCE_FROM_WORLD_MAP = 4 };
 
 enum {
   RIVER_LOG = 10, ///< actors 8 to 10 are the logs
-  TRET = 11,      ///< "Hroom!"
+  TRET = 11,      ///< roars. "Hroom!"
   LAUREL = 12,
   /// The domes of Psynergy, one over each member; Mia's only with Mia.
   LEADER_BARRIER = 13,

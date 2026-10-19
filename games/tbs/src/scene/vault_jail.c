@@ -85,8 +85,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gJailThiefEvents;
 }
 
-/// The jailed leader glares at each of his men and snaps "Shut yer yaps!",
-/// then turns to the party: they got us this time, but you'll pay for this.
+/// The jailed leader glares at each of his men and snaps at them, then turns to
+/// the party: they got us this time, but you'll pay for this. "Shut yer yaps!"
 static void Event_LeaderSilencesThieves(void) {
   Engine_EventBegin();
 

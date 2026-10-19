@@ -96,7 +96,8 @@ s32 ItemMenu_SelectMember(s32 pane) {
 }
 
 #if LANGUAGE != LANGUAGE_JAPANESE
-/// "L+A: Arrange items"; the next message is "R: View equipment".
+/// The item menu's help, followed by the equipment help. "L+A: Arrange
+/// items"; the next message is "R: View equipment".
 extern u8 MsgArrangeItemsHelp[];
 
 s32 UiWindow_UpdateOrCreate(void **window, s32 x, s32 y, s32 width, s32 height,

@@ -21,11 +21,11 @@
 #define FLAG_KEEP_MUSIC_HELD 0x11b
 #define FLAG_NOT_ON_MAP 0x11c ///< the current place is not on the world map
 /// Set before an action on the field; still set afterwards, nothing came of it
-/// and the game says "But nothing happens.". An event that acts clears it.
+/// and the game says so. "But nothing happens." An event that acts clears it.
 #define FLAG_NOTHING_HAPPENS 0x142
 #define FLAG_ITEM_USED_UP 0x143 ///< the item just used is removed afterwards
-/// Retreat "does not work here", from Psynergy or an item. Cleared on every
-/// scene entrance; the scenes that forbid Retreat set it.
+/// Retreat is blocked, from Psynergy or an item. It "does not work here".
+/// Cleared on every scene entrance; the scenes that forbid Retreat set it.
 #define FLAG_RETREAT_BLOCKED 0x144
 #define FLAG_ITEM_USE 0x145     ///< the Psynergy comes from an item
 #define FLAG_DEBUG_BATTLE 0x162 ///< set before every debug battle
@@ -341,7 +341,8 @@
 // Suhalla Desert
 /// search on or go to Lalivero
 #define FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA 0x9b5
-#define FLAG_SUHALLA_DESERT_IODEM_WARNED 0x9b6 ///< "A sandstorm!"
+/// Iodem warned of a sandstorm. "A sandstorm!"
+#define FLAG_SUHALLA_DESERT_IODEM_WARNED 0x9b6
 #define FLAG_SUHALLA_DESERT_CHASING_STORM_DOUSED 0x9b7
 // Tolbi
 #define FLAG_TOLBI_CORN_GIVEN 0x8bf    ///< the snack vendor gave away her corn
@@ -360,11 +361,13 @@
 #define FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED 0x903 ///< the party will scout it
 /// The crew have wondered what became of the replacement ship.
 #define FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY 0x920
+/// The party has heard that the captain decided to sail.
 /// "But the captain decided to set sail just a second ago."
 #define FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL 0x921
 /// The party gave back the captain's Anchor Charm and agreed to protect the
 /// ship.
 #define FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED 0x925
+/// The ship has set sail without its replacement.
 /// "Our replacement never arrived, but we're shoving off just the same."
 #define FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT 0x926
 #define FLAG_TOLBI_SHIP_ROWING 0x927 ///< the oars are moving
@@ -380,7 +383,8 @@
 #define FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS 0x935
 #define FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS 0x917
 #define FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS 0x990
-#define FLAG_TOLBI_SHIP_REACHED_TOLBI 0x93e ///< "The ship has arrived safely"
+/// The ship reached Tolbi. "The ship has arrived safely"
+#define FLAG_TOLBI_SHIP_REACHED_TOLBI 0x93e
 // Tunnel Ruins
 #define FLAG_TUNNEL_RUINS_BUSH_BLOWN_AWAY 0x970
 #define FLAG_TUNNEL_RUINS_PILLAR_A_SUNK 0x971
@@ -409,15 +413,16 @@
 #define FLAG_VALE_STORM_MONSTER_FOUGHT 0x900
 
 // Vale, the plaza
+/// A villager asked whether Isaac is going to Kraden's cottage.
 /// "Do you need to go past here? You must be going to Kraden's cottage..."
 #define FLAG_VALE_ASKED_IF_GOING_TO_KRADEN 0x806
-/// A villager's first outburst at Garet ("Garet, you make me so mad
-/// sometimes!").
+/// A villager has scolded Garet once.
+/// "Garet, you make me so mad sometimes!"
 #define FLAG_VALE_ANGRY_VILLAGER_ARGUED 0x807
 /// Back from Kalay, a villager asked whether Jenna is back yet.
 #define FLAG_VALE_ASKED_IF_JENNA_IS_BACK 0x81f
-/// A villager stopped Isaac: "You're not planning on sneaking up to Mt.
-/// Aleph..."
+/// A villager stopped Isaac and warned him off the mountain.
+/// "You're not planning on sneaking up to Mt. Aleph..."
 #define FLAG_VALE_WARNED_AGAINST_MT_ALEPH 0x823
 
 // Vale on the stormy night, the paths outside
@@ -426,18 +431,20 @@
 #define FLAG_VALE_STORM_SECOND_ROCK_FELL 0x831
 #define FLAG_VALE_STORM_THIRD_ROCK_FELL 0x832
 #define FLAG_VALE_STORM_FOURTH_ROCK_FELL 0x833
-/// A villager running out of his house shoved Isaac ("Huh? Isaac?").
+/// A villager running out of his house shoved Isaac.
+/// "Huh? Isaac?"
 #define FLAG_VALE_STORM_BUMPED_INTO_VILLAGER 0x835
-/// Isaac heard Garet struggling with his things ("Ugh... Hrnghhh...").
+/// Isaac heard Garet struggling with his things.
+/// "Ugh... Hrnghhh..."
 #define FLAG_VALE_STORM_HEARD_GARET 0x836
 #define FLAG_VALE_STORM_GARET_JOINED 0x837
 #define FLAG_VALE_BOULDER_FELL 0x838
 /// Isaac saw the villagers trying to pull Felix from the river.
 #define FLAG_VALE_STORM_SAW_RIVER_RESCUE 0x83a
-/// Jenna came back to the river ("Mom! Dad! We're back!") and the scene there
-/// ended with ValeStorm_ShowBoulderSweepingDownriver.
+/// Jenna came back to the river and the scene there ended with
+/// ValeStorm_ShowBoulderSweepingDownriver. "Mom! Dad! We're back!"
 #define FLAG_VALE_STORM_RIVER_GATHERING_SEEN 0x841
-/// Garet ran off ("Isaac!"), leaving Isaac alone.
+/// Garet ran off, leaving Isaac alone. "Isaac!"
 #define FLAG_VALE_STORM_GARET_LEFT 0x842
 /// Dora and Kyle sent Isaac to the plaza.
 #define FLAG_VALE_STORM_SENT_TO_PLAZA 0x87b
@@ -466,8 +473,8 @@
 #define FLAG_GARET_CAME_HOME 0x81d
 
 // Vale during the eruption
-/// Isaac and Garet came down Mt. Aleph and followed the elders into the
-/// sanctum.
+/// Isaac and Garet followed the elders into the sanctum. They came down
+/// Mt. Aleph to do so.
 #define FLAG_VALE_RETURNED_FROM_MT_ALEPH 0x879
 // Vault: the stolen Shaman's Rod, and its containers, set once each is
 // searched
@@ -621,7 +628,7 @@
 // Also uses FLAG_SCENE_TEMP_43.
 
 // Sol Sanctum
-/// Kraden has said "This is it! We've found it!" in the hall of statues.
+/// Kraden has found the hall of statues. "This is it! We've found it!"
 #define FLAG_SOL_SANCTUM_FOUND 0x809
 /// Kraden has seen the Luna and Sol rooms and asked the party to search on.
 #define FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN 0x80a
@@ -639,7 +646,8 @@
 #define FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN 0x812
 /// The statues' lights have flashed as Kraden stood among them.
 #define FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG 0x813
-/// Mt. Aleph has erupted: the sanctum's rooms rumble and shake.
+/// The volcano has erupted and the sanctum's rooms rumble and shake. The
+/// volcano is Mt. Aleph.
 #define FLAG_SOL_SANCTUM_ERUPTED 0x814
 /// The statues beside the hall's centre shine their beams.
 #define FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING 0x816
@@ -647,7 +655,8 @@
 #define FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED 0x818
 /// The floor has opened over the way up to the Elemental Star room.
 #define FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN 0x819
-/// Kraden has said "You found it, Isaac." after the seals' lights flashed.
+/// Kraden has praised Isaac after the seals' lights flashed.
+/// "You found it, Isaac."
 #define FLAG_SOL_SANCTUM_KRADEN_SAID_YOU_FOUND_IT 0x822
 /// Kraden has seen the statues out of his reach behind the blocks.
 #define FLAG_SOL_SANCTUM_INNER_STATUES_SEEN 0x825

@@ -176,7 +176,7 @@ void ResourceObject_Release(struct ResourceObjectWork *work) {
 #include "types.h"
 #include "scene.h"
 
-/// Sum the first cnt frame durations of animation id's entry no.
+/// Sum the first cnt frame durations of animation id's entry number `no`.
 /// Commands are two bytes (command, value); 254, 241, 253, and 239 terminate.
 /// Add values for commands 245, 255, and commands <= 238.
 s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt) {

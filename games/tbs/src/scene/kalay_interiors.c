@@ -113,9 +113,9 @@ const struct SceneEvent *KalayInteriors_GetEvents(void) {
   return gKalayInteriors_NoEvents;
 }
 
-/// The tour guide in the inn's dining room: "Please finish eating if you are
-/// taking the tour! We'll be leaving soon!" Now the party has heard of the
-/// tour.
+/// The tour guide in the inn's dining room: now the party has heard of the
+/// tour. "Please finish eating if you are taking the tour! We'll be leaving
+/// soon!"
 static void KalayInteriors_TalkToTourGuide(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayPleaseFinishEatingIfTaking);

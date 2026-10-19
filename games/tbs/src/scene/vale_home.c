@@ -50,7 +50,7 @@
 // villager searching for the Psynergy Stone told Isaac it is gone.
 
 enum ValeHomeActor {
-  /// "Only the two of us survived..."
+  /// One of the two travelers. "Only the two of us survived..."
   ACTOR_FIRST_TRAVELER = 23,
   ACTOR_SECOND_TRAVELER = 24
 };
@@ -157,7 +157,8 @@ struct SceneEvent *ValeHome_GetEvents(void) {
   return gValeHome_Events;
 }
 
-/// Ask whether the party meditates on Mt. Aleph each day.
+/// Ask about meditating each day. The question is whether the party meditates
+/// on Mt. Aleph each day.
 static void Event_AskAboutMeditation(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeMeditateOnMtAlephDaily);
@@ -602,7 +603,7 @@ static inline void ValeHome_RejoinParty(s32 actorId) {
 }
 
 /// On the stormy night, villagers send Isaac and his companion to aid the
-/// elders holding back the Boulder ("Go aid the elders!").
+/// elders holding back the Boulder. "Go aid the elders!"
 static void Event_SentToAidElders(void) {
   struct FieldActor *leader;
   s32 skipReply = 0;
@@ -735,7 +736,7 @@ static void Event_SentToAidElders(void) {
 }
 
 /// On the stormy night, Isaac overhears the two travelers who survived Sol
-/// Sanctum ("Only the two of us survived...").
+/// Sanctum. "Only the two of us survived..."
 static void Event_MeetSurvivingTravelers(void) {
   struct FieldActor *camera;
 
@@ -798,8 +799,8 @@ static void Event_MeetSurvivingTravelers(void) {
   Engine_EventEnd();
 }
 
-/// The travelers catch Isaac eavesdropping ("You must forget everything you
-/// heard.") and fight; win or lose, the party returns by entrance 19.
+/// The travelers catch Isaac eavesdropping and fight; win or lose, the party
+/// returns by entrance 19. "You must forget everything you heard."
 static void ValeHome_FightTravelers(void) {
   struct FieldActor *actor;
   s32 southSouthwestFacing;

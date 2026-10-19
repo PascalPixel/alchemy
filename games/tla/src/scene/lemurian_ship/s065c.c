@@ -1,7 +1,8 @@
 #include "lemurian_ship.h"
 
 /// A switch that toggles flag 0x207 and its map edits once flag 0x983 is set;
-/// before that, "There's no reaction... It doesn't seem to be running."
+/// before that, it does nothing. "There's no reaction... It doesn't seem to be
+/// running."
 void Func_0200065c(void) {
   Func_02002c68();
   Func_02002da8(0);

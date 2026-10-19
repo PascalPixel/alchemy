@@ -630,7 +630,7 @@ static void AltinPeak_ToggleRoom3SwitchCells(void) {
   }
 }
 
-/// Searching room 3's switch: "You flipped the switch." and it flips.
+/// Searching room 3's switch flips it. "You flipped the switch."
 static void AltinPeak_FlipRoom3Switch(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
@@ -960,11 +960,11 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   GameFlag_Set(FLAG_ALTIN_PEAK_BOULDER_FALLEN);
 }
 
-/// Searching room 9's sign: "Watch for falling rocks! Do not strike the
-/// wall!" Before the rockfall, while the party has no Orb of Force, Garet
-/// steps out, grumbles at the dead end and strikes the wall; the ground
-/// shakes, he tells the leader to run and runs down the path, and the
-/// rockfall follows.
+/// Searching room 9's sign, which can bring the rockfall. "Watch for falling
+/// rocks! Do not strike the wall!" Before the rockfall, while the party has no
+/// Orb of Force, Garet steps out, grumbles at the dead end and strikes the
+/// wall; the ground shakes, he tells the leader to run and runs down the path,
+/// and the rockfall follows.
 static void AltinPeak_ReadFallingRockSign(void) {
   struct FieldActor *actor;
   s32 message;

@@ -271,10 +271,10 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gTretTreeInteriorsEvents;
 }
 
-/// Walking up to Tret (touch trigger 40, until FLAG_TRET_DEFEATED): he roars
-/// "Hm... HROOOM!!!", the party gathers in front of him, and he scorns them
-/// ("You hoped to find my kindly self?") before the battle with him starts.
-/// The battle returns to entrance 19.
+/// Walking up to Tret (touch trigger 40, until FLAG_TRET_DEFEATED): he roars,
+/// the party gathers in front of him, and he scorns them before the battle with
+/// him starts. "Hm... HROOOM!!!" and "You hoped to find my kindly self?" The
+/// battle returns to entrance 19.
 static void Event_FightTret(void) {
   s32 hasMia;
   struct FieldActor *leader;
@@ -353,9 +353,9 @@ static void Event_FightTret(void) {
   EV_END();
 }
 
-/// After the battle: a passage opens beside Tret, who comes to ("Oh...
-/// Mmmmm..."), thanks the party and says good-bye. Garet and Ivan stop him and
-/// he asks whether they need something; answering no earns the leader a
+/// After the battle: a passage opens beside Tret, who comes to, thanks the
+/// party and says good-bye. "Oh... Mmmmm..." Garet and Ivan stop him and he
+/// asks whether they need something; answering no earns the leader a
 /// scolding. Tret learns he turned the people of Kolima into trees, tries to
 /// free them in a swirl of sparks but cannot, and the party resolve to heal
 /// him. Sets FLAG_TRET_DEFEATED.

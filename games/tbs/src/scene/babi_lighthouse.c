@@ -346,7 +346,7 @@ static void BabiLighthouse_RiseToAlternateExit(void) {
   Engine_EventEnd();
 }
 
-/// Searching room 2's door: "It seems to be locked."
+/// Searching room 2's door. "It seems to be locked."
 static void BabiLighthouse_InspectLockedDoor(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -956,8 +956,8 @@ static void BabiLighthouse_CloseTruthDoor(void) {
 }
 
 /// Searching the door's switch: under Reveal's light it is flipped and the
-/// door opens; otherwise it reads "The truth of this door is open to those
-/// seeing with their true heart."
+/// door opens; otherwise it reads an inscription. "The truth of this door is
+/// open to those seeing with their true heart."
 static void BabiLighthouse_InspectTruthDoorSwitch(void) {
   u8 *work = (u8 *)gEventWork;
   s16 *revealActive;

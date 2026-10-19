@@ -119,8 +119,8 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 /// A Djinni joins the party: djinn (0 to 19) of element goes to the member with
 /// the fewest Djinn, or to no one and only its flag while FLAG_DJINN_TUTORIAL
 /// is set. Unless slot is -1, the Djinni's actor slot first plays its
-/// element's capture effect and is freed. Ends with "<Djinni> joined
-/// <member>.".
+/// element's capture effect and is freed. Ends with
+/// `<Djinni> joined <member>.`
 void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   struct FieldWork *work;
   s32 owner;

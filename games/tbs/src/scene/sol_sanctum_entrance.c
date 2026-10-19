@@ -156,9 +156,9 @@ static void Event_OpenDoorAndEnter(void) {
   Engine_EventEnd();
 }
 
-/// Searching the first minotaur relief: "The right eye is sparkling, but
-/// there's a hole where the left eye should be.", or both eyes sparkle once
-/// the Small Jewel is set. Holding the jewel sets the event work's unk172;
+/// Searching the first minotaur relief: one eye sparkles, or both once the
+/// Small Jewel is set. "The right eye is sparkling, but there's a hole where
+/// the left eye should be." Holding the jewel sets the event work's unk172;
 /// what reads it is not known.
 static void Event_InspectFirstMinotaurRelief(void) {
 
@@ -195,9 +195,9 @@ static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
   Engine_EventWait(40);
 }
 
-/// Using the Small Jewel on the first relief: the leader "set the small gem
-/// into the empty socket.", "You hear the sound of shifting stone." and a
-/// passage opens.
+/// Using the Small Jewel on the first relief: the leader sets it in and a
+/// passage opens. "set the small gem into the empty socket.", "You hear the
+/// sound of shifting stone."
 static void Event_SetFirstSmallJewel(void) {
   s32 message;
   s32 oneCell;
@@ -1036,7 +1036,7 @@ static void SolSanctumEntrance_RestoreInnerBlockCells(s32 placeActors) {
   }
 }
 
-/// Searching the door beside the way in: "The door is tightly locked."
+/// Searching the door beside the way in. "The door is tightly locked."
 static void Event_DoorTightlyLocked(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);

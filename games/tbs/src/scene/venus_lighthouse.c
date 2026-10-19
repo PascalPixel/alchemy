@@ -765,15 +765,15 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gVenusLighthousePlacementsOther;
 }
 
-/// Searching a locked door: "The door is tightly locked."
+/// Searching a locked door. "The door is tightly locked."
 static void Event_SearchLockedDoor(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
   Engine_EventEnd();
 }
 
-/// Talking to the man at the entrance (or reading his mind): "Venus
-/// Lighthouse was attacked by strange wanderers...", and he flickers away.
+/// Talking to the man at the entrance (or reading his mind): he flickers away.
+/// "Venus Lighthouse was attacked by strange wanderers..."
 static void Event_HearOfTheAttack(void) {
   u32 flickersLeft;
   u32 flickerDelay;
@@ -823,8 +823,8 @@ static void Event_CarryBlockPastWall(void) {
   Engine_EventEnd();
 }
 
-/// Searching a relief: "There are words carved into the relief..." and its
-/// words; each relief has its own message, except in English, which keeps one.
+/// Searching a relief shows its words; each relief has its own message, except
+/// in English, which keeps one. "There are words carved into the relief..."
 static void Event_ReadRelief(void) {
   s32 message;
 #if TBS_PATCH_LEVEL != 1
@@ -922,8 +922,8 @@ static void Event_JumpDown(void) {
   Engine_EventEnd();
 }
 
-/// Searching the statue: "The statue speaks to Isaac's soul..."; the room
-/// flashes and the path it opens changes, and the camera shows it.
+/// Searching the statue: the room flashes and the path it opens changes, and
+/// the camera shows it. "The statue speaks to Isaac's soul..."
 static void Event_SearchStatue(void) {
   struct FieldWork *work;
 
@@ -997,8 +997,8 @@ static void Event_SearchStatue(void) {
   work->busy = 0;
 }
 
-/// Move on the block by the wall: once it reaches the wall, Garet comes out,
-/// "Hmmm. We can't push the block farther than this.", the first time only.
+/// Move on the block by the wall: once it reaches the wall, the first time
+/// only, Garet comes out. "Hmmm. We can't push the block farther than this."
 static void Event_MoveBlockTowardWall(void) {
   struct FieldActor *actor;
   struct FieldActor *leader;

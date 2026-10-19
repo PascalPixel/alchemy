@@ -693,8 +693,8 @@ static void CrossboneIslePillarRooms_AnimateWaterLevel(void) {
   Engine_TaskWait(30);
 }
 
-/// Searching the switch in room 3: "Isaac flipped the switch." The water rises,
-/// or drains, and the pillars stand higher or lower with it.
+/// Searching the switch in room 3 flips it. "Isaac flipped the switch." The
+/// water rises, or drains, and the pillars stand higher or lower with it.
 static void Event_FlipWaterSwitch(void) {
   s32 waterRaised;
   struct FieldActor *water;

@@ -61,8 +61,8 @@ static __inline__ void ObjPlace(s32 id, s32 x, s32 z, s32 angle) {
     ObjPlace(id, (x) << 16, (z) << 16, angle_);                                \
   }
 
-/// Places actors 0, 2, 27 and 26 and shows "I'm sorry"; then the party is
-/// left with owners 2 and 0, whose first values and PP drop by 10000.
+/// Places actors 0, 2, 27 and 26 and shows an apology; then the party is left
+/// with owners 2 and 0, whose first values and PP drop by 10000. "I'm sorry"
 void Func_02001c7c(void) {
   Func_020047d4();
   Func_0200494c(0);

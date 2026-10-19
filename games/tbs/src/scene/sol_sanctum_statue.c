@@ -906,9 +906,9 @@ static void Event_BlockRightTriggerCell(void) {
   }
 }
 
-/// Moving the centre statue with Move, or a beam completing the pair: with both
-/// beams shining the statue slides into the opened floor, the hall shakes, and
-/// "Something clicked!"
+/// Moving the centre statue with Move, or a beam completing the pair: with
+/// both beams shining the statue slides into the opened floor and the hall
+/// shakes. "Something clicked!"
 static void Event_CenterStatueMoved(void) {
   struct FieldActor *statue;
   struct FieldActor *leader;

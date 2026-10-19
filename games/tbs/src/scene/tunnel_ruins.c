@@ -1189,7 +1189,7 @@ static void Event_PushLadyStatue(void) {
   EV_END();
 }
 
-/// Searching the second statue: "The statue seems to speak to your soul..."
+/// Searching the second statue. "The statue seems to speak to your soul..."
 static void Event_ReadSecondStatue(void) {
   EV_BEGIN();
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);

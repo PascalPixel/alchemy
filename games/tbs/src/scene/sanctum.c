@@ -202,8 +202,8 @@ static void Event_ReadMindAboutGoldenStatue(void) {
   Engine_EventEnd();
 }
 
-/// Talking to the Great Healer after refusing: "Are you sure?" Changing his
-/// mind, Isaac accepts after all.
+/// Talking to the Great Healer after refusing: changing his mind, Isaac
+/// accepts after all. "Are you sure?"
 static void Event_ReconsiderQuest(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSanctumAreYouSure);
@@ -265,8 +265,8 @@ static void Event_ReconsiderQuest(void) {
 #define SANCTUM_NEW_FRIENDS_SPEAKER 1
 #endif
 
-/// Talking to actor 9 after the party grows: "Isaac, are your new friends
-/// Adepts?"
+/// Talking to actor 9 after the party grows: the actor asks about the new
+/// friends. "Isaac, are your new friends Adepts?"
 static void Event_AskAboutNewAdepts(void) {
   Engine_EventBegin();
 #if TBS_PATCH_1
@@ -342,8 +342,9 @@ s32 Sanctum_Initialize(void) {
   return 0;
 }
 
-/// Walking toward the door after refusing: the Great Healer warns "Once you
-/// step outside the village, you cannot take back your decision."
+/// Walking toward the door after refusing: the Great Healer warns that the
+/// choice is final. "Once you step outside the village, you cannot take back
+/// your decision."
 static void Event_WarnBeforeLeaving(void) {
   Engine_EventBegin();
   Engine_CameraSetSpeed(PIXELS(1), PIXELS(1) / 8);
@@ -360,8 +361,8 @@ static void Event_WarnBeforeLeaving(void) {
   Engine_EventEnd();
 }
 
-/// Leaving after refusing: the room turns sepia, "And so the world began
-/// drifting...", and the game offers to start again.
+/// Leaving after refusing: the room turns sepia and the game offers to start
+/// again. "And so the world began drifting..."
 static void Event_LeaveAfterRefusing(void) {
   struct BattleEffectBuffers *paletteWork;
 

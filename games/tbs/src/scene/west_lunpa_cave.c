@@ -144,8 +144,9 @@ static void Gate_Lower(void) {
   Map_CopyCellAttributes(19, 17, 1, 1, 22, 15);
 }
 
-/// Searching the lowering switch: the hero "flipped the switch." and the gate
-/// comes down, unless it is down already or a frozen pillar props it open.
+/// Searching the lowering switch: the hero flips it and the gate comes down,
+/// unless it is down already or a frozen pillar props it open. "flipped the
+/// switch."
 static void Event_FlipLoweringSwitch(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_01) == 0) {
     if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) == 0) {
@@ -173,8 +174,8 @@ static void Gate_Raise(void) {
   Map_CopyCellAttributes(19, 17, 1, 1, 21, 14);
 }
 
-/// Searching the raising switch: the hero "flipped the switch." and the gate
-/// goes up, unless it is up already or propped open.
+/// Searching the raising switch: the hero flips it and the gate goes up, unless
+/// it is up already or propped open. "flipped the switch."
 static void Event_FlipRaisingSwitch(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) == 0) {
     if (GameFlag_IsSet(FLAG_SCENE_TEMP_02) == 0) {

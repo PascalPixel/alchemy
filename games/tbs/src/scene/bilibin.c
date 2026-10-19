@@ -56,7 +56,7 @@ enum {
 enum {
   RIVER_BLOCK = 8,
   JILL_TREE = 11, ///< Jill as a tree, about to be swept downstream
-  /// Jill's two friends: with her they were the "Gang of Three".
+  /// Jill's two friends. With her they were the "Gang of Three".
   GANG_MEMBER_WEST = 12,
   GANG_MEMBER_EAST = 13,
   JILL = 14
@@ -334,8 +334,8 @@ static void Event_PullJillFromRiver(void) {
 static void Event_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
 /// Back on the riverbank once the curse is lifted, Jill and her friends
-/// recognize the party: "Remember me? I was that tree!" She gives the leader a
-/// Hard Nut in thanks.
+/// recognize the party, and she gives the leader a Hard Nut in thanks.
+/// "Remember me? I was that tree!"
 static void Event_JillGivesHardNut(void) {
   struct FieldActor *leader;
   struct FieldActor *westMember;

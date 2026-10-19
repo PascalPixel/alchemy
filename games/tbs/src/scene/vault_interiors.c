@@ -49,7 +49,8 @@
 enum {
   ACTOR_GEM_OWNER = 8, ///< a sparkling rock was blown here from the volcano
   ACTOR_GEM_OWNERS_WIFE = 9,
-  ACTOR_CHILD = 11, ///< "Hey, mister! Is it fun to see strange new places?"
+  /// Asks about travel. "Hey, mister! Is it fun to see strange new places?"
+  ACTOR_CHILD = 11,
   ACTOR_MAYOR = 16, ///< Ivan's host; his wife calls him the mayor
   ACTOR_MAYORS_WIFE = 17,
   ACTOR_BONE_GIVER = 18,
@@ -284,7 +285,7 @@ static void Event_TalkToInnkeeper(void) {
 // Shared source is included here in ROM order.
 #include "common/vault_bone.h"
 
-/// "We don't have time for that, Isaac!"
+/// Garet refuses to leave. "We don't have time for that, Isaac!"
 static void Event_GaretRefusesToLeave(void) {
 #if TBS_PATCH_1
   Leader_StopMoving();
@@ -343,7 +344,8 @@ static void VaultInteriors_AskYesNoAndShowReply(s32 x) {
   Engine_EventShowMessage(x, 0);
 }
 
-/// The child: "Hey, mister! Is it fun to see strange new places?"
+/// The child asks about travel.
+/// "Hey, mister! Is it fun to see strange new places?"
 static void Event_ChildAsksAboutTravel(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultMisterFunSeeStrangeNew);
@@ -352,6 +354,7 @@ static void Event_ChildAsksAboutTravel(void) {
   Engine_EventEnd();
 }
 
+/// Offers Ivan's secret.
 /// "Ivan has great powers. Wouldn't you like to know what they are?"
 static void Event_OfferIvansSecret(void) {
   Engine_EventBegin();
@@ -361,8 +364,8 @@ static void Event_OfferIvansSecret(void) {
   Engine_EventEnd();
 }
 
-/// Across the counter the item shop opens; otherwise "Did you just arrive in
-/// town today?", or, after the thieves are jailed, the bridge is out.
+/// Across the counter the item shop opens; otherwise a greeting, or, after the
+/// thieves are jailed, the bridge is out. "Did you just arrive in town today?"
 static void Event_TalkToItemMerchant(void) {
   s32 leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
@@ -392,8 +395,9 @@ static void Event_TalkAboutRocks(void) {
   Engine_EventEnd();
 }
 
-/// "Is it just me, or am I missing something?", or, after the thieves are
-/// jailed, they hid the treasure in the loft and more in the cemetery.
+/// Talks about missing things, or, after the thieves are jailed, says they hid
+/// the treasure in the loft and more in the cemetery.
+/// "Is it just me, or am I missing something?"
 static void Event_TalkAboutMissingThings(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0) {
@@ -436,8 +440,8 @@ static void Event_WarnAboutThreeStrangers(void) {
   Engine_EventEnd();
 }
 
-/// The suspected leader cries "Ow! Stop it!" and runs to his next spot, chosen
-/// by the way he faces and where he is on his route.
+/// The suspected leader cries out and runs to his next spot, chosen by the way
+/// he faces and where he is on his route. "Ow! Stop it!"
 static void Event_SuspectedLeaderDodges(void) {
   struct FieldActor *suspect;
   s16 *routeState;
@@ -498,7 +502,8 @@ VaultInteriors_ApplySecondSuspectRoute(struct FieldActor *actor, s32 scriptRow,
   actor->timer = actor->timer - routePair * 2 + routeDelta;
 }
 
-/// The suspected thief cries "No! Leave me alone!" and runs to his next spot.
+/// The suspected thief cries out and runs to his next spot.
+/// "No! Leave me alone!"
 static void Event_SuspectedThiefDodges(void) {
   struct FieldActor *actor;
   u32 facing;
@@ -546,6 +551,7 @@ static void Event_SuspectedThiefDodges(void) {
   Engine_EventEnd();
 }
 
+/// Asks whether the thieves came from Lunpa.
 /// "Did those thieves come from Lunpa?"
 static void Event_AskWhetherThievesCameFromLunpa(void) {
   Engine_EventBegin();
@@ -562,7 +568,7 @@ static void Event_ChildWorriesAboutFather(void) {
   Engine_EventEnd();
 }
 
-/// "I heard you defeated those thieves!"
+/// Asks about defeating the thieves. "I heard you defeated those thieves!"
 static void Event_AskAboutDefeatingThieves(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultHeardDefeatedThoseThieves);
@@ -683,8 +689,8 @@ static void Event_ReadMindOnThieves(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read on the mayor: "That tickles...", or the cave in the Goma Range is
-/// dangerous, but the party will be okay.
+/// Mind Read on the mayor: a laugh, or the cave in the Goma Range is
+/// dangerous, but the party will be okay. "That tickles..."
 static void Event_ReadMayorMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -1173,7 +1179,7 @@ static void Event_ClimbToAttic(void) {
 }
 
 /// Leaving the loft before the thieves are confronted, the party hears the
-/// roofer groan "Uhnn... Uhnn...".
+/// roofer groan. "Uhnn... Uhnn..."
 static void Event_LeaveAttic(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 744, 408);
@@ -1188,8 +1194,8 @@ static void Event_LeaveAttic(void) {
   Engine_EventRequestExit(14);
 }
 
-/// The suspects at the inn: "What do you want?", they spot that weird kid
-/// with the party and run from him.
+/// The suspects at the inn spot that weird kid with the party and run from him.
+/// "What do you want?"
 static void Event_ApproachSuspects(void) {
 
   struct FieldActor *actor24;
@@ -1372,8 +1378,8 @@ static inline void VaultInteriors_SetPartyImagePriority(void) {
   }
 }
 
-/// Once a suspect is cornered ("Uh-oh! I'm surrounded!"), Garet calls "Now,
-/// Ivan!" and Ivan reads their minds.
+/// Once a suspect is cornered, Garet calls Ivan and Ivan reads their minds.
+/// "Uh-oh! I'm surrounded!" "Now, Ivan!"
 static void Event_ReadCorneredSuspectsMinds(void) {
   s32 actor;
   struct EventWork *work;

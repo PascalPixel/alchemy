@@ -1,6 +1,6 @@
 /// @file
 /// Kolima and its forest bridge: the sparkling dust that falls when Tret's
-/// curse strikes ("That sparkly stuff on the ground... What is it?").
+/// curse strikes. "That sparkly stuff on the ground... What is it?"
 #include "script.h"
 #include "types.h"
 #include "field_obj.h"

@@ -332,10 +332,10 @@ static void Event_IodemQuestionsGuards(void) {
   Engine_EventEnd();
 }
 
-/// Before the attack the east guard asks "Do you want to go to Babi
-/// Lighthouse?": yes, and the party must show travel papers it does not have;
-/// no, and the guard calls them strange. Afterwards the guard vows to settle
-/// the score.
+/// Before the attack the east guard asks whether the party is bound for Babi
+/// Lighthouse. "Do you want to go to Babi Lighthouse?" Yes, and the party must
+/// show travel papers it does not have; no, and the guard calls them strange.
+/// Afterwards the guard vows to settle the score.
 static void Event_TalkToEastGuard(void) {
   Engine_EventBegin();
 

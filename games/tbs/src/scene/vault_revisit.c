@@ -33,14 +33,16 @@
 // again.
 
 enum {
-  ACTOR_GREETER = 8, ///< Vault's greeter: "You're the warriors who captured..."
-  ACTOR_LUNPA_GOSSIP = 11,    ///< rumors of thieves from Lunpa running wild
-  ACTOR_MAYORS_VISITOR = 12,  ///< "I was just talking about you with our mayor"
+  ACTOR_GREETER = 8, ///< Vault's greeter. "You're the warriors who captured..."
+  ACTOR_LUNPA_GOSSIP = 11, ///< rumors of thieves from Lunpa running wild
+  /// Has talked with the mayor. "I was just talking about you with our mayor"
+  ACTOR_MAYORS_VISITOR = 12,
   ACTOR_VOLCANO_WATCHER = 13, ///< if the volcano stays calm...
-  /// The two who walk in circles: "Hey, it's that warrior guy!"
+  /// The two who walk in circles. "Hey, it's that warrior guy!"
   ACTOR_FIRST_WALKER = 14,
-  ACTOR_SECOND_WALKER = 15, ///< "Grown-ups always get so scared"
-  ACTOR_WATCHMAN = 16, ///< Vault's watchman: "Did you guys check out the jail?"
+  /// Speaks of the grown-ups. "Grown-ups always get so scared"
+  ACTOR_SECOND_WALKER = 15,
+  ACTOR_WATCHMAN = 16, ///< Vault's watchman. "Did you guys check out the jail?"
   ACTOR_VAULT_DOG = 18,
   ACTOR_VAULT_VENUS_DJINNI = 21,
   VAULT_VENUS_DJINNI_INDEX = 4,
@@ -88,8 +90,8 @@ static void VaultRevisit_ShowStandingActorMessage(s32 actor) {
   Engine_EventEnd();
 }
 
-/// "You're the warriors who captured the thieves a while back, aren't you?
-/// You've returned to Vault!"
+/// The party is recognized. "You're the warriors who captured the thieves a
+/// while back, aren't you? You've returned to Vault!"
 static void Event_RecognizeThiefCatchers(void) {
   Engine_EventBegin();
   Engine_ActorFaceActor(ACTOR_GREETER, ACTOR_PARTY_LEADER, 2);
@@ -130,7 +132,7 @@ static void Event_HopeVolcanoStaysCalm(void) {
   VaultRevisit_ShowStandingActorMessage(ACTOR_VOLCANO_WATCHER);
 }
 
-/// The first walker stops circling: "Hey, it's that warrior guy!" and "Yeah,
+/// The first walker stops circling. "Hey, it's that warrior guy!" and "Yeah,
 /// and Ivan, too." the first time, then "I'm so glad you came back to Vault!"
 static void Event_GreetWarriorGuy(void) {
   struct FieldActor *actor = Actor_Get(ACTOR_FIRST_WALKER);
@@ -158,7 +160,7 @@ static void Event_GreetWarriorGuy(void) {
   GameFlag_Set(FLAG_WALKER_SPOKE);
 }
 
-/// The second walker stops: "I wish Vault's elders were as brave as you!"
+/// The second walker stops. "I wish Vault's elders were as brave as you!"
 static void Event_WishEldersWereBrave(void) {
   struct FieldActor *actor;
   s16 originalFacing;
@@ -177,8 +179,8 @@ static void Event_WishEldersWereBrave(void) {
   actor->timer = 0;
 }
 
-/// "Did you guys check out the jail?" Yes: how did the thugs break out?
-/// No: the thieves broke out and got away.
+/// Asks about the jail. "Did you guys check out the jail?" Yes: how did the
+/// thugs break out? No: the thieves broke out and got away.
 static void Event_AskAboutJailbreak(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultGuysCheckJail);

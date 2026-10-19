@@ -1564,8 +1564,8 @@ static void WorldMap_RestoreExitTrigger(void) {
   }
 }
 
-/// Talking to the one who gave the Black Orb (or reading his mind): "Now use
-/// it... on the ship."
+/// Talking to the one who gave the Black Orb (or reading his mind): he urges
+/// its use. "Now use it... on the ship."
 static void Event_TalkAboutBlackOrb(void) {
   Engine_EventBegin();
   Actor_FaceActor(55, ACTOR_PARTY_LEADER, 0);
@@ -1575,8 +1575,8 @@ static void Event_TalkAboutBlackOrb(void) {
   Engine_EventEnd();
 }
 
-/// Walking away from the shipwreck with the Black Orb: "(Hero), where you
-/// going? I said to use the Orb on Babi's ship!", and the hero walks back.
+/// Walking away from the shipwreck with the Black Orb: the hero walks back.
+/// "(Hero), where you going? I said to use the Orb on Babi's ship!"
 static void Event_StopLeavingShip(void) {
   Engine_EventBegin();
   Battle_SetObjectFlag5bWhenMode3();
@@ -1588,7 +1588,7 @@ static void Event_StopLeavingShip(void) {
   Engine_EventEnd();
 }
 
-/// Searching the shipwreck: "The wreckage of a ship scuttled off the coast."
+/// Searching the shipwreck. "The wreckage of a ship scuttled off the coast."
 static void Event_SearchShipwreck(void) {
 
   Engine_EventBegin();

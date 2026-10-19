@@ -575,11 +575,11 @@ static void KalayTolbiDocks_SettleBlock(s32 actorId) {
   actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 }
 
-/// Garet runs to the edge of the Kalay docks: "Incredible! So this is the ocean
-/// Kraden was talking about!" The man who asks travellers about Tolbi (actor 8)
-/// walks over, shaking his head: the Karagol is surrounded by land, so it is
-/// not a real ocean. Garet means to see a real one someday, nods with the
-/// leader and rejoins the party.
+/// Garet runs to the edge of the Kalay docks and marvels at the sea.
+/// "Incredible! So this is the ocean Kraden was talking about!" The man who
+/// asks travellers about Tolbi (actor 8) walks over, shaking his head: the
+/// Karagol is surrounded by land, so it is not a real ocean. Garet means to see
+/// a real one someday, nods with the leader and rejoins the party.
 static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   struct FieldActor *actor;
 

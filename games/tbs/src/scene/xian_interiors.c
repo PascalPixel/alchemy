@@ -165,8 +165,8 @@ static void XianInteriors_AskAboutAltinMonsters(void) {
   Engine_EventEnd();
 }
 
-/// Feizhi, when the party helped free Hsu: "Oh, warrior! Welcome!", a look at
-/// Hsu, then her thanks to the party and Master Hama.
+/// Feizhi, when the party helped free Hsu, welcomes the party, looks at Hsu,
+/// then thanks the party and Master Hama. "Oh, warrior! Welcome!"
 static void XianInteriors_FeizhiThanksParty(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianWarriorWelcome);

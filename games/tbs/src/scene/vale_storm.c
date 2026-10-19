@@ -170,7 +170,7 @@ static void Event_LeaveByExit5(void) {
 }
 
 /// Isaac's first time at the door of exit 6: a villager runs out and shoves
-/// him ("Huh? Isaac?"); afterwards the door opens as usual.
+/// him; afterwards the door opens as usual. "Huh? Isaac?"
 static void Event_LeaveByExit6(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_06) == 0) {
     Event_PlayCue(SE_DOOR_OPEN);
@@ -449,8 +449,8 @@ s32 ValeStorm_Initialize(void) {
   return 0;
 }
 
-/// Dora and Kyle come out into the storm with Isaac ("Kyle... Will they be able
-/// to stop the Boulder?") and send him to the plaza while they go to help.
+/// Dora and Kyle come out into the storm with Isaac and send him to the plaza
+/// while they go to help. "Kyle... Will they be able to stop the Boulder?"
 static void Event_DoraSendsIsaacToThePlaza(void) {
   s32 message;
 
@@ -829,7 +829,7 @@ static void ValeStorm_MeetVillagerAtExit6(void) {
   Engine_EventEnd();
 }
 
-/// Isaac hears Garet struggling with his things ("Ugh... Hrnghhh...").
+/// Isaac hears Garet struggling with his things. "Ugh... Hrnghhh..."
 static void Event_HearGaretStruggling(void) {
   if (GameFlag_IsSet(FLAG_VALE_STORM_HEARD_GARET) == 0) {
     if (GameFlag_IsSet(FLAG_VALE_STORM_GARET_JOINED) == 0) {
@@ -923,7 +923,7 @@ static void ValeStorm_RunCallOutSequence(void) {
   Engine_GameFlagSet(FLAG_VALE_STORM_GARET_JOINED);
 }
 
-/// Garet catches up ("Hey! Isaac!") and joins Isaac.
+/// Garet catches up and joins Isaac. "Hey! Isaac!"
 static void Event_GaretJoinsIsaac(void) {
   struct FieldActor *actor;
   s32 message;
@@ -971,7 +971,7 @@ static void Event_GaretJoinsIsaac(void) {
   }
 }
 
-/// Garet warns that the path north leads to Mt. Aleph.
+/// Garet warns where the path north leads. It leads to Mt. Aleph.
 static void Event_WarnAboutMtAleph(void) {
   struct FieldActor *leader;
   struct FieldActor *initialLeader;
@@ -1036,8 +1036,8 @@ static void ValeStorm_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   Engine_ActorSetPosition(22, 0, 0);
 }
 
-/// The Boulder falls toward Vale while the elders hold it with their Psynergy
-/// ("Ahhh! The Boulder! It's falling!").
+/// The Boulder falls toward Vale while the elders hold it with their Psynergy.
+/// "Ahhh! The Boulder! It's falling!"
 static void Event_WatchBoulderFall(void) {
   u32 i;
   struct FieldActor *movingActor;
@@ -1256,7 +1256,7 @@ UNUSED static void ValeStorm_FlashBoulderSceneAnimationEntries(void) {
 }
 
 /// At the river, Jenna cries out for her brother as the villagers try to save
-/// Felix ("Oh no! My brother!").
+/// Felix. "Oh no! My brother!"
 static void Event_WitnessRiverRescue(void) {
   const s32 *pulseScript;
 
@@ -1673,8 +1673,8 @@ static void Event_TalkAboutRescuingFelix(void) {
   Engine_EventEnd();
 }
 
-/// Jenna comes back to the river ("Mom! Dad! We're back!"), and the
-/// scene ends with the Boulder sweeping down it.
+/// Jenna comes back to the river, and the scene ends with the Boulder sweeping
+/// down it. "Mom! Dad! We're back!"
 static void Event_GatherAfterRiverRescue(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -2251,7 +2251,7 @@ static void ValeStorm_FlickerGlowOffset(void) {
   }
 }
 
-/// A villager who cannot move asks Isaac to get help ("I can't move...").
+/// A villager who cannot move asks Isaac to get help. "I can't move..."
 static void Event_VillagerAsksForHelp(void) {
   struct FieldActor *villager;
   struct FieldActor *leader;

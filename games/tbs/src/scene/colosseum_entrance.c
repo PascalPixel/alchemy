@@ -261,7 +261,7 @@ static void Event_TalkToAzart(void) {
   Engine_EventEnd();
 }
 
-/// Galahad, the third seed, jumps: "Waah! Don't frighten me!"
+/// Galahad, the third seed, jumps. "Waah! Don't frighten me!"
 static void Event_TalkToGalahad(void) {
   Engine_EventBegin();
   Actor_SetAttachedEffect(GALAHAD, 0x102);

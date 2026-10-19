@@ -17,9 +17,10 @@
 #define GIFT_RECEIVED_MESSAGE_MODE 3
 #endif
 
-/// Shows "Isaac got <item>." for an item the party has just received. The
-/// German release has its own sentence for the Black Orb. flags are the
-/// message window flags of UiText_ShowPositionedMessageAndWait.
+/// Shows the message for an item the party has just received. The message is
+/// `Isaac got <item>.`; the German release has its own sentence for the Black
+/// Orb. flags are the message window flags of
+/// UiText_ShowPositionedMessageAndWait.
 static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
 #if (LANGUAGE == LANGUAGE_GERMAN)
   if (item == ITEM_BLACK_ORB) {
@@ -135,8 +136,9 @@ void Event_SetSceneEvents(const struct SceneEvent *events) {
   work->events = events;
 }
 
-/// Adds unit to the party. With announce nonzero it also shows "<name> joined
-/// your party." (Party_ShowJoinedMessage, which receives announce too).
+/// Adds unit to the party. With announce nonzero it also shows
+/// `<name> joined your party.` (Party_ShowJoinedMessage, which receives
+/// announce too).
 void Event_PrepareObjectAndApplyValue(s32 unit, s32 announce) {
   UnitGetFar(unit);
   Party_AddActiveOwnerFar(unit);
@@ -208,9 +210,10 @@ void Party_RemoveOwnerRestored(s32 unit) {
 }
 
 /// Checks whether the party can carry one more of item: each member carries at
-/// most 30 of one item. When they are all full, says "Isaac's party cannot
-/// carry any more <item>s..." and "Isaac threw the <item> as far away as
-/// possible." and returns -1; otherwise returns 0.
+/// most 30 of one item. When they are all full, says
+/// `Isaac's party cannot carry any more <item>s...` and
+/// `Isaac threw the <item> as far away as possible.` and returns -1; otherwise
+/// returns 0.
 s32 Party_CheckItemLimit(s32 item) {
   s32 partyCount;
   s32 heldQuantity = 0;
@@ -420,8 +423,8 @@ s32 Menu_AskYesNo(s32 atBottom) {
   return Menu_RunConfirmSelectionFar(atBottom, 0, 0, 0);
 }
 
-/// Teaches unit the Psynergy ability and says "<unit> learned <ability>." with
-/// its jingle, waiting for the player to read it.
+/// Teaches unit the Psynergy ability and says so with its jingle, waiting for
+/// the player to read it. The message is `<unit> learned <ability>.`
 void Party_LearnAbility(s32 unit, s32 ability) {
   // Declared without parameters: unit and ability pass through in r0 and r1.
   Unit_LearnPsynergyFar();

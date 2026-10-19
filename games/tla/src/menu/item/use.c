@@ -16,7 +16,7 @@ struct ItemMenuUseWork {
   s16 messageOffset;
 };
 
-/// "You recovered all HP!", the first of the item use results.
+/// The first of the item use results. "You recovered all HP!"
 extern const u8 MsgItemUseResult[];
 
 s32 Func_08100738(s32 slot, s32 owner, s32 target);

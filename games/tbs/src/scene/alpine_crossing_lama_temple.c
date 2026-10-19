@@ -704,7 +704,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Engine_EventRequestExit(CROSSING_EXIT_TO_FAREWELL);
 }
 
-/// Searching the signpost: "North: Altin Mine. West: Lama Temple."
+/// Searching the signpost. "North: Altin Mine. West: Lama Temple."
 static void AlpineCrossing_ReadSignpost(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);

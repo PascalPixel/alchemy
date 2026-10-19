@@ -138,9 +138,9 @@ static __inline__ void Madra_Func_02002c10(s32 id, s32 a) {
   Func_02002c10(id, a);
 }
 
-/// "You there, hold": actors 24 and 25 talk with 32 and 4, 25 is moved
-/// about with its priority bit cleared and set, and 32 is placed at the
-/// current owner before flag 0x910 is set.
+/// Actors 24 and 25 talk with 32 and 4, 25 is moved about with its priority
+/// bit cleared and set, and 32 is placed at the current owner before flag
+/// 0x910 is set. It opens with "You there, hold".
 void Func_02000ac4(void) {
   struct ObjectRuntime *object;
 
@@ -273,9 +273,9 @@ void Func_02000ac4(void) {
   Func_02002b30();
 }
 
-/// Once flag 0x911 is set: actors 33 and 34 talk with 4 ("... has escaped"),
-/// the prompt's answer is counted in the event work either way, and flag
-/// 0x913 is set.
+/// Once flag 0x911 is set: actors 33 and 34 talk with 4, the prompt's answer
+/// is counted in the event work either way, and flag 0x913 is set. The talk
+/// includes "... has escaped".
 void Func_02000f80(void) {
   if (!GameFlag_Test(0x911))
     return;
@@ -433,9 +433,10 @@ void Func_02000f80(void) {
   Func_02002b30();
 }
 
-/// "Hey, you lot": actors 24, 25 and 32 question 4, whose answers are
-/// counted in the event work; after flag 0x98f 32 asks again ("It was
-/// them"). Then 32 is placed at the current owner and flag 0x914 is set.
+/// Actors 24, 25 and 32 question 4, whose answers are counted in the event
+/// work; after flag 0x98f 32 asks again. It opens with "Hey, you lot"; 32's
+/// second question is "It was them". Then 32 is placed at the current owner and
+/// flag 0x914 is set.
 void Func_020014fc(void) {
   struct ObjectRuntime *object;
 
@@ -592,10 +593,10 @@ extern const struct MetatileCopyEntry gData_02003308[];
     Object_SetModeById(id, mode);                                              \
   } while (0)
 
-/// "Wait": actor 34 questions 4 and the others; the answers are counted in
-/// the event work. With room for item 210 it is given and flag 0x918 is set,
-/// otherwise the mayor's two lines are shown. 33 then talks with the group,
-/// and they all gather at 4 before flags 0x980 and 0x98e are set.
+/// Actor 34 questions 4 and the others; the answers are counted in the event
+/// work. It opens with "Wait". With room for item 210 it is given and flag
+/// 0x918 is set, otherwise the mayor's two lines are shown. 33 then talks with
+/// the group, and they all gather at 4 before flags 0x980 and 0x98e are set.
 void Func_020019d8(void) {
   struct ObjectRuntime *object;
   s32 x;

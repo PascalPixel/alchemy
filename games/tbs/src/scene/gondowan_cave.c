@@ -171,9 +171,9 @@ static void Event_IodemAsksWhyTurningBack(void) {
   }
 }
 
-/// Talking to Iodem where he waits, or walking up to him (trigger 11): "I've
-/// been waiting for you, Isaac! We should go to Babi Lighthouse soon." He
-/// joins the party again.
+/// Talking to Iodem where he waits, or walking up to him (trigger 11): he joins
+/// the party again. "I've been waiting for you, Isaac! We should go to Babi
+/// Lighthouse soon."
 static void Event_IodemRejoins(void) {
   EV_BEGIN();
   OBJ_FACE(IODEM, ACTOR_PARTY_LEADER, 0);
@@ -198,9 +198,10 @@ static void Event_IodemRejoins(void) {
   EV_END();
 }
 
-/// Talking to the first soldier: "Do you wish to cross into Gondowan?" Yes:
-/// "I won't stop you, but I wouldn't go unless I had business there." No:
-/// "That's a good idea. They wouldn't let you into Babi Lighthouse, anyway."
+/// Talking to the first soldier, who asks whether the party will cross into
+/// Gondowan. "Do you wish to cross into Gondowan?" Yes: "I won't stop you, but
+/// I wouldn't go unless I had business there." No: "That's a good idea. They
+/// wouldn't let you into Babi Lighthouse, anyway."
 static void Event_SoldierAsksAboutCrossing(void) {
   s32 firstMessage;
 

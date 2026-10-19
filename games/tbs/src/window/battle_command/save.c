@@ -12,11 +12,13 @@
 #define SAVE_NO_FREE_FILE 999
 
 // What the save functions return when they fail, after showing the message.
-#define SAVE_ERROR_READ -2      ///< a record could not be read
-#define SAVE_ERROR_WRITE -3     ///< "Failed to save." (or "Failed to erase.")
-#define SAVE_ERROR_ERASE -4     ///< "Failed to erase."
-#define SAVE_ERROR_NO_FILE -5   ///< no empty file to copy into
-#define SAVE_ERROR_NO_MEMORY -9 ///< "Unable to detect backup memory."
+#define SAVE_ERROR_READ -2 ///< a record could not be read
+/// Writing failed. "Failed to save." (or "Failed to erase.")
+#define SAVE_ERROR_WRITE -3
+#define SAVE_ERROR_ERASE -4   ///< erasing failed. "Failed to erase."
+#define SAVE_ERROR_NO_FILE -5 ///< no empty file to copy into
+/// No backup memory. "Unable to detect backup memory."
+#define SAVE_ERROR_NO_MEMORY -9
 
 /// Writes the play time `frames` (at 60 frames a second) into `out` as hours
 /// and minutes, "hhh:mm" with the hours right-aligned in three characters, and
@@ -341,9 +343,9 @@ s32 SaveState_ProcessSelectedSlot(void) {
   return result;
 }
 
-/// Asks "OK to save over this file?" and, on Yes, writes the save stamp into
-/// the current file (SaveState_ProcessSelectedSlot) and says "Your game was
-/// saved." Returns that result.
+/// Asks whether to save over the current file and, on Yes, writes the save
+/// stamp into it (SaveState_ProcessSelectedSlot) and says so. "OK to save over
+/// this file?" and "Your game was saved." Returns that result.
 /// Nothing calls it.
 UNUSED s32 SaveState_ConfirmAndProcessSelectedSlot(void) {
   s32 result;
@@ -423,10 +425,10 @@ s32 SaveState_CopySlotPair(void) {
   return result;
 }
 
-/// The file menu's Erase: lets the player choose a file, asks "OK to erase
-/// this?" and on Yes deletes both of its records. Returns 0 (also when the
-/// player answers No), -1 when cancelled, or a SAVE_ERROR_* after showing its
-/// message.
+/// The file menu's Erase: lets the player choose a file, asks whether to erase
+/// it and on Yes deletes both of its records. "OK to erase this?" Returns 0
+/// (also when the player answers No), -1 when cancelled, or a SAVE_ERROR_*
+/// after showing its message.
 s32 SaveState_DeleteSelectedSlot(void) {
   s32 error;
   s32 file;
@@ -1171,8 +1173,9 @@ done:
 #endif
 
 /// The Save command: lets the player choose a file (the current one first),
-/// asks "OK to save over this file?" when it has data, then saves the game to
-/// it, object table included, and makes it the current file. Returns 0 (also
+/// asks whether to save over it when it has data, then saves the game to it,
+/// object table included, and makes it the current file. The question is "OK
+/// to save over this file?" Returns 0 (also
 /// when the player answers No), -1 when cancelled, or a SAVE_ERROR_* after
 /// showing its message.
 s32 Save_WriteSelectedSlot(void) {

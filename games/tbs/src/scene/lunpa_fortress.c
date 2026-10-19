@@ -403,7 +403,8 @@ static void Event_UnlockOuterDoor(void) {
   }
 }
 
-/// Searching a cell door without the Cell Key: "The door is tightly locked."
+/// Searching a cell door without the Cell Key: it stays shut.
+/// "The door is tightly locked."
 static void Event_SearchLockedDoor(void) {
   if (Engine_PartyInventoryFindOwner(ITEM_CELL_KEY) == -1) {
     Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
@@ -1033,8 +1034,8 @@ static void UNUSED LunpaFortress_FirstPatrolThrowsPartyOut(void) {
   EV_END();
 }
 
-/// A guard who caught the party: "Who are you? How did you get in here?",
-/// and the party is sent back to the gate below the fortress.
+/// A guard who caught the party sends it back to the gate below the fortress.
+/// "Who are you? How did you get in here?"
 static void LunpaFortress_GuardThrowsPartyOut(s32 actorId) {
   EV_BEGIN();
   EV_BEGIN();
@@ -1090,7 +1091,7 @@ static void LunpaFortress_GuardChallengesParty(s32 actorId) {
   }
 }
 
-/// "Hey! Intruder!"
+/// A guard spots an intruder. "Hey! Intruder!"
 static void LunpaFortress_ActOutIntruderDialogue(s32 actorId) {
   s32 messageBase;
 
@@ -1107,7 +1108,7 @@ static void LunpaFortress_ActOutIntruderDialogue(s32 actorId) {
   MESSAGE_PUT(actorId, 0);
 }
 
-/// "Huh? Who's that?"
+/// A guard asks who is there. "Huh? Who's that?"
 static void LunpaFortress_ActOutWhosThereDialogue(s32 actorId) {
   s32 messageBase = MsgLunpaGuardWhosThat;
 
@@ -1121,7 +1122,7 @@ static void LunpaFortress_ActOutWhosThereDialogue(s32 actorId) {
   MESSAGE_PUT(actorId, 0);
 }
 
-/// "Is my shift up already?", then he sees who it is.
+/// A guard expects his relief, then sees who it is. "Is my shift up already?"
 static void LunpaFortress_ActOutGuardShiftDialogue(s32 actorId) {
   s32 messageBase;
 
@@ -1140,7 +1141,7 @@ static void LunpaFortress_ActOutGuardShiftDialogue(s32 actorId) {
   MESSAGE_PUT(actorId, 0);
 }
 
-/// "You scoundrel!"
+/// A guard calls the party a scoundrel. "You scoundrel!"
 static void LunpaFortress_ActOutScoundrelDialogue(s32 actorId) {
   s32 messageBase = MsgLunpaScoundrel;
 
@@ -1189,8 +1190,8 @@ static void Event_FightHallGuard(void) {
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_HALL_GUARD_BEATEN);
 }
 
-/// Walking up to the three guards: "Who are you!?"; they argue, then fight
-/// the party together. After the battle the party comes back to this room.
+/// Walking up to the three guards: they argue, then fight the party together.
+/// "Who are you!?" After the battle the party comes back to this room.
 static void Event_FightThreeGuards(void) {
   s32 messageBase;
 
@@ -1282,8 +1283,8 @@ static void Event_FightEastGuard(void) {
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN);
 }
 
-/// Walking past the entrance guard, or seen by him: "Who are you?", and the
-/// party is sent back to the gate below the fortress.
+/// Walking past the entrance guard, or seen by him: the party is sent back to
+/// the gate below the fortress. "Who are you?"
 static void Event_EntranceGuardThrowsPartyOut(void) {
   EV_BEGIN();
   Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 0);
@@ -1308,8 +1309,8 @@ static void Event_EntranceGuardThrowsPartyOut(void) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_24);
 }
 
-/// Walking between the sentries, or seen by them: "Who are you?", and the
-/// party is sent back to the gate below the fortress.
+/// Walking between the sentries, or seen by them: the party is sent back to the
+/// gate below the fortress. "Who are you?"
 static void Event_SentriesThrowPartyOut(void) {
   s32 challengeMessage;
 
@@ -1364,8 +1365,8 @@ LunpaFortress_FlipHiddenSwitch(s32 cellX, s32 cellY,
   openPassage();
 }
 
-/// Searching the first switch while Reveal shows it: "You flipped the
-/// switch." and its passage opens.
+/// Searching the first switch while Reveal shows it flips it, and its passage
+/// opens. "You flipped the switch."
 static void Event_FlipFirstSwitch(void) {
   if (((struct FieldWork *)gEventWork)->revealActive != 0) {
     if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED) == 0) {
@@ -1379,8 +1380,8 @@ static void Event_FlipFirstSwitch(void) {
   }
 }
 
-/// Searching the second switch while Reveal shows it: "You flipped the
-/// switch." and its passage opens.
+/// Searching the second switch while Reveal shows it flips it, and its passage
+/// opens. "You flipped the switch."
 static void Event_FlipSecondSwitch(void) {
   if (((struct FieldWork *)gEventWork)->revealActive != 0) {
     if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED) == 0) {
@@ -2614,8 +2615,8 @@ static void Event_ReadDonpasThoughts(void) {
   }
 }
 
-/// Donpa: asleep before the rescue ("ZZZZ..."). After it, the first time,
-/// he thanks the party and has his attendant show them his reward.
+/// Donpa: asleep before the rescue. "ZZZZ..." After it, the first time, he
+/// thanks the party and has his attendant show them his reward.
 static void Event_TalkToDonpa(void) {
   s32 rewardMessage;
 
@@ -2681,37 +2682,38 @@ static void Event_DjinniJoins(void) {
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_REWARD_TAKEN);
 }
 
-/// The third of the beaten guards: "Owww! Hey! Don't hurt me again..."
+/// The third of the beaten guards begs. "Owww! Hey! Don't hurt me again..."
 static void Event_TalkToBeatenGuardC(void) {
   Engine_ActorRunRepeatedMotion(GUARD_ROOM_GUARD_C, 2);
   MESSAGE_SET(MsgLunpaOwwwDontHurt);
   MESSAGE_PUT(GUARD_ROOM_GUARD_C, 0);
 }
 
-/// The second of the beaten guards: "We give up!", and Hammet is in the
-/// cave.
+/// The second of the beaten guards gives up, and Hammet is in the cave.
+/// "We give up!"
 static void Event_TalkToBeatenGuardB(void) {
   Engine_ActorRunRepeatedMotion(GUARD_ROOM_GUARD_B, 2);
   MESSAGE_SET(MsgLunpaRightRightGive);
   MESSAGE_PUT(GUARD_ROOM_GUARD_B, 0);
 }
 
-/// The first of the beaten guards: "Who'd have thought they'd be so tough?"
+/// The first of the beaten guards marvels at the party.
+/// "Who'd have thought they'd be so tough?"
 static void Event_TalkToBeatenGuardA(void) {
   Engine_ActorRunRepeatedMotion(GUARD_ROOM_GUARD_A, 2);
   MESSAGE_SET(MsgLunpaGuysTougherThought);
   MESSAGE_PUT(GUARD_ROOM_GUARD_A, 0);
 }
 
-/// "Do you know where Dodonpa is?"
+/// Asks where Dodonpa is. "Do you know where Dodonpa is?"
 static void Event_AskWhereDodonpaIs(void) {
   MESSAGE_SET(MsgLunpaKnowWhereDodonpa);
   Engine_EventAskYesNo(18, 0);
 }
 
-/// A resident of the outer rooms, startled the first time ("Wh-Wh-Who goes
-/// there!"), asks whether the party sneaked in in search of something; on yes,
-/// promises to keep quiet.
+/// A resident of the outer rooms, startled the first time, asks whether the
+/// party sneaked in in search of something; on yes, promises to keep quiet.
+/// "Wh-Wh-Who goes there!"
 static void Event_TalkToStartledResident(void) {
   s32 frightMessage;
   s32 purposeMessage;

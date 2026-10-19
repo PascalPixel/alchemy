@@ -47,7 +47,7 @@ enum AbilityKind {
   ABILITY_KIND_ATTACK = 3,            ///< Attack vs Defense, plus the power
   ABILITY_KIND_ATTACK_MULTIPLIED = 4, ///< that attack times power / 10
   ABILITY_KIND_DAMAGE = 5,            ///< HP damage from the power (Psynergy)
-  ABILITY_KIND_UNLEASHED_DAMAGE = 6,  ///< an enemy's: "X unleashes Y!"
+  ABILITY_KIND_UNLEASHED_DAMAGE = 6,  ///< an enemy's. Shown as `X unleashes Y!`
   ABILITY_KIND_SUMMON = 8,
   ABILITY_KIND_PP_DAMAGE = 10,
   ABILITY_KIND_HEAL_PP = 11

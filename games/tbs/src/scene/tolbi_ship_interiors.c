@@ -43,8 +43,8 @@
 // enters another place group, and other places use the numbers for their own.
 #define FLAG_TOLBI_SHIP_ROWER_CHOSEN 0x300    ///< a passenger follows the party
 #define FLAG_TOLBI_SHIP_MONSTERS_ABOARD 0x301 ///< the hold's stairs are barred
-/// "There's a huge sea monster on the ship!": the deck shakes until the
-/// Kraken is defeated (tolbi_ship_deck.c reads it too).
+/// The Kraken is aboard: the deck shakes until it is defeated
+/// (tolbi_ship_deck.c reads it too). "There's a huge sea monster on the ship!"
 #define FLAG_TOLBI_SHIP_KRAKEN_ABOARD 0x302
 
 /// Operations shared by the cabin, passenger hold and rowing-deck events.
@@ -78,8 +78,8 @@ enum ShipSceneCommand {
 };
 
 /// The warriors bound for Colosso in the hold while the ship waits at Kalay
-/// (gTolbiShipInteriors_HoldPlacements): Ouranos, who "can't stand water", and
-/// his friend Sean.
+/// (gTolbiShipInteriors_HoldPlacements): Ouranos and his friend Sean. Ouranos
+/// "can't stand water".
 enum TolbiShipInteriorsActor {
   HOLD_OURANOS = 13,
   HOLD_SEAN = 14,
@@ -588,8 +588,8 @@ static void TolbiShipInteriors_TalkToWaitingPassenger8(void) {
   Engine_EventEnd();
 }
 
-/// Another waiting passenger: "Are you going to row?" once the party has agreed
-/// to protect the ship.
+/// Another waiting passenger, once the party has agreed to protect the ship,
+/// asks whether it will row. "Are you going to row?"
 static void TolbiShipInteriors_TalkToWaitingPassenger10(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
@@ -1138,8 +1138,8 @@ static void TolbiShipInteriors_TalkToRower25(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read on a rower: "Just hurry up and slay that beast!", by the round
-/// they were chosen in.
+/// Mind Read on a rower, by the round they were chosen in.
+/// "Just hurry up and slay that beast!"
 static void TolbiShipInteriors_ReadRower18Mind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS))
@@ -1333,8 +1333,8 @@ static void TolbiShipInteriors_FightMonstersInHold(void) {
   Engine_EventEnd();
 }
 
-/// While the monsters are aboard: "Where are you going, Isaac? Slay
-/// the beasts and save my mates!" The leader is walked back from the stairs.
+/// While the monsters are aboard, the leader is walked back from the stairs.
+/// "Where are you going, Isaac? Slay the beasts and save my mates!"
 static void TolbiShipInteriors_TurnBackFromStairs(void) {
   if (GameFlag_IsSet(FLAG_TOLBI_SHIP_MONSTERS_ABOARD) != 0) {
     Engine_EventBegin();

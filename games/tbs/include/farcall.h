@@ -9,7 +9,7 @@
 /// For example, UiText_DrawNumberAtOffsetFar is the window bank's entry for
 /// UiText_DrawNumberAtOffset. Overlays bind their imported names to these
 /// entries in src/system/overlay.inc, using the same 8-byte jump mechanism.
-/// A file with a local declaration defines OWN_<name> before including this
+/// A file with a local declaration defines `OWN_<name>` before including this
 /// header to keep that declaration in scope.
 
 #include "callback_scheduler.h"

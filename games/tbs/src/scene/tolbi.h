@@ -26,14 +26,14 @@ enum TolbiActor {
   TOLBI_OLDER_BROTHER = 16,
   TOLBI_YOUNGER_SIBLING = 17,
   TOLBI_SNACK_VENDOR = 19,
-  /// A family at the festival: the father ("the wife doesn't go in for that
-  /// sort of thing"), the mother and their child, who cries for sweets ("Mom,
-  /// you said you were all out of money").
+  /// A family at the festival: the father, the mother and their child, who
+  /// cries for sweets. The father: "the wife doesn't go in for that sort of
+  /// thing"; the child: "Mom, you said you were all out of money".
   TOLBI_FATHER = 24,
   TOLBI_MOTHER = 25,
   TOLBI_CRYING_CHILD = 26,
   /// Sleeps under the archway during the festival; on finals day he sells
-  /// seats ("Today is a big day for us scalpers").
+  /// seats. "Today is a big day for us scalpers"
   TOLBI_SCALPER = 27,
   TOLBI_GAMBLER = 28,
   TOLBI_SOLDIER_A = 29,

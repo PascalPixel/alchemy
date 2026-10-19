@@ -178,8 +178,8 @@ const struct ScenePlacement *MercuryLighthouseEntrance_GetPlacements(void) {
   return gMercuryLighthouseEntrance_Placements;
 }
 
-/// Searching the inscription (trigger 1): "He who honors the heart of the
-/// goddess..."
+/// Searching the inscription (trigger 1).
+/// "He who honors the heart of the goddess..."
 static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);

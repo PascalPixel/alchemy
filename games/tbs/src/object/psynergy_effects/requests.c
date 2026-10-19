@@ -23,9 +23,9 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   BattleFx_SelectBattleCue(zone, slot);
 }
 
-/// Sets up the battle with Djinni no. The low 8 bits of flag are the Djinni's
-/// actor, which hops first unless DJINN_NO_HOP is set. Djinn are numbered 20
-/// to an element (Djinn_ResolvePendingEvent).
+/// Sets up the battle with Djinni number `no`. The low 8 bits of flag are the
+/// Djinni's actor, which hops first unless DJINN_NO_HOP is set. Djinn are
+/// numbered 20 to an element (Djinn_ResolvePendingEvent).
 void Field_RequestDjinnBattle(s32 flag, s32 no) {
   struct FieldWork *field;
   struct GameState *gameState;

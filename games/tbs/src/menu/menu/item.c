@@ -1963,7 +1963,7 @@ s32 Item_ClassifyUseMode(s32 ownerId, s32 inventoryEntry) {
 }
 
 /// After the selected item is used: an item of use type 2 breaks one time in
-/// eight, with the break sound and "It broke!".
+/// eight, with the break sound. "It broke!"
 void ItemMenu_TryBreak(void) {
   struct InventoryMenuState *menu;
 

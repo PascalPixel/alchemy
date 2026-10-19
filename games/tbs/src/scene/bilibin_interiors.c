@@ -33,7 +33,7 @@ enum {
 
 /// Actor slots follow the placement rows, starting at ACTOR_FIRST_PLACED.
 enum {
-  BILIBIN_MIA_ADMIRER = 10, ///< wants to see "that angelic" Mia again
+  BILIBIN_MIA_ADMIRER = 10, ///< wants to see Mia again. "that angelic" Mia
   BILIBIN_WEAPON_SHOPKEEPER = 16,
   BILIBIN_ARMOR_SHOPKEEPER = 17,
   BILIBIN_ITEM_SHOPKEEPER = 18,

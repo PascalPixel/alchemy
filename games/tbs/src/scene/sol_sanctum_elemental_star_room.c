@@ -1262,7 +1262,7 @@ static void Event_TalkToMenardi(void) {
   Engine_EventEnd();
 }
 
-/// Talking to Felix: "..."
+/// Talking to Felix: he says nothing. "..."
 static void Event_TalkToFelix(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSolSanctumFelixSilence);
@@ -1278,8 +1278,8 @@ static void Event_TalkToAlex(void) {
   Engine_EventEnd();
 }
 
-/// Heading out before the stars are bagged: "There aren't any Elemental Stars
-/// out there!"
+/// Heading out before the stars are bagged: the party is called back.
+/// "There aren't any Elemental Stars out there!"
 static void Event_KradenStopsPartyLeaving(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSolSanctumNoStarsOutThere);

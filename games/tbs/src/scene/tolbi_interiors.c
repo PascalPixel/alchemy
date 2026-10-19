@@ -131,8 +131,8 @@ static void TolbiInteriors_EnterDoor(void) {
 }
 
 /// After Colosso, entering by entrance 19: a woman finds something on the
-/// floor ("Hey, what's this?"), is startled to see the party and hides it in
-/// the barrel behind the trash pile. The thing is a Lucky Medal, found later in
+/// floor, is startled to see the party and hides it in the barrel behind the
+/// trash pile. "Hey, what's this?" The thing is a Lucky Medal, found later in
 /// that barrel.
 static void TolbiInteriors_WatchWomanHideMedal(void) {
   struct FieldActor *sparkle;

@@ -24,15 +24,17 @@
 // Isaac and Garet to come down the mountain.
 
 enum ValeEruptionActor {
-  /// "Oooh, my grandson! Will Garet be safe in this eruption?!?"
+  /// Garet's grandfather. "Oooh, my grandson! Will Garet be safe in this
+  /// eruption?!?"
   ACTOR_GARETS_GRANDFATHER = ACTOR_FIRST_PLACED + 1,
-  /// "They were hanging around here while I was on guard duty."
+  /// The guard. "They were hanging around here while I was on guard duty."
   ACTOR_GUARD = ACTOR_FIRST_PLACED + 5
 };
 
 static void Event_ReturnFromMtAleph(void);
 
-/// Return where the party appears: the path down from Mt. Aleph.
+/// Return where the party appears: the path down from the mountain. The
+/// mountain is Mt. Aleph.
 struct SceneEntrance *ValeEruption_GetEntrances(void) {
   return gValeEruption_Entrances;
 }
@@ -51,7 +53,7 @@ struct ScenePlacement *ValeEruption_GetPlacements(void) {
 /// The square has no events of its own: everything happens on arrival.
 struct SceneEvent *ValeEruption_GetEvents(void) { return gValeEruption_Events; }
 
-/// Arriving by entrance 15, from the top of Mt. Aleph, plays the return.
+/// Arriving by entrance 15, from the top of the mountain, plays the return.
 s32 ValeEruption_Initialize(void) {
   if (gGameState.entrance == 15) {
     Event_ReturnFromMtAleph();

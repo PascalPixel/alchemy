@@ -64,7 +64,7 @@ static void ValeBabi_DemonstrateCatch(void);
 // neighbour remarked how much Isaac has grown.
 
 enum ValeBabiActor {
-  /// "Isaac, Dora, hurry! The Boulder could fall at any second!"
+  /// Dora. "Isaac, Dora, hurry! The Boulder could fall at any second!"
   ACTOR_DORA = 8,
   ACTOR_INNKEEPER = 13
 };
@@ -138,7 +138,8 @@ struct SceneEvent *ValeBabi_GetEvents(void) {
   return gValeBabi_Events;
 }
 
-/// A villager calls "Hey, boy" and asks Isaac whether he has business here.
+/// A villager calls to Isaac and asks whether he has business here.
+/// "Hey, boy"
 static void Event_AskIsaacHisBusiness(void) {
   Engine_EventBegin();
   Engine_ActorStartRepeatedMotion(16, 2);
@@ -326,9 +327,9 @@ s32 ValeBabi_Initialize(void) {
   return 0;
 }
 
-/// Arriving by entrance 20 on the stormy night: Dora wakes Isaac ("The Mt.
-/// Aleph Boulder is going to fall!"), makes him take his tunic, and leads him
-/// out into the storm.
+/// Arriving by entrance 20 on the stormy night: Dora wakes Isaac, makes him
+/// take his tunic, and leads him out into the storm. "The Mt. Aleph Boulder is
+/// going to fall!"
 static void Event_DoraWakesIsaac(void) {
   s32 firstMessage;
   struct AnimationObject *sprite;

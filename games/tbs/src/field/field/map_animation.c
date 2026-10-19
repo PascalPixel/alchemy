@@ -73,7 +73,7 @@ void MapAnimation_Update(void) {
   }
 }
 
-/// Resumes tile animation channel no.
+/// Resumes tile animation channel channelIndex.
 void Map_ClearLayerEntryFlag(u32 channelIndex) {
   struct MapState *mapState = gMapWork[0];
   struct MapAnimation *channel = &mapState->anim[channelIndex];
@@ -81,7 +81,7 @@ void Map_ClearLayerEntryFlag(u32 channelIndex) {
   channel->paused = 0;
 }
 
-/// Pauses tile animation channel no.
+/// Pauses tile animation channel channelIndex.
 void Map_SetLayerEntryFlag(u32 channelIndex) {
   struct MapState *mapState = gMapWork[0];
   struct MapAnimation *channel = &mapState->anim[channelIndex];

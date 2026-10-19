@@ -134,15 +134,16 @@ static inline void BabiPalace_ShowQuestionAnswer(s32 actorId, s32 question) {
   Engine_EventShowMessage(actorId, 0);
 }
 
+/// Asks about Babi's soldiers.
 /// "Did you run into any of Babi's soldiers in town?"
 static void BabiPalace_AskAboutSoldiers(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiRunBabisSoldiers);
 }
 
-/// Talking to the attendant before Babi's rescue: "We have just enough extra
-/// beds in this room for everybody. Please follow me." and the attendant
-/// leads the party to them; talking again, the attendant asks whether the
-/// party will sleep right away and goes back.
+/// Talking to the attendant before Babi's rescue: the attendant leads the party
+/// to the beds. "We have just enough extra beds in this room for everybody.
+/// Please follow me." Talking again, the attendant asks whether the party will
+/// sleep right away and goes back.
 static void BabiPalace_ShowBeds(s32 actorId) {
 
   struct FieldActor *leader;
@@ -201,7 +202,8 @@ static void BabiPalace_ShowBeds(s32 actorId) {
 
 /// Talking to the attendant during the finals: the first time, the attendant
 /// asks whether the party came to rest before the match and steps aside;
-/// afterwards, "if you're tired, please feel free to get some rest."
+/// afterwards, the attendant offers rest. "if you're tired, please feel free to
+/// get some rest."
 static void BabiPalace_OfferRest(s32 actorId) {
   s32 question;
 
@@ -296,7 +298,7 @@ static void BabiPalace_TalkToIndigestedWarrior(s32 actorId) {
 }
 
 /// Mind Read on Sheba: she cannot escape to Lalivero alone; the first time,
-/// she feels it, ends the Psynergy and asks "Did you just..."
+/// she feels it, ends the Psynergy and asks about it. "Did you just..."
 static void BabiPalace_ReadShebasMind(s32 unused0, s32 actorId) {
   Event_Begin();
   Event_SetMessage(MsgTolbiEvenIfEscapedBabiPalace);
@@ -317,13 +319,14 @@ static void BabiPalace_ReadShebasMind(s32 unused0, s32 actorId) {
   Event_End();
 }
 
-/// "Did you meet with Babi?"
+/// Asks about meeting Babi. "Did you meet with Babi?"
 static void BabiPalace_AskAboutMeetingBabi(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiMeetBabi);
 }
 
-/// "So, you're all from the eastern shores of the Karagol Sea, huh? Do you
-/// want to go back already?"
+/// Asks whether the party wants to go back to the eastern shores. "So, you're
+/// all from the eastern shores of the Karagol Sea, huh? Do you want to go back
+/// already?"
 static void BabiPalace_AskAboutEasternShores(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiEasternShoresKaragol);
 }
@@ -511,8 +514,8 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Event_End();
 }
 
-/// Searching the beds: "Would you like to sleep now?" The party goes to bed,
-/// talking it over the first night.
+/// Searching the beds: the party goes to bed, talking it over the first night.
+/// "Would you like to sleep now?"
 static void BabiPalace_RestInPalaceBeds(void) {
   struct FieldActor *leader;
   s16 roundedFacing;
@@ -2182,8 +2185,9 @@ static void BabiPalace_LeaveThroughAnimatedDoor(void) {
   Event_End();
 }
 
-/// A courtyard guard during the finals: "You're Isaac, aren't you? Babi left
-/// word that he would be waiting for you at the colosseum."
+/// A courtyard guard during the finals passes on Babi's word. "You're Isaac,
+/// aren't you? Babi left word that he would be waiting for you at the
+/// colosseum."
 static void BabiPalace_PassOnBabisWord(void) {
   s32 question;
   GameFlag_Set(FLAG_BABI_PALACE_GUARD_GAVE_WORD);
@@ -2242,8 +2246,9 @@ static void BabiPalace_ThankForSavingBabi(void) {
   }
 }
 
-/// "All the warriors who stayed in the palace left when Colosso ended. Are
-/// you folks leaving too?"
+/// Asks whether the party is leaving, like the other warriors. "All the
+/// warriors who stayed in the palace left when Colosso ended. Are you folks
+/// leaving too?"
 static void BabiPalace_AskAboutRemainingWarriors(s32 actorId) {
   s32 question = MsgTolbiWarriorsWhoStayed;
 
@@ -2258,7 +2263,7 @@ static void BabiPalace_AskAboutRemainingWarriors(s32 actorId) {
   }
 }
 
-/// Searching the courtyard's well: "It's filled with fresh, clean water."
+/// Searching the courtyard's well. "It's filled with fresh, clean water."
 static void BabiPalace_ExamineWell(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);

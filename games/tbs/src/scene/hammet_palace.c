@@ -80,8 +80,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gHammetPalaceEventsOther;
 }
 
-/// Talking to a resident (actor 13) before Hammet is rescued: "Lord Hammet
-/// will be released soon. Right?"
+/// Talking to a resident (actor 13) before Hammet is rescued: the resident
+/// hopes for his release. "Lord Hammet will be released soon. Right?"
 static void Event_AskWhetherHammetWillBeReleased(void) {
   EV_BEGIN();
   MESSAGE_SET(MsgKalayLordHammetWillReleasedSoon);
@@ -89,8 +89,9 @@ static void Event_AskWhetherHammetWillBeReleased(void) {
   EV_END();
 }
 
-/// Talking to a resident (actor 16) before Hammet is rescued: "Has the legacy
-/// of Lord Hammet's silk trading come to an end?"
+/// Talking to a resident (actor 16) before Hammet is rescued: the resident
+/// worries for his silk trade. "Has the legacy of Lord Hammet's silk trading
+/// come to an end?"
 static void Event_AskWhetherSilkTradeHasEnded(void) {
   EV_BEGIN();
   MESSAGE_SET(MsgKalayHasLegacyLordHammetsSilk);
@@ -98,9 +99,9 @@ static void Event_AskWhetherSilkTradeHasEnded(void) {
   EV_END();
 }
 
-/// Talking to Layana once the party has been to Lunpa: "Isaac, you sneaked into
-/// Lunpa? That's far too dangerous!" She is glad Hammet is unhurt, but asks
-/// the party not to go back, and to fulfill their quest.
+/// Talking to Layana once the party has been to Lunpa: she is glad Hammet is
+/// unhurt, but asks the party not to go back, and to fulfill their quest.
+/// "Isaac, you sneaked into Lunpa? That's far too dangerous!"
 static void Event_LayanaScoldsLunpaVisit(void) {
 
   EV_BEGIN();

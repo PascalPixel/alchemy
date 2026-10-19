@@ -882,9 +882,9 @@ void CharacterMenu_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
   Render_SetTilemapFlagRect(menu->statusWindow, x, y, width, 1, palette);
 }
 
-/// Writes the advice for the selected ailment (two lines, e.g. how to revive a
-/// member who is down) into window target, or that the member is well when
-/// they have no ailment.
+/// Writes the advice for the selected ailment (two lines, for example how to
+/// revive a member who is down) into window target, or that the member is well
+/// when they have no ailment.
 void CharacterMenu_DrawSelectionLabels(struct UiWindow *target, s32 selected,
                                        const u8 *entries) {
   s32 labelCount = 0;

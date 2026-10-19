@@ -9,7 +9,7 @@
 
 /// Actors, numbered in the order of the placement table from 8.
 enum TolbiInteriorsActor {
-  TOLBI_INTERIORS_HOST = 9, ///< "Do you want to stay with us?"
+  TOLBI_INTERIORS_HOST = 9, ///< offers a stay. "Do you want to stay with us?"
   TOLBI_INTERIORS_WEAPON_SHOPKEEPER = 19,
   TOLBI_INTERIORS_ARMOR_SHOPKEEPER = 20,
   TOLBI_INTERIORS_ITEM_SHOPKEEPER = 21,
@@ -25,7 +25,7 @@ enum TolbiInteriorsActor {
 
 /// Map objects the party can search.
 enum TolbiInteriorsMapObject {
-  TOLBI_INTERIORS_INN_SIGN = 40, ///< "Inn Full / No Vacancies"
+  TOLBI_INTERIORS_INN_SIGN = 40, ///< the inn's sign. "Inn Full / No Vacancies"
   TOLBI_INTERIORS_VIAL_BARREL = 100,
   TOLBI_INTERIORS_MEDAL_BARREL = 101,
   TOLBI_INTERIORS_HIDDEN_MEDAL_BARREL = 102, ///< where the woman hid her find

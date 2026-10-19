@@ -170,8 +170,8 @@ s32 BattleEscape_PlayRun(struct BattleActionRecord *action) {
   return 0;
 }
 
-/// Auto battle: shows "<unit> is defending" for a standing unit. Returns -1
-/// for an invalid unit id, 0 otherwise.
+/// Auto battle: shows that a standing unit is defending. The message is
+/// `<unit> is defending`. Returns -1 for an invalid unit id, 0 otherwise.
 s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *action) {
   s32 unitId;
   s32 result;
@@ -307,7 +307,7 @@ s32 BattlePresentation_RunPairedUnitTransition(
   return 0;
 }
 
-/// Auto battle: an attack. Shows "<unit> attacks!", sends the attacker up
+/// Auto battle: an attack. Shows `<unit> attacks!`, sends the attacker up
 /// to its target, plays the blow and sends both back. Returns -1 for an
 /// invalid attacker or target.
 s32 BattlePres_RunApproachAction(struct BattleActionRecord *input) {
@@ -435,10 +435,10 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
   return 0;
 }
 
-/// Auto battle: deals damage HP to unit unitId and shows it: "A bitter
-/// blow!" (to the party) or "A critical hit!" (to an enemy) first when
-/// showMessage is set, then "<unit> takes <damage> damage!", and "<unit>
-/// goes down..." or "<unit> has been downed!" when the HP runs out.
+/// Auto battle: deals damage HP to unit unitId and shows it. When showMessage
+/// is set, "A bitter blow!" (to the party) or "A critical hit!" (to an enemy)
+/// comes first; then `<unit> takes <damage> damage!`, and `<unit> goes down...`
+/// or `<unit> has been downed!` when the HP runs out.
 /// context, if null, is replaced by four cleared bytes nothing reads.
 void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
                                         u8 *context) {

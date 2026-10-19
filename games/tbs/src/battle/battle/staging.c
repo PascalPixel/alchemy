@@ -384,9 +384,9 @@ s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused) {
 
 /// Plays an attack: the camera turns halfway to the attacker's view, the
 /// attacker runs up to its first target over its swing's frames, and the
-/// blow lands: a miss makes the target hop back ("nimbly dodges the
-/// blow"); a hit plays its effect and the events, and a critical hit
-/// zooms in on the pair with only those two shown. Both then return.
+/// blow lands: a miss makes the target hop back; a hit plays its effect and
+/// the events, and a critical hit zooms in on the pair with only those two
+/// shown. Both then return. A miss "nimbly dodges the blow".
 s32 BattlePres_RunAttack(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;
   struct MotionObject *object;

@@ -30,13 +30,14 @@
 // home...").
 
 enum ValeInteriorsActor {
-  /// "Isaac, please take care of my grandson, Garet."
+  /// Garet's grandfather. "Isaac, please take care of my grandson, Garet."
   ACTOR_GARETS_GRANDFATHER = 8,
-  /// "Grandma! What's the matter? Are you choking?"
+  /// Garet's grandmother. "Grandma! What's the matter? Are you choking?"
   ACTOR_GARETS_GRANDMOTHER = 9,
+  /// Garet's father.
   /// "I'm proud of you, Garet. My own son...on such an important quest!"
   ACTOR_GARETS_FATHER = 10,
-  /// "As mothers, Dora and I will always worry about you."
+  /// Garet's mother. "As mothers, Dora and I will always worry about you."
   ACTOR_GARETS_MOTHER = 11,
   ACTOR_ITEM_SHOPKEEPER = 20,
   ACTOR_WEAPON_SHOPKEEPER = 21,
@@ -108,7 +109,8 @@ struct SceneEvent *ValeInteriors_GetEvents(void) {
   return gValeInteriors_Events;
 }
 
-/// A villager asks whether Isaac knew Kraden came to Vale to study Mt. Aleph.
+/// A villager asks whether Isaac knew why Kraden came to Vale. He came to
+/// study Mt. Aleph.
 static void Event_AskAboutKradensStudies(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeKradenCameToStudyMt);

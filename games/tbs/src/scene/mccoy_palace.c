@@ -129,7 +129,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gMcCoyPalaceEventsOther;
 }
 
-/// "Oh, are you willing to go to Kolima Forest?"
+/// Asks about going to Kolima. "Oh, are you willing to go to Kolima Forest?"
 static void Event_AskAboutGoingToKolima(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinYouWillingGoKolimaForest);
@@ -137,8 +137,7 @@ static void Event_AskAboutGoingToKolima(void) {
   Engine_EventEnd();
 }
 
-/// The resident in a nightgown screams ("AAAAH!!!"), then turns to the
-/// party.
+/// The resident in a nightgown screams, then turns to the party. "AAAAH!!!"
 static void Event_TalkToStartledResident(void) {
   Engine_EventBegin();
   Actor_ShowEmote(ACTOR_STARTLED_RESIDENT, EMOTE_IN_FRONT | 2, 0);
@@ -154,8 +153,9 @@ static void Event_TalkToStartledResident(void) {
   Engine_EventEnd();
 }
 
-/// "You are a fine warrior." the first time; after, "It's very reckless
-/// for such young warriors to face the holy tree..."
+/// The admirer praises the party the first time, then warns of the holy tree.
+/// "You are a fine warrior." After, "It's very reckless for such young
+/// warriors to face the holy tree..."
 static void Event_TalkToAdmirer(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinFineWarrior);
@@ -167,8 +167,8 @@ static void Event_TalkToAdmirer(void) {
   Engine_EventEnd();
 }
 
-/// "I was watching from here. After all that fuss, you still went to
-/// Kolima?"
+/// The watcher saw the party go to Kolima. "I was watching from here. After
+/// all that fuss, you still went to Kolima?"
 static void Event_TalkToKolimaWatcher(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinWasWatchingFromHereAfter);
@@ -197,9 +197,9 @@ static void Event_TalkToRewardKeeper(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read on the admirer: "Sometimes, we need children to remind us of
-/// our own responsibilities.", then "You looked very courageous walking
-/// toward Kolima."
+/// Mind Read on the admirer shows two thoughts. "Sometimes, we need children
+/// to remind us of our own responsibilities." Then "You looked very courageous
+/// walking toward Kolima."
 static void Event_ReadAdmirersThoughts(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinSometimesWeNeedChildrenRemind);
@@ -267,14 +267,14 @@ static void Event_WalkThroughDoor(void) {
   Map_SetLayerEntryFlag(2);
 }
 
-/// "Isaac checked the chest... but it was empty."
+/// The chest is empty. "Isaac checked the chest... but it was empty."
 static void McCoyPalace_ShowChestEmpty(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgBilibinIsaacCheckedChestButWas, 1);
   Engine_EventEnd();
 }
 
-/// "The treasure chest is locked."
+/// The chest is locked. "The treasure chest is locked."
 static void McCoyPalace_ShowChestLocked(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgBilibinTreasureChestLocked, 1);
@@ -358,8 +358,8 @@ static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
   Engine_EventEnd();
 }
 
-/// Leaving the reward room without a reward: "Please take your reward
-/// before your depart!", and the escort walks the leader back.
+/// Leaving the reward room without a reward: the escort walks the leader back.
+/// "Please take your reward before your depart!"
 static void Event_EscortAsksPartyToChoose(void) {
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) == 0) {
     if (Engine_GameFlagIsSet(0x322) != 0) {
@@ -378,8 +378,8 @@ static void Event_EscortAsksPartyToChoose(void) {
   }
 }
 
-/// Leaving the reward room with a reward: "You are always welcome in the
-/// palace of Lord McCoy.", and the escort leaves.
+/// Leaving the reward room with a reward: the escort leaves.
+/// "You are always welcome in the palace of Lord McCoy."
 static void Event_EscortSeesPartyOff(void) {
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     Engine_EventBegin();

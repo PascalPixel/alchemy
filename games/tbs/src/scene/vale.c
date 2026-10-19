@@ -194,8 +194,8 @@ static void Event_WarnAboutGoingBeyondKradensCottage(void) {
   Engine_EventEnd();
 }
 
-/// A villager scolds Garet ("Garet, you make me so mad sometimes!"); afterwards
-/// the villager only threatens him.
+/// A villager scolds Garet; afterwards the villager only threatens him.
+/// "Garet, you make me so mad sometimes!"
 static void Event_ArgueWithTheAngryVillager(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_VALE_ANGRY_VILLAGER_ARGUED) == 0) {
@@ -287,8 +287,8 @@ static void Event_EnterSanctum(void) {
   Engine_EventRequestExit(11);
 }
 
-/// The path to Mt. Aleph: Jenna stops Isaac until Kraden has planned the visit
-/// ("Kraden is waiting for us").
+/// The mountain path: Jenna stops Isaac until Kraden has planned the visit.
+/// The path leads to Mt. Aleph; Jenna says "Kraden is waiting for us".
 static void Event_ApproachMtAleph(void) {
   if (Engine_GameFlagIsSet(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
     Vale_HaveJennaStopTheAlephDetour();
@@ -333,7 +333,7 @@ static void Event_EnterCentralHouse(void) {
 }
 
 /// Isaac's house: after the party has left and before Kalay, Dora will not
-/// open ("My Isaac would keep his promise... Go away.").
+/// open. "My Isaac would keep his promise... Go away."
 static void Event_EnterIsaacsHouse(void) {
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0 &&
       Engine_GameFlagIsSet(FLAG_REACHED_KALAY) == 0) {
@@ -507,8 +507,8 @@ static void Event_ReturnThroughSouthernPassage(void) {
   Engine_EventEnd();
 }
 
-/// A villager jumps out in front of Isaac: "You're not planning on sneaking up
-/// to Mt. Aleph...?", then keeps watching him.
+/// A villager jumps out in front of Isaac, then keeps watching him.
+/// "You're not planning on sneaking up to Mt. Aleph...?"
 static void Event_WarnAgainstSneakingUpMtAleph(void) {
   struct FieldActor *villager;
   struct FieldActor *actor;
@@ -1301,8 +1301,8 @@ s32 Vale_Initialize(void) {
   return 0;
 }
 
-/// Back from Kalay, Garet's sister: "Ah! It's been a while... You're back?"
-/// ("Sis...").
+/// Back from Kalay, Garet meets his sister. "Ah! It's been a while... You're
+/// back?" ("Sis...").
 static void Event_GaretMeetsHisSister(void) {
   struct FieldActor *record;
   s32 msg;
@@ -1376,8 +1376,8 @@ static void Event_GaretMeetsHisSister(void) {
   Engine_EventEnd();
 }
 
-/// Back from Kalay, Garet tells a villager: "WHATEVER YOU DO, you must protect
-/// the family while I'm gone."
+/// Back from Kalay, Garet asks a villager to protect his family. "WHATEVER YOU
+/// DO, you must protect the family while I'm gone."
 static void Event_GaretAsksToProtectFamily(void) {
   struct FieldActor *record;
 
@@ -1585,8 +1585,8 @@ static void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode) {
   }
 }
 
-/// Arriving by entrance 16, the game's opening: "Three years later... Isaac!
-/// Haven't you finished mending the roof yet?"
+/// Arriving by entrance 16, the game's opening: Isaac is mending the roof.
+/// "Three years later... Isaac! Haven't you finished mending the roof yet?"
 static void Event_MendingTheRoof(void) {
   u32 i;
   /* FAKEMATCH: repairActor's dead zero initializer and the stoppedMotionFlags
@@ -1904,8 +1904,8 @@ static void Event_MendingTheRoof(void) {
   Engine_EventEnd();
 }
 
-/// Arriving by entrance 17 after the opening: Dora praises the mended roof
-/// ("Good job, Isaac. You patched it nicely.").
+/// Arriving by entrance 17 after the opening: Dora praises the mended roof.
+/// "Good job, Isaac. You patched it nicely."
 static void Event_RoofMended(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;

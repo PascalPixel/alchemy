@@ -16,7 +16,7 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
 s32 CreateSideObject(s32 id, s32 kind, s32 slot, struct UiWindow *window, s32 x,
                      s32 y);
 
-void UiWork_SetTwoEntriesTo999(void) {
+void UiWork_ClearPortraitSlots(void) {
   struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
   s32 index = 0;
 

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global UiWork_SetTwoEntriesTo999
+	.global UiWork_ClearPortraitSlots
 	.thumb_func
-UiWork_SetTwoEntriesTo999:
+UiWork_ClearPortraitSlots:
 	movs r3, #192
 	lsls r3, r3, #18
 	ldr r3, [r3, #60]

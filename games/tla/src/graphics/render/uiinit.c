@@ -35,7 +35,7 @@ void UiWork_InitializeWithResourceCounters(void) {
   work->level = 15;
   FillWords(Iwram_FillWords, work->tilemap, sizeof(work->tilemap), 0xf000f000);
   UiWork_InitFreeList();
-  UiWork_SetTwoEntriesTo999();
+  UiWork_ClearPortraitSlots();
   Scheduler_AddOrUpdateCallback((s32)UiWork_UploadDirtyBlocks, 0xc80);
   UiWork_InitCountersWithResourceAndScheduleRefresh();
 }

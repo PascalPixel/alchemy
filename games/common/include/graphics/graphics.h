@@ -64,7 +64,7 @@ void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
 void UiWork_InitCountersWithResourceAndScheduleRefresh(void);
 void UiWork_ProcessDirectWork(void);
 void UiWork_ProcessRenderChannels(void);
-void UiWork_SetTwoEntriesTo999(void);
+void UiWork_ClearPortraitSlots(void);
 void UiWork_UploadDirtyBlocks(void);
 #endif
 

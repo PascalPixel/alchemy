@@ -519,10 +519,10 @@ Func_0803d020:
 	.section .rom.0003d2f8, "ax"
 	.incbin "baserom.gba", 0x0003d2f8, 0x0000010c
 	.section .rom.0003d404, "ax"
-	.global UiWork_SetTwoEntriesTo999
-	.type UiWork_SetTwoEntriesTo999, %function
+	.global UiWork_ClearPortraitSlots
+	.type UiWork_ClearPortraitSlots, %function
 	.thumb_func
-UiWork_SetTwoEntriesTo999:
+UiWork_ClearPortraitSlots:
 	.incbin "baserom.gba", 0x0003d404, 0x00000020
 	.section .rom.0003d618, "ax"
 	.global Ui_BuildPairedPatternsToSlot

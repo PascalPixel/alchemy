@@ -472,7 +472,7 @@ UNUSED s32 UiText_DecodeSymbol(struct TextReader *reader) {
 }
 
 // Marks both portrait slots free (999).
-void UiWork_SetTwoEntriesTo999(void) {
+void UiWork_ClearPortraitSlots(void) {
   struct UiRenderWork *work = UI_WORK;
   s32 index = 0;
 

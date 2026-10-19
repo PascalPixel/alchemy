@@ -257,7 +257,7 @@ void UiText_ShowCenteredMessage(s32 message, s32 mode, s32 yOffset);
 s32 UiText_BuildRenderEntriesMode1(s32 arg0);
 void UiText_LookupMessage(struct TextReader *reader, s32 message);
 s32 UiText_DecodeSymbol(struct TextReader *reader);
-void UiWork_SetTwoEntriesTo999(void);
+void UiWork_ClearPortraitSlots(void);
 s32 Localization_LookupEntryId(u32 value);
 struct UiWindow *UiWindow_CreateWithSideObject(s32 arg0, s32 arg1, s32 x,
                                                s32 y);

@@ -86,7 +86,7 @@ void UiWork_InitializeWithResourceCounters(void) {
 #endif
   // Make the output and palette pools available, then start the updates.
   RenderOutput_InitFreeList();
-  UiWork_SetTwoEntriesTo999();
+  UiWork_ClearPortraitSlots();
   Scheduler_AddOrUpdateCallback(UiWork_UploadDirtyBlocks, 0x480);
   UiWork_InitCountersWithResourceAndScheduleRefresh();
 }

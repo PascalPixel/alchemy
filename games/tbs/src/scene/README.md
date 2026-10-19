@@ -7,6 +7,10 @@ spot, searches or uses Psynergy, and plays its cutscenes. The field engine (in
 `games/tbs/src/field` and `games/tbs/src/object`) runs the scene; the scene
 drives it through the engine's services.
 
+See also: [Field objects](../object/README.md), which runs a scene and its
+events; [Field](../field/README.md), the engine underneath; and
+[Maps](../map/README.md), the maps the scenes are set on.
+
 ## Files
 
 | File | What it holds |
@@ -65,27 +69,73 @@ family's prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`,
 (`SceneActor_`, `SceneEffect_`, `OverlayObject_`, `FieldScene_`) until the
 scenes that call them are renamed with them.
 
-## Spellings
+The spellings some sites keep to match (fields reached through `offsetof`,
+another struct's view of an actor, update hooks that return `s32`), and the
+comment markers, are in [Matching](../MATCHING.md).
 
-Some sites match only with a plain-C equivalent of the usual spelling, and
-keep it without a FAKEMATCH tag; each says so in a comment:
+## Design
 
-- A field read or written through its offset, `*(T *)((u8 *)p +
-  offsetof(struct FieldActor, field))`, where `p->field` goes through
-  FieldActor's single/group union and moves a load
-  ([`common/effect_spawn.h`](common/effect_spawn.h),
-  [`common/mercury_lighthouse_pillar.h`](common/mercury_lighthouse_pillar.h)).
-- Another struct's view of the same object (`struct SolSanctumRingObject`
-  for a FieldActor) in
-  [`common/sol_sanctum_elemental_star_ring_setup.h`](common/sol_sanctum_elemental_star_ring_setup.h).
-- A byte store through a `u8 *` and `offsetof` in place of a struct field
-  (`Colosso_RestoreCompetitor`).
-- `gMapWork[0]` read as a `u32` (`SceneActor_MoveAndRedraw`).
-- A command of `event.h` and the service it names can compile differently;
-  each site keeps the one it matches with.
+### A scene is an overlay that answers six questions
 
-An update hook that the bytes show returning a value keeps its `s32` return,
-with the `void` form the hook type wants behind `UBFIX` (`// UB:` above it).
+Every scene is its own overlay, loaded into the same 32 KB at 0x2008000 when
+the party enters, so the game keeps only one place's code in memory at a
+time. The field engine knows nothing about a scene except its entry table:
+six veneers at the overlay's start, always in the same order, which it calls
+as functions (`struct SceneEntries`). Each returns one of the scene's tables,
+or runs its setup.
+
+They are functions rather than pointers to tables so that a scene can answer
+differently as the story moves on: `Vault_SelectEvents` returns
+`gVault_EventsAfterThieves` once the thieves are in jail, and the engine
+needs no notion of story state at all. The same goes for placements, whose
+rows carry conditions, and for exits, whose rows can depend on a flag.
+
+### State that cleans itself up
+
+A scene does not undo what it changed when the party leaves. Instead, two
+ranges of game flags are cleared for it on entry (`Scene_ResetFlagsOnEnter`,
+`games/tbs/src/object/object/scene.c`): 0x200 to 0x2ff on every ordinary
+entrance, and 0x300 to 0x3ff whenever the party enters a different group of
+scenes, the scenes of one place. So a scene keeps a moved crate or an opened
+door in a `FLAG_SCENE_TEMP_xx` flag, and it is put back the next time the
+party comes in; a place keeps what should last while the party is anywhere
+inside it in its group's flags. When the party returns to where it was, as
+after a battle, `FLAG_KEEP_PARTY_POSITION` keeps both ranges, and a scene's
+initialization skips its arrival cutscenes.
+
+### Why shared code is copied into each scene
+
+An overlay can only call the main image, through its import table, because
+only one overlay is ever loaded (see [System](../system/README.md)). So code
+that several overlays need is in each of them, and the ROM holds several
+byte-for-byte copies of the same functions. Where the same code appears in
+several overlays it is written once, in `common/`, and each scene includes
+it at the place its bytes are, under the line `// Shared source is included
+here in ROM order.` Each header opens by saying which scenes include it. A
+header in `common/` is code, not declarations: including it twice in one
+scene would place it twice.
+
+The headers are named after the place or the job they share:
+
+| Headers | Scenes | What they hold |
+| --- | --- | --- |
+| `colosso_*.h`, `item_equip.h` | the Colosso finals' courses (Colosso Log, River and Wall) | the friends' cheering spots, the stage guides, the race gauge, the rival's recorded path, the guide's pointer and the start lettering |
+| `vault_*.h` | Vault and its interiors | the walking villagers, the Bone, the doorway, Ivan's farewell |
+| `mercury_lighthouse_*.h` | Mercury Lighthouse and its entrance | the pool's lights that carry the leader over it, the passages between floors, the pool's shimmer |
+| `kolima_*.h` | Kolima and its forest | the cursed forest's colours, the dust of Tret's curse, the hop onto the river's actor |
+| `sol_sanctum_*.h` | Sol Sanctum's rooms | the Elemental Star room's floating lights, the corridor's and maze's entry |
+| [`common/vale.h`](common/vale.h), [`common/world_map_linked_effects.h`](common/world_map_linked_effects.h) | Vale's scenes, the world map | the storm's door exits, the particles around a glowing actor |
+| `effect_*.h` | many | Effect_Spawn and the small effects it places, cutscene Psynergy |
+| `object_*.h` | many | actors: pushed blocks and rolling logs, the floating Nut, lookups by cell and distance, turning and waiting |
+| `map_panel.h`, [`common/scroll_initialize_hblank_dma.h`](common/scroll_initialize_hblank_dma.h) | Crossbone Isle and Kolima; the Lemurian ship | a stretch of map drawn into the tile map; the water's ripple |
+
+A header named after one place may be shared further:
+[`common/colosso_item_icon.h`](common/colosso_item_icon.h) also draws
+Crossbone Isle's Red Key.
+
+Renaming a function in `common/` renames it in every scene that includes the
+header, and in the scene's entry table or event table when it is listed
+there.
 
 ## How a scene runs
 
@@ -103,8 +153,7 @@ then calls the overlay through its entry table, in this order:
    an exit. Most scenes have none and return `NULL`.
 
 A scene that changes with the story returns another table from the same
-entry: `Vault_SelectEvents` returns `gVault_EventsAfterThieves` once the
-thieves are in jail.
+entry (see the design above).
 
 Then the party walks until something happens: an event runs, or the party
 takes an exit and the next scene is loaded.
@@ -138,37 +187,6 @@ What happens is a message (`MSGNO(MsgName)`), a function
 (`EVENT_SCRIPT(Function)`), or for a search what is found (`FIND_ITEM`,
 `FIND_COINS`, `FIND_PSYNERGY_STONE`, `FIND_MESSAGE`). A condition is
 `CONDITION_ALWAYS`, a flag that must be clear, or `IF_FLAG_SET(flag)`.
-
-### How scenes share code
-
-An overlay can only call the main image, so code that several overlays need
-is in each of them. Where the same code appears in several overlays it is
-written once, in `common/`, and each scene includes it at the place its bytes
-are, under the line `// Shared source is included here in ROM order.` Each
-header opens by saying which scenes include it. A header in `common/` is code,
-not declarations: including it twice in one scene would place it twice.
-
-The headers are named after the place or the job they share:
-
-| Headers | Scenes | What they hold |
-| --- | --- | --- |
-| `colosso_*.h`, `item_equip.h` | the Colosso finals' courses (Colosso Log, River and Wall) | the friends' cheering spots, the stage guides, the race gauge, the rival's recorded path, the guide's pointer and the start lettering |
-| `vault_*.h` | Vault and its interiors | the walking villagers, the Bone, the doorway, Ivan's farewell |
-| `mercury_lighthouse_*.h` | Mercury Lighthouse and its entrance | the pool's lights that carry the leader over it, the passages between floors, the pool's shimmer |
-| `kolima_*.h` | Kolima and its forest | the cursed forest's colours, the dust of Tret's curse, the hop onto the river's actor |
-| `sol_sanctum_*.h` | Sol Sanctum's rooms | the Elemental Star room's floating lights, the corridor's and maze's entry |
-| [`common/vale.h`](common/vale.h), [`common/world_map_linked_effects.h`](common/world_map_linked_effects.h) | Vale's scenes, the world map | the storm's door exits, the particles around a glowing actor |
-| `effect_*.h` | many | Effect_Spawn and the small effects it places, cutscene Psynergy |
-| `object_*.h` | many | actors: pushed blocks and rolling logs, the floating Nut, lookups by cell and distance, turning and waiting |
-| `map_panel.h`, [`common/scroll_initialize_hblank_dma.h`](common/scroll_initialize_hblank_dma.h) | Crossbone Isle and Kolima; the Lemurian ship | a stretch of map drawn into the tile map; the water's ripple |
-
-A header named after one place may be shared further:
-[`common/colosso_item_icon.h`](common/colosso_item_icon.h) also draws
-Crossbone Isle's Red Key.
-
-Renaming a function in `common/` renames it in every scene that includes the
-header, and in the scene's entry table or event table when it is listed
-there.
 
 ## How to find a scene and an event in it
 
@@ -242,3 +260,18 @@ decompilations write it, with pret's naming (`PascalCase` functions,
   the party's 8, then the placed actors.
 - A scene's own flags are 0x200 to 0x2ff, cleared on every ordinary
   entrance.
+
+## Evidence and open questions
+
+A scene's name is its place's name in the English release, from the text its
+people say and the place names the game shows; its functions are named for
+what the player sees there; its messages are linker symbols made from their
+English text. Overlay numbers are their rows of the resource directory.
+
+Still unknown:
+
+- XXX: many functions in `common/` keep older descriptive names
+  (`SceneActor_`, `SceneEffect_`, `OverlayObject_`, `FieldScene_`) until the
+  scenes that call them are renamed with them.
+- XXX: the temporary flags' meanings are written per scene beside each use;
+  sounds without a proven name keep their numbers (`SE_188`).

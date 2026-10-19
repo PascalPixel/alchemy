@@ -1905,9 +1905,9 @@ s32 Scene_Initialize(void) {
   gGameState.retreatEntrance = 11;
   gGameState.retreatScene = (s32)&SceneId_MercuryLighthouse4;
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  Io_Write16(0x3f40, &REG_BLDCNT);
+  Io_Write16(BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND, &REG_BLDCNT);
   {
-    s32 alpha = 0x1010;
+    s32 alpha = BLEND_ALPHA(16, 16);
     REG_BLDALPHA = alpha;
   }
   MercuryLighthouse_SpawnLightObjects(21, (s32)gSceneState);

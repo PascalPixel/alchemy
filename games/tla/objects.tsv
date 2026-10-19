@@ -5533,9 +5533,14 @@ main	rom_main_08	recon/tla/fr/rom	.rom.001275a0	fr
 main	rom_main_08	recon/tla/es/rom	.rom.001275a0	es
 main	rom_main_08	recon/tla/de/rom	.rom.001275a0	de
 main	rom_main_08	recon/tla/raw/08127588	.text	en
-main	rom_main_08	recon/tla/raw/0812764c	.text	en
-main	rom_main_08	recon/tla/raw/0812786c	.text	en
 main	rom_main_08	recon/tla/ja/rom	.rom.00127584	ja
+main	rom_main_08	games/tla/src/battle/formation_select_level_matched_candidate	.text
+main	rom_main_08	recon/tla/it/rom	.rom.00127884	it
+main	rom_main_08	recon/tla/fr/rom	.rom.00127884	fr
+main	rom_main_08	recon/tla/es/rom	.rom.00127884	es
+main	rom_main_08	recon/tla/de/rom	.rom.00127884	de
+main	rom_main_08	recon/tla/raw/0812786c	.text	en
+main	rom_main_08	recon/tla/ja/rom	.rom.00127868	ja
 main	rom_main_08	games/tla/src/battle/raise_base_stats	.text
 main	rom_main_08	recon/tla/it/rom	.rom.00127af4	it
 main	rom_main_08	recon/tla/fr/rom	.rom.00127af4	fr

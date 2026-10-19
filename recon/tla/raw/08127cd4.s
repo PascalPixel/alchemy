@@ -29,7 +29,7 @@ Func_08127cd4:
 	cmp r0, #0
 	beq .L_08127d10
 	add r0, sp, #32
-	bl Func_0812764c
+	bl BattleFormation_SelectLevelMatchedCandidate
 	adds r5, r0, #0
 .L_08127d10:
 	movs r2, #165

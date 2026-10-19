@@ -1937,12 +1937,6 @@ BattleFx_StartRandomParticleEmitter:
 	.incbin "baserom.gba", 0x000d417c, 0x000001c4
 	.section .rom.000d4554, "ax"
 	.incbin "baserom.gba", 0x000d4554, 0x000001a8
-	.section .rom.000d46fc, "ax"
-	.global Func_080cf6fc
-	.type Func_080cf6fc, %function
-	.thumb_func
-Func_080cf6fc:
-	.incbin "baserom.gba", 0x000d46fc, 0x00000090
 	.section .rom.000d478c, "ax"
 	.global Func_080cf78c
 	.type Func_080cf78c, %function

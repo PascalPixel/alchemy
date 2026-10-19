@@ -6,6 +6,9 @@ out. Each effect is a function that takes the effect's `BattleEffectArgument`
 (the user, the targets and the effect's own values), plays a fixed number of
 frames and returns when the effect is over.
 
+See also: [Battles](../battle/README.md), which starts each effect and plays
+its messages and hits while the effect runs.
+
 ## Files
 
 | File | What it holds |
@@ -29,16 +32,6 @@ still compiled only as part of `effect.c`.
 In the ROM the effect code is one object of about 150 KB; its rows of
 `games/tbs/objects.tsv` (from `effect`) give it, the blitter fragments, the
 tables and the bit operands in link order.
-
-Camelot's other C files are each followed by their own data, so the effects
-were very likely one large file, with the tables kept in a separate data file
-in step with it. `effect.c` stays that one
-object; the split into parts is ours, cut where one family of effects ends and
-the next begins, and the order of its `#include` lines is the order of the
-code in the ROM. The tables are not `const`: as `const`, 52 of them change the
-generated code, and without it all of them match. Each function's small
-constant vectors are `static` variables inside it, in the ROM in the order of
-the functions that use them.
 
 ## Words
 
@@ -77,29 +70,15 @@ elsewhere, which keep its prefix as their Lost Age twins do: `Camera_`,
 `Palette_`, `Graphics_`, `Resource_`, `EffectStep_`, `EffectPosition_`,
 `ObjectGroup_`.
 
-## Spellings
-
-- A work slot is read as `WORK_SLOT(n)` or `gWorkSlot[n]`, through a base
-  pointer as `slots[n - base]`, `EFFECT_SLOT` or `CANVAS_SLOT`, and as a
-  blitter as `EFFECT_BLITTERS[n]` or `(DrawRectangle)gWorkSlot[n]`; each site
-  keeps the one it matches with, as these can compile differently.
-
-Two comment markers are fixed:
-
-- `// DEAD: why`: code the ROM keeps that can never change the result, such
-  as a test that is always true, whose own compare, branch or loop is in the
-  ROM.
-- `/* FAKEMATCH(kind): the form kept; as the plain form, N of M instructions
-  differ in tbs-en. */`: a device that steers the compiler towards the
-  original instructions (an unused variable, a block that runs once), with
-  how many of the function's instructions differ without it.
+The spellings some sites keep to match (a work slot is read five ways), and
+the `DEAD` and `FAKEMATCH` markers, are in [Matching](../MATCHING.md).
 
 ## How to find an effect
 
 Each ordinary effect kind is named after the move that uses it, such as
 `BattleFx_RunQuake` or `BattleFx_RunCure`. To find a move's code, search for
-its English name: its handler's comment begins `// Abilities:` and lists every
-ability that reaches it. The handler table, `gBattleFx_EffectHandlers` in
+its English name: its handler's comment has a line `/// Abilities:` that lists
+every ability that reaches it. The handler table, `gBattleFx_EffectHandlers` in
 `effect_table.c`, names each kind's part and first ability:
 
 ```c
@@ -130,15 +109,17 @@ The largest families:
 
 ## How to write a handler's header
 
-Every handler opens the same way:
+Every handler opens the same way, with a documentation comment:
 
 ```c
-// Abilities: Quake, Earthquake, Quake Sphere (kind 1).
-//
-// What the player sees, frame by frame where the effect is long.
-//
-// effect: the user and targets, if the handler reads more than usual.
-// mode  : for a runner, what each mode changes.
+/// Rock wall: one sentence saying what the effect does.
+///
+/// Abilities: Quake, Earthquake, Quake Sphere (kind 1).
+///
+/// What the player sees, frame by frame where the effect is long.
+///
+/// effect: the user and targets, if the handler reads more than usual.
+/// mode  : for a runner, what each mode changes.
 ```
 
 A kind no ability uses says `Abilities: none (kind N).`, and a scene `(scene
@@ -161,9 +142,23 @@ canvas), runs the effect and releases them:
   sequences and ring scenes, which need a sprite sheet twice the usual size.
 
 An effect may schedule callbacks that use those blocks, but it must remove
-them before it returns, because the blocks are gone afterwards.
+them before it returns, because the blocks are gone afterwards: releasing a
+heap block also releases everything allocated after it (see
+[Runtime](../runtime/README.md)), so the three are released in the reverse
+of the order they were taken.
 
-## How an effect draws
+## Design
+
+### One object, and tables that are not `const`
+
+Camelot's other C files are each followed by their own data, so the effects
+were very likely one large file, with the tables kept in a separate data file
+in step with it. `effect.c` stays that one object; the split into parts is
+ours, cut where one family of effects ends and the next begins, and the order
+of its `#include` lines is the order of the code in the ROM. The tables are
+not `const`: as `const`, 52 of them change the generated code, and without it
+all of them match. Each function's small constant vectors are `static`
+variables inside it, in the ROM in the order of the functions that use them.
 
 ### The canvas
 
@@ -313,3 +308,19 @@ column at an existing kind and variant.
 - The work block has 64 particles and `PARTICLES` about 1,750.
 - There are two blitter slots, and each new picture size or mode needs its
   own blitter.
+
+## Evidence and open questions
+
+A handler's name comes from the abilities that reach its kind, read from
+`actflags.tsv` and named as the English release names them; the families'
+runners from what they draw; the blitter's words from the fragments it
+joins. Kinds that no ability uses (kinds 34 and 67, in `planet_diver.c` and
+`bind.c`) are named from what they draw.
+
+Still unknown:
+
+- XXX: what reaches the two kinds that no ability uses.
+- XXX: the `unk_` fields of the work block and the particles' spare words
+  where an effect's use of them is not yet read.
+- XXX: why `work->sheet` may grow into the scanline table only for effects
+  that do not use it (0x7080 against 0x6980), and which effects do.

@@ -89,6 +89,15 @@
 // A monster was fought on the stormy night: Vale's music changes (song 23).
 #define FLAG_VALE_STORM_MONSTER_FOUGHT 0x900
 
+// Vale, the village
+// On the stormy night, the villagers sent Isaac to aid the elders holding
+// back the Boulder.
+#define FLAG_VALE_STORM_SENT_TO_AID_ELDERS 0x840
+// Whirlwind cleared the three targets (actors 8 to 10) in the village.
+#define FLAG_VALE_FIRST_WHIRLWIND_TARGET_CLEARED 0x90b
+#define FLAG_VALE_SECOND_WHIRLWIND_TARGET_CLEARED 0x90c
+#define FLAG_VALE_THIRD_WHIRLWIND_TARGET_CLEARED 0x90d
+
 // Vale, around Isaac's house
 // Back from Kalay, Mind Read showed that Dora is ill.
 #define FLAG_READ_THOUGHTS_ABOUT_DORA 0x81c

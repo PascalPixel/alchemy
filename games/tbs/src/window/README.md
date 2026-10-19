@@ -7,6 +7,9 @@ and the screens made of windows: the selection row, the option and system
 menus, the party status window, the save file menu, name entry, the status
 screen, the battle menus and the debug menus.
 
+See also: [Menus](../menu/README.md) and [Shops](../shop/README.md), the
+screens built on these windows.
+
 ## Files
 
 | File | What it holds |
@@ -49,10 +52,8 @@ DMA control words (`DMA_COPY32` and its kin).
   into a window a few characters a frame and runs its control codes
   (`TEXT_`): pages, pauses, colours and the speaker's voice blips.
 - **message** and **decoded text**: a message is a number, written as its
-  linker symbol (`MsgGameSaved`). `UiText_BuildRenderEntries` decodes its
-  Huffman-coded script into `work->entries`, a ring of 16-bit codes, writing
-  out names, numbers and articles from the argument table
-  (`UiWork_PushValueSlot`, `MSG_ARG_`).
+  linker symbol (`MsgGameSaved`); decoded text is what it becomes in the ring
+  of `work->entries` (see the design below).
 - **render output**: a `struct RenderOutput`, a sprite in a window's output
   list (a character, an icon, a portrait); `UiWork_AnimateSpriteSlots` moves
   and queues each one every frame by its `UI_SPRITE_` motion.
@@ -82,19 +83,82 @@ The `Ui_` functions left have no family yet, and each is also used in another
 folder. Many names here are shared with The Lost Age's twins and with the
 far-call tables (`system/far_call/WINDOW.S`), so a rename crosses folders.
 
-## Spellings
+The spellings some sites keep to match, and the comment markers, are in
+[Matching](../MATCHING.md).
 
-Each site keeps the form it matches with. These pairs are one idea and can
-compile differently:
+## Design
 
-- The work block as `UI_WORK` or as `gWindowWork[0]`, and a neighbouring heap
-  block as `gWindowWork[n]`.
-- A tilemap cell as `work->tilemap + y * 32 + x`, or as a byte offset added to
-  `(u32)work->tilemap`.
-- Palette RAM through `BG_PLTT_COLOR`, which is volatile, or through a plain
-  pointer to it such as `(u16 *)&BG_PLTT_COLOR(14, 0)`.
-- A function whose result nothing reads keeps its `s32` return where `void`
-  changes its epilogue; `UBFIX` gives the `void` form.
+### From a message number to letters on the screen
+
+Showing a message takes three steps, each owned by a different piece, so
+that the slow part happens once and the typing costs little each frame.
+
+**Decoding.** `UiText_BuildRenderEntries` ([`window/decode.c`](window/decode.c))
+turns a message into decoded text all at once. Messages are Huffman coded
+with one tree per previous symbol: the code just decoded picks the tree for
+the next (`Text_MessageContexts`), so common pairs of letters cost few bits.
+The routine that walks the trees is ARM code; it is copied into heap slot 50
+for the decode and released at the end (the C form, `UiText_DecodeSymbol`,
+is in the ROM but unused). As it decodes, it writes out what the message only
+refers to: names, numbers, item and ability names from the argument table
+(`UiWork_PushValueSlot`, `MSG_ARG_`), and the articles, possessives and
+endings each language needs (`articles.c`). Style codes
+(colours, pauses, page breaks) are kept with their operands for the channel.
+
+**The ring.** Decoded text goes into `work->entries`, a ring of 16-bit codes
+indexed with a mask (`RENDER_ENTRY_MASK`). Each message is written after the
+last one, ends with a 0, and is known only by the index it starts at, which
+`UiText_BuildRenderEntries` returns (and `-1` asks for the last one again).
+Nothing owns a message's place in the ring: it stays readable until enough
+later decoding wraps round onto it. That is what lets several windows show
+text at once without any allocation. A message is cut off at the ring's
+length. The Japanese release has a ring of 256 codes and 12 windows; every
+other edition has 512 codes and 8 windows (`TBS_PATCH_1` in
+`include/tbs_edition.h`), the same work block traded differently. XXX: that
+the ring was doubled for the longer European text is the likely reason; the
+bytes show only the change.
+
+**Typing.** A channel (`struct UiChannelSlot`) types decoded text into one
+window: it holds the window, the pen position in 1/256 pixels, the index of
+the next code, a countdown to the next character and the current style.
+`UiText_QueueRenderEntries` takes the first free channel and returns `NULL`
+when all three are busy, so at most three messages type at any moment;
+`UiText_StartBattleMessage` also reuses a channel whose window has finished,
+continuing below its last line. Typing is spread over frames because it is
+a task: `UiWork_ProcessAll`, the window system's scheduled routine, runs
+every frame, windows first (opening and closing), then the channels, then
+the sprites the windows carry, while the code that showed the message waits.
+XXX: why three channels is not known.
+
+### Windows and their pictures
+
+A window is a framed rectangle of one shared tile map, 32 tiles wide and 20
+tall (`work->tilemap`, copied to `UI_TILEMAP_VRAM`), so every window shares
+one background and one set of tiles. Its text is drawn in one of three ways,
+chosen by flags: into bitmap tiles of the text canvas
+(`UI_WINDOW_TEXT_CANVAS`, drawn by `glyph_arm.c` from RAM), as one 16 by 16
+sprite a character, or as tiles of the tile map itself. The canvas holds 120
+tiles, the interior of one full-width window six tiles tall, so it serves one
+window at a time; labels and icons are sprites, from the render outputs and
+the sprite VRAM cache.
+`work->tileAttributes` remembers which text tiles the tile map still shows,
+so that redrawing a string can reuse the tiles it already has.
+
+## Evidence and open questions
+
+The names come from what each piece does on screen: windows, channels and
+render outputs from their structs' use, the control codes from what the
+decoder does with each, the screens from the English release's text they
+show. The message names are linker symbols made from their English text.
+
+Still unknown:
+
+- XXX: why there are three channels, and why the patch traded four windows
+  for a longer ring.
+- XXX: what a message longer than the ring was meant to do: the decoder
+  stops after one ring's length, and its terminator then lands on the
+  message's own start.
+- `unk` fields remain in `struct UiRenderWork` around the argument tables.
 
 ## How to change a window or a message
 

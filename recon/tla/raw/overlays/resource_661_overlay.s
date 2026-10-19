@@ -554,44 +554,6 @@ Func_020007e0:
 	.4byte 0xfdff0000
 .L_02008914:
 	.4byte gMapShapeGrid
-	.section .text.x02008918,"ax",%progbits
-	.global Func_02000918
-	.thumb_func
-Func_02000918:
-	push {r5, r6, r7, lr}
-	movs r3, #192
-	lsls r3, r3, #18
-	adds r5, r0, #0
-	ldr r7, [r3, #32]
-	b .L_0200894e
-.L_02008924:
-	ldrh r0, [r5]
-	bl Object_GetById
-	adds r6, r0, #0
-	ldrh r0, [r5, #4]
-	bl GameFlag_Test
-	cmp r0, #0
-	beq .L_0200894c
-	adds r0, r6, #0
-	bl Func_020041e0
-	movs r2, #212
-	lsls r2, r2, #1
-	adds r3, r7, r2
-	ldr r3, [r3]
-	lsls r0, r0, #2
-	adds r3, r3, r0
-	movs r2, #255
-	strb r2, [r3, #2]
-.L_0200894c:
-	adds r5, #6
-.L_0200894e:
-	movs r2, #255
-	ldrh r3, [r5]
-	lsls r2, r2, #8
-	adds r2, #255
-	cmp r3, r2
-	bne .L_02008924
-	pop {r5, r6, r7, pc}
 	.section .text.x0200895c,"ax",%progbits
 	.global Func_0200095c
 	.thumb_func

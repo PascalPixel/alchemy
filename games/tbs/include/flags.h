@@ -132,4 +132,11 @@
 #define FLAG_SCENE_TEMP_36 0x236
 #define FLAG_SCENE_TEMP_37 0x237
 
+// World map
+// The Black Orb did nothing on Babi's ship and was handed back.
+#define FLAG_BLACK_ORB_RETURNED 0x85d
+#define FLAG_SCENE_TEMP_F0 0x2f0
+#define FLAG_SCENE_TEMP_F1 0x2f1
+#define FLAG_SCENE_TEMP_F8 0x2f8 // a byte flag
+
 #endif

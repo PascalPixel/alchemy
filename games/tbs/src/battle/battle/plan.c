@@ -692,7 +692,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     if ((abilityId >= 0 && abilityId <= 517) &&
         gBattle_ActionStatus[abilityId] != 0)
       plan->outcome = gBattle_ActionStatus[abilityId];
-    else if (Ability_CheckStatusOrSpecialId(abilityId))
+    else if (Ability_IsPsynergy(abilityId))
       plan->outcome = PLAN_SHOW_CAST;
     else if (plan->presentationFlags != 0) {
       if (actor->classIndex == 0)

@@ -544,7 +544,7 @@ Func_08122514:
 	cmp r3, r1
 	beq .L_081229d6
 	mov r0, r9
-	bl Ability_CheckStatusOrSpecialId
+	bl Ability_IsPsynergy
 	cmp r0, #0
 	beq .L_081229b8
 	movs r3, #1

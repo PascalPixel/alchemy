@@ -1252,7 +1252,7 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
 
 // Returns 1 for an ability that costs PP, and for Psy Drain, which costs
 // none.
-u32 Ability_CheckStatusOrSpecialId(s32 abilityId) {
+u32 Ability_IsPsynergy(s32 abilityId) {
   u8 pp;
 
   if (abilityId == ABILITY_PSY_DRAIN)

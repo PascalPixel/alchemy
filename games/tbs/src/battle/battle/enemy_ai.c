@@ -185,8 +185,7 @@ select_again:
 
     // Psynergy: a careful enemy (strategy not 0) avoids it without the PP,
     // and the most careful (2) also while sealed.
-    if (request->command != CMD_ITEM &&
-        Ability_CheckStatusOrSpecialId(abilityId) != 0) {
+    if (request->command != CMD_ITEM && Ability_IsPsynergy(abilityId) != 0) {
       request->command = CMD_PSYNERGY;
       request->parameter = abilityId;
       if (ability->ppCost > unit->pp && enemy->targetStrategy != 0)

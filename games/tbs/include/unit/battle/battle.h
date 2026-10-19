@@ -178,7 +178,7 @@ u32 BattleEv_DispatchQueued(void);
 u32 BattleEvPush(u32 opcode, u32 operand);
 s32 BattleEffectDeadCheck(s32 effect);
 s32 BattleTargetExec(struct BattlePlan *plan, s32 slot);
-u32 Ability_CheckStatusOrSpecialId(s32 abilityId);
+u32 Ability_IsPsynergy(s32 abilityId);
 s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
                                   s32 retry);
 void Dma_StopAllThenRunHook(void);

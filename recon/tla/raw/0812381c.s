@@ -1851,7 +1851,7 @@ Func_0812381c:
 	b .L_08124772
 .L_0812473c:
 	adds r0, r7, #0
-	bl Ability_CheckStatusOrSpecialId
+	bl Ability_IsPsynergy
 	cmp r0, #0
 	beq .L_0812474e
 	mov r1, r11

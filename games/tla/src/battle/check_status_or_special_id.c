@@ -9,7 +9,7 @@
 // Return 1 for PP-consuming abilities; Psy Drain returns 1 regardless of PP.
 // abilityId: ability ID.
 //--------------------------------------------------------------------------
-u32 Ability_CheckStatusOrSpecialId(s32 abilityId) {
+u32 Ability_IsPsynergy(s32 abilityId) {
   u8 pp;
 
   if (abilityId == 126) // Psy Drain.

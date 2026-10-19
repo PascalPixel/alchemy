@@ -32,7 +32,7 @@ Resource_DirectoryTable:
 	resource WindowTiles, Ui_WindowTiles
 	resource , UiText_SmallFont
 	resource ClockDigits, Field_ClockDigits
-	resource , Title_ScreenPicture
+	resource TitleScreenPicture, Title_ScreenPicture
 	resource , Title_IntroGraphicsC
 	resource Data018, Resource_Data018
 	resource , Title_IntroLighthousePicture
@@ -42,7 +42,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data01D
 	resource , Resource_Data01E
 	resource , Resource_Data01F
-	resource , Title_NintendoLogo
+	resource NintendoLogo, Title_NintendoLogo
 	resource , Title_CamelotLogo
 	resource LogoOnBlack, Title_LogoOnBlackPicture
 	resource Data023, Resource_Data023

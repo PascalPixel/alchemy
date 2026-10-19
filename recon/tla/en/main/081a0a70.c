@@ -1,7 +1,10 @@
-// Near miss: differ 10 of 152. The one-pass block (found by a greedy device
-// search) moves one load; the remaining swaps put the native's pool loads of
-// the OAM attribute words ahead of 0x300's split constant in each loop's
-// preheader.
+// Near miss: differ 2 of 152 (was 10 with the one-pass block on the table
+// store). Pinning the table cell to r5 and each loop's OAM attribute word to
+// r0 behind a volatile barrier issues the native's pool loads first. Left: the
+// grid loop's preheader, where the native loads 0x40004000 (ldr r3, then r10)
+// between 16's movs and its copy to lr; a forced temporary for the word loads
+// it first but swaps r2 and r3 (differ 8), a pin to r10 the same, an explicit
+// x += 8 column worse (differ 45). Three permuter minutes found nothing.
 #include "types.h"
 #include "mem.h"
 #include "dma.h"
@@ -30,11 +33,12 @@ void DisplayScroll_InitObjectTable(void) {
   u32 i;
   u32 j;
 
-  do {
-    *(void **)((u8 *)&gDisplayScroll_Objects) =
-        Runtime_BumpAllocateAlternatePool(128 *
-                                          sizeof(struct DisplayScrollObject));
-  } while (0);
+  void *objects =
+      Runtime_BumpAllocateAlternatePool(128 * sizeof(struct DisplayScrollObject));
+  register void **cell asm("r5") = (void **)&gDisplayScroll_Objects;
+
+  __asm__ __volatile__("" : "+l"(cell));
+  *cell = objects;
   fill = 0;
   Dma_Set((void *)&fill, (void *)0x06010000, 0x85001800,
           (volatile u32 *)0x040000d4);
@@ -42,27 +46,42 @@ void DisplayScroll_InitObjectTable(void) {
   Dma_Set((void *)&fill, (void *)0x06016000, 0x85000040,
           (volatile u32 *)0x040000d4);
 
-  entry = *(u32 **)((u8 *)&gDisplayScroll_Objects);
+  entry = *(u32 **)cell;
+  {
+    register u32 attr asm("r0") = 0x80004000;
+
+    __asm__ __volatile__("" : "+l"(attr));
   for (i = 0; i < 8; i++) {
     u32 *q = entry;
 
-    *q++ = (i << 21) | 0x80004000;
+    *q++ = (i << 21) | attr;
     *q = 0x300;
     entry += 2;
   }
-  for (i = 0; i < 8; i++) {
-    u32 *q = entry;
-
-    *q++ = (i << 21) | 0x80004088;
-    *q = 0x300;
-    entry += 2;
   }
-  for (i = 0; i < 8; i++) {
-    u32 *q = entry;
+  {
+    register u32 attr asm("r0") = 0x80004088;
 
-    *q++ = (i << 21) | 0x40004098;
-    *q = 0x300;
-    entry += 2;
+    __asm__ __volatile__("" : "+l"(attr));
+    for (i = 0; i < 8; i++) {
+      u32 *q = entry;
+
+      *q++ = (i << 21) | attr;
+      *q = 0x300;
+      entry += 2;
+    }
+  }
+  {
+    register u32 attr asm("r0") = 0x40004098;
+
+    __asm__ __volatile__("" : "+l"(attr));
+    for (i = 0; i < 8; i++) {
+      u32 *q = entry;
+
+      *q++ = (i << 21) | attr;
+      *q = 0x300;
+      entry += 2;
+    }
   }
   for (i = 0; i < 16; i++) {
     for (j = 0; j < 6; j++) {

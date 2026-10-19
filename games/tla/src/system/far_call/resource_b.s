@@ -14,11 +14,11 @@ Func_081a6008:
 	.global Func_081a6010
 	.thumb_func
 Func_081a6010:
-	overlay_veneer Data_081a7514
+	overlay_veneer Title_NoOpPalette
 	.global Func_081a6018
 	.thumb_func
 Func_081a6018:
-	overlay_veneer Func_081a7518
+	overlay_veneer Title_ShowSplashScreen
 	.global Func_081a6020
 	.thumb_func
 Func_081a6020:

@@ -26,7 +26,7 @@ enum LinkPartyPacketSize {
 // name; then receives the opponent's Djinn recovery list. Stops early if a
 // transfer cannot start. Returns how many of the received units are
 // members (a unit sent with side 0 is an empty place).
-s32 UpdateNameEntries(void) {
+s32 LinkBattle_ReceiveParty(void) {
   u16 label[24];
   void *buffer;
   struct BattleUnit *opponent;

@@ -27,7 +27,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void);
 s32 BattleParty_ReconcileDjinnRecovery(void);
 struct BattleSummonState *BattleSummon_UpdateAvailability(void);
 void BattleSummon_ReservedNoOp(void);
-s32 UpdateNameEntries(void);
+s32 LinkBattle_ReceiveParty(void);
 s32 LinkBattle_SendParty(void);
 u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source);
 s32 BattlePres_WaitSync(void);

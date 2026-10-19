@@ -10,7 +10,7 @@ void *Resource_FarCall005(s32);
 
 extern char MsgEnemyLabel;
 
-s32 UpdateNameEntries(void) {
+s32 LinkBattle_ReceiveParty(void) {
   u16 name_text[16];
   void *buffer;
   u8 *name_entry;

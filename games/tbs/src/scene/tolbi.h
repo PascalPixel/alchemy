@@ -12,15 +12,11 @@ extern u8 gWindowWork[];
 #define NULL ((void *)0)
 
 #include "common/colosso_story_flags.h"
+#include "flags.h"
 
-// Tolbi's own flags.
-enum TolbiFlag {
-  FLAG_TOLBI_SPROUT_GROWN = 0x200,  // the sprout by the spring has grown
-  FLAG_TOLBI_PUDDLE_FROZEN = 0x201, // the puddle by the spring is frozen
-  FLAG_TOLBI_CORN_GIVEN = 0x8bf,    // the snack vendor gave away her corn
-  FLAG_TOLBI_SEARCHERS_MET = 0x8c0, // the soldiers asked about Babi
-  FLAG_TOLBI_SPRING_OPENED = 0x8c1, // the gambler let the party go first
-};
+// Scene flags: FLAG_SCENE_TEMP_00 is set once Growth has raised the sprout,
+// FLAG_SCENE_TEMP_01 once Frost has frozen the puddle; both reset when the
+// party leaves the town.
 
 // Actors, numbered in the order of the placement table from 8.
 enum TolbiActor {
@@ -30,6 +26,15 @@ enum TolbiActor {
   TOLBI_OLDER_BROTHER = 16,
   TOLBI_YOUNGER_SIBLING = 17,
   TOLBI_SNACK_VENDOR = 19,
+  // A family at the festival: the father ("the wife doesn't go in for that
+  // sort of thing"), the mother and their child, who cries for sweets ("Mom,
+  // you said you were all out of money").
+  TOLBI_FATHER = 24,
+  TOLBI_MOTHER = 25,
+  TOLBI_CRYING_CHILD = 26,
+  // Sleeps under the archway during the festival; on finals day he sells
+  // seats ("Today is a big day for us scalpers").
+  TOLBI_SCALPER = 27,
   TOLBI_GAMBLER = 28,
   TOLBI_SOLDIER_A = 29,
   TOLBI_SOLDIER_B = 30,

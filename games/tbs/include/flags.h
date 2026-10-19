@@ -70,6 +70,11 @@
 #define FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE 0x9a2
 #define FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED 0x9a5
 
+// Tolbi
+#define FLAG_TOLBI_CORN_GIVEN 0x8bf    // the snack vendor gave away her corn
+#define FLAG_TOLBI_SEARCHERS_MET 0x8c0 // the soldiers asked about Babi
+#define FLAG_TOLBI_SPRING_OPENED 0x8c1 // the gambler let the party go first
+
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
 #define FLAG_SCENE_TEMP_00 0x200

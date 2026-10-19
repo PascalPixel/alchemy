@@ -41,7 +41,7 @@ extern const s32 Data_0812cacc[];
 struct MotionObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 struct BattleUnit *UnitGet(s32 unitId);
 s32 SummonSlot_RegisterActorSprites(s32 unitId);
-s32 Summon_GetEntryValue(s32 index);
+s32 BattleClass_GetSprite(s32 index);
 s32 Summon_GetEntryFlag1Field(s32 index);
 s32 BattleUnit_LookupWeaponValueByClass(s32 unitId);
 s32 Inventory_GetEquippedItemFar(struct BattleUnit *unit, s32 slot);
@@ -67,7 +67,7 @@ void BattleObjMake(struct TlaBattleObj *actor, s32 unitId, s32 x, s32 y) {
   registeredSprite = SummonSlot_RegisterActorSprites(unitId);
 
   if (unit->classIndex == 0) {
-    sprite = Summon_GetEntryValue(unit->enemyId);
+    sprite = BattleClass_GetSprite(unit->enemyId);
     if (registeredSprite == 0)
       palette = Summon_GetEntryFlag1Field(unit->enemyId);
     else

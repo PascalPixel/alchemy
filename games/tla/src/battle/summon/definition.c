@@ -9,7 +9,7 @@ u32 Summon_GetLayoutKind(s32 index) {
   return kind;
 }
 
-s32 Summon_GetEntryValue(s32 index) {
+s32 BattleClass_GetSprite(s32 index) {
   if ((u32)index > 386)
     return gSummon_EntryTable[0].animation;
   return gSummon_EntryTable[index].animation;

@@ -43,7 +43,7 @@ BattleObjMake:
 	lsls r5, r5, #1
 	add r5, r10
 	ldrh r0, [r5]
-	bl Summon_GetEntryValue
+	bl BattleClass_GetSprite
 	adds r1, r0, #0
 	cmp r6, #0
 	bne .L_0811a81a

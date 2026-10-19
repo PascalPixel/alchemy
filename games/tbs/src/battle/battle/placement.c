@@ -40,7 +40,7 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   // The sprite: an enemy's from its class, a party member's by character;
   // enemies use the second palette.
   if (unit->classIndex == 0) {
-    sprite = Summon_GetEntryValue(unit->classId);
+    sprite = BattleClass_GetSprite(unit->classId);
     if (registeredSprite == 0)
       palette = Summon_GetEntryFlag1Field(unit->classId);
     else

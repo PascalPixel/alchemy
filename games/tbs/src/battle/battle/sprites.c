@@ -72,7 +72,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unitId) {
 
   result.halves[0] = 0;
   result.halves[1] = 0;
-  sprite = Summon_GetEntryValue(unit->classId);
+  sprite = BattleClass_GetSprite(unit->classId);
   spritePart = result.value;
   do {
     s32 slot;

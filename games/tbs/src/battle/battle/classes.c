@@ -18,7 +18,7 @@ u32 Summon_GetLayoutKind(s32 index) {
 
 // Returns the enemy-class sprite animation, using row zero for an invalid
 // class.
-s32 Summon_GetEntryValue(s32 index) {
+s32 BattleClass_GetSprite(s32 index) {
   if (index < 0 || index > ENEMY_CLASS_LAST)
     return gSummon_EntryTable[0].animation;
   return gSummon_EntryTable[index].animation;

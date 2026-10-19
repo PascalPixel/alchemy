@@ -12,7 +12,7 @@ extern u8 Data_02018000[];
 
 struct BattleUnit *UnitGet(s32 unit);
 s32 BattleClass_IsSmall(s32 index);
-s32 Summon_GetEntryValue(s32 index);
+s32 BattleClass_GetSprite(s32 index);
 s32 Summon_GetEntryFlag1Field(s32 index);
 s32 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 
@@ -39,7 +39,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unit) {
 
   result.halves[0] = 0;
   result.halves[1] = 0;
-  spriteValue = Summon_GetEntryValue(actor->enemyId);
+  spriteValue = BattleClass_GetSprite(actor->enemyId);
   pass = result.value;
   do {
     s32 slot;

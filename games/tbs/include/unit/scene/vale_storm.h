@@ -4,12 +4,12 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *ValeStorm_GetEntrances(void);
-s32 SceneData_ReturnZero(void);
-u8 *ValeStorm_GetExits(void);
-u8 *ValeStorm_GetPlacements(void);
-u8 *ValeStorm_GetEvents(void);
-s32 FieldScene_RunFlagGatedActorSetup(void);
+struct SceneEntrance *ValeStorm_GetEntrances(void);
+struct SceneRegion *ValeStorm_GetRegions(void);
+u32 *ValeStorm_GetExits(void);
+struct ScenePlacement *ValeStorm_GetPlacements(void);
+struct SceneEvent *ValeStorm_GetEvents(void);
+s32 ValeStorm_Initialize(void);
 extern u8 gValeStorm_FrameModes[];
 extern s32 gValeStorm_ActorTwentyScript[];
 extern s32 gValeStorm_ActorTwentyTwoScriptA[];
@@ -33,11 +33,11 @@ extern s32 gValeStorm_GatherPath22[];
 extern s32 gValeStorm_LookAroundScript[];
 extern s32 gValeStorm_ActorEightScript[];
 extern s32 gValeStorm_ActorNineteenRiseScript[];
-extern struct SceneEntrance gValeStorm_SceneTable0[];
-extern u32 gValeStorm_SceneTable1[];
-extern struct ScenePlacement gValeStorm_SceneTable2[];
-extern struct ScenePlacement gValeStorm_LastObjectCall[];
-extern struct SceneEvent gValeStorm_SceneTable3[];
+extern struct SceneEntrance gValeStorm_Entrances[];
+extern u32 gValeStorm_Exits[];
+extern struct ScenePlacement gValeStorm_Placements[];
+extern struct ScenePlacement gValeStorm_BoulderWatchers[];
+extern struct SceneEvent gValeStorm_Events[];
 extern u16 gValeStorm_CellSteps0[];
 extern u16 gValeStorm_CellSteps1[];
 extern u16 gValeStorm_CellSteps2[];

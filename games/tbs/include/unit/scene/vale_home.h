@@ -5,11 +5,11 @@
 #include "field_scene.h"
 
 struct SceneEntrance *ValeHome_GetEntrances(void);
-s32 ValeHome_GetDefaultResult(void);
-u32 *ValeHome_SelectExits(void);
-struct ScenePlacement *ValeHome_SelectPlacements(void);
-struct SceneEvent *ValeHome_SelectEvents(void);
-s32 ValeHome_RestoreEntryState(void);
+struct SceneRegion *ValeHome_GetRegions(void);
+u32 *ValeHome_GetExits(void);
+struct ScenePlacement *ValeHome_GetPlacements(void);
+struct SceneEvent *ValeHome_GetEvents(void);
+s32 ValeHome_Initialize(void);
 extern u32 gValeHome_Actor22ActionsHead[];
 extern s32 gValeHome_Actor22Actions[];
 extern s32 gValeHome_Actor24Actions[];
@@ -28,18 +28,18 @@ extern s32 gValeHome_Actor21Actions[];
 extern s32 gValeHome_Actor17Actions[];
 extern s32 gValeHome_LeaderStepActions[];
 extern s32 gValeHome_Actor25StepActions[];
-extern struct SceneEntrance gValeHomeEntrances[];
-extern u32 gValeHomeExits[];
-extern u32 gValeHomeExitsFlag834[];
-extern struct ScenePlacement gValeHomePlacements[];
-extern struct ScenePlacement gValeHomePlacementsFlag834[];
-extern struct ScenePlacement gValeHomePlacementsEntrance12[];
-extern struct ScenePlacement gValeHomePlacementsFlag87a[];
-extern struct SceneEvent gValeHomeEvents[];
-extern struct SceneEvent gValeHomeEventsFlag834[];
-extern struct SceneEvent gValeHomeEventsEntrance12[];
-extern struct SceneEvent gValeHomeEventsAfterLeaving[];
-extern struct SceneEvent gValeHomeEventsFlag87a[];
-extern u16 gValeHome_CellSteps[];
+extern struct SceneEntrance gValeHome_Entrances[];
+extern u32 gValeHome_Exits[];
+extern u32 gValeHome_StormExits[];
+extern struct ScenePlacement gValeHome_Placements[];
+extern struct ScenePlacement gValeHome_StormPlacements[];
+extern struct ScenePlacement gValeHome_DeparturePlacements[];
+extern struct ScenePlacement gValeHome_PlacementsAfterKalay[];
+extern struct SceneEvent gValeHome_Events[];
+extern struct SceneEvent gValeHome_StormEvents[];
+extern struct SceneEvent gValeHome_DepartureEvents[];
+extern struct SceneEvent gValeHome_EventsAfterLeaving[];
+extern struct SceneEvent gValeHome_EventsAfterKalay[];
+extern u16 gValeHome_DoorOpens[];
 
 #endif

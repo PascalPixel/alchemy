@@ -33,9 +33,11 @@
 #include "global_cells.h"
 #include "vram_tab.h"
 #include "fixed_math.h"
+#include "flags.h"
+#include "songs.h"
 
 // Forward declarations.
-static void Scene_DoraSendsIsaacToThePlaza(void);
+static void Event_DoraSendsIsaacToThePlaza(void);
 static void ValeStorm_SetStormCellAttributes(void);
 static void ValeStorm_ApplyRock12Collision(void);
 static void ValeStorm_ApplyRock13Collision(void);
@@ -55,8 +57,6 @@ static void ValeStorm_SpawnEffectPair(struct FieldActor *parent);
 static void ValeStorm_UpdateBoulderSceneEffects(void);
 static void ValeStorm_CycleBoulderPalette(void);
 static void ValeStorm_CopyLeaderSpritePriority(void);
-
-enum { FLAG_BOULDER_FELL = 0x838 };
 
 enum { STORM_CALLBACK_PRIORITY = 3200 };
 
@@ -88,30 +88,35 @@ ValeStorm_RerollHeadingOnCountdown(struct ScriptInterpreter *interpreter) {
 // Shared source is included here in ROM order.
 #include "common/object_pulse.h"
 
-// Return the storm scene entrance table.
-u8 *ValeStorm_GetEntrances(void) { return gValeStorm_SceneTable0; }
+// Return the entrances to the paths outside on the stormy night.
+struct SceneEntrance *ValeStorm_GetEntrances(void) {
+  return gValeStorm_Entrances;
+}
 
-// Return the scene hook result without additional work.
-s32 SceneData_ReturnZero(void) { return 0; }
+// The paths have no scene regions.
+struct SceneRegion *ValeStorm_GetRegions(void) { return NULL; }
 
 // Return the storm scene exit table.
-u8 *ValeStorm_GetExits(void) { return gValeStorm_SceneTable1; }
+u32 *ValeStorm_GetExits(void) { return gValeStorm_Exits; }
 
 // Return the storm scene actor placements.
-u8 *ValeStorm_GetPlacements(void) { return gValeStorm_SceneTable2; }
+struct ScenePlacement *ValeStorm_GetPlacements(void) {
+  return gValeStorm_Placements;
+}
 
 // Return the storm scene event bindings.
-u8 *ValeStorm_GetEvents(void) { return gValeStorm_SceneTable3; }
+struct SceneEvent *ValeStorm_GetEvents(void) { return gValeStorm_Events; }
 
-// Remember and apply the alternate path collision cells.
-static void ValeStorm_SetPathCellOverride(void) {
-  Engine_GameFlagSet(0x210);
+// Walking onto the upper path: its collision cells change, remembered in
+// FLAG_SCENE_TEMP_10.
+static void Event_SetPathCellOverride(void) {
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_10);
   Map_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
-// Restore the path collision cells and clear the saved override.
-static void ValeStorm_ClearPathCellOverride(void) {
-  Engine_GameFlagClear(0x210);
+// Walking off the upper path restores its collision cells.
+static void Event_ClearPathCellOverride(void) {
+  Engine_GameFlagClear(FLAG_SCENE_TEMP_10);
   Map_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
@@ -120,7 +125,7 @@ static void ValeStorm_ClearPathCellOverride(void) {
 
 // Animate the doorway before taking backdrop exit 11.
 UNUSED static void ValeStorm_OpenBackdropExit11(void) {
-  Engine_AudioPlayCue(0x9E);
+  Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps0, 45, 11);
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 257, 420);
   Engine_EventWait(3);
@@ -128,50 +133,53 @@ UNUSED static void ValeStorm_OpenBackdropExit11(void) {
 }
 
 // Play the exit cue and take backdrop exit 1.
-static void ValeStorm_OpenExit1(void) {
-  Engine_AudioPlayCue(0x7B);
+static void Event_LeaveByExit1(void) {
+  Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropExit(1);
 }
 
 // Play the exit cue and take backdrop exit 3.
-static void ValeStorm_OpenExit3(void) {
-  Engine_AudioPlayCue(0x7B);
+static void Event_LeaveByExit3(void) {
+  Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropExit(3);
 }
 
 // Play the exit cue and take backdrop exit 4.
-static void ValeStorm_OpenExit4(void) {
-  Engine_AudioPlayCue(0x7B);
+static void Event_LeaveByExit4(void) {
+  Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropExit(4);
 }
 
 // Let Garet leave before taking backdrop exit 2.
-static void ValeStorm_OpenExit2(void) {
-  Engine_AudioPlayCue(0x7B);
-  if (Engine_GameFlagIsSet(0x841) != 0 && Engine_GameFlagIsSet(0x842) == 0) {
+static void Event_LeaveByExit2(void) {
+  Engine_AudioPlayCue(SE_MAP_EXIT);
+  if (Engine_GameFlagIsSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN) != 0 &&
+      Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_LEFT) == 0) {
     ValeStorm_GaretLeavesIsaac();
   }
   Vale_RequestBackdropExit(2);
 }
 
 // Animate the doorway and take backdrop exit 5.
-static void ValeStorm_OpenExit5(void) {
-  Engine_AudioPlayCue(0x9E);
+static void Event_LeaveByExit5(void) {
+  Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps1, 54, 32);
   Engine_ActorWalkTo(0, 406, 727);
   Engine_EventWait(3);
   Vale_RequestBackdropExit(5);
 }
 
-// Meet the villager on the first visit, then allow backdrop exit 6.
-static void ValeStorm_OpenExit6(void) {
-  if (GameFlag_IsSet(0x206) == 0) {
-    Event_PlayCue(158);
+// Isaac's first time at the door of exit 6: a villager runs out and shoves
+// him ("Huh? Isaac?"); afterwards the door opens as usual.
+static void Event_LeaveByExit6(void) {
+  if (GameFlag_IsSet(FLAG_SCENE_TEMP_06) == 0) {
+    Event_PlayCue(SE_DOOR_OPEN);
     Map_AnimateCells(gValeStorm_CellSteps2, 45, 39);
   }
-  if (GameFlag_IsSet(0x835) == 0 && GameFlag_IsSet(0x831) == 0) {
+  if (GameFlag_IsSet(FLAG_VALE_STORM_BUMPED_INTO_VILLAGER) == 0 &&
+      GameFlag_IsSet(FLAG_VALE_STORM_SECOND_ROCK_FELL) == 0) {
     ValeStorm_MeetVillagerAtExit6();
-    GameFlag_Set(0x206);
+    GameFlag_Set(FLAG_SCENE_TEMP_06);
   } else {
     Actor_WalkTo(ACTOR_PARTY_LEADER, 262, 805);
     Engine_EventWait(3);
@@ -180,9 +188,9 @@ static void ValeStorm_OpenExit6(void) {
 }
 
 // Animate the doorway and take backdrop exit 7.
-static void ValeStorm_OpenExit7(void) {
-  if (Engine_GameFlagIsSet(0x205) == 0) {
-    Engine_AudioPlayCue(0x9E);
+static void Event_LeaveByExit7(void) {
+  if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_05) == 0) {
+    Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gValeStorm_CellSteps1, 50, 44);
   }
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 340, 888);
@@ -191,8 +199,8 @@ static void ValeStorm_OpenExit7(void) {
 }
 
 // Animate the doorway and take backdrop exit 8.
-static void ValeStorm_OpenExit8(void) {
-  Engine_AudioPlayCue(158);
+static void Event_LeaveByExit8(void) {
+  Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps2, 49, 69);
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 326, 1126);
   Engine_EventWait(3);
@@ -200,8 +208,8 @@ static void ValeStorm_OpenExit8(void) {
 }
 
 // Animate the doorway and take backdrop exit 9.
-static void ValeStorm_OpenExit9(void) {
-  Engine_AudioPlayCue(158);
+static void Event_LeaveByExit9(void) {
+  Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps3, 52, 76);
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 374, 1238);
   Engine_EventWait(3);
@@ -209,8 +217,8 @@ static void ValeStorm_OpenExit9(void) {
 }
 
 // Animate the doorway and take backdrop exit 10.
-static void ValeStorm_OpenExit10(void) {
-  Event_PlayCue(158);
+static void Event_LeaveByExit10(void) {
+  Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_CellSteps1, 35, 74);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 1206);
   Engine_EventWait(3);
@@ -218,8 +226,8 @@ static void ValeStorm_OpenExit10(void) {
 }
 
 // Animate the doorway and take backdrop exit 12.
-static void ValeStorm_OpenExit12(void) {
-  Event_PlayCue(158);
+static void Event_LeaveByExit12(void) {
+  Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_CellSteps1, 35, 73);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 1206);
   Engine_EventWait(3);
@@ -227,36 +235,38 @@ static void ValeStorm_OpenExit12(void) {
 }
 
 // Animate the doorway and take backdrop exit 13.
-static void ValeStorm_OpenExit13(void) {
-  Event_PlayCue(158);
+static void Event_LeaveByExit13(void) {
+  Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_CellSteps2, 38, 72);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 146, 1182);
   Engine_EventWait(3);
   Vale_RequestBackdropExit(13);
 }
 
-// Restore storm damage and actors from the saved scene flags.
-s32 FieldScene_RunFlagGatedActorSetup(void) {
-  BattleFx_SetQueuedSoundAndPlay(0xAA);
+// Arriving on the stormy night: restore the fallen rocks, the river scene and
+// the Boulder from their flags, start the storm, and play the scene with Dora
+// and Kyle on the first arrival by entrance 15.
+s32 ValeStorm_Initialize(void) {
+  BattleFx_SetQueuedSoundAndPlay(SE_170);
   Engine_ActorSetPosition(23, 0, 0);
-  if (Engine_GameFlagIsSet(0x109) != 0) {
-    Engine_GameFlagClear(0x205);
-    Engine_GameFlagClear(0x206);
+  if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
+    Engine_GameFlagClear(FLAG_SCENE_TEMP_05);
+    Engine_GameFlagClear(FLAG_SCENE_TEMP_06);
   }
   // Restore the rocks that have already fallen.
-  if (Engine_GameFlagIsSet(0x830) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_STORM_FIRST_ROCK_FELL) != 0) {
     Actor_SetPosition(11, PIXELS(334), PIXELS(932));
     ValeStorm_SetStormCellAttributes();
   }
-  if (Engine_GameFlagIsSet(0x831) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_STORM_SECOND_ROCK_FELL) != 0) {
     Actor_SetPosition(12, PIXELS(224), PIXELS(872));
     ValeStorm_ApplyRock12Collision();
   }
-  if (Engine_GameFlagIsSet(0x832) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_STORM_THIRD_ROCK_FELL) != 0) {
     Actor_SetPosition(13, PIXELS(64), PIXELS(703));
     ValeStorm_ApplyRock13Collision();
   }
-  if (Engine_GameFlagIsSet(0x833) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_STORM_FOURTH_ROCK_FELL) != 0) {
     Actor_SetPosition(14, PIXELS(432), PIXELS(1147));
     ValeStorm_ApplyRock14Collision();
   }
@@ -268,7 +278,7 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
   Object_GetById(16)->collisionFlags |= 4;
   Object_GetById(17)->collisionFlags |= 4;
   Object_GetById(18)->collisionFlags |= 4;
-  if (Engine_GameFlagIsSet(0x837) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_JOINED) != 0) {
     Engine_ActorSetPosition(22, 0, 0);
   }
   {
@@ -278,13 +288,13 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
     actor->scaleX = 2 * Q16_ONE;
     actor->scaleY = 2 * Q16_ONE;
   }
-  if (Engine_GameFlagIsSet(FLAG_BOULDER_FELL) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_BOULDER_FELL) != 0) {
     Actor_SetPosition(19, PIXELS(114), PIXELS(333));
   } else {
     Actor_SetActionScript(19, gValeStorm_ActorNineteenScript);
   }
   // Restore the riverbank cast at the saved stage of the storm.
-  if (Engine_GameFlagIsSet(0x841) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN) != 0) {
     s32 facing;
     const s32 *table;
     ValeStorm_RebuildRiverbank();
@@ -339,10 +349,10 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
     Engine_ActorSetPosition(25, 0, 0);
     Engine_ActorSetPosition(23, 0, 0);
     Engine_ActorSetPosition(19, 0, 0);
-    if (Engine_GameFlagIsSet(0x842) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_LEFT) != 0) {
       Engine_ActorSetPosition(22, 0, 0);
     }
-  } else if (Engine_GameFlagIsSet(0x83a) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_VALE_STORM_SAW_RIVER_RESCUE) != 0) {
     const s32 *table;
     Actor_SetPosition(10, PIXELS(192), PIXELS(1214));
     Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
@@ -384,14 +394,15 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
     Engine_ActorSetPosition(17, 0, 0);
     Engine_ActorSetPosition(18, 0, 0);
   }
-  if (gGameState.entrance != 15 || Engine_GameFlagIsSet(0x87b) != 0) {
+  if (gGameState.entrance != 15 ||
+      Engine_GameFlagIsSet(FLAG_VALE_STORM_SENT_TO_PLAZA) != 0) {
     Effect_SoundAndFlash();
     FieldFx_StartLightning();
   }
-  if (Engine_GameFlagIsSet(0x210) != 0) {
-    ValeStorm_SetPathCellOverride();
+  if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_10) != 0) {
+    Event_SetPathCellOverride();
   }
-  Engine_GameFlagSet(0x834);
+  Engine_GameFlagSet(FLAG_VALE_STORM);
   Map_CopyCellAttributes(29, 24, 1, 2, 26, 46);
   Map_CopyCellAttributes(29, 25, 1, 1, 27, 46);
   Map_CopyCellAttributes(29, 25, 1, 1, 28, 46);
@@ -407,26 +418,27 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
     Engine_ActorSetSpriteFlags(actor, 0);
   }
   Engine_TaskWait(1);
-  if (Engine_GameFlagIsSet(0x87b) == 0 && gGameState.entrance == 15) {
-    Scene_DoraSendsIsaacToThePlaza();
+  if (Engine_GameFlagIsSet(FLAG_VALE_STORM_SENT_TO_PLAZA) == 0 &&
+      gGameState.entrance == 15) {
+    Event_DoraSendsIsaacToThePlaza();
     return 0;
   }
   Engine_ActorSetAnimation(23, 7);
-  if (Engine_GameFlagIsSet(0x837) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_JOINED) == 0) {
     Engine_EventBegin();
     Actor_SetAttachedEffect(22, 0x101);
     Actor_SetPosition(22, PIXELS(400), PIXELS(611));
     Actor_SetPosition(21, PIXELS(424), PIXELS(627));
     Actor_WalkTo(22, 400, 619);
     Actor_WalkToAndWait(21, 424, 619);
-    Engine_ActorSetAnimation(21, 2);
+    Engine_ActorSetAnimation(21, ANIM_WALK);
     Engine_ActorSetAnimation(22, 5);
     Engine_EventEnd();
   } else {
     Engine_EventBegin();
     Actor_SetPosition(21, PIXELS(424), PIXELS(627));
     Actor_WalkToAndWait(21, 424, 619);
-    Engine_ActorSetAnimation(21, 3);
+    Engine_ActorSetAnimation(21, ANIM_NOD);
     Engine_EventEnd();
   }
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -437,8 +449,9 @@ s32 FieldScene_RunFlagGatedActorSetup(void) {
   return 0;
 }
 
-// Play the opening conversation with Dora and Kyle.
-static void Scene_DoraSendsIsaacToThePlaza(void) {
+// Dora and Kyle come out into the storm with Isaac ("Kyle... Will they be able
+// to stop the Boulder?") and send him to the plaza while they go to help.
+static void Event_DoraSendsIsaacToThePlaza(void) {
   s32 message;
 
   Engine_EventBegin();
@@ -455,7 +468,7 @@ static void Scene_DoraSendsIsaacToThePlaza(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   FieldFx_ResumeLightning();
-  Event_PlayCue(158);
+  Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_CellSteps1, 50, 44);
   Actor_SetAttachedEffect(22, 0x101);
   Actor_SetSpeed(ACTOR_DORA, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -469,7 +482,7 @@ static void Scene_DoraSendsIsaacToThePlaza(void) {
   Actor_WalkTo(ACTOR_PARTY_LEADER, 342, 890);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 342, 905);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 318, 905);
-  Engine_ActorSetAnimation(ACTOR_DORA, 1);
+  Engine_ActorSetAnimation(ACTOR_DORA, ANIM_STAND);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 60);
   message = MsgValeKyleAbleStop;
@@ -477,16 +490,16 @@ static void Scene_DoraSendsIsaacToThePlaza(void) {
   Event_ShowMessage(ACTOR_DORA, 0);
   Actor_WalkToAndWait(ACTOR_KYLE, 294, 838);
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(ACTOR_KYLE, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_KYLE, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_KYLE, 0);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_DORA, 0);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_KYLE, FACING_SOUTH, 0);
   Event_ShowMessageAndWait(ACTOR_KYLE, 0, 20);
-  Actor_ShowEmote(ACTOR_DORA, 0x101, 20);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 1, 20);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 10);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_KYLE, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_KYLE, ANIM_SHAKE_HEAD);
   Event_ShowMessage(ACTOR_KYLE, 0);
   Actor_SetAttachedEffect(ACTOR_DORA, 0x102);
   Engine_EventWait(30);
@@ -498,7 +511,7 @@ static void Scene_DoraSendsIsaacToThePlaza(void) {
   Event_ShowMessage(ACTOR_DORA, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_KYLE, 2);
   Event_ShowMessage(ACTOR_KYLE, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST, 10);
   Engine_EventSetMessage((message + 8));
@@ -510,27 +523,28 @@ static void Scene_DoraSendsIsaacToThePlaza(void) {
     Engine_EventSetMessage(MsgValeBigBoyWhy);
     Event_OpenMessage(ACTOR_DORA, 0);
   }
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Engine_EventSetMessage(MsgValeKnowWayGo);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetSpeed(ACTOR_KYLE, PIXELS(3) / 2, PIXELS(3) / 4);
   Actor_WalkTo(ACTOR_KYLE, 297, 750);
   Engine_EventWait(10);
   Actor_WalkToAndWait(ACTOR_DORA, 297, 750);
   Actor_SetPosition(ACTOR_DORA, 0, 0);
   Actor_SetPosition(ACTOR_KYLE, 0, 0);
-  Engine_ActorSetAnimation(ACTOR_KYLE, 1);
-  Engine_ActorSetAnimation(21, 2);
+  Engine_ActorSetAnimation(ACTOR_KYLE, ANIM_STAND);
+  Engine_ActorSetAnimation(21, ANIM_WALK);
   Engine_ActorSetAnimation(22, 5);
   GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
-  GameFlag_Set(0x87b);
-  GameFlag_Set(0x205);
+  GameFlag_Set(FLAG_VALE_STORM_SENT_TO_PLAZA);
+  GameFlag_Set(FLAG_SCENE_TEMP_05);
   Engine_EventEnd();
 }
 
-// Drop rock 11 into place and let Garet comment on the blocked path.
-static void ValeStorm_DropRock11(void) {
+// Walking past: rock 11 falls across the path, and Garet, once with Isaac,
+// says they cannot get around it.
+static void Event_Rock11Falls(void) {
   struct FieldActor *rock;
   struct FieldActor *leader;
   s32 targetHeight;
@@ -540,13 +554,13 @@ static void ValeStorm_DropRock11(void) {
   if (GameFlag_IsSet(0x310) != 0) {
   } else {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x830) == 0) {
+    if (GameFlag_IsSet(FLAG_VALE_STORM_FIRST_ROCK_FELL) == 0) {
       rock = Object_GetById(11);
       rockSprite = rock->sprite;
       Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-      Engine_AudioPlayCue(141);
+      Engine_AudioPlayCue(SE_141);
       Engine_TaskWait(40);
-      Engine_AudioPlayCue(145);
+      Engine_AudioPlayCue(SE_145);
       rock->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       rockSprite->image.priority = 1;
       Actor_SetPosition(11, PIXELS(473), PIXELS(932));
@@ -560,16 +574,16 @@ static void ValeStorm_DropRock11(void) {
       rockSprite->image.priority = 3;
       rock->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       Engine_EventWait(40);
-      Engine_AudioPlayCue(0x121);
+      Engine_AudioPlayCue(SE_289);
       Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapWaitWorkValuesBelow256();
       BattleFx_PlayQueuedSound();
-      Engine_GameFlagSet(0x830);
+      Engine_GameFlagSet(FLAG_VALE_STORM_FIRST_ROCK_FELL);
     }
     ValeStorm_SetStormCellAttributes();
     Engine_GameFlagSet(0x310);
-    if (Engine_GameFlagIsSet(0x837) != 0) {
-      if (Engine_GameFlagIsSet(0x841) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_JOINED) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN) == 0) {
         if (Engine_GameFlagIsSet(0x30c) == 0) {
           leader = Object_GetById(0);
           if (leader->y.fixed > PIXELS(128)) {
@@ -596,8 +610,8 @@ static void ValeStorm_SetStormCellAttributes(void) {
   Map_CopyCellAttributes(28, 20, 1, 1, 20, 57);
 }
 
-// Drop rock 12 down the path and update its collision cells.
-static void ValeStorm_DropRock12(void) {
+// Walking past: rock 12 falls down the path.
+static void Event_Rock12Falls(void) {
   struct FieldActor *rock;
   struct FieldActor *leader;
   s32 targetHeight;
@@ -605,12 +619,12 @@ static void ValeStorm_DropRock12(void) {
   if (GameFlag_IsSet(0x311) != 0) {
   } else {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x831) == 0) {
+    if (GameFlag_IsSet(FLAG_VALE_STORM_SECOND_ROCK_FELL) == 0) {
       rock = Object_GetById(12);
       Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-      Engine_AudioPlayCue(141);
+      Engine_AudioPlayCue(SE_141);
       Engine_TaskWait(40);
-      Engine_AudioPlayCue(145);
+      Engine_AudioPlayCue(SE_145);
       Actor_SetPosition(12, PIXELS(381), PIXELS(808));
       rock->speed = PIXELS(3) / 2;
       rock->acceleration = PIXELS(3) / 2;
@@ -624,16 +638,16 @@ static void ValeStorm_DropRock12(void) {
       Engine_ActorSetSpritePriority(12, 2);
       Actor_WalkToAndWait(12, 224, 872);
       Engine_EventWait(40);
-      Engine_AudioPlayCue(0x121);
+      Engine_AudioPlayCue(SE_289);
       Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapWaitWorkValuesBelow256();
       BattleFx_PlayQueuedSound();
-      Engine_GameFlagSet(0x831);
+      Engine_GameFlagSet(FLAG_VALE_STORM_SECOND_ROCK_FELL);
     }
     ValeStorm_ApplyRock12Collision();
     Engine_GameFlagSet(0x311);
-    if (Engine_GameFlagIsSet(0x837) != 0) {
-      if (Engine_GameFlagIsSet(0x841) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_JOINED) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN) == 0) {
         if (Engine_GameFlagIsSet(0x30c) == 0) {
           leader = Object_GetById(0);
           if (leader->y.fixed > PIXELS(128)) {
@@ -663,20 +677,20 @@ static void ValeStorm_ApplyRock12Collision(void) {
   Map_CopyCellAttributes(13, 55, 1, 1, 15, 55);
 }
 
-// Drop rock 13 while preserving the leader sprite priority.
-static void ValeStorm_DropRock13(void) {
+// Walking past: rock 13 falls down the path.
+static void Event_Rock13Falls(void) {
   if (GameFlag_IsSet(0x312) == 0) {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x832) == 0) {
+    if (GameFlag_IsSet(FLAG_VALE_STORM_THIRD_ROCK_FELL) == 0) {
       struct FieldActor *actor = Actor_Get(13);
       struct FieldActor *leader = Actor_Get(ACTOR_PARTY_LEADER);
       u16 priority = leader->sprite->image.priority;
       u8 flags = leader->priorityFlags;
 
       Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-      Event_PlayCue(141);
+      Event_PlayCue(SE_141);
       Engine_TaskWait(40);
-      Event_PlayCue(145);
+      Event_PlayCue(SE_145);
       Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
       Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       Actor_SetPosition(13, 0, PIXELS(703));
@@ -687,19 +701,19 @@ static void ValeStorm_DropRock13(void) {
       actor->bounce = 0x8000;
       Actor_WalkToAndWait(13, 64, 703);
       Engine_EventWait(40);
-      Event_PlayCue(0x121);
+      Event_PlayCue(SE_289);
       Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapWaitWorkValuesBelow256();
       BattleFx_PlayQueuedSound();
-      GameFlag_Set(0x832);
+      GameFlag_Set(FLAG_VALE_STORM_THIRD_ROCK_FELL);
       Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, priority);
       Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       leader->priorityFlags = flags;
     }
     ValeStorm_ApplyRock13Collision();
     GameFlag_Set(0x312);
-    if (GameFlag_IsSet(0x837) != 0) {
-      if (GameFlag_IsSet(0x841) == 0) {
+    if (GameFlag_IsSet(FLAG_VALE_STORM_GARET_JOINED) != 0) {
+      if (GameFlag_IsSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN) == 0) {
         if (GameFlag_IsSet(0x30c) == 0) {
           if (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed <= 0x2b4ffff) {
             ValeStorm_GaretCommentsOnBlockedPath(62, 0x29d);
@@ -724,8 +738,8 @@ static void ValeStorm_ApplyRock13Collision(void) {
   Map_CopyCellAttributes(23, 20, 3, 1, 2, 43);
 }
 
-// Drop rock 14 into place and update its collision cells.
-static void ValeStorm_DropRock14(void) {
+// Walking past: rock 14 falls down the path.
+static void Event_Rock14Falls(void) {
   struct FieldActor *rock;
   struct FieldActor *leader;
   s32 targetHeight;
@@ -733,12 +747,12 @@ static void ValeStorm_DropRock14(void) {
   if (GameFlag_IsSet(0x313) != 0) {
   } else {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x833) == 0) {
+    if (GameFlag_IsSet(FLAG_VALE_STORM_FOURTH_ROCK_FELL) == 0) {
       rock = Object_GetById(14);
       Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-      Engine_AudioPlayCue(141);
+      Engine_AudioPlayCue(SE_141);
       Engine_TaskWait(40);
-      Engine_AudioPlayCue(145);
+      Engine_AudioPlayCue(SE_145);
       Actor_SetPosition(14, PIXELS(474), PIXELS(1147));
       rock->speed = PIXELS(1);
       rock->acceleration = PIXELS(1);
@@ -748,16 +762,16 @@ static void ValeStorm_DropRock14(void) {
       rock->bounce = 0x8000;
       Engine_ActorWalkToAndWait(14, 432, 1147);
       Engine_EventWait(40);
-      Engine_AudioPlayCue(0x121);
+      Engine_AudioPlayCue(SE_289);
       Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapWaitWorkValuesBelow256();
       BattleFx_PlayQueuedSound();
-      Engine_GameFlagSet(0x833);
+      Engine_GameFlagSet(FLAG_VALE_STORM_FOURTH_ROCK_FELL);
     }
     ValeStorm_ApplyRock14Collision();
     Engine_GameFlagSet(0x313);
-    if (Engine_GameFlagIsSet(0x837) != 0) {
-      if (Engine_GameFlagIsSet(0x841) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_JOINED) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN) == 0) {
         if (Engine_GameFlagIsSet(0x30c) == 0) {
           leader = Object_GetById(0);
           if (leader->z.fixed <= 0x479ffff) {
@@ -795,13 +809,13 @@ static void ValeStorm_MeetVillagerAtExit6(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 282, 855);
-  Engine_ActorSetAnimation(20, 1);
+  Engine_ActorSetAnimation(20, ANIM_STAND);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 20, 0);
   BattleFx_PlayQueuedSound();
   Engine_EventWait(30);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Actor_ShowEmote(20, 0x100, 20);
+  Actor_ShowEmote(20, EMOTE_IN_FRONT | 0, 20);
   message = MsgValeHuh;
   Engine_EventSetMessage(message);
   Event_ShowMessage(20, 0);
@@ -811,32 +825,34 @@ static void ValeStorm_MeetVillagerAtExit6(void) {
   Engine_EventSetMessage((message + 4));
   Event_ShowMessageAndWait(20, 0, 20);
   Actor_RunActionScriptAndWait(20, gValeStorm_ActorTwentyScript);
-  GameFlag_Set(0x835);
+  GameFlag_Set(FLAG_VALE_STORM_BUMPED_INTO_VILLAGER);
   Engine_EventEnd();
 }
 
-// Draw attention to Garet struggling with his belongings.
-static void ValeStorm_HearGaretStruggling(void) {
-  if (GameFlag_IsSet(0x836) == 0) {
-    if (GameFlag_IsSet(0x837) == 0) {
+// Isaac hears Garet struggling with his things ("Ugh... Hrnghhh...").
+static void Event_HearGaretStruggling(void) {
+  if (GameFlag_IsSet(FLAG_VALE_STORM_HEARD_GARET) == 0) {
+    if (GameFlag_IsSet(FLAG_VALE_STORM_GARET_JOINED) == 0) {
       Engine_EventBegin();
       Engine_EventSetMessage(MsgValeUghHrnghhh);
       Event_ShowMessageAndWait(22, 0, 20);
-      Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x101, 40);
+      Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 40);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 382, 619);
       Actor_FaceActor(ACTOR_PARTY_LEADER, 22, 0);
       Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
       Engine_EventWait(30);
       Event_ShowMessage(22, 0);
-      GameFlag_Set(0x836);
+      GameFlag_Set(FLAG_VALE_STORM_HEARD_GARET);
       Engine_EventEnd();
     }
   }
 }
 
-// Have Garet call after Isaac if the first conversation is unfinished.
-static void ValeStorm_GaretCallsAfterIsaac(void) {
-  if (Engine_GameFlagIsSet(0x837) == 0 && Engine_GameFlagIsSet(0x836) != 0) {
+// Walking away from him, Garet calls after Isaac, asking whether he will just
+// leave him there.
+static void Event_GaretCallsAfterIsaac(void) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_JOINED) == 0 &&
+      Engine_GameFlagIsSet(FLAG_VALE_STORM_HEARD_GARET) != 0) {
     Engine_EventBegin();
     Engine_ActorRunRepeatedMotion(22, 2);
     Engine_EventWait(20);
@@ -846,9 +862,10 @@ static void ValeStorm_GaretCallsAfterIsaac(void) {
   }
 }
 
-// Discuss leaving belongings behind or the danger from the boulder.
-static void ValeStorm_TalkToGaret(void) {
-  if (GameFlag_IsSet(0x841) != 0) {
+// Talking to Garet: whether to leave his things behind, or, after the river,
+// the Boulder.
+static void Event_TalkToGaret(void) {
+  if (GameFlag_IsSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN) != 0) {
     Engine_EventBegin();
     Actor_FaceActor(22, ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
@@ -857,7 +874,7 @@ static void ValeStorm_TalkToGaret(void) {
     Actor_FaceDirection(22, FACING_NORTHEAST, 10);
     Engine_EventEnd();
   } else {
-    if (GameFlag_IsSet(0x837) == 0) {
+    if (GameFlag_IsSet(FLAG_VALE_STORM_GARET_JOINED) == 0) {
       Engine_EventBegin();
       Engine_EventSetMessage(MsgValeWantDumpStuff);
       ValeStorm_RunCallOutSequence();
@@ -883,19 +900,19 @@ static void ValeStorm_RunCallOutSequence(void) {
   Engine_EventWait(20);
   Engine_EventShowMessageAndWait(22, 0, 40);
   Actor_SetAttachedEffect(22, 0x100);
-  Engine_ActorSetAnimation(21, 3);
-  Engine_ActorSetAnimation(22, 1);
+  Engine_ActorSetAnimation(21, ANIM_NOD);
+  Engine_ActorSetAnimation(22, ANIM_STAND);
   Engine_EventWait(40);
   Engine_ActorFaceActor(22, 0, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(22, 3);
+  Engine_ActorSetAnimationAndWait(22, ANIM_NOD);
   if (agreedToLeaveBelongings != 0) {
     Engine_EventSetMessage(MsgValeKnowRightOk);
   } else {
     Engine_EventSetMessage(MsgValeRightDitchStuff);
   }
   Engine_EventShowMessage(22, 0);
-  Engine_ActorSetAnimation(22, 2);
+  Engine_ActorSetAnimation(22, ANIM_WALK);
   leader = Object_GetById(0);
   if (leader != 0) {
     Engine_ActorSetDestination(22, leader->x.part.pixel, leader->z.part.pixel);
@@ -903,21 +920,21 @@ static void ValeStorm_RunCallOutSequence(void) {
   Engine_ActorWaitForMove(22);
   Engine_ActorSetPosition(22, 0, 0);
   Event_PrepareObjectAndApplyValue(1, 1);
-  Engine_GameFlagSet(0x837);
+  Engine_GameFlagSet(FLAG_VALE_STORM_GARET_JOINED);
 }
 
-// Play the alternate conversation that brings Garet into the party.
-static void ValeStorm_GaretJoinsIsaac(void) {
+// Garet catches up ("Hey! Isaac!") and joins Isaac.
+static void Event_GaretJoinsIsaac(void) {
   struct FieldActor *actor;
   s32 message;
 
-  if (GameFlag_IsSet(0x837) == 0) {
+  if (GameFlag_IsSet(FLAG_VALE_STORM_GARET_JOINED) == 0) {
     Engine_EventBegin();
     Actor_SetAttachedEffect(22, 0x100);
     message = MsgValeHey;
     Engine_EventSetMessage(message);
     Event_ShowMessage(22, 0);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 20);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
     Camera_MoveTo(PIXELS(256), -1, PIXELS(588), 1);
@@ -936,11 +953,11 @@ static void ValeStorm_GaretJoinsIsaac(void) {
     Engine_ActorRunRepeatedMotion(22, 1);
     Engine_EventSetMessage((message + 5));
     Event_ShowMessageAndWait(22, 0, 20);
-    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimationAndWait(22, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(22, ANIM_NOD);
     Event_ShowMessage(22, 0);
     Actor_SetSpeed(22, PIXELS(1), PIXELS(1) / 2);
-    Engine_ActorSetAnimation(22, 2);
+    Engine_ActorSetAnimation(22, ANIM_WALK);
     actor = Object_GetById(ACTOR_PARTY_LEADER);
     if (actor != 0) {
       Actor_SetDestination(22, actor->x.part.pixel, actor->z.part.pixel);
@@ -948,14 +965,14 @@ static void ValeStorm_GaretJoinsIsaac(void) {
     Engine_ActorWaitForMove(22);
     Actor_SetPosition(22, 0, 0);
     Event_PrepareObjectAndApplyValue(1, 1);
-    Engine_ActorSetAnimation(21, 3);
-    GameFlag_Set(0x837);
+    Engine_ActorSetAnimation(21, ANIM_NOD);
+    GameFlag_Set(FLAG_VALE_STORM_GARET_JOINED);
     Engine_EventEnd();
   }
 }
 
-// Have Garet warn Isaac about the path toward Mt. Aleph.
-static void ValeStorm_WarnAboutMtAleph(void) {
+// Garet warns that the path north leads to Mt. Aleph.
+static void Event_WarnAboutMtAleph(void) {
   struct FieldActor *leader;
   struct FieldActor *initialLeader;
 
@@ -976,7 +993,7 @@ static void ValeStorm_WarnAboutMtAleph(void) {
   Engine_EventWait(20);
   Actor_FaceDirection(22, FACING_SOUTH, 0);
   Event_ShowMessage(22, 0);
-  Engine_ActorSetAnimation(22, 2);
+  Engine_ActorSetAnimation(22, ANIM_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(22, leader->x.part.pixel, leader->z.part.pixel);
@@ -1008,8 +1025,8 @@ static void ValeStorm_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   Engine_EventShowMessage(22, 0);
   Engine_ActorRunRepeatedMotion(22, 2);
   Engine_EventShowMessage(22, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-  Engine_ActorSetAnimation(22, 2);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(22, ANIM_WALK);
   leaderAtEnd = Object_GetById(ACTOR_PARTY_LEADER);
   if (leaderAtEnd != 0) {
     Engine_ActorSetDestination(22, leaderAtEnd->x.part.pixel,
@@ -1019,8 +1036,9 @@ static void ValeStorm_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   Engine_ActorSetPosition(22, 0, 0);
 }
 
-// Show the boulder falling while the actors below react.
-static void ValeStorm_WatchBoulderFall(void) {
+// The Boulder falls toward Vale while the elders hold it with their Psynergy
+// ("Ahhh! The Boulder! It's falling!").
+static void Event_WatchBoulderFall(void) {
   u32 i;
   struct FieldActor *movingActor;
   s32 *shakeShift;
@@ -1029,16 +1047,16 @@ static void ValeStorm_WatchBoulderFall(void) {
   SchedulerCallback cycleBoulderPalette;
   s32 boulderHeight;
 
-  if (GameFlag_IsSet(FLAG_BOULDER_FELL) == 0) {
+  if (GameFlag_IsSet(FLAG_VALE_BOULDER_FELL) == 0) {
     Engine_EventBegin();
-    Event_CallWithLastActiveObjectId(gValeStorm_LastObjectCall);
+    Event_CallWithLastActiveObjectId(gValeStorm_BoulderWatchers);
     SceneState_SetValue140Mode0();
     Engine_TaskWait(1);
-    Event_PlayCue(141);
+    Event_PlayCue(SE_141);
     Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     Engine_EventWait(30);
     Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
-    Event_PlayCue(145);
+    Event_PlayCue(SE_145);
     Engine_EventWait(30);
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     if (actor != NULL) {
@@ -1049,13 +1067,13 @@ static void ValeStorm_WatchBoulderFall(void) {
     Actor_SetActionScript(0, gValeStorm_LeaderScript);
     Actor_RunActionScriptAndWait(22, gValeStorm_ActorTwentyTwoScript);
     Object_RefreshSelectorById(0);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
-    Actor_ShowEmote(22, 0x100, 30);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 0);
+    Actor_ShowEmote(22, EMOTE_IN_FRONT | 0, 30);
     Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-    Event_PlayCue(145);
+    Event_PlayCue(SE_145);
     Engine_EventWait(40);
     Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-    Event_PlayCue(145);
+    Event_PlayCue(SE_145);
     Engine_EventWait(20);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
     Actor_SetAttachedEffect(22, 0x102);
@@ -1101,41 +1119,41 @@ static void ValeStorm_WatchBoulderFall(void) {
     movingActor->y.fixed = boulderHeight;
     movingActor->targetY = boulderHeight;
     Actor_SetSpeed(19, PIXELS(4) / 5, PIXELS(2) / 5);
-    Event_PlayCue(145);
+    Event_PlayCue(SE_145);
     Actor_MoveToAndWait(19, 114, 333);
-    Engine_ActorSetAnimation(19, 2);
+    Engine_ActorSetAnimation(19, ANIM_WALK);
     Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-    Event_PlayCue(145);
+    Event_PlayCue(SE_145);
     *shakeShift = 0;
     Actor_SetSpeed(19, PIXELS(2) / 5, PIXELS(1) / 5);
     Actor_MoveToAndWait(19, 114, 300);
-    Engine_ActorSetAnimation(19, 2);
+    Engine_ActorSetAnimation(19, ANIM_WALK);
     Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-    Event_PlayCue(145);
+    Event_PlayCue(SE_145);
     *shakeShift = 2;
     Actor_SetSpeed(19, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_MoveToAndWait(19, 114, 333);
-    Engine_ActorSetAnimation(19, 2);
+    Engine_ActorSetAnimation(19, ANIM_WALK);
     Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-    Event_PlayCue(145);
+    Event_PlayCue(SE_145);
     *shakeShift = 0;
     Actor_SetSpeed(19, PIXELS(2) / 5, PIXELS(1) / 5);
     Actor_MoveToAndWait(19, 114, 300);
-    Engine_ActorSetAnimation(19, 2);
+    Engine_ActorSetAnimation(19, ANIM_WALK);
     Map_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-    Event_PlayCue(145);
+    Event_PlayCue(SE_145);
     *shakeShift = 2;
     Actor_SetSpeed(19, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_MoveToAndWait(19, 114, 333);
-    Engine_ActorSetAnimation(19, 2);
+    Engine_ActorSetAnimation(19, ANIM_WALK);
     Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-    Event_PlayCue(145);
+    Event_PlayCue(SE_145);
     *shakeShift = 1;
     Engine_EventWait(20);
     Actor_SetAttachedEffect(32, 0x102);
     Engine_ActorRunRepeatedMotion(32, 2);
     Event_ShowMessage(31, 0);
-    Actor_ShowEmote(33, 0x100, 0);
+    Actor_ShowEmote(33, EMOTE_IN_FRONT | 0, 0);
     Engine_ActorRunRepeatedMotion(33, 2);
     Event_ShowMessageAndWait(28, 0, 40);
     Actor_SetAttachedEffect(30, 0x102);
@@ -1143,21 +1161,21 @@ static void ValeStorm_WatchBoulderFall(void) {
     Event_ShowMessage(30, 0);
     // Stop the final actor effect and return the camera to Isaac.
     sShakeDone = 1;
-    Engine_ActorSetAnimation(29, 1);
+    Engine_ActorSetAnimation(29, ANIM_STAND);
     Engine_TaskWait(1);
     Actor_SetChildValue(29, 0);
-    Actor_ShowEmote(29, 0x105, 20);
+    Actor_ShowEmote(29, EMOTE_IN_FRONT | 5, 20);
     Actor_FaceDirection(29, FACING_WEST, 40);
     Actor_FaceDirection(29, FACING_EAST, 20);
     Actor_FaceDirection(29, FACING_WEST, 20);
     Actor_FaceDirection(29, FACING_SOUTH, 40);
-    Actor_ShowEmote(29, 0x100, 0);
+    Actor_ShowEmote(29, EMOTE_IN_FRONT | 0, 0);
     Engine_ActorRunRepeatedMotion(29, 2);
     Engine_ActorJump(29, 4, 40);
     Engine_ActorSetAnimation(29, 9);
     Engine_EventWait(10);
     Event_ShowMessageAndWait(29, 0, 20);
-    Event_PlayCue(0x121);
+    Event_PlayCue(SE_289);
     Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Camera_SetSpeed(PIXELS(6), PIXELS(3) / 4);
     Camera_MoveTo(PIXELS(84), -1, PIXELS(564), 1);
@@ -1173,10 +1191,10 @@ static void ValeStorm_WatchBoulderFall(void) {
     Actor_FaceActor(ACTOR_PARTY_LEADER, 22, 0);
     Engine_EventWait(20);
     SceneEffect_CleanupSceneObjects();
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimationAndWait(22, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(22, ANIM_NOD);
     Engine_EventWait(20);
-    Engine_ActorSetAnimation(22, 2);
+    Engine_ActorSetAnimation(22, ANIM_WALK);
     movingActor = Object_GetById(ACTOR_PARTY_LEADER);
     if (movingActor != 0) {
       Actor_SetDestination(22, movingActor->x.part.pixel,
@@ -1190,7 +1208,7 @@ static void ValeStorm_WatchBoulderFall(void) {
     Engine_ActorDestroy(29);
     Engine_ActorDestroy(32);
     Engine_ActorDestroy(33);
-    GameFlag_Set(FLAG_BOULDER_FELL);
+    GameFlag_Set(FLAG_VALE_BOULDER_FELL);
     Engine_EventEnd();
   }
 }
@@ -1237,11 +1255,12 @@ UNUSED static void ValeStorm_FlashBoulderSceneAnimationEntries(void) {
   }
 }
 
-// Show the attempt to rescue Felix from the river.
-static void ValeStorm_WitnessRiverRescue(void) {
+// At the river, Jenna cries out for her brother as the villagers try to save
+// Felix ("Oh no! My brother!").
+static void Event_WitnessRiverRescue(void) {
   const s32 *pulseScript;
 
-  if (GameFlag_IsSet(0x83a) != 0) {
+  if (GameFlag_IsSet(FLAG_VALE_STORM_SAW_RIVER_RESCUE) != 0) {
     return;
   }
   Engine_EventBegin();
@@ -1282,14 +1301,14 @@ static void ValeStorm_WitnessRiverRescue(void) {
     Actor_SetActionScript(25, pulseScript);
   }
   Actor_SetPosition(26, PIXELS(227), PIXELS(1189));
-  Actor_FaceDirection(26, 0x3000, 0);
+  Actor_FaceDirection(26, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_SetPosition(23, PIXELS(243), PIXELS(1277));
   Actor_FaceDirection(23, FACING_NORTH, 0);
   Engine_ActorSetSpriteFlags(Object_GetById(23), 0);
   Engine_TaskWait(3);
   Engine_EventSetMessage(MsgValeNoBrother);
   Engine_EventShowMessage(0x201a, 0);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 20);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 20);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 150, 1094);
   {
     struct FieldActor *leader;
@@ -1311,35 +1330,35 @@ static void ValeStorm_WitnessRiverRescue(void) {
   Engine_EventShowMessageAndWait(10, 0, 10);
   Engine_ActorRunRepeatedMotion(23, 3);
   Engine_ActorFaceDirection(9, FACING_EAST, 10);
-  Engine_ActorSetAnimationAndWait(9, 3);
+  Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
   Engine_EventShowMessageAndWait(9, 0, 10);
-  Actor_FaceDirection(9, 0x3000, 10);
+  Actor_FaceDirection(9, FACING_SOUTHEAST + FACING_STEP, 10);
   Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   Camera_MoveTo(PIXELS(232), -1, PIXELS(1253), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Engine_AudioPlayCue(134);
+  Engine_AudioPlayCue(SE_HEAVY_IMPACT);
   Engine_ActorJump(23, 4, 0);
   Engine_ActorSetAnimation(23, 6);
   Engine_EventWait(10);
   Engine_ActorSetPosition(23, 0, 0);
   Engine_EventWait(60);
   BattleFx_PlayQueuedSound();
-  Engine_ActorSetAnimation(10, 1);
+  Engine_ActorSetAnimation(10, ANIM_STAND);
   {
     struct FieldActor *actor;
     actor = Object_GetById(10);
     actor->scaleX = Q16_ONE;
     actor->scaleY = Q16_ONE;
   }
-  Engine_ActorSetAnimation(24, 1);
+  Engine_ActorSetAnimation(24, ANIM_STAND);
   {
     struct FieldActor *actor;
     actor = Object_GetById(24);
     actor->scaleX = Q16_ONE;
     actor->scaleY = Q16_ONE;
   }
-  Engine_ActorSetAnimation(25, 1);
+  Engine_ActorSetAnimation(25, ANIM_STAND);
   {
     struct FieldActor *actor;
     actor = Object_GetById(25);
@@ -1369,7 +1388,7 @@ static void ValeStorm_WitnessRiverRescue(void) {
   Engine_CameraWaitForMove();
   Engine_ActorSetPosition(23, PIXELS(243), PIXELS(1277));
   Engine_TaskWait(1);
-  Engine_AudioPlayCue(106);
+  Engine_AudioPlayCue(SE_106);
   {
     struct FieldActor *actor;
     actor = Object_GetById(23);
@@ -1385,7 +1404,7 @@ static void ValeStorm_WitnessRiverRescue(void) {
   Engine_CameraWaitForMove();
   Engine_ActorRunRepeatedMotion(24, 2);
   Engine_EventWait(20);
-  Actor_ShowEmote(24, 0x105, 40);
+  Actor_ShowEmote(24, EMOTE_IN_FRONT | 5, 40);
   Engine_ActorFaceEachOther(24, 10, 0);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(10, 2);
@@ -1412,32 +1431,32 @@ static void ValeStorm_WitnessRiverRescue(void) {
   Object_GetById(26)->steeringFlags |= ACTOR_FACES_MOTION;
   Engine_ActorFaceDirection(26, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(25, FACING_WEST, 10);
-  Engine_ActorSetAnimation(24, 4);
+  Engine_ActorSetAnimation(24, ANIM_SHAKE_HEAD);
   Engine_EventShowMessageAndWait(0x8018, 0, 10);
   Actor_FaceDirection(10, FACING_NORTH, 20);
   Engine_ActorFaceDirection(10, FACING_EAST, 10);
-  Engine_ActorSetAnimation(10, 4);
+  Engine_ActorSetAnimation(10, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(0x800A, 0, 10);
-  Actor_ShowEmote(24, 0x105, 0);
-  Actor_ShowEmote(10, 0x105, 60);
-  Actor_ShowEmote(9, 0x106, 20);
+  Actor_ShowEmote(24, EMOTE_IN_FRONT | 5, 0);
+  Actor_ShowEmote(10, EMOTE_IN_FRONT | 5, 60);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | 6, 20);
   Actor_FaceDirection(9, FACING_WEST, 40);
   Actor_FaceDirection(9, FACING_NORTH, 20);
   Engine_ActorFaceDirection(9, FACING_EAST, 30);
   Actor_FaceDirection(9, FACING_SOUTH, 10);
   Engine_EventShowMessageAndWait(9, 0, 10);
   Actor_FaceDirection(10, FACING_NORTH, 0);
-  Actor_FaceDirection(25, 0x9000, 0);
+  Actor_FaceDirection(25, FACING_WEST + FACING_STEP, 0);
   Actor_FaceDirection(24, FACING_NORTHWEST, 0);
   Actor_FaceDirection(26, FACING_WEST, 10);
   Engine_ActorRunRepeatedMotion(10, 1);
   Event_ShowMessageAndWait(0x800A, 0, 10);
-  Engine_ActorSetAnimation(9, 4);
+  Engine_ActorSetAnimation(9, ANIM_SHAKE_HEAD);
   Engine_EventShowMessageAndWait(9, 0, 10);
-  Actor_ShowEmote(10, 0x105, 0);
-  Actor_ShowEmote(24, 0x105, 0);
-  Actor_ShowEmote(25, 0x105, 0);
-  Actor_ShowEmote(26, 0x105, 40);
+  Actor_ShowEmote(10, EMOTE_IN_FRONT | 5, 0);
+  Actor_ShowEmote(24, EMOTE_IN_FRONT | 5, 0);
+  Actor_ShowEmote(25, EMOTE_IN_FRONT | 5, 0);
+  Actor_ShowEmote(26, EMOTE_IN_FRONT | 5, 40);
   Engine_ActorFaceDirection(9, FACING_EAST, 10);
   Engine_ActorFaceEachOther(24, 25, 0);
   Engine_EventWait(20);
@@ -1445,13 +1464,13 @@ static void ValeStorm_WitnessRiverRescue(void) {
   Engine_ActorFaceDirection(10, FACING_EAST, 10);
   Actor_FaceDirection(24, FACING_WEST, 0);
   Actor_FaceDirection(25, FACING_WEST, 10);
-  Engine_ActorSetAnimation(24, 3);
-  Engine_ActorSetAnimationAndWait(25, 3);
+  Engine_ActorSetAnimation(24, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(25, ANIM_NOD);
   Engine_ActorFaceEachOther(10, 9, 0);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(10, 1);
   Engine_EventShowMessageAndWait(0x800A, 0, 10);
-  Engine_ActorSetAnimationAndWait(9, 3);
+  Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
   Actor_FaceDirection(24, 0xD000, 10);
   Engine_ActorStartRepeatedMotion(24, 1);
   Engine_EventShowMessageAndWait(24, 0, 10);
@@ -1460,21 +1479,21 @@ static void ValeStorm_WitnessRiverRescue(void) {
   Engine_ActorRunRepeatedMotion(26, 1);
   Actor_FaceDirection(26, FACING_SOUTHEAST, 20);
   Actor_FaceDirection(25, FACING_NORTHWEST, 20);
-  Engine_ActorSetAnimationAndWait(25, 3);
+  Engine_ActorSetAnimationAndWait(25, ANIM_NOD);
   Engine_EventShowMessageAndWait(25, 0, 10);
-  Engine_ActorSetAnimationAndWait(26, 3);
+  Engine_ActorSetAnimationAndWait(26, ANIM_NOD);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(9, 2);
-  Engine_ActorSetAnimationAndWait(9, 3);
+  Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
   Engine_EventShowMessageAndWait(9, 0, 10);
   Actor_FaceDirection(26, FACING_WEST, 10);
-  Engine_ActorSetAnimationAndWait(26, 3);
+  Engine_ActorSetAnimationAndWait(26, ANIM_NOD);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(9, 1);
   Engine_EventShowMessageAndWait(9, 0, 10);
   // Search both river paths before asking the children to help.
   ValeStorm_RunRiverSearch();
-  Engine_GameFlagSet(0x83A);
+  Engine_GameFlagSet(FLAG_VALE_STORM_SAW_RIVER_RESCUE);
   Engine_EventEnd();
 }
 
@@ -1487,16 +1506,16 @@ static void ValeStorm_RunRiverSearch(void) {
   s32 helpMessage;
   struct FieldActor *leader;
 
-  Actor_FaceDirection(26, 0x3000, 0);
-  Actor_FaceDirection(24, 0xd000, 0);
-  Actor_FaceDirection(25, 0xb000, 0);
-  Actor_FaceDirection(9, 0x3000, 0);
-  Actor_FaceDirection(10, 0xd000, 20);
-  Engine_ActorSetAnimation(26, 3);
-  Engine_ActorSetAnimation(24, 3);
-  Engine_ActorSetAnimation(25, 3);
-  Engine_ActorSetAnimation(9, 3);
-  Engine_ActorSetAnimationAndWait(25, 3);
+  Actor_FaceDirection(26, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(24, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(25, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(9, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(10, FACING_NORTH + FACING_STEP, 20);
+  Engine_ActorSetAnimation(26, ANIM_NOD);
+  Engine_ActorSetAnimation(24, ANIM_NOD);
+  Engine_ActorSetAnimation(25, ANIM_NOD);
+  Engine_ActorSetAnimation(9, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(25, ANIM_NOD);
   Engine_EventWait(20);
   Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   Camera_MoveTo(PIXELS(134), -1, PIXELS(1195), 1);
@@ -1504,16 +1523,16 @@ static void ValeStorm_RunRiverSearch(void) {
   Actor_SetSpeed(9, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_SetActionScript(26, gValeStorm_ActorTwentySixScriptA);
   Actor_RunActionScriptAndWait(9, gValeStorm_ActorNineScriptA);
-  Event_PlayCue(158);
+  Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_CellSteps2, 38, 72);
   Engine_EventWait(10);
   Actor_WalkToAndWait(9, 149, 1175);
   Actor_SetPosition(9, 0, 0);
   Actor_WalkToAndWait(25, 250, 1214);
   BattleFx_PlayQueuedSound();
-  Actor_FaceDirection(10, 0x3000, 0);
-  Actor_FaceDirection(24, 0x3000, 0);
-  Actor_FaceDirection(25, 0x3000, 0);
+  Actor_FaceDirection(10, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(24, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(25, FACING_SOUTHEAST + FACING_STEP, 0);
   Engine_ActorSetAnimation(10, 5);
   Engine_ActorSetAnimation(24, 6);
   Engine_ActorSetAnimation(25, 6);
@@ -1532,12 +1551,12 @@ static void ValeStorm_RunRiverSearch(void) {
   Actor_SetActionScript(25, script);
   Object_RefreshSelectorById(26);
   Engine_EventWait(10);
-  Event_PlayCue(159);
+  Event_PlayCue(SE_159);
   Map_AnimateCells(gValeStorm_CellSteps5, 38, 72);
   Engine_EventWait(30);
   BattleFx_PlayQueuedSound();
   Camera_MoveTo(PIXELS(112), -1, PIXELS(1225), 1);
-  Event_PlayCue(158);
+  Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_CellSteps1, 35, 73);
   Engine_EventWait(20);
   BattleFx_PlayQueuedSound();
@@ -1545,7 +1564,7 @@ static void ValeStorm_RunRiverSearch(void) {
   Engine_EventWait(20);
   Actor_SetActionScript(26, gValeStorm_ActorTwentySixScriptB);
   Engine_EventWait(40);
-  Event_PlayCue(159);
+  Event_PlayCue(SE_159);
   Map_AnimateCells(gValeStorm_CellSteps4, 35, 73);
   Object_RefreshSelectorById(26);
   BattleFx_PlayQueuedSound();
@@ -1553,10 +1572,10 @@ static void ValeStorm_RunRiverSearch(void) {
   northMessage = MsgValeGoLookNorth;
   Engine_EventSetMessage(northMessage);
   Event_ShowMessageAndWait(9, 0, 20);
-  Engine_ActorSetAnimationAndWait(26, 3);
+  Engine_ActorSetAnimationAndWait(26, ANIM_NOD);
   Event_ShowMessageAndWait(0x201a, 0, 40);
-  Engine_ActorSetAnimation(9, 3);
-  Engine_ActorSetAnimationAndWait(26, 3);
+  Engine_ActorSetAnimation(9, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(26, ANIM_NOD);
   Engine_EventWait(30);
   Actor_SetActionScript(9, gValeStorm_ActorNineScriptC);
   Actor_SetActionScript(26, gValeStorm_ActorTwentySixScriptC);
@@ -1565,7 +1584,7 @@ static void ValeStorm_RunRiverSearch(void) {
   Camera_MoveTo(PIXELS(105), -1, PIXELS(1086), 1);
   Object_RefreshSelectorById(9);
   Actor_FaceDirection(9, FACING_EAST, 0);
-  Actor_ShowEmote(9, 0x100, 40);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | 0, 40);
   Event_ShowMessageAndWait(9, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(22, FACING_WEST, 10);
@@ -1574,7 +1593,7 @@ static void ValeStorm_RunRiverSearch(void) {
   Event_OpenMessage(0x8009, 0);
   Actor_FaceDirection(22, FACING_EAST, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_ActorSetAnimationAndWait(9, 3);
+    Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
     Engine_EventSetMessage((northMessage + 4));
   } else {
     Engine_ActorRunRepeatedMotion(9, 2);
@@ -1582,23 +1601,23 @@ static void ValeStorm_RunRiverSearch(void) {
   }
   Event_ShowMessage(0x8009, 0);
   Actor_FaceDirection(22, FACING_WEST, 40);
-  Actor_ShowEmote(9, 0x100, 30);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | 0, 30);
   helpMessage = MsgValeDontSupposeTwo;
   Engine_EventSetMessage(helpMessage);
   Event_OpenMessage(0x8009, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_ActorSetAnimationAndWait(9, 3);
+    Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
     Engine_EventSetMessage((helpMessage + 1));
     Event_ShowMessageAndWait(0x8009, 0, 30);
     Actor_FaceDirection(22, FACING_WEST, 20);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-    Engine_ActorSetAnimation(22, 3);
-    Engine_ActorSetAnimationAndWait(9, 3);
+    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+    Engine_ActorSetAnimation(22, ANIM_NOD);
+    Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
     Engine_EventWait(40);
   } else {
-    Actor_ShowEmote(9, 0x105, 90);
-    Actor_ShowEmote(9, 0x103, 40);
-    Engine_ActorSetAnimation(9, 4);
+    Actor_ShowEmote(9, EMOTE_IN_FRONT | 5, 90);
+    Actor_ShowEmote(9, EMOTE_IN_FRONT | 3, 40);
+    Engine_ActorSetAnimation(9, ANIM_SHAKE_HEAD);
     Engine_EventSetMessage((helpMessage + 2));
     Event_ShowMessage(0x8009, 0);
   }
@@ -1606,10 +1625,10 @@ static void ValeStorm_RunRiverSearch(void) {
   Engine_EventWait(90);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 22, 0);
   Engine_EventWait(40);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-  Engine_ActorSetAnimationAndWait(22, 3);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(22, ANIM_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(22, 2);
+  Engine_ActorSetAnimation(22, ANIM_WALK);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader != NULL) {
     Actor_SetDestination(22, leader->x.part.pixel, leader->z.part.pixel);
@@ -1618,13 +1637,13 @@ static void ValeStorm_RunRiverSearch(void) {
   Actor_SetPosition(22, 0, 0);
 }
 
-// Discuss the rescue attempt and resume the villager idle animation.
-static void ValeStorm_TalkAboutRescuingFelix(void) {
+// A villager at the river talks of rescuing Felix.
+static void Event_TalkAboutRescuingFelix(void) {
   s32 facing = FACING_SOUTHEAST;
   const s32 *pulseScript;
 
   Engine_EventBegin();
-  Engine_ActorSetAnimation(10, 1);
+  Engine_ActorSetAnimation(10, ANIM_STAND);
   Engine_EventWait(10);
   Engine_ActorFaceEachOther(10, ACTOR_PARTY_LEADER, 20);
   if (Engine_GameFlagIsSet(0x30d) != 0) {
@@ -1654,16 +1673,17 @@ static void ValeStorm_TalkAboutRescuingFelix(void) {
   Engine_EventEnd();
 }
 
-// Gather the children after the rescue and show the next boulder scene.
-static void ValeStorm_GatherAfterRiverRescue(void) {
+// Jenna comes back to the river ("Mom! Dad! We're back!"), and the
+// scene ends with the Boulder sweeping down it.
+static void Event_GatherAfterRiverRescue(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
   s32 automaticPriority;
   struct AnimationObject *sprite;
 
-  if (Engine_GameFlagIsSet(0x840) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) == 0) {
   } else {
-    if (GameFlag_IsSet(0x841) != 0) {
+    if (GameFlag_IsSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN) != 0) {
     } else {
       Engine_EventBegin();
       Actor_SetSpeed(0, PIXELS(1), PIXELS(1) / 2);
@@ -1676,13 +1696,13 @@ static void ValeStorm_GatherAfterRiverRescue(void) {
         Engine_ActorSetPosition(22, actor->x.fixed, actor->z.fixed);
       }
       Actor_WalkToAndWait(22, 235, 1367);
-      Actor_FaceDirection(22, 0xb000, 0);
+      Actor_FaceDirection(22, FACING_NORTHWEST + FACING_STEP, 0);
       actor = Object_GetById(0);
       if (actor != 0) {
         Engine_ActorSetPosition(26, actor->x.fixed, actor->z.fixed);
       }
       Actor_WalkToAndWait(26, 199, 1367);
-      Actor_FaceDirection(26, 0xd000, 0);
+      Actor_FaceDirection(26, FACING_NORTH + FACING_STEP, 0);
       Actor_SetPosition(25, PIXELS(247), PIXELS(1210));
       Engine_ActorFaceDirection(25, FACING_SOUTHWEST, 0);
       actor = Object_GetById(8);
@@ -1698,7 +1718,7 @@ static void ValeStorm_GatherAfterRiverRescue(void) {
         Engine_ActorSetPosition(8, actor->x.fixed, actor->z.fixed);
       }
       Actor_WalkToAndWait(8, 221, 1385);
-      Actor_FaceDirection(8, 0xb000, 60);
+      Actor_FaceDirection(8, FACING_NORTHWEST + FACING_STEP, 60);
       Engine_ActorRunRepeatedMotion(26, 2);
       Engine_EventSetMessage(MsgValeMomDadBack);
       Engine_EventShowMessageAndWait(26, 0, 40);
@@ -1723,23 +1743,23 @@ static void ValeStorm_GatherAfterRiverRescue(void) {
       Camera_MoveTo(PIXELS(221), -1, PIXELS(1385), 1);
       Engine_ActorFaceActor(0, 8, 0);
       Engine_ActorFaceActor(22, 8, 0);
-      Actor_FaceDirection(26, 0x3000, 80);
+      Actor_FaceDirection(26, FACING_SOUTHEAST + FACING_STEP, 80);
       Engine_CameraMoveTo(PIXELS(182), -1, PIXELS(1360), 1);
       Actor_WalkToAndWait(8, 182, 1384);
       Engine_ActorFaceActor(8, 9, 0);
       Engine_EventWait(30);
-      Engine_ActorSetAnimationAndWait(8, 3);
+      Engine_ActorSetAnimationAndWait(8, ANIM_NOD);
       Engine_EventWait(10);
       Engine_ActorFaceActor(0, 9, 0);
       Engine_ActorFaceActor(22, 9, 0);
       Engine_ActorFaceActor(26, 9, 0);
-      Engine_ActorSetAnimationAndWait(9, 3);
+      Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
       Engine_EventShowMessage(9, 0);
       Engine_ActorRunRepeatedMotion(26, 2);
       Engine_EventShowMessageAndWait(26, 0, 10);
       Actor_FaceDirection(9, FACING_NORTHEAST, 40);
-      Actor_FaceDirection(9, 0x3000, 20);
-      Engine_ActorSetAnimationAndWait(9, 3);
+      Actor_FaceDirection(9, FACING_SOUTHEAST + FACING_STEP, 20);
+      Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
       Engine_EventShowMessage(9, 0);
       Engine_ActorFaceEachOther(26, 8, 0);
       Engine_ActorFaceEachOther(22, 0, 0);
@@ -1751,16 +1771,16 @@ static void ValeStorm_GatherAfterRiverRescue(void) {
       Engine_ActorRunRepeatedMotion(9, 2);
       Engine_EventWait(20);
       Engine_EventShowMessageAndWait(9, 0, 10);
-      Engine_ActorSetAnimation(0, 3);
-      Engine_ActorSetAnimation(26, 3);
-      Engine_ActorSetAnimation(22, 3);
+      Engine_ActorSetAnimation(0, ANIM_NOD);
+      Engine_ActorSetAnimation(26, ANIM_NOD);
+      Engine_ActorSetAnimation(22, ANIM_NOD);
       automaticPriority = ACTOR_PRIORITY_AUTOMATIC;
-      Engine_ActorSetAnimationAndWait(8, 3);
+      Engine_ActorSetAnimationAndWait(8, ANIM_NOD);
       leader->priorityFlags |= automaticPriority;
       actor = Object_GetById(8);
       actor->priorityFlags |= automaticPriority;
       ValeStorm_ShowBoulderSweepingDownriver();
-      Engine_GameFlagSet(0x841);
+      Engine_GameFlagSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN);
       Engine_EventEnd();
     }
   }
@@ -1782,7 +1802,7 @@ static __inline__ void ValeStorm_PlaceActor(struct FieldActor *object,
 static __inline__ void ValeStorm_PlayImpactBeat(s32 shakeAmplitude,
                                                 s32 frames) {
   Map_SetShake(shakeAmplitude, shakeAmplitude, Q16_ONE);
-  Event_PlayCue(145);
+  Event_PlayCue(SE_145);
   Event_Wait(frames);
 }
 
@@ -1824,7 +1844,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   FieldFx_StopLightning();
   Actor_SetActionScript(22, entryActions);
   Event_Wait(128);
-  ValeStorm_ClearPathCellOverride();
+  Event_ClearPathCellOverride();
   Camera_MoveTo(PIXELS(174), -1, PIXELS(1428), 1);
   Event_Wait(104);
   Camera_MoveTo(PIXELS(153), -1, PIXELS(1325), 1);
@@ -1838,11 +1858,11 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ValeStorm_PlayImpactBeat(PIXELS(4), 20);
   Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Event_Wait(60);
-  Actor_ShowEmote(0, 0x101, 0);
-  Actor_ShowEmote(26, 0x101, 0);
-  Actor_ShowEmote(22, 0x101, 0);
-  Actor_ShowEmote(8, 0x101, 0);
-  Actor_ShowEmote(9, 0x101, 60);
+  Actor_ShowEmote(0, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(26, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(22, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | 1, 0);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | 1, 60);
   Actor_FaceEachOther(26, 8, 0);
   Actor_FaceEachOther(22, 0, 0);
   Event_Wait(20);
@@ -1872,7 +1892,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   Actor_SetActionScript(22, lookAroundActions);
   Actor_SetActionScript(8, lookAroundActions);
   Event_Wait(10);
-  Event_PlayCue(17);
+  Event_PlayCue(MUS_017);
   ValeStorm_PlayImpactBeat(PIXELS(3), 30);
   Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Event_Wait(120);
@@ -2231,8 +2251,8 @@ static void ValeStorm_FlickerGlowOffset(void) {
   }
 }
 
-// Ask the immobilized villager to fetch help.
-static void ValeStorm_AskVillagerToGetHelp(void) {
+// A villager who cannot move asks Isaac to get help ("I can't move...").
+static void Event_VillagerAsksForHelp(void) {
   struct FieldActor *villager;
   struct FieldActor *leader;
 
@@ -2259,7 +2279,7 @@ static void ValeStorm_AskVillagerToGetHelp(void) {
     Engine_ActorStop(8);
     villager->scaleX = Q16_ONE;
     villager->scaleY = Q16_ONE;
-    Actor_FaceDirection(8, 0x1000, 0);
+    Actor_FaceDirection(8, FACING_EAST + FACING_STEP, 0);
     if ((s16)leader->facing >= 0) {
       Engine_ActorSetAnimation(8, 7);
     } else {
@@ -2268,7 +2288,7 @@ static void ValeStorm_AskVillagerToGetHelp(void) {
     Engine_EventWait(20);
     Engine_EventSetMessage(MsgValeIllGo);
     Event_ShowMessageAndWait(8, 0, 20);
-    Engine_ActorSetAnimation(8, 1);
+    Engine_ActorSetAnimation(8, ANIM_STAND);
     Engine_ActorJump(8, 4, 0);
     Engine_EventWait(80);
     Engine_ActorRunRepeatedMotion(8, 2);
@@ -2299,7 +2319,7 @@ static void ValeStorm_GaretLeavesIsaac(void) {
   Scheduler_RemoveCallback(ValeStorm_CopyLeaderSpritePriority);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 480, 1392);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  Actor_FaceDirection(ACTOR_GARET, 0x3000, 20);
+  Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_Get(ACTOR_GARET)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetPosition(ACTOR_GARET, PIXELS(249), PIXELS(1240));
   Engine_TaskWait(1);
@@ -2311,17 +2331,17 @@ static void ValeStorm_GaretLeavesIsaac(void) {
   Camera_MoveTo(PIXELS(162), 0, PIXELS(1285), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARET, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARET, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(0x1016, 0, 10);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_GARET, 2);
   Event_ShowMessageAndWait(0x1016, 0, 10);
-  Actor_FaceDirection(ACTOR_GARET, 0x1000, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_GARET, 3);
+  Actor_FaceDirection(ACTOR_GARET, FACING_EAST + FACING_STEP, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
   Actor_SetSpeed(ACTOR_GARET, PIXELS(2), PIXELS(1));
   Actor_WalkToAndWait(ACTOR_GARET, 165, 1300);
   Actor_WalkToAndWait(ACTOR_GARET, 195, 1432);
-  GameFlag_Set(0x842);
+  GameFlag_Set(FLAG_VALE_STORM_GARET_LEFT);
 }
 
 // Redraw the riverbank cells after the boulder has passed.
@@ -2344,31 +2364,32 @@ static void ValeStorm_RebuildRiverbank(void) {
   Engine_MapRedraw();
 }
 
-// Start encounter-table entry 2 with the scene battle transition.
-static void ValeStorm_StartEncounter2(void) {
+// On the stormy night, a monster attacks on the paths (encounter 2 of table
+// 12).
+static void Event_FightThirdMonster(void) {
   struct EventWork *state;
 
   Engine_EventBegin();
   state = gEventWork;
   state->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   state->transitionFrames = 64;
-  Engine_GameFlagSet(0x87c);
+  Engine_GameFlagSet(FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(12, 2);
-  Engine_GameFlagSet(0x900);
+  Engine_GameFlagSet(FLAG_VALE_STORM_MONSTER_FOUGHT);
   Engine_EventEnd();
 }
 
-// Start encounter-table entry 3 with the scene battle transition.
-static void ValeStorm_StartEncounter3(void) {
+// On the stormy night, another monster attacks (encounter 3 of table 12).
+static void Event_FightFourthMonster(void) {
   struct EventWork *state;
 
   Engine_EventBegin();
   state = gEventWork;
   state->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   state->transitionFrames = 64;
-  Engine_GameFlagSet(0x87f);
+  Engine_GameFlagSet(FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(12, 3);
-  Engine_GameFlagSet(0x900);
+  Engine_GameFlagSet(FLAG_VALE_STORM_MONSTER_FOUGHT);
   Engine_EventEnd();
 }
 
@@ -2429,7 +2450,7 @@ static void ValeStorm_SpawnEffectPair(struct FieldActor *parent) {
   struct PairWork *work = gEffectWork;
   s32 i;
 
-  Engine_AudioPlayCue(152);
+  Engine_AudioPlayCue(SE_152);
   for (i = 0; i < 2; ++i) {
     child = Engine_ObjectCreate(26, parent->x.fixed, parent->y.fixed,
                                 parent->z.fixed);
@@ -2508,15 +2529,15 @@ static void ValeStorm_CopyLeaderSpritePriority(void) {
 #endif
 }
 
-// Show the locked-door message.
-static void ValeStorm_SearchLockedDoor(void) {
+// The door won't open: the impact knocked it off its hinges.
+static void Event_SearchBrokenDoor(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgValeDoorWontOpen, 1);
   Engine_EventEnd();
 }
 
-// Show the description of the chest of valuables.
-static void ValeStorm_SearchValuablesChest(void) {
+// Searching the chest of valuables.
+static void Event_SearchValuablesChest(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgValeSChestValuables, 1);
   Engine_EventEnd();
@@ -2749,7 +2770,7 @@ s32 gValeStorm_ActorNineteenRiseScript[] = {
     SC_END,
 };
 
-struct SceneEntrance gValeStorm_SceneTable0[] = {
+struct SceneEntrance gValeStorm_Entrances[] = {
     {0, CONDITION_ALWAYS, 167, 0, 1281, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {1, CONDITION_ALWAYS, 257, 0, 456, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {2, CONDITION_ALWAYS, 113, 0, 303, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -2770,7 +2791,7 @@ struct SceneEntrance gValeStorm_SceneTable0[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gValeStorm_SceneTable1[] = {
+u32 gValeStorm_Exits[] = {
     SCENE_EXITS(3),        SCENE_EXIT(2, 5, 8),   SCENE_EXIT(3, 6, 1),
     SCENE_EXIT(4, 6, 2),   SCENE_EXIT(5, 7, 6),   SCENE_EXIT(6, 7, 5),
     SCENE_EXIT(7, 8, 6),   SCENE_EXIT(8, 7, 2),   SCENE_EXIT(9, 7, 1),
@@ -2779,7 +2800,7 @@ u32 gValeStorm_SceneTable1[] = {
 };
 
 // clang-format off
-struct ScenePlacement gValeStorm_SceneTable2[] = {
+struct ScenePlacement gValeStorm_Placements[] = {
     { 0x74, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2823,7 +2844,7 @@ struct ScenePlacement gValeStorm_SceneTable2[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gValeStorm_LastObjectCall[] = {
+struct ScenePlacement gValeStorm_BoulderWatchers[] = {
     { 0x16, CONDITION_ALWAYS, 7,
         PIXELS(124), 0, PIXELS(375), FACING_NORTHWEST + FACING_STEP, TALK_KEEP_FACING, 0 },
     { 0x6c, CONDITION_ALWAYS, ACTOR_STAND,
@@ -2840,37 +2861,36 @@ struct ScenePlacement gValeStorm_LastObjectCall[] = {
 };
 // clang-format on
 
-struct SceneEvent gValeStorm_SceneTable3[] = {
-    {EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(ValeStorm_OpenExit1)},
-    {EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(ValeStorm_OpenExit3)},
-    {EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(ValeStorm_OpenExit4)},
-    {EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(ValeStorm_OpenExit2)},
+struct SceneEvent gValeStorm_Events[] = {
+    {EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByExit1)},
+    {EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByExit3)},
+    {EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByExit4)},
+    {EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByExit2)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_OpenExit5)},
+     EVENT_SCRIPT(Event_LeaveByExit5)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_OpenExit6)},
+     EVENT_SCRIPT(Event_LeaveByExit6)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_OpenExit7)},
+     EVENT_SCRIPT(Event_LeaveByExit7)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_OpenExit8)},
+     EVENT_SCRIPT(Event_LeaveByExit8)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_OpenExit9)},
+     EVENT_SCRIPT(Event_LeaveByExit9)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_OpenExit10)},
+     EVENT_SCRIPT(Event_LeaveByExit10)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_OpenExit12)},
+     EVENT_SCRIPT(Event_LeaveByExit12)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_OpenExit13)},
-    {EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(ValeStorm_TalkToGaret)},
+     EVENT_SCRIPT(Event_LeaveByExit13)},
+    {EVENT_TALK, 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToGaret)},
     {EVENT_TALK, 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_TalkAboutRescuingFelix)},
+     EVENT_SCRIPT(Event_TalkAboutRescuingFelix)},
     {EVENT_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgValeHangOnFelixHelpIsOn)},
     {EVENT_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgValeDontLetGoFelix)},
     {EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgValeNoItCantBeKyleIt)},
     {EVENT_TALK, 26, CONDITION_ALWAYS,
      MSGNO(MsgValeMomDadFelixPleaseDontLeave)},
-    {EVENT_TALK, 8, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_AskVillagerToGetHelp)},
+    {EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_VillagerAsksForHelp)},
     {EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved)},
     {EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved)},
     {EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved)},
@@ -2880,33 +2900,31 @@ struct SceneEvent gValeStorm_SceneTable3[] = {
     {EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved)},
     {EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved)},
     {EVENT_TOUCH, 15, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_SetPathCellOverride)},
+     EVENT_SCRIPT(Event_SetPathCellOverride)},
     {EVENT_TOUCH, 14, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_ClearPathCellOverride)},
-    {EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(ValeStorm_DropRock11)},
-    {EVENT_TOUCH, 42, CONDITION_ALWAYS, EVENT_SCRIPT(ValeStorm_DropRock12)},
-    {EVENT_TOUCH, 43, CONDITION_ALWAYS, EVENT_SCRIPT(ValeStorm_DropRock13)},
-    {EVENT_TOUCH, 44, CONDITION_ALWAYS, EVENT_SCRIPT(ValeStorm_DropRock14)},
+     EVENT_SCRIPT(Event_ClearPathCellOverride)},
+    {EVENT_TOUCH, 41, CONDITION_ALWAYS, EVENT_SCRIPT(Event_Rock11Falls)},
+    {EVENT_TOUCH, 42, CONDITION_ALWAYS, EVENT_SCRIPT(Event_Rock12Falls)},
+    {EVENT_TOUCH, 43, CONDITION_ALWAYS, EVENT_SCRIPT(Event_Rock13Falls)},
+    {EVENT_TOUCH, 44, CONDITION_ALWAYS, EVENT_SCRIPT(Event_Rock14Falls)},
     {EVENT_TOUCH, 30, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_HearGaretStruggling)},
+     EVENT_SCRIPT(Event_HearGaretStruggling)},
     {EVENT_TOUCH, 31, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_GaretCallsAfterIsaac)},
-    {EVENT_TOUCH, 32, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_GaretJoinsIsaac)},
-    {EVENT_TOUCH, 33, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_WarnAboutMtAleph)},
-    {EVENT_TOUCH, 34, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_WatchBoulderFall)},
-    {EVENT_TOUCH, 35, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_WitnessRiverRescue)},
+     EVENT_SCRIPT(Event_GaretCallsAfterIsaac)},
+    {EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_GaretJoinsIsaac)},
+    {EVENT_TOUCH, 33, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WarnAboutMtAleph)},
+    {EVENT_TOUCH, 34, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WatchBoulderFall)},
+    {EVENT_TOUCH, 35, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WitnessRiverRescue)},
     {EVENT_TOUCH, 36, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_GatherAfterRiverRescue)},
-    {EVENT_TOUCH, 16, 0x87c, EVENT_SCRIPT(ValeStorm_StartEncounter2)},
-    {EVENT_TOUCH, 17, 0x87f, EVENT_SCRIPT(ValeStorm_StartEncounter3)},
+     EVENT_SCRIPT(Event_GatherAfterRiverRescue)},
+    {EVENT_TOUCH, 16, FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT,
+     EVENT_SCRIPT(Event_FightThirdMonster)},
+    {EVENT_TOUCH, 17, FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT,
+     EVENT_SCRIPT(Event_FightFourthMonster)},
     {SEARCH(SEARCH_UNNAMED), 24, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_SearchLockedDoor)},
+     EVENT_SCRIPT(Event_SearchBrokenDoor)},
     {SEARCH(SEARCH_UNNAMED), 19, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ValeStorm_SearchValuablesChest)},
+     EVENT_SCRIPT(Event_SearchValuablesChest)},
     {SCENE_EVENTS_END},
 };
 

@@ -26,8 +26,17 @@
 #include "fixed_math.h"
 #include "palbuf.h"
 #include "flags.h"
+#include "songs.h"
+
+// The north of Vale around Kraden's cottage: the fence above the village, the
+// path down to the plaza, and the cottage's gate.
+
+// FLAG_SCENE_TEMP_42: the cottage's gate stands open since Kraden went in.
 
 enum ValeKradenActor {
+  // "It's a huge rock that Isaac's strength can't even budge."
+  ACTOR_WEST_ROCK = 9,
+  ACTOR_EAST_ROCK = 10,
   ACTOR_ROCKSLIDE_SURVIVOR = 11,
   ACTOR_FENCE_ONLOOKER = 12,
   ACTOR_KRADEN = 13,
@@ -57,11 +66,11 @@ const struct ScenePlacement *ValeKraden_GetPlacements(void) {
 
 // Select events for the current visit to Vale.
 const struct SceneEvent *ValeKraden_GetEvents(void) {
-  if (Engine_GameFlagIsSet(0x87A) != 0) {
-    return gValeKraden_Events87a;
+  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+    return gValeKraden_EventsAfterKalay;
   }
-  if (Engine_GameFlagIsSet(0x834) != 0) {
-    return gValeKraden_Events834;
+  if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
+    return gValeKraden_StormEvents;
   }
   return gValeKraden_Events;
 }
@@ -92,8 +101,9 @@ static __inline__ void ValeKraden_WalkTowardLeader(s32 companionId) {
   }
 }
 
-// Ask the onlooker about the growls beyond the fence.
-static void ValeKraden_DiscussFenceGrowls(void) {
+// The child at the fence asks whether Isaac hears the growls beyond it; once
+// the party has left Vale, he means to climb it someday.
+static void Event_TalkToFenceOnlooker(void) {
   s32 message;
 
   Engine_EventBegin();
@@ -119,8 +129,9 @@ static void ValeKraden_DiscussFenceGrowls(void) {
   Engine_EventEnd();
 }
 
-// Have Kraden persuade the party to investigate Sol Sanctum.
-static void ValeKraden_PlanSanctumVisit(void) {
+// Talking to Kraden outside his cottage: he talks Isaac, Garet and Jenna into a
+// secret look at Sol Sanctum, then goes inside to prepare.
+static void Event_KradenPlansSanctumVisit(void) {
   struct FieldActor *leader;
   s32 x, z;
   s32 sneakingMessage;
@@ -330,7 +341,7 @@ static void ValeKraden_PlanSanctumVisit(void) {
     Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 20);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 10);
     // Kraden goes inside to prepare; continue through the cottage exit.
-    Event_PlayCue(158);
+    Event_PlayCue(SE_DOOR_OPEN);
     Map_AnimateCells(gValeKraden_GateCells, 43, 8);
     Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_KRADEN, 232, 218);
@@ -346,8 +357,9 @@ static void ValeKraden_PlanSanctumVisit(void) {
   }
 }
 
-// Bring Kraden out of the cottage and join the party.
-static void ValeKraden_LeaveForMtAleph(void) {
+// Arriving by entrance 10, from the cottage: Kraden comes out ready ("This is
+// our best bet."), and everyone joins Isaac for Mt. Aleph.
+static void Event_KradenSetsOff(void) {
   struct FieldActor *actor;
   s32 facing;
 
@@ -406,22 +418,23 @@ static void ValeKraden_LeaveForMtAleph(void) {
   GameFlag_Set(FLAG_SANCTUM_VISIT_PLANNED);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
-  GameFlag_Set(0x242);
+  GameFlag_Set(FLAG_SCENE_TEMP_42);
   Engine_EventEnd();
 }
 
-// Open the cottage gate before taking its entrance.
-static void ValeKraden_EnterCottage(void) {
-  if (Engine_GameFlagIsSet(0x242) == 0) {
-    Engine_AudioPlayCue(158);
+// Walking into the cottage: the gate opens unless Kraden left it open.
+static void Event_EnterCottage(void) {
+  if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_42) == 0) {
+    Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gValeKraden_GateCells, 43, 8);
   }
   Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 229, 217);
   Engine_EventRequestExit(3);
 }
 
-// Confront Saturos and Menardi after overhearing their plans.
-static void ValeKraden_MeetSaturosAndMenardi(void) {
+// Walking past the two strangers: Isaac, Garet and Jenna overhear Saturos and
+// Menardi, confront them and are warned off.
+static void Event_MeetSaturosAndMenardi(void) {
   struct FieldActor *actor;
   s32 x, z;
   s32 strangersMessage;
@@ -432,7 +445,7 @@ static void ValeKraden_MeetSaturosAndMenardi(void) {
   }
 
   Engine_EventBegin();
-  Event_PlayCue(17);
+  Event_PlayCue(MUS_017);
   GameFlag_Set(FLAG_MET_SATUROS_AND_MENARDI);
 
   // Overhear the strangers, then spread the party out to confront them.
@@ -468,7 +481,7 @@ static void ValeKraden_MeetSaturosAndMenardi(void) {
   Camera_MoveTo(PIXELS(215), -1, PIXELS(345), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Event_PlayCue(61);
+  Event_PlayCue(MUS_061);
 
   // Saturos and Menardi discuss the villagers before noticing Isaac.
   Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
@@ -607,7 +620,7 @@ static void ValeKraden_MeetSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 1, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
-  Event_PlayCue(17);
+  Event_PlayCue(MUS_017);
 
   ValeKraden_WalkTowardLeader(GARET);
   Engine_ActorWaitForMove(GARET);
@@ -626,17 +639,18 @@ static void ValeKraden_MeetSaturosAndMenardi(void) {
   Engine_EventEnd();
 }
 
-// Let Kraden speculate about the strangers and Alchemy.
-static void ValeKraden_OverhearKraden(void) {
+// Walking up to the cottage: Kraden paces, wondering aloud who the strangers
+// were and what they know of Sol Sanctum and the Elemental Stars.
+static void Event_OverhearKraden(void) {
   struct FieldActor *leader;
 
-  if (GameFlag_IsSet(0x800) != 0) {
+  if (GameFlag_IsSet(FLAG_OVERHEARD_KRADEN) != 0) {
   } else {
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     // Kraden paces while recalling the strangers' knowledge.
     Engine_EventSetMessage(MsgValeWho);
-    Engine_EventShowMessage(13, 0);
+    Engine_EventShowMessage(ACTOR_KRADEN, 0);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     {
       s32 x = leader->x.part.pixel;
@@ -659,31 +673,31 @@ static void ValeKraden_OverhearKraden(void) {
     Engine_CameraWaitForMove();
     Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-    Engine_EventShowMessage(13, 0);
+    Engine_EventShowMessage(ACTOR_KRADEN, 0);
     Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1) / 5, PIXELS(1) / 10);
     Engine_ActorWalkToAndWait(ACTOR_KRADEN, 216, 232);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
     Engine_EventWait(10);
-    Engine_EventShowMessageAndWait(13, 0, 40);
+    Engine_EventShowMessageAndWait(ACTOR_KRADEN, 0, 40);
     Engine_ActorJump(ACTOR_KRADEN, 2, 10);
     Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_EAST, 10);
-    Engine_EventShowMessageAndWait(13, 0, 10);
+    Engine_EventShowMessageAndWait(ACTOR_KRADEN, 0, 10);
     Engine_ActorWalkToAndWait(ACTOR_KRADEN, 248, 232);
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
     Engine_EventWait(20);
-    Engine_EventShowMessage(13, 0);
+    Engine_EventShowMessage(ACTOR_KRADEN, 0);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 1, 60);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
-    Engine_EventShowMessageAndWait(13, 0, 2);
+    Engine_EventShowMessageAndWait(ACTOR_KRADEN, 0, 2);
     Engine_ActorWalkToAndWait(ACTOR_KRADEN, 232, 232);
     Engine_EventWait(2);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 4);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
     Engine_EventWait(4);
-    Engine_EventShowMessageAndWait(13, 0, 2);
+    Engine_EventShowMessageAndWait(ACTOR_KRADEN, 0, 2);
     Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     Engine_EventWait(20);
     Engine_CameraFollowActor(0, 1);
@@ -704,24 +718,25 @@ static void ValeKraden_OverhearKraden(void) {
     }
     Engine_ActorWaitForMove(JENNA);
     Engine_ActorSetPosition(JENNA, 0, 0);
-    Engine_GameFlagSet(0x800);
+    Engine_GameFlagSet(FLAG_OVERHEARD_KRADEN);
     Engine_EventEnd();
   }
 }
 
-// Restore actors and obstacles for the current story chapter.
+// Place the actors for the storm or for the day, and play the arrival from
+// the cottage.
 s32 ValeKraden_Initialize(void) {
   struct FieldActor *actor;
   s32 debrisRow;
 
   if (gGameState.entrance == 5 || gGameState.entrance == 6) {
-    Engine_GameFlagClear(0x12f);
+    Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
   }
-  if (GameFlag_IsSet(0x109) != 0) {
-    Engine_GameFlagClear(0x242);
+  if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
+    Engine_GameFlagClear(FLAG_SCENE_TEMP_42);
   }
   // The rockslide chapter replaces residents with debris and a survivor.
-  if (Engine_GameFlagIsSet(0x834) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     Effect_SoundAndFlash();
     FieldFx_StartLightning();
     Engine_EventBegin();
@@ -746,7 +761,7 @@ s32 ValeKraden_Initialize(void) {
     }
     Actor_SetActionScript(ACTOR_ROCKSLIDE_SURVIVOR,
                           gValeKraden_RockslideSurvivorSwayActions);
-    if (Engine_GameFlagIsSet(0x839) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) != 0) {
       Engine_ActorSetPosition(ACTOR_ROCKSLIDE_SURVIVOR, 0, 0);
     }
     debrisRow = 21;
@@ -759,14 +774,14 @@ s32 ValeKraden_Initialize(void) {
     Map_CopyCellAttributes(9, 24, 1, 1, 23, 20);
     Map_CopyCellAttributes(9, 24, 1, 1, 24, 20);
   } else {
-    Engine_ActorSetPosition(9, 0, 0);
-    Engine_ActorSetPosition(10, 0, 0);
+    Engine_ActorSetPosition(ACTOR_WEST_ROCK, 0, 0);
+    Engine_ActorSetPosition(ACTOR_EAST_ROCK, 0, 0);
     Engine_ActorSetPosition(GARET, 0, 0);
     Engine_ActorSetPosition(ACTOR_ROCKSLIDE_SURVIVOR, 0, 0);
     Engine_EventBegin();
-    if (Engine_GameFlagIsSet(0x109) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       if (gGameState.entrance == 10) {
-        ValeKraden_LeaveForMtAleph();
+        Event_KradenSetsOff();
       }
     }
     if (Engine_GameFlagIsSet(FLAG_SANCTUM_VISIT_PLANNED) != 0) {
@@ -785,7 +800,7 @@ s32 ValeKraden_Initialize(void) {
             gValeKraden_FaceTargetActions);
       }
     }
-    if (Engine_GameFlagIsSet(0x87a) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
       Actor_SetPosition(ACTOR_COTTAGE_VISITOR, PIXELS(132), PIXELS(264));
     }
     Engine_EventEnd();
@@ -793,17 +808,18 @@ s32 ValeKraden_Initialize(void) {
   return 0;
 }
 
-// Discover that the rockslide survivor can still escape.
-static void ValeKraden_TalkToRockslideSurvivor(void) {
+// The man hurt in the rockslide asks whether he will die: yes, and he gives up;
+// no, and he finds he is unhurt and runs off to the plaza.
+static void Event_TalkToRockslideSurvivor(void) {
   struct FieldActor *leader;
   s32 message;
 
-  if (GameFlag_IsSet(0x839) == 0) {
-    if (GameFlag_IsSet(0x82f) != 0) {
+  if (GameFlag_IsSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) == 0) {
+    if (GameFlag_IsSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP) != 0) {
       Engine_EventBegin();
       Engine_ActorRunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
       Engine_EventSetMessage(MsgValeSaveYourselves);
-      Engine_EventShowMessage(11, 0);
+      Engine_EventShowMessage(ACTOR_ROCKSLIDE_SURVIVOR, 0);
       Engine_EventEnd();
     } else {
       Engine_EventBegin();
@@ -812,7 +828,7 @@ static void ValeKraden_TalkToRockslideSurvivor(void) {
       // Reassure the survivor or leave him convinced that he is dying.
       message = MsgValeRockslideDestroyedFence;
       Engine_EventSetMessage(message);
-      Engine_EventShowMessageAndWait(11, 0, 20);
+      Engine_EventShowMessageAndWait(ACTOR_ROCKSLIDE_SURVIVOR, 0, 20);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 30);
       Engine_CameraMoveTo(PIXELS(98), -1, PIXELS(283), 1);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 94, 293);
@@ -825,28 +841,28 @@ static void ValeKraden_TalkToRockslideSurvivor(void) {
       Actor_FaceDirection(GARET, FACING_NORTHWEST, 40);
       Engine_ActorRunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
       Engine_EventWait(40);
-      Engine_EventOpenMessage(11, 0);
+      Engine_EventOpenMessage(ACTOR_ROCKSLIDE_SURVIVOR, 0);
       if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_ActorRunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
         Engine_EventWait(20);
         Engine_EventSetMessage((message + 2));
-        Engine_EventShowMessage(11, 0);
-        Engine_GameFlagSet(0x82f);
+        Engine_EventShowMessage(ACTOR_ROCKSLIDE_SURVIVOR, 0);
+        Engine_GameFlagSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP);
       } else {
         Engine_ActorRunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
         Engine_EventWait(20);
         Engine_EventSetMessage((message + 3));
-        Engine_EventShowMessageAndWait(11, 0, 40);
+        Engine_EventShowMessageAndWait(ACTOR_ROCKSLIDE_SURVIVOR, 0, 40);
         Engine_ActorFaceActor(ACTOR_ROCKSLIDE_SURVIVOR, 0, 0);
         Engine_ActorSetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_STAND);
         Engine_ActorJump(ACTOR_ROCKSLIDE_SURVIVOR, 4, 40);
         Engine_ActorSetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, 6);
         Actor_ShowEmote(ACTOR_ROCKSLIDE_SURVIVOR, EMOTE_IN_FRONT | 1, 40);
-        Engine_EventShowMessageAndWait(11, 0, 10);
+        Engine_EventShowMessageAndWait(ACTOR_ROCKSLIDE_SURVIVOR, 0, 10);
         Engine_ActorSetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_STAND);
         Engine_EventWait(10);
         Engine_ActorSetAnimationAndWait(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_NOD);
-        Engine_EventShowMessageAndWait(11, 0, 10);
+        Engine_EventShowMessageAndWait(ACTOR_ROCKSLIDE_SURVIVOR, 0, 10);
         Engine_ActorSetAnimationAndWait(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_NOD);
         // Follow his escape until the party can see that he is unharmed.
         FieldObject_SetTargetAndCallback(ACTOR_PARTY_LEADER,
@@ -863,7 +879,7 @@ static void ValeKraden_TalkToRockslideSurvivor(void) {
         Actor_FaceDirection(GARET, FACING_SOUTH, 60);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 0);
         Engine_ActorShowEmote(GARET, EMOTE_IN_FRONT | 5, 120);
-        Engine_GameFlagSet(0x839);
+        Engine_GameFlagSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED);
       }
       Engine_ActorSetAnimation(GARET, ANIM_WALK);
       leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -878,8 +894,8 @@ static void ValeKraden_TalkToRockslideSurvivor(void) {
   }
 }
 
-// Start the first monster encounter near the broken fence.
-static void ValeKraden_StartFirstMonsterBattle(void) {
+// On the stormy night, a monster attacks by the broken fence.
+static void Event_FightFirstMonster(void) {
   struct EventWork *work;
 
   Engine_EventBegin();
@@ -888,14 +904,14 @@ static void ValeKraden_StartFirstMonsterBattle(void) {
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   work->transitionFrames = 64;
 
-  Engine_GameFlagSet(0x87D);
+  Engine_GameFlagSet(FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(12, 0);
-  Engine_GameFlagSet(0x900);
+  Engine_GameFlagSet(FLAG_VALE_STORM_MONSTER_FOUGHT);
   Engine_EventEnd();
 }
 
-// Start the second monster encounter near the broken fence.
-static void ValeKraden_StartSecondMonsterBattle(void) {
+// On the stormy night, a second monster attacks by the broken fence.
+static void Event_FightSecondMonster(void) {
   struct EventWork *work;
 
   Engine_EventBegin();
@@ -904,14 +920,15 @@ static void ValeKraden_StartSecondMonsterBattle(void) {
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
   work->transitionFrames = 64;
 
-  Engine_GameFlagSet(0x87E);
+  Engine_GameFlagSet(FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(12, 1);
-  Engine_GameFlagSet(0x900);
+  Engine_GameFlagSet(FLAG_VALE_STORM_MONSTER_FOUGHT);
   Engine_EventEnd();
 }
 
-// Ask Isaac about his memories of Kraden's cottage.
-static void ValeKraden_RememberCottage(void) {
+// After the party has reached Kalay, a villager at the cottage asks Isaac about
+// his memories of it.
+static void Event_TalkToCottageVisitor(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeMemoriesOfThisCottage);
   Engine_EventAskYesNo(16, 0);
@@ -999,47 +1016,47 @@ struct ScenePlacement gValeKraden_Placements[] = {
 };
 
 struct SceneEvent gValeKraden_Events[] = {
-    { EVENT_TALK, ACTOR_KRADEN, CONDITION_ALWAYS, EVENT_SCRIPT(ValeKraden_PlanSanctumVisit) },
-    { EVENT_TALK, ACTOR_FENCE_ONLOOKER, CONDITION_ALWAYS, EVENT_SCRIPT(ValeKraden_DiscussFenceGrowls) },
+    { EVENT_TALK, ACTOR_KRADEN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_KradenPlansSanctumVisit) },
+    { EVENT_TALK, ACTOR_FENCE_ONLOOKER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToFenceOnlooker) },
     { EVENT_TALK, ACTOR_SATUROS, CONDITION_ALWAYS, MSGNO(MsgValeDoNotKeepKradenWaiting) },
     { EVENT_TALK, ACTOR_MENARDI, CONDITION_ALWAYS, MSGNO(MsgValeLeaveBeforeWeChangeMinds) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FENCE_ONLOOKER, CONDITION_ALWAYS, MSGNO(MsgValeCuriousBeyondFence) },
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(ValeKraden_EnterCottage) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCottage) },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(ValeKraden_OverhearKraden) },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(ValeKraden_MeetSaturosAndMenardi) },
-    { PSYNERGY_ON_ACTOR(0x8f), 8, CONDITION_ALWAYS, 0 },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OverhearKraden) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MeetSaturosAndMenardi) },
+    { PSYNERGY_ON_ACTOR(ABILITY_LIFT), 8, CONDITION_ALWAYS, 0 },
     { SEARCH(SEARCH_JAR), 100, 0xf41, FIND_ITEM(ITEM_ELIXIR) },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeKraden_Events834[] = {
+struct SceneEvent gValeKraden_StormEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 12 },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
-    { EVENT_TALK, ACTOR_ROCKSLIDE_SURVIVOR, CONDITION_ALWAYS, EVENT_SCRIPT(ValeKraden_TalkToRockslideSurvivor) },
-    { EVENT_TOUCH, 20, 0x82f, EVENT_SCRIPT(ValeKraden_TalkToRockslideSurvivor) },
-    { EVENT_TOUCH, 10, 0x87d, EVENT_SCRIPT(ValeKraden_StartFirstMonsterBattle) },
-    { EVENT_TOUCH, 11, 0x87e, EVENT_SCRIPT(ValeKraden_StartSecondMonsterBattle) },
+    { EVENT_TALK, ACTOR_WEST_ROCK, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
+    { EVENT_TALK, ACTOR_EAST_ROCK, CONDITION_ALWAYS, MSGNO(MsgValeRockCannotBeMoved) },
+    { EVENT_TALK, ACTOR_ROCKSLIDE_SURVIVOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToRockslideSurvivor) },
+    { EVENT_TOUCH, 20, FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP, EVENT_SCRIPT(Event_TalkToRockslideSurvivor) },
+    { EVENT_TOUCH, 10, FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT, EVENT_SCRIPT(Event_FightFirstMonster) },
+    { EVENT_TOUCH, 11, FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT, EVENT_SCRIPT(Event_FightSecondMonster) },
     { SEARCH(SEARCH_JAR), 100, CONDITION_ALWAYS, 0 },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeKraden_Events87a[] = {
+struct SceneEvent gValeKraden_EventsAfterKalay[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(ValeKraden_EnterCottage) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCottage) },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
     { EVENT_TALK, ACTOR_FENCE_ONLOOKER, CONDITION_ALWAYS, MSGNO(MsgValeWonderBeyondFence) },
-    { EVENT_TALK, ACTOR_COTTAGE_VISITOR, CONDITION_ALWAYS, EVENT_SCRIPT(ValeKraden_RememberCottage) },
+    { EVENT_TALK, ACTOR_COTTAGE_VISITOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToCottageVisitor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FENCE_ONLOOKER, CONDITION_ALWAYS, MSGNO(MsgValeAdventuresBeyondFence) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COTTAGE_VISITOR, CONDITION_ALWAYS, MSGNO(MsgValeLonelyWithoutKraden) },
-    { PSYNERGY_ON_ACTOR(0x8f), 8, CONDITION_ALWAYS, 0 },
+    { PSYNERGY_ON_ACTOR(ABILITY_LIFT), 8, CONDITION_ALWAYS, 0 },
 #if TBS_PATCH_3
     { SEARCH(SEARCH_JAR), 100, 0xf41, FIND_ITEM(ITEM_ELIXIR) },
 #endif

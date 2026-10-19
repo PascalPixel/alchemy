@@ -1,5 +1,3 @@
-// Vale's storm, departure, and return scenes share this overlay with the bag
-// scene.
 
 #include "game_state.h"
 #include "vram_tab.h"
@@ -43,57 +41,70 @@
 #include "objcmd.h"
 #include "iowrite.h"
 #include "field_obj.h"
+#include "flags.h"
+#include "fixed_math.h"
 
-// Entry setup selects the longer sequences defined after the touch handlers.
-static void ValeBabi_RunIsaacsStormAwakening(void);
-static void ValeBabi_RunBoulderWarning(void);
+// The arrival scenes are defined after the event handlers.
+static void Event_DoraWakesIsaac(void);
+static void Event_HurryToThePlaza(void);
 static void ValeBabi_RestoreRoomPatch(void);
-static void ValeBabi_ShowMythrilBag(void);
+static void Event_ShowMythrilBag(void);
 static void ValeBabi_SpawnEffectPair(union FieldObject *object);
 static void ValeBabi_DemonstrateCatch(void);
 
 // Shared facing code retains its position before the overlay entry points.
 #include "common/object_facing.h"
 
-enum {
+// The south-west of Vale around Isaac's house, through the stormy night, the
+// party's departure and its return; entrance 19 is instead a room of Babi's
+// scholars, and entrance 22 shows the Mythril Bag.
+//
+// FLAG_SCENE_TEMP_03: Dora got out of her sickbed on this visit.
+// Group flag 0x300: the innkeeper welcomed Isaac back. Group flag 0x301: a
+// neighbour remarked how much Isaac has grown.
 
-  ITEM_MYTHRIL_BAG = 224
+enum ValeBabiActor {
+  // "Isaac, Dora, hurry! The Boulder could fall at any second!"
+  ACTOR_DORA = 8,
+  ACTOR_INNKEEPER = 13
 };
 
-extern struct SceneEvent gValeBabiEvents2[];
+enum { ITEM_MYTHRIL_BAG = 224 };
 
-// Return the shared entrance table through this overlay's existing ABI.
-s32 *ValeBabi_GetEntrances(void) { return gValeBabiEntrances; }
-
-// The overlay has no clipping-region table.
-s32 SceneData_ReturnZero(void) { return 0; }
-
-// The storm changes which exits are available.
-s32 ValeBabi_SelectExits(void) {
-  if (Engine_GameFlagIsSet(0x834) != 0) {
-    return (s32)gValeBabiExits2;
-  }
-  return (s32)gValeBabiExits;
+// Return the entrances, among them the scenes played on arrival.
+struct SceneEntrance *ValeBabi_GetEntrances(void) {
+  return gValeBabi_Entrances;
 }
 
-// Select placements for the bag scene, storm, departure, or return to Vale.
-s32 ValeBabi_SelectPlacements(void) {
+// This part of Vale has no scene regions.
+struct SceneRegion *ValeBabi_GetRegions(void) { return NULL; }
+
+// On the stormy night the exits lead into the storm.
+u32 *ValeBabi_GetExits(void) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
+    return gValeBabi_StormExits;
+  }
+  return gValeBabi_Exits;
+}
+
+// Place Babi's scholars, or Vale's villagers as the story has left them.
+struct ScenePlacement *ValeBabi_GetPlacements(void) {
   struct ScenePlacement *table;
 
   if (gGameState.entrance == 19)
-    return (s32)gValeBabiPlacements4;
-  if (Engine_GameFlagIsSet(0x87a) != 0)
-    table = gValeBabiPlacements3;
+    return gValeBabi_ScholarsPlacements;
+  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
+    table = gValeBabi_PlacementsAfterKalay;
   else if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
-    table = gValeBabiPlacements2;
+    table = gValeBabi_PlacementsAfterLeaving;
   else
-    table = gValeBabiPlacements;
+    table = gValeBabi_Placements;
   FieldScene_PrepareActors(table);
-  return (s32)table;
+  return table;
 }
 
-// Ask whether the party knows Kraden and discuss his travels.
-static void ValeBabi_AskAboutKnowingKraden(s32 speakerId) {
+// A scholar asks whether the party knows Kraden.
+static void Event_ScholarAsksAboutKraden(s32 speakerId) {
   s32 firstMessage = MsgValeFolksSeemKnow;
 
   Engine_EventSetMessage(firstMessage);
@@ -107,39 +118,40 @@ static void ValeBabi_AskAboutKnowingKraden(s32 speakerId) {
   Engine_EventShowMessage(speakerId, 0);
 }
 
-// Match the event table to the entrance and the party's story progress.
-s32 ValeBabi_SelectEvents(void) {
+// Babi's scholars talk differently once flag 0x950 is set (set in Babi's
+// palace); Vale's villagers follow the storm and the story.
+struct SceneEvent *ValeBabi_GetEvents(void) {
   if (gGameState.entrance == 19) {
     if (Engine_GameFlagIsSet(0x950) != 0) {
-      return (s32)gValeBabiEvents6;
+      return gValeBabi_ScholarsLaterEvents;
     }
-    return (s32)gValeBabiEvents5;
+    return gValeBabi_ScholarsEvents;
   }
 
-  if (Engine_GameFlagIsSet(0x834) != 0) {
-    return (s32)gValeBabiEvents4;
+  if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
+    return gValeBabi_StormEvents;
   }
-  if (Engine_GameFlagIsSet(0x87A) != 0) {
-    return (s32)gValeBabiEvents3;
+  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
+    return gValeBabi_EventsAfterKalay;
   }
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-    return (s32)gValeBabiEvents2;
+    return gValeBabi_EventsAfterLeaving;
   }
-  return (s32)gValeBabiEvents;
+  return gValeBabi_Events;
 }
 
-// Ask Isaac whether he has business with the speaker, then show the reply.
-static void ValeBabi_AskIsaacHisBusiness(void) {
+// A villager calls "Hey, boy" and asks Isaac whether he has business here.
+static void Event_AskIsaacHisBusiness(void) {
   Engine_EventBegin();
   Engine_ActorStartRepeatedMotion(16, 2);
   Engine_EventWait(30);
   Engine_EventSetMessage(MsgValeHeyBoy);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 16, 10);
   Event_ShowMessageAndWait(16, 0, 6);
-  Actor_ShowEmote(16, 0x102, 0);
+  Actor_ShowEmote(16, EMOTE_IN_FRONT | 2, 0);
   Engine_ActorStartRepeatedMotion(16, 1);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(16, 4);
+  Engine_ActorSetAnimationAndWait(16, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_OpenMessage(16, 0);
   if (Engine_EventChooseYesNo(0, 0) == 1) {
@@ -151,8 +163,9 @@ static void ValeBabi_AskIsaacHisBusiness(void) {
   Engine_EventEnd();
 }
 
-// Discuss the masked man being Felix, with a follow-up question on refusal.
-static void ValeBabi_AskWhetherMaskedManWasFelix(void) {
+// After the party has left Vale, a villager asks whether the masked man was
+// Felix.
+static void Event_AskWhetherMaskedManWasFelix(void) {
   struct EventWork *work;
 
   Engine_EventBegin();
@@ -171,7 +184,7 @@ static void ValeBabi_AskWhetherMaskedManWasFelix(void) {
 
 // Stop storm lightning before fading through the requested exit.
 static void ValeBabi_CloseScreenAndExit(s32 exitId) {
-  if (Engine_GameFlagIsSet(0x834) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     FieldFx_StopLightning();
   }
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -181,82 +194,82 @@ static void ValeBabi_CloseScreenAndExit(s32 exitId) {
 }
 
 // Play the exit cue before leaving through trigger 1.
-static void ValeBabi_ExitNorthwestArea(void) {
+static void Event_ExitNorthwestArea(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(1);
 }
 
 // Play the exit cue before leaving through trigger 2.
-static void ValeBabi_ExitNorthArea(void) {
+static void Event_ExitNorthArea(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(2);
 }
 
 // Play the exit cue before leaving through trigger 3.
-static void ValeBabi_ExitNortheastArea(void) {
+static void Event_ExitNortheastArea(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(3);
 }
 
 // Play the exit cue before leaving through trigger 4.
-static void ValeBabi_ExitWestAreaSouth(void) {
+static void Event_ExitWestAreaSouth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(4);
 }
 
 // Play the alternate exit cue before leaving through trigger 5.
-static void ValeBabi_ExitWestAreaNorth(void) {
-  Engine_AudioPlayCue(0x80);
+static void Event_ExitWestAreaNorth(void) {
+  Engine_AudioPlayCue(SE_128);
   ValeBabi_CloseScreenAndExit(5);
 }
 
 // Play the exit cue before leaving through trigger 6.
-static void ValeBabi_ExitCenterAreaSouth(void) {
+static void Event_ExitCenterAreaSouth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(6);
 }
 
 // Play the alternate exit cue before leaving through trigger 7.
-static void ValeBabi_ExitCenterAreaNorth(void) {
-  Engine_AudioPlayCue(0x80);
+static void Event_ExitCenterAreaNorth(void) {
+  Engine_AudioPlayCue(SE_128);
   ValeBabi_CloseScreenAndExit(7);
 }
 
 // Play the exit cue before leaving through trigger 8.
-static void ValeBabi_ExitSouthwestArea(void) {
-  Engine_AudioPlayCue(0x81);
+static void Event_ExitSouthwestArea(void) {
+  Engine_AudioPlayCue(SE_129);
   ValeBabi_CloseScreenAndExit(8);
 }
 
 // Play the exit cue before leaving through trigger 9.
-static void ValeBabi_ExitSouthAreaWest(void) {
-  Engine_AudioPlayCue(0x81);
+static void Event_ExitSouthAreaWest(void) {
+  Engine_AudioPlayCue(SE_129);
   ValeBabi_CloseScreenAndExit(9);
 }
 
 // Play the exit cue before leaving through trigger 10.
-static void ValeBabi_ExitSouthAreaSouth(void) {
+static void Event_ExitSouthAreaSouth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(10);
 }
 
 // Play the exit cue before leaving through trigger 11.
-static void ValeBabi_ExitSoutheastArea(void) {
+static void Event_ExitSoutheastArea(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(11);
 }
 
-// Restore story-dependent actors, storm effects, and the selected arrival
-// scene.
-s32 ValeBabi_RestoreEntryState(void) {
+// Arriving: set up the stormy night or the villagers of the story, and play
+// the scenes of entrances 19 to 22.
+s32 ValeBabi_Initialize(void) {
   struct FieldActor *actor;
 
   if (gGameState.entrance == 19) {
-    Engine_GameFlagClear(0x12f);
+    Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
     ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
         SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   } else {
-    if (Engine_GameFlagIsSet(0x834) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
       Engine_ActorSetPosition(11, 0, 0);
       Engine_ActorSetPosition(12, 0, 0);
       Engine_ActorSetPosition(13, 0, 0);
@@ -267,35 +280,35 @@ s32 ValeBabi_RestoreEntryState(void) {
       ValeBabi_RestoreRoomPatch();
     }
     Engine_ActorSetSpritePriority(13, 1);
-    if (Engine_GameFlagIsSet(0x87a) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
       actor = Object_GetById(17);
       Engine_ActorSetSpriteFlags(actor, 0);
       if (gGameState.entrance == 6 || gGameState.entrance == 7) {
-        if (Engine_GameFlagIsSet(0x109) != 0) {
-          if (Engine_GameFlagIsSet(0x203) != 0) {
+        if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
+          if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_03) != 0) {
             Map_ClearLayerEntryFlag(12);
           }
         } else {
           Map_ClearLayerEntryFlag(11);
-          actor = Object_GetById(8);
+          actor = Object_GetById(ACTOR_DORA);
           Engine_ActorSetSpriteFlags(actor, 0);
-          Engine_ActorSetAnimation(8, 10);
+          Engine_ActorSetAnimation(ACTOR_DORA, 10);
         }
       }
     } else {
       if (gGameState.entrance == 21) {
-        ValeBabi_RunBoulderWarning();
+        Event_HurryToThePlaza();
       } else {
         if (gGameState.entrance == 20) {
-          Engine_GameFlagSet(0x834);
-          ValeBabi_RunIsaacsStormAwakening();
+          Engine_GameFlagSet(FLAG_VALE_STORM);
+          Event_DoraWakesIsaac();
         } else {
           if (gGameState.entrance == 22) {
-            ValeBabi_ShowMythrilBag();
+            Event_ShowMythrilBag();
           } else {
             ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
                 SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-            if (Engine_GameFlagIsSet(0x834) != 0) {
+            if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
               FieldFx_StartLightning();
               ((struct FieldBlendWork *)WORK_SLOT(30))->loud = 1;
               FieldFx_LastLightning();
@@ -315,8 +328,10 @@ s32 ValeBabi_RestoreEntryState(void) {
   return 0;
 }
 
-// Wake Isaac, lead him outside into the storm, and send him toward the exit.
-static void ValeBabi_RunIsaacsStormAwakening(void) {
+// Arriving by entrance 20 on the stormy night: Dora wakes Isaac ("The Mt.
+// Aleph Boulder is going to fall!"), makes him take his tunic, and leads him
+// out into the storm.
+static void Event_DoraWakesIsaac(void) {
   s32 firstMessage;
   struct AnimationObject *sprite;
   struct MapScrollWork *mapWork;
@@ -324,10 +339,9 @@ static void ValeBabi_RunIsaacsStormAwakening(void) {
   struct EventWork **eventSlot;
 
   eventSlot = (struct EventWork **)Ram_EventWork;
-  /* FAKEMATCH: needed to match: stage the root reads before consuming
-     the event record. Read in place (measured again 2026-10-13, with the
-     once-used locals gone): 431 instructions for 430, differ 11 (map
-     work first) or 13 (view centre first). */
+  /* FAKEMATCH(temporary): the event record read into a block-local before
+     the map work and view centre; as reads in place, 11 of 430 instructions
+     differ in tbs-en (13 with the view centre first). */
   {
     struct EventWork *event = *eventSlot;
 
@@ -343,32 +357,32 @@ static void ValeBabi_RunIsaacsStormAwakening(void) {
   Engine_ActorSetPosition(14, 0, 0);
   Engine_ActorSetPosition(15, 0, 0);
   Engine_ActorSetPosition(16, 0, 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
-  Engine_ActorSetAnimation(0, 18);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 18);
   sprite->rotation = 1365;
   Object_GetById(17)->motionFlags = 0;
   Engine_ActorSetSpriteFlags(Object_GetById(17), 0);
   Engine_ActorSetPosition(17, PIXELS(576), PIXELS(650));
   Map_ClearLayerEntryFlag(7);
-  Engine_ActorSetPosition(8, PIXELS(534), PIXELS(688));
+  Engine_ActorSetPosition(ACTOR_DORA, PIXELS(534), PIXELS(688));
   Graphics_EnableObjLayerAndCallbacks();
-  Ui_SetMessageVoiceFromActor(8);
+  Ui_SetMessageVoiceFromActor(ACTOR_DORA);
   firstMessage = MsgValeWake;
   UiText_ShowCenteredMessage(firstMessage, 1, 0);
   Engine_EventWait(40);
-  Map_SetShake(65536, 65536, 65536);
-  Ui_SetMessageVoiceFromActor(8);
+  Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  Ui_SetMessageVoiceFromActor(ACTOR_DORA);
   UiText_ShowCenteredMessage(firstMessage + 1, 1, 0);
   ObjectDispatch_StopCallbacksAndHideLayers();
   Engine_EventWait(40);
   // Widen the camera bounds and reveal the lightning outside.
-  mapWork->minX = 0x01480000;
-  mapWork->minY = 0x02580000;
-  mapWork->maxX = 0x02700000;
-  mapWork->maxY = 0x03300000;
-  viewCenter->x.fixed = 0x02340000;
+  mapWork->minX = PIXELS(328);
+  mapWork->minY = PIXELS(600);
+  mapWork->maxX = PIXELS(624);
+  mapWork->maxY = PIXELS(816);
+  viewCenter->x.fixed = PIXELS(564);
   viewCenter->y.fixed = 0;
-  viewCenter->z.fixed = 0x02b30000;
+  viewCenter->z.fixed = PIXELS(691);
   Engine_MapRedraw();
   Engine_TaskWait(1);
   (*eventSlot)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
@@ -381,80 +395,80 @@ static void ValeBabi_RunIsaacsStormAwakening(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   FieldFx_ResumeLightning();
-  Engine_ActorSetAnimationAndWait(8, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Engine_EventSetMessage(firstMessage + 2);
-  Event_ShowMessageAndWait(36872, 0, 60);
-  Engine_ActorRunRepeatedMotion(0, 2);
+  Event_ShowMessageAndWait(0x9000 | ACTOR_DORA, 0, 60);
+  Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(40);
-  Engine_ActorRunRepeatedMotion(8, 1);
+  Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
   Engine_EventWait(40);
-  Event_ShowMessageAndWait(36872, 0, 20);
-  Engine_ActorRunRepeatedMotion(0, 2);
+  Event_ShowMessageAndWait(0x9000 | ACTOR_DORA, 0, 20);
+  Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Map_SetLayerEntryFlag(7);
   Engine_EventWait(20);
   Map_ClearLayerEntryFlag(8);
-  Actor_SetSpeed(0, 65536, 32768);
-  Engine_ActorSetAnimation(0, 19);
-  Actor_MoveToAndWait(0, 557, 679);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, Q16_ONE, 0x8000);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
+  Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 557, 679);
   Map_SetLayerEntryFlag(8);
   Map_ClearLayerEntryFlag(9);
-  Actor_MoveToAndWait(0, 555, 680);
+  Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 555, 680);
   Engine_EventWait(30);
-  Actor_FaceDirection(8, 53248, 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(0), 1);
-  Engine_ActorJump(0, 4, 0);
-  Actor_WalkToAndWait(0, 543, 674);
-  Engine_ActorSetSpritePriority(0, 3);
-  Actor_FaceDirection(0, 16384, 40);
-  Engine_ActorSetAnimationAndWait(8, 4);
+  Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 0);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 1);
+  Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 543, 674);
+  Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Event_ShowMessage(36872, 0);
+  Event_ShowMessage(0x9000 | ACTOR_DORA, 0);
   ValeBabi_DemonstrateCatch();
   // Resolve the Psynergy demonstration before the pair walks away together.
-  Engine_ActorStartRepeatedMotion(8, 2);
-  Event_ShowMessageAndWait(36872, 0, 20);
-  Object_GetById(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(8, 542, 680);
+  Engine_ActorStartRepeatedMotion(ACTOR_DORA, 2);
+  Event_ShowMessageAndWait(0x9000 | ACTOR_DORA, 0, 20);
+  Object_GetById(ACTOR_DORA)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkToAndWait(ACTOR_DORA, 542, 680);
   Engine_EventWait(1);
-  Object_GetById(8)->steeringFlags |= ACTOR_FACES_MOTION;
+  Object_GetById(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
   Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(8, 2);
-  ObjectDispatch_RegisterChildMetadata(Object_GetById(0), 226);
+  Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
+  ObjectDispatch_RegisterChildMetadata(Object_GetById(ACTOR_PARTY_LEADER), 226);
   Engine_GameFlagSet(33);
-  Engine_AudioPlayCue(126);
-  Engine_ActorSetChildValue(0, 7);
+  Engine_AudioPlayCue(SE_RECOVERY);
+  Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 7);
   Engine_EventWait(10);
-  Engine_ActorSetChildValue(0, 0);
+  Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(20);
-  Object_GetById(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(8, 534, 688);
+  Object_GetById(ACTOR_DORA)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkToAndWait(ACTOR_DORA, 534, 688);
   Engine_EventWait(1);
-  Object_GetById(8)->steeringFlags |= ACTOR_FACES_MOTION;
+  Object_GetById(ACTOR_DORA)->steeringFlags |= ACTOR_FACES_MOTION;
   Engine_EventWait(20);
-  Actor_SetSpeed(8, 98304, 49152);
-  Actor_SetSpeed(0, 98304, 49152);
-  Engine_CameraFollowActor(8, 1);
-  Object_GetById(0)->priorityFlags |= 0x1;
-  Actor_SetActionScript(8, gValeBabiSharedAction);
+  Actor_SetSpeed(ACTOR_DORA, 0x18000, 0xc000);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
+  Engine_CameraFollowActor(ACTOR_DORA, 1);
+  Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= 0x1;
+  Actor_SetActionScript(ACTOR_DORA, gValeBabi_LeaveHouseScript);
   Engine_EventWait(20);
-  Actor_SetActionScript(0, gValeBabiSharedAction);
-  Object_RefreshSelectorById(8);
-  Actor_WalkToAndWait(8, 419, 661);
-  Actor_WalkToAndWait(8, 408, 661);
-  Engine_ActorSetAnimation(8, 1);
-  Engine_ActorSetAnimation(0, 1);
-  Actor_FaceDirection(8, 16384, 10);
-  Event_OpenMessage(32776, 0);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeBabi_LeaveHouseScript);
+  Object_RefreshSelectorById(ACTOR_DORA);
+  Actor_WalkToAndWait(ACTOR_DORA, 419, 661);
+  Actor_WalkToAndWait(ACTOR_DORA, 408, 661);
+  Engine_ActorSetAnimation(ACTOR_DORA, ANIM_STAND);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 10);
+  Event_OpenMessage(0x8000 | ACTOR_DORA, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     (*eventSlot)->message++;
   }
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(32776, 0, 20);
-  Engine_ActorSetAnimation(0, 3);
-  Engine_ActorSetAnimationAndWait(8, 3);
+  Event_ShowMessageAndWait(0x8000 | ACTOR_DORA, 0, 20);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Engine_EventWait(20);
-  Actor_SetActionScript(8, gValeBabiActorExitAction);
-  Actor_SetActionScript(0, gValeBabiLeaderExitAction);
+  Actor_SetActionScript(ACTOR_DORA, gValeBabi_DoraLeavesScript);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeBabi_IsaacLeavesScript);
   Engine_EventWait(20);
   (*eventSlot)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   (*eventSlot)->transitionFrames = 16;
@@ -474,9 +488,9 @@ struct PairWork {
   u16 vramBlock;
 };
 
-// Run the boulder warning and collapse, fading its sprite through alpha
-// blending.
-static void ValeBabi_RunBoulderWarning(void) {
+// Arriving by entrance 21 on the stormy night: a villager calls to Isaac and
+// Dora to hurry; actor 10 shakes, falls and fades as they run to the plaza.
+static void Event_HurryToThePlaza(void) {
   struct FieldActor *actor;
   struct AnimationObject *sprite;
   u32 i;
@@ -491,13 +505,13 @@ static void ValeBabi_RunBoulderWarning(void) {
   Engine_ActorSetPosition(14, 0, 0);
   Engine_ActorSetPosition(15, 0, 0);
   Engine_ActorSetPosition(16, 0, 0);
-  Actor_SetPosition(8, PIXELS(431), PIXELS(391));
+  Actor_SetPosition(ACTOR_DORA, PIXELS(431), PIXELS(391));
   Engine_ActorSetPosition(10, PIXELS(463), PIXELS(404));
   Engine_ActorSetSpriteFlags(Object_GetById(10), 0);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   actor->motionFlags = 0;
   sprite->image.priority = 1;
-  Actor_SetActionScript(10, gValeBabiRampActor10Action);
+  Actor_SetActionScript(10, gValeBabi_Actor10ShakesScript);
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   Map_CopyCellsTo(83, 15, 83, 19, 5, 4);
@@ -510,46 +524,46 @@ static void ValeBabi_RunBoulderWarning(void) {
   Map_CopyCellsTo(92, 28, 87, 23, 4, 4);
   Map_CopyCellsTo(65, 53, 88, 24, 2, 2);
   DisplayBlend_EnableRunScript();
-  SetBlendTarget(0x3f42);
-  Io_Write16(0x100c, &REG_BLDALPHA);
+  SetBlendTarget(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
+  Io_Write16(BLEND_ALPHA(12, 16), &REG_BLDALPHA);
   FieldFx_StartLightning();
   ((struct FieldBlendWork *)WORK_SLOT(30))->loud = 1;
   FieldFx_LastLightning();
   Engine_TaskWait(30);
-  Engine_CameraFollowActor(8, 1);
-  Actor_SetSpeed(8, 0x18000, 0xc000);
+  Engine_CameraFollowActor(ACTOR_DORA, 1);
+  Actor_SetSpeed(ACTOR_DORA, 0x18000, 0xc000);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x18000, 0xc000);
   Actor_SetSpeed(9, 0x18000, 0xc000);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeBabiRampLeaderAction);
-  Actor_SetActionScript(8, gValeBabiRampActor8Action);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeBabi_IsaacRunsAheadScript);
+  Actor_SetActionScript(ACTOR_DORA, gValeBabi_DoraRunsAheadScript);
   Engine_EventOpenScreen();
-  Object_RefreshSelectorById(8);
-  Engine_AudioPlayCue(158);
-  Actor_ShowEmote(8, 0x100, 0);
-  Engine_ActorRunRepeatedMotion(8, 2);
-  Actor_FaceDirection(8, FACING_SOUTH, 10);
-  Camera_SetSpeed(0x40000, 0x8000);
+  Object_RefreshSelectorById(ACTOR_DORA);
+  Engine_AudioPlayCue(SE_DOOR_OPEN);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 0, 0);
+  Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 10);
+  Camera_SetSpeed(PIXELS(4), 0x8000);
   Camera_MoveTo(PIXELS(414), -1, PIXELS(530), 1);
   Actor_SetPosition(9, PIXELS(414), PIXELS(530));
   Engine_ActorWalkToAndWait(9, 427, 483);
   Engine_CameraWaitForMove();
   Engine_EventSetMessage(MsgValeDoraHurryBoulder);
-  Engine_EventShowMessageAndWait(32777, 0, 10);
+  Engine_EventShowMessageAndWait(0x8000 | 9, 0, 10);
   Engine_CameraSetSpeed(0x18000, 0x3000);
   Engine_CameraMoveTo(PIXELS(480), -1, PIXELS(444), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Actor_FaceDirection(8, FACING_WEST, 20);
-  Engine_ActorSetAnimation(8, 3);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-  Engine_ActorSetAnimationAndWait(9, 3);
+  Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 20);
+  Engine_ActorSetAnimation(ACTOR_DORA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
   Engine_ActorWalkTo(9, 415, 589);
   Engine_EventWait(10);
-  Actor_SetActionScript(8, gValeBabiRampActor8ActionB);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeBabiRampLeaderActionB);
-  Engine_AudioPlayCue(234);
+  Actor_SetActionScript(ACTOR_DORA, gValeBabi_DoraRunsBackScript);
+  Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeBabi_IsaacRunsBackScript);
+  Engine_AudioPlayCue(SE_234);
   Engine_EventWait(20);
-  Actor_SetActionScript(10, gValeBabiRampActor10ActionB);
+  Actor_SetActionScript(10, gValeBabi_Actor10FallsScript);
   alpha = &REG_BLDALPHA;
 
   // Bring the boulder fully into view before fading it away.
@@ -559,31 +573,31 @@ ramp:
   Engine_TaskWait(1);
   if (++i <= 3)
     goto ramp;
-  Engine_AudioPlayCue(202);
+  Engine_AudioPlayCue(SE_202);
   Engine_TaskWait(10);
   for (i = 0; i <= 15; i++) {
     SetBlendAlpha(0x100f - i);
     Engine_TaskWait(1);
   }
-  Object_RefreshSelectorById(0);
-  Engine_ActorSetAnimation(8, 1);
-  Engine_ActorStartRepeatedMotion(8, 2);
+  Object_RefreshSelectorById(ACTOR_PARTY_LEADER);
+  Engine_ActorSetAnimation(ACTOR_DORA, ANIM_STAND);
+  Engine_ActorStartRepeatedMotion(ACTOR_DORA, 2);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(10);
-  Actor_FaceDirection(8, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
-  Actor_SetAttachedEffect(8, 0x102);
+  Actor_SetAttachedEffect(ACTOR_DORA, 0x102);
   Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
   Engine_EventWait(80);
   Engine_ActorSetPosition(9, 0, 0);
-  Engine_ActorFaceEachOther(8, 0, 20);
-  Engine_ActorSetAnimation(8, 3);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorFaceEachOther(ACTOR_DORA, ACTOR_PARTY_LEADER, 20);
+  Engine_ActorSetAnimation(ACTOR_DORA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(40);
   Engine_CameraSetSpeed(0xcccc, 0x1999);
-  Engine_CameraFollowActor(8, 1);
-  Actor_SetActionScript(8, gValeBabiRampFinalAction);
-  Actor_RunActionScriptAndWait(ACTOR_PARTY_LEADER, gValeBabiRampFinalAction);
+  Engine_CameraFollowActor(ACTOR_DORA, 1);
+  Actor_SetActionScript(ACTOR_DORA, gValeBabi_RunToPlazaScript);
+  Actor_RunActionScriptAndWait(ACTOR_PARTY_LEADER, gValeBabi_RunToPlazaScript);
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
       SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->transitionFrames = 32;
@@ -592,193 +606,197 @@ ramp:
   Engine_EventRequestExit(21);
 }
 
-// Open inn service from the counter, or discuss Vale's current circumstances.
-static void ValeBabi_RunInnkeeperTalk(void) {
+// The innkeeper offers a room from behind the counter; elsewhere talks of the
+// travelers, the eruption, or, back from Kalay, welcomes Isaac home.
+static void Event_TalkToInnkeeper(void) {
   struct FieldActor *actor;
 
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if ((u32)(actor->facing + -0x2000) > 0x9000) {
-    Engine_InnOpen(0, 13);
+    Engine_InnOpen(0, ACTOR_INNKEEPER);
   } else {
     Engine_EventBegin();
-    if (GameFlag_IsSet(0x87a) != 0) {
-      Engine_ActorRunRepeatedMotion(13, 2);
-      Actor_FaceActor(13, ACTOR_PARTY_LEADER, 10);
+    if (GameFlag_IsSet(FLAG_REACHED_KALAY) != 0) {
+      Engine_ActorRunRepeatedMotion(ACTOR_INNKEEPER, 2);
+      Actor_FaceActor(ACTOR_INNKEEPER, ACTOR_PARTY_LEADER, 10);
       if (GameFlag_IsSet(0x300) == 0) {
         Engine_EventSetMessage(MsgValeCameBack2);
-        Event_ShowMessage(13, 0);
+        Event_ShowMessage(ACTOR_INNKEEPER, 0);
         GameFlag_Set(0x300);
       }
       Engine_EventSetMessage(MsgValeHomeJustToStay);
-      Event_AskYesNo(13, 0);
-      Actor_FaceDirection(13, 0x9000, 10);
+      Event_AskYesNo(ACTOR_INNKEEPER, 0);
+      Actor_FaceDirection(ACTOR_INNKEEPER, FACING_WEST + FACING_STEP, 10);
     } else {
       if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
         Engine_EventSetMessage(MsgValeTheVisitorsCausedTheEruption);
       } else {
         Engine_EventSetMessage(MsgValeTheThreeTravelersSeemOdd);
       }
-      Event_ShowMessage(13, 0);
+      Event_ShowMessage(ACTOR_INNKEEPER, 0);
     }
     Engine_EventEnd();
   }
 }
 
-// Acknowledge how much Isaac has grown and record the conversation.
-static void ValeBabi_GreetIsaacOnHisReturn(void) {
+// Back from Kalay, a neighbour remarks how much Isaac has grown.
+static void Event_NeighborSeesIsaacHasGrown(void) {
   Engine_EventBegin();
-  Engine_ActorFaceActor(0x10, ACTOR_PARTY_LEADER, 0xA);
+  Engine_ActorFaceActor(16, ACTOR_PARTY_LEADER, 10);
   Engine_EventSetMessage(MsgValeYouveGrownSoMuch);
-  Engine_EventShowMessage(0x10, 0);
-  Engine_ActorFaceDirection(0x10, 0xB000, 0xA);
+  Engine_EventShowMessage(16, 0);
+  Engine_ActorFaceDirection(16, FACING_NORTHWEST + FACING_STEP, 10);
   Engine_GameFlagSet(0x301);
   Engine_EventEnd();
 }
 
-// Mind Read learns that Dora would not let Isaac remain in Vale.
-static void ValeBabi_ReadInnkeepersThoughtsAboutDora(void) {
+// Mind Read on the innkeeper: Dora would not let Isaac stay in Vale.
+static void Event_ReadInnkeepersThoughts(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeDoraWouldntLetHimStay);
-  Engine_EventShowMessage(0xD, 0);
-  Engine_GameFlagSet(0x81C);
+  Engine_EventShowMessage(ACTOR_INNKEEPER, 0);
+  Engine_GameFlagSet(FLAG_READ_THOUGHTS_ABOUT_DORA);
   Engine_EventEnd();
 }
 
-// Mind Read learns of Dora's illness before visiting her.
-static void ValeBabi_ReadThoughtsAboutDorasIllness(void) {
+// Mind Read on the neighbour: Dora was struck with illness.
+static void Event_ReadThoughtsAboutDorasIllness(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeDoraWasStruckWithIllness);
-  Engine_EventShowMessage(0x10, 0);
-  Engine_GameFlagSet(0x81C);
+  Engine_EventShowMessage(16, 0);
+  Engine_GameFlagSet(FLAG_READ_THOUGHTS_ABOUT_DORA);
   Engine_EventEnd();
 }
 
-// Visit the ill Dora, answer her questions, and see her get out of bed.
-static void ValeBabi_RunSickbedVisit(void) {
+// Back from Kalay, Isaac visits Dora in her sickbed; she asks who told him she
+// was ill, then gets up to show she feels well.
+static void Event_VisitSickDora(void) {
   struct FieldActor *leader;
   s32 firstMessage;
 
   Engine_EventBegin();
-  Actor_SetSpeed(0, 0x9999, 0x4ccc);
-  Actor_WalkToAndWait(0, 0x239, 0x189);
-  Actor_FaceDirection(0, 0x4000, 40);
-  Engine_ActorStartRepeatedMotion(8, 2);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 569, 393);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
+  Engine_ActorStartRepeatedMotion(ACTOR_DORA, 2);
   Engine_EventSetMessage(MsgValeCoughCoughWho);
-  Engine_EventShowMessageAndWait(8, 0, 80);
-  Actor_ShowEmote(8, 0x101, 60);
-  Engine_ActorStartRepeatedMotion(8, 1);
-  Engine_EventShowMessageAndWait(8, 0, 60);
-  Engine_ActorRunRepeatedMotion(8, 2);
+  Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 80);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 1, 60);
+  Engine_ActorStartRepeatedMotion(ACTOR_DORA, 1);
+  Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 60);
+  Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
   Engine_EventWait(80);
-  Actor_SetSpeed(8, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_DORA, 0xcccc, 0x6666);
   // Bring Dora out of bed before asking about her illness.
-  Engine_ActorSetDestination(8, 0x248, 0x196);
+  Engine_ActorSetDestination(ACTOR_DORA, 584, 406);
   Map_SetLayerEntryFlag(11);
   Map_ClearLayerEntryFlag(12);
-  Engine_ActorSetAnimation(8, 12);
+  Engine_ActorSetAnimation(ACTOR_DORA, 12);
   Engine_EventWait(80);
-  Engine_ActorRunRepeatedMotion(8, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
   Engine_EventWait(40);
-  Engine_EventShowMessageAndWait(8, 0, 40);
-  Actor_ShowEmote(8, 0x108, 40);
-  Engine_EventShowMessageAndWait(8, 0, 40);
-  Actor_ShowEmote(0, 0x105, 60);
-  Engine_ActorSetAnimationAndWait(8, 13);
-  Actor_ShowEmote(8, 0x103, 0);
-  Engine_ActorSetAnimation(8, 11);
+  Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 40);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 8, 40);
+  Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 40);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 60);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 13);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 3, 0);
+  Engine_ActorSetAnimation(ACTOR_DORA, 11);
   Engine_EventWait(40);
-  Engine_EventShowMessageAndWait(8, 0, 40);
-  Engine_ActorRunRepeatedMotion(8, 1);
+  Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 40);
+  Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
   Engine_EventWait(20);
-  Engine_EventShowMessageAndWait(8, 0, 20);
-  Engine_ActorSetAnimationAndWait(8, 12);
+  Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 12);
   Engine_EventWait(20);
-  Actor_ShowEmote(0, 0x102, 60);
-  Engine_ActorSetAnimation(8, 13);
-  Engine_EventOpenMessage(8, 0);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
+  Engine_ActorSetAnimation(ACTOR_DORA, 13);
+  Engine_EventOpenMessage(ACTOR_DORA, 0);
   if (Engine_EventChooseYesNo(0, 0) == 1) {
     gEventWork->message += 1;
   }
-  if (GameFlag_IsSet(0x81c) != 0) {
-    Actor_ShowEmote(8, 0x102, 60);
+  if (GameFlag_IsSet(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 2, 60);
   }
   Engine_EventWait(20);
-  Engine_EventShowMessage(8, 0);
-  Actor_ShowEmote(8, 0x107, 60);
+  Engine_EventShowMessage(ACTOR_DORA, 0);
+  Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 7, 60);
   // Branch on Isaac's replies and whether Mind Read revealed her illness.
   firstMessage = MsgValeWhoToldIll;
   Engine_EventSetMessage(firstMessage);
-  Engine_EventOpenMessage(8, 0);
+  Engine_EventOpenMessage(ACTOR_DORA, 0);
   if (Engine_EventChooseYesNo(0, 0) == 1) {
     gEventWork->message += 1;
   }
-  if (Engine_GameFlagIsSet(0x81c) != 0) {
-    Actor_ShowEmote(8, 0x102, 60);
+  if (Engine_GameFlagIsSet(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
+    Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 2, 60);
   }
   Engine_EventWait(20);
-  Engine_EventShowMessage(8, 0);
-  Engine_ActorShowEmote(8, 0x107, 60);
+  Engine_EventShowMessage(ACTOR_DORA, 0);
+  Engine_ActorShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 7, 60);
   Engine_EventSetMessage(firstMessage + 3);
-  Engine_EventShowMessage(8, 0);
-  Engine_ActorRunRepeatedMotion(8, 1);
+  Engine_EventShowMessage(ACTOR_DORA, 0);
+  Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(8, 13);
-  Engine_ActorStartRepeatedMotion(8, 2);
-  Engine_EventShowMessageAndWait(8, 0, 40);
-  Engine_ActorRunRepeatedMotion(8, 1);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 13);
+  Engine_ActorStartRepeatedMotion(ACTOR_DORA, 2);
+  Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 40);
+  Engine_ActorRunRepeatedMotion(ACTOR_DORA, 1);
   Engine_EventWait(20);
-  Engine_EventShowMessageAndWait(8, 0, 40);
-  Engine_ActorRunRepeatedMotion(8, 2);
+  Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 40);
+  Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
   Engine_EventWait(40);
   // Make room for Dora to walk and demonstrate that she feels well.
-  leader = Object_GetById(0);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   leader->facing = 0;
   Engine_TaskWait(1);
-  Object_GetById(0)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_SetDestination(0, 0x22e, 0x184);
-  Actor_SetSpeed(8, 0x13333, 0x9999);
-  Engine_ActorSetAnimation(8, 14);
-  Engine_ActorMoveToAndWait(8, 0x24a, 0x190);
+  Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_SetDestination(ACTOR_PARTY_LEADER, 558, 388);
+  Actor_SetSpeed(ACTOR_DORA, 0x13333, 0x9999);
+  Engine_ActorSetAnimation(ACTOR_DORA, 14);
+  Engine_ActorMoveToAndWait(ACTOR_DORA, 586, 400);
   Engine_EventWait(40);
-  Actor_WalkToAndWait(8, 0x244, 0x17e);
-  Actor_FaceDirection(8, 0x8000, 40);
-  Object_GetById(0)->steeringFlags |= ACTOR_FACES_MOTION;
-  Engine_ActorFaceDirection(8, 0xc000, 8);
-  Engine_ActorFaceDirection(8, 0, 8);
-  Actor_FaceDirection(8, 0x4000, 8);
-  Actor_FaceDirection(8, 0x8000, 10);
-  Engine_ActorJump(8, 4, 20);
-  Engine_ActorJump(8, 6, 40);
-  Engine_ActorJump(8, 4, 20);
-  Engine_EventShowMessageAndWait(8, 0, 40);
-  Actor_SetSpeed(8, 0x6666, 0x3333);
-  Actor_WalkToAndWait(8, 0x23c, 0x180);
-  Engine_EventShowMessageAndWait(8, 0, 20);
-  Engine_ActorSetAnimationAndWait(0, 3);
+  Actor_WalkToAndWait(ACTOR_DORA, 580, 382);
+  Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 40);
+  Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+  Engine_ActorFaceDirection(ACTOR_DORA, FACING_NORTH, 8);
+  Engine_ActorFaceDirection(ACTOR_DORA, FACING_EAST, 8);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 8);
+  Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 10);
+  Engine_ActorJump(ACTOR_DORA, 4, 20);
+  Engine_ActorJump(ACTOR_DORA, 6, 40);
+  Engine_ActorJump(ACTOR_DORA, 4, 20);
+  Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 40);
+  Actor_SetSpeed(ACTOR_DORA, 0x6666, 0x3333);
+  Actor_WalkToAndWait(ACTOR_DORA, 572, 384);
+  Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Engine_GameFlagSet(0x81e);
-  Engine_GameFlagSet(0x203);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+  Engine_GameFlagSet(FLAG_VISITED_SICK_DORA);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_03);
   Engine_EventEnd();
 }
 
-// Show Dora's sickbed dialogue or her reassurance after the visit.
-static void ValeBabi_TalkToDoraAtHome(void) {
+// Talking to Dora: in her sickbed she murmurs Kyle's name; once up, she tells
+// Isaac not to worry.
+static void Event_TalkToDora(void) {
   s32 message;
 
   Engine_EventBegin();
-  if (Engine_GameFlagIsSet(0x203) != 0) {
-    Object_SetTargetAndCallback(8, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
-                                (s32)gValeBabiActor8Departure);
+  if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_03) != 0) {
+    Object_SetTargetAndCallback(ACTOR_DORA,
+                                ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                gValeBabi_DoraFacesIsaacScript);
     Engine_EventWait(20);
     Engine_EventSetMessage(MsgValeDontWorryBest);
-    Engine_EventShowMessage(8, 0);
+    Engine_EventShowMessage(ACTOR_DORA, 0);
   } else {
-    Engine_ActorRunRepeatedMotion(8, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
     Engine_EventWait(40);
     message = MsgValeUnnOhhKyle;
     Engine_EventSetMessage(message);
-    Engine_EventShowMessageAndWait(8, 0, 40);
+    Engine_EventShowMessageAndWait(ACTOR_DORA, 0, 40);
     Engine_MessageShowCentered((message + 1), 1);
   }
   Engine_EventEnd();
@@ -790,8 +808,9 @@ static void ValeBabi_RestoreRoomPatch(void) {
   Map_CopyCellAttributes(25, 15, 2, 2, 25, 25);
 }
 
-// Display the Mythril Bag icon while its actor lifts and examines it.
-static void ValeBabi_ShowMythrilBag(void) {
+// Arriving by entrance 22: the Mythril Bag rises and wobbles before Kraden's
+// sprite (0x1e, actor 18), with no text.
+static void Event_ShowMythrilBag(void) {
   struct FieldActor *actor;
   struct AnimationObject *sprite;
   GlyphTransfer *glyph;
@@ -801,14 +820,14 @@ static void ValeBabi_ShowMythrilBag(void) {
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  Actor_SetPosition(18, 0x1e00000, 0xca0000);
+  Actor_SetPosition(18, PIXELS(480), PIXELS(202));
   Engine_TaskWait(1);
   Engine_CameraFollowActor(18, 1);
   clear = 0;
-  actor = Engine_ObjectCreate(22, 0x1480000, 0x20000, 0xc30000);
+  actor = Engine_ObjectCreate(22, PIXELS(328), PIXELS(2), PIXELS(195));
   actor->motionFlags = clear;
   sprite = actor->sprite;
-  actor->y.fixed = 0x50000;
+  actor->y.fixed = PIXELS(5);
   sprite->count = clear;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
@@ -820,19 +839,19 @@ static void ValeBabi_ShowMythrilBag(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_EventOpenScreen();
   // Walk the presenter into view, then wait for both bag scripts to finish.
-  Actor_SetSpeed(18, 0x10000, 0x8000);
-  Actor_WalkToAndWait(18, 0x1e0, 176);
-  Actor_WalkToAndWait(18, 0x1a4, 164);
-  Actor_WalkToAndWait(18, 0x146, 185);
-  Actor_FaceDirection(18, 0x4000, 10);
-  Engine_ObjectSetScript(actor, gValeBabiBagLiftScript);
+  Actor_SetSpeed(18, Q16_ONE, 0x8000);
+  Actor_WalkToAndWait(18, 480, 176);
+  Actor_WalkToAndWait(18, 420, 164);
+  Actor_WalkToAndWait(18, 326, 185);
+  Actor_FaceDirection(18, FACING_SOUTH, 10);
+  Engine_ObjectSetScript(actor, gValeBabi_MythrilBagRisesScript);
   ObjectDispatch_WaitForValue16(actor);
-  Object_SetScript(actor, gValeBabiBagShowScript);
+  Object_SetScript(actor, gValeBabi_MythrilBagWobblesScript);
   ObjectDispatch_WaitForValue16(actor);
   Engine_EventWait(20);
   Engine_ObjectDispatchRelease(actor);
   Engine_ActorJump(18, 2, 20);
-  Actor_FaceDirection(18, 0, 40);
+  Actor_FaceDirection(18, FACING_EAST, 40);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventRequestExit(22);
@@ -939,17 +958,17 @@ UNUSED static void ValeBabi_CyclePaletteWithoutParticles(void) {
   ValeBabi_CyclePaletteOnOddFrames((union FieldObject *)Object_GetById(17));
 }
 
-// Demonstrate Catch on actor 8, then release its temporary effect objects.
+// Catch's effect plays on Dora, then its objects are released.
 static void ValeBabi_DemonstrateCatch(void) {
   Engine_PsynergyBegin(ABILITY_CATCH, 1);
-  Engine_PsynergySetTarget(8, 0x11);
+  Engine_PsynergySetTarget(ACTOR_DORA, 0x11);
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);
   Engine_PsynergyLowerHands();
   BattleEffect_CleanupSceneObjects();
 }
 
-s32 gValeBabiSharedAction[] = {
+s32 gValeBabi_LeaveHouseScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(522), 0, PIXELS(748)),
     SC_SYNC,   SC_MOVE(PIXELS(419), 0, PIXELS(748)),
     SC_SYNC,   SC_MOVE(PIXELS(419), 0, PIXELS(691)),
@@ -957,26 +976,26 @@ s32 gValeBabiSharedAction[] = {
     SC_END,
 };
 
-s32 gValeBabiActorExitAction[] = {
+s32 gValeBabi_DoraLeavesScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(387), 0, PIXELS(661)), SC_SYNC, SC_POS(0, 0, 0),
     SC_END,
 };
 
-s32 gValeBabiLeaderExitAction[] = {
+s32 gValeBabi_IsaacLeavesScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(408), 0, PIXELS(661)),
     SC_SYNC,   SC_MOVE(PIXELS(387), 0, PIXELS(661)),
     SC_SYNC,   SC_POS(0, 0, 0),
     SC_END,
 };
 
-s32 gValeBabiRampActor8Action[] = {
+s32 gValeBabi_DoraRunsAheadScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(468), 0, PIXELS(390)),
     SC_SYNC,   SC_MOVE(PIXELS(508), 0, PIXELS(402)),
     SC_SYNC,   SC_ARG(1),
     SC_END,
 };
 
-s32 gValeBabiRampLeaderAction[] = {
+s32 gValeBabi_IsaacRunsAheadScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(431), 0, PIXELS(391)),
     SC_SYNC,   SC_MOVE(PIXELS(468), 0, PIXELS(390)),
     SC_SYNC,   SC_MOVE(PIXELS(486), 0, PIXELS(393)),
@@ -984,7 +1003,7 @@ s32 gValeBabiRampLeaderAction[] = {
     SC_END,
 };
 
-s32 gValeBabiRampActor8ActionB[] = {
+s32 gValeBabi_DoraRunsBackScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(525), 0, PIXELS(414)),
     SC_SYNC,   SC_MOVE(PIXELS(509), 0, PIXELS(442)),
     SC_SYNC,   SC_MOVE(PIXELS(455), 0, PIXELS(450)),
@@ -992,7 +1011,7 @@ s32 gValeBabiRampActor8ActionB[] = {
     SC_END,
 };
 
-s32 gValeBabiRampLeaderActionB[] = {
+s32 gValeBabi_IsaacRunsBackScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(525), 0, PIXELS(414)),
     SC_SYNC,   SC_MOVE(PIXELS(509), 0, PIXELS(442)),
     SC_SYNC,   SC_MOVE(PIXELS(481), 0, PIXELS(443)),
@@ -1000,20 +1019,20 @@ s32 gValeBabiRampLeaderActionB[] = {
     SC_END,
 };
 
-s32 gValeBabiRampFinalAction[] = {
+s32 gValeBabi_RunToPlazaScript[] = {
     SC_ARG(2), SC_MOVE(PIXELS(428), 0, PIXELS(460)),
     SC_SYNC,   SC_MOVE(PIXELS(415), 0, PIXELS(513)),
     SC_SYNC,   SC_MOVE(PIXELS(415), 0, PIXELS(589)),
     SC_SYNC,   SC_END,
 };
 
-s32 gValeBabiRampActor10Action[] = {
+s32 gValeBabi_Actor10ShakesScript[] = {
     SC_SET(SW_SCALE_X, 0xe666),  SC_SET(SW_SCALE_Y, 0x10000), SC_WAIT(4),
     SC_SET(SW_SCALE_X, 0xcccc),  SC_SET(SW_SCALE_Y, 0xcccc),  SC_WAIT(4),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gValeBabiRampActor10ActionB[] = {
+s32 gValeBabi_Actor10FallsScript[] = {
     SC_ARG(2),
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x13333),
@@ -1046,7 +1065,7 @@ s32 gValeBabiRampActor10ActionB[] = {
     SC_END,
 };
 
-s32 gValeBabiActor8Departure[] = {
+s32 gValeBabi_DoraFacesIsaacScript[] = {
     SC_CALL(OverlayObject_UpdateFacingTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
     SC_MOVE(PIXELS(567), 0, PIXELS(690)),
@@ -1056,13 +1075,13 @@ s32 gValeBabiActor8Departure[] = {
     SC_END,
 };
 
-s32 gValeBabiBagLiftScript[] = {
+s32 gValeBabi_MythrilBagRisesScript[] = {
     SC_ADD(SW_Y, 0x8000),
     SC_WAIT(1),
     SC_LOOP(16, SC_TOP),
 };
 
-s32 gValeBabiBagShowScript[] = {
+s32 gValeBabi_MythrilBagWobblesScript[] = {
     SC_ADD(SW_SCALE_X, -0x4000),
     SC_ADD(SW_SCALE_Y, 0x2000),
     SC_WAIT(2),
@@ -1090,7 +1109,7 @@ s32 gValeBabiBagShowScript[] = {
     SC_END,
 };
 
-struct SceneEntrance gValeBabiEntrances[] = {
+struct SceneEntrance gValeBabi_Entrances[] = {
     {0, CONDITION_ALWAYS, 120, 0, 100, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {1, CONDITION_ALWAYS, 160, 0, 228, FACING_NORTH, 0, 24, 0, 248, 256, 0},
     {2, CONDITION_ALWAYS, 480, 0, 176, FACING_NORTH, 0, 264, 8, 560, 240, 0},
@@ -1113,7 +1132,7 @@ struct SceneEntrance gValeBabiEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gValeBabiExits[] = {
+u32 gValeBabi_Exits[] = {
     SCENE_EXITS(8),          SCENE_EXIT(1, 5, 6),   SCENE_EXIT(2, 6, 3),
     SCENE_EXIT(3, 5, 2),     SCENE_EXIT(4, 5, 7),   SCENE_EXIT(5, 8, 8),
     SCENE_EXIT(6, 4, 8),     SCENE_EXIT(7, 8, 9),   SCENE_EXIT(8, 8, 5),
@@ -1122,7 +1141,7 @@ u32 gValeBabiExits[] = {
     SCENE_EXIT(22, 6, 10),   SCENE_EXITS_END,
 };
 
-u32 gValeBabiExits2[] = {
+u32 gValeBabi_StormExits[] = {
     SCENE_EXITS(8),        SCENE_EXIT(1, 5, 6),   SCENE_EXIT(2, 6, 3),
     SCENE_EXIT(3, 5, 2),   SCENE_EXIT(4, 5, 7),   SCENE_EXIT(5, 8, 8),
     SCENE_EXIT(6, 3, 8),   SCENE_EXIT(7, 8, 9),   SCENE_EXIT(8, 8, 5),
@@ -1131,7 +1150,7 @@ u32 gValeBabiExits2[] = {
 };
 
 // clang-format off
-struct ScenePlacement gValeBabiPlacements[] = {
+struct ScenePlacement gValeBabi_Placements[] = {
     { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0x35, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1157,7 +1176,7 @@ struct ScenePlacement gValeBabiPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gValeBabiPlacements2[] = {
+struct ScenePlacement gValeBabi_PlacementsAfterLeaving[] = {
     { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { 0x35, 0x0, ACTOR_STAND,
@@ -1177,7 +1196,7 @@ struct ScenePlacement gValeBabiPlacements2[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gValeBabiPlacements3[] = {
+struct ScenePlacement gValeBabi_PlacementsAfterKalay[] = {
     { 0x1f, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(586), 0, PIXELS(406), FACING_EAST, TALK_KEEP_FACING, 0 },
     { 0x35, 0x0, ACTOR_STAND,
@@ -1201,7 +1220,7 @@ struct ScenePlacement gValeBabiPlacements3[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gValeBabiPlacements4[] = {
+struct ScenePlacement gValeBabi_ScholarsPlacements[] = {
     { 0x70, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(792), 0, PIXELS(336), FACING_NORTH, TALK_FACE_PARTY, 0 },
     { 0x71, CONDITION_ALWAYS, ACTOR_STAND,
@@ -1215,18 +1234,18 @@ struct ScenePlacement gValeBabiPlacements4[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gValeBabiEvents4[] = {
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitNorthwestArea) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitNorthArea) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitNortheastArea) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitWestAreaSouth) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitWestAreaNorth) },
-    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitCenterAreaSouth) },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitCenterAreaNorth) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitSouthwestArea) },
-    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitSouthAreaWest) },
-    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitSouthAreaSouth) },
-    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitSoutheastArea) },
+struct SceneEvent gValeBabi_StormEvents[] = {
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitNorthwestArea) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitNorthArea) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitNortheastArea) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitWestAreaSouth) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitWestAreaNorth) },
+    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitCenterAreaSouth) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitCenterAreaNorth) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSouthwestArea) },
+    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSouthAreaWest) },
+    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSouthAreaSouth) },
+    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSoutheastArea) },
     { SEARCH(SEARCH_WOODEN_BOX), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeWoodenBoxEmpty)) },
     { SEARCH(SEARCH_JAR), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeJarEmpty)) },
     { SEARCH(SEARCH_BARREL), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultButDidntFindAnything)) },
@@ -1240,24 +1259,24 @@ struct SceneEvent gValeBabiEvents4[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeBabiEvents[] = {
+struct SceneEvent gValeBabi_Events[] = {
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeMyFatherAlsoDiedInThat) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeMySonIsStillYoungSo) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeOneOfTheMenFromThat) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgValeTwoOfThoseThreeGuestsStaying) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_AskIsaacHisBusiness) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_RunInnkeeperTalk) },
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitNorthwestArea) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitNorthArea) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitNortheastArea) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitWestAreaSouth) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitWestAreaNorth) },
-    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitCenterAreaSouth) },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitCenterAreaNorth) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitSouthwestArea) },
-    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitSouthAreaWest) },
-    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitSouthAreaSouth) },
-    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitSoutheastArea) },
+    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskIsaacHisBusiness) },
+    { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitNorthwestArea) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitNorthArea) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitNortheastArea) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitWestAreaSouth) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitWestAreaNorth) },
+    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitCenterAreaSouth) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitCenterAreaNorth) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSouthwestArea) },
+    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSouthAreaWest) },
+    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSouthAreaSouth) },
+    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSoutheastArea) },
     { SEARCH(SEARCH_WOODEN_BOX), 100, 0xf47, FIND_ITEM(0xb4) },
     { SEARCH(SEARCH_JAR), 101, 0xf48, FIND_COINS(5) },
     { SEARCH(SEARCH_BARREL), 102, 0xf49, FIND_COINS(1) },
@@ -1271,28 +1290,28 @@ struct SceneEvent gValeBabiEvents[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeBabiEvents2[] = {
+struct SceneEvent gValeBabi_EventsAfterLeaving[] = {
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeComeBackAsAStrongWarrior) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeIWantedJennaToBeMy) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_AskWhetherMaskedManWasFelix) },
+    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskWhetherMaskedManWasFelix) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgValeWereASmallHotelAndWe) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_RunInnkeeperTalk) },
+    { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgValeIWillThinkOfJennaAs) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgValeNowThatJennaIsGoneWe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfFelixChangedMuch) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgValeFelixAndHisGangMustHave) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgValeWhoCouldHaveKnownThatMasked) },
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitNorthwestArea) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitNorthArea) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitNortheastArea) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitWestAreaSouth) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitWestAreaNorth) },
-    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitCenterAreaSouth) },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitCenterAreaNorth) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitSouthwestArea) },
-    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitSouthAreaWest) },
-    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitSouthAreaSouth) },
-    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitSoutheastArea) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgValeWhoCouldHaveKnownThatMasked) },
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitNorthwestArea) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitNorthArea) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitNortheastArea) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitWestAreaSouth) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitWestAreaNorth) },
+    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitCenterAreaSouth) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitCenterAreaNorth) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSouthwestArea) },
+    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSouthAreaWest) },
+    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSouthAreaSouth) },
+    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSoutheastArea) },
     { SEARCH(SEARCH_WOODEN_BOX), 100, 0xf47, FIND_ITEM(0xb4) },
     { SEARCH(SEARCH_JAR), 101, 0xf48, FIND_COINS(5) },
     { SEARCH(SEARCH_BARREL), 102, 0xf49, FIND_COINS(1) },
@@ -1306,38 +1325,38 @@ struct SceneEvent gValeBabiEvents2[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeBabiEvents3[] = {
+struct SceneEvent gValeBabi_EventsAfterKalay[] = {
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeOwItsGonnaBeYearsBefore) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeWelcomeHomeIsaacOhWhatHappened) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeYouTraveledAroundTheEasternEdge) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgValeArentYouGladToSeeThe) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_RunInnkeeperTalk) },
-    { EVENT_TALK, 16, 0x300, EVENT_SCRIPT(ValeBabi_GreetIsaacOnHisReturn) },
+    { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
+    { EVENT_TALK, 16, 0x300, EVENT_SCRIPT(Event_NeighborSeesIsaacHasGrown) },
     { EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgValeYouveGrownSoMuch) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgValeIPromisedIdBecomeAGreat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgValeThatShyGirlWithIsaacSure) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfIsaacWillContinue) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgValeValeWillNeverChangeSoYou) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40d, 0x300, EVENT_SCRIPT(ValeBabi_RunInnkeeperTalk) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ReadInnkeepersThoughtsAboutDora) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x410, 0x301, EVENT_SCRIPT(ValeBabi_GreetIsaacOnHisReturn) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ReadThoughtsAboutDorasIllness) },
-    { EVENT_TALK, 8, 0x81e, EVENT_SCRIPT(ValeBabi_RunSickbedVisit) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_TalkToDoraAtHome) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, 0x81e, EVENT_SCRIPT(ValeBabi_RunSickbedVisit) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x203, MSGNO(MsgValeKyleWatchOutTheBoulderThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgValeImSorryISeemedSoHarsh) },
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitNorthwestArea) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitNorthArea) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitNortheastArea) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitWestAreaSouth) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitWestAreaNorth) },
-    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitCenterAreaSouth) },
-    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitCenterAreaNorth) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitSouthwestArea) },
-    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitSouthAreaWest) },
-    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitSouthAreaSouth) },
-    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_ExitSoutheastArea) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_INNKEEPER, 0x300, EVENT_SCRIPT(Event_TalkToInnkeeper) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadInnkeepersThoughts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | 16, 0x301, EVENT_SCRIPT(Event_NeighborSeesIsaacHasGrown) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadThoughtsAboutDorasIllness) },
+    { EVENT_TALK, ACTOR_DORA, FLAG_VISITED_SICK_DORA, EVENT_SCRIPT(Event_VisitSickDora) },
+    { EVENT_TALK, ACTOR_DORA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToDora) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_DORA, FLAG_VISITED_SICK_DORA, EVENT_SCRIPT(Event_VisitSickDora) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DORA, FLAG_SCENE_TEMP_03, MSGNO(MsgValeKyleWatchOutTheBoulderThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DORA, CONDITION_ALWAYS, MSGNO(MsgValeImSorryISeemedSoHarsh) },
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitNorthwestArea) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitNorthArea) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitNortheastArea) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitWestAreaSouth) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitWestAreaNorth) },
+    { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitCenterAreaSouth) },
+    { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitCenterAreaNorth) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSouthwestArea) },
+    { EVENT_TOUCH, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSouthAreaWest) },
+    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSouthAreaSouth) },
+    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ExitSoutheastArea) },
     { SEARCH(SEARCH_WOODEN_BOX), 100, 0xf47, FIND_ITEM(0xb4) },
     { SEARCH(SEARCH_JAR), 101, 0xf48, FIND_COINS(5) },
     { SEARCH(SEARCH_BARREL), 102, 0xf49, FIND_COINS(1) },
@@ -1354,7 +1373,7 @@ struct SceneEvent gValeBabiEvents3[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeBabiEvents5[] = {
+struct SceneEvent gValeBabi_ScholarsEvents[] = {
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBabiOriginallyThereWereAncientRuinsAt) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgBabiNoMatterHowManyTimesI) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBabiItIsSaidThatLongAgo) },
@@ -1373,9 +1392,9 @@ struct SceneEvent gValeBabiEvents5[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeBabiEvents6[] = {
+struct SceneEvent gValeBabi_ScholarsLaterEvents[] = {
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBabiOnceBabiLighthouseIsCompleteId) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(ValeBabi_AskAboutKnowingKraden) },
+    { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ScholarAsksAboutKraden) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBabiAlchemyTeachesThatTheFourElements) },
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBabiIfTheRiddleOfTheVenus) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBabiImSureKradenWouldStopBy) },

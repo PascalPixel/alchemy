@@ -375,6 +375,85 @@
 #define FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST 0x974
 #define FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST 0x975
 #define FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN 0x984
+// Vale
+// The prologue's stormy night: lightning over Vale, the rockslide and the
+// monsters loose in the village.
+#define FLAG_VALE_STORM 0x834
+// Set whenever Kalay is entered; Vale's villagers then talk of the party's
+// journey.
+#define FLAG_REACHED_KALAY 0x87a
+
+// Vale, Kraden's cottage
+#define FLAG_OVERHEARD_KRADEN 0x800 // Kraden wondered aloud about the strangers
+// The man hurt in the rockslide believes he will die.
+#define FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP 0x82f
+// He found he was unhurt and ran to the plaza.
+#define FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED 0x839
+#define FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT 0x87d
+#define FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT 0x87e
+// A monster was fought on the stormy night: Vale's music changes (song 23).
+#define FLAG_VALE_STORM_MONSTER_FOUGHT 0x900
+
+// Vale, the plaza
+// "Do you need to go past here? You must be going to Kraden's cottage..."
+#define FLAG_VALE_ASKED_IF_GOING_TO_KRADEN 0x806
+// A villager's first outburst at Garet ("Garet, you make me so mad
+// sometimes!").
+#define FLAG_VALE_ANGRY_VILLAGER_ARGUED 0x807
+// Back from Kalay, a villager asked whether Jenna is back yet.
+#define FLAG_VALE_ASKED_IF_JENNA_IS_BACK 0x81f
+// A villager stopped Isaac: "You're not planning on sneaking up to Mt.
+// Aleph..."
+#define FLAG_VALE_WARNED_AGAINST_MT_ALEPH 0x823
+
+// Vale on the stormy night, the paths outside
+// The four rocks that fall across the paths (actors 11 to 14).
+#define FLAG_VALE_STORM_FIRST_ROCK_FELL 0x830
+#define FLAG_VALE_STORM_SECOND_ROCK_FELL 0x831
+#define FLAG_VALE_STORM_THIRD_ROCK_FELL 0x832
+#define FLAG_VALE_STORM_FOURTH_ROCK_FELL 0x833
+// A villager running out of his house shoved Isaac ("Huh? Isaac?").
+#define FLAG_VALE_STORM_BUMPED_INTO_VILLAGER 0x835
+// Isaac heard Garet struggling with his things ("Ugh... Hrnghhh...").
+#define FLAG_VALE_STORM_HEARD_GARET 0x836
+#define FLAG_VALE_STORM_GARET_JOINED 0x837
+#define FLAG_VALE_BOULDER_FELL 0x838
+// Isaac saw the villagers trying to pull Felix from the river.
+#define FLAG_VALE_STORM_SAW_RIVER_RESCUE 0x83a
+// Jenna came back to the river ("Mom! Dad! We're back!") and the scene there
+// ended with ValeStorm_ShowBoulderSweepingDownriver.
+#define FLAG_VALE_STORM_RIVER_GATHERING_SEEN 0x841
+// Garet ran off ("Isaac!"), leaving Isaac alone.
+#define FLAG_VALE_STORM_GARET_LEFT 0x842
+// Dora and Kyle sent Isaac to the plaza.
+#define FLAG_VALE_STORM_SENT_TO_PLAZA 0x87b
+#define FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT 0x87c
+#define FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT 0x87f
+
+// Vale, the village
+// On the stormy night, the villagers sent Isaac to aid the elders holding
+// back the Boulder.
+#define FLAG_VALE_STORM_SENT_TO_AID_ELDERS 0x840
+// Whirlwind cleared the three targets (actors 8 to 10) in the village.
+#define FLAG_VALE_FIRST_WHIRLWIND_TARGET_CLEARED 0x90b
+#define FLAG_VALE_SECOND_WHIRLWIND_TARGET_CLEARED 0x90c
+#define FLAG_VALE_THIRD_WHIRLWIND_TARGET_CLEARED 0x90d
+
+// Vale, around Isaac's house
+// Back from Kalay, Mind Read showed that Dora is ill.
+#define FLAG_READ_THOUGHTS_ABOUT_DORA 0x81c
+// Isaac visited Dora in her sickbed and she got up.
+#define FLAG_VISITED_SICK_DORA 0x81e
+
+// Vale, houses and shops
+// The item shopkeeper gave Isaac a Herb as a farewell gift.
+#define FLAG_VALE_FAREWELL_HERB_RECEIVED 0x81b
+// Back from Kalay, Garet surprised his family at home.
+#define FLAG_GARET_CAME_HOME 0x81d
+
+// Vale during the eruption
+// Isaac and Garet came down Mt. Aleph and followed the elders into the sanctum.
+#define FLAG_VALE_RETURNED_FROM_MT_ALEPH 0x879
 
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
@@ -417,6 +496,8 @@
 #define FLAG_SCENE_TEMP_43 0x243 // Lunpa gate: Garet turns the leader back
 #define FLAG_SCENE_TEMP_44 0x244 // Lunpa gate: the guards caught the party
 #define FLAG_SCENE_TEMP_18 0x218 // Suhalla Desert: the storm holding the party
+#define FLAG_SCENE_TEMP_41 0x241 // Vale: the plaza's watching villager paused
+#define FLAG_SCENE_TEMP_42 0x242 // Vale: Kraden's gate stands open
 #define FLAG_SCENE_TEMP_50                                                     \
   0x250 // Vault interiors: the leader is beside the Bone
 #define FLAG_SCENE_TEMP_70 0x270 // Lunpa Fortress: Hammet's rescue has begun

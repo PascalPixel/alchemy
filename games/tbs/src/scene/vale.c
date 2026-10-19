@@ -38,6 +38,8 @@
 #include "map_scroll.h"
 #include "fixed_math.h"
 #include "macros.h"
+#include "flags.h"
+#include "songs.h"
 
 #if TBS_PATCH_2
 #define VALE_GARET_REUNION_Z 829
@@ -62,8 +64,8 @@ static void Vale_MoveActorAlongHigherZPath(s32 actorId, s32 approachAnimationId,
                                            s32 departureAnimationId,
                                            s32 resumeMotion);
 static void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode);
-static void Vale_PlayHouseRepairReunion(void);
-static void Scene_RepairTheHouse(void);
+static void Event_MendingTheRoof(void);
+static void Event_RoofMended(void);
 static void Vale_UpdateGaretPaletteAndEffects(void);
 static void Vale_UpdateLeaderPaletteAndEffects(void);
 static void Vale_CycleVillagerNinePalette(void);
@@ -79,13 +81,26 @@ static void Effect_ConfigureSpawnedParticle(union FieldObject *fieldObject);
 static void Effect_SpawnRisingDustBurst(struct FieldActor *emitter);
 static void Effect_UpdateParticlePosition(struct FieldActor *particle,
                                           s32 distance, s32 angle);
-static void Vale_OpenVillagerLane(void);
+static void Event_SettleMovedObject(void);
 static void Effect_PlayStepSound(void);
 static void Vale_SynchronizeAlephVillagerPause(void);
 static void Vale_AdjustVillagerPriorityForLeaderHeight(void);
 static void Vale_FlashActorAndSpawnEffects(struct FieldActor *actor);
 static void Vale_CycleActorPaletteAndSpawnEffects(struct FieldActor *actor);
 static void Vale_CycleActorPalette(struct FieldActor *actor);
+
+// Vale's plaza and the paths around it in daytime: the game opens here three
+// years after the storm with Isaac mending his roof (entrances 16 and 17), and
+// the villagers talk of the story before the party leaves, after it has left
+// and after its return from Kalay.
+//
+// FLAG_SCENE_TEMP_02: the roof has just been mended. FLAG_SCENE_TEMP_04: Isaac
+// is in the northern passage. FLAG_SCENE_TEMP_10: the upper path's cells are
+// in place. FLAG_SCENE_TEMP_41: the villager watching Isaac is paused.
+// Group flags 0x303 and 0x304: Garet has talked with his sister and with the
+// villager he asks to protect his family. 0x305: set by an unused scene. 0x307:
+// a villager asked about the lack of travelers. 0x308: the roof-mending end has
+// played. 0x314 to 0x316: the movable object's column.
 
 enum HouseActor { ACTOR_BOARD = 23, ACTOR_LAST_BOARD = 24 };
 
@@ -94,25 +109,30 @@ enum { ANIM_HAMMER = 11 };
 // Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
-s32 MapStagedScene_SelectPrimaryData(void) { return (s32)gValeEntrances; }
+// Return the plaza's entrances.
+struct SceneEntrance *Vale_GetEntrances(void) { return gVale_Entrances; }
 
-s32 MapStagedScene_GetEmptyData(void) { return 0; }
+// The plaza has no scene regions.
+struct SceneRegion *Vale_GetRegions(void) { return NULL; }
 
-s32 MapStagedScene_SelectSecondaryData(void) { return (s32)gValeExits; }
+// Return the plaza's exits.
+u32 *Vale_GetExits(void) { return gVale_Exits; }
 
-s32 MapStagedScene_SelectTertiaryData(void) {
+// Place the villagers for the story so far, or for the roof repair (entrance
+// 16).
+struct ScenePlacement *Vale_GetPlacements(void) {
   u8 *scene_state = (u8 *)&gGameState;
   if (((struct GameState *)scene_state)->entrance == 16)
-    return (s32)gValePlacements4;
-  if (Engine_GameFlagIsSet(0x87a) != 0)
-    return (s32)gValePlacements3;
+    return gVale_RepairPlacements;
+  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
+    return gVale_PlacementsAfterKalay;
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
-    return (s32)gValePlacements2;
-  return (s32)gValePlacements;
+    return gVale_PlacementsAfterLeaving;
+  return gVale_Placements;
 }
 
-// Catch the nut, hide its field actor and mark it collected.
-static void Vale_CatchNutBeforeDeparture(void) {
+// Catch on the Nut hanging in the plaza: the party gets it.
+static void Event_CatchNut(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(26, 0, 0);
   Engine_GameFlagSet(0xfd0);
@@ -121,8 +141,8 @@ static void Vale_CatchNutBeforeDeparture(void) {
   Engine_EventEnd();
 }
 
-// Collect the return visit nut using its current actor slot.
-static void Vale_CatchNutAfterReturning(void) {
+// The same Nut after Kalay, where it is actor 20.
+static void Event_CatchNutAfterKalay(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(20, 0, 0);
   Engine_GameFlagSet(0xfd0);
@@ -131,16 +151,17 @@ static void Vale_CatchNutAfterReturning(void) {
   Engine_EventEnd();
 }
 
-s32 MapStagedScene_SelectQuaternaryData(void) {
-  if (Engine_GameFlagIsSet(0x87a) != 0)
-    return (s32)gValeEvents3;
+// The villagers talk of the story so far.
+struct SceneEvent *Vale_GetEvents(void) {
+  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
+    return gVale_EventsAfterKalay;
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)
-    return (s32)gValeEvents2;
-  return (s32)gValeEvents;
+    return gVale_EventsAfterLeaving;
+  return gVale_Events;
 }
 
 // Ask about the mayor before departure, or the tremors after returning.
-static void Vale_TalkAboutTheMayorAndTremors(void) {
+static void Event_TalkAboutTheMayorAndTremors(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
     Engine_EventSetMessage(MsgValeTheGroundStillShakes);
@@ -154,8 +175,8 @@ static void Vale_TalkAboutTheMayorAndTremors(void) {
 }
 
 // Warn about the mountain path, with a shorter repeat greeting.
-static void Vale_WarnAboutGoingBeyondKradensCottage(void) {
-  s32 flag = 0x806;
+static void Event_WarnAboutGoingBeyondKradensCottage(void) {
+  s32 flag = FLAG_VALE_ASKED_IF_GOING_TO_KRADEN;
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
     Engine_EventSetMessage(MsgValeKradenHasntComeBack);
@@ -173,34 +194,35 @@ static void Vale_WarnAboutGoingBeyondKradensCottage(void) {
   Engine_EventEnd();
 }
 
-// Play the first argument, then use the repeat complaint.
-static void Vale_ArgueWithTheAngryVillager(void) {
+// A villager scolds Garet ("Garet, you make me so mad sometimes!"); afterwards
+// the villager only threatens him.
+static void Event_ArgueWithTheAngryVillager(void) {
   Engine_EventBegin();
-  if (GameFlag_IsSet(0x807) == 0) {
-    GameFlag_Set(0x807);
+  if (GameFlag_IsSet(FLAG_VALE_ANGRY_VILLAGER_ARGUED) == 0) {
+    GameFlag_Set(FLAG_VALE_ANGRY_VILLAGER_ARGUED);
     Engine_EventSetMessage(MsgValeYouMakeMeSoMad);
-    Actor_ShowEmote(18, 0x103, 0);
+    Actor_ShowEmote(18, EMOTE_IN_FRONT | 3, 0);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 18, 20);
     Event_ShowMessageAndWait(18, 0, 6);
     Actor_FaceDirection(18, FACING_WEST, 30);
     Engine_ActorJump(18, 2, 20);
     Event_ShowMessageAndWait(18, 0, 6);
     Engine_ActorFaceEachOther(18, ACTOR_PARTY_LEADER, 10);
-    Actor_ShowEmote(18, 0x103, 0);
+    Actor_ShowEmote(18, EMOTE_IN_FRONT | 3, 0);
     Event_ShowMessageAndWait(18, 0, 10);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
   } else {
-    Actor_ShowEmote(18, 0x103, 0);
+    Actor_ShowEmote(18, EMOTE_IN_FRONT | 3, 0);
     Engine_EventSetMessage(MsgValeIllGetYouForMy);
     Event_ShowMessageAndWait(18, 0, 20);
   }
   Engine_EventEnd();
 }
 
-// Choose the weather remark according to the current story flag.
-static void Vale_TalkAboutTheWeather(void) {
+// A villager talks of the weather, differently right after the roof repair.
+static void Event_TalkAboutTheWeather(void) {
   Engine_EventBegin();
-  if (Engine_GameFlagIsSet(0x202) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02) != 0) {
     Engine_EventSetMessage(MsgValeIToldGaretItWas);
   } else {
     Engine_EventSetMessage(MsgValeItWontRainForSome);
@@ -209,18 +231,18 @@ static void Vale_TalkAboutTheWeather(void) {
   Engine_EventEnd();
 }
 
-// Ask whether Jenna is back and record the conversation.
-static void Vale_AskWhetherJennaHasReturned(void) {
+// Back from Kalay, a villager asks whether Jenna is back.
+static void Event_AskWhetherJennaHasReturned(void) {
   Engine_EventBegin();
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 10, 20);
   Engine_EventSetMessage(MsgValeIsJennaBackYet);
   Engine_EventShowMessage(10, 0);
-  Engine_GameFlagSet(0x81f);
+  Engine_GameFlagSet(FLAG_VALE_ASKED_IF_JENNA_IS_BACK);
   Engine_EventEnd();
 }
 
 // Shake the view before the villager reacts to another tremor.
-static void Vale_ReactToAnotherTremor(void) {
+static void Event_ReactToAnotherTremor(void) {
   Engine_EventBegin();
   Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   Engine_TaskWait(10);
@@ -233,7 +255,7 @@ static void Vale_ReactToAnotherTremor(void) {
 }
 
 // Ask about the quiet roads after the eruption.
-static void Vale_AskAboutTheLackOfTravelers(void) {
+static void Event_AskAboutTheLackOfTravelers(void) {
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(19, 2);
   Engine_EventWait(20);
@@ -244,74 +266,77 @@ static void Vale_AskAboutTheLackOfTravelers(void) {
   Engine_EventEnd();
 }
 
-// Install the alternate path collision attributes and remember the change.
-static void Vale_ApplyAlternatePathAttributes(void) {
-  Engine_GameFlagSet(0x210);
+// Walking onto the upper path: its collision cells change, remembered in
+// FLAG_SCENE_TEMP_10.
+static void Event_SetPathCellOverride(void) {
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_10);
   Map_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
-// Restore the original path collision attributes and clear the saved state.
-static void Vale_RestorePathAttributes(void) {
-  Engine_GameFlagClear(0x210);
+// Walking off the upper path restores its collision cells.
+static void Event_ClearPathCellOverride(void) {
+  Engine_GameFlagClear(FLAG_SCENE_TEMP_10);
   Map_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
 // Open the sanctum door, walk inside and take its scene exit.
-static void Vale_EnterSanctum(void) {
-  Event_PlayCue(188);
+static void Event_EnterSanctum(void) {
+  Event_PlayCue(SE_188);
   Map_AnimateCells(gValeCellAnimC, 45, 11);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 257, 420);
   Engine_EventRequestExit(11);
 }
 
-// Let Jenna stop the first detour; later visits can leave toward Aleph.
-static void Vale_ApproachAleph(void) {
-  if (Engine_GameFlagIsSet(0x801) == 0) {
+// The path to Mt. Aleph: Jenna stops Isaac until Kraden has planned the visit
+// ("Kraden is waiting for us").
+static void Event_ApproachMtAleph(void) {
+  if (Engine_GameFlagIsSet(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
     Vale_HaveJennaStopTheAlephDetour();
   } else {
-    Engine_AudioPlayCue(123);
+    Engine_AudioPlayCue(SE_MAP_EXIT);
     Engine_EventRequestExit(1);
   }
 }
 
-// Take the northern path into the Kraden scene.
-static void Vale_VisitKradenFromNorthPath(void) {
-  Engine_AudioPlayCue(123);
+// The northern path toward Kraden's cottage.
+static void Event_LeaveByNorthPath(void) {
+  Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventRequestExit(3);
 }
 
-// Take the southern path into the Kraden scene.
-static void Vale_VisitKradenFromSouthPath(void) {
-  Engine_AudioPlayCue(123);
+// The southern path toward Kraden's cottage.
+static void Event_LeaveBySouthPath(void) {
+  Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventRequestExit(4);
 }
 
 // Leave through the exit leading back to the house.
-static void Vale_ReturnHome(void) {
-  Engine_AudioPlayCue(123);
+static void Event_LeaveTowardHome(void) {
+  Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventRequestExit(2);
 }
 
 // Animate the eastern house door before entering.
-static void Vale_EnterEastHouse(void) {
-  Event_PlayCue(158);
+static void Event_EnterEastHouse(void) {
+  Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimA, 54, 32);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 406, 727);
   Engine_EventRequestExit(5);
 }
 
 // Animate the central house door before entering.
-static void Vale_EnterCentralHouse(void) {
-  Event_PlayCue(158);
+static void Event_EnterCentralHouse(void) {
+  Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimB, 45, 39);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 262, 805);
   Engine_EventRequestExit(6);
 }
 
-// Handle the return greeting, or open the door to the Babi scene.
-static void Vale_EnterBabisHouse(void) {
+// Isaac's house: after the party has left and before Kalay, Dora will not
+// open ("My Isaac would keep his promise... Go away.").
+static void Event_EnterIsaacsHouse(void) {
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0 &&
-      Engine_GameFlagIsSet(0x87a) == 0) {
+      Engine_GameFlagIsSet(FLAG_REACHED_KALAY) == 0) {
     Engine_EventBegin();
     Engine_EventSetMessage(MsgValeYouCantBeIsaac);
     Engine_EventOpenMessage(21, 0);
@@ -327,7 +352,7 @@ static void Vale_EnterBabisHouse(void) {
     }
     Engine_EventEnd();
   } else {
-    Engine_AudioPlayCue(0x9e);
+    Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapAnimateCells(gValeCellAnimA, 50, 44);
     Engine_ActorWalkTo(ACTOR_PARTY_LEADER, 340, 888);
     Engine_EventRequestExit(7);
@@ -335,24 +360,24 @@ static void Vale_EnterBabisHouse(void) {
 }
 
 // Open the southeastern door and enter its interior.
-static void Vale_EnterSoutheastHouse(void) {
-  Event_PlayCue(158);
+static void Event_EnterSoutheastHouse(void) {
+  Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimB, 49, 69);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 326, 1126);
   Engine_EventRequestExit(8);
 }
 
 // Open the far southern door and enter its interior.
-static void Vale_EnterFarSouthHouse(void) {
-  Event_PlayCue(158);
+static void Event_EnterFarSouthHouse(void) {
+  Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimD, 52, 76);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 374, 1238);
   Engine_EventRequestExit(9);
 }
 
 // Open the southwestern door and enter its interior.
-static void Vale_EnterSouthwestHouse(void) {
-  Event_PlayCue(158);
+static void Event_EnterSouthwestHouse(void) {
+  Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimA, 35, 74);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 1206);
   Engine_EventRequestExit(10);
@@ -385,9 +410,9 @@ static void Vale_HaveJennaStopTheAlephDetour(void) {
   } else {
     Event_ShowMessageAndWait(0x8005, 0, 2);
   }
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(2);
-  Engine_ActorSetAnimation(JENNA, 2);
+  Engine_ActorSetAnimation(JENNA, ANIM_WALK);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != NULL) {
     Actor_SetDestination(JENNA, actor->x.part.pixel, actor->z.part.pixel);
@@ -399,18 +424,18 @@ static void Vale_HaveJennaStopTheAlephDetour(void) {
 }
 
 // Pan down to the puppies and return the camera to the leader.
-static void Vale_WatchThePuppies(void) {
+static void Event_WatchThePuppies(void) {
   struct MapScrollWork *map;
   s32 *savedOrigin;
   struct FieldActor *leader;
   s32 frame;
   s32 cameraPosition[3];
 
-  if (Engine_GameFlagIsSet(0x808) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_MET_SATUROS_AND_MENARDI) == 0) {
     map = gMapWork[0];
     Engine_EventBegin();
     Actor_SetSpeed(0, PIXELS(1), PIXELS(1) / 2);
-    Engine_ActorSetAnimation(0, 1);
+    Engine_ActorSetAnimation(0, ANIM_STAND);
     Engine_EventWait(2);
     Engine_EventSetMessage(MsgValeRrruffRrrruff);
     Engine_EventShowMessageAndWait(15, 0, 2);
@@ -447,10 +472,10 @@ static void Vale_WatchThePuppies(void) {
 }
 
 // Show the puppies message from the opposite approach.
-static void Vale_TurnBackFromThePuppies(void) {
+static void Event_TurnBackFromThePuppies(void) {
   s32 msg;
 
-  if (GameFlag_IsSet(0x808) == 0) {
+  if (GameFlag_IsSet(FLAG_MET_SATUROS_AND_MENARDI) == 0) {
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     msg = MsgValeRrruffRrrruff;
@@ -465,25 +490,26 @@ static void Vale_TurnBackFromThePuppies(void) {
 }
 
 // Change the passage collision and move through its northern end.
-static void Vale_EnterNorthernPassage(void) {
+static void Event_EnterNorthernPassage(void) {
   Engine_EventBegin();
   Map_CopyCellAttributes(49, 53, 8, 4, 20, 50);
   Vale_MoveActorAlongLowerZPath(0, 10, 11, 1);
-  Engine_GameFlagSet(0x204);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_04);
   Engine_EventEnd();
 }
 
 // Move back through the passage and restore its collision attributes.
-static void Vale_ReturnThroughSouthernPassage(void) {
+static void Event_ReturnThroughSouthernPassage(void) {
   Engine_EventBegin();
   Vale_MoveActorAlongHigherZPath(0, 13, 10, 1);
-  Engine_GameFlagClear(0x204);
+  Engine_GameFlagClear(FLAG_SCENE_TEMP_04);
   Map_CopyCellAttributes(49, 46, 8, 4, 20, 50);
   Engine_EventEnd();
 }
 
-// Stage the first warning about sneaking up Mt. Aleph.
-static void Vale_TriggerAlephWarning(void) {
+// A villager jumps out in front of Isaac: "You're not planning on sneaking up
+// to Mt. Aleph...?", then keeps watching him.
+static void Event_WarnAgainstSneakingUpMtAleph(void) {
   struct FieldActor *villager;
   struct FieldActor *actor;
 
@@ -499,24 +525,24 @@ static void Vale_TriggerAlephWarning(void) {
   Actor_SetSpeed(22, PIXELS(5) / 2, PIXELS(5) / 2);
   Engine_ActorJump(22, 4, 0);
   Actor_WalkToAndWait(22, 202, 395);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xb000, 0);
-  Actor_FaceDirection(22, 0x3000, 24);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x100, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(22, FACING_SOUTHEAST + FACING_STEP, 24);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 0);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(20);
   Actor_SetSpeed(22, PIXELS(3) / 2, PIXELS(1));
   Actor_SetActionScript(ACTOR_PARTY_LEADER, gValeLeaderWalkActions);
   Engine_EventWait(10);
-  Actor_ShowEmote(22, 0x103, 0);
+  Actor_ShowEmote(22, EMOTE_IN_FRONT | 3, 0);
   Actor_SetActionScript(22, gValeActor22WalkActions);
   Object_RefreshSelectorById(0);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 256, 474);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Object_RefreshSelectorById(22);
   Actor_WalkToAndWait(22, 256, 456);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Actor_FaceDirection(22, FACING_SOUTH, 20);
   Engine_ActorStartRepeatedMotion(22, 2);
   Engine_EventWait(20);
@@ -530,14 +556,14 @@ static void Vale_TriggerAlephWarning(void) {
       (void (*)(union FieldObject *))Vale_HaveVillagerWatchTheLeader;
 #endif
   Actor_SetActionScript(22, gValeActor22Actions);
-  GameFlag_Set(0x823);
+  GameFlag_Set(FLAG_VALE_WARNED_AGAINST_MT_ALEPH);
   Engine_EventEnd();
 }
 
 // Repeat the warning when the villager reaches the first pause.
-static void Vale_RepeatAlephWarningFromFirstApproach(void) {
+static void Event_RepeatMtAlephWarningFromFirstApproach(void) {
   struct FieldActor *villager = Object_GetById(22);
-  if (Engine_GameFlagIsSet(0x823) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
     if (villager->timer == 1) {
       Vale_AskAboutSneakingToAleph(gValePairTableA, gValePairTableB);
     }
@@ -555,12 +581,12 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
   villager = Object_GetById(22);
   Engine_EventBegin();
   Engine_ActorStartRepeatedMotion(22, 2);
-  Actor_ShowEmote(22, 0x100, 20);
+  Actor_ShowEmote(22, EMOTE_IN_FRONT | 0, 20);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 40);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 40);
   Actor_SetActionScript(ACTOR_PARTY_LEADER, leaderActions);
   Engine_EventWait(10);
-  Actor_ShowEmote(22, 0x103, 0);
+  Actor_ShowEmote(22, EMOTE_IN_FRONT | 3, 0);
   Actor_RunActionScriptAndWait(22, replyActions);
   Object_RefreshSelectorById(0);
   Engine_EventWait(20);
@@ -584,9 +610,9 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
 }
 
 // Repeat the warning when the villager reaches the second pause.
-static void Vale_RepeatAlephWarningFromSecondApproach(void) {
+static void Event_RepeatMtAlephWarningFromSecondApproach(void) {
   struct FieldActor *villager = Object_GetById(22);
-  if (Engine_GameFlagIsSet(0x823) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
     if (villager->timer == 2) {
       Vale_AskAboutSneakingToAleph(gValePairTableC, gValePairTableD);
     }
@@ -594,9 +620,9 @@ static void Vale_RepeatAlephWarningFromSecondApproach(void) {
 }
 
 // Choose the warning approach matching the current villager pause.
-static void Vale_RepeatAlephWarningAtEitherPause(void) {
+static void Event_RepeatMtAlephWarningAtEitherPause(void) {
   struct FieldActor *villager = Object_GetById(22);
-  if (Engine_GameFlagIsSet(0x823) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
     s32 pause;
     pause = villager->timer;
     if (pause == 1) {
@@ -1146,22 +1172,24 @@ UNUSED static void HouseScene_RunRepairMorning(void) {
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(100);
-  GameFlag_Set(0x202);
+  GameFlag_Set(FLAG_SCENE_TEMP_02);
   GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
   *leaderMotion = leaderMotionFlags;
   Engine_EventEnd();
 }
 
-s32 Vale_ApplyEntryState(void) {
+// Arriving: play the roof mending (entrance 16) or its end (entrance 17, once),
+// place the Nut and the movable object, and restore the paths' cells.
+s32 Vale_Initialize(void) {
   struct FieldActor *actor;
   s32 set;
 
   if (gGameState.entrance == 16) {
     PaletteGlow_Update(((u8 *)&gGameState)[517], ((u8 *)&gGameState)[518]);
-    Vale_PlayHouseRepairReunion();
+    Event_MendingTheRoof();
   } else {
     if (!Engine_GameFlagIsSet(0xfd0)) {
-      if (!Engine_GameFlagIsSet(0x87a)) {
+      if (!Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
         InitializeStagedActorSceneOrbitingEffect(26);
       } else {
         InitializeStagedActorSceneOrbitingEffect(20);
@@ -1169,7 +1197,8 @@ s32 Vale_ApplyEntryState(void) {
     }
     Map_CopyCellsTo(2, 102, 84, 41, 2, 1);
     Map_CopyCellsTo(1, 102, 83, 41, 1, 1);
-    actor = Object_GetById((Engine_GameFlagIsSet(0x87a) != 0) + 20);
+    actor =
+        Object_GetById((Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) + 20);
     Engine_ActorSetSpriteFlags(actor, 0);
     if (Engine_GameFlagIsSet(0x314)) {
       actor->x.fixed = 181 << 17;
@@ -1180,40 +1209,40 @@ s32 Vale_ApplyEntryState(void) {
     }
     actor->z.fixed = PIXELS(584);
     actor->y.fixed = PIXELS(192);
-    Vale_OpenVillagerLane();
+    Event_SettleMovedObject();
     actor->terrainId = 3;
     actor->motionFlags = 0;
     FieldScheduler_AddCallback(Vale_AdjustVillagerPriorityForLeaderHeight,
                                0xc80);
 #if TBS_PATCH_4
-    if (Engine_GameFlagIsSet(0x87a)) {
-      if (Engine_GameFlagIsSet(0x109)) {
-        if (Engine_GameFlagIsSet(0x204)) {
+    if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
+      if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
+        if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_04)) {
           Map_CopyCellAttributes(49, 53, 8, 4, 20, 50);
         }
-        if (Engine_GameFlagIsSet(0x210)) {
-          Vale_ApplyAlternatePathAttributes();
+        if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_10)) {
+          Event_SetPathCellOverride();
         }
       }
     } else {
 #else
-    if (!Engine_GameFlagIsSet(0x87a)) {
+    if (!Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
 #endif
-      if (GameFlag_IsSet(0x815)) {
+      if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE)) {
         actor = Object_GetById(21);
         Engine_ActorSetSpriteFlags(Object_GetById(21), 0);
         actor->scaleX = 0x28f;
         actor->scaleY = 0x28f;
       }
-      if (Engine_GameFlagIsSet(0x808)) {
+      if (Engine_GameFlagIsSet(FLAG_MET_SATUROS_AND_MENARDI)) {
         Engine_ActorSetPosition(15, 0, 0);
         Engine_ActorSetPosition(16, 0, 0);
         Engine_ActorSetPosition(17, 0, 0);
       }
-      set = Engine_GameFlagIsSet(0x815);
+      set = Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE);
       if (set == 0) {
-        if (!Engine_GameFlagIsSet(0x109)) {
-          if (Engine_GameFlagIsSet(0x823)) {
+        if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
+          if (Engine_GameFlagIsSet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH)) {
             Actor_SetPosition(22, PIXELS(256), PIXELS(456));
 #ifdef UBFIX
             Object_GetById(22)->update = Vale_HaveVillagerWatchTheLeader;
@@ -1225,23 +1254,24 @@ s32 Vale_ApplyEntryState(void) {
           }
         } else {
           Object_GetById(22)->paused = set;
-          Engine_GameFlagClear(0x241);
+          Engine_GameFlagClear(FLAG_SCENE_TEMP_41);
         }
-        if (gGameState.entrance != 16 && !Engine_GameFlagIsSet(0x87a)) {
+        if (gGameState.entrance != 16 &&
+            !Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
           FieldScheduler_AddCallback(Vale_SynchronizeAlephVillagerPause, 0xc80);
         }
       }
       if (!GameFlag_IsSet(0x308) && gGameState.entrance == 17) {
-        Scene_RepairTheHouse();
+        Event_RoofMended();
         Engine_GameFlagSet(0x308);
       }
 #if TBS_PATCH_4
-      if (Engine_GameFlagIsSet(0x109)) {
-        if (Engine_GameFlagIsSet(0x204)) {
+      if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
+        if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_04)) {
           Map_CopyCellAttributes(49, 53, 8, 4, 20, 50);
         }
-        if (Engine_GameFlagIsSet(0x210)) {
-          Vale_ApplyAlternatePathAttributes();
+        if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_10)) {
+          Event_SetPathCellOverride();
         }
       }
       {
@@ -1255,23 +1285,25 @@ s32 Vale_ApplyEntryState(void) {
 #endif
     }
 #if !TBS_PATCH_4
-    if (Engine_GameFlagIsSet(0x109)) {
-      if (Engine_GameFlagIsSet(0x204)) {
+    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
+      if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_04)) {
         Map_CopyCellAttributes(49, 53, 8, 4, 20, 50);
       }
-      if (Engine_GameFlagIsSet(0x210)) {
-        Vale_ApplyAlternatePathAttributes();
+      if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_10)) {
+        Event_SetPathCellOverride();
       }
     }
 #endif
-    BattleFx_SetQueuedSoundAndPlay(170);
+    BattleFx_SetQueuedSoundAndPlay(SE_170);
     Engine_MapRedraw();
     Engine_TaskWait(1);
   }
   return 0;
 }
 
-static void FieldScene_RunSecondaryActorSequence(void) {
+// Back from Kalay, Garet's sister: "Ah! It's been a while... You're back?"
+// ("Sis...").
+static void Event_GaretMeetsHisSister(void) {
   struct FieldActor *record;
   s32 msg;
 
@@ -1288,19 +1320,19 @@ static void FieldScene_RunSecondaryActorSequence(void) {
   Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 420, 608);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(8, 0x3000, 0);
+  Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 0);
   record = Object_GetById(0);
   if (record != 0) {
     Actor_SetPosition(GARET, record->x.fixed, record->z.fixed);
   }
   Actor_WalkToAndWait(GARET, 402, 608);
-  Actor_FaceDirection(GARET, 0xd000, 20);
+  Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 20);
   Event_ShowMessage(0x1001, 0);
-  Actor_FaceDirection(8, 0x5000, 20);
-  Engine_ActorSetAnimationAndWait(8, 3);
+  Actor_FaceDirection(8, FACING_SOUTH + FACING_STEP, 20);
+  Engine_ActorSetAnimationAndWait(8, ANIM_NOD);
   Event_ShowMessage(0x4008, 0);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-  Engine_ActorSetAnimationAndWait(GARET, 3);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(8, 2);
   Event_OpenMessage(0x4008, 0);
@@ -1309,31 +1341,31 @@ static void FieldScene_RunSecondaryActorSequence(void) {
     Engine_ActorStartRepeatedMotion(8, 1);
   }
   Event_ShowMessageAndWait(0x4008, 0, 40);
-  Actor_ShowEmote(8, 0x105, 60);
+  Actor_ShowEmote(8, EMOTE_IN_FRONT | 5, 60);
   Engine_EventSetMessage(msg + 6);
   Event_ShowMessageAndWait(0x4008, 0, 20);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Engine_EventWait(40);
   Event_ShowMessageAndWait(0x1001, 0, 40);
   Engine_ActorRunRepeatedMotion(8, 1);
-  Actor_FaceDirection(8, 0xd000, 20);
+  Actor_FaceDirection(8, FACING_NORTH + FACING_STEP, 20);
   Event_ShowMessage(0x4008, 0);
-  Engine_ActorSetAnimationAndWait(GARET, 3);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Event_ShowMessageAndWait(0x1001, 0, 120);
   Event_ShowMessageAndWait(0x4008, 0, 20);
-  Actor_ShowEmote(GARET, 0x105, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 40);
   Event_ShowMessageAndWait(0x1001, 0, 40);
-  Engine_ActorSetAnimationAndWait(8, 4);
+  Engine_ActorSetAnimationAndWait(8, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(0x4008, 0, 20);
-  Engine_ActorSetAnimationAndWait(GARET, 3);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_EventWait(40);
-  Actor_FaceDirection(8, 0x5000, 20);
+  Actor_FaceDirection(8, FACING_SOUTH + FACING_STEP, 20);
   Event_ShowMessageAndWait(0x4008, 0, 10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-  Engine_ActorSetAnimationAndWait(GARET, 3);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(8, 3);
-  Engine_ActorSetAnimation(GARET, 2);
+  Engine_ActorSetAnimationAndWait(8, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIM_WALK);
   record = Object_GetById(0);
   if (record != 0) {
     Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
@@ -1344,7 +1376,9 @@ static void FieldScene_RunSecondaryActorSequence(void) {
   Engine_EventEnd();
 }
 
-static void FieldScene_RunPrimaryActorSequence(void) {
+// Back from Kalay, Garet tells a villager: "WHATEVER YOU DO, you must protect
+// the family while I'm gone."
+static void Event_GaretAsksToProtectFamily(void) {
   struct FieldActor *record;
 
   Engine_EventBegin();
@@ -1356,60 +1390,60 @@ static void FieldScene_RunPrimaryActorSequence(void) {
     Actor_SetPosition(GARET, record->x.fixed, record->z.fixed);
   }
   Actor_WalkToAndWait(GARET, 346, 745);
-  Actor_FaceDirection(GARET, 0xd000, 20);
+  Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 20);
   Engine_EventSetMessage(MsgValeHowHaveYouBeen);
   Event_ShowMessage(GARET, 0);
   Engine_ActorRunRepeatedMotion(9, 2);
-  Actor_ShowEmote(9, 0x100, 0);
-  Actor_FaceDirection(9, 0x3000, 10);
-  Actor_FaceDirection(9, 0x5000, 10);
-  Actor_FaceDirection(9, 0x3000, 40);
+  Actor_ShowEmote(9, EMOTE_IN_FRONT | 0, 0);
+  Actor_FaceDirection(9, FACING_SOUTHEAST + FACING_STEP, 10);
+  Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 10);
+  Actor_FaceDirection(9, FACING_SOUTHEAST + FACING_STEP, 40);
   Event_ShowMessageAndWait(9, 0, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-  Engine_ActorSetAnimationAndWait(GARET, 3);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ActorRunRepeatedMotion(9, 1);
-  Actor_FaceDirection(9, 0x5000, 10);
+  Actor_FaceDirection(9, FACING_SOUTH + FACING_STEP, 10);
   Event_ShowMessageAndWait(9, 0, 20);
   Engine_ActorStartRepeatedMotion(GARET, 1);
-  Actor_ShowEmote(GARET, 0x103, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 40);
   Event_ShowMessageAndWait(GARET, 0, 10);
-  Engine_ActorSetAnimationAndWait(9, 3);
+  Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
   Event_ShowMessageAndWait(9, 0, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-  Actor_FaceDirection(GARET, 0x1000, 40);
-  Engine_ActorSetAnimationAndWait(9, 4);
+  Actor_FaceDirection(GARET, FACING_EAST + FACING_STEP, 40);
+  Engine_ActorSetAnimationAndWait(9, ANIM_SHAKE_HEAD);
   Event_ShowMessage(9, 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xb000, 0);
-  Actor_FaceDirection(GARET, 0xd000, 10);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 10);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(GARET, 0, 10);
-  Engine_ActorSetAnimationAndWait(9, 3);
+  Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
   Event_ShowMessageAndWait(9, 0, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
-  Actor_ShowEmote(GARET, 0x102, 80);
+  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 80);
   Event_ShowMessageAndWait(GARET, 0, 20);
   Engine_ActorRunRepeatedMotion(9, 2);
   Event_ShowMessageAndWait(9, 0, 20);
-  Actor_FaceDirection(GARET, 0x1000, 20);
+  Actor_FaceDirection(GARET, FACING_EAST + FACING_STEP, 20);
   Event_OpenMessage(GARET, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Actor_ShowEmote(GARET, 0x105, 60);
+    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 60);
   } else {
     gEventWork->message++;
   }
   Event_ShowMessageAndWait(GARET, 0, 20);
-  Actor_FaceDirection(GARET, 0xd000, 10);
+  Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 10);
   Engine_EventSetMessage(MsgValeEverProtectFamily);
   Event_ShowMessage(GARET, 0);
-  Engine_ActorSetAnimationAndWait(9, 3);
+  Engine_ActorSetAnimationAndWait(9, ANIM_NOD);
   Event_ShowMessageAndWait(9, 0, 20);
-  Engine_ActorSetAnimationAndWait(GARET, 3);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_EventWait(20);
-  Actor_FaceDirection(GARET, 0x1000, 20);
-  Engine_ActorSetAnimationAndWait(GARET, 3);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-  Engine_ActorSetAnimation(GARET, 2);
+  Actor_FaceDirection(GARET, FACING_EAST + FACING_STEP, 20);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIM_WALK);
   record = Object_GetById(0);
   if (record != 0) {
     Actor_SetDestination(GARET, record->x.part.pixel, record->z.part.pixel);
@@ -1443,9 +1477,9 @@ UNUSED static void FieldScene_RunCompanionActorSequence(void) {
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_TaskWait(20);
   Actor_RunActionScriptAndWait(ACTOR_C, actions);
-  Actor_ShowEmote(ACTOR_D, 0x100, 40);
+  Actor_ShowEmote(ACTOR_D, EMOTE_IN_FRONT | 0, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_D, 2);
-  Actor_FaceDirection(ACTOR_D, 0xd000, 10);
+  Actor_FaceDirection(ACTOR_D, FACING_NORTH + FACING_STEP, 10);
   Engine_EventSetMessage(MsgValeIUsedToPlayHere);
   Event_ShowMessageAndWait(ACTOR_D, 0, 40);
   Actor_FaceActor(ACTOR_D, ACTOR_PARTY_LEADER, 20);
@@ -1487,7 +1521,7 @@ static void Vale_MoveActorAlongLowerZPath(s32 actorId, s32 approachAnimationId,
     actor->motionFlags = 3;
   }
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(actorId, 1);
+  Engine_ActorSetAnimation(actorId, ANIM_STAND);
 }
 
 // Traverse the passage toward higher Z and restore falling motion if requested.
@@ -1522,7 +1556,7 @@ static void Vale_MoveActorAlongHigherZPath(s32 actorId, s32 approachAnimationId,
   if (restoreMotion != 0) {
     actor->motionFlags = 3;
   }
-  Engine_ActorSetAnimation(actorId, 1);
+  Engine_ActorSetAnimation(actorId, ANIM_STAND);
 }
 
 // Reset consecutive repair actors to their staging position or hide them.
@@ -1550,8 +1584,9 @@ static void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode) {
   }
 }
 
-// Play the repair morning, reunion with visitors and dust effects.
-static void Vale_PlayHouseRepairReunion(void) {
+// Arriving by entrance 16, the game's opening: "Three years later... Isaac!
+// Haven't you finished mending the roof yet?"
+static void Event_MendingTheRoof(void) {
   u32 i;
   /* FAKEMATCH: repairActor's dead zero initializer and the stoppedMotionFlags
    * temporary preserve register allocation throughout the scene. Without the
@@ -1628,7 +1663,7 @@ static void Vale_PlayHouseRepairReunion(void) {
   Actor_WalkToAndWait(JENNA, 359, 1033);
   Actor_SetSpeed(8, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkTo(8, 318, 947);
-  Engine_ActorSetAnimation(8, 2);
+  Engine_ActorSetAnimation(8, ANIM_WALK);
   Actor_WalkToAndWait(JENNA, 412, 1033);
   Actor_WalkToAndWait(JENNA, 412, 1019);
   Actor_WalkToAndWait(JENNA, 374, 1008);
@@ -1636,7 +1671,7 @@ static void Vale_PlayHouseRepairReunion(void) {
   Actor_WalkToAndWait(8, 318, 947);
   Engine_ActorFaceEachOther(JENNA, 8, 40);
   Engine_ActorRunRepeatedMotion(8, 2);
-  Engine_ActorSetAnimationAndWait(JENNA, 3);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
   Engine_EventWait(10);
   Actor_WalkTo(8, 379, 1017);
   Camera_SetSpeed(PIXELS(1) / 2, PIXELS(1) / 16);
@@ -1644,7 +1679,7 @@ static void Vale_PlayHouseRepairReunion(void) {
   Actor_WalkToAndWait(JENNA, 299, 924);
   Engine_CameraWaitForMove();
   Engine_EventWait(10);
-  Actor_FaceDirection(JENNA, 0xf000, 30);
+  Actor_FaceDirection(JENNA, FACING_NORTHEAST + FACING_STEP, 30);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Engine_EventWait(20);
   Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
@@ -1668,28 +1703,28 @@ static void Vale_PlayHouseRepairReunion(void) {
   Engine_CameraFollowActor(JENNA, 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(JENNA, 3);
-  Actor_FaceDirection(JENNA, 0xd000, 10);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
+  Actor_FaceDirection(JENNA, FACING_NORTH + FACING_STEP, 10);
   Actor_WalkToAndWait(JENNA, 312, 759);
   Actor_WalkToAndWait(JENNA, 361, 760);
   Engine_EventWait(20);
   Actor_FaceDirection(JENNA, FACING_WEST, 40);
   Actor_FaceDirection(JENNA, FACING_EAST, 40);
   Event_ShowMessageAndWait(0x6001, 0, 10);
-  Actor_ShowEmote(JENNA, 0x100, 0);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 0, 0);
   Engine_ActorJump(JENNA, 4, 40);
   Actor_FaceDirection(JENNA, FACING_NORTH, 30);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Engine_EventWait(40);
   Event_ShowMessageAndWait(JENNA, 0, 30);
-  Engine_ActorSetAnimationAndWait(JENNA, 3);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
   Engine_EventWait(10);
   Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   Camera_MoveTo(PIXELS(396), -1, PIXELS(588), 1);
   Actor_WalkToAndWait(JENNA, 456, 739);
   Engine_CameraWaitForMove();
   Engine_EventWait(10);
-  Actor_ShowEmote(GARET, 0x105, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 40);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(20);
 
@@ -1697,7 +1732,7 @@ static void Vale_PlayHouseRepairReunion(void) {
   SceneState_SetValue140Mode0();
   Engine_ActorSetAnimation(GARET, 17);
   Event_ShowMessageAndWait(0x2001, 0, 20);
-  Event_PlayCue(131);
+  Event_PlayCue(SE_131);
   for (i = 0; i < 60; i++) {
     Vale_FlashActorAndSpawnEffects(Object_GetById(GARET));
     Engine_TaskWait(1);
@@ -1734,8 +1769,8 @@ static void Vale_PlayHouseRepairReunion(void) {
   Engine_TaskWait(1);
   Actor_SetChildValue(GARET, 0);
   Actor_SetChildValue(9, 0);
-  Actor_FaceDirection(GARET, 0x3000, 0);
-  Engine_ActorSetAnimation(GARET, 1);
+  Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
+  Engine_ActorSetAnimation(GARET, ANIM_STAND);
   Effect_SpawnRisingDustBurst(dustEmitter);
   SceneEffect_CleanupSceneObjects();
 
@@ -1746,82 +1781,82 @@ static void Vale_PlayHouseRepairReunion(void) {
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(0x6001, 0, 20);
-  Engine_ActorSetAnimationAndWait(JENNA, 3);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(JENNA, 0, 20);
-  Actor_ShowEmote(GARET, 0x102, 40);
-  Engine_ActorSetAnimationAndWait(JENNA, 4);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 40);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(JENNA, 0, 20);
-  Actor_ShowEmote(GARET, 0x101, 80);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 80);
   Engine_ActorRunRepeatedMotion(JENNA, 1);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(JENNA, 0, 20);
-  Actor_ShowEmote(GARET, 0x102, 80);
-  Engine_ActorSetAnimationAndWait(JENNA, 4);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 80);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(JENNA, 0, 20);
-  Engine_ActorSetAnimationAndWait(GARET, 3);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_EventWait(10);
   Actor_WalkToAndWait(JENNA, 388, 604);
   Actor_FaceDirection(JENNA, FACING_NORTHWEST, 20);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(0x1005, 0, 20);
-  Engine_ActorSetAnimationAndWait(JENNA, 4);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
-  Actor_ShowEmote(GARET, 0x105, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 40);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(10);
   Actor_FaceDirection(JENNA, FACING_EAST, 0);
-  Actor_FaceDirection(GARET, 0x8000, 40);
+  Actor_FaceDirection(GARET, FACING_WEST, 40);
   Event_ShowTwoMessagesAndWait(1, 1, 2, 25, 2, 5, 10, 14, 4, 14,
                                stoppedMotionFlags);
   Engine_EventWait(40);
   Actor_SetAttachedEffect(JENNA, 0x102);
   Actor_SetAttachedEffect(GARET, 0x102);
   Engine_EventWait(80);
-  Actor_ShowEmote(JENNA, 0x101, 40);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 40);
   Event_ShowMessageAndWait(0x1005, 0, 20);
   Actor_SetAttachedEffect(GARET, 0x102);
   Engine_EventWait(80);
-  Engine_ActorSetAnimationAndWait(GARET, 4);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
-  Actor_ShowEmote(JENNA, 0x101, 40);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 40);
   Event_ShowMessageAndWait(0x1005, 0, 20);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(GARET, 4);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Actor_ShowEmote(JENNA, 0x101, 80);
-  Engine_ActorSetAnimationAndWait(JENNA, 4);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 80);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(0x1005, 0, 10);
-  Actor_FaceDirection(JENNA, 0x1000, 40);
+  Actor_FaceDirection(JENNA, FACING_EAST + FACING_STEP, 40);
   Actor_FaceActor(JENNA, GARET, 40);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(10);
   Actor_WalkToAndWait(JENNA, 380, 620);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(0x1005, 0, 10);
-  Actor_FaceDirection(GARET, 0x5000, 30);
+  Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 30);
   Actor_SetAttachedEffect(GARET, 0x102);
   Engine_EventWait(80);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(0x6001, 0, 20);
-  Engine_ActorSetAnimationAndWait(JENNA, 4);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
-  Actor_ShowEmote(GARET, 0x101, 80);
-  Engine_ActorSetAnimationAndWait(JENNA, 4);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 80);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
   Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(GARET, 412, 604);
-  Actor_FaceDirection(GARET, 0x5000, 20);
+  Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 20);
   Engine_ActorRunRepeatedMotion(JENNA, 1);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(0x1005, 0, 20);
-  Actor_ShowEmote(GARET, 0x101, 80);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 80);
   Engine_ActorJump(JENNA, 4, 30);
   Event_ShowMessageAndWait(0x1005, 0, 20);
   Engine_ActorRunRepeatedMotion(GARET, 3);
@@ -1829,32 +1864,32 @@ static void Vale_PlayHouseRepairReunion(void) {
   Event_ShowMessageAndWait(0x6001, 0, 20);
   Engine_EventWait(30);
   Actor_FaceDirection(JENNA, FACING_NORTHEAST, 40);
-  Engine_ActorSetAnimationAndWait(JENNA, 3);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
   Event_ShowMessageAndWait(0x1005, 0, 20);
-  Actor_ShowEmote(GARET, 0x101, 80);
-  Actor_ShowEmote(JENNA, 0x103, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 80);
+  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 3, 40);
   Actor_SetSpeed(JENNA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkTo(JENNA, 428, 628);
   Engine_EventWait(20);
-  Actor_FaceDirection(GARET, 0x3000, 0);
+  Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   Engine_ActorWaitForMove(JENNA);
   Event_ShowMessage(0x5001, 0);
-  Engine_ActorSetAnimation(JENNA, 1);
+  Engine_ActorSetAnimation(JENNA, ANIM_STAND);
   Engine_EventWait(60);
-  Actor_FaceDirection(JENNA, 0xb000, 30);
+  Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 30);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Actor_WalkToAndWait(JENNA, 428, 628);
-  Actor_FaceDirection(JENNA, 0xb000, 20);
+  Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 20);
   Engine_ActorRunRepeatedMotion(GARET, 3);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(JENNA, 4);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(0x2005, 0, 20);
   Actor_SetAttachedEffect(GARET, 0x102);
   Engine_EventWait(40);
   Event_ShowMessageAndWait(0x5001, 0, 20);
-  Engine_ActorSetAnimation(GARET, 3);
-  Engine_ActorSetAnimationAndWait(JENNA, 3);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
   Engine_EventWait(10);
   Actor_SetSpeed(JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetSpeed(GARET, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -1868,7 +1903,9 @@ static void Vale_PlayHouseRepairReunion(void) {
   Engine_EventEnd();
 }
 
-static void Scene_RepairTheHouse(void) {
+// Arriving by entrance 17 after the opening: Dora praises the mended roof
+// ("Good job, Isaac. You patched it nicely.").
+static void Event_RoofMended(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
   u32 i;
@@ -1940,8 +1977,8 @@ static void Scene_RepairTheHouse(void) {
   Actor_SetBuiltinAction(0, ACTOR_ACTION_IDLE);
   leader->scaleX = Q16_ONE;
   leader->scaleY = Q16_ONE;
-  Actor_FaceDirection(0, 0xb000, 40);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Actor_FaceDirection(0, FACING_NORTHWEST + FACING_STEP, 40);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(10);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 10, PIXELS(3) / 20);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 400, 840);
@@ -1973,7 +2010,7 @@ static void Scene_RepairTheHouse(void) {
 
     record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
   }
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Scheduler_RemoveCallback(Effect_PlayStepSound);
   Scheduler_RemoveCallback(callbackA);
   Scheduler_RemoveCallback(callbackB);
@@ -1989,9 +2026,9 @@ static void Scene_RepairTheHouse(void) {
   Actor_SetBuiltinAction(0, ACTOR_ACTION_IDLE);
   leader->scaleX = Q16_ONE;
   leader->scaleY = Q16_ONE;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 377, 843);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 20);
@@ -2016,7 +2053,7 @@ static void Scene_RepairTheHouse(void) {
 
     record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
   }
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Scheduler_RemoveCallback(Effect_PlayStepSound);
   Scheduler_RemoveCallback(callbackC);
   Scheduler_RemoveCallback(callbackD);
@@ -2032,13 +2069,13 @@ static void Scene_RepairTheHouse(void) {
   Actor_SetBuiltinAction(0, ACTOR_ACTION_IDLE);
   leader->scaleX = Q16_ONE;
   leader->scaleY = Q16_ONE;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_EventWait(40);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 360, 855);
-  Actor_FaceDirection(ACTOR_DORA, 0xb000, 10);
+  Actor_FaceDirection(ACTOR_DORA, FACING_NORTHWEST + FACING_STEP, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 20);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 17);
   Task_AddCallback(Effect_PlayStepSound, 3200);
   for (i = 0; i < 40; i++) {
@@ -2060,7 +2097,7 @@ static void Scene_RepairTheHouse(void) {
 
     record->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | record->priorityFlags;
   }
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Scheduler_RemoveCallback(Effect_PlayStepSound);
   Scheduler_RemoveCallback(callbackE);
   Scheduler_RemoveCallback(callbackF);
@@ -2080,72 +2117,72 @@ static void Scene_RepairTheHouse(void) {
   Engine_ActorJump(ACTOR_DORA, 2, 20);
   Engine_EventSetMessage(MsgValeGoodJob);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x1000, 10);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST + FACING_STEP, 10);
   Vale_MoveActorAlongLowerZPath(21, 5, 6, 0);
   Actor_SetSpeed(ACTOR_DORA, PIXELS(3) / 10, PIXELS(3) / 20);
   Actor_WalkToAndWait(ACTOR_DORA, 397, 832);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 60);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH, 60);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
   Actor_WalkToAndWait(ACTOR_DORA, 372, 832);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 40);
   Actor_FaceDirection(ACTOR_DORA, FACING_WEST, 40);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-  Actor_FaceDirection(ACTOR_DORA, 0x5000, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 20);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Event_OpenMessage(ACTOR_DORA, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
     gEventWork->message++;
   } else {
-    Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
+    Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   }
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
   Engine_EventSetMessage(MsgValeWorkingYourselvesBone);
   Actor_WalkToAndWait(ACTOR_DORA, 386, 841);
   Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_DORA, 0xd000, 60);
+  Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-  Actor_FaceDirection(ACTOR_DORA, 0x5000, 30);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
   Event_OpenMessage(ACTOR_DORA, 0);
   if (Engine_EventChooseYesNo(0, 0) == 1) {
     gEventWork->message++;
   }
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-  Actor_FaceDirection(ACTOR_DORA, 0xd000, 60);
+  Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
   Engine_EventSetMessage(MsgValeDevastatedWhenKyle);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
   Actor_WalkToAndWait(ACTOR_DORA, 386, 825);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Engine_EventWait(60);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 60);
-  Actor_FaceDirection(ACTOR_DORA, 0x5000, 10);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 10);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
   Actor_WalkToAndWait(ACTOR_DORA, 372, 832);
-  Actor_FaceDirection(ACTOR_DORA, 0x5000, 10);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
   Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
   Camera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(860), 1);
@@ -2153,25 +2190,25 @@ static void Scene_RepairTheHouse(void) {
   Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkTo(GARET, 369, 904);
   Actor_WalkToAndWait(JENNA, 392, 904);
-  Engine_ActorSetAnimation(GARET, 1);
+  Engine_ActorSetAnimation(GARET, ANIM_STAND);
   Vale_MoveActorAlongLowerZPath(5, 10, 11, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHWEST, 0);
   Event_ShowMessageAndWait(JENNA, 0, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
   Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_DORA, 0x3000, 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x1000, 20);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST + FACING_STEP, 20);
   Engine_ActorJump(JENNA, 4, 0);
   Actor_WalkToAndWait(JENNA, 392, 843);
-  Actor_FaceDirection(JENNA, 0x9000, 0);
-  Actor_FaceDirection(ACTOR_DORA, 0x3000, 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 20);
-  Engine_ActorSetAnimationAndWait(21, 3);
+  Actor_FaceDirection(JENNA, FACING_WEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 20);
+  Engine_ActorSetAnimationAndWait(21, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-  Engine_ActorSetAnimationAndWait(JENNA, 3);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
   Event_ShowMessageAndWait(JENNA, 0, 10);
-  Engine_ActorSetAnimation(ACTOR_DORA, 3);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimation(ACTOR_DORA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
   Vale_MoveActorAlongLowerZPath(1, 10, 11, 0);
   Actor_SetSpeed(JENNA, PIXELS(3) / 10, PIXELS(3) / 20);
@@ -2187,28 +2224,28 @@ static void Scene_RepairTheHouse(void) {
   }
   Actor_FaceDirection(JENNA, FACING_WEST, 0);
   Engine_ActorWaitForMove(GARET);
-  Engine_ActorSetAnimation(GARET, 1);
+  Engine_ActorSetAnimation(GARET, ANIM_STAND);
   Actor_FaceDirection(GARET, FACING_WEST, 30);
   Engine_ActorJump(ACTOR_DORA, 4, 30);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-  Engine_ActorSetAnimationAndWait(GARET, 3);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_EventWait(20);
-  Actor_FaceDirection(ACTOR_DORA, 0x5000, 20);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 20);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 30);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 258);
   Engine_EventWait(60);
-  Actor_FaceDirection(ACTOR_DORA, 0x3000, 40);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 40);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Event_ShowMessageAndWait(GARET, 0, 20);
   Actor_ShowEmote(ACTOR_DORA, 257, 80);
-  Actor_FaceDirection(ACTOR_DORA, 0x5000, 30);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 30);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
-  Actor_FaceDirection(ACTOR_DORA, 0x3000, 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 20);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 20);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-  Engine_ActorSetAnimationAndWait(GARET, 3);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_EventWait(80);
   Engine_ActorFaceEachOther(JENNA, GARET, 30);
   Engine_ActorStartRepeatedMotion(GARET, 2);
@@ -2224,36 +2261,36 @@ static void Scene_RepairTheHouse(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_DORA, 2);
   Engine_EventWait(40);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-  Engine_ActorSetAnimation(GARET, 3);
-  Engine_ActorSetAnimationAndWait(JENNA, 3);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-  Engine_ActorSetAnimation(GARET, 3);
-  Engine_ActorSetAnimationAndWait(JENNA, 3);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-  Engine_ActorSetAnimation(GARET, 3);
-  Engine_ActorSetAnimationAndWait(JENNA, 3);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
   Camera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
   Camera_MoveTo(PIXELS(373), PIXELS(160), PIXELS(837), 1);
   Actor_WalkToAndWait(ACTOR_DORA, 364, 816);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 0);
-  Actor_FaceDirection(ACTOR_DORA, 0x3000, 10);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTHEAST + FACING_STEP, 10);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 40);
   Engine_ActorFaceEachOther(JENNA, GARET, 30);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Engine_EventWait(20);
   Actor_FaceDirection(GARET, FACING_WEST, 0);
-  Actor_FaceDirection(5, 0x8000, 20);
-  Actor_FaceDirection(ACTOR_DORA, 0x5000, 20);
+  Actor_FaceDirection(5, FACING_WEST, 20);
+  Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH + FACING_STEP, 20);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, 261, 60);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Event_OpenMessage(ACTOR_DORA, 0);
   none = 0;
 
@@ -2270,7 +2307,7 @@ static void Scene_RepairTheHouse(void) {
   Engine_ActorSetAnimation(ACTOR_DORA, 7);
   Engine_EventWait(5);
   Event_ShowTwoMessagesAndWait(21, 14, 2, 24, 2, 1, 10, 14, 4, 14, none);
-  Event_PlayCue(161);
+  Event_PlayCue(SE_161);
   actor = Actor_Get(ACTOR_DORA);
   actor->sprite->flags = none;
   actor->steeringFlags &= 0xfe;
@@ -2290,17 +2327,17 @@ static void Scene_RepairTheHouse(void) {
   Actor_SetPosition(GARET, PIXELS(374), PIXELS(VALE_GARET_REUNION_Z));
 #endif
   Event_ShowMessage(JENNA, 0);
-  Actor_FaceDirection(GARET, 0xb000, 0);
+  Actor_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_ShowEmote(JENNA, 256, 0);
   Engine_ActorStartRepeatedMotion(JENNA, 2);
   Actor_ShowEmote(GARET, 256, 10);
   Engine_ActorSetAnimation(GARET, 13);
   Engine_ActorJump(GARET, 2, 5);
-  Event_PlayCue(143);
+  Event_PlayCue(SE_143);
   Map_SetShake(0, PIXELS(4), Q16_ONE);
   Map_CopyCellsTo(1, 102, 83, 41, 1, 1);
   Engine_ActorSetSpriteFlags(Actor_Get(GARET), 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 10);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 10);
   Engine_ActorStartRepeatedMotion(GARET, 3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
@@ -2314,7 +2351,7 @@ static void Scene_RepairTheHouse(void) {
   }
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(GARET, 2);
-  Actor_FaceDirection(GARET, 0x5000, 30);
+  Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 30);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Engine_EventWait(60);
@@ -2337,7 +2374,7 @@ static void Scene_RepairTheHouse(void) {
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
   Actor_SetAttachedEffect(ACTOR_DORA, 258);
   Engine_EventWait(80);
-  Actor_FaceDirection(GARET, 0x5000, 40);
+  Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 40);
   Actor_ShowEmote(GARET, 258, 80);
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Event_ShowMessageAndWait(GARET, 0, 20);
@@ -2347,7 +2384,7 @@ static void Scene_RepairTheHouse(void) {
   Engine_ActorRunRepeatedMotion(GARET, 3);
   Engine_ActorSetSpriteFlags(Actor_Get(GARET), 1);
   Engine_ActorJump(GARET, 6, 0);
-  Engine_ActorSetAnimation(GARET, 1);
+  Engine_ActorSetAnimation(GARET, ANIM_STAND);
   Actor_SetSpeed(GARET, PIXELS(4), PIXELS(2));
   actor = Actor_Get(GARET);
   actor->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -2356,14 +2393,14 @@ static void Scene_RepairTheHouse(void) {
   Actor_FaceDirection(JENNA, FACING_NORTH, 20);
   Event_ShowMessageAndWait(JENNA, 0, 1);
   Engine_ActorWaitForMove(GARET);
-  Actor_FaceDirection(GARET, 0x5000, 20);
+  Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 20);
   Event_ShowMessageAndWait(GARET, 0, 20);
   Actor_ShowEmote(GARET, 256, 0);
   Engine_ActorSetAnimation(GARET, 13);
   Engine_ActorJump(GARET, 2, 5);
   Engine_ActorSetSpriteFlags(Actor_Get(GARET), 0);
   Map_CopyCellsTo(2, 102, 84, 41, 2, 1);
-  Event_PlayCue(143);
+  Event_PlayCue(SE_143);
   Map_SetShake(0, PIXELS(4), Q16_ONE);
   Engine_ActorRunRepeatedMotion(GARET, 3);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -2380,16 +2417,16 @@ static void Scene_RepairTheHouse(void) {
   Actor_FaceDirection(GARET, FACING_SOUTH, 30);
   Engine_ActorRunRepeatedMotion(GARET, 3);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(JENNA, 4);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
   Engine_EventWait(80);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 10);
-  Actor_FaceDirection(JENNA, 0xb000, 0);
+  Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 60);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 60);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Engine_EventWait(60);
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 80);
   Actor_ShowEmote(ACTOR_DORA, 261, 80);
@@ -2398,7 +2435,7 @@ static void Scene_RepairTheHouse(void) {
   Actor_ShowEmote(ACTOR_PARTY_LEADER, 257, 0);
   Actor_ShowEmote(JENNA, 257, 0);
   Actor_ShowEmote(GARET, 257, 60);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Engine_EventWait(30);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 60);
   Engine_ActorStartRepeatedMotion(GARET, 2);
@@ -2407,19 +2444,19 @@ static void Scene_RepairTheHouse(void) {
   Actor_FaceDirection(JENNA, FACING_WEST, 60);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 30);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 30);
-  Engine_ActorSetAnimationAndWait(JENNA, 3);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(JENNA, 0, 20);
   Actor_FaceDirection(ACTOR_DORA, FACING_EAST, 30);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-  Engine_ActorSetAnimationAndWait(JENNA, 3);
+  Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(GARET, 3);
   Engine_EventWait(10);
   Event_ShowMessageAndWait(GARET, 0, 20);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xd000, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH + FACING_STEP, 0);
   Actor_ShowEmote(ACTOR_DORA, 256, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 3);
   Engine_EventWait(30);
@@ -2432,9 +2469,9 @@ static void Scene_RepairTheHouse(void) {
   Engine_EventWait(60);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 60);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(60);
-  Engine_ActorSetAnimationAndWait(ACTOR_DORA, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_DORA, ANIM_NOD);
   Engine_EventWait(60);
   actor = Actor_Get(GARET);
   flag = 1;
@@ -2449,10 +2486,10 @@ static void Scene_RepairTheHouse(void) {
   Actor_WalkToAndWait(GARET, actor->x.part.pixel + 16,
                       actor->z.part.pixel - 16);
   Engine_ActorWaitForMove(GARET);
-  Actor_FaceDirection(GARET, 0x5000, 30);
-  Engine_ActorSetAnimation(GARET, 3);
-  Engine_ActorSetAnimation(JENNA, 3);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 30);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(JENNA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(40);
   Actor_WalkToAndWait(JENNA, actor->x.part.pixel, actor->z.part.pixel);
   Actor_SetPosition(JENNA, 0, 0);
@@ -2472,15 +2509,15 @@ static void Scene_RepairTheHouse(void) {
   Actor_WalkToAndWait(ACTOR_DORA, 373, 887);
   Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
-  Engine_ActorSetAnimation(ACTOR_DORA, 3);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
+  Engine_ActorSetAnimation(ACTOR_DORA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(20);
   Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(100);
   Map_CopyCellAttributes(49, 46, 8, 4, 20, 50);
-  GameFlag_Set(514);
-  GameFlag_Clear(303);
+  GameFlag_Set(FLAG_SCENE_TEMP_02);
+  GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
 #if TBS_PATCH_1
   leader->motionFlags = 3;
   leader->y.fixed = PIXELS(160);
@@ -2632,14 +2669,14 @@ static void Effect_ConfigureSpawnedParticle(union FieldObject *fieldObject) {
       ((u8 *)&record->image)[9] = priorityFlags;
     }
   }
-  Engine_AudioPlayCue(0x8a);
+  Engine_AudioPlayCue(SE_ITEM_BREAK);
 }
 
 // Shrink and raise the emitter, scatter dust, then clear its motion targets.
 static void Effect_SpawnRisingDustBurst(struct FieldActor *emitter) {
   s32 frameCountdown;
 
-  Engine_AudioPlayCue(154);
+  Engine_AudioPlayCue(SE_CAST);
 
   for (frameCountdown = 30; frameCountdown >= 0; frameCountdown--) {
     emitter->y.fixed += PIXELS(1);
@@ -2673,7 +2710,7 @@ static void Effect_SpawnRisingDustBurst(struct FieldActor *emitter) {
     }
   }
 
-  Engine_AudioPlayCue(131);
+  Engine_AudioPlayCue(SE_131);
 
   emitter->x.fixed = 0;
   emitter->y.fixed = 0;
@@ -2696,25 +2733,28 @@ static void Effect_UpdateParticlePosition(struct FieldActor *particle,
   }
 }
 
-static void SceneState_ApplyRectAndRunTwo(void) {
+// Pushing the movable object (actor 20; 21 after Kalay) moves it a cell.
+static void Event_PushObject(void) {
 #if !TBS_PATCH_1
   // Japanese edition only: look up a villager but do not use the return value.
-  if (Engine_GameFlagIsSet(0x87a))
+  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY))
     Object_GetById(ACTOR_DORA);
   else
     Object_GetById(20);
 #endif
   Map_CopyCellAttributes(17, 0, 3, 1, 22, 36);
   StagedActor_AdvancePair();
-  Vale_OpenVillagerLane();
+  Event_SettleMovedObject();
 }
 
-static void Vale_OpenVillagerLane(void) {
+// After Move or a push, record the object's column in group flags 0x314 to
+// 0x316 and block the cell it now stands on.
+static void Event_SettleMovedObject(void) {
   struct FieldActor *actor;
   s32 column;
 
   Map_CopyCellAttributes(17, 0, 3, 1, 22, 36);
-  if (Engine_GameFlagIsSet(0x87a))
+  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY))
     actor = Object_GetById(21);
   else
     actor = Object_GetById(20);
@@ -2738,11 +2778,11 @@ static void Vale_OpenVillagerLane(void) {
 
 static void Effect_PlayStepSound(void) {
   if ((*(u32 *)&gFrameCount & 15) == 0)
-    Engine_AudioPlayCue(0x83);
+    Engine_AudioPlayCue(SE_131);
 }
 
 // Tell the player that this door will not open.
-static void Vale_SearchTheLockedDoor(void) {
+static void Event_SearchTheLockedDoor(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgValeDoorWontOpen, 1);
   Engine_EventEnd();
@@ -2752,16 +2792,16 @@ static void Vale_SearchTheLockedDoor(void) {
 static void Vale_SynchronizeAlephVillagerPause(void) {
   s32 pauseFlag;
 
-  if (GameFlag_IsSet(0x241) != 0) {
+  if (GameFlag_IsSet(FLAG_SCENE_TEMP_41) != 0) {
     pauseFlag = GameFlag_IsSet(0x106);
     if (pauseFlag == 0) {
       Object_GetById(22)->paused = pauseFlag;
-      GameFlag_Clear(0x241);
+      GameFlag_Clear(FLAG_SCENE_TEMP_41);
     }
   } else {
     if (GameFlag_IsSet(0x106) != 0) {
       Object_GetById(22)->paused = 1;
-      GameFlag_Set(0x241);
+      GameFlag_Set(FLAG_SCENE_TEMP_41);
     }
   }
 }
@@ -2770,7 +2810,7 @@ static void Vale_SynchronizeAlephVillagerPause(void) {
 static void Vale_AdjustVillagerPriorityForLeaderHeight(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldActor *villager;
-  if (Engine_GameFlagIsSet(0x87a) != 0)
+  if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
     villager = Object_GetById(21);
   else
     villager = Object_GetById(20);
@@ -2983,7 +3023,7 @@ s32 gDustBurstScript[] = {
     SC_FREE,
 };
 
-struct SceneEntrance gValeEntrances[] = {
+struct SceneEntrance gVale_Entrances[] = {
     { 0, CONDITION_ALWAYS, 167, 0, 1281, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 1, CONDITION_ALWAYS, 256, 0, 440, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 2, CONDITION_ALWAYS, 113, 0, 303, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
@@ -3001,7 +3041,7 @@ struct SceneEntrance gValeEntrances[] = {
     { SCENE_TABLE_END },
 };
 
-u32 gValeExits[] = {
+u32 gVale_Exits[] = {
     SCENE_EXITS(4),
     SCENE_EXIT(1, 19, 1),
     SCENE_EXIT(2, 5, 8),
@@ -3018,7 +3058,7 @@ u32 gValeExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gValePlacements[] = {
+struct ScenePlacement gVale_Placements[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { JENNA, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3064,7 +3104,7 @@ struct ScenePlacement gValePlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gValePlacements2[] = {
+struct ScenePlacement gVale_PlacementsAfterLeaving[] = {
     { JENNA, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3110,7 +3150,7 @@ struct ScenePlacement gValePlacements2[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gValePlacements3[] = {
+struct ScenePlacement gVale_PlacementsAfterKalay[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
     { 0x2a, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3144,7 +3184,7 @@ struct ScenePlacement gValePlacements3[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gValePlacements4[] = {
+struct ScenePlacement gVale_RepairPlacements[] = {
     { JENNA, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(409), 0, PIXELS(1134), FACING_NORTH, TALK_FACE_PARTY, 0 },
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
@@ -3166,55 +3206,55 @@ struct ScenePlacement gValePlacements4[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gValeEvents[] = {
+struct SceneEvent gVale_Events[] = {
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephLooksBeautifulTodayIts) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgValeValeStaysPristineBecauseOfMt) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_TalkAboutTheMayorAndTremors) },
+    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutTheMayorAndTremors) },
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeThisPlaceLooksJustLikeIt) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeIsaacWatchOutDontGetToo) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeValeMustRemainHiddenPsynergysSecrets) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_WarnAboutGoingBeyondKradensCottage) },
-    { EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_ArgueWithTheAngryVillager) },
+    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WarnAboutGoingBeyondKradensCottage) },
+    { EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ArgueWithTheAngryVillager) },
     { EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgValeYoureInTroubleNowGaretYour) },
-    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_TalkAboutTheWeather) },
+    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutTheWeather) },
     { EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephIsASacredPeak) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterSanctum) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_ApproachAleph) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_VisitKradenFromNorthPath) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_VisitKradenFromSouthPath) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_ReturnHome) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterEastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterCentralHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterBabisHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterSoutheastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterFarSouthHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterSouthwestHouse) },
-    { EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_ApplyAlternatePathAttributes) },
-    { EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_RestorePathAttributes) },
-    { EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_WatchThePuppies) },
-    { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_TurnBackFromThePuppies) },
-    { EVENT_TOUCH, 50, 0x823, EVENT_SCRIPT(Vale_TriggerAlephWarning) },
-    { EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_RepeatAlephWarningFromFirstApproach) },
-    { EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_RepeatAlephWarningFromSecondApproach) },
-    { EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_RepeatAlephWarningAtEitherPause) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterNorthernPassage) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_ReturnThroughSouthernPassage) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 26, 0xfd0, EVENT_SCRIPT(Vale_CatchNutBeforeDeparture) },
-    { PSYNERGY_ON_ACTOR(0x8c), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_OpenVillagerLane) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndRunTwo) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndRunTwo) },
-    { SEARCH(SEARCH_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_SearchTheLockedDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSanctum) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ApproachMtAleph) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByNorthPath) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBySouthPath) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveTowardHome) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterEastHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCentralHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterIsaacsHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSoutheastHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterFarSouthHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSouthwestHouse) },
+    { EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetPathCellOverride) },
+    { EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClearPathCellOverride) },
+    { EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WatchThePuppies) },
+    { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TurnBackFromThePuppies) },
+    { EVENT_TOUCH, 50, FLAG_VALE_WARNED_AGAINST_MT_ALEPH, EVENT_SCRIPT(Event_WarnAgainstSneakingUpMtAleph) },
+    { EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RepeatMtAlephWarningFromFirstApproach) },
+    { EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RepeatMtAlephWarningFromSecondApproach) },
+    { EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RepeatMtAlephWarningAtEitherPause) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthernPassage) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReturnThroughSouthernPassage) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 26, 0xfd0, EVENT_SCRIPT(Event_CatchNut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SettleMovedObject) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushObject) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushObject) },
+    { SEARCH(SEARCH_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchTheLockedDoor) },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeEvents2[] = {
+struct SceneEvent gVale_EventsAfterLeaving[] = {
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgValeValeIsSavedThanksToThe) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgValeEverSinceTheTremorsStartedMt) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_TalkAboutTheMayorAndTremors) },
+    { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutTheMayorAndTremors) },
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeSighNoLongerWillISee) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeIDontBlameFelixIfOnly) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeTheMayorWasTooKindTo) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_WarnAboutGoingBeyondKradensCottage) },
+    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WarnAboutGoingBeyondKradensCottage) },
     { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgValeYouGuysAreSoLuckyGaret) },
     { EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgValePleaseTakeCareOfMyBrother) },
     { EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgValeItIsVeryDangerousToGo) },
@@ -3228,79 +3268,79 @@ struct SceneEvent gValeEvents2[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgValeICantBelieveAnyoneWouldClimb) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgValeIJustDontFeelSafeKnowing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgValeThePeopleOfValeWillNever) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterSanctum) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_ApproachAleph) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_VisitKradenFromNorthPath) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_VisitKradenFromSouthPath) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_ReturnHome) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterEastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterCentralHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterBabisHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterSoutheastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterFarSouthHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterSouthwestHouse) },
-    { EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_ApplyAlternatePathAttributes) },
-    { EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_RestorePathAttributes) },
-    { EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_WatchThePuppies) },
-    { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_TurnBackFromThePuppies) },
-    { EVENT_TOUCH, 50, 0x823, EVENT_SCRIPT(Vale_TriggerAlephWarning) },
-    { EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_RepeatAlephWarningFromFirstApproach) },
-    { EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_RepeatAlephWarningFromSecondApproach) },
-    { EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_RepeatAlephWarningAtEitherPause) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterNorthernPassage) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_ReturnThroughSouthernPassage) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 26, 0xfd0, EVENT_SCRIPT(Vale_CatchNutBeforeDeparture) },
-    { PSYNERGY_ON_ACTOR(0x8c), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_OpenVillagerLane) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndRunTwo) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndRunTwo) },
-    { SEARCH(SEARCH_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_SearchTheLockedDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSanctum) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ApproachMtAleph) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByNorthPath) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBySouthPath) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveTowardHome) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterEastHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCentralHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterIsaacsHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSoutheastHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterFarSouthHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSouthwestHouse) },
+    { EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetPathCellOverride) },
+    { EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClearPathCellOverride) },
+    { EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WatchThePuppies) },
+    { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TurnBackFromThePuppies) },
+    { EVENT_TOUCH, 50, FLAG_VALE_WARNED_AGAINST_MT_ALEPH, EVENT_SCRIPT(Event_WarnAgainstSneakingUpMtAleph) },
+    { EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RepeatMtAlephWarningFromFirstApproach) },
+    { EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RepeatMtAlephWarningFromSecondApproach) },
+    { EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RepeatMtAlephWarningAtEitherPause) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthernPassage) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReturnThroughSouthernPassage) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 26, 0xfd0, EVENT_SCRIPT(Event_CatchNut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SettleMovedObject) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushObject) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushObject) },
+    { SEARCH(SEARCH_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchTheLockedDoor) },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gValeEvents3[] = {
-    { EVENT_TALK, 8, 0x303, EVENT_SCRIPT(FieldScene_RunSecondaryActorSequence) },
+struct SceneEvent gVale_EventsAfterKalay[] = {
+    { EVENT_TALK, 8, 0x303, EVENT_SCRIPT(Event_GaretMeetsHisSister) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgValeICanTellJustByLooking) },
-    { EVENT_TALK, 9, 0x304, EVENT_SCRIPT(FieldScene_RunPrimaryActorSequence) },
+    { EVENT_TALK, 9, 0x304, EVENT_SCRIPT(Event_GaretAsksToProtectFamily) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgValeIWillDoMyBestTo) },
-    { EVENT_TALK, 10, 0x81f, EVENT_SCRIPT(Vale_AskWhetherJennaHasReturned) },
+    { EVENT_TALK, 10, FLAG_VALE_ASKED_IF_JENNA_IS_BACK, EVENT_SCRIPT(Event_AskWhetherJennaHasReturned) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgValePromiseMeIsaacPromiseMeYoull) },
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgValeIUsedToPlayHere) },
     { EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephsEruptionWasSoPowerful) },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_ReactToAnotherTremor) },
+    { EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReactToAnotherTremor) },
     { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgValeTheySayTheDangerIsGone) },
-    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_AskAboutTheLackOfTravelers) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, 0x303, EVENT_SCRIPT(FieldScene_RunSecondaryActorSequence) },
+    { EVENT_TALK, 19, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutTheLackOfTravelers) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, 0x303, EVENT_SCRIPT(Event_GaretMeetsHisSister) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgValeYouGuysAreWorkingSoHard) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x409, 0x304, EVENT_SCRIPT(FieldScene_RunPrimaryActorSequence) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x409, 0x304, EVENT_SCRIPT(Event_GaretAsksToProtectFamily) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgValeICouldGoWithYouIf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40a, 0x81f, EVENT_SCRIPT(Vale_AskWhetherJennaHasReturned) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40a, FLAG_VALE_ASKED_IF_JENNA_IS_BACK, EVENT_SCRIPT(Event_AskWhetherJennaHasReturned) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgValeYouDidntBringJennaWithYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgValeFelixMustBeProtectingJennaIm) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgValeTheEarthquakesArentCausedByEruptions) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgValeAhhICantStandTheseEarthquakes) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgValeTheSmokeFromMtAlephIsnt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x413, 0x307, EVENT_SCRIPT(Vale_AskAboutTheLackOfTravelers) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x413, 0x307, EVENT_SCRIPT(Event_AskAboutTheLackOfTravelers) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgValeHavingNoTravelersIsNoFun) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterSanctum) },
-    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_ApproachAleph) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_VisitKradenFromNorthPath) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_VisitKradenFromSouthPath) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_ReturnHome) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterEastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterCentralHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterBabisHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterSoutheastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterFarSouthHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterSouthwestHouse) },
-    { EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_ApplyAlternatePathAttributes) },
-    { EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_RestorePathAttributes) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_EnterNorthernPassage) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_ReturnThroughSouthernPassage) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 20, 0xfd0, EVENT_SCRIPT(Vale_CatchNutAfterReturning) },
-    { PSYNERGY_ON_ACTOR(0x8c), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_OpenVillagerLane) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndRunTwo) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(SceneState_ApplyRectAndRunTwo) },
-    { SEARCH(SEARCH_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Vale_SearchTheLockedDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSanctum) },
+    { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ApproachMtAleph) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByNorthPath) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBySouthPath) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveTowardHome) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterEastHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCentralHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterIsaacsHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSoutheastHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterFarSouthHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSouthwestHouse) },
+    { EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetPathCellOverride) },
+    { EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClearPathCellOverride) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthernPassage) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReturnThroughSouthernPassage) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 20, 0xfd0, EVENT_SCRIPT(Event_CatchNutAfterKalay) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SettleMovedObject) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushObject) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushObject) },
+    { SEARCH(SEARCH_UNNAMED), 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchTheLockedDoor) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

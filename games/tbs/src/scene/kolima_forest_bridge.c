@@ -32,12 +32,14 @@
 
 // Kolima Forest's bridge, where the road from the world map enters the
 // forest. Of its three logs, the one pushed west to the bank tips into the
-// river and bridges it. Arriving from the world map (entrance 4) before the
-// party has seen the curse in Kolima, they see it fall here:
-// sparkles of Tret's glamour rain down, domes of their own Psynergy shield
-// them, and Tret and Laurel, unseen, speak of the dying forest.
+// river and bridges it. Arriving from the world map before the party has
+// seen the curse in Kolima, they see it fall here: sparkles of Tret's
+// glamour rain down, domes of their own Psynergy shield them, and Tret and
+// Laurel, unseen, speak of the dying forest.
 //
 // FLAG_SCENE_TEMP_00: the log is in the river.
+
+enum { ENTRANCE_FROM_WORLD_MAP = 4 };
 
 enum {
   RIVER_LOG = 10, // actors 8 to 10 are the logs
@@ -169,7 +171,7 @@ s32 KolimaForestBridge_Initialize(void) {
   }
   FieldScene_RedrawActorFootprint(8);
   FieldScene_RedrawActorFootprint(9);
-  if (gGameState.entrance == 4) {
+  if (gGameState.entrance == ENTRANCE_FROM_WORLD_MAP) {
     if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_WITNESSED) == 0) {
       KolimaForestBridge_WitnessForestCurse();
     }

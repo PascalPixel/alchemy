@@ -1,8 +1,8 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.include "games/tbs/src/system/overlay.inc"
-	overlay_veneer FieldScene_SetupEntryActors8To11
-	overlay_veneer SceneData_GetScriptTable
-	overlay_veneer SceneData_GetMessageTable
-	overlay_veneer SceneData_GetActorTable
-	overlay_veneer SceneData_GetExtraTable
-	overlay_veneer SceneData_ReturnZero
+	overlay_veneer KolimaForestClearing_Initialize
+	overlay_veneer KolimaForestClearing_GetEntrances
+	overlay_veneer KolimaForestClearing_GetExits
+	overlay_veneer KolimaForestClearing_GetPlacements
+	overlay_veneer KolimaForestClearing_GetEvents
+	overlay_veneer KolimaForestClearing_GetRegions

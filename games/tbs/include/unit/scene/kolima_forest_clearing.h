@@ -4,18 +4,18 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *SceneData_GetScriptTable(void);
-s32 SceneData_ReturnZero(void);
-u8 *SceneData_GetMessageTable(void);
-u8 *SceneData_GetActorTable(void);
-u8 *SceneData_GetExtraTable(void);
-s32 FieldScene_SetupEntryActors8To11(void);
+const struct SceneEntrance *KolimaForestClearing_GetEntrances(void);
+const struct SceneRegion *KolimaForestClearing_GetRegions(void);
+const u32 *KolimaForestClearing_GetExits(void);
+const struct ScenePlacement *KolimaForestClearing_GetPlacements(void);
+const struct SceneEvent *KolimaForestClearing_GetEvents(void);
+s32 KolimaForestClearing_Initialize(void);
 extern s32 gStagedActor_DirectionSteps[];
 extern u32 gStagedActor_FootprintKinds[];
 extern s32 gStagedActor_FootprintBounds[];
-extern struct SceneEntrance gKolimaForestClearing_Scripts[];
-extern u32 gKolimaForestClearing_Messages[];
-extern struct ScenePlacement gKolimaForestClearing_Actors[];
-extern struct SceneEvent gKolimaForestClearing_Extras[];
+extern struct SceneEntrance gKolimaForestClearing_Entrances[];
+extern u32 gKolimaForestClearing_Exits[];
+extern struct ScenePlacement gKolimaForestClearing_Placements[];
+extern struct SceneEvent gKolimaForestClearing_Events[];
 
 #endif

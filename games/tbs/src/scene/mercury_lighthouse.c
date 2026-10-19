@@ -2066,6 +2066,7 @@ s32 MercuryLighthouse_Initialize(void) {
       break;
     case 15:
       SetEffectRecordMode(Object_GetById(ACTOR_PARTY_LEADER), 1);
+      // Fall through.
     case 4:
       if (Engine_GameFlagIsSet(FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN)) {
         Engine_TaskWait(1);
@@ -2207,6 +2208,7 @@ s32 MercuryLighthouse_Initialize(void) {
     case 3:
     case 13:
       MercuryLighthouse_ArriveWithSparks();
+      // Fall through.
     case 1:
     case 2:
     case 12:
@@ -2265,6 +2267,7 @@ s32 MercuryLighthouse_Initialize(void) {
 #else
       MercuryLighthouse_OpenStoneDoor(1);
 #endif
+      // Fall through.
     case 14:
       if (gGameState.entrance == 14)
         Engine_AudioPlayCue(SE_211);
@@ -2374,6 +2377,7 @@ s32 MercuryLighthouse_Initialize(void) {
     case 12:
       Engine_EventWait(1);
       SetEffectRecordMode(Object_GetById(ACTOR_PARTY_LEADER), 1);
+      // Fall through.
     case 11:
       Map_CopyCellAttributes(104, 34, 5, 4, 40, 34);
       Map_CopyCellsTo(45, 91, 40, 91, 5, 4);

@@ -358,7 +358,8 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     // Until Mia has gone in, arriving here plays the Lizard Man scene.
     if (!GameFlag_IsSet(FLAG_MIA_ENTERED_MERCURY_LIGHTHOUSE))
       Engine_EventRequestExit(EXIT_TO_LIZARD_MAN);
-    // Fall through: both doorway entrances flip actors 12 to 14.
+    // Both doorway entrances flip actors 12 to 14.
+    // Fall through.
   case 2:
     Actor_Get(12)->scaleX = -0x10000;
     Actor_Get(13)->scaleX = -0x10000;
@@ -446,7 +447,8 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   case 19:
   case 20:
     MercuryLighthouse_ArriveWithSparks();
-    // Fall through: all four arrivals play the same sound.
+    // All four arrivals play the same sound.
+    // Fall through.
   case 17:
     BattleFx_SetQueuedSoundAndPlay(SE_170);
     break;

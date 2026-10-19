@@ -46,7 +46,7 @@ void ObjectMotion_EnableActionAndResetMotion(u32 objectId) {
   if (object != NULL) {
     enabled = 1;
     object->actionFlags = enabled | object->actionFlags;
-    ObjectDispatch_InitFromTable6Far(object);
+    ObjectDispatch_StartIdleFar(object);
   }
 }
 
@@ -92,7 +92,7 @@ void ObjectMotion_ResetAndSetPosition(u32 objectId, s32 x, s32 z) {
 
   if (object != NULL) {
     object->movementState = 0;
-    ObjectDispatch_InitFromTable6Far(object);
+    ObjectDispatch_StartIdleFar(object);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
   }
 }
@@ -104,7 +104,7 @@ void ObjectMotion_SetPositionAndCommit(u32 objectId, s32 x, s32 z) {
 
   if (object != NULL) {
     object->movementState = 0;
-    ObjectDispatch_InitFromTable6Far(object);
+    ObjectDispatch_StartIdleFar(object);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
     FieldObject_WaitForMoveFar(object);
   }
@@ -117,7 +117,7 @@ void ObjectMotion_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z) {
 
   if (object != NULL) {
     object->movementState = 0;
-    ObjectDispatch_InitFromTable6Far(object);
+    ObjectDispatch_StartIdleFar(object);
     ObjectDispatch_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
   }
@@ -130,7 +130,7 @@ void ObjectMotion_SetPositionAndReset(u32 objectId, s32 x, s32 z) {
 
   if (object != NULL) {
     object->movementState = 0;
-    ObjectDispatch_InitFromTable6Far(object);
+    ObjectDispatch_StartIdleFar(object);
     ObjectDispatch_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
     FieldObject_WaitForMoveFar(object);
@@ -158,7 +158,7 @@ void ObjectMotion_CenterOnColumn(u32 objectId, s32 priority, s32 zOffset) {
     columnX *= 16;
     offsetInColumn = pixelX - columnX;
     object->movementState = 0;
-    ObjectDispatch_InitFromTable6Far(object);
+    ObjectDispatch_StartIdleFar(object);
     ObjectDispatch_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, object->x + ((8 - offsetInColumn) << 16),
                             object->y, object->z);
@@ -177,7 +177,7 @@ void ObjectMotion_OffsetPositionAndResetMotion(u32 objectId, s32 xOffset,
 
   if (object != NULL) {
     object->movementState = 0;
-    ObjectDispatch_InitFromTable6Far(object);
+    ObjectDispatch_StartIdleFar(object);
     Object_SetMoveTargetFar(object, object->x + (xOffset << 16), object->y,
                             object->z + (zOffset << 16));
   }
@@ -191,7 +191,7 @@ void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 xOffset,
 
   if (object != NULL) {
     object->movementState = 0;
-    ObjectDispatch_InitFromTable6Far(object);
+    ObjectDispatch_StartIdleFar(object);
     ObjectDispatch_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, object->x + (xOffset << 16), object->y,
                             object->z + (zOffset << 16));
@@ -258,7 +258,7 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
 
   object = ObjectTable_Get(objectId);
   if (object != NULL) {
-    ObjectDispatch_InitFromTable6Far(object);
+    ObjectDispatch_StartIdleFar(object);
     SET_VELOCITY(object, 0, 0, 0);
     object->targetY = ACTOR_NO_TARGET;
     object->targetX = ACTOR_NO_TARGET;
@@ -293,7 +293,7 @@ void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
 
   object = ObjectTable_Get(objectId);
   if (object != NULL) {
-    ObjectDispatch_InitFromTable6Far(object);
+    ObjectDispatch_StartIdleFar(object);
     SET_VELOCITY(object, 0, 0, 0);
     object->targetY = ACTOR_NO_TARGET;
     object->targetX = ACTOR_NO_TARGET;
@@ -777,7 +777,7 @@ void Object_ResetTargetAndSetMode1(u32 objectId) {
     object->targetX = ACTOR_NO_TARGET;
     object->targetY = ACTOR_NO_TARGET;
     object->targetZ = ACTOR_NO_TARGET;
-    ObjectDispatch_InitFromTable6Far(object);
+    ObjectDispatch_StartIdleFar(object);
     ObjectDispatch_SelectAnimationFar(object, 1);
   }
 }

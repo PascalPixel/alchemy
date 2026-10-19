@@ -71,7 +71,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
   z = user->z + percent * (target->z - user->z) / 100;
   userHeight = BattleUnit_GetEffectHeightFar(work->effect->actor);
   targetHeight = BattleUnit_GetEffectHeightFar(work->effect->actors[0]);
-  ObjectDispatch_InitFromTable6Far(user);
+  ObjectDispatch_StartIdleFar(user);
   Object_SetMoveTargetFar(user, x, 0, z);
   ObjectDispatch_SelectAnimationFar(user, 2);
   user->snapToTarget = 1;
@@ -112,7 +112,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
       user->acceleration = 1 << 16;
       user->speedLimit = 2 << 16;
       user->autoFaceMotion = 0;
-      ObjectDispatch_InitFromTable6Far(user);
+      ObjectDispatch_StartIdleFar(user);
       Object_SetMoveTargetFar(user, 0, 0, user->z);
     }
     EFFECT_VIEW_FROM_CAMERA(camera);

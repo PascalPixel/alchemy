@@ -45,7 +45,7 @@ void Func_080d4580(struct ObjectRuntime *target, s32 keepCurrentPosition) {
 
   object = ((struct EventWork *)Runtime_AllocateBlock(108, 0xd50))->viewCenter;
   if (target != NULL) {
-    ObjectDispatch_InitFromTable4WithArgumentFar(object, NULL);
+    ObjectDispatch_StartCameraFar(object, NULL);
     object->linkedObject = target;
     if (keepCurrentPosition == 0) {
       SET_POSITION(object, target->x, target->y, target->z);

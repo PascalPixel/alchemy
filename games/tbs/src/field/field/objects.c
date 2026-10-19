@@ -397,43 +397,43 @@ void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object,
 // Starts an object on the script that approaches its linked object
 // (SC_APPROACH_LINK), linked to linkedObjectHandle. The functions below start
 // the engine's other scripts (object_script.c).
-void ObjectDispatch_InitFromTable5WithArgument(struct DispatchObject *object,
-                                               s32 linkedObjectHandle) {
-  ObjectDispatch_Initialize(object, gObjectDispatch_Table5Script);
+void ObjectDispatch_StartApproachLink(struct DispatchObject *object,
+                                      s32 linkedObjectHandle) {
+  ObjectDispatch_Initialize(object, gObjectDispatch_ApproachLinkScript);
   object->argument = linkedObjectHandle;
 }
 
 // Starts an object on the script that runs SC_KEY_COUNT every frame.
-void ObjectDispatch_InitFromTable0(struct DispatchObject *object) {
-  ObjectDispatch_Initialize(object, gObjectDispatch_Table0Script);
+void ObjectDispatch_StartKeyCheck(struct DispatchObject *object) {
+  ObjectDispatch_Initialize(object, gObjectDispatch_KeyCheckScript);
 }
 
 // Starts an object on the script that moves it by the keys (SC_KEYS).
-void ObjectDispatch_InitFromTable1(struct DispatchObject *object) {
-  ObjectDispatch_Initialize(object, gObjectDispatch_Table1Script);
+void ObjectDispatch_StartMoveByKeys(struct DispatchObject *object) {
+  ObjectDispatch_Initialize(object, gObjectDispatch_KeysScript);
 }
 
 // Starts an object on the player control script (SC_PLAYER).
-void ObjectDispatch_InitFromTable2(struct DispatchObject *object) {
-  ObjectDispatch_Initialize(object, gObjectDispatch_Table2Script);
+void ObjectDispatch_StartPlayerControl(struct DispatchObject *object) {
+  ObjectDispatch_Initialize(object, gObjectDispatch_PlayerScript);
 }
 
 // Starts an object on the world map control script (SC_WORLD).
-void ObjectDispatch_InitFromTable3(struct DispatchObject *object) {
-  ObjectDispatch_Initialize(object, gObjectDispatch_Table3Script);
+void ObjectDispatch_StartWorldMapControl(struct DispatchObject *object) {
+  ObjectDispatch_Initialize(object, gObjectDispatch_WorldMapScript);
 }
 
 // Starts an object on the idle script (a lone SC_END).
-void ObjectDispatch_InitFromTable6(struct DispatchObject *object) {
-  ObjectDispatch_Initialize(object, gObjectDispatch_Table6Script);
+void ObjectDispatch_StartIdle(struct DispatchObject *object) {
+  ObjectDispatch_Initialize(object, gObjectDispatch_EndScript);
 }
 
 // Starts an object on the camera script (SC_CAMERA). With a leader to
 // follow, it also gets a speed limit of 4 pixels a frame and an
 // acceleration of 0.5 (value30 and value34 are those fields).
-void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *object,
-                                               s32 linkedObjectHandle) {
-  ObjectDispatch_Initialize(object, gObjectDispatch_Table4Script);
+void ObjectDispatch_StartCamera(struct DispatchObject *object,
+                                s32 linkedObjectHandle) {
+  ObjectDispatch_Initialize(object, gObjectDispatch_CameraScript);
   if (linkedObjectHandle != 0) {
     object->value34 = 0x8000;
     object->value30 = 0x40000;

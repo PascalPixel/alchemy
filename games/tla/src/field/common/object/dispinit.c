@@ -73,7 +73,7 @@ void Func_08023524(struct DispatchObject *object) {
     script = gData_0802f128;
     break;
   case 12:
-    script = gObjectDispatch_Table6;
+    script = gObjectDispatch_EndScript;
     break;
   default:
     script = gData_0802f098;

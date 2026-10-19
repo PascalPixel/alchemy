@@ -14,43 +14,43 @@ const s32 gObjectDispatch_DefaultScript[] = {
 };
 
 // The scripts below each repeat one command every frame.
-const s32 gObjectDispatch_Table0Script[] = {
+const s32 gObjectDispatch_KeyCheckScript[] = {
     SC_KEY_COUNT,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gObjectDispatch_Table1Script[] = {
+const s32 gObjectDispatch_KeysScript[] = {
     SC_KEYS,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gObjectDispatch_Table2Script[] = {
+const s32 gObjectDispatch_PlayerScript[] = {
     SC_PLAYER,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gObjectDispatch_Table3Script[] = {
+const s32 gObjectDispatch_WorldMapScript[] = {
     SC_WORLD,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gObjectDispatch_Table4Script[] = {
+const s32 gObjectDispatch_CameraScript[] = {
     SC_CAMERA,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gObjectDispatch_Table5Script[] = {
+const s32 gObjectDispatch_ApproachLinkScript[] = {
     SC_APPROACH_LINK,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-const s32 gObjectDispatch_Table6Script[] = {
+const s32 gObjectDispatch_EndScript[] = {
     SC_END,
 };
 

@@ -70,7 +70,7 @@ void Field_PlaceMapMarkers(void) {
             }
             ObjectDispatch_SelectAnimationFar(markerActor, 2);
           }
-          ObjectDispatch_InitFromTable6Far(markerActor);
+          ObjectDispatch_StartIdleFar(markerActor);
           markerActor->homeX = markerActor->x / 0x10000;
           markerActor->homeZ = markerActor->z / 0x10000;
           markerActor->unk23 = 1;
@@ -95,7 +95,7 @@ void Field_PlaceMapMarkers(void) {
             continue;
           ObjectMotion_SnapToTerrain(markerActor);
           ObjectDispatch_SetSingleChildFlagsFar(markerActor, 0);
-          ObjectDispatch_InitFromTable6Far(markerActor);
+          ObjectDispatch_StartIdleFar(markerActor);
           ObjectDispatch_SelectAnimationFar(markerActor, 1);
           markerActor->homeX = markerActor->x / 0x10000;
           markerActor->homeZ = markerActor->z / 0x10000;

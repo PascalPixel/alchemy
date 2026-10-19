@@ -16,7 +16,7 @@ WorldMap_LoadGraphicsFar:
 	.global Object_ResetMotion
 	.thumb_func
 Object_ResetMotion:
-	overlay_veneer ObjectDispatch_InitFromTable6
+	overlay_veneer ObjectDispatch_StartIdle
 	.global Object_RefreshSelector
 	.thumb_func
 Object_RefreshSelector:

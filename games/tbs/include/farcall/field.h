@@ -19,16 +19,15 @@ void ObjectDispatch_SelectAnimationFar(void *raw, s32 no);
 void ObjectDispatch_SetAnimationSpeedFar(struct DispatchObject *obj, s32 val);
 void ObjectDispatch_InitializeFar(struct DispatchObject *obj,
                                   const s32 *script);
-void ObjectDispatch_InitFromTable2Far(struct DispatchObject *obj);
-void ObjectDispatch_InitFromTable3Far(struct DispatchObject *obj);
-void ObjectDispatch_InitFromTable1Far(struct DispatchObject *obj);
-void ObjectDispatch_InitFromTable0Far(struct DispatchObject *obj);
+void ObjectDispatch_StartPlayerControlFar(struct DispatchObject *obj);
+void ObjectDispatch_StartWorldMapControlFar(struct DispatchObject *obj);
+void ObjectDispatch_StartMoveByKeysFar(struct DispatchObject *obj);
+void ObjectDispatch_StartKeyCheckFar(struct DispatchObject *obj);
 #ifndef OWN_Object_CreateFar
 struct ObjectRuntime *Object_CreateFar(s32 id, s32 x, s32 y, s32 z);
 #endif
 void ObjectDispatch_ReleaseFar(struct DispatchObject *obj);
-void ObjectDispatch_InitFromTable4WithArgumentFar(struct DispatchObject *obj,
-                                                  s32 arg);
+void ObjectDispatch_StartCameraFar(struct DispatchObject *obj, s32 arg);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *obj, s32 x,
                                          s32 y, s32 z);
 void render_animated_tile_frameFar(u8 *obj, u32 pos);
@@ -39,7 +38,7 @@ s32 Map_InitializePerspectiveSceneFar(void);
 void Map_CenterOnFollowedPointFar(void);
 void Map_UpdateCurrentTileBlockFar(void);
 void WorldMap_LoadGraphicsFar(s32 x, s32 z);
-void ObjectDispatch_InitFromTable6Far(struct DispatchObject *obj);
+void ObjectDispatch_StartIdleFar(struct DispatchObject *obj);
 void ObjectDispatch_WaitForValue16Far(void *raw);
 #ifndef OWN_Object_SetMoveTargetFar
 void Object_SetMoveTargetFar(struct ObjectRuntime *object, s32 x, s32 y, s32 z);

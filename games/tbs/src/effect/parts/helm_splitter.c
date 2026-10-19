@@ -88,7 +88,7 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
     object->verticalMotionStrength = 0xdeb8;
     object->verticalMotionPhase = 0;
     object->autoFaceMotion = 1;
-    ObjectDispatch_InitFromTable6Far(object);
+    ObjectDispatch_StartIdleFar(object);
     Object_SetMoveTargetFar(object, x, 0, z);
     ObjectDispatch_SelectAnimationFar(object, 2);
   }

@@ -273,7 +273,7 @@ Func_080caa4c:
 	adds r6, r0, #0
 	str r3, [r6, #20]
 	adds r1, r5, #0
-	bl ObjectDispatch_InitFromTable4WithArgumentFar
+	bl ObjectDispatch_StartCameraFar
 	movs r3, #197
 	lsls r3, r3, #1
 	add r3, r8

@@ -136,7 +136,7 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
       actor->velocityX = 0;
       actor->velocityY = 0;
       actor->z = target->z;
-      ObjectDispatch_InitFromTable6Far(actor);
+      ObjectDispatch_StartIdleFar(actor);
     }
     // From frame 18: fall 15 pixels across and 8 down a frame; on reaching
     // the ground, throw out 256 chips, and the target recoils and flashes

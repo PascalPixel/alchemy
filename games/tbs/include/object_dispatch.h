@@ -29,12 +29,12 @@ struct DispatchObject {
   u8 unk6c[4];
 };
 
-extern const s32 gObjectDispatch_Table0Script[];
-extern const s32 gObjectDispatch_Table1Script[];
-extern const s32 gObjectDispatch_Table2Script[];
-extern const s32 gObjectDispatch_Table3Script[];
-extern const s32 gObjectDispatch_Table4Script[];
-extern const s32 gObjectDispatch_Table5Script[];
-extern const s32 gObjectDispatch_Table6Script[];
+extern const s32 gObjectDispatch_KeyCheckScript[];
+extern const s32 gObjectDispatch_KeysScript[];
+extern const s32 gObjectDispatch_PlayerScript[];
+extern const s32 gObjectDispatch_WorldMapScript[];
+extern const s32 gObjectDispatch_CameraScript[];
+extern const s32 gObjectDispatch_ApproachLinkScript[];
+extern const s32 gObjectDispatch_EndScript[];
 
 #endif

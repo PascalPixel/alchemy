@@ -497,35 +497,35 @@ void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *obj, s32 no) {
 //--------------------------------------------------------------------------
 // Start the object with a predefined script.
 //--------------------------------------------------------------------------
-void ObjectDispatch_InitFromTable5WithArgument(struct DispatchObject *obj,
+void ObjectDispatch_StartApproachLink(struct DispatchObject *obj,
                                                s32 arg) {
-  ObjectDispatch_Initialize(obj, gObjectDispatch_Table5Script);
+  ObjectDispatch_Initialize(obj, gObjectDispatch_ApproachLinkScript);
   obj->argument = arg;
 }
 
-void ObjectDispatch_InitFromTable0(struct DispatchObject *obj) {
-  ObjectDispatch_Initialize(obj, gObjectDispatch_Table0Script);
+void ObjectDispatch_StartKeyCheck(struct DispatchObject *obj) {
+  ObjectDispatch_Initialize(obj, gObjectDispatch_KeyCheckScript);
 }
 
-void ObjectDispatch_InitFromTable1(struct DispatchObject *obj) {
-  ObjectDispatch_Initialize(obj, gObjectDispatch_Table1Script);
+void ObjectDispatch_StartMoveByKeys(struct DispatchObject *obj) {
+  ObjectDispatch_Initialize(obj, gObjectDispatch_KeysScript);
 }
 
-void ObjectDispatch_InitFromTable2(struct DispatchObject *obj) {
-  ObjectDispatch_Initialize(obj, gObjectDispatch_Table2Script);
+void ObjectDispatch_StartPlayerControl(struct DispatchObject *obj) {
+  ObjectDispatch_Initialize(obj, gObjectDispatch_PlayerScript);
 }
 
-void ObjectDispatch_InitFromTable3(struct DispatchObject *obj) {
-  ObjectDispatch_Initialize(obj, gObjectDispatch_Table3Script);
+void ObjectDispatch_StartWorldMapControl(struct DispatchObject *obj) {
+  ObjectDispatch_Initialize(obj, gObjectDispatch_WorldMapScript);
 }
 
-void ObjectDispatch_InitFromTable6(struct DispatchObject *obj) {
-  ObjectDispatch_Initialize(obj, gObjectDispatch_Table6Script);
+void ObjectDispatch_StartIdle(struct DispatchObject *obj) {
+  ObjectDispatch_Initialize(obj, gObjectDispatch_EndScript);
 }
 
-void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *obj,
+void ObjectDispatch_StartCamera(struct DispatchObject *obj,
                                                s32 arg) {
-  ObjectDispatch_Initialize(obj, gObjectDispatch_Table4Script);
+  ObjectDispatch_Initialize(obj, gObjectDispatch_CameraScript);
   if (arg != 0) {
     obj->value34 = 0x8000;
     obj->value30 = 0x40000;

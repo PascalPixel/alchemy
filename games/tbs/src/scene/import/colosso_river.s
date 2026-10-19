@@ -24,8 +24,8 @@
 	.set import.Object_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
-	.set import.ObjectDispatch_InitFromTable4WithArgument, 1
-	.set import.ObjectDispatch_InitFromTable6, 1
+	.set import.ObjectDispatch_StartCamera, 1
+	.set import.ObjectDispatch_StartIdle, 1
 	.set import.ObjectDispatch_WaitForValue16, 1
 	.set import.Engine_ObjectSetPosition, 1
 	.set import.FieldObject_WaitForMove, 1

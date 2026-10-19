@@ -133,7 +133,7 @@ void Colosso_RestoreCompetitor(s32 id) {
 void OverlayObject_ResetMotionFields(s32 actor) {
   struct FieldActor *o = Object_GetById(actor);
 
-  ObjectDispatch_InitFromTable6((struct DispatchObject *)o);
+  ObjectDispatch_StartIdle((struct DispatchObject *)o);
   o->velocityX = 0;
   o->velocityZ = 0;
   o->targetX = ACTOR_NO_TARGET;
@@ -264,7 +264,7 @@ void SceneActor_StartMode5MoveToTile(s32 actorId, s32 x, s32 z) {
     actor->speed = speed;
     actor->acceleration = speed >> 1;
     actor->paused = zero;
-    ObjectDispatch_InitFromTable6((struct DispatchObject *)actor);
+    ObjectDispatch_StartIdle((struct DispatchObject *)actor);
     Object_SetMode(actor, 5);
     Engine_ObjectSetPosition(actor, x << 16, actor->y.fixed, z << 16);
   }
@@ -282,7 +282,7 @@ void OverlayObject_PlaceWithScale14000(s32 actorId, s32 x, s32 z) {
     actor->speed = speed;
     actor->acceleration = speed >> 1;
     actor->paused = zero;
-    ObjectDispatch_InitFromTable6((struct DispatchObject *)actor);
+    ObjectDispatch_StartIdle((struct DispatchObject *)actor);
     Object_SetMode(actor, 5);
     Engine_ObjectSetPosition(actor, x << 16, actor->y.fixed, z << 16);
     FieldObject_WaitForMove(actor);

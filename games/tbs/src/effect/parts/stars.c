@@ -167,7 +167,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
           target->velocityY = 0x50000;
           target->verticalMotionStrength = 0xab85;
           target->autoFaceMotion = 0;
-          ObjectDispatch_InitFromTable6Far(target);
+          ObjectDispatch_StartIdleFar(target);
           if (target->x < 0)
             Object_SetMoveTargetFar(target, target->x - 0x280000, 0, target->z);
           else

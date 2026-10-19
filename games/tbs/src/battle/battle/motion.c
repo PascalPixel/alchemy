@@ -25,7 +25,7 @@ void ObjMotRst(s32 unitId) {
   object->verticalMotionPhase = stopped;
   object->autoFaceMotion = stopped;
   object->snapToTarget = 1;
-  ObjectDispatch_InitFromTable6Far(object);
+  ObjectDispatch_StartIdleFar(object);
   Object_SetMoveTargetFar(object, battleObject->anchorX, 0,
                           battleObject->anchorZ);
   z = battleObject->anchorZ;
@@ -48,7 +48,7 @@ void BattleMotion_SetupEscapeObject(s32 unitId) {
   object->verticalMotionStrength = 0x7851;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
-  ObjectDispatch_InitFromTable6Far(object);
+  ObjectDispatch_StartIdleFar(object);
   Object_SetMoveTargetFar(object, battleObject->anchorX * 3, 0,
                           battleObject->anchorZ);
   ObjectDispatch_SelectAnimationFar(object, 1);
@@ -112,7 +112,7 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 unitId) {
   object->verticalMotionStrength = 0x9999;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
-  ObjectDispatch_InitFromTable6Far(object);
+  ObjectDispatch_StartIdleFar(object);
   scaledX = battleObject->anchorX * 3;
   Object_SetMoveTargetFar(object, (s32)(scaledX + (scaledX >> 0x1F)) >> 1, 0,
                           battleObject->anchorZ);
@@ -130,7 +130,7 @@ void BattleMotion_InitializeObject(s32 unitId) {
   object->verticalMotionStrength = 0x9999;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
-  ObjectDispatch_InitFromTable6Far(object);
+  ObjectDispatch_StartIdleFar(object);
   Object_SetMoveTargetFar(object, Iwram_MulQ16(battleObject->anchorX, 0x14ccc),
                           0, battleObject->anchorZ);
   ObjectDispatch_SelectAnimationFar(object, 5);
@@ -157,7 +157,7 @@ void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant) {
     object->verticalMotionStrength = 0x9999;
     object->verticalMotionPhase = 0;
     object->autoFaceMotion = 0;
-    ObjectDispatch_InitFromTable6Far(object);
+    ObjectDispatch_StartIdleFar(object);
     anchorX = battleObject->anchorX;
     targetX = (anchorX * gBattleMotion_VariantDistancePercent[variant]) / 100;
     Object_SetMoveTargetFar(object, targetX, 0, battleObject->anchorZ);
@@ -198,7 +198,7 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   object->velocityY = initialVelocityY;
   object->verticalMotionStrength = 0xab85;
   object->autoFaceMotion = 1;
-  ObjectDispatch_InitFromTable6Far(object);
+  ObjectDispatch_StartIdleFar(object);
   Object_SetMoveTargetFar(object, x, 0, z);
   ObjectDispatch_SelectAnimationFar(object, 2);
 }
@@ -208,7 +208,7 @@ void BattleMotion_ResetSlotObjectMode2(s32 unitId) {
   struct MotionObject *object;
 
   object = BattleObjGet(unitId)->object;
-  ObjectDispatch_InitFromTable6Far(object);
+  ObjectDispatch_StartIdleFar(object);
   ObjectDispatch_SelectAnimationFar(object, 2);
 }
 

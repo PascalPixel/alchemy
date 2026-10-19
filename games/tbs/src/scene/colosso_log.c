@@ -536,7 +536,7 @@ static void Event_RollLongLog(void) {
   Engine_EventWait(6);
   Engine_ActorSetAnimation(actor, 2);
   work = Runtime_AllocateBlock(27, 0xccc);
-  ObjectDispatch_InitFromTable4WithArgument(work->viewCenter, log);
+  ObjectDispatch_StartCamera(work->viewCenter, log);
   Actor_SetSpeed(actor, PIXELS(1) / 2, acceleration);
   Event_PlayCue(SE_239);
   Object_SetMode(rider, 2);
@@ -1575,7 +1575,7 @@ static void ColossoLogRollingStage_PositionActor(s32 selector, s32 x, s32 z) {
 
   actor = Engine_ActorLookup(selector);
   if (actor != 0) {
-    ObjectDispatch_InitFromTable6(actor);
+    ObjectDispatch_StartIdle(actor);
     Object_SetMode(actor, 5);
     Engine_ObjectSetPosition(actor, x << 16, actor->y.fixed, z << 16);
   }
@@ -1588,7 +1588,7 @@ static void ColossoLogRollingStage_PositionAndActivateActor(s32 selector, s32 x,
 
   actor = Engine_ActorLookup(selector);
   if (actor != 0) {
-    ObjectDispatch_InitFromTable6(actor);
+    ObjectDispatch_StartIdle(actor);
     Object_SetMode(actor, 5);
     Engine_ObjectSetPosition(actor, x << 16, actor->y.fixed, z << 16);
     FieldObject_WaitForMove(actor);

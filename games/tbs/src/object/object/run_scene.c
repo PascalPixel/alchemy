@@ -123,7 +123,7 @@ s32 Field_RunScene(s32 entrance) {
       // Note where the leader is, for the requests to use.
       GameFlag_SetBitFar(0x104);
       actor = work->actors[gGameState.selectedActor];
-      ObjectDispatch_InitFromTable6Far(actor);
+      ObjectDispatch_StartIdleFar(actor);
       gGameState.x = actor->x.fixed;
       gGameState.y = 0;
       gGameState.z = actor->z.fixed;
@@ -332,13 +332,13 @@ s32 Field_RunScene(s32 entrance) {
       actor = work->actors[gGameState.selectedActor];
       if (actor != NULL) {
         if (gGameState.movementMode == 2)
-          ObjectDispatch_InitFromTable0Far(actor);
+          ObjectDispatch_StartKeyCheckFar(actor);
         else if (gGameState.movementMode == 1)
-          ObjectDispatch_InitFromTable1Far(actor);
+          ObjectDispatch_StartMoveByKeysFar(actor);
         else if (work->mode == MODE_WORLD_MAP)
-          ObjectDispatch_InitFromTable3Far(actor);
+          ObjectDispatch_StartWorldMapControlFar(actor);
         else
-          ObjectDispatch_InitFromTable2Far(actor);
+          ObjectDispatch_StartPlayerControlFar(actor);
       }
       do {
         WaitFrames(1);

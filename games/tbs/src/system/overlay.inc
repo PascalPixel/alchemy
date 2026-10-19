@@ -94,9 +94,9 @@
 	import Engine_ObjectCreate, Object_CreateFar
 	import Engine_ObjectDispatchRelease, ObjectDispatch_ReleaseFar
 	import Object_Destroy, ObjectDispatch_ReleaseFar
-	import ObjectDispatch_InitFromTable4WithArgument, ObjectDispatch_InitFromTable4WithArgumentFar
+	import ObjectDispatch_StartCamera, ObjectDispatch_StartCameraFar
 	import Engine_MapRedraw, Map_CenterOnFollowedPointFar
-	import ObjectDispatch_InitFromTable6, ObjectDispatch_InitFromTable6Far
+	import ObjectDispatch_StartIdle, ObjectDispatch_StartIdleFar
 	import ObjectDispatch_WaitForValue16, ObjectDispatch_WaitForValue16Far
 	import Engine_ObjectSetPosition, Object_SetMoveTargetFar
 	import FieldObject_WaitForMove, FieldObject_WaitForMoveFar

@@ -28,7 +28,7 @@ void Camera_FollowActor(s32 id, s32 flag) {
   map = Ram_HeapSlots->mapWork;
   if (obj != 0) {
     map->origin = &target->x;
-    ObjectDispatch_InitFromTable4WithArgumentFar(target, obj);
+    ObjectDispatch_StartCameraFar(target, obj);
     if (flag == 0) {
       SET_POSITION(target, obj->x, obj->y, obj->z);
       WaitFrames(1);

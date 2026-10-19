@@ -559,8 +559,8 @@ static void KolimaForestBend_RollLog(struct BendLog *runs) {
   Engine_ObjectSetPosition(actor, x, 0, z);
   Engine_EventWait(6);
   Engine_ActorSetAnimation(0, 2);
-  ObjectDispatch_InitFromTable4WithArgument(
-      *(s32 *)(Runtime_AllocateBlock(27, 0xccc) + 0x1e0), actor);
+  ObjectDispatch_StartCamera(*(s32 *)(Runtime_AllocateBlock(27, 0xccc) + 0x1e0),
+                             actor);
   Actor_SetSpeed(0, 0x4ccc, 0x3333);
   Actor_SetDestinationOffset(0, gKolimaForestBend_PushStepX[quarter],
                              gKolimaForestBend_PushStepZ[quarter]);

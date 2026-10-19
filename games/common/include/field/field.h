@@ -382,7 +382,7 @@ s32 Object_IsTargetUnset(void *arg0);
 void Object_SetPartAttribute(struct ObjectRuntime *object, s32 attribute);
 #endif
 void Object_SetSpritePriority(struct FieldActor *object, s32 priority);
-void ObjectDispatch_InitFromTable4WithArgumentFar(void *object, void *effect);
+void ObjectDispatch_StartCameraFar(void *object, void *effect);
 void ObjectEffect_EndContextEffect(s32 effect);
 void ObjectEffect_PrepareContextEffect(s32 effect);
 void ObjectMotion_CenterOnColumn(u32 objectId, s32 action, s32 z_offset);

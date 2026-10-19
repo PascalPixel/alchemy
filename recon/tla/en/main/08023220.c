@@ -72,7 +72,7 @@ struct ObjectRuntime *Func_08023220(s32 id, s32 x, s32 y, s32 z) {
   }
   if (object != NULL) {
     Object_SetPositionAndResetMotion(object, x, y, z);
-    object->script = (s32 *)gObjectDispatch_Table6;
+    object->script = (s32 *)gObjectDispatch_EndScript;
     object->speedLimit = 0x20000;
     object->step = 0;
     object->scaleX = 0x10000;

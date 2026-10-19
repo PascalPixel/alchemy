@@ -1635,7 +1635,7 @@ static void Event_UseBlackOrb(void) {
   site = NULL;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   leader->paused = 0;
-  ObjectDispatch_InitFromTable6((struct DispatchObject *)leader);
+  ObjectDispatch_StartIdle((struct DispatchObject *)leader);
   if (leader->z.fixed > PIXELS(3432)) {
     if (leader->x.fixed > PIXELS(5998)) {
       FieldObject_SetPosition(leader, PIXELS(5998), leader->y.fixed,

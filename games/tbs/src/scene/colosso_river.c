@@ -405,7 +405,7 @@ static void Event_PushPipeworksBlock(void) {
                            actor->z.fixed);
   Engine_EventWait(6);
   Engine_ActorSetAnimation(leaderId, 2);
-  ObjectDispatch_InitFromTable4WithArgument(
+  ObjectDispatch_StartCamera(
       *(struct DispatchObject **)(Runtime_AllocateBlock(27, 0xccc) + 480),
       (s32)actor);
   Actor_SetSpeed(leaderId, PIXELS(3) / 10, PIXELS(1) / 5);

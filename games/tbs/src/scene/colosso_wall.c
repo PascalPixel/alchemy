@@ -468,7 +468,7 @@ static void ColossoWall_RollLogToCell(s32 logId, s32 halfCellX, s32 halfCellZ) {
   Engine_EventWait(6);
   Engine_ActorSetAnimation(pusher, 2);
   // Follow halfway behind the rolling log while its finish effect runs.
-  ObjectDispatch_InitFromTable4WithArgument(
+  ObjectDispatch_StartCamera(
       *(struct DispatchObject **)((u8 *)Runtime_AllocateBlock(27, 0xccc) + 480),
       (s32)log);
   Engine_ActorSetSpeed(pusher, 0x8000, 0x3333);

@@ -147,15 +147,15 @@ void ObjectDispatch_SetChildRotation(struct DispatchObject *object,
 void Animation_SetIndexAndInitObjects(void *rawDispatchObject, s32 animationId);
 void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object,
                                           s32 animationId);
-void ObjectDispatch_InitFromTable5WithArgument(struct DispatchObject *object,
-                                               s32 linkedObjectHandle);
-void ObjectDispatch_InitFromTable0(struct DispatchObject *object);
-void ObjectDispatch_InitFromTable1(struct DispatchObject *object);
-void ObjectDispatch_InitFromTable2(struct DispatchObject *object);
-void ObjectDispatch_InitFromTable3(struct DispatchObject *object);
-void ObjectDispatch_InitFromTable6(struct DispatchObject *object);
-void ObjectDispatch_InitFromTable4WithArgument(struct DispatchObject *object,
-                                               s32 linkedObjectHandle);
+void ObjectDispatch_StartApproachLink(struct DispatchObject *object,
+                                      s32 linkedObjectHandle);
+void ObjectDispatch_StartKeyCheck(struct DispatchObject *object);
+void ObjectDispatch_StartMoveByKeys(struct DispatchObject *object);
+void ObjectDispatch_StartPlayerControl(struct DispatchObject *object);
+void ObjectDispatch_StartWorldMapControl(struct DispatchObject *object);
+void ObjectDispatch_StartIdle(struct DispatchObject *object);
+void ObjectDispatch_StartCamera(struct DispatchObject *object,
+                                s32 linkedObjectHandle);
 void ObjectDispatch_WaitForValue16(void *rawObject);
 void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *object,
                                         u32 flags);

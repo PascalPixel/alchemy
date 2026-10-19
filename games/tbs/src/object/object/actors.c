@@ -220,8 +220,7 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
   // The camera follows this leader and starts at its resolved ground height.
   camera = Object_CreateFar(0x8000, object->x, object->y, object->z);
   camera->terrainHeight = object->terrainHeight;
-  ObjectDispatch_InitFromTable4WithArgumentFar((struct DispatchObject *)camera,
-                                               (s32)object);
+  ObjectDispatch_StartCameraFar((struct DispatchObject *)camera, (s32)object);
   if (work->mode == MODE_WORLD_MAP) {
     struct AnimationEntry *meta =
         (struct AnimationEntry *)ResourceMetadata_RegisterFar(object->animation,
@@ -512,7 +511,7 @@ void ObjectTable_Restore(void) {
         camera->terrainHeight = y;
         camera->y = y;
         cameraPosition[1] = y;
-        ObjectDispatch_InitFromTable6Far(object);
+        ObjectDispatch_StartIdleFar(object);
       }
     }
     snapshot++;

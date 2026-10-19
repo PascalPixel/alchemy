@@ -3,8 +3,7 @@
 
 #include "../psynergy_effects_internal.h"
 
-#define AERIE 98           // encounter table fought before the Aerie's storm
-#define DJINN_NO_HOP 0x800 // do not make the Djinni hop first
+#define AERIE 98 // encounter table fought before the Aerie's storm
 // Sets up a battle with enemy group slot of encounter table zone. On the
 // world map (mode 3) the terrain under the leader picks the battle backdrop.
 void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
@@ -89,4 +88,3 @@ void BattleFx_PlayQueuedSound(void) {
 }
 
 #undef AERIE
-#undef DJINN_NO_HOP

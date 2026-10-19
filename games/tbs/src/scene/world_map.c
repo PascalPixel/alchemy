@@ -99,10 +99,6 @@ enum {
 // Djinn numbers, 20 to an element (Field_RequestDjinnBattle).
 enum { DJINNI_VINE = 3, DJINNI_HAIL = 24, DJINNI_CORONA = 42 };
 
-// The Djinni stays where it is instead of hopping first
-// (Field_RequestDjinnBattle's DJINN_NO_HOP).
-enum { DJINN_BATTLE_NO_HOP = 0x800 };
-
 // The world map's scene flags:
 // FLAG_SCENE_TEMP_00: the carried actor has landed on its guide.
 // FLAG_SCENE_TEMP_34: the Black Orb has been handed over.
@@ -119,8 +115,7 @@ static void Event_MeetVine(void) {
   if (gGameState.encounterSteps >=
       Math_Divide(work->encounterThreshold * 9, 10)) {
     if ((u32)Engine_RandomNext() < 0x8000) {
-      Field_RequestDjinnBattle(DJINN_BATTLE_NO_HOP | ACTOR_VENUS_DJINNI,
-                               DJINNI_VINE);
+      Field_RequestDjinnBattle(DJINN_NO_HOP | ACTOR_VENUS_DJINNI, DJINNI_VINE);
       work->encounterBias = 0;
     } else {
       gGameState.encounterSteps = work->encounterThreshold;
@@ -136,8 +131,7 @@ static void Event_MeetCorona(void) {
   struct EventWork *work = gEventWork;
 
   if (*steps >= Math_Divide(work->encounterThreshold * 9, 10)) {
-    Field_RequestDjinnBattle(DJINN_BATTLE_NO_HOP | ACTOR_MARS_DJINNI,
-                             DJINNI_CORONA);
+    Field_RequestDjinnBattle(DJINN_NO_HOP | ACTOR_MARS_DJINNI, DJINNI_CORONA);
     work->encounterBias = 0;
   }
 }
@@ -150,8 +144,7 @@ static void Event_MeetHail(void) {
   struct EventWork *work = gEventWork;
 
   if (*steps >= Math_Divide(work->encounterThreshold * 9, 10)) {
-    Field_RequestDjinnBattle(DJINN_BATTLE_NO_HOP | ACTOR_MERCURY_DJINNI,
-                             DJINNI_HAIL);
+    Field_RequestDjinnBattle(DJINN_NO_HOP | ACTOR_MERCURY_DJINNI, DJINNI_HAIL);
     work->encounterBias = 0;
   }
 }

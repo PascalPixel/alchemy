@@ -72,6 +72,8 @@ void Event_SetDestination(s32 scene, s32 entrance);
 void Event_SetSavedDestination(u16 scene, u16 entrance);
 void Event_SetExitRequest(u16 request);
 void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo);
+// Field_RequestDjinnBattle's flag: the Djinni does not hop first.
+#define DJINN_NO_HOP 0x800
 void Field_RequestDjinnBattle(s32 flag, s32 no);
 void Event_SetNextDestination(s32 scene, s32 entrance);
 void Event_SetDefeatDestination(s32 scene, s32 entrance);

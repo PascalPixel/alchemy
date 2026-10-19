@@ -627,10 +627,15 @@ main	rom_main_01	recon/tla/de/rom	.rom.00027e20	de
 main	rom_main_01	recon/tla/raw/08027e20	.text	en
 main	rom_main_01	recon/tla/raw/08028534	.text	en
 main	rom_main_01	recon/tla/raw/08028aac	.text	en
-main	rom_main_01	recon/tla/raw/080290f4	.text	en
+main	rom_main_01	recon/tla/ja/rom	.rom.00027d9c	ja
+main	rom_main_01	games/tla/src/field/common/script/move_by_keys	.text
+main	rom_main_01	recon/tla/it/rom	.rom.000292fc	it
+main	rom_main_01	recon/tla/fr/rom	.rom.000292fc	fr
+main	rom_main_01	recon/tla/es/rom	.rom.000292fc	es
+main	rom_main_01	recon/tla/de/rom	.rom.000292fc	de
 main	rom_main_01	recon/tla/raw/080292fc	.text	en
 main	rom_main_01	recon/tla/raw/08029570	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.00027d9c	ja
+main	rom_main_01	recon/tla/ja/rom	.rom.00029278	ja
 main	rom_main_01	games/tla/src/field/common/script/s29810	.text
 main	rom_main_01	recon/tla/it/rom	.rom.000298c0	it
 main	rom_main_01	recon/tla/fr/rom	.rom.000298c0	fr

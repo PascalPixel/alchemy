@@ -24,8 +24,9 @@ struct EventWork {
   u8 unk168[2];
   u16 unk16a;
   u8 unk16c[0x18];
-  s16 unk184;
-  u8 unk186[4];
+  s16 blockedSteps; // refused key moves in a row
+  u16 heldKeys;
+  u8 unk188[2];
   s8 controlMode;
   u8 unk18b[0x21];
   s32 screenEffect;

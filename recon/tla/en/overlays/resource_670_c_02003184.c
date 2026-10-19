@@ -1,5 +1,12 @@
-// near miss: differ 10 (listing 43 instructions, draft 43); scheduling: the
-// native loads 0x0c08 before it builds the register address
+// Near miss, differ 4 of 43 (was 10): x as a local and the first four calls
+// through an inline put each x copy (adds r0, r5) ahead of the y and z halves,
+// as the native does; the fifth matches only called directly. Left: the native
+// loads 0x0c08 before it builds the register address, and starts x (movs r5)
+// before the second store but shifts it after. Pinning 0x0c08 to r3 behind a
+// barrier that clobbers r2 orders the head, but the barrier's 4 estimated
+// bytes move the mid-function pool island two instructions earlier (differ 10);
+// the pin alone, a one-pass block around a u32 copy (20) and the original
+// leading one-pass block (10) do not help.
 #include "../../../../games/tla/src/scene/kibombo/kibombo.h"
 
 extern struct KibomboObject *gData_02007950;
@@ -43,14 +50,18 @@ void Func_02005c24(void);
 void Func_02005c2c(void);
 void Func_02005c34(void);
 
+static inline void Kibombo_Spawn(s32 x, s32 y, s32 z) {
+  Func_02003104(x, y, z);
+}
+
 void Func_02003184(void) {
-  do {
-  } while (0);
+  s32 x = 0x1b80000;
+
   *(volatile u16 *)0x04000052 = 0x0c08;
   *(volatile u16 *)0x04000050 = 0x3f10;
-  Func_02003104(0x1b80000, 0x280000, 0x1c20000);
-  Func_02003104(0x1b80000, 0x2e0000, 0x1b60000);
-  Func_02003104(0x1b80000, 0x340000, 0x1aa0000);
-  Func_02003104(0x1b80000, 0x3a0000, 0x19e0000);
-  Func_02003104(0x1b80000, 0x400000, 0x1920000);
+  Kibombo_Spawn(x, 0x280000, 0x1c20000);
+  Kibombo_Spawn(x, 0x2e0000, 0x1b60000);
+  Kibombo_Spawn(x, 0x340000, 0x1aa0000);
+  Kibombo_Spawn(x, 0x3a0000, 0x19e0000);
+  Func_02003104(x, 0x400000, 0x1920000);
 }

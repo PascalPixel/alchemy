@@ -1,13 +1,14 @@
-// Draft, differ 22 of 177: written from the listing (☀️'s
-// FieldScene_RunSupplementalSequenceOne is its twin). Left: the options pointer
-// and i take r10 and r8 where the native has r8 and r10; the velocity array's
-// address is built before the cosine call, not after it; and both random terms
-// load the velocity word one row later than the native. The inlines keep the -1
-// and 0x50000 constants per call, as ☀️'s scene layer does (differ 59 called
-// directly). Tried: declaration orders, a do-while loop, velocity at function
-// scope, the random terms as separate subtractions, permuter 4 minutes (24),
-// velocity through a pointer pinned to r6 with the cosine taken into a local
-// first (63).
+// Draft, differ 10 of 177 (was 22): written from the listing (☀️'s
+// FieldScene_RunSupplementalSequenceOne is its twin). i pinned to r10 gives the
+// options pointer r8, as the native has them; a pinned i needs the do-while
+// loop (as a for loop it keeps an entry test, differ 16). Left: the velocity
+// array's address is built before the cosine call, not after it; and both
+// random terms load the velocity word one row later than the native (it loads
+// between the shift and the add of x * 3). The inlines keep the -1 and 0x50000
+// constants per call, as ☀️'s scene layer does (differ 59 called directly).
+// Tried: declaration orders, velocity at function scope, the random terms as
+// separate subtractions, permuter 4 minutes (24), velocity through a pointer
+// pinned to r6 with the cosine taken into a local first (63).
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -45,7 +46,9 @@ static __inline__ void SetWorkTriple(s32 a, s32 b, s32 c) {
 
 void Func_02002394(void) {
   struct ObjectRuntime *actor = Object_GetById(gPartyState.currentOwner);
-  u32 i;
+  /* FAKEMATCH(pin): i in r10, which leaves r8 to the options pointer; as a
+   * plain local, 22 of 177 instructions differ in tla-en. */
+  register u32 i asm("r10");
   struct EffectOptions options;
 
   Func_020056b4();
@@ -67,7 +70,8 @@ void Func_02002394(void) {
   options.update = Effect_AdvanceMotion;
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
-  for (i = 0; i <= 16; i++) {
+  i = 0;
+  do {
     s32 angle;
     s32 velocity[3];
 
@@ -80,7 +84,8 @@ void Func_02002394(void) {
     velocity[2] += (Random16Far() * 0x6000 >> 16) - 0x3000;
     Func_020000b8(actor->x, actor->y, actor->z, velocity[0], velocity[1],
                   velocity[2], 0x1090001, &options);
-  }
+    i++;
+  } while (i <= 16);
   Func_02005854(188);
   Func_02005794(gPartyState.currentOwner, 0x101);
   Object_SetModeById(gPartyState.currentOwner, 49);

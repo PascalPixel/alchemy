@@ -4,7 +4,6 @@ SECTIONS
     {
         "*/games/tla/src/scene/mars_lighthouse_aerie/entry.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_aerie/update_a.o"(.text)
-        "*/resource_6ae_overlay.o"(.text.x020080e4)
         "*/games/tla/src/scene/mars_lighthouse_aerie/scene_tables.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_aerie/events_a.o"(.text)
         "*/games/tla/src/scene/mars_lighthouse_aerie/scene_events.o"(.text)

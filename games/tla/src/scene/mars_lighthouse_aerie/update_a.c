@@ -51,3 +51,41 @@ void Func_0200008c(struct ObjectRuntime *object) {
     object->scaleY = 0x11000;
   }
 }
+
+// Circles the object around actor 8: each frame it steps its angle back by
+// 0x800 and places itself at the anchor's x and z plus the cosine and sine
+// times two radii read from its speed limit and its counter byte. The twin of
+// ☀️'s SceneEffect_UpdateCounterDrivenOrbit.
+void Func_020000e4(struct ObjectRuntime *object) {
+  struct ObjectRuntime *anchor = Object_GetById(8);
+  u16 *pangle = (u16 *)&object->action;
+  s32 angle = *pangle;
+  s32 cosine;
+  s32 sine;
+  s32 along;
+  s32 across;
+  u8 *counter;
+
+  cosine = Math_Cosine(angle);
+  counter = &object->unk5c[6];
+  {
+    s32 radius = object->speedLimit + *counter;
+    /* FAKEMATCH(pin): the anchor copied into r1 for its x; as anchor->x read
+     * straight, 2 of 48 instructions differ in tla-en. */
+    register struct ObjectRuntime *a asm("r1");
+
+    a = anchor;
+    /* FAKEMATCH(barrier): an asm reading the copy, so the copy comes before
+     * the radius's + 6; as anchor->x read straight, 2 of 48 instructions
+     * differ in tla-en. */
+    asm("" : : "l"(a));
+    along = a->x + cosine * (radius + 6);
+  }
+  object->x = along;
+  sine = Math_Sine(angle);
+  across = anchor->z + sine * (*counter + 4);
+  object->z = across;
+  object->targetX = object->x;
+  object->targetZ = across;
+  *pangle -= 0x800;
+}

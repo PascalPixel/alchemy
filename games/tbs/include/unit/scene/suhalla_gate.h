@@ -4,28 +4,26 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct SceneEntrance;
-struct SceneEvent;
-struct ScenePlacement;
+struct SceneRegion;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
-s32 SceneData_ReturnZero(void);
-u8 *SceneData_GetSceneTable(void);
+const struct SceneRegion *Scene_GetRegions(void);
+const u32 *Scene_GetExits(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
-s32 SuhallaGate_EnterScene(void);
-extern s32 gSuhallaGate_PatrolStartup[];
-extern s32 gSuhallaGatePlacements1Flagged1[];
-extern s32 gSuhallaGate_FirstGuardStartup[];
-extern s32 gSuhallaGatePlacements1Flagged0[];
+s32 Scene_Initialize(void);
+extern s32 gSuhallaGateWoundedNoCollision[];
+extern s32 gSuhallaGateWounded[];
+extern s32 gSuhallaGateWoundedFlippedNoCollision[];
+extern s32 gSuhallaGateWoundedFlipped[];
 extern struct SceneEntrance gSuhallaGateEntrancesOther[];
 extern struct SceneEntrance gSuhallaGateEntrances2[];
 extern struct SceneEntrance gSuhallaGateEntrances3[];
-extern u32 gSuhallaGate_SceneTable[];
+extern u32 gSuhallaGateExits[];
 extern struct ScenePlacement gSuhallaGatePlacementsOther[];
 extern struct ScenePlacement gSuhallaGatePlacements2[];
 extern struct ScenePlacement gSuhallaGatePlacements1[];
-extern struct ScenePlacement gSuhallaGatePlacements1Flagged[];
+extern struct ScenePlacement gSuhallaGatePlacements1AfterAudience[];
 extern struct SceneEvent gSuhallaGateEventsOther[];
 extern struct SceneEvent gSuhallaGateEvents2[];
 extern struct SceneEvent gSuhallaGateEvents3[];

@@ -304,6 +304,24 @@
 // The last guiding ape has led the party to the Killer Ape's hiding place.
 #define FLAG_MOGALL_FOREST_LED_TO_KILLER_APE 0x89d
 #define FLAG_MOGALL_FOREST_KILLER_APE_BEATEN 0x89e
+// Suhalla
+// Set at Babi's palace as his audience after Colosso begins; afterwards
+// Suhalla's people talk of the Tolbi soldiers the sandstorms brought there.
+#define FLAG_BABI_AUDIENCE_AFTER_COLOSSO 0x96f
+// Iodem has found the wounded soldiers at Suhalla's inn and asked for Sheba.
+#define FLAG_IODEM_MET_WOUNDED_SOLDIERS 0x9b0
+
+// Suhalla Gate
+#define FLAG_SUHALLA_GATE_SOLDIER_VANISHED 0x897 // after his last words
+#define FLAG_SUHALLA_GATE_ATTACK_SEEN 0x89f // Iodem has questioned the guards
+// The side the party last came through, which Retreat returns them to.
+#define FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH 0x8fb
+#define FLAG_SUHALLA_GATE_ENTERED_FROM_EAST 0x8fc
+
+// Suhalla Desert
+#define FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA 0x9b5 // search on or go to Lalivero
+#define FLAG_SUHALLA_DESERT_IODEM_WARNED 0x9b6    // "A sandstorm!"
+#define FLAG_SUHALLA_DESERT_CHASING_STORM_DOUSED 0x9b7
 
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
@@ -345,6 +363,7 @@
 #define FLAG_SCENE_TEMP_42 0x242 // Lunpa gate: the party enters the fortress
 #define FLAG_SCENE_TEMP_43 0x243 // Lunpa gate: Garet turns the leader back
 #define FLAG_SCENE_TEMP_44 0x244 // Lunpa gate: the guards caught the party
+#define FLAG_SCENE_TEMP_18 0x218 // Suhalla Desert: the storm holding the party
 #define FLAG_SCENE_TEMP_50                                                     \
   0x250 // Vault interiors: the leader is beside the Bone
 #define FLAG_SCENE_TEMP_70 0x270 // Lunpa Fortress: Hammet's rescue has begun

@@ -1,5 +1,5 @@
-#ifndef SUHALLA_INTERIORS_H
-#define SUHALLA_INTERIORS_H
+#ifndef ALCHEMY_SUHALLA_INTERIORS_H
+#define ALCHEMY_SUHALLA_INTERIORS_H
 
 #include "types.h"
 #include "field_service.h"

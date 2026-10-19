@@ -4,18 +4,20 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *SuhallaInteriors_GetEntrances(void);
-u8 *SuhallaInteriors_GetRegions(void);
-u8 *SuhallaInteriors_GetExits(void);
-s32 SuhallaInteriors_SelectPlacements(void);
-s32 SuhallaInteriors_SelectEvents(void);
-s32 Scene_InitActorRecords(void);
+struct SceneRegion;
+
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneRegion *Scene_GetRegions(void);
+const u32 *Scene_GetExits(void);
+const struct ScenePlacement *Scene_GetPlacements(void);
+const struct SceneEvent *Scene_GetEvents(void);
+s32 Scene_Initialize(void);
 extern struct SceneEntrance gSuhallaInteriorsEntrances[];
 extern s16 gSuhallaInteriorsRegions[];
 extern u32 gSuhallaInteriorsExits[];
 extern struct ScenePlacement gSuhallaInteriorsPlacements[];
-extern struct ScenePlacement gSuhallaInteriorsPlacements96f[];
+extern struct ScenePlacement gSuhallaInteriorsPlacementsAfterAudience[];
 extern struct SceneEvent gSuhallaInteriorsEvents[];
-extern struct SceneEvent gSuhallaInteriorsEvents96f[];
+extern struct SceneEvent gSuhallaInteriorsEventsAfterAudience[];
 
 #endif

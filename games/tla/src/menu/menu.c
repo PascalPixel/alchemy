@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// confirm_selection.c
-// Menu: select command icons, such as Yes and No.
-//--------------------------------------------------------------------------
+// Menu: select command icons, such as Yes and No. The first section was
+// written as confirm_selection.c.
 
 #include "battle.h"
 #include "debug.h"

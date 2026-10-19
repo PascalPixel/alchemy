@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// draw_four_numbers_in_row.c
-// Saves: draw the recorded Djinn counts in a row, one per element.
-//--------------------------------------------------------------------------
+// Saves: draw the recorded Djinn counts in a row, one per element. The first
+// section was written as draw_four_numbers_in_row.c.
 
 #include "text_render_runtime.h"
 #include "types.h"

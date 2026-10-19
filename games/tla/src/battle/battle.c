@@ -1,7 +1,5 @@
-//--------------------------------------------------------------------------
-// actor_commit_placement.c
-// Battle: place objects for all units.
-//--------------------------------------------------------------------------
+// Battle: place objects for all units. The first section was written as
+// actor_commit_placement.c.
 
 #include "types.h"
 #include "battle.h"

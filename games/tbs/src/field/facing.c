@@ -1,5 +1,6 @@
 #include "unit/field/facing.h"
 #include "types.h"
+#include "objcmd.h"
 
 // Facing tables: for each animation kind, the frame to draw for each sector
 // of the facing angle. Sprite_ComposeAnimationFrame adds the low three bits
@@ -90,7 +91,7 @@ const s32 gScriptObject_CycleTable[32] = {
 // The idle script an object returns to when its own one ends: a lone SC_END,
 // which reloads it.
 const s32 gScript_MainScript[1] = {
-    16,
+    SC_END,
 };
 
 // Halfwords that follow the main script; nothing reads them.
@@ -106,10 +107,10 @@ const u16 gWorldMap_KeyHeadings[16] = {
 };
 
 // Two scripts for the world map's footprint and dust effects: wait 120 or 30
-// frames, then release the object (command 27, SC_FREE).
+// frames, then release the object.
 const s32 gWorldMap_FootprintActions[6] = {
-    0, 120, 27,
-    0, 30, 27,
+    SC_WAIT(120), SC_FREE,
+    SC_WAIT(30), SC_FREE,
 };
 
 // The world map camera's turn rate for each state of the direction pad.

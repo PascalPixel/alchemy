@@ -17,11 +17,14 @@ frames and returns when the effect is over.
 | `effect_bits.c` | the bit operands the blitter builder adds to its widths |
 | `battle_effect_composite.s`, `battle_effect_composite_color.s` | the ARM fragments blitters are built from |
 
-The headers are in `games/tbs/include/unit/effect/`: `effect.h` for the
-functions and `effect_table.h` for the tables.
+The headers are in `games/tbs/include/unit/effect/`:
+[`effect.h`](../../include/unit/effect/effect.h) for the functions and
+`effect_table.h` for the tables.
 
-Each part includes `effect_internal.h`, so a part opened on its own resolves
-in an editor; it is still compiled only as part of `effect.c`.
+`effect.c` includes the parts in ROM order, and each part's first lines say
+what it holds: `head -3 parts/*.c` lists them all. Each part includes
+`effect_internal.h`, so a part opened on its own resolves in an editor; it is
+still compiled only as part of `effect.c`.
 
 In the ROM the effect code is one object of about 150 KB; its rows of
 `games/tbs/objects.tsv` (from `effect`) give it, the blitter fragments, the
@@ -37,7 +40,61 @@ generated code, and without it all of them match. Each function's small
 constant vectors are `static` variables inside it, in the ROM in the order of
 the functions that use them.
 
-## Finding an effect
+## Words
+
+- **kind**: an effect's number in the handler table, which the ability's
+  entry in `gBattle_ActionFlags` selects.
+- **runner** and **mode**: a runner draws a family of kinds; the mode it is
+  passed picks the family member.
+- **variant**: `effect->variant`, the size of the ability (Quake, Earthquake or
+  Quake Sphere play the same kind at three variants). A particle's `variant`
+  field is something else: a spare word each effect uses as it needs.
+- **side**: `effect->side`, 1 when the targets are the party and 0 when they
+  are enemies; effects mirror on it.
+- **sheet** and **cell**: a sheet is a decoded set of pictures in
+  `work->sheet`; a cell is a byte offset into it (the `*_CELL` and `*_CELLS`
+  constants).
+- **level**: a pixel value, an index into a palette ramp. Fades work on levels.
+- **element**: 0 Venus, 1 Mercury, 2 Mars, 3 Jupiter, where a function takes
+  one.
+
+The same locals carry the same names in every handler:
+
+- `effect`: the `struct BattleEffectArgument *` a handler is passed.
+- `slots` and `cursor`: `gBattleFxWork`, and the pointer that walks it to
+  fetch `work` and `canvas` (`EFFECT_GET_SLOTS`).
+- `work`: the effect's `struct BattleEffectWork`; `canvas`: the 128x128 canvas.
+- `sheet`: the decoded pictures, usually `work->sheet`.
+- `draw`: the `BlitterPair`, a rectangle blitter for each facing
+  (`BattleFx_FetchRectangleBlitters`).
+- `frame`: the frame counter; `cell`: a picture's index or offset.
+- `unk_<offset>`: a field whose meaning is not known yet.
+
+## Prefixes
+
+Functions are `BattleFx_` unless they act on one thing the engine names
+elsewhere, which keep its prefix as their Lost Age twins do: `Camera_`,
+`Palette_`, `Graphics_`, `Resource_`, `EffectStep_`, `EffectPosition_`,
+`ObjectGroup_`.
+
+## Spellings
+
+- A work slot is read as `WORK_SLOT(n)` or `gWorkSlot[n]`, through a base
+  pointer as `slots[n - base]`, `EFFECT_SLOT` or `CANVAS_SLOT`, and as a
+  blitter as `EFFECT_BLITTERS[n]` or `(DrawRectangle)gWorkSlot[n]`; each site
+  keeps the one it matches with, as these can compile differently.
+
+Two comment markers are fixed:
+
+- `// DEAD: why`: code the ROM keeps that can never change the result, such
+  as a test that is always true, whose own compare, branch or loop is in the
+  ROM.
+- `/* FAKEMATCH(kind): the form kept; as the plain form, N of M instructions
+  differ in tbs-en. */`: a device that steers the compiler towards the
+  original instructions (an unused variable, a block that runs once), with
+  how many of the function's instructions differ without it.
+
+## How to find an effect
 
 Each ordinary effect kind is named after the move that uses it, such as
 `BattleFx_RunQuake` or `BattleFx_RunCure`. To find a move's code, search for
@@ -68,10 +125,10 @@ The largest families:
 | `BattleFx_RunStreakVolley` | `streaks.c` | streaks fired from above the user at each target |
 | `BattleFx_RunRushingStrike` | `rushing_strike.c` | the user rushes at the first target and strikes |
 | `BattleFx_RunBurstScene` | `burst_scene.c` | a flurry of strikes on the first target |
-| `BattleFx_RunGrowingColumns` | `growth.c` | vines or green pillars growing from the ground |
+| `BattleFx_RunGrowingColumns` | [`parts/growth.c`](parts/growth.c) | vines or green pillars growing from the ground |
 | `BattleFx_RunDjinnBeams` | `djinn_beams.c` | a Djinni appears, then columns of light fall on the targets |
 
-## Writing a handler's header
+## How to write a handler's header
 
 Every handler opens the same way:
 
@@ -88,72 +145,27 @@ A kind no ability uses says `Abilities: none (kind N).`, and a scene `(scene
 kind N)`. The description does not repeat the kind or the frame count a
 `*_FRAMES` constant already gives.
 
-## Words used here
-
-- **kind**: an effect's number in the handler table, which the ability's
-  entry in `gBattle_ActionFlags` selects.
-- **runner** and **mode**: a runner draws a family of kinds; the mode it is
-  passed picks the family member.
-- **variant**: `effect->variant`, the size of the ability (Quake, Earthquake or
-  Quake Sphere play the same kind at three variants). A particle's `variant`
-  field is something else: a spare word each effect uses as it needs.
-- **side**: `effect->side`, 1 when the targets are the party and 0 when they
-  are enemies; effects mirror on it.
-- **sheet** and **cell**: a sheet is a decoded set of pictures in
-  `work->sheet`; a cell is a byte offset into it (the `*_CELL` and `*_CELLS`
-  constants).
-- **level**: a pixel value, an index into a palette ramp. Fades work on levels.
-- **element**: 0 Venus, 1 Mercury, 2 Mars, 3 Jupiter, where a function takes
-  one.
-
-The same locals carry the same names in every handler:
-
-- `effect`: the `struct BattleEffectArgument *` a handler is passed.
-- `slots` and `cursor`: `gBattleFxWork`, and the pointer that walks it to
-  fetch `work` and `canvas` (`EFFECT_GET_SLOTS`).
-- `work`: the effect's `struct BattleEffectWork`; `canvas`: the 128x128 canvas.
-- `sheet`: the decoded pictures, usually `work->sheet`.
-- `draw`: the `BlitterPair`, a rectangle blitter for each facing
-  (`BattleFx_FetchRectangleBlitters`).
-- `frame`: the frame counter; `cell`: a picture's index or offset.
-- `unk_<offset>`: a field whose meaning is not known yet.
-
-Names and spellings the parts share:
-
-- Functions are `BattleFx_` unless they act on one thing the engine names
-  elsewhere, which keep its prefix as their Lost Age twins do: `Camera_`,
-  `Palette_`, `Graphics_`, `Resource_`, `EffectStep_`, `EffectPosition_`,
-  `ObjectGroup_`.
-- A work slot is read as `WORK_SLOT(n)` or `gWorkSlot[n]`, through a base
-  pointer as `slots[n - base]`, `EFFECT_SLOT` or `CANVAS_SLOT`, and as a
-  blitter as `EFFECT_BLITTERS[n]` or `(DrawRectangle)gWorkSlot[n]`; each site
-  keeps the one it matches with, as these can compile differently.
-
-Two comment markers are fixed:
-
-- `// DEAD: why`: code the ROM keeps that can never change the result, such
-  as a test that is always true, whose own compare, branch or loop is in the
-  ROM.
-- `/* FAKEMATCH(kind): the form kept; as the plain form, N of M instructions
-  differ in tbs-en. */`: a device that steers the compiler (AGENTS.md, S2).
-
-## Entry points
+## How the battle starts an effect
 
 The battle starts an effect through one of three functions, each of which
 allocates the effect's three heap blocks (sprite sheet, work block and
 canvas), runs the effect and releases them:
 
-- `BattleFx_RunTableEffect` (`dispatch.c`) looks the effect's kind up in
-  `gBattleFx_EffectHandlers`, the table of ordinary effects.
-- `BattleFx_RunSceneEffect` (`dispatch.c`) runs one of the large effects, those
-  whose presentation flags have bit 15 set, chosen by its kind.
+- `BattleFx_RunTableEffect` ([`parts/dispatch.c`](parts/dispatch.c)) looks
+  the effect's kind up in `gBattleFx_EffectHandlers`, the table of ordinary
+  effects.
+- `BattleFx_RunSceneEffect` ([`parts/dispatch.c`](parts/dispatch.c)) runs one
+  of the large effects, those whose presentation flags have bit 15 set,
+  chosen by its kind.
 - `BattleFx_DispatchByIdRange` (`positions.c`) runs the casting impacts, beam
   sequences and ring scenes, which need a sprite sheet twice the usual size.
 
 An effect may schedule callbacks that use those blocks, but it must remove
 them before it returns, because the blocks are gone afterwards.
 
-## The canvas
+## How an effect draws
+
+### The canvas
 
 Most effects draw into one canvas: 128x128 pixels of 8-bit colour, stored as
 16x16 tiles of 8x8 pixels. BG2 shows it, stretched to twice the width so that
@@ -173,7 +185,7 @@ on BG1 without stretching it (the beam scenes). Effects that draw a
 full-screen picture into `Ram_MapCellBuffer` show it on BG1 too, flushed by
 `BattleFx_FlushPendingGraphicsTransfer` (the particle streams).
 
-## Blitters
+### Blitters
 
 Drawing a picture onto the canvas goes through a blitter, a small ARM routine
 that `BattleFx_BuildBlitter` (`blitter.c`) assembles at run time from the
@@ -184,7 +196,7 @@ too slow. The routines live in two heap slots, and an effect usually takes
 them as a `BlitterPair`: `[0]` is the picture as drawn and `[1]` another mode
 or its mirror, so one picture can be drawn on both sides of the screen.
 
-## The frame loop
+### The frame loop
 
 Every effect has the same shape. Its setup opens the canvas, builds the
 blitters, loads the pictures and places the particles. Then it runs a fixed
@@ -198,7 +210,7 @@ changes every random value after it. Cues that fire on one frame, such as a
 sound, a screen shake or a palette step, are tests on the frame number, and the
 comments in a long effect mark where each of its phases begins.
 
-## Particles
+### Particles
 
 A particle is an `EffectStep`: a position and a velocity in three axes, 16.16
 fixed point unless a comment says otherwise, and one spare word (`variant`)
@@ -220,7 +232,7 @@ corner, centred on its position or standing on it, as each family chooses.
 Spawning stays with each runner: every family draws its own random ranges,
 and the order of those draws is part of the effect.
 
-## Picture format and units
+### Picture format and units
 
 - A picture in a sheet is linear: one byte a pixel, row after row, `width`
   bytes to a row. The canvas is tiled instead: 16x16 tiles of 8x8 pixels.
@@ -233,7 +245,7 @@ and the order of those draws is part of the effect.
   canvas, which BG2 stretches to twice its width, an x on the screen is half
   that x on the canvas.
 
-## Pictures and colours
+### Pictures and colours
 
 An effect loads its pictures by resource id: `ResourceId_FirePillarSheetB` is
 an entry in the resource directory
@@ -250,7 +262,7 @@ levels in the same ramp as the canvas palette the effect loads. A fade draws
 from darker copies of a picture built before the first frame, and a symmetric
 picture is drawn left of its centre line and then mirrored to the right.
 
-## Changing an effect
+## How to change an effect
 
 1. Find the effect (above) and read its header: the frame timeline, the
    particle ranges and the pictures it loads.
@@ -263,16 +275,11 @@ picture is drawn left of its centre line and then mirrored to the right.
 
    A mod changes the bytes on purpose, so it will not compare OK; keep the
    matching tree separate from your mod.
-3. Keep within the limits: the canvas is 128x128 pixels; `work->sheet` holds
-   0x6980 bytes, and an effect that does not use the scanline table after it
-   (`bg2xLines`) may use up to 0x7080 (`imageStorage`); the work block has 64
-   particles and `PARTICLES` about 1,750; there are two blitter slots, and
-   each new picture size or mode needs its own blitter. An effect's particle
-   counts are named where it sets them up: raise one and its loops follow.
-   Steps that draw random numbers keep their order, or every later random
-   value changes.
+3. Keep within the limits below. An effect's particle counts are named where
+   it sets them up: raise one and its loops follow. Steps that draw random
+   numbers keep their order, or every later random value changes.
 
-## Adding an effect
+## How to add an effect
 
 An ability reaches its effect through its row of
 `games/tbs/src/battle/actflags.tsv`: the row number is the ability id, and
@@ -291,12 +298,18 @@ row as one word, `effect` in its low half and `flags` above it
   (24 abilities), read outside the effects.
 
 To give an ability a new effect, write its handler in a part, name a free kind
-for it in `enum BattleFxKind` (`effect.h`; kinds without a handler are free),
-put the handler in that kind's row of `gBattleFx_EffectHandlers`, and set the
-ability's `effect` column to the kind. To reuse an effect, point the column at
-an existing kind and variant.
+for it in `enum BattleFxKind`
+([`effect.h`](../../include/unit/effect/effect.h); kinds without a handler are
+free), put the handler in that kind's row of `gBattleFx_EffectHandlers`, and
+set the ability's `effect` column to the kind. To reuse an effect, point the
+column at an existing kind and variant.
 
-## Parts of effect.c
+## Limits
 
-`effect.c` includes the parts in ROM order, and each part's first lines say
-what it holds: `head -3 parts/*.c` lists them all.
+- The canvas is 128x128 pixels.
+- `work->sheet` holds 0x6980 bytes, and an effect that does not use the
+  scanline table after it (`bg2xLines`) may use up to 0x7080
+  (`imageStorage`).
+- The work block has 64 particles and `PARTICLES` about 1,750.
+- There are two blitter slots, and each new picture size or mode needs its
+  own blitter.

@@ -29,7 +29,7 @@ reaches many of these functions through the far-call table
 `games/tbs/src/system/far_call/RUNTIME.S` (the `...Far` names), so a rename
 crosses folders.
 
-## Words used here
+## Words
 
 - **heap slot**: one of the named long-lived blocks (`enum HeapSlot`,
   `HEAP_SLOT_*`) in `gWorkSlot`. The heap is two bump allocators, one in IWRAM
@@ -50,7 +50,7 @@ crosses folders.
   rotation and a translation, with a one-level stack (`transform.c`).
 - **record**: one save record in one 4 KB flash sector, with a 16-byte header
   (signature, record id, checksum, sequence number); a save file is records
-  `n` and `n + 3` (`save.c`).
+  `n` and `n + 3` ([`runtime/save.c`](runtime/save.c)).
 - **payload** and **block**: each VBlank two linked consoles trade a 24-byte
   payload; bulk data rides on it in 20-byte blocks (`serial.c`).
 
@@ -86,3 +86,44 @@ differently:
 
 A DMA control word is written with its flags above its count:
 `(DMA_ENABLE | DMA_32BIT) << 16 | words`, or `DMA_ENABLE << 16 | halfwords`.
+
+## How the game boots and runs one frame
+
+The memory these steps use is mapped in `../system/README.md`.
+
+1. **Entry.** The cartridge header jumps to `System_Entry`
+   (`games/tbs/src/system/entry.s`), which sets the IRQ-mode and system-mode
+   stacks (0x03007fa0 and 0x03007f00) and calls `System_Initialize`.
+2. **Power-up** (`System_Initialize`, `runtime/system.c`): stop any HBlank
+   DMA, set the cartridge wait states, clear IWRAM up to 0x03007800, empty
+   the heap (`Runtime_InitializeHeap`), copy the resident runtime into IWRAM
+   and point the interrupt vector at its dispatcher
+   (`Runtime_InstallIwramAndIrqs`), load the window graphics, install
+   `System_VBlankHandler` for VBlank, arm the soft-reset keys, start the
+   sound driver, reset the sprite VRAM cache and the task table, wait ten
+   frames, and start the game (`Game_ResetForNewGameFar`). It never returns:
+   `Game_ResetForNewGame` (`games/tbs/src/object/object/scene.c`) loops from
+   scene to scene, starting at the title.
+3. **A frame** (`WaitFrames`, `runtime/frame.c`). Code that wants time to pass
+   calls `WaitFrames(n)`, from however deep in its own calls. If the caller's
+   stack is below `Ram_FrameWaitStackTop` (0x03007a00), it is copied aside and
+   the loop runs on that top. Each frame it runs the main-loop tasks
+   (`Scheduler_RunPass(SCHEDULER_KEY_MAIN_LOOP)`), builds the OAM list into
+   the frame scratch heap block (`Render_BuildOamList`), measures CPU load for
+   the debug display, counts idle and L+R frames for sleep, then halts until
+   VBlank (`swi 2`) and updates key repeat.
+4. **VBlank** (`System_VBlankHandler`, `runtime/frame.c`), reached through
+   the IWRAM dispatcher and `gIrqHandlers`: trade the link cable payloads,
+   step the music's fades and the screen fade, and if the frame loop finished
+   a frame, copy its OAM list and BG scroll registers and flush the queued
+   register writes. Then run the one-shot VBlank hook and the VBlank tasks
+   (`SCHEDULER_KEY_VBLANK`), read the keypad, count the frame and mix the
+   next sound buffer.
+
+## Limits
+
+- 62 heap slots (`games/tbs/include/heap_state.h`); the IWRAM heap ends at
+  0x03007800 and the EWRAM heap at 0x02040000.
+- 20 scheduled tasks at a time (`runtime/scheduler.c`).
+- 96 sprite VRAM cache entries over 512 blocks of 64 bytes.
+- 256 sprite depth slots.

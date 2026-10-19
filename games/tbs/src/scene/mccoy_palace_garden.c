@@ -25,6 +25,7 @@
 #include "objcmd.h"
 #include "flags.h"
 #include "facing_object.h"
+#include "songs.h"
 
 #ifdef UBFIX
 #define MCCOY_GARDEN_SET_ACTOR_POSITION Engine_ActorSetPosition
@@ -35,34 +36,24 @@
 // The garden before Lord McCoy's palace in Bilibin. Two guards keep the
 // palace gate and let only brave warriors through; once Kolima's curse is
 // lifted, they arrest the party for breaking it and take them to McCoy.
+//
+// Scene flags: FLAG_SCENE_TEMP_00, the palace gate is open; FLAG_SCENE_TEMP_01,
+// the east guard has scolded the party for keeping McCoy waiting. Flag
+// 0x304, reused from place to place, is set in Bilibin when McCoy is
+// looking for the party.
 
 enum {
-  WORKER_WEST = 8,
-  WORKER_NORTH = 9,
-  MCCOY = 10,
-  GATE_GUARD_WEST = 11,
-  GATE_GUARD_EAST = 12,
-  FLOATING_NUT = 13
+  ACTOR_WEST_WORKER = 8,
+  ACTOR_NORTH_WORKER = 9,
+  ACTOR_LORD_MCCOY = 10,
+  ACTOR_WEST_GUARD = 11,
+  ACTOR_EAST_GUARD = 12,
+  ACTOR_FLOATING_NUT = 13
 };
-
-enum {
-  FLAG_GATE_OPEN = 0x200,
-  FLAG_SCOLDED_FOR_LATENESS = 0x201,
-  FLAG_MCCOY_WAITING = 0x304, // McCoy is looking for the party
-  FLAG_GUARDS_LET_PARTY_IN = 0x84a,
-  // Two later steps of McCoy's request; they change the guards' lines.
-  FLAG_84E = 0x84e,
-  FLAG_84F = 0x84f,
-  FLAG_ARREST_SEEN = 0x85e,
-  FLAG_NUT_CAUGHT = 0xfd2
-};
-
-// Played as the palace gate swings open.
-enum { SOUND_PALACE_GATE = 188 };
 
 static void Garden_ApplyProgress(void);
-static void Guards_ArrestParty(void);
-static void PalaceGate_Open(void);
+static void Event_GuardsArrestParty(void);
+static void Garden_OpenPalaceGate(void);
 
 // Shared scene code, included where the ROM places it.
 #include "common/object_facing.h"
@@ -78,12 +69,12 @@ const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 // Where each exit leads.
 const u32 *Scene_GetExits(void) { return gMcCoyPalaceGardenExits; }
 
-// The garden's people. Once McCoy's later step is done the east guard
+// The garden's people. Once McCoy has turned the party away, the east guard
 // turns back after talking, and once the curse is lifted McCoy faces the
 // party.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_McCoyPalaceGarden) {
-    if (Engine_GameFlagIsSet(FLAG_84F) != 0)
+    if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_BARRICADE_HINT) != 0)
       gMcCoyPalaceGardenPlacements[4].talkFacing = TALK_FACE_PARTY_AND_BACK;
     if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0)
       gMcCoyPalaceGardenPlacements[2].talkFacing = TALK_FACE_PARTY;
@@ -93,17 +84,17 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 }
 
 // Catch on the nut floating over the garden: the party gets it.
-static void FloatingNut_Catch(void) {
+static void Event_CatchFloatingNut(void) {
   Engine_EventBegin();
-  Engine_ActorSetPosition(FLOATING_NUT, 0, 0);
-  Engine_GameFlagSet(FLAG_NUT_CAUGHT);
+  Engine_ActorSetPosition(ACTOR_FLOATING_NUT, 0, 0);
+  Engine_GameFlagSet(FLAG_MCCOY_PALACE_GARDEN_NUT_CAUGHT);
   Engine_ItemShowFound(ITEM_NUT, 3);
   Engine_PartyGiveItem(ITEM_NUT, 0);
   Engine_EventEnd();
 }
 
 // Searching the dry well.
-static void Well_Search(void) {
+static void Event_SearchWell(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
   Engine_MessageShowCentered(MsgBilibinUponCloserInspectionSeemsDried, 1);
@@ -118,121 +109,122 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gMcCoyPalaceGardenEventsOther;
 }
 
-// The workers and McCoy each ask the party a question.
-static void NorthWorker_Talk(void) {
+// The north worker asks whether the party has seen the barricade.
+static void Event_TalkToNorthWorker(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinHaveYouSeenBarricadeWe);
-  Engine_EventAskYesNo(WORKER_NORTH, 0);
+  Engine_EventAskYesNo(ACTOR_NORTH_WORKER, 0);
   Engine_EventEnd();
 }
 
 // McCoy asks whether the palace work makes him responsible for the curse.
-static void McCoy_Talk(void) {
+static void Event_TalkToMcCoy(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinTellingMeImResponsibleFor);
-  Engine_EventAskYesNo(MCCOY, 0);
+  Engine_EventAskYesNo(ACTOR_LORD_MCCOY, 0);
   Engine_EventEnd();
 }
 
 // The young west guard asks whether he can become a warrior like them.
-static void WestGuard_Talk(void) {
+static void Event_TalkToWestGuard(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinDoThinkCanBecomeAs);
-  Engine_EventAskYesNo(GATE_GUARD_WEST, 0);
+  Engine_EventAskYesNo(ACTOR_WEST_GUARD, 0);
   Engine_EventEnd();
 }
 
 // The east guard: until he lets them in, he asks whether they are brave
 // enough to meet McCoy and, on yes, opens the gate and walks in with his
 // partner; after, he scolds them once for keeping McCoy waiting.
-static void EastGuard_Talk(void) {
+static void Event_TalkToEastGuard(void) {
   Engine_EventBegin();
   // Once admitted, the party only receives the guard's current reminder.
-  if (GameFlag_IsSet(FLAG_GUARDS_LET_PARTY_IN) != 0) {
-    if (Engine_GameFlagIsSet(FLAG_MCCOY_WAITING) != 0) {
-      if (GameFlag_IsSet(FLAG_SCOLDED_FOR_LATENESS) == 0) {
+  if (GameFlag_IsSet(FLAG_MCCOY_PALACE_ADMITTED) != 0) {
+    if (Engine_GameFlagIsSet(0x304) != 0) {
+      if (GameFlag_IsSet(FLAG_SCENE_TEMP_01) == 0) {
         Engine_EventSetMessage(MsgBilibinWhere);
-        Engine_EventShowMessageAndWait(GATE_GUARD_EAST, 0, 10);
-        Actor_ShowEmote(GATE_GUARD_EAST, EMOTE_IN_FRONT | 7, 40);
-        Engine_EventShowMessageAndWait(GATE_GUARD_EAST, 0, 10);
-        Engine_ActorRunRepeatedMotion(GATE_GUARD_EAST, 2);
-        Engine_GameFlagSet(FLAG_SCOLDED_FOR_LATENESS);
+        Engine_EventShowMessageAndWait(ACTOR_EAST_GUARD, 0, 10);
+        Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | 7, 40);
+        Engine_EventShowMessageAndWait(ACTOR_EAST_GUARD, 0, 10);
+        Engine_ActorRunRepeatedMotion(ACTOR_EAST_GUARD, 2);
+        Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
       }
       Engine_EventSetMessage(MsgBilibinMasterQuiteCranky);
-      Engine_EventShowMessage(GATE_GUARD_EAST, 0);
+      Engine_EventShowMessage(ACTOR_EAST_GUARD, 0);
     } else {
       Engine_EventSetMessage(MsgBilibinLordMccoyDifficult);
-      Engine_EventShowMessage(GATE_GUARD_EAST, 0);
+      Engine_EventShowMessage(ACTOR_EAST_GUARD, 0);
       goto guard;
     }
   } else {
     // On the first visit, the guards confer before opening the gate.
     Engine_EventSetMessage(MsgBilibinLordOnlyMeet);
-    Engine_EventOpenMessage(GATE_GUARD_EAST, 0);
+    Engine_EventOpenMessage(ACTOR_EAST_GUARD, 0);
     if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
       gEventWork->message++;
-      Engine_EventShowMessageAndWait(GATE_GUARD_EAST, 0, 10);
+      Engine_EventShowMessageAndWait(ACTOR_EAST_GUARD, 0, 10);
       if (Object_GetById(ACTOR_PARTY_LEADER)->z.fixed < PIXELS(270)) {
-        Actor_SetSpeed(GATE_GUARD_EAST, 0xcccc, 0x6666);
-        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x15a, 0x112);
-        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x148, 0x11a);
+        Actor_SetSpeed(ACTOR_EAST_GUARD, 0xcccc, 0x6666);
+        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 346, 274);
+        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 282);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
       }
-      Actor_FaceDirection(GATE_GUARD_WEST, FACING_EAST + FACING_STEP, 0);
-      Actor_FaceDirection(GATE_GUARD_EAST, FACING_SOUTHWEST + FACING_STEP, 20);
-      Actor_ShowEmote(GATE_GUARD_WEST, EMOTE_IN_FRONT | 2, 20);
-      Engine_ActorStartRepeatedMotion(GATE_GUARD_WEST, 1);
-      Engine_EventShowMessageAndWait(GATE_GUARD_WEST, 0, 10);
-      Actor_ShowEmote(GATE_GUARD_EAST, EMOTE_IN_FRONT | 8, 60);
-      Engine_ActorStartRepeatedMotion(GATE_GUARD_EAST, 1);
-      Engine_EventShowMessageAndWait(GATE_GUARD_EAST, 0, 20);
-      Engine_ActorSetAnimation(GATE_GUARD_WEST, 3);
-      Engine_ActorSetAnimationAndWait(GATE_GUARD_EAST, 3);
-      Actor_FaceDirection(GATE_GUARD_WEST, FACING_SOUTHEAST + FACING_STEP, 0);
-      Actor_FaceDirection(GATE_GUARD_EAST, FACING_SOUTH + FACING_STEP, 10);
-      Engine_ActorStartRepeatedMotion(GATE_GUARD_WEST, 1);
-      Engine_EventShowMessageAndWait(GATE_GUARD_WEST, 0, 20);
-      Actor_FaceDirection(GATE_GUARD_WEST, FACING_NORTHEAST + FACING_STEP, 0);
-      Engine_ActorSetSpeed(GATE_GUARD_EAST, 0x10000, 0x8000);
-      Object_GetById(GATE_GUARD_EAST)->steeringFlags &= ~ACTOR_FACES_MOTION;
-      Actor_WalkToAndWait(GATE_GUARD_EAST, 0x15a, 0x107);
+      Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_EAST + FACING_STEP, 0);
+      Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTHWEST + FACING_STEP, 20);
+      Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | 2, 20);
+      Engine_ActorStartRepeatedMotion(ACTOR_WEST_GUARD, 1);
+      Engine_EventShowMessageAndWait(ACTOR_WEST_GUARD, 0, 10);
+      Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | 8, 60);
+      Engine_ActorStartRepeatedMotion(ACTOR_EAST_GUARD, 1);
+      Engine_EventShowMessageAndWait(ACTOR_EAST_GUARD, 0, 20);
+      Engine_ActorSetAnimation(ACTOR_WEST_GUARD, 3);
+      Engine_ActorSetAnimationAndWait(ACTOR_EAST_GUARD, 3);
+      Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
+      Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 10);
+      Engine_ActorStartRepeatedMotion(ACTOR_WEST_GUARD, 1);
+      Engine_EventShowMessageAndWait(ACTOR_WEST_GUARD, 0, 20);
+      Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_NORTHEAST + FACING_STEP, 0);
+      Engine_ActorSetSpeed(ACTOR_EAST_GUARD, 0x10000, 0x8000);
+      Object_GetById(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
+      Actor_WalkToAndWait(ACTOR_EAST_GUARD, 346, 263);
       Engine_EventWait(1);
-      Object_GetById(GATE_GUARD_EAST)->steeringFlags |= ACTOR_FACES_MOTION;
-      Actor_SetSpeed(GATE_GUARD_WEST, 0x9999, 0x4ccc);
-      Actor_WalkToAndWait(GATE_GUARD_WEST, 0x148, 0x107);
-      Actor_WalkToAndWait(GATE_GUARD_WEST, 0x148, 252);
-      Actor_FaceDirection(GATE_GUARD_WEST, FACING_NORTH, 10);
-      PalaceGate_Open();
-      Actor_WalkToAndWait(GATE_GUARD_WEST, 0x148, 246);
+      Object_GetById(ACTOR_EAST_GUARD)->steeringFlags |= ACTOR_FACES_MOTION;
+      Actor_SetSpeed(ACTOR_WEST_GUARD, 0x9999, 0x4ccc);
+      Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 263);
+      Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 252);
+      Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_NORTH, 10);
+      Garden_OpenPalaceGate();
+      Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 246);
       /* FAKEMATCH: instruction order only: called through a cast with no
          prototype that returns a value, the call sets r0, so sched2 loads
          the actor id after the two zeros, as native. Plain forms measured
          (2026-10-13): Engine_ActorSetPosition or Actor_SetPosition by
          their prototype load r0 first (differ 2). */
-      MCCOY_GARDEN_SET_ACTOR_POSITION(11, 0, 0);
+      MCCOY_GARDEN_SET_ACTOR_POSITION(ACTOR_WEST_GUARD, 0, 0);
       /* FAKEMATCH: instruction order only: the one-pass block's loop note
          after the call above is a scheduling barrier; with the cast it
          keeps r0 last among that call's arguments. A plain call or
          GameFlag_Set here loads r0 first (differ 2). */
       do {
-        Engine_GameFlagSet(FLAG_GUARDS_LET_PARTY_IN);
+        Engine_GameFlagSet(FLAG_MCCOY_PALACE_ADMITTED);
       } while (0);
     guard:
       FieldObject_SetTargetAndCallback(
-          12, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER, gGuardWatchesParty);
+          ACTOR_EAST_GUARD, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+          gGuardWatchesParty);
     } else {
-      Engine_EventShowMessage(GATE_GUARD_EAST, 0);
-      Actor_FaceDirection(GATE_GUARD_EAST, FACING_SOUTHEAST + FACING_STEP, 10);
+      Engine_EventShowMessage(ACTOR_EAST_GUARD, 0);
+      Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTHEAST + FACING_STEP, 10);
     }
   }
   Engine_EventEnd();
 }
 
-// Trigger 2, the palace gate: opens it if still shut and walks in.
-static void PalaceGate_Enter(void) {
+// Walking into the palace gate: it opens if still shut and the leader walks in.
+static void Event_EnterPalace(void) {
   Engine_EventBegin();
-  if (GameFlag_IsSet(FLAG_GATE_OPEN) == 0) {
-    PalaceGate_Open();
+  if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) == 0) {
+    Garden_OpenPalaceGate();
   }
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -243,15 +235,15 @@ static void PalaceGate_Enter(void) {
   Engine_EventEnd();
 }
 
-// Sets the garden up: McCoy drawn in front, and the guards, McCoy and the
-// arrest as the story stands.
+// Sets the garden up: the west worker drawn in front, and the guards, McCoy and
+// the arrest as the story stands.
 s32 Scene_Initialize(void) {
   struct EventWork *work = gEventWork;
   struct FieldActor *actor;
 
   work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
-  actor = Object_GetById(WORKER_WEST);
+  actor = Object_GetById(ACTOR_WEST_WORKER);
   actor->priorityFlags = 0;
   actor->sprite->image.priority = 1;
 
@@ -267,30 +259,30 @@ s32 Scene_Initialize(void) {
 // party.
 static void Garden_ApplyProgress(void) {
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
-    Engine_GameFlagClear(FLAG_GATE_OPEN);
+    Engine_GameFlagClear(FLAG_SCENE_TEMP_00);
   }
-  if (Engine_GameFlagIsSet(FLAG_NUT_CAUGHT) == 0) {
-    InitializeStagedActorSceneOrbitingEffect(13);
+  if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_GARDEN_NUT_CAUGHT) == 0) {
+    InitializeStagedActorSceneOrbitingEffect(ACTOR_FLOATING_NUT);
   }
-  if (Engine_GameFlagIsSet(FLAG_GUARDS_LET_PARTY_IN) != 0) {
-    Actor_SetPosition(GATE_GUARD_WEST, PIXELS(308), PIXELS(263));
-    Engine_ActorSetPosition(GATE_GUARD_EAST, PIXELS(346), PIXELS(263));
-    if (Engine_GameFlagIsSet(FLAG_84F) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_ADMITTED) != 0) {
+    Actor_SetPosition(ACTOR_WEST_GUARD, PIXELS(308), PIXELS(263));
+    Engine_ActorSetPosition(ACTOR_EAST_GUARD, PIXELS(346), PIXELS(263));
+    if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_BARRICADE_HINT) == 0) {
       if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-        Engine_ActorSetPosition(GATE_GUARD_WEST, 0, 0);
+        Engine_ActorSetPosition(ACTOR_WEST_GUARD, 0, 0);
         FieldObject_SetTargetAndCallback(
-            12, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+            ACTOR_EAST_GUARD, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
             gGuardWatchesParty);
       }
     }
   }
   // McCoy's outdoor meeting and the arrest happen only after the curse lifts.
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
-    Actor_SetPosition(MCCOY, PIXELS(224), PIXELS(292));
-    Actor_FaceDirection(MCCOY, FACING_SOUTH, 0);
-    Engine_ActorFaceDirection(WORKER_WEST, FACING_EAST, 0);
-    if (Engine_GameFlagIsSet(FLAG_ARREST_SEEN) == 0) {
-      Guards_ArrestParty();
+    Actor_SetPosition(ACTOR_LORD_MCCOY, PIXELS(224), PIXELS(292));
+    Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH, 0);
+    Engine_ActorFaceDirection(ACTOR_WEST_WORKER, FACING_EAST, 0);
+    if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_PARTY_REWARDED) == 0) {
+      Event_GuardsArrestParty();
     }
   }
 }
@@ -298,7 +290,7 @@ static void Garden_ApplyProgress(void) {
 // Kolima's curse is lifted: the guards stop the party, ask whether they
 // broke the holy tree's curse until they answer yes, and march them into
 // the palace to McCoy.
-static void Guards_ArrestParty(void) {
+static void Event_GuardsArrestParty(void) {
 
   // Bring the leader into view before the guards interrupt.
   Engine_EventBegin();
@@ -311,70 +303,70 @@ static void Guards_ArrestParty(void) {
   Engine_CameraSetSpeed(0x3333, 0x666);
   Engine_CameraMoveTo(0x1400000, -1, 0x1220000, 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x9999, 0x4ccc);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x140, 0x136);
-  Actor_FaceDirection(GATE_GUARD_WEST, FACING_SOUTHEAST + FACING_STEP, 10);
-  Engine_ActorStartRepeatedMotion(GATE_GUARD_WEST, 2);
-  Actor_ShowEmote(GATE_GUARD_WEST, EMOTE_IN_FRONT, 60);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 320, 310);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 10);
+  Engine_ActorStartRepeatedMotion(ACTOR_WEST_GUARD, 2);
+  Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT, 60);
   Engine_EventSetMessage(MsgBilibinOhItS);
-  Engine_EventShowMessageAndWait(GATE_GUARD_WEST, 0, 10);
-  Actor_FaceDirection(GATE_GUARD_EAST, FACING_SOUTH + FACING_STEP, 10);
-  Engine_ActorStartRepeatedMotion(GATE_GUARD_EAST, 2);
-  Actor_ShowEmote(GATE_GUARD_EAST, EMOTE_IN_FRONT, 60);
-  Engine_EventShowMessageAndWait(GATE_GUARD_EAST, 0, 20);
-  Actor_FaceDirection(GATE_GUARD_WEST, FACING_EAST + FACING_STEP, 0);
-  Actor_FaceDirection(GATE_GUARD_EAST, FACING_SOUTHWEST + FACING_STEP, 40);
-  Actor_FaceDirection(GATE_GUARD_WEST, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(GATE_GUARD_EAST, FACING_SOUTH + FACING_STEP, 10);
-  Engine_ActorRunRepeatedMotion(GATE_GUARD_WEST, 1);
-  Engine_EventShowMessageAndWait(GATE_GUARD_WEST, 0, 10);
-  Engine_ActorRunRepeatedMotion(GATE_GUARD_EAST, 1);
-  Engine_EventOpenMessage(GATE_GUARD_EAST, 0);
+  Engine_EventShowMessageAndWait(ACTOR_WEST_GUARD, 0, 10);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 10);
+  Engine_ActorStartRepeatedMotion(ACTOR_EAST_GUARD, 2);
+  Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT, 60);
+  Engine_EventShowMessageAndWait(ACTOR_EAST_GUARD, 0, 20);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_EAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTHWEST + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 10);
+  Engine_ActorRunRepeatedMotion(ACTOR_WEST_GUARD, 1);
+  Engine_EventShowMessageAndWait(ACTOR_WEST_GUARD, 0, 10);
+  Engine_ActorRunRepeatedMotion(ACTOR_EAST_GUARD, 1);
+  Engine_EventOpenMessage(ACTOR_EAST_GUARD, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
   // Refusals repeat the accusation until the player acknowledges it.
   while (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) != 0) {
-    Engine_ActorShowEmote(GATE_GUARD_EAST, EMOTE_IN_FRONT, 60);
+    Engine_ActorShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT, 60);
     Engine_EventSetMessage(MsgBilibinNotTrueWitnesses);
-    Engine_EventShowMessageAndWait(GATE_GUARD_EAST, 0, 10);
-    Engine_ActorStartRepeatedMotion(GATE_GUARD_EAST, 2);
-    Engine_EventOpenMessage(GATE_GUARD_EAST, 0);
+    Engine_EventShowMessageAndWait(ACTOR_EAST_GUARD, 0, 10);
+    Engine_ActorStartRepeatedMotion(ACTOR_EAST_GUARD, 2);
+    Engine_EventOpenMessage(ACTOR_EAST_GUARD, 0);
   }
   Engine_EventWait(10);
-  Actor_FaceDirection(GATE_GUARD_WEST, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(GATE_GUARD_EAST, FACING_SOUTH + FACING_STEP, 20);
-  Engine_ActorSetAnimation(GATE_GUARD_WEST, 3);
-  Engine_ActorSetAnimationAndWait(GATE_GUARD_EAST, 3);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH + FACING_STEP, 20);
+  Engine_ActorSetAnimation(ACTOR_WEST_GUARD, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_EAST_GUARD, 3);
   Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(GATE_GUARD_WEST, 1);
+  Engine_ActorRunRepeatedMotion(ACTOR_WEST_GUARD, 1);
   Engine_EventSetMessage(MsgBilibinUnderArrest);
-  Engine_EventShowMessageAndWait(GATE_GUARD_WEST, 0, 10);
-  Actor_SetSpeed(GATE_GUARD_WEST, 0x10000, 0x8000);
-  Actor_WalkToAndWait(GATE_GUARD_WEST, 0x13a, 0x118);
+  Engine_EventShowMessageAndWait(ACTOR_WEST_GUARD, 0, 10);
+  Actor_SetSpeed(ACTOR_WEST_GUARD, 0x10000, 0x8000);
+  Actor_WalkToAndWait(ACTOR_WEST_GUARD, 314, 280);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
-  Engine_EventShowMessageAndWait(GATE_GUARD_WEST, 0, 40);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
+  Engine_EventShowMessageAndWait(ACTOR_WEST_GUARD, 0, 40);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
   Engine_EventWait(60);
-  if (Engine_GameFlagIsSet(FLAG_GUARDS_LET_PARTY_IN) == 0) {
-    Engine_ActorSetSpeed(GATE_GUARD_EAST, 0x10000, 0x8000);
-    Object_GetById(GATE_GUARD_EAST)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    Engine_ActorWalkToAndWait(GATE_GUARD_EAST, 0x15a, 0x107);
+  if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_ADMITTED) == 0) {
+    Engine_ActorSetSpeed(ACTOR_EAST_GUARD, 0x10000, 0x8000);
+    Object_GetById(ACTOR_EAST_GUARD)->steeringFlags &= ~ACTOR_FACES_MOTION;
+    Engine_ActorWalkToAndWait(ACTOR_EAST_GUARD, 346, 263);
     Engine_EventWait(1);
     {
-      struct FieldActor *guard = Object_GetById(GATE_GUARD_EAST);
+      struct FieldActor *guard = Object_GetById(ACTOR_EAST_GUARD);
 
       guard->steeringFlags = ACTOR_FACES_MOTION | guard->steeringFlags;
     }
   }
-  Actor_SetSpeed(GATE_GUARD_WEST, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_WEST_GUARD, 0xcccc, 0x6666);
   // Escort Isaac through the opened gate before changing to the palace.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-  Actor_WalkTo(GATE_GUARD_WEST, 0x148, 0x106);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x148, 0x116);
-  Engine_ActorSetAnimation(GATE_GUARD_WEST, 1);
-  PalaceGate_Open();
+  Actor_WalkTo(ACTOR_WEST_GUARD, 328, 262);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 328, 278);
+  Engine_ActorSetAnimation(ACTOR_WEST_GUARD, 1);
+  Garden_OpenPalaceGate();
   Engine_EventWait(40);
-  Actor_WalkTo(ACTOR_PARTY_LEADER, 0x148, 242);
-  Actor_WalkToAndWait(GATE_GUARD_WEST, 0x148, 242);
-  Engine_ActorSetPosition(GATE_GUARD_WEST, 0, 0);
+  Actor_WalkTo(ACTOR_PARTY_LEADER, 328, 242);
+  Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 242);
+  Engine_ActorSetPosition(ACTOR_WEST_GUARD, 0, 0);
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
   Engine_ActorSetPosition(ACTOR_PARTY_LEADER, 0, 0);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
@@ -385,10 +377,10 @@ static void Guards_ArrestParty(void) {
 }
 
 // The palace gate swings open.
-static void PalaceGate_Open(void) {
-  Engine_AudioPlayCue(SOUND_PALACE_GATE);
+static void Garden_OpenPalaceGate(void) {
+  Engine_AudioPlayCue(SE_188);
   Engine_MapAnimateCells(gPalaceGateOpenSteps, 52, 11);
-  Engine_GameFlagSet(FLAG_GATE_OPEN);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
 }
 
 // Shared scene code, included where the ROM places it.
@@ -435,7 +427,7 @@ struct ScenePlacement gMcCoyPalaceGardenPlacements[] = {
         PIXELS(320), 0, PIXELS(263), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x96, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(334), 0, PIXELS(263), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { 0x16, FLAG_NUT_CAUGHT, 7,
+    { 0x16, FLAG_MCCOY_PALACE_GARDEN_NUT_CAUGHT, 7,
         PIXELS(216), 0, PIXELS(344), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 #if TBS_PATCH_3
     { 0xf8, CONDITION_ALWAYS, ACTOR_STAND,
@@ -450,34 +442,34 @@ struct SceneEvent gMcCoyPalaceGardenEventsOther[] = {
 
 struct SceneEvent gMcCoyPalaceGardenEvents[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(PalaceGate_Enter) },
-    { EVENT_TALK, 8, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheLumberIOrderedFromKolima) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBilibinNowThatTheCurseIsBroken) },
-    { EVENT_TALK, 9, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(NorthWorker_Talk) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgBilibinItsOverOverMilordDecidedNot) },
-    { EVENT_TALK, 10, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(McCoy_Talk) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBilibinHmphMyPalaceIsNotFinished) },
-    { EVENT_TALK, 11, FLAG_84F, MSGNO(MsgBilibinLordMccoyIsSoUpsetAbout) },
-    { EVENT_TALK, 11, FLAG_84E, MSGNO(MsgBilibinICantTellYouAnythingElse) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(WestGuard_Talk) },
-    { EVENT_TALK, 12, FLAG_84F, EVENT_SCRIPT(EastGuard_Talk) },
-    { EVENT_TALK, 12, FLAG_84E, MSGNO(MsgBilibinWhatAShameHuhIGuess) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBilibinICouldNeverHaveGoneTo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIfThingsLikeThisAreGoing) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgBilibinWedStillBeWorkingIfWe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIAmGladIDidntKnow) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgBilibinThatWasCloseBuildingACursed) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIfAllThisTroubleWasCaused) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgBilibinHeSaidHeStoppedConstructionSo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_GUARDS_LET_PARTY_IN, MSGNO(MsgBilibinNoOneBelievedTheyWouldTurn) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_84E, MSGNO(MsgBilibinThatBarricadeIsPrettyShabbyIt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgBilibinIWillBeAReliableWarrior) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_GUARDS_LET_PARTY_IN, MSGNO(MsgBilibinIsThereNoOneWhoCan) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_84F, MSGNO(MsgBilibinLordMccoyWouldNeverHireAnyone) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_84E, MSGNO(MsgBilibinIDidntThinkTheydLetYou) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBilibinDontLeaveIsaacBeMyMentor) },
-    { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Well_Search) },
-    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), 13, FLAG_NUT_CAUGHT, EVENT_SCRIPT(FloatingNut_Catch) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterPalace) },
+    { EVENT_TALK, ACTOR_WEST_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinTheLumberIOrderedFromKolima) },
+    { EVENT_TALK, ACTOR_WEST_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinNowThatTheCurseIsBroken) },
+    { EVENT_TALK, ACTOR_NORTH_WORKER, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Event_TalkToNorthWorker) },
+    { EVENT_TALK, ACTOR_NORTH_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinItsOverOverMilordDecidedNot) },
+    { EVENT_TALK, ACTOR_LORD_MCCOY, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Event_TalkToMcCoy) },
+    { EVENT_TALK, ACTOR_LORD_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinHmphMyPalaceIsNotFinished) },
+    { EVENT_TALK, ACTOR_WEST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_HINT, MSGNO(MsgBilibinLordMccoyIsSoUpsetAbout) },
+    { EVENT_TALK, ACTOR_WEST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinICantTellYouAnythingElse) },
+    { EVENT_TALK, ACTOR_WEST_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWestGuard) },
+    { EVENT_TALK, ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_HINT, EVENT_SCRIPT(Event_TalkToEastGuard) },
+    { EVENT_TALK, ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinWhatAShameHuhIGuess) },
+    { EVENT_TALK, ACTOR_EAST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBilibinICouldNeverHaveGoneTo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIfThingsLikeThisAreGoing) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinWedStillBeWorkingIfWe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_NORTH_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIAmGladIDidntKnow) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_NORTH_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinThatWasCloseBuildingACursed) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LORD_MCCOY, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIfAllThisTroubleWasCaused) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LORD_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinHeSaidHeStoppedConstructionSo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD, FLAG_MCCOY_PALACE_ADMITTED, MSGNO(MsgBilibinNoOneBelievedTheyWouldTurn) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinThatBarricadeIsPrettyShabbyIt) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBilibinIWillBeAReliableWarrior) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_ADMITTED, MSGNO(MsgBilibinIsThereNoOneWhoCan) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_HINT, MSGNO(MsgBilibinLordMccoyWouldNeverHireAnyone) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinIDidntThinkTheydLetYou) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBilibinDontLeaveIsaacBeMyMentor) },
+    { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchWell) },
+    { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_FLOATING_NUT, FLAG_MCCOY_PALACE_GARDEN_NUT_CAUGHT, EVENT_SCRIPT(Event_CatchFloatingNut) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

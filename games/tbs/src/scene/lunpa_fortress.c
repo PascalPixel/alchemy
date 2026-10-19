@@ -2219,7 +2219,7 @@ static void Event_DonpaJudgesDodonpa(void) {
   MESSAGE_SET((donpaMessage + 9));
   MESSAGE_PUT(RESCUE_DONPA, 0);
   WAIT(20);
-  Actor_SetAttachedEffect(RESCUE_DODONPA, 0x101);
+  Actor_SetAttachedEffect(RESCUE_DODONPA, EMOTE_IN_FRONT | 1);
   WAIT(80);
   Actor_SetAttachedEffect(RESCUE_DODONPA, 0);
   OBJ_WALK(RESCUE_DONPA, 496, 240);

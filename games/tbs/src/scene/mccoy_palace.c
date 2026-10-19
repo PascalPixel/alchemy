@@ -26,8 +26,27 @@
 #include "objcmd.h"
 #include "facing_object.h"
 #include "fixed_math.h"
+#include "songs.h"
 
+// Lord McCoy's palace in Bilibin. At the first audience McCoy asks the party
+// to lift the curse on Kolima, then turns them away as too young; once the
+// curse is lifted, his guards bring them back and he rewards them with one
+// of four treasures.
+//
+// Scene flags: FLAG_SCENE_TEMP_00, the escort has opened the front door;
+// FLAG_SCENE_TEMP_02, the party is choosing its reward; FLAG_SCENE_TEMP_10 to
+// _13, the chest it chose. The flags from 0x300 are reused from place to
+// place: 0x302 and 0x303, the admirer has spoken or been read once; 0x321,
+// McCoy has turned the party away; 0x322, the reward is still to choose; 0x333,
+// the reward visit is over. McCoy speaks as 0x2000 | ACTOR_LORD_MCCOY,
+// a speaker bit field_event.h does not name yet.
+
+// The palace's people and the reward room's chests.
 enum {
+  ACTOR_KOLIMA_ASKER = 10,
+  ACTOR_STARTLED_RESIDENT = 14,
+  ACTOR_PARTY_ADMIRER = 15,
+  ACTOR_KOLIMA_WATCHER = 16,
   ACTOR_REWARD_KEEPER = 17,
   ACTOR_LORD_MCCOY = 18,
   ACTOR_ESCORT = 19,
@@ -38,22 +57,25 @@ enum {
   ACTOR_WATER_OF_LIFE_CHEST = 24
 };
 
-// The entrance handler dispatches the palace's request and reward sequences.
+// Touching a trigger while facing a way.
+#define TOUCH_FACING(facing) (EVENT_TOUCH | EVENT_TOUCH_FACING | (facing))
+
+// Forward declarations.
 static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
                                     s32 chestFlag);
-static void McCoyPalace_ReceiveKolimaRequest(void);
-static void McCoyPalace_GreetReturningParty(void);
-static void McCoyPalace_ReceiveKolimaReward(void);
-static void McCoyPalace_PresentRewardChests(void);
+static void Event_AudienceWithMcCoy(void);
+static void Event_EscortHintsAtBarricade(void);
+static void Event_McCoyRewardsParty(void);
+static void Event_PresentRewardChests(void);
 
-// Existing byte view of talkFacing in placement rows 6, 7, 8 and 9.
+// The talkFacing bytes of placement rows 6 to 9: actors 14 to 17.
 struct PalacePlacementTalkFacingView {
   u8 unk000[166];
   u8 startledResident;
   u8 unk167[23];
-  u8 warrior;
+  u8 admirer;
   u8 unk191[23];
-  u8 observer;
+  u8 kolimaWatcher;
   u8 unk215[23];
   u8 rewardKeeper;
 };
@@ -61,19 +83,21 @@ struct PalacePlacementTalkFacingView {
 // The shared facing callback precedes the scene's entry points.
 #include "common/object_facing.h"
 
-// Return the palace's entrances.
-const struct SceneEntrance *McCoyPalace_GetEntrances(void) {
+// Where the party can enter the palace.
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gMcCoyPalaceEntrances;
 }
 
-// The palace has no scene regions.
-const struct SceneRegion *McCoyPalace_GetRegions(void) { return NULL; }
+// The palace has no regions.
+const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-// Return the palace's packed exits.
-const u32 *McCoyPalace_GetExits(void) { return gMcCoyPalaceExits; }
+// Where each door and stair leads.
+const u32 *Scene_GetExits(void) { return gMcCoyPalaceExits; }
 
-// Prepare palace placements and update reward-room conversation facings.
-const struct ScenePlacement *McCoyPalace_GetPlacements(void) {
+// The palace's people. Once the reward is taken, the startled resident,
+// the admirer, the Kolima watcher and the reward keeper turn differently
+// when talked to.
+const struct ScenePlacement *Scene_GetPlacements(void) {
   struct ScenePlacement *placements;
 
   if (gGameState.scene == (s32)&SceneId_McCoyPalace) {
@@ -89,8 +113,8 @@ const struct ScenePlacement *McCoyPalace_GetPlacements(void) {
           (struct PalacePlacementTalkFacingView *)placements;
 
       facings->startledResident = TALK_KEEP_FACING;
-      facings->warrior = TALK_FACE_PARTY;
-      facings->observer = 3;
+      facings->admirer = TALK_FACE_PARTY;
+      facings->kolimaWatcher = 3;
       facings->rewardKeeper = TALK_FACE_PARTY_AND_BACK;
     }
 
@@ -99,62 +123,68 @@ const struct ScenePlacement *McCoyPalace_GetPlacements(void) {
   return gMcCoyPalacePlacementsOther;
 }
 
-// Select palace dialogue, reward chests, and doorway events.
-const struct SceneEvent *McCoyPalace_GetEvents(void) {
+// What the party can talk to and search in the palace.
+const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_McCoyPalace) {
     return gMcCoyPalaceEvents;
   }
   return gMcCoyPalaceEventsOther;
 }
 
-// Ask whether the party is willing to visit Kolima Forest.
-static void McCoyPalace_AskToVisitKolima(void) {
+// "Oh, are you willing to go to Kolima Forest?"
+static void Event_AskAboutGoingToKolima(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinYouWillingGoKolimaForest);
-  Engine_EventAskYesNo(10, 0);
+  Engine_EventAskYesNo(ACTOR_KOLIMA_ASKER, 0);
   Engine_EventEnd();
 }
 
-// Interrupt the startled actor's reaction to face the party and speak.
-static void McCoyPalace_TalkToStartledResident(void) {
+// The resident in a nightgown screams ("AAAAH!!!"), then turns to the
+// party.
+static void Event_TalkToStartledResident(void) {
   Engine_EventBegin();
-  Actor_ShowEmote(14, EMOTE_IN_FRONT | 2, 0);
-  Engine_ActorRunRepeatedMotion(14, 2);
+  Actor_ShowEmote(ACTOR_STARTLED_RESIDENT, EMOTE_IN_FRONT | 2, 0);
+  Engine_ActorRunRepeatedMotion(ACTOR_STARTLED_RESIDENT, 2);
   Engine_EventWait(40);
   Engine_EventSetMessage(MsgBilibinAaaah);
-  Event_ShowMessageAndWait(14, 0, 20);
-  Actor_FaceActor(14, ACTOR_PARTY_LEADER, 0);
+  Event_ShowMessageAndWait(ACTOR_STARTLED_RESIDENT, 0, 20);
+  Actor_FaceActor(ACTOR_STARTLED_RESIDENT, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(14, 0, 10);
-  Actor_FaceDirection(14, FACING_NORTHWEST + FACING_STEP, 10);
+  Event_ShowMessageAndWait(ACTOR_STARTLED_RESIDENT, 0, 10);
+  Actor_FaceDirection(ACTOR_STARTLED_RESIDENT, FACING_NORTHWEST + FACING_STEP,
+                      10);
   Engine_EventEnd();
 }
 
-// Change the warrior's assessment after the first conversation.
-static void McCoyPalace_DiscussWarriors(void) {
+// "You are a fine warrior." the first time; after, "It's very reckless
+// for such young warriors to face the holy tree..."
+static void Event_TalkToAdmirer(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinFineWarrior);
   if (GameFlag_IsSet(0x302) != 0) {
     Engine_EventSetMessage(MsgBilibinItsVeryRecklessForSuch);
   }
-  Event_ShowMessage(15, 0);
+  Event_ShowMessage(ACTOR_PARTY_ADMIRER, 0);
   GameFlag_Set(0x302);
   Engine_EventEnd();
 }
 
-// Ask about what the observer saw from this position.
-static void McCoyPalace_DiscussKolimaView(void) {
+// "I was watching from here. After all that fuss, you still went to
+// Kolima?"
+static void Event_TalkToKolimaWatcher(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinWasWatchingFromHereAfter);
-  Engine_EventAskYesNo(16, 0);
+  Engine_EventAskYesNo(ACTOR_KOLIMA_WATCHER, 0);
   Engine_EventEnd();
 }
 
-// Explain the reward selection, accounting for the item already taken.
-static void McCoyPalace_ExplainReward(void) {
+// The keeper of McCoy's treasures: while the party chooses, only one item;
+// after, the reward was the greatest; before, Bilibin's great treasures
+// go to whoever ends the curse.
+static void Event_TalkToRewardKeeper(void) {
   Engine_EventBegin();
 
-  if (Engine_GameFlagIsSet(0x202) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02) != 0) {
     Engine_EventSetMessage(MsgBilibinMayChooseOnlyOneItem);
   } else if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     Engine_EventSetMessage(MsgBilibinRewardReceivedWasIndeedGreatest);
@@ -165,27 +195,29 @@ static void McCoyPalace_ExplainReward(void) {
     }
   }
 
-  Engine_EventShowMessage(17, 0);
+  Engine_EventShowMessage(ACTOR_REWARD_KEEPER, 0);
   Engine_EventEnd();
 }
 
-// Mind Read changes this actor's thoughts after the first reading.
-static void McCoyPalace_ReadWarriorThoughts(void) {
+// Mind Read on the admirer: "Sometimes, we need children to remind us of
+// our own responsibilities.", then "You looked very courageous walking
+// toward Kolima."
+static void Event_ReadAdmirersThoughts(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinSometimesWeNeedChildrenRemind);
   if (GameFlag_IsSet(0x303) != 0) {
     Engine_EventSetMessage(MsgBilibinLookedVeryCourageousWalkingToward);
   }
-  Event_ShowMessage(15, 0);
+  Event_ShowMessage(ACTOR_PARTY_ADMIRER, 0);
   GameFlag_Set(0x303);
   Engine_EventEnd();
 }
 
-// Mind Read reveals the actor's thoughts about offering a reward.
-static void McCoyPalace_ReadRewardKeeperThoughts(void) {
+// Mind Read on the keeper of McCoy's treasures.
+static void Event_ReadRewardKeepersThoughts(void) {
   Engine_EventBegin();
 
-  if (Engine_GameFlagIsSet(0x202) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02) != 0) {
     Engine_EventSetMessage(MsgBilibinNonethelessIfYourLuckSour);
   } else if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     Engine_EventSetMessage(MsgBilibinGoodTreasureIfGetTurned);
@@ -196,24 +228,26 @@ static void McCoyPalace_ReadRewardKeeperThoughts(void) {
     }
   }
 
-  Engine_EventShowMessage(17, 0);
+  Engine_EventShowMessage(ACTOR_REWARD_KEEPER, 0);
   Engine_EventEnd();
 }
 
-// Temporarily hide doorway layers while the leader walks through an exit.
-static void McCoyPalace_RunDoorExitScene(void) {
+// Walking through one of the palace's doors: it opens with a sound, the
+// leader walks through and the next room loads. The front door makes no
+// sound once the escort has opened it.
+static void Event_WalkThroughDoor(void) {
   struct EventWork *work;
   s32 hideDoorLayers;
 
   work = gEventWork;
   hideDoorLayers = 0;
   if (work->touchedTrigger == 9) {
-    if (Engine_GameFlagIsSet(0x200) == 0) {
-      Engine_AudioPlayCue(188);
+    if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00) == 0) {
+      Engine_AudioPlayCue(SE_188);
       hideDoorLayers = 1;
     }
   } else {
-    Engine_AudioPlayCue(158);
+    Engine_AudioPlayCue(SE_DOOR_OPEN);
     hideDoorLayers = 1;
   }
   if (hideDoorLayers != 0) {
@@ -235,21 +269,22 @@ static void McCoyPalace_RunDoorExitScene(void) {
   Map_SetLayerEntryFlag(2);
 }
 
-// Explain that the selected reward chest has already been emptied.
+// "Isaac checked the chest... but it was empty."
 static void McCoyPalace_ShowChestEmpty(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgBilibinIsaacCheckedChestButWas, 1);
   Engine_EventEnd();
 }
 
-// Explain that an unavailable reward chest remains locked.
+// "The treasure chest is locked."
 static void McCoyPalace_ShowChestLocked(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgBilibinTreasureChestLocked, 1);
   Engine_EventEnd();
 }
 
-// Distinguish the emptied reward chest from the other locked choices.
+// Searching a reward chest after the reward: the chosen one is empty, the
+// others locked.
 static void McCoyPalace_ShowUnavailableChest(s32 chestFlag) {
   if (Engine_GameFlagIsSet(chestFlag) != 0) {
     McCoyPalace_ShowChestEmpty();
@@ -258,44 +293,49 @@ static void McCoyPalace_ShowUnavailableChest(s32 chestFlag) {
   }
 }
 
-// Offer the first chest only while no reward has been claimed.
-static void McCoyPalace_SearchVialChest(void) {
+// Searching the first reward chest: a Vial, while no reward is taken.
+static void Event_SearchVialChest(void) {
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
-    McCoyPalace_ShowUnavailableChest(0x210);
+    McCoyPalace_ShowUnavailableChest(FLAG_SCENE_TEMP_10);
   } else {
-    McCoyPalace_ClaimReward(ACTOR_VIAL_CHEST, ITEM_VIAL, 0x210);
+    McCoyPalace_ClaimReward(ACTOR_VIAL_CHEST, ITEM_VIAL, FLAG_SCENE_TEMP_10);
   }
 }
 
-// Offer the second chest only while no reward has been claimed.
-static void McCoyPalace_SearchPotionChest(void) {
+// Searching the second reward chest: a Potion, while no reward is taken.
+static void Event_SearchPotionChest(void) {
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
-    McCoyPalace_ShowUnavailableChest(0x211);
+    McCoyPalace_ShowUnavailableChest(FLAG_SCENE_TEMP_11);
   } else {
-    McCoyPalace_ClaimReward(ACTOR_POTION_CHEST, ITEM_POTION, 0x211);
+    McCoyPalace_ClaimReward(ACTOR_POTION_CHEST, ITEM_POTION,
+                            FLAG_SCENE_TEMP_11);
   }
 }
 
-// Offer the third chest only while no reward has been claimed.
-static void McCoyPalace_SearchPsyCrystalChest(void) {
+// Searching the third reward chest: a Psy Crystal, while no reward is
+// taken.
+static void Event_SearchPsyCrystalChest(void) {
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
-    McCoyPalace_ShowUnavailableChest(0x212);
+    McCoyPalace_ShowUnavailableChest(FLAG_SCENE_TEMP_12);
   } else {
-    McCoyPalace_ClaimReward(ACTOR_PSY_CRYSTAL_CHEST, ITEM_PSY_CRYSTAL, 0x212);
+    McCoyPalace_ClaimReward(ACTOR_PSY_CRYSTAL_CHEST, ITEM_PSY_CRYSTAL,
+                            FLAG_SCENE_TEMP_12);
   }
 }
 
-// Offer the fourth chest only while no reward has been claimed.
-static void McCoyPalace_SearchWaterOfLifeChest(void) {
+// Searching the fourth reward chest: a Water of Life, while no reward is
+// taken.
+static void Event_SearchWaterOfLifeChest(void) {
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
-    McCoyPalace_ShowUnavailableChest(0x213);
+    McCoyPalace_ShowUnavailableChest(FLAG_SCENE_TEMP_13);
   } else {
     McCoyPalace_ClaimReward(ACTOR_WATER_OF_LIFE_CHEST, ITEM_WATER_OF_LIFE,
-                            0x213);
+                            FLAG_SCENE_TEMP_13);
   }
 }
 
-// Present the reward and commit its flags only if the party can carry it.
+// The chest opens and gives its item; with no room for it, the chest
+// closes again and the reward is still to choose.
 static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
                                     s32 chestFlag) {
   s32 emitterHandle;
@@ -310,9 +350,9 @@ static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
     Engine_GameFlagSet(FLAG_MCCOY_PALACE_REWARD_TAKEN);
     Engine_GameFlagSet(chestFlag);
     Engine_GameFlagClear(0x322);
-    Engine_GameFlagClear(0x202);
+    Engine_GameFlagClear(FLAG_SCENE_TEMP_02);
   } else {
-    Engine_AudioPlayCue(125);
+    Engine_AudioPlayCue(SE_125);
     Engine_ActorSetAnimation(chestActorId, 5);
   }
 
@@ -320,8 +360,9 @@ static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
   Engine_EventEnd();
 }
 
-// Stop the party from leaving before it chooses the offered reward.
-static void McCoyPalace_KeepPartyInRewardRoom(void) {
+// Leaving the reward room without a reward: "Please take your reward
+// before your depart!", and the escort walks the leader back.
+static void Event_EscortAsksPartyToChoose(void) {
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) == 0) {
     if (Engine_GameFlagIsSet(0x322) != 0) {
       Engine_EventBegin();
@@ -330,7 +371,7 @@ static void McCoyPalace_KeepPartyInRewardRoom(void) {
       Engine_ActorRunRepeatedMotion(ACTOR_ESCORT, 2);
       Engine_EventWait(20);
       Engine_EventSetMessage(MsgBilibinPleaseTakeYourRewardBefore);
-      Event_ShowMessage(19, 0);
+      Event_ShowMessage(ACTOR_ESCORT, 0);
       Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 616, 762);
       Actor_FaceDirection(ACTOR_ESCORT, FACING_NORTH + FACING_STEP, 10);
@@ -339,11 +380,12 @@ static void McCoyPalace_KeepPartyInRewardRoom(void) {
   }
 }
 
-// After a reward is claimed, finish the farewell and dismiss the escort.
-static void McCoyPalace_FinishRewardVisit(void) {
+// Leaving the reward room with a reward: "You are always welcome in the
+// palace of Lord McCoy.", and the escort leaves.
+static void Event_EscortSeesPartyOff(void) {
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     Engine_EventBegin();
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 19, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_ESCORT, 0);
     Actor_SetSpeed(ACTOR_ESCORT, PIXELS(3) / 5, PIXELS(3) / 10);
     Actor_WalkToAndWait(ACTOR_ESCORT, 622, 764);
     Actor_FaceDirection(ACTOR_ESCORT, FACING_NORTHEAST + FACING_STEP, 20);
@@ -354,18 +396,18 @@ static void McCoyPalace_FinishRewardVisit(void) {
     Engine_EventWait(20);
     Engine_ActorSetAnimationAndWait(ACTOR_ESCORT, 3);
     Engine_EventSetMessage(MsgBilibinAlwaysWelcomeInPalaceLord);
-    Event_ShowMessageAndWait(19, 0, 10);
+    Event_ShowMessageAndWait(ACTOR_ESCORT, 0, 10);
     Actor_SetSpeed(ACTOR_ESCORT, PIXELS(4) / 5, PIXELS(2) / 5);
     Actor_WalkToAndWait(ACTOR_ESCORT, 570, 758);
     Actor_SetPosition(ACTOR_ESCORT, 0, 0);
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-    GameFlag_Set(0x85e);
+    GameFlag_Set(FLAG_MCCOY_PALACE_PARTY_REWARDED);
     GameFlag_Set(0x333);
     Engine_EventEnd();
   }
 }
 
-// Put the four reward choices in their display row.
+// The four reward chests stand in a row.
 static __inline__ void McCoyPalace_PositionRewardChests(void) {
   Actor_SetPosition(ACTOR_VIAL_CHEST, PIXELS(616), PIXELS(728));
   Actor_SetPosition(ACTOR_POTION_CHEST, PIXELS(632), PIXELS(728));
@@ -373,14 +415,16 @@ static __inline__ void McCoyPalace_PositionRewardChests(void) {
   Engine_ActorSetPosition(ACTOR_WATER_OF_LIFE_CHEST, PIXELS(664), PIXELS(728));
 }
 
-// Restore the collision cells around the reward display.
+// The cells before the chest row can be walked on.
 static __inline__ void McCoyPalace_OpenRewardChestRow(void) {
   Map_CopyCellAttributes(38, 55, 4, 1, 38, 45);
   Map_CopyCellAttributes(42, 55, 4, 1, 38, 46);
 }
 
-// Restore the audience or reward room and run the pending arrival sequence.
-s32 McCoyPalace_Initialize(void) {
+// Sets the palace up: McCoy's first audience, the escort at the door after
+// it, the reward audience once Kolima's curse is lifted, or the reward
+// chests where the party left them.
+s32 Scene_Initialize(void) {
   s32 rewardTaken;
   s32 curseLifted;
   struct FieldActor *chest;
@@ -388,34 +432,34 @@ s32 McCoyPalace_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Map_SetLayerEntryFlag(1);
   Map_SetLayerEntryFlag(2);
-  Engine_GameFlagSet(0x84b);
-  if (Engine_GameFlagIsSet(0x109) != 0) {
-    Engine_GameFlagClear(0x200);
+  Engine_GameFlagSet(FLAG_MCCOY_PALACE_VISITED);
+  if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
+    Engine_GameFlagClear(FLAG_SCENE_TEMP_00);
   }
   // A first audience and a return to the entrance have different greetings.
-  if (Engine_GameFlagIsSet(0x84f) == 0 &&
+  if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_BARRICADE_HINT) == 0 &&
       Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     if (gGameState.entrance == 29) {
-      McCoyPalace_ReceiveKolimaRequest();
+      Event_AudienceWithMcCoy();
     } else if (gGameState.entrance == 9 && Engine_GameFlagIsSet(0x321) != 0) {
-      McCoyPalace_GreetReturningParty();
+      Event_EscortHintsAtBarricade();
     }
   } else {
     rewardTaken = Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN);
     if (rewardTaken != 0) {
     } else {
       if (gGameState.entrance == 29) {
-        if (Engine_GameFlagIsSet(0x85e) == 0) {
+        if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_PARTY_REWARDED) == 0) {
           curseLifted = Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED);
           if (curseLifted != 0) {
-            McCoyPalace_ReceiveKolimaReward();
+            Event_McCoyRewardsParty();
           }
         }
       } else {
         // Restore the displayed chest row after reloading the reward room.
         if (gGameState.entrance == 28) {
           if (Engine_GameFlagIsSet(0x322) != 0) {
-            if (Engine_GameFlagIsSet(0x109) != 0) {
+            if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
               McCoyPalace_OpenRewardChestRow();
               McCoyPalace_PositionRewardChests();
               chest = Object_GetById(ACTOR_VIAL_CHEST);
@@ -441,7 +485,7 @@ s32 McCoyPalace_Initialize(void) {
               chest = Object_GetById(ACTOR_WATER_OF_LIFE_CHEST);
               chest->y.fixed = -PIXELS(4);
             } else {
-              McCoyPalace_PresentRewardChests();
+              Event_PresentRewardChests();
             }
           }
         }
@@ -451,7 +495,7 @@ s32 McCoyPalace_Initialize(void) {
   return 0;
 }
 
-// Set the companions' speeds and walking animations before an audience.
+// Garet, Ivan and Mia get ready to walk up to McCoy.
 static __inline__ void McCoyPalace_PrepareCompanionApproach(void) {
   Actor_SetSpeed(GARET, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_SetSpeed(IVAN, PIXELS(3) / 5, PIXELS(3) / 10);
@@ -461,8 +505,12 @@ static __inline__ void McCoyPalace_PrepareCompanionApproach(void) {
   Engine_ActorSetAnimation(MIA, ANIM_WALK);
 }
 
-// Present McCoy's Kolima request, including refusal and reconsideration paths.
-static void McCoyPalace_ReceiveKolimaRequest(void) {
+// The first audience: the escort announces the party and McCoy asks them to
+// lift Kolima's curse. Refusing, he calls them too young and they leave;
+// coming back, they may change their minds. Accepting, McCoy gives the key
+// to the barricades, Garet bristles at being called children, and McCoy
+// takes the key back.
+static void Event_AudienceWithMcCoy(void) {
   struct FieldActor *actor;
 
   // Stage the first audience, or place the leader for a return visit.
@@ -473,7 +521,7 @@ static void McCoyPalace_ReceiveKolimaRequest(void) {
   Camera_MoveTo(PIXELS(894), -1, PIXELS(664), 0);
   Engine_TaskWait(1);
   Engine_ActorSetPosition(ACTOR_PARTY_LEADER, 0, 0);
-  if (GameFlag_IsSet(0x85f) != 0) {
+  if (GameFlag_IsSet(FLAG_MCCOY_PALACE_JOB_REFUSED) != 0) {
     Camera_MoveTo(PIXELS(894), -1, PIXELS(698), 0);
     Actor_SetPosition(ACTOR_ESCORT, PIXELS(876), PIXELS(634));
     Actor_FaceDirection(ACTOR_ESCORT, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -485,7 +533,7 @@ static void McCoyPalace_ReceiveKolimaRequest(void) {
   gEventWork->transitionFrames = 40;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  if (Engine_GameFlagIsSet(0x85f) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_JOB_REFUSED) == 0) {
     Engine_EventWait(80);
     Actor_SetPosition(ACTOR_ESCORT, PIXELS(894), PIXELS(798));
     Camera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
@@ -505,18 +553,18 @@ static void McCoyPalace_ReceiveKolimaRequest(void) {
     Engine_EventWait(10);
     // The escort announces the warriors before they enter the audience.
     Engine_EventSetMessage(MsgBilibinMatter);
-    Event_ShowMessageAndWait(0x2012, 0, 10);
+    Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_ESCORT, 2);
-    Engine_EventShowMessageAndWait(19, 0, 20);
+    Engine_EventShowMessageAndWait(ACTOR_ESCORT, 0, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
-    Event_ShowMessageAndWait(0x2012, 0, 10);
+    Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_ESCORT, 3);
     Engine_EventWait(40);
     Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 5, 60);
-    Event_ShowMessage(0x2012, 0);
+    Event_ShowMessage(0x2000 | ACTOR_LORD_MCCOY, 0);
     Engine_ActorRunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
-    Event_ShowMessageAndWait(0x2012, 0, 10);
-    Engine_ActorSetAttachedEffect(ACTOR_ESCORT, 0x102);
+    Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
+    Engine_ActorSetAttachedEffect(ACTOR_ESCORT, EMOTE_IN_FRONT | 2);
     Engine_EventWait(60);
     Actor_FaceDirection(ACTOR_ESCORT, FACING_SOUTHEAST + FACING_STEP, 10);
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 10);
@@ -528,7 +576,7 @@ static void McCoyPalace_ReceiveKolimaRequest(void) {
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Engine_EventWait(10);
     Engine_ActorRunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
-    Engine_EventShowMessage(0x2012, 0);
+    Engine_EventShowMessage(0x2000 | ACTOR_LORD_MCCOY, 0);
     Camera_MoveTo(PIXELS(894), -1, PIXELS(664), 1);
     Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 894, 684);
     actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -561,19 +609,19 @@ static void McCoyPalace_ReceiveKolimaRequest(void) {
     Actor_FaceDirection(IVAN, FACING_NORTH, 20);
     Engine_ActorJump(ACTOR_LORD_MCCOY, 2, 20);
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHWEST + FACING_STEP, 10);
-    Event_ShowMessageAndWait(0x2012, 0, 10);
+    Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
     Actor_FaceDirection(ACTOR_ESCORT, FACING_EAST + FACING_STEP, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_ESCORT, 3);
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 40);
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHWEST + FACING_STEP, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 4);
-    Event_ShowMessageAndWait(0x2012, 0, 10);
-    Engine_ActorSetAttachedEffect(ACTOR_ESCORT, 0x102);
+    Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
+    Engine_ActorSetAttachedEffect(ACTOR_ESCORT, EMOTE_IN_FRONT | 2);
     Engine_EventWait(40);
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 20);
     Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 5, 40);
     // Let the party accept the assignment or leave after McCoy refuses them.
-    Engine_EventOpenMessage(0x2012, 0);
+    Engine_EventOpenMessage(0x2000 | ACTOR_LORD_MCCOY, 0);
     Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
     Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
@@ -582,10 +630,10 @@ static void McCoyPalace_ReceiveKolimaRequest(void) {
     }
   declined:
     Engine_EventSetMessage(MsgBilibinTooYoungForTheJob);
-    Event_ShowMessageAndWait(0x2012, 0, 10);
+    Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
     Actor_FaceDirection(ACTOR_ESCORT, FACING_SOUTHEAST + FACING_STEP, 0);
     Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 4);
-    Engine_EventShowMessageAndWait(0x2012, 0, 10);
+    Engine_EventShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
     Actor_FaceDirection(GARET, FACING_NORTH, 0);
     Actor_FaceDirection(IVAN, FACING_NORTH, 0);
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -613,7 +661,7 @@ static void McCoyPalace_ReceiveKolimaRequest(void) {
     Engine_ActorSetPosition(GARET, 0, 0);
     Engine_ActorSetPosition(IVAN, 0, 0);
     Actor_SetPosition(MIA, 0, 0);
-    Engine_GameFlagSet(0x85f);
+    Engine_GameFlagSet(FLAG_MCCOY_PALACE_JOB_REFUSED);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 752);
     gEventWork->transitionFrames = 16;
@@ -660,7 +708,7 @@ static void McCoyPalace_ReceiveKolimaRequest(void) {
   // A returning party can reconsider the assignment without replaying the
   // escort.
   Engine_EventSetMessage(MsgBilibinYehveChangeHeart);
-  Engine_EventOpenMessage(0x2012, 0);
+  Engine_EventOpenMessage(0x2000 | ACTOR_LORD_MCCOY, 0);
   if (Engine_EventChooseYesNo(0, 0) == 1) {
     // Reuse the initial refusal's dialogue and departure.
     goto declined;
@@ -677,7 +725,7 @@ accepted:
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ActorShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 5, 60);
   Engine_EventSetMessage(MsgBilibinHmmmWellGrant);
-  Event_ShowMessage(0x2012, 0);
+  Event_ShowMessage(0x2000 | ACTOR_LORD_MCCOY, 0);
   // Animate McCoy tossing the barricade key to the party.
   actor = Object_GetById(ACTOR_BARRICADE_KEY);
   Engine_ActorSetSpriteFlags(actor, 0);
@@ -694,16 +742,16 @@ accepted:
   Actor_SetSpeed(ACTOR_BARRICADE_KEY, PIXELS(2), PIXELS(1));
   Actor_MoveToAndWait(ACTOR_BARRICADE_KEY, 894, 668);
   Engine_EventWait(40);
-  Event_ShowMessageAndWait(0x2012, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 60);
   Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 4);
-  Event_ShowMessageAndWait(0x2012, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 60);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 10);
-  Engine_EventOpenMessage(0x4001, 0);
+  Engine_EventOpenMessage(SPEAKER_WINDOW_ABOVE | GARET, 0);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
@@ -712,13 +760,13 @@ accepted:
       Engine_ActorStartRepeatedMotion(GARET, 2);
       Engine_ActorRunRepeatedMotion(IVAN, 2);
       Engine_EventSetMessage(MsgBilibinSeriousDoesntBother);
-      Engine_EventOpenMessage(0x4001, 0);
+      Engine_EventOpenMessage(SPEAKER_WINDOW_ABOVE | GARET, 0);
     } while (Engine_EventChooseYesNo(0, 0) != 1);
   }
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   // Resolve Garet\'s objections before McCoy dismisses the party.
   Engine_EventSetMessage(MsgBilibinWellDontLet);
-  Event_ShowMessageAndWait(0x4001, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | GARET, 0, 10);
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
@@ -727,32 +775,32 @@ accepted:
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(20);
   Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 5, 60);
-  Engine_EventShowMessageAndWait(0x2012, 0, 20);
+  Engine_EventShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 20);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 2, 60);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHEAST + FACING_STEP, 10);
   Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 1, 60);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 40);
   Engine_ActorFaceDirection(GARET, FACING_EAST, 20);
   Engine_ActorRunRepeatedMotion(GARET, 1);
-  Event_ShowMessageAndWait(0x4001, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | GARET, 0, 10);
   Actor_FaceDirection(MIA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 20);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 2, 60);
   Actor_FaceDirection(IVAN, FACING_WEST, 10);
-  Engine_EventShowMessageAndWait(0x4002, 0, 10);
+  Engine_EventShowMessageAndWait(SPEAKER_WINDOW_ABOVE | IVAN, 0, 10);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Engine_EventWait(40);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
-  Event_ShowMessageAndWait(0x4001, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | GARET, 0, 10);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 10);
   Engine_ActorStartRepeatedMotion(GARET, 1);
-  Engine_EventOpenMessage(0x4001, 0);
+  Engine_EventOpenMessage(SPEAKER_WINDOW_ABOVE | GARET, 0);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   while (Engine_EventChooseYesNo(0, 0) != 0) {
     Engine_EventSetMessage(MsgBilibinComeSaidYoud);
-    Engine_EventOpenMessage(0x4001, 0);
+    Engine_EventOpenMessage(SPEAKER_WINDOW_ABOVE | GARET, 0);
   }
   Engine_EventWait(10);
   Actor_FaceDirection(MIA, FACING_WEST, 0);
@@ -763,11 +811,11 @@ accepted:
   Actor_FaceDirection(IVAN, FACING_WEST, 10);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
   Engine_EventSetMessage(MsgBilibinWellSGoing);
-  Event_ShowMessageAndWait(0x4002, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | IVAN, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 4);
-  Event_ShowMessageAndWait(0x2012, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
@@ -779,18 +827,18 @@ accepted:
   Engine_EventWait(40);
   Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 5, 80);
   Actor_FaceDirection(ACTOR_ESCORT, FACING_EAST + FACING_STEP, 10);
-  Actor_SetAttachedEffect(ACTOR_ESCORT, 0x102);
+  Actor_SetAttachedEffect(ACTOR_ESCORT, EMOTE_IN_FRONT | 2);
   Engine_EventWait(40);
-  Engine_EventShowMessageAndWait(19, 0, 10);
+  Engine_EventShowMessageAndWait(ACTOR_ESCORT, 0, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHWEST + FACING_STEP, 20);
-  Event_ShowMessageAndWait(0x2012, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_ESCORT, 3);
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 4);
   Engine_ActorSetAnimation(ACTOR_LORD_MCCOY, 4);
-  Event_ShowMessageAndWait(0x2012, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
   Engine_ActorJump(ACTOR_BARRICADE_KEY, 6, 0);
   actor = Object_GetById(ACTOR_LORD_MCCOY);
   if (actor != 0) {
@@ -800,33 +848,33 @@ accepted:
   Engine_ActorWaitForMove(ACTOR_BARRICADE_KEY);
   Engine_ActorSetPosition(ACTOR_BARRICADE_KEY, 0, 0);
   Engine_EventWait(20);
-  Actor_SetAttachedEffect(MIA, 0x102);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
-  Actor_SetAttachedEffect(GARET, 0x102);
-  Engine_ActorSetAttachedEffect(IVAN, 0x102);
+  Actor_SetAttachedEffect(MIA, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
+  Actor_SetAttachedEffect(GARET, EMOTE_IN_FRONT | 2);
+  Engine_ActorSetAttachedEffect(IVAN, EMOTE_IN_FRONT | 2);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(ACTOR_ESCORT, 2);
-  Engine_EventShowMessageAndWait(19, 0, 10);
+  Engine_EventShowMessageAndWait(ACTOR_ESCORT, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
-  Event_ShowMessageAndWait(0x2012, 0, 20);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_ESCORT, 3);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(0x4002, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | IVAN, 0, 10);
   Actor_FaceDirection(ACTOR_ESCORT, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHEAST + FACING_STEP, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 4);
-  Event_ShowMessageAndWait(0x2012, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 60);
-  Engine_EventShowMessageAndWait(0x4001, 0, 10);
+  Engine_EventShowMessageAndWait(SPEAKER_WINDOW_ABOVE | GARET, 0, 10);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 10);
   Engine_ActorSetAnimation(ACTOR_LORD_MCCOY, 4);
-  Event_ShowMessageAndWait(0x2012, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
   Engine_ActorSetAnimation(IVAN, ANIM_SHAKE_HEAD);
-  Engine_EventShowMessageAndWait(0x4002, 0, 10);
+  Engine_EventShowMessageAndWait(SPEAKER_WINDOW_ABOVE | IVAN, 0, 10);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHEAST + FACING_STEP, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
-  Event_ShowMessageAndWait(0x2012, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 7, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 7, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 7, 0);
@@ -834,26 +882,27 @@ accepted:
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHWEST + FACING_STEP, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
   Engine_EventWait(10);
-  Event_ShowMessageAndWait(0x2012, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_ESCORT, 2);
   Actor_FaceDirection(ACTOR_ESCORT, FACING_EAST + FACING_STEP, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_ESCORT, 3);
   Engine_EventWait(20);
-  FieldObject_SetTargetAndCallback(0, ACTOR_LINK_KEEP_MOTION | 19,
+  FieldObject_SetTargetAndCallback(ACTOR_PARTY_LEADER,
+                                   ACTOR_LINK_KEEP_MOTION | ACTOR_ESCORT,
                                    gPalace_FacingActions);
   // Keep the party looking at its escort while he leaves the audience.
-  FieldObject_SetTargetAndCallback(1, ACTOR_LINK_KEEP_MOTION | 19,
+  FieldObject_SetTargetAndCallback(GARET, ACTOR_LINK_KEEP_MOTION | ACTOR_ESCORT,
                                    gPalace_FacingActions);
-  FieldObject_SetTargetAndCallback(2, ACTOR_LINK_KEEP_MOTION | 19,
+  FieldObject_SetTargetAndCallback(IVAN, ACTOR_LINK_KEEP_MOTION | ACTOR_ESCORT,
                                    gPalace_FacingActions);
-  FieldObject_SetTargetAndCallback(3, ACTOR_LINK_KEEP_MOTION | 19,
+  FieldObject_SetTargetAndCallback(MIA, ACTOR_LINK_KEEP_MOTION | ACTOR_ESCORT,
                                    gPalace_FacingActions);
   Actor_SetSpeed(ACTOR_ESCORT, PIXELS(3) / 5, PIXELS(3) / 10);
   Actor_WalkToAndWait(ACTOR_ESCORT, 852, 646);
   Actor_WalkToAndWait(ACTOR_ESCORT, 852, 666);
   Actor_WalkToAndWait(ACTOR_ESCORT, 864, 672);
   Actor_FaceDirection(ACTOR_ESCORT, FACING_EAST + FACING_STEP, 10);
-  Event_ShowMessageAndWait(0x4013, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_ESCORT, 0, 20);
   Engine_ActorStop(ACTOR_PARTY_LEADER);
   Engine_ActorStop(GARET);
   Engine_ActorStop(IVAN);
@@ -863,8 +912,9 @@ accepted:
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
-  FieldObject_SetTargetAndCallback(
-      19, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER, gPalace_FacingActions);
+  FieldObject_SetTargetAndCallback(ACTOR_ESCORT,
+                                   ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+                                   gPalace_FacingActions);
   Engine_ActorSetAnimation(GARET, ANIM_WALK);
   actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
@@ -897,8 +947,10 @@ leave:
   Engine_EventEnd();
 }
 
-// Receive the party at the doorway after it returns from McCoy's request.
-static void McCoyPalace_GreetReturningParty(void) {
+// At the front door after the audience: McCoy's escort is sorry the party
+// was rejected, asks them not to go to Kolima and lets slip that the
+// barricade may not need a key.
+static void Event_EscortHintsAtBarricade(void) {
   Engine_EventBegin();
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -907,8 +959,8 @@ static void McCoyPalace_GreetReturningParty(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 256, 660);
   Engine_EventWait(20);
   Camera_MoveTo(-1, -1, -1, 0);
-  Engine_GameFlagSet(0x200);
-  Event_PlayCue(188);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
+  Event_PlayCue(SE_188);
   Map_ClearLayerEntryFlag(1);
   Map_ClearLayerEntryFlag(2);
   Engine_ActorSetPosition(ACTOR_ESCORT, PIXELS(256), PIXELS(632));
@@ -920,49 +972,50 @@ static void McCoyPalace_GreetReturningParty(void) {
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(ACTOR_ESCORT, 2);
   Engine_EventSetMessage(MsgBilibinNameSorryRejected);
-  Engine_EventShowMessageAndWait(19, 0, 10);
+  Engine_EventShowMessageAndWait(ACTOR_ESCORT, 0, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 40);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 264, 660);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_WalkToAndWait(ACTOR_ESCORT, 248, 660);
   Actor_FaceDirection(ACTOR_ESCORT, FACING_EAST + FACING_STEP, 40);
   Engine_ActorSetAnimationAndWait(ACTOR_ESCORT, 4);
-  Engine_EventShowMessage(19, 0);
+  Engine_EventShowMessage(ACTOR_ESCORT, 0);
   Engine_ActorSetAnimationAndWait(ACTOR_ESCORT, 3);
-  Engine_EventAskYesNo(19, 0);
+  Engine_EventAskYesNo(ACTOR_ESCORT, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_ESCORT, 2);
-  Engine_EventShowMessageAndWait(19, 0, 10);
+  Engine_EventShowMessageAndWait(ACTOR_ESCORT, 0, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 60);
-  Actor_SetAttachedEffect(ACTOR_ESCORT, 0x102);
+  Actor_SetAttachedEffect(ACTOR_ESCORT, EMOTE_IN_FRONT | 2);
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(ACTOR_ESCORT, 1);
-  Engine_EventShowMessageAndWait(19, 0, 10);
+  Engine_EventShowMessageAndWait(ACTOR_ESCORT, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_ESCORT, 3);
-  Event_ShowMessage(19, 0);
+  Event_ShowMessage(ACTOR_ESCORT, 0);
   Actor_SetSpeed(ACTOR_ESCORT, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_WalkToAndWait(ACTOR_ESCORT, 248, 772);
   Engine_ActorSetPosition(ACTOR_ESCORT, 0, 0);
-  Engine_GameFlagClear(0x12f);
-  Engine_GameFlagSet(0x84f);
+  Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
+  Engine_GameFlagSet(FLAG_MCCOY_PALACE_BARRICADE_HINT);
   Engine_EventEnd();
 }
 
-// Turn the three companions toward their dialogue partners.
+// Garet, Ivan and Mia turn to talk among themselves.
 static void McCoyPalace_FaceCompanionsForDiscussion(void) {
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   Actor_FaceDirection(MIA, FACING_WEST, 0);
 }
 
-// Restore the companions' northward audience facings.
+// Garet, Ivan and Mia face McCoy again.
 static void McCoyPalace_FaceCompanionsForAudience(void) {
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 0);
 }
 
-// Escort the party into McCoy's audience after Kolima's curse is lifted.
-static void McCoyPalace_ReceiveKolimaReward(void) {
+// Brought in after lifting Kolima's curse: McCoy thanks the party and sends
+// them to choose a reward.
+static void Event_McCoyRewardsParty(void) {
   struct FieldActor *viewCenter;
   struct FieldActor *actor;
   s32 advanceAlternateReply;
@@ -1007,11 +1060,11 @@ static void McCoyPalace_ReceiveKolimaReward(void) {
   // Adjacent variants depend on whether McCoy's earlier request was declined.
 
   advanceAlternateReply = 1;
-  if (GameFlag_IsSet(0x84f) == 0) {
+  if (GameFlag_IsSet(FLAG_MCCOY_PALACE_BARRICADE_HINT) == 0) {
     gEventWork->message++;
     advanceAlternateReply = 0;
   }
-  Event_ShowMessage(19, 0);
+  Event_ShowMessage(ACTOR_ESCORT, 0);
   if (advanceAlternateReply != 0) {
     gEventWork->message++;
   }
@@ -1020,15 +1073,15 @@ static void McCoyPalace_ReceiveKolimaReward(void) {
   Actor_SetActionScript(ACTOR_ESCORT, gPalace_PacingActions);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 684);
 
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Actor_SetPosition(GARET, actor->x.fixed, actor->z.fixed);
   }
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Actor_SetPosition(IVAN, actor->x.fixed, actor->z.fixed);
   }
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Actor_SetPosition(MIA, actor->x.fixed, actor->z.fixed);
   }
@@ -1050,23 +1103,23 @@ static void McCoyPalace_ReceiveKolimaReward(void) {
   Engine_EventWait(20);
 
   advanceAlternateReply = 1;
-  if (GameFlag_IsSet(0x84f) == 0) {
+  if (GameFlag_IsSet(FLAG_MCCOY_PALACE_BARRICADE_HINT) == 0) {
     gEventWork->message++;
     advanceAlternateReply = 0;
   }
   Engine_ActorRunRepeatedMotion(ACTOR_LORD_MCCOY, 3);
-  Event_ShowMessageAndWait(0x2012, 0, 20);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 20);
   if (advanceAlternateReply != 0) {
     gEventWork->message++;
   }
 
   advanceAlternateReply = 1;
-  if (GameFlag_IsSet(0x84f) == 0) {
+  if (GameFlag_IsSet(FLAG_MCCOY_PALACE_BARRICADE_HINT) == 0) {
     gEventWork->message++;
     advanceAlternateReply = 0;
   }
   Engine_ActorRunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
-  Event_ShowMessageAndWait(0x2012, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
   if (advanceAlternateReply != 0) {
     gEventWork->message++;
   }
@@ -1074,7 +1127,7 @@ static void McCoyPalace_ReceiveKolimaReward(void) {
   // Let the companions answer McCoy\'s thanks in turn.
   McCoyPalace_FaceCompanionsForDiscussion();
   Engine_EventWait(20);
-  if (GameFlag_IsSet(0x84f) != 0) {
+  if (GameFlag_IsSet(FLAG_MCCOY_PALACE_BARRICADE_HINT) != 0) {
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 40);
   } else {
@@ -1082,23 +1135,23 @@ static void McCoyPalace_ReceiveKolimaReward(void) {
   }
 
   Actor_FaceDirection(GARET, FACING_NORTH, 10);
-  Event_ShowMessageAndWait(0x4001, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | GARET, 0, 10);
   Actor_FaceDirection(IVAN, FACING_NORTH, 10);
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
-  Event_ShowMessage(0x4002, 0);
+  Event_ShowMessage(SPEAKER_WINDOW_ABOVE | IVAN, 0);
   Actor_FaceDirection(MIA, FACING_NORTHWEST, 10);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
-  Event_ShowMessageAndWait(0x4003, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | MIA, 0, 20);
   Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(0x2012, 0, 20);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 20);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 60);
 
-  if (GameFlag_IsSet(0x84f) != 0) {
+  if (GameFlag_IsSet(FLAG_MCCOY_PALACE_BARRICADE_HINT) != 0) {
     Engine_ActorRunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
     Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 4);
-    Event_OpenMessage(0x2012, 0);
+    Event_OpenMessage(0x2000 | ACTOR_LORD_MCCOY, 0);
     McCoyPalace_FaceCompanionsForDiscussion();
     advanceAlternateReply = 1;
     if (Engine_EventChooseYesNo(0, 0) != 0) {
@@ -1108,7 +1161,7 @@ static void McCoyPalace_ReceiveKolimaReward(void) {
     Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 0);
     McCoyPalace_FaceCompanionsForAudience();
     Engine_EventWait(10);
-    Event_ShowMessageAndWait(0x2012, 0, 10);
+    Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
     if (advanceAlternateReply != 0) {
       gEventWork->message++;
     }
@@ -1117,7 +1170,7 @@ static void McCoyPalace_ReceiveKolimaReward(void) {
     gEventWork->message += 4;
   }
 
-  Event_OpenMessage(0x2012, 0);
+  Event_OpenMessage(0x2000 | ACTOR_LORD_MCCOY, 0);
   McCoyPalace_FaceCompanionsForDiscussion();
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventSetMessage(MsgBilibinHumblyThank);
@@ -1126,35 +1179,35 @@ static void McCoyPalace_ReceiveKolimaReward(void) {
   }
 
   McCoyPalace_FaceCompanionsForAudience();
-  Event_ShowMessageAndWait(0x2012, 0, 20);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_ESCORT, 1);
   // McCoy explains his caution and offers a choice from the treasury.
   Engine_EventSetMessage(MsgBilibinWasButWorriedYehMight);
-  Event_ShowMessageAndWait(19, 0, 10);
+  Event_ShowMessageAndWait(ACTOR_ESCORT, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(IVAN, FACING_EAST, 0);
   Actor_FaceDirection(MIA, FACING_WEST, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_LORD_MCCOY, 2);
-  Event_ShowMessageAndWait(0x2012, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   McCoyPalace_FaceCompanionsForAudience();
   Engine_EventWait(10);
   Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 5, 60);
-  Event_ShowMessageAndWait(0x2012, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimation(IVAN, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
-  Event_ShowMessageAndWait(0x2012, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
   Actor_ShowEmote(ACTOR_LORD_MCCOY, EMOTE_IN_FRONT | 8, 60);
-  Event_ShowMessageAndWait(0x2012, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHEAST + FACING_STEP, 10);
-  Event_ShowMessageAndWait(0x2012, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
-  Event_OpenMessage(0x2012, 0);
+  Event_OpenMessage(0x2000 | ACTOR_LORD_MCCOY, 0);
 
   McCoyPalace_FaceCompanionsForDiscussion();
   advanceAlternateReply = 1;
@@ -1163,7 +1216,7 @@ static void McCoyPalace_ReceiveKolimaReward(void) {
     advanceAlternateReply = 0;
   }
   McCoyPalace_FaceCompanionsForAudience();
-  Event_ShowMessageAndWait(0x2012, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
   if (advanceAlternateReply != 0) {
     gEventWork->message++;
   }
@@ -1174,13 +1227,13 @@ static void McCoyPalace_ReceiveKolimaReward(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(ACTOR_ESCORT, 3);
-  Event_ShowMessageAndWait(19, 0, 10);
+  Event_ShowMessageAndWait(ACTOR_ESCORT, 0, 10);
   Actor_FaceDirection(ACTOR_ESCORT, FACING_SOUTHEAST + FACING_STEP, 10);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTHEAST + FACING_STEP, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_LORD_MCCOY, 1);
-  Event_ShowMessageAndWait(0x2012, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_LORD_MCCOY, 3);
-  Event_ShowMessageAndWait(0x2012, 0, 10);
+  Event_ShowMessageAndWait(0x2000 | ACTOR_LORD_MCCOY, 0, 10);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimation(IVAN, ANIM_NOD);
@@ -1188,17 +1241,17 @@ static void McCoyPalace_ReceiveKolimaReward(void) {
   Engine_EventWait(20);
 
   Engine_ActorSetAnimation(GARET, ANIM_WALK);
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Actor_SetDestination(GARET, actor->x.part.pixel, actor->z.part.pixel);
   }
   Engine_ActorSetAnimation(IVAN, ANIM_WALK);
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Actor_SetDestination(IVAN, actor->x.part.pixel, actor->z.part.pixel);
   }
   Engine_ActorSetAnimation(MIA, ANIM_WALK);
-  actor = Object_GetById(0);
+  actor = Object_GetById(ACTOR_PARTY_LEADER);
   if (actor != 0) {
     Actor_SetDestination(MIA, actor->x.part.pixel, actor->z.part.pixel);
   }
@@ -1210,7 +1263,8 @@ static void McCoyPalace_ReceiveKolimaReward(void) {
   Actor_SetPosition(MIA, 0, 0);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH + FACING_STEP, 0);
-  FieldObject_SetTargetAndCallback(0, ACTOR_LINK_KEEP_MOTION | 19,
+  FieldObject_SetTargetAndCallback(ACTOR_PARTY_LEADER,
+                                   ACTOR_LINK_KEEP_MOTION | ACTOR_ESCORT,
                                    gPalace_FacingActions);
   Actor_WalkToAndWait(ACTOR_ESCORT, 852, 646);
   Actor_WalkToAndWait(ACTOR_ESCORT, 852, 666);
@@ -1218,23 +1272,24 @@ static void McCoyPalace_ReceiveKolimaReward(void) {
   Actor_FaceDirection(ACTOR_ESCORT, FACING_EAST + FACING_STEP, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_ESCORT, 1);
   Engine_EventWait(10);
-  Event_ShowMessageAndWait(19, 0, 10);
+  Event_ShowMessageAndWait(ACTOR_ESCORT, 0, 10);
   Actor_WalkToAndWait(ACTOR_ESCORT, 886, 708);
   Actor_WalkTo(ACTOR_ESCORT, 894, 764);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 894, 764);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   GameFlag_Set(802);
-  if (GameFlag_IsSet(0x84f) == 0) {
-    GameFlag_Set(0x84f);
-    GameFlag_Set(0x84a);
+  if (GameFlag_IsSet(FLAG_MCCOY_PALACE_BARRICADE_HINT) == 0) {
+    GameFlag_Set(FLAG_MCCOY_PALACE_BARRICADE_HINT);
+    GameFlag_Set(FLAG_MCCOY_PALACE_ADMITTED);
   }
   Engine_EventRequestExit(6);
   Engine_EventEnd();
 }
 
-// Arrange the four reward chests and explain the one-item choice.
-static void McCoyPalace_PresentRewardChests(void) {
+// In the reward room: the escort shows the four chests and the keeper
+// explains that only one may be chosen.
+static void Event_PresentRewardChests(void) {
   struct FieldActor *actor;
 
   Engine_EventBegin();
@@ -1243,7 +1298,7 @@ static void McCoyPalace_PresentRewardChests(void) {
   Engine_EventGetViewCenter()->motionFlags = 0;
   Engine_CameraMoveTo(0x2740000, -1, 0x2ec0000, 0);
   McCoyPalace_OpenRewardChestRow();
-  Object_GetById(0)->facing = 0;
+  Object_GetById(ACTOR_PARTY_LEADER)->facing = 0;
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(577), PIXELS(760));
   Object_GetById(ACTOR_ESCORT)->facing = 0;
   Engine_ActorSetPosition(ACTOR_ESCORT, PIXELS(592), PIXELS(760));
@@ -1278,14 +1333,14 @@ static void McCoyPalace_PresentRewardChests(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_ESCORT, 1);
   // The escort and keeper explain that only one chest may be chosen.
   Engine_EventSetMessage(MsgBilibinLordMccoyOrdered);
-  Engine_EventShowMessageAndWait(19, 0, 10);
+  Engine_EventShowMessageAndWait(ACTOR_ESCORT, 0, 10);
   Actor_WalkToAndWait(ACTOR_ESCORT, 622, 780);
   Actor_FaceDirection(ACTOR_ESCORT, FACING_NORTH, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_REWARD_KEEPER, 2);
-  Engine_EventShowMessageAndWait(17, 0, 10);
+  Engine_EventShowMessageAndWait(ACTOR_REWARD_KEEPER, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  Engine_GameFlagClear(0x12f);
-  Engine_GameFlagSet(0x202);
+  Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_02);
   Engine_EventEnd();
 }
 
@@ -1439,11 +1494,11 @@ struct SceneEvent gMcCoyPalaceEvents[] = {
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
     { EVENT_EXIT, 7, CONDITION_ALWAYS, 7 },
     { EVENT_EXIT, 8, CONDITION_ALWAYS, 8 },
-    { 0xc402, 9, CONDITION_ALWAYS, EVENT_SCRIPT(McCoyPalace_RunDoorExitScene) },
+    { TOUCH_FACING(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WalkThroughDoor) },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
-    { 0xc402, 12, CONDITION_ALWAYS, EVENT_SCRIPT(McCoyPalace_RunDoorExitScene) },
-    { 0xc402, 13, CONDITION_ALWAYS, EVENT_SCRIPT(McCoyPalace_RunDoorExitScene) },
+    { TOUCH_FACING(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WalkThroughDoor) },
+    { TOUCH_FACING(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WalkThroughDoor) },
     { EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
     { EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
     { EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
@@ -1464,56 +1519,56 @@ struct SceneEvent gMcCoyPalaceEvents[] = {
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgBilibinThePeopleOfBilibinWillNever) },
     { EVENT_TALK, 9, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinMakeSureYouDontOffendLord) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgBilibinIHeardYouReceivedASpectacular) },
-    { EVENT_TALK, 10, FLAG_MCCOY_PALACE_REWARD_TAKEN, EVENT_SCRIPT(McCoyPalace_AskToVisitKolima) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBilibinLadyMccoyIsQuiteUpsetThat) },
+    { EVENT_TALK, ACTOR_KOLIMA_ASKER, FLAG_MCCOY_PALACE_REWARD_TAKEN, EVENT_SCRIPT(Event_AskAboutGoingToKolima) },
+    { EVENT_TALK, ACTOR_KOLIMA_ASKER, CONDITION_ALWAYS, MSGNO(MsgBilibinLadyMccoyIsQuiteUpsetThat) },
     { EVENT_TALK, 11, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinIAlwaysBelievedThatTheOld) },
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBilibinThingsAreLookingGrimSouthOf) },
     { EVENT_TALK, 12, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinThisIsLadyMccoysRoomSo) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBilibinMiladyWasVeryUpsetWhenShe) },
     { EVENT_TALK, 13, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinMiladyWasRenownedFarAndWide) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBilibinForOnceMilordDidntLetLady) },
-    { EVENT_TALK, 14, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinOhSomedayIWantToSleep) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(McCoyPalace_TalkToStartledResident) },
-    { EVENT_TALK, 15, 0x84f, MSGNO(MsgBilibinYouCanSeeKolimaPrettyWell) },
-    { EVENT_TALK, 15, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinHeyIfYouCantDoThe) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(McCoyPalace_DiscussWarriors) },
-    { EVENT_TALK, 16, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinHmmItSeemsTheCurseOf) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(McCoyPalace_DiscussKolimaView) },
-    { EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgBilibinYouMaySelectASingleItem) },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(McCoyPalace_ExplainReward) },
-    { EVENT_TALK, 18, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinSorryLadsButKolimasFutureIs) },
-    { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgBilibinYehveTaughtMeThatICannae) },
+    { EVENT_TALK, ACTOR_STARTLED_RESIDENT, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinOhSomedayIWantToSleep) },
+    { EVENT_TALK, ACTOR_STARTLED_RESIDENT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToStartledResident) },
+    { EVENT_TALK, ACTOR_PARTY_ADMIRER, FLAG_MCCOY_PALACE_BARRICADE_HINT, MSGNO(MsgBilibinYouCanSeeKolimaPrettyWell) },
+    { EVENT_TALK, ACTOR_PARTY_ADMIRER, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinHeyIfYouCantDoThe) },
+    { EVENT_TALK, ACTOR_PARTY_ADMIRER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToAdmirer) },
+    { EVENT_TALK, ACTOR_KOLIMA_WATCHER, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinHmmItSeemsTheCurseOf) },
+    { EVENT_TALK, ACTOR_KOLIMA_WATCHER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToKolimaWatcher) },
+    { EVENT_TALK, ACTOR_ESCORT, CONDITION_ALWAYS, MSGNO(MsgBilibinYouMaySelectASingleItem) },
+    { EVENT_TALK, ACTOR_REWARD_KEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToRewardKeeper) },
+    { EVENT_TALK, ACTOR_LORD_MCCOY, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinSorryLadsButKolimasFutureIs) },
+    { EVENT_TALK, ACTOR_LORD_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinYehveTaughtMeThatICannae) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinHowManyTimesDoIHave) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgBilibinIFeelSorryForTheWarriors) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinTheyShouldNeverHaveLetSuch) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgBilibinIWonderWhatKindOfTreasure) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinSendingTheseChildrenToKolimaForest) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgBilibinIWishShedJustStopWhining) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KOLIMA_ASKER, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinSendingTheseChildrenToKolimaForest) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KOLIMA_ASKER, CONDITION_ALWAYS, MSGNO(MsgBilibinIWishShedJustStopWhining) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinIShouldntHaveSaidAnythingWhen) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgBilibinTheydBeGuaranteedAGoodLife) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinOfAllTheNerveComingInto) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgBilibinICanTellWhenShesUpset) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinWillIEverFindSomeoneTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgBilibinSometimesAMansJustGottaPut) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinOhNoThisNightgownHasA) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgBilibinTheHoleInThisNightgownIs) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, 0x84f, MSGNO(MsgBilibinLordMccoyHasntComeHereFor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinItsAToughThingBeingSo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT_SCRIPT(McCoyPalace_ReadWarriorThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinKolimaForestUsedToBeSo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgBilibinACourageousWarriorWouldntThinkTwice) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgBilibinTheseCourageousWarriorsDeserveToReceive) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, EVENT_SCRIPT(McCoyPalace_ReadRewardKeeperThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinThereIsNothingMoreToTalk) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgBilibinButICannaeFiggerOutHow) },
-    { SEARCH(SEARCH_UNNAMED), 100, CONDITION_ALWAYS, EVENT_SCRIPT(McCoyPalace_SearchVialChest) },
-    { SEARCH(SEARCH_UNNAMED), 101, CONDITION_ALWAYS, EVENT_SCRIPT(McCoyPalace_SearchPotionChest) },
-    { SEARCH(SEARCH_UNNAMED), 102, CONDITION_ALWAYS, EVENT_SCRIPT(McCoyPalace_SearchPsyCrystalChest) },
-    { SEARCH(SEARCH_UNNAMED), 103, CONDITION_ALWAYS, EVENT_SCRIPT(McCoyPalace_SearchWaterOfLifeChest) },
-    { EVENT_TOUCH, 50, 0x333, EVENT_SCRIPT(McCoyPalace_FinishRewardVisit) },
-    { EVENT_TOUCH, 51, 0x333, EVENT_SCRIPT(McCoyPalace_KeepPartyInRewardRoom) },
-    { SEARCH(SEARCH_BARREL), 120, 0xf55, FIND_ITEM(ITEM_ELIXIR) },
-    { SEARCH(SEARCH_BARREL), 121, 0xf56, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STARTLED_RESIDENT, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinOhNoThisNightgownHasA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STARTLED_RESIDENT, CONDITION_ALWAYS, MSGNO(MsgBilibinTheHoleInThisNightgownIs) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PARTY_ADMIRER, FLAG_MCCOY_PALACE_BARRICADE_HINT, MSGNO(MsgBilibinLordMccoyHasntComeHereFor) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PARTY_ADMIRER, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinItsAToughThingBeingSo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PARTY_ADMIRER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadAdmirersThoughts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KOLIMA_WATCHER, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinKolimaForestUsedToBeSo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KOLIMA_WATCHER, CONDITION_ALWAYS, MSGNO(MsgBilibinACourageousWarriorWouldntThinkTwice) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ESCORT, CONDITION_ALWAYS, MSGNO(MsgBilibinTheseCourageousWarriorsDeserveToReceive) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_REWARD_KEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadRewardKeepersThoughts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LORD_MCCOY, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinThereIsNothingMoreToTalk) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LORD_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinButICannaeFiggerOutHow) },
+    { SEARCH(SEARCH_UNNAMED), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchVialChest) },
+    { SEARCH(SEARCH_UNNAMED), 101, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchPotionChest) },
+    { SEARCH(SEARCH_UNNAMED), 102, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchPsyCrystalChest) },
+    { SEARCH(SEARCH_UNNAMED), 103, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchWaterOfLifeChest) },
+    { EVENT_TOUCH, 50, 0x333, EVENT_SCRIPT(Event_EscortSeesPartyOff) },
+    { EVENT_TOUCH, 51, 0x333, EVENT_SCRIPT(Event_EscortAsksPartyToChoose) },
+    { SEARCH(SEARCH_BARREL), 120, FLAG_MCCOY_PALACE_BARREL_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
+    { SEARCH(SEARCH_BARREL), 121, FLAG_MCCOY_PALACE_BARREL_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
     { SEARCH(SEARCH_WARDROBE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBilibinTheresASilkNegligeeIsaacPut)) },
     { SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBilibinTheresASheetOfPaperTitled)) },
     { SCENE_EVENTS_END },

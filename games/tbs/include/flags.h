@@ -111,6 +111,21 @@
 #define FLAG_LUNPA_FORTRESS_CHEST_POWER_BREAD 0xfa7
 #define FLAG_LUNPA_FORTRESS_CELL_KEY 0xf2e // caught or taken from its hook
 
+// McCoy Palace and its garden, in Bilibin
+// The gate guards have let the party into the palace.
+#define FLAG_MCCOY_PALACE_ADMITTED 0x84a
+#define FLAG_MCCOY_PALACE_VISITED 0x84b // set on every entry to the palace
+// After McCoy turned the party away, his escort let slip that the
+// barricade may not need a key.
+#define FLAG_MCCOY_PALACE_BARRICADE_HINT 0x84f
+// The escort has seen the party off after McCoy's reward.
+#define FLAG_MCCOY_PALACE_PARTY_REWARDED 0x85e
+// The party refused McCoy's job at the first audience.
+#define FLAG_MCCOY_PALACE_JOB_REFUSED 0x85f
+#define FLAG_MCCOY_PALACE_BARREL_ELIXIR 0xf55
+#define FLAG_MCCOY_PALACE_BARREL_SMOKE_BOMB 0xf56
+#define FLAG_MCCOY_PALACE_GARDEN_NUT_CAUGHT 0xfd2 // the floating nut
+
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
 #define FLAG_SCENE_TEMP_00 0x200

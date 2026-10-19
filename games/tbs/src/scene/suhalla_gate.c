@@ -221,7 +221,9 @@ static void Event_GuardsBlockPassage(void) {
 // party.
 static void Event_IodemQuestionsGuards(void) {
   struct FieldActor *leader;
+#if !TBS_PATCH_3
   s32 destinationColumn;
+#endif
 
   Engine_EventBegin();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x19999, 0xcccc);

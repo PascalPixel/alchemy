@@ -34,21 +34,25 @@ enum {
 enum { SHOP_SUHALLA = 31, INN_SUHALLA = 10 };
 
 // Where the party can enter the houses.
-u8 *Scene_GetEntrances(void) { return gSuhallaInteriorsEntrances; }
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gSuhallaInteriorsEntrances;
+}
 
 // The houses' two regions.
-u8 *Scene_GetRegions(void) { return gSuhallaInteriorsRegions; }
+const struct SceneRegion *Scene_GetRegions(void) {
+  return (const struct SceneRegion *)gSuhallaInteriorsRegions;
+}
 
 // Where each exit leads.
-u8 *Scene_GetExits(void) { return gSuhallaInteriorsExits; }
+const u32 *Scene_GetExits(void) { return gSuhallaInteriorsExits; }
 
 // The townsfolk, joined after Babi's audience by Iodem, the wounded soldiers
 // and the travelers the sandstorms brought.
-s32 Scene_GetPlacements(void) {
+const struct ScenePlacement *Scene_GetPlacements(void) {
   if (Engine_GameFlagIsSet(FLAG_BABI_AUDIENCE_AFTER_COLOSSO) != 0) {
-    return (s32)gSuhallaInteriorsPlacementsAfterAudience;
+    return gSuhallaInteriorsPlacementsAfterAudience;
   }
-  return (s32)gSuhallaInteriorsPlacements;
+  return gSuhallaInteriorsPlacements;
 }
 
 // Spoken to facing north, across the counter, the shopkeeper opens the shop;
@@ -405,11 +409,11 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
 }
 
 // The doors, the townsfolk and the ovens, before or after Babi's audience.
-s32 Scene_GetEvents(void) {
+const struct SceneEvent *Scene_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_BABI_AUDIENCE_AFTER_COLOSSO) != 0) {
-    return (s32)gSuhallaInteriorsEventsAfterAudience;
+    return gSuhallaInteriorsEventsAfterAudience;
   }
-  return (s32)gSuhallaInteriorsEvents;
+  return gSuhallaInteriorsEvents;
 }
 
 // Sets the houses up as the party enters: the shopkeeper and innkeeper behind

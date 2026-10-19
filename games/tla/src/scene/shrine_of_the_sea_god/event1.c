@@ -10,6 +10,69 @@ void Func_02003ad8(s32 a);
 void Event_StartScreenTransition(void);
 void Event_FinishScreenTransition(void);
 
+// The leader is placed at y -50 and map layer 1 moved by -50; then both move
+// by 0x8000 in y a frame for 100 frames as a screen transition starts.
+void Func_02000ce8(void) {
+  struct ShrineOfTheSeaGodMapWork *map =
+      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
+  struct ShrineOfTheSeaGodMapLayer *layer;
+  struct ShrineOfTheSeaGodObject *leader;
+  u32 i;
+  s32 frames;
+
+  /* FAKEMATCH(barrier): the layer's address waits for gPartyState's; without
+   * it, 2 of 142 instructions differ in tla-en. */
+  asm("" : "+l"(map) : "l"(&gPartyState));
+  layer = &map->layers[1];
+  leader = Object_GetById(gPartyState.currentOwner);
+
+  Func_020039d8();
+  Func_02003b08(0);
+  Func_02003b48(244);
+  ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
+  ShrineOfTheSeaGod_CamMove(172 << 17, -1, 248 << 16, 0);
+  ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
+  WaitFrames(1);
+  ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
+  leader->motionFlags = 0;
+  leader->y = -50 << 16;
+  leader->height = -50 << 16;
+  layer->y += -50 << 16;
+  Func_02003988();
+  WaitFrames(1);
+  ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
+      ->screenEffect = 515;
+  Event_StartScreenTransition();
+  Call3((void (*)())Func_020039b8, 0x10000, 0x10000, 0x10000);
+  // A goto loop: as a for, while or do loop, loop.c hoists the 0x8000 the
+  // bytes rebuild on every pass (differ 64).
+  i = 0;
+loop:
+  leader->y += 0x8000;
+  frames = 2;
+  leader->height += 0x8000;
+  /* FAKEMATCH(barrier): WaitFrames' argument is set before the count; as
+   * WaitFrames(2), 4 of 142 instructions differ in tla-en. */
+  asm volatile("" : "+l"(frames));
+  i++;
+  /* FAKEMATCH(barrier): the layer is read after the count; without it, 4 of
+   * 142 instructions differ in tla-en. */
+  asm("" : "+l"(layer) : "l"(i));
+  layer->y += 0x8000;
+  WaitFrames(frames);
+  if (i <= 99)
+    goto loop;
+  Func_02003b48(288);
+  Func_02003b48(390);
+  Call3((void (*)())Func_020039b8, 0, 0, 0);
+  ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
+      ->screenEffect = 521;
+  Object_GetById(gPartyState.currentOwner)->priorityFlags |= 1;
+  ShrineOfTheSeaGod_CopyRect(62, 69, 62, 18, 19, 6);
+  WaitFrames(1);
+  Func_020039e0();
+}
+
 // The leader turns, then moves with map layer 1 by -0x8000 in y a frame for
 // 100 frames; at frame 90 the screen transition finishes.
 void Func_02000e38(void) {

@@ -4401,7 +4401,7 @@ DebugParty_LoadPreset:
 Func_08118f6c:
 	.incbin "baserom.gba", 0x00118f6c, 0x000000e8
 	.section .rom.00119604, "ax"
-	.incbin "baserom.gba", 0x00119604, 0x00000148
+	.incbin "baserom.gba", 0x00119604, 0x00000110
 	.section .rom.00119808, "ax"
 	.global Func_081197f0
 	.type Func_081197f0, %function

@@ -5154,8 +5154,8 @@ main	rom_main_08	recon/tla/fr/rom	.rom.00119604	fr
 main	rom_main_08	recon/tla/es/rom	.rom.00119604	es
 main	rom_main_08	recon/tla/de/rom	.rom.00119604	de
 main	rom_main_08	recon/tla/raw/081195ec	.text	en
-main	rom_main_08	recon/tla/raw/081196fc	.text	en
 main	rom_main_08	recon/tla/ja/rom	.rom.001195ec	ja
+main	rom_main_08	games/tla/src/battle/presentation/camera_create	.text
 main	rom_main_08	games/tla/src/battle/tutorial_fx	.text
 main	rom_main_08	games/tla/src/battle/tutorial_message	.text
 main	rom_main_08	recon/tla/it/rom	.rom.00119808	it

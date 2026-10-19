@@ -122,7 +122,7 @@ mix, and why those three songs, is not known.
 The driver's names follow pret's for MusicPlayer2000 where its structure is
 the same; the cue layer's come from what `AudioCommand_Play` does with each
 range of numbers, and the songs' from `songs.h`, where a song without a
-proven name keeps its number (`MUS_070`, `SE_138`).
+proven name keeps its number (`MUS_070`, `SE_188`).
 
 Still unknown:
 

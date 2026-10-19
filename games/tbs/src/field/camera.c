@@ -622,7 +622,9 @@ void LuckyDice_Run(void) {
                                      0, 0);
         for (index = 0; index != DICE_COUNT; index++) {
           rollingDie = &diceWork->particles[index];
-          if (index > 1) { // never true for two dice
+          // DEAD: never true with DICE_COUNT 2; a third die would start
+          // further back and higher up.
+          if (index > 1) {
             rollingDie->z = -0xb40000;
             rollingDie->y = 0x600000;
           }

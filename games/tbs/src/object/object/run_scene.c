@@ -24,7 +24,7 @@ s32 Field_RunScene(s32 entrance) {
   // Set up the scene.
   work = Runtime_AllocateBlock(27, sizeof(struct FieldWork));
   Dma_Fill32(0, work, sizeof(struct FieldWork));
-  GameFlag_ClearBitFar(0x103);
+  GameFlag_ClearBitFar(FLAG_IN_BATTLE);
   gGameState.defaultScene = gGameState.scene;
   gGameState.defaultEntrance = gGameState.entrance;
   gGameState.nextScene = -1;
@@ -297,7 +297,7 @@ s32 Field_RunScene(s32 entrance) {
             Battle_ResetEffectCounter();
             UiTimedNotice_CloseIfActiveFar();
             gGameState.returnCue = AudioCommand_GetSecondaryStateByteFar();
-            if (GameFlag_TestFar(0x17e) == 0) {
+            if (GameFlag_TestFar(FLAG_IN_LINK_LOBBY) == 0) {
               // Wait a frame first when fewer than 136 of the 512 resource
               // blocks are free.
               struct MenuCtrl *ctrl = (struct MenuCtrl *)gMenuCtrlWork;

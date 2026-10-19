@@ -3,6 +3,8 @@
 
 #define FLAG_CHILDHOOD 0x20 // the prologue: Isaac and Garet are children
 #define FLAG_DJINNI_0 48    // the flag of Djinni 0, set once it is caught
+// Set as a battle starts, cleared as a field scene starts.
+#define FLAG_IN_BATTLE 0x103
 // Lit lighthouses: the adepts of a lit element regain PP faster
 #define FLAG_VENUS_LIGHTHOUSE_LIT 0x110
 #define FLAG_MERCURY_LIGHTHOUSE_LIT 0x111

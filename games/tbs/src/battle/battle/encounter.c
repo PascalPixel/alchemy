@@ -70,7 +70,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   transition->unk18 = 0;
   transition->unk1c = 0;
   REG_DISPCNT = DISPCNT_MODE_1;
-  GameFlag_SetBitFar(0x103);
+  GameFlag_SetBitFar(FLAG_IN_BATTLE);
   GameFlag_SetBitFar(0x169);
   Render_ResetTransformState();
 

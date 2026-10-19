@@ -341,7 +341,7 @@ Game_ResetForNewGame:
 	bl BattleFx_LoadResourceGroup
 	adds r0, r6, #0
 	bl Field_RunScene
-	bl Func_080c9694
+	bl Scene_TakeExit
 	b .L_080c99ea
 .L_080c9c0c:
 	.4byte gPartyState

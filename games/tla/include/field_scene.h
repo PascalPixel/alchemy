@@ -80,4 +80,21 @@ struct SceneEvent {
 
 struct SceneRegion;
 
+// The table a scene overlay starts with (gOverlayArea), as ☀️'s: a veneer
+// word and an entry point for each of its tables.
+struct SceneEntries {
+  u32 initializeVeneer;
+  s32 (*initialize)(void);
+  u32 entrancesVeneer;
+  const struct SceneEntrance *(*entrances)(void);
+  u32 exitsVeneer;
+  const u32 *(*exits)(void);
+  u32 placementsVeneer;
+  const struct ScenePlacement *(*placements)(void);
+  u32 eventsVeneer;
+  const struct SceneEvent *(*events)(void);
+  u32 regionsVeneer;
+  const struct SceneRegion *(*regions)(void);
+};
+
 #endif

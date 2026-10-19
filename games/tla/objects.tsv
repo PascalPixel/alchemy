@@ -2727,13 +2727,13 @@ main	rom_main_04	games/tla/src/battle/effect/integrate_vectors
 main	rom_main_04	games/tla/src/system/resource/tables2	.rodata
 main	rom_main_04	games/tla/src/battle/effect/decode_frame
 main	rom_main_04	games/tla/src/battle/effect/decode_frame_data
-main	rom_main_04	recon/tla/it/rom	.rom.000c9694	it
-main	rom_main_04	recon/tla/fr/rom	.rom.000ce694	fr
-main	rom_main_04	recon/tla/es/rom	.rom.000d2694	es
-main	rom_main_04	recon/tla/de/rom	.rom.000d6694	de
-main	rom_main_04	recon/tla/raw/080c9694	.text	en
+main	rom_main_04	games/tla/src/field/common/take_exit	.text
+main	rom_main_04	recon/tla/it/rom	.rom.000c977c	it
+main	rom_main_04	recon/tla/fr/rom	.rom.000ce77c	fr
+main	rom_main_04	recon/tla/es/rom	.rom.000d277c	es
+main	rom_main_04	recon/tla/de/rom	.rom.000d677c	de
 main	rom_main_04	recon/tla/raw/080c977c	.text	en
-main	rom_main_04	recon/tla/ja/rom	.rom.000c9694	ja
+main	rom_main_04	recon/tla/ja/rom	.rom.000c977c	ja
 main	rom_main_04	games/tla/src/battle/effect/data_get_resource_group	.text
 main	rom_main_04	recon/tla/it/rom	.rom.000c9944	it
 main	rom_main_04	recon/tla/fr/rom	.rom.000ce944	fr

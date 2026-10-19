@@ -695,10 +695,15 @@ main	rom_main_01	recon/tla/de/rom	.rom.0002dd70	de
 main	rom_main_01	recon/tla/de/rom	.rom.0002de8c	de
 main	rom_main_01	recon/tla/raw/0802dd70	.text	en
 main	rom_main_01	recon/tla/raw/0802de8c	.text	en
-main	rom_main_01	recon/tla/raw/0802e444	.text	en
-main	rom_main_01	recon/tla/raw/0802e4c8	.text	en
 main	rom_main_01	recon/tla/ja/rom	.rom.0002dcec	ja
 main	rom_main_01	recon/tla/ja/rom	.rom.0002de08	ja
+main	rom_main_01	games/tla/src/field/common/map/stops	.text
+main	rom_main_01	recon/tla/it/rom	.rom.0002e4c8	it
+main	rom_main_01	recon/tla/fr/rom	.rom.0002e4c8	fr
+main	rom_main_01	recon/tla/es/rom	.rom.0002e4c8	es
+main	rom_main_01	recon/tla/de/rom	.rom.0002e4c8	de
+main	rom_main_01	recon/tla/raw/0802e4c8	.text	en
+main	rom_main_01	recon/tla/ja/rom	.rom.0002e444	ja
 main	rom_main_01	games/tla/src/graphics/tile/grid	.text
 main	rom_main_01	games/tla/src/system/resource/animdata	.rodata
 main	rom_main_01	games/tla/src/field/common/object/objdata	.rodata
@@ -787,7 +792,6 @@ main	rom_main_02	recon/tla/fr/rom	.rom.0003954c	fr
 main	rom_main_02	recon/tla/es/rom	.rom.0003954c	es
 main	rom_main_02	recon/tla/de/rom	.rom.0003954c	de
 main	rom_main_02	recon/tla/raw/0803954c	.text	en
-main	rom_main_02	recon/tla/raw/080395fc	.text	en
 main	rom_main_02	recon/tla/ja/rom	.rom.00039540	ja
 main	rom_main_02	games/tla/src/graphics/render/free	.text
 main	rom_main_02	recon/tla/it/rom	.rom.0003972a	it
@@ -868,26 +872,25 @@ main	rom_main_02	recon/tla/es/rom	.rom.0003aab0	es
 main	rom_main_02	recon/tla/de/rom	.rom.0003aa8a	de
 main	rom_main_02	recon/tla/de/rom	.rom.0003aa8c	de
 main	rom_main_02	recon/tla/raw/0803aae4	.text	en
-main	rom_main_02	recon/tla/raw/0803ac60	.text	en
+main	rom_main_02	recon/tla/ja/rom	.rom.0003aa84	ja
+main	rom_main_02	recon/tla/ja/rom	.rom.0003ac3c	ja
 main	rom_main_02	games/tla/src/graphics/text/render_wide	.text	en de es fr it
-main	rom_main_02	recon/tla/it/rom	.rom.0003addc	it
+main	rom_main_02	games/tla/src/graphics/text/format_number	.text
+main	rom_main_02	recon/tla/it/rom	.rom.0003aea0	it
 main	rom_main_02	recon/tla/it/rom	.rom.0003afe4	it
 main	rom_main_02	recon/tla/it/rom	.rom.0003b7b0	it
-main	rom_main_02	recon/tla/fr/rom	.rom.0003ada8	fr
+main	rom_main_02	recon/tla/fr/rom	.rom.0003ae6c	fr
 main	rom_main_02	recon/tla/fr/rom	.rom.0003b024	fr
 main	rom_main_02	recon/tla/fr/rom	.rom.0003b79c	fr
-main	rom_main_02	recon/tla/es/rom	.rom.0003addc	es
+main	rom_main_02	recon/tla/es/rom	.rom.0003aea0	es
 main	rom_main_02	recon/tla/es/rom	.rom.0003b044	es
 main	rom_main_02	recon/tla/es/rom	.rom.0003b7ac	es
-main	rom_main_02	recon/tla/de/rom	.rom.0003ad9c	de
+main	rom_main_02	recon/tla/de/rom	.rom.0003ae60	de
 main	rom_main_02	recon/tla/de/rom	.rom.0003afcc	de
 main	rom_main_02	recon/tla/de/rom	.rom.0003b7ac	de
-main	rom_main_02	recon/tla/raw/0803ae14	.text	en
 main	rom_main_02	recon/tla/raw/0803aed8	.text	en
 main	rom_main_02	recon/tla/raw/0803b094	.text	en
 main	rom_main_02	recon/tla/raw/0803b794	.text	en
-main	rom_main_02	recon/tla/ja/rom	.rom.0003aa84	ja
-main	rom_main_02	recon/tla/ja/rom	.rom.0003ac3c	ja
 main	rom_main_02	recon/tla/ja/rom	.rom.0003ae38	ja
 main	rom_main_02	recon/tla/ja/rom	.rom.0003b77c	ja
 main	rom_main_02	games/tla/src/graphics/text/resource_measure	.text

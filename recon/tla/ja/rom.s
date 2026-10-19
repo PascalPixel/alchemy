@@ -373,7 +373,9 @@ Func_0802d45c:
 	.type Func_0802de8c, %function
 	.thumb_func
 Func_0802de8c:
-	.incbin "baserom.gba", 0x0002de08, 0x00000828
+	.incbin "baserom.gba", 0x0002de08, 0x000005b8
+	.section .rom.0002e444, "ax"
+	.incbin "baserom.gba", 0x0002e444, 0x000001ec
 	.section .rom.0003028c, "ax"
 	.incbin "baserom.gba", 0x0003028c, 0x00000010
 	.section .rom.000385e0, "ax"
@@ -401,7 +403,7 @@ UiWindow_ClearInteriorTiles:
 	.type UiText_QueueRenderEntries, %function
 	.thumb_func
 UiText_QueueRenderEntries:
-	.incbin "baserom.gba", 0x00039540, 0x00000154
+	.incbin "baserom.gba", 0x00039540, 0x000000b0
 	.section .rom.0003971e, "ax"
 	.incbin "baserom.gba", 0x0003971e, 0x0000002a
 	.section .rom.00039750, "ax"
@@ -454,7 +456,7 @@ UiText_RenderWideStringAtOffset:
 	.type UiText_RenderWideStringInWindow, %function
 	.thumb_func
 UiText_RenderWideStringInWindow:
-	.incbin "baserom.gba", 0x0003ac3c, 0x000001fc
+	.incbin "baserom.gba", 0x0003ac3c, 0x00000138
 	.section .rom.0003ae38, "ax"
 	.global UiText_BuildRenderEntries
 	.type UiText_BuildRenderEntries, %function

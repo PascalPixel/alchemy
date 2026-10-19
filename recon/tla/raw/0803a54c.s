@@ -59,7 +59,7 @@ UiMessage_Show:
 	ldr r2, [r6, #8]
 	adds r0, r5, #0
 	mov r1, r8
-	bl Func_080395fc
+	bl UiText_StartBattleMessage
 	movs r3, #0
 	adds r7, r0, #0
 	str r7, [r6, #4]

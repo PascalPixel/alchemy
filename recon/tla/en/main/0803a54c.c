@@ -13,7 +13,7 @@ s32 UiText_BuildRenderEntries(s32 message, s32 mode);
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 style);
 void Func_0803a2b0(s32 x, s32 y, s32 width, s32 height, s32 mode);
-s32 Func_080395fc(struct UiWindow *window, s32 entry, s32 cursor);
+s32 UiText_StartBattleMessage(struct UiWindow *window, s32 entry, s32 cursor);
 
 void UiMessage_Show(s32 message) {
   struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
@@ -38,7 +38,7 @@ void UiMessage_Show(s32 message) {
       window = slot->window;
     }
     if (window != NULL) {
-      result = Func_080395fc(window, entry, slot->cursor);
+      result = UiText_StartBattleMessage(window, entry, slot->cursor);
       slot->result = result;
       slot->cursor = 0;
       if (result == 0)

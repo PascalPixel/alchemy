@@ -1,6 +1,9 @@
-// differ 8: the native stores the channel fields before it builds the text-mode
-// offset, and loads the zero before addressing the spacing; only ARM9TDMI
-// scheduling differs
+// Near miss, differ 6 of 84: ☀️'s UiText_QueueRenderEntries. The native
+// starts the text-mode offset 0x138c (movs r1, #152) before the channel
+// stores and finishes it (lsls, adds) after them; agscc builds it whole
+// before them. The zero pinned to r2 behind a barrier loads from the pool
+// before the spacing is addressed (differ 8 without them; the pin alone, or
+// with a one-pass block, 8).
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -56,8 +59,14 @@ struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window,
       for (i = 0; i < 4; i++)
         found->spacing[i] = *spacing++;
     } else {
+      /* FAKEMATCH: the zero pinned to r2 loads from the pool before the
+       * spacing is addressed; the barrier holds it there. */
+      register u16 zero asm("r2") = 0;
+
+      /* FAKEMATCH: the barrier of the pin above. */
+      asm volatile("" : "+l"(zero));
       for (i = 0; i < 4; i++)
-        found->spacing[i] = 0;
+        found->spacing[i] = zero;
     }
     found->line = 0;
   }

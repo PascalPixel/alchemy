@@ -1,12 +1,15 @@
 // Near miss of UiWindow_UpdateInterpolatedGeometry (The Broken Seal twin in
-// graphics/window/window.c; first written 2026-10-12): differ 10 of 92, order
-// only. After each of three ratio calls the native loads the next operand
-// (window->x, window->height, window->y) before it stores the result to the
-// scratch (ldrsh; str r0, [r5, #8]), and it stores the third scaled part after
-// the duration is loaded; the draft stores first each time. x and y are signed
-// here (ldrsh), unlike the twin. Measured: the result in a local with the
-// origin loaded before the store (differ 44 and 46: the shift leaves r0), the
-// scratch as a word array (same 10).
+// graphics/window/window.c; first written 2026-10-12): differ 2 of 92. After
+// each of three ratio calls the native loads the next operand (window->x,
+// window->height, window->y) before it stores the result to the scratch
+// (ldrsh; str r0, [r5, #8]); the twin's form stores first each time (differ
+// 10). The ratio and the operand held in temporaries, loaded in the native's
+// order, fix all three; the pointer to the duration (found by the permuter)
+// keeps the third part's registers. Left: after the second call the native
+// shifts the width out before it multiplies the next part; agscc multiplies
+// first. Measured: function-level temporaries reused at the later sites
+// (differ 44 and 46: the allocation changes), a barrier after the width
+// (differ 6).
 #include "types.h"
 #include "iwram_call.h"
 
@@ -42,23 +45,43 @@ void UiWindow_UpdateInterpolatedGeometry(void *arg, s32 savePosition) {
   s32 y;
   s32 width;
   s32 height;
+  s32 r;
+  s32 origin;
+  s16 *durationField;
 
   frame = (s16)window->frame;
   duration = window->duration;
   remaining = duration - frame;
   scratch[0] = (frame * window->width) << 16;
   scratch[1] = duration << 17;
-  scratch[2] = Iwram_RatioMulQ14(scratch[1], scratch[0]);
-  x = (scratch[2] >> 16) + window->x;
+  /* FAKEMATCH: forced temporaries: the operand loads before the store. */
+  r = Iwram_RatioMulQ14(scratch[1], scratch[0]);
+  origin = window->x;
+  scratch[2] = r;
+  x = (r >> 16) + origin;
 
   scratch[0] = (remaining * window->width) << 16;
-  scratch[2] = Iwram_RatioMulQ14(scratch[1], scratch[0]);
-  width = scratch[2] >> 15;
+  /* FAKEMATCH: forced temporaries, as above, and the duration's address
+   * taken early. */
+  {
+    s32 result = Iwram_RatioMulQ14(scratch[1], scratch[0]);
+    s32 size = window->height;
 
-  scratch[0] = (frame * window->height) << 16;
-  scratch[1] = window->duration << 17;
-  scratch[2] = Iwram_RatioMulQ14(scratch[1], scratch[0]);
-  y = (scratch[2] >> 16) + window->y;
+    scratch[2] = result;
+    width = result >> 15;
+    durationField = &window->duration;
+
+    scratch[0] = (frame * size) << 16;
+  }
+  scratch[1] = (*durationField) << 17;
+  /* FAKEMATCH: forced temporaries, as above. */
+  {
+    s32 result = Iwram_RatioMulQ14(scratch[1], scratch[0]);
+    s32 originY = window->y;
+
+    scratch[2] = result;
+    y = (result >> 16) + originY;
+  }
 
   scratch[0] = (remaining * window->height) << 16;
   scratch[2] = Iwram_RatioMulQ14(scratch[1], scratch[0]);

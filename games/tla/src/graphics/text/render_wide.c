@@ -2,8 +2,56 @@
 #include "ram_buffer.h"
 #include "window.h"
 #include "edition.h"
+#include "text_render_runtime.h"
 
 s32 Func_0803c274(struct UiWindow *window, u32 c, s32 x, s32 y, s32 flags);
+
+// Draws a string of 16-bit character codes straight into the UI tilemap, as
+// tiles, inside a window at tile (offsetX, offsetY) of its interior, writing
+// both the work block's copy and VRAM, as ☀️'s function of the same name. A
+// NULL buffer draws the decoded text in UiRenderWork.entries. ⚓️ reads the
+// window's position signed and passes offsetX & 7 where ☀️ passes the VRAM
+// base. Not in tla-ja, which keeps an older layout.
+void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
+                                        const struct UiWindow *work,
+                                        s32 offsetX, s32 offsetY) {
+  struct UiRenderWork *canvas =
+      (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  u32 cell;
+
+  if (buffer == NULL) {
+    buffer = canvas->entries;
+    canvas->entries[canvas->count] = 0;
+    {
+      // ⚓️ loads the mask 0x1ff from the pool before it rereads the count.
+      /* FAKEMATCH(pin): the mask pinned to the r2 it takes, as in
+       * UiText_RenderWideStringInWindow, so it loads from the pool; as a
+       * plain u16 local, 14 of 50 instructions differ in tla-en (a split
+       * constant). */
+      register u16 mask asm("r2") = UI_TEXT_ENTRY_COUNT - 1;
+
+      /* FAKEMATCH(one-pass): the count update in a one-pass block, which
+       * keeps the reread after the mask's load; as a plain statement, 2 of 50
+       * instructions differ in tla-en (an empty asm barrier instead moves the
+       * literal pool). */
+      do {
+        canvas->count = (canvas->count + 1) & mask;
+      } while (0);
+    }
+  }
+
+  cell = (((s16)work->y + offsetY + 1) << 5) + ((s16)work->x + offsetX) + 1;
+  if (cell < 32 * 20) { // inside the tilemap
+    s32 src;
+    s32 dst;
+
+    cell *= 2;
+    dst = 0x06002000 + cell;
+    src = (s32)canvas->tilemap + cell;
+
+    UiText_RenderStringTiles(buffer, (u16 *)src, (u16 *)dst, offsetX & 7);
+  }
+}
 
 // Draws a string of wide (16-bit) codes into the window, one glyph per cell,
 // skipping the control codes and their arguments; code 3 starts a new line.

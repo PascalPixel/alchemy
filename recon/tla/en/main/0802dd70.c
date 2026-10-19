@@ -1,77 +1,78 @@
-// Draft, differ 70 of 132: builds the perspective map's 160 scanline
-// terms for the camera pitch (depth is its cotangent), ☀️'s
-// WorldMap_BuildScanlineTable (games/tbs/src/field/field.c) word for word
-// over ⚓️'s projection record. Left is register choice: the native keeps
-// the line counter in fp and the camera point's address in a stack slot
-// where this draft swaps them, which swaps r5 and r6 through the sqrt
-// block.
+// Trial: ☀️'s WorldMap_BuildScanlineTable (games/tbs/src/field/field.c)
+// word for word over ⚓️'s projection record differs 70 of 132 (register
+// choice: the line counter and the camera point's address swap fp and a
+// stack slot); this draft, written from the listing, comes closer.
+// Near miss, differ 20 of 132, written from the listing:
+// for each of the 160 scanlines, projects a ground point through the camera
+// (gCameraSceneParameters) and stores its x and y offsets in 16.16, or zeros
+// when the line is above the horizon. The pointer to result[2] (found by the
+// permuter) and height declared before nearZ give the native's registers
+// and stack slots. Left: the native takes the result's address again after
+// the transform call (add r1, sp, #16 for the call, a spilled copy after it)
+// where agscc shares one spilled pointer; the first vector stores and the
+// row parameter's copy are ordered differently. Plain result[] reads 55.
 #include "types.h"
-#include "macros.h"
 #include "iwram_call.h"
 
-struct MapScanline {
-  s32 scale, depth;
-  s32 offsetX, offsetY;
-  s16 pa, pc;
+extern u32 gCameraSceneParameters[];
+
+struct ScanlineRow {
+  s32 x;
+  s32 y;
+  s32 unk08;
+  s32 unk0c;
+  s32 unk10;
 };
 
-struct Projection {
-  s32 focal;
-  s32 unk04[3];
-  s32 centerY;
-};
+void Func_0802dd70(s32 depth, s32 *position, struct ScanlineRow *row) {
+  s32 vector[3];
+  s32 result[3];
+  s32 height;
+  s32 nearZ;
+  s32 i;
+  s32 z;
+  s32 ratio;
+  s32 dx;
+  s32 sum;
+  s32 *far;
 
-extern struct Projection gCameraSceneParameters;
+  vector[0] = position[0];
+  vector[1] = 0;
+  vector[2] = position[2];
+  Iwram_TransformVector(vector, result);
+  far = &result[2];
+  height = result[1] - Iwram_MulQ16(*far, depth);
+  nearZ = -gCameraSceneParameters[0];
+  for (i = 0; i < 160; i++) {
+    s32 distance;
 
-void Func_0802dd70(s32 depth, s32 *position, struct MapScanline *scanline) {
-  s32 groundPoint[3];
-  s32 cameraPoint[3];
-  s32 horizon;
-  s32 focus;
-  s32 *cameraCoordinates;
-  s32 line;
-  s32 distance;
-  s32 difference;
-  s32 scale;
-  s32 horizontalSquared;
-  s32 verticalSquared;
-  s32 diagonal;
-  s32 vertical;
-  s32 zero;
-  s32 horizontal;
+    z = Iwram_RatioMulQ14(nearZ, (gCameraSceneParameters[4] - i) << 16);
+    distance = z - depth;
+    if (distance == 0)
+      distance = 1;
+    ratio = Iwram_RatioMulQ14(distance, height);
+    if (ratio < 0) {
+      row->x = Iwram_RatioMulQ14(gCameraSceneParameters[0],
+                                 Iwram_MulQ16(-ratio, 0x8000));
+      z = Iwram_MulQ16(ratio, z);
+      dx = (result[2] - ratio) >> 4;
+      z -= result[1];
+      sum = Iwram_MulQ16(dx, dx);
+      z >>= 4;
+      sum += Iwram_MulQ16(z, z);
+      {
+        s32 length = Iwram_Sqrt(sum) << 12;
 
-  zero = 0;
-  SET_VECTOR(groundPoint, position[0], zero, position[2]);
-  Iwram_TransformVector(groundPoint, cameraPoint);
-  cameraCoordinates = cameraPoint;
-  horizon = cameraCoordinates[1] - Iwram_MulQ16(cameraCoordinates[2], depth);
-  focus = -gCameraSceneParameters.focal;
-  for (line = 0; line < 160; line++) {
-    distance = Iwram_RatioMulQ14(
-        focus, (gCameraSceneParameters.centerY - line) * 65536);
-    difference = distance - depth;
-    if (difference == 0)
-      difference = 1;
-    scale = Iwram_RatioMulQ14(difference, horizon);
-    if (scale < 0) {
-      diagonal = Iwram_MulQ16(-scale, 0x8000);
-      scanline->scale =
-          Iwram_RatioMulQ14(gCameraSceneParameters.focal, diagonal);
-      diagonal = Iwram_MulQ16(scale, distance);
-      horizontal = (cameraCoordinates[2] - scale) >> 4;
-      vertical = (diagonal - cameraCoordinates[1]) >> 4;
-      horizontalSquared = Iwram_MulQ16(horizontal, horizontal);
-      verticalSquared = Iwram_MulQ16(vertical, vertical);
-      verticalSquared = Iwram_Sqrt(horizontalSquared + verticalSquared) << 12;
-      if (vertical < 0)
-        verticalSquared = -verticalSquared;
-      scanline->depth = Iwram_MulQ16(verticalSquared, 0x8000);
+        if (z < 0)
+          length = -length;
+        row->y = Iwram_MulQ16(length, 0x8000);
+      }
     } else {
-      scanline->scale = 0;
-      scanline->depth = 0;
+      row->x = 0;
+      row->y = 0;
     }
-    scanline->offsetX = 0;
-    scanline->offsetY = 0;
-    scanline++;
+    row->unk08 = 0;
+    row->unk0c = 0;
+    row++;
   }
 }

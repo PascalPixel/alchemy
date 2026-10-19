@@ -75,7 +75,7 @@ s32 BattleMotion_GetSlotPalette(s32 unitId);
 s32 EnemyCheck(s32 classId);
 s32 SummonSlot_RegisterActorSprites(s32 unitId);
 s32 BattleMotion_ReleaseObjectSlotByValue(s32 unitId);
-s32 Resource_FindFreeSlot(s32 itemId);
+s32 BattleUnit_GetWeaponKind(s32 itemId);
 s32 BattleUnit_LookupWeaponValueByClass(s32 unitId);
 void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y);
 void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y);

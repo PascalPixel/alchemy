@@ -31,7 +31,7 @@ void BattleMotion_ReleaseObjectSlotByValue(s32 value) {
   }
 }
 
-s32 Resource_FindFreeSlot(s32 key) {
+s32 BattleUnit_GetWeaponKind(s32 key) {
   s32 index;
   s32 entry;
   s32 result;
@@ -91,7 +91,7 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 owner) {
 
     /* FAKEMATCH: the barrier of the pin above. */
     __asm__ volatile("");
-    index = Resource_FindFreeSlot(item & 0x1ff);
+    index = BattleUnit_GetWeaponKind(item & 0x1ff);
     switch (unit->classId) {
     case ISAAC:
       result = gData_081287d4[index];

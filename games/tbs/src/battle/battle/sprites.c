@@ -143,7 +143,7 @@ s32 BattleMotion_ReleaseObjectSlotByValue(s32 unitId) {
 // Returns the kind of the weapon whose item id is itemId (0 to 5), which
 // picks a party member's attack animation, or WEAPON_KIND_NONE for an item
 // the list lacks.
-s32 Resource_FindFreeSlot(s32 itemId) {
+s32 BattleUnit_GetWeaponKind(s32 itemId) {
   struct SlotAssignmentView {
     volatile u16 entries[52];
   };
@@ -187,7 +187,7 @@ s32 BattleUnit_LookupWeaponValueByClass(s32 unitId) {
     s32 weaponKind;
 
     weaponKind =
-        Resource_FindFreeSlot(unit->inventory[slot] & WEAPON_ITEM_MASK);
+        BattleUnit_GetWeaponKind(unit->inventory[slot] & WEAPON_ITEM_MASK);
     switch (unit->classId) {
     case ISAAC:
       weaponSprite = gBattleUnit_WeaponAnimsClass0[weaponKind];

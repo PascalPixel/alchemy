@@ -65,7 +65,7 @@ SECTIONS
         "*/resource_691_overlay.o"(.text.x0200b0bc)
         "*/games/tla/src/scene/magma_rock/swap_position.o"(.text)
         "*/resource_691_overlay.o"(.text.x0200b240)
-        "*/resource_691_overlay.o"(.text.x0200b42c)
+        "*/games/tla/src/scene/magma_rock/s342c.o"(.text)
         "*/resource_691_overlay.o"(.text.x0200b4ac)
         "*/resource_691_overlay.o"(.text.x0200b5e0)
         "*/resource_691_overlay.o"(.text.x0200b6f8)

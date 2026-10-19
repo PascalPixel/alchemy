@@ -1211,12 +1211,15 @@ static inline void MercuryLighthouse_RotatePaletteRange(u16 *colors,
   }
 }
 
-// Cycle the entrance effect's palette once every eight frames.
+// While the lighthouse door is shut its light shimmers: background palette
+// 2, colors 8 to 15, rotates every eight frames.
 static void MercuryLighthouse_CycleEntrancePalette(void) {
-  MercuryLighthouse_RotatePaletteRange((u16 *)0x05000050, 8);
+  MercuryLighthouse_RotatePaletteRange((u16 *)&BG_PLTT_COLOR(2, 8), 8);
 }
 
-// Have Mia sense someone inside and explain the statue blocking her way.
+// Talking to Mia at the lighthouse's foot, or Mind Read on her, before the
+// door is open: "Somebody...is here." She asks whether the party hears it,
+// says only Alex can enter besides her, and that the statue blocks her way.
 static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   struct FieldActor *mia;
 
@@ -1266,7 +1269,7 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   Engine_EventEnd();
 }
 
-// Have Mia explain that the statue still blocks the entrance.
+// Talking to Mia again: "This statue is blocking the entrance."
 static void MercuryLighthouse_MiaDiscussesBlockedEntrance(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
@@ -1276,7 +1279,7 @@ static void MercuryLighthouse_MiaDiscussesBlockedEntrance(void) {
   Engine_EventEnd();
 }
 
-// Fade the entrance effect's eight colors to white.
+// The door's light brightens to white as it opens.
 static void MercuryLighthouse_FadePaletteToWhite(void) {
   // Palette RAM is hardware (its volatile is source, not a device): volatile
   // makes each read of palette RAM a load of its own: the native reads every
@@ -1290,7 +1293,7 @@ static void MercuryLighthouse_FadePaletteToWhite(void) {
   s32 blue;
 
   do {
-    palette = (volatile u16 *)0x05000050;
+    palette = &BG_PLTT_COLOR(2, 8);
     whiteColors = 0;
     for (colorIndex = 0; colorIndex <= 7; colorIndex++) {
       red = *palette & 31;
@@ -1313,7 +1316,9 @@ static void MercuryLighthouse_FadePaletteToWhite(void) {
   } while (whiteColors <= 7);
 }
 
-// After the statue moves, have Mia use Ply to open the entrance.
+// Move on the door statue: once it stands at column 51 Mia asks whether the
+// party did that, learns of Psynergy, and uses Ply to open the door; she goes
+// in, and Garet and Ivan rejoin the leader.
 static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
   struct FieldActor *actor;
   s32 column;
@@ -1326,7 +1331,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
   Engine_EventBegin();
   if (column != 51) {
   } else {
-    // Mia notices Move, then the party discusses helping her enter.
+    // Mia turns: "Did you do that?"
     Engine_ActorSetSpeed(MIA, 0xcccc, 0x6666);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(MIA, 2);
@@ -1348,6 +1353,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
       gEventWork->message += 1;
     }
     Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 60);
+    // Garet and Ivan step out to explain Psynergy; Mia tells of Ply.
     actor = Object_GetById(GARET);
     SetEffectRecordMode(actor, 1);
     actor = Object_GetById(IVAN);
@@ -1412,7 +1418,8 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 0);
     Actor_FaceDirection(IVAN, FACING_WEST, 0);
     Engine_EventWait(30);
-    // Ply lights the entrance column; finish its palette effect before walking.
+    // Mia casts Ply on the door: a flash, the light turns white and the door
+    // opens.
     MercuryLighthouse_MiaCastsPlyOnEntrance();
     Engine_EventWait(50);
     Engine_AudioPlayCue(SE_131);
@@ -1431,6 +1438,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Engine_MapAnimateCells(gMercuryLighthouse_ColumnCells, 116, 35);
     Engine_TaskRemoveCallback(MercuryLighthouse_CycleEntrancePalette);
     Engine_EventWait(20);
+    // She nods, jumps up and goes in.
     Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
     Engine_EventWait(20);
     Actor_SetSpeed(MIA, 0x30000, 0x18000);
@@ -1451,6 +1459,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Engine_ActorSetAnimation(GARET, ANIM_NOD);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
     Engine_EventWait(20);
+    // Garet and Ivan rejoin the leader.
     Engine_ActorSetAnimation(GARET, ANIM_WALK);
     actor = Object_GetById(ACTOR_PARTY_LEADER);
     if (actor != 0) {
@@ -1471,12 +1480,13 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
   Engine_EventEnd();
 }
 
-// Cycle the waterfall effect's seven palette colors every eight frames.
+// The waterfall shimmers: background palette 6, colors 1 to 7, rotates every
+// eight frames.
 static void MercuryLighthouse_CycleWaterfallPalette(void) {
-  MercuryLighthouse_RotatePaletteRange((u16 *)0x050000c2, 7);
+  MercuryLighthouse_RotatePaletteRange((u16 *)&BG_PLTT_COLOR(6, 1), 7);
 }
 
-// Fade the waterfall effect's seven colors to black.
+// The waterfall's colors fade to black as it stops.
 static void MercuryLighthouse_FadePaletteToBlack(void) {
   // Palette RAM is hardware (its volatile is source, not a device): volatile
   // makes each read of palette RAM a load of its own: the native reads every
@@ -1491,7 +1501,7 @@ static void MercuryLighthouse_FadePaletteToBlack(void) {
   s32 blue;
 
   do {
-    palette = (volatile u16 *)0x050000c2;
+    palette = &BG_PLTT_COLOR(6, 1);
     blackColors = 0;
     for (colorIndex = 0; colorIndex <= 6; colorIndex++) {
       red = *palette & 31;
@@ -1553,7 +1563,10 @@ static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
   }
 }
 
-// Use Ply to open the waterfall passage, then send the party through it.
+// Ply on the waterfall statue: the waterfall darkens and stops, sparkles
+// rise and the way behind it opens. Once Saturos is beaten the leader rises
+// through it alone to the aerie (exit 9); before that Mia rises first and
+// the party follows, out to the world map (exit 8).
 static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   struct EffectOptions *effectOptions;
   s32 rowOffset;
@@ -1663,8 +1676,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   Engine_MapRenderWaitForValues();
   BattleFx_PlayQueuedSound();
   Engine_EventWait(30);
-  // Revisited passages move Isaac alone; the first visit stages the whole
-  // party.
+  // After Saturos the leader goes alone; the first time Mia leads the party.
   if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 824, 232);
@@ -1771,7 +1783,8 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   }
 }
 
-// Read the inscription describing the healing Water of Hermes.
+// Searching trigger 42 at the foot: "Fountain of Healing / Water of Hermes:
+// It brings rejuvenation to all that lives."
 static void MercuryLighthouse_ReadHermesFountainInscription(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1779,7 +1792,7 @@ static void MercuryLighthouse_ReadHermesFountainInscription(void) {
   Engine_EventEnd();
 }
 
-// Explain that the inspected door is tightly locked.
+// Searching trigger 20 on the second or third map: the door is locked tight.
 static void MercuryLighthouse_InspectLockedDoor(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1787,7 +1800,9 @@ static void MercuryLighthouse_InspectLockedDoor(void) {
   Engine_EventEnd();
 }
 
-// Inspect the fountain, then open the menu when the party carries a bottle.
+// Searching the fountain (trigger 5) before taking its water: it seems dry,
+// or once Saturos is beaten flows with water; carrying an Empty Bottle, the
+// item menu then opens.
 static void MercuryLighthouse_InspectHealingFountain(void) {
 
   Engine_EventBegin();
@@ -1807,7 +1822,9 @@ static void MercuryLighthouse_InspectHealingFountain(void) {
   Engine_EventEnd();
 }
 
-// Replace the party's bottle with Hermes water and show the obtained item.
+// Using the Empty Bottle at the fountain (event 0xb904: the bottle's item
+// number and kind 4) once Saturos is beaten: the bottle becomes Hermes'
+// Water, once a visit.
 static void MercuryLighthouse_FillHermesWaterBottle(void) {
   Engine_EventBegin();
   Engine_AudioPlayCue(MUS_TREASURE_FOUND);
@@ -1820,7 +1837,9 @@ static void MercuryLighthouse_FillHermesWaterBottle(void) {
   Engine_EventEnd();
 }
 
-// Run the rising-object passage motion, with the entrance scene's transition.
+// Walking south into trigger 15 on the first or second map: on the first
+// the leader steps to the hole and drops into the entrance hall (exit 8,
+// its entrance 6); on the second the motion runs alone.
 static void MercuryLighthouse_EnterRisingPassage(void) {
   Engine_EventBegin();
   if (gGameState.scene == (s32)&SceneId_MercuryLighthouse1) {
@@ -1829,7 +1848,7 @@ static void MercuryLighthouse_EnterRisingPassage(void) {
     Camera_MoveTo(PIXELS(464), -1, PIXELS(656), 1);
     Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
     OverlayObject_PrepareObject(Object_GetById(ACTOR_PARTY_LEADER)->x.fixed, 0,
-                                0x2be0000, 223);
+                                PIXELS(702), 223);
     Map_CopyCellsTo(92, 46, 92, 40, 3, 2);
     Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
     Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
@@ -2369,6 +2388,8 @@ s32 MercuryLighthouse_Initialize(void) {
         Engine_ActorSetSpritePriority(ACTOR_FIRST_VISITOR + 2, 1);
       }
       Object_GetById(9)->scaleX = -0x10000;
+      // Flag 0x82b: Mia has run off to the lighthouse in Imil (imil.c);
+      // until then she is not here and the door stays shut.
       if (!Engine_GameFlagIsSet(0x82b)) {
         Engine_ActorSetPosition(MIA, 0, 0);
         Actor_SetPosition(ACTOR_DOOR_STATUE, PIXELS(824), PIXELS(600));
@@ -2406,7 +2427,10 @@ s32 MercuryLighthouse_Initialize(void) {
   return 0;
 }
 
-// After rescuing Mia again, have her join the party with her Djinn.
+// Move on the statue blocking Mia, before she has joined: once it stands at
+// column 48, "You've saved me again, haven't you!" She asks whether the
+// party has business in the lighthouse and presses until it says yes, then
+// joins with Fizz.
 static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   s32 firstMessage;
   s32 blockColumn;
@@ -2434,7 +2458,8 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Engine_ActorSetAnimation(MIA, ANIM_STAND);
   Engine_EventOpenMessage(MIA, 0);
   if (Engine_EventChooseYesNo(0, 0) == 1) {
-    // Repeated denials return to Mia's request for an honest answer.
+    // Each "no" brings "Please, don't hide anything." until the party says
+    // yes.
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(MIA, 2);
     Engine_EventWait(20);
@@ -2472,7 +2497,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
     }
   }
   Engine_EventSetMessage(MsgMercuryThoughtSo);
-  Actor_SetSpeed(MIA, 52428, 26214);
+  Actor_SetSpeed(MIA, 0xcccc, 0x6666);
   Engine_ActorWalkToAndWait(MIA, 728, 632);
   Engine_EventWait(20);
   Engine_EventShowMessageAndWait(MIA, 0, 20);
@@ -2488,7 +2513,8 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Engine_EventWait(20);
   Event_ShowMessageAndWait(MIA, 0, 20);
   Event_PrepareObjectAndApplyValue(MIA, 1);
-  // Add Mia's Djinn before recalculating her stats and merging her into Isaac.
+  // "The Adept Mia joined your party!" Fizz, Mercury Djinni 0, comes with
+  // her and is set; her stats are worked out again.
   Engine_GameFlagSet(FLAG_DJINNI_0 + ELEMENT_MERCURY * 20);
   Djinn_AddToOwner(MIA, ELEMENT_MERCURY, 0);
   Djinn_Activate(MIA, ELEMENT_MERCURY, 0);
@@ -2505,22 +2531,23 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   Engine_EventEnd();
 }
 
-// Ride the scrolling lift layer, step off and let the lift return.
+// Entrance 15 at the foot: the leader rides the lift up beside its statue,
+// hops off onto the landing, and the lift goes back down.
 static void MercuryLighthouse_RideLift(void) {
   struct MapLayerScroll *liftLayer;
   s32 liftSpeed;
 
   liftLayer = &((struct MapScrollWork *)gMapWork[0])->layers[2];
   liftSpeed = 0x9c28;
-  liftLayer->offsetY = 0x04890000;
+  liftLayer->offsetY = PIXELS(1161);
   liftLayer->speedY = 0;
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Actor_Get(ACTOR_PARTY_LEADER)->z.fixed += -0x890000;
+  Actor_Get(ACTOR_PARTY_LEADER)->z.fixed += -PIXELS(137);
   Actor_Get(ACTOR_PARTY_LEADER)->targetZ =
       Actor_Get(ACTOR_PARTY_LEADER)->z.fixed;
   Actor_Get(ACTOR_LIFT_STATUE)->motionFlags = 0;
   Actor_SetPosition(ACTOR_LIFT_STATUE, PIXELS(680), PIXELS(440));
-  Actor_Get(ACTOR_LIFT_STATUE)->z.fixed += -0x890000;
+  Actor_Get(ACTOR_LIFT_STATUE)->z.fixed += -PIXELS(137);
   Actor_Get(ACTOR_LIFT_STATUE)->targetZ = Actor_Get(ACTOR_LIFT_STATUE)->z.fixed;
   Engine_MapRedraw();
   Engine_TaskWait(1);
@@ -2529,7 +2556,7 @@ static void MercuryLighthouse_RideLift(void) {
   Engine_EventWait(60);
   DisplayBlend_EnableRunScript();
   Engine_AudioPlayCue(SE_223);
-  // Scroll the layer against both riders until the lift reaches its upper stop.
+  // The lift layer scrolls up with both riders, slowing as it nears the top.
   for (;;) {
     liftLayer->offsetY -= liftSpeed;
     Actor_Get(ACTOR_PARTY_LEADER)->z.fixed += liftSpeed;
@@ -2538,7 +2565,7 @@ static void MercuryLighthouse_RideLift(void) {
     Actor_Get(ACTOR_LIFT_STATUE)->z.fixed += liftSpeed;
     Actor_Get(ACTOR_LIFT_STATUE)->targetZ =
         Actor_Get(ACTOR_LIFT_STATUE)->z.fixed;
-    if (liftLayer->offsetY > 0x04000000) {
+    if (liftLayer->offsetY > PIXELS(1024)) {
       if ((gFrameCount & 15) == 0 && liftSpeed > 0xccb)
         liftSpeed += -0x560;
       Engine_TaskWait(1);
@@ -2546,7 +2573,7 @@ static void MercuryLighthouse_RideLift(void) {
     }
     break;
   }
-  liftLayer->offsetY = 0x04000000;
+  liftLayer->offsetY = PIXELS(1024);
   Engine_MapRedraw();
   Engine_TaskWait(2);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 3;
@@ -2571,19 +2598,19 @@ static void MercuryLighthouse_RideLift(void) {
   Engine_EventWait(6);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 30);
   Engine_AudioPlayCue(SE_223);
-  // Leave Isaac on the landing while the lift and its other actor return.
+  // The lift and its statue go back down without the leader.
   for (;;) {
     liftLayer->offsetY += liftSpeed;
     Actor_Get(ACTOR_LIFT_STATUE)->z.fixed -= liftSpeed;
     Actor_Get(ACTOR_LIFT_STATUE)->targetZ =
         Actor_Get(ACTOR_LIFT_STATUE)->z.fixed;
-    if (liftLayer->offsetY >= 0x04890000)
+    if (liftLayer->offsetY >= PIXELS(1161))
       break;
     if ((gFrameCount & 7) == 0 && liftSpeed <= 0xcccc)
       liftSpeed += 0x1999;
     Engine_TaskWait(1);
   }
-  liftLayer->offsetY = 0x04000000;
+  liftLayer->offsetY = PIXELS(1024);
   Map_CopyCellsTo(45, 91, 40, 91, 5, 4);
   Map_CopyCellAttributes(104, 34, 5, 4, 40, 34);
   Engine_MapRedraw();
@@ -2593,7 +2620,7 @@ static void MercuryLighthouse_RideLift(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 }
 
-// Have Mia cast Ply on the entrance's target actor.
+// Mia casts Ply on the Ply target, moved onto the door.
 static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
   struct BattleFxScene *effectWork;
   u8 flags;

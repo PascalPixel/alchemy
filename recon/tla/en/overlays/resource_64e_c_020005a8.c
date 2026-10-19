@@ -1,3 +1,8 @@
+// Draft, differ 8 of 76, order only: after the first two random calls the
+// native loads the object's x (y) a row earlier, between the multiply's
+// halves (after the << 5). Tried 2026-10-19: each coordinate read into a
+// temporary held with the product by an asm volatile (12), the y alone held
+// (14; the object pointer's copy then takes r3).
 #include "types.h"
 
 void Object_SetPartAttribute(void *object, s32 value);

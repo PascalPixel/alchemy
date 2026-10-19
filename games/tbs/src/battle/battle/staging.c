@@ -928,7 +928,7 @@ removed:
 // Shows a downed unit: a party member's sprite in animation 4, an enemy's in
 // 5; an enemy then leaves the lists after four frames and its sprite dissolves
 // a dot at a time.
-void BattleMotion_InitializeActorRecords(s32 unitId) {
+void BattleMotion_ShowDowned(s32 unitId) {
   void *records[4];
   struct BattleUnit *unit;
   struct AnimationObject *record;

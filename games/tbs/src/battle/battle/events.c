@@ -230,7 +230,7 @@ u32 BattleEv_DispatchQueued(void) {
       case BATTLE_EVENT_DEFEAT:
         BattleEnemy_RecordDefeat(queue->operands[eventIndex], runtime->flags);
         BattleActor_ResetRuntimeFields(queue->operands[eventIndex]);
-        BattleMotion_InitializeActorRecords(queue->operands[eventIndex]);
+        BattleMotion_ShowDowned(queue->operands[eventIndex]);
         break;
       case BATTLE_EVENT_DRAW_STATUS:
         PartyStatusDrawFar(gBattleWork->partyStatus);

@@ -69,7 +69,7 @@ removed:
 // Enemies wait four more frames, leave the formation, then erase pixel by
 // pixel. id: unit ID.
 //--------------------------------------------------------------------------
-void BattleMotion_InitializeActorRecords(s32 id) {
+void BattleMotion_ShowDowned(s32 id) {
   void *recs[4];
   struct BattleUnit *unit;
   struct AnimationObject *rec;

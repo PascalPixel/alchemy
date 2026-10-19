@@ -16,7 +16,7 @@ void Audio_PlayCue(s32 cue);
 void BattleMotion_FlashHit(u32 unitId, s32 a, s32 b);
 s32 Func_0812824c(s32 unitId, s32 earned);
 void BattleActor_ResetRuntimeFields(u32 unitId);
-void BattleMotion_InitializeActorRecords(u32 unitId);
+void BattleMotion_ShowDowned(u32 unitId);
 void PartyStatusDrawFar(s32 state);
 struct BattleObj *BattleObjGet(s32 objectId);
 void BattleUnit_BuildStatusFlags(u32 unitId, struct BattleObj *slot);
@@ -86,7 +86,7 @@ u32 BattleEv_DispatchQueued(void) {
       case BATTLE_EVENT_DEFEAT:
         Func_0812824c(queue->operands[i], runtime->flags);
         BattleActor_ResetRuntimeFields(queue->operands[i]);
-        BattleMotion_InitializeActorRecords(queue->operands[i]);
+        BattleMotion_ShowDowned(queue->operands[i]);
         break;
       case BATTLE_EVENT_DRAW_STATUS:
         PartyStatusDrawFar(Ram_HeapSlots->battleWork->partyStatus);

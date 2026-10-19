@@ -165,7 +165,7 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode);
 
 void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1);
 void BattleActor_RemoveFromLists(s32 unitId);
-void BattleMotion_InitializeActorRecords(s32 unitId);
+void BattleMotion_ShowDowned(s32 unitId);
 s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit);
 s32 BattleTarget_SelectForAction(s32 actorId, struct BattleAct *action);
 s32 BattleActor_ResetRuntimeFields(s32 unitId);

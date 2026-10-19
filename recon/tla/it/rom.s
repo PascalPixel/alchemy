@@ -2808,8 +2808,6 @@ Func_080ce458:
 	.incbin "baserom.gba", 0x000ce458, 0x0000011c
 	.section .rom.000ce61c, "ax"
 	.incbin "baserom.gba", 0x000ce61c, 0x000004e0
-	.section .rom.000ceba8, "ax"
-	.incbin "baserom.gba", 0x000ceba8, 0x0000007c
 	.section .rom.000cec34, "ax"
 	.incbin "baserom.gba", 0x000cec34, 0x0000020c
 	.section .rom.000ceeac, "ax"

@@ -2983,12 +2983,6 @@ main	rom_main_04	recon/tla/ja/rom	.rom.000ce5fc	ja
 main	rom_main_04	games/tla/src/field/common/event/pending_event	.text
 main	rom_main_04	games/tla/src/battle/effect/has_trigger	.text
 main	rom_main_04	games/tla/src/battle/effect/object_state	.text
-main	rom_main_04	recon/tla/it/rom	.rom.000ceba8	it
-main	rom_main_04	recon/tla/fr/rom	.rom.000d3ba8	fr
-main	rom_main_04	recon/tla/es/rom	.rom.000d7ba8	es
-main	rom_main_04	recon/tla/de/rom	.rom.000dbba8	de
-main	rom_main_04	recon/tla/raw/080ceba8	.text	en
-main	rom_main_04	recon/tla/ja/rom	.rom.000ceb88	ja
 main	rom_main_04	games/tla/src/battle/effect/m80cec24	.text
 main	rom_main_04	recon/tla/it/rom	.rom.000cec34	it
 main	rom_main_04	recon/tla/fr/rom	.rom.000d3c34	fr

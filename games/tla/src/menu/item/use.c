@@ -24,7 +24,7 @@ void Func_08100d40(s32 item);
 void Audio_PlayCue(s32 cue);
 void RenderOutput_ClearListFar(void *window);
 void RenderOutput_RedrawSavedRectFar(void *window);
-void Func_080f8ce8(const u8 *message, s32 a, s32 b);
+void InventoryMenu_ShowModalMessage(const u8 *message, s32 a, s32 b);
 void UnitCalcFar(s32 unit);
 
 // Uses the selected item from the owner in pane 0 on the member in pane 1, as
@@ -44,7 +44,7 @@ s32 ItemMenu_Use(void) {
   if (result == -1) {
     Audio_PlayCue(114);
     RenderOutput_ClearListFar(menu->infoWindow);
-    Func_080f8ce8(menu->messageOffset + MsgItemUseResult, result, result);
+    InventoryMenu_ShowModalMessage(menu->messageOffset + MsgItemUseResult, result, result);
 #if LANGUAGE == LANGUAGE_JAPANESE
     RenderOutput_RedrawSavedRectFar(menu->infoWindow);
 #endif

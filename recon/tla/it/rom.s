@@ -3970,6 +3970,10 @@ Func_080f8ce8:
 	.section .rom.000f8f9c, "ax"
 	.incbin "baserom.gba", 0x000f8f9c, 0x0000016c
 	.section .rom.000f92dc, "ax"
+	.global Menu_SetPageIcons
+	.type Menu_SetPageIcons, %function
+	.thumb_func
+Menu_SetPageIcons:
 	.incbin "baserom.gba", 0x000f92dc, 0x00000098
 	.section .rom.000f93b6, "ax"
 	.incbin "baserom.gba", 0x000f93b6, 0x00000002
@@ -4066,7 +4070,9 @@ Func_080feec0:
 Func_080ff370:
 	.incbin "baserom.gba", 0x000ff46c, 0x00000570
 	.section .rom.000ffa48, "ax"
-	.incbin "baserom.gba", 0x000ffa48, 0x00000b8c
+	.incbin "baserom.gba", 0x000ffa48, 0x000007b4
+	.section .rom.00100338, "ax"
+	.incbin "baserom.gba", 0x00100338, 0x0000029c
 	.section .rom.00100854, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x00100854, 0x00000608

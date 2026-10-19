@@ -16807,7 +16807,7 @@ msgctxt "message"
 msgid "04133"
 msgstr "Djinn "
 
-msgctxt "message"
+msgctxt "MsgStatLabel"
 msgid "04134"
 msgstr "Attack"
 

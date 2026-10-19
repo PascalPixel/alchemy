@@ -18670,7 +18670,7 @@ msgctxt "message"
 msgid "04594"
 msgstr "Djinn / Echanger"
 
-msgctxt "message"
+msgctxt "MsgStatLabel"
 msgid "04595"
 msgstr "Attaque"
 

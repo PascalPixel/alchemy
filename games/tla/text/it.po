@@ -18641,7 +18641,7 @@ msgctxt "message"
 msgid "04594"
 msgstr "Djinn / Scambia"
 
-msgctxt "message"
+msgctxt "MsgStatLabel"
 msgid "04595"
 msgstr "Attacco"
 

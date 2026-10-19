@@ -16796,7 +16796,7 @@ msgctxt "message"
 msgid "04133"
 msgstr "ジン/こうかん"
 
-msgctxt "message"
+msgctxt "MsgStatLabel"
 msgid "04134"
 msgstr "こうげき"
 

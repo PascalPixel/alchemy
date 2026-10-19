@@ -1,4 +1,4 @@
-// Near miss: listing 141 instructions, draft 141, differ 6 (three pairs;
+// Near miss: listing 141 instructions, draft 141, differ 4 (was 6: three pairs;
 // -mtune=arm7tdmi as an analysis: also 6, the prologue pair fixed and the
 // outer loop's y += 18 one slot early). No ☀️ twin: The Broken Seal has no
 // mesh builder of this kind (closest call order PsynergyMenu_BuildPageResult,
@@ -19,6 +19,12 @@
 // keeps both in stack slots): 104.
 // 2026-10-18: psynergy permute (6 min, 2 jobs, seed 31): no candidate below
 // the draft.
+// 2026-10-19 (run 33): the end marker's pinned pointer (tagged below): 6 to
+// 4. The same device in the ring's triangle block (the pointer pinned to r3,
+// the asm holding r5) orders that pair too, but without the triangles reload
+// the reload registers rotate differently after it (mov r3, sl for i, and
+// later r3 for r1): differ 8; with i pinned to r1 as well: 76. A volatile
+// asm reading triangles adds a reference and triangles takes r9: 40 rows.
 #include "types.h"
 #include "fixed_math.h"
 
@@ -102,7 +108,17 @@ void Func_081885f0(struct MeshVertex *vertices, struct MeshTriangle *triangles,
   }
 
   // The end of the list.
-  triangles[segments * 2].vertex[0] = 0;
-  triangles[segments * 2].vertex[1] = 0;
-  triangles[segments * 2].vertex[2] = 0;
+  {
+    /* FAKEMATCH(pin): the triangles pointer pinned to r1 behind an empty asm
+     * that holds r3, so its reload comes before the * 24 chain; as
+     * triangles[segments * 2], 2 of 141 instructions differ in tla-en. */
+    register u32 base __asm__("r1") = (u32)triangles;
+    struct MeshTriangle *end;
+
+    __asm__("" : "+l"(base) : : "r3");
+    end = (struct MeshTriangle *)(segments * 24 + base);
+    end->vertex[0] = 0;
+    end->vertex[1] = 0;
+    end->vertex[2] = 0;
+  }
 }

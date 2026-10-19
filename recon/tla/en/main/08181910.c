@@ -1,5 +1,9 @@
-// Draft of BattleFx_RunLifeShear, decompiled from the listing: differ 334 of
+// Draft of BattleFx_RunLifeShear, decompiled from the listing: differ 318 of
 // 602 (draft 598), the same 55 calls and control flow; allocation differs.
+// 2026-10-19 (run 33): the blitter as a pair (tagged below), which gives
+// the native's 64-byte frame and its unused sp+36: 334 to 318. Left: a
+// six-use spill slot at sp+28 the native keeps in a register, and with it
+// the order of the slots below.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -123,7 +127,11 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT, BLIT_COPY };
 void BattleFx_RunLifeShear(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
-  DrawRectangle blit;
+  /* FAKEMATCH(frame): the blitter as a pair of which only the first is used;
+   * as one two-word DImode pseudo its spill takes sp+32 and the unused sp+36
+   * the native frame has. As a single DrawRectangle the frame is 60 bytes
+   * (334 of 602 instructions differ in tla-en, 318 with the pair). */
+  DrawRectangle blit[2];
   struct EffectPosition target;
   struct ModelTexture texture;
   struct RenderModel *model;
@@ -154,7 +162,7 @@ void BattleFx_RunLifeShear(struct BattleEffectArgument *effect) {
                                         COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                             COMPOSITE_FLIP_X));
   }
-  blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 1;
   work->transferValue = 0;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
@@ -210,7 +218,7 @@ void BattleFx_RunLifeShear(struct BattleEffectArgument *effect) {
     }
     REG_BG2X = -x << 8;
     if ((u32)(frame - 24) <= 39) {
-      blit(canvas, Data_020112e8, (effect->side != 0 ? 5 : 64) + shift,
+      blit[0](canvas, Data_020112e8, (effect->side != 0 ? 5 : 64) + shift,
            reaperY >> 16, 59, 89);
     } else {
       s32 column;
@@ -226,7 +234,7 @@ void BattleFx_RunLifeShear(struct BattleEffectArgument *effect) {
           column = 9;
         }
       }
-      blit(canvas, gMapCellBuffer, column + shift, reaperY >> 16, 55, 88);
+      blit[0](canvas, gMapCellBuffer, column + shift, reaperY >> 16, 55, 88);
     }
 
     // The scythe's path: still, a backswing at 24, the strike at 33.

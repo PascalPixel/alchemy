@@ -1,5 +1,13 @@
-// Draft of BattleFx_RunVengeance, decompiled from the listing: differ 744 of
-// 861 (draft 859), the same 36 calls and control flow; allocation differs.
+// Draft of BattleFx_RunVengeance, decompiled from the listing: differ 675 of
+// 861 (draft 862), the same 36 calls and control flow; allocation differs.
+// 2026-10-19 (run 33), from 744: the two blitters as one pair, draw[0] and
+// the flipped draw[1] (each alone as a pair with an unused half: 726 and
+// 714; both as pairs: 699, the frame 8 bytes too big): 695; frame declared
+// after canvas, its slot under work's: 675. Every spill slot now has the
+// native's place and use count. Left, from the start: the tile map loop
+// keeps row in r0 and column in r1 with the store offset stepping by 2 in
+// fp, and sign-extends each entry (lsls, asrs) before its strh; here row is
+// in ip and the index steps by 1.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -110,15 +118,16 @@ extern const u8 Data_081995f3[][7]; // per level: which blades strike
 void BattleFx_RunVengeance(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
+  s32 frame;
   u16 *camera;
-  DrawRectangle blit;
-  DrawRectangle blitFlipped;
+  // The plain and the flipped blitter, as one pair: as two locals their
+  // spills take two unrelated slots (714 to 744 of 861 differ).
+  DrawRectangle draw[2];
   struct EffectPosition pos;
   struct EffectStep *blade;
   s32 backgroundX;
   s32 speed;
   s32 raised;
-  s32 frame;
   s32 row;
   s32 column;
   s32 i;
@@ -181,13 +190,13 @@ void BattleFx_RunVengeance(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_Data0B0, work->sheet, 1, 1);
   BattleFx_LoadBlitter(SLOT_BLITTER,
                 BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-  blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   BattleFx_LoadBlitter(188,
                 BLITTER(BLIT_TRANSPARENT, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
                                               COMPOSITE_FLIP_X));
   work->transferMode = 1;
   work->transferValue = 0;
-  blitFlipped = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   backgroundX = 0x560000;
   speed = 0x100000;
@@ -258,14 +267,14 @@ void BattleFx_RunVengeance(struct BattleEffectArgument *effect) {
     }
     if (effect->side == 0) {
       if (raised == 0) {
-        blit(canvas, work->sheet, 32, 0, 88, 96);
+        draw[0](canvas, work->sheet, 32, 0, 88, 96);
       } else {
-        blit(canvas, work->sheet + 0x2100, 32, 0, 88, 96);
+        draw[0](canvas, work->sheet + 0x2100, 32, 0, 88, 96);
       }
     } else if (raised == 0) {
-      blitFlipped(canvas, work->sheet, 8, 0, 88, 96);
+      draw[1](canvas, work->sheet, 8, 0, 88, 96);
     } else {
-      blitFlipped(canvas, work->sheet + 0x2100, 8, 0, 88, 96);
+      draw[1](canvas, work->sheet + 0x2100, 8, 0, 88, 96);
     }
 
     // The blades.
@@ -318,33 +327,33 @@ void BattleFx_RunVengeance(struct BattleEffectArgument *effect) {
       }
       if (effect->side == 0) {
         if (state == 0) {
-          blit(canvas, work->sheet + 0x42cc, (blade->x >> 16) - 111,
+          draw[0](canvas, work->sheet + 0x42cc, (blade->x >> 16) - 111,
                HI(blade->y) + 24, 51, 12);
-          blit(canvas, work->sheet + 0x42cc, HI(blade->x) + 17,
+          draw[0](canvas, work->sheet + 0x42cc, HI(blade->x) + 17,
                HI(blade->y) + 96, 51, 12);
-          blit(canvas, work->sheet + 0x4200, HI(blade->x) - 128,
+          draw[0](canvas, work->sheet + 0x4200, HI(blade->x) - 128,
                HI(blade->y) + 24, 17, 12);
-          blit(canvas, work->sheet + 0x4200, HI(blade->x), HI(blade->y) + 96,
+          draw[0](canvas, work->sheet + 0x4200, HI(blade->x), HI(blade->y) + 96,
                17, 12);
         } else {
-          blit(canvas, work->sheet + 0x42cc, pos.x / 2 + blade->x - 111,
+          draw[0](canvas, work->sheet + 0x42cc, pos.x / 2 + blade->x - 111,
                HI(blade->y) + 24, 51, 12);
-          blit(canvas, work->sheet + 0x42cc, pos.x / 2 + blade->x + 17,
+          draw[0](canvas, work->sheet + 0x42cc, pos.x / 2 + blade->x + 17,
                HI(blade->y) + 96, 51, 12);
         }
       } else if (state == 0) {
-        blitFlipped(canvas, work->sheet + 0x42cc, blade->x >> 16,
+        draw[1](canvas, work->sheet + 0x42cc, blade->x >> 16,
                     HI(blade->y) + 24, 51, 12);
-        blitFlipped(canvas, work->sheet + 0x42cc, HI(blade->x) - 128,
+        draw[1](canvas, work->sheet + 0x42cc, HI(blade->x) - 128,
                     HI(blade->y) + 96, 51, 12);
-        blitFlipped(canvas, work->sheet + 0x4200, HI(blade->x) + 51,
+        draw[1](canvas, work->sheet + 0x4200, HI(blade->x) + 51,
                     HI(blade->y) + 24, 17, 12);
-        blitFlipped(canvas, work->sheet + 0x4200, HI(blade->x) - 77,
+        draw[1](canvas, work->sheet + 0x4200, HI(blade->x) - 77,
                     HI(blade->y) + 96, 17, 12);
       } else {
-        blitFlipped(canvas, work->sheet + 0x42cc, pos.x / 2 + blade->x,
+        draw[1](canvas, work->sheet + 0x42cc, pos.x / 2 + blade->x,
                     HI(blade->y) + 24, 51, 12);
-        blitFlipped(canvas, work->sheet + 0x42cc, pos.x / 2 + blade->x - 128,
+        draw[1](canvas, work->sheet + 0x42cc, pos.x / 2 + blade->x - 128,
                     HI(blade->y) + 96, 51, 12);
       }
     }
@@ -352,9 +361,9 @@ void BattleFx_RunVengeance(struct BattleEffectArgument *effect) {
     // The avenger's eye, while the arm is down.
     if (raised == 0) {
       if (effect->side == 0) {
-        blit(canvas, work->sheet + 0x4530, 88, 29, 14, 13);
+        draw[0](canvas, work->sheet + 0x4530, 88, 29, 14, 13);
       } else {
-        blitFlipped(canvas, work->sheet + 0x4530, 26, 29, 14, 13);
+        draw[1](canvas, work->sheet + 0x4530, 26, 29, 14, 13);
       }
     }
     ObjectGroup_TickMemberTimers();

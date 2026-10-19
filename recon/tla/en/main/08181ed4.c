@@ -1,4 +1,4 @@
-// Draft (tla-en): listing 513 instructions, draft 513, common 393, differ 240.
+// Draft (tla-en): listing 513 instructions, draft 513, common 442, differ 142.
 // The body of effect kinds 114, 461 and 462 (summon_modes_1.c's
 // BattleFx_RunPurgatory, BattleFx_RunDjinnBlast and BattleFx_RunDjinnStorm pass modes 0, 2 and 1).
 // Written from the listing on ☀️'s skeleton (2026-10-15, lane N2); its
@@ -21,6 +21,14 @@
 // speed (the native copies speed and multiplies by the result): 258;
 // speed's +32 folded into its first assignment: 240; speed and angle
 // declared the other way round: no change.
+// 2026-10-19 (run 33): psynergy permute (5 minutes) found the target's
+// actors pointer taken before Func_081180e8 at frame 20: 240 to 142. It
+// holds r5 across the call, which moves the drop loop's speed to r7 and the
+// angle to r5 as the native has them; the frame-20 block itself is now
+// three rows off (the native reloads effect after the call). The swapped
+// spill slots (the pair's address and spawned) remain. A pointer variable
+// for the blitter pair instead: 296. A second run from 142 (8 minutes)
+// reached 120 only by reading an uninitialized temporary: not taken.
 // Resources 0xc0 (BattleFx_CrossTextureSheet), 0xd2 (Resource_Data0D2) and
 // the Djinn sheets 0x154, 0x150 and 0x152 need names in
 // system/resource/directory.s when this is adopted.
@@ -131,6 +139,7 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition midpoint;
   struct BattleEffectWork *work =
       (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
+  s16 *actors;
   void *canvas = Ram_HeapSlots->battleFxWork[1];
   u8 *sparkCels = Ram_HeapSlots->unk64[0];
   struct EffectStep *drop;
@@ -176,8 +185,9 @@ void Func_08181ed4(struct BattleEffectArgument *effect, s32 mode) {
     }
     if (frame == GEYSER_PEAK_FRAME) {
       work->shakeFrames = 8;
+      actors = effect->actors;
       Func_081180e8(134);
-      Func_08118088(effect->actors[0], 1);
+      Func_08118088(actors[0], 1);
     }
 
     // The first frame clears every drop.

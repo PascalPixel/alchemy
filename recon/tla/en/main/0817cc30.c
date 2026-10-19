@@ -1,5 +1,13 @@
-// Draft of BattleFx_RunOceanFist, decompiled from the listing: differ 477 of
-// 598 (draft 597), the same 46 calls and control flow; allocation differs.
+// Draft of BattleFx_RunOceanFist, decompiled from the listing: differ 448 of
+// 598 (draft 596), the same 46 calls and control flow; allocation differs.
+// 2026-10-19 (run 33), from 477: canvas declared before work (the native's
+// sp+28 and sp+24): 455; the column's scroll written as frame * 8, which
+// loop.c reduces into the native's late slot at sp+8 (as an accumulator it
+// took sp+16 above the address pseudos): the same 455, with every slot now
+// the native's; the drops' lives cleared through Data_02010018, as the
+// listing's pool names it: 448. Left: the native keeps gData_02014000 in r5
+// from the prologue to the first load, the dimming loop's asrs (here lsrs),
+// and the reload registers (the native takes r4 for its reloads of work).
 
 #include "types.h"
 #include "battle_effect.h"
@@ -85,6 +93,8 @@ extern u8 gMapCellBuffer[];
 extern const u16 gData_08197410[];         // gBattleFx_MoteCells
 extern const s32 Data_081994a8[4];         // the early drops' drags
 extern u8 gData_02014000[];                // the spray sheet
+// The drops' lives: gMapCellBuffer's EffectSteps from their variant on.
+extern s32 Data_02010018[];
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->unk64[1])
 enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
@@ -103,8 +113,8 @@ enum { BLIT_ADDITIVE, BLIT_MAX, BLIT_TRANSPARENT };
 // fountain of 256 at frame 28. The target is struck at frame 32 and pushed
 // back.
 void BattleFx_RunOceanFist(struct BattleEffectArgument *effect) {
-  struct BattleEffectWork *work;
   void *canvas;
+  struct BattleEffectWork *work;
   u8 *sprites;
   DrawRectangle blitters[2];
   struct EffectPosition target;
@@ -112,7 +122,6 @@ void BattleFx_RunOceanFist(struct BattleEffectArgument *effect) {
   struct EffectStep *drop;
   struct EffectStep *spray;
   s32 frame;
-  s32 scroll;
   s32 i;
   s32 j;
 
@@ -135,11 +144,13 @@ void BattleFx_RunOceanFist(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
   EffectPosition_ProjectBattler(effect->actors[0], &target);
 
-  for (frame = 0, scroll = 0; frame != OCEAN_FIST_FRAMES;
-       frame++, scroll += 8) {
+  for (frame = 0; frame != OCEAN_FIST_FRAMES; frame++) {
     if (frame == 0) {
+      s32 *life = Data_02010018;
+
       for (i = 0; i != OCEAN_DROPS; i++) {
-        drops[i].variant = -1;
+        *life = -1;
+        life += 7;
       }
       Resource_LoadAndDecompress((s32)&ResourceId_WhirlBeamSheet, work->sheet,
                                  1, 0);
@@ -160,17 +171,17 @@ void BattleFx_RunOceanFist(struct BattleEffectArgument *effect) {
       u8 *pixel = work->sheet + (frame % 3) * 3 * 0x800;
 
       for (i = 0; i != 0x1800; i++) {
-        *pixel = *pixel >> 1;
+        *pixel = *pixel / 2;
         pixel++;
       }
     }
 
     // The column, three 64-line bands scrolling up from line 120.
     if (frame <= 41) {
-      s32 top = 120 - scroll;
+      s32 top = 120 - frame * 8;
       s32 picture = frame % 3;
       s32 x = target.x / 2;
-      s32 phase = scroll % 64;
+      s32 phase = frame * 8 % 64;
 
       if (top < 0) {
         top = 0;

@@ -1,9 +1,16 @@
-// Draft (tla-en): listing 436 instructions, draft 436, common 392, differ 88.
+// Draft (tla-en): listing 436 instructions, draft 436, common 409, differ 54.
 // Written from the listing (☀️'s BattleFx_RunJupiter is only a
 // hint). The pink star burst: 32 smoke puffs rise from the caster for 24
 // frames, the caster rises and leans to the target, and at frame 32 the
 // target bursts into 16 pink stars for 24 frames.
-// Left:
+// 2026-10-19 (run 33): the unreferenced slot is the blitter pair's second
+// half (tagged below), as in 0817c27c; with it "stars" goes and each star
+// loop starts at &particles[SMOKE_COUNT] as the native rebuilds it: 88 to
+// 70; the smoke drawing loop on a pointer of its own (r5, the native's;
+// the spawn loop keeps r7): 54. What is left is scheduling: the native's
+// loads one row before their neighbouring constants, BattleFx_LoadBlitter's
+// 3 before its 104, and the star base built between the divisions.
+// Earlier notes, from before the pair:
 // - the native frame is 60 bytes with an unreferenced slot at sp+20
 // between frame (sp+24) and draw (sp+16); 0817c27c has the same unused
 // slot between the same two. Here "stars" (&particles[32], set once before
@@ -95,8 +102,12 @@ void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
   struct EffectPosition caster;
   struct EffectPosition target;
   s32 frame;
-  struct EffectStep *stars;
-  DrawRectangle draw;
+  /* FAKEMATCH(frame): the blitter as a pair of which only the first is used;
+   * as one two-word DImode pseudo its spill takes sp+16 and the unused sp+20
+   * the native frame has. As a single DrawRectangle the frame is 56 bytes
+   * and every stack offset moves (132 of 436 instructions differ in tla-en
+   * without "stars", 88 with it, 70 with the pair). */
+  DrawRectangle draw[2];
   struct MotionObject *targetObject;
   struct MotionObject *casterObject;
   u8 *battle;
@@ -125,7 +136,7 @@ void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
                              work->sheet + STAR_CELS, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work->sheet, 1, 1);
   BattleFx_LoadBlitter(HEAP_SLOT_BLITTER, BLITTER(BLITTER_ADDITIVE, CLIP_XY));
-  draw = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   work->transferMode = 2;
   work->transferValue = 50;
   Scheduler_AddOrUpdateCallback((s32)BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
@@ -133,7 +144,6 @@ void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
   casterObject = GetBattleObjectSlotFar(effect->actor)->object;
   battle = (u8 *)Ram_HeapSlots->battleWork;
   battle[0x866] = 1;
-  stars = &work->particles[SMOKE_COUNT];
 
   for (frame = 0; frame != STAR_FRAMES; frame++) {
     BattleObject_SetRecordPriority(effect->actor, 3);
@@ -162,12 +172,14 @@ void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
      * caster's placing in one block as the native has them (without it
      * three instructions fewer and differ 105). */
     if (frame >= 0) {
-      for (i = 0, step = work->particles; i != 24; i++, step++) {
-        if (frame >= i / 8 && step->variant <= 23) {
-          draw(canvas, work->sheet + (step->variant / 4) * 0x480,
-               HI(step->x) - 12, HI(step->y) - 24, 24, 48);
-          BattleFxKernels_IntegrateVector2(step, 48, -0x2000);
-          step->variant++;
+      struct EffectStep *puff;
+
+      for (i = 0, puff = work->particles; i != 24; i++, puff++) {
+        if (frame >= i / 8 && puff->variant <= 23) {
+          draw[0](canvas, work->sheet + (puff->variant / 4) * 0x480,
+                  HI(puff->x) - 12, HI(puff->y) - 24, 24, 48);
+          BattleFxKernels_IntegrateVector2(puff, 48, -0x2000);
+          puff->variant++;
         }
       }
       if (frame == 0) {
@@ -193,7 +205,7 @@ void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
       targetObject->x = targetObject->x * 80 / 100;
       casterObject->angle = targetObject->angle;
       EffectPosition_ProjectScaledBattler(effect->actors[0], &target);
-      for (i = 0, step = stars; i != STAR_COUNT; i++, step++) {
+      for (i = 0, step = &work->particles[SMOKE_COUNT]; i != STAR_COUNT; i++, step++) {
         s32 angle;
         s32 speed;
 
@@ -214,9 +226,9 @@ void BattleFx_RunBackstab(struct BattleEffectArgument *effect) {
 
     // The stars twinkle through their six cels as they fly.
     if (frame >= STAR_BURST_FRAME && frame < STAR_BURST_FRAME + 24) {
-      for (i = 0, step = stars; i != STAR_COUNT; i++, step++) {
+      for (i = 0, step = &work->particles[SMOKE_COUNT]; i != STAR_COUNT; i++, step++) {
         if (step->variant >= 0) {
-          draw(canvas, work->sheet + STAR_CELS + (((frame + i) / 4) % 6) * 256,
+          draw[0](canvas, work->sheet + STAR_CELS + (((frame + i) / 4) % 6) * 256,
                HI(step->x) - 8, HI(step->y) - 8, 16, 16);
           BattleFxKernels_IntegrateVector2(step, 56, 0);
           step->variant--;

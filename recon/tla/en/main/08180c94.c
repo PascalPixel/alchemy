@@ -1,6 +1,23 @@
-// Draft of BattleFx_RunDaedalusAlt, decompiled from the listing: differ 328
-// of 575 (draft 573), the same 51 calls and control flow; allocation and
-// stack slots differ.
+// Draft of BattleFx_RunDaedalusAlt, decompiled from the listing: differ 188
+// of 575 (draft 569), the same 51 calls and control flow.
+// 2026-10-19 (run 33), from 328: the frame now matches (68 bytes: effect
+// sp+32, canvas 28, the blitter pair 20 and 24, centerX 16, centerY 12, burst
+// 8, texture 36, source 44, request 52). Measured: the sparks' lives cleared
+// through Data_02014018, as the listing's pool names it: 325; the blitter as
+// a pair (the native's unused sp+24): 299; source copied whole from its
+// table as one two-word struct (ldr, ldr, str, str): 265; a pointer of its
+// own for the drawing loop (r5; the burst loop keeps r7): 249; the ring's
+// variant stepped before its angle: 231; 0x10000 written out where "one"
+// was, so loop.c keeps it in r8 as the native does: 213; centerX and centerY
+// declared with the function's locals, before burst, so their slots come
+// above burst's: 203; the rings placed relative to x: 188. Tried: burst as
+// (frame - 80) * 8 at the burst loop (294, 353), object->unk16 stored before
+// unk12 (the native's zero register is not CSE's low byte of 0x8800: no
+// gain), y as a variable like x.
+// Left: the native shifts x and 0x500000 at run time for Func_0818caa8 and
+// adds a pooled -0x400000 to the rings' places, as if neither value were a
+// known constant there; here both fold. The rest is register choice in
+// reloads and the burst loop's preheader order.
 
 #include "types.h"
 #include "battle_effect.h"
@@ -84,10 +101,16 @@ extern char ResourceId_Data0C9;
 extern u8 gMapCellBuffer[];
 extern const u16 gData_08197410[];         // gBattleFx_MoteCells
 extern const u8 Data_081995ec[];           // the seven strike frames
-extern const s32 Data_08196ee8[2];         // the summon's placement source
+struct PlacementSource {
+  s32 x;
+  s32 y;
+};
+extern const struct PlacementSource Data_08196ee8; // the summon's placement source
 extern const u8 Data_08199220[];           // the rings' mesh
 extern const u8 gData_081991b0[];          // their corners
 extern struct EffectStep gData_02014000[]; // the sparks
+// The sparks' lives: gData_02014000's EffectSteps from their variant on.
+extern s32 Data_02014018[];
 extern const u8 gData_08199210[];          // its four corners
 extern u32 gCameraSceneParameters[];
 
@@ -118,13 +141,19 @@ struct SummonObject {
 void BattleFx_RunDaedalusAlt(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
-  DrawRectangle draw;
+  /* FAKEMATCH(frame): the blitter as a pair of which only the first is used;
+   * as one two-word DImode pseudo its spill takes sp+20 and the unused sp+24
+   * the native frame has. As a single DrawRectangle the frame is 64 bytes
+   * and every slot above it moves (differ 325 against 299). */
+  DrawRectangle draw[2];
   struct ModelTexture texture;
-  s32 source[2];
   s32 request[4];
+  struct PlacementSource source;
   s32 frame;
   s32 i;
   s32 j;
+  s32 centerX;
+  s32 centerY;
   s32 burst;
   struct EffectStep *spark;
 
@@ -138,7 +167,7 @@ void BattleFx_RunDaedalusAlt(struct BattleEffectArgument *effect) {
   BattleFx_SpawnObjects(1, 0x296, 3);
   BattleFx_SelectLivingTargets(work->effect);
   BattleFx_LoadBlitter(104, BLIT_MODE(BLIT_ADDITIVE, BLIT_CLIP));
-  draw = BLITTER;
+  draw[0] = BLITTER;
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              0);
   work->transferMode = 2;
@@ -174,15 +203,18 @@ void BattleFx_RunDaedalusAlt(struct BattleEffectArgument *effect) {
     // From frame 80: eight bursts of sparks, one a frame.
     if (frame > 79) {
       if (frame == 80) {
+        s32 *life = Data_02014018;
+
         for (i = 0; i != DAEDALUS_SPARKS; i++) {
-          gData_02014000[i].variant = -1;
+          *life = -1;
+          life += 7;
         }
         work->shakeFrames = 8;
         Iwram_FillWords(canvas, 0x3c00, 0x3f3f3f3f);
       }
       if ((u32)(frame - 80) <= 7) {
-        s32 centerX = ((Random16() & 63) + 28) << 16;
-        s32 centerY = ((Random16() & 31) + 80) << 16;
+        centerX = ((Random16() & 63) + 28) << 16;
+        centerY = ((Random16() & 31) + 80) << 16;
 
         for (j = 0, spark = &gData_02014000[burst]; j != 8; j++, spark++) {
           s32 speed = Random16() & 31;
@@ -196,12 +228,16 @@ void BattleFx_RunDaedalusAlt(struct BattleEffectArgument *effect) {
           spark->variant = 0;
         }
       }
-      for (i = 0, spark = gData_02014000; i != DAEDALUS_SPARKS; i++, spark++) {
-        if ((u32)spark->variant <= 17) {
-          draw(canvas, work->sheet + ((spark->variant / 3) << 11),
-               HI(spark->x) - 16, HI(spark->y) - 48, 32, 64);
-          BattleFxKernels_IntegrateVector2(spark, 62, -0x800);
-          spark->variant++;
+      {
+        struct EffectStep *mote;
+
+        for (i = 0, mote = gData_02014000; i != DAEDALUS_SPARKS; i++, mote++) {
+          if ((u32)mote->variant <= 17) {
+            draw[0](canvas, work->sheet + ((mote->variant / 3) << 11),
+                    HI(mote->x) - 16, HI(mote->y) - 48, 32, 64);
+            BattleFxKernels_IntegrateVector2(mote, 62, -0x800);
+            mote->variant++;
+          }
         }
       }
     }
@@ -210,8 +246,7 @@ void BattleFx_RunDaedalusAlt(struct BattleEffectArgument *effect) {
     if (frame <= 91) {
       struct SummonObject *object;
 
-      source[0] = Data_08196ee8[0];
-      source[1] = Data_08196ee8[1];
+      source = Data_08196ee8;
       object = work->objects[0];
       object->unk17 = 32;
       object->unk12 = 0x8800;
@@ -230,7 +265,7 @@ void BattleFx_RunDaedalusAlt(struct BattleEffectArgument *effect) {
         request[0] = 136 << 16;
         request[2] = 0x400000;
       }
-      Render_ApplyProjectedPlacementFar(work->objects[0], request, source, 0);
+      Render_ApplyProjectedPlacementFar(work->objects[0], request, &source.x, 0);
     }
 
     // Frames 56 to 91: the disc and the rings.
@@ -241,7 +276,7 @@ void BattleFx_RunDaedalusAlt(struct BattleEffectArgument *effect) {
       struct RenderModel *model;
       void *vertices;
       struct EffectStep *ring;
-      s32 one;
+
 
       if (grow <= 64) {
         size = grow * 2;
@@ -273,20 +308,20 @@ void BattleFx_RunDaedalusAlt(struct BattleEffectArgument *effect) {
       model->kind = 7;
       model->texture = &texture;
       model->mesh = Data_08199220;
-      one = 0x10000;
+
       for (i = 0, ring = work->particles; i != 6; i++, ring++) {
-        ring->x += ring->y * 2;
         ring->variant += 2;
+        ring->x += ring->y * 2;
         if ((u32)ring->variant <= 47) {
           s32 k;
 
           Render_ResetTransformState();
           k = i & 3;
-          Func_08015160((k << 17) + 0x420000 - 0x400000,
-                        0x500000 - ((k + 2) << 16) - 0x400000, 0);
-          Func_080151e4(0x8000, one, one);
+          Func_08015160((k << 17) + 0x420000 - x,
+                        0x500000 - ((k + 2) << 16) - x, 0);
+          Func_080151e4(0x8000, 0x10000, 0x10000);
           Func_080150e4(ring->x);
-          Func_080151e4(Trig_Sin(ring->variant * 682) + one, 0x20000, one);
+          Func_080151e4(Trig_Sin(ring->variant * 682) + 0x10000, 0x20000, 0x10000);
           Render_TransformVertices(gData_081991b0, vertices, 4);
           Render_DrawModelList(model);
         }

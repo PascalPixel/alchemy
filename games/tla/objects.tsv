@@ -450,12 +450,6 @@ main	rom_main_01	games/tla/src/system/resource/animate	.text
 main	rom_main_01	games/tla/src/system/resource/child_value	.text
 main	rom_main_01	games/tla/src/graphics/tile/vram_block_93	.text
 main	rom_main_01	games/tla/src/system/resource/object	.text
-main	rom_main_01	recon/tla/it/rom	.rom.00022d40	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00022d40	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00022d40	es
-main	rom_main_01	recon/tla/de/rom	.rom.00022d40	de
-main	rom_main_01	recon/tla/raw/08022d40	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.00022d40	ja
 main	rom_main_01	games/tla/src/system/resource/resource_obj	.text
 main	rom_main_01	games/tla/src/field/common/map/render_animated_tile_frame	.text
 main	rom_main_01	games/tla/src/field/common/map/animation_work	.text

@@ -20,6 +20,10 @@
 #include "songs.h"
 #include "fixed_math.h"
 
+// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// enters another place group, and other places use the numbers for their own.
+#define FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN 0x350
+
 // The Sol Sanctum room that holds a Psynergy Stone, scene 13.
 
 // Where the party can enter the room.

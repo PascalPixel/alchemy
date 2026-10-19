@@ -33,6 +33,12 @@
 #include "objcmd.h"
 #include "global_cells.h"
 
+// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// enters another place group, and other places use the numbers for their own.
+// Nyunpa's test was declined; the students saw the training tree fall.
+#define FLAG_NYUNPA_TEST_DECLINED 0x300
+#define FLAG_FEH_SCHOOL_SAW_TREE_FALL 0x301
+
 // The first scene, outside the temple.
 #define FALLS_MONK 9 // the monk beneath the falls, at the waterfall grotto
 #define HEALER 13

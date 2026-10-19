@@ -54,6 +54,14 @@
 #include "map_scroll.h"
 #include "songs.h"
 
+// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// enters another place group, and other places use the numbers for their own.
+// A room's floor switch has been flipped from its first position.
+#define FLAG_ALTIN_PEAK_ROOM_3_SWITCH 0x323
+#define FLAG_ALTIN_PEAK_ROOM_5_SWITCH 0x325
+#define FLAG_ALTIN_PEAK_ROOM_6_SWITCH 0x326
+#define FLAG_ALTIN_PEAK_ROOM_7_SWITCH 0x327
+
 static void AltinPeak_RunBoulderChase(s32 boulderDelay);
 static void AltinPeak_RestoreRoom1(void);
 static void AltinPeak_RestoreRoom3(void);

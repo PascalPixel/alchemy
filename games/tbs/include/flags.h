@@ -24,6 +24,9 @@
 // The link lobby's battle against a monster when no opponent is linked:
 // formations matched to the party's level, and no spoils.
 #define FLAG_MONSTER_BATTLE 0x173
+// Flags 0x300 to 0x3ff are place flags: Scene_ResetFlagsOnEnter clears them
+// when the party enters another place group, and each place uses the numbers
+// for its own, so the scenes name them. These two are the link lobby's.
 // Byte flags, read and written eight at a time.
 #define FLAG_LINK_PARTY_COUNT 0x3f0 // the members the linked opponent sent
 // Monster battles won in a row, added to the monsters' level; -1 after the
@@ -71,7 +74,6 @@
 #define FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED 0x9a5
 
 // Alpine Crossing and Lama Temple
-#define FLAG_LAMA_TEMPLE_PSYNERGY_STONE 0x350 // the temple's Psynergy Stone
 // Feizhi has found the road blocked and run ahead to look for Hsu.
 #define FLAG_FEIZHI_SAW_ROCKSLIDE 0x8b0
 // Hama has reached Hsu and spoken with him and Feizhi.
@@ -95,11 +97,6 @@
 #define FLAG_SCENE_TEMP_42 0x242
 
 // Altin Peak, numbered by its rooms (SceneId_AltinPeak1 to 11)
-// A room's floor switch has been flipped from its first position.
-#define FLAG_ALTIN_PEAK_ROOM_3_SWITCH 0x323
-#define FLAG_ALTIN_PEAK_ROOM_5_SWITCH 0x325
-#define FLAG_ALTIN_PEAK_ROOM_6_SWITCH 0x326
-#define FLAG_ALTIN_PEAK_ROOM_7_SWITCH 0x327
 // Room 1's water beast has been seen hopping along its first and its second
 // route.
 #define FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN 0x904
@@ -333,8 +330,6 @@
 #define FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN 0x8bc // she hid it in the barrel
 #define FLAG_TOLBI_INTERIORS_MEDAL_TAKEN 0x8bd  // the party took it
 #define FLAG_TOLBI_INTERIORS_MEDAL_MISSED 0x8be // she has greeted them since
-// A place flag (0x300 to 0x3ff), cleared when the party leaves Tolbi.
-#define FLAG_TOLBI_INTERIORS_SAILORS_SEEN 0x300 // their argument has played
 
 // Tolbi ship: the crossing of the Karagol Sea from Kalay to Tolbi
 #define FLAG_TOLBI_SHIP_AT_ISLAND 0x8a0 // at anchor off the island
@@ -364,12 +359,6 @@
 #define FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS 0x917
 #define FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS 0x990
 #define FLAG_TOLBI_SHIP_REACHED_TOLBI 0x93e // "The ship has arrived safely"
-// Place flags (0x300 to 0x3ff), cleared when the party leaves the ship.
-#define FLAG_TOLBI_SHIP_ROWER_CHOSEN 0x300    // a passenger follows the party
-#define FLAG_TOLBI_SHIP_MONSTERS_ABOARD 0x301 // the hold's stairs are barred
-// "There's a huge sea monster on the ship!": the deck shakes until the
-// Kraken is defeated.
-#define FLAG_TOLBI_SHIP_KRAKEN_ABOARD 0x302
 // Tunnel Ruins
 #define FLAG_TUNNEL_RUINS_BUSH_BLOWN_AWAY 0x970
 #define FLAG_TUNNEL_RUINS_PILLAR_A_SUNK 0x971
@@ -552,9 +541,6 @@
 #define FLAG_SCENE_TEMP_70 0x270 // Lunpa Fortress: Hammet's rescue has begun
 
 // Goma Cave
-#define FLAG_GOMA_CAVE_STUMP_FELL 0x300 // pushed over into the room below
-#define FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE 0x301 // sunk into its place
-#define FLAG_GOMA_CAVE_WEST_PILLAR_MOVED 0x302    // one step east of its start
 #define FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED 0x860
 #define FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP 0x861
 #define FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS 0x862
@@ -582,12 +568,8 @@
 #define FLAG_FEH_WAITS_TO_SEE_CHI 0x898
 #define FLAG_FEH_CHI_DEMONSTRATION_DECLINED 0x899
 #define FLAG_FEH_SAW_CHI 0x89b
-// Nyunpa's test was declined; the students saw the training tree fall.
-#define FLAG_NYUNPA_TEST_DECLINED 0x300
-#define FLAG_FEH_SCHOOL_SAW_TREE_FALL 0x301
 
 // Crossbone Isle
-#define FLAG_CROSSBONE_ISLE_THIRD_BLOCK_LOWERED 0x300
 // The four blue doors in a row, then the red door.
 #define FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN 0x9c0
 #define FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN 0x9c4
@@ -653,27 +635,6 @@
 #define FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED 0x83f
 // Isaac agreed to look farther on while Kraden studies the rooms.
 #define FLAG_SOL_SANCTUM_ISAAC_SEARCHING_FOR_KRADEN 0x896
-// The column each movable block stands in, east or west of its pair.
-#define FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_EAST 0x300
-#define FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_WEST 0x301
-#define FLAG_SOL_SANCTUM_OUTER_LEFT_BLOCK_EAST 0x302
-#define FLAG_SOL_SANCTUM_OUTER_LEFT_BLOCK_WEST 0x303
-#define FLAG_SOL_SANCTUM_FLOATING_EYE_SEEN 0x309
-#define FLAG_SOL_SANCTUM_STATUE_HALL_VISITED 0x30a
-#define FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED 0x30b
-#define FLAG_SOL_SANCTUM_INNER_BLOCK_1_EAST 0x310
-#define FLAG_SOL_SANCTUM_INNER_BLOCK_1_WEST 0x311
-#define FLAG_SOL_SANCTUM_INNER_BLOCK_2_EAST 0x312
-#define FLAG_SOL_SANCTUM_INNER_BLOCK_2_WEST 0x313
-#define FLAG_SOL_SANCTUM_INNER_BLOCK_3_EAST 0x314
-#define FLAG_SOL_SANCTUM_INNER_BLOCK_3_WEST 0x315
-#define FLAG_SOL_SANCTUM_INNER_BLOCK_4_EAST 0x316
-#define FLAG_SOL_SANCTUM_INNER_BLOCK_4_WEST 0x317
-#define FLAG_SOL_SANCTUM_INNER_BLOCK_5_EAST 0x318
-#define FLAG_SOL_SANCTUM_INNER_BLOCK_5_WEST 0x319
-#define FLAG_SOL_SANCTUM_INNER_BLOCK_6_EAST 0x31a
-#define FLAG_SOL_SANCTUM_INNER_BLOCK_6_WEST 0x31b
-#define FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN 0x350
 // The chests: the Small Jewel for each minotaur relief, and a Herb.
 #define FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND 0xf01
 #define FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND 0xf02
@@ -700,26 +661,12 @@
 #define FLAG_VENUS_LIGHTHOUSE_BLOCK_AT_WALL 0x986
 // Carry has set that block down beyond the wall.
 #define FLAG_VENUS_LIGHTHOUSE_BLOCK_CARRIED 0x987
-// The floor switches have slid the walls aside.
-#define FLAG_VENUS_LIGHTHOUSE_WALL_MOVED 0x300
-#define FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED 0x306
-#define FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED 0x307
-// The gates the sunken blocks opened: one block, three blocks (and which of
-// two sets of sockets they sank into) and the pillar room's four.
-#define FLAG_VENUS_LIGHTHOUSE_GATE_OPEN 0x301
-#define FLAG_VENUS_LIGHTHOUSE_SOCKETS_A 0x302
-#define FLAG_VENUS_LIGHTHOUSE_SOCKETS_B 0x303
-#define FLAG_VENUS_LIGHTHOUSE_THREE_BLOCK_GATE_OPEN 0x304
-#define FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN 0x308
 
 // Venus Lighthouse aerie
 // Set where Retreat does nothing (items.c skips the Retreat item's move).
 #define FLAG_NO_RETREAT 0x144
 // The next scene keeps the music that is playing (scene.c clears it).
 #define FLAG_KEEP_MUSIC 0x11a
-// Plus the party member (0 to 3) who carried the Shaman's Rod when it was
-// handed over before the aerie's first battle; a defeat gives it back.
-#define FLAG_SHAMANS_ROD_OWNER 0x345
 // Also uses FLAG_SCENE_TEMP_34.
 // Also uses FLAG_SCENE_TEMP_35.
 #define FLAG_SCENE_TEMP_36 0x236

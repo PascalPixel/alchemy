@@ -27,6 +27,26 @@
 #include "songs.h"
 #include "item_ids.h"
 
+// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// enters another place group, and other places use the numbers for their own.
+// The column each movable block stands in, east or west of its pair.
+#define FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_EAST 0x300
+#define FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_WEST 0x301
+#define FLAG_SOL_SANCTUM_OUTER_LEFT_BLOCK_EAST 0x302
+#define FLAG_SOL_SANCTUM_OUTER_LEFT_BLOCK_WEST 0x303
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_1_EAST 0x310
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_1_WEST 0x311
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_2_EAST 0x312
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_2_WEST 0x313
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_3_EAST 0x314
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_3_WEST 0x315
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_4_EAST 0x316
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_4_WEST 0x317
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_5_EAST 0x318
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_5_WEST 0x319
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_6_EAST 0x31a
+#define FLAG_SOL_SANCTUM_INNER_BLOCK_6_WEST 0x31b
+
 // Forward declarations.
 static void SolSanctumEntrance_ApplyEntryState(void);
 static void SolSanctumEntrance_RestoreInteriorState(void);

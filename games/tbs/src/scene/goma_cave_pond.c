@@ -22,6 +22,11 @@
 #include "flags.h"
 #include "event.h"
 
+// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// enters another place group, and other places use the numbers for their own.
+// The stump has been pushed over into the room below (goma_cave_pillar.c).
+#define FLAG_GOMA_CAVE_STUMP_FELL 0x300
+
 // The stump the party pushes over in the room above, lying in this room.
 #define FALLEN_STUMP 8
 

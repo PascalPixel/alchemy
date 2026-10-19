@@ -46,6 +46,10 @@
 #include "songs.h"
 #include "event.h"
 
+// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// enters another place group, and other places use the numbers for their own.
+#define FLAG_CROSSBONE_ISLE_THIRD_BLOCK_LOWERED 0x300
+
 #if TBS_PATCH_1
 #define CROSSBONE_PURSUER_STEP_Z 16
 #define CROSSBONE_LEADER_STEP_Z 24

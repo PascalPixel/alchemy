@@ -36,6 +36,12 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
+// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// enters another place group, and other places use the numbers for their own.
+// "There's a huge sea monster on the ship!": the deck shakes until the
+// Kraken is defeated (set in tolbi_ship_interiors.c).
+#define FLAG_TOLBI_SHIP_KRAKEN_ABOARD 0x302
+
 // Defined below, in the order of the ROM.
 static void TolbiShipDeck_ConfrontCrewman(void);
 static void TolbiShipDeck_ApplyEntryState(void);

@@ -32,6 +32,11 @@
 #include "songs.h"
 #include "ability_ids.h"
 
+// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// enters another place group, and other places use the numbers for their own.
+#define FLAG_SOL_SANCTUM_STATUE_HALL_VISITED 0x30a
+#define FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED 0x30b
+
 #if TBS_PATCH_3
 #define SOL_SANCTUM_STATUE_BACK_SCROLL_ROW_Y_OFFSET 6
 #else

@@ -58,6 +58,12 @@
 #include "flags.h"
 #include "item_ids.h"
 
+// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// enters another place group, and other places use the numbers for their own.
+// Plus the party member (0 to 3) who carried the Shaman's Rod when it was
+// handed over before the aerie's first battle; a defeat gives it back.
+#define FLAG_SHAMANS_ROD_OWNER 0x345
+
 // Forward declarations.
 static void Event_SteadyPillars(void);
 static void VenusLighthouseAerie_EnterAndConfrontAntagonists(void);

@@ -39,6 +39,14 @@
 #include "fixed_math.h"
 #include "field_runtime.h"
 
+// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// enters another place group, and other places use the numbers for their own.
+#define FLAG_TOLBI_SHIP_ROWER_CHOSEN 0x300    // a passenger follows the party
+#define FLAG_TOLBI_SHIP_MONSTERS_ABOARD 0x301 // the hold's stairs are barred
+// "There's a huge sea monster on the ship!": the deck shakes until the
+// Kraken is defeated (tolbi_ship_deck.c reads it too).
+#define FLAG_TOLBI_SHIP_KRAKEN_ABOARD 0x302
+
 // Operations shared by the cabin, passenger hold and rowing-deck events.
 enum ShipSceneCommand {
   SHIP_FACE_PARTY_EAST_AND_WEST,

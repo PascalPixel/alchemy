@@ -66,6 +66,8 @@ crosses folders.
 | `Inn_` | the inn |
 | `Battle_`, `BattleUnit_`, `BattleFx_`, `AudioCommand_`, `NodeChain_` | things the engine names elsewhere |
 
+The comment markers are in [Matching](../MATCHING.md).
+
 ## Design
 
 ### Artifacts are counted, not stocked

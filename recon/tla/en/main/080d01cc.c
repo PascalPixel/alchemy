@@ -1,67 +1,73 @@
-// Draft of DisplayTransition_Start: differ 280 of 352 (tla-en, 2026-10-18).
-// The Broken Seal's function of the same name
-// (games/tbs/src/object/object.c), ported: it fades the screen in over frames
-// frames by the kind in the mode's high byte, and queues the map's display
-// control. QUEUE_DISPLAY_CONTROL is IO_WRITE_QUEUE_PUSH on REG_DISPCNT again
-// (an empty stand-in had left the draft at 369).
-//
-// Left: other. The Lost Age's transition state is larger (its fields from
-// 0x528, allocated by Func_080d019c), the window kind also sets a halfword
-// from REG_WINOUT's high byte, and its scanline callbacks and keys differ, as
-// in DisplayTransition_Finish (0x080d0520).
-
+// Draft, differ 42 of 352 (2026-10-18), rewritten from ☀️'s
+// DisplayTransition_Start in place of a draft whose headers no longer exist:
+// this game's map work (dispcnt at 0x14, the centre lines at 0x104), its
+// callbacks and priorities, and the IO_WRITE_QUEUE_PUSH of REG_DISPCNT after
+// each mode. Left: in each of the five queue pushes the native starts
+// REG_DISPCNT's address after the count's store and adds the entry's base
+// after the map's dispcnt load (two reordered rows each), and the switch's
+// opening schedules its mask and the frames copy in another order. Tried:
+// the value's operands swapped (50), the push written out with q->count
+// (42) and with the entry taken after the count's store (106).
 #include "types.h"
 #include "callback_scheduler.h"
 #include "io_reg.h"
 #include "io_write_queue.h"
-#include "iwram_call.h"
-#include "scene.h"
+#include "irq.h"
 #include "ram_buffer.h"
 #include "display_transition.h"
-#define QUEUE_DISPLAY_CONTROL(value)                                           \
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, value, 0x20000)
 
+// The map work as the window transitions see it.
+struct TransitionMapWork {
+  u8 unk000[0x14];
+  u16 dispcnt;
+  u8 unk016[0x104 - 0x16];
+  u16 firstLine;
+  u16 secondLine;
+};
+
+void WaitFrames(s32 frames);
+void Fade_FromBlack(s32 frames);
+void Fade_ToBlack(s32 frames);
+void BattleFx_ApplyColorToSourceBuffer(s32 value, s32 mode);
+void BattleFx_StartBufferInterpolation(s32 frames);
+void BattleFx_SetPrimaryBufferValue(s32 value);
+struct DisplayTransitionState *Func_080d019c(void);
+void Func_080cf78c(void);
+
+// Fades the screen in over frames frames, as ☀️'s DisplayTransition_Start.
 void DisplayTransition_Start(s32 mode, s32 frames) {
-  void **work;
-  struct DisplayTransitionWindow *display;
-  s32 value;
-  s32 kind;
+  struct TransitionMapWork *display;
+  s32 variant;
+  s32 transitionKind;
 
-  /* FAKEMATCH: the one-pass IME scopes and count-store spelling in
-     QUEUE_DISPLAY_CONTROL keep the saved IME move before disabling IME
-     and the final queue/IME loads in native order. The ordinary block
-     and member store keep 708 bytes but change 24 instruction bytes in EN;
-     both spellings store the count as a halfword. The word prefix of
-     the map-work view preserves its existing load/address ordering. */
-  kind = (mode >> 8) & 0xff;
-  work = (void **)Ram_HeapSlots->mapWork;
-  display = *(struct DisplayTransitionWindow **)work;
-  value = mode & 0xff;
-  switch (kind) {
+  transitionKind = (mode >> 8) & 0xff;
+  display = (struct TransitionMapWork *)Ram_HeapSlots->mapWork;
+  variant = mode & 0xff;
+  switch (transitionKind) {
   case 0:
     Fade_ToBlack(0);
     Fade_FromBlack(frames);
     WaitFrames(1);
     break;
   case 1:
-    BattleFx_ApplyColorToSourceBuffer(0x8000, *(u16 *)0x05000000);
+    BattleFx_ApplyColorToSourceBuffer(0x8000, PLTT_BACKDROP);
     BattleFx_StartBufferInterpolation(frames);
     WaitFrames(1);
-    QUEUE_DISPLAY_CONTROL(*(volatile u16 *)0x04000000 | display->dispcnt);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
+                        0x20000);
     BattleFx_SetPrimaryBufferValue(0);
     return;
   case 2: {
-    struct DisplayTransitionState *state =
-        DisplayTransition_AllocateAndClearState();
-    state->mode = value;
+    struct DisplayTransitionState *state = Func_080d019c();
+    state->mode = variant;
     state->value = 0;
     state->mask = 63;
-    state->active = 1;
-    Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateScanlineTable),
-                                  0xc80);
-    Scheduler_AddOrUpdateCallback((s32)(BattleFx_StartWindowHBlankDma), 0x480);
+    state->active = (REG_WINOUT & 0xff00) | 1;
+    Scheduler_AddOrUpdateCallback(Func_080cf78c, 0x480);
+    Scheduler_AddOrUpdateCallback(BattleFx_StartWindowHBlankDma, 0xc76);
     WaitFrames(1);
-    QUEUE_DISPLAY_CONTROL(*(volatile u16 *)0x04000000 | display->dispcnt);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
+                        0x20000);
     state->start = 0;
     state->end = 32;
     state->duration = frames;
@@ -69,14 +75,14 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     return;
   }
   case 3: {
-    struct DisplayTransitionState *state =
-        DisplayTransition_AllocateAndClearState();
-    state->mode = value;
+    struct DisplayTransitionState *state = Func_080d019c();
+    state->mode = variant;
     state->value = 32;
     DisplayTransition_FillTilemapAndSolidTile(15);
     WaitFrames(1);
-    Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateFrame), 0xc80);
-    QUEUE_DISPLAY_CONTROL(*(volatile u16 *)0x04000000 | display->dispcnt);
+    Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFrame, 0x480);
+    IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
+                        0x20000);
     state->start = 0;
     state->end = 32;
     state->duration = frames;
@@ -86,21 +92,20 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
   case 4: {
     struct DisplayTransitionState *state;
 
-    display = (struct DisplayTransitionWindow *)*work;
-    state = DisplayTransition_AllocateAndClearState();
+    display = (struct TransitionMapWork *)Ram_HeapSlots->mapWork;
+    state = Func_080d019c();
     display->firstLine = 80;
     display->secondLine = 80;
     WaitFrames(1);
-    if (value == 0) {
-      Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_Update), 0xc80);
+    if (variant == 0) {
+      Scheduler_AddOrUpdateCallback(DisplayTransition_Update, 0x480);
       Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
       state->start = 80;
       state->end = 0;
       state->duration = frames;
       state->step = 0;
     } else {
-      Scheduler_AddOrUpdateCallback((s32)(DisplayTransition_UpdateFromCentre),
-                                    0xc80);
+      Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFromCentre, 0x480);
       Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
       state->start = 80;
       state->end = 0;
@@ -110,5 +115,6 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     break;
   }
   }
-  QUEUE_DISPLAY_CONTROL(*(volatile u16 *)0x04000000 | display->dispcnt);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
+                      0x20000);
 }

@@ -1,85 +1,84 @@
-// Draft, differ 75 of 106: the field inspect handler. Ids 242 to 247 show a
-// fixed pair of messages; any other id looks up its group 3 descriptor, shows
-// its "checked" message and runs its handler (a ROM address) or shows its
-// message (0x004xxxxx) when its condition holds. No ☀️ twin found. Left:
-// register choice (the native keeps id in r5 and the index in r6, then the
-// descriptor in r5 and the message index in r6; this draft swaps them) and
-// block order: the native tests 0xf000000, then 0xfff00000 == 0x400000
-// inline before the handler path, with the message path after it; written
-// as if / else if (here) the second test follows the handler path, and the
-// nested if-not form differs 81. The packed word is signed (asrs).
+// Draft, differ 59 of 106 (2026-10-18), from the listing: the search
+// command. Collision codes 242 to 247 show their pair of messages from
+// Data_080eff22; otherwise the search event (kind 3) of the cell runs: its
+// "checked the ..." message, then its message or callback, or the matching
+// "found nothing" message. The messages are linker symbols the .po files do
+// not name yet: MsgSearchStart is message 3524 in English (3985 in German,
+// Spanish, French and Italian, 3525 in Japanese) and the base of the "X
+// checked the Y..." lines, MsgSearchEmpty 3567 (4028) the base of the
+// "found nothing" lines, MsgButFoundNothing 3615 (4076). Left: the id and
+// its index (id - 242) take r5 and r6 in the native, the result's two
+// paths are laid out the other way round, and six minutes of permute
+// found 52 at best.
 #include "types.h"
-#include "event_work.h"
-#include "flag_call.h"
 #include "party_state.h"
 
-void *Func_080ccd78(s32 group, s32 id);
-s32 GameFlag_IsConditionActive(s32 condition);
-void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 flags);
-
-extern const u8 Data_080eff22[];
-
-// Unnamed messages, given draft names: the "checked the ..." openers from
-// 3524, their results from 3567, and the plain search of the ground.
-extern char MsgCheckedBase[];
-extern char MsgCheckResultBase[];
-extern char MsgCheckedGround[];
-extern char MsgFoundNothingOnGround[];
-extern char MsgFoundNothing[];
-
-struct InspectDescriptor {
-  s32 packed;
-  u16 flags;
+struct SceneEvent {
+  s32 flags;
+  u8 target;
+  u8 unk05;
   s16 condition;
-  s32 handler;
+  u32 result;
 };
 
-#define FLAG_INSPECT_SHOWN 322
+extern const u8 Data_080eff22[];
+extern char MsgSearchStart[];
+extern char MsgSearchEmpty[];
+extern char MsgButFoundNothing[];
+void EventRuntime_PrepareCurrentObject(void);
+void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 flags);
+struct SceneEvent *Func_080ccd78(s32 kind, s32 target);
+s32 GameFlag_IsConditionActive(s32 condition);
+void GameFlag_SetBit(s32 flag);
+void GameFlag_ClearBit(s32 flag);
+s32 GameFlag_Test(s32 flag);
 
 s32 Func_080cd808(s32 id) {
-  struct InspectDescriptor *desc;
-  s32 message;
+  struct SceneEvent *event;
+  s32 index;
+  s32 kind;
   s32 condition;
-  u32 handler;
+  u32 result;
 
-  message = id - 242;
-  if ((u32)message <= 5) {
-    s32 index;
+  index = id - 242;
+  if ((u32)index <= 5) {
+    s32 message;
 
     EventRuntime_PrepareCurrentObject();
-    index = Data_080eff22[message];
-    UiText_ShowPositionedMessageAndWaitFar((s32)MsgCheckedBase + index, 1);
-    UiText_ShowPositionedMessageAndWaitFar((s32)MsgCheckResultBase + index, 1);
+    message = Data_080eff22[index];
+    UiText_ShowPositionedMessageAndWaitFar(message + (s32)MsgSearchStart, 1);
+    UiText_ShowPositionedMessageAndWaitFar(message + (s32)MsgSearchEmpty, 1);
     return 0;
   }
-  desc = Func_080ccd78(3, id);
-  if (desc != NULL) {
-    condition = desc->condition;
-    message = (desc->packed >> 4) & 31;
-    if (!(desc->flags & 0x400) && message != 0) {
+  event = Func_080ccd78(3, id);
+  if (event != NULL) {
+    condition = event->condition;
+    kind = (event->flags >> 4) & 31;
+    if (!(*(u16 *)&event->target & 0x400) && kind != 0) {
       EventRuntime_PrepareCurrentObject();
-      UiText_ShowPositionedMessageAndWaitFar((s32)MsgCheckedBase + message, 1);
-      GameFlag_SetBit(FLAG_INSPECT_SHOWN);
+      UiText_ShowPositionedMessageAndWaitFar(kind + (s32)MsgSearchStart, 1);
+      GameFlag_SetBit(0x142);
     } else {
-      GameFlag_ClearBit(FLAG_INSPECT_SHOWN);
+      GameFlag_ClearBit(0x142);
     }
-    handler = desc->handler;
-    if (handler & 0xf000000) {
+    result = event->result;
+    if ((result & 0xf000000) == 0) {
+      if ((result & 0xfff00000) == 0x400000) {
+        if (GameFlag_IsConditionActive(condition))
+          UiText_ShowPositionedMessageAndWaitFar((u16)event->result, 1);
+        else
+          UiText_ShowPositionedMessageAndWaitFar((s32)MsgButFoundNothing, 1);
+      }
+    } else {
       if (GameFlag_IsConditionActive(condition))
-        ((void (*)(s32))desc->handler)(gPartyState.currentOwner);
-      if (GameFlag_Test(FLAG_INSPECT_SHOWN))
-        UiText_ShowPositionedMessageAndWaitFar(
-            (s32)MsgCheckResultBase + message, 1);
-    } else if ((handler & 0xfff00000) == 0x400000) {
-      UiText_ShowPositionedMessageAndWaitFar(
-          GameFlag_IsConditionActive(condition) ? (u16)desc->handler
-                                                : (s32)MsgFoundNothing,
-          1);
+        ((void (*)(s32))event->result)(gPartyState.currentOwner);
+      if (GameFlag_Test(0x142))
+        UiText_ShowPositionedMessageAndWaitFar(kind + (s32)MsgSearchEmpty, 1);
     }
   } else {
-    UiText_ShowPositionedMessageAndWaitFar((s32)MsgCheckedGround, 1);
-    UiText_ShowPositionedMessageAndWaitFar((s32)MsgFoundNothingOnGround, 1);
+    UiText_ShowPositionedMessageAndWaitFar((s32)MsgSearchStart + 5, 1);
+    UiText_ShowPositionedMessageAndWaitFar((s32)MsgSearchEmpty + 5, 1);
   }
-  GameFlag_ClearBit(FLAG_INSPECT_SHOWN);
+  GameFlag_ClearBit(0x142);
   return 0;
 }

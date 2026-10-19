@@ -24,7 +24,11 @@ struct PartyState {
   s16 special;
   u8 unk1f8[2];
   s16 map;
-  u8 unk1fc[0x12];
+  s32 x; // the party's position on entering, as ☀️'s gGameState
+  s32 y;
+  s32 z;
+  s32 heading;
+  u16 turn;
   s16 sceneCue;
   s16 cue;
   u8 renderMode;

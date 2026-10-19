@@ -1,102 +1,138 @@
-// Draft, differ 31 of 196: starts the random particle emitter at an event
-// actor. The leader's emitter goes one step ahead of it, snapped to the cell
-// centre; in particle mode the old spawners and particles go first. The new
-// object takes its sprite tiles from a decoded heap block, and in particle mode
-// replaces any marker on the same cell. No ☀️ twin found. Left: register
-// choice in the last loop, where the native keeps the object and count in r0
-// and r1 and this draft in r5 and r6 (a search loop with the destroy after it
-// differs more), with a few moves one slot apart before it. The event actors
-// are an array field (through a cast pointer the slot address is formed the
-// other way round: differ 33); the sprite stores are FieldSprite bitfields
-// (QImode masks -33 and -13).
+// Near miss, differ 2 of 196 (2026-10-18): ⚓️'s
+// BattleFx_StartRandomParticleEmitter: shows the picture of item above actor
+// (in front of the controlled owner, on the centre of the cell), clearing
+// Reveal's sparkles first. The source actor and the picture are one
+// variable (their register is shared), the tile is a 10-bit bitfield, and
+// the mask idiom is rising.c's. The pin and the barrier around the spawn's
+// position (differ 8 and 6 without them) are devices to tag under S2 before
+// adoption. Left: the native copies actor (adds r5, r0) after the heap
+// slots' lsls, this draft right after its movs. Tried: the actor's offset
+// computed first as ☀️ does (no change), the heap slots in a pinned r6
+// (41), the argument copied behind a barrier (35), five minutes of permute.
 #include "types.h"
-#include "event_work.h"
-#include "field_sprite.h"
-#include "object_runtime.h"
 #include "ram_buffer.h"
+#include "object_runtime.h"
 
-void WaitFrames(s32 count);
+struct EmitterWork {
+  u8 unk000[0x14];
+  struct ObjectRuntime *actors[(0xca4 - 0x14) / 4];
+  s8 revealActive;
+};
+
+struct EffectVisual {
+  u8 unk00[5];
+  u8 flags05;
+  u8 unk06[2];
+  u16 tile : 10;
+  u16 attributes : 6;
+  u8 unk0a[6];
+  u8 tileSlot;
+  u8 unk11[9];
+  u8 value1a;
+  u8 value1b;
+};
+
+extern const u8 gData_080effd8[];
+extern const u8 gBattleFx_ParticleScript[];
+extern const u8 Data_080f01b8[];
+s32 EventRuntime_GetControlledOwner(void);
+void Vector_AddPolarOffset(s32 length, s32 angle, s32 *position);
 void Object_Destroy(struct ObjectRuntime *object);
-void Vector_AddPolarOffset(s32 distance, s32 angle, s32 *position);
-struct ObjectRuntime *Func_080200c0(s32 sprite, s32 x, s32 y, s32 z);
+void WaitFrames(s32 frames);
+struct ObjectRuntime *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_InitializeFar(struct ObjectRuntime *object,
-                                  const void *script);
+                                  const u8 *script);
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
-void Func_08038248(s32 kind);
-s32 VramCache_Load(u32 slot, u32 size, const void *source);
+void Func_08038248(s32 item);
+s32 VramCache_Load(u32 slot, u32 size, const void *picture);
 void BattleFx_SpawnRandomParticleAtPosition(void);
 void Marker_MoveLeaderAwayFromEmitter(void);
 
-struct EventActors {
-  u8 unk00[20];
-  struct ObjectRuntime *actors[64];
-};
-
-extern s32 gBattleFx_ParticleScript[];
-extern s32 Data_080f01b8[];
-extern const u8 gData_080effd8[];
-
-struct ObjectRuntime *BattleFx_StartRandomParticleEmitter(s32 id, s32 kind) {
-  u8 *work = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *actor = ((struct EventActors *)work)->actors[id];
+struct ObjectRuntime *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
+  struct EmitterWork *work = Ram_HeapSlots->eventWork;
+  struct ObjectRuntime *picture = work->actors[actor];
   struct ObjectRuntime *object;
-  struct FieldSprite *sprite;
-  u8 *tiles;
+  struct EffectVisual *visual;
   s32 position[3];
+  u8 *buffer;
+  s32 tile;
   s32 i;
+  s32 zero;
+  s32 mask;
 
-  if (actor == NULL)
+  if (picture == NULL)
     return NULL;
-  position[0] = actor->x;
-  position[1] = actor->y;
-  position[2] = actor->z;
-  if (id == EventRuntime_GetControlledOwner()) {
-    Vector_AddPolarOffset(0x100000, actor->angle, position);
+  position[0] = picture->x;
+  position[1] = picture->y;
+  position[2] = picture->z;
+  if (actor == EventRuntime_GetControlledOwner()) {
+    Vector_AddPolarOffset(0x100000, picture->angle, position);
     position[0] = (position[0] & 0xfff00000) + 0x80000;
     position[2] = (position[2] & 0xfff00000) + 0x80000;
   }
-  if (*(s8 *)(work + 0xca4) != 0) {
+  if (work->revealActive != 0) {
     object = Ram_HeapSlots->scriptObjects;
-    for (i = 63; i >= 0; i--, object++) {
+    i = 63;
+    do {
       if (object->script != NULL) {
         if (object->update == BattleFx_SpawnRandomParticleAtPosition)
           Object_Destroy(object);
-        if (object->script == gBattleFx_ParticleScript)
+        if (object->script == (s32 *)gBattleFx_ParticleScript)
           Object_Destroy(object);
       }
-    }
+      i--;
+      object++;
+    } while (i >= 0);
   }
   WaitFrames(3);
-  actor = Func_080200c0(489, position[0], position[1] + 0x100000, position[2]);
-  if (actor == NULL)
+  {
+    register s32 *p asm("r2") = position;
+    s32 x = p[0];
+    s32 y = p[1];
+
+    __asm__ volatile("");
+    picture = Func_080200c0(489, x, y + 0x100000, position[2]);
+  }
+  if (picture == NULL)
     return NULL;
-  ObjectDispatch_InitializeFar(actor, gData_080effd8);
-  sprite = actor->animation;
-  sprite->nextFrame = 0;
-  sprite->unk1b[0] = 0;
-  sprite->fullColor = 0;
-  sprite->palette = 0;
-  sprite->priority = 1;
-  actor->motionFlags = 2;
-  actor->terrainHeight = position[1];
-  actor->velocityY = 0x20000;
-  actor->gravity = 0x4000;
-  tiles = Runtime_AllocateHeapBlock(68, 0x608);
-  Func_08038248(kind);
-  sprite->tile = VramCache_Load(sprite->vramBlock, 128, tiles + 0x400);
+  ObjectDispatch_InitializeFar(picture, gData_080effd8);
+  visual = picture->animation;
+  zero = 0;
+  visual->value1a = zero;
+  visual->value1b = zero;
+  visual->flags05 &= zero - 33;
+  mask = ((u8 *)visual)[9] & 0x0f;
+  {
+    s32 clear = 13;
+
+    clear = -clear;
+    mask &= clear;
+  }
+  mask |= 4;
+  ((u8 *)visual)[9] = mask;
+  picture->motionFlags = 2;
+  picture->terrainHeight = position[1];
+  picture->velocityY = 0x20000;
+  picture->gravity = 0x4000;
+  buffer = Runtime_AllocateHeapBlock(68, 0x608);
+  Func_08038248(item);
+  tile = VramCache_Load(visual->tileSlot, 128, buffer + 0x400);
+  visual->tile = tile;
   Runtime_ReleaseHeapBlock(68);
-  actor->update = Marker_MoveLeaderAwayFromEmitter;
-  if (*(s8 *)(work + 0xca4) != 0) {
-    object = Ram_HeapSlots->scriptObjects;
-    for (i = 0; i <= 63; i++, object++) {
-      if (object->script != NULL && object->script == Data_080f01b8 &&
-          object->x >> 20 == actor->x >> 20 &&
-          object->z >> 20 == actor->z >> 20) {
-        Object_Destroy(object);
+  picture->update = Marker_MoveLeaderAwayFromEmitter;
+  if (work->revealActive != 0) {
+    struct ObjectRuntime *marker = Ram_HeapSlots->scriptObjects;
+    s32 j;
+
+    for (j = 0; j <= 63; j++, marker++) {
+      if (marker->script != NULL && marker->script == (s32 *)Data_080f01b8 &&
+          marker->x >> 20 == picture->x >> 20 &&
+          marker->z >> 20 == picture->z >> 20) {
+        Object_Destroy(marker);
         break;
       }
     }
   }
-  return actor;
+  return picture;
 }

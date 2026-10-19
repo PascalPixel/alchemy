@@ -212,7 +212,7 @@ s32 TolbiSpring_Initialize(void) {
       }
     }
   } else {
-    if (Engine_GameFlagIsSet(FLAG_COLOSSO_ENDED)) {
+    if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER)) {
       Engine_ActorSetPosition(TOLBI_SPRING_SOLDIER, 0, 0);
     }
     gOamCopyEnabled = 1;
@@ -1461,8 +1461,8 @@ const struct SceneEvent gTolbiSpringEventsOther[] = {
     { EVENT_TALK, TOLBI_SPRING_WHEELS_RULES_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_ReadLuckyWheelsRules) },
     { EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringLuckyDiceThrowTheDiceOn) },
     { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringLuckyDiceIfTwoNumbersMatch) },
-    { EVENT_TALK, TOLBI_SPRING_SOLDIER, FLAG_COLOSSO_FINALS_DAY, MSGNO(MsgTolbiSpringYeahThatDiceGameLooksKinda) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_SPRING_SOLDIER, FLAG_COLOSSO_FINALS_DAY, MSGNO(MsgTolbiSpringILikePlayingLuckyDiceBut) },
+    { EVENT_TALK, TOLBI_SPRING_SOLDIER, FLAG_BABI_SAVED, MSGNO(MsgTolbiSpringYeahThatDiceGameLooksKinda) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_SPRING_SOLDIER, FLAG_BABI_SAVED, MSGNO(MsgTolbiSpringILikePlayingLuckyDiceBut) },
     { EVENT_TALK, TOLBI_SPRING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringOhThereAreAlwaysScalpersAt) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_SPRING_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringTheresNoWayPoorSoldiersLike) },
     { SCENE_EVENTS_END },

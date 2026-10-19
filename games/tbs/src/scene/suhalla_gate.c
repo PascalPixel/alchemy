@@ -86,7 +86,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
     return gSuhallaGatePlacements2;
   }
   if (scene == (s32)&SceneId_SuhallaGate1) {
-    if (Engine_GameFlagIsSet(FLAG_BABI_AUDIENCE_AFTER_COLOSSO) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
       return gSuhallaGatePlacements1AfterAudience;
     }
     return gSuhallaGatePlacements1;
@@ -125,9 +125,9 @@ s32 Scene_Initialize(void) {
     if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_SOLDIER_VANISHED))
       Engine_ActorSetPosition(VANISHING_SOLDIER, 0, 0);
 #if TBS_PATCH_3
-    else if (Engine_GameFlagIsSet(FLAG_BABI_AUDIENCE_AFTER_COLOSSO))
+    else if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO))
       Map_CopyCellAttributes(0, 0, 2, 1, 29, 18);
-    if (Engine_GameFlagIsSet(FLAG_BABI_AUDIENCE_AFTER_COLOSSO)) {
+    if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
       Map_CopyCellAttributes(0, 0, 2, 1, 8, 25);
       Map_CopyCellAttributes(0, 0, 2, 1, 9, 26);
     }
@@ -147,7 +147,7 @@ s32 Scene_Initialize(void) {
     }
     if (gGameState.entrance == ENTRANCE_SOUTH) {
       Engine_GameFlagSet(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
-      if (!Engine_GameFlagIsSet(FLAG_BABI_AUDIENCE_AFTER_COLOSSO))
+      if (!Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO))
         Map_CopyCellAttributes(6, 0, 2, 1, 8, 27);
     }
     if (gGameState.entrance == ENTRANCE_EAST)
@@ -523,7 +523,7 @@ struct SceneEvent gSuhallaGateEventsOther[] = {
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
     { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveForWorldMap) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterHouse) },
-    { EVENT_TOUCH, 10, FLAG_BABI_AUDIENCE_AFTER_COLOSSO, EVENT_SCRIPT(Event_GuardsBlockPassage) },
+    { EVENT_TOUCH, 10, FLAG_BABI_SPOKE_AFTER_COLOSSO, EVENT_SCRIPT(Event_GuardsBlockPassage) },
     { EVENT_TOUCH, 10, FLAG_SUHALLA_GATE_ATTACK_SEEN, EVENT_SCRIPT(Event_IodemQuestionsGuards) },
     { EVENT_TALK, 8, FLAG_SUHALLA_GATE_ATTACK_SEEN, MSGNO(MsgSuhallaTravelPapersRequired) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgSuhallaSendHelpFromTower) },

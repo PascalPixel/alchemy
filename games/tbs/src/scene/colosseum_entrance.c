@@ -122,7 +122,7 @@ const struct ScenePlacement *ColosseumEntrance_GetPlacements(void) {
   } else if (gGameState.scene == (s32)&SceneId_ColosseumEntrance3) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       table = gColosseumEntrancePlacements3AfterColosso;
-    } else if (Engine_GameFlagIsSet(FLAG_COLOSSO_FINALS_DAY) != 0) {
+    } else if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
       table = gColosseumEntrancePlacements3FinalsDay;
     } else {
       table = gColosseumEntrancePlacements3;
@@ -156,7 +156,7 @@ const struct SceneEvent *ColosseumEntrance_GetEvents(void) {
 // get in to see Colosso; on the finals day the colosseum is already full.
 static void Event_DiscussSeating(void) {
   Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_COLOSSO_FINALS_DAY)) {
+  if (Engine_GameFlagIsSet(FLAG_BABI_SAVED)) {
     Engine_EventSetMessage(MsgColosseumColosseumAlreadyFullIfReally);
     Engine_EventShowMessage(10, 0);
   } else {
@@ -170,7 +170,7 @@ static void Event_DiscussSeating(void) {
 // day, a good spot costs too much.
 static void Event_DiscussLuckyGuessSeats(void) {
   Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_COLOSSO_FINALS_DAY)) {
+  if (Engine_GameFlagIsSet(FLAG_BABI_SAVED)) {
     Engine_ActorShowEmote(13, 258, 40);
     Engine_EventSetMessage(MsgColosseumWantWatchFinalsFromGood);
     Engine_EventShowMessage(13, 0);
@@ -185,7 +185,7 @@ static void Event_DiscussLuckyGuessSeats(void) {
 // finals day a scalper, busy with a customer, asks if the party wants seats.
 static void Event_DiscussLuckyGuessWinnings(void) {
   Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_COLOSSO_FINALS_DAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
     Engine_ActorRunRepeatedMotion(14, 2);
     Engine_EventSetMessage(MsgColosseumHoldOnSecond);
     ColosseumEntrance_ShowMessageAndPause(14);
@@ -204,7 +204,7 @@ static void Event_DiscussLuckyGuessWinnings(void) {
 // and refuses him, as finalists may not play (0x3c0: said once).
 static void Event_OfferLuckyGuess(void) {
   Engine_EventBegin();
-  if (GameFlag_IsSet(FLAG_COLOSSO_FINALS_DAY) != 0) {
+  if (GameFlag_IsSet(FLAG_BABI_SAVED) != 0) {
     if (GameFlag_IsSet(0x3c0) != 0) {
       Engine_EventSetMessage(MsgColosseumLookImSorryButWe);
       Event_ShowMessage(16, 0);
@@ -362,7 +362,7 @@ static void Event_CrowdRecognizesIsaac(void) {
   // The native sequence reuses this word for actor handles and the reply.
   s32 actorOrAnswer;
 
-  if (Engine_GameFlagIsSet(FLAG_COLOSSO_FINALS_DAY) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) == 0) {
     return;
   }
 
@@ -1107,7 +1107,7 @@ static void ColosseumEntrance_UpdateEntranceCells(void) {
     Map_CopyCellAttributes(14, 8, 2, 1, column, row);
   } else {
     Engine_ActorSetChildValue(16, 2);
-    if (Engine_GameFlagIsSet(FLAG_COLOSSO_FINALS_DAY) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
       column = 14;
       row = 11;
       Map_CopyCellAttributes(30, 22, 1, 2, column, row);
@@ -2017,37 +2017,37 @@ struct SceneEvent gColosseumEntranceEvents1[] = {
 struct SceneEvent gColosseumEntranceEvents3[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TALK, 8, FLAG_COLOSSO_FINALS_DAY, MSGNO(MsgColosseumEntranceTheyreHoldingThePreliminaryColossoHeats) },
+    { EVENT_TALK, 8, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceTheyreHoldingThePreliminaryColossoHeats) },
     { EVENT_TALK, 8, FLAG_COLOSSO_OVER, MSGNO(MsgColosseumEntranceTheFinalsAreFinallyHereI) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceColossoIsOverAndTheColosseum) },
-    { EVENT_TALK, 9, FLAG_COLOSSO_FINALS_DAY, MSGNO(MsgColosseumEntranceSighTheColosseumIsPackedWith) },
+    { EVENT_TALK, 9, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceSighTheColosseumIsPackedWith) },
     { EVENT_TALK, 9, FLAG_COLOSSO_OVER, MSGNO(MsgColosseumEntranceIHeardBabiHasPickedSome) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceTheColosseumIsClosedUntilNext) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DiscussSeating) },
-    { EVENT_TALK, 11, FLAG_COLOSSO_FINALS_DAY, MSGNO(MsgColosseumEntranceIfYouHitItBigIn) },
+    { EVENT_TALK, 11, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceIfYouHitItBigIn) },
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceAWarriorNamedIsaacWasSelected) },
-    { EVENT_TALK, 12, FLAG_COLOSSO_FINALS_DAY, MSGNO(MsgColosseumEntranceIveBeenBettingOnTheLucky) },
+    { EVENT_TALK, 12, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceIveBeenBettingOnTheLucky) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceHavingAWarriorWhoWasntIn) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DiscussLuckyGuessSeats) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DiscussLuckyGuessWinnings) },
     { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OfferLuckyGuess) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_COLOSSO_FINALS_DAY, MSGNO(MsgColosseumEntranceIWonderWhichWarriorWillBe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceIWonderWhichWarriorWillBe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_COLOSSO_OVER, MSGNO(MsgColosseumEntranceTheRealBattlesAreAboutTo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceWhenTheColosseumGatesFinallyShut) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_COLOSSO_FINALS_DAY, MSGNO(MsgColosseumEntranceHavingToArriveSoEarlyJust) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceHavingToArriveSoEarlyJust) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_COLOSSO_OVER, MSGNO(MsgColosseumEntranceTheWarriorNamedIsaacIsSure) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceTheFightingAtThisYearsColosso) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_COLOSSO_FINALS_DAY, MSGNO(MsgColosseumEntranceThereAreSoManyPeopleWho) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceThereAreSoManyPeopleWho) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceOfCourseItsTheRichWho) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_COLOSSO_FINALS_DAY, MSGNO(MsgColosseumEntranceImGoingToPickTheBiggest) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceImGoingToPickTheBiggest) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceThereCanBeUpsetsInThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_COLOSSO_FINALS_DAY, MSGNO(MsgColosseumEntranceImFeelingConfidentThisTimeIm) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceImFeelingConfidentThisTimeIm) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceWhatKindOfWarriorIsThat) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_COLOSSO_FINALS_DAY, MSGNO(MsgColosseumEntranceEveryoneKeepsRiskingMoreAndMore) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceEveryoneKeepsRiskingMoreAndMore) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceMaybeIWillBuyASeat) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, FLAG_COLOSSO_FINALS_DAY, MSGNO(MsgColosseumEntranceEveryYearIGoAfterA) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceEveryYearIGoAfterA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceImGoingToBeInTrouble) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_COLOSSO_FINALS_DAY, MSGNO(MsgColosseumEntranceOnceTheTrialsAreOverIts) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_BABI_SAVED, MSGNO(MsgColosseumEntranceOnceTheTrialsAreOverIts) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceAllOfTheProfitsFromThe) },
     { EVENT_TOUCH, 10, FLAG_COLOSSO_OVER, EVENT_SCRIPT(Event_CrowdRecognizesIsaac) },
     { SCENE_EVENTS_END },

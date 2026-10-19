@@ -197,17 +197,17 @@ static void Tolbi_TalkToOlderBrother(void) {
   Engine_EventBegin();
   kid->kidFlags |= KID_TALKING;
   if (work->psynergyRequest == 0) {
-    if (Engine_GameFlagIsSet(FLAG_COLOSSO_ENDED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       msg = MsgTolbiYayEasyRun;
-    } else if (Engine_GameFlagIsSet(FLAG_COLOSSO_FINALS_DAY) != 0) {
+    } else if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
       msg = MsgTolbiHoorayFinalsSeven;
     } else {
       msg = MsgTolbiWheeFestivalColosso;
     }
   } else {
-    if (Engine_GameFlagIsSet(FLAG_COLOSSO_ENDED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       msg = MsgTolbiMainStreetTolbi;
-    } else if (Engine_GameFlagIsSet(FLAG_COLOSSO_FINALS_DAY) != 0) {
+    } else if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
       msg = MsgTolbiWinBigUsed;
     } else {
       msg = MsgTolbiOldestShouldntShare;
@@ -235,17 +235,17 @@ static void Tolbi_TalkToYoungerSibling(void) {
   Engine_EventBegin();
   kid->kidFlags |= KID_TALKING;
   if (work->psynergyRequest == 0) {
-    if (Engine_GameFlagIsSet(FLAG_COLOSSO_ENDED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       msg = MsgTolbiHaHaHa;
-    } else if (Engine_GameFlagIsSet(FLAG_COLOSSO_FINALS_DAY) != 0) {
+    } else if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
       msg = MsgTolbiWaahBigBrother;
     } else {
       msg = MsgTolbiWaahSaidMoney;
     }
   } else {
-    if (Engine_GameFlagIsSet(FLAG_COLOSSO_ENDED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       msg = MsgTolbiBrotherMeanDuring;
-    } else if (Engine_GameFlagIsSet(FLAG_COLOSSO_FINALS_DAY) != 0) {
+    } else if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
       msg = MsgTolbiMamaWhyListen;
     } else {
       msg = MsgTolbiMamaToldShare;
@@ -263,10 +263,10 @@ static void Tolbi_TalkToYoungerSibling(void) {
 
 // Picks the event table for Tolbi's current mood.
 u8 *Tolbi_SelectEvents(void) {
-  if (Engine_GameFlagIsSet(FLAG_COLOSSO_ENDED) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
     return (u8 *)gTolbiEventsAfterColosso;
   }
-  if (Engine_GameFlagIsSet(FLAG_COLOSSO_FINALS_DAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
     return (u8 *)gTolbiEventsFinalsDay;
   }
   return (u8 *)gTolbiEventsFestival;
@@ -437,7 +437,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
 
   // After Colosso the crowd has gone home: actors 20 to 27 (but 23) are
   // moved off the map. On finals day the scalper waits by the gate.
-  if (Engine_GameFlagIsSet(FLAG_COLOSSO_ENDED) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
     Actor_SetPosition(20, PIXELS(520), PIXELS(560));
     Actor_SetPosition(21, PIXELS(520), PIXELS(560));
     Actor_SetPosition(22, PIXELS(520), PIXELS(560));
@@ -446,7 +446,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
     Actor_SetPosition(TOLBI_CRYING_CHILD, PIXELS(520), PIXELS(560));
     Actor_SetPosition(TOLBI_SCALPER, PIXELS(520), PIXELS(560));
   } else {
-    if (Engine_GameFlagIsSet(FLAG_COLOSSO_FINALS_DAY) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
       Actor_SetPosition(TOLBI_SCALPER, PIXELS(280), PIXELS(80));
       Actor_FaceDirection(TOLBI_SCALPER, FACING_SOUTHEAST, 0);
       Engine_ActorSetAnimation(TOLBI_SCALPER, ANIM_STAND);

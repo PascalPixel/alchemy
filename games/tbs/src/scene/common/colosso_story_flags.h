@@ -3,9 +3,6 @@
 #ifndef ALCHEMY_COLOSSO_STORY_FLAGS_H
 #define ALCHEMY_COLOSSO_STORY_FLAGS_H
 
-enum ColossoStoryFlag {
-  FLAG_COLOSSO_ENDED = 0x950,      // "this year's Colosso has ended"
-  FLAG_COLOSSO_FINALS_DAY = 0x962, // "the finals start today"
-};
+#include "flags.h"
 
 #endif

@@ -45,7 +45,7 @@ const u32 *Scene_GetExits(void) { return gSuhallaExits; }
 
 // The townsfolk, who stand elsewhere after Babi's audience.
 const struct ScenePlacement *Scene_GetPlacements(void) {
-  if (Engine_GameFlagIsSet(FLAG_BABI_AUDIENCE_AFTER_COLOSSO) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gSuhallaPlacementsLater;
   }
   return gSuhallaPlacements;
@@ -120,7 +120,7 @@ static void Event_EnterWideDoor(void) {
 // The doors, the townsfolk, the treasure and the sprout, before or after
 // Babi's audience.
 const struct SceneEvent *Scene_GetEvents(void) {
-  if (Engine_GameFlagIsSet(FLAG_BABI_AUDIENCE_AFTER_COLOSSO) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gSuhallaEventsLater;
   }
   return gSuhallaEvents;
@@ -132,7 +132,7 @@ s32 Scene_Initialize(void) {
   struct EventWork *work;
 
   if (gGameState.entrance == ENTRANCE_90) {
-    Engine_GameFlagSet(FLAG_BABI_AUDIENCE_AFTER_COLOSSO);
+    Engine_GameFlagSet(FLAG_BABI_SPOKE_AFTER_COLOSSO);
   }
 
   work = gEventWork;

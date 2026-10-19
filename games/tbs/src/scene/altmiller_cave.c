@@ -760,7 +760,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   s32 evb;
 
   // Give Babi the draught and bring the party beside him.
-  GameFlag_Set(FLAG_BABI_RESCUED);
+  GameFlag_Set(FLAG_BABI_SAVED);
   // Item 237 is the Mystic Draught.
   Engine_PartyRemoveItem(237);
   Engine_EventBegin();
@@ -1831,7 +1831,7 @@ static void AltmillerCave_RepeatRockOrder(void) {
 static void AltmillerCave_BabiCallsPartyBack(void) {
   if (Engine_GameFlagIsSet(FLAG_MET_INVISIBLE_BABI) == 0)
     return;
-  if (Engine_GameFlagIsSet(FLAG_BABI_RESCUED) != 0)
+  if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0)
     return;
 
   Engine_GameFlagSet(FLAG_BABI_CALLED_PARTY_BACK);
@@ -1932,7 +1932,7 @@ s32 AltmillerCave_Initialize(void) {
     }
   }
   if (gGameState.scene == (s32)&SceneId_AltmillerCave2) {
-    if (Engine_GameFlagIsSet(FLAG_BABI_RESCUED)) {
+    if (Engine_GameFlagIsSet(FLAG_BABI_SAVED)) {
       Engine_ActorSetPosition(ACTOR_INVISIBLE_BABI, 0, 0);
     } else {
       actor = Object_GetById(ACTOR_INVISIBLE_BABI);
@@ -2343,12 +2343,12 @@ struct SceneEvent gAltmillerCave_Events2[] = {
     {0x31, 11, CONDITION_ALWAYS, 11},
     {EVENT_TALK, ACTOR_INVISIBLE_BABI, FLAG_MET_INVISIBLE_BABI, EVENT_SCRIPT(AltmillerCave_MeetInvisibleBabi)},
     {EVENT_TALK, ACTOR_INVISIBLE_BABI, FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT, EVENT_SCRIPT(AltmillerCave_RepeatRockOrder)},
-    {EVENT_TALK, ACTOR_INVISIBLE_BABI, FLAG_BABI_RESCUED, EVENT_SCRIPT(AltmillerCave_RestoreBabiAndInviteParty)},
+    {EVENT_TALK, ACTOR_INVISIBLE_BABI, FLAG_BABI_SAVED, EVENT_SCRIPT(AltmillerCave_RestoreBabiAndInviteParty)},
     {EVENT_TOUCH, 19, FLAG_BABI_CALLED_PARTY_BACK, EVENT_SCRIPT(AltmillerCave_BabiCallsPartyBack)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_INVISIBLE_BABI, FLAG_MET_INVISIBLE_BABI,
         EVENT_SCRIPT(AltmillerCave_MeetInvisibleBabi)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INVISIBLE_BABI, FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT, MSGNO(MsgAltmillerNeedDraught)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_INVISIBLE_BABI, FLAG_BABI_RESCUED,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_INVISIBLE_BABI, FLAG_BABI_SAVED,
         EVENT_SCRIPT(AltmillerCave_RestoreBabiAndInviteParty)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(AltmillerCave_EndReveal)},

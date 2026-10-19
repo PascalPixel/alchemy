@@ -117,8 +117,9 @@
 #define FLAG_MET_INVISIBLE_BABI 0x960 // Babi has asked for his draught
 // Babi has called the party back once as it made to leave without him.
 #define FLAG_BABI_CALLED_PARTY_BACK 0x961
-// The party has saved Babi in Altmiller Cave with his Mystic Draught.
-#define FLAG_BABI_RESCUED 0x962
+// The party has saved Babi in Altmiller Cave with his Mystic Draught; Tolbi
+// then holds the Colosso finals, and its scenes read this as the finals day.
+#define FLAG_BABI_SAVED 0x962
 #define FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT 0xf30 // behind the rocks' wall
 #define FLAG_ALTMILLER_CAVE_VIAL 0xf9c           // room 3's chest
 #define FLAG_ALTMILLER_CAVE_COOKIE 0xf9d         // room 5's chest
@@ -163,8 +164,9 @@
 #define FLAG_COLOSSO_CLEARED_TRIAL_SEEN 0x8a4 // a warrior cleared his trial
 #define FLAG_COLOSSO_FIRST_MATCH_WON 0x90e
 #define FLAG_COLOSSO_SECOND_MATCH_WON 0x90f
-#define FLAG_COLOSSO_OVER 0x950       // the colosseum is closed until next year
-#define FLAG_COLOSSO_FINALS_DAY 0x962 // the trials are over: the finals day
+// Also FLAG_COLOSSO_OVER (0x950): the colosseum is closed until next year.
+// Also FLAG_BABI_SAVED (0x962): the trials are over, the finals day.
+
 // Kalay
 // The inn's guests told the party about the Colosso tour to Tolbi.
 #define FLAG_KALAY_HEARD_OF_COLOSSO_TOUR 0x910
@@ -307,7 +309,7 @@
 // Suhalla
 // Set at Babi's palace as his audience after Colosso begins; afterwards
 // Suhalla's people talk of the Tolbi soldiers the sandstorms brought there.
-#define FLAG_BABI_AUDIENCE_AFTER_COLOSSO 0x96f
+// Also uses FLAG_BABI_SPOKE_AFTER_COLOSSO.
 // Iodem has found the wounded soldiers at Suhalla's inn and asked for Sheba.
 #define FLAG_IODEM_MET_WOUNDED_SOLDIERS 0x9b0
 
@@ -530,21 +532,21 @@
 #define FLAG_SCENE_TEMP_16 0x216 // Colosso log course: the third rock settled
 #define FLAG_SCENE_TEMP_34 0x234 // Colosseum waiting room: stepped to the line
 #define FLAG_SCENE_TEMP_35 0x235 // Colosseum waiting room: asked at the line
-#define FLAG_SCENE_TEMP_15 0x215 // Lunpa Fortress: set with FLAG_SCENE_TEMP_14
+// Also FLAG_SCENE_TEMP_15: Lunpa Fortress, set with FLAG_SCENE_TEMP_14.
 #define FLAG_SCENE_TEMP_17 0x217 // Lunpa Fortress: the first switch is hidden
 #define FLAG_SCENE_TEMP_18 0x218 // Lunpa Fortress: the second switch is hidden
 #define FLAG_SCENE_TEMP_24 0x224 // Lunpa Fortress: thrown out at the entrance
 #define FLAG_SCENE_TEMP_25 0x225 // Lunpa Fortress: the sentries saw the party
 #define FLAG_SCENE_TEMP_26 0x226 // Lunpa Fortress: the resident keeps quiet
 #define FLAG_SCENE_TEMP_27 0x227 // Lunpa Fortress: the resident was startled
-#define FLAG_SCENE_TEMP_40 0x240 // Lunpa gate: the guards block the gateway
-#define FLAG_SCENE_TEMP_41 0x241 // Lunpa gate: Cloak is cast
-#define FLAG_SCENE_TEMP_42 0x242 // Lunpa gate: the party enters the fortress
+// Also FLAG_SCENE_TEMP_40: Lunpa gate, the guards block the gateway.
+// Also FLAG_SCENE_TEMP_41: Lunpa gate, Cloak is cast.
+// Also FLAG_SCENE_TEMP_42: Lunpa gate, the party enters the fortress.
 #define FLAG_SCENE_TEMP_43 0x243 // Lunpa gate: Garet turns the leader back
 #define FLAG_SCENE_TEMP_44 0x244 // Lunpa gate: the guards caught the party
-#define FLAG_SCENE_TEMP_18 0x218 // Suhalla Desert: the storm holding the party
-#define FLAG_SCENE_TEMP_41 0x241 // Vale: the plaza's watching villager paused
-#define FLAG_SCENE_TEMP_42 0x242 // Vale: Kraden's gate stands open
+// Also FLAG_SCENE_TEMP_18: Suhalla Desert, the storm holds the party.
+// Also FLAG_SCENE_TEMP_41: Vale, the plaza's watching villager paused.
+// Also FLAG_SCENE_TEMP_42: Vale, Kraden's gate stands open.
 #define FLAG_SCENE_TEMP_50                                                     \
   0x250 // Vault interiors: the leader is beside the Bone
 #define FLAG_SCENE_TEMP_70 0x270 // Lunpa Fortress: Hammet's rescue has begun
@@ -602,10 +604,10 @@
 // Crossbone Isle's pursuer room: a pursuer is after the leader.
 #define FLAG_SCENE_TEMP_20 0x220
 // Crossbone Isle's first room: its four plants have grown.
-#define FLAG_SCENE_TEMP_40 0x240
-#define FLAG_SCENE_TEMP_41 0x241
-#define FLAG_SCENE_TEMP_42 0x242
-#define FLAG_SCENE_TEMP_43 0x243
+// Also uses FLAG_SCENE_TEMP_40.
+// Also uses FLAG_SCENE_TEMP_41.
+// Also uses FLAG_SCENE_TEMP_42.
+// Also uses FLAG_SCENE_TEMP_43.
 
 // Sol Sanctum
 // Kraden has said "This is it! We've found it!" in the hall of statues.
@@ -678,7 +680,7 @@
 #define FLAG_SOL_SANCTUM_HERB_FOUND 0xf40
 // The entrance hall: the party has entered the inner block room, and the
 // outer blocks no longer move.
-#define FLAG_SCENE_TEMP_34 0x234
+// Also uses FLAG_SCENE_TEMP_34.
 // The eruption: Saturos's group has gone, and the embers fall silently.
 #define FLAG_SCENE_TEMP_46 0x246
 
@@ -718,8 +720,8 @@
 // Plus the party member (0 to 3) who carried the Shaman's Rod when it was
 // handed over before the aerie's first battle; a defeat gives it back.
 #define FLAG_SHAMANS_ROD_OWNER 0x345
-#define FLAG_SCENE_TEMP_34 0x234
-#define FLAG_SCENE_TEMP_35 0x235
+// Also uses FLAG_SCENE_TEMP_34.
+// Also uses FLAG_SCENE_TEMP_35.
 #define FLAG_SCENE_TEMP_36 0x236
 #define FLAG_SCENE_TEMP_37 0x237
 

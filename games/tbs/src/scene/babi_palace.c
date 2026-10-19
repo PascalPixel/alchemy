@@ -116,7 +116,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
     return gBabiPalacePlacementsAfterColosso;
   }
-  if (Engine_GameFlagIsSet(FLAG_BABI_RESCUED) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
     return gBabiPalacePlacementsColosso;
   }
   return gBabiPalacePlacementsOther;
@@ -2271,7 +2271,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       return gBabiPalaceEvents2AfterColosso;
     }
-    if (Engine_GameFlagIsSet(FLAG_BABI_RESCUED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
       return gBabiPalaceEvents2Colosso;
     }
     return gBabiPalaceEvents2;
@@ -2279,7 +2279,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
     return gBabiPalaceEventsAfterColosso;
   }
-  if (Engine_GameFlagIsSet(FLAG_BABI_RESCUED) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
     return gBabiPalaceEventsColosso;
   }
   return gBabiPalaceEventsOther;
@@ -2298,10 +2298,10 @@ s32 BabiPalace_ApplyEntryState(void) {
   Map_SetLayerEntryFlag(2);
   Map_SetLayerEntryFlag(4);
   if (gGameState.entrance == 90) {
-    GameFlag_Set(FLAG_BABI_RESCUED);
+    GameFlag_Set(FLAG_BABI_SAVED);
   }
   if (gGameState.entrance == 91) {
-    GameFlag_Set(FLAG_BABI_RESCUED);
+    GameFlag_Set(FLAG_BABI_SAVED);
     GameFlag_Set(FLAG_COLOSSO_OVER);
   }
   if (gGameState.scene != (s32)&SceneId_BabiPalace2) {
@@ -2334,7 +2334,7 @@ s32 BabiPalace_ApplyEntryState(void) {
       }
       Actor_SetAnimation(ACTOR_BABI, 5);
       Actor_SetSpriteFlags(Actor_Get(ACTOR_BABI), 0);
-    } else if (GameFlag_IsSet(FLAG_BABI_RESCUED) &&
+    } else if (GameFlag_IsSet(FLAG_BABI_SAVED) &&
                !GameFlag_IsSet(FLAG_BABI_PALACE_FINALS_REST_OFFERED)) {
       Actor_SetPosition(ACTOR_FINALS_ATTENDANT, PIXELS(120), PIXELS(72));
     }

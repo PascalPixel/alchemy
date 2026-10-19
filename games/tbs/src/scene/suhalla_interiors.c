@@ -49,7 +49,7 @@ const u32 *Scene_GetExits(void) { return gSuhallaInteriorsExits; }
 // The townsfolk, joined after Babi's audience by Iodem, the wounded soldiers
 // and the travelers the sandstorms brought.
 const struct ScenePlacement *Scene_GetPlacements(void) {
-  if (Engine_GameFlagIsSet(FLAG_BABI_AUDIENCE_AFTER_COLOSSO) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gSuhallaInteriorsPlacementsAfterAudience;
   }
   return gSuhallaInteriorsPlacements;
@@ -62,7 +62,7 @@ static void Event_TalkToShopkeeper(s32 actorId) {
   u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
   if (facing == FACING_NORTH) {
     Engine_ShopOpen(SHOP_SUHALLA, actorId);
-  } else if (Engine_GameFlagIsSet(FLAG_BABI_AUDIENCE_AFTER_COLOSSO)) {
+  } else if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
     s32 question = MsgSuhallaArentSurprisedFind;
     Engine_EventSetMessage(question);
     Engine_EventOpenMessage(actorId, 0);
@@ -86,7 +86,7 @@ static void Event_TalkToInnkeeper(s32 actorId) {
   u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
   if (facing == FACING_NORTH) {
     Engine_InnCheckIn(INN_SUHALLA, actorId);
-  } else if (Engine_GameFlagIsSet(FLAG_BABI_AUDIENCE_AFTER_COLOSSO)) {
+  } else if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
     Engine_EventSetMessage(MsgSuhallaBusyEverSince);
     Engine_EventShowMessage(actorId, 0);
   } else {
@@ -102,7 +102,7 @@ static void Event_TalkToPriest(s32 actorId) {
   u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
   if (facing == FACING_NORTH) {
     Engine_ShopConfirmAct(actorId);
-  } else if (Engine_GameFlagIsSet(FLAG_BABI_AUDIENCE_AFTER_COLOSSO)) {
+  } else if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
     Engine_EventSetMessage(MsgSuhallaWonderWhySandstorms);
     Engine_EventShowMessage(actorId, 0);
   } else {
@@ -410,7 +410,7 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
 
 // The doors, the townsfolk and the ovens, before or after Babi's audience.
 const struct SceneEvent *Scene_GetEvents(void) {
-  if (Engine_GameFlagIsSet(FLAG_BABI_AUDIENCE_AFTER_COLOSSO) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gSuhallaInteriorsEventsAfterAudience;
   }
   return gSuhallaInteriorsEvents;
@@ -421,7 +421,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
 s32 Scene_Initialize(void) {
   union SceneActor *work;
   if (gGameState.entrance == ENTRANCE_90)
-    Engine_GameFlagSet(FLAG_BABI_AUDIENCE_AFTER_COLOSSO);
+    Engine_GameFlagSet(FLAG_BABI_SPOKE_AFTER_COLOSSO);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   gEventWork->transitionFrames = 24;
   ((union SceneActor *)Object_GetById(SHOPKEEPER))->bytes[89] |= 4;

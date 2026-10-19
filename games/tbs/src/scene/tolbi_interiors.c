@@ -61,7 +61,7 @@ u8 *TolbiInteriors_GetExits(void) { return gTolbiInteriorsExits; }
 
 // After Colosso the rooms hold a different crowd.
 s32 TolbiInteriors_SelectPlacements(void) {
-  if (Engine_GameFlagIsSet(FLAG_COLOSSO_ENDED) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
     return (s32)gTolbiInteriorsPlacementsAfterColosso;
   }
   return (s32)gTolbiInteriorsPlacements;
@@ -77,10 +77,10 @@ static void TolbiInteriors_AskWhetherBabiWasMissing(s32 speaker) {
 
 // Picks the event table for the current point in the Colosso story.
 u8 *TolbiInteriors_SelectEvents(void) {
-  if (Engine_GameFlagIsSet(FLAG_COLOSSO_ENDED) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
     return gTolbiInteriorsEventsAfterColosso;
   }
-  if (Engine_GameFlagIsSet(FLAG_COLOSSO_FINALS_DAY) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
     return gTolbiInteriorsEventsFinalsDay;
   }
   return gTolbiInteriorsEventsFestival;
@@ -236,7 +236,7 @@ s32 TolbiInteriors_ApplyEntryState(void) {
   struct FieldActor *actor;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  if (Engine_GameFlagIsSet(FLAG_COLOSSO_ENDED) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
     // Restore the changed room tiles and the sailors' fixed draw priority.
     Map_CopyCellAttributes(51, 47, 3, 1, 51, 45);
     actor = Object_GetById(TOLBI_INTERIORS_ANGRY_SAILOR);
@@ -280,10 +280,10 @@ static void TolbiInteriors_TalkToItemShopkeeper(s32 speaker) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_WEST) {
     Engine_ShopOpen(TOLBI_INTERIORS_ITEM_SHOP, speaker);
-  } else if (Engine_GameFlagIsSet(FLAG_COLOSSO_ENDED) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
     Engine_EventSetMessage(MsgTolbiRightOneWell);
     Engine_EventShowMessage(speaker, 0);
-  } else if (Engine_GameFlagIsSet(FLAG_COLOSSO_FINALS_DAY) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
     Engine_EventSetMessage(MsgTolbiRequireLotHealing);
     Engine_EventShowMessage(speaker, 0);
   } else {
@@ -297,9 +297,9 @@ static void TolbiInteriors_TalkToWeaponShopkeeper(s32 speaker) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
     Engine_ShopOpen(TOLBI_INTERIORS_WEAPON_SHOP, speaker);
-  } else if (Engine_GameFlagIsSet(FLAG_COLOSSO_ENDED) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
     TolbiInteriors_AskYesNo(MsgTolbiComeWayKalay, speaker);
-  } else if (Engine_GameFlagIsSet(FLAG_COLOSSO_FINALS_DAY) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
     Engine_EventSetMessage(MsgTolbiColossoFinalsFinally);
     Engine_EventShowMessage(speaker, 0);
   } else {
@@ -318,10 +318,10 @@ static void TolbiInteriors_TalkToArmorShopkeeper(s32 speaker) {
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
     Engine_ShopOpen(TOLBI_INTERIORS_ARMOR_SHOP, speaker);
   } else {
-    if (Engine_GameFlagIsSet(FLAG_COLOSSO_ENDED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       Engine_EventSetMessage(MsgTolbiWasntAbleWatch);
       Engine_EventShowMessage(speaker, 0);
-    } else if (Engine_GameFlagIsSet(FLAG_COLOSSO_FINALS_DAY) != 0) {
+    } else if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
       Engine_EventSetMessage(MsgTolbiMaybeCloseShop);
       Engine_EventShowMessage(speaker, 0);
     } else {
@@ -410,10 +410,10 @@ static void TolbiInteriors_TalkToPriest(s32 speaker) {
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
     Engine_SanctumOpen(speaker);
   } else {
-    if (Engine_GameFlagIsSet(FLAG_COLOSSO_ENDED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       Engine_EventSetMessage(MsgTolbiShipsArentGoing);
       Engine_EventShowMessage(speaker, 0);
-    } else if (Engine_GameFlagIsSet(FLAG_COLOSSO_FINALS_DAY) != 0) {
+    } else if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
       Engine_EventSetMessage(MsgTolbiMissFinalsTolbis);
       Engine_EventShowMessage(speaker, 0);
     } else {

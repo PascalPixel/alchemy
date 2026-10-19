@@ -1,6 +1,9 @@
-// near miss: differ 17 (listing 31 instructions, draft 30); the native keeps
-// the constant 0xffff0000 in r5 and finishes the first offset before the second
-// random call
+// Near miss, differ 4 of 31 (was 17): on odd frames the object
+// jitters by up to a pixel around its base position. Starting dy as a copy of
+// dx keeps the constant 0xffff0000 in r5 with the copy in r6, as the native
+// does (dx = dy = -0x10000 lets CSE add the second register). Left, scheduling:
+// the native loads the constant one insn earlier (before adds r3, r3, r0) and
+// shifts the second offset after it loads the position.
 #include "../../../../games/tla/src/scene/kibombo/kibombo.h"
 
 extern u8 gData_0200635c[];
@@ -22,7 +25,8 @@ s32 Func_02000054(struct KibomboObject *object) {
     s32 dx;
     s32 dy;
 
-    dx = dy = -0x10000;
+    dx = -0x10000;
+    dy = dx;
     dx += ((Random16Far() * 3) >> 16) << 16;
     dy += ((Random16Far() * 3) >> 16) << 16;
 

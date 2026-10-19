@@ -1,3 +1,5 @@
+// Gondowan Cave: the soldiers guarding the bridge to Gondowan, Iodem waiting
+// there on the way to Babi Lighthouse, and the cave's moving puzzles.
 #include "game_state.h"
 #include "global_cells.h"
 #include "scene_ids.h"
@@ -26,8 +28,20 @@
 #include "fixed_math.h"
 #include "flags.h"
 
+// The first room's actors: the soldiers who guard the bridge, and Iodem.
+#define SOLDIER_1 8
+#define SOLDIER_2 9
+#define SOLDIER_3 10
+#define IODEM 11
+
+// The third room's actors: two objects the party moves, and the one that
+// stands in for the second once it has moved.
+#define FIRST_OBJECT 8
+#define SECOND_OBJECT 9
+#define SECOND_OBJECT_MOVED 10
+
 // The leap event also runs after the shared staged-actor movement.
-static void GondowanCave_UpdateSecondObjectPosition(void);
+static void Event_MoveSecondObject(void);
 static void GondowanCave_RunSpinningLeap(s32 actorId);
 
 // Shared effect routines retain their position before the scene handlers.
@@ -41,7 +55,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId);
 #include "objcmd.h"
 
 // Select the entrance bounds for the current cave section.
-const struct SceneEntrance *GondowanCave_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_GondowanCave1) {
@@ -57,18 +71,18 @@ const struct SceneEntrance *GondowanCave_GetEntrances(void) {
 }
 
 // This overlay has no clipping regions.
-const struct SceneRegion *GondowanCave_GetRegions(void) { return NULL; }
+const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 // All cave sections share the exit table.
-const u32 *GondowanCave_GetExits(void) { return gGondowanCaveExits; }
+const u32 *Scene_GetExits(void) { return gGondowanCaveExits; }
 
-// The first section gains Iodem in its alternate placement table.
-const struct ScenePlacement *GondowanCave_GetPlacements(void) {
+// Iodem waits in the first room once he is on his way to Babi Lighthouse.
+const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_GondowanCave1) {
     if (Engine_GameFlagIsSet(0x96f) != 0) {
-      return gGondowanCavePlacements1Flag96f;
+      return gGondowanCavePlacements1WithIodem;
     }
     return gGondowanCavePlacements1;
   }
@@ -81,13 +95,13 @@ const struct ScenePlacement *GondowanCave_GetPlacements(void) {
   return gGondowanCavePlacementsOther;
 }
 
-// Match each section's events to its current placement table.
-const struct SceneEvent *GondowanCave_GetEvents(void) {
+// Each room's events, with Iodem's in the first room when he is there.
+const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_GondowanCave1) {
     if (Engine_GameFlagIsSet(0x96f) != 0) {
-      return gGondowanCaveEvents1Flag96f;
+      return gGondowanCaveEvents1WithIodem;
     }
     return gGondowanCaveEvents1;
   }
@@ -100,117 +114,128 @@ const struct SceneEvent *GondowanCave_GetEvents(void) {
   return gGondowanCaveEventsOther;
 }
 
-// Iodem asks whether Isaac intends to turn back.
-static void GondowanCave_AskIodemAboutTurningBack(void) {
+// Walking back (trigger 10) with Iodem in the party: he steps out and
+// asks why Isaac is going back. Yes: he waits here for the party's return.
+// No: he rejoins the party and Isaac steps away from the trigger.
+static void Event_IodemAsksWhyTurningBack(void) {
   struct FieldActor *leader;
 
   if (GameFlag_IsSet(0x98a) == 0 &&
       GameFlag_IsSet(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
     Engine_EventBegin();
     // Bring Iodem out of the party before opening his question.
-    Engine_ActorSetSpeed(11, PIXELS(1), PIXELS(1) / 2);
+    Engine_ActorSetSpeed(IODEM, PIXELS(1), PIXELS(1) / 2);
     leader = Actor_Get(ACTOR_PARTY_LEADER);
     if (leader != 0) {
-      Actor_SetPosition(11, leader->x.fixed, leader->z.fixed);
+      Actor_SetPosition(IODEM, leader->x.fixed, leader->z.fixed);
     }
-    Engine_ActorSetDestinationOffset(11, -8, 16);
-    Engine_ActorWaitForMove(11);
-    Actor_FaceDirection(11, FACING_NORTH + FACING_STEP, 0);
+    Engine_ActorSetDestinationOffset(IODEM, -8, 16);
+    Engine_ActorWaitForMove(IODEM);
+    Actor_FaceDirection(IODEM, FACING_NORTH + FACING_STEP, 0);
     Engine_EventWait(10);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
+    Actor_FaceActor(ACTOR_PARTY_LEADER, IODEM, 0);
     Engine_EventSetMessage(MsgKaragolWhyGoingBackIsaacDo);
-    Event_OpenMessage(11, 0);
+    Event_OpenMessage(IODEM, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
-      // Leave him waiting and retain the return entrance in Tolbi.
-      Event_ShowMessage(11, 0);
-      Actor_WalkTo(11, 152, 232);
+      // "I see... In that case, I shall wait here for you to return." The
+      // saved place becomes Tolbi's.
+      Event_ShowMessage(IODEM, 0);
+      Actor_WalkTo(IODEM, 152, 232);
       GameFlag_Clear(FLAG_IODEM_FOLLOWING_PARTY);
-      Engine_ActorWaitForMove(11);
-      Engine_ActorSetAnimation(11, 1);
+      Engine_ActorWaitForMove(IODEM);
+      Engine_ActorSetAnimation(IODEM, ANIM_STAND);
       gGameState.savedScene = (s32)&SceneId_TolbiInteriors;
       gGameState.savedEntrance = 30;
     } else {
-      // Rejoin the party, then move Isaac away from the trigger.
+      // "Then we should continue on our way to the lighthouse." He rejoins
+      // the party, and Isaac steps away from the trigger.
       gEventWork->message += 1;
-      Event_ShowMessage(11, 0);
-      Engine_ActorSetAnimation(11, 2);
+      Event_ShowMessage(IODEM, 0);
+      Engine_ActorSetAnimation(IODEM, ANIM_WALK);
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       if (leader != 0) {
-        Actor_SetDestination(11, leader->x.part.pixel, leader->z.part.pixel);
+        Actor_SetDestination(IODEM, leader->x.part.pixel, leader->z.part.pixel);
       }
-      Engine_ActorWaitForMove(11);
-      Actor_SetPosition(11, 0, 0);
+      Engine_ActorWaitForMove(IODEM);
+      Actor_SetPosition(IODEM, 0, 0);
       Engine_EventWait(30);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 2);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
       Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, 16);
       Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+      Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     }
     Engine_EventEnd();
   }
 }
 
-// Iodem greets Isaac and resumes travelling with the party.
-static void GondowanCave_RejoinIodem(void) {
+// Talking to Iodem where he waits, or walking up to him (trigger 11): "I've
+// been waiting for you, Isaac! We should go to Babi Lighthouse soon." He
+// joins the party again.
+static void Event_IodemRejoins(void) {
   Engine_EventBegin();
-  Engine_ActorFaceActor(11, ACTOR_PARTY_LEADER, 0);
-  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, 11, 0);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorFaceActor(IODEM, ACTOR_PARTY_LEADER, 0);
+  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, IODEM, 0);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_EventWait(10);
-  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 11, 0);
+  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IODEM, 0);
   Engine_EventSetMessage(MsgKaragolIveBeenWaitingForIsaac);
-  Engine_EventShowMessage(11, 0);
-  Engine_ActorSetAnimation(11, 2);
+  Engine_EventShowMessage(IODEM, 0);
+  Engine_ActorSetAnimation(IODEM, ANIM_WALK);
   {
     struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
     if (leader != 0)
-      Engine_ActorSetDestination(11, leader->x.part.pixel,
+      Engine_ActorSetDestination(IODEM, leader->x.part.pixel,
                                  leader->z.part.pixel);
   }
-  Engine_ActorWaitForMove(11);
-  Engine_ActorSetPosition(11, 0, 0);
+  Engine_ActorWaitForMove(IODEM);
+  Engine_ActorSetPosition(IODEM, 0, 0);
   Engine_EventWait(20);
   Engine_GameFlagSet(FLAG_IODEM_FOLLOWING_PARTY);
   Engine_EventEnd();
 }
 
-// Ask about crossing into Gondowan, with the alternate Colosso response.
-static void GondowanCave_AskAboutCrossing(void) {
+// Talking to the first soldier: "Do you wish to cross into Gondowan?" Yes:
+// "I won't stop you, but I wouldn't go unless I had business there." No:
+// "That's a good idea. They wouldn't let you into Babi Lighthouse, anyway."
+static void Event_SoldierAsksAboutCrossing(void) {
   s32 firstMessage;
 
   firstMessage = MsgKaragolDoYouWishCrossInto;
   Engine_EventSetMessage(firstMessage);
-  Engine_EventOpenMessage(8, 0);
+  Engine_EventOpenMessage(SOLDIER_1, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     if (Engine_GameFlagIsSet(0x950) != 0) {
       if (Engine_GameFlagIsSet(0x96f) == 0) {
+        // The shorter answer, without the advice to watch Colosso.
         Engine_EventSetMessage(firstMessage + 8);
       }
     }
-    Engine_EventShowMessage(8, 0);
+    Engine_EventShowMessage(SOLDIER_1, 0);
   } else {
     gEventWork->message++;
-    Engine_EventShowMessage(8, 0);
+    Engine_EventShowMessage(SOLDIER_1, 0);
   }
 }
 
-// Mind Read reveals whether the soldier missed Colosso.
-static void GondowanCave_ReadSoldierThoughts(void) {
+// Mind Read on the second soldier: once flag 0x950 is set and until Iodem
+// waits here, he grumbles that guard duty made him miss all of Colosso;
+// before, that the warriors fight while he guards the bridge.
+static void Event_ReadSoldierMind(void) {
   if (Engine_GameFlagIsSet(0x950) != 0 && Engine_GameFlagIsSet(0x96f) == 0)
     Engine_EventSetMessage(MsgKaragolWeMissedColossoBecauseWe);
   else
     Engine_EventSetMessage(MsgKaragolWarriorsHaveBeenFightingWhile);
-  Engine_EventShowMessage(9, 0);
+  Engine_EventShowMessage(SOLDIER_2, 0);
 }
 
-// Restore the affected puzzle flags before leaving through the touched exit.
-static void GondowanCave_ResetPuzzleAndExit(void) {
+// Leaving the third room by its first exit (trigger 1). With temporary flag
+// 0x204 set, the puzzle's saved flags return to one arrangement first.
+static void Event_LeaveThroughEntrance(void) {
   struct EventWork *event;
 
   event = gEventWork;
   Engine_EventBegin();
-  // Temporary bit 4 selects the alternate saved arrangement on departure.
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_04) != 0) {
     GameFlag_Clear(0x9a3);
     GameFlag_Clear(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED);
@@ -225,20 +250,20 @@ static void GondowanCave_ResetPuzzleAndExit(void) {
   Engine_EventEnd();
 }
 
-// Probe ahead when walking into either of the paired movable actors.
-static void GondowanCave_CheckAheadForMovableObject(void) {
-  Engine_LeaderCheckAhead();
-}
+// Walking into the second object from the east or the west (triggers 10
+// and 11): look at what is ahead, which starts the push.
+static void Event_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
-// Move makes actor 8 leap across and opens its former collision cell.
-static void GondowanCave_BeginFirstObjectLeap(void) {
-  Object_GetById(8);
+// Move on the first object: from column 30 or less it spins and leaps across,
+// freeing the cell where it stood.
+static void Event_MoveFirstObject(void) {
+  Object_GetById(FIRST_OBJECT);
   Engine_EventBegin();
   {
-    struct FieldActor *actor = Object_GetById(8);
+    struct FieldActor *actor = Object_GetById(FIRST_OBJECT);
 
     if ((actor->x.fixed >> 20) <= 30) {
-      GondowanCave_RunSpinningLeap(8);
+      GondowanCave_RunSpinningLeap(FIRST_OBJECT);
       Map_CopyCellAttributes(29, 19, 1, 1, 27, 19);
       Engine_GameFlagSet(FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE);
     }
@@ -246,23 +271,25 @@ static void GondowanCave_BeginFirstObjectLeap(void) {
   Engine_EventEnd();
 }
 
-// Advance the paired actors, then test the second actor's destination.
-static void GondowanCave_PushPairedObject(void) {
+// Pushing the second object (trigger 50): it moves a step, then may have
+// reached its place.
+static void Event_PushSecondObject(void) {
   StagedActor_AdvancePair();
-  GondowanCave_UpdateSecondObjectPosition();
+  Event_MoveSecondObject();
 }
 
-// Hide the movable actor and show its replacement at the saved destination.
+// Hide the second object and show the one that stands in for it in its place.
 static inline void GondowanCave_PlaceMovedSecondObject(s32 animation) {
-  Actor_SetPosition(9, 0, 0);
-  Actor_SetPosition(10, PIXELS(696), PIXELS(288));
-  Engine_ActorSetAnimation(10, animation);
+  Actor_SetPosition(SECOND_OBJECT, 0, 0);
+  Actor_SetPosition(SECOND_OBJECT_MOVED, PIXELS(696), PIXELS(288));
+  Engine_ActorSetAnimation(SECOND_OBJECT_MOVED, animation);
 }
 
-// Replace actor 9 after it crosses the destination cell boundary.
-static void GondowanCave_UpdateSecondObjectPosition(void) {
+// Move on the second object, and after each push: past column 42 it drops
+// into its place for good.
+static void Event_MoveSecondObject(void) {
   Engine_EventBegin();
-  if ((Object_GetById(9)->x.fixed >> 20) > 42) {
+  if ((Object_GetById(SECOND_OBJECT)->x.fixed >> 20) > 42) {
     s32 destinationCellX = 107;
     s32 destinationCellZ = 17;
 
@@ -297,7 +324,8 @@ static void GondowanCave_WaitForDescent(struct FieldActor *actor,
   }
 }
 
-// Spin, leap to the far side, scatter particles, and settle into place.
+// The object spins in place, leaps and lands with a shake and a ring of dust,
+// then comes to rest a little further on.
 static void GondowanCave_RunSpinningLeap(s32 actorId) {
   struct FieldActor *actor;
   u32 stepIndex;
@@ -353,19 +381,18 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
 // Unused empty scene callback retained with the overlay's routines.
 static UNUSED void GondowanCave_UnusedSceneCallback(void) {}
 
-// Lift hides the additional actor at the movable pair.
-static void GondowanCave_HideLiftedObject(void) {
-  Engine_ActorSetPosition(12, 0, 0);
-}
+// Lift on the third room's actor 11 also takes away actor 12 beside it.
+static void Event_LiftObject(void) { Engine_ActorSetPosition(12, 0, 0); }
 
-// Restore actor positions and collision cells from the saved puzzle flags.
-s32 GondowanCave_Initialize(void) {
+// The first room keeps Iodem out of sight while he travels with the party;
+// the third puts the moved objects where the party left them.
+s32 Scene_Initialize(void) {
   struct FieldActor *actor;
 
   if (gGameState.scene == (s32)&SceneId_GondowanCave1) {
     GameFlag_Set(0x144);
     if (GameFlag_IsSet(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
-      Actor_SetPosition(11, 0, 0);
+      Actor_SetPosition(IODEM, 0, 0);
     }
   }
   if (gGameState.scene == (s32)&SceneId_GondowanCave3) {
@@ -373,8 +400,8 @@ s32 GondowanCave_Initialize(void) {
       Map_CopyCellAttributes(108, 17, 1, 1, 107, 17);
     }
     if (GameFlag_IsSet(FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE) != 0) {
-      Actor_SetPosition(8, PIXELS(440), PIXELS(308));
-      Engine_ActorSetAnimation(8, 2);
+      Actor_SetPosition(FIRST_OBJECT, PIXELS(440), PIXELS(308));
+      Engine_ActorSetAnimation(FIRST_OBJECT, 2);
       Map_CopyCellAttributes(29, 19, 1, 1, 27, 19);
     }
     if (GameFlag_IsSet(FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED) != 0) {
@@ -496,13 +523,14 @@ struct ScenePlacement gGondowanCavePlacements1[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gGondowanCavePlacements1Flag96f[] = {
+struct ScenePlacement gGondowanCavePlacements1WithIodem[] = {
     { 0x96, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(104), 0, PIXELS(136), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0x96, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(120), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x96, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(184), 0, PIXELS(120), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
+    // Iodem
     { 0x39, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(152), 0, PIXELS(232), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { SCENE_TABLE_END },
@@ -539,31 +567,31 @@ struct SceneEvent gGondowanCaveEventsOther[] = {
 struct SceneEvent gGondowanCaveEvents1[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(GondowanCave_AskAboutCrossing) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveUsWereTheSoldiersWhoGuard) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEvenIfYouHeadEastYou) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveThoseWhoGoToGondowanRarely) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(GondowanCave_ReadSoldierThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveYoudThinkYouCouldGetThrough) },
-    { SEARCH(SEARCH_CHEST), 100, 0xfa0, FIND_ITEM(0xc1) },
+    { EVENT_TALK, SOLDIER_1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SoldierAsksAboutCrossing) },
+    { EVENT_TALK, SOLDIER_2, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveUsWereTheSoldiersWhoGuard) },
+    { EVENT_TALK, SOLDIER_3, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEvenIfYouHeadEastYou) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SOLDIER_1, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveThoseWhoGoToGondowanRarely) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SOLDIER_2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadSoldierMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SOLDIER_3, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveYoudThinkYouCouldGetThrough) },
+    { SEARCH(SEARCH_CHEST), 100, 0xfa0, FIND_ITEM(ITEM_APPLE) },
     { SEARCH(SEARCH_CHEST), 101, 0xfa1, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gGondowanCaveEvents1Flag96f[] = {
+struct SceneEvent gGondowanCaveEvents1WithIodem[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(GondowanCave_AskIodemAboutTurningBack) },
-    { EVENT_TOUCH, 11, FLAG_IODEM_FOLLOWING_PARTY, EVENT_SCRIPT(GondowanCave_RejoinIodem) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWhyWouldIodemChooseToWait) },
-    { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWeHaventSeenAnybodyUnusualCrossing) },
-    { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEvenIfYouGoEastFrom) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(GondowanCave_RejoinIodem) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveIodemIsGoingToBabiLighthouse) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveItsALotOfStressBut) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEveryoneComesDownThisWayWhen) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWeHaveToHeadForThe) },
-    { SEARCH(SEARCH_CHEST), 100, 0xfa0, FIND_ITEM(0xc1) },
+    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IodemAsksWhyTurningBack) },
+    { EVENT_TOUCH, 11, FLAG_IODEM_FOLLOWING_PARTY, EVENT_SCRIPT(Event_IodemRejoins) },
+    { EVENT_TALK, SOLDIER_1, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWhyWouldIodemChooseToWait) },
+    { EVENT_TALK, SOLDIER_2, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWeHaventSeenAnybodyUnusualCrossing) },
+    { EVENT_TALK, SOLDIER_3, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEvenIfYouGoEastFrom) },
+    { EVENT_TALK, IODEM, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IodemRejoins) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SOLDIER_1, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveIodemIsGoingToBabiLighthouse) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SOLDIER_2, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveItsALotOfStressBut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SOLDIER_3, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEveryoneComesDownThisWayWhen) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), IODEM, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWeHaveToHeadForThe) },
+    { SEARCH(SEARCH_CHEST), 100, 0xfa0, FIND_ITEM(ITEM_APPLE) },
     { SEARCH(SEARCH_CHEST), 101, 0xfa1, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SCENE_EVENTS_END },
 };
@@ -574,26 +602,26 @@ struct SceneEvent gGondowanCaveEvents2[] = {
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
     { PSYNERGY_ON_ACTOR(ABILITY_LIFT), 8, CONDITION_ALWAYS, 0 },
-    { SEARCH(SEARCH_CHEST), 100, 0xfa0, FIND_ITEM(0xc1) },
+    { SEARCH(SEARCH_CHEST), 100, 0xfa0, FIND_ITEM(ITEM_APPLE) },
     { SEARCH(SEARCH_CHEST), 101, 0xfa1, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SCENE_EVENTS_END },
 };
 
-// Temporary bit 5 gates Move on the second movable object.
+// Temporary flag 0x205 ends Move on the second object.
 struct SceneEvent gGondowanCaveEvents3[] = {
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(GondowanCave_ResetPuzzleAndExit) },
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughEntrance) },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 6 },
-    { PSYNERGY_ON_ACTOR(ABILITY_LIFT), 11, CONDITION_ALWAYS, EVENT_SCRIPT(GondowanCave_HideLiftedObject) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE, EVENT_SCRIPT(GondowanCave_BeginFirstObjectLeap) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_SCENE_TEMP_05, EVENT_SCRIPT(GondowanCave_UpdateSecondObjectPosition) },
-    { TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(GondowanCave_CheckAheadForMovableObject) },
-    { TOUCH_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(GondowanCave_CheckAheadForMovableObject) },
-    { 0x202, 50, CONDITION_ALWAYS, EVENT_SCRIPT(GondowanCave_PushPairedObject) },
-    { SEARCH(SEARCH_CHEST), 100, 0xfa0, FIND_ITEM(0xc1) },
+    { PSYNERGY_ON_ACTOR(ABILITY_LIFT), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LiftObject) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), FIRST_OBJECT, FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE, EVENT_SCRIPT(Event_MoveFirstObject) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), SECOND_OBJECT, FLAG_SCENE_TEMP_05, EVENT_SCRIPT(Event_MoveSecondObject) },
+    { TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
+    { TOUCH_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 50, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushSecondObject) },
+    { SEARCH(SEARCH_CHEST), 100, 0xfa0, FIND_ITEM(ITEM_APPLE) },
     { SEARCH(SEARCH_CHEST), 101, 0xfa1, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { SCENE_EVENTS_END },
 };

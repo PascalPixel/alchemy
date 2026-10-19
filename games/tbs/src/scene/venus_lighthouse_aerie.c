@@ -89,6 +89,13 @@ VenusLighthouseAerie_UpdateOrbitingEffect(union FieldObject *object);
 
 s32 Math_RemainderUnsigned(s32, s32);
 
+// The aerie's scene flags:
+// FLAG_SCENE_TEMP_34: Saturos and Menardi slide together as they fuse.
+// FLAG_SCENE_TEMP_35: they grow as they fuse.
+// FLAG_SCENE_TEMP_36: the beacon has erupted; its particles rise higher.
+// FLAG_SCENE_TEMP_37: the light has lifted the party and flashed white.
+// FLAG_SCENE_TEMP_50: the leader stands on a pillar.
+
 // Shared source is included here in ROM order.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"

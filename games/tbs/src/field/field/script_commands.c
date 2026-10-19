@@ -504,6 +504,9 @@ s32 Object_Wander(struct ScriptInterpreter *interpreter) {
   s32 attempts;
   s32 dx;
   s32 dz;
+#ifdef BUGFIX
+  s32 aheadBlocked;
+#endif
 
   operands = &object->script[(s16)object->scriptCursor + 1];
   minimumDistance = *operands++;
@@ -530,12 +533,23 @@ retry:
     probePosition.y = object->y;
     probePosition.z = object->z;
     Vector_AddPolarOffset(travelDistance, heading, &probePosition);
+    // BUG: the probe straight ahead is placed but never tested, so only the
+    // two at 45 degrees need clear ground; SC_WANDER_HOME tests all three.
+#ifdef BUGFIX
+    aheadBlocked =
+        Map_CheckObjectStep((struct ObjectRuntime *)object, &probePosition);
+#endif
     probePosition.x = object->x;
     probePosition.y = object->y;
     probePosition.z = object->z;
     Vector_AddPolarOffset(travelDistance, heading + 0x2000, &probePosition);
+#ifdef BUGFIX
+    if (aheadBlocked != 0 || Map_CheckObjectStep((struct ObjectRuntime *)object,
+                                                 &probePosition) != 0)
+#else
     if (Map_CheckObjectStep((struct ObjectRuntime *)object, &probePosition) !=
         0)
+#endif
       goto retry;
     probePosition.x = object->x;
     probePosition.y = object->y;

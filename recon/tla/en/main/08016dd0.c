@@ -5,7 +5,10 @@
 // two-cycle-plus load latency for the ldrb the index feeds would order them as
 // the native. Measured: the statements in other orders and an index
 // temporary (differ 18 to 29), an operand barrier on the index (2); two
-// minutes of permuter found nothing.
+// minutes of permuter found nothing. 2026-10-18: the mask set after an
+// empty asm that follows the index shift orders the pair but the 15 and the
+// flag bytes trade r4 and r5 (differ 18), and pinning the bytes to r4 then
+// moves their load down (14).
 #include "types.h"
 
 extern u8 gGameFlagBytes[];

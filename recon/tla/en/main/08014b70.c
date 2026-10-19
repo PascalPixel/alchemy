@@ -1,3 +1,11 @@
+// Draft, differ 2 of 22: ☀️'s DebugText_Clear (fill screen block 4 with
+// blank cells, home the cursor, point BG0 at it). The native loads the fill
+// word 0xf000f000 from the pool before the prologue's sub sp, #4; here the
+// stack adjusts first, the same prologue order as 08015ad0 and 08015ca4,
+// and no statement can be placed before the prologue. Measured: ☀️'s form
+// with Dma_Fill32 and Io_Write16 (also 2); four minutes of permuter found
+// nothing better. Move it to games/tla/src/system/memory/debugnum.c, its
+// linker neighbour, when it matches.
 #include "types.h"
 #include "dma.h"
 #include "ram_buffer.h"

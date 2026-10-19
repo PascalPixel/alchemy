@@ -100,8 +100,6 @@ differently:
 - A message after a named one as `MsgName + n`, such as
   `MsgSaveDataCorrupted + 2` for `MsgSaveRecoveryFailed`, where the ROM adds
   to the register holding the first.
-- A field of the menu work as `menu->field`, or as a byte offset from the
-  work (`(u8 *)menu + offset`, in `PsynergyMenu_SelectPartySlot`).
 - A neighbouring heap block as `cache[HEAP_SLOT_EVENT - HEAP_SLOT_MENU_CONTROL]`
   from the menu control slot.
 - Palette RAM through `BG_PLTT_COLOR`, or through a plain pointer to it.

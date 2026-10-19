@@ -331,9 +331,11 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
 // from the one chosen last, with each member's Psynergy shown as the cursor
 // passes. Returns the chosen member's id, or -1 when the player backs out.
 s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
-  /* FAKEMATCH: retain the original scalar tab/icon address lanes. Direct
-   * indexed owner fields change the 244-byte native object to 246 bytes and
-   * reorder loads around the cursor call. */
+  /* FAKEMATCH(temporary): the pane's tab, icon and owner reached through
+   * byte offsets from the work held in scalars, which keeps partySlot in its
+   * own register beside the icon's offset; as menu->paneIcon[partySlot],
+   * menu->tabIndex[partySlot] and menu->ownerTable[ownerIndex], 19 of 75
+   * instructions differ in tbs-en. */
   struct PsynergyMenuState *menu = gMenuWork;
   s32 tabOffset = partySlot + ((u8 *)menu->tabIndex - (u8 *)menu);
   s32 iconOffset = partySlot * sizeof(menu->paneIcon[0]) +

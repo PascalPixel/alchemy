@@ -1,4 +1,5 @@
-// Near miss, differ 8 of 167: sells count of a unit's item at slot (count -1
+// Near miss, differ 6 of 167 (2026-10-19; was 8):
+// sells count of a unit's item at slot (count -1
 // sells the whole old item), ☀️'s Shop_SellItem in games/tbs/src/shop/shop.c,
 // rewritten with ⚓️'s calls (UnitGet, Shop_GetSellPrice, UiText_DrawQuantity,
 // the shop message and choice routines Func_0810857c and Func_08108630,
@@ -6,6 +7,7 @@
 // does not call) and numbered messages, their ☀️ names beside them. Instruction
 // order only: the work pointer's address build against the frame setup, the
 // slot offset's copy and the 0x1ff mask's first move against their neighbours.
+// buy.c's barrier before the 0x1ff mask now orders the mask (8 to 6).
 #include "battle_system.h"
 #include "battle_unit.h"
 #include "item.h"
@@ -45,14 +47,21 @@ void Shop_DrawItemCount(s32 window, s32 unitId);
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   struct BattleUnit *unit = UnitGet(unitId);
-  s32 itemId = unit->inventory[slot] & 0x1ff;
-  struct ItemDefinition *item = Item_Get(itemId);
-  u8 rare = item->flags & 4;
-  s32 all = 0;
+  u32 raw = unit->inventory[slot];
+  s32 itemId;
+  struct ItemDefinition *item;
+  u8 rare;
+  s32 all;
   s32 total;
   s32 message;
   s32 i;
 
+  asm volatile("");
+  itemId = 0x1ff;
+  itemId &= raw;
+  item = Item_Get(itemId);
+  rare = item->flags & 4;
+  all = 0;
   if (count == -1) {
     all = 1;
     count = 1;

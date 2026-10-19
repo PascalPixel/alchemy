@@ -40,7 +40,7 @@ Func_0810b418:
 	bl Func_080380f8
 	mov r8, r0
 	adds r0, r5, #0
-	bl Func_0810b378
+	bl Inn_RoomPrice
 	movs r1, #5
 	adds r5, r0, #0
 	bl UiText_DrawQuantity

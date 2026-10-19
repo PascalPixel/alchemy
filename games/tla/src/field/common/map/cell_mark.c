@@ -33,7 +33,7 @@ s32 Func_08020310(s32 x, s32 z, s32 layer);
 s32 Func_080dbde8(s32 x, s32 z, s32 layer);
 u8 Func_080dbdf4(s32 x, s32 z, s32 layer, s32 value);
 void Func_08108148(void);
-s32 Func_0810b378(s32 value);
+s32 Inn_RoomPrice(s32 innId);
 void Func_0810824c(void);
 
 void Func_080ea8a8(s32 x, s32 z, s32 layer) {

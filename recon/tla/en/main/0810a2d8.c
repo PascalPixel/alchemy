@@ -1,4 +1,5 @@
-// Near miss, differ 10 of 170: the shop repairs a unit's damaged item at slot
+// Near miss, differ 8 of 170 (2026-10-19; was 10):
+// the shop repairs a unit's damaged item at slot
 // (refusing other kinds, undamaged items, cursed equipped items and a price
 // over the party's coins), then offers to equip it. ☀️'s Shop_RepairItem in
 // games/tbs/src/shop/shop.c, rewritten with ⚓️'s calls (UnitGet,
@@ -8,6 +9,9 @@
 // only, the same pattern as Shop_SellItem (0810a108): the work pointer's
 // address build against the frame setup, the slot offset's copy and the 0x1ff
 // mask's first move, and one register copy against the equipped slot's spill.
+// buy.c's barrier before the 0x1ff mask now orders the mask (10 to 8); a
+// barrier ahead of the work's load puts its build after sub sp as native but
+// swaps r5 and r6 and two spill slots (differ 20).
 #include "party_state.h"
 #include "battle_system.h"
 #include "battle_unit.h"
@@ -45,14 +49,21 @@ void Shop_SellOld(s32 unitId, s32 slot);
 void Shop_RepairItem(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   struct BattleUnit *unit = UnitGet(unitId);
-  s32 itemId = unit->inventory[slot] & 0x1ff;
-  struct ItemDefinition *item = Item_Get(itemId);
-  s32 equipped = Inventory_FindEquippedFar(unitId, item->type);
-  u32 price = Shop_GetItemPrice(unit->inventory[slot]);
+  u32 raw = unit->inventory[slot];
+  s32 itemId;
+  struct ItemDefinition *item;
+  s32 equipped;
+  u32 price;
   s32 message;
   u8 kind;
   u32 saved;
 
+  asm volatile("");
+  itemId = 0x1ff;
+  itemId &= raw;
+  item = Item_Get(itemId);
+  equipped = Inventory_FindEquippedFar(unitId, item->type);
+  price = Shop_GetItemPrice(unit->inventory[slot]);
   kind = item->useType;
   if (kind != 2) {
     UiText_DrawQuantity(itemId, 2);

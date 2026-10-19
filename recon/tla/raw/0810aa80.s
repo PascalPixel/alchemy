@@ -116,7 +116,7 @@ Func_0810aa80:
 	ldr r5, .L_0810abe4
 	adds r0, r5, #0
 	bl Func_0810a9ac
-	bl Func_0810a8ec
+	bl Shop_CountUnits
 	cmp r0, #0
 	bne .L_0810ab84
 	adds r0, r5, #1

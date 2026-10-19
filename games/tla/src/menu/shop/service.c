@@ -9,6 +9,7 @@
 #include "system.h"
 #include "owner_state.h"
 #include "types.h"
+#include "ram_buffer.h"
 
 s32 Shop_ServicePrice(s32 entry_id, s32 kind) {
   u8 value = ((struct BattleUnit *)UnitGet(entry_id))->level;
@@ -36,4 +37,36 @@ s32 Shop_CanServe(s32 entry_id, s32 kind) {
     result = 1;
   }
   return result;
+}
+
+// The sanctum's view of the shop work (heap slot 220).
+struct ShopRuntime {
+  u8 unk000[0x4ca];
+  s16 partyMemberIds[8];
+  u8 unk4da[0x2a];
+  s8 partyMemberCount;
+  u8 unk505[2];
+  s8 partyAction;
+};
+
+// Counts the party members who need the selected sanctum service, as ☀️'s
+// Shop_CountUnits.
+s32 Shop_CountUnits(void) {
+  struct ShopRuntime *shop;
+  s32 eligibleCount;
+  s32 serviceKind;
+  s32 memberIndex;
+
+  shop = Ram_HeapSlots->menuRuntime;
+  /* FAKEMATCH(barrier): the work loaded before the service kind's offset is
+   * built in r1, as native; the clobber keeps that build below the load. As
+   * plain C, 2 of 56 instructions differ in tla-en. */
+  asm("" : "+l"(shop) : : "r1");
+  eligibleCount = 0;
+  serviceKind = shop->partyAction;
+  for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
+    if (Shop_CanServe(shop->partyMemberIds[memberIndex], serviceKind) != 0)
+      eligibleCount++;
+  }
+  return eligibleCount;
 }

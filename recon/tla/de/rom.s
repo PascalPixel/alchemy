@@ -2626,8 +2626,6 @@ Func_0810a108:
 	.thumb_func
 Forge_FindRecipe:
 	.incbin "baserom.gba", 0x00112710, 0x0000003c
-	.section .rom.001128f0, "ax"
-	.incbin "baserom.gba", 0x001128f0, 0x00000074
 	.section .rom.00112a84, "ax"
 	.balign 4
 	.global Func_0810aa80
@@ -2636,16 +2634,10 @@ Forge_FindRecipe:
 Func_0810aa80:
 	.incbin "baserom.gba", 0x00112a84, 0x00000424
 	.section .rom.00112f28, "ax"
-	.incbin "baserom.gba", 0x00112f28, 0x00000198
+	.incbin "baserom.gba", 0x00112f28, 0x00000128
 	.section .rom.001131b8, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x001131b8, 0x000001c4
-	.section .rom.0011337c, "ax"
-	.global Func_0810b378
-	.type Func_0810b378, %function
-	.thumb_func
-Func_0810b378:
-	.incbin "baserom.gba", 0x0011337c, 0x00000074
 	.section .rom.0011341c, "ax"
 	.balign 4
 	.global Func_0810b418
@@ -2680,10 +2672,6 @@ Func_0810bdf4:
 	.thumb_func
 Func_0810bebc:
 	.incbin "baserom.gba", 0x00113ed0, 0x000000dc
-	.section .rom.00118000, "ax"
-	.global Resource_FarCall009
-Resource_FarCall009:
-	.incbin "baserom.gba", 0x00118000, 0x00000010
 	.section .rom.00118058, "ax"
 	.global Summon_IsEntrySecondaryFlaggedFar
 	.type Summon_IsEntrySecondaryFlaggedFar, %function
@@ -2868,10 +2856,6 @@ Func_08118158:
 	.incbin "baserom.gba", 0x00118230, 0x00000008
 	.section .rom.00118244, "ax"
 	.incbin "baserom.gba", 0x00118244, 0x00000040
-	.section .rom.00118394, "ax"
-	.global ColorBuffer_ScaleKernelCode
-ColorBuffer_ScaleKernelCode:
-	.incbin "baserom.gba", 0x00118394, 0x0000007c
 	.section .rom.0011843c, "ax"
 	.balign 4
 	.incbin "baserom.gba", 0x0011843c, 0x000002fc
@@ -2883,6 +2867,10 @@ DebugParty_LoadPreset:
 	.incbin "baserom.gba", 0x00118738, 0x0000021c
 	.section .rom.00118958, "ax"
 	.balign 4
+	.global Func_08118958
+	.type Func_08118958, %function
+	.thumb_func
+Func_08118958:
 	.incbin "baserom.gba", 0x00118958, 0x00000274
 	.section .rom.00118c68, "ax"
 	.incbin "baserom.gba", 0x00118c68, 0x000000c4
@@ -3045,7 +3033,12 @@ Func_08123574:
 	.incbin "baserom.gba", 0x0012358c, 0x0000129c
 	.section .rom.00124cdc, "ax"
 	.balign 4
-	.incbin "baserom.gba", 0x00124cdc, 0x00000eb4
+	.incbin "baserom.gba", 0x00124cdc, 0x00000ddc
+	.global Func_08125aa0
+	.type Func_08125aa0, %function
+	.thumb_func
+Func_08125aa0:
+	.incbin "baserom.gba", 0x00125ab8, 0x000000d8
 	.section .rom.00125bd0, "ax"
 	.incbin "baserom.gba", 0x00125bd0, 0x00000054
 	.section .rom.00125d8c, "ax"

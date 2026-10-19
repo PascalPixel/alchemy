@@ -1,12 +1,17 @@
-// Draft, differ 33 of 118: draws the selected item's panel in the sell and
-// drop menus: its name, then why it cannot be dropped or removed, or
-// (selling) its price times the quantity held. Close to ☀️'s Shop_DrawUseItem
-// (games/tbs/src/shop/shop.c) in what it draws. Left: other: the native
-// loads the inventory halfword twice (once for the 0x1ff mask, again for the
-// count), where CSE here reads it once; with it the high registers differ
-// (the menu work in r11 natively, r9 here; slot*2 in r9, r10 here; the unit
-// in r10, r11 here) and the mask's movs sits a slot earlier. Tried: the slot
-// as a 9/2/5 bitfield struct (41, and a 4-byte slot).
+// Draft, differ 15 of 118 (2026-10-19; was 33): draws the selected item's panel
+// in the sell and drop menus: its name, then why it cannot be dropped or
+// removed, or (selling) its price times the quantity held. Close to ☀️'s
+// Shop_DrawUseItem (games/tbs/src/shop/shop.c) in what it draws. Left: other:
+// the native loads the inventory halfword twice (once for the 0x1ff mask, again
+// for the count), where CSE here reads it once; with it the high registers
+// differ (the menu work in r11 natively, r9 here; slot*2 in r9, r10 here; the
+// unit in r10, r11 here) and the mask's movs sits a slot earlier. Tried: the
+// slot as a 9/2/5 bitfield struct (41, and a 4-byte slot). Now: buy.c's barrier
+// before the 0x1ff mask and a memory barrier after it, which makes the count
+// reload the halfword as native (33 to 15; 17 without the first). Left: the
+// unit's copy to r10 comes before the first load (the second load then goes
+// through it), the parameter copy and the work's move to r11 against sub sp. A
+// volatile second read instead: 31.
 #include "types.h"
 #include "ram_buffer.h"
 
@@ -37,12 +42,18 @@ s32 Shop_GetSellPrice(s32 item);
 void Shop_DrawSellItem(void *window, s32 unitId, s32 slot) {
   struct ShopRuntime *shop = Ram_HeapSlots->menuRuntime;
   struct ShopUnit *unit = UnitGet(unitId);
-  s32 item = unit->inventory[slot] & 0x1ff;
-  s32 quantity = (unit->inventory[slot] >> 11) + 1;
+  u32 raw = unit->inventory[slot];
+  s32 item;
+  s32 quantity;
   s32 flags;
   s32 price;
   s32 message;
 
+  asm volatile("");
+  item = 0x1ff;
+  item &= raw;
+  asm volatile("" : : : "memory");
+  quantity = (unit->inventory[slot] >> 11) + 1;
   if (window == 0)
     return;
   RenderOutput_RedrawSavedRectFar(window);

@@ -4656,12 +4656,6 @@ main	rom_main_07	recon/tla/raw/0810a70c	.text	en
 main	rom_main_07	recon/tla/ja/rom	.rom.0010a71c	ja
 main	rom_main_07	games/tla/src/menu/shop/forge	.text
 main	rom_main_07	games/tla/src/menu/shop/service	.text
-main	rom_main_07	recon/tla/it/rom	.rom.0010a8f0	it
-main	rom_main_07	recon/tla/fr/rom	.rom.0010a8f0	fr
-main	rom_main_07	recon/tla/es/rom	.rom.0010e8f0	es
-main	rom_main_07	recon/tla/de/rom	.rom.001128f0	de
-main	rom_main_07	recon/tla/raw/0810a8ec	.text	en
-main	rom_main_07	recon/tla/ja/rom	.rom.0010a8fc	ja
 main	rom_main_07	games/tla/src/menu/shop/f10a960	.text
 main	rom_main_07	recon/tla/it/rom	.rom.0010aa84	it
 main	rom_main_07	recon/tla/fr/rom	.rom.0010aa84	fr
@@ -4672,29 +4666,23 @@ main	rom_main_07	recon/tla/raw/0810abf0	.text	en
 main	rom_main_07	recon/tla/ja/rom	.rom.0010aa90	ja
 main	rom_main_07	games/tla/src/menu/shop/reset_state_by_mode	.text
 main	rom_main_07	recon/tla/it/rom	.rom.0010af08	it
-main	rom_main_07	recon/tla/it/rom	.rom.0010b0a0	it
-main	rom_main_07	recon/tla/it/rom	.rom.0010b14c	it
-main	rom_main_07	recon/tla/it/rom	.rom.0010b35c	it
 main	rom_main_07	recon/tla/fr/rom	.rom.0010af28	fr
 main	rom_main_07	recon/tla/es/rom	.rom.0010ef28	es
-main	rom_main_07	recon/tla/es/rom	.rom.0010f0c0	es
-main	rom_main_07	recon/tla/es/rom	.rom.0010f16c	es
-main	rom_main_07	recon/tla/es/rom	.rom.0010f37c	es
 main	rom_main_07	recon/tla/de/rom	.rom.00112f28	de
 main	rom_main_07	recon/tla/raw/0810af24	.text	en
-main	rom_main_07	recon/tla/raw/0810b04c	.text	en
-main	rom_main_07	games/tla/src/menu/shop/radial_motion	.text	en de fr
 main	rom_main_07	recon/tla/ja/rom	.rom.0010af34	ja
+main	rom_main_07	games/tla/src/menu/shop/select_msg	.text
+main	rom_main_07	recon/tla/it/rom	.rom.0010b0a0	it
+main	rom_main_07	recon/tla/it/rom	.rom.0010b14c	it
+main	rom_main_07	recon/tla/es/rom	.rom.0010f0c0	es
+main	rom_main_07	recon/tla/es/rom	.rom.0010f16c	es
+main	rom_main_07	games/tla/src/menu/shop/radial_motion	.text	en de fr
 main	rom_main_07	recon/tla/ja/rom	.rom.0010b0cc	ja
 main	rom_main_07	games/tla/src/menu/shop/fx_update	.text	ja en de fr
 main	rom_main_07	recon/tla/fr/rom	.rom.0010b1b8	fr
-main	rom_main_07	recon/tla/fr/rom	.rom.0010b37c	fr
 main	rom_main_07	recon/tla/de/rom	.rom.001131b8	de
-main	rom_main_07	recon/tla/de/rom	.rom.0011337c	de
 main	rom_main_07	recon/tla/raw/0810b1b4	.text	en
-main	rom_main_07	recon/tla/raw/0810b378	.text	en
 main	rom_main_07	recon/tla/ja/rom	.rom.0010b1c4	ja
-main	rom_main_07	recon/tla/ja/rom	.rom.0010b388	ja
 main	rom_main_07	games/tla/src/menu/shop/run_room_price	.text
 main	rom_main_07	recon/tla/it/rom	.rom.0010b3fc	it
 main	rom_main_07	recon/tla/fr/rom	.rom.0010b41c	fr
@@ -4744,13 +4732,7 @@ main	rom_main_07	games/tla/src/menu/shop/shopspr	.rodata
 main	rom_main_07	games/tla/src/menu/shop/selofs	.rodata
 main	rom_main_07	games/tla/src/menu/shop/d010c38e	.rodata
 main	rom_main_07	games/tla/src/menu/shop/shopdata	.rodata
-main	rom_main_08	recon/tla/it/rom	.rom.00118000	it
-main	rom_main_08	recon/tla/fr/rom	.rom.00118000	fr
-main	rom_main_08	recon/tla/es/rom	.rom.00118000	es
-main	rom_main_08	recon/tla/de/rom	.rom.00118000	de
-main	rom_main_08	recon/tla/raw/08118000	.text	en
-main	rom_main_08	recon/tla/raw/08118008	.text	en
-main	rom_main_08	recon/tla/ja/rom	.rom.00118000	ja
+main	rom_main_08	games/tla/src/system/far_call/resource_09
 main	rom_main_08	games/tla/src/system/far_call/table_43
 main	rom_main_08	games/tla/src/system/far_call/table_44
 main	rom_main_08	recon/tla/es/rom	.rom.00118058	es
@@ -4812,12 +4794,7 @@ main	rom_main_08	recon/tla/de/rom	.rom.00118244	de
 main	rom_main_08	recon/tla/raw/08118244		en
 main	rom_main_08	recon/tla/ja/rom	.rom.00118244	ja
 main	rom_main_08	games/tla/src/graphics/tile/model_bit_commands
-main	rom_main_08	recon/tla/it/rom	.rom.00118394	it
-main	rom_main_08	recon/tla/fr/rom	.rom.00118394	fr
-main	rom_main_08	recon/tla/es/rom	.rom.00118394	es
-main	rom_main_08	recon/tla/de/rom	.rom.00118394	de
-main	rom_main_08	recon/tla/raw/08118394		en
-main	rom_main_08	recon/tla/ja/rom	.rom.00118394	ja
+main	rom_main_08	games/tla/src/graphics/palette/color_scale_kernel
 main	rom_main_08	games/tla/src/graphics/palette/color_scale_loader
 main	rom_main_08	games/tla/src/battle/presentation/m8118430	.text
 main	rom_main_08	recon/tla/it/rom	.rom.0011843c	it

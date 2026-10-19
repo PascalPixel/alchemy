@@ -186,7 +186,7 @@ Func_0810abf0:
 	bl Func_0810af24
 	mov r1, r8
 	ldr r0, [sp, #8]
-	bl Func_0810b04c
+	bl Shop_DrawSelectMsg
 	movs r1, #0
 	mov r9, r1
 .L_0810ad68:
@@ -271,7 +271,7 @@ Func_0810abf0:
 	bl UiText_DrawQuantity
 	adds r0, r6, #4
 	bl Func_0810a9ac
-	bl Func_0810a8ec
+	bl Shop_CountUnits
 	cmp r0, #0
 	beq .L_0810ae6a
 	movs r0, #1

@@ -28,33 +28,43 @@ enum SpriteColorMode {
   SPRITE_COLOR_HIDDEN = 15      ///< solid colour 0, transparent
 };
 
+/// One animation layer of a sprite: its animation id, frames, running script
+/// and timer.
 struct AnimationEntry {
-  s16 animId;
+  s16 animId; ///< the sprite id whose metadata and frames it uses
+  /// Time left on the current frame in sixteenths of a frame, read signed:
+  /// each timed command adds its argument times 16, each frame takes off step.
   u16 timer;
+  /// The facing table its frames follow (from the metadata, or
+  /// animation command 240).
   u8 kind;
-  u8 param;
-  u8 priority;
-  u8 mode;
-  void **frames;
-  u8 **scripts;
-  u8 *script;
-  u8 pos;
-  u8 step;
-  u8 frame;
-  u8 frameBase;
+  u8 param;      ///< SpriteColorMode its pixels are drawn with
+  u8 priority;   ///< drawing order 0 to 3 among the layers; above 3 not drawn
+  u8 mode;       ///< frame codec: 1 type-01, 3 LZ, anything else raw
+  void **frames; ///< frame pointers, from the metadata or a resource slot
+  u8 **scripts;  ///< the metadata's command scripts, one per animation number
+  u8 *script;    ///< the running script; null once command 239 ends it
+  u8 pos;        ///< byte offset of the next command in script
+  u8 step;       ///< taken off timer each frame; 16 is normal speed
+  u8 frame;      ///< frame shown, frameBase plus the facing offset; 255 none
+  u8 frameBase;  ///< frame the script chose, before facing; 255 blank
 };
 
+/// A resource slot: the tag of the animation loaded into it (slot number and
+/// animation id) and the buffer holding its frames.
 struct ResourceSlot {
-  s32 tag;
-  void *buffer;
+  s32 tag;      ///< (slot << 12) | animation id
+  void *buffer; ///< the decoded frames, their offsets made pointers
 };
 
+/// The object system's work: the flag that suspends sprite projection, the
+/// outline's edge and fill colours, and the resource slots.
 struct ObjectSystemWork {
   u16 used;
   u8 unk02[2];
-  s16 suspended;
-  u8 edge;
-  u8 fill;
+  s16 suspended; ///< nonzero while a menu has suspended sprite projection
+  u8 edge;       ///< outline edge colour
+  u8 fill;       ///< outline fill colour
   u8 unk08[0x10];
   s32 count;
   struct ResourceSlot slots[8];

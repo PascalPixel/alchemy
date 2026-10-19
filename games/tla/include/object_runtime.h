@@ -8,45 +8,64 @@ struct BattleAnimationState {
   s16 *value28;
 };
 
+/// A field object: its script, position, motion toward a target, sprites and
+/// update hook.
 struct ObjectRuntime {
-  s32 *script;
-  s16 step;
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 terrainHeight;
-  s32 scaleX;
-  s32 scaleY;
-  u16 radius;
-  u8 terrainId;
+  s32 *script; ///< the object script it runs; null when the object is free
+  s16 step;    ///< the script cursor, in words
+  u16 angle;   ///< 1/65536 turns
+  s32 x;       ///< 16.16 fixed-point pixels
+  s32 y;       ///< 16.16 fixed-point pixels
+  s32 z;       ///< 16.16 fixed-point pixels
+  s32 terrainHeight; ///< 16.16 fixed-point pixels
+  s32 scaleX;        ///< 16.16 fixed point, 0x10000 full size
+  s32 scaleY;        ///< 16.16 fixed point, 0x10000 full size
+  u16 radius;        ///< collision radius in pixels
+  u8 terrainId;      ///< the map layer its ground height is read from
+  /// Bit 0 is cleared when ObjectDispatch_SetSpritePriority fixes its
+  /// sprite's priority.
   u8 priorityFlags;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 speedLimit;
+  s32 velocityX;  ///< 16.16 fixed-point pixels per frame
+  s32 velocityY;  ///< 16.16 fixed-point pixels per frame
+  s32 velocityZ;  ///< 16.16 fixed-point pixels per frame
+  s32 speedLimit; ///< 16.16 fixed-point pixels per frame
+  /// Added toward the target each frame, or taken off the speed when there is
+  /// none, in 16.16 fixed-point pixels per frame.
   s32 acceleration;
-  s32 targetX;
-  s32 targetY;
-  s32 targetZ;
+  s32 targetX; ///< 16.16 fixed-point pixels; 0x80000000 when unset
+  s32 targetY; ///< 16.16 fixed-point pixels; 0x80000000 when unset
+  s32 targetZ; ///< 16.16 fixed-point pixels; 0x80000000 when unset
+  /// The share of its falling speed kept as it bounces on landing, 16.16
+  /// fixed point.
   s32 bounce;
+  /// Taken off the vertical velocity each frame while it is above the
+  /// ground, in 16.16 fixed-point pixels per frame.
   s32 gravity;
+  /// Not read by the motion update; field code keeps its own values here (a
+  /// drifting speed, a 0x31415927 marker).
   s32 unk4c;
-  void *animation;
-  u8 animationKind;
-  u8 motionFlags;
+  void *animation;  ///< its sprite, or its list of sprites, by animationKind
+  u8 animationKind; ///< 1 one sprite, 2 a group of sprites
+  u8 motionFlags;   ///< bit 1: falls by its gravity and bounces
+  /// The axis watched for arrival at the target; zero once it arrives, and
+  /// cleared with the target.
   u8 unk56;
-  u8 unk57;
-  u8 snapToTarget;
+  u8 unk57;        ///< not named by TLA code
+  u8 snapToTarget; ///< nonzero lands it exactly on its target
+  /// bits: 4 targeted from half as far again | 3 skipped by the target
+  /// searches | 2 counts as 10/13 as far in the nearest search | 0 solid
   u8 collisionFlags;
-  u8 actionFlags;
+  u8 actionFlags; ///< bit 0: turns toward its velocity, 1/16 turn a frame
   u8 movementState;
   u8 unk5c[0x04];
   void *callback;
+  /// The parameter its action script reads (a follow distance or an angle to
+  /// face).
   s16 action;
   u16 unk66;
+  /// The object its action script follows or faces.
   struct ObjectRuntime *linkedObject;
-  void (*update)(void);
+  void (*update)(void); ///< the object's per-frame hook
   u8 unk70[0x10];
 };
 

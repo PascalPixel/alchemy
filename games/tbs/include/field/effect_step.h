@@ -28,7 +28,7 @@ struct EffectStep {
   s32 velocityX; ///< 16.16 fixed-point pixels per frame
   s32 velocityY; ///< 16.16 fixed-point pixels per frame
   s32 velocityZ; ///< 16.16 fixed-point pixels per frame
-  s32 variant;
+  s32 variant;   ///< each effect's own: a size, a countdown, -1 for idle
 };
 
 /// Returns the step's three coordinates as an array.
@@ -48,16 +48,16 @@ struct EffectPosition {
   /// Projection writes three coordinates; effects read their named components.
   union {
     struct {
-      s32 x; ///< screen pixels
-      s32 y; ///< screen pixels
-      s32 depth;
+      s32 x;     ///< screen pixels
+      s32 y;     ///< screen pixels
+      s32 depth; ///< projected depth, larger further away
     };
     s32 coordinates[3];
   };
 #else
-  s32 x; ///< screen pixels
-  s32 y; ///< screen pixels
-  s32 depth;
+  s32 x;     ///< screen pixels
+  s32 y;     ///< screen pixels
+  s32 depth; ///< projected depth, larger further away
 #endif
 };
 

@@ -12,44 +12,66 @@
 /// One of the 64 field objects in the object pool (heap slot 5): its script,
 /// position, motion toward a target, animation and update callback.
 struct ObjectRuntime {
-  s32 *script;
-  s16 step;
-  u16 angle;         ///< 1/65536 turns
-  s32 x;             ///< 16.16 fixed-point pixels
-  s32 y;             ///< 16.16 fixed-point pixels
-  s32 z;             ///< 16.16 fixed-point pixels
+  s32 *script; ///< the object script it runs; null when the object is free
+  s16 step;    ///< the script cursor, in words
+  u16 angle;   ///< 1/65536 turns
+  s32 x;       ///< 16.16 fixed-point pixels
+  s32 y;       ///< 16.16 fixed-point pixels
+  s32 z;       ///< 16.16 fixed-point pixels
   s32 terrainHeight; ///< 16.16 fixed-point pixels
-  u8 unk18[0x08];
-  u16 radius; ///< pixels
-  u8 terrainId;
+  u8 unk18[0x08];    ///< the x and y scales, FieldActor.scaleX and scaleY
+  u16 radius;        ///< collision radius in pixels
+  u8 terrainId;      ///< the map layer its ground height is read from
+  /// FieldActor.priorityFlags: 1 for placed actors, 2 for footprints.
   u8 unk23;
   s32 velocityX;  ///< 16.16 fixed-point pixels per frame
   s32 velocityY;  ///< 16.16 fixed-point pixels per frame
   s32 velocityZ;  ///< 16.16 fixed-point pixels per frame
   s32 speedLimit; ///< 16.16 fixed-point pixels per frame
+  /// Added toward the target each frame, or taken off the speed when there is
+  /// none, in 16.16 fixed-point pixels per frame; 0x10000 when created.
   s32 acceleration;
-  s32 targetX; ///< 16.16 fixed-point pixels
-  s32 targetY; ///< 16.16 fixed-point pixels
-  s32 targetZ; ///< 16.16 fixed-point pixels
+  s32 targetX; ///< 16.16 fixed-point pixels; 0x80000000 when unset
+  s32 targetY; ///< 16.16 fixed-point pixels; 0x80000000 when unset
+  s32 targetZ; ///< 16.16 fixed-point pixels; 0x80000000 when unset
+  /// FieldActor's bounce and gravity, and a word FieldObject_Create zeroes.
   u8 unk44[0x0c];
-  void *animation;
+  void *animation; ///< its sprite, or its list of four, by animationKind
+  /// Low four bits: 0 no sprite, 1 one sprite, 2 a group of up to four.
   u8 animationKind;
+  /// FieldActor.motionFlags: 3 when created, 4 for a placed actor above the
+  /// ground; zero is free flight in 3D.
   u8 flags;
-  u8 arrivalAxis;
-  u8 unk57;
-  u8 snapToTarget;
+  u8 arrivalAxis;  ///< the ARRIVAL_AXIS_* that decides arrival
+  u8 unk57;        ///< the object script's last flag test
+  u8 snapToTarget; ///< nonzero lands it exactly on its target
+  /// FieldActor.collisionFlags: bit 0 solid, bit 1 the player pushes it,
+  /// bits 2 to 4 for talk and Psynergy targets; placed actors take 1.
   u8 unk59;
-  u8 actionFlags;
-  u8 movementState;
+  u8 actionFlags;   ///< FieldActor.steeringFlags: bit 0 faces its motion
+  u8 movementState; ///< nonzero skips its script and motion (paused)
+  /// Byte 0, when nonzero, keeps its sprite's VRAM cache entry while sprites
+  /// are suspended or it is off screen; byte 1 is the object script's
+  /// SC_LOOP count.
   u8 unk5c[0x02];
-  u16 unk5e;
+  u16 unk5e; ///< the object script's wait, in frames
+  /// Not named by TBS code through this struct. Its bytes are the frames a
+  /// solid object has refused the object's move and the frozen flag
+  /// (ScriptMotionObject's refused and frozen), then two bytes scene code
+  /// uses.
   void *callback;
+  /// The parameter its action script reads (a follow distance or an angle),
+  /// or the player's frames to its next footprint.
   s16 action;
-  s16 unk66;
+  s16 unk66; ///< the side of the player's next footprint (2 after a stop)
+  /// The object its action script follows or faces.
   struct ObjectRuntime *linkedObject;
+  /// The update hook (FieldActor.update), which the unused
+  /// ObjectDispatch_SetUpdateValue sets as a word.
   u8 unk6c[0x04];
 };
 
+/// Up to 32 actors saved by ObjectTable_Snapshot for ObjectTable_Restore.
 extern struct ObjectRuntime gObjectSnapshots[32];
 
 STATIC_ASSERT(sizeof(struct ObjectRuntime) == 0x70);

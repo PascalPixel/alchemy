@@ -5,29 +5,32 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// A moving point of an effect: its position, its velocity and a value each
+/// effect uses its own way.
 struct EffectStep {
 #ifdef UBFIX
   union {
     struct {
-      s32 x;
-      s32 y;
-      s32 z;
+      s32 x; ///< 16.16 fixed-point pixels
+      s32 y; ///< 16.16 fixed-point pixels
+      s32 z; ///< 16.16 fixed-point pixels
     };
     s32 coordinates[3];
   };
 #else
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y; ///< 16.16 fixed-point pixels
+  s32 z; ///< 16.16 fixed-point pixels
 #endif
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 variant;
+  s32 velocityX; ///< 16.16 fixed-point pixels per frame
+  s32 velocityY; ///< 16.16 fixed-point pixels per frame
+  s32 velocityZ; ///< 16.16 fixed-point pixels per frame
+  s32 variant;   ///< each effect's own
 };
 
-/// UB: indexing from &x crosses the step's separate scalar members.
-/// UBFIX supplies a real coordinate array without including motion state.
+/// Returns the step's three coordinates as an array.
+// UB: indexing from &x crosses the step's separate scalar members.
+// UBFIX supplies a real coordinate array without including motion state.
 static inline const s32 *EffectStep_Coordinates(const struct EffectStep *step) {
 #ifdef UBFIX
   return step->coordinates;
@@ -36,26 +39,28 @@ static inline const s32 *EffectStep_Coordinates(const struct EffectStep *step) {
 #endif
 }
 
+/// A point projected onto the screen, with its depth.
 struct EffectPosition {
 #ifdef UBFIX
   /// Projection writes three coordinates; effects read their named components.
   union {
     struct {
-      s32 x;
-      s32 y;
+      s32 x; ///< screen pixels
+      s32 y; ///< screen pixels
       s32 depth;
     };
     s32 coordinates[3];
   };
 #else
-  s32 x;
-  s32 y;
+  s32 x; ///< screen pixels
+  s32 y; ///< screen pixels
   s32 depth;
 #endif
 };
 
-/// UB: indexing from &x crosses separate scalar members in the legacy record.
-/// UBFIX provides a real array while keeping the effects' named coordinates.
+/// Returns the position's three coordinates as an array.
+// UB: indexing from &x crosses separate scalar members in the legacy record.
+// UBFIX provides a real array while keeping the effects' named coordinates.
 // An always-on union changes native alias analysis in the effect/window code.
 static inline s32 *EffectPosition_Coordinates(struct EffectPosition *position) {
 #ifdef UBFIX

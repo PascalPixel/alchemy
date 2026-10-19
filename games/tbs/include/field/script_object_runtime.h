@@ -10,39 +10,56 @@
 /// A field object as its object script commands see it: the script and its
 /// place, position, motion toward a target, and the home it wanders around.
 struct ScriptObjectRuntime {
-  const s32 *script;
-  u16 scriptCursor;
+  const s32 *script; ///< null when the object is free
+  u16 scriptCursor;  ///< in words
+  /// The object's facing, 1/65536 turns: the heading SC_WANDER and
+  /// SC_WANDER_HOME wander around, and where SC_FACE_LINK stores the angle to
+  /// the linked object.
   u16 scriptValue;
   s32 x;             ///< 16.16 fixed-point pixels
   s32 y;             ///< 16.16 fixed-point pixels
   s32 z;             ///< 16.16 fixed-point pixels
   s32 terrainHeight; ///< 16.16 fixed-point pixels
-  u8 unk18[0x0a];
-  u8 terrainId;
-  u8 unk23;
-  s32 velocityX;  ///< 16.16 fixed-point pixels per frame
-  s32 velocityY;  ///< 16.16 fixed-point pixels per frame
-  s32 velocityZ;  ///< 16.16 fixed-point pixels per frame
-  s32 speedLimit; ///< 16.16 fixed-point pixels per frame
-  s32 acceleration;
-  s32 targetX; ///< 16.16 fixed-point pixels
-  s32 targetY; ///< 16.16 fixed-point pixels
-  s32 targetZ; ///< 16.16 fixed-point pixels
-  u8 unk44[0x0c];
-  void *animation;
-  u8 animationKind;
-  u8 flags;
+  u8 unk18[0x0a];    ///< the x and y scales and the radius; not named here
+  u8 terrainId;      ///< the map layer its ground height is read from
+  u8 unk23;          ///< FieldActor.priorityFlags; not named here
+  s32 velocityX;     ///< 16.16 fixed-point pixels per frame
+  s32 velocityY;     ///< 16.16 fixed-point pixels per frame
+  s32 velocityZ;     ///< 16.16 fixed-point pixels per frame
+  s32 speedLimit;    ///< 16.16 fixed-point pixels per frame
+  s32 acceleration;  ///< 16.16 fixed-point pixels per frame, per frame
+  s32 targetX;       ///< 16.16 fixed-point pixels; 0x80000000 when unset
+  s32 targetY;       ///< 16.16 fixed-point pixels; 0x80000000 when unset
+  s32 targetZ;       ///< 16.16 fixed-point pixels; 0x80000000 when unset
+  u8 unk44[0x0c];    ///< bounce, gravity and a spare word; not named here
+  void *animation;   ///< its sprite, or its list of four, by animationKind
+  u8 animationKind;  ///< low four bits: 0 no sprite, 1 one, 2 up to four
+  u8 flags;          ///< FieldActor.motionFlags
+  /// The arrival axis, the last flag test and the snap flag; not named here.
   u8 unk56[0x03];
+  /// FieldActor.collisionFlags. SC_WANDER_HOME sets bit 1 while it roams
+  /// inside its home radius and clears it on heading home.
   u8 flags59;
-  u8 actionFlags;
-  u8 movementState;
+  u8 actionFlags;   ///< FieldActor.steeringFlags
+  u8 movementState; ///< nonzero skips its script and motion (paused)
+  /// The flag that keeps its sprite's VRAM, and the object script's SC_LOOP
+  /// count; not named here.
   u8 unk5c[0x02];
+  /// The object script's wait, in frames (ScriptMotionObject.wait). SC_WANDER
+  /// sets 1 when it turns back, to wait a frame.
   u16 turnedBack;
+  /// Not named by TBS code through this struct: the refusal count, the
+  /// frozen flag and two bytes scene code uses.
   void *callback;
-  s16 homeX; ///< pixels
-  s16 homeZ; ///< pixels
+  /// Its home, in pixels: where it was created or placed. The bytes are
+  /// ObjectRuntime's action and unk66 too.
+  ///@{
+  s16 homeX;
+  s16 homeZ;
+  ///@}
+  /// The object SC_FACE_LINK and SC_MOVE_LINK aim at.
   struct ScriptObjectRuntime *linkedObject;
-  u8 unk6c[0x04];
+  u8 unk6c[0x04]; ///< the update hook (FieldActor.update); not named here
 };
 
 STATIC_ASSERT(sizeof(struct ScriptObjectRuntime) == 0x70);

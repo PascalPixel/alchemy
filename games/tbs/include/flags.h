@@ -70,6 +70,25 @@
 #define FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE 0x9a2
 #define FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED 0x9a5
 
+// Suhalla
+// Set at Babi's palace as his audience after Colosso begins; afterwards
+// Suhalla's people talk of the Tolbi soldiers the sandstorms brought there.
+#define FLAG_BABI_AUDIENCE_AFTER_COLOSSO 0x96f
+// Iodem has found the wounded soldiers at Suhalla's inn and asked for Sheba.
+#define FLAG_IODEM_MET_WOUNDED_SOLDIERS 0x9b0
+
+// Suhalla Gate
+#define FLAG_SUHALLA_GATE_SOLDIER_VANISHED 0x897 // after his last words
+#define FLAG_SUHALLA_GATE_ATTACK_SEEN 0x89f // Iodem has questioned the guards
+// The side the party last came through, which Retreat returns them to.
+#define FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH 0x8fb
+#define FLAG_SUHALLA_GATE_ENTERED_FROM_EAST 0x8fc
+
+// Suhalla Desert
+#define FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA 0x9b5 // search on or go to Lalivero
+#define FLAG_SUHALLA_DESERT_IODEM_WARNED 0x9b6    // "A sandstorm!"
+#define FLAG_SUHALLA_DESERT_CHASING_STORM_DOUSED 0x9b7
+
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
 #define FLAG_SCENE_TEMP_00 0x200

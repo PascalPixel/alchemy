@@ -565,49 +565,6 @@ Func_02000cc8:
 	.4byte 0xfff80000
 .L_02008de0:
 	.4byte 0xffff0000
-	.section .text.x0200907c,"ax",%progbits
-	.global Func_0200107c
-	.thumb_func
-Func_0200107c:
-	push {r5, r6, lr}
-	subs r1, #10
-	sub sp, #8
-	cmp r1, #1
-	bhi .L_020090ca
-	movs r0, #10
-	bl Object_GetById
-	adds r3, r0, #0
-	adds r3, #85
-	movs r5, #0
-	strb r5, [r3]
-	movs r1, #33
-	ldr r3, [r0, #8]
-	movs r2, #1
-	asrs r3, r3, #20
-	str r3, [sp, #0]
-	movs r6, #34
-	movs r3, #1
-	movs r0, #8
-	str r6, [sp, #4]
-	bl Func_02003d1c
-	movs r0, #11
-	bl Object_GetById
-	adds r3, r0, #0
-	adds r3, #85
-	strb r5, [r3]
-	movs r1, #33
-	ldr r3, [r0, #8]
-	movs r2, #1
-	asrs r3, r3, #20
-	str r3, [sp, #0]
-	movs r0, #8
-	movs r3, #1
-	str r6, [sp, #4]
-	bl Func_02003d1c
-.L_020090ca:
-	add sp, #8
-	pop {r5, r6, pc}
-	.2byte 0x0000
 	.section .text.x020093bc,"ax",%progbits
 	.global Func_020013bc
 	.thumb_func

@@ -12,13 +12,27 @@ the Djinn.
 | --- | --- |
 | `game.c` | the guide to the game object: it includes `game_internal.h`, then the parts in `game/` in ROM order |
 | `game_internal.h` | the object's includes, and `Inventory_CompactSlots`, which two parts use |
+| `game/battle_calc.c` | damage and success rates: the attack, Psynergy and healing formulas, the element multiplier, the effect rolls and the weapon unleash |
 | `starting_equipment.c` | the characters given starting equipment |
-| `*.tsv` with the `.s` beside them | the definition tables: actions, items, characters, classes, enemies, summons, Djinn, element presets and levels, experience |
+| `*.tsv` with the `.s` beside them | the definition tables (below) |
 
-Each `.tsv` is a table with one row per entry and a `name:type` header; the
-build writes it to a `.table` beside it, which its `.s` places with its label
-(`classes.tsv` becomes `gClass_DefinitionTable`). Edit the `.tsv`; a column
-named `unknown_` or `pad_` is a field whose meaning is not known yet.
+| Table | One row per | Placed as | Label column |
+| --- | --- | --- | --- |
+| `items.tsv` | item, by item id (324) | `gItem_DefinitionTable` (`item_table.s`) | `item` |
+| `actions.tsv` | ability, by ability id (519) | `gBattleAction_DefinitionTable` (`actions.s`) | `ability` |
+| `djinn.tsv` | Djinni, 20 to an element: Venus, Mercury, Mars, Jupiter (80) | `gDjinn_DefinitionTable` (`djinn_table.s`) | `djinni` |
+| `enemies.tsv` | enemy, by enemy id (165) | `gEnemy_Definitions` (`enemies.s`) | `enemy` |
+| `summons.tsv` | summon (16) | `summons.s` | none |
+| `classes.tsv` | class (203) | `classes.s` | none |
+| `chars.tsv`, `elempre.tsv`, `artifact_slots.tsv`, `level_experience_*.tsv` | character, element preset, artifact slot, level | their `.s` | none |
+
+Each `.tsv` has a `name:type` header, one row per entry, and no row numbers:
+the first row after the header is entry 0. The build writes it to a
+`.table` beside it, which its `.s` places with its label. Edit the `.tsv`.
+A column named without a type, such as `item`, is a label for people: the
+build skips it and writes nothing for it. A column named `unknown_` or
+`unk_` is a field whose meaning is not known yet; `reserved_` and `pad_`
+name bytes that are zero in every row.
 
 The guide's comment says where to start, and each part's second line says
 what it holds: `head -2 game/*.c` lists them. A part includes the private
@@ -32,7 +46,7 @@ reaches these functions through the far-call table
 `games/tbs/src/system/far_call/GAME.S` (the `...Far` names), so a rename
 crosses folders.
 
-## Words used here
+## Words
 
 - **owner** and **unit**: an owner is a number, a unit the `struct
   BattleUnit` record `UnitGet(owner)` returns. 0 to 7 are the playable
@@ -44,8 +58,10 @@ crosses folders.
   in its low 9 bits (`ITEM_ID_MASK`), then `INVENTORY_EQUIPPED`,
   `INVENTORY_BROKEN` and the quantity less one from
   `INVENTORY_QUANTITY_SHIFT`.
+- **ability**: a row of `actions.tsv`; Psynergy, a Djinni's and a summon's
+  effect, an item's use and an enemy's attack are all abilities.
 - **element**: 0 Venus, 1 Mercury, 2 Mars, 3 Jupiter (`ELEMENT_VENUS` and the
-  rest). `Unit_GetElementLevels` gives each element level times ten.
+  rest), 4 none. `Unit_GetElementLevels` gives each element level times ten.
 - **Djinn** `group` and `index`: a Djinni is its element (0 to 3) and its
   number within it (0 to 19). A unit holds it, and it is set (on the unit) or
   on standby, waiting to be set again.
@@ -77,3 +93,62 @@ Each site keeps the form it matches with:
   other banks.
 - An element pair array as `s16 [4][2]` where the matching code indexes it, or
   through `struct BattleElementStats` with `UBFIX`.
+
+## How to find a row
+
+Search the table for the English name in its label column: `Healing Ring`
+in `items.tsv`, `Quake` in `actions.tsv`, `Flint` in `djinn.tsv`, `Vermin` in
+`enemies.tsv`. The row's id is its line number less two (the header is line
+1, entry 0 is line 2). The labels are the English edition's names from
+`games/tbs/text/en.po`: an item's name is message `MsgItemName` + id (386 +
+id), an enemy's `MsgEnemyName` + id (655 + id), an ability's
+`MsgAbilityName` + id (819 + id), and a Djinni's `MsgDjinnName` + its row
+(1119 + row), which is also its ability, 300 + row. A row whose message is
+`?` or `=` is unused, and the labels keep those marks; a row past the last
+name message says `(no name message)`. `item_ids.h`, `ability_ids.h` and
+`djinn_ids.h` name the ids the code uses.
+
+## How to change an item
+
+An item is its row of `items.tsv` (`struct ItemDefinition` in
+`games/tbs/include/game/item.h`):
+
+- **Price**: `price`, in coins.
+- **Who can equip it**: `equip_mask`, one bit per character, bit 0 for
+  Isaac (`character_ids.h`).
+- **What it adds to Attack and Defense while equipped**: `primary_bonus`
+  and `secondary_bonus` (`UnitCalc`, `game/units.c`).
+- **What it does while equipped**: up to four effects, `effect0_kind` and
+  `effect0_amount` to `effect3_`; the kinds are `enum ItemEffectKind` in
+  `item.h` (`ITEM_EFFECT_ADD_HP` is 1, `ITEM_EFFECT_SCALE_ATTACK` 11).
+- **What a weapon unleashes**: `unleash_action`, an ability id, at
+  `unleash_chance` times 5 percent.
+- **What using it does**: `action_id`, an ability id; see below.
+- **Its name**: message `MsgItemName` + id in the PO catalogs
+  (`games/tbs/text`); the line the item screen shows about it is
+  `MsgItemPlainName` + id.
+
+## How an item reaches an ability
+
+An item names an ability by its row in `actions.tsv`, in two columns:
+
+- `action_id` is what the item does when used. In battle
+  (`BattleCommand_BuildPlan`, `../battle/battle/plan.c`) the item command
+  plans that ability; `use_type` says what the use costs: 1 one is used up,
+  2 it may break (one time in eight), 4 it leaves an Empty Bottle. With
+  `use_type` 3 the ability is instead taught while the item is equipped, as
+  Psynergy (`game/levels.c`; the Orb of Force and the rest, `type` 6).
+- `unleash_action` is what a weapon unleashes in place of an attack
+  (`RollWeaponUnleash`, `game/battle_calc.c`).
+
+The ability's row of `actions.tsv` then gives its element, power, range and
+kind; `../battle/README.md` follows it to the damage.
+
+## Limits
+
+- Item ids are 9 bits (`ITEM_ID_MASK`); `items.tsv` has 324 rows, of which
+  rows 269 to 323 have no name message of their own.
+- A unit carries 15 inventory slots (`INVENTORY_SLOTS`).
+- 20 Djinn to an element; 519 abilities; 165 enemies, of which the last has
+  no name message.
+- 4096 game flags.

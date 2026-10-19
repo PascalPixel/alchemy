@@ -1,7 +1,14 @@
 // Draft of BattleFx_RunSerac, decompiled from the listing: differ 1130 of 1101
 // (draft 1093), the same 91 calls and control flow; allocation differs.
+// 2026-10-19: the native frame is 160 bytes (here 176 at first). Its
+// arrays above the arguments' slots take 92 bytes, one 12-byte point
+// fewer than here: the falling Djinni is projected into shard, not a
+// point of its own (164); screenB is declared before screenA and frame
+// after work, as the native's stack offsets show. One spill slot more
+// than the native's remains (the native has one slot between frame and
+// the blitter pair and nine below it, here none and eleven), so every
+// offset is still 4 off and the count stays 1130.
 
-#include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -9,6 +16,7 @@
 #include "iwram_call.h"
 #include "mem.h"
 #include "ram_buffer.h"
+#include "types.h"
 
 struct ModelTexture {
   u32 logWidth : 8;
@@ -30,7 +38,8 @@ struct RenderModel {
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_ProcessPendingGraphicsTransfer(
+    void); // BattleFx_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
 void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
@@ -49,11 +58,11 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode); // SpawnObjects
+void BattleFx_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
@@ -135,9 +144,10 @@ extern const u8 Data_081991a4[];
 void BattleFx_RunSerac(struct BattleEffectArgument *effect) {
   void *canvas;
   struct BattleEffectWork *work;
+  s32 frame;
   DrawRectangle blitters[2];
-  s32 screenA[3];
   s32 screenB[3];
+  s32 screenA[3];
   s16 *camera;
   s16 savedYaw;
   s32 *target;
@@ -152,7 +162,6 @@ void BattleFx_RunSerac(struct BattleEffectArgument *effect) {
   u8 color;
   s32 savedScrollX;
   s32 savedScrollY;
-  s32 frame;
   s32 row;
   s32 column;
   s32 i;
@@ -314,13 +323,12 @@ void BattleFx_RunSerac(struct BattleEffectArgument *effect) {
     }
     // The Djinni falls.
     if (frame <= 29) {
-      struct ProjectedPoint at;
-
       drop.x = target[2];
       drop.y = 0x3c0000 - (frame << 17);
       drop.depth = target[4] + (Trig_Sin(frame << 9) << 5);
-      Render_ProjectPoint(&drop, &at);
-      blitters[1](canvas, work->sheet + 0x4000, at.x - 20, at.y - 30, 40, 40);
+      Render_ProjectPoint(&drop, &shard);
+      blitters[1](canvas, work->sheet + 0x4000, shard.x - 20, shard.y - 30, 40,
+                  40);
     }
     if (frame == 4) {
       Audio_PlayCue(156);

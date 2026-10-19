@@ -520,7 +520,7 @@ menu_top:;
       GameFlag_ClearBit(FLAG_KEEP_PARTY_POSITION);
       Engine_GameFlagSet(0x13f);
     }
-    GameFlag_ClearBit(0x106);
+    GameFlag_ClearBit(FLAG_MENU_OPEN);
     goto leave;
   }
   if (v6 == 2) {
@@ -550,7 +550,7 @@ menu_top:;
     }
     PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
     GameFlag_ClearBit(FLAG_KEEP_PARTY_POSITION);
-    GameFlag_ClearBit(0x106);
+    GameFlag_ClearBit(FLAG_MENU_OPEN);
     Engine_GameFlagSet(FLAG_IN_LINK_LOBBY);
     gSleepDisabled = 1;
     Event_SetDestination((s32)&SceneId_LinkLobby, 1);

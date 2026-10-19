@@ -147,7 +147,7 @@ static void Colosso_DrawGauge(void) {
   segments = gauge->segments;
   if (gauge->hold != 0) {
     gauge->level = 2;
-  } else if (Engine_GameFlagIsSet(0x106)) {
+  } else if (Engine_GameFlagIsSet(FLAG_MENU_OPEN)) {
     if (gauge->level > 0) {
       gauge->level--;
     }

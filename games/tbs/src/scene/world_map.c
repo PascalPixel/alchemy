@@ -2117,7 +2117,7 @@ static void WorldMap_UpdateAirborneTravelTimer(void) {
   if (progress != 0) {
     if (progress == 1) {
       scene->raisedTrigger = 99;
-    } else if (Engine_GameFlagIsSet(0x106) == 0) {
+    } else if (Engine_GameFlagIsSet(FLAG_MENU_OPEN) == 0) {
       progress -= 1;
     }
   }

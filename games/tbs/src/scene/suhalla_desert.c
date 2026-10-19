@@ -190,7 +190,7 @@ static void SuhallaDesert_UpdateCaptureTimer(void) {
   if (remainingFrames != 0) {
     if (remainingFrames == 1) {
       requests->stateOneMarker = 99;
-    } else if (Engine_GameFlagIsSet(0x106) == 0) {
+    } else if (Engine_GameFlagIsSet(FLAG_MENU_OPEN) == 0) {
       remainingFrames -= 1;
     }
   }

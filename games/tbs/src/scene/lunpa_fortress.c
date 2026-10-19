@@ -547,7 +547,7 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
     patrolLayer->speedX = -1;
     patrolLayer->speedY = -1;
   }
-  if (FLAG_CHECK(0x106) || PATROL_PSYNERGY_REQUEST(fieldWork) != 0 ||
+  if (FLAG_CHECK(FLAG_MENU_OPEN) || PATROL_PSYNERGY_REQUEST(fieldWork) != 0 ||
       PATROL_ITEM_REQUEST(fieldWork) != 0) {
     firstGuard->paused = 1;
     secondGuard->paused = 1;
@@ -658,7 +658,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
     patrolLayer->speedX = -1;
     patrolLayer->speedY = -1;
   }
-  if (FLAG_CHECK(0x106) || PATROL_PSYNERGY_REQUEST(fieldWork) != 0 ||
+  if (FLAG_CHECK(FLAG_MENU_OPEN) || PATROL_PSYNERGY_REQUEST(fieldWork) != 0 ||
       PATROL_ITEM_REQUEST(fieldWork) != 0) {
     guard->paused = 1;
   } else if (!FLAG_CHECK(FLAG_SCENE_TEMP_14)) {
@@ -734,7 +734,7 @@ static void LunpaFortress_UpdateOuterGuardDetection(void) {
     patrolLayer->speedX = -1;
     patrolLayer->speedY = -1;
   }
-  if (FLAG_CHECK(0x106) || PATROL_PSYNERGY_REQUEST(fieldWork) != 0 ||
+  if (FLAG_CHECK(FLAG_MENU_OPEN) || PATROL_PSYNERGY_REQUEST(fieldWork) != 0 ||
       PATROL_ITEM_REQUEST(fieldWork) != 0) {
     guard->paused = 1;
   } else if (!FLAG_CHECK(FLAG_SCENE_TEMP_14)) {

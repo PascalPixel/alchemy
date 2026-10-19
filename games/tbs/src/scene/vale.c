@@ -2793,13 +2793,13 @@ static void Vale_SynchronizeAlephVillagerPause(void) {
   s32 pauseFlag;
 
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_41) != 0) {
-    pauseFlag = GameFlag_IsSet(0x106);
+    pauseFlag = GameFlag_IsSet(FLAG_MENU_OPEN);
     if (pauseFlag == 0) {
       Object_GetById(22)->paused = pauseFlag;
       GameFlag_Clear(FLAG_SCENE_TEMP_41);
     }
   } else {
-    if (GameFlag_IsSet(0x106) != 0) {
+    if (GameFlag_IsSet(FLAG_MENU_OPEN) != 0) {
       Object_GetById(22)->paused = 1;
       GameFlag_Set(FLAG_SCENE_TEMP_41);
     }

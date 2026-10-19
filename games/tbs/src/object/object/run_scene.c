@@ -239,7 +239,7 @@ s32 Field_RunScene(s32 entrance) {
           Leader_StopMoving();
           AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
           Battle_SetObjectFlag5bWhenMode3();
-          GameFlag_SetBitFar(0x106);
+          GameFlag_SetBitFar(FLAG_MENU_OPEN);
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0 &&
               (gKeysHeld & KEY_SELECT) != 0) {
             Menu_RunSelectionWithCursorObjectFar();
@@ -251,7 +251,7 @@ s32 Field_RunScene(s32 entrance) {
             work->effectTimerRunning = 1;
           }
           Battle_ClearObjectFlag5bWhenMode3();
-          GameFlag_ClearBitFar(0x106);
+          GameFlag_ClearBitFar(FLAG_MENU_OPEN);
           GameFlag_RefreshLureCapFar();
           work->menu = 0;
         } else if ((s16)work->descriptor != 0) {
@@ -281,7 +281,7 @@ s32 Field_RunScene(s32 entrance) {
           AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
           Leader_StopMoving();
           Battle_SetObjectFlag5bWhenMode3();
-          GameFlag_SetBitFar(0x106);
+          GameFlag_SetBitFar(FLAG_MENU_OPEN);
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0) {
             Menu_RunSelectionFar();
           }
@@ -321,7 +321,7 @@ s32 Field_RunScene(s32 entrance) {
             }
           }
           Battle_ClearObjectFlag5bWhenMode3();
-          GameFlag_ClearBitFar(0x106);
+          GameFlag_ClearBitFar(FLAG_MENU_OPEN);
           work->start = 0;
         }
       }

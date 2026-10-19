@@ -4,7 +4,7 @@
 #include "stub.inc"
 	.global FarCall_MenuTable
 FarCall_MenuTable:
-	export RunAssetSelectionScreenFar, RunAssetSelectionScreen
+	export ItemMenu_RunFar, ItemMenu_Run
 	export PsynergyMenu_RunFar, PsynergyMenu_Run
 	export Menu_OpenActionFlow, ActionMenu_Open
 	export Menu_OpenCharacterSelectorFar, Menu_OpenCharacterSelector

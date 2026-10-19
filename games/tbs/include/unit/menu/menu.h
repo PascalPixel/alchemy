@@ -82,7 +82,7 @@ void FourObjectMotion_ClearSlotsAndScheduleAlt(void);
 
 #define LIST_PAGE_SIZE 5
 
-s32 RunAssetSelectionScreen(void);
+s32 ItemMenu_Run(void);
 s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut);
 s32 ItemMenu_Use(void);
 void ItemMenu_Init(s32 x, s32 y, s32 mode, s32 columns);

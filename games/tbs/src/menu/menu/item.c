@@ -86,7 +86,7 @@ struct ItemPickerResult {
 // The item picker an event script opens (window command 3): the item menu,
 // in which the player chooses one party member's item. Records the choice in
 // the event work and returns 1 if one was made.
-s32 RunAssetSelectionScreen(void) {
+s32 ItemMenu_Run(void) {
 #if TBS_PATCH_1
   void *backup;
 #endif

@@ -1,5 +1,5 @@
 // First draft of Func_080f94a4: the item picker an event script opens, the
-// twin of ☀️'s RunAssetSelectionScreen (games/tbs/src/menu/menu.c) in its
+// twin of ☀️'s ItemMenu_Run (games/tbs/src/menu/menu.c) in its
 // TBS_PATCH_1 form: opens the item menu over the field (saving the window
 // tiles at 0x06004000), runs ItemMenu_RunCommands (Func_080f9644), records the
 // choice in the event work and returns 1 if one was made. Differ 96 of 162

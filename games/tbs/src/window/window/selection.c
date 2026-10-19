@@ -1359,7 +1359,7 @@ s32 Menu_RunTopSelection(void) {
         continue;
       break;
     case 3:
-      ret = RunAssetSelectionScreenFar();
+      ret = ItemMenu_RunFar();
       if (ret == -1)
         continue;
       break;

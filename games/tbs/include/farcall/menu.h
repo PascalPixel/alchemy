@@ -1,7 +1,7 @@
 // Party menus and their interactive selection screens.
 // Far-call interfaces; their ordered jump stubs live in
 // games/tbs/src/system/far_call/MENU.S.
-s32 RunAssetSelectionScreenFar(void);
+s32 ItemMenu_RunFar(void);
 s32 PsynergyMenu_RunFar(void);
 s32 Menu_OpenActionFlow(void);
 s32 Menu_OpenCharacterSelectorFar(void);

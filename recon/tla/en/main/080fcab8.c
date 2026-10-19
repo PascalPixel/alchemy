@@ -1,6 +1,6 @@
 // First draft of Func_080fcab8: a second item picker an event script opens,
 // built as Func_080f94a4 (recon/tla/en/main/080f94a4.c, ☀️'s
-// RunAssetSelectionScreen) without the window tile save: opens the item menu
+// ItemMenu_Run) without the window tile save: opens the item menu
 // over the field, runs the command loop Func_080fcbd8, and when it returns 1
 // looks up the chosen item's action (BattleActGet, result unused) and records
 // owner << 10 | item in the event work at 0x166. Returns the loop's result.

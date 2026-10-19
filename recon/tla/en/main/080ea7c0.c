@@ -1,7 +1,12 @@
-// Near miss, differ 25 of 104, register choice: the native keeps the
-// list's start in r9 and the map work in r10 (and copies the start through
-// r9 before reading the first actor); this swaps them. Iterating from an
-// initialised entry pointer measured the same. The terrain store order
+// Near miss, differ 6 of 104 (2026-10-19; 25 before). The list's start is
+// fixed in r9, as the native keeps it for Func_080eaa14, which also puts the
+// map work in r10 (25 -> 6). What remains is the opening's copies: the
+// native copies the argument to the cursor in r8, the cursor to r9 and r9
+// to r2 for the first test; this copies it to r9, then r8, then r2. With
+// the cursor fixed in r8 too and the list copied from it, 10 (the first
+// test then reads r8); with an if around a do-while testing the list, 8.
+// Permute 4 min: 6 at best. Iterating from an initialised entry pointer
+// measured the same as the for loop. The terrain store order
 // (y first, then the terrain height) is the native's.
 // Puts a list of actors back on the map after a battle effect. For
 // each (actor, flag) entry until 0xffff it clears the actor's motion flags
@@ -39,7 +44,8 @@ void GameFlag_ClearBit(s32 flag);
 void Func_080eaa14(struct ActorFlag *list);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 
-void Func_080ea7c0(struct ActorFlag *list) {
+void Func_080ea7c0(struct ActorFlag *actors) {
+  register struct ActorFlag *list asm("r9") = actors;
   struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
   struct ActorFlag *entry;
   struct ObjectRuntime *leader;

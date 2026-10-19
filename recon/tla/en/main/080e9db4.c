@@ -1,12 +1,17 @@
-// Near miss of Func_080e9db4 (first written 2026-10-12): differ 13 of 90, two
-// places. The native enters the first wait loop (60 frames) with a branch to
-// its height test at the bottom (b; body; cmp r6, #59; bgt; ldr; ldr; cmp;
-// bgt), where this for loop copies the test in front as the two 20-frame loops
-// do in both; measured against it: the bound joined to the test with &&, a
-// block-scoped y, do-while and while forms (13, 13, 19, 19) and a compound
-// break condition. At the end the native finishes the gravity store before it
-// finishes the work offset 0x102c (movs r2; str; movs r3; lsls r3; str; lsls
-// r2; adds r2), the draft finishes the offset first.
+// Near miss of Func_080e9db4 (first written 2026-10-12): differ 4 of 90 since
+// 2026-10-19 (6 on 2026-10-18), two reordered places. The permuter found a
+// one-pass block from the render mode store to the gravity store (6 -> 4);
+// ending it before the y or the gravity store is 6, an empty asm before the
+// render mode store inside it 6, the zero taken from i 29. The first wait loop
+// is entered at its height test with a goto, as the native branches to the test
+// at the bottom (13 -> 6; a while loop with the count inside is 19). What
+// remains: agscc sets the render mode's 0 before the motion flags' store,
+// where the native sets it after the mode's offset, and starts the work
+// offset 0x102c after the y store, where the native starts it before.
+// Measured before the block: an empty asm before the render mode
+// store (8), the party state through a pointer behind a one-pass block (24)
+// or a non-volatile asm (6), the pointer pinned to r3 behind a volatile asm
+// (6, the zero then moves up).
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -31,30 +36,35 @@ void Func_080e9db4(void) {
   Scheduler_RemoveCallback(Func_080e9940);
   Object_SetPositionAndResetMotionFar(object, object->x, object->y, object->z);
   object->motionFlags = 3;
-  gPartyState.renderMode = 0;
-  for (i = 0; i < 60; i++) {
-    if (object->y <= object->terrainHeight)
-      break;
+  do {
+    gPartyState.renderMode = 0;
+    i = 0;
+    goto test;
+    do {
+      WaitFrames(1);
+      if (++i > 59)
+        break;
+    test:;
+    } while (object->y > object->terrainHeight);
+    Audio_PlayCue(132);
     WaitFrames(1);
-  }
-  Audio_PlayCue(132);
-  WaitFrames(1);
-  for (i = 0; i < 20; i++) {
-    if (object->y <= object->terrainHeight)
-      break;
+    for (i = 0; i < 20; i++) {
+      if (object->y <= object->terrainHeight)
+        break;
+      WaitFrames(1);
+    }
     WaitFrames(1);
-  }
-  WaitFrames(1);
-  for (i = 0; i < 20; i++) {
-    if (object->y <= object->terrainHeight)
-      break;
+    for (i = 0; i < 20; i++) {
+      if (object->y <= object->terrainHeight)
+        break;
+      WaitFrames(1);
+    }
     WaitFrames(1);
-  }
-  WaitFrames(1);
-  object->bounce = 0;
-  object->velocityY = 0;
-  object->y = object->terrainHeight;
-  object->gravity = 0x10000;
+    object->bounce = 0;
+    object->velocityY = 0;
+    object->y = object->terrainHeight;
+    object->gravity = 0x10000;
+  } while (0);
   Resource_ResetEntry(*(s16 *)(work + 0x102c));
   Runtime_ReleaseHeapBlock(92);
 }

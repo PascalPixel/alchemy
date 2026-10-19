@@ -1,10 +1,15 @@
-// Near miss, differ 10 of 66, three reordered places and nothing else: the
-// native loads the fill routine's entry before it starts the size (ldr r3; movs
-// r1, #128), clears the row counter before it copies y (movs r6, #0; adds r1,
-// r5, #0) and loads the map base before the row's shift (ldr r5; lsls r3, r6,
-// #5). The screen position needs counters of its own beside row and column
-// (differ 88 with y + row). Setting sy before row is differ 54. The permuter
-// found nothing better in five minutes.
+// Near miss, differ 2 of 66 (2026-10-19; 10 on 2026-10-15). The opening sits
+// in a one-pass block with the fill routine's entry read into a local
+// behind a volatile asm (10 -> 6 for the asm, 6 -> 2 for the block, which
+// the permuter found): the entry loads before the size and the row counter
+// clears before y is copied. One pair remains: the ROM loads the map base
+// before the row's shift (ldr r5; lsls r3, r6, #5). Reload rematerializes
+// the base just before its add, and sched2 has it as a constant move, not
+// a load, so it stays there. Measured: the store as *(map + i), as
+// *(u16 *)(base + i * 2), as map[column + row * 32], through a map local
+// shared with the fill, inside a one-pass block (all 2); the base through
+// a "+l" asm (57) or a volatile asm input (35). The permuter found nothing
+// better in four more minutes.
 #include "types.h"
 #include "iwram_call.h"
 
@@ -18,10 +23,15 @@ void Func_080e7fec(s32 x, s32 y) {
   s32 column;
   s32 sx;
   s32 sy;
+  s32 (*fill)(void *, s32, u32);
 
-  x /= 8;
-  y /= 8;
-  Iwram_FillWords((void *)0x06002000, 0x400, 0);
+  do {
+    x /= 8;
+    y /= 8;
+    fill = Iwram_FillWordsEntry;
+    asm volatile("" : : "l"(fill));
+    fill((void *)0x06002000, 0x400, 0);
+  } while (0);
   for (row = 0, sy = y; row < 16; row++, sy++) {
     if (sy < 0)
       continue;

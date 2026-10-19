@@ -1,7 +1,11 @@
-// Near miss, differ 22 of 169 (2026-10-15, written from the listing; ☀️ has no
-// twin). Func_080e8c9c restores what this keeps. What remains: viewX, minZ and
-// maxZ take r10, r9 and r11 here where the ROM has r11, r10 and r9, and the
-// ROM spills viewZ to sp+0 (frame 20 bytes, this 16). Measured: the two tests
+// Near miss, differ 8 of 169 (2026-10-19; 22 on 2026-10-15, written from the
+// listing; ☀️ has no twin). Func_080e8c9c restores what this keeps. viewX is
+// fixed in r11, which also gives minZ and maxZ the ROM's r10 and r9 (22 ->
+// 8). What remains is two reordered places: the ROM builds left + 12 among
+// the view centre's copies, and reloads viewZ before it starts top + 12.
+// Measured with the pin: the copies before the edges (48), the margins
+// folded into the edge locals (48); permute 4 min: 10 at best. Before the
+// pin, viewX, minZ and maxZ took r10, r9 and r11. Measured: the two tests
 // apart, each with both shakes, as the ROM branches (167 -> 157); the bounds
 // copied to locals after the call (100); the pixel edges in locals before the
 // tests, as the ROM computes all four first (22). viewX or viewZ as s16 (22);
@@ -41,7 +45,7 @@ void Func_080e89e4(s32 direction) {
   struct EventWork *event = Ram_HeapSlots->eventWork;
   struct ObjectRuntime *center = event->viewCenter;
   struct MapWork *map = Ram_HeapSlots->mapWork;
-  s32 viewX = map->viewX >> 16;
+  register s32 viewX asm("r11") = map->viewX >> 16;
   s32 viewZ = map->viewZ >> 16;
   struct ViewMoveWork *work = Ram_HeapSlots->battleFxWork[0];
   struct MapBounds bounds;

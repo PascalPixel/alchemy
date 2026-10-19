@@ -1,8 +1,9 @@
 // Draft, differ 199 of 228: The Broken Seal's Transform_BuildLookAt
-// (games/common render.c) for The Lost Age: the dot-product routine copied to
-// the stack is eight words here (Math_DotProductQ16Code, frame 68), the square
-// roots are Iwram_Sqrt at its fixed entry shifted left 8, and the native holds
-// three routines in registers for the whole function, the divide in r9, the
+// (games/tbs/src/runtime/runtime/transform.c) for The Lost Age: the
+// dot-product routine copied to the stack is eight words here
+// (Math_DotProductQ16Code, frame 68), the square roots are Iwram_Sqrt at its
+// fixed entry shifted left 8, and the native holds three routines in
+// registers for the whole function, the divide in r9, the
 // stack routine in r10 and the multiply in r11, loading only the square root
 // entry from the pool at each use; it keeps eye, out, the view vector and the
 // side axis on the stack. This form keeps out in r9 and spills the dot pointer,

@@ -1,7 +1,7 @@
 #ifndef TLA_EVENT_WORK_H
 #define TLA_EVENT_WORK_H
 
-#include "../../common/include/field/event_work.h"
+#include "field/event_work.h"
 
 struct PendingEvent {
   u32 key;

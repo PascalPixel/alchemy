@@ -1,6 +1,6 @@
-#include "../../../../common/include/system/flash.h"
-#include "../../../../common/include/system/flash_data.h"
-#include "../../../../common/include/system/io_reg.h"
+#include "../../../include/system/flash.h"
+#include "../../../include/system/flash_data.h"
+#include "../../../include/system/io_reg.h"
 
 s32 CountRemainingErasedFlashBytes(u8 *ptr);
 s32 RunFlashEraseVerifier(u8 *ptr, s32 (*verify)(u8 *));

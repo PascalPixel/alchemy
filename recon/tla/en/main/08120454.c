@@ -3,13 +3,12 @@
 // differ 48 (2026-10-08; 56 before the HP drain below, 70 before the
 // order devices).
 // This draft is The Broken Seal's source (0x080bbb0c,
-// games/tbs/src/battle/battle.c) with this game's differences written in; they
-// were worked out under GAME_TLA in that file and moved here, where they stay
-// until every edition of this game matches. Then one source in games/common
-// carries only the real differences under GAME_TLA. Not real differences, to
-// settle against ☀️'s form then: the locals block (this one orders offset,
-// actionId, range, scale and pass differently, which steers registers, and
-// declares apwr for the whole function), targetId u8 or s32 (no change), and
+// games/tbs/src/battle/battle.c) with this game's differences written in,
+// where they stay until every edition of this game matches and it becomes this
+// game's own source. Not real differences, to settle against ☀️'s form then:
+// the locals block (this one orders offset, actionId, range, scale and pass
+// differently, which steers registers, and declares apwr for the whole
+// function), targetId u8 or s32 (no change), and
 // MsgSplitFailed where ☀️ has MsgSplitFail (each game's PO name for the same
 // message). Scores: the old hand draft 806; ☀️'s source compiled for this game
 // with only its names resolved 3237. One power variable (apwr) for every damage

@@ -6,7 +6,7 @@
 #include "battle_type.h"
 #include "battle_event.h"
 #include "ram_buffer.h"
-#include "../../common/include/battle/battle_session.h"
+#include "battle/battle_session.h"
 
 struct BattleEventState {
   struct BattleEventQueue queue;

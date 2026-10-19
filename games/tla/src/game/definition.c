@@ -31,9 +31,7 @@ struct ItemDefinition *Item_GetDirect(s32 item) {
 // Check equipMask bit classId; return 0 for classId >= 8.
 //--------------------------------------------------------------------------
 s32 Item_CanOwnerEquipDirect(s32 unit, s32 item) {
-#if GAME_TLA
   struct OwnerInventoryState *st = UnitGet(unit);
-#endif
   struct ItemDefinition *def = Item_GetDirect(item);
   s32 mask = def->equipMask;
 

@@ -7,7 +7,7 @@
 // address in r4, 16 pooled) and is not kept: no new goto. Tried: the step as
 // a local, as ++blend inside the expression, the operands of | swapped.
 #include "../../../../games/tla/src/scene/gabomba_statue_chamber/gabomba_statue_chamber.h"
-#include "../../../../games/common/include/system/io_reg.h"
+#include "../../../../games/tla/include/system/io_reg.h"
 
 struct GabombaStatueChamberLayer {
   u8 unk00[12];

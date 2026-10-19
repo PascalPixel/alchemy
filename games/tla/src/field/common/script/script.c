@@ -8,16 +8,12 @@
 //--------------------------------------------------------------------------
 // Move the script cursor and return 1 to continue with the next command.
 //--------------------------------------------------------------------------
-#if GAME_TLA
 s32 Script_JumpToNextOperandPointer(struct ScriptInterpreter *sc)
-#endif
 {
   s32 zero;
 
-#if GAME_TLA
   // Jump to the script pointed to by the following word.
   sc->script = (const s32 *)sc->script[sc->cursor + 1];
-#endif
   zero = 0;
   sc->cursor = zero;
   return 1;

@@ -135,7 +135,7 @@ ROM_END_tbs := 0x08800000
 ROM_END_tla := 0x09000000
 
 INCLUDES := -Igames/$(GAME)/include \
-            $(addprefix -Igames/common/include/,battle field game graphics lib menu sound system)
+            $(addprefix -Igames/$(GAME)/include/,battle field game graphics lib menu sound system)
 
 # Game C (K1, K2): agscc's GCC of July 2000, one option set per game.
 CFLAGS_tbs := -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi -nostdinc -fcall-used-r4
@@ -398,10 +398,16 @@ tools:
 test: tools format-check
 	$(MAKE) -f tools/Makefile test
 
-# ☀️'s C and the shared C are as clang-format writes them (AGENTS.md S3).
-# Without clang-format installed the check says so and is skipped.
+# ☀️'s C is as clang-format writes it (AGENTS.md S3), and so is the C ⚓️ took
+# from it: the headers in include's folders, the sound library, the save code
+# and a few files beside them. Without clang-format installed the check says so
+# and is skipped.
 CLANG_FORMAT ?= clang-format
-FORMATTED := $(shell git ls-files 'games/tbs/*.c' 'games/tbs/*.h' 'games/common/*.c' 'games/common/*.h')
+FORMATTED := $(shell git ls-files 'games/tbs/*.c' 'games/tbs/*.h' 'games/tla/include/*/*.h' \
+               games/tla/src/sound/sound.c games/tla/src/sound/tables.c 'games/tla/src/system/save/*.c' \
+               games/tla/src/battle/wait_sync.c games/tla/src/game/ratios_second_input.c \
+               games/tla/src/window/glow_update_sine.c games/tla/src/graphics/display/glyph_widths.h \
+               games/tla/src/graphics/lucky_dice/tables.h games/tla/src/graphics/slots/reel_tables.h)
 .PHONY: format-check
 format-check:
 	@if command -v $(CLANG_FORMAT) >/dev/null; then \

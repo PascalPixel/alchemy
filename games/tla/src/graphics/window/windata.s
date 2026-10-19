@@ -1,4 +1,4 @@
-	.include "games/common/include/game/ed_asm.h"
+	.include "games/tla/include/game/ed_asm.h"
 	.section .rodata
 	.global gUiText_GlyphWidths
 gUiText_GlyphWidths:

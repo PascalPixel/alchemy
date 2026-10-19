@@ -1,6 +1,6 @@
 #include "audio_engine.h"
 #include "types.h"
-#include "../../../common/include/system/io_reg.h"
+#include "../../include/system/io_reg.h"
 
 // Taking the entry address folds its slot into a literal address. Direct
 // indexing adds an address-adjustment instruction with the library compiler.

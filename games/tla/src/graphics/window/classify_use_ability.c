@@ -26,9 +26,7 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
   if (item == 0) {
     return 1;
   }
-#if GAME_TLA
   def = Item_Get(item);
-#endif
   ret = 1;
   if (def->useType == 3) // Equipment that grants Psynergy.
   {

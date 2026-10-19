@@ -1,10 +1,9 @@
-	.include "games/common/include/game/ed_asm.h"
+	.include "games/tbs/include/game/ed_asm.h"
 	.section .rodata
 	.global BattleFx_TileAnimationMask
 BattleFx_TileAnimationMask:
 	.incbin "games/tbs/src/graphics/battle_fx/tile_mask_00.gbapal"
 	.incbin "games/tbs/src/graphics/battle_fx/tile_mask.parts.lz"
-	.ifeq GAME_TLA
 	.ifdef TBS_EDITION_EN
 	.byte 0x32, 0xb9, 0x81	@ PACKER: left in the buffer by LuckyDice_Sprites+0x845
 	.else
@@ -25,7 +24,4 @@ BattleFx_TileAnimationMask:
 	.endif
 	.endif
 	.endif
-	.endif
-	.else
-	.byte 0x38, 0xfa, 0x06	@ PACKER: left in the buffer by BattleFx_CloudPuffSheet+0x845
 	.endif

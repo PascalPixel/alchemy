@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_TYPE_H
 
 #include "static_assert.h"
-#include "../../common/include/battle/battle_unit.h"
+#include "battle/battle_unit.h"
 
 enum { BATTLE_TARGET_CAPACITY = 13, BATTLE_PLAN_SIZE = 0x64 };
 

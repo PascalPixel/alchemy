@@ -6,13 +6,9 @@
 #include "types.h"
 #include "edition.h"
 #include "window.h"
-#if GAME_TLA
 #include "ram_buffer.h"
-#endif
 
-#if GAME_TLA
 #define UI_WORK ((struct UiRenderWork *)Ram_HeapSlots->windowTiles)
-#endif
 
 //--------------------------------------------------------------------------
 // Remove the first entry from the free list, or return NULL if empty.

@@ -1,4 +1,4 @@
-	.include "games/common/include/game/ed_asm.h"
+	.include "games/tbs/include/game/ed_asm.h"
 	.section .rodata
 @ The width of each main font glyph in pixels, from the space (0x20)
 	.global gUiText_GlyphWidths

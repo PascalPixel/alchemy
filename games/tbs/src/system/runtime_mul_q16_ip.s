@@ -130,7 +130,7 @@ IwramSqrt:
 	lsrs	r2, r2, #2
 	bne	.L_sqrt_coarse
 	bx	lr
-	.include "games/common/include/game/ed_asm.h"
+	.include "games/tbs/include/game/ed_asm.h"
 .syntax unified
 	.arm
 

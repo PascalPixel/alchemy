@@ -108,8 +108,6 @@ s32 *Runtime_ClearWordIfSet(s32 *p) {
 
 // Closing the message channels' windows, and the message argument table.
 
-#if !GAME_TLA
-
 // Closes every window: first the message channels' windows, waiting until
 // they have closed, then the windows opened directly.
 // Channel references are cleared only after their windows finish closing.
@@ -317,7 +315,6 @@ void UiWork_FinalizePendingCore(void) {
   } while (i != 3);
   WaitFrames(10);
 }
-#endif
 
 // Shows a message centred on the screen (yOffset tiles lower) and waits until
 // it is typed out, then closes it. With mode 0 the window has no frame or

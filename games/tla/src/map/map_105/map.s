@@ -1,4 +1,4 @@
-	.include "games/common/include/game/ed_asm.h"
+	.include "games/tla/include/game/ed_asm.h"
 	.include "games/tla/src/map/map.inc"
 	.section .rodata
 	.global Field_Map105

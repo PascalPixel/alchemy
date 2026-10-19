@@ -1,4 +1,4 @@
-	.include "games/common/include/game/ed_asm.h"
+	.include "games/tbs/include/game/ed_asm.h"
 	.section .rodata
 	.global gCharacter_DescriptorTable
 gCharacter_DescriptorTable:

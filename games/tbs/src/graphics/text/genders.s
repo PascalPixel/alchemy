@@ -1,4 +1,4 @@
-	.include "games/common/include/game/ed_asm.h"
+	.include "games/tbs/include/game/ed_asm.h"
 	.section .rodata
 @ Grammatical gender of item names, by language
 	.ifdef TBS_EDITION_DE

@@ -62,7 +62,6 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src) {
     s32 dz = target->z - src->z;
 
     if (dx != 0 || dz != 0) {
-#if GAME_TLA
       s32 dir = ArcTan2(dz, dx);
       s32 cur = src->angle;
       s32 lim = 128;
@@ -71,7 +70,6 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src) {
       lim <<= 5;
       if (turn > lim)
         turn = lim;
-#endif
       if (turn < -0x1000)
         turn = -0x1000;
       src->angle += turn;
@@ -88,15 +86,11 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *src) {
   dist <<= 4;
   Vector_AddPolarOffset(dist, Random16(), &pos);
 
-#if GAME_TLA
   obj = Object_Spawn(0x2a1, pos.x, pos.y, pos.z);
-#endif
   if (obj != 0) {
     obj->mode55 = 2;
     obj->field48 = 0x1999;
-#if GAME_TLA
     Object_SetMode(obj, 0);
-#endif
     obj->field5e = 12;
     ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
                                  gBattleFx_CommonParticleScript);

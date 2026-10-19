@@ -1,4 +1,4 @@
-	.include "games/common/include/game/ed_asm.h"
+	.include "games/tbs/include/game/ed_asm.h"
 	.section .rodata
 	.include "games/tbs/src/graphics/slots/frame.s"
 	.include "games/tbs/src/graphics/slots/icons.s"

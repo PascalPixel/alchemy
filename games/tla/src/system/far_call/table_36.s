@@ -1,7 +1,7 @@
 .syntax unified
 	.thumb
 	.include "games/tla/src/system/overlay.inc"
-	.include "games/common/include/game/ed_asm.h"
+	.include "games/tla/include/game/ed_asm.h"
 @ The Spanish and Italian table is English's shifted by one entry.
 	.global Func_080c8950
 	.thumb_func

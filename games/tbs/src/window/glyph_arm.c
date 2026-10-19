@@ -331,7 +331,7 @@ void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
           break;
         case 0xf007:
         case 0xf016: // left side
-#if (LANGUAGE != LANGUAGE_JAPANESE) || GAME_TLA
+#if LANGUAGE != LANGUAGE_JAPANESE
         case 0xf01a:
 #endif
           left = tileColumn * 8;
@@ -356,7 +356,7 @@ void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
           break;
         case 0xf007:
         case 0xf017: // right side
-#if (LANGUAGE != LANGUAGE_JAPANESE) || GAME_TLA
+#if LANGUAGE != LANGUAGE_JAPANESE
         case 0xf01b:
 #endif
           bottomRight = tileColumn * 8 + 8;

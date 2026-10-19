@@ -90,9 +90,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts) {
   s32 add;
   s32 i;
 
-#if GAME_TLA
   work = Ram_HeapSlots->battleWork;
-#endif
   {
     struct BattleActionRecord *rec = work->actions;
     u32 n;
@@ -106,9 +104,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts) {
   BattleUnit_ResetGuardLevels();
   Palette_CopyBanksWithBrightnessOffset(8);
   // Flag set while commands are being selected.
-#if GAME_TLA
   GameFlag_SetBit(363);
-#endif
   mode = &work->encounterMode;
   Camera_ConfigureScene(0);
   UiWork_FinalizeSharedSlotFar();
@@ -126,9 +122,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts) {
   }
 
   // Link opponent or enemy actions.
-#if GAME_TLA
   if (Ram_HeapSlots->battleWork->twoSided != 0) {
-#endif
     add = BattlePresentation_AppendLinkedActions(acts, cnt);
     if (BattlePres_WaitSync() < 0) {
       cnt = -1;
@@ -151,10 +145,8 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts) {
     i = cnt;
     do {
       if (act->command == 3 || act->command == 7) {
-#if GAME_TLA
         unit = UnitGet(act->unitId);
         unit->guardLevel = act->command == 3 ? 1 : 3;
-#endif
       }
       act++;
       i--;
@@ -162,13 +154,9 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *acts) {
   }
 
 finish:
-#if GAME_TLA
   GameFlag_ClearBit(363);
-#endif
   Camera_InitDefaultTransform();
-#if GAME_TLA
   Ram_HeapSlots->transitionWork->targetYaw = 0x2000;
-#endif
   return cnt;
 }
 
@@ -177,9 +165,7 @@ finish:
 // slot: low 4 bits are the position; 0x80 selects the enemy formation.
 //--------------------------------------------------------------------------
 s16 Battle_GetTaggedSlotValue(s32 slot) {
-#if GAME_TLA
   struct BattleWork *work = Ram_HeapSlots->battleWork;
-#endif
 
   if ((slot & 0x80) != 0)
     return work->enemyIds[slot & 0xf];
@@ -192,9 +178,7 @@ s16 Battle_GetTaggedSlotValue(s32 slot) {
 // id: unit ID (0-7 allies, all others enemies).
 //--------------------------------------------------------------------------
 s32 Battle_FindTaggedSlotByValue(u32 id) {
-#if GAME_TLA
   struct BattleWork *work = Ram_HeapSlots->battleWork;
-#endif
   s32 i;
   s16 unit;
 

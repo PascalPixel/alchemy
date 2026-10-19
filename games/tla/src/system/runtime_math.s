@@ -1,4 +1,4 @@
-	.include "games/common/include/game/ed_asm.h"
+	.include "games/tla/include/game/ed_asm.h"
 .syntax unified
 	.thumb
 	.global IwramClearWords

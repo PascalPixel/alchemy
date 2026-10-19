@@ -3,8 +3,6 @@
 
 #include "../battle_command_internal.h"
 
-#if !GAME_TLA
-
 #if TBS_PATCH_1
 #define SUMMON_COST_X 13 // Column for the required Djinni count
 #else
@@ -362,4 +360,3 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
   WaitFrames(1);
   return result;
 }
-#endif

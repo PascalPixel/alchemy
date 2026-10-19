@@ -11,17 +11,10 @@
 #include "animspr.h"
 
 struct ResourceObjectWork {
-#if GAME_TLA
   u8 unk00[16];
   u8 resource; // VRAM cache index.
   u8 flags;    // Bit 0: do not return the VRAM cache entry.
   u8 unk12[22];
-#else
-  u8 unk00[28];
-  u8 resource; // VRAM cache index.
-  u8 flags;    // Bit 0: do not return the VRAM cache entry.
-  u8 unk1e[10];
-#endif
   void *children[4];
 };
 

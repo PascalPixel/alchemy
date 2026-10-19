@@ -1,4 +1,4 @@
-	.include "games/common/include/game/ed_asm.h"
+	.include "games/tla/include/game/ed_asm.h"
 	.section .rodata
 	.balign 4
 @ The file menu's 64x16 headings, each drawn as two 32x16 sprites. The

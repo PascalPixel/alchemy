@@ -1,7 +1,7 @@
 #ifndef TBS_VERSION_H
 #define TBS_VERSION_H
 
-#include "../../common/include/game/edition.h"
+#include "game/edition.h"
 
 #if (defined(TBS_EDITION_JA) + defined(TBS_EDITION_EN) +                       \
      defined(TBS_EDITION_DE) + defined(TBS_EDITION_ES) +                       \

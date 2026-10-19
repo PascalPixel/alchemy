@@ -19,9 +19,7 @@
 // Return the OBJ tile index.
 //--------------------------------------------------------------------------
 s32 VramCache_Reload(s32 no, s32 src) {
-#if GAME_TLA
   return VramCache_Load(no, gResourceTableEntries[no].size, (const void *)src);
-#endif
 }
 
 // Takes the next of the 32 sprite affine matrices and fills it with a

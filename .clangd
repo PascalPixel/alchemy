@@ -11,12 +11,12 @@ CompileFlags:
   Add:
     - -DTLA_EDITION_EN=1
     - -Igames/tla/include
-    - -Igames/common/include/battle
-    - -Igames/common/include/field
-    - -Igames/common/include/game
-    - -Igames/common/include/graphics
-    - -Igames/common/include/lib
-    - -Igames/common/include/menu
-    - -Igames/common/include/sound
-    - -Igames/common/include/system
+    - -Igames/tla/include/battle
+    - -Igames/tla/include/field
+    - -Igames/tla/include/game
+    - -Igames/tla/include/graphics
+    - -Igames/tla/include/lib
+    - -Igames/tla/include/menu
+    - -Igames/tla/include/sound
+    - -Igames/tla/include/system
     - -Iout/tla-en

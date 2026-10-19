@@ -6,7 +6,6 @@
 #include "edition.h"
 #include "mapcopy.h"
 
-#if GAME_TLA
 
 //--------------------------------------------------------------------------
 // Copy a rectangle's cells, including block indices and attributes.
@@ -19,4 +18,3 @@ void Map_CopyCellsRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
   Map_CopyMetatileIndicesRect(srcX, srcY, dstX, dstY, width, height);
   Map_CopyCellAttributeRect(srcX, srcY, width, height, dstX, dstY);
 }
-#endif

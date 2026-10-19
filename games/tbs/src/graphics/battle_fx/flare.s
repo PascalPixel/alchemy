@@ -1,10 +1,9 @@
-	.include "games/common/include/game/ed_asm.h"
+	.include "games/tbs/include/game/ed_asm.h"
 	.section .rodata
 	.global BattleFx_FlareSheet
 BattleFx_FlareSheet:
 	.incbin "games/tbs/src/graphics/battle_fx/flare_00.gbapal"
 	.incbin "games/tbs/src/graphics/battle_fx/flare.parts.lz"
-	.ifeq GAME_TLA
 	.ifdef TBS_EDITION_ES
 	.byte 0x10, 0xb6	@ PACKER: left in the buffer by LuckyDice_Sprites+0x1d86
 	.else
@@ -25,7 +24,4 @@ BattleFx_FlareSheet:
 	.endif
 	.endif
 	.endif
-	.endif
-	.else
-	.byte 0x26, 0x20	@ PACKER: left in the buffer by Resource_Data0F3+0x1d86
 	.endif

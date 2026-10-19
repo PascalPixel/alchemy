@@ -379,8 +379,7 @@ UNUSED void UiIcon_Decompress(GlyphTransfer *work) {
 }
 
 // Open a 6x4 window at the upper left, write its heading and return it.
-#if (LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH) ||           \
-    (GAME_TLA && (LANGUAGE == LANGUAGE_ITALIAN))
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH
 #define LINK_COUNTDOWN_DRAW_HEADING UiText_DrawStringAtOffset
 #else
 #define LINK_COUNTDOWN_DRAW_HEADING UiText_DrawStringInWindow

@@ -1,4 +1,4 @@
-	.include "games/common/include/game/ed_asm.h"
+	.include "games/tla/include/game/ed_asm.h"
 	.section .rodata
 @ Two cloud images and "Camelot presents / Golden Sun / Book Two" (per language).
 	.global Resource_Data018

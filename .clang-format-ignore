@@ -1,2 +1,3 @@
 # Assembly the assembler reads through .include, not C.
-games/common/include/game/ed_asm.h
+games/tbs/include/game/ed_asm.h
+games/tla/include/game/ed_asm.h

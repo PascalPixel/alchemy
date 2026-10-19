@@ -103,7 +103,6 @@ UNUSED s16 Math_ScaleByRatio(s16 numerator, s16 denominator) {
 // The reciprocal of an 8.8 fixed-point value.
 UNUSED s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 
-#if !GAME_TLA
 #include "resource.h"
 #include "mem.h"
 #include "dma.h"
@@ -198,8 +197,6 @@ enum LuckyDiceState {
   LUCKY_DICE_PAYOUT  // the winnings move into the coins
 };
 
-#endif
-
 // Copies count RGB555 colours from source to destination with each channel
 // multiplied by scale (16.16: 0 is black, 0x10000 unchanged), for fades.
 // Returns 0.
@@ -238,7 +235,6 @@ s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
   return 0;
 }
 
-#if !GAME_TLA
 // Runs the Lucky Dice minigame until the player quits or cannot afford a
 // throw. Each throw costs ten coins per level of the party's average. Two
 // dice are thrown onto a board of six rows; each die's face and the row it
@@ -965,4 +961,3 @@ void LuckyDice_Run(void) {
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
 }
-#endif

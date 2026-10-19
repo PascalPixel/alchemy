@@ -2,7 +2,6 @@
 
 #include "edition.h"
 #include "types.h"
-#if GAME_TLA || TBS_PATCH_1
 #include "fixed_math.h"
 
 extern u32 gFrameTick;
@@ -64,5 +63,3 @@ void PaletteGlow_UpdateSine(void) {
     } while (0);
   } while (++i <= 3);
 }
-
-#endif

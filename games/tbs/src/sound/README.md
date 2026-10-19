@@ -19,7 +19,7 @@ the rest with the game's compiler. The songs and samples are in
 `games/tbs/sound`, and the songs' names in `songs.h` (`MUS_`, `SE_`).
 Link order is in `games/tbs/objects.tsv`. The unit headers are in
 `games/tbs/include/unit/sound/`, the driver's structures in
-`games/common/include/sound`.
+`games/tbs/include/sound`.
 
 ## Words used here
 

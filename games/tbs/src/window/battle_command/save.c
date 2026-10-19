@@ -464,8 +464,7 @@ s32 SaveState_DeleteSelectedSlot(void) {
   return result;
 }
 
-#if (LANGUAGE != LANGUAGE_JAPANESE) ||                                         \
-    (GAME_TLA && (LANGUAGE == LANGUAGE_JAPANESE))
+#if LANGUAGE != LANGUAGE_JAPANESE
 
 // A scheduler callback that makes colours 8-11 of BG palette 14 glow: each
 // follows a sine wave of the frame counter, eight frames behind the one

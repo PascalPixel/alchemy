@@ -17,9 +17,7 @@ extern u16 gLinkPeerSignatures[][12];
 // Returns zero immediately outside a link battle.
 //--------------------------------------------------------------------------
 s32 BattlePres_WaitSync(void) {
-#if GAME_TLA
   struct BattleWork *work = Ram_HeapSlots->battleWork;
-#endif
   u16 *peer;
   u16 *sig;
   s32 lost = 0;
@@ -64,9 +62,7 @@ s32 BattlePres_WaitSync(void) {
 // agreement, or outside a link battle.
 //--------------------------------------------------------------------------
 s32 BattlePres_SyncTurn(void) {
-#if GAME_TLA
   struct BattleWork *work = Ram_HeapSlots->battleWork;
-#endif
   u16 *peer;
   u16 *sig;
   s32 lost = 0;

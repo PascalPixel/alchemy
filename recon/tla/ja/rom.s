@@ -386,12 +386,6 @@ Map_CopyCellAttributeRect:
 	.thumb_func
 Func_0802b450:
 	.incbin "baserom.gba", 0x0002b3cc, 0x00000140
-	.section .rom.0002b50c, "ax"
-	.global Func_0802b590
-	.type Func_0802b590, %function
-	.thumb_func
-Func_0802b590:
-	.incbin "baserom.gba", 0x0002b50c, 0x00000090
 	.section .rom.0002b7f4, "ax"
 	.global Map_WriteLayerCellTile
 	.type Map_WriteLayerCellTile, %function

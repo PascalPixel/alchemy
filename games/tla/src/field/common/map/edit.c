@@ -6,6 +6,35 @@
 #include "resource.h"
 #include "party_state.h"
 
+extern u8 gMapShapeGrid[];
+
+// Copies a rectangle of map cells as they are, with their shape grid bytes,
+// from (srcX, srcY) to (dstX, dstY), width by height cells.
+void Func_0802b590(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
+                   s32 dstY) {
+  u32 *cells = (u32 *)Ram_MapCellBuffer;
+  s32 dst = (dstY << 7) + dstX;
+  u8 *dstShapes = gMapShapeGrid + dst;
+  s32 src = (srcY << 7) + srcX;
+  u8 *srcShapes = gMapShapeGrid + src;
+  u32 *dstCells = cells + dst;
+  u16 row;
+  u16 col;
+
+  cells += src;
+  for (row = 0; row < height; row++) {
+    u32 *dstCell = dstCells + (row << 7);
+    u32 *srcCell = cells + (row << 7);
+    u8 *dstShape = dstShapes + (row << 7);
+    u8 *srcShape = srcShapes + (row << 7);
+
+    for (col = 0; col < width; col++) {
+      *dstCell++ = *srcCell++;
+      *dstShape++ = *srcShape++;
+    }
+  }
+}
+
 void Map_SetWorkFlagBits9To11(u32 v) {
   struct MapWork *state = Ram_HeapSlots->mapWork;
   u32 mask = v & 0xe00;
@@ -131,7 +160,6 @@ struct MapHeader {
   s32 cells;
   s32 shapes;
 };
-extern u8 gMapShapeGrid[];
 void Tilemap_ConvertBuffer(void);
 
 void Map_LoadCellsAndShapes(void) {

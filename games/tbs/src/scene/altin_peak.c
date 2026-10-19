@@ -1370,7 +1370,7 @@ static void AltinPeak_RestoreRoom1(void) {
   struct MapScrollWork *map;
 
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-    if (gGameState.entrance == 99) {
+    if (gGameState.entrance == ENTRANCE_AFTER_BATTLE) {
       AltinPeak_AwardFrostJewelAndDrain();
     }
   }
@@ -1455,7 +1455,7 @@ static void AltinPeak_RestoreRoom3(void) {
   } else {
     AltinPeak_StartPaletteAnim();
     if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0 &&
-        gGameState.entrance == 99) {
+        gGameState.entrance == ENTRANCE_AFTER_BATTLE) {
       AltinPeak_DrainAfterSecondBeast();
     } else {
       Map_CopyCellAttributes(38, 24, 1, 2, 37, 24);
@@ -1501,7 +1501,7 @@ static void AltinPeak_RestoreRoom5(void) {
     Actor_SetPosition(ACTOR_ROOM5_BEAST, 0, 0);
   } else {
     if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-      if (gGameState.entrance == 99) {
+      if (gGameState.entrance == ENTRANCE_AFTER_BATTLE) {
         AltinPeak_DrainAfterThirdBeast();
       }
     }
@@ -1672,7 +1672,7 @@ static void AltinPeak_RestoreRoom10(void) {
       leader->y.fixed = PIXELS(16);
       Engine_EventEnd();
     }
-  } else if (entrance == 99) {
+  } else if (entrance == ENTRANCE_AFTER_BATTLE) {
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       AltinPeak_CelebrateHydrosVictory();
     }

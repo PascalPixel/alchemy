@@ -1,10 +1,13 @@
-// Draft, differ 142 of 159: register choice throughout, and some order.
-// The native keeps the object in r6 and the change flag in r7, the cell
-// table in r8 and the shape row in r9, and spills the slot and key (sp 4,
-// sp 0); this swaps r6 and r7 and keeps the slot in r10, so every later
-// use differs. Func_080eab98's value goes in unextended, so its parameter
-// is an int here (an s8 parameter adds lsl/asr). The cell's raised bit as
-// a bitfield measured 142, as |= 0x80 and &= 0x7f 153.
+// Draft, differ 85 of 159 (2026-10-19; 142 before): register choice and some
+// order. The native keeps the object in r6 and the change flag in r7, the
+// cell table in r8 and the shape row in r9, and spills the slot and key (sp
+// 4, sp 0). Here the table and the row are fixed in r8 and r9 (142 -> 109),
+// the flag in r7 (89), and the table and row step to the slot in place, as
+// the ROM adds the slot into r8 and r9 (85); the height then takes r5 where
+// the ROM has r7 (fixing it there too, 121), and stepping the table typed as
+// cells 110. Permute 4 min: 85 at best. Func_080eab98's value goes in
+// unextended, so its parameter is an int here (an s8 parameter adds lsl/asr).
+// The cell's raised bit as a bitfield measured 142, as |= 0x80 and &= 0x7f 153.
 // Raises or lowers the map under a list of switch actors. For each
 // (actor, flag) entry until 0xffff whose sprite frame (0 when the flag is
 // set, 1 when clear) disagrees with its flag, it records the actor in the
@@ -57,7 +60,7 @@ void Func_080eaa14(struct ActorFlag *list) {
 
   *(struct ObjectRuntime **)(event + 0xcbc) = NULL;
   for (; list->actor != 0xffff; list++) {
-    s32 change = 0;
+    register s32 change asm("r7") = 0;
     struct ObjectRuntime *object = Object_GetById(list->actor);
     u8 frame = ((u8 *)object->animation)[24];
     u16 flag = list->flag;
@@ -70,10 +73,12 @@ void Func_080eaa14(struct ActorFlag *list) {
         change = 1;
     }
     if (change) {
-      u8 (*cells)[4] = ((struct RestoreMap *)Ram_HeapSlots->mapWork)
-                           ->layers[object->terrainId]
-                           .cells;
-      u8 *shapes = &gMapShapeGrid[((s32)cells - 0x02010000) >> 2];
+      register u8 (*cells)[4] asm("r8") =
+          ((struct RestoreMap *)Ram_HeapSlots->mapWork)
+              ->layers[object->terrainId]
+              .cells;
+      register u8 *shapes asm("r9") =
+          &gMapShapeGrid[((s32)cells - 0x02010000) >> 2];
       s32 slot = Func_080eab70(object);
       u32 key = Func_080202f0(object->terrainId, object->x, object->z);
       s32 height =
@@ -89,9 +94,12 @@ void Func_080eaa14(struct ActorFlag *list) {
         GameFlag_SetBit(flag);
       }
       if ((object->x | object->z) != 0) {
-        struct SwitchCell *cell = (struct SwitchCell *)cells[slot];
+        struct SwitchCell *cell;
 
-        shapes[slot] = Func_080eab98(object->terrainId, key, height);
+        cells += slot;
+        shapes += slot;
+        cell = (struct SwitchCell *)*cells;
+        *shapes = Func_080eab98(object->terrainId, key, height);
         if (GameFlag_Test(flag)) {
           cell->block = 0;
           cell->raised = 1;

@@ -1,8 +1,12 @@
-// Near miss, differ 10 of 45 (2026-10-15): rewritten on view_move.h's
+// Near miss, differ 6 of 45 (2026-10-19; 10 on 2026-10-15). The permuter
+// found a one-pass block around the third bound store, which keeps the
+// loads after their address steps as the ROM has them (10 -> 6); a second
+// block around the second store changes nothing. Rewritten on view_move.h's
 // ViewMoveWork and the map and event work structs, from the earlier draft at
 // 12. What remains is order only: the ROM sets the call's 1 (movs r1, #1)
-// among the bound stores, where this sets it just before the call, and forms
-// the effect work's address one slot later. Measured: the four work pointers
+// after the second bound's load, where this sets it after the fourth, and
+// forms the effect work's address one slot later; the first store's address
+// copy also comes after its load. Measured: the four work pointers
 // in nine orders (10-22; map, view-move work, scene, event best).
 #include "types.h"
 #include "ram_buffer.h"
@@ -32,7 +36,9 @@ void Func_080e8c9c(void) {
   } else {
     map->minX = work->savedMinX;
     map->maxX = work->savedMaxX;
-    map->minZ = work->savedMinZ;
+    do {
+      map->minZ = work->savedMinZ;
+    } while (0);
     map->maxZ = work->savedMaxZ;
     Camera_FollowActor(scene->firstObjectId, 1);
   }

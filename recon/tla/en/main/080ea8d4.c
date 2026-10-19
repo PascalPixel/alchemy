@@ -1,7 +1,13 @@
-// Near miss, differ 26 of 141, register choice: the native spills the
-// list's start (sp 0) and keeps the map work in r11 and the 0x100000 step
-// in r9; this spills the map work and keeps the step in r11, with a few
-// rows of order around the cell lookup.
+// Near miss, differ 14 of 141 (2026-10-19; 26 before). The native spills
+// the list's start (sp 0) and keeps the map work in r11 and the 0x100000
+// step in r9, set after the first test: both are fixed here, the step set
+// in an if around the loop (26 -> 18; the plain for loop sets it before
+// the test, 52), with x - 0x100000 left to the pool as the native has it
+// (26 with the step). The owner's y is stored before its terrain height
+// (16) and the actor's x is read before its cell is marked (14). What
+// remains: the prologue (the native subtracts sp after its first movs and
+// spills the list after the map load), the 0xffff's order around the first
+// test, and the map's copy taking r1 where the native takes r2.
 // Func_080ea7c0's sibling that also touches the four cells around each
 // actor. For each (actor, flag) entry until 0xffff it clears the actor's
 // motion flags and collision bit 0, shows its sprite, marks its map cell
@@ -43,39 +49,47 @@ void Func_080ea8a8(s32 x, s32 z, s32 layer, s32 height);
 s32 Func_08020310(s32 x, s32 z, s32 layer, s32 height);
 
 void Func_080ea8d4(struct ActorFlag *list) {
-  struct RestoreMap *map = (struct RestoreMap *)Ram_HeapSlots->mapWork;
+  register struct RestoreMap *map asm("r11") =
+      (struct RestoreMap *)Ram_HeapSlots->mapWork;
   struct ActorFlag *entry;
   struct ObjectRuntime *owner;
+  s32 x;
+  register s32 step asm("r9");
 
-  for (entry = list; entry->actor != 0xffff; entry++) {
-    struct ObjectRuntime *object = Object_GetById(entry->actor);
-    u16 flag = entry->flag;
-    s32 slot = Func_080eab70(object);
-    u8 *cell = map->layers[object->terrainId].cells[slot];
+  entry = list;
+  if (entry->actor != 0xffff) {
+    step = 0x100000;
+    do {
+      struct ObjectRuntime *object = Object_GetById(entry->actor);
+      u16 flag = entry->flag;
+      s32 slot = Func_080eab70(object);
+      u8 *cell = map->layers[object->terrainId].cells[slot];
 
-    object->motionFlags = 0;
-    object->collisionFlags &= ~1;
-    ObjectDispatch_SetSingleChildFlagsFar(object, 0);
-    cell[2] = 0xff;
-    Func_080ea8a8(object->x + 0x100000, object->z, object->terrainId,
-                  object->terrainHeight);
-    Func_080ea8a8(object->x - 0x100000, object->z, object->terrainId,
-                  object->terrainHeight);
-    Func_080ea8a8(object->x, object->z + 0x100000, object->terrainId,
-                  object->terrainHeight);
-    Func_080ea8a8(object->x, object->z - 0x100000, object->terrainId,
-                  object->terrainHeight);
-    if (GameFlag_Test(flag)) {
-      Object_SetMode(object, 0);
-      GameFlag_ClearBit(flag);
-    } else {
-      Object_SetMode(object, 1);
-    }
+      object->motionFlags = 0;
+      object->collisionFlags &= ~1;
+      ObjectDispatch_SetSingleChildFlagsFar(object, 0);
+      x = object->x;
+      cell[2] = 0xff;
+      Func_080ea8a8(x + step, object->z, object->terrainId,
+                    object->terrainHeight);
+      Func_080ea8a8(object->x - 0x100000, object->z, object->terrainId,
+                    object->terrainHeight);
+      Func_080ea8a8(object->x, object->z + step, object->terrainId,
+                    object->terrainHeight);
+      Func_080ea8a8(object->x, object->z - 0x100000, object->terrainId,
+                    object->terrainHeight);
+      if (GameFlag_Test(flag)) {
+        Object_SetMode(object, 0);
+        GameFlag_ClearBit(flag);
+      } else {
+        Object_SetMode(object, 1);
+      }
+      entry++;
+    } while (entry->actor != 0xffff);
   }
   Func_080eaa14(list);
   owner = Object_GetById(EventRuntime_GetControlledOwner());
-  if (Func_08020310(owner->x, owner->z, owner->terrainId,
-                    owner->terrainHeight))
-    owner->y = owner->terrainHeight =
+  if (Func_08020310(owner->x, owner->z, owner->terrainId, owner->terrainHeight))
+    owner->terrainHeight = owner->y =
         Map_GetTerrainHeightFar(owner->terrainId, owner->x, owner->z);
 }

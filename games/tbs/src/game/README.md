@@ -6,6 +6,9 @@ inventories, Psynergy and levelling up, the game flags, enemy units, the
 party's coins and counters, element levels and classes, battle arithmetic and
 the Djinn.
 
+See also: [Battles](../battle/README.md), which follows an ability from these
+tables to its damage, and [Shops](../shop/README.md), which sell the items.
+
 ## Files
 
 | File | What it holds |
@@ -85,14 +88,46 @@ crosses folders.
 | `Battle_`, `BattleRandom`, `BattleTarget_`, `BattleFx_` | battle arithmetic the battle folder calls |
 | `BattleUnitSet` | filling an enemy unit at the start of a battle |
 
-## Spellings
+The spellings some sites keep to match, and the comment markers, are in
+[Matching](../MATCHING.md).
 
-Each site keeps the form it matches with:
+## Design
 
-- A unit as `UnitGet(owner)`, or as the far-call `UnitGetFar(owner)` from
-  other banks.
-- An element pair array as `s16 [4][2]` where the matching code indexes it, or
-  through `struct BattleElementStats` with `UBFIX`.
+### A row's place is its id, and its name is the message at the same place
+
+The definition tables have no id column. An item is the row it sits on, and
+the same number is its place in three other lists: its name is message
+`MsgItemName` + id, its line on the item screen `MsgItemPlainName` + id, and
+code reaches both by adding the id to the first message's number
+(`itemId + MsgItemName` in the shops and the menus). Abilities, enemies and
+Djinn work the same way, with their own first messages. So the tables and the
+message catalogs are parallel lists tied only by position: a row inserted in
+the middle of `items.tsv` gives every later item the name of the one before
+it, unless the catalogs of all six languages gain a message at the same
+place. Rows that no item uses keep their places for the same reason, with
+`?` or `=` as their names.
+
+### Flags are bits that can also be read as bytes
+
+The 4,096 game flags are one array of bits, `gGameFlagBytes`. A flag
+number's low three bits pick the bit and the next nine the byte
+(`game/flags.c`), so eight consecutive flags are also one byte, and the byte
+calls (`GameFlag_GetByte`, `GameFlag_SetByte`, `GameFlag_IncrementByte`)
+read and write it whole. A small counter can therefore live among the flags,
+and it follows the flags' rules: one kept in a scene's temporary range
+(0x200 to 0x2ff) is cleared on entry with the rest (see
+[Scenes](../scene/README.md)), and all of them are saved with the game.
+
+### An inventory slot is one halfword
+
+A unit's 15 inventory slots are halfwords: the item id in the low 9 bits,
+then the equipped bit (`INVENTORY_EQUIPPED`, 0x200), the broken bit
+(`INVENTORY_BROKEN`, 0x400), and the quantity less one from bit 11
+(`INVENTORY_QUANTITY_SHIFT`). So an item, its state and its stack move
+together in one load and one store, and a slot of 0 is empty, which
+`Inventory_CompactSlots` relies on when it closes the gaps. Code that asks
+which item a slot holds masks it with `ITEM_ID_MASK` first, since the same
+item equipped, broken or stacked is a different halfword.
 
 ## How to find a row
 
@@ -152,3 +187,18 @@ kind; `../battle/README.md` follows it to the damage.
 - 20 Djinn to an element; 519 abilities; 165 enemies, of which the last has
   no name message.
 - 4096 game flags.
+
+## Evidence and open questions
+
+The tables' label columns are the English edition's names from
+`games/tbs/text/en.po`, by the message each row's id reaches; the columns are
+named from what the code reads in them; the item effect kinds from what
+`UnitCalc` does with each. `item_ids.h`, `ability_ids.h` and `djinn_ids.h`
+name only the ids code uses.
+
+Still unknown:
+
+- XXX: the `unknown_` and `unk_` columns of the tables, and what rows 269 to
+  323 of `items.tsv` were for, as they have no name message.
+- XXX: why game flags 48 to 127 are counted in the save file's summary
+  (`SaveState_BuildSummaryHeader`).

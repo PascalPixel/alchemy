@@ -37,6 +37,6 @@ extern struct ScenePlacement gTolbiShipMast_StagingObjects[];
 extern struct ScenePlacement gTolbiShipMast_EnsembleObjects[];
 extern struct ScenePlacement gTolbiShipMast_LandingObjects[];
 extern struct SceneEvent gTolbiShipMast_Events[];
-extern u32 gTolbiShipMast_FlagValues[];
+extern u32 gTolbiShipMast_PassengerRowValues[];
 
 #endif

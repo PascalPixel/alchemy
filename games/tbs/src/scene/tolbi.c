@@ -21,6 +21,7 @@
 #include "field_scene.h"
 #include "item_ids.h"
 #include "objcmd.h"
+#include "songs.h"
 
 #if TBS_PATCH_1
 #define TOLBI_JAR_SEARCH_KIND                                                  \
@@ -33,7 +34,9 @@ static void Tolbi_FreezePuddle(void);
 
 // Talking to Ember, the Mars Djinni hiding in town, makes it join the party.
 // Its index among the Mars Djinn is 4, the fifth Mars name in the game text.
-static void Tolbi_JoinEmber(void) { Djinn_JoinParty(TOLBI_EMBER, 2, 4); }
+static void Tolbi_JoinEmber(void) {
+  Djinn_JoinParty(TOLBI_EMBER, ELEMENT_MARS, 4);
+}
 
 #include "common/object_distance.h"
 
@@ -152,7 +155,7 @@ static void Tolbi_GrowSprout(void) {
   sprout = Object_GetById(TOLBI_SPROUT);
   Engine_ActorSetSpriteFlags((s32)sprout, 0);
   Field_SetMapCellCollision(0, PIXELS(544), PIXELS(288), 253);
-  Engine_GameFlagSet(FLAG_TOLBI_SPROUT_GROWN);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
 }
 
 // Reveal uncovers the hidden chest: its map cell is drawn in and the chest
@@ -269,58 +272,61 @@ u8 *Tolbi_SelectEvents(void) {
   return (u8 *)gTolbiEventsFestival;
 }
 
-// A townsperson asks whether someone can live to be more than 100.
-static void Tolbi_TalkToActor15(void) {
+// A townsperson asks whether someone can live to be more than 100 years old;
+// either way the talk turns to Babi, who is older still.
+static void Tolbi_AskAboutLivingPastHundred(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiSomeoneLiveMore);
   Engine_EventAskYesNo(15, 0);
   Engine_EventEnd();
 }
 
-// A parent asks whether children really do love souvenirs.
-static void Tolbi_TalkToActor24(void) {
+// The father asks whether children really do love souvenirs, and owns up to
+// loving them himself.
+static void Tolbi_TalkToFather(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiChildrenLoveSouvenirs);
-  Engine_EventAskYesNo(24, 0);
+  Engine_EventAskYesNo(TOLBI_FATHER, 0);
   Engine_EventEnd();
 }
 
-// A parent answers the party, then turns to the crying child: "Be patient,
-// little guy."
-static void Tolbi_TalkToActor25(void) {
+// The mother turns to her crying child, "Be patient, little guy.", then back
+// to promise better sweets later on.
+static void Tolbi_TalkToMother(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiPatientLittleGuy);
-  Actor_FaceDirection(25, FACING_NORTH, 0);
-  Engine_EventShowMessage(25, 0);
-  Actor_FaceDirection(25, FACING_WEST, 0);
-  Engine_EventShowMessage(25, 0);
+  Actor_FaceDirection(TOLBI_MOTHER, FACING_NORTH, 0);
+  Engine_EventShowMessage(TOLBI_MOTHER, 0);
+  Actor_FaceDirection(TOLBI_MOTHER, FACING_WEST, 0);
+  Engine_EventShowMessage(TOLBI_MOTHER, 0);
   Engine_EventEnd();
 }
 
-// The child begging for sweets turns and stamps twice.
-static void Tolbi_TalkToActor26(void) {
+// The crying child turns, stamps twice and wails for sweets.
+static void Tolbi_TalkToCryingChild(void) {
   Engine_EventBegin();
-  Actor_FaceDirection(26, FACING_SOUTH, 0);
-  Engine_ActorStartRepeatedMotion(26, 2);
+  Actor_FaceDirection(TOLBI_CRYING_CHILD, FACING_SOUTH, 0);
+  Engine_ActorStartRepeatedMotion(TOLBI_CRYING_CHILD, 2);
   Engine_EventSetMessage(MsgTolbiWaahBuySweets);
-  Engine_EventShowMessage(26, 0);
+  Engine_EventShowMessage(TOLBI_CRYING_CHILD, 0);
   Engine_EventEnd();
 }
 
-// The traveller sleeping under the archway because the inns are full.
-static void Tolbi_TalkToActor27(void) {
+// During the festival the scalper sleeps under the archway: the inns are
+// full.
+static void Tolbi_TalkToSleepingScalper(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiInnsFullStaying);
-  Engine_EventShowMessage(27, 0);
+  Engine_EventShowMessage(TOLBI_SCALPER, 0);
   Engine_EventEnd();
 }
 
-// After Colosso, a man asks whether the party was in the finals. The question
-// is anchored to actor 24, who has left town by then, not to actor 12.
-static void Tolbi_TalkToActor12(void) {
+// After Colosso, actor 12 asks whether the party was in the finals. The
+// question is anchored to the father, who has left town by then.
+static void Tolbi_AskWhetherPartyWasInFinals(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiFinalsWerent);
-  Engine_EventAskYesNo(24, 0);
+  Engine_EventAskYesNo(TOLBI_FATHER, 0);
   Engine_EventEnd();
 }
 
@@ -357,7 +363,7 @@ static void Tolbi_EnterDoor(void) {
     }
   }
   door = work->touchedTrigger - 1;
-  Engine_AudioPlayCue(158);
+  Engine_AudioPlayCue(SE_DOOR_OPEN);
   Map_AnimateCells((s32)gTolbiDoors[door].steps, gTolbiDoors[door].x,
                    gTolbiDoors[door].y);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -419,29 +425,31 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SPRING_OPENED) != 0) {
     Actor_SetPosition(TOLBI_GAMBLER, PIXELS(316), PIXELS(328));
   }
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_PUDDLE_FROZEN) != 0) {
+  // The puddle is frozen.
+  if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01) != 0) {
     Tolbi_FreezePuddle();
   }
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SPROUT_GROWN) != 0) {
+  // The sprout has grown.
+  if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00) != 0) {
     Tolbi_GrowSprout();
     Engine_ActorSetAnimation(TOLBI_SPROUT, 4);
   }
 
   // After Colosso the crowd has gone home: actors 20 to 27 (but 23) are
-  // moved off the map. On finals day actor 27 waits by the gate.
+  // moved off the map. On finals day the scalper waits by the gate.
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_ENDED) != 0) {
     Actor_SetPosition(20, PIXELS(520), PIXELS(560));
     Actor_SetPosition(21, PIXELS(520), PIXELS(560));
     Actor_SetPosition(22, PIXELS(520), PIXELS(560));
-    Actor_SetPosition(24, PIXELS(520), PIXELS(560));
-    Actor_SetPosition(25, PIXELS(520), PIXELS(560));
-    Actor_SetPosition(26, PIXELS(520), PIXELS(560));
-    Actor_SetPosition(27, PIXELS(520), PIXELS(560));
+    Actor_SetPosition(TOLBI_FATHER, PIXELS(520), PIXELS(560));
+    Actor_SetPosition(TOLBI_MOTHER, PIXELS(520), PIXELS(560));
+    Actor_SetPosition(TOLBI_CRYING_CHILD, PIXELS(520), PIXELS(560));
+    Actor_SetPosition(TOLBI_SCALPER, PIXELS(520), PIXELS(560));
   } else {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_FINALS_DAY) != 0) {
-      Actor_SetPosition(27, PIXELS(280), PIXELS(80));
-      Actor_FaceDirection(27, FACING_SOUTHEAST, 0);
-      Engine_ActorSetAnimation(27, ANIM_STAND);
+      Actor_SetPosition(TOLBI_SCALPER, PIXELS(280), PIXELS(80));
+      Actor_FaceDirection(TOLBI_SCALPER, FACING_SOUTHEAST, 0);
+      Engine_ActorSetAnimation(TOLBI_SCALPER, ANIM_STAND);
     }
   }
   return 0;
@@ -602,7 +610,7 @@ static void Tolbi_FreezePuddle(void) {
   {
     Map_CopyCellAttributes(36, 16, 1, 1, 34, 16);
   }
-  Engine_GameFlagSet(FLAG_TOLBI_PUDDLE_FROZEN);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
 }
 
 // The action script of a mirrored actor: flips its sprite and passes 7 on.
@@ -739,7 +747,8 @@ struct ScenePlacement gTolbiPlacements[] = {
         PIXELS(-9), 0, PIXELS(488), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { 0x98, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(-9), 0, PIXELS(488), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0x5c, 0x5c, ACTOR_STAND,
+    // Ember, until its Djinni flag is set: twenty flags to an element.
+    { 0x5c, FLAG_DJINNI_0 + ELEMENT_MARS * 20 + 4, ACTOR_STAND,
         PIXELS(584), 0, PIXELS(136), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0x34, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(-9), 0, PIXELS(488), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
@@ -748,7 +757,7 @@ struct ScenePlacement gTolbiPlacements[] = {
 
 // During the festival, before the finals.
 struct SceneEvent gTolbiEventsFestival[] = {
-    { PSYNERGY_ON_ACTOR(0xc /* Growth */), TOLBI_SPROUT, FLAG_TOLBI_SPROUT_GROWN, EVENT_SCRIPT(Tolbi_GrowSprout) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), TOLBI_SPROUT, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Tolbi_GrowSprout) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
@@ -770,7 +779,7 @@ struct SceneEvent gTolbiEventsFestival[] = {
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTolbiTryoutsStartedAtTheColosseumToday) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTolbiColossoShouldHaveStartedTodayWhat) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTolbiBabiWasAlreadyPrettyOldBack) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToActor15) },
+    { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_AskAboutLivingPastHundred) },
     { EVENT_TALK, TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToOlderBrother) },
     { EVENT_TALK, TOLBI_YOUNGER_SIBLING, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToYoungerSibling) },
     { EVENT_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgTolbiGetYourColossoSouvenirsTheyMake) },
@@ -778,10 +787,10 @@ struct SceneEvent gTolbiEventsFestival[] = {
     { EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgTolbiIveDecidedNotToFightAt) },
     { EVENT_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgTolbiWowTolbisFestivalIsHumongousJust) },
     { EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTolbiRatsWeOversleptAndNowThe) },
-    { EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToActor24) },
-    { EVENT_TALK, 25, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToActor25) },
-    { EVENT_TALK, 26, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToActor26) },
-    { EVENT_TALK, 27, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToActor27) },
+    { EVENT_TALK, TOLBI_FATHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToFather) },
+    { EVENT_TALK, TOLBI_MOTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToMother) },
+    { EVENT_TALK, TOLBI_CRYING_CHILD, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToCryingChild) },
+    { EVENT_TALK, TOLBI_SCALPER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToSleepingScalper) },
     { EVENT_TALK, TOLBI_GAMBLER, FLAG_TOLBI_SPRING_OPENED, EVENT_SCRIPT(Tolbi_TalkToGambler) },
     { EVENT_TALK, TOLBI_GAMBLER, CONDITION_ALWAYS, MSGNO(MsgTolbiAhIGuessIJustDont) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTolbiTouristsArentTheOnlyOnesWho) },
@@ -797,10 +806,10 @@ struct SceneEvent gTolbiEventsFestival[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgTolbiISawThePeopleWhoAre) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgTolbiTolbiIsNotLikeXianIt) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgTolbiICantSayAnythingCauseIt) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgTolbiTheStuffTheyreSellingAtThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgTolbiWhyDoKidsWantSuchAwful) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTolbiThoseSweetsSmellGreatImNot) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTolbiIveBeenGuardingOurSpotBut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_FATHER, CONDITION_ALWAYS, MSGNO(MsgTolbiTheStuffTheyreSellingAtThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_MOTHER, CONDITION_ALWAYS, MSGNO(MsgTolbiWhyDoKidsWantSuchAwful) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_CRYING_CHILD, CONDITION_ALWAYS, MSGNO(MsgTolbiThoseSweetsSmellGreatImNot) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_SCALPER, CONDITION_ALWAYS, MSGNO(MsgTolbiIveBeenGuardingOurSpotBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgTolbiIKeepLosingCoinsButI) },
     { EVENT_TALK, TOLBI_EMBER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_JoinEmber) },
     { SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadSpringSign) },
@@ -808,8 +817,8 @@ struct SceneEvent gTolbiEventsFestival[] = {
     { SEARCH(SEARCH_BARREL), TOLBI_BARREL, 0xf97, FIND_COINS(9) },
 // The international editions find the jar only when the party faces north.
     { TOLBI_JAR_SEARCH_KIND, TOLBI_JAR, 0xf98, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { SEARCH(SEARCH_CHEST), TOLBI_HIDDEN_CHEST, 0xf99, FIND_ITEM(0xbf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), TOLBI_PUDDLE, FLAG_TOLBI_PUDDLE_FROZEN, EVENT_SCRIPT(Tolbi_FreezePuddle) },
+    { SEARCH(SEARCH_CHEST), TOLBI_HIDDEN_CHEST, 0xf99, FIND_ITEM(ITEM_POWER_BREAD) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), TOLBI_PUDDLE, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Tolbi_FreezePuddle) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RevealHiddenChest) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_HideRevealedChest) },
     { SCENE_EVENTS_END },
@@ -817,7 +826,7 @@ struct SceneEvent gTolbiEventsFestival[] = {
 
 // On finals day.
 struct SceneEvent gTolbiEventsFinalsDay[] = {
-    { PSYNERGY_ON_ACTOR(0xc /* Growth */), TOLBI_SPROUT, FLAG_TOLBI_SPROUT_GROWN, EVENT_SCRIPT(Tolbi_GrowSprout) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), TOLBI_SPROUT, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Tolbi_GrowSprout) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
@@ -846,10 +855,10 @@ struct SceneEvent gTolbiEventsFinalsDay[] = {
     { EVENT_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgTolbiTheTrialsWereSoRivetingThe) },
     { EVENT_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgTolbiIHaveSeatsToTheFinals) },
     { EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTolbiIOversleptAgainSoICant) },
-    { EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToActor24) },
-    { EVENT_TALK, 25, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToActor25) },
-    { EVENT_TALK, 26, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToActor26) },
-    { EVENT_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgTolbiTheFinalsStartTodayIWonder) },
+    { EVENT_TALK, TOLBI_FATHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToFather) },
+    { EVENT_TALK, TOLBI_MOTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToMother) },
+    { EVENT_TALK, TOLBI_CRYING_CHILD, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToCryingChild) },
+    { EVENT_TALK, TOLBI_SCALPER, CONDITION_ALWAYS, MSGNO(MsgTolbiTheFinalsStartTodayIWonder) },
     { EVENT_TALK, TOLBI_GAMBLER, FLAG_TOLBI_SPRING_OPENED, EVENT_SCRIPT(Tolbi_TalkToGambler) },
     { EVENT_TALK, TOLBI_GAMBLER, CONDITION_ALWAYS, MSGNO(MsgTolbiAhIGuessIJustDont) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgTolbiIveGotToGetToThe) },
@@ -865,18 +874,18 @@ struct SceneEvent gTolbiEventsFinalsDay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgTolbiFightingInColossoRequiresALot) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgTolbiTheyreSellingFinalsSeatsRightAt) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgTolbiItsSupposedToBeFreeHaving) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgTolbiOnceColossoEndsOurLivesCan) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgTolbiFestivalsAreSoExpensiveMyWallets) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTolbiMomYouSaidYouWereAll) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTolbiTodayIsABigDayFor) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_FATHER, CONDITION_ALWAYS, MSGNO(MsgTolbiOnceColossoEndsOurLivesCan) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_MOTHER, CONDITION_ALWAYS, MSGNO(MsgTolbiFestivalsAreSoExpensiveMyWallets) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_CRYING_CHILD, CONDITION_ALWAYS, MSGNO(MsgTolbiMomYouSaidYouWereAll) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TOLBI_SCALPER, CONDITION_ALWAYS, MSGNO(MsgTolbiTodayIsABigDayFor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS, MSGNO(MsgTolbiIKeepLosingCoinsButI) },
     { EVENT_TALK, TOLBI_EMBER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_JoinEmber) },
     { SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadSpringSign) },
     { SEARCH(SEARCH_UNNAMED), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
     { SEARCH(SEARCH_BARREL), TOLBI_BARREL, 0xf97, FIND_COINS(9) },
     { SEARCH(SEARCH_JAR), TOLBI_JAR, 0xf98, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { SEARCH(SEARCH_CHEST), TOLBI_HIDDEN_CHEST, 0xf99, FIND_ITEM(0xbf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), TOLBI_PUDDLE, FLAG_TOLBI_PUDDLE_FROZEN, EVENT_SCRIPT(Tolbi_FreezePuddle) },
+    { SEARCH(SEARCH_CHEST), TOLBI_HIDDEN_CHEST, 0xf99, FIND_ITEM(ITEM_POWER_BREAD) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), TOLBI_PUDDLE, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Tolbi_FreezePuddle) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RevealHiddenChest) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_HideRevealedChest) },
     { SCENE_EVENTS_END },
@@ -884,7 +893,7 @@ struct SceneEvent gTolbiEventsFinalsDay[] = {
 
 // After Colosso has ended.
 struct SceneEvent gTolbiEventsAfterColosso[] = {
-    { PSYNERGY_ON_ACTOR(0xc /* Growth */), TOLBI_SPROUT, FLAG_TOLBI_SPROUT_GROWN, EVENT_SCRIPT(Tolbi_GrowSprout) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), TOLBI_SPROUT, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Tolbi_GrowSprout) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
@@ -902,7 +911,7 @@ struct SceneEvent gTolbiEventsAfterColosso[] = {
     { EVENT_TOUCH | EVENT_TOUCH_FACING | FACING_NORTH, 239, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT_SCRIPT(Tolbi_EnterSpring) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTolbiWellThisYearsColossoHasEnded) },
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTolbiItsBackToOurNormalQuiet) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToActor12) },
+    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_AskWhetherPartyWasInFinals) },
     { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgTolbiWithAllThoseRevelersGoneThe) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgTolbiIHadNoLuckInThe) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgTolbiItsSoQuietTheHustleAnd) },
@@ -928,8 +937,8 @@ struct SceneEvent gTolbiEventsAfterColosso[] = {
     { SEARCH(SEARCH_UNNAMED), 31, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
     { SEARCH(SEARCH_BARREL), TOLBI_BARREL, 0xf97, FIND_COINS(9) },
     { SEARCH(SEARCH_JAR), TOLBI_JAR, 0xf98, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { SEARCH(SEARCH_CHEST), TOLBI_HIDDEN_CHEST, 0xf99, FIND_ITEM(0xbf) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), TOLBI_PUDDLE, FLAG_TOLBI_PUDDLE_FROZEN, EVENT_SCRIPT(Tolbi_FreezePuddle) },
+    { SEARCH(SEARCH_CHEST), TOLBI_HIDDEN_CHEST, 0xf99, FIND_ITEM(ITEM_POWER_BREAD) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), TOLBI_PUDDLE, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(Tolbi_FreezePuddle) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RevealHiddenChest) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_HideRevealedChest) },
     { SCENE_EVENTS_END },

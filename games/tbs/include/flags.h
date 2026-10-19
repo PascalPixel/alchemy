@@ -322,6 +322,52 @@
 #define FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA 0x9b5 // search on or go to Lalivero
 #define FLAG_SUHALLA_DESERT_IODEM_WARNED 0x9b6    // "A sandstorm!"
 #define FLAG_SUHALLA_DESERT_CHASING_STORM_DOUSED 0x9b7
+// Tolbi
+#define FLAG_TOLBI_CORN_GIVEN 0x8bf    // the snack vendor gave away her corn
+#define FLAG_TOLBI_SEARCHERS_MET 0x8c0 // the soldiers asked about Babi
+#define FLAG_TOLBI_SPRING_OPENED 0x8c1 // the gambler let the party go first
+
+// Tolbi interiors: the woman who finds a Lucky Medal after Colosso
+#define FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN 0x8bc // she hid it in the barrel
+#define FLAG_TOLBI_INTERIORS_MEDAL_TAKEN 0x8bd  // the party took it
+#define FLAG_TOLBI_INTERIORS_MEDAL_MISSED 0x8be // she has greeted them since
+// A place flag (0x300 to 0x3ff), cleared when the party leaves Tolbi.
+#define FLAG_TOLBI_INTERIORS_SAILORS_SEEN 0x300 // their argument has played
+
+// Tolbi ship: the crossing of the Karagol Sea from Kalay to Tolbi
+#define FLAG_TOLBI_SHIP_AT_ISLAND 0x8a0 // at anchor off the island
+// The ship's place plays music 29, the monsters' theme, instead of 41.
+#define FLAG_TOLBI_SHIP_MONSTERS_SIGHTED 0x8f0
+#define FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED 0x903 // the party will scout it
+// The crew have wondered what became of the replacement ship.
+#define FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY 0x920
+// "But the captain decided to set sail just a second ago."
+#define FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL 0x921
+// The party gave back the captain's Anchor Charm and agreed to protect the
+// ship.
+#define FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED 0x925
+// "Our replacement never arrived, but we're shoving off just the same."
+#define FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT 0x926
+#define FLAG_TOLBI_SHIP_ROWING 0x927 // the oars are moving
+// The monster attacks fought off. After the first an oarsman is hurt, and
+// from then on passengers the party chooses take the empty seats.
+#define FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED 0x928
+#define FLAG_TOLBI_SHIP_SECOND_ATTACK_REPELLED 0x929
+#define FLAG_TOLBI_SHIP_THIRD_ATTACK_REPELLED 0x92a
+#define FLAG_TOLBI_SHIP_KRAKEN_DEFEATED 0x92b
+// The passengers chosen to row: a group of nine flags for each empty seat,
+// one flag for each passenger, in the order of their actors from 8.
+#define FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS 0x92c
+#define FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS 0x935
+#define FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS 0x917
+#define FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS 0x990
+#define FLAG_TOLBI_SHIP_REACHED_TOLBI 0x93e // "The ship has arrived safely"
+// Place flags (0x300 to 0x3ff), cleared when the party leaves the ship.
+#define FLAG_TOLBI_SHIP_ROWER_CHOSEN 0x300    // a passenger follows the party
+#define FLAG_TOLBI_SHIP_MONSTERS_ABOARD 0x301 // the hold's stairs are barred
+// "There's a huge sea monster on the ship!": the deck shakes until the
+// Kraken is defeated.
+#define FLAG_TOLBI_SHIP_KRAKEN_ABOARD 0x302
 
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
@@ -504,5 +550,7 @@
 // Sanctum
 // Isaac accepted the Great Healer's request to go to Sol Sanctum.
 #define FLAG_SANCTUM_QUEST_ACCEPTED 0x9f0
+#define FLAG_SCENE_TEMP_71 0x271 // Tolbi ship deck: the first door is open
+#define FLAG_SCENE_TEMP_72 0x272 // Tolbi ship deck: the second door is open
 
 #endif

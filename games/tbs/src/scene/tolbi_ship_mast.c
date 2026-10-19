@@ -18,6 +18,7 @@
 #include "global_cells.h"
 #include "item_ids.h"
 #include "flags.h"
+#include "songs.h"
 #include "types.h"
 #include "field_event.h"
 #include "field_service.h"
@@ -40,8 +41,8 @@ static void TolbiShipMast_InitializeDriftingActor(s32 actorId);
 static void TolbiShipMast_RunLandingSequence(void);
 static void TolbiShipMast_AnnounceLand(void);
 static void TolbiShipMast_UpdateSway(void);
-static s32 TolbiShipMast_GetFlagPairDifference(void);
-static s32 TolbiShipMast_GetFlagGroupValue(u32 groupIndex);
+static s32 TolbiShipMast_GetRowingBalance(void);
+static s32 TolbiShipMast_GetSeatRowValue(u32 seat);
 
 s32 gTolbiShipMast_DriftY __attribute__((section(".bss")));
 s32 gTolbiShipMast_DriftX __attribute__((section(".bss")));
@@ -204,19 +205,22 @@ s32 TolbiShipMast_Initialize(void) {
 
   Engine_GameFlagSet(0x144);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  if ((Engine_GameFlagIsSet(0x927) != 0 || Engine_GameFlagIsSet(0x928) != 0) &&
-      Engine_GameFlagIsSet(0x93e) == 0 && Engine_GameFlagIsSet(0x8a0) == 0) {
+  if ((Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWING) != 0 ||
+       Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) &&
+      Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0 &&
+      Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND) == 0) {
     gTolbiShipMast_SwayX = (u16)Engine_RandomNext();
     gTolbiShipMast_SwayY = (u16)Engine_RandomNext();
     FieldScheduler_AddCallback(TolbiShipMast_UpdateSway, 0xc80);
   }
-  if (Engine_GameFlagIsSet(0x925) != 0 && Engine_GameFlagIsSet(0x93e) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0 &&
+      Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0) {
     Actor_SetPosition(8, PIXELS(164), PIXELS(328));
   }
   // The ship's scripted entrances resume their matching lookout scenes.
   switch (gGameState.entrance) {
   case 1:
-    if (Engine_GameFlagIsSet(0x109) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Object_GetById(ACTOR_PARTY_LEADER);
       Engine_EventBegin();
       Field_ClimbUp();
@@ -230,7 +234,7 @@ s32 TolbiShipMast_Initialize(void) {
     }
     break;
   case 10:
-    if (Engine_GameFlagIsSet(0x928) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) {
       TolbiShipMast_SetupVisibleLeaderLookout();
     } else {
       TolbiShipMast_SetupHiddenLeaderLookout();
@@ -341,8 +345,8 @@ static void TolbiShipMast_RunAvastScene(void) {
   gTolbiShipMast_CameraCenter[1] = zero;
   Actor_SetActionScript(9, gTolbiShipMast_FollowCameraActions);
   Engine_EventWait(20);
-  Engine_AudioPlayCue(29);
-  Engine_GameFlagSet(0x8f0);
+  Engine_AudioPlayCue(MUS_029);
+  Engine_GameFlagSet(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   Engine_ActorStop(8);
   Engine_TaskWait(1);
   Actor_ShowEmote(8, EMOTE_IN_FRONT, 0);
@@ -506,8 +510,8 @@ static void TolbiShipMast_ShowMonsters(void) {
   // The lookout recognizes the approaching group and reports monsters.
   Engine_ActorJump(8, 4, 20);
   Engine_ActorJump(8, 6, 40);
-  Event_PlayCue(29);
-  GameFlag_Set(0x8f0);
+  Event_PlayCue(MUS_029);
+  GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   Engine_EventSetMessage(MsgTolbiShipMonsters2);
   Event_ShowMessageAndWait(16, 0, 20);
   Actor_ShowEmote(8, EMOTE_IN_FRONT, 0);
@@ -562,7 +566,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(300);
-  Event_PlayCue(147);
+  Event_PlayCue(SE_147);
   Engine_EventWait(100);
   // Clear the approaching group from the foreground before the landing reveal.
   TolbiShipMast_PrepareGroupDeparture();
@@ -593,8 +597,8 @@ static void TolbiShipMast_RunLandingSequence(void) {
   Engine_TaskWait(1);
   Engine_ActorRunRepeatedMotion(8, 1);
   Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 0);
-  Event_PlayCue(29);
-  GameFlag_Set(0x8f0);
+  Event_PlayCue(MUS_029);
+  GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   // Grow actor 18 over 32 frames before staging actor 17 beside it.
   for (frame = 0; frame < 32; frame++) {
     actor->scaleX += Q16_ONE / 20;
@@ -617,7 +621,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   actor->gravity = PIXELS(3);
   Engine_EventWait(20);
   Engine_ActorJump(8, 6, 20);
-  Event_PlayCue(147);
+  Event_PlayCue(SE_147);
   Engine_EventWait(20);
   Actor_SetActionScript(8, gTolbiShipMast_WaveActions);
   Engine_EventWait(80);
@@ -626,7 +630,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   Actor_SetSpeed(17, PIXELS(1), PIXELS(1) / 2);
   actor->bounce = Q16_ONE / 10;
   actor->gravity = 7 * PIXELS(1) / 10;
-  Event_PlayCue(153);
+  Event_PlayCue(SE_153);
   actor->velocityY = PIXELS(8);
   Actor_SetDestination(17, 132, 360);
   Actor_SetDestination(18, 132, 360);
@@ -681,10 +685,11 @@ static void TolbiShipMast_AnnounceLand(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  // The flag-group score chooses the continuing scene's exit.
+  // How evenly the passengers row picks the next scene: a balance of 11 takes
+  // exit 15.
   gGameState.savedScene = (s32)&SceneId_TolbiShipInteriors;
   gGameState.savedEntrance = 2;
-  if (TolbiShipMast_GetFlagPairDifference() == 11) {
+  if (TolbiShipMast_GetRowingBalance() == 11) {
     Engine_EventRequestExit(15);
   } else {
     Engine_EventRequestExit(14);
@@ -709,40 +714,41 @@ static void TolbiShipMast_UpdateSway(void) {
   gTolbiShipMast_SwayY &= 0xffff;
 }
 
-// Subtracts the odd flag groups' values from the even groups' values.
-static s32 TolbiShipMast_GetFlagPairDifference(void) {
-  s32 evenGroups;
-  s32 oddGroups;
+// How evenly the chosen passengers row: the values of those at the west seats
+// (the first and third filled) less those at the east seats.
+static s32 TolbiShipMast_GetRowingBalance(void) {
+  s32 westSeats;
+  s32 eastSeats;
 
-  evenGroups = TolbiShipMast_GetFlagGroupValue(0);
-  evenGroups += TolbiShipMast_GetFlagGroupValue(2);
-  oddGroups = TolbiShipMast_GetFlagGroupValue(1);
-  oddGroups += TolbiShipMast_GetFlagGroupValue(3);
-  return evenGroups - oddGroups;
+  westSeats = TolbiShipMast_GetSeatRowValue(0);
+  westSeats += TolbiShipMast_GetSeatRowValue(2);
+  eastSeats = TolbiShipMast_GetSeatRowValue(1);
+  eastSeats += TolbiShipMast_GetSeatRowValue(3);
+  return westSeats - eastSeats;
 }
 
-// Returns the value of the first set flag in one of four nine-flag groups.
-static s32 TolbiShipMast_GetFlagGroupValue(u32 groupIndex) {
+// The rowing value of the passenger chosen for a seat, or 0 while it is empty.
+static s32 TolbiShipMast_GetSeatRowValue(u32 seat) {
   s32 firstFlag = 0;
-  u32 flagIndex;
+  u32 passenger;
 
-  switch (groupIndex) {
+  switch (seat) {
   case 0:
-    firstFlag = 0x92c;
+    firstFlag = FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS;
     break;
   case 1:
-    firstFlag = 0x935;
+    firstFlag = FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS;
     break;
   case 2:
-    firstFlag = 0x917;
+    firstFlag = FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS;
     break;
   case 3:
-    firstFlag = 0x990;
+    firstFlag = FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS;
     break;
   }
-  for (flagIndex = 0; flagIndex <= 8; flagIndex++) {
-    if (Engine_GameFlagIsSet(firstFlag + flagIndex) != 0)
-      return gTolbiShipMast_FlagValues[flagIndex];
+  for (passenger = 0; passenger <= 8; passenger++) {
+    if (Engine_GameFlagIsSet(firstFlag + passenger) != 0)
+      return gTolbiShipMast_PassengerRowValues[passenger];
   }
   return 0;
 }
@@ -926,17 +932,19 @@ struct ScenePlacement gTolbiShipMast_LandingObjects[] = {
 
 struct SceneEvent gTolbiShipMast_Events[] = {
     { TOUCH_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipMast_ClimbDownLadder) },
-    { EVENT_TALK, 8, 0x928, MSGNO(MsgTolbiShipWatchSeasHelpKaja) },
-    { EVENT_TALK, 8, 0x8a0, MSGNO(MsgTolbiShipLookoutCannotRow) },
+    { EVENT_TALK, 8, FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED, MSGNO(MsgTolbiShipWatchSeasHelpKaja) },
+    { EVENT_TALK, 8, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipLookoutCannotRow) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipIslandMonstersUnknown) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x928, MSGNO(MsgTolbiShipHiddenAnchorDiscovered) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x8a0, MSGNO(MsgTolbiShipSeaTooVast) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED, MSGNO(MsgTolbiShipHiddenAnchorDiscovered) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipSeaTooVast) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipIslandTreasures) },
     { SEARCH(SEARCH_UNNAMED), 11, FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND, EVENT_SCRIPT(TolbiShipMast_FindAnchorCharm) },
     { SCENE_EVENTS_END },
 };
 
-u32 gTolbiShipMast_FlagValues[] = {
+// Each passenger's rowing value, in the order of their actors in the hold
+// from 8.
+u32 gTolbiShipMast_PassengerRowValues[] = {
     7, 5, 8, 4, 9, 12, 6, 3,
     0,
 };

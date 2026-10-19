@@ -16,15 +16,17 @@
 /// The battle camera: its eye, the focus it turns about, and its pitch, yaw
 /// and distance. It lives in the HEAP_SLOT_CAMERA work slot.
 struct BattleCamera {
+  /// The eye, 16.16 fixed-point pixels: written each frame distance behind
+  /// the focus along the turned view.
   s32 eye[3];
-  s32 pos[3];
-  s32 unk18;
-  s32 *followPos;
-  s32 distance;
-  u8 unk24[16];
-  u16 pitch; ///< 1/65536 turns
-  u16 yaw;   ///< 1/65536 turns
-  u8 unk38[20];
+  s32 pos[3];     ///< the focus, 16.16 fixed-point pixels
+  s32 unk18;      ///< cleared beside followPos; not read by name in TBS
+  s32 *followPos; ///< when set, the focus followed instead of pos
+  s32 distance;   ///< eye to focus, 16.16 fixed-point pixels
+  u8 unk24[16];   ///< not named by TBS code
+  u16 pitch;      ///< 1/65536 turns
+  u16 yaw;        ///< 1/65536 turns
+  u8 unk38[20];   ///< not named by TBS code
 };
 
 STATIC_ASSERT(sizeof(struct BattleCamera) == 0x4c);
@@ -39,17 +41,20 @@ extern struct BattleCamera *gCameraWork;
 /// camera eases toward and the frames left to ease it.
 struct BattlePresentationTransition {
   s32 targetYaw; ///< 1/65536 turns
-  s32 frames;
-  u8 unk08[8];
-  s32 active;
+  s32 frames;    ///< frames left to ease the yaw, a sixteenth a frame
+  u8 unk08[8];   ///< BattleBackgroundView's mode and secondMode
+  s32 active;    ///< BattleBackgroundView's busy, at the same offset
+  /// 0 lets the camera update set the background's range each frame; 1 for
+  /// a critical hit's zoom and once a round's view is set.
   s32 flag;
-  s32 unk18;
-  s32 unk1c;
+  s32 unk18; ///< cleared when the battle starts; not read by name in TBS
+  s32 unk1c; ///< cleared when the battle starts; not read by name in TBS
 };
 
 /// The effect updates its command while the presentation keeps animation state.
 struct BattlePresentationWork {
   struct BattleEffectArgument effect;
+  /// Each target's animation entries' param, saved before the effect.
   u8 savedAnimationParameters[8][4];
 };
 
@@ -61,10 +66,10 @@ STATIC_ASSERT(offsetof(struct BattlePresentationWork, effect.actors) == 0x24);
 /// The battle background's work slot as the background code reads it: its
 /// display mode (2 draws it as an affine perspective plane).
 struct BattleBackgroundView {
-  u8 unk00[8];
-  s32 mode;
-  s32 secondMode;
-  s32 busy;
+  u8 unk00[8];    ///< BattlePresentationTransition's targetYaw and frames
+  s32 mode;       ///< 2 draws the affine plane; 1 sets BG1's scroll too
+  s32 secondMode; ///< 1 also sets BG1's scroll; one effect sets it
+  s32 busy;       ///< while set, BattleCamera_SetRange leaves BG1's scroll
 };
 
 /// The battle background's affine parameters and reference point, copied
@@ -77,8 +82,8 @@ struct BattleAffine {
 /// The battle background's scanline work in heap slot 10: two pages of
 /// per-line BG2CNT values, swapped each frame, and the affine parameters.
 struct BattleAffineHdma {
-  u32 page;
-  u8 unk04[12];
+  u32 page;     ///< the page of lines shown; the other one is built
+  u8 unk04[12]; ///< not named by TBS code
   struct BattleAffine affine;
   u16 lines[2][160];
 };

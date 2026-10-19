@@ -8,34 +8,38 @@
 struct AnimationObject;
 union FieldObject;
 
+/// A field object as an arc effect's caster: its facing, its animation records
+/// and the phase and frame count of its per-frame callback.
 struct ArcEffectObject {
   u8 unk00[6];
-  u16 angle;
+  u16 angle; ///< 1/65536 turns
   u8 unk08[0x48];
   struct AnimationObject *records;
   u8 unk54[0x10];
-  s16 phase;
-  s16 step;
+  s16 phase; ///< 1 spins the caster
+  s16 step;  ///< frames since the arcs started
   struct FieldActor *linkedObject;
-  void (*callback)(union FieldObject *object);
+  void (*callback)(union FieldObject *object); ///< run each frame
 };
 
+/// The work of a Psynergy effect scene: its caster and target, where it takes
+/// place, the map state it restores and its 24 effect slots.
 struct BattleFxScene {
-  s32 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  void *mainObject;
-  void *child;
-  s16 firstObjectId;
-  s16 secondObjectId;
-  u16 action;
-  s16 fieldKind;
-  s8 enabled;
+  s32 angle;          ///< 1/65536 turns
+  s32 x;              ///< 16.16 fixed-point pixels
+  s32 y;              ///< 16.16 fixed-point pixels
+  s32 z;              ///< 16.16 fixed-point pixels
+  void *mainObject;   ///< the caster's object
+  void *child;        ///< the target's object, or NULL
+  s16 firstObjectId;  ///< the caster's object id
+  s16 secondObjectId; ///< the target's object id
+  u16 action;         ///< the ability id
+  s16 fieldKind;      ///< the ability's field kind
+  s8 enabled;         ///< cleared once the target has been dispatched
   u8 mode;
   s8 visible;
   s8 active;
-  void (*finishCallback)(void);
+  void (*finishCallback)(void); ///< run, when set, as an effect ends
   u8 unk28[0x0c];
   s8 childOption;
   s8 childMode;
@@ -48,9 +52,12 @@ struct BattleFxScene {
   u16 tileSlot;
   u16 unk48;
   u16 freeBlocks;
+  /// The map's shake and its decay, kept to restore after the effect.
+  ///@{
   s32 savedShakeX;
   s32 savedShakeY;
   s32 savedShakeDecay;
+  ///@}
   struct EffectSlot slots[24];
   u8 unk718[2];
   s16 arcTileSlot;

@@ -11,16 +11,20 @@
 #include "static_assert.h"
 #include "edition.h"
 
+/// The battle camera: its eye, the focus it turns about, and its pitch, yaw
+/// and distance.
 struct BattleCamera {
+  /// The eye, 16.16 fixed-point pixels: written distance behind the focus
+  /// along the turned view.
   s32 eye[3];
-  s32 pos[3];
-  s32 unk18;
-  s32 *followPos;
-  s32 distance;
-  u8 unk24[16];
-  u16 pitch;
-  u16 yaw;
-  u8 unk38[20];
+  s32 pos[3];     ///< the focus, 16.16 fixed-point pixels
+  s32 unk18;      ///< cleared beside followPos; not read by name in TLA
+  s32 *followPos; ///< when set, the focus followed instead of pos
+  s32 distance;   ///< eye to focus, 16.16 fixed-point pixels
+  u8 unk24[16];   ///< not named by TLA code
+  u16 pitch;      ///< 1/65536 turns
+  u16 yaw;        ///< 1/65536 turns
+  u8 unk38[20];   ///< not named by TLA code
 };
 
 STATIC_ASSERT(sizeof(struct BattleCamera) == 0x4c);
@@ -31,28 +35,32 @@ STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 0x36);
 
 extern struct BattleCamera *gCameraWork;
 
+/// The battle background's work slot as the camera reads it: the yaw the
+/// camera eases toward and the frames left to ease it.
 struct BattlePresentationTransition {
-  s32 targetYaw;
-  s32 frames;
-  u8 unk08[8];
-  s32 active;
-  s32 flag;
-  s32 unk18;
-  s32 unk1c;
+  s32 targetYaw; ///< 1/65536 turns
+  s32 frames;    ///< frames left to ease the yaw, a sixteenth a frame
+  u8 unk08[8];   ///< BattleBackgroundView's mode and secondMode
+  s32 active;    ///< BattleBackgroundView's busy, at the same offset
+  s32 flag;      ///< 0 lets the camera update set the background's range
+  s32 unk18;     ///< cleared at the battle's start; not read by name in TLA
+  s32 unk1c;     ///< cleared at the battle's start; not read by name in TLA
 };
 
+/// A presentation's effect command, laid out as BattleEffectArgument with a
+/// ninth actor, and the animation state it keeps.
 struct BattlePresentationWork {
-  s32 kind;
-  s32 side;
-  s32 actor;
-  s32 firstTarget;
-  s32 initialValue;
-  s32 count;
-  s32 variant;
-  s32 flags;
-  u8 unk20[4];
-  s16 actors[9];
-  u8 params[8][4];
+  s32 kind;         ///< the effect's index in the handler table
+  s32 side;         ///< 1 when the targets are the party, 0 for enemies
+  s32 actor;        ///< the user's unit id
+  s32 firstTarget;  ///< the action's first target
+  s32 initialValue; ///< BattleEffectArgument's range: the action's, or 1
+  s32 count;        ///< targets in actors
+  s32 variant;      ///< the ability's size, from 0
+  s32 flags;        ///< BattleEffectArgument's prelude, at the same offset
+  u8 unk20[4];      ///< not named by TLA code
+  s16 actors[9];    ///< the targets' unit ids, count of them
+  u8 params[8][4];  ///< each target's animation entries' param, kept
 };
 
 STATIC_ASSERT(sizeof(struct BattlePresentationTransition) == 0x20);
@@ -61,21 +69,27 @@ STATIC_ASSERT(sizeof(struct BattlePresentationWork) == 0x58);
 STATIC_ASSERT(offsetof(struct BattlePresentationWork, actors) == 0x24);
 STATIC_ASSERT(offsetof(struct BattlePresentationWork, params) == 0x36);
 
+/// The battle background's work slot as the background code reads it: its
+/// display mode.
 struct BattleBackgroundView {
-  u8 unk00[8];
-  s32 mode;
-  s32 secondMode;
+  u8 unk00[8];    ///< BattlePresentationTransition's targetYaw and frames
+  s32 mode;       ///< 2 draws the affine plane through the HBlank DMA
+  s32 secondMode; ///< set by an effect while its canvas is open
   s32 busy;
 };
 
+/// The battle background's affine parameters and reference point, copied
+/// whole to the BG2PA registers.
 struct BattleAffine {
   u16 pa, pb, pc, pd;
   s32 x, y;
 };
 
+/// The battle background's scanline work: two pages of per-line values,
+/// swapped each frame, and the affine parameters.
 struct BattleAffineHdma {
-  u32 page;
-  u8 unk04[12];
+  u32 page;     ///< the page of lines shown
+  u8 unk04[12]; ///< not named by TLA code
   struct BattleAffine affine;
   u16 lines[2][160];
 };

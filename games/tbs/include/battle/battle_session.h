@@ -14,22 +14,24 @@ struct SpriteEntry;
 /// A unit's place on the battlefield: its sprite object, resources and
 /// animations, its anchor spot and scale, and the conditions it shows.
 struct BattleObj {
-  struct MotionObject *object;
-  u16 resource;
-  u16 overlay;
-  u16 animation;
-  u16 effect;
-  s32 anchorX; ///< 16.16 fixed-point pixels
-  s32 anchorZ; ///< 16.16 fixed-point pixels
-  s32 palette;
-  s32 scale; ///< 16.16 fixed point, 0x10000 full size
-  u16 activeConditions;
-  u8 selectedCondition;
-  s8 cycleTimer;
-  struct SpriteEntry *animationEntry;
-  struct SpriteEntry *effectEntry;
+  struct MotionObject *object; ///< NULL once released
+  u16 resource;                ///< the unit's sprite
+  u16 overlay;   ///< a second sprite drawn over it, the weapon; 0 for none
+  u16 animation; ///< the status icon's animation shown; 0 for none
+  u16 effect;    ///< an effect sprite drawn with the unit
+  s32 anchorX;   ///< 16.16 fixed-point pixels
+  s32 anchorZ;   ///< 16.16 fixed-point pixels
+  s32 palette;   ///< the unit sprite's palette
+  s32 scale;     ///< 16.16 fixed point, 0x10000 full size
+  u16 activeConditions;               ///< a bit per status with an icon (ICON_)
+  u8 selectedCondition;               ///< the status whose icon is shown
+  s8 cycleTimer;                      ///< frames until the next status icon
+  struct SpriteEntry *animationEntry; ///< the status icon's sprite, or NULL
+  struct SpriteEntry *effectEntry;    ///< the effect sprite, or NULL
+  /// Set by BattleObj_MarkForRelease: the object is released with the
+  /// others by BattleMotion_DestroyAllSlotObjects.
   s16 active;
-  s16 fading;
+  s16 fading; ///< set while a fallen enemy's picture is being removed
 };
 
 /// BattleActionRecord.command and BattlePlan's copy of it: what a unit does
@@ -51,13 +53,13 @@ enum BattleCommand {
 /// its target and range, and its priority in the turn order.
 struct BattleActionRecord {
   s16 unitId;
-  u16 slot;
-  u16 priority;
-  s16 command;
-  s16 parameter;
-  s16 target;
-  s16 range;
-  s16 unk0e;
+  u16 slot;      ///< in a link battle, unitId as the opponent knows it
+  u16 priority;  ///< from the unit's Agility; higher acts first
+  s16 command;   ///< enum BattleCommand
+  s16 parameter; ///< an ability id, or CMD_ITEM's inventory index (-1 gone)
+  s16 target;    ///< the aimed unit's id
+  s16 range;     ///< the action's range
+  s16 unk0e;     ///< not named by TBS code
 };
 
 /// A battle's spoils so far: coins, experience, enemies defeated and up to
@@ -65,7 +67,7 @@ struct BattleActionRecord {
 struct BattleSpoils {
   s32 coins;
   s32 experience;
-  s32 defeated;
+  s32 defeated; ///< enemies defeated
   u16 items[4];
 };
 

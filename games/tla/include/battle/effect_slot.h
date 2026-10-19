@@ -10,34 +10,37 @@
 struct EffectSlot;
 typedef void (*EffectCallback)(struct EffectSlot *);
 
+/// A particle a Psynergy effect moves and draws: its sprite, its position and
+/// target, its speed, scale and heading, and its per-frame callback.
 struct EffectSlot {
-  void *object;
-  s32 x;
-  s32 z;
-  s32 targetX;
-  s32 targetZ;
-  s32 originX;
-  s32 originZ;
-  s32 speed;
-  s32 maxSpeed;
-  s32 acceleration;
-  s32 scaleX;
-  s32 scaleY;
-  u16 heading;
-  s16 maxTurnStep;
-  EffectCallback callback;
-  u16 age;
-  s16 callbackDelay;
-  s16 orbitRadius;
-  s16 orbitAngle;
-  s8 state;
-  s8 stopAtTarget;
+  void *object;     ///< the slot's sprite
+  s32 x;            ///< 16.16 fixed-point pixels
+  s32 z;            ///< 16.16 fixed-point pixels
+  s32 targetX;      ///< 16.16 fixed-point pixels; EFFECT_NO_TARGET at rest
+  s32 targetZ;      ///< 16.16 fixed-point pixels; EFFECT_NO_TARGET at rest
+  s32 originX;      ///< 16.16 fixed-point pixels
+  s32 originZ;      ///< 16.16 fixed-point pixels
+  s32 speed;        ///< 16.16 fixed-point pixels per frame
+  s32 maxSpeed;     ///< 16.16 fixed-point pixels per frame
+  s32 acceleration; ///< 16.16 fixed-point pixels per frame, each frame
+  s32 scaleX;       ///< 16.16 fixed point, 0x10000 full size
+  s32 scaleY;       ///< 16.16 fixed point, 0x10000 full size
+  u16 heading;      ///< 1/65536 turns
+  s16 maxTurnStep;  ///< 1/65536 turns a frame
+  EffectCallback callback; ///< run each frame once callbackDelay is 0
+  u16 age;                 ///< frames
+  s16 callbackDelay;       ///< frames
+  s16 orbitRadius;         ///< pixels
+  s16 orbitAngle;          ///< 1/32 turns
+  s8 state;                ///< the callback's own step
+  s8 stopAtTarget;         ///< nonzero: lands on the target within 8 pixels
   s8 limitTurnStep; ///< Clamp steering to maxTurnStep; zero faces the target
                     ///< directly.
-  s8 updateMotion;
-  s8 render;
-  s8 active;
-  u8 randomValue;
+  s8 updateMotion;  ///< nonzero: EffectSlot_UpdateMotion moves it each frame
+  s8 render;        ///< nonzero: drawn each frame
+  s8 active;        ///< nonzero while the slot is in use
+  u8 randomValue;   ///< not read by name in TLA
+  /// bits: 2 z also lifts the sprite
   u8 flags;
 };
 

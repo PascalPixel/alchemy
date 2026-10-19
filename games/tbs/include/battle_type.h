@@ -24,9 +24,9 @@ enum BattleCritical {
 /// One action, as BattleCommand_BuildPlan lays it out for BattleTargetExec to
 /// apply target by target.
 struct BattlePlan {
-  u8 actorId;
-  s8 targetCount;
-  u8 targetIds[BATTLE_TARGET_CAPACITY];
+  u8 actorId;                           ///< the acting unit
+  s8 targetCount;                       ///< targets in targetIds
+  u8 targetIds[BATTLE_TARGET_CAPACITY]; ///< in battlefield order
   /// Each target's place relative to the aimed one: negative to one side.
   s8 targetOffset[BATTLE_TARGET_CAPACITY];
   /// The damage multiplier: 0 a miss, 1 a blow, 2 or 3 a double or triple.
@@ -34,12 +34,15 @@ struct BattlePlan {
   s8 targetCritical[BATTLE_TARGET_CAPACITY]; ///< enum BattleCritical
   s8 targetHit[BATTLE_TARGET_CAPACITY];      ///< 1, 0 or HIT_NOT_ROLLED
   s16 command;                               ///< enum BattleCommand
-  u8 unk4a[2];
+  u8 unk4a[2];                               ///< not named by TBS code
   s32 abilityId;
   s32 element; ///< enum Element
-  s32 outcome;
+  s32 outcome; ///< enum BattlePlanStaging: how the action is shown
+  /// How the effect is staged (STAGING_ in battle_internal.h).
+  /// bits: 19 view reversed | 18 view across | 17 other side | 16 on downed |
+  /// 15 scene | 14 by id range | 13..12 variant | 11..0 effect kind
   u32 presentationFlags;
-  s32 failure;
+  s32 failure; ///< 0 cast; 1 the Psynergy is sealed, 2 too little PP
   /// The damage the evil spirit deals a haunted actor at the end of its turn.
   u32 hauntDamage;
 };

@@ -86,9 +86,10 @@ struct ScaledSprite;
 struct SceneCueRule;
 struct WorldMapWork;
 
+/// A spawned object as a particle emitter sees it: only its sprite.
 struct ParticleEffectObject {
-  u8 padding[80];
-  struct ParticleChild *child;
+  u8 padding[80];              ///< not named through this view
+  struct ParticleChild *child; ///< the sprite, MotionObject's records
 };
 struct ParticlePosition {
   s32 x;

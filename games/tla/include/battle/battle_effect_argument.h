@@ -6,16 +6,16 @@
 
 /// The command shared by an effect's caller, dispatcher and handlers.
 struct BattleEffectArgument {
-  s32 kind;
-  s32 side;
-  s32 actor;
-  s32 firstTarget;
-  s32 range; ///< forwarded action range, otherwise initialized to 1
-  s32 count;
-  s32 variant;
-  s32 prelude;
-  s32 unk0020;
-  s16 actors[8];
+  s32 kind;        ///< the effect's index in the handler table
+  s32 side;        ///< 1 when the targets are the party, 0 for enemies
+  s32 actor;       ///< the user's unit id
+  s32 firstTarget; ///< the action's first target
+  s32 range;       ///< forwarded action range, otherwise initialized to 1
+  s32 count;       ///< targets in actors
+  s32 variant;     ///< the ability's size, from 0
+  s32 prelude;     ///< 1 plays a prelude: in some effects a Djinni appears
+  s32 unk0020;     ///< not named by TLA code
+  s16 actors[8];   ///< the targets' unit ids, count of them
 };
 
 STATIC_ASSERT(sizeof(struct BattleEffectArgument) == 0x34);

@@ -21,24 +21,24 @@ struct BattlePromptSprite {
   u16 size : 7;
   u16 tile : 10;
   u16 palette : 6;
-  u16 unk0a;
+  u16 unk0a; ///< cleared with the tile word each frame; not named
 };
 
 struct UiWindow;
 
 /// The battle message's text channel, as far as its offset in the window.
 struct BattleDisplayOffset {
-  s32 unk00;
-  u16 x; ///< 1/256 pixels
-  u16 y; ///< 1/256 pixels
+  s32 unk00; ///< not named by TBS code
+  u16 x;     ///< 1/256 pixels
+  u16 y;     ///< 1/256 pixels
 };
 
 /// The battle message display: its window, its text channel and whether the
 /// next message is marked.
 struct BattleDisplayWork {
-  struct UiWindow *window;
-  struct BattleDisplayOffset *offset;
-  s32 marked;
+  struct UiWindow *window;            ///< the message window
+  struct BattleDisplayOffset *offset; ///< its text channel
+  s32 marked; ///< set by BATTLE_EVENT_MARK; passed to the next message
 };
 
 STATIC_ASSERT(sizeof(struct BattleDisplayOffset) == 8);
@@ -50,13 +50,15 @@ extern struct BattleDisplayWork *gBattleDisplayWork;
 /// playing and the advance arrow.
 struct BattleEventState {
   struct BattleEventQueue queue;
-  s32 phase;
-  s32 eventIndex;
-  s32 timer;
-  struct BattlePromptSprite displayEntry;
-  s32 displaySource;
-  s32 actorId;
-  s32 pendingCue;
+  s32 phase;      ///< enum BattlePlaybackPhase, or a message phase
+  s32 eventIndex; ///< the next queued event to play
+  s32 timer;      ///< frames to wait, or frames waited for the advance key
+  struct BattlePromptSprite displayEntry; ///< the advance arrow
+  s32 displaySource; ///< the arrow's resource entry; -1 until it is shown
+  s32 actorId;       ///< the unit of the hit or defeat being played
+  s32 pendingCue;    ///< hit sound (an SE_ id), played on the next hit
+  /// bits: 0 Djinn bonus (EVENT_FLAG_DJINN_BONUS), for the enemies that fall
+  /// during the action
   s32 flags;
 };
 
@@ -67,45 +69,58 @@ enum { BATTLE_ENEMY_CAPACITY = 6, BATTLE_ACTION_CAPACITY = 20 };
 /// actions, the spoils, the background palette, the plan and the events. It
 /// lives in the HEAP_SLOT_BATTLE work slot.
 struct BattleWork {
-  s32 enemyGroup;
-  s16 spriteSlots[6];
+  s32 enemyGroup;     ///< the encounter's enemy formation
+  s16 spriteSlots[6]; ///< the unit in each enemy sprite slot, 0 when free
+  /// The enemy classes met so far, for their name letters, and the first
+  /// class to fall (firstDefeated).
   u16 enemyClasses[6];
+  /// Name letters in use by each class in enemyClasses, a bit per letter.
   u32 summonMasks[6];
+  /// The letter each class in enemyClasses gave out last; -1 for none yet.
   s8 summonChannels[6];
-  u8 unk03a[2];
+  u8 unk03a[2]; ///< not named by TBS code
+  /// The enemyClasses index of the first class to fall; 6 for none.
   u16 firstDefeated;
-  u16 defeatState;
-  u8 summonCount;
-  u8 partyStatus;
-  u8 battleType;
+  u16 defeatState; ///< DEFEAT_ONE, DEFEAT_SEVERAL or DEFEAT_BY_PARTY_MEMBER
+  u8 summonCount;  ///< classes listed in enemyClasses, at most 5
+  u8 partyStatus;  ///< PARTY_STATUS_SUMMONS or PARTY_STATUS_NO_SUMMONS
+  u8 battleType;   ///< FORMATION_SHUFFLED or FORMATION_INTERLEAVED
+  /// bits: 1 a party unit was challenged; nonzero, the party cannot run
   u8 challengeFlag;
-  u8 twoSided;
-  u8 encounterMode;
+  u8 twoSided;      ///< 1 in a link battle
+  u8 encounterMode; ///< BATTLE_ENCOUNTER_: who strikes first
+  /// Failed attempts to run; each adds 2000 to the base chance of 5000.
   u8 escapeFailures;
-  u8 unk047;
+  u8 unk047; ///< not named by TBS code
+  /// For each party unit, its slot as a link opponent's enemy, minus
+  /// FIRST_ENEMY_UNIT; 0xff for none.
   u8 ownerSlots[8];
-  u8 linkSide;
-  u8 linkMisses;
-  u8 linkPaused;
-  u8 unk053;
-  s32 promptSlot;
-  s16 partyUnits[7];
+  u8 linkSide;    ///< this console's multiplayer id
+  u8 linkMisses;  ///< frames the link has been down
+  u8 linkPaused;  ///< set when the link drops or the console's id changes
+  u8 unk053;      ///< not named by TBS code
+  s32 promptSlot; ///< resource entry of the advance arrow's tiles; -1 for none
+  s16 partyUnits[7];                       ///< ends with BATTLE_UNIT_LIST_END
   s16 enemyIds[BATTLE_ENEMY_CAPACITY + 1]; ///< ends with BATTLE_UNIT_LIST_END
   struct BattleObj slots[14];
+  /// Each unit's index in slots, enemies from 8; 0xff for none.
   u8 placement[14];
-  u8 unk2ea[2];
+  u8 unk2ea[2]; ///< not named by TBS code
+  /// The actions chosen for the turn.
   struct BattleActionRecord actions[BATTLE_ACTION_CAPACITY];
-  u8 unk42c[0x104];
+  u8 unk42c[0x104]; ///< not named by TBS code
   struct BattleSpoils spoils;
-  u16 palette[128];
-  s32 brightness;
-  u16 background;
-  u8 unk64a[4];
-  u16 highlightStep;
-  u16 highlightMode;
-  u8 unk652[2];
+  u16 palette[128];  ///< the backdrop's colours, before scaling
+  s32 brightness;    ///< the backdrop's brightness, 16.16, 0x10000 full
+  u16 background;    ///< the battle background's id
+  u8 unk64a[4];      ///< not named by TBS code
+  u16 highlightStep; ///< index into gBattleFx_HighlightBlendRamp
+  u16 highlightMode; ///< nonzero while the units are highlighted
+  u8 unk652[2];      ///< not named by TBS code
   struct BattlePlan plan;
   struct BattleEventState events;
+  /// A value Runtime_AdjustDebugValueWithButtons edits with the d-pad while
+  /// Start is held.
   s32 debugValue;
 };
 

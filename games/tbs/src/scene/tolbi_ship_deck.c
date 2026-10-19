@@ -558,18 +558,20 @@ u8 *TolbiShipDeck_GetRegions(void) { return gTolbiShipDeckRegions; }
 u8 *TolbiShipDeck_GetExits(void) { return gTolbiShipDeckExits; }
 
 u8 *TolbiShipDeck_GetPlacements(void) {
-  s32 underSail;
+  s32 afterFirstAttack;
 
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI))
     return gTolbiShipDeckPlacementsArrived;
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWING))
     return gTolbiShipDeckPlacementsRowing;
-  underSail = Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED);
-  if (underSail != 0)
+  afterFirstAttack =
+      Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED);
+  if (afterFirstAttack != 0)
     return gTolbiShipDeckPlacementsAtSea;
   if (Engine_GameFlagIsSet(0x911)) {
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED)) {
-      STORE_CONST(gTolbiShipDeckPlacementsWaiting[13].talkFacing) = underSail;
+      STORE_CONST(gTolbiShipDeckPlacementsWaiting[13].talkFacing) =
+          afterFirstAttack;
       STORE_CONST(gTolbiShipDeckPlacementsWaiting[17].talkFacing) = 2;
       STORE_CONST(gTolbiShipDeckPlacementsWaiting[18].talkFacing) = 2;
     } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN)) {
@@ -595,7 +597,7 @@ u8 *TolbiShipDeck_GetEvents(void) {
 // alarmed once the warriors storm off to the captain, relieved
 // once the party has agreed to protect the ship. While alarmed he
 // paces at random intervals.
-static void TolbiShipDeck_TalkToActor21(void) {
+static void TolbiShipDeck_TalkToWaitingPassenger21(void) {
   struct FieldActor *passenger;
   s32 random;
   s32 wait;
@@ -625,7 +627,7 @@ static void TolbiShipDeck_TalkToActor21(void) {
 }
 
 // Another waiting passenger, with the same three moods as actor 21.
-static void TolbiShipDeck_TalkToActor24(void) {
+static void TolbiShipDeck_TalkToWaitingPassenger24(void) {
   struct FieldActor *passenger;
   s32 random;
   s32 wait;
@@ -3149,8 +3151,8 @@ const struct SceneEvent gTolbiShipDeckEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED, MSGNO(MsgTolbiShipDeckTheReplacementShipFromTolbiShould) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckIHidTheAnchorCharmNo) },
     { EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckWeApologizeForAnyTroubleThat) },
-    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_TalkToActor21) },
-    { EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_TalkToActor24) },
+    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_TalkToWaitingPassenger21) },
+    { EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_TalkToWaitingPassenger24) },
     { EVENT_TALK, 25, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, MSGNO(MsgTolbiShipDeckIWonderWhatsGoingOnWeve) },
     { EVENT_TALK, 25, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipDeckThoseWarriorsGotTiredOfWaiting) },
     { EVENT_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckIfWeJustPromiseToHelp) },

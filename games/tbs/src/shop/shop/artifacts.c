@@ -100,9 +100,20 @@ void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
   shop->selectedItem = savedSelectedItem;
 }
 
-// Shop stock: 24 regular items, 8 special items (each 0-terminated), then kind.
+// The shops' stock, one row per shop: up to 24 items, then up to 8 artifacts
+// (each list ending with 0 when shorter), then the shop's type.
+enum {
+  SHOP_STOCK_ITEMS = 0,
+  SHOP_STOCK_ITEM_COUNT = 24,
+  SHOP_STOCK_ARTIFACTS = 24,
+  SHOP_STOCK_ARTIFACT_COUNT = 8,
+  SHOP_STOCK_TYPE = 32,
+  SHOP_STOCK_COLUMNS = 33,
+  SHOP_STOCK_ROWS = 35
+};
+
 // clang-format off
-static const s16 sStockTable[35][33] = {
+static const s16 sStockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS] = {
     {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0,
@@ -282,7 +293,7 @@ static const s16 sStockTable[35][33] = {
 // clang-format on
 
 // Returns the number of rows in the shop stock table.
-s32 EventTable_GetRowLimit(void) { return 35; }
+s32 EventTable_GetRowLimit(void) { return SHOP_STOCK_ROWS; }
 
 // Adds a location's initial artifacts to shared stock once, before its first
 // shop visit.
@@ -297,14 +308,14 @@ void EventTable_ApplyRowAbilities(s32 stockRow) {
   if (GameFlag_TestFar(initializedFlag) == 0) {
     GameFlag_SetBitFar(initializedFlag);
     artifactIndex = 0;
-    itemId = sStockTable[stockRow][24];
+    itemId = sStockTable[stockRow][SHOP_STOCK_ARTIFACTS];
     if (itemId != 0) {
       stockEntries = sStockTable[stockRow];
-      artifactCursor = stockEntries + 24;
+      artifactCursor = stockEntries + SHOP_STOCK_ARTIFACTS;
       do {
         Item_AdjustCounterFar(itemId, 1);
         artifactIndex++;
-        if (artifactIndex > 7)
+        if (artifactIndex > SHOP_STOCK_ARTIFACT_COUNT - 1)
           break;
         artifactCursor++;
         itemId = *artifactCursor;
@@ -320,7 +331,7 @@ s32 EventTable_CopyRowHeader(s32 stockRow, s16 *output) {
   s32 count;
 
   count = 0;
-  if (sStockTable[stockRow][0] != 0) {
+  if (sStockTable[stockRow][SHOP_STOCK_ITEMS] != 0) {
     dst = output;
     src = sStockTable[stockRow];
     do {
@@ -332,7 +343,7 @@ s32 EventTable_CopyRowHeader(s32 stockRow, s16 *output) {
       count++;
       src++;
       dst++;
-      if (count > 23)
+      if (count > SHOP_STOCK_ITEM_COUNT - 1)
         break;
     } while (*src != 0);
   }
@@ -341,4 +352,6 @@ s32 EventTable_CopyRowHeader(s32 stockRow, s16 *output) {
 }
 
 // Reads the shop type from the last word of its stock row.
-s32 EventTable_GetRowType(s32 stockRow) { return sStockTable[stockRow][32]; }
+s32 EventTable_GetRowType(s32 stockRow) {
+  return sStockTable[stockRow][SHOP_STOCK_TYPE];
+}

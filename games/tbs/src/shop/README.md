@@ -34,7 +34,7 @@ crosses folders.
   and `Inn_Cleanup` releases it for every counter.
 - **stock row**: a row of `sStockTable` (`artifacts.c`), one per shop: up to
   24 item ids from column 0, ending with 0; up to 8 artifacts from column 24;
-  and the shop's type in column 32.
+  and the shop's type in column 32 (`SHOP_STOCK_` names the columns).
 - **artifact**: an item a shop sells only while its shared stock counter is
   not zero (`Item_AdjustCounter`). A shop adds its row's artifacts to the
   counters once, on its first visit, and sets flag `0x400 + stockRow` to

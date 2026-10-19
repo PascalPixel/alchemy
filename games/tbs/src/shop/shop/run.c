@@ -4,7 +4,7 @@
 #include "../shop_internal.h"
 
 // Lists the current shop's artifacts whose shared stock counters are nonzero.
-s32 AbilityMenu_BuildAvailableList(void) {
+s32 Shop_ListAvailableArtifacts(void) {
   struct ShopRuntime *shop;
   s16 *stockItems;
   s32 itemId;
@@ -131,7 +131,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
       UiMessage_ShowAndWait(MsgWhatToSell);
       Shop_PickUnit();
     } else if (action == SHOP_ACTION_ARTIFACTS) {
-      if (AbilityMenu_BuildAvailableList() != 0) {
+      if (Shop_ListAvailableArtifacts() != 0) {
         UiMessage_ShowAndWait(MsgConnoisseur);
         Shop_SelectBuy();
       } else {

@@ -619,7 +619,7 @@ void SerialRuntime_StepBlockTransfer(void) {
 extern const u8 Rom_Start[];
 
 // An empty routine the link test calls to waste time.
-void RuntimeWait_BusyLoopTick(void) {}
+void SerialTest_Delay(void) {}
 
 // A link cable test left in the game: it shows a row of tiles, receives
 // blocks into the map cell buffer and shows them as tiles, and sends a part
@@ -656,7 +656,7 @@ restart:
       tick = 9999;
       do {
         tick--;
-        RuntimeWait_BusyLoopTick();
+        SerialTest_Delay();
       } while (tick >= 0);
     }
     if (gSerialReceiveDest == 0) {

@@ -209,7 +209,7 @@ next_page:
   if (selectionResult == 0 && shop->partyAction == SHOP_ACTION_ARTIFACTS) {
     for (removedCount = 0; removedCount < quantity; removedCount++)
       Item_AdjustCounterFar(shop->selectedItem, -1);
-    if (AbilityMenu_BuildAvailableList() == 0)
+    if (Shop_ListAvailableArtifacts() == 0)
       goto close;
     if (selected > shop->stockCount - 1)
       selected = shop->stockCount - 1;

@@ -60,7 +60,7 @@ crosses folders.
 | `EventTable_` | the stock rows |
 | `Sanctum_` | the sanctum's services |
 | `Inn_` | the inn |
-| `AbilityMenu_`, `Battle_`, `BattleUnit_`, `BattleFx_`, `AudioCommand_`, `NodeChain_` | things the engine names elsewhere |
+| `Battle_`, `BattleUnit_`, `BattleFx_`, `AudioCommand_`, `NodeChain_` | things the engine names elsewhere |
 
 ## Changing a counter
 

@@ -173,7 +173,7 @@ void SerialRuntime_WaitForTransfers(void);
 s32 SerialRuntime_GetActiveTransfers(void);
 void BattleLink_ResetTransferState(void);
 void SerialRuntime_StepBlockTransfer(void);
-void RuntimeWait_BusyLoopTick(void);
+void SerialTest_Delay(void);
 void SerialTest_Run(void);
 
 #endif

@@ -420,8 +420,8 @@ void UnitCalc(s32 owner) {
   MemFree(stats);
 }
 
-// Sets flag 0x167 when any party member has an item with equipment effect 27
-// equipped, and clears it otherwise.
+// Sets flag 0x167 when any party member has the Lure Cap (item 164, the one
+// item with equipment effect 27) equipped, and clears it otherwise.
 void GameFlag_RefreshLureCap(void) {
   s32 partySize;
   s32 partyIndex;
@@ -571,8 +571,7 @@ void GameState_InitDefaults(void) {
   gGameState.prizeWeights[14] = 64;
 }
 
-// Sets flag 0x20 and recomputes characters 0, 1 and 5 (Isaac, Garet and
-// Jenna).
+// Sets FLAG_CHILDHOOD and recomputes Isaac, Garet and Jenna.
 void Party_BeginChildhood(void) {
   GameFlag_SetBit(FLAG_CHILDHOOD);
   Unit_UpdateClass(ISAAC);
@@ -584,19 +583,19 @@ void Party_BeginChildhood(void) {
 }
 
 // The party set-up after the prologue: flags, Jenna recomputed, Isaac and
-// Garet healed with item 15 in their inventories replaced by item 16 and
-// equipped, four Psynergy entries taught across Isaac, Garet and Ivan, and
-// 300 coins.
+// Garet healed with the Machete (item 15) in their inventories replaced by
+// the Short Sword (item 16) and equipped, four Psynergy entries taught across
+// Isaac, Garet and Ivan, and 300 coins.
 void Party_EndChildhood(void) {
   s32 owner;
 
   GameFlag_ClearBit(FLAG_CHILDHOOD);
-  GameFlag_ClearBit(33);
+  GameFlag_ClearBit(0x21);
   GameFlag_SetBit(0x901);
   Unit_UpdateClass(JENNA);
   UnitCalc(JENNA);
   GameFlag_ClearBit(0x11b);
-  GameFlag_SetBit(282);
+  GameFlag_SetBit(0x11a);
 
   for (owner = 0; owner <= 1; owner++) {
     struct BattleUnit *unit = UnitGet(owner);
@@ -648,8 +647,8 @@ void Party_RestoreHpPp(s32 cureConditions) {
   }
 }
 
-// Restores the PP of each party member whose element group has one of its
-// flags set (0x110 or 0x112 for group 0, 0x111 or 0x113 for the others).
+// Restores the PP of each party member whose element group has a lit
+// lighthouse: Venus or Mars for group 0, Mercury or Jupiter for the others.
 void Party_RestorePpOfLitElements(void) {
   s32 partySize;
   s32 partyIndex;

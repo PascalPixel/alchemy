@@ -10,7 +10,7 @@ struct NodeChainState;
 struct RenderOutput;
 struct ShopCursor;
 
-s32 AbilityMenu_BuildAvailableList(void);
+s32 Shop_ListAvailableArtifacts(void);
 void Shop_StepCursor(void);
 void Shop_InitializeCursorWork(void);
 void Inn_Cleanup(void);

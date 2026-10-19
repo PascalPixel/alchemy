@@ -24,9 +24,9 @@ void Inventory_AddAndEquip(s32 owner, s32 itemId) {
 #define INVENTORY_SNAPSHOT_SENTINEL 0x6774
 
 // Saves the first four characters' inventories, shortcuts and party order,
-// then keeps only the Psynergy-granting items (type 6), gives Isaac item 16,
-// sets flag 0x952 and restores everyone. Nothing happens when a snapshot is
-// already saved, apart from the restore.
+// then keeps only the Psynergy-granting items (type 6), gives Isaac the Short
+// Sword (item 16), sets flag 0x952 and restores everyone. Nothing happens when
+// a snapshot is already saved, apart from the restore.
 void InventorySnapshot_Save(void) {
   u16 *save;
   struct BattleUnit *unit;

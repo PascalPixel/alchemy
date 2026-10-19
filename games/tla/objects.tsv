@@ -457,12 +457,6 @@ main	rom_main_01	recon/tla/de/rom	.rom.00022d40	de
 main	rom_main_01	recon/tla/raw/08022d40	.text	en
 main	rom_main_01	recon/tla/ja/rom	.rom.00022d40	ja
 main	rom_main_01	games/tla/src/system/resource/resource_obj	.text
-main	rom_main_01	recon/tla/it/rom	.rom.00022f22	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00022f22	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00022f22	es
-main	rom_main_01	recon/tla/de/rom	.rom.00022f22	de
-main	rom_main_01	recon/tla/raw/08022f22	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.00022f22	ja
 main	rom_main_01	games/tla/src/field/common/map/render_animated_tile_frame	.text
 main	rom_main_01	games/tla/src/field/common/map/animation_work	.text
 main	rom_main_01	games/tla/src/field/common/object/object	.text
@@ -476,31 +470,19 @@ main	rom_main_01	games/tla/src/field/common/object/dispatch	.text
 main	rom_main_01	games/tla/src/field/common/object/dispinit	.text
 main	rom_main_01	games/tla/src/field/common/object/child_state	.text
 main	rom_main_01	games/tla/src/field/common/object/command	.text
-main	rom_main_01	recon/tla/it/rom	.rom.0002367e	it
 main	rom_main_01	recon/tla/it/rom	.rom.00023680	it
 main	rom_main_01	recon/tla/it/rom	.rom.000236a8	it
-main	rom_main_01	recon/tla/fr/rom	.rom.0002367e	fr
 main	rom_main_01	recon/tla/fr/rom	.rom.00023680	fr
 main	rom_main_01	recon/tla/fr/rom	.rom.000236a8	fr
-main	rom_main_01	recon/tla/es/rom	.rom.0002367e	es
 main	rom_main_01	recon/tla/es/rom	.rom.00023680	es
 main	rom_main_01	recon/tla/es/rom	.rom.000236a8	es
-main	rom_main_01	recon/tla/de/rom	.rom.0002367e	de
 main	rom_main_01	recon/tla/de/rom	.rom.00023680	de
 main	rom_main_01	recon/tla/de/rom	.rom.000236a8	de
-main	rom_main_01	recon/tla/raw/0802367e	.text	en
 main	rom_main_01	recon/tla/raw/08023680	.text	en
 main	rom_main_01	recon/tla/raw/080236a8	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.0002367e	ja
 main	rom_main_01	recon/tla/ja/rom	.rom.00023680	ja
 main	rom_main_01	recon/tla/ja/rom	.rom.000236a8	ja
 main	rom_main_01	games/tla/src/field/common/object/priority	.text
-main	rom_main_01	recon/tla/it/rom	.rom.0002372a	it
-main	rom_main_01	recon/tla/fr/rom	.rom.0002372a	fr
-main	rom_main_01	recon/tla/es/rom	.rom.0002372a	es
-main	rom_main_01	recon/tla/de/rom	.rom.0002372a	de
-main	rom_main_01	recon/tla/raw/0802372a	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.0002372a	ja
 main	rom_main_01	games/tla/src/field/common/object/objlayer	.text
 main	rom_main_01	recon/tla/it/rom	.rom.0002386c	it
 main	rom_main_01	recon/tla/fr/rom	.rom.0002386c	fr
@@ -510,7 +492,6 @@ main	rom_main_01	recon/tla/raw/0802386c	.text	en
 main	rom_main_01	recon/tla/ja/rom	.rom.0002386c	ja
 main	rom_main_01	games/tla/src/field/common/object/camera_fixed	.text
 main	rom_main_01	games/tla/src/field/common/script/script	.text
-main	rom_main_01	recon/tla/raw/08023f3a		en
 main	rom_main_01	games/tla/src/field/common/script/interpreter_wait_for_event_timeout	.text
 main	rom_main_01	games/tla/src/field/common/object/f23f94	.text
 main	rom_main_01	recon/tla/it/rom	.rom.00023f9c	it
@@ -521,17 +502,11 @@ main	rom_main_01	recon/tla/raw/08023f9c	.text	en
 main	rom_main_01	recon/tla/ja/rom	.rom.00023f9c	ja
 main	rom_main_01	games/tla/src/field/common/object/carried	.text
 main	rom_main_01	games/tla/src/field/common/object/motion_set_position_and_reset_motion	.text
-main	rom_main_01	recon/tla/it/rom	.rom.00024736	it
 main	rom_main_01	recon/tla/it/rom	.rom.00024738	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00024736	fr
 main	rom_main_01	recon/tla/fr/rom	.rom.00024738	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00024736	es
 main	rom_main_01	recon/tla/es/rom	.rom.00024738	es
-main	rom_main_01	recon/tla/de/rom	.rom.00024736	de
 main	rom_main_01	recon/tla/de/rom	.rom.00024738	de
-main	rom_main_01	recon/tla/raw/08024736	.text	en
 main	rom_main_01	recon/tla/raw/08024738	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.00024736	ja
 main	rom_main_01	recon/tla/ja/rom	.rom.00024738	ja
 main	rom_main_01	games/tla/src/field/common/object/collect_active	.text
 main	rom_main_01	recon/tla/it/rom	.rom.0002493c	it
@@ -547,24 +522,11 @@ main	rom_main_01	games/tla/src/field/common/script/load_main_script	.text
 main	rom_main_01	games/tla/src/field/common/script/testflag	.text
 main	rom_main_01	games/tla/src/field/common/script/flags	.text
 main	rom_main_01	games/tla/src/field/common/script/toggle_flag	.text
-main	rom_main_01	recon/tla/it/rom	.rom.00024ec6	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00024ec6	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00024ec6	es
-main	rom_main_01	recon/tla/de/rom	.rom.00024ec6	de
-main	rom_main_01	recon/tla/raw/08024ec6	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.00024ec6	ja
 main	rom_main_01	games/tla/src/field/common/script/skip_command	.text
-main	rom_main_01	recon/tla/raw/08024ede		en
 main	rom_main_01	games/tla/src/field/common/script/call	.text
 main	rom_main_01	recon/tla/it/rom	.rom.00024efe	it
 main	rom_main_01	recon/tla/es/rom	.rom.00024efe	es
 main	rom_main_01	games/tla/src/field/common/script/overlap	.text
-main	rom_main_01	recon/tla/it/rom	.rom.00024fde	it
-main	rom_main_01	recon/tla/fr/rom	.rom.00024fde	fr
-main	rom_main_01	recon/tla/es/rom	.rom.00024fde	es
-main	rom_main_01	recon/tla/de/rom	.rom.00024fde	de
-main	rom_main_01	recon/tla/raw/08024fde	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.00024fde	ja
 main	rom_main_01	games/tla/src/field/common/script/apply_relative_position	.text
 main	rom_main_01	games/tla/src/field/common/script/offset	.text
 main	rom_main_01	recon/tla/it/rom	.rom.00025160	it

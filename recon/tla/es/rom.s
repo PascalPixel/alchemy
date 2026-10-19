@@ -308,8 +308,6 @@ InitializeAnimationObjects:
 	.thumb_func
 ResourceObject_Create:
 	.incbin "baserom.gba", 0x00022d40, 0x00000150
-	.section .rom.00022f22, "ax"
-	.incbin "baserom.gba", 0x00022f22, 0x00000002
 	.section .rom.00023220, "ax"
 	.balign 4
 	.global Func_08023220
@@ -317,9 +315,8 @@ ResourceObject_Create:
 	.thumb_func
 Func_08023220:
 	.incbin "baserom.gba", 0x00023220, 0x00000188
-	.section .rom.0002367e, "ax"
-	.incbin "baserom.gba", 0x0002367e, 0x00000002
 	.section .rom.00023680, "ax"
+	.balign 4
 	.global Animation_SetStateFlags
 	.type Animation_SetStateFlags, %function
 	.thumb_func
@@ -331,8 +328,6 @@ Animation_SetStateFlags:
 	.thumb_func
 Animation_SetDisplayFlag:
 	.incbin "baserom.gba", 0x000236a8, 0x00000028
-	.section .rom.0002372a, "ax"
-	.incbin "baserom.gba", 0x0002372a, 0x00000002
 	.section .rom.0002386c, "ax"
 	.global Func_0802386c
 	.type Func_0802386c, %function
@@ -345,9 +340,8 @@ Func_0802386c:
 	.thumb_func
 Func_08023f9c:
 	.incbin "baserom.gba", 0x00023f9c, 0x0000071c
-	.section .rom.00024736, "ax"
-	.incbin "baserom.gba", 0x00024736, 0x00000002
 	.section .rom.00024738, "ax"
+	.balign 4
 	.global Object_SetMoveTarget
 	.type Object_SetMoveTarget, %function
 	.thumb_func
@@ -359,8 +353,6 @@ Object_SetMoveTarget:
 	.thumb_func
 Func_0802493c:
 	.incbin "baserom.gba", 0x0002493c, 0x00000314
-	.section .rom.00024ec6, "ax"
-	.incbin "baserom.gba", 0x00024ec6, 0x00000002
 	.section .rom.00024efe, "ax"
 	.incbin "baserom.gba", 0x00024efe, 0x00000002
 	.global Script_CallWithOperand
@@ -368,8 +360,6 @@ Func_0802493c:
 	.thumb_func
 Script_CallWithOperand:
 	.incbin "baserom.gba", 0x00024f00, 0x00000020
-	.section .rom.00024fde, "ax"
-	.incbin "baserom.gba", 0x00024fde, 0x00000002
 	.section .rom.00025160, "ax"
 	.global Func_08025160
 	.type Func_08025160, %function

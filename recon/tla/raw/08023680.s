@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Animation_SetStateFlags
 	.thumb_func
 Animation_SetStateFlags:

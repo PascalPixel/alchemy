@@ -8,6 +8,11 @@
 // Tried: scene as s32 (4) or initialised at its declaration (6), the store
 // after the scene read (6), the direction through a temporary (4), an s16
 // direction (9), gData_02005af0 as u32 (4), permuter 4 minutes (4).
+// Pinned: the direction in r5 held by an asm that clobbers r1 after the store
+// puts the copy and store in place but loads gPartyState after the store
+// (2); with the store's address pinned to r3 and the party pointer an input
+// of an asm before the store, gPartyState is loaded before the copy (2); a
+// volatile barrier moves the frame's sub sp first (6).
 #include "types.h"
 #include "object_runtime.h"
 #include "party_state.h"

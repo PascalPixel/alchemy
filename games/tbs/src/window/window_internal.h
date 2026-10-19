@@ -184,4 +184,11 @@ enum { HEAP_SLOT_BATTLE_DISPLAY = 37 };
 // The heap block the message decoder routine is copied into to run.
 #define TEXT_WORK_BLOCK 50
 
+// The glyph transfer work in IWRAM (system/iwram.s), which icons are built in.
+extern GlyphTransfer *gGlyphWork;
+
+// Each message context bank's Huffman models and their offsets, which the
+// message catalog built from games/tbs/text defines.
+extern const void *const Text_MessageContexts[][2];
+
 #endif

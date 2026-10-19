@@ -325,4 +325,11 @@ struct SelectionWork {
   s32 commandKinds[6];
 };
 
+// The Djinn menu's blinking tile, and where each element's Djinn count sits in
+// the party status window, in tiles, to blink while it has Djinn on standby
+// (windata.s).
+extern const u8 gDjinnMenu_BlinkTile[32];
+extern const u8 gDjinnMenu_ElementXOffsets[4];
+extern const u8 gDjinnMenu_ElementYOffsets[4];
+
 #endif

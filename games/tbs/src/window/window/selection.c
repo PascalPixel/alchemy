@@ -653,7 +653,8 @@ u32 Menu_WaitForSelectionInput(u32 mode) {
 
 // Moves the cursor one entry right, scrolling the row at its fourth place.
 // This variant stops at the end; Menu_StepRight also wraps around.
-void Menu_MoveSelectionForward(struct SelectionScreen *screen) {
+// Nothing calls it.
+UNUSED void Menu_MoveSelectionForward(struct SelectionScreen *screen) {
   u32 nextEntry = screen->top + screen->cursorIndex + 1;
 
   if (nextEntry == screen->count) {
@@ -682,7 +683,8 @@ void Menu_MoveSelectionForward(struct SelectionScreen *screen) {
 
 // Moves the cursor one entry left, scrolling the row at its second place.
 // This variant stops at the beginning; Menu_StepLeft also wraps around.
-void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
+// Nothing calls it.
+UNUSED void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
   u32 cursorIndex;
 
   if (screen->top == 0 && screen->cursorIndex == 0) {
@@ -1221,12 +1223,12 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   return chosenIndex;
 }
 
-// Six empty functions.
-void UiTextResource_NoOpCallback(void) {}
+// Six empty functions; nothing calls the first, the fourth or the fifth.
+UNUSED void UiTextResource_NoOpCallback(void) {}
 void UiTextResource_NoOpCallbackBank(void) {}
 void UiTextResource_NoOpCallback1(void) {}
-void UiTextResource_NoOpCallback2(void) {}
-void UiTextResource_NoOpCallback3(void) {}
+UNUSED void UiTextResource_NoOpCallback2(void) {}
+UNUSED void UiTextResource_NoOpCallback3(void) {}
 void UiTextResource_NoOpCallback4(void) {}
 
 // Sets up a sprite as the right-pointing arrow, in a free tile slot (returned
@@ -1388,7 +1390,8 @@ void UiWindow_OpenMode1AndWaitFrame(void) {
 void UiWork_CloseAndRelease(void) { UiWork_FinalizeAndReleaseBlock16(); }
 
 // Sets up an empty selection screen and waits a frame.
-void SelectionScreen_CreateEmpty(void) {
+// Nothing calls it.
+UNUSED void SelectionScreen_CreateEmpty(void) {
   UiGlyph_ResetWorkState();
   Resource_ClearOwnerListAndCounters();
   WaitFrames(1);

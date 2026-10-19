@@ -78,7 +78,6 @@ s32 SaveMenu_SelectSlot(s32 file, s32 mode);
 s32 Save_WriteSelectedSlot(void);
 s32 SaveState_LoadRecordIntoWork(s32 mode);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
-s32 Resource_ReturnTrue(void);
 s32 NameEntry_AcceptsMark(s32 mark, s32 letter);
 s32 NameEntry_CountLetters(const u8 *name);
 void UiWindow_CopyTilemapRegion(const struct UiWindow *window,
@@ -98,7 +97,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second);
 void RenderResource_LoadPair(s32 picture, s32 slot);
 struct RenderOutput *
 RenderResource_CreatePair(s32 picture, struct UiWindow *window, s32 x, s32 y);
-void Ui_ApplyTableOffsetToPair(struct RenderOutput *obj);
+void RenderOutput_BobPair(struct RenderOutput *obj);
 void RenderResource_LoadFrame(s32 icon, s32 slot, s32 remap);
 struct RenderOutput *RenderResource_CreateFrame(s32 icon, s32 remap,
                                                 struct UiWindow *window, s32 x,
@@ -127,9 +126,9 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst);
 s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index);
 s32 Resource_LoadKind26EntryToBuffer(s32 resource, s32 index);
 s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index);
-s32 Ui_LoadEntryForKind(u32 kind, s32 value);
+s32 UiGlyph_LoadPortrait(u32 member, s32 cacheSlot);
 s32 Ui_GetTableWordZero(s32 no);
-void Ui_RunCopiedRoutine(GlyphTransfer *work);
+void UiIcon_Decompress(GlyphTransfer *work);
 struct UiWindow *Link_CreateCountdownLabelWindow(void);
 s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1);
 void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
@@ -139,7 +138,7 @@ void Graphics_SetBg1Priority3(void);
 void Graphics_SetBg1Priority0(void);
 void Graphics_InstallBg1VCountHandler(void);
 struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y);
-s32 Ui_RunSelectionScreen(s32 mode);
+s32 Menu_RunCommandRow(s32 mode);
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt);
 s32 BattleLayout_HighlightPartyPanels(u16 *ids);
 #ifdef UBFIX

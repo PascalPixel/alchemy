@@ -24,7 +24,7 @@ struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y) {
 // shoulder-button switch. Mode 0 is the top menu; the other mode selects
 // a battle command and remembers its own cursor. Tutorial input is replayed
 // through the same selection path.
-s32 Ui_RunSelectionScreen(s32 mode) {
+s32 Menu_RunCommandRow(s32 mode) {
   u8 party[4];
   struct UiRenderWork *render;
   struct SelectionWork *selectionUi;

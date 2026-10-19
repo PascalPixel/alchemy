@@ -4,8 +4,10 @@
 #include "../battle_command_internal.h"
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-// Always 1: the international name entry has no voicing marks to check.
-s32 Resource_ReturnTrue(void) { return 1; }
+// The international name entry has no voicing marks: where the Japanese
+// edition checks a mark against the letter before it, this edition keeps a
+// function that accepts every character. Nothing calls it.
+UNUSED s32 NameEntry_AcceptsMark(s32 mark, s32 letter) { return 1; }
 #else
 
 // The kana voicing marks of the Japanese name entry, which join the letter

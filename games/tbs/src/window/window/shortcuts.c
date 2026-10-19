@@ -72,7 +72,8 @@ s32 Item_ReturnTrue(void) { return 1; }
 
 // Steps the window hue one step: back when keys contains LEFT, on
 // otherwise.
-void OptionMenu_StepWindowHue(s32 keys) {
+// Nothing calls it.
+UNUSED void OptionMenu_StepWindowHue(s32 keys) {
   u8 hue = gGameState.paletteGlow[0];
   if (keys & KEY_LEFT)
     hue += 0xff;
@@ -304,7 +305,8 @@ struct SelectionWorkspace {
 };
 
 // Allocates the work block of heap slot 19 and clears its two icon flags.
-void Menu_AllocateSelectionWorkspace(void) {
+// Nothing calls it.
+UNUSED void Menu_AllocateSelectionWorkspace(void) {
   struct SelectionWorkspace *work;
   u32 zero;
 
@@ -316,7 +318,8 @@ void Menu_AllocateSelectionWorkspace(void) {
 
 // Closes the window of heap slot 19's work block, frees its two icons and
 // frees the block.
-void Ui_FinalizeWorkAndReleaseHeap13(void) {
+// Nothing calls it.
+UNUSED void Menu_ReleaseSelectionWorkspace(void) {
   struct SelectionWorkspace *state;
 
   state = *(struct SelectionWorkspace **)gSelectionWorkspace;

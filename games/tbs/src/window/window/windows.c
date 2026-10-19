@@ -459,7 +459,8 @@ void UiWindow_ClearInteriorTiles(const struct UiWindow *window, u32 left,
 
 // Points a list's tail link back at its last output, after the list has been
 // edited by hand.
-void RenderOutputList_UpdateTail(struct RenderOutputList *list) {
+// Nothing calls it.
+UNUSED void RenderOutputList_UpdateTail(struct RenderOutputList *list) {
   struct RenderOutput *node = list->head;
   struct RenderOutput **tail = &list->head;
 

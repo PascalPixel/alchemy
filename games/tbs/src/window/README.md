@@ -77,9 +77,9 @@ flags (`UI_WINDOW_`), sprite motions (`UI_SPRITE_`), message argument kinds
 | `NameEntry_`, `PartyTalkMenu_`, `DjinnMenu_`, `SummonMenu_`, `ItemList_`, `BattleMenu_`, `BattleTarget_` | the screens they name |
 | `Resource_`, `RenderResource_`, `Graphics_`, `Vram_` | things the engine names elsewhere: VRAM cache entries, pictures and video registers |
 
-`Ui_` functions have no family yet. Many names here are shared with The Lost
-Age's twins and with the far-call tables (`system/far_call/WINDOW.S`), so a
-rename crosses folders.
+The `Ui_` functions left have no family yet, and each is also used in another
+folder. Many names here are shared with The Lost Age's twins and with the
+far-call tables (`system/far_call/WINDOW.S`), so a rename crosses folders.
 
 ## Spellings
 

@@ -127,7 +127,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
 
     nameSprite.oam.word.attr01 = 0x80000400;
     nameSprite.oam.word.attr23 = 0;
-    nameSprite.oam.f.tile = Ui_LoadEntryForKind(owner, portraitSlot);
+    nameSprite.oam.f.tile = UiGlyph_LoadPortrait(owner, portraitSlot);
     nameSprite.oam.f.x = 8;
     nameSprite.oam.f.y = 24;
     nameSprite.oam.f.palette = 14;

@@ -343,7 +343,8 @@ s32 SaveState_ProcessSelectedSlot(void) {
 // Asks "OK to save over this file?" and, on Yes, writes the save stamp into
 // the current file (SaveState_ProcessSelectedSlot) and says "Your game was
 // saved." Returns that result.
-s32 SaveState_ConfirmAndProcessSelectedSlot(void) {
+// Nothing calls it.
+UNUSED s32 SaveState_ConfirmAndProcessSelectedSlot(void) {
   s32 result;
 
   // UB: on No, result is returned without ever being set.
@@ -1107,7 +1108,7 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
     }
     ShopCursor_AdvanceFar(&fileCursor);
 #endif
-    Ui_ApplyTableOffsetToPair(modePicture);
+    RenderOutput_BobPair(modePicture);
     WaitFrames(1);
     // Up and down move to the previous or next file the mode allows.
     if (gKeysRepeat & KEY_UP) {

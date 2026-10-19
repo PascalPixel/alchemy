@@ -14,7 +14,7 @@ FarCall_BattleTable:
 	export BattlePresentation_ConfigurePaletteFadeFar, BattlePresentation_ConfigurePaletteFade
 	export BattleBackground_LoadFar, BattleBackground_Load
 	export BattlePresentation_SetPaletteLevelFar, BattlePresentation_SetPaletteLevel
-	overlay_veneer Summon_GetEntryByte4
+	overlay_veneer BattleClass_GetEffectHeight
 	export Summon_IsEntrySecondaryFlaggedFar, Summon_IsEntrySecondaryFlagged
 	overlay_veneer Battle_GetSpriteFlagHighBits
 	overlay_veneer BattleClass_IsSmall

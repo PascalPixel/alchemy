@@ -74,7 +74,7 @@ s32 Summon_IsEntrySecondaryFlagged(s32 index) {
 }
 
 // Returns the class's effect-height byte, or zero for an invalid class.
-s32 Summon_GetEntryByte4(s32 index) {
+s32 BattleClass_GetEffectHeight(s32 index) {
   if (index < 0 || index > ENEMY_CLASS_LAST)
     return 0;
   return gSummon_EntryTable[index].unk04[0];

@@ -21,7 +21,7 @@ BattleBackground_LoadFar:
 	.thumb_func
 BattlePresentation_SetPaletteLevelFar:
 	overlay_veneer BattlePresentation_SetPaletteLevel
-	.global Summon_GetEntryByte4Far
+	.global BattleClass_GetEffectHeightFar
 	.thumb_func
-Summon_GetEntryByte4Far:
-	overlay_veneer Summon_GetEntryByte4
+BattleClass_GetEffectHeightFar:
+	overlay_veneer BattleClass_GetEffectHeight

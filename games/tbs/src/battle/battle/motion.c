@@ -319,14 +319,14 @@ s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
 }
 
 // Returns the height above unit id where its effects play, 16.16: its
-// class's own (Summon_GetEntryByte4), else 24 for a small enemy and 48 for
-// others.
+// class's own (BattleClass_GetEffectHeight), else 24 for a small enemy and 48
+// for others.
 s32 Battle_GetObjectTableValue(s32 unitId) {
   u32 height;
   u8 classId;
 
   classId = UnitGetFar(unitId)->classId;
-  height = (u8)Summon_GetEntryByte4(classId) << 16;
+  height = (u8)BattleClass_GetEffectHeight(classId) << 16;
   if (height == 0) {
     classId = UnitGetFar(unitId)->classId;
     if (BattleClass_IsSmall(classId) != 0) {

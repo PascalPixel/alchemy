@@ -6,11 +6,11 @@ struct SummonOwnerState {
 };
 
 struct SummonOwnerState *UnitGet(s32 owner);
-u8 Summon_GetEntryByte4(s32 index);
+u8 BattleClass_GetEffectHeight(s32 index);
 s32 BattleClass_IsSmall(s32 index);
 
 s32 Func_0811c37c(s32 owner) {
-  s32 value = Summon_GetEntryByte4(UnitGet(owner)->summon) << 16;
+  s32 value = BattleClass_GetEffectHeight(UnitGet(owner)->summon) << 16;
 
   if (value == 0) {
     if (BattleClass_IsSmall(UnitGet(owner)->summon) != 0)

@@ -72,7 +72,7 @@ s32 Summon_IsEntrySecondaryFlagged(s32 index) {
   return gSummon_EntryTable[index].layoutBit0;
 }
 
-u32 Summon_GetEntryByte4(u32 index) {
+u32 BattleClass_GetEffectHeight(u32 index) {
   u8 *table;
   u32 offset;
 

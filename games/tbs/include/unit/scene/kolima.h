@@ -25,7 +25,7 @@ extern s32 gKolima_ProtectiveFieldGrowActions[];
 extern s32 gKolima_ProtectiveFieldShrinkActions[];
 extern s32 gKolima_EntryActions[];
 extern s32 gKolima_DebrisScript[];
-extern s32 gKolima_Actor8Path[];
+extern s32 gKolima_FaceLeaderScript[];
 extern u16 gKolima_SwitchCells[];
 extern struct SceneEntrance gKolimaEntrances[];
 extern struct SceneEntrance gKolimaEntrances3[];

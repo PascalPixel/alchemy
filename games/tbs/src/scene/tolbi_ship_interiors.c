@@ -69,6 +69,18 @@ enum ShipSceneCommand {
   SHIP_PLACE_FOLLOWERS_AND_MONSTERS
 };
 
+// The warriors bound for Colosso in the hold while the ship waits at Kalay
+// (gTolbiShipInteriors_HoldPlacements): Ouranos, who "can't stand water", and
+// his friend Sean.
+enum TolbiShipInteriorsActor {
+  HOLD_OURANOS = 13,
+  HOLD_SEAN = 14,
+};
+
+// A speaker: the actor, and in the top four bits where the message window
+// opens beside them.
+#define SPEAKER(actor, window) ((window) << 12 | (actor))
+
 // Defined below, in the order of the ROM.
 static void TolbiShipInteriors_StepBesideLeader(s32 passengerId);
 static s32 TolbiShipInteriors_IsSpotFree(s32 bucket);
@@ -1362,12 +1374,13 @@ static void TolbiShipInteriors_WatchCrewWonderAtDelay(void) {
   Engine_EventEnd();
 }
 
-// Once the party has heard of the delay (flag 0x911): a passenger threatens to
-// go ashore if the ship doesn't sail, and actor 12 storms off past the party.
-// Records that the warriors have left to seek the captain.
+// Once the party has heard of the delay at Kalay: Ouranos threatens to go
+// ashore if the ship doesn't sail. Actor 12 can't say when it will, so Sean
+// and Ouranos set off to make the captain set sail, and actor 12 ("I don't
+// want any violence!") hurries after them past the party.
 static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
-  s32 requestA;
-  s32 requestB;
+  s32 actor12Speaker;
+  s32 seanSpeaker;
   const s32 *action;
 
   if (GameFlag_IsSet(0x911) == 0) {
@@ -1378,91 +1391,91 @@ static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
     Camera_SetSpeed(0x26666, 0x4ccc);
     TolbiShipInteriors_MoveCameraAndWait(PIXELS(1463), -1, PIXELS(464),
                                          0x10000014);
-    Engine_ActorRunRepeatedMotion(13, 1);
+    Engine_ActorRunRepeatedMotion(HOLD_OURANOS, 1);
     Engine_EventSetMessage(MsgTolbiShipIfWeArentGoingSet);
-    TolbiShipInteriors_Say(0x200d);
+    TolbiShipInteriors_Say(SPEAKER(HOLD_OURANOS, 2));
     TolbiShipInteriors_Turn(12, 0xd000);
-    requestA = 0x800c;
+    actor12Speaker = SPEAKER(12, 8);
     Actor_ShowEmote(12, 0x102, 20);
     Engine_ActorStartRepeatedMotion(12, 2);
-    TolbiShipInteriors_Say(requestA);
-    Engine_ActorRunRepeatedMotion(14, 1);
-    Event_ShowMessageAndWait(0xa00e, 0, 20);
+    TolbiShipInteriors_Say(actor12Speaker);
+    Engine_ActorRunRepeatedMotion(HOLD_SEAN, 1);
+    Event_ShowMessageAndWait(SPEAKER(HOLD_SEAN, 10), 0, 20);
     TolbiShipInteriors_Turn(12, 0);
-    requestB = 0xa00e;
+    seanSpeaker = SPEAKER(HOLD_SEAN, 10);
     Actor_ShowEmote(12, 0x101, 40);
-    Actor_ShowEmote(14, 0x103, 40);
-    Engine_ActorStartRepeatedMotion(14, 3);
-    TolbiShipInteriors_Say(requestB);
+    Actor_ShowEmote(HOLD_SEAN, 0x103, 40);
+    Engine_ActorStartRepeatedMotion(HOLD_SEAN, 3);
+    TolbiShipInteriors_Say(seanSpeaker);
     Actor_SetAttachedEffect(12, 0x102);
     Engine_EventWait(40);
     Engine_ActorStartRepeatedMotion(12, 3);
-    TolbiShipInteriors_Say(requestA);
-    Engine_ActorRunRepeatedMotion(14, 1);
-    TolbiShipInteriors_Say(requestB);
-    TolbiShipInteriors_Turn(14, 0xb000);
-    TolbiShipInteriors_Say(requestB);
+    TolbiShipInteriors_Say(actor12Speaker);
+    Engine_ActorRunRepeatedMotion(HOLD_SEAN, 1);
+    TolbiShipInteriors_Say(seanSpeaker);
+    TolbiShipInteriors_Turn(HOLD_SEAN, 0xb000);
+    TolbiShipInteriors_Say(seanSpeaker);
     TolbiShipInteriors_Turn(12, 0xd000);
     Actor_ShowEmote(12, 0x100, 30);
     Engine_ActorStartRepeatedMotion(12, 1);
-    TolbiShipInteriors_Say(requestA);
-    Engine_ActorSetAnimationAndWait(13, 4);
-    TolbiShipInteriors_Say(0x200d);
-    Engine_ActorStartRepeatedMotion(13, 2);
-    TolbiShipInteriors_Say(0x200d);
+    TolbiShipInteriors_Say(actor12Speaker);
+    Engine_ActorSetAnimationAndWait(HOLD_OURANOS, 4);
+    TolbiShipInteriors_Say(SPEAKER(HOLD_OURANOS, 2));
+    Engine_ActorStartRepeatedMotion(HOLD_OURANOS, 2);
+    TolbiShipInteriors_Say(SPEAKER(HOLD_OURANOS, 2));
     Engine_ActorSetAnimation(12, 4);
-    TolbiShipInteriors_Say(requestA);
-    Engine_ActorSetAnimationAndWait(14, 4);
-    TolbiShipInteriors_Say(requestB);
-    TolbiShipInteriors_Turn(14, 0x8000);
-    Engine_ActorStartRepeatedMotion(14, 2);
-    Event_ShowMessageAndWait(requestB, 0, 20);
+    TolbiShipInteriors_Say(actor12Speaker);
+    Engine_ActorSetAnimationAndWait(HOLD_SEAN, 4);
+    TolbiShipInteriors_Say(seanSpeaker);
+    TolbiShipInteriors_Turn(HOLD_SEAN, 0x8000);
+    Engine_ActorStartRepeatedMotion(HOLD_SEAN, 2);
+    Event_ShowMessageAndWait(seanSpeaker, 0, 20);
     Actor_FaceDirection(12, FACING_EAST, 0);
     Actor_ShowEmote(12, 0x102, 80);
-    Event_ShowMessageAndWait(requestA, 0, 20);
-    Actor_ShowEmote(14, 0x103, 0);
-    Actor_ShowEmote(13, 0x103, 60);
-    Engine_ActorStartRepeatedMotion(14, 2);
-    TolbiShipInteriors_Say(requestB);
-    TolbiShipInteriors_Turn(14, 0xb000);
-    Engine_ActorRunRepeatedMotion(14, 1);
-    TolbiShipInteriors_Say(requestB);
-    TolbiShipInteriors_Turn(13, 0x3000);
-    Actor_ShowEmote(13, 0x101, 0);
+    Event_ShowMessageAndWait(actor12Speaker, 0, 20);
+    Actor_ShowEmote(HOLD_SEAN, 0x103, 0);
+    Actor_ShowEmote(HOLD_OURANOS, 0x103, 60);
+    Engine_ActorStartRepeatedMotion(HOLD_SEAN, 2);
+    TolbiShipInteriors_Say(seanSpeaker);
+    TolbiShipInteriors_Turn(HOLD_SEAN, 0xb000);
+    Engine_ActorRunRepeatedMotion(HOLD_SEAN, 1);
+    TolbiShipInteriors_Say(seanSpeaker);
+    TolbiShipInteriors_Turn(HOLD_OURANOS, 0x3000);
+    Actor_ShowEmote(HOLD_OURANOS, 0x101, 0);
     Actor_ShowEmote(12, 0x101, 60);
-    Engine_ActorRunRepeatedMotion(13, 1);
-    TolbiShipInteriors_Say(13);
-    Actor_ShowEmote(14, 0x103, 40);
-    Engine_ActorRunRepeatedMotion(14, 1);
-    TolbiShipInteriors_Say(requestB);
+    Engine_ActorRunRepeatedMotion(HOLD_OURANOS, 1);
+    TolbiShipInteriors_Say(HOLD_OURANOS);
+    Actor_ShowEmote(HOLD_SEAN, 0x103, 40);
+    Engine_ActorRunRepeatedMotion(HOLD_SEAN, 1);
+    TolbiShipInteriors_Say(seanSpeaker);
     Actor_FaceDirection(12, 0xd000, 0);
-    Actor_FaceDirection(13, 0x5000, 40);
+    Actor_FaceDirection(HOLD_OURANOS, 0x5000, 40);
     Actor_FaceDirection(12, FACING_EAST, 0);
-    TolbiShipInteriors_Turn(13, 0x3000);
+    TolbiShipInteriors_Turn(HOLD_OURANOS, 0x3000);
     Engine_ActorRunRepeatedMotion(12, 2);
-    Event_ShowMessageAndWait(requestA, 0, 20);
-    Actor_FaceDirection(14, FACING_SOUTH, 40);
-    TolbiShipInteriors_Say(requestB);
+    Event_ShowMessageAndWait(actor12Speaker, 0, 20);
+    Actor_FaceDirection(HOLD_SEAN, FACING_SOUTH, 40);
+    TolbiShipInteriors_Say(seanSpeaker);
     Engine_ActorStartRepeatedMotion(12, 2);
-    Engine_ActorRunRepeatedMotion(13, 2);
+    Engine_ActorRunRepeatedMotion(HOLD_OURANOS, 2);
     Engine_EventWait(60);
-    Engine_ActorRunRepeatedMotion(13, 1);
-    TolbiShipInteriors_Say(13);
-    Engine_ActorSetAnimationAndWait(14, 3);
-    TolbiShipInteriors_Say(requestB);
+    Engine_ActorRunRepeatedMotion(HOLD_OURANOS, 1);
+    TolbiShipInteriors_Say(HOLD_OURANOS);
+    Engine_ActorSetAnimationAndWait(HOLD_SEAN, 3);
+    TolbiShipInteriors_Say(seanSpeaker);
     Actor_ShowEmote(12, 0x102, 40);
     Engine_ActorRunRepeatedMotion(12, 2);
-    TolbiShipInteriors_Say(requestA);
-    Engine_ActorSetAnimationAndWait(13, 3);
-    TolbiShipInteriors_Say(13);
-    Actor_FaceDirection(14, 0xb000, 40);
-    Engine_ActorSetAnimation(14, 3);
-    Engine_ActorSetAnimationAndWait(13, 3);
-    Actor_SetSpeed(14, PIXELS(8) / 5, PIXELS(4) / 5);
-    Actor_SetSpeed(13, PIXELS(8) / 5, PIXELS(4) / 5);
+    TolbiShipInteriors_Say(actor12Speaker);
+    Engine_ActorSetAnimationAndWait(HOLD_OURANOS, 3);
+    TolbiShipInteriors_Say(HOLD_OURANOS);
+    Actor_FaceDirection(HOLD_SEAN, 0xb000, 40);
+    Engine_ActorSetAnimation(HOLD_SEAN, 3);
+    Engine_ActorSetAnimationAndWait(HOLD_OURANOS, 3);
+    Actor_SetSpeed(HOLD_SEAN, PIXELS(8) / 5, PIXELS(4) / 5);
+    Actor_SetSpeed(HOLD_OURANOS, PIXELS(8) / 5, PIXELS(4) / 5);
     action = gTolbiShipInteriors_LeaveHold;
-    Actor_SetActionScript(14, action);
-    Actor_SetActionScript(13, action);
+    Actor_SetActionScript(HOLD_SEAN, action);
+    Actor_SetActionScript(HOLD_OURANOS, action);
     Engine_EventWait(20);
     Actor_FaceDirection(12, FACING_SOUTH, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(12) / 5, PIXELS(6) / 5);

@@ -25,7 +25,7 @@ SECTIONS
         "*/games/tla/src/scene/tundaria_tower/s0964.o"(.text)
         "*/resource_68f_overlay.o"(.text.x02008a48)
         "*/games/tla/src/scene/tundaria_tower/script3.o"(.text)
-        "*/resource_68f_overlay.o"(.text.x02008b3c)
+        "*/games/tla/src/scene/tundaria_tower/s0b3c.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/events_b.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/s0c64.o"(.text)
         "*/games/tla/src/scene/tundaria_tower/s0d2c.o"(.text)

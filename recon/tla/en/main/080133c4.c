@@ -1,35 +1,33 @@
+// Draft, differ 12 of 40 (was 28): ☀️'s Runtime_InstallIwramAndIrqs with
+// ⚓️'s 0x400-word runtime copy and the gamepak interrupt enabled. The native
+// pool holds IwramIrqMain twice: the copy's destination and the vector's
+// value are two entries, which agscc's pool merges whenever both are the
+// same symbol, so every later pool offset is 4 short. The empty asm on the
+// destination keeps CSE from carrying it to the vector store (the vector's
+// value is reloaded after the copy, as in the native); without it the
+// address stays in r4 and the registers shift (differ 30). A second
+// entry would need a second name for 0x03000100, which O2 forbids unless
+// evidence shows the source had one (the IWRAM runtime block it copies is
+// a candidate).
 #include "types.h"
 #include "dma.h"
 #include "io_reg.h"
+#include "iowrite.h"
 #include "irq.h"
 
 void Runtime_InstallIwramAndIrqs(void) {
-  volatile u16 *ime;
-  s32 zero;
-  s32 value;
-  s32 one;
+  u8 *iwram;
 
-  ime = &REG_IME;
-  zero = 0;
-  /* FAKEMATCH: the empty do-while places the IME store before the
-     IWRAM address load; the direct form scored 2150 and ordinary shared
-     locals scored 890 with different loads, registers and ordering. */
-  do {
-    *ime = zero;
-  } while (0);
-  Dma_Set((const void *)IwramRuntime_Rom, IwramIrqMain, 0x84000400, REG_DMA3);
-  /* FAKEMATCH: the one-pass vector-store boundary scores 695 versus
-     795 for a direct store or a boundary around the runtime copy. */
-  do {
-    gIrqVector = IwramIrqMain;
-  } while (0);
-  Dma_Set((const void *)gRuntime_IrqHandlers, (void *)gIrqHandlers, 0x8400000e,
+  Io_Write16(0, &REG_IME);
+  iwram = IwramIrqMain;
+  asm("" : "+r"(iwram));
+  Dma_Set(IwramRuntime_Rom, iwram, (DMA_ENABLE | DMA_32BIT) << 16 | 0x400,
           REG_DMA3);
-  REG_DISPSTAT = zero;
-  value = 0xc3ff;
-  REG_KEYCNT = value;
-  value = 0x3001;
-  REG_IE = value;
-  one = 1;
-  *ime = one;
+  gIrqVector = IwramIrqMain;
+  Dma_Set(gRuntime_IrqHandlers, gIrqHandlers,
+          (DMA_ENABLE | DMA_32BIT) << 16 | 0xe, REG_DMA3);
+  Io_Write16(0, &REG_DISPSTAT);
+  Io_Write16(0xc3ff, &REG_KEYCNT);
+  Io_Write16(0x3001, &REG_IE);
+  Io_Write16(1, &REG_IME);
 }

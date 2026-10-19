@@ -1,15 +1,3 @@
-	.section .rom.00000630, "ax"
-	.global SoundDriver_EnterFrameUpdate
-	.type SoundDriver_EnterFrameUpdate, %function
-	.thumb_func
-SoundDriver_EnterFrameUpdate:
-	.incbin "baserom.gba", 0x00000630, 0x00000088
-	.section .rom.000019f4, "ax"
-	.global Render_BuildOamList
-	.type Render_BuildOamList, %function
-	.thumb_func
-Render_BuildOamList:
-	.incbin "baserom.gba", 0x000019f4, 0x00000020
 	.section .rom.0001319c, "ax"
 	.global Func_0801319c
 	.type Func_0801319c, %function
@@ -77,8 +65,6 @@ Func_08013de4:
 	.thumb_func
 VramCache_AllocateBlocks:
 	.incbin "baserom.gba", 0x000141a0, 0x00000080
-	.section .rom.00014422, "ax"
-	.incbin "baserom.gba", 0x00014422, 0x00000002
 	.section .rom.00014b9c, "ax"
 	.global Func_08014b70
 	.type Func_08014b70, %function
@@ -112,10 +98,6 @@ Func_0801596c:
 	.thumb_func
 Func_08016180:
 	.incbin "baserom.gba", 0x000161ac, 0x0000015c
-	.section .rom.00016372, "ax"
-	.incbin "baserom.gba", 0x00016372, 0x00000002
-	.section .rom.00016512, "ax"
-	.incbin "baserom.gba", 0x00016512, 0x00000002
 	.section .rom.000165e0, "ax"
 	.global SerialRuntime_CollectReceivedPayloads
 	.type SerialRuntime_CollectReceivedPayloads, %function
@@ -142,9 +124,6 @@ Func_08016dd0:
 	.incbin "baserom.gba", 0x00016dfc, 0x00000028
 	.section .rom.00016e2e, "ax"
 	.incbin "baserom.gba", 0x00016e2e, 0x00000002
-	.section .rom.00017d10, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x00017d10, 0x00000004
 	.section .rom.00020010, "ax"
 	.global Render_ApplyProjectedPlacementFar
 Render_ApplyProjectedPlacementFar:

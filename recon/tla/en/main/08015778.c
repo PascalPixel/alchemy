@@ -1,3 +1,10 @@
+// Draft, differ 8 of 82: the native passes the view's address to the
+// transform as a fresh mov r1, sp and forms it again after the call (mov r6,
+// sp); here one copy in r6 is made before the call and r1 is copied from it,
+// which shifts three loads by a slot. Measured: a one-pass block after the
+// call (55), the view through a pointer set after the call behind an operand
+// barrier (13) or in a one-pass block (10); four minutes of permuter found
+// nothing better.
 #include "types.h"
 #include "iwram_call.h"
 

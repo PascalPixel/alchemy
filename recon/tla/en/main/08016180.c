@@ -1,3 +1,10 @@
+// Draft, differ 8 of 127: three one-slot swaps around the interrupt
+// registers. The native stores REG_IME = 0 before it loads &REG_IE (twice),
+// and loads 0x4003 before it reads SIOCNT. Measured: an empty asm after the
+// first REG_IME = 0 orders that pair but swaps the first call's arguments
+// (still 8); after the second it moves the REG_IME = 1 constant up instead;
+// a one-pass block there is differ 12; four minutes of permuter found
+// differ 6 only by wrapping the tail in a one-pass block.
 #include "serial_runtime.h"
 #include "dma.h"
 

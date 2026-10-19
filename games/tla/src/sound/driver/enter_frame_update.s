@@ -1,3 +1,9 @@
+@ The sound driver's frame entry: checks the stack is in IWRAM and the
+@ sound area is unlocked, saves the high registers, runs the two frame
+@ callbacks and enters the IWRAM mixer with its buffer offset for this
+@ frame. Handwritten (S1): it reads its three words with one pc-relative
+@ block load, and calls its callbacks through lr with a lone BL suffix.
+
 .syntax unified
 	.thumb
 	.global SoundDriver_EnterFrameUpdate
@@ -64,10 +70,10 @@ AlchemyUncreditedEnd_08000646:
 	adds	r4, #80
 	ldr	r3, [pc, #0]
 	bx	r3
-	.4byte	0x030007b5
-	.4byte	0x02003a90
+	.4byte	IwramSoundMixEntry + 1
+	.4byte	gData_02003a90
 AlchemyUncredited_080006ac:
 	.4byte	0x00000350
 	.4byte	0x04000006
 AlchemyUncreditedEnd_080006ac:
-	.4byte	0x03001138
+	.4byte	gData_03001138

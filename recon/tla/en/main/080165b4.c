@@ -1,7 +1,11 @@
 // Draft: SerialRuntime_CollectReceivedPayloads, 2026-10-12: The Broken Seal's
 // source (system/link/link.c) as it stands.
-// differ 4 of 106: the store of the last flag byte (strb r0, [r3, #3]) and the
-// load of the serial state's address (ldr r2, =) swap places.
+// differ 2 of 106 (was 4): the empty asm after clearing currentMask keeps its
+// store (strb r0, [r3, #3]) ahead of the loop setup, as the native has it.
+// Left: in the masked branch the native loads the serial state's address
+// (ldr r2, =, reload's rematerialized r9) before it shifts the bit (lsls r4,
+// r7); sched2 finds both ready after the DMA's stmia and takes the shift by
+// its RTL place. Eight minutes of permuter found nothing better.
 #include "serial_runtime.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -26,6 +30,9 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload) {
   *(u32 *)gSerialRuntime.channelFlags = 0;
   Io_Write16(1, &REG_IME);
   gSerialRuntime.currentMask = 0;
+  /* FAKEMATCH: holds the currentMask store ahead of the loop setup (one
+   * reordered pair without it). */
+  asm volatile("");
   for (i = 0; i <= 1; i++) {
     packet = gSerialRuntime.pendingBuffer[i];
     sum = 0;

@@ -14,12 +14,7 @@ main	rom_start_00	games/tla/src/sound/driver/resampler_records_3
 main	rom_start_00	games/tla/src/sound/driver/resampler_records_pad_2
 main	rom_start_00	games/tla/src/sound/driver/resampler_records_4
 main	rom_start_00	games/tla/src/sound/driver/vsync_dma_refresh
-main	rom_start_00	recon/tla/it/rom	.rom.00000630	it
-main	rom_start_00	recon/tla/fr/rom	.rom.00000630	fr
-main	rom_start_00	recon/tla/es/rom	.rom.00000630	es
-main	rom_start_00	recon/tla/de/rom	.rom.00000630	de
-main	rom_start_00	recon/tla/raw/08000630		en
-main	rom_start_00	recon/tla/ja/rom	.rom.00000630	ja
+main	rom_start_00	games/tla/src/sound/driver/enter_frame_update	.text
 main	iwram_runtime_00	games/tla/src/system/runtime
 main	iwram_runtime_00	games/tla/src/system/runtime_irq_table
 main	iwram_runtime_00	games/tla/src/system/runtime_mul_q16
@@ -40,12 +35,6 @@ main	iwram_runtime_00	games/tla/src/system/runtime_mix_render
 main	iwram_runtime_00	games/tla/src/system/runtime_mix_modes
 main	rom_main_00	games/tla/src/system/resource/decode_byte_lz
 main	rom_main_00	games/tla/src/graphics/render/build_oam_list
-main	rom_main_00	recon/tla/it/rom	.rom.000019f4	it
-main	rom_main_00	recon/tla/fr/rom	.rom.000019f4	fr
-main	rom_main_00	recon/tla/es/rom	.rom.000019f4	es
-main	rom_main_00	recon/tla/de/rom	.rom.000019f4	de
-main	rom_main_00	recon/tla/raw/080019f4		en
-main	rom_main_00	recon/tla/ja/rom	.rom.000019f4	ja
 main	rom_main_00	games/tla/src/graphics/palette/color_backup_kernels
 main	rom_main_00	games/tla/src/graphics/palette/color_brighten_kernel
 main	rom_main_00	games/tla/src/graphics/palette/color_backup_loaders
@@ -132,12 +121,6 @@ main	rom_main_00	recon/tla/ja/rom	.rom.00014174	ja
 main	rom_main_00	games/tla/src/system/resource/clear_slot_references	.text
 main	rom_main_00	games/tla/src/system/resource/activate_entry	.text
 main	rom_main_00	games/tla/src/system/resource/initialize	.text
-main	rom_main_00	recon/tla/it/rom	.rom.00014422	it
-main	rom_main_00	recon/tla/fr/rom	.rom.00014422	fr
-main	rom_main_00	recon/tla/es/rom	.rom.00014422	es
-main	rom_main_00	recon/tla/de/rom	.rom.00014422	de
-main	rom_main_00	recon/tla/raw/080143f6	.text	en
-main	rom_main_00	recon/tla/ja/rom	.rom.000143f6	ja
 main	rom_main_00	games/tla/src/system/resource/resource_cache	.text
 main	rom_main_00	games/tla/src/system/scheduler/callback_scheduler	.text
 main	rom_main_00	games/tla/src/system/scheduler/disable_callbacks	.text
@@ -192,19 +175,7 @@ main	rom_main_00	recon/tla/de/rom	.rom.000161ac	de
 main	rom_main_00	recon/tla/raw/08016180	.text	en
 main	rom_main_00	recon/tla/ja/rom	.rom.00016180	ja
 main	rom_main_00	games/tla/src/system/link/sio_time	.text
-main	rom_main_00	recon/tla/it/rom	.rom.00016372	it
-main	rom_main_00	recon/tla/fr/rom	.rom.00016372	fr
-main	rom_main_00	recon/tla/es/rom	.rom.00016372	es
-main	rom_main_00	recon/tla/de/rom	.rom.00016372	de
-main	rom_main_00	recon/tla/raw/08016346	.text	en
-main	rom_main_00	recon/tla/ja/rom	.rom.00016346	ja
 main	rom_main_00	games/tla/src/system/link/serial_poll_status	.text
-main	rom_main_00	recon/tla/it/rom	.rom.00016512	it
-main	rom_main_00	recon/tla/fr/rom	.rom.00016512	fr
-main	rom_main_00	recon/tla/es/rom	.rom.00016512	es
-main	rom_main_00	recon/tla/de/rom	.rom.00016512	de
-main	rom_main_00	recon/tla/raw/080164e6	.text	en
-main	rom_main_00	recon/tla/ja/rom	.rom.000164e6	ja
 main	rom_main_00	games/tla/src/system/link/sio_xchg	.text
 main	rom_main_00	recon/tla/it/rom	.rom.000165e0	it
 main	rom_main_00	recon/tla/it/rom	.rom.000166c0	it
@@ -246,7 +217,6 @@ main	rom_main_00	recon/tla/de/rom	.rom.00016e2e	de
 main	rom_main_00	recon/tla/raw/08016e02		en
 main	rom_main_00	recon/tla/ja/rom	.rom.00016e02	ja
 main	rom_main_00	games/tla/src/system/sound_vsync_on
-main	rom_main_00	recon/tla/raw/08016e0a		en
 main	rom_main_00	games/common/src/system/save/flash	.text
 main	rom_main_00	games/common/src/system/save/sst	.text
 main	rom_main_00	games/common/src/system/save/program_flash_sector	.text
@@ -257,12 +227,6 @@ main	rom_main_00	games/tla/src/lib/mathtan	.rodata
 main	rom_main_00	games/tla/src/system/memory/winpal	.rodata
 main	rom_main_00	games/tla/src/system/memory/syspal	.rodata
 main	rom_main_00	games/tla/src/system/memory/numtext	.rodata
-main	rom_main_00	recon/tla/it/rom	.rom.00017d10	it
-main	rom_main_00	recon/tla/fr/rom	.rom.00017d10	fr
-main	rom_main_00	recon/tla/es/rom	.rom.00017d10	es
-main	rom_main_00	recon/tla/de/rom	.rom.00017d10	de
-main	rom_main_00	recon/tla/raw/08017ce4		en
-main	rom_main_00	recon/tla/ja/rom	.rom.00017ce4	ja
 main	rom_main_00	games/tla/src/lib/q16_dot_product
 main	rom_main_00	games/common/src/system/save/savedata	.rodata
 main	rom_main_00	games/common/src/system/save/flashtab	.rodata

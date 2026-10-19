@@ -29,6 +29,7 @@
 #include "object_runtime.h"
 #include "ability_ids.h"
 #include "flags.h"
+#include "songs.h"
 #include "objcmd.h"
 #include "map_scroll.h"
 #include "field_runtime.h"
@@ -45,6 +46,20 @@ s32 Math_RemainderUnsigned();
 #include "io_write_queue.h"
 
 #define TILE(position) ((position) / 0x100000)
+
+// Scene flags. The six Frost targets of the second map keep their frozen
+// state in six flags in a row, read by index as well.
+enum {
+  FLAG_WEST_UPPER_FROZEN = FLAG_SCENE_TEMP_00,
+  FLAG_WEST_LOWER_FROZEN = FLAG_SCENE_TEMP_01,
+  FLAG_INNER_WEST_LOWER_FROZEN = FLAG_SCENE_TEMP_02,
+  FLAG_EAST_UPPER_FROZEN = FLAG_SCENE_TEMP_03,
+  FLAG_EAST_LOWER_FROZEN = FLAG_SCENE_TEMP_04,
+  FLAG_FAR_EAST_FROZEN = FLAG_SCENE_TEMP_05,
+  // A falling object struck the northern block before it reached its switch.
+  FLAG_NORTH_BLOCK_STRUCK = FLAG_SCENE_TEMP_07,
+  FLAG_WHIRLWIND_USED = FLAG_SCENE_TEMP_00 + 0x100
+};
 
 // Selects the cave map's entrance positions and camera bounds.
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -193,7 +208,7 @@ static void VaultCave_PushBlockAhead(void) {
   }
   Object_SetMode(leader, 8);
   Engine_TaskWait(15);
-  Engine_AudioPlayCue(238);
+  Engine_AudioPlayCue(SE_238);
   block->speed = 0x3333;
   block->acceleration = 0x3333;
   Engine_ObjectSetPosition(block, destination.x, destination.y, destination.z);
@@ -201,7 +216,7 @@ static void VaultCave_PushBlockAhead(void) {
   leader->acceleration = 0x3333;
   Engine_ObjectSetPosition(leader, destination.x, destination.y, destination.z);
   FieldObject_WaitForMove(block);
-  Engine_AudioPlayCue(288);
+  Engine_AudioPlayCue(SE_288);
   block->x.fixed = destination.x;
   block->z.fixed = destination.z;
   block->velocityX = 0;
@@ -213,11 +228,13 @@ static void VaultCave_PushBlockAhead(void) {
   Object_SetMode(leader, 1);
 }
 
-// Remembers Whirlwind use on the target in the second cave map.
-static void VaultCave_RecordWhirlwindUse(void) { Engine_GameFlagSet(0x300); }
+// Whirlwind on the target in the second map blows it away for good.
+static void Event_UseWhirlwind(void) {
+  Engine_GameFlagSet(FLAG_WHIRLWIND_USED);
+}
 
-// Shows the locked-door message without starting another event.
-static void VaultCave_ShowLockedDoor(void) {
+// "The door is tightly locked."
+static void Event_ShowLockedDoor(void) {
   Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
 }
 
@@ -263,15 +280,16 @@ static s32 VaultCave_IsSouthernBlockOnSwitch(void) {
 // Finish the southern switch only after the block reaches its target cell.
 static inline void VaultCave_CompleteSouthernSwitch(void) {
   if (VaultCave_IsSouthernBlockOnSwitch() != 0) {
-    GameFlag_Set(0x9a9);
-    Event_PlayCue(80);
+    GameFlag_Set(FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH);
+    Event_PlayCue(MUS_PUZZLE_SOLVED);
     VaultCave_ApplySouthernSwitchCells();
   }
 }
 
-// Checks the southern switch after an ordinary block push.
-static void VaultCave_CheckSouthernSwitchAfterPush(void) {
-  if (GameFlag_IsSet(0x9a9) == 0) {
+// Pushing the southern block; once it rests on its switch, the puzzle chime
+// plays and the switch opens the way.
+static void Event_PushSouthernBlock(void) {
+  if (GameFlag_IsSet(FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH) == 0) {
     VaultCave_PushBlockAhead();
     VaultCave_CompleteSouthernSwitch();
   }
@@ -284,9 +302,9 @@ static void VaultCave_ApplySouthernSwitchCells(void) {
   Map_CopyCellAttributes(16, 52, 1, 1, 16, 53);
 }
 
-// Checks the same southern switch after Move finishes.
-static void VaultCave_CheckSouthernSwitchAfterMove(void) {
-  if (GameFlag_IsSet(0x9a9) == 0) {
+// Move on the southern block, with the same switch check.
+static void Event_MoveSouthernBlock(void) {
+  if (GameFlag_IsSet(FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH) == 0) {
     VaultCave_CompleteSouthernSwitch();
   }
 }
@@ -326,36 +344,37 @@ static s32 VaultCave_IsNorthernBlockOnSwitch(void) {
 
 // The northern switch also waits until the falling-object guard is clear.
 static inline void VaultCave_CompleteNorthernSwitch(void) {
-  if (GameFlag_IsSet(0x9aa) == 0) {
+  if (GameFlag_IsSet(FLAG_VAULT_CAVE_NORTH_BLOCK_ON_SWITCH) == 0) {
     if (VaultCave_IsNorthernBlockOnSwitch() != 0) {
-      if (GameFlag_IsSet(FLAG_SCENE_TEMP_07) == 0) {
-        Event_PlayCue(80);
+      if (GameFlag_IsSet(FLAG_NORTH_BLOCK_STRUCK) == 0) {
+        Event_PlayCue(MUS_PUZZLE_SOLVED);
         VaultCave_ApplyNorthernSwitchCells();
-        GameFlag_Set(0x9aa);
+        GameFlag_Set(FLAG_VAULT_CAVE_NORTH_BLOCK_ON_SWITCH);
       }
     }
   }
 }
 
-// Pushes the block and checks whether the northern switch can be completed.
-static void VaultCave_CheckNorthernSwitchAfterPush(void) {
+// Pushing the northern block; it opens its switch only if no falling object
+// has struck it.
+static void Event_PushNorthernBlock(void) {
   VaultCave_PushBlockAhead();
   VaultCave_CompleteNorthernSwitch();
 }
 
-// Leaves this Move target unchanged; the event table still uses the callback.
-static void VaultCave_IgnoreMoveInteraction(void) {}
+// Move on the southern block in the third map does nothing.
+static void Event_IgnoreMove(void) {}
 
-// Checks the northern switch after Move, preserving its extra scene-state
-// guard.
-static void VaultCave_CheckNorthernSwitchAfterMove(void) {
+// Move on the northern block, with the same switch check.
+static void Event_MoveNorthernBlock(void) {
   VaultCave_CompleteNorthernSwitch();
 }
 
-// Restores the upper western Frost target and remembers its state.
+// Frost on the upper western target freezes it and changes its map cell;
+// arriving again re-freezes every target whose flag is set.
 // An ordinary shared Frost helper keeps the extents but saves r5-r7 instead
 // of r5 alone and changes the map-copy argument registers in native English.
-static void VaultCave_ApplyWestUpperFrostState(void) {
+static void Event_FreezeWestUpperTarget(void) {
   struct FieldActor *target = Object_GetById(16);
 
   Map_CopyCellAttributes(26, 30, 1, 1, 23, 32);
@@ -366,11 +385,11 @@ static void VaultCave_ApplyWestUpperFrostState(void) {
     target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
 
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
+  Engine_GameFlagSet(FLAG_WEST_UPPER_FROZEN);
 }
 
-// Restores the lower western Frost target and remembers its state.
-static void VaultCave_ApplyWestLowerFrostState(void) {
+// Frost on the lower western target.
+static void Event_FreezeWestLowerTarget(void) {
   struct FieldActor *target = Object_GetById(17);
 
   Map_CopyCellAttributes(26, 30, 1, 1, 23, 34);
@@ -381,11 +400,11 @@ static void VaultCave_ApplyWestLowerFrostState(void) {
     target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
 
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
+  Engine_GameFlagSet(FLAG_WEST_LOWER_FROZEN);
 }
 
-// Restores the adjacent inner western Frost target.
-static void VaultCave_ApplyInnerWestLowerFrostState(void) {
+// Frost on the lower target just east of it.
+static void Event_FreezeInnerWestLowerTarget(void) {
   struct FieldActor *target = Object_GetById(18);
 
   Map_CopyCellAttributes(26, 30, 1, 1, 24, 34);
@@ -396,11 +415,11 @@ static void VaultCave_ApplyInnerWestLowerFrostState(void) {
     target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
 
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_02);
+  Engine_GameFlagSet(FLAG_INNER_WEST_LOWER_FROZEN);
 }
 
-// Restores the upper eastern Frost target, including its sprite flags.
-static void VaultCave_ApplyEastUpperFrostState(void) {
+// Frost on the upper eastern target.
+static void Event_FreezeEastUpperTarget(void) {
   struct FieldActor *target = Object_GetById(19);
 
   Map_CopyCellAttributes(26, 30, 1, 1, 26, 32);
@@ -412,11 +431,11 @@ static void VaultCave_ApplyEastUpperFrostState(void) {
     target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
 
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_03);
+  Engine_GameFlagSet(FLAG_EAST_UPPER_FROZEN);
 }
 
-// Restores the lower eastern Frost target, including its sprite flags.
-static void VaultCave_ApplyEastLowerFrostState(void) {
+// Frost on the lower eastern target.
+static void Event_FreezeEastLowerTarget(void) {
   struct FieldActor *target = Object_GetById(20);
 
   Map_CopyCellAttributes(26, 30, 1, 1, 26, 34);
@@ -428,11 +447,11 @@ static void VaultCave_ApplyEastLowerFrostState(void) {
     target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
 
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_04);
+  Engine_GameFlagSet(FLAG_EAST_LOWER_FROZEN);
 }
 
-// Restores the far eastern Frost target, including its sprite flags.
-static void VaultCave_ApplyFarEastFrostState(void) {
+// Frost on the far eastern target.
+static void Event_FreezeFarEastTarget(void) {
   struct FieldActor *target = Object_GetById(21);
 
   Map_CopyCellAttributes(26, 30, 1, 1, 28, 33);
@@ -444,7 +463,7 @@ static void VaultCave_ApplyFarEastFrostState(void) {
     target->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   }
 
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_05);
+  Engine_GameFlagSet(FLAG_FAR_EAST_FROZEN);
 }
 
 // Changes the Frost targets' draw priorities when the leader is above them.
@@ -505,7 +524,7 @@ static void VaultCave_RunRumble(void) {
   }
   Map_SetShake(0x30000, 0x30000, 0x10000);
   Map_SetShake(-1, -1, 0xe666);
-  Event_PlayCue(163);
+  Event_PlayCue(SE_163);
   // Scroll and shake for 480 frames before the final fade.
   for (frame = 479; frame >= 0; frame--) {
     u32 scrollDrift = (u32)(Random_Next() << 11) >> 16;
@@ -530,30 +549,31 @@ static void VaultCave_RunRumble(void) {
   } while (frame <= 69);
   // Replace the mechanism's map cells after the fade completes.
   Map_CopyCells(19, 83, 15, 8, 19, 91);
-  Event_PlayCue(0x120);
+  Event_PlayCue(SE_288);
   Engine_MapRedraw();
   Engine_MapRenderWaitForValues();
   Engine_EventEnd();
 }
 
-// Animates the switch once, then runs the rumbling mechanism.
-static void VaultCave_FlipRumbleSwitch(void) {
+// "Isaac flipped the switch." The first time, the switch turns, the cave
+// rumbles and shakes for eight seconds and the map changes as it fades.
+static void Event_FlipSwitch(void) {
   s32 destinationRow;
   s32 destinationColumn;
 
-  if (GameFlag_IsSet(0x9a8) == 0) {
+  if (GameFlag_IsSet(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
     Engine_MessageShowCentered(MSGNO(MsgFieldFlippedSwitch), 1);
-    GameFlag_Set(0x9a8);
+    GameFlag_Set(FLAG_VAULT_CAVE_SWITCH_FLIPPED);
     // Animate the switch face before the adjacent mechanism starts.
     destinationRow = 27;
     destinationColumn = 92;
-    Event_PlayCue(155);
+    Event_PlayCue(SE_155);
     Map_CopyCells(107, 27, 1, 1, destinationColumn, destinationRow);
     Engine_EventWait(39);
     Map_CopyCells(108, 27, 1, 1, destinationColumn, destinationRow);
     Engine_EventWait(50);
     destinationColumn = 25;
-    Event_PlayCue(156);
+    Event_PlayCue(SE_156);
     Map_CopyCells(1, 24, 1, 2, destinationColumn, destinationRow);
     Engine_EventWait(40);
     Map_CopyCells(2, 24, 1, 2, destinationColumn, destinationRow);
@@ -622,22 +642,22 @@ static void VaultCave_UpdateTimedFallingObjects(void) {
           fallingActor->gravity = 0;
           fallingActor->velocityY = 0;
           fallingActor->paused = 0;
-          Event_PlayCue(106);
+          Event_PlayCue(SE_106);
         }
       }
     }
     // A falling object landing on either movable block restarts at the top.
     if (VaultCave_ResetFallingObjectAtActorCell(10) != 0) {
       Engine_ActorSetAnimation(10, 1);
-      if (GameFlag_IsSet(FLAG_SCENE_TEMP_07) == 0) {
-        GameFlag_Set(FLAG_SCENE_TEMP_07);
-        Event_PlayCue(204);
+      if (GameFlag_IsSet(FLAG_NORTH_BLOCK_STRUCK) == 0) {
+        GameFlag_Set(FLAG_NORTH_BLOCK_STRUCK);
+        Event_PlayCue(SE_204);
       } else {
-        Event_PlayCue(106);
+        Event_PlayCue(SE_106);
       }
     }
     if (VaultCave_ResetFallingObjectAtActorCell(9) != 0) {
-      Event_PlayCue(106);
+      Event_PlayCue(SE_106);
     }
   }
 }
@@ -665,7 +685,8 @@ static void VaultCave_UpdateFrostControlledFallingObjects(void) {
     // Each object's paired Frost flag selects its reset height.
     for (fallingIndex = 0; fallingIndex <= 5; fallingIndex++) {
       fallingActor = Object_GetById((fallingIndex + 10));
-      stateValue = Engine_GameFlagIsSet((fallingIndex + FLAG_SCENE_TEMP_00));
+      stateValue =
+          Engine_GameFlagIsSet((fallingIndex + FLAG_WEST_UPPER_FROZEN));
       if (stateValue != 0) {
         if (fallingActor->velocityY <= 0) {
           if (fallingActor->y.fixed > 0x20ffff) {
@@ -675,7 +696,7 @@ static void VaultCave_UpdateFrostControlledFallingObjects(void) {
         fallingActor->y.fixed = PIXELS(255);
         fallingActor->gravity = 0;
         fallingActor->velocityY = 0;
-        Engine_AudioPlayCue(106);
+        Engine_AudioPlayCue(SE_106);
       } else {
         if (fallingActor->velocityY <= 0) {
           if (fallingActor->y.fixed > 0xffff) {
@@ -685,7 +706,7 @@ static void VaultCave_UpdateFrostControlledFallingObjects(void) {
         fallingActor->gravity = stateValue;
         fallingActor->velocityY = stateValue;
         fallingActor->y.fixed = PIXELS(255);
-        Engine_AudioPlayCue(106);
+        Engine_AudioPlayCue(SE_106);
       }
     }
   }
@@ -786,7 +807,7 @@ s32 Scene_Initialize(void) {
     case 7:
     case 8:
     case 13:
-      if (Engine_GameFlagIsSet(0x9a8) == 0) {
+      if (Engine_GameFlagIsSet(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
         Map_CopyCellAttributes(22, 29, 1, 1, 21, 29);
       } else {
         Map_CopyCells(108, 27, 1, 1, 92, 27);
@@ -799,12 +820,12 @@ s32 Scene_Initialize(void) {
       Engine_TaskWait(1);
       break;
     case 10:
-      Engine_GameFlagClear(0x9a8);
+      Engine_GameFlagClear(FLAG_VAULT_CAVE_SWITCH_FLIPPED);
       break;
     }
   }
   if (gGameState.scene == (s32)&SceneId_VaultCave2) {
-    if (Engine_GameFlagIsSet(0x300) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_WHIRLWIND_USED) == 0) {
       Object_GetById(22)->scaleY = 0x18000;
     }
     switch (gGameState.entrance) {
@@ -812,7 +833,7 @@ s32 Scene_Initialize(void) {
     case 2:
     case 3:
     case 4:
-      if (Engine_GameFlagIsSet(0x9a8) == 0) {
+      if (Engine_GameFlagIsSet(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
         Map_CopyCells(5, 81, 11, 7, 5, 73);
       } else {
         Map_CopyCellAttributes(5, 12, 1, 1, 6, 12);
@@ -823,36 +844,36 @@ s32 Scene_Initialize(void) {
     case 9:
     case 14:
       VaultCave_StartFrostControlledFalls();
-      if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_WEST_UPPER_FROZEN) != 0) {
         Engine_ActorSetAnimation(16, 5);
-        VaultCave_ApplyWestUpperFrostState();
+        Event_FreezeWestUpperTarget();
       }
-      if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_01) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_WEST_LOWER_FROZEN) != 0) {
         Engine_ActorSetAnimation(17, 5);
-        VaultCave_ApplyWestLowerFrostState();
+        Event_FreezeWestLowerTarget();
       }
-      if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_INNER_WEST_LOWER_FROZEN) != 0) {
         Engine_ActorSetAnimation(18, 5);
-        VaultCave_ApplyInnerWestLowerFrostState();
+        Event_FreezeInnerWestLowerTarget();
       }
-      if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_03) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_EAST_UPPER_FROZEN) != 0) {
         Engine_ActorSetAnimation(19, 5);
-        VaultCave_ApplyEastUpperFrostState();
+        Event_FreezeEastUpperTarget();
       }
-      if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_04) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_EAST_LOWER_FROZEN) != 0) {
         Engine_ActorSetAnimation(20, 5);
-        VaultCave_ApplyEastLowerFrostState();
+        Event_FreezeEastLowerTarget();
       }
-      if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_05) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_FAR_EAST_FROZEN) != 0) {
         Engine_ActorSetAnimation(21, 5);
-        VaultCave_ApplyFarEastFrostState();
+        Event_FreezeFarEastTarget();
       }
       FieldScheduler_AddCallback(VaultCave_UpdateFrostTargetPriorities,
                                  TASK_PRIORITY_SCENE);
       break;
     case 10:
     case 11:
-      if (Engine_GameFlagIsSet(0x9a9) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH) != 0) {
         VaultCave_ApplySouthernSwitchCells();
         Actor_SetPosition(9, PIXELS(248), PIXELS(876));
       }
@@ -867,7 +888,7 @@ s32 Scene_Initialize(void) {
   }
   if (gGameState.scene == (s32)&SceneId_VaultCave3) {
     Engine_ActorSetAnimation(8, 2);
-    if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_07) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_NORTH_BLOCK_STRUCK) == 0) {
       Engine_ActorSetAnimation(10, 2);
     }
     Engine_ActorSetSpriteFlags(Object_GetById(8), 0);
@@ -886,7 +907,7 @@ s32 Scene_Initialize(void) {
       Object_GetById(8)->collisionFlags = 1;
       Object_GetById(10)->collisionFlags = 1;
       Object_GetById(9)->collisionFlags = 1;
-      if (Engine_GameFlagIsSet(0x9aa) != 0) {
+      if (Engine_GameFlagIsSet(FLAG_VAULT_CAVE_NORTH_BLOCK_ON_SWITCH) != 0) {
         VaultCave_ApplyNorthernSwitchCells();
         Actor_SetPosition(10, PIXELS(264), PIXELS(204));
       }
@@ -1069,7 +1090,7 @@ struct ScenePlacement gVaultCavePlacements2[] = {
         PIXELS(424), 0, PIXELS(552), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xe3, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(456), 0, PIXELS(536), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xf8, 0x300, ACTOR_STAND,
+    { 0xf8, FLAG_WHIRLWIND_USED, ACTOR_STAND,
         PIXELS(456), 0, PIXELS(456), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
@@ -1110,9 +1131,9 @@ struct SceneEvent gVaultCaveEvents1[] = {
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 12, CONDITION_ALWAYS, 12 },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
-    { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(VaultCave_FlipRumbleSwitch) },
-    { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(VaultCave_ShowLockedDoor) },
-    { SEARCH(SEARCH_CHEST), 100, 0xef3, 0x500003 },
+    { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FlipSwitch) },
+    { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShowLockedDoor) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_VAULT_CAVE_1_CHEST, 0x500003 },
     { SCENE_EVENTS_END },
 };
 
@@ -1130,17 +1151,17 @@ struct SceneEvent gVaultCaveEvents2[] = {
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },
     { EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
-    { SEARCH(SEARCH_CHEST), 100, 0xfc4, FIND_ITEM(0x82) },
-    { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(VaultCave_ShowLockedDoor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, 0x9a9, EVENT_SCRIPT(VaultCave_CheckSouthernSwitchAfterMove) },
-    { FLAG_SCENE_TEMP_02, 60, CONDITION_ALWAYS, EVENT_SCRIPT(VaultCave_CheckSouthernSwitchAfterPush) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(VaultCave_ApplyWestUpperFrostState) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 17, FLAG_SCENE_TEMP_01, EVENT_SCRIPT(VaultCave_ApplyWestLowerFrostState) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 18, FLAG_SCENE_TEMP_02, EVENT_SCRIPT(VaultCave_ApplyInnerWestLowerFrostState) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 19, FLAG_SCENE_TEMP_03, EVENT_SCRIPT(VaultCave_ApplyEastUpperFrostState) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 20, FLAG_SCENE_TEMP_04, EVENT_SCRIPT(VaultCave_ApplyEastLowerFrostState) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 21, FLAG_SCENE_TEMP_05, EVENT_SCRIPT(VaultCave_ApplyFarEastFrostState) },
-    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 22, 0x300, EVENT_SCRIPT(VaultCave_RecordWhirlwindUse) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_VAULT_CAVE_2_CHEST, FIND_ITEM(0x82) },
+    { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShowLockedDoor) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH, EVENT_SCRIPT(Event_MoveSouthernBlock) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 60, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushSouthernBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 16, FLAG_WEST_UPPER_FROZEN, EVENT_SCRIPT(Event_FreezeWestUpperTarget) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 17, FLAG_WEST_LOWER_FROZEN, EVENT_SCRIPT(Event_FreezeWestLowerTarget) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 18, FLAG_INNER_WEST_LOWER_FROZEN, EVENT_SCRIPT(Event_FreezeInnerWestLowerTarget) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 19, FLAG_EAST_UPPER_FROZEN, EVENT_SCRIPT(Event_FreezeEastUpperTarget) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 20, FLAG_EAST_LOWER_FROZEN, EVENT_SCRIPT(Event_FreezeEastLowerTarget) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST), 21, FLAG_FAR_EAST_FROZEN, EVENT_SCRIPT(Event_FreezeFarEastTarget) },
+    { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 22, FLAG_WHIRLWIND_USED, EVENT_SCRIPT(Event_UseWhirlwind) },
     { SCENE_EVENTS_END },
 };
 
@@ -1151,10 +1172,10 @@ struct SceneEvent gVaultCaveEvents3[] = {
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
     { 0x21, 6, CONDITION_ALWAYS, 6 },
-    { FLAG_SCENE_TEMP_02, 50, CONDITION_ALWAYS, EVENT_SCRIPT(VaultCave_CheckNorthernSwitchAfterPush) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, 0x9aa, EVENT_SCRIPT(VaultCave_CheckNorthernSwitchAfterMove) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT_SCRIPT(VaultCave_IgnoreMoveInteraction) },
-    { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(VaultCave_ShowLockedDoor) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 50, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushNorthernBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, FLAG_VAULT_CAVE_NORTH_BLOCK_ON_SWITCH, EVENT_SCRIPT(Event_MoveNorthernBlock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IgnoreMove) },
+    { SEARCH(SEARCH_UNNAMED), 99, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShowLockedDoor) },
     { SCENE_EVENTS_END },
 };
 

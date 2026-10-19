@@ -87,6 +87,13 @@
 #define FLAG_VAULT_INTERIORS_BARREL_SLEEP_BOMB 0xf4d
 #define FLAG_VAULT_INTERIORS_BOX_MINT 0xf4e
 
+// Vault cave: its switches, and its chests, set once each is opened
+#define FLAG_VAULT_CAVE_SWITCH_FLIPPED 0x9a8
+#define FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH 0x9a9
+#define FLAG_VAULT_CAVE_NORTH_BLOCK_ON_SWITCH 0x9aa
+#define FLAG_VAULT_CAVE_1_CHEST 0xef3
+#define FLAG_VAULT_CAVE_2_CHEST 0xfc4
+
 // Vault Jail: its chests, set once each is opened
 #define FLAG_JAIL_CHEST_WATER_OF_LIFE 0xf8c
 #define FLAG_JAIL_CHEST_SMOKE_BOMB 0xf8d

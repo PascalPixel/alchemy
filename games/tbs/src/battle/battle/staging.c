@@ -917,7 +917,7 @@ void BattleActor_RemoveFromLists(s32 unitId) {
 
 removed:
   // Free the letter that told the enemy apart from others of its class.
-  EnemyCountRelease(unitId);
+  BattleEnemy_ReleaseNameLetter(unitId);
   for (enemyOrActionIndex = 0; enemyOrActionIndex < BATTLE_ACTION_CAPACITY;
        enemyOrActionIndex++) {
     if (battle->actions[enemyOrActionIndex].unitId == unitId)

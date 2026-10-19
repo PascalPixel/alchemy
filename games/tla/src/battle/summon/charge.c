@@ -22,7 +22,7 @@ struct BattleActorDefinition {
   u16 classId;
 };
 
-s32 EnemyCountRelease(s32 actorId) {
+s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
   struct SummonChargeState *state =
       (struct SummonChargeState *)Ram_HeapSlots->battleWork;
   struct BattleActorDefinition *actor;
@@ -55,7 +55,7 @@ s32 EnemyCountRelease(s32 actorId) {
   state->usedMasks[index] &= ~(1 << bit);
 }
 
-s32 EnemyCountClear(s32 enemyId) {
+s32 BattleEnemy_LetterFirstOfClass(s32 enemyId) {
   struct BattleUnit *summon;
   s32 objectIndex;
   s32 slot;

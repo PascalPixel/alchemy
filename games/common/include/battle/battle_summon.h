@@ -42,9 +42,9 @@ s32 EnemyCheck(s32 classId);
 
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summon_id);
 s32 BattleGroupRandom(s32 recordId);
-s32 EnemyCountDecrement(s32 classId, s32 n);
-s32 EnemyCountRelease(s32 actorId);
-s32 EnemyCountClear(s32 classId);
+s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 n);
+s32 BattleEnemy_ReleaseNameLetter(s32 actorId);
+s32 BattleEnemy_LetterFirstOfClass(s32 classId);
 s32 EnemyUpdate(void);
 #endif
 

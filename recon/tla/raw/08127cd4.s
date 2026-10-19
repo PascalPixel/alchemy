@@ -422,7 +422,7 @@ Func_08127cd4:
 	movs r1, #1
 	adds r5, r2, r6
 	ldrh r0, [r5]
-	bl EnemyCountDecrement
+	bl BattleEnemy_ClaimNameLetter
 	movs r3, #128
 	adds r4, r0, #0
 	lsls r3, r3, #8
@@ -431,7 +431,7 @@ Func_08127cd4:
 	beq .L_0812800a
 	ldrh r0, [r5]
 	str r4, [sp, #0]
-	bl EnemyCountClear
+	bl BattleEnemy_LetterFirstOfClass
 	ldr r4, [sp, #0]
 .L_0812800a:
 	movs r2, #254

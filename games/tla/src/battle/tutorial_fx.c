@@ -19,7 +19,7 @@ struct BattleFxRequest {
 void Func_08138050(struct BattleFxRequest *request, s32 value);
 
 s32 BattleObj_MarkForRelease(s32 objectId);
-s32 EnemyCountDecrement(s32 classId, s32 n);
+s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 n);
 s32 BattleUnitSetFar(s32 slot, s32 unit, s32 mask);
 s32 EnemyUpdate(void);
 struct BattleObj *BattleObjGet(s32 objectId);
@@ -36,7 +36,7 @@ void Func_08119734(s32 id) {
     unit = 376;
   BattleObj_MarkForRelease(128);
   BattleMotion_DestroyAllSlotObjects();
-  EnemyCountDecrement(unit, 1);
+  BattleEnemy_ClaimNameLetter(unit, 1);
   BattleUnitSetFar(128, unit, 255);
   work->enemyIds[0] = 128;
   work->enemyIds[1] = 255;

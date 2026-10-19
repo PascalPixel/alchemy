@@ -598,9 +598,9 @@ power_end:
     }
     if (hit != 0 && EnemyCheck(cls) != 0 && ent >= 0) {
       if (chg == -1) {
-        chg = EnemyCountDecrement(cls, 1);
+        chg = BattleEnemy_ClaimNameLetter(cls, 1);
         if (chg & 0x8000)
-          EnemyCountClear(cls);
+          BattleEnemy_LetterFirstOfClass(cls);
       }
       BattleUnitSetFar(ent, cls, chg & 0x7fff);
       if (action->effect == 87) {

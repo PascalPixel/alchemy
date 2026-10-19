@@ -222,7 +222,7 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels) {
 // Claims the next displayed name suffix for an enemy class. Bit 15 requests
 // a suffix for the first existing duplicate; a new class returns the
 // suffix-count sentinel.
-s32 EnemyCountDecrement(s32 classId, s32 unused) {
+s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
   struct BattleWork *battle;
   s32 classCount;
   s32 classIndex;
@@ -262,7 +262,7 @@ s32 EnemyCountDecrement(s32 classId, s32 unused) {
   return -1;
 }
 
-s32 EnemyCountRelease(s32 actorId) {
+s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
   struct BattleWork *battle = gBattleWork;
   struct BattleUnit *unit;
   s32 count = battle->summonCount;
@@ -295,7 +295,7 @@ s32 EnemyCountRelease(s32 actorId) {
 }
 
 // Appends the first suffix to the first present enemy of the duplicated class.
-s32 EnemyCountClear(s32 classId) {
+s32 BattleEnemy_LetterFirstOfClass(s32 classId) {
   struct BattleUnit *unit;
   s32 enemyIndex;
   s32 nameIndex;
@@ -524,10 +524,11 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
 assign_enemy:
   // Repeated enemy classes get distinct suffixes within this encounter.
   {
-    s32 suffixCode = EnemyCountDecrement(enemyClasses[memberOrEnemyIndex], 1);
+    s32 suffixCode =
+        BattleEnemy_ClaimNameLetter(enemyClasses[memberOrEnemyIndex], 1);
 
     if (suffixCode & 0x8000)
-      EnemyCountClear(enemyClasses[memberOrEnemyIndex]);
+      BattleEnemy_LetterFirstOfClass(enemyClasses[memberOrEnemyIndex]);
     BattleUnitSetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
                      enemyClasses[memberOrEnemyIndex], suffixCode & 0x7fff);
     UnitGetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT);

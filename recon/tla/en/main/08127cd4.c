@@ -38,7 +38,7 @@ struct FormationBattleWork {
 struct BattleUnit *UnitGet(s32 unitId);
 s32 GameFlag_Test(s32 flag);
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin);
-s32 EnemyCountDecrement(s32 no, s32 n);
+s32 BattleEnemy_ClaimNameLetter(s32 no, s32 n);
 void Func_0812786c(s32 unitId, s32 levels);
 void Func_08127a0c(s32 unitId);
 
@@ -196,12 +196,12 @@ s32 Func_08127cd4(s32 recordId) {
 assign_enemy:
   // Repeated enemy classes get distinct suffixes within this encounter.
   {
-    s32 suffixCode = EnemyCountDecrement(enemyClasses[memberOrEnemyIndex], 1);
+    s32 suffixCode = BattleEnemy_ClaimNameLetter(enemyClasses[memberOrEnemyIndex], 1);
     struct BattleUnit *unit;
     s32 enemyId;
 
     if (suffixCode & 0x8000)
-      EnemyCountClear(enemyClasses[memberOrEnemyIndex]);
+      BattleEnemy_LetterFirstOfClass(enemyClasses[memberOrEnemyIndex]);
     BattleUnitSetFar(memberOrEnemyIndex + 128,
                      enemyClasses[memberOrEnemyIndex], suffixCode & 0x7fff);
     unit = UnitGet(memberOrEnemyIndex + 128);

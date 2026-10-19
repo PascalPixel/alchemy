@@ -241,9 +241,9 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
 
       // The newcomer's name letter; on the first duplicate the enemy
       // already there takes a letter too.
-      suffix = EnemyCountDecrement(classId, 1);
+      suffix = BattleEnemy_ClaimNameLetter(classId, 1);
       if (suffix & 0x8000)
-        EnemyCountClear(classId);
+        BattleEnemy_LetterFirstOfClass(classId);
       BattleUnitSetFar(newUnitId, classId, suffix & 0x7fff);
       // Fill a removed enemy's place in the list, or append the newcomer.
       {

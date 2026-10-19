@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global EnemyCountDecrement
+	.global BattleEnemy_ClaimNameLetter
 	.thumb_func
-EnemyCountDecrement:
+BattleEnemy_ClaimNameLetter:
 	push {r5, r6, r7, lr}
 	movs r3, #192
 	lsls r3, r3, #18

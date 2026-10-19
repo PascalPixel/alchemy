@@ -485,7 +485,7 @@ BattleTargetExec:
 	bne .L_08120816
 	adds r0, r5, #0
 	movs r1, #1
-	bl EnemyCountDecrement
+	bl BattleEnemy_ClaimNameLetter
 	movs r3, #128
 	adds r7, r0, #0
 	lsls r3, r3, #8
@@ -493,7 +493,7 @@ BattleTargetExec:
 	cmp r3, #0
 	beq .L_08120816
 	adds r0, r5, #0
-	bl EnemyCountClear
+	bl BattleEnemy_LetterFirstOfClass
 .L_08120816:
 	movs r2, #254
 	lsls r2, r2, #7

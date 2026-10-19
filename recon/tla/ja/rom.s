@@ -3754,10 +3754,10 @@ Func_08127588:
 	.balign 4
 	.incbin "baserom.gba", 0x00127868, 0x000001a0
 	.section .rom.00127ad8, "ax"
-	.global EnemyCountDecrement
-	.type EnemyCountDecrement, %function
+	.global BattleEnemy_ClaimNameLetter
+	.type BattleEnemy_ClaimNameLetter, %function
 	.thumb_func
-EnemyCountDecrement:
+BattleEnemy_ClaimNameLetter:
 	.incbin "baserom.gba", 0x00127ad8, 0x000000c4
 	.section .rom.00127cd0, "ax"
 	.incbin "baserom.gba", 0x00127cd0, 0x000003cc

@@ -56,7 +56,7 @@ s32 BattleActor_RemoveFromLists(s32 id) {
   return -1;
 
 removed:
-  EnemyCountRelease(id);
+  BattleEnemy_ReleaseNameLetter(id);
   for (j = 0; j < 20; j++) {
     if (work->actions[j].unitId == id)
       work->actions[j].unitId = BATTLE_UNIT_LIST_END;

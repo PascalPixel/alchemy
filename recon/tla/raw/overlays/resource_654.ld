@@ -18,7 +18,6 @@ SECTIONS
         "*/games/tla/src/scene/shrine_of_the_sea_god/eventa.o"(.text)
         "*/resource_654_overlay.o"(.text.x02008994)
         "*/resource_654_overlay.o"(.text.x02008ce8)
-        "*/resource_654_overlay.o"(.text.x02008e38)
         "*/games/tla/src/scene/shrine_of_the_sea_god/event1.o"(.text)
         "*/games/tla/src/scene/shrine_of_the_sea_god/event2.o"(.text)
         "*/games/tla/src/field/common/effect/advance_motion.o"(.text)

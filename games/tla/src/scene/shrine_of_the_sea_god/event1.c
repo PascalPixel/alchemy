@@ -1,7 +1,61 @@
 #include "shrine_of_the_sea_god.h"
 #include "macros.h"
+#include "call.h"
 
 extern const u8 gData_02003cbc[];
+
+void Func_02003988(void);
+void Func_020039b8(s32 a, s32 b, s32 c);
+void Func_02003ad8(s32 a);
+void Event_StartScreenTransition(void);
+void Event_FinishScreenTransition(void);
+
+// The leader turns, then moves with map layer 1 by -0x8000 in y a frame for
+// 100 frames; at frame 90 the screen transition finishes.
+void Func_02000e38(void) {
+  struct ShrineOfTheSeaGodMapWork *map =
+      (struct ShrineOfTheSeaGodMapWork *)Ram_HeapSlots->mapWork;
+  struct ShrineOfTheSeaGodMapLayer *layer;
+  struct ShrineOfTheSeaGodObject *object;
+  u32 i;
+
+  /* FAKEMATCH(barrier): the map pointer is ready before the layer offset; with
+   * only the next barrier, 4 of 95 instructions differ in tla-en. */
+  asm("" : "+l"(map));
+  /* FAKEMATCH(barrier): the layer's address waits for gPartyState's; with only
+   * the barrier above, 4 of 95 differ, and with neither 2, in tla-en. */
+  asm("" : "+l"(map) : "l"(&gPartyState));
+  layer = &map->layers[1];
+  object = Object_GetById(gPartyState.currentOwner);
+
+  Func_020039d8();
+  Func_02003b08(0);
+  ShrineOfTheSeaGod_CamMove(-1, -1, -1, 0);
+  ShrineOfTheSeaGod_CamMove(344 << 16, -1, 248 << 16, 1);
+  ShrineOfTheSeaGod_CopyRect(62, 77, 62, 18, 19, 6);
+  ShrineOfTheSeaGod_ObjTurn(gPartyState.currentOwner, 0x4000, 20);
+  ObjectMotion_SetActionVariant(gPartyState.currentOwner, 2);
+  object->motionFlags = 0;
+  Func_02003b48(245);
+  Call3((void (*)())Func_020039b8, 0x10000, 0x10000, 0x10000);
+  // A goto loop: the bytes reload the step on every pass, and a for loop
+  // hoists it (differ 30).
+  i = 0;
+loop:
+  object->y -= 0x8000;
+  object->height -= 0x8000;
+  layer->y -= 0x8000;
+  WaitFrames(2);
+  if (i == 90) {
+    ((struct ShrineOfTheSeaGodEventWork *)Ram_HeapSlots->eventWork)
+        ->screenEffect = 0x203;
+    Event_FinishScreenTransition();
+  }
+  i++;
+  if (i <= 99)
+    goto loop;
+  Func_02003ad8(1);
+}
 
 void Func_02000f18(s32 actor) {
   Func_02003aa0(actor);

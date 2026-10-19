@@ -227,12 +227,6 @@ main	rom_main_00	games/tla/src/lib/mathtan	.rodata
 main	rom_main_00	games/tla/src/system/memory/winpal	.rodata
 main	rom_main_00	games/tla/src/system/memory/syspal	.rodata
 main	rom_main_00	games/tla/src/system/memory/numtext	.rodata
-main	rom_main_00	recon/tla/it/rom	.rom.00017d10	it
-main	rom_main_00	recon/tla/fr/rom	.rom.00017d10	fr
-main	rom_main_00	recon/tla/es/rom	.rom.00017d10	es
-main	rom_main_00	recon/tla/de/rom	.rom.00017d10	de
-main	rom_main_00	recon/tla/raw/08017ce4		en
-main	rom_main_00	recon/tla/ja/rom	.rom.00017ce4	ja
 main	rom_main_00	games/tla/src/lib/q16_dot_product
 main	rom_main_00	games/common/src/system/save/savedata	.rodata
 main	rom_main_00	games/common/src/system/save/flashtab	.rodata

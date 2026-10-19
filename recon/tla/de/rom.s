@@ -124,9 +124,6 @@ Func_08016dd0:
 	.incbin "baserom.gba", 0x00016dfc, 0x00000028
 	.section .rom.00016e2e, "ax"
 	.incbin "baserom.gba", 0x00016e2e, 0x00000002
-	.section .rom.00017d10, "ax"
-	.balign 4
-	.incbin "baserom.gba", 0x00017d10, 0x00000004
 	.section .rom.00020010, "ax"
 	.global Render_ApplyProjectedPlacementFar
 Render_ApplyProjectedPlacementFar:

@@ -1,72 +1,70 @@
-// Draft, differ 220 of 157: keeps the camera focus out of the map's
-// bounding rectangles (s16 cells, -1 ends the list, each widened by 120
-// pixels and shifted by the focus height): inside one, x or z moves to the
-// nearer edge, then the camera is placed from x and z - y. No ☀️ twin
-// found. The same shape, distances as b - a when a - b is negative as the
-// native computes them (with an ABS of the difference, negs: differ 202,
-// fewer only because the shape is further off). Left is register choice:
-// the native keeps x, y, z in lr, r8 and ip and the focus pointer in a
-// stack slot it rewrites after each load, which cascades through the loop.
+// Near miss, differ 185 of 157 (2026-10-18), first pass: The Broken Seal's
+// Map_ApplyWorkOriginAndSpan, with this game's list of camera rectangles
+// (s16 pixels, ended by -1, the pointer at map work 0xfc) that push the
+// followed point out to the nearest edge. Left: the native keeps the
+// followed pointer in a stack slot (sub sp, #4, stored after each read) and
+// hoists -1 into r10; this keeps the pointer in a register. Its distance
+// tests subtract the other way round where a difference is negative
+// (subs r2, r1, r5), as ABS of an expression folds; written as ABS(left - x)
+// throughout, the allocation drifts further (differ 220).
 #include "types.h"
 #include "ram_buffer.h"
+#include "map.h"
 
-#define DISTANCE(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
-
-struct CameraBound {
-  s16 left;
-  s16 top;
-  s16 right;
-  s16 bottom;
-};
-
-struct CameraMapWork {
-  s32 *focus;
-  u8 unk04[248];
-  struct CameraBound *bounds;
-};
+#define ABS(v) ((v) < 0 ? -(v) : (v))
 
 void Func_0802af9c(s32 x, s32 y);
 void Func_0802ad84(void);
 
 void Func_0802aa74(void) {
-  struct CameraMapWork *map = (struct CameraMapWork *)Ram_HeapSlots->mapWork;
-  s32 *focus = map->focus;
-  struct CameraBound *bound;
+  struct MapWork *work = Ram_HeapSlots->mapWork;
+  s32 *followedPosition = work->origin;
   s32 x = 0;
-  s32 y = 0;
+  s32 height = 0;
   s32 z = 0;
 
-  if (focus != 0) {
-    x = *focus++;
-    y = *focus++;
-    z = *focus++;
-    bound = map->bounds;
-    if (bound != 0) {
-      for (; bound->left != -1; bound++) {
-        s32 left = (bound->left << 16) - 0x780000;
-        s32 top = (bound->top << 16) + y - 0x400000;
-        s32 right = (bound->right << 16) + 0x780000;
-        s32 bottom = (bound->bottom << 16) + y + 0x600000;
+  if (followedPosition != NULL) {
+    s16 *rect;
+
+    x = *followedPosition++;
+    height = *followedPosition++;
+    z = *followedPosition++;
+    rect = *(s16 **)((u8 *)work + 0xfc);
+    if (rect != NULL) {
+      while (rect[0] != -1) {
+        s32 left = (rect[0] << 16) - 0x780000;
+        s32 top = (rect[1] << 16) + height - 0x400000;
+        s32 right = (rect[2] << 16) + 0x780000;
+        s32 bottom = (rect[3] << 16) + height + 0x600000;
 
         if (x >= left && z >= top && x <= right && z <= bottom) {
-          s32 edgeX = left;
-          s32 edgeZ = top;
+          s32 nearX = left;
+          s32 dx = left - x;
+          s32 nearZ;
+          s32 dz;
 
-          if (DISTANCE(left, x) > DISTANCE(right, x))
-            edgeX = right;
-          if (DISTANCE(top, z) > DISTANCE(bottom, z))
-            edgeZ = bottom;
-          if (DISTANCE(edgeX, x) <= DISTANCE(edgeZ, z))
-            x = edgeX;
+          if (ABS(dx) > ABS(right - x)) {
+            nearX = right;
+            dx = right - x;
+          }
+          nearZ = top;
+          dz = top - z;
+          if (ABS(dz) > ABS(bottom - z)) {
+            nearZ = bottom;
+            dz = bottom - z;
+          }
+          if (ABS(dx) <= ABS(dz))
+            x = nearX;
           else
-            z = edgeZ;
+            z = nearZ;
           break;
         }
+        rect += 4;
       }
-      focus[-3] = x;
-      focus[-1] = z;
+      followedPosition[-3] = x;
+      followedPosition[-1] = z;
     }
   }
-  Func_0802af9c(x, z - y);
+  Func_0802af9c(x, z - height);
   Func_0802ad84();
 }

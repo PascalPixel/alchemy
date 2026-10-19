@@ -587,22 +587,16 @@ main	rom_main_01	games/tla/src/field/common/map/metatile_seq	.text
 main	rom_main_01	games/tla/src/field/common/map/mapcopy	.text
 main	rom_main_01	recon/tla/it/rom	.rom.0002b38c	it
 main	rom_main_01	recon/tla/it/rom	.rom.0002b450	it
-main	rom_main_01	recon/tla/it/rom	.rom.0002b590	it
 main	rom_main_01	recon/tla/fr/rom	.rom.0002b38c	fr
 main	rom_main_01	recon/tla/fr/rom	.rom.0002b450	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.0002b590	fr
 main	rom_main_01	recon/tla/es/rom	.rom.0002b38c	es
 main	rom_main_01	recon/tla/es/rom	.rom.0002b450	es
-main	rom_main_01	recon/tla/es/rom	.rom.0002b590	es
 main	rom_main_01	recon/tla/de/rom	.rom.0002b38c	de
 main	rom_main_01	recon/tla/de/rom	.rom.0002b450	de
-main	rom_main_01	recon/tla/de/rom	.rom.0002b590	de
 main	rom_main_01	recon/tla/raw/0802b38c	.text	en
 main	rom_main_01	recon/tla/raw/0802b450	.text	en
-main	rom_main_01	recon/tla/raw/0802b590	.text	en
 main	rom_main_01	recon/tla/ja/rom	.rom.0002b308	ja
 main	rom_main_01	recon/tla/ja/rom	.rom.0002b3cc	ja
-main	rom_main_01	recon/tla/ja/rom	.rom.0002b50c	ja
 main	rom_main_01	games/tla/src/field/common/map/edit	.text
 main	rom_main_01	recon/tla/it/rom	.rom.0002b878	it
 main	rom_main_01	recon/tla/it/rom	.rom.0002b998	it
@@ -619,30 +613,29 @@ main	rom_main_01	recon/tla/ja/rom	.rom.0002b914	ja
 main	rom_main_01	games/tla/src/field/common/map/perspective	.text
 main	rom_main_01	recon/tla/it/rom	.rom.0002bdd0	it
 main	rom_main_01	recon/tla/it/rom	.rom.0002be4c	it
-main	rom_main_01	recon/tla/it/rom	.rom.0002c240	it
-main	rom_main_01	recon/tla/it/rom	.rom.0002c4d8	it
 main	rom_main_01	recon/tla/fr/rom	.rom.0002bdd0	fr
 main	rom_main_01	recon/tla/fr/rom	.rom.0002be4c	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.0002c240	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.0002c4d8	fr
 main	rom_main_01	recon/tla/es/rom	.rom.0002bdd0	es
 main	rom_main_01	recon/tla/es/rom	.rom.0002be4c	es
-main	rom_main_01	recon/tla/es/rom	.rom.0002c240	es
-main	rom_main_01	recon/tla/es/rom	.rom.0002c4d8	es
 main	rom_main_01	recon/tla/de/rom	.rom.0002bdd0	de
 main	rom_main_01	recon/tla/de/rom	.rom.0002be4c	de
-main	rom_main_01	recon/tla/de/rom	.rom.0002c240	de
-main	rom_main_01	recon/tla/de/rom	.rom.0002c4d8	de
 main	rom_main_01	recon/tla/raw/0802bdd0	.text	en
 main	rom_main_01	recon/tla/raw/0802be4c	.text	en
 main	rom_main_01	recon/tla/raw/0802c088	.text	en
-main	rom_main_01	recon/tla/raw/0802c174	.text	en
-main	rom_main_01	recon/tla/raw/0802c1f4	.text	en
+main	rom_main_01	recon/tla/ja/rom	.rom.0002bd4c	ja
+main	rom_main_01	recon/tla/ja/rom	.rom.0002bdc8	ja
+main	rom_main_01	games/tla/src/field/common/map/palette_mapped	.text
+main	rom_main_01	recon/tla/it/rom	.rom.0002c240	it
+main	rom_main_01	recon/tla/it/rom	.rom.0002c4d8	it
+main	rom_main_01	recon/tla/fr/rom	.rom.0002c240	fr
+main	rom_main_01	recon/tla/fr/rom	.rom.0002c4d8	fr
+main	rom_main_01	recon/tla/es/rom	.rom.0002c240	es
+main	rom_main_01	recon/tla/es/rom	.rom.0002c4d8	es
+main	rom_main_01	recon/tla/de/rom	.rom.0002c240	de
+main	rom_main_01	recon/tla/de/rom	.rom.0002c4d8	de
 main	rom_main_01	recon/tla/raw/0802c240	.text	en
 main	rom_main_01	recon/tla/raw/0802c4d8	.text	en
 main	rom_main_01	recon/tla/raw/0802c58c	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.0002bd4c	ja
-main	rom_main_01	recon/tla/ja/rom	.rom.0002bdc8	ja
 main	rom_main_01	recon/tla/ja/rom	.rom.0002c1bc	ja
 main	rom_main_01	recon/tla/ja/rom	.rom.0002c454	ja
 main	rom_main_01	games/tla/src/field/common/map/loadgfx	.text
@@ -678,12 +671,6 @@ main	rom_main_01	recon/tla/raw/0802d088	.text	en
 main	rom_main_01	recon/tla/ja/rom	.rom.0002d004	ja
 main	rom_main_01	games/tla/src/lib/curve	.text
 main	rom_main_01	games/tla/src/lib/sample	.text
-main	rom_main_01	recon/tla/it/rom	.rom.0002d36e	it
-main	rom_main_01	recon/tla/fr/rom	.rom.0002d36e	fr
-main	rom_main_01	recon/tla/es/rom	.rom.0002d36e	es
-main	rom_main_01	recon/tla/de/rom	.rom.0002d36e	de
-main	rom_main_01	recon/tla/raw/0802d36e	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.0002d2ea	ja
 main	rom_main_01	games/tla/src/lib/step	.text
 main	rom_main_01	games/tla/src/lib/curve_row	.text
 main	rom_main_01	games/tla/src/lib/curve_lookup	.text
@@ -695,28 +682,7 @@ main	rom_main_01	recon/tla/de/rom	.rom.0002d45c	de
 main	rom_main_01	recon/tla/raw/0802d45c	.text	en
 main	rom_main_01	recon/tla/ja/rom	.rom.0002d3d8	ja
 main	rom_main_01	games/tla/src/field/common/map/cell_collision	.text
-main	rom_main_01	recon/tla/it/rom	.rom.0002d71c	it
-main	rom_main_01	recon/tla/it/rom	.rom.0002d87c	it
-main	rom_main_01	recon/tla/fr/rom	.rom.0002d71c	fr
-main	rom_main_01	recon/tla/fr/rom	.rom.0002d87c	fr
-main	rom_main_01	recon/tla/es/rom	.rom.0002d71c	es
-main	rom_main_01	recon/tla/es/rom	.rom.0002d87c	es
-main	rom_main_01	recon/tla/de/rom	.rom.0002d71c	de
-main	rom_main_01	recon/tla/de/rom	.rom.0002d87c	de
-main	rom_main_01	recon/tla/raw/0802d71c	.text	en
-main	rom_main_01	recon/tla/raw/0802d7b0	.text	en
-main	rom_main_01	recon/tla/raw/0802d87c	.text	en
-main	rom_main_01	recon/tla/raw/0802d958	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.0002d698	ja
-main	rom_main_01	recon/tla/ja/rom	.rom.0002d72c	ja
-main	rom_main_01	recon/tla/ja/rom	.rom.0002d7f8	ja
 main	rom_main_01	games/tla/src/field/common/map/cell_open	.text
-main	rom_main_01	recon/tla/it/rom	.rom.0002da88	it
-main	rom_main_01	recon/tla/fr/rom	.rom.0002da88	fr
-main	rom_main_01	recon/tla/es/rom	.rom.0002da88	es
-main	rom_main_01	recon/tla/de/rom	.rom.0002da88	de
-main	rom_main_01	recon/tla/raw/0802da88	.text	en
-main	rom_main_01	recon/tla/ja/rom	.rom.0002da04	ja
 main	rom_main_01	games/tla/src/field/common/map/world_collision	.text
 main	rom_main_01	games/tla/src/field/common/map/terrain	.text
 main	rom_main_01	recon/tla/it/rom	.rom.0002dd70	it

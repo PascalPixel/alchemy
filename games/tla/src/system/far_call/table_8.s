@@ -10,7 +10,7 @@ Func_08020328:
 .ifdef TLA_EDITION_EN
 	overlay_veneer Map_GetHeaderSize
 .else
-	overlay_veneer Func_0802b7e0
+	overlay_veneer GetWorldMapCollision
 .endif
 .endif
 	.global Func_08020330

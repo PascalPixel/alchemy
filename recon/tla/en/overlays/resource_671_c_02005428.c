@@ -1,11 +1,13 @@
-// Draft of overlay 671 Func_02005428, first attempt, differ 38 of 61; overlay
-// 6a0's Func_02001a48 is the same function with Func_02001acc for
-// Func_020054ac. The native enters the loop at its test (b), starts the end
-// mark 0xffff before the entry jump and again at the end of each pass
-// (movs r1, #255) and finishes it at the test, and reads the id from the
-// work on every pass; this while loop copies the test above the loop and
-// hoists the mark and the id. Overlay 6a1's Func_02000094 has the same
-// entry shape, reached there with a jump into a do-while.
+// Draft of overlay 671 Func_02005428, differ 9 of 61 (was 38); overlay 6a0's
+// Func_02001a48 is the same function with Func_02001acc for Func_020054ac.
+// Entered at its test through a goto into the do-while, as the native enters
+// it, and with the object pinned to r6 (as a plain local, 27), the loop has the
+// native's shape and registers. Left: the native starts the end mark 0xffff
+// (movs r1, #255) before the entry jump and again at the end of each pass and
+// finishes it at the test, loading the word between the halves; it reads the
+// list word before the id; and it copies the count to r10 after the mode. An
+// end mark pinned to r1 and set before the jump and at the end of the body
+// loses the first set and swaps r2 and r3 (18).
 #include "types.h"
 #include "ram_buffer.h"
 #include "object_runtime.h"
@@ -23,11 +25,14 @@ void Func_020054ac(s32 id, s32 a, s32 flag, s32 terrain);
 void Func_02005428(u16 *list, s32 mode, s32 count) {
   struct GabombaStatueEffectWork *work = Ram_HeapSlots->effectWork;
 
-  while (*list != 0xffff) {
+  goto test;
+  do {
     s32 id = work->objectId;
 
     if (id == *list) {
-      struct ObjectRuntime *object = Object_GetById(id);
+      /* FAKEMATCH(pin): the object in r6, as the native keeps it; as a plain
+       * local, 27 of 61 instructions differ in tla-en. */
+      register struct ObjectRuntime *object asm("r6") = Object_GetById(id);
       s32 a;
       s32 flag;
 
@@ -44,5 +49,6 @@ void Func_02005428(u16 *list, s32 mode, s32 count) {
       break;
     }
     list += 3;
-  }
+  test:;
+  } while (*list != 0xffff);
 }

@@ -57,7 +57,7 @@ u32 BattleClass_GetAttackEffect(u32 index) {
 }
 
 // Returns the class's attack-hop height, or zero for an invalid class.
-u32 Battle_GetSpriteFlagHighBits(u32 index) {
+u32 BattleClass_GetAttackHop(u32 index) {
   u16 value;
 
   if (index > ENEMY_CLASS_LAST)

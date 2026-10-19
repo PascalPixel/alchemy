@@ -4070,10 +4070,10 @@ Func_0810bebc:
 Summon_IsEntrySecondaryFlaggedFar:
 	.incbin "baserom.gba", 0x00118058, 0x00000008
 	.section .rom.00118060, "ax"
-	.global Battle_GetSpriteFlagHighBitsFar
-	.type Battle_GetSpriteFlagHighBitsFar, %function
+	.global BattleClass_GetAttackHopFar
+	.type BattleClass_GetAttackHopFar, %function
 	.thumb_func
-Battle_GetSpriteFlagHighBitsFar:
+BattleClass_GetAttackHopFar:
 	.incbin "baserom.gba", 0x00118060, 0x00000008
 	.section .rom.00118068, "ax"
 	.global BattleClass_IsSmallFar

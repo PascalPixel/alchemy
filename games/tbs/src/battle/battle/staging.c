@@ -448,8 +448,7 @@ s32 BattlePres_RunAttack(struct BattlePlan *plan, s32 mode) {
   frames = ResourceMetadata_SumCommandLengthsFar(animation->entries[0]->animId,
                                                  2, 1);
   BattleMotion_ApproachTarget(work.effect.actor, work.effect.actors[0], frames,
-                              Battle_GetSpriteFlagHighBits(unit->classId)
-                                  << 16);
+                              BattleClass_GetAttackHop(unit->classId) << 16);
   ObjectDispatch_ApplyValueToChildrenFar(
       (struct DispatchObject *)BattleObjGet(work.effect.actor)->object, 16);
   BattleObjGet(work.effect.actors[0]);

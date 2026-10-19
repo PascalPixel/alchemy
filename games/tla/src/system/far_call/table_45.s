@@ -5,10 +5,10 @@
 	.thumb_func
 Summon_IsEntrySecondaryFlaggedFar:
 	overlay_veneer Summon_IsEntrySecondaryFlagged
-	.global Battle_GetSpriteFlagHighBitsFar
+	.global BattleClass_GetAttackHopFar
 	.thumb_func
-Battle_GetSpriteFlagHighBitsFar:
-	overlay_veneer Battle_GetSpriteFlagHighBits
+BattleClass_GetAttackHopFar:
+	overlay_veneer BattleClass_GetAttackHop
 	.global BattleClass_IsSmallFar
 	.thumb_func
 BattleClass_IsSmallFar:

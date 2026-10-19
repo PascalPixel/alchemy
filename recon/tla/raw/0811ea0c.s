@@ -141,7 +141,7 @@ Func_0811ea0c:
 	lsls r2, r2, #1
 	adds r3, r6, r2
 	ldrh r0, [r3]
-	bl Battle_GetSpriteFlagHighBits
+	bl BattleClass_GetAttackHop
 	mov r4, r8
 	adds r3, r0, #0
 	movs r2, #36
@@ -188,7 +188,7 @@ Func_0811ea0c:
 	lsls r4, r4, #1
 	adds r3, r0, r4
 	ldrh r0, [r3]
-	bl Battle_GetSpriteFlagHighBits
+	bl BattleClass_GetAttackHop
 	ldr r1, [sp, #16]
 	adds r3, r0, #0
 	mov r4, r8

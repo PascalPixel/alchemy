@@ -51,7 +51,7 @@ u32 BattleClass_GetAttackEffect(u32 index) {
   return result;
 }
 
-u32 Battle_GetSpriteFlagHighBits(u32 index) {
+u32 BattleClass_GetAttackHop(u32 index) {
   /* FAKEMATCH: zero-result selection preserves the compare and return move. */
   u32 value;
   u32 result;

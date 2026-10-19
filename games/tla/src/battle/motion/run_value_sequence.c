@@ -14,7 +14,7 @@
 #include "battle_work.h"
 #include "field_event.h"
 
-void BattleMotion_RunValueSequence(s32 id) {
+void BattleMotion_FlashHit(s32 id) {
   u16 selection[2];
   u16 *selected;
   s32 target;

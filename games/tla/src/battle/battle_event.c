@@ -13,7 +13,7 @@ void UiText_ShowMessageAndWaitCoreFar(u32 message);
 void BattlePresentation_WaitForAdvance(void);
 void UiWork_ClearValueNameTablesFar(void);
 void Audio_PlayCue(s32 cue);
-void BattleMotion_RunValueSequence(u32 unitId, s32 a, s32 b);
+void BattleMotion_FlashHit(u32 unitId, s32 a, s32 b);
 s32 Func_0812824c(s32 unitId, s32 earned);
 void BattleActor_ResetRuntimeFields(u32 unitId);
 void BattleMotion_InitializeActorRecords(u32 unitId);
@@ -81,7 +81,7 @@ u32 BattleEv_DispatchQueued(void) {
       case BATTLE_EVENT_HIT:
         if (runtime->pendingCue > 0)
           Audio_PlayCue(runtime->pendingCue);
-        BattleMotion_RunValueSequence(queue->operands[i], 0, 0);
+        BattleMotion_FlashHit(queue->operands[i], 0, 0);
         break;
       case BATTLE_EVENT_DEFEAT:
         Func_0812824c(queue->operands[i], runtime->flags);

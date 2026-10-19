@@ -225,7 +225,7 @@ u32 BattleEv_DispatchQueued(void) {
       case BATTLE_EVENT_HIT:
         if (runtime->pendingCue > 0)
           AudioCommand_PlayFar(runtime->pendingCue);
-        BattleMotion_RunValueSequence(queue->operands[eventIndex], 0, 0);
+        BattleMotion_FlashHit(queue->operands[eventIndex], 0, 0);
         break;
       case BATTLE_EVENT_DEFEAT:
         BattleEnemy_RecordDefeat(queue->operands[eventIndex], runtime->flags);

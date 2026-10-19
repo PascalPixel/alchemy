@@ -163,7 +163,7 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
 s32 BattleMotion_SetRecordChildValues(struct MotionObject *object, s32 palette);
 s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode);
 
-void BattleMotion_RunValueSequence(s32 unitId, s32 unused0, s32 unused1);
+void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1);
 void BattleActor_RemoveFromLists(s32 unitId);
 void BattleMotion_InitializeActorRecords(s32 unitId);
 s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit);

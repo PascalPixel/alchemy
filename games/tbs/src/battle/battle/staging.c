@@ -846,7 +846,7 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
 // Flashes unit id as it is hit: puts it in pose 5 and switches its sprites
 // between palette 7 and its own twice, two frames each, its status panel
 // highlighted.
-void BattleMotion_RunValueSequence(s32 unitId, s32 unused0, s32 unused1) {
+void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
   u16 selection[2];
   u16 *selected;
   s32 listTerminator;

@@ -4,7 +4,7 @@
 #include "../field_internal.h"
 
 // SC_BASE: restarts the script at the next word, and returns 1 to run on.
-s32 Script_AdvancePastCursor(struct ScriptInterpreter *interpreter) {
+s32 Script_SetBase(struct ScriptInterpreter *interpreter) {
   s32 zero;
 
   // The word after the command becomes the script's start.

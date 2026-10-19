@@ -499,7 +499,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position) {
 
 // Returns 0 when the world map at position can be walked on (collision 5 to
 // 12), else -1.
-s32 CheckWorldMapCollisionRange(s32 unused, struct WorldPosition *position) {
+s32 CheckWorldMapWalkable(s32 unused, struct WorldPosition *position) {
   if ((GetWorldMapCollision(position) - 5) <= 7U) {
     return 0;
   }

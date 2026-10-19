@@ -185,7 +185,7 @@ s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter) {
 }
 
 // SC_ARG(v): switches the object's sprites to animation v.
-s32 Script_ApplyObjectArgument(struct ScriptInterpreter *interpreter) {
+s32 Script_SetAnimation(struct ScriptInterpreter *interpreter) {
   ObjectDispatch_ApplyArgumentToChildren(
       interpreter, interpreter->script[interpreter->cursor + 1]);
   interpreter->cursor += 2;
@@ -193,7 +193,7 @@ s32 Script_ApplyObjectArgument(struct ScriptInterpreter *interpreter) {
 }
 
 // SC_FREE: releases the object. Returns 0.
-s32 ObjectDispatch_RunHookAndReturnZero(struct ScriptInterpreter *interpreter) {
+s32 Script_FreeObject(struct ScriptInterpreter *interpreter) {
   ObjectDispatch_Release((struct DispatchObject *)interpreter);
   return 0;
 }

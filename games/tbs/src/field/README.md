@@ -63,11 +63,13 @@ as other folders call them: `Sprite_` and `Render_` draw sprites,
 and `ResourceSlot_` keep sprites and layers, `ObjectSystem_`,
 `ObjectDispatch_`, `FieldObject_` and `Object_` keep objects, `Script_` are
 object script commands, `Field_` the configured keys, `Map_` and `Tilemap_`
-the layered maps and cells, `WorldMap_` the world map, `MapAnimation_`,
-`DisplayBlend_` and `PaletteQueue_` the timed map effects, `Curve_` the
-ground height functions, `Ui_` the debug sprite viewer and `LuckyDice_` the
-minigame. Names that do not yet say what their code does are listed for a
-rename across folders.
+the layered maps and cells (`TileMap_DrawRowsFromRam` after the routine it
+runs), `WorldMap_` the world map, `GetWorldMap` and `CheckWorldMap` the
+ground under a point on it, `MapAnimation_`, `DisplayBlend_` and
+`PaletteQueue_` the timed map effects, `Curve_` the ground height functions,
+`Ui_` the debug sprite viewer and `LuckyDice_` the minigame. A name other
+folders or The Lost Age's twin also use changes only in a rename across
+folders, even where it no longer says what its code does.
 
 A part's own types, macros and static helpers start with its part's or
 family's name (`ObjectCamera`, `LayeredScene`, `WorldMap`), and its macros

@@ -75,6 +75,11 @@
 #define FLAG_TOLBI_SEARCHERS_MET 0x8c0 // the soldiers asked about Babi
 #define FLAG_TOLBI_SPRING_OPENED 0x8c1 // the gambler let the party go first
 
+// Tolbi interiors: the woman who finds a Lucky Medal after Colosso
+#define FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN 0x8bc // she hid it in the barrel
+#define FLAG_TOLBI_INTERIORS_MEDAL_TAKEN 0x8bd  // the party took it
+#define FLAG_TOLBI_INTERIORS_MEDAL_MISSED 0x8be // she has greeted them since
+
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
 #define FLAG_SCENE_TEMP_00 0x200

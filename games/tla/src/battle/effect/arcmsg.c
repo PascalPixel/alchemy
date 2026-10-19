@@ -1,27 +1,7 @@
 #include "types.h"
 #include "party_state.h"
 #include "ram_buffer.h"
-
-extern char MsgAbilityWoreOff;
-extern char MsgItemWoreOff;
-
-void Func_080cb82c(void);
-void Func_080cb8a4(void);
-void UiText_DrawQuantity(s32 value, s32 slot);
-void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 flags);
-
-void FieldEvent_ShowStatusMessage(void) {
-  gPartyState.avoidDistance = 0;
-  Func_080cb82c();
-  if (gPartyState.avoidByItem == 0) {
-    UiText_DrawQuantity(150, 4);
-    UiText_ShowPositionedMessageAndWaitFar((s32)&MsgAbilityWoreOff, 1);
-  } else {
-    UiText_DrawQuantity(236, 2);
-    UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemWoreOff, 1);
-  }
-  Func_080cb8a4();
-}
+#include "scene_ids.h"
 
 struct ArcEntry {
   u8 unk00[5];
@@ -48,6 +28,56 @@ struct ArcEffectObject {
   void (*callback)(struct ArcEffectObject *);
 };
 
+extern char MsgAbilityWoreOff;
+extern char MsgItemWoreOff;
+
+void Func_080e1024(struct ArcEffectObject *caster);
+void Func_080cb82c(void);
+void Func_080cb8a4(void);
+void UiText_DrawQuantity(s32 value, s32 slot);
+void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 flags);
+
+// The caster during Avoid (BattleFx_RunEffect16): sheds a pair of falling
+// arcs every 5 frames (7 in scene Ov64a), and spins in phase 1, as ☀️'s
+// function of the same name.
+void BattleFx_UpdatePairedArcSpawner(struct ArcEffectObject *caster) {
+  s16 phase;
+  s32 elapsedFrames;
+  struct PartyState *party;
+
+  phase = caster->phase;
+  /* FAKEMATCH(one-pass): the step's advance and the party state's address in
+   * a one-pass block; as elapsedFrames = (s16)caster->step++ with
+   * gPartyState.map, 4 of 43 instructions differ in tla-en. */
+  do {
+    elapsedFrames = (s16)caster->step++;
+    party = &gPartyState;
+  } while (0);
+
+  if (party->map == (s32)&SceneId_Ov64a) {
+    if (elapsedFrames % 7 == 0)
+      Func_080e1024(caster);
+  } else if (elapsedFrames % 5 == 0) {
+    Func_080e1024(caster);
+  }
+
+  if (phase == 1)
+    caster->angle += 0xc00;
+}
+
+void FieldEvent_ShowStatusMessage(void) {
+  gPartyState.avoidDistance = 0;
+  Func_080cb82c();
+  if (gPartyState.avoidByItem == 0) {
+    UiText_DrawQuantity(150, 4);
+    UiText_ShowPositionedMessageAndWaitFar((s32)&MsgAbilityWoreOff, 1);
+  } else {
+    UiText_DrawQuantity(236, 2);
+    UiText_ShowPositionedMessageAndWaitFar((s32)&MsgItemWoreOff, 1);
+  }
+  Func_080cb8a4();
+}
+
 struct ArcScene {
   u8 unk00[0x10];
   struct ArcEffectObject *mainObject;
@@ -65,7 +95,6 @@ s32 GameFlag_Test(s32 flag);
 void Animation_ApplyChildValuesFar(void *object, s32 value);
 void Audio_PlayCue(s32 cue);
 void WaitFrames(s32 frames);
-void Func_080e1154(struct ArcEffectObject *obj);
 
 // Psynergy effect 16: the user spins, rains arc particles, then flashes.
 void BattleFx_RunEffect16(void) {
@@ -111,7 +140,7 @@ void BattleFx_RunEffect16(void) {
     gPartyState.avoidDistance = 0x09600000;
     gPartyState.avoidByItem = GameFlag_Test(0x145);
     Animation_ApplyChildValuesFar(object, 0);
-    object->callback = Func_080e1154;
+    object->callback = BattleFx_UpdatePairedArcSpawner;
     object->phase = zero;
     object->step = zero;
   }

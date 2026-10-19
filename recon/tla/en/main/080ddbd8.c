@@ -1,10 +1,14 @@
-// Draft, differ 239 of 208 (2026-10-15), ported from ☀️'s
+// Draft, differ 76 of 208 (2026-10-18; was 239), ported from ☀️'s
 // BattleEffect_SpawnBurstParticleField: ⚓️ spawns object 672, its sprite's
 // second part sits 28 bytes in (☀️: 12), the target goes through
-// Object_SetPosition and the angle is read as a halfword. The listing keeps the
-// loop count in a stack word and two copies of the position pointer (r10, r11);
-// this keeps the count in a register. Far from matching; kept for the measured
-// ⚓️ differences.
+// Object_SetPosition and the angle is read as a halfword. Counting the loop
+// down from 23 spills the count to the stack word the listing keeps, and loop
+// hoists the position's address twice, as the listing's r10 and r11. Left: the
+// scene pointer takes r11 and the address copy r9 where the listing has them
+// the other way (most of the rows), and three loads of the sprite-bit copy are
+// scheduled one row late. A pointer for either half of the loop is worse
+// (187 for the first half, 76 for the second); declaration order changes
+// nothing.
 #include "types.h"
 #include "system.h"
 #include "objdisp.h"
@@ -58,7 +62,7 @@ void Func_080ddbd8(void) {
   user = work->mainObject;
   BattleEffect_InitializeSharedScene();
 
-  for (n = 0; n < 24; n++) {
+  for (n = 23; n >= 0; n--) {
     struct FieldActor *obj;
     struct BurstParticleVisual *visual;
     struct BurstParticleVisual *child;
@@ -83,8 +87,8 @@ void Func_080ddbd8(void) {
     visual = &((struct BurstParticleVisualGroup *)obj->sprite)->primary;
     child = &((struct BurstParticleVisualGroup *)obj->sprite)->child;
     child->flip = visual->flip;
-    child->flagsAHigh = visual->flagsAHigh;
     child->flagsBHigh = visual->flagsBHigh;
+    child->flagsAHigh = visual->flagsAHigh;
     child->attributes.bits.shape = visual->attributes.bits.shape;
     child->attributes.bytes.palette = visual->attributes.bytes.palette;
 

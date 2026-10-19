@@ -52,7 +52,7 @@ u32 Random16(void);
 void BattleFx_PrepareBufferInterpolation(void);
 void ObjectGroup_ApplyRandomChildValues(struct SpinObject *owner);
 void BattleFx_AdvanceAngleWithRamp(struct SpinObject *object);
-void Func_080e0cac(struct SpinObject *obj);
+void BattleFx_UpdateDescendingObject(struct SpinObject *obj);
 void Func_080e0cec(struct EffectSlot *slot);
 
 void BattleFx_RunEffect15(void) {
@@ -84,7 +84,7 @@ void BattleFx_RunEffect15(void) {
 
   ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
   obj->motionFlags = 0;
-  obj->update = Func_080e0cac;
+  obj->update = BattleFx_UpdateDescendingObject;
   obj->targetX = EFFECT_NO_TARGET;
   pos.x = obj->x;
   pos.y = obj->y;

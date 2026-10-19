@@ -1,9 +1,12 @@
-// Near miss, differ 24 of 94: The Broken Seal's ResetSceneTransitionEffect with
-// this game's offsets. Three spots: the three heap slot loads at the top come
-// in another order (the native loads the event work before the effect work
-// and holds the transition work in r1 until after the flag read), the two
-// halfword arguments index through r2 where this uses r3, and the pooled
-// zero for the phase byte is loaded one row early in the native.
+// Near miss, differ 6 of 94 (2026-10-18; plainly 24): The Broken Seal's
+// ResetSceneTransitionEffect with this game's offsets. The opening matches
+// behind three tagged devices: a barrier after the two heap slot loads, the
+// flag offset pinned to r2 and the transition work loaded into r1. Left: the
+// two halfword arguments index through r2 where this uses r3 (temporaries for
+// either argument, the same), and the pooled zero for the phase byte is loaded
+// one row early in the native (a volatile barrier, the s16 zero, or a zero
+// pinned to r3 behind a barrier holding r2: 6, 6, 11). Permute (4 minutes)
+// found nothing better.
 #include "types.h"
 #include "system.h"
 #include "ram_buffer.h"
@@ -30,15 +33,30 @@ struct EffectWork_080dd950 {
 void Func_080dd950(void) {
   u8 *state = Ram_HeapSlots->eventWork;
   struct EffectWork_080dd950 *work = Ram_HeapSlots->effectWork;
-  u8 *scene = (u8 *)Ram_HeapSlots->displayTransition;
+  s8 *flag;
+  u8 *scene;
   void *ev;
   s16 zero;
 
-  if (*(s8 *)(state + 0xca4) != 0) {
+  /* FAKEMATCH: the native loads both heap slots before it builds the flag
+   * offset, in r2, and loads the transition work into r1, copying it after
+   * the flag read (differ 24 without the three devices). */
+  asm("");
+  {
+    register s32 offset asm("r2") = 0xca4;
+    asm("" : "+r"(offset));
+    flag = (s8 *)(state + offset);
+  }
+  {
+    register u8 *loaded asm("r1") = (u8 *)Ram_HeapSlots->displayTransition;
+    asm("" : "+r"(loaded));
+    scene = loaded;
+  }
+  if (*flag != 0) {
     Audio_PlayCue(167);
     Scheduler_RemoveCallback(FieldEffect_WatchLeaderDistance);
     zero = 0;
-    *(s8 *)(state + 0xca4) = zero;
+    *flag = zero;
     *(s16 *)(state + 0xca6) = zero;
     BattleFx_RunBusyWaitDelay(0);
     BattleFx_ApplyColorToTargetBuffer(0x10000, 1);

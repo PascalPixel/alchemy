@@ -82,6 +82,18 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void);
 // block's number (0 to 3): that block is set down in its place.
 // FLAG_SCENE_TEMP_01: the leader stands on the floor switch.
 
+// Actors the events name, by room. Outside the entrance: the man who tells of
+// the attack and the scholar waiting to go in. In the room with the floor
+// switch: the scholar by the door, the block Move pushes to the wall and the
+// block that holds the switch down.
+enum {
+  ACTOR_ENTRANCE_MAN = 8,
+  ACTOR_ENTRANCE_SCHOLAR = 11,
+  ACTOR_DOOR_SCHOLAR = 10,
+  ACTOR_WALL_BLOCK = 12,
+  ACTOR_SWITCH_BLOCK = 13
+};
+
 struct DirXZ {
   s32 x;
   s32 unused;
@@ -752,15 +764,15 @@ static void Event_HearOfTheAttack(void) {
   u32 flickerDelay;
 
   Engine_EventBegin();
-  Engine_ActorRunRepeatedMotion(8, 3);
+  Engine_ActorRunRepeatedMotion(ACTOR_ENTRANCE_MAN, 3);
   Engine_EventSetMessage(MsgFieldVenusLighthouseWasAttackedBy);
   flickersLeft = 10;
   flickerDelay = 8;
-  Engine_EventShowMessageAndWait(8, 0, 20);
+  Engine_EventShowMessageAndWait(ACTOR_ENTRANCE_MAN, 0, 20);
   do {
-    Engine_ActorSetChildValue(8, 15);
+    Engine_ActorSetChildValue(ACTOR_ENTRANCE_MAN, 15);
     Engine_TaskWait(2);
-    Engine_ActorSetChildValue(8, 0);
+    Engine_ActorSetChildValue(ACTOR_ENTRANCE_MAN, 0);
     Engine_TaskWait(flickerDelay);
     if (flickerDelay > 3) {
       flickerDelay--;
@@ -768,7 +780,7 @@ static void Event_HearOfTheAttack(void) {
     flickersLeft--;
   } while (flickersLeft != 0);
   Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD);
-  Engine_ActorSetPosition(8, 0, 0);
+  Engine_ActorSetPosition(ACTOR_ENTRANCE_MAN, 0, 0);
   Map_CopyCellAttributes(7, 17, 2, 1, 7, 16);
   Engine_EventEnd();
 }
@@ -777,9 +789,9 @@ static void Event_HearOfTheAttack(void) {
 static void Event_TalkToWaitingScholar(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVenusIveWaitedLongSeeIts);
-  Engine_EventShowMessageAndWait(11, 0, 20);
-  Engine_ActorRunRepeatedMotion(11, 2);
-  Engine_EventShowMessage(11, 0);
+  Engine_EventShowMessageAndWait(ACTOR_ENTRANCE_SCHOLAR, 0, 20);
+  Engine_ActorRunRepeatedMotion(ACTOR_ENTRANCE_SCHOLAR, 2);
+  Engine_EventShowMessage(ACTOR_ENTRANCE_SCHOLAR, 0);
   Engine_EventEnd();
 }
 
@@ -788,7 +800,7 @@ static void Event_TalkToWaitingScholar(void) {
 static void Event_CarryBlockPastWall(void) {
   struct FieldActor *block;
 
-  block = Object_GetById(12);
+  block = Object_GetById(ACTOR_WALL_BLOCK);
   Engine_EventBegin();
   if (block->x.fixed >> 20 == 54 || block->z.fixed >> 20 == 6) {
     Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_BLOCK_CARRIED);
@@ -987,7 +999,7 @@ static void Event_MoveBlockTowardWall(void) {
   emote = EMOTE_IN_FRONT;
   garetX = 0x338;
   Engine_EventBegin();
-  actor = Object_GetById(12);
+  actor = Object_GetById(ACTOR_WALL_BLOCK);
   if (actor->x.fixed >> 20 == 53) {
     if (Engine_GameFlagIsSet(conversationFlag) == 0) {
       // Record the one-time conversation before bringing Garet out to inspect
@@ -1046,7 +1058,7 @@ static void Event_MoveBlockOntoSwitch(void) {
   struct FieldActor *block;
   s32 switchHeight;
 
-  block = Object_GetById(13);
+  block = Object_GetById(ACTOR_SWITCH_BLOCK);
   Engine_EventBegin();
   if (block->x.fixed >> 20 == 42) {
     Engine_EventWait(30);
@@ -1098,14 +1110,14 @@ static void Event_TalkToScholarByDoor(void) {
   work->busy = 1;
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVenusThoughtIdExploreAfterDoor);
-  Actor_FaceActor(10, ACTOR_PARTY_LEADER, 0);
+  Actor_FaceActor(ACTOR_DOOR_SCHOLAR, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(10);
-  Event_ShowMessageAndWait(10, 0, 20);
-  Actor_FaceDirection(10, FACING_NORTHEAST, 0);
+  Event_ShowMessageAndWait(ACTOR_DOOR_SCHOLAR, 0, 20);
+  Actor_FaceDirection(ACTOR_DOOR_SCHOLAR, FACING_NORTHEAST, 0);
   Camera_SetSpeed(0x10000, 0x2000);
   Camera_MoveTo(PIXELS(448), -1, PIXELS(432), 1);
   Engine_CameraWaitForMove();
-  Event_ShowMessage(10, 0);
+  Event_ShowMessage(ACTOR_DOOR_SCHOLAR, 0);
   Engine_EventEnd();
 }
 

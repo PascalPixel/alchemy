@@ -260,7 +260,12 @@ Animation_SetDisplayFlagFar:
 	.type Func_0802db64Far, %function
 	.thumb_func
 Func_0802db64Far:
-	.incbin "baserom.gba", 0x00020318, 0x00000020
+	.incbin "baserom.gba", 0x00020318, 0x00000018
+	.global Func_080237c8Far
+	.type Func_080237c8Far, %function
+	.thumb_func
+Func_080237c8Far:
+	.incbin "baserom.gba", 0x00020330, 0x00000008
 	.section .rom.000212d8, "ax"
 	.incbin "baserom.gba", 0x000212d8, 0x0000042c
 	.section .rom.00021824, "ax"

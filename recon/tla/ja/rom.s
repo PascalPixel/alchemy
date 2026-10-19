@@ -3030,11 +3030,6 @@ Func_080dd820:
 	.thumb_func
 Func_080dd950:
 	.incbin "baserom.gba", 0x000dd90c, 0x000000e0
-	.global Func_080dda30
-	.type Func_080dda30, %function
-	.thumb_func
-Func_080dda30:
-	.incbin "baserom.gba", 0x000dd9ec, 0x0000010c
 	.section .rom.000ddb94, "ax"
 	.global Func_080ddbd8
 	.type Func_080ddbd8, %function

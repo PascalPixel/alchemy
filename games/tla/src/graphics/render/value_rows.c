@@ -90,7 +90,7 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 window) {
   // The label at the left and a slash at 48. A current figure ends before
   // the slash, at 48, and a maximum at 88, each in a field as wide as its
   // digits.
-  UiText_DrawStringAtOffsetFar((s32)gUi_HpString, window, 0, 40);
+  UiText_DrawStringAtOffsetFar(gUi_HpString, window, 0, 40);
   UiText_DrawStringInWindowFar((u8 *)gUi_SlashString, window, 48, 40);
   value = unit->maxHp;
   UiText_DrawNumberRightAligned(value, window, 88, 40);
@@ -103,7 +103,7 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, s32 window) {
   }
   UiText_DrawNumberRightAligned(value, window, 48, 40);
   UiWork_SetParamNibbleFar(15);
-  UiText_DrawStringAtOffsetFar((s32)gUi_PpString, window, 0, 48);
+  UiText_DrawStringAtOffsetFar(gUi_PpString, window, 0, 48);
   UiText_DrawStringInWindowFar((u8 *)gUi_SlashString, window, 48, 48);
   value = unit->pp;
   UiText_DrawNumberRightAligned(value, window, 48, 48);

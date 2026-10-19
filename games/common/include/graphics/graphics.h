@@ -224,7 +224,8 @@ void UiText_DrawNumberAtOffsetFar(s32 value, s32 width, s32 window, s32 x,
 void UiText_DrawNumberInWindowFar(s32 value, s32 width, s32 window, s32 x,
                                   s32 y);
 void UiText_DrawString(u8 *text, s32 window, s32 x, s32 y);
-void UiText_DrawStringAtOffsetFar(s32 text, s32 window, s32 x, s32 y);
+void UiText_DrawStringAtOffsetFar(const u8 *text, s32 window, s32 offsetX,
+                                  s32 offsetY);
 #ifndef OWN_UiText_DrawStringInWindowFar
 void UiText_DrawStringInWindowFar(u8 *text, s32 window, u32 x, u32 y);
 #endif

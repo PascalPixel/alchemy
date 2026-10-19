@@ -1,5 +1,6 @@
-// Part of battle.c, the battle object, compiled only through it.
-// Debug: the party presets, the message viewer and the battle test menu.
+/// @file
+/// Part of battle.c, the battle object, compiled only through it.
+/// Debug: the party presets, the message viewer and the battle test menu.
 
 #include "../battle_internal.h"
 
@@ -22,17 +23,17 @@
 #define DEBUG_SECOND_FORM MsgDebugSecondForm
 #endif
 
-// One row of the debug party presets (presets.tsv): a party member, the
-// level to raise them to, the djinn of each element to give them, the items
-// to equip and up to two abilities to teach. A row whose owner is -1 ends a
-// preset.
+/// One row of the debug party presets (presets.tsv): a party member, the
+/// level to raise them to, the djinn of each element to give them, the items
+/// to equip and up to two abilities to teach. A row whose owner is -1 ends a
+/// preset.
 struct DebugPartyEntry {
   s8 owner;
   u8 level;
   s8 djinnCounts[NUM_ELEMENTS];
   u16 items[4];
   u16 abilities[2];
-  u16 unused; // 0 in every row
+  u16 unused; ///< 0 in every row
 };
 
 extern struct DebugPartyEntry gDebug_PartyPresets[];
@@ -40,11 +41,11 @@ extern struct DebugPartyEntry gDebug_PartyPresets[];
 #define DEBUG_PRESET_LAST_ROW 332
 #define DEBUG_PRESET_END -1
 
-// Debug: replaces the party with the members of preset number preset.
-// Each member is raised to the row's level, given the row's djinn (Set, in
-// order of their numbers across the party), the row's abilities, and an
-// emptied inventory holding the row's items, each equipped.
-// Returns 1 when the table ends before that preset, 0 otherwise.
+/// Debug: replaces the party with the members of preset number preset.
+/// Each member is raised to the row's level, given the row's djinn (Set, in
+/// order of their numbers across the party), the row's abilities, and an
+/// emptied inventory holding the row's items, each equipped.
+/// Returns 1 when the table ends before that preset, 0 otherwise.
 s32 DebugParty_LoadPreset(s32 preset) {
   s32 nextDjinn[NUM_ELEMENTS]; // the next djinn number of each element to hand
                                // out
@@ -126,19 +127,19 @@ s32 DebugParty_LoadPreset(s32 preset) {
   return notFound;
 }
 
-// The highest message index the viewer reaches.
+/// The highest message index the viewer reaches.
 #define DEBUG_VIEW_LIMIT                                                       \
   (MsgLaliveroHowDidSearchForSheba -                                           \
    MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely + 5)
 
-// Debug: a message viewer that never returns. Names the first party member
-// "Ha hi fu he ho" (MsgDebugSampleName), fills the message arguments with
-// sample values and shows one message at a time, counted from the Babi
-// Lighthouse dialogue (MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely) or,
-// in the second range, from DEBUG_SECOND_FORM. Right and Left step the
-// index, R and L step it by ten, Up and Down pick the range, and B
-// alternates between the ranges, moving on one message each time it leaves
-// the first. A closes the window and shows the message again.
+/// Debug: a message viewer that never returns. Names the first party member
+/// "Ha hi fu he ho" (MsgDebugSampleName), fills the message arguments with
+/// sample values and shows one message at a time, counted from the Babi
+/// Lighthouse dialogue (MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely) or,
+/// in the second range, from DEBUG_SECOND_FORM. Right and Left step the
+/// index, R and L step it by ten, Up and Down pick the range, and B
+/// alternates between the ranges, moving on one message each time it leaves
+/// the first. A closes the window and shows the message again.
 void DebugBattle_ViewMessages(void) {
   u16 text[64];
   s32 secondRange = 0;
@@ -225,16 +226,16 @@ void DebugBattle_ViewMessages(void) {
   }
 }
 
-// The encounter the debug battle starts with, and the Djinn tutorial's.
+/// The encounter the debug battle starts with, and the Djinn tutorial's.
 #define DEBUG_FIRST_ENCOUNTER 257
 #define DJINN_TUTORIAL_ENCOUNTER 28
 
-// Debug: the battle test menu, which never returns. Without Down held it
-// fights encounter 257 again and again with auto battle on. Holding Down at
-// the start opens the chooser: Right and Left step the encounter, Up and
-// Down by ten, R and L pick the party preset, Start opens the message
-// viewer and A fights; B marks every later battle with start mode 5.
-// Holding Down when A is pressed makes it a link battle.
+/// Debug: the battle test menu, which never returns. Without Down held it
+/// fights encounter 257 again and again with auto battle on. Holding Down at
+/// the start opens the chooser: Right and Left step the encounter, Up and
+/// Down by ten, R and L pick the party preset, Start opens the message
+/// viewer and A fights; B marks every later battle with start mode 5.
+/// Holding Down when A is pressed makes it a link battle.
 void DebugBattle_RunMenu(void) {
   s32 startModeSet = 0;
   s32 encounter;

@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Helm Splitter, formations and the impact burst.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Helm Splitter, formations and the impact burst.
 
 #include "../effect_internal.h"
 
@@ -14,17 +15,17 @@
 
 #define HELM_SPLITTER_FRAMES 70
 #define HELM_SPLITTER_STRIKE_FRAME 18 // the swirl strikes the target
-// The pink star animation, after the swirl.
+/// The pink star animation, after the swirl.
 #define HELM_SPLITTER_STAR_CELLS 0x3e80
 #define HELM_SPLITTER_CLEARED_SLOTS 1024 // map-buffer spark slots cleared first
 #define HELM_SPLITTER_SPARKS 16          // sparks scattered by the strike
 #define HELM_SPLITTER_SPARK_SLOTS 128    // spark slots moved and drawn
 
-// Abilities: Helm Splitter (kind 51).
-//
-// The user leaps at the first target and strikes through a fire swirl; on
-// frame 18 the target flashes and reels and 16 sparks scatter, bouncing
-// off the ground. 70 frames.
+/// Abilities: Helm Splitter (kind 51).
+///
+/// The user leaps at the first target and strikes through a fire swirl; on
+/// frame 18 the target flashes and reels and 16 sparks scatter, bouncing
+/// off the ground. 70 frames.
 void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -169,13 +170,13 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-// Arranges work->objects in a formation; x and z are its origin in 16.16
-// pixels.
-// formation: 0 = nine in a 3x3 grid at 32-pixel spacing;
-//            1 = twelve in rows of 1, 3, 4 and 4, from 16 left and 32 up;
-//            2 = eight in rows of 3, 2 and 3, from 16 right;
-//            3 = eight drawn at 1.25 times their size.
-// Any other value places nothing.
+/// Arranges work->objects in a formation; x and z are its origin in 16.16
+/// pixels.
+/// formation: 0 = nine in a 3x3 grid at 32-pixel spacing;
+///            1 = twelve in rows of 1, 3, 4 and 4, from 16 left and 32 up;
+///            2 = eight in rows of 3, 2 and 3, from 16 right;
+///            3 = eight drawn at 1.25 times their size.
+/// Any other value places nothing.
 void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   static struct SpriteScale normalScale = {{{0x10000, 0x10000}}};
   static struct SpriteScale largeScale = {{{0x14000, 0x14000}}};
@@ -229,10 +230,10 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 #define IMPACT_BURST_SMALL_SPARKS 64   // small sparks thrown
 #define IMPACT_BURST_FIRST_FRAGMENT 61 // the first fragment in work->particles
 
-// Open an impact flash and scatter sparks and fragments over 72 frames.
-// Also rearrange the objects into formation during the first 36 frames.
-// formation: layout used by BattleFx_PlaceFormationObjects
-// x, y: impact position in 16.16 pixels
+/// Open an impact flash and scatter sparks and fragments over 72 frames.
+/// Also rearrange the objects into formation during the first 36 frames.
+/// formation: layout used by BattleFx_PlaceFormationObjects
+/// x, y: impact position in 16.16 pixels
 void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
   void **slots;
   void **cursor;

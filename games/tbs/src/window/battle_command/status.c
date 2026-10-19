@@ -1,5 +1,6 @@
-// Part of battle_command.c, the menu object, compiled only through it.
-// The status screen.
+/// @file
+/// Part of battle_command.c, the menu object, compiled only through it.
+/// The status screen.
 
 #include "../battle_command_internal.h"
 
@@ -22,7 +23,7 @@
 #define STATUS_CURSOR_CONDITIONS 2
 
 struct StatusCursor {
-  // XOR2 navigation can transiently use index3; keep all five positions.
+  /// XOR2 navigation can transiently use index3; keep all five positions.
   s8 groupPositions[5];
   s32 helpEntry;
   s32 drawnHelpEntry;
@@ -32,9 +33,9 @@ struct StatusCursor {
   s32 row;
 };
 
-// Show a party member's stats and condition help until B or the link session
-// ends. The supplied list enables shoulder-button member switching. Measure
-// stage deltas temporarily, then restore the unit from its snapshot.
+/// Show a party member's stats and condition help until B or the link session
+/// ends. The supplied list enables shoulder-button member switching. Measure
+/// stage deltas temporarily, then restore the unit from its snapshot.
 s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   struct MenuSprite portraitSprite;
   struct MenuSprite cursorSprite;

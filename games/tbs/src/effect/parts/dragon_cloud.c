@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Dragon Cloud.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Dragon Cloud.
 
 #include "../effect_internal.h"
 
@@ -14,28 +15,28 @@
 #define DRAGON_CLOUD_EMBERS 40            // embers, from FIRST_EMBER
 #define DRAGON_CLOUD_FLASHES 16           // flashes, from FIRST_FLASH
 
-// Draws puff picture cell of sheet on canvas at (x, y) with blit, sized by
-// the puff tables.
+/// Draws puff picture cell of sheet on canvas at (x, y) with blit, sized by
+/// the puff tables.
 #define DRAGON_CLOUD_DRAW_PUFF(blit, canvas, sheet, cell, x, y)                \
   blit(canvas,                                                                 \
        &(sheet)[DRAGON_CLOUD_PUFF_CELLS] + gBattleFx_PuffArcCells[cell], x, y, \
        gBattleFx_PuffArcCellWidths[cell], gBattleFx_PuffArcCellHeights[cell])
 
-// Abilities: Dragon Cloud (kind 49).
-//
-// A flame leaves the user along a stored path with a fading trail of 19
-// copies behind it, then strikes the first target on
-// DRAGON_CLOUD_STRIKE_FRAME and bursts into embers and flashes. The trail's
-// last nine copies are darker versions of the trail picture, each
-// DRAGON_CLOUD_TRAIL_CELL_BYTES long. The camera turns over the first 64 of
-// the DRAGON_CLOUD_FRAMES frames:
-//
-//   0 to 17    a pair of puffs, one mirrored, bursts in front of the user
-//   18 to 58   the flame follows its stored path
-//   50         the first target flashes, the screen shakes and eight puffs
-//              rise in an arc
-//   78 to 83   the flame dives in again
-//   83         the target is struck; embers and flashes burst from it
+/// Abilities: Dragon Cloud (kind 49).
+///
+/// A flame leaves the user along a stored path with a fading trail of 19
+/// copies behind it, then strikes the first target on
+/// DRAGON_CLOUD_STRIKE_FRAME and bursts into embers and flashes. The trail's
+/// last nine copies are darker versions of the trail picture, each
+/// DRAGON_CLOUD_TRAIL_CELL_BYTES long. The camera turns over the first 64 of
+/// the DRAGON_CLOUD_FRAMES frames:
+///
+///   0 to 17    a pair of puffs, one mirrored, bursts in front of the user
+///   18 to 58   the flame follows its stored path
+///   50         the first target flashes, the screen shakes and eight puffs
+///              rise in an arc
+///   78 to 83   the flame dives in again
+///   83         the target is struck; embers and flashes burst from it
 void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
   struct Point2D trail[20];
   struct EffectPosition position;

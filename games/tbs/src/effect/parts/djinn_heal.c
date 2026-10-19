@@ -1,17 +1,18 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Djinn healing.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Djinn healing.
 
 #include "../effect_internal.h"
 
 #define DJINN_HEAL_SWIRL_FRAMES 98 // frames of the swirl
 #define DJINN_HEAL_SWIRL_MOTES 32  // motes swirled in
 
-// A small Mercury Djinni healing the party: the user glows while motes
-// swirl round a point that rises from the user up to above the first
-// target (frames 30 to 69); the Djinni appears there on frame 83. Then,
-// for each target in turn, 8 frames apart, sparkles spiral in on it with
-// the recovery sound and a glow, while the Djinni sways and finally flies
-// off. No effect table entry points here.
+/// A small Mercury Djinni healing the party: the user glows while motes
+/// swirl round a point that rises from the user up to above the first
+/// target (frames 30 to 69); the Djinni appears there on frame 83. Then,
+/// for each target in turn, 8 frames apart, sparkles spiral in on it with
+/// the recovery sound and a glow, while the Djinni sways and finally flies
+/// off. No effect table entry points here.
 UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -209,10 +210,10 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-// Scheduler callback: turns the battle camera by cameraDelta. The effect
-// sets cameraPhase to 1 after each of its frames; the callback then turns
-// the whole delta once, and half of it on the frames in between, so the
-// turn stays smooth whatever the effect's frame rate.
+/// Scheduler callback: turns the battle camera by cameraDelta. The effect
+/// sets cameraPhase to 1 after each of its frames; the callback then turns
+/// the whole delta once, and half of it on the frames in between, so the
+/// turn stays smooth whatever the effect's frame rate.
 void Camera_ApplyPhasedDelta(void) {
   // Both come from the one slot table; a separate camera base compiles 4
   // bytes longer.

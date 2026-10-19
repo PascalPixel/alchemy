@@ -1,18 +1,19 @@
-// Part of window.c, the window object, compiled only through it.
-// Characters drawn into windows, and the per-frame sprite update.
+/// @file
+/// Part of window.c, the window object, compiled only through it.
+/// Characters drawn into windows, and the per-frame sprite update.
 
 #include "../window_internal.h"
 
 typedef s32 (*GlyphRoutine)(struct UiWindow *, u32, u32, u32, const u8 *);
 
-// A render output's sprite cell: the link and OAM attributes in its 12 bytes
-// from offset 0x10.
+/// A render output's sprite cell: the link and OAM attributes in its 12 bytes
+/// from offset 0x10.
 #define SPRITE_CELL(output) ((struct CursorSprite *)(output)->unk10)
 
-// Draws a character of a window's text with its top-left corner at pixel
-// (x, y) of the window's interior and returns how far the text advances. A
-// text canvas window draws it into the canvas; other windows show it as a
-// sprite carried by the window. mode 1 shows the next-page arrow instead.
+/// Draws a character of a window's text with its top-left corner at pixel
+/// (x, y) of the window's interior and returns how far the text advances. A
+/// text canvas window draws it into the canvas; other windows show it as a
+/// sprite carried by the window. mode 1 shows the next-page arrow instead.
 s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
                      s32 mode) {
   struct UiRenderWork *work = UI_WORK;
@@ -149,9 +150,9 @@ done:
   return width;
 }
 
-// A view of struct RenderOutput with its sprite cell (from offset 0x10) as the
-// member attr. Read through a cast of RenderOutput.unk10 instead,
-// UiWork_AnimateSpriteSlots does not match (578 instructions become 605).
+/// A view of struct RenderOutput with its sprite cell (from offset 0x10) as the
+/// member attr. Read through a cast of RenderOutput.unk10 instead,
+/// UiWork_AnimateSpriteSlots does not match (578 instructions become 605).
 struct SpriteOutput {
   struct SpriteOutput *next;
   u8 kind;
@@ -180,9 +181,9 @@ STATIC_ASSERT(offsetof(struct SpriteOutput, attr) ==
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 
-// Puts a character into a window's tilemap as a tile at tile (x, y) of its
-// interior. mode 1 shows the next-page arrow sprite in the window's corner
-// instead.
+/// Puts a character into a window's tilemap as a tile at tile (x, y) of its
+/// interior. mode 1 shows the next-page arrow sprite in the window's corner
+/// instead.
 void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
   void *work = gWindowWork[0];
   u8 *base = work;
@@ -243,7 +244,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
 
 #else
 
-// The Japanese UiWindow_PutGlyph, which also places the kana marks.
+/// The Japanese UiWindow_PutGlyph, which also places the kana marks.
 void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
   u8 *work = gWindowWork[0];
   /* FAKEMATCH: needed to match: this XOR pair changes no pointer bits and folds
@@ -339,9 +340,9 @@ enum {
 #define TILEMAP_WIDTH 32
 #define TILEMAP_ENTRIES (TILEMAP_WIDTH * 20)
 
-// Writes value into a window's tilemap at tile (x, y) of its interior, with
-// the palette mode names (TILEMAP_ENTRY_), or as it is for
-// TILEMAP_ENTRY_PLAIN; TILEMAP_ENTRY_NONE writes nothing.
+/// Writes value into a window's tilemap at tile (x, y) of its interior, with
+/// the palette mode names (TILEMAP_ENTRY_), or as it is for
+/// TILEMAP_ENTRY_PLAIN; TILEMAP_ENTRY_NONE writes nothing.
 void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
                               u32 mode) {
   struct UiRenderWork *work = UI_WORK;
@@ -391,8 +392,8 @@ void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
   }
 }
 
-// Steps a scaling sprite's animation (UI_SPRITE_SWELL to
-// UI_SPRITE_SHRINK_HALF) and sets its affine scale for this frame.
+/// Steps a scaling sprite's animation (UI_SPRITE_SWELL to
+/// UI_SPRITE_SHRINK_HALF) and sets its affine scale for this frame.
 void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output) {
   s32 scale = 256;
   struct CursorSprite *sprite = SPRITE_CELL(output);
@@ -438,8 +439,8 @@ void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output) {
   }
 }
 
-// The per-frame sprite update: moves each sprite that an open window carries
-// by its animation mode (UI_SPRITE_) and queues it for drawing.
+/// The per-frame sprite update: moves each sprite that an open window carries
+/// by its animation mode (UI_SPRITE_) and queues it for drawing.
 void UiWork_AnimateSpriteSlots(void) {
   struct UiRenderWork *work = UI_WORK;
   struct UiWindow *window = work->windows;

@@ -1,22 +1,23 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Annihilation.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Annihilation.
 
 #include "../effect_internal.h"
 
 #define ANNIHILATION_FRAMES 64
 
-// Abilities: Annihilation (kind 55).
-//
-// The user closes on the first target and fire bursts from it in a shower
-// of shards. The scene runs for 64 frames:
-//
-//   4 on       64 shards scatter from the target and fall
-//   6 to 11    a fire streak flares in front of the user
-//   8          the target is struck; the canvas is filled
-//   16 to 47   a fire burst grows over the target in three steps
-//
-// effect: the user and the target; a nonzero variant gives the burst its
-// second picture and a sound.
+/// Abilities: Annihilation (kind 55).
+///
+/// The user closes on the first target and fire bursts from it in a shower
+/// of shards. The scene runs for 64 frames:
+///
+///   4 on       64 shards scatter from the target and fall
+///   6 to 11    a fire streak flares in front of the user
+///   8          the target is struck; the canvas is filled
+///   16 to 47   a fire burst grows over the target in three steps
+///
+/// effect: the user and the target; a nonzero variant gives the burst its
+/// second picture and a sound.
 void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

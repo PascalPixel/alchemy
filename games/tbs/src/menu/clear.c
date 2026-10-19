@@ -1,6 +1,7 @@
-// The file select overlay: the Golden Sun logo, the start menu (new game,
-// continue, copy and delete), the door to the Battle Arena and the transfer of
-// a save's data, by link or as a password.
+/// @file
+/// The file select overlay: the Golden Sun logo, the start menu (new game,
+/// continue, copy and delete), the door to the Battle Arena and the transfer of
+/// a save's data, by link or as a password.
 
 #include "scene_ids.h"
 #include "unit/menu/clear.h"
@@ -117,16 +118,16 @@
 #define PASSWORD_SYMBOLS_PER_PAGE 50
 #define PASSWORD_SYMBOL_MASK 0x3f
 
-// Forward declarations
+/// Forward declarations
 static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out);
 static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 Clear_ComputePasswordCrc16(u32 byteCount, u8 *data);
 
-// The file select overlay's scene tables, for the scene loader: one entrance,
-// the exit, and no placements or events.
+/// The file select overlay's scene tables, for the scene loader: one entrance,
+/// the exit, and no placements or events.
 u8 *Clear_GetEntrances(void) { return (u8 *)gClear_Entrances; }
 
-// Returns zero from this menu entry.
+/// Returns zero from this menu entry.
 s32 SceneData_ReturnZero(void) { return 0; }
 
 u8 *Clear_GetExits(void) { return (u8 *)gClear_Exits; }
@@ -135,7 +136,7 @@ u8 *Clear_GetPlacements(void) { return (u8 *)gClear_Placements; }
 
 u8 *Clear_GetEvents(void) { return (u8 *)gClear_Events; }
 
-// Loads the Golden Sun logo, maps its tiles and resets background scroll.
+/// Loads the Golden Sun logo, maps its tiles and resets background scroll.
 static void Clear_LoadBackground(void) {
   u8 *resource;
   s32 resourceId;
@@ -184,7 +185,7 @@ static void Clear_LoadBackground(void) {
   }
 }
 
-// Advances the logo blend every two frames and removes itself at completion.
+/// Advances the logo blend every two frames and removes itself at completion.
 static void Clear_UpdateBlend(void) {
   s32 frame;
   s32 level;
@@ -205,7 +206,7 @@ static void Clear_UpdateBlend(void) {
     Engine_TaskRemoveCallback(Clear_UpdateBlend);
 }
 
-// Hidden command: sequence of pressed keys, terminated by 0.
+/// Hidden command: sequence of pressed keys, terminated by 0.
 // clang-format off
 const u16 gClear_CodeSequence[] = {
     KEY_SELECT, KEY_SELECT, KEY_SELECT, 0,
@@ -227,7 +228,7 @@ const u16 gClear_ExtraCodeSequence[] = {
   (((struct { u16 key[1]; } *)(sequence))->key)
 #endif
 
-// Tracks two hidden key sequences, requiring a full release after each key.
+/// Tracks two hidden key sequences, requiring a full release after each key.
 static void Clear_CheckButtonCodes(void) {
   if (gClear_CodeUnlocked == 0) {
     if (gClear_CodeHeld != 0) {
@@ -272,7 +273,7 @@ static void Clear_CheckButtonCodes(void) {
 
 #undef CLEAR_SEQUENCE_KEYS
 
-// Converts a six-bit password symbol to the edition's one- or two-byte glyph.
+/// Converts a six-bit password symbol to the edition's one- or two-byte glyph.
 static void Clear_NameEntryCharacter(s32 cell, u8 *text) {
   text[1] = 0;
   text[2] = 0;
@@ -330,7 +331,7 @@ static void Clear_NameEntryCharacter(s32 cell, u8 *text) {
 #endif
 }
 
-// Returns -1 when the flagged saved scene blocks recovery, otherwise zero.
+/// Returns -1 when the flagged saved scene blocks recovery, otherwise zero.
 static s32 Clear_GetSaveRecoveryBlockMask(void) {
   s32 sceneDifference;
 
@@ -356,9 +357,9 @@ struct SaveLinkGreeting {
 
 s32 __divsi3(s32, s32);
 
-// Runs new/continue/copy/delete, arena entry and save-data transfer/password
-// menus. Returns zero after choosing a destination; cancellation returns to
-// selection.
+/// Runs new/continue/copy/delete, arena entry and save-data transfer/password
+/// menus. Returns zero after choosing a destination; cancellation returns to
+/// selection.
 s32 SaveMenu_Run(void) {
   s32 pageCount;
   s32 encodedSize;
@@ -844,8 +845,8 @@ leave:;
   return 0;
 }
 
-// UNUSED: decodes tiles and maps a 16-by-eight window region in VRAM and
-// shadow.
+/// UNUSED: decodes tiles and maps a 16-by-eight window region in VRAM and
+/// shadow.
 UNUSED static void SaveMenu_FillTileGrid(struct UiWindow *window,
                                          const void *compressedTiles) {
   u16 *shadow;
@@ -874,8 +875,8 @@ UNUSED static void SaveMenu_FillTileGrid(struct UiWindow *window,
   Runtime_BumpFree(decodedTiles);
 }
 
-// UNUSED: fills a 16-by-eight region with palette 15 tiles beginning at
-// tile 32.
+/// UNUSED: fills a 16-by-eight region with palette 15 tiles beginning at
+/// tile 32.
 UNUSED static void SaveMenu_FillTileBlock(const struct UiWindow *window) {
   s16 *mirror = ((struct UiRenderWork *)gWindowWork[0])->tilemap;
   s16 *buffer = Runtime_BumpAllocateAlternatePool(0x300);
@@ -931,11 +932,11 @@ struct PasswordOwner {
   u32 djinnAvailable[4];
 };
 
-// Packs selected flags, levels, Djinn and optional stats/inventories/coins.
-// Clamps the source base stats and levels in place; returns the raw byte count.
-// A direct BattleUnit owner plus the real member table shrinks the native
-// function from 0x400 to 0x3f4. The private view remains pending owner
-// reconciliation; its fields below follow BattleUnit's actual base stats.
+/// Packs selected flags, levels, Djinn and optional stats/inventories/coins.
+/// Clamps the source base stats and levels in place; returns the raw byte
+/// count. A direct BattleUnit owner plus the real member table shrinks the
+/// native function from 0x400 to 0x3f4. The private view remains pending owner
+/// reconciliation; its fields below follow BattleUnit's actual base stats.
 static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   s32 length;
   u32 levelBits;
@@ -1140,8 +1141,8 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   return length;
 }
 
-// Obscures the packed bytes and emits position-adjusted six-bit password
-// symbols.
+/// Obscures the packed bytes and emits position-adjusted six-bit password
+/// symbols.
 static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out) {
   s32 xorKey;
   s32 symbolCount;
@@ -1192,8 +1193,8 @@ static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out) {
   return symbolCount;
 }
 
-// Runs the original shift/subtract checksum, initially 0xffff, and returns
-// its complemented low 16 bits.
+/// Runs the original shift/subtract checksum, initially 0xffff, and returns
+/// its complemented low 16 bits.
 static u16 Clear_ComputePasswordCrc16(u32 byteCount, u8 *data) {
   u32 crc;
   u32 byteIndex;

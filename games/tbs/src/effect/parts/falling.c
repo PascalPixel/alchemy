@@ -1,12 +1,13 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Ice and Douse: shards and bolts falling on the targets' side.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Ice and Douse: shards and bolts falling on the targets' side.
 
 #include "../effect_internal.h"
 
-// Fills window 0's per-scanline edges for the falling shards and bolts:
-// lines 8 to `last` take `slant`, an expression of the line `i`; the rest of
-// the battle view, down to line 135, takes the fixed `span`; and the lines
-// below it are empty. Every band the effects pass is 128 pixels wide.
+/// Fills window 0's per-scanline edges for the falling shards and bolts:
+/// lines 8 to `last` take `slant`, an expression of the line `i`; the rest of
+/// the battle view, down to line 135, takes the fixed `span`; and the lines
+/// below it are empty. Every band the effects pass is 128 pixels wide.
 #define FALLING_BUILD_SLANTED_WINDOW(line, i, last, slant, span)               \
   for ((i) = 0; (i) != 160; (i)++) {                                           \
     if ((i) >= 8 && (i) <= (last))                                             \
@@ -17,45 +18,45 @@
       (line)[i] = WINDOW_SPAN_INVERTED;                                        \
   }
 
-// Falling shards and bolts, streak volleys and the mote fountain: four effects
-// that throw many small pictures at the targets.
-//
-// - The falling shards (Ice) and bolts (Douse) rain diagonally onto the
-//   targets' side. Both show the canvas only inside a slanted band of
-//   window 0, whose edges an HBlank DMA feeds line by line from a table at
-//   the start of PARTICLES. Each particle falls until it passes y 80,
-//   then lands: shards shatter and kick up sparkle puffs, bolts flash and
-//   throw a fountain of sparks. A small timing table per effect picks the
-//   count, spacing and duration from effect->variant.
-// - The streak volley fires three streaks of light from the user at each
-//   target in turn; a settings row per style says whether the streak
-//   animates and how a hit looks.
-// - The mote fountain bursts motes out of the user that float upwards and
-//   wobble while each target reacts.
-//
-// Particle slots: the shards use work->particles, 0 to 31 for the shards and
-// 32 to 63 for their puffs; the bolts use work->particles for the bolts and
-// Ram_MapCellBuffer, after the window table, for their sparks; the streaks use
-// work->particles, one per target and streak; the motes use PARTICLES. A
-// falling particle's variant is -1 until it lands, then counts the frames
-// since. Shards and bolts are positioned in eighths of a pixel; sparks,
-// streaks and motes in 16.16 fixed point.
+/// Falling shards and bolts, streak volleys and the mote fountain: four effects
+/// that throw many small pictures at the targets.
+///
+/// - The falling shards (Ice) and bolts (Douse) rain diagonally onto the
+///   targets' side. Both show the canvas only inside a slanted band of
+///   window 0, whose edges an HBlank DMA feeds line by line from a table at
+///   the start of PARTICLES. Each particle falls until it passes y 80,
+///   then lands: shards shatter and kick up sparkle puffs, bolts flash and
+///   throw a fountain of sparks. A small timing table per effect picks the
+///   count, spacing and duration from effect->variant.
+/// - The streak volley fires three streaks of light from the user at each
+///   target in turn; a settings row per style says whether the streak
+///   animates and how a hit looks.
+/// - The mote fountain bursts motes out of the user that float upwards and
+///   wobble while each target reacts.
+///
+/// Particle slots: the shards use work->particles, 0 to 31 for the shards and
+/// 32 to 63 for their puffs; the bolts use work->particles for the bolts and
+/// Ram_MapCellBuffer, after the window table, for their sparks; the streaks use
+/// work->particles, one per target and streak; the motes use PARTICLES. A
+/// falling particle's variant is -1 until it lands, then counts the frames
+/// since. Shards and bolts are positioned in eighths of a pixel; sparks,
+/// streaks and motes in 16.16 fixed point.
 enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 
-// A falling shard or bolt keeps falling while its y (in eighths of a pixel)
-// is at most this, just above 80 pixels.
+/// A falling shard or bolt keeps falling while its y (in eighths of a pixel)
+/// is at most this, just above 80 pixels.
 #define FALLING_LAND_Y 0x27f
 
-// Abilities: Ice, Ice Horn, Ice Missile (kind 7).
-//
-// Ice shards rain down diagonally onto the targets' side of the field and
-// shatter into puffs of sparkle, flashing and shaking each target as they land.
-// The canvas shows only inside a slanted band of window 0, so the shards stream
-// out of the sky above the targets. effect->variant picks the size of the
-// volley from gFalling_IceCounts (shards and frames: 16 for 46 frames, 20 for
-// 52, 32 for 80); variant 1 leaves longer trails and variant 2 draws
-// additively. effect->side is 1 when the targets are the party, 0 when they are
-// enemies.
+/// Abilities: Ice, Ice Horn, Ice Missile (kind 7).
+///
+/// Ice shards rain down diagonally onto the targets' side of the field and
+/// shatter into puffs of sparkle, flashing and shaking each target as they
+/// land. The canvas shows only inside a slanted band of window 0, so the shards
+/// stream out of the sky above the targets. effect->variant picks the size of
+/// the volley from gFalling_IceCounts (shards and frames: 16 for 46 frames, 20
+/// for 52, 32 for 80); variant 1 leaves longer trails and variant 2 draws
+/// additively. effect->side is 1 when the targets are the party, 0 when they
+/// are enemies.
 void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -247,8 +248,8 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   BattleFx_ConfigureEffectDisplay();
 }
 
-// The falling bolts keep their sparks after window 0's scanline table in
-// Ram_MapCellBuffer.
+/// The falling bolts keep their sparks after window 0's scanline table in
+/// Ram_MapCellBuffer.
 enum { FALLING_BOLT_COUNT = 64, FALLING_BOLT_SPARK_COUNT = 512 };
 
 struct BoltSparkBuffer {
@@ -262,16 +263,16 @@ struct BoltSparkBuffer {
 #define DOUSE_FLASH_CELL 0x844   // the landing flash picture in the sheet
 #define DOUSE_BURST_CELL 0xa84   // the 42x42 burst picture in the sheet
 
-// Abilities: Douse, Drench, Deluge (kind 9).
-//
-// Blue bolts streak down diagonally onto the targets' side
-// of the field, each bursting into a fountain of falling sparks where it
-// lands, while the targets flash. Like the falling shards, the canvas shows
-// only inside a slanted band of window 0.
-// effect->variant picks the volley from gFalling_Counts: 6 bolts of 8
-// sparks, 8 of 16 or 32 of 4, spaced 32, 24 or 8 pixels apart, over 80
-// frames; it also picks how the canvas fades (see below).
-// effect->side is 1 when the targets are the party, 0 when they are enemies.
+/// Abilities: Douse, Drench, Deluge (kind 9).
+///
+/// Blue bolts streak down diagonally onto the targets' side
+/// of the field, each bursting into a fountain of falling sparks where it
+/// lands, while the targets flash. Like the falling shards, the canvas shows
+/// only inside a slanted band of window 0.
+/// effect->variant picks the volley from gFalling_Counts: 6 bolts of 8
+/// sparks, 8 of 16 or 32 of 4, spaced 32, 24 or 8 pixels apart, over 80
+/// frames; it also picks how the canvas fades (see below).
+/// effect->side is 1 when the targets are the party, 0 when they are enemies.
 void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

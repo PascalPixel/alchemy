@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// The Atalanta summon.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// The Atalanta summon.
 
 #include "../effect_internal.h"
 
@@ -9,12 +10,12 @@
 // matrix is stored after the particle records in the shared scratch buffer.
 // In the falling part 24 blades drop onto the targets and burst into flame.
 
-// The trail particles' random rotations, 48 bytes each, after the 384
-// particles in PARTICLES.
+/// The trail particles' random rotations, 48 bytes each, after the 384
+/// particles in PARTICLES.
 #define ATALANTA_MATRICES (Ram_MapCellBuffer + 0x3800)
 
-// The pictures in the slash sheet: five flash frames, then the slash in
-// three parts.
+/// The pictures in the slash sheet: five flash frames, then the slash in
+/// three parts.
 enum SlashSheetCell {
   ATALANTA_SLASH_FLASH_1 = 0x0000,
   ATALANTA_SLASH_FLASH_2 = 0x0188,
@@ -31,14 +32,14 @@ enum SlashSheetCell {
   ATALANTA_SLASH_BOTTOM = 0x1bf3
 };
 
-// Abilities: Atalanta (scene kind 4).
-//
-// Rain of blades: under a violet sky, a 3x3 formation of objects flies
-// along a stored path while sixteen blades gather trails of light, flash
-// and fly off; A or B skips ahead. Then 24 blades fall diagonally on the
-// targets and burst into flame, hitting each target as they land.
-//
-// effect: the targets.
+/// Abilities: Atalanta (scene kind 4).
+///
+/// Rain of blades: under a violet sky, a 3x3 formation of objects flies
+/// along a stored path while sixteen blades gather trails of light, flash
+/// and fly off; A or B skips ahead. Then 24 blades fall diagonally on the
+/// targets and burst into flame, hitting each target as they land.
+///
+/// effect: the targets.
 void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   s32 point[3];
   struct EffectPosition screen;

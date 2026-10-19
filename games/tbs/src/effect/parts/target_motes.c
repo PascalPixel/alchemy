@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Status motes: Taint, Delude, Paralyze, Sleep, Curse ....
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Status motes: Taint, Delude, Paralyze, Sleep, Curse ....
 
 #include "../effect_internal.h"
 
@@ -19,9 +20,9 @@
 // image cycle. The bouncing sheep (Sleep) and the target markers (Curse) that
 // follow keep theirs in work->particles.
 
-// Abilities: Taint, Poison (kind 32).
-//
-// Lime smoke (effect->variant 0) or pink smoke.
+/// Abilities: Taint, Poison (kind 32).
+///
+/// Lime smoke (effect->variant 0) or pink smoke.
 void BattleFx_RunTaint(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
     BattleFx_RunTargetMotes(effect, 0);
@@ -30,72 +31,72 @@ void BattleFx_RunTaint(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 1);
 }
 
-// Pink smoke; no ☀️ effect table entry points here.
+/// Pink smoke; no ☀️ effect table entry points here.
 UNUSED void BattleFx_RunTargetMotesMode1(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 1);
 }
 
-// Abilities: Delude, Confuse, Mist (kind 33).
-//
-// Cyan smoke that rises.
+/// Abilities: Delude, Confuse, Mist (kind 33).
+///
+/// Cyan smoke that rises.
 void BattleFx_RunDelude(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 2);
 }
-// Abilities: Paralyze (kind 36).
-//
-// Rising smoke with glints.
+/// Abilities: Paralyze (kind 36).
+///
+/// Rising smoke with glints.
 void BattleFx_RunParalyze(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 3);
 }
-// Abilities: Heartrender (kind 346); kind 35 is used by no ability.
-//
-// Hearts.
+/// Abilities: Heartrender (kind 346); kind 35 is used by no ability.
+///
+/// Hearts.
 void BattleFx_RunHeartrender(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 4);
 }
-// Abilities: Mystic Flame (kind 312).
-//
-// Glowing orbs.
+/// Abilities: Mystic Flame (kind 312).
+///
+/// Glowing orbs.
 void BattleFx_RunMysticFlame(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 5);
 }
-// Abilities: Demon Fire (kind 64).
-//
-// Glowing orbs in Mars Djinn colours, and the user strikes.
+/// Abilities: Demon Fire (kind 64).
+///
+/// Glowing orbs in Mars Djinn colours, and the user strikes.
 void BattleFx_RunDemonFire(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 7);
 }
-// Abilities: Drown (kind 66).
-//
-// Vortex motes.
+/// Abilities: Drown (kind 66).
+///
+/// Vortex motes.
 void BattleFx_RunDrown(struct BattleEffectArgument *effect) {
   BattleFx_RunTargetMotes(effect, 6);
 }
-// Styles whose motes start in a wide ball and last 64 frames more.
+/// Styles whose motes start in a wide ball and last 64 frames more.
 #define TARGET_MOTES_START_WIDE(mode)                                          \
   ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6 || (mode) == 7)
-// Styles whose motes close in on the target; the others rise.
+/// Styles whose motes close in on the target; the others rise.
 #define TARGET_MOTES_CLOSE_IN(mode)                                            \
   ((mode) <= 1 || (mode) == 4 || (mode) == 5 || (mode) == 6)
 
-// Modes other than 0, 1 and 3 ripple the canvas: BG2's x is set line by
-// line from work->bg2xLines (BattleFx_ArmBg2AffineHBlankDma).
+/// Modes other than 0, 1 and 3 ripple the canvas: BG2's x is set line by
+/// line from work->bg2xLines (BattleFx_ArmBg2AffineHBlankDma).
 #define TARGET_MOTES_RIPPLE(mode) (!((mode) <= 1 || (mode) == 3))
 
-// Where mode 3 keeps its glint images in work->sheet.
+/// Where mode 3 keeps its glint images in work->sheet.
 enum { TARGET_MOTES_GLINT_CELLS = 0x2580 };
 
 #define TARGET_MOTES 512      // motes scattered at the start
 #define TARGET_MOTES_SLOTS 64 // particles reserved for each target
 #define TARGET_MOTES_CYCLE 24 // frames of a mote's image cycle
 
-// Around each target in turn, 8 frames apart, motes (smoke, hearts, orbs)
-// turn about a point 20 pixels up, either closing in on it or rising, and
-// the target flashes until the end; the battle shows the damage 32 frames
-// before the end. The effect layer ripples, except in modes 0, 1 and 3.
-// mode : 0 lime smoke, 1 pink smoke, 2 cyan smoke, 3 smoke with glints,
-//        4 hearts, 5 glowing orbs, 6 vortex motes, 7 orbs in Mars Djinn
-//        colours, with the user stepping up to strike the first target.
+/// Around each target in turn, 8 frames apart, motes (smoke, hearts, orbs)
+/// turn about a point 20 pixels up, either closing in on it or rising, and
+/// the target flashes until the end; the battle shows the damage 32 frames
+/// before the end. The effect layer ripples, except in modes 0, 1 and 3.
+/// mode : 0 lime smoke, 1 pink smoke, 2 cyan smoke, 3 smoke with glints,
+///        4 hearts, 5 glowing orbs, 6 vortex motes, 7 orbs in Mars Djinn
+///        colours, with the user stepping up to strike the first target.
 void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
@@ -331,12 +332,12 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
 #define SLEEP_SEEDED 32 // particles cleared at the start
 #define SLEEP_SHEEP 12  // sheep dropped
 
-// Abilities: Sleep (kind 37).
-//
-// Twelve sheep drop onto the targets' side, one every 4
-// frames, tumbling through eight images (the last four mirrored both
-// ways); each target takes its damage pose in turn from frame 64, and the
-// battle shows the result on frame 80. 148 frames.
+/// Abilities: Sleep (kind 37).
+///
+/// Twelve sheep drop onto the targets' side, one every 4
+/// frames, tumbling through eight images (the last four mirrored both
+/// ways); each target takes its damage pose in turn from frame 64, and the
+/// battle shows the result on frame 80. 148 frames.
 void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -438,11 +439,11 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
 
 #define CURSE_MARKER_CELLS 1728 // the marker picture in the sheet
 
-// Abilities: Curse (kind 41); Lucid Prophecy (kind 354).
-//
-// A small flame burns above each target in
-// turn, 16 frames apart, for 72 frames each, over a marker at its feet;
-// the battle shows the result on frame 32.
+/// Abilities: Curse (kind 41); Lucid Prophecy (kind 354).
+///
+/// A small flame burns above each target in
+/// turn, 16 frames apart, for 72 frames each, over a marker at its feet;
+/// the battle shows the result on frame 32.
 void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
   void **slot;
   struct BattleEffectWork *work;

@@ -1,16 +1,17 @@
-// Part of battle.c, the battle object, compiled only through it.
-// The battle camera each frame, the opening announcement, the unit lists,
-// and the party's battle state and Djinn as a battle starts and ends.
+/// @file
+/// Part of battle.c, the battle object, compiled only through it.
+/// The battle camera each frame, the opening announcement, the unit lists,
+/// and the party's battle state and Djinn as a battle starts and ends.
 
 #include "../battle_internal.h"
 
-// Runs each frame of a battle. In a link battle it first checks the link:
-// a connection lost for more than LINK_MAX_MISSED_FRAMES frames, or a
-// console whose link number changed, pauses the battle. Then it turns the
-// camera a sixteenth of the way toward a transition's yaw, places the camera
-// at its position (or at the one it follows) with its yaw, pitch and
-// distance, and, unless a transition owns the background, refreshes the
-// background's perspective.
+/// Runs each frame of a battle. In a link battle it first checks the link:
+/// a connection lost for more than LINK_MAX_MISSED_FRAMES frames, or a
+/// console whose link number changed, pauses the battle. Then it turns the
+/// camera a sixteenth of the way toward a transition's yaw, places the camera
+/// at its position (or at the one it follows) with its yaw, pitch and
+/// distance, and, unless a transition owns the background, refreshes the
+/// background's perspective.
 void BattlePresentation_UpdateCamera(void) {
   // UB: indexing past scalar gCameraWork reaches other work slots. Named
   // slots add four bytes in the native EN trial (0xf8 to 0xfc).
@@ -76,9 +77,9 @@ void BattlePresentation_UpdateCamera(void) {
   }
 }
 
-// Announces the enemies at the start of a battle: "<enemy> appeared!" for
-// each of the first enemyCount enemies, the last one's message a different
-// line, then whether the party strikes first or is caught by surprise.
+/// Announces the enemies at the start of a battle: "<enemy> appeared!" for
+/// each of the first enemyCount enemies, the last one's message a different
+/// line, then whether the party strikes first or is caught by surprise.
 void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   s16 enemies[8];
   struct BattleWork *battle;
@@ -118,10 +119,10 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   }
 }
 
-// Fills the battle's two unit lists, each ended by BATTLE_UNIT_LIST_END:
-// the party members in their order, and the enemies, left to right for a
-// random formation or, for a fixed one, alternating out from the centre
-// (gBattleParty_CenterOrderOffsets).
+/// Fills the battle's two unit lists, each ended by BATTLE_UNIT_LIST_END:
+/// the party members in their order, and the enemies, left to right for a
+/// random formation or, for a fixed one, alternating out from the centre
+/// (gBattleParty_CenterOrderOffsets).
 void BattleParty_CollectUnitList(void) {
   u16 unitIds[14];
   struct BattleWork *battle;
@@ -154,27 +155,27 @@ done:
   battle->enemyIds[count] = BATTLE_UNIT_LIST_END;
 }
 
-// Moves the 16 bytes at VRAM 0x06000290 down to 0x06000280 and clears the
-// 20 bytes from 0x0600028c.
+/// Moves the 16 bytes at VRAM 0x06000290 down to 0x06000280 and clears the
+/// 20 bytes from 0x0600028c.
 s32 BattlePresentation_InitializeTilePattern(void) {
   Dma_Set((const void *)0x06000290, (void *)0x06000280, DMA_COPY_HALFWORDS(8),
           REG_DMA3);
   return Iwram_ClearWords((void *)0x0600028c, 20);
 }
 
-// Sets BG0's vertical scroll back to 0.
+/// Sets BG0's vertical scroll back to 0.
 void BattlePresentation_ClearBg0VerticalOffset(void) {
   u32 zero = 0;
 
   REG_BG0VOFS = zero;
 }
 
-// Does nothing.
+/// Does nothing.
 void Party_ReservedNoOp5B14(s32 unused) {}
 
-// Clears every battle-only state of the party members (stat stages and
-// their turns, statuses, Djinn element boosts, the countdowns) and
-// recalculates their stats, as a battle ends.
+/// Clears every battle-only state of the party members (stat stages and
+/// their turns, statuses, Djinn element boosts, the countdowns) and
+/// recalculates their stats, as a battle ends.
 s32 BattleParty_ResetActiveRuntimeFields(void) {
   u16 owners[10];
   s32 count;
@@ -229,10 +230,10 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
   }
 }
 
-// Brings the Djinn recovery list up to date as a battle ends: every Djinni
-// a party member has on standby that the list lacks joins it. Then, outside
-// a link battle, each Djinni waiting for the battle to end whose owner is
-// no longer in the battle is Set again and leaves the list.
+/// Brings the Djinn recovery list up to date as a battle ends: every Djinni
+/// a party member has on standby that the list lacks joins it. Then, outside
+/// a link battle, each Djinni waiting for the battle to end whose owner is
+/// no longer in the battle is Set again and leaves the list.
 s32 BattleParty_ReconcileDjinnRecovery(void) {
   u16 owners[10];
   s32 count;
@@ -302,10 +303,10 @@ s32 BattleParty_ReconcileDjinnRecovery(void) {
 
 #define NUM_SUMMONS 32
 
-// Works out which summons the party can call: one whose Djinn requirement
-// of every element is met by the party's Djinn of that element, all
-// members together. Stores the mask of them (bit n for summon n) and
-// returns the state that holds it.
+/// Works out which summons the party can call: one whose Djinn requirement
+/// of every element is met by the party's Djinn of that element, all
+/// members together. Stores the mask of them (bit n for summon n) and
+/// returns the state that holds it.
 struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
   u8 totals[NUM_ELEMENTS];
   u16 partyMembers[10];
@@ -369,5 +370,5 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
   }
 }
 
-// Does nothing.
+/// Does nothing.
 void BattleSummon_ReservedNoOp(void) {}

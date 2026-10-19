@@ -1,10 +1,11 @@
-// Part of battle.c, the battle object, compiled only through it.
-// Battle events played over frames, BattleEvent_Playback.
+/// @file
+/// Part of battle.c, the battle object, compiled only through it.
+/// Battle events played over frames, BattleEvent_Playback.
 
 #include "../battle_internal.h"
 
-// Sets DMA3 three times over, stopping it, then calls the IRQ return
-// instruction's word as a routine.
+/// Sets DMA3 three times over, stopping it, then calls the IRQ return
+/// instruction's word as a routine.
 void Dma_StopAllThenRunHook(void) {
   Dma_Set(0, 0, DMA_COPY_WORDS(0), REG_DMA3);
   Dma_Set(0, 0, DMA_COPY_WORDS(0), REG_DMA3);
@@ -12,8 +13,8 @@ void Dma_StopAllThenRunHook(void) {
   _call_via_r0(IwramIrqModeWord);
 }
 
-// Resumes paused playback from target processing.
-// cue: hit sound effect; zero leaves it unchanged.
+/// Resumes paused playback from target processing.
+/// cue: hit sound effect; zero leaves it unchanged.
 void BattleEventRuntime_BeginPhase(s32 cue) {
   struct BattleEventState *events;
 
@@ -26,8 +27,8 @@ void BattleEventRuntime_BeginPhase(s32 cue) {
   }
 }
 
-// Clears the event sequence and schedules playback.
-// frames: delay before the first event.
+/// Clears the event sequence and schedules playback.
+/// frames: delay before the first event.
 s32 BattleEventRuntime_SchedulePhase(s32 frames) {
   struct BattleEventState *events;
 
@@ -50,7 +51,7 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames) {
 
 #define FELLED_FLASH 0x400 // Timer base while changing colour.
 
-// Scheduler callback that runs BattleTargetExec's queued events in order.
+/// Scheduler callback that runs BattleTargetExec's queued events in order.
 void BattleEvent_Playback(void) {
   u16 selection[8];
   struct AnimationObject *records[4];
@@ -373,8 +374,8 @@ void BattleEvent_Playback(void) {
   }
 }
 
-// Clears playback, queued events, target progress and flags; restores the
-// default hit cue.
+/// Clears playback, queued events, target progress and flags; restores the
+/// default hit cue.
 u32 BattleEventRuntime_Reset(void) {
   struct BattleEventState *events;
 
@@ -388,8 +389,8 @@ u32 BattleEventRuntime_Reset(void) {
   events->flags = 0;
 }
 
-// Starts idle playback, waits for all targets and events, then removes the
-// callback and resets it.
+/// Starts idle playback, waits for all targets and events, then removes the
+/// callback and resets it.
 s32 BattleEventRuntime_WaitForReady(void) {
   s32 state;
   struct BattleEventState *events;

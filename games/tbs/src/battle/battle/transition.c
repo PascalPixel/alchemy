@@ -1,10 +1,11 @@
-// Part of battle.c, the battle object, compiled only through it.
-// The opening transition: the curtain, or the Venus Lighthouse storm.
+/// @file
+/// Part of battle.c, the battle object, compiled only through it.
+/// The opening transition: the curtain, or the Venus Lighthouse storm.
 
 #include "../battle_internal.h"
 
-// Fades to black while increasing mosaic size over sixteen frames; preserves
-// the four background controls and consumes four random draws each frame.
+/// Fades to black while increasing mosaic size over sixteen frames; preserves
+/// the four background controls and consumes four random draws each frame.
 s32 BattlePres_RunMosaicFadeOut(void) {
   /* FAKEMATCH(volatile): the four saved BGxCNT values kept on the stack, each
    * stored and loaded again as in the ROM; without volatile, 28 of 90
@@ -48,9 +49,9 @@ s32 BattlePres_RunMosaicFadeOut(void) {
   return 0;
 }
 
-// Tiles: builds a map of sequential byte indices.
-// Writes byte sequences 0..255 and 0..223, then fills the remaining 544 bytes
-// with 0xff, for 1024 bytes total.
+/// Tiles: builds a map of sequential byte indices.
+/// Writes byte sequences 0..255 and 0..223, then fills the remaining 544 bytes
+/// with 0xff, for 1024 bytes total.
 void Graphics_BuildSequentialTileTable(s32 *destination) {
   u32 packedIndices;
   s32 wordIndex;
@@ -75,8 +76,8 @@ void Graphics_BuildSequentialTileTable(s32 *destination) {
   Iwram_FillWords(destination, 544, -1);
 }
 
-// Builds the background's padded tilemap around sequential tile pairs
-// 0x200..0x3df.
+/// Builds the background's padded tilemap around sequential tile pairs
+/// 0x200..0x3df.
 void BattlePresentation_BuildTilemap(s32 *destination) {
   s32 entry;
   u32 index;
@@ -95,8 +96,8 @@ void BattlePresentation_BuildTilemap(s32 *destination) {
   Iwram_FillWords(destination, 0x280, 0x03ff03ff);
 }
 
-// Installs the active scanline page and affine registers while the battle
-// background uses mode 2.
+/// Installs the active scanline page and affine registers while the battle
+/// background uses mode 2.
 void BattlePres_UpdateHBlankScroll(void) {
   struct BattleAffineHdma *scanlines;
   u16 *line;
@@ -113,8 +114,8 @@ void BattlePres_UpdateHBlankScroll(void) {
   }
 }
 
-// Uploads one of eight 32-byte curtain tile frames while the transition timer
-// is 1..32.
+/// Uploads one of eight 32-byte curtain tile frames while the transition timer
+/// is 1..32.
 void BattlePresentation_UploadTileVariant(void) {
   u32 variant = *gDisp - 1;
   if (variant <= 31)
@@ -122,8 +123,8 @@ void BattlePresentation_UploadTileVariant(void) {
             DMA_COPY_WORDS(8), REG_DMA3);
 }
 
-// Advances the entry camera turn and curtain scroll, then settles at the normal
-// zoom.
+/// Advances the entry camera turn and curtain scroll, then settles at the
+/// normal zoom.
 void BattlePres_AdvanceTransitionTimer(void) {
   s32 scroll;
   struct BattleCamera *camera;
@@ -152,7 +153,7 @@ void BattlePres_AdvanceTransitionTimer(void) {
   BattlePres_SetupTransitionScene(0, 0, 0, 0x64);
 }
 
-// Draws the mirrored curtain rows as the eighty-frame entry transition opens.
+/// Draws the mirrored curtain rows as the eighty-frame entry transition opens.
 void BattlePres_DrawTransitionRows(void) {
   u32 column;
   s32 transitionFrame;
@@ -196,7 +197,7 @@ void BattlePres_DrawTransitionRows(void) {
   }
 }
 
-// Clears BG0 vertical scroll from the entry transition's interrupt handler.
+/// Clears BG0 vertical scroll from the entry transition's interrupt handler.
 void Graphics_ClearBg0Vofs(void) {
   u32 zero = 0;
 
@@ -208,8 +209,8 @@ struct DisplayRegisters {
   u16 greenSwap;
 };
 
-// Runs the curtain entrance or the Venus Aerie storm entrance, announces the
-// enemies and restores the normal battle display and interrupt handlers.
+/// Runs the curtain entrance or the Venus Aerie storm entrance, announces the
+/// enemies and restores the normal battle display and interrupt handlers.
 void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
   volatile u32 fill;
   struct BattlePresentationWork presentation;

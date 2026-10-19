@@ -1,6 +1,7 @@
-// Part of menu.c, the menu object, compiled only through it.
-// The item menu: the item picker events open, the command loop, the member
-// and item lists, and Use, Equip, Give, Drop, Remove and Details.
+/// @file
+/// Part of menu.c, the menu object, compiled only through it.
+/// The item menu: the item picker events open, the command loop, the member
+/// and item lists, and Use, Equip, Give, Drop, Remove and Details.
 
 #include "../menu_internal.h"
 
@@ -74,18 +75,18 @@
 #define ITEM_LIST_NAME_X 32
 #endif
 
-// The event work as the item picker sees it: what the player chose, for the
-// event script. The shared header has no names for these two fields yet.
+/// The event work as the item picker sees it: what the player chose, for the
+/// event script. The shared header has no names for these two fields yet.
 struct ItemPickerResult {
   s32 unk000[0x60];
-  u16 chosenItem; // owner << 10 | item id
+  u16 chosenItem; ///< owner << 10 | item id
   u8 unk182[0x18];
-  u16 chosenSlot; // the owner's inventory slot
+  u16 chosenSlot; ///< the owner's inventory slot
 };
 
-// The item picker an event script opens (window command 3): the item menu,
-// in which the player chooses one party member's item. Records the choice in
-// the event work and returns 1 if one was made.
+/// The item picker an event script opens (window command 3): the item menu,
+/// in which the player chooses one party member's item. Records the choice in
+/// the event work and returns 1 if one was made.
 s32 ItemMenu_Run(void) {
 #if TBS_PATCH_1
   void *backup;
@@ -163,10 +164,10 @@ s32 ItemMenu_Run(void) {
   return result;
 }
 
-// The most items of one kind a stack holds.
+/// The most items of one kind a stack holds.
 #define ITEM_STACK_MAX 30
 
-// The resident IWRAM word copy, called through its address.
+/// The resident IWRAM word copy, called through its address.
 typedef s32 (*ItemWordCopyFn)(void *dst, const void *src, s32 size);
 
 #define ITEM_IWRAM_COPY_WORDS                                                  \
@@ -180,7 +181,7 @@ static __inline__ s32 Item_CopyWords(ItemWordCopyFn copy, void *dst,
   return copy(dst, src, size);
 }
 
-// The steps of the item menu's command loop (ItemMenu_RunCommands).
+/// The steps of the item menu's command loop (ItemMenu_RunCommands).
 enum ItemMenuStep {
   ITEM_STEP_OWNER = 0,
   ITEM_STEP_ITEM = 1,
@@ -190,18 +191,18 @@ enum ItemMenuStep {
   ITEM_STEP_DROP = 5,
   ITEM_STEP_TARGET = 6,
   ITEM_STEP_TRADE = 7,
-  ITEM_STEP_IDLE = 8, // nothing sets it
+  ITEM_STEP_IDLE = 8, ///< nothing sets it
   ITEM_STEP_COMMAND = 9,
   ITEM_STEP_INSPECT = 10,
   ITEM_STEP_REMOVE = 11,
-  ITEM_STEP_QUANTITY = 12 // nothing sets it
+  ITEM_STEP_QUANTITY = 12 ///< nothing sets it
 };
 
-// Runs the item menu: choose a party member, one of their items and a command
-// (Use, Equip, Give, Drop, Remove or Inspect), then carry it out, until the
-// player backs out or presses Start. Returns 1 when an item is to be used
-// outside the menu, with its owner, target and item id in the out parameters;
-// -1 when the player backed out or pressed Start; 0 otherwise.
+/// Runs the item menu: choose a party member, one of their items and a command
+/// (Use, Equip, Give, Drop, Remove or Inspect), then carry it out, until the
+/// player backs out or presses Start. Returns 1 when an item is to be used
+/// outside the menu, with its owner, target and item id in the out parameters;
+/// -1 when the player backed out or pressed Start; 0 otherwise.
 s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   s32 done;
 #if !TBS_PATCH_1
@@ -822,10 +823,10 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   return menuResult;
 }
 
-// Uses the selected item from the owner in pane 0 on the member in pane 1.
-// On failure plays the error sound, shows why in the info window and returns
-// -1; otherwise plays the item's animation, recalculates both members and
-// returns 1.
+/// Uses the selected item from the owner in pane 0 on the member in pane 1.
+/// On failure plays the error sound, shows why in the info window and returns
+/// -1; otherwise plays the item's animation, recalculates both members and
+/// returns 1.
 s32 ItemMenu_Use(void) {
   struct InventoryMenuState *menu;
   s32 result;
@@ -852,9 +853,9 @@ s32 ItemMenu_Use(void) {
   return 1;
 }
 
-// Sets up the item menu's first screen: the cursor window with the party's
-// figures, the info window along the bottom, and an 8 by 2 cursor grid. The
-// parameters are not used.
+/// Sets up the item menu's first screen: the cursor window with the party's
+/// figures, the info window along the bottom, and an 8 by 2 cursor grid. The
+/// parameters are not used.
 void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
   struct InventoryMenuState *menu = gMenuWork;
   s32 ownerIndex;
@@ -878,9 +879,9 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
   }
 }
 
-// Creates the 32 item icon sprites in window, off screen until placed: slots 0
-// to 7 at x 248, the rest at x 256, all at y 168, each showing item graphic
-// slot of the same number.
+/// Creates the 32 item icon sprites in window, off screen until placed: slots 0
+/// to 7 at x 248, the rest at x 256, all at y 168, each showing item graphic
+/// slot of the same number.
 void Menu_SpawnIconEntries(struct InventoryMenuState *state,
                            struct UiWindow *window) {
   struct RenderOutput **firstIcons;
@@ -921,7 +922,7 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *state,
   } while (remainingSlot <= 31);
 }
 
-// Hides all 32 item icons.
+/// Hides all 32 item icons.
 void ItemMenu_HideAllIcons(void) {
   s32 hiddenState = ICON_HIDDEN;
   struct RenderOutput **icons =
@@ -937,7 +938,7 @@ void ItemMenu_HideAllIcons(void) {
 }
 
 #if TBS_PATCH_1
-// Hides the item icons in the first column of the five-wide item grid.
+/// Hides the item icons in the first column of the five-wide item grid.
 void ItemMenu_HidePageIcons(void) {
   struct InventoryMenuState *menu = gMenuWork;
   s32 slot = 0;
@@ -955,8 +956,8 @@ void ItemMenu_HidePageIcons(void) {
 }
 #endif
 
-// Closes the item menu: releases the party figures, hides the icons and the
-// cursor, and closes every window the menu opened.
+/// Closes the item menu: releases the party figures, hides the icons and the
+/// cursor, and closes every window the menu opened.
 void ItemMenu_Close(void) {
   struct InventoryMenuState *menu;
   struct RenderOutput *cursor;
@@ -980,8 +981,9 @@ void ItemMenu_Close(void) {
   UiWindow_CloseIfOpen(&menu->unknownWindow40, 1);
 }
 
-// Lets the player choose a party member in pane (0 or 1), starting from the
-// member chosen last. Returns the member's id, or -1 when the player backs out.
+/// Lets the player choose a party member in pane (0 or 1), starting from the
+/// member chosen last. Returns the member's id, or -1 when the player backs
+/// out.
 s32 ItemMenu_SelectMember(s32 pane) {
   struct InventoryMenuState *menu = gMenuWork;
   s32 result = 0;
@@ -1005,11 +1007,11 @@ s32 ItemMenu_SelectMember(s32 pane) {
   return result;
 }
 
-// The party member row of the item menu. Left and Right move between members,
-// showing each one's items and status; holding R shows their equipment
-// instead; L + A sorts the member's items, a new sort order each press; A
-// chooses a member who has items and B backs out. Returns the chosen member's
-// id, or -1.
+/// The party member row of the item menu. Left and Right move between members,
+/// showing each one's items and status; holding R shows their equipment
+/// instead; L + A sorts the member's items, a new sort order each press; A
+/// chooses a member who has items and B backs out. Returns the chosen member's
+/// id, or -1.
 s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
   struct InventoryMenuState *menu;
   s32 selection;
@@ -1123,7 +1125,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
   return result;
 }
 
-// Shows the equipment view of member ownerId's items in the item window.
+/// Shows the equipment view of member ownerId's items in the item window.
 void ItemMenu_OpenCategory(s32 ownerId) {
   struct InventoryMenuState *menu;
 
@@ -1133,12 +1135,12 @@ void ItemMenu_OpenCategory(s32 ownerId) {
   ItemMenu_DrawCategory(menu->itemWindow, ownerId, 0);
 }
 
-// Chooses the party member to use (mode 0) or give (mode 1) the selected item
-// to. Using shows each member's status as the cursor passes; giving shows each
-// member's items, how many of this item they already hold, or that they would
-// have to trade, and the equipment preview. The party members who can equip
-// the item move while the cursor is up. Returns the chosen member's id, or -1
-// when the player backs out; giving cannot choose the item's owner.
+/// Chooses the party member to use (mode 0) or give (mode 1) the selected item
+/// to. Using shows each member's status as the cursor passes; giving shows each
+/// member's items, how many of this item they already hold, or that they would
+/// have to trade, and the equipment preview. The party members who can equip
+/// the item move while the cursor is up. Returns the chosen member's id, or -1
+/// when the player backs out; giving cannot choose the item's owner.
 s32 ItemMenu_SelectTarget(s32 mode) {
 
   struct InventoryMenuState *menu;
@@ -1273,9 +1275,9 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   return (s8)result;
 }
 
-// Scheduler callback while choosing a member to give an item to: every 32
-// frames, sets each party figure's animation by whether that member can equip
-// the item (3) or not (1).
+/// Scheduler callback while choosing a member to give an item to: every 32
+/// frames, sets each party figure's animation by whether that member can equip
+/// the item (3) or not (1).
 void EquipmentMenu_UpdateCompatibilityIndicators(void) {
   struct InventoryMenuState *menu;
   s8 memberIndex;
@@ -1297,8 +1299,8 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
   }
 }
 
-// Ends EquipmentMenu_UpdateCompatibilityIndicators: puts every party figure
-// back to animation 1 and removes the callback.
+/// Ends EquipmentMenu_UpdateCompatibilityIndicators: puts every party figure
+/// back to animation 1 and removes the callback.
 void EquipmentMenu_StartCompatibilityIndicators(void) {
   struct InventoryMenuState *menu;
   s8 memberIndex;
@@ -1315,8 +1317,8 @@ void EquipmentMenu_StartCompatibilityIndicators(void) {
   Scheduler_RemoveCallback(&EquipmentMenu_UpdateCompatibilityIndicators);
 }
 
-// Returns 1 for the items that raise a stat for good (Apple, Hard Nut, Mint
-// and Lucky Pepper), whose use shows the stats panel instead of HP and PP.
+/// Returns 1 for the items that raise a stat for good (Apple, Hard Nut, Mint
+/// and Lucky Pepper), whose use shows the stats panel instead of HP and PP.
 s32 ItemMenu_IsSpecial(s32 itemId) {
   switch (itemId) {
   case ITEM_APPLE:
@@ -1328,7 +1330,7 @@ s32 ItemMenu_IsSpecial(s32 itemId) {
   return 0;
 }
 
-// Clears the message window and writes message into it.
+/// Clears the message window and writes message into it.
 void ItemMenu_DrawMessage(s32 unused, s32 message) {
   struct InventoryMenuState *menu;
 
@@ -1337,7 +1339,7 @@ void ItemMenu_DrawMessage(s32 unused, s32 message) {
   UiText_DrawCharacterAtOffsetFar(message, menu->messageWindow, 0, 0);
 }
 
-// Hides the icon of each of the 32 list entries whose item is 0.
+/// Hides the icon of each of the 32 list entries whose item is 0.
 void Menu_HideEmptyEntryIcons(const u16 *items) {
   struct InventoryMenuState *menu = gMenuWork;
   s32 slot;
@@ -1350,7 +1352,7 @@ void Menu_HideEmptyEntryIcons(const u16 *items) {
   }
 }
 
-// Returns how many of member ownerId's 15 inventory slots hold an item.
+/// Returns how many of member ownerId's 15 inventory slots hold an item.
 s32 ItemMenu_CountItems(s32 ownerId) {
   s32 maskedItemId;
   s32 remainingSlots;
@@ -1371,9 +1373,9 @@ s32 ItemMenu_CountItems(s32 ownerId) {
   return count;
 }
 
-// Returns how many of itemId the unit ownerId holds: the quantity of
-// its first stack, or 0. The Spanish and Italian editions add up every stack
-// of it.
+/// Returns how many of itemId the unit ownerId holds: the quantity of
+/// its first stack, or 0. The Spanish and Italian editions add up every stack
+/// of it.
 s32 InventoryMenu_GetItemQuantity(s32 ownerId, s32 itemId) {
   struct BattleUnit *unit;
   s32 slotIndex;
@@ -1401,8 +1403,8 @@ s32 InventoryMenu_GetItemQuantity(s32 ownerId, s32 itemId) {
   return quantity;
 }
 
-// Copies the unit's items into the list items (32 entries), skipping empty
-// slots and clearing the rest. Returns how many there are. mode is not used.
+/// Copies the unit's items into the list items (32 entries), skipping empty
+/// slots and clearing the rest. Returns how many there are. mode is not used.
 s32 ItemMenu_CollectItems(struct BattleUnit *unit, u16 *items, s32 mode) {
   s32 itemCount;
   s32 slotIndex;
@@ -1421,9 +1423,10 @@ s32 ItemMenu_CollectItems(struct BattleUnit *unit, u16 *items, s32 mode) {
   return itemCount;
 }
 
-// Loads each listed item's icon into its item icon sprite, the first 15 entries
-// of inventoryEntries, and hides the icons of empty entries. iconStyle 0 draws
-// the list's icons; any other iconStyle the equipment view's (graphics kind 7).
+/// Loads each listed item's icon into its item icon sprite, the first 15
+/// entries of inventoryEntries, and hides the icons of empty entries. iconStyle
+/// 0 draws the list's icons; any other iconStyle the equipment view's (graphics
+/// kind 7).
 void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
   s32 remaining;
   u16 *entries;
@@ -1448,8 +1451,8 @@ void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
   Menu_HideEmptyEntryIcons(inventoryEntries);
 }
 
-// Shows member ownerId's items in the item window, laid out for layout mode
-// (see ItemMenu_RefreshEntry), or "no items" when there are none.
+/// Shows member ownerId's items in the item window, laid out for layout mode
+/// (see ItemMenu_RefreshEntry), or "no items" when there are none.
 void ItemMenu_RefreshOwner(s32 ownerId, s32 mode) {
   struct InventoryMenuState *menu;
   struct BattleUnit *owner;
@@ -1466,15 +1469,15 @@ void ItemMenu_RefreshOwner(s32 ownerId, s32 mode) {
     UiText_DrawCharacterAtOffsetFar(MsgItemMenuEmpty, menu->itemWindow, 8, 24);
 }
 
-// Does nothing; nothing calls it.
+/// Does nothing; nothing calls it.
 UNUSED void InventoryMenu_NoOp(void) {}
 
-// Shows in the status panel what the item in owner's inventory slot would mean
-// to member target: for a usable item, target's status; for equipment, target's
-// stats with it equipped; for a Psynergy item, the Psynergy it teaches. When
-// target is someone else, the item is put into a copy of target's inventory for
-// the preview, making room first if it is full, and target is restored after.
-// mode 1 redraws only the lower part of the panel.
+/// Shows in the status panel what the item in owner's inventory slot would mean
+/// to member target: for a usable item, target's status; for equipment,
+/// target's stats with it equipped; for a Psynergy item, the Psynergy it
+/// teaches. When target is someone else, the item is put into a copy of
+/// target's inventory for the preview, making room first if it is full, and
+/// target is restored after. mode 1 redraws only the lower part of the panel.
 void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   /* FAKEMATCH(temporary): the saved unit kept in owner once owner is no
    * longer needed, and in Psynergy items' case also in buffer, which keeps
@@ -1564,9 +1567,9 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   }
 }
 
-// Makes room in ownerId's inventory: if no slot is free, removes the whole
-// stack in the first slot that is not equipped. Returns 1 when a slot is free
-// (or was freed), 0 otherwise.
+/// Makes room in ownerId's inventory: if no slot is free, removes the whole
+/// stack in the first slot that is not equipped. Returns 1 when a slot is free
+/// (or was freed), 0 otherwise.
 s32 Inventory_RemoveFirstUnflagged(s32 ownerId) {
   struct BattleUnit *unit = UnitGetFar(ownerId);
   s32 result = 0;
@@ -1597,8 +1600,8 @@ s32 Inventory_RemoveFirstUnflagged(s32 ownerId) {
 
 #if TBS_PATCH_1
 
-// The x and y of the item command cursor on column and row of the command grid
-// (three commands to a row).
+/// The x and y of the item command cursor on column and row of the command grid
+/// (three commands to a row).
 s32 ItemMenu_CommandCursorX(s32 column, s32 row) {
   if (column > 2 || row > 2 || column < 0 || row < 0)
     return 0;
@@ -1617,17 +1620,17 @@ s32 ItemMenu_CommandCursorY(s32 column, s32 row) {
 }
 #endif
 
-// Each item command's state in the grid.
+/// Each item command's state in the grid.
 #define ITEM_COMMAND_STATE_DISABLED (-1)
 #define ITEM_COMMAND_STATE_AVAILABLE 1
 
-// The item command grid: Use, Equip and Details on the top row, Give, Remove
-// and Drop below (grid index = row * 3 + column, as ItemMenuCommand counts
-// them). Disabled commands are grey and refuse A. The status panel follows the
-// cursor: the owner's status on Use, the stats with the item equipped on Equip
-// and Details, and without it on the bottom row, where Give also shows who can
-// equip it. The cursor starts on the command chosen last, or on the first
-// available one. Returns the command chosen, or -1 when the player backs out.
+/// The item command grid: Use, Equip and Details on the top row, Give, Remove
+/// and Drop below (grid index = row * 3 + column, as ItemMenuCommand counts
+/// them). Disabled commands are grey and refuse A. The status panel follows the
+/// cursor: the owner's status on Use, the stats with the item equipped on Equip
+/// and Details, and without it on the bottom row, where Give also shows who can
+/// equip it. The cursor starts on the command chosen last, or on the first
+/// available one. Returns the command chosen, or -1 when the player backs out.
 s32 ItemMenu_ChooseCommand(void) {
   struct InventoryMenuState *menu;
   s8 commandStorage[6];
@@ -1798,11 +1801,11 @@ s32 ItemMenu_ChooseCommand(void) {
   return commandIndex;
 }
 
-// Fills commandStates (indexed by ItemMenuCommand) for the selected item:
-// Use for usable items the owner can use here and for field items, Equip for
-// equipment the owner can wear and is not wearing, Remove for worn equipment
-// that is not cursed, Give with someone to give to, Drop unless the item is
-// indispensable, and neither for cursed equipment being worn.
+/// Fills commandStates (indexed by ItemMenuCommand) for the selected item:
+/// Use for usable items the owner can use here and for field items, Equip for
+/// equipment the owner can wear and is not wearing, Remove for worn equipment
+/// that is not cursed, Give with someone to give to, Drop unless the item is
+/// indispensable, and neither for cursed equipment being worn.
 void ItemMenu_BuildCommands(s8 *commandStates) {
   struct InventoryMenuState *menu;
   struct ItemDefinition *item;
@@ -1862,7 +1865,7 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
 
 #define TEXT_COLOR_DISABLED 14
 
-// Writes the six command names into window, the disabled ones in grey.
+/// Writes the six command names into window, the disabled ones in grey.
 void ItemMenu_DrawCommands(const s8 *commandStates, struct UiWindow *window) {
   s32 disabled;
   s32 useState;
@@ -1906,15 +1909,15 @@ void ItemMenu_DrawCommands(const s8 *commandStates, struct UiWindow *window) {
   UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL);
 }
 
-// Says how ownerId can use inventoryEntry from the item menu:
-// 0  the item works on the field (BattleFx_HasTriggerFar), or its action is
-//    usable neither in the field nor in battle, and is used once the menu
-//    closes;
-// 1  usable in the field: choose a party member to use it on;
-// 2  usable in the field on the whole party at once (range 0xff);
-// -1 it cannot be used here: it has no action, it is equipment the owner
-//    cannot wear or of use type 3, or its action is usable only in battle.
-// Usable items always qualify; equipment only when the owner can wear it.
+/// Says how ownerId can use inventoryEntry from the item menu:
+/// 0  the item works on the field (BattleFx_HasTriggerFar), or its action is
+///    usable neither in the field nor in battle, and is used once the menu
+///    closes;
+/// 1  usable in the field: choose a party member to use it on;
+/// 2  usable in the field on the whole party at once (range 0xff);
+/// -1 it cannot be used here: it has no action, it is equipment the owner
+///    cannot wear or of use type 3, or its action is usable only in battle.
+/// Usable items always qualify; equipment only when the owner can wear it.
 s32 Item_ClassifyUseMode(s32 ownerId, s32 inventoryEntry) {
   s32 itemId = inventoryEntry;
   struct ItemDefinition *itemDefinition;
@@ -1959,8 +1962,8 @@ s32 Item_ClassifyUseMode(s32 ownerId, s32 inventoryEntry) {
   return result;
 }
 
-// After the selected item is used: an item of use type 2 breaks one time in
-// eight, with the break sound and "It broke!".
+/// After the selected item is used: an item of use type 2 breaks one time in
+/// eight, with the break sound and "It broke!".
 void ItemMenu_TryBreak(void) {
   struct InventoryMenuState *menu;
 
@@ -1978,8 +1981,8 @@ void ItemMenu_TryBreak(void) {
   }
 }
 
-// Opens the details window (top left, 13 by 10 tiles) and describes the item
-// in pane itemIndex there. Returns 1.
+/// Opens the details window (top left, 13 by 10 tiles) and describes the item
+/// in pane itemIndex there. Returns 1.
 s32 ItemMenu_OpenDetail(s32 itemIndex) {
   struct InventoryMenuState *menu = gMenuWork;
 
@@ -1992,9 +1995,9 @@ s32 ItemMenu_OpenDetail(s32 itemIndex) {
   return 1;
 }
 
-// The item menu's Details screen: describes the item entry value in a large
-// window (the whole top half after patch 1) and waits for A or B. Up and Down
-// move an unused counter from 0 to 4. Returns the counter, or -1 after B.
+/// The item menu's Details screen: describes the item entry value in a large
+/// window (the whole top half after patch 1) and waits for A or B. Up and Down
+/// move an unused counter from 0 to 4. Returns the counter, or -1 after B.
 s32 Menu_SelectQuantity(s32 value) {
 #if TBS_PATCH_1
   s32 changed = 1;
@@ -2079,13 +2082,13 @@ s32 Menu_SelectQuantity(s32 value) {
   return counter;
 }
 
-// Writes the description of the inventoryEntry into window, one line a row:
-// for equipment its Attack and Defense bonuses, then each of its effects
-// (flat bonuses, rates as multipliers, elemental Power and Resist with the
-// element's icon, and the effects that are only text), whether it is cursed or
-// bestows Psynergy, whether it is used up or may break, and for a stack how
-// many there are. An item with nothing to say is rare, important, or
-// undescribed.
+/// Writes the description of the inventoryEntry into window, one line a row:
+/// for equipment its Attack and Defense bonuses, then each of its effects
+/// (flat bonuses, rates as multipliers, elemental Power and Resist with the
+/// element's icon, and the effects that are only text), whether it is cursed or
+/// bestows Psynergy, whether it is used up or may break, and for a stack how
+/// many there are. An item with nothing to say is rare, important, or
+/// undescribed.
 void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
   struct ItemDefinition *def;
   s32 i;
@@ -2286,8 +2289,8 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
   }
 }
 
-// Writes a signed stat change at (x, y) of window: the number, with a plus or
-// minus sign just before its first digit.
+/// Writes a signed stat change at (x, y) of window: the number, with a plus or
+/// minus sign just before its first digit.
 void ItemMenu_DrawStat(s32 statChange, s32 unused, struct UiWindow *window,
                        s32 x, s32 y) {
   s32 digits;
@@ -2319,54 +2322,54 @@ void ItemMenu_DrawStat(s32 statChange, s32 unused, struct UiWindow *window,
   }
 }
 
-// Moves the item window to row 5 of the right-hand side.
+/// Moves the item window to row 5 of the right-hand side.
 void ItemMenu_SetItemWindowRow5(void) {
   UiWindow_SetBounds(
       (struct UiWindow *)((struct InventoryMenuState *)gMenuWork)->itemWindow,
       13, 5, 17, 10);
 }
 
-// Moves the item window to row 3 of the right-hand side.
+/// Moves the item window to row 3 of the right-hand side.
 void ItemMenu_SetItemWindowRow3(void) {
   UiWindow_SetBounds(
       (struct UiWindow *)((struct InventoryMenuState *)gMenuWork)->itemWindow,
       13, 3, 17, 10);
 }
 
-// Makes the message window, along the top right, 5 rows tall.
+/// Makes the message window, along the top right, 5 rows tall.
 void ItemMenu_SetMessageWindowHeight5(void) {
   UiWindow_SetBounds((struct UiWindow *)((struct InventoryMenuState *)gMenuWork)
                          ->messageWindow,
                      13, 0, 17, 5);
 }
 
-// Makes the message window 6 rows tall.
+/// Makes the message window 6 rows tall.
 void ItemMenu_SetMessageWindowHeight6(void) {
   UiWindow_SetBounds((struct UiWindow *)((struct InventoryMenuState *)gMenuWork)
                          ->messageWindow,
                      13, 0, 17, 6);
 }
 
-// Makes the message window 7 rows tall.
+/// Makes the message window 7 rows tall.
 void ItemMenu_SetMessageWindowHeight7(void) {
   UiWindow_SetBounds((struct UiWindow *)((struct InventoryMenuState *)gMenuWork)
                          ->messageWindow,
                      13, 0, 17, 7);
 }
 
-// Makes the message window 3 rows tall.
+/// Makes the message window 3 rows tall.
 void ItemMenu_SetMessageWindowHeight3(void) {
   UiWindow_SetBounds((struct UiWindow *)((struct InventoryMenuState *)gMenuWork)
                          ->messageWindow,
                      13, 0, 17, 3);
 }
 
-// Asks how many of the selected item stack to give or drop: Left and Right
-// choose a number from 1 to quantityRange (shown as baseQuantity + 1 up to
-// baseQuantity + quantityRange on a dial of digit sprites), with the owner's
-// remaining count and, when giving (dropMode 0), the receiver's new count
-// beside their names. Returns the number less one, or -1 when the player backs
-// out.
+/// Asks how many of the selected item stack to give or drop: Left and Right
+/// choose a number from 1 to quantityRange (shown as baseQuantity + 1 up to
+/// baseQuantity + quantityRange on a dial of digit sprites), with the owner's
+/// remaining count and, when giving (dropMode 0), the receiver's new count
+/// beside their names. Returns the number less one, or -1 when the player backs
+/// out.
 s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
                                 s32 dropMode) {
   s32 quantity = baseQuantity;
@@ -2469,8 +2472,8 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   return quantity;
 }
 
-// Shows the selected item at the top of the message window: its icon, its
-// owner's name and its name.
+/// Shows the selected item at the top of the message window: its icon, its
+/// owner's name and its name.
 void ItemMenu_DrawItemHead(void) {
   struct InventoryMenuState *menu = gMenuWork;
 
@@ -2487,8 +2490,8 @@ void ItemMenu_DrawItemHead(void) {
                                   menu->messageWindow, 16, 8);
 }
 
-// Asks whether to drop item (an inventory entry): its name, the question, and
-// Yes or No, No first. Returns 0 for Yes and 1 for No, B or Start.
+/// Asks whether to drop item (an inventory entry): its name, the question, and
+/// Yes or No, No first. Returns 0 for Yes and 1 for No, B or Start.
 s32 ItemMenu_ConfirmDrop(s32 item) {
   struct UiWindow *window;
   s32 itemId;
@@ -2547,10 +2550,10 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
   return selection;
 }
 
-// After giving or trading the selected item to the member in pane 1, offers to
-// equip it there, showing the stats it would give. Returns 0 when it is
-// equipped; 1 when the player says No, backs out, or the member cannot equip
-// it, and the member is left as before.
+/// After giving or trading the selected item to the member in pane 1, offers to
+/// equip it there, showing the stats it would give. Returns 0 when it is
+/// equipped; 1 when the player says No, backs out, or the member cannot equip
+/// it, and the member is left as before.
 s32 ItemMenu_ConfirmEquip(s32 unused) {
   s32 rows = 2;
   s32 selection = 0;
@@ -2636,8 +2639,8 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   return selection;
 }
 
-// Loads the stat arrows (up and down) into two free VRAM blocks, kept in the
-// menu work's resource slots.
+/// Loads the stat arrows (up and down) into two free VRAM blocks, kept in the
+/// menu work's resource slots.
 void Resource_LoadPairedBlocks(void) {
   struct InventoryMenuState *menu = gMenuWork;
   s32 block = Resource_FindFreeEntry();
@@ -2649,9 +2652,9 @@ void Resource_LoadPairedBlocks(void) {
   VramCache_Load(block, 128, gMenu_SmallDownArrowTiles);
 }
 
-// Fills result with the item list of the member in pane index: their unit,
-// how many items they hold, and the page and row of the item chosen last for
-// them (kept within the list), five items to a page. Returns 1.
+/// Fills result with the item list of the member in pane index: their unit,
+/// how many items they hold, and the page and row of the item chosen last for
+/// them (kept within the list), five items to a page. Returns 1.
 s32 ItemMenu_PageResult(struct MenuResult *result, s32 index) {
   s32 unit;
   struct InventoryMenuState *menu = gMenuWork;
@@ -2682,9 +2685,9 @@ s32 ItemMenu_PageResult(struct MenuResult *result, s32 index) {
   return 1;
 }
 
-// Updates the item list for the row under the cursor: puts the selected item's
-// plain name in the info window and highlights its row of the five. window and
-// ownerWork are not used.
+/// Updates the item list for the row under the cursor: puts the selected item's
+/// plain name in the info window and highlights its row of the five. window and
+/// ownerWork are not used.
 s32 ItemMenu_DrawItemDetailPage(struct UiWindow *window, void *ownerWork,
                                 struct MenuResult *pageState) {
   struct InventoryMenuState *menu;
@@ -2723,8 +2726,8 @@ s32 ItemMenu_DrawItemDetailPage(struct UiWindow *window, void *ownerWork,
   return 1;
 }
 
-// Draws one page of the item list into window: up to five item names with
-// their icons, and the page numbers when there is more than one page.
+/// Draws one page of the item list into window: up to five item names with
+/// their icons, and the page numbers when there is more than one page.
 s32 ItemMenu_DrawNamePage(struct UiWindow *window, s32 unused,
                           const struct MenuResult *pageState) {
   struct InventoryMenuState *menu = gMenuWork;
@@ -2766,17 +2769,17 @@ s32 ItemMenu_DrawNamePage(struct UiWindow *window, s32 unused,
   return 1;
 }
 
-// Return 1, and do nothing; nothing calls them.
+/// Return 1, and do nothing; nothing calls them.
 UNUSED s32 InventoryMenu_ItemNamePageReturnTrue(void) { return 1; }
 
 UNUSED void InventoryMenu_ItemNamePageNoOp(void) {}
 
-// The item list of the member in paneIndex (0: the owner, 1: the receiver of a
-// trade), five items a page. The cursor's item is named in the info window and
-// previewed in the status panel, its icon animates, and the party members who
-// can equip it move. Up and Down move the cursor, Left and Right turn pages,
-// and in paneIndex 0 L and R switch to the previous or next member who has
-// items. Returns the chosen inventory entry, or -1 when the player backs out.
+/// The item list of the member in paneIndex (0: the owner, 1: the receiver of a
+/// trade), five items a page. The cursor's item is named in the info window and
+/// previewed in the status panel, its icon animates, and the party members who
+/// can equip it move. Up and Down move the cursor, Left and Right turn pages,
+/// and in paneIndex 0 L and R switch to the previous or next member who has
+/// items. Returns the chosen inventory entry, or -1 when the player backs out.
 s32 ItemMenu_RunList(s32 paneIndex) {
   struct InventoryMenuState *menu;
   struct UiWindow *window;

@@ -1,28 +1,29 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// The Procne summon.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// The Procne summon.
 
 #include "../effect_internal.h"
 
-// The whirlwind sheet holds three 48x64 frames, then the dust; the violet
-// comets are decoded further on.
+/// The whirlwind sheet holds three 48x64 frames, then the dust; the violet
+/// comets are decoded further on.
 #define PROCNE_DUST_CELLS (3 * (48 * 64))
 #define PROCNE_COMET_CELLS 0x3600
 
-// Abilities: Procne (scene kind 8).
-//
-// 400 frames:
-//   0 to 159   : a whirlwind rises over the field and lifts the targets,
-//                spinning them round it and drawing them in, while dust
-//                spirals up;
-//   160        : the backdrop becomes the violet sky, and a 3x3 block of
-//                nine objects appears and sways;
-//   256 to 329 : motes gather into the middle of the block;
-//   330 to 372 : four comets shoot out of it, 12 frames apart, each with a
-//                ring of sparks, striking the targets on frames 334, 347,
-//                359 and 372 (gProcne_Frames);
-//   395        : the targets fall back to the ground.
-// Pressing A or B skips to frame 160, or from there to frame 395. At the
-// end the battle shows the damage and the targets go back to their places.
+/// Abilities: Procne (scene kind 8).
+///
+/// 400 frames:
+///   0 to 159   : a whirlwind rises over the field and lifts the targets,
+///                spinning them round it and drawing them in, while dust
+///                spirals up;
+///   160        : the backdrop becomes the violet sky, and a 3x3 block of
+///                nine objects appears and sways;
+///   256 to 329 : motes gather into the middle of the block;
+///   330 to 372 : four comets shoot out of it, 12 frames apart, each with a
+///                ring of sparks, striking the targets on frames 334, 347,
+///                359 and 372 (gProcne_Frames);
+///   395        : the targets fall back to the ground.
+/// Pressing A or B skips to frame 160, or from there to frame 395. At the
+/// end the battle shows the damage and the targets go back to their places.
 void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   void **slots;

@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Effect positions, projection and id dispatch helpers.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Effect positions, projection and id dispatch helpers.
 
 #include "../effect_internal.h"
 
@@ -17,8 +18,8 @@
 // on a battler. They differ only in how the battler is projected: at its
 // sprite's scaled height, scaled for the battle view, or plainly.
 
-// Moves a particle one frame in three dimensions: adds its velocity, then
-// gravity to its vertical speed, then damps every speed by damping / 64.
+/// Moves a particle one frame in three dimensions: adds its velocity, then
+/// gravity to its vertical speed, then damps every speed by damping / 64.
 void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping,
                                      s32 gravity) {
   step->x += step->velocityX;
@@ -29,8 +30,8 @@ void EffectStep_AdvanceWithGravity3D(struct EffectStep *step, s32 damping,
                step->velocityY * damping / 64, step->velocityZ * damping / 64);
 }
 
-// Moves a particle one frame on the screen: adds its velocity, then
-// gravity to its vertical speed, then damps both speeds by damping / 64.
+/// Moves a particle one frame on the screen: adds its velocity, then
+/// gravity to its vertical speed, then damps both speeds by damping / 64.
 void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping,
                                      s32 gravity) {
   step->x += step->velocityX;
@@ -40,8 +41,8 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping,
   step->velocityY = step->velocityY * damping / 64;
 }
 
-// Projects a point in the current transform onto the screen, 16 pixels
-// higher, and returns the projection's scale.
+/// Projects a point in the current transform onto the screen, 16 pixels
+/// higher, and returns the projection's scale.
 s32 EffectPosition_ProjectPoint(const void *point,
                                 struct EffectPosition *position) {
   s32 result = Render_ProjectPoint(point, EffectPosition_Coordinates(position));
@@ -49,15 +50,15 @@ s32 EffectPosition_ProjectPoint(const void *point,
   return result;
 }
 
-// The screen position of a battler's sprite, at its scaled height, 16
-// pixels higher.
+/// The screen position of a battler's sprite, at its scaled height, 16
+/// pixels higher.
 void EffectPosition_ProjectSprite(s32 id, struct EffectPosition *position) {
   BattleUnit_ProjectToScreen(id, EffectPosition_Coordinates(position));
   position->y -= 16;
 }
 
-// The screen position of a battler, scaled for the battle view, 16 pixels
-// higher.
+/// The screen position of a battler, scaled for the battle view, 16 pixels
+/// higher.
 void EffectPosition_ProjectScaledBattler(s32 id,
                                          struct EffectPosition *position) {
   BattleMotion_ProjectScaledPositionFar(id,
@@ -65,20 +66,20 @@ void EffectPosition_ProjectScaledBattler(s32 id,
   position->y -= 16;
 }
 
-// The screen position of a battler, 16 pixels higher.
+/// The screen position of a battler, 16 pixels higher.
 void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position) {
   BattleMotion_ProjectPositionFar(id, EffectPosition_Coordinates(position));
   position->y -= 16;
 }
 
-// Projects a battler onto the screen, raised by half its table height (the
-// table holds the full height in 16.16) at the sprite's scale. The view is
-// reset to the battle camera first, so the result does not depend on the
-// transform an effect has left behind.
-//
-// unit: the battler.
-// screen: receives x and y.
-// Returns 0.
+/// Projects a battler onto the screen, raised by half its table height (the
+/// table holds the full height in 16.16) at the sprite's scale. The view is
+/// reset to the battle camera first, so the result does not depend on the
+/// transform an effect has left behind.
+///
+/// unit: the battler.
+/// screen: receives x and y.
+/// Returns 0.
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   struct BattleCamera *camera;
   struct MotionObject *object;
@@ -97,8 +98,8 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   return 0;
 }
 
-// Reads the held keys when the first target is an enemy (id 128 or more)
-// and does nothing with them. No effect calls it.
+/// Reads the held keys when the first target is an enemy (id 128 or more)
+/// and does nothing with them. No effect calls it.
 void BattleFx_ProbeKeysForExtendedActor(void) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   struct BattleEffectArgument *effect = work->effect;
@@ -107,12 +108,12 @@ void BattleFx_ProbeKeysForExtendedActor(void) {
     (void)gKeysHeld;
 }
 
-// Runs a battle effect from the second range of kinds: 100 to 135 are the
-// casting impacts (kind - 100), 136 to 199 the beam sequences, 200 and up
-// the ring and spark scenes. Allocates the sheet, the work and the canvas
-// for the effect and frees them after.
-//
-// effect: the effect argument.
+/// Runs a battle effect from the second range of kinds: 100 to 135 are the
+/// casting impacts (kind - 100), 136 to 199 the beam sequences, 200 and up
+/// the ring and spark scenes. Allocates the sheet, the work and the canvas
+/// for the effect and frees them after.
+///
+/// effect: the effect argument.
 void BattleFx_DispatchByIdRange(struct BattleEffectArgument *effect) {
   s32 kind;
   s32 value;

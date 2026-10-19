@@ -1,5 +1,6 @@
-// Part of battle_command.c, the menu object, compiled only through it.
-// The Colosso choice and the joined-party messages.
+/// @file
+/// Part of battle_command.c, the menu object, compiled only through it.
+/// The Colosso choice and the joined-party messages.
 
 #include "../battle_command_internal.h"
 
@@ -15,9 +16,9 @@
 #define TALK_WINDOW_WIDTH 16
 #endif
 
-// The Colosso choice of what to do: "Descriptions", "Cheer" or "Nothing",
-// chosen with a pointing hand. Returns the choice (0-2), or -1 when
-// cancelled with B.
+/// The Colosso choice of what to do: "Descriptions", "Cheer" or "Nothing",
+/// chosen with a pointing hand. Returns the choice (0-2), or -1 when
+/// cancelled with B.
 s32 PartyTalkMenu_Choose(s32 unused) {
   /* FAKEMATCH: the shared cursor union preserves pointer-store ordering; an
    * equal-size struct changes stack-address construction in all six editions.
@@ -90,9 +91,9 @@ s32 PartyTalkMenu_Choose(s32 unused) {
   return row;
 }
 
-// Shows "The <element> Djinni <name> joined <member>." with the element's
-// Djinni portrait while the join fanfare (sound 81) plays, until it ends or A,
-// B, L or R is pressed. `djinn` is the Djinni's number in its element.
+/// Shows "The <element> Djinni <name> joined <member>." with the element's
+/// Djinni portrait while the join fanfare (sound 81) plays, until it ends or A,
+/// B, L or R is pressed. `djinn` is the Djinni's number in its element.
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   struct UiRenderWork *work = (struct UiRenderWork *)*gWindowWork;
   s32 name;
@@ -151,9 +152,9 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   }
 }
 
-// Returns the portrait character of party member `member` (0-8): from
-// gCharacter_ChildSpriteTable during the prologue, from
-// gCharacter_SpriteTable otherwise; 0 for any other member.
+/// Returns the portrait character of party member `member` (0-8): from
+/// gCharacter_ChildSpriteTable during the prologue, from
+/// gCharacter_SpriteTable otherwise; 0 for any other member.
 s32 Party_LookupCharacterValueByFlag32(u32 index) {
   if (index > 8) {
     return 0;
@@ -164,8 +165,8 @@ s32 Party_LookupCharacterValueByFlag32(u32 index) {
   return gCharacter_ChildSpriteTable[index];
 }
 
-// Shows "<member> joined your party." with the member's portrait while the
-// join fanfare (sound 81) plays, until it ends or A, B, L or R is pressed.
+/// Shows "<member> joined your party." with the member's portrait while the
+/// join fanfare (sound 81) plays, until it ends or A, B, L or R is pressed.
 void Party_ShowJoinedMessage(s32 member) {
   struct UiRenderWork *work = (struct UiRenderWork *)*gWindowWork;
   struct UiWindow *window = NULL;
@@ -204,8 +205,8 @@ void Party_ShowJoinedMessage(s32 member) {
   }
 }
 
-// Shows "<first> and <second> joined your party." with both portraits while
-// the join fanfare (sound 81) plays, until it ends or A, B, L or R is pressed.
+/// Shows "<first> and <second> joined your party." with both portraits while
+/// the join fanfare (sound 81) plays, until it ends or A, B, L or R is pressed.
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   u8 *work = gWindowWork[0];
   struct UiWindow *window;

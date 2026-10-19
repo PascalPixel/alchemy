@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Revive, Water of Life, Quartz and Dew.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Revive, Water of Life, Quartz and Dew.
 
 #include "../effect_internal.h"
 
@@ -10,24 +11,24 @@
 #define DJINN_BEAMS_MOTE_CELLS 0x2710   // the motes (CrescentMoonSheet, 24x24)
 #define DJINN_BEAMS_DJINNI_CELLS 0x65c0 // the Djinni (40x40)
 
-// Abilities: Revive, Water of Life (kind 25); Quartz (kind 201).
-//
-// With a Venus Djinni: beams of light, where motes drift down over each target
-// and a column of light falls on it.
+/// Abilities: Revive, Water of Life (kind 25); Quartz (kind 201).
+///
+/// With a Venus Djinni: beams of light, where motes drift down over each target
+/// and a column of light falls on it.
 void BattleFx_RunRevive(struct BattleEffectArgument *effect) {
   BattleFx_RunDjinnBeams(effect, 0);
 }
-// Abilities: Dew (kind 209).
-//
-// With a Mercury Djinni: the same beams of light as Revive.
+/// Abilities: Dew (kind 209).
+///
+/// With a Mercury Djinni: the same beams of light as Revive.
 void BattleFx_RunDew(struct BattleEffectArgument *effect) {
   BattleFx_RunDjinnBeams(effect, 1);
 }
-// When effect->prelude is 1, a Djinni appears, sways and then rises out of
-// sight. Over each target in turn, 16 frames apart, eight motes drift down,
-// and from 72 frames after its turn starts a column of light falls on it
-// and narrows away; the battle shows the result on frame 80.
-// mode : 0 a Venus Djinni, 1 a Mercury Djinni.
+/// When effect->prelude is 1, a Djinni appears, sways and then rises out of
+/// sight. Over each target in turn, 16 frames apart, eight motes drift down,
+/// and from 72 frames after its turn starts a column of light falls on it
+/// and narrows away; the battle shows the result on frame 80.
+/// mode : 0 a Venus Djinni, 1 a Mercury Djinni.
 void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition one;
   struct EffectPosition screenPosition;

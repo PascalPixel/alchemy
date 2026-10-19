@@ -1,13 +1,14 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Undead Sword.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Undead Sword.
 
 #include "../effect_internal.h"
 
-// Abilities: Undead Sword (kind 320).
-//
-// Two mirrored columns of light rise at the first target's feet and sink
-// again, scattering 16 sparks that drift upward; the target is struck on
-// frame 10. 54 frames.
+/// Abilities: Undead Sword (kind 320).
+///
+/// Two mirrored columns of light rise at the first target's feet and sink
+/// again, scattering 16 sparks that drift upward; the target is struck on
+/// frame 10. 54 frames.
 void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

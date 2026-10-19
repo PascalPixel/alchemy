@@ -1,9 +1,10 @@
-// Part of menu.c, the menu object, compiled only through it.
-// The stat arrows and the other icons the menus load into VRAM blocks.
+/// @file
+/// Part of menu.c, the menu object, compiled only through it.
+/// The stat arrows and the other icons the menus load into VRAM blocks.
 
 #include "../menu_internal.h"
 
-// Loads each menu icon resource whose cache slot was acquired.
+/// Loads each menu icon resource whose cache slot was acquired.
 void Resource_LoadPairedBlocksIfAvailable(void) {
   s32 firstSlot;
   s32 secondSlot;
@@ -22,7 +23,7 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
   }
 }
 
-// Releases both cached icon resources used by the menu.
+/// Releases both cached icon resources used by the menu.
 void Menu_ResetTwoResourceEntries(void) {
   struct InventoryMenuState *state;
 
@@ -31,7 +32,7 @@ void Menu_ResetTwoResourceEntries(void) {
   Resource_ResetEntry((u16)state->resourceSlots[1]);
 }
 
-// Decodes one icon into a temporary buffer and reloads its VRAM slot.
+/// Decodes one icon into a temporary buffer and reloads its VRAM slot.
 s32 UiIcon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   s32 decodedResource;
   s32 selectedSlot;
@@ -46,7 +47,7 @@ s32 UiIcon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   return firstTile;
 }
 
-// Loads an icon into a free cache slot and creates its sprite when possible.
+/// Loads an icon into a free cache slot and creates its sprite when possible.
 s32 UiIcon_CreateWithLoadedResource(struct UiWindow *window, s32 x, s32 y,
                                     s32 resourceId) {
   s32 slot;
@@ -58,7 +59,7 @@ s32 UiIcon_CreateWithLoadedResource(struct UiWindow *window, s32 x, s32 y,
   }
 }
 
-// Creates a stat-change arrow from one of the two loaded resources.
+/// Creates a stat-change arrow from one of the two loaded resources.
 s32 UiIcon_CreateStatChangeArrow(struct UiWindow *window, s32 x, s32 y,
                                  s32 variant) {
   struct RenderOutput *object;
@@ -89,7 +90,7 @@ s32 UiIcon_CreateStatChangeArrow(struct UiWindow *window, s32 x, s32 y,
   return 1;
 }
 
-// Creates an arrow with the vertical adjustment for its resource variant.
+/// Creates an arrow with the vertical adjustment for its resource variant.
 s32 UiIcon_DrawVariantWithTileOffset(struct UiWindow *window, s32 x, s32 y,
                                      s32 variant) {
   struct RenderOutput *object;

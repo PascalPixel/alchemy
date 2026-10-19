@@ -1,10 +1,11 @@
-// Part of shop.c, the shop object, compiled only through it.
-// Selling: choosing a party member, the item grid and the sale.
+/// @file
+/// Part of shop.c, the shop object, compiled only through it.
+/// Selling: choosing a party member, the item grid and the sale.
 
 #include "../shop_internal.h"
 
-// Selects whose inventory to sell or repair, returning to the party list after
-// each operation.
+/// Selects whose inventory to sell or repair, returning to the party list after
+/// each operation.
 s32 Shop_PickUnit(void) {
   struct ShopRuntime *shop = gMenuWork;
   struct UiWindow *listWindow;
@@ -73,10 +74,10 @@ s32 Shop_PickUnit(void) {
   }
 }
 
-// Selects an inventory slot and quantity to sell, repeating until cancelled or
-// the inventory is empty.
-// Shared previous/next-row inlines added four bytes to each sell, repair and
-// use picker in the English native build; the direct row arithmetic remains.
+/// Selects an inventory slot and quantity to sell, repeating until cancelled or
+/// the inventory is empty.
+/// Shared previous/next-row inlines added four bytes to each sell, repair and
+/// use picker in the English native build; the direct row arithmetic remains.
 s32 Shop_SelectSell(s32 unitId) {
   struct UiWindow *descriptionWindow;
   struct ShopRuntime *shop;
@@ -179,8 +180,8 @@ s32 Shop_SelectSell(s32 unitId) {
   return result;
 }
 
-// Draws all fifteen inventory slots in five columns, including any empty
-// positions.
+/// Draws all fifteen inventory slots in five columns, including any empty
+/// positions.
 void Shop_DrawUnitGrid(struct UiWindow *window, s32 unitId) {
   struct BattleUnit *unit;
   s32 x;
@@ -219,8 +220,8 @@ void Shop_DrawUnitGrid(struct UiWindow *window, s32 unitId) {
   }
 }
 
-// Asks how many to sell only for stacks larger than one, restoring the cursor
-// afterward.
+/// Asks how many to sell only for stacks larger than one, restoring the cursor
+/// afterward.
 s32 Shop_SelectSellNum(s32 unitId, s32 slot) {
   s32 result;
   s16 savedX;
@@ -254,8 +255,8 @@ s32 Shop_SelectSellNum(s32 unitId, s32 slot) {
   return result;
 }
 
-// Checks the offer and restrictions, discards the chosen count, then credits
-// coins and redraws.
+/// Checks the offer and restrictions, discards the chosen count, then credits
+/// coins and redraws.
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   struct ShopRuntime *shop = gMenuWork;
   struct BattleUnit *unit = UnitGetFar(unitId);

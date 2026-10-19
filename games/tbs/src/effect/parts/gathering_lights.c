@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Demon Night, Rumble and Haunting.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Demon Night, Rumble and Haunting.
 
 #include "../effect_internal.h"
 
@@ -8,37 +9,37 @@
 
 // Lights that scatter from the user and gather into each target.
 
-// Abilities: Demon Night (kind 50).
-//
-// Sixteen pink lights burst out of the user and are pulled into each target,
-// with the heavy impact sound.
+/// Abilities: Demon Night (kind 50).
+///
+/// Sixteen pink lights burst out of the user and are pulled into each target,
+/// with the heavy impact sound.
 void BattleFx_RunDemonNight(struct BattleEffectArgument *effect) {
   BattleFx_RunGatheringLights(effect, 0);
 }
-// Abilities: Rumble (kind 308).
-//
-// Eight lights in Mars Djinn colours burst out of the user and are pulled into
-// each target.
+/// Abilities: Rumble (kind 308).
+///
+/// Eight lights in Mars Djinn colours burst out of the user and are pulled into
+/// each target.
 void BattleFx_RunRumble(struct BattleEffectArgument *effect) {
   BattleFx_RunGatheringLights(effect, 1);
 }
-// Abilities: Haunting (kind 351).
-//
-// Twelve lights in Mercury Djinn colours burst out of the user and are pulled
-// into each target.
+/// Abilities: Haunting (kind 351).
+///
+/// Twelve lights in Mercury Djinn colours burst out of the user and are pulled
+/// into each target.
 void BattleFx_RunHaunting(struct BattleEffectArgument *effect) {
   BattleFx_RunGatheringLights(effect, 2);
 }
 #define GATHERING_LIGHTS_SLOTS 128 // particles reserved for each target
 
-// For each target in turn, 20 frames apart, lights burst out of the user;
-// 30 frames after each one appears it is pulled towards the middle of the
-// target's body and goes out when it is within 32 pixels across and in
-// depth. Each light takes one of three images. Each target is struck 70
-// frames after its turn starts, and the battle shows the damage at frame 80.
-// The effect layer ripples throughout.
-// mode : the colours (0 pink, 1 Mars Djinn, 2 Mercury Djinn) and the row of
-//        gGatheringLights_Counts: lights per target and frames.
+/// For each target in turn, 20 frames apart, lights burst out of the user;
+/// 30 frames after each one appears it is pulled towards the middle of the
+/// target's body and goes out when it is within 32 pixels across and in
+/// depth. Each light takes one of three images. Each target is struck 70
+/// frames after its turn starts, and the battle shows the damage at frame 80.
+/// The effect layer ripples throughout.
+/// mode : the colours (0 pink, 1 Mars Djinn, 2 Mercury Djinn) and the row of
+///        gGatheringLights_Counts: lights per target and frames.
 void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
                                  s32 mode) {
   struct EffectPosition screenPosition;

@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// The Nereid summon.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// The Nereid summon.
 
 #include "../effect_internal.h"
 
@@ -16,15 +17,15 @@
 #define NEREID_EMBERS 1024        // embers in PARTICLES
 #define NEREID_COLUMN_IMAGE 0x6e4 // the column of fire in the sheet
 
-// Abilities: Nereid (scene kind 2).
-//
-// 124 frames; pressing A
-// or B during frames 33 to 97 skips to frame 98. A formation of twelve
-// objects sweeps in from the right; embers burst up on frame 28 and over
-// frames 32 to 79, fall back under gravity and from frame 80 rise away,
-// while three columns of fire stream upwards over frames 32 to 79 and the
-// targets bounce. At the end the formation explodes with
-// BattleFx_RunImpactBurst; the battle shows the damage on frame 120.
+/// Abilities: Nereid (scene kind 2).
+///
+/// 124 frames; pressing A
+/// or B during frames 33 to 97 skips to frame 98. A formation of twelve
+/// objects sweeps in from the right; embers burst up on frame 28 and over
+/// frames 32 to 79, fall back under gravity and from frame 80 rise away,
+/// while three columns of fire stream upwards over frames 32 to 79 and the
+/// targets bounce. At the end the formation explodes with
+/// BattleFx_RunImpactBurst; the battle shows the damage on frame 120.
 void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **cursor;

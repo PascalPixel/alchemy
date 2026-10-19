@@ -1,9 +1,10 @@
-// Part of battle.c, the battle object, compiled only through it.
-// Enemy formations: the enemies chosen, levelled and lettered.
+/// @file
+/// Part of battle.c, the battle object, compiled only through it.
+/// Enemy formations: the enemies chosen, levelled and lettered.
 
 #include "../battle_internal.h"
 
-// The rows of gBattleFormation_Records.
+/// The rows of gBattleFormation_Records.
 #define FORMATION_COUNT 380
 
 // How many name letters tell the enemies of one class apart: 26 in Japanese,
@@ -14,8 +15,9 @@
 #define ENEMY_NAME_SUFFIX_COUNT 26
 #endif
 
-// Returns the formation's average enemy level, or -1 for an empty minimum list,
-// -2 for an ineligible unseen enemy, or -3 when no member has a maximum count.
+/// Returns the formation's average enemy level, or -1 for an empty minimum
+/// list, -2 for an ineligible unseen enemy, or -3 when no member has a maximum
+/// count.
 s32 BattleFormation_AverageLevel(s32 recordId) {
   struct BattleFormationRecord *record;
   struct EnemyDefinition *enemy;
@@ -75,9 +77,9 @@ struct BattleBaseStats {
   struct BattleElementStats element[4];
 };
 
-// Keeps up to thirty-two eligible formations near the party's adjusted average
-// level, chooses one randomly and returns its level adjustment through
-// outMargin.
+/// Keeps up to thirty-two eligible formations near the party's adjusted average
+/// level, chooses one randomly and returns its level adjustment through
+/// outMargin.
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   s32 matchCount = 0;
   struct FormationCandidate *pool = Runtime_BumpAllocateAlternatePool(128);
@@ -161,8 +163,8 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   return result;
 }
 
-// Adjusts enemy base stats by the level margin, retaining 70-percent floors and
-// per-stat caps, then updates the level and derived stats.
+/// Adjusts enemy base stats by the level margin, retaining 70-percent floors
+/// and per-stat caps, then updates the level and derived stats.
 s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   struct BattleBaseStats *base;
   struct BattleUnit *unit;
@@ -219,9 +221,9 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   MemFree(base);
 }
 
-// Claims the next displayed name suffix for an enemy class. Bit 15 requests
-// a suffix for the first existing duplicate; a new class returns the
-// suffix-count sentinel.
+/// Claims the next displayed name suffix for an enemy class. Bit 15 requests
+/// a suffix for the first existing duplicate; a new class returns the
+/// suffix-count sentinel.
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
   struct BattleWork *battle;
   s32 classCount;
@@ -294,7 +296,7 @@ s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
   battle->summonMasks[index] &= ~(1 << suffixIndex);
 }
 
-// Appends the first suffix to the first present enemy of the duplicated class.
+/// Appends the first suffix to the first present enemy of the duplicated class.
 s32 BattleEnemy_LetterFirstOfClass(s32 classId) {
   struct BattleUnit *unit;
   s32 enemyIndex;
@@ -332,8 +334,8 @@ s32 BattleEnemy_LetterFirstOfClass(s32 classId) {
   }
 }
 
-// Chooses an enemy class from the formation's members whose maximum count is
-// nonzero.
+/// Chooses an enemy class from the formation's members whose maximum count is
+/// nonzero.
 s32 BattleGroupRandom(s32 recordId) {
   s32 choices[5];
   struct BattleFormationRecord *record;
@@ -366,9 +368,9 @@ s32 BattleGroupRandom(s32 recordId) {
   return choices[(Random16() * choiceCount) >> 16];
 }
 
-// Chooses extra enemies within the six sprite slots, orders them according to
-// the formation type and initializes each enemy with its suffix and level
-// adjustment.
+/// Chooses extra enemies within the six sprite slots, orders them according to
+/// the formation type and initializes each enemy with its suffix and level
+/// adjustment.
 s32 BattleFormation_BuildEnemyList(s32 recordId) {
   u16 *enemyClasses;
   struct BattleWork *battle;

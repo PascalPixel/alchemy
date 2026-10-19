@@ -1,13 +1,14 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Streak volleys (Sonic Wave, Shriek, War Cry ...) and mote fountains (Sleep
-// Star, Soothing Star).
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Streak volleys (Sonic Wave, Shriek, War Cry ...) and mote fountains (Sleep
+/// Star, Soothing Star).
 
 #include "../effect_internal.h"
 
 // Streak volleys: three streaks of light fly from the user to each target in
 // turn, in one of five colours.
 
-// gStreaks_Records has four flags for each style.
+/// gStreaks_Records has four flags for each style.
 #define STREAKS_VALUE(mode, n) gStreaks_Records[(mode)][(n)]
 #define STREAKS_ANIMATE 0 // nonzero: the streak cycles through three images
 #define STREAKS_HIT 1     // nonzero: play the hit sound and flash the target
@@ -24,43 +25,44 @@ enum StreakStyle {
   STREAKS_STYLE_CYAN
 };
 
-// Abilities: Sonic Wave (kind 300).
-//
-// Ember streaks. Three streaks of ember light fly from the user at each target
-// in turn; each target flashes and recoils.
+/// Abilities: Sonic Wave (kind 300).
+///
+/// Ember streaks. Three streaks of ember light fly from the user at each target
+/// in turn; each target flashes and recoils.
 void BattleFx_RunSonicWave(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAKS_STYLE_EMBER);
 }
-// Abilities: Shriek (kind 301).
-//
-// Lime streaks. Three streaks of lime light fly from the user at each target in
-// turn; each target flashes and recoils.
+/// Abilities: Shriek (kind 301).
+///
+/// Lime streaks. Three streaks of lime light fly from the user at each target
+/// in turn; each target flashes and recoils.
 void BattleFx_RunShriek(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAKS_STYLE_LIME);
 }
-// Abilities: Banshee Howl (kind 302).
-//
-// Violet streaks. Three streaks of violet light fly from the user at each
-// target in turn; each target flashes and trembles.
+/// Abilities: Banshee Howl (kind 302).
+///
+/// Violet streaks. Three streaks of violet light fly from the user at each
+/// target in turn; each target flashes and trembles.
 void BattleFx_RunBansheeHowl(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAKS_STYLE_VIOLET);
 }
-// Abilities: War Cry (kind 304).
-//
-// Cyan streaks. Three flickering cyan streaks, cycling through three colour
-// rows, fly from the user at each target in turn; each target flashes and
-// recoils.
+/// Abilities: War Cry (kind 304).
+///
+/// Cyan streaks. Three flickering cyan streaks, cycling through three colour
+/// rows, fly from the user at each target in turn; each target flashes and
+/// recoils.
 void BattleFx_RunWarCry(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAKS_STYLE_CYAN);
 }
-// Abilities: Wicked Howl (kind 305).
-//
-// Red streaks. Three flickering red streaks, cycling through three colour rows,
-// fly from the user at each target in turn; each target flashes and trembles.
+/// Abilities: Wicked Howl (kind 305).
+///
+/// Red streaks. Three flickering red streaks, cycling through three colour
+/// rows, fly from the user at each target in turn; each target flashes and
+/// trembles.
 void BattleFx_RunWickedHowl(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAKS_STYLE_RED);
 }
-// The streak volley in lime. UNUSED: no effect table entry points here.
+/// The streak volley in lime. UNUSED: no effect table entry points here.
 UNUSED void BattleFx_RunLimeStreaks(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAKS_STYLE_LIME);
 }
@@ -69,13 +71,13 @@ UNUSED void BattleFx_RunLimeStreaks(struct BattleEffectArgument *effect) {
 #define STREAKS_FLIGHT 24       // frames from user to target
 #define STREAKS_TARGET_DELAY 32 // frames between targets
 
-// Fires STREAKS_MAX streaks at each target from 20 pixels above the user,
-// one every 6 frames, each reaching 20 pixels above its target 24 frames
-// later; each target's volley starts 32 frames after the previous one's.
-// A streak image is 20x40 and drawn twice, mirrored upwards, as a 20x80
-// streak that wavers from side to side and leaves a fading trail.
-// mode : the style, 0 to 4: the streak colour (ember, lime, violet, red,
-//        cyan) and the row of gStreaks_Records that says how a hit looks.
+/// Fires STREAKS_MAX streaks at each target from 20 pixels above the user,
+/// one every 6 frames, each reaching 20 pixels above its target 24 frames
+/// later; each target's volley starts 32 frames after the previous one's.
+/// A streak image is 20x40 and drawn twice, mirrored upwards, as a 20x80
+/// streak that wavers from side to side and leaves a fading trail.
+/// mode : the style, 0 to 4: the streak colour (ember, lime, violet, red,
+///        cyan) and the row of gStreaks_Records that says how a hit looks.
 void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition position;
   void **slots;
@@ -262,31 +264,31 @@ enum MoteFountainMode {
 };
 enum { MOTE_FOUNTAIN_INITIALIZED_COUNT = 256, MOTE_VISIBLE_COUNT = 128 };
 
-// Abilities: Sleep Star (kind 349).
-//
-// Rising motes that drift onto the targets and strike.
-// Motes burst out of the user and float up, wobbling, as they drift across the
-// field; each target flinches in turn.
+/// Abilities: Sleep Star (kind 349).
+///
+/// Rising motes that drift onto the targets and strike.
+/// Motes burst out of the user and float up, wobbling, as they drift across the
+/// field; each target flinches in turn.
 void BattleFx_RunSleepStar(struct BattleEffectArgument *effect) {
   BattleFx_RunMoteFountain(effect, MOTE_FOUNTAIN_DRIFTING);
 }
-// Abilities: Soothing Star (kind 344).
-//
-// Rising healing motes. Orange motes burst out of the
-// user and float up close to it, and each target glows in turn with the
-// recovery sound.
+/// Abilities: Soothing Star (kind 344).
+///
+/// Rising healing motes. Orange motes burst out of the
+/// user and float up close to it, and each target glows in turn with the
+/// recovery sound.
 void BattleFx_RunSoothingStar(struct BattleEffectArgument *effect) {
   BattleFx_RunMoteFountain(effect, MOTE_FOUNTAIN_FOUNTAIN_HEALING);
 }
 #define MOTE_FOUNTAIN_FOUNTAIN_FRAMES 128
 
-// Motes burst out of the user in every direction and float upwards,
-// wobbling, for 128 frames; a new group of 32 joins every 8 frames. Each
-// target in turn reacts from frame 48, 8 frames apart.
-// mode 0: orange motes that stay close to the user; each target plays the
-//         recovery sound and glows (a healing effect).
-// mode 1: motes on the earth palette that drift across towards the far side
-//         of the field; each target flinches (an attack).
+/// Motes burst out of the user in every direction and float upwards,
+/// wobbling, for 128 frames; a new group of 32 joins every 8 frames. Each
+/// target in turn reacts from frame 48, 8 frames apart.
+/// mode 0: orange motes that stay close to the user; each target plays the
+///         recovery sound and glows (a healing effect).
+/// mode 1: motes on the earth palette that drift across towards the far side
+///         of the field; each target flinches (an attack).
 void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
   s32 worldPoint[3];
   struct EffectPosition position;

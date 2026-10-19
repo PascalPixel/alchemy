@@ -1,11 +1,12 @@
-// Part of menu.c, the menu object, compiled only through it.
-// Previewing a Djinn change before it is made, the chosen member's status,
-// and the checks that keep the members' Djinn counts even.
+/// @file
+/// Part of menu.c, the menu object, compiled only through it.
+/// Previewing a Djinn change before it is made, the chosen member's status,
+/// and the checks that keep the members' Djinn counts even.
 
 #include "../menu_internal.h"
 
-// Previews a give, trade, set or standby change without committing it.
-// It saves and restores the unit records before polling for confirmation.
+/// Previews a give, trade, set or standby change without committing it.
+/// It saves and restores the unit records before polling for confirmation.
 s32 OwnerAction_RunCompareLoop(u32 mode) {
   struct DjinnMenuWork *menu;
   struct DjinnMenuBackdrop *backdrop;
@@ -527,7 +528,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
   return result;
 }
 
-// Shows the chosen owner's current stats and paged Psynergy list.
+/// Shows the chosen owner's current stats and paged Psynergy list.
 s32 DjinnMenu_ShowOwnerStatus(void) {
   s32 selectedPages[2];
   s32 pageCounts[2];
@@ -674,8 +675,8 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
   return result;
 }
 
-// Marks recipients that would leave unequal Djinn totals after a direct give.
-// Returns how many recipients would need a trade instead.
+/// Marks recipients that would leave unequal Djinn totals after a direct give.
+/// Returns how many recipients would need a trade instead.
 s32 Djinn_MarkBalancedEntries(s8 *requiresTrade, s32 sourceOwnerColumn) {
   s32 tradeCount;
   s32 ownerColumn;
@@ -702,8 +703,8 @@ s32 Djinn_MarkBalancedEntries(s8 *requiresTrade, s32 sourceOwnerColumn) {
   return tradeCount;
 }
 
-// Tests whether a hypothetical give leaves every pair of owners within one
-// Djinn.
+/// Tests whether a hypothetical give leaves every pair of owners within one
+/// Djinn.
 s32 Djinn_CheckTurnBalance(s32 sourceOwnerColumn, s32 targetOwnerColumn) {
   struct DjinnMenuWork *menu;
   s8 ownedCounts[16];
@@ -735,7 +736,7 @@ s32 Djinn_CheckTurnBalance(s32 sourceOwnerColumn, s32 targetOwnerColumn) {
   return balanced;
 }
 
-// Counts each owner's Djinn across its set and available bitmasks.
+/// Counts each owner's Djinn across its set and available bitmasks.
 void Djinn_CountTurns(u8 *ownedCounts) {
   struct DjinnMenuWork *menu;
   struct BattleUnit *unit;

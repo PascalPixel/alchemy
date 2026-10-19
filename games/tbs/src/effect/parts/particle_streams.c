@@ -1,9 +1,10 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Meteor and Outer Space.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Meteor and Outer Space.
 
 #include "../effect_internal.h"
 
-// Add per-channel steps to background colours 1 to 63, capped at 31.
+/// Add per-channel steps to background colours 1 to 63, capped at 31.
 void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
   u16 *color = (u16 *)&BG_PLTT[1];
   s32 i;
@@ -26,9 +27,9 @@ void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
   }
 }
 
-// Arms DMA 0 to write one halfword of the table at work->sheet + 0x1f80 into
-// background colour 0 at each horizontal blank, so the backdrop colour
-// changes line by line.
+/// Arms DMA 0 to write one halfword of the table at work->sheet + 0x1f80 into
+/// background colour 0 at each horizontal blank, so the backdrop colour
+/// changes line by line.
 void BattleFx_ArmPaletteHBlankDma(void) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   volatile u16 *channel = REG_DMA0;
@@ -37,18 +38,18 @@ void BattleFx_ArmPaletteHBlankDma(void) {
           (volatile u32 *)channel);
 }
 
-// Abilities: Meteor (scene kind 11).
-//
-// A formation rises out of a dissolving starfield and bursts into embers and
-// flashes: the particle stream in mode 0, with one spawned object rising.
+/// Abilities: Meteor (scene kind 11).
+///
+/// A formation rises out of a dissolving starfield and bursts into embers and
+/// flashes: the particle stream in mode 0, with one spawned object rising.
 void BattleFx_RunMeteor(struct BattleEffectArgument *effect) {
   BattleFx_RunParticleStreams(effect, 0);
 }
-// Abilities: Outer Space (kind 384).
-//
-// The user leaps up, and two objects rise out of a dissolving starfield and
-// burst into embers and flashes: the particle stream in mode 1, in the
-// lightning bolt's colours.
+/// Abilities: Outer Space (kind 384).
+///
+/// The user leaps up, and two objects rise out of a dissolving starfield and
+/// burst into embers and flashes: the particle stream in mode 1, in the
+/// lightning bolt's colours.
 void BattleFx_RunOuterSpace(struct BattleEffectArgument *effect) {
   BattleFx_RunParticleStreams(effect, 1);
 }
@@ -57,19 +58,19 @@ void BattleFx_RunOuterSpace(struct BattleEffectArgument *effect) {
 #define PARTICLE_STREAMS_RISE_FRAMES 192 // frames, at most, of the rise
 #define PARTICLE_STREAMS_BURST_FRAMES 54 // frames of the burst
 
-// The mote pictures in the sheet: two sets, MOTE_SET_BYTES apart.
+/// The mote pictures in the sheet: two sets, MOTE_SET_BYTES apart.
 #define PARTICLE_STREAMS_MOTE_CELLS 0x3200
 
-// The stream runs in two halves. The rise dissolves the battle map into a
-// starfield, then for up to PARTICLE_STREAMS_RISE_FRAMES lifts a formation of
-// objects while motes, orbiting sparks and falling drops are drawn into the
-// map buffer over a heat-tinted scanline palette. The burst then switches to
-// a blended half-scale canvas and throws embers, screen motes and growing
-// flashes from the origin for PARTICLE_STREAMS_BURST_FRAMES shaking frames.
-//
-// Particle slots: the burst's flashes use PARTICLES 0 to 127 and its embers
-// the 512 after them (PARTICLE_STREAMS_EMBERS); work->particles holds the
-// rising motes (0 to 31) and the flames (32 to 47).
+/// The stream runs in two halves. The rise dissolves the battle map into a
+/// starfield, then for up to PARTICLE_STREAMS_RISE_FRAMES lifts a formation of
+/// objects while motes, orbiting sparks and falling drops are drawn into the
+/// map buffer over a heat-tinted scanline palette. The burst then switches to
+/// a blended half-scale canvas and throws embers, screen motes and growing
+/// flashes from the origin for PARTICLE_STREAMS_BURST_FRAMES shaking frames.
+///
+/// Particle slots: the burst's flashes use PARTICLES 0 to 127 and its embers
+/// the 512 after them (PARTICLE_STREAMS_EMBERS); work->particles holds the
+/// rising motes (0 to 31) and the flames (32 to 47).
 void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
                                  s32 mode) {
   volatile u32 fill;

@@ -18,9 +18,9 @@
 // run down columns: each column of tiles is as tall as the window's interior,
 // which is the window height less its two frame rows.
 
-// Sets one pixel in the column-major text canvas. windowHeight includes the
-// two frame rows; doubledPixelRow is twice the row within a tile.
-// repeatedColor holds the colour index in all four nibbles.
+/// Sets one pixel in the column-major text canvas. windowHeight includes the
+/// two frame rows; doubledPixelRow is twice the row within a tile.
+/// repeatedColor holds the colour index in all four nibbles.
 static __inline__ void UiText_SetCanvasPixel(u32 windowHeight, u32 x, u32 tileY,
                                              u32 doubledPixelRow, u8 *canvas,
                                              u32 repeatedColor) {
@@ -34,18 +34,18 @@ static __inline__ void UiText_SetCanvasPixel(u32 windowHeight, u32 x, u32 tileY,
   *pixelHalfword = (*pixelHalfword & ~pixelMask) | (pixelMask & repeatedColor);
 }
 
-// Draws one character into a window's text canvas with its top-left corner at
-// pixel (x, y) of the window's interior, and returns how far the text
-// advances.
-//
-// With font set, the character comes from that small font: the 10-row, 1bpp
-// kana and numeral font in Japanese, or an 8x8 two-colour font elsewhere. With
-// no font, it comes from the main font (gUiText_Glyphs, and in Japanese
-// gUiText_KanjiGlyphs for codes from 256), drawn in four passes: the first
-// three draw an outline in colour 5 (offset left, right and down when the
-// window has UI_WINDOW_OUTLINED_TEXT) and the last draws the glyph itself in
-// colour 1. In Japanese, kana marks (codes 222 and 223) sit over the previous
-// character and advance by 0.
+/// Draws one character into a window's text canvas with its top-left corner at
+/// pixel (x, y) of the window's interior, and returns how far the text
+/// advances.
+///
+/// With font set, the character comes from that small font: the 10-row, 1bpp
+/// kana and numeral font in Japanese, or an 8x8 two-colour font elsewhere. With
+/// no font, it comes from the main font (gUiText_Glyphs, and in Japanese
+/// gUiText_KanjiGlyphs for codes from 256), drawn in four passes: the first
+/// three draw an outline in colour 5 (offset left, right and down when the
+/// window has UI_WINDOW_OUTLINED_TEXT) and the last draws the glyph itself in
+/// colour 1. In Japanese, kana marks (codes 222 and 223) sit over the previous
+/// character and advance by 0.
 s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
                         const u8 *font) {
   const u16 *glyphRows;
@@ -274,12 +274,12 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
 #endif
 }
 
-// Builds the hardware window's horizontal extent for each of the screen's
-// 160 scanlines from frameTiles in the UI tilemap (32 tiles a row,
-// 30 shown). Each scanline gets (left << 8) | right, the WINxH format, written
-// to the second halfword of its pair in scanlineBounds. A row without a frame
-// gets 0. The rounded corner tiles trim the first or last scanline of a row by
-// one pixel on that side, so the window follows the frame's rounded corners.
+/// Builds the hardware window's horizontal extent for each of the screen's
+/// 160 scanlines from frameTiles in the UI tilemap (32 tiles a row,
+/// 30 shown). Each scanline gets (left << 8) | right, the WINxH format, written
+/// to the second halfword of its pair in scanlineBounds. A row without a frame
+/// gets 0. The rounded corner tiles trim the first or last scanline of a row by
+/// one pixel on that side, so the window follows the frame's rounded corners.
 void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
   u32 tileRow;
   u32 tileColumn;

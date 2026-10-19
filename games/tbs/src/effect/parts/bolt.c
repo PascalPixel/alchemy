@@ -1,40 +1,41 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Bolt.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Bolt.
 
 #include "../effect_internal.h"
 
 // Bolt's sparks fall under gravity and bounce off the ground at half speed.
 
-// Lightning bolts: a bolt strikes each target, with sparks and glints.
-// PARTICLES holds the sparks, 128 for each target.
-// The second blitter, made anew for each glint.
+/// Lightning bolts: a bolt strikes each target, with sparks and glints.
+/// PARTICLES holds the sparks, 128 for each target.
+/// The second blitter, made anew for each glint.
 #define BOLT_GLINT_BLITTER                                                     \
   ((DrawRectangle *)                                                           \
        gBattleFxWork)[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT]
 
-// The columns of a gBolt_Counts row.
+/// The columns of a gBolt_Counts row.
 enum {
-  BOLT_SPARKS,       // sparks thrown from each bolt's foot
-  BOLT_GLINTS,       // glints a frame around each target
-  BOLT_GLINT_SPREAD, // how high and wide the glints spread
-  BOLT_STRIKES       // bolts drawn over each other
+  BOLT_SPARKS,       ///< sparks thrown from each bolt's foot
+  BOLT_GLINTS,       ///< glints a frame around each target
+  BOLT_GLINT_SPREAD, ///< how high and wide the glints spread
+  BOLT_STRIKES       ///< bolts drawn over each other
 };
 
-// The bolt pictures in the sheet, after the tornado.
+/// The bolt pictures in the sheet, after the tornado.
 #define BOLT_CELLS 0xc56
 
-// Abilities: Bolt, Flash Bolt, Blue Bolt (kind 16).
-//
-// A bolt of lightning strikes each target in turn, 8 frames apart.
-//
-// Target i's turn starts on frame 8i with a flash of the canvas. The bolt
-// drops from the top, 64 pixels a frame down to y 104, and the screen shakes
-// the frame after; on frame 8i + 2 sparks fly up from its foot and glints
-// flicker there for 22 frames; on frame 8i + 4 the target recoils. The
-// battle moves on to the results on frame 24.
-//
-// effect: the targets; variant picks the row of gBolt_Counts
-//         and the glints' blend.
+/// Abilities: Bolt, Flash Bolt, Blue Bolt (kind 16).
+///
+/// A bolt of lightning strikes each target in turn, 8 frames apart.
+///
+/// Target i's turn starts on frame 8i with a flash of the canvas. The bolt
+/// drops from the top, 64 pixels a frame down to y 104, and the screen shakes
+/// the frame after; on frame 8i + 2 sparks fly up from its foot and glints
+/// flicker there for 22 frames; on frame 8i + 4 the target recoils. The
+/// battle moves on to the results on frame 24.
+///
+/// effect: the targets; variant picks the row of gBolt_Counts
+///         and the glints' blend.
 void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

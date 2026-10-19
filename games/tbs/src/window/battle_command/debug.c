@@ -1,10 +1,12 @@
-// Part of battle_command.c, the menu object, compiled only through it.
-// The debug menus (scenes, flags, icon browsers) and the system menu's choices.
+/// @file
+/// Part of battle_command.c, the menu object, compiled only through it.
+/// The debug menus (scenes, flags, icon browsers) and the system menu's
+/// choices.
 
 #include "../battle_command_internal.h"
 
-// Schedules the debug scene and entrance selector; 0xc80 is a scheduler order,
-// not a number of frames to wait. Nothing in the game calls it.
+/// Schedules the debug scene and entrance selector; 0xc80 is a scheduler order,
+/// not a number of frames to wait. Nothing in the game calls it.
 UNUSED void DebugMenu_ScheduleSceneSelector(void) {
 #ifdef UBFIX
   Scheduler_AddOrUpdateCallback(Menu_RunSelection, 0xC80);
@@ -13,7 +15,7 @@ UNUSED void DebugMenu_ScheduleSceneSelector(void) {
 #endif
 }
 
-// Draw the debug scene and entrance numbers with their category/area labels.
+/// Draw the debug scene and entrance numbers with their category/area labels.
 void Menu_DrawSelectionRow(struct UiWindow *work, s32 scene,
                            const s16 *entrance) {
   s16 sceneIndex = scene;
@@ -85,8 +87,8 @@ s16 Menu_RunSelection(void) {
   }
 }
 
-// Edit the debug scene or entrance, returning -1 to warp and -2 to cancel.
-// Shoulder buttons step by ten; keep the original 99-step entrance wrap.
+/// Edit the debug scene or entrance, returning -1 to warp and -2 to cancel.
+/// Shoulder buttons step by ten; keep the original 99-step entrance wrap.
 s32 Menu_HandleSelectionRowInput(struct UiWindow *window, s16 scene,
                                  s16 *entrance, s16 *selectedField) {
   if (gKeysRepeat & KEY_A)
@@ -147,8 +149,8 @@ s32 Menu_HandleSelectionRowInput(struct UiWindow *window, s16 scene,
   return scene;
 }
 
-// Show a 16x16 flag grid per page and process input until closed.
-// Start on page 8; always return 0.
+/// Show a 16x16 flag grid per page and process input until closed.
+/// Start on page 8; always return 0.
 s32 Menu_RunSelectionWithCursorObject(void) {
   struct MenuSprite cursorSprite; // Cursor object
   s32 cursor[2];                  // Cursor column and row
@@ -180,8 +182,8 @@ s32 Menu_RunSelectionWithCursorObject(void) {
   return 0;
 }
 
-// Write the lowest count digits of value, up to five, most significant first
-// as uppercase hexadecimal in out; do not append a null terminator.
+/// Write the lowest count digits of value, up to five, most significant first
+/// as uppercase hexadecimal in out; do not append a null terminator.
 void Text_FormatHex(u32 value, u32 count, u8 *out) {
   u8 digits[8];
   u32 i;
@@ -202,7 +204,7 @@ void Text_FormatHex(u32 value, u32 count, u8 *out) {
     *out++ = digits[i];
 }
 
-// Draw one page of 256 flags as sixteen rows of hexadecimal labels and bits.
+/// Draw one page of 256 flags as sixteen rows of hexadecimal labels and bits.
 void Menu_DrawFlagBitTable(struct UiWindow *window, s32 page) {
   s32 row;
   s32 y;
@@ -236,8 +238,8 @@ void Menu_DrawFlagBitTable(struct UiWindow *window, s32 page) {
   }
 }
 
-// Move within the flag grid, change pages, or toggle the selected flag.
-// Return 1 when flags/page need redrawing, -1 to close, and 0 otherwise.
+/// Move within the flag grid, change pages, or toggle the selected flag.
+/// Return 1 when flags/page need redrawing, -1 to close, and 0 otherwise.
 s32 Menu_HandleFlagGridInput(struct UiWindow *window, s32 *page, s32 *cursor) {
   s32 *row = &cursor[1];
 
@@ -286,17 +288,18 @@ s32 Menu_HandleFlagGridInput(struct UiWindow *window, s32 *page, s32 *cursor) {
   return 0;
 }
 
-// Reserved menu entry; it intentionally performs no work.
+/// Reserved menu entry; it intentionally performs no work.
 void Menu_ReservedNoOp(void) {}
 
-// Set the Djinni's collected flag, then add it to the specified owner.
+/// Set the Djinni's collected flag, then add it to the specified owner.
 void Djinn_SetFoundFlagAndAdd(s32 owner, s32 element, s32 index) {
   GameFlag_SetBitFar((element * 0x14) + index + FLAG_DJINNI_0);
   Djinn_AddToOwnerFar(owner, element, index);
 }
 
-// Handle Save, Sleep and Options from the field workspace. A cancelled save
-// or options screen reopens the workspace; cancelling the workspace returns -1.
+/// Handle Save, Sleep and Options from the field workspace. A cancelled save
+/// or options screen reopens the workspace; cancelling the workspace returns
+/// -1.
 s32 Menu_RunWorkspaceResultLoop(void) {
   s32 result;
 
@@ -319,8 +322,8 @@ s32 Menu_RunWorkspaceResultLoop(void) {
   return 0;
 }
 
-// Browse pages of item, Psynergy and status-pattern icons. Suspend the menu
-// controller while the browser owns its window and cache entries.
+/// Browse pages of item, Psynergy and status-pattern icons. Suspend the menu
+/// controller while the browser owns its window and cache entries.
 s32 DebugMenu_BrowseIcons(void) {
   s32 redraw;
   s32 tile;
@@ -413,8 +416,8 @@ s32 DebugMenu_BrowseIcons(void) {
 #define DEBUG_GLYPH_NAME MsgDebugSecondForm
 #endif
 
-// Browse the character and sprite portrait maps as one circular list. Show
-// each entry's glyph and label, then release both windows on A or B.
+/// Browse the character and sprite portrait maps as one circular list. Show
+/// each entry's glyph and label, then release both windows on A or B.
 s32 DebugMenu_BrowseEntryGlyphs(void) {
   struct UiRenderWork *work;
   struct UiWindow *portrait;

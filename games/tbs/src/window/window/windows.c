@@ -1,10 +1,11 @@
-// Part of window.c, the window object, compiled only through it.
-// The render output pool, opening and closing windows, starting messages.
+/// @file
+/// Part of window.c, the window object, compiled only through it.
+/// The render output pool, opening and closing windows, starting messages.
 
 #include "../window_internal.h"
 
-// Takes the first render output from the free list, or returns NULL when every
-// output is in use.
+/// Takes the first render output from the free list, or returns NULL when every
+/// output is in use.
 struct RenderOutput *RenderOutput_AcquireFree(void) {
   struct UiRenderWork *work = UI_WORK;
   struct RenderOutput *out = work->freeOutputs.head;
@@ -19,8 +20,8 @@ struct RenderOutput *RenderOutput_AcquireFree(void) {
   return out;
 }
 
-// Returns a render output to the end of the free list. An output from outside
-// the work block's pool is ignored.
+/// Returns a render output to the end of the free list. An output from outside
+/// the work block's pool is ignored.
 void RenderOutput_ReleaseFree(struct RenderOutput *out) {
   struct UiRenderWork *work = UI_WORK;
 
@@ -34,7 +35,7 @@ void RenderOutput_ReleaseFree(struct RenderOutput *out) {
   }
 }
 
-// Links all 64 render outputs of the pool into the free list.
+/// Links all 64 render outputs of the pool into the free list.
 void RenderOutput_InitFreeList(void) {
   s32 remainingLinks;
   struct UiRenderWork *work;
@@ -55,10 +56,10 @@ void RenderOutput_InitFreeList(void) {
   work->freeOutputs.tailLink = &next->next;
 }
 
-// Sets up the window system for the field (and the other screens outside
-// battle): allocates and clears the work block, blanks the tilemap, frees
-// every render output and starts the two per-frame callbacks, the tilemap
-// upload and the window update.
+/// Sets up the window system for the field (and the other screens outside
+/// battle): allocates and clears the work block, blanks the tilemap, frees
+/// every render output and starts the two per-frame callbacks, the tilemap
+/// upload and the window update.
 void UiWork_InitializeWithResourceCounters(void) {
   struct UiRenderWork *work;
 #if TBS_PATCH_1
@@ -91,10 +92,10 @@ void UiWork_InitializeWithResourceCounters(void) {
   UiWork_InitCountersWithResourceAndScheduleRefresh();
 }
 
-// Sets up the window system for battle, as
-// UiWork_InitializeWithResourceCounters does for the field, and marks the work
-// block as in battle (menuState 1). loadGlyphTiles is set only when the Djinn
-// tutorial flag is set: it loads the glyph tiles the tutorial's messages use.
+/// Sets up the window system for battle, as
+/// UiWork_InitializeWithResourceCounters does for the field, and marks the work
+/// block as in battle (menuState 1). loadGlyphTiles is set only when the Djinn
+/// tutorial flag is set: it loads the glyph tiles the tutorial's messages use.
 void UiWork_Initialize(s32 loadGlyphTiles) {
   struct UiRenderWork *work;
 #if TBS_PATCH_1
@@ -148,10 +149,10 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
   }
 }
 
-// The per-frame tilemap upload: copies each 256-byte band of the tilemap
-// (four tile rows) marked in the dirty bits to VRAM. Bit 0 marks the whole
-// tilemap, bits 1 to 5 one band each. Nothing is copied while menuBusy holds
-// the upload off.
+/// The per-frame tilemap upload: copies each 256-byte band of the tilemap
+/// (four tile rows) marked in the dirty bits to VRAM. Bit 0 marks the whole
+/// tilemap, bits 1 to 5 one band each. Nothing is copied while menuBusy holds
+/// the upload off.
 void UiWork_UploadDirtyBlocks(void) {
   struct UiRenderWork *work = UI_WORK;
   u32 bands;
@@ -178,9 +179,9 @@ void UiWork_UploadDirtyBlocks(void) {
   }
 }
 
-// Erases a window's rectangle of the tilemap (x, y, width and height in
-// tiles), clamped to the screen. In battle the rows below row 16 take tile
-// 0x7f instead of the blank tile.
+/// Erases a window's rectangle of the tilemap (x, y, width and height in
+/// tiles), clamped to the screen. In battle the rows below row 16 take tile
+/// 0x7f instead of the blank tile.
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   struct UiRenderWork *canvas = UI_WORK;
   u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)canvas->tilemap);
@@ -232,9 +233,9 @@ void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   canvas->dirty = 1;
 }
 
-// Draws a window at its full size: its frame, and for a text canvas window
-// the canvas, filled with colour 4 under a frame when the window is framed and
-// transparent otherwise.
+/// Draws a window at its full size: its frame, and for a text canvas window
+/// the canvas, filled with colour 4 under a frame when the window is framed and
+/// transparent otherwise.
 void UiWindow_DrawOpened(struct UiWindow *window) {
   u32 flags;
   u32 value;
@@ -269,10 +270,10 @@ void UiWindow_DrawOpened(struct UiWindow *window) {
   work->dirty = 1;
 }
 
-// Opens a window at tile (x, y) of width by height tiles in the first free
-// window slot, and returns it, or NULL when all slots are in use. attrs takes
-// the UI_WINDOW_ flags. Unless it is UI_WINDOW_INSTANT the window zooms open
-// over eight frames, and this waits until it is fully open.
+/// Opens a window at tile (x, y) of width by height tiles in the first free
+/// window slot, and returns it, or NULL when all slots are in use. attrs takes
+/// the UI_WINDOW_ flags. Unless it is UI_WINDOW_INSTANT the window zooms open
+/// over eight frames, and this waits until it is fully open.
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
                                  s32 attrs) {
   struct UiWindow *slot;
@@ -331,7 +332,7 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
   return found;
 }
 
-// Waits until a zooming window has finished opening or closing.
+/// Waits until a zooming window has finished opening or closing.
 void UiWindow_WaitZoom(struct UiWindow *window) {
   if (!(UI_WINDOW_INSTANT & window->flags) && window->duration != 0) {
     do {
@@ -340,9 +341,9 @@ void UiWindow_WaitZoom(struct UiWindow *window) {
   }
 }
 
-// Closes a window: clears its contents and remembers its last rectangle.
-// With instant set the window is erased and its slot freed at once; otherwise
-// it zooms closed over four frames first. Does nothing for NULL.
+/// Closes a window: clears its contents and remembers its last rectangle.
+/// With instant set the window is erased and its slot freed at once; otherwise
+/// it zooms closed over four frames first. Does nothing for NULL.
 void UiWork_Finalize(struct UiWindow *window, s32 instant) {
   u16 zero;
 
@@ -384,8 +385,8 @@ void UiWork_Finalize(struct UiWindow *window, s32 instant) {
   }
 }
 
-// Clears a window's contents: redraws its empty frame and releases the render
-// outputs it carries. A text canvas window is left alone.
+/// Clears a window's contents: redraws its empty frame and releases the render
+/// outputs it carries. A text canvas window is left alone.
 void RenderOutput_PrepareForRedraw(struct UiWindow *window) {
   if (!(UI_WINDOW_TEXT_CANVAS & window->flags)) {
     RenderOutput_RedrawSavedRect(window);
@@ -393,13 +394,13 @@ void RenderOutput_PrepareForRedraw(struct UiWindow *window) {
   }
 }
 
-// Redraws a window's empty frame at its current rectangle.
+/// Redraws a window's empty frame at its current rectangle.
 void RenderOutput_RedrawSavedRect(struct UiWindow *window) {
   UiWindow_DrawFrame(window->x, window->y, window->width, window->height);
 }
 
-// Releases every render output in a list and empties it. outputs is the list,
-// or a window (whose output list comes first); NULL is ignored.
+/// Releases every render output in a list and empties it. outputs is the list,
+/// or a window (whose output list comes first); NULL is ignored.
 void RenderOutput_ClearList(void *outputs) {
   struct RenderOutputList *list = outputs;
   struct RenderOutput *node;
@@ -419,9 +420,9 @@ void RenderOutput_ClearList(void *outputs) {
   }
 }
 
-// Clears an area of a window's interior to the window fill. left, top, right
-// and bottom are pixels inside the window, and the area covers every tile
-// they touch.
+/// Clears an area of a window's interior to the window fill. left, top, right
+/// and bottom are pixels inside the window, and the area covers every tile
+/// they touch.
 void UiWindow_ClearInteriorTiles(const struct UiWindow *window, u32 left,
                                  u32 top, u32 right, u32 bottom) {
   struct UiRenderWork *work;
@@ -457,9 +458,9 @@ void UiWindow_ClearInteriorTiles(const struct UiWindow *window, u32 left,
   work->dirty = 1;
 }
 
-// Points a list's tail link back at its last output, after the list has been
-// edited by hand.
-// Nothing calls it.
+/// Points a list's tail link back at its last output, after the list has been
+/// edited by hand.
+/// Nothing calls it.
 UNUSED void RenderOutputList_UpdateTail(struct RenderOutputList *list) {
   struct RenderOutput *node = list->head;
   struct RenderOutput **tail = &list->head;
@@ -471,7 +472,7 @@ UNUSED void RenderOutputList_UpdateTail(struct RenderOutputList *list) {
   list->tailLink = tail;
 }
 
-// Adds a render output to the end of a list; NULL lists are ignored.
+/// Adds a render output to the end of a list; NULL lists are ignored.
 void RenderOutput_AppendToList(struct RenderOutputList *list,
                                struct RenderOutput *node) {
   /* FAKEMATCH: storing the new tail as a RenderOutput * keeps both stores in
@@ -489,8 +490,8 @@ void RenderOutput_AppendToList(struct RenderOutputList *list,
   }
 }
 
-// Frees a render output: returns it to the free list, releases its resource,
-// and for a kind-2 output frees its palette slot too.
+/// Frees a render output: returns it to the free list, releases its resource,
+/// and for a kind-2 output frees its palette slot too.
 void RenderOutput_Release(struct RenderOutput *entry) {
   RenderOutput_ReleaseFree(entry);
   if ((u8)entry->kind != 0) {
@@ -505,11 +506,11 @@ void RenderOutput_Release(struct RenderOutput *entry) {
   entry->active = 0;
 }
 
-// Starts a free message channel typing the decoded text that begins at entry
-// into window, with the pen at pixel (x, y). spacing gives each of four lines
-// an extra gap between characters (or none for NULL); flags is kept with the
-// channel (nonzero keeps the window's size from page to page). Returns the
-// channel, or NULL when all three are busy.
+/// Starts a free message channel typing the decoded text that begins at entry
+/// into window, with the pen at pixel (x, y). spacing gives each of four lines
+/// an extra gap between characters (or none for NULL); flags is kept with the
+/// channel (nonzero keeps the window's size from page to page). Returns the
+/// channel, or NULL when all three are busy.
 struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window,
                                                 s32 entry, s32 x, s32 y,
                                                 u16 *spacing, s32 flags) {
@@ -548,10 +549,10 @@ struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window,
   return found;
 }
 
-// Starts a channel typing the decoded text at entry into the battle message
-// window. A channel that already serves a finished window continues below its
-// last line (scrolling up once both lines are used) unless keepPosition is
-// set. Returns the channel, or NULL when all three are busy.
+/// Starts a channel typing the decoded text at entry into the battle message
+/// window. A channel that already serves a finished window continues below its
+/// last line (scrolling up once both lines are used) unless keepPosition is
+/// set. Returns the channel, or NULL when all three are busy.
 struct UiChannelSlot *UiText_StartBattleMessage(struct UiWindow *window,
                                                 s32 entry, s32 keepPosition) {
   struct UiChannelSlot *slot;
@@ -608,19 +609,19 @@ struct UiChannelSlot *UiText_StartBattleMessage(struct UiWindow *window,
   return selected;
 }
 
-// Clears the text canvas to transparent.
+/// Clears the text canvas to transparent.
 s32 Ui_ClearVramBlock(void) {
   return Iwram_FillWords(UI_CANVAS_VRAM, UI_CANVAS_SIZE, 0);
 }
 
-// Fills the text canvas with the window background colour (4).
+/// Fills the text canvas with the window background colour (4).
 s32 Ui_FillVramBlockPattern(void) {
   return Iwram_FillWords(UI_CANVAS_VRAM, UI_CANVAS_SIZE,
                          UI_CANVAS_BACKGROUND_WORD);
 }
 
-// Resets the pen and text style of the first idle message channel, clearing
-// the canvas when the channel still has a window.
+/// Resets the pen and text style of the first idle message channel, clearing
+/// the canvas when the channel still has a window.
 void UiWork_ResetFreeChannel(void) {
   struct UiChannelSlot *slot = UI_WORK->channels;
   struct UiChannelSlot *selection = 0;
@@ -645,8 +646,8 @@ void UiWork_ResetFreeChannel(void) {
   }
 }
 
-// Copies the channel's text colour, outline and line spacing into the shared
-// glyph renderer before that channel draws its next character.
+/// Copies the channel's text colour, outline and line spacing into the shared
+/// glyph renderer before that channel draws its next character.
 void UiText_ApplyChannelStyle(struct UiChannelSlot *channel) {
   struct UiRenderWork *work = UI_WORK;
 
@@ -655,7 +656,7 @@ void UiText_ApplyChannelStyle(struct UiChannelSlot *channel) {
   work->lineSpacing = channel->lineSpacing;
 }
 
-// Starts a channel scrolling its canvas up a line, over two frames.
+/// Starts a channel scrolling its canvas up a line, over two frames.
 void UiText_StartCanvasScroll(struct UiChannelSlot *channel) {
   channel->transition = 2;
 }

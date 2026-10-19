@@ -1,14 +1,15 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Gust, Flying Attack and the rush bursts.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Gust, Flying Attack and the rush bursts.
 
 #include "../effect_internal.h"
 
-// Abilities: Gust (kind 219); Rapid Smash, Sonic Smash, Slice (kind 310).
-//
-// The flurry's entries: each passes its kind of flurry to
-// BattleFx_RunBurstScene. The dispatch table supplies actual effect
-// arguments; their variant selects the flurry when an entry covers several
-// modes.
+/// Abilities: Gust (kind 219); Rapid Smash, Sonic Smash, Slice (kind 310).
+///
+/// The flurry's entries: each passes its kind of flurry to
+/// BattleFx_RunBurstScene. The dispatch table supplies actual effect
+/// arguments; their variant selects the flurry when an entry covers several
+/// modes.
 void BattleFx_RunGust(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
     BattleFx_RunBurstScene(effect, 6);
@@ -21,33 +22,33 @@ void BattleFx_RunGust(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 8);
 }
 
-// Abilities: Bear Claw (kind 317); Counterstrike (kind 342).
-//
-// Play the first flurry style selected by the effect table.
+/// Abilities: Bear Claw (kind 317); Counterstrike (kind 342).
+///
+/// Play the first flurry style selected by the effect table.
 void BattleFx_RunBearClaw(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 0);
 }
-// Abilities: Ransack (kind 321); Mad Dash (kind 343).
-//
-// Use the same first flurry style for this alternate effect-table entry.
+/// Abilities: Ransack (kind 321); Mad Dash (kind 343).
+///
+/// Use the same first flurry style for this alternate effect-table entry.
 void BattleFx_RunRansack(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 0);
 }
-// Abilities: Bacteria Rush (kind 328).
-//
-// Play the second flurry style selected by the effect table.
+/// Abilities: Bacteria Rush (kind 328).
+///
+/// Play the second flurry style selected by the effect table.
 void BattleFx_RunBacteriaRush(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 1);
 }
-// Abilities: Freebite Rush (kind 334).
-//
-// Play the third flurry style selected by the effect table.
+/// Abilities: Freebite Rush (kind 334).
+///
+/// Play the third flurry style selected by the effect table.
 void BattleFx_RunFreebiteRush(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 2);
 }
-// Abilities: Flying Attack (kind 319); Swift Strike (kind 329).
-//
-// Choose flurry styles 3, 4 or 5 from the effect variant.
+/// Abilities: Flying Attack (kind 319); Swift Strike (kind 329).
+///
+/// Choose flurry styles 3, 4 or 5 from the effect variant.
 void BattleFx_RunFlyingAttack(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
     BattleFx_RunBurstScene(effect, 3);
@@ -61,33 +62,33 @@ void BattleFx_RunFlyingAttack(struct BattleEffectArgument *effect) {
 }
 
 // Flurries of strikes, and the rising rock wall.
-// The bytes of a gBurstScene_Records row.
+/// The bytes of a gBurstScene_Records row.
 enum BurstField {
-  BURST_SCENE_ARC_SHEET, // 0: blue arc A, else B; 1 also draws every strike as
-                         // an arc
-  BURST_SCENE_PALETTE,   // the palette's resource (0 to 3)
-  BURST_SCENE_STRIKES,   // the strikes
-  BURST_SCENE_MOTES,     // motes thrown by each strike
-  BURST_SCENE_INTERVAL,  // frames between strikes
-  BURST_SCENE_FRAMES,    // frames in the whole effect
-  BURST_SCENE_FLASH      // 1 fills the canvas on each hit
+  BURST_SCENE_ARC_SHEET, ///< 0: blue arc A, else B; 1 also draws every strike
+                         ///< as an arc
+  BURST_SCENE_PALETTE,   ///< the palette's resource (0 to 3)
+  BURST_SCENE_STRIKES,   ///< the strikes
+  BURST_SCENE_MOTES,     ///< motes thrown by each strike
+  BURST_SCENE_INTERVAL,  ///< frames between strikes
+  BURST_SCENE_FRAMES,    ///< frames in the whole effect
+  BURST_SCENE_FLASH      ///< 1 fills the canvas on each hit
 };
 
-// The packed flash pictures and the waves.
+/// The packed flash pictures and the waves.
 #define BURST_SCENE_FLASH_CELLS 0x5100
 #define BURST_SCENE_WAVE_CELLS (Ram_MapCellBuffer + 0x5e00)
 
-// Flurry: the user closes on the first target and strikes it again and
-// again; each strike shows an arc (or, in rows with arc sheet 0, a wave
-// for the third and fourth of every four), flashes and throws motes. A
-// strike lands 2 frames after it starts: an odd one jolts the target, and
-// the last knocks it back, shakes the screen harder and ends the attack.
-// The motes wait above the target until their strike releases them, then
-// bounce off the ground and die out.
-//
-// effect: the user and the targets; prelude 1 brings in a Jupiter djinni
-//         first.
-// mode   : the row of gBurstScene_Records.
+/// Flurry: the user closes on the first target and strikes it again and
+/// again; each strike shows an arc (or, in rows with arc sheet 0, a wave
+/// for the third and fourth of every four), flashes and throws motes. A
+/// strike lands 2 frames after it starts: an odd one jolts the target, and
+/// the last knocks it back, shakes the screen harder and ends the attack.
+/// The motes wait above the target until their strike releases them, then
+/// bounce off the ground and die out.
+///
+/// effect: the user and the targets; prelude 1 brings in a Jupiter djinni
+///         first.
+/// mode   : the row of gBurstScene_Records.
 void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition actorPos;
   struct EffectPosition targetPos;

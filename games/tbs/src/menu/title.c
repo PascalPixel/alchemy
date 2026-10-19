@@ -1,5 +1,6 @@
-// The title overlay: the Golden Sun logo and its sprites revealed over the
-// title screen.
+/// @file
+/// The title overlay: the Golden Sun logo and its sprites revealed over the
+/// title screen.
 
 #include "game_state.h"
 #include "vram_tab.h"
@@ -44,22 +45,22 @@
 static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);
 
-// Expose the title overlay entrance table to the scene loader.
+/// Expose the title overlay entrance table to the scene loader.
 u8 *Title_GetEntrances(void) { return (u8 *)gTitleEntrances; }
 
-// The title overlay needs no additional scene data.
+/// The title overlay needs no additional scene data.
 s32 SceneData_ReturnZero(void) { return 0; }
 
-// Expose the title overlay exit table to the scene loader.
+/// Expose the title overlay exit table to the scene loader.
 u8 *Title_GetExits(void) { return (u8 *)gTitleExits; }
 
-// The title overlay has no placed field actors.
+/// The title overlay has no placed field actors.
 u8 *Title_GetPlacements(void) { return (u8 *)gTitlePlacements; }
 
-// The title overlay has no field events.
+/// The title overlay has no field events.
 u8 *Title_GetEvents(void) { return (u8 *)gTitleEvents; }
 
-// Route the logo, completion presentation and new-game title entrances.
+/// Route the logo, completion presentation and new-game title entrances.
 s32 Title_Run(void) {
   s32 waitFrames;
 
@@ -134,8 +135,8 @@ s32 Title_Run(void) {
   return 0;
 }
 
-// Decode the language-specific title sprites and upload their palette and
-// tiles.
+/// Decode the language-specific title sprites and upload their palette and
+/// tiles.
 static void Title_LoadSprites(s32 unused) {
   u8 *decodedSprites;
   volatile u32 *dma3;
@@ -169,7 +170,7 @@ static void Title_LoadSprites(s32 unused) {
   MemFree(decodedSprites);
 }
 
-// Reveal successive sprite columns, flickering each newly reached column.
+/// Reveal successive sprite columns, flickering each newly reached column.
 static void Title_UpdateSpriteReveal(void) {
   u32 *attributes;
   struct TitleSprite *sprite;
@@ -237,7 +238,7 @@ static void Title_UpdateSpriteReveal(void) {
   gTitleRevealFrame++;
 }
 
-// Prepare the logo, reveal its sprites and then open the screen transition.
+/// Prepare the logo, reveal its sprites and then open the screen transition.
 static void Title_RevealScreen(s32 unused) {
   s32 brightnessStep;
 
@@ -275,7 +276,7 @@ static void Title_RevealScreen(s32 unused) {
   gEventWork->transitionFrames = 60;
 }
 
-// Load the logo palette and tiles, build its tilemap and reset scrolling.
+/// Load the logo palette and tiles, build its tilemap and reset scrolling.
 static void Title_LoadBackground(void) {
   u8 *encodedGraphics;
   s32 resourceId;

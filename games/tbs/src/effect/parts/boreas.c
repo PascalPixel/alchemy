@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// The Boreas summon.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// The Boreas summon.
 
 #include "../effect_internal.h"
 
@@ -11,23 +12,23 @@
 // is a loop over frames whose steps run in the order the original drew and
 // moved things, since the order of the random draws is part of the effect.
 
-// The smoke trails behind the spray, after the 128 particles in PARTICLES.
+/// The smoke trails behind the spray, after the 128 particles in PARTICLES.
 #define BOREAS_ICE_BLOCK_TRAILS                                                \
   ((struct EffectStep *)(Ram_MapCellBuffer + 0xe00))
 #define BOREAS_BIG_BLOCK_CELLS 0xc46      // the dropping 24x48 ice block
 #define BOREAS_FALLING_BLOCK_CELLS 0x14f9 // the diagonal 40x80 ice block
 
-// gBoreas_Points has an x and a y for each rock.
+/// gBoreas_Points has an x and a y for each rock.
 #define BOREAS_POINT_X(rock) gBoreas_Points[rock][0]
 #define BOREAS_POINT_Y(rock) gBoreas_Points[rock][1]
 
-// Abilities: Boreas (scene kind 10).
-//
-// Rocks and ice blocks: a window opens on rocks that crumble, a big ice
-// block drops and throws up spray; then ice blocks rain down on the
-// targets, and boulders crumble into bouncing chips.
-//
-// effect: the targets.
+/// Abilities: Boreas (scene kind 10).
+///
+/// Rocks and ice blocks: a window opens on rocks that crumble, a big ice
+/// block drops and throws up spray; then ice blocks rain down on the
+/// targets, and boulders crumble into bouncing chips.
+///
+/// effect: the targets.
 void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   s32 rockPoints[32][2]; // a copy of gBoreas_Points that nothing reads

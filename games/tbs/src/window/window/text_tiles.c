@@ -1,14 +1,14 @@
-// Part of window.c, the window object, compiled only through it.
-// Text drawn as tiles, text tile ownership and divider lines.
+/// @file
+/// Part of window.c, the window object, compiled only through it.
+/// Text drawn as tiles, text tile ownership and divider lines.
 
 #include "../window_internal.h"
 
-// Draws window tile pattern over the tile of tilemap entry *entry, with its
-// colours mapped through remap (0 leaves a pixel as it was). A shared tile
-// first gets a free tile of its own, which entry and mirror then point to.
-// Only nonzero remap entries replace pixels; shared tiles become private before
-// upload.
-// Nothing calls it.
+/// Draws window tile pattern over the tile of tilemap entry *entry, with its
+/// colours mapped through remap (0 leaves a pixel as it was). A shared tile
+/// first gets a free tile of its own, which entry and mirror then point to.
+/// Only nonzero remap entries replace pixels; shared tiles become private
+/// before upload. Nothing calls it.
 UNUSED void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
                                         u8 *remap) {
   struct UiRenderWork *work = UI_WORK;
@@ -74,11 +74,11 @@ UNUSED void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
           REG_DMA3);
 }
 
-// Draws a string of 16-bit character codes with the window font into tiles
-// of their own, starting x pixels into the first tile, and points tiles (and
-// the same entries in mirror) at them. Colour codes change the text colour.
-// Returns how many tiles the text covers.
-// The canvas is eight rows of 256 pixels; the pen must stay within each row.
+/// Draws a string of 16-bit character codes with the window font into tiles
+/// of their own, starting x pixels into the first tile, and points tiles (and
+/// the same entries in mirror) at them. Colour codes change the text colour.
+/// Returns how many tiles the text covers.
+/// The canvas is eight rows of 256 pixels; the pen must stay within each row.
 s32 UiText_RenderStringTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   /* FAKEMATCH: needed to match: an unread 32-byte reserve, the native frame's
    * extra bytes (the frame is 36 bytes without it). */
@@ -269,9 +269,9 @@ s32 UiText_RenderStringTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   return tileCount;
 }
 
-// Marks the text tiles under a tilemap rectangle (x, y, width and height in
-// tiles) as no longer shown, for reuse.
-// Only the dynamic text-tile ranges have allocation attributes to clear.
+/// Marks the text tiles under a tilemap rectangle (x, y, width and height in
+/// tiles) as no longer shown, for reuse.
+/// Only the dynamic text-tile ranges have allocation attributes to clear.
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height) {
   u8 *base = gWindowWork[0];
   u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)base);
@@ -294,7 +294,7 @@ void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height) {
   }
 }
 
-// Marks the text tiles the tilemap shows, and frees those it no longer shows.
+/// Marks the text tiles the tilemap shows, and frees those it no longer shows.
 void UiWindow_MarkVisibleTileAttributes(void) {
   u8 *base = gWindowWork[0];
   u16 *cursor = (u16 *)base;
@@ -322,9 +322,9 @@ void UiWindow_MarkVisibleTileAttributes(void) {
   }
 }
 
-// Frees every text tile, and with flag set lets text tiles take the second
-// tile range (0x200 to 0x27f) too.
-// The second range extends text capacity from 128 to 256 tiles.
+/// Frees every text tile, and with flag set lets text tiles take the second
+/// tile range (0x200 to 0x27f) too.
+/// The second range extends text capacity from 128 to 256 tiles.
 void UiWork_SetAltFlagAndClearTable(s32 allowAlternateTiles) {
   s32 i;
   s32 j;
@@ -355,12 +355,12 @@ void UiWork_SetAltFlagAndClearTable(s32 allowAlternateTiles) {
   } while (j >= 0);
 }
 
-// Does nothing, and nothing calls it.
+/// Does nothing, and nothing calls it.
 UNUSED void UiRender_ReservedNoOp(void) {}
 
-// Draws a straight divider line inside a window from tile (x1, y1) to
-// (x2, y2), horizontal or vertical: its ends join the frame or the lines they
-// meet, and it crosses the lines it passes over.
+/// Draws a straight divider line inside a window from tile (x1, y1) to
+/// (x2, y2), horizontal or vertical: its ends join the frame or the lines they
+/// meet, and it crosses the lines it passes over.
 void UiWindow_DrawDividerLine(struct UiWindow *win, u32 x1, u32 y1, u32 x2,
                               u32 y2) {
   struct UiRenderWork *work = UI_WORK;
@@ -519,21 +519,21 @@ void UiWindow_DrawDividerLine(struct UiWindow *win, u32 x1, u32 y1, u32 x2,
   }
 }
 
-// Sets the text colour (0 to 15) of drawn text.
+/// Sets the text colour (0 to 15) of drawn text.
 void UiWork_SetParamNibble(s32 param) {
   struct UiRenderWork *work = UI_WORK;
 
   work->colour = param & 15;
 }
 
-// Sets the text style (UiRenderWork.outline) of drawn text.
+/// Sets the text style (UiRenderWork.outline) of drawn text.
 void UiWork_SetRenderWord(u16 value) {
   struct UiRenderWork *work = UI_WORK;
 
   work->outline = value;
 }
 
-// Decodes a message and draws it into a text canvas window at pixel (x, y).
+/// Decodes a message and draws it into a text canvas window at pixel (x, y).
 void UiText_DrawResource(s32 message, struct UiWindow *window, s32 x, s32 y) {
   struct UiRenderWork *canvas = UI_WORK;
   u16 *counter = &canvas->count;
@@ -546,8 +546,8 @@ void UiText_DrawResource(s32 message, struct UiWindow *window, s32 x, s32 y) {
   UiText_RenderWideStringAtOffset(canvas->entries, window, x, y);
 }
 
-// Decodes a message and draws it as tiles in a window at pixel (offsetX,
-// offsetY) of its interior.
+/// Decodes a message and draws it as tiles in a window at pixel (offsetX,
+/// offsetY) of its interior.
 void UiText_DrawCharacterAtOffset(s32 message, const struct UiWindow *window,
                                   u32 offsetX, u32 offsetY) {
   s32 byteOffset;
@@ -579,8 +579,8 @@ void UiText_DrawCharacterAtOffset(s32 message, const struct UiWindow *window,
   }
 }
 
-// Copies a zero-terminated byte string into the text renderer's halfwords.
-// The destination needs one halfword per input byte, including the terminator.
+/// Copies a zero-terminated byte string into the text renderer's halfwords.
+/// The destination needs one halfword per input byte, including the terminator.
 static __inline__ void UiText_WidenByteString(const u8 *input, u16 *output) {
   if (*input != 0) {
     do {
@@ -592,9 +592,9 @@ static __inline__ void UiText_WidenByteString(const u8 *input, u16 *output) {
   *output = 0;
 }
 
-// Draws a byte string into a text canvas window at pixel (x, y).
-// The 256-halfword scratch requires at most 255 input bytes before the
-// terminator.
+/// Draws a byte string into a text canvas window at pixel (x, y).
+/// The 256-halfword scratch requires at most 255 input bytes before the
+/// terminator.
 void UiText_DrawString(const u8 *text, struct UiWindow *window, s32 x, s32 y) {
   s16 *buffer;
   const u8 *input;
@@ -606,10 +606,10 @@ void UiText_DrawString(const u8 *text, struct UiWindow *window, s32 x, s32 y) {
   MemFree(buffer);
 }
 
-// Draws a byte string as tiles in window work at pixel (offsetX, offsetY) of
-// its interior.
-// The conversion scratch has the same 255-byte input limit as
-// UiText_DrawString.
+/// Draws a byte string as tiles in window work at pixel (offsetX, offsetY) of
+/// its interior.
+/// The conversion scratch has the same 255-byte input limit as
+/// UiText_DrawString.
 void UiText_DrawStringAtOffset(const u8 *text, const struct UiWindow *work,
                                s32 offsetX, s32 offsetY) {
   s16 *buffer;
@@ -638,10 +638,10 @@ void UiText_DrawStringAtOffset(const u8 *text, const struct UiWindow *work,
   }
 }
 
-// Draws a byte string into a window's tilemap at pixel (x, y) of its
-// interior, rounded down to tiles.
-// Bytes widen to character codes; pixel coordinates round down to tile
-// coordinates.
+/// Draws a byte string into a window's tilemap at pixel (x, y) of its
+/// interior, rounded down to tiles.
+/// Bytes widen to character codes; pixel coordinates round down to tile
+/// coordinates.
 void UiText_DrawStringInWindow(const u8 *text, struct UiWindow *window, u32 x,
                                u32 y) {
   u16 *buffer = Runtime_BumpAllocateAlternatePool(UI_BYTE_STRING_BUFFER_SIZE);
@@ -652,8 +652,8 @@ void UiText_DrawStringInWindow(const u8 *text, struct UiWindow *window, u32 x,
   MemFree(buffer);
 }
 
-// Draws a number (width as UiText_FormatNumber) into a text canvas window at
-// pixel (x, y).
+/// Draws a number (width as UiText_FormatNumber) into a text canvas window at
+/// pixel (x, y).
 void UiText_DrawNumber(s32 value, s32 width, struct UiWindow *window, s32 x,
                        s32 y) {
   u8 numberText[UI_NUMBER_BUFFER_SIZE];
@@ -662,8 +662,8 @@ void UiText_DrawNumber(s32 value, s32 width, struct UiWindow *window, s32 x,
                     y);
 }
 
-// Draws a number (width as UiText_FormatNumber) as tiles in a window at pixel
-// (x, y) of its interior.
+/// Draws a number (width as UiText_FormatNumber) as tiles in a window at pixel
+/// (x, y) of its interior.
 void UiText_DrawNumberAtOffset(s32 value, s32 width,
                                const struct UiWindow *window, s32 x, s32 y) {
   u8 numberText[UI_NUMBER_BUFFER_SIZE];
@@ -672,8 +672,8 @@ void UiText_DrawNumberAtOffset(s32 value, s32 width,
                             window, x, y);
 }
 
-// Draws a number (width as UiText_FormatNumber) into a window's tilemap at
-// pixel (x, y) of its interior.
+/// Draws a number (width as UiText_FormatNumber) into a window's tilemap at
+/// pixel (x, y) of its interior.
 void UiText_DrawNumberInWindow(s32 value, s32 width, struct UiWindow *window,
                                s32 x, s32 y) {
   u8 numberText[UI_NUMBER_BUFFER_SIZE];
@@ -682,9 +682,9 @@ void UiText_DrawNumberInWindow(s32 value, s32 width, struct UiWindow *window,
                             window, x, y);
 }
 
-// Draws a four-digit number after a two-glyph sign (window tiles 0x1d and
-// 0x1e, or 0x1f and 0x1e with variant set) as tiles in window work at pixel
-// (offsetX, offsetY) of its interior.
+/// Draws a four-digit number after a two-glyph sign (window tiles 0x1d and
+/// 0x1e, or 0x1f and 0x1e with variant set) as tiles in window work at pixel
+/// (offsetX, offsetY) of its interior.
 void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
                                        s32 offsetX, s32 offsetY, s32 variant) {
   u8 formatted[UI_NUMBER_BUFFER_SIZE];

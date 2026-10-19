@@ -1,12 +1,13 @@
-// Part of battle_command.c, the menu object, compiled only through it.
-// The name entry screen.
+/// @file
+/// Part of battle_command.c, the menu object, compiled only through it.
+/// The name entry screen.
 
 #include "../battle_command_internal.h"
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-// The international name entry has no voicing marks: where the Japanese
-// edition checks a mark against the letter before it, this edition keeps a
-// function that accepts every character. Nothing calls it.
+/// The international name entry has no voicing marks: where the Japanese
+/// edition checks a mark against the letter before it, this edition keeps a
+/// function that accepts every character. Nothing calls it.
 UNUSED s32 NameEntry_AcceptsMark(s32 mark, s32 letter) { return 1; }
 #else
 
@@ -15,9 +16,9 @@ UNUSED s32 NameEntry_AcceptsMark(s32 mark, s32 letter) { return 1; }
 #define NAME_VOICED_MARK 0xde     // dakuten
 #define NAME_SEMIVOICED_MARK 0xdf // handakuten
 
-// Returns whether `mark` may follow `letter` in a Japanese name: any
-// character but a voicing mark may, and a voicing mark only after a letter
-// in its table of ranges (pairs of first and last letter, ended by 0).
+/// Returns whether `mark` may follow `letter` in a Japanese name: any
+/// character but a voicing mark may, and a voicing mark only after a letter
+/// in its table of ranges (pairs of first and last letter, ended by 0).
 s32 NameEntry_AcceptsMark(s32 mark, s32 letter) {
   const u8 *range;
 
@@ -34,8 +35,8 @@ s32 NameEntry_AcceptsMark(s32 mark, s32 letter) {
   return 0;
 }
 
-// Returns how many letters the Japanese name `name` has, not counting the
-// voicing marks.
+/// Returns how many letters the Japanese name `name` has, not counting the
+/// voicing marks.
 s32 NameEntry_CountLetters(const u8 *name) {
   s32 count;
 
@@ -49,9 +50,9 @@ s32 NameEntry_CountLetters(const u8 *name) {
 }
 #endif
 
-// Decompresses the type-01 tilemap `source` and copies it over `window`'s
-// rectangle, both into the BG screen block at 0x06002000 and into the UI
-// tilemap that mirrors it.
+/// Decompresses the type-01 tilemap `source` and copies it over `window`'s
+/// rectangle, both into the BG screen block at 0x06002000 and into the UI
+/// tilemap that mirrors it.
 void UiWindow_CopyTilemapRegion(const struct UiWindow *window,
                                 const void *source) {
   struct UiRenderWork *work = UI_WORK;
@@ -82,9 +83,9 @@ void UiWindow_CopyTilemapRegion(const struct UiWindow *window,
   MemFree(buffer);
 }
 
-// Like UiWindow_SetTileAttributeBitRect, but ORs all of `palette` into the
-// palette number of each entry (bits 12-15) after clearing only its lowest
-// bit.
+/// Like UiWindow_SetTileAttributeBitRect, but ORs all of `palette` into the
+/// palette number of each entry (bits 12-15) after clearing only its lowest
+/// bit.
 void UiWindow_SetTileAttributeRect(const struct UiWindow *window, s32 x, s32 y,
                                    s32 width, s32 height, u32 palette) {
   u8 *tilemap = gWindowWork[0];
@@ -127,12 +128,12 @@ void UiWindow_SetTileAttributeRect(const struct UiWindow *window, s32 x, s32 y,
   }
 }
 
-// Loads the pointing hand cursor's tiles into VRAM slot `slot`.
+/// Loads the pointing hand cursor's tiles into VRAM slot `slot`.
 void Resource_CopyFixedBlockB(s32 slot) {
   VramCache_Load(slot, 0x80, gResource_FixedBlockBTiles);
 }
 
-// Loads the 16x16 sprite gResource_FixedBlockATiles into VRAM slot `slot`.
+/// Loads the 16x16 sprite gResource_FixedBlockATiles into VRAM slot `slot`.
 void Resource_CopyFixedBlockA(s32 slot) {
   VramCache_Load(slot, 0x80, gResource_FixedBlockATiles);
 }
@@ -145,8 +146,8 @@ void Resource_CopyFixedBlockA(s32 slot) {
 #define NAME_MAX_BYTES 14 // stored name bytes, excluding its terminator
 
 #if TBS_PATCH_1
-// Puts the string `str` into the UI's text entries and returns its width in
-// pixels.
+/// Puts the string `str` into the UI's text entries and returns its width in
+/// pixels.
 s32 UiText_SetRenderString(const u8 *str) {
   struct UiRenderWork *work;
   u16 *dst;
@@ -170,13 +171,13 @@ s32 UiText_SetRenderString(const u8 *str) {
   return width;
 }
 
-// The text control code that sets the colour of the text after it, from the
-// byte that follows ({text_color:N} in the message catalogs).
+/// The text control code that sets the colour of the text after it, from the
+/// byte that follows ({text_color:N} in the message catalogs).
 #define TEXT_COLOR_COMMAND 8
 
-// Draws the name being entered, `name`, at the top left of `window`, with
-// the free places up to its seventh character shown as underscores in text
-// colour 2.
+/// Draws the name being entered, `name`, at the top left of `window`, with
+/// the free places up to its seventh character shown as underscores in text
+/// colour 2.
 void UiText_DrawPaddedLabel(struct UiWindow *window, u8 *name) {
   u8 text[20];
   s32 length = 0;
@@ -223,11 +224,11 @@ void UiText_DrawPaddedLabel(struct UiWindow *window, u8 *name) {
 #define NAME_END_KEY_WIDTH 3
 #endif
 
-// The name entry screen for party member `member`: the player types a name
-// of up to NAME_MAX_LETTERS letters on the keyboard and ends with End (or
-// Start, which jumps there). A puts the key under the cursor into the name,
-// B or Delete removes the last letter, and B on an empty name cancels. Ending
-// with an empty name keeps the old one. Returns 0, or -1 when cancelled.
+/// The name entry screen for party member `member`: the player types a name
+/// of up to NAME_MAX_LETTERS letters on the keyboard and ends with End (or
+/// Start, which jumps there). A puts the key under the cursor into the name,
+/// B or Delete removes the last letter, and B on an empty name cancels. Ending
+/// with an empty name keeps the old one. Returns 0, or -1 when cancelled.
 s32 NameEntry_EditOwnerName(s32 member) {
   struct UiWindow *nameWindow;
   s32 result = 0;
@@ -481,11 +482,11 @@ s32 NameEntry_EditOwnerName(s32 member) {
 }
 #else
 
-// The name entry screen for party member `member`: the player types a name
-// of up to NAME_MAX_LETTERS letters on the keyboard and ends with End (or
-// Start, which jumps there). A puts the key under the cursor into the name,
-// B or Delete removes the last letter, and B on an empty name cancels. Ending
-// with an empty name keeps the old one. Returns 0, or -1 when cancelled.
+/// The name entry screen for party member `member`: the player types a name
+/// of up to NAME_MAX_LETTERS letters on the keyboard and ends with End (or
+/// Start, which jumps there). A puts the key under the cursor into the name,
+/// B or Delete removes the last letter, and B on an empty name cancels. Ending
+/// with an empty name keeps the old one. Returns 0, or -1 when cancelled.
 s32 NameEntry_EditOwnerName(s32 member) {
   struct UiWindow *nameWindow;
   s32 result = 0;

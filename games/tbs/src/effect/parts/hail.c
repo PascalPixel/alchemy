@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Hail and Ground.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Hail and Ground.
 
 #include "../effect_internal.h"
 
@@ -8,22 +9,22 @@
 
 #define HAIL_CHIP_COUNT 64 // ice chips
 
-// Where the water burst's pictures sit in the sheet, after the waves.
+/// Where the water burst's pictures sit in the sheet, after the waves.
 #define HAIL_CHIP_CELLS 0x400
 #define HAIL_DJINNI_CELLS 0x65c0
 
 #define HAIL_FRAMES 64
 
-// Abilities: Hail (kind 207).
-//
-// Water burst: after a Mercury djinni enters, ice chips burst out of the
-// first target and waves rise along the bottom of the screen; the canvas
-// fades out over the last 16 of its 64 frames. The 64 chips start together
-// and are let go four a frame from frame 4, alternately mirrored; the
-// battle shows the damage on frame 8. The chips live in PARTICLES,
-// since work holds the waves' sheet.
-//
-// effect: the user and the targets; prelude 1 keeps the djinni circling.
+/// Abilities: Hail (kind 207).
+///
+/// Water burst: after a Mercury djinni enters, ice chips burst out of the
+/// first target and waves rise along the bottom of the screen; the canvas
+/// fades out over the last 16 of its 64 frames. The 64 chips start together
+/// and are let go four a frame from frame 4, alternately mirrored; the
+/// battle shows the damage on frame 8. The chips live in PARTICLES,
+/// since work holds the waves' sheet.
+///
+/// effect: the user and the targets; prelude 1 keeps the djinni circling.
 void BattleFx_RunHail(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -148,7 +149,7 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-// The small Venus djinni in the rock toss's sheet.
+/// The small Venus djinni in the rock toss's sheet.
 #define GROUND_DJINNI_CELLS 0x65c0
 
 #define GROUND_FRAMES 96
@@ -157,14 +158,14 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
 #define GROUND_ROCKS 6          // rocks thrown
 #define GROUND_CHIPS_PER_ROCK 4 // chips each rock sheds
 
-// Abilities: Ground (kind 203).
-//
-// Venus djinni rock toss: after a Venus djinni enters, six rocks rise from
-// the user shedding chips, swirl, and home in on the first target, each
-// hitting it as it lands. A rock's variant is 1 while it flies and 0 once
-// it has hit; the chips are particles 32 to 63, four for each rock.
-//
-// effect: the user and the targets; prelude 1 keeps the djinni circling.
+/// Abilities: Ground (kind 203).
+///
+/// Venus djinni rock toss: after a Venus djinni enters, six rocks rise from
+/// the user shedding chips, swirl, and home in on the first target, each
+/// hitting it as it lands. A rock's variant is 1 while it flies and 0 once
+/// it has hit; the chips are particles 32 to 63, four for each rock.
+///
+/// effect: the user and the targets; prelude 1 keeps the djinni circling.
 void BattleFx_RunGround(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -325,14 +326,14 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-// Shakes the battle view while gBattleFxWork's shakeFrames lasts, moving
-// BG1 and the projection centre by a random offset; once the shake runs
-// out, BG1 returns to its saved position and the centre to (120, 120). It
-// takes two random numbers each shaking frame, x first.
-//
-// rangeX: the horizontal range, a power of two.
-// rangeY: the vertical range, a power of two; both offsets are centred on
-//         half of it.
+/// Shakes the battle view while gBattleFxWork's shakeFrames lasts, moving
+/// BG1 and the projection centre by a random offset; once the shake runs
+/// out, BG1 returns to its saved position and the centre to (120, 120). It
+/// takes two random numbers each shaking frame, x first.
+///
+/// rangeX: the horizontal range, a power of two.
+/// rangeY: the vertical range, a power of two; both offsets are centred on
+///         half of it.
 void Camera_ApplyShake(s32 rangeX, u32 rangeY) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
 

@@ -1,17 +1,18 @@
-// Part of window.c, the window object, compiled only through it.
-// The area name notice, the Psynergy shortcut picker and heap block 19.
+/// @file
+/// Part of window.c, the window object, compiled only through it.
+/// The area name notice, the Psynergy shortcut picker and heap block 19.
 
 #include "../window_internal.h"
 
-// The area name notice's fields, which live in the event work block.
+/// The area name notice's fields, which live in the event work block.
 struct TimedNoticeWork {
-  u8 eventWork[0x230]; // the event work's other fields
+  u8 eventWork[0x230]; ///< the event work's other fields
   struct UiWindow *window;
   u16 countdown;
 };
 
-// Shows the area's name in a window near the top of the screen for 90 frames.
-// The event work owns the window and countdown until the scheduler closes it.
+/// Shows the area's name in a window near the top of the screen for 90 frames.
+/// The event work owns the window and countdown until the scheduler closes it.
 void UiTimedNotice_Create(void) {
   struct TimedNoticeWork *notice;
   s32 height;
@@ -37,7 +38,7 @@ void UiTimedNotice_Create(void) {
   Scheduler_AddOrUpdateCallback(UiTimedNotice_Tick, 0xc80);
 }
 
-// Counts the area name down, and closes it at 0.
+/// Counts the area name down, and closes it at 0.
 void UiTimedNotice_Tick(void) {
   struct TimedNoticeWork *notice;
   u16 framesLeft;
@@ -50,7 +51,7 @@ void UiTimedNotice_Tick(void) {
   }
 }
 
-// Closes the area name at once, if it is shown.
+/// Closes the area name at once, if it is shown.
 void UiTimedNotice_CloseIfActive(void) {
   struct UiWindow *window;
 
@@ -61,19 +62,19 @@ void UiTimedNotice_CloseIfActive(void) {
   }
 }
 
-// Removes the item from the party's inventory and returns 0; the first
-// argument is unused.
+/// Removes the item from the party's inventory and returns 0; the first
+/// argument is unused.
 s32 Item_RemoveFromInventory(s32 unused, s32 itemId) {
   PartyInventory_RemoveFar(itemId);
   return 0;
 }
 
-// Returns 1.
+/// Returns 1.
 s32 Item_ReturnTrue(void) { return 1; }
 
-// Steps the window hue one step: back when keys contains LEFT, on
-// otherwise.
-// Nothing calls it.
+/// Steps the window hue one step: back when keys contains LEFT, on
+/// otherwise.
+/// Nothing calls it.
 UNUSED void OptionMenu_StepWindowHue(s32 keys) {
   u8 hue = gGameState.paletteGlow[0];
   if (keys & KEY_LEFT)
@@ -88,11 +89,11 @@ struct AbilityListEntry {
   u16 ability;
 };
 
-// Lets the player pick two Psynergy shortcuts from all the party's Psynergy,
-// showing each one's cost and description, and stores them in
-// gGameState.firstShortcut and secondShortcut (owner << 10 | Psynergy).
-// This debug path seeds extra Psynergy before enumerating the party's
-// shortcuts.
+/// Lets the player pick two Psynergy shortcuts from all the party's Psynergy,
+/// showing each one's cost and description, and stores them in
+/// gGameState.firstShortcut and secondShortcut (owner << 10 | Psynergy).
+/// This debug path seeds extra Psynergy before enumerating the party's
+/// shortcuts.
 void Debug_SelectAbilityPair(void) {
   struct AbilityListEntry *list;
   struct UiWindow *win;
@@ -227,10 +228,10 @@ void Debug_SelectAbilityPair(void) {
   MemFree(list);
 }
 
-// Lists every Psynergy of the party's active members as (owner, Psynergy)
-// pairs in output and returns how many.
-// output must hold every owner's nonzero action slots; there is no capacity
-// argument.
+/// Lists every Psynergy of the party's active members as (owner, Psynergy)
+/// pairs in output and returns how many.
+/// output must hold every owner's nonzero action slots; there is no capacity
+/// argument.
 s32 Party_ListPsynergy(struct AbilityListEntry *output) {
   u16 ownerIds[14];
   s32 outputCount = 0;
@@ -261,9 +262,9 @@ s32 Party_ListPsynergy(struct AbilityListEntry *output) {
   return outputCount;
 }
 
-// Finds the two Psynergy shortcuts in a list from Party_ListPsynergy, and
-// returns their indexes (0 for one not found).
-// A shortcut absent from the list falls back to entry 0.
+/// Finds the two Psynergy shortcuts in a list from Party_ListPsynergy, and
+/// returns their indexes (0 for one not found).
+/// A shortcut absent from the list falls back to entry 0.
 void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
                               const struct AbilityListEntry *entries) {
   s32 entryIndex;
@@ -288,11 +289,11 @@ void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
   }
 }
 
-// Runs the Psynergy shortcut picker.
+/// Runs the Psynergy shortcut picker.
 void Menu_RunSelectionHook(void) { Debug_SelectAbilityPair(); }
 
-// The work block of heap slot 19: two icon flags and resources and a window,
-// among fields nothing here uses.
+/// The work block of heap slot 19: two icon flags and resources and a window,
+/// among fields nothing here uses.
 struct SelectionWorkspace {
   u8 unk000[0x46];
   u16 firstActive;
@@ -305,8 +306,8 @@ struct SelectionWorkspace {
   u8 unkff8[12];
 };
 
-// Allocates the work block of heap slot 19 and clears its two icon flags.
-// Nothing calls it.
+/// Allocates the work block of heap slot 19 and clears its two icon flags.
+/// Nothing calls it.
 UNUSED void Menu_AllocateSelectionWorkspace(void) {
   struct SelectionWorkspace *work;
   u32 zero;
@@ -317,9 +318,9 @@ UNUSED void Menu_AllocateSelectionWorkspace(void) {
   work->secondActive = zero;
 }
 
-// Closes the window of heap slot 19's work block, frees its two icons and
-// frees the block.
-// Nothing calls it.
+/// Closes the window of heap slot 19's work block, frees its two icons and
+/// frees the block.
+/// Nothing calls it.
 UNUSED void Menu_ReleaseSelectionWorkspace(void) {
   struct SelectionWorkspace *state;
 

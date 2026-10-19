@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Planet Diver, Haunt and the orbiting spirals.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Planet Diver, Haunt and the orbiting spirals.
 
 #include "../effect_internal.h"
 
@@ -19,16 +20,16 @@
 
 // The leap that falls as a ball of fire.
 
-// One chip of the impact, laid over the same 28-byte records as PARTICLES
-// but with its velocities in other places than struct EffectStep's.
+/// One chip of the impact, laid over the same 28-byte records as PARTICLES
+/// but with its velocities in other places than struct EffectStep's.
 struct ImpactChip {
-  s32 x; // canvas position, 16.16 fixed point
+  s32 x; ///< canvas position, 16.16 fixed point
   s32 y;
   s32 velocityX;
   s32 unused0c;
   s32 velocityY;
   s32 unused14;
-  s32 life; // frames left
+  s32 life; ///< frames left
 };
 
 #define PLANET_DIVER_IMPACT_CHIPS ((struct ImpactChip *)Ram_MapCellBuffer)
@@ -37,12 +38,12 @@ struct ImpactChip {
 #define PLANET_DIVER_CLEARED_CHIPS 1024 // map-buffer chip slots cleared first
 #define PLANET_DIVER_CHIPS 256          // chips the fireball bursts into
 
-// Abilities: Planet Diver (kind 60).
-//
-// The user flashes and leaps into the air, turns into a ball of fire, falls
-// onto the first target and bursts into chips that bounce on the ground. 88
-// frames. effect->side says which way the ball falls; actors[0] is where it
-// lands.
+/// Abilities: Planet Diver (kind 60).
+///
+/// The user flashes and leaps into the air, turns into a ball of fire, falls
+/// onto the first target and bursts into chips that bounce on the ground. 88
+/// frames. effect->side says which way the ball falls; actors[0] is where it
+/// lands.
 void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   BlitterPair draw;
@@ -218,14 +219,14 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
 #define HAUNT_SKULLS 8      // skulls drawn around each target
 #define HAUNT_SLOTS 64      // particles reserved for each target
 
-// Abilities: Haunt (kind 39).
-//
-// Skulls close in on each target in turn. Around each target, 32 frames apart,
-// eight skulls appear one every 4 frames, scattered up to 64 pixels away, and
-// close in on a point 20 pixels above the target while the group spins; the
-// target flashes 32 frames into its turn, and a skull that reaches the centre
-// is no longer drawn. The effect layer ripples throughout. PARTICLES holds 64
-// skulls per target, of which the first 8 are used.
+/// Abilities: Haunt (kind 39).
+///
+/// Skulls close in on each target in turn. Around each target, 32 frames apart,
+/// eight skulls appear one every 4 frames, scattered up to 64 pixels away, and
+/// close in on a point 20 pixels above the target while the group spins; the
+/// target flashes 32 frames into its turn, and a skull that reaches the centre
+/// is no longer drawn. The effect layer ripples throughout. PARTICLES holds 64
+/// skulls per target, of which the first 8 are used.
 void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   s32 point[3];
@@ -334,13 +335,13 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
 
 #define ORBITING_SPIRALS_LIFE 60 // frames each target's spirals turn
 
-// Abilities: none (kind 34).
-//
-// Four spirals circle 40 pixels above each target in turn, 16 frames apart, for
-// 60 frames each, 16 pixels out from the centre; each target takes its damage
-// pose halfway through. The effect layer ripples throughout. Signed sine/cosine
-// results are scaled by multiplication: negative left shifts were undefined,
-// while these products stay within signed 32 bits.
+/// Abilities: none (kind 34).
+///
+/// Four spirals circle 40 pixels above each target in turn, 16 frames apart,
+/// for 60 frames each, 16 pixels out from the centre; each target takes its
+/// damage pose halfway through. The effect layer ripples throughout. Signed
+/// sine/cosine results are scaled by multiplication: negative left shifts were
+/// undefined, while these products stay within signed 32 bits.
 void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

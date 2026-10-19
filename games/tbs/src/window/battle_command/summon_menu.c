@@ -1,5 +1,6 @@
-// Part of battle_command.c, the menu object, compiled only through it.
-// The battle summon menu.
+/// @file
+/// Part of battle_command.c, the menu object, compiled only through it.
+/// The battle summon menu.
 
 #include "../battle_command_internal.h"
 
@@ -11,9 +12,9 @@
 
 #define SUMMON_END 32 // End of summon list
 
-// Show learned summons four per page; return the selected summon number.
-// Cancel returns -1.
-// standby: number of standby Djinn for each element
+/// Show learned summons four per page; return the selected summon number.
+/// Cancel returns -1.
+/// standby: number of standby Djinn for each element
 s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
   struct CursorSprite cursor;
   struct MenuSprite sprites[4];

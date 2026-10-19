@@ -1,19 +1,20 @@
-// Part of menu.c, the menu object, compiled only through it.
-// Using an item or Psynergy from the menu: what it does to the party, and the
-// sound it plays.
+/// @file
+/// Part of menu.c, the menu object, compiled only through it.
+/// Using an item or Psynergy from the menu: what it does to the party, and the
+/// sound it plays.
 
 #include "../menu_internal.h"
 
-// Copies and lightens the palette used by the item-use animation.
+/// Copies and lightens the palette used by the item-use animation.
 void Item_PrepareUsePalette(void) {
   Palette_CopyObjectBankToBackground14();
   Palette_LightenBankHighlight(13);
 }
 
-// Reserved empty callback during an item's menu animation.
+/// Reserved empty callback during an item's menu animation.
 void Item_UseNoOpCallback(void) {}
 
-// Applies the slot's action, then consumes or transforms the item on success.
+/// Applies the slot's action, then consumes or transforms the item on success.
 s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
   struct InventoryMenuState *menu;
   s32 useResult;
@@ -43,11 +44,11 @@ s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
   return useResult;
 }
 
-// Returns the original item callback's success value.
+/// Returns the original item callback's success value.
 s32 Item_ReturnOne(void) { return 1; }
 
-// Applies healing or permanent-stat effects to one member or the whole party.
-// The result message is kept in menu work; -1 reports that nothing changed.
+/// Applies healing or permanent-stat effects to one member or the whole party.
+/// The result message is kept in menu work; -1 reports that nothing changed.
 s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
                                 s32 fixedScale) {
   struct BattleAct *effect;
@@ -307,13 +308,13 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   return 0;
 }
 
-// Runs the animation selected by the item's action definition.
+/// Runs the animation selected by the item's action definition.
 void Item_PlayUseAnimation(u32 item) {
   Ability_PlayUseAnimation(Item_GetDirectFar(item)->actionId &
                            OWNER_ACTION_ID_MASK);
 }
 
-// Starts the action's menu animation and waits for its completion.
+/// Starts the action's menu animation and waits for its completion.
 void Ability_PlayUseAnimation(s32 action) {
   s32 animationType;
   u32 targetType;
@@ -376,5 +377,5 @@ void Ability_PlayUseAnimation(s32 action) {
   }
 }
 
-// Returns the original reserved zero value.
+/// Returns the original reserved zero value.
 s32 Menu_ReservedStatusZero(void) { return 0; }

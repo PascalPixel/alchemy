@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// The Kirin summon.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// The Kirin summon.
 
 #include "../effect_internal.h"
 
@@ -13,19 +14,19 @@
 
 #define KIRIN_OBJECTS 9 // objects in the rows
 
-// Abilities: Kirin (scene kind 3).
-//
-// Over a scrolling forest a row of objects rides in on a wave trailing fire,
-// then sweeps across the targets, each throwing a burst of motes as the row
-// passes it.
-//
-// The scene runs in two stages. In the sweep (120 frames; A or B ends it
-// after frame 16), KIRIN_OBJECTS objects ride in on a sine wave while the
-// backdrop scrolls, a ring of motes opens around them and a trail of fire
-// follows. In the rise (96 frames) the row slides across the targets; each
-// target the row passes throws a burst of 32 motes and plays its hit
-// reaction, and the fire sheet slides off behind it. The battle shows the
-// damage at the end.
+/// Abilities: Kirin (scene kind 3).
+///
+/// Over a scrolling forest a row of objects rides in on a wave trailing fire,
+/// then sweeps across the targets, each throwing a burst of motes as the row
+/// passes it.
+///
+/// The scene runs in two stages. In the sweep (120 frames; A or B ends it
+/// after frame 16), KIRIN_OBJECTS objects ride in on a sine wave while the
+/// backdrop scrolls, a ring of motes opens around them and a trail of fire
+/// follows. In the rise (96 frames) the row slides across the targets; each
+/// target the row passes throws a burst of 32 motes and plays its hit
+/// reaction, and the fire sheet slides off behind it. The battle shows the
+/// damage at the end.
 void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   static struct SpriteScale sweepScale = {{{0x10000, 0x10000}}};
   static struct SpriteScale riseScale = {{{0x10000, 0x10000}}};

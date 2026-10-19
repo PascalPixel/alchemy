@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Bind and Triangle Strike.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Bind and Triangle Strike.
 
 #include "../effect_internal.h"
 
@@ -11,11 +12,11 @@
 // spaced points and a flare is stamped at each. The blue-ramp helper here
 // also converts a full-screen tiled picture in place, for Condemn.
 
-// Turn the screen into shades of blue, top down, with a ragged edge. Works
-// on a copy of the screen in Ram_MapCellBuffer. Each column starts up to 63
-// lines late, and the edge speeds up a little every frame; after at most 27
-// frames the picture moves onto a second blue ramp at colours 96 to 127.
-// Takes 256 random numbers, one a column. Nothing calls it.
+/// Turn the screen into shades of blue, top down, with a ragged edge. Works
+/// on a copy of the screen in Ram_MapCellBuffer. Each column starts up to 63
+/// lines late, and the edge speeds up a little every frame; after at most 27
+/// frames the picture moves onto a second blue ramp at colours 96 to 127.
+/// Takes 256 random numbers, one a column. Nothing calls it.
 UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
   s32 i, x, y, row, end, speed;
   s32 red, green, blue;
@@ -96,12 +97,12 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
   WaitFrames(1);
 }
 
-// Abilities: Bind (kind 38); Luff (kind 218).
-//
-// A triangle of light spins and shrinks onto the first target for 64 frames,
-// then a rune stands on the target; the battle shows the result on frame 64.
-// When effect->prelude is 1 a Jupiter Djinni appears first, sways and rises
-// away. The canvas darkens a little faster every 16 frames.
+/// Abilities: Bind (kind 38); Luff (kind 218).
+///
+/// A triangle of light spins and shrinks onto the first target for 64 frames,
+/// then a rune stands on the target; the battle shows the result on frame 64.
+/// When effect->prelude is 1 a Jupiter Djinni appears first, sways and rises
+/// away. The canvas darkens a little faster every 16 frames.
 void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   struct EffectPosition anchor;
   // World input and projected vertices reuse one coordinate workspace.
@@ -259,10 +260,10 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-// Abilities: none (kind 67).
-//
-// The spinning triangle and rune of BattleFx_RunBind without the Djinni; on
-// frame 46 the user steps up to the first target.
+/// Abilities: none (kind 67).
+///
+/// The spinning triangle and rune of BattleFx_RunBind without the Djinni; on
+/// frame 46 the user steps up to the first target.
 void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   struct EffectPosition anchor;
   // World input and projected vertices reuse one coordinate workspace.

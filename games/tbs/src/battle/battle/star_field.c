@@ -1,5 +1,6 @@
-// Part of battle.c, the battle object, compiled only through it.
-// A unit's elemental glow: the star field and the other glows.
+/// @file
+/// Part of battle.c, the battle object, compiled only through it.
+/// A unit's elemental glow: the star field and the other glows.
 
 #include "../battle_internal.h"
 
@@ -160,8 +161,8 @@ u32 BattleFx_UploadStarField(void) {
 #define STAR_FIELD_UPLOAD_CALLBACK ((SchedulerCallback)BattleFx_UploadStarField)
 #endif
 
-// Initializes sixteen sparks and three rings, loads the element palette and
-// blitters, then schedules canvas updates and uploads.
+/// Initializes sixteen sparks and three rings, loads the element palette and
+/// blitters, then schedules canvas updates and uploads.
 s32 BattleFx_InitializeStarField(s32 mode) {
   struct SparkWork *work;
   struct Spark *spark;
@@ -252,8 +253,8 @@ s32 BattleFx_InitializeStarField(s32 mode) {
   return Scheduler_AddOrUpdateCallback(STAR_FIELD_UPLOAD_CALLBACK, 0xc80);
 }
 
-// Clears the effect tiles, releases its canvas and blitters and removes both
-// star-field callbacks.
+/// Clears the effect tiles, releases its canvas and blitters and removes both
+/// star-field callbacks.
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused) {
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -266,7 +267,7 @@ s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused) {
   return Scheduler_RemoveCallback(STAR_FIELD_UPDATE_CALLBACK);
 }
 
-// Scales RGB555 channels by a 16.16 factor capped at 1x; returns zero.
+/// Scales RGB555 channels by a 16.16 factor capped at 1x; returns zero.
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
                                 s32 count) {
   s32 remaining;
@@ -304,8 +305,8 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
   return 0;
 }
 
-// Stages the unit's elemental glow: a tracked star field, a tracked effect
-// scene, a summon power burst or a Djinn-setting gathering burst.
+/// Stages the unit's elemental glow: a tracked star field, a tracked effect
+/// scene, a summon power burst or a Djinn-setting gathering burst.
 void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
                                     s32 variant) {
   /* FAKEMATCH(dead): an unused array for the frame's 40 bytes; without it, 2
@@ -403,10 +404,10 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
   }
 }
 
-// Restores the saved battle palette without dimming.
+/// Restores the saved battle palette without dimming.
 void BattlePres_RestorePalette(void) {
   BattlePresentation_SetPaletteLevel(0, 0);
 }
 
-// Removes the battle transition's interrupt handler.
+/// Removes the battle transition's interrupt handler.
 void Runtime_RemoveIrqHandlerSlot2(void) { Runtime_SetIrqHandler(2, 0, 0); }

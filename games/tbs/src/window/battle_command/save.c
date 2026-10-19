@@ -1,11 +1,12 @@
-// Part of battle_command.c, the menu object, compiled only through it.
-// Save files and the save file menu.
+/// @file
+/// Part of battle_command.c, the menu object, compiled only through it.
+/// Save files and the save file menu.
 
 #include "../battle_command_internal.h"
 
-// The three save files. Each is two 4 KB records of backup memory: record
-// `file` holds the first half of the 8 KB save buffer and record
-// `file + SAVE_FILE_COUNT` the second.
+/// The three save files. Each is two 4 KB records of backup memory: record
+/// `file` holds the first half of the 8 KB save buffer and record
+/// `file + SAVE_FILE_COUNT` the second.
 #define SAVE_FILE_COUNT 3
 #define SAVE_RECORD_BYTES 0x1000
 #define SAVE_NO_FREE_FILE 999
@@ -17,9 +18,9 @@
 #define SAVE_ERROR_NO_FILE -5   // no empty file to copy into
 #define SAVE_ERROR_NO_MEMORY -9 // "Unable to detect backup memory."
 
-// Writes the play time `frames` (at 60 frames a second) into `out` as hours
-// and minutes, "hhh:mm" with the hours right-aligned in three characters, and
-// returns `out`. The time stops at 999:59.
+/// Writes the play time `frames` (at 60 frames a second) into `out` as hours
+/// and minutes, "hhh:mm" with the hours right-aligned in three characters, and
+/// returns `out`. The time stops at 999:59.
 void *Text_FormatPlayTime(s32 frames, u8 *out) {
   u8 digits[64];
   u32 totalMinutes;
@@ -57,8 +58,8 @@ void *Text_FormatPlayTime(s32 frames, u8 *out) {
   return out;
 }
 
-// Returns the first save file whose summary shows it empty (level 0), or
-// SAVE_NO_FREE_FILE when all three are in use. The summaries must be loaded.
+/// Returns the first save file whose summary shows it empty (level 0), or
+/// SAVE_NO_FREE_FILE when all three are in use. The summaries must be loaded.
 u32 SaveState_FindFreeSummarySlot(void) {
   u32 file;
   struct SaveSummary *summary;
@@ -71,9 +72,9 @@ u32 SaveState_FindFreeSummarySlot(void) {
   return SAVE_NO_FREE_FILE;
 }
 
-// Returns how many save files there are, leaving out those whose summary has
-// its send flag set when `excludeSent` is nonzero, or SAVE_ERROR_NO_MEMORY
-// when the backup memory cannot be read.
+/// Returns how many save files there are, leaving out those whose summary has
+/// its send flag set when `excludeSent` is nonzero, or SAVE_ERROR_NO_MEMORY
+/// when the backup memory cannot be read.
 s32 SaveState_CountRecordsExcludingFlagged(s32 excludeSent) {
   s32 file;
   s32 count;
@@ -95,16 +96,16 @@ s32 SaveState_CountRecordsExcludingFlagged(s32 excludeSent) {
   return count;
 }
 
-// The distance in bytes from one field of a save summary to another.
+/// The distance in bytes from one field of a save summary to another.
 #define SUMMARY_DISTANCE(from, to)                                             \
   ((u32)&((struct SaveSummary *)0)->to - (u32)&((struct SaveSummary *)0)->from)
 
-// Loads the save file summaries for the title menu and returns how many files
-// there are: plus 100 when every file has its send flag set, or
-// SAVE_ERROR_NO_MEMORY when the backup memory cannot be read. Sets
-// gTitleExtraOptionEnabled when a file has any of game flags 48-127 set, and
-// gTitleSendOptionEnabled when a file has its send flag set and R and Left are
-// held.
+/// Loads the save file summaries for the title menu and returns how many files
+/// there are: plus 100 when every file has its send flag set, or
+/// SAVE_ERROR_NO_MEMORY when the backup memory cannot be read. Sets
+/// gTitleExtraOptionEnabled when a file has any of game flags 48-127 set, and
+/// gTitleSendOptionEnabled when a file has its send flag set and R and Left are
+/// held.
 s32 SaveState_ScanRecordFlags(void) {
   /* FAKEMATCH: the signed cursor from the party tail keeps the native
    * literal base 0x1070 and the flag offsets 1 and 2. Measured: the
@@ -149,12 +150,12 @@ s32 SaveState_ScanRecordFlags(void) {
   return fileCount;
 }
 
-// Prepares the save buffer for writing: stamps the game state with the time
-// and options, then fills the file summary shown on the file menus (the
-// leader's name, level and class, the play time, area, coins, Djinn of each
-// element, the party, the send flag and how many of game flags 48-127 are
-// set) and its checksum, the sum of the 968 words from gGameFlagBytes on.
-// Returns the checksum.
+/// Prepares the save buffer for writing: stamps the game state with the time
+/// and options, then fills the file summary shown on the file menus (the
+/// leader's name, level and class, the play time, area, coins, Djinn of each
+/// element, the party, the send flag and how many of game flags 48-127 are
+/// set) and its checksum, the sum of the 968 words from gGameFlagBytes on.
+/// Returns the checksum.
 u32 SaveState_BuildSummaryHeader(void) {
   u16 members[14];
   struct SaveSummary *summary;
@@ -239,9 +240,9 @@ u32 SaveState_BuildSummaryHeader(void) {
   return sum;
 }
 
-// Saves the game to the current file (gSaveSlot): builds the summary and
-// writes both halves of the save buffer. Returns 0, gSaveSlot itself (-1)
-// when no file is chosen, or a SAVE_ERROR_* after showing its message.
+/// Saves the game to the current file (gSaveSlot): builds the summary and
+/// writes both halves of the save buffer. Returns 0, gSaveSlot itself (-1)
+/// when no file is chosen, or a SAVE_ERROR_* after showing its message.
 s16 SaveState_WriteCurrentSlotPair(void) {
   s16 file;
   s16 result;
@@ -276,8 +277,8 @@ s16 SaveState_WriteCurrentSlotPair(void) {
   return file;
 }
 
-// Writes both halves of the save buffer, as they are, to save file `file`.
-// Returns 0, or a SAVE_ERROR_* after showing its message.
+/// Writes both halves of the save buffer, as they are, to save file `file`.
+/// Returns 0, or a SAVE_ERROR_* after showing its message.
 s32 SaveState_WriteSlotPair(s32 file) {
   s32 error;
   s16 result = 0;
@@ -301,10 +302,10 @@ s32 SaveState_WriteSlotPair(s32 file) {
   return result;
 }
 
-// Writes the 64-byte save stamp (gSaveStamp, which lies in the first half of
-// the save buffer) into the current file's first record, leaving the rest of
-// the record as it was saved. Returns 0, -1 when no file is chosen, or a
-// SAVE_ERROR_* after showing its message.
+/// Writes the 64-byte save stamp (gSaveStamp, which lies in the first half of
+/// the save buffer) into the current file's first record, leaving the rest of
+/// the record as it was saved. Returns 0, -1 when no file is chosen, or a
+/// SAVE_ERROR_* after showing its message.
 s32 SaveState_ProcessSelectedSlot(void) {
   void *record;
   s32 result;
@@ -340,10 +341,10 @@ s32 SaveState_ProcessSelectedSlot(void) {
   return result;
 }
 
-// Asks "OK to save over this file?" and, on Yes, writes the save stamp into
-// the current file (SaveState_ProcessSelectedSlot) and says "Your game was
-// saved." Returns that result.
-// Nothing calls it.
+/// Asks "OK to save over this file?" and, on Yes, writes the save stamp into
+/// the current file (SaveState_ProcessSelectedSlot) and says "Your game was
+/// saved." Returns that result.
+/// Nothing calls it.
 UNUSED s32 SaveState_ConfirmAndProcessSelectedSlot(void) {
   s32 result;
 
@@ -369,11 +370,11 @@ UNUSED s32 SaveState_ConfirmAndProcessSelectedSlot(void) {
   return result;
 }
 
-// The file menu's Copy: lets the player choose a file, reads both of its
-// records into the save buffer and writes them to the first empty file.
-// Returns 0, -1 when cancelled, or a SAVE_ERROR_* after showing its message
-// (the game says "Failed to erase." both when no file is empty and when the
-// write fails).
+/// The file menu's Copy: lets the player choose a file, reads both of its
+/// records into the save buffer and writes them to the first empty file.
+/// Returns 0, -1 when cancelled, or a SAVE_ERROR_* after showing its message
+/// (the game says "Failed to erase." both when no file is empty and when the
+/// write fails).
 s32 SaveState_CopySlotPair(void) {
   u32 error;
   s32 file;
@@ -422,10 +423,10 @@ s32 SaveState_CopySlotPair(void) {
   return result;
 }
 
-// The file menu's Erase: lets the player choose a file, asks "OK to erase
-// this?" and on Yes deletes both of its records. Returns 0 (also when the
-// player answers No), -1 when cancelled, or a SAVE_ERROR_* after showing its
-// message.
+/// The file menu's Erase: lets the player choose a file, asks "OK to erase
+/// this?" and on Yes deletes both of its records. Returns 0 (also when the
+/// player answers No), -1 when cancelled, or a SAVE_ERROR_* after showing its
+/// message.
 s32 SaveState_DeleteSelectedSlot(void) {
   s32 error;
   s32 file;
@@ -466,10 +467,10 @@ s32 SaveState_DeleteSelectedSlot(void) {
 
 #if LANGUAGE != LANGUAGE_JAPANESE
 
-// A scheduler callback that makes colours 8-11 of BG palette 14 glow: each
-// follows a sine wave of the frame counter, eight frames behind the one
-// before. With s the sine from -1 to 1, the colour is red 22 + 2s, green
-// 16 + s and blue 20 + s (of 31).
+/// A scheduler callback that makes colours 8-11 of BG palette 14 glow: each
+/// follows a sine wave of the frame counter, eight frames behind the one
+/// before. With s the sine from -1 to 1, the colour is red 22 + 2s, green
+/// 16 + s and blue 20 + s (of 31).
 void PaletteGlow_UpdateSine(void) {
   s32 *tick;
   volatile u16 *palette;
@@ -523,19 +524,19 @@ void PaletteGlow_UpdateSine(void) {
 
 #if TBS_PATCH_1
 
-// Starts the palette glow (PaletteGlow_UpdateSine) in the scheduler.
+/// Starts the palette glow (PaletteGlow_UpdateSine) in the scheduler.
 void PaletteGlow_Start(void) {
   Scheduler_AddOrUpdateCallback(PaletteGlow_UpdateSine, 0xC80);
 }
 
-// Stops the palette glow.
+/// Stops the palette glow.
 void PaletteGlow_Stop(void) {
   Scheduler_RemoveCallback(PaletteGlow_UpdateSine);
 }
 
-// Fills the `width` x `height` tile rectangle at (x, y) inside `window`,
-// clipped to the screen as UiWindow_SetTileAttributeBitRect clips, with the
-// blank tile entry 0xe006 of the UI tilemap.
+/// Fills the `width` x `height` tile rectangle at (x, y) inside `window`,
+/// clipped to the screen as UiWindow_SetTileAttributeBitRect clips, with the
+/// blank tile entry 0xe006 of the UI tilemap.
 void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width,
                               s32 height) {
   u16 *tilemap = (u16 *)gWindowWork[0];
@@ -583,16 +584,16 @@ void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width,
 
 #endif
 
-// The save file menu shows the chosen file's party as walking sprites in a
-// row, and four Djinn sprites, one for each element, over the file's Djinn
-// counts. Each sprite stands three tiles (24 pixels) from the one before.
+/// The save file menu shows the chosen file's party as walking sprites in a
+/// row, and four Djinn sprites, one for each element, over the file's Djinn
+/// counts. Each sprite stands three tiles (24 pixels) from the one before.
 #define SAVE_MENU_SPRITE_SPACING 3
-// Scheduler priority of the callbacks that place the sprites every frame.
+/// Scheduler priority of the callbacks that place the sprites every frame.
 #define SAVE_MENU_SPRITE_PRIORITY (200 << 4)
 
-// Shows the party of save file `summary` (up to four members) as sprites in
-// a row from tile (x, y) inside `window`, and starts placing them every
-// frame (SaveMenu_PlacePartySprites).
+/// Shows the party of save file `summary` (up to four members) as sprites in
+/// a row from tile (x, y) inside `window`, and starts placing them every
+/// frame (SaveMenu_PlacePartySprites).
 void SaveMenu_ShowPartySprites(struct UiWindow *window, s32 x, s32 y,
                                struct SaveSummary *summary) {
   struct ShopRuntime *menu = gMenuWork;
@@ -622,7 +623,7 @@ void SaveMenu_ShowPartySprites(struct UiWindow *window, s32 x, s32 y,
   Scheduler_AddOrUpdateCallback(SaveMenu_PlacePartySprites, priority);
 }
 
-// Stops placing the party sprites of the save file menu and releases them.
+/// Stops placing the party sprites of the save file menu and releases them.
 void SaveMenu_HidePartySprites(void) {
   struct ShopRuntime *menu = gMenuWork;
   s32 i;
@@ -636,8 +637,8 @@ void SaveMenu_HidePartySprites(void) {
   }
 }
 
-// A scheduler callback: draws each party sprite of the save file menu at its
-// place and scale for this frame.
+/// A scheduler callback: draws each party sprite of the save file menu at its
+/// place and scale for this frame.
 void SaveMenu_PlacePartySprites(void) {
   struct ShopRuntime *menu = gMenuWork;
   struct SpriteScale scale;
@@ -664,9 +665,9 @@ void SaveMenu_PlacePartySprites(void) {
   }
 }
 
-// Shows the four Djinn sprites, one for each element, in a row from tile
-// (x, y) inside `window`, and starts placing them every frame
-// (SaveMenu_PlaceDjinnSprites). Does nothing when `window` is NULL.
+/// Shows the four Djinn sprites, one for each element, in a row from tile
+/// (x, y) inside `window`, and starts placing them every frame
+/// (SaveMenu_PlaceDjinnSprites). Does nothing when `window` is NULL.
 void SaveMenu_ShowDjinnSprites(struct UiWindow *window, s32 x, s32 y) {
   struct FourObjectMotionState *menu = gMenuWork;
   s32 i;
@@ -693,7 +694,7 @@ void SaveMenu_ShowDjinnSprites(struct UiWindow *window, s32 x, s32 y) {
   }
 }
 
-// Stops placing the Djinn sprites of the save file menu and releases them.
+/// Stops placing the Djinn sprites of the save file menu and releases them.
 void SaveMenu_HideDjinnSprites(void) {
   struct FourObjectMotionState *menu = gMenuWork;
   s32 i;
@@ -707,8 +708,8 @@ void SaveMenu_HideDjinnSprites(void) {
   }
 }
 
-// A scheduler callback: draws each Djinn sprite of the save file menu at its
-// place, at scale 1.0, for this frame.
+/// A scheduler callback: draws each Djinn sprite of the save file menu at its
+/// place, at scale 1.0, for this frame.
 void SaveMenu_PlaceDjinnSprites(void) {
   struct FourObjectMotionState *menu = gMenuWork;
   struct SpriteScale scale;
@@ -735,9 +736,9 @@ void SaveMenu_PlaceDjinnSprites(void) {
   } while (index <= 3);
 }
 
-// Draws the Djinn counts of save file `summary`, one for each element, two
-// digits each, 24 pixels apart on row 16 of `window`, under the Djinn
-// sprites. Does nothing when `window` is NULL.
+/// Draws the Djinn counts of save file `summary`, one for each element, two
+/// digits each, 24 pixels apart on row 16 of `window`, under the Djinn
+/// sprites. Does nothing when `window` is NULL.
 void SaveMenu_DrawDjinnCounts(struct UiWindow *window,
                               struct SaveSummary *summary) {
   s32 i;
@@ -764,9 +765,9 @@ void SaveMenu_DrawDjinnCounts(struct UiWindow *window,
 #define SUMMARY_DRAW_LEVEL UiText_DrawStringInWindow
 #endif
 
-// Draws the summary of save file `summary` into `window`: the leader's name,
-// level and class, the play time and the coins. Does nothing when `window`
-// is 0.
+/// Draws the summary of save file `summary` into `window`: the leader's name,
+/// level and class, the play time and the coins. Does nothing when `window`
+/// is 0.
 void SaveMenu_DrawFileSummary(struct UiWindow *window,
                               struct SaveSummary *summary) {
   u32 playTime[4]; // the play time text
@@ -810,18 +811,18 @@ void SaveMenu_DrawFileSummary(struct UiWindow *window,
   }
 }
 
-// What the save file menu is choosing a file for, which decides the files
-// the cursor may stop on.
+/// What the save file menu is choosing a file for, which decides the files
+/// the cursor may stop on.
 enum SaveMenuMode {
-  SAVE_MENU_SAVE,     // saving: any file, empty ones too
-  SAVE_MENU_CONTINUE, // continuing: files not yet cleared
-  SAVE_MENU_COPY,     // copying: any file with data
-  SAVE_MENU_ERASE,    // erasing: any file with data
-  SAVE_MENU_EXTRA,    // files with any of game flags 48-127 set
-  SAVE_MENU_CLEARED   // cleared files only
+  SAVE_MENU_SAVE,     ///< saving: any file, empty ones too
+  SAVE_MENU_CONTINUE, ///< continuing: files not yet cleared
+  SAVE_MENU_COPY,     ///< copying: any file with data
+  SAVE_MENU_ERASE,    ///< erasing: any file with data
+  SAVE_MENU_EXTRA,    ///< files with any of game flags 48-127 set
+  SAVE_MENU_CLEARED   ///< cleared files only
 };
 
-// SaveMenu_SelectSlot's result when no file can be chosen in its mode.
+/// SaveMenu_SelectSlot's result when no file can be chosen in its mode.
 #define SAVE_MENU_NO_FILE -2
 
 // The save file menu: lists the three files with each one's leader and area
@@ -1169,11 +1170,11 @@ done:
 }
 #endif
 
-// The Save command: lets the player choose a file (the current one first),
-// asks "OK to save over this file?" when it has data, then saves the game to
-// it, object table included, and makes it the current file. Returns 0 (also
-// when the player answers No), -1 when cancelled, or a SAVE_ERROR_* after
-// showing its message.
+/// The Save command: lets the player choose a file (the current one first),
+/// asks "OK to save over this file?" when it has data, then saves the game to
+/// it, object table included, and makes it the current file. Returns 0 (also
+/// when the player answers No), -1 when cancelled, or a SAVE_ERROR_* after
+/// showing its message.
 s32 Save_WriteSelectedSlot(void) {
   s32 result;
   s32 file;
@@ -1228,10 +1229,10 @@ done:
   return result;
 }
 
-// Lets the player choose a file in save menu `mode` (see SaveMenuMode) and
-// loads it into the save buffer as the current file, restoring its play time
-// and options. Returns 0, -1 when cancelled, or a SAVE_ERROR_* after showing
-// its message.
+/// Lets the player choose a file in save menu `mode` (see SaveMenuMode) and
+/// loads it into the save buffer as the current file, restoring its play time
+/// and options. Returns 0, -1 when cancelled, or a SAVE_ERROR_* after showing
+/// its message.
 s32 SaveState_LoadRecordIntoWork(s32 mode) {
   s32 result = 0;
   s32 error = SaveState_InitializeWorkspace();
@@ -1267,8 +1268,8 @@ s32 SaveState_LoadRecordIntoWork(s32 mode) {
   return result;
 }
 
-// Loads the pointing hand cursor's tiles (gResource_FixedBlockBTiles, 128
-// bytes) into a free VRAM slot and returns the slot.
+/// Loads the pointing hand cursor's tiles (gResource_FixedBlockBTiles, 128
+/// bytes) into a free VRAM slot and returns the slot.
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
   s32 slot;
 

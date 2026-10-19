@@ -1,9 +1,10 @@
-// Part of shop.c, the shop object, compiled only through it.
-// The Game Ticket counter, the gift items and every shop's stock.
+/// @file
+/// Part of shop.c, the shop object, compiled only through it.
+/// The Game Ticket counter, the gift items and every shop's stock.
 
 #include "../shop_internal.h"
 
-// Gift prices
+/// Gift prices
 // clang-format off
 static const s16 sGameTicketCreditCosts[30] = {
     300, 300, 300, 300, 300,
@@ -14,15 +15,15 @@ static const s16 sGameTicketCreditCosts[30] = {
     8000, 8000, 8000, 8000, 8000,
 };
 
-// Gift items, terminated by 0; no function reads this table.
+/// Gift items, terminated by 0; no function reads this table.
 const s16 gShop_GiftItemIds[21] = {
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
     16, 195, 38, 84, 89, 90, 180, 181, 190, 0,
 };
 // clang-format on
 
-// Offers a Game Ticket for accumulated shop credit and lets the player choose
-// its recipient.
+/// Offers a Game Ticket for accumulated shop credit and lets the player choose
+/// its recipient.
 void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
   struct ShopRuntime *shop = gMenuWork;
   s32 creditCost;
@@ -100,8 +101,8 @@ void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
   shop->selectedItem = savedSelectedItem;
 }
 
-// The shops' stock, one row per shop: up to 24 items, then up to 8 artifacts
-// (each list ending with 0 when shorter), then the shop's type.
+/// The shops' stock, one row per shop: up to 24 items, then up to 8 artifacts
+/// (each list ending with 0 when shorter), then the shop's type.
 enum {
   SHOP_STOCK_ITEMS = 0,
   SHOP_STOCK_ITEM_COUNT = 24,
@@ -292,11 +293,11 @@ static const s16 sStockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS] = {
 };
 // clang-format on
 
-// Returns the number of rows in the shop stock table.
+/// Returns the number of rows in the shop stock table.
 s32 EventTable_GetRowLimit(void) { return SHOP_STOCK_ROWS; }
 
-// Adds a location's initial artifacts to shared stock once, before its first
-// shop visit.
+/// Adds a location's initial artifacts to shared stock once, before its first
+/// shop visit.
 void EventTable_ApplyRowAbilities(s32 stockRow) {
   const s16 *stockEntries;
   const s16 *artifactCursor;
@@ -324,7 +325,7 @@ void EventTable_ApplyRowAbilities(s32 stockRow) {
   }
 }
 
-// Copies up to 24 ordinary stock items and appends a zero terminator.
+/// Copies up to 24 ordinary stock items and appends a zero terminator.
 s32 EventTable_CopyRowHeader(s32 stockRow, s16 *output) {
   const s16 *src;
   s16 *dst;
@@ -351,7 +352,7 @@ s32 EventTable_CopyRowHeader(s32 stockRow, s16 *output) {
   return count;
 }
 
-// Reads the shop type from the last word of its stock row.
+/// Reads the shop type from the last word of its stock row.
 s32 EventTable_GetRowType(s32 stockRow) {
   return sStockTable[stockRow][SHOP_STOCK_TYPE];
 }

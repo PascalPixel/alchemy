@@ -1,36 +1,37 @@
-// Part of battle.c, the battle object, compiled only through it.
-// A whole battle, Battle_RunEncounter, and the lists of the units in it.
+/// @file
+/// Part of battle.c, the battle object, compiled only through it.
+/// A whole battle, Battle_RunEncounter, and the lists of the units in it.
 
 #include "../battle_internal.h"
 
-// BattleWork.partyStatus: how the party status window draws, with the
-// Summon command offered or not.
+/// BattleWork.partyStatus: how the party status window draws, with the
+/// Summon command offered or not.
 #define PARTY_STATUS_NO_SUMMONS 1
 #define PARTY_STATUS_SUMMONS 3
 
-// Battle_RunEncounter's results besides the number of enemies defeated.
+/// Battle_RunEncounter's results besides the number of enemies defeated.
 #define ENCOUNTER_PARTY_LOST -1
 #define ENCOUNTER_FLED 999
 
-// BattleWork.defeatState: whether the last enemy fell alone, or with others
-// before it ("has been downed!" or "'s party goes down!"); 3 when a party
-// member's action ended the battle with a single defeat.
+/// BattleWork.defeatState: whether the last enemy fell alone, or with others
+/// before it ("has been downed!" or "'s party goes down!"); 3 when a party
+/// member's action ended the battle with a single defeat.
 #define DEFEAT_ONE 0
 #define DEFEAT_SEVERAL 1
 #define DEFEAT_BY_PARTY_MEMBER 3
 
-// The size of the block a link battle copies its field state into.
+/// The size of the block a link battle copies its field state into.
 #define LINK_OWNER_STATES_SIZE 0x7c8
 
-// Fights the battle against the enemy formation enemyGroup, from the
-// opening transition to the end, and returns how it ended: the number of
-// enemies defeated when the party won (or the link broke), ENCOUNTER_FLED
-// when the party ran, or ENCOUNTER_PARTY_LOST.
-//
-// Each round, the party's commands are chosen (or chosen automatically
-// under FLAG_AUTO_BATTLE), every unit acts in turn order, and the round ends
-// with the turn-end effects; the Djinn tutorial adds its two messages
-// after each round.
+/// Fights the battle against the enemy formation enemyGroup, from the
+/// opening transition to the end, and returns how it ended: the number of
+/// enemies defeated when the party won (or the link broke), ENCOUNTER_FLED
+/// when the party ran, or ENCOUNTER_PARTY_LOST.
+///
+/// Each round, the party's commands are chosen (or chosen automatically
+/// under FLAG_AUTO_BATTLE), every unit acts in turn order, and the round ends
+/// with the turn-end effects; the Djinn tutorial adds its two messages
+/// after each round.
 s32 Battle_RunEncounter(s32 enemyGroup) {
   struct BattleCamera *camera;
   s32 *focus;
@@ -334,10 +335,10 @@ finished:
   return result;
 }
 
-// Lists the party members who fight (the first four of the party, three in
-// a link battle) and marks each unit as a party member. owners, if not
-// null, receives their ids ended by BATTLE_UNIT_LIST_END. Returns how many
-// fight.
+/// Lists the party members who fight (the first four of the party, three in
+/// a link battle) and marks each unit as a party member. owners, if not
+/// null, receives their ids ended by BATTLE_UNIT_LIST_END. Returns how many
+/// fight.
 s32 BattleParty_PrepareActiveOwners(u16 *owners) {
   s32 limit;
   s32 count;
@@ -364,8 +365,8 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners) {
   return count;
 }
 
-// Lists the enemy units present, ended by BATTLE_UNIT_LIST_END, and returns
-// how many there are (0 when unitIds is null).
+/// Lists the enemy units present, ended by BATTLE_UNIT_LIST_END, and returns
+/// how many there are (0 when unitIds is null).
 s32 BattleEnemyList(s16 *unitIds) {
   s16 *output;
   s32 count;
@@ -396,10 +397,10 @@ s32 BattleEnemyList(s16 *unitIds) {
   return count;
 }
 
-// Lists the units still standing (HP above 0) on the sides in sideMask
-// (BATTLE_SIDE_PARTY, BATTLE_SIDE_ENEMIES or both), party first. unitIds,
-// if not null, receives them ended by BATTLE_UNIT_LIST_END. Returns how
-// many there are.
+/// Lists the units still standing (HP above 0) on the sides in sideMask
+/// (BATTLE_SIDE_PARTY, BATTLE_SIDE_ENEMIES or both), party first. unitIds,
+/// if not null, receives them ended by BATTLE_UNIT_LIST_END. Returns how
+/// many there are.
 s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
   u16 activeMembers[8];
   u16 *base;
@@ -466,10 +467,10 @@ s32 BattleParty_ListLivingUnits(s32 sideMask, u16 *unitIds) {
   return livingCount;
 }
 
-// Lists the units in the battle's unit lists on the sides in sideMask,
-// party first, skipping those removed from the battle. unitIds, if not
-// null, receives them ended by BATTLE_UNIT_LIST_END. Returns how many
-// there are.
+/// Lists the units in the battle's unit lists on the sides in sideMask,
+/// party first, skipping those removed from the battle. unitIds, if not
+/// null, receives them ended by BATTLE_UNIT_LIST_END. Returns how many
+/// there are.
 s32 BattleParty_ListActorIds(s32 sideMask, u16 *unitIds) {
   struct BattleWork *battle;
   s32 count;

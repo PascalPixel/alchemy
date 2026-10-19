@@ -1,5 +1,6 @@
-// Part of window.c, the window object, compiled only through it.
-// The message decoder: articles, names and numbers written out.
+/// @file
+/// Part of window.c, the window object, compiled only through it.
+/// The message decoder: articles, names and numbers written out.
 
 #include "../window_internal.h"
 
@@ -33,11 +34,11 @@ struct ArticleTable {
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-// The German, Spanish, French and Italian form: forms 0 and 4 take no article,
-// the others the class's article (in Spanish, form bit 3 asks for the
-// indefinite article), capitalised at the start of a sentence.
-// The write position wraps in the decoded-text ring; language grammar remains
-// separate.
+/// The German, Spanish, French and Italian form: forms 0 and 4 take no article,
+/// the others the class's article (in Spanish, form bit 3 asks for the
+/// indefinite article), capitalised at the start of a sentence.
+/// The write position wraps in the decoded-text ring; language grammar remains
+/// separate.
 u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
                              u16 *entries, s32 articleForm, s32 plural,
                              s32 *suffix) {
@@ -130,11 +131,11 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 #endif
 
 #if (LANGUAGE == LANGUAGE_ENGLISH)
-// The English form: form 1 (or 3 with a single item) takes "a" or "an" (by the
-// name's first letter unless its class says otherwise), and form 2 (or 3 with
-// several) adds the plural "s" or "es".
-// The write position wraps in the decoded-text ring; language grammar remains
-// separate.
+/// The English form: form 1 (or 3 with a single item) takes "a" or "an" (by the
+/// name's first letter unless its class says otherwise), and form 2 (or 3 with
+/// several) adds the plural "s" or "es".
+/// The write position wraps in the decoded-text ring; language grammar remains
+/// separate.
 u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
                              u16 *entries, s32 articleForm, s32 plural,
                              s32 *suffix) {
@@ -210,8 +211,8 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 }
 #endif
 
-// The control codes of a message as stored (the PO catalogs' names), which
-// UiText_BuildRenderEntries expands into decoded text.
+/// The control codes of a message as stored (the PO catalogs' names), which
+/// UiText_BuildRenderEntries expands into decoded text.
 enum {
   MSG_END = 0,
   MSG_PAGE_BREAK = 1,
@@ -219,8 +220,8 @@ enum {
   MSG_LINE_BREAK = 3,
   MSG_TEXT_COLOR = 8,
   MSG_TEXT_EFFECT = 9,
-  // German: a counted noun; Italian: a gender ending; Spanish and French: the
-  // plural suffix
+  /// German: a counted noun; Italian: a gender ending; Spanish and French: the
+  /// plural suffix
   MSG_LOCALIZED_WORD = 13,
   MSG_PROTAGONIST_NAME = 16,
   MSG_ACTOR_NAME = 17,
@@ -231,8 +232,8 @@ enum {
   MSG_ARGUMENT_SIGNED_NUMBER = 22,
   MSG_ARGUMENT_LOCATION_NAME = 23,
   MSG_EM_DASH = 24,
-  // English: the plural suffix; German, Spanish, French and Italian: the
-  // item's possessive
+  /// English: the plural suffix; German, Spanish, French and Italian: the
+  /// item's possessive
   MSG_PLURAL_SUFFIX = 25,
   MSG_BUTTON_ICON = 26,
   MSG_POSSESSIVE_SUFFIX = 27,
@@ -240,7 +241,7 @@ enum {
   MSG_END_NOW = 30,
 };
 
-// What halting speech (UiWork_SetBusyFlags) puts between characters.
+/// What halting speech (UiWork_SetBusyFlags) puts between characters.
 #define ENTRY_NARROW_GAP TEXT_PAUSE_SHORT
 #define ENTRY_WIDE_GAP TEXT_VOICED_MARK
 
@@ -262,13 +263,13 @@ extern u8 *gUiText_NumberWords[];
 #endif
 #endif
 
-// Decodes message script into the ring of decoded text (UiRenderWork.entries)
-// and returns where it starts; script -1 returns the last message's start
-// again. Argument codes take their values from the argument table
-// (UiWork_PushValueSlot), and clear empties the table afterwards. Names,
-// numbers and articles are written out; style codes are kept with their
-// operands for the message channel to run.
-// script -1 reuses messageStart; clear consumes argument slots after decoding.
+/// Decodes message script into the ring of decoded text (UiRenderWork.entries)
+/// and returns where it starts; script -1 returns the last message's start
+/// again. Argument codes take their values from the argument table
+/// (UiWork_PushValueSlot), and clear empties the table afterwards. Names,
+/// numbers and articles are written out; style codes are kept with their
+/// operands for the message channel to run.
+/// script -1 reuses messageStart; clear consumes argument slots after decoding.
 s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
   struct UiRenderWork *work = UI_WORK;
   u32 code = 0;
@@ -780,9 +781,9 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 
-// The Japanese form: Japanese has no articles, so the name is copied as it is.
-// The write position wraps in the decoded-text ring; language grammar remains
-// separate.
+/// The Japanese form: Japanese has no articles, so the name is copied as it is.
+/// The write position wraps in the decoded-text ring; language grammar remains
+/// separate.
 extern __inline__ u32 UiText_AppendArticleName(s32 mode, u16 *name,
                                                u32 writePosition, u16 *entries,
                                                s32 articleForm, s32 plural,
@@ -813,9 +814,9 @@ extern __inline__ u32 UiText_AppendArticleName(s32 mode, u16 *name,
   return writePosition;
 }
 
-// The Japanese UiText_BuildRenderEntries, as above with no articles or
-// plurals.
-// script -1 reuses messageStart; clear consumes argument slots after decoding.
+/// The Japanese UiText_BuildRenderEntries, as above with no articles or
+/// plurals.
+/// script -1 reuses messageStart; clear consumes argument slots after decoding.
 s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
   struct UiRenderWork *work = UI_WORK;
   u32 code = 0;

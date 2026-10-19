@@ -1,16 +1,17 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Break and Drain.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Break and Drain.
 
 #include "../effect_internal.h"
 
 // Break: ice shards burst from each target.
 #define DRAIN_ICE_SHARDS_PER_TARGET 128 // shards for each target
 
-// Abilities: Break (kind 43).
-//
-// Ice shards burst up from each target in turn, 20 frames apart, tinting
-// the target as they go, and fall away below line 112.
-// effect: the targets.
+/// Abilities: Break (kind 43).
+///
+/// Ice shards burst up from each target in turn, 20 frames apart, tinting
+/// the target as they go, and fall away below line 112.
+/// effect: the targets.
 void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -121,16 +122,16 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
 #define DRAIN_MOTES_PER_TARGET 128 // motes for each target
 #define DRAIN_DRAWN 32             // motes drawn for each target
 
-// Abilities: Drain, Psy Drain (kind 42).
-//
-// Drain: motes of light burst from each target in turn, 20 frames apart,
-// and are pulled into the centre of the user's body. Each target flashes
-// in its damage pose for 42 frames as its motes burst, and the user glows
-// from frame 40 until 20 frames before the end. A negative variant marks
-// a mote that has gone out.
-//
-// effect: the targets; variant 0 takes the ice block palette, any other
-//         the blast palette.
+/// Abilities: Drain, Psy Drain (kind 42).
+///
+/// Drain: motes of light burst from each target in turn, 20 frames apart,
+/// and are pulled into the centre of the user's body. Each target flashes
+/// in its damage pose for 42 frames as its motes burst, and the user glows
+/// from frame 40 until 20 frames before the end. A negative variant marks
+/// a mote that has gone out.
+///
+/// effect: the targets; variant 0 takes the ice block palette, any other
+///         the blast palette.
 void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

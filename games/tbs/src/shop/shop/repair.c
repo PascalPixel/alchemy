@@ -1,10 +1,11 @@
-// Part of shop.c, the shop object, compiled only through it.
-// Repairing broken items.
+/// @file
+/// Part of shop.c, the shop object, compiled only through it.
+/// Repairing broken items.
 
 #include "../shop_internal.h"
 
-// Returns one quarter of the base price for broken items, or zero for intact
-// items.
+/// Returns one quarter of the base price for broken items, or zero for intact
+/// items.
 s32 Shop_RepairPrice(s32 inventoryEntry) {
   s32 repairCost = Item_GetDirectFar(inventoryEntry)->price / 4;
 
@@ -14,14 +15,14 @@ s32 Shop_RepairPrice(s32 inventoryEntry) {
   return repairCost;
 }
 
-// Preserves the original repair-owner wrapper and its zero result.
+/// Preserves the original repair-owner wrapper and its zero result.
 s32 Shop_SelectUnit(void) {
   Shop_PickUnit();
   return 0;
 }
 
-// Selects an inventory slot for repair and repeats until cancelled or the
-// inventory is empty.
+/// Selects an inventory slot for repair and repeats until cancelled or the
+/// inventory is empty.
 s32 Shop_SelectRepair(s32 unitId) {
   struct ShopRuntime *shop;
   s32 inventoryCount;
@@ -123,8 +124,8 @@ s32 Shop_SelectRepair(s32 unitId) {
   return result;
 }
 
-// Checks the repair, hides the item during the work sequence, restores it and
-// charges the fee.
+/// Checks the repair, hides the item during the work sequence, restores it and
+/// charges the fee.
 void Shop_RepairItem(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = gMenuWork;
   struct BattleUnit *unit = UnitGetFar(unitId);

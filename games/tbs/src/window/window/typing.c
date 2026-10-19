@@ -1,16 +1,17 @@
-// Part of window.c, the window object, compiled only through it.
-// The per-frame message update: typing text and running its control codes.
+/// @file
+/// Part of window.c, the window object, compiled only through it.
+/// The per-frame message update: typing text and running its control codes.
 
 #include "../window_internal.h"
 
-// The battle message canvas: 30 columns of 4 tiles. In a column each word is
-// one 8-pixel row of 4bpp pixels, so a column is 32 pixel rows of one word.
+/// The battle message canvas: 30 columns of 4 tiles. In a column each word is
+/// one 8-pixel row of 4bpp pixels, so a column is 32 pixel rows of one word.
 #define CANVAS_COLUMNS 30
 #define CANVAS_COLUMN_WORDS 32
 #define CANVAS_KEPT_ROWS 8 // the top 8 pixel rows stay put
 
-// Scrolls the battle message canvas up by 6 pixel rows per step, below its
-// top 8 rows, and clears the rows this uncovers.
+/// Scrolls the battle message canvas up by 6 pixel rows per step, below its
+/// top 8 rows, and clears the rows this uncovers.
 void UiText_ScrollCanvasUp(s32 step) {
   s32 shift = step * 6;
   u32 *base = UI_CANVAS_VRAM;
@@ -26,16 +27,16 @@ void UiText_ScrollCanvasUp(s32 step) {
   }
 }
 
-// What UiWork_StepChannelScript reports.
+/// What UiWork_StepChannelScript reports.
 enum {
-  CHANNEL_STEP_RUNNING = 0, // the text goes on next frame
-  CHANNEL_STEP_ENDED = 8,   // the text has ended; the window stays open
-  CHANNEL_STEP_CLOSE = 9,   // the text is dismissed: close the window
+  CHANNEL_STEP_RUNNING = 0, ///< the text goes on next frame
+  CHANNEL_STEP_ENDED = 8,   ///< the text has ended; the window stays open
+  CHANNEL_STEP_CLOSE = 9,   ///< the text is dismissed: close the window
 };
 
-// The per-frame message update: each message channel whose window is fully
-// open runs its window effect or types more text, and on the text's end marks
-// the window done (state 1) or closes it.
+/// The per-frame message update: each message channel whose window is fully
+/// open runs its window effect or types more text, and on the text's end marks
+/// the window done (state 1) or closes it.
 void UiWork_ProcessRenderChannels(void) {
   struct UiChannelSlot *channel = UI_WORK->channels;
   s32 channelNo = 0;
@@ -84,9 +85,9 @@ void UiWork_ProcessRenderChannels(void) {
   } while (channelNo != 3);
 }
 
-// Types one frame's share of a channel's text: runs control codes (new line,
-// new page, pauses, colours) and draws characters, playing the speaker's voice
-// blips. Returns a CHANNEL_STEP_ result.
+/// Types one frame's share of a channel's text: runs control codes (new line,
+/// new page, pauses, colours) and draws characters, playing the speaker's voice
+/// blips. Returns a CHANNEL_STEP_ result.
 s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
   struct UiRenderWork *work = UI_WORK;
   // Preserve the native's initial volatile sample, separate from later reads.

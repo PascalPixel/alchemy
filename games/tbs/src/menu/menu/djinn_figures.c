@@ -1,10 +1,12 @@
-// Part of menu.c, the menu object, compiled only through it.
-// FourObjectMotion: the row of four figures the Status and Djinn menus show,
-// placed by a scheduler callback and eased in and out.
+/// @file
+/// Part of menu.c, the menu object, compiled only through it.
+/// FourObjectMotion: the row of four figures the Status and Djinn menus show,
+/// placed by a scheduler callback and eased in and out.
 
 #include "../menu_internal.h"
 
-// Replaces the four displayed objects and starts their projected-position task.
+/// Replaces the four displayed objects and starts their projected-position
+/// task.
 void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1) {
   struct FourObjectMotionState *state = gMenuWork;
   s32 index;
@@ -32,7 +34,7 @@ void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1) {
   Scheduler_AddOrUpdateCallback(FourObjectMotion_UpdateAllPositions, 0xc80);
 }
 
-// Releases the four objects and removes their scheduler callback.
+/// Releases the four objects and removes their scheduler callback.
 #define FOUR_OBJECT_MOTION_DEFINE_RELEASE(name, update)                        \
   void name(void) {                                                            \
     struct FourObjectMotionState *state = gMenuWork;                           \
@@ -53,12 +55,12 @@ void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1) {
 FOUR_OBJECT_MOTION_DEFINE_RELEASE(FourObjectMotion_ClearSlotsAndSchedule,
                                   FourObjectMotion_UpdateAllPositions)
 
-// Full size, 1.0 in 16.16, and the height the figures are placed from: 482
-// pixels, in 16.16.
+/// Full size, 1.0 in 16.16, and the height the figures are placed from: 482
+/// pixels, in 16.16.
 #define FOUR_OBJECT_MOTION_FULL_SCALE 0x10000u
 #define FOUR_OBJECT_MOTION_ORIGIN_Y 0x01e20000u
 
-// Projects the four objects at full scale from their saved row positions.
+/// Projects the four objects at full scale from their saved row positions.
 void FourObjectMotion_UpdateAllPositions(void) {
   struct FourObjectMotionState *state = gMenuWork;
   s32 index;
@@ -87,7 +89,7 @@ void FourObjectMotion_UpdateAllPositions(void) {
   }
 }
 
-// Projects the bottom row using its saved scale or easing toward full size.
+/// Projects the bottom row using its saved scale or easing toward full size.
 void FourObjectMotion_UpdateBottomRow(void) {
   struct FourObjectMotionState *menu = gMenuWork;
   s32 objectIndex;
@@ -134,7 +136,7 @@ void FourObjectMotion_UpdateBottomRow(void) {
   } while (objectIndex <= 3);
 }
 
-// Replaces the bottom row's four objects and starts its easing task.
+/// Replaces the bottom row's four objects and starts its easing task.
 void FourObjectMotion_InitializeBottomRow(s32 unused0, s32 unused1) {
   struct FourObjectMotionState *state = gMenuWork;
   s32 index;
@@ -161,7 +163,7 @@ void FourObjectMotion_InitializeBottomRow(s32 unused0, s32 unused1) {
   Scheduler_AddOrUpdateCallback(FourObjectMotion_UpdateBottomRow, 0xc80);
 }
 
-// Updates one object's saved position and its signed y marker.
+/// Updates one object's saved position and its signed y marker.
 s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative) {
   struct FourObjectMotionState *state = gMenuWork;
 
@@ -173,12 +175,12 @@ s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative) {
   return index;
 }
 
-// Sets one displayed object's easing phase.
+/// Sets one displayed object's easing phase.
 s32 FourObjectMotion_SetSlotPhase(s32 index, s32 phase) {
   ((struct FourObjectMotionState *)gMenuWork)->phases[index] = phase;
 }
 
-// Replaces one displayed object and selects its animation.
+/// Replaces one displayed object and selects its animation.
 s32 FourObjectMotion_ReplaceSlot(s32 index, s32 resourceKind, s32 value) {
   struct FourObjectMotionState *state = gMenuWork;
 
@@ -200,7 +202,7 @@ s32 FourObjectMotion_ReplaceSlot(s32 index, s32 resourceKind, s32 value) {
 FOUR_OBJECT_MOTION_DEFINE_RELEASE(FourObjectMotion_ClearSlotsAndScheduleAlt,
                                   FourObjectMotion_UpdateBottomRow)
 
-// Starts the walking animation (1) of each party figure. Nothing calls it.
+/// Starts the walking animation (1) of each party figure. Nothing calls it.
 UNUSED void Menu_StartPartyFiguresWalking(void) {
   struct InventoryMenuState *state = gMenuWork;
   s32 index;

@@ -1,21 +1,22 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Fire.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Fire.
 
 #include "../effect_internal.h"
 
-// The embers set up in PARTICLES: no row of gFire_Counts may ask for more.
+/// The embers set up in PARTICLES: no row of gFire_Counts may ask for more.
 #define FIRE_EMBERS 64
 
-// Abilities: Fire, Fireball, Inferno (kind 12).
-//
-// Homing embers: embers burst from the top of the user two a frame, turn
-// towards the targets 48 frames after they appear, and each one that hits
-// the ground shows an impact flare for 12 frames as its target flinches.
-// The camera swings round over frames 17 to 79, and the battle shows the
-// damage 24 frames before the end.
-//
-// effect: the targets; variant picks the number of embers
-//         (gFire_Counts).
+/// Abilities: Fire, Fireball, Inferno (kind 12).
+///
+/// Homing embers: embers burst from the top of the user two a frame, turn
+/// towards the targets 48 frames after they appear, and each one that hits
+/// the ground shows an impact flare for 12 frames as its target flinches.
+/// The camera swings round over frames 17 to 79, and the battle shows the
+/// damage 24 frames before the end.
+///
+/// effect: the targets; variant picks the number of embers
+///         (gFire_Counts).
 void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

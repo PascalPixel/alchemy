@@ -1,12 +1,13 @@
-// Part of battle_command.c, the menu object, compiled only through it.
-// The battle item menu.
+/// @file
+/// Part of battle_command.c, the menu object, compiled only through it.
+/// The battle item menu.
 
 #include "../battle_command_internal.h"
 
-// Check whether an item can be used in battle.
-// Return: 0 usable, 1 unusable, 2 unusable in battle.
-// unit: character index
-// item: inventory item value
+/// Check whether an item can be used in battle.
+/// Return: 0 usable, 1 unusable, 2 unusable in battle.
+/// unit: character index
+/// item: inventory item value
 s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
   s32 itemUseStatus;
   struct ItemDefinition *definition;
@@ -32,15 +33,15 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
   return 0;
 }
 
-// Copy one 4bpp VRAM tile, ignoring the palette and flip bits of each entry.
+/// Copy one 4bpp VRAM tile, ignoring the palette and flip bits of each entry.
 void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
   Dma_Set(BG_CHAR_BLOCK(0) + (sourceTile & 0x3ff) * TILE_SIZE_4BPP,
           BG_CHAR_BLOCK(0) + (destinationTile & 0x3ff) * TILE_SIZE_4BPP,
           DMA_COPY32(8), REG_DMA3);
 }
 
-// Choose an inventory-list position for battle use, or -1 on cancel. Keep
-// unavailable items visible with their help text, but reject confirmation.
+/// Choose an inventory-list position for battle use, or -1 on cancel. Keep
+/// unavailable items visible with their help text, but reject confirmation.
 s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
   struct UiRenderWork *render;
   s32 drawnFirstEntry;

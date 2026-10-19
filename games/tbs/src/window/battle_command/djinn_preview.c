@@ -1,10 +1,11 @@
-// Part of battle_command.c, the menu object, compiled only through it.
-// The preview of what setting or removing a Djinni changes.
+/// @file
+/// Part of battle_command.c, the menu object, compiled only through it.
+/// The preview of what setting or removing a Djinni changes.
 
 #include "../battle_command_internal.h"
 
-// The decimal formatter writes eleven characters plus a terminator. Keep
-// the original two trailing bytes in the widened copy as well.
+/// The decimal formatter writes eleven characters plus a terminator. Keep
+/// the original two trailing bytes in the widened copy as well.
 #define NUMBER_TEXT_WIDE_LENGTH 14
 
 // Formats a decimal number, then widens the first 14 shared-buffer bytes
@@ -27,14 +28,14 @@ s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value) {
   }
 }
 
-// Preview marks are separate from the action ID in the low fourteen bits.
+/// Preview marks are separate from the action ID in the low fourteen bits.
 #define DJINN_PREVIEW_ABILITY_GAINED 0x8000
 #define DJINN_PREVIEW_ABILITY_LOST 0x4000
 #define DJINN_PREVIEW_ABILITY_CAPACITY 48
 
-// List Psynergy in the new grid, marking newly gained entries with bit 15,
-// then append lost entries with bit 14. Return the number of entries and
-// report the gained/lost counts separately.
+/// List Psynergy in the new grid, marking newly gained entries with bit 15,
+/// then append lost entries with bit 14. Return the number of entries and
+/// report the gained/lost counts separately.
 s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid,
                                const struct OwnerActionSlot *newGrid, u16 *out,
                                s32 *gained, s32 *lost) {
@@ -102,9 +103,9 @@ s32 Ui_CreateOutputFromResourceSlot(struct UiWindow *window, s32 x, s32 y,
   }
 }
 
-// Temporarily toggle a Djinni and recalculate its owner's stats to show the
-// change. Page 0 compares stats; later pages show gained and lost Psynergy.
-// Restore the complete unit snapshot before returning the preview window.
+/// Temporarily toggle a Djinni and recalculate its owner's stats to show the
+/// change. Page 0 compares stats; later pages show gained and lost Psynergy.
+/// Restore the complete unit snapshot before returning the preview window.
 struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
                                              s32 encodedDjinn, s32 page,
                                              s32 *pageCount) {

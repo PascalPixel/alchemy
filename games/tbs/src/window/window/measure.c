@@ -1,5 +1,6 @@
-// Part of window.c, the window object, compiled only through it.
-// Sizing windows to their text and fitting them on the screen.
+/// @file
+/// Part of window.c, the window object, compiled only through it.
+/// Sizing windows to their text and fitting them on the screen.
 
 #include "../window_internal.h"
 
@@ -8,11 +9,11 @@
 #define FIT_FIXED_LIMIT 1
 #endif
 
-// Sizes a window for decoded text no and moves (*px, *py) so the window fits
-// on the screen. flags: bit 0 measures every page (UiText_MeasureAllPages)
-// rather than the first; bit 1 takes the size in *pw and *ph as given, in
-// tiles, instead of measuring. Measuring returns the size in tiles in *pw and
-// *ph and fills spacing with each line's extra character gap.
+/// Sizes a window for decoded text no and moves (*px, *py) so the window fits
+/// on the screen. flags: bit 0 measures every page (UiText_MeasureAllPages)
+/// rather than the first; bit 1 takes the size in *pw and *ph as given, in
+/// tiles, instead of measuring. Measuring returns the size in tiles in *pw and
+/// *ph and fills spacing with each line's extra character gap.
 void UiWindow_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
                           u32 *windowWidth, u32 *windowHeight, u16 *spacing,
                           u32 flags) {
@@ -88,7 +89,7 @@ void UiWindow_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
   *windowY = y;
 }
 
-// Decodes message no and returns its text's width and height in pixels.
+/// Decodes message no and returns its text's width and height in pixels.
 void UiText_MeasureResourceEntries(s32 message, s32 *x, s32 *y) {
   UiText_MeasureEntryDimensions(UiText_BuildRenderEntries(message, 0), (u32 *)x,
                                 (u32 *)y, 0);
@@ -97,11 +98,11 @@ void UiText_MeasureResourceEntries(s32 message, s32 *x, s32 *y) {
 DEFINE_GET_RESOURCE_DIMENSIONS(UiText_GetResourceDimensions, 0)
 DEFINE_GET_RESOURCE_DIMENSIONS(UiText_GetResourceDimensionsAlt, 1)
 
-// Measures decoded text from entryIndex to its first page's end: returns the
-// width of the longest line and the height (15 pixels a line) in pixels. With
-// spacing set, fills one entry per line with the extra gap between characters,
-// in 1/256 pixel, that spreads the line to fill the window. spacing, when
-// non-NULL, has room for four line entries.
+/// Measures decoded text from entryIndex to its first page's end: returns the
+/// width of the longest line and the height (15 pixels a line) in pixels. With
+/// spacing set, fills one entry per line with the extra gap between characters,
+/// in 1/256 pixel, that spreads the line to fill the window. spacing, when
+/// non-NULL, has room for four line entries.
 void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
                                    u32 *outHeight, u16 *spacing) {
   struct UiRenderWork *work;
@@ -265,11 +266,11 @@ done:
   }
 }
 
-// Measures decoded text from start over all its pages: the width of the first
-// page's longest line and the height of its tallest page, in pixels, with each
-// line's extra character gap in spacing as UiText_MeasureEntryDimensions.
-// The text must fit 16 page-height slots; this routine does not clamp the page
-// count.
+/// Measures decoded text from start over all its pages: the width of the first
+/// page's longest line and the height of its tallest page, in pixels, with each
+/// line's extra character gap in spacing as UiText_MeasureEntryDimensions.
+/// The text must fit 16 page-height slots; this routine does not clamp the page
+/// count.
 void UiText_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
                             u16 *spacing) {
   u32 pageHeights[16];

@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// The casting impact scene and its image helpers.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// The casting impact scene and its image helpers.
 
 #include "../effect_internal.h"
 
@@ -31,9 +32,9 @@
 // A casting impact may hand off to another runner after removing its
 // prelude callbacks and releasing the blitters that runner will replace.
 
-// Moves each RGB555 channel of background colours 0 to 63 one level towards
-// the resource palette. Colour 0 always goes towards black, whatever the
-// resource holds.
+/// Moves each RGB555 channel of background colours 0 to 63 one level towards
+/// the resource palette. Colour 0 always goes towards black, whatever the
+/// resource holds.
 void BattleFx_StepPaletteToResource(s32 resourceId) {
   u16 target[64];
   u16 *color = (u16 *)BG_PLTT;
@@ -77,7 +78,7 @@ static inline void CastingImpact_LoadResource(const void *id, void *dest,
   Resource_LoadAndDecompress((s32)id, dest, skip, copy);
 }
 
-// Packs a casting impact's picture rows (Graphics_PackTileRows).
+/// Packs a casting impact's picture rows (Graphics_PackTileRows).
 static inline void CastingImpact_PackRows(void *src, void *dest, s32 width,
                                           s32 height) {
   /* FAKEMATCH: keep packing arguments within their own inline scope;
@@ -86,7 +87,7 @@ static inline void CastingImpact_PackRows(void *src, void *dest, s32 width,
   Graphics_PackTileRows(src, dest, width, height);
 }
 
-// Draws one casting impact image with the given blitter.
+/// Draws one casting impact image with the given blitter.
 static inline void CastingImpact_DrawImage(void *canvas, const void *pixels,
                                            s32 x, s32 y, s32 width, s32 height,
                                            DrawRectangle *draw) {
@@ -96,7 +97,7 @@ static inline void CastingImpact_DrawImage(void *canvas, const void *pixels,
   (*draw)(canvas, pixels, x, y, width, height);
 }
 
-// Draw a casting-impact image whose height is twice its width.
+/// Draw a casting-impact image whose height is twice its width.
 static inline void CastingImpact_DrawTallImage(void *canvas, const void *pixels,
                                                s32 x, s32 y, s32 width,
                                                DrawRectangle *draw) {
@@ -107,7 +108,7 @@ static inline void CastingImpact_DrawTallImage(void *canvas, const void *pixels,
   (*draw)(canvas, pixels, x, y, width, width * 2);
 }
 
-// Draw only the unscrolled height of a casting-impact image.
+/// Draw only the unscrolled height of a casting-impact image.
 static inline void CastingImpact_DrawScrolledImage(void *canvas,
                                                    const void *pixels, s32 x,
                                                    s32 y, s32 width, s32 height,
@@ -119,7 +120,7 @@ static inline void CastingImpact_DrawScrolledImage(void *canvas,
   (*draw)(canvas, pixels, x, y, width, height - scroll);
 }
 
-// Draw a casting-impact image cropped to 91 pixels high.
+/// Draw a casting-impact image cropped to 91 pixels high.
 static inline void CastingImpact_DrawCroppedImage(void *canvas,
                                                   const void *pixels, s32 x,
                                                   s32 y, s32 width,
@@ -131,8 +132,8 @@ static inline void CastingImpact_DrawCroppedImage(void *canvas,
   (*draw)(canvas, pixels, x, y, width, 91);
 }
 
-// Clear the prelude image, stop its callbacks and release its blitters before
-// the next effect takes over.
+/// Clear the prelude image, stop its callbacks and release its blitters before
+/// the next effect takes over.
 static inline void CastingImpact_EndPrelude(struct BattleEffectWork *work,
                                             void *canvas) {
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
@@ -143,71 +144,72 @@ static inline void CastingImpact_EndPrelude(struct BattleEffectWork *work,
   EFFECT_RELEASE_BLITTERS();
 }
 
-// The casting impacts, by kind - 100: each is named for the first ability
-// whose gBattle_ActionFlags entry selects it; the four no ability selects
-// keep their numbers.
-//
-// The trailing comments give each impact's own animation, drawn over the
-// target after the orb and sparks. Most animations use the 64 particles at
-// Ram_MapCellBuffer + 0x4000, which start at the target; their pictures are in
-// Ram_MapCellBuffer. "Smoke" is puffs of smoke rising from the target; "hands
-// off" impacts stop after gathering and hand the canvas to another effect.
+/// The casting impacts, by kind - 100: each is named for the first ability
+/// whose gBattle_ActionFlags entry selects it; the four no ability selects
+/// keep their numbers.
+///
+/// The trailing comments give each impact's own animation, drawn over the
+/// target after the orb and sparks. Most animations use the 64 particles at
+/// Ram_MapCellBuffer + 0x4000, which start at the target; their pictures are in
+/// Ram_MapCellBuffer. "Smoke" is puffs of smoke rising from the target; "hands
+/// off" impacts stop after gathering and hand the canvas to another effect.
 enum CastingImpact {
-  CASTING_IMPACT_IMPACT_BANE = 0,      // smoke
-  CASTING_IMPACT_IMPACT_SMOG,          // smoke
-  CASTING_IMPACT_IMPACT_MIST,          // smoke
-  CASTING_IMPACT_IMPACT_FEVER,         // smoke
-  CASTING_IMPACT_IMPACT_FLINT,         // nothing
-  CASTING_IMPACT_IMPACT_SCORCH,        // flash bursts rise from the target
-  CASTING_IMPACT_IMPACT_SQUALL,        // two bolts strike among glints
-  CASTING_IMPACT_IMPACT_SAP,           // motes fly back to the caster
-  CASTING_IMPACT_IMPACT_TERRA_STRIKE,  // a rock spire grows and sinks
-  CASTING_IMPACT_IMPACT_POISON_CLOUD,  // smoke
-  CASTING_IMPACT_IMPACT_DEADLY_POISON, // smoke
-  CASTING_IMPACT_IMPACT_MORTAL_DANGER, // also Death Size; a large picture rises
-                                       // and breaks
-  CASTING_IMPACT_IMPACT_BAD_OMEN,      // skulls rise from the target
-  CASTING_IMPACT_IMPACT_LIFE_NOURISH,  // motes fly back to the caster
-  CASTING_IMPACT_IMPACT_AQUA_SOCK,  // a blue flame column falls onto the target
-  CASTING_IMPACT_IMPACT_15,         // hands off
-  CASTING_IMPACT_IMPACT_FROST_BITE, // ice chips converge on the target
-  CASTING_IMPACT_IMPACT_17,         // hands off
-  CASTING_IMPACT_IMPACT_LIFE_LEECH, // motes fly back to the caster
-  CASTING_IMPACT_IMPACT_PSY_LEECH,  // motes fly back to the caster
-  CASTING_IMPACT_IMPACT_BROIL,      // ember streaks spread sideways
-  CASTING_IMPACT_IMPACT_MELTDOWN,   // nothing; hands to the stat reduction
-  CASTING_IMPACT_IMPACT_HEAT_MIRAGE,    // also Heat Flash; smoke
-  CASTING_IMPACT_IMPACT_BARRAGE,        // flash bursts rise from the target
-  CASTING_IMPACT_IMPACT_24,             // hands off
-  CASTING_IMPACT_IMPACT_ACID_BATH,      // smoke
-  CASTING_IMPACT_IMPACT_26,             // hands off
-  CASTING_IMPACT_IMPACT_STUN_VOLTAGE,   // two bolts strike among glints
-  CASTING_IMPACT_IMPACT_BLINDING_SMOG,  // smoke
-  CASTING_IMPACT_IMPACT_MURK,           // smoke
-  CASTING_IMPACT_IMPACT_CYCLONE_SLASH,  // a tornado stands over the target
-  CASTING_IMPACT_IMPACT_PSYPHON_SEAL,   // a rune opens over the target
-  CASTING_IMPACT_IMPACT_ASURA,          // a beast scrolls across and breaks
-  CASTING_IMPACT_IMPACT_FORCIBLE_ARM,   // a flame falls diagonally
-  CASTING_IMPACT_IMPACT_TRUNCHEON_FIST, // a flame falls diagonally
-  CASTING_IMPACT_IMPACT_SEVERE_BLOW,    // hands off
+  CASTING_IMPACT_IMPACT_BANE = 0,      ///< smoke
+  CASTING_IMPACT_IMPACT_SMOG,          ///< smoke
+  CASTING_IMPACT_IMPACT_MIST,          ///< smoke
+  CASTING_IMPACT_IMPACT_FEVER,         ///< smoke
+  CASTING_IMPACT_IMPACT_FLINT,         ///< nothing
+  CASTING_IMPACT_IMPACT_SCORCH,        ///< flash bursts rise from the target
+  CASTING_IMPACT_IMPACT_SQUALL,        ///< two bolts strike among glints
+  CASTING_IMPACT_IMPACT_SAP,           ///< motes fly back to the caster
+  CASTING_IMPACT_IMPACT_TERRA_STRIKE,  ///< a rock spire grows and sinks
+  CASTING_IMPACT_IMPACT_POISON_CLOUD,  ///< smoke
+  CASTING_IMPACT_IMPACT_DEADLY_POISON, ///< smoke
+  CASTING_IMPACT_IMPACT_MORTAL_DANGER, ///< also Death Size; a large picture
+                                       ///< rises and breaks
+  CASTING_IMPACT_IMPACT_BAD_OMEN,      ///< skulls rise from the target
+  CASTING_IMPACT_IMPACT_LIFE_NOURISH,  ///< motes fly back to the caster
+  CASTING_IMPACT_IMPACT_AQUA_SOCK,     ///< a blue flame column falls onto the
+                                       ///< target
+  CASTING_IMPACT_IMPACT_15,            ///< hands off
+  CASTING_IMPACT_IMPACT_FROST_BITE,    ///< ice chips converge on the target
+  CASTING_IMPACT_IMPACT_17,            ///< hands off
+  CASTING_IMPACT_IMPACT_LIFE_LEECH,    ///< motes fly back to the caster
+  CASTING_IMPACT_IMPACT_PSY_LEECH,     ///< motes fly back to the caster
+  CASTING_IMPACT_IMPACT_BROIL,         ///< ember streaks spread sideways
+  CASTING_IMPACT_IMPACT_MELTDOWN,      ///< nothing; hands to the stat reduction
+  CASTING_IMPACT_IMPACT_HEAT_MIRAGE,   ///< also Heat Flash; smoke
+  CASTING_IMPACT_IMPACT_BARRAGE,       ///< flash bursts rise from the target
+  CASTING_IMPACT_IMPACT_24,            ///< hands off
+  CASTING_IMPACT_IMPACT_ACID_BATH,     ///< smoke
+  CASTING_IMPACT_IMPACT_26,            ///< hands off
+  CASTING_IMPACT_IMPACT_STUN_VOLTAGE,  ///< two bolts strike among glints
+  CASTING_IMPACT_IMPACT_BLINDING_SMOG, ///< smoke
+  CASTING_IMPACT_IMPACT_MURK,          ///< smoke
+  CASTING_IMPACT_IMPACT_CYCLONE_SLASH, ///< a tornado stands over the target
+  CASTING_IMPACT_IMPACT_PSYPHON_SEAL,  ///< a rune opens over the target
+  CASTING_IMPACT_IMPACT_ASURA,         ///< a beast scrolls across and breaks
+  CASTING_IMPACT_IMPACT_FORCIBLE_ARM,  ///< a flame falls diagonally
+  CASTING_IMPACT_IMPACT_TRUNCHEON_FIST, ///< a flame falls diagonally
+  CASTING_IMPACT_IMPACT_SEVERE_BLOW,    ///< hands off
 };
 
 #define CASTING_IMPACT_ORB_CELLS 0x5100 // the impact orb, packed at half width
 #define CASTING_IMPACT_DJINNI_CELLS 0x3c56 // the Djinni pictures, in PARTICLES
 #define CASTING_IMPACT_GATHER_FRAMES 32    // frames the sparks gather
 #define CASTING_IMPACT_SPARKS 64           // sparks in work->particles
-// The impact pictures' particles, in Ram_MapCellBuffer after the Djinni.
+/// The impact pictures' particles, in Ram_MapCellBuffer after the Djinni.
 #define CASTING_IMPACT_IMPACT_PARTICLES                                        \
   ((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))
 #define CASTING_IMPACT_IMPACT_PARTICLE_COUNT 64
 
-// gCastingImpact_ImageX has seven pictures for each side.
+/// gCastingImpact_ImageX has seven pictures for each side.
 #define CASTING_IMPACT_IMAGE_X(side, image)                                    \
   gCastingImpact_ImageX[(side)][(image)]
 
-// Gather sparks around the acting unit, launch the Djinni and draw its impact.
-// Impacts 15, 17, 24, 26 and 35 (Severe Blow) hand off to another effect after
-// gathering. command: effect arguments kind: ability (effect number minus 100)
+/// Gather sparks around the acting unit, launch the Djinni and draw its impact.
+/// Impacts 15, 17, 24, 26 and 35 (Severe Blow) hand off to another effect after
+/// gathering. command: effect arguments kind: ability (effect number minus 100)
 void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   void **slots;
   void **slot;

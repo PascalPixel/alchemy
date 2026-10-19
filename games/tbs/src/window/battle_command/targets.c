@@ -1,5 +1,6 @@
-// Part of battle_command.c, the menu object, compiled only through it.
-// Choosing a battle target.
+/// @file
+/// Part of battle_command.c, the menu object, compiled only through it.
+/// Choosing a battle target.
 
 #include "../battle_command_internal.h"
 
@@ -18,9 +19,9 @@ struct CursorSlot {
   s8 index;
 };
 
-// Choose a party/enemy target and animate its selection markers. Return the
-// encoded side and party position, or -1 on cancel. Healing and status-cure
-// categories choose an appropriate initial ally and supply condition help.
+/// Choose a party/enemy target and animate its selection markers. Return the
+/// encoded side and party position, or -1 on cancel. Healing and status-cure
+/// categories choose an appropriate initial ally and supply condition help.
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   u16 candidateIds[8];
   struct SelectionSprite cursorSprites[6];

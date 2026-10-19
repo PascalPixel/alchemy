@@ -1,5 +1,6 @@
-// Part of window.c, the window object, compiled only through it.
-// Characters rendered into tiles, string widths and number formatting.
+/// @file
+/// Part of window.c, the window object, compiled only through it.
+/// Characters rendered into tiles, string widths and number formatting.
 
 #include "../window_internal.h"
 
@@ -8,11 +9,12 @@
 // bytes apart, then packs it into 4bpp tiles.
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-// Draws a character, and a second one when the code carries it in bits 8 to
-// 15, into a 16x16-pixel cell of four 4bpp tiles at out: in the text colour
-// over a shadow, or with an outline when UiRenderWork.outline is 1. Returns
-// the width of the text drawn in pixels.
-// The caller supplies 32 words for four tiles; the returned width is in pixels.
+/// Draws a character, and a second one when the code carries it in bits 8 to
+/// 15, into a 16x16-pixel cell of four 4bpp tiles at out: in the text colour
+/// over a shadow, or with an outline when UiRenderWork.outline is 1. Returns
+/// the width of the text drawn in pixels.
+/// The caller supplies 32 words for four tiles; the returned width is in
+/// pixels.
 s32 UiText_RenderGlyphPair(s32 code, u32 *out) {
   u8 pixels[384];
   struct UiRenderWork *work;
@@ -87,11 +89,12 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out) {
   }
 
 #else
-// Draws a character into a 16x16-pixel cell of four 4bpp tiles at out: in the
-// text colour over a shadow, or with an outline when UiRenderWork.outline is
-// 1, with the kana mark in the code's top two bits above its top right.
-// Codes from 256 are kanji. Returns the character's width in pixels.
-// The caller supplies 32 words for four tiles; the returned width is in pixels.
+/// Draws a character into a 16x16-pixel cell of four 4bpp tiles at out: in the
+/// text colour over a shadow, or with an outline when UiRenderWork.outline is
+/// 1, with the kana mark in the code's top two bits above its top right.
+/// Codes from 256 are kanji. Returns the character's width in pixels.
+/// The caller supplies 32 words for four tiles; the returned width is in
+/// pixels.
 s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
   u8 pixels[256];
   struct UiRenderWork *work;
@@ -207,15 +210,15 @@ s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
 #define WIDE_WIDTH_FIXED 1
 #endif
 
-// The main font's glyph n, counted from the space character.
+/// The main font's glyph n, counted from the space character.
 #define FONT_GLYPH(n)                                                          \
   ((const struct FontGlyph *)((n) * sizeof(struct FontGlyph) +                 \
                               (const u8 *)gUiText_Glyphs))
 
-// Returns the width in pixels of a zero-terminated string of 16-bit character
-// codes: 4 for a space, the font width for other codes up to 0xff (in German,
-// Spanish, French and Italian a flat 10) and 10 for a kanji. The kana marks
-// take no width.
+/// Returns the width in pixels of a zero-terminated string of 16-bit character
+/// codes: 4 for a space, the font width for other codes up to 0xff (in German,
+/// Spanish, French and Italian a flat 10) and 10 for a kanji. The kana marks
+/// take no width.
 s32 UiText_GetWideStringWidth(u16 *text) {
   s32 width;
   u16 *cursor;
@@ -252,10 +255,10 @@ s32 UiText_GetWideStringWidth(u16 *text) {
   return width;
 }
 
-// Draws a zero-terminated string of 16-bit character codes into a text canvas
-// window at pixel (x, y), running its colour, outline, line spacing and new
-// line codes; other control codes are skipped with their arguments. A NULL
-// text draws the decoded text in UiRenderWork.entries.
+/// Draws a zero-terminated string of 16-bit character codes into a text canvas
+/// window at pixel (x, y), running its colour, outline, line spacing and new
+/// line codes; other control codes are skipped with their arguments. A NULL
+/// text draws the decoded text in UiRenderWork.entries.
 void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
                                      s32 y) {
   u8 *base;
@@ -365,11 +368,11 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
   }
 }
 
-// Draws a string of 16-bit character codes straight into the UI tilemap, as
-// tiles, inside a window at tile (offsetX, offsetY) of its interior, writing
-// both the work block's copy and VRAM. A NULL buffer draws the decoded text
-// in UiRenderWork.entries.
-// Nothing calls it.
+/// Draws a string of 16-bit character codes straight into the UI tilemap, as
+/// tiles, inside a window at tile (offsetX, offsetY) of its interior, writing
+/// both the work block's copy and VRAM. A NULL buffer draws the decoded text
+/// in UiRenderWork.entries.
+/// Nothing calls it.
 UNUSED void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
                                                const struct UiWindow *work,
                                                s32 offsetX, s32 offsetY) {
@@ -399,10 +402,11 @@ UNUSED void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
   }
 }
 
-// Draws a zero-terminated string of 16-bit character codes into a window's
-// tilemap at tile (x, y) of its interior, one tile per character, skipping
-// control codes; a NULL text draws the decoded text in UiRenderWork.entries.
-// Control operands are skipped, not rendered as glyphs; the input is read only.
+/// Draws a zero-terminated string of 16-bit character codes into a window's
+/// tilemap at tile (x, y) of its interior, one tile per character, skipping
+/// control codes; a NULL text draws the decoded text in UiRenderWork.entries.
+/// Control operands are skipped, not rendered as glyphs; the input is read
+/// only.
 void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
                                      s32 y) {
   struct UiRenderWork *work;
@@ -459,11 +463,11 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
   work->dirty = 1;
 }
 
-// Writes value as decimal text into buffer (14 bytes) and returns where the
-// text starts. With width 0 the number has no padding and a minus sign when
-// negative; otherwise it is right-aligned in width characters (up to 12) and
-// unsigned.
-// The caller supplies at least 14 bytes; fixed-width output omits the sign.
+/// Writes value as decimal text into buffer (14 bytes) and returns where the
+/// text starts. With width 0 the number has no padding and a minus sign when
+/// negative; otherwise it is right-aligned in width characters (up to 12) and
+/// unsigned.
+/// The caller supplies at least 14 bytes; fixed-width output omits the sign.
 u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width) {
   s32 offset;
   s32 value;

@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Poison Beat, Spinning Beat and Spider Web.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Poison Beat, Spinning Beat and Spider Web.
 
 #include "../effect_internal.h"
 
@@ -9,25 +10,25 @@
 // - The spider web spreads four mirrored quarters of a web over the targets
 //   and fades it in and out.
 
-// Abilities: Poison Beat (kind 382).
-//
-// A lime swipe that knocks the target back.
+/// Abilities: Poison Beat (kind 382).
+///
+/// A lime swipe that knocks the target back.
 void BattleFx_RunPoisonBeat(struct BattleEffectArgument *effect) {
   BattleFx_RunSwirlSwipe(effect, 0);
 }
-// Abilities: Spinning Beat (kind 383).
-//
-// A magenta swipe that throws the target into the air.
+/// Abilities: Spinning Beat (kind 383).
+///
+/// A magenta swipe that throws the target into the air.
 void BattleFx_RunSpinningBeat(struct BattleEffectArgument *effect) {
   BattleFx_RunSwirlSwipe(effect, 1);
 }
-// A swirling swipe across the first target, six images four frames each,
-// from the user's side: the first four from the swirl sheet, the last two
-// from the tail sheet. The swipe lands on frame 8.
-// mode 0 : lime colours; the battle shows the damage at once and the target
-//          recoils. 48 frames.
-// mode 1 : the target flashes, is thrown up on frame 13 and the battle shows
-//          the damage as it lands on frame 65. 74 frames.
+/// A swirling swipe across the first target, six images four frames each,
+/// from the user's side: the first four from the swirl sheet, the last two
+/// from the tail sheet. The swipe lands on frame 8.
+/// mode 0 : lime colours; the battle shows the damage at once and the target
+///          recoils. 48 frames.
+/// mode 1 : the target flashes, is thrown up on frame 13 and the battle shows
+///          the damage as it lands on frame 65. 74 frames.
 void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -119,12 +120,12 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
 
 #define SPIDER_WEB_FRAMES 63
 
-// Abilities: Spider Web (kind 345).
-//
-// A spider web spreads over the targets, drawn as four mirrored 32x32 quarters
-// around the point between the first and last target. It fades in over 8
-// frames; the targets flash on frame 10, the battle shows the damage on frame
-// 32, and it fades out from frame 54.
+/// Abilities: Spider Web (kind 345).
+///
+/// A spider web spreads over the targets, drawn as four mirrored 32x32 quarters
+/// around the point between the first and last target. It fades in over 8
+/// frames; the targets flash on frame 10, the battle shows the damage on frame
+/// 32, and it fades out from frame 54.
 void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   struct EffectPosition first;
   struct EffectPosition last;

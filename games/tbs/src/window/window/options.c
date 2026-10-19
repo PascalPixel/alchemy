@@ -1,24 +1,25 @@
-// Part of window.c, the window object, compiled only through it.
-// Window colours, the option screen and the system menu.
+/// @file
+/// Part of window.c, the window object, compiled only through it.
+/// Window colours, the option screen and the system menu.
 
 #include "../window_internal.h"
 
-// Three empty functions; nothing calls them.
+/// Three empty functions; nothing calls them.
 UNUSED void GraphicsPalette_ReservedNoOpC9BC(void) {}
 UNUSED void GraphicsPalette_ReservedNoOpC9C0(void) {}
 UNUSED void GraphicsPalette_ReservedNoOpC9C4(void) {}
 
-// One of the seven entries of the option screen's work from offset 0x400;
-// only its state is known.
+/// One of the seven entries of the option screen's work from offset 0x400;
+/// only its state is known.
 struct MenuWorkspaceEntry {
   u8 unk00[10];
   u16 state;
   u8 unk0c[40];
 };
 
-// Clears the option screen's seven entry states, its row, its tint and its
-// cursor animation.
-// Nothing calls it.
+/// Clears the option screen's seven entry states, its row, its tint and its
+/// cursor animation.
+/// Nothing calls it.
 UNUSED void OptionMenu_ResetEntries(struct WorkspaceWork *work) {
   struct MenuWorkspaceEntry *entry =
       (struct MenuWorkspaceEntry *)((u8 *)work + 0x400);
@@ -44,11 +45,11 @@ UNUSED void OptionMenu_ResetEntries(struct WorkspaceWork *work) {
   work->cursorFrame = zero;
 }
 
-// Works out the window tint (red, green and blue, 0 to 31) from the window
-// colour settings: the hue picks a point on the colour wheel and the
-// brightness shifts all three channels.
-// The three wave samples are one third of the 96-step colour cycle apart.
-// Nothing calls it.
+/// Works out the window tint (red, green and blue, 0 to 31) from the window
+/// colour settings: the hue picks a point on the colour wheel and the
+/// brightness shifts all three channels.
+/// The three wave samples are one third of the 96-step colour cycle apart.
+/// Nothing calls it.
 UNUSED void WindowColor_ComputeTint(struct WorkspaceWork *work) {
   s16 phase;
   s32 bias;
@@ -81,9 +82,9 @@ UNUSED void WindowColor_ComputeTint(struct WorkspaceWork *work) {
   work->tint[2] = blue;
 }
 
-// Writes window colours 4 to 10 of BG palette 15, each a fixed scale of the
-// window tint.
-// Nothing calls it.
+/// Writes window colours 4 to 10 of BG palette 15, each a fixed scale of the
+/// window tint.
+/// Nothing calls it.
 UNUSED void WindowColor_WritePalette(struct WorkspaceWork *work) {
   *(s16 *)&BG_PLTT_COLOR(15, 4) =
       WindowColor_ScaleTint(work, 0xEEEE, 0xCCCC, 0x11110);
@@ -101,9 +102,9 @@ UNUSED void WindowColor_WritePalette(struct WorkspaceWork *work) {
       WindowColor_ScaleTint(work, 0x13BBB, 0x10000, 0x17777);
 }
 
-// Returns the window tint with each channel scaled (16.16 fixed point) and
-// clamped to 0 to 31, as a BGR555 colour.
-// Multipliers use 16.16 fixed point; clamped components pack into BGR555.
+/// Returns the window tint with each channel scaled (16.16 fixed point) and
+/// clamped to 0 to 31, as a BGR555 colour.
+/// Multipliers use 16.16 fixed point; clamped components pack into BGR555.
 u16 WindowColor_ScaleTint(struct WorkspaceWork *work, s32 redScale,
                           s32 greenScale, s32 blueScale) {
   s32 red;
@@ -128,9 +129,9 @@ u16 WindowColor_ScaleTint(struct WorkspaceWork *work, s32 redScale,
   return red + ((blue << 10) + (green << 5));
 }
 
-// Returns rgb with each channel scaled (16.16 fixed point) and clamped to 0 to
-// 31, as a BGR555 colour.
-// rgb holds three components, not an already packed palette word.
+/// Returns rgb with each channel scaled (16.16 fixed point) and clamped to 0 to
+/// 31, as a BGR555 colour.
+/// rgb holds three components, not an already packed palette word.
 u16 Color_ScaleComponents(s16 *rgb, s32 redScale, s32 greenScale,
                           s32 blueScale) {
   s32 red;
@@ -146,9 +147,9 @@ u16 Color_ScaleComponents(s16 *rgb, s32 redScale, s32 greenScale,
   return red + ((blue << 10) + (green << 5));
 }
 
-// Sets the window colours (BG palette 15, colours 4 to 10) for a window hue
-// (0 to 23) and brightness (0 to 14, 7 neutral).
-// The live palette path leaves the saved colour settings untouched.
+/// Sets the window colours (BG palette 15, colours 4 to 10) for a window hue
+/// (0 to 23) and brightness (0 to 14, 7 neutral).
+/// The live palette path leaves the saved colour settings untouched.
 void PaletteGlow_Update(s32 phase, s32 brightness) {
   s16 rgb[3];
   s16 step;
@@ -177,8 +178,8 @@ void PaletteGlow_Update(s32 phase, s32 brightness) {
   BG_PLTT_COLOR(15, 10) = Color_ScaleComponents(rgb, 0x13bbb, 0x10000, 0x17777);
 }
 
-// Moves the three-row settings cursor up, wrapping to the bottom.
-// Nothing calls it.
+/// Moves the three-row settings cursor up, wrapping to the bottom.
+/// Nothing calls it.
 UNUSED void OptionMenu_PreviousRow(struct WorkspaceWork *work) {
   if (work->page == 0)
     work->page = 2;
@@ -186,16 +187,16 @@ UNUSED void OptionMenu_PreviousRow(struct WorkspaceWork *work) {
     work->page--;
 }
 
-// Moves the three-row settings cursor down, wrapping to the top.
-// Nothing calls it.
+/// Moves the three-row settings cursor down, wrapping to the top.
+/// Nothing calls it.
 UNUSED void OptionMenu_NextRow(struct WorkspaceWork *work) {
   if (++work->page > 2)
     work->page = 0;
 }
 
-// Lowers the setting on the three-row cursor's row: message speed, window hue
-// or window brightness.
-// Nothing calls it.
+/// Lowers the setting on the three-row cursor's row: message speed, window hue
+/// or window brightness.
+/// Nothing calls it.
 UNUSED void OptionMenu_LowerSetting(struct WorkspaceWork *work) {
   switch (work->page) {
   case 0:
@@ -213,9 +214,9 @@ UNUSED void OptionMenu_LowerSetting(struct WorkspaceWork *work) {
   }
 }
 
-// Raises the setting on the three-row cursor's row: message speed, window hue
-// or window brightness.
-// Nothing calls it.
+/// Raises the setting on the three-row cursor's row: message speed, window hue
+/// or window brightness.
+/// Nothing calls it.
 UNUSED void OptionMenu_RaiseSetting(struct WorkspaceWork *work) {
   switch (work->page) {
   case 0:
@@ -233,12 +234,12 @@ UNUSED void OptionMenu_RaiseSetting(struct WorkspaceWork *work) {
   }
 }
 
-// Does nothing.
+/// Does nothing.
 void GraphicsPalette_SelectionNoOp(void) {}
 
-// The option screen's per-frame callback: moves the cursor and the two slider
-// markers, animates the marker of the slider in use, and pulses the chosen
-// setting's icon.
+/// The option screen's per-frame callback: moves the cursor and the two slider
+/// markers, animates the marker of the slider in use, and pulses the chosen
+/// setting's icon.
 void OptionMenu_AnimateCursors(void) {
   s32 cursorResource;
   s32 markerResource;
@@ -275,9 +276,9 @@ void OptionMenu_AnimateCursors(void) {
   work->cursorFrame++;
 }
 
-// Allocates the option screen's work block, copies the settings into it with
-// how many values each takes, and starts its per-frame callback.
-// Copy settings into scratch so cancelling can discard the edits.
+/// Allocates the option screen's work block, copies the settings into it with
+/// how many values each takes, and starts its per-frame callback.
+/// Copy settings into scratch so cancelling can discard the edits.
 void OptionMenu_InitializeWork(void) {
   struct WorkspaceWork *work;
 
@@ -296,8 +297,8 @@ void OptionMenu_InitializeWork(void) {
   Scheduler_AddOrUpdateCallback(OptionMenu_AnimateCursors, 0xc80);
 }
 
-// Stops the option screen's per-frame callback and frees its work block.
-// Remove the frame callback before releasing the workspace it reads.
+/// Stops the option screen's per-frame callback and frees its work block.
+/// Remove the frame callback before releasing the workspace it reads.
 void OptionMenu_Release(void) {
   Scheduler_RemoveCallback(OptionMenu_AnimateCursors);
   Runtime_ReleaseHeapBlock(0x14);
@@ -306,9 +307,9 @@ void OptionMenu_Release(void) {
 #define SLIDER_PALETTE 14
 #define RESOURCE_SLOTS 96
 
-// Opens the option screen's window: the labels, the hue and brightness
-// sliders with their markers, the cursor and the setting icons. Returns the
-// window.
+/// Opens the option screen's window: the labels, the hue and brightness
+/// sliders with their markers, the cursor and the setting icons. Returns the
+/// window.
 struct UiWindow *OptionMenu_Open(void) {
   /* FAKEMATCH: the shared cursor union keeps pointer stores before window
    * reads; an equal-size struct reorders these moves in all six editions. */
@@ -416,10 +417,10 @@ struct UiWindow *OptionMenu_Open(void) {
   return window;
 }
 
-// Runs the option screen (window colour and brightness, message speed,
-// speech, auto-sleep) until A or START keeps the settings (returns 0) or B
-// drops them (returns -1). SELECT cycles through the colour presets.
-// Preview edits affect the live palette; only confirmation saves the settings.
+/// Runs the option screen (window colour and brightness, message speed,
+/// speech, auto-sleep) until A or START keeps the settings (returns 0) or B
+/// drops them (returns -1). SELECT cycles through the colour presets.
+/// Preview edits affect the live palette; only confirmation saves the settings.
 s32 Menu_RunWorkspaceOptions(void) {
   struct WorkspaceWork *work;
   struct UiWindow *settingsWindow;
@@ -591,8 +592,8 @@ s32 Menu_RunWorkspaceOptions(void) {
 #define WORKSPACE_ROW_HEIGHT 24
 #define WORKSPACE_TEXT_X 48
 
-// The system menu's per-frame callback: moves the cursor and pulses the
-// chosen entry's icon.
+/// The system menu's per-frame callback: moves the cursor and pulses the
+/// chosen entry's icon.
 void SystemMenu_AnimateCursor(void) {
   struct WorkspaceWork *work = gSelectionWork;
   u32 index;
@@ -602,8 +603,9 @@ void SystemMenu_AnimateCursor(void) {
   Ui_ApplyTableScaleToObject(work->icon[index]);
 }
 
-// Allocates the system menu's work block and starts its per-frame callback.
-// The system menu shares the option workspace slot and cannot run concurrently.
+/// Allocates the system menu's work block and starts its per-frame callback.
+/// The system menu shares the option workspace slot and cannot run
+/// concurrently.
 void SystemMenu_Initialize(void) {
   void *work;
   work = Runtime_AllocateBlock(20, 0x628);
@@ -611,17 +613,17 @@ void SystemMenu_Initialize(void) {
   Scheduler_AddOrUpdateCallback(SystemMenu_AnimateCursor, 3200);
 }
 
-// Stops the system menu's per-frame callback and frees its work block.
-// Remove the frame callback before releasing its workspace.
+/// Stops the system menu's per-frame callback and frees its work block.
+/// Remove the frame callback before releasing its workspace.
 void SystemMenu_Release(void) {
   Scheduler_RemoveCallback(&SystemMenu_AnimateCursor);
   Runtime_ReleaseHeapBlock(0x14);
 }
 
-// Opens the system menu's window with its entries (Save your quest, Sleep,
-// Change settings, and the debug entries in debug mode; only Change settings
-// while FLAG_IN_LINK_LOBBY is set), their icons and the cursor. Returns the
-// window.
+/// Opens the system menu's window with its entries (Save your quest, Sleep,
+/// Change settings, and the debug entries in debug mode; only Change settings
+/// while FLAG_IN_LINK_LOBBY is set), their icons and the cursor. Returns the
+/// window.
 struct UiWindow *SystemMenu_Open(void) {
   struct WorkspaceWork *work;
   s32 rows;
@@ -693,9 +695,9 @@ struct UiWindow *SystemMenu_Open(void) {
   return window;
 }
 
-// Runs the system menu until the player picks an entry (its number, counting
-// Save your quest as 0) or cancels with B or START (-1).
-// Adjust the result to the full entry table when only settings is visible.
+/// Runs the system menu until the player picks an entry (its number, counting
+/// Save your quest as 0) or cancels with B or START (-1).
+/// Adjust the result to the full entry table when only settings is visible.
 s32 Menu_RunWorkspaceSelectionLoop(void) {
   struct UiWindow *window;
   s32 redraw;

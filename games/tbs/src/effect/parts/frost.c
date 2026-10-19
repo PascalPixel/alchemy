@@ -1,25 +1,26 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Frost.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Frost.
 
 #include "../effect_internal.h"
 
-// One row of gFrost_Timings, for each variant.
+/// One row of gFrost_Timings, for each variant.
 enum {
-  FROST_MOTES,   // the rising motes
-  FROST_COLUMNS, // the ice columns
-  FROST_FRAME    // the frame the motes burst
+  FROST_MOTES,   ///< the rising motes
+  FROST_COLUMNS, ///< the ice columns
+  FROST_FRAME    ///< the frame the motes burst
 };
 
-// Abilities: Frost, Tundra, Glacier (kind 6).
-//
-// Rising motes: motes spiral upwards while ice columns spring up one every
-// 3 frames from frame 36; at the burst frame the motes spread and fall,
-// chips fly and smoke rises over the heights they span. The targets take a
-// blue tint 4 frames apart from frame 40, the battle shows the damage 11
-// frames after the burst, and the effect ends 75 frames after it.
-//
-// effect: the targets; variant picks the number of motes and columns and
-//         the burst frame (gFrost_Timings).
+/// Abilities: Frost, Tundra, Glacier (kind 6).
+///
+/// Rising motes: motes spiral upwards while ice columns spring up one every
+/// 3 frames from frame 36; at the burst frame the motes spread and fall,
+/// chips fly and smoke rises over the heights they span. The targets take a
+/// blue tint 4 frames apart from frame 40, the battle shows the damage 11
+/// frames after the burst, and the effect ends 75 frames after it.
+///
+/// effect: the targets; variant picks the number of motes and columns and
+///         the burst frame (gFrost_Timings).
 void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

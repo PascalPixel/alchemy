@@ -1,13 +1,14 @@
-// Part of battle.c, the battle object, compiled only through it.
-// An ability applied to one target, BattleTargetExec: damage, healing and
-// its added effect.
+/// @file
+/// Part of battle.c, the battle object, compiled only through it.
+/// An ability applied to one target, BattleTargetExec: damage, healing and
+/// its added effect.
 
 #include "../battle_internal.h"
 
-// Returns 1 for an effect that still applies when the ability's damage has
-// just knocked its target out: the drains, which give the damage they dealt
-// back to the actor.
-// effect : the ability's effect (enum AbilityEffect)
+/// Returns 1 for an effect that still applies when the ability's damage has
+/// just knocked its target out: the drains, which give the damage they dealt
+/// back to the actor.
+/// effect : the ability's effect (enum AbilityEffect)
 s32 BattleEffectDeadCheck(s32 effect) {
   switch (effect) {
   case ABILITY_EFFECT_DRAIN_HP:
@@ -21,42 +22,42 @@ s32 BattleEffectDeadCheck(s32 effect) {
 }
 
 // The target's checks, effect and messages
-// A stat stage changes the stat by an eighth of it (UnitCalc), from half at
-// the lowest to one and a half at the highest.
+/// A stat stage changes the stat by an eighth of it (UnitCalc), from half at
+/// the lowest to one and a half at the highest.
 #define STAT_STAGE_MIN -4
 #define STAT_STAGE_MAX 4
-// Zephyr's Agility stage, beyond the usual highest: twice the Agility.
+/// Zephyr's Agility stage, beyond the usual highest: twice the Agility.
 #define AGILITY_STAGE_DOUBLED 8
-// A Resistance stage adds 20 to the resistance to every element (UnitCalc).
+/// A Resistance stage adds 20 to the resistance to every element (UnitCalc).
 #define RESISTANCE_PER_STAGE 20
 
-// The turns a stat change or a status lasts; each may end sooner, at the
-// rolls the end of every turn makes (BattleUnit_RollCounterEarlyEnd).
+/// The turns a stat change or a status lasts; each may end sooner, at the
+/// rolls the end of every turn makes (BattleUnit_RollCounterEarlyEnd).
 #define STAT_CHANGE_TURNS 7
 #define AGILITY_CHANGE_TURNS 5
 #define STATUS_TURNS 7
-// The Grim Reaper's countdown.
+/// The Grim Reaper's countdown.
 #define CURSE_TURNS 7
 
-// BattleUnit.psySeal: Bind's seal counts its seven turns in the low three
-// bits, and may end sooner; Luff's counts down 8 a turn, two turns that never
-// end early (Battle_AdvanceCounterAndCheckChance).
+/// BattleUnit.psySeal: Bind's seal counts its seven turns in the low three
+/// bits, and may end sooner; Luff's counts down 8 a turn, two turns that never
+/// end early (Battle_AdvanceCounterAndCheckChance).
 #define PSY_SEAL_BIND 7
 #define PSY_SEAL_LUFF 16
 
-// The rate BattlePowerCalc and BattleRecoveryCalc scale by: 256 is 1.
+/// The rate BattlePowerCalc and BattleRecoveryCalc scale by: 256 is 1.
 #define FULL_RATE 256
 
-// A message operand that shows nothing: the event only waits for the player.
+/// A message operand that shows nothing: the event only waits for the player.
 #define MESSAGE_NONE -1
 
-// Unit ids 0 to 7 are the party's; enemy units start at FIRST_ENEMY_UNIT.
+/// Unit ids 0 to 7 are the party's; enemy units start at FIRST_ENEMY_UNIT.
 #define IS_PARTY_UNIT(unitId) ((unitId) >= 0 && (unitId) < 8)
 
 // The helpers below are macros because the bytes need them so: written as
 // inline functions they compile to different code.
 
-// Holds a stat stage within STAT_STAGE_MIN to STAT_STAGE_MAX.
+/// Holds a stat stage within STAT_STAGE_MIN to STAT_STAGE_MAX.
 #define CLAMP_STAT_STAGE(stage)                                                \
   {                                                                            \
     if ((stage) < STAT_STAGE_MIN)                                              \
@@ -65,7 +66,7 @@ s32 BattleEffectDeadCheck(s32 effect) {
       (stage) = STAT_STAGE_MAX;                                                \
   }
 
-// Pushes one message for a unit of the party and another for an enemy.
+/// Pushes one message for a unit of the party and another for an enemy.
 #define PUSH_SIDE_MESSAGE(unitId, partyMessage, enemyMessage)                  \
   {                                                                            \
     if (IS_PARTY_UNIT(unitId))                                                 \
@@ -74,7 +75,7 @@ s32 BattleEffectDeadCheck(s32 effect) {
       PUSH_MESSAGE(enemyMessage);                                              \
   }
 
-// A guarding unit takes half the damage, or a tenth behind Total Defense.
+/// A guarding unit takes half the damage, or a tenth behind Total Defense.
 #define REDUCE_BY_GUARD(damage, unit)                                          \
   {                                                                            \
     s32 guard = (unit)->guardLevel;                                            \
@@ -87,21 +88,21 @@ s32 BattleEffectDeadCheck(s32 effect) {
     }                                                                          \
   }
 
-// Applies the planned ability to one of its targets: first its damage or
-// healing, then its added effect (a status, a stat change, a revival...).
-// Nothing is shown here: each step queues battle events (the names and
-// numbers a message needs, the message, the target's reactions) that
-// BattleEvent_Playback then plays in order. The units themselves change at
-// once: UnitCalcFar recalculates a unit's stats from its stages, and
-// UnitRatioFar its HP and PP gauges after either changes.
-//
-// plan : the action under way: the actor, the ability, its element and its
-//        targets, each with its distance from the aimed position, damage
-//        multiplier, critical hit and any hit roll made in advance.
-// slot : which of the plan's targets (0 to plan->targetCount - 1).
-//
-// Declared to return s32, as the bytes require (the epilogue keeps r0), but
-// it returns nothing and its callers ignore the result.
+/// Applies the planned ability to one of its targets: first its damage or
+/// healing, then its added effect (a status, a stat change, a revival...).
+/// Nothing is shown here: each step queues battle events (the names and
+/// numbers a message needs, the message, the target's reactions) that
+/// BattleEvent_Playback then plays in order. The units themselves change at
+/// once: UnitCalcFar recalculates a unit's stats from its stages, and
+/// UnitRatioFar its HP and PP gauges after either changes.
+///
+/// plan : the action under way: the actor, the ability, its element and its
+///        targets, each with its distance from the aimed position, damage
+///        multiplier, critical hit and any hit roll made in advance.
+/// slot : which of the plan's targets (0 to plan->targetCount - 1).
+///
+/// Declared to return s32, as the bytes require (the epilogue keeps r0), but
+/// it returns nothing and its callers ignore the result.
 s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
   s32 distance; // steps from the aimed position, 0 to 5
   struct BattleAct *ability;
@@ -1250,8 +1251,8 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
 
 #define ABILITY_PSY_DRAIN 126
 
-// Returns 1 for an ability that costs PP, and for Psy Drain, which costs
-// none.
+/// Returns 1 for an ability that costs PP, and for Psy Drain, which costs
+/// none.
 u32 Ability_IsPsynergy(s32 abilityId) {
   u8 pp;
 

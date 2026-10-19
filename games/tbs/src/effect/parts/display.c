@@ -1,12 +1,13 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Display, scroll and window HBlank DMA helpers.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Display, scroll and window HBlank DMA helpers.
 
 #include "../effect_internal.h"
 
-// Puts the battle screen back into the display state every effect starts
-// from and ends with: no blending, window 0 and window 1 both covering the
-// battle view (lines 16 to 135), and the effect display mode queued for the
-// next frame. Waits one frame.
+/// Puts the battle screen back into the display state every effect starts
+/// from and ends with: no blending, window 0 and window 1 both covering the
+/// battle view (lines 16 to 135), and the effect display mode queued for the
+/// next frame. Waits one frame.
 void BattleFx_ConfigureEffectDisplay(void) {
   // Restore the battle viewport before the next effect changes its layers.
   REG_BLDCNT = 0;
@@ -22,8 +23,8 @@ void BattleFx_ConfigureEffectDisplay(void) {
   WaitFrames(1);
 }
 
-// Scheduler callback: every scrollInterval frames, scrolls background 1 by
-// (scrollStepX, scrollStepY).
+/// Scheduler callback: every scrollInterval frames, scrolls background 1 by
+/// (scrollStepX, scrollStepY).
 void BattleFx_AdvanceScrollOnInterval(void) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   u32 *timer = (u32 *)&work->scrollTimer;
@@ -36,9 +37,9 @@ void BattleFx_AdvanceScrollOnInterval(void) {
   }
 }
 
-// Scheduler callback: every scrollInterval frames, writes the effect's
-// background 2 reference point to the hardware and then moves it by
-// (scrollStepX, scrollStepY), so the affine layer slides in steps.
+/// Scheduler callback: every scrollInterval frames, writes the effect's
+/// background 2 reference point to the hardware and then moves it by
+/// (scrollStepX, scrollStepY), so the affine layer slides in steps.
 void BattleFx_AdvanceBg2OnInterval(void) {
   s32 timer;
   struct BattleEffectWork *work;
@@ -56,9 +57,9 @@ void BattleFx_AdvanceBg2OnInterval(void) {
   }
 }
 
-// Scheduler callback: restarts the HBlank DMA that copies one WIN0H value per
-// scanline from Ram_MapCellBuffer, so window 0's edges follow the per-line
-// table the effect drew there (a slanted or shaped window).
+/// Scheduler callback: restarts the HBlank DMA that copies one WIN0H value per
+/// scanline from Ram_MapCellBuffer, so window 0's edges follow the per-line
+/// table the effect drew there (a slanted or shaped window).
 void BattleFx_ArmWin0HBlankDma(void) {
   volatile u16 *channel = REG_DMA0;
   // Stop the preceding scanline transfer before replacing its source.

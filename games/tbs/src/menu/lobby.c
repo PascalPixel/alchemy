@@ -1,6 +1,7 @@
-// The Battle Arena overlay: the lobby where linked and monster battles
-// start, the exchange of the two parties, the attendant and the records of
-// wins.
+/// @file
+/// The Battle Arena overlay: the lobby where linked and monster battles
+/// start, the exchange of the two parties, the attendant and the records of
+/// wins.
 
 #include "unit/import.h"
 #include "unit/menu/lobby.h"
@@ -45,7 +46,7 @@
 #include "global_cells.h"
 #include "songs.h"
 
-// Link transfers use three unit records followed by one recovery-table record.
+/// Link transfers use three unit records followed by one recovery-table record.
 #define LOBBY_UNIT_RECORD_BYTES 0x154
 #define LOBBY_RECOVERY_RECORD_BYTES 0x140
 #define LOBBY_UNIT_RECORD_COUNT 3
@@ -105,14 +106,14 @@ struct LinkPeer {
 
 static s32 sLinkLobbyWaitFrames;
 
-// Returns the lobby entrance table through the scene entry ABI.
+/// Returns the lobby entrance table through the scene entry ABI.
 u8 *LinkLobby_GetEntrances(void) { return (u8 *)gLinkLobbyEntrances; }
 
-// Returns zero from this lobby scene entry.
+/// Returns zero from this lobby scene entry.
 s32 SceneData_ReturnZero(void) { return 0; }
 
-// Reinitializes the serial runtime while interrupts are locked.
-// The original s32 entry produces no defined result; its callers ignore it.
+/// Reinitializes the serial runtime while interrupts are locked.
+/// The original s32 entry produces no defined result; its callers ignore it.
 static s32 LinkLobby_InitializeSerial(void) {
   u32 savedIrqState;
 
@@ -125,10 +126,10 @@ static s32 LinkLobby_InitializeSerial(void) {
   IRQ_UNLOCK(savedIrqState);
 }
 
-// Returns the lobby's packed exit table.
+/// Returns the lobby's packed exit table.
 u8 *LinkLobby_GetExits(void) { return (u8 *)gLinkLobbyExits; }
 
-// Selects the post-link-battle placements for entrances nine and eleven.
+/// Selects the post-link-battle placements for entrances nine and eleven.
 s32 LinkLobby_SelectPlacements(void) {
   s16 entrance = gGameState.entrance;
 
@@ -138,7 +139,8 @@ s32 LinkLobby_SelectPlacements(void) {
   return (s32)gLinkLobbyPlacements;
 }
 
-// Checks one language-specific peer signature slot and updates link-side flags.
+/// Checks one language-specific peer signature slot and updates link-side
+/// flags.
 static s32 LinkLobby_PeerSlotMatches(s32 slot) {
   s32 serialPlayerId = -1;
 
@@ -170,7 +172,7 @@ static s32 LinkLobby_PeerSlotMatches(s32 slot) {
   return 0;
 }
 
-// Publishes a protocol slot value in the outgoing signature payload.
+/// Publishes a protocol slot value in the outgoing signature payload.
 static void LinkLobby_WriteSlotValue(s32 slot) {
   s32 *dst = (s32 *)gSerialTransfer.payload;
   const s32 *src = &gLinkLobby_SlotValues[slot];
@@ -182,8 +184,8 @@ static void LinkLobby_WriteSlotValue(s32 slot) {
 // modern build uses the scheduler's actual callback type to avoid an
 // incompatible indirect call.
 #ifdef UBFIX
-// Polls peer readiness, raises arrival/disconnect events and refreshes
-// signatures.
+/// Polls peer readiness, raises arrival/disconnect events and refreshes
+/// signatures.
 static void LinkLobby_PollPeerReady(void) {
 #else
 static s32 LinkLobby_PollPeerReady(void) {
@@ -251,8 +253,8 @@ static s32 LinkLobby_PollPeerReady(void) {
 
 u32 gLinkLobbyCallFrames;
 
-// Prompts for participation unless entering battle or a prompt is still
-// pending. Retains the original handler's missing result on the message path.
+/// Prompts for participation unless entering battle or a prompt is still
+/// pending. Retains the original handler's missing result on the message path.
 static s32 LinkLobby_PromptToParticipate(void) {
   s32 set;
 
@@ -276,8 +278,8 @@ static s32 LinkLobby_PromptToParticipate(void) {
   Engine_EventEnd();
 }
 
-// Resets the disconnect trigger and displays the attendant's warning.
-// The original handler has no defined return value.
+/// Resets the disconnect trigger and displays the attendant's warning.
+/// The original handler has no defined return value.
 static s32 LinkLobby_ReportDisconnection(void) {
   struct EventWork *work = gEventWork;
 
@@ -292,8 +294,9 @@ static s32 LinkLobby_ReportDisconnection(void) {
   Engine_EventEnd();
 }
 
-// Receives three unit records and a recovery table; returns the occupied count
-// or the original transfer failure. All size checks observe fresh serial reads.
+/// Receives three unit records and a recovery table; returns the occupied count
+/// or the original transfer failure. All size checks observe fresh serial
+/// reads.
 static s32 LinkLobby_ReceivePartyRecords(void) {
   /* FAKEMATCH(volatile): gSerialReceivedSize is volatile (serial_runtime.h),
    * so every read here is a load of its own; without the qualifier, 24 of 190
@@ -416,8 +419,8 @@ done:
   return result;
 }
 
-// Copies at most three active owner IDs, terminates with 0xff, and returns
-// count. Passing a null destination only counts the entries.
+/// Copies at most three active owner IDs, terminates with 0xff, and returns
+/// count. Passing a null destination only counts the entries.
 static s32 LinkLobby_CopyPartyOwnerIds(u16 *ownerIds) {
   s32 ownerCount = Party_CountActiveOwners();
   if (ownerCount > LOBBY_UNIT_RECORD_COUNT)
@@ -452,10 +455,10 @@ static s32 LinkLobby_CopyPartyOwnerIds(u16 *ownerIds) {
   return ownerCount;
 }
 
-// Measured plain form: replacing only the final offer-transfer wait3/test3
-// polling region with while(active transfers) adds 8 bytes in tbs-en.
-// Sends up to three active owners, pads missing records, then sends recovery
-// data. Returns zero on completion or the original serial failure.
+/// Measured plain form: replacing only the final offer-transfer wait3/test3
+/// polling region with while(active transfers) adds 8 bytes in tbs-en.
+/// Sends up to three active owners, pads missing records, then sends recovery
+/// data. Returns zero on completion or the original serial failure.
 static s32 LinkLobby_SendPartyRecords(void) {
   s32 result;
   u8 *slotMap;
@@ -591,8 +594,8 @@ done:
   return result;
 }
 
-// Orders send/receive by link side and records the received owner count.
-// A failed exchange resets the transfer state.
+/// Orders send/receive by link side and records the received owner count.
+/// A failed exchange resets the transfer state.
 static s32 LinkLobby_ExchangePartyRecords(void) {
   s32 result;
   s32 receivedOwnerCount;
@@ -634,9 +637,9 @@ check:
   return result;
 }
 
-// Waits for the opponent, exchanges parties and starts the arena battle.
-// Disconnects restore the lobby callback and actor position; original returns
-// have no defined status.
+/// Waits for the opponent, exchanges parties and starts the arena battle.
+/// Disconnects restore the lobby callback and actor position; original returns
+/// have no defined status.
 static s32 LinkLobby_EnterBattle(void) {
   struct EventWork *work;
   s32 failed;
@@ -769,8 +772,8 @@ static s32 LinkLobby_EnterBattle(void) {
   Engine_EventEnd();
 }
 
-// Offers a linked challenge or a monster battle and publishes the response.
-// Retains the original shared message tails and ignored return value.
+/// Offers a linked challenge or a monster battle and publishes the response.
+/// Retains the original shared message tails and ignored return value.
 static s32 LinkLobby_ChooseBattleMode(void) {
   // Returns no value: r0 is whatever the last call left.
 
@@ -866,8 +869,8 @@ static s32 LinkLobby_ChooseBattleMode(void) {
   Engine_EventEnd();
 }
 
-// Reports total or consecutive linked wins according to the leader's facing.
-// Retains the original handler's missing return and event-end behavior.
+/// Reports total or consecutive linked wins according to the leader's facing.
+/// Retains the original handler's missing return and event-end behavior.
 static s32 LinkLobby_ReportWinTallies(s32 actor) {
   u32 facing = Object_GetById(0)->facing;
   u16 *tally;
@@ -901,8 +904,8 @@ static s32 LinkLobby_ReportWinTallies(s32 actor) {
     }
   }
 }
-// Selects a debug party preset; A accepts and B cancels.
-// The preset loader's nonzero result selects the unavailable-preset message.
+/// Selects a debug party preset; A accepts and B cancels.
+/// The preset loader's nonzero result selects the unavailable-preset message.
 static s32 LinkLobby_ChooseDebugPartyPreset(s32 actorId) {
   struct UiWindow *window;
   s32 presetIndex;
@@ -958,14 +961,14 @@ static s32 LinkLobby_ChooseDebugPartyPreset(s32 actorId) {
   Engine_EventEnd();
 }
 
-// Runs the sanctum service for this actor within an event.
+/// Runs the sanctum service for this actor within an event.
 static s32 LinkLobby_OpenSanctum(s32 actorId) {
   Engine_EventBegin();
   Engine_SanctumOpen(actorId);
   Engine_EventEnd();
 }
 
-// Tests the first three linked-battle owners, or four outside linked finals.
+/// Tests the first three linked-battle owners, or four outside linked finals.
 static s32 LinkLobby_PartyContains(s32 ownerId) {
   s32 count;
   s32 ownerLimit;
@@ -990,10 +993,10 @@ static s32 LinkLobby_PartyContains(s32 ownerId) {
   return 0;
 }
 
-// UNUSED: the original empty lobby callback.
+/// UNUSED: the original empty lobby callback.
 UNUSED static void State_NoOp(void) {}
 
-// Chooses each party member's dialogue from participation and round outcome.
+/// Chooses each party member's dialogue from participation and round outcome.
 static s32 LinkLobby_TalkByProgress(s32 actor) {
   s32 messageBase = MsgLobbyCantWaitLets;
   s32 isaacPresent = LinkLobby_PartyContains(0);
@@ -1027,8 +1030,8 @@ static s32 LinkLobby_TalkByProgress(s32 actor) {
   Engine_EventEnd();
 }
 
-// Removes the link IRQ handlers, restores sound parameters and leaves the
-// arena.
+/// Removes the link IRQ handlers, restores sound parameters and leaves the
+/// arena.
 static s32 LinkLobby_LeaveArena(void) {
   SerialRuntime_RemoveIrqHandlers();
   Sound_LoadPresetParameters(2);
@@ -1038,7 +1041,7 @@ static s32 LinkLobby_LeaveArena(void) {
 // The handlers below are s32 and return no value: r0 is whatever
 // Engine_EventEnd left.
 
-// Selects the attendant's rules or post-battle line from the round outcome.
+/// Selects the attendant's rules or post-battle line from the round outcome.
 static s32 LinkLobby_TalkToAttendant(s32 actor) {
   s32 message;
   s32 step = 0;
@@ -1064,7 +1067,7 @@ static s32 LinkLobby_TalkToAttendant(s32 actor) {
   Engine_EventEnd();
 }
 
-// Alternates between the linked-party size and reorder instructions.
+/// Alternates between the linked-party size and reorder instructions.
 static s32 LinkLobby_ExplainPartyOrder(s32 actor) {
   s32 message;
 
@@ -1085,7 +1088,7 @@ static s32 LinkLobby_ExplainPartyOrder(s32 actor) {
   Engine_EventEnd();
 }
 
-// Reports the stored consecutive-monster-battle record when nonzero.
+/// Reports the stored consecutive-monster-battle record when nonzero.
 static s32 LinkLobby_ReportMonsterRecord(s32 actorId) {
   struct GameState *state;
 
@@ -1102,12 +1105,12 @@ static s32 LinkLobby_ReportMonsterRecord(s32 actorId) {
   Engine_EventEnd();
 }
 
-// Returns the lobby event table through the scene entry ABI.
+/// Returns the lobby event table through the scene entry ABI.
 u8 *LinkLobby_GetEvents(void) { return (u8 *)gLinkLobbyEvents; }
 
-// Shows saving/saved messages around the linked battle results save.
-// A shared inline message-pair helper grows each save routine from 0x6c to
-// 0x70 in the native build, so retain the two sequences.
+/// Shows saving/saved messages around the linked battle results save.
+/// A shared inline message-pair helper grows each save routine from 0x6c to
+/// 0x70 in the native build, so retain the two sequences.
 static s32 LinkLobby_SaveBattleResults(void) {
   struct UiWindow *window;
 
@@ -1124,8 +1127,8 @@ static s32 LinkLobby_SaveBattleResults(void) {
   UiWork_Finalize(window, 1);
 }
 
-// Shows saving/saved messages around the monster battle record save.
-// See LinkLobby_SaveBattleResults for the measured shared-helper trial.
+/// Shows saving/saved messages around the monster battle record save.
+/// See LinkLobby_SaveBattleResults for the measured shared-helper trial.
 static s32 LinkLobby_SaveMonsterBattleResults(void) {
   struct UiWindow *window;
 
@@ -1142,7 +1145,7 @@ static s32 LinkLobby_SaveMonsterBattleResults(void) {
   UiWork_Finalize(window, 1);
 }
 
-// Draws a right-to-left three-digit value capped at 999, then redraws the map.
+/// Draws a right-to-left three-digit value capped at 999, then redraws the map.
 static s32 LinkLobby_DrawThreeDigitValue(s32 value) {
   s32 digit;
 
@@ -1155,8 +1158,8 @@ static s32 LinkLobby_DrawThreeDigitValue(s32 value) {
   Engine_MapRedraw();
 }
 
-// Processes the entry's monster/link result and restores lobby polling.
-// Returns zero after updating records, messages and party recovery.
+/// Processes the entry's monster/link result and restores lobby polling.
+/// Returns zero after updating records, messages and party recovery.
 s32 LinkLobby_RunRoundResult(void) {
   s32 i;
   u32 score;

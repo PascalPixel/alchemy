@@ -1,5 +1,6 @@
-// Part of battle_command.c, the menu object, compiled only through it.
-// The battle Djinn menu.
+/// @file
+/// Part of battle_command.c, the menu object, compiled only through it.
+/// The battle Djinn menu.
 
 #include "../battle_command_internal.h"
 
@@ -15,15 +16,15 @@
 
 #define CURSOR_OWNER (*(struct PartyStatusWindow **)gPartyStatusWork)
 
-// A selected Djinni packs its element/index, standby bit and recovery turns.
+/// A selected Djinni packs its element/index, standby bit and recovery turns.
 #define DJINN_ENTRY_STANDBY 0x10000
 #define DJINN_ENTRY_RECOVERY_MASK 0x3e0000
 #define DJINN_ENTRY_RECOVERY_SHIFT 17
 #define DJINN_ENTRY_END 0x80000000
 
-// Select a Djinni for the current battle command. Entries encode its element,
-// index, standby state and recovery turns; -1 means cancel. R opens the
-// stat/Psynergy preview, and tutorial input follows the normal input path.
+/// Select a Djinni for the current battle command. Entries encode its element,
+/// index, standby state and recovery turns; -1 means cancel. R opens the
+/// stat/Psynergy preview, and tutorial input follows the normal input path.
 s32 Battle_SelectAbility(s32 owner, s32 unused) {
   struct CursorSprite cursor;
   u16 messageText[64];

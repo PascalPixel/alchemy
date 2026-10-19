@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Ragnarok.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Ragnarok.
 
 #include "../effect_internal.h"
 
@@ -22,19 +23,19 @@
 #define RAGNAROK_SPARKS 340       // sparks kept per column
 #define RAGNAROK_DRAWN_SPARKS 256 // of which flown
 
-// gRagnarok_StrikeColumns has three columns for each side.
+/// gRagnarok_StrikeColumns has three columns for each side.
 #define RAGNAROK_COLUMN_X(side, column)                                        \
   gRagnarok_StrikeColumns[(side)][(column)]
 
-// Abilities: Ragnarok (kind 58).
-//
-// A huge flaming blade swings down over the targets and two columns of light
-// strike through them. The sword is drawn for 40 frames: it swings down over
-// 10 frames, pauses until frame 20, then creeps on. The columns flash at
-// frames 16 and 24 and scatter sparks six frames later, as the targets
-// recoil; the battle shows the damage on frame 40. Column x comes from
-// gRagnarok_StrikeColumns: first two of three per side. PARTICLES holds 340
-// sparks per column.
+/// Abilities: Ragnarok (kind 58).
+///
+/// A huge flaming blade swings down over the targets and two columns of light
+/// strike through them. The sword is drawn for 40 frames: it swings down over
+/// 10 frames, pauses until frame 20, then creeps on. The columns flash at
+/// frames 16 and 24 and scatter sparks six frames later, as the targets
+/// recoil; the battle shows the damage on frame 40. Column x comes from
+/// gRagnarok_StrikeColumns: first two of three per side. PARTICLES holds 340
+/// sparks per column.
 void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

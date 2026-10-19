@@ -16,6 +16,6 @@
       ARM_IMMEDIATE_BIT(12), ARM_IMMEDIATE_BIT(13), ARM_IMMEDIATE_BIT(14),     \
       ARM_IMMEDIATE_BIT(15)
 
-// Two identical tables; the first has no references.
+/// Two identical tables; the first has no references.
 u16 gUnused_BitOperands[] = {ARM_IMMEDIATE_POWERS};
 u16 gBattleFx_BitOperands[] = {ARM_IMMEDIATE_POWERS};

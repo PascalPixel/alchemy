@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Condemn.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Condemn.
 
 #include "../effect_internal.h"
 
@@ -7,16 +8,17 @@
 #define CONDEMN_BREAK_FRAME 88   // the panel breaks in a white flash
 #define CONDEMN_BOUNCE_FRAME 120 // the falling target bounces
 
-// gCondemn_PanelX and _PanelY have seven stages for each column and row.
+/// gCondemn_PanelX and _PanelY have seven stages for each column and row.
 #define CONDEMN_PANEL_X(column, stage) gCondemn_PanelX[(column)][(stage)]
 #define CONDEMN_PANEL_Y(row, stage) gCondemn_PanelY[(row)][(stage)]
 
-// Abilities: Condemn (kind 40).
-//
-// A tall panel (57x98) swings across the screen three times, each pass fading
-// out through a ripple, the last over the first target; on frame 88 it shatters
-// in a white flash into a burst of larger pieces and the target is knocked
-// back, bouncing on frame 120. The effect layer ripples throughout. 132 frames.
+/// Abilities: Condemn (kind 40).
+///
+/// A tall panel (57x98) swings across the screen three times, each pass fading
+/// out through a ripple, the last over the first target; on frame 88 it
+/// shatters in a white flash into a burst of larger pieces and the target is
+/// knocked back, bouncing on frame 120. The effect layer ripples throughout.
+/// 132 frames.
 void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

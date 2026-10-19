@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Plasma, and the spark groups of Blast and Dynamite.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Plasma, and the spark groups of Blast and Dynamite.
 
 #include "../effect_internal.h"
 
@@ -18,18 +19,18 @@
 #define PLASMA_SPACING 8           // frames between pillars
 #define PLASMA_SECOND_IMAGE 0x1500 // the second picture in the sheet
 
-// gPlasma_Columns has seven pillars for each side.
+/// gPlasma_Columns has seven pillars for each side.
 #define PLASMA_COLUMN_X(side, pillar) gPlasma_Columns[(side)][(pillar)]
 
-// Abilities: Plasma, Shine Plasma, Spark Plasma, Thunderclap, Thunderbolt,
-// Thunderstorm (kind 18).
-//
-// Pillars of lightning strike one every 8 frames, each with a white flash,
-// throwing sparks up from the ground and knocking the targets back; the battle
-// shows the damage on frame 32. effect->variant picks how many pillars
-// (gPlasma_Counts), how many sparks each throws and how long the screen shakes
-// (gPlasma_Sparks); with variant 2 the camera also swings round for the first
-// 64 frames. effect->side picks the row of pillar positions.
+/// Abilities: Plasma, Shine Plasma, Spark Plasma, Thunderclap, Thunderbolt,
+/// Thunderstorm (kind 18).
+///
+/// Pillars of lightning strike one every 8 frames, each with a white flash,
+/// throwing sparks up from the ground and knocking the targets back; the battle
+/// shows the damage on frame 32. effect->variant picks how many pillars
+/// (gPlasma_Counts), how many sparks each throws and how long the screen shakes
+/// (gPlasma_Sparks); with variant 2 the camera also swings round for the first
+/// 64 frames. effect->side picks the row of pillar positions.
 void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **slots;
@@ -199,18 +200,18 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
 // burst (only the first twelve are drawn), and its sparks in PARTICLES,
 // one run per burst.
 
-// Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb (kind
-// 15).
-//
-// Bursts at (60, 48), the canvas behind the battle's
-// first layer (priority 1).
+/// Abilities: Blast, Nova, Supernova, Fire Bomb, Cluster Bomb, Carpet Bomb
+/// (kind 15).
+///
+/// Bursts at (60, 48), the canvas behind the battle's
+/// first layer (priority 1).
 void BattleFx_RunNova(struct BattleEffectArgument *effect) {
   BattleFx_RunSparkGroups(effect, 0);
 }
-// Abilities: Dynamite (kind 338).
-//
-// Orange bursts at (60, 64), the canvas in front
-// (priority 0).
+/// Abilities: Dynamite (kind 338).
+///
+/// Orange bursts at (60, 64), the canvas in front
+/// (priority 0).
 void BattleFx_RunDynamite(struct BattleEffectArgument *effect) {
   BattleFx_RunSparkGroups(effect, 1);
 }
@@ -219,16 +220,16 @@ void BattleFx_RunDynamite(struct BattleEffectArgument *effect) {
 #define SPARK_GROUPS_RING 12        // of which drawn as the ring
 #define SPARK_GROUPS_FLASH_DRAWN 18 // a flash is drawn for its last 18 frames
 
-// One to three bursts, 8 frames apart: each flashes, rings itself with
-// twelve smaller flashes that fade, and throws out sparks that bounce on
-// the ground; every burst knocks the targets back.
-// effect->variant picks the shape from gPlasma_Shapes: sparks per
-// burst, how many bursts, and each burst's offset across. Variant 2 also
-// scrolls the camera, and variant 3 flashes the whole canvas on frame 4.
-// mode : 0 at (60, 48), the battle shows the damage on frame 24;
-//        1 at (60, 64), orange; the damage shows on frame 2;
-//        2 below the user, in the LightningBolt colours, with the sparks
-//          rising instead of falling; the damage shows on frame 2.
+/// One to three bursts, 8 frames apart: each flashes, rings itself with
+/// twelve smaller flashes that fade, and throws out sparks that bounce on
+/// the ground; every burst knocks the targets back.
+/// effect->variant picks the shape from gPlasma_Shapes: sparks per
+/// burst, how many bursts, and each burst's offset across. Variant 2 also
+/// scrolls the camera, and variant 3 flashes the whole canvas on frame 4.
+/// mode : 0 at (60, 48), the battle shows the damage on frame 24;
+///        1 at (60, 64), orange; the damage shows on frame 2;
+///        2 below the user, in the LightningBolt colours, with the sparks
+///          rising instead of falling; the damage shows on frame 2.
 void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition screenPosition;
   BlitterPair draw;

@@ -1,22 +1,23 @@
-// Part of battle.c, the battle object, compiled only through it.
-// An enemy's choice of action, BattleCommand_SelectAutomatic.
+/// @file
+/// Part of battle.c, the battle object, compiled only through it.
+/// An enemy's choice of action, BattleCommand_SelectAutomatic.
 
 #include "../battle_internal.h"
 
-// An enemy's memory of its action choice, kept in BattleUnit.rewards.
+/// An enemy's memory of its action choice, kept in BattleUnit.rewards.
 struct BattleAutomaticState {
   unsigned initialized : 1;
-  unsigned selection : 3; // the place in its action list
+  unsigned selection : 3; ///< the place in its action list
   unsigned remaining : 28;
 };
 
-// Chooses an enemy's action (a party member's is chosen in the menu): one of
-// the eight in its definition, picked by its action strategy, with an item
-// instead where its item mask says so, and a target worth the ability. A
-// choice that cannot be made (too little PP, sealed, a forbidden escape, no
-// worthwhile target) picks again; after 18 tries the enemy defends.
-// retry : 0 when the round is built: only a guard is settled now (it must
-//         raise before anyone acts); 1 at the enemy's turn: the rest.
+/// Chooses an enemy's action (a party member's is chosen in the menu): one of
+/// the eight in its definition, picked by its action strategy, with an item
+/// instead where its item mask says so, and a target worth the ability. A
+/// choice that cannot be made (too little PP, sealed, a forbidden escape, no
+/// worthwhile target) picks again; after 18 tries the enemy defends.
+/// retry : 0 when the round is built: only a guard is settled now (it must
+///         raise before anyone acts); 1 at the enemy's turn: the rest.
 s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
                                   s32 retry) {
   u32 selection;

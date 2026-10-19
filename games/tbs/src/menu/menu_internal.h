@@ -1,10 +1,11 @@
 #ifndef ALCHEMY_MENU_INTERNAL_H
 #define ALCHEMY_MENU_INTERNAL_H
 
-// What every part of the menu object shares: its includes, and the macros
-// and types more than one part uses. menu.c includes it before the parts,
-// and each part includes it too, so that a part read on its own resolves. It
-// places no bytes.
+/// @file
+/// What every part of the menu object shares: its includes, and the macros
+/// and types more than one part uses. menu.c includes it before the parts,
+/// and each part includes it too, so that a part read on its own resolves. It
+/// places no bytes.
 
 #include "render_placement.h"
 #include "unit/menu/menu.h"
@@ -73,38 +74,38 @@ extern u8 IwramCopyWords[];
 
 s32 _call_via_r3(void *, void *, s32, void *);
 
-// BattleAct.flags: where an ability or item can be used, as the Psynergy
-// list says ("Usable in the field", "Usable in battle").
+/// BattleAct.flags: where an ability or item can be used, as the Psynergy
+/// list says ("Usable in the field", "Usable in battle").
 #define ACTION_USABLE_IN_FIELD 0x40
 #define ACTION_USABLE_IN_BATTLE 0x80
 
-// Game flags of the menus. Start was pressed: every menu screen unwinds and
-// the whole menu closes.
+/// Game flags of the menus. Start was pressed: every menu screen unwinds and
+/// the whole menu closes.
 #define FLAG_MENU_START_PRESSED 0x150
-// The info window holds a message the next selection must not draw over.
+/// The info window holds a message the next selection must not draw over.
 #define FLAG_MENU_INFO_KEPT 0x151
 
-// The target id of Psynergy or an item used on the whole party.
+/// The target id of Psynergy or an item used on the whole party.
 #define MENU_TARGET_WHOLE_PARTY 9
 
-// The bytes of the menu work, heap block HEAP_SLOT_MENU.
+/// The bytes of the menu work, heap block HEAP_SLOT_MENU.
 #define MENU_WORK_SIZE 0xa70
 
-// Inventory icons occupy five columns in the fifteen-slot list.
+/// Inventory icons occupy five columns in the fifteen-slot list.
 #define MENU_ITEM_GRID_COLUMNS 5
 
-// What Menu_DrawOwnerStatusPanel shows below the name and ailments: the low
-// byte of its mode.
+/// What Menu_DrawOwnerStatusPanel shows below the name and ailments: the low
+/// byte of its mode.
 enum StatusPanelKind {
-  STATUS_PANEL_EXPERIENCE = 0, // class, HP, PP and experience
-  STATUS_PANEL_EQUIP = 2,      // stats if the item were equipped
-  STATUS_PANEL_LEARN = 4,      // the Psynergy a Psynergy item teaches
-  STATUS_PANEL_CLASS = 6,      // class, HP and PP
-  STATUS_PANEL_STATS = 8,      // Attack, Defense, Agility and Luck
+  STATUS_PANEL_EXPERIENCE = 0, ///< class, HP, PP and experience
+  STATUS_PANEL_EQUIP = 2,      ///< stats if the item were equipped
+  STATUS_PANEL_LEARN = 4,      ///< the Psynergy a Psynergy item teaches
+  STATUS_PANEL_CLASS = 6,      ///< class, HP and PP
+  STATUS_PANEL_STATS = 8,      ///< Attack, Defense, Agility and Luck
 };
 #define STATUS_PANEL_KIND_MASK 0xff
-// Keeps the open window, the name and the ailments, and redraws only the
-// part below them.
+/// Keeps the open window, the name and the ailments, and redraws only the
+/// part below them.
 #define STATUS_PANEL_LOWER_ONLY 0x100
 
 // The revised information pane restores its tiles and draws directly into them.
@@ -128,14 +129,14 @@ enum StatusPanelKind {
 #define TEXT_COLOR_NO_HP 2  // HP 0
 #define TEXT_COLOR_NORMAL 15
 
-// RenderOutput.active as the menu sets it: shown, or hidden but kept.
+/// RenderOutput.active as the menu sets it: shown, or hidden but kept.
 #define ICON_SHOWN 1
 #define ICON_HIDDEN 13
 
-// RenderOutput_CreateFar's sprite attributes for the menu's 16x16 icons.
+/// RenderOutput_CreateFar's sprite attributes for the menu's 16x16 icons.
 #define ICON_SPRITE_16X16 0x40000000
 
-// The preview loop's four operations, as its confirmation text describes them.
+/// The preview loop's four operations, as its confirmation text describes them.
 enum DjinnCompareOperation {
   DJINN_COMPARE_TRADE = 0,
   DJINN_COMPARE_GIVE = 1,

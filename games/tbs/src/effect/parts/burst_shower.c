@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// The blessings' burst showers.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// The blessings' burst showers.
 
 #include "../effect_internal.h"
 
@@ -8,25 +9,25 @@
 // lightning bolt instead. Each burst is one particle slot, its variant
 // counting the 24 frames it lives (-1 when free).
 
-// The burst shower's second picture in the sheet, after the tornado.
+/// The burst shower's second picture in the sheet, after the tornado.
 #define BURST_SHOWER_CELLS 0xC56
 #define BURST_SHOWER_BURSTS 48     // one fired a frame from frame 0
 #define BURST_SHOWER_BURST_LIFE 24 // frames each burst lives
 
-// The burst shower's styles, its mode argument.
+/// The burst shower's styles, its mode argument.
 enum BurstShowerMode {
-  BURST_SHOWER_MODE_FLASH,     // flash bursts
-  BURST_SHOWER_MODE_ICE,       // in the ice block palette
-  BURST_SHOWER_MODE_SPRAY,     // in the water spray palette
-  BURST_SHOWER_MODE_PINK,      // pink, fired from 16 pixels lower
-  BURST_SHOWER_MODE_DJINNI,    // Mars djinni palette, 28 pixels in front
-  BURST_SHOWER_MODE_LIGHTNING, // no bursts: a violet lightning bolt
-  BURST_SHOWER_MODE_GREY,      // grey; the targets stay solid black
-  BURST_SHOWER_MODE_FACES,     // demon faces from 16 pixels in front
+  BURST_SHOWER_MODE_FLASH,     ///< flash bursts
+  BURST_SHOWER_MODE_ICE,       ///< in the ice block palette
+  BURST_SHOWER_MODE_SPRAY,     ///< in the water spray palette
+  BURST_SHOWER_MODE_PINK,      ///< pink, fired from 16 pixels lower
+  BURST_SHOWER_MODE_DJINNI,    ///< Mars djinni palette, 28 pixels in front
+  BURST_SHOWER_MODE_LIGHTNING, ///< no bursts: a violet lightning bolt
+  BURST_SHOWER_MODE_GREY,      ///< grey; the targets stay solid black
+  BURST_SHOWER_MODE_FACES,     ///< demon faces from 16 pixels in front
 };
 
-// Arms DMA 0 to copy one word of gBattleFxWork's bg2xLines table into BG2X at
-// each horizontal blank, bending BG2 line by line.
+/// Arms DMA 0 to copy one word of gBattleFxWork's bg2xLines table into BG2X at
+/// each horizontal blank, bending BG2 line by line.
 void BattleFx_ArmBg2AffineHBlankDma(void) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   volatile u16 *channel = REG_DMA0;
@@ -35,71 +36,71 @@ void BattleFx_ArmBg2AffineHBlankDma(void) {
           (volatile u32 *)channel);
 }
 
-// Abilities: Fire Blessing (kind 400).
-//
-// The user fires a stream of flash bursts at the targets, one a frame,
-// each towards a random point near a target.
+/// Abilities: Fire Blessing (kind 400).
+///
+/// The user fires a stream of flash bursts at the targets, one a frame,
+/// each towards a random point near a target.
 void BattleFx_RunFireBlessing(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_FLASH);
 }
-// Abilities: Water Blessing (kind 401).
-//
-// The user fires a stream of bursts at the targets in the water-spray
-// palette.
+/// Abilities: Water Blessing (kind 401).
+///
+/// The user fires a stream of bursts at the targets in the water-spray
+/// palette.
 void BattleFx_RunWaterBlessing(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_SPRAY);
 }
-// Abilities: Dark Blessing (kind 403).
-//
-// The user fires a stream of grey bursts at the targets, which turn solid
-// black and stay so.
+/// Abilities: Dark Blessing (kind 403).
+///
+/// The user fires a stream of grey bursts at the targets, which turn solid
+/// black and stay so.
 void BattleFx_RunDarkBlessing(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_GREY);
 }
-// Abilities: Dark Blessing, Acid Blessing (kind 404).
-//
-// Fire pink bursts from 16 pixels below the normal origin.
+/// Abilities: Dark Blessing, Acid Blessing (kind 404).
+///
+/// Fire pink bursts from 16 pixels below the normal origin.
 void BattleFx_RunAcidBlessing(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_PINK);
 }
-// Abilities: Storm Blessing (kind 405).
-//
-// Show violet lightning between the user and targets instead of bursts: a
-// bolt flickers through three pictures in front of the user, and the
-// targets flash in turn without being knocked back.
+/// Abilities: Storm Blessing (kind 405).
+///
+/// Show violet lightning between the user and targets instead of bursts: a
+/// bolt flickers through three pictures in front of the user, and the
+/// targets flash in turn without being knocked back.
 void BattleFx_RunStormBlessing(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_LIGHTNING);
 }
-// Abilities: Evil Blessing (kind 406).
-//
-// The user fires a stream of demon faces at the targets, from 16 pixels in
-// front of it.
+/// Abilities: Evil Blessing (kind 406).
+///
+/// The user fires a stream of demon faces at the targets, from 16 pixels in
+/// front of it.
 void BattleFx_RunEvilBlessing(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_FACES);
 }
-// Abilities: Deadly Gas (kind 407).
-//
-// The user fires a stream of Mars-coloured bursts at the targets, from 28
-// pixels in front of it.
+/// Abilities: Deadly Gas (kind 407).
+///
+/// The user fires a stream of Mars-coloured bursts at the targets, from 28
+/// pixels in front of it.
 void BattleFx_RunDeadlyGas(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_DJINNI);
 }
 #define BURST_SHOWER_FRAMES 64
 
-// Burst shower: for 48 frames the user fires one burst a frame at a random
-// point near one of the targets, taking them in turn, and each target is
-// hit every 8 frames. Each burst lives 24 frames. A sound plays on frame 4
-// and the battle shows the damage on frame 24 (frame 60 in the grey mode).
-//
-// effect: the user and the targets.
-// mode: the burst and its palette: 0 flash bursts, 1 in the ice block
-//       palette, 2 in the water spray palette, 3 pink and fired from 16
-//       pixels lower, 4 in the Mars djinni palette from 28 pixels in
-//       front, 6 grey (the targets turn solid black and stay so), 7 demon
-//       faces from 16 pixels in front. Mode 5 fires no bursts: a violet
-//       lightning bolt stands between the user and the targets, on a
-//       canvas shown at three times its width. No kind in the effect
-//       table uses mode 1.
+/// Burst shower: for 48 frames the user fires one burst a frame at a random
+/// point near one of the targets, taking them in turn, and each target is
+/// hit every 8 frames. Each burst lives 24 frames. A sound plays on frame 4
+/// and the battle shows the damage on frame 24 (frame 60 in the grey mode).
+///
+/// effect: the user and the targets.
+/// mode: the burst and its palette: 0 flash bursts, 1 in the ice block
+///       palette, 2 in the water spray palette, 3 pink and fired from 16
+///       pixels lower, 4 in the Mars djinni palette from 28 pixels in
+///       front, 6 grey (the targets turn solid black and stay so), 7 demon
+///       faces from 16 pixels in front. Mode 5 fires no bursts: a violet
+///       lightning bolt stands between the user and the targets, on a
+///       canvas shown at three times its width. No kind in the effect
+///       table uses mode 1.
 void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   u32 *slots;
   struct BattleEffectWork *work;

@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Prism.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Prism.
 
 #include "../effect_internal.h"
 
@@ -7,17 +8,17 @@
 
 #define PRISM_GROUND_Y 0x380000 // y 56, where the crystals shatter
 
-// Abilities: Prism, Hail Prism, Freeze Prism (kind 8).
-//
-// Crystals drop out of the sky onto the targets' side, 8 frames apart, and
-// shatter on the ground into 16 spinning shards each, flashing the targets and
-// shaking the screen; the battle shows the damage 80 frames before the end, and
-// the canvas darkens away over the last 8. effect->variant picks the volley
-// from gPrism_Counts (crystals and frames: 1 in 110, 4 in 134, 12 in 166); with
-// variant 2 the camera also swings round for the first 104 frames. The crystals
-// are particles[]: z is 1 once shattered, variant is the frame it starts to
-// fall. The shards are 16 per crystal in PARTICLES: z is how fast it
-// spins.
+/// Abilities: Prism, Hail Prism, Freeze Prism (kind 8).
+///
+/// Crystals drop out of the sky onto the targets' side, 8 frames apart, and
+/// shatter on the ground into 16 spinning shards each, flashing the targets and
+/// shaking the screen; the battle shows the damage 80 frames before the end,
+/// and the canvas darkens away over the last 8. effect->variant picks the
+/// volley from gPrism_Counts (crystals and frames: 1 in 110, 4 in 134, 12 in
+/// 166); with variant 2 the camera also swings round for the first 104 frames.
+/// The crystals are particles[]: z is 1 once shattered, variant is the frame it
+/// starts to fall. The shards are 16 per crystal in PARTICLES: z is how fast it
+/// spins.
 void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **cursor;
@@ -149,11 +150,11 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-// Rebuilds background colours 1 to 63 as a grey ramp whose red, green and
-// blue each sway with the frame, out of step by their phases (1/65536ths
-// of a turn), so the effect shimmers through colours.
-// frame      : the effect's frame; the sway turns 1/64 of a circle a frame
-// redPhase, greenPhase, bluePhase : each channel's offset in the sway
+/// Rebuilds background colours 1 to 63 as a grey ramp whose red, green and
+/// blue each sway with the frame, out of step by their phases (1/65536ths
+/// of a turn), so the effect shimmers through colours.
+/// frame      : the effect's frame; the sway turns 1/64 of a circle a frame
+/// redPhase, greenPhase, bluePhase : each channel's offset in the sway
 void Graphics_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
                                  s32 bluePhase) {
   u16 palette[64];

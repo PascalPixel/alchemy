@@ -1,14 +1,15 @@
-// Part of battle_command.c, the menu object, compiled only through it.
-// Sprite outputs, portraits and the window spans.
+/// @file
+/// Part of battle_command.c, the menu object, compiled only through it.
+/// Sprite outputs, portraits and the window spans.
 
 #include "../battle_command_internal.h"
 
-// Creates a sprite output for the VRAM cache slot `slot` and attaches it to
-// `window`, placed at (offsetX, offsetY) pixels from the window's inner
-// corner (one tile in from its top-left border). `oamFlags` holds the OAM
-// shape and size bits. The sprite draws on layer 255 until the caller changes
-// it. Returns the output, or NULL with the VRAM slot released when all
-// outputs are in use.
+/// Creates a sprite output for the VRAM cache slot `slot` and attaches it to
+/// `window`, placed at (offsetX, offsetY) pixels from the window's inner
+/// corner (one tile in from its top-left border). `oamFlags` holds the OAM
+/// shape and size bits. The sprite draws on layer 255 until the caller changes
+/// it. Returns the output, or NULL with the VRAM slot released when all
+/// outputs are in use.
 struct RenderOutput *RenderOutput_Create(s32 slot, s32 oamFlags,
                                          struct UiWindow *window, s32 offsetX,
                                          s32 offsetY) {
@@ -42,9 +43,9 @@ struct RenderOutput *RenderOutput_Create(s32 slot, s32 oamFlags,
   return output;
 }
 
-// Loads resource `resource` in loading mode `mode` into a VRAM slot and shows
-// it as a 16x16 sprite at (x, y) in `window`. Returns NULL when it cannot be
-// loaded.
+/// Loads resource `resource` in loading mode `mode` into a VRAM slot and shows
+/// it as a 16x16 sprite at (x, y) in `window`. Returns NULL when it cannot be
+/// loaded.
 struct RenderOutput *RenderOutput_CreateFromResource(s32 mode, s32 resource,
                                                      struct UiWindow *window,
                                                      s32 x, s32 y) {
@@ -57,9 +58,9 @@ struct RenderOutput *RenderOutput_CreateFromResource(s32 mode, s32 resource,
   return RenderOutput_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
 }
 
-// Copies icon `icon` (with `layers` passed on to the copier) into a free VRAM
-// slot and shows it as a 16x16 sprite at (x, y) in `window`. Returns NULL
-// when no slot is free.
+/// Copies icon `icon` (with `layers` passed on to the copier) into a free VRAM
+/// slot and shows it as a 16x16 sprite at (x, y) in `window`. Returns NULL
+/// when no slot is free.
 struct RenderOutput *RenderOutput_CreateLoaded(s32 icon, s32 layers,
                                                struct UiWindow *window, s32 x,
                                                s32 y) {
@@ -75,9 +76,9 @@ struct RenderOutput *RenderOutput_CreateLoaded(s32 icon, s32 layers,
   return output;
 }
 
-// Builds a 16x16 icon from frame pattern 1 with overlay pattern `icon` drawn
-// over it, and shows it at (x, y) in `window` on draw layer 251. Returns NULL
-// when no VRAM slot is free.
+/// Builds a 16x16 icon from frame pattern 1 with overlay pattern `icon` drawn
+/// over it, and shows it at (x, y) in `window` on draw layer 251. Returns NULL
+/// when no VRAM slot is free.
 struct RenderOutput *RenderOutput_CreateWithTransform(s32 icon,
                                                       struct UiWindow *window,
                                                       s32 x, s32 y) {
@@ -95,10 +96,10 @@ struct RenderOutput *RenderOutput_CreateWithTransform(s32 icon,
   return output;
 }
 
-// Loads the pattern at the start of gRenderResource_PairSourceTable into a
-// free VRAM slot and shows it as a 16x16 sprite at (x, y) in `window`.
-// `tableEntry` is passed on to the loader, which loads that same pattern for
-// every value. Returns NULL when no slot is free.
+/// Loads the pattern at the start of gRenderResource_PairSourceTable into a
+/// free VRAM slot and shows it as a 16x16 sprite at (x, y) in `window`.
+/// `tableEntry` is passed on to the loader, which loads that same pattern for
+/// every value. Returns NULL when no slot is free.
 struct RenderOutput *RenderOutput_CreateFromTable(s32 tableEntry,
                                                   struct UiWindow *window,
                                                   s32 x, s32 y) {
@@ -114,12 +115,12 @@ struct RenderOutput *RenderOutput_CreateFromTable(s32 tableEntry,
   return output;
 }
 
-// Shows the 32x32 portrait of `character` at (x, y) in `window`, in portrait
-// slot `side` (0 or 1, or any other value for the first free one; the second
-// is tried first). Each slot has its own palette, 14 or 15. In the prologue,
-// characters 0 and 1 show portraits 18 and 19 instead. `unused` is
-// passed on to the loader, which ignores it. Returns the sprite, or NULL when
-// the character has no portrait or both slots are taken.
+/// Shows the 32x32 portrait of `character` at (x, y) in `window`, in portrait
+/// slot `side` (0 or 1, or any other value for the first free one; the second
+/// is tried first). Each slot has its own palette, 14 or 15. In the prologue,
+/// characters 0 and 1 show portraits 18 and 19 instead. `unused` is
+/// passed on to the loader, which ignores it. Returns the sprite, or NULL when
+/// the character has no portrait or both slots are taken.
 struct RenderOutput *CreateSideObject(s32 character, s32 unused, s32 side,
                                       struct UiWindow *window, s32 x, s32 y) {
   struct UiRenderWork *work = UI_WORK;
@@ -162,11 +163,11 @@ struct RenderOutput *CreateSideObject(s32 character, s32 unused, s32 side,
   return portrait;
 }
 
-// Reloads the portrait image of `character` into portrait slot `side` (0 or
-// 1), keeping its sprite: used to change the picture of a portrait already on
-// screen. With any other `side`, the slot already showing that character's
-// portrait is used, and nothing happens when none does. `unused` is passed on
-// to the loader, which ignores it.
+/// Reloads the portrait image of `character` into portrait slot `side` (0 or
+/// 1), keeping its sprite: used to change the picture of a portrait already on
+/// screen. With any other `side`, the slot already showing that character's
+/// portrait is used, and nothing happens when none does. `unused` is passed on
+/// to the loader, which ignores it.
 void Ui_LoadCharacterEntryForSlot(u32 side, s32 character, s32 unused) {
   s32 tile;
   s32 slot;
@@ -199,8 +200,8 @@ void Ui_LoadCharacterEntryForSlot(u32 side, s32 character, s32 unused) {
   }
 }
 
-// Switches the sprite output `out` to animation `mode` from its first step.
-// Does nothing when `out` is NULL.
+/// Switches the sprite output `out` to animation `mode` from its first step.
+/// Does nothing when `out` is NULL.
 void RenderOutput_SetAnimation(struct RenderOutput *out, s32 mode) {
   if (out != NULL) {
     out->active = mode;
@@ -208,8 +209,8 @@ void RenderOutput_SetAnimation(struct RenderOutput *out, s32 mode) {
   }
 }
 
-// Sets the draw layer of the sprite output `output` to 255 - `priority`, so a
-// higher priority draws on a lower layer. Does nothing when `output` is NULL.
+/// Sets the draw layer of the sprite output `output` to 255 - `priority`, so a
+/// higher priority draws on a lower layer. Does nothing when `output` is NULL.
 void RenderOutput_SetInvertedSentinel(void *output, s32 priority) {
   if (output != NULL)
     ((struct RenderOutput *)output)->sentinel = ~priority;
@@ -217,10 +218,10 @@ void RenderOutput_SetInvertedSentinel(void *output, s32 priority) {
 
 typedef void (*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
 
-// Fills `spans` with the horizontal extent of the windows on each of the 20
-// tile rows, read from the UI tilemap by the ARM routine Tile_BuildMetatiles
-// copied into RAM. With no UI work, every row is filled with 0xe0e0 (no
-// window).
+/// Fills `spans` with the horizontal extent of the windows on each of the 20
+/// tile rows, read from the UI tilemap by the ARM routine Tile_BuildMetatiles
+/// copied into RAM. With no UI work, every row is filled with 0xe0e0 (no
+/// window).
 void UiWindow_FillFromScene(void *spans) {
   void *tilemap = gWindowWork[0];
 
@@ -235,9 +236,9 @@ void UiWindow_FillFromScene(void *spans) {
   }
 }
 
-// Fills the top-left `width` x `height` tiles of the 32-tile-wide BG screen
-// block at 0x06002000 with the tilemap entry `value`. The first two
-// parameters are ignored.
+/// Fills the top-left `width` x `height` tiles of the 32-tile-wide BG screen
+/// block at 0x06002000 with the tilemap entry `value`. The first two
+/// parameters are ignored.
 void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width,
                                   u32 height, s32 value) {
   u32 row = 0;

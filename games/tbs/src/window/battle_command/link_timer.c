@@ -1,5 +1,6 @@
-// Part of battle_command.c, the menu object, compiled only through it.
-// The link battle timer and the no-escape check.
+/// @file
+/// Part of battle_command.c, the menu object, compiled only through it.
+/// The link battle timer and the no-escape check.
 
 #include "../battle_command_internal.h"
 
@@ -15,8 +16,8 @@ struct LinkSignature {
   u8 padding010[8];
 };
 
-// Advance the link command-entry timer, slide the battle panels, and redraw
-// the remaining seconds. Pause flags and peer signatures stop the timer.
+/// Advance the link command-entry timer, slide the battle panels, and redraw
+/// the remaining seconds. Pause flags and peer signatures stop the timer.
 void UpdateLinkSessionCountdown(void) {
   struct LinkRoundState *state = COUNTDOWN;
   struct BattleWork *runtime;
@@ -119,8 +120,8 @@ void UpdateLinkSessionCountdown(void) {
   }
 }
 
-// Test whether this battle forbids escape. Show the reason until A/B or the
-// link timer expires, returning 1 when escape is forbidden and 0 otherwise.
+/// Test whether this battle forbids escape. Show the reason until A/B or the
+/// link timer expires, returning 1 when escape is forbidden and 0 otherwise.
 s32 UiText_ShowLocalizedMessageAndWait(void) {
   s16 buffer[64];
   struct UiWindow *work;

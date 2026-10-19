@@ -1,10 +1,11 @@
-// Part of shop.c, the shop object, compiled only through it.
-// The sanctum's services, their prices and their sparkles.
+/// @file
+/// Part of shop.c, the shop object, compiled only through it.
+/// The sanctum's services, their prices and their sparkles.
 
 #include "../shop_internal.h"
 
-// Calculates the existing fee for reviving, curing poison, exorcising or
-// removing a curse.
+/// Calculates the existing fee for reviving, curing poison, exorcising or
+/// removing a curse.
 s32 Shop_ServicePrice(s32 unitId, s32 serviceKind) {
   u8 level = UnitGetFar(unitId)->level;
   s32 donation = 0;
@@ -21,7 +22,7 @@ s32 Shop_ServicePrice(s32 unitId, s32 serviceKind) {
   return donation;
 }
 
-// Checks whether a member needs the selected sanctum service.
+/// Checks whether a member needs the selected sanctum service.
 s32 Shop_CanServe(s32 unitId, s32 serviceKind) {
   struct BattleUnit *unit = UnitGetFar(unitId);
   s32 eligible = 0;
@@ -35,7 +36,7 @@ s32 Shop_CanServe(s32 unitId, s32 serviceKind) {
   return eligible;
 }
 
-// Counts party members who need the currently selected sanctum service.
+/// Counts party members who need the currently selected sanctum service.
 s32 Shop_CountUnits(void) {
   struct ShopRuntime *shop = gMenuWork;
   s32 eligibleCount = 0;
@@ -49,8 +50,8 @@ s32 Shop_CountUnits(void) {
   return eligibleCount;
 }
 
-// Selects the matching poison, exorcism or curse-service message from a revive
-// message base.
+/// Selects the matching poison, exorcism or curse-service message from a revive
+/// message base.
 s32 Shop_MsgByMode(s32 messageId) {
   s8 serviceKind = ((struct ShopRuntime *)gMenuWork)->partyAction;
 
@@ -66,8 +67,8 @@ s32 Shop_MsgByMode(s32 messageId) {
   return messageId;
 }
 
-// Resolves service dialogue and waits for completion, including the final
-// frame.
+/// Resolves service dialogue and waits for completion, including the final
+/// frame.
 void UiMessage_ShowResolvedAndWait(s32 messageId) {
   s32 portraitResource;
 
@@ -83,7 +84,8 @@ void UiMessage_ShowResolvedAndWait(s32 messageId) {
   WaitFrames(1U);
 }
 
-// Resolves service dialogue, waits for it and restores the cursor's saved mode.
+/// Resolves service dialogue, waits for it and restores the cursor's saved
+/// mode.
 void UiMessage_ShowResolvedAndRestoreState(s32 messageId) {
   struct ShopRuntime *shop;
   struct RenderOutput **cursorSlot;
@@ -104,8 +106,8 @@ void UiMessage_ShowResolvedAndRestoreState(s32 messageId) {
   shop->cursor.anchor->active = savedCursorMode;
 }
 
-// Runs the sanctum service menu using the shared shop cursor and window
-// resources.
+/// Runs the sanctum service menu using the shared shop cursor and window
+/// resources.
 s32 Shop_ConfirmAct(s32 unitId) {
   s32 serviceSelection = 0;
   struct UiWindow *listWindow = 0;
@@ -176,8 +178,8 @@ s32 Shop_ConfirmAct(s32 unitId) {
   return 0;
 }
 
-// Selects an eligible member, confirms the donation and applies the chosen
-// service.
+/// Selects an eligible member, confirms the donation and applies the chosen
+/// service.
 s32 Sanctum_RunPartyService(void) {
   struct ShopRuntime *shop = gMenuWork;
   struct UiWindow *priceWindow;
@@ -301,8 +303,8 @@ s32 Sanctum_RunPartyService(void) {
   return 0;
 }
 
-// Revives, cures poison, removes a haunting or unequips cursed items for a
-// sanctum service.
+/// Revives, cures poison, removes a haunting or unequips cursed items for a
+/// sanctum service.
 void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind) {
   struct BattleUnit *unit;
 
@@ -329,8 +331,8 @@ void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind) {
   }
 }
 
-// Highlights the selected party icon and dims members who do not need the
-// sanctum service.
+/// Highlights the selected party icon and dims members who do not need the
+/// sanctum service.
 void Shop_HiliteUnit(struct UiWindow *window, s32 selected) {
   struct ShopRuntime *shop = gMenuWork;
   s32 memberIndex;
@@ -351,8 +353,8 @@ void Shop_HiliteUnit(struct UiWindow *window, s32 selected) {
   }
 }
 
-// Shows the selected member's service price or the message that no treatment is
-// needed.
+/// Shows the selected member's service price or the message that no treatment
+/// is needed.
 void Shop_DrawSelectMsg(struct UiWindow *target, s32 unitId) {
   s32 serviceOrMessage;
   s32 donation;
@@ -372,8 +374,8 @@ void Shop_DrawSelectMsg(struct UiWindow *target, s32 unitId) {
   }
 }
 
-// Picks random particle positions, moves toward the target and releases
-// finished particles.
+/// Picks random particle positions, moves toward the target and releases
+/// finished particles.
 void BattleFx_UpdateRadialMotion(struct EffectSlot *effect) {
   struct FixedPointPosition position;
   s8 *statePointer;
@@ -406,7 +408,7 @@ void BattleFx_UpdateRadialMotion(struct EffectSlot *effect) {
   }
 }
 
-// Updates all 24 service particles, then randomizes the active member's pose.
+/// Updates all 24 service particles, then randomizes the active member's pose.
 void Shop_ResetEffects(void) {
   struct ShopRuntime *shop = gMenuWork;
   struct EffectSlot *effect = shop->effects;
@@ -424,7 +426,7 @@ void Shop_ResetEffects(void) {
         shop->partyMemberIcons[burstMember], (Random16() * 7) >> 16);
 }
 
-// Sound effects for each party member action
+/// Sound effects for each party member action
 static const s8 sSanctumServiceCues[4] = {
     0x52,
     0x54,
@@ -432,8 +434,8 @@ static const s8 sSanctumServiceCues[4] = {
     0x57,
 };
 
-// Animates the selected member and service particles, then restores the menu
-// and cursor.
+/// Animates the selected member and service particles, then restores the menu
+/// and cursor.
 void Shop_RunPartyMemberIconBurst(s32 member) {
 
   struct ShopRuntime *shop;

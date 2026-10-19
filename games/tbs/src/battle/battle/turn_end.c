@@ -1,11 +1,12 @@
-// Part of battle.c, the battle object, compiled only through it.
-// The end of a turn and of a round: counters, Djinn recovery, poison and
-// the Grim Reaper.
+/// @file
+/// Part of battle.c, the battle object, compiled only through it.
+/// The end of a turn and of a round: counters, Djinn recovery, poison and
+/// the Grim Reaper.
 
 #include "../battle_internal.h"
 
-// Rolls whether a counter of five turns or fewer ends early, using luck, turns
-// and the supplied bias.
+/// Rolls whether a counter of five turns or fewer ends early, using luck, turns
+/// and the supplied bias.
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
   struct BattleUnit *unit = UnitGetFar(unitId);
 
@@ -17,8 +18,8 @@ s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
   return 0;
 }
 
-// Ticks Attack's duration; clears its stage on expiry or an early end of a
-// reduction.
+/// Ticks Attack's duration; clears its stage on expiry or an early end of a
+/// reduction.
 s32 BattleUnit_TickAttackModifier(s32 unitId) {
   struct BattleUnit *unit = UnitGetFar(unitId);
 
@@ -41,9 +42,9 @@ s32 BattleUnit_TickAttackModifier(s32 unitId) {
   return 0;
 }
 
-// Decrements a stat change's turn counter. Resets level and returns one when
-// the counter reaches zero, or when BattleUnit_RollCounterEarlyEnd ends a
-// negative-level stat reduction early.
+/// Decrements a stat change's turn counter. Resets level and returns one when
+/// the counter reaches zero, or when BattleUnit_RollCounterEarlyEnd ends a
+/// negative-level stat reduction early.
 #define DEFINE_TICK_MODIFIER(name, counter, level)                             \
   s32 name(s32 unitId) {                                                       \
     struct BattleUnit *state = UnitGetFar(unitId);                             \
@@ -64,15 +65,15 @@ s32 BattleUnit_TickAttackModifier(s32 unitId) {
     return 0;                                                                  \
   }
 
-// Ticks Defense duration and clears an expired or prematurely ended reduction.
+/// Ticks Defense duration and clears an expired or prematurely ended reduction.
 DEFINE_TICK_MODIFIER(BattleUnit_TickDefenseModifier, defenseTurns, defenseStage)
-// Ticks Resistance duration and clears an expired or prematurely ended
-// reduction.
+/// Ticks Resistance duration and clears an expired or prematurely ended
+/// reduction.
 DEFINE_TICK_MODIFIER(BattleUnit_TickResistanceModifier, resistanceTurns,
                      resistanceStage)
 
-// Decrements a status condition's turn counter. Returns one when it reaches
-// zero, or when BattleUnit_RollCounterEarlyEnd(bias) ends it early.
+/// Decrements a status condition's turn counter. Returns one when it reaches
+/// zero, or when BattleUnit_RollCounterEarlyEnd(bias) ends it early.
 #define DEFINE_TICK_STATUS(name, counter, bias)                                \
   s32 name(s32 unitId) {                                                       \
     struct BattleUnit *state = UnitGetFar(unitId);                             \
@@ -88,10 +89,10 @@ DEFINE_TICK_MODIFIER(BattleUnit_TickResistanceModifier, resistanceTurns,
     return 0;                                                                  \
   }
 
-// Ticks delusion and rolls its early end with bias 30.
+/// Ticks delusion and rolls its early end with bias 30.
 DEFINE_TICK_STATUS(BattleUnit_TickDelusion, delusion, 30)
 
-// Ticks the unsigned confusion counter and rolls its early end with bias 60.
+/// Ticks the unsigned confusion counter and rolls its early end with bias 60.
 s32 BattleUnit_TickConfusion(s32 unitId) {
   struct BattleUnit *unit = UnitGetFar(unitId);
   if ((u8)unit->confusion != 0) {
@@ -106,15 +107,15 @@ s32 BattleUnit_TickConfusion(s32 unitId) {
   return 0;
 }
 
-// Ticks charm and rolls its early end with bias 70.
+/// Ticks charm and rolls its early end with bias 70.
 DEFINE_TICK_STATUS(BattleUnit_TickCharm, charm, 70)
-// Ticks stun and rolls its early end with bias 40.
+/// Ticks stun and rolls its early end with bias 40.
 DEFINE_TICK_STATUS(BattleUnit_TickStun, stun, 40)
-// Ticks sleep and rolls its early end with bias 50.
+/// Ticks sleep and rolls its early end with bias 50.
 DEFINE_TICK_STATUS(BattleUnit_TickSleep, sleep, 50)
 
-// Ticks both packed Psynergy-seal counters; only Bind's low-bit counter may end
-// early.
+/// Ticks both packed Psynergy-seal counters; only Bind's low-bit counter may
+/// end early.
 s32 Battle_AdvanceCounterAndCheckChance(s32 unitId) {
   s32 decremented;
   u8 remaining;
@@ -148,7 +149,7 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 unitId) {
   return 0;
 }
 
-// Ticks HP-regeneration duration; returns one when it expires.
+/// Ticks HP-regeneration duration; returns one when it expires.
 s32 BattleUnit_TickRefrain(s32 unitId) {
   u8 *turns = &UnitGetFar(unitId)->refrain;
   if (*turns != 0) {
@@ -160,7 +161,7 @@ s32 BattleUnit_TickRefrain(s32 unitId) {
   return 0;
 }
 
-// Ticks reflection duration; returns one when it expires.
+/// Ticks reflection duration; returns one when it expires.
 s32 BattleUnit_TickReflect(s32 unitId) {
   u8 *turns = (u8 *)&UnitGetFar(unitId)->reflect;
   if (*turns != 0) {
@@ -172,7 +173,7 @@ s32 BattleUnit_TickReflect(s32 unitId) {
   return 0;
 }
 
-// Ticks Agility's duration and clears its stage on expiry.
+/// Ticks Agility's duration and clears its stage on expiry.
 s32 BattleUnit_TickAgilityModifier(s32 unitId) {
   struct BattleUnit *unit = UnitGetFar(unitId);
   u8 *turns = &unit->agilityTurns;
@@ -186,8 +187,8 @@ s32 BattleUnit_TickAgilityModifier(s32 unitId) {
   return 0;
 }
 
-// Ticks party Djinn recovery for living owners, then sets and removes every
-// expired entry. Returns one when any entry was removed.
+/// Ticks party Djinn recovery for living owners, then sets and removes every
+/// expired entry. Returns one when any entry was removed.
 s32 DjinnRecovery_Tick(void) {
   struct DjinnRecoveryList *list;
   struct DjinnRecoveryEntry *timedEntry;
@@ -230,7 +231,7 @@ s32 DjinnRecovery_Tick(void) {
   return removed;
 }
 
-// Advances party Djinn recovery twenty times, setting every expired Djinni.
+/// Advances party Djinn recovery twenty times, setting every expired Djinni.
 s32 DjinnRecovery_TickTwenty(void) {
   s32 turns;
 
@@ -242,15 +243,15 @@ s32 DjinnRecovery_TickTwenty(void) {
   return 0;
 }
 
-// Reserved empty routine.
+/// Reserved empty routine.
 void Battle_ReservedNoOpF674(void) {}
 
 struct BattleGroupOrder {
   s32 group[2];
 };
 
-// Advances Djinn recovery on each battle side, applies HP/PP regeneration and
-// announces expired stat changes and conditions in the round's side order.
+/// Advances Djinn recovery on each battle side, applies HP/PP regeneration and
+/// announces expired stat changes and conditions in the round's side order.
 s32 Battle_ProcessRoundEnd(void) {
   struct BattleWork *battle;
   s32 side;
@@ -453,9 +454,9 @@ s32 Battle_ProcessRoundEnd(void) {
   }
 }
 
-// Processes the actor's standby and summoned Djinn, raises summon element
-// power, then applies haunting, poison and the Grim Reaper before recalculating
-// stats.
+/// Processes the actor's standby and summoned Djinn, raises summon element
+/// power, then applies haunting, poison and the Grim Reaper before
+/// recalculating stats.
 s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
   s32 unitId;
   struct BattleUnit *unit;

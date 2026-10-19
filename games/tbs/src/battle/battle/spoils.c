@@ -1,10 +1,11 @@
-// Part of battle.c, the battle object, compiled only through it.
-// The spoils: coins, experience, items and level ups.
+/// @file
+/// Part of battle.c, the battle object, compiled only through it.
+/// The spoils: coins, experience, items and level ups.
 
 #include "../battle_internal.h"
 
-// Ranks a spoil item by its indispensable flag, flag 4 and item ID; an empty
-// entry ranks zero.
+/// Ranks a spoil item by its indispensable flag, flag 4 and item ID; an empty
+/// entry ranks zero.
 u32 BattleSpoils_RankItem(u32 inventoryEntry) {
   u32 priority = 0;
   u32 itemId = inventoryEntry & ITEM_ID_MASK;
@@ -24,8 +25,8 @@ u32 BattleSpoils_RankItem(u32 inventoryEntry) {
   return priority;
 }
 
-// Clears pending items and the battle's coin, experience, defeat and item
-// spoils.
+/// Clears pending items and the battle's coin, experience, defeat and item
+/// spoils.
 void BattleSpoils_Clear(void) {
   struct BattleWork *battle = gBattleWork;
   struct BattleSpoils *spoils = &battle->spoils;
@@ -41,10 +42,10 @@ void BattleSpoils_Clear(void) {
     items[index] = 0;
 }
 
-// These reward rolls retain separate inline bodies: a die-size parameter
-// adds eight bytes to BattleEnemy_RecordDefeat in EN.
-// Adds one six-sided roll per ten levels plus one, with a bonus floor of 30
-// percent of the base coins.
+/// These reward rolls retain separate inline bodies: a die-size parameter
+/// adds eight bytes to BattleEnemy_RecordDefeat in EN.
+/// Adds one six-sided roll per ten levels plus one, with a bonus floor of 30
+/// percent of the base coins.
 static __inline__ s32 BattleEnemy_CalculateCoinReward(struct BattleUnit *unit,
                                                       u16 *reward) {
   s32 rollIndex;
@@ -61,8 +62,8 @@ static __inline__ s32 BattleEnemy_CalculateCoinReward(struct BattleUnit *unit,
   return bonus + base;
 }
 
-// Adds one four-sided roll per ten levels plus one, with a bonus floor of 30
-// percent of base experience.
+/// Adds one four-sided roll per ten levels plus one, with a bonus floor of 30
+/// percent of base experience.
 static __inline__ s32
 BattleEnemy_CalculateExperienceReward(struct BattleUnit *unit, u16 *reward) {
   s32 rollIndex;
@@ -79,8 +80,8 @@ BattleEnemy_CalculateExperienceReward(struct BattleUnit *unit, u16 *reward) {
   return bonus + base;
 }
 
-// Records an enemy defeat and its coins and experience, applying the Djinn
-// bonus when earned and retaining higher-ranked distinct item drops.
+/// Records an enemy defeat and its coins and experience, applying the Djinn
+/// bonus when earned and retaining higher-ranked distinct item drops.
 s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   struct BattleUnit *unit;
   struct EnemyDefinition *enemy;
@@ -163,9 +164,9 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   return 0;
 }
 
-// Awards living party members experience and level gains, reports newly learned
-// Psynergy, gives coins and distributes ranked item drops until inventory
-// overflow.
+/// Awards living party members experience and level gains, reports newly
+/// learned Psynergy, gives coins and distributes ranked item drops until
+/// inventory overflow.
 void Battle_AwardSpoils(void) {
   struct BattleSpoils *spoils;
   s32 count;
@@ -292,5 +293,5 @@ void Battle_AwardSpoils(void) {
   }
 }
 
-// Reserved empty routine used by the debug battle menu.
+/// Reserved empty routine used by the debug battle menu.
 void Battle_ReservedNoOp2A08(void) {}

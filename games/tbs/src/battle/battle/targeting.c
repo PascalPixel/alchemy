@@ -1,5 +1,6 @@
-// Part of battle.c, the battle object, compiled only through it.
-// The targets an enemy's or a confused unit's ability picks.
+/// @file
+/// Part of battle.c, the battle object, compiled only through it.
+/// The targets an enemy's or a confused unit's ability picks.
 
 #include "../battle_internal.h"
 
@@ -10,14 +11,14 @@ struct SlotArray {
 };
 #endif
 
-// The list place codes the target pickers return: the party's places
-// 0x100 | place, the enemies' 0x180 | place (Battle_FindTaggedSlotByValue).
+/// The list place codes the target pickers return: the party's places
+/// 0x100 | place, the enemies' 0x180 | place (Battle_FindTaggedSlotByValue).
 #define PLACE_PARTY 0x100
 #define PLACE_ENEMY 0x180
 
-// Picks a random place: with requireLivingUnit, a party member still
-// standing; otherwise any enemy place in use. Returns its place code, or 0
-// when there is none.
+/// Picks a random place: with requireLivingUnit, a party member still
+/// standing; otherwise any enemy place in use. Returns its place code, or 0
+/// when there is none.
 s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
 
   u16 positions[6];
@@ -103,8 +104,8 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
   return positions[(Random16() * count) >> 16];
 }
 
-// Counts the ailments of unit that a partial cure removes (delusion,
-// confusion, charm, sleep, Psynergy seal, the Grim Reaper's curse).
+/// Counts the ailments of unit that a partial cure removes (delusion,
+/// confusion, charm, sleep, Psynergy seal, the Grim Reaper's curse).
 #define COUNT_PARTIAL_CURES(unit, count)                                       \
   {                                                                            \
     if ((unit)->delusion != 0)                                                 \
@@ -121,7 +122,7 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
       (count)++;                                                               \
   }
 
-// Counts the ailments a full cure removes: those, haunting and poison.
+/// Counts the ailments a full cure removes: those, haunting and poison.
 #define COUNT_ALL_CURES(unit, count)                                           \
   {                                                                            \
     COUNT_PARTIAL_CURES((unit), (count));                                      \
@@ -131,7 +132,7 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
       (count)++;                                                               \
   }
 
-// Counts unit's raised stats: Attack, Defense, Resistance and each element.
+/// Counts unit's raised stats: Attack, Defense, Resistance and each element.
 #define COUNT_POSITIVE_MODIFIERS(unit, count)                                  \
   {                                                                            \
     if ((unit)->attackStage > 0)                                               \
@@ -150,12 +151,12 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
       (count)++;                                                               \
   }
 
-// How worthwhile an enemy's ability is against unit, in applies (0 for
-// pointless): a stat change that can still move (one more when it is about
-// to wear off), a cure or a heal the unit needs, an ailment it lacks, a
-// revival of a downed unit (100). Failing its added effect, the ability's
-// damage or healing must have something to work on. kindIndex receives the
-// ability's kind less one.
+/// How worthwhile an enemy's ability is against unit, in applies (0 for
+/// pointless): a stat change that can still move (one more when it is about
+/// to wear off), a cure or a heal the unit needs, an ailment it lacks, a
+/// revival of a downed unit (100). Failing its added effect, the ability's
+/// damage or healing must have something to work on. kindIndex receives the
+/// ability's kind less one.
 #define CHECK_EFFECT_TARGET(unit, action, applies, kindIndex)                  \
   {                                                                            \
     (applies) = 0;                                                             \
@@ -291,18 +292,18 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
     }                                                                          \
   }
 
-// EnemyDefinition.targetStrategy: a single-target attacker favours the
-// target with the most HP left, the most maximum HP, or no one.
+/// EnemyDefinition.targetStrategy: a single-target attacker favours the
+/// target with the most HP left, the most maximum HP, or no one.
 #define STRATEGY_MOST_HP 0
 #define STRATEGY_MOST_MAX_HP 1
 #define STRATEGY_RANDOM 2
 
-// Picks the target of an enemy's ability (or a confused unit's), as a place
-// code: among the units of the side it may target, those it would affect
-// (CHECK_EFFECT_TARGET), at random; a single-target attack by an enemy with
-// a strategy favours the strongest, the first of the sorted targets 6 times
-// in 11, 15 or 18, the next 5 times, and so on. Returns -2 when the side
-// has no one, -1 when the ability would affect no one.
+/// Picks the target of an enemy's ability (or a confused unit's), as a place
+/// code: among the units of the side it may target, those it would affect
+/// (CHECK_EFFECT_TARGET), at random; a single-target attack by an enemy with
+/// a strategy favours the strongest, the first of the sorted targets 6 times
+/// in 11, 15 or 18, the next 5 times, and so on. Returns -2 when the side
+/// has no one, -1 when the ability would affect no one.
 s32 BattleTarget_SelectForAction(s32 actorId, struct BattleAct *action) {
   u16 orderPositions[6];
   s32 unitIds[6];

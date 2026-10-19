@@ -4,8 +4,8 @@
 
 // Sprite scales, motion curves and lookup tables of the window and menu code.
 
-// A sprite's pulse, as a scale where 256 is its normal size: it swells to
-// 1.5 times and back over 32 steps.
+/// A sprite's pulse, as a scale where 256 is its normal size: it swells to
+/// 1.5 times and back over 32 steps.
 // clang-format off
 const u16 gUi_BounceScales[32] = {
     256, 256, 260, 266, 274, 284, 294, 306,
@@ -14,19 +14,19 @@ const u16 gUi_BounceScales[32] = {
     320, 306, 294, 284, 274, 266, 260, 256,
 };
 
-// Nothing in the game reads these eight offsets.
+/// Nothing in the game reads these eight offsets.
 const s8 gUi_BounceScalesTail[8] = {
     -15, -28, -36, -40, -36, -28, -15, 0,
 };
 
-// The selection cursor's bob: a 16-step wave of up to 3 pixels each way.
+/// The selection cursor's bob: a 16-step wave of up to 3 pixels each way.
 const s8 gMenu_CursorBobOffsets[16] = {
     0, 1, 2, 3, 2, 1, 0, 0, 0, -1, -2, -3, -2, -1, 0, 0,
 };
 
-// The window colour wheel: one colour channel's level (0 to 31) over 96 hue
-// steps. Red reads it at the hue, green 32 steps later and blue 64 steps
-// later. Nothing reads the 25 entries after the first 96.
+/// The window colour wheel: one colour channel's level (0 to 31) over 96 hue
+/// steps. Red reads it at the hue, green 32 steps later and blue 64 steps
+/// later. Nothing reads the 25 entries after the first 96.
 const u8 gPaletteGlow_WaveTable[121] = {
     31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16,
     15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
@@ -38,8 +38,8 @@ const u8 gPaletteGlow_WaveTable[121] = {
     41, 44, 47, 49, 52, 54, 57, 60, 62,
 };
 
-// The option screen's sprite frames for each setting's choices: message
-// speed Slow, Normal and Fast; Speech Off and On; Auto-Sleep Off and On.
+/// The option screen's sprite frames for each setting's choices: message
+/// speed Slow, Normal and Fast; Speech Off and On; Auto-Sleep Off and On.
 const s8 gOptionMenu_SpeedFrames[3] = {
     0x22, 0x23, 0x24,
 };
@@ -52,8 +52,8 @@ const s8 gOptionMenu_SleepFrames[2] = {
     0x27, 0x28,
 };
 
-// The window colour presets SELECT cycles through on the option screen: the
-// colour (hue) and the brightness of each.
+/// The window colour presets SELECT cycles through on the option screen: the
+/// colour (hue) and the brightness of each.
 const u8 gOptionMenu_HuePresets[6] = {
     4, 16, 8, 21, 1, 13,
 };
@@ -62,13 +62,13 @@ const u8 gOptionMenu_BrightnessPresets[6] = {
     0, 11, 13, 7, 14, 14,
 };
 
-// The sprite frame of each entry's icon in the system menu (Save your quest,
-// Sleep, Change settings, and the debug entries after them).
+/// The sprite frame of each entry's icon in the system menu (Save your quest,
+/// Sleep, Change settings, and the debug entries after them).
 const s8 gMenu_WorkspaceIconFrames[8] = {
     0x29, 0x2a, 0x2b, 0x0b, 0x0b, 0x0b, 0x00, 0x00,
 };
 
-// {character, portrait} pairs of the playable characters, ending in -1.
+/// {character, portrait} pairs of the playable characters, ending in -1.
 const s16 gPortrait_CharacterMap[20] = {
     ISAAC, ISAAC,
     ISAAC_CHILD, FACE_ISAAC_CHILD,
@@ -82,8 +82,8 @@ const s16 gPortrait_CharacterMap[20] = {
     -1, -1,
 };
 
-// {sprite, portrait} pairs of the other speakers, ending in -1: portrait n
-// of this list is portrait 128 + n.
+/// {sprite, portrait} pairs of the other speakers, ending in -1: portrait n
+/// of this list is portrait 128 + n.
 const s16 gPortrait_SpriteMap[100] = {
     93, 0,
     90, 1,

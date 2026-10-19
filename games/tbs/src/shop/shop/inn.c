@@ -1,5 +1,6 @@
-// Part of shop.c, the shop object, compiled only through it.
-// The inn: room prices, checking in and the night's sleep.
+/// @file
+/// Part of shop.c, the shop object, compiled only through it.
+/// The inn: room prices, checking in and the night's sleep.
 
 #include "../shop_internal.h"
 
@@ -11,14 +12,14 @@ enum InnMessageId {
   INN_MESSAGE_REST_COMPLETE,
 };
 
-// Inn price multiplier
+/// Inn price multiplier
 // clang-format off
 static const s8 sInnPricesPerGuest[12] = {
     2, 4, 7, 8, 8, 10, 12, 15, 20, 0, 18, 25,
 };
 // clang-format on
 
-// Multiplies the inn's price per guest by the number of living party members.
+/// Multiplies the inn's price per guest by the number of living party members.
 s32 Inn_RoomPrice(s32 innId) {
   struct ShopRuntime *shop = gMenuWork;
   s32 guestCount = 0;
@@ -32,8 +33,8 @@ s32 Inn_RoomPrice(s32 innId) {
   return pricePerGuest * guestCount;
 }
 
-// Offers an inn stay, checks the fee and restores the innkeeper window after
-// resting.
+/// Offers an inn stay, checks the fee and restores the innkeeper window after
+/// resting.
 s32 Inn_CheckIn(s32 innId, s32 objectId) {
   struct InnRuntimeState *state;
   struct FieldActor *innkeeper;
@@ -89,8 +90,8 @@ s32 Inn_CheckIn(s32 innId, s32 objectId) {
   return 0;
 }
 
-// Charges for the stay, restores living members' HP and PP, then plays the rest
-// transition.
+/// Charges for the stay, restores living members' HP and PP, then plays the
+/// rest transition.
 void Inn_PlaySleep(s32 roomPrice) {
   s16 partyMemberIds[8];
   s32 memberCount;

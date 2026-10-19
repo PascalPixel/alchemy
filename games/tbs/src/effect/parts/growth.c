@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Growth, Punji, Vine and Thorn.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Growth, Punji, Vine and Thorn.
 
 #include "../effect_internal.h"
 
@@ -10,43 +11,43 @@
 // plays seven pictures, drawn mirrored about its x. Both scenes fade out over
 // their last 16 frames.
 
-// Growing columns: vines or pillars spring from the ground one after
-// another, throwing up dust. PARTICLES holds the dust.
-// One growing column, laid over a struct EffectStep.
+/// Growing columns: vines or pillars spring from the ground one after
+/// another, throwing up dust. PARTICLES holds the dust.
+/// One growing column, laid over a struct EffectStep.
 struct DualColumn {
-  s32 x; // the root, in canvas pixels
+  s32 x; ///< the root, in canvas pixels
   s32 y;
-  s32 z; // the EffectStep's z and velocityX, unused here
+  s32 z; ///< the EffectStep's z and velocityX, unused here
   s32 velocityX;
-  s32 height;    // the full length
-  s32 velocityZ; // the EffectStep's, unused here
-  s32 start;     // the frame it starts to grow
+  s32 height;    ///< the full length
+  s32 velocityZ; ///< the EffectStep's, unused here
+  s32 start;     ///< the frame it starts to grow
 };
 
-// Abilities: Growth, Mad Growth, Wild Growth (kind 4).
-//
-// Grow vines from the ground, scattering dust from each root.
+/// Abilities: Growth, Mad Growth, Wild Growth (kind 4).
+///
+/// Grow vines from the ground, scattering dust from each root.
 void BattleFx_RunGrowth(struct BattleEffectArgument *effect) {
   BattleFx_RunGrowingColumns(effect, 0);
 }
-// Abilities: Punji, Punji Trap, Punji Strike (kind 56).
-//
-// Grow green pillars from the ground, scattering dust from each root.
+/// Abilities: Punji, Punji Trap, Punji Strike (kind 56).
+///
+/// Grow green pillars from the ground, scattering dust from each root.
 void BattleFx_RunPunji(struct BattleEffectArgument *effect) {
   BattleFx_RunGrowingColumns(effect, 1);
 }
-// Vines (mode 0) or green pillars (mode 1) grow one every 4 frames,
-// alternately mirrored, each throwing up dust from its root.
-//
-// Column i appears on frame 4i + 9, shaking the screen, and grows 8 pixels a
-// frame to a random length capped by its shape (i % 3); a pillar also stops
-// at its gGrowth_PillarHeights. On frame 4i + 12 the targets react (even
-// columns with a sound), and on frames 4i + 12 and 4i + 16 the column throws
-// up a puff of dust. The battle moves on to the results 64 frames before the
-// end; the scene fades out over 16 frames, and nothing grows in its last 4.
-//
-// effect: the targets; variant picks the number of columns
-//         (gGrowth_ColumnCounts).
+/// Vines (mode 0) or green pillars (mode 1) grow one every 4 frames,
+/// alternately mirrored, each throwing up dust from its root.
+///
+/// Column i appears on frame 4i + 9, shaking the screen, and grows 8 pixels a
+/// frame to a random length capped by its shape (i % 3); a pillar also stops
+/// at its gGrowth_PillarHeights. On frame 4i + 12 the targets react (even
+/// columns with a sound), and on frames 4i + 12 and 4i + 16 the column throws
+/// up a puff of dust. The battle moves on to the results 64 frames before the
+/// end; the scene fades out over 16 frames, and nothing grows in its last 4.
+///
+/// effect: the targets; variant picks the number of columns
+///         (gGrowth_ColumnCounts).
 void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
   void **slots;
   void **cursor;
@@ -287,17 +288,17 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
 #define VINE_COLUMNS 16 // columns that rise
 #define VINE_FRAMES 70
 
-// Abilities: Vine (kind 202).
-//
-// Rising vines: sixteen green vines grow from the middle of the row of
-// targets, 2 frames apart, and shrink back.
-//
-// Vine i appears on frame 2i + 5 and grows 4 pixels a frame up to 32,
-// cycling through five 32x32 pictures, then shrinks away from frame 2i + 32;
-// odd vines are mirrored. Vine i shakes the screen on frame 4i + 5. On frame
-// 32 the targets react together, with a sound.
-//
-// effect: the targets.
+/// Abilities: Vine (kind 202).
+///
+/// Rising vines: sixteen green vines grow from the middle of the row of
+/// targets, 2 frames apart, and shrink back.
+///
+/// Vine i appears on frame 2i + 5 and grows 4 pixels a frame up to 32,
+/// cycling through five 32x32 pictures, then shrinks away from frame 2i + 32;
+/// odd vines are mirrored. Vine i shakes the screen on frame 4i + 5. On frame
+/// 32 the targets react together, with a sound.
+///
+/// effect: the targets.
 void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   u32 *slots, *cursor;
   struct BattleEffectWork *work;
@@ -383,19 +384,19 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-// Abilities: Thorn, Briar, Nettle (kind 5).
-//
-// Rising thorns: thorns burst from the ground one every 8 frames, throwing
-// up dust from their roots.
-//
-// Thorn i appears on frame 8i + 9, shaking the screen, and throws up a puff
-// of dust on each of its first two frames; on frame 8i + 12 the targets
-// react with a sound. The battle moves on to the results 64 frames before
-// the end, and the scene fades out over its last 16 frames.
-//
-// effect: the targets; variant picks the number of thorns
-//         (gGrowth_Counts). gGrowth_Kinds gives each
-//         thorn's size and direction.
+/// Abilities: Thorn, Briar, Nettle (kind 5).
+///
+/// Rising thorns: thorns burst from the ground one every 8 frames, throwing
+/// up dust from their roots.
+///
+/// Thorn i appears on frame 8i + 9, shaking the screen, and throws up a puff
+/// of dust on each of its first two frames; on frame 8i + 12 the targets
+/// react with a sound. The battle moves on to the results 64 frames before
+/// the end, and the scene fades out over its last 16 frames.
+///
+/// effect: the targets; variant picks the number of thorns
+///         (gGrowth_Counts). gGrowth_Kinds gives each
+///         thorn's size and direction.
 void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
   void *canvas;
   s32 frame;

@@ -1,14 +1,15 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// The Cybele summon.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// The Cybele summon.
 
 #include "../effect_internal.h"
 
-// Cybele reuses work->particles over the scene:
-// - 0 to 15: vines (only the first ten are drawn).
-// - 32 to 47: thorns, until frame 127.
-// - 16 to 63: chips, thrown on frame 128 (only 32 to 63 are drawn); from
-//   frame 128 the sparks, six per target from 16 on, share these slots.
-// - 0 on: embers, ten per target, from frame 302.
+/// Cybele reuses work->particles over the scene:
+/// - 0 to 15: vines (only the first ten are drawn).
+/// - 32 to 47: thorns, until frame 127.
+/// - 16 to 63: chips, thrown on frame 128 (only 32 to 63 are drawn); from
+///   frame 128 the sparks, six per target from 16 on, share these slots.
+/// - 0 on: embers, ten per target, from frame 302.
 #define CYBELE_FRAMES 366
 #define CYBELE_CHIP_COUNT 48      // chips thrown by the thorns
 #define CYBELE_VINES 10           // vines drawn
@@ -18,27 +19,27 @@
 #define CYBELE_FIRST_CHIP 16      // the first chip in work->particles
 #define CYBELE_EMBER_CELL 6       // the ember picture in gCybele_EmberOffsets
 
-// Abilities: Cybele (scene kind 5).
-//
-// Thorn vines: thorns fly in from the right, vines grow out of the ground
-// and lift the targets while sparks flash around them, the picture
-// dissolves pixel by pixel, and the targets drop and explode. 366 frames:
-//
-// - 0 to 127: the formation objects drop in, landing on frame 31; from 72
-//   a thorn flies in from the right each frame.
-// - 128 to 224: vines grow out of the ground, shaking the screen, while
-//   chips fly; sparks flash around the targets, which rise from 161.
-// - 224 to 247: the first 64 background colours fade to grey.
-// - 233 on: the canvas dissolves from the top, two rows a frame.
-// - 286 on: the targets drop, 5 frames apart.
-// - 302 on: each target is hit 16 frames after it drops and bursts into a
-//   blast and embers.
-//
-// Pressing A or B between frames 191 and 285 skips to the drop. At the end
-// the battle shows the damage and an impact burst (BattleFx_RunImpactBurst)
-// explodes at the formation.
-//
-// effect: the targets.
+/// Abilities: Cybele (scene kind 5).
+///
+/// Thorn vines: thorns fly in from the right, vines grow out of the ground
+/// and lift the targets while sparks flash around them, the picture
+/// dissolves pixel by pixel, and the targets drop and explode. 366 frames:
+///
+/// - 0 to 127: the formation objects drop in, landing on frame 31; from 72
+///   a thorn flies in from the right each frame.
+/// - 128 to 224: vines grow out of the ground, shaking the screen, while
+///   chips fly; sparks flash around the targets, which rise from 161.
+/// - 224 to 247: the first 64 background colours fade to grey.
+/// - 233 on: the canvas dissolves from the top, two rows a frame.
+/// - 286 on: the targets drop, 5 frames apart.
+/// - 302 on: each target is hit 16 frames after it drops and bursts into a
+///   blast and embers.
+///
+/// Pressing A or B between frames 191 and 285 skips to the drop. At the end
+/// the battle shows the damage and an impact burst (BattleFx_RunImpactBurst)
+/// explodes at the formation.
+///
+/// effect: the targets.
 void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
   void **cursor;
   struct BattleEffectWork *work;

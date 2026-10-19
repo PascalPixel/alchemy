@@ -1,33 +1,34 @@
-// The battle effect object: everything drawn over the battle while an
-// ability plays. effect_internal.h holds what every effect shares (includes,
-// macros and the frame-loop helpers); the effects are in the files under
-// parts/, included here in the order their code has in the ROM. That order
-// mixes families, Djinn, summons and shared machinery, and each part is one
-// run of it, named for what it holds. Camelot's own files are not
-// recoverable: the ROM shows one object, and these parts are ours, cut where
-// one family ends and the next begins.
-//
-// To find the effect a move plays, search for the move's English name: each
-// handler's "Abilities:" comment lists the abilities that reach it, and each
-// row of gBattleFx_EffectHandlers (effect_table.c) gives its kind, its part
-// and its first ability. README.md gives the prefixes and the spellings the
-// parts use. The shared machinery:
-//
-//   Entry points    dispatch.c: BattleFx_RunTableEffect,
-//                   BattleFx_RunSceneEffect; positions.c:
-//                   BattleFx_DispatchByIdRange
-//   Canvas          canvas.c: BattleFx_BeginCanvasLayer,
-//                   BattleFx_EndCanvasLayer, BattleFx_WipeCanvas,
-//                   BattleFx_ProcessPendingGraphicsTransfer
-//   Blitters        blitter.c: BattleFx_BuildBlitter; mirrored_wall.c:
-//                   BattleFx_FetchRectangleBlitters
-//   Motion          positions.c: EffectStep_AdvanceWithGravity2D and 3D,
-//                   BattleUnit_ProjectToScreen; hail.c: Camera_ApplyShake
-//   Targets         dispatch.c: BattleFx_SelectLivingTargets;
-//                   helm_splitter.c: BattleFx_PlaceFormationObjects
-//
-// README.md in this folder explains the ideas: the canvas, blitters, the
-// frame loop, particles, pictures and how to change an effect.
+/// @file
+/// The battle effect object: everything drawn over the battle while an
+/// ability plays. effect_internal.h holds what every effect shares (includes,
+/// macros and the frame-loop helpers); the effects are in the files under
+/// parts/, included here in the order their code has in the ROM. That order
+/// mixes families, Djinn, summons and shared machinery, and each part is one
+/// run of it, named for what it holds. Camelot's own files are not
+/// recoverable: the ROM shows one object, and these parts are ours, cut where
+/// one family ends and the next begins.
+///
+/// To find the effect a move plays, search for the move's English name: each
+/// handler's "Abilities:" comment lists the abilities that reach it, and each
+/// row of gBattleFx_EffectHandlers (effect_table.c) gives its kind, its part
+/// and its first ability. README.md gives the prefixes and the spellings the
+/// parts use. The shared machinery:
+///
+///   Entry points    dispatch.c: BattleFx_RunTableEffect,
+///                   BattleFx_RunSceneEffect; positions.c:
+///                   BattleFx_DispatchByIdRange
+///   Canvas          canvas.c: BattleFx_BeginCanvasLayer,
+///                   BattleFx_EndCanvasLayer, BattleFx_WipeCanvas,
+///                   BattleFx_ProcessPendingGraphicsTransfer
+///   Blitters        blitter.c: BattleFx_BuildBlitter; mirrored_wall.c:
+///                   BattleFx_FetchRectangleBlitters
+///   Motion          positions.c: EffectStep_AdvanceWithGravity2D and 3D,
+///                   BattleUnit_ProjectToScreen; hail.c: Camera_ApplyShake
+///   Targets         dispatch.c: BattleFx_SelectLivingTargets;
+///                   helm_splitter.c: BattleFx_PlaceFormationObjects
+///
+/// README.md in this folder explains the ideas: the canvas, blitters, the
+/// frame loop, particles, pictures and how to change an effect.
 
 #include "effect_internal.h"
 

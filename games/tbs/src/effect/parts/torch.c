@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Torch and Kite.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Torch and Kite.
 
 #include "../effect_internal.h"
 
@@ -10,13 +11,13 @@
 
 #define TORCH_FRAMES 96
 
-// Abilities: Torch (kind 214).
-//
-// A fiery disc fades in, its rings running outward while every scanline
-// ripples, then fades out. The disc is a mirrored radial picture whose
-// pixels hold their distance from the middle, so rotating the palette
-// moves the rings. The scene runs for 96 frames: it fades in over the
-// first 9, ripples throughout and fades out over the last 7.
+/// Abilities: Torch (kind 214).
+///
+/// A fiery disc fades in, its rings running outward while every scanline
+/// ripples, then fades out. The disc is a mirrored radial picture whose
+/// pixels hold their distance from the middle, so rotating the palette
+/// moves the rings. The scene runs for 96 frames: it fades in over the
+/// first 9, ripples throughout and fades out over the last 7.
 void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   void **slots;
   struct BattleEffectWork *work;
@@ -149,9 +150,9 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-// Abilities: Kite (kind 217).
-//
-// Show the extended Jupiter Djinni prelude on the side opposite the effect.
+/// Abilities: Kite (kind 217).
+///
+/// Show the extended Jupiter Djinni prelude on the side opposite the effect.
 void BattleFx_RunKite(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   s32 originX;

@@ -1,13 +1,14 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// The Neptune summon.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// The Neptune summon.
 
 #include "../effect_internal.h"
 
-// Restore the background 2 horizontal scale to one screen pixel per source
-// pixel.
+/// Restore the background 2 horizontal scale to one screen pixel per source
+/// pixel.
 void Graphics_ResetBg2Pa(void) { REG_BG2PA = Q_8_8(1); }
 
-// Stretch background 2 to twice its source width.
+/// Stretch background 2 to twice its source width.
 void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 
 #define NEPTUNE_FLAME_GROUND 112   // where the blue flames throw sparks
@@ -15,21 +16,21 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 #define NEPTUNE_PARTICLES 1024     // map-buffer particle slots
 #define NEPTUNE_FLARE_SHEET 0x4e20 // the flare pictures in the sheet
 
-// Abilities: Neptune (scene kind 6).
-//
-// Over dusk clouds a formation of objects flies in through rising spray,
-// gathers a ring of flares into a burst of light, then five blue flame columns
-// drop onto the targets, throwing sparks.
-//
-// The scene runs in two stages. The first (244 frames; A or B ends it after
-// frame 16) places NEPTUNE_OBJECTS objects at one and a half times their
-// size, opens the window with an edge table built every frame, sprays
-// particles under gravity, converges a ring of flares, then breaks into a
-// burst of light; meanwhile a frame callback and an interrupt change BG2's
-// horizontal scale. The second stage (144 frames) drops five blue flame
-// columns onto the targets, one every 16 frames; each throws sparks when it
-// reaches the ground (NEPTUNE_FLAME_GROUND). The battle shows the damage on
-// its frame 96.
+/// Abilities: Neptune (scene kind 6).
+///
+/// Over dusk clouds a formation of objects flies in through rising spray,
+/// gathers a ring of flares into a burst of light, then five blue flame columns
+/// drop onto the targets, throwing sparks.
+///
+/// The scene runs in two stages. The first (244 frames; A or B ends it after
+/// frame 16) places NEPTUNE_OBJECTS objects at one and a half times their
+/// size, opens the window with an edge table built every frame, sprays
+/// particles under gravity, converges a ring of flares, then breaks into a
+/// burst of light; meanwhile a frame callback and an interrupt change BG2's
+/// horizontal scale. The second stage (144 frames) drops five blue flame
+/// columns onto the targets, one every 16 frames; each throws sparks when it
+/// reaches the ground (NEPTUNE_FLAME_GROUND). The battle shows the damage on
+/// its frame 96.
 void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x18000, 0x18000}}};
   struct SpritePlacement pos;

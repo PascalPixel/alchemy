@@ -1,10 +1,11 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// The Mercury, Jupiter, Venus and Mars Djinn attacks.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// The Mercury, Jupiter, Venus and Mars Djinn attacks.
 
 #include "../effect_internal.h"
 
-// Copies a w x h byte picture into an h x w one turned 90 degrees
-// clockwise: the top row of src becomes the right column of dst.
+/// Copies a w x h byte picture into an h x w one turned 90 degrees
+/// clockwise: the top row of src becomes the right column of dst.
 void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
   s32 y;
   s32 x;
@@ -63,14 +64,14 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 // the images.
 
 #define MERCURY_FRAMES 96
-// The blue flame sheet holds a 17x104 flame, then a 34x65 one; Mercury
-// turns both on their side after its djinni.
+/// The blue flame sheet holds a 17x104 flame, then a 34x65 one; Mercury
+/// turns both on their side after its djinni.
 #define DJINN_ATTACKS_FLAME2_CELLS (17 * 104)
 #define MERCURY_TALL_FLAME_CELLS 0x2a8 // 104x17, not drawn
 #define MERCURY_FLAME_CELLS 0x990      // 65x34
 #define MERCURY_FLAMES 5               // flames thrown
-// The mote slots Mercury walks: room for more than MERCURY_FLAMES *
-// DJINN_ATTACKS_MOTES_PER_FLAME.
+/// The mote slots Mercury walks: room for more than MERCURY_FLAMES *
+/// DJINN_ATTACKS_MOTES_PER_FLAME.
 #define MERCURY_MOTE_SLOTS 256
 // The Djinn attacks share these: each flame, ball or column that lands
 // throws its motes into its own DJINN_ATTACKS_MOTES_PER_FLAME slots of
@@ -79,13 +80,13 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 #define DJINN_ATTACKS_MOTES_PER_FLAME 32 // slots for each flame's motes
 #define DJINN_ATTACKS_MOTE_SLOTS 512
 
-// Abilities: Mercury (kind 251).
-//
-// Mercury djinni flames: the small Mercury djinni spirals around (96, 60)
-// and fires five blue flames to the left; each flame shatters into 32
-// motes after 5 frames, hitting every target.
-//
-// effect: the targets.
+/// Abilities: Mercury (kind 251).
+///
+/// Mercury djinni flames: the small Mercury djinni spirals around (96, 60)
+/// and fires five blue flames to the left; each flame shatters into 32
+/// motes after 5 frames, hitting every target.
+///
+/// effect: the targets.
 void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -215,13 +216,13 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
 #define JUPITER_GROUND_Y 95           // where the flameballs land
 #define JUPITER_FLAMEBALL_CELLS 0x320 // after the djinni
 
-// Abilities: Jupiter (kind 253).
-//
-// Jupiter djinni fall: the small Jupiter djinni spirals while eight
-// flameballs fall from the top right to the bottom left, 4 frames apart;
-// each shatters into 32 motes below line 95, hitting every target.
-//
-// effect: the targets.
+/// Abilities: Jupiter (kind 253).
+///
+/// Jupiter djinni fall: the small Jupiter djinni spirals while eight
+/// flameballs fall from the top right to the bottom left, 4 frames apart;
+/// each shatters into 32 motes below line 95, hitting every target.
+///
+/// effect: the targets.
 void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -328,12 +329,12 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-// Decompresses a resource whose first 128 bytes may be a palette.
-//
-// id: the resource.
-// dst: receives the decompressed data.
-// skipPalette: the resource starts with a palette to skip.
-// copyPalette: copy that palette to the start of background palette RAM.
+/// Decompresses a resource whose first 128 bytes may be a palette.
+///
+/// id: the resource.
+/// dst: receives the decompressed data.
+/// skipPalette: the resource starts with a palette to skip.
+/// copyPalette: copy that palette to the start of background palette RAM.
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
                                 s32 copyPalette) {
   u8 *data = Resource_GetTableEntry(id);
@@ -347,17 +348,17 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 
 #define VENUS_FRAMES 96
 #define VENUS_COLUMNS 10 // columns of flame that rise
-// The blue flame sheet, after the djinni, and its second flame.
+/// The blue flame sheet, after the djinni, and its second flame.
 #define VENUS_FLAME_SHEET 0x2f8
 #define VENUS_COLUMN_CELLS (VENUS_FLAME_SHEET + DJINN_ATTACKS_FLAME2_CELLS)
 
-// Abilities: Venus (kind 250).
-//
-// Venus djinni columns: the small Venus djinni sways while ten columns of
-// flame in its colours rise from the ground one after another, each
-// bursting into motes and hitting every target.
-//
-// effect: the targets.
+/// Abilities: Venus (kind 250).
+///
+/// Venus djinni columns: the small Venus djinni sways while ten columns of
+/// flame in its colours rise from the ground one after another, each
+/// bursting into motes and hitting every target.
+///
+/// effect: the targets.
 void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -466,19 +467,19 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
 #define MARS_EMBERS_PER_FLAME 16 // embers in each flame
 #define MARS_ORB_CELLS 0x320     // six 40x40 orb pictures, after the djinni
 
-// Abilities: Mars (kind 252).
-//
-// Mars Djinni flames: a glowing orb flares, the small Mars Djinni dives to
-// the ground, and nine flames erupt in a row while embers rise. The scene
-// runs for 112 frames:
-//
-//   0 to 23    the orb flares
-//   20 to 31   the Djinni appears, then dives from frame 24
-//   32         it strikes: the screen shakes and the flames start erupting
-//   38         every target is hit
-//   40 on      the embers rise, 16 more every 2 frames
-//
-// effect: the targets.
+/// Abilities: Mars (kind 252).
+///
+/// Mars Djinni flames: a glowing orb flares, the small Mars Djinni dives to
+/// the ground, and nine flames erupt in a row while embers rise. The scene
+/// runs for 112 frames:
+///
+///   0 to 23    the orb flares
+///   20 to 31   the Djinni appears, then dives from frame 24
+///   32         it strikes: the screen shakes and the flames start erupting
+///   38         every target is hit
+///   40 on      the embers rise, 16 more every 2 frames
+///
+/// effect: the targets.
 void BattleFx_RunMars(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

@@ -1,22 +1,23 @@
-// Part of battle.c, the battle object, compiled only through it.
-// Battle objects made and placed on the battlefield.
+/// @file
+/// Part of battle.c, the battle object, compiled only through it.
+/// Battle objects made and placed on the battlefield.
 
 #include "../battle_internal.h"
 
-// Isaac and Garet hold a Machete with sprites of their own.
+/// Isaac and Garet hold a Machete with sprites of their own.
 #define SPRITE_ISAAC_MACHETE 480
 #define SPRITE_GARET_MACHETE 482
 
-// BattleObj.scale and MotionObject scales are 16.16 fixed point.
+/// BattleObj.scale and MotionObject scales are 16.16 fixed point.
 #define SCALE_ONE 0x10000
 
-// BattleObj.effect while no effect is attached.
+/// BattleObj.effect while no effect is attached.
 #define BATTLE_OBJ_NO_EFFECT 0x1fe
 
-// Creates the battle object of unit at (x, y) on the battlefield, in
-// pixels: its sprite (an enemy's from its class, sharing the slot it
-// already holds; a party member's battle sprite), palette, size and weapon
-// sprite, turned to face the centre, and starts its motion script.
+/// Creates the battle object of unit at (x, y) on the battlefield, in
+/// pixels: its sprite (an enemy's from its class, sharing the slot it
+/// already holds; a party member's battle sprite), palette, size and weapon
+/// sprite, turned to face the centre, and starts its motion script.
 void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   s32 fixedX;
   s32 fixedZ;
@@ -252,22 +253,22 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
                                gBattlePres_ActorObjectScript);
 }
 
-// Reads the battlefield position of party place index from
-// gBattlePlacement_StepPairs, in pixels.
+/// Reads the battlefield position of party place index from
+/// gBattlePlacement_StepPairs, in pixels.
 void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
   partyPlace *= 2;
   *x = gBattlePlacement_StepPairs[partyPlace];
   *y = gBattlePlacement_StepPairs[partyPlace + 1];
 }
 
-// BattleWork.enemyIds of an enemy that left the battle, and of a place
-// held for one: unit ids 254 and 255 in the list.
+/// BattleWork.enemyIds of an enemy that left the battle, and of a place
+/// held for one: unit ids 254 and 255 in the list.
 #define IS_PLACEHOLDER_ID(id) ((u16)((id) - BATTLE_UNIT_REMOVED) <= 1)
 
-// Lays out count enemies in a column 80 pixels left of the centre, spaced
-// by their size (38 pixels around a large enemy, 27 around a small one, 25
-// around an empty place, closer when there are more than four) and centred
-// on the line. Two large classes stand nearer, 50 pixels left.
+/// Lays out count enemies in a column 80 pixels left of the centre, spaced
+/// by their size (38 pixels around a large enemy, 27 around a small one, 25
+/// around an empty place, closer when there are more than four) and centred
+/// on the line. Two large classes stand nearer, 50 pixels left.
 void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
                             s32 *zPositions) {
   s32 totalSpacing = count <= 4 ? 30 : 27;
@@ -302,7 +303,7 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
   }
 }
 
-// Returns the id of the first free enemy unit, or -1 when all six are taken.
+/// Returns the id of the first free enemy unit, or -1 when all six are taken.
 s32 EnemySlotGet(void) {
   s32 enemySlot;
   s32 unitId;
@@ -317,8 +318,8 @@ s32 EnemySlotGet(void) {
   return unitId;
 }
 
-// Lays the enemies out again (after one joins or leaves) and moves each
-// one's object to its new place.
+/// Lays the enemies out again (after one joins or leaves) and moves each
+/// one's object to its new place.
 s32 EnemyUpdate(void) {
   struct BattleWork *battle = gBattleWork;
   u16 unitIds[14];
@@ -345,9 +346,9 @@ s32 EnemyUpdate(void) {
   }
 }
 
-// Places every unit at the start of a battle: numbers the places (party
-// members 0 up in their order, enemies 8 to 13) and creates each unit's
-// object at its spot.
+/// Places every unit at the start of a battle: numbers the places (party
+/// members 0 up in their order, enemies 8 to 13) and creates each unit's
+/// object at its spot.
 void BattleUnit_RefreshPlacement(void) {
   struct BattleWork *battle;
   u16 unitIds[14];
@@ -399,9 +400,9 @@ void BattleUnit_RefreshPlacement(void) {
   }
 }
 
-// Returns 1 if the unit at place is in list.
-// list : unit ids, ended by BATTLE_UNIT_LIST_END, 14 at most
-// place: 0 to 7 the party, 8 to 13 the enemies
+/// Returns 1 if the unit at place is in list.
+/// list : unit ids, ended by BATTLE_UNIT_LIST_END, 14 at most
+/// place: 0 to 7 the party, 8 to 13 the enemies
 s32 BattlePlacement_ContainsId(s16 *list, s32 place) {
   u32 listIndex;
 

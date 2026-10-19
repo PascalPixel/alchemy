@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Swirling stars, orbiting skulls and target bursts.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Swirling stars, orbiting skulls and target bursts.
 
 #include "../effect_internal.h"
 
@@ -13,12 +14,12 @@
 #define SWIRLING_STARS_FRAMES 160
 #define SWIRLING_STARS_COUNT 64 // stars that swirl
 
-// Swirling stars: 64 stars scattered around a point 80 pixels up spin
-// about it, each on its own axis, appearing four a frame; 30 frames after
-// it appears, each star is drawn back towards the centre. Stars are drawn
-// smaller the further away they are. The scene runs for 160 frames. All
-// 256 stars of the pool are seeded, at rest in a cube 255 pixels across,
-// though only 64 are drawn.
+/// Swirling stars: 64 stars scattered around a point 80 pixels up spin
+/// about it, each on its own axis, appearing four a frame; 30 frames after
+/// it appears, each star is drawn back towards the centre. Stars are drawn
+/// smaller the further away they are. The scene runs for 160 frames. All
+/// 256 stars of the pool are seeded, at rest in a cube 255 pixels across,
+/// though only 64 are drawn.
 void BattleFx_RunSwirlingStars(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -101,10 +102,10 @@ void BattleFx_RunSwirlingStars(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-// Orbiting skulls: three skulls circle each target in turn, 16 frames
-// apart, for 64 frames each, a third of a turn apart on a circle of 8
-// pixels around the target. Runs with the effect already in
-// gBattleFxWork.
+/// Orbiting skulls: three skulls circle each target in turn, 16 frames
+/// apart, for 64 frames each, a third of a turn apart on a circle of 8
+/// pixels around the target. Runs with the effect already in
+/// gBattleFxWork.
 void BattleFx_RunOrbitingSkulls(void) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -211,14 +212,14 @@ void BattleFx_RunOrbitingSkulls(void) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-// The burst picture in the sheet, after the smoke.
+/// The burst picture in the sheet, after the smoke.
 #define TARGET_BURSTS_CELLS 0x1b00
 
 #define TARGET_BURSTS_FRAMES 96
 
-// Target bursts: on each target in turn, 8 frames apart, a burst flares up
-// in the middle while five puffs of smoke scatter around it, for 40
-// frames.
+/// Target bursts: on each target in turn, 8 frames apart, a burst flares up
+/// in the middle while five puffs of smoke scatter around it, for 40
+/// frames.
 void BattleFx_RunTargetBursts(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

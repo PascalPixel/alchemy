@@ -1,44 +1,45 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Smoke Bomb and Blast.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Smoke Bomb and Blast.
 
 #include "../effect_internal.h"
 
-// Abilities: Smoke Bomb, Sleep Bomb (kind 380).
-//
-// A fountain of grey motes and puffs of smoke bursts up beside the targets
-// and falls back, flashing each target. It always uses the second
-// count-table row.
+/// Abilities: Smoke Bomb, Sleep Bomb (kind 380).
+///
+/// A fountain of grey motes and puffs of smoke bursts up beside the targets
+/// and falls back, flashing each target. It always uses the second
+/// count-table row.
 void BattleFx_RunSmokeBomb(struct BattleEffectArgument *effect) {
   BattleFx_RunEruption(effect, 1);
 }
-// Abilities: Blast, Mad Blast, Fiery Blast (kind 14).
-//
-// A fountain of fire-coloured motes and puffs of smoke bursts up beside the
-// targets and falls back, flashing each target and making it recoil.
+/// Abilities: Blast, Mad Blast, Fiery Blast (kind 14).
+///
+/// A fountain of fire-coloured motes and puffs of smoke bursts up beside the
+/// targets and falls back, flashing each target and making it recoil.
 void BattleFx_RunBlast(struct BattleEffectArgument *effect) {
   BattleFx_RunEruption(effect, 0);
 }
-// The columns of a gEruption_Counts row.
+/// The columns of a gEruption_Counts row.
 enum {
-  ERUPTION_FIELD_MOTES, // motes thrown
-  ERUPTION_FIELD_PUFFS, // puffs of smoke thrown
-  ERUPTION_FIELD_FRAMES // frames in the whole effect
+  ERUPTION_FIELD_MOTES, ///< motes thrown
+  ERUPTION_FIELD_PUFFS, ///< puffs of smoke thrown
+  ERUPTION_FIELD_FRAMES ///< frames in the whole effect
 };
 
-// The mote pictures in the sheet: two sets, MOTE_SET_BYTES apart.
+/// The mote pictures in the sheet: two sets, MOTE_SET_BYTES apart.
 #define ERUPTION_FIELD_MOTE_CELLS 0x3200
 
-// Shared by BattleFx_RunBlast (mode 0) and BattleFx_RunSmokeBomb (mode 1).
-//
-// A fountain of motes and puffs of smoke bursts up beside the
-// targets and falls back, hitting the targets one frame apart from frame
-// 6. A sound and a 6-frame screen shake start on frame 2, and the battle
-// shows the damage 48 frames before the end.
-//
-// effect: the targets.
-// mode: 0 burns (the fire streak palette, the effect's variant picks the
-//       counts, and the targets recoil); 1 is grey (a ramp of greys,
-//       variant 1's counts).
+/// Shared by BattleFx_RunBlast (mode 0) and BattleFx_RunSmokeBomb (mode 1).
+///
+/// A fountain of motes and puffs of smoke bursts up beside the
+/// targets and falls back, hitting the targets one frame apart from frame
+/// 6. A sound and a 6-frame screen shake start on frame 2, and the battle
+/// shows the damage 48 frames before the end.
+///
+/// effect: the targets.
+/// mode: 0 burns (the fire streak palette, the effect's variant picks the
+///       counts, and the targets recoil); 1 is grey (a ramp of greys,
+///       variant 1's counts).
 void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
@@ -195,13 +196,13 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-// Creates the effect's animation objects in gBattleFxWork's objects.
-//
-// entryCount: how many objects to create.
-// source: the resource object every one of them is made from.
-// priority: the sprite priority they take.
-// Object n plays animation n. A slot whose object could not be created is
-// left NULL.
+/// Creates the effect's animation objects in gBattleFxWork's objects.
+///
+/// entryCount: how many objects to create.
+/// source: the resource object every one of them is made from.
+/// priority: the sprite priority they take.
+/// Object n plays animation n. A slot whose object could not be created is
+/// left NULL.
 void BattleFx_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   s32 entryIndex = 0;
@@ -222,7 +223,7 @@ void BattleFx_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
   } while (entryIndex != entryCount);
 }
 
-// An effect that does nothing.
+/// An effect that does nothing.
 void BattleFx_DoNothing(void) {}
 
 #undef ERUPTION_FIELD_MOTE_CELLS

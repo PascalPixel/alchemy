@@ -1,7 +1,8 @@
-// Part of menu.c, the menu object, compiled only through it.
-// The pieces the menu screens share: windows, the status panel, numbers,
-// icons, the party figures, the hand cursor, paged lists, palettes and the
-// Start watch.
+/// @file
+/// Part of menu.c, the menu object, compiled only through it.
+/// The pieces the menu screens share: windows, the status panel, numbers,
+/// icons, the party figures, the hand cursor, paged lists, palettes and the
+/// Start watch.
 
 #include "../menu_internal.h"
 
@@ -26,14 +27,14 @@
 #define STATUS_PANEL_LEARN_STATUS_Y 56
 #endif
 
-// UiWindow_UpdateOrCreate: keep an existing window as it is, without redrawing
-// its saved rectangle. The low byte of the flags is the window style.
+/// UiWindow_UpdateOrCreate: keep an existing window as it is, without redrawing
+/// its saved rectangle. The low byte of the flags is the window style.
 #define WINDOW_KEEP_EXISTING 0x100
 #define WINDOW_STYLE_MASK 0xff
 
-// Pauses the field while a menu is open: stops the overlay's scheduler
-// callbacks and the map update, and clears game flags 0x166 and 0x152.
-// Returns nothing useful; callers ignore the value.
+/// Pauses the field while a menu is open: stops the overlay's scheduler
+/// callbacks and the map update, and clears game flags 0x166 and 0x152.
+/// Returns nothing useful; callers ignore the value.
 s32 Scheduler_DisableOverlayCallbacksWithFlags(void) {
   Scheduler_ResumeOverlayTasks();
   Map_DisableUpdateCallbackFar();
@@ -43,9 +44,9 @@ s32 Scheduler_DisableOverlayCallbacksWithFlags(void) {
   GameFlag_ClearBitFar(0x152);
 }
 
-// Undoes Scheduler_DisableOverlayCallbacksWithFlags when the menu closes:
-// sets flags 0x152 and 0x166 again and restarts the map update and the
-// overlay's scheduler callbacks. Returns the scheduler's result.
+/// Undoes Scheduler_DisableOverlayCallbacksWithFlags when the menu closes:
+/// sets flags 0x152 and 0x166 again and restarts the map update and the
+/// overlay's scheduler callbacks. Returns the scheduler's result.
 s32 Scheduler_EnableOverlayCallbacksWithFlags(void) {
   GameFlag_SetBitFar(0x152);
   GameFlag_SetBitFar(0x166);
@@ -53,8 +54,8 @@ s32 Scheduler_EnableOverlayCallbacksWithFlags(void) {
   return Scheduler_SuspendOverlayTasks();
 }
 
-// Clears the whole menu work and sets its defaults: no pane selected, one
-// entry in each pane, and a 1x1 cursor grid.
+/// Clears the whole menu work and sets its defaults: no pane selected, one
+/// entry in each pane, and a 1x1 cursor grid.
 void UiWindow_InitializeWork(s32 unused) {
   struct InventoryMenuState *work = gMenuWork;
 
@@ -66,12 +67,12 @@ void UiWindow_InitializeWork(s32 unused) {
   work->rowCount = 1;
 }
 
-// Opens the window kept in *handle, or redraws it if it is already open.
-//
-// If *handle is empty, creates a window at (x, y), w by h tiles, in the style
-// given by the low byte of flags, stores it in *handle and returns 1. If the
-// window exists, redraws its saved rectangle (unless flags has
-// WINDOW_KEEP_EXISTING) and returns 0.
+/// Opens the window kept in *handle, or redraws it if it is already open.
+///
+/// If *handle is empty, creates a window at (x, y), w by h tiles, in the style
+/// given by the low byte of flags, stores it in *handle and returns 1. If the
+/// window exists, redraws its saved rectangle (unless flags has
+/// WINDOW_KEEP_EXISTING) and returns 0.
 s32 UiWindow_UpdateOrCreate(struct UiWindow **handle, s32 x, s32 y, s32 w,
                             s32 h, s32 flags) {
   struct UiWindow *window;
@@ -90,8 +91,8 @@ s32 UiWindow_UpdateOrCreate(struct UiWindow **handle, s32 x, s32 y, s32 w,
   return 1;
 }
 
-// Closes the window kept in *handle, if any, and clears the handle. style is
-// passed on to UiWork_FinalizeFar and chooses how the window closes.
+/// Closes the window kept in *handle, if any, and clears the handle. style is
+/// passed on to UiWork_FinalizeFar and chooses how the window closes.
 void UiWindow_CloseIfOpen(struct UiWindow **handle, s32 style) {
   if (*handle != NULL) {
     UiWork_FinalizeFar(*handle, style);
@@ -99,18 +100,18 @@ void UiWindow_CloseIfOpen(struct UiWindow **handle, s32 style) {
   }
 }
 
-// Copies one BattleUnit with the resident IWRAM word copy.
+/// Copies one BattleUnit with the resident IWRAM word copy.
 static inline void Owner_Copy(struct BattleUnit *destination,
                               struct BattleUnit *source) {
   _call_via_r3(destination, source, sizeof(struct BattleUnit), IwramCopyWords);
 }
 
-// Draws the item menu's status panel for the party member owner (window at
-// tile 0,5, 13 by 12): the name, up to two ailments or the level, and below
-// them what mode's panel kind asks for. slot is the inventory slot of the
-// item the panel is about, for the equipment and Psynergy item panels. The
-// first parameter, the status window, is not used: the window is the menu
-// work's.
+/// Draws the item menu's status panel for the party member owner (window at
+/// tile 0,5, 13 by 12): the name, up to two ailments or the level, and below
+/// them what mode's panel kind asks for. slot is the inventory slot of the
+/// item the panel is about, for the equipment and Psynergy item panels. The
+/// first parameter, the status window, is not used: the window is the menu
+/// work's.
 void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
                                s32 mode) {
   s32 created;
@@ -267,15 +268,15 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
 }
 
 #if LANGUAGE != LANGUAGE_JAPANESE
-// The pixels the field allows each digit. The Latin font's digits are 7
-// pixels wide, so the digits themselves take a pixel less each.
+/// The pixels the field allows each digit. The Latin font's digits are 7
+/// pixels wide, so the digits themselves take a pixel less each.
 #define NUMBER_PIXELS_PER_DIGIT 8
 
-// Returns how many decimal digits number has, but at least 2: 0-99 give 2,
-// 100-999 give 3, 1000-9999 give 4. The count starts with the units digit,
-// adds one for each division by ten that leaves 10 or more, then adds the
-// leading digit; a number under 10 has its one digit counted as both, which
-// is where the minimum of 2 comes from.
+/// Returns how many decimal digits number has, but at least 2: 0-99 give 2,
+/// 100-999 give 3, 1000-9999 give 4. The count starts with the units digit,
+/// adds one for each division by ten that leaves 10 or more, then adds the
+/// leading digit; a number under 10 has its one digit counted as both, which
+/// is where the minimum of 2 comes from.
 static inline s32 CountDigitsAtLeastTwo(s32 number) {
   s32 count;
 
@@ -292,25 +293,25 @@ static inline s32 CountDigitsAtLeastTwo(s32 number) {
   return count;
 }
 
-// Draws number right-aligned in a field that ends at pixel column x and
-// allows 8 pixels for each digit, at least two digits wide.
-//
-// The international editions draw a character's HP and PP with it
-// (Ui_DrawValuePairRows). The Japanese editions draw those figures in
-// four-character fields padded with spaces, which keeps the digits in line
-// because the Japanese font's space is as wide as a digit (7 pixels). The
-// Latin font's space is 5 pixels, so here each figure gets a field as wide
-// as its digits instead.
-//
-// The number writer draws the digits 7 pixels apart, so a number ends about
-// a pixel per digit before x: 99 ends 2 pixels before it, 100 ends 3. A
-// number under 10 draws as a 5-pixel space and its digit, and ends 4 pixels
-// before x.
-//
-// number: the value to draw, 0 or more
-// window: the window to draw in
-// x:      the field's right edge, in pixels within the window
-// y:      the pixel row of the text, within the window
+/// Draws number right-aligned in a field that ends at pixel column x and
+/// allows 8 pixels for each digit, at least two digits wide.
+///
+/// The international editions draw a character's HP and PP with it
+/// (Ui_DrawValuePairRows). The Japanese editions draw those figures in
+/// four-character fields padded with spaces, which keeps the digits in line
+/// because the Japanese font's space is as wide as a digit (7 pixels). The
+/// Latin font's space is 5 pixels, so here each figure gets a field as wide
+/// as its digits instead.
+///
+/// The number writer draws the digits 7 pixels apart, so a number ends about
+/// a pixel per digit before x: 99 ends 2 pixels before it, 100 ends 3. A
+/// number under 10 draws as a 5-pixel space and its digit, and ends 4 pixels
+/// before x.
+///
+/// number: the value to draw, 0 or more
+/// window: the window to draw in
+/// x:      the field's right edge, in pixels within the window
+/// y:      the pixel row of the text, within the window
 void UiText_DrawNumberRightAligned(s32 number, struct UiWindow *window, s32 x,
                                    s32 y) {
   s32 width = CountDigitsAtLeastTwo(number);
@@ -324,13 +325,13 @@ void UiText_DrawNumberRightAligned(s32 number, struct UiWindow *window, s32 x,
 
 #endif
 
-// Draws a character's HP and PP into window as two rows, "HP current/maximum"
-// at pixel row 40 and "PP current/maximum" at row 48. Current HP is drawn in
-// colour 4 when it is below a quarter of maximum HP and in colour 2 at 0;
-// then the colour goes back to 15, the default text colour.
-//
-// unit:   the character whose figures are drawn
-// window: the window to draw in
+/// Draws a character's HP and PP into window as two rows, "HP current/maximum"
+/// at pixel row 40 and "PP current/maximum" at row 48. Current HP is drawn in
+/// colour 4 when it is below a quarter of maximum HP and in colour 2 at 0;
+/// then the colour goes back to 15, the default text colour.
+///
+/// unit:   the character whose figures are drawn
+/// window: the window to draw in
 void Ui_DrawValuePairRows(struct BattleUnit *unit, struct UiWindow *window) {
   // Each figure in turn, as an s16. Read straight from unit, the figures
   // compile differently.
@@ -385,13 +386,13 @@ void Ui_DrawValuePairRows(struct BattleUnit *unit, struct UiWindow *window) {
 #endif
 }
 
-// The stat arrows: the up and down arrow sprites the menu loads into its two
-// resource slots (Resource_LoadPairedBlocks).
+/// The stat arrows: the up and down arrow sprites the menu loads into its two
+/// resource slots (Resource_LoadPairedBlocks).
 enum StatArrow { STAT_ARROW_UP, STAT_ARROW_DOWN };
 
-// Writes Attack, Defense and Agility into a status window as they are now
-// (before), and beside each one that changes its new value (after) with an up
-// or down arrow: the equipment preview.
+/// Writes Attack, Defense and Agility into a status window as they are now
+/// (before), and beside each one that changes its new value (after) with an up
+/// or down arrow: the equipment preview.
 void UiText_DrawStatComparison(const struct BattleUnit *after,
                                const struct BattleUnit *before,
                                struct UiWindow *window) {
@@ -427,12 +428,12 @@ void UiText_DrawStatComparison(const struct BattleUnit *after,
   }
 }
 
-// Size of one 16x16 4bpp sprite tile block.
+/// Size of one 16x16 4bpp sprite tile block.
 #define ICON_TILE_BYTES 0x80
 
-// Creates a hand cursor sprite in window at (x, y), loading the hand's tiles
-// into a free VRAM block. Returns the sprite, or 0 when no block is free.
-// Nothing calls it; UiIcon_CreateWithResourceVariant is the one in use.
+/// Creates a hand cursor sprite in window at (x, y), loading the hand's tiles
+/// into a free VRAM block. Returns the sprite, or 0 when no block is free.
+/// Nothing calls it; UiIcon_CreateWithResourceVariant is the one in use.
 UNUSED s32 UiIcon_CreateWithResource(struct UiWindow *window, s32 unused, s32 x,
                                      s32 y) {
   s32 block;
@@ -446,9 +447,9 @@ UNUSED s32 UiIcon_CreateWithResource(struct UiWindow *window, s32 unused, s32 x,
   return icon;
 }
 
-// Creates the menu's hand cursor sprite in window at (x, y), loading the
-// hand's tiles into a free VRAM block. Returns the sprite, or 0 when no
-// block is free.
+/// Creates the menu's hand cursor sprite in window at (x, y), loading the
+/// hand's tiles into a free VRAM block. Returns the sprite, or 0 when no
+/// block is free.
 s32 UiIcon_CreateWithResourceVariant(struct UiWindow *window, s32 x, s32 y) {
   s32 block;
   s32 icon;
@@ -462,7 +463,7 @@ s32 UiIcon_CreateWithResourceVariant(struct UiWindow *window, s32 x, s32 y) {
   return icon;
 }
 
-// Shows a menu icon at its stored position, without rotation or scaling.
+/// Shows a menu icon at its stored position, without rotation or scaling.
 void UiIcon_PrepareObject(struct RenderOutput *object) {
   if (object != NULL) {
     object->active = ICON_SHOWN;
@@ -473,14 +474,14 @@ void UiIcon_PrepareObject(struct RenderOutput *object) {
   }
 }
 
-// Loads the graphics of character unit into menu entry slot 0. The calling
-// menu argument is not used.
+/// Loads the graphics of character unit into menu entry slot 0. The calling
+/// menu argument is not used.
 void PsynergyMenu_CallIconRoutineWithValue(const void *unused, s32 unit) {
   Ui_LoadCharacterEntryForSlotFar(0, unit, 0);
 }
 
-// Opens the menu's top-left window (13 by 5 tiles) and puts the hand cursor
-// in it, hidden for now. Selects no tab yet. Returns the window.
+/// Opens the menu's top-left window (13 by 5 tiles) and puts the hand cursor
+/// in it, hidden for now. Selects no tab yet. Returns the window.
 struct UiWindow *UiMenu_CreateCursor(void *source) {
   struct PsynergyMenuState *work = source;
   struct UiWindow *window;
@@ -504,11 +505,11 @@ struct UiWindow *UiMenu_CreateCursor(void *source) {
   return window;
 }
 
-// Creates a walking figure for each active party member, side by side under
-// the window source: origin (originX, originY) in tiles from the window's
-// corner, each figure 16 + spacing pixels after the last, at full scale.
-// Clears the unused figure slots and starts the callback that places them
-// every frame.
+/// Creates a walking figure for each active party member, side by side under
+/// the window source: origin (originX, originY) in tiles from the window's
+/// corner, each figure 16 + spacing pixels after the last, at full scale.
+/// Clears the unused figure slots and starts the callback that places them
+/// every frame.
 void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
                                          s32 spacing, s32 unused) {
   u16 ownerIds[14];
@@ -551,8 +552,8 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
   }
 }
 
-// Releases the party figures PsynergyMenu_InitializeEntryObjects created and
-// stops their placement callback.
+/// Releases the party figures PsynergyMenu_InitializeEntryObjects created and
+/// stops their placement callback.
 void Menu_ReleaseEntryObjects(void) {
   u16 ownerIds[14];
   struct PsynergyMenuState *menu = gMenuWork;
@@ -575,9 +576,9 @@ void Menu_ReleaseEntryObjects(void) {
   Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
 }
 
-// Scheduler callback: each frame, places every party member sprite created by
-// PsynergyMenu_InitializeEntryObjects at its menu position and scale, through
-// the field's projected placement.
+/// Scheduler callback: each frame, places every party member sprite created by
+/// PsynergyMenu_InitializeEntryObjects at its menu position and scale, through
+/// the field's projected placement.
 void Menu_UpdateEntryObjectTransforms(void) {
   struct PsynergyMenuState *menu = gMenuWork;
   struct SpriteScale scale;
@@ -604,11 +605,11 @@ void Menu_UpdateEntryObjectTransforms(void) {
   }
 }
 
-// The cursor bobs through an 8-step table, one step every two frames.
+/// The cursor bobs through an 8-step table, one step every two frames.
 #define CURSOR_BOB_STEP() ((gFrameCount >> 1) & 7)
 
-// Places the hand cursor at (xOffset, yOffset) inside the menu's top-left
-// window, bobbing.
+/// Places the hand cursor at (xOffset, yOffset) inside the menu's top-left
+/// window, bobbing.
 void UiMenu_PositionCursor(s32 xOffset, s32 yOffset) {
   struct PsynergyMenuState *work = gMenuWork;
   struct RenderOutput *cursor = work->paneIcon[0];
@@ -619,10 +620,10 @@ void UiMenu_PositionCursor(s32 xOffset, s32 yOffset) {
                               (work->auxiliaryWindow)->y * 8 + 8;
 }
 
-// Slides the hand cursor from where it is to (x, y) inside the menu's
-// top-left window over two frames, in 1/16 pixel steps. Positions carry a
-// 64-pixel bias while moving so that they stay positive. Does nothing, once,
-// after skipSlide is set.
+/// Slides the hand cursor from where it is to (x, y) inside the menu's
+/// top-left window over two frames, in 1/16 pixel steps. Positions carry a
+/// 64-pixel bias while moving so that they stay positive. Does nothing, once,
+/// after skipSlide is set.
 void UiMenu_SlideCursor(s32 x, s32 y) {
 
   struct PsynergyMenuState *work = gMenuWork;
@@ -677,16 +678,16 @@ void UiMenu_SlideCursor(s32 x, s32 y) {
   } while (steps != 0);
 }
 
-// Does nothing; nothing calls it.
+/// Does nothing; nothing calls it.
 UNUSED void PsynergyMenu_ReservedNoOp(void) {}
 
-// Lays the entry icons out eight to a row from (108, 40). Nothing calls it.
+/// Lays the entry icons out eight to a row from (108, 40). Nothing calls it.
 UNUSED void PsynergyMenu_RefreshOwnerEntriesDefault(void) {
   PsynergyMenu_RefreshOwnerEntries(108, 40, 8);
 }
 
-// Lays the menu's entry icons (up to 32) out in a grid of 16x16 cells,
-// columns wide, from (originX, originY); empty slots keep their place.
+/// Lays the menu's entry icons (up to 32) out in a grid of 16x16 cells,
+/// columns wide, from (originX, originY); empty slots keep their place.
 void PsynergyMenu_RefreshOwnerEntries(s32 originX, s32 originY, s32 columns) {
   struct RenderOutput **slot;
   struct RenderOutput **scan;
@@ -704,8 +705,8 @@ void PsynergyMenu_RefreshOwnerEntries(s32 originX, s32 originY, s32 columns) {
   } while (index < 32);
 }
 
-// Places the icon in *slot at grid cell index (0 above 31) of a grid of
-// 16x16 cells, columns wide, from (originX, originY), and shows it.
+/// Places the icon in *slot at grid cell index (0 above 31) of a grid of
+/// 16x16 cells, columns wide, from (originX, originY), and shows it.
 void PsynergyMenu_PositionOwnerEntry(struct RenderOutput **slot, s32 index,
                                      s32 originX, s32 originY, s32 columns) {
   struct RenderOutput *icon;
@@ -719,8 +720,8 @@ void PsynergyMenu_PositionOwnerEntry(struct RenderOutput **slot, s32 index,
   UiIcon_PrepareObject(icon);
 }
 
-// Places the icon at slotIndex (0 above 15) in a columns-wide grid of
-// 24x16 cells starting at (originX, originY), and shows it.
+/// Places the icon at slotIndex (0 above 15) in a columns-wide grid of
+/// 24x16 cells starting at (originX, originY), and shows it.
 void ItemMenu_PlaceIcon(struct RenderOutput **slot, s32 slotIndex, s32 originX,
                         s32 originY, s32 columns) {
   struct RenderOutput *icon;
@@ -733,8 +734,8 @@ void ItemMenu_PlaceIcon(struct RenderOutput **slot, s32 slotIndex, s32 originX,
   UiIcon_PrepareObject(icon);
 }
 
-// Lays the inventory's 15 item icons out five to a row from (116, y): y is
-// 56 for layout 1 and 40 otherwise.
+/// Lays the inventory's 15 item icons out five to a row from (116, y): y is
+/// 56 for layout 1 and 40 otherwise.
 void ItemMenu_RefreshEntry(s32 layout) {
   struct RenderOutput **slot;
   struct RenderOutput **scan;
@@ -761,13 +762,13 @@ void ItemMenu_RefreshEntry(s32 layout) {
   } while (index < 15);
 }
 
-// Shows message in the item menu, with the hand cursor hidden meanwhile.
-//
-// With y == -1 the message goes into the info window; otherwise a modal
-// window sized to the message opens at (x, y). With x == -1 the message stays
-// up and FLAG_MENU_INFO_KEPT records that the info window holds it (the next
-// selection keeps it instead of drawing the item name); otherwise it waits
-// for A, B or Start and clears it again.
+/// Shows message in the item menu, with the hand cursor hidden meanwhile.
+///
+/// With y == -1 the message goes into the info window; otherwise a modal
+/// window sized to the message opens at (x, y). With x == -1 the message stays
+/// up and FLAG_MENU_INFO_KEPT records that the info window holds it (the next
+/// selection keeps it instead of drawing the item name); otherwise it waits
+/// for A, B or Start and clears it again.
 void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
   struct InventoryMenuState *menu = gMenuWork;
   struct UiWindow *window;
@@ -818,10 +819,10 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
 #endif
 }
 
-// Sorts a party member's 15 inventory slots by the list order of mode (see
-// Menu_CopyListOrder): items are grouped by the order's item types and, within
-// a type, run from the highest item id down. Empty slots go to the end.
-// L + A in the item menu cycles through the modes. Returns 1.
+/// Sorts a party member's 15 inventory slots by the list order of mode (see
+/// Menu_CopyListOrder): items are grouped by the order's item types and, within
+/// a type, run from the highest item id down. Empty slots go to the end.
+/// L + A in the item menu cycles through the modes. Returns 1.
 s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode) {
   u16 sorted[16];
   u16 items[16];
@@ -886,8 +887,8 @@ s32 InventoryMenu_SortByListOrder(u16 *inventory, s32 mode) {
   return 1;
 }
 
-// Copies the list order of mode 0 to 2 (any other mode: the default order)
-// into order, up to and including its LIST_ORDER_END and at most 32 bytes.
+/// Copies the list order of mode 0 to 2 (any other mode: the default order)
+/// into order, up to and including its LIST_ORDER_END and at most 32 bytes.
 void Menu_CopyListOrder(s32 mode, u8 *order) {
   u8 *src;
   s32 n;
@@ -917,18 +918,18 @@ void Menu_CopyListOrder(s32 mode, u8 *order) {
   }
 }
 
-// The page indicator: the window font's digit tiles for pages 1, 2, ...,
-// between the two page arrows.
+/// The page indicator: the window font's digit tiles for pages 1, 2, ...,
+/// between the two page arrows.
 #define PAGE_LABEL_FIRST 49
 
-// Moves a paged list's cursor and page with the d-pad's repeating keys.
-//
-// count entries are shown pageSize at a time; *cursor is the row on the page
-// and *page the page. Vertical lists (horizontal 0) move the cursor with Up
-// and Down and turn pages with Left and Right; horizontal lists the other way
-// round. Moving past either end wraps round; turning to a shorter page pulls
-// the cursor up to its last entry. Returns 1 after a page turn, 0 after a
-// cursor move and -1 when nothing moved or the list is empty.
+/// Moves a paged list's cursor and page with the d-pad's repeating keys.
+///
+/// count entries are shown pageSize at a time; *cursor is the row on the page
+/// and *page the page. Vertical lists (horizontal 0) move the cursor with Up
+/// and Down and turn pages with Left and Right; horizontal lists the other way
+/// round. Moving past either end wraps round; turning to a shorter page pulls
+/// the cursor up to its last entry. Returns 1 after a page turn, 0 after a
+/// cursor move and -1 when nothing moved or the list is empty.
 s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
                          s32 *page) {
   s32 pages;
@@ -1008,9 +1009,9 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   return 0;
 }
 
-// Copies the last background palette (15) into background palette bank and
-// lightens its colour 4 by 9 steps in each channel: the highlight colour of
-// the menu's selected rows.
+/// Copies the last background palette (15) into background palette bank and
+/// lightens its colour 4 by 9 steps in each channel: the highlight colour of
+/// the menu's selected rows.
 void Palette_LightenBankHighlight(s32 bank) {
   u16 *palette = (u16 *)&BG_PLTT_COLOR(bank, 0);
   u32 red;
@@ -1036,9 +1037,9 @@ void Palette_LightenBankHighlight(s32 bank) {
   palette[4] = (blue << 10) | (green << 5) | red;
 }
 
-// Draws a paged list's page numbers on the top border of window, ending at
-// tile rightEdge: one digit per page between the page arrows, selectedPage in
-// palette 14 and the others in palette 15. Draws nothing for a single page.
+/// Draws a paged list's page numbers on the top border of window, ending at
+/// tile rightEdge: one digit per page between the page arrows, selectedPage in
+/// palette 14 and the others in palette 15. Draws nothing for a single page.
 void Menu_DrawPageIndicator(struct UiWindow *window, s32 itemCount,
                             s32 pageSize, s32 selectedPage, s32 rightEdge) {
   s32 pageCount;
@@ -1069,11 +1070,11 @@ void Menu_DrawPageIndicator(struct UiWindow *window, s32 itemCount,
   }
 }
 
-// Switches a rectangle of a window's text between palette 15 (normal) and 14
-// (the highlight made by Palette_LightenBankHighlight): palette is the new
-// palette number. Only bit 12 of each map entry is cleared before it is set,
-// so this works between those two palettes. (x, y) and the size are in tiles
-// inside the window's border; the rectangle is clipped to the screen.
+/// Switches a rectangle of a window's text between palette 15 (normal) and 14
+/// (the highlight made by Palette_LightenBankHighlight): palette is the new
+/// palette number. Only bit 12 of each map entry is cleared before it is set,
+/// so this works between those two palettes. (x, y) and the size are in tiles
+/// inside the window's border; the rectangle is clipped to the screen.
 void Render_SetTilemapFlagRect(const struct UiWindow *window, s32 x, s32 y,
                                s32 width, s32 height, u32 palette) {
   struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
@@ -1118,8 +1119,8 @@ void Render_SetTilemapFlagRect(const struct UiWindow *window, s32 x, s32 y,
   }
 }
 
-// Copies the first sprite palette into background palette 14, then colour 4
-// of background palette 15 over its colour 14.
+/// Copies the first sprite palette into background palette 14, then colour 4
+/// of background palette 15 over its colour 14.
 void Palette_CopyObjectBankToBackground14(void) {
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
           DMA_ENABLE << 16 | 16, REG_DMA3);
@@ -1127,9 +1128,9 @@ void Palette_CopyObjectBankToBackground14(void) {
           DMA_ENABLE << 16 | 1, REG_DMA3);
 }
 
-// Shows the item icons of one page of the item list: entries first to
-// first + pageSize - 1, one row of 16 pixels each from (x, y). Hides all the
-// others.
+/// Shows the item icons of one page of the item list: entries first to
+/// first + pageSize - 1, one row of 16 pixels each from (x, y). Hides all the
+/// others.
 void Menu_SetPageIcons(s32 pageSize, s32 first, struct UiWindow *window, s32 x,
                        s32 y) {
   struct InventoryMenuState *menu = gMenuWork;
@@ -1152,7 +1153,7 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, struct UiWindow *window, s32 x,
   }
 }
 
-// Writes the party's coins and the "Coins" label into window.
+/// Writes the party's coins and the "Coins" label into window.
 void UiText_DrawWorkValueWithLabel(struct UiWindow *window) {
   UiText_DrawNumberAtOffsetFar(gGameState.coins, 7, window, 8, 0);
   UiText_DrawCharacterAtOffsetFar(MsgCoinsLabel, window, 64, 0);
@@ -1161,7 +1162,7 @@ void UiText_DrawWorkValueWithLabel(struct UiWindow *window) {
 #endif
 }
 
-// Moves and resizes a window, in tiles.
+/// Moves and resizes a window, in tiles.
 void UiWindow_SetBounds(struct UiWindow *window, s32 x, s32 y, s32 width,
                         s32 height) {
   if (window != NULL) {
@@ -1172,24 +1173,24 @@ void UiWindow_SetBounds(struct UiWindow *window, s32 x, s32 y, s32 width,
   }
 }
 
-// Marks the window system busy with the menu, or no longer busy.
+/// Marks the window system busy with the menu, or no longer busy.
 void UiWork_SetMenuBusy(void) {
   ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 1;
 }
 
-// Lets the window renderer resume drawing after a menu update.
+/// Lets the window renderer resume drawing after a menu update.
 void UiWork_ClearMenuBusy(void) {
   ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 0;
 }
 
-// Plays a sound and returns 1.
+/// Plays a sound and returns 1.
 s32 Audio_PlayCueReturnOne(s32 cue) {
   AudioCommand_PlayFar(cue);
   return 1;
 }
 
-// Scheduler callback while a menu runs: on Start, plays the cancel sound,
-// sets FLAG_MENU_START_PRESSED and removes itself.
+/// Scheduler callback while a menu runs: on Start, plays the cancel sound,
+/// sets FLAG_MENU_START_PRESSED and removes itself.
 void Menu_CancelSoundTick(void) {
   if (gKeysPressed & KEY_START) {
     AudioCommand_PlayFar(SE_MENU_CANCEL);
@@ -1198,27 +1199,27 @@ void Menu_CancelSoundTick(void) {
   }
 }
 
-// Starts watching for Start: clears FLAG_MENU_START_PRESSED and adds
-// Menu_CancelSoundTick.
+/// Starts watching for Start: clears FLAG_MENU_START_PRESSED and adds
+/// Menu_CancelSoundTick.
 void Menu_CancelSoundReset(void) {
   GameFlag_ClearBitFar(FLAG_MENU_START_PRESSED);
   Scheduler_AddOrUpdateCallback(Menu_CancelSoundTick, 0xC80);
 }
 
-// Stops watching for Start, if Start has not removed the watch already.
+/// Stops watching for Start, if Start has not removed the watch already.
 void Menu_EnsureCancelSound(void) {
   if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     Scheduler_RemoveCallback(Menu_CancelSoundTick);
   }
 }
 
-// Set the window text colour: normal (15), no HP (2) and low HP (4).
+/// Set the window text colour: normal (15), no HP (2) and low HP (4).
 void UiPalette_SetColor15(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL); }
 
-// Selects text color 2 for the following drawing calls.
+/// Selects text color 2 for the following drawing calls.
 void UiPalette_SetColor2(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_NO_HP); }
 
-// Selects text color 4 for the following drawing calls.
+/// Selects text color 4 for the following drawing calls.
 void UiPalette_SetColor4(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_LOW_HP); }
 
 #undef STATUS_PANEL_TEXT_X

@@ -1,31 +1,32 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Quake.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Quake.
 
 #include "../effect_internal.h"
 
-// The columns of a gQuake_Timings row.
+/// The columns of a gQuake_Timings row.
 enum {
-  QUAKE_TIMING_FRAMES,      // frames in the whole effect
-  QUAKE_TIMING_RISE_FRAMES, // frames each pillar stands
-  QUAKE_TIMING_SHAKE        // how far the screen shakes
+  QUAKE_TIMING_FRAMES,      ///< frames in the whole effect
+  QUAKE_TIMING_RISE_FRAMES, ///< frames each pillar stands
+  QUAKE_TIMING_SHAKE        ///< how far the screen shakes
 };
 
 struct RockWallHeights {
-  s32 column[4]; // each pillar's height in pixels
+  s32 column[4]; ///< each pillar's height in pixels
 };
 
 #define QUAKE_PILLAR_WIDTH 40 // a pillar's width in pixels
-// The rock picture in the sheet; the sheet starts with the 40x16 strip of
-// ground cut from the background.
+/// The rock picture in the sheet; the sheet starts with the 40x16 strip of
+/// ground cut from the background.
 #define QUAKE_WALL_CELLS 0x1e00
 
-// Abilities: Quake, Earthquake, Quake Sphere (kind 1).
-//
-// Rock wall: three rock pillars rise from the left, 4 frames apart, and
-// sink again, throwing the targets standing on them into the air. Each
-// pillar is capped with a strip of ground cut from the background.
-//
-// effect: the targets; variant picks the row of gQuake_Timings.
+/// Abilities: Quake, Earthquake, Quake Sphere (kind 1).
+///
+/// Rock wall: three rock pillars rise from the left, 4 frames apart, and
+/// sink again, throwing the targets standing on them into the air. Each
+/// pillar is capped with a strip of ground cut from the background.
+///
+/// effect: the targets; variant picks the row of gQuake_Timings.
 void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
   static s32 wallHeights[4] = {
       -32,

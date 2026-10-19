@@ -1,18 +1,19 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Flare.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Flare.
 
 #include "../effect_internal.h"
 
 #define FLARE_ARC_COUNT 9 // flames on the arc
 
-// Abilities: Flare, Flare Wall, Flare Storm (kind 11).
-//
-// Flame arc: nine flames rise one after another, 4 frames apart, along a
-// half circle, over 80 frames. Each target is hit in turn, 8 frames apart
-// from frame 16.
-//
-// effect: the targets. variant 1 adds a second flame 16 pixels above each
-//         one, variant 2 a third 32 pixels above (and longer trails).
+/// Abilities: Flare, Flare Wall, Flare Storm (kind 11).
+///
+/// Flame arc: nine flames rise one after another, 4 frames apart, along a
+/// half circle, over 80 frames. Each target is hit in turn, 8 frames apart
+/// from frame 16.
+///
+/// effect: the targets. variant 1 adds a second flame 16 pixels above each
+///         one, variant 2 a third 32 pixels above (and longer trails).
 void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
   u32 *slots;
   u32 *cursor;
@@ -158,9 +159,9 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-// List the indices within indexRadius of where currentValue sits in values,
-// keeping only those from 0 to entryLimit - 1. Writes the indices to output
-// and returns how many there are.
+/// List the indices within indexRadius of where currentValue sits in values,
+/// keeping only those from 0 to entryLimit - 1. Writes the indices to output
+/// and returns how many there are.
 UNUSED s32 BattleFx_BuildCenteredIndexList(BattleEffectIndexWindow *window,
                                            s16 *output) {
   s32 windowLength = window->indexRadius * 2 + 1;

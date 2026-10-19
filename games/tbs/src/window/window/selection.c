@@ -1,5 +1,6 @@
-// Part of window.c, the window object, compiled only through it.
-// The selection screen's row of icons, and the field menu.
+/// @file
+/// Part of window.c, the window object, compiled only through it.
+/// The selection screen's row of icons, and the field menu.
 
 #include "../window_internal.h"
 
@@ -8,7 +9,7 @@ struct GlyphCursor {
   u16 cursor;
 };
 
-// Clears a selection record's cursor.
+/// Clears a selection record's cursor.
 static __inline__ void ResetCursor(struct GlyphCursor *cursor) {
   /* FAKEMATCH: the helper takes the node's base field as its record, so each
    * row store forms base + 372 and stores the cursor at #2, as the native does.
@@ -17,8 +18,8 @@ static __inline__ void ResetCursor(struct GlyphCursor *cursor) {
   cursor->cursor = 0;
 }
 
-// Allocates and resets the selection screen: the row of icons the player picks
-// from, with arrows at each end and a pointing hand over the chosen target.
+/// Allocates and resets the selection screen: the row of icons the player picks
+/// from, with arrows at each end and a pointing hand over the chosen target.
 void UiGlyph_ResetWorkState(void) {
   struct SelectionScreen *work;
   struct SelectionSprite *visual;
@@ -65,8 +66,8 @@ void UiGlyph_ResetWorkState(void) {
   visual->priority = 0;
 }
 
-// Empties the selection screen's list of entries.
-// The high cursor bit requests resetting both the list origin and cursor.
+/// Empties the selection screen's list of entries.
+/// The high cursor bit requests resetting both the list origin and cursor.
 void Resource_ClearOwnerListAndCounters(void) {
   struct SelectionScreen *screen;
 
@@ -81,8 +82,8 @@ void Resource_ClearOwnerListAndCounters(void) {
   screen->count = 0;
 }
 
-// Adds an entry (kind and id) to the selection screen's list, up to 16.
-// The constructor and clear routine establish the count's 0-to-16 invariant.
+/// Adds an entry (kind and id) to the selection screen's list, up to 16.
+/// The constructor and clear routine establish the count's 0-to-16 invariant.
 void Resource_PushPendingPair(u32 kind, u32 base) {
   struct SelectionScreen *state = gResQueueWork;
   u16 entryCount = state->count;
@@ -94,10 +95,10 @@ void Resource_PushPendingPair(u32 kind, u32 base) {
   }
 }
 
-// Creates icons for the first five listed entries in a row along the bottom of
-// the screen.
-// Build the linked row before placing the visible icons and loading the
-// preview.
+/// Creates icons for the first five listed entries in a row along the bottom of
+/// the screen.
+/// Build the linked row before placing the visible icons and loading the
+/// preview.
 void MenuSelection_BuildEntries(u32 unused) {
   struct SelectionScreen *screen = gResQueueWork;
   u32 count = screen->count;
@@ -154,11 +155,11 @@ void MenuSelection_BuildEntries(u32 unused) {
   SelectionScreen_LoadLargeIcon();
 }
 
-// Does nothing.
+/// Does nothing.
 void UiWork_ReservedNoOp(void) {}
 
-// Returns a free selection icon record: one of the seven row icons (kind 0) or
-// of the five chosen icons (otherwise), or NULL.
+/// Returns a free selection icon record: one of the seven row icons (kind 0) or
+/// of the five chosen icons (otherwise), or NULL.
 struct SelectionNode *SelectionScreen_FindFreeIcon(s32 kind) {
   struct SelectionScreen *state = gResQueueWork;
   s32 i;
@@ -177,19 +178,19 @@ struct SelectionNode *SelectionScreen_FindFreeIcon(s32 kind) {
   return NULL;
 }
 
-// Starts drawing the selection screen each frame.
+/// Starts drawing the selection screen each frame.
 void Resource_ScheduleOwnerResetDelayed(void) {
   Scheduler_AddOrUpdateCallback(SelectionScreen_Draw, 0xC80);
 }
 
-// Stops drawing the selection screen.
+/// Stops drawing the selection screen.
 void Resource_ScheduleOwnerReset(void) {
   Scheduler_RemoveCallback(SelectionScreen_Draw);
 }
 
-// The selection screen's per-frame callback: slides and draws the row of
-// icons, the large icon over the chosen one, the end arrows, the icons already
-// chosen and the pointing hand.
+/// The selection screen's per-frame callback: slides and draws the row of
+/// icons, the large icon over the chosen one, the end arrows, the icons already
+/// chosen and the pointing hand.
 void SelectionScreen_Draw(void) {
   struct SelectionScreen *state = gResQueueWork;
   struct SelectionSprite *cursorEntry = &state->records[14].sprite;
@@ -369,8 +370,8 @@ void SelectionScreen_Draw(void) {
   state->status += 1;
 }
 
-// Draws the selection screen's left (index 0) or right (1) arrow, nudged
-// outwards while it flashes after a scroll.
+/// Draws the selection screen's left (index 0) or right (1) arrow, nudged
+/// outwards while it flashes after a scroll.
 void SelectionScreen_DrawArrow(struct SelectionScreen *state, s32 side) {
   u32 animationStep = (gFrameTick >> 2) & 7;
   struct SelectionSprite *arrow;
@@ -404,10 +405,10 @@ void SelectionScreen_DrawArrow(struct SelectionScreen *state, s32 side) {
     state->records[side].base--;
 }
 
-// Opens or refits the name window above the selection row and writes the name
-// of the icon under the cursor, or that nothing is known (mode 4, Psynergy)
-// or held (mode 2, items). mode 6 is a yes or no question, placed at the
-// bottom or top of the screen.
+/// Opens or refits the name window above the selection row and writes the name
+/// of the icon under the cursor, or that nothing is known (mode 4, Psynergy)
+/// or held (mode 2, items). mode 6 is a yes or no question, placed at the
+/// bottom or top of the screen.
 void Menu_OpenSelectionWindow(s32 mode, u32 count) {
   struct SelectionScreen *screen;
   struct SelectionNode *node;
@@ -452,7 +453,7 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count) {
   }
 }
 
-// Closes the selection screen and frees its icons, tiles and work block.
+/// Closes the selection screen and frees its icons, tiles and work block.
 void Resource_ResetOwnerEntries(void) {
   struct SelectionScreen *state = gResQueueWork;
   struct SelectionNode *node;
@@ -487,7 +488,7 @@ void Resource_ResetOwnerEntries(void) {
   Runtime_ReleaseHeapBlock(18);
 }
 
-// Moves the row of icons to start at pixel (x, y), 16 pixels apart.
+/// Moves the row of icons to start at pixel (x, y), 16 pixels apart.
 void Menu_SetNodeCoordinates(u32 x, u32 y) {
   struct SelectionScreen *screen = gResQueueWork;
   struct SelectionNode *node;
@@ -505,7 +506,7 @@ void Menu_SetNodeCoordinates(u32 x, u32 y) {
   }
 }
 
-// Sets up both end arrows of the selection row.
+/// Sets up both end arrows of the selection row.
 void Menu_SetupSelectionBothSides(void) {
   struct SelectionScreen *state;
 
@@ -514,8 +515,8 @@ void Menu_SetupSelectionBothSides(void) {
   SelectionScreen_SetupArrow(state, 1);
 }
 
-// Sets up the left (index 0) or right (1) arrow of the selection row, shown
-// when there are entries beyond that end.
+/// Sets up the left (index 0) or right (1) arrow of the selection row, shown
+/// when there are entries beyond that end.
 void SelectionScreen_SetupArrow(struct SelectionScreen *state, s32 side) {
   struct SelectionSprite *arrow = &state->records[side].sprite;
   const u8 *arrowTiles = 0;
@@ -561,8 +562,8 @@ void SelectionScreen_SetupArrow(struct SelectionScreen *state, s32 side) {
   }
 }
 
-// Returns the node at the selection screen's cursor index.
-// cursorIndex is relative to head, not the number of queued entries.
+/// Returns the node at the selection screen's cursor index.
+/// cursorIndex is relative to head, not the number of queued entries.
 struct SelectionNode *Selection_GetCursorNode(struct SelectionScreen *screen) {
   struct SelectionNode *node = screen->head;
   s32 i;
@@ -583,9 +584,9 @@ struct SelectionNode *Selection_GetCursorNode(struct SelectionScreen *screen) {
 #define SELECTION_ROWS 4
 #define ARROW_SCROLL_FRAMES 8
 
-// Runs the selection row until the player chooses (the chosen entry's index)
-// or, when mode allows it, cancels with B (-1). SELECTION_FIXED allows no
-// moving or choosing.
+/// Runs the selection row until the player chooses (the chosen entry's index)
+/// or, when mode allows it, cancels with B (-1). SELECTION_FIXED allows no
+/// moving or choosing.
 s32 Menu_SelectionLoop(s32 mode) {
   struct SelectionScreen *screen = gResQueueWork;
 
@@ -610,7 +611,7 @@ s32 Menu_SelectionLoop(s32 mode) {
   }
 }
 
-// As Menu_SelectionLoop, with the menu sounds.
+/// As Menu_SelectionLoop, with the menu sounds.
 u32 Menu_WaitForSelectionInput(u32 mode) {
   struct SelectionScreen *screen = gResQueueWork;
   u32 result;
@@ -651,9 +652,9 @@ u32 Menu_WaitForSelectionInput(u32 mode) {
   }
 }
 
-// Moves the cursor one entry right, scrolling the row at its fourth place.
-// This variant stops at the end; Menu_StepRight also wraps around.
-// Nothing calls it.
+/// Moves the cursor one entry right, scrolling the row at its fourth place.
+/// This variant stops at the end; Menu_StepRight also wraps around.
+/// Nothing calls it.
 UNUSED void Menu_MoveSelectionForward(struct SelectionScreen *screen) {
   u32 nextEntry = screen->top + screen->cursorIndex + 1;
 
@@ -681,9 +682,9 @@ UNUSED void Menu_MoveSelectionForward(struct SelectionScreen *screen) {
   WaitFrames(1);
 }
 
-// Moves the cursor one entry left, scrolling the row at its second place.
-// This variant stops at the beginning; Menu_StepLeft also wraps around.
-// Nothing calls it.
+/// Moves the cursor one entry left, scrolling the row at its second place.
+/// This variant stops at the beginning; Menu_StepLeft also wraps around.
+/// Nothing calls it.
 UNUSED void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
   u32 cursorIndex;
 
@@ -712,8 +713,8 @@ UNUSED void Menu_MoveSelectionBackward(struct SelectionScreen *screen) {
   WaitFrames(1);
 }
 
-// Moves the cursor one entry right, scrolling the row at its edge and
-// wrapping from the last entry to the first.
+/// Moves the cursor one entry right, scrolling the row at its edge and
+/// wrapping from the last entry to the first.
 void Menu_StepRight(struct SelectionScreen *state) {
   struct SelectionNode *node;
   u32 entryIndex;
@@ -781,8 +782,8 @@ void Menu_StepRight(struct SelectionScreen *state) {
   WaitFrames(1);
 }
 
-// Moves the cursor one entry left, scrolling the row at its edge and
-// wrapping from the first entry to the last.
+/// Moves the cursor one entry left, scrolling the row at its edge and
+/// wrapping from the first entry to the last.
 void Menu_StepLeft(struct SelectionScreen *state) {
   struct SelectionNode *node;
   s32 i;
@@ -856,7 +857,7 @@ void Menu_StepLeft(struct SelectionScreen *state) {
   WaitFrames(1);
 }
 
-// Redraws the command icon at row place index in its plain state.
+/// Redraws the command icon at row place index in its plain state.
 void SelectionScreen_RedrawIcon(struct SelectionScreen *state, u32 rowIndex) {
   struct SelectionNode *node = state->head;
   u32 tile;
@@ -874,7 +875,7 @@ void SelectionScreen_RedrawIcon(struct SelectionScreen *state, u32 rowIndex) {
   }
 }
 
-// Redraws the command icon at row place index and loads its large icon.
+/// Redraws the command icon at row place index and loads its large icon.
 void SelectionScreen_HighlightIcon(struct SelectionScreen *state,
                                    u32 rowIndex) {
   struct SelectionNode *node = state->head;
@@ -894,7 +895,7 @@ void SelectionScreen_HighlightIcon(struct SelectionScreen *state,
   }
 }
 
-// Tells the battle presentation how many icons the row shows.
+/// Tells the battle presentation how many icons the row shows.
 void Menu_SendNodeCountList(struct SelectionScreen *screen) {
   u16 data[6];
   struct SelectionNode *node = screen->head;
@@ -908,9 +909,10 @@ void Menu_SendNodeCountList(struct SelectionScreen *screen) {
   BattlePres_SetActorModesFar(data, 0);
 }
 
-// Scrolls the row one entry: forward brings an icon in from the right as the
-// leftmost shrinks away, and back the reverse; waits until it has moved.
-// Release the departing cache slot only after its shrinking animation finishes.
+/// Scrolls the row one entry: forward brings an icon in from the right as the
+/// leftmost shrinks away, and back the reverse; waits until it has moved.
+/// Release the departing cache slot only after its shrinking animation
+/// finishes.
 void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
   struct SelectionNode *node;
   struct SelectionNode *last;
@@ -1006,9 +1008,9 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
   }
 }
 
-// Loads the icon of an entry of kind mode (1 and 6 commands, 2 items, 4
-// Psynergy, 9 fixed images) into a free sprite tile slot and returns it, or
-// -1.
+/// Loads the icon of an entry of kind mode (1 and 6 commands, 2 items, 4
+/// Psynergy, 9 fixed images) into a free sprite tile slot and returns it, or
+/// -1.
 s32 Resource_LoadByMode(s32 mode, s32 value) {
   s32 output;
   s32 result = -1;
@@ -1037,9 +1039,9 @@ s32 Resource_LoadByMode(s32 mode, s32 value) {
   return result;
 }
 
-// Loads the icon of an entry of kind mode into sprite tile slot result (a free
-// slot when -1) and returns the slot. Kind 7 is an item icon without its
-// count, 8 one of the other icons.
+/// Loads the icon of an entry of kind mode into sprite tile slot result (a free
+/// slot when -1) and returns the slot. Kind 7 is an item icon without its
+/// count, 8 one of the other icons.
 s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
   s32 output;
   s32 original = result;
@@ -1075,9 +1077,9 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
   return result;
 }
 
-// Sets up a selection icon for an entry: its icon tiles (in its old slot when
-// reuse is set), its name message and its sprite.
-// kind must select a command, item or Psynergy with the matching base ID.
+/// Sets up a selection icon for an entry: its icon tiles (in its old slot when
+/// reuse is set), its name message and its sprite.
+/// kind must select a command, item or Psynergy with the matching base ID.
 void SelectionScreen_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
                                s32 reuse) {
   s32 cacheSlot;
@@ -1125,11 +1127,11 @@ void SelectionScreen_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
   sprite->priority = 0;
 }
 
-// Chooses the entry under the cursor: the other icons gather into it and
-// vanish, and it joins the chosen icons at the top left. Returns the entry's
-// index.
-// The selected row node and a free chosen-icon record must exist before
-// confirming.
+/// Chooses the entry under the cursor: the other icons gather into it and
+/// vanish, and it joins the chosen icons at the top left. Returns the entry's
+/// index.
+/// The selected row node and a free chosen-icon record must exist before
+/// confirming.
 u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   struct SelectionNode *node;
   struct SelectionNode *other = NULL;
@@ -1223,7 +1225,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   return chosenIndex;
 }
 
-// Six empty functions; nothing calls the first, the fourth or the fifth.
+/// Six empty functions; nothing calls the first, the fourth or the fifth.
 UNUSED void UiTextResource_NoOpCallback(void) {}
 void UiTextResource_NoOpCallbackBank(void) {}
 void UiTextResource_NoOpCallback1(void) {}
@@ -1231,10 +1233,10 @@ UNUSED void UiTextResource_NoOpCallback2(void) {}
 UNUSED void UiTextResource_NoOpCallback3(void) {}
 void UiTextResource_NoOpCallback4(void) {}
 
-// Sets up a sprite as the right-pointing arrow, in a free tile slot (returned
-// in *slot).
-// The caller owns the cache slot and releases it through
-// UiTextResource_Release.
+/// Sets up a sprite as the right-pointing arrow, in a free tile slot (returned
+/// in *slot).
+/// The caller owns the cache slot and releases it through
+/// UiTextResource_Release.
 void UiTextResource_Initialize(struct MenuSprite *sprite, s32 *slot) {
   const void *data = gMenu_CursorObjectTiles;
   s32 cacheSlot = Resource_FindFreeEntry();
@@ -1251,17 +1253,17 @@ void UiTextResource_Initialize(struct MenuSprite *sprite, s32 *slot) {
   sprite->oam.f.priority = 0;
 }
 
-// Places an arrow sprite at (x, y) and queues it for drawing.
+/// Places an arrow sprite at (x, y) and queues it for drawing.
 void UiTextResource_SetPosition(struct MenuSprite *sprite, s32 x, s32 y) {
   sprite->oam.f.x = x;
   sprite->oam.f.y = y;
   Runtime_PushSlotEntry(sprite, 0xFC);
 }
 
-// Frees an arrow sprite's tile slot.
+/// Frees an arrow sprite's tile slot.
 void UiTextResource_Release(s32 value) { Resource_ResetEntry(value); }
 
-// Loads the large icon of the command under the cursor, zooming in.
+/// Loads the large icon of the command under the cursor, zooming in.
 void SelectionScreen_LoadLargeIcon(void) {
   struct SelectionScreen *state = gResQueueWork;
   struct SelectionNode *selected = Selection_GetCursorNode(state);
@@ -1296,8 +1298,8 @@ void SelectionScreen_LoadLargeIcon(void) {
   Runtime_ReleaseHeapBlock(17);
 }
 
-// Frees the large command icon, if it is shown.
-// The large preview owns a cache slot independently of the visible row icons.
+/// Frees the large command icon, if it is shown.
+/// The large preview owns a cache slot independently of the visible row icons.
 void Resource_ResetPendingTransfer(void) {
   struct SelectionNode *largeIcon = &gResQueueWork->records[15];
 
@@ -1312,8 +1314,8 @@ void Resource_ResetPendingTransfer(void) {
 #define HAS_LOCALIZED_MENU_GUARD 1
 #endif
 
-// Runs the field menu until the player picks something that leaves it, and
-// returns that choice's result.
+/// Runs the field menu until the player picks something that leaves it, and
+/// returns that choice's result.
 s32 Menu_RunTopSelection(void) {
   s32 ret;
   s32 selection;
@@ -1380,27 +1382,27 @@ s32 Menu_RunTopSelection(void) {
   return ret;
 }
 
-// Opens the field menu's window and waits a frame.
+/// Opens the field menu's window and waits a frame.
 void UiWindow_OpenMode1AndWaitFrame(void) {
   UiWindow_CreateWithLayoutBounds(1);
   WaitFrames(1);
 }
 
-// Closes the window kept in heap block 16 and frees the block.
+/// Closes the window kept in heap block 16 and frees the block.
 void UiWork_CloseAndRelease(void) { PartyStatus_Close(); }
 
-// Sets up an empty selection screen and waits a frame.
-// Nothing calls it.
+/// Sets up an empty selection screen and waits a frame.
+/// Nothing calls it.
 UNUSED void SelectionScreen_CreateEmpty(void) {
   UiGlyph_ResetWorkState();
   Resource_ClearOwnerListAndCounters();
   WaitFrames(1);
 }
 
-// Runs a selection row with the cursor on entry value, cancellable, and
-// returns the entry chosen or -1.
-// The parameter is an initial row index; cancellation returns -1 encoded as
-// u32.
+/// Runs a selection row with the cursor on entry value, cancellable, and
+/// returns the entry chosen or -1.
+/// The parameter is an initial row index; cancellation returns -1 encoded as
+/// u32.
 u32 Menu_RunSelectionForValue(u32 initialIndex) {
   struct SelectionScreen *screen = gResQueueWork;
   u32 result;

@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Lobbed shells (Mad Spatter, Decompose, Bone Chiller ...).
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Lobbed shells (Mad Spatter, Decompose, Bone Chiller ...).
 
 #include "../effect_internal.h"
 
@@ -9,65 +10,65 @@
 // Lobbed shells: a shell arcs from the user onto each target and bursts
 // into smoke or shards, in seven colourings.
 
-// Abilities: Mad Spatter (kind 347).
-//
-// Gold shells that burst into shards.
+/// Abilities: Mad Spatter (kind 347).
+///
+/// Gold shells that burst into shards.
 void BattleFx_RunMadSpatter(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 4);
 }
-// Abilities: Decompose (kind 350).
-//
-// Green shells that burst into smoke.
+/// Abilities: Decompose (kind 350).
+///
+/// Green shells that burst into smoke.
 void BattleFx_RunDecompose(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 5);
 }
-// Abilities: Bone Chiller (kind 309).
-//
-// Blue shells that burst into smoke.
+/// Abilities: Bone Chiller (kind 309).
+///
+/// Blue shells that burst into smoke.
 void BattleFx_RunBoneChiller(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 0);
 }
-// Abilities: Sticky Goo (kind 315).
-//
-// Shells in the spider web's colours that burst into smoke.
+/// Abilities: Sticky Goo (kind 315).
+///
+/// Shells in the spider web's colours that burst into smoke.
 void BattleFx_RunStickyGoo(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 1);
 }
-// Abilities: Poison Ink (kind 340).
-//
-// Shells in Mars Djinn colours that burst into smoke.
+/// Abilities: Poison Ink (kind 340).
+///
+/// Shells in Mars Djinn colours that burst into smoke.
 void BattleFx_RunPoisonInk(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 6);
 }
-// Abilities: Sticky Poison (kind 322).
-//
-// Lime shells that burst into smoke.
+/// Abilities: Sticky Poison (kind 322).
+///
+/// Lime shells that burst into smoke.
 void BattleFx_RunStickyPoison(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 2);
 }
-// Abilities: Rotten Blood (kind 330).
-//
-// Green shells that burst into shards.
+/// Abilities: Rotten Blood (kind 330).
+///
+/// Green shells that burst into shards.
 void BattleFx_RunRottenBlood(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 3);
 }
 // gLobbedShells_Records has two entries per style; the first is nonzero when
 // the shells burst into shards instead of smoke.
 
-// The bursts live after the shells in PARTICLES.
+/// The bursts live after the shells in PARTICLES.
 #define LOBBED_SHELLS_BURSTS ((struct EffectStep *)(Ram_MapCellBuffer + 0x1c00))
 #define LOBBED_SHELLS_SLOTS 16           // particles reserved for each target
 #define LOBBED_SHELLS_BURST_SLOTS 256    // burst particles after the shells
 #define LOBBED_SHELLS_SMOKE_CELLS 0x3e80 // the smoke pictures in the sheet
 
-// Nonzero when the style's shells burst into shards instead of smoke.
+/// Nonzero when the style's shells burst into shards instead of smoke.
 #define LOBBED_SHELLS_SHATTER(mode) gLobbedShells_Records[(mode) * 2]
 
-// Lobs a shell from the user at each target in turn, 8 frames apart. Each
-// tumbles through ten images as it flies and, when it lands, the target
-// flashes and the battle shows the damage; the shell bursts into 4 smoke
-// puffs that drift up or 16 shards that fly up and fall.
-// mode : the style, 0 to 6: the colours and the row of gLobbedShells_Records.
+/// Lobs a shell from the user at each target in turn, 8 frames apart. Each
+/// tumbles through ten images as it flies and, when it lands, the target
+/// flashes and the battle shows the damage; the shell bursts into 4 smoke
+/// puffs that drift up or 16 shards that fly up and fall.
+/// mode : the style, 0 to 6: the colours and the row of gLobbedShells_Records.
 void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition position;
   BlitterPair draw;

@@ -1,21 +1,22 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Froth and Whirlwind.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Froth and Whirlwind.
 
 #include "../effect_internal.h"
 
 #define FROTH_MOTE_CELL 0xc00 // the mote picture in the sheet
 #define FROTH_FIRST_TARGET 32 // the first target seat in work->particles
-// The motes set up in work->particles, before the target seats: no row of
-// gVortices_Counts may ask for more.
+/// The motes set up in work->particles, before the target seats: no row of
+/// gVortices_Counts may ask for more.
 #define FROTH_MOTES 30
 
-// Abilities: Froth, Froth Sphere, Froth Spiral (kind 10).
-//
-// Motes fly out of the top of the user, hang, and from 48 frames after each
-// appears home in on the targets in turn; each that reaches the ground strikes
-// in a burst, flashing and knocking back its target, while the camera swings
-// round over frames 17 to 63. effect->variant picks the volley from
-// gVortices_Counts (motes and frames) and how hard the screen shakes.
+/// Abilities: Froth, Froth Sphere, Froth Spiral (kind 10).
+///
+/// Motes fly out of the top of the user, hang, and from 48 frames after each
+/// appears home in on the targets in turn; each that reaches the ground strikes
+/// in a burst, flashing and knocking back its target, while the camera swings
+/// round over frames 17 to 63. effect->variant picks the volley from
+/// gVortices_Counts (motes and frames) and how hard the screen shakes.
 void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   struct BattleEffectWork *work;
@@ -148,14 +149,14 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-// Abilities: Whirlwind, Tornado, Tempest, Gale, Typhoon, Hurricane (kind 20).
-//
-// Tornadoes sweep across the targets for 80 frames,
-// sparkling with glints; the canvas flashes and the targets reel seven
-// times, 8 frames apart, from frame 16, and the battle shows the damage on
-// frame 32.
-// effect->variant picks the shape from gVortices_Shapes: how many
-// tornadoes, how far they sway and how hard the screen shakes.
+/// Abilities: Whirlwind, Tornado, Tempest, Gale, Typhoon, Hurricane (kind 20).
+///
+/// Tornadoes sweep across the targets for 80 frames,
+/// sparkling with glints; the canvas flashes and the targets reel seven
+/// times, 8 frames apart, from frame 16, and the battle shows the damage on
+/// frame 32.
+/// effect->variant picks the shape from gVortices_Shapes: how many
+/// tornadoes, how far they sway and how hard the screen shakes.
 void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **slots;

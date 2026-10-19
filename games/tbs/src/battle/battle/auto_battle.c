@@ -1,12 +1,13 @@
-// Part of battle.c, the battle object, compiled only through it.
-// Auto battle: the actions it builds and plays, without the command menu.
+/// @file
+/// Part of battle.c, the battle object, compiled only through it.
+/// Auto battle: the actions it builds and plays, without the command menu.
 
 #include "../battle_internal.h"
 
-// Auto battle: gives every living unit a plain attack and sorts them into
-// turn order. The party act at their Agility and target the first enemy;
-// enemies act at half their Agility plus a random part of it and target a
-// random party member. Returns how many actions there are.
+/// Auto battle: gives every living unit a plain attack and sorts them into
+/// turn order. The party act at their Agility and target the first enemy;
+/// enemies act at half their Agility plus a random part of it and target a
+/// random party member. Returns how many actions there are.
 s32 BattlePresentation_BuildSortedUnitEntries(
     struct BattleActionRecord *entries) {
   struct BattleActionRecord swap;
@@ -71,12 +72,12 @@ s32 BattlePresentation_BuildSortedUnitEntries(
   return count;
 }
 
-// Turns the camera while L or R is held.
+/// Turns the camera while L or R is held.
 DEFINE_ADJUST_CAMERA(BattlePres_AdjustCameraByShoulderKeys)
 
-// Auto battle: plays one action. A unit already down does nothing (-1);
-// a defeated target is replaced by a living unit of its side first.
-// Returns 1 when the party got away, 0 otherwise.
+/// Auto battle: plays one action. A unit already down does nothing (-1);
+/// a defeated target is replaced by a living unit of its side first.
+/// Returns 1 when the party got away, 0 otherwise.
 s32 BattlePres_RunAction(struct BattleActionRecord *action) {
   struct BattlePresentationTransition *transition;
   s32 actorId;
@@ -129,7 +130,7 @@ s32 BattlePres_RunAction(struct BattleActionRecord *action) {
   return 0;
 }
 
-// Returns 0 for a party member's or an enemy's unit id, -1 for any other.
+/// Returns 0 for a party member's or an enemy's unit id, -1 for any other.
 s32 BattleObject_IsValidId(u32 unitId) {
   if (unitId <= 7) {
     return 0;
@@ -140,9 +141,9 @@ s32 BattleObject_IsValidId(u32 unitId) {
   return -1;
 }
 
-// Auto battle: the party tries to run, and gets away 15 times in 16, each
-// living member running off in turn. Returns 1 when they got away; else
-// shows "But there's no escape!"... and returns 0.
+/// Auto battle: the party tries to run, and gets away 15 times in 16, each
+/// living member running off in turn. Returns 1 when they got away; else
+/// shows "But there's no escape!"... and returns 0.
 s32 BattleEscape_PlayRun(struct BattleActionRecord *action) {
   s16 partyMembers[14];
   s32 partySize;
@@ -169,8 +170,8 @@ s32 BattleEscape_PlayRun(struct BattleActionRecord *action) {
   return 0;
 }
 
-// Auto battle: shows "<unit> is defending" for a standing unit. Returns -1
-// for an invalid unit id, 0 otherwise.
+/// Auto battle: shows "<unit> is defending" for a standing unit. Returns -1
+/// for an invalid unit id, 0 otherwise.
 s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *action) {
   s32 unitId;
   s32 result;
@@ -191,11 +192,11 @@ s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *action) {
   return 0;
 }
 
-// Auto battle: casts Psynergy. The camera turns to the caster's side and
-// the caster raises its hand; the target side fades out, its living units
-// are readied alone, the Psynergy's effect (kind action->parameter) plays
-// on them, and everyone fades back in. Returns -1 for an invalid actor or
-// target.
+/// Auto battle: casts Psynergy. The camera turns to the caster's side and
+/// the caster raises its hand; the target side fades out, its living units
+/// are readied alone, the Psynergy's effect (kind action->parameter) plays
+/// on them, and everyone fades back in. Returns -1 for an invalid actor or
+/// target.
 s32 BattlePresentation_RunPairedUnitTransition(
     struct BattleActionRecord *action) {
   u16 visibleUnits[14];
@@ -306,9 +307,9 @@ s32 BattlePresentation_RunPairedUnitTransition(
   return 0;
 }
 
-// Auto battle: an attack. Shows "<unit> attacks!", sends the attacker up
-// to its target, plays the blow and sends both back. Returns -1 for an
-// invalid attacker or target.
+/// Auto battle: an attack. Shows "<unit> attacks!", sends the attacker up
+/// to its target, plays the blow and sends both back. Returns -1 for an
+/// invalid attacker or target.
 s32 BattlePres_RunApproachAction(struct BattleActionRecord *input) {
   struct BattlePresentationWork work;
 
@@ -352,10 +353,10 @@ s32 BattlePres_RunApproachAction(struct BattleActionRecord *input) {
   return 0;
 }
 
-// Auto battle: an attack or an item. Turns the camera to the actor's side,
-// poses the actor and plays the effect (kind action->parameter) on the
-// first living unit of the target's side, then sends both back. Returns -1
-// for an invalid actor.
+/// Auto battle: an attack or an item. Turns the camera to the actor's side,
+/// poses the actor and plays the effect (kind action->parameter) on the
+/// first living unit of the target's side, then sends both back. Returns -1
+/// for an invalid actor.
 s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
   struct BattlePresentationWork work;
   struct BattlePresentationTransition *transition = gTransitionWork;
@@ -434,11 +435,11 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
   return 0;
 }
 
-// Auto battle: deals damage HP to unit unitId and shows it: "A bitter
-// blow!" (to the party) or "A critical hit!" (to an enemy) first when
-// showMessage is set, then "<unit> takes <damage> damage!", and "<unit>
-// goes down..." or "<unit> has been downed!" when the HP runs out.
-// context, if null, is replaced by four cleared bytes nothing reads.
+/// Auto battle: deals damage HP to unit unitId and shows it: "A bitter
+/// blow!" (to the party) or "A critical hit!" (to an enemy) first when
+/// showMessage is set, then "<unit> takes <damage> damage!", and "<unit>
+/// goes down..." or "<unit> has been downed!" when the HP runs out.
+/// context, if null, is replaced by four cleared bytes nothing reads.
 void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
                                         u8 *context) {
   u8 localContext[4];
@@ -493,8 +494,8 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
   ObjectDispatch_SelectAnimationFar(battleObject->object, 1);
 }
 
-// For a unit whose HP has run out: plays its falling animation to the last
-// frame and marks its object for release (BattleObj_MarkForRelease).
+/// For a unit whose HP has run out: plays its falling animation to the last
+/// frame and marks its object for release (BattleObj_MarkForRelease).
 void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
   struct AnimationEntry *actorData;
   struct AnimationObject *object;
@@ -510,11 +511,11 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
   }
 }
 
-// BattleTarget_ReplaceDefeated's result when the target's side is all down.
+/// BattleTarget_ReplaceDefeated's result when the target's side is all down.
 #define TARGET_SIDE_DEFEATED 0x100
 
-// Returns the action's target, or a random living unit of its side when
-// the target is down; TARGET_SIDE_DEFEATED when none is left.
+/// Returns the action's target, or a random living unit of its side when
+/// the target is down; TARGET_SIDE_DEFEATED when none is left.
 s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action) {
   u16 livingUnits[14];
   s32 targetId;

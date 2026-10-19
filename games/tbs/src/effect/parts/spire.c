@@ -1,19 +1,20 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Spire.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Spire.
 
 #include "../effect_internal.h"
 
-// The shard pictures in the sheet, after the boulder.
+/// The shard pictures in the sheet, after the boulder.
 #define SPIRE_SHARD_CELLS 0x83c
 #define SPIRE_SHARDS 21 // shards per rock
 
-// Abilities: Spire, Clay Spire, Stone Spire (kind 2).
-//
-// Shattering rocks: boulders drop along the row of targets, centred on
-// it, and burst into tumbling shards, hitting every target as each lands.
-//
-// effect: the targets; its variant picks the number of boulders
-//         (gSpire_RockCounts).
+/// Abilities: Spire, Clay Spire, Stone Spire (kind 2).
+///
+/// Shattering rocks: boulders drop along the row of targets, centred on
+/// it, and burst into tumbling shards, hitting every target as each lands.
+///
+/// effect: the targets; its variant picks the number of boulders
+///         (gSpire_RockCounts).
 void BattleFx_RunSpire(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

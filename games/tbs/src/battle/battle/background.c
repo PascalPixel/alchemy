@@ -1,6 +1,7 @@
-// Part of battle.c, the battle object, compiled only through it.
-// The battle background, its palette and perspective, the camera's zoom and
-// the units' highlights.
+/// @file
+/// Part of battle.c, the battle object, compiled only through it.
+/// The battle background, its palette and perspective, the camera's zoom and
+/// the units' highlights.
 
 #include "../battle_internal.h"
 
@@ -13,8 +14,8 @@
 #define DEBUG_SELECT_VALUE 480
 #endif
 
-// Uploads the saved battle palette, scaling its brightness unless the level is
-// zero. Preserves the interrupt-enable state around the update.
+/// Uploads the saved battle palette, scaling its brightness unless the level is
+/// zero. Preserves the interrupt-enable state around the update.
 void BattlePresentation_SetPaletteLevel(s32 unused, s32 level) {
   struct BattleWork *battle = gBattleWork;
   u16 *palette = battle->palette;
@@ -48,8 +49,8 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level) {
   }
 }
 
-// Selects the background mode and restores or darkens its palette, then
-// rebuilds the background tile lookup and map. unusedResource is not read.
+/// Selects the background mode and restores or darkens its palette, then
+/// rebuilds the background tile lookup and map. unusedResource is not read.
 void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 unusedResource,
                                              s32 fade) {
   struct BattleBackgroundView *transition =
@@ -104,8 +105,8 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 unusedResource,
   BattlePresentation_BuildTilemap(BG_SCREEN_BLOCK(31));
 }
 
-// Allocates and clears the affine scanline workspace and resets background
-// mode.
+/// Allocates and clears the affine scanline workspace and resets background
+/// mode.
 void BattlePresentation_InitializeWorkAndResetState(void) {
   struct BattleAffineHdma *work;
   struct BattleBackgroundView *state;
@@ -115,13 +116,13 @@ void BattlePresentation_InitializeWorkAndResetState(void) {
   state->mode = 0;
 }
 
-// Releases the battle background's affine scanline workspace.
+/// Releases the battle background's affine scanline workspace.
 void Runtime_ReleaseHeapBlock10(void) { Runtime_ReleaseHeapBlock(10); }
 
 typedef void (*BitDecoder)(const u8 *source, void *destination);
 
-// Decodes the background image, saves and uploads its palette, rebuilds its
-// tilemap and enables scanline updates for the requested display mode.
+/// Decodes the background image, saves and uploads its palette, rebuilds its
+/// tilemap and enables scanline updates for the requested display mode.
 void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
   struct BattleBackgroundView *view = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
   u8 *backgroundData = Resource_GetTableEntry(resourceId);
@@ -163,9 +164,9 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
     REG_BG1CNT = BATTLE_BG1CNT;
 }
 
-// Builds the next affine background page from the view centre, offsets and
-// zoom, dividing scanlines into sky, ground and hidden rows before swapping
-// pages.
+/// Builds the next affine background page from the view centre, offsets and
+/// zoom, dividing scanlines into sky, ground and hidden rows before swapping
+/// pages.
 void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
                            s32 scale) {
   struct BattleBackgroundView *view = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
@@ -224,8 +225,8 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   scanlines->page ^= 1;
 }
 
-// Unused depth-based camera setup. Its original zoom local is uninitialized;
-// no current caller establishes the missing zoom contract.
+/// Unused depth-based camera setup. Its original zoom local is uninitialized;
+/// no current caller establishes the missing zoom contract.
 UNUSED void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y) {
   s32 span = 0x01fe0000;
   // BUG: zoom is uninitialized; reads entry r4 directly (lsls r0, r4, #16).
@@ -271,8 +272,8 @@ UNUSED void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y) {
   Projection_Set(width, result, half * 4);
 }
 
-// Sets the camera focus and zoom, projects the origin to align the background,
-// then installs the projection bounds scaled by the zoom percentage.
+/// Sets the camera focus and zoom, projects the origin to align the background,
+/// then installs the projection bounds scaled by the zoom percentage.
 void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
   struct BattleCamera *camera = gCameraWork;
   s32 *focus = camera->pos;
@@ -316,8 +317,8 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
   Projection_Set(width, result, half * 4);
 }
 
-// Centers the camera at the two objects' midpoint in x and z.
-// zoom: scale percentage.
+/// Centers the camera at the two objects' midpoint in x and z.
+/// zoom: scale percentage.
 void BattlePres_SetupTransitionAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
                                               s32 zoom) {
   struct MotionObject *firstObject = BattleObjGet(firstUnitId)->object;
@@ -332,7 +333,7 @@ void BattlePres_SetupTransitionAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
   BattlePres_SetupTransitionScene(x, 0, z, zoom);
 }
 
-// Fades the selected blend target out in eight two-step alpha updates.
+/// Fades the selected blend target out in eight two-step alpha updates.
 void Graphics_FadeAlphaOut(void) {
   s32 alphaStep;
 
@@ -343,7 +344,7 @@ void Graphics_FadeAlphaOut(void) {
   }
 }
 
-// Fades the selected blend target in in eight two-step alpha updates.
+/// Fades the selected blend target in in eight two-step alpha updates.
 void Graphics_FadeAlphaIn(void) {
   s32 step;
 
@@ -361,13 +362,13 @@ struct BattleTransitionEntry {
   u32 fieldc;
 };
 
-// Selects the battle overlay's blend targets.
+/// Selects the battle overlay's blend targets.
 void Graphics_SetBlendControl(void) {
   REG_BLDCNT = BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN;
 }
 
-// Resets the transform and adds the previous first value to the new first
-// value.
+/// Resets the transform and adds the previous first value to the new first
+/// value.
 void BattlePresentation_InitializeTransitionEntries(
     struct BattleTransitionEntry *entries) {
   u32 previous = entries[0].value;
@@ -377,11 +378,12 @@ void BattlePresentation_InitializeTransitionEntries(
   entries[0].sum = previous + entries[0].value;
 }
 
-// Divides a signed value by sixteen, rounding toward zero.
+/// Divides a signed value by sixteen, rounding toward zero.
 s32 BattlePres_DivideBy16(s32 value) { return value / 16; }
 
-// While Start is held, edits the debug value with the d-pad and accepts it with
-// A. Select overrides the result with the edition's fixed debug selection.
+/// While Start is held, edits the debug value with the d-pad and accepts it
+/// with A. Select overrides the result with the edition's fixed debug
+/// selection.
 s32 Runtime_AdjustDebugValueWithButtons(s32 selectedValue) {
   struct BattleWork *battle;
 
@@ -410,8 +412,8 @@ s32 Runtime_AdjustDebugValueWithButtons(s32 selectedValue) {
   return selectedValue;
 }
 
-// Sets both sprite parts of each available animation record to the requested
-// OBJ mode.
+/// Sets both sprite parts of each available animation record to the requested
+/// OBJ mode.
 void BattlePres_SetActorRecordMode(s32 actorId, s32 mode) {
   struct BattleObj *slot = BattleObjGet(actorId);
   struct MotionObject *object;
@@ -447,8 +449,8 @@ void BattlePres_SetActorRecordMode(s32 actorId, s32 mode) {
   }
 }
 
-// Makes every unit sprite except the selected one translucent (OBJ mode one).
-// selectedUnitId: the unit left as it is.
+/// Makes every unit sprite except the selected one translucent (OBJ mode one).
+/// selectedUnitId: the unit left as it is.
 void BattlePres_SetOtherActorRecordModes(s32 selectedUnitId) {
   s16 unitIds[14];
   s32 unitCount = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, unitIds);
@@ -460,7 +462,7 @@ void BattlePres_SetOtherActorRecordModes(s32 selectedUnitId) {
   }
 }
 
-// Restores every unit sprite to normal rendering (OBJ mode zero).
+/// Restores every unit sprite to normal rendering (OBJ mode zero).
 void BattlePres_ClearAllActorRecordModes(void) {
   s16 unitIds[14];
   s32 unitCount = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, unitIds);
@@ -470,8 +472,8 @@ void BattlePres_ClearAllActorRecordModes(void) {
     BattlePres_SetActorRecordMode(unitIds[unitIndex], 0);
 }
 
-// Advances the sixteen-step highlight brightness ramp while highlighting is
-// enabled.
+/// Advances the sixteen-step highlight brightness ramp while highlighting is
+/// enabled.
 void Graphics_AdvancePaletteCycle(void) {
   struct BattleWork *battle = gBattleWork;
   s8 *blendRamp;
@@ -491,8 +493,8 @@ void Graphics_AdvancePaletteCycle(void) {
   }
 }
 
-// Starts or stops the palette highlight callback, applies the selected OBJ mode
-// to every unit and the opposite mode to the explicitly selected units.
+/// Starts or stops the palette highlight callback, applies the selected OBJ
+/// mode to every unit and the opposite mode to the explicitly selected units.
 void BattlePres_SetActorModes(u16 *selectedUnits, s32 mode) {
   s16 unitIds[14];
   struct BattleWork *battle = gBattleWork;

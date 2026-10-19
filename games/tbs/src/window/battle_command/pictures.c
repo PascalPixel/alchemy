@@ -1,13 +1,14 @@
-// Part of battle_command.c, the menu object, compiled only through it.
-// Pictures and command icons loaded for the menus, and BG1's priority.
+/// @file
+/// Part of battle_command.c, the menu object, compiled only through it.
+/// Pictures and command icons loaded for the menus, and BG1's priority.
 
 #include "../battle_command_internal.h"
 
 extern const u8 *gRenderResource_PairSourceTable[];
 
-// Decompresses picture `picture` of gRenderResource_PairSourceTable (two
-// 32x32 sprites side by side, 512 bytes) into VRAM slot `slot`. The heap
-// block is not freed when `slot` is not a valid VRAM slot.
+/// Decompresses picture `picture` of gRenderResource_PairSourceTable (two
+/// 32x32 sprites side by side, 512 bytes) into VRAM slot `slot`. The heap
+/// block is not freed when `slot` is not a valid VRAM slot.
 void RenderResource_LoadPair(s32 picture, s32 slot) {
   void *stagingBuffer = Runtime_AllocateBlock(14, 0x400);
   const u8 *resource = gRenderResource_PairSourceTable[picture];
@@ -19,10 +20,10 @@ void RenderResource_LoadPair(s32 picture, s32 slot) {
   }
 }
 
-// Shows picture `picture` of gRenderResource_PairSourceTable as two 32x32
-// sprites side by side at (x, y) in `window`, on draw layer 253, and
-// returns the left one (the right one follows it in the window's list).
-// Returns NULL when no VRAM slot is free.
+/// Shows picture `picture` of gRenderResource_PairSourceTable as two 32x32
+/// sprites side by side at (x, y) in `window`, on draw layer 253, and
+/// returns the left one (the right one follows it in the window's list).
+/// Returns NULL when no VRAM slot is free.
 struct RenderOutput *
 RenderResource_CreatePair(s32 picture, struct UiWindow *window, s32 x, s32 y) {
   s32 slot;
@@ -44,8 +45,8 @@ RenderResource_CreatePair(s32 picture, struct UiWindow *window, s32 x, s32 y) {
   return first;
 }
 
-// Bobs the two sprites of a pair (see RenderResource_CreatePair) up and down
-// by gUi_PairBobOffsets, one step every four frames.
+/// Bobs the two sprites of a pair (see RenderResource_CreatePair) up and down
+/// by gUi_PairBobOffsets, one step every four frames.
 void RenderOutput_BobPair(struct RenderOutput *obj) {
   s32 value;
 
@@ -60,9 +61,9 @@ void RenderOutput_BobPair(struct RenderOutput *obj) {
   obj->oam.y = value;
 }
 
-// Decompresses command icon `icon` (a 32x32 picture of 256 colours, 1 KB)
-// into VRAM slot `slot`, remapping its first 768 bytes' colours by table
-// when `remap` is nonzero.
+/// Decompresses command icon `icon` (a 32x32 picture of 256 colours, 1 KB)
+/// into VRAM slot `slot`, remapping its first 768 bytes' colours by table
+/// when `remap` is nonzero.
 void RenderResource_LoadFrame(s32 icon, s32 slot, s32 remap) {
   s32 size = 1024;
   void *buffer = Runtime_AllocateBlock(14, size);
@@ -78,9 +79,9 @@ void RenderResource_LoadFrame(s32 icon, s32 slot, s32 remap) {
   }
 }
 
-// Shows command icon `icon` (see RenderResource_LoadFrame) as a 32x32
-// 256-colour sprite at (x, y) in `window`, on draw layer 251. Returns NULL
-// when no VRAM slot is free.
+/// Shows command icon `icon` (see RenderResource_LoadFrame) as a 32x32
+/// 256-colour sprite at (x, y) in `window`, on draw layer 251. Returns NULL
+/// when no VRAM slot is free.
 struct RenderOutput *RenderResource_CreateFrame(s32 icon, s32 remap,
                                                 struct UiWindow *window, s32 x,
                                                 s32 y) {
@@ -98,9 +99,9 @@ struct RenderOutput *RenderResource_CreateFrame(s32 icon, s32 remap,
   return output;
 }
 
-// Makes the sprite `obj` pulse: scales it about its centre by
-// gUi_ObjectPulseScales (in 1/65536, used in 1/256), one step every two
-// frames, and puts it on draw layer 252. Does nothing when `obj` is NULL.
+/// Makes the sprite `obj` pulse: scales it about its centre by
+/// gUi_ObjectPulseScales (in 1/65536, used in 1/256), one step every two
+/// frames, and puts it on draw layer 252. Does nothing when `obj` is NULL.
 void Ui_ApplyTableScaleToObject(struct RenderOutput *obj) {
   s32 scale = gUi_ObjectPulseScales[(gFrameTick >> 1) & 7];
   struct AffineTransform effect;
@@ -186,8 +187,9 @@ int UiWindow_DrawThreeTileColumn(struct UiWindow *window, s32 x, s32 y,
   UiWindow_SetTilemapEntry(window, rightTile, x + 2, y, 0);
 }
 
-// Merge two 8x8 4bpp tiles row by row. Shift the second tile horizontally by
-// shift pixels, using the first tile wherever the shifted pixel is transparent.
+/// Merge two 8x8 4bpp tiles row by row. Shift the second tile horizontally by
+/// shift pixels, using the first tile wherever the shifted pixel is
+/// transparent.
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift) {
   s32 oppositeShift;
@@ -231,7 +233,7 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
   } while (row <= 7);
 }
 
-// Animate the two link indicator tiles with opposing two/three-pixel shifts.
+/// Animate the two link indicator tiles with opposing two/three-pixel shifts.
 void Link_DrawShiftedTilePair(s32 offset) {
   s32 phase = (gFrameCount >> 2) & 3;
 
@@ -249,8 +251,8 @@ void Link_DrawShiftedTilePair(s32 offset) {
                                 (u32 *)(offset + 32), phase);
 }
 
-// Expand two palette variants of the ten source tile rows at 0x06000600,
-// mapping each packed nibble through gGraphics_ExpandNibbleTable.
+/// Expand two palette variants of the ten source tile rows at 0x06000600,
+/// mapping each packed nibble through gGraphics_ExpandNibbleTable.
 void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
   s32 bank = 0;
   s32 paletteOffset = 0;
@@ -292,8 +294,8 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
   } while (bank <= 1);
 }
 
-// Compose a table-entry glyph in temporary transfer work, reload its cache
-// slot, then release the temporary work and return the tile index.
+/// Compose a table-entry glyph in temporary transfer work, reload its cache
+/// slot, then release the temporary work and return the tile index.
 s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
   s32 result;
   GlyphTransfer *work;
@@ -305,8 +307,8 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
   return result;
 }
 
-// Compose the item icon with style 0x1a in temporary transfer work and reload
-// the requested cache slot. Return its tile index.
+/// Compose the item icon with style 0x1a in temporary transfer work and reload
+/// the requested cache slot. Return its tile index.
 s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 result;
   GlyphTransfer *work;
@@ -318,8 +320,8 @@ s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
   return result;
 }
 
-// Build the ability glyph in temporary transfer work, reload the requested
-// cache slot and return its tile index.
+/// Build the ability glyph in temporary transfer work, reload the requested
+/// cache slot and return its tile index.
 s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
   s32 tile;
   s32 slot;
@@ -334,8 +336,8 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
   return result;
 }
 
-// Load a party portrait into the supplied cache slot and return its tile.
-// In the prologue, Isaac and Garet use their childhood portrait entries.
+/// Load a party portrait into the supplied cache slot and return its tile.
+/// In the prologue, Isaac and Garet use their childhood portrait entries.
 s32 UiGlyph_LoadPortrait(u32 member, s32 cacheSlot) {
   s32 tile;
   s32 slot;
@@ -360,17 +362,17 @@ s32 UiGlyph_LoadPortrait(u32 member, s32 cacheSlot) {
   return tile;
 }
 
-// Return gUi_FixedTileBlocks[0]; treat any nonzero no as 0 as well.
+/// Return gUi_FixedTileBlocks[0]; treat any nonzero no as 0 as well.
 s32 Ui_GetTableWordZero(s32 no) {
   if (no != 0)
     no = 0;
   return gUi_FixedTileBlocks[no];
 }
 
-// Copies the 4bpp decoder into RAM, calls it with the transfer's encoded
-// source and byte buffer, then releases the copied code. Its ARM entry reads
-// the stream through r0 and writes bytes through r1, as UiIcon_Decode does.
-// Nothing calls it.
+/// Copies the 4bpp decoder into RAM, calls it with the transfer's encoded
+/// source and byte buffer, then releases the copied code. Its ARM entry reads
+/// the stream through r0 and writes bytes through r1, as UiIcon_Decode does.
+/// Nothing calls it.
 UNUSED void UiIcon_Decompress(GlyphTransfer *work) {
   RamCode_LoadSlot(49, Tile_Decompress4bpp, Tile_Decompress4bppCodeSize);
   ((void (*)(const void *, u8 *))((union HeapState *)gWorkSlot)->slots[49])(
@@ -385,7 +387,7 @@ UNUSED void UiIcon_Decompress(GlyphTransfer *work) {
 #define LINK_COUNTDOWN_DRAW_HEADING UiText_DrawStringInWindow
 #endif
 
-// Create the link timer window and draw its fixed time heading.
+/// Create the link timer window and draw its fixed time heading.
 struct UiWindow *Link_CreateCountdownLabelWindow(void) {
   struct UiWindow *win = UiWindow_Create(0, 0, 6, 4, 6);
 
@@ -393,8 +395,8 @@ struct UiWindow *Link_CreateCountdownLabelWindow(void) {
   return win;
 }
 
-// Decode a command-icon table entry in temporary transfer work and reload
-// the requested cache slot. Return its tile index.
+/// Decode a command-icon table entry in temporary transfer work and reload
+/// the requested cache slot. Return its tile index.
 s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
   GlyphTransfer *buffer =
       Runtime_AllocateHeapBlock(0x11, sizeof(GlyphTransfer));
@@ -410,9 +412,9 @@ s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
   return result;
 }
 
-// Load a command icon into 8bpp OBJ VRAM, sharing a compact palette across
-// the selection's icons. Copy each newly encountered color from OBJ to BG
-// palette storage before uploading the remapped pixels.
+/// Load a command icon into 8bpp OBJ VRAM, sharing a compact palette across
+/// the selection's icons. Copy each newly encountered color from OBJ to BG
+/// palette storage before uploading the remapped pixels.
 void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
                               s32 tile) {
   GlyphTransfer *decoded;
@@ -446,8 +448,8 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
   Runtime_ReleaseHeapBlock(17);
 }
 
-// Load a selection icon, initialize its sprite and bind the decoded tiles.
-// The icon's kind also chooses its command-name label.
+/// Load a selection icon, initialize its sprite and bind the decoded tiles.
+/// The icon's kind also chooses its command-name label.
 void UiText_DrawCharacter(struct SelectionWork *work, s32 index, u32 icon) {
   struct SelectionEntry *entry = &work->entries[index];
 
@@ -458,7 +460,7 @@ void UiText_DrawCharacter(struct SelectionWork *work, s32 index, u32 icon) {
       Resource_LoadIndexedIntoBuffer(work->entries[index].resource, icon);
 }
 
-// Put BG1 behind the other priority levels while the command strip is active.
+/// Put BG1 behind the other priority levels while the command strip is active.
 void Graphics_SetBg1Priority3(void) {
   u32 value = REG_BG1CNT;
 
@@ -467,7 +469,7 @@ void Graphics_SetBg1Priority3(void) {
   REG_BG1CNT = value;
 }
 
-// Restore BG1 priority 0; the VCount handler applies this below the strip.
+/// Restore BG1 priority 0; the VCount handler applies this below the strip.
 void Graphics_SetBg1Priority0(void) {
   u32 value = REG_BG1CNT;
 
@@ -475,8 +477,8 @@ void Graphics_SetBg1Priority0(void) {
   REG_BG1CNT = value;
 }
 
-// Clear BG0 vertical scroll and install the BG1 priority change at line 136.
-// Nothing calls it.
+/// Clear BG0 vertical scroll and install the BG1 priority change at line 136.
+/// Nothing calls it.
 UNUSED void Graphics_InstallBg1VCountHandler(void) {
   u32 address = 0x04000012;
   s32 zero = 0;

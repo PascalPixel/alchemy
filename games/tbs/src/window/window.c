@@ -1,30 +1,31 @@
-// The window object: the UI windows drawn into a shared BG tilemap, the
-// message channels that type text into them, the message decoder and the
-// formatting behind it, the sprites (render outputs) that windows carry,
-// icons, the selection screen and the option and system menus.
-//
-// Everything lives in one work block, struct UiRenderWork (heap slot
-// HEAP_SLOT_WINDOW, reached as UI_WORK): the tilemap, the window slots, three
-// message channels, a pool of 64 render outputs and the decoded text.
-//
-// window_internal.h holds what every part shares (includes, edition values
-// and macros); the code is in the files under window/, included here in the
-// order it has in the ROM. Camelot's own files are not recoverable: the ROM
-// shows one object, and these parts are ours, cut where one family ends and
-// the next begins. README.md in this folder gives the words, prefixes and
-// spellings the parts use. Where to start:
-//
-//   Windows         windows.c: UiWindow_Create, UiWork_Finalize;
-//                   frames.c: UiWindow_DrawFrame, UiWork_ProcessDirectWork
-//   Messages        frames.c: UiText_OpenMessageWindow,
-//                   UiText_ShowPositionedMessageAndWait; typing.c:
-//                   UiWork_StepChannelScript; decode.c:
-//                   UiText_BuildRenderEntries
-//   Text drawing    sprites.c: UiText_DrawGlyph; text_tiles.c:
-//                   UiText_RenderStringTiles, UiText_DrawString
-//   Screens         selection.c: Menu_SelectionLoop, Menu_RunTopSelection;
-//                   options.c: Menu_RunWorkspaceOptions,
-//                   Menu_RunWorkspaceSelectionLoop
+/// @file
+/// The window object: the UI windows drawn into a shared BG tilemap, the
+/// message channels that type text into them, the message decoder and the
+/// formatting behind it, the sprites (render outputs) that windows carry,
+/// icons, the selection screen and the option and system menus.
+///
+/// Everything lives in one work block, struct UiRenderWork (heap slot
+/// HEAP_SLOT_WINDOW, reached as UI_WORK): the tilemap, the window slots, three
+/// message channels, a pool of 64 render outputs and the decoded text.
+///
+/// window_internal.h holds what every part shares (includes, edition values
+/// and macros); the code is in the files under window/, included here in the
+/// order it has in the ROM. Camelot's own files are not recoverable: the ROM
+/// shows one object, and these parts are ours, cut where one family ends and
+/// the next begins. README.md in this folder gives the words, prefixes and
+/// spellings the parts use. Where to start:
+///
+///   Windows         windows.c: UiWindow_Create, UiWork_Finalize;
+///                   frames.c: UiWindow_DrawFrame, UiWork_ProcessDirectWork
+///   Messages        frames.c: UiText_OpenMessageWindow,
+///                   UiText_ShowPositionedMessageAndWait; typing.c:
+///                   UiWork_StepChannelScript; decode.c:
+///                   UiText_BuildRenderEntries
+///   Text drawing    sprites.c: UiText_DrawGlyph; text_tiles.c:
+///                   UiText_RenderStringTiles, UiText_DrawString
+///   Screens         selection.c: Menu_SelectionLoop, Menu_RunTopSelection;
+///                   options.c: Menu_RunWorkspaceOptions,
+///                   Menu_RunWorkspaceSelectionLoop
 
 #include "window_internal.h"
 

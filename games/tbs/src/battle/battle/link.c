@@ -1,5 +1,6 @@
-// Part of battle.c, the battle object, compiled only through it.
-// Link battles: the parties and Djinn exchanged, and the turn handshake.
+/// @file
+/// Part of battle.c, the battle object, compiled only through it.
+/// Link battles: the parties and Djinn exchanged, and the turn handshake.
 
 #include "../battle_internal.h"
 
@@ -14,18 +15,18 @@
 #define APPEND_NAME_SPACE 0
 #endif
 
-// What a link battle sends of each party member, and of the Djinn recovery
-// list.
+/// What a link battle sends of each party member, and of the Djinn recovery
+/// list.
 enum LinkPartyPacketSize {
   LINK_PARTY_UNIT_BYTES = 340,
   LINK_PARTY_OFFER_BYTES = 320
 };
 
-// Link battle: receives the opponent's party into the enemy units, one
-// member at a time, and puts the "Enemy" label (MsgEnemyLabel) before each
-// name; then receives the opponent's Djinn recovery list. Stops early if a
-// transfer cannot start. Returns how many of the received units are
-// members (a unit sent with side 0 is an empty place).
+/// Link battle: receives the opponent's party into the enemy units, one
+/// member at a time, and puts the "Enemy" label (MsgEnemyLabel) before each
+/// name; then receives the opponent's Djinn recovery list. Stops early if a
+/// transfer cannot start. Returns how many of the received units are
+/// members (a unit sent with side 0 is an empty place).
 s32 LinkBattle_ReceiveParty(void) {
   u16 label[24];
   void *buffer;
@@ -88,10 +89,10 @@ s32 LinkBattle_ReceiveParty(void) {
   return memberCount;
 }
 
-// Link battle: sends the party, one member at a time and three places in
-// all (an empty place has side 0), then the Djinn recovery list with each
-// owner given the unit id the opponent knows them by. Records that id of
-// each member in ownerSlots.
+/// Link battle: sends the party, one member at a time and three places in
+/// all (an empty place has side 0), then the Djinn recovery list with each
+/// owner given the unit id the opponent knows them by. Records that id of
+/// each member in ownerSlots.
 s32 LinkBattle_SendParty(void) {
   u8 *buffer;
   struct BattleWork *work;
@@ -153,10 +154,10 @@ s32 LinkBattle_SendParty(void) {
   MemFree(buffer);
 }
 
-// Unused. Copies the first four characters of a name into a buffer on its
-// own stack, an underscore for each one that is missing, and returns a
-// pointer past them into that buffer, which no longer exists once it
-// returns. Its first two arguments are ignored.
+/// Unused. Copies the first four characters of a name into a buffer on its
+/// own stack, an underscore for each one that is missing, and returns a
+/// pointer past them into that buffer, which no longer exists once it
+/// returns. Its first two arguments are ignored.
 u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source) {
   u8 buffer[5];
   u8 *base = buffer;
@@ -180,10 +181,10 @@ u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source) {
   return dst;
 }
 
-// In a link battle, shows the "EXEC" signature to the other console and
-// waits up to 30 frames for it to show the same. Returns 0 once both do (or
-// outside a link battle), and -1 if the battle is paused, the link is lost
-// for more than LINK_MAX_MISSED_FRAMES frames or the signatures never meet.
+/// In a link battle, shows the "EXEC" signature to the other console and
+/// waits up to 30 frames for it to show the same. Returns 0 once both do (or
+/// outside a link battle), and -1 if the battle is paused, the link is lost
+/// for more than LINK_MAX_MISSED_FRAMES frames or the signatures never meet.
 s32 BattlePres_WaitSync(void) {
   struct BattleWork *work = gBattleWork;
   u16 *peer;
@@ -221,13 +222,13 @@ s32 BattlePres_WaitSync(void) {
   return 0;
 }
 
-// In a link battle, after each action and after the end of each round,
-// steps both consoles through the same handshake: "ex" "TU", then "rn",
-// "EXEC", "tu" and finally "RN". Each step shows its signature and waits
-// for the other console to show it too, failing if the other console
-// shows a different earlier step. Returns -1 if the battle is paused, the
-// link is lost for more than LINK_MAX_MISSED_FRAMES frames, or the steps
-// disagree; 0 once in step, or outside a link battle.
+/// In a link battle, after each action and after the end of each round,
+/// steps both consoles through the same handshake: "ex" "TU", then "rn",
+/// "EXEC", "tu" and finally "RN". Each step shows its signature and waits
+/// for the other console to show it too, failing if the other console
+/// shows a different earlier step. Returns -1 if the battle is paused, the
+/// link is lost for more than LINK_MAX_MISSED_FRAMES frames, or the steps
+/// disagree; 0 once in step, or outside a link battle.
 s32 BattlePres_SyncTurn(void) {
   struct BattleWork *work = gBattleWork;
   u16 *peer;
@@ -337,8 +338,8 @@ s32 BattlePres_SyncTurn(void) {
   return 0;
 }
 
-// Records, for each party member, the unit id the link opponent knows them
-// by (FIRST_ENEMY_UNIT plus their place in the party).
+/// Records, for each party member, the unit id the link opponent knows them
+/// by (FIRST_ENEMY_UNIT plus their place in the party).
 s32 BattleParty_AssignMemberSlots(void) {
   u16 activeMembers[8];
   struct BattleWork *battleState = gBattleWork;
@@ -353,7 +354,7 @@ s32 BattleParty_AssignMemberSlots(void) {
   }
 }
 
-// Clears the link transfer's payload, the signatures included.
+/// Clears the link transfer's payload, the signatures included.
 s32 Battle_ClearSerialTransferPayload(void) {
   return Iwram_ClearWords(gSerialTransfer.payload, 16);
 }

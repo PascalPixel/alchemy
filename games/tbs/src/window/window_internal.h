@@ -1,10 +1,11 @@
 #ifndef ALCHEMY_WINDOW_INTERNAL_H
 #define ALCHEMY_WINDOW_INTERNAL_H
 
-// What every part of the window object shares: its includes, edition values,
-// macros and the codes of decoded text. window.c includes it before the
-// parts, and each part includes it too, so that a part read on its own still
-// resolves.
+/// @file
+/// What every part of the window object shares: its includes, edition values,
+/// macros and the codes of decoded text. window.c includes it before the
+/// parts, and each part includes it too, so that a part read on its own still
+/// resolves.
 
 #include "unit/window/scales.h"
 #include "unit/window/articles.h"
@@ -114,30 +115,30 @@
 #endif
 
 #ifdef MODERN
-// In the matching build these calls precede their declarations. Prototypes
-// reorder three argument moves for ClearTileAttributesInRect and two for
-// PutGlyph in the English image.
+/// In the matching build these calls precede their declarations. Prototypes
+/// reorder three argument moves for ClearTileAttributesInRect and two for
+/// PutGlyph in the English image.
 void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode);
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 #endif
 
-// A glyph resource id meaning no glyph resource is loaded.
+/// A glyph resource id meaning no glyph resource is loaded.
 #define NO_GLYPH_RESOURCE 99
 
-// UiRenderWork owns three message channels, each with four line gaps.
+/// UiRenderWork owns three message channels, each with four line gaps.
 #define UI_MESSAGE_CHANNEL_COUNT 3
 #define UI_MESSAGE_LINE_COUNT 4
 #define UI_TEXT_DEFAULT_COLOUR 15
 #define UI_TEXT_DEFAULT_LINE_SPACING 10
 #define UI_TILEMAP_PALETTE 15
 
-// Window animation lengths and the palette slot's unused marker.
+/// Window animation lengths and the palette slot's unused marker.
 #define UI_WINDOW_OPEN_FRAMES 8
 #define UI_WINDOW_CLOSE_FRAMES 4
 #define UI_PALETTE_SLOT_FREE 999
 #define UI_CANVAS_BACKGROUND_WORD 0x44444444
 
-// Scratch capacities are in bytes unless the name says halfwords.
+/// Scratch capacities are in bytes unless the name says halfwords.
 #define UI_NUMBER_BUFFER_SIZE 16
 #define UI_BYTE_STRING_BUFFER_SIZE 0x200
 #define UI_MESSAGE_NAME_HALFWORDS 24
@@ -145,51 +146,51 @@ void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 #define UI_SELECTION_ENTRY_LIMIT 16
 #define UI_AREA_NOTICE_FRAMES 90
 
-// The control codes of decoded message text (UiRenderWork.entries). Codes
-// from TEXT_SPACE up are characters.
+/// The control codes of decoded message text (UiRenderWork.entries). Codes
+/// from TEXT_SPACE up are characters.
 enum {
   TEXT_END = 0,
-  TEXT_PAGE = 1,     // wait for a button, then clear the window for a new page
-  TEXT_WAIT_KEY = 2, // wait for a button, then close the window
+  TEXT_PAGE = 1, ///< wait for a button, then clear the window for a new page
+  TEXT_WAIT_KEY = 2, ///< wait for a button, then close the window
   TEXT_NEWLINE = 3,
-  TEXT_PAUSE_LONG = 4,    // a 60-frame pause
-  TEXT_PAUSE_SHORT = 5,   // a 20-frame pause a button can cut short
-  TEXT_PAUSE_LONGEST = 6, // a 120-frame pause a button can cut short
+  TEXT_PAUSE_LONG = 4,    ///< a 60-frame pause
+  TEXT_PAUSE_SHORT = 5,   ///< a 20-frame pause a button can cut short
+  TEXT_PAUSE_LONGEST = 6, ///< a 120-frame pause a button can cut short
   TEXT_COLOURS_RESET = 7,
-  TEXT_COLOUR = 8,        // the next entry is the text colour
-  TEXT_OUTLINE = 9,       // the next entry is the outline colour
-  TEXT_LINE_SPACING = 10, // the next entry is the line spacing
-  TEXT_WINDOW_STATE = 15, // the next entry is the window effect to run
+  TEXT_COLOUR = 8,        ///< the next entry is the text colour
+  TEXT_OUTLINE = 9,       ///< the next entry is the outline colour
+  TEXT_LINE_SPACING = 10, ///< the next entry is the line spacing
+  TEXT_WINDOW_STATE = 15, ///< the next entry is the window effect to run
   TEXT_END_ALT = 30,
   TEXT_COMMANDS = 31,
   TEXT_SPACE = 32,
-  TEXT_VOICED_MARK = 222,    // dakuten
-  TEXT_SEMIVOICED_MARK = 223 // handakuten
+  TEXT_VOICED_MARK = 222,    ///< dakuten
+  TEXT_SEMIVOICED_MARK = 223 ///< handakuten
 };
 
-// The kana mark drawn with a character, in the top two bits of its code (the
-// index into gUiText_MarkGlyphCodes).
+/// The kana mark drawn with a character, in the top two bits of its code (the
+/// index into gUiText_MarkGlyphCodes).
 #define TEXT_CODE_MARK_SHIFT 14
 #define TEXT_CODE_VOICED (1 << TEXT_CODE_MARK_SHIFT)
 #define TEXT_CODE_SEMIVOICED (2 << TEXT_CODE_MARK_SHIFT)
 
-// The window effect a message can start (TEXT_WINDOW_STATE): the window's
-// frame grows by a tile and its text sprites pulse, for the channel's
-// countdown.
+/// The window effect a message can start (TEXT_WINDOW_STATE): the window's
+/// frame grows by a tile and its text sprites pulse, for the channel's
+/// countdown.
 #define UI_WINDOW_EFFECT_SWELL 4
 
-// The heap slot of the battle display's work block (struct BattleDisplayWork),
-// whose window is the battle message window.
+/// The heap slot of the battle display's work block (struct BattleDisplayWork),
+/// whose window is the battle message window.
 enum { HEAP_SLOT_BATTLE_DISPLAY = 37 };
 
-// The heap block the message decoder routine is copied into to run.
+/// The heap block the message decoder routine is copied into to run.
 #define TEXT_WORK_BLOCK 50
 
-// The glyph transfer work in IWRAM (system/iwram.s), which icons are built in.
+/// The glyph transfer work in IWRAM (system/iwram.s), which icons are built in.
 extern GlyphTransfer *gGlyphWork;
 
-// Each message context bank's Huffman models and their offsets, which the
-// message catalog built from games/tbs/text defines.
+/// Each message context bank's Huffman models and their offsets, which the
+/// message catalog built from games/tbs/text defines.
 extern const void *const Text_MessageContexts[][2];
 
 #endif

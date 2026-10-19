@@ -1,6 +1,7 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Death Plunge, the blade rain, the element pillar, the element burst and
-// the shattering picture.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Death Plunge, the blade rain, the element pillar, the element burst and
+/// the shattering picture.
 
 #include "../effect_internal.h"
 
@@ -22,11 +23,11 @@
 
 #define DEATH_PLUNGE_FRAMES 96
 
-// Abilities: Death Plunge (kind 53).
-//
-// The user runs 9/10 of the way to the first target, then both leap and turn
-// upside down in the air; on frame 54 the target is hit and both bounce back,
-// while flashes burst from the user and rise in a widening ring.
+/// Abilities: Death Plunge (kind 53).
+///
+/// The user runs 9/10 of the way to the first target, then both leap and turn
+/// upside down in the air; on frame 54 the target is hit and both bounce back,
+/// while flashes burst from the user and rise in a widening ring.
 void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -164,13 +165,13 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
 
 #define BLADE_RAIN_FRAMES 120
 
-// Drop 16 swords, one every 4 frames, slanting in towards the first target
-// (the middle of the canvas, x 64) and sticking in the ground, where their
-// bottom 4 pixels are hidden.
-//
-// Sword i falls from frame 4i + 16 and sticks at frame 4i + 25. Every 4
-// frames from 24 to 84 the target flashes white in its damage pose for 2
-// frames and the screen shakes; every 8 frames the hit sound plays.
+/// Drop 16 swords, one every 4 frames, slanting in towards the first target
+/// (the middle of the canvas, x 64) and sticking in the ground, where their
+/// bottom 4 pixels are hidden.
+///
+/// Sword i falls from frame 4i + 16 and sticks at frame 4i + 25. Every 4
+/// frames from 24 to 84 the target flashes white in its damage pose for 2
+/// frames and the screen shakes; every 8 frames the hit sound plays.
 UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   BlitterPair draw;
@@ -322,13 +323,13 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
 
 #define ELEMENT_PILLAR_FRAMES 56
 
-// The glow of an element around a unit (BattleFx_PlayUnitElementEffect's
-// mode 2): a symmetrical pillar of light stands at the unit's feet while
-// motes spiral up around it, for 56 frames, and the first target flashes.
-// Unlike the other effects it allocates its own work, canvas and sheet.
-// effect->kind    : the element, which picks the palette: 0 Venus yellow,
-//                   1 Mercury blue, 2 Mars red, others Jupiter violet.
-// effect->variant : the mote size less one, kept to 1 to 4 after adding 1.
+/// The glow of an element around a unit (BattleFx_PlayUnitElementEffect's
+/// mode 2): a symmetrical pillar of light stands at the unit's feet while
+/// motes spiral up around it, for 56 frames, and the first target flashes.
+/// Unlike the other effects it allocates its own work, canvas and sheet.
+/// effect->kind    : the element, which picks the palette: 0 Venus yellow,
+///                   1 Mercury blue, 2 Mars red, others Jupiter violet.
+/// effect->variant : the mote size less one, kept to 1 to 4 after adding 1.
 void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
   struct EffectPosition ground;
   struct EffectPosition screenPosition;
@@ -477,14 +478,14 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
   frame ^= 1;
 }
 
-// Sets the pixel at (x, y) of the 256x120 8bpp tile picture in
-// Ram_MapCellBuffer (32 tiles across) to colour 2.
+/// Sets the pixel at (x, y) of the 256x120 8bpp tile picture in
+/// Ram_MapCellBuffer (32 tiles across) to colour 2.
 #define SHATTERING_OPENING_PLOT_PIXEL(x, y)                                    \
   (*(Ram_MapCellBuffer + ((x) & 7) + (x) / 8 * 64 + ((y) & 7) * 8 +            \
      (y) / 8 * 2048) = 2)
 
-// Plots the four corners (x1 or x2, y1 or y2): one point of the circle
-// mirrored into four octants.
+/// Plots the four corners (x1 or x2, y1 or y2): one point of the circle
+/// mirrored into four octants.
 #define SHATTERING_OPENING_PLOT_CORNERS(x1, x2, y1, y2)                        \
   (SHATTERING_OPENING_PLOT_PIXEL(x2, y2),                                      \
    SHATTERING_OPENING_PLOT_PIXEL(x2, y1),                                      \
@@ -497,13 +498,13 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
 #define SHATTERING_OPENING_DISC_X 96  // the centre of the opening disc
 #define SHATTERING_OPENING_DISC_Y 60  // the centre of the opening disc
 
-// The shattering opening of the battle on the Venus aerie storm backdrop:
-// the screen turns white and a grey disc grows from (96, 60) by 32 pixels a
-// frame while the TileAnimationMask picture breaks into 33 pieces that fly
-// apart and fall; background palettes 6 to 13 then ease from white back to
-// the battle backdrop's colours, and from frame 51 32 flashes rise. Runs
-// for 128 frames and allocates its own work, canvas and sheet.
-// effect : only effect->actors[0], the unit that flashes, is read.
+/// The shattering opening of the battle on the Venus aerie storm backdrop:
+/// the screen turns white and a grey disc grows from (96, 60) by 32 pixels a
+/// frame while the TileAnimationMask picture breaks into 33 pieces that fly
+/// apart and fall; background palettes 6 to 13 then ease from white back to
+/// the battle backdrop's colours, and from frame 51 32 flashes rise. Runs
+/// for 128 frames and allocates its own work, canvas and sheet.
+/// effect : only effect->actors[0], the unit that flashes, is read.
 void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
   /* FAKEMATCH: never read: the native frame keeps 12 unused
    * bytes at sp+44..55, exactly this struct 2026-10-11: without it only the
@@ -843,9 +844,9 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-// One streak of light of the element streak burst, laid over the same
-// 28-byte records as PARTICLES: a line along a randomly turned axis from
-// tail to head, in distance from the centre.
+/// One streak of light of the element streak burst, laid over the same
+/// 28-byte records as PARTICLES: a line along a randomly turned axis from
+/// tail to head, in distance from the centre.
 struct Streak {
   s32 head;
   s32 tail;
@@ -856,13 +857,13 @@ struct Streak {
   s32 unused18;
 };
 
-// The burst of an element over a unit (BattleFx_PlayUnitElementEffect's
-// mode 3), for 56 frames: sparks flare at the four corners around the
-// unit, motes spiral in, and from frame 28 a burst of light plays over
-// the unit while the first target flashes. Allocates its own work, canvas
-// and sheet.
-// effect->kind : the element, which picks the palette: 0 Venus yellow,
-//                1 Mercury blue, 2 Mars red, others Jupiter violet.
+/// The burst of an element over a unit (BattleFx_PlayUnitElementEffect's
+/// mode 3), for 56 frames: sparks flare at the four corners around the
+/// unit, motes spiral in, and from frame 28 a burst of light plays over
+/// the unit while the first target flashes. Allocates its own work, canvas
+/// and sheet.
+/// effect->kind : the element, which picks the palette: 0 Venus yellow,
+///                1 Mercury blue, 2 Mars red, others Jupiter violet.
 void BattleFx_RunElementBurst(struct BattleEffectArgument *effect) {
   struct EffectPosition ground;
   struct BattleEffectWork *work;
@@ -986,10 +987,10 @@ void BattleFx_RunElementBurst(struct BattleEffectArgument *effect) {
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-// Scheduler callback of the element streak burst: on its first frame seeds
-// 256 streaks with random axes, then each frame draws the first 64 (streak
-// i from frame i / 4) as lines three pixels thick that shrink 4 pixels a
-// frame towards the centre of the canvas, a little below its middle.
+/// Scheduler callback of the element streak burst: on its first frame seeds
+/// 256 streaks with random axes, then each frame draws the first 64 (streak
+/// i from frame i / 4) as lines three pixels thick that shrink 4 pixels a
+/// frame towards the centre of the canvas, a little below its middle.
 void BattleFx_DrawStreaks(void) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   s32 frame;
@@ -1049,13 +1050,13 @@ void BattleFx_DrawStreaks(void) {
   work->transferPending = 1;
 }
 
-// Starts the element streak burst (BattleFx_PlayUnitElementEffect's mode 1)
-// and returns at once: opens the canvas and schedules
-// BattleFx_DrawStreaks with a canvas that darkens each frame.
-// The caller keeps the canvas on its unit and ends the burst with
-// BattleFx_EndElementStreaks.
-// element: the element, which picks the palette: 0 Venus yellow, 1 Mercury
-//        blue, 2 Mars red, 3 Jupiter violet, others a dusty grey.
+/// Starts the element streak burst (BattleFx_PlayUnitElementEffect's mode 1)
+/// and returns at once: opens the canvas and schedules
+/// BattleFx_DrawStreaks with a canvas that darkens each frame.
+/// The caller keeps the canvas on its unit and ends the burst with
+/// BattleFx_EndElementStreaks.
+/// element: the element, which picks the palette: 0 Venus yellow, 1 Mercury
+///        blue, 2 Mars red, 3 Jupiter violet, others a dusty grey.
 void BattleFx_StartElementStreaks(s32 element) {
   struct BattleEffectWork *work;
   void *palette;
@@ -1095,9 +1096,9 @@ void BattleFx_StartElementStreaks(s32 element) {
                                 EFFECT_CALLBACK_ORDER);
 }
 
-// Ends the element streak burst that BattleFx_StartElementStreaks
-// started: stops its callbacks and the background palette fade, clears the
-// canvas in VRAM and frees the work and the canvas.
+/// Ends the element streak burst that BattleFx_StartElementStreaks
+/// started: stops its callbacks and the background palette fade, clears the
+/// canvas in VRAM and frees the work and the canvas.
 void BattleFx_EndElementStreaks(void) {
   Scheduler_RemoveCallback(BattleFx_DrawStreaks);
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);

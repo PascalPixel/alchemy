@@ -1,10 +1,11 @@
-// Part of shop.c, the shop object, compiled only through it.
-// Buying: the stock list, the money and party windows, quantities and prices.
+/// @file
+/// Part of shop.c, the shop object, compiled only through it.
+/// Buying: the stock list, the money and party windows, quantities and prices.
 
 #include "../shop_internal.h"
 
-// Browses stock, selects a recipient, checks capacity and funds, then purchases
-// the chosen quantity.
+/// Browses stock, selects a recipient, checks capacity and funds, then
+/// purchases the chosen quantity.
 s32 Shop_SelectBuy(void) {
   struct ShopRuntime *shop = gMenuWork;
   struct UiWindow *priceWindow = 0;
@@ -224,8 +225,8 @@ close:
   return 0;
 }
 
-// Draws a seven-item stock page, selection highlight, page arrows and price
-// sprites.
+/// Draws a seven-item stock page, selection highlight, page arrows and price
+/// sprites.
 void Shop_DrawStock(struct UiWindow *window, s32 selected) {
 
   struct ShopRuntime *shop;
@@ -288,7 +289,7 @@ void Shop_DrawStock(struct UiWindow *window, s32 selected) {
   }
 }
 
-// Draws the party's coins using the edition's layout and currency grammar.
+/// Draws the party's coins using the edition's layout and currency grammar.
 void Shop_DrawMoney(void) {
   struct ShopRuntime *shop;
   struct UiWindow *window;
@@ -309,9 +310,9 @@ void Shop_DrawMoney(void) {
   }
 }
 
-// Draws the item name and price, or its cannot-buy or not-broken note.
-// A structured switch with early returns reduced the English native extent
-// from 0x98 to 0x90, so the existing shared draw tail remains.
+/// Draws the item name and price, or its cannot-buy or not-broken note.
+/// A structured switch with early returns reduced the English native extent
+/// from 0x98 to 0x90, so the existing shared draw tail remains.
 void Shop_DrawItemPrice(struct UiWindow *window, s32 itemId, s32 price,
                         s32 priceKind) {
   s32 labelMessage;
@@ -347,8 +348,8 @@ draw:
   return;
 }
 
-// Clears or restores the message window, then draws its text; a null window
-// is ignored.
+/// Clears or restores the message window, then draws its text; a null window
+/// is ignored.
 void Shop_DrawMsg(struct UiWindow *window, s32 message) {
   if (window != 0) {
 #if TBS_PATCH_1
@@ -361,8 +362,8 @@ void Shop_DrawMsg(struct UiWindow *window, s32 message) {
   }
 }
 
-// Highlights the selected party icon and dims members who cannot equip the
-// candidate item.
+/// Highlights the selected party icon and dims members who cannot equip the
+/// candidate item.
 void Shop_DrawParty(struct UiWindow *window, s32 selected, s32 itemId) {
   struct ShopRuntime *shop = gMenuWork;
   s32 memberIndex;
@@ -383,8 +384,8 @@ void Shop_DrawParty(struct UiWindow *window, s32 selected, s32 itemId) {
   }
 }
 
-// Temporarily equips the candidate, recalculates stats, restores the slot and
-// draws the comparison.
+/// Temporarily equips the candidate, recalculates stats, restores the slot and
+/// draws the comparison.
 void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 itemId) {
   struct ShopRuntime *shop = gMenuWork;
   struct BattleUnit *unit = UnitGetFar(unitId);
@@ -457,10 +458,10 @@ void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 itemId) {
     UiText_DrawCharacterAtOffsetFar(replacedItemId + MsgItemName, window, 0,
                                     48);
 }
-// Shows the quantity already carried and draws the member's existing inventory
-// icons.
-// A typed RenderOutput icon store kept the English text extent but changed
-// 76 text bytes; retain the existing byte view of the sprite.
+/// Shows the quantity already carried and draws the member's existing inventory
+/// icons.
+/// A typed RenderOutput icon store kept the English text extent but changed
+/// 76 text bytes; retain the existing byte view of the sprite.
 void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
 
   u8 *unitBytes;
@@ -518,8 +519,8 @@ void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
   }
 }
 
-// Limits the purchase by stack space, available coins and artifact stock before
-// asking its quantity.
+/// Limits the purchase by stack space, available coins and artifact stock
+/// before asking its quantity.
 s32 Shop_SelectBuyNum(s32 unitId, s32 itemId) {
   struct ShopRuntime *shop;
   struct BattleUnit *unit;
@@ -579,8 +580,8 @@ s32 Shop_SelectBuyNum(s32 unitId, s32 itemId) {
 #define SHOP_QUANTITY_COIN_LABEL_X 136
 #endif
 
-// Polls a wrapped quantity selector, redraws its amount and price, and returns
-// the count or -1.
+/// Polls a wrapped quantity selector, redraws its amount and price, and returns
+/// the count or -1.
 s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   void *tileBuffer;
   struct UiWindow *window;
@@ -665,8 +666,8 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   return selectedQuantity;
 }
 
-// Adds each purchased item, charges coins and earns credit before offering to
-// equip it.
+/// Adds each purchased item, charges coins and earns credit before offering to
+/// equip it.
 void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   s32 replacedSlot;
   s32 remainingQuantity;
@@ -695,8 +696,8 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   }
 }
 
-// Checks equipment restrictions, asks permission and equips the item, including
-// its curse warning.
+/// Checks equipment restrictions, asks permission and equips the item,
+/// including its curse warning.
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = gMenuWork;
   struct BattleUnit *unit = UnitGetFar(unitId);
@@ -743,8 +744,8 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   return 1;
 }
 
-// Offers to sell one replaced equipment item unless its type or flags prohibit
-// it.
+/// Offers to sell one replaced equipment item unless its type or flags prohibit
+/// it.
 s32 Shop_SellOld(s32 unitId, s32 slot) {
   struct BattleUnit *unit;
   s32 itemId;
@@ -764,8 +765,8 @@ s32 Shop_SellOld(s32 unitId, s32 slot) {
   return 1;
 }
 
-// Returns zero for indispensable items, half price for broken ones or three
-// quarters otherwise.
+/// Returns zero for indispensable items, half price for broken ones or three
+/// quarters otherwise.
 s32 Shop_SalePrice(s32 inventoryEntry) {
   s32 salePrice;
 

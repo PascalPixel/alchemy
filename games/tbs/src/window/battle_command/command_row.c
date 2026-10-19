@@ -1,10 +1,11 @@
-// Part of battle_command.c, the menu object, compiled only through it.
-// The row of command icons the player picks a command from.
+/// @file
+/// Part of battle_command.c, the menu object, compiled only through it.
+/// The row of command icons the player picks a command from.
 
 #include "../battle_command_internal.h"
 
-// Open a message at (x, y), wait for its text to finish, and return its window
-// so the caller can hold it open for a separate prompt.
+/// Open a message at (x, y), wait for its text to finish, and return its window
+/// so the caller can hold it open for a separate prompt.
 struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y) {
   struct UiWindow *result;
 
@@ -20,10 +21,10 @@ struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y) {
 #define WINDOW_X 23
 #endif
 
-// Select a command icon, returning its kind, -1 for cancel or -2 for a
-// shoulder-button switch. Mode 0 is the top menu; the other mode selects
-// a battle command and remembers its own cursor. Tutorial input is replayed
-// through the same selection path.
+/// Select a command icon, returning its kind, -1 for cancel or -2 for a
+/// shoulder-button switch. Mode 0 is the top menu; the other mode selects
+/// a battle command and remembers its own cursor. Tutorial input is replayed
+/// through the same selection path.
 s32 Menu_RunCommandRow(s32 mode) {
   u8 party[4];
   struct UiRenderWork *render;
@@ -332,8 +333,8 @@ s32 Menu_RunCommandRow(s32 mode) {
   return command;
 }
 
-// Set bit 12 of each tile in a screen-space rectangle, preserving the other
-// tile attributes. Keep the original bottom-edge test (29) and height (20).
+/// Set bit 12 of each tile in a screen-space rectangle, preserving the other
+/// tile attributes. Keep the original bottom-edge test (29) and height (20).
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
   struct UiRenderWork *render = UI_WORK;
 
@@ -377,8 +378,8 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
   }
 }
 
-// Dim the party strip, then highlight the actor IDs up to the 0xff terminator.
-// Missing IDs are ignored; the search stops at the party's own terminator.
+/// Dim the party strip, then highlight the actor IDs up to the 0xff terminator.
+/// Missing IDs are ignored; the search stops at the party's own terminator.
 s32 BattleLayout_HighlightPartyPanels(u16 *ids) {
   struct BattleWork *battle = gBattleWork;
   s32 count;

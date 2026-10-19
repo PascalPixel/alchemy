@@ -1,10 +1,11 @@
-// Part of battle.c, the battle object, compiled only through it.
-// An action announced and planned, BattleCommand_BuildPlan.
+/// @file
+/// Part of battle.c, the battle object, compiled only through it.
+/// An action announced and planned, BattleCommand_BuildPlan.
 
 #include "../battle_internal.h"
 
-// Returns one when the unit is in its side's formation.
-// unitId: 0 to 7 a party member, any other an enemy.
+/// Returns one when the unit is in its side's formation.
+/// unitId: 0 to 7 a party member, any other an enemy.
 u32 BattleParty_IsUnitListed(u32 unitId) {
   u16 list[8];
   s32 side;
@@ -24,8 +25,8 @@ u32 BattleParty_IsUnitListed(u32 unitId) {
   return unitIndex != unitCount;
 }
 
-// Counts standby Djinn owned by the selected unit's active battle side.
-// Optionally writes one count per element.
+/// Counts standby Djinn owned by the selected unit's active battle side.
+/// Optionally writes one count per element.
 s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts) {
   u16 unitIds[8];
   struct DjinnRecoveryList *recoveryList;
@@ -71,14 +72,14 @@ s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts) {
   return standbyCount;
 }
 
-// Djinni selector: element in bits 8..11, index in bits 0..7.
+/// Djinni selector: element in bits 8..11, index in bits 0..7.
 #define DJINN_ELEMENT(v) (((v) >> 8) & 15)
 #define DJINN_INDEX(v) ((v) & 255)
 #define TARGET_MAX 14
 
-// Announces the action and plans its targets and effects.
-// Returns zero to execute, -1 on failure (already reported), or -2 for no
-// action.
+/// Announces the action and plans its targets and effects.
+/// Returns zero to execute, -1 on failure (already reported), or -2 for no
+/// action.
 s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
                             struct BattlePlan *plan) {
   struct BattleUnit *actor = UnitGetFar(request->unitId);

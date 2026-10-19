@@ -1,12 +1,13 @@
-// Part of battle_command.c, the menu object, compiled only through it.
-// Collecting the party's battle commands.
+/// @file
+/// Part of battle_command.c, the menu object, compiled only through it.
+/// Collecting the party's battle commands.
 
 #include "../battle_command_internal.h"
 
-// Return the target selection category for an ability's effect.
-// 0 other, 1 restore HP, 2 restore PP, 3 cure poison, 4 cure status ailments,
-// 5 revive, 6 cure all status ailments.
-// act: ability data
+/// Return the target selection category for an ability's effect.
+/// 0 other, 1 restore HP, 2 restore PP, 3 cure poison, 4 cure status ailments,
+/// 5 revive, 6 cure all status ailments.
+/// act: ability data
 s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
   s32 signedEffect;
   s32 abilityKind;
@@ -33,9 +34,9 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
   return targetKind;
 }
 
-// Collect commands in party order, including target, cost and randomized
-// priority. Cancelling returns to the preceding choice; linked battles
-// exchange completion signatures before releasing the command UI.
+/// Collect commands in party order, including target, cost and randomized
+/// priority. Cancelling returns to the preceding choice; linked battles
+/// exchange completion signatures before releasing the command UI.
 s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
                                 u16 *actors, s32 commandCount) {
   struct LinkRoundState *state;

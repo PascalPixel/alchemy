@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Dragon Driver and the Tiamat summon.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Dragon Driver and the Tiamat summon.
 
 #include "../effect_internal.h"
 
@@ -10,46 +11,46 @@
 // that order. An idle particle's variant is -1; a live one's counts its age
 // up until it goes out.
 
-// Abilities: Dragon Driver (kind 385).
-//
-// The rising embers from the user's side, in the LightningBolt colours.
+/// Abilities: Dragon Driver (kind 385).
+///
+/// The rising embers from the user's side, in the LightningBolt colours.
 void BattleFx_RunDragonDriver(struct BattleEffectArgument *effect) {
   BattleFx_RunPaletteParticles(effect, 1);
 }
-// Abilities: Tiamat (scene kind 7).
-//
-// The rising embers with a
-// formation of eight objects that sweeps in and explodes at the end.
+/// Abilities: Tiamat (scene kind 7).
+///
+/// The rising embers with a
+/// formation of eight objects that sweeps in and explodes at the end.
 void BattleFx_RunTiamat(struct BattleEffectArgument *effect) {
   BattleFx_RunPaletteParticles(effect, 0);
 }
 #define PALETTE_PARTICLES_FRAMES 208
-// Falling streaks, work->particles 24 to 39.
+/// Falling streaks, work->particles 24 to 39.
 #define PALETTE_PARTICLES_STREAKS 16
 #define PALETTE_PARTICLES_FIRST_STREAK 24 // the first streak in work->particles
 #define PALETTE_PARTICLES_FIRST_SPARK 40  // the first spark in work->particles
 #define PALETTE_PARTICLES_EMBERS 512      // embers in PARTICLES
 #define PALETTE_PARTICLES_FLASHES 24      // flashes, work->particles 0 to 23
 #define PALETTE_PARTICLES_SPARKS 24       // sparks, work->particles 40 to 63
-// The streak pictures in the sheet.
+/// The streak pictures in the sheet.
 #define PALETTE_PARTICLES_STREAK_IMAGES 0x3000
 
-// A 208-frame effect of embers rising from the ground; pressing A or B
-// during frames 49 to 159 skips to frame 160. The targets reel on frame
-// 138, the screen flares white over frames 160 to 175 and fades out after,
-// and the battle shows the damage on frame 178.
-// mode : 0 also brings in a formation of eight objects that sweeps in and,
-//          at the end, explodes with BattleFx_RunImpactBurst;
-//        1 throws the sparks and flashes from the user's side
-//          (effect->side), in the LightningBolt colours.
-// Four kinds of particle, in canvas coordinates with y growing downwards:
-//   PARTICLES[0..511]  embers: rise from y 112, speeding up; one a frame
-//                      over frames 33 to 103, eight a frame over 104 to 175
-//   particles[40..63]  sparks: one on each odd frame from 41 to 127,
-//                      thrown up at a slant
-//   particles[0..23]   flashes: one a frame over 129 to 175, thrown across
-//   particles[24..39]  streaks: fall at a slant from the top and, below
-//                      y 55, play their images over and over
+/// A 208-frame effect of embers rising from the ground; pressing A or B
+/// during frames 49 to 159 skips to frame 160. The targets reel on frame
+/// 138, the screen flares white over frames 160 to 175 and fades out after,
+/// and the battle shows the damage on frame 178.
+/// mode : 0 also brings in a formation of eight objects that sweeps in and,
+///          at the end, explodes with BattleFx_RunImpactBurst;
+///        1 throws the sparks and flashes from the user's side
+///          (effect->side), in the LightningBolt colours.
+/// Four kinds of particle, in canvas coordinates with y growing downwards:
+///   PARTICLES[0..511]  embers: rise from y 112, speeding up; one a frame
+///                      over frames 33 to 103, eight a frame over 104 to 175
+///   particles[40..63]  sparks: one on each odd frame from 41 to 127,
+///                      thrown up at a slant
+///   particles[0..23]   flashes: one a frame over 129 to 175, thrown across
+///   particles[24..39]  streaks: fall at a slant from the top and, below
+///                      y 55, play their images over and over
 void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
                                   s32 mode) {
   struct EffectPosition origin;

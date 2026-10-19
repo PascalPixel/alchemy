@@ -1,18 +1,19 @@
-// The battle object: a battle from its opening transition to its spoils.
-// battle_internal.h holds what the parts share (the includes and the names
-// two or more of them use); the code is in the files under battle/, included
-// here in the order it has in the ROM. Camelot's own files are not
-// recoverable: the ROM shows one object, and these parts are ours, cut where
-// one family ends and the next begins.
-//
-// A battle runs from Battle_RunEncounter (encounter.c). Each round the
-// actions are gathered and put in turn order (round.c, or auto_battle.c under
-// auto battle), and each action is announced and planned
-// (BattleCommand_BuildPlan, plan.c), staged (BattlePresentation_DispatchAction,
-// staging.c) and applied to each target (BattleTargetExec, target_exec.c),
-// which queues the battle events BattleEvent_Playback plays (playback.c).
-// README.md in this folder gives the words, prefixes and spellings the parts
-// use.
+/// @file
+/// The battle object: a battle from its opening transition to its spoils.
+/// battle_internal.h holds what the parts share (the includes and the names
+/// two or more of them use); the code is in the files under battle/, included
+/// here in the order it has in the ROM. Camelot's own files are not
+/// recoverable: the ROM shows one object, and these parts are ours, cut where
+/// one family ends and the next begins.
+///
+/// A battle runs from Battle_RunEncounter (encounter.c). Each round the
+/// actions are gathered and put in turn order (round.c, or auto_battle.c under
+/// auto battle), and each action is announced and planned
+/// (BattleCommand_BuildPlan, plan.c), staged
+/// (BattlePresentation_DispatchAction, staging.c) and applied to each target
+/// (BattleTargetExec, target_exec.c), which queues the battle events
+/// BattleEvent_Playback plays (playback.c). README.md in this folder gives the
+/// words, prefixes and spellings the parts use.
 
 #include "battle_internal.h"
 

@@ -1,10 +1,11 @@
-// Part of battle_command.c, the menu object, compiled only through it.
-// The battle Psynergy menu.
+/// @file
+/// Part of battle_command.c, the menu object, compiled only through it.
+/// The battle Psynergy menu.
 
 #include "../battle_command_internal.h"
 
-// Select a Psynergy-list position, or -1 on cancel. The list shows PP cost
-// and range, and confirmation rejects abilities the unit cannot use.
+/// Select a Psynergy-list position, or -1 on cancel. The list shows PP cost
+/// and range, and confirmation rejects abilities the unit cannot use.
 s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
   struct UiRenderWork *render;
   s32 drawnFirstEntry;

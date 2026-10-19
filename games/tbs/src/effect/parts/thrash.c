@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Thrash, Quick Strike and Vorpal Slash.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Thrash, Quick Strike and Vorpal Slash.
 
 #include "../effect_internal.h"
 
@@ -7,9 +8,9 @@
 // image revealed in front of the target, and two mirrored columns rising at
 // the target's feet.
 
-// Abilities: Thrash (kind 388).
-//
-// Hop the acting unit toward the first target; trigger type 4 after 29 frames.
+/// Abilities: Thrash (kind 388).
+///
+/// Hop the acting unit toward the first target; trigger type 4 after 29 frames.
 void BattleFx_RunThrash(struct BattleEffectArgument *effect) {
   // Hop 3/4 of the distance at displacement / 24, initial vertical speed 12.2.
   BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 24, 0xc3333);
@@ -18,7 +19,7 @@ void BattleFx_RunThrash(struct BattleEffectArgument *effect) {
   BattleFx_RunSparkGroups(effect, 2); // 2: from the acting unit's position
 }
 
-// Hop the acting unit toward the first target; trigger type 3 after 12 frames.
+/// Hop the acting unit toward the first target; trigger type 3 after 12 frames.
 void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect) {
   // Hop 3/4 of the distance at displacement / 24, initial vertical speed 7.2.
   BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 24, 0x73333);
@@ -27,25 +28,25 @@ void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect) {
   BattleFx_RunSparkGroups(effect, 2); // 2: from the acting unit's position
 }
 
-// Abilities: Quick Strike (kind 52).
-//
-// The user leaps at the first target, four pictures flash across the effect
-// layer, then it fills with one colour as the target is struck.
+/// Abilities: Quick Strike (kind 52).
+///
+/// The user leaps at the first target, four pictures flash across the effect
+/// layer, then it fills with one colour as the target is struck.
 void BattleFx_RunQuickStrike(struct BattleEffectArgument *effect) {
   BattleFx_RunFlashingStrike(effect, 1);
 }
-// Abilities: Vorpal Slash (kind 65).
-//
-// Flash the target using the first pair of reveal-mask resources.
+/// Abilities: Vorpal Slash (kind 65).
+///
+/// Flash the target using the first pair of reveal-mask resources.
 void BattleFx_RunVorpalSlash(struct BattleEffectArgument *effect) {
   BattleFx_RunFlashingStrike(effect, 2);
 }
-// Shared runner of Quick Strike (mode 1) and Vorpal Slash (mode 2); no kind
-// uses mode 0. The user steps up to the first target over 16 frames, with a
-// hop in mode 1. Then four 120x120 pictures, chosen by mode, show for four
-// frames each (mirrored on side 1), the canvas fills with colour 0x3f on
-// frames 16 to 19, the battle shows the damage on frame 18, and on frame 20
-// the target reels and the screen shakes. 21 frames.
+/// Shared runner of Quick Strike (mode 1) and Vorpal Slash (mode 2); no kind
+/// uses mode 0. The user steps up to the first target over 16 frames, with a
+/// hop in mode 1. Then four 120x120 pictures, chosen by mode, show for four
+/// frames each (mirrored on side 1), the canvas fills with colour 0x3f on
+/// frames 16 to 19, the battle shows the damage on frame 18, and on frame 20
+/// the target reels and the screen shakes. 21 frames.
 void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
   void **slots;
   struct BattleEffectWork *work;

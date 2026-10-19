@@ -1,21 +1,22 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Projectile volleys (Slash, Shuriken, Wing Flutter, Blizzard ...).
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Projectile volleys (Slash, Shuriken, Wing Flutter, Blizzard ...).
 
 #include "../effect_internal.h"
 
-// Djinni entrance: sparks swirl around a point that travels from the user
-// to the goal and gather into the djinni, which sways for 16 frames and
-// bursts into motes. Leaves the canvas cleared for the effect that
-// follows.
-//
-// effect: the user and the targets.
-// mode: the djinni: 0 Venus, 1 Mercury, 2 Mars, 3 Jupiter; 4 to 7 the same
-//       over 84 frames instead of 64.
-// side: 1 mirrors the pictures.
-// anchor: where the djinni appears: 0 over the first target, 1 at the
-//         first target's x at depth 0, 2 over the user, 3 at the user's x
-//         at depth 0, 4 in the centre of the field.
-// outX, outY: receive the djinni's last screen position.
+/// Djinni entrance: sparks swirl around a point that travels from the user
+/// to the goal and gather into the djinni, which sways for 16 frames and
+/// bursts into motes. Leaves the canvas cleared for the effect that
+/// follows.
+///
+/// effect: the user and the targets.
+/// mode: the djinni: 0 Venus, 1 Mercury, 2 Mars, 3 Jupiter; 4 to 7 the same
+///       over 84 frames instead of 64.
+/// side: 1 mirrors the pictures.
+/// anchor: where the djinni appears: 0 over the first target, 1 at the
+///         first target's x at depth 0, 2 over the user, 3 at the user's x
+///         at depth 0, 4 in the centre of the field.
+/// outX, outY: receive the djinni's last screen position.
 void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
                                 s32 side, s32 anchor, s32 *outX, s32 *outY) {
   s32 center[3];
@@ -267,54 +268,54 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
 // The rushing strike sends the user at the first target; on frame 10 it
 // strikes, a ring flares and 64 sparks scatter, over 60 frames in all.
 
-// Actor animation steps while firing and after the volley finishes.
+/// Actor animation steps while firing and after the volley finishes.
 #define PROJECTILE_VOLLEY_ANIMATION_STEP_FAST 0x30
 #define PROJECTILE_VOLLEY_ANIMATION_STEP_NORMAL 0x10
 
-// Abilities: Slash, Wind Slash, Sonic Slash (kind 19).
-//
-// Six comets fly at each target, three frames apart, and burst into a flash
-// and sparks; the effect's variant picks one of three comets. Volley mode 0.
+/// Abilities: Slash, Wind Slash, Sonic Slash (kind 19).
+///
+/// Six comets fly at each target, three frames apart, and burst into a flash
+/// and sparks; the effect's variant picks one of three comets. Volley mode 0.
 void BattleFx_RunSlash(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 0);
 }
-// Abilities: Shuriken (kind 54).
-//
-// Four spinning shurikens fly at each target, five frames apart, and vanish
-// once past it. Volley mode 1.
+/// Abilities: Shuriken (kind 54).
+///
+/// Four spinning shurikens fly at each target, five frames apart, and vanish
+/// once past it. Volley mode 1.
 void BattleFx_RunShuriken(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 1);
 }
-// Abilities: Crazy Voice (kind 303).
-//
-// Ten pellets fly slowly at each target and bounce off it, up or down at
-// random. Volley mode 2.
+/// Abilities: Crazy Voice (kind 303).
+///
+/// Ten pellets fly slowly at each target and bounce off it, up or down at
+/// random. Volley mode 2.
 void BattleFx_RunCrazyVoice(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 2);
 }
-// Abilities: Wing Flutter (kind 307).
-//
-// Five yellow sparks fly level at each target, five frames apart. Volley
-// mode 3.
+/// Abilities: Wing Flutter (kind 307).
+///
+/// Five yellow sparks fly level at each target, five frames apart. Volley
+/// mode 3.
 void BattleFx_RunWingFlutter(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 3);
 }
-// Abilities: Wing Stroke (kind 381).
-//
-// Ten large yellow sparks stream level at each target, one a frame, spread
-// up and down. Volley mode 11.
+/// Abilities: Wing Stroke (kind 381).
+///
+/// Ten large yellow sparks stream level at each target, one a frame, spread
+/// up and down. Volley mode 11.
 void BattleFx_RunWingStroke(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 11);
 }
-// Abilities: Wing Beat (kind 306).
-//
-// Ten small yellow sparks stream level at each target, one a frame. Volley
-// mode 4.
+/// Abilities: Wing Beat (kind 306).
+///
+/// Ten small yellow sparks stream level at each target, one a frame. Volley
+/// mode 4.
 void BattleFx_RunWingBeat(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 4);
 }
-// Puts the user into its action pose (2) and fires the volley in this mode
-// while its animation runs fast.
+/// Puts the user into its action pose (2) and fires the volley in this mode
+/// while its animation runs fast.
 static inline void
 BattleFx_RunVolleyWithAction(struct BattleEffectArgument *effect, s32 mode) {
   s32 user;
@@ -328,56 +329,56 @@ BattleFx_RunVolleyWithAction(struct BattleEffectArgument *effect, s32 mode) {
                                       PROJECTILE_VOLLEY_ANIMATION_STEP_NORMAL);
 }
 
-// Abilities: Cutting Edge (kind 57).
-//
-// From the user's action pose, one large comet in ice colours flies at each
-// target and bursts into 80 sparks. Volley mode 5.
+/// Abilities: Cutting Edge (kind 57).
+///
+/// From the user's action pose, one large comet in ice colours flies at each
+/// target and bursts into 80 sparks. Volley mode 5.
 void BattleFx_RunCuttingEdge(struct BattleEffectArgument *effect) {
   BattleFx_RunVolleyWithAction(effect, 5);
 }
-// Abilities: Heat Wave (kind 59).
-//
-// From the user's action pose, seven fireballs trailing embers fly at each
-// target, two frames apart, each bursting into 40 sparks. Volley mode 6.
+/// Abilities: Heat Wave (kind 59).
+///
+/// From the user's action pose, seven fireballs trailing embers fly at each
+/// target, two frames apart, each bursting into 40 sparks. Volley mode 6.
 void BattleFx_RunHeatWave(struct BattleEffectArgument *effect) {
   BattleFx_RunVolleyWithAction(effect, 6);
 }
-// Abilities: Sleet (kind 205).
-//
-// Thirty ice chips fall from high above the user onto each target, without
-// shaking the screen or knocking the target back; the battle shows the
-// damage on frame 48. Volley mode 7.
+/// Abilities: Sleet (kind 205).
+///
+/// Thirty ice chips fall from high above the user onto each target, without
+/// shaking the screen or knocking the target back; the battle shows the
+/// damage on frame 48. Volley mode 7.
 void BattleFx_RunSleet(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 7);
 }
-// Abilities: Ice Blessing (kind 402).
-//
-// Sixty ice chips stream at each target, one a frame, without knocking it
-// back. Volley mode 10.
+/// Abilities: Ice Blessing (kind 402).
+///
+/// Sixty ice chips stream at each target, one a frame, without knocking it
+/// back. Volley mode 10.
 void BattleFx_RunIceBlessing(struct BattleEffectArgument *effect) {
   BattleFx_RunProjectileVolley(effect, 10);
 }
-// Abilities: Blizzard (kind 63).
-//
-// From the user's action pose, sixty ice chips stream at each target, one a
-// frame, scattered up and down, without knocking it back. Volley mode 9.
+/// Abilities: Blizzard (kind 63).
+///
+/// From the user's action pose, sixty ice chips stream at each target, one a
+/// frame, scattered up and down, without knocking it back. Volley mode 9.
 void BattleFx_RunBlizzard(struct BattleEffectArgument *effect) {
   BattleFx_RunVolleyWithAction(effect, 9);
 }
 // Projectile volleys, and moving battlers about.
 // Five bytes for each mode; see VolleyField.
 
-// PARTICLES holds the hit flashes from 0, the sparks from 100 and the
-// fireball trails from 512.
+/// PARTICLES holds the hit flashes from 0, the sparks from 100 and the
+/// fireball trails from 512.
 #define PROJECTILE_VOLLEY_PARTICLE_COUNT 1024
 
-// The bytes of a gProjectiles_Modes row.
+/// The bytes of a gProjectiles_Modes row.
 enum VolleyField {
-  PROJECTILE_VOLLEY_SHOTS,   // shots at each target
-  PROJECTILE_VOLLEY_STEPS,   // frames a shot takes to reach its target
-  PROJECTILE_VOLLEY_STAGGER, // frames between shots
-  PROJECTILE_VOLLEY_DELAY,   // frames between targets
-  PROJECTILE_VOLLEY_SPARKS   // sparks thrown on each hit
+  PROJECTILE_VOLLEY_SHOTS,   ///< shots at each target
+  PROJECTILE_VOLLEY_STEPS,   ///< frames a shot takes to reach its target
+  PROJECTILE_VOLLEY_STAGGER, ///< frames between shots
+  PROJECTILE_VOLLEY_DELAY,   ///< frames between targets
+  PROJECTILE_VOLLEY_SPARKS   ///< sparks thrown on each hit
 };
 
 // Where the volley's pictures sit in the sheet.
@@ -389,16 +390,16 @@ enum VolleyField {
 #define PROJECTILE_VOLLEY_FIRST_SPARK 100     // the first spark in PARTICLES
 #define PROJECTILE_VOLLEY_FIRST_TRAIL 512     // the first trail in PARTICLES
 
-// Projectile volley: shots fly from the user to each target and burst
-// into a flash and sparks when they pass it. The hit sound plays at most
-// once every 8 frames.
-//
-// effect: the user and the targets. variant picks the comet in mode 0
-//         (mode 5 always uses comet 2, mode 8 comet 0); with prelude 1 a
-//         Mercury djinni enters first.
-// mode: the shot and its flight (0 to 11): 0, 5 and 8 comets (5 in the
-//       ice palette), 1 shurikens, 2 bouncing pellets, 3, 4 and 11
-//       yellow sparks, 6 fireballs with trails, 7, 9 and 10 ice chips.
+/// Projectile volley: shots fly from the user to each target and burst
+/// into a flash and sparks when they pass it. The hit sound plays at most
+/// once every 8 frames.
+///
+/// effect: the user and the targets. variant picks the comet in mode 0
+///         (mode 5 always uses comet 2, mode 8 comet 0); with prelude 1 a
+///         Mercury djinni enters first.
+/// mode: the shot and its flight (0 to 11): 0, 5 and 8 comets (5 in the
+///       ice palette), 1 shurikens, 2 bouncing pellets, 3, 4 and 11
+///       yellow sparks, 6 fireballs with trails, 7, 9 and 10 ice chips.
 void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                                   s32 mode) {
   struct EffectPosition position;
@@ -933,9 +934,9 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-// Sends a battler back to its place (its anchor) with a hop.
-//
-// id: the battler.
+/// Sends a battler back to its place (its anchor) with a hop.
+///
+/// id: the battler.
 void BattleFx_InitializeRisingObject(s32 id) {
   struct BattleObj *slot = GetBattleObjectSlotFar(id);
   struct MotionObject *object = slot->object;
@@ -952,13 +953,13 @@ void BattleFx_InitializeRisingObject(s32 id) {
   ObjectDispatch_SelectAnimationFar(object, 1);
 }
 
-// Moves a battler 80% of the way to another one over a number of frames,
-// in its action pose. The speed is that distance over the frames; the
-// distance is taken in 1/256 pixels so its square fits in 32 bits.
-//
-// id: the battler that moves.
-// targetId: the battler it moves towards.
-// frames: how long the move takes.
+/// Moves a battler 80% of the way to another one over a number of frames,
+/// in its action pose. The speed is that distance over the frames; the
+/// distance is taken in 1/256 pixels so its square fits in 32 bits.
+///
+/// id: the battler that moves.
+/// targetId: the battler it moves towards.
+/// frames: how long the move takes.
 void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   struct BattleObj *slot = GetBattleObjectSlotFar(id);
   struct BattleObj *targetSlot = GetBattleObjectSlotFar(targetId);

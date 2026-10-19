@@ -1,6 +1,7 @@
-// Part of menu.c, the menu object, compiled only through it.
-// The Djinn menu: its screen, the Djinn list, help, and choosing the Djinn to
-// set, put on standby, give or trade.
+/// @file
+/// Part of menu.c, the menu object, compiled only through it.
+/// The Djinn menu: its screen, the Djinn list, help, and choosing the Djinn to
+/// set, put on standby, give or trade.
 
 #include "../menu_internal.h"
 
@@ -41,13 +42,13 @@
 #define DJINN_PREVIEW_PP_X 56
 #endif
 
-// Wraps a cursor index that has stepped one past either end of modulus
-// entries: -1 becomes modulus - 1 and modulus becomes 0.
+/// Wraps a cursor index that has stepped one past either end of modulus
+/// entries: -1 becomes modulus - 1 and modulus becomes 0.
 s32 Menu_WrapIndex(s32 value, s32 modulus) {
   return (value + modulus) % modulus;
 }
 
-// Places the Djinn menu's first row at its normal height plus yOffset.
+/// Places the Djinn menu's first row at its normal height plus yOffset.
 s32 Menu_SetFirstObjectRowCoordinates(s32 yOffset) {
   struct DjinnMenuWork *menu;
   s32 ownerX;
@@ -63,7 +64,7 @@ s32 Menu_SetFirstObjectRowCoordinates(s32 yOffset) {
   return yOffset;
 }
 
-// Runs the Djinn menu, preserving field tiles and the message speed.
+/// Runs the Djinn menu, preserving field tiles and the message speed.
 s32 DjinnMenu_Run(void) {
   struct DjinnMenuWork *menu;
   u32 savedMessageSpeed;
@@ -132,7 +133,7 @@ s32 DjinnMenu_Run(void) {
   return 1;
 }
 
-// Find the moved Djinni in the list and select its new position.
+/// Find the moved Djinni in the list and select its new position.
 /* FAKEMATCH(one-pass): a statement macro of DjinnMenu_RunScreen's, used at
  * its two places, whose do { } while (0) ends the selection store's
  * scheduling region; as a plain { } block, 4 of 560 instructions differ in
@@ -155,7 +156,7 @@ s32 DjinnMenu_Run(void) {
     (menu)->selection[0] = column + found * DJINN_LIST_ROWS;                   \
   } while (0)
 
-// The screen chooses an operation, optionally previews it, then commits it.
+/// The screen chooses an operation, optionally previews it, then commits it.
 enum DjinnMenuStep {
   DJINN_STEP_HANDLE_RESULT = 0,
   DJINN_STEP_RESERVED = 1,
@@ -175,8 +176,9 @@ enum DjinnMenuStep {
   DJINN_STEP_SHOW_HELP = 15
 };
 
-// Chooses a Djinni, previews changes, then sets, stands by, gives or trades it.
-// Confirmation states fall through to their matching commit states on success.
+/// Chooses a Djinni, previews changes, then sets, stands by, gives or trades
+/// it. Confirmation states fall through to their matching commit states on
+/// success.
 s32 DjinnMenu_RunScreen(void) {
   struct DjinnMenuWork *menu;
   struct RenderOutput *cursor;
@@ -386,9 +388,9 @@ s32 DjinnMenu_RunScreen(void) {
   return menuResult;
 }
 
-// Writes copies of background palettes 15, 5 and 7, each brightnessDelta
-// lighter in every channel (clamped to 0-31), into palettes 14, 4 and 6.
-// Palette 7's copy is 12 darker instead.
+/// Writes copies of background palettes 15, 5 and 7, each brightnessDelta
+/// lighter in every channel (clamped to 0-31), into palettes 14, 4 and 6.
+/// Palette 7's copy is 12 darker instead.
 void Graphics_AdjustPaletteBank(s32 brightnessDelta) {
   s32 bankIndex;
   s32 bank;
@@ -448,9 +450,9 @@ void Graphics_AdjustPaletteBank(s32 brightnessDelta) {
 #define DJINN_PREVIEW_GAINED 0x8000
 #define DJINN_PREVIEW_LOST 0x4000
 
-// UB: the implicit int call conflicts with DrawElementList's void definition.
-// The sole caller ignores this wrapper's result. Plain void changes the native
-// tbs-en return from pop {r1}; bx r1 to pop {r0}; bx r0.
+/// UB: the implicit int call conflicts with DrawElementList's void definition.
+/// The sole caller ignores this wrapper's result. Plain void changes the native
+/// tbs-en return from pop {r1}; bx r1 to pop {r0}; bx r0.
 MenuBackdropResult Menu_OpenBackdropScreen(void) {
   struct DjinnMenuWork *menu = gMenuWork;
   struct DjinnMenuBackdrop *backdrop = menu->backdrop;
@@ -479,8 +481,8 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
 #endif
 }
 
-// Lists the actions after a preview, marking gains, then appends the losses.
-// The two output counts distinguish gained and lost actions.
+/// Lists the actions after a preview, marking gains, then appends the losses.
+/// The two output counts distinguish gained and lost actions.
 s32 OwnerAction_DiffSlots(struct OwnerActionSlot *before,
                           struct OwnerActionSlot *after, u16 *actionsOut,
                           s32 *gainedCountOut, s32 *lostCountOut) {
@@ -532,8 +534,8 @@ s32 OwnerAction_DiffSlots(struct OwnerActionSlot *before,
   return actionCount;
 }
 
-// Rebuilds the Djinn lists in table: each owner's packed Djinn entries and
-// their count.
+/// Rebuilds the Djinn lists in table: each owner's packed Djinn entries and
+/// their count.
 s32 DjinnMenu_BuildLists(void *table) {
   struct DjinnMenuWork *menu;
   s32 ownerIndex;
@@ -561,11 +563,11 @@ s32 DjinnMenu_BuildLists(void *table) {
   }
 }
 
-// The window map entry of the first element icon, in palette 5; the four
-// elements follow it in order.
+/// The window map entry of the first element icon, in palette 5; the four
+/// elements follow it in order.
 #define DJINN_ELEMENT_TILE 0x5001
 
-// Draws each owner's Djinn column, including set and recovering entries.
+/// Draws each owner's Djinn column, including set and recovering entries.
 void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
   struct DjinnMenuWork *menu;
   s32 listIndex;
@@ -629,8 +631,8 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
   ui->menuBusy = 0;
 }
 
-// Sets the palette of a rectangle of window's interior, (x, y) and its size in
-// tiles from the interior's corner, through UiWindow_SetPaletteBitRectFar.
+/// Sets the palette of a rectangle of window's interior, (x, y) and its size in
+/// tiles from the interior's corner, through UiWindow_SetPaletteBitRectFar.
 s32 UiWindow_SetInteriorPaletteBitRect(const struct UiWindow *window, s32 x,
                                        s32 y, s32 width, s32 height,
                                        s32 palette) {
@@ -638,8 +640,8 @@ s32 UiWindow_SetInteriorPaletteBitRect(const struct UiWindow *window, s32 x,
                                 height, palette);
 }
 
-// Moves each tile of a screen rectangle (in tiles, clipped to the screen) that
-// shows palette 15 to palette.
+/// Moves each tile of a screen rectangle (in tiles, clipped to the screen) that
+/// shows palette 15 to palette.
 void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
   struct UiRenderWork *render;
   u16 *tileCursor;
@@ -680,8 +682,8 @@ void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
   }
 }
 
-// UiWindow_SetRectPalette on a rectangle of window's interior, (x, y) and its
-// size in tiles from the interior's corner.
+/// UiWindow_SetRectPalette on a rectangle of window's interior, (x, y) and its
+/// size in tiles from the interior's corner.
 void UiWindow_SetInteriorRectPalette(void *window, s32 x, s32 y, s32 width,
                                      s32 height, s32 palette) {
   UiWindow_SetRectPalette(((struct UiWindow *)window)->x + x + 1,
@@ -689,7 +691,7 @@ void UiWindow_SetInteriorRectPalette(void *window, s32 x, s32 y, s32 width,
                           palette);
 }
 
-// Runs the Djinn help choices and restores the list when the player leaves.
+/// Runs the Djinn help choices and restores the list when the player leaves.
 s32 DjinnMenu_ShowHelp(void) {
   struct UiWindow *helpWindow;
   struct UiWindow *statusWindow;
@@ -808,8 +810,8 @@ s32 DjinnMenu_ShowHelp(void) {
 #define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)
 #define DJINN_NUMBER(v) ((v) & 0x1f)
 
-// Chooses an owner and Djinni, or a set, standby, give or trade action.
-// The tutorial can replace the sampled input without changing the input order.
+/// Chooses an owner and Djinni, or a set, standby, give or trade action.
+/// The tutorial can replace the sampled input without changing the input order.
 s32 DjinnMenu_SelectDjinn(s32 mode) {
   s8 columnFlags[8];
   u8 requiresTrade[16];
@@ -1485,8 +1487,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
   return result;
 }
 
-// Lists owned Djinn by element and index, marking those that are set.
-// For element -1, entries also encode their owner.
+/// Lists owned Djinn by element and index, marking those that are set.
+/// For element -1, entries also encode their owner.
 s32 Djinn_ListOwnerEntries(u16 *entriesOut, s32 ownerId, s32 element) {
   struct BattleUnit *unit = UnitGetFar(ownerId);
   s32 count = 0;
@@ -1518,7 +1520,7 @@ s32 Djinn_ListOwnerEntries(u16 *entriesOut, s32 ownerId, s32 element) {
   return count;
 }
 
-// Draws both sides of the give or trade preview for the selected page.
+/// Draws both sides of the give or trade preview for the selected page.
 s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex) {
   struct DjinnMenuWork *menu;
 
@@ -1537,14 +1539,14 @@ s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex) {
   return 1;
 }
 
-// Copies a full unit for a temporary Djinn-stat preview.
+/// Copies a full unit for a temporary Djinn-stat preview.
 static __inline__ void Unit_Copy(struct BattleUnit *destination,
                                  struct BattleUnit *source) {
   Iwram_CopyWords(destination, source, sizeof(struct BattleUnit));
 }
 
-// Saves the unit, applies a hypothetical Djinn change, draws its differences
-// and restores the original unit before returning.
+/// Saves the unit, applies a hypothetical Djinn change, draws its differences
+/// and restores the original unit before returning.
 s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
                               s32 ownerId, s32 removePairSlot, s32 addPairSlot,
                               s32 previewMode, s32 page, s32 side) {

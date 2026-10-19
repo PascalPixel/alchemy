@@ -1,10 +1,11 @@
-// Part of shop.c, the shop object, compiled only through it.
-// The item picker scenes and Psynergy use to choose a member's item.
+/// @file
+/// Part of shop.c, the shop object, compiled only through it.
+/// The item picker scenes and Psynergy use to choose a member's item.
 
 #include "../shop_internal.h"
 
-// Returns the selected party member and inventory slot, or -1 for both when
-// cancelled.
+/// Returns the selected party member and inventory slot, or -1 for both when
+/// cancelled.
 s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
   struct ShopRuntime *shop;
   struct RenderOutput *cursorAnchor;
@@ -115,8 +116,8 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
 #define SHOP_USE_COIN_MESSAGE_OFFSET 1
 #endif
 
-// Selects a discardable inventory slot, showing the original restriction
-// messages on rejection.
+/// Selects a discardable inventory slot, showing the original restriction
+/// messages on rejection.
 s32 Shop_SelectUse(s32 unitId) {
   struct ShopRuntime *shop = gMenuWork;
 
@@ -228,8 +229,8 @@ s32 Shop_SelectUse(s32 unitId) {
   return selectionResult;
 }
 
-// Draws the selected slot's item, discard restriction or whole-stack sale
-// value.
+/// Draws the selected slot's item, discard restriction or whole-stack sale
+/// value.
 void Shop_DrawUseItem(struct UiWindow *window, s32 unitId, s32 slot) {
   struct BattleUnit *unit = UnitGetFar(unitId);
   s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;

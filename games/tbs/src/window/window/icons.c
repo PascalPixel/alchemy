@@ -1,23 +1,24 @@
-// Part of window.c, the window object, compiled only through it.
-// Item, Psynergy and command icons.
+/// @file
+/// Part of window.c, the window object, compiled only through it.
+/// Item, Psynergy and command icons.
 
 #include "../window_internal.h"
 
-// Returns how many item icons there are.
+/// Returns how many item icons there are.
 s32 UiIcon_CountItemIcons(void) {
   return gUiIcon_ItemIconPointersEnd - gUiIcon_ItemIconPointers;
 }
 
-// Returns how many Psynergy icons there are.
+/// Returns how many Psynergy icons there are.
 s32 UiIcon_CountPsynergyIcons(void) {
   return gUiIcon_PsynergyIconPointersEnd - gUiIcon_PsynergyIconPointers;
 }
 
-// Builds a command icon (overlay no0 over frame no1) and loads it into a
-// sprite tile slot: *slot, or a free one when flag is 0. Returns the tile in
-// *ret.
-// Frame decode is opaque; the command layer is then composited with
-// transparency.
+/// Builds a command icon (overlay no0 over frame no1) and loads it into a
+/// sprite tile slot: *slot, or a free one when flag is 0. Returns the tile in
+/// *ret.
+/// Frame decode is opaque; the command layer is then composited with
+/// transparency.
 void Ui_BuildPairedPatternsToSlot(s32 overlayIcon, s32 frameIcon, s32 *slot,
                                   s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;
@@ -38,18 +39,18 @@ void Ui_BuildPairedPatternsToSlot(s32 overlayIcon, s32 frameIcon, s32 *slot,
   Runtime_ReleaseHeapBlock(0x11);
 }
 
-// Builds the icon of a battle action's item (its first operand) into a slot,
-// as UiIcon_BuildItemIconTiles.
+/// Builds the icon of a battle action's item (its first operand) into a slot,
+/// as UiIcon_BuildItemIconTiles.
 void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                           s32 reuse) {
   UiIcon_BuildItemIconTiles(BattleActGet(action)->unk04[0], withBase, slot,
                             tile, reuse);
 }
 
-// Builds item icon glyph, over the icon frame when withBase is set, and loads
-// it into *cacheSlot (a free slot unless reuse is set). Returns the tile in
-// *tileOut.
-// The optional frame is decoded first and selects masked icon expansion.
+/// Builds item icon glyph, over the icon frame when withBase is set, and loads
+/// it into *cacheSlot (a free slot unless reuse is set). Returns the tile in
+/// *tileOut.
+/// The optional frame is decoded first and selects masked icon expansion.
 void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
                                s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;
@@ -88,11 +89,11 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
 #define ICON_BROKEN 16
 #define ICON_ARTIFACT 32
 
-// Draws an item's icon into the glyph work buffer from its inventory code
-// (item id in the low 9 bits, broken 0x200, equipped 0x400, count less one in
-// the top 5 bits) with the layers asked for (ICON_ flags): the frame, the
-// equipped, broken and artifact marks, and the count. Returns 256, or -1 when
-// there is no glyph work buffer.
+/// Draws an item's icon into the glyph work buffer from its inventory code
+/// (item id in the low 9 bits, broken 0x200, equipped 0x400, count less one in
+/// the top 5 bits) with the layers asked for (ICON_ flags): the frame, the
+/// equipped, broken and artifact marks, and the count. Returns 256, or -1 when
+/// there is no glyph work buffer.
 s32 ItemIcon_Compose(u32 code, u32 layers) {
   s32 overlay;
   struct ItemDefinition *item;
@@ -162,8 +163,8 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
   return 256;
 }
 
-// Composes an inventory icon with the requested layers and loads it into
-// cacheSlot. The temporary glyph block is released after the upload.
+/// Composes an inventory icon with the requested layers and loads it into
+/// cacheSlot. The temporary glyph block is released after the upload.
 s32 UiIcon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
   GlyphTransfer *work;
 
@@ -174,7 +175,7 @@ s32 UiIcon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
   return 1;
 }
 
-// Builds one of the other icons and loads it into sprite tile slot slot.
+/// Builds one of the other icons and loads it into sprite tile slot slot.
 s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 cacheSlot) {
   GlyphTransfer *work;
 
@@ -186,7 +187,7 @@ s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 cacheSlot) {
 }
 extern const u8 *gRenderResource_PairSourceTable[];
 
-// Loads one of four small fixed images into sprite tile slot slot.
+/// Loads one of four small fixed images into sprite tile slot slot.
 s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
   /* FAKEMATCH: three more names of the one table keep each case's own literal
    * slot; with the one name in every case the switch folds away, differ 21 on
@@ -214,7 +215,7 @@ s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
   return 1;
 }
 
-// Draws an item's icon from its inventory code into the glyph work buffer.
+/// Draws an item's icon from its inventory code into the glyph work buffer.
 void Ui_PrepareTransferForItem(s32 code) {
   GlyphTransfer *glyph = gGlyphWork;
   struct ItemDefinition *item = Item_GetDirectFar(0x1ff & code);
@@ -229,8 +230,8 @@ void Ui_PrepareTransferForItem(s32 code) {
   UiIcon_Decode(glyph, 0);
 }
 
-// Builds the Psynergy icon of a battle action, as
-// UiIcon_BuildAbilityIconTiles.
+/// Builds the Psynergy icon of a battle action, as
+/// UiIcon_BuildAbilityIconTiles.
 void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                        s32 reuse) {
   UiIcon_BuildAbilityIconTiles(BattleActGet(action)->unk04[0], withBase, slot,
@@ -239,10 +240,10 @@ void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
 
 #define ROUTINE_BLOCK 49
 
-// Builds Psynergy icon glyph, over the icon frame when withBase is set, and
-// loads it into *cacheSlot (a free slot unless reuse is set).
-// Returns the tile in *tileOut.
-// The optional frame is decoded first and selects masked icon expansion.
+/// Builds Psynergy icon glyph, over the icon frame when withBase is set, and
+/// loads it into *cacheSlot (a free slot unless reuse is set).
+/// Returns the tile in *tileOut.
+/// The optional frame is decoded first and selects masked icon expansion.
 void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
                                   s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;
@@ -274,7 +275,7 @@ void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   Runtime_ReleaseHeapBlock(0x11);
 }
 
-// Draws one of the other icons into the glyph work buffer.
+/// Draws one of the other icons into the glyph work buffer.
 void Ui_PrepareTransferFromTableEntry(u32 iconIndex) {
   GlyphTransfer *glyph = gGlyphWork;
 
@@ -284,10 +285,10 @@ void Ui_PrepareTransferFromTableEntry(u32 iconIndex) {
   UiIcon_Decode(glyph, 0);
 }
 
-// Loads a 32x32 icon from the icon resource into sprite tile slot *slot (a
-// free slot unless reuse is set) and its colours into sprite palette palette.
-// Returns the tile in *tile.
-// This resource stores its palette before the encoded tile payload.
+/// Loads a 32x32 icon from the icon resource into sprite tile slot *slot (a
+/// free slot unless reuse is set) and its colours into sprite palette palette.
+/// Returns the tile in *tile.
+/// This resource stores its palette before the encoded tile payload.
 void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                                   s32 palette, s32 reuse) {
   GlyphTransfer *work;
@@ -314,13 +315,13 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
           REG_DMA3);
 }
 
-// Does nothing.
+/// Does nothing.
 void UiGlyph_ReservedNoOp(void) {}
 
-// Decodes a compressed icon into the glyph buffer and expands it to tiles,
-// opaque for the first layer or masked over what is there when overlay is set.
-// Release each copied decoder before loading the next routine into the same
-// slot.
+/// Decodes a compressed icon into the glyph buffer and expands it to tiles,
+/// opaque for the first layer or masked over what is there when overlay is set.
+/// Release each copied decoder before loading the next routine into the same
+/// slot.
 void UiIcon_Decode(GlyphTransfer *glyph, s32 outlined) {
   RamCode_LoadSlot(ROUTINE_BLOCK, Tile_Decompress4bpp,
                    Tile_Decompress4bppCodeSize);

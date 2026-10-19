@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// Titan Blade.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// Titan Blade.
 
 #include "../effect_internal.h"
 
@@ -23,14 +24,14 @@
 #define TITAN_BLADE_DRAWN_DUST 342 // dust moved and drawn
 #define TITAN_BLADE_SPARKS 340     // sparks after the dust
 
-// Abilities: Titan Blade (kind 61).
-//
-// A huge sword drops onto the first target amid charging flashes, dust and
-// sparks. Dust rises at the target's feet from frame 28 while a pillar of
-// fire scrolls over it; the sword drops in, holds, sinks and plunges after
-// frame 60. A ring of flashes bursts from frame 56, sparks fly from frame 60
-// as the battle shows the damage, and every target flashes and recoils on
-// frame 68. The canvas is wiped at frames 9 and 60.
+/// Abilities: Titan Blade (kind 61).
+///
+/// A huge sword drops onto the first target amid charging flashes, dust and
+/// sparks. Dust rises at the target's feet from frame 28 while a pillar of
+/// fire scrolls over it; the sword drops in, holds, sinks and plunges after
+/// frame 60. A ring of flashes bursts from frame 56, sparks fly from frame 60
+/// as the battle shows the damage, and every target flashes and recoils on
+/// frame 68. The canvas is wiped at frames 9 and 60.
 void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
   void **slots;
   void **slotCursor;

@@ -1,6 +1,7 @@
-// Part of menu.c, the menu object, compiled only through it.
-// The Psynergy menu: the screen events open, the member and Psynergy lists,
-// targets, and the L and R shortcuts.
+/// @file
+/// Part of menu.c, the menu object, compiled only through it.
+/// The Psynergy menu: the screen events open, the member and Psynergy lists,
+/// targets, and the L and R shortcuts.
 
 #include "../menu_internal.h"
 
@@ -33,11 +34,11 @@
 #define PSYNERGY_LIST_CURSOR_X 98
 #endif
 
-// The Psynergy menu an event opens (window command 1): the field menu's
-// Psynergy screen over the field, which stops meanwhile. When the player picks
-// Psynergy to use on the field, it is recorded in the event work's
-// psynergyRequest (owner << 10 | Psynergy) and 1 is returned; -1 when the
-// player backs out.
+/// The Psynergy menu an event opens (window command 1): the field menu's
+/// Psynergy screen over the field, which stops meanwhile. When the player picks
+/// Psynergy to use on the field, it is recorded in the event work's
+/// psynergyRequest (owner << 10 | Psynergy) and 1 is returned; -1 when the
+/// player backs out.
 s32 PsynergyMenu_Run(void) {
 #if TBS_PATCH_2
   void *saved = Runtime_BumpAllocateAlternatePool(PSYNERGY_PROMPT_TILES_SIZE);
@@ -99,7 +100,7 @@ s32 PsynergyMenu_Run(void) {
   return result;
 }
 
-// The steps of the Psynergy menu (Menu_ResolveSelectedAction).
+/// The steps of the Psynergy menu (Menu_ResolveSelectedAction).
 enum PsynergyMenuStep {
   PSYNERGY_STEP_OWNER,
   PSYNERGY_STEP_LIST,
@@ -108,12 +109,12 @@ enum PsynergyMenuStep {
   PSYNERGY_STEP_APPLY,
 };
 
-// Runs the Psynergy menu: choose a party member and one of their Psynergy,
-// then use it on a member (or the whole party), or, in the shortcut modes, set
-// it as the L or R shortcut. Returns 1 with the owner and Psynergy in the out
-// parameters when the chosen Psynergy works on the field, to be used once the
-// menu closes; -1 when the player backs out or presses Start; otherwise the
-// result of the last use.
+/// Runs the Psynergy menu: choose a party member and one of their Psynergy,
+/// then use it on a member (or the whole party), or, in the shortcut modes, set
+/// it as the L or R shortcut. Returns 1 with the owner and Psynergy in the out
+/// parameters when the chosen Psynergy works on the field, to be used once the
+/// menu closes; -1 when the player backs out or presses Start; otherwise the
+/// result of the last use.
 s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
   struct PsynergyMenuState *menu;
   s32 useResult;
@@ -302,9 +303,9 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
   return useResult;
 }
 
-// Says how the selected Psynergy is used from the menu: 0 on the field once the
-// menu closes (its effect has a field event), 2 on the whole party (range
-// 0xff), 1 on one chosen member when its target mode is 2, and 0 otherwise.
+/// Says how the selected Psynergy is used from the menu: 0 on the field once
+/// the menu closes (its effect has a field event), 2 on the whole party (range
+/// 0xff), 1 on one chosen member when its target mode is 2, and 0 otherwise.
 s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   struct BattleAct *action;
   s32 targetModeDifference;
@@ -327,9 +328,9 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   return classification;
 }
 
-// Lets the player choose a party member in pane partySlot (0 or 1), starting
-// from the one chosen last, with each member's Psynergy shown as the cursor
-// passes. Returns the chosen member's id, or -1 when the player backs out.
+/// Lets the player choose a party member in pane partySlot (0 or 1), starting
+/// from the one chosen last, with each member's Psynergy shown as the cursor
+/// passes. Returns the chosen member's id, or -1 when the player backs out.
 s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
   /* FAKEMATCH(temporary): the pane's tab, icon and owner reached through
    * byte offsets from the work held in scalars, which keeps partySlot in its
@@ -387,11 +388,11 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
   return result;
 }
 
-// The party member row of the Psynergy menu. Left and Right move between
-// members, showing each one's Psynergy, status and shortcuts; A chooses a
-// member who has Psynergy to use, L or R one who has field Psynergy to set as
-// that shortcut (menu mode 1 or 2), and B backs out. Returns the chosen
-// member's id, or -1.
+/// The party member row of the Psynergy menu. Left and Right move between
+/// members, showing each one's Psynergy, status and shortcuts; A chooses a
+/// member who has Psynergy to use, L or R one who has field Psynergy to set as
+/// that shortcut (menu mode 1 or 2), and B backs out. Returns the chosen
+/// member's id, or -1.
 s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
   struct PsynergyMenuState *menu;
   s32 selection;
@@ -500,8 +501,8 @@ s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
   return result;
 }
 
-// Shows member ownerId's Psynergy icons in the Psynergy window, eight to a
-// row, or "no Psynergy" when they have none.
+/// Shows member ownerId's Psynergy icons in the Psynergy window, eight to a
+/// row, or "no Psynergy" when they have none.
 void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId) {
   u16 *psynergies;
   struct PsynergyMenuState *menu;
@@ -520,14 +521,14 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId) {
   }
 }
 
-// Return 1, and do nothing; nothing calls them.
+/// Return 1, and do nothing; nothing calls them.
 UNUSED s32 PsynergyMenu_ReturnTrue(void) { return 1; }
 
 UNUSED void PsynergyMenu_NoOp(void) {}
 
-// Chooses the party member to use the selected Psynergy on. In mode 0 each
-// member's status shows as the cursor passes, with the Psynergy's description
-// once. Returns the chosen member's id, or -1 when the player backs out.
+/// Chooses the party member to use the selected Psynergy on. In mode 0 each
+/// member's status shows as the cursor passes, with the Psynergy's description
+/// once. Returns the chosen member's id, or -1 when the player backs out.
 s32 PsynergyMenu_SelectTarget(s32 targetMode) {
 
   struct PsynergyMenuState *menu;
@@ -605,12 +606,12 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
   return result;
 }
 
-// A Psynergy shortcut: its owner above bit 10, the Psynergy's id below.
+/// A Psynergy shortcut: its owner above bit 10, the Psynergy's id below.
 #define PSYNERGY_SHORTCUT_OWNER_SHIFT 10
 #define PSYNERGY_SHORTCUT_ID_MASK 0x3ff
 
-// Sets the L (shortcutIndex 0) or R (shortcutIndex 1) Psynergy shortcut:
-// ownerId << 10 | the Psynergy's id. Returns 1.
+/// Sets the L (shortcutIndex 0) or R (shortcutIndex 1) Psynergy shortcut:
+/// ownerId << 10 | the Psynergy's id. Returns 1.
 s32 PsynergyMenu_SetShortcut(s32 ownerId, s32 actionId, s32 shortcutIndex) {
   s32 id = actionId & OWNER_ACTION_ID_MASK;
   s32 code = (ownerId << PSYNERGY_SHORTCUT_OWNER_SHIFT) | id;
@@ -763,9 +764,9 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 owner) {
 }
 #endif
 
-// Sets up a Psynergy grid screen: the cursor window with the party's figures,
-// a 30 by 15 window below with a hidden grid cursor and a portrait, and 16
-// Psynergy icon sprites in two rows of eight from (96, 8), on an 8 by 2 grid.
+/// Sets up a Psynergy grid screen: the cursor window with the party's figures,
+/// a 30 by 15 window below with a hidden grid cursor and a portrait, and 16
+/// Psynergy icon sprites in two rows of eight from (96, 8), on an 8 by 2 grid.
 void PsynergyMenu_CreateEntryGrid(void) {
   struct UiWindow *window;
   struct PsynergyMenuState *menu;
@@ -813,7 +814,7 @@ void PsynergyMenu_CreateEntryGrid(void) {
   } while (index <= 15);
 }
 
-// Releases the party figures and closes the Psynergy grid screen's windows.
+/// Releases the party figures and closes the Psynergy grid screen's windows.
 void PsynergyMenu_CloseWindows(void) {
   struct PsynergyMenuState *menu;
 
@@ -824,8 +825,8 @@ void PsynergyMenu_CloseWindows(void) {
   UiWork_FinalizeFar((void *)menu->messageWindow, 1);
 }
 
-// Loads each listed Psynergy's icon into its icon sprite (32 entries) and hides
-// the icons of empty entries.
+/// Loads each listed Psynergy's icon into its icon sprite (32 entries) and
+/// hides the icons of empty entries.
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
   s32 remaining;
   struct RenderOutput **icons;
@@ -846,10 +847,10 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
   Menu_HideEmptyEntryIcons(psynergies);
 }
 
-// Lists unit's Psynergy into actions (32 entries, cleared first) and returns
-// how many there are. mode 1 lists only the Psynergy that work on the field
-// (those that can be shortcuts); mode 2 those with a field effect or usable
-// in the field; any other mode those first, then the rest.
+/// Lists unit's Psynergy into actions (32 entries, cleared first) and returns
+/// how many there are. mode 1 lists only the Psynergy that work on the field
+/// (those that can be shortcuts); mode 2 those with a field effect or usable
+/// in the field; any other mode those first, then the rest.
 s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
                                 s32 mode) {
   /* FAKEMATCH(dead): each entry cleared twice through the byte-offset
@@ -909,9 +910,9 @@ s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
   return actionCount;
 }
 
-// Fills result with the Psynergy list of the member in pane index: their unit,
-// how many Psynergy are listed, and the page and row of the one chosen last for
-// them (kept within the list), five to a page. Returns 1.
+/// Fills result with the Psynergy list of the member in pane index: their unit,
+/// how many Psynergy are listed, and the page and row of the one chosen last
+/// for them (kept within the list), five to a page. Returns 1.
 s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index) {
   s32 unitBits;
   struct PsynergyMenuState *menu = gMenuWork;
@@ -944,13 +945,13 @@ s32 PsynergyMenu_BuildPageResult(struct MenuResult *result, s32 index) {
   return 1;
 }
 
-// PsynergyMenuState.flags: the Psynergy list shows the shortcut help (Select
-// held).
+/// PsynergyMenuState.flags: the Psynergy list shows the shortcut help (Select
+/// held).
 #define PSYNERGY_MENU_SHORTCUT_HELP 2
 
-// Updates the Psynergy list for the row under the cursor: puts the Psynergy's
-// description in the info window, unless a kept message is there, and
-// highlights its row of the five. window and work are not used.
+/// Updates the Psynergy list for the row under the cursor: puts the Psynergy's
+/// description in the info window, unless a kept message is there, and
+/// highlights its row of the five. window and work are not used.
 s32 PsynergyMenu_DrawDetailPage(struct UiWindow *window, s32 *work,
                                 struct MenuResult *state) {
   struct PsynergyMenuState *menu;
@@ -1002,10 +1003,11 @@ s32 PsynergyMenu_DrawDetailPage(struct UiWindow *window, s32 *work,
   return 1;
 }
 
-// Draws one page of the Psynergy list into window: up to five names with their
-// icons and PP costs, Psynergy the member cannot afford in the no-HP colour
-// and one restricted here in the low-HP colour, the page numbers, and the help
-// line (how to set a shortcut while Select is held, else how to change member).
+/// Draws one page of the Psynergy list into window: up to five names with their
+/// icons and PP costs, Psynergy the member cannot afford in the no-HP colour
+/// and one restricted here in the low-HP colour, the page numbers, and the help
+/// line (how to set a shortcut while Select is held, else how to change
+/// member).
 s32 PsynergyMenu_DrawActionPage(struct UiWindow *window, s32 unused,
                                 const struct MenuResult *pageState) {
   u32 firstEntry;
@@ -1072,14 +1074,14 @@ s32 PsynergyMenu_DrawActionPage(struct UiWindow *window, s32 unused,
   return 1;
 }
 
-// The Psynergy list of the member in paneIndex, five a page. The cursor's
-// Psynergy is described in the info window and its icon animates; L and R
-// switch to the previous or next member who has Psynergy to list. In the use
-// mode (menu mode 0), A chooses Psynergy the member can use and afford;
-// holding Select shows the shortcut help, and L or R with Select set the
-// Psynergy as that shortcut. In the shortcut modes (1 and 2) only field
-// Psynergy are listed and A chooses one. Returns the chosen Psynergy, or -1
-// when the player backs out.
+/// The Psynergy list of the member in paneIndex, five a page. The cursor's
+/// Psynergy is described in the info window and its icon animates; L and R
+/// switch to the previous or next member who has Psynergy to list. In the use
+/// mode (menu mode 0), A chooses Psynergy the member can use and afford;
+/// holding Select shows the shortcut help, and L or R with Select set the
+/// Psynergy as that shortcut. In the shortcut modes (1 and 2) only field
+/// Psynergy are listed and A chooses one. Returns the chosen Psynergy, or -1
+/// when the player backs out.
 s32 PsynergyMenu_RunList(s32 paneIndex) {
   struct PsynergyMenuState *menu;
   struct BattleAct *ability;
@@ -1313,9 +1315,9 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
   return result;
 }
 
-// Returns 1 when actionEntry cannot be used from the
-// menu: it has no field effect and is not usable both in the field and in
-// battle.
+/// Returns 1 when actionEntry cannot be used from the
+/// menu: it has no field effect and is not usable both in the field and in
+/// battle.
 s32 PsynergyMenu_IsActionRestricted(s32 actionEntry) {
   // Mask the unsigned entry without overflowing a signed left shift.
   struct BattleAct *action = BattleActGet(((u32)actionEntry << 18) >> 18);

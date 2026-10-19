@@ -1,14 +1,15 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// The walls of Berserk, Spasm and Recovery.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// The walls of Berserk, Spasm and Recovery.
 
 #include "../effect_internal.h"
 
 // The canvas blitters, and the 48-frame wall effects.
 
-// Builds the two usual routines that draw onto the 128x128 canvas, both
-// clipped on both axes.
-// flip : nonzero draws mirrored.
-// out  : [0] keeps the higher colour index, [1] adds the colours (up to 63).
+/// Builds the two usual routines that draw onto the 128x128 canvas, both
+/// clipped on both axes.
+/// flip : nonzero draws mirrored.
+/// out  : [0] keeps the higher colour index, [1] adds the colours (up to 63).
 void BattleFx_FetchRectangleBlitters(s32 flip, BlitterPair out) {
   if (flip == 0) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
@@ -27,30 +28,30 @@ void BattleFx_FetchRectangleBlitters(s32 flip, BlitterPair out) {
   }
 }
 
-// Abilities: Berserk (kind 353).
-//
-// The wall rises wide and shakes the screen hard.
+/// Abilities: Berserk (kind 353).
+///
+/// The wall rises wide and shakes the screen hard.
 void BattleFx_RunBerserk(struct BattleEffectArgument *effect) {
   BattleFx_RunMirroredWall(effect, 1);
 }
-// Abilities: Spasm (kind 348).
-//
-// The wall rises with a long gentle shake and the recovery sound.
+/// Abilities: Spasm (kind 348).
+///
+/// The wall rises with a long gentle shake and the recovery sound.
 void BattleFx_RunSpasm(struct BattleEffectArgument *effect) {
   BattleFx_RunMirroredWall(effect, 0);
 }
-// Abilities: Recovery (kind 389).
-//
-// A wide wall of fire, without a shake.
+/// Abilities: Recovery (kind 389).
+///
+/// A wide wall of fire, without a shake.
 void BattleFx_RunRecovery(struct BattleEffectArgument *effect) {
   BattleFx_RunMirroredWall(effect, 2);
 }
-// Raises a symmetrical wall (the EarthWall images) at the first target's
-// feet for 48 frames; the target glows and the battle shows the result on
-// frame 24.
-// mode : 0 actual size, a gentle shake for 32 frames
-//        1 1.25 times as wide, a hard shake for 8 frames
-//        2 1.25 times as wide, no shake, in the Fireball colours
+/// Raises a symmetrical wall (the EarthWall images) at the first target's
+/// feet for 48 frames; the target glows and the battle shows the result on
+/// frame 24.
+/// mode : 0 actual size, a gentle shake for 32 frames
+///        1 1.25 times as wide, a hard shake for 8 frames
+///        2 1.25 times as wide, no shake, in the Fireball colours
 void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
   void **cursor;
   struct BattleEffectWork *work;

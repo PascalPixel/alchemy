@@ -1,14 +1,15 @@
-// Part of battle.c, the battle object, compiled only through it.
-// An action played: its targets, and how an attack, a cast, an item, a
-// summon or an escape is staged.
+/// @file
+/// Part of battle.c, the battle object, compiled only through it.
+/// An action played: its targets, and how an attack, a cast, an item, a
+/// summon or an escape is staged.
 
 #include "../battle_internal.h"
 
-// Plays one action of the round, after delay frames facing the party: an
-// enemy picks its ability now; the action is planned (its targets, hits
-// and damage) and shown the way its staging asks, then the turn's end
-// effects run and every unit returns to its spot. Returns 1 when the
-// party got away, 0 otherwise, and -1 when the actor is already down.
+/// Plays one action of the round, after delay frames facing the party: an
+/// enemy picks its ability now; the action is planned (its targets, hits
+/// and damage) and shown the way its staging asks, then the turn's end
+/// effects run and every unit returns to its spot. Returns 1 when the
+/// party got away, 0 otherwise, and -1 when the actor is already down.
 s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
                                       s32 delay) {
   struct BattlePresentationTransition *transition;
@@ -100,9 +101,9 @@ finish:
   return fled;
 }
 
-// Fills an effect command from a plan: its kind and strength,
-// the actor and the targets still standing (or every target, for an effect
-// that revives), at least the first.
+/// Fills an effect command from a plan: its kind and strength,
+/// the actor and the targets still standing (or every target, for an effect
+/// that revives), at least the first.
 s32 BattlePres_BuildTargetList(struct BattlePlan *plan,
                                struct BattleEffectArgument *effect) {
   // Callers ignore the result. As void, native English changes its return
@@ -142,10 +143,10 @@ s32 BattlePres_BuildTargetList(struct BattlePlan *plan,
   effect->range = 1;
 }
 
-// Plays a unit's attempt to run. The party gets away unless the enemies
-// struck first ("But there's no escape!"), each member able to move running
-// off in turn; an enemy gets away 7 times in 10 and leaves the battle.
-// Returns 1 when the party got away.
+/// Plays a unit's attempt to run. The party gets away unless the enemies
+/// struck first ("But there's no escape!"), each member able to move running
+/// off in turn; an enemy gets away 7 times in 10 and leaves the battle.
+/// Returns 1 when the party got away.
 s32 BattlePres_RunEscape(struct BattlePlan *plan) {
   struct BattlePresentationTransition *presentation =
       WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
@@ -210,12 +211,12 @@ s32 BattlePres_RunEscape(struct BattlePlan *plan) {
   return completed.value;
 }
 
-// Plays a summon or a full-screen Psynergy. The camera turns to the target
-// side (or to the actor's, for a staged scene), the actor glows in its
-// element and the other side fades out; then, unless the cast failed
-// ("blocked" or too little PP), the target side's units are readied alone
-// and the effect plays while the events run. Everyone fades back in.
-// mode : bit 0 hides the actor too (the summons)
+/// Plays a summon or a full-screen Psynergy. The camera turns to the target
+/// side (or to the actor's, for a staged scene), the actor glows in its
+/// element and the other side fades out; then, unless the cast failed
+/// ("blocked" or too little PP), the target side's units are readied alone
+/// and the effect plays while the events run. Everyone fades back in.
+/// mode : bit 0 hides the actor too (the summons)
 s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
   u16 units[14];
   struct BattlePresentationWork work;
@@ -363,9 +364,9 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
   return 0;
 }
 
-// Clears the highlights, then applies the action to each target in turn and
-// plays its events; with no target, only waits for the player.
-// plan : the action and its targets
+/// Clears the highlights, then applies the action to each target in turn and
+/// plays its events; with no target, only waits for the player.
+/// plan : the action and its targets
 s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused) {
   s32 targetIndex;
 
@@ -381,11 +382,11 @@ s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused) {
   WaitFrames(1);
 }
 
-// Plays an attack: the camera turns halfway to the attacker's view, the
-// attacker runs up to its first target over its swing's frames, and the
-// blow lands: a miss makes the target hop back ("nimbly dodges the
-// blow"); a hit plays its effect and the events, and a critical hit
-// zooms in on the pair with only those two shown. Both then return.
+/// Plays an attack: the camera turns halfway to the attacker's view, the
+/// attacker runs up to its first target over its swing's frames, and the
+/// blow lands: a miss makes the target hop back ("nimbly dodges the
+/// blow"); a hit plays its effect and the events, and a critical hit
+/// zooms in on the pair with only those two shown. Both then return.
 s32 BattlePres_RunAttack(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;
   struct MotionObject *object;
@@ -529,9 +530,9 @@ s32 BattlePres_RunAttack(struct BattlePlan *plan, s32 mode) {
   return 0;
 }
 
-// Unused. Plays a plain attack run: the attacker runs up to its first target
-// and the blow's effect and events play, or, with bit 1 of flags (a miss), the
-// target hops back; both then return.
+/// Unused. Plays a plain attack run: the attacker runs up to its first target
+/// and the blow's effect and events play, or, with bit 1 of flags (a miss), the
+/// target hops back; both then return.
 UNUSED s32 BattlePres_RunPlainAttack(struct BattlePlan *input, s32 flags) {
   struct BattlePresentationWork work;
   struct BattlePlan *savedInput;
@@ -601,15 +602,15 @@ UNUSED s32 BattlePres_RunPlainAttack(struct BattlePlan *input, s32 flags) {
   return 0;
 }
 
-// Inventory_RemoveFar's result when the last one left its slot, and the
-// slots after it moved up.
+/// Inventory_RemoveFar's result when the last one left its slot, and the
+/// slots after it moved up.
 #define ITEM_REMOVED_SLOT_GONE 2
 
-// Plays an item's use: the camera turns to the user's side, the user raises
-// the item and, for an item with an effect, the screen dims while it plays
-// with the events. Then the item is spent as its use type says; when its
-// slot empties, later item commands of the same member this round follow
-// their items to their new slots (or lose theirs, -1).
+/// Plays an item's use: the camera turns to the user's side, the user raises
+/// the item and, for an item with an effect, the screen dims while it plays
+/// with the events. Then the item is spent as its use type says; when its
+/// slot empties, later item commands of the same member this round follow
+/// their items to their new slots (or lose theirs, -1).
 s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
                        struct BattleActionRecord *selection) {
   struct BattlePresentationWork work;
@@ -718,8 +719,8 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
   return 0;
 }
 
-// Gives every sprite of an object palette value on its first entry (0 on
-// the others) and restarts each entry's frame.
+/// Gives every sprite of an object palette value on its first entry (0 on
+/// the others) and restarts each entry's frame.
 s32 BattleMotion_SetRecordChildValues(struct MotionObject *object,
                                       s32 palette) {
   s32 recordIndex = 0;
@@ -750,12 +751,12 @@ s32 BattleMotion_SetRecordChildValues(struct MotionObject *object,
   }
 }
 
-// Plays Psynergy, a Djinni or an enemy's cast. The camera turns toward
-// the targets from the caster's side, the caster raises its hand and glows
-// in its element (no glow for a Djinni); then the cast fails ("blocked" or
-// too little PP) or its effect plays with the events, and the targets
-// return to their spots.
-// mode : 1 a Djinni, 2 an enemy's cast, 0 any other
+/// Plays Psynergy, a Djinni or an enemy's cast. The camera turns toward
+/// the targets from the caster's side, the caster raises its hand and glows
+/// in its element (no glow for a Djinni); then the cast fails ("blocked" or
+/// too little PP) or its effect plays with the events, and the targets
+/// return to their spots.
+/// mode : 1 a Djinni, 2 an enemy's cast, 0 any other
 s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;
   struct BattlePresentationTransition *transition = gTransitionWork;
@@ -843,9 +844,9 @@ s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   return 0;
 }
 
-// Flashes unit id as it is hit: puts it in pose 5 and switches its sprites
-// between palette 7 and its own twice, two frames each, its status panel
-// highlighted.
+/// Flashes unit id as it is hit: puts it in pose 5 and switches its sprites
+/// between palette 7 and its own twice, two frames each, its status panel
+/// highlighted.
 void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
   u16 selection[2];
   u16 *selected;
@@ -876,8 +877,8 @@ void BattleMotion_FlashHit(s32 unitId, s32 unused0, s32 unused1) {
   PartyStatusDrawFar(gBattleWork->partyStatus);
 }
 
-// Takes unit id out of the party's or the enemies' list and out of this
-// round's actions, and frees its place in the enemy count.
+/// Takes unit id out of the party's or the enemies' list and out of this
+/// round's actions, and frees its place in the enemy count.
 void BattleActor_RemoveFromLists(s32 unitId) {
   struct BattleWork *battle;
   s32 partyIndex;
@@ -925,9 +926,9 @@ removed:
   }
 }
 
-// Shows a downed unit: a party member's sprite in animation 4, an enemy's in
-// 5; an enemy then leaves the lists after four frames and its sprite dissolves
-// a dot at a time.
+/// Shows a downed unit: a party member's sprite in animation 4, an enemy's in
+/// 5; an enemy then leaves the lists after four frames and its sprite dissolves
+/// a dot at a time.
 void BattleMotion_ShowDowned(s32 unitId) {
   void *records[4];
   struct BattleUnit *unit;

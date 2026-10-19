@@ -1,5 +1,6 @@
-// Part of battle_command.c, the menu object, compiled only through it.
-// The party status window.
+/// @file
+/// Part of battle_command.c, the menu object, compiled only through it.
+/// The party status window.
 
 #include "../battle_command_internal.h"
 
@@ -14,18 +15,18 @@
 #define PARTY_STATUS_COLUMN_WIDTH 6
 #define PARTY_STATUS_DJINN_WIDTH 5
 
-// The heap block the party status window's layout lives in.
+/// The heap block the party status window's layout lives in.
 #define PARTY_STATUS_BLOCK 16
 
-// The address of pixel row 7 - `up` of BG tile `tile` (4bpp, 32 bytes a tile,
-// 4 bytes a row): the status bars are drawn from a tile's bottom row up.
+/// The address of pixel row 7 - `up` of BG tile `tile` (4bpp, 32 bytes a tile,
+/// 4 bytes a row): the status bars are drawn from a tile's bottom row up.
 #define TILE_ROW_FROM_BOTTOM(tile, up)                                         \
   ((u32 *)((tile) * 32 - (up) * 4 + 0x0600001c))
 
-// Works out where the party status window goes for `flags`: one column per
-// party member (those in battle when a battle is on), plus the Djinn column,
-// right-aligned on the 30-tile screen row at the top. It is four tiles high
-// outside battle and three in battle, plus one with the PP row.
+/// Works out where the party status window goes for `flags`: one column per
+/// party member (those in battle when a battle is on), plus the Djinn column,
+/// right-aligned on the 30-tile screen row at the top. It is four tiles high
+/// outside battle and three in battle, plus one with the PP row.
 void UiWindow_BuildLayoutBounds(s32 flags) {
   // UB: slot[-1] steps before the single party-status work slot. Reading
   // the actual owners grows the EN function from 0x68 to 0x6c bytes.
@@ -68,8 +69,8 @@ void UiWindow_BuildLayoutBounds(s32 flags) {
   layout->flags = flags;
 }
 
-// Opens the party status window with `flags` (see PARTY_STATUS_*) in a new
-// heap block and draws it. The UI is held busy while it is drawn.
+/// Opens the party status window with `flags` (see PARTY_STATUS_*) in a new
+/// heap block and draws it. The UI is held busy while it is drawn.
 void UiWindow_CreateWithLayoutBounds(s32 flags) {
   s32 zero;
   struct PartyStatusWindow *layout;
@@ -86,11 +87,11 @@ void UiWindow_CreateWithLayoutBounds(s32 flags) {
   *busy = zero;
 }
 
-// Draws the vertical lines between the members' columns of the party status
-// `window`, with their top and bottom joints, at the offsets listed in
-// gUiWindow_PartyColumnOffsets (shifted right past the Djinn column, whose own
-// line comes first in the list). In battle it also draws the window's bottom
-// edge.
+/// Draws the vertical lines between the members' columns of the party status
+/// `window`, with their top and bottom joints, at the offsets listed in
+/// gUiWindow_PartyColumnOffsets (shifted right past the Djinn column, whose own
+/// line comes first in the list). In battle it also draws the window's bottom
+/// edge.
 void UiWindow_DrawColumnBorders(struct UiWindow *window, u32 flags) {
   struct UiRenderWork *work = UI_WORK;
   s32 first = 1;
@@ -213,11 +214,11 @@ s32 UiWindow_DrawStatusBarTiles(struct UiWindow *window, s32 x, s32 y,
   }
 }
 
-// Draws the party status window with `flags` (see PARTY_STATUS_*): each
-// member's name, HP and optionally PP with their bars, and in battle the
-// standby Djinn of each element. The HP is drawn in text colour 2 at zero and
-// colour 4 at a quarter or less. When the flags change, the window is erased
-// and laid out again first.
+/// Draws the party status window with `flags` (see PARTY_STATUS_*): each
+/// member's name, HP and optionally PP with their bars, and in battle the
+/// standby Djinn of each element. The HP is drawn in text colour 2 at zero and
+/// colour 4 at a quarter or less. When the flags change, the window is erased
+/// and laid out again first.
 void PartyStatusDraw(s32 flags) {
   // UB: the negative indices leave the single party-status work slot.
   // Named owners grow the EN function from 0x3d4 to 0x3dc bytes. Keep the
@@ -358,17 +359,17 @@ void PartyStatusDraw(s32 flags) {
   work->menuBusy = 0;
 }
 
-// Closes the party status window and frees its heap block.
+/// Closes the party status window and frees its heap block.
 void PartyStatus_Close(void) {
   UiWork_Finalize((struct UiWindow *)**(s32 **)(u32)&gWindowWork[1], 1);
   Runtime_ReleaseHeapBlock(PARTY_STATUS_BLOCK);
 }
 
-// Sets (`set` 1) or clears (0) bit 12 of the tilemap entries of the
-// `width` x `height` tile rectangle at (x, y) inside `window`, clipped to the
-// screen: bit 12 is the lowest bit of the entry's palette number, so this
-// switches the rectangle between two palettes. The clip uses 29 for the
-// bottom edge test and 20 for the clipped height.
+/// Sets (`set` 1) or clears (0) bit 12 of the tilemap entries of the
+/// `width` x `height` tile rectangle at (x, y) inside `window`, clipped to the
+/// screen: bit 12 is the lowest bit of the entry's palette number, so this
+/// switches the rectangle between two palettes. The clip uses 29 for the
+/// bottom edge test and 20 for the clipped height.
 void UiWindow_SetTileAttributeBitRect(const struct UiWindow *window, s32 x,
                                       s32 y, s32 width, s32 height, u32 set) {
   struct UiRenderWork *work = UI_WORK;

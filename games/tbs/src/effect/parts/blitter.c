@@ -1,5 +1,6 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// The blitter builder, BattleFx_BuildBlitter.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// The blitter builder, BattleFx_BuildBlitter.
 
 #include "../effect_internal.h"
 
@@ -58,9 +59,9 @@
 #define BRANCH_FIELD(site, target)                                             \
   ((((u32)(target) - (u32)(site) - 8) >> 2) & 0x00FFFFFF)
 
-// The words of a partial run, one pixel at a time: the mode's one-pixel
-// fragment, read forwards or, mirrored across, backwards. Each walk writes a
-// leading and a trailing run.
+/// The words of a partial run, one pixel at a time: the mode's one-pixel
+/// fragment, read forwards or, mirrored across, backwards. Each walk writes a
+/// leading and a trailing run.
 #define BLITTER_PARTIAL_RUN(mode, flags)                                       \
   switch (mode) {                                                              \
   default:                                                                     \
@@ -94,12 +95,12 @@
     break;                                                                     \
   }
 
-// The template walk itself, written once. BattleFx_BuildBlitter expands it
-// twice under two definitions of PUT, COPY, COPY_FROM, COPY_TWICE,
-// PUT_BRANCH, MARK and PATCH: first to count the words, then to write them.
-// It uses the caller's templateWords, flags, mode, widthShift, heightShift,
-// and the branch sites emptyRowsBranch, emptyColumnsBranch, rowLoop,
-// skipBranch, partialRun and fullCellLoop.
+/// The template walk itself, written once. BattleFx_BuildBlitter expands it
+/// twice under two definitions of PUT, COPY, COPY_FROM, COPY_TWICE,
+/// PUT_BRANCH, MARK and PATCH: first to count the words, then to write them.
+/// It uses the caller's templateWords, flags, mode, widthShift, heightShift,
+/// and the branch sites emptyRowsBranch, emptyColumnsBranch, rowLoop,
+/// skipBranch, partialRun and fullCellLoop.
 #define BLITTER_WALK()                                                         \
   COPY(3);                                                                     \
   if (mode == COMPOSITE_ADDITIVE) {                                            \
@@ -301,11 +302,11 @@
   PUT(*templateWords++);                                                       \
   PUT(*templateWords++)
 
-// Installs a canvas blitter in heap slot `slot`. widthShift and heightShift
-// are the cell's dimensions as powers of two; flags select clipping and
-// mirroring, and mode how source pixels combine with the destination.
-// Returns nonzero when the walk ended exactly at gBattleFx_MoteCells,
-// the expected end of the template.
+/// Installs a canvas blitter in heap slot `slot`. widthShift and heightShift
+/// are the cell's dimensions as powers of two; flags select clipping and
+/// mirroring, and mode how source pixels combine with the destination.
+/// Returns nonzero when the walk ended exactly at gBattleFx_MoteCells,
+/// the expected end of the template.
 s32 BattleFx_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                           u32 mode) {
   const u32 *templateWords;

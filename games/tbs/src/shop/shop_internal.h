@@ -1,10 +1,11 @@
 #ifndef ALCHEMY_SHOP_INTERNAL_H
 #define ALCHEMY_SHOP_INTERNAL_H
 
-// What every part of the shop object shares: its includes, the shop actions
-// and sanctum services, and the values that differ by edition. shop.c
-// includes it before the parts, and each part includes it too, so that a
-// part read on its own still resolves.
+/// @file
+/// What every part of the shop object shares: its includes, the shop actions
+/// and sanctum services, and the values that differ by edition. shop.c
+/// includes it before the parts, and each part includes it too, so that a
+/// part read on its own still resolves.
 
 #include "unit/shop/shop.h"
 #include "unit/runtime/runtime.h"
@@ -51,7 +52,7 @@
 #include "heap_state.h"
 #include "flags.h"
 
-// English menu entries 48..51 establish the four shop actions.
+/// English menu entries 48..51 establish the four shop actions.
 enum ShopAction {
   SHOP_ACTION_BUY,
   SHOP_ACTION_SELL,
@@ -59,7 +60,7 @@ enum ShopAction {
   SHOP_ACTION_REPAIR
 };
 
-// These service kinds select the existing condition, fee and cure branches.
+/// These service kinds select the existing condition, fee and cure branches.
 enum SanctumService {
   SANCTUM_SERVICE_REVIVE,
   SANCTUM_SERVICE_CURE_POISON,

@@ -1,12 +1,13 @@
-// Part of effect.c, the battle effect object, compiled only through it.
-// The Ramses summon.
+/// @file
+/// Part of effect.c, the battle effect object, compiled only through it.
+/// The Ramses summon.
 
 #include "../effect_internal.h"
 
-// Ramses' slots: objects 0 to 6 are the formation, 7 and 8 the orb and 9 to
-// 14 the rocks. work->particles 0 to 5 move the rocks (variant counts their
-// bounces), 6 to 29 are the orb's puffs (eight kept per drop, four thrown)
-// and 30 to 41 the rocks' puffs, two per rock. PARTICLES holds the sparks.
+/// Ramses' slots: objects 0 to 6 are the formation, 7 and 8 the orb and 9 to
+/// 14 the rocks. work->particles 0 to 5 move the rocks (variant counts their
+/// bounces), 6 to 29 are the orb's puffs (eight kept per drop, four thrown)
+/// and 30 to 41 the rocks' puffs, two per rock. PARTICLES holds the sparks.
 #define RAMSES_FRAMES 320
 #define RAMSES_STRIKE_FRAME 260   // the orb's burst strikes the targets
 #define RAMSES_ROCKS 6            // rocks that fall and bounce
@@ -14,22 +15,22 @@
 #define RAMSES_FIRST_ROCK_PUFF 30 // the first rock puff in work->particles
 #define RAMSES_SPARKS 512         // sparks of the orb's burst
 
-// Abilities: Ramses (scene kind 1).
-//
-// Over the desert backdrop a formation stands while an orb circles above it,
-// drops three times throwing puffs, and flies off; RAMSES_ROCKS rocks fall
-// and bounce, and the orb's flight ends in a burst of RAMSES_SPARKS sparks
-// from PARTICLES. Up to RAMSES_FRAMES frames; A or B ends it early.
-//
-//   0 to 90     the orb circles above the formation
-//   91 to 196   it drops three times, 40 frames apart, throwing puffs, and
-//               rises again; the screen shakes over frames 96 to 251
-//   244 to 275  it flies off to the left, speeding up
-//   260         the targets are struck and the sparks burst out
-//
-// After frame 96 the rocks fall and bounce. Within a frame the order of the
-// steps matters: later steps draw over earlier ones, and several of them
-// consume random numbers.
+/// Abilities: Ramses (scene kind 1).
+///
+/// Over the desert backdrop a formation stands while an orb circles above it,
+/// drops three times throwing puffs, and flies off; RAMSES_ROCKS rocks fall
+/// and bounce, and the orb's flight ends in a burst of RAMSES_SPARKS sparks
+/// from PARTICLES. Up to RAMSES_FRAMES frames; A or B ends it early.
+///
+///   0 to 90     the orb circles above the formation
+///   91 to 196   it drops three times, 40 frames apart, throwing puffs, and
+///               rises again; the screen shakes over frames 96 to 251
+///   244 to 275  it flies off to the left, speeding up
+///   260         the targets are struck and the sparks burst out
+///
+/// After frame 96 the rocks fall and bounce. Within a frame the order of the
+/// steps matters: later steps draw over earlier ones, and several of them
+/// consume random numbers.
 void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   // Every object of the scene takes this scale.
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};

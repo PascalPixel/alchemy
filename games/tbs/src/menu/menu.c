@@ -1,13 +1,14 @@
-// The menu object: the field menu's Psynergy, Djinn, Item and Status
-// screens, the member chooser and item picker that events open, and the
-// pieces they share. menu_internal.h holds what the parts share (includes,
-// macros and types); the code is in the files under menu/, included here in
-// the order it has in the ROM. Camelot's own files are not recoverable: the
-// ROM shows one object, and these parts are ours, cut where one screen ends
-// and the next begins.
-//
-// README.md in this folder gives the words, prefixes and spellings the parts
-// use, and how to find a screen's code.
+/// @file
+/// The menu object: the field menu's Psynergy, Djinn, Item and Status
+/// screens, the member chooser and item picker that events open, and the
+/// pieces they share. menu_internal.h holds what the parts share (includes,
+/// macros and types); the code is in the files under menu/, included here in
+/// the order it has in the ROM. Camelot's own files are not recoverable: the
+/// ROM shows one object, and these parts are ours, cut where one screen ends
+/// and the next begins.
+///
+/// README.md in this folder gives the words, prefixes and spellings the parts
+/// use, and how to find a screen's code.
 
 #include "menu_internal.h"
 

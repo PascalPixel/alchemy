@@ -1,9 +1,10 @@
-// Part of shop.c, the shop object, compiled only through it.
-// Running a shop, its cursor work, and the message helpers every counter uses.
+/// @file
+/// Part of shop.c, the shop object, compiled only through it.
+/// Running a shop, its cursor work, and the message helpers every counter uses.
 
 #include "../shop_internal.h"
 
-// Lists the current shop's artifacts whose shared stock counters are nonzero.
+/// Lists the current shop's artifacts whose shared stock counters are nonzero.
 s32 Shop_ListAvailableArtifacts(void) {
   struct ShopRuntime *shop;
   s16 *stockItems;
@@ -30,13 +31,13 @@ s32 Shop_ListAvailableArtifacts(void) {
   return count;
 }
 
-// Advances the cursor in the shared menu state once per scheduled update.
+/// Advances the cursor in the shared menu state once per scheduled update.
 void Shop_StepCursor(void) {
   ShopCursor_Advance(&((struct ShopRuntime *)gMenuWork)->cursor);
 }
 
-// Allocates the shared menu state, lists the party, loads six cursor icons and
-// starts its task.
+/// Allocates the shared menu state, lists the party, loads six cursor icons and
+/// starts its task.
 void Shop_InitializeCursorWork(void) {
   struct ShopRuntime *shop;
   s32 resourceSlot;
@@ -67,8 +68,8 @@ void Shop_InitializeCursorWork(void) {
   Scheduler_AddOrUpdateCallback(Shop_StepCursor, 0xc80);
 }
 
-// Stops the shared cursor task and releases the shop, sanctum or inn menu
-// resources.
+/// Stops the shared cursor task and releases the shop, sanctum or inn menu
+/// resources.
 void Shop_ReleaseCursorWork(void) {
   struct ShopRuntime *state;
 
@@ -84,8 +85,8 @@ void Shop_ReleaseCursorWork(void) {
   Runtime_ReleaseHeapBlock(HEAP_SLOT_MENU);
 }
 
-// Runs the shop's buy, sell, artifacts and repair menu with the selected
-// shopkeeper.
+/// Runs the shop's buy, sell, artifacts and repair menu with the selected
+/// shopkeeper.
 s32 Shop_Run(s32 stockRow, s32 keeperId) {
   struct ShopRuntime *shop;
   struct RenderOutput *anchor;
@@ -159,8 +160,8 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
 #define SHOP_DEBUG_STOCK_ROW 2
 #endif
 
-// Sets up the original debug shop scenario with money, equipment and party
-// ailments.
+/// Sets up the original debug shop scenario with money, equipment and party
+/// ailments.
 s32 Battle_ApplyPresetItemsAndFlags(s32 unused) {
   gGameState.coins = 0x30d40;
   gGameState.shopGifts = 0x1c;
@@ -174,7 +175,7 @@ s32 Battle_ApplyPresetItemsAndFlags(s32 unused) {
   return 0;
 }
 
-// Waits one frame at a time until the audio command completes.
+/// Waits one frame at a time until the audio command completes.
 void AudioCommand_WaitForStateByteClear(void) {
   while (AudioCommand_GetStateByteFar() != 0) {
     WaitFrames(1);
@@ -186,10 +187,10 @@ struct SelectorRecord {
   u8 values[21];
 };
 
-// Resolves shop dialogue and waits for its window to finish, including the
-// final frame.
-// A shared message-resolution inline added four bytes to each dialogue caller
-// in the English native build; both callers retain their direct resolution.
+/// Resolves shop dialogue and waits for its window to finish, including the
+/// final frame.
+/// A shared message-resolution inline added four bytes to each dialogue caller
+/// in the English native build; both callers retain their direct resolution.
 void UiMessage_ShowAndWait(s32 messageId) {
   struct ShopRuntime *shop = gMenuWork;
   s32 portraitResource = BattleFx_GetResourceIdFar(shop->keeperResource);
@@ -211,8 +212,8 @@ void UiMessage_ShowAndWait(s32 messageId) {
   WaitFrames(1);
 }
 
-// Resolves shop dialogue, hides the cursor while it is shown and restores the
-// saved cursor mode.
+/// Resolves shop dialogue, hides the cursor while it is shown and restores the
+/// saved cursor mode.
 void UiMessage_ShowAndRestoreState(s32 messageId) {
   s32 portraitResource;
   s32 resolvedMessage;
@@ -249,8 +250,8 @@ void UiMessage_ShowAndRestoreState(s32 messageId) {
   shop->cursor.anchor->active = savedCursorMode;
 }
 
-// Prepares the localized confirmation menu and restores the cursor's saved
-// mode.
+/// Prepares the localized confirmation menu and restores the cursor's saved
+/// mode.
 s32 UiMessage_ShowChoice(s32 choice) {
   struct RenderOutput **cursorSlot =
       &((struct ShopRuntime *)gMenuWork)->cursor.anchor;
@@ -261,8 +262,8 @@ s32 UiMessage_ShowChoice(s32 choice) {
   return choice;
 }
 
-// Runs the sanctum-position confirmation menu and restores the cursor's saved
-// mode.
+/// Runs the sanctum-position confirmation menu and restores the cursor's saved
+/// mode.
 s32 UiMessage_ShowChoiceVariant(s32 choice) {
   struct RenderOutput **cursorSlot =
       &((struct ShopRuntime *)gMenuWork)->cursor.anchor;
@@ -273,7 +274,7 @@ s32 UiMessage_ShowChoiceVariant(s32 choice) {
   return choice;
 }
 
-// Unused original list walker: follows the requested number of next links.
+/// Unused original list walker: follows the requested number of next links.
 UNUSED struct NodeChainNode *
 NodeChain_GetNodeAtIndex(struct NodeChainState *state) {
   struct NodeChainNode *node = state->node;

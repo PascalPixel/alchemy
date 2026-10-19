@@ -455,7 +455,7 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
     Engine_ActorJump(WITNESS, 4, 0);
     break;
   case 480:
-    Engine_ActorSetAnimation(WITNESS, 4);
+    Engine_ActorSetAnimation(WITNESS, ANIM_SHAKE_HEAD);
     break;
   }
   if (gGameState.pendingDjinnEvent == 0)
@@ -471,7 +471,7 @@ static void Event_WitnessCheersForgeCaught(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
   Engine_EventSetMessage(MsgGomaGotWowThatsPrettyImpressive);
   Event_ShowMessage(WITNESS, 0);
-  Engine_ActorSetAnimationAndWait(WITNESS, 3);
+  Engine_ActorSetAnimationAndWait(WITNESS, ANIM_NOD);
   Engine_EventWait(30);
   Object_GetById(EAST_PILLAR)->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
   Actor_SetSpeed(WITNESS, PIXELS(2), PIXELS(1));

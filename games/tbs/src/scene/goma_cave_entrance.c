@@ -162,8 +162,8 @@ static void Event_PushWestPillar(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 8);
   Engine_EventWait(20);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x3333, 0x1999);
-  Actor_SetSpeed(WEST_PILLAR, 0x3333, 0x1999);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
+  Actor_SetSpeed(WEST_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
   Event_PlayCue(185);
   // 16 pixels east from trigger 5, west from trigger 6.
   offsetX = (11 - (work->touchedTrigger << 1)) << 4;
@@ -263,14 +263,14 @@ static void Event_IvanRejoins(void) {
   Engine_EventBegin();
   Engine_EventWait(30);
   Engine_EventSetMessage(MsgGomaNoUsePsynergy);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
-  Actor_SetSpeed(GARET, 0xcccc, 0x6666);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+  Actor_SetSpeed(GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetPosition(GARET, leader->x.fixed, leader->z.fixed);
   }
-  Actor_WalkToAndWait(GARET, 0x108, 168);
+  Actor_WalkToAndWait(GARET, 264, 168);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 20);
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
@@ -291,9 +291,9 @@ static void Event_IvanRejoins(void) {
   } else {
     // Ivan comes up from the south: "You want to move the stump, right?"
     Actor_SetPosition(IVAN, PIXELS(360), PIXELS(248));
-    Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
-    Actor_WalkToAndWait(IVAN, 0x110, 248);
-    Actor_WalkToAndWait(IVAN, 0x110, 208);
+    Actor_SetSpeed(IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+    Actor_WalkToAndWait(IVAN, 272, 248);
+    Actor_WalkToAndWait(IVAN, 272, 208);
     Actor_FaceDirection(IVAN, FACING_NORTHWEST, 20);
     Engine_ActorRunRepeatedMotion(IVAN, 2);
     Engine_EventWait(20);
@@ -304,7 +304,7 @@ static void Event_IvanRejoins(void) {
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 60);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
-    Actor_WalkToAndWait(IVAN, 0x108, 200);
+    Actor_WalkToAndWait(IVAN, 264, 200);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 248, 168);
     Actor_WalkToAndWait(IVAN, 248, 184);
     Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
@@ -356,7 +356,7 @@ static void Event_IvanRejoins(void) {
     Engine_ActorJump(GARET, 2, 0);
     Engine_EventWait(20);
     GomaCaveEntrance_SayThenWait(GARET, 20);
-    Actor_WalkToAndWait(IVAN, 0x108, 184);
+    Actor_WalkToAndWait(IVAN, 264, 184);
     Engine_EventWait(10);
     Actor_FaceActor(IVAN, GARET, 0);
     Actor_FaceActor(GARET, IVAN, 0);
@@ -446,8 +446,8 @@ static void Event_IvanRejoins(void) {
     Engine_ActorSetAnimation(GARET, ANIM_NOD);
     Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
     Engine_EventWait(50);
-    Actor_SetSpeed(GARET, 0xcccc, 0x6666);
-    Actor_SetSpeed(IVAN, 0xcccc, 0x6666);
+    Actor_SetSpeed(GARET, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
+    Actor_SetSpeed(IVAN, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
     Actor_WalkTo(GARET, 248, 168);
     Actor_WalkToAndWait(IVAN, 248, 168);
     Actor_SetPosition(IVAN, 0, 0);
@@ -531,7 +531,7 @@ static void GomaCaveEntrance_LeapStump(s32 id) {
     actor->hover = 0x80000000;
   }
   actor->callback = (s32)GomaCaveEntrance_SpinStump;
-  Actor_SetSpeed(id, 0x30000, 0x18000);
+  Actor_SetSpeed(id, PIXELS(3), 3 * PIXELS(1) / 2);
   Engine_ActorSetDestination(id, 160, 192);
   actor->accel = 0xcccc;
   actor->layer = 3;

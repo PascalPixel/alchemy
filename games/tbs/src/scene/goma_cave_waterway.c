@@ -163,7 +163,7 @@ static void GomaCaveWaterway_LeapStump(s32 no) {
     work->fields.field38 = 0x80000000;
   }
   work->fields.callback = (u32)GomaCaveWaterway_SpinStump;
-  Actor_SetSpeed(no, 0x30000, 0x18000);
+  Actor_SetSpeed(no, PIXELS(3), 3 * PIXELS(1) / 2);
   Actor_SetDestination(no, 376, 288);
   work->fields.velocityY = 0xcccc;
   work->fields.mode = 3;

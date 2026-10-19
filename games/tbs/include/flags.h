@@ -97,4 +97,17 @@
 #define FLAG_SCENE_TEMP_50                                                     \
   0x250 // Vault interiors: the leader is beside the Bone
 
+// Venus Lighthouse aerie
+// Set where Retreat does nothing (items.c skips the Retreat item's move).
+#define FLAG_NO_RETREAT 0x144
+// The next scene keeps the music that is playing (scene.c clears it).
+#define FLAG_KEEP_MUSIC 0x11a
+// Plus the party member (0 to 3) who carried the Shaman's Rod when it was
+// handed over before the aerie's first battle; a defeat gives it back.
+#define FLAG_SHAMANS_ROD_OWNER 0x345
+#define FLAG_SCENE_TEMP_34 0x234
+#define FLAG_SCENE_TEMP_35 0x235
+#define FLAG_SCENE_TEMP_36 0x236
+#define FLAG_SCENE_TEMP_37 0x237
+
 #endif

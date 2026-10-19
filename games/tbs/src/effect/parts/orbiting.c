@@ -12,7 +12,7 @@
 //   scatter around each flare; six particle slots per target.
 
 #define SWIRLING_STARS_FRAMES 160
-#define SWIRLING_STARS_COUNT 64 // stars that swirl
+#define SWIRLING_STARS_COUNT 64 ///< stars that swirl
 
 /// Swirling stars: 64 stars scattered around a point 80 pixels up spin
 /// about it, each on its own axis, appearing four a frame; 30 frames after

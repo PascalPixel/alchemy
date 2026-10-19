@@ -125,8 +125,8 @@ enum StatusPanelKind {
 #endif
 
 // Text colours of the status panel's numbers.
-#define TEXT_COLOR_LOW_HP 4 // HP under a quarter of the maximum
-#define TEXT_COLOR_NO_HP 2  // HP 0
+#define TEXT_COLOR_LOW_HP 4 ///< HP under a quarter of the maximum
+#define TEXT_COLOR_NO_HP 2  ///< HP 0
 #define TEXT_COLOR_NORMAL 15
 
 /// RenderOutput.active as the menu sets it: shown, or hidden but kept.

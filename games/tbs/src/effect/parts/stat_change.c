@@ -58,9 +58,9 @@ enum StatBoostSheet {
   STAT_BOOST_DJINNI = 0x65c0   ///< the 40x40 djinni
 };
 
-#define STAT_BOOST_SCATTERED 512 // flares scattered at the start
-#define STAT_BOOST_DRAWN 32      // flares drawn for each target
-#define STAT_BOOST_SLOTS 64      // particles reserved for each target
+#define STAT_BOOST_SCATTERED 512 ///< flares scattered at the start
+#define STAT_BOOST_DRAWN 32      ///< flares drawn for each target
+#define STAT_BOOST_SLOTS 64      ///< particles reserved for each target
 
 /// Flares of light swirl in to the centre of each target, one target every
 /// 8 frames, burst, and the mode's picture plays. Target n's flares appear
@@ -421,9 +421,9 @@ BattleFx_RunStatReductionMode3(struct BattleEffectArgument *effect) {
 /// The shard picture in the sheet, followed by seven copies of it, each
 /// with its colour levels capped 7 lower than the one before.
 #define STAT_REDUCTION_SHARD_CELLS 0x2580
-#define STAT_REDUCTION_SHARD_BYTES 696 // bytes in each copy
-#define STAT_REDUCTION_SHARDS 24       // shards drawn for each target
-#define STAT_REDUCTION_SLOTS 32        // particles reserved for each target
+#define STAT_REDUCTION_SHARD_BYTES 696 ///< bytes in each copy
+#define STAT_REDUCTION_SHARDS 24       ///< shards drawn for each target
+#define STAT_REDUCTION_SLOTS 32        ///< particles reserved for each target
 
 /// Stat cuts: a dagger (mode 0) or a shield (other modes) appears over each
 /// target, 4 frames apart, and then breaks into 24 shards that fly off and

@@ -51,7 +51,7 @@ void BattleFx_UpdateItemBreakFragment(union FieldObject *fieldObject) {
   BattleFx_InitializeFallingFragment(fragment);
 }
 
-#define MOVE_CELL_MASK 0xfff00000 // a 16-pixel tile
+#define MOVE_CELL_MASK 0xfff00000 ///< a 16-pixel tile
 
 /// Abilities: Move (field kind 1), cast on a target.
 ///

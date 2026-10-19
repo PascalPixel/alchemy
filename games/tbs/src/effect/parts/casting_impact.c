@@ -194,10 +194,12 @@ enum CastingImpact {
   CASTING_IMPACT_IMPACT_SEVERE_BLOW,    ///< hands off
 };
 
-#define CASTING_IMPACT_ORB_CELLS 0x5100 // the impact orb, packed at half width
-#define CASTING_IMPACT_DJINNI_CELLS 0x3c56 // the Djinni pictures, in PARTICLES
-#define CASTING_IMPACT_GATHER_FRAMES 32    // frames the sparks gather
-#define CASTING_IMPACT_SPARKS 64           // sparks in work->particles
+/// the impact orb, packed at half width
+#define CASTING_IMPACT_ORB_CELLS 0x5100
+/// the Djinni pictures, in PARTICLES
+#define CASTING_IMPACT_DJINNI_CELLS 0x3c56
+#define CASTING_IMPACT_GATHER_FRAMES 32 ///< frames the sparks gather
+#define CASTING_IMPACT_SPARKS 64        ///< sparks in work->particles
 /// The impact pictures' particles, in Ram_MapCellBuffer after the Djinni.
 #define CASTING_IMPACT_IMPACT_PARTICLES                                        \
   ((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))

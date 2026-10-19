@@ -707,8 +707,8 @@ void Map_PlayMetatileCopySequence(u16 *sequence, s32 destinationX,
 // Map: copying rectangles of cells.
 
 #define MAP_CELLS ((u32 *)gMapCellBuffer)
-#define MAP_CELL_TILE_MASK 0x00000fff      // the block (metatile) number
-#define MAP_CELL_ATTRIBUTE_MASK 0xfffff000 // the cell's attributes
+#define MAP_CELL_TILE_MASK 0x00000fff      ///< the block (metatile) number
+#define MAP_CELL_ATTRIBUTE_MASK 0xfffff000 ///< the cell's attributes
 
 /// Copies a rectangle of cells (16x16 pixels each) as they are, from
 /// (srcX, srcY) to (dstX, dstY), width by height cells. Where a copied cell

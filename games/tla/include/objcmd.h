@@ -11,37 +11,37 @@
 
 #include "types.h"
 
-#define SC_LABEL(n) (s32)(0x80000000 | (n) << 16) // a jump target
-#define SC_TO(n) (s32)(0xc0000000 | (n) << 16)    // jump to label n
-#define SC_TOP 0                                  // jump to the first word
+#define SC_LABEL(n) (s32)(0x80000000 | (n) << 16) ///< a jump target
+#define SC_TO(n) (s32)(0xc0000000 | (n) << 16)    ///< jump to label n
+#define SC_TOP 0                                  ///< jump to the first word
 #define SC_FOREVER 0xffff
 
-#define SC_WAIT(n) 0x00, (n)                // wait n frames
-#define SC_SYNC 0x01                        // wait to arrive
-#define SC_POS(x, y, z) 0x02, (x), (y), (z) // place at a position
+#define SC_WAIT(n) 0x00, (n)                ///< wait n frames
+#define SC_SYNC 0x01                        ///< wait to arrive
+#define SC_POS(x, y, z) 0x02, (x), (y), (z) ///< place at a position
 #define SC_CMD_03 0x03
-#define SC_MOVE(x, y, z) 0x04, (x), (y), (z)    // move to a target
-#define SC_MOVE_BY(x, y, z) 0x05, (x), (y), (z) // move by an offset
-#define SC_FACE_LINK 0x06                       // face the linked object
-#define SC_MOVE_LINK 0x07                       // move to the linked object
+#define SC_MOVE(x, y, z) 0x04, (x), (y), (z)    ///< move to a target
+#define SC_MOVE_BY(x, y, z) 0x05, (x), (y), (z) ///< move by an offset
+#define SC_FACE_LINK 0x06                       ///< face the linked object
+#define SC_MOVE_LINK 0x07                       ///< move to the linked object
 #define SC_MOVE_LOCAL(a, b) 0x08, (a), (b)
 #define SC_WANDER(a, b, c) 0x09, (a), (b), (c)
 #define SC_WANDER_HOME(a, b, c) 0x0a, (a), (b), (c)
 #define SC_APPROACH_LINK 0x0b
-#define SC_CAMERA 0x0c                 // follow the leader
-#define SC_LOOP(n, to) 0x0d, (n), (to) // repeat up to n times
+#define SC_CAMERA 0x0c                 ///< follow the leader
+#define SC_LOOP(n, to) 0x0d, (n), (to) ///< repeat up to n times
 #define SC_JUMP(to) 0x0e, (to)
-#define SC_IF(to) 0x0f, (to)    // if the result is true
-#define SC_IFNOT(to) 0x10, (to) // if the result is false
-#define SC_END 0x11             // return to the main script
+#define SC_IF(to) 0x0f, (to)    ///< if the result is true
+#define SC_IFNOT(to) 0x10, (to) ///< if the result is false
+#define SC_END 0x11             ///< return to the main script
 #define SC_FLAG_CHECK(f) 0x12, (f)
 #define SC_FLAG_ON(f) 0x13, (f)
 #define SC_FLAG_OFF(f) 0x14, (f)
 #define SC_FLAG_REV(f) 0x15, (f)
-#define SC_SET(w, v) 0x16, (w), (v) // write a work value
+#define SC_SET(w, v) 0x16, (w), (v) ///< write a work value
 #define SC_ADD(w, v) 0x17, (w), (v)
 #define SC_CMP(w, v) 0x18, (w), (v)
-#define SC_PLAYER 0x19 // key control
+#define SC_PLAYER 0x19 ///< key control
 #define SC_CMD_1A 0x1a
 #define SC_CMD_1B 0x1b
 #define SC_CMD_1C 0x1c
@@ -54,17 +54,17 @@
 #define SC_CMD_23 0x23
 #define SC_CMD_24 0x24
 #define SC_CMD_25 0x25
-#define SC_FREE 0x26 // release the object
+#define SC_FREE 0x26 ///< release the object
 #define SC_ARG(v) 0x27, (v)
 #define SC_NOP(v) 0x28, (v)
-#define SC_SE(n) 0x29, (n) // a sound effect
+#define SC_SE(n) 0x29, (n) ///< a sound effect
 #define SC_CMD_2A(v) 0x2a, (v)
-#define SC_GOTO(script) 0x2b, (s32)(script) // continue in another script
+#define SC_GOTO(script) 0x2b, (s32)(script) ///< continue in another script
 #define SC_B54_OFF 0x2c
 #define SC_B54_ON 0x2d
 #define SC_CALL(fn) 0x2e, (s32)(fn)
 #define SC_CMD_2F 0x2f
-#define SC_MOVE_XZ(x, z) 0x30, (x), (z) // move to (x, z) at the same height
+#define SC_MOVE_XZ(x, z) 0x30, (x), (z) ///< move to (x, z) at the same height
 
 /// Script work values for SC_SET, SC_ADD and SC_CMP
 enum ScriptWork {

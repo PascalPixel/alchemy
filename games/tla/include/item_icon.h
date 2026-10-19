@@ -6,8 +6,8 @@
 #include "callback_scheduler.h"
 #include "vram_tab.h"
 
-#define ICON_COUNT 15 // Number of carried items.
-#define ICON_NONE 96  // No resource.
+#define ICON_COUNT 15 ///< Number of carried items.
+#define ICON_NONE 96  ///< No resource.
 
 struct IconAttr {
   u8 y;

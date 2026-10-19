@@ -15,7 +15,7 @@ struct RockWallHeights {
   s32 column[4]; ///< each pillar's height in pixels
 };
 
-#define QUAKE_PILLAR_WIDTH 40 // a pillar's width in pixels
+#define QUAKE_PILLAR_WIDTH 40 ///< a pillar's width in pixels
 /// The rock picture in the sheet; the sheet starts with the 40x16 strip of
 /// ground cut from the background.
 #define QUAKE_WALL_CELLS 0x1e00

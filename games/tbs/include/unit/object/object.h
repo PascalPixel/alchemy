@@ -68,14 +68,14 @@ struct EffectDescriptor {
   s32 result;    ///< below 0x10000 a message, else a function to call
 };
 
-#define OBJ_LAST 66 // the last actor slot searched
+#define OBJ_LAST 66 ///< the last actor slot searched
 
 //--------------------------------------------------------------------------
 // The map's marker actors (chests and Psynergy stones)
 //--------------------------------------------------------------------------
 #define MARKER_MAX 10
 
-#define MODE_WORLD_MAP 3 // the world map
+#define MODE_WORLD_MAP 3 ///< the world map
 
 s32 Party_RemapCharacterIdByFlags(s32 character);
 s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood);

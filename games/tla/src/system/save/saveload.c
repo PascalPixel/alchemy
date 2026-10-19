@@ -114,7 +114,7 @@ s32 UiWork_IsComplete(void);
 void UiWork_FinalizePendingCore(void);
 
 #if (LANGUAGE == LANGUAGE_FRENCH)
-#define ERASE_CONFIRM_X 4 // The French confirmation window is farther left.
+#define ERASE_CONFIRM_X 4 ///< The French confirmation window is farther left.
 #else
 #define ERASE_CONFIRM_X 8
 #endif

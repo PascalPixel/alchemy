@@ -94,7 +94,7 @@ The reference ROM judges the build and never feeds it. Reconstructing Camelot's 
   - Documentation comments, in Doxygen's line form: a comment that documents a declaration (a file, function, global, type, struct, enum, macro or field) is `///`; every other comment stays `//`.
     - The text is the same plain English. No `@brief`: Doxygen takes the first sentence. No `@param` or `@return` unless a parameter needs saying; then `@param name` with the sentence that already said it.
     - A file's opening comment is `/// @file` with its summary on the `///` lines after it; a file with none gets none invented. A part's first line says it is part of its object and compiled only through it.
-    - A trailing note on a field, enumerator or table column is `///<`, its continuation lines too.
+    - A trailing note on any declaration (a field, enumerator, table column, macro or global) is `///<`, its continuation lines too.
     - FAKEMATCH tags, `// BUG:`, `// DEAD:` and comments inside function bodies stay as they are: they describe matching, not the interface. So do a block a blank line separates from what follows, a section heading or label over a run of declarations, a comment above `#if` or `#include`, and `// clang-format off` and `on`, which clang-format reads only in that form.
     - A folder's README.md is its page: it opens with a `#` heading unique across the repository that names the folder (`# Battle effects`), with a `{#label}` only where something links to it. Links between READMEs and code use relative paths and plain function names.
     - Doxygen's settings live with the docs tooling, never as markup in the source beyond these.

@@ -305,7 +305,7 @@ enum {
   LIST_TILE_PAGES_RIGHT = 0xf335      ///< Right arrow
 };
 
-#define BATTLE_OK 0x80 // flags: usable in battle
+#define BATTLE_OK 0x80 ///< flags: usable in battle
 
 /// The command icon row's work block and one of its icons: pictures.c loads
 /// the icons, command_row.c runs the row.

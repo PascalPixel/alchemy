@@ -113,7 +113,7 @@ static const u8 sBlankLine[] = "";
 #elif (LANGUAGE == LANGUAGE_SPANISH)
 #define CREDITS_SUBTITLE "LA EDAD PERDIDA"
 #elif (LANGUAGE == LANGUAGE_FRENCH)
-#define CREDITS_SUBTITLE "L'\177GE PERDU" // L'ÂGE PERDU: the French font draws Â at 0x7f
+#define CREDITS_SUBTITLE "L'\177GE PERDU" ///< L'ÂGE PERDU: the French font draws Â at 0x7f
 #elif (LANGUAGE == LANGUAGE_ITALIAN)
 #define CREDITS_SUBTITLE "L'ERA PERDUTA"
 #endif

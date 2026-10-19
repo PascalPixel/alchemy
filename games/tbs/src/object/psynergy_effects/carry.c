@@ -26,7 +26,7 @@ void BattleFx_SpawnFallingParticles(void) {
   BattleFx_InitializeFallingFragment(fragment);
 }
 
-#define CARRY_SHARD_MAX 20 // shards
+#define CARRY_SHARD_MAX 20 ///< shards
 
 /// Tests the target's move with its terrain reference raised 16 pixels.
 /// Restore the reference before returning the collision result.

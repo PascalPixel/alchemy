@@ -12,7 +12,7 @@
 // objects are the effect's animation objects (work->objects, created by
 // BattleFx_SpawnObjects).
 
-#define KIRIN_OBJECTS 9 // objects in the rows
+#define KIRIN_OBJECTS 9 ///< objects in the rows
 
 /// Abilities: Kirin (scene kind 3).
 ///

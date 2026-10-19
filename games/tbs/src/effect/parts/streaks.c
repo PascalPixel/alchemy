@@ -10,12 +10,13 @@
 
 /// gStreaks_Records has four flags for each style.
 #define STREAKS_VALUE(mode, n) gStreaks_Records[(mode)][(n)]
-#define STREAKS_ANIMATE 0 // nonzero: the streak cycles through three images
-#define STREAKS_HIT 1     // nonzero: play the hit sound and flash the target
-#define STREAKS_MOTION 2  // the target's recoil motion on the hit (-1: none)
-#define STREAKS_SHAKE 3 // nonzero: the struck target trembles from side to side
+#define STREAKS_ANIMATE 0 ///< nonzero: the streak cycles through three images
+#define STREAKS_HIT 1     ///< nonzero: play the hit sound and flash the target
+#define STREAKS_MOTION 2  ///< the target's recoil motion on the hit (-1: none)
+/// nonzero: the struck target trembles from side to side
+#define STREAKS_SHAKE 3
 
-#define STREAKS_MAX 3 // streaks fired at each target
+#define STREAKS_MAX 3 ///< streaks fired at each target
 
 enum StreakStyle {
   STREAKS_STYLE_EMBER,
@@ -67,9 +68,9 @@ UNUSED void BattleFx_RunLimeStreaks(struct BattleEffectArgument *effect) {
   BattleFx_RunStreakVolley(effect, STREAKS_STYLE_LIME);
 }
 
-#define STREAKS_SPACING 6       // frames between streaks
-#define STREAKS_FLIGHT 24       // frames from user to target
-#define STREAKS_TARGET_DELAY 32 // frames between targets
+#define STREAKS_SPACING 6       ///< frames between streaks
+#define STREAKS_FLIGHT 24       ///< frames from user to target
+#define STREAKS_TARGET_DELAY 32 ///< frames between targets
 
 /// Fires STREAKS_MAX streaks at each target from 20 pixels above the user,
 /// one every 6 frames, each reaching 20 pixels above its target 24 frames

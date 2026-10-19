@@ -4,8 +4,8 @@
 
 #include "../effect_internal.h"
 
-#define DJINN_HEAL_SWIRL_FRAMES 98 // frames of the swirl
-#define DJINN_HEAL_SWIRL_MOTES 32  // motes swirled in
+#define DJINN_HEAL_SWIRL_FRAMES 98 ///< frames of the swirl
+#define DJINN_HEAL_SWIRL_MOTES 32  ///< motes swirled in
 
 /// A small Mercury Djinni healing the party: the user glows while motes
 /// swirl round a point that rises from the user up to above the first

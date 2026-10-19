@@ -382,13 +382,13 @@ enum VolleyField {
 };
 
 // Where the volley's pictures sit in the sheet.
-#define PROJECTILE_VOLLEY_COMET_CELLS 0x1000  // comets: the top half of each
-#define PROJECTILE_VOLLEY_STREAK_CELLS 0x2000 // wind streaks
-#define PROJECTILE_VOLLEY_FLASH_TURNED                                         \
-  0x128a // the hit flashes turned on their side
-#define PROJECTILE_VOLLEY_DJINNI_CELLS 0x65c0 // the small Mercury djinni
-#define PROJECTILE_VOLLEY_FIRST_SPARK 100     // the first spark in PARTICLES
-#define PROJECTILE_VOLLEY_FIRST_TRAIL 512     // the first trail in PARTICLES
+#define PROJECTILE_VOLLEY_COMET_CELLS 0x1000  ///< comets: the top half of each
+#define PROJECTILE_VOLLEY_STREAK_CELLS 0x2000 ///< wind streaks
+/// the hit flashes turned on their side
+#define PROJECTILE_VOLLEY_FLASH_TURNED 0x128a
+#define PROJECTILE_VOLLEY_DJINNI_CELLS 0x65c0 ///< the small Mercury djinni
+#define PROJECTILE_VOLLEY_FIRST_SPARK 100     ///< the first spark in PARTICLES
+#define PROJECTILE_VOLLEY_FIRST_TRAIL 512     ///< the first trail in PARTICLES
 
 /// Projectile volley: shots fly from the user to each target and burst
 /// into a flash and sparks when they pass it. The hit sound plays at most

@@ -16,13 +16,13 @@
                          TITAN_BLADE_DUST * sizeof(struct EffectStep)))
 
 #define TITAN_BLADE_FRAMES 102
-#define TITAN_BLADE_SWORD_IMAGE 20000 // the sword picture in the sheet
-#define TITAN_BLADE_FLASHES 32        // flashes scattered
-#define TITAN_BLADE_RING 16           // of which drawn as the ring
-#define TITAN_BLADE_DUST 684       // dust slots in PARTICLES, before the sparks
-#define TITAN_BLADE_FIRST_DUST 256 // dust lit at once on frame 28
-#define TITAN_BLADE_DRAWN_DUST 342 // dust moved and drawn
-#define TITAN_BLADE_SPARKS 340     // sparks after the dust
+#define TITAN_BLADE_SWORD_IMAGE 20000 ///< the sword picture in the sheet
+#define TITAN_BLADE_FLASHES 32        ///< flashes scattered
+#define TITAN_BLADE_RING 16           ///< of which drawn as the ring
+#define TITAN_BLADE_DUST 684 ///< dust slots in PARTICLES, before the sparks
+#define TITAN_BLADE_FIRST_DUST 256 ///< dust lit at once on frame 28
+#define TITAN_BLADE_DRAWN_DUST 342 ///< dust moved and drawn
+#define TITAN_BLADE_SPARKS 340     ///< sparks after the dust
 
 /// Abilities: Titan Blade (kind 61).
 ///

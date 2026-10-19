@@ -7,9 +7,9 @@
 #include "script_motion.h"
 #include "macros.h"
 
-#define OBJECT_SLOTS 8 // script-driven objects updated each frame
-#define TARGET_UNSET ((s32)0x80000000) // no movement target
-#define TURN_MAX 0x1000                // the most an object turns in one frame
+#define OBJECT_SLOTS 8 ///< script-driven objects updated each frame
+#define TARGET_UNSET ((s32)0x80000000) ///< no movement target
+#define TURN_MAX 0x1000 ///< the most an object turns in one frame
 
 /// Calls a resident IWRAM routine at its absolute address, which this code
 /// still reaches when it runs from its copy in RAM.

@@ -259,9 +259,9 @@ struct BoltSparkBuffer {
 
 #define FALLING_BOLT_SPARKS ((struct BoltSparkBuffer *)Ram_MapCellBuffer)
 
-#define DOUSE_FALLING_CELL 0x604 // the falling bolt picture in the sheet
-#define DOUSE_FLASH_CELL 0x844   // the landing flash picture in the sheet
-#define DOUSE_BURST_CELL 0xa84   // the 42x42 burst picture in the sheet
+#define DOUSE_FALLING_CELL 0x604 ///< the falling bolt picture in the sheet
+#define DOUSE_FLASH_CELL 0x844   ///< the landing flash picture in the sheet
+#define DOUSE_BURST_CELL 0xa84   ///< the 42x42 burst picture in the sheet
 
 /// Abilities: Douse, Drench, Deluge (kind 9).
 ///

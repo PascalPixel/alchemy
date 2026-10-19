@@ -43,13 +43,13 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames) {
 
 // BattleEvent_Playback's waits, in BattleEventState.phase beside the phases
 // battle_event.h names.
-#define PLAY_MESSAGE 3      // Wait for message display.
-#define PLAY_ADVANCE 5      // Wait for the advance key.
-#define PLAY_HIT 10         // Flash the unit that was hit.
-#define PLAY_FELLED 11      // Remove a defeated enemy.
-#define PLAY_MESSAGE_ADD 13 // Continue the message without waiting for a key.
+#define PLAY_MESSAGE 3      ///< Wait for message display.
+#define PLAY_ADVANCE 5      ///< Wait for the advance key.
+#define PLAY_HIT 10         ///< Flash the unit that was hit.
+#define PLAY_FELLED 11      ///< Remove a defeated enemy.
+#define PLAY_MESSAGE_ADD 13 ///< Continue the message without waiting for a key.
 
-#define FELLED_FLASH 0x400 // Timer base while changing colour.
+#define FELLED_FLASH 0x400 ///< Timer base while changing colour.
 
 /// Scheduler callback that runs BattleTargetExec's queued events in order.
 void BattleEvent_Playback(void) {

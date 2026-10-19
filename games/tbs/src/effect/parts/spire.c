@@ -6,7 +6,7 @@
 
 /// The shard pictures in the sheet, after the boulder.
 #define SPIRE_SHARD_CELLS 0x83c
-#define SPIRE_SHARDS 21 // shards per rock
+#define SPIRE_SHARDS 21 ///< shards per rock
 
 /// Abilities: Spire, Clay Spire, Stone Spire (kind 2).
 ///

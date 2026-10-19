@@ -86,9 +86,9 @@ void BattleFx_RunDrown(struct BattleEffectArgument *effect) {
 /// Where mode 3 keeps its glint images in work->sheet.
 enum { TARGET_MOTES_GLINT_CELLS = 0x2580 };
 
-#define TARGET_MOTES 512      // motes scattered at the start
-#define TARGET_MOTES_SLOTS 64 // particles reserved for each target
-#define TARGET_MOTES_CYCLE 24 // frames of a mote's image cycle
+#define TARGET_MOTES 512      ///< motes scattered at the start
+#define TARGET_MOTES_SLOTS 64 ///< particles reserved for each target
+#define TARGET_MOTES_CYCLE 24 ///< frames of a mote's image cycle
 
 /// Around each target in turn, 8 frames apart, motes (smoke, hearts, orbs)
 /// turn about a point 20 pixels up, either closing in on it or rising, and
@@ -329,8 +329,8 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
 }
 
 #define SLEEP_FRAMES 148
-#define SLEEP_SEEDED 32 // particles cleared at the start
-#define SLEEP_SHEEP 12  // sheep dropped
+#define SLEEP_SEEDED 32 ///< particles cleared at the start
+#define SLEEP_SHEEP 12  ///< sheep dropped
 
 /// Abilities: Sleep (kind 37).
 ///
@@ -437,7 +437,7 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-#define CURSE_MARKER_CELLS 1728 // the marker picture in the sheet
+#define CURSE_MARKER_CELLS 1728 ///< the marker picture in the sheet
 
 /// Abilities: Curse (kind 41); Lucid Prophecy (kind 354).
 ///

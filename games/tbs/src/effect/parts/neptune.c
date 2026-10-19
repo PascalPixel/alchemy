@@ -11,10 +11,10 @@ void Graphics_ResetBg2Pa(void) { REG_BG2PA = Q_8_8(1); }
 /// Stretch background 2 to twice its source width.
 void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 
-#define NEPTUNE_FLAME_GROUND 112   // where the blue flames throw sparks
-#define NEPTUNE_OBJECTS 8          // objects in the formation
-#define NEPTUNE_PARTICLES 1024     // map-buffer particle slots
-#define NEPTUNE_FLARE_SHEET 0x4e20 // the flare pictures in the sheet
+#define NEPTUNE_FLAME_GROUND 112   ///< where the blue flames throw sparks
+#define NEPTUNE_OBJECTS 8          ///< objects in the formation
+#define NEPTUNE_PARTICLES 1024     ///< map-buffer particle slots
+#define NEPTUNE_FLARE_SHEET 0x4e20 ///< the flare pictures in the sheet
 
 /// Abilities: Neptune (scene kind 6).
 ///

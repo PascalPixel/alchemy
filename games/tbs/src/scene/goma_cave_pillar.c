@@ -43,9 +43,9 @@
 
 // Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another place group, and other places use the numbers for their own.
-#define FLAG_GOMA_CAVE_STUMP_FELL 0x300 // pushed over into the room below
-#define FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE 0x301 // sunk into its place
-#define FLAG_GOMA_CAVE_WEST_PILLAR_MOVED 0x302    // one step east of its start
+#define FLAG_GOMA_CAVE_STUMP_FELL 0x300 ///< pushed over into the room below
+#define FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE 0x301 ///< sunk into its place
+#define FLAG_GOMA_CAVE_WEST_PILLAR_MOVED 0x302 ///< one step east of its start
 
 enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 
@@ -54,7 +54,7 @@ enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 #define STUMP 9
 #define EAST_PILLAR 10
 #define FORGE 12
-#define WITNESS 13 // the man who fought Forge and lost it
+#define WITNESS 13 ///< the man who fought Forge and lost it
 
 // Shared movement routines stay in their linked order.
 #include "common/object_staged_actor.h"

@@ -265,10 +265,10 @@ UNUSED void *ObjectTable_GetSlotAddress(u32 actorIndex) {
 // Actors and the view: placement conditions from the map's view bounds, and
 // clearing placed actors.
 
-#define FLAG_IN_VIEW 0x164     // kept clear, so a placement using it appears
-#define FLAG_OUT_OF_VIEW 0x165 // kept set, so a placement using it does not
+#define FLAG_IN_VIEW 0x164     ///< kept clear, so a placement using it appears
+#define FLAG_OUT_OF_VIEW 0x165 ///< kept set, so a placement using it does not
 
-#define PLACED_MAX 58 // actor slots 8 to 65
+#define PLACED_MAX 58 ///< actor slots 8 to 65
 
 /// Gives each placement with condition 0 a condition saying whether it lies
 /// within the map's view bounds, so that only those inside appear.

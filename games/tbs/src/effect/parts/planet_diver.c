@@ -35,8 +35,8 @@ struct ImpactChip {
 #define PLANET_DIVER_IMPACT_CHIPS ((struct ImpactChip *)Ram_MapCellBuffer)
 
 #define PLANET_DIVER_FRAMES 88
-#define PLANET_DIVER_CLEARED_CHIPS 1024 // map-buffer chip slots cleared first
-#define PLANET_DIVER_CHIPS 256          // chips the fireball bursts into
+#define PLANET_DIVER_CLEARED_CHIPS 1024 ///< map-buffer chip slots cleared first
+#define PLANET_DIVER_CHIPS 256          ///< chips the fireball bursts into
 
 /// Abilities: Planet Diver (kind 60).
 ///
@@ -215,9 +215,9 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
 
 // Closing skulls.
 
-#define HAUNT_SCATTERED 512 // skull slots scattered at the start
-#define HAUNT_SKULLS 8      // skulls drawn around each target
-#define HAUNT_SLOTS 64      // particles reserved for each target
+#define HAUNT_SCATTERED 512 ///< skull slots scattered at the start
+#define HAUNT_SKULLS 8      ///< skulls drawn around each target
+#define HAUNT_SLOTS 64      ///< particles reserved for each target
 
 /// Abilities: Haunt (kind 39).
 ///
@@ -333,7 +333,7 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-#define ORBITING_SPIRALS_LIFE 60 // frames each target's spirals turn
+#define ORBITING_SPIRALS_LIFE 60 ///< frames each target's spirals turn
 
 /// Abilities: none (kind 34).
 ///

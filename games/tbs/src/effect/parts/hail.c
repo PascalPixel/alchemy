@@ -7,7 +7,7 @@
 // The rock toss (Ground): a Venus Djinni throws six rocks from the user,
 // shedding chips, which swirl and home in on the first target.
 
-#define HAIL_CHIP_COUNT 64 // ice chips
+#define HAIL_CHIP_COUNT 64 ///< ice chips
 
 /// Where the water burst's pictures sit in the sheet, after the waves.
 #define HAIL_CHIP_CELLS 0x400
@@ -153,10 +153,10 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
 #define GROUND_DJINNI_CELLS 0x65c0
 
 #define GROUND_FRAMES 96
-#define GROUND_LAUNCHED 8       // rocks launched
-#define GROUND_CHIPS 32         // chip slots
-#define GROUND_ROCKS 6          // rocks thrown
-#define GROUND_CHIPS_PER_ROCK 4 // chips each rock sheds
+#define GROUND_LAUNCHED 8       ///< rocks launched
+#define GROUND_CHIPS 32         ///< chip slots
+#define GROUND_ROCKS 6          ///< rocks thrown
+#define GROUND_CHIPS_PER_ROCK 4 ///< chips each rock sheds
 
 /// Abilities: Ground (kind 203).
 ///

@@ -15,8 +15,8 @@
 /// The smoke trails behind the spray, after the 128 particles in PARTICLES.
 #define BOREAS_ICE_BLOCK_TRAILS                                                \
   ((struct EffectStep *)(Ram_MapCellBuffer + 0xe00))
-#define BOREAS_BIG_BLOCK_CELLS 0xc46      // the dropping 24x48 ice block
-#define BOREAS_FALLING_BLOCK_CELLS 0x14f9 // the diagonal 40x80 ice block
+#define BOREAS_BIG_BLOCK_CELLS 0xc46      ///< the dropping 24x48 ice block
+#define BOREAS_FALLING_BLOCK_CELLS 0x14f9 ///< the diagonal 40x80 ice block
 
 /// gBoreas_Points has an x and a y for each rock.
 #define BOREAS_POINT_X(rock) gBoreas_Points[rock][0]

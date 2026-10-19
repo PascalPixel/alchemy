@@ -121,20 +121,20 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 #define REGION_FIXED(value) ((s32)((u32)(s32)(value) << 16))
 
 // A field Psynergy or item use, packed into one value (items.c, psynergy.c).
-#define ABILITY_ID(c) ((c) & 0x3ff)    // the Psynergy
-#define ACT_UNIT(c) (((c) >> 10) & 15) // who uses it
-#define ACT_PACKED 0x2000              // use it without paying PP
+#define ABILITY_ID(c) ((c) & 0x3ff)    ///< the Psynergy
+#define ACT_UNIT(c) (((c) >> 10) & 15) ///< who uses it
+#define ACT_PACKED 0x2000              ///< use it without paying PP
 #define UNIT_NONE 15
-#define ALLY_MAX 7 // the last party member
+#define ALLY_MAX 7 ///< the last party member
 
-#define EXIT_RETREAT 999 // the exit Retreat takes
+#define EXIT_RETREAT 999 ///< the exit Retreat takes
 
-#define FLAG_PSYNERGY_EFFECT 0x140 // play the usual effect
-#define FLAG_PSYNERGY_TARGET 0x141 // aim the effect at the target
+#define FLAG_PSYNERGY_EFFECT 0x140 ///< play the usual effect
+#define FLAG_PSYNERGY_TARGET 0x141 ///< aim the effect at the target
 
 /// The flags of a Psynergy event (kind 5) in the given phase.
 #define PSYNERGY_EV(phase) ((phase) << 28 | EVENT_PSYNERGY)
-#define PSYNERGY_EV_ANY PSYNERGY_EV(7) // any phase
+#define PSYNERGY_EV_ANY PSYNERGY_EV(7) ///< any phase
 
 /// Shows message m with the user's and the Psynergy's names, and waits.
 #define PSYNERGY_MESSAGE(who, act, m)                                          \

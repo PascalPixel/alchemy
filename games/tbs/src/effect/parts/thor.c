@@ -20,12 +20,12 @@
 //
 // effect: the targets.
 
-#define THOR_PARTICLE_COUNT 910 // particles in THOR_PARTICLES
-#define THOR_DIMMED_DOTS 10000  // the darker copies of the dot pictures
-#define THOR_DIMMED_DOT_BYTES MOTE_SET_BYTES // bytes in each darker copy
-#define THOR_DUSK_FRAMES 170      // frames, at most, of the dusk part
-#define THOR_LIGHTNING_FRAMES 192 // frames of the lightning part
-#define THOR_BOLTS 30             // violet bolts after the pillar
+#define THOR_PARTICLE_COUNT 910 ///< particles in THOR_PARTICLES
+#define THOR_DIMMED_DOTS 10000  ///< the darker copies of the dot pictures
+#define THOR_DIMMED_DOT_BYTES MOTE_SET_BYTES ///< bytes in each darker copy
+#define THOR_DUSK_FRAMES 170      ///< frames, at most, of the dusk part
+#define THOR_LIGHTNING_FRAMES 192 ///< frames of the lightning part
+#define THOR_BOLTS 30             ///< violet bolts after the pillar
 
 /// Launches up to max sparks from (px, py), 16.16, into the free slots
 /// (variant 0) of THOR_PARTICLES, walking them with spark and counting with

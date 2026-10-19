@@ -493,10 +493,10 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
    SHATTERING_OPENING_PLOT_PIXEL(x1, y1))
 
 #define SHATTERING_OPENING_FRAMES 128
-#define SHATTERING_OPENING_FLASHES 32 // flashes thrown as the picture breaks
-#define SHATTERING_OPENING_PIECES 33  // pieces the picture breaks into
-#define SHATTERING_OPENING_DISC_X 96  // the centre of the opening disc
-#define SHATTERING_OPENING_DISC_Y 60  // the centre of the opening disc
+#define SHATTERING_OPENING_FLASHES 32 ///< flashes thrown as the picture breaks
+#define SHATTERING_OPENING_PIECES 33  ///< pieces the picture breaks into
+#define SHATTERING_OPENING_DISC_X 96  ///< the centre of the opening disc
+#define SHATTERING_OPENING_DISC_Y 60  ///< the centre of the opening disc
 
 /// The shattering opening of the battle on the Venus aerie storm backdrop:
 /// the screen turns white and a grey disc grows from (96, 60) by 32 pixels a

@@ -8,7 +8,7 @@
 /// 13 of row 1 of screen block 4.
 #define EDITOR_PALETTE ((u16 *)0x05000000)
 #define EDITOR_MAP ((u16 *)0x0600205a)
-#define EDITOR_HEX_DIGIT 0xf0e0 // the tile of digit 0, in BG palette 15
+#define EDITOR_HEX_DIGIT 0xf0e0 ///< the tile of digit 0, in BG palette 15
 
 /// The debug palette editor (L on the pause menu in debug mode). Shows colours
 /// 1 to 15 of a palette with their red, green and blue values in hex. Left and

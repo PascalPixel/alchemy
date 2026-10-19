@@ -30,10 +30,10 @@ void ObjectDispatch_SetSingleChildFlagsFar(struct ObjectRuntime *object,
                                            s32 flags);
 void Func_080daecc(s32 objectId, s32 mode);
 
-#define BURST_FALL_OBJECT 281 // the object that falls round the target
+#define BURST_FALL_OBJECT 281 ///< the object that falls round the target
 
 // The two kinds of target that do not sink into the ground.
-#define TARGET_KIND_SCATTERS 372 // scatters five falling pieces instead
+#define TARGET_KIND_SCATTERS 372 ///< scatters five falling pieces instead
 #define TARGET_KIND_STAYS 394
 
 // The Spanish and Italian scaffolds still label Func_080daecc with another

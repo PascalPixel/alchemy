@@ -5,7 +5,7 @@
 #include "../object_internal.h"
 
 // Palette work stores 224 BG colours and 224 OBJ colours, each as B, G, R.
-#define HEAP_SLOT_PALBUF 32 // the colour buffer (gPaletteBufferWork)
+#define HEAP_SLOT_PALBUF 32 ///< the colour buffer (gPaletteBufferWork)
 #define COLOR_MAX 448
 #define COLOR_HALF 224
 #define COLOR_CHANNEL_COUNT (COLOR_MAX * 3)

@@ -4,7 +4,7 @@
 
 #include "../effect_internal.h"
 
-#define FLARE_ARC_COUNT 9 // flames on the arc
+#define FLARE_ARC_COUNT 9 ///< flames on the arc
 
 /// Abilities: Flare, Flare Wall, Flare Storm (kind 11).
 ///

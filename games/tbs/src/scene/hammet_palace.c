@@ -31,7 +31,7 @@
 /// placement table from 8.
 #define LAYANA 8
 #define HAMMET 9
-#define SOLDIER_1 10 // the soldiers of Kalay in the meeting
+#define SOLDIER_1 10 ///< the soldiers of Kalay in the meeting
 #define SOLDIER_2 11
 
 /// Entrance setup and the two long conversations use the helpers below.

@@ -12,11 +12,11 @@
 #define SAVE_NO_FREE_FILE 999
 
 // What the save functions return when they fail, after showing the message.
-#define SAVE_ERROR_READ -2      // a record could not be read
-#define SAVE_ERROR_WRITE -3     // "Failed to save." (or "Failed to erase.")
-#define SAVE_ERROR_ERASE -4     // "Failed to erase."
-#define SAVE_ERROR_NO_FILE -5   // no empty file to copy into
-#define SAVE_ERROR_NO_MEMORY -9 // "Unable to detect backup memory."
+#define SAVE_ERROR_READ -2      ///< a record could not be read
+#define SAVE_ERROR_WRITE -3     ///< "Failed to save." (or "Failed to erase.")
+#define SAVE_ERROR_ERASE -4     ///< "Failed to erase."
+#define SAVE_ERROR_NO_FILE -5   ///< no empty file to copy into
+#define SAVE_ERROR_NO_MEMORY -9 ///< "Unable to detect backup memory."
 
 /// Writes the play time `frames` (at 60 frames a second) into `out` as hours
 /// and minutes, "hhh:mm" with the hours right-aligned in three characters, and

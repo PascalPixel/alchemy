@@ -5,7 +5,7 @@
 #include "project.h"
 #include "static_assert.h"
 
-#define VISIBLE_SCANLINES 160 // visible scanlines
+#define VISIBLE_SCANLINES 160 ///< visible scanlines
 
 /// An eight-byte runtime entry contains the ldr/bx instructions and a target
 /// word. Entries this routine does not call keep their target word opaque.

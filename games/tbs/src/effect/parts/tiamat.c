@@ -27,11 +27,12 @@ void BattleFx_RunTiamat(struct BattleEffectArgument *effect) {
 #define PALETTE_PARTICLES_FRAMES 208
 /// Falling streaks, work->particles 24 to 39.
 #define PALETTE_PARTICLES_STREAKS 16
-#define PALETTE_PARTICLES_FIRST_STREAK 24 // the first streak in work->particles
-#define PALETTE_PARTICLES_FIRST_SPARK 40  // the first spark in work->particles
-#define PALETTE_PARTICLES_EMBERS 512      // embers in PARTICLES
-#define PALETTE_PARTICLES_FLASHES 24      // flashes, work->particles 0 to 23
-#define PALETTE_PARTICLES_SPARKS 24       // sparks, work->particles 40 to 63
+/// the first streak in work->particles
+#define PALETTE_PARTICLES_FIRST_STREAK 24
+#define PALETTE_PARTICLES_FIRST_SPARK 40 ///< the first spark in work->particles
+#define PALETTE_PARTICLES_EMBERS 512     ///< embers in PARTICLES
+#define PALETTE_PARTICLES_FLASHES 24     ///< flashes, work->particles 0 to 23
+#define PALETTE_PARTICLES_SPARKS 24      ///< sparks, work->particles 40 to 63
 /// The streak pictures in the sheet.
 #define PALETTE_PARTICLES_STREAK_IMAGES 0x3000
 

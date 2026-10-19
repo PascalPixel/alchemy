@@ -20,7 +20,7 @@ s32 UiWindow_UpdateOrCreate(s32 *handle, s32 x, s32 y, s32 width, s32 height,
                             s32 style);
 void *SideObject_CreateFar(s32, s32, s32, s32, s32, s32);
 void Menu_SpawnIconEntries(struct State080a8088 *state, s32 handle);
-void Func_080ff370(s32, s32, s32); // draws the status ailments
+void Func_080ff370(s32, s32, s32); ///< draws the status ailments
 
 /// Creates the status window and its side object the first time, spawns the
 /// icon entries in mode 3, then draws the status ailments (with 0x100 when the

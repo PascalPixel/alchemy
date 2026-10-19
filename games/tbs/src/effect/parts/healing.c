@@ -19,7 +19,7 @@
 // and drawing one in is a step of 2 pixels a frame along the line to the
 // centre.
 
-#define HEALING_DJINNI_CELLS 0x1000 // the djinni picture in the sheet
+#define HEALING_DJINNI_CELLS 0x1000 ///< the djinni picture in the sheet
 
 /// Abilities: Ply, Ply Well, Pure Ply, Herb, Nut, Vial, Potion, Soothing Water
 /// (kind 22); Fizz (kind 204).
@@ -79,8 +79,8 @@ void BattleFx_RunTonic(struct BattleEffectArgument *effect) {
 void BattleFx_RunPsyCrystal(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 6);
 }
-#define HEALING_MOTES 512 // motes in PARTICLES
-#define HEALING_SLOTS 64  // particles reserved for each target
+#define HEALING_MOTES 512 ///< motes in PARTICLES
+#define HEALING_SLOTS 64  ///< particles reserved for each target
 
 /// Healing sparkles: motes of light scattered around each target swirl in
 /// towards it, one target every 8 frames, with the recovery sound on each

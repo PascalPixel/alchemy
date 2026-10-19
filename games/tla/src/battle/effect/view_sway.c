@@ -10,7 +10,7 @@
 /// The sway's amplitude (16.16 pixels) and how it ramps.
 #define SWAY_START 0x20000
 #define SWAY_PEAK 0x60000
-#define SWAY_RAMP 0x2666 // 0.15 pixels a frame
+#define SWAY_RAMP 0x2666 ///< 0.15 pixels a frame
 #define SWAY_HOLD_FRAMES 10
 
 enum {

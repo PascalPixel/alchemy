@@ -11,8 +11,8 @@
 
 /// The burst shower's second picture in the sheet, after the tornado.
 #define BURST_SHOWER_CELLS 0xC56
-#define BURST_SHOWER_BURSTS 48     // one fired a frame from frame 0
-#define BURST_SHOWER_BURST_LIFE 24 // frames each burst lives
+#define BURST_SHOWER_BURSTS 48     ///< one fired a frame from frame 0
+#define BURST_SHOWER_BURST_LIFE 24 ///< frames each burst lives
 
 /// The burst shower's styles, its mode argument.
 enum BurstShowerMode {

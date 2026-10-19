@@ -320,14 +320,14 @@ struct MapWork {
 static u16 sStrokePhase[4];
 
 static s32 sSwayAngleY;
-static s32 sUnused0; // never used; keeps the statics' layout
+static s32 sUnused0; ///< never used; keeps the statics' layout
 
 static u16 sOarAngle[8];
 
 static s32 sSeaScroll[2];
 
 static s32 sSwayAngleX;
-static s32 sUnused1; // never used; keeps the statics' layout
+static s32 sUnused1; ///< never used; keeps the statics' layout
 
 static s32 sSeaSpeed[2];
 

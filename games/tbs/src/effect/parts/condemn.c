@@ -5,8 +5,8 @@
 #include "../effect_internal.h"
 
 #define CONDEMN_FRAMES 132
-#define CONDEMN_BREAK_FRAME 88   // the panel breaks in a white flash
-#define CONDEMN_BOUNCE_FRAME 120 // the falling target bounces
+#define CONDEMN_BREAK_FRAME 88   ///< the panel breaks in a white flash
+#define CONDEMN_BOUNCE_FRAME 120 ///< the falling target bounces
 
 /// gCondemn_PanelX and _PanelY have seven stages for each column and row.
 #define CONDEMN_PANEL_X(column, stage) gCondemn_PanelX[(column)][(stage)]

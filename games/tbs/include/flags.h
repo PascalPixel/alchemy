@@ -4,8 +4,8 @@
 /// Flags 0 to 7: the character with that id (character_ids.h) is in the party
 /// (Party_AddActiveOwner).
 #define FLAG_IN_PARTY(character) (character)
-#define FLAG_CHILDHOOD 0x20 // the prologue: Isaac and Garet are children
-#define FLAG_DJINNI_0 48    // the flag of Djinni 0, set once it is caught
+#define FLAG_CHILDHOOD 0x20 ///< the prologue: Isaac and Garet are children
+#define FLAG_DJINNI_0 48    ///< the flag of Djinni 0, set once it is caught
 /// Set as a battle starts, cleared as a field scene starts.
 #define FLAG_IN_BATTLE 0x103
 /// Set while the field menu is open; scenes hold their moving actors still.
@@ -19,20 +19,20 @@
 /// FLAG_KEEP_MUSIC as it does, and leaves FLAG_KEEP_MUSIC_HELD set.
 #define FLAG_KEEP_MUSIC 0x11a
 #define FLAG_KEEP_MUSIC_HELD 0x11b
-#define FLAG_NOT_ON_MAP 0x11c // the current place is not on the world map
+#define FLAG_NOT_ON_MAP 0x11c ///< the current place is not on the world map
 /// Set before an action on the field; still set afterwards, nothing came of it
 /// and the game says "But nothing happens.". An event that acts clears it.
 #define FLAG_NOTHING_HAPPENS 0x142
-#define FLAG_ITEM_USED_UP 0x143 // the item just used is removed afterwards
+#define FLAG_ITEM_USED_UP 0x143 ///< the item just used is removed afterwards
 /// Retreat "does not work here", from Psynergy or an item. Cleared on every
 /// scene entrance; the scenes that forbid Retreat set it.
 #define FLAG_RETREAT_BLOCKED 0x144
-#define FLAG_ITEM_USE 0x145     // the Psynergy comes from an item
-#define FLAG_DEBUG_BATTLE 0x162 // set before every debug battle
+#define FLAG_ITEM_USE 0x145     ///< the Psynergy comes from an item
+#define FLAG_DEBUG_BATTLE 0x162 ///< set before every debug battle
 /// Set while the Lure Cap is worn: random encounters come twice as fast.
 #define FLAG_LURE_CAP 0x167
 #define FLAG_AUTO_BATTLE 0x16a
-#define FLAG_CHOOSING_COMMANDS 0x16b // set while the commands are chosen
+#define FLAG_CHOOSING_COMMANDS 0x16b ///< set while the commands are chosen
 #define FLAG_LINK_BATTLE 0x16c
 #define FLAG_DJINN_TUTORIAL 0x16e
 /// The link lobby's battle against a monster when no opponent is linked:
@@ -45,7 +45,7 @@
 // when the party enters another place group, and each place uses the numbers
 // for its own, so the scenes name them. These two are the link lobby's.
 // Byte flags, read and written eight at a time.
-#define FLAG_LINK_PARTY_COUNT 0x3f0 // the members the linked opponent sent
+#define FLAG_LINK_PARTY_COUNT 0x3f0 ///< the members the linked opponent sent
 /// Monster battles won in a row, added to the monsters' level; -1 after the
 /// series ends.
 #define FLAG_MONSTER_BATTLE_WINS 0x3f8
@@ -100,15 +100,15 @@
 /// comes back from Lama Temple after Xian has heard of the accident. While it
 /// is set, Xian's people do not thank the party for the rescue.
 #define FLAG_HSU_RESCUED_WITHOUT_PARTY 0x8b3
-#define FLAG_ALPINE_CROSSING_POWER_BREAD 0xf71 // the crossing's chest
-#define FLAG_LAMA_TEMPLE_WATER_OF_LIFE 0xf7a   // the temple's chest
+#define FLAG_ALPINE_CROSSING_POWER_BREAD 0xf71 ///< the crossing's chest
+#define FLAG_LAMA_TEMPLE_WATER_OF_LIFE 0xf7a   ///< the temple's chest
 
 // Altin
-#define FLAG_ALTIN_WATER_BEAST_LEFT 0x8ff // jumped back into the flood
-#define FLAG_ALTIN_BLOCK_MOVED 0x906      // pushed to its place by Move
-#define FLAG_ALTIN_NUT 0xf73              // a barrel in the houses
-#define FLAG_ALTIN_COINS 0xf74            // a barrel in the houses
-#define FLAG_ALTIN_SLEEP_BOMB 0xf75       // a bed in the houses
+#define FLAG_ALTIN_WATER_BEAST_LEFT 0x8ff ///< jumped back into the flood
+#define FLAG_ALTIN_BLOCK_MOVED 0x906      ///< pushed to its place by Move
+#define FLAG_ALTIN_NUT 0xf73              ///< a barrel in the houses
+#define FLAG_ALTIN_COINS 0xf74            ///< a barrel in the houses
+#define FLAG_ALTIN_SLEEP_BOMB 0xf75       ///< a bed in the houses
 /// Scene flags: Altin keeps its water level in them, set on entry.
 #define FLAG_SCENE_TEMP_40 0x240
 #define FLAG_SCENE_TEMP_41 0x241
@@ -121,23 +121,23 @@
 #define FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN 0x905
 /// Room 9's boulder has fallen and rolled down after the party leader.
 #define FLAG_ALTIN_PEAK_BOULDER_FALLEN 0x908
-#define FLAG_ALTIN_PEAK_COOKIE 0xf76        // room 3's chest
-#define FLAG_ALTIN_PEAK_DRAGON_SHIELD 0xf77 // room 5's chest
-#define FLAG_ALTIN_PEAK_LUCKY_MEDAL 0xf78   // room 8's chest
-#define FLAG_ALTIN_PEAK_VIAL 0xf79          // room 11's chest
-#define FLAG_ALTIN_PEAK_PSY_CRYSTAL 0xf07   // room 7's chest
-#define FLAG_ALTIN_PEAK_LIFTING_GEM 0xf08   // room 10's chest
+#define FLAG_ALTIN_PEAK_COOKIE 0xf76        ///< room 3's chest
+#define FLAG_ALTIN_PEAK_DRAGON_SHIELD 0xf77 ///< room 5's chest
+#define FLAG_ALTIN_PEAK_LUCKY_MEDAL 0xf78   ///< room 8's chest
+#define FLAG_ALTIN_PEAK_VIAL 0xf79          ///< room 11's chest
+#define FLAG_ALTIN_PEAK_PSY_CRYSTAL 0xf07   ///< room 7's chest
+#define FLAG_ALTIN_PEAK_LIFTING_GEM 0xf08   ///< room 10's chest
 
 // Altmiller Cave
-#define FLAG_MET_INVISIBLE_BABI 0x960 // Babi has asked for his draught
+#define FLAG_MET_INVISIBLE_BABI 0x960 ///< Babi has asked for his draught
 /// Babi has called the party back once as it made to leave without him.
 #define FLAG_BABI_CALLED_PARTY_BACK 0x961
 /// The party has saved Babi in Altmiller Cave with his Mystic Draught; Tolbi
 /// then holds the Colosso finals, and its scenes read this as the finals day.
 #define FLAG_BABI_SAVED 0x962
-#define FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT 0xf30 // behind the rocks' wall
-#define FLAG_ALTMILLER_CAVE_VIAL 0xf9c           // room 3's chest
-#define FLAG_ALTMILLER_CAVE_COOKIE 0xf9d         // room 5's chest
+#define FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT 0xf30 ///< behind the rocks' wall
+#define FLAG_ALTMILLER_CAVE_VIAL 0xf9c           ///< room 3's chest
+#define FLAG_ALTMILLER_CAVE_COOKIE 0xf9d         ///< room 5's chest
 
 // Babi Lighthouse
 /// The stone door that Reveal's switch opens stands open.
@@ -149,11 +149,11 @@
 #define FLAG_IODEM_AT_BABI_LIGHTHOUSE 0x98a
 /// The party has opened the door before Iodem and Faran, who stay behind.
 #define FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN 0x989
-#define FLAG_BABI_LIGHTHOUSE_LUCKY_PEPPER 0xfbc // the building site's chest
+#define FLAG_BABI_LIGHTHOUSE_LUCKY_PEPPER 0xfbc ///< the building site's chest
 
 // Babi Palace
-#define FLAG_COLOSSO_OVER 0x950 // the Colosso finals have been fought
-#define FLAG_WON_COLOSSO 0x951  // the party won the finals
+#define FLAG_COLOSSO_OVER 0x950 ///< the Colosso finals have been fought
+#define FLAG_WON_COLOSSO 0x951  ///< the party won the finals
 /// The attendant has offered the beds for the night before the finals.
 #define FLAG_BABI_PALACE_FINALS_REST_OFFERED 0x966
 /// While set, the beds can be used during the finals.
@@ -162,7 +162,7 @@
 #define FLAG_SHEBA_NOTICED_MIND_READ 0x968
 /// While set, the beds can be used before the finals.
 #define FLAG_BABI_PALACE_BEDS_OPEN 0x969
-#define FLAG_BABI_PALACE_FIRST_NIGHT 0x96a // the party has slept there once
+#define FLAG_BABI_PALACE_FIRST_NIGHT 0x96a ///< the party has slept there once
 /// The soldiers have come back from Altmiller Cave to Iodem without Babi.
 #define FLAG_IODEM_HEARD_SOLDIERS 0x96b
 /// A courtyard guard has passed on Babi's word to go to the colosseum.
@@ -171,15 +171,15 @@
 #define FLAG_BABI_PALACE_GUARD_THANKED_PARTY 0x96d
 /// Babi and Iodem have spoken with the party after Colosso.
 #define FLAG_BABI_SPOKE_AFTER_COLOSSO 0x96f
-#define FLAG_BABI_PALACE_CLOAK_BALL 0xf31  // lent by Babi after Colosso
-#define FLAG_BABI_PALACE_LUCKY_MEDAL 0xf9f // in a barrel
+#define FLAG_BABI_PALACE_CLOAK_BALL 0xf31  ///< lent by Babi after Colosso
+#define FLAG_BABI_PALACE_LUCKY_MEDAL 0xf9f ///< in a barrel
 // Bilibin
-#define FLAG_BILIBIN_JILL_RESCUED 0x848 // Jill, a tree, pulled from the river
-#define FLAG_BILIBIN_JILL_GIFT_RECEIVED 0x849 // her thanks, a Hard Nut
+#define FLAG_BILIBIN_JILL_RESCUED 0x848 ///< Jill, a tree, pulled from the river
+#define FLAG_BILIBIN_JILL_GIFT_RECEIVED 0x849 ///< her thanks, a Hard Nut
 
 // Colosso
-#define FLAG_COLOSSO_FAILED_TRIAL_SEEN 0x8a3  // a warrior failed his trial
-#define FLAG_COLOSSO_CLEARED_TRIAL_SEEN 0x8a4 // a warrior cleared his trial
+#define FLAG_COLOSSO_FAILED_TRIAL_SEEN 0x8a3  ///< a warrior failed his trial
+#define FLAG_COLOSSO_CLEARED_TRIAL_SEEN 0x8a4 ///< a warrior cleared his trial
 #define FLAG_COLOSSO_FIRST_MATCH_WON 0x90e
 #define FLAG_COLOSSO_SECOND_MATCH_WON 0x90f
 // Also FLAG_COLOSSO_OVER (0x950): the colosseum is closed until next year.
@@ -188,8 +188,8 @@
 // Kalay
 /// The inn's guests told the party about the Colosso tour to Tolbi.
 #define FLAG_KALAY_HEARD_OF_COLOSSO_TOUR 0x910
-#define FLAG_KALAY_COLOSSO_TOUR_LEFT 0x911 // the tour group has left town
-#define FLAG_KALAY_TOWN_NUT_CAUGHT 0x916   // the Nut circling in the town
+#define FLAG_KALAY_COLOSSO_TOUR_LEFT 0x911 ///< the tour group has left town
+#define FLAG_KALAY_TOWN_NUT_CAUGHT 0x916   ///< the Nut circling in the town
 
 // Imil
 /// Mia's second apprentice told the party Mia went to the old couple's house.
@@ -198,7 +198,7 @@
 #define FLAG_IMIL_MET_MIA 0x82b
 /// Her apprentice told the party she can act as its healer in the sanctum.
 #define FLAG_IMIL_APPRENTICE_OFFERED_HEALING 0x82d
-#define FLAG_IMIL_MIA_SAID_FAREWELL 0x82e // to her two apprentices
+#define FLAG_IMIL_MIA_SAID_FAREWELL 0x82e ///< to her two apprentices
 
 // Fuchin Falls
 /// The Dragon's Eye is set in the dragon statue, which opened the hidden path.
@@ -209,9 +209,9 @@
 /// The father on the Kalay docks asked the party to take a message to his
 /// daughter in Tolbi, and the party agreed.
 #define FLAG_KALAY_DOCKS_CARRYING_MESSAGE 0x8a6
-#define FLAG_KALAY_DOCKS_TICKET_HANDED_OVER 0x8a7 // the party may board
+#define FLAG_KALAY_DOCKS_TICKET_HANDED_OVER 0x8a7 ///< the party may board
 #define FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED 0x8a8
-#define FLAG_KALAY_DOCKS_WENT_ASHORE 0x8a9 // off the ship after boarding
+#define FLAG_KALAY_DOCKS_WENT_ASHORE 0x8a9 ///< off the ship after boarding
 /// A passenger on the Tolbi docks walked up to the party as it arrived.
 #define FLAG_TOLBI_DOCKS_PASSENGER_MET_PARTY 0x8aa
 /// The passengers confronted the tour guides and their bodyguard.
@@ -224,10 +224,10 @@
 #define FLAG_KOLIMA_BRIDGE_COLLAPSED 0x847
 
 // Kolima Forest
-#define FLAG_KOLIMA_FOREST_NUT_CAUGHT 0xfd3 // Catch took the clearing's Nut
+#define FLAG_KOLIMA_FOREST_NUT_CAUGHT 0xfd3 ///< Catch took the clearing's Nut
 
 // Lamakan Desert
-#define FLAG_LAMAKAN_SAND_MONSTER_BEATEN 0x90a // on the third map
+#define FLAG_LAMAKAN_SAND_MONSTER_BEATEN 0x90a ///< on the third map
 
 // Lalivero
 /// The party is back from Venus Lighthouse, by the aerie's exit.
@@ -235,8 +235,8 @@
 /// The party saw the ship from Venus Lighthouse before coming back.
 #define FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE 0x9bf
 #define FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN 0x9b8
-#define FLAG_IODEM_FAREWELL_SEEN 0x9ba // Iodem gave the Black Orb
-#define FLAG_LALIVERO_WHARF_OPEN 0x9bb // the guard lets the party to the ship
+#define FLAG_IODEM_FAREWELL_SEEN 0x9ba ///< Iodem gave the Black Orb
+#define FLAG_LALIVERO_WHARF_OPEN 0x9bb ///< the guard lets the party to the ship
 /// Iodem asked the party to wait for him outside.
 #define FLAG_IODEM_ASKED_TO_MEET 0x9bc
 // Lunpa
@@ -248,9 +248,9 @@
 #define FLAG_LUNPA_PSYNERGY_STONE 0xf27
 #define FLAG_LUNPA_GRAVE_SLEEP_BOMB 0xf88
 #define FLAG_LUNPA_BARREL_NUT 0xf89
-#define FLAG_LUNPA_WOODEN_BOX_LUCKY_MEDAL 0xf8a // in the town's buildings
-#define FLAG_LUNPA_BARREL_VIAL 0xf8b            // in the town's buildings
-#define FLAG_LUNPA_NUT_CAUGHT 0xfd1 // the nut floating over the town
+#define FLAG_LUNPA_WOODEN_BOX_LUCKY_MEDAL 0xf8a ///< in the town's buildings
+#define FLAG_LUNPA_BARREL_VIAL 0xf8b            ///< in the town's buildings
+#define FLAG_LUNPA_NUT_CAUGHT 0xfd1 ///< the nut floating over the town
 
 // Lunpa Fortress. From FLAG_LUNPA_FORTRESS_COLUMN_LOWERED to
 // FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN, the fortress's state is cleared
@@ -274,16 +274,16 @@
 #define FLAG_LUNPA_FORTRESS_REWARD_TAKEN 0x94e
 #define FLAG_LUNPA_FORTRESS_CHEST_ELIXIR 0xfa2
 #define FLAG_LUNPA_FORTRESS_CHEST_LUCKY_MEDAL 0xfa3
-#define FLAG_LUNPA_FORTRESS_THIRD_CHEST 0xfa4 // item 0xaa
+#define FLAG_LUNPA_FORTRESS_THIRD_CHEST 0xfa4 ///< item 0xaa
 #define FLAG_LUNPA_FORTRESS_CHEST_COINS 0xfa5
 #define FLAG_LUNPA_FORTRESS_BARREL_VIAL 0xfa6
 #define FLAG_LUNPA_FORTRESS_CHEST_POWER_BREAD 0xfa7
-#define FLAG_LUNPA_FORTRESS_CELL_KEY 0xf2e // caught or taken from its hook
+#define FLAG_LUNPA_FORTRESS_CELL_KEY 0xf2e ///< caught or taken from its hook
 
 // McCoy Palace and its garden, in Bilibin
 /// The gate guards have let the party into the palace.
 #define FLAG_MCCOY_PALACE_ADMITTED 0x84a
-#define FLAG_MCCOY_PALACE_VISITED 0x84b // set on every entry to the palace
+#define FLAG_MCCOY_PALACE_VISITED 0x84b ///< set on every entry to the palace
 /// After McCoy turned the party away, his escort let slip that the
 /// barricade may not need a key.
 #define FLAG_MCCOY_PALACE_BARRICADE_HINT 0x84f
@@ -293,7 +293,7 @@
 #define FLAG_MCCOY_PALACE_JOB_REFUSED 0x85f
 #define FLAG_MCCOY_PALACE_BARREL_ELIXIR 0xf55
 #define FLAG_MCCOY_PALACE_BARREL_SMOKE_BOMB 0xf56
-#define FLAG_MCCOY_PALACE_GARDEN_NUT_CAUGHT 0xfd2 // the floating nut
+#define FLAG_MCCOY_PALACE_GARDEN_NUT_CAUGHT 0xfd2 ///< the floating nut
 // Mercury Lighthouse
 /// Mia has told the party she senses someone inside the lighthouse.
 #define FLAG_MIA_SENSED_SOMEONE_INSIDE 0x870
@@ -301,7 +301,7 @@
 #define FLAG_MIA_OPENED_MERCURY_LIGHTHOUSE 0x871
 /// Past the Lizard Man, Mia has gone on into the lighthouse.
 #define FLAG_MIA_ENTERED_MERCURY_LIGHTHOUSE 0x872
-#define FLAG_MIA_JOINED_PARTY 0x873 // rescued again, Mia joins with Fizz
+#define FLAG_MIA_JOINED_PARTY 0x873 ///< rescued again, Mia joins with Fizz
 /// The block rests on the floor switch and holds the gate open.
 #define FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN 0x874
 /// Ply in the entrance hall: the lights cycle and the pillar routes open.
@@ -320,7 +320,7 @@
 #define FLAG_SATUROS_BEATEN_AT_MERCURY 0x881
 
 // Mogall Forest
-#define FLAG_MOGALL_FOREST_FIRST_APE_SEEN 0x89c // an ape hides on arrival
+#define FLAG_MOGALL_FOREST_FIRST_APE_SEEN 0x89c ///< an ape hides on arrival
 /// The last guiding ape has led the party to the Killer Ape's hiding place.
 #define FLAG_MOGALL_FOREST_LED_TO_KILLER_APE 0x89d
 #define FLAG_MOGALL_FOREST_KILLER_APE_BEATEN 0x89e
@@ -332,31 +332,32 @@
 #define FLAG_IODEM_MET_WOUNDED_SOLDIERS 0x9b0
 
 // Suhalla Gate
-#define FLAG_SUHALLA_GATE_SOLDIER_VANISHED 0x897 // after his last words
-#define FLAG_SUHALLA_GATE_ATTACK_SEEN 0x89f // Iodem has questioned the guards
+#define FLAG_SUHALLA_GATE_SOLDIER_VANISHED 0x897 ///< after his last words
+#define FLAG_SUHALLA_GATE_ATTACK_SEEN 0x89f ///< Iodem has questioned the guards
 /// The side the party last came through, which Retreat returns them to.
 #define FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH 0x8fb
 #define FLAG_SUHALLA_GATE_ENTERED_FROM_EAST 0x8fc
 
 // Suhalla Desert
-#define FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA 0x9b5 // search on or go to Lalivero
-#define FLAG_SUHALLA_DESERT_IODEM_WARNED 0x9b6    // "A sandstorm!"
+/// search on or go to Lalivero
+#define FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA 0x9b5
+#define FLAG_SUHALLA_DESERT_IODEM_WARNED 0x9b6 ///< "A sandstorm!"
 #define FLAG_SUHALLA_DESERT_CHASING_STORM_DOUSED 0x9b7
 // Tolbi
-#define FLAG_TOLBI_CORN_GIVEN 0x8bf    // the snack vendor gave away her corn
-#define FLAG_TOLBI_SEARCHERS_MET 0x8c0 // the soldiers asked about Babi
-#define FLAG_TOLBI_SPRING_OPENED 0x8c1 // the gambler let the party go first
+#define FLAG_TOLBI_CORN_GIVEN 0x8bf    ///< the snack vendor gave away her corn
+#define FLAG_TOLBI_SEARCHERS_MET 0x8c0 ///< the soldiers asked about Babi
+#define FLAG_TOLBI_SPRING_OPENED 0x8c1 ///< the gambler let the party go first
 
 // Tolbi interiors: the woman who finds a Lucky Medal after Colosso
-#define FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN 0x8bc // she hid it in the barrel
-#define FLAG_TOLBI_INTERIORS_MEDAL_TAKEN 0x8bd  // the party took it
-#define FLAG_TOLBI_INTERIORS_MEDAL_MISSED 0x8be // she has greeted them since
+#define FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN 0x8bc ///< she hid it in the barrel
+#define FLAG_TOLBI_INTERIORS_MEDAL_TAKEN 0x8bd  ///< the party took it
+#define FLAG_TOLBI_INTERIORS_MEDAL_MISSED 0x8be ///< she has greeted them since
 
 // Tolbi ship: the crossing of the Karagol Sea from Kalay to Tolbi
-#define FLAG_TOLBI_SHIP_AT_ISLAND 0x8a0 // at anchor off the island
+#define FLAG_TOLBI_SHIP_AT_ISLAND 0x8a0 ///< at anchor off the island
 /// The ship's place plays music 29, the monsters' theme, instead of 41.
 #define FLAG_TOLBI_SHIP_MONSTERS_SIGHTED 0x8f0
-#define FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED 0x903 // the party will scout it
+#define FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED 0x903 ///< the party will scout it
 /// The crew have wondered what became of the replacement ship.
 #define FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY 0x920
 /// "But the captain decided to set sail just a second ago."
@@ -366,7 +367,7 @@
 #define FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED 0x925
 /// "Our replacement never arrived, but we're shoving off just the same."
 #define FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT 0x926
-#define FLAG_TOLBI_SHIP_ROWING 0x927 // the oars are moving
+#define FLAG_TOLBI_SHIP_ROWING 0x927 ///< the oars are moving
 /// The monster attacks fought off. After the first an oarsman is hurt, and
 /// from then on passengers the party chooses take the empty seats.
 #define FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED 0x928
@@ -379,7 +380,7 @@
 #define FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS 0x935
 #define FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS 0x917
 #define FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS 0x990
-#define FLAG_TOLBI_SHIP_REACHED_TOLBI 0x93e // "The ship has arrived safely"
+#define FLAG_TOLBI_SHIP_REACHED_TOLBI 0x93e ///< "The ship has arrived safely"
 // Tunnel Ruins
 #define FLAG_TUNNEL_RUINS_BUSH_BLOWN_AWAY 0x970
 #define FLAG_TUNNEL_RUINS_PILLAR_A_SUNK 0x971
@@ -396,7 +397,8 @@
 #define FLAG_REACHED_KALAY 0x87a
 
 // Vale, Kraden's cottage
-#define FLAG_OVERHEARD_KRADEN 0x800 // Kraden wondered aloud about the strangers
+/// Kraden wondered aloud about the strangers
+#define FLAG_OVERHEARD_KRADEN 0x800
 /// The man hurt in the rockslide believes he will die.
 #define FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP 0x82f
 /// He found he was unhurt and ran to the plaza.
@@ -534,33 +536,36 @@
 #define FLAG_SCENE_TEMP_0E 0x20e
 #define FLAG_SCENE_TEMP_0F 0x20f
 
-#define FLAG_SCENE_TEMP_10 0x210 // Tret: lower middle east landing
-#define FLAG_SCENE_TEMP_11 0x211 // Tret: second floor to west landing
-#define FLAG_SCENE_TEMP_12 0x212 // Tret: lower middle southwest landing
-#define FLAG_SCENE_TEMP_13 0x213 // Tret: lower middle south landing
-#define FLAG_SCENE_TEMP_14 0x214 // Tret: lower middle southeast landing
-#define FLAG_SCENE_TEMP_15 0x215 // Colosso log course: the second rock settled
-#define FLAG_SCENE_TEMP_16 0x216 // Colosso log course: the third rock settled
-#define FLAG_SCENE_TEMP_34 0x234 // Colosseum waiting room: stepped to the line
-#define FLAG_SCENE_TEMP_35 0x235 // Colosseum waiting room: asked at the line
+#define FLAG_SCENE_TEMP_10 0x210 ///< Tret: lower middle east landing
+#define FLAG_SCENE_TEMP_11 0x211 ///< Tret: second floor to west landing
+#define FLAG_SCENE_TEMP_12 0x212 ///< Tret: lower middle southwest landing
+#define FLAG_SCENE_TEMP_13 0x213 ///< Tret: lower middle south landing
+#define FLAG_SCENE_TEMP_14 0x214 ///< Tret: lower middle southeast landing
+/// Colosso log course: the second rock settled
+#define FLAG_SCENE_TEMP_15 0x215
+#define FLAG_SCENE_TEMP_16 0x216 ///< Colosso log course: the third rock settled
+/// Colosseum waiting room: stepped to the line
+#define FLAG_SCENE_TEMP_34 0x234
+#define FLAG_SCENE_TEMP_35 0x235 ///< Colosseum waiting room: asked at the line
 // Also FLAG_SCENE_TEMP_15: Lunpa Fortress, set with FLAG_SCENE_TEMP_14.
-#define FLAG_SCENE_TEMP_17 0x217 // Lunpa Fortress: the first switch is hidden
-#define FLAG_SCENE_TEMP_18 0x218 // Lunpa Fortress: the second switch is hidden
-#define FLAG_SCENE_TEMP_24 0x224 // Lunpa Fortress: thrown out at the entrance
-#define FLAG_SCENE_TEMP_25 0x225 // Lunpa Fortress: the sentries saw the party
-#define FLAG_SCENE_TEMP_26 0x226 // Lunpa Fortress: the resident keeps quiet
-#define FLAG_SCENE_TEMP_27 0x227 // Lunpa Fortress: the resident was startled
+#define FLAG_SCENE_TEMP_17 0x217 ///< Lunpa Fortress: the first switch is hidden
+/// Lunpa Fortress: the second switch is hidden
+#define FLAG_SCENE_TEMP_18 0x218
+#define FLAG_SCENE_TEMP_24 0x224 ///< Lunpa Fortress: thrown out at the entrance
+#define FLAG_SCENE_TEMP_25 0x225 ///< Lunpa Fortress: the sentries saw the party
+#define FLAG_SCENE_TEMP_26 0x226 ///< Lunpa Fortress: the resident keeps quiet
+#define FLAG_SCENE_TEMP_27 0x227 ///< Lunpa Fortress: the resident was startled
 // Also FLAG_SCENE_TEMP_40: Lunpa gate, the guards block the gateway.
 // Also FLAG_SCENE_TEMP_41: Lunpa gate, Cloak is cast.
 // Also FLAG_SCENE_TEMP_42: Lunpa gate, the party enters the fortress.
-#define FLAG_SCENE_TEMP_43 0x243 // Lunpa gate: Garet turns the leader back
-#define FLAG_SCENE_TEMP_44 0x244 // Lunpa gate: the guards caught the party
+#define FLAG_SCENE_TEMP_43 0x243 ///< Lunpa gate: Garet turns the leader back
+#define FLAG_SCENE_TEMP_44 0x244 ///< Lunpa gate: the guards caught the party
 /// Also FLAG_SCENE_TEMP_18: Suhalla Desert, the storm holds the party.
 /// Also FLAG_SCENE_TEMP_41: Vale, the plaza's watching villager paused.
 /// Also FLAG_SCENE_TEMP_42: Vale, Kraden's gate stands open.
-#define FLAG_SCENE_TEMP_50                                                     \
-  0x250 // Vault interiors: the leader is beside the Bone
-#define FLAG_SCENE_TEMP_70 0x270 // Lunpa Fortress: Hammet's rescue has begun
+/// Vault interiors: the leader is beside the Bone
+#define FLAG_SCENE_TEMP_50 0x250
+#define FLAG_SCENE_TEMP_70 0x270 ///< Lunpa Fortress: Hammet's rescue has begun
 
 // Goma Cave
 #define FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED 0x860
@@ -571,10 +576,10 @@
 /// Ivan has blown the ivy off the stump and rejoined the party.
 #define FLAG_GOMA_CAVE_IVAN_REJOINED 0x865
 #define FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY 0x866
-#define FLAG_GOMA_CAVE_WITNESS_LEFT 0x869 // after the party caught Forge
+#define FLAG_GOMA_CAVE_WITNESS_LEFT 0x869 ///< after the party caught Forge
 
 // Hammet's palace
-#define FLAG_IVAN_REPORTED_TO_LAYANA 0x912 // that Hammet is still in Lunpa
+#define FLAG_IVAN_REPORTED_TO_LAYANA 0x912 ///< that Hammet is still in Lunpa
 #define FLAG_LAYANA_SCOLDED_LUNPA_VISIT 0x913
 #define FLAG_HAMMET_HOMECOMING_SEEN 0x914
 
@@ -583,9 +588,9 @@
 #define FLAG_NYUNPA_ENLIGHTENED 0x88f
 /// The visitor from Kolima heard that the bridge is open again.
 #define FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN 0x890
-#define FLAG_NYUNPA_TEST_ACCEPTED 0x891 // the test of the waterfall grotto
-#define FLAG_FUCHIN_FALLS_GROTTO_OPENED 0x892 // the monk stepped aside
-#define FLAG_NYUNPA_TAUGHT_FORCE 0x893        // the power the monks call Ki
+#define FLAG_NYUNPA_TEST_ACCEPTED 0x891 ///< the test of the waterfall grotto
+#define FLAG_FUCHIN_FALLS_GROTTO_OPENED 0x892 ///< the monk stepped aside
+#define FLAG_NYUNPA_TAUGHT_FORCE 0x893        ///< the power the monks call Ki
 #define FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST 0x894
 /// The Orb of Force's chest in Fuchin Falls has been opened.
 #define FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND 0xf14
@@ -672,8 +677,8 @@
 // Sanctum
 /// Isaac accepted the Great Healer's request to go to Sol Sanctum.
 #define FLAG_SANCTUM_QUEST_ACCEPTED 0x9f0
-#define FLAG_SCENE_TEMP_71 0x271 // Tolbi ship deck: the first door is open
-#define FLAG_SCENE_TEMP_72 0x272 // Tolbi ship deck: the second door is open
+#define FLAG_SCENE_TEMP_71 0x271 ///< Tolbi ship deck: the first door is open
+#define FLAG_SCENE_TEMP_72 0x272 ///< Tolbi ship deck: the second door is open
 
 // Venus Lighthouse
 /// The man at the entrance has told of the attack and is gone.
@@ -697,6 +702,6 @@
 #define FLAG_BLACK_ORB_RETURNED 0x85d
 #define FLAG_SCENE_TEMP_F0 0x2f0
 #define FLAG_SCENE_TEMP_F1 0x2f1
-#define FLAG_SCENE_TEMP_F8 0x2f8 // a byte flag
+#define FLAG_SCENE_TEMP_F8 0x2f8 ///< a byte flag
 
 #endif

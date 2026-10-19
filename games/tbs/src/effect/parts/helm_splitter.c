@@ -14,12 +14,13 @@
 //   large sparks), small sparks PARTICLES.
 
 #define HELM_SPLITTER_FRAMES 70
-#define HELM_SPLITTER_STRIKE_FRAME 18 // the swirl strikes the target
+#define HELM_SPLITTER_STRIKE_FRAME 18 ///< the swirl strikes the target
 /// The pink star animation, after the swirl.
 #define HELM_SPLITTER_STAR_CELLS 0x3e80
-#define HELM_SPLITTER_CLEARED_SLOTS 1024 // map-buffer spark slots cleared first
-#define HELM_SPLITTER_SPARKS 16          // sparks scattered by the strike
-#define HELM_SPLITTER_SPARK_SLOTS 128    // spark slots moved and drawn
+/// map-buffer spark slots cleared first
+#define HELM_SPLITTER_CLEARED_SLOTS 1024
+#define HELM_SPLITTER_SPARKS 16       ///< sparks scattered by the strike
+#define HELM_SPLITTER_SPARK_SLOTS 128 ///< spark slots moved and drawn
 
 /// Abilities: Helm Splitter (kind 51).
 ///
@@ -220,15 +221,17 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   }
 }
 
-#define IMPACT_BURST_SHARD_CELLS 0x59d8 // Fragment graphics: four 12x24 images
+/// Fragment graphics: four 12x24 images
+#define IMPACT_BURST_SHARD_CELLS 0x59d8
 
 #define IMPACT_BURST_FRAMES 72
-#define IMPACT_BURST_FRAGMENTS 3       // fragments, work->particles 61 to 63
-#define IMPACT_BURST_DRAWN_LARGE 30    // large sparks drawn
-#define IMPACT_BURST_DRAWN_SMALL 60    // small sparks drawn
-#define IMPACT_BURST_LARGE_SPARKS 64   // large sparks thrown
-#define IMPACT_BURST_SMALL_SPARKS 64   // small sparks thrown
-#define IMPACT_BURST_FIRST_FRAGMENT 61 // the first fragment in work->particles
+#define IMPACT_BURST_FRAGMENTS 3     ///< fragments, work->particles 61 to 63
+#define IMPACT_BURST_DRAWN_LARGE 30  ///< large sparks drawn
+#define IMPACT_BURST_DRAWN_SMALL 60  ///< small sparks drawn
+#define IMPACT_BURST_LARGE_SPARKS 64 ///< large sparks thrown
+#define IMPACT_BURST_SMALL_SPARKS 64 ///< small sparks thrown
+/// the first fragment in work->particles
+#define IMPACT_BURST_FIRST_FRAGMENT 61
 
 /// Open an impact flash and scatter sparks and fragments over 72 frames.
 /// Also rearrange the objects into formation during the first 36 frames.

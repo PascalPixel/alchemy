@@ -5,15 +5,15 @@
 #include "../effect_internal.h"
 
 #define DRAGON_CLOUD_FRAMES 150
-#define DRAGON_CLOUD_STRIKE_FRAME 83      // the flame strikes the first target
-#define DRAGON_CLOUD_TRAIL_CELL_BYTES 936 // bytes in each trail copy
-#define DRAGON_CLOUD_FIRST_EMBER 8        // the first ember in work->particles
-#define DRAGON_CLOUD_FIRST_FLASH 48       // the first flash in work->particles
-#define DRAGON_CLOUD_TRAIL_CELLS 0x1680   // the trail picture in the sheet
-#define DRAGON_CLOUD_PUFF_CELLS 0x3c00    // the puff pictures in the sheet
-#define DRAGON_CLOUD_PUFFS 8              // puffs, particles 0 to 7
-#define DRAGON_CLOUD_EMBERS 40            // embers, from FIRST_EMBER
-#define DRAGON_CLOUD_FLASHES 16           // flashes, from FIRST_FLASH
+#define DRAGON_CLOUD_STRIKE_FRAME 83 ///< the flame strikes the first target
+#define DRAGON_CLOUD_TRAIL_CELL_BYTES 936 ///< bytes in each trail copy
+#define DRAGON_CLOUD_FIRST_EMBER 8      ///< the first ember in work->particles
+#define DRAGON_CLOUD_FIRST_FLASH 48     ///< the first flash in work->particles
+#define DRAGON_CLOUD_TRAIL_CELLS 0x1680 ///< the trail picture in the sheet
+#define DRAGON_CLOUD_PUFF_CELLS 0x3c00  ///< the puff pictures in the sheet
+#define DRAGON_CLOUD_PUFFS 8            ///< puffs, particles 0 to 7
+#define DRAGON_CLOUD_EMBERS 40          ///< embers, from FIRST_EMBER
+#define DRAGON_CLOUD_FLASHES 16         ///< flashes, from FIRST_FLASH
 
 /// Draws puff picture cell of sheet on canvas at (x, y) with blit, sized by
 /// the puff tables.

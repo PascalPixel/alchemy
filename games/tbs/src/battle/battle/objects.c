@@ -5,7 +5,7 @@
 
 #include "../battle_internal.h"
 
-#define UNIT_MAX 14 // the party's and the enemies' units together
+#define UNIT_MAX 14 ///< the party's and the enemies' units together
 
 /// The two side walks stay separate: a shared priority helper changes EN
 /// register allocation despite the same 0x1ac-byte extent.
@@ -129,15 +129,15 @@ void BattleActor_UpdateSpritePriorities(void) {
 
 /// The status icons' bits in BattleObj.activeConditions
 #define ICON_POISON 0x01
-#define ICON_VENOM 0x02 // deadly poison
+#define ICON_VENOM 0x02 ///< deadly poison
 #define ICON_STUN 0x04
 #define ICON_PSY_SEAL 0x08
 #define ICON_SLEEP 0x10
 #define ICON_DELUSION 0x20
 #define ICON_HAUNT 0x40
-#define ICON_GRIM_REAPER 6 // the curse's turns left, 1 to 7, as bits 7 to 13
+#define ICON_GRIM_REAPER 6 ///< the curse's turns left, 1 to 7, as bits 7 to 13
 
-#define ICON_MAX 14 // the kinds of icon
+#define ICON_MAX 14 ///< the kinds of icon
 
 /// Builds the status icon bits of unit id's ailments into slot.
 s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject) {

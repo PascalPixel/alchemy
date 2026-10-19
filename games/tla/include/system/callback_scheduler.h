@@ -35,7 +35,7 @@ STATIC_ASSERT(offsetof(struct SchedulerTask, mask) == 6);
  * own; without it Scheduler_AddOrUpdateCallback: differ 14 in tbs-en, 59
  * instructions for 61. */
 extern volatile u8 gSchedulerStatus;
-extern u8 gSchedulerReady; // 1 once the task table is set up
+extern u8 gSchedulerReady; ///< 1 once the task table is set up
 extern struct SchedulerTask gSchedulerTaskTable[];
 
 void Runtime_PushSlotEntry(void *entry, s32 priority);

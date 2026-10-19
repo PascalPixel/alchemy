@@ -55,8 +55,8 @@ void Func_080e42d4(void) {
 #define HEAP_SLOT_FRAME_DECODER 80
 
 // How a picture's frames are stored.
-#define FRAME_FORMAT_TYPE01 1     // one type-01 stream
-#define FRAME_FORMAT_COMPRESSED 3 // compressed, then run through the decoder
+#define FRAME_FORMAT_TYPE01 1     ///< one type-01 stream
+#define FRAME_FORMAT_COMPRESSED 3 ///< compressed, then run through the decoder
 
 struct FrameSource {
   u8 unk00[5];

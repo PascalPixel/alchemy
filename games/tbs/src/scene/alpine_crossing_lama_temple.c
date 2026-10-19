@@ -36,7 +36,7 @@
 
 // Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another place group, and other places use the numbers for their own.
-#define FLAG_LAMA_TEMPLE_PSYNERGY_STONE 0x350 // the temple's Psynergy Stone
+#define FLAG_LAMA_TEMPLE_PSYNERGY_STONE 0x350 ///< the temple's Psynergy Stone
 
 #define SCENE_ALPINE_CROSSING ((s32)&SceneId_AlpineCrossingLamaTemple1)
 #define SCENE_LAMA_TEMPLE ((s32)&SceneId_AlpineCrossingLamaTemple2)

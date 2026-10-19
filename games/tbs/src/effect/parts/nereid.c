@@ -12,10 +12,10 @@
 
 #define NEREID_FRAMES 124
 
-#define NEREID_OBJECTS 12         // objects in the sweeping formation
-#define NEREID_COLUMNS 3          // wrapping columns of fire
-#define NEREID_EMBERS 1024        // embers in PARTICLES
-#define NEREID_COLUMN_IMAGE 0x6e4 // the column of fire in the sheet
+#define NEREID_OBJECTS 12         ///< objects in the sweeping formation
+#define NEREID_COLUMNS 3          ///< wrapping columns of fire
+#define NEREID_EMBERS 1024        ///< embers in PARTICLES
+#define NEREID_COLUMN_IMAGE 0x6e4 ///< the column of fire in the sheet
 
 /// Abilities: Nereid (scene kind 2).
 ///

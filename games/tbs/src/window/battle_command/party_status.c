@@ -8,10 +8,10 @@
 // HP and, when shown, PP with a bar under each), and in battle an optional
 // five-tile column of standby Djinn counts on its left. It sits at the top
 // right of the screen. Its flags:
-#define PARTY_STATUS_SHOW_PP 1     // add the PP row
-#define PARTY_STATUS_SHOW_DJINN 2  // add the Djinn column (needs the PP row)
-#define PARTY_STATUS_CLOSED 9      // erase the window
-#define PARTY_STATUS_KEEP_FLAGS -1 // redraw with the flags it has
+#define PARTY_STATUS_SHOW_PP 1     ///< add the PP row
+#define PARTY_STATUS_SHOW_DJINN 2  ///< add the Djinn column (needs the PP row)
+#define PARTY_STATUS_CLOSED 9      ///< erase the window
+#define PARTY_STATUS_KEEP_FLAGS -1 ///< redraw with the flags it has
 #define PARTY_STATUS_COLUMN_WIDTH 6
 #define PARTY_STATUS_DJINN_WIDTH 5
 

@@ -9,7 +9,7 @@ void ObjectMotion_MoveHalfwayTowardTarget(union FieldObject *fieldObject) {
   BattleFx_MoveAfterimageHalfway(fieldObject);
 }
 
-#define DJINNI_CLONE_MAX 8 // afterimages of the leaping Djinni
+#define DJINNI_CLONE_MAX 8 ///< afterimages of the leaping Djinni
 
 /// A Djinni's battle start: the Djinni (actor id) bounces twice, turns to face
 /// the leader, hops back 16 pixels three times, then leaps 64 pixels at the

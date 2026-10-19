@@ -116,9 +116,9 @@ enum DisplayControl {
 #define BLDCNT_TGT1_BD 0x0020
 #define BLDCNT_TGT1_ALL 0x003f
 #define BLDCNT_EFFECT_NONE 0x0000
-#define BLDCNT_EFFECT_BLEND 0x0040   // weighted by REG_BLDALPHA
-#define BLDCNT_EFFECT_LIGHTEN 0x0080 // towards white by REG_BLDY
-#define BLDCNT_EFFECT_DARKEN 0x00c0  // towards black by REG_BLDY
+#define BLDCNT_EFFECT_BLEND 0x0040   ///< weighted by REG_BLDALPHA
+#define BLDCNT_EFFECT_LIGHTEN 0x0080 ///< towards white by REG_BLDY
+#define BLDCNT_EFFECT_DARKEN 0x00c0  ///< towards black by REG_BLDY
 #define BLDCNT_TGT2_BG0 0x0100
 #define BLDCNT_TGT2_BG1 0x0200
 #define BLDCNT_TGT2_BG2 0x0400

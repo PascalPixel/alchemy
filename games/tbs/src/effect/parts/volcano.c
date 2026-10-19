@@ -12,11 +12,11 @@
 // when idle.
 
 #define VOLCANO_FRAMES 96
-#define VOLCANO_ERUPTION 200            // sparks thrown as a pillar starts
-#define VOLCANO_TRICKLE 4               // and each frame after
-#define VOLCANO_SPARK_POOL 1024         // sparks in PARTICLES
-#define VOLCANO_FLAME_IMAGE_ODD 0xdd0   // the flame on odd frames
-#define VOLCANO_FLAME_IMAGE_EVEN 0x10b4 // the flame on even frames
+#define VOLCANO_ERUPTION 200            ///< sparks thrown as a pillar starts
+#define VOLCANO_TRICKLE 4               ///< and each frame after
+#define VOLCANO_SPARK_POOL 1024         ///< sparks in PARTICLES
+#define VOLCANO_FLAME_IMAGE_ODD 0xdd0   ///< the flame on odd frames
+#define VOLCANO_FLAME_IMAGE_EVEN 0x10b4 ///< the flame on even frames
 
 /// Abilities: Volcano, Eruption, Pyroclasm, Lava Shower, Molten Bath, Magma
 /// Storm (kind 13).

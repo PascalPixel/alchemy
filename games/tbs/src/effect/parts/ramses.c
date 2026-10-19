@@ -9,11 +9,11 @@
 /// bounces), 6 to 29 are the orb's puffs (eight kept per drop, four thrown)
 /// and 30 to 41 the rocks' puffs, two per rock. PARTICLES holds the sparks.
 #define RAMSES_FRAMES 320
-#define RAMSES_STRIKE_FRAME 260   // the orb's burst strikes the targets
-#define RAMSES_ROCKS 6            // rocks that fall and bounce
-#define RAMSES_FIRST_PUFF 6       // the first puff in work->particles
-#define RAMSES_FIRST_ROCK_PUFF 30 // the first rock puff in work->particles
-#define RAMSES_SPARKS 512         // sparks of the orb's burst
+#define RAMSES_STRIKE_FRAME 260   ///< the orb's burst strikes the targets
+#define RAMSES_ROCKS 6            ///< rocks that fall and bounce
+#define RAMSES_FIRST_PUFF 6       ///< the first puff in work->particles
+#define RAMSES_FIRST_ROCK_PUFF 30 ///< the first rock puff in work->particles
+#define RAMSES_SPARKS 512         ///< sparks of the orb's burst
 
 /// Abilities: Ramses (scene kind 1).
 ///

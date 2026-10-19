@@ -20,7 +20,7 @@
 
 // Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another place group, and other places use the numbers for their own.
-#define FLAG_TOLBI_INTERIORS_SAILORS_SEEN 0x300 // their argument has played
+#define FLAG_TOLBI_INTERIORS_SAILORS_SEEN 0x300 ///< their argument has played
 
 #if !TBS_PATCH_1
 #define TOLBI_INTERIORS_INN_CAMERA_MAX_Z 736

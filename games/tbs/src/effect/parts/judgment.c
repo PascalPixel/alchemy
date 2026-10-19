@@ -39,24 +39,24 @@ struct JudgmentWork {
 
 #define JUDGMENT_SPARKS (&PARTICLES[128])
 
-#define JUDGMENT_GATHER_FRAMES 160      // frames of the gathering
-#define JUDGMENT_SWEEP_FRAMES 320       // frames of the sweep
-#define JUDGMENT_SHEET_FLARE_B 0x4240   // the second flare picture in the sheet
-#define JUDGMENT_FORMATION_OBJECTS 16   // objects in the formation
-#define JUDGMENT_DEBRIS_OBJECTS 16      // debris objects of the sweep
-#define JUDGMENT_SHEET_BURST 0x600      // the burst pictures in the sheet
-#define JUDGMENT_SHEET_EXPLOSION 0x4000 // the explosion pictures in the sheet
-#define JUDGMENT_SHEET_FLARE_A 0x4000   // the first flare picture in the sheet
+#define JUDGMENT_GATHER_FRAMES 160    ///< frames of the gathering
+#define JUDGMENT_SWEEP_FRAMES 320     ///< frames of the sweep
+#define JUDGMENT_SHEET_FLARE_B 0x4240 ///< the second flare picture in the sheet
+#define JUDGMENT_FORMATION_OBJECTS 16 ///< objects in the formation
+#define JUDGMENT_DEBRIS_OBJECTS 16    ///< debris objects of the sweep
+#define JUDGMENT_SHEET_BURST 0x600    ///< the burst pictures in the sheet
+#define JUDGMENT_SHEET_EXPLOSION 0x4000 ///< the explosion pictures in the sheet
+#define JUDGMENT_SHEET_FLARE_A 0x4000 ///< the first flare picture in the sheet
 /// The small flash picture in the sheet.
 #define JUDGMENT_SHEET_FLASH_SMALL 0x6000
 /// The large flash picture in the sheet.
 #define JUDGMENT_SHEET_FLASH_LARGE 0x6110
 /// The flash streak picture in the sheet.
 #define JUDGMENT_SHEET_FLASH_STREAK 0x64e8
-#define JUDGMENT_EXPLOSION_CELL_BYTES 1728 // bytes in each explosion picture
-#define JUDGMENT_WAVE_SIZE 120             // the wave picture is 120x120
-#define JUDGMENT_DMA_FILL_CANVAS                                               \
-  DMA_FILL_WORDS(0x1000) // DMA word that clears the canvas
+#define JUDGMENT_EXPLOSION_CELL_BYTES 1728 ///< bytes in each explosion picture
+#define JUDGMENT_WAVE_SIZE 120             ///< the wave picture is 120x120
+/// DMA word that clears the canvas
+#define JUDGMENT_DMA_FILL_CANVAS DMA_FILL_WORDS(0x1000)
 /// DMA word that clears the wave picture.
 #define JUDGMENT_DMA_FILL_WAVE DMA_FILL_WORDS(0xe10)
 

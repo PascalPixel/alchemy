@@ -9,7 +9,7 @@
 
 #define RAY_SPARK_COUNT 1024
 
-#define RAY_CELLS 0x60e // the bolt pictures in the sheet
+#define RAY_CELLS 0x60e ///< the bolt pictures in the sheet
 #define RAY_COUNT 4
 
 /// Abilities: Ray, Storm Ray, Destruct Ray (kind 17).

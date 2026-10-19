@@ -4,8 +4,8 @@
 
 #include "../psynergy_effects_internal.h"
 
-#define MERCURY_PARTICLE_MAX 24  // droplets (one an effect slot)
-#define MERCURY_AFTERIMAGE_MAX 8 // afterimages of the rising Djinni
+#define MERCURY_PARTICLE_MAX 24  ///< droplets (one an effect slot)
+#define MERCURY_AFTERIMAGE_MAX 8 ///< afterimages of the rising Djinni
 /// A Mercury Djinni joins the party: the screen is tinted blue, the Djinni
 /// bounces twice and hops three times ever higher, then rises 120 pixels out
 /// of sight trailing eight afterimages. The leader turns to the camera and

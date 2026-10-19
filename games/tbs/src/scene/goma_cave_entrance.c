@@ -41,7 +41,7 @@
 #define STUMP 8
 #define WEST_PILLAR 9
 #define EAST_PILLAR 10
-#define STUMP_IVY 15 // the ivy holding the stump
+#define STUMP_IVY 15 ///< the ivy holding the stump
 #define IVY 16
 
 /// Private scene actions used by the reunion sequence.

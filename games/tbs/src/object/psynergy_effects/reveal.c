@@ -109,7 +109,7 @@ void FieldFx_RunReveal(void) {
   Scheduler_AddOrUpdateCallback(FieldEffect_WatchLeaderDistance, 0xc80);
 }
 
-#define REVEAL_END_EVENT 0x40000005 // Psynergy event, stage 4
+#define REVEAL_END_EVENT 0x40000005 ///< Psynergy event, stage 4
 
 /// Ends Reveal if it is running: stops its watch, brings the colours back
 /// from black over 30 frames and runs stage 4 of the Psynergy event.

@@ -4,10 +4,10 @@
 
 #include "../psynergy_effects_internal.h"
 
-#define GROWTH_PARTICLE_MAX 24     // particles round the target
-#define GROWTH_PARTICLE_OBJECT 284 // particle object
-#define GROWTH_FALL_OBJECT 217     // falling object
-#define GROWTH_FALL_LAST 4         // five falling objects, 0 to 4
+#define GROWTH_PARTICLE_MAX 24     ///< particles round the target
+#define GROWTH_PARTICLE_OBJECT 284 ///< particle object
+#define GROWTH_FALL_OBJECT 217     ///< falling object
+#define GROWTH_FALL_LAST 4         ///< five falling objects, 0 to 4
 
 struct BurstParticleVector {
   s32 values[3]; ///< x, y, z

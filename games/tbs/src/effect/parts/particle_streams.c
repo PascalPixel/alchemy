@@ -55,8 +55,8 @@ void BattleFx_RunOuterSpace(struct BattleEffectArgument *effect) {
 }
 #define PARTICLE_STREAMS_EMBERS (&PARTICLES[128])
 
-#define PARTICLE_STREAMS_RISE_FRAMES 192 // frames, at most, of the rise
-#define PARTICLE_STREAMS_BURST_FRAMES 54 // frames of the burst
+#define PARTICLE_STREAMS_RISE_FRAMES 192 ///< frames, at most, of the rise
+#define PARTICLE_STREAMS_BURST_FRAMES 54 ///< frames of the burst
 
 /// The mote pictures in the sheet: two sets, MOTE_SET_BYTES apart.
 #define PARTICLE_STREAMS_MOTE_CELLS 0x3200

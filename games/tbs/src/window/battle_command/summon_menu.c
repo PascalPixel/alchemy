@@ -5,12 +5,12 @@
 #include "../battle_command_internal.h"
 
 #if TBS_PATCH_1
-#define SUMMON_COST_X 13 // Column for the required Djinni count
+#define SUMMON_COST_X 13 ///< Column for the required Djinni count
 #else
 #define SUMMON_COST_X 10
 #endif
 
-#define SUMMON_END 32 // End of summon list
+#define SUMMON_END 32 ///< End of summon list
 
 /// Show learned summons four per page; return the selected summon number.
 /// Cancel returns -1.

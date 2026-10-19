@@ -8,7 +8,7 @@
 /// one 8-pixel row of 4bpp pixels, so a column is 32 pixel rows of one word.
 #define CANVAS_COLUMNS 30
 #define CANVAS_COLUMN_WORDS 32
-#define CANVAS_KEPT_ROWS 8 // the top 8 pixel rows stay put
+#define CANVAS_KEPT_ROWS 8 ///< the top 8 pixel rows stay put
 
 /// Scrolls the battle message canvas up by 6 pixel rows per step, below its
 /// top 8 rows, and clears the rows this uncovers.

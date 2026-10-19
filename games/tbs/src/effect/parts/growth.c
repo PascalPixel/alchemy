@@ -285,7 +285,7 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
   EFFECT_FINISH_CANVAS();
 }
 
-#define VINE_COLUMNS 16 // columns that rise
+#define VINE_COLUMNS 16 ///< columns that rise
 #define VINE_FRAMES 70
 
 /// Abilities: Vine (kind 202).

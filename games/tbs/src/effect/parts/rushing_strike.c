@@ -27,8 +27,8 @@ void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
   } while (row != rows);
 }
 
-#define RUSHING_STRIKE_SPARK_COUNT 64   // sparks
-#define RUSHING_STRIKE_RING_BYTES 0x3c0 // one 20x48 ring picture
+#define RUSHING_STRIKE_SPARK_COUNT 64   ///< sparks
+#define RUSHING_STRIKE_RING_BYTES 0x3c0 ///< one 20x48 ring picture
 
 /// Abilities: Bone Charge (kind 311).
 ///
@@ -55,7 +55,7 @@ void BattleFx_RunHeadbutt(struct BattleEffectArgument *effect) {
   BattleFx_RunRushingStrike(effect, 3);
 }
 #define RUSHING_STRIKE_FRAMES 60
-#define RUSHING_STRIKE_FRAME 10 // the user strikes
+#define RUSHING_STRIKE_FRAME 10 ///< the user strikes
 
 /// Rushing strike: the user rushes at the first target and strikes it on
 /// frame 10; a ring flares where it hits and 64 sparks scatter, over 60

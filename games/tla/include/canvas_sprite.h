@@ -21,9 +21,9 @@
 #define CANVAS_SIZE 0x1000
 
 // How the sprite is drawn.
-#define CANVAS_SPRITE_16_COLORS 1  // rebuilt each frame, in OBJ palette 14
-#define CANVAS_SPRITE_256_COLORS 2 // rebuilt each frame, in 256 colours
-#define CANVAS_SPRITE_KEPT 3       // drawn as the effect left it
+#define CANVAS_SPRITE_16_COLORS 1  ///< rebuilt each frame, in OBJ palette 14
+#define CANVAS_SPRITE_256_COLORS 2 ///< rebuilt each frame, in 256 colours
+#define CANVAS_SPRITE_KEPT 3       ///< drawn as the effect left it
 
 /// What Func_080eb594 does with the canvas in the next frame.
 #define CANVAS_UPLOAD_AND_CLEAR 1

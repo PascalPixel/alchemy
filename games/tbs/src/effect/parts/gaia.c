@@ -14,7 +14,7 @@
 /// in the rebuilt sheet.
 #define GAIA_WALL_TOP_CELLS 0x13c0
 #define GAIA_WALL_FOOT_CELLS 0x25c0
-#define GAIA_ROCKS 11 // rocks that tumble up the wall
+#define GAIA_ROCKS 11 ///< rocks that tumble up the wall
 
 /// Abilities: Gaia, Mother Gaia, Grand Gaia, Rockfall, Rockslide, Avalanche
 /// (kind 3).

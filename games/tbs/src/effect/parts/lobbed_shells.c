@@ -57,9 +57,9 @@ void BattleFx_RunRottenBlood(struct BattleEffectArgument *effect) {
 
 /// The bursts live after the shells in PARTICLES.
 #define LOBBED_SHELLS_BURSTS ((struct EffectStep *)(Ram_MapCellBuffer + 0x1c00))
-#define LOBBED_SHELLS_SLOTS 16           // particles reserved for each target
-#define LOBBED_SHELLS_BURST_SLOTS 256    // burst particles after the shells
-#define LOBBED_SHELLS_SMOKE_CELLS 0x3e80 // the smoke pictures in the sheet
+#define LOBBED_SHELLS_SLOTS 16           ///< particles reserved for each target
+#define LOBBED_SHELLS_BURST_SLOTS 256    ///< burst particles after the shells
+#define LOBBED_SHELLS_SMOKE_CELLS 0x3e80 ///< the smoke pictures in the sheet
 
 /// Nonzero when the style's shells burst into shards instead of smoke.
 #define LOBBED_SHELLS_SHATTER(mode) gLobbedShells_Records[(mode) * 2]

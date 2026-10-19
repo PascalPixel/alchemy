@@ -135,8 +135,8 @@
 #define PARTY_BATTLE_SIZE 4
 #define ENEMY_BATTLE_SIZE 6
 
-#define ABILITY_ATTACK 1 // the ability "Attack"
-#define ALLY_MAX 7       // the last party member's unit id
+#define ABILITY_ATTACK 1 ///< the ability "Attack"
+#define ALLY_MAX 7       ///< the last party member's unit id
 
 /// The length of a unit's name, its terminator excluded.
 #define UNIT_NAME_LENGTH 14
@@ -215,10 +215,10 @@ enum BattlePlanStaging {
 #define STAGING_KIND_MASK 0xfff
 #define STAGING_VARIANT_MASK 0x3000
 #define STAGING_VARIANT_SHIFT 12
-#define STAGING_BY_ID_RANGE 0x4000 // BattleFx_DispatchByIdRangeFar
-#define STAGING_SCENE 0x8000       // BattleFx_RunSceneEffectFar, actor's view
-#define STAGING_ON_DOWNED 0x10000  // shown on downed targets too (revivals)
-#define STAGING_OTHER_SIDE 0x20000 // played from the other side
+#define STAGING_BY_ID_RANGE 0x4000 ///< BattleFx_DispatchByIdRangeFar
+#define STAGING_SCENE 0x8000       ///< BattleFx_RunSceneEffectFar, actor's view
+#define STAGING_ON_DOWNED 0x10000  ///< shown on downed targets too (revivals)
+#define STAGING_OTHER_SIDE 0x20000 ///< played from the other side
 
 /// More of BattlePlan.presentationFlags: the camera takes the other side's
 /// view (an enemy's cast a view of its own), or turns right round.
@@ -226,9 +226,9 @@ enum BattlePlanStaging {
 #define STAGING_VIEW_REVERSED 0x80000
 
 // ItemDefinition.useType: what using an item in battle does to it.
-#define ITEM_USE_CONSUMED 1  // one is used up
-#define ITEM_USE_MAY_BREAK 2 // breaks one time in eight
-#define ITEM_USE_EMPTIES 4   // Hermes' Water leaves an Empty Bottle
+#define ITEM_USE_CONSUMED 1  ///< one is used up
+#define ITEM_USE_MAY_BREAK 2 ///< breaks one time in eight
+#define ITEM_USE_EMPTIES 4   ///< Hermes' Water leaves an Empty Bottle
 
 /// BattleAct.targetMode: whom an ability may target, from its user's view.
 #define TARGET_MODE_NONE 0

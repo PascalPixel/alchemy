@@ -1,6 +1,6 @@
 #include "types.h"
 
-extern u8 MsgDjinnName[]; // the first djinni's name
+extern u8 MsgDjinnName[]; ///< the first djinni's name
 
 s32 Djinn_IsReadyFar(s32 owner, s32 element, s32 index);
 s32 Djinn_IsActiveFar(s32 owner, s32 element, s32 index);

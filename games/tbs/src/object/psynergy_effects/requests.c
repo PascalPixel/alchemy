@@ -4,7 +4,7 @@
 
 #include "../psynergy_effects_internal.h"
 
-#define AERIE 98 // encounter table fought before the Aerie's storm
+#define AERIE 98 ///< encounter table fought before the Aerie's storm
 /// Sets up a battle with enemy group slot of encounter table zone. On the
 /// world map (mode 3) the terrain under the leader picks the battle backdrop.
 void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {

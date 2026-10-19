@@ -41,7 +41,7 @@
 #define FLAG_FEH_SCHOOL_SAW_TREE_FALL 0x301
 
 // The first scene, outside the temple.
-#define FALLS_MONK 9 // the monk beneath the falls, at the waterfall grotto
+#define FALLS_MONK 9 ///< the monk beneath the falls, at the waterfall grotto
 #define HEALER 13
 
 /// The second scene: Nyunpa's hall and Master Feh's school.
@@ -50,7 +50,7 @@
 #define FEIZHI 17
 #define FEH 18
 #define TRAINING_TREE 19
-#define TRAINING_TREE_TARGET 20 // where Force strikes the tree
+#define TRAINING_TREE_TARGET 20 ///< where Force strikes the tree
 
 /// The second scene by entrance 3: Hama's room in Lama Temple.
 #define HAMA 8

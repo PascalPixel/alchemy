@@ -67,9 +67,9 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 /// The blue flame sheet holds a 17x104 flame, then a 34x65 one; Mercury
 /// turns both on their side after its djinni.
 #define DJINN_ATTACKS_FLAME2_CELLS (17 * 104)
-#define MERCURY_TALL_FLAME_CELLS 0x2a8 // 104x17, not drawn
-#define MERCURY_FLAME_CELLS 0x990      // 65x34
-#define MERCURY_FLAMES 5               // flames thrown
+#define MERCURY_TALL_FLAME_CELLS 0x2a8 ///< 104x17, not drawn
+#define MERCURY_FLAME_CELLS 0x990      ///< 65x34
+#define MERCURY_FLAMES 5               ///< flames thrown
 /// The mote slots Mercury walks: room for more than MERCURY_FLAMES *
 /// DJINN_ATTACKS_MOTES_PER_FLAME.
 #define MERCURY_MOTE_SLOTS 256
@@ -77,7 +77,7 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 // throws its motes into its own DJINN_ATTACKS_MOTES_PER_FLAME slots of
 // PARTICLES (Venus's columns fill 16 of them), and the motes move through all
 // DJINN_ATTACKS_MOTE_SLOTS.
-#define DJINN_ATTACKS_MOTES_PER_FLAME 32 // slots for each flame's motes
+#define DJINN_ATTACKS_MOTES_PER_FLAME 32 ///< slots for each flame's motes
 #define DJINN_ATTACKS_MOTE_SLOTS 512
 
 /// Abilities: Mercury (kind 251).
@@ -212,9 +212,9 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
 }
 
 #define JUPITER_FRAMES 96
-#define JUPITER_FLAMEBALLS 8          // flameballs that fall
-#define JUPITER_GROUND_Y 95           // where the flameballs land
-#define JUPITER_FLAMEBALL_CELLS 0x320 // after the djinni
+#define JUPITER_FLAMEBALLS 8          ///< flameballs that fall
+#define JUPITER_GROUND_Y 95           ///< where the flameballs land
+#define JUPITER_FLAMEBALL_CELLS 0x320 ///< after the djinni
 
 /// Abilities: Jupiter (kind 253).
 ///
@@ -347,7 +347,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
 }
 
 #define VENUS_FRAMES 96
-#define VENUS_COLUMNS 10 // columns of flame that rise
+#define VENUS_COLUMNS 10 ///< columns of flame that rise
 /// The blue flame sheet, after the djinni, and its second flame.
 #define VENUS_FLAME_SHEET 0x2f8
 #define VENUS_COLUMN_CELLS (VENUS_FLAME_SHEET + DJINN_ATTACKS_FLAME2_CELLS)
@@ -462,10 +462,10 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
 }
 
 #define MARS_FRAMES 112
-#define MARS_STRIKE_FRAME 32     // the Djinni strikes the ground
-#define MARS_FLAMES 9            // flames along the arc
-#define MARS_EMBERS_PER_FLAME 16 // embers in each flame
-#define MARS_ORB_CELLS 0x320     // six 40x40 orb pictures, after the djinni
+#define MARS_STRIKE_FRAME 32     ///< the Djinni strikes the ground
+#define MARS_FLAMES 9            ///< flames along the arc
+#define MARS_EMBERS_PER_FLAME 16 ///< embers in each flame
+#define MARS_ORB_CELLS 0x320     ///< six 40x40 orb pictures, after the djinni
 
 /// Abilities: Mars (kind 252).
 ///

@@ -291,7 +291,7 @@ void BattleFx_StartEffectObject22(s32 item, s32 flags) {
 #endif
 
 #if defined(PARTICLES_PAUSE_FOR_MENU)
-#define MENU_OPEN_OFFSET 0xcca // in gEventWork: non-zero while a menu is open
+#define MENU_OPEN_OFFSET 0xcca ///< in gEventWork: non-zero while a menu is open
 
 /// While Reveal is active, destroys all its sparkles.
 void BattleFx_ClearRandomParticles(void) {

@@ -9,7 +9,7 @@
 #include "graphics.h"
 #include "uiwindow.h"
 
-#define BATTLE_OK 0x80 // flags: usable in battle.
+#define BATTLE_OK 0x80 ///< flags: usable in battle.
 
 /// Determine whether an item can be used in battle.
 /// Returns: 0 usable / 1 unusable / 2 unavailable in battle.

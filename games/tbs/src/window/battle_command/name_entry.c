@@ -13,8 +13,8 @@ UNUSED s32 NameEntry_AcceptsMark(s32 mark, s32 letter) { return 1; }
 
 // The kana voicing marks of the Japanese name entry, which join the letter
 // before them.
-#define NAME_VOICED_MARK 0xde     // dakuten
-#define NAME_SEMIVOICED_MARK 0xdf // handakuten
+#define NAME_VOICED_MARK 0xde     ///< dakuten
+#define NAME_SEMIVOICED_MARK 0xdf ///< handakuten
 
 /// Returns whether `mark` may follow `letter` in a Japanese name: any
 /// character but a voicing mark may, and a voicing mark only after a letter
@@ -141,9 +141,9 @@ void Resource_CopyFixedBlockA(s32 slot) {
 // The name entry screen: a keyboard window of letter keys, with a column of
 // command keys on its right (Delete and End, and in Japanese the keyboard
 // switch), the name above it and the character's portrait.
-#define NAME_COMMAND_COLUMN 18 // the keyboard column of the command keys
+#define NAME_COMMAND_COLUMN 18 ///< the keyboard column of the command keys
 #define NAME_MAX_LETTERS 5
-#define NAME_MAX_BYTES 14 // stored name bytes, excluding its terminator
+#define NAME_MAX_BYTES 14 ///< stored name bytes, excluding its terminator
 
 #if TBS_PATCH_1
 /// Puts the string `str` into the UI's text entries and returns its width in

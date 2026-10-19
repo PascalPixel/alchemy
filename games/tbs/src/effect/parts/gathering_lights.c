@@ -30,7 +30,7 @@ void BattleFx_RunRumble(struct BattleEffectArgument *effect) {
 void BattleFx_RunHaunting(struct BattleEffectArgument *effect) {
   BattleFx_RunGatheringLights(effect, 2);
 }
-#define GATHERING_LIGHTS_SLOTS 128 // particles reserved for each target
+#define GATHERING_LIGHTS_SLOTS 128 ///< particles reserved for each target
 
 /// For each target in turn, 20 frames apart, lights burst out of the user;
 /// 30 frames after each one appears it is pulled towards the middle of the

@@ -137,7 +137,7 @@ void BattleMotion_InitializeObject(s32 unitId) {
   ObjectDispatch_SelectAnimationFar(object, 5);
 }
 
-#define CLASS_NO_KNOCKBACK 0x94 // a class that never moves when hit
+#define CLASS_NO_KNOCKBACK 0x94 ///< a class that never moves when hit
 
 /// Knocks unit id back, by the speed, hop and distance of motion variant
 /// (gBattleMotion_Variant*), and puts it in pose 5. One class only takes

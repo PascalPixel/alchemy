@@ -5,7 +5,7 @@
 #include "../effect_internal.h"
 
 // Break: ice shards burst from each target.
-#define DRAIN_ICE_SHARDS_PER_TARGET 128 // shards for each target
+#define DRAIN_ICE_SHARDS_PER_TARGET 128 ///< shards for each target
 
 /// Abilities: Break (kind 43).
 ///
@@ -119,8 +119,8 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
 // Gathering motes: motes of light leave the targets and are drawn into the
 // user.
 
-#define DRAIN_MOTES_PER_TARGET 128 // motes for each target
-#define DRAIN_DRAWN 32             // motes drawn for each target
+#define DRAIN_MOTES_PER_TARGET 128 ///< motes for each target
+#define DRAIN_DRAWN 32             ///< motes drawn for each target
 
 /// Abilities: Drain, Psy Drain (kind 42).
 ///

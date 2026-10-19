@@ -14,10 +14,10 @@
 
 // Pillars of lightning and the sparks they throw up.
 
-#define PLASMA_SPARK_COUNT 1024 // sparks
+#define PLASMA_SPARK_COUNT 1024 ///< sparks
 
-#define PLASMA_SPACING 8           // frames between pillars
-#define PLASMA_SECOND_IMAGE 0x1500 // the second picture in the sheet
+#define PLASMA_SPACING 8           ///< frames between pillars
+#define PLASMA_SECOND_IMAGE 0x1500 ///< the second picture in the sheet
 
 /// gPlasma_Columns has seven pillars for each side.
 #define PLASMA_COLUMN_X(side, pillar) gPlasma_Columns[(side)][(pillar)]
@@ -215,10 +215,10 @@ void BattleFx_RunNova(struct BattleEffectArgument *effect) {
 void BattleFx_RunDynamite(struct BattleEffectArgument *effect) {
   BattleFx_RunSparkGroups(effect, 1);
 }
-#define SPARK_GROUPS_FLASHES 16     // flashes kept per burst
-#define SPARK_GROUPS_SPACING 8      // frames between bursts
-#define SPARK_GROUPS_RING 12        // of which drawn as the ring
-#define SPARK_GROUPS_FLASH_DRAWN 18 // a flash is drawn for its last 18 frames
+#define SPARK_GROUPS_FLASHES 16     ///< flashes kept per burst
+#define SPARK_GROUPS_SPACING 8      ///< frames between bursts
+#define SPARK_GROUPS_RING 12        ///< of which drawn as the ring
+#define SPARK_GROUPS_FLASH_DRAWN 18 ///< a flash is drawn for its last 18 frames
 
 /// One to three bursts, 8 frames apart: each flashes, rings itself with
 /// twelve smaller flashes that fade, and throws out sparks that bounce on

@@ -93,8 +93,8 @@ void BattleFx_SetupResourcesAndWindow(void) {
 #if TBS_PATCH_2
 /// The cursor snaps to the nearest place when the d-pad is released.
 #define WORLD_MAP_CURSOR_SNAPS 1
-#define WORLD_MAP_NAME_RANGE 64 // squared distance that shows a place's name
-#define WORLD_MAP_NAME_LEFT 3   // how far left of its marker the name goes
+#define WORLD_MAP_NAME_RANGE 64 ///< squared distance that shows a place's name
+#define WORLD_MAP_NAME_LEFT 3   ///< how far left of its marker the name goes
 #else
 #define WORLD_MAP_CURSOR_SNAPS 0
 #define WORLD_MAP_NAME_RANGE 100

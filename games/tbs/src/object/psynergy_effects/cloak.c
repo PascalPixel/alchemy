@@ -4,8 +4,8 @@
 
 #include "../psynergy_effects_internal.h"
 
-#define CLOAK_TILE 0xfb  // the tile attribute Cloak can stay hidden on
-#define CLOAK_END 0x2092 // field command when Cloak can no longer hide
+#define CLOAK_TILE 0xfb  ///< the tile attribute Cloak can stay hidden on
+#define CLOAK_END 0x2092 ///< field command when Cloak can no longer hide
 
 /// Scheduler callback of Cloak: when the tile under the leader is not
 /// CLOAK_TILE, requests CLOAK_END. On the world map (event mode 3) it reads

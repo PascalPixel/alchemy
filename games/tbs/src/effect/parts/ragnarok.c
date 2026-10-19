@@ -12,16 +12,16 @@
 // flashes live in work->particles and the blade picture in the work sheet;
 // PARTICLES holds 340 sparks per column.
 
-#define RAGNAROK_FLASH_CELLS                                                   \
-  (64 * 128) // Place flash graphics after the 64x128 sword image.
+/// Place flash graphics after the 64x128 sword image.
+#define RAGNAROK_FLASH_CELLS (64 * 128)
 
 #define RAGNAROK_FRAMES 80
-#define RAGNAROK_COLUMNS 2        // columns that strike
-#define RAGNAROK_SEEDED 3         // columns given particles
-#define RAGNAROK_FLASHES 16       // flashes kept per column
-#define RAGNAROK_RING 12          // of which drawn as the ring
-#define RAGNAROK_SPARKS 340       // sparks kept per column
-#define RAGNAROK_DRAWN_SPARKS 256 // of which flown
+#define RAGNAROK_COLUMNS 2        ///< columns that strike
+#define RAGNAROK_SEEDED 3         ///< columns given particles
+#define RAGNAROK_FLASHES 16       ///< flashes kept per column
+#define RAGNAROK_RING 12          ///< of which drawn as the ring
+#define RAGNAROK_SPARKS 340       ///< sparks kept per column
+#define RAGNAROK_DRAWN_SPARKS 256 ///< of which flown
 
 /// gRagnarok_StrikeColumns has three columns for each side.
 #define RAGNAROK_COLUMN_X(side, column)                                        \

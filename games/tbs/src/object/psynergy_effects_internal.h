@@ -198,8 +198,8 @@ struct CaptureObject {
     }                                                                          \
   }
 
-#define HEAP_SLOT_FX                                                           \
-  56 // the Psynergy effect's work (gWorkSlot[56], gEffectWork)
+/// the Psynergy effect's work (gWorkSlot[56], gEffectWork)
+#define HEAP_SLOT_FX 56
 
 struct WaveFxSprite {
   u32 unk00[2];
@@ -292,7 +292,7 @@ BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
     BattleFx_PrepareBufferInterpolation();                                     \
   }
 
-#define ABOVE (16 << 16) // 16 pixels up
+#define ABOVE (16 << 16) ///< 16 pixels up
 
 /// A FieldActor seen with the halfword at 0x5e (its lifetime), which
 /// FieldActor does not name.

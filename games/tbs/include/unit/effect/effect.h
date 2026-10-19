@@ -213,8 +213,8 @@ typedef struct {
 /// as particles. The effects use these two, not gMapCellBuffer itself.
 #define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 
-#define EFFECT_CLIP_BOUNDS                                                     \
-  (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y) // Clip overflow on all four sides.
+/// Clip overflow on all four sides.
+#define EFFECT_CLIP_BOUNDS (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 // Extract signed 16.16 pixels without reading an s32 through an s16 alias.
 // The plain shift adds four bytes to native English effect.text overall.

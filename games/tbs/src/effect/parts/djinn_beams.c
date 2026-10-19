@@ -8,8 +8,8 @@
 // light falls from the sky onto each target.
 
 // Images in work->sheet.
-#define DJINN_BEAMS_MOTE_CELLS 0x2710   // the motes (CrescentMoonSheet, 24x24)
-#define DJINN_BEAMS_DJINNI_CELLS 0x65c0 // the Djinni (40x40)
+#define DJINN_BEAMS_MOTE_CELLS 0x2710 ///< the motes (CrescentMoonSheet, 24x24)
+#define DJINN_BEAMS_DJINNI_CELLS 0x65c0 ///< the Djinni (40x40)
 
 /// Abilities: Revive, Water of Life (kind 25); Quartz (kind 201).
 ///

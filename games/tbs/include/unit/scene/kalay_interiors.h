@@ -8,26 +8,27 @@
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
+struct SceneRegion;
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-s32 SceneData_ReturnZero(void);
+const struct SceneEntrance *KalayInteriors_GetEntrances(void);
+const struct SceneRegion *KalayInteriors_GetRegions(void);
 u8 *KalayInteriors_GetExits(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
-s32 Scene_Initialize(void);
-extern struct SceneEntrance gKalayInteriorsEntrancesOther[];
-extern struct SceneEntrance gKalayInteriorsEntrances1[];
-extern struct SceneEntrance gKalayInteriorsEntrances2[];
+const struct ScenePlacement *KalayInteriors_GetPlacements(void);
+const struct SceneEvent *KalayInteriors_GetEvents(void);
+s32 KalayInteriors_Initialize(void);
+extern struct SceneEntrance gKalayInteriors_NoEntrances[];
+extern struct SceneEntrance gKalayInteriors_HouseEntrances[];
+extern struct SceneEntrance gKalayInteriors_SanctumEntrances[];
 extern u32 gKalayInteriors_Exits[];
-extern struct ScenePlacement gKalayInteriorsPlacementsOther[];
-extern struct ScenePlacement gKalayInteriorsPlacements1[];
-extern struct ScenePlacement gKalayInteriorsPlacements1Entrance9[];
-extern struct ScenePlacement gKalayInteriorsPlacements2[];
-extern struct SceneEvent gKalayInteriorsEventsOther[];
-extern struct SceneEvent gKalayInteriorsEvents1[];
-extern struct SceneEvent gKalayInteriorsEvents1Entrance9[];
-extern struct SceneEvent gKalayInteriorsEvents2[];
-extern u16 gKalayInteriors_ArrivalPlacementData[];
-extern struct MapCellAnim gKalayInteriors_ArrivalPlacements[];
+extern struct ScenePlacement gKalayInteriors_NoPlacements[];
+extern struct ScenePlacement gKalayInteriors_HousePlacements[];
+extern struct ScenePlacement gKalayInteriors_InnPlacements[];
+extern struct ScenePlacement gKalayInteriors_SanctumPlacements[];
+extern struct SceneEvent gKalayInteriors_NoEvents[];
+extern struct SceneEvent gKalayInteriors_HouseEvents[];
+extern struct SceneEvent gKalayInteriors_InnEvents[];
+extern struct SceneEvent gKalayInteriors_SanctumEvents[];
+extern u16 gKalayInteriors_DoorCellSteps[];
+extern struct MapCellAnim gKalayInteriors_DoorCells[];
 
 #endif

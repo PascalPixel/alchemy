@@ -70,6 +70,25 @@
 #define FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE 0x9a2
 #define FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED 0x9a5
 
+// Kalay
+// The inn's guests told the party about the Colosso tour to Tolbi.
+#define FLAG_KALAY_HEARD_OF_COLOSSO_TOUR 0x910
+#define FLAG_KALAY_COLOSSO_TOUR_LEFT 0x911 // the tour group has left town
+
+// Kalay and Tolbi docks
+#define FLAG_KALAY_DOCKS_TICKET_BOUGHT 0x8a5
+// The father on the Kalay docks asked the party to take a message to his
+// daughter in Tolbi, and the party agreed.
+#define FLAG_KALAY_DOCKS_CARRYING_MESSAGE 0x8a6
+#define FLAG_KALAY_DOCKS_TICKET_HANDED_OVER 0x8a7 // the party may board
+#define FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED 0x8a8
+#define FLAG_KALAY_DOCKS_WENT_ASHORE 0x8a9 // off the ship after boarding
+// A passenger on the Tolbi docks walked up to the party as it arrived.
+#define FLAG_TOLBI_DOCKS_PASSENGER_MET_PARTY 0x8aa
+// The passengers confronted the tour guides and their bodyguard.
+#define FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN 0x8ab
+#define FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL 0x8ac
+
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
 #define FLAG_SCENE_TEMP_00 0x200

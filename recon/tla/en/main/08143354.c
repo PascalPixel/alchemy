@@ -2,7 +2,11 @@
 // two halves of the pair's step (movs r4, #128; ldr r1, [pc]; lsls r4, r4,
 // #10); here the load follows the shift. The step is loop.c's hoisted constant,
 // so a barrier on the tile pair cannot sit inside it (an operand barrier
-// changes nothing).
+// changes nothing). The sched2 dump says why: after the movs, the shift and
+// the load both have priority 2 and the shift wins on its one dependent; a
+// load cost one cycle higher, as the native's loads seem to have throughout
+// ⚓️, would rank the load first. A non-volatile operand barrier on the tile
+// pair lowers the load's priority to 1.
 #include "types.h"
 #include "iwram_call.h"
 

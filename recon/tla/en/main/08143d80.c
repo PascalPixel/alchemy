@@ -1,12 +1,15 @@
-// Near miss, differ 10 of 114: The Broken Seal's BattleFx_SetupCanvasTileMap
-// with ⚓️'s slots (the background view is the 0xb0 slot) and its IWRAM calls
-// through forwarders (differ 28 called directly). Left: three places where the
-// native loads a pool constant ahead of a constant it builds: the loop
-// preheader (ldr r5, =0x0600fb00; movs r2, #128; ldr r7, =0xff; lsls r2, r2,
-// #1), the window sizes (ldr r1, =0xf0; movs r3, #128; ldr r2, =0x1088; lsls
-// r3, r3, #19) and WININ (ldr r3, =0x3537 before movs r2, #128). Pinning
-// WININ's value behind a barrier that holds r2, as f18284c.c does, orders that
-// row but reorders the literal pool (differ 18).
+// Near miss, differ 6 of 114 (10 as plain C): The Broken Seal's
+// BattleFx_SetupCanvasTileMap with ⚓️'s slots (the background view is the
+// 0xb0 slot) and its IWRAM calls through forwarders (differ 28 called
+// directly). Left: two places where the native issues a pool load between the
+// halves of a constant it builds, which agscc's sched2 ranks one below the
+// shift, as if the native's loads cost a cycle more: the loop preheader (ldr
+// r5, =0x0600fb00; movs r2, #128; ldr r7, =0xff; lsls r2, r2, #1) and the
+// window height (movs r3, #128; ldr r2, =0x1088; lsls r3, r3, #19). The
+// window width and WININ's value load first through pins in one-pass blocks,
+// which add no bytes to the pool estimate (a pin behind a barrier asm, as
+// f18284c.c does, reorders the literal pool: differ 18). Pinning the map base
+// in r5 the same way rewrites the loop's registers and addressing.
 #include "types.h"
 #include "system.h"
 #include "io_reg.h"
@@ -55,11 +58,33 @@ void BattleFx_SetupCanvasTileMap(void) {
   REG_DISPCNT = 0x7741;
   REG_BG1CNT = 0x1f81;
   REG_BLDCNT = 0x3f42;
-  REG_WIN0H = 0xf0;
-  REG_WIN0V = 0x1088;
-  REG_WIN1H = 0xf0;
-  REG_WIN1V = 0x1088;
-  REG_WININ = 0x3537;
+  {
+    /* FAKEMATCH(fixed register): the window width loaded into r1 inside the
+     * block below, before the window address starts; with neither this nor
+     * WININ's pin, 10 of 114 instructions differ in tla-en. */
+    register u16 width asm("r1");
+
+    /* FAKEMATCH(one-pass block): ends the scheduling region after the load,
+     * with no bytes for the pool's estimate. */
+    do {
+      width = 0xf0;
+    } while (0);
+    REG_WIN0H = width;
+    REG_WIN0V = 0x1088;
+    REG_WIN1H = width;
+    REG_WIN1V = 0x1088;
+  }
+  {
+    /* FAKEMATCH(fixed register): WININ's value loaded into r3 before its
+     * address starts, as above. */
+    register u16 inside asm("r3");
+
+    /* FAKEMATCH(one-pass block): as above. */
+    do {
+      inside = 0x3537;
+    } while (0);
+    REG_WININ = inside;
+  }
   REG_WINOUT = 0x3f21;
   REG_BLDALPHA = 0x100e;
   ClearWords_(canvas, 0x4000);

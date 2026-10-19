@@ -14,12 +14,7 @@ main	rom_start_00	games/tla/src/sound/driver/resampler_records_3
 main	rom_start_00	games/tla/src/sound/driver/resampler_records_pad_2
 main	rom_start_00	games/tla/src/sound/driver/resampler_records_4
 main	rom_start_00	games/tla/src/sound/driver/vsync_dma_refresh
-main	rom_start_00	recon/tla/it/rom	.rom.00000630	it
-main	rom_start_00	recon/tla/fr/rom	.rom.00000630	fr
-main	rom_start_00	recon/tla/es/rom	.rom.00000630	es
-main	rom_start_00	recon/tla/de/rom	.rom.00000630	de
-main	rom_start_00	recon/tla/raw/08000630		en
-main	rom_start_00	recon/tla/ja/rom	.rom.00000630	ja
+main	rom_start_00	games/tla/src/sound/driver/enter_frame_update	.text
 main	iwram_runtime_00	games/tla/src/system/runtime
 main	iwram_runtime_00	games/tla/src/system/runtime_irq_table
 main	iwram_runtime_00	games/tla/src/system/runtime_mul_q16

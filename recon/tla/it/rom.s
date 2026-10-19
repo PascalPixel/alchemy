@@ -1,9 +1,3 @@
-	.section .rom.00000630, "ax"
-	.global SoundDriver_EnterFrameUpdate
-	.type SoundDriver_EnterFrameUpdate, %function
-	.thumb_func
-SoundDriver_EnterFrameUpdate:
-	.incbin "baserom.gba", 0x00000630, 0x00000088
 	.section .rom.0001319c, "ax"
 	.global Func_0801319c
 	.type Func_0801319c, %function

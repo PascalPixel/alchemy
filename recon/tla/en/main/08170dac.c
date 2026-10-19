@@ -1,7 +1,13 @@
-// Draft of BattleFx_RunVoidBeam, decompiled from the listing: differ 859 of 743
+// Draft of BattleFx_RunVoidBeam, decompiled from the listing: differ 851 of 743
 // (draft 752), the same 45 calls and control flow; allocation differs.
+// 2026-10-19: the native frame is 248 bytes (here 184 at first). Its
+// arrays are point at sp 236, then 132 bytes of corners from sp 104 (11
+// points, of which the hexagon uses 6), then the ring and the segment;
+// its two blitters are one pair stored together (sp 56 and 60); frame is
+// declared after canvas, camera before sprites. With all that the frame
+// is 244: the native spills one pseudo more below sprites (11 slots
+// against 10 here), so every offset is still 4 off.
 
-#include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -9,6 +15,7 @@
 #include "iwram_call.h"
 #include "mem.h"
 #include "ram_buffer.h"
+#include "types.h"
 
 struct ModelTexture {
   u32 logWidth : 8;
@@ -30,7 +37,8 @@ struct RenderModel {
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_ProcessPendingGraphicsTransfer(
+    void); // BattleFx_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
 void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
@@ -49,11 +57,11 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode); // SpawnObjects
+void BattleFx_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
@@ -128,17 +136,16 @@ extern const s8 Data_08196e9c[];   // the hexagon's corners (z, y)
 void BattleFx_RunVoidBeam(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
-  u8 *sprites;
+  s32 frame;
+  DrawRectangle draw[2];
   s32 *camera;
-  DrawRectangle blit;
-  DrawRectangle blitAlternate;
+  u8 *sprites;
   struct VoidCaster *caster;
-  struct EffectPosition corners[6];
+  s32 point[3];
+  struct EffectPosition corners[11];
   struct EffectPosition ring;
   struct EffectPosition segment;
-  s32 point[3];
   s32 flip;
-  s32 frame;
   s32 scroll;
   s32 twice;
   s32 count;
@@ -204,8 +211,8 @@ void BattleFx_RunVoidBeam(struct BattleEffectArgument *effect) {
   }
   Func_08196404(SLOT_BLITTER, 7, 7, flip | 3, 1);
   Func_08196404(188, 7, 7, flip | 11, 1);
-  blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
-  blitAlternate = (DrawRectangle)Ram_HeapSlots->unkb8[1];
+  draw[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  draw[1] = (DrawRectangle)Ram_HeapSlots->unkb8[1];
   work->cameraDelta = 0;
   work->cameraPhase = 0;
   Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, 0x480);
@@ -270,7 +277,7 @@ void BattleFx_RunVoidBeam(struct BattleEffectArgument *effect) {
           s32 y = corners[i].y +
                   Iwram_MulQ16(k * (corners[next].y - corners[i].y), 1820);
 
-          blit(canvas, sprites + gData_08197410[3], x - 2, y - 4, 4, 8);
+          draw[0](canvas, sprites + gData_08197410[3], x - 2, y - 4, 4, 8);
         }
       }
     }
@@ -293,8 +300,8 @@ void BattleFx_RunVoidBeam(struct BattleEffectArgument *effect) {
       if (ring.depth > 799) {
         ring.depth = 799;
       }
-      blitAlternate(canvas, sprites + gData_08197410[3], ring.x - 2, ring.y - 4,
-                    4, 8);
+      draw[1](canvas, sprites + gData_08197410[3], ring.x - 2, ring.y - 4, 4,
+              8);
     }
 
     // The beam.
@@ -326,13 +333,13 @@ void BattleFx_RunVoidBeam(struct BattleEffectArgument *effect) {
           segment.x -= 32;
         }
         if (i > 0) {
-          blit(canvas, work->sheet + 0x1a20, segment.x, segment.y - 32, 32, 32);
-          blitAlternate(canvas, work->sheet + 0x1a20, segment.x, segment.y, 32,
-                        32);
+          draw[0](canvas, work->sheet + 0x1a20, segment.x, segment.y - 32, 32,
+                  32);
+          draw[1](canvas, work->sheet + 0x1a20, segment.x, segment.y, 32, 32);
         } else if (frame <= 81) {
-          blit(canvas, work->sheet + 0x1000, segment.x, segment.y - 36, 32, 36);
-          blitAlternate(canvas, work->sheet + 0x1000, segment.x, segment.y, 32,
-                        36);
+          draw[0](canvas, work->sheet + 0x1000, segment.x, segment.y - 36, 32,
+                  36);
+          draw[1](canvas, work->sheet + 0x1000, segment.x, segment.y, 32, 36);
         }
       }
       row = work->sheet + 0x1a20;

@@ -1,7 +1,15 @@
-// Draft of BattleFx_RunGeode, decompiled from the listing: differ 960 of 1139
-// (draft 1137), the same 69 calls and control flow; allocation differs.
+// Draft of BattleFx_RunGeode, decompiled from the listing: differ 785 of 1139
+// (draft 1136), the same 69 calls and control flow; allocation differs.
+// Left (2026-10-19): the native frame is 152 bytes, here 148: the native
+// spills one pseudo more (its 17 slots between sp 4 and sp 68 against 16
+// here; the dome block spills its curl at sp 44 and another value at sp
+// 48), so every stack offset from the arrays down is 4 off.
+// Tried (differ):
+// first draft                                                       960
+// the blitter as The Broken Seal's pair (FAKEMATCH below)           785
+// projected, vertices, mesh, pitch, battle and caster, and screenB
+// before screenA, declared in the native's stack order (785)
 
-#include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -9,6 +17,7 @@
 #include "iwram_call.h"
 #include "mem.h"
 #include "ram_buffer.h"
+#include "types.h"
 
 struct ModelTexture {
   u32 logWidth : 8;
@@ -30,7 +39,8 @@ struct RenderModel {
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_ProcessPendingGraphicsTransfer(
+    void); // BattleFx_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
 void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
@@ -49,11 +59,11 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode); // SpawnObjects
+void BattleFx_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
@@ -131,21 +141,24 @@ extern const u8 Data_08199050[];
 void BattleFx_RunGeode(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
-  DrawRectangle blit;
+  /* FAKEMATCH(frame): the blitter is declared as The Broken Seal's pair
+   * though only the first is used; its second word is the unused word at
+   * sp 72 of the native's frame (differ 960 as one DrawRectangle). */
+  DrawRectangle blit[2];
   s32 *transition;
+  u8 *projected;
+  u8 *vertices;
+  u8 *mesh;
+  s32 pitch;
   u8 *battle;
   void *caster;
-  u8 *vertices;
-  u8 *projected;
-  u8 *mesh;
-  s32 screenA[3];
   s32 screenB[3];
+  s32 screenA[3];
   struct EffectPosition source;
   struct EffectPosition target;
   struct ModelTexture texture;
   struct ModelTexture dust;
   struct RenderModel *model;
-  s32 pitch;
   s32 frame;
   s32 i;
 
@@ -159,14 +172,16 @@ void BattleFx_RunGeode(struct BattleEffectArgument *effect) {
   REG_WINOUT = 0x3f31;
   transition[4] = 1;
   if (effect->side == 0) {
-    BattleFx_LoadBlitter(SLOT_BLITTER,
-                  BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+    BattleFx_LoadBlitter(
+        SLOT_BLITTER,
+        BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   } else {
     BattleFx_LoadBlitter(SLOT_BLITTER,
-                  BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                             COMPOSITE_FLIP_X));
+                         BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
+                                                    COMPOSITE_CLIP_Y |
+                                                    COMPOSITE_FLIP_X));
   }
-  blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
+  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = 0x1010;
   REG_BLDCNT = 0;
   work->transferMode = 1;
@@ -245,7 +260,8 @@ void BattleFx_RunGeode(struct BattleEffectArgument *effect) {
     }
     if (frame == 34) {
       Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
-      Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingBlock2Transfer, 0xc8f);
+      Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingBlock2Transfer,
+                                    0xc8f);
       IO_WRITE_QUEUE_PUSH(0x04000000, 0x7341, 0x20000);
       Iwram_ClearWords(canvas, 0x3c00);
       gBgScroll[1].y = 78;
@@ -257,7 +273,8 @@ void BattleFx_RunGeode(struct BattleEffectArgument *effect) {
     if (frame == 35) {
       Scheduler_RemoveCallback(Display_ApplyBg2Affine);
       Scheduler_RemoveCallback(BattleFx_ProcessPendingBlock2Transfer);
-      Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc8f);
+      Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
+                                    0xc8f);
       IO_WRITE_QUEUE_PUSH(0x04000028, 0, 0x30000);
       IO_WRITE_QUEUE_PUSH(0x0400002c, -0x1000, 0x30000);
       IO_WRITE_QUEUE_PUSH(0x04000020, 128, 0x20000);
@@ -304,8 +321,8 @@ void BattleFx_RunGeode(struct BattleEffectArgument *effect) {
       } else {
         x = x / 2 - 20;
       }
-      blit(canvas, work->sheet + 0x65c0, x - 10, y - 48, 20, 40);
-      blit(canvas, work->sheet + 0x65c0, x - 10, y - 48, 20, 40);
+      blit[0](canvas, work->sheet + 0x65c0, x - 10, y - 48, 20, 40);
+      blit[0](canvas, work->sheet + 0x65c0, x - 10, y - 48, 20, 40);
     }
 
     // The battlefield peels up into a dome.

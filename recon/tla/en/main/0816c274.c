@@ -1,9 +1,24 @@
-// Draft of BattleFx_RunCrystal, decompiled from the listing: differ 310 of
-// 491 (draft 491), same calls and control flow. Left: the frame is 100
-// bytes for 104 (the native keeps one more spill slot), so the stack
-// offsets shift, and the disc loop counter takes sl for r8.
+// Draft of BattleFx_RunCrystal, decompiled from the listing: differ 168 of
+// 491 (draft 491), same calls and control flow.
+// Left (2026-10-19): the loop counter i takes sl where the native has r8
+// (the disc, shard and flash loops, about 40 rows); the disc loop's
+// gMapCellBuffer is loaded straight into r0 where the native reloads a
+// hoisted copy into r4; the two GCSE pointers for camera + 12 and &texture
+// take each other's stack slots (16 and 20); the rest is scheduling.
+// Tried (differ):
+// first draft                                                       310
+// center, other, screen, texture declared in the native's stack order
+// (no change in the count; the layout is the native's)             310
+// the pillar's y as cos + center[1] - 24, then += frame * 3          298
+// the shard's pulse as width * sin / 2 >> 16 (the native's rounding)
+// and sin * width (its multiply order)                             273
+// the blitter as The Broken Seal's pair (FAKEMATCH below)           186
+// camera and target declared in a block around the frame loop, so
+// their pseudos follow the centre pointer's as the native's do      168
+// the centre through an explicit pointer declared before camera
+// (same slots, 188); the disc loop with its own counter (175);
+// frame or shard declared with camera (168)
 
-#include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -11,6 +26,7 @@
 #include "iwram_call.h"
 #include "mem.h"
 #include "ram_buffer.h"
+#include "types.h"
 
 struct ModelTexture {
   u32 logWidth : 8;
@@ -37,7 +53,8 @@ struct BattleObjectPosition {
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_ProcessPendingGraphicsTransfer(
+    void); // BattleFx_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
 void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
@@ -93,14 +110,16 @@ extern u32 gCameraSceneParameters[];
 void BattleFx_RunCrystal(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
+  /* FAKEMATCH(frame): the blitter is declared as The Broken Seal's pair
+   * though only the first is used; its second word is the unused word at
+   * sp 44 of the native's 104-byte frame. As one DrawRectangle the frame
+   * is 100 bytes and every stack offset moves (differ 273). */
+  DrawRectangle draw[2];
   u16 *discOffsets;
-  DrawRectangle draw;
-  void *camera;
-  struct BattleObjectPosition *target;
-  struct ModelTexture texture;
-  struct EffectPosition screen;
-  s32 other[3];
   s32 center[3];
+  s32 other[3];
+  struct EffectPosition screen;
+  struct ModelTexture texture;
   s32 frame;
   s32 i;
   s32 size;
@@ -128,118 +147,132 @@ void BattleFx_RunCrystal(struct BattleEffectArgument *effect) {
   if (effect->side == 1) {
     BattleFx_LoadBlitter(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y);
   } else {
-    BattleFx_LoadBlitter(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X);
+    BattleFx_LoadBlitter(104, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
+                                  COMPOSITE_FLIP_X);
   }
-  draw = BLITTER;
+  draw[0] = BLITTER;
   work->transferMode = 2;
   work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer, 0xc80);
-  camera = Ram_HeapSlots->cameraWork;
-  target = *GetBattleObjectSlotFar(effect->actors[0]);
+  // camera and target declared here take their pseudos after the centre
+  // pointer's, which gives the native's stack slots (differ 186 with them
+  // at the top).
+  {
+    void *camera;
+    struct BattleObjectPosition *target;
 
-  for (frame = 0; frame != CRYSTAL_FRAMES; frame++) {
-    if (frame == 0) {
-      for (i = 0, shard = work->particles; i != CRYSTAL_SHARDS; i++, shard++) {
-        s32 angle = Random16();
-        s32 radius = (Random16() & 63) + 80;
+    camera = Ram_HeapSlots->cameraWork;
+    target = *GetBattleObjectSlotFar(effect->actors[0]);
 
-        shard->x = target->x + ((Trig_Sin(angle) * radius) >> 1);
-        shard->y = 0x80000;
-        shard->z = (Trig_Cos(angle) * radius) >> 1;
-        shard->velocityX = Random16();
-        shard->velocityY = (Random16() & 0xffff) + 0x40000;
-        shard->velocityZ = (Random16() & 7) + 4;
-        shard->variant = -1;
+    for (frame = 0; frame != CRYSTAL_FRAMES; frame++) {
+      if (frame == 0) {
+        for (i = 0, shard = work->particles; i != CRYSTAL_SHARDS;
+             i++, shard++) {
+          s32 angle = Random16();
+          s32 radius = (Random16() & 63) + 80;
+
+          shard->x = target->x + ((Trig_Sin(angle) * radius) >> 1);
+          shard->y = 0x80000;
+          shard->z = (Trig_Cos(angle) * radius) >> 1;
+          shard->velocityX = Random16();
+          shard->velocityY = (Random16() & 0xffff) + 0x40000;
+          shard->velocityZ = (Random16() & 7) + 4;
+          shard->variant = -1;
+        }
       }
-    }
-    if (frame > 95) {
-      REG_BLDALPHA = (0xce - frame * 2) | 0x1000;
-    }
-    Render_ResetTransformState();
-    Transform_SetLookAt(camera, (u8 *)camera + 12);
-
-    // The pillar of light.
-    if (frame <= 19) {
-      s32 x = ((Trig_Sin(frame << 11) * 8) >> 16) + center[0] / 2 - 10;
-      s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + center[1] - 24 + frame * 3;
-
-      draw(canvas, work->sheet + 0x65c0, x, y, 20, 40);
-      if (frame <= 3) {
-        draw(canvas, work->sheet + 0x65c0, x, y, 20, 40);
+      if (frame > 95) {
+        REG_BLDALPHA = (0xce - frame * 2) | 0x1000;
       }
-    }
+      Render_ResetTransformState();
+      Transform_SetLookAt(camera, (u8 *)camera + 12);
 
-    // The shards, one more every two frames from frame 48.
-    if (frame > 47) {
-      for (i = 0, shard = work->particles; i != CRYSTAL_SHARDS; i++, shard++) {
-        if (frame >= i * 2 + 48) {
-          s32 width;
+      // The pillar of light.
+      if (frame <= 19) {
+        s32 x = ((Trig_Sin(frame << 11) * 8) >> 16) + center[0] / 2 - 10;
+        s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + center[1] - 24;
 
-          EffectPosition_ProjectPoint(&shard->x, &screen);
-          screen.x >>= 1;
-          width = shard->velocityZ;
-          width += width * Trig_Sin(shard->velocityX) / 0x20000;
-          shard->velocityX += 0x400;
-          width *= 2;
-          if ((u32)(width - 2) <= 61) {
-            s32 cell = (width - 2) / 2;
-            s32 x = screen.x;
-            s32 y = screen.y;
+        y += frame * 3;
 
-            if (shard->variant == 0) {
-              x += (Random16() & 7) - 4;
-              y += (Random16() & 7) - 4;
+        draw[0](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+        if (frame <= 3) {
+          draw[0](canvas, work->sheet + 0x65c0, x, y, 20, 40);
+        }
+      }
+
+      // The shards, one more every two frames from frame 48.
+      if (frame > 47) {
+        for (i = 0, shard = work->particles; i != CRYSTAL_SHARDS;
+             i++, shard++) {
+          if (frame >= i * 2 + 48) {
+            s32 width;
+
+            EffectPosition_ProjectPoint(&shard->x, &screen);
+            screen.x >>= 1;
+            width = shard->velocityZ;
+            width += Trig_Sin(shard->velocityX) * width / 2 >> 16;
+            shard->velocityX += 0x400;
+            width *= 2;
+            if ((u32)(width - 2) <= 61) {
+              s32 cell = (width - 2) / 2;
+              s32 x = screen.x;
+              s32 y = screen.y;
+
+              if (shard->variant == 0) {
+                x += (Random16() & 7) - 4;
+                y += (Random16() & 7) - 4;
+              }
+              Func_0818caa8(gMapCellBuffer + (s16)discOffsets[cell], x, y,
+                            width);
             }
-            Func_0818caa8(gMapCellBuffer + (s16)discOffsets[cell], x, y, width);
+            shard->y += shard->velocityY;
           }
-          shard->y += shard->velocityY;
         }
       }
-    }
 
-    for (i = 0; i != effect->count; i++) {
-      if (frame == i * 4 + 64) {
-        Audio_PlayCue(126);
-        Func_0814cd48(effect->actors[i], 7, -1, i, 24);
-      }
-    }
-
-    // The crystal, spinning and growing from frame 16.
-    Render_ResetTransformState();
-    gCameraSceneParameters[4] = 104;
-    {
-      void *vertices = Runtime_BumpAllocateAlternatePool(32);
-      struct RenderModel *model = Render_AllocateModelList(1);
-
-      model->kind = 6;
-      model->mesh = gData_08199364;
-      model->texture = &texture;
-      model->vertices = vertices;
-      texture.logWidth = 7;
-      texture.logHeight = 7;
-      texture.pixels = gData_02014000;
-      if (frame > 15) {
-        s32 scale = (frame << 12) - 0x10000;
-
-        if (scale > 0x1bd50) {
-          scale = 0x1bd50;
+      for (i = 0; i != effect->count; i++) {
+        if (frame == i * 4 + 64) {
+          Audio_PlayCue(126);
+          Func_0814cd48(effect->actors[i], 7, -1, i, 24);
         }
-        model->shade = 0;
-        SceneTransform_ApplyPitch(-0xbb8);
-        Func_08015160((center[0] / 2 - 64) << 16, 0x280000, 0);
-        Func_0801521c(scale >> 1);
-        SceneTransform_ApplyYaw(frame << 9);
-        Render_TransformVertices(gData_08199210, vertices, 4);
-        Render_DrawModelList(model);
       }
-      MemFree(model);
-      MemFree(vertices);
+
+      // The crystal, spinning and growing from frame 16.
+      Render_ResetTransformState();
+      gCameraSceneParameters[4] = 104;
+      {
+        void *vertices = Runtime_BumpAllocateAlternatePool(32);
+        struct RenderModel *model = Render_AllocateModelList(1);
+
+        model->kind = 6;
+        model->mesh = gData_08199364;
+        model->texture = &texture;
+        model->vertices = vertices;
+        texture.logWidth = 7;
+        texture.logHeight = 7;
+        texture.pixels = gData_02014000;
+        if (frame > 15) {
+          s32 scale = (frame << 12) - 0x10000;
+
+          if (scale > 0x1bd50) {
+            scale = 0x1bd50;
+          }
+          model->shade = 0;
+          SceneTransform_ApplyPitch(-0xbb8);
+          Func_08015160((center[0] / 2 - 64) << 16, 0x280000, 0);
+          Func_0801521c(scale >> 1);
+          SceneTransform_ApplyYaw(frame << 9);
+          Render_TransformVertices(gData_08199210, vertices, 4);
+          Render_DrawModelList(model);
+        }
+        MemFree(model);
+        MemFree(vertices);
+      }
+      gCameraSceneParameters[3] = 120;
+      gCameraSceneParameters[4] = 120;
+      ObjectGroup_TickMemberTimers();
+      work->transferPending = 1;
+      WaitFrames(1);
     }
-    gCameraSceneParameters[3] = 120;
-    gCameraSceneParameters[4] = 120;
-    ObjectGroup_TickMemberTimers();
-    work->transferPending = 1;
-    WaitFrames(1);
   }
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Runtime_ReleaseHeapBlock(104);

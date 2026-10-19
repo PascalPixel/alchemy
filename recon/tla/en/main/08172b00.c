@@ -1,4 +1,4 @@
-// Draft of Func_08172b00, decompiled from the listing: differ 774 of 1216
+// Draft of Func_08172b00, decompiled from the listing: differ 766 of 1216
 // (draft 1208), the same control flow and 71 calls but one; the Djinni's
 // start and step are read as work->particles[62] and [63] in place, so their
 // field addresses are hoisted as in the native.
@@ -6,8 +6,15 @@
 // call (the native loads the blitter early for the first, so its tails
 // differ); a separate sheet pointer or blitter copy does not change that.
 // The rest is allocation.
+// 2026-10-19: the native frame is 144 bytes, here 136. Its blitter slot
+// (sp 80) has an unused word above it, as The Broken Seal's blitter pair
+// would give (770 with the pair, not kept until the frame's other word
+// is found), and frame, declared after the blitter and before camera,
+// takes the native's slot (774 to 766). Camera, sprites and the centre
+// pointers follow; the native keeps the screen and focus pointers just
+// below sprites, as if the locals after them were declared in a block
+// after the first call (792 so, with the frame still short).
 
-#include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -15,6 +22,7 @@
 #include "iwram_call.h"
 #include "mem.h"
 #include "ram_buffer.h"
+#include "types.h"
 
 struct ModelTexture {
   u32 logWidth : 8;
@@ -36,7 +44,8 @@ struct RenderModel {
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_ProcessPendingGraphicsTransfer(
+    void); // BattleFx_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
 void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
@@ -55,11 +64,11 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode); // SpawnObjects
+void BattleFx_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
@@ -130,9 +139,10 @@ extern const u16 gData_08197410[];
 void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
   void *canvas;
   struct BattleEffectWork *work;
+  DrawRectangle blit;
+  s32 frame;
   s16 *camera;
   u8 *sprites;
-  DrawRectangle blit;
   s32 *target;
   s16 savedYaw;
   void *caster;
@@ -144,7 +154,6 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectStep *p;
   s32 frames;
   s32 count;
-  s32 frame;
   s32 i;
 
   canvas = Ram_HeapSlots->battleFxWork[1];
@@ -156,12 +165,14 @@ void Func_08172b00(struct BattleEffectArgument *effect, s32 mode) {
                 (s32 *)&screen, focus);
   REG_BG2CNT = 0x785;
   if (effect->side == 0) {
-    BattleFx_LoadBlitter(SLOT_BLITTER,
-                  BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+    BattleFx_LoadBlitter(
+        SLOT_BLITTER,
+        BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   } else {
     BattleFx_LoadBlitter(SLOT_BLITTER,
-                  BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                             COMPOSITE_FLIP_X));
+                         BLITTER(BLIT_ADDITIVE, COMPOSITE_CLIP_X |
+                                                    COMPOSITE_CLIP_Y |
+                                                    COMPOSITE_FLIP_X));
   }
   blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
   REG_BLDALPHA = 0x1010;

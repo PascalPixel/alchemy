@@ -1,9 +1,16 @@
-// Draft of BattleFx_RunLightSurge, decompiled from the listing: differ 648 of
+// Draft of BattleFx_RunLightSurge, decompiled from the listing: differ 574 of
 // 828 (draft 814), the same 67 calls and control flow; allocation differs.
 // The pillar offsets are read as plain (not const) bytes, so the native
 // reloads and redivides them after each Trig_Sin call.
+// 2026-10-19: the bolt's head is three words, not an EffectStep (the
+// native frame is 116 bytes; with a 28-byte head it was 132), and frame,
+// i, camera, savedYaw, target and circles are declared in the native's
+// stack order (648 to 582); the bolts' products are written sin * radius,
+// the native's multiply order (574). Left: the circle loop keeps size in
+// r8 where the native has r6 (a ring-local size moves everything: 795),
+// the native keeps the sprite sheet pointer in r6 from the start (as a
+// local, 577) and its first literal pool sits one call earlier.
 
-#include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -11,6 +18,7 @@
 #include "iwram_call.h"
 #include "mem.h"
 #include "ram_buffer.h"
+#include "types.h"
 
 struct ModelTexture {
   u32 logWidth : 8;
@@ -32,7 +40,8 @@ struct RenderModel {
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_ProcessPendingGraphicsTransfer(
+    void); // BattleFx_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
 void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
@@ -51,11 +60,11 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode); // SpawnObjects
+void BattleFx_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
@@ -130,11 +139,15 @@ extern s8 Data_08198c10[4];        // and its offset
 void BattleFx_RunLightSurge(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
+  s32 frame;
+  s32 i;
   s32 *camera;
+  s16 savedYaw;
   struct SurgeTarget *target;
+  u16 *circles;
   struct EffectPosition screen;
   struct EffectPosition center;
-  struct EffectStep head;
+  s32 head[3];
   struct ModelTexture texture;
   struct RenderModel *model;
   struct EffectStep *bolt;
@@ -142,19 +155,15 @@ void BattleFx_RunLightSurge(struct BattleEffectArgument *effect) {
   struct EffectStep *flash;
   struct EffectStep *glow;
   s16 *vertices;
-  u16 *circles;
-  s16 savedYaw;
   s32 offset;
   s32 size;
-  s32 frame;
-  s32 i;
 
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = 0x1010;
   BattleFx_LoadBlitter(SLOT_BLITTER,
-                BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+                       BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C4, work->sheet + 0x1000, 0,
                              0);
   Resource_LoadAndDecompress((s32)&ResourceId_Data0C9, work->sheet + 0x4000, 0,
@@ -196,12 +205,12 @@ void BattleFx_RunLightSurge(struct BattleEffectArgument *effect) {
         s32 angle = Random16() & 0xffff;
         s32 z;
 
-        bolt->x = (radius + 32) * Trig_Sin(angle);
-        bolt->z = (radius + 32) * Trig_Cos(angle);
+        bolt->x = Trig_Sin(angle) * (radius + 32);
+        bolt->z = Trig_Cos(angle) * (radius + 32);
         bolt->y = 0x6e0000;
         radius = (Random16() & 31) + 4;
-        bolt->velocityX = target->x + radius * Trig_Sin(angle);
-        z = target->z + radius * Trig_Cos(angle);
+        bolt->velocityX = target->x + Trig_Sin(angle) * radius;
+        z = target->z + Trig_Cos(angle) * radius;
         bolt->velocityZ = z;
         bolt->velocityY = -0x80000;
         bolt->velocityX = (bolt->velocityX - bolt->x) / 6;
@@ -245,26 +254,27 @@ void BattleFx_RunLightSurge(struct BattleEffectArgument *effect) {
       y = screen.y;
       half = size >> 1;
       circle = gMapCellBuffer + circles[(size - 2) >> 1];
-      BattleFx_LoadBlitter(188,
-                    BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+      BattleFx_LoadBlitter(
+          188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, circle, x - half,
                                                y - size, half, size);
       Runtime_ReleaseHeapBlock(188);
-      BattleFx_LoadBlitter(188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                               COMPOSITE_FLIP_X));
+      BattleFx_LoadBlitter(188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
+                                                      COMPOSITE_CLIP_Y |
+                                                      COMPOSITE_FLIP_X));
       ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, circle, x, y - size,
                                                half, size);
       Runtime_ReleaseHeapBlock(188);
       if (i > 15) {
-        BattleFx_LoadBlitter(188,
-                      BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                            COMPOSITE_FLIP_Y));
+        BattleFx_LoadBlitter(188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
+                                                        COMPOSITE_CLIP_Y |
+                                                        COMPOSITE_FLIP_Y));
         ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, circle, x - half, y,
                                                  half, size);
         Runtime_ReleaseHeapBlock(188);
-        BattleFx_LoadBlitter(188,
-                      BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y |
-                                            COMPOSITE_FLIP));
+        BattleFx_LoadBlitter(188, BLITTER(BLIT_MAX, COMPOSITE_CLIP_X |
+                                                        COMPOSITE_CLIP_Y |
+                                                        COMPOSITE_FLIP));
         ((DrawRectangle)Ram_HeapSlots->unkb8[1])(canvas, circle, x, y, half,
                                                  size);
         Runtime_ReleaseHeapBlock(188);
@@ -291,17 +301,17 @@ void BattleFx_RunLightSurge(struct BattleEffectArgument *effect) {
         continue;
       }
       if (t > 11) {
-        head.x = bolt->x + bolt->velocityX * (t - 12);
-        head.y = bolt->y + bolt->velocityY * (bolt->variant - 12);
-        head.z = bolt->z + bolt->velocityZ * (bolt->variant - 12);
+        head[0] = bolt->x + bolt->velocityX * (t - 12);
+        head[1] = bolt->y + bolt->velocityY * (bolt->variant - 12);
+        head[2] = bolt->z + bolt->velocityZ * (bolt->variant - 12);
         if (bolt->variant == 16) {
-          glow->x = head.x;
-          glow->y = head.y;
-          glow->z = head.z;
+          glow->x = head[0];
+          glow->y = head[1];
+          glow->z = head[2];
           glow->velocityX = (Random16() & 15) + 8;
           glow->variant = 0;
         }
-        EffectPosition_ProjectPoint(&head, &screen);
+        EffectPosition_ProjectPoint((struct EffectStep *)head, &screen);
       } else {
         EffectPosition_ProjectPoint(bolt, &screen);
       }
@@ -310,18 +320,18 @@ void BattleFx_RunLightSurge(struct BattleEffectArgument *effect) {
       vertices[4] = screen.x / 2 + 2;
       vertices[5] = screen.y;
       if (bolt->variant <= 5) {
-        head.x = bolt->x + bolt->velocityX * bolt->variant;
-        head.y = bolt->y + bolt->velocityY * bolt->variant;
-        head.z = bolt->z + bolt->velocityZ * bolt->variant;
+        head[0] = bolt->x + bolt->velocityX * bolt->variant;
+        head[1] = bolt->y + bolt->velocityY * bolt->variant;
+        head[2] = bolt->z + bolt->velocityZ * bolt->variant;
       } else {
-        head.x = bolt->x + bolt->velocityX * 6;
-        head.y = bolt->y + bolt->velocityY * 6;
-        head.z = bolt->z + bolt->velocityZ * 6;
+        head[0] = bolt->x + bolt->velocityX * 6;
+        head[1] = bolt->y + bolt->velocityY * 6;
+        head[2] = bolt->z + bolt->velocityZ * 6;
       }
       if (bolt->variant == 6) {
-        flash->x = head.x;
-        flash->y = head.y;
-        flash->z = head.z;
+        flash->x = head[0];
+        flash->y = head[1];
+        flash->z = head[2];
         flash->velocityX = (Random16() & 7) + 24;
         flash->variant = 0;
         work->shakeFrames = 4;
@@ -329,7 +339,7 @@ void BattleFx_RunLightSurge(struct BattleEffectArgument *effect) {
         Func_08118088(effect->actors[0], 0);
         Func_0814cd48(effect->actors[0], 7, 5, 0, 2);
       }
-      EffectPosition_ProjectPoint(&head, &screen);
+      EffectPosition_ProjectPoint((struct EffectStep *)head, &screen);
       vertices[8] = screen.x / 2 - 2;
       vertices[9] = screen.y;
       vertices[12] = screen.x / 2 + 2;

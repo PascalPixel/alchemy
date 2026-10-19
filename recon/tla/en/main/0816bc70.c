@@ -1,7 +1,22 @@
-// Draft of BattleFx_RunDiamondBerg, decompiled from the listing: differ 611 of
-// 658 (draft 663), the same 56 calls and control flow; allocation differs.
+// Draft of BattleFx_RunDiamondBerg, decompiled from the listing: differ 317 of
+// 658 (draft 659), the same 56 calls and control flow.
+// Left (2026-10-19): the three resource loads into the map cell buffer
+// (the native loads gMapCellBuffer and adds each offset; here the first
+// address stays in r5 and the others are taken from it); the blow's shard
+// loop keeps the shard in r7, the x in sl and the mask 127 in r5 where the
+// native has r5, r7 and sl; the ripple and flash loops' allocation; the
+// rest is scheduling.
+// Tried (differ):
+// first draft                                                       611
+// the blitter as The Broken Seal's pair (FAKEMATCH below; it pays only
+// with the next two rows)                                           645
+// a shard's width and height read once into locals (the native
+// loads each once and its table bases stop being hoisted)          347
+// the berg drawn from Data_02014e20, its own EWRAM name (347); the
+// resource offsets as &gMapCellBuffer[n] or through s32 (347)
+// vertices declared in the model block (its pseudo after the berg's
+// height, the native's stack order)                                317
 
-#include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -9,6 +24,7 @@
 #include "iwram_call.h"
 #include "mem.h"
 #include "ram_buffer.h"
+#include "types.h"
 
 struct ModelTexture {
   u32 logWidth : 8;
@@ -30,7 +46,8 @@ struct RenderModel {
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_ProcessPendingGraphicsTransfer(
+    void); // BattleFx_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
 void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
@@ -49,11 +66,11 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode); // SpawnObjects
+void BattleFx_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
@@ -104,6 +121,7 @@ extern char ResourceId_Data0DA;
 extern char ResourceId_Data134;
 extern char ResourceId_Data0C2;
 extern u8 gMapCellBuffer[];
+extern u8 Data_02014e20[];         // gMapCellBuffer + 20000, the berg
 extern const s32 gData_08197834[]; // the shards' cells: offsets,
 extern const u8 gData_0819781a[];  // widths
 extern const u8 gData_08197826[];  // and heights
@@ -128,13 +146,16 @@ void BattleFx_RunDiamondBerg(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   u8 *sprites;
-  DrawRectangle blit;
+  /* FAKEMATCH(frame): the blitter is declared as The Broken Seal's pair
+   * though only the first is used; its second word is the unused word at
+   * sp 28 of the native's frame; as one DrawRectangle every stack offset
+   * below it moves (differ 365). */
+  DrawRectangle blit[2];
   struct EffectPosition pos;
   struct EffectPosition target;
   struct ModelTexture texture;
   struct RenderModel *model;
   struct EffectStep *shard;
-  void *vertices;
   s32 centerX;
   s32 top;
   s32 frame;
@@ -149,8 +170,8 @@ void BattleFx_RunDiamondBerg(struct BattleEffectArgument *effect) {
   EffectPosition_ProjectBattler(effect->actors[0], &pos);
   centerX = pos.x / 2;
   BattleFx_LoadBlitter(SLOT_BLITTER,
-                BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
-  blit = (DrawRectangle)Ram_HeapSlots->unk64[1];
+                       BLITTER(BLIT_MAX, COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y));
+  blit[0] = (DrawRectangle)Ram_HeapSlots->unk64[1];
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_CrystalBitmapSheet,
                              gMapCellBuffer + 20000, 1, 1);
@@ -199,7 +220,8 @@ void BattleFx_RunDiamondBerg(struct BattleEffectArgument *effect) {
           work->shakeFrames = 4;
           if (frame <= 79) {
             Audio_PlayCue(144);
-            BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 16, 70);
+            BattleFx_SetApproachMotion(effect->actor, effect->actors[0], 16,
+                                       70);
           } else {
             Func_08118088(effect->actors[0], 4);
             Func_081180e8(144);
@@ -222,7 +244,7 @@ void BattleFx_RunDiamondBerg(struct BattleEffectArgument *effect) {
         height = height - top + 4;
       }
       if (height > 0) {
-        blit(canvas, gMapCellBuffer + 20000, centerX - 24, top, 48, height);
+        blit[0](canvas, Data_02014e20, centerX - 24, top, 48, height);
       }
     }
     if (frame == 7) {
@@ -242,15 +264,18 @@ void BattleFx_RunDiamondBerg(struct BattleEffectArgument *effect) {
     if (frame > 6) {
       for (i = 0, shard = work->particles; i != 64; i++, shard++) {
         s32 cell;
+        u32 width;
+        u32 height;
 
         if ((u32)shard->variant > 1023) {
           continue;
         }
         cell = i % 5 * 3 + shard->variant / 96 % 3;
-        blit(canvas, work->sheet + 0x800 + gData_08197834[cell],
-             HI(shard->x) - (gData_0819781a[cell] >> 1),
-             HI(shard->y) - (gData_08197826[cell] >> 1), gData_0819781a[cell],
-             gData_08197826[cell]);
+        width = gData_0819781a[cell];
+        height = gData_08197826[cell];
+        blit[0](canvas, work->sheet + 0x800 + gData_08197834[cell],
+                HI(shard->x) - (width >> 1), HI(shard->y) - (height >> 1),
+                width, height);
         BattleFxKernels_IntegrateVector2(shard, 64, 0x4000);
         if (HI(shard->y) > 104) {
           shard->velocityY = -shard->velocityY / 2;
@@ -263,6 +288,8 @@ void BattleFx_RunDiamondBerg(struct BattleEffectArgument *effect) {
     }
 
     if (frame > 5) {
+      void *vertices;
+
       vertices = Runtime_BumpAllocateAlternatePool(0x400);
       model = Render_AllocateModelList(1);
       texture.logWidth = 7;

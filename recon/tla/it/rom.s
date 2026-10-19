@@ -2677,12 +2677,6 @@ Encounter_SelectEnemyGroup:
 	.incbin "baserom.gba", 0x000ca2fc, 0x0000006c
 	.section .rom.000ca4a8, "ax"
 	.incbin "baserom.gba", 0x000ca4a8, 0x0000006c
-	.section .rom.000ca5d8, "ax"
-	.global BattleFx_SelectBattleCue
-	.type BattleFx_SelectBattleCue, %function
-	.thumb_func
-BattleFx_SelectBattleCue:
-	.incbin "baserom.gba", 0x000ca5d8, 0x000000cc
 	.section .rom.000ca6e4, "ax"
 	.incbin "baserom.gba", 0x000ca6e4, 0x00000004
 	.section .rom.000ca6e8, "ax"

@@ -1763,12 +1763,6 @@ Encounter_SelectEnemyGroup:
 	.incbin "baserom.gba", 0x000cf2fc, 0x0000006c
 	.section .rom.000cf4a8, "ax"
 	.incbin "baserom.gba", 0x000cf4a8, 0x0000006c
-	.section .rom.000cf5d8, "ax"
-	.global BattleFx_SelectBattleCue
-	.type BattleFx_SelectBattleCue, %function
-	.thumb_func
-BattleFx_SelectBattleCue:
-	.incbin "baserom.gba", 0x000cf5d8, 0x000000cc
 	.section .rom.000cf6e8, "ax"
 	.balign 4
 	.global Event_SpawnObjectTable

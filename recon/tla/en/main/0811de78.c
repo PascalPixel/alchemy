@@ -26,7 +26,7 @@ void BattleMotion_SetupEscapeObject(s32 objectId);
 void WaitFrames(s32 frames);
 u32 Random16(void);
 void BattleActor_RemoveFromLists(s32 unitId);
-void ActivateBattleObjectSlot(s32 objectId);
+void BattleObj_MarkForRelease(s32 objectId);
 struct BattleUnit *UnitGet(s32 id);
 
 s32 Func_0811de78(struct BattlePlan *plan) {
@@ -79,7 +79,7 @@ s32 Func_0811de78(struct BattlePlan *plan) {
     BattleMotion_SetupEscapeObject(event[0]);
     WaitFrames(8);
     BattleActor_RemoveFromLists(plan->actorId);
-    ActivateBattleObjectSlot(plan->actorId);
+    BattleObj_MarkForRelease(plan->actorId);
   } else {
     UiText_ShowMessageAndWaitCoreFar((s32)MsgNoEscape);
     BattlePresentation_WaitForAdvance();

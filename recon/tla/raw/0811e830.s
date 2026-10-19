@@ -87,7 +87,7 @@ Func_0811e830:
 	cmp r3, #0
 	beq .L_0811e8e2
 	ldr r0, [sp, #8]
-	bl ActivateBattleObjectSlot
+	bl BattleObj_MarkForRelease
 	bl BattleMotion_DestroyAllSlotObjects
 .L_0811e8e2:
 	movs r3, #0

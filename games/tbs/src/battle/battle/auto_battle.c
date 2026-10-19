@@ -494,7 +494,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
 }
 
 // For a unit whose HP has run out: plays its falling animation to the last
-// frame and marks its object for release (ActivateBattleObjectSlot).
+// frame and marks its object for release (BattleObj_MarkForRelease).
 void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
   struct AnimationEntry *actorData;
   struct AnimationObject *object;
@@ -506,7 +506,7 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
     actorData->frame = 0xFF;
     WaitFrames(4);
     Map_RenderAnimatedTileFramesForObjectFar(object);
-    ActivateBattleObjectSlot(unitId);
+    BattleObj_MarkForRelease(unitId);
   }
 }
 

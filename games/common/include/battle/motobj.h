@@ -70,7 +70,7 @@ STATIC_ASSERT(offsetof(struct SpriteEntry, palette) == 0x05);
 STATIC_ASSERT(offsetof(struct SpriteEntry, priority) == 0x06);
 
 #if GAME_TLA
-s32 ActivateBattleObjectSlot(s32 objectId);
+s32 BattleObj_MarkForRelease(s32 objectId);
 struct BattleObj *BattleObjGet(s32 objectId);
 struct BattleObj *GetBattleObjectSlotFar(s32 objectId);
 void *GetMotionRecord(struct MotionObject *object, s32 record_index);

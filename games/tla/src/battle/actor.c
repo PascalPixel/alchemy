@@ -103,6 +103,6 @@ void BattleMotion_InitializeActorRecords(s32 id) {
     WaitFrames(4);
     BattleActor_RemoveFromLists(id);
     Map_RenderAllAnimatedTileFramesFar(recs, n); // Erase pixel by pixel.
-    ActivateBattleObjectSlot(id);
+    BattleObj_MarkForRelease(id);
   }
 }

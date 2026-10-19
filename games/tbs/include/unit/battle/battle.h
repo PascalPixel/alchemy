@@ -94,7 +94,7 @@ void BattleActor_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses);
 struct BattleObj *BattleObjGet(s32 unitId);
 void ResetMotionRecordGroup(void *recordGroup);
 void ResetBattleObjectRecordGroups(struct MotionObject *object);
-s32 ActivateBattleObjectSlot(s32 unitId);
+s32 BattleObj_MarkForRelease(s32 unitId);
 void *BattleMotion_DestroyAllSlotObjects(void);
 s32 Battle_GetWorkEntryPair(s32 place, struct FixedPointPosition *position);
 s32 Camera_ApplyTransformByFlag(void);

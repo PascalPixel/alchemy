@@ -55,7 +55,7 @@ static __inline__ struct BattleObj *BattleObject_FindSlot(s32 id) {
   return &slots[work[id]];
 }
 
-s32 ActivateBattleObjectSlot(s32 objectId) {
+s32 BattleObj_MarkForRelease(s32 objectId) {
   struct BattleObj *slot;
 
   BattleMotion_ReleaseObjectSlotByValue(objectId);

@@ -200,7 +200,7 @@ s32 BattlePres_RunEscape(struct BattlePlan *plan) {
     BattleMotion_SetupEscapeObject(event[0]);
     WaitFrames(8);
     BattleActor_RemoveFromLists(plan->actorId);
-    ActivateBattleObjectSlot(plan->actorId);
+    BattleObj_MarkForRelease(plan->actorId);
   } else {
     UiText_ShowMessageAndWaitCoreFar(MsgNoEscape);
     BattlePresentation_WaitForAdvance();
@@ -960,6 +960,6 @@ void BattleMotion_InitializeActorRecords(s32 unitId) {
     BattleActor_RemoveFromLists(unitId);
     // A dot at a time.
     Map_RenderAllAnimatedTileFramesFar(records, recordCount);
-    ActivateBattleObjectSlot(unitId);
+    BattleObj_MarkForRelease(unitId);
   }
 }

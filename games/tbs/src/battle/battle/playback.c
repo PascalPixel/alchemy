@@ -346,7 +346,7 @@ void BattleEvent_Playback(void) {
 
           for (recordIndex = 0; recordIndex < count; recordIndex++)
             BattleSprite_ClearTiles(records[recordIndex], 0);
-          ActivateBattleObjectSlot(events->actorId);
+          BattleObj_MarkForRelease(events->actorId);
           events->phase = BATTLE_PLAYBACK_DISPATCH;
           events->timer = 0;
           return;

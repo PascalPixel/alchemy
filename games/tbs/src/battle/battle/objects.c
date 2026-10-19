@@ -491,7 +491,7 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object) {
 
 // Frees the enemy sprite slots unitId holds and marks its object
 // for release at the end of the round (BattleMotion_DestroyAllSlotObjects).
-s32 ActivateBattleObjectSlot(s32 unitId) {
+s32 BattleObj_MarkForRelease(s32 unitId) {
   struct BattleObj *battleObject;
   BattleMotion_ReleaseObjectSlotByValue(unitId);
   battleObject = BattleObjGet(unitId);
@@ -499,7 +499,7 @@ s32 ActivateBattleObjectSlot(s32 unitId) {
   return 0;
 }
 
-// Releases the object of every unit marked by ActivateBattleObjectSlot.
+// Releases the object of every unit marked by BattleObj_MarkForRelease.
 // Declared to return a pointer, but it returns nothing.
 void *BattleMotion_DestroyAllSlotObjects(void) {
   s32 unitId;

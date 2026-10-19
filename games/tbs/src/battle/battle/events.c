@@ -154,7 +154,7 @@ s32 BattleActor_DestroyTemporaryObject(s32 unitId) {
   if (enemy->side == BATTLE_UNIT_ENEMY) {
     Unit_SetHpFar(enemy, 0);
     BattleActor_RemoveFromLists(unitId);
-    ActivateBattleObjectSlot(unitId);
+    BattleObj_MarkForRelease(unitId);
     slot = BattleObjGet(unitId);
     ObjectDispatch_ReleaseFar((struct DispatchObject *)slot->object);
     slot->object = 0;

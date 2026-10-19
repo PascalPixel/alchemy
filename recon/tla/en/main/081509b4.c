@@ -1,4 +1,5 @@
-// Near miss of BattleFx_RunFlare, effect kind 11: differ 14 of 274 (draft 274).
+// Near miss of BattleFx_RunFlare, effect kind 11: differ 8 of 274 (draft 274;
+// 2026-10-19, was 14).
 
 // Twin: The Broken Seal's BattleFx_RunFlare (effect.c), call for call.
 // The Lost Age blends BG1 and BG2 at 16:16 where The Broken Seal has 14:16,
@@ -6,16 +7,24 @@
 // its blitter through BattleFx_LoadBlitter (BLIT_ADDITIVE is 0 where
 // COMPOSITE_ADDITIVE is 3) and orders the callback 0xc80.
 
-// Left: seven swapped pairs, each the native issuing a load or a constant
-// one slot earlier than agscc: the effect argument's spill before the RAM
-// base, the BLDALPHA value before the register address, the first angle
-// before its counter, the cell offset table before the cell, and 0x700
-// (the sheet) after the particle's x in the second and third draws.
+// Left: four swapped pairs, each the native issuing a load one slot earlier
+// than agscc: the BLDALPHA value before the sheet offset (here the register
+// address comes next), the cell offset table before the cell, and the
+// particle's x before 0x700 (the sheet) in the second and third draws. Three
+// tagged devices put the argument's spill, the BLDCNT value and the first
+// angle in the native's place (14 to 8).
 
 // Tried:
 // - the four cell tables extern const (the earlier draft): 316; without
 // const, as The Broken Seal's readers declare them: 14.
 // - alchemy permute, 8 minutes, 2 jobs: no candidate beat 14.
+// - 2026-10-19: the BLDALPHA value pinned behind a one-pass block (the
+// register address then comes before the sheet offset, 8); behind an empty
+// asm (every row in order, but the asm's four estimated bytes move the
+// halfword pool before the arc set-up, 16); with the sheet computed before
+// the store (10), or the store in a comma expression in the call (10). The
+// cell table pinned behind a one-pass block with the division written out
+// (46 to 67).
 
 #include "types.h"
 #include "battle_effect.h"
@@ -76,10 +85,27 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
   struct EffectStep *puff;
   struct EffectStep *p;
 
+  /* FAKEMATCH(one-pass block): an empty one-pass block before the first
+   * statement keeps the argument's spill (str r0) ahead of the RAM base, as
+   * the native stores it; without it, 10 of 274 instructions differ in tla-en
+   * (this draft: 8). */
+  do {
+  } while (0);
   work = (struct BattleEffectWork *)Ram_HeapSlots->battleFxWork[0];
   canvas = Ram_HeapSlots->battleFxWork[1];
   BattleFx_BeginCanvasLayer(0);
-  REG_BLDCNT = 0x3f46;
+  {
+    /* FAKEMATCH(fixed register, one-pass block): the BLDCNT halfword pinned to
+     * r3 and set behind a one-pass block, so its pool load comes before the
+     * register's address; as REG_BLDCNT = 0x3f46, 10 of 274 instructions
+     * differ in tla-en (this draft: 8). */
+    register u16 value asm("r3");
+
+    do {
+      value = 0x3f46;
+    } while (0);
+    REG_BLDCNT = value;
+  }
   REG_BLDALPHA = 0x1010;
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              1);
@@ -95,7 +121,12 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
     org = 64;
     sign = -1;
   }
-  angle = -0x4000;
+  /* FAKEMATCH(one-pass block): the first angle set behind a one-pass block,
+   * so its pool load comes before the counter's zero; as angle = -0x4000, 10
+   * of 274 instructions differ in tla-en (this draft: 8). */
+  do {
+    angle = -0x4000;
+  } while (0);
   i = 0;
   tick = 0;
   puff = work->particles;

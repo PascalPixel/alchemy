@@ -1,4 +1,5 @@
-// Near miss, differ 20 of 300 (effect kind 37, the bouncing sheep).
+// Near miss, differ 12 of 300 (effect kind 37, the bouncing sheep; 2026-10-19,
+// was 20).
 
 // ☀️ twin: BattleFx_RunSleep (games/tbs/src/effect/effect.c), shape
 // 0.776, structure 0.977. ⚓️'s changes: the canvas layer at priority 1; the
@@ -9,13 +10,14 @@
 // the blitters are transparent, ⚓️ mode 2 (☀️ 1).
 
 // Declaration order sets the native frame: the middle above the position
-// record, and drawB, drawA, scroll spilled in that order. What is left:
-// the argument spill (str r0) that the native issues before the
-// 0x03000000 base, the canvas slot load and store one row apart, the
-// REG_BG2PA pool word before its address, the BLDCNT value's address, the
-// literal pool's branch placed before the second BattleFx_LoadBlitter call where
-// agscc places it after (arm_reorg's length estimate), and pool offsets
-// that move with them.
+// record, and drawB, drawA, scroll spilled in that order. Two tagged devices
+// put the argument's spill (str r0) before the 0x03000000 base and the
+// REG_BG2PA pool word before its address, and with them the literal pool's
+// branch lands after the second BattleFx_LoadBlitter call as the native's
+// does. What is left: the canvas slot load and store one row apart, the
+// BLDCNT value's stack address before the BG2PA store, the sheep record's
+// pool load before the draw size 32, the transfer flag's offset built
+// before the work's reload, and pool offsets that move with them.
 
 // Tried (differ):
 // trial 0's port with ☀️'s declaration order (2026-10-15)            42
@@ -27,6 +29,10 @@
 // greedy declaration-order scan, every local through every place     20
 // alchemy permute, 10 minutes, 2 jobs: nothing below 20 (its best
 // weighted candidate, an added integer mask, is 21)
+// 2026-10-19, with the two tagged devices (12): the sheep record behind a
+// one-pass block, with or without the draw size in a local set after it
+// (12 to 14); the work read into a local behind a block for the transfer
+// flag (12); alchemy permute 4 minutes (12).
 
 #include "types.h"
 #include "system.h"
@@ -84,6 +90,12 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
   s32 scroll;
   s32 member;
 
+  /* FAKEMATCH(one-pass block): an empty one-pass block before the first
+   * statement keeps the argument's spill (str r0) ahead of the RAM base, as
+   * the native stores it; without it, 14 of 300 instructions differ in tla-en
+   * (this draft: 12). */
+  do {
+  } while (0);
   // Set up: the canvas layer, the sheep sheet and a transparent blitter
   // pair, the second mirrored.
   sheep = (struct EffectStep *)Ram_MapCellBuffer;
@@ -91,7 +103,18 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
   canvas = Ram_HeapSlots->battleFxWork[1];
   scroll = 0;
   BattleFx_BeginCanvasLayer(1);
-  REG_BG2PA = 0x100;
+  {
+    /* FAKEMATCH(fixed register, one-pass block): the BG2PA halfword pinned to
+     * r3 and set behind a one-pass block, so its pool load comes before the
+     * register's address; as REG_BG2PA = 0x100, 18 of 300 instructions differ
+     * in tla-en (this draft: 12; the pool's branch also moves). */
+    register u16 value asm("r3");
+
+    do {
+      value = 0x100;
+    } while (0);
+    REG_BG2PA = value;
+  }
   REG_BLDCNT = scroll;
   Resource_LoadAndDecompress((s32)&ResourceId_SheepCardSheet, work->sheet, 1,
                              1);

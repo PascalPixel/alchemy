@@ -11,15 +11,20 @@
 /// One cell of a map layer: its metatile and flags, its collision code and an
 /// attribute indexing the collision table.
 struct MapCell {
+  /// bits: 15..12 flags (15..14 read by Map_GetCellHighFlags) | 11..0 metatile
   u16 metatileAndFlags;
+  /// The step code: 1 to 239 scene events, 240 and 241 encounter ground, 250
+  /// hazard, 252 to 254 for Field_RunPushTileEvent, 0xff a wall.
   u8 collisionCode;
+  /// Indexes the 4-byte collision entries (gMapCollision): terrain kind in the
+  /// first byte's low four bits, then its height samples.
   u8 attributeB;
 };
 
 /// A map layer's scroll record, seen from its cells.
 struct MapLayer {
-  struct MapCell *cells;
-  u8 unk04[0x2c];
+  struct MapCell *cells; ///< the layer's first cell (MapLayerScroll's cells)
+  u8 unk04[0x2c]; ///< the next layer's scroll values; not named by TBS code
 };
 
 /// The map's running blend script, which sets the blend registers over time.
@@ -42,15 +47,19 @@ struct MapAnimation {
 /// The map work in heap slot 8 (struct MapScrollWork), seen as its tile
 /// animation channels, blend script and layers' cells.
 struct MapState {
-  u8 unk000[0x14];
-  u16 flags;
-  u8 wideTiles;
-  u8 unk17;
+  u8 unk000[0x14]; ///< MapScrollWork's origin, shake and script
+  u16 flags;       ///< REG_DISPCNT bits; Map_SetShownLayers sets BG1 to BG3
+  u8 wideTiles;    ///< nonzero: tile animations copy 64-byte tiles
+  u8 unk17;        ///< MapScrollWork's footprints; Bilibin Cave sets it
   struct MapAnimation anim[16];
   struct BlendScriptState blend;
-  u8 unke4[0x1f];
+  u8 unke4[0x1f]; ///< MapScrollWork's view, bounds and shown layers
+  /// The last BLDCNT the blend script wrote; with mode 1 in bits 7..6 its
+  /// values go to BLDALPHA, else to BLDY.
   u8 blendControl;
-  u8 unk104[0x2c];
+  u8 unk104[0x2c]; ///< the first layer's scroll values; not named by TBS code
+  /// Each layer's cells, at MapScrollWork's layers[i].cells; readers mask the
+  /// layer with 3, and the fourth entry lies past MapScrollWork's end.
   struct MapLayer layers[4];
 };
 

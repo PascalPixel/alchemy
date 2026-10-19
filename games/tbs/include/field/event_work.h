@@ -15,40 +15,41 @@ struct ObjectRuntime;
 
 /// The running scene's event work: its placement and event tables, its
 /// actors, the triggers and exit it has hit, encounters, transitions and the
-/// message on show.
+/// message on show. It is struct FieldWork (heap slot 27) as the scenes see
+/// it, through gEventWork; each field is the FieldWork field at its offset.
 struct EventWork {
-  struct ScenePlacement *tables[4];
-  struct SceneEvent *events;
-  struct FieldActor *actors[8];
-  struct FieldActor *placedActors[58];
-  u8 unk11c[0x50];
-  s16 touchedTrigger;
-  u8 unk16e[2];
-  u16 requestedExit;
-  u16 unk172;
-  u8 unk174[6];
-  s16 facingTrigger;
+  struct ScenePlacement *tables[4];    ///< the placement tables placed so far
+  struct SceneEvent *events;           ///< the scene's event table
+  struct FieldActor *actors[8];        ///< the party's characters, ids 0 to 7
+  struct FieldActor *placedActors[58]; ///< the placed actors, from id 8
+  u8 unk11c[0x50];         ///< FieldWork's markers; not named by TBS code
+  s16 touchedTrigger;      ///< the step event a touch or exit event answers
+  u8 unk16e[2];            ///< FieldWork's input request; not named by TBS code
+  u16 requestedExit;       ///< the exit kind taken, which ends the scene
+  u16 unk172;              ///< FieldWork's menu request; scenes set it to 1
+  u8 unk174[6];            ///< FieldWork's examine, start and descriptor
+  s16 facingTrigger;       ///< the collision code ahead, which a search answers
   u16 encounterEnemyGroup; ///< the next battle's enemy group, 0 for none
-  s16 psynergyRequest;
-  u8 unk180[2];
-  s16 raisedTrigger;
-  u8 unk184[0x18];
-  s16 blockedSteps;
-  s16 mode;
-  u8 encounterGroups[8];
-  s32 encounterBias;
-  s32 encounterThreshold;
-  u8 unk1b0[0x10];
-  s32 startTransition;
-  u8 unk1c4[4];
-  s32 transitionFrames;
-  u8 unk1cc[0x0c];
-  u16 message;
-  u8 unk1da[6];
-  struct FieldActor *viewCenter;
-  u8 unk1e4[0xade];
-  u16 choiceMessage; ///< Message containing the choices.
-  u16 unkcc4;
+  s16 psynergyRequest;   ///< a field Psynergy to use, as owner << 10 | Psynergy
+  u8 unk180[2];          ///< FieldWork's item request; not named by TBS code
+  s16 raisedTrigger;     ///< a raised event for Scene_RunRaisedEvent
+  u8 unk184[0x18];       ///< FieldWork's fallen characters and item slot
+  s16 blockedSteps;      ///< frames the leader has pushed against something
+  s16 mode;              ///< MODE_WORLD_MAP (3) on the world map
+  u8 encounterGroups[8]; ///< encounter zone for each kind of ground
+  s32 encounterBias;     ///< randomized distance adjustment between battles
+  s32 encounterThreshold; ///< encounter steps before a battle
+  u8 unk1b0[0x10];        ///< FieldWork's walking distance and tiles
+  s32 startTransition;    ///< SCENE_TRANSITION(style, variant)
+  u8 unk1c4[4];           ///< FieldWork's unk1c4 and transitionActive
+  s32 transitionFrames;   ///< frames
+  u8 unk1cc[0x0c];        ///< FieldWork's fastForward and unk1d0
+  u16 message;            ///< the next message, advanced as each window opens
+  u8 unk1da[6];           ///< FieldWork's unk1da to unk1de
+  struct FieldActor *viewCenter; ///< the object the map view follows
+  u8 unk1e4[0xade];              ///< not named by TBS code through this view
+  u16 choiceMessage;             ///< Message containing the choices.
+  u16 unkcc4; ///< FieldWork's nameWidth; Colosso sets it to 4
 };
 
 STATIC_ASSERT(offsetof(struct EventWork, placedActors) == 0x34);

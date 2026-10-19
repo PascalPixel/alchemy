@@ -62,9 +62,11 @@ enum ActorAnimation {
 
 /// Cell replacement: procedure and destination cells
 struct MapCellAnim {
+  /// MAP_CELL_STEP records, ended by MAP_CELL_STEPS_END, for
+  /// Map_PlayMetatileCopySequence.
   const u16 *steps;
-  u16 x;
-  u16 y;
+  u16 x; ///< destination cell column
+  u16 y; ///< destination cell row
 };
 
 // Imports of main-image routines. EventRequestExit, ActorSetPosition,

@@ -29,17 +29,17 @@ enum { SCENE_TABLE_END = -1, CONDITION_ALWAYS = -1 };
 
 /// Entrance positions.
 struct SceneEntrance {
-  s16 entrance;
-  s16 requiredFlag;
-  s16 x;
-  s16 y;
-  s16 z;
-  u16 facing;
+  s16 entrance;     ///< the entrance number; SCENE_TABLE_END ends the table
+  s16 requiredFlag; ///< a flag that must be set, or -1 for none
+  s16 x;            ///< pixels
+  s16 y;            ///< pixels
+  s16 z;            ///< pixels
+  u16 facing;       ///< 1/65536 turns (enum Facing)
   s16 unused1;
-  s16 cameraLeft;
-  s16 cameraTop;
-  s16 cameraRight;
-  s16 cameraBottom;
+  s16 cameraLeft;   ///< pixels, -1 for none
+  s16 cameraTop;    ///< pixels, -1 for none
+  s16 cameraRight;  ///< pixels, -1 for none
+  s16 cameraBottom; ///< pixels, -1 for none
   s16 unused2;
 };
 
@@ -53,13 +53,13 @@ struct SceneEntrance {
 
 /// Actor placements.
 struct ScenePlacement {
-  s16 sprite;
-  s16 condition;
+  s16 sprite; ///< the actor's sprite; -1 ends the table
+  s16 condition; ///< CONDITION_ALWAYS (-1), or a flag condition
   s32 behavior;
-  s32 x;
-  s32 y;
-  s32 z;
-  u16 facing;
+  s32 x;      ///< 16.16 fixed-point pixels
+  s32 y;      ///< 16.16 fixed-point pixels
+  s32 z;      ///< 16.16 fixed-point pixels
+  u16 facing; ///< 1/65536 turns (enum Facing)
   u8 talkFacing;
   u8 flags;
 };
@@ -68,10 +68,14 @@ struct ScenePlacement {
 
 /// Events.
 struct SceneEvent {
+  /// The kind and its detail; SCENE_EVENTS_END ends the table. Item events
+  /// read it as bits: 15..8 item | 4 on an actor | 3..0 kind (4)
   u32 control;
+  /// What the event answers: an actor id or a tile code. Item events read it
+  /// as bits: 15..12 facing | 11 needs facing | 7..0 target
   s16 trigger;
-  s16 condition;
-  u32 value;
+  s16 condition; ///< CONDITION_ALWAYS (-1), or a flag condition
+  u32 value;     ///< a message (FIND_MESSAGE) or an event script (EVENT_SCRIPT)
 };
 
 #define FIND_MESSAGE(message) (0x00400000 | (message))

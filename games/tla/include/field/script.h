@@ -11,15 +11,19 @@ typedef s32 (*ScriptCommand)(struct ScriptInterpreter *);
 
 /// The prefix that command handlers read from a field object's 0x70-byte slot.
 struct ScriptInterpreter {
-  const s32 *script;
-  s16 cursor;
-  u8 padding06[0x4e];
-  u8 byte54;
-  u8 padding55[2];
-  u8 conditionResult;
-  u8 padding58[5];
-  u8 repeatCount;
+  const s32 *script;  ///< the running script; SC_END sets gScript_MainScript
+  s16 cursor;         ///< the word index of the next command in script
+  u8 padding06[0x4e]; ///< the object's own fields; not read by the commands
+  u8 byte54;          ///< SC_B54_ON sets 1 and SC_B54_OFF sets 0
+  u8 padding55[2];    ///< the object's own fields; not read by the commands
+  u8 conditionResult; ///< the last flag test, read by SC_IF and SC_IFNOT
+  u8 padding58[5];    ///< the object's own fields; not read by the commands
+  u8 repeatCount;     ///< SC_LOOP's count of jumps so far
+  /// Frames left of SC_WAIT (n - 1 when it starts); Script_FindLabel clears
+  /// it.
   s16 lookupResult;
+  /// Frames a solid object has blocked the object; SC_SYNC stops waiting
+  /// after 60 and clears it.
   u8 delay;
 };
 
@@ -57,18 +61,18 @@ struct ScriptOperands {
   u32 word48;
   u32 word4c;
   u32 address50;
-  u8 byte54;
+  u8 byte54; ///< ScriptInterpreter.byte54
   u8 byte55;
   u8 byte56;
-  u8 comparisonResult;
+  u8 comparisonResult; ///< ScriptInterpreter.conditionResult
   u8 byte58;
   u8 byte59;
   u8 byte5a;
   u8 byte5b;
   u8 byte5c;
-  u8 byte5d;
-  u16 halfword5e;
-  u8 byte60;
+  u8 byte5d;      ///< ScriptInterpreter.repeatCount, the SC_LOOP count
+  u16 halfword5e; ///< ScriptInterpreter.lookupResult, SC_WAIT's frames left
+  u8 byte60;      ///< ScriptInterpreter.delay, the blocked frames
   u8 byte61;
   u8 byte62;
   u8 byte63;

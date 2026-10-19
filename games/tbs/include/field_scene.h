@@ -52,18 +52,18 @@ enum { FLAG_PARTY_LEFT_VALE = 0x815 };
 /// A scene entrance: where and facing which way the party arrives, and the
 /// camera's bounds there (-1 for none).
 struct SceneEntrance {
-  s16 entrance;
-  s16 requiredFlag;
-  s16 x;      ///< pixels
-  s16 y;      ///< pixels
-  s16 z;      ///< pixels
-  u16 facing; ///< 1/65536 turns (enum Facing)
-  s16 unused1;
+  s16 entrance;     ///< the entrance number the game state names; -1 ends
+  s16 requiredFlag; ///< a flag that must be set, or -1 for none
+  s16 x;            ///< pixels
+  s16 y;            ///< pixels
+  s16 z;            ///< pixels
+  u16 facing;       ///< 1/65536 turns (enum Facing)
+  s16 unused1;      ///< 0 in every table; not read
   s16 cameraLeft;   ///< pixels
   s16 cameraTop;    ///< pixels
   s16 cameraRight;  ///< pixels
   s16 cameraBottom; ///< pixels
-  s16 unused2;
+  s16 unused2;      ///< 0 in every table; not read
 };
 
 STATIC_ASSERT(sizeof(struct SceneEntrance) == 24);
@@ -79,15 +79,21 @@ STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
 /// An actor a scene places: its sprite, the condition for placing it, how it
 /// behaves, where it stands and which way it faces, and how it turns to talk.
 struct ScenePlacement {
+  /// The actor's sprite; 0 to 7 are the party's characters, each in its own
+  /// actor slot, and -1 ends the table.
   s16 sprite;
+  /// -1 always, a flag | 0x1000 set, else the flag clear; off the world map,
+  /// 48 to 127 also need condition + 80 to hold.
   s16 condition;
+  /// A built-in action (enum ActorBehavior, 1 to 7) or an action script, for
+  /// ObjectMotion_SetActionCallback.
   s32 behavior;
-  s32 x;      ///< 16.16 fixed-point pixels
-  s32 y;      ///< 16.16 fixed-point pixels
-  s32 z;      ///< 16.16 fixed-point pixels
-  u16 facing; ///< 1/65536 turns (enum Facing)
-  u8 talkFacing;
-  u8 flags;
+  s32 x;         ///< 16.16 fixed-point pixels
+  s32 y;         ///< 16.16 fixed-point pixels
+  s32 z;         ///< 16.16 fixed-point pixels
+  u16 facing;    ///< 1/65536 turns (enum Facing)
+  u8 talkFacing; ///< enum ActorTalkFacing; 3 follows the leader afterwards
+  u8 flags;      ///< PLACEMENT_SHARE_PREVIOUS_SPRITE
 };
 
 STATIC_ASSERT(sizeof(struct ScenePlacement) == 24);
@@ -110,9 +116,20 @@ enum { ACTOR_PARTY_LEADER = 0, ACTOR_FIRST_PLACED = 8 };
 /// A scene event: its kind and detail, the trigger it answers, its condition
 /// and its value (a message or an event script).
 struct SceneEvent {
+  /// The kind and its detail, read by Scene_FindEvent and the item, Psynergy
+  /// and search lookups; -1 ends the table. The detail bits depend on the kind.
+  /// bits: 30..28 Psynergy phase | 15..12 touch facing | 15..8 item or ability
+  /// | 11 short push | 10 facing | 9 walking | 8..4 search target
+  /// | 7 Psynergy in area | 5..4 exit sound | 4 on an actor | 3..0 kind
   u32 control;
+  /// What the event answers: an actor id, a tile's collision code, a marker
+  /// id or a raised value. Item and Psynergy events read it as bits below;
+  /// bit 10 also skips a search's checking message and a Psynergy's effect.
+  /// bits: 15..12 facing | 11 needs facing | 10 own message | 7..0 target
   s16 trigger;
-  s16 condition;
+  s16 condition; ///< -1 always, a flag | 0x1000 set, else the flag clear
+  /// A message below 0x10000, else an event function; for an exit, the exit
+  /// kind its scene's exit table matches, and for a search, a FIND_ value.
   u32 value;
 };
 

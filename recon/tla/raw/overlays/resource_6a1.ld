@@ -5,7 +5,7 @@ SECTIONS
         "*/games/tla/src/scene/jupiter_lighthouse_room_8/entry.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_8/scene_tables.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_8/s0054.o"(.text)
-        "*/resource_6a1_overlay.o"(.text.x02008094)
+        "*/games/tla/src/scene/jupiter_lighthouse_room_8/s0094.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_8/scene_events.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_8/s0110.o"(.text)
         "*/games/tla/src/scene/jupiter_lighthouse_room_8/s01d4.o"(.text)

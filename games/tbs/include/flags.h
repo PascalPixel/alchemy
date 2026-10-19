@@ -368,6 +368,13 @@
 // "There's a huge sea monster on the ship!": the deck shakes until the
 // Kraken is defeated.
 #define FLAG_TOLBI_SHIP_KRAKEN_ABOARD 0x302
+// Tunnel Ruins
+#define FLAG_TUNNEL_RUINS_BUSH_BLOWN_AWAY 0x970
+#define FLAG_TUNNEL_RUINS_PILLAR_A_SUNK 0x971
+#define FLAG_TUNNEL_RUINS_PILLAR_B_SUNK 0x972
+#define FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST 0x974
+#define FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST 0x975
+#define FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN 0x984
 
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.

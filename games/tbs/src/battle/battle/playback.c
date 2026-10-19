@@ -276,7 +276,8 @@ void BattleEvent_Playback(void) {
         s32 frame = 6;
 
         if (events->timer == 0 && events->flags != 0) {
-          s32 kind = Summon_GetLayoutKind(UnitGetFar(events->actorId)->classId);
+          s32 kind = BattleClass_GetDefeatSoundKind(
+              UnitGetFar(events->actorId)->classId);
 
           if (kind >= 0) {
             kind--;
@@ -289,7 +290,8 @@ void BattleEvent_Playback(void) {
         if (events->timer > FELLED_FLASH + 29)
           events->timer = 0;
         if (events->timer == 0) {
-          s32 kind = Summon_GetLayoutKind(UnitGetFar(events->actorId)->classId);
+          s32 kind = BattleClass_GetDefeatSoundKind(
+              UnitGetFar(events->actorId)->classId);
 
           if (kind >= 0)
             AudioCommand_PlayFar(SE_146 + kind);

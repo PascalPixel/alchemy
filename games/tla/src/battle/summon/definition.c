@@ -1,7 +1,7 @@
 #include "battle_summon.h"
 #include "types.h"
 
-u32 Summon_GetLayoutKind(s32 index) {
+u32 BattleClass_GetDefeatSoundKind(s32 index) {
   u32 kind = gSummon_EntryTable[index].layoutKind;
 
   if ((s32)kind > 4)

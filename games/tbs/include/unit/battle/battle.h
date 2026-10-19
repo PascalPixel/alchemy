@@ -271,7 +271,7 @@ s32 EnemyCountClear(s32 classId);
 s32 BattleGroupRandom(s32 recordId);
 s32 BattleFormation_BuildEnemyList(s32 recordId);
 
-u32 Summon_GetLayoutKind(s32 index);
+u32 BattleClass_GetDefeatSoundKind(s32 index);
 s32 BattleClass_GetSprite(s32 index);
 s32 BattleClass_GetPalette(s32 index);
 s32 BattleClass_IsSmall(s32 index);

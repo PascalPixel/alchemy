@@ -5,7 +5,7 @@
 
 // Returns the enemy sprite's defeat-sound layout kind; values above four become
 // -1.
-u32 Summon_GetLayoutKind(s32 index) {
+u32 BattleClass_GetDefeatSoundKind(s32 index) {
   u32 kind = gSummon_EntryTable[index].layoutKind;
 
   if ((s32)kind > 4)

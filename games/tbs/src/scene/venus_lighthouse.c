@@ -201,7 +201,7 @@ static void VenusLighthouse_PushAdjacentBlock(void) {
   Object_SetMode(leader, 8);
   moveRate = 0x3333;
   Engine_TaskWait(15);
-  Engine_AudioPlayCue(185);
+  Engine_AudioPlayCue(SE_185);
   block->moveRateX = moveRate;
   block->moveRateZ = moveRate;
   Engine_ObjectSetPosition(block, targetPosition[0], targetPosition[1],
@@ -395,7 +395,7 @@ static void VenusLighthouse_LeaveThroughSparkPassage(void) {
   eventWork = gEventWork;
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   Engine_EventBegin();
-  Engine_AudioPlayCue(228);
+  Engine_AudioPlayCue(SE_228);
 #ifdef UBFIX
   leader->update = VenusLighthouse_EmitPassageSparkTrail;
 #else
@@ -431,7 +431,7 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
     Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    Event_PlayCue(228);
+    Event_PlayCue(SE_228);
 #ifdef UBFIX
     leader->update = VenusLighthouse_EmitPassageSparkTrail;
 #else
@@ -483,7 +483,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(30);
-  Event_PlayCue(204);
+  Event_PlayCue(SE_204);
   leader->motionFlags = 3;
   Engine_EventWait(24);
   options.palette = 7;
@@ -500,7 +500,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
     Effect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed, velocity[0],
                  velocity[1], velocity[2], 0x1090001, &options);
   }
-  Event_PlayCue(188);
+  Event_PlayCue(SE_188);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
   Map_SetShake(0x50000, 0x50000, 0x10000);
@@ -542,7 +542,7 @@ static s32 VenusLighthouse_EmitGateParticles(union FieldObject *fieldObject) {
   if ((u32)(Engine_RandomNext() * 6) >> 16 == 0) {
     if (actor->targetX != ACTOR_NO_TARGET ||
         actor->targetZ != ACTOR_NO_TARGET) {
-      Engine_AudioPlayCue(246);
+      Engine_AudioPlayCue(SE_246);
     }
   }
   velocityY = 0;
@@ -646,7 +646,7 @@ static s32 VenusLighthouse_TryJumpAcrossGap(void) {
       Engine_EventBegin();
       Object_SetMode(leader, 6);
       Engine_TaskWait(6);
-      Engine_AudioPlayCue(152);
+      Engine_AudioPlayCue(SE_152);
       Object_SetMode(leader, 7);
       leader->speed = 0x30000;
       leader->acceleration = 0x20000;
@@ -899,7 +899,7 @@ static void VenusLighthouse_ConsultPathStatue(void) {
   ColorBuffer_ApplyTarget(0x10005, 0);
   Engine_ColorBufferInterpolate(120);
   Engine_EventWait(100);
-  Event_PlayCue(142);
+  Event_PlayCue(SE_142);
   Engine_EventWait(30);
   ColorBuffer_ApplyTarget(0x7fff, 0);
   Engine_ColorBufferInterpolate(60);
@@ -1037,7 +1037,7 @@ static void VenusLighthouse_SinkBlockOnFloorSwitch(void) {
   Engine_EventBegin();
   if (block->x.fixed >> 20 == 42) {
     Engine_EventWait(30);
-    Engine_AudioPlayCue(188);
+    Engine_AudioPlayCue(SE_188);
     block->motionFlags = 0;
     switchHeight = 0xfffe0000;
     block->terrainHeight = switchHeight;
@@ -1067,7 +1067,7 @@ static void VenusLighthouse_UpdateLeaderFloorSwitch(void) {
     Map_CopyCellsTo(52, 50, 42, 49, 1, 1);
     Map_CopyCellsTo(52, 117, 41, 117, 3, 5);
     GameFlag_Set(FLAG_SCENE_TEMP_01);
-    Engine_AudioPlayCue(161);
+    Engine_AudioPlayCue(SE_161);
     leader->motionFlags &= ~1;
     leader->terrainHeight = -0x20000;
     leader->y.fixed = -0x20000;
@@ -1316,11 +1316,11 @@ static void VenusLighthouse_ActivateSlidingWall(void) {
     leader->y.fixed = -0x20000;
     if (!GameFlag_IsSet(0x300)) {
       Engine_EventBegin();
-      Engine_AudioPlayCue(161);
+      Engine_AudioPlayCue(SE_161);
       GameFlag_Set(0x300);
       Map_CopyCellsTo(26, 33, 19, 33, 1, 1);
       Engine_EventWait(30);
-      Engine_AudioPlayCue(239);
+      Engine_AudioPlayCue(SE_239);
       Map_SetShake(0x10000, 0x10000, 0x10000);
       Engine_EventWait(20);
       dustX = 0x1200000;
@@ -1358,8 +1358,8 @@ static void VenusLighthouse_ActivateSlidingWall(void) {
       scrollLayer->offsetX = scrollLayer->offsetX / 0x10000 << 16;
       Map_CopyCellAttributes(15, 32, 3, 1, 9, 32);
       Map_CopyCellAttributes(12, 32, 3, 1, 15, 32);
-      Engine_AudioPlayCue(288);
-      Engine_AudioPlayCue(188);
+      Engine_AudioPlayCue(SE_288);
+      Engine_AudioPlayCue(SE_188);
       Map_SetShake(-1, -1, 0xe666);
       Engine_MapRenderWaitForValues();
       gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
@@ -1416,7 +1416,7 @@ static void VenusLighthouse_OpenGateWithSunkenBlock(void) {
         block->bounce = gateOpened;
         Map_CopyCellAttributes(43, 45, 1, 1, column, row);
         OverlayObject_WaitUntilIdle(block);
-        Engine_AudioPlayCue(188);
+        Engine_AudioPlayCue(SE_188);
         block->motionFlags = gateOpened;
         block->y.fixed = -0x100000;
         Engine_ActorSetSpritePriority(9, 3);
@@ -1526,7 +1526,7 @@ static void VenusLighthouse_SettlePushedBlocks(void) {
     Map_CopyCellAttributes(42, 41, 1, 1, gVenusSwitchCells[switchIndex].x,
                            gVenusSwitchCells[switchIndex].z);
     OverlayObject_WaitUntilIdle(block);
-    Engine_AudioPlayCue(188);
+    Engine_AudioPlayCue(SE_188);
     block->collisionFlags = 0;
     block->motionFlags = 0;
     block->y.fixed = -0x100000;
@@ -1622,7 +1622,7 @@ static void VenusLighthouse_LowerFloatingBlocks(s32 waitFrames) {
   Actor_SetSpeed(8, 0x8000, 0x4000);
   Engine_ActorSetSpeed(9, 0x8000, 0x4000);
   if (waitFrames != 0) {
-    Engine_AudioPlayCue(180);
+    Engine_AudioPlayCue(SE_180);
   }
   FieldObject_SetPosition((s32)westSupport, westSupport->x.fixed,
                           gVenusBlockHeights[westSupport->timer],
@@ -1635,7 +1635,7 @@ static void VenusLighthouse_LowerFloatingBlocks(s32 waitFrames) {
   westSupport->y.fixed = gVenusBlockHeights[westSupport->timer];
   eastSupport->y.fixed = gVenusBlockHeights[eastSupport->timer];
   if (waitFrames != 0) {
-    Engine_AudioPlayCue(0x121);
+    Engine_AudioPlayCue(SE_289);
   }
   for (blockIndex = 0; blockIndex < 5; blockIndex++) {
     struct FieldActor *actor = Object_GetById(blockIndex + 8);
@@ -1683,7 +1683,7 @@ static void VenusLighthouse_StackFloatingBlock(s32 blockId) {
   Engine_ObjectSetPosition(block, block->x.fixed, supportHeight,
                            block->z.fixed);
   Engine_ActorWaitForMove(blockId);
-  Engine_AudioPlayCue(188);
+  Engine_AudioPlayCue(SE_188);
   SceneEffect_SpawnNineRadialEffects(blockId);
   Engine_EventWait(30);
 }
@@ -1837,11 +1837,11 @@ static void VenusLighthouse_ActivateWestSlidingWall(void) {
     if (!Engine_GameFlagIsSet(0x306)) {
       Engine_EventBegin();
       Map_CopyCellsTo(63, 29, 33, 20, 1, 1);
-      Engine_AudioPlayCue(161);
+      Engine_AudioPlayCue(SE_161);
       Map_CopyCellsTo(44, 83, 44, 80, 3, 3);
       Engine_EventWait(30);
       Map_SetShake(0x10000, 0x10000, 0x10000);
-      Engine_AudioPlayCue(239);
+      Engine_AudioPlayCue(SE_239);
       Engine_EventWait(20);
       dustX = 0x2680000;
       column = 0;
@@ -1870,8 +1870,8 @@ static void VenusLighthouse_ActivateWestSlidingWall(void) {
       }
       scrollLayer->offsetX += 0x8000;
       scrollLayer->offsetX = scrollLayer->offsetX / 0x10000 << 16;
-      Engine_AudioPlayCue(288);
-      Engine_AudioPlayCue(188);
+      Engine_AudioPlayCue(SE_288);
+      Engine_AudioPlayCue(SE_188);
       Map_SetShake(-1, -1, 0xe666);
       Engine_MapRenderWaitForValues();
       gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
@@ -1902,10 +1902,10 @@ static void VenusLighthouse_ActivateEastSlidingWall(void) {
     if (!Engine_GameFlagIsSet(0x307)) {
       Engine_EventBegin();
       Map_CopyCellsTo(63, 29, 49, 20, 1, 1);
-      Engine_AudioPlayCue(161);
+      Engine_AudioPlayCue(SE_161);
       Engine_EventWait(30);
       Map_SetShake(0x10000, 0x10000, 0x10000);
-      Engine_AudioPlayCue(239);
+      Engine_AudioPlayCue(SE_239);
       Engine_EventWait(20);
       dustX = 0x2c00000;
       column = 61;
@@ -1934,8 +1934,8 @@ static void VenusLighthouse_ActivateEastSlidingWall(void) {
       }
       scrollLayer->offsetX += 0x8000;
       scrollLayer->offsetX = scrollLayer->offsetX / 0x10000 << 16;
-      Engine_AudioPlayCue(288);
-      Engine_AudioPlayCue(188);
+      Engine_AudioPlayCue(SE_288);
+      Engine_AudioPlayCue(SE_188);
       Map_SetShake(-1, -1, 0xe666);
       Engine_MapRenderWaitForValues();
       gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
@@ -2026,7 +2026,7 @@ static void VenusLighthouse_SettlePillarSwitchBlocks(void) {
     Map_CopyCellAttributes(6, 44, 1, 1, gVenusPillarCells[switchIndex].x,
                            gVenusPillarCells[switchIndex].z);
     OverlayObject_WaitUntilIdle(block);
-    Event_PlayCue(188);
+    Event_PlayCue(SE_188);
     block->collisionFlags = 0;
     *motionFlags = 0;
     block->y.fixed = -0x100000;
@@ -2284,7 +2284,7 @@ s32 Scene_RunEntrySetup(void) {
       VenusLighthouse_AnimatePairedTileWaves();
       break;
     case 20:
-      BattleFx_SetQueuedSoundAndPlay(170);
+      BattleFx_SetQueuedSoundAndPlay(SE_170);
       if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION))
         VenusLighthouse_LandWithRadialDust();
       break;
@@ -2320,7 +2320,7 @@ s32 Scene_RunEntrySetup(void) {
     case 13:
     case 14:
     case 15:
-      BattleFx_SetQueuedSoundAndPlay(170);
+      BattleFx_SetQueuedSoundAndPlay(SE_170);
       BattleFx_StartFadeOverlay(0);
       Engine_TaskWait(2);
       if (Engine_GameFlagIsSet(0x300)) {
@@ -2337,7 +2337,7 @@ s32 Scene_RunEntrySetup(void) {
     case 3:
     case 4:
     case 19:
-      BattleFx_SetQueuedSoundAndPlay(170);
+      BattleFx_SetQueuedSoundAndPlay(SE_170);
       break;
     }
   } else if (scene == (s32)&SceneId_VenusLighthouse4) {
@@ -2345,7 +2345,7 @@ s32 Scene_RunEntrySetup(void) {
     switch (gGameState.entrance) {
     case 2:
       VenusLighthouse_ArriveThroughSparkPassage();
-      BattleFx_SetQueuedSoundAndPlay(170);
+      BattleFx_SetQueuedSoundAndPlay(SE_170);
       break;
     case 4:
     case 6:
@@ -2389,7 +2389,7 @@ s32 Scene_RunEntrySetup(void) {
       Object_GetById(0)->y.fixed = -0x20000;
     case 7:
     case 8:
-      BattleFx_SetQueuedSoundAndPlay(170);
+      BattleFx_SetQueuedSoundAndPlay(SE_170);
       DisplayBlend_EnableRunScript();
       {
         s32 zero = 0;
@@ -2425,7 +2425,7 @@ s32 Scene_RunEntrySetup(void) {
       gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
       break;
     case 1:
-      BattleFx_SetQueuedSoundAndPlay(170);
+      BattleFx_SetQueuedSoundAndPlay(SE_170);
       break;
     }
   } else if (scene == (s32)&SceneId_VenusLighthouse5) {
@@ -2441,7 +2441,7 @@ s32 Scene_RunEntrySetup(void) {
     case 13:
     case 14:
     case 20:
-      BattleFx_SetQueuedSoundAndPlay(170);
+      BattleFx_SetQueuedSoundAndPlay(SE_170);
       if (Engine_GameFlagIsSet(0x306)) {
         Map_CopyCells(53, 12, 3, 13, 26, 12);
         Map_CopyCellsTo(81, 41, 89, 14, 9, 2);
@@ -2468,7 +2468,7 @@ s32 Scene_RunEntrySetup(void) {
        * into the identical call before it and two instructions go (differ 42,
        * 2026-10-13). */
       VENUS_LIGHTHOUSE_RUN_OPENING_SEQUENCE();
-      BattleFx_SetQueuedSoundAndPlay(170);
+      BattleFx_SetQueuedSoundAndPlay(SE_170);
       break;
     case 15:
     case 16:
@@ -2520,7 +2520,7 @@ s32 Scene_RunEntrySetup(void) {
       VenusLighthouse_SettlePushedBlocks();
       break;
     case 6:
-      BattleFx_SetQueuedSoundAndPlay(170);
+      BattleFx_SetQueuedSoundAndPlay(SE_170);
       break;
     }
   } else if (scene == (s32)&SceneId_VenusLighthouse6) {
@@ -2581,7 +2581,7 @@ s32 Scene_RunEntrySetup(void) {
       break;
     case 13:
     case 14:
-      BattleFx_SetQueuedSoundAndPlay(170);
+      BattleFx_SetQueuedSoundAndPlay(SE_170);
       break;
     case 18:
     case 19:
@@ -2604,7 +2604,7 @@ s32 Scene_RunEntrySetup(void) {
       DisplayBlend_EnableRunScript();
       Io_Write16(0, &REG_BLDCNT);
       if (Engine_GameFlagIsSet(0x306)) {
-        BattleFx_SetQueuedSoundAndPlay(170);
+        BattleFx_SetQueuedSoundAndPlay(SE_170);
         Map_CopyCellsTo(36, 81, 32, 81, 3, 2);
         Map_CopyCellsTo(36, 83, 36, 81, 3, 2);
         Map_CopyCellAttributes(36, 17, 3, 1, 32, 17);
@@ -2825,11 +2825,11 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
   Engine_EventBegin();
   Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
   Engine_ActorSetChildValue(0, 15);
-  BattleFx_SetQueuedSoundAndPlay(170);
+  BattleFx_SetQueuedSoundAndPlay(SE_170);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
-  Engine_AudioPlayCue(162);
+  Engine_AudioPlayCue(SE_162);
   extraBursts = 0;
   // Advance the first tile wave, holding its fourth row for three extra bursts.
   for (row = 0; row < 10; row++) {
@@ -2862,7 +2862,7 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
     Engine_TaskWait(3);
     Map_CopyCellsTo(55, row + 26, 48, row + 3, 3, 1);
   }
-  Engine_AudioPlayCue(289);
+  Engine_AudioPlayCue(SE_289);
   Engine_EventWait(60);
   Engine_EventRequestExit(21);
   Engine_EventEnd();
@@ -2914,11 +2914,11 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   Engine_EventBegin();
   Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
   Engine_ActorSetChildValue(0, 15);
-  BattleFx_SetQueuedSoundAndPlay(170);
+  BattleFx_SetQueuedSoundAndPlay(SE_170);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
-  Engine_AudioPlayCue(162);
+  Engine_AudioPlayCue(SE_162);
   Engine_CameraSetSpeed(0x8000, 0x1000);
   Engine_CameraMoveTo(0x1b80000, -1, 0x1680000, 1);
   extraBursts = 0;
@@ -2974,11 +2974,11 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   Engine_EventBegin();
   Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
   Engine_ActorSetChildValue(0, 15);
-  BattleFx_SetQueuedSoundAndPlay(170);
+  BattleFx_SetQueuedSoundAndPlay(SE_170);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
-  Engine_AudioPlayCue(162);
+  Engine_AudioPlayCue(SE_162);
   Engine_CameraSetSpeed(0x8000, 0x1000);
   Engine_CameraMoveTo(0x2380000, -1, 0x1680000, 1);
   extraBursts = 0;
@@ -3037,7 +3037,7 @@ static s32 VenusLighthouse_UpdateRisingSpray(union FieldObject *fieldObject) {
   framePhase = gFrameCount & 3;
   if (framePhase == 0) {
     if ((gFrameCount & 7) == 0) {
-      Engine_AudioPlayCue(246);
+      Engine_AudioPlayCue(SE_246);
     }
     particleX =
         actor->x.fixed + ((((u32)(Engine_RandomNext() * 49) >> 16) - 24) << 16);
@@ -3076,7 +3076,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   leader->motionFlags = 0;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  Event_PlayCue(204);
+  Event_PlayCue(SE_204);
   Engine_EventWait(30);
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Engine_EventWait(24);
@@ -3115,8 +3115,8 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   Engine_EventWait(60);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
   Engine_ActorSetSpritePriority(20, 1);
-  Event_PlayCue(17);
-  Event_PlayCue(0x134);
+  Event_PlayCue(MUS_017);
+  Event_PlayCue(SE_308);
   GameFlag_Set(0x101);
   // Raise the leader, terrain contact and spray by the same pixel each frame.
   for (riseFrame = 0; riseFrame < 128; riseFrame++) {

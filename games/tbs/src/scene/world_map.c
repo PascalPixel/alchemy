@@ -48,6 +48,7 @@
 #include "fixed_math.h"
 #include "palbuf.h"
 #include "flags.h"
+#include "songs.h"
 
 // Forward declarations.
 static s32 WorldMap_ApplyMapRotation(struct ScriptInterpreter *interpreter);
@@ -157,7 +158,7 @@ static void WorldMap_PulseOrbAndSpawnSparks(union FieldObject *fieldObject) {
   y = actor->y.fixed;
   z = actor->z.fixed;
   spark = Engine_ObjectCreate(0x11d, x, y, z);
-  Engine_AudioPlayCue(0xf6);
+  Engine_AudioPlayCue(SE_246);
   if (spark == 0)
     return;
   spark->motionFlags = 0;
@@ -326,7 +327,7 @@ static void WorldMap_SelectExitByX(s32 trigger, s32 exitBefore, s32 exitAfter) {
   } else {
     work->requestedExit = exitAfter;
   }
-  Engine_AudioPlayCue(0x7B);
+  Engine_AudioPlayCue(SE_MAP_EXIT);
 }
 
 // Choose a passage exit from the leader's north-south approach.
@@ -343,7 +344,7 @@ static void WorldMap_SelectExitByZ(s32 trigger, s32 exitBefore, s32 exitAfter) {
   } else {
     work->requestedExit = exitAfter;
   }
-  Engine_AudioPlayCue(0x7B);
+  Engine_AudioPlayCue(SE_MAP_EXIT);
 }
 
 // Select the exit for the horizontal passage.
@@ -438,7 +439,7 @@ static void WorldMap_EnterTransferRoute(void) {
   if (Engine_GameFlagIsSet(0x85a) == 0) {
     Engine_EventRequestExit(101);
   } else {
-    Engine_AudioPlayCue(123);
+    Engine_AudioPlayCue(SE_MAP_EXIT);
     Engine_EventRequestExit(3);
   }
 }
@@ -655,7 +656,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Actor_SetSpeed(11, PIXELS(8) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(12, PIXELS(8) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(13, PIXELS(8) / 5, PIXELS(2) / 5);
-  Event_PlayCue(141);
+  Event_PlayCue(SE_141);
   Actor_SetActionScript(10, gTransferArrive10);
   Engine_EventWait(20);
   Actor_SetActionScript(11, gTransferArrive11);
@@ -663,7 +664,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Actor_SetActionScript(12, gTransferArrive12);
   Engine_EventWait(20);
   Actor_RunActionScriptAndWait(13, gTransferArrive13);
-  Event_PlayCue(0x121);
+  Event_PlayCue(SE_289);
   spriteActor = Object_GetById(ACTOR_PARTY_LEADER);
   if (spriteActor != 0) {
     Actor_SetPosition(GARET, spriteActor->x.fixed, spriteActor->z.fixed);
@@ -684,7 +685,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 60);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST, 10);
-  Event_PlayCue(141);
+  Event_PlayCue(SE_141);
   Actor_SetActionScript(10, gTransferDepart10);
   Engine_EventWait(20);
   Actor_SetActionScript(11, gTransferDepart11);
@@ -694,7 +695,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 10);
   Actor_RunActionScriptAndWait(13, gTransferDepart13);
-  Event_PlayCue(0x121);
+  Event_PlayCue(SE_289);
   Engine_EventWait(20);
   Battle_ClearObjectFlag5bWhenMode3();
   Engine_ActorSetAnimation(10, 1);
@@ -751,11 +752,11 @@ static void WorldMap_DepartWithTravelers(void) {
   Event_ShowMessageAndWait(9, 0, 20);
   Engine_ActorSetAnimationAndWait(8, 3);
   Battle_ClearObjectFlag5bWhenMode3();
-  Event_PlayCue(107);
+  Event_PlayCue(SE_107);
   Camera_SetSpeed(PIXELS(4), PIXELS(4));
   // Focus on the departure effect before moving the group to the landing.
   WorldMap_ShakeTransferStartCamera();
-  Event_PlayCue(0x121);
+  Event_PlayCue(SE_289);
   Actor_ShowEmote(8, 0x100, 0);
   Actor_ShowEmote(9, 0x100, 0);
   Actor_FaceDirection(8, FACING_WEST, 0);
@@ -796,7 +797,7 @@ static void WorldMap_DepartWithTravelers(void) {
   spriteActor->velocityY = PIXELS(6);
   spriteActor = Object_GetById(8);
   spriteActor->velocityY = PIXELS(6);
-  Event_PlayCue(145);
+  Event_PlayCue(SE_145);
   Camera_SetSpeed(PIXELS(4), PIXELS(4));
   WorldMap_ShakeTransferLandingCamera();
   WorldMap_ShakeTransferLandingCamera();
@@ -836,7 +837,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Actor_WalkToAndWait(9, 5640, 1736);
   Actor_WalkToAndWait(9, 5640, 1752);
   Actor_SetPosition(9, 0, 0);
-  Event_PlayCue(141);
+  Event_PlayCue(SE_141);
   Actor_SetActionScript(10, gTransferReturn10);
   Actor_SetActionScript(11, gTransferReturn11);
   Engine_EventWait(40);
@@ -865,7 +866,7 @@ static void WorldMap_DepartWithTravelers(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Object_RefreshSelectorById(13);
-  Event_PlayCue(0x121);
+  Event_PlayCue(SE_289);
   Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   Camera_MoveTo(PIXELS(5880), -1, PIXELS(1608), 1);
   Engine_CameraWaitForMove();
@@ -943,7 +944,7 @@ static void WorldMap_UpdateTransferredActorLanding(void) {
   if (actor->y.fixed < PIXELS(10)) {
     actor->y.fixed = PIXELS(10);
     if (GameFlag_IsSet(0x200) == 0) {
-      Event_PlayCue(145);
+      Event_PlayCue(SE_145);
       Object_SetMode(actor, 3);
       GameFlag_Set(0x200);
       actor->timer = 1;
@@ -1124,7 +1125,7 @@ static void WorldMap_ShowDjinnTutorial(void) {
   Engine_EventSetMessage(MsgWorldMapAfterBringingDjinniIntoYour);
   Event_ShowMessage(8, 0);
   Engine_EventWait(30);
-  Event_PlayCue(111);
+  Event_PlayCue(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
   GameFlag_Clear(0x16f);
   GameFlag_Clear(0x171);
@@ -1198,7 +1199,7 @@ static void WorldMap_MeetFirstDjinni(void) {
     Engine_ObjectSetPartPalettes(djinni, 0);
     djinni->gravity = PIXELS(1);
     Event_ShowMessage(DJINNI, 0);
-    Event_PlayCue(131);
+    Event_PlayCue(SE_131);
     Engine_PsynergyBegin(140, 0);
     for (i = 59; i >= 0; i--) {
       if (gFrameCount & 2)
@@ -1275,13 +1276,13 @@ static void WorldMap_MeetFirstDjinni(void) {
     Event_ShowMessage(DJINNI, 0);
   listened:
     UiWork_PushValueSlot(300, 4);
-    Event_PlayCue(81);
+    Event_PlayCue(MUS_081);
     count = MsgWorldMapAbilityVenusDjinni;
     Message_ShowCentered(count++, 3);
     Event_SetMessage(count);
     Actor_Jump(DJINNI, 2, 20);
     Event_ShowMessage(DJINNI, 0);
-    Event_PlayCue(9);
+    Event_PlayCue(MUS_009);
     WorldMap_ShowDjinnTutorial();
     Battle_ClearObjectFlag5bWhenMode3();
     return;
@@ -1304,7 +1305,7 @@ static void WorldMap_MeetFirstDjinni(void) {
   Event_ShowMessage(DJINNI, 0);
   Actor_RunRepeatedMotion(DJINNI, 2);
   Event_ShowMessage(DJINNI, 0);
-  Event_PlayCue(111);
+  Event_PlayCue(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
   GameFlag_Set(0x16f);
   GameFlag_Clear(0x171);
@@ -1343,7 +1344,7 @@ static void WorldMap_MeetFirstDjinni(void) {
   Event_ShowMessage(DJINNI, 0);
   Battle_ClearObjectFlag5bWhenMode3();
   Djinn_JoinParty(DJINNI, 0, 0);
-  Event_PlayCue(42);
+  Event_PlayCue(MUS_042);
   Event_End();
   GameFlag_Clear(FLAG_DJINNI_MET);
   GameFlag_Clear(0x16f);
@@ -1370,7 +1371,7 @@ static void WorldMap_DisembarkCarriage(void) {
   Engine_EventWait(20);
   Actor_SetPosition(10, PIXELS(5480), PIXELS(2104));
   Engine_TaskWait(1);
-  Event_PlayCue(141);
+  Event_PlayCue(SE_141);
   Actor_SetSpeed(10, PIXELS(8) / 5, PIXELS(2) / 5);
   Engine_ActorSetAnimation(10, 2);
   Actor_MoveToAndWait(10, 5485, 2136);
@@ -1380,7 +1381,7 @@ static void WorldMap_DisembarkCarriage(void) {
   Actor_MoveToAndWait(10, 5544, 2158);
   Actor_MoveToAndWait(10, 5608, 2168);
   Engine_ActorSetAnimation(10, 1);
-  Event_PlayCue(0x121);
+  Event_PlayCue(SE_289);
   Engine_EventWait(20);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(5592), PIXELS(2168));
   Engine_TaskWait(1);
@@ -1388,7 +1389,7 @@ static void WorldMap_DisembarkCarriage(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 5576, 2168);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 40);
-  Event_PlayCue(141);
+  Event_PlayCue(SE_141);
   Engine_ActorSetAnimation(10, 2);
   Actor_MoveToAndWait(10, 5624, 2168);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
@@ -1400,7 +1401,7 @@ static void WorldMap_DisembarkCarriage(void) {
   Actor_MoveToAndWait(10, 5490, 2136);
   Actor_MoveToAndWait(10, 5480, 2104);
   Actor_SetPosition(10, 0, 0);
-  Event_PlayCue(0x121);
+  Event_PlayCue(SE_289);
   Engine_EventWait(40);
   Camera_MoveTo(PIXELS(5592), -1, PIXELS(2136), 1);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1840,7 +1841,7 @@ static void WorldMap_ShowEndingScene(void) {
   Engine_ActorStartRepeatedMotion(8, 2);
   Event_ShowMessageAndWait(8, 0, 60);
   Map_LoadDefaultCellsAndUpdateBlock();
-  Event_PlayCue(17);
+  Event_PlayCue(MUS_017);
   ColorBuffer_ApplyTarget(0, 0);
   Engine_ColorBufferInterpolate(120);
   Engine_TaskWait(120);
@@ -1850,7 +1851,7 @@ static void WorldMap_ShowEndingScene(void) {
 // Start the sparkling travel transition and fade out to its destination.
 static void WorldMap_StartTransitionEffect(void) {
   Engine_EventBegin();
-  Engine_AudioPlayCue(141);
+  Engine_AudioPlayCue(SE_141);
   Engine_ColorBufferApplySource(0, 0);
   Engine_ColorBufferApplyTarget(0, 0);
   Engine_ColorBufferInterpolate(1);
@@ -2109,7 +2110,7 @@ static void WorldMap_StartAirborneTravel(s32 targetActor) {
       Actor_SetDestination(id, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(id);
-    Event_PlayCue(244);
+    Event_PlayCue(SE_244);
     FieldScheduler_AddCallback(WorldMap_UpdateAirborneTravelTimer, 0xc80);
     actor->motionFlags = alreadyTraveling;
     Engine_ObjectSetPosition(actor, actor->x.fixed, actor->y.fixed + PIXELS(32),
@@ -2160,7 +2161,7 @@ static void WorldMap_FinishAirborneTravel(void) {
 
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
-  Event_PlayCue(219);
+  Event_PlayCue(SE_219);
   Engine_ActorSetSpriteFlags(actor, 0);
   other->motionFlags = 0;
   actor->motionFlags = 0;
@@ -2247,7 +2248,7 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   gEventWork->transitionFrames = 16;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  Engine_AudioPlayCue(246);
+  Engine_AudioPlayCue(SE_246);
 
   // Fade through the inward frames, hold, then reverse the animation.
   gWorldMapBlend = 0xe00;
@@ -2278,7 +2279,7 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   WORLD_MAP_QUEUE_TRANSITION_FRAME(buffer, 0x3a80);
   Map_LoadAreaGraphics();
   FieldScheduler_AddCallback(WorldMap_JitterTransitionCamera, 0xc80);
-  Engine_AudioPlayCue(141);
+  Engine_AudioPlayCue(SE_141);
   gWorldMapBlend = 0xd00;
   Engine_EventWait(4);
   gWorldMapBlend = 0xe00;

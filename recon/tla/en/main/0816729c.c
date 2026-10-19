@@ -1,7 +1,12 @@
-// Draft of BattleFx_RunJudgment, decompiled from the listing: differ 2562 of
-// 2680 (draft 2644), the same 172 calls and control flow; allocation differs.
+// Draft of BattleFx_RunJudgment, decompiled from the listing: differ 2553 of
+// 2680 (draft 2655), the same 172 calls and control flow; allocation differs.
+// 2026-10-19: the native's arrays, from the top of its 188-byte frame:
+// anchor (sp 176), pos (164), the swords' placement (148), the falling
+// objects' placement (132, its own array: drift here), req (124), the
+// first texture (116), the glare's texture (108, its own: glare here) and
+// scale (100). Declared so, the arrays sit as the native's but the frame
+// is 196: the spills below scale take two words more than the native's.
 
-#include "types.h"
 #include "battle_effect.h"
 #include "battle_effect_work.h"
 #include "effect_step.h"
@@ -9,6 +14,7 @@
 #include "iwram_call.h"
 #include "mem.h"
 #include "ram_buffer.h"
+#include "types.h"
 
 struct ModelTexture {
   u32 logWidth : 8;
@@ -30,7 +36,8 @@ struct RenderModel {
 
 void BattleFx_BeginCanvasLayer(s32 bgControl);
 void BattleFx_EndCanvasLayer(void); // BattleFx_EndCanvasLayer
-void BattleFx_ProcessPendingGraphicsTransfer(void); // BattleFx_ProcessPendingGraphicsTransfer
+void BattleFx_ProcessPendingGraphicsTransfer(
+    void); // BattleFx_ProcessPendingGraphicsTransfer
 void ObjectGroup_TickMemberTimers(void); // ObjectGroup_TickMemberTimers
 void BattleFx_LoadBlitter(s32 slot, s32 modeAndFlags); // BattleFx_BuildBlitter
 void Func_0814cd48(s32 actor, s32 palette, s32 pose, s32 timerSlot,
@@ -49,11 +56,11 @@ void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Render_ResetTransformState(void);
 void Func_080151e4(s32 x, s32 y, s32 z); // SceneTransform_ApplyScale3
-void EffectPosition_ProjectBattler(s32 id,
-                                                 struct EffectPosition *out);
-void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode);   // SpawnObjects
-void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect); // SelectLivingTargets
-void Func_080150e4(s32 angle); // SceneTransform_ApplyRoll
+void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *out);
+void BattleFx_SpawnObjects(s32 count, s32 resource, s32 mode); // SpawnObjects
+void BattleFx_SelectLivingTargets(
+    struct BattleEffectArgument *effect); // SelectLivingTargets
+void Func_080150e4(s32 angle);            // SceneTransform_ApplyRoll
 void BattleFx_StartActorMotion(s32 id, s32 force, s32 acceleration,
                                s32 speedLimit, s32 velocityY, s32 percent);
 void Render_ApplyProjectedPlacementFar(void *object, s32 *request, s32 *source,
@@ -160,11 +167,13 @@ void BattleFx_RunJudgment(void) {
   struct JudgmentObject *obj;
   struct RenderModel *model;
   void *verts;
-  struct ModelTexture texture;
-  struct EffectPosition pos;
   s32 anchor[3];
+  struct EffectPosition pos;
   s32 place[4];
+  s32 drift[4];
   s32 req[2];
+  struct ModelTexture texture;
+  struct ModelTexture glare;
   s32 scale[2];
   s32 depth;
   s32 zoom;
@@ -691,10 +700,10 @@ void BattleFx_RunJudgment(void) {
       verts = Runtime_BumpAllocateAlternatePool(32);
       model = Render_AllocateModelList(1);
       s = (frame << 13) - 0x8f800;
-      texture.logWidth = 7;
-      texture.logHeight = 7;
-      texture.pixels = gData_02014000;
-      model->texture = &texture;
+      glare.logWidth = 7;
+      glare.logHeight = 7;
+      glare.pixels = gData_02014000;
+      model->texture = &glare;
       model->kind = 7;
       model->mesh = gData_08199364;
       model->vertices = verts;
@@ -822,7 +831,7 @@ void BattleFx_RunJudgment(void) {
     }
 
     if (frame > 213) {
-      place[3] = place[1] = 0;
+      drift[3] = drift[1] = 0;
       p = work->particles;
       for (i = 0; i != 16; i++, p++) {
         if (p->variant != 0) {
@@ -831,10 +840,10 @@ void BattleFx_RunJudgment(void) {
             scale[0] = 0x800;
           }
           scale[1] = scale[0];
-          place[1] = 0xff0000;
-          place[0] = p->x;
-          place[2] = p->y + 0xff0000;
-          Render_ApplyProjectedPlacementFar(work->objects[i], place, scale, 0);
+          drift[1] = 0xff0000;
+          drift[0] = p->x;
+          drift[2] = p->y + 0xff0000;
+          Render_ApplyProjectedPlacementFar(work->objects[i], drift, scale, 0);
           p->y -= p->velocityY;
           if (p->y <= 0xfffff) {
             if (frame <= 279) {

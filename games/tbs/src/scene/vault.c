@@ -86,16 +86,16 @@ static s32 Vault_UpdateActor21Proximity(union FieldObject *fieldObject) {
 }
 
 // Return the town's entrance positions.
-struct SceneEntrance *Vault_GetEntrances(void) { return gVault_Entrances; }
+struct SceneEntrance *Scene_GetEntrances(void) { return gVault_Entrances; }
 
-// This overlay callback returns zero.
-int SceneData_ReturnZero(void) { return 0; }
+// The town has no regions.
+const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 // Return the town's exits.
-u32 *Vault_GetExits(void) { return gVault_Exits; }
+u32 *Scene_GetExits(void) { return gVault_Exits; }
 
 // Select placements before or after the thieves are captured.
-struct ScenePlacement *Vault_SelectPlacements(void) {
+struct ScenePlacement *Scene_GetPlacements(void) {
   if (Engine_GameFlagIsSet(0x855) != 0)
     return gVault_PlacementsAfterThieves;
   return gVault_Placements;
@@ -162,7 +162,7 @@ static void Vault_PeerIntoWell(void) {
 }
 
 // Select interactions before or after the thieves are captured.
-struct SceneEvent *Vault_SelectEvents(void) {
+struct SceneEvent *Scene_GetEvents(void) {
   if (Engine_GameFlagIsSet(0x855) != 0)
     return gVault_EventsAfterThieves;
   return gVault_Events;
@@ -680,7 +680,7 @@ static void Vault_GiveBoneToDog(void) {
 }
 
 // Restore town changes, facing callbacks and Ivan's entrance greeting.
-s32 Vault_RestoreEntryState(void) {
+s32 Scene_Initialize(void) {
   s32 actor21Flag;
   struct FieldActor *actor;
   s32 lowBit;
@@ -1220,7 +1220,7 @@ struct SceneEvent gVault_Events[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_ReadThoughtsOnRoofRepairer) },
     { SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RingBell) },
     { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_PeerIntoWell) },
-    { SEARCH(SEARCH_WOODEN_BOX), 101, 0xf4a, FIND_ITEM(ITEM_NUT) },
+    { SEARCH(SEARCH_WOODEN_BOX), 101, FLAG_VAULT_BOX_NUT, FIND_ITEM(ITEM_NUT) },
     { SCENE_EVENTS_END },
 };
 
@@ -1265,7 +1265,7 @@ struct SceneEvent gVault_EventsAfterThieves[] = {
     { SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RingBell) },
     { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_PeerIntoWell) },
     { 0xe714, 19, FLAG_VAULT_DOG_SHOWN_PASSAGE, EVENT_SCRIPT(Vault_GiveBoneToDog) },
-    { SEARCH(SEARCH_WOODEN_BOX), 101, 0xf4a, FIND_ITEM(ITEM_NUT) },
+    { SEARCH(SEARCH_WOODEN_BOX), 101, FLAG_VAULT_BOX_NUT, FIND_ITEM(ITEM_NUT) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

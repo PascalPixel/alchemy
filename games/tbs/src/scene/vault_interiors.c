@@ -67,18 +67,18 @@ static void VaultInteriors_UpdateActorStops(void);
 static void VaultInteriors_StartActorStops(void);
 
 // Return the entrances for the Vault interiors overlay.
-struct SceneEntrance *VaultInteriors_GetEntrances(void) {
+struct SceneEntrance *Scene_GetEntrances(void) {
   return gVaultInteriors_Scripts;
 }
 
 // Return the trigger regions for the Vault interiors overlay.
-s16 *VaultInteriors_GetRegions(void) { return gVaultInteriors_Regions; }
+s16 *Scene_GetRegions(void) { return gVaultInteriors_Regions; }
 
 // Return the exits for the Vault interiors overlay.
-u32 *VaultInteriors_GetExits(void) { return gVaultInteriors_Messages; }
+u32 *Scene_GetExits(void) { return gVaultInteriors_Messages; }
 
 // Select the attic placements for entrances 15–17 and prepare the actors.
-const struct ScenePlacement *VaultInteriors_GetPlacements(void) {
+const struct ScenePlacement *Scene_GetPlacements(void) {
   struct ScenePlacement *table;
 
   switch (gGameState.entrance) {
@@ -266,7 +266,7 @@ static void VaultInteriors_SearchEmptyChest(void) {
 }
 
 // Choose the attic events or the town events before and after the theft.
-const struct SceneEvent *VaultInteriors_GetEvents(void) {
+const struct SceneEvent *Scene_GetEvents(void) {
   switch (gGameState.entrance) {
   case 15:
   case 16:
@@ -1391,7 +1391,8 @@ static void VaultInteriors_ReadCorneredSuspectsMinds(void) {
 
     suspect->timer = routeIndex;
   }
-  FieldScheduler_AddCallback(VaultInteriors_FaceSuspectsTowardLeader, 0xc80);
+  FieldScheduler_AddCallback(VaultInteriors_FaceSuspectsTowardLeader,
+                             TASK_PRIORITY_SCENE);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Engine_EventEnd();
 }
@@ -1567,7 +1568,7 @@ static void VaultInteriors_AdvanceSuspectRoute(s32 actor, s32 expected,
 #include "common/vault_spotflag.h"
 
 // Restore room actors, passages, and the appropriate theft-story sequence.
-s32 VaultInteriors_Initialize(void) {
+s32 Scene_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   switch (gGameState.entrance) {
   case 5: {
@@ -1599,7 +1600,7 @@ s32 VaultInteriors_Initialize(void) {
       Actor_FaceDirection(18, 0x4000, 0);
       OverlayObject_ConfigureObject22WithResource17(231, PIXELS(568),
                                                     PIXELS(16), PIXELS(672));
-      Task_AddCallback(Vault_UpdateBoneProximityFlag, 0xc80);
+      Task_AddCallback(Vault_UpdateBoneProximityFlag, TASK_PRIORITY_SCENE);
     } else if (Engine_GameFlagIsSet(0x853) != 0) {
       Engine_ActorSetPosition(18, 0, 0);
     }
@@ -1608,7 +1609,8 @@ s32 VaultInteriors_Initialize(void) {
     if (Engine_GameFlagIsSet(0x109) != 0 && Engine_GameFlagIsSet(0x852) != 0 &&
         Engine_GameFlagIsSet(0x853) == 0 && Engine_GameFlagIsSet(0x300) != 0) {
       Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
-      Task_AddCallback(VaultInteriors_FaceSuspectsTowardLeader, 0xc80);
+      Task_AddCallback(VaultInteriors_FaceSuspectsTowardLeader,
+                       TASK_PRIORITY_SCENE);
       break;
     }
     if (Engine_GameFlagIsSet(0x856) != 0) {
@@ -1624,7 +1626,7 @@ s32 VaultInteriors_Initialize(void) {
       Object_GetById(24)->timer = 5;
       Object_GetById(25)->timer = 4;
       FieldScheduler_AddCallback(VaultInteriors_FaceSuspectsTowardLeader,
-                                 0xc80);
+                                 TASK_PRIORITY_SCENE);
     }
     break;
   case 13:
@@ -3357,10 +3359,10 @@ struct SceneEvent gVaultInteriorsEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x419, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_MoveSecondSuspectAside) },
     { PSYNERGY_ON_ACTOR(0x8c), 26, 0x859, EVENT_SCRIPT(VaultInteriors_OpenMovedCratePassage) },
     { SEARCH(SEARCH_UNNAMED), 41, CONDITION_ALWAYS, EVENT_SCRIPT(VaultInteriors_SearchEmptyBarrel) },
-    { SEARCH(SEARCH_JAR), 100, 0xf4b, FIND_COINS(7) },
-    { SEARCH(SEARCH_BARREL), 101, 0xf4c, FIND_COINS(4) },
-    { SEARCH(SEARCH_BARREL), 102, 0xf4d, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { SEARCH(SEARCH_WOODEN_BOX), 103, 0xf4e, FIND_ITEM(0xc3) },
+    { SEARCH(SEARCH_JAR), 100, FLAG_VAULT_INTERIORS_JAR_COINS, FIND_COINS(7) },
+    { SEARCH(SEARCH_BARREL), 101, FLAG_VAULT_INTERIORS_BARREL_COINS, FIND_COINS(4) },
+    { SEARCH(SEARCH_BARREL), 102, FLAG_VAULT_INTERIORS_BARREL_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { SEARCH(SEARCH_WOODEN_BOX), 103, FLAG_VAULT_INTERIORS_BOX_MINT, FIND_ITEM(ITEM_MINT) },
     { 0xc4f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
     { SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOf)) },
     { SCENE_EVENTS_END },
@@ -3420,10 +3422,10 @@ struct SceneEvent gVaultInteriorsEventsFlag855[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgVaultWhyAreThesePeopleSoAnxious) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgVaultWhoCouldHaveKnownTheyWere) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgVaultOfCourseIAlwaysSuspectedThey) },
-    { SEARCH(SEARCH_JAR), 100, 0xf4b, FIND_COINS(7) },
-    { SEARCH(SEARCH_BARREL), 101, 0xf4c, FIND_COINS(4) },
-    { SEARCH(SEARCH_BARREL), 102, 0xf4d, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { SEARCH(SEARCH_WOODEN_BOX), 103, 0xf4e, FIND_ITEM(0xc3) },
+    { SEARCH(SEARCH_JAR), 100, FLAG_VAULT_INTERIORS_JAR_COINS, FIND_COINS(7) },
+    { SEARCH(SEARCH_BARREL), 101, FLAG_VAULT_INTERIORS_BARREL_COINS, FIND_COINS(4) },
+    { SEARCH(SEARCH_BARREL), 102, FLAG_VAULT_INTERIORS_BARREL_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { SEARCH(SEARCH_WOODEN_BOX), 103, FLAG_VAULT_INTERIORS_BOX_MINT, FIND_ITEM(ITEM_MINT) },
     { 0xc4f3, 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
     { SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOf)) },
     { SCENE_EVENTS_END },

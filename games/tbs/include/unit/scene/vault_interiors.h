@@ -25,12 +25,12 @@ struct VaultInteriorsStop {
 STATIC_ASSERT(sizeof(struct VaultInteriorsStopConnection) == 4);
 STATIC_ASSERT(sizeof(struct VaultInteriorsStop) == 16);
 
-struct SceneEntrance *VaultInteriors_GetEntrances(void);
-s16 *VaultInteriors_GetRegions(void);
-u32 *VaultInteriors_GetExits(void);
-const struct ScenePlacement *VaultInteriors_GetPlacements(void);
-const struct SceneEvent *VaultInteriors_GetEvents(void);
-s32 VaultInteriors_Initialize(void);
+struct SceneEntrance *Scene_GetEntrances(void);
+s16 *Scene_GetRegions(void);
+u32 *Scene_GetExits(void);
+const struct ScenePlacement *Scene_GetPlacements(void);
+const struct SceneEvent *Scene_GetEvents(void);
+s32 Scene_Initialize(void);
 extern struct VaultInteriorsStop gVaultInteriors_Stops[];
 extern s32 gVaultInteriors_ActionTable[];
 extern s32 gVaultInteriors_Villager11ExitScript[];

@@ -63,9 +63,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 }
 
 // Returns the region boxes used by the cave exits.
-const struct SceneRegion *VaultCave_GetRegions(void) {
-  return gVaultCaveRegions;
-}
+const struct SceneRegion *Scene_GetRegions(void) { return gVaultCaveRegions; }
 
 // Selects the current cave map's packed exit destinations.
 const u32 *Scene_GetExits(void) {
@@ -778,7 +776,7 @@ static void VaultCave_StartTimedFalls(void) {
 }
 
 // Restores each room's puzzles and actors, then sets the Retreat destination.
-s32 VaultCave_ApplyEntryState(void) {
+s32 Scene_Initialize(void) {
   ((struct FieldWork *)gEventWork)->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gGameState.scene == (s32)&SceneId_VaultCave1) {

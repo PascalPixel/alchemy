@@ -45,15 +45,6 @@ enum JailTrigger {
   TRIGGER_CHEST_ELIXIR
 };
 
-enum JailChestFlag {
-  FLAG_JAIL_CHEST_WATER_OF_LIFE = 0xf8c,
-  FLAG_JAIL_CHEST_SMOKE_BOMB,
-  FLAG_JAIL_CHEST_LUCKY_MEDAL,
-  FLAG_JAIL_CHEST_ANTIDOTE,
-  FLAG_JAIL_CHEST_COINS,
-  FLAG_JAIL_CHEST_ELIXIR
-};
-
 enum JailActor {
   ACTOR_THIEF_LEADER = ACTOR_FIRST_PLACED,
   ACTOR_LEFT_THIEF,
@@ -94,8 +85,9 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gJailThiefEvents;
 }
 
-// The leader silences the two thieves before addressing the party.
-static void EV08_TALK(void) {
+// The jailed leader glares at each of his men and snaps "Shut yer yaps!",
+// then turns to the party: they got us this time, but you'll pay for this.
+static void Event_LeaderSilencesThieves(void) {
   Engine_EventBegin();
 
   Engine_ActorFaceActor(ACTOR_THIEF_LEADER, ACTOR_LEFT_THIEF, 0);
@@ -123,8 +115,9 @@ static void EV08_TALK(void) {
   Engine_EventEnd();
 }
 
-// The left thief regrets the escape.
-static void EV09_TALK(void) {
+// The left thief wishes they had escaped to the cave northeast of the Goma
+// Range.
+static void Event_LeftThiefRegretsEscape(void) {
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
   Engine_EventWait(20);
@@ -133,8 +126,8 @@ static void EV09_TALK(void) {
   Engine_EventEnd();
 }
 
-// The right thief regrets staying behind.
-static void EV10_TALK(void) {
+// The right thief shakes his head: they should have skipped town sooner.
+static void Event_RightThiefRegretsStaying(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
@@ -143,32 +136,32 @@ static void EV10_TALK(void) {
   Engine_EventEnd();
 }
 
-// Mind Read on the thieves' leader.
-static void EV08_PSYNERGY(void) {
+// Mind Read on the leader: he'll be out of this jail before you know it.
+static void Event_ReadLeaderMind(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultThiefLeaderThoughts);
   Engine_EventShowMessage(ACTOR_THIEF_LEADER, 0);
   Engine_EventEnd();
 }
 
-// Mind Read on the left thief.
-static void EV09_PSYNERGY(void) {
+// Mind Read on the left thief: will he ever run free again?
+static void Event_ReadLeftThiefMind(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultLeftThiefThoughts);
   Engine_EventShowMessage(ACTOR_LEFT_THIEF, 0);
   Engine_EventEnd();
 }
 
-// Mind Read on the right thief.
-static void EV10_PSYNERGY(void) {
+// Mind Read on the right thief: is this for stealing Hammet's Shaman's Rod?
+static void Event_ReadRightThiefMind(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultRightThiefThoughts);
   Engine_EventShowMessage(ACTOR_RIGHT_THIEF, 0);
   Engine_EventEnd();
 }
 
-// Plays the map-exit sound before returning to Vault.
-static void EV01_TOUCH(void) {
+// The party steps out of the jail into Vault.
+static void Event_LeaveForVault(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventRequestExit(JAIL_EXIT_TO_VAULT);
 }
@@ -227,20 +220,20 @@ const struct ScenePlacement gJailPrisonerPlacements[] = {
 };
 
 const struct SceneEvent gJailThiefEvents[] = {
-    { EVENT_TOUCH, TRIGGER_VAULT_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EV01_TOUCH) },
+    { EVENT_TOUCH, TRIGGER_VAULT_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveForVault) },
     { EVENT_EXIT, TRIGGER_LUNPA_DOOR, CONDITION_ALWAYS, JAIL_EXIT_TO_LUNPA },
     { EVENT_TALK, ACTOR_THIEF_LEADER, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
-      EVENT_SCRIPT(EV08_TALK) },
+      EVENT_SCRIPT(Event_LeaderSilencesThieves) },
     { EVENT_TALK, ACTOR_LEFT_THIEF, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
-      EVENT_SCRIPT(EV09_TALK) },
+      EVENT_SCRIPT(Event_LeftThiefRegretsEscape) },
     { EVENT_TALK, ACTOR_RIGHT_THIEF, IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED),
-      EVENT_SCRIPT(EV10_TALK) },
+      EVENT_SCRIPT(Event_RightThiefRegretsStaying) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIEF_LEADER,
-      IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(EV08_PSYNERGY) },
+      IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(Event_ReadLeaderMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LEFT_THIEF,
-      IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(EV09_PSYNERGY) },
+      IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(Event_ReadLeftThiefMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_RIGHT_THIEF,
-      IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(EV10_PSYNERGY) },
+      IF_FLAG_SET(FLAG_VAULT_THIEVES_JAILED), EVENT_SCRIPT(Event_ReadRightThiefMind) },
     { SEARCH(SEARCH_CHEST), TRIGGER_CHEST_WATER_OF_LIFE, FLAG_JAIL_CHEST_WATER_OF_LIFE,
       FIND_ITEM(ITEM_WATER_OF_LIFE) },
     { SEARCH(SEARCH_CHEST), TRIGGER_CHEST_SMOKE_BOMB, FLAG_JAIL_CHEST_SMOKE_BOMB,

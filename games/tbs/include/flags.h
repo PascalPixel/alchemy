@@ -70,6 +70,23 @@
 #define FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE 0x9a2
 #define FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED 0x9a5
 
+// Vault: its containers, set once each is searched
+#define FLAG_VAULT_BOX_NUT 0xf4a
+
+// Vault interiors: their containers, set once each is searched
+#define FLAG_VAULT_INTERIORS_JAR_COINS 0xf4b
+#define FLAG_VAULT_INTERIORS_BARREL_COINS 0xf4c
+#define FLAG_VAULT_INTERIORS_BARREL_SLEEP_BOMB 0xf4d
+#define FLAG_VAULT_INTERIORS_BOX_MINT 0xf4e
+
+// Vault Jail: its chests, set once each is opened
+#define FLAG_JAIL_CHEST_WATER_OF_LIFE 0xf8c
+#define FLAG_JAIL_CHEST_SMOKE_BOMB 0xf8d
+#define FLAG_JAIL_CHEST_LUCKY_MEDAL 0xf8e
+#define FLAG_JAIL_CHEST_ANTIDOTE 0xf8f
+#define FLAG_JAIL_CHEST_COINS 0xf90
+#define FLAG_JAIL_CHEST_ELIXIR 0xf91
+
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
 #define FLAG_SCENE_TEMP_00 0x200

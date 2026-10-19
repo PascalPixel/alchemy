@@ -285,7 +285,7 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
       spacing = 25;
       if (!IS_PLACEHOLDER_ID(actorIds[index])) {
         actor = UnitGetFar(actorIds[index]);
-        spacing = Summon_IsEntryFlagged(actor->classId) ? 27 : 38;
+        spacing = BattleClass_IsSmall(actor->classId) ? 27 : 38;
         if (actor->classId == 148 || actor->classId == 121) {
           xPositions[index] = -50;
         }
@@ -297,7 +297,7 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
     if (!IS_PLACEHOLDER_ID(actorIds[index])) {
       struct BattleUnit *actor = UnitGetFar(actorIds[index]);
 
-      spacing = Summon_IsEntryFlagged(actor->classId) ? 27 : 38;
+      spacing = BattleClass_IsSmall(actor->classId) ? 27 : 38;
     }
     z -= spacing / 2;
   }

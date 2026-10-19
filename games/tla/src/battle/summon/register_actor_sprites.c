@@ -11,7 +11,7 @@ struct BattleSpriteSlots {
 extern u8 Data_02018000[];
 
 struct BattleUnit *UnitGet(s32 unit);
-s32 Summon_IsEntryFlagged(s32 index);
+s32 BattleClass_IsSmall(s32 index);
 s32 Summon_GetEntryValue(s32 index);
 s32 Summon_GetEntryFlag1Field(s32 index);
 s32 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
@@ -26,7 +26,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unit) {
   struct BattleSpriteSlots *table =
       (struct BattleSpriteSlots *)Ram_HeapSlots->battleWork;
   struct BattleUnit *actor = UnitGet(unit);
-  s32 singleSlot = Summon_IsEntryFlagged(actor->enemyId);
+  s32 singleSlot = BattleClass_IsSmall(actor->enemyId);
   /* FAKEMATCH(temporary): result cleared a halfword at a time, which keeps
    * pass a copy of its register (mov r4, r10), as in The Broken Seal; as an
    * s32 set to 0, 2 of 134 instructions differ in tla-en. */

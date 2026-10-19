@@ -17,7 +17,7 @@ FarCall_BattleTable:
 	overlay_veneer Summon_GetEntryByte4
 	export Summon_IsEntrySecondaryFlaggedFar, Summon_IsEntrySecondaryFlagged
 	overlay_veneer Battle_GetSpriteFlagHighBits
-	overlay_veneer Summon_IsEntryFlagged
+	overlay_veneer BattleClass_IsSmall
 	export Battle_GetObjectTableValueFar, Battle_GetObjectTableValue
 	export BattleMotion_ApproachTargetFar, BattleMotion_ApproachTarget
 	overlay_veneer BattleMotion_InitializeObject

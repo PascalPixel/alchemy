@@ -180,7 +180,7 @@ s32 Func_0811c314(s32 slot, s32 *screen) {
 
   Camera_ApplyTransformByFlag();
   scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), record->height);
-  if (Summon_IsEntryFlagged(*(u16 *)((u8 *)UnitGet(slot) + 0x14a)) != 0)
+  if (BattleClass_IsSmall(*(u16 *)((u8 *)UnitGet(slot) + 0x14a)) != 0)
     screen[1] -= Iwram_MulQ16(scale, 24);
   else
     screen[1] -= Iwram_MulQ16(scale, 48);

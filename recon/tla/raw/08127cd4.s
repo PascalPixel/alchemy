@@ -84,7 +84,7 @@ Func_08127cd4:
 	beq .L_08127d86
 	ldrh r0, [r6]
 	adds r0, #8
-	bl Summon_IsEntryFlagged
+	bl BattleClass_IsSmall
 	negs r3, r0
 	orrs r3, r0
 	movs r2, #2
@@ -133,7 +133,7 @@ Func_08127cd4:
 	ldr r1, [sp, #8]
 	ldrh r0, [r1]
 	adds r0, #8
-	bl Summon_IsEntryFlagged
+	bl BattleClass_IsSmall
 	negs r1, r0
 	orrs r1, r0
 	lsrs r1, r1, #31
@@ -183,7 +183,7 @@ Func_08127cd4:
 	beq .L_08127e66
 	str r1, [sp, #4]
 	str r4, [sp, #0]
-	bl Summon_IsEntryFlagged
+	bl BattleClass_IsSmall
 	negs r3, r0
 	orrs r3, r0
 	lsrs r3, r3, #31

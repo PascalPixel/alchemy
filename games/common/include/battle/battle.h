@@ -70,7 +70,7 @@ void BattleUnit_ResetGuardLevels(void);
 void Camera_InitDefaultTransform(void);
 void EffectSlot_UpdateMotion(struct EffectSlot *effect);
 void RunBattleEffect05(void);
-s32 Summon_IsEntryFlagged(s32 index);
+s32 BattleClass_IsSmall(s32 index);
 void BattlePres_SetActorModesFar(u16 *, s32);
 void Map_RenderAllAnimatedTileFramesFar(void **, s32);
 void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,

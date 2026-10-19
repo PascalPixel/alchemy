@@ -9,7 +9,7 @@ Summon_IsEntrySecondaryFlaggedFar:
 	.thumb_func
 Battle_GetSpriteFlagHighBitsFar:
 	overlay_veneer Battle_GetSpriteFlagHighBits
-	.global Summon_IsEntryFlaggedFar
+	.global BattleClass_IsSmallFar
 	.thumb_func
-Summon_IsEntryFlaggedFar:
-	overlay_veneer Summon_IsEntryFlagged
+BattleClass_IsSmallFar:
+	overlay_veneer BattleClass_IsSmall

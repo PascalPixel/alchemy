@@ -25,7 +25,7 @@ void BattleParty_ListAllUnitsAndSubmit(void) {
 s32 BattleMotion_GetSlotPalette(s32 id) { return BattleObjGet(id)->palette; }
 
 // The battle has six enemy sprite slots; a large enemy takes two side by
-// side, a small one (Summon_IsEntryFlagged) one.
+// side, a small one (BattleClass_IsSmall) one.
 #define ENEMY_SPRITE_SLOTS 6
 
 // Returns 1 if an enemy of class classId would find room among the enemy
@@ -36,7 +36,7 @@ s32 EnemyCheck(s32 classId) {
   s32 needsSingleSlot;
   s32 spriteSlot;
 
-  needsSingleSlot = Summon_IsEntryFlagged(classId);
+  needsSingleSlot = BattleClass_IsSmall(classId);
   battle = gBattleWork;
   for (spriteSlot = 0; spriteSlot < ENEMY_SPRITE_SLOTS; spriteSlot++) {
     if (battle->spriteSlots[spriteSlot] != 0)
@@ -60,7 +60,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unitId) {
   s32 spritePart;
   struct BattleWork *battle = gBattleWork;
   struct BattleUnit *unit = UnitGetFar(unitId);
-  s32 needsSingleSlot = Summon_IsEntryFlagged(unit->classId);
+  s32 needsSingleSlot = BattleClass_IsSmall(unit->classId);
   /* FAKEMATCH(temporary): result cleared a halfword at a time, which keeps
    * spritePart a copy of its register (mov r4, r10); as an s32 set to 0, 1 of
    * 114 instructions differ in tbs-en. */

@@ -2,7 +2,7 @@
 #include "battle_unit.h"
 
 struct BattleUnit *UnitGet(s32 unit);
-s32 Summon_IsEntryFlagged(s32 index);
+s32 BattleClass_IsSmall(s32 index);
 
 // Lays out the actors of a summon in a column: each stands at x = -80
 // (nearer, at -50, for a few large enemies) and z steps down by half the
@@ -33,7 +33,7 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
       spacing = 25;
       if ((u16)(id - 254) > 1) {
         actor = UnitGet(actorIds[index]);
-        spacing = Summon_IsEntryFlagged(actor->enemyId) ? 27 : 38;
+        spacing = BattleClass_IsSmall(actor->enemyId) ? 27 : 38;
         enemy = actor->enemyId;
         /* FAKEMATCH(barrier): the enemy id loaded before 357 is built; as
          * actor->enemyId in each test, 2 of 134 instructions differ in
@@ -55,7 +55,7 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
     if ((u16)(actorIds[index] - 254) > 1) {
       struct BattleUnit *actor = UnitGet(actorIds[index]);
 
-      spacing = Summon_IsEntryFlagged(actor->enemyId) ? 27 : 38;
+      spacing = BattleClass_IsSmall(actor->enemyId) ? 27 : 38;
     }
     z -= spacing / 2;
   }

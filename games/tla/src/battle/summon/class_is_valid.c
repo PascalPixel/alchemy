@@ -24,7 +24,7 @@ s32 EnemyCheck(s32 arg0) {
   s32 i;
   struct Layout *ptr;
 
-  retval = Summon_IsEntryFlagged(arg0);
+  retval = BattleClass_IsSmall(arg0);
   ptr = (struct Layout *)Ram_HeapSlots->battleWork;
   i = 0;
   for (; i < 6; i++) {

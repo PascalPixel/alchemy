@@ -34,7 +34,7 @@ s32 Summon_GetEntryFlag1Field(s32 index) {
 
 // Returns whether the enemy class uses a single sprite slot; invalid classes
 // return zero.
-s32 Summon_IsEntryFlagged(s32 index) {
+s32 BattleClass_IsSmall(s32 index) {
   s32 result;
 
   if (index < 0 || index > ENEMY_CLASS_LAST)

@@ -85,7 +85,7 @@ s32 Func_08127cd4(s32 recordId) {
   for (memberOrEnemyIndex = 0; memberOrEnemyIndex <= 4; memberOrEnemyIndex++) {
     if (record->minimumCounts[memberOrEnemyIndex] != 0) {
       s32 requiredSlots =
-          2 - (Summon_IsEntryFlagged(record->memberIds[memberOrEnemyIndex] +
+          2 - (BattleClass_IsSmall(record->memberIds[memberOrEnemyIndex] +
                                      8) != 0);
 
       freeSpriteSlots -=
@@ -103,7 +103,7 @@ s32 Func_08127cd4(s32 recordId) {
     additionalRoom = maximum - minimum;
     if (additionalRoom > 0) {
       s32 memberSlots =
-          2 - (Summon_IsEntryFlagged(record->memberIds[memberOrEnemyIndex] +
+          2 - (BattleClass_IsSmall(record->memberIds[memberOrEnemyIndex] +
                                      8) != 0);
 
       fittingCount = freeSpriteSlots / memberSlots;
@@ -122,7 +122,7 @@ s32 Func_08127cd4(s32 recordId) {
          memberOrEnemyIndex++) {
       classId = record->memberIds[memberOrEnemyIndex] + 8;
       if (extraCounts[memberOrEnemyIndex] != 0) {
-        spriteSlots = 2 - (Summon_IsEntryFlagged(classId) != 0);
+        spriteSlots = 2 - (BattleClass_IsSmall(classId) != 0);
         if (spriteSlots > freeSpriteSlots) {
           extraCounts[memberOrEnemyIndex] = 0;
         } else {

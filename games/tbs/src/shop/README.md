@@ -20,14 +20,14 @@ header, so it resolves when opened on its own, but it is compiled only through
 where one family ends and the next begins. Link order is in
 `games/tbs/objects.tsv`, from `shop`.
 
-The work block's layout, `struct ShopRuntime`, is in `games/tbs/include/shop.h`
-and the prototypes in `games/tbs/include/unit/shop/`. Scene overlays import
-these functions by name (`games/tbs/src/scene/import/`), and code in other
+The work block's layout, `struct ShopRuntime`, is in
+[`include/shop.h`](../../include/shop.h) and the prototypes in
+`games/tbs/include/unit/shop/`. Scene overlays import these functions by name (`games/tbs/src/scene/import/`), and code in other
 banks calls them through the far-call table
 `games/tbs/src/system/far_call/SHOP.S` (the `...Far` names), so a rename
 crosses folders.
 
-## Words used here
+## Words
 
 - **work block**: `struct ShopRuntime`, heap slot `HEAP_SLOT_MENU`, reached as
   `gMenuWork` while a counter is open; `Shop_InitializeCursorWork` sets it up
@@ -62,7 +62,7 @@ crosses folders.
 | `Inn_` | the inn |
 | `Battle_`, `BattleUnit_`, `BattleFx_`, `AudioCommand_`, `NodeChain_` | things the engine names elsewhere |
 
-## Changing a counter
+## How to change a counter
 
 - A shop's stock is its row of `sStockTable` in `artifacts.c`; each row's
   number is the `stockRow` its scene passes to `Shop_Run`.
@@ -72,3 +72,9 @@ crosses folders.
   branch.
 - Messages are linker symbols (`MsgDeal`); their text is in the PO catalogs
   in `games/tbs/text`.
+
+## Limits
+
+- A shop sells at most 24 items and 8 artifacts, the columns of its stock
+  row (`SHOP_STOCK_`).
+- A shop adds its artifacts once, remembered by flag `0x400 + stockRow`.

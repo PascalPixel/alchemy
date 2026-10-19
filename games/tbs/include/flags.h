@@ -70,6 +70,12 @@
 #define FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE 0x9a2
 #define FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED 0x9a5
 
+// Kolima
+// The party has seen the curse fall, in Kolima or on the forest bridge.
+#define FLAG_KOLIMA_CURSE_WITNESSED 0x843
+// Kolima's bridge fell as the party crossed it.
+#define FLAG_KOLIMA_BRIDGE_COLLAPSED 0x847
+
 // Kolima Forest
 #define FLAG_KOLIMA_FOREST_NUT_CAUGHT 0xfd3 // Catch took the clearing's Nut
 

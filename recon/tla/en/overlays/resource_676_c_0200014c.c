@@ -1,31 +1,28 @@
-// Near miss: differ 4 of 82 (two reordered rows): the native loads the party
-// state's address before it builds the owner offset, and sets the first
-// argument after the movement byte is cleared.
+// Japanese draft (compare with --edition tla-ja), differ 4 of 64: the other
+// editions' Func_0200014c, adopted in yallam/s014c.c, without the stop beside
+// the leader. The native loads the window tiles before it copies the object
+// to r5, and the flags before the event work; here both pairs come the other
+// way round. Tried 2026-10-19: the flags read into a local ahead of the event
+// work (10), an empty asm holding the tiles (37).
 #include "../../../../games/tla/src/scene/yallam/yallam.h"
 
 s32 Func_0200014c(struct ObjectRuntime *object) {
   u8 *tiles = Ram_HeapSlots->windowTiles;
   u8 *event = Ram_HeapSlots->eventWork;
-  struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
   s32 force = 0;
+  struct ObjectRuntime *target;
+  u16 *flags = (u16 *)&object->action;
 
-  if (SceneActor_CalculateFixedPointDistance(&leader->x, &object->x) <= 11) {
-    object->movementState = force;
-    Func_02002448(object, 2);
-  } else {
-    struct ObjectRuntime *target;
-    u16 *flags = (u16 *)&object->action;
+  if (*flags & 1)
+    target = Object_GetById(10);
+  else
+    target = Object_GetById(9);
+  if (Func_02000088(object, target, 24, 0) == 0) {
+    struct ObjectRuntime *leader = Object_GetById(gPartyState.currentOwner);
 
-    if (*flags & 1)
-      target = Object_GetById(10);
-    else
-      target = Object_GetById(9);
-    if (Func_02000088(object, target, 24, 0) == 0) {
-      leader = Object_GetById(gPartyState.currentOwner);
-      if ((*(s16 *)(event + 352) != 0 || tiles[4] != 0) && (*flags & 2))
-        force = 1;
-      Func_02000088(object, leader, 24, force);
-    }
+    if ((*(s16 *)(event + 352) != 0 || tiles[4] != 0) && (*flags & 2))
+      force = 1;
+    Func_02000088(object, leader, 24, force);
   }
   return 0;
 }

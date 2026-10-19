@@ -17,8 +17,8 @@ extern const s32 *gEffectScripts[];
 extern struct SceneEntrance gXianInteriors_Entrances[];
 extern u32 gXianInteriors_Exits[];
 extern struct ScenePlacement gXianInteriors_Placements[];
-extern struct ScenePlacement gXianInteriors_PlacementsEntrance8[];
+extern struct ScenePlacement gXianInteriors_SchoolRoomPlacements[];
 extern struct SceneEvent gXianInteriors_Events[];
-extern struct SceneEvent gXianInteriors_EventsEntrance8[];
+extern struct SceneEvent gXianInteriors_SchoolRoomEvents[];
 
 #endif

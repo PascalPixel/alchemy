@@ -4,28 +4,28 @@
 #include "types.h"
 #include "field_scene.h"
 
-u8 *SceneEffect_GetPrimaryData(void);
-s32 SceneEffect_GetInitialValue(void);
-u8 *SceneEffect_GetSecondaryData(void);
-s32 SceneEffect_PrepareState(void);
-u8 *SceneEffect_GetTertiaryData(void);
-s32 Xian_SetupScene(void);
+const struct SceneEntrance *Xian_GetEntrances(void);
+const struct SceneRegion *Xian_GetRegions(void);
+const u32 *Xian_GetExits(void);
+const struct ScenePlacement *Xian_GetPlacements(void);
+const struct SceneEvent *Xian_GetEvents(void);
+s32 Xian_Initialize(void);
 extern s32 gEffectScript0[];
 extern s32 gEffectScript1[];
 extern s32 gEffectScript2[];
 extern const s32 *gEffectScripts[];
-extern s32 gXian_ActionTable[];
-extern s32 gXian_Actor19Motion[];
-extern s32 gXian_EffectScript[];
-extern s32 gXian_EffectConfig[];
-extern u16 gXian_GateSteps1[];
-extern u16 gXian_GateSteps2[];
-extern u16 gXian_GateSteps3[];
-extern u16 gXian_GateSteps4[];
-extern u16 gXian_GateSteps5[];
-extern struct SceneEntrance gXianEntrances[];
-extern u32 gXianExits[];
-extern struct ScenePlacement gXianPlacements[];
-extern struct SceneEvent gXianEvents[];
+extern s32 gXian_WaterCarrierRoute[];
+extern s32 gXian_TrainingTreeJump[];
+extern s32 gXian_TreeImpactScript[];
+extern s32 gXian_TrainingParticleScript[];
+extern u16 gXian_DoorSteps1[];
+extern u16 gXian_DoorSteps2[];
+extern u16 gXian_DoorSteps3[];
+extern u16 gXian_DoorSteps4[];
+extern u16 gXian_DoorSteps5[];
+extern struct SceneEntrance gXian_Entrances[];
+extern u32 gXian_Exits[];
+extern struct ScenePlacement gXian_Placements[];
+extern struct SceneEvent gXian_Events[];
 
 #endif

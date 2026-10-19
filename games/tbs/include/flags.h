@@ -495,6 +495,12 @@
 #define FLAG_JAIL_CHEST_ANTIDOTE 0xf8f
 #define FLAG_JAIL_CHEST_COINS 0xf90
 #define FLAG_JAIL_CHEST_ELIXIR 0xf91
+// Xian: set once the jar's Lucky Medal is taken.
+#define FLAG_XIAN_LUCKY_MEDAL_JAR 0xf6e
+
+// Xian interiors: set once each find is taken.
+#define FLAG_XIAN_INTERIORS_ELIXIR_BARREL 0xf6f
+#define FLAG_XIAN_INTERIORS_SLEEP_BOMB_JAR 0xf70
 
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.

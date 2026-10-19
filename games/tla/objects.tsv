@@ -5170,13 +5170,7 @@ main	rom_main_08	games/tla/src/battle/party/list_living_units	.text
 main	rom_main_08	games/tla/src/battle/party/party	.text
 main	rom_main_08	games/tla/src/battle/battle	.text
 main	rom_main_08	games/tla/src/battle/summon/class_is_valid	.text
-main	rom_main_08	recon/tla/it/rom	.rom.0011a4f6	it
-main	rom_main_08	recon/tla/fr/rom	.rom.0011a4f6	fr
-main	rom_main_08	recon/tla/es/rom	.rom.0011a4f6	es
-main	rom_main_08	recon/tla/de/rom	.rom.0011a4f6	de
-main	rom_main_08	recon/tla/raw/0811a4de	.text	en
-main	rom_main_08	recon/tla/raw/0811a4e0	.text	en
-main	rom_main_08	recon/tla/ja/rom	.rom.0011a4da	ja
+main	rom_main_08	games/tla/src/battle/summon/register_actor_sprites	.text
 main	rom_main_08	games/tla/src/battle/presentation/find_free_slot	.text
 main	rom_main_08	games/tla/src/battle/presentation/reset_actor	.text
 main	rom_main_08	recon/tla/it/rom	.rom.0011a7c4	it

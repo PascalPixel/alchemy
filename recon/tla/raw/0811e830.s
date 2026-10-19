@@ -135,7 +135,7 @@ Func_0811e830:
 .L_0811e93c:
 	mov r2, r11
 	ldrh r0, [r7, r2]
-	bl Func_0811a4e0
+	bl SummonSlot_RegisterActorSprites
 	adds r5, r0, #0
 	cmp r5, #0
 	beq .L_0811e954

@@ -31,7 +31,7 @@ BattleObjMake:
 	mov r10, r0
 	mov r0, r9
 	mov r11, r2
-	bl Func_0811a4e0
+	bl SummonSlot_RegisterActorSprites
 	movs r3, #42
 	adds r3, #255
 	add r3, r10

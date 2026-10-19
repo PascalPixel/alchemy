@@ -263,7 +263,7 @@ s32 ValeBabi_Initialize(void) {
   struct FieldActor *actor;
 
   if (gGameState.entrance == 19) {
-    Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
+    Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
         SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   } else {

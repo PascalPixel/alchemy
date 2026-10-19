@@ -1961,7 +1961,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   SolSanctumElementalStarRoom_GiveMythrilBags();
   Map_CopyCellAttributes(8, 0, 5, 1, 27, 17);
   gEventWork->transitionFrames = 16;
-  GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
+  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   Engine_EventEnd();
 }
 

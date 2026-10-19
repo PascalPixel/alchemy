@@ -387,7 +387,7 @@ static void Event_ReturnFromMtAleph(void) {
   Engine_EventCloseScreen();
   Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
-  GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
+  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   GameFlag_Set(FLAG_VALE_RETURNED_FROM_MT_ALEPH);
   Engine_EventRequestExit(1);
   Engine_EventEnd();

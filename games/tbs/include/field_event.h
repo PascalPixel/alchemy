@@ -280,8 +280,6 @@ static inline void Map_SetShake(s32 horizontal, s32 vertical, s32 decay) {
   Engine_WorkSetValuesIfNonNegative(horizontal, vertical, decay);
 }
 
-enum { FLAG_ARRIVAL_EVENT_PENDING = 0x12f };
-
 // Keep the scene wrappers separate from the main-image declarations.
 #define GameFlag_Set FieldEvent_GameFlagSet
 #define GameFlag_IsSet FieldEvent_GameFlagIsSet

@@ -311,7 +311,7 @@ static void SolSanctumStatue_VisitStatueHall(void) {
   }
   Engine_ActorWaitForMove(JENNA);
   Actor_SetPosition(JENNA, 0, 0);
-  GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
+  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gEventWork->transitionFrames = 16;
   Engine_EventEnd();
@@ -501,7 +501,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   }
   Engine_ActorWaitForMove(GARET);
   Engine_ActorSetPosition(GARET, 0, 0);
-  GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
+  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   work = gEventWork;
   work->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   work->transitionFrames = 16;

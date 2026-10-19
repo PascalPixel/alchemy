@@ -664,7 +664,7 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
   GameFlag_Set(FLAG_SOL_SANCTUM_ENTERED);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
+  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   Engine_EventEnd();
 }
 
@@ -868,7 +868,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Engine_ActorSetAnimation(GARET, ANIM_STAND);
   Engine_ActorSetAnimation(JENNA, 1);
   GameFlag_Set(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE);
-  Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
+  Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   Engine_EventEnd();
 }
 

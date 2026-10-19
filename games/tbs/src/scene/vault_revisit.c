@@ -562,7 +562,7 @@ s32 Scene_Initialize(void) {
       !Engine_GameFlagIsSet(FLAG_DJINNI_0 + VAULT_VENUS_DJINNI_INDEX))
     Actor_SetPosition(ACTOR_VAULT_VENUS_DJINNI, PIXELS(408), PIXELS(120));
   if (gGameState.entrance == 11)
-    Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
+    Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   if (gGameState.entrance == 13)
     Engine_GameFlagClear(0x120);
   return 0;

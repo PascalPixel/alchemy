@@ -469,7 +469,7 @@ static void Bilibin_RestoreVillageActors(void) {
   if (entrance == 10) {
     Actor_SetPosition(8, 0, 0);
   } else if (entrance == 9) {
-    GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
+    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
   if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
     entrance = gGameState.entrance;

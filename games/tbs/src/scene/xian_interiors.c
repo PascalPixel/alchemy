@@ -201,7 +201,7 @@ s32 XianInteriors_Initialize(void) {
     OverlayObject_CreateConfiguredObject(PIXELS(460), 0, PIXELS(568), 20);
     OverlayObject_CreateConfiguredObject(PIXELS(484), 0, PIXELS(568), 20);
   } else if (entrance == XIAN_INTERIORS_ENTRANCE_FROM_SCHOOL) {
-    Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
+    Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     Engine_ActorSetAnimation(ACTOR_HSU, 6);
   }
   return 0;

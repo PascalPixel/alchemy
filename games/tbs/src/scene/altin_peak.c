@@ -1485,7 +1485,7 @@ static void AltinPeak_RestoreRoom4(void) {
   {
     // Entrances 6 and 7 do not run the pending arrival event.
     if ((u32)(((u16)gGameState.entrance - 6) << 16) <= 0x10000) {
-      GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
+      GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     }
   }
 }
@@ -2070,7 +2070,7 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Actor_RunActionScriptAndWait(MIA, party);
   Engine_EventWait(20);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
+  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   gEventWork->transitionFrames = 16;
   GameFlag_Set(FLAG_HYDROS_STATUES_DEFEATED);
   Engine_EventEnd();

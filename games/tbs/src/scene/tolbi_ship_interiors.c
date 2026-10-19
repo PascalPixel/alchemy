@@ -3333,7 +3333,7 @@ static void TolbiShipInteriors_ReportMonstersBelowdecks(void) {
   Engine_EventWait(40);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_ABOARD);
   TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_PARTY_FOLLOWERS, 0, 0);
-  GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
+  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
 }
 
 // The crew checks on the party after the monster fight, then resumes rowing.
@@ -3611,7 +3611,7 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   FieldScheduler_AddCallback(TolbiShipInteriors_ShakeWhileKrakenAboard, 0xc80);
   TolbiShipInteriors_RunSceneCommand(SHIP_HIDE_PARTY_FOLLOWERS, 0, 0);
   Engine_ActorDestroy(27);
-  GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
+  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   GameFlag_Clear(FLAG_TOLBI_SHIP_ROWING);
   Engine_EventEnd();
 }

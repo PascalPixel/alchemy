@@ -536,7 +536,7 @@ static void Event_DoraSendsIsaacToThePlaza(void) {
   Engine_ActorSetAnimation(ACTOR_KYLE, ANIM_STAND);
   Engine_ActorSetAnimation(21, ANIM_WALK);
   Engine_ActorSetAnimation(22, 5);
-  GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
+  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   GameFlag_Set(FLAG_VALE_STORM_SENT_TO_PLAZA);
   GameFlag_Set(FLAG_SCENE_TEMP_05);
   Engine_EventEnd();

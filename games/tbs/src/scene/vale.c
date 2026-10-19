@@ -1173,7 +1173,7 @@ UNUSED static void HouseScene_RunRepairMorning(void) {
   Engine_CameraWaitForMove();
   Engine_EventWait(100);
   GameFlag_Set(FLAG_SCENE_TEMP_02);
-  GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
+  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   *leaderMotion = leaderMotionFlags;
   Engine_EventEnd();
 }
@@ -2517,7 +2517,7 @@ static void Event_RoofMended(void) {
   Engine_EventWait(100);
   Map_CopyCellAttributes(49, 46, 8, 4, 20, 50);
   GameFlag_Set(FLAG_SCENE_TEMP_02);
-  GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
+  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
 #if TBS_PATCH_1
   leader->motionFlags = 3;
   leader->y.fixed = PIXELS(160);

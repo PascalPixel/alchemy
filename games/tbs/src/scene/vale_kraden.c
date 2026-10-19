@@ -730,7 +730,7 @@ s32 ValeKraden_Initialize(void) {
   s32 debrisRow;
 
   if (gGameState.entrance == 5 || gGameState.entrance == 6) {
-    Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
+    Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   }
   if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
     Engine_GameFlagClear(FLAG_SCENE_TEMP_42);

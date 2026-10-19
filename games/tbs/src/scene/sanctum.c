@@ -317,7 +317,7 @@ s32 Sanctum_Initialize(void) {
     if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0) {
       Actor_SetPosition(10, PIXELS(200), PIXELS(80));
     }
-    Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
+    Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     break;
   case 20:
     Sanctum_RestoreCeremonyFloor();
@@ -328,7 +328,7 @@ s32 Sanctum_Initialize(void) {
   case 29:
   case 32:
   case 35:
-    Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
+    Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     break;
   case 21:
     Sanctum_RestoreCeremonyFloor();
@@ -336,7 +336,7 @@ s32 Sanctum_Initialize(void) {
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       Sanctum_RequestQuestAcceptance();
     }
-    Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
+    Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     break;
   }
   return 0;

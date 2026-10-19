@@ -646,7 +646,7 @@ static void Village_ApplyWaterLevel(void) {
     FieldScheduler_AddCallback(Beast_SpawnSpray, TASK_PRIORITY_SCENE);
   }
   if (gGameState.entrance == ENTRANCE_FROM_MINE) {
-    GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
+    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
   Map_CopyCellAttributes(0, 33, 4, 3, 20, 41);
   if (GameFlag_IsSet(FLAG_ALTIN_BLOCK_MOVED) != 0) {

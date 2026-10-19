@@ -4381,7 +4381,9 @@ Palette_Transform:
 LuckyDice_Run:
 	.incbin "baserom.gba", 0x001ac15c, 0x000011ec
 	.section .rom.001b21ec, "ax"
-	.incbin "baserom.gba", 0x001b21ec, 0x000012bc
+	.incbin "baserom.gba", 0x001b21ec, 0x000010a8
+	.section .rom.001b336c, "ax"
+	.incbin "baserom.gba", 0x001b336c, 0x0000013c
 	.section .rom.001b34a8, "ax"
 	.global ReelGame_Run
 	.type ReelGame_Run, %function

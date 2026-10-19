@@ -6546,20 +6546,25 @@ main	rom_main_13	games/tla/src/system/far_call/resource_e	.text
 main	rom_main_13	games/tla/src/graphics/palette/scale_rgb555	.text
 main	rom_main_13	games/tla/src/battle/effect/darken	.text
 main	rom_main_13	recon/tla/it/rom	.rom.001b21ec	it
-main	rom_main_13	recon/tla/it/rom	.rom.001b34a8	it
 main	rom_main_13	recon/tla/fr/rom	.rom.001b21ec	fr
-main	rom_main_13	recon/tla/fr/rom	.rom.001b34a8	fr
 main	rom_main_13	recon/tla/es/rom	.rom.001b21ec	es
-main	rom_main_13	recon/tla/es/rom	.rom.001b34e8	es
 main	rom_main_13	recon/tla/de/rom	.rom.001b21ec	de
-main	rom_main_13	recon/tla/de/rom	.rom.001b34a8	de
 main	rom_main_13	recon/tla/raw/081b21ec	.text	en
 main	rom_main_13	recon/tla/raw/081b22b8	.text	en
 main	rom_main_13	recon/tla/raw/081b243c	.text	en
-main	rom_main_13	recon/tla/raw/081b3294	.text	en
+main	rom_main_13	recon/tla/ja/rom	.rom.001b21ec	ja
+main	rom_main_13	games/tla/src/graphics/slots/reel_game	.text
+main	rom_main_13	recon/tla/it/rom	.rom.001b336c	it
+main	rom_main_13	recon/tla/it/rom	.rom.001b34a8	it
+main	rom_main_13	recon/tla/fr/rom	.rom.001b336c	fr
+main	rom_main_13	recon/tla/fr/rom	.rom.001b34a8	fr
+main	rom_main_13	recon/tla/es/rom	.rom.001b33ac	es
+main	rom_main_13	recon/tla/es/rom	.rom.001b34e8	es
+main	rom_main_13	recon/tla/de/rom	.rom.001b336c	de
+main	rom_main_13	recon/tla/de/rom	.rom.001b34a8	de
 main	rom_main_13	recon/tla/raw/081b336c	.text	en
 main	rom_main_13	recon/tla/raw/081b34a8	.text	en
-main	rom_main_13	recon/tla/ja/rom	.rom.001b21ec	ja
+main	rom_main_13	recon/tla/ja/rom	.rom.001b3228	ja
 main	rom_main_13	recon/tla/ja/rom	.rom.001b3364	ja
 main	rom_main_13	games/tla/src/sound/reset_slot_buckets	.text
 main	rom_main_13	games/tla/src/sound/track_slot_buffer	.text

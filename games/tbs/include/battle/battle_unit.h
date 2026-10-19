@@ -192,15 +192,15 @@ struct BattleUnit {
   s8 elementLevels[4];
   s8 restraint;
   s8 poison; ///< 1 poisoned, 2 deadly poison
-  /// Each stat change: the turns it has left, and its stage (UnitCalc: an
-  /// eighth of Attack, Defense or Agility, or 20 Resistance, a stage).
+  // Each stat change: the turns it has left, and its stage (UnitCalc: an
+  // eighth of Attack, Defense or Agility, or 20 Resistance, a stage).
   u8 attackTurns;
   s8 attackStage;
   u8 defenseTurns;
   s8 defenseStage;
   u8 resistanceTurns;
   s8 resistanceStage;
-  /// Delusion to sleep: the turns each status has left.
+  // Delusion to sleep: the turns each status has left.
   u8 delusion;
   s8 confusion;
   u8 charm;

@@ -52,7 +52,7 @@
 #include "songs.h"
 #include "item_ids.h"
 
-/// Forward declarations.
+// Forward declarations.
 static s32 WorldMap_ApplyMapRotation(struct ScriptInterpreter *interpreter);
 static void WorldMap_BoardBunzasWagon(void);
 static void WorldMap_DepartWithTravelers(void);

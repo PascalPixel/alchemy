@@ -41,7 +41,7 @@
 #define Ram_WorkSlot FIXED_ADDRESS((void **), 0x03001e50, gWorkSlot)
 #endif
 
-/// Work pointers in the gWorkSlot table.
+// Work pointers in the gWorkSlot table.
 #define Ram_MapWork ((void **)&gWorkSlot[8])
 #define Ram_CameraWork ((void **)&gWorkSlot[12])
 #define Ram_EventWork ((void **)&gWorkSlot[27])

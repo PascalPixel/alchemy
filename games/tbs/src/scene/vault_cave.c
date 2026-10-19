@@ -37,7 +37,7 @@
 #include "macros.h"
 #include "item_ids.h"
 
-/// Forward declarations.
+// Forward declarations.
 static void VaultCave_ApplySouthernSwitchCells(void);
 static void VaultCave_UseUnderfootFrostPriorities(void);
 static void VaultCave_UseAutomaticFrostPriorities(void);

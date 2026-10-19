@@ -70,7 +70,7 @@
   ((s32 (*)(s32, s32))Scene_GiveAndEquipItem)
 #endif
 
-/// Forward declarations.
+// Forward declarations.
 static void ColossoRiver_ExplainFinalsRules(s32 guide);
 static void ColossoRiver_ShowRoundIntroduction(s32 round);
 static void ColossoRiver_ShowMatchResult(s32 result);

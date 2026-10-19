@@ -46,7 +46,7 @@ enum ValeInteriorsActor {
   ACTOR_FIRST_DRIFTING_SPRITE = 23
 };
 
-/// Forward declarations.
+// Forward declarations.
 static void Event_GaretComesHome(void);
 static void ValeInteriors_SpawnDriftingSprite(void);
 

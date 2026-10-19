@@ -88,7 +88,7 @@ enum {
 /// The chests: an unnamed item (0x4c) and a chest whose find kind is 5.
 enum { FLAG_CHEST_ITEM_4C = 0xf65, FLAG_CHEST_EF0 = 0xef0 };
 
-/// Forward declarations.
+// Forward declarations.
 static void MercuryLighthouseEntrance_LizardManBlocksMia(void);
 static void MercuryLighthouseEntrance_MiaEntersLighthouse(void);
 

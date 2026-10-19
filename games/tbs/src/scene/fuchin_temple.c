@@ -34,8 +34,9 @@
 #include "objcmd.h"
 #include "global_cells.h"
 
-/// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-/// enters another place group, and other places use the numbers for their own.
+// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// enters another place group, and other places use the numbers for their own.
+
 /// Nyunpa's test was declined; the students saw the training tree fall.
 #define FLAG_NYUNPA_TEST_DECLINED 0x300
 #define FLAG_FEH_SCHOOL_SAW_TREE_FALL 0x301
@@ -44,7 +45,7 @@
 #define FALLS_MONK 9 ///< the monk beneath the falls, at the waterfall grotto
 #define HEALER 13
 
-/// The second scene: Nyunpa's hall and Master Feh's school.
+// The second scene: Nyunpa's hall and Master Feh's school.
 #define NYUNPA 8
 #define JUMPING_STUDENT 12
 #define FEIZHI 17
@@ -55,7 +56,7 @@
 /// The second scene by entrance 3: Hama's room in Lama Temple.
 #define HAMA 8
 
-/// Forward declarations.
+// Forward declarations.
 static void FuchinTemple_FeizhiLeavesForHsu(void);
 static void FuchinTemple_FehSeesChi(void);
 static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ);

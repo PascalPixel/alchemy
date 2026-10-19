@@ -116,9 +116,9 @@
 #define BATTLE_BG1CNT                                                          \
   (BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31))
 
-/// The kinds of argument a message's placeholders take, for
-/// UiWork_PushValueSlotFar: a unit's name, an item's, a class's, an
-/// ability's, and a number.
+// The kinds of argument a message's placeholders take, for
+// UiWork_PushValueSlotFar: a unit's name, an item's, a class's, an
+// ability's, and a number.
 #define VALUE_UNIT_NAME 1
 #define VALUE_ITEM_NAME 2
 #define VALUE_CLASS_NAME 3
@@ -176,8 +176,8 @@
 /// The inventory's weapon slot, for Inventory_FindEquippedFar.
 #define EQUIP_WEAPON 1
 
-/// MotionObject.recordStorageKind's low four bits: no sprite, one sprite in
-/// records, or records pointing to a table of up to four.
+// MotionObject.recordStorageKind's low four bits: no sprite, one sprite in
+// records, or records pointing to a table of up to four.
 #define RECORDS_NONE 0
 #define RECORDS_SINGLE 1
 #define RECORDS_TABLE 2
@@ -209,9 +209,9 @@ enum BattlePlanStaging {
   PLAN_SHOW_FULL_SCREEN = 9 ///< Gaia, Rockfall, Procne and their kin
 };
 
-/// BattlePlan.presentationFlags: the effect's kind in the low twelve bits and
-/// its strength (a double or triple blow) above them; then how the effect is
-/// staged.
+// BattlePlan.presentationFlags: the effect's kind in the low twelve bits and
+// its strength (a double or triple blow) above them; then how the effect is
+// staged.
 #define STAGING_KIND_MASK 0xfff
 #define STAGING_VARIANT_MASK 0x3000
 #define STAGING_VARIANT_SHIFT 12
@@ -230,7 +230,7 @@ enum BattlePlanStaging {
 #define ITEM_USE_MAY_BREAK 2 ///< breaks one time in eight
 #define ITEM_USE_EMPTIES 4   ///< Hermes' Water leaves an Empty Bottle
 
-/// BattleAct.targetMode: whom an ability may target, from its user's view.
+// BattleAct.targetMode: whom an ability may target, from its user's view.
 #define TARGET_MODE_NONE 0
 #define TARGET_MODE_FOES 1
 #define TARGET_MODE_ALLIES 2

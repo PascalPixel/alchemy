@@ -69,7 +69,7 @@
   ((s32 (*)())Scene_GiveAndEquipItem)
 #endif
 
-/// Forward declarations.
+// Forward declarations.
 static void ColossoLog_PlayPostBattleReunion(s32 battleResult);
 static void ColossoLog_IntroduceFinalCourse(s32 guideId);
 static void ColossoLogRollingStage_RunScriptedTransition(s32 mode);

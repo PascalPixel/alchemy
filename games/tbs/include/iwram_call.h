@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-/// Fixed addresses of IWRAM-resident routines.
+// Fixed addresses of IWRAM-resident routines.
 #define Iwram_RatioMulQ14Entry                                                 \
   FIXED_ADDRESS((s32 (*)(s32 divisor, s32 value)), 0x0300013c, IwramRatioMulQ14)
 #define Iwram_ClearWordsEntry                                                  \

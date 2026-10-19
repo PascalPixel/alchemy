@@ -63,7 +63,7 @@ enum {
 #define TRET_TINT_CHANNEL_MAX 31
 #define TRET_TINT_END 99
 
-/// Forward declarations.
+// Forward declarations.
 static void TretPalette_SaveSceneColors(void);
 static void TretPalette_UpdateSceneTint(void);
 static void TretTreeInteriors_PlayGesture(s32 gesture);

@@ -64,7 +64,7 @@ enum {
 
 enum { FLAG_PSYNERGY_STONE = 0x350 };
 
-/// Forward declarations.
+// Forward declarations.
 static void MercuryLighthouseAerie_PartyArrives(void);
 static void MercuryLighthouseAerie_SettlePlatforms(void);
 static void MercuryLighthouseAerie_AlexAppears(void);

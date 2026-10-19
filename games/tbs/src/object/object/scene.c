@@ -4,10 +4,10 @@
 
 #include "../object_internal.h"
 
-/// The scene overlay's exit table: a header word holding a scene id, then that
-/// scene's exits, one packed word each (and a flag word after it when
-/// EXIT_HAS_FLAG is set). Scene id EXIT_TABLE_END ends the exits of a scene and
-/// the whole table.
+// The scene overlay's exit table: a header word holding a scene id, then that
+// scene's exits, one packed word each (and a flag word after it when
+// EXIT_HAS_FLAG is set). Scene id EXIT_TABLE_END ends the exits of a scene and
+// the whole table.
 #define EXIT_SCENE_MASK 0xfff
 #define EXIT_ENTRANCE(word) (((word) & 0xff000) >> 12)
 #define EXIT_KIND(word) (((word) & 0x0ff00000) >> 20)

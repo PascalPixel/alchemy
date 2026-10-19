@@ -10,8 +10,8 @@
 // swells, the wall grows row by row, stands while rocks (animation objects)
 // tumble up its face, and sinks.
 
-/// The standing wall's top (48x96, stretched from 48x32) and foot (48x21)
-/// in the rebuilt sheet.
+// The standing wall's top (48x96, stretched from 48x32) and foot (48x21)
+// in the rebuilt sheet.
 #define GAIA_WALL_TOP_CELLS 0x13c0
 #define GAIA_WALL_FOOT_CELLS 0x25c0
 #define GAIA_ROCKS 11 ///< rocks that tumble up the wall

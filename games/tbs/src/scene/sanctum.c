@@ -56,7 +56,7 @@ enum {
   ACTOR_HEALER_AFTERIMAGE
 };
 
-/// Forward declarations.
+// Forward declarations.
 static void Sanctum_RequestQuestAcceptance(void);
 static void Sanctum_ReceiveWiseOnesMission(void);
 static void Sanctum_ShowHealerAfterimage(void);

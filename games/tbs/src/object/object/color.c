@@ -83,7 +83,7 @@ void BattlePalette_UpdateBlend(void) {
   }
 }
 
-/// Curves mapping a 5-bit channel to the buffer's channel shifted up 10 bits.
+// Curves mapping a 5-bit channel to the buffer's channel shifted up 10 bits.
 extern u16 gBattlePalette_ChannelCurve[];
 extern u16 gBattlePalette_ChannelCurveLight[];
 extern u16 gBattlePalette_ChannelCurveContrast[];

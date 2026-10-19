@@ -89,7 +89,7 @@ struct ObjectRuntime;
 struct FieldActor *Object_GetById(s32 actor);
 void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit,
                                      s32 acceleration);
-/// Built-in actions selected by ObjectMotion_SetActionCallback.
+// Built-in actions selected by ObjectMotion_SetActionCallback.
 #define ACTOR_ACTION_IDLE 1
 #define ACTOR_ACTION_FOLLOW_LINKED_OBJECT 5
 #define ACTOR_ACTION_FACE_SELECTED_ACTOR 6

@@ -4,8 +4,8 @@
 
 #include "../window_internal.h"
 
-/// The battle message canvas: 30 columns of 4 tiles. In a column each word is
-/// one 8-pixel row of 4bpp pixels, so a column is 32 pixel rows of one word.
+// The battle message canvas: 30 columns of 4 tiles. In a column each word is
+// one 8-pixel row of 4bpp pixels, so a column is 32 pixel rows of one word.
 #define CANVAS_COLUMNS 30
 #define CANVAS_COLUMN_WORDS 32
 #define CANVAS_KEPT_ROWS 8 ///< the top 8 pixel rows stay put

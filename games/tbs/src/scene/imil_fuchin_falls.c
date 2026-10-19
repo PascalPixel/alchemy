@@ -58,7 +58,7 @@ enum ImilFuchinFallsActor {
   ACTOR_FUCHIN_DJINNI = 11 ///< in the second platform room
 };
 
-/// Forward declarations.
+// Forward declarations.
 static void Fuchin_RebuildFirstRoomPlatforms(void);
 static void Fuchin_RebuildSecondRoomPlatforms(void);
 static void Fuchin_RebuildThirdRoomPlatforms(void);

@@ -27,14 +27,14 @@
 #include "songs.h"
 #include "item_ids.h"
 
-/// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-/// enters another place group, and other places use the numbers for their own.
+// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// enters another place group, and other places use the numbers for their own.
 #define FLAG_SOL_SANCTUM_FLOATING_EYE_SEEN 0x309
 
 // Scene temporary flags 00, 01 and 02 select the plain, first-tint and
 // second-tint palettes, respectively.
 
-/// Forward declarations.
+// Forward declarations.
 static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void);
 static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void);
 static s32 SolSanctumLunaSolRooms_AreAllStatueLightsLit(void);

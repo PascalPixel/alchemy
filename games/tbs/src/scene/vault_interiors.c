@@ -81,7 +81,7 @@ enum {
   ACTOR_THIRD_CHEST = 17
 };
 
-/// Forward declarations.
+// Forward declarations.
 static void VaultInteriors_IvanJoinsRodSearch(void);
 static void VaultInteriors_DiscussMindReading(void);
 static void VaultInteriors_AdvanceSuspectRoute(s32 actor, s32 expected,
@@ -2898,7 +2898,7 @@ static void VaultInteriors_StartActorStops(void) {
 }
 
 // clang-format off
-/// A missing edge keeps both sentinel bytes; valid facings use the angle's high byte.
+// A missing edge keeps both sentinel bytes; valid facings use the angle's high byte.
 #define NO_CONNECTION {255, 0xff, {0, 0}}
 #define CONNECTION(stop, direction) {stop, (direction) >> 8, {0, 0}}
 struct VaultInteriorsStop gVaultInteriors_Stops[] = {

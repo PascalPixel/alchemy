@@ -89,7 +89,7 @@ enum TolbiShipInteriorsActor {
 /// opens beside them.
 #define SPEAKER(actor, window) ((window) << 12 | (actor))
 
-/// Defined below, in the order of the ROM.
+// Defined below, in the order of the ROM.
 static void TolbiShipInteriors_StepBesideLeader(s32 passengerId);
 static s32 TolbiShipInteriors_IsSpotFree(s32 bucket);
 static s32 TolbiShipInteriors_GetChosenOarsman(void);

@@ -20,7 +20,7 @@
 
 extern struct ScriptMotionObject *gObjectSlots;
 
-/// Far-call stubs copied to RAM together with this code (updfar.s).
+// Far-call stubs copied to RAM together with this code (updfar.s).
 s32 ArcTan2FarArm(s32 z, s32 x);
 s32 IwramSqrtFarArm(s32 value);
 s32 IwramRatioMulQ14FarArm(s32 divisor, s32 value);

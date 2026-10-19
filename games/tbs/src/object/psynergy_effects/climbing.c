@@ -4,8 +4,8 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// The map's cells (128 to a row), and the same cells seen one row south and
-/// one row north: TILE_CELLS_SOUTH[i] is the cell below TILE_CELLS[i].
+// The map's cells (128 to a row), and the same cells seen one row south and
+// one row north: TILE_CELLS_SOUTH[i] is the cell below TILE_CELLS[i].
 #define TILE_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 #define TILE_CELLS_SOUTH ((struct MapCell *)(Ram_MapCellBuffer + 0x200))
 #define TILE_CELLS_NORTH ((struct MapCell *)(Ram_MapCellBuffer - 0x200))

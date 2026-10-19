@@ -55,9 +55,9 @@
 #define WATER_ACTOR 16
 /// Room 3: the water has been raised.
 #define WATER_RAISED_FLAG FLAG_SCENE_TEMP_00
-/// Room 4 keeps FLAG_SCENE_TEMP_00 to 03 for its four pillars' footprints.
-/// Room 5: FLAG_SCENE_TEMP_00 to 02 the three pools are frozen, 03 the leader
-/// stood on the third when Frost began, 04 the sinking pillar has sunk.
+// Room 4 keeps FLAG_SCENE_TEMP_00 to 03 for its four pillars' footprints.
+// Room 5: FLAG_SCENE_TEMP_00 to 02 the three pools are frozen, 03 the leader
+// stood on the third when Frost began, 04 the sinking pillar has sunk.
 #define FIRST_FROZEN_POOL_FLAG FLAG_SCENE_TEMP_00
 #define LEADER_ON_THIRD_POOL_FLAG FLAG_SCENE_TEMP_03
 #define PILLAR_SUNK_FLAG FLAG_SCENE_TEMP_04

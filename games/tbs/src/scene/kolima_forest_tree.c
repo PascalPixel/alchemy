@@ -46,7 +46,7 @@ enum {
   ACTOR_TRETS_DARK_SIDE = 14
 };
 
-/// Forward declarations.
+// Forward declarations.
 static void KolimaForestTree_RejectHermesWater(void);
 static void KolimaForestTree_RestoreTret(void);
 static void KolimaForestTree_SpawnRejectionSpark(void);

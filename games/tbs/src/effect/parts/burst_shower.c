@@ -9,7 +9,7 @@
 // lightning bolt instead. Each burst is one particle slot, its variant
 // counting the 24 frames it lives (-1 when free).
 
-/// The burst shower's second picture in the sheet, after the tornado.
+// The burst shower's second picture in the sheet, after the tornado.
 #define BURST_SHOWER_CELLS 0xC56
 #define BURST_SHOWER_BURSTS 48     ///< one fired a frame from frame 0
 #define BURST_SHOWER_BURST_LIFE 24 ///< frames each burst lives

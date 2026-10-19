@@ -69,8 +69,8 @@ enum DisplayControl {
 #define REG_WININ (*(volatile u16 *)0x04000048)
 #define REG_WINOUT (*(volatile u16 *)0x0400004a)
 
-/// REG_WININ: the layers shown inside window 0 (low byte) and window 1 (high
-/// byte). CLR lets the colour effect of REG_BLDCNT apply there.
+// REG_WININ: the layers shown inside window 0 (low byte) and window 1 (high
+// byte). CLR lets the colour effect of REG_BLDCNT apply there.
 #define WININ_WIN0_BG0 0x0001
 #define WININ_WIN0_BG1 0x0002
 #define WININ_WIN0_BG2 0x0004
@@ -86,8 +86,8 @@ enum DisplayControl {
 #define WININ_WIN1_CLR 0x2000
 #define WININ_WIN1_ALL 0x3f00
 
-/// REG_WINOUT: the layers shown outside both windows (low byte) and inside the
-/// sprite window (high byte).
+// REG_WINOUT: the layers shown outside both windows (low byte) and inside the
+// sprite window (high byte).
 #define WINOUT_WIN01_BG0 0x0001
 #define WINOUT_WIN01_BG1 0x0002
 #define WINOUT_WIN01_BG2 0x0004
@@ -106,8 +106,8 @@ enum DisplayControl {
 #define REG_MOSAIC (*(volatile u16 *)0x0400004c)
 #define REG_BLDCNT (*(volatile u16 *)0x04000050)
 
-/// REG_BLDCNT: the first target layers, the colour effect, then the second
-/// target layers that a blend mixes the first ones with.
+// REG_BLDCNT: the first target layers, the colour effect, then the second
+// target layers that a blend mixes the first ones with.
 #define BLDCNT_TGT1_BG0 0x0001
 #define BLDCNT_TGT1_BG1 0x0002
 #define BLDCNT_TGT1_BG2 0x0004
@@ -172,7 +172,7 @@ enum DisplayControl {
 #define REG_KEYCNT (*(volatile u16 *)0x04000132)
 #define REG_RCNT (*(volatile u16 *)0x04000134)
 
-/// SIOCNT flags, as pret names them.
+// SIOCNT flags, as pret names them.
 #define SIO_115200_BPS 0x0003
 #define SIO_START 0x0080
 #define SIO_32BIT_MODE 0x1000
@@ -184,8 +184,8 @@ enum DisplayControl {
 #define RCNT_SIO_MODE 0x0000
 #define RCNT_GPIO_MODE 0x8000
 
-/// DMAxCNT_H flags, as pret names them. A 32-bit control word takes them
-/// shifted above its count: (DMA_ENABLE | DMA_32BIT) << 16 | words.
+// DMAxCNT_H flags, as pret names them. A 32-bit control word takes them
+// shifted above its count: (DMA_ENABLE | DMA_32BIT) << 16 | words.
 #define DMA_DEST_INC 0x0000
 #define DMA_DEST_DEC 0x0020
 #define DMA_DEST_FIXED 0x0040
@@ -208,9 +208,9 @@ enum DisplayControl {
 #define DMA_START_TIMING_DRQ_REPEAT                                            \
   (DMA_START_SPECIAL | DMA_DREQ_ON | DMA_REPEAT)
 
-/// DMA control words: copy n words or halfwords at once, or one halfword or
-/// word each HBlank to a register reloaded every line (a scanline table that
-/// drives a window edge, a scroll or an affine register).
+// DMA control words: copy n words or halfwords at once, or one halfword or
+// word each HBlank to a register reloaded every line (a scanline table that
+// drives a window edge, a scroll or an affine register).
 #define DMA_COPY_WORDS(n) ((DMA_ENABLE | DMA_32BIT) << 16 | (n))
 #define DMA_COPY_HALFWORDS(n) (DMA_ENABLE << 16 | (n))
 #define DMA_HBLANK_HALFWORD_PER_LINE                                           \
@@ -247,8 +247,8 @@ enum KeyMask {
 #define REG_BG0CNT (*(volatile u16 *)0x04000008)
 #define REG_BG0VOFS (*(volatile u16 *)0x04000012)
 #define REG_SOUNDCNT_H (*(volatile u16 *)0x04000082)
-/// SOUNDCNT_H flags, as pret names them: the mixing volumes, then each direct
-/// sound channel's speakers, timer and FIFO reset.
+// SOUNDCNT_H flags, as pret names them: the mixing volumes, then each direct
+// sound channel's speakers, timer and FIFO reset.
 #define SOUND_CGB_MIX_FULL 0x0002
 #define SOUND_A_MIX_FULL 0x0004
 #define SOUND_B_MIX_FULL 0x0008

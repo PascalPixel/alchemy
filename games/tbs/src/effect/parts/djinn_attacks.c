@@ -64,8 +64,8 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 // the images.
 
 #define MERCURY_FRAMES 96
-/// The blue flame sheet holds a 17x104 flame, then a 34x65 one; Mercury
-/// turns both on their side after its djinni.
+// The blue flame sheet holds a 17x104 flame, then a 34x65 one; Mercury
+// turns both on their side after its djinni.
 #define DJINN_ATTACKS_FLAME2_CELLS (17 * 104)
 #define MERCURY_TALL_FLAME_CELLS 0x2a8 ///< 104x17, not drawn
 #define MERCURY_FLAME_CELLS 0x990      ///< 65x34

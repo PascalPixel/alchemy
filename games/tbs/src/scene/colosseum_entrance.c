@@ -26,7 +26,7 @@
 #include "flags.h"
 #include "songs.h"
 
-/// Forward declarations.
+// Forward declarations.
 static void ColosseumEntrance_ApplyArrivalState(void);
 static void ColosseumEntrance_ShowMessageAndPause(s32 speaker);
 static void ColosseumEntrance_FaceDirection(s32 actor, s32 facing);

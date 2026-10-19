@@ -1277,8 +1277,8 @@ void ReelGame_Run(void) {
   }
 }
 
-/// The LZ packer: a window of 1024 bytes, matches of up to PACK_MATCH_MAX
-/// bytes at most PACK_DISTANCE_MAX back, and PACK_LOOKAHEAD bytes read ahead.
+// The LZ packer: a window of 1024 bytes, matches of up to PACK_MATCH_MAX
+// bytes at most PACK_DISTANCE_MAX back, and PACK_LOOKAHEAD bytes read ahead.
 #define PACK_WINDOW_MASK 0x3ff
 #define PACK_MATCH_MAX 272
 #define PACK_DISTANCE_MAX 63

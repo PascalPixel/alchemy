@@ -39,7 +39,7 @@
 #include "songs.h"
 #include "event.h"
 
-/// Forward declarations.
+// Forward declarations.
 static void CrossboneIsle_RestoreMovedRoomBlock(void);
 static void CrossboneIsle_LeaveClearedRoom(void);
 static void CrossboneIsle_RestoreIvy(void);

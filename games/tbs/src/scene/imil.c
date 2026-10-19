@@ -76,7 +76,7 @@ enum ImilTownFlag {
 #define IMIL_OPEN_SHOP ((s32 (*)())Engine_ShopOpen)
 #endif
 
-/// Forward declarations.
+// Forward declarations.
 static void Imil_MeetMiaAtOldCouplesHouse(void);
 static void Imil_MiaCastsPlyOnOldMan(void);
 static void Imil_SpawnAmbientEffects(void);

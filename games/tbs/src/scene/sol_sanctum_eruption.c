@@ -38,7 +38,7 @@
 #include "songs.h"
 #include "item_ids.h"
 
-/// Forward declarations.
+// Forward declarations.
 static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId);
 static void SolSanctumEruption_ThrowEruptionRing(void);
 static void SolSanctumEruption_ResetEmberEmission(void);

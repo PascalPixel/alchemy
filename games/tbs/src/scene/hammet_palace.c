@@ -27,14 +27,14 @@
 #include "songs.h"
 #include "event.h"
 
-/// The palace's actors: the party keeps its slots, the rest follow the
-/// placement table from 8.
+// The palace's actors: the party keeps its slots, the rest follow the
+// placement table from 8.
 #define LAYANA 8
 #define HAMMET 9
 #define SOLDIER_1 10 ///< the soldiers of Kalay in the meeting
 #define SOLDIER_2 11
 
-/// Entrance setup and the two long conversations use the helpers below.
+// Entrance setup and the two long conversations use the helpers below.
 static void HammetPalace_SetUpEntrance(void);
 static void HammetPalace_IvanReportsToLayana(void);
 static void HammetPalace_FacePartyOutward(s32 waitFrames);

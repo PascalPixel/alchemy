@@ -36,7 +36,7 @@
 #include "songs.h"
 #include "item_ids.h"
 
-/// Forward declarations.
+// Forward declarations.
 static void Kolima_WitnessForestCurse(void);
 static void Kolima_ShowMessageAndWait(s32 actorId, s32 waitFrames);
 static void Kolima_FaceActorAndWait(s32 actorId, s32 facing, s32 waitFrames);

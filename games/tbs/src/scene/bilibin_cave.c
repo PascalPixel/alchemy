@@ -34,7 +34,7 @@
 #include "flags.h"
 #include "songs.h"
 
-/// The entry points dispatch to the section-specific setup routines below.
+// The entry points dispatch to the section-specific setup routines below.
 static void BilibinCave_RestoreGrowthSection(void);
 static void BilibinCave_RestoreDouseSection(void);
 static void BilibinCave_RestoreIcePuzzleSection(void);

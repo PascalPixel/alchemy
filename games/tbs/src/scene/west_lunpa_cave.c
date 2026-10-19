@@ -7,7 +7,7 @@
 #include "west_lunpa_cave.h"
 #include "text/msg_ids.h"
 
-/// Forward declarations.
+// Forward declarations.
 static void Reunion_Converse(void);
 static void WagonChoice_Run(void);
 static u8 Leader_AnswersYes(void);

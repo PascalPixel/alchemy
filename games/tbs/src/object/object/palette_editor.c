@@ -4,8 +4,8 @@
 
 #include "../object_internal.h"
 
-/// The palettes, as plain halfwords, and where the editor draws: from column
-/// 13 of row 1 of screen block 4.
+// The palettes, as plain halfwords, and where the editor draws: from column
+// 13 of row 1 of screen block 4.
 #define EDITOR_PALETTE ((u16 *)0x05000000)
 #define EDITOR_MAP ((u16 *)0x0600205a)
 #define EDITOR_HEX_DIGIT 0xf0e0 ///< the tile of digit 0, in BG palette 15

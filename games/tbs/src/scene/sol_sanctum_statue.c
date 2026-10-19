@@ -32,8 +32,8 @@
 #include "songs.h"
 #include "ability_ids.h"
 
-/// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-/// enters another place group, and other places use the numbers for their own.
+// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// enters another place group, and other places use the numbers for their own.
 #define FLAG_SOL_SANCTUM_STATUE_HALL_VISITED 0x30a
 #define FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED 0x30b
 
@@ -49,7 +49,7 @@
 // Scene temporary flag 07 is set once both beams have opened the hole in the
 // hall's floor.
 
-/// Forward declarations.
+// Forward declarations.
 static void SolSanctumStatue_InitializeScrollingSprites(void);
 static void Event_CenterStatueMoved(void);
 static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,

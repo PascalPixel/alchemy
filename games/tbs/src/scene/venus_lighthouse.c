@@ -43,14 +43,15 @@
 #include "songs.h"
 #include "item_ids.h"
 
-/// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-/// enters another place group, and other places use the numbers for their own.
-/// The floor switches have slid the walls aside.
+// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// enters another place group, and other places use the numbers for their own.
+
+// The floor switches have slid the walls aside.
 #define FLAG_VENUS_LIGHTHOUSE_WALL_MOVED 0x300
 #define FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED 0x306
 #define FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED 0x307
-/// The gates the sunken blocks opened: one block, three blocks (and which of
-/// two sets of sockets they sank into) and the pillar room's four.
+// The gates the sunken blocks opened: one block, three blocks (and which of
+// two sets of sockets they sank into) and the pillar room's four.
 #define FLAG_VENUS_LIGHTHOUSE_GATE_OPEN 0x301
 #define FLAG_VENUS_LIGHTHOUSE_SOCKETS_A 0x302
 #define FLAG_VENUS_LIGHTHOUSE_SOCKETS_B 0x303
@@ -81,7 +82,7 @@
 #define VENUS_DESCENT_COLLISION_WIDTH 5
 #endif
 
-/// Forward declarations.
+// Forward declarations.
 struct DirXZ;
 static void VenusLighthouse_StepActorWithDust(struct DirXZ *direction);
 static void VenusLighthouse_AnimatePairedTileWaves(void);

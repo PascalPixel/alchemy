@@ -55,9 +55,10 @@
 #include "map_scroll.h"
 #include "songs.h"
 
-/// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-/// enters another place group, and other places use the numbers for their own.
-/// A room's floor switch has been flipped from its first position.
+// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// enters another place group, and other places use the numbers for their own.
+
+// A room's floor switch has been flipped from its first position.
 #define FLAG_ALTIN_PEAK_ROOM_3_SWITCH 0x323
 #define FLAG_ALTIN_PEAK_ROOM_5_SWITCH 0x325
 #define FLAG_ALTIN_PEAK_ROOM_6_SWITCH 0x326
@@ -156,8 +157,8 @@ enum { ANIM_LEADER_JUMP = 22, ANIM_LEADER_LEAP = 7 };
 /// Altin) and room 9's boulder, whose pieces fly in the crash.
 enum { SPRITE_BOULDER = 200, SPRITE_SPRAY = 222 };
 
-/// The spray's direction (0 east, 0x8000 west) and origin, and the water's
-/// flicker timer.
+// The spray's direction (0 east, 0x8000 west) and origin, and the water's
+// flicker timer.
 extern s32 gAltinPeak_SprayDirection;
 extern s32 gAltinPeak_SprayOrigin[3];
 extern u16 gAltinPeak_FlickerTimer;

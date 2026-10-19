@@ -125,20 +125,20 @@ void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 /// A glyph resource id meaning no glyph resource is loaded.
 #define NO_GLYPH_RESOURCE 99
 
-/// UiRenderWork owns three message channels, each with four line gaps.
+// UiRenderWork owns three message channels, each with four line gaps.
 #define UI_MESSAGE_CHANNEL_COUNT 3
 #define UI_MESSAGE_LINE_COUNT 4
 #define UI_TEXT_DEFAULT_COLOUR 15
 #define UI_TEXT_DEFAULT_LINE_SPACING 10
 #define UI_TILEMAP_PALETTE 15
 
-/// Window animation lengths and the palette slot's unused marker.
+// Window animation lengths and the palette slot's unused marker.
 #define UI_WINDOW_OPEN_FRAMES 8
 #define UI_WINDOW_CLOSE_FRAMES 4
 #define UI_PALETTE_SLOT_FREE 999
 #define UI_CANVAS_BACKGROUND_WORD 0x44444444
 
-/// Scratch capacities are in bytes unless the name says halfwords.
+// Scratch capacities are in bytes unless the name says halfwords.
 #define UI_NUMBER_BUFFER_SIZE 16
 #define UI_BYTE_STRING_BUFFER_SIZE 0x200
 #define UI_MESSAGE_NAME_HALFWORDS 24
@@ -168,8 +168,8 @@ enum {
   TEXT_SEMIVOICED_MARK = 223 ///< handakuten
 };
 
-/// The kana mark drawn with a character, in the top two bits of its code (the
-/// index into gUiText_MarkGlyphCodes).
+// The kana mark drawn with a character, in the top two bits of its code (the
+// index into gUiText_MarkGlyphCodes).
 #define TEXT_CODE_MARK_SHIFT 14
 #define TEXT_CODE_VOICED (1 << TEXT_CODE_MARK_SHIFT)
 #define TEXT_CODE_SEMIVOICED (2 << TEXT_CODE_MARK_SHIFT)

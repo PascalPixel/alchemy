@@ -4,16 +4,16 @@
 
 #include "../battle_command_internal.h"
 
-/// The three save files. Each is two 4 KB records of backup memory: record
-/// `file` holds the first half of the 8 KB save buffer and record
-/// `file + SAVE_FILE_COUNT` the second.
+// The three save files. Each is two 4 KB records of backup memory: record
+// `file` holds the first half of the 8 KB save buffer and record
+// `file + SAVE_FILE_COUNT` the second.
 #define SAVE_FILE_COUNT 3
 #define SAVE_RECORD_BYTES 0x1000
 #define SAVE_NO_FREE_FILE 999
 
 // What the save functions return when they fail, after showing the message.
 #define SAVE_ERROR_READ -2 ///< a record could not be read
-/// Writing failed. "Failed to save." (or "Failed to erase.")
+// Writing failed. "Failed to save." (or "Failed to erase.")
 #define SAVE_ERROR_WRITE -3
 #define SAVE_ERROR_ERASE -4   ///< erasing failed. "Failed to erase."
 #define SAVE_ERROR_NO_FILE -5 ///< no empty file to copy into

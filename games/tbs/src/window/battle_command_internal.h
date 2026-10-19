@@ -249,8 +249,8 @@
 #define OUTPUT_SIZE_16X16 0x40000000
 #define OUTPUT_SIZE_32X32 0x80000000
 
-/// The two portrait slots of the UI work, and the palette the first one uses
-/// (the second uses the next).
+// The two portrait slots of the UI work, and the palette the first one uses
+// (the second uses the next).
 #define PORTRAIT_SLOT_COUNT 2
 #define PORTRAIT_PALETTE 14
 #define PORTRAIT_SLOT_EMPTY 999
@@ -326,9 +326,9 @@ struct SelectionWork {
   s32 commandKinds[6];
 };
 
-/// The Djinn menu's blinking tile, and where each element's Djinn count sits in
-/// the party status window, in tiles, to blink while it has Djinn on standby
-/// (windata.s).
+// The Djinn menu's blinking tile, and where each element's Djinn count sits in
+// the party status window, in tiles, to blink while it has Djinn on standby
+// (windata.s).
 extern const u8 gDjinnMenu_BlinkTile[32];
 extern const u8 gDjinnMenu_ElementXOffsets[4];
 extern const u8 gDjinnMenu_ElementYOffsets[4];

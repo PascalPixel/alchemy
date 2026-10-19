@@ -80,7 +80,7 @@ enum { STORM_CAPTURE_FRAMES = 180 };
 /// storm drops it elsewhere.
 enum { WORLD_MAP_STORM_DROP = 27, WORLD_MAP_STORM_DROP_FOURTH = 77 };
 
-/// Forward declarations.
+// Forward declarations.
 static void SuhallaDesert_SetUpFirstSceneStorms(void);
 static void SuhallaDesert_SetUpSecondSceneStorms(void);
 

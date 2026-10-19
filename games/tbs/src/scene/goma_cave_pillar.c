@@ -49,7 +49,7 @@
 
 enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 
-/// The room's actors, in placement order.
+// The room's actors, in placement order.
 #define WEST_PILLAR 8
 #define STUMP 9
 #define EAST_PILLAR 10

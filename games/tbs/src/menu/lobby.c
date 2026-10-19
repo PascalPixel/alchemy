@@ -46,7 +46,7 @@
 #include "global_cells.h"
 #include "songs.h"
 
-/// Link transfers use three unit records followed by one recovery-table record.
+// Link transfers use three unit records followed by one recovery-table record.
 #define LOBBY_UNIT_RECORD_BYTES 0x154
 #define LOBBY_RECOVERY_RECORD_BYTES 0x140
 #define LOBBY_UNIT_RECORD_COUNT 3

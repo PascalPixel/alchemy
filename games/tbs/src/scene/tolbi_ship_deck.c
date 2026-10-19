@@ -36,13 +36,14 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 
-/// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-/// enters another place group, and other places use the numbers for their own.
+// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// enters another place group, and other places use the numbers for their own.
+
 /// "There's a huge sea monster on the ship!": the deck shakes until the
 /// Kraken is defeated (set in tolbi_ship_interiors.c).
 #define FLAG_TOLBI_SHIP_KRAKEN_ABOARD 0x302
 
-/// Defined below, in the order of the ROM.
+// Defined below, in the order of the ROM.
 static void TolbiShipDeck_ConfrontCrewman(void);
 static void TolbiShipDeck_ApplyEntryState(void);
 static void TolbiShipDeck_PlaceWaitingPassengers(void);
@@ -331,8 +332,8 @@ static s32 sUnused1; ///< never used; keeps the statics' layout
 
 static s32 sSeaSpeed[2];
 
-/// The ROM places these after the file's other statics, the strokes first, on
-/// the 16-byte boundary the assembler gives a 32-byte common symbol.
+// The ROM places these after the file's other statics, the strokes first, on
+// the 16-byte boundary the assembler gives a 32-byte common symbol.
 static u32 sOarStroke[8] __attribute__((aligned(16)));
 static s32 sOarDepth[8];
 

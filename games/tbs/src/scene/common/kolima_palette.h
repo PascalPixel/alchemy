@@ -16,7 +16,7 @@
 // the forest's colours turned redder and darker, and both sets of colours kept
 // for the scene where the curse lifts.
 
-/// Forward declarations.
+// Forward declarations.
 static u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj);
 static void KolimaPalette_SaveFirst(void);
 static void KolimaPalette_SaveSecond(void);

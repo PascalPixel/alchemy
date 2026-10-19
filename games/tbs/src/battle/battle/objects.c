@@ -127,7 +127,7 @@ void BattleActor_UpdateSpritePriorities(void) {
   }
 }
 
-/// The status icons' bits in BattleObj.activeConditions
+// The status icons' bits in BattleObj.activeConditions
 #define ICON_POISON 0x01
 #define ICON_VENOM 0x02 ///< deadly poison
 #define ICON_STUN 0x04

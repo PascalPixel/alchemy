@@ -17,7 +17,7 @@
 #define HELM_SPLITTER_STRIKE_FRAME 18 ///< the swirl strikes the target
 /// The pink star animation, after the swirl.
 #define HELM_SPLITTER_STAR_CELLS 0x3e80
-/// map-buffer spark slots cleared first
+// map-buffer spark slots cleared first
 #define HELM_SPLITTER_CLEARED_SLOTS 1024
 #define HELM_SPLITTER_SPARKS 16       ///< sparks scattered by the strike
 #define HELM_SPLITTER_SPARK_SLOTS 128 ///< spark slots moved and drawn

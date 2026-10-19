@@ -31,8 +31,8 @@ s32 BattleEffectDeadCheck(s32 effect) {
 /// A Resistance stage adds 20 to the resistance to every element (UnitCalc).
 #define RESISTANCE_PER_STAGE 20
 
-/// The turns a stat change or a status lasts; each may end sooner, at the
-/// rolls the end of every turn makes (BattleUnit_RollCounterEarlyEnd).
+// The turns a stat change or a status lasts; each may end sooner, at the
+// rolls the end of every turn makes (BattleUnit_RollCounterEarlyEnd).
 #define STAT_CHANGE_TURNS 7
 #define AGILITY_CHANGE_TURNS 5
 #define STATUS_TURNS 7

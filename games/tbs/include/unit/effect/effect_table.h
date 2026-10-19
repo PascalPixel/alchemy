@@ -16,8 +16,8 @@
 #define STRIKE_SPARKS 8 ///< each hit scatters sparks
 #define STRIKE_HEAVY 16 ///< one heavy hit: a big shake and the target recoils
 
-/// Every table effect_table.c defines, in its order. A table read by columns
-/// is a two-dimensional array, its columns named by the enum above it.
+// Every table effect_table.c defines, in its order. A table read by columns
+// is a two-dimensional array, its columns named by the enum above it.
 extern u16 gBattleFx_MoteCells[];
 extern u16 gBattleFx_FlareCells[];
 extern u16 gBattleFx_PuffCells[];

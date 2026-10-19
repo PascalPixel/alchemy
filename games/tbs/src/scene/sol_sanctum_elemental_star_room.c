@@ -40,7 +40,7 @@
 #include "songs.h"
 #include "item_ids.h"
 
-/// Forward declarations.
+// Forward declarations.
 static void SolSanctumElementalStarRoom_BagJupiterStar(void);
 static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void);
 static void SolSanctumElementalStarRoom_DemandElementalStars(void);

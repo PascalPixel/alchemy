@@ -12,7 +12,7 @@
 // is a loop over frames whose steps run in the order the original drew and
 // moved things, since the order of the random draws is part of the effect.
 
-/// The smoke trails behind the spray, after the 128 particles in PARTICLES.
+// The smoke trails behind the spray, after the 128 particles in PARTICLES.
 #define BOREAS_ICE_BLOCK_TRAILS                                                \
   ((struct EffectStep *)(Ram_MapCellBuffer + 0xe00))
 #define BOREAS_BIG_BLOCK_CELLS 0xc46      ///< the dropping 24x48 ice block

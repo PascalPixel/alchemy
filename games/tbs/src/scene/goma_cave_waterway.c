@@ -33,7 +33,7 @@
 
 #define STUMP 8
 
-/// Forward declarations.
+// Forward declarations.
 static void GomaCaveWaterway_LeapStump(s32 no);
 
 // Shared source is included here in ROM order.

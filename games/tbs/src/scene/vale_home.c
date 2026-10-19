@@ -55,7 +55,7 @@ enum ValeHomeActor {
   ACTOR_SECOND_TRAVELER = 24
 };
 
-/// Forward declarations.
+// Forward declarations.
 static void Event_MeetSurvivingTravelers(void);
 static void ValeHome_FightTravelers(void);
 static void Event_TravelersLeaveAfterBattle(void);

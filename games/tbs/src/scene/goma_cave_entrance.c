@@ -36,15 +36,15 @@
 #include "event.h"
 #include "item_ids.h"
 
-/// The room's actors: Garet and Ivan take their party slots, the rest follow
-/// the placement table from 8.
+// The room's actors: Garet and Ivan take their party slots, the rest follow
+// the placement table from 8.
 #define STUMP 8
 #define WEST_PILLAR 9
 #define EAST_PILLAR 10
 #define STUMP_IVY 15 ///< the ivy holding the stump
 #define IVY 16
 
-/// Private scene actions used by the reunion sequence.
+// Private scene actions used by the reunion sequence.
 static void GomaCaveEntrance_WhirlwindOnStumpIvy(void);
 static void GomaCaveEntrance_LeapStump(s32 id);
 static void GomaCaveEntrance_GiveShamansRod(void);

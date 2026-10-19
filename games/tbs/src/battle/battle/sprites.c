@@ -135,8 +135,8 @@ s32 BattleMotion_ReleaseObjectSlotByValue(s32 unitId) {
   }
 }
 
-/// gResource_SlotAssignments: each entry is a weapon's item id in the low nine
-/// bits and its kind above them; the list ends with -1.
+// gResource_SlotAssignments: each entry is a weapon's item id in the low nine
+// bits and its kind above them; the list ends with -1.
 #define WEAPON_ITEM_MASK 0x1ff
 #define WEAPON_KIND_SHIFT 9
 #define WEAPON_KIND_NONE 6

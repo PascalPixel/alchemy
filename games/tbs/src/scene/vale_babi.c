@@ -44,7 +44,7 @@
 #include "flags.h"
 #include "fixed_math.h"
 
-/// The arrival scenes are defined after the event handlers.
+// The arrival scenes are defined after the event handlers.
 static void Event_DoraWakesIsaac(void);
 static void Event_HurryToThePlaza(void);
 static void ValeBabi_RestoreRoomPatch(void);

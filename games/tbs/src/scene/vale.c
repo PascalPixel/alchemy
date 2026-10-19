@@ -53,7 +53,7 @@
 #define VALE_SOUTH_VILLAGER_Z 889
 #endif
 
-/// Forward declarations.
+// Forward declarations.
 static void Vale_HaveJennaStopTheAlephDetour(void);
 static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
                                          const s32 *villagerActions);

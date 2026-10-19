@@ -35,7 +35,7 @@
 #include "songs.h"
 #include "item_ids.h"
 
-/// Forward declarations.
+// Forward declarations.
 static void Bilibin_RestoreVillageActors(void);
 static void Bilibin_UpdateVillageBlockCells(void);
 static void Bilibin_RestoreRiverActors(void);

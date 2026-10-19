@@ -292,8 +292,8 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
     }                                                                          \
   }
 
-/// EnemyDefinition.targetStrategy: a single-target attacker favours the
-/// target with the most HP left, the most maximum HP, or no one.
+// EnemyDefinition.targetStrategy: a single-target attacker favours the
+// target with the most HP left, the most maximum HP, or no one.
 #define STRATEGY_MOST_HP 0
 #define STRATEGY_MOST_MAX_HP 1
 #define STRATEGY_RANDOM 2

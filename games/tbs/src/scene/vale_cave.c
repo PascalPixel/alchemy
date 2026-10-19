@@ -41,8 +41,8 @@
 // Djinni Kite hides. Djinn_JoinParty(ACTOR_KITE, 3, 4) gives Jupiter Djinni 4,
 // and the fifth Jupiter Djinni the text names is Kite.
 
-/// Kite is placement 8 of the second room; the objects moved with Move or
-/// pushed are placements 9 to 11 of the second and third rooms.
+// Kite is placement 8 of the second room; the objects moved with Move or
+// pushed are placements 9 to 11 of the second and third rooms.
 #define ACTOR_KITE 8
 #define WESTERN_MOVABLE_OBJECT 9
 #define EASTERN_MOVABLE_OBJECT 10
@@ -64,7 +64,7 @@
 // ledge and keeps away from the party. Both last while the party stays in the
 // cave.
 
-/// Forward declarations.
+// Forward declarations.
 static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row);
 static void ValeCave_ApplyEntryState(void);
 

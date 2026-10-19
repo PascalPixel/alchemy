@@ -40,7 +40,7 @@
 #include "songs.h"
 #include "common/colosso_story_flags.h"
 
-/// Forward declarations.
+// Forward declarations.
 static void TolbiSpring_RiseAndFadeIn(void);
 static void TolbiSpring_OfferLuckyWheels(s32 spoken);
 static s32 TolbiSpring_RunSpringGame(void);

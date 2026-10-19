@@ -31,19 +31,19 @@
 #include "songs.h"
 #include "event.h"
 
-/// The first room's actors: the soldiers who guard the bridge, and Iodem.
+// The first room's actors: the soldiers who guard the bridge, and Iodem.
 #define SOLDIER_1 8
 #define SOLDIER_2 9
 #define SOLDIER_3 10
 #define IODEM 11
 
-/// The third room's actors: two objects the party moves, and the one that
-/// stands in for the second once it has moved.
+// The third room's actors: two objects the party moves, and the one that
+// stands in for the second once it has moved.
 #define FIRST_OBJECT 8
 #define SECOND_OBJECT 9
 #define SECOND_OBJECT_MOVED 10
 
-/// The leap event also runs after the shared staged-actor movement.
+// The leap event also runs after the shared staged-actor movement.
 static void Event_MoveSecondObject(void);
 static void GondowanCave_RunSpinningLeap(s32 actorId);
 

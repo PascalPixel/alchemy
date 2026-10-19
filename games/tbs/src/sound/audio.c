@@ -37,7 +37,7 @@ s32 Pcm_KeyToFrequency(void *wave, u8 key, u8 pitch) {
 /// Provides the empty callback retained by the sound driver.
 void Audio_NoopStub(void) {}
 
-/// The sound data's symbols supply the player count and maximum track count.
+// The sound data's symbols supply the player count and maximum track count.
 extern char Sound_PlayerCount[];
 extern char Sound_MaxLines[];
 #define SOUND_PLAYER_COUNT ((u16)(u32)Sound_PlayerCount)

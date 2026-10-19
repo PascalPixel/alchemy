@@ -134,7 +134,7 @@ enum {
 /// The native paired patrol computes this layer offset in floating point.
 #define PAIRED_PATROL_LAYER_ORIGIN_X (136.0 * 65536)
 
-/// Forward declarations.
+// Forward declarations.
 static s32 LunpaFortress_TryCollectDisplayedItem(s32 actorId, s32 itemId);
 static void LunpaFortress_CheckSecondEntranceSentry(void);
 static s32 LunpaFortress_CanGuardSeeLeader(s32 actorId);

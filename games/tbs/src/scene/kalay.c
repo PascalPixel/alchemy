@@ -82,7 +82,7 @@ enum KalayTunnelFlag {
   FLAG_TUNNEL_SECOND_PASSAGE_OPEN = 0x303
 };
 
-/// Forward declarations.
+// Forward declarations.
 static void Kalay_PrepareTown(void);
 static void Kalay_PreparePalaceGate(void);
 static void Kalay_PrepareCave(void);

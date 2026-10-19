@@ -58,7 +58,7 @@ enum {
   ACTOR_WATER_OF_LIFE_CHEST = 24
 };
 
-/// Forward declarations.
+// Forward declarations.
 static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
                                     s32 chestFlag);
 static void Event_AudienceWithMcCoy(void);

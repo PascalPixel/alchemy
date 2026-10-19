@@ -21,9 +21,9 @@
 // choose where to cheer from, and the guide at each stage describes it and
 // offers a friend's cheering there.
 
-/// Byte flags (eight flags each) holding where a friend cheers from: the cell
-/// column at COLOSSO_CHEER_COLUMN + 16 * character and the cell row at
-/// COLOSSO_CHEER_ROW + 16 * character, for Garet, Ivan and Mia.
+// Byte flags (eight flags each) holding where a friend cheers from: the cell
+// column at COLOSSO_CHEER_COLUMN + 16 * character and the cell row at
+// COLOSSO_CHEER_ROW + 16 * character, for Garet, Ivan and Mia.
 #define COLOSSO_CHEER_COLUMN 0x370
 #define COLOSSO_CHEER_ROW 0x378
 #define COLOSSO_CHEER_SLOT(character) ((character) << 4)

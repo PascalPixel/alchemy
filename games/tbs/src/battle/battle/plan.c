@@ -72,7 +72,7 @@ s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts) {
   return standbyCount;
 }
 
-/// Djinni selector: element in bits 8..11, index in bits 0..7.
+// Djinni selector: element in bits 8..11, index in bits 0..7.
 #define DJINN_ELEMENT(v) (((v) >> 8) & 15)
 #define DJINN_INDEX(v) ((v) & 255)
 #define TARGET_MAX 14

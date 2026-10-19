@@ -38,9 +38,9 @@ enum ActorAnimation {
 
 #define EMOTE_IN_FRONT 0x100
 
-/// Speaker bits above the actor id in a message command, as
-/// UiText_OpenMessageAtObject reads them: the portrait left or right of the
-/// speaker, and the message window above it or never above it.
+// Speaker bits above the actor id in a message command, as
+// UiText_OpenMessageAtObject reads them: the portrait left or right of the
+// speaker, and the message window above it or never above it.
 #define SPEAKER_PORTRAIT_LEFT 0x1000
 #define SPEAKER_PORTRAIT_RIGHT 0x2000
 #define SPEAKER_WINDOW_ABOVE 0x4000
@@ -57,9 +57,9 @@ struct MapCellAnim {
   u16 y;
 };
 
-/// Imports of main-image routines. EventRequestExit, ActorSetPosition,
-/// ActorSetAnimation and RandomNext have differing argument counts at their
-/// call sites, as measured in the bytes, so retain old-style declarations.
+// Imports of main-image routines. EventRequestExit, ActorSetPosition,
+// ActorSetAnimation and RandomNext have differing argument counts at their
+// call sites, as measured in the bytes, so retain old-style declarations.
 void Engine_EventBegin(void);
 void Engine_EventEnd(void);
 void Engine_EventWait(s32 frames);
@@ -280,7 +280,7 @@ static inline void Map_SetShake(s32 horizontal, s32 vertical, s32 decay) {
   Engine_WorkSetValuesIfNonNegative(horizontal, vertical, decay);
 }
 
-/// Keep the scene wrappers separate from the main-image declarations.
+// Keep the scene wrappers separate from the main-image declarations.
 #define GameFlag_Set FieldEvent_GameFlagSet
 #define GameFlag_IsSet FieldEvent_GameFlagIsSet
 #define GameFlag_Clear FieldEvent_GameFlagClear

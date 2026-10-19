@@ -179,6 +179,6 @@ struct SceneEvent gKolimaForestRiverEvents[] = {
     {SCENE_EVENTS_END},
 };
 
-/// The .bss order follows the first declarations (externs in field.h).
+// The .bss order follows the first declarations (externs in field.h).
 u8 gKolimaPalette_First[1792] __attribute__((section(".bss")));
 u8 gKolimaPalette_Second[896] __attribute__((section(".bss")));

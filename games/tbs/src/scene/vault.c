@@ -68,7 +68,7 @@ enum {
   VAULT_VENUS_DJINNI_INDEX = 4
 };
 
-/// Forward declarations.
+// Forward declarations.
 static void Vault_ShowStandingActorMessage(s32 actor);
 static void Vault_ShowMessageAndWait(s32 actor, s32 delay);
 static void Vault_FaceActorAndWait(s32 actor, s32 cue, s32 delay);

@@ -29,8 +29,8 @@
 #include "frame.h"
 #include "flags.h"
 
-/// Credits text uses six 32-pixel sprites across each 192-pixel line. Its
-/// 32 tile rows form a ring, with sixteen rows visible at a time.
+// Credits text uses six 32-pixel sprites across each 192-pixel line. Its
+// 32 tile rows form a ring, with sixteen rows visible at a time.
 #define CREDITS_LINE_PIXELS 192
 #define CREDITS_VISIBLE_ROWS 16
 #define CREDITS_COLUMNS 6

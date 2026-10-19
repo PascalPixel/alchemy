@@ -418,8 +418,8 @@ UNUSED void
 BattleFx_RunStatReductionMode3(struct BattleEffectArgument *effect) {
   BattleFx_RunStatReduction(effect, 3);
 }
-/// The shard picture in the sheet, followed by seven copies of it, each
-/// with its colour levels capped 7 lower than the one before.
+// The shard picture in the sheet, followed by seven copies of it, each
+// with its colour levels capped 7 lower than the one before.
 #define STAT_REDUCTION_SHARD_CELLS 0x2580
 #define STAT_REDUCTION_SHARD_BYTES 696 ///< bytes in each copy
 #define STAT_REDUCTION_SHARDS 24       ///< shards drawn for each target

@@ -36,7 +36,7 @@
 #include "flags.h"
 #include "songs.h"
 
-/// Forward declarations.
+// Forward declarations.
 static void Event_DoraSendsIsaacToThePlaza(void);
 static void ValeStorm_SetStormCellAttributes(void);
 static void ValeStorm_ApplyRock12Collision(void);

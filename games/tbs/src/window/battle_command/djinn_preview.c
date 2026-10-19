@@ -28,7 +28,7 @@ s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value) {
   }
 }
 
-/// Preview marks are separate from the action ID in the low fourteen bits.
+// Preview marks are separate from the action ID in the low fourteen bits.
 #define DJINN_PREVIEW_ABILITY_GAINED 0x8000
 #define DJINN_PREVIEW_ABILITY_LOST 0x4000
 #define DJINN_PREVIEW_ABILITY_CAPACITY 48

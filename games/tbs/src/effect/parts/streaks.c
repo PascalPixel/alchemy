@@ -8,7 +8,7 @@
 // Streak volleys: three streaks of light fly from the user to each target in
 // turn, in one of five colours.
 
-/// gStreaks_Records has four flags for each style.
+// gStreaks_Records has four flags for each style.
 #define STREAKS_VALUE(mode, n) gStreaks_Records[(mode)][(n)]
 #define STREAKS_ANIMATE 0 ///< nonzero: the streak cycles through three images
 #define STREAKS_HIT 1     ///< nonzero: play the hit sound and flash the target

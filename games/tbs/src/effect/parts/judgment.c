@@ -51,7 +51,7 @@ struct JudgmentWork {
 #define JUDGMENT_SHEET_FLASH_SMALL 0x6000
 /// The large flash picture in the sheet.
 #define JUDGMENT_SHEET_FLASH_LARGE 0x6110
-/// The flash streak picture in the sheet.
+// The flash streak picture in the sheet.
 #define JUDGMENT_SHEET_FLASH_STREAK 0x64e8
 #define JUDGMENT_EXPLOSION_CELL_BYTES 1728 ///< bytes in each explosion picture
 #define JUDGMENT_WAVE_SIZE 120             ///< the wave picture is 120x120

@@ -39,9 +39,9 @@ enum {
   UI_WINDOW_FIXED_X = 0x100,
 };
 
-/// The text canvas tiles in VRAM: 120 4bpp tiles from tile 0x128, enough for
-/// the interior of a full-width window six tiles tall. The tiles run down
-/// columns, each as tall as the window's interior.
+// The text canvas tiles in VRAM: 120 4bpp tiles from tile 0x128, enough for
+// the interior of a full-width window six tiles tall. The tiles run down
+// columns, each as tall as the window's interior.
 #define UI_CANVAS_VRAM ((void *)0x06002500)
 #define UI_CANVAS_SIZE 0xf00
 #define UI_CANVAS_FIRST_TILE 0x128
@@ -56,10 +56,10 @@ enum {
 /// time.
 #define UI_TILE_PAIR(entry) ((u32)(entry) << 16 | (entry))
 
-/// The two page arrows beside a paged list's page numbers, in the menus and
-/// the clear menu: tiles 0x128 and 0x129 of character block 0, which
-/// Link_DrawShiftedTilePair slides back and forth each frame, and their
-/// tilemap entries.
+// The two page arrows beside a paged list's page numbers, in the menus and
+// the clear menu: tiles 0x128 and 0x129 of character block 0, which
+// Link_DrawShiftedTilePair slides back and forth each frame, and their
+// tilemap entries.
 #define UI_PAGE_ARROW_TILE 0x128
 #define UI_PAGE_ARROW_VRAM                                                     \
   ((s32)BG_CHAR_BLOCK(0) + UI_PAGE_ARROW_TILE * TILE_SIZE_4BPP)

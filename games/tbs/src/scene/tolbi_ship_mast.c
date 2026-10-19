@@ -31,7 +31,7 @@
 #include "heap_state.h"
 #include "macros.h"
 
-/// Scene sequences and the mast's per-frame updates.
+// Scene sequences and the mast's per-frame updates.
 static void TolbiShipMast_SetupHiddenLeaderLookout(void);
 static void TolbiShipMast_SetupVisibleLeaderLookout(void);
 static void TolbiShipMast_AnnounceClearCourse(void);

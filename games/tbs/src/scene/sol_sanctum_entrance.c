@@ -27,9 +27,10 @@
 #include "songs.h"
 #include "item_ids.h"
 
-/// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-/// enters another place group, and other places use the numbers for their own.
-/// The column each movable block stands in, east or west of its pair.
+// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// enters another place group, and other places use the numbers for their own.
+
+// The column each movable block stands in, east or west of its pair.
 #define FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_EAST 0x300
 #define FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_WEST 0x301
 #define FLAG_SOL_SANCTUM_OUTER_LEFT_BLOCK_EAST 0x302
@@ -47,7 +48,7 @@
 #define FLAG_SOL_SANCTUM_INNER_BLOCK_6_EAST 0x31a
 #define FLAG_SOL_SANCTUM_INNER_BLOCK_6_WEST 0x31b
 
-/// Forward declarations.
+// Forward declarations.
 static void SolSanctumEntrance_ApplyEntryState(void);
 static void SolSanctumEntrance_RestoreInteriorState(void);
 static void SolSanctumEntrance_IntroduceSanctum(void);

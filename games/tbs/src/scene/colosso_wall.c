@@ -106,7 +106,7 @@
   ((s32 (*)())Scene_GiveAndEquipItem)
 #endif
 
-/// Forward declarations.
+// Forward declarations.
 static void ColossoWall_IntroduceSecondFinals(s32 attendantId);
 static void ColossoWall_ShowRoundStartLettering(s32 mode);
 static void ColossoWall_ShowBattleResultLettering(s32 result);

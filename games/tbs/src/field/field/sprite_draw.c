@@ -5,9 +5,9 @@
 #include "../field_internal.h"
 
 /// Draws one layer's frame into a sprite's pixel buffer (Render_DecodeFrame,
-/// run from RAM) and uploads a finished buffer to sprite VRAM
-/// (Tile_CopyStrided).
+/// run from RAM).
 typedef void (*SpriteDrawFn)(const void *src, void *dst, s32 param);
+/// Uploads a finished sprite buffer to sprite VRAM (Tile_CopyStrided).
 typedef void (*SpriteUploadFn)(const void *src, u32 w, u32 h, void *vram);
 
 /// Advances a sprite's animation layers by one frame, picks each layer's frame

@@ -118,7 +118,7 @@
 #define PASSWORD_SYMBOLS_PER_PAGE 50
 #define PASSWORD_SYMBOL_MASK 0x3f
 
-/// Forward declarations
+// Forward declarations.
 static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out);
 static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 Clear_ComputePasswordCrc16(u32 byteCount, u8 *data);

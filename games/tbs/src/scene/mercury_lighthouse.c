@@ -71,7 +71,7 @@
   ((s32 (*)())Engine_ActorSetAnimationAndWait)
 #endif
 
-/// Forward declarations.
+// Forward declarations.
 static void MercuryLighthouse_OpenGateWithMovedBlock(void);
 static void MercuryLighthouse_OpenStairGateWithMovedBlock(void);
 static void MercuryLighthouse_SyncBlockFlags(void);

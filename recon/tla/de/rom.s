@@ -2184,12 +2184,6 @@ Func_080e03cc:
 	.thumb_func
 Func_080e09c0:
 	.incbin "baserom.gba", 0x000ed9c0, 0x000002c4
-	.section .rom.000edcac, "ax"
-	.global Func_080e0cac
-	.type Func_080e0cac, %function
-	.thumb_func
-Func_080e0cac:
-	.incbin "baserom.gba", 0x000edcac, 0x00000040
 	.section .rom.000edcec, "ax"
 	.global Func_080e0cec
 	.type Func_080e0cec, %function

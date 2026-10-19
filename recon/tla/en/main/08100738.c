@@ -1,77 +1,55 @@
+// Draft of Item_Use (Func_08100738): applies the slot's action, then consumes
+// or transforms the item on success; the twin of The Broken Seal's Item_Use
+// (games/tbs/src/menu/menu/use.c), rewritten with ⚓️'s calls and menu work
+// (items 0x1c4, count 0x214).
+// Differ 32 of 90 (2026-10-19, two instructions short): the native builds
+// the 0x1ff mask in the item id's own high register and masks through a
+// copy (mov r10, r2; mov r1, r10; ands r1, r3; mov r10, r1), where agscc
+// builds it in r1; the item id as u32 or u16, through a mask local or with
+// the mask assigned first is no nearer.
 #include "types.h"
-#include "battle_effect.h"
-#include "battle_type.h"
+#include "ram_buffer.h"
+#include "item.h"
+#include "battle_unit.h"
 
-struct ItemOwner {
-  u8 padding000[0x10];
-  u16 stat10;
-  u16 stat12;
-  u8 padding014[4];
-  u16 stat18;
-  u16 stat1a;
-  u16 stat1c;
-  u8 stat1e;
-  u8 padding01f[0x15];
-  s16 maxHp;
-  s16 maxPp;
-  s16 hp;
-  s16 pp;
-  u8 padding03c[0x9c];
-  u16 items[15];
-  u8 padding0f6[0x3b];
-  s8 poison;
+struct InventoryMenuState {
+  u8 unk000[0x1c4];
+  u16 items[32];
+  u8 unk204[0x10];
+  u8 itemCount;
 };
 
-struct ItemData {
-  u8 padding00[0x0c];
-  u8 kind;
-  u8 padding0d[0x1b];
-  u16 useAbility;
-};
-
-struct ItemUseWork {
-  u8 padding000[0x1c8];
-  u16 entries[32];
-  u16 targets[8];
-  u8 entryCount;
-  u8 targetCount;
-  u8 padding21a[0x40];
-  s16 resultCode;
-};
-
-extern struct ItemUseWork *gMenuWork;
-
-struct ItemOwner *UnitGetFar(s32);
-struct ItemData *Item_Get(s32);
-u8 Inventory_RemoveFar(s32, s32);
-u32 ItemMenu_Collect(struct ItemOwner *, u16 *, s32);
-s32 BattleEffect_ApplyToTargets(s32, s32, s32, s32);
+struct BattleUnit *UnitGet(s32 owner);
+void Inventory_RemoveFar(s32 ownerId, s32 slot);
+s32 ItemMenu_Collect(struct BattleUnit *owner, u16 *items, s32 mode);
+s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
+                                s32 fixedScale);
 
 s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
-  struct ItemUseWork *work;
-  s32 result;
+  struct InventoryMenuState *menu;
+  s32 useResult;
   s32 itemId;
-  struct ItemOwner *owner;
-  struct ItemData *item;
+  struct BattleUnit *unit;
+  struct ItemDefinition *item;
 
-  owner = UnitGetFar(ownerId);
-  work = gMenuWork;
-  itemId = 0x1ff & owner->items[slot];
+  unit = UnitGet(ownerId);
+  menu = Ram_HeapSlots->menuRuntime;
+  itemId = ITEM_ID_MASK & unit->inventory[slot];
   item = Item_Get(itemId);
-  result = BattleEffect_ApplyToTargets(0x3fff & item->useAbility, ownerId,
-                                       targetId, 1);
-  if (result != -1) {
-    item = Item_Get(owner->items[slot]);
-    if (item->kind == 1) {
+  useResult = BattleEffect_ApplyToTargets(OWNER_ACTION_ID_MASK & item->actionId,
+                                          ownerId, targetId, 1);
+  if (useResult != -1) {
+    item = Item_Get(unit->inventory[slot]);
+    if (item->useType == 1) {
       Inventory_RemoveFar(ownerId, slot);
-      work->entryCount = ItemMenu_Collect(owner, work->entries, 0);
+      menu->itemCount = ItemMenu_Collect(unit, menu->items, 0);
     }
-    if (item->kind == 4) {
+    if (item->useType == 4) {
       if (itemId == 0xb8)
         itemId = 0xb9;
-      owner->items[slot] = itemId;
+      unit->inventory[slot] = itemId;
     }
-    result = 0;
+    useResult = 0;
   }
-  return result;
+  return useResult;
 }

@@ -32,7 +32,7 @@ Resource_DirectoryTable:
 	resource WindowTiles, Ui_WindowTiles
 	resource , UiText_SmallFont
 	resource ClockDigits, Field_ClockDigits
-	resource , Title_ScreenPicture
+	resource TitleScreenPicture, Title_ScreenPicture
 	resource , Title_IntroGraphicsC
 	resource Data018, Resource_Data018
 	resource , Title_IntroLighthousePicture

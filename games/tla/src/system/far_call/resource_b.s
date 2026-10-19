@@ -14,7 +14,7 @@ Func_081a6008:
 	.global Func_081a6010
 	.thumb_func
 Func_081a6010:
-	overlay_veneer Data_081a7514
+	overlay_veneer Title_NoOpPalette
 	.global Func_081a6018
 	.thumb_func
 Func_081a6018:

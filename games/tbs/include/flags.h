@@ -85,6 +85,10 @@
 #define FLAG_IMIL_APPRENTICE_OFFERED_HEALING 0x82d
 #define FLAG_IMIL_MIA_SAID_FAREWELL 0x82e // to her two apprentices
 
+// Fuchin Falls
+// The Dragon's Eye is set in the dragon statue, which opened the hidden path.
+#define FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET 0x820
+
 // Kalay and Tolbi docks
 #define FLAG_KALAY_DOCKS_TICKET_BOUGHT 0x8a5
 // The father on the Kalay docks asked the party to take a message to his

@@ -36,6 +36,25 @@
 #include "fixed_math.h"
 #include "object_effect.h"
 #include "palbuf.h"
+#include "flags.h"
+#include "songs.h"
+
+// Seven maps: the Djinni's ice room by Imil, then Fuchin Falls' four platform
+// rooms, the room of the Ki inscription and the dragon statue's room.
+//
+// Flags 0x301 to 0x315 belong to the cave and hold the platforms' stops:
+// 0x301 to 0x303 the first room's, 0x304 to 0x307 the second's, 0x308 to
+// 0x312 the third's and 0x313 to 0x315 the fourth's.
+
+enum ImilFuchinFallsActor {
+  ACTOR_IMIL_DJINNI = 8, // in the ice room
+  // The platforms, in each platform room
+  ACTOR_FIRST_PLATFORM = 8,
+  ACTOR_SECOND_PLATFORM = 9,
+  ACTOR_THIRD_PLATFORM = 10,
+  ACTOR_FOURTH_PLATFORM = 11,
+  ACTOR_FUCHIN_DJINNI = 11 // in the second platform room
+};
 
 // Forward declarations.
 static void Fuchin_RebuildFirstRoomPlatforms(void);
@@ -43,8 +62,8 @@ static void Fuchin_RebuildSecondRoomPlatforms(void);
 static void Fuchin_RebuildThirdRoomPlatforms(void);
 static void Fuchin_RebuildFourthRoomPlatforms(void);
 static void Imil_WalkTowardDjinni(void);
-static void ImilFuchinFalls_ApplyEntrySetup(void);
-static void ImilFuchinFalls_ApplyRoomLayout(void);
+static void ImilFuchinFalls_PrepareRoom(void);
+static void ImilFuchinFalls_RebuildPlatformRoom(void);
 static void ImilFuchinFalls_HopBy(s32 dx, s32 dz);
 static void ImilFuchinFalls_PlaceDragonsEye(void);
 static void Imil_SlideActorAcrossIce(void);
@@ -79,69 +98,71 @@ STATIC_ASSERT(offsetof(struct CaveDustOptions, targetScaleX) ==
 STATIC_ASSERT(offsetof(struct CaveDustOptions, targetScaleY) ==
               offsetof(struct EffectOptions, targetScaleY));
 
-// Add the Imil Djinni to the party.
-static void Imil_JoinDjinni(void) { Djinn_JoinParty(8, 2, 1); }
+// Talking to the Djinni in the ice room adds it to the party.
+static void Imil_RecruitDjinni(void) {
+  Djinn_JoinParty(ACTOR_IMIL_DJINNI, ELEMENT_MARS, 1);
+}
 
-// Start the Fuchin Djinn encounter.
+// Talking to the Djinni in the second platform room starts its battle.
 static void Fuchin_StartDjinnBattle(void) { Field_RequestDjinnBattle(11, 62); }
 
 // Select the entrances for the current Imil or Fuchin room.
-const struct SceneEntrance *Scene_GetEntrances(void) {
+const struct SceneEntrance *ImilFuchinFalls_GetEntrances(void) {
   s16 sceneId = gGameState.scene;
 
   if (sceneId == (s32)&SceneId_ImilFuchinFalls1) {
-    return gImilFuchinFallsEntrances1;
+    return gImilFuchinFalls_DjinniRoomEntrances;
   }
   if (sceneId == (s32)&SceneId_ImilFuchinFalls2) {
-    return gImilFuchinFallsEntrances2;
+    return gImilFuchinFalls_FirstRoomEntrances;
   }
   if (sceneId == (s32)&SceneId_ImilFuchinFalls3) {
-    return gImilFuchinFallsEntrances3;
+    return gImilFuchinFalls_SecondRoomEntrances;
   }
   if (sceneId == (s32)&SceneId_ImilFuchinFalls4) {
-    return gImilFuchinFallsEntrances4;
+    return gImilFuchinFalls_ThirdRoomEntrances;
   }
   if (sceneId == (s32)&SceneId_ImilFuchinFalls5) {
-    return gImilFuchinFallsEntrances5;
+    return gImilFuchinFalls_FourthRoomEntrances;
   }
   if (sceneId == (s32)&SceneId_ImilFuchinFalls6) {
-    return gImilFuchinFallsEntrances6;
+    return gImilFuchinFalls_KiRoomEntrances;
   }
   if (sceneId == (s32)&SceneId_ImilFuchinFalls7) {
-    return gImilFuchinFallsEntrances7;
+    return gImilFuchinFalls_DragonRoomEntrances;
   }
-  return gImilFuchinFallsEntrancesOther;
+  return gImilFuchinFalls_NoEntrances;
 }
 
-// Return the scene protocol default.
-s32 SceneData_ReturnZero(void) { return 0; }
+// The cave has no scene regions.
+const struct SceneRegion *ImilFuchinFalls_GetRegions(void) { return NULL; }
 
 // Return the exit connections shared by these rooms.
-u32 *ImilFuchinFalls_GetExits(void) { return gImilFuchinFallsExits; }
+u32 *ImilFuchinFalls_GetExits(void) { return gImilFuchinFalls_Exits; }
 
 // Select actor placements for the current room.
-const struct ScenePlacement *Scene_GetPlacements(void) {
+const struct ScenePlacement *ImilFuchinFalls_GetPlacements(void) {
   s16 sceneId = gGameState.scene;
 
   if (sceneId == (s32)&SceneId_ImilFuchinFalls1) {
-    return gImilFuchinFallsPlacements1;
+    return gImilFuchinFalls_DjinniRoomPlacements;
   }
   if (sceneId == (s32)&SceneId_ImilFuchinFalls2) {
-    return gImilFuchinFallsPlacements2;
+    return gImilFuchinFalls_FirstRoomPlacements;
   }
   if (sceneId == (s32)&SceneId_ImilFuchinFalls3) {
-    return gImilFuchinFallsPlacements3;
+    return gImilFuchinFalls_SecondRoomPlacements;
   }
   if (sceneId == (s32)&SceneId_ImilFuchinFalls4) {
-    return gImilFuchinFallsPlacements4;
+    return gImilFuchinFalls_ThirdRoomPlacements;
   }
   if (sceneId == (s32)&SceneId_ImilFuchinFalls5) {
-    return gImilFuchinFallsPlacements5;
+    return gImilFuchinFalls_FourthRoomPlacements;
   }
   if (sceneId == (s32)&SceneId_ImilFuchinFalls7) {
-    return gImilFuchinFallsPlacements7;
+    return gImilFuchinFalls_DragonRoomPlacements;
   }
-  return gImilFuchinFallsPlacementsOther;
+  return gImilFuchinFalls_NoPlacements;
 }
 
 // Shared source is included here in ROM order.
@@ -149,17 +170,17 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 
 // Let the platform settle before rebuilding its room's collision cells.
 static inline void Fuchin_FinishPlatformMove(void (*rebuildPlatforms)(void)) {
-  Engine_AudioPlayCue(289);
+  Engine_AudioPlayCue(SE_289);
   Engine_TaskWait(2);
   rebuildPlatforms();
 }
 
 // Move the first platform east in the first puzzle room.
 static void Fuchin_FirstRoom_MoveFirstPlatformEast(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(8, 112, 0);
-  SceneActor_PlacePairAtOffset(8, 112, 0);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, 112, 0);
+  SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, 112, 0);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagSet(0x301);
   Engine_TaskWait(2);
   Fuchin_RebuildFirstRoomPlatforms();
@@ -170,10 +191,10 @@ static void Fuchin_FirstRoom_MoveFirstPlatformWest(void) {
   s32 offset = 112;
 
   offset = -offset;
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(8, offset, 0);
-  SceneActor_PlacePairAtOffset(8, offset, 0);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, offset, 0);
+  SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, offset, 0);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagClear(0x301);
   Engine_TaskWait(2);
   Fuchin_RebuildFirstRoomPlatforms();
@@ -181,9 +202,9 @@ static void Fuchin_FirstRoom_MoveFirstPlatformWest(void) {
 
 // Move the second platform south in the first puzzle room.
 static void Fuchin_FirstRoom_MoveSecondPlatformSouth(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(9, 0, 64);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, 0, 64);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagClear(0x302);
   Engine_TaskWait(2);
   Fuchin_RebuildFirstRoomPlatforms();
@@ -191,9 +212,9 @@ static void Fuchin_FirstRoom_MoveSecondPlatformSouth(void) {
 
 // Move the second platform north in the first puzzle room.
 static void Fuchin_FirstRoom_MoveSecondPlatformNorth(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(9, 0, -64);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, 0, -64);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagSet(0x302);
   Engine_TaskWait(2);
   Fuchin_RebuildFirstRoomPlatforms();
@@ -201,9 +222,9 @@ static void Fuchin_FirstRoom_MoveSecondPlatformNorth(void) {
 
 // Move the third platform south in the first puzzle room.
 static void Fuchin_FirstRoom_MoveThirdPlatformSouth(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(10, 0, 64);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, 64);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagClear(0x303);
   Engine_TaskWait(2);
   Fuchin_RebuildFirstRoomPlatforms();
@@ -211,9 +232,9 @@ static void Fuchin_FirstRoom_MoveThirdPlatformSouth(void) {
 
 // Move the third platform north in the first puzzle room.
 static void Fuchin_FirstRoom_MoveThirdPlatformNorth(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(10, 0, -64);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, -64);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagSet(0x303);
   Engine_TaskWait(2);
   Fuchin_RebuildFirstRoomPlatforms();
@@ -221,9 +242,9 @@ static void Fuchin_FirstRoom_MoveThirdPlatformNorth(void) {
 
 // Move the first platform to east end in the second puzzle room.
 static void Fuchin_SecondRoom_MoveFirstPlatformToEastEnd(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(8, 144, 0);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, 144, 0);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagSet(0x304);
   Engine_TaskWait(2);
   Fuchin_RebuildSecondRoomPlatforms();
@@ -231,9 +252,9 @@ static void Fuchin_SecondRoom_MoveFirstPlatformToEastEnd(void) {
 
 // Move the first platform to west end in the second puzzle room.
 static void Fuchin_SecondRoom_MoveFirstPlatformToWestEnd(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(8, -144, 0);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, -144, 0);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagClear(0x304);
   Engine_GameFlagSet(0x305);
   Engine_TaskWait(2);
@@ -242,9 +263,9 @@ static void Fuchin_SecondRoom_MoveFirstPlatformToWestEnd(void) {
 
 // Nudge the first platform west in the second puzzle room.
 static void Fuchin_SecondRoom_NudgeFirstPlatformWest(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(8, -14, 0);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, -14, 0);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagSet(0x305);
   Engine_TaskWait(2);
   Fuchin_RebuildSecondRoomPlatforms();
@@ -252,13 +273,13 @@ static void Fuchin_SecondRoom_NudgeFirstPlatformWest(void) {
 
 // Move the first platform east in the second puzzle room.
 static void Fuchin_SecondRoom_MoveFirstPlatformEast(void) {
-  Engine_AudioPlayCue(0xF1);
+  Engine_AudioPlayCue(SE_241);
 
   if (Engine_GameFlagIsSet(0x306) != 0) {
-    SceneActor_PlacePairAtOffset(8, 16, 0);
+    SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, 16, 0);
     Engine_GameFlagClear(0x305);
   } else {
-    SceneActor_PlacePairAtOffset(8, 144, 0);
+    SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, 144, 0);
 
     Engine_GameFlagSet(0x304);
   }
@@ -268,9 +289,9 @@ static void Fuchin_SecondRoom_MoveFirstPlatformEast(void) {
 
 // Move the second platform south in the second puzzle room.
 static void Fuchin_SecondRoom_MoveSecondPlatformSouth(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(9, 0, 64);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, 0, 64);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagSet(0x306);
   Engine_TaskWait(2);
   Fuchin_RebuildSecondRoomPlatforms();
@@ -278,9 +299,9 @@ static void Fuchin_SecondRoom_MoveSecondPlatformSouth(void) {
 
 // Move the second platform north in the second puzzle room.
 static void Fuchin_SecondRoom_MoveSecondPlatformNorth(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(9, 0, -64);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, 0, -64);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagClear(0x306);
   Engine_TaskWait(2);
   Fuchin_RebuildSecondRoomPlatforms();
@@ -288,10 +309,10 @@ static void Fuchin_SecondRoom_MoveSecondPlatformNorth(void) {
 
 // Move the third platform south in the second puzzle room.
 static void Fuchin_SecondRoom_MoveThirdPlatformSouth(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(10, 0, 144);
-  SceneActor_PlacePairAtOffset(10, 0, 128);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, 144);
+  SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, 128);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagClear(0x307);
   Engine_TaskWait(2);
   Fuchin_RebuildSecondRoomPlatforms();
@@ -301,11 +322,11 @@ static void Fuchin_SecondRoom_MoveThirdPlatformSouth(void) {
 static void Fuchin_SecondRoom_MoveThirdPlatformNorth(void) {
   s32 depth = -96;
 
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(10, 0, depth);
-  SceneActor_PlacePairAtOffset(10, 0, depth);
-  SceneActor_PlacePairAtOffset(10, 0, -80);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, depth);
+  SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, depth);
+  SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, -80);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagSet(0x307);
   Engine_TaskWait(2);
   Fuchin_RebuildSecondRoomPlatforms();
@@ -313,14 +334,14 @@ static void Fuchin_SecondRoom_MoveThirdPlatformNorth(void) {
 
 // Move the first platform west in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveFirstPlatformWest(void) {
-  Engine_AudioPlayCue(0xF1);
+  Engine_AudioPlayCue(SE_241);
 
   if (Engine_GameFlagIsSet(0x310) != 0 || Engine_GameFlagIsSet(0x30D) != 0) {
-    SceneActor_PlacePairAtOffset(8, -48, 0);
+    SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, -48, 0);
     Engine_GameFlagClear(0x308);
     Engine_GameFlagSet(0x309);
   } else {
-    SceneActor_PlacePairAtOffset(8, -96, 0);
+    SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, -96, 0);
     Engine_GameFlagSet(0x308);
     Engine_GameFlagClear(0x309);
   }
@@ -330,10 +351,10 @@ static void Fuchin_ThirdRoom_MoveFirstPlatformWest(void) {
 
 // Move the first platform east from the middle in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveFirstPlatformEastFromMiddle(void) {
-  Engine_AudioPlayCue(0xF1);
+  Engine_AudioPlayCue(SE_241);
   Engine_GameFlagClear(0x308);
   Engine_GameFlagClear(0x309);
-  SceneActor_PlacePairAtOffset(8, 48, 0);
+  SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, 48, 0);
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
@@ -346,29 +367,29 @@ static void Fuchin_ThirdRoom_MoveFirstPlatformWestIfClear(void) {
     return;
   }
 
-  Engine_AudioPlayCue(0xF1);
+  Engine_AudioPlayCue(SE_241);
 
   Engine_GameFlagSet(0x308);
   Engine_GameFlagClear(0x309);
 
-  SceneActor_PlacePairAtOffset(8, -48, 0);
+  SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, -48, 0);
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
 // Move the first platform east from the west end in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveFirstPlatformEastFromWestEnd(void) {
-  Engine_AudioPlayCue(0xF1);
+  Engine_AudioPlayCue(SE_241);
   Engine_GameFlagClear(0x308);
   Engine_GameFlagClear(0x309);
-  SceneActor_PlacePairAtOffset(8, 96, 0);
+  SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, 96, 0);
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
 // Move the second platform west in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveSecondPlatformWest(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(9, -32, 0);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, -32, 0);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagSet(0x30A);
   Engine_TaskWait(2);
   Fuchin_RebuildThirdRoomPlatforms();
@@ -376,9 +397,9 @@ static void Fuchin_ThirdRoom_MoveSecondPlatformWest(void) {
 
 // Move the second platform east in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveSecondPlatformEast(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(9, 32, 0);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, 32, 0);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagClear(0x30A);
   Engine_TaskWait(2);
   Fuchin_RebuildThirdRoomPlatforms();
@@ -386,15 +407,15 @@ static void Fuchin_ThirdRoom_MoveSecondPlatformEast(void) {
 
 // Move the third platform north from the south end in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveThirdPlatformNorthFromSouthEnd(void) {
-  Engine_AudioPlayCue(241);
+  Engine_AudioPlayCue(SE_241);
   if (Engine_GameFlagIsSet(0x308) != 0) {
-    SceneActor_PlacePairAtOffset(10, 0, -64);
+    SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, -64);
     Engine_GameFlagClear(0x30b);
     Engine_GameFlagSet(0x30c);
     Engine_GameFlagClear(0x30d);
     Engine_GameFlagClear(0x30e);
   } else {
-    SceneActor_PlacePairAtOffset(10, 0, -128);
+    SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, -128);
     Engine_GameFlagSet(0x30b);
     Engine_GameFlagClear(0x30c);
     Engine_GameFlagClear(0x30d);
@@ -405,28 +426,28 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformNorthFromSouthEnd(void) {
 
 // Move the third platform south from the north end in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromNorthEnd(void) {
-  Engine_AudioPlayCue(0xf1);
+  Engine_AudioPlayCue(SE_241);
 
   if (Engine_GameFlagIsSet(0x308) != 0) {
-    SceneActor_PlacePairAtOffset(10, 0, 16);
+    SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, 16);
     Engine_GameFlagClear(0x30b);
     Engine_GameFlagSet(0x30c);
     Engine_GameFlagClear(0x30d);
     Engine_GameFlagClear(0x30e);
   } else if (Engine_GameFlagIsSet(0x310) != 0) {
-    SceneActor_PlacePairAtOffset(10, 0, 16);
+    SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, 16);
     Engine_GameFlagClear(0x30b);
     Engine_GameFlagSet(0x30c);
     Engine_GameFlagClear(0x30d);
     Engine_GameFlagClear(0x30e);
   } else if (Engine_GameFlagIsSet(0x311) != 0) {
-    SceneActor_PlacePairAtOffset(10, 0, 64);
+    SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, 64);
     Engine_GameFlagClear(0x30b);
     Engine_GameFlagClear(0x30c);
     Engine_GameFlagSet(0x30d);
     Engine_GameFlagClear(0x30e);
   } else {
-    SceneActor_PlacePairAtOffset(10, 0, 128);
+    SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, 128);
     Engine_GameFlagClear(0x30b);
     Engine_GameFlagClear(0x30c);
     Engine_GameFlagClear(0x30d);
@@ -437,9 +458,9 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromNorthEnd(void) {
 
 // Nudge the third platform north in the third puzzle room.
 static void Fuchin_ThirdRoom_NudgeThirdPlatformNorth(void) {
-  Engine_AudioPlayCue(241);
-  SceneActor_PlacePairAtOffset(10, 0, -16);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, -16);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagSet(0x30b);
   Engine_GameFlagClear(0x30c);
   Engine_GameFlagClear(0x30d);
@@ -450,22 +471,22 @@ static void Fuchin_ThirdRoom_NudgeThirdPlatformNorth(void) {
 
 // Move the third platform south from the upper stop in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromUpperStop(void) {
-  Engine_AudioPlayCue(0xf1);
+  Engine_AudioPlayCue(SE_241);
   if (Engine_GameFlagIsSet(0x311) != 0) {
-    SceneActor_PlacePairAtOffset(10, 0, 48);
+    SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, 48);
     Engine_GameFlagClear(0x30b);
 
     Engine_GameFlagClear(0x30c);
     Engine_GameFlagSet(0x30d);
     Engine_GameFlagClear(0x30e);
   } else if (Engine_GameFlagIsSet(0x310) != 0) {
-    SceneActor_PlacePairAtOffset(10, 0, 32);
+    SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, 32);
     Engine_GameFlagClear(0x30b);
     Engine_GameFlagSet(0x30c);
     Engine_GameFlagClear(0x30d);
     Engine_GameFlagClear(0x30e);
   } else {
-    SceneActor_PlacePairAtOffset(10, 0, 112);
+    SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, 112);
     Engine_GameFlagClear(0x30b);
     Engine_GameFlagClear(0x30c);
     Engine_GameFlagClear(0x30d);
@@ -476,9 +497,9 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromUpperStop(void) {
 
 // Move the third platform north from the middle in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveThirdPlatformNorthFromMiddle(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(10, 0, -64);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, -64);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagSet(0x30B);
   Engine_GameFlagClear(0x30D);
   Engine_TaskWait(2);
@@ -487,9 +508,9 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformNorthFromMiddle(void) {
 
 // Move the third platform south from the middle in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromMiddle(void) {
-  Engine_AudioPlayCue(241);
-  SceneActor_PlacePairAtOffset(10, 0, 64);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, 64);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagClear(0x30b);
   Engine_GameFlagClear(0x30c);
   Engine_GameFlagClear(0x30d);
@@ -500,9 +521,9 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromMiddle(void) {
 
 // Move the third platform north from the lower stop in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveThirdPlatformNorthFromLowerStop(void) {
-  Engine_AudioPlayCue(241);
-  SceneActor_PlacePairAtOffset(10, 0, -80);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, -80);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagSet(0x30b);
   Engine_GameFlagClear(0x30c);
   Engine_GameFlagClear(0x30d);
@@ -513,9 +534,9 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformNorthFromLowerStop(void) {
 
 // Move the third platform south from the lower stop in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromLowerStop(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(10, 0, 64);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, 64);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagClear(0x30B);
   Engine_GameFlagClear(0x30C);
   Engine_GameFlagClear(0x30D);
@@ -526,22 +547,22 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromLowerStop(void) {
 
 // Move the fourth platform north in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveFourthPlatformNorth(void) {
-  Engine_AudioPlayCue(0xf1);
+  Engine_AudioPlayCue(SE_241);
 
   if (Engine_GameFlagIsSet(0x308) != 0 || Engine_GameFlagIsSet(0x30d) != 0) {
-    SceneActor_PlacePairAtOffset(11, 0, -64);
+    SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, -64);
     Engine_GameFlagClear(0x30f);
     Engine_GameFlagClear(0x310);
     Engine_GameFlagSet(0x311);
     Engine_GameFlagClear(0x312);
   } else if (Engine_GameFlagIsSet(0x30c) != 0) {
-    SceneActor_PlacePairAtOffset(11, 0, -112);
+    SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, -112);
     Engine_GameFlagClear(0x30f);
     Engine_GameFlagSet(0x310);
     Engine_GameFlagClear(0x311);
     Engine_GameFlagClear(0x312);
   } else {
-    SceneActor_PlacePairAtOffset(11, 0, -128);
+    SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, -128);
     Engine_GameFlagSet(0x30f);
     Engine_GameFlagClear(0x310);
     Engine_GameFlagClear(0x311);
@@ -560,17 +581,17 @@ static void Fuchin_ClearFourthPlatformStops(void) {
 
 // Move the fourth platform south from the north end in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromNorthEnd(void) {
-  Engine_AudioPlayCue(241);
-  SceneActor_PlacePairAtOffset(11, 0, 128);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, 128);
   Fuchin_ClearFourthPlatformStops();
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
 // Nudge the fourth platform north in the third puzzle room.
 static void Fuchin_ThirdRoom_NudgeFourthPlatformNorth(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(11, 0, -16);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, -16);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagSet(0x30F);
   Engine_GameFlagClear(0x310);
   Engine_GameFlagClear(0x311);
@@ -581,9 +602,9 @@ static void Fuchin_ThirdRoom_NudgeFourthPlatformNorth(void) {
 
 // Move the fourth platform south from the upper stop in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromUpperStop(void) {
-  Engine_AudioPlayCue(241);
-  SceneActor_PlacePairAtOffset(11, 0, 112);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, 112);
+  Engine_AudioPlayCue(SE_289);
   Fuchin_ClearFourthPlatformStops();
   Engine_TaskWait(2);
   Fuchin_RebuildThirdRoomPlatforms();
@@ -591,9 +612,9 @@ static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromUpperStop(void) {
 
 // Move the fourth platform south from the middle in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromMiddle(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(11, 0, 64);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, 64);
+  Engine_AudioPlayCue(SE_289);
   Fuchin_ClearFourthPlatformStops();
   Engine_TaskWait(2);
   Fuchin_RebuildThirdRoomPlatforms();
@@ -601,9 +622,9 @@ static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromMiddle(void) {
 
 // Move the fourth platform south from the lower stop in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromLowerStop(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(11, 0, 80);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, 80);
+  Engine_AudioPlayCue(SE_289);
   Fuchin_ClearFourthPlatformStops();
   Engine_TaskWait(2);
   Fuchin_RebuildThirdRoomPlatforms();
@@ -611,9 +632,9 @@ static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromLowerStop(void) {
 
 // Move the fourth platform south from the last stop in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromLastStop(void) {
-  Engine_AudioPlayCue(241);
-  SceneActor_PlacePairAtOffset(11, 0, 48);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, 48);
+  Engine_AudioPlayCue(SE_289);
   Fuchin_ClearFourthPlatformStops();
   Engine_TaskWait(2);
   Fuchin_RebuildThirdRoomPlatforms();
@@ -621,9 +642,9 @@ static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromLastStop(void) {
 
 // Move the first platform south in the fourth puzzle room.
 static void Fuchin_FourthRoom_MoveFirstPlatformSouth(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(8, 0, 112);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, 0, 112);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagSet(0x313);
   Engine_TaskWait(2);
   Fuchin_RebuildFourthRoomPlatforms();
@@ -631,9 +652,9 @@ static void Fuchin_FourthRoom_MoveFirstPlatformSouth(void) {
 
 // Move the first platform north in the fourth puzzle room.
 static void Fuchin_FourthRoom_MoveFirstPlatformNorth(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(8, 0, -112);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, 0, -112);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagClear(0x313);
   Engine_TaskWait(2);
   Fuchin_RebuildFourthRoomPlatforms();
@@ -641,9 +662,9 @@ static void Fuchin_FourthRoom_MoveFirstPlatformNorth(void) {
 
 // Move the second platform west in the fourth puzzle room.
 static void Fuchin_FourthRoom_MoveSecondPlatformWest(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(9, -128, 0);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, -128, 0);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagSet(0x314);
   Engine_TaskWait(2);
   Fuchin_RebuildFourthRoomPlatforms();
@@ -651,9 +672,9 @@ static void Fuchin_FourthRoom_MoveSecondPlatformWest(void) {
 
 // Move the second platform east in the fourth puzzle room.
 static void Fuchin_FourthRoom_MoveSecondPlatformEast(void) {
-  Engine_AudioPlayCue(0xF1);
-  SceneActor_PlacePairAtOffset(9, 128, 0);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, 128, 0);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagClear(0x314);
   Engine_TaskWait(2);
   Fuchin_RebuildFourthRoomPlatforms();
@@ -661,9 +682,9 @@ static void Fuchin_FourthRoom_MoveSecondPlatformEast(void) {
 
 // Move the third platform east in the fourth puzzle room.
 static void Fuchin_FourthRoom_MoveThirdPlatformEast(void) {
-  Engine_AudioPlayCue(241);
-  SceneActor_PlacePairAtOffset(10, 160, 0);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 160, 0);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagSet(0x315);
   Engine_TaskWait(2);
   Fuchin_RebuildFourthRoomPlatforms();
@@ -671,9 +692,9 @@ static void Fuchin_FourthRoom_MoveThirdPlatformEast(void) {
 
 // Move the third platform west in the fourth puzzle room.
 static void Fuchin_FourthRoom_MoveThirdPlatformWest(void) {
-  Engine_AudioPlayCue(241);
-  SceneActor_PlacePairAtOffset(10, -160, 0);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_241);
+  SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, -160, 0);
+  Engine_AudioPlayCue(SE_289);
   Engine_GameFlagClear(0x315);
   Engine_TaskWait(2);
   Fuchin_RebuildFourthRoomPlatforms();
@@ -681,26 +702,26 @@ static void Fuchin_FourthRoom_MoveThirdPlatformWest(void) {
 
 // Advance the first platform through its two rolling animations.
 static void Fuchin_AnimateFirstPlatform(void) {
-  Engine_ActorSetAnimation(8, 1);
-  Engine_ActorSetAnimation(8, 2);
+  Engine_ActorSetAnimation(ACTOR_FIRST_PLATFORM, 1);
+  Engine_ActorSetAnimation(ACTOR_FIRST_PLATFORM, 2);
 }
 
 // Advance the second platform through its two rolling animations.
 static void Fuchin_AnimateSecondPlatform(void) {
-  Engine_ActorSetAnimation(9, 1);
-  Engine_ActorSetAnimation(9, 2);
+  Engine_ActorSetAnimation(ACTOR_SECOND_PLATFORM, 1);
+  Engine_ActorSetAnimation(ACTOR_SECOND_PLATFORM, 2);
 }
 
 // Advance the third platform through its two rolling animations.
 static void Fuchin_AnimateThirdPlatform(void) {
-  Engine_ActorSetAnimation(10, 1);
-  Engine_ActorSetAnimation(10, 2);
+  Engine_ActorSetAnimation(ACTOR_THIRD_PLATFORM, 1);
+  Engine_ActorSetAnimation(ACTOR_THIRD_PLATFORM, 2);
 }
 
 // Advance the fourth platform through its two rolling animations.
 static void Fuchin_AnimateFourthPlatform(void) {
-  Engine_ActorSetAnimation(11, 1);
-  Engine_ActorSetAnimation(11, 2);
+  Engine_ActorSetAnimation(ACTOR_FOURTH_PLATFORM, 1);
+  Engine_ActorSetAnimation(ACTOR_FOURTH_PLATFORM, 2);
 }
 
 // Create a stationary foreground actor with its palette and priority set.
@@ -720,31 +741,31 @@ static struct FieldActor *Fuchin_CreateForegroundActor(s32 x, s32 y, s32 z,
 }
 
 // Select interactions for the current room.
-const struct SceneEvent *Scene_GetEvents(void) {
+const struct SceneEvent *ImilFuchinFalls_GetEvents(void) {
   s16 sceneId = gGameState.scene;
 
   if (sceneId == (s32)&SceneId_ImilFuchinFalls1) {
-    return gImilFuchinFallsEvents1;
+    return gImilFuchinFalls_DjinniRoomEvents;
   }
   if (sceneId == (s32)&SceneId_ImilFuchinFalls2) {
-    return gImilFuchinFallsEvents2;
+    return gImilFuchinFalls_FirstRoomEvents;
   }
   if (sceneId == (s32)&SceneId_ImilFuchinFalls3) {
-    return gImilFuchinFallsEvents3;
+    return gImilFuchinFalls_SecondRoomEvents;
   }
   if (sceneId == (s32)&SceneId_ImilFuchinFalls4) {
-    return gImilFuchinFallsEvents4;
+    return gImilFuchinFalls_ThirdRoomEvents;
   }
   if (sceneId == (s32)&SceneId_ImilFuchinFalls5) {
-    return gImilFuchinFallsEvents5;
+    return gImilFuchinFalls_FourthRoomEvents;
   }
   if (sceneId == (s32)&SceneId_ImilFuchinFalls6) {
-    return gImilFuchinFallsEvents6;
+    return gImilFuchinFalls_KiRoomEvents;
   }
   if (sceneId == (s32)&SceneId_ImilFuchinFalls7) {
-    return gImilFuchinFallsEvents7;
+    return gImilFuchinFalls_DragonRoomEvents;
   }
-  return gImilFuchinFallsEventsOther;
+  return gImilFuchinFalls_NoEvents;
 }
 
 // Face the leader south and leave the Imil Djinn room.
@@ -754,7 +775,7 @@ static void Imil_LeaveDjinnRoom(void) {
   Engine_EventBegin();
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   leader->facing = FACING_SOUTH;
-  Engine_AudioPlayCue(123);
+  Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventRequestExit(1);
@@ -785,14 +806,14 @@ static void Fuchin_RebuildFirstRoomPlatforms(void) {
   }
 
   if (Engine_GameFlagIsSet(0x301) != 0) {
-    Fuchin_PlacePlatformAtCell(8, 22, 31);
+    Fuchin_PlacePlatformAtCell(ACTOR_FIRST_PLATFORM, 22, 31);
     {
       s32 column = 8;
       s32 row = 30;
       Map_CopyCellAttributes(9, 30, 1, 3, column, row);
     }
   } else {
-    Fuchin_PlacePlatformAtCell(8, 8, 31);
+    Fuchin_PlacePlatformAtCell(ACTOR_FIRST_PLATFORM, 8, 31);
     {
       s32 column = 22;
       s32 row = 30;
@@ -801,14 +822,14 @@ static void Fuchin_RebuildFirstRoomPlatforms(void) {
   }
 
   if (Engine_GameFlagIsSet(0x302) != 0) {
-    Fuchin_PlacePlatformAtCell(9, 12, 29);
+    Fuchin_PlacePlatformAtCell(ACTOR_SECOND_PLATFORM, 12, 29);
     {
       s32 column = 11;
       s32 row = 33;
       Map_CopyCellAttributes(14, 33, 3, 1, column, row);
     }
   } else {
-    Fuchin_PlacePlatformAtCell(9, 12, 33);
+    Fuchin_PlacePlatformAtCell(ACTOR_SECOND_PLATFORM, 12, 33);
     {
       s32 column = 11;
       s32 row = 29;
@@ -817,14 +838,14 @@ static void Fuchin_RebuildFirstRoomPlatforms(void) {
   }
 
   if (Engine_GameFlagIsSet(0x303) != 0) {
-    Fuchin_PlacePlatformAtCell(10, 18, 29);
+    Fuchin_PlacePlatformAtCell(ACTOR_THIRD_PLATFORM, 18, 29);
     {
       s32 column = 17;
       s32 row = 33;
       Map_CopyCellAttributes(14, 33, 3, 1, column, row);
     }
   } else {
-    Fuchin_PlacePlatformAtCell(10, 18, 33);
+    Fuchin_PlacePlatformAtCell(ACTOR_THIRD_PLATFORM, 18, 33);
     {
       s32 column = 17;
       s32 row = 29;
@@ -842,14 +863,14 @@ static void Fuchin_RebuildSecondRoomPlatforms(void) {
   }
 
   if (Engine_GameFlagIsSet(0x304) != 0) {
-    Fuchin_PlacePlatformAtCell(8, 21, 20);
+    Fuchin_PlacePlatformAtCell(ACTOR_FIRST_PLATFORM, 21, 20);
     {
       s32 column = 13;
       s32 row = 19;
       Map_CopyCellAttributes(20, 19, 1, 3, column, row);
     }
   } else {
-    Fuchin_PlacePlatformAtCell(8, 13, 20);
+    Fuchin_PlacePlatformAtCell(ACTOR_FIRST_PLATFORM, 13, 20);
     {
       s32 column = 21;
       s32 row = 19;
@@ -858,7 +879,7 @@ static void Fuchin_RebuildSecondRoomPlatforms(void) {
   }
 
   if (Engine_GameFlagIsSet(0x305) != 0) {
-    Fuchin_PlacePlatformAtCell(8, 12, 20);
+    Fuchin_PlacePlatformAtCell(ACTOR_FIRST_PLATFORM, 12, 20);
     {
       s32 column = 12;
       s32 row = 19;
@@ -870,7 +891,7 @@ static void Fuchin_RebuildSecondRoomPlatforms(void) {
       Map_CopyCellAttributes(20, 19, 1, 3, column, row);
     }
     if (Engine_GameFlagIsSet(0x304) != 0) {
-      Fuchin_PlacePlatformAtCell(8, 21, 20);
+      Fuchin_PlacePlatformAtCell(ACTOR_FIRST_PLATFORM, 21, 20);
       {
         s32 column = 13;
         s32 row = 19;
@@ -885,14 +906,14 @@ static void Fuchin_RebuildSecondRoomPlatforms(void) {
   }
 
   if (Engine_GameFlagIsSet(0x306) != 0) {
-    Fuchin_PlacePlatformAtCell(9, 15, 21);
+    Fuchin_PlacePlatformAtCell(ACTOR_SECOND_PLATFORM, 15, 21);
     {
       s32 column = 14;
       s32 row = 17;
       Map_CopyCellAttributes(14, 18, 3, 1, column, row);
     }
   } else {
-    Fuchin_PlacePlatformAtCell(9, 15, 17);
+    Fuchin_PlacePlatformAtCell(ACTOR_SECOND_PLATFORM, 15, 17);
     {
       s32 column = 14;
       s32 row = 21;
@@ -901,14 +922,14 @@ static void Fuchin_RebuildSecondRoomPlatforms(void) {
   }
 
   if (Engine_GameFlagIsSet(0x307) != 0) {
-    Fuchin_PlacePlatformAtCell(10, 19, 8);
+    Fuchin_PlacePlatformAtCell(ACTOR_THIRD_PLATFORM, 19, 8);
     {
       s32 column = 18;
       s32 row = 25;
       Map_CopyCellAttributes(14, 18, 3, 1, column, row);
     }
   } else {
-    Fuchin_PlacePlatformAtCell(10, 19, 25);
+    Fuchin_PlacePlatformAtCell(ACTOR_THIRD_PLATFORM, 19, 25);
     {
       s32 column = 18;
       s32 row = 8;
@@ -924,12 +945,12 @@ static void Fuchin_RebuildThirdRoomPlatforms(void) {
   }
 
   if (Engine_GameFlagIsSet(0x308) != 0) {
-    Fuchin_PlacePlatformAtCell(8, 14, 25);
+    Fuchin_PlacePlatformAtCell(ACTOR_FIRST_PLATFORM, 14, 25);
     {
       Map_CopyCellAttributes(16, 24, 1, 3, 20, 24);
     }
   } else if (Engine_GameFlagIsSet(0x309) != 0) {
-    Fuchin_PlacePlatformAtCell(8, 17, 25);
+    Fuchin_PlacePlatformAtCell(ACTOR_FIRST_PLATFORM, 17, 25);
     {
       s32 row = 24;
       Map_CopyCellAttributes(18, 24, 1, 3, 20, row);
@@ -937,33 +958,33 @@ static void Fuchin_RebuildThirdRoomPlatforms(void) {
       Map_CopyCellAttributes(8, 41, 1, 3, 17, row);
     }
   } else {
-    Fuchin_PlacePlatformAtCell(8, 20, 25);
+    Fuchin_PlacePlatformAtCell(ACTOR_FIRST_PLATFORM, 20, 25);
     {
       Map_CopyCellAttributes(16, 24, 1, 3, 14, 24);
     }
   }
 
   if (Engine_GameFlagIsSet(0x30a) != 0) {
-    Fuchin_PlacePlatformAtCell(9, 13, 35);
+    Fuchin_PlacePlatformAtCell(ACTOR_SECOND_PLATFORM, 13, 35);
     {
       Map_CopyCellAttributes(14, 34, 1, 3, 15, 34);
     }
   } else {
-    Fuchin_PlacePlatformAtCell(9, 15, 35);
+    Fuchin_PlacePlatformAtCell(ACTOR_SECOND_PLATFORM, 15, 35);
     {
       Map_CopyCellAttributes(14, 34, 1, 3, 13, 34);
     }
   }
 
   if (Engine_GameFlagIsSet(0x30b) != 0) {
-    Fuchin_PlacePlatformAtCell(10, 15, 22);
+    Fuchin_PlacePlatformAtCell(ACTOR_THIRD_PLATFORM, 15, 22);
     {
       s32 column = 14;
       Map_CopyCellAttributes(14, 29, 3, 1, column, 30);
       Map_CopyCellAttributes(5, 41, 3, 1, column, 22);
     }
   } else if (Engine_GameFlagIsSet(0x30c) != 0) {
-    Fuchin_PlacePlatformAtCell(10, 15, 23);
+    Fuchin_PlacePlatformAtCell(ACTOR_THIRD_PLATFORM, 15, 23);
     {
       s32 column = 14;
       Map_CopyCellAttributes(5, 42, 3, 1, column, 23);
@@ -971,7 +992,7 @@ static void Fuchin_RebuildThirdRoomPlatforms(void) {
       Map_CopyCellAttributes(10, 44, 3, 1, column, 21);
     }
   } else if (Engine_GameFlagIsSet(0x30d) != 0) {
-    Fuchin_PlacePlatformAtCell(10, 15, 26);
+    Fuchin_PlacePlatformAtCell(ACTOR_THIRD_PLATFORM, 15, 26);
     {
       s32 column = 14;
       Map_CopyCellAttributes(14, 29, 3, 1, column, 22);
@@ -979,7 +1000,7 @@ static void Fuchin_RebuildThirdRoomPlatforms(void) {
       Map_CopyCellAttributes(14, 29, 3, 1, column, 30);
     }
   } else if (Engine_GameFlagIsSet(0x30e) != 0) {
-    Fuchin_PlacePlatformAtCell(10, 15, 27);
+    Fuchin_PlacePlatformAtCell(ACTOR_THIRD_PLATFORM, 15, 27);
     {
       s32 column = 14;
       Map_CopyCellAttributes(14, 29, 3, 1, column, 22);
@@ -987,39 +1008,39 @@ static void Fuchin_RebuildThirdRoomPlatforms(void) {
       Map_CopyCellAttributes(5, 44, 3, 1, column, 27);
     }
   } else {
-    Fuchin_PlacePlatformAtCell(10, 15, 30);
+    Fuchin_PlacePlatformAtCell(ACTOR_THIRD_PLATFORM, 15, 30);
   }
 
   if (Engine_GameFlagIsSet(0x30f) != 0) {
-    Fuchin_PlacePlatformAtCell(11, 15, 23);
+    Fuchin_PlacePlatformAtCell(ACTOR_FOURTH_PLATFORM, 15, 23);
     {
       s32 column = 14;
       Map_CopyCellAttributes(14, 29, 3, 1, column, 31);
       Map_CopyCellAttributes(10, 40, 3, 1, column, 23);
     }
   } else if (Engine_GameFlagIsSet(0x310) != 0) {
-    Fuchin_PlacePlatformAtCell(11, 15, 24);
+    Fuchin_PlacePlatformAtCell(ACTOR_FOURTH_PLATFORM, 15, 24);
     {
       s32 column = 14;
       Map_CopyCellAttributes(14, 29, 3, 1, column, 31);
       Map_CopyCellAttributes(10, 41, 3, 1, column, 24);
     }
   } else if (Engine_GameFlagIsSet(0x311) != 0) {
-    Fuchin_PlacePlatformAtCell(11, 15, 27);
+    Fuchin_PlacePlatformAtCell(ACTOR_FOURTH_PLATFORM, 15, 27);
     {
       s32 column = 14;
       Map_CopyCellAttributes(14, 29, 3, 1, column, 31);
       Map_CopyCellAttributes(10, 42, 3, 1, column, 27);
     }
   } else if (Engine_GameFlagIsSet(0x312) != 0) {
-    Fuchin_PlacePlatformAtCell(11, 15, 28);
+    Fuchin_PlacePlatformAtCell(ACTOR_FOURTH_PLATFORM, 15, 28);
     {
       s32 column = 14;
       Map_CopyCellAttributes(14, 29, 3, 1, column, 31);
       Map_CopyCellAttributes(10, 43, 3, 1, column, 28);
     }
   } else {
-    Fuchin_PlacePlatformAtCell(11, 15, 31);
+    Fuchin_PlacePlatformAtCell(ACTOR_FOURTH_PLATFORM, 15, 31);
   }
 }
 
@@ -1040,14 +1061,14 @@ static void Fuchin_RebuildFourthRoomPlatforms(void) {
   }
 
   if (Engine_GameFlagIsSet(0x313) != 0) {
-    Fuchin_PlacePlatformAtCell(8, 20, 17);
+    Fuchin_PlacePlatformAtCell(ACTOR_FIRST_PLATFORM, 20, 17);
     {
       s32 column = 19;
       s32 row = 10;
       Map_CopyCellAttributes(19, 11, 3, 1, column, row);
     }
   } else {
-    Fuchin_PlacePlatformAtCell(8, 20, 10);
+    Fuchin_PlacePlatformAtCell(ACTOR_FIRST_PLATFORM, 20, 10);
     {
       s32 column = 19;
       s32 row = 17;
@@ -1056,14 +1077,14 @@ static void Fuchin_RebuildFourthRoomPlatforms(void) {
   }
 
   if (Engine_GameFlagIsSet(0x314) != 0) {
-    Fuchin_PlacePlatformAtCell(9, 14, 16);
+    Fuchin_PlacePlatformAtCell(ACTOR_SECOND_PLATFORM, 14, 16);
     {
       s32 column = 22;
       s32 row = 15;
       Map_CopyCellAttributes(16, 15, 1, 3, column, row);
     }
   } else {
-    Fuchin_PlacePlatformAtCell(9, 22, 16);
+    Fuchin_PlacePlatformAtCell(ACTOR_SECOND_PLATFORM, 22, 16);
     {
       s32 column = 14;
       s32 row = 15;
@@ -1072,14 +1093,14 @@ static void Fuchin_RebuildFourthRoomPlatforms(void) {
   }
 
   if (Engine_GameFlagIsSet(0x315) != 0) {
-    Fuchin_PlacePlatformAtCell(10, 17, 46);
+    Fuchin_PlacePlatformAtCell(ACTOR_THIRD_PLATFORM, 17, 46);
     {
       s32 column = 7;
       s32 row = 45;
       Map_CopyCellAttributes(15, 15, 1, 3, column, row);
     }
   } else {
-    Fuchin_PlacePlatformAtCell(10, 7, 46);
+    Fuchin_PlacePlatformAtCell(ACTOR_THIRD_PLATFORM, 7, 46);
     {
       s32 column = 17;
       s32 row = 45;
@@ -1106,15 +1127,16 @@ static void Fuchin_StopLightFollowingLeader(void) {
   }
 }
 
-// Play the Imil first entry or restore the saved Fuchin room state.
-s32 ImilFuchinFalls_ApplyEntryHook(void) {
+// Entering the Djinni's ice room the first time, the leader walks toward the
+// Djinni; otherwise each room restores its platforms, eye and lighting.
+s32 ImilFuchinFalls_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  if (Engine_GameFlagIsSet(0x109) == 0 &&
+  if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0 &&
       gGameState.scene == (s32)&SceneId_ImilFuchinFalls1) {
     Engine_GameFlagSet(0x144);
     Imil_WalkTowardDjinni();
   } else {
-    ImilFuchinFalls_ApplyEntrySetup();
+    ImilFuchinFalls_PrepareRoom();
   }
   return 0;
 }
@@ -1124,7 +1146,7 @@ static void Imil_WalkTowardDjinni(void) {
   struct FieldActor *actor;
 
   Engine_EventBegin();
-  actor = Object_GetById(8);
+  actor = Object_GetById(ACTOR_IMIL_DJINNI);
   Engine_ActorSetSpriteFlags(actor, 0);
   Engine_EventOpenScreen();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1) / 10);
@@ -1133,14 +1155,14 @@ static void Imil_WalkTowardDjinni(void) {
 }
 
 // Restore room props and the cave light for this entrance.
-static void ImilFuchinFalls_ApplyEntrySetup(void) {
+static void ImilFuchinFalls_PrepareRoom(void) {
   struct FieldActor *actor;
   /* FAKEMATCH: needed to match: the shared zero/address-word lifetime avoids
    * swapping registers and adding a heap-cell add. Literal zeros and the slot
    * read in place: differ 51. */
   s32 value;
 
-  ImilFuchinFalls_ApplyRoomLayout();
+  ImilFuchinFalls_RebuildPlatformRoom();
   if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls4) {
     if (!GameFlag_IsSet(0xf13) && gGameState.entrance == 1) {
       ImilFuchinFalls_PlaceDragonsEye();
@@ -1171,7 +1193,7 @@ static void ImilFuchinFalls_ApplyEntrySetup(void) {
       break;
     }
     if (gGameState.entrance <= 6) {
-      if (GameFlag_IsSet(0x820)) {
+      if (GameFlag_IsSet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET)) {
         Map_CopyCellsTo(30, 57, 19, 57, 1, 1);
         Map_CopyCellsTo(30, 8, 12, 8, 8, 7);
       } else {
@@ -1187,7 +1209,7 @@ static void ImilFuchinFalls_ApplyEntrySetup(void) {
 }
 
 // Restore the collision templates for the current platform room.
-static void ImilFuchinFalls_ApplyRoomLayout(void) {
+static void ImilFuchinFalls_RebuildPlatformRoom(void) {
   if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls2) {
     Map_CopyCellAttributes(8, 29, 15, 5, 8, 42);
     Fuchin_RebuildFirstRoomPlatforms();
@@ -1263,7 +1285,7 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
     Engine_ItemLoadIcon(ITEM_DRAGONS_EYE);
     Engine_VramLoad(sprite->slot, 128, glyph->tiles);
     Engine_HeapRelease(17);
-    gImilFuchinFallsDragonsEye = actor;
+    gImilFuchinFalls_DragonsEye = actor;
   }
 }
 
@@ -1271,15 +1293,15 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
 static void Fuchin_CollectDragonsEye(void) {
   Engine_EventBegin();
 
-  if (gImilFuchinFallsDragonsEye != NULL) {
-    Engine_RunRisingObjectSequence(gImilFuchinFallsDragonsEye, 3);
+  if (gImilFuchinFalls_DragonsEye != NULL) {
+    Engine_RunRisingObjectSequence(gImilFuchinFalls_DragonsEye, 3);
   }
 
   Engine_PartyGiveItem(ITEM_DRAGONS_EYE, 0);
   Engine_GameFlagSet(0xF13);
 
-  if (gImilFuchinFallsDragonsEye != NULL) {
-    Engine_ObjectDispatchRelease(gImilFuchinFallsDragonsEye);
+  if (gImilFuchinFalls_DragonsEye != NULL) {
+    Engine_ObjectDispatchRelease(gImilFuchinFalls_DragonsEye);
   }
 
   Engine_EventEnd();
@@ -1304,16 +1326,17 @@ static s32 Fuchin_SetDustPalette(struct ScriptInterpreter *interpreter) {
 }
 
 // Create scripted cave dust with the requested velocity, palette and scale.
-void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
-                  s32 velocityZ, u32 flags, const struct EffectOptions *extra) {
+void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
+                               s32 velocityY, s32 velocityZ, u32 flags,
+                               const struct EffectOptions *extra) {
   struct FieldEffect *effect;
   struct AnimationObject *sprite;
   const s32 *script;
   /* FAKEMATCH: needed to match: copying three scripts keeps the 12-byte frame
-   * and prevents an early scale-script load. Reading gEffectScripts in place:
-   * differ 107. */
+   * and prevents an early scale-script load. Reading
+   * gImilFuchinFalls_DustScripts in place: differ 107. */
   struct CaveEffectScripts scripts =
-      *(const struct CaveEffectScripts *)gEffectScripts;
+      *(const struct CaveEffectScripts *)gImilFuchinFalls_DustScripts;
 
   effect = (struct FieldEffect *)Engine_ObjectCreate(222, x, y, z);
   if (effect == 0)
@@ -1371,10 +1394,10 @@ static void ImilFuchinFalls_BlowCaveMouthDust(void) {
   options.targetScaleX = 9 * Q16_ONE / 5;
   options.targetScaleY = 9 * Q16_ONE / 5;
   if ((gFrameCount & 7) == 0)
-    Engine_AudioPlayCue(136);
+    Engine_AudioPlayCue(SE_136);
   velocityX = -PIXELS(1) - ((((u32)Engine_RandomNext() << 1) >> 16) << 16);
   velocityY = -((((u32)Engine_RandomNext() * 3) >> 16) * (PIXELS(1) / 5));
-  Effect_Spawn(
+  ImilFuchinFalls_SpawnDust(
       PIXELS(308), PIXELS(64), PIXELS(222), velocityX, velocityY, framePhase,
       1 | EFFECT_USE_PALETTE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
       (const struct EffectOptions *)&options);
@@ -1385,8 +1408,8 @@ static void Fuchin_LightDragonWithEye(void) {
   u32 pass;
 
   // Flash the room as the eye opens the dragon's path.
-  Engine_AudioPlayCue(19);
-  Engine_AudioPlayCue(182);
+  Engine_AudioPlayCue(MUS_019);
+  Engine_AudioPlayCue(SE_182);
   Engine_EventBegin();
   Battle_ResetEffectCounter();
 
@@ -1406,7 +1429,8 @@ static void Fuchin_LightDragonWithEye(void) {
   Engine_TaskWait(30);
 
   // Blow dust from the cave mouth while the room brightens.
-  FieldScheduler_AddCallback(ImilFuchinFalls_BlowCaveMouthDust, 0xc80);
+  FieldScheduler_AddCallback(ImilFuchinFalls_BlowCaveMouthDust,
+                             TASK_PRIORITY_SCENE);
   Engine_TaskWait(40);
   Engine_ColorBufferApplyTarget(0x201090, 1);
   Engine_ColorBufferInterpolate(40);
@@ -1420,7 +1444,7 @@ static void Fuchin_LightDragonWithEye(void) {
 
   Engine_TaskWait(80);
 
-  Engine_GameFlagSet(0x820);
+  Engine_GameFlagSet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET);
   PartyInventory_Discard(ITEM_DRAGONS_EYE);
   Audio_PlayCueFromEventWork();
 
@@ -1452,7 +1476,7 @@ static void Fuchin_ReadShadowInscription(void) {
 static void Fuchin_SearchDragonStatue(void) {
   Engine_EventBegin();
 
-  if (Engine_GameFlagIsSet(0x820) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET) != 0) {
     Engine_MessageShowCentered(MsgFuchinDragonRedEyes, 1);
   } else {
     Engine_MessageShowCentered(MsgFuchinEyelessDragon, 1);
@@ -1495,7 +1519,7 @@ static void Imil_TurnSkaterTowardHeldDirection(union FieldObject *object) {
     return;
   }
   actor->steeringFlags = 0;
-  direction = gImilFuchinFallsKeyHeadings[(gKeysHeld >> 4) & 15];
+  direction = gImilFuchinFalls_KeyHeadings[(gKeysHeld >> 4) & 15];
   if (direction == -1) {
     Object_SetMode(actor, 9);
     return;
@@ -1524,7 +1548,7 @@ static void Imil_SlideActorAcrossIce(void) {
   actor = Engine_ActorLookup(gGameState.selectedActor);
 
   for (;;) {
-    heading = gImilFuchinFallsHeadings[(gKeysHeld >> 4) & 15];
+    heading = gImilFuchinFalls_SlideHeadings[(gKeysHeld >> 4) & 15];
     if (((u32)heading << 16) == 0xffff0000) {
       return;
     }
@@ -1603,40 +1627,40 @@ tail:
   Engine_EventEnd();
 }
 
-s32 *gEffectScripts[] = {
-    gEffectScript0,
-    gEffectScript1,
-    gEffectScript2,
+s32 *gImilFuchinFalls_DustScripts[] = {
+    gImilFuchinFalls_DustScript0,
+    gImilFuchinFalls_DustScript1,
+    gImilFuchinFalls_DustScript2,
 };
 
 // clang-format off
-s16 gImilFuchinFallsKeyHeadings[] = {
+s16 gImilFuchinFalls_KeyHeadings[] = {
     0xffff, FACING_EAST, FACING_WEST, 0xffff, FACING_NORTH, FACING_NORTHEAST, FACING_NORTHWEST, FACING_NORTH,
     FACING_SOUTH, FACING_SOUTHEAST, FACING_SOUTHWEST, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
     0xffff, FACING_EAST, FACING_WEST, 0xffff, FACING_NORTH, 0xffff, 0xffff, FACING_NORTH,
     FACING_SOUTH, 0xffff, 0xffff, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
 };
 
-s16 gImilFuchinFallsHeadings[] = {
+s16 gImilFuchinFalls_SlideHeadings[] = {
     0xffff, FACING_EAST, FACING_WEST, 0xffff, FACING_NORTH, FACING_EAST, FACING_WEST, FACING_NORTH,
     FACING_SOUTH, FACING_EAST, FACING_WEST, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
     FACING_EAST, FACING_EAST,
 };
 
-struct FieldActor *gImilFuchinFallsDragonsEye = NULL;
+struct FieldActor *gImilFuchinFalls_DragonsEye = NULL;
 
-struct SceneEntrance gImilFuchinFallsEntrancesOther[] = {
+struct SceneEntrance gImilFuchinFalls_NoEntrances[] = {
     { 0, CONDITION_ALWAYS, 256, 0, 600, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gImilFuchinFallsEntrances1[] = {
+struct SceneEntrance gImilFuchinFalls_DjinniRoomEntrances[] = {
     { 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 1, CONDITION_ALWAYS, 264, 0, 289, FACING_NORTH, 0, 135, 62, 376, 328, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gImilFuchinFallsEntrances2[] = {
+struct SceneEntrance gImilFuchinFalls_FirstRoomEntrances[] = {
     { 0, CONDITION_ALWAYS, 248, 0, 600, FACING_SOUTH, 0, 64, 64, 416, 656, 0 },
     { 1, CONDITION_ALWAYS, 248, 0, 632, FACING_NORTH, 0, 64, 368, 416, 656, 0 },
     { 2, CONDITION_ALWAYS, 376, 0, 488, FACING_SOUTH, 0, 64, 368, 416, 656, 0 },
@@ -1649,13 +1673,13 @@ struct SceneEntrance gImilFuchinFallsEntrances2[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gImilFuchinFallsEntrances3[] = {
+struct SceneEntrance gImilFuchinFalls_SecondRoomEntrances[] = {
     { 1, CONDITION_ALWAYS, 248, 0, 120, FACING_SOUTH, 0, 96, 64, 416, 480, 0 },
     { 2, CONDITION_ALWAYS, 152, 0, 200, FACING_NORTH, 0, 96, 64, 416, 480, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gImilFuchinFallsEntrances4[] = {
+struct SceneEntrance gImilFuchinFalls_ThirdRoomEntrances[] = {
     { 1, CONDITION_ALWAYS, 248, 0, 104, FACING_SOUTH, 0, 128, 64, 368, 256, 0 },
     { 2, CONDITION_ALWAYS, 184, 0, 328, FACING_SOUTH, 0, 96, 256, 416, 656, 0 },
     { 3, CONDITION_ALWAYS, 152, 0, 432, FACING_SOUTH, 0, 96, 256, 416, 656, 0 },
@@ -1664,7 +1688,7 @@ struct SceneEntrance gImilFuchinFallsEntrances4[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gImilFuchinFallsEntrances5[] = {
+struct SceneEntrance gImilFuchinFalls_FourthRoomEntrances[] = {
     { 1, CONDITION_ALWAYS, 328, 0, 72, FACING_SOUTH, 0, 64, 16, 416, 416, 0 },
     { 2, CONDITION_ALWAYS, 248, 0, 392, FACING_NORTH, 0, 64, 16, 416, 416, 0 },
     { 3, CONDITION_ALWAYS, 248, 0, 472, FACING_SOUTH, 0, 64, 416, 416, 800, 0 },
@@ -1672,7 +1696,7 @@ struct SceneEntrance gImilFuchinFallsEntrances5[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gImilFuchinFallsEntrances6[] = {
+struct SceneEntrance gImilFuchinFalls_KiRoomEntrances[] = {
     { 1, CONDITION_ALWAYS, 264, 0, 232, FACING_NORTH, 0, 128, 16, 384, 256, 0 },
     { 2, CONDITION_ALWAYS, 248, 0, 472, FACING_SOUTH, 0, 64, 256, 416, 720, 0 },
     { 3, CONDITION_ALWAYS, 216, 0, 664, FACING_NORTH, 0, 64, 256, 416, 720, 0 },
@@ -1680,7 +1704,7 @@ struct SceneEntrance gImilFuchinFallsEntrances6[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gImilFuchinFallsEntrances7[] = {
+struct SceneEntrance gImilFuchinFalls_DragonRoomEntrances[] = {
     { 1, CONDITION_ALWAYS, 280, 0, 120, FACING_SOUTH, 0, 64, 0, 416, 344, 0 },
     { 2, CONDITION_ALWAYS, 216, 0, 120, FACING_SOUTH, 0, 64, 0, 416, 344, 0 },
     { 3, CONDITION_ALWAYS, 104, 0, 280, FACING_SOUTH, 0, 64, 0, 416, 344, 0 },
@@ -1696,7 +1720,7 @@ struct SceneEntrance gImilFuchinFallsEntrances7[] = {
     { SCENE_TABLE_END },
 };
 
-u32 gImilFuchinFallsExits[] = {
+u32 gImilFuchinFalls_Exits[] = {
     SCENE_EXITS(52),
     SCENE_EXIT(1, 50, 9),
     SCENE_EXIT(0, 62, 0),
@@ -1743,17 +1767,17 @@ u32 gImilFuchinFallsExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ScenePlacement gImilFuchinFallsPlacementsOther[] = {
+struct ScenePlacement gImilFuchinFalls_NoPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gImilFuchinFallsPlacements1[] = {
+struct ScenePlacement gImilFuchinFalls_DjinniRoomPlacements[] = {
     { 0x5c, 0x59, ACTOR_STAND,
         PIXELS(263), 0, PIXELS(204), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gImilFuchinFallsPlacements2[] = {
+struct ScenePlacement gImilFuchinFalls_FirstRoomPlacements[] = {
     { 0xed, CONDITION_ALWAYS, 7,
         PIXELS(136), 0, PIXELS(504), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xec, CONDITION_ALWAYS, 7,
@@ -1763,7 +1787,7 @@ struct ScenePlacement gImilFuchinFallsPlacements2[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gImilFuchinFallsPlacements3[] = {
+struct ScenePlacement gImilFuchinFalls_SecondRoomPlacements[] = {
     { 0xed, CONDITION_ALWAYS, 7,
         PIXELS(216), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xec, CONDITION_ALWAYS, 7,
@@ -1775,7 +1799,7 @@ struct ScenePlacement gImilFuchinFallsPlacements3[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gImilFuchinFallsPlacements4[] = {
+struct ScenePlacement gImilFuchinFalls_ThirdRoomPlacements[] = {
     { 0xed, CONDITION_ALWAYS, 7,
         PIXELS(328), 0, PIXELS(408), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xed, CONDITION_ALWAYS, 7,
@@ -1787,7 +1811,7 @@ struct ScenePlacement gImilFuchinFallsPlacements4[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gImilFuchinFallsPlacements5[] = {
+struct ScenePlacement gImilFuchinFalls_FourthRoomPlacements[] = {
     { 0xec, CONDITION_ALWAYS, 7,
         PIXELS(328), 0, PIXELS(168), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { 0xed, CONDITION_ALWAYS, 7,
@@ -1797,24 +1821,24 @@ struct ScenePlacement gImilFuchinFallsPlacements5[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gImilFuchinFallsPlacements7[] = {
+struct ScenePlacement gImilFuchinFalls_DragonRoomPlacements[] = {
     { 0xdf, CONDITION_ALWAYS, 7,
         PIXELS(312), 0, PIXELS(128), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SCENE_TABLE_END },
 };
 
-struct SceneEvent gImilFuchinFallsEventsOther[] = {
+struct SceneEvent gImilFuchinFalls_NoEvents[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gImilFuchinFallsEvents1[] = {
+struct SceneEvent gImilFuchinFalls_DjinniRoomEvents[] = {
     { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_LeaveDjinnRoom) },
     { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_MoveAcrossIce) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_JoinDjinni) },
+    { EVENT_TALK, ACTOR_IMIL_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RecruitDjinni) },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gImilFuchinFallsEvents2[] = {
+struct SceneEvent gImilFuchinFalls_FirstRoomEvents[] = {
     { TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_FirstRoom_MoveFirstPlatformEast) },
     { TOUCH_WALKING_INTO(FACING_WEST), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_FirstRoom_MoveFirstPlatformWest) },
     { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_AnimateFirstPlatform) },
@@ -1840,7 +1864,7 @@ struct SceneEvent gImilFuchinFallsEvents2[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gImilFuchinFallsEvents3[] = {
+struct SceneEvent gImilFuchinFalls_SecondRoomEvents[] = {
     { TOUCH_WALKING_INTO(FACING_EAST), 11, 0x306, EVENT_SCRIPT(Fuchin_SecondRoom_MoveFirstPlatformToEastEnd) },
     { TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_SecondRoom_NudgeFirstPlatformWest) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT_SCRIPT(ImilFuchinFalls_HopOnTrigger) },
@@ -1861,11 +1885,11 @@ struct SceneEvent gImilFuchinFallsEvents3[] = {
     { EVENT_TOUCH, 16, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_AnimateThirdPlatform) },
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_StartDjinnBattle) },
+    { EVENT_TALK, ACTOR_FUCHIN_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_StartDjinnBattle) },
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gImilFuchinFallsEvents4[] = {
+struct SceneEvent gImilFuchinFalls_ThirdRoomEvents[] = {
     { TOUCH_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_ThirdRoom_MoveFirstPlatformWest) },
     { TOUCH_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_ThirdRoom_MoveFirstPlatformEastFromMiddle) },
     { TOUCH_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_ThirdRoom_MoveFirstPlatformWestIfClear) },
@@ -1916,7 +1940,7 @@ struct SceneEvent gImilFuchinFallsEvents4[] = {
 };
 // clang-format on
 
-struct SceneEvent gImilFuchinFallsEvents5[] = {
+struct SceneEvent gImilFuchinFalls_FourthRoomEvents[] = {
     {TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS,
      EVENT_SCRIPT(Fuchin_FourthRoom_MoveFirstPlatformSouth)},
     {TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS,
@@ -1949,7 +1973,7 @@ struct SceneEvent gImilFuchinFallsEvents5[] = {
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gImilFuchinFallsEvents6[] = {
+struct SceneEvent gImilFuchinFalls_KiRoomEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -1960,7 +1984,7 @@ struct SceneEvent gImilFuchinFallsEvents6[] = {
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gImilFuchinFallsEvents7[] = {
+struct SceneEvent gImilFuchinFalls_DragonRoomEvents[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {0x31, 3, CONDITION_ALWAYS, 3},
@@ -1979,27 +2003,28 @@ struct SceneEvent gImilFuchinFallsEvents7[] = {
      EVENT_SCRIPT(Fuchin_StopLightFollowingLeader)},
     {SEARCH(SEARCH_UNNAMED), 19, CONDITION_ALWAYS,
      EVENT_SCRIPT(Fuchin_ReadShadowInscription)},
-    {0xe604, 20, 0x820, EVENT_SCRIPT(Fuchin_LightDragonWithEye)},
+    {0xe604, 20, FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET,
+     EVENT_SCRIPT(Fuchin_LightDragonWithEye)},
     {SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS,
      EVENT_SCRIPT(Fuchin_SearchDragonStatue)},
-    {PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, 0x820,
+    {PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET,
      EVENT_SCRIPT(Fuchin_EndRevealLighting)},
     {SCENE_EVENTS_END},
 };
 
-s32 gEffectScript0[] = {
+s32 gImilFuchinFalls_DustScript0[] = {
     SC_WAIT(1), SC_LOOP(22, SC_TOP), SC_CALL(Fuchin_SetDustPalette),
     SC_WAIT(1), SC_POS(0, 0, 0),     SC_WAIT(1),
     SC_FREE,
 };
 
-s32 gEffectScript1[] = {
+s32 gImilFuchinFalls_DustScript1[] = {
     SC_WAIT(1), SC_LOOP(44, SC_TOP), SC_CALL(Fuchin_SetDustPalette),
     SC_WAIT(1), SC_POS(0, 0, 0),     SC_WAIT(1),
     SC_FREE,
 };
 
-s32 gEffectScript2[] = {
+s32 gImilFuchinFalls_DustScript2[] = {
     SC_WAIT(1), SC_LOOP(126, SC_TOP), SC_CALL(Fuchin_SetDustPalette),
     SC_WAIT(1), SC_POS(0, 0, 0),      SC_WAIT(1),
     SC_FREE,

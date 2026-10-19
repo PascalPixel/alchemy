@@ -281,7 +281,7 @@ s32 Summon_IsEntrySecondaryFlagged(s32 index);
 s32 BattleClass_GetEffectHeight(s32 index);
 
 u32 BattleSpoils_RankItem(u32 inventoryEntry);
-void Summon_ClearWorkFields(void);
+void BattleSpoils_Clear(void);
 s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus);
 void Battle_AwardSpoils(void);
 void Battle_ReservedNoOp2A08(void);

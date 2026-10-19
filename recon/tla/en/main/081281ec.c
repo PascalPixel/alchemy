@@ -1,4 +1,4 @@
-// Draft of Func_081281ec, The Broken Seal's Summon_ClearWorkFields
+// Draft of Func_081281ec, The Broken Seal's BattleSpoils_Clear
 // (games/tbs/src/battle/battle.c): differ 2 of 27 (tla-en, 2026-10-15).
 // The battle's spoils sit at 0x550 of The Lost Age's battle work, and the
 // pending item is the party state's halfword at 0x25c.

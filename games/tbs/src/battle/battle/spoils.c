@@ -26,7 +26,7 @@ u32 BattleSpoils_RankItem(u32 inventoryEntry) {
 
 // Clears pending items and the battle's coin, experience, defeat and item
 // spoils.
-void Summon_ClearWorkFields(void) {
+void BattleSpoils_Clear(void) {
   struct BattleWork *battle = gBattleWork;
   struct BattleSpoils *spoils = &battle->spoils;
   u16 *items;

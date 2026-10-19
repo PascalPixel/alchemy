@@ -163,7 +163,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   BattlePres_SetupTransitionScene(0, 0, 0, 190);
   Party_ReservedNoOp5B14(1);
   REG_BLDCNT = 0;
-  Summon_ClearWorkFields();
+  BattleSpoils_Clear();
   battle->promptSlot = VramCache_AllocEntry(128);
 
   // A random encounter may open with a first strike (1 in 16) or a

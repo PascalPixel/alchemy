@@ -21,7 +21,6 @@ SECTIONS
         "*/resource_661_overlay.o"(.text.x020086ac)
         "*/resource_661_overlay.o"(.text.x020087e0)
         "*/games/tla/src/scene/yampi_desert/s0918.o"(.text)
-        "*/resource_661_overlay.o"(.text.x0200895c)
         "*/games/tla/src/scene/yampi_desert/s0994.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s0a10.o"(.text)
         "*/games/tla/src/scene/yampi_desert/s0a8c.o"(.text)

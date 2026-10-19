@@ -6,7 +6,7 @@
 
 struct SceneEvent;
 struct ScenePlacement;
-struct ActorWheel;
+struct LightWheel;
 
 struct SceneEntrance *AltmillerCave_GetEntrances(void);
 struct SceneRegion *AltmillerCave_GetRegions(void);
@@ -17,23 +17,23 @@ s32 AltmillerCave_Initialize(void);
 extern s32 gStagedActor_DirectionSteps[];
 extern u32 gStagedActor_FootprintKinds[];
 extern s32 gStagedActor_FootprintBounds[];
-extern struct ActorWheel *gAltmillerCaveWheel;
+extern struct LightWheel *gAltmillerCave_LightWheel;
 extern struct SceneEntrance gAltmillerCave_Entrances[];
 extern u32 gAltmillerCave_Exits[];
-extern struct ScenePlacement gAltmillerCavePlacementsOther[];
-extern struct ScenePlacement gAltmillerCavePlacements2[];
-extern struct ScenePlacement gAltmillerCavePlacements4[];
-extern struct ScenePlacement gAltmillerCavePlacements6[];
+extern struct ScenePlacement gAltmillerCave_PlacementsOther[];
+extern struct ScenePlacement gAltmillerCave_Placements2[];
+extern struct ScenePlacement gAltmillerCave_Placements4[];
+extern struct ScenePlacement gAltmillerCave_Placements6[];
 extern u32 gAltmillerCave_PulseScales[];
-extern s32 gAltmillerActionA[];
-extern s32 gAltmillerActionB[];
-extern s32 gAltmillerActionC[];
-extern s32 gAltmillerActionD[];
-extern struct SceneEvent gAltmillerCaveEventsOther[];
-extern struct SceneEvent gAltmillerCaveEvents2[];
-extern struct SceneEvent gAltmillerCaveEvents3[];
-extern struct SceneEvent gAltmillerCaveEvents4[];
-extern struct SceneEvent gAltmillerCaveEvents5[];
-extern struct SceneEvent gAltmillerCaveEvents6[];
+extern s32 gAltmillerCave_GuardsArrivePath[];
+extern s32 gAltmillerCave_SecondGuardLeavePath[];
+extern s32 gAltmillerCave_FirstGuardLeavePath[];
+extern s32 gAltmillerCave_BabiLeavePath[];
+extern struct SceneEvent gAltmillerCave_EventsOther[];
+extern struct SceneEvent gAltmillerCave_Events2[];
+extern struct SceneEvent gAltmillerCave_Events3[];
+extern struct SceneEvent gAltmillerCave_Events4[];
+extern struct SceneEvent gAltmillerCave_Events5[];
+extern struct SceneEvent gAltmillerCave_Events6[];
 
 #endif

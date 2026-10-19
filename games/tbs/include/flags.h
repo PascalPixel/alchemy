@@ -113,6 +113,16 @@
 #define FLAG_ALTIN_PEAK_PSY_CRYSTAL 0xf07   // room 7's chest
 #define FLAG_ALTIN_PEAK_LIFTING_GEM 0xf08   // room 10's chest
 
+// Altmiller Cave
+#define FLAG_MET_INVISIBLE_BABI 0x960 // Babi has asked for his draught
+// Babi has called the party back once as it made to leave without him.
+#define FLAG_BABI_CALLED_PARTY_BACK 0x961
+// The party has brought Babi his Mystic Draught and found him in the cave.
+#define FLAG_BABI_RESCUED 0x962
+#define FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT 0xf30 // behind the rocks' wall
+#define FLAG_ALTMILLER_CAVE_VIAL 0xf9c           // room 3's chest
+#define FLAG_ALTMILLER_CAVE_COOKIE 0xf9d         // room 5's chest
+
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
 #define FLAG_SCENE_TEMP_00 0x200

@@ -212,7 +212,7 @@ void FieldEvent_RunTypeHandler(void) {
 
 // Runs the event tied to an effect: a result below 0x10000 is a message,
 // shown at target; a larger one is a routine, called with param and target
-// (through r3). Afterwards, with flag 322 set, says "But nothing happens.".
+// (through r3). Afterwards, with flag 0x142 set, says "But nothing happens.".
 // Returns 0.
 s32 Field_RunEventAction(void *event, s32 param, s32 target) {
   s32 script;
@@ -229,7 +229,7 @@ s32 Field_RunEventAction(void *event, s32 param, s32 target) {
         _call_via_r3(param, target);
       }
     }
-    if (GameFlag_TestFar(322) != 0) {
+    if (GameFlag_TestFar(0x142) != 0) {
       FieldEvent_Begin();
       UiText_ShowPositionedMessageAndWaitFar(MsgNothingHappens, 1);
       FieldEvent_End();

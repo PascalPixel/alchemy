@@ -260,7 +260,7 @@ void BattleFx_UpdateAllSlots(void) { FieldFx_UpdateSceneSlots(); }
 void BattleFx_InitializeSlots(void) {
   void *work;
 
-  work = Runtime_AllocateHeapBlock(56, sizeof(struct BattleFxScene));
+  work = Runtime_AllocateHeapBlock(HEAP_SLOT_FX, sizeof(struct BattleFxScene));
   Dma_Fill32(0, work, sizeof(struct BattleFxScene));
   Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllSlots, 3200);
 }
@@ -278,7 +278,7 @@ void BattleFx_ClearActiveSlotsAndScheduleUpdates(void) {
     if (slot->active != 0)
       BattleFx_ClearOwnedSlot(slot);
   }
-  Runtime_ReleaseHeapBlock(56);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_FX);
   WaitFrames(1);
 }
 

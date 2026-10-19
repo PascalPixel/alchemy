@@ -3,7 +3,7 @@
 
 #include "../psynergy_effects_internal.h"
 
-#define FLAG_NOT_ON_MAP 284 // the current place is not on the world map
+#define FLAG_NOT_ON_MAP 0x11c // the current place is not on the world map
 #define WORLD_MAP_MARKER_TILE_BYTES 0x80
 
 // BUG: the original reserves 32 bytes but writes and uploads 128. The bump
@@ -71,7 +71,7 @@ void BattleFx_SetupResourcesAndWindow(void) {
     *oam++ = tileAttributes;
   }
   MemFree(markerTiles);
-  if (GameFlag_TestFar(284)) {
+  if (GameFlag_TestFar(FLAG_NOT_ON_MAP)) {
     work->x.fixed = 240 << 15;
     work->z.fixed = 160 << 15;
   } else {

@@ -377,7 +377,8 @@ void ReelGame_RunFrame(void) {
   dma = REG_DMA0;
   dma[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
   dma[5] &= ~DMA_ENABLE;
-  dma[5];
+  (void)dma[5];
+  // One halfword at each HBlank (repeating, destination reloaded).
   Dma_Set(work->scanlineOffsets, (void *)&REG_BLDY, 0xa2600001,
           (volatile u32 *)dma);
 

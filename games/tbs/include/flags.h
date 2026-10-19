@@ -80,6 +80,35 @@
 #define FLAG_TOLBI_INTERIORS_MEDAL_TAKEN 0x8bd  // the party took it
 #define FLAG_TOLBI_INTERIORS_MEDAL_MISSED 0x8be // she has greeted them since
 
+// Tolbi ship: the crossing of the Karagol Sea from Kalay to Tolbi
+#define FLAG_TOLBI_SHIP_AT_ISLAND 0x8a0 // at anchor off the island
+// The ship's place plays music 29, the monsters' theme, instead of 41.
+#define FLAG_TOLBI_SHIP_MONSTERS_SIGHTED 0x8f0
+#define FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED 0x903 // the party will scout it
+// The crew have wondered what became of the replacement ship.
+#define FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY 0x920
+// "But the captain decided to set sail just a second ago."
+#define FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL 0x921
+// The party gave back the captain's Anchor Charm and agreed to protect the
+// ship.
+#define FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED 0x925
+// "Our replacement never arrived, but we're shoving off just the same."
+#define FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT 0x926
+#define FLAG_TOLBI_SHIP_ROWING 0x927 // the oars are moving
+// The monster attacks fought off. After the first an oarsman is hurt, and
+// from then on passengers the party chooses take the empty seats.
+#define FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED 0x928
+#define FLAG_TOLBI_SHIP_SECOND_ATTACK_REPELLED 0x929
+#define FLAG_TOLBI_SHIP_THIRD_ATTACK_REPELLED 0x92a
+#define FLAG_TOLBI_SHIP_KRAKEN_DEFEATED 0x92b
+// The passengers chosen to row: a group of nine flags for each empty seat,
+// one flag for each passenger, in the order of their actors from 8.
+#define FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS 0x92c
+#define FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS 0x935
+#define FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS 0x917
+#define FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS 0x990
+#define FLAG_TOLBI_SHIP_REACHED_TOLBI 0x93e // "The ship has arrived safely"
+
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
 #define FLAG_SCENE_TEMP_00 0x200

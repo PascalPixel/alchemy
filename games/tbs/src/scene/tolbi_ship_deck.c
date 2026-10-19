@@ -545,15 +545,15 @@ u8 *TolbiShipDeck_GetExits(void) { return gTolbiShipDeckExits; }
 u8 *TolbiShipDeck_GetPlacements(void) {
   s32 underSail;
 
-  if (Engine_GameFlagIsSet(0x93e))
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI))
     return gTolbiShipDeckPlacementsFlag93e;
-  if (Engine_GameFlagIsSet(0x927))
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWING))
     return gTolbiShipDeckPlacementsFlag927;
-  underSail = Engine_GameFlagIsSet(0x928);
+  underSail = Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED);
   if (underSail != 0)
     return gTolbiShipDeckPlacementsFlag928;
   if (Engine_GameFlagIsSet(0x911)) {
-    if (Engine_GameFlagIsSet(0x925)) {
+    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED)) {
       STORE_CONST(gTolbiShipDeckPlacementsFlag911[13].talkFacing) = underSail;
       STORE_CONST(gTolbiShipDeckPlacementsFlag911[17].talkFacing) = 2;
       STORE_CONST(gTolbiShipDeckPlacementsFlag911[18].talkFacing) = 2;
@@ -567,18 +567,18 @@ u8 *TolbiShipDeck_GetPlacements(void) {
 }
 
 u8 *TolbiShipDeck_GetEvents(void) {
-  if (Engine_GameFlagIsSet(0x93e))
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI))
     return gTolbiShipDeckEventsFlag93e;
-  if (Engine_GameFlagIsSet(0x8A0))
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND))
     return gTolbiShipDeckEventsFlag8a0;
-  if (Engine_GameFlagIsSet(0x928))
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED))
     return gTolbiShipDeckEventsFlag928;
   return gTolbiShipDeckEvents;
 }
 
 // A passenger at Kalay. What he says follows the delay: impatient at first,
 // alarmed once the warriors storm off to the captain, relieved
-// once the party has agreed to protect the ship (flag 0x925). While alarmed he
+// once the party has agreed to protect the ship. While alarmed he
 // paces at random intervals.
 static void TolbiShipDeck_TalkToActor21(void) {
   struct FieldActor *passenger;
@@ -586,7 +586,7 @@ static void TolbiShipDeck_TalkToActor21(void) {
   s32 wait;
 
   Engine_EventBegin();
-  if (GameFlag_IsSet(0x925) != 0) {
+  if (GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
     Engine_EventSetMessage(MsgTolbiShipNowWeHaveProtectShip);
     Event_ShowMessage(21, 0);
   } else {
@@ -616,7 +616,7 @@ static void TolbiShipDeck_TalkToActor24(void) {
   s32 wait;
 
   Engine_EventBegin();
-  if (GameFlag_IsSet(0x925) != 0) {
+  if (GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
     Engine_EventSetMessage(MsgTolbiShipHaveMakeThemPromiseHelp);
     Event_ShowMessage(24, 0);
   } else {
@@ -712,7 +712,7 @@ static void TolbiShipDeck_GoBelowWhileFacingWest(void) {
 
 // At Kalay, once the party has heard of the delay (flag 0x911): the crew wonder
 // what happened to the replacement ship and decide to set sail anyway; actor 20
-// runs off through the second door. Plays once (flag 0x920).
+// runs off through the second door. Plays once.
 static void TolbiShipDeck_WatchCrewDecideToSail(void) {
   struct FieldActor *record;
 
@@ -821,7 +821,7 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
     record->scaleX = 0x10000;
     record = Object_GetById(20);
     record->scaleY = 0x10000;
-    GameFlag_Set(0x920);
+    GameFlag_Set(FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY);
     Engine_EventEnd();
   }
 }
@@ -971,31 +971,31 @@ static void TolbiShipDeck_ApplyEntryState(void) {
   s32 flag;
 
   Engine_GameFlagSet(0x144);
-  if (Engine_GameFlagIsSet(0x109) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
     Engine_GameFlagClear(0x271);
     Engine_GameFlagClear(0x272);
   }
-  if (Engine_GameFlagIsSet(0x93e) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
     TolbiShipDeck_CopyUnderwayCells();
     TolbiShipDeck_CopyAnchoredCells();
     Engine_ActorSetChildValue(24, 2);
-  } else if (Engine_GameFlagIsSet(0x8a0) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
     TolbiShipDeck_CopyUnderwayCells();
     TolbiShipDeck_CopyAnchoredCells();
-  } else if ((flag = Engine_GameFlagIsSet(0x927)) != 0) {
+  } else if ((flag = Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWING)) != 0) {
     TolbiShipDeck_CopyUnderwayCells();
     TolbiShipDeck_SetUpOars();
     Task_AddCallback(TolbiShipDeck_RowOars, 0xc80);
     sSeaScroll[1] = 0x200000;
     sSeaSpeed[1] = 0x13333;
     FieldScheduler_AddCallback(TolbiShipDeck_RockDeck, 0xc80);
-  } else if (Engine_GameFlagIsSet(0x928) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) {
     TolbiShipDeck_CopyUnderwayCells();
     sSeaScroll[1] = flag;
     sSeaSpeed[1] = flag;
     FieldScheduler_AddCallback(TolbiShipDeck_RockDeck, 0xc80);
   }
-  if (Engine_GameFlagIsSet(0x927) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWING) == 0) {
     TolbiShipDeck_RestOars();
   }
   switch (gGameState.entrance) {
@@ -1003,7 +1003,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
     Object_GetById(0)->sprite->image.priority = 1;
     break;
   case 10:
-    if (Engine_GameFlagIsSet(0x928) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) {
       TolbiShipDeck_DepartWithParty();
     } else {
       TolbiShipDeck_DepartFromKalay();
@@ -1025,7 +1025,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
     TolbiShipDeck_JumpIntoKrakenBattle();
     return;
   case 16:
-    if (Engine_GameFlagIsSet(0x109) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
       TolbiShipDeck_SetUpAfterKraken();
     } else {
       TolbiShipDeck_ThankForKraken();
@@ -1035,7 +1035,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
     TolbiShipDeck_SightLand();
     return;
   case 18:
-    if (Engine_GameFlagIsSet(0x109) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       TolbiShipDeck_RowersDisembark();
     }
     return;
@@ -1043,15 +1043,15 @@ static void TolbiShipDeck_ApplyEntryState(void) {
     TolbiShipDeck_ArriveAtTolbi();
     return;
   }
-  if (Engine_GameFlagIsSet(0x93e) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
     *(s32 *)(((u8 *)gMapWork[0]) + 236) = 0x410000;
-  } else if (Engine_GameFlagIsSet(0x8a0) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
     TolbiShipDeck_SetUpAtAnchor();
-  } else if (Engine_GameFlagIsSet(0x92b) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
     TolbiShipDeck_SetUpAfterKraken();
-  } else if (Engine_GameFlagIsSet(0x928) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) {
     TolbiShipDeck_SetUpUnderSail();
-  } else if (Engine_GameFlagIsSet(0x925) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
     TolbiShipDeck_PlacePassengersAgreedToRow();
   } else if (Engine_GameFlagIsSet(0x911) != 0) {
     TolbiShipDeck_PlaceWaitingPassengers();
@@ -1069,7 +1069,7 @@ static void TolbiShipDeck_PlaceWaitingPassengers(void) {
   Engine_ActorSetSpritePriority(22, 1);
   Engine_ActorSetSpritePriority(26, 1);
   Engine_ActorSetSpritePriority(24, 1);
-  if (Engine_GameFlagIsSet(0x920) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY) != 0) {
     Engine_ActorSetPosition(22, PIXELS(162), PIXELS(666));
     Object_GetById(22)->facing = FACING_WEST;
     Engine_ActorSetPosition(23, 0, 0);
@@ -1116,7 +1116,7 @@ static void TolbiShipDeck_PlacePassengersAgreedToRow(void) {
 }
 
 // Under sail: the crew take their places, the two lookouts start their rounds
-// and, when the party keeps its position (flag 0x109), the leader stands on
+// and, when the party keeps its position, the leader stands on
 // deck.
 static void TolbiShipDeck_SetUpUnderSail(void) {
   struct FieldActor *record;
@@ -1147,7 +1147,7 @@ static void TolbiShipDeck_SetUpUnderSail(void) {
   }
   Actor_SetSpeed(21, 0xcccc, 0x6666);
   Actor_SetActionScript(21, gTolbiShipDeck_LeadActionsB);
-  if (GameFlag_IsSet(0x109) != 0) {
+  if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
     TolbiShipDeck_PlaceLeaderOnDeck();
   }
   Engine_EventEnd();
@@ -1172,15 +1172,15 @@ static void TolbiShipDeck_SetUpAfterKraken(void) {
   }
   Actor_SetSpeed(21, 0xcccc, 0x6666);
   Actor_SetActionScript(21, gTolbiShipDeck_LeadActionsB);
-  if (GameFlag_IsSet(0x109) != 0) {
+  if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
     TolbiShipDeck_PlaceLeaderOnDeck();
   }
   Engine_EventEnd();
 }
 
-// At anchor off the island: the crew stand where they were left (flag 0x903
-// says whether the party offered to scout), and entering by entrance 6 means
-// the party is back from the island.
+// At anchor off the island: the crew stand where they were left, by whether
+// the party has agreed to scout the island, and entering by entrance 6 means
+// the party is back from it.
 static void TolbiShipDeck_SetUpAtAnchor(void) {
   struct FieldActor *record;
   s32 facing;
@@ -1194,7 +1194,7 @@ static void TolbiShipDeck_SetUpAtAnchor(void) {
   facing = 192; // 192 << 6 is 0x3000, south-southeast
   record = Object_GetById(23);
   record->facing = (facing << 6);
-  if (Engine_GameFlagIsSet(0x903) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED) != 0) {
     Actor_SetPosition(22, PIXELS(162), PIXELS(634));
     record = Object_GetById(22);
     record->facing = (facing << 6);
@@ -1695,8 +1695,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Engine_EventEnd();
 }
 
-// Entrance 16: "Thank you, Isaac. You did good against that Kraken." Sets flag
-// 0x92b.
+// Entrance 16: "Thank you, Isaac. You did good against that Kraken."
 static void TolbiShipDeck_ThankForKraken(void) {
   struct FieldActor *record;
 
@@ -1743,7 +1742,7 @@ static void TolbiShipDeck_ThankForKraken(void) {
   Actor_WalkToAndWait(20, 216, 0x244);
   Actor_SetPosition(20, 0, 0);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  GameFlag_Set(0x92b);
+  GameFlag_Set(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED);
   GameFlag_Clear(0x302);
   Engine_EventEnd();
 }
@@ -2005,7 +2004,7 @@ static void TolbiShipDeck_RowersDisembark(void) {
   Engine_ActorFaceDirection(20, 192 << 6, 0);
   Engine_ActorSetPosition(32, 0, 0);
 
-  Engine_GameFlagClear(0x12f);
+  Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   Engine_EventEnd();
 }
 
@@ -2019,16 +2018,16 @@ static s32 TolbiShipDeck_GetRowerAtSeat(u32 seat) {
 
   switch (seat) {
   case 0:
-    flag = 0x92C;
+    flag = FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS;
     break;
   case 1:
-    flag = 0x935;
+    flag = FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS;
     break;
   case 2:
-    flag = 0x917;
+    flag = FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS;
     break;
   case 3:
-    flag = 0x990;
+    flag = FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS;
     break;
   }
   for (i = 0; i < 9; i++) {
@@ -2170,16 +2169,16 @@ static s32 TolbiShipDeck_GetSeatStroke(u32 seat) {
 
   switch (seat) {
   case 0:
-    base = 0x92C;
+    base = FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS;
     break;
   case 1:
-    base = 0x935;
+    base = FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS;
     break;
   case 2:
-    base = 0x917;
+    base = FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS;
     break;
   case 3:
-    base = 0x990;
+    base = FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS;
     break;
   }
   for (i = 0; i < 9; i++) {
@@ -2440,7 +2439,7 @@ static void TolbiShipDeck_ArriveAtTolbi(void) {
 }
 
 // At anchor: the party is asked to scout the island; Garet and Ivan may argue
-// before the party agrees. Sets flag 0x903.
+// before the party agrees.
 static void TolbiShipDeck_OfferToScoutIsland(void) {
   struct FieldActor *leader;
   u8 bits;
@@ -2533,7 +2532,7 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
   Engine_ActorDestroy(GARET);
   Engine_ActorDestroy(IVAN);
   Engine_ActorDestroy(MIA);
-  GameFlag_Set(0x903);
+  GameFlag_Set(FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED);
   Engine_EventEnd();
 }
 
@@ -3138,31 +3137,31 @@ const struct SceneEvent gTolbiShipDeckEvents[] = {
     { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_TalkToActor21) },
     { EVENT_TALK, 24, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_TalkToActor24) },
     { EVENT_TALK, 25, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, MSGNO(MsgTolbiShipDeckIWonderWhatsGoingOnWeve) },
-    { EVENT_TALK, 25, 0x925, MSGNO(MsgTolbiShipDeckThoseWarriorsGotTiredOfWaiting) },
+    { EVENT_TALK, 25, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipDeckThoseWarriorsGotTiredOfWaiting) },
     { EVENT_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckIfWeJustPromiseToHelp) },
     { EVENT_TALK, 26, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, MSGNO(MsgTolbiShipDeckIWonderIfImTheOnly) },
-    { EVENT_TALK, 26, 0x925, MSGNO(MsgTolbiShipDeckIWonderIfThoseTwoAre) },
+    { EVENT_TALK, 26, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipDeckIWonderIfThoseTwoAre) },
     { EVENT_TALK, 26, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckIllAgreeToAnythingEvenRowing) },
     { EVENT_TALK, 27, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, MSGNO(MsgTolbiShipDeckTheKaragolIsLikeAHumongous) },
-    { EVENT_TALK, 27, 0x925, MSGNO(MsgTolbiShipDeckHaHahThoseMercenariesAreGoing) },
+    { EVENT_TALK, 27, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipDeckHaHahThoseMercenariesAreGoing) },
     { EVENT_TALK, 27, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckThatSeaDogKajaIsA) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckThereIsNothingToFearAs) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, MSGNO(MsgTolbiShipDeckWhenAreWeGoingWhenAre) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, 0x925, MSGNO(MsgTolbiShipDeckUsingForceToLaunchTheShip) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipDeckUsingForceToLaunchTheShip) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckAreYouSeriousAboutSettingSail) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, MSGNO(MsgTolbiShipDeckHmmmThisIsSoFrustratingWhy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, 0x925, MSGNO(MsgTolbiShipDeckTheyWereJustAboutToLaunch) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipDeckTheyWereJustAboutToLaunch) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckItProbablyWontMakeAnyDifference) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, MSGNO(MsgTolbiShipDeckTravelingByShipIsFasterThan) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, 0x925, MSGNO(MsgTolbiShipDeckThoseThugsAreTooImpatientTrying) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipDeckThoseThugsAreTooImpatientTrying) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckUltimatelyTheyreJustBeingThreatenedInto) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, MSGNO(MsgTolbiShipDeckMostOfThePeopleGoingTo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, 0x925, MSGNO(MsgTolbiShipDeckHeeHeeIfWeCanGet) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipDeckHeeHeeIfWeCanGet) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 26, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckBesidesRowingIsAMansJob) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, MSGNO(MsgTolbiShipDeckTheKaragolSeaIsPrettyFoggy) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, 0x925, MSGNO(MsgTolbiShipDeckThoseGuysSeemPrettySureOf) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipDeckThoseGuysSeemPrettySureOf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 27, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckUsHelpWithTheRowingGet) },
-    { EVENT_TOUCH, 10, 0x920, EVENT_SCRIPT(TolbiShipDeck_WatchCrewDecideToSail) },
+    { EVENT_TOUCH, 10, FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY, EVENT_SCRIPT(TolbiShipDeck_WatchCrewDecideToSail) },
     { EVENT_TOUCH, 11, FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED, EVENT_SCRIPT(TolbiShipDeck_CatchCrewmanFromEast) },
     { EVENT_TOUCH, 12, FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED, EVENT_SCRIPT(TolbiShipDeck_CatchCrewmanFromWest) },
     { SCENE_EVENTS_END },
@@ -3213,14 +3212,14 @@ const struct SceneEvent gTolbiShipDeckEventsFlag8a0[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipDeck_GoBelow) },
     { EVENT_EXIT, 6, CONDITION_ALWAYS, 7 },
     { EVENT_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckKajaAndTheCaptainAreProfessionals) },
-    { EVENT_TALK, 22, 0x903, EVENT_SCRIPT(TolbiShipDeck_OfferToScoutIsland) },
+    { EVENT_TALK, 22, FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED, EVENT_SCRIPT(TolbiShipDeck_OfferToScoutIsland) },
     { EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckTheresNoTellingWhatKindOf) },
-    { EVENT_TALK, 21, 0x903, EVENT_SCRIPT(TolbiShipDeck_OfferToScoutIsland) },
+    { EVENT_TALK, 21, FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED, EVENT_SCRIPT(TolbiShipDeck_OfferToScoutIsland) },
     { EVENT_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckWeveDoneAGoodJobOf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckIWantToBeASailor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, 0x903, MSGNO(MsgTolbiShipDeckIGiveUpWhatAreWe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED, MSGNO(MsgTolbiShipDeckIGiveUpWhatAreWe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckThisIslandGivesMeTheCreeps) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, 0x903, MSGNO(MsgTolbiShipDeckThatsEnoughBickering) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED, MSGNO(MsgTolbiShipDeckThatsEnoughBickering) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckWhatWeCanDoNowIs) },
     { SCENE_EVENTS_END },
 };

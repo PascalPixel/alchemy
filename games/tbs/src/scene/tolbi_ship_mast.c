@@ -204,19 +204,22 @@ s32 TolbiShipMast_Initialize(void) {
 
   Engine_GameFlagSet(0x144);
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  if ((Engine_GameFlagIsSet(0x927) != 0 || Engine_GameFlagIsSet(0x928) != 0) &&
-      Engine_GameFlagIsSet(0x93e) == 0 && Engine_GameFlagIsSet(0x8a0) == 0) {
+  if ((Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ROWING) != 0 ||
+       Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) &&
+      Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0 &&
+      Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND) == 0) {
     gTolbiShipMast_SwayX = (u16)Engine_RandomNext();
     gTolbiShipMast_SwayY = (u16)Engine_RandomNext();
     FieldScheduler_AddCallback(TolbiShipMast_UpdateSway, 0xc80);
   }
-  if (Engine_GameFlagIsSet(0x925) != 0 && Engine_GameFlagIsSet(0x93e) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0 &&
+      Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0) {
     Actor_SetPosition(8, PIXELS(164), PIXELS(328));
   }
   // The ship's scripted entrances resume their matching lookout scenes.
   switch (gGameState.entrance) {
   case 1:
-    if (Engine_GameFlagIsSet(0x109) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Object_GetById(ACTOR_PARTY_LEADER);
       Engine_EventBegin();
       Field_ClimbUp();
@@ -230,7 +233,7 @@ s32 TolbiShipMast_Initialize(void) {
     }
     break;
   case 10:
-    if (Engine_GameFlagIsSet(0x928) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) != 0) {
       TolbiShipMast_SetupVisibleLeaderLookout();
     } else {
       TolbiShipMast_SetupHiddenLeaderLookout();
@@ -342,7 +345,7 @@ static void TolbiShipMast_RunAvastScene(void) {
   Actor_SetActionScript(9, gTolbiShipMast_FollowCameraActions);
   Engine_EventWait(20);
   Engine_AudioPlayCue(29);
-  Engine_GameFlagSet(0x8f0);
+  Engine_GameFlagSet(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   Engine_ActorStop(8);
   Engine_TaskWait(1);
   Actor_ShowEmote(8, EMOTE_IN_FRONT, 0);
@@ -507,7 +510,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   Engine_ActorJump(8, 4, 20);
   Engine_ActorJump(8, 6, 40);
   Event_PlayCue(29);
-  GameFlag_Set(0x8f0);
+  GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   Engine_EventSetMessage(MsgTolbiShipMonsters2);
   Event_ShowMessageAndWait(16, 0, 20);
   Actor_ShowEmote(8, EMOTE_IN_FRONT, 0);
@@ -594,7 +597,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   Engine_ActorRunRepeatedMotion(8, 1);
   Actor_FaceDirection(8, FACING_SOUTHEAST + FACING_STEP, 0);
   Event_PlayCue(29);
-  GameFlag_Set(0x8f0);
+  GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   // Grow actor 18 over 32 frames before staging actor 17 beside it.
   for (frame = 0; frame < 32; frame++) {
     actor->scaleX += Q16_ONE / 20;
@@ -728,16 +731,16 @@ static s32 TolbiShipMast_GetFlagGroupValue(u32 groupIndex) {
 
   switch (groupIndex) {
   case 0:
-    firstFlag = 0x92c;
+    firstFlag = FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS;
     break;
   case 1:
-    firstFlag = 0x935;
+    firstFlag = FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS;
     break;
   case 2:
-    firstFlag = 0x917;
+    firstFlag = FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS;
     break;
   case 3:
-    firstFlag = 0x990;
+    firstFlag = FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS;
     break;
   }
   for (flagIndex = 0; flagIndex <= 8; flagIndex++) {
@@ -926,11 +929,11 @@ struct ScenePlacement gTolbiShipMast_LandingObjects[] = {
 
 struct SceneEvent gTolbiShipMast_Events[] = {
     { TOUCH_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipMast_ClimbDownLadder) },
-    { EVENT_TALK, 8, 0x928, MSGNO(MsgTolbiShipWatchSeasHelpKaja) },
-    { EVENT_TALK, 8, 0x8a0, MSGNO(MsgTolbiShipLookoutCannotRow) },
+    { EVENT_TALK, 8, FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED, MSGNO(MsgTolbiShipWatchSeasHelpKaja) },
+    { EVENT_TALK, 8, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipLookoutCannotRow) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipIslandMonstersUnknown) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x928, MSGNO(MsgTolbiShipHiddenAnchorDiscovered) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x8a0, MSGNO(MsgTolbiShipSeaTooVast) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED, MSGNO(MsgTolbiShipHiddenAnchorDiscovered) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipSeaTooVast) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipIslandTreasures) },
     { SEARCH(SEARCH_UNNAMED), 11, FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND, EVENT_SCRIPT(TolbiShipMast_FindAnchorCharm) },
     { SCENE_EVENTS_END },

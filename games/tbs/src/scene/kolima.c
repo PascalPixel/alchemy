@@ -437,8 +437,7 @@ static void Kolima_WitnessForestCurse(void) {
 
   // Enter the deserted village and let Ivan inspect one of its trees.
   Engine_EventBegin();
-  partyLayout = &gKolima_LayoutFlag;
-  // Flag 3: Mia is in the party.
+  partyLayout = &gKolima_MiaInParty;
   *partyLayout = GameFlag_IsSet(FLAG_IN_PARTY(MIA));
   actor = Object_GetById(19);
   Engine_ActorSetSpriteFlags(actor, 0);
@@ -480,7 +479,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 20);
   Actor_FaceDirection(IVAN, FACING_NORTHEAST, 20);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST, 20);
-  partyLayout = &gKolima_LayoutFlag;
+  partyLayout = &gKolima_MiaInParty;
   if (*partyLayout != 0) {
     Actor_FaceDirection(MIA, FACING_SOUTHEAST, 0);
   }
@@ -638,7 +637,7 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_EventWait(100);
   Kolima_ShowMessageAndWait(GARET, 20);
   Kolima_ShowMessageAndWait(IVAN, 40);
-  if (gKolima_LayoutFlag != 0) {
+  if (gKolima_MiaInParty != 0) {
     Engine_EventWait(40);
     Actor_SetAttachedEffect(MIA, 0x102);
     Engine_EventWait(40);
@@ -647,7 +646,7 @@ static void Kolima_WitnessForestCurse(void) {
     gEventWork->message++;
   }
   Engine_EventWait(20);
-  if (gKolima_LayoutFlag != 0) {
+  if (gKolima_MiaInParty != 0) {
     stagingValue = 128;
     actor = Object_GetById(3);
     actor->velocityY = (stagingValue << 10);
@@ -729,7 +728,7 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ActorStartRepeatedMotion(MIA, 2);
   Actor_SetAttachedEffect(GARET, 0x102);
   Kolima_ShowMessageAndWait(GARET, 20);
-  if (gKolima_LayoutFlag != 0) {
+  if (gKolima_MiaInParty != 0) {
     Actor_SetAttachedEffect(MIA, 0x102);
     Kolima_ShowMessageAndWait(MIA, 10);
   } else {
@@ -758,7 +757,7 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ActorSetSpritePriority(20, 2);
   Actor_SetPosition(20, PIXELS(100), PIXELS(274));
   Actor_SetActionScript(20, growFieldActions);
-  if (gKolima_LayoutFlag != 0) {
+  if (gKolima_MiaInParty != 0) {
     Object_GetById(21)->priorityFlags &= 254;
     Engine_ActorSetSpritePriority(21, 2);
     Actor_SetPosition(21, PIXELS(74), PIXELS(254));
@@ -782,7 +781,7 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_TaskWait(60);
   Engine_ActorStop(19);
   Engine_ActorStop(20);
-  if (gKolima_LayoutFlag != 0) {
+  if (gKolima_MiaInParty != 0) {
     Engine_ActorStop(21);
   }
   Engine_ActorStop(22);
@@ -790,7 +789,7 @@ static void Kolima_WitnessForestCurse(void) {
   shrinkFieldActions = gKolima_ProtectiveFieldShrinkActions;
   Actor_SetActionScript(19, shrinkFieldActions);
   Actor_SetActionScript(20, shrinkFieldActions);
-  if (gKolima_LayoutFlag != 0) {
+  if (gKolima_MiaInParty != 0) {
     Actor_SetActionScript(21, shrinkFieldActions);
   }
   Actor_RunActionScriptAndWait(22, shrinkFieldActions);
@@ -808,7 +807,7 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Kolima_ShowMessageAndWait(IVAN, 20);
-  if (gKolima_LayoutFlag != 0) {
+  if (gKolima_MiaInParty != 0) {
     Engine_ActorRunRepeatedMotion(MIA, 2);
     Engine_EventWait(10);
     Engine_EventSetMessage(MsgKolimaKnowThoseFieldsWere);
@@ -848,7 +847,7 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ActorJump(GARET, 4, 0);
   Engine_EventWait(20);
   Kolima_ShowMessageAndWait(GARET, 20);
-  if (gKolima_LayoutFlag != 0) {
+  if (gKolima_MiaInParty != 0) {
     Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 0);
     Engine_EventWait(60);
     Engine_ActorRunRepeatedMotion(MIA, 2);
@@ -932,7 +931,7 @@ static void Kolima_WitnessForestCurse(void) {
   Kolima_FaceActorAndWait(IVAN, FACING_NORTH, 10);
   Engine_ActorSetAnimationAndWait(IVAN, 3);
   Kolima_ShowMessageAndWait(IVAN, 10);
-  if (gKolima_LayoutFlag != 0) {
+  if (gKolima_MiaInParty != 0) {
     Engine_ActorRunRepeatedMotion(MIA, 2);
     Kolima_FaceActorAndWait(MIA, 0, 20);
     Kolima_FaceActorAndWait(MIA, FACING_SOUTHEAST, 10);
@@ -1007,7 +1006,7 @@ static void Kolima_WitnessForestCurse(void) {
   Kolima_ShowMessageAndWait(IVAN, 10);
   Kolima_FaceActorAndWait(GARET, FACING_NORTH, 10);
   Kolima_FaceActorAndWait(ACTOR_PARTY_LEADER, FACING_NORTH, 10);
-  if (gKolima_LayoutFlag != 0) {
+  if (gKolima_MiaInParty != 0) {
     Kolima_FaceActorAndWait(MIA, FACING_NORTH, 10);
   }
   Object_GetById(0)->priorityFlags &= 254;
@@ -1025,7 +1024,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetActionScript(19, growFieldActions);
   Actor_SetPosition(20, PIXELS(100), PIXELS(274));
   Actor_SetActionScript(20, growFieldActions);
-  if (gKolima_LayoutFlag != 0) {
+  if (gKolima_MiaInParty != 0) {
     Actor_SetPosition(21, PIXELS(74), PIXELS(254));
     Actor_SetActionScript(21, growFieldActions);
   }
@@ -1128,7 +1127,7 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_TaskWait(80);
   Engine_ActorStop(19);
   Engine_ActorStop(20);
-  sceneState = &gKolima_LayoutFlag;
+  sceneState = &gKolima_MiaInParty;
   Engine_ActorStop(21);
   Engine_ActorStop(22);
   Engine_TaskWait(1);
@@ -1204,7 +1203,7 @@ static void Kolima_WitnessForestCurse(void) {
       Engine_EventWait(40);
       Kolima_FaceActorAndWait(IVAN, FACING_NORTHEAST, 10);
       Kolima_ShowMessageAndWait(IVAN, 10);
-      if (gKolima_LayoutFlag != 0) {
+      if (gKolima_MiaInParty != 0) {
         Kolima_FaceActorAndWait(MIA, 0, 10);
         Engine_ActorStartRepeatedMotion(MIA, 3);
         Kolima_ShowMessageAndWait(MIA, 20);
@@ -1219,7 +1218,7 @@ static void Kolima_WitnessForestCurse(void) {
       Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 0);
       Engine_EventWait(120);
       Kolima_ShowMessageAndWait(IVAN, 40);
-      if (gKolima_LayoutFlag != 0) {
+      if (gKolima_MiaInParty != 0) {
         Kolima_FaceActorAndWait(MIA, FACING_SOUTHEAST, 10);
         Engine_ActorSetAnimationAndWait(MIA, 4);
         Kolima_ShowMessageAndWait(MIA, 10);
@@ -1228,7 +1227,7 @@ static void Kolima_WitnessForestCurse(void) {
       }
       Engine_EventWait(60);
       Engine_ActorRunRepeatedMotion(IVAN, 2);
-      if (gKolima_LayoutFlag != 0) {
+      if (gKolima_MiaInParty != 0) {
         Kolima_FaceActorAndWait(IVAN, FACING_NORTHWEST, 40);
         Kolima_FaceActorAndWait(IVAN, FACING_NORTHEAST, 20);
       }
@@ -1248,7 +1247,7 @@ static void Kolima_WitnessForestCurse(void) {
       Engine_ActorSetAnimationAndWait(IVAN, 3);
       Engine_EventSetMessage(MsgKolimaThatsReliefIsaacThoughtYoud);
       Kolima_ShowMessageAndWait(IVAN, 20);
-      if (gKolima_LayoutFlag != 0) {
+      if (gKolima_MiaInParty != 0) {
         Kolima_FaceActorAndWait(MIA, 0, 10);
         Engine_ActorStartRepeatedMotion(MIA, 1);
         Kolima_ShowMessageAndWait(MIA, 20);
@@ -1263,7 +1262,7 @@ static void Kolima_WitnessForestCurse(void) {
       Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 5, 0);
       Engine_EventWait(80);
       Kolima_ShowMessageAndWait(IVAN, 40);
-      if (gKolima_LayoutFlag != 0) {
+      if (gKolima_MiaInParty != 0) {
         Kolima_FaceActorAndWait(MIA, FACING_SOUTHEAST, 20);
         Engine_ActorSetAnimation(MIA, 4);
         Kolima_ShowMessageAndWait(MIA, 40);
@@ -1300,7 +1299,7 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_SetPosition(IVAN, 0, 0);
   Actor_SetPosition(17, 0, 0);
   Actor_SetPosition(18, 0, 0);
-  if (gKolima_LayoutFlag != 0) {
+  if (gKolima_MiaInParty != 0) {
     Engine_ActorSetAnimation(MIA, 2);
     actor = Object_GetById(0);
     if (actor != NULL) {
@@ -1372,7 +1371,7 @@ static void Kolima_SpawnCurseSparkle(void) {
 // Trigger a temporary pose when an effect enters the party's occupied area.
 static s32 Kolima_TriggerRegionScript(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
-  if (gKolima_LayoutFlag != 0) {
+  if (gKolima_MiaInParty != 0) {
     if ((actor->x.fixed > PIXELS(59) && actor->x.fixed < PIXELS(141) &&
          actor->z.fixed > PIXELS(211) && actor->z.fixed < PIXELS(257)) ||
         (actor->x.fixed > PIXELS(69) && actor->x.fixed < PIXELS(122) &&
@@ -1399,7 +1398,7 @@ static s32 Kolima_TriggerRegionScript(struct ScriptInterpreter *interpreter) {
 // Shared source is included here in ROM order.
 #include "common/kolima_forest_bridge_falling_effect.h"
 s32 gKolima_PendingPose __attribute__((section(".bss")));
-s32 gKolima_LayoutFlag __attribute__((section(".bss")));
+s32 gKolima_MiaInParty __attribute__((section(".bss")));
 s32 gKolima_EffectActive __attribute__((section(".bss")));
 
 // Restore the bridge's villagers and collision after its collapse.

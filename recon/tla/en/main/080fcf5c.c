@@ -61,7 +61,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
   p456 = menu + 452;
   badge = PsynergyMenu_CollectActions(objPtr, p456, 2);
   *(u8 *)(menu + 532) = (u8)badge;
-  result = PsynergyMenu_SetupActionIcons(menu + 516, p456);
+  result = PsynergyMenu_SelectMember(menu + 516, p456);
 
   cursorOffset2 = partySlot * 4 + 20;
   icon = *(void **)(menu + cursorOffset2);

@@ -1,5 +1,5 @@
 // First draft of Func_080fd000: the party member row of the Psynergy menu,
-// the twin of The Broken Seal's PsynergyMenu_SetupActionIcons
+// the twin of The Broken Seal's PsynergyMenu_SelectMember
 // (games/tbs/src/menu/menu/psynergy.c). ⚓️ moves the selection through
 // Func_08104c00 (which returns whether to redraw, 2 to scroll the row) and
 // keeps it on the stack.

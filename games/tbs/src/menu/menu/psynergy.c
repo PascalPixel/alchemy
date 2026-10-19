@@ -377,7 +377,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
   actions = menu->psynergies;
   actionCount = PsynergyMenu_CollectActions(unit, actions, 2);
   menu->psynergyCount = actionCount;
-  result = PsynergyMenu_SetupActionIcons(menu->ownerTable, actions);
+  result = PsynergyMenu_SelectMember(menu->ownerTable, actions);
 
   iconOffset2 = partySlot * sizeof(menu->paneIcon[0]) +
                 ((u8 *)menu->paneIcon - (u8 *)menu);
@@ -392,7 +392,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 partySlot) {
 // member who has Psynergy to use, L or R one who has field Psynergy to set as
 // that shortcut (menu mode 1 or 2), and B backs out. Returns the chosen
 // member's id, or -1.
-s32 PsynergyMenu_SetupActionIcons(u16 *ownerIds, u16 *unused) {
+s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused) {
   struct PsynergyMenuState *menu;
   s32 selection;
   s32 ownerCount;

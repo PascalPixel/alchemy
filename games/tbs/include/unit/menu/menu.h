@@ -145,7 +145,7 @@ s32 PsynergyMenu_Run(void);
 s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction);
 s32 PsynergyMenu_ClassifySelectedPsynergy(void);
 s32 PsynergyMenu_SelectPartySlot(s32 partySlot);
-s32 PsynergyMenu_SetupActionIcons(u16 *ownerIds, u16 *unused);
+s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused);
 void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId);
 s32 PsynergyMenu_ReturnTrue(void);
 void PsynergyMenu_NoOp(void);

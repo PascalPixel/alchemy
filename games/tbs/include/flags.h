@@ -123,6 +123,15 @@
 #define FLAG_ALTMILLER_CAVE_VIAL 0xf9c           // room 3's chest
 #define FLAG_ALTMILLER_CAVE_COOKIE 0xf9d         // room 5's chest
 
+// Babi Lighthouse
+// The stone door that Reveal's switch opens stands open.
+#define FLAG_BABI_LIGHTHOUSE_DOOR_OPEN 0x985
+// Iodem and Faran have asked the party to follow Sheba's kidnappers.
+#define FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED 0x988
+// The party has opened the door before Iodem and Faran, who stay behind.
+#define FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN 0x989
+#define FLAG_BABI_LIGHTHOUSE_LUCKY_PEPPER 0xfbc // the building site's chest
+
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
 #define FLAG_SCENE_TEMP_00 0x200

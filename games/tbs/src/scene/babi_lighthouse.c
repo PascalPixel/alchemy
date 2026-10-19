@@ -1,3 +1,13 @@
+// Babi Lighthouse, the lighthouse Babi is building on old ruins near
+// Lalivero. Four scenes share this overlay:
+//
+// - room 1, the stone door Sheba's kidnappers went through, where Iodem and
+//   Faran ask the party to follow them; a switch only Reveal shows opens it;
+// - room 2, inside, where the party drops between floors, with a Djinni;
+// - room 3, where the kidnappers knocked down four men on their way, with two
+//   blocks on ledges and a sprout for Growth;
+// - the building site outside, with its workers and a block to move.
+
 #include "game_state.h"
 #include "version.h"
 #include "global_cells.h"
@@ -35,12 +45,53 @@
 #include "ability_ids.h"
 #include "objcmd.h"
 #include "field_obj.h"
+#include "flags.h"
+#include "songs.h"
+#include "item_ids.h"
 
-// Forward declarations.
+// Room 1, before the stone door: the door's two halves, Iodem, the man who
+// saw the kidnappers go through, two more onlookers and Faran.
+enum {
+  ACTOR_LEFT_DOOR = 8,
+  ACTOR_RIGHT_DOOR = 9,
+  ACTOR_IODEM = 10,
+  ACTOR_WITNESS = 11,
+  ACTOR_FIRST_ONLOOKER = 12,
+  ACTOR_SECOND_ONLOOKER = 13,
+  ACTOR_FARAN = 14
+};
+
+// Room 2's Djinni.
+enum { ACTOR_DJINNI = 8 };
+
+// Room 3: the two blocks on the ledges, the sprout for Growth and the four
+// men the kidnappers knocked down on their way in.
+enum {
+  ACTOR_LEFT_BLOCK = 8,
+  ACTOR_RIGHT_BLOCK = 9,
+  ACTOR_SPROUT = 10,
+  ACTOR_FIRST_FALLEN_MAN = 11
+};
+
+// The building site outside: four workers and the block for Move and Carry.
+enum { ACTOR_SITE_BLOCK = 12 };
+
+// The lighthouse keeps two flags in the area flags from 0x300.
+enum {
+  // Growth has grown room 3's sprout into a vine.
+  FLAG_GROWTH_PASSAGE_OPEN = 0x300,
+  // The party is on the far side of room 1's stone door.
+  FLAG_BEYOND_DOOR = 0x301
+};
+
+// A chest searched while facing the given way.
+#define SEARCH_CHEST_FACING(facing)                                            \
+  (SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | (facing))
+
 static void BabiLighthouse_CloseTruthDoor(void);
 static void BabiLighthouse_RefreshMovableBlockTiles(void);
 
-// Unused signed division helper; no scene callback or script references it.
+// Unused: a signed division nothing calls.
 static __inline__ s32 UNUSED Entrance_Divide(s32 dividend, s32 divisor) {
   return dividend / divisor;
 }
@@ -52,18 +103,17 @@ static __inline__ s32 UNUSED Entrance_Divide(s32 dividend, s32 divisor) {
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-// Starts the Djinn battle for actor 8; the engine maps Djinn 66 to its enemy
-// group.
+// Talking to the Djinni in room 2 starts the battle for Djinni 66.
 static void BabiLighthouse_StartDjinnBattle(void) {
-  Field_RequestDjinnBattle(8, 66);
+  Field_RequestDjinnBattle(ACTOR_DJINNI, 66);
 }
 
 // Shared source is included here in ROM order.
 #include "common/object_waitidle.h"
 #include "common/effect_advance.h"
 
-// Drops the leader into the room, emits a ring of particles, then restores
-// motion.
+// Arriving by falling from the floor above: the leader drops in, lands with
+// a thud that shakes the screen and throws up a ring of dust, and is startled.
 static void BabiLighthouse_LandWithParticles(void) {
   u32 particle;
   struct FieldActor *leader;
@@ -75,15 +125,15 @@ static void BabiLighthouse_LandWithParticles(void) {
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
-  Object_GetById(0)->y.fixed = 0x820000;
-  Object_GetById(0)->gravity = 0x8000;
-  Object_GetById(0)->bounce = 0;
-  Object_GetById(0)->motionFlags = 0;
+  Object_GetById(ACTOR_PARTY_LEADER)->y.fixed = 0x820000;
+  Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
+  Object_GetById(ACTOR_PARTY_LEADER)->bounce = 0;
+  Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(30);
-  Engine_AudioPlayCue(204);
-  Object_GetById(0)->motionFlags = 3;
+  Engine_AudioPlayCue(SE_204);
+  Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 3;
   Engine_EventWait(24);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   // Spread the landing particles around the leader before restoring bounce.
@@ -101,19 +151,20 @@ static void BabiLighthouse_LandWithParticles(void) {
                      EFFECT_USE_PALETTE | 1,
                  &options);
   }
-  Engine_AudioPlayCue(188);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x101);
+  Engine_AudioPlayCue(SE_188);
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 22);
   Map_SetShake(0x50000, 0x50000, 0x10000);
   Map_SetShake(-1, -1, 0xe666);
   Engine_MapRenderWaitForValues();
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x100);
-  Object_GetById(0)->gravity = 0x10000;
-  Object_GetById(0)->bounce = 0x4000;
+  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT);
+  Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x10000;
+  Object_GetById(ACTOR_PARTY_LEADER)->bounce = 0x4000;
   Engine_EventEnd();
 }
 
-// Drops the leader from above and requests the supplied exit after landing.
+// Arriving at one of room 2's drop entrances: the leader drops in and falls
+// on, out through the given exit.
 static void BabiLighthouse_FallToExit(s32 exit) {
   struct FieldActor *leader;
 
@@ -128,13 +179,13 @@ static void BabiLighthouse_FallToExit(s32 exit) {
   leader->gravity = 0x4000;
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   leader->bounce = 0;
-  Object_GetById(0)->motionFlags = 0;
+  Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(10);
-  Engine_AudioPlayCue(204);
-  Object_GetById(0)->motionFlags = 3;
+  Engine_AudioPlayCue(SE_204);
+  Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 3;
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   leader->velocityY = -0x50000;
   OverlayObject_WaitUntilIdle(Actor_Get(ACTOR_PARTY_LEADER));
@@ -143,74 +194,74 @@ static void BabiLighthouse_FallToExit(s32 exit) {
   Engine_EventEnd();
 }
 
-// Selects the entrance table for the active lighthouse room.
+// Returns the entrance table of the scene being entered.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_BabiLighthouse3) {
-    return gBabiLighthouseEntrances3;
+    return gBabiLighthouse_Entrances3;
   }
   if (scene == (s32)&SceneId_BabiLighthouse2) {
-    return gBabiLighthouseEntrances2;
+    return gBabiLighthouse_Entrances2;
   }
   if (scene == (s32)&SceneId_BabiLighthouse1) {
-    return gBabiLighthouseEntrances1;
+    return gBabiLighthouse_Entrances1;
   }
-  return gBabiLighthouseEntrancesOther;
+  return gBabiLighthouse_EntrancesOther;
 }
 
-// Provides the ledge exit regions only in the third lighthouse room.
+// Only room 3 has regions.
 const struct SceneRegion *Scene_GetRegions(void) {
   if (gGameState.scene == (s32)&SceneId_BabiLighthouse3) {
-    return gBabiLighthouseRegions3;
+    return gBabiLighthouse_Regions3;
   }
   return 0;
 }
 
-// Provides the shared exit table, whose groups cover all lighthouse rooms.
-u8 *BabiLighthouse_GetExits(void) { return gBabiLighthouseExits; }
+// The four scenes share one exit table.
+u8 *BabiLighthouse_GetExits(void) { return gBabiLighthouse_Exits; }
 
-// Selects the actor placements for the active lighthouse room.
+// Returns the actor placements of the scene being entered.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_BabiLighthouse3) {
-    return gBabiLighthousePlacements3;
+    return gBabiLighthouse_Placements3;
   }
   if (scene == (s32)&SceneId_BabiLighthouse2) {
-    return gBabiLighthousePlacements2;
+    return gBabiLighthouse_Placements2;
   }
   if (scene == (s32)&SceneId_BabiLighthouse1) {
-    return gBabiLighthousePlacements1;
+    return gBabiLighthouse_Placements1;
   }
-  return gBabiLighthousePlacementsOther;
+  return gBabiLighthouse_PlacementsOther;
 }
 
-// Moves the leader off either movable ledge block, then refreshes collision
-// tiles.
+// After Move on one of room 3's blocks, or a push: a leader left standing on
+// a block's ledge cell jumps off it, and the blocks' cells are redrawn.
 static void BabiLighthouse_JumpFromLedge(void) {
   struct FieldActor *leader;
 
-  leader = Object_GetById(0);
+  leader = Object_GetById(ACTOR_PARTY_LEADER);
   Engine_EventBegin();
   if (((leader->x.fixed >> 20) == 6 || (leader->x.fixed >> 20) == 18) &&
       (leader->z.fixed >> 20) == 20) {
     leader->targetX = ACTOR_NO_TARGET;
     leader->targetZ = ACTOR_NO_TARGET;
-    Actor_ShowEmote(0, 0x100, 20);
-    Actor_SetSpeed(0, 0x20000, 0x10000);
-    Engine_ActorJump(0, 4, 0);
+    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 20);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
+    Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
     {
       u16 facing = leader->facing;
       if ((u16)(facing + 0x4fff) <= 0x1fff ||
           (u16)(facing - 0x3001) <= 0x1fff) {
-        Engine_ActorSetDestinationOffset(0, 16, 0);
-        Engine_ActorWaitForMove(0);
-        Actor_FaceDirection(0, FACING_WEST, 20);
+        Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 16, 0);
+        Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
       } else {
         FieldObjectMotion_OffsetPositionAndResetMotion(0, 0, -16);
-        Engine_ActorWaitForMove(0);
-        Actor_FaceDirection(0, FACING_SOUTH, 20);
+        Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
+        Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 20);
       }
     }
   }
@@ -218,8 +269,7 @@ static void BabiLighthouse_JumpFromLedge(void) {
   Engine_EventEnd();
 }
 
-// Advances the staged actor pair before checking whether the leader must jump
-// off.
+// Walking into one of room 3's blocks pushes it.
 static void BabiLighthouse_AdvancePairAndJump(void) {
   Engine_EventBegin();
   StagedActor_AdvancePair();
@@ -227,12 +277,13 @@ static void BabiLighthouse_AdvancePairAndJump(void) {
   Engine_EventEnd();
 }
 
-// Uses the ledge block on the leader's side, or falls back to climbing down.
+// Walking south off room 3's ledge: pushes the block below on the leader's
+// side if it stands at the ledge's foot, and otherwise climbs down.
 static void BabiLighthouse_ClimbDownOrAdvancePair(void) {
-  struct FieldActor *block = Object_GetById(9);
+  struct FieldActor *block = Object_GetById(ACTOR_RIGHT_BLOCK);
 
-  if ((Object_GetById(0)->x.fixed >> 20) <= 12) {
-    block = Object_GetById(8);
+  if ((Object_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20) <= 12) {
+    block = Object_GetById(ACTOR_LEFT_BLOCK);
     if ((block->x.fixed >> 20) == 6) {
       if ((block->z.fixed >> 20) == 20) {
         BabiLighthouse_AdvancePairAndJump();
@@ -253,7 +304,7 @@ static void BabiLighthouse_ClimbDownOrAdvancePair(void) {
 // Raises the leader, then closes the screen before a room transition.
 static void BabiLighthouse_RiseAndCloseScreen(void) {
   Camera_MoveTo(-1, -1, -1, 0);
-  FieldBattleFx_RunRisingObjectSequence(0, 6, 0);
+  FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, 0);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
 }
@@ -269,7 +320,7 @@ static void BabiLighthouse_RiseToExit(void) {
 // Prepares one effect, raises the leader, then takes exit 12.
 static void BabiLighthouse_RisePastSingleEffect(void) {
   Engine_EventBegin();
-  OverlayObject_PrepareObject(0x1d00000, 0, 0x1220000, 223);
+  OverlayObject_PrepareObject(PIXELS(464), 0, PIXELS(290), 223);
   BabiLighthouse_RiseAndCloseScreen();
   Engine_EventRequestExit(12);
   Engine_EventEnd();
@@ -278,8 +329,8 @@ static void BabiLighthouse_RisePastSingleEffect(void) {
 // Prepares two effects, raises the leader, then takes exit 13.
 static void BabiLighthouse_RisePastPairedEffects(void) {
   Engine_EventBegin();
-  OverlayObject_PrepareObject(0x8f0000, 0, 0x1220000, 223);
-  OverlayObject_PrepareObject(0x790000, 0, 0x11e0000, 253);
+  OverlayObject_PrepareObject(PIXELS(143), 0, PIXELS(290), 223);
+  OverlayObject_PrepareObject(PIXELS(121), 0, PIXELS(286), 253);
   BabiLighthouse_RiseAndCloseScreen();
   Engine_EventRequestExit(13);
   Engine_EventEnd();
@@ -293,19 +344,19 @@ static void BabiLighthouse_RiseToAlternateExit(void) {
   Engine_EventEnd();
 }
 
-// Stops the leader's animation and reports that the door seems locked.
+// Searching room 2's door: "It seems to be locked."
 static void BabiLighthouse_InspectLockedDoor(void) {
   Engine_EventBegin();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 1);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_MessageShowCentered(MsgBabiSeemsLocked, 1);
   Engine_EventEnd();
 }
 
-// Moves a companion back to the leader, then hides its separate scene actor.
+// A companion walks back to the leader and rejoins the party.
 static inline void BabiLighthouse_RegroupPartyMember(s32 actorId) {
   struct FieldActor *leader;
 
-  Engine_ActorSetAnimation(actorId, 2);
+  Engine_ActorSetAnimation(actorId, ANIM_WALK);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader != 0) {
     Actor_SetDestination(actorId, leader->x.part.pixel, leader->z.part.pixel);
@@ -314,10 +365,13 @@ static inline void BabiLighthouse_RegroupPartyMember(s32 actorId) {
   Actor_SetPosition(actorId, 0, 0);
 }
 
-// Stages the discussion about pursuing the kidnappers through the sealed door.
+// Walking up to room 1's stone door the first time: Faran asks whether the
+// kidnappers really went through it; the onlookers argue, and Iodem,
+// arriving with the party, tells who they are, and Faran, doubting them,
+// asks them to prove they can follow by opening the door.
 static void BabiLighthouse_DiscussPursuit(void) {
   // Bring the party to the witnesses gathered around the sealed door.
-  GameFlag_Set(0x988);
+  GameFlag_Set(FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED);
   GameFlag_Set(0x98a);
   Engine_EventBegin();
   Battle_ResetEffectCounter();
@@ -326,90 +380,90 @@ static void BabiLighthouse_DiscussPursuit(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 352);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Engine_EventWait(10);
-  FieldMotion_LaunchFromFocusedObject(10, 16, 0, 0xc000);
-  FieldMotion_LaunchFromFocusedObject(1, -8, 16, 0xc000);
-  FieldMotion_LaunchFromFocusedObject(2, 8, 16, 0xc000);
-  FieldMotion_LaunchFromFocusedObject(3, 24, 16, 0xc000);
+  FieldMotion_LaunchFromFocusedObject(ACTOR_IODEM, 16, 0, FACING_NORTH);
+  FieldMotion_LaunchFromFocusedObject(GARET, -8, 16, FACING_NORTH);
+  FieldMotion_LaunchFromFocusedObject(IVAN, 8, 16, FACING_NORTH);
+  FieldMotion_LaunchFromFocusedObject(MIA, 24, 16, FACING_NORTH);
   Engine_ActorWaitForMove(MIA);
   Engine_EventWait(20);
-  Event_ShowMessage(14, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
   Camera_SetSpeed(0x30000, 0x6000);
-  Camera_MoveTo(0x1180000, -1, 0x1200000, 1);
+  Camera_MoveTo(PIXELS(280), -1, PIXELS(288), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(11, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_WITNESS, ANIM_NOD);
   Engine_EventWait(30);
-  Event_ShowMessage(11, 0);
+  Event_ShowMessage(ACTOR_WITNESS, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(14, FACING_NORTH, 0);
-  Actor_FaceDirection(11, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_FARAN, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTH, 0);
   Engine_EventWait(30);
   Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(14, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_FARAN, 2);
   Engine_EventWait(20);
-  Event_ShowMessage(14, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
   // The witnesses try the stone door and disagree about who passed through it.
-  Engine_ActorStartRepeatedMotion(13, 2);
-  Engine_ActorRunRepeatedMotion(12, 2);
+  Engine_ActorStartRepeatedMotion(ACTOR_SECOND_ONLOOKER, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_ONLOOKER, 2);
   Engine_EventWait(40);
-  Engine_ActorStartRepeatedMotion(13, 2);
-  Engine_ActorRunRepeatedMotion(12, 2);
+  Engine_ActorStartRepeatedMotion(ACTOR_SECOND_ONLOOKER, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_ONLOOKER, 2);
   Engine_EventWait(40);
-  Engine_ActorStartRepeatedMotion(13, 2);
-  Engine_ActorRunRepeatedMotion(12, 2);
+  Engine_ActorStartRepeatedMotion(ACTOR_SECOND_ONLOOKER, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_ONLOOKER, 2);
   Engine_EventWait(40);
-  Actor_ShowEmote(12, 0x102, 50);
-  Event_ShowMessage(12, 0);
+  Actor_ShowEmote(ACTOR_FIRST_ONLOOKER, EMOTE_IN_FRONT | 2, 50);
+  Event_ShowMessage(ACTOR_FIRST_ONLOOKER, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(13, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_EAST, 0);
   Engine_EventWait(25);
-  Engine_ActorRunRepeatedMotion(13, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_SECOND_ONLOOKER, 2);
   Engine_EventWait(20);
-  Event_ShowMessage(13, 0);
+  Event_ShowMessage(ACTOR_SECOND_ONLOOKER, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(12, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_WEST, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(13, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_ONLOOKER, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Event_ShowMessage(13, 0);
+  Event_ShowMessage(ACTOR_SECOND_ONLOOKER, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(11, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_WITNESS, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Event_ShowMessage(11, 0);
+  Event_ShowMessage(ACTOR_WITNESS, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(13, 0x107, 40);
+  Actor_ShowEmote(ACTOR_SECOND_ONLOOKER, EMOTE_IN_FRONT | 7, 40);
   Engine_EventWait(10);
-  Actor_FaceDirection(13, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_SOUTH, 0);
   Engine_EventWait(20);
-  Event_ShowMessage(13, 0);
+  Event_ShowMessage(ACTOR_SECOND_ONLOOKER, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(13, 0x101, 75);
-  Actor_ShowEmote(14, 0x101, 60);
-  Actor_FaceDirection(12, FACING_SOUTH, 0);
+  Actor_ShowEmote(ACTOR_SECOND_ONLOOKER, EMOTE_IN_FRONT | 1, 75);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 1, 60);
+  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_SOUTH, 0);
   Engine_EventWait(20);
-  Actor_FaceDirection(11, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_WITNESS, FACING_SOUTH, 0);
   Engine_EventWait(20);
-  Actor_FaceDirection(14, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
   Engine_EventWait(30);
-  Event_ShowMessage(14, 0);
-  Camera_MoveTo(0x1180000, -1, 0x1400000, 1);
+  Event_ShowMessage(ACTOR_FARAN, 0);
+  Camera_MoveTo(PIXELS(280), -1, PIXELS(320), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
   // The party learns where the kidnappers went and is asked to pursue them.
-  Engine_ActorSetAnimationAndWait(10, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Engine_EventWait(30);
-  Event_ShowMessage(10, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(10, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Event_ShowMessage(10, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(14, 0x105, 60);
-  Event_ShowMessage(14, 0);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 5, 60);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(MIA, 4);
+  Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(MIA, 0);
   Engine_EventWait(10);
@@ -422,145 +476,145 @@ static void BabiLighthouse_DiscussPursuit(void) {
   Event_OpenMessage(GARET, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(30);
-    Actor_FaceDirection(10, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
     Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(10, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Engine_EventWait(30);
-    Event_ShowMessage(10, 0);
+    Event_ShowMessage(ACTOR_IODEM, 0);
     gEventWork->message++;
   } else {
     Engine_EventWait(30);
-    Actor_FaceDirection(10, FACING_WEST, 0);
+    Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
     Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(10, 4);
+    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
     Engine_EventWait(20);
     gEventWork->message++;
-    Event_ShowMessage(10, 0);
+    Event_ShowMessage(ACTOR_IODEM, 0);
   }
   Engine_EventWait(10);
-  Actor_ShowEmote(14, 0x101, 60);
-  Actor_SetSpeed(14, 0x10000, 0x8000);
-  Actor_WalkByAndWait(14, 0, 16);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 1, 60);
+  Actor_SetSpeed(ACTOR_FARAN, 0x10000, 0x8000);
+  Actor_WalkByAndWait(ACTOR_FARAN, 0, 16);
   Engine_EventWait(20);
-  Event_ShowMessage(14, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(10, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
   Engine_EventWait(35);
-  Event_ShowMessage(10, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(14, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_FARAN, 2);
   Engine_EventWait(20);
-  Event_ShowMessage(14, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(MIA, 0x102, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 40);
   Event_ShowMessage(MIA, 0);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(20);
   Event_ShowMessage(IVAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(GARET, 3);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_EventWait(30);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(14, 0x100, 40);
-  Event_OpenMessage(14, 0);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT, 40);
+  Event_OpenMessage(ACTOR_FARAN, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(14, 4);
+    Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
     Engine_EventWait(20);
-    Event_ShowMessage(14, 0);
+    Event_ShowMessage(ACTOR_FARAN, 0);
     gEventWork->message++;
   } else {
     Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(14, 4);
+    Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
     Engine_EventWait(20);
     gEventWork->message++;
-    Event_ShowMessage(14, 0);
+    Event_ShowMessage(ACTOR_FARAN, 0);
   }
   Engine_EventWait(10);
-  Actor_ShowEmote(10, 0x102, 50);
-  Event_ShowMessage(10, 0);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 50);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(13, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_SECOND_ONLOOKER, 2);
   Engine_EventWait(20);
-  Actor_SetSpeed(13, 0x14ccc, 0xa666);
-  Actor_WalkByAndWait(13, 0, 16);
+  Actor_SetSpeed(ACTOR_SECOND_ONLOOKER, 0x14ccc, 0xa666);
+  Actor_WalkByAndWait(ACTOR_SECOND_ONLOOKER, 0, 16);
   Engine_EventWait(20);
-  Event_ShowMessage(13, 0);
+  Event_ShowMessage(ACTOR_SECOND_ONLOOKER, 0);
   Engine_EventWait(10);
-  Actor_SetSpeed(12, 0x14ccc, 0xa666);
-  Actor_WalkByAndWait(12, 0, 16);
+  Actor_SetSpeed(ACTOR_FIRST_ONLOOKER, 0x14ccc, 0xa666);
+  Actor_WalkByAndWait(ACTOR_FIRST_ONLOOKER, 0, 16);
   Engine_EventWait(20);
-  Actor_ShowEmote(12, 0x107, 50);
-  Event_ShowMessage(12, 0);
+  Actor_ShowEmote(ACTOR_FIRST_ONLOOKER, EMOTE_IN_FRONT | 7, 50);
+  Event_ShowMessage(ACTOR_FIRST_ONLOOKER, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(14, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
   Engine_EventWait(30);
   Engine_EventWait(10);
-  Actor_ShowEmote(10, 0x102, 60);
-  Actor_FaceDirection(10, FACING_WEST, 0);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 60);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
   Engine_EventWait(25);
-  Event_ShowMessage(10, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(10, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_IODEM, 2);
   Engine_EventWait(20);
-  Event_OpenMessage(10, 0);
+  Event_OpenMessage(ACTOR_IODEM, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(10, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Engine_EventWait(30);
-    Event_ShowMessage(10, 0);
+    Event_ShowMessage(ACTOR_IODEM, 0);
     gEventWork->message++;
   } else {
     Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(10, 4);
+    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
     Engine_EventWait(20);
     gEventWork->message++;
-    Event_ShowMessage(10, 0);
+    Event_ShowMessage(ACTOR_IODEM, 0);
   }
   Engine_EventWait(10);
-  Actor_FaceDirection(10, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH, 0);
   Engine_EventWait(35);
-  Engine_ActorSetAnimationAndWait(14, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
   Engine_EventWait(30);
-  Actor_FaceDirection(14, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_EventWait(40);
-  Event_ShowMessage(14, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
-  Engine_ActorFaceEachOther(12, 13, 50);
-  Engine_ActorSetAnimation(12, 3);
-  Engine_ActorSetAnimationAndWait(13, 3);
+  Engine_ActorFaceEachOther(ACTOR_FIRST_ONLOOKER, ACTOR_SECOND_ONLOOKER, 50);
+  Engine_ActorSetAnimation(ACTOR_FIRST_ONLOOKER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_ONLOOKER, ANIM_NOD);
   Engine_EventWait(30);
-  Actor_FaceDirection(12, FACING_SOUTH, 0);
-  Actor_FaceDirection(13, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_SOUTH, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimation(12, 3);
-  Engine_ActorSetAnimationAndWait(13, 3);
+  Engine_ActorSetAnimation(ACTOR_FIRST_ONLOOKER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_ONLOOKER, ANIM_NOD);
   Engine_EventWait(30);
-  Actor_SetSpeed(12, 0x10000, 0x8000);
-  Actor_SetSpeed(13, 0x10000, 0x8000);
-  Actor_WalkBy(12, 32, 0);
-  Actor_WalkByAndWait(13, 32, 0);
-  Actor_WalkBy(12, 0, 16);
-  Actor_WalkByAndWait(13, 16, 0);
-  Actor_WalkTo(13, 344, 312);
-  Actor_WalkToAndWait(12, 344, 336);
-  Engine_ActorSetAnimation(13, 1);
-  Actor_FaceDirection(12, FACING_WEST, 0);
-  Actor_FaceDirection(13, FACING_WEST, 0);
+  Actor_SetSpeed(ACTOR_FIRST_ONLOOKER, 0x10000, 0x8000);
+  Actor_SetSpeed(ACTOR_SECOND_ONLOOKER, 0x10000, 0x8000);
+  Actor_WalkBy(ACTOR_FIRST_ONLOOKER, 32, 0);
+  Actor_WalkByAndWait(ACTOR_SECOND_ONLOOKER, 32, 0);
+  Actor_WalkBy(ACTOR_FIRST_ONLOOKER, 0, 16);
+  Actor_WalkByAndWait(ACTOR_SECOND_ONLOOKER, 16, 0);
+  Actor_WalkTo(ACTOR_SECOND_ONLOOKER, 344, 312);
+  Actor_WalkToAndWait(ACTOR_FIRST_ONLOOKER, 344, 336);
+  Engine_ActorSetAnimation(ACTOR_SECOND_ONLOOKER, ANIM_STAND);
+  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_WEST, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(14, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_FARAN, FACING_SOUTH, 0);
   Engine_EventWait(20);
-  Event_ShowMessage(14, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
-  Actor_SetSpeed(14, 0x10000, 0x8000);
-  Actor_WalkToAndWait(14, 328, 312);
-  Actor_FaceDirection(14, FACING_WEST, 0);
+  Actor_SetSpeed(ACTOR_FARAN, 0x10000, 0x8000);
+  Actor_WalkToAndWait(ACTOR_FARAN, 328, 312);
+  Actor_FaceDirection(ACTOR_FARAN, FACING_WEST, 0);
   Engine_EventWait(30);
-  Actor_SetSpeed(11, 0x10000, 0x8000);
-  Actor_WalkToAndWait(11, 328, 328);
-  Actor_FaceDirection(11, FACING_WEST, 0);
+  Actor_SetSpeed(ACTOR_WITNESS, 0x10000, 0x8000);
+  Actor_WalkToAndWait(ACTOR_WITNESS, 328, 328);
+  Actor_FaceDirection(ACTOR_WITNESS, FACING_WEST, 0);
   Engine_EventWait(20);
   // Regroup the travelling party after the conversation.
   Actor_SetSpeed(GARET, 0x13333, 0x9999);
@@ -573,11 +627,12 @@ static void BabiLighthouse_DiscussPursuit(void) {
   Engine_EventEnd();
 }
 
-// Shows the door opening, then explains why those without Psynergy cannot
-// enter.
+// The door opens before Iodem and Faran the first time: everyone marvels,
+// the door closes again, and the party says those without Psynergy cannot
+// follow; Iodem and Faran leave Sheba's rescue to them.
 static void BabiLighthouse_ExplainTruthDoor(void) {
   // Everyone reacts to the opened door before trying to follow the party.
-  GameFlag_Set(0x989);
+  GameFlag_Set(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN);
   Engine_EventBegin();
   Battle_ResetEffectCounter();
   Engine_EventSetMessage(MsgBabiTheDoor);
@@ -585,48 +640,48 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 296, 312);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Engine_EventWait(10);
-  Motion_LaunchFromFocusedObject(1, 0, 16, 0);
-  FieldMotion_LaunchFromFocusedObject(2, -16, -8, 0);
-  Motion_LaunchFromFocusedObject(3, -16, 24, 0);
+  Motion_LaunchFromFocusedObject(GARET, 0, 16, FACING_EAST);
+  FieldMotion_LaunchFromFocusedObject(IVAN, -16, -8, FACING_EAST);
+  Motion_LaunchFromFocusedObject(MIA, -16, 24, FACING_EAST);
   Engine_ActorWaitForMove(MIA);
   Engine_EventWait(20);
   Camera_SetSpeed(0x30000, 0x6000);
-  Camera_MoveTo(0x1180000, -1, 0x1480000, 1);
+  Camera_MoveTo(PIXELS(280), -1, PIXELS(328), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(10);
   Engine_EventWait(10);
-  Actor_FaceDirection(10, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(10, 0x100, 40);
-  Event_ShowMessage(10, 0);
-  Engine_ActorJump(10, 4, 13);
-  Engine_ActorJump(10, 4, 30);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT, 40);
+  Event_ShowMessage(ACTOR_IODEM, 0);
+  Engine_ActorJump(ACTOR_IODEM, 4, 13);
+  Engine_ActorJump(ACTOR_IODEM, 4, 30);
   Engine_EventWait(10);
-  Actor_ShowEmote(11, 0x100, 0);
-  Actor_ShowEmote(12, 0x100, 0);
-  Actor_ShowEmote(13, 0x100, 0);
-  Actor_ShowEmote(14, 0x100, 40);
+  Actor_ShowEmote(ACTOR_WITNESS, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_FIRST_ONLOOKER, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_SECOND_ONLOOKER, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT, 40);
   Engine_EventWait(10);
-  Actor_FaceDirection(14, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(11, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(12, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(13, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_EventWait(30);
-  Engine_ActorRunRepeatedMotion(14, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_FARAN, 2);
   Engine_EventWait(20);
-  Event_ShowMessage(14, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(13, 0x102, 40);
-  Event_ShowMessage(13, 0);
+  Actor_ShowEmote(ACTOR_SECOND_ONLOOKER, EMOTE_IN_FRONT | 2, 40);
+  Event_ShowMessage(ACTOR_SECOND_ONLOOKER, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(12, 0x101, 50);
-  Actor_FaceDirection(12, FACING_WEST, 0);
+  Actor_ShowEmote(ACTOR_FIRST_ONLOOKER, EMOTE_IN_FRONT | 1, 50);
+  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_WEST, 0);
   Engine_EventWait(25);
-  Event_ShowMessage(12, 0);
+  Event_ShowMessage(ACTOR_FIRST_ONLOOKER, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(14, FACING_WEST, 0);
-  Actor_FaceDirection(11, FACING_WEST, 0);
-  Actor_FaceDirection(13, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_FARAN, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_WITNESS, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_WEST, 0);
   Engine_EventWait(30);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(MIA, 2);
@@ -637,72 +692,72 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_EventWait(20);
   Event_ShowMessage(IVAN, 0);
   Engine_EventWait(10);
-  Actor_ShowEmote(GARET, 0x102, 40);
+  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 40);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(10, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Event_ShowMessage(10, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(14, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_FARAN, 2);
   Engine_EventWait(25);
-  Event_ShowMessage(14, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(10, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_IODEM, 2);
   Engine_EventWait(20);
-  Actor_SetSpeed(10, 0x10000, 0x8000);
-  Actor_WalkByAndWait(10, 0, -40);
-  Actor_FaceDirection(10, FACING_EAST, 0);
+  Actor_SetSpeed(ACTOR_IODEM, 0x10000, 0x8000);
+  Actor_WalkByAndWait(ACTOR_IODEM, 0, -40);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 0);
   Engine_EventWait(20);
-  Event_ShowMessage(10, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(14, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
   Engine_EventWait(30);
   Engine_EventWait(10);
-  Actor_FaceDirection(13, FACING_SOUTH, 0);
-  Actor_FaceDirection(12, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_NORTH, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimation(12, 3);
-  Engine_ActorSetAnimationAndWait(13, 3);
+  Engine_ActorSetAnimation(ACTOR_FIRST_ONLOOKER, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_ONLOOKER, ANIM_NOD);
   Engine_EventWait(30);
-  Actor_FaceDirection(13, FACING_WEST, 0);
-  Actor_FaceDirection(12, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_WEST, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(10, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Engine_EventWait(30);
-  Engine_CameraFollowActor(10, 1);
-  Actor_WalkByAndWait(10, 0, -32);
+  Engine_CameraFollowActor(ACTOR_IODEM, 1);
+  Actor_WalkByAndWait(ACTOR_IODEM, 0, -32);
   // Demonstrate that the door closes again when someone without Psynergy
   // enters.
   BabiLighthouse_CloseTruthDoor();
-  GameFlag_Clear(0x301);
+  GameFlag_Clear(FLAG_BEYOND_DOOR);
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_EventBegin();
-  Actor_ShowEmote(10, 0x102, 40);
-  Event_ShowMessage(10, 0);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 2, 40);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(14, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(11, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(12, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(13, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
   Engine_EventWait(30);
-  Actor_ShowEmote(11, 0x100, 0);
-  Actor_ShowEmote(12, 0x100, 0);
-  Actor_ShowEmote(13, 0x100, 0);
-  Actor_ShowEmote(14, 0x100, 70);
-  Camera_MoveTo(0x1180000, -1, 0x1380000, 1);
+  Actor_ShowEmote(ACTOR_WITNESS, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_FIRST_ONLOOKER, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_SECOND_ONLOOKER, EMOTE_IN_FRONT, 0);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT, 70);
+  Camera_MoveTo(PIXELS(280), -1, PIXELS(312), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(10);
-  Actor_ShowEmote(12, 0x102, 40);
-  Event_ShowMessage(12, 0);
+  Actor_ShowEmote(ACTOR_FIRST_ONLOOKER, EMOTE_IN_FRONT | 2, 40);
+  Event_ShowMessage(ACTOR_FIRST_ONLOOKER, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(13, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_SECOND_ONLOOKER, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Event_ShowMessage(13, 0);
+  Event_ShowMessage(ACTOR_SECOND_ONLOOKER, 0);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(30);
@@ -710,120 +765,120 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_EventWait(20);
   Event_ShowMessage(IVAN, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(10, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH, 0);
   Engine_EventWait(30);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
   Engine_EventWait(30);
-  Actor_ShowEmote(MIA, 0x102, 40);
+  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 2, 40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
   Engine_EventWait(20);
   Event_ShowMessage(MIA, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(GARET, 4);
+  Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(14, 0x103, 50);
-  Actor_FaceDirection(14, FACING_WEST, 0);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 3, 50);
+  Actor_FaceDirection(ACTOR_FARAN, FACING_WEST, 0);
   Engine_EventWait(20);
   // Explain the restriction and ask the onlookers to leave the pursuit to us.
-  Event_OpenMessage(14, 0);
+  Event_OpenMessage(ACTOR_FARAN, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-  Actor_FaceDirection(11, FACING_WEST, 0);
-  Actor_FaceDirection(12, FACING_WEST, 0);
-  Actor_FaceDirection(13, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_WITNESS, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_WEST, 0);
   Actor_FaceDirection(IVAN, FACING_EAST + FACING_STEP, 0);
   Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(30);
-    Engine_ActorRunRepeatedMotion(14, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_FARAN, 2);
     Engine_EventWait(20);
-    Event_ShowMessage(14, 0);
+    Event_ShowMessage(ACTOR_FARAN, 0);
     gEventWork->message++;
   } else {
     Engine_EventWait(30);
-    Engine_ActorRunRepeatedMotion(14, 2);
+    Engine_ActorRunRepeatedMotion(ACTOR_FARAN, 2);
     Engine_EventWait(20);
     gEventWork->message++;
-    Event_ShowMessage(14, 0);
+    Event_ShowMessage(ACTOR_FARAN, 0);
   }
   Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(10, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_IODEM, 2);
   Engine_EventWait(20);
-  Actor_WalkByAndWait(10, 0, 16);
-  Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
+  Actor_WalkByAndWait(ACTOR_IODEM, 0, 16);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
   Engine_EventWait(20);
-  Event_ShowMessage(10, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(14, FACING_NORTHWEST, 0);
+  Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST, 0);
   Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(14, 4);
+  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Event_ShowMessage(14, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
-  // The party learns where the kidnappers went and is asked to pursue them.
-  Engine_ActorSetAnimationAndWait(10, 3);
+  // Iodem and Faran agree to stay behind and leave the rescue to the party.
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Engine_EventWait(30);
-  Event_ShowMessage(10, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(14, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_FARAN, 2);
   Engine_EventWait(20);
-  Event_OpenMessage(14, 0);
+  Event_OpenMessage(ACTOR_FARAN, 0);
   Engine_EventWait(40);
-  Actor_FaceDirection(10, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 0);
   Engine_EventWait(20);
-  Actor_ShowEmote(10, 0x101, 60);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | 1, 60);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(30);
-    Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
+    Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(10, 3);
+    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Engine_EventWait(30);
-    Event_ShowMessage(10, 0);
+    Event_ShowMessage(ACTOR_IODEM, 0);
     gEventWork->message++;
   } else {
     Engine_EventWait(30);
-    Actor_FaceDirection(10, FACING_SOUTHEAST, 0);
+    Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTHEAST, 0);
     Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(10, 4);
+    Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_SHAKE_HEAD);
     Engine_EventWait(20);
     gEventWork->message++;
-    Event_ShowMessage(10, 0);
+    Event_ShowMessage(ACTOR_IODEM, 0);
   }
   Engine_EventWait(10);
-  Actor_ShowEmote(14, 0x102, 50);
-  Event_ShowMessage(14, 0);
+  Actor_ShowEmote(ACTOR_FARAN, EMOTE_IN_FRONT | 2, 50);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(15);
-  Engine_ActorSetAnimationAndWait(10, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
   Engine_EventWait(30);
   Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(14, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_FARAN, 2);
   Engine_EventWait(40);
-  Actor_FaceDirection(14, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_FARAN, FACING_WEST, 0);
   Engine_EventWait(20);
-  Event_ShowMessage(14, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(14, 3);
+  Engine_ActorSetAnimationAndWait(ACTOR_FARAN, ANIM_NOD);
   Engine_EventWait(30);
-  Event_ShowMessage(14, 0);
+  Event_ShowMessage(ACTOR_FARAN, 0);
   Engine_EventWait(10);
-  Actor_FaceDirection(10, FACING_SOUTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 0);
   Engine_EventWait(25);
-  Engine_ActorRunRepeatedMotion(10, 2);
+  Engine_ActorRunRepeatedMotion(ACTOR_IODEM, 2);
   Engine_EventWait(20);
-  Actor_WalkToAndWait(10, 312, 312);
+  Actor_WalkToAndWait(ACTOR_IODEM, 312, 312);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-  Actor_FaceDirection(10, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_WEST, 0);
   Engine_EventWait(25);
-  Event_ShowMessage(10, 0);
+  Event_ShowMessage(ACTOR_IODEM, 0);
   Engine_EventWait(10);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
   Engine_ActorFaceEachOther(MIA, IVAN, 0);
   Engine_EventWait(30);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
-  Engine_ActorSetAnimation(GARET, 3);
-  Engine_ActorSetAnimation(MIA, 3);
-  Engine_ActorSetAnimationAndWait(IVAN, 3);
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
+  Engine_ActorSetAnimation(GARET, ANIM_NOD);
+  Engine_ActorSetAnimation(MIA, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_EventWait(30);
   // Regroup the travelling party after the conversation.
   Actor_SetSpeed(GARET, 0x13333, 0x9999);
@@ -834,68 +889,73 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   BabiLighthouse_RegroupPartyMember(MIA);
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_FaceDirection(10, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(14, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(11, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(12, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(13, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_NORTHWEST + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_EventWait(30);
   Engine_EventEnd();
 }
 
-// Selects the revealed switch tiles to match the truth door's open flag.
+// Reveal shows the door's switch, flipped one way or the other as the door
+// stands.
 static void BabiLighthouse_RefreshTruthDoorTiles(void) {
-  if (Engine_GameFlagIsSet(0x985) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
     Map_CopyCellsLayered(36, 78, 1, 2, 17, 78);
   } else {
     Map_CopyCellsLayered(34, 78, 1, 2, 17, 78);
   }
 }
 
-// Restores the ordinary tiles when Reveal no longer exposes the door switch.
+// Reveal's light ends and the switch is hidden again.
 static void BabiLighthouse_HideTruthDoorSwitch(void) {
   Map_CopyCellsLayered(32, 78, 1, 2, 17, 78);
 }
 
-// Opens both door halves and runs the first-opening conversation once.
+// The stone door's halves slide open (SE_GATE_MOVE); the first time, Iodem
+// and Faran see it.
 static void BabiLighthouse_OpenTruthDoor(void) {
-  if (GameFlag_IsSet(0x985) == 0) {
-    GameFlag_Set(0x985);
-    Engine_AudioPlayCue(157);
+  if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
+    GameFlag_Set(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN);
+    Engine_AudioPlayCue(SE_GATE_MOVE);
     Engine_EventBegin();
-    Actor_SetDestination(8, 280, 240);
-    Actor_SetDestination(9, 328, 240);
-    Engine_ActorWaitForMove(8);
-    Engine_ActorWaitForMove(9);
+    Actor_SetDestination(ACTOR_LEFT_DOOR, 280, 240);
+    Actor_SetDestination(ACTOR_RIGHT_DOOR, 328, 240);
+    Engine_ActorWaitForMove(ACTOR_LEFT_DOOR);
+    Engine_ActorWaitForMove(ACTOR_RIGHT_DOOR);
     Map_CopyCellAttributes(81, 14, 4, 1, 17, 14);
     Engine_EventEnd();
-    if (GameFlag_IsSet(0x989) == 0) {
+    if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN) == 0) {
       BabiLighthouse_ExplainTruthDoor();
     }
   }
 }
 
-// Closes both door halves and toggles which doorway touch trigger is active.
+// Walking through the open door: it slides shut behind the party, now on its
+// other side.
 static void BabiLighthouse_CloseTruthDoor(void) {
-  if (GameFlag_IsSet(0x985) != 0) {
-    GameFlag_Clear(0x985);
-    Engine_AudioPlayCue(157);
+  if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) != 0) {
+    GameFlag_Clear(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN);
+    Engine_AudioPlayCue(SE_GATE_MOVE);
     Engine_EventBegin();
-    Actor_SetDestination(8, 296, 240);
-    Actor_SetDestination(9, 312, 240);
-    Engine_ActorWaitForMove(8);
-    Engine_ActorWaitForMove(9);
+    Actor_SetDestination(ACTOR_LEFT_DOOR, 296, 240);
+    Actor_SetDestination(ACTOR_RIGHT_DOOR, 312, 240);
+    Engine_ActorWaitForMove(ACTOR_LEFT_DOOR);
+    Engine_ActorWaitForMove(ACTOR_RIGHT_DOOR);
     Map_CopyCellAttributes(0, 14, 4, 1, 17, 14);
     Engine_EventEnd();
-    if (GameFlag_IsSet(0x301) != 0) {
-      GameFlag_Clear(0x301);
+    if (GameFlag_IsSet(FLAG_BEYOND_DOOR) != 0) {
+      GameFlag_Clear(FLAG_BEYOND_DOOR);
     } else {
-      GameFlag_Set(0x301);
+      GameFlag_Set(FLAG_BEYOND_DOOR);
     }
   }
 }
 
-// Operates the hidden switch under Reveal; otherwise reads its inscription.
+// Searching the door's switch: under Reveal's light it is flipped and the
+// door opens; otherwise it reads "The truth of this door is open to those
+// seeing with their true heart."
 static void BabiLighthouse_InspectTruthDoorSwitch(void) {
   u8 *work = (u8 *)gEventWork;
   s16 *revealActive;
@@ -903,10 +963,10 @@ static void BabiLighthouse_InspectTruthDoorSwitch(void) {
   Engine_EventBegin();
   revealActive = (s16 *)(work + 0xcb8);
   if (revealActive[0] != 0) {
-    if (Engine_GameFlagIsSet(0x985) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
 
       Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
-      Engine_AudioPlayCue(155);
+      Engine_AudioPlayCue(SE_155);
       Map_CopyCellsLayered(35, 78, 1, 2, 17, 78);
       Engine_EventWait(10);
       Map_CopyCellsLayered(34, 78, 1, 2, 17, 78);
@@ -942,15 +1002,16 @@ BabiLighthouse_FindActorAhead(struct StagedActor *actor) {
   return StagedActor_FindAtTile(target, actor);
 }
 
-// Enables the effect scene's child option; its remaining meaning is unknown.
+// Carry's first phase on the building site's block sets the effect's
+// childOption; what that changes is not known.
 static void BabiLighthouse_EnableChildOption(void) {
   ((struct BattleFxScene *)gEffectWork)->childOption = 1;
 }
 
-// Updates the moved block's height, flags and tile after it reaches column 20,
-// row 12.
+// After Move or Carry on the building site's block: in its cell at (20, 12)
+// it settles at a height of 48 pixels.
 static void BabiLighthouse_UpdateMovedBlock(void) {
-  struct FieldActor *block = Object_GetById(12);
+  struct FieldActor *block = Object_GetById(ACTOR_SITE_BLOCK);
   s32 column = block->x.fixed >> 20;
 
   if (column == 20) {
@@ -1001,7 +1062,8 @@ static void BabiLighthouse_AdvanceNearbyPair(void) {
 // Tries vertical climbing first, then advances the staged pair when
 // appropriate.
 static void BabiLighthouse_ClimbOrAdvancePair(void) {
-  struct StagedActor *leader = (struct StagedActor *)Object_GetById(0);
+  struct StagedActor *leader =
+      (struct StagedActor *)Object_GetById(ACTOR_PARTY_LEADER);
   struct StagedActor *ahead = BabiLighthouse_FindActorAhead(leader);
   s32 climbDirection = (leader->directionAndKind + 0x2000) & 0xc000;
   s32 climbResult = -1;
@@ -1021,37 +1083,36 @@ static void BabiLighthouse_ClimbOrAdvancePair(void) {
   }
 }
 
-// Selects the event table for the active lighthouse room.
+// Returns the event table of the scene being entered.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
   if (scene == (s32)&SceneId_BabiLighthouse3) {
-    return gBabiLighthouseEvents3;
+    return gBabiLighthouse_Events3;
   }
   if (scene == (s32)&SceneId_BabiLighthouse2) {
-    return gBabiLighthouseEvents2;
+    return gBabiLighthouse_Events2;
   }
   if (scene == (s32)&SceneId_BabiLighthouse1) {
-    return gBabiLighthouseEvents1;
+    return gBabiLighthouse_Events1;
   }
-  return gBabiLighthouseEventsOther;
+  return gBabiLighthouse_EventsOther;
 }
 
-// Copies the passage's collision tiles after Growth and remembers the change.
+// Growth on room 3's sprout: it grows into a vine the party can climb.
 static void BabiLighthouse_OpenGrowthPassage(void) {
 
   Map_CopyCellAttributes(82, 7, 1, 2, 18, 7);
   Engine_TaskWait(1);
-  Engine_GameFlagSet(0x300);
+  Engine_GameFlagSet(FLAG_GROWTH_PASSAGE_OPEN);
 }
 
-// Restores both ledge regions, then places collision tiles under the two
-// blocks.
+// Redraws room 3's ledge cells, then blocks the cells under its two blocks.
 static void BabiLighthouse_RefreshMovableBlockTiles(void) {
-  struct FieldActor *leftBlock = Object_GetById(8);
+  struct FieldActor *leftBlock = Object_GetById(ACTOR_LEFT_BLOCK);
 
-  Engine_ActorSetSpritePriority(8, 1);
-  Engine_ActorSetSpritePriority(9, 1);
+  Engine_ActorSetSpritePriority(ACTOR_LEFT_BLOCK, 1);
+  Engine_ActorSetSpritePriority(ACTOR_RIGHT_BLOCK, 1);
   Map_CopyCellAttributes(69, 19, 3, 3, 5, 19);
   Map_CopyCellAttributes(69, 19, 3, 3, 17, 19);
   {
@@ -1060,7 +1121,7 @@ static void BabiLighthouse_RefreshMovableBlockTiles(void) {
     Map_CopyCellAttributes(3, 3, 1, 1, column, row);
   }
   {
-    struct FieldActor *rightBlock = Object_GetById(9);
+    struct FieldActor *rightBlock = Object_GetById(ACTOR_RIGHT_BLOCK);
     s32 column = rightBlock->x.fixed >> 20, row = rightBlock->z.fixed >> 20;
 
     Map_CopyCellAttributes(3, 3, 1, 1, column, row);
@@ -1068,33 +1129,33 @@ static void BabiLighthouse_RefreshMovableBlockTiles(void) {
 }
 
 #if TBS_PATCH_2
-// Updates both movable blocks' sprite priorities relative to the leader's
-// depth.
+// Update callback of room 3's blocks (TBS_PATCH_2 and later): each is drawn
+// in front of the leader when nearer the screen, and on its layer otherwise.
 static void BabiLighthouse_MatchLeaderPriority(union FieldObject *fieldObject) {
   struct AnimationObject *sprite;
   struct FieldActor *actor;
   s32 priority;
 
   sprite = Object_GetById(ACTOR_PARTY_LEADER)->sprite;
-  actor = Object_GetById(8);
+  actor = Object_GetById(ACTOR_LEFT_BLOCK);
   if (actor->z.fixed < Object_GetById(ACTOR_PARTY_LEADER)->z.fixed) {
-    Engine_ActorSetSpritePriority(8, sprite->image.priority);
+    Engine_ActorSetSpritePriority(ACTOR_LEFT_BLOCK, sprite->image.priority);
   } else {
     priority = sprite->image.priority;
     if (priority != 1)
       priority--;
-    Engine_ActorSetSpritePriority(8, priority);
-    Object_GetById(8)->priorityFlags |= 1;
+    Engine_ActorSetSpritePriority(ACTOR_LEFT_BLOCK, priority);
+    Object_GetById(ACTOR_LEFT_BLOCK)->priorityFlags |= 1;
   }
-  actor = Object_GetById(9);
+  actor = Object_GetById(ACTOR_RIGHT_BLOCK);
   if (actor->z.fixed < Object_GetById(ACTOR_PARTY_LEADER)->z.fixed) {
-    Engine_ActorSetSpritePriority(9, sprite->image.priority);
+    Engine_ActorSetSpritePriority(ACTOR_RIGHT_BLOCK, sprite->image.priority);
   } else {
     priority = sprite->image.priority;
     if (priority != 1)
       priority--;
-    Engine_ActorSetSpritePriority(9, priority);
-    Object_GetById(9)->priorityFlags |= 1;
+    Engine_ActorSetSpritePriority(ACTOR_RIGHT_BLOCK, priority);
+    Object_GetById(ACTOR_RIGHT_BLOCK)->priorityFlags |= 1;
   }
 }
 #endif
@@ -1114,7 +1175,9 @@ struct RowActor {
   u16 delay;
 };
 
-// Restores room-specific blocks, door state and arrival sequences on entry.
+// Sets up the scene being entered: Retreat leads back to room 3; the site's
+// block, room 3's blocks, vine and fallen men, room 2's arrivals by falling,
+// and room 1's door and onlookers are restored. Returns 0.
 s32 BabiLighthouse_SetupScene(void) {
   struct FieldActor *actor;
   struct RowActor *row;
@@ -1136,7 +1199,7 @@ s32 BabiLighthouse_SetupScene(void) {
   }
   // Restore the moved block's collision in the construction-area room.
   if (scene == (s32)&SceneId_BabiLighthouse4) {
-    row = (struct RowActor *)Object_GetById(12);
+    row = (struct RowActor *)Object_GetById(ACTOR_SITE_BLOCK);
     x = row->x.fixed >> 20;
     if (x == 20) {
       z = row->z.fixed >> 20;
@@ -1146,26 +1209,26 @@ s32 BabiLighthouse_SetupScene(void) {
     }
   } else if (sceneCopy == (s32)&SceneId_BabiLighthouse3) {
     // Set up the movable ledge blocks and the staggered actor animations.
-    Actor_SetChildValue(8, 6);
-    Actor_SetChildValue(9, 6);
+    Actor_SetChildValue(ACTOR_LEFT_BLOCK, 6);
+    Actor_SetChildValue(ACTOR_RIGHT_BLOCK, 6);
 #if TBS_PATCH_2
-    ((union FieldObject *)Object_GetById(8))->actor.update =
+    ((union FieldObject *)Object_GetById(ACTOR_LEFT_BLOCK))->actor.update =
         BabiLighthouse_MatchLeaderPriority;
-    ((union FieldObject *)Object_GetById(9))->actor.update =
+    ((union FieldObject *)Object_GetById(ACTOR_RIGHT_BLOCK))->actor.update =
         BabiLighthouse_MatchLeaderPriority;
 #endif
-    if (state->entrance == 5 && GameFlag_IsSet(0x109) == 0) {
-      Actor_SetPosition(9, 0x1380000, 0x1480000);
+    if (state->entrance == 5 && GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+      Actor_SetPosition(ACTOR_RIGHT_BLOCK, PIXELS(312), PIXELS(328));
     }
     BabiLighthouse_RefreshMovableBlockTiles();
-    actor = Object_GetById(9);
-    actor->y.fixed = Object_GetById(9)->terrainHeight;
-    if (GameFlag_IsSet(0x300) != 0) {
-      Engine_ActorSetAnimation(10, 4);
-      Object_GetById(10)->collisionFlags = 0xfe;
+    actor = Object_GetById(ACTOR_RIGHT_BLOCK);
+    actor->y.fixed = Object_GetById(ACTOR_RIGHT_BLOCK)->terrainHeight;
+    if (GameFlag_IsSet(FLAG_GROWTH_PASSAGE_OPEN) != 0) {
+      Engine_ActorSetAnimation(ACTOR_SPROUT, 4);
+      Object_GetById(ACTOR_SPROUT)->collisionFlags = 0xfe;
       BabiLighthouse_OpenGrowthPassage();
     }
-    row = (struct RowActor *)Object_GetById(11);
+    row = (struct RowActor *)Object_GetById(ACTOR_FIRST_FALLEN_MAN);
     row->collisionFlags = 0;
     row->priorityFlags = 0;
     row->delay = 0;
@@ -1173,31 +1236,31 @@ s32 BabiLighthouse_SetupScene(void) {
     zero = 0;
     ((u8 *)row->sprite)[38] = zero;
     row->sprite->rotation = 0xc000;
-    Engine_ActorSetAnimation(11, 0);
-    row = (struct RowActor *)Object_GetById(12);
+    Engine_ActorSetAnimation(ACTOR_FIRST_FALLEN_MAN, 0);
+    row = (struct RowActor *)Object_GetById(ACTOR_FIRST_FALLEN_MAN + 1);
     row->collisionFlags = zero;
     row->priorityFlags = zero;
     row->delay = 30;
     ((u8 *)row->sprite)[9] |= 12;
     ((u8 *)row->sprite)[38] = zero;
     row->sprite->rotation = 0x4000;
-    Engine_ActorSetAnimation(12, 0);
-    row = (struct RowActor *)Object_GetById(13);
+    Engine_ActorSetAnimation(ACTOR_FIRST_FALLEN_MAN + 1, 0);
+    row = (struct RowActor *)Object_GetById(ACTOR_FIRST_FALLEN_MAN + 2);
     row->collisionFlags = zero;
     row->priorityFlags = zero;
     row->delay = 60;
     ((u8 *)row->sprite)[9] |= 12;
     ((u8 *)row->sprite)[38] = zero;
     row->sprite->rotation = 0x8000;
-    Engine_ActorSetAnimation(13, 0);
-    row = (struct RowActor *)Object_GetById(14);
+    Engine_ActorSetAnimation(ACTOR_FIRST_FALLEN_MAN + 2, 0);
+    row = (struct RowActor *)Object_GetById(ACTOR_FIRST_FALLEN_MAN + 3);
     row->collisionFlags = zero;
     row->priorityFlags = zero;
     row->delay = 90;
     ((u8 *)row->sprite)[9] |= 12;
     ((u8 *)row->sprite)[38] = zero;
     row->sprite->rotation = 0x8000;
-    Engine_ActorSetAnimation(14, 0);
+    Engine_ActorSetAnimation(ACTOR_FIRST_FALLEN_MAN + 3, 0);
   } else if (sceneCopy == (s32)&SceneId_BabiLighthouse2) {
     // Match the arrival effect and fall to the entrance used in this room.
     switch (state->entrance) {
@@ -1211,24 +1274,24 @@ s32 BabiLighthouse_SetupScene(void) {
       }
       break;
     case 14:
-      OverlayObject_PrepareObject(0x1b80000, 0, 0x1220000, 223);
+      OverlayObject_PrepareObject(PIXELS(440), 0, PIXELS(290), 223);
       Map_CopyCellAttributes(22, 13, 1, 1, 27, 13);
       BabiLighthouse_FallToExit(14);
       break;
     case 16:
-      OverlayObject_PrepareObject(0x1c00000, 0, 0x1220000, 223);
+      OverlayObject_PrepareObject(PIXELS(448), 0, PIXELS(290), 223);
       Map_CopyCellAttributes(22, 12, 1, 1, 28, 10);
       BabiLighthouse_FallToExit(16);
       break;
     case 17:
-      OverlayObject_PrepareObject(0xe80000, 0, 0x2520000, 223);
+      OverlayObject_PrepareObject(PIXELS(232), 0, PIXELS(594), 223);
       Map_CopyCellAttributes(22, 12, 1, 1, 14, 33);
       BabiLighthouse_FallToExit(17);
       break;
     case 12:
     case 13:
     case 15:
-      if (GameFlag_IsSet(0x109) == 0) {
+      if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
         BabiLighthouse_LandWithParticles();
       }
       break;
@@ -1236,46 +1299,48 @@ s32 BabiLighthouse_SetupScene(void) {
   } else if (scene == (s32)&SceneId_BabiLighthouse1) {
     // Restore the truth door and the onlookers' positions after each
     // discussion.
-    Object_GetById(8)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    Object_GetById(9)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    Actor_SetSpeed(8, 0x10000, 0x8000);
-    Actor_SetSpeed(9, 0x10000, 0x8000);
-    if (GameFlag_IsSet(0x109) == 0) {
+    Object_GetById(ACTOR_LEFT_DOOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
+    Object_GetById(ACTOR_RIGHT_DOOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
+    Actor_SetSpeed(ACTOR_LEFT_DOOR, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_RIGHT_DOOR, 0x10000, 0x8000);
+    if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       if (state->entrance == 1) {
-        GameFlag_Set(0x301);
+        GameFlag_Set(FLAG_BEYOND_DOOR);
       } else {
-        GameFlag_Clear(0x301);
+        GameFlag_Clear(FLAG_BEYOND_DOOR);
       }
     }
-    if (GameFlag_IsSet(0x988) == 0) {
-      Actor_SetPosition(10, -0x400000, -0x400000);
-      Actor_SetPosition(11, 0x1180000, 0x1280000);
-      Actor_SetPosition(12, 0x1380000, 0xf80000);
-      Actor_SetPosition(13, 0x1280000, 0xf80000);
-      Actor_SetPosition(14, 0x1400000, 0x1280000);
-      Actor_FaceDirection(11, FACING_EAST, 0);
-      Actor_FaceDirection(12, FACING_NORTH, 0);
-      Actor_FaceDirection(13, FACING_NORTH, 0);
-      Actor_FaceDirection(14, FACING_WEST, 0);
+    if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED) == 0) {
+      Actor_SetPosition(ACTOR_IODEM, -PIXELS(64), -PIXELS(64));
+      Actor_SetPosition(ACTOR_WITNESS, PIXELS(280), PIXELS(296));
+      Actor_SetPosition(ACTOR_FIRST_ONLOOKER, PIXELS(312), PIXELS(248));
+      Actor_SetPosition(ACTOR_SECOND_ONLOOKER, PIXELS(296), PIXELS(248));
+      Actor_SetPosition(ACTOR_FARAN, PIXELS(320), PIXELS(296));
+      Actor_FaceDirection(ACTOR_WITNESS, FACING_EAST, 0);
+      Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_NORTH, 0);
+      Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_NORTH, 0);
+      Actor_FaceDirection(ACTOR_FARAN, FACING_WEST, 0);
       Engine_EventWait(5);
-    } else if (GameFlag_IsSet(0x989) != 0) {
-      Actor_SetPosition(10, 0x1380000, 0x1380000);
-      Actor_FaceDirection(10, FACING_NORTHWEST + FACING_STEP, 0);
-      Actor_FaceDirection(11, FACING_NORTHWEST + FACING_STEP, 0);
-      Actor_FaceDirection(12, FACING_NORTHWEST + FACING_STEP, 0);
-      Actor_FaceDirection(13, FACING_NORTHWEST + FACING_STEP, 0);
-      Actor_FaceDirection(14, FACING_NORTHWEST + FACING_STEP, 0);
+    } else if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN) != 0) {
+      Actor_SetPosition(ACTOR_IODEM, PIXELS(312), PIXELS(312));
+      Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 0);
+      Actor_FaceDirection(ACTOR_WITNESS, FACING_NORTHWEST + FACING_STEP, 0);
+      Actor_FaceDirection(ACTOR_FIRST_ONLOOKER, FACING_NORTHWEST + FACING_STEP,
+                          0);
+      Actor_FaceDirection(ACTOR_SECOND_ONLOOKER, FACING_NORTHWEST + FACING_STEP,
+                          0);
+      Actor_FaceDirection(ACTOR_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
       Engine_EventWait(5);
     }
-    if (GameFlag_IsSet(0x985) != 0) {
-      Actor_SetPosition(8, 0x1180000, 0xf00000);
-      Actor_SetPosition(9, 0x1480000, 0xf00000);
-      Actor_FaceDirection(8, FACING_WEST, 0);
-      Actor_FaceDirection(9, FACING_EAST, 0);
+    if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) != 0) {
+      Actor_SetPosition(ACTOR_LEFT_DOOR, PIXELS(280), PIXELS(240));
+      Actor_SetPosition(ACTOR_RIGHT_DOOR, PIXELS(328), PIXELS(240));
+      Actor_FaceDirection(ACTOR_LEFT_DOOR, FACING_WEST, 0);
+      Actor_FaceDirection(ACTOR_RIGHT_DOOR, FACING_EAST, 0);
       Map_CopyCellAttributes(81, 14, 4, 1, 17, 14);
     }
     if (gGameState.entrance == 3) {
-      if (GameFlag_IsSet(0x109) == 0) {
+      if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
         BabiLighthouse_LandWithParticles();
       }
     }
@@ -1327,7 +1392,7 @@ const s32 *gEffectScripts[] = {
     gEffectScript2,
 };
 
-s32 gBabiLighthousePlacements3_Data[] = {
+s32 gBabiLighthouse_TrembleScript[] = {
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x10000),
     SC_LABEL(1),
@@ -1359,7 +1424,7 @@ s32 gBabiLighthousePlacements3_Data[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-struct SceneEntrance gBabiLighthouseEntrances3[] = {
+struct SceneEntrance gBabiLighthouse_Entrances3[] = {
     {0, CONDITION_ALWAYS, 136, 0, 376, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {1, CONDITION_ALWAYS, 200, 0, 424, FACING_NORTH, 0, 0, 0, 384, 448, 0},
     {2, CONDITION_ALWAYS, 200, 0, 200, FACING_SOUTH, 0, 0, 0, 384, 448, 0},
@@ -1370,7 +1435,7 @@ struct SceneEntrance gBabiLighthouseEntrances3[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gBabiLighthouseEntrances2[] = {
+struct SceneEntrance gBabiLighthouse_Entrances2[] = {
     {0, CONDITION_ALWAYS, 136, 0, 376, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {1, CONDITION_ALWAYS, 232, 0, 488, FACING_SOUTH, 0, 128, 432, 368, 672, 0},
     {2, CONDITION_ALWAYS, 280, 0, 488, FACING_SOUTH, 0, 128, 432, 368, 672, 0},
@@ -1392,26 +1457,26 @@ struct SceneEntrance gBabiLighthouseEntrances2[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gBabiLighthouseEntrances1[] = {
+struct SceneEntrance gBabiLighthouse_Entrances1[] = {
     {1, CONDITION_ALWAYS, 248, 0, 120, FACING_SOUTH, 0, 96, 48, 384, 432, 0},
     {2, CONDITION_ALWAYS, 136, 0, 368, FACING_NORTH, 0, 96, 48, 384, 432, 0},
     {3, CONDITION_ALWAYS, 168, 0, 344, FACING_SOUTH, 0, 96, 48, 384, 432, 0},
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gBabiLighthouseEntrancesOther[] = {
+struct SceneEntrance gBabiLighthouse_EntrancesOther[] = {
     {0, CONDITION_ALWAYS, 328, 0, 240, FACING_NORTH, 0, 0, 0, 464, 400, 0},
     {1, CONDITION_ALWAYS, 112, 0, 360, FACING_NORTH, 0, 0, 0, 464, 400, 0},
     {2, CONDITION_ALWAYS, 136, 0, 32, FACING_SOUTH, 0, 0, 0, 464, 400, 0},
     {SCENE_TABLE_END},
 };
 
-s16 gBabiLighthouseRegions3[] = {
+s16 gBabiLighthouse_Regions3[] = {
     96,  -20, 320, 112, -4, 336, -1, 4, 288, -20, 320, 304, -4, 336, -1, 5,
     304, -20, 96,  320, -4, 112, -1, 6, -1,  0,   0,   0,   0,  0,   0,  0,
 };
 
-u32 gBabiLighthouseExits[] = {
+u32 gBabiLighthouse_Exits[] = {
     SCENE_EXITS(176),        SCENE_EXIT(1, 177, 2),   SCENE_EXIT(2, 175, 7),
     SCENE_EXIT(3, 175, 9),   SCENE_EXIT(4, 173, 1),   SCENE_EXIT(5, 173, 3),
     SCENE_EXIT(6, 173, 2),   SCENE_EXIT(0, 175, 0),   SCENE_EXIT(1, 175, 4),
@@ -1425,36 +1490,36 @@ u32 gBabiLighthouseExits[] = {
     SCENE_EXIT(1, 2, 31),    SCENE_EXIT(2, 176, 1),   SCENE_EXITS_END,
 };
 
-struct ScenePlacement gBabiLighthouseNoPlacements[] = {
+struct ScenePlacement gBabiLighthouse_NoPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ScenePlacement gBabiLighthousePlacements3[] = {
+struct ScenePlacement gBabiLighthouse_Placements3[] = {
     {0xfd, CONDITION_ALWAYS, 7, PIXELS(88), 0, PIXELS(328), FACING_SOUTH,
      TALK_KEEP_FACING, 0},
     {0xfd, CONDITION_ALWAYS, 7, PIXELS(296), 0, PIXELS(328), FACING_SOUTH,
      TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE},
     {0xee, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(296), 0, PIXELS(130),
      FACING_SOUTH, TALK_FACE_PARTY, 0},
-    {0x98, CONDITION_ALWAYS, (s32)gBabiLighthousePlacements3_Data, PIXELS(176),
-     0, PIXELS(360), FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {0x74, CONDITION_ALWAYS, (s32)gBabiLighthousePlacements3_Data, PIXELS(240),
-     0, PIXELS(240), FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {0x98, CONDITION_ALWAYS, (s32)gBabiLighthousePlacements3_Data, PIXELS(216),
-     0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {0x72, CONDITION_ALWAYS, (s32)gBabiLighthousePlacements3_Data, PIXELS(184),
-     0, PIXELS(248), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {0x98, CONDITION_ALWAYS, (s32)gBabiLighthouse_TrembleScript, PIXELS(176), 0,
+     PIXELS(360), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {0x74, CONDITION_ALWAYS, (s32)gBabiLighthouse_TrembleScript, PIXELS(240), 0,
+     PIXELS(240), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {0x98, CONDITION_ALWAYS, (s32)gBabiLighthouse_TrembleScript, PIXELS(216), 0,
+     PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {0x72, CONDITION_ALWAYS, (s32)gBabiLighthouse_TrembleScript, PIXELS(184), 0,
+     PIXELS(248), FACING_SOUTH, TALK_KEEP_FACING, 0},
     {SCENE_TABLE_END},
 };
 
-struct ScenePlacement gBabiLighthousePlacements2[] = {
-    {0x5d, 0x72, ACTOR_STAND, PIXELS(472), 0, PIXELS(184), FACING_SOUTHEAST,
-     TALK_FACE_PARTY, 0},
+struct ScenePlacement gBabiLighthouse_Placements2[] = {
+    {0x5d, FLAG_DJINNI_0 + 66, ACTOR_STAND, PIXELS(472), 0, PIXELS(184),
+     FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
     {SCENE_TABLE_END},
 };
 
 // clang-format off
-struct ScenePlacement gBabiLighthousePlacements1[] = {
+struct ScenePlacement gBabiLighthouse_Placements1[] = {
     {GARET, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_EAST,
         TALK_FACE_PARTY, 0},
     {IVAN, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(-64), 0, PIXELS(-64), FACING_EAST, TALK_FACE_PARTY,
@@ -1476,7 +1541,7 @@ struct ScenePlacement gBabiLighthousePlacements1[] = {
     {SCENE_TABLE_END},
 };
 
-struct ScenePlacement gBabiLighthousePlacementsOther[] = {
+struct ScenePlacement gBabiLighthouse_PlacementsOther[] = {
     {0x72, CONDITION_ALWAYS, ACTOR_WANDER, PIXELS(128), 0, PIXELS(264), FACING_WEST,
         TALK_FACE_PARTY, 0},
     {0x74, CONDITION_ALWAYS, ACTOR_WANDER, PIXELS(96), 0, PIXELS(184), FACING_EAST, TALK_FACE_PARTY,
@@ -1490,31 +1555,31 @@ struct ScenePlacement gBabiLighthousePlacementsOther[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEvent gBabiLighthouseEvents3[] = {
+struct SceneEvent gBabiLighthouse_Events3[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
-    {0x202, 10, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_AdvancePairAndJump)},
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_AdvancePairAndJump)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_ClimbDownOrAdvancePair)},
-    {EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely)},
-    {EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseOnlyTwoOfThoseSixEver)},
-    {EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyJustKickedUsOutOf)},
-    {EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheySetFireToEverythingThats)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+    {EVENT_TALK, ACTOR_FIRST_FALLEN_MAN, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely)},
+    {EVENT_TALK, ACTOR_FIRST_FALLEN_MAN + 1, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseOnlyTwoOfThoseSixEver)},
+    {EVENT_TALK, ACTOR_FIRST_FALLEN_MAN + 2, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheyJustKickedUsOutOf)},
+    {EVENT_TALK, ACTOR_FIRST_FALLEN_MAN + 3, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseTheySetFireToEverythingThats)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_FALLEN_MAN, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseWereTheOnesWhoAttackedBut)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_FALLEN_MAN + 1, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseTheOtherFourDidntSeemTo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_FALLEN_MAN + 2, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseWhatCouldTheyBePlanningFor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_FALLEN_MAN + 3, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseNoneOfThemHadAnyTorches)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_JumpFromLedge)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 9, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_JumpFromLedge)},
-    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 10, 0x300, EVENT_SCRIPT(BabiLighthouse_OpenGrowthPassage)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LEFT_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_JumpFromLedge)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RIGHT_BLOCK, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_JumpFromLedge)},
+    {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_GROWTH_PASSAGE_OPEN, EVENT_SCRIPT(BabiLighthouse_OpenGrowthPassage)},
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gBabiLighthouseEvents2[] = {
+struct SceneEvent gBabiLighthouse_Events2[] = {
     {0x31, 5, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 6, CONDITION_ALWAYS, 2},
     {0x21, 1, CONDITION_ALWAYS, 3},
@@ -1530,44 +1595,44 @@ struct SceneEvent gBabiLighthouseEvents2[] = {
     {TOUCH_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_RisePastSingleEffect)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_RisePastPairedEffects)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_RiseToAlternateExit)},
-    {EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_StartDjinnBattle)},
+    {EVENT_TALK, ACTOR_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_StartDjinnBattle)},
     {SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_InspectLockedDoor)},
     {SCENE_EVENTS_END},
 };
 
-struct SceneEvent gBabiLighthouseEvents1[] = {
+struct SceneEvent gBabiLighthouse_Events1[] = {
     {0x31, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {EVENT_TOUCH, 10, 0x988, EVENT_SCRIPT(BabiLighthouse_DiscussPursuit)},
-    {EVENT_TOUCH, 20, IF_FLAG_SET(0x301), EVENT_SCRIPT(BabiLighthouse_CloseTruthDoor)},
-    {EVENT_TOUCH, 21, 0x301, EVENT_SCRIPT(BabiLighthouse_CloseTruthDoor)},
+    {EVENT_TOUCH, 10, FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED, EVENT_SCRIPT(BabiLighthouse_DiscussPursuit)},
+    {EVENT_TOUCH, 20, IF_FLAG_SET(FLAG_BEYOND_DOOR), EVENT_SCRIPT(BabiLighthouse_CloseTruthDoor)},
+    {EVENT_TOUCH, 21, FLAG_BEYOND_DOOR, EVENT_SCRIPT(BabiLighthouse_CloseTruthDoor)},
     {EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_OpenTruthDoor)},
-    {EVENT_TALK, 10, 0x989, MSGNO(MsgBabiLighthouseIAmCountingOnYouIsaac)},
-    {EVENT_TALK, 11, 0x989, MSGNO(MsgBabiLighthouseWhenISawThemTheyHad)},
-    {EVENT_TALK, 12, 0x989, MSGNO(MsgBabiLighthouseIAmSorryButNotEven)},
-    {EVENT_TALK, 13, 0x989, MSGNO(MsgBabiLighthouseThisAllStartedWhenActorWas)},
-    {EVENT_TALK, 14, 0x989, MSGNO(MsgBabiLighthouseIfYouCanOpenThisDoor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, 0x989, MSGNO(MsgBabiLighthouseIDoNotMeanToDoubt)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x989,
+    {EVENT_TALK, ACTOR_IODEM, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseIAmCountingOnYouIsaac)},
+    {EVENT_TALK, ACTOR_WITNESS, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseWhenISawThemTheyHad)},
+    {EVENT_TALK, ACTOR_FIRST_ONLOOKER, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseIAmSorryButNotEven)},
+    {EVENT_TALK, ACTOR_SECOND_ONLOOKER, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseThisAllStartedWhenActorWas)},
+    {EVENT_TALK, ACTOR_FARAN, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseIfYouCanOpenThisDoor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_IODEM, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseIDoNotMeanToDoubt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WITNESS, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN,
         MSGNO(MsgBabiLighthouseNobodyThinksTheDoorCanBe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x989,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_ONLOOKER, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN,
         MSGNO(MsgBabiLighthouseIDontKnowWhatTheyreWaiting)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, 0x989, MSGNO(MsgBabiLighthouseThisIsAllAHugeWaste)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, 0x989, MSGNO(MsgBabiLighthouseIHopeTheyCanOpenThe)},
-    {EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseIBegOfYouIsaacPlease)},
-    {EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseICantBelieveThisDoorActually)},
-    {EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseItTakesGreatCourageToContinue)},
-    {EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseImVeryInterestedInWhatLies)},
-    {EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseIAmNotAfraidOfDanger)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_ONLOOKER, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseThisIsAllAHugeWaste)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARAN, FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN, MSGNO(MsgBabiLighthouseIHopeTheyCanOpenThe)},
+    {EVENT_TALK, ACTOR_IODEM, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseIBegOfYouIsaacPlease)},
+    {EVENT_TALK, ACTOR_WITNESS, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseICantBelieveThisDoorActually)},
+    {EVENT_TALK, ACTOR_FIRST_ONLOOKER, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseItTakesGreatCourageToContinue)},
+    {EVENT_TALK, ACTOR_SECOND_ONLOOKER, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseImVeryInterestedInWhatLies)},
+    {EVENT_TALK, ACTOR_FARAN, CONDITION_ALWAYS, MSGNO(MsgBabiLighthouseIAmNotAfraidOfDanger)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_IODEM, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseIfAnythingHappensToActorTolbi)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WITNESS, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseIfThisDoorOpensMaybeWe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_ONLOOKER, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseIBetTheMonstersAroundHere)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_ONLOOKER, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseThisIsABigWasteOf)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FARAN, CONDITION_ALWAYS,
         MSGNO(MsgBabiLighthouseIDontWantToHinderActors)},
     {SEARCH(SEARCH_UNNAMED), 60, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_InspectTruthDoorSwitch)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
@@ -1578,16 +1643,16 @@ struct SceneEvent gBabiLighthouseEvents1[] = {
 };
 // clang-format on
 
-struct SceneEvent gBabiLighthouseEventsOther[] = {
-    {0x202, 50, CONDITION_ALWAYS,
+struct SceneEvent gBabiLighthouse_EventsOther[] = {
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 50, CONDITION_ALWAYS,
      EVENT_SCRIPT(BabiLighthouse_AdvanceNearbyPair)},
-    {0x202, 51, CONDITION_ALWAYS,
+    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 51, CONDITION_ALWAYS,
      EVENT_SCRIPT(BabiLighthouse_ClimbOrAdvancePair)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SITE_BLOCK, CONDITION_ALWAYS,
      EVENT_SCRIPT(BabiLighthouse_UpdateMovedBlock)},
-    {0x10009315, 12, CONDITION_ALWAYS,
-     EVENT_SCRIPT(BabiLighthouse_EnableChildOption)},
-    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), 12, CONDITION_ALWAYS,
+    {0x10000000 | PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_SITE_BLOCK,
+     CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_EnableChildOption)},
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_SITE_BLOCK, CONDITION_ALWAYS,
      EVENT_SCRIPT(BabiLighthouse_UpdateMovedBlock)},
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -1607,6 +1672,7 @@ struct SceneEvent gBabiLighthouseEventsOther[] = {
      MSGNO(MsgBabiLighthouseWhyWouldTheyWantToRush)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
      MSGNO(MsgBabiLighthouseNowThatIThinkOfIt)},
-    {0x413, 100, 0xfbc, FIND_ITEM(0xc4)},
+    {SEARCH_CHEST_FACING(FACING_EAST), 100, FLAG_BABI_LIGHTHOUSE_LUCKY_PEPPER,
+     FIND_ITEM(ITEM_LUCKY_PEPPER)},
     {SCENE_EVENTS_END},
 };

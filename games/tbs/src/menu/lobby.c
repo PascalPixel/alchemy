@@ -55,6 +55,15 @@
 #define LOBBY_RECEIVE_TIMEOUT_FRAMES 900
 #define LOBBY_PEER_WAIT_FRAMES 25
 
+// The lobby's temporary flags:
+// FLAG_SCENE_TEMP_00: the attendant has asked the player to take part; every
+//   300th call of LinkLobby_PromptToParticipate clears it, to ask again.
+// FLAG_SCENE_TEMP_01: a linked partner is there (its signatures match).
+// FLAG_SCENE_TEMP_02: the player has agreed to a battle.
+// FLAG_SCENE_TEMP_03: the party is on its way into the battle.
+// FLAG_SCENE_TEMP_04: the attendant's next explanation is the party order.
+// FLAG_SCENE_TEMP_05: the link was lost, and the attendant has yet to say so.
+
 #define PEER_TAG(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
 
 // clang-format off

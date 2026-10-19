@@ -20,7 +20,7 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
   struct AnimationObject *sprite = (struct AnimationObject *)obj;
 
   // The sprite's tiles in OBJ VRAM.
-  tile = (u16 *)(0x06010000 + gVramBlockCache[sprite->slot].offset);
+  tile = (u16 *)(OBJ_VRAM0 + gVramBlockCache[sprite->slot].offset);
   tileCount = (sprite->width * sprite->height) / 64;
   i = 0;
 

@@ -154,7 +154,7 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
 
   if (offset != -1) {
     // Commit the allocation before copying, clearing or leaving its pixels.
-    dst = (void *)(0x06010000 + offset);
+    dst = (void *)(OBJ_VRAM0 + offset);
     entry->size = size;
     entry->offset = offset;
     if (src != 0) {

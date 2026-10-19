@@ -187,7 +187,7 @@ void Title_LoadIntroBackgrounds(void) {
   OBJ_PLTT[0] = 0;
   resourceData += 0x200;
   Resource_DecodeByteLz(resourceData, Ram_MapCellBuffer);
-  Dma_Set(Ram_MapCellBuffer, (void *)0x06010000, DMA_ENABLE << 16 | 0xf00,
+  Dma_Set(Ram_MapCellBuffer, (void *)OBJ_VRAM0, DMA_ENABLE << 16 | 0xf00,
           REG_DMA3);
   resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsC);
   Dma_Set(resourceData, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,

@@ -50,8 +50,6 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames) {
 
 #define FELLED_FLASH 0x400 // Timer base while changing colour.
 
-#define OBJ_VRAM 0x06010000
-
 // Scheduler callback that runs BattleTargetExec's queued events in order.
 void BattleEvent_Playback(void) {
   u16 selection[8];
@@ -61,7 +59,7 @@ void BattleEvent_Playback(void) {
 
   // Clear the character's tiles.
   void BattleSprite_ClearTiles(struct AnimationObject * record, s32 unused) {
-    u8 *tiles = (u8 *)OBJ_VRAM + gVramBlockCache[record->slot].offset;
+    u8 *tiles = (u8 *)OBJ_VRAM0 + gVramBlockCache[record->slot].offset;
 
     Iwram_ClearWords(tiles, record->width * record->height);
   }

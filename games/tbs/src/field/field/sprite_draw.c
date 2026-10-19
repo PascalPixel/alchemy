@@ -285,7 +285,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
     // Upload the pixels to the sprite's tiles in VRAM.
     tile = VramCache_Load(obj->slot, size, 0);
     {
-      void *vram = (void *)(0x06010000 + (tile << 5));
+      void *vram = (void *)(OBJ_VRAM0 + (tile << 5));
       ((SpriteUploadFn)gWorkSlot[HEAP_SLOT_FRAME_UPLOADER])(pixels, obj->width,
                                                             obj->height, vram);
     }

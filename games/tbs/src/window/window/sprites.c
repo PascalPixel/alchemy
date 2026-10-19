@@ -126,7 +126,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
 #endif
     } else {
       // Copy the glyph's tiles to its sprite tiles (OBJ VRAM) and place it.
-      Dma_Set(tiles, (void *)(0x06010000 + (work->glyphTiles + index) * 32),
+      Dma_Set(tiles, (void *)(OBJ_VRAM0 + (work->glyphTiles + index) * 32),
               DMA_COPY32(32), REG_DMA3);
 #if (LANGUAGE == LANGUAGE_JAPANESE)
       ((u16 *)&output->oam)[0] = y + (spacingY >> 1) + window->y * 8;

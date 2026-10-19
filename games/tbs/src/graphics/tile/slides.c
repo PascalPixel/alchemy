@@ -942,7 +942,7 @@ void DisplayScroll_InitObjectTable(void) {
 
   SCROLL_OBJECTS = Runtime_BumpAllocateAlternatePool(
       CREDITS_OAM_ENTRIES * sizeof(struct DisplayScrollObject));
-  Dma_Fill32Cell(dmaFill, 0, (void *)0x06010000, 0x6000);
+  Dma_Fill32Cell(dmaFill, 0, (void *)OBJ_VRAM0, 0x6000);
   Dma_Fill32Cell(dmaFill, 0x11111111, (void *)0x06016000, 0x100);
 
   oamWords = (u32 *)SCROLL_OBJECTS;
@@ -1082,7 +1082,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
     s32 tileIndex = firstTile + row;
     u32 *words = (u32 *)linePixels + row;
 
-    *(u32 *)(0x06010000 + tileIndex * 32) = words[0x000];
+    *(u32 *)(OBJ_VRAM0 + tileIndex * 32) = words[0x000];
     *(u32 *)(0x06010004 + tileIndex * 32) = words[0x040];
     *(u32 *)(0x06010008 + tileIndex * 32) = words[0x080];
     *(u32 *)(0x0601000c + tileIndex * 32) = words[0x0c0];

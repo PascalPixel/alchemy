@@ -1070,7 +1070,7 @@ void ReelGame_Run(void) {
             REG_DMA3);
     entry += 480;
     Resource_DecodeType01(entry, tiles);
-    Dma_Set(tiles, (void *)0x06010000, (DMA_ENABLE | DMA_32BIT) << 16 | 0x1b30,
+    Dma_Set(tiles, (void *)OBJ_VRAM0, (DMA_ENABLE | DMA_32BIT) << 16 | 0x1b30,
             REG_DMA3);
     entry = Resource_GetTableEntry((s32)&ResourceId_SlotsJackpot);
     Dma_Set(entry, (void *)&OBJ_PLTT_COLOR(15, 0),

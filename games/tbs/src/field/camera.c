@@ -364,7 +364,7 @@ void LuckyDice_Run(void) {
 #else
   Value2(Resource_DecodeType01, resourceAddress, (s32)Ram_MapCellBuffer);
 #endif
-  Dma_Set(Ram_MapCellBuffer, (void *)0x06010000,
+  Dma_Set(Ram_MapCellBuffer, (void *)OBJ_VRAM0,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x1f00, REG_DMA3);
   Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, 0, 256);
   Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, 0, 256);

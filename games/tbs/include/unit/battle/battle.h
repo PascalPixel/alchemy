@@ -264,7 +264,7 @@ void Runtime_RemoveIrqHandlerSlot2(void);
 
 s32 BattleFormation_AverageLevel(s32 recordId);
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin);
-s32 Owner_ApplyLevelGains(s32 owner, s32 levels);
+s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels);
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused);
 s32 BattleEnemy_ReleaseNameLetter(s32 actorId);
 s32 BattleEnemy_LetterFirstOfClass(s32 classId);

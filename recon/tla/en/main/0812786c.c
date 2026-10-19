@@ -30,7 +30,7 @@ struct OwnerState *UnitGetFar(s32 owner);
 s32 __divsi3(s32 numerator, s32 denominator);
 void UnitCalcFar(s32 owner);
 
-s32 Owner_ApplyLevelGains(s32 owner, s32 levels) {
+s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   struct OwnerStats *base;
   struct OwnerState *state;
   struct OwnerStats *stats;

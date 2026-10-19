@@ -163,7 +163,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
 
 // Adjusts enemy base stats by the level margin, retaining 70-percent floors and
 // per-stat caps, then updates the level and derived stats.
-s32 Owner_ApplyLevelGains(s32 owner, s32 levels) {
+s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   struct BattleBaseStats *base;
   struct BattleUnit *unit;
   s32 value;
@@ -533,8 +533,8 @@ assign_enemy:
                      enemyClasses[memberOrEnemyIndex], suffixCode & 0x7fff);
     UnitGetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
     if (levelAdjustment != 0)
-      Owner_ApplyLevelGains(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
-                            levelAdjustment);
+      BattleEnemy_AdjustLevel(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
+                              levelAdjustment);
   }
   memberOrEnemyIndex++;
   if (memberOrEnemyIndex > 5)

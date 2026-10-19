@@ -53,6 +53,7 @@
 #include "palbuf.h"
 #include "colosso_gauge.h"
 #include "macros.h"
+#include "songs.h"
 
 // Keep native call forms while UBFIX uses the declared void contracts.
 #ifdef UBFIX
@@ -79,6 +80,33 @@ static s32 ColossoLog_CollectFinishEquipment(s32 firstItem, s32 secondItem);
 static void ColossoLog_PushActorAhead(void);
 
 typedef void (*SceneTaskEntry)(void);
+
+// The third course's actors, by the guide's and attendants' explanations: the
+// Scales of Justice, the Stepping-Stone Stage, the Wall Wedge, the Free-Climb
+// Area, the Moving Sidewalk Stage and another log-rolling area lead to the
+// arena. The Wall Wedge's moving wall is actors 18 to 27; actors 15 to 17 are
+// rocks that settle where they fall (FLAG_SCENE_TEMP_14 to _16).
+enum {
+  OPPONENT = 8,        // the warrior racing Isaac to the arena
+  FROST_TARGET = 9,    // on the eastern pan
+  SCALE_PAN_WEST = 10, // the Scales of Justice
+  SCALE_PAN_EAST = 11,
+  SCALE_WEIGHT = 12, // pushed onto the western pan
+  STONE = 13,
+  WALL_OPERATOR = 28,
+  GROWTH_PLANT = 29,
+  SIDEWALK_BLOCK = 30,
+  LONG_LOG = 31, // the log-rolling area's long log
+  GUIDE = 32,    // explains the third course
+  SCALES_ATTENDANT = 33,
+  STEPPING_STONE_ATTENDANT = 34,
+  WALL_WEDGE_ATTENDANT = 35,
+  FREE_CLIMB_ATTENDANT = 36,
+  MOVING_SIDEWALK_ATTENDANT = 37,
+  LOG_ROLLING_ATTENDANT = 38,
+  PRIZE_A = 39, // the arena's Claymore and Hunter's Sword
+  PRIZE_B = 40
+};
 
 // Set the leader speed for the shared solo-party placement routine.
 static inline void InitializeActorZero(void) {
@@ -181,8 +209,9 @@ static void ColossoLogRollingStage_WaitForSceneTask(void) {
   }
 }
 
-// Push the selected actor and camera west while on the moving sidewalk.
-static void ColossoLog_ApplyMovingSidewalk(void) {
+// On the Moving Sidewalk, until 0x363 is set, the belt carries the controlled
+// actor and the camera west.
+static void Event_RideMovingSidewalk(void) {
   struct EventWork *work = gEventWork;
   struct GameState *state = &gGameState;
   s32 id = state->selectedActor;
@@ -196,8 +225,8 @@ static void ColossoLog_ApplyMovingSidewalk(void) {
   }
 }
 
-// Open the shortcut collision cells after Growth.
-static void ColossoLog_GrowShortcut(void) {
+// Growth on the plant: it grows and opens a shortcut (0x360).
+static void Event_GrowPlant(void) {
   Engine_GameFlagSet(0x360);
   {
 
@@ -212,18 +241,19 @@ static inline void ColossoLog_MoveOnScales(struct FieldActor *pan, s32 height) {
   Engine_ObjectSetPosition(pan, pan->x.fixed, height, pan->z.fixed);
 }
 
-// Normalize the frozen weight and reverse the heights of the scale pans.
-static void ColossoLog_ApplyFrostToScales(void) {
+// Frost on the target on the eastern pan: it freezes and the Scales of Justice
+// tip, the western pan down and the eastern pan up (0x362).
+static void Event_FreezeOnScales(void) {
   struct FieldActor *object;
 
-  object = Object_GetById(9);
+  object = Object_GetById(FROST_TARGET);
   object->scaleX = Q16_ONE;
   object->scaleY = Q16_ONE;
 
-  object = Object_GetById(11);
+  object = Object_GetById(SCALE_PAN_EAST);
   ColossoLog_MoveOnScales(object, PIXELS(32));
 
-  object = Object_GetById(10);
+  object = Object_GetById(SCALE_PAN_WEST);
   ColossoLog_MoveOnScales(object, PIXELS(4));
 
   Engine_GameFlagSet(0x362);
@@ -231,8 +261,9 @@ static void ColossoLog_ApplyFrostToScales(void) {
   Map_CopyCellAttributes(14, 12, 1, 1, 9, 12);
 }
 
-// Lower the occupied pan and rider, then restore terrain-following motion.
-static void ColossoLog_RideLoweringScalePan(void) {
+// Stepping onto the western pan, unless the scales are frozen: it sinks with
+// the rider as the eastern pan rises (0x367).
+static void Event_StepOnScales(void) {
   s32 actor;
   s32 lowered;
   struct FieldActor *log;
@@ -242,15 +273,15 @@ static void ColossoLog_RideLoweringScalePan(void) {
   actor = gGameState.selectedActor;
   lowered = GameFlag_IsSet(0x362);
   if (lowered == 0) {
-    log = Object_GetById(10);
+    log = Object_GetById(SCALE_PAN_WEST);
     if (log != NULL) {
       Actor_SetDestination(actor, log->x.part.pixel, log->z.part.pixel);
     }
     Engine_ActorWaitForMove(actor);
-    log = Object_GetById(11);
+    log = Object_GetById(SCALE_PAN_EAST);
     log->motionFlags = lowered;
     ColossoLog_MoveOnScales(log, PIXELS(32));
-    log = Object_GetById(10);
+    log = Object_GetById(SCALE_PAN_WEST);
     log->motionFlags = lowered;
     ColossoLog_MoveOnScales(log, PIXELS(4));
     rider = Object_GetById(actor);
@@ -268,21 +299,21 @@ static void ColossoLog_RideLoweringScalePan(void) {
   }
 }
 
-// Raise the vacated pan and restore the scale collision cell.
-static void ColossoLog_ResetScalePans(void) {
+// Stepping off the western pan: the scales swing back.
+static void Event_StepOffScales(void) {
   struct FieldActor *object;
 
   Engine_ActorSetAnimation(gGameState.selectedActor, 1);
 
-  object = Object_GetById(11);
+  object = Object_GetById(SCALE_PAN_EAST);
   object->motionFlags = 0;
   ColossoLog_MoveOnScales(object, PIXELS(4));
 
-  object = Object_GetById(10);
+  object = Object_GetById(SCALE_PAN_WEST);
   object->motionFlags = 0;
   ColossoLog_MoveOnScales(object, PIXELS(32));
 
-  Engine_ActorWaitForMove(10);
+  Engine_ActorWaitForMove(SCALE_PAN_WEST);
   {
     Map_CopyCellAttributes(0, 25, 1, 1, 9, 12);
   }
@@ -290,8 +321,9 @@ static void ColossoLog_ResetScalePans(void) {
   Engine_GameFlagClear(0x367);
 }
 
-// Lower the movable weight onto the pan when it reaches the scale cell.
-static void ColossoLog_SetWeightOnScalePan(void) {
+// When the weight reaches the western pan, it sinks the pan and the eastern
+// pan rises (0x368).
+static void Event_SetWeightOnScales(void) {
   struct FieldActor *probe;
   struct FieldActor *log;
   struct FieldActor *upper;
@@ -299,20 +331,20 @@ static void ColossoLog_SetWeightOnScalePan(void) {
   s32 x;
   s32 z;
 
-  probe = Object_GetById(12);
+  probe = Object_GetById(SCALE_WEIGHT);
   x = probe->x.fixed >> 20;
   if (x == 9) {
     z = probe->z.fixed >> 20;
     if (z == 12) {
-      log = Object_GetById(12);
+      log = Object_GetById(SCALE_WEIGHT);
       Engine_ActorSetSpriteFlags(log, 0);
       log->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       log->motionFlags = 0;
       ColossoLog_MoveOnScales(log, PIXELS(4));
-      upper = Object_GetById(11);
+      upper = Object_GetById(SCALE_PAN_EAST);
       upper->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       ColossoLog_MoveOnScales(upper, PIXELS(32));
-      lower = Object_GetById(10);
+      lower = Object_GetById(SCALE_PAN_WEST);
       ColossoLog_MoveOnScales(lower, PIXELS(4));
       Engine_GameFlagSet(0x368);
       Map_CopyCellAttributes(15, 12, 1, 1, 13, z);
@@ -321,32 +353,33 @@ static void ColossoLog_SetWeightOnScalePan(void) {
   }
 }
 
-// Push the actor ahead and update the scales if the weight arrived.
-static void ColossoLog_PushWeightOntoScales(void) {
+// Walking into the weight pushes it, perhaps onto the scales.
+static void Event_PushWeight(void) {
   ColossoLog_PushActorAhead();
-  ColossoLog_SetWeightOnScalePan();
+  Event_SetWeightOnScales();
 }
 
-// Save the moved stone column and rebuild its collision support.
-static void ColossoLog_SaveMovableStoneColumn(void) {
+// After Move on the stone: its column is kept (byte flag 0x370) and its cell
+// rebuilt.
+static void Event_MoveStone(void) {
   struct FieldActor *actor;
   s32 x;
 
-  actor = Object_GetById(13);
+  actor = Object_GetById(STONE);
   x = actor->x.fixed >> 20;
   FieldGameFlag_SetByte(880, x);
   Map_CopyCellAttributes(18, 10, 3, 1, 18, 11);
   Map_CopyCellAttributes(17, 11, 1, 1, x, 11);
 }
 
-// Leave this moved obstacle without an additional scene reaction.
-static void ColossoLog_KeepMovedObstacleState(void) {}
+// Move on this rock needs nothing more.
+static void Event_IgnoreMove(void) {}
 
-// Push the obstacle directly ahead of the rider.
-static void ColossoLog_PushObstacle(void) { ColossoLog_PushActorAhead(); }
+// Walking into a rock pushes it.
+static void Event_PushRock(void) { ColossoLog_PushActorAhead(); }
 
-// Make grounded obstacles stationary and update both collision rows.
-static void ColossoLog_AnchorGroundedObstacles(void) {
+// A rock resting on the floor becomes a step (FLAG_SCENE_TEMP_14 to _16).
+static void Event_SettleRocks(void) {
   struct FieldActor *actor;
   s32 slot;
   s32 x;
@@ -365,7 +398,7 @@ static void ColossoLog_AnchorGroundedObstacles(void) {
       x2 = actor->x.fixed >> 20;
       z2 = actor->z.fixed >> 20;
       Map_CopyCellAttributes(83, 13, 1, 1, x2, z2 + 52);
-      Engine_GameFlagSet(slot + 517);
+      Engine_GameFlagSet(slot - 15 + FLAG_SCENE_TEMP_14);
     }
   }
 }
@@ -424,8 +457,10 @@ static s32 ColossoLogRollingStage_CheckPathClearance(s32 x, s32 z) {
   return 0;
 }
 
-// Roll the long log sideways until it meets an obstacle or reaches the exit.
-static void ColossoLog_RollFinalLog(void) {
+// Walking into the long log rolls it, with the leader, the way the pad is held
+// until something stops it; at the east end it drops into place and the path
+// is made (0x369). Away from the log, a rock ahead is pushed instead.
+static void Event_RollLongLog(void) {
   struct FieldActor *rider;
   struct FieldActor *log;
   struct EventWork *work;
@@ -442,7 +477,7 @@ static void ColossoLog_RollFinalLog(void) {
   s32 ahead[3];
 
   rider = Object_GetById(gGameState.selectedActor);
-  log = Object_GetById(31);
+  log = Object_GetById(LONG_LOG);
   steps = 0;
   angle = gColossoEarlySequenceData[rider->facing >> 13];
   actor = gGameState.selectedActor;
@@ -503,7 +538,7 @@ static void ColossoLog_RollFinalLog(void) {
   work = Runtime_AllocateBlock(27, 0xccc);
   ObjectDispatch_InitFromTable4WithArgument(work->viewCenter, log);
   Actor_SetSpeed(actor, PIXELS(1) / 2, acceleration);
-  Event_PlayCue(239);
+  Event_PlayCue(SE_239);
   Object_SetMode(rider, 2);
   Engine_ObjectSetPosition(rider, (steps * step * PIXELS(1)) + rider->x.fixed,
                            0, rider->z.fixed);
@@ -513,8 +548,8 @@ static void ColossoLog_RollFinalLog(void) {
   // At the eastern end the log settles into the course exit.
   if (x >= PIXELS(1328)) {
     GameFlag_Set(0x369);
-    Engine_ActorSetAnimation(31, 3);
-    Actor_SetDestinationOffset(31, 18, 6);
+    Engine_ActorSetAnimation(LONG_LOG, 3);
+    Actor_SetDestinationOffset(LONG_LOG, 18, 6);
     Engine_EventWait(30);
     Object_SetMode(log, 8);
     FieldObject_WaitForMove(log);
@@ -522,12 +557,12 @@ static void ColossoLog_RollFinalLog(void) {
     column = 84;
     Map_CopyCellAttributes(86, 10, 1, 2, column, 10);
     Map_CopyCellAttributes(86, 9, 1, 1, column, 12);
-    Event_PlayCue(0x120);
-    Event_PlayCue(240);
+    Event_PlayCue(SE_288);
+    Event_PlayCue(SE_240);
   } else {
     Object_SetMode(log, 1);
-    Event_PlayCue(0x120);
-    Event_PlayCue(213);
+    Event_PlayCue(SE_288);
+    Event_PlayCue(SE_213);
     column = x >> 20;
     Map_CopyCellAttributes(85, 9, 1, 4, column, 9);
     Map_CopyCellAttributes(85, 9, 1, 4, column, 61);
@@ -537,7 +572,7 @@ static void ColossoLog_RollFinalLog(void) {
   return;
 far:
   ColossoLog_PushActorAhead();
-  ColossoLog_AnchorGroundedObstacles();
+  Event_SettleRocks();
 }
 
 // Display the activated moving sidewalk and play its arrival sounds.
@@ -545,17 +580,18 @@ static s32
 ColossoLog_ShowActivatedSidewalkLayer(struct ScriptInterpreter *interpreter) {
   Map_SetLayerEntryFlag(1);
   Map_ClearLayerEntryFlag(2);
-  Engine_AudioPlayCue(288);
-  Engine_AudioPlayCue(217);
+  Engine_AudioPlayCue(SE_288);
+  Engine_AudioPlayCue(SE_217);
   return 0;
 }
 
-// Start the Force-activated sidewalk object moving along its script.
-static void ColossoLog_ActivateMovingSidewalk(void) {
+// Force on the Moving Sidewalk's block: it slides away and the belt carries
+// no one any more (0x363).
+static void Event_ForceSidewalkBlock(void) {
   struct FieldActor *effect;
   s32 moveRate;
 
-  effect = Object_GetById(30);
+  effect = Object_GetById(SIDEWALK_BLOCK);
   effect->motionFlags = 0;
   moveRate = PIXELS(8) / 5;
   effect->acceleration = moveRate;
@@ -565,9 +601,10 @@ static void ColossoLog_ActivateMovingSidewalk(void) {
   Engine_GameFlagSet(0x363);
 }
 
-// Stop the wall after Halt reaches one of its open patterns.
-static void ColossoLog_HaltMovingWall(void) {
-  BattleEffect_PauseObject(28);
+// Halt on the wall operator: the Wall Wedge stops at its next open pattern
+// (0x361).
+static void Event_HaltWall(void) {
+  BattleEffect_PauseObject(WALL_OPERATOR);
   Engine_GameFlagSet(0x361);
   Engine_TaskWait(10);
   while (gColossoSceneTaskStatus != 1 && gColossoSceneTaskStatus != 3)
@@ -576,8 +613,8 @@ static void ColossoLog_HaltMovingWall(void) {
   Engine_TaskRemoveCallback(ColossoLogRollingStage_SceneTask);
 }
 
-// Move the rider through the northern wall opening.
-static void ColossoLog_PassNorthWallOpening(void) {
+// The rider passes through the moving wall's northern opening.
+static void Event_PassNorthWallOpening(void) {
   struct FieldActor *actor;
 #ifndef UBFIX
   s16 *gameWords;
@@ -604,8 +641,8 @@ static void ColossoLog_PassNorthWallOpening(void) {
   FieldObject_WaitForMove(actor);
 }
 
-// Move through the southern wall opening and finish the tutorial reaction.
-static void ColossoLog_PassSouthWallOpening(void) {
+// The rider passes through the moving wall's southern opening.
+static void Event_PassSouthWallOpening(void) {
   struct FieldActor *actor;
 #ifndef UBFIX
   s16 *gameWords;
@@ -672,8 +709,9 @@ UNUSED static void ColossoLog_RunCompetitorTalk(s32 competitorId) {
   }
 }
 
-// Collect finish equipment, meet the rival and start the final battle.
-static void ColossoLog_StartFinalBattle(void) {
+// Reaching the arena: the leader takes a prize (the Claymore if first, the
+// Hunter's Sword if second), and he and his opponent face off and fight.
+static void Event_ReachArena(void) {
   s32 place;
   s32 i;
   s32 last;
@@ -686,24 +724,24 @@ static void ColossoLog_StartFinalBattle(void) {
   place = ColossoLog_CollectFinishEquipment(3, 17);
   ColossoLog_WaitForRivalToFinish();
   for (i = 0; i < 10; i++) {
-    Object_RefreshSelectorById(8);
+    Object_RefreshSelectorById(OPPONENT);
   }
-  Actor_SetSpeed(8, PIXELS(1), PIXELS(1) / 2);
-  Actor_WalkTo(8, 1528, 192);
+  Actor_SetSpeed(OPPONENT, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkTo(OPPONENT, 1528, 192);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 1496, 192);
-  Engine_ActorSetAnimation(8, 1);
-  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 8, 0);
+  Engine_ActorSetAnimation(OPPONENT, 1);
+  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, OPPONENT, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimation(8, 3);
+  Engine_ActorSetAnimation(OPPONENT, 3);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
   Engine_EventWait(20);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1));
-  Actor_SetSpeed(8, PIXELS(2), PIXELS(1));
+  Actor_SetSpeed(OPPONENT, PIXELS(2), PIXELS(1));
   Actor_WalkTo(ACTOR_PARTY_LEADER, 1504, 192);
-  Actor_WalkToAndWait(8, 1520, 192);
+  Actor_WalkToAndWait(OPPONENT, 1520, 192);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 16);
-  Engine_ActorSetAnimation(8, 9);
+  Engine_ActorSetAnimation(OPPONENT, 9);
   Engine_EventWait(10);
   Field_RequestBattleFromEncounterTable(72, last - place + 1);
   Battle_SetStart(3);
@@ -712,19 +750,19 @@ static void ColossoLog_StartFinalBattle(void) {
   Engine_GameFlagSet(0x11a);
 }
 
-// Check the path ahead when no other actor occupies it.
-static void ColossoLog_CheckObstacleAhead(void) {
+// Walking into something: unless it is an actor, it is checked.
+static void Event_CheckAhead(void) {
   if (SceneActor_FindOccupantAheadOfSubject() == 0) {
     Engine_LeaderCheckAhead();
   }
 }
 
-// Check the clear path or push an actor toward the scales.
-static void ColossoLog_CheckAndPushScaleWeight(void) {
+// Walking into something: the weight is pushed, anything else is checked.
+static void Event_PushWeightOrCheckAhead(void) {
   if (SceneActor_FindOccupantAheadOfSubject() == 0) {
     Engine_LeaderCheckAhead();
   } else {
-    ColossoLog_PushWeightOntoScales();
+    Event_PushWeight();
   }
 }
 
@@ -745,27 +783,27 @@ s32 ColossoLog_Initialize(void) {
   FieldScheduler_AddCallback(ColossoLog_UpdateEastEndCollision, 3200);
   Map_CopyCellAttributes(74, 60, 8, 6, 120, 60);
 
-  Engine_ActorSetSpriteFlags(Object_GetById(9), 0);
+  Engine_ActorSetSpriteFlags(Object_GetById(FROST_TARGET), 0);
 
-  actor = Object_GetById(10);
+  actor = Object_GetById(SCALE_PAN_WEST);
   Engine_ActorSetSpriteFlags(actor, 0);
   actor->motionFlags = 0;
   actor->y.fixed = PIXELS(32);
 
-  actor = Object_GetById(11);
+  actor = Object_GetById(SCALE_PAN_EAST);
   Engine_ActorSetSpriteFlags(actor, 0);
   actor->motionFlags = 0;
   actor->y.fixed = PIXELS(4);
 
   if (Engine_GameFlagIsSet(866) != 0) {
-    Engine_ActorSetAnimation(9, 5);
-    actor = Object_GetById(10);
+    Engine_ActorSetAnimation(FROST_TARGET, 5);
+    actor = Object_GetById(SCALE_PAN_WEST);
     actor->y.fixed = PIXELS(4);
-    actor = Object_GetById(11);
+    actor = Object_GetById(SCALE_PAN_EAST);
     actor->y.fixed = PIXELS(32);
     Map_CopyCellAttributes(15, 12, 1, 1, 13, 12);
   } else {
-    actor = Object_GetById(9);
+    actor = Object_GetById(FROST_TARGET);
     actor->scaleX = 3 * Q16_ONE / 2;
     actor->scaleY = 3 * Q16_ONE / 2;
     if (Engine_GameFlagIsSet(871) != 0) {
@@ -778,15 +816,15 @@ s32 ColossoLog_Initialize(void) {
   if (Engine_GameFlagIsSet(872) != 0) {
     Map_CopyCellAttributes(15, 12, 1, 1, 13, 12);
     Map_CopyCellAttributes(1, 25, 1, 1, 9, 12);
-    actor = Object_GetById(12);
+    actor = Object_GetById(SCALE_WEIGHT);
     Engine_ActorSetSpriteFlags(actor, 0);
     actor->motionFlags = 0;
     actor->y.fixed = PIXELS(2);
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    actor = Object_GetById(10);
+    actor = Object_GetById(SCALE_PAN_WEST);
     actor->y.fixed = PIXELS(4);
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-    actor = Object_GetById(11);
+    actor = Object_GetById(SCALE_PAN_EAST);
     actor->y.fixed = PIXELS(32);
   }
 
@@ -794,7 +832,7 @@ s32 ColossoLog_Initialize(void) {
   if (column == 0) {
     column = 19;
   }
-  actor = Object_GetById(13);
+  actor = Object_GetById(STONE);
   actor->x.fixed = (column << 20) + (PIXELS(8));
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
@@ -827,8 +865,8 @@ s32 ColossoLog_Initialize(void) {
       Object_SetMode(actor, 10);
       Map_CopyCellAttributes(74, 12, 1, 1, i * 2 - 3, 11);
     }
-    Engine_ActorSetAnimation(28, 10);
-    BattleEffect_PauseObject(28);
+    Engine_ActorSetAnimation(WALL_OPERATOR, 10);
+    BattleEffect_PauseObject(WALL_OPERATOR);
   } else {
     for (i = 18; i <= 22; i++) {
       actor = Object_GetById(i);
@@ -842,13 +880,13 @@ s32 ColossoLog_Initialize(void) {
   }
 
   if (Engine_GameFlagIsSet(864) != 0) {
-    Engine_ActorSetAnimation(29, 4);
+    Engine_ActorSetAnimation(GROWTH_PLANT, 4);
     Map_CopyCellAttributes(47, 61, 1, 4, 49, 61);
   }
 
   if (Engine_GameFlagIsSet(867) != 0) {
     Map_SetLayerEntryFlag(1);
-    actor = Object_GetById(30);
+    actor = Object_GetById(SIDEWALK_BLOCK);
     actor->motionFlags = 0;
     actor->x.fixed = PIXELS(1130);
     actor->z.fixed = PIXELS(184);
@@ -860,31 +898,31 @@ s32 ColossoLog_Initialize(void) {
   }
 
   if (Engine_GameFlagIsSet(873) != 0) {
-    actor = Object_GetById(31);
+    actor = Object_GetById(LONG_LOG);
     Object_SetMode(actor, 8);
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Map_CopyCellAttributes(86, 10, 1, 2, 84, 10);
     Map_CopyCellAttributes(86, 9, 1, 1, 84, 12);
   } else {
-    actor = Object_GetById(31);
+    actor = Object_GetById(LONG_LOG);
     Map_CopyCellAttributes(85, 9, 1, 4, actor->x.fixed >> 20, 9);
     Map_CopyCellAttributes(85, 9, 1, 4, actor->x.fixed >> 20, 61);
   }
 
-  actor = Object_GetById(9);
+  actor = Object_GetById(FROST_TARGET);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  actor = Object_GetById(10);
+  actor = Object_GetById(SCALE_PAN_WEST);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  actor = Object_GetById(11);
+  actor = Object_GetById(SCALE_PAN_EAST);
   actor->motionFlags = 0;
   actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  Engine_ActorSetAnimation(8, 9);
+  Engine_ActorSetAnimation(OPPONENT, 9);
   gGameState.movementMode = 0;
-  Colosso_ShowItemIcon(39, 3);
-  Colosso_ShowItemIcon(40, 17);
-  Engine_ActorSetChildValue(8, 2);
+  Colosso_ShowItemIcon(PRIZE_A, 3);
+  Colosso_ShowItemIcon(PRIZE_B, 17);
+  Engine_ActorSetChildValue(OPPONENT, 2);
 
   // Enter the race, solo practice, course tour or post-battle reunion.
   switch (gGameState.entrance) {
@@ -892,15 +930,15 @@ s32 ColossoLog_Initialize(void) {
     FieldScene_BuildSceneDescriptorAndInstallTask(0, 8, 6, PIXELS(1512),
                                                   PIXELS(192), 39, 40);
     Map_CopyCellsLayered(127, 0, 1, 2, 5, 2);
-    Engine_ActorDestroy(32);
-    Engine_ActorDestroy(33);
-    Engine_ActorDestroy(34);
-    Engine_ActorDestroy(35);
-    Engine_ActorDestroy(36);
-    Engine_ActorDestroy(37);
-    Engine_ActorDestroy(38);
+    Engine_ActorDestroy(GUIDE);
+    Engine_ActorDestroy(SCALES_ATTENDANT);
+    Engine_ActorDestroy(STEPPING_STONE_ATTENDANT);
+    Engine_ActorDestroy(WALL_WEDGE_ATTENDANT);
+    Engine_ActorDestroy(FREE_CLIMB_ATTENDANT);
+    Engine_ActorDestroy(MOVING_SIDEWALK_ATTENDANT);
+    Engine_ActorDestroy(LOG_ROLLING_ATTENDANT);
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-      Engine_AudioPlayCue(17);
+      Engine_AudioPlayCue(MUS_017);
       Colosso_SelectSoloCompetitor(0);
       SceneActor_PlacePartyAtSavedTiles();
       Object_LinkObjectAndSetCallback(1, 0);
@@ -914,8 +952,8 @@ s32 ColossoLog_Initialize(void) {
 
   case 2:
     FieldScheduler_AddCallback(SceneState_RaiseTriggerOnPsynergyTarget, 3200);
-    Engine_ActorDestroy(39);
-    Engine_ActorDestroy(40);
+    Engine_ActorDestroy(PRIZE_A);
+    Engine_ActorDestroy(PRIZE_B);
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
       break;
     }
@@ -928,7 +966,7 @@ s32 ColossoLog_Initialize(void) {
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
       break;
     }
-    ColossoLog_IntroduceFinalCourse(32);
+    ColossoLog_IntroduceFinalCourse(GUIDE);
     Colosso_ClearSavedActorPositions();
     break;
 
@@ -1019,18 +1057,18 @@ static void ColossoLog_PlayPostBattleReunion(s32 battleResult) {
   SchedulerCallback particleCallback;
 
   // Place the rival and companions around the resting leader.
-  Engine_ActorDestroy(39);
-  Engine_ActorDestroy(40);
+  Engine_ActorDestroy(PRIZE_A);
+  Engine_ActorDestroy(PRIZE_B);
   Party_RestoreHpPp(1);
-  Engine_AudioPlayCue(17);
+  Engine_AudioPlayCue(MUS_017);
   Engine_EventBegin();
-  Actor_SetPosition(8, PIXELS(1544), PIXELS(192));
+  Actor_SetPosition(OPPONENT, PIXELS(1544), PIXELS(192));
   if (battleResult < 0) {
-    Engine_ActorSetAnimation(8, 10);
+    Engine_ActorSetAnimation(OPPONENT, 10);
   } else {
-    Engine_ActorSetAnimation(8, 8);
+    Engine_ActorSetAnimation(OPPONENT, 8);
   }
-  Actor_SetActionScript(8, gColossoLog_Actor8Action);
+  Actor_SetActionScript(OPPONENT, gColossoLog_Actor8Action);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(1504), PIXELS(192));
   actor = Object_GetById(0);
   {
@@ -1282,8 +1320,9 @@ static void ColossoLog_IntroduceFinalCourse(s32 guideId) {
   Engine_EventEnd();
 }
 
-// Demonstrate the two scale pans or finish the current practice round.
-static void ColossoLog_ExplainScales(s32 guideId) {
+// The Scales of Justice's attendant: the first time, the pans are shown; then
+// the objective.
+static void Event_TalkToScalesAttendant(s32 guideId) {
   struct FieldActor *pan1;
   struct FieldActor *pan2;
   struct FieldActor *back1;
@@ -1311,18 +1350,18 @@ static void ColossoLog_ExplainScales(s32 guideId) {
     Engine_EventShowMessage(guideId, 0);
     SceneEffect_RemoveMarkerTask();
     Engine_TaskWait(2);
-    pan1 = Object_GetById(10);
+    pan1 = Object_GetById(SCALE_PAN_WEST);
     pan1->motionFlags = 0;
     ColossoLog_MoveOnScales(pan1, PIXELS(4));
-    pan2 = Object_GetById(11);
+    pan2 = Object_GetById(SCALE_PAN_EAST);
     pan2->motionFlags = 0;
     ColossoLog_MoveOnScales(pan2, PIXELS(32));
     FieldObject_WaitForMove(pan2);
     Engine_EventWait(45);
-    back1 = Object_GetById(10);
+    back1 = Object_GetById(SCALE_PAN_WEST);
     back1->motionFlags = 0;
     ColossoLog_MoveOnScales(back1, PIXELS(32));
-    back2 = Object_GetById(11);
+    back2 = Object_GetById(SCALE_PAN_EAST);
     back2->motionFlags = 0;
     ColossoLog_MoveOnScales(back2, PIXELS(4));
     FieldObject_WaitForMove(back2);
@@ -1347,8 +1386,9 @@ static void ColossoLog_ExplainScales(s32 guideId) {
   Engine_EventEnd();
 }
 
-// Demonstrate the stepping-stone path and its turns.
-static void ColossoLog_ExplainSteppingStones(s32 guideId) {
+// The Stepping-Stone Stage's attendant: the first time, a warrior finds the
+// way; then the objective.
+static void Event_TalkToSteppingStoneAttendant(s32 guideId) {
   s32 promptResult;
   s32 x;
 
@@ -1401,8 +1441,9 @@ static void ColossoLog_ExplainSteppingStones(s32 guideId) {
   Engine_EventEnd();
 }
 
-// Demonstrate timing a passage through the moving wall.
-static void ColossoLog_ExplainMovingWall(s32 guideId) {
+// The Wall Wedge's attendant: the first time, a warrior times his way through
+// the moving wall; then that its operator will cheer for Isaac.
+static void Event_TalkToWallWedgeAttendant(s32 guideId) {
   struct EventWork *work;
   s32 promptResult;
 
@@ -1445,7 +1486,7 @@ static void ColossoLog_ExplainMovingWall(s32 guideId) {
           }
         } while (work->raisedTrigger != 5);
       }
-      ColossoLog_PassSouthWallOpening();
+      Event_PassSouthWallOpening();
       Actor_FaceDirection(0, 0xc000, 20);
       Actor_ShowEmote(0, 0x103, 60);
       Engine_EventShowMessage(guideId, 0);
@@ -1462,8 +1503,9 @@ static void ColossoLog_ExplainMovingWall(s32 guideId) {
   }
 }
 
-// Demonstrate climbing across the free-climb obstacle.
-static void ColossoLog_ExplainFreeClimb(s32 guideId) {
+// The Free-Climb Area's attendant: the first time, a warrior climbs across;
+// then the objective.
+static void Event_TalkToFreeClimbAttendant(s32 guideId) {
   s32 result;
   struct FieldActor *actor;
   s32 x;
@@ -1551,8 +1593,9 @@ static void ColossoLogRollingStage_PositionAndActivateActor(s32 selector, s32 x,
   }
 }
 
-// Demonstrate walking against the moving sidewalk.
-static void ColossoLog_ExplainMovingSidewalk(s32 guideId) {
+// The Moving Sidewalk Stage's attendant: the first time, a warrior walks
+// against the belt; then the objective.
+static void Event_TalkToMovingSidewalkAttendant(s32 guideId) {
   s32 i;
   s32 result;
   struct FieldActor *actor;
@@ -1609,8 +1652,9 @@ static void ColossoLog_ExplainMovingSidewalk(s32 guideId) {
   }
 }
 
-// Explain the long log route using the moving course marker.
-static void ColossoLog_ExplainLogRolling(s32 actor) {
+// The log-rolling area's attendant: the first time, a marker traces the log's
+// route; then the objective.
+static void Event_TalkToLogRollingAttendant(s32 actor) {
   s32 state;
 
   if (gGameState.entrance == 2) {
@@ -1697,7 +1741,7 @@ static void ColossoLogRollingStage_RunScriptedTransition(s32 mode) {
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(30);
-    Engine_AudioPlayCue(0x59);
+    Engine_AudioPlayCue(MUS_089);
     Colosso_LoadPortrait(0);
     ColossoLogRollingStage_InitializeModeTask(1, 0);
     Engine_EventWait(120);
@@ -1705,7 +1749,7 @@ static void ColossoLogRollingStage_RunScriptedTransition(s32 mode) {
     return;
   }
 
-  Engine_AudioPlayCue(0xf7);
+  Engine_AudioPlayCue(SE_247);
   Engine_EventBegin();
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
@@ -1723,21 +1767,21 @@ static void ColossoLogRollingStage_RunScriptedTransition(s32 mode) {
     Engine_TaskWait(1);
   }
 
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_289);
   Colosso_LoadPortrait(5);
   ColossoLogRollingStage_InitializeModeTask(2, 0);
-  Engine_AudioPlayCue(0xec);
+  Engine_AudioPlayCue(SE_236);
   Engine_EventWait(60);
   ColossoLogRollingStage_InitializeModeTask(2, 1);
-  Engine_AudioPlayCue(0xec);
+  Engine_AudioPlayCue(SE_236);
   Engine_EventWait(60);
   Colosso_LoadPortrait(6);
   ColossoLogRollingStage_InitializeModeTask(2, 0);
-  Engine_AudioPlayCue(0xec);
+  Engine_AudioPlayCue(SE_236);
   Engine_EventWait(60);
   Colosso_LoadPortrait(7);
   ColossoLogRollingStage_InitializeModeTask(4, 0);
-  Engine_AudioPlayCue(0xed);
+  Engine_AudioPlayCue(SE_237);
   Audio_PlayCueFromEventWork();
   Engine_EventEnd();
   Engine_GameFlagSet(0x123);
@@ -1747,7 +1791,7 @@ static void ColossoLogRollingStage_RunScriptedTransition(s32 mode) {
 UNUSED static void FieldScene_RunScene3bcSequenceA(s32 countdown) {
   s32 actorId;
 
-  Engine_AudioPlayCue(247);
+  Engine_AudioPlayCue(SE_247);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   gColossoModeScript3A[13] = countdown * 60;
@@ -1755,7 +1799,7 @@ UNUSED static void FieldScene_RunScene3bcSequenceA(s32 countdown) {
       (countdown < 0 ? -countdown : countdown) * 60;
   if (countdown < 0) {
     Engine_EventWait(30);
-    Engine_AudioPlayCue(86);
+    Engine_AudioPlayCue(MUS_086);
     Colosso_LoadPortrait(8);
     // UB: the void target is called through an incompatible return type.
     /* FAKEMATCH: called through a cast to the s32 call type the bytes show, its
@@ -1785,9 +1829,9 @@ UNUSED static void FieldScene_RunScene3bcSequenceA(s32 countdown) {
   while (AudioCommand_GetStateByte() != 0) {
     Engine_TaskWait(1);
   }
-  Engine_AudioPlayCue(19);
+  Engine_AudioPlayCue(MUS_019);
   Engine_EventWait(30);
-  Engine_AudioPlayCue(0x121);
+  Engine_AudioPlayCue(SE_289);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
 }
@@ -1878,7 +1922,7 @@ static s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(
                            source->z);
   effect->state = 0;
   Engine_ObjectSetScript(effect, gColossoLinkedEffect);
-  Engine_AudioPlayCue(83);
+  Engine_AudioPlayCue(MUS_TREASURE_FOUND);
   source->linkedEffectSlot = 0;
   return 0;
 }
@@ -1893,7 +1937,7 @@ static s32 ColossoLog_CollectFinishEquipment(s32 firstItem, s32 secondItem) {
   u16 *itemActorId;
   s16 *linkedItemActor;
 
-  rivalFinishedFirst = Engine_GameFlagIsSet(0x211);
+  rivalFinishedFirst = Engine_GameFlagIsSet(FLAG_SCENE_TEMP_11);
   actor = Object_GetById(gGameState.selectedActor);
   if (work->finishX < actor->x.fixed) {
     x = work->finishX + PIXELS(12);
@@ -1912,7 +1956,7 @@ static s32 ColossoLog_CollectFinishEquipment(s32 firstItem, s32 secondItem) {
   actor->acceleration = PIXELS(1) / 4;
   actor->speed = PIXELS(1);
   Engine_ObjectSetPosition(actor, x, 0, z);
-  Engine_GameFlagSet(0x211);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_11);
   Engine_ObjectSetScript(actor, gColossoLog_PlaceScript);
   while (*linkedItemActor != 0) {
     Engine_TaskWait(1);
@@ -2018,9 +2062,9 @@ static void ColossoLog_PushActorAhead(void) {
   subject->acceleration = PIXELS(1) / 5;
   Engine_ObjectSetPosition(subject, position.x, position.y, position.z);
 
-  Engine_AudioPlayCue(0xee);
+  Engine_AudioPlayCue(SE_238);
   FieldObject_WaitForMove(target);
-  Engine_AudioPlayCue(0x120);
+  Engine_AudioPlayCue(SE_288);
 
   target->x.fixed = position.x;
   target->z.fixed = position.z;
@@ -2262,44 +2306,44 @@ s32 gColossoSceneTaskStatus = 0;
 s32 gColossoSceneTaskState = 0;
 
 struct SceneEvent gColossoLogEvents[] = {
-    { 0x202, 90, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLog_CheckObstacleAhead) },
-    { 0x202, 91, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLog_CheckAndPushScaleWeight) },
-    { EVENT_TOUCH, 11, 0x363, EVENT_SCRIPT(ColossoLog_ApplyMovingSidewalk) },
-    { 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLog_PushWeightOntoScales) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLog_SetWeightOnScalePan) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLog_SaveMovableStoneColumn) },
-    { 0x202, 22, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLog_PushObstacle) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLog_KeepMovedObstacleState) },
-    { 0x202, 23, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLog_RollFinalLog) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, 0x214, EVENT_SCRIPT(ColossoLog_AnchorGroundedObstacles) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, 0x215, EVENT_SCRIPT(ColossoLog_AnchorGroundedObstacles) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, 0x216, EVENT_SCRIPT(ColossoLog_AnchorGroundedObstacles) },
-    { EVENT_TOUCH, 15, 0x367, EVENT_SCRIPT(ColossoLog_RideLoweringScalePan) },
-    { EVENT_TOUCH, 16, IF_FLAG_SET(0x367), EVENT_SCRIPT(ColossoLog_ResetScalePans) },
-    { EVENT_TOUCH, 50, 0x210, EVENT_SCRIPT(ColossoLog_StartFinalBattle) },
+    { 0x202, 90, CONDITION_ALWAYS, EVENT_SCRIPT(Event_CheckAhead) },
+    { 0x202, 91, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushWeightOrCheckAhead) },
+    { EVENT_TOUCH, 11, 0x363, EVENT_SCRIPT(Event_RideMovingSidewalk) },
+    { 0x202, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushWeight) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), SCALE_WEIGHT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetWeightOnScales) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), STONE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveStone) },
+    { 0x202, 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushRock) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_IgnoreMove) },
+    { 0x202, 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RollLongLog) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, FLAG_SCENE_TEMP_14, EVENT_SCRIPT(Event_SettleRocks) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 16, FLAG_SCENE_TEMP_15, EVENT_SCRIPT(Event_SettleRocks) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 17, FLAG_SCENE_TEMP_16, EVENT_SCRIPT(Event_SettleRocks) },
+    { EVENT_TOUCH, 15, 0x367, EVENT_SCRIPT(Event_StepOnScales) },
+    { EVENT_TOUCH, 16, IF_FLAG_SET(0x367), EVENT_SCRIPT(Event_StepOffScales) },
+    { EVENT_TOUCH, 50, FLAG_SCENE_TEMP_10, EVENT_SCRIPT(Event_ReachArena) },
     { SEARCH(SEARCH_CHEST), 101, 0x36a, FIND_ITEM(ITEM_SMOKE_BOMB) },
     { SEARCH(SEARCH_CHEST), 102, 0x36b, FIND_ITEM(ITEM_NUT) },
     { 0x8413, 103, 0x36c, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { 0x50001815, 9, 0x362, EVENT_SCRIPT(ColossoLog_ApplyFrostToScales) },
-    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), 29, 0x360, EVENT_SCRIPT(ColossoLog_GrowShortcut) },
-    { PSYNERGY_ON_ACTOR(ABILITY_HALT), 28, 0x361, EVENT_SCRIPT(ColossoLog_HaltMovingWall) },
-    { 0x50008e15, 30, 0x363, EVENT_SCRIPT(ColossoLog_ActivateMovingSidewalk) },
-    { EVENT_RAISED, 4, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLog_PassNorthWallOpening) },
-    { EVENT_RAISED, 5, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLog_PassSouthWallOpening) },
-    { EVENT_TALK, 32, CONDITION_ALWAYS, EVENT_SCRIPT(RunPartyCountInteraction) },
-    { EVENT_TALK, 33, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLog_ExplainScales) },
-    { EVENT_TALK, 34, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLog_ExplainSteppingStones) },
-    { EVENT_TALK, 35, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLog_ExplainMovingWall) },
-    { EVENT_TALK, 36, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLog_ExplainFreeClimb) },
-    { EVENT_TALK, 37, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLog_ExplainMovingSidewalk) },
-    { EVENT_TALK, 38, CONDITION_ALWAYS, EVENT_SCRIPT(ColossoLog_ExplainLogRolling) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 32, CONDITION_ALWAYS, MSGNO(MsgColossoRiverThisYearsFinalsAreIncredibleThis) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 33, CONDITION_ALWAYS, MSGNO(MsgColossoLogTheStreetVendorsCornOnThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 34, CONDITION_ALWAYS, MSGNO(MsgColossoLogICantSeeAnythingWhenIm) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS, MSGNO(MsgColossoLogItsNotVeryExcitingWorkBut) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 36, CONDITION_ALWAYS, MSGNO(MsgColossoLogStandingForLongPeriodsOfTime) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 37, CONDITION_ALWAYS, MSGNO(MsgColossoLogIWasUpAllNightTrying) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 38, CONDITION_ALWAYS, MSGNO(MsgColossoLogSomeTouristToldMeILook) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FROST) | 0x50000000, FROST_TARGET, 0x362, EVENT_SCRIPT(Event_FreezeOnScales) },
+    { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), GROWTH_PLANT, 0x360, EVENT_SCRIPT(Event_GrowPlant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_HALT), WALL_OPERATOR, 0x361, EVENT_SCRIPT(Event_HaltWall) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FORCE) | 0x50000000, SIDEWALK_BLOCK, 0x363, EVENT_SCRIPT(Event_ForceSidewalkBlock) },
+    { EVENT_RAISED, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PassNorthWallOpening) },
+    { EVENT_RAISED, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PassSouthWallOpening) },
+    { EVENT_TALK, GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(RunPartyCountInteraction) },
+    { EVENT_TALK, SCALES_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToScalesAttendant) },
+    { EVENT_TALK, STEPPING_STONE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToSteppingStoneAttendant) },
+    { EVENT_TALK, WALL_WEDGE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWallWedgeAttendant) },
+    { EVENT_TALK, FREE_CLIMB_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToFreeClimbAttendant) },
+    { EVENT_TALK, MOVING_SIDEWALK_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToMovingSidewalkAttendant) },
+    { EVENT_TALK, LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToLogRollingAttendant) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), GUIDE, CONDITION_ALWAYS, MSGNO(MsgColossoRiverThisYearsFinalsAreIncredibleThis) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), SCALES_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogTheStreetVendorsCornOnThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), STEPPING_STONE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogICantSeeAnythingWhenIm) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), WALL_WEDGE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogItsNotVeryExcitingWorkBut) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FREE_CLIMB_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogStandingForLongPeriodsOfTime) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), MOVING_SIDEWALK_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogIWasUpAllNightTrying) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogSomeTouristToldMeILook) },
     { EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_RememberSupportPosition) },
     { SCENE_EVENTS_END },
 };

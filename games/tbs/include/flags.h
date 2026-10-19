@@ -106,6 +106,8 @@
 #define FLAG_SCENE_TEMP_12 0x212 // Tret: lower middle southwest landing
 #define FLAG_SCENE_TEMP_13 0x213 // Tret: lower middle south landing
 #define FLAG_SCENE_TEMP_14 0x214 // Tret: lower middle southeast landing
+#define FLAG_SCENE_TEMP_15 0x215 // Colosso log course: the second rock settled
+#define FLAG_SCENE_TEMP_16 0x216 // Colosso log course: the third rock settled
 #define FLAG_SCENE_TEMP_34 0x234 // Colosseum waiting room: stepped to the line
 #define FLAG_SCENE_TEMP_35 0x235 // Colosseum waiting room: asked at the line
 #define FLAG_SCENE_TEMP_50                                                     \

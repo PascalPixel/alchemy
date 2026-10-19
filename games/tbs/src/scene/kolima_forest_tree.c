@@ -65,25 +65,25 @@ s32 gKolimaForestTreeSparkFrame __attribute__((section(".bss")));
 s32 gKolimaForestTreePlaySparkSound __attribute__((section(".bss")));
 s32 gKolimaForestTreePaletteFrame __attribute__((section(".bss")));
 
-/// Return the clearing's entrances.
+/// Returns the clearing's entrances.
 const struct SceneEntrance *KolimaForestTree_GetEntrances(void) {
   return gKolimaForestTreeEntrances;
 }
 
-/// Return the region at the entrance to Tret's interior.
+/// Returns the region at the entrance to Tret's interior.
 const struct SceneRegion *KolimaForestTree_GetRegions(void) {
   return gKolimaForestTreeRegions;
 }
 
-/// Return the connections to the bridge and Tret's interior.
+/// Returns the connections to the bridge and Tret's interior.
 const u32 *KolimaForestTree_GetExits(void) { return gKolimaForestTreeExits; }
 
-/// Return Tret, Laurel and their auxiliary actors.
+/// Returns Tret, Laurel and their auxiliary actors.
 const struct ScenePlacement *KolimaForestTree_GetPlacements(void) {
   return gKolimaForestTreePlacements;
 }
 
-/// Take the touched exit after completing the leader's current movement.
+/// Takes the touched exit after completing the leader's current movement.
 UNUSED static void KolimaForestTree_ExitTouchedRegion(void) {
   struct EventWork *scene;
 
@@ -94,12 +94,12 @@ UNUSED static void KolimaForestTree_ExitTouchedRegion(void) {
   Engine_EventEnd();
 }
 
-/// Return the trees' dialogue, Mind Read and item-use events.
+/// Returns the trees' dialogue, Mind Read and item-use events.
 const struct SceneEvent *KolimaForestTree_GetEvents(void) {
   return gKolimaForestTreeEvents;
 }
 
-/// Introduce Laurel or hear her warning while Tret is still dying.
+/// Introduces Laurel or hear her warning while Tret is still dying.
 static void KolimaForestTree_TalkToLaurel(void) {
   Engine_EventBegin();
   KolimaForestTree_PlayGesture(ACTOR_LAUREL_AUXILIARY, 1);
@@ -130,7 +130,7 @@ static void KolimaForestTree_TalkToLaurel(void) {
   Engine_EventEnd();
 }
 
-/// Talk to Tret and offer the item prompt when Hermes' Water is available.
+/// Talks to Tret and offers the item prompt when Hermes' Water is available.
 static void KolimaForestTree_TalkToTret(void) {
   s32 waterOwner;
 
@@ -170,7 +170,7 @@ static void KolimaForestTree_TalkToTret(void) {
   Engine_EventEnd();
 }
 
-/// Read Laurel's thoughts about the healing water or the danger beyond the
+/// Reads Laurel's thoughts about the healing water or the danger beyond the
 /// river.
 static void KolimaForestTree_ReadLaurelThoughts(void) {
   Engine_EventBegin();
@@ -183,7 +183,7 @@ static void KolimaForestTree_ReadLaurelThoughts(void) {
   Engine_EventEnd();
 }
 
-/// Read Tret's regret before healing, or his concern for the forest afterward.
+/// Reads Tret's regret before healing, or his concern for the forest afterward.
 static void KolimaForestTree_ReadTretThoughts(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
@@ -195,7 +195,7 @@ static void KolimaForestTree_ReadTretThoughts(void) {
   Engine_EventEnd();
 }
 
-/// Heal Tret only after his hostile heart has been defeated.
+/// Heals Tret only after his hostile heart has been defeated.
 static void KolimaForestTree_UseHermesWater(void) {
   Engine_EventBegin();
   Battle_ResetEffectCounter();
@@ -207,7 +207,7 @@ static void KolimaForestTree_UseHermesWater(void) {
   Engine_EventEnd();
 }
 
-/// Show Tret's hostile heart repelling the leader's attempt to help.
+/// Shows Tret's hostile heart repelling the leader's attempt to help.
 static void KolimaForestTree_RejectHermesWater(void) {
   struct FieldActor *leader;
 
@@ -274,7 +274,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   Engine_EventWait(20);
 }
 
-/// Give all four companions the same nod, waiting on Ivan's animation.
+/// Gives all four companions the same nod, waiting on Ivan's animation.
 static __inline__ void KolimaForestTree_NodTogether(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 3);
   Engine_ActorSetAnimation(GARET, 3);
@@ -282,7 +282,7 @@ static __inline__ void KolimaForestTree_NodTogether(void) {
   Engine_ActorSetAnimationAndWait(IVAN, 3);
 }
 
-/// Turn the companions together and pause after the final facing change.
+/// Turns the companions together and pauses after the final facing change.
 static __inline__ void KolimaForestTree_FaceParty(s32 facing, s32 waitFrames) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, facing, 0);
   Actor_FaceDirection(GARET, facing, 0);
@@ -290,7 +290,7 @@ static __inline__ void KolimaForestTree_FaceParty(s32 facing, s32 waitFrames) {
   Actor_FaceDirection(IVAN, facing, waitFrames);
 }
 
-/// Heal Tret, lift Kolima's curse and hear the trees' warning.
+/// Heals Tret, lift Kolima's curse and hear the trees' warning.
 static void KolimaForestTree_RestoreTret(void) {
   s32 includeMia;
   struct FieldActor *leader;
@@ -649,7 +649,7 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaForestTree_ReplaceInventoryItem(ITEM_HERMES_WATER, ITEM_EMPTY_BOTTLE);
 }
 
-/// Restore the trees' faces, collision and the dying forest's palette.
+/// Restores the trees' faces, collision and the dying forest's palette.
 s32 KolimaForestTree_Initialize(void) {
   struct FieldActor *tretAuxiliary;
   struct FieldActor *tretsDarkSide;
@@ -696,7 +696,7 @@ s32 KolimaForestTree_Initialize(void) {
 // Shared source is included here in ROM order.
 #include "common/kolima_grow.h"
 
-/// Spawn the growing sparks that repel the party leader.
+/// Spawns the growing sparks that repel the party leader.
 static void KolimaForestTree_SpawnRejectionSpark(void) {
   struct FieldActor *effect;
   struct AnimationObject *sprite;
@@ -731,7 +731,7 @@ static void KolimaForestTree_SpawnRejectionSpark(void) {
   Engine_ObjectSetScript(effect, gKolimaForestTreeEffectScript);
 }
 
-/// Alternate the saved healthy and withered palettes over thirty frames.
+/// Alternates the saved healthy and withered palettes over thirty frames.
 static void KolimaForestTree_UpdateHealingPalette(void) {
   s32 step = gKolimaForestTreePaletteFrame;
 
@@ -749,7 +749,7 @@ static void KolimaForestTree_UpdateHealingPalette(void) {
   }
 }
 
-/// Alternate two facial frames twice, ending on the first frame.
+/// Alternates two facial frames twice, ending on the first frame.
 static __inline__ void KolimaForestTree_AlternateFaceFrames(s32 actorId,
                                                             s32 firstFrame,
                                                             s32 secondFrame) {
@@ -764,7 +764,7 @@ static __inline__ void KolimaForestTree_AlternateFaceFrames(s32 actorId,
   Engine_ActorSetAnimation(actorId, firstFrame);
 }
 
-/// Choose Tret or Laurel's facial sequence through their auxiliary actor.
+/// Chooses Tret or Laurel's facial sequence through their auxiliary actor.
 static void KolimaForestTree_PlayGesture(s32 auxiliaryActorId, s32 gesture) {
   if (auxiliaryActorId == ACTOR_TRET_AUXILIARY) {
     switch (gesture) {
@@ -850,7 +850,8 @@ static void KolimaForestTree_PlayGesture(s32 auxiliaryActorId, s32 gesture) {
   Engine_TaskWait(12);
 }
 
-/// Expand a spark along its spiral for 120 frames, then release its cache slot.
+/// Expands a spark along its spiral for 120 frames, then releases its cache
+/// slot.
 static void KolimaForestTree_UpdateOrbitSpark(union FieldObject *fieldObject) {
   struct FieldActor *spark = &fieldObject->actor;
   s32 position[3];
@@ -873,7 +874,7 @@ static void KolimaForestTree_UpdateOrbitSpark(union FieldObject *fieldObject) {
   }
 }
 
-/// Emit six-spark rings at ten-frame intervals during each burst.
+/// Emits six-spark rings at ten-frame intervals during each burst.
 static void KolimaForestTree_SpawnOrbitSparks(void) {
   struct FieldActor *spark;
   struct AnimationObject *previousSprite;
@@ -913,7 +914,7 @@ static void KolimaForestTree_SpawnOrbitSparks(void) {
   }
 }
 
-/// Replace the used water with its empty bottle in the same inventory slot.
+/// Replaces the used water with its empty bottle in the same inventory slot.
 static void KolimaForestTree_ReplaceInventoryItem(s32 oldItemId,
                                                   s32 newItemId) {
   s32 owner = PartyInventory_FindOwner(oldItemId);

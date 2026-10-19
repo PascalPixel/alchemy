@@ -210,7 +210,7 @@ static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
 #include "common/mercury_lighthouse_sparks.h"
 #include "common/mercury_lighthouse_palette_cycle.h"
 
-/// Select the entrance rows for the current lighthouse scene.
+/// Selects the entrance rows for the current lighthouse scene.
 const struct SceneEntrance *MercuryLighthouse_GetEntrances(void) {
   s16 selector = gGameState.scene;
 
@@ -229,10 +229,10 @@ const struct SceneEntrance *MercuryLighthouse_GetEntrances(void) {
 /// These lighthouse scenes have no placement-clipping regions.
 const struct SceneRegion *MercuryLighthouse_GetRegions(void) { return NULL; }
 
-/// Return the packed exits shared by the lighthouse scenes.
+/// Returns the packed exits shared by the lighthouse scenes.
 const u32 *MercuryLighthouse_GetExits(void) { return gMercuryLighthouse_Exits; }
 
-/// Select the actors and obstacles for the current lighthouse scene.
+/// Selects the actors and obstacles for the current lighthouse scene.
 const struct ScenePlacement *MercuryLighthouse_GetPlacements(void) {
   s16 selector = gGameState.scene;
 
@@ -280,7 +280,7 @@ static void MercuryLighthouse_InspectBlockedPassage(void) {
   Engine_EventEnd();
 }
 
-/// Select the puzzle interactions and dialogue for the current scene.
+/// Selects the puzzle interactions and dialogue for the current scene.
 const struct SceneEvent *MercuryLighthouse_GetEvents(void) {
   s16 selector = gGameState.scene;
 
@@ -515,7 +515,7 @@ static void MercuryLighthouse_CloseFloorSwitch(void) {
   }
 }
 
-/// Animate the fountain's map strips between the requested steps.
+/// Animates the fountain's map strips between the requested steps.
 static void MercuryLighthouse_AnimateFountainTiles(s32 delayFrames,
                                                    s32 firstStep, s32 endStep) {
   u32 step;
@@ -544,7 +544,7 @@ static void MercuryLighthouse_AnimateFountainTiles(s32 delayFrames,
   Map_CopyCellAttributes(42, 52, 4, 5, 42, 33);
 }
 
-/// Restore the fountain's map strips after moving its block away.
+/// Restores the fountain's map strips after moving its block away.
 static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
   u32 step;
   s32 destinationColumn;
@@ -585,12 +585,12 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
   Engine_MapRenderWaitForValues();
 }
 
-/// Emit the scheduled spray at the fountain's fixed position.
+/// Emits the scheduled spray at the fountain's fixed position.
 static void MercuryLighthouse_SprayAtFountain(void) {
   SceneEffect_SpawnRandomEveryFourFrames(0x2b20000, 0, 0x2480000);
 }
 
-/// Open the fountain row by row and start its continuous spray.
+/// Opens the fountain row by row and starts its continuous spray.
 static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
   struct EffectOptions *effectOptions;
   s32 row;
@@ -656,7 +656,7 @@ static void MercuryLighthouse_OpenFountainWithSpray(s32 delayFrames) {
   Engine_MapRenderWaitForValues();
 }
 
-/// Restore the fountain tiles and stop its continuous spray.
+/// Restores the fountain tiles and stops its continuous spray.
 static void MercuryLighthouse_StopFountainSpray(void) {
   struct EffectOptions *effectOptions;
   s32 row;
@@ -836,7 +836,7 @@ static void MercuryLighthouse_ReleaseStairFloorSwitch(void) {
   }
 }
 
-/// Choose the random speed component used by stone-door particles.
+/// Chooses the random speed component used by stone-door particles.
 /// Sharing a centered-velocity helper with other sprays shrinks the fountain
 /// from 0x150 to 0x128 bytes and grows this door from 0x27c to 0x284 in
 /// English.
@@ -846,7 +846,7 @@ static __inline__ s32 MercuryLighthouse_RandomDoorParticleSpeed(void) {
   return ((drift << 3) >> 16) * 0x3333;
 }
 
-/// Open the selected stone door with particles along its moving edge.
+/// Opens the selected stone door with particles along its moving edge.
 static void MercuryLighthouse_OpenStoneDoor(s32 side) {
   struct EffectOptions options;
   u32 particleIndex;
@@ -906,7 +906,7 @@ static void MercuryLighthouse_OpenStoneDoor(s32 side) {
   }
 }
 
-/// Restore the selected stone door's tiles with trailing particles.
+/// Restores the selected stone door's tiles with trailing particles.
 static void MercuryLighthouse_CloseStoneDoor(s32 side) {
   struct EffectOptions options;
   u32 particleIndex, row;
@@ -1189,7 +1189,7 @@ static void MercuryLighthouse_OpenMovedBlockCrossing(void) {
   Engine_EventEnd();
 }
 
-/// Rotate the selected palette range once every eight frames. Write the saved
+/// Rotates the selected palette range once every eight frames. Write the saved
 /// first color at the end before shifting, preserving the palette access order.
 static inline void MercuryLighthouse_RotatePaletteRange(u16 *colors,
                                                         u32 colorCount) {
@@ -1526,7 +1526,7 @@ static void MercuryLighthouse_FadePaletteToBlack(void) {
   } while (blackColors != 7);
 }
 
-/// Raise an actor into the passage with sparks for 48 ticks, two frames each.
+/// Raises an actor into the passage with sparks for 48 ticks, two frames each.
 /// Its upward displacement accelerates by about 0.1 pixel per tick.
 static void MercuryLighthouse_RaiseActorWithSparks(s32 actorId) {
   struct EffectOptions options;
@@ -1897,7 +1897,7 @@ static void SceneEffect_SpawnParticleRowsAndDrawTiles(void) {
   }
 }
 
-/// Restore the stair tiles in three particle-covered steps.
+/// Restores the stair tiles in three particle-covered steps.
 static void MercuryLighthouse_OpenThreeStepStair(void) {
   struct EffectOptions options;
   struct EffectOptions *effectOptions;
@@ -1932,7 +1932,7 @@ static void MercuryLighthouse_OpenThreeStepStair(void) {
   }
 }
 
-/// Emit particles around the leader once every four frames.
+/// Emits particles around the leader once every four frames.
 static void SceneEffect_SpawnParticleEveryFourthFrame(void) {
   struct EffectOptions options;
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -1957,7 +1957,7 @@ static void SceneEffect_SpawnParticleEveryFourthFrame(void) {
   }
 }
 
-/// Emit particles at a fixed point once every four frames.
+/// Emits particles at a fixed point once every four frames.
 static void SceneEffect_SpawnRandomEveryFourFrames(s32 x, s32 y, s32 z) {
   struct EffectOptions options;
   s32 framePhase = gFrameCount & 3;
@@ -1980,7 +1980,7 @@ static void SceneEffect_SpawnRandomEveryFourFrames(s32 x, s32 y, s32 z) {
   }
 }
 
-/// Emit a stationary particle near the supplied position.
+/// Emits a stationary particle near the supplied position.
 static void SceneEffect_SpawnWithRandomOffset(s32 x, s32 y, s32 z) {
   struct EffectOptions options;
 
@@ -1998,7 +1998,7 @@ static void SceneEffect_SpawnWithRandomOffset(s32 x, s32 y, s32 z) {
   }
 }
 
-/// Emit a short burst with velocities spreading along the supplied angle.
+/// Emits a short burst with velocities spreading along the supplied angle.
 static void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 angle) {
   struct EffectOptions options;
   s32 velocity[3];
@@ -2031,7 +2031,7 @@ static void SceneEffect_SpawnRandomizedBurst(s32 x, s32 y, s32 z, s32 angle) {
   } while (particleIndex <= 11);
 }
 
-/// Restore each lighthouse scene's puzzle state and entrance sequence.
+/// Restores each lighthouse scene's puzzle state and entrance sequence.
 s32 MercuryLighthouse_Initialize(void) {
   u32 blockIndex;
   s32 positionFlag;
@@ -2644,7 +2644,7 @@ static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
   Engine_PsynergyLowerHands();
 }
 
-/// Replace one inventory item in the owner and slot that contain it.
+/// Replaces one inventory item in the owner and slot that contain it.
 static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem) {
   s32 owner = PartyInventory_FindOwner(oldItem);
 
@@ -2660,7 +2660,7 @@ static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem) {
 // Shared source is included here in ROM order.
 #include "common/mercury_lighthouse_lights.h"
 
-/// Create the rising effect at the source actor and set its sprite priority.
+/// Creates the rising effect at the source actor and sets its sprite priority.
 static void OverlayObject_SpawnKind24AtObject(struct FieldActor *source) {
   struct FieldActor *effect;
   struct AnimationObject *sprite;

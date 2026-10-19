@@ -112,12 +112,12 @@ enum {
   PRIZE_B = 40
 };
 
-/// Set the leader speed for the shared solo-party placement routine.
+/// Sets the leader speed for the shared solo-party placement routine.
 static inline void InitializeActorZero(void) {
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
 }
 
-/// Set a companion speed for the shared solo-party placement routine.
+/// Sets a companion speed for the shared solo-party placement routine.
 static inline void InitializeSelectedActor(s32 actorId) {
   Engine_ActorSetSpeed(actorId, PIXELS(1), PIXELS(1) / 2);
 }
@@ -126,7 +126,7 @@ extern s32 gColossoParticleCount;
 
 // Shared Colosso routines (scene/common/colosso_*.c).
 
-/// Return the course entrance placements.
+/// Returns the course entrance placements.
 struct SceneEntrance *ColossoLog_GetEntrances(void) {
   return gColossoLogEntrances;
 }
@@ -134,15 +134,15 @@ struct SceneEntrance *ColossoLog_GetEntrances(void) {
 /// The course has no region table.
 const struct SceneRegion *ColossoLog_GetRegions(void) { return 0; }
 
-/// Return the course exit connections.
+/// Returns the course exit connections.
 u32 *ColossoLog_GetExits(void) { return gColossoLogExits; }
 
-/// Return the course actor placements.
+/// Returns the course actor placements.
 struct ScenePlacement *ColossoLog_GetPlacements(void) {
   return gColossoLogPlacements;
 }
 
-/// Cycle the moving wall and raise the opening event beneath the rider.
+/// Cycles the moving wall and raises the opening event beneath the rider.
 static void ColossoLogRollingStage_SceneTask(void) {
   struct EventWork *work = gEventWork;
   struct FieldActor *actor = Object_GetById(gGameState.selectedActor);
@@ -181,7 +181,7 @@ static void ColossoLogRollingStage_SceneTask(void) {
 
 // Function from another file; its callers use no declaration (implicit int).
 
-/// Reset the moving wall to its first displayed pattern.
+/// Resets the moving wall to its first displayed pattern.
 static void ColossoLogRollingStage_ResetAndRunSceneTask(void) {
   SceneTaskEntry entry;
 
@@ -192,12 +192,12 @@ static void ColossoLogRollingStage_ResetAndRunSceneTask(void) {
   entry();
 }
 
-/// Resume cycling the moving wall.
+/// Resumes cycling the moving wall.
 static void ColossoLogRollingStage_StartSceneTask(void) {
   FieldScheduler_AddCallback(ColossoLogRollingStage_SceneTask, 0xC80);
 }
 
-/// Wait for the wall pattern used by the tutorial, with a bounded timeout.
+/// Waits for the wall pattern used by the tutorial, with a bounded timeout.
 static void ColossoLogRollingStage_WaitForSceneTask(void) {
   s32 polls;
 
@@ -238,7 +238,7 @@ static void Event_GrowPlant(void) {
   }
 }
 
-/// Move a scale pan vertically at the shared speed and acceleration.
+/// Moves a scale pan vertically at the shared speed and acceleration.
 static inline void ColossoLog_MoveOnScales(struct FieldActor *pan, s32 height) {
   pan->acceleration = PIXELS(2) / 5;
   pan->speed = PIXELS(4) / 5;
@@ -407,7 +407,7 @@ static void Event_SettleRocks(void) {
   }
 }
 
-/// Change the eastern end collision according to the rider facing.
+/// Changes the eastern end collision according to the rider facing.
 static void ColossoLog_UpdateEastEndCollision(void) {
   struct FieldActor *actor;
   s32 x;
@@ -426,7 +426,7 @@ static void ColossoLog_UpdateEastEndCollision(void) {
   }
 }
 
-/// Reject blocked cells and cells occupied by one of the three obstacles.
+/// Rejects blocked cells and cells occupied by one of the three obstacles.
 static s32 ColossoLogRollingStage_CheckObstacleDestination(s32 x, s32 z) {
   struct FieldActor *actor;
 
@@ -450,7 +450,7 @@ static s32 ColossoLogRollingStage_CheckObstacleDestination(s32 x, s32 z) {
   return 0;
 }
 
-/// Check all four cells covered by the long rolling log.
+/// Checks all four cells covered by the long rolling log.
 static s32 ColossoLogRollingStage_CheckPathClearance(s32 x, s32 z) {
   if (ColossoLogRollingStage_CheckObstacleDestination(x, z - PIXELS(24)) != 0 ||
       ColossoLogRollingStage_CheckObstacleDestination(x, z - PIXELS(8)) != 0 ||
@@ -579,7 +579,7 @@ far:
   Event_SettleRocks();
 }
 
-/// Display the activated moving sidewalk and play its arrival sounds.
+/// Displays the activated moving sidewalk and plays its arrival sounds.
 static s32
 ColossoLog_ShowActivatedSidewalkLayer(struct ScriptInterpreter *interpreter) {
   Map_SetLayerEntryFlag(1);
@@ -680,7 +680,7 @@ static void Event_PassSouthWallOpening(void) {
 /// Unused scene-event callback with no behavior.
 UNUSED static void ColossoLogRollingStage_NoopSceneEventHook(void) {}
 
-/// Offer to practise the course with a selected solo competitor.
+/// Offers to practise the course with a selected solo competitor.
 UNUSED static void ColossoLog_RunCompetitorTalk(s32 competitorId) {
   struct EventWork *work;
   s32 actorId;
@@ -772,10 +772,10 @@ static void Event_PushWeightOrCheckAhead(void) {
   }
 }
 
-/// Return the course event table.
+/// Returns the course event table.
 struct SceneEvent *ColossoLog_GetEvents(void) { return gColossoLogEvents; }
 
-/// Restore obstacle progress, then enter practice, introduction or battle
+/// Restores obstacle progress, then enters practice, introduction or battle
 /// aftermath.
 s32 ColossoLog_Initialize(void) {
   struct FieldActor *actor;
@@ -991,7 +991,7 @@ s32 ColossoLog_Initialize(void) {
   return 0;
 }
 
-/// Advance a reunion particle using its signed small-step velocity fields.
+/// Advances a reunion particle using its signed small-step velocity fields.
 static s32 ColossoLogRollingStage_AdvanceParticleMotion(
     struct ScriptInterpreter *interpreter) {
   SceneParticle *particle = (SceneParticle *)interpreter;
@@ -1004,7 +1004,7 @@ static s32 ColossoLogRollingStage_AdvanceParticleMotion(
   return 0;
 }
 
-/// Show one of three reunion particles at its scheduled point in the cycle.
+/// Shows one of three reunion particles at its scheduled point in the cycle.
 static void ColossoLogRollingStage_SpawnPeriodicParticle(void) {
   SceneParticle *particle;
   SceneParticle *source;
@@ -1055,7 +1055,7 @@ static void ColossoLogRollingStage_SpawnPeriodicParticle(void) {
   Actor_SetActionScript(kind, gColossoParticleKinds);
 }
 
-/// Reunite the party after the battle and play the resting conversation.
+/// Reunites the party after the battle and plays the resting conversation.
 static void ColossoLog_PlayPostBattleReunion(s32 battleResult) {
   struct FieldActor *actor;
   const s32 *leaderScaleScript;
@@ -1258,7 +1258,7 @@ static void ColossoLog_PlayPostBattleReunion(s32 battleResult) {
   Engine_EventEnd();
 }
 
-/// Stage the party behind the guide for the introduction to the third finals.
+/// Stages the party behind the guide for the introduction to the third finals.
 static void ColossoLog_IntroduceFinalCourse(s32 guideId) {
   s32 guideZ;
   s32 guideX;
@@ -1572,7 +1572,7 @@ static void Event_TalkToFreeClimbAttendant(s32 guideId) {
   }
 }
 
-/// Start a scripted pixel destination while preserving the actor height.
+/// Starts a scripted pixel destination while preserving the actor height.
 static void ColossoLogRollingStage_PositionActor(s32 selector, s32 x, s32 z) {
   struct FieldActor *actor;
 
@@ -1584,7 +1584,7 @@ static void ColossoLogRollingStage_PositionActor(s32 selector, s32 x, s32 z) {
   }
 }
 
-/// Move to a scripted pixel destination, wait, then restore the idle mode.
+/// Moves to a scripted pixel destination, wait, then restores the idle mode.
 static void ColossoLogRollingStage_PositionAndActivateActor(s32 selector, s32 x,
                                                             s32 z) {
   struct FieldActor *actor;
@@ -1705,7 +1705,7 @@ static void Event_TalkToLogRollingAttendant(s32 actor) {
 #include "common/item_equip.h"
 #include "common/colosso_task.h"
 
-/// Select the portrait task script and clear its movement state.
+/// Selects the portrait task script and clears its movement state.
 static void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter) {
   s32 handler;
 
@@ -1740,7 +1740,7 @@ static void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter) {
   gColosso_LetteringPosition = 0;
 }
 
-/// Play the countdown portraits and the start-of-race transition.
+/// Plays the countdown portraits and the start-of-race transition.
 static void ColossoLogRollingStage_RunScriptedTransition(s32 mode) {
   if (mode == 0) {
     Engine_EventBegin();
@@ -1846,7 +1846,7 @@ UNUSED static void FieldScene_RunScene3bcSequenceA(s32 countdown) {
 #include "common/colosso_marker.h"
 #include "common/colosso_item_icon.h"
 
-/// Write eight hexadecimal digits followed by a terminator.
+/// Writes eight hexadecimal digits followed by a terminator.
 UNUSED static void WriteU32AsHex(u8 *hexText, u32 value) {
   s32 digitIndex;
 
@@ -1863,14 +1863,14 @@ UNUSED static void WriteU32AsHex(u8 *hexText, u32 value) {
 /// Scene hook with no behavior.
 static void ColossoLogRollingStage_NoopSceneHook(void) {}
 
-/// Mark the rival path recorder as finished.
+/// Marks the rival path recorder as finished.
 UNUSED static void ColossoLog_MarkRivalFinished(void) {
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;
 
   recorder->mode = 9;
 }
 
-/// Wait until the rival path recorder reaches its finished mode.
+/// Waits until the rival path recorder reaches its finished mode.
 static void ColossoLog_WaitForRivalToFinish(void) {
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;
 
@@ -1917,7 +1917,7 @@ ColossoLogRollingStage_SpawnRandomSceneEffect(union FieldObject *fieldObject) {
   }
 }
 
-/// Raise the linked item actor and clear the source link.
+/// Raises the linked item actor and clears the source link.
 static s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(
     struct ScriptInterpreter *interpreter) {
   LinkedStageEffect *source = (LinkedStageEffect *)interpreter;
@@ -1933,7 +1933,7 @@ static s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(
   return 0;
 }
 
-/// Move to the available finish item, equip it and announce it.
+/// Moves to the available finish item, equip it and announces it.
 static s32 ColossoLog_CollectFinishEquipment(s32 firstItem, s32 secondItem) {
   struct ColossoGaugeWork *work = (struct ColossoGaugeWork *)gColossoWork;
   struct FieldActor *actor;
@@ -1996,7 +1996,7 @@ static s32 ColossoLog_CollectFinishEquipment(s32 firstItem, s32 secondItem) {
 #include "common/colosso_scene_state.h"
 #include "common/object_findslot.h"
 
-/// Push a neighboring actor one cell when its destination and overhead are
+/// Pushes a neighboring actor one cell when its destination and overhead are
 /// clear.
 static void ColossoLog_PushActorAhead(void) {
   struct FieldActor *subject;

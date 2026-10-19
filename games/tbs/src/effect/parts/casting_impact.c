@@ -97,7 +97,7 @@ static inline void CastingImpact_DrawImage(void *canvas, const void *pixels,
   (*draw)(canvas, pixels, x, y, width, height);
 }
 
-/// Draw a casting-impact image whose height is twice its width.
+/// Draws a casting-impact image whose height is twice its width.
 static inline void CastingImpact_DrawTallImage(void *canvas, const void *pixels,
                                                s32 x, s32 y, s32 width,
                                                DrawRectangle *draw) {
@@ -108,7 +108,7 @@ static inline void CastingImpact_DrawTallImage(void *canvas, const void *pixels,
   (*draw)(canvas, pixels, x, y, width, width * 2);
 }
 
-/// Draw only the unscrolled height of a casting-impact image.
+/// Draws only the unscrolled height of a casting-impact image.
 static inline void CastingImpact_DrawScrolledImage(void *canvas,
                                                    const void *pixels, s32 x,
                                                    s32 y, s32 width, s32 height,
@@ -120,7 +120,7 @@ static inline void CastingImpact_DrawScrolledImage(void *canvas,
   (*draw)(canvas, pixels, x, y, width, height - scroll);
 }
 
-/// Draw a casting-impact image cropped to 91 pixels high.
+/// Draws a casting-impact image cropped to 91 pixels high.
 static inline void CastingImpact_DrawCroppedImage(void *canvas,
                                                   const void *pixels, s32 x,
                                                   s32 y, s32 width,
@@ -132,8 +132,8 @@ static inline void CastingImpact_DrawCroppedImage(void *canvas,
   (*draw)(canvas, pixels, x, y, width, 91);
 }
 
-/// Clear the prelude image, stop its callbacks and release its blitters before
-/// the next effect takes over.
+/// Clears the prelude image, stops its callbacks and releases its blitters
+/// before the next effect takes over.
 static inline void CastingImpact_EndPrelude(struct BattleEffectWork *work,
                                             void *canvas) {
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
@@ -209,7 +209,8 @@ enum CastingImpact {
 #define CASTING_IMPACT_IMAGE_X(side, image)                                    \
   gCastingImpact_ImageX[(side)][(image)]
 
-/// Gather sparks around the acting unit, launch the Djinni and draw its impact.
+/// Gathers sparks around the acting unit, launches the Djinni and draws its
+/// impact.
 /// Impacts 15, 17, 24, 26 and 35 (Severe Blow) hand off to another effect after
 /// gathering. command: effect arguments kind: ability (effect number minus 100)
 void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {

@@ -19,7 +19,7 @@ struct CursorSlot {
   s8 index;
 };
 
-/// Choose a party/enemy target and animate its selection markers. Return the
+/// Chooses a party/enemy target and animates its selection markers. Return the
 /// encoded side and party position, or -1 on cancel. Healing and status-cure
 /// categories choose an appropriate initial ally and supply condition help.
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {

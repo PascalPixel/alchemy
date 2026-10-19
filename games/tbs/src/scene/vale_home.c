@@ -70,7 +70,8 @@ static void ValeHome_UpdateActor17Psynergy(void);
 static void ValeHome_UpdateActor20Psynergy(void);
 static void ValeHome_SetProgressFlagsAndExit(void);
 
-/// Turn and wait by calling ValeHome_FaceDirectionAndWait through this inline.
+/// Turns and waits by calling ValeHome_FaceDirectionAndWait through this
+/// inline.
 static inline void ValeHome_TurnAndWait(s32 actor, s32 facing, s32 frames) {
   /* FAKEMATCH: forwarding inline for Event_DepartForQuest's three
    * calls (call.h's Call3 did the same); called directly the function grows by
@@ -98,7 +99,7 @@ static inline s32 ValeHome_TurnAndWaitValue(s32 actor, s32 facing, s32 frames) {
 // Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
-/// Return the village's entrance positions.
+/// Returns the village's entrance positions.
 struct SceneEntrance *ValeHome_GetEntrances(void) {
   return gValeHome_Entrances;
 }
@@ -106,7 +107,7 @@ struct SceneEntrance *ValeHome_GetEntrances(void) {
 /// The village has no scene regions.
 struct SceneRegion *ValeHome_GetRegions(void) { return NULL; }
 
-/// Select the storm or ordinary village exits.
+/// Selects the storm or ordinary village exits.
 u32 *ValeHome_GetExits(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     return gValeHome_StormExits;
@@ -114,7 +115,7 @@ u32 *ValeHome_GetExits(void) {
   return gValeHome_Exits;
 }
 
-/// Select the villagers for the storm, farewell or return visit.
+/// Selects the villagers for the storm, farewell or return visit.
 struct ScenePlacement *ValeHome_GetPlacements(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     return gValeHome_StormPlacements;
@@ -141,7 +142,7 @@ static void Event_UsePsynergyStone(void) {
   Engine_EventEnd();
 }
 
-/// Select the village's interactions for the current story state.
+/// Selects the village's interactions for the current story state.
 struct SceneEvent *ValeHome_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
     return gValeHome_EventsAfterKalay;
@@ -158,7 +159,7 @@ struct SceneEvent *ValeHome_GetEvents(void) {
   return gValeHome_Events;
 }
 
-/// Ask about meditating each day. The question is whether the party meditates
+/// Asks about meditating each day. The question is whether the party meditates
 /// on Mt. Aleph each day.
 static void Event_AskAboutMeditation(void) {
   Engine_EventBegin();
@@ -177,7 +178,7 @@ static void Event_RecallThreeYearsAgo(void) {
   Engine_EventEnd();
 }
 
-/// Ask whether the travelers went to meet the mayor.
+/// Asks whether the travelers went to meet the mayor.
 static void Event_AskAboutTheTravelers(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeDidTheTravelersMeetThe);
@@ -254,7 +255,7 @@ static void Event_DemonstratePsynergy(void) {
   Engine_EventEnd();
 }
 
-/// Ask about the journey, the Wise One or learning Psynergy.
+/// Asks about the journey, the Wise One or learning Psynergy.
 static void Event_AskAboutJourney(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
@@ -278,7 +279,7 @@ static void Event_AskAboutJourney(void) {
   Engine_EventEnd();
 }
 
-/// Turn toward the fallen stone while describing what happened.
+/// Turns toward the fallen stone while describing what happened.
 static void Event_TalkAboutFallenStone(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(26, ANIM_STAND);
@@ -356,7 +357,7 @@ static void Event_TalkAboutHelping(void) {
   Engine_EventEnd();
 }
 
-/// Welcome the party home, then use the repeat greeting on later visits.
+/// Welcomes the party home, then uses the repeat greeting on later visits.
 static void Event_WelcomeIsaacHome(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(0x302) != 0) {
@@ -369,7 +370,7 @@ static void Event_WelcomeIsaacHome(void) {
   Engine_EventEnd();
 }
 
-/// Pause the villager's search to discuss the missing Psynergy Stone.
+/// Pauses the villager's search to discuss the missing Psynergy Stone.
 static void Event_PsynergyStoneIsGone(void) {
   struct FieldActor *actor = Object_GetById(21);
   Engine_EventBegin();
@@ -397,7 +398,7 @@ static void Event_PsynergyStoneIsGone(void) {
 // Shared source is included here in ROM order.
 #include "common/vale.h"
 
-/// Open a door's map cells and send the leader through its threshold.
+/// Opens a door's map cells and sends the leader through its threshold.
 static inline void Event_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ, s32 x,
                                                 s32 z) {
   Event_PlayCue(SE_DOOR_OPEN);
@@ -405,13 +406,13 @@ static inline void Event_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ, s32 x,
   Actor_WalkTo(ACTOR_PARTY_LEADER, x, z);
 }
 
-/// Enter through the village's northwest door.
+/// Enters through the village's northwest door.
 static void Event_OpenNorthwestDoor(void) {
   Event_OpenDoorAndWalkThrough(44, 7, 248, 279);
   Vale_RequestBackdropExit(1);
 }
 
-/// Open the northeast doorway in two stages and walk inside.
+/// Opens the northeast doorway in two stages and walks inside.
 static void Event_OpenNortheastDoor(void) {
   Event_PlayCue(SE_188);
   Map_CopyCellsTo(0, 63, 51, 8, 2, 2);
@@ -424,43 +425,43 @@ static void Event_OpenNortheastDoor(void) {
   Vale_RequestBackdropExit(2);
 }
 
-/// Enter through the western door in the village's middle row.
+/// Enters through the western door in the village's middle row.
 static void Event_OpenCentralWestDoor(void) {
   Event_OpenDoorAndWalkThrough(43, 15, 230, 407);
   Vale_RequestBackdropExit(3);
 }
 
-/// Enter through the eastern door in the village's middle row.
+/// Enters through the eastern door in the village's middle row.
 static void Event_OpenCentralEastDoor(void) {
   Event_OpenDoorAndWalkThrough(52, 18, 374, 419);
   Vale_RequestBackdropExit(4);
 }
 
-/// Enter through the southwestern door.
+/// Enters through the southwestern door.
 static void Event_OpenSouthwestDoor(void) {
   Event_OpenDoorAndWalkThrough(41, 32, 200, 546);
   Vale_RequestBackdropExit(5);
 }
 
-/// Enter through the door at the village's western edge.
+/// Enters through the door at the village's western edge.
 static void Event_OpenWestEdgeDoor(void) {
   Event_OpenDoorAndWalkThrough(35, 36, 102, 611);
   Vale_RequestBackdropExit(6);
 }
 
-/// Enter through the southeastern door.
+/// Enters through the southeastern door.
 static void Event_OpenSoutheastDoor(void) {
   Event_OpenDoorAndWalkThrough(51, 39, 358, 670);
   Vale_RequestBackdropExit(7);
 }
 
-/// Leave through the village's western passage.
+/// Leaves through the village's western passage.
 static void Event_LeaveThroughWestPassage(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropExit(8);
 }
 
-/// Leave by the south passage once the party has begun its journey.
+/// Leaves by the south passage once the party has begun its journey.
 static void Event_LeaveThroughSouthPassage(void) {
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
     Engine_AudioPlayCue(SE_MAP_EXIT);
@@ -468,17 +469,17 @@ static void Event_LeaveThroughSouthPassage(void) {
   }
 }
 
-/// Remember that Whirlwind cleared actor 8.
+/// Remembers that Whirlwind cleared actor 8.
 static void Event_ClearFirstWhirlwindTarget(void) {
   Engine_GameFlagSet((FLAG_VALE_FIRST_WHIRLWIND_TARGET_CLEARED));
 }
 
-/// Remember that Whirlwind cleared actor 9.
+/// Remembers that Whirlwind cleared actor 9.
 static void Event_ClearSecondWhirlwindTarget(void) {
   Engine_GameFlagSet((FLAG_VALE_SECOND_WHIRLWIND_TARGET_CLEARED));
 }
 
-/// Remember that Whirlwind cleared actor 10.
+/// Remembers that Whirlwind cleared actor 10.
 static void Event_ClearThirdWhirlwindTarget(void) {
   Engine_GameFlagSet((FLAG_VALE_THIRD_WHIRLWIND_TARGET_CLEARED));
 }
@@ -589,7 +590,7 @@ s32 ValeHome_Initialize(void) {
   return 0;
 }
 
-/// Walk a separate scene actor back to the leader, then hide it.
+/// Walks a separate scene actor back to the leader, then hides it.
 static inline void ValeHome_RejoinParty(s32 actorId) {
   struct FieldActor *leader;
 
@@ -1315,19 +1316,19 @@ static void Event_DepartForQuest(void) {
   Engine_EventEnd();
 }
 
-/// Show the current message, then leave a pause before the next scene action.
+/// Shows the current message, then leaves a pause before the next scene action.
 static void Event_SayThenWait(s32 speaker, s32 frames) {
   Engine_EventShowMessage(speaker, 0);
   Engine_EventWait(frames);
 }
 
-/// Turn an actor immediately, then pause the scene.
+/// Turns an actor immediately, then pauses the scene.
 static void ValeHome_FaceDirectionAndWait(s32 actorId, s32 facing, s32 frames) {
   Engine_ActorFaceDirection(actorId, facing, 0);
   Engine_EventWait(frames);
 }
 
-/// Flash the caster's palette and emit paired effects every sixteen frames.
+/// Flashes the caster's palette and emits paired effects every sixteen frames.
 static void ValeHome_FlashPsynergyPalette(struct FieldActor *actor) {
   if ((gFrameCount & 2) != 0) {
     Engine_ObjectSetPartPalettes(actor, 7);
@@ -1339,7 +1340,7 @@ static void ValeHome_FlashPsynergyPalette(struct FieldActor *actor) {
   }
 }
 
-/// Cycle six palette banks and emit the caster's paired effects.
+/// Cycles six palette banks and emits the caster's paired effects.
 static void
 ValeHome_CyclePsynergyPaletteAndSpawnEffects(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0) {
@@ -1351,7 +1352,7 @@ ValeHome_CyclePsynergyPaletteAndSpawnEffects(struct FieldActor *actor) {
   }
 }
 
-/// Cycle the levitated actor through six palette banks.
+/// Cycles the levitated actor through six palette banks.
 static void ValeHome_CyclePsynergyPalette(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0) {
     s32 palette = Math_RemainderUnsigned(gFrameCount >> 1, 6);
@@ -1362,7 +1363,7 @@ static void ValeHome_CyclePsynergyPalette(struct FieldActor *actor) {
 // Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 
-/// Create the two vertical Psynergy effects using the shared sprite tiles.
+/// Creates the two vertical Psynergy effects using the shared sprite tiles.
 static void ValeHome_SpawnEffectPair(struct FieldActor *parent) {
   struct FieldActor *pair[2];
   struct FieldActor *child;
@@ -1416,17 +1417,17 @@ static void ValeHome_SpawnEffectPair(struct FieldActor *parent) {
 // Shared source is included here in ROM order.
 #include "common/effect_psynergy.h"
 
-/// Update the levitating villager's Psynergy display.
+/// Updates the levitating villager's Psynergy display.
 static void ValeHome_UpdateActor15Psynergy(void) {
   ValeHome_CyclePsynergyPaletteAndSpawnEffects(Object_GetById(15));
 }
 
-/// Update the demonstrating villager's Psynergy display.
+/// Updates the demonstrating villager's Psynergy display.
 static void ValeHome_UpdateActor17Psynergy(void) {
   ValeHome_CyclePsynergyPaletteAndSpawnEffects(Object_GetById(17));
 }
 
-/// Update the palette of the levitated actor.
+/// Updates the palette of the levitated actor.
 static void ValeHome_UpdateActor20Psynergy(void) {
   ValeHome_CyclePsynergyPalette(Object_GetById(20));
 }

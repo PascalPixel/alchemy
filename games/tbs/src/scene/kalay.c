@@ -105,7 +105,7 @@ static void Kalay_UpdateTunnelEmitters(void);
 static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z);
 static void Kalay_UpdateNutOrbit(void);
 
-/// Clear the flag a guide's script sets when it is done.
+/// Clears the flag a guide's script sets when it is done.
 static __inline__ void Kalay_ClearScriptDone(struct FieldActor *actor) {
   s32 completed = 0;
 
@@ -1988,7 +1988,7 @@ static void Kalay_UpdateTunnelEmitters(void) {
   }
 }
 
-/// Create a short-lived particle with random position and velocity offsets.
+/// Creates a short-lived particle with random position and velocity offsets.
 static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
   s32 depth;
   struct FieldActor *particle;

@@ -16,7 +16,7 @@ struct LinkSignature {
   u8 padding010[8];
 };
 
-/// Advance the link command-entry timer, slide the battle panels, and redraw
+/// Advances the link command-entry timer, slides the battle panels, and redraws
 /// the remaining seconds. Pause flags and peer signatures stop the timer.
 void UpdateLinkSessionCountdown(void) {
   struct LinkRoundState *state = COUNTDOWN;
@@ -120,7 +120,7 @@ void UpdateLinkSessionCountdown(void) {
   }
 }
 
-/// Test whether this battle forbids escape. Show the reason until A/B or the
+/// Tests whether this battle forbids escape. Show the reason until A/B or the
 /// link timer expires, returning 1 when escape is forbidden and 0 otherwise.
 s32 UiText_ShowLocalizedMessageAndWait(void) {
   s16 buffer[64];

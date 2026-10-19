@@ -34,7 +34,7 @@
 #define COLOSSO_STAGE_CHEERED 0x200
 #define COLOSSO_STAGE_DESCRIBED 0x208
 
-/// Put Garet, Ivan and Mia back at the cells where they chose to cheer, at the
+/// Puts Garet, Ivan and Mia back at the cells where they chose to cheer, at the
 /// centre of each cell.
 void Colosso_PlaceFriendsAtCheeringSpots(void) {
   {
@@ -73,8 +73,8 @@ void Colosso_PlaceFriendsAtCheeringSpots(void) {
   }
 }
 
-/// Make the character the party's only member, the one the player moves and the
-/// camera follows, with full HP and PP and no poison. The gauges are the
+/// Makes the character the party's only member, the one the player moves and
+/// the camera follows, with full HP and PP and no poison. The gauges are the
 /// battle's (0x4000 full; a character with any HP or PP left shows at least 1).
 void Colosso_ControlCharacterAlone(s32 id) {
   struct BattleUnit *unit;
@@ -294,7 +294,7 @@ static void Colosso_AskReadyToRace(s32 actorId) {
   Engine_EventEnd();
 }
 
-/// Forget where Garet, Ivan and Mia cheer from.
+/// Forgets where Garet, Ivan and Mia cheer from.
 void Colosso_ClearCheeringSpots(void) {
   FieldGameFlag_SetByte(COLOSSO_CHEER_COLUMN + COLOSSO_CHEER_SLOT(GARET), 0);
   FieldGameFlag_SetByte(COLOSSO_CHEER_ROW + COLOSSO_CHEER_SLOT(GARET), 0);

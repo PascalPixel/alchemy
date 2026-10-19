@@ -77,7 +77,7 @@ static void ValeCave_ApplyEntryState(void);
 /// Reaching Kite: it joins the party.
 static void Event_TalkToKite(void) { Djinn_JoinParty(ACTOR_KITE, 3, 4); }
 
-/// Wait for an actor to land, bounded by a one-second timeout.
+/// Waits for an actor to land, bounded by a one-second timeout.
 static void ValeCave_WaitForActorLanding(struct FieldActor *actor) {
   s32 framesRemaining = ACTOR_LANDING_TIMEOUT;
 
@@ -118,7 +118,7 @@ static s32 ValeCave_FaceActorTowardLeader(union FieldObject *fieldObject) {
   ((void (*)(union FieldObject *))ValeCave_FaceActorTowardLeader)
 #endif
 
-/// Select entrance positions and camera bounds for the current cave room.
+/// Selects entrance positions and camera bounds for the current cave room.
 const struct SceneEntrance *ValeCave_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -137,10 +137,10 @@ const struct SceneEntrance *ValeCave_GetEntrances(void) {
 /// The cave rooms have no additional region table.
 const struct SceneRegion *ValeCave_GetRegions(void) { return NULL; }
 
-/// Return the shared packed exits for all cave rooms.
+/// Returns the shared packed exits for all cave rooms.
 const u32 *ValeCave_GetExits(void) { return gValeCave_Exits; }
 
-/// Select the current room's actors and movable objects.
+/// Selects the current room's actors and movable objects.
 const struct ScenePlacement *ValeCave_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -166,7 +166,7 @@ static void Event_RevealHiddenTile(void) {
   Map_CopyCells(16, 17, 1, 1, 15, 15);
 }
 
-/// Lower one object while emitting a particle each frame around its opening.
+/// Lowers one object while emitting a particle each frame around its opening.
 static inline void
 ValeCave_SinkObjectWithParticles(s32 actorId, s32 baseX, s32 baseZ,
                                  struct EffectOptions *particleOptions) {
@@ -537,7 +537,7 @@ static void Event_PushObjectNorth(void) {
   Engine_EventEnd();
 }
 
-/// Select the current room's touch, Psynergy and search bindings.
+/// Selects the current room's touch, Psynergy and search bindings.
 const struct SceneEvent *ValeCave_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -553,7 +553,7 @@ const struct SceneEvent *ValeCave_GetEvents(void) {
   return gValeCave_EventsOther;
 }
 
-/// Choose the entry transition and restore the room's puzzle state.
+/// Chooses the entry transition and restores the room's puzzle state.
 s32 ValeCave_Initialize(void) {
   s32 *request = &gEventWork->startTransition;
 
@@ -577,7 +577,7 @@ static void Event_LeaveRoom(void) {
   Engine_EventRequestExit(exitId);
 }
 
-/// Rebuild the passage cells around the sliding object's saved side.
+/// Rebuilds the passage cells around the sliding object's saved side.
 static void ValeCave_UpdateSlidingObjectPassage(void) {
   Map_CopyCellAttributes(0, 34, 13, 3, 23, 34);
 
@@ -617,7 +617,7 @@ static void Event_SlideObjectsWest(void) {
   Engine_AudioPlayCue(SE_289);
 }
 
-/// Center an actor on a map cell and give it underfoot priority.
+/// Centers an actor on a map cell and gives it underfoot priority.
 static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row) {
   struct FieldActor *actor = Object_GetById(actorId);
 
@@ -630,7 +630,7 @@ static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row) {
   }
 }
 
-/// Restore the Djinni route and completed movable-object puzzles on entry.
+/// Restores the Djinni route and completed movable-object puzzles on entry.
 static void ValeCave_ApplyEntryState(void) {
   s32 northernObjectMoved;
 

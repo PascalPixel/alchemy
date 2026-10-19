@@ -4,7 +4,7 @@
 #include "field_obj.h"
 #include "field_event.h"
 
-/// Show the message already set as the actor's thought: the actor stops and
+/// Shows the message already set as the actor's thought: the actor stops and
 /// stands while the thought is shown.
 static void Vault_ShowThought(s32 actorId) {
   u8 *paused = &Object_GetById(actorId)->paused;

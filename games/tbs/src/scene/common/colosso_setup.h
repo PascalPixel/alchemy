@@ -7,7 +7,7 @@
 #include "field_event.h"
 #include "flags.h"
 
-/// Start the race gauge (struct ColossoGaugeWork, in work slot 59): Isaac and
+/// Starts the race gauge (struct ColossoGaugeWork, in work slot 59): Isaac and
 /// the rival as playerActor and rivalActor, a bar of segments pieces either
 /// side, and the finish at pixel (finishX, finishZ) in 16.16, where the two
 /// item actors stand. Unless the party returns to where it was, the rival is
@@ -65,9 +65,9 @@ void Colosso_StartRaceGauge(s32 playerActor, s32 rivalActor, s32 segments,
   Runtime_BumpFree((void *)handle);
 }
 
-/// Decode the rival's recorded path (resource) after the gauge's work and,
-/// unless the party returns to where it was, have the rival run it from the
-/// start, mirrored across the finish; then start the rival's callback.
+/// Decodes the rival's recorded path (resource) after the gauge's work and,
+/// unless the party returns to where it was, has the rival run it from the
+/// start, mirrored across the finish; then starts the rival's callback.
 void Colosso_StartRival(s32 resource) {
   u8 *work = gColossoWork;
   struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;

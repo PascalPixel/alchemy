@@ -4,11 +4,11 @@
 
 #include "../effect_internal.h"
 
-/// Restore the background 2 horizontal scale to one screen pixel per source
+/// Restores the background 2 horizontal scale to one screen pixel per source
 /// pixel.
 void Graphics_ResetBg2Pa(void) { REG_BG2PA = Q_8_8(1); }
 
-/// Stretch background 2 to twice its source width.
+/// Stretches background 2 to twice its source width.
 void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 
 #define NEPTUNE_FLAME_GROUND 112   ///< where the blue flames throw sparks

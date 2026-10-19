@@ -12,7 +12,7 @@
 // spaced points and a flare is stamped at each. The blue-ramp helper here
 // also converts a full-screen tiled picture in place, for Condemn.
 
-/// Turn the screen into shades of blue, top down, with a ragged edge. Works
+/// Turns the screen into shades of blue, top down, with a ragged edge. Works
 /// on a copy of the screen in Ram_MapCellBuffer. Each column starts up to 63
 /// lines late, and the edge speeds up a little every frame; after at most 27
 /// frames the picture moves onto a second blue ramp at colours 96 to 127.

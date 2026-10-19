@@ -47,7 +47,7 @@ static void ColosseumEntrance_WalkToWestExit(void);
 static void ColosseumEntrance_CelebrateBothWins(void);
 static void ColosseumEntrance_InitializeContestants(void);
 
-/// Turn over ten frames by calling ColosseumEntrance_FaceDirection
+/// Turns over ten frames by calling ColosseumEntrance_FaceDirection
 /// through the inline helper.
 static inline void ColosseumEntrance_Turn(s32 actor, s32 facing) {
   /* FAKEMATCH: forwarding inline for Event_CrowdRecognizesIsaac's
@@ -73,7 +73,7 @@ enum {
   BUFORD = 18
 };
 
-/// Select the entrance table for this colosseum area.
+/// Selects the entrance table for this colosseum area.
 const struct SceneEntrance *ColosseumEntrance_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -89,10 +89,10 @@ const struct SceneEntrance *ColosseumEntrance_GetEntrances(void) {
 /// This scene has no additional region table.
 const struct SceneRegion *ColosseumEntrance_GetRegions(void) { return 0; }
 
-/// Return the shared colosseum exits.
+/// Returns the shared colosseum exits.
 const u32 *ColosseumEntrance_GetExits(void) { return gColosseumEntranceExits; }
 
-/// Select actors for the current area and stage of Colosso.
+/// Selects actors for the current area and stage of Colosso.
 const struct ScenePlacement *ColosseumEntrance_GetPlacements(void) {
   const struct ScenePlacement *table;
 
@@ -139,7 +139,7 @@ const struct ScenePlacement *ColosseumEntrance_GetPlacements(void) {
   return table;
 }
 
-/// Select interactions for this area and arrival.
+/// Selects interactions for this area and arrival.
 const struct SceneEvent *ColosseumEntrance_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -1090,13 +1090,13 @@ static void ColosseumEntrance_ApplyArrivalState(void) {
   }
 }
 
-/// Show the current message and leave a short pause.
+/// Shows the current message and leaves a short pause.
 static void ColosseumEntrance_ShowMessageAndPause(s32 speaker) {
   Engine_EventShowMessage(speaker, 0);
   Engine_EventWait(10);
 }
 
-/// Turn an actor to the given facing over ten frames.
+/// Turns an actor to the given facing over ten frames.
 static void ColosseumEntrance_FaceDirection(s32 actor, s32 facing) {
   Engine_ActorFaceDirection(actor, (u16)facing, 10);
 }
@@ -1121,7 +1121,7 @@ static void ColosseumEntrance_UpdateEntranceCells(void) {
   }
 }
 
-/// Place the three companions behind Isaac for the officials' briefing.
+/// Places the three companions behind Isaac for the officials' briefing.
 static inline void ColosseumEntrance_PositionPartyForBriefing(void) {
   Actor_SetPosition(GARET, PIXELS(792), PIXELS(136));
   Actor_SetPosition(IVAN, PIXELS(824), PIXELS(136));

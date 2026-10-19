@@ -34,7 +34,7 @@ enum ValeEruptionActor {
 
 static void Event_ReturnFromMtAleph(void);
 
-/// Return where the party appears: the path down from the mountain. The
+/// Returns where the party appears: the path down from the mountain. The
 /// mountain is Mt. Aleph.
 struct SceneEntrance *ValeEruption_GetEntrances(void) {
   return gValeEruption_Entrances;
@@ -43,10 +43,10 @@ struct SceneEntrance *ValeEruption_GetEntrances(void) {
 /// The square has no scene regions.
 struct SceneRegion *ValeEruption_GetRegions(void) { return NULL; }
 
-/// Return the way back to Vale.
+/// Returns the way back to Vale.
 u32 *ValeEruption_GetExits(void) { return gValeEruption_Exits; }
 
-/// Return Garet and the villagers gathered before the sanctum.
+/// Returns Garet and the villagers gathered before the sanctum.
 struct ScenePlacement *ValeEruption_GetPlacements(void) {
   return gValeEruption_Placements;
 }

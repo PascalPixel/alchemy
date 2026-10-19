@@ -413,7 +413,7 @@ static inline void TolbiShipMast_StopDriftingActor(struct FieldActor *actor) {
   actor->riseBaseY = 0;
 }
 
-/// Give each of the seven approaching actors its own random drift and bob.
+/// Gives each of the seven approaching actors its own random drift and bob.
 static inline void TolbiShipMast_InitializeDriftingGroup(void) {
   TolbiShipMast_InitializeDriftingActor(9);
   TolbiShipMast_InitializeDriftingActor(10);
@@ -424,7 +424,7 @@ static inline void TolbiShipMast_InitializeDriftingGroup(void) {
   TolbiShipMast_InitializeDriftingActor(15);
 }
 
-/// Stop the drifting actions and give the group its departure walking speed.
+/// Stops the drifting actions and gives the group its departure walking speed.
 static inline void TolbiShipMast_PrepareGroupDeparture(void) {
   Engine_ActorStop(9);
   Engine_ActorStop(10);

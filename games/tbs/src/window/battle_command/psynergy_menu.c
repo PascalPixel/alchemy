@@ -4,7 +4,7 @@
 
 #include "../battle_command_internal.h"
 
-/// Select a Psynergy-list position, or -1 on cancel. The list shows PP cost
+/// Selects a Psynergy-list position, or -1 on cancel. The list shows PP cost
 /// and range, and confirmation rejects abilities the unit cannot use.
 s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
   struct UiRenderWork *render;

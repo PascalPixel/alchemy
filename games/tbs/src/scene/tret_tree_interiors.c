@@ -88,20 +88,20 @@ static s16 *sLastFloorEntrance;
 #include "item_ids.h"
 #include "objcmd.h"
 
-/// Return the interior entrance and landing positions.
+/// Returns the interior entrance and landing positions.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTretTreeInteriorsEntrances;
 }
 
-/// Return the upper exit regions for the tree interior.
+/// Returns the upper exit regions for the tree interior.
 const struct SceneRegion *Scene_GetRegions(void) {
   return gTretTreeInteriorsRegions;
 }
 
-/// Return the interior's packed exits.
+/// Returns the interior's packed exits.
 const u32 *Scene_GetExits(void) { return gTretTreeInteriorsExits; }
 
-/// Return the staged party and Tret actors.
+/// Returns the staged party and Tret actors.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   return gTretTreeInteriorsPlacements;
 }
@@ -270,7 +270,7 @@ static void Event_ResetFloorLatchWhenClear(void) {
     *sLastFloorEntrance = -1;
 }
 
-/// Return the floor, story, Reveal and search event bindings.
+/// Returns the floor, story, Reveal and search event bindings.
 const struct SceneEvent *Scene_GetEvents(void) {
   return gTretTreeInteriorsEvents;
 }
@@ -568,7 +568,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   EV_END();
 }
 
-/// Restore the post-battle map and optionally play its conversation.
+/// Restores the post-battle map and optionally play its conversation.
 static void TretTreeInteriors_ApplyPostBattleState(s32 playRecoveryScene) {
   if (playRecoveryScene != 0 && FLAG_CHECK(FLAG_KEEP_PARTY_POSITION) == 0)
     TretTreeInteriors_PlayPostBattleConversation();
@@ -591,7 +591,7 @@ static void TretTreeInteriors_ApplyPostBattleState(s32 playRecoveryScene) {
   }
 }
 
-/// Restore the room, tint and entry fall before continuing its story event.
+/// Restores the room, tint and entry fall before continuing its story event.
 s32 TretTreeInteriors_EnterRoom(void) {
   struct FieldActor *tret;
   struct FieldActor *actor;
@@ -674,13 +674,13 @@ s32 TretTreeInteriors_EnterRoom(void) {
   return 0;
 }
 
-/// Save background palettes 0 to 13 as the base for Tret's scene tint.
+/// Saves background palettes 0 to 13 as the base for Tret's scene tint.
 static void TretPalette_SaveSceneColors(void) {
   Dma_Set((const void *)BG_PLTT, gPaletteBufferWork->palette,
           (DMA_ENABLE | DMA_32BIT) << 16 | 112, REG_DMA3);
 }
 
-/// Tint background colours 16 to 78 every thirty-two frames, leaving
+/// Tints background colours 16 to 78 every thirty-two frames, leaving
 /// palette 4's last colour alone. Each later palette receives a weaker tint.
 static void TretPalette_UpdateSceneTint(void) {
   u16 *sourceColors;
@@ -750,7 +750,7 @@ static void TretPalette_UpdateSceneTint(void) {
     gTretTreeInteriors_TintIndex = 0;
 }
 
-/// Play a Tret animation sequence with its original pauses.
+/// Plays a Tret animation sequence with its original pauses.
 static void TretTreeInteriors_PlayGesture(s32 gesture) {
   switch (gesture) {
   case 0:
@@ -823,7 +823,7 @@ static void TretTreeInteriors_PlayGesture(s32 gesture) {
   Engine_TaskWait(12);
 }
 
-/// Move a fading spark outward from its saved origin, then release it.
+/// Moves a fading spark outward from its saved origin, then releases it.
 static void TretTreeInteriors_UpdateSwirlSpark(union FieldObject *fieldObject) {
   struct FieldActor *spark = (struct FieldActor *)fieldObject;
   struct FieldPosition position;
@@ -854,7 +854,7 @@ static void TretTreeInteriors_UpdateSwirlSpark(union FieldObject *fieldObject) {
   }
 }
 
-/// Emit five shrinking waves of fading sparks from the saved origin.
+/// Emits five shrinking waves of fading sparks from the saved origin.
 static void TretTreeInteriors_SpawnSwirlSparks(void) {
   struct FieldActor *spark;
   u32 frame;
@@ -915,7 +915,7 @@ static void TretTreeInteriors_SpawnSwirlSparks(void) {
   }
 }
 
-/// Restore each enabled single-cell patch whose puzzle flag is set.
+/// Restores each enabled single-cell patch whose puzzle flag is set.
 static void TretTreeInteriors_ApplyFlaggedMapPatches(void) {
   s32 patchOffset;
 
@@ -930,7 +930,7 @@ static void TretTreeInteriors_ApplyFlaggedMapPatches(void) {
   }
 }
 
-/// Stop the scene tint while Reveal is active.
+/// Stops the scene tint while Reveal is active.
 static void Event_CastReveal(void) {
   Engine_TaskRemoveCallback(TretPalette_UpdateSceneTint);
 }
@@ -938,7 +938,7 @@ static void Event_CastReveal(void) {
 // Shared source is included here in ROM order.
 #include "common/effect_advance.h"
 
-/// Drop the leader into the room with a ring of landing particles.
+/// Drops the leader into the room with a ring of landing particles.
 static void TretTreeInteriors_RunLandingDustScene(void) {
   struct EffectOptions options;
   struct FieldPosition velocity;

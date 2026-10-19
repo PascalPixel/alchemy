@@ -2166,7 +2166,7 @@ static void AltinPeak_StopLogAndJumpOff(struct FieldActor *object) {
   Engine_AudioPlayCue(SE_159);
 }
 
-/// Retain the unused empty scene entry.
+/// Retains the unused empty scene entry.
 UNUSED static void AltinPeak_ReservedNoOp(void) {}
 
 /// The log turns a quarter turn right around the corner it reaches.

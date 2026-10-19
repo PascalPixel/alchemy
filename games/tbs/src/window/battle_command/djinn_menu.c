@@ -22,7 +22,7 @@
 #define DJINN_ENTRY_RECOVERY_SHIFT 17
 #define DJINN_ENTRY_END 0x80000000
 
-/// Select a Djinni for the current battle command. Entries encode its element,
+/// Selects a Djinni for the current battle command. Entries encode its element,
 /// index, standby state and recovery turns; -1 means cancel. R opens the
 /// stat/Psynergy preview, and tutorial input follows the normal input path.
 s32 Battle_SelectAbility(s32 owner, s32 unused) {

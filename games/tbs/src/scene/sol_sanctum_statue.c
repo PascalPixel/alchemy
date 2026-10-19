@@ -122,7 +122,7 @@ static union {
   s32 words[3 * SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT * 3];
 } sScrollingSprites;
 
-/// Return the statue hall arrival positions.
+/// Returns the statue hall arrival positions.
 struct SceneEntrance *SolSanctumStatue_GetEntrances(void) {
   return gSolSanctumStatue_Entrances;
 }
@@ -130,20 +130,20 @@ struct SceneEntrance *SolSanctumStatue_GetEntrances(void) {
 /// The statue hall has no separate trigger-region table.
 struct SceneRegion *SolSanctumStatue_GetRegions(void) { return NULL; }
 
-/// Return the statue hall scene destinations.
+/// Returns the statue hall scene destinations.
 u32 *SolSanctumStatue_GetExits(void) { return gSolSanctumStatue_Exits; }
 
-/// Return the statues and companions placed in the hall.
+/// Returns the statues and companions placed in the hall.
 struct ScenePlacement *SolSanctumStatue_GetPlacements(void) {
   return gSolSanctumStatue_Placements;
 }
 
-/// Return the movement triggers and statue interactions.
+/// Returns the movement triggers and statue interactions.
 struct SceneEvent *SolSanctumStatue_GetEvents(void) {
   return gSolSanctumStatue_Events;
 }
 
-/// Choose the next story scene from the saved state of the hall.
+/// Chooses the next story scene from the saved state of the hall.
 static s32 SolSanctumStatue_SelectStoryExit(void) {
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) != 0) {
     if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG) == 0) {
@@ -157,7 +157,7 @@ static s32 SolSanctumStatue_SelectStoryExit(void) {
   return -1;
 }
 
-/// Animate the floor opening after both light beams meet.
+/// Animates the floor opening after both light beams meet.
 static void SolSanctumStatue_OpenCentralHole(void) {
   s32 flash;
 
@@ -183,7 +183,7 @@ static void SolSanctumStatue_OpenCentralHole(void) {
   Event_CenterStatueMoved();
 }
 
-/// Show Kraden discovering the hall and examining its two sides.
+/// Shows Kraden discovering the hall and examining its two sides.
 static void SolSanctumStatue_VisitStatueHall(void) {
   struct FieldActor *leader;
 
@@ -329,7 +329,7 @@ static void SolSanctumStatue_VisitStatueHall(void) {
   Engine_EventEnd();
 }
 
-/// Have Kraden explain the statues before leaving the puzzle to Isaac.
+/// Has Kraden explain the statues before leaving the puzzle to Isaac.
 static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   struct EventWork *work;
   struct FieldActor *leader;
@@ -520,7 +520,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_EventEnd();
 }
 
-/// Pan toward the central seal, open it, then restore the camera origin.
+/// Pans toward the central seal, opens it, then restores the camera origin.
 static void SolSanctumStatue_RunSealOpenedSequence(void) {
   struct MapScrollWork *map;
   struct FieldActor *leader;
@@ -598,7 +598,7 @@ static void SolSanctumStatue_RunSealOpenedSequence(void) {
   map->origin = savedOrigin;
 }
 
-/// Draw the three parallax rows while they overlap the screen.
+/// Draws the three parallax rows while they overlap the screen.
 static void SolSanctumStatue_UpdateScrollingSprites(void) {
   struct MapScrollWork *map = gMapWork[0];
   struct AnimationSpritePart *sprite = sScrollingSprites.parts;
@@ -676,7 +676,7 @@ UNUSED static void SolSanctumStatue_MoveUnusedNorthwestStatue(void) {
   }
 }
 
-/// Restore the hall graphics, statues and arrival conversations.
+/// Restores the hall graphics, statues and arrival conversations.
 s32 SolSanctumStatue_Initialize(void) {
   struct FieldActor *centerEffect;
 
@@ -781,7 +781,7 @@ s32 SolSanctumStatue_Initialize(void) {
   return 0;
 }
 
-/// Load three graphic strips and initialize their scrolling sprite rows.
+/// Loads three graphic strips and initializes their scrolling sprite rows.
 static void SolSanctumStatue_InitializeScrollingSprites(void) {
   u32 column;
   s32 tile;
@@ -1092,7 +1092,7 @@ static void Event_PushRightBeamStatueNorth(void) {
   }
 }
 
-/// Move the leader and statue together to the centers of their target cells.
+/// Moves the leader and statue together to the centers of their target cells.
 static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
                                         s32 statueRow, s32 leaderColumn,
                                         s32 leaderRow) {
@@ -1115,7 +1115,7 @@ static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
   Engine_EventEnd();
 }
 
-/// Test an actor map column and row.
+/// Tests an actor map column and row.
 static s32 SolSanctumStatue_IsActorAtCell(s32 actorId, s32 column, s32 row) {
   struct FieldActor *actor = Object_GetById(actorId);
   if (actor == NULL || (actor->x.fixed >> 20) != column) {
@@ -1127,7 +1127,7 @@ static s32 SolSanctumStatue_IsActorAtCell(s32 actorId, s32 column, s32 row) {
   return 1;
 }
 
-/// Configure the northwest seal animation and statue return position.
+/// Configures the northwest seal animation and statue return position.
 static void SolSanctumStatue_OpenNorthwestSeal(void) {
   struct SealScene *scene = &sSealScene;
   scene->open.srcX = 0;
@@ -1182,7 +1182,7 @@ static void SolSanctumStatue_OpenNorthwestSeal(void) {
   SolSanctumStatue_OpenSeal();
 }
 
-/// Configure the northeast seal animation and statue return position.
+/// Configures the northeast seal animation and statue return position.
 static void SolSanctumStatue_OpenNortheastSeal(void) {
   struct SealScene *scene = &sSealScene;
   scene->open.srcX = 4;
@@ -1237,7 +1237,7 @@ static void SolSanctumStatue_OpenNortheastSeal(void) {
   SolSanctumStatue_OpenSeal();
 }
 
-/// Configure the southwest seal animation and statue return position.
+/// Configures the southwest seal animation and statue return position.
 static void SolSanctumStatue_OpenSouthwestSeal(void) {
   struct SealScene *scene = &sSealScene;
   scene->open.srcX = 0;
@@ -1292,7 +1292,7 @@ static void SolSanctumStatue_OpenSouthwestSeal(void) {
   SolSanctumStatue_OpenSeal();
 }
 
-/// Configure the southeast seal animation and statue return position.
+/// Configures the southeast seal animation and statue return position.
 static void SolSanctumStatue_OpenSoutheastSeal(void) {
   struct SealScene *scene = &sSealScene;
   scene->open.srcX = 4;
@@ -1347,12 +1347,12 @@ static void SolSanctumStatue_OpenSoutheastSeal(void) {
   SolSanctumStatue_OpenSeal();
 }
 
-/// Apply one configured source-to-destination tile region.
+/// Applies one configured source-to-destination tile region.
 #define COPY_CELLS(copy)                                                       \
   Map_CopyCellsTo((copy).srcX, (copy).srcY, (copy).destX, (copy).destY,        \
                   (copy).width, (copy).height)
 
-/// Animate the seal and either advance the story or reset its statue.
+/// Animates the seal and either advance the story or resets its statue.
 static void SolSanctumStatue_OpenSeal(void) {
   struct SealScene *scene;
   s32 exitResult;
@@ -1421,7 +1421,7 @@ static void SolSanctumStatue_OpenSeal(void) {
   Engine_EventEnd();
 }
 
-/// Draw the left beam and open the floor when the right beam is also lit.
+/// Draws the left beam and opens the floor when the right beam is also lit.
 static void SolSanctumStatue_ShineLeftBeam(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) == 0) {
@@ -1445,7 +1445,7 @@ static void SolSanctumStatue_ShineLeftBeam(void) {
   Engine_EventEnd();
 }
 
-/// Draw the right beam and open the floor when the left beam is also lit.
+/// Draws the right beam and opens the floor when the left beam is also lit.
 static void SolSanctumStatue_ShineRightBeam(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) == 0) {
@@ -1469,7 +1469,7 @@ static void SolSanctumStatue_ShineRightBeam(void) {
   Engine_EventEnd();
 }
 
-/// Show the selected message from one speaker and wait the requested frames.
+/// Shows the selected message from one speaker and waits the requested frames.
 static void Event_SayThenWait(s32 speaker, s32 frames) {
   Engine_EventShowMessage(speaker, 0);
   Engine_EventWait(frames);

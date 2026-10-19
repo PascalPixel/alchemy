@@ -5,7 +5,7 @@
 #include "field_obj.h"
 #include "field_event.h"
 
-/// Create object 22 at the 16.16 position and draw it as the item's icon: the
+/// Creates object 22 at the 16.16 position and draws it as the item's icon: the
 /// sprite's own animation is stopped (flags and count 0, 16-colour, palette 0),
 /// the object stays put (motionFlags 0), and the icon's tiles, decoded into
 /// heap block 17, are loaded into the sprite's VRAM block.

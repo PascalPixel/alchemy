@@ -42,7 +42,7 @@
 #define CREDITS_BORDER_SPRITES 24
 #define CREDITS_OAM_ENTRIES 128
 
-/// Fill 30 KB of 256-color tiles with color 1 and clear 128 palette colors.
+/// Fills 30 KB of 256-color tiles with color 1 and clears 128 palette colors.
 /// alternate: 0 selects the first half (VRAM 0x06000000, palette 0-127).
 ///      1 selects the second half (VRAM 0x06008000, palette 128-255, fill 129).
 void Graphics_ClearCharacterBlockAndPalette(s32 alternate) {

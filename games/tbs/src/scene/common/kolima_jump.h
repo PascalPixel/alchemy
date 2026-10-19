@@ -8,7 +8,7 @@
 #include "game_state.h"
 #include "songs.h"
 
-/// Hop the leader to the pixel of the 16.16 position request, unless something
+/// Hops the leader to the pixel of the 16.16 position request, unless something
 /// blocks the way: the leader crouches, jumps (3 pixels a frame, rising at 4)
 /// and lands while actor 10 plays its animation 7; the leader is then nudged a
 /// pixel north-west twice and back. Returns 1 after a hop.

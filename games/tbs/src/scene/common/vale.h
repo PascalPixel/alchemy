@@ -5,8 +5,8 @@
 #include "field_event.h"
 #include "flags.h"
 
-/// Take exit no in the backdrop fade over 16 frames, first stopping the storm's
-/// lightning while the storm rages (FLAG_VALE_STORM).
+/// Takes exit no in the backdrop fade over 16 frames, first stopping the
+/// storm's lightning while the storm rages (FLAG_VALE_STORM).
 static void Vale_RequestBackdropExit(s32 no) {
   struct EventWork *p;
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {

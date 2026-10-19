@@ -72,7 +72,7 @@ void Object_RefreshSelectorById(u32 objectId) {
     ObjectDispatch_WaitForValue16Far(object);
 }
 
-/// Start a built-in action or supplied script, then wait up to 300 frames for
+/// Starts a built-in action or supplied script, then waits up to 300 frames for
 /// its script to end. Scene script calls use Actor_RunActionScriptAndWait.
 void Object_SetActionCallbackAndRefreshById(u32 objectId, s32 action) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);

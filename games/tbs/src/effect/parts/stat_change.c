@@ -412,7 +412,7 @@ void BattleFx_RunImpair(struct BattleEffectArgument *effect) {
 void BattleFx_RunWeaken(struct BattleEffectArgument *effect) {
   BattleFx_RunStatReduction(effect, 2);
 }
-/// Break the shield picture into fading shards with style 3, which plays as
+/// Breaks the shield picture into fading shards with style 3, which plays as
 /// style 2 does. No effect table entry reaches it.
 UNUSED void
 BattleFx_RunStatReductionMode3(struct BattleEffectArgument *effect) {

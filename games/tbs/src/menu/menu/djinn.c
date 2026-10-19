@@ -133,7 +133,7 @@ s32 DjinnMenu_Run(void) {
   return 1;
 }
 
-/// Find the moved Djinni in the list and select its new position.
+/// Finds the moved Djinni in the list and selects its new position.
 /* FAKEMATCH(one-pass): a statement macro of DjinnMenu_RunScreen's, used at
  * its two places, whose do { } while (0) ends the selection store's
  * scheduling region; as a plain { } block, 4 of 560 instructions differ in

@@ -187,7 +187,7 @@ int UiWindow_DrawThreeTileColumn(struct UiWindow *window, s32 x, s32 y,
   UiWindow_SetTilemapEntry(window, rightTile, x + 2, y, 0);
 }
 
-/// Merge two 8x8 4bpp tiles row by row. Shift the second tile horizontally by
+/// Merges two 8x8 4bpp tiles row by row. Shift the second tile horizontally by
 /// shift pixels, using the first tile wherever the shifted pixel is
 /// transparent.
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
@@ -233,7 +233,7 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
   } while (row <= 7);
 }
 
-/// Animate the two link indicator tiles with opposing two/three-pixel shifts.
+/// Animates the two link indicator tiles with opposing two/three-pixel shifts.
 void Link_DrawShiftedTilePair(s32 offset) {
   s32 phase = (gFrameCount >> 2) & 3;
 
@@ -251,7 +251,7 @@ void Link_DrawShiftedTilePair(s32 offset) {
                                 (u32 *)(offset + 32), phase);
 }
 
-/// Expand two palette variants of the ten source tile rows at 0x06000600,
+/// Expands two palette variants of the ten source tile rows at 0x06000600,
 /// mapping each packed nibble through gGraphics_ExpandNibbleTable.
 void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
   s32 bank = 0;
@@ -294,8 +294,8 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
   } while (bank <= 1);
 }
 
-/// Compose a table-entry glyph in temporary transfer work, reload its cache
-/// slot, then release the temporary work and return the tile index.
+/// Composes a table-entry glyph in temporary transfer work, reloads its cache
+/// slot, then releases the temporary work and returns the tile index.
 s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
   s32 result;
   GlyphTransfer *work;
@@ -307,7 +307,7 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index) {
   return result;
 }
 
-/// Compose the item icon with style 0x1a in temporary transfer work and reload
+/// Composes the item icon with style 0x1a in temporary transfer work and reload
 /// the requested cache slot. Return its tile index.
 s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
   s32 result;
@@ -320,8 +320,8 @@ s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
   return result;
 }
 
-/// Build the ability glyph in temporary transfer work, reload the requested
-/// cache slot and return its tile index.
+/// Builds the ability glyph in temporary transfer work, reloads the requested
+/// cache slot and returns its tile index.
 s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
   s32 tile;
   s32 slot;
@@ -336,7 +336,7 @@ s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
   return result;
 }
 
-/// Load a party portrait into the supplied cache slot and return its tile.
+/// Loads a party portrait into the supplied cache slot and returns its tile.
 /// In the prologue, Isaac and Garet use their childhood portrait entries.
 s32 UiGlyph_LoadPortrait(u32 member, s32 cacheSlot) {
   s32 tile;
@@ -387,7 +387,7 @@ UNUSED void UiIcon_Decompress(GlyphTransfer *work) {
 #define LINK_COUNTDOWN_DRAW_HEADING UiText_DrawStringInWindow
 #endif
 
-/// Create the link timer window and draw its fixed time heading.
+/// Creates the link timer window and draws its fixed time heading.
 struct UiWindow *Link_CreateCountdownLabelWindow(void) {
   struct UiWindow *win = UiWindow_Create(0, 0, 6, 4, 6);
 
@@ -395,7 +395,7 @@ struct UiWindow *Link_CreateCountdownLabelWindow(void) {
   return win;
 }
 
-/// Decode a command-icon table entry in temporary transfer work and reload
+/// Decodes a command-icon table entry in temporary transfer work and reload
 /// the requested cache slot. Return its tile index.
 s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
   GlyphTransfer *buffer =
@@ -412,7 +412,7 @@ s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
   return result;
 }
 
-/// Load a command icon into 8bpp OBJ VRAM, sharing a compact palette across
+/// Loads a command icon into 8bpp OBJ VRAM, sharing a compact palette across
 /// the selection's icons. Copy each newly encountered color from OBJ to BG
 /// palette storage before uploading the remapped pixels.
 void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
@@ -448,7 +448,7 @@ void UiText_LoadRemappedGlyph(struct GlyphPalette *palette, s32 glyph,
   Runtime_ReleaseHeapBlock(17);
 }
 
-/// Load a selection icon, initialize its sprite and bind the decoded tiles.
+/// Loads a selection icon, initializes its sprite and binds the decoded tiles.
 /// The icon's kind also chooses its command-name label.
 void UiText_DrawCharacter(struct SelectionWork *work, s32 index, u32 icon) {
   struct SelectionEntry *entry = &work->entries[index];
@@ -460,7 +460,7 @@ void UiText_DrawCharacter(struct SelectionWork *work, s32 index, u32 icon) {
       Resource_LoadIndexedIntoBuffer(work->entries[index].resource, icon);
 }
 
-/// Put BG1 behind the other priority levels while the command strip is active.
+/// Puts BG1 behind the other priority levels while the command strip is active.
 void Graphics_SetBg1Priority3(void) {
   u32 value = REG_BG1CNT;
 
@@ -469,7 +469,7 @@ void Graphics_SetBg1Priority3(void) {
   REG_BG1CNT = value;
 }
 
-/// Restore BG1 priority 0; the VCount handler applies this below the strip.
+/// Restores BG1 priority 0; the VCount handler applies this below the strip.
 void Graphics_SetBg1Priority0(void) {
   u32 value = REG_BG1CNT;
 
@@ -477,7 +477,7 @@ void Graphics_SetBg1Priority0(void) {
   REG_BG1CNT = value;
 }
 
-/// Clear BG0 vertical scroll and install the BG1 priority change at line 136.
+/// Clears BG0 vertical scroll and installs the BG1 priority change at line 136.
 /// Nothing calls it.
 UNUSED void Graphics_InstallBg1VCountHandler(void) {
   u32 address = 0x04000012;

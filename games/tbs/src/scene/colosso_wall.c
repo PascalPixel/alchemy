@@ -182,17 +182,17 @@ struct StageControl {
   s16 f8;
 };
 
-/// Set the party leader's walking speed and acceleration.
+/// Sets the party leader's walking speed and acceleration.
 static inline void InitializeActorZero(void) {
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
 }
 
-/// Set the specified actor's walking speed and acceleration.
+/// Sets the specified actor's walking speed and acceleration.
 static inline void InitializeSelectedActor(s32 actorId) {
   Engine_ActorSetSpeed(actorId, PIXELS(1), PIXELS(1) / 2);
 }
 
-/// Return the entrance rows for the second Colosso finals course.
+/// Returns the entrance rows for the second Colosso finals course.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gColossoWallEntrances;
 }
@@ -200,10 +200,10 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 /// This course has no placement-clipping regions.
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
-/// Return the packed course and battle-result exits.
+/// Returns the packed course and battle-result exits.
 const u32 *Scene_GetExits(void) { return gColossoWallExits; }
 
-/// Return the course's competitors, obstacles and attendants.
+/// Returns the course's competitors, obstacles and attendants.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   return gColossoWallPlacements;
 }
@@ -211,10 +211,10 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// Move on the first two rocks does nothing.
 static void Event_IgnoreMove(void) {}
 
-/// Push the obstacle immediately ahead of the selected actor.
+/// Pushes the obstacle immediately ahead of the selected actor.
 static void Event_PushRock(void) { ColossoWall_PushAdjacentObstacle(); }
 
-/// Update the first movable obstacle's collision after Move.
+/// Updates the first movable obstacle's collision after Move.
 static void Event_UpdateMovedRockCell(void) {
   struct FieldActor *obstacle;
   s32 column;
@@ -234,13 +234,13 @@ static void Event_UpdateMovedRockCell(void) {
   }
 }
 
-/// Push an obstacle, then restore the first obstacle's collision cell.
+/// Pushes an obstacle, then restores the first obstacle's collision cell.
 static void Event_PushRockAndUpdateCells(void) {
   ColossoWall_PushAdjacentObstacle();
   Event_UpdateMovedRockCell();
 }
 
-/// Save the movable obstacles' columns and rebuild their collision cells.
+/// Saves the movable obstacles' columns and rebuilds their collision cells.
 static void Event_SaveMovedRockColumns(void) {
 
   struct FieldActor *obstacle;
@@ -264,7 +264,7 @@ static void Event_SaveMovedRockColumns(void) {
   Map_CopyCellAttributes(71, 16, 1, 1, column, 16);
 }
 
-/// Enable the child effect for Force on the course obstacle.
+/// Enables the child effect for Force on the course obstacle.
 static void Event_PrepareForce(void) {
   u8 *effectWork = gEffectWork;
 
@@ -355,15 +355,15 @@ static void Event_GrowPlant(void) {
   }
 }
 
-/// Run the rising-object sequence for the actor touching the obstacle.
+/// Runs the rising-object sequence for the actor touching the obstacle.
 static void Event_RunRisingSequence(void) {
   FieldBattleFx_RunRisingObjectSequence(gGameState.selectedActor, 6, 0);
 }
 
-/// Let the field engine check the obstacle ahead of the leader.
+/// Lets the field engine check the obstacle ahead of the leader.
 static void Event_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
-/// Move a riding log and its pusher to aligned cell centers.
+/// Moves a riding log and its pusher to aligned cell centers.
 static void ColossoWall_MovePusherAndLog(s32 logId, s32 offsetX, s32 offsetZ) {
 
   struct FieldActor *pusher;
@@ -412,7 +412,7 @@ static void ColossoWall_MovePusherAndLog(s32 logId, s32 offsetX, s32 offsetZ) {
   Engine_EventEnd();
 }
 
-/// Move the aligned riding log in the direction the player holds.
+/// Moves the aligned riding log in the direction the player holds.
 static void Event_RideLog(void) {
   struct FieldActor *pusher = Object_GetById(gGameState.selectedActor);
   s32 column = pusher->x.fixed >> 20;
@@ -443,7 +443,7 @@ static void Event_RideLog(void) {
   }
 }
 
-/// Roll a log to half-cell coordinates while its pusher follows halfway.
+/// Rolls a log to half-cell coordinates while its pusher follows halfway.
 static void ColossoWall_RollLogToCell(s32 logId, s32 halfCellX, s32 halfCellZ) {
   s32 pusher = gGameState.selectedActor;
   struct FieldActor *pusherActor = Object_GetById(pusher);
@@ -490,7 +490,7 @@ static void ColossoWall_RollLogToCell(s32 logId, s32 halfCellX, s32 halfCellZ) {
   Engine_EventEnd();
 }
 
-/// Rebuild the three rolling logs' collision rectangles at their positions.
+/// Rebuilds the three rolling logs' collision rectangles at their positions.
 static void ColossoWall_UpdateRollingLogCollision(void) {
   s32 cell;
 
@@ -506,37 +506,37 @@ static void ColossoWall_UpdateRollingLogCollision(void) {
   Map_CopyCellAttributes(13, 28, 4, 1, 18, cell);
 }
 
-/// Roll the western log toward its western stopping point.
+/// Rolls the western log toward its western stopping point.
 static void Event_RollWestLogWest(void) {
   ColossoWall_RollLogToCell(ROLLING_LOG_WEST, 29, 26);
   ColossoWall_UpdateRollingLogCollision();
 }
 
-/// Roll the western log toward its eastern stopping point.
+/// Rolls the western log toward its eastern stopping point.
 static void Event_RollWestLogEast(void) {
   ColossoWall_RollLogToCell(ROLLING_LOG_WEST, 33, 26);
   ColossoWall_UpdateRollingLogCollision();
 }
 
-/// Roll the eastern log toward its western stopping point.
+/// Rolls the eastern log toward its western stopping point.
 static void Event_RollEastLogWest(void) {
   ColossoWall_RollLogToCell(ROLLING_LOG_EAST, 45, 26);
   ColossoWall_UpdateRollingLogCollision();
 }
 
-/// Roll the eastern log toward its eastern stopping point.
+/// Rolls the eastern log toward its eastern stopping point.
 static void Event_RollEastLogEast(void) {
   ColossoWall_RollLogToCell(ROLLING_LOG_EAST, 49, 26);
   ColossoWall_UpdateRollingLogCollision();
 }
 
-/// Roll the center log north and rebuild the log collision rectangles.
+/// Rolls the center log north and rebuilds the log collision rectangles.
 static UNUSED void ColossoWall_RollCenterLogNorth(void) {
   ColossoWall_RollLogToCell(ROLLING_LOG_CENTER, 40, 23);
   ColossoWall_UpdateRollingLogCollision();
 }
 
-/// Roll the center log south and rebuild the log collision rectangles.
+/// Rolls the center log south and rebuilds the log collision rectangles.
 static UNUSED void ColossoWall_RollCenterLogSouth(void) {
   ColossoWall_RollLogToCell(ROLLING_LOG_CENTER, 40, 25);
   ColossoWall_UpdateRollingLogCollision();
@@ -641,7 +641,7 @@ static void ColossoWall_UpdateMovingPlatforms(void) {
   }
 }
 
-/// Stop the moving-platform task and restore its starting row.
+/// Stops the moving-platform task and restores its starting row.
 static void ColossoWall_ResetMovingPlatforms(void) {
   gColossoWall_SpectatorTimer = 0;
   gColossoWall_SpectatorPhase = 0;
@@ -653,13 +653,13 @@ static void ColossoWall_ResetMovingPlatforms(void) {
   Engine_ActorSetAnimation(LIFT_OPERATOR, 10);
 }
 
-/// Start the moving-platform task and release its pause flag.
+/// Starts the moving-platform task and releases its pause flag.
 static void ColossoWall_StartMovingPlatforms(void) {
   FieldScheduler_AddCallback(ColossoWall_UpdateMovingPlatforms, 0xC85);
   Engine_GameFlagClear(0x104);
 }
 
-/// Wait for the demonstration's crossing phase, with a ten-second timeout.
+/// Waits for the demonstration's crossing phase, with a ten-second timeout.
 static void ColossoWall_WaitForPlatformCrossingPhase(void) {
   s32 elapsedFrames;
 
@@ -744,7 +744,7 @@ static void Event_ReachArena(void) {
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
 }
 
-/// Return the course's obstacle interactions and attendant dialogue.
+/// Returns the course's obstacle interactions and attendant dialogue.
 const struct SceneEvent *Scene_GetEvents(void) { return gColossoWallEvents; }
 
 /// Back from the battle: the two warriors stand in the arena as the result is
@@ -772,7 +772,7 @@ static void ColossoWall_StageBattleResult(s32 result) {
   Engine_EventEnd();
 }
 
-/// Restore obstacle progress and set up the selected course entrance.
+/// Restores obstacle progress and sets up the selected course entrance.
 s32 ColossoWall_Initialize(void) {
   struct FieldActor *actor;
   s32 x;
@@ -951,7 +951,7 @@ s32 ColossoWall_Initialize(void) {
   return 0;
 }
 
-/// Introduce the second finals course, then gather the party behind Isaac.
+/// Introduces the second finals course, then gathers the party behind Isaac.
 static void ColossoWall_IntroduceSecondFinals(s32 attendantId) {
   s32 attendantZ;
   s32 attendantX;
@@ -1225,7 +1225,8 @@ static void Event_TalkToWallAttendant(s32 attendant) {
   Engine_EventEnd();
 }
 
-/// Move a demonstration obstacle to pixel coordinates while its pusher follows.
+/// Moves a demonstration obstacle to pixel coordinates while its pusher
+/// follows.
 static void ColossoWall_PushBlockToCell(s32 obstacleId, s32 column, s32 row) {
   s32 pusher = gGameState.selectedActor;
   struct FieldActor *pusherActor = Object_GetById(pusher);
@@ -1315,7 +1316,7 @@ static void Event_TalkToBoardWalkAttendant(s32 attendant) {
 #include "common/item_equip.h"
 #include "common/colosso_task.h"
 
-/// Choose the lettering animation script and reset its task state.
+/// Chooses the lettering animation script and resets its task state.
 static void ColossoWall_StartLetteringAnimation(u32 mode, u32 tileVariant) {
   s32 script;
 
@@ -1349,7 +1350,7 @@ static void ColossoWall_StartLetteringAnimation(u32 mode, u32 tileVariant) {
   gColosso_LetteringPosition = 0;
 }
 
-/// Show the course-opening lettering and play its timed audio cues.
+/// Shows the course-opening lettering and plays its timed audio cues.
 static void ColossoWall_ShowRoundStartLettering(s32 mode) {
   if (mode == 0) {
     Engine_EventBegin();
@@ -1403,7 +1404,7 @@ static void ColossoWall_ShowRoundStartLettering(s32 mode) {
   Engine_GameFlagSet(0x123);
 }
 
-/// Show the win-or-loss lettering and the appropriate competitor's reaction.
+/// Shows the win-or-loss lettering and the appropriate competitor's reaction.
 static void ColossoWall_ShowBattleResultLettering(s32 result) {
 
   s32 reactingActor;
@@ -1455,7 +1456,7 @@ static void ColossoWall_ShowBattleResultLettering(s32 result) {
 #include "common/colosso_marker.h"
 #include "common/colosso_item_icon.h"
 
-/// Write eight uppercase hexadecimal digits followed by a terminator.
+/// Writes eight uppercase hexadecimal digits followed by a terminator.
 static UNUSED void Text_WriteU32AsHex(u8 *destination, u32 value) {
   s32 digit;
 
@@ -1469,15 +1470,15 @@ static UNUSED void Text_WriteU32AsHex(u8 *destination, u32 value) {
   }
 }
 
-/// Retain the empty hook called before the finish sequence.
+/// Retains the empty hook called before the finish sequence.
 static void SceneState_EmptyHook(void) {}
 
-/// Mark the rival's path state as finished.
+/// Marks the rival's path state as finished.
 static UNUSED void ColossoWall_MarkRivalFinished(void) {
   ((struct StageControl *)gSceneState)->status = 9;
 }
 
-/// Wait until the rival's path state reaches its finish marker.
+/// Waits until the rival's path state reaches its finish marker.
 static void ColossoWall_WaitForRivalFinish(void) {
   s16 *status = &((struct StageControl *)gSceneState)->status;
 
@@ -1522,7 +1523,7 @@ static void ColossoWall_SpawnRandomSceneEffect(union FieldObject *fieldObject) {
   }
 }
 
-/// Raise the linked finish effect, start its script and clear the link.
+/// Raises the linked finish effect, starts its script and clears the link.
 static s32
 ColossoWall_RaiseLinkedSceneEffect(struct ScriptInterpreter *interpreter) {
   RaisedEffect *source = (RaisedEffect *)interpreter;
@@ -1537,7 +1538,7 @@ ColossoWall_RaiseLinkedSceneEffect(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-/// Approach the finish item on the unused side and show the item message.
+/// Approaches the finish item on the unused side and shows the item message.
 static s32 ColossoWall_ApproachFinishAndTakeItem(s32 firstItem,
                                                  s32 secondItem) {
   u8 *raceWork = *(u8 **)((u8 *)gWorkSlot + WORK_SLOT_STAGE * 4);
@@ -1611,7 +1612,8 @@ static s32 ColossoWall_ApproachFinishAndTakeItem(s32 firstItem,
 // Shared source is included here in ROM order.
 #include "common/colosso_path_rival.h"
 
-/// Allocate the race work, record both competitors and install the gauge task.
+/// Allocates the race work, record both competitors and installs the gauge
+/// task.
 void FieldScene_BuildDescriptorAndInstallTask(s32 leaderId, s32 rivalId,
                                               s32 raceMode, s32 finishX,
                                               s32 finishZ, s32 firstItem,
@@ -1658,7 +1660,7 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 leaderId, s32 rivalId,
   Runtime_BumpFree(graphics);
 }
 
-/// Decode the rival's recorded path and start its playback task.
+/// Decodes the rival's recorded path and starts its playback task.
 static void ColossoWall_StartRivalPath(s32 pathResource) {
   u8 *raceWork = *(u8 **)((u8 *)gWorkSlot + WORK_SLOT_STAGE * 4);
   struct StageControl *pathState = (struct StageControl *)gSceneState;
@@ -1679,7 +1681,7 @@ static void ColossoWall_StartRivalPath(s32 pathResource) {
 #include "common/colosso_scene_state.h"
 #include "common/object_findslot.h"
 
-/// Push the adjacent obstacle only when the destination and space above are
+/// Pushes the adjacent obstacle only when the destination and space above are
 /// clear.
 static void ColossoWall_PushAdjacentObstacle(void) {
 

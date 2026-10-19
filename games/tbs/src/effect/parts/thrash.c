@@ -19,7 +19,8 @@ void BattleFx_RunThrash(struct BattleEffectArgument *effect) {
   BattleFx_RunSparkGroups(effect, 2); // 2: from the acting unit's position
 }
 
-/// Hop the acting unit toward the first target; trigger type 3 after 12 frames.
+/// Hops the acting unit toward the first target; triggers type 3 after 12
+/// frames.
 void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect) {
   // Hop 3/4 of the distance at displacement / 24, initial vertical speed 7.2.
   BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 24, 0x73333);

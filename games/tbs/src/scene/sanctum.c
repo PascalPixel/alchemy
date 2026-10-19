@@ -76,10 +76,10 @@ static void Sanctum_RestoreCeremonyFloor(void);
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 44 to 42 bytes in tbs-en.
 #ifdef UBFIX
-/// Face the actor whose ID this callback stores in the timer field.
+/// Faces the actor whose ID this callback stores in the timer field.
 static void Sanctum_FaceActorNamedByTimer(union FieldObject *fieldObject) {
 #else
-/// Face the actor whose ID this callback stores in the timer field.
+/// Faces the actor whose ID this callback stores in the timer field.
 static s32 Sanctum_FaceActorNamedByTimer(union FieldObject *fieldObject) {
 #endif
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
@@ -95,16 +95,16 @@ static s32 Sanctum_FaceActorNamedByTimer(union FieldObject *fieldObject) {
 #endif
 }
 
-/// Return the entrances shared by all Sanctum visits.
+/// Returns the entrances shared by all Sanctum visits.
 struct SceneEntrance *Sanctum_GetEntrances(void) { return gSanctum_Entrances; }
 
 /// The Sanctum has no region table.
 struct SceneRegion *Sanctum_GetRegions(void) { return NULL; }
 
-/// Return the Sanctum exit connections.
+/// Returns the Sanctum exit connections.
 u32 *Sanctum_GetExits(void) { return gSanctum_Exits; }
 
-/// Choose the actors for the current entrance.
+/// Chooses the actors for the current entrance.
 struct ScenePlacement *Sanctum_GetPlacements(void) {
   switch (gGameState.entrance) {
   case 1:
@@ -130,7 +130,7 @@ struct ScenePlacement *Sanctum_GetPlacements(void) {
   }
 }
 
-/// Choose interactions for the entrance and current story flags.
+/// Chooses interactions for the entrance and current story flags.
 struct SceneEvent *Sanctum_GetEvents(void) {
   switch (gGameState.entrance) {
   case 10:
@@ -308,7 +308,7 @@ static void Event_AskAboutPsynergyChanges(void) {
   Engine_EventEnd();
 }
 
-/// Prepare the current visit and start its opening scene.
+/// Prepares the current visit and starts its opening scene.
 s32 Sanctum_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
@@ -408,10 +408,10 @@ static void Event_LeaveAfterRefusing(void) {
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 66 to 64 bytes in tbs-en.
 #ifdef UBFIX
-/// Keep this actor at the party leader's drawing priority.
+/// Keeps this actor at the party leader's drawing priority.
 static void Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
 #else
-/// Keep this actor at the party leader's drawing priority.
+/// Keeps this actor at the party leader's drawing priority.
 static s32 Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
 #endif
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
@@ -426,7 +426,7 @@ static s32 Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
 #endif
 }
 
-/// Have the party and four witnesses nod, waiting for the final witness.
+/// Has the party and four witnesses nod, waiting for the final witness.
 static inline void Sanctum_NodCeremonyGroup(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
@@ -436,7 +436,7 @@ static inline void Sanctum_NodCeremonyGroup(void) {
   Engine_ActorSetAnimationAndWait(10, 3);
 }
 
-/// Start the six group motions and wait for the final witness.
+/// Starts the six group motions and waits for the final witness.
 static inline void Sanctum_StartCeremonyGroupMotion(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Engine_ActorStartRepeatedMotion(GARET, 1);
@@ -446,7 +446,7 @@ static inline void Sanctum_StartCeremonyGroupMotion(void) {
   Engine_ActorRunRepeatedMotion(10, 1);
 }
 
-/// Show the same foreground reaction on the party and four witnesses.
+/// Shows the same foreground reaction on the party and four witnesses.
 static inline void Sanctum_ShowCeremonyGroupEmotes(void) {
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
@@ -979,7 +979,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
   Engine_EventEnd();
 }
 
-/// Bring in the Wise One and prepare the party for its mission.
+/// Brings in the Wise One and prepares the party for its mission.
 static void Sanctum_ReceiveWiseOnesMission(void) {
 
   u32 sparkIndex;
@@ -1354,7 +1354,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_ActorSetAnimation(12, 3);
 }
 
-/// Copy the healer into the afterimage actor.
+/// Copies the healer into the afterimage actor.
 static void Sanctum_ShowHealerAfterimage(void) {
   u32 entryIndex;
   struct FieldActor *afterimage;
@@ -1389,14 +1389,14 @@ static void Sanctum_ShowHealerAfterimage(void) {
   sprite->image.priority = 2;
 }
 
-/// Hide the healer's afterimage actor.
+/// Hides the healer's afterimage actor.
 static void Sanctum_HideHealerAfterimage(void) {
   struct FieldActor *state = Object_GetById(ACTOR_HEALER_AFTERIMAGE);
   state->update = 0;
   Engine_ActorSetPosition(ACTOR_HEALER_AFTERIMAGE, 0, 0);
 }
 
-/// Cycle the afterimage through four offsets from the healer.
+/// Cycles the afterimage through four offsets from the healer.
 static void Sanctum_UpdateHealerAfterimage(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct FieldActor *healer;
@@ -1421,7 +1421,7 @@ static void Sanctum_UpdateHealerAfterimage(union FieldObject *fieldObject) {
   }
 }
 
-/// Advance an effect around its linked actor on an elliptical path.
+/// Advances an effect around its linked actor on an elliptical path.
 static void Sanctum_UpdateOrbitingEffect(union FieldObject *fieldObject) {
   struct FieldActor *effect = (struct FieldActor *)fieldObject;
   struct FieldActor *anchor = effect->linkedObject;
@@ -1443,7 +1443,7 @@ static void Sanctum_UpdateOrbitingEffect(union FieldObject *fieldObject) {
   *angle = (*angle + effect->work);
 }
 
-/// Create an orbiting effect with the requested angular step.
+/// Creates an orbiting effect with the requested angular step.
 static void Sanctum_SpawnOrbitingEffect(s32 ownerId, s32 angleStep) {
   s32 orbitStep;
   struct FieldActor *owner;
@@ -1488,7 +1488,7 @@ static void Sanctum_SpawnOrbitingEffect(s32 ownerId, s32 angleStep) {
 #define CURSOR_X 64
 #endif
 
-/// Offer the refusal ending's restart choices and return the selection.
+/// Offers the refusal ending's restart choices and returns the selection.
 static s32 Sanctum_ChooseRestartOption(void) {
   s32 slot;
   struct MenuSprite cursor;
@@ -1534,7 +1534,7 @@ static s32 Sanctum_ChooseRestartOption(void) {
 
 s32 Math_RemainderUnsigned(s32 value, s32 modulus);
 
-/// Have Isaac and Garet act out the events at Sol Sanctum.
+/// Has Isaac and Garet act out the events at Sol Sanctum.
 static void Sanctum_ReenactSolSanctum(void) {
 
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
@@ -1772,7 +1772,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   Engine_EventWait(60);
 }
 
-/// Show an item icon rising from the supplied fixed-point position.
+/// Shows an item icon rising from the supplied fixed-point position.
 static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
                                   s32 fixedZ) {
   struct FieldActor *icon;
@@ -1805,7 +1805,7 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
   }
 }
 
-/// Move a spark upward, cycle its scale, and expire its lifetime.
+/// Moves a spark upward, cycles its scale, and expires its lifetime.
 static void Sanctum_UpdateRisingSpark(union FieldObject *object) {
   struct FieldActor *spark = &object->actor;
   s32 scale;
@@ -1835,7 +1835,7 @@ static void Sanctum_UpdateRisingSpark(union FieldObject *object) {
     Engine_ObjectSetScript(spark, gSanctum_SparkEndScript);
 }
 
-/// Create a short-lived spark beside the specified actor.
+/// Creates a short-lived spark beside the specified actor.
 static void Sanctum_SpawnActorSpark(s32 id) {
   struct FieldActor *actor;
   struct FieldActor *spark;
@@ -1865,7 +1865,7 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   sprite->image.priority = actor->sprite->image.priority;
 }
 
-/// Restore the two floor rectangles changed during the ceremony.
+/// Restores the two floor rectangles changed during the ceremony.
 static void Sanctum_RestoreCeremonyFloor(void) {
   {
     Map_CopyCellsTo(0, 64, 11, 68, 3, 2);
@@ -1876,7 +1876,7 @@ static void Sanctum_RestoreCeremonyFloor(void) {
   Engine_TaskWait(1);
 }
 
-/// Test whether the leader is facing toward the healer.
+/// Tests whether the leader is facing toward the healer.
 static s32 Sanctum_IsLeaderFacingHealer(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 

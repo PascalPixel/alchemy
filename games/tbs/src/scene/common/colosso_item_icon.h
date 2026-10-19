@@ -19,7 +19,7 @@
 #include "dma.h"
 #include "io_reg.h"
 
-/// Replace the picture of actor id, when it has a sprite of its own, with the
+/// Replaces the picture of actor id, when it has a sprite of its own, with the
 /// icon of item: the icon's tiles, decoded into heap block 17, are loaded into
 /// the sprite's VRAM block and its animation is stopped.
 void Colosso_ShowItemIcon(s32 id, s32 item) {

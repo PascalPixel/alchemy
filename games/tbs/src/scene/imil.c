@@ -138,7 +138,7 @@ const struct SceneEntrance *Imil_GetEntrances(void) {
 /// Imil has no scene regions.
 struct SceneRegion *Imil_GetRegions(void) { return NULL; }
 
-/// Return Imil's exits.
+/// Returns Imil's exits.
 u32 *Imil_GetExits(void) { return gImil_Exits; }
 
 /// Once the epidemic is cured (flag 0x881), the townspeople are well again and
@@ -911,7 +911,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Engine_EventEnd();
 }
 
-/// Move an unused effect around its stored origin until its timer expires.
+/// Moves an unused effect around its stored origin until its timer expires.
 UNUSED static void Imil_UpdateCountdownArc(struct FieldActor *actor) {
   s32 buf[3];
   s32 *b;
@@ -986,7 +986,7 @@ static void Imil_MiaCastsPlyOnOldMan(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-/// Reset a rising effect's motion, sprite priority, and initial scale.
+/// Resets a rising effect's motion, sprite priority, and initial scale.
 static void Imil_InitializeRisingEffect(struct FieldActor *work) {
   struct AnimationObject *sprite;
 
@@ -1004,7 +1004,8 @@ static void Imil_InitializeRisingEffect(struct FieldActor *work) {
   work->scaleY = Q16_ONE / 2;
 }
 
-/// Move and enlarge an ambient effect, then release it when its timer expires.
+/// Moves and enlarge an ambient effect, then releases it when its timer
+/// expires.
 static void Imil_UpdateRisingEffect(union FieldObject *object) {
   object->effect.x += (s16)object->effect.spin << 8;
   object->effect.y += PIXELS(1) / 2;
@@ -1016,7 +1017,7 @@ static void Imil_UpdateRisingEffect(union FieldObject *object) {
   }
 }
 
-/// Initialize a newly created ambient effect for its one-second rise.
+/// Initializes a newly created ambient effect for its one-second rise.
 static inline void Imil_StartRisingEffect(union FieldObject *object) {
   if (object != NULL) {
     Imil_InitializeRisingEffect(&object->actor);

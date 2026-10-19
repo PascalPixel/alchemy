@@ -33,7 +33,7 @@ enum KolimaInteriorActor {
   ACTOR_LAST_VILLAGER = 22
 };
 
-/// Replace the cursed residents' sprites and disable their movement and
+/// Replaces the cursed residents' sprites and disables their movement and
 /// turning.
 static void
 KolimaInteriors_TurnVillagersIntoTrees(struct ScenePlacement *placement) {
@@ -60,7 +60,7 @@ KolimaInteriors_TurnVillagersIntoTrees(struct ScenePlacement *placement) {
   } while (villagerIndex < ACTOR_LAST_VILLAGER - ACTOR_FIRST_VILLAGER + 1);
 }
 
-/// Return the entrances for Kolima's houses and shops.
+/// Returns the entrances for Kolima's houses and shops.
 const struct SceneEntrance *KolimaInteriors_GetEntrances(void) {
   return gKolimaInteriors_Entrances;
 }
@@ -68,10 +68,10 @@ const struct SceneEntrance *KolimaInteriors_GetEntrances(void) {
 /// Kolima's interiors have no scene regions.
 const struct SceneRegion *KolimaInteriors_GetRegions(void) { return NULL; }
 
-/// Return the doors and stairs linking the interiors.
+/// Returns the doors and stairs linking the interiors.
 const u32 *KolimaInteriors_GetExits(void) { return gKolimaInteriors_Exits; }
 
-/// Apply the curse before preparing the residents' placement records.
+/// Applies the curse before preparing the residents' placement records.
 const struct ScenePlacement *KolimaInteriors_GetPlacements(void) {
   struct ScenePlacement *placements;
 
@@ -83,7 +83,7 @@ const struct ScenePlacement *KolimaInteriors_GetPlacements(void) {
   return placements;
 }
 
-/// Offer weapons at the counter or discuss Fuchin Temple.
+/// Offers weapons at the counter or discuss Fuchin Temple.
 static void KolimaInteriors_TalkToWeaponMerchant(void) {
   u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
@@ -97,7 +97,7 @@ static void KolimaInteriors_TalkToWeaponMerchant(void) {
   Engine_EventEnd();
 }
 
-/// Offer armor at the counter or discuss the bridge.
+/// Offers armor at the counter or discuss the bridge.
 static void KolimaInteriors_TalkToArmorMerchant(void) {
   u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
@@ -111,7 +111,7 @@ static void KolimaInteriors_TalkToArmorMerchant(void) {
   Engine_EventEnd();
 }
 
-/// Offer items at the counter or discuss life after the curse.
+/// Offers items at the counter or discuss life after the curse.
 static void KolimaInteriors_TalkToItemMerchant(void) {
   u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
@@ -125,7 +125,7 @@ static void KolimaInteriors_TalkToItemMerchant(void) {
   Engine_EventEnd();
 }
 
-/// Offer a room at the counter or discuss McCoy's construction.
+/// Offers a room at the counter or discuss McCoy's construction.
 static void KolimaInteriors_TalkToInnkeeper(void) {
   u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
@@ -141,12 +141,12 @@ static void KolimaInteriors_TalkToInnkeeper(void) {
   Engine_EventEnd();
 }
 
-/// Return the residents' conversations, thoughts and searchable objects.
+/// Returns the residents' conversations, thoughts and searchable objects.
 const struct SceneEvent *KolimaInteriors_GetEvents(void) {
   return gKolimaInteriors_Events;
 }
 
-/// Clear resident sprite flags and select the room layout for this entrance.
+/// Clears resident sprite flags and selects the room layout for this entrance.
 s32 KolimaInteriors_Initialize(void) {
   struct EventWork *work = gEventWork;
   s32 actorId;

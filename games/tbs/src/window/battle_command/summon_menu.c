@@ -12,7 +12,7 @@
 
 #define SUMMON_END 32 ///< End of summon list
 
-/// Show learned summons four per page; return the selected summon number.
+/// Shows learned summons four per page; returns the selected summon number.
 /// Cancel returns -1.
 /// standby: number of standby Djinn for each element
 s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {

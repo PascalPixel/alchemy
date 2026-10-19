@@ -50,7 +50,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gCaveNoPlacements;
 }
 
-/// Route switches, Frost targets and the reunion trigger to their handlers.
+/// Routes switches, Frost targets and the reunion trigger to their handlers.
 const struct SceneEvent *Scene_GetEvents(void) { return gCaveEvents; }
 
 /// Frost on the hidden puddle: it freezes, and no flag remembers it.
@@ -76,7 +76,7 @@ static void Event_FreezeSouthPuddle(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_04);
 }
 
-/// Animate the raised gate resting on the frozen pillar, then open collision.
+/// Animates the raised gate resting on the frozen pillar, then opens collision.
 static void Gate_DrawPropped(void) {
   struct FieldActor *pillar;
 
@@ -124,7 +124,8 @@ static void Event_FreezeNorthPuddle(void) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_03);
 }
 
-/// Lower the gate in four-frame steps and restore the blocked cell attributes.
+/// Lowers the gate in four-frame steps and restores the blocked cell
+/// attributes.
 static void Gate_Lower(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_02) != 0) {
     Map_CopyCells(41, 86, 2, 6, 21, 57);
@@ -163,7 +164,7 @@ static void Event_FlipLoweringSwitch(void) {
   }
 }
 
-/// Raise the unpropped gate and restore its passable cell attributes.
+/// Raises the unpropped gate and restores its passable cell attributes.
 static void Gate_Raise(void) {
   Map_CopyCells(41, 87, 2, 5, 21, 59);
   Engine_TaskWait(4);
@@ -314,7 +315,7 @@ static void Event_HammetFindsBunza(void) {
   }
 }
 
-/// Explain Bunza's arrival and offer his wagon as a way out of Lunpa.
+/// Explains Bunza's arrival and offers his wagon as a way out of Lunpa.
 static void Reunion_Converse(void) {
   s32 reunion;
   s32 plan;
@@ -609,7 +610,7 @@ static void Reunion_Converse(void) {
   WagonChoice_Run();
 }
 
-/// Reconcile the party's answers until they either ride or stay behind.
+/// Reconciles the party's answers until they either ride or stay behind.
 static void WagonChoice_Run(void) {
   s32 wagon;
   s32 insisted;
@@ -676,14 +677,14 @@ static u8 Leader_AnswersYes(void) {
   return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-/// Ask whether the party really intends to refuse the ride.
+/// Asks whether the party really intends to refuse the ride.
 static u8 Garet_AsksIfNotRiding(void) {
   Engine_EventSetMessage(MsgLunpaGaretAsksIfNotRiding);
   Engine_EventOpenMessage(GARET, 0);
   return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-/// Ask whether unfinished business explains the refusal to ride.
+/// Asks whether unfinished business explains the refusal to ride.
 static u8 Garet_AsksAboutUnfinishedBusiness(void) {
   Engine_EventSetMessage(MsgLunpaGaretAsksAboutUnfinishedBusiness);
   Engine_EventOpenMessage(GARET, 0);
@@ -693,28 +694,28 @@ static u8 Garet_AsksAboutUnfinishedBusiness(void) {
 /// Reserved confirmation step; it always succeeds and displays no message.
 static u8 Party_ConfirmsStaying(void) { return TRUE; }
 
-/// Let Bunza check whether the party has unfinished business before leaving.
+/// Lets Bunza check whether the party has unfinished business before leaving.
 static u8 Bunza_AsksAboutUnfinishedBusiness(void) {
   Engine_EventSetMessage(MsgLunpaBunzaAsksAboutUnfinishedBusiness);
   Engine_EventOpenMessage(ACTOR_BUNZA, 0);
   return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-/// Open Garet's confirmation prompt; WagonChoice_Run collects the answer.
+/// Opens Garet's confirmation prompt; WagonChoice_Run collects the answer.
 static u8 Garet_ChecksNothingLeftToDo(void) {
   Engine_EventSetMessage(MsgLunpaGaretChecksNothingLeft);
   Engine_EventOpenMessage(GARET, 0);
   return TRUE;
 }
 
-/// Ask whether the party has changed its mind about taking the wagon.
+/// Asks whether the party has changed its mind about taking the wagon.
 static u8 Mia_AsksIfRidingAfterAll(void) {
   Engine_EventSetMessage(MsgLunpaMiaAsksIfRidingAfter);
   Engine_EventOpenMessage(MIA, 0);
   return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-/// Explain that Bunza cannot wait and ask again about the party's business.
+/// Explains that Bunza cannot wait and asks again about the party's business.
 static u8 Bunza_CannotWait(void) {
   s32 warning;
 
@@ -734,14 +735,14 @@ static u8 Bunza_CannotWait(void) {
   return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-/// Ask the leader to confirm that something still needs doing here.
+/// Asks the leader to confirm that something still needs doing here.
 static u8 Garet_AsksAboutThingsToDo(void) {
   Engine_EventSetMessage(MsgLunpaGaretAsksAboutThingsTo);
   Engine_EventOpenMessage(GARET, 0);
   return Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
-/// Send Hammet and Bunza ahead, then return the companions to the leader.
+/// Sends Hammet and Bunza ahead, then returns the companions to the leader.
 static void Party_StaysBehind(void) {
   struct FieldActor *leader;
   s32 farewell;
@@ -849,7 +850,7 @@ static void Party_StaysBehind(void) {
   GameFlag_Set(FLAG_BUNZAS_WAGON_LEFT);
 }
 
-/// Lead everyone down the passage and request the wagon departure exit.
+/// Leads everyone down the passage and request the wagon departure exit.
 static void Party_RidesWagon(void) {
   struct FieldActor *leader;
   s32 departure;
@@ -940,7 +941,7 @@ static void Party_RidesWagon(void) {
   Engine_EventRequestExit(CAVE_EXIT_BY_WAGON);
 }
 
-/// Restore the gate and frozen puddles from the persistent puzzle flags.
+/// Restores the gate and frozen puddles from the persistent puzzle flags.
 s32 Scene_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gGameState.scene == (s32)&SceneId_WestLunpaCave) {

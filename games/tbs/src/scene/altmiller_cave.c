@@ -175,7 +175,7 @@ struct SceneEntrance *AltmillerCave_GetEntrances(void) {
 /// The cave has no regions.
 struct SceneRegion *AltmillerCave_GetRegions(void) { return NULL; }
 
-/// Return the connections between the cave chambers.
+/// Returns the connections between the cave chambers.
 u32 *AltmillerCave_GetExits(void) { return gAltmillerCave_Exits; }
 
 /// Returns the actor placements of the room being entered.
@@ -737,7 +737,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
   }
 }
 
-/// Divide the nonnegative random value for wall-fragment scaling.
+/// Divides the nonnegative random value for wall-fragment scaling.
 s32 Math_DivideUnsigned(s32 value, s32 divisor);
 
 /// The party turns north, toward Babi.

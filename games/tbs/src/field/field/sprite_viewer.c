@@ -462,7 +462,7 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
     }                                                                          \
   }
 
-/// Set the draw parameter or the priority of one layer of the viewer's ten
+/// Sets the draw parameter or the priority of one layer of the viewer's ten
 /// sprites.
 UI_DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnParameter, param)
 UI_DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnPriority, priority)

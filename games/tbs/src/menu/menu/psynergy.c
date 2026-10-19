@@ -521,7 +521,7 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId) {
   }
 }
 
-/// Return 1, and do nothing; nothing calls them.
+/// Returns 1, and do nothing; nothing calls them.
 UNUSED s32 PsynergyMenu_ReturnTrue(void) { return 1; }
 
 UNUSED void PsynergyMenu_NoOp(void) {}

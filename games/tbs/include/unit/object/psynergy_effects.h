@@ -93,7 +93,7 @@ void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit,
 #define ACTOR_ACTION_IDLE 1
 #define ACTOR_ACTION_FOLLOW_LINKED_OBJECT 5
 #define ACTOR_ACTION_FACE_SELECTED_ACTOR 6
-/// Clear child and collision flags, then return to the idle script.
+/// Clears child and collision flags, then returns to the idle script.
 #define ACTOR_ACTION_RESET 7
 
 void ObjectMotion_EnableActionAndSetCallback(u32 objectId, s32 action);

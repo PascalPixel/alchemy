@@ -84,7 +84,7 @@ void Colosso_FadeInCompetitor(s32 id, s32 x, s32 z) {
   Engine_EventWait(20);
 }
 
-/// Put Isaac (id) back where Colosso_FadeInCompetitor found him: he stands
+/// Puts Isaac (id) back where Colosso_FadeInCompetitor found him: he stands
 /// (or turns south, nods and waits half a second), then returns to his kept
 /// position and facing with his motion stopped.
 void Colosso_RestoreCompetitor(s32 id) {
@@ -129,7 +129,7 @@ void Colosso_RestoreCompetitor(s32 id) {
   Engine_TaskWait(1);
 }
 
-/// Stop the actor where it is: no velocity and no destination.
+/// Stops the actor where it is: no velocity and no destination.
 void OverlayObject_ResetMotionFields(s32 actor) {
   struct FieldActor *o = Object_GetById(actor);
 
@@ -143,7 +143,7 @@ void OverlayObject_ResetMotionFields(s32 actor) {
 // The guide's pointer: one 16x16 sprite centred on a point of the screen,
 // shown for 13 frames of every 20, that can glide from point to point.
 
-/// Load the pointer's picture into a free VRAM block, once.
+/// Loads the pointer's picture into a free VRAM block, once.
 static void Colosso_EnsureMarkerSlot(void) {
 
   if (gColosso_MarkerSlot == -1) {
@@ -220,7 +220,7 @@ static void Colosso_UpdateMarker(void) {
   }
 }
 
-/// Show the pointer at screen pixel (x, y), drawn at priority style & 3.
+/// Shows the pointer at screen pixel (x, y), drawn at priority style & 3.
 void Colosso_ShowPointer(u32 x, u32 y, u32 style) {
   Colosso_EnsureMarkerSlot();
 
@@ -233,7 +233,7 @@ void Colosso_ShowPointer(u32 x, u32 y, u32 style) {
   FieldScheduler_AddCallback(Colosso_UpdateMarker, TASK_PRIORITY_SCENE);
 }
 
-/// Glide the pointer to screen pixel (x, y) over duration frames.
+/// Glides the pointer to screen pixel (x, y) over duration frames.
 void Colosso_MovePointer(u32 x, u32 y, u32 duration) {
   gColosso_MarkerEndX = x;
   gColosso_MarkerEndY = y;
@@ -245,7 +245,7 @@ void Colosso_MovePointer(u32 x, u32 y, u32 duration) {
   FieldScheduler_AddCallback(Colosso_UpdateMarker, TASK_PRIORITY_SCENE);
 }
 
-/// Hide the pointer and free its VRAM block.
+/// Hides the pointer and frees its VRAM block.
 void Colosso_HidePointer(void) {
 
   Engine_TaskRemoveCallback(Colosso_UpdateMarker);
@@ -253,7 +253,8 @@ void Colosso_HidePointer(void) {
   gColosso_MarkerSlot = -1;
 }
 
-/// Walk the actor at 2 pixels a frame towards pixel (x, z) and return at once.
+/// Walks the actor at 2 pixels a frame towards pixel (x, z) and returns at
+/// once.
 void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
   struct FieldActor *actor = Engine_ActorLookup(actorId);
 
@@ -270,8 +271,8 @@ void Colosso_WalkActorTo(s32 actorId, s32 x, s32 z) {
   }
 }
 
-/// Walk the actor at 1.25 pixels a frame to pixel (x, z), wait until it
-/// arrives and stand it there.
+/// Walks the actor at 1.25 pixels a frame to pixel (x, z), waits until it
+/// arrives and stands it there.
 void Colosso_WalkActorToAndStand(s32 actorId, s32 x, s32 z) {
   struct FieldActor *actor = Engine_ActorLookup(actorId);
 

@@ -112,7 +112,7 @@ static void Fuchin_StartDjinnBattle(void) {
   Field_RequestDjinnBattle(11, DJINNI_ZEPHYR);
 }
 
-/// Select the entrances for the current Imil or Fuchin room.
+/// Selects the entrances for the current Imil or Fuchin room.
 const struct SceneEntrance *ImilFuchinFalls_GetEntrances(void) {
   s16 sceneId = gGameState.scene;
 
@@ -143,10 +143,10 @@ const struct SceneEntrance *ImilFuchinFalls_GetEntrances(void) {
 /// The cave has no scene regions.
 const struct SceneRegion *ImilFuchinFalls_GetRegions(void) { return NULL; }
 
-/// Return the exit connections shared by these rooms.
+/// Returns the exit connections shared by these rooms.
 u32 *ImilFuchinFalls_GetExits(void) { return gImilFuchinFalls_Exits; }
 
-/// Select actor placements for the current room.
+/// Selects actor placements for the current room.
 const struct ScenePlacement *ImilFuchinFalls_GetPlacements(void) {
   s16 sceneId = gGameState.scene;
 
@@ -174,14 +174,14 @@ const struct ScenePlacement *ImilFuchinFalls_GetPlacements(void) {
 // Shared source is included here in ROM order.
 #include "common/object_pairmove.h"
 
-/// Let the platform settle before rebuilding its room's collision cells.
+/// Lets the platform settle before rebuilding its room's collision cells.
 static inline void Fuchin_FinishPlatformMove(void (*rebuildPlatforms)(void)) {
   Engine_AudioPlayCue(SE_289);
   Engine_TaskWait(2);
   rebuildPlatforms();
 }
 
-/// Move the first platform east in the first puzzle room.
+/// Moves the first platform east in the first puzzle room.
 static void Fuchin_FirstRoom_MoveFirstPlatformEast(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, 112, 0);
@@ -192,7 +192,7 @@ static void Fuchin_FirstRoom_MoveFirstPlatformEast(void) {
   Fuchin_RebuildFirstRoomPlatforms();
 }
 
-/// Move the first platform west in the first puzzle room.
+/// Moves the first platform west in the first puzzle room.
 static void Fuchin_FirstRoom_MoveFirstPlatformWest(void) {
   s32 offset = 112;
 
@@ -206,7 +206,7 @@ static void Fuchin_FirstRoom_MoveFirstPlatformWest(void) {
   Fuchin_RebuildFirstRoomPlatforms();
 }
 
-/// Move the second platform south in the first puzzle room.
+/// Moves the second platform south in the first puzzle room.
 static void Fuchin_FirstRoom_MoveSecondPlatformSouth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, 0, 64);
@@ -216,7 +216,7 @@ static void Fuchin_FirstRoom_MoveSecondPlatformSouth(void) {
   Fuchin_RebuildFirstRoomPlatforms();
 }
 
-/// Move the second platform north in the first puzzle room.
+/// Moves the second platform north in the first puzzle room.
 static void Fuchin_FirstRoom_MoveSecondPlatformNorth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, 0, -64);
@@ -226,7 +226,7 @@ static void Fuchin_FirstRoom_MoveSecondPlatformNorth(void) {
   Fuchin_RebuildFirstRoomPlatforms();
 }
 
-/// Move the third platform south in the first puzzle room.
+/// Moves the third platform south in the first puzzle room.
 static void Fuchin_FirstRoom_MoveThirdPlatformSouth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, 64);
@@ -236,7 +236,7 @@ static void Fuchin_FirstRoom_MoveThirdPlatformSouth(void) {
   Fuchin_RebuildFirstRoomPlatforms();
 }
 
-/// Move the third platform north in the first puzzle room.
+/// Moves the third platform north in the first puzzle room.
 static void Fuchin_FirstRoom_MoveThirdPlatformNorth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, -64);
@@ -246,7 +246,7 @@ static void Fuchin_FirstRoom_MoveThirdPlatformNorth(void) {
   Fuchin_RebuildFirstRoomPlatforms();
 }
 
-/// Move the first platform to east end in the second puzzle room.
+/// Moves the first platform to east end in the second puzzle room.
 static void Fuchin_SecondRoom_MoveFirstPlatformToEastEnd(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, 144, 0);
@@ -256,7 +256,7 @@ static void Fuchin_SecondRoom_MoveFirstPlatformToEastEnd(void) {
   Fuchin_RebuildSecondRoomPlatforms();
 }
 
-/// Move the first platform to west end in the second puzzle room.
+/// Moves the first platform to west end in the second puzzle room.
 static void Fuchin_SecondRoom_MoveFirstPlatformToWestEnd(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, -144, 0);
@@ -267,7 +267,7 @@ static void Fuchin_SecondRoom_MoveFirstPlatformToWestEnd(void) {
   Fuchin_RebuildSecondRoomPlatforms();
 }
 
-/// Nudge the first platform west in the second puzzle room.
+/// Nudges the first platform west in the second puzzle room.
 static void Fuchin_SecondRoom_NudgeFirstPlatformWest(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, -14, 0);
@@ -277,7 +277,7 @@ static void Fuchin_SecondRoom_NudgeFirstPlatformWest(void) {
   Fuchin_RebuildSecondRoomPlatforms();
 }
 
-/// Move the first platform east in the second puzzle room.
+/// Moves the first platform east in the second puzzle room.
 static void Fuchin_SecondRoom_MoveFirstPlatformEast(void) {
   Engine_AudioPlayCue(SE_241);
 
@@ -293,7 +293,7 @@ static void Fuchin_SecondRoom_MoveFirstPlatformEast(void) {
   Fuchin_FinishPlatformMove(Fuchin_RebuildSecondRoomPlatforms);
 }
 
-/// Move the second platform south in the second puzzle room.
+/// Moves the second platform south in the second puzzle room.
 static void Fuchin_SecondRoom_MoveSecondPlatformSouth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, 0, 64);
@@ -303,7 +303,7 @@ static void Fuchin_SecondRoom_MoveSecondPlatformSouth(void) {
   Fuchin_RebuildSecondRoomPlatforms();
 }
 
-/// Move the second platform north in the second puzzle room.
+/// Moves the second platform north in the second puzzle room.
 static void Fuchin_SecondRoom_MoveSecondPlatformNorth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, 0, -64);
@@ -313,7 +313,7 @@ static void Fuchin_SecondRoom_MoveSecondPlatformNorth(void) {
   Fuchin_RebuildSecondRoomPlatforms();
 }
 
-/// Move the third platform south in the second puzzle room.
+/// Moves the third platform south in the second puzzle room.
 static void Fuchin_SecondRoom_MoveThirdPlatformSouth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, 144);
@@ -324,7 +324,7 @@ static void Fuchin_SecondRoom_MoveThirdPlatformSouth(void) {
   Fuchin_RebuildSecondRoomPlatforms();
 }
 
-/// Move the third platform north in the second puzzle room.
+/// Moves the third platform north in the second puzzle room.
 static void Fuchin_SecondRoom_MoveThirdPlatformNorth(void) {
   s32 depth = -96;
 
@@ -338,7 +338,7 @@ static void Fuchin_SecondRoom_MoveThirdPlatformNorth(void) {
   Fuchin_RebuildSecondRoomPlatforms();
 }
 
-/// Move the first platform west in the third puzzle room.
+/// Moves the first platform west in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveFirstPlatformWest(void) {
   Engine_AudioPlayCue(SE_241);
 
@@ -355,7 +355,7 @@ static void Fuchin_ThirdRoom_MoveFirstPlatformWest(void) {
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
-/// Move the first platform east from the middle in the third puzzle room.
+/// Moves the first platform east from the middle in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveFirstPlatformEastFromMiddle(void) {
   Engine_AudioPlayCue(SE_241);
   Engine_GameFlagClear(0x308);
@@ -364,7 +364,7 @@ static void Fuchin_ThirdRoom_MoveFirstPlatformEastFromMiddle(void) {
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
-/// Move the first platform west if clear in the third puzzle room.
+/// Moves the first platform west if clear in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveFirstPlatformWestIfClear(void) {
   if (Engine_GameFlagIsSet(0x310) != 0) {
     return;
@@ -382,7 +382,7 @@ static void Fuchin_ThirdRoom_MoveFirstPlatformWestIfClear(void) {
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
-/// Move the first platform east from the west end in the third puzzle room.
+/// Moves the first platform east from the west end in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveFirstPlatformEastFromWestEnd(void) {
   Engine_AudioPlayCue(SE_241);
   Engine_GameFlagClear(0x308);
@@ -391,7 +391,7 @@ static void Fuchin_ThirdRoom_MoveFirstPlatformEastFromWestEnd(void) {
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
-/// Move the second platform west in the third puzzle room.
+/// Moves the second platform west in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveSecondPlatformWest(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, -32, 0);
@@ -401,7 +401,7 @@ static void Fuchin_ThirdRoom_MoveSecondPlatformWest(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
-/// Move the second platform east in the third puzzle room.
+/// Moves the second platform east in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveSecondPlatformEast(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, 32, 0);
@@ -411,7 +411,7 @@ static void Fuchin_ThirdRoom_MoveSecondPlatformEast(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
-/// Move the third platform north from the south end in the third puzzle room.
+/// Moves the third platform north from the south end in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveThirdPlatformNorthFromSouthEnd(void) {
   Engine_AudioPlayCue(SE_241);
   if (Engine_GameFlagIsSet(0x308) != 0) {
@@ -430,7 +430,7 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformNorthFromSouthEnd(void) {
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
-/// Move the third platform south from the north end in the third puzzle room.
+/// Moves the third platform south from the north end in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromNorthEnd(void) {
   Engine_AudioPlayCue(SE_241);
 
@@ -462,7 +462,7 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromNorthEnd(void) {
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
-/// Nudge the third platform north in the third puzzle room.
+/// Nudges the third platform north in the third puzzle room.
 static void Fuchin_ThirdRoom_NudgeThirdPlatformNorth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, -16);
@@ -475,7 +475,7 @@ static void Fuchin_ThirdRoom_NudgeThirdPlatformNorth(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
-/// Move the third platform south from the upper stop in the third puzzle room.
+/// Moves the third platform south from the upper stop in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromUpperStop(void) {
   Engine_AudioPlayCue(SE_241);
   if (Engine_GameFlagIsSet(0x311) != 0) {
@@ -501,7 +501,7 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromUpperStop(void) {
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
-/// Move the third platform north from the middle in the third puzzle room.
+/// Moves the third platform north from the middle in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveThirdPlatformNorthFromMiddle(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, -64);
@@ -512,7 +512,7 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformNorthFromMiddle(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
-/// Move the third platform south from the middle in the third puzzle room.
+/// Moves the third platform south from the middle in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromMiddle(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, 64);
@@ -525,7 +525,7 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromMiddle(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
-/// Move the third platform north from the lower stop in the third puzzle room.
+/// Moves the third platform north from the lower stop in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveThirdPlatformNorthFromLowerStop(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, -80);
@@ -538,7 +538,7 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformNorthFromLowerStop(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
-/// Move the third platform south from the lower stop in the third puzzle room.
+/// Moves the third platform south from the lower stop in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromLowerStop(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, 64);
@@ -551,7 +551,7 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromLowerStop(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
-/// Move the fourth platform north in the third puzzle room.
+/// Moves the fourth platform north in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveFourthPlatformNorth(void) {
   Engine_AudioPlayCue(SE_241);
 
@@ -577,7 +577,7 @@ static void Fuchin_ThirdRoom_MoveFourthPlatformNorth(void) {
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
-/// Clear all saved intermediate stops for the fourth platform.
+/// Clears all saved intermediate stops for the fourth platform.
 static void Fuchin_ClearFourthPlatformStops(void) {
   Engine_GameFlagClear(0x30F);
   Engine_GameFlagClear(0x310);
@@ -585,7 +585,7 @@ static void Fuchin_ClearFourthPlatformStops(void) {
   Engine_GameFlagClear(0x312);
 }
 
-/// Move the fourth platform south from the north end in the third puzzle room.
+/// Moves the fourth platform south from the north end in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromNorthEnd(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, 128);
@@ -593,7 +593,7 @@ static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromNorthEnd(void) {
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
-/// Nudge the fourth platform north in the third puzzle room.
+/// Nudges the fourth platform north in the third puzzle room.
 static void Fuchin_ThirdRoom_NudgeFourthPlatformNorth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, -16);
@@ -606,7 +606,8 @@ static void Fuchin_ThirdRoom_NudgeFourthPlatformNorth(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
-/// Move the fourth platform south from the upper stop in the third puzzle room.
+/// Moves the fourth platform south from the upper stop in the third puzzle
+/// room.
 static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromUpperStop(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, 112);
@@ -616,7 +617,7 @@ static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromUpperStop(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
-/// Move the fourth platform south from the middle in the third puzzle room.
+/// Moves the fourth platform south from the middle in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromMiddle(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, 64);
@@ -626,7 +627,8 @@ static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromMiddle(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
-/// Move the fourth platform south from the lower stop in the third puzzle room.
+/// Moves the fourth platform south from the lower stop in the third puzzle
+/// room.
 static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromLowerStop(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, 80);
@@ -636,7 +638,7 @@ static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromLowerStop(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
-/// Move the fourth platform south from the last stop in the third puzzle room.
+/// Moves the fourth platform south from the last stop in the third puzzle room.
 static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromLastStop(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, 48);
@@ -646,7 +648,7 @@ static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromLastStop(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
-/// Move the first platform south in the fourth puzzle room.
+/// Moves the first platform south in the fourth puzzle room.
 static void Fuchin_FourthRoom_MoveFirstPlatformSouth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, 0, 112);
@@ -656,7 +658,7 @@ static void Fuchin_FourthRoom_MoveFirstPlatformSouth(void) {
   Fuchin_RebuildFourthRoomPlatforms();
 }
 
-/// Move the first platform north in the fourth puzzle room.
+/// Moves the first platform north in the fourth puzzle room.
 static void Fuchin_FourthRoom_MoveFirstPlatformNorth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, 0, -112);
@@ -666,7 +668,7 @@ static void Fuchin_FourthRoom_MoveFirstPlatformNorth(void) {
   Fuchin_RebuildFourthRoomPlatforms();
 }
 
-/// Move the second platform west in the fourth puzzle room.
+/// Moves the second platform west in the fourth puzzle room.
 static void Fuchin_FourthRoom_MoveSecondPlatformWest(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, -128, 0);
@@ -676,7 +678,7 @@ static void Fuchin_FourthRoom_MoveSecondPlatformWest(void) {
   Fuchin_RebuildFourthRoomPlatforms();
 }
 
-/// Move the second platform east in the fourth puzzle room.
+/// Moves the second platform east in the fourth puzzle room.
 static void Fuchin_FourthRoom_MoveSecondPlatformEast(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, 128, 0);
@@ -686,7 +688,7 @@ static void Fuchin_FourthRoom_MoveSecondPlatformEast(void) {
   Fuchin_RebuildFourthRoomPlatforms();
 }
 
-/// Move the third platform east in the fourth puzzle room.
+/// Moves the third platform east in the fourth puzzle room.
 static void Fuchin_FourthRoom_MoveThirdPlatformEast(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 160, 0);
@@ -696,7 +698,7 @@ static void Fuchin_FourthRoom_MoveThirdPlatformEast(void) {
   Fuchin_RebuildFourthRoomPlatforms();
 }
 
-/// Move the third platform west in the fourth puzzle room.
+/// Moves the third platform west in the fourth puzzle room.
 static void Fuchin_FourthRoom_MoveThirdPlatformWest(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, -160, 0);
@@ -706,31 +708,31 @@ static void Fuchin_FourthRoom_MoveThirdPlatformWest(void) {
   Fuchin_RebuildFourthRoomPlatforms();
 }
 
-/// Advance the first platform through its two rolling animations.
+/// Advances the first platform through its two rolling animations.
 static void Fuchin_AnimateFirstPlatform(void) {
   Engine_ActorSetAnimation(ACTOR_FIRST_PLATFORM, 1);
   Engine_ActorSetAnimation(ACTOR_FIRST_PLATFORM, 2);
 }
 
-/// Advance the second platform through its two rolling animations.
+/// Advances the second platform through its two rolling animations.
 static void Fuchin_AnimateSecondPlatform(void) {
   Engine_ActorSetAnimation(ACTOR_SECOND_PLATFORM, 1);
   Engine_ActorSetAnimation(ACTOR_SECOND_PLATFORM, 2);
 }
 
-/// Advance the third platform through its two rolling animations.
+/// Advances the third platform through its two rolling animations.
 static void Fuchin_AnimateThirdPlatform(void) {
   Engine_ActorSetAnimation(ACTOR_THIRD_PLATFORM, 1);
   Engine_ActorSetAnimation(ACTOR_THIRD_PLATFORM, 2);
 }
 
-/// Advance the fourth platform through its two rolling animations.
+/// Advances the fourth platform through its two rolling animations.
 static void Fuchin_AnimateFourthPlatform(void) {
   Engine_ActorSetAnimation(ACTOR_FOURTH_PLATFORM, 1);
   Engine_ActorSetAnimation(ACTOR_FOURTH_PLATFORM, 2);
 }
 
-/// Create a stationary foreground actor with its palette and priority set.
+/// Creates a stationary foreground actor with its palette and priority set.
 static struct FieldActor *Fuchin_CreateForegroundActor(s32 x, s32 y, s32 z,
                                                        s32 resourceId) {
   struct FieldActor *actor = Engine_ObjectCreate(resourceId, x, y, z);
@@ -746,7 +748,7 @@ static struct FieldActor *Fuchin_CreateForegroundActor(s32 x, s32 y, s32 z,
   return 0;
 }
 
-/// Select interactions for the current room.
+/// Selects interactions for the current room.
 const struct SceneEvent *ImilFuchinFalls_GetEvents(void) {
   s16 sceneId = gGameState.scene;
 
@@ -774,7 +776,7 @@ const struct SceneEvent *ImilFuchinFalls_GetEvents(void) {
   return gImilFuchinFalls_NoEvents;
 }
 
-/// Face the leader south and leave the Imil Djinn room.
+/// Faces the leader south and leaves the Imil Djinn room.
 static void Imil_LeaveDjinnRoom(void) {
   struct FieldActor *leader;
 
@@ -787,10 +789,10 @@ static void Imil_LeaveDjinnRoom(void) {
   Engine_EventRequestExit(1);
 }
 
-/// Start sliding the selected actor in the held direction.
+/// Starts sliding the selected actor in the held direction.
 static void Imil_MoveAcrossIce(void) { Imil_SlideActorAcrossIce(); }
 
-/// Center a platform on its cell and give it underfoot priority.
+/// Centers a platform on its cell and gives it underfoot priority.
 static void Fuchin_PlacePlatformAtCell(s32 id, s32 column, s32 row) {
   struct FieldActor *actor = Object_GetById(id);
 
@@ -803,7 +805,7 @@ static void Fuchin_PlacePlatformAtCell(s32 id, s32 column, s32 row) {
   }
 }
 
-/// Restore platform positions and collision cells in the first puzzle room.
+/// Restores platform positions and collision cells in the first puzzle room.
 static void Fuchin_RebuildFirstRoomPlatforms(void) {
   {
     s32 column = 8;
@@ -860,7 +862,7 @@ static void Fuchin_RebuildFirstRoomPlatforms(void) {
   }
 }
 
-/// Restore platform positions and collision cells in the second puzzle room.
+/// Restores platform positions and collision cells in the second puzzle room.
 static void Fuchin_RebuildSecondRoomPlatforms(void) {
   {
     s32 column = 12;
@@ -944,7 +946,7 @@ static void Fuchin_RebuildSecondRoomPlatforms(void) {
   }
 }
 
-/// Restore the interacting platform stops and collision cells in the third
+/// Restores the interacting platform stops and collision cells in the third
 /// room.
 static void Fuchin_RebuildThirdRoomPlatforms(void) {
   {
@@ -1051,7 +1053,8 @@ static void Fuchin_RebuildThirdRoomPlatforms(void) {
   }
 }
 
-/// Restore both halves of the fourth puzzle room from its saved platform stops.
+/// Restores both halves of the fourth puzzle room from its saved platform
+/// stops.
 static void Fuchin_RebuildFourthRoomPlatforms(void) {
   if (((u32)((u16)gGameState.entrance - 1) << 16) <= 0x10000) {
     {
@@ -1116,7 +1119,7 @@ static void Fuchin_RebuildFourthRoomPlatforms(void) {
   }
 }
 
-/// Attach the active cave light to the party leader.
+/// Attaches the active cave light to the party leader.
 static void Fuchin_FollowLeaderWithLight(void) {
   if (gImilFuchinFalls_TrackLeader != 0) {
     struct FadeOverlayWork *work = *(gWorkSlot + 36);
@@ -1125,7 +1128,7 @@ static void Fuchin_FollowLeaderWithLight(void) {
   }
 }
 
-/// Detach the active cave light from the party leader.
+/// Detaches the active cave light from the party leader.
 static void Fuchin_StopLightFollowingLeader(void) {
   if (gImilFuchinFalls_TrackLeader != 0) {
     struct FadeOverlayWork *work = *(gWorkSlot + 36);
@@ -1148,7 +1151,7 @@ s32 ImilFuchinFalls_Initialize(void) {
   return 0;
 }
 
-/// Show the Imil Djinni and walk the leader toward it.
+/// Shows the Imil Djinni and walks the leader toward it.
 static void Imil_WalkTowardDjinni(void) {
   struct FieldActor *actor;
 
@@ -1161,7 +1164,7 @@ static void Imil_WalkTowardDjinni(void) {
   Engine_EventEnd();
 }
 
-/// Restore room props and the cave light for this entrance.
+/// Restores room props and the cave light for this entrance.
 static void ImilFuchinFalls_PrepareRoom(void) {
   struct FieldActor *actor;
   /* FAKEMATCH: needed to match: the shared zero/address-word lifetime avoids
@@ -1215,7 +1218,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
   }
 }
 
-/// Restore the collision templates for the current platform room.
+/// Restores the collision templates for the current platform room.
 static void ImilFuchinFalls_RebuildPlatformRoom(void) {
   if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls2) {
     Map_CopyCellAttributes(8, 29, 15, 5, 8, 42);
@@ -1237,7 +1240,7 @@ static void ImilFuchinFalls_RebuildPlatformRoom(void) {
   }
 }
 
-/// Hop across a platform edge when its current stop permits it.
+/// Hops across a platform edge when its current stop permits it.
 static void ImilFuchinFalls_HopOnTrigger(void) {
   s32 trigger = gEventWork->touchedTrigger;
 
@@ -1254,13 +1257,13 @@ static void ImilFuchinFalls_HopOnTrigger(void) {
   }
 }
 
-/// Hop the leader one gap north.
+/// Hops the leader one gap north.
 static void Fuchin_HopNorth(void) { ImilFuchinFalls_HopBy(0, -32); }
 
-/// Hop the leader one gap west.
+/// Hops the leader one gap west.
 static void Fuchin_HopWest(void) { ImilFuchinFalls_HopBy(-32, 0); }
 
-/// Jump the leader by a pixel offset while using the hopping animations.
+/// Jumps the leader by a pixel offset while using the hopping animations.
 static void ImilFuchinFalls_HopBy(s32 dx, s32 dz) {
   Engine_EventBegin();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
@@ -1272,7 +1275,7 @@ static void ImilFuchinFalls_HopBy(s32 dx, s32 dz) {
   Engine_EventEnd();
 }
 
-/// Create the collectible eye and upload its item icon.
+/// Creates the collectible eye and upload its item icon.
 static void ImilFuchinFalls_PlaceDragonsEye(void) {
   struct FieldActor *actor;
   struct AnimationObject *sprite;
@@ -1296,7 +1299,7 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
   }
 }
 
-/// Give the eye to the party and remove its displayed actor.
+/// Gives the eye to the party and removes its displayed actor.
 static void Fuchin_CollectDragonsEye(void) {
   Engine_EventBegin();
 
@@ -1314,7 +1317,7 @@ static void Fuchin_CollectDragonsEye(void) {
   Engine_EventEnd();
 }
 
-/// Apply the dust velocity and scale change for one frame.
+/// Applies the dust velocity and scale change for one frame.
 static void Fuchin_UpdateDustMotion(union FieldObject *raw) {
   struct FieldEffect *object = &raw->effect;
 
@@ -1325,14 +1328,14 @@ static void Fuchin_UpdateDustMotion(union FieldObject *raw) {
   object->scaleY += object->scaleRateY;
 }
 
-/// Select the dust palette when its object script finishes looping.
+/// Selects the dust palette when its object script finishes looping.
 static s32 Fuchin_SetDustPalette(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   ObjectGroup_SetChildValue(actor, 15);
   return 0;
 }
 
-/// Create scripted cave dust with the requested velocity, palette and scale.
+/// Creates scripted cave dust with the requested velocity, palette and scale.
 void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
                                s32 velocityY, s32 velocityZ, u32 flags,
                                const struct EffectOptions *extra) {
@@ -1385,7 +1388,7 @@ void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
   }
 }
 
-/// Emit cave-mouth dust every fourth frame while the dragon awakens.
+/// Emits cave-mouth dust every fourth frame while the dragon awakens.
 static void ImilFuchinFalls_BlowCaveMouthDust(void) {
   struct CaveDustOptions options;
   s32 framePhase;
@@ -1410,7 +1413,7 @@ static void ImilFuchinFalls_BlowCaveMouthDust(void) {
       (const struct EffectOptions *)&options);
 }
 
-/// Insert the eye, light the dragon room and reveal its hidden path.
+/// Inserts the eye, light the dragon room and reveal its hidden path.
 static void Fuchin_LightDragonWithEye(void) {
   u32 pass;
 
@@ -1458,28 +1461,28 @@ static void Fuchin_LightDragonWithEye(void) {
   Engine_EventEnd();
 }
 
-/// Read the inscription describing the dragon flame.
+/// Reads the inscription describing the dragon flame.
 static void Fuchin_ReadDragonFlameInscription(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFuchinDragonFlameShowsPath, 1);
   Engine_EventEnd();
 }
 
-/// Read the inscription about the secret power of Ki.
+/// Reads the inscription about the secret power of Ki.
 static void Fuchin_ReadKiInscription(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFuchinSecretKiRevealed, 1);
   Engine_EventEnd();
 }
 
-/// Read the inscription about light revealing shadows.
+/// Reads the inscription about light revealing shadows.
 static void Fuchin_ReadShadowInscription(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFuchinLightRevealsShadows, 1);
   Engine_EventEnd();
 }
 
-/// Describe the dragon eyes or offer to insert the carried eye.
+/// Describes the dragon eyes or offers to insert the carried eye.
 static void Fuchin_SearchDragonStatue(void) {
   Engine_EventBegin();
 
@@ -1494,7 +1497,7 @@ static void Fuchin_SearchDragonStatue(void) {
   Engine_EventEnd();
 }
 
-/// Restore the dark cave lighting when Reveal expires.
+/// Restores the dark cave lighting when Reveal expires.
 static void Fuchin_EndRevealLighting(void) {
   struct BattleFxScene *scene;
   struct DisplayTransitionState *transition;
@@ -1513,7 +1516,7 @@ static void Fuchin_EndRevealLighting(void) {
   }
 }
 
-/// Turn the sliding actor gradually toward the held direction.
+/// Turns the sliding actor gradually toward the held direction.
 static void Imil_TurnSkaterTowardHeldDirection(union FieldObject *object) {
   struct FieldActor *actor = &object->actor;
   s32 timer;
@@ -1542,7 +1545,7 @@ static void Imil_TurnSkaterTowardHeldDirection(union FieldObject *object) {
   ObjectDispatch_SetAnimationSpeed(actor, 0x30);
 }
 
-/// Slide along the ice until terrain or a collision boundary ends the move.
+/// Slides along the ice until terrain or a collision boundary ends the move.
 static void Imil_SlideActorAcrossIce(void) {
   struct FieldActor *actor;
   struct FieldPosition probe;

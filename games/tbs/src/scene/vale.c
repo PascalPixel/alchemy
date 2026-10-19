@@ -110,16 +110,16 @@ enum { ANIM_HAMMER = 11 };
 // Shared source is included here in ROM order.
 #include "common/object_staged_actor.h"
 
-/// Return the plaza's entrances.
+/// Returns the plaza's entrances.
 struct SceneEntrance *Vale_GetEntrances(void) { return gVale_Entrances; }
 
 /// The plaza has no scene regions.
 struct SceneRegion *Vale_GetRegions(void) { return NULL; }
 
-/// Return the plaza's exits.
+/// Returns the plaza's exits.
 u32 *Vale_GetExits(void) { return gVale_Exits; }
 
-/// Place the villagers for the story so far, or for the roof repair (entrance
+/// Places the villagers for the story so far, or for the roof repair (entrance
 /// 16).
 struct ScenePlacement *Vale_GetPlacements(void) {
   u8 *scene_state = (u8 *)&gGameState;
@@ -161,7 +161,7 @@ struct SceneEvent *Vale_GetEvents(void) {
   return gVale_Events;
 }
 
-/// Ask about the mayor before departure, or the tremors after returning.
+/// Asks about the mayor before departure, or the tremors after returning.
 static void Event_TalkAboutTheMayorAndTremors(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
@@ -175,7 +175,7 @@ static void Event_TalkAboutTheMayorAndTremors(void) {
   Engine_EventEnd();
 }
 
-/// Warn about the mountain path, with a shorter repeat greeting.
+/// Warns about the mountain path, with a shorter repeat greeting.
 static void Event_WarnAboutGoingBeyondKradensCottage(void) {
   s32 flag = FLAG_VALE_ASKED_IF_GOING_TO_KRADEN;
   Engine_EventBegin();
@@ -242,7 +242,7 @@ static void Event_AskWhetherJennaHasReturned(void) {
   Engine_EventEnd();
 }
 
-/// Shake the view before the villager reacts to another tremor.
+/// Shakes the view before the villager reacts to another tremor.
 static void Event_ReactToAnotherTremor(void) {
   Engine_EventBegin();
   Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
@@ -255,7 +255,7 @@ static void Event_ReactToAnotherTremor(void) {
   Engine_EventEnd();
 }
 
-/// Ask about the quiet roads after the eruption.
+/// Asks about the quiet roads after the eruption.
 static void Event_AskAboutTheLackOfTravelers(void) {
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(19, 2);
@@ -280,7 +280,7 @@ static void Event_ClearPathCellOverride(void) {
   Map_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
-/// Open the sanctum door, walk inside and take its scene exit.
+/// Opens the sanctum door, walk inside and takes its scene exit.
 static void Event_EnterSanctum(void) {
   Event_PlayCue(SE_188);
   Map_AnimateCells(gValeCellAnimC, 45, 11);
@@ -311,13 +311,13 @@ static void Event_LeaveBySouthPath(void) {
   Engine_EventRequestExit(4);
 }
 
-/// Leave through the exit leading back to the house.
+/// Leaves through the exit leading back to the house.
 static void Event_LeaveTowardHome(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventRequestExit(2);
 }
 
-/// Animate the eastern house door before entering.
+/// Animates the eastern house door before entering.
 static void Event_EnterEastHouse(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimA, 54, 32);
@@ -325,7 +325,7 @@ static void Event_EnterEastHouse(void) {
   Engine_EventRequestExit(5);
 }
 
-/// Animate the central house door before entering.
+/// Animates the central house door before entering.
 static void Event_EnterCentralHouse(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimB, 45, 39);
@@ -360,7 +360,7 @@ static void Event_EnterIsaacsHouse(void) {
   }
 }
 
-/// Open the southeastern door and enter its interior.
+/// Opens the southeastern door and enters its interior.
 static void Event_EnterSoutheastHouse(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimB, 49, 69);
@@ -368,7 +368,7 @@ static void Event_EnterSoutheastHouse(void) {
   Engine_EventRequestExit(8);
 }
 
-/// Open the far southern door and enter its interior.
+/// Opens the far southern door and enters its interior.
 static void Event_EnterFarSouthHouse(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimD, 52, 76);
@@ -376,7 +376,7 @@ static void Event_EnterFarSouthHouse(void) {
   Engine_EventRequestExit(9);
 }
 
-/// Open the southwestern door and enter its interior.
+/// Opens the southwestern door and enters its interior.
 static void Event_EnterSouthwestHouse(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimA, 35, 74);
@@ -384,7 +384,7 @@ static void Event_EnterSouthwestHouse(void) {
   Engine_EventRequestExit(10);
 }
 
-/// Bring Jenna out to remind Isaac that Kraden is waiting.
+/// Brings Jenna out to remind Isaac that Kraden is waiting.
 static void Vale_HaveJennaStopTheAlephDetour(void) {
   struct FieldActor *leader;
   struct FieldActor *jenna;
@@ -424,7 +424,7 @@ static void Vale_HaveJennaStopTheAlephDetour(void) {
   Engine_EventEnd();
 }
 
-/// Pan down to the puppies and return the camera to the leader.
+/// Pans down to the puppies and returns the camera to the leader.
 static void Event_WatchThePuppies(void) {
   struct MapScrollWork *map;
   s32 *savedOrigin;
@@ -472,7 +472,7 @@ static void Event_WatchThePuppies(void) {
   }
 }
 
-/// Show the puppies message from the opposite approach.
+/// Shows the puppies message from the opposite approach.
 static void Event_TurnBackFromThePuppies(void) {
   s32 msg;
 
@@ -490,7 +490,7 @@ static void Event_TurnBackFromThePuppies(void) {
   }
 }
 
-/// Change the passage collision and move through its northern end.
+/// Changes the passage collision and moves through its northern end.
 static void Event_EnterNorthernPassage(void) {
   Engine_EventBegin();
   Map_CopyCellAttributes(49, 53, 8, 4, 20, 50);
@@ -499,7 +499,7 @@ static void Event_EnterNorthernPassage(void) {
   Engine_EventEnd();
 }
 
-/// Move back through the passage and restore its collision attributes.
+/// Moves back through the passage and restores its collision attributes.
 static void Event_ReturnThroughSouthernPassage(void) {
   Engine_EventBegin();
   Vale_MoveActorAlongHigherZPath(0, 13, 10, 1);
@@ -561,7 +561,7 @@ static void Event_WarnAgainstSneakingUpMtAleph(void) {
   Engine_EventEnd();
 }
 
-/// Repeat the warning when the villager reaches the first pause.
+/// Repeats the warning when the villager reaches the first pause.
 static void Event_RepeatMtAlephWarningFromFirstApproach(void) {
   struct FieldActor *villager = Object_GetById(22);
   if (Engine_GameFlagIsSet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
@@ -571,7 +571,7 @@ static void Event_RepeatMtAlephWarningFromFirstApproach(void) {
   }
 }
 
-/// Ask about the Aleph detour, then resume each actor's response actions.
+/// Asks about the Aleph detour, then resumes each actor's response actions.
 static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
                                          const s32 *villagerActions) {
   const s32 *replyActions;
@@ -610,7 +610,7 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
   Engine_EventEnd();
 }
 
-/// Repeat the warning when the villager reaches the second pause.
+/// Repeats the warning when the villager reaches the second pause.
 static void Event_RepeatMtAlephWarningFromSecondApproach(void) {
   struct FieldActor *villager = Object_GetById(22);
   if (Engine_GameFlagIsSet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
@@ -620,7 +620,7 @@ static void Event_RepeatMtAlephWarningFromSecondApproach(void) {
   }
 }
 
-/// Choose the warning approach matching the current villager pause.
+/// Chooses the warning approach matching the current villager pause.
 static void Event_RepeatMtAlephWarningAtEitherPause(void) {
   struct FieldActor *villager = Object_GetById(22);
   if (Engine_GameFlagIsSet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
@@ -1490,7 +1490,7 @@ UNUSED static void FieldScene_RunCompanionActorSequence(void) {
   Engine_EventEnd();
 }
 
-/// Traverse the passage toward lower Z, changing animations at its lip.
+/// Traverses the passage toward lower Z, changing animations at its lip.
 static void Vale_MoveActorAlongLowerZPath(s32 actorId, s32 approachAnimationId,
                                           s32 departureAnimationId,
                                           s32 resumeMotion) {
@@ -1525,7 +1525,7 @@ static void Vale_MoveActorAlongLowerZPath(s32 actorId, s32 approachAnimationId,
   Engine_ActorSetAnimation(actorId, ANIM_STAND);
 }
 
-/// Traverse the passage toward higher Z and restore falling motion if
+/// Traverses the passage toward higher Z and restores falling motion if
 /// requested.
 static void Vale_MoveActorAlongHigherZPath(s32 actorId, s32 approachAnimationId,
                                            s32 departureAnimationId,
@@ -1561,7 +1561,7 @@ static void Vale_MoveActorAlongHigherZPath(s32 actorId, s32 approachAnimationId,
   Engine_ActorSetAnimation(actorId, ANIM_STAND);
 }
 
-/// Reset consecutive repair actors to their staging position or hide them.
+/// Resets consecutive repair actors to their staging position or hides them.
 static void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode) {
   s32 selector = first;
   u32 i;
@@ -2534,32 +2534,32 @@ static void Event_RoofMended(void) {
 // Shared source is included here in ROM order.
 #include "common/effect_psynergy.h"
 
-/// Cycle palettes on Garet and periodically spawn attached effects.
+/// Cycles palettes on Garet and periodically spawn attached effects.
 static void Vale_UpdateGaretPaletteAndEffects(void) {
   Vale_CycleActorPaletteAndSpawnEffects(Object_GetById(GARET));
 }
 
-/// Cycle the leader palette and periodically spawn attached effects.
+/// Cycles the leader palette and periodically spawn attached effects.
 static void Vale_UpdateLeaderPaletteAndEffects(void) {
   Vale_CycleActorPaletteAndSpawnEffects(Object_GetById(ACTOR_PARTY_LEADER));
 }
 
-/// Cycle actor 9 palette during the repair scene.
+/// Cycles actor 9 palette during the repair scene.
 static void Vale_CycleVillagerNinePalette(void) {
   Vale_CycleActorPalette(Object_GetById(9));
 }
 
-/// Cycle the first board palette while its repair effect runs.
+/// Cycles the first board palette while its repair effect runs.
 static void Vale_CycleFirstBoardPalette(void) {
   Vale_CycleActorPalette(Object_GetById(0x17));
 }
 
-/// Cycle the second board palette while its repair effect runs.
+/// Cycles the second board palette while its repair effect runs.
 static void Vale_CycleSecondBoardPalette(void) {
   Vale_CycleActorPalette(Object_GetById(0x18));
 }
 
-/// Cycle actor 25 palette during the repair scene.
+/// Cycles actor 25 palette during the repair scene.
 static void Vale_CycleActor25Palette(void) {
   Vale_CycleActorPalette(Object_GetById(0x19));
 }
@@ -2642,7 +2642,7 @@ static s32 Vale_HaveVillagerWatchTheLeader(union FieldObject *fieldObject) {
 #endif
 }
 
-/// Emit one dust particle below the moving source actor.
+/// Emits one dust particle below the moving source actor.
 static void Effect_ConfigureSpawnedParticle(union FieldObject *fieldObject) {
   struct FieldActor *source = &fieldObject->actor;
   s32 spawnPosition[3];
@@ -2674,7 +2674,8 @@ static void Effect_ConfigureSpawnedParticle(union FieldObject *fieldObject) {
   Engine_AudioPlayCue(SE_ITEM_BREAK);
 }
 
-/// Shrink and raise the emitter, scatter dust, then clear its motion targets.
+/// Shrinks and raises the emitter, scatter dust, then clears its motion
+/// targets.
 static void Effect_SpawnRisingDustBurst(struct FieldActor *emitter) {
   s32 frameCountdown;
 
@@ -2723,7 +2724,8 @@ static void Effect_SpawnRisingDustBurst(struct FieldActor *emitter) {
   SET_VELOCITY(emitter, 0, 0, 0);
 }
 
-/// Move a particle outward in the horizontal plane without changing its height.
+/// Moves a particle outward in the horizontal plane without changing its
+/// height.
 static void Effect_UpdateParticlePosition(struct FieldActor *particle,
                                           s32 distance, s32 angle) {
   s32 position[3];
@@ -2783,14 +2785,14 @@ static void Effect_PlayStepSound(void) {
     Engine_AudioPlayCue(SE_131);
 }
 
-/// Tell the player that this door will not open.
+/// Tells the player that this door will not open.
 static void Event_SearchTheLockedDoor(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgValeDoorWontOpen, 1);
   Engine_EventEnd();
 }
 
-/// Pause the Aleph villager while the corresponding event flag is set.
+/// Pauses the Aleph villager while the corresponding event flag is set.
 static void Vale_SynchronizeAlephVillagerPause(void) {
   s32 pauseFlag;
 
@@ -2808,7 +2810,7 @@ static void Vale_SynchronizeAlephVillagerPause(void) {
   }
 }
 
-/// Keep raised villager priority consistent with the leader height.
+/// Keeps raised villager priority consistent with the leader height.
 static void Vale_AdjustVillagerPriorityForLeaderHeight(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldActor *villager;

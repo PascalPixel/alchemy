@@ -66,7 +66,7 @@ s32 gSolSanctumEntrance_RumbleTimer __attribute__((section(".bss")));
 
 void InitializeSceneRecordBuffer();
 
-/// Select the entrance table for the current sanctum map.
+/// Selects the entrance table for the current sanctum map.
 const struct SceneEntrance *SolSanctumEntrance_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -82,12 +82,12 @@ const struct SceneEntrance *SolSanctumEntrance_GetEntrances(void) {
 /// The sanctum entrance maps have no region table.
 const struct SceneRegion *SolSanctumEntrance_GetRegions(void) { return 0; }
 
-/// Return the shared sanctum exit routes.
+/// Returns the shared sanctum exit routes.
 const u32 *SolSanctumEntrance_GetExits(void) {
   return gSolSanctumEntrance_Exits;
 }
 
-/// Select the actors for the current map and puzzle room.
+/// Selects the actors for the current map and puzzle room.
 const struct ScenePlacement *SolSanctumEntrance_GetPlacements(void) {
   struct ScenePlacement *table;
   s32 firstBlockEntrance = 11;
@@ -112,7 +112,7 @@ const struct ScenePlacement *SolSanctumEntrance_GetPlacements(void) {
   return gSolSanctumEntrancePlacementsOther;
 }
 
-/// Select the interactions for the current map and puzzle room.
+/// Selects the interactions for the current map and puzzle room.
 const struct SceneEvent *SolSanctumEntrance_GetEvents(void) {
   s32 firstBlockEntrance = 11;
 
@@ -294,7 +294,7 @@ static void Event_SetSecondSmallJewel(void) {
   }
 }
 
-/// Remember which of a movable block's two destination columns it occupies.
+/// Remembers which of a movable block's two destination columns it occupies.
 static inline void SolSanctumEntrance_RecordBlockColumn(s32 column,
                                                         s32 flagBase,
                                                         s32 leftColumn,
@@ -492,7 +492,7 @@ static void Event_PushBlock(void) {
   }
 }
 
-/// Restore the outdoor or interior state for this entrance.
+/// Restores the outdoor or interior state for this entrance.
 s32 SolSanctumEntrance_Initialize(void) {
   s32 scene = gGameState.scene;
 
@@ -504,7 +504,7 @@ s32 SolSanctumEntrance_Initialize(void) {
   return 0;
 }
 
-/// Restore the approach's rumbling, collision and actor positions.
+/// Restores the approach's rumbling, collision and actor positions.
 static void SolSanctumEntrance_ApplyEntryState(void) {
   // Retreat does not work here (flag 0x144).
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
@@ -527,7 +527,7 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
   }
 }
 
-/// Restore opened passages and the current room's block positions.
+/// Restores opened passages and the current room's block positions.
 static void SolSanctumEntrance_RestoreInteriorState(void) {
   s32 entrance;
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -612,7 +612,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   }
 }
 
-/// Introduce Kraden's first visit to Sol Sanctum.
+/// Introduces Kraden's first visit to Sol Sanctum.
 static void SolSanctumEntrance_IntroduceSanctum(void) {
   struct FieldActor *leader;
 
@@ -695,7 +695,7 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Engine_EventEnd();
 }
 
-/// Survey the room while Kraden explains the hidden-passage puzzle.
+/// Surveys the room while Kraden explains the hidden-passage puzzle.
 static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   struct FieldActor *leader;
 
@@ -899,7 +899,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Engine_EventEnd();
 }
 
-/// Show the inner statues that Kraden cannot reach.
+/// Shows the inner statues that Kraden cannot reach.
 static void SolSanctumEntrance_InspectInnerStatues(void) {
   struct FieldActor *leader;
 
@@ -953,7 +953,7 @@ static void SolSanctumEntrance_InspectInnerStatues(void) {
   Engine_EventEnd();
 }
 
-/// Restore block collision cells and, on entry, the saved actors.
+/// Restores block collision cells and, on entry, the saved actors.
 static void SolSanctumEntrance_RestoreInnerBlockCells(s32 placeActors) {
   // Clear all six destinations before restoring occupied cells.
   Map_CopyCellAttributes(122, 20, 1, 1, 100, 32);
@@ -1308,7 +1308,7 @@ struct SceneEvent gSolSanctumEntranceEvents1Entrances14To16[] = {
 };
 // clang-format on
 
-/// Push step by direction: X in the upper halfword, Z in the lower (pixels).
+/// Pushes step by direction: X in the upper halfword, Z in the lower (pixels).
 #define PUSH_STEP(x, z) (((x) << 16) | ((z) & 0xffff))
 
 s32 gSolSanctumPushSteps[] = {

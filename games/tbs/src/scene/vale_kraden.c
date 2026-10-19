@@ -49,7 +49,7 @@ enum ValeKradenActor {
 // Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
-/// Return the cottage area's entrance positions.
+/// Returns the cottage area's entrance positions.
 const struct SceneEntrance *ValeKraden_GetEntrances(void) {
   return gValeKraden_Entrances;
 }
@@ -57,15 +57,15 @@ const struct SceneEntrance *ValeKraden_GetEntrances(void) {
 /// This area has no scene regions.
 const struct SceneRegion *ValeKraden_GetRegions(void) { return NULL; }
 
-/// Return the cottage area's exits.
+/// Returns the cottage area's exits.
 const u32 *ValeKraden_GetExits(void) { return gValeKraden_Exits; }
 
-/// Return the cottage residents and story actors.
+/// Returns the cottage residents and story actors.
 const struct ScenePlacement *ValeKraden_GetPlacements(void) {
   return gValeKraden_Placements;
 }
 
-/// Select events for the current visit to Vale.
+/// Selects events for the current visit to Vale.
 const struct SceneEvent *ValeKraden_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
     return gValeKraden_EventsAfterKalay;
@@ -76,21 +76,21 @@ const struct SceneEvent *ValeKraden_GetEvents(void) {
   return gValeKraden_Events;
 }
 
-/// Finish the party's nod together before the next line of dialogue.
+/// Finishes the party's nod together before the next line of dialogue.
 static __inline__ void ValeKraden_NodTogether(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
 }
 
-/// Turn all three party members toward the strangers.
+/// Turns all three party members toward the strangers.
 static __inline__ void ValeKraden_FacePartySouth(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(JENNA, FACING_SOUTH, 0);
 }
 
-/// Start a companion walking back to Isaac's current pixel position.
+/// Starts a companion walking back to Isaac's current pixel position.
 static __inline__ void ValeKraden_WalkTowardLeader(s32 companionId) {
   struct FieldActor *leader;
 
@@ -725,7 +725,7 @@ static void Event_OverhearKraden(void) {
   }
 }
 
-/// Place the actors for the storm or for the day, and play the arrival from
+/// Places the actors for the storm or for the day, and plays the arrival from
 /// the cottage.
 s32 ValeKraden_Initialize(void) {
   struct FieldActor *actor;
@@ -937,7 +937,7 @@ static void Event_TalkToCottageVisitor(void) {
   Engine_EventEnd();
 }
 
-/// Lead the party away from the broken fence, then leave the map.
+/// Leads the party away from the broken fence, then leaves the map.
 s32 gValeKraden_RockslideSurvivorEscapeActions[] = {
     SC_ARG(2), SC_MOVE(PIXELS(72), 0, PIXELS(294)),
     SC_SYNC,   SC_MOVE(PIXELS(77), 0, PIXELS(329)),
@@ -946,7 +946,7 @@ s32 gValeKraden_RockslideSurvivorEscapeActions[] = {
     SC_END,
 };
 
-/// Alternate the survivor's width and height while he lies by the fence.
+/// Alternates the survivor's width and height while he lies by the fence.
 s32 gValeKraden_RockslideSurvivorSwayActions[] = {
     SC_ADD(SW_SCALE_Y, -Q16_ONE / 16),
     SC_ADD(SW_SCALE_X, Q16_ONE / 32),
@@ -966,7 +966,7 @@ s32 gValeKraden_RockslideSurvivorSwayActions[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Keep a linked actor facing its current target.
+/// Keeps a linked actor facing its current target.
 s32 gValeKraden_FaceTargetActions[] = {
     SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),

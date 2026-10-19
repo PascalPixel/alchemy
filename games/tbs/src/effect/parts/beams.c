@@ -8,7 +8,7 @@
 // over the first target. The ring-and-spark scene plays a strike of rings and
 // sparks, restoring the user's motion afterwards.
 
-/// Draw the selected beam and its projected sparks over the first target: a
+/// Draws the selected beam and its projected sparks over the first target: a
 /// beam, arc or wave shoots from the user; from frame 4 the target is hit,
 /// a yellow orb flashes over it and sparks fly off, for 32 frames in all.
 /// effect->kind picks the picture.
@@ -243,7 +243,7 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   BattleFx_HideBg1AndRestoreBackdrop();
 }
 
-/// Play the selected ring-and-spark strike, restoring the user motion after
+/// Plays the selected ring-and-spark strike, restoring the user motion after
 /// it. Kinds above 199 first gather 64 motes of light into the user for 32
 /// frames while it stands still; then star burst and crescent rings flash
 /// over the canvas and sparks fly from the first target for 32 frames, and

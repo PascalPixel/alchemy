@@ -6,7 +6,7 @@
 
 extern void *gWorkSlot[64];
 
-/// Read slots through their own addresses; adjacent slots are reached by
+/// Reads slots through their own addresses; adjacent slots are reached by
 /// offsets. (gWorkSlot[n] instead addresses from the table's start.)
 #define WORK_SLOT(n) (*(gWorkSlot + (n)))
 

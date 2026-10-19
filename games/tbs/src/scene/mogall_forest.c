@@ -149,7 +149,8 @@ static void MogallForest_StartDjinnBattle(void) {
   Field_RequestDjinnBattle(18, DJINNI_QUARTZ);
 }
 
-/// Jump the leader to an unobstructed fixed-point position and restore motion.
+/// Jumps the leader to an unobstructed fixed-point position and restores
+/// motion.
 static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   u8 *motionFlags = &leader->motionFlags;
@@ -191,7 +192,7 @@ MogallForest_CopyTimerToChild(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-/// Clear the actor sprite flags when its script requests it.
+/// Clears the actor sprite flags when its script requests it.
 static s32
 MogallForest_ClearActorSpriteFlags(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -199,7 +200,7 @@ MogallForest_ClearActorSpriteFlags(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-/// Hop an actor to a pixel destination with the requested vertical speed.
+/// Hops an actor to a pixel destination with the requested vertical speed.
 static void MogallForest_HopActorTo(s32 actorId, s32 targetX, s32 targetZ,
                                     s32 verticalSpeed) {
   struct FieldActor *actor;
@@ -218,7 +219,7 @@ static void MogallForest_HopActorTo(s32 actorId, s32 targetX, s32 targetZ,
   actor->gravity = PIXELS(1);
 }
 
-/// Scatter a complete ring of rising puffs around an actor.
+/// Scatters a complete ring of rising puffs around an actor.
 static void MogallForest_SpawnPuffRing(s32 id) {
   struct Vector3 velocity;
   struct EffectOptions options;
@@ -566,7 +567,7 @@ static void MogallForest_SecondArea_PushLog(void) {
   Engine_EventEnd();
 }
 
-/// Mark the obstacle cell and clear the cells it could have moved from.
+/// Marks the obstacle cell and clears the cells it could have moved from.
 static inline void MogallForest_UpdateObstacleFootprint(s32 column, s32 row) {
   StagedActor_FillGridAttributeRectangle(2, column, row, 1, 1, 255);
   StagedActor_FillGridAttributeRectangle(2, column + 1, row, 1, 1, 0);

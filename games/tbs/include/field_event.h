@@ -154,7 +154,7 @@ static inline void Actor_SetActionScript(s32 actor, const s32 *script) {
   Engine_ActorEnableActionCallback(actor, (s32)script);
 }
 
-/// Run a script, waiting at most 300 frames for its final command.
+/// Runs a script, waiting at most 300 frames for its final command.
 static inline void Actor_RunActionScriptAndWait(s32 actor, const s32 *script) {
   Object_SetActionCallbackAndRefreshById(actor, (s32)script);
 }
@@ -274,7 +274,7 @@ static inline void Map_CopyCellAttributes(s32 srcX, s32 srcY, s32 width,
   Engine_MapCopyCellAttributes(srcX, srcY, width, height, destX, destY);
 }
 
-/// Set shake amplitudes in fixed-point pixels and the per-frame decay factor.
+/// Sets shake amplitudes in fixed-point pixels and the per-frame decay factor.
 /// A negative argument keeps that component unchanged; Q16_ONE keeps the shake.
 static inline void Map_SetShake(s32 horizontal, s32 vertical, s32 decay) {
   Engine_WorkSetValuesIfNonNegative(horizontal, vertical, decay);

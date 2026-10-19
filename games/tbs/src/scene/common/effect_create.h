@@ -4,7 +4,7 @@
 // Twenty-three scenes, most of those that spawn effects (effect_spawn.h): two
 // ways to place a still effect object of a given type at a 16.16 position.
 
-/// Set the actor's sprite priority (0 in front of the backgrounds, 3 behind).
+/// Sets the actor's sprite priority (0 in front of the backgrounds, 3 behind).
 static void SetEffectRecordMode(struct FieldActor *work, s32 mode) {
   work->sprite->image.priority = mode;
 }

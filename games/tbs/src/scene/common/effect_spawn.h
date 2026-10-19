@@ -9,7 +9,7 @@
 // a velocity, its script one of gEffectScripts and its options chosen by the
 // EFFECT_USE_ flags.
 
-/// Integrate linear motion, scale changes and rotation once per effect frame.
+/// Integrates linear motion, scale changes and rotation once per effect frame.
 void BattleFx_UpdateObjectMotionScaleAndLinkedAngle(union FieldObject *object) {
   object->effect.x += object->effect.velocity.x;
   object->effect.y += object->effect.velocity.y;
@@ -30,7 +30,7 @@ enum {
   EFFECT_SCRIPT_REPEAT_COUNT = 3
 };
 
-/// Start with linear motion and the leader's draw order; options can override
+/// Starts with linear motion and the leader's draw order; options can override
 /// it.
 static inline void Effect_InitializeMotion(struct FieldEffect *effect,
                                            struct AnimationObject *sprite,

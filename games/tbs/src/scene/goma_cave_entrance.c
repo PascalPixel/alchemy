@@ -95,7 +95,7 @@ struct Item_387 {
   u8 equippable;
 };
 
-/// Show the next message over the speaker, then pause.
+/// Shows the next message over the speaker, then pauses.
 static void GomaCaveEntrance_SayThenWait(s32 actorId, s32 frames) {
   MESSAGE_PUT(actorId, 0);
   WAIT(frames);
@@ -195,7 +195,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gGomaCaveEntranceEvents;
 }
 
-/// Put the stump and pillars where the party left them, and the stump's ivy
+/// Puts the stump and pillars where the party left them, and the stump's ivy
 /// away once Ivan has blown it off.
 s32 Scene_Initialize(void) {
   struct FieldActor *movedObject;
@@ -568,7 +568,7 @@ static void GomaCaveEntrance_LeapStump(s32 id) {
 // Shared inventory equipment code stays at its native overlay position.
 #include "common/item_equip.h"
 
-/// Give Ivan the Shaman's Rod and equip it. With his items full, he drops
+/// Gives Ivan the Shaman's Rod and equip it. With his items full, he drops
 /// another to make room; later patches stop dropping items whose byte 3 is 8.
 static void GomaCaveEntrance_GiveShamansRod(void) {
   struct Member_387 *member;

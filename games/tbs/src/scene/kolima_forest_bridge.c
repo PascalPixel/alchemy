@@ -1013,13 +1013,13 @@ static void KolimaForestBridge_WitnessForestCurse(void) {
   Engine_EventEnd();
 }
 
-/// Show the next line, then leave time for the next beat.
+/// Shows the next line, then leaves time for the next beat.
 static void KolimaForestBridge_ShowMessageAndWait(s32 speaker, s32 frames) {
   Engine_EventShowMessage(speaker, 0);
   Engine_EventWait(frames);
 }
 
-/// Turn an actor at once, then leave time for the next beat.
+/// Turns an actor at once, then leaves time for the next beat.
 static void KolimaForestBridge_FaceActorAndWait(s32 actorId, s32 facing,
                                                 s32 waitFrames) {
   Engine_ActorFaceDirection(actorId, facing, 0);

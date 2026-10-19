@@ -30,7 +30,7 @@
 // put back at the heart. Touch trigger 31 takes the lights away, and Retreat
 // removes the column.
 
-/// Raise the spark while its scale follows a half-sine pulse.
+/// Raises the spark while its scale follows a half-sine pulse.
 static s32
 SceneEffect_AdvanceAnchoredRiseFrame(struct ScriptInterpreter *interpreter) {
   struct FieldActor *effect = (struct FieldActor *)interpreter;
@@ -51,7 +51,7 @@ SceneEffect_AdvanceAnchoredRiseFrame(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Grow the moving light over the first sixteen script frames.
+/// Grows the moving light over the first sixteen script frames.
 static s32 OverlayObject_RampWords24And28Over16Frames(
     struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -66,7 +66,7 @@ static s32 OverlayObject_RampWords24And28Over16Frames(
   return 1;
 }
 
-/// Expand the released light before its script removes it.
+/// Expands the released light before its script removes it.
 static s32
 OverlayObject_AdvanceScaleCounter(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -81,7 +81,7 @@ OverlayObject_AdvanceScaleCounter(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Follow the linked actor and alternate the light's animation parameter.
+/// Follows the linked actor and alternates the light's animation parameter.
 static s32
 MercuryLighthouse_FollowLeader(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -145,7 +145,7 @@ MercuryLighthouse_FollowLeader(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Place the two spark animations on the selected actor.
+/// Places the two spark animations on the selected actor.
 static void MercuryLighthouse_SpawnSparkPair(void) {
   struct FieldActor *point;
   struct FieldActor *spark;

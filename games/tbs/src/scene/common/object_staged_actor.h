@@ -41,7 +41,7 @@ extern s32 gStagedActor_FootprintBounds[];
 // Shared source is included here in ROM order.
 #include "object_distance.h"
 
-/// Return the placed actor on the cell of the 16.16 position and at its height
+/// Returns the placed actor on the cell of the 16.16 position and at its height
 /// (in whole pixels), or 0. origin is not read.
 static struct StagedActor *StagedActor_FindAtTile(s32 *position,
                                                   struct StagedActor *origin) {
@@ -139,7 +139,7 @@ static void StagedActor_AdvancePair(void) {
   Object_SetMode((struct FieldActor *)lead, 1);
 }
 
-/// Set the collision code of a width by height rectangle of cells, from cell
+/// Sets the collision code of a width by height rectangle of cells, from cell
 /// (x, z), to value, on map layer 0 to 2, or (3 and up) in gMapCellBuffer.
 static s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
                                                   u32 width, u32 height,
@@ -213,7 +213,7 @@ static s32 StagedActor_StopBlockedMotion(struct StagedActor *actor) {
   return 0;
 }
 
-/// Return the large thing whose footprint covers the cell ahead of the leader
+/// Returns the large thing whose footprint covers the cell ahead of the leader
 /// (the leader not standing in line with its first column or row), with the
 /// leader's direction, its actor number and its footprint; or NULL.
 static u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot,
@@ -268,7 +268,7 @@ static u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot,
   return NULL;
 }
 
-/// Find where the large thing ahead of the leader would roll to: step its
+/// Finds where the large thing ahead of the leader would roll to: step its
 /// footprint on, a cell at a time the way the leader faces, until a cell of it
 /// meets something (a collision result of 2). Fills probe with the thing, its
 /// footprint and that position; returns 0 when there is no thing or it cannot
@@ -362,7 +362,7 @@ found:
   return 1;
 }
 
-/// Roll the large thing to the position probe found: the leader pushes
+/// Rolls the large thing to the position probe found: the leader pushes
 /// (animation 8), the thing rolls (mode 3 or 2 by the direction) with SE_239
 /// while the leader follows half a cell, and it stops with SE_288 and SE_213.
 /// Its cells are blocked (collision 255) at its new place, through the map's

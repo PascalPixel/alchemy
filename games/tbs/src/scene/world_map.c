@@ -151,7 +151,7 @@ static void Event_MeetHail(void) {
   }
 }
 
-/// Release the spark after its initial timer step.
+/// Releases the spark after its initial timer step.
 static void WorldMap_ReleaseSparkAfterDelay(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   if (actor->timer <= 0) {
@@ -161,7 +161,7 @@ static void WorldMap_ReleaseSparkAfterDelay(union FieldObject *fieldObject) {
   }
 }
 
-/// Pulse the orb's scale and emit short-lived sparks.
+/// Pulses the orb's scale and emits short-lived sparks.
 static void WorldMap_PulseOrbAndSpawnSparks(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   struct FieldActor *spark;
@@ -193,7 +193,7 @@ static void WorldMap_PulseOrbAndSpawnSparks(union FieldObject *fieldObject) {
   spark->update = WorldMap_ReleaseSparkAfterDelay;
 }
 
-/// Cycle the marker's palette and orbit it around its map position.
+/// Cycles the marker's palette and orbits it around its map position.
 static void WorldMap_UpdateBobbingMarker(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   s16 *angle;
@@ -214,7 +214,7 @@ static void WorldMap_UpdateBobbingMarker(union FieldObject *fieldObject) {
   }
 }
 
-/// Animate the first Djinni until it has met the party.
+/// Animates the first Djinni until it has met the party.
 static s32
 WorldMap_InitializeFirstDjinni(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -233,16 +233,16 @@ WorldMap_InitializeFirstDjinni(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-/// Return the world-map entrances.
+/// Returns the world-map entrances.
 struct SceneEntrance *WorldMap_GetEntrances(void) { return gWorldMapEntrances; }
 
 /// The world map has no additional region table.
 struct SceneRegion *WorldMap_GetRegions(void) { return NULL; }
 
-/// Return the world-map exits.
+/// Returns the world-map exits.
 u32 *WorldMap_GetExits(void) { return gWorldMapExits; }
 
-/// Align the actor to the map and select its flagged animation mode.
+/// Aligns the actor to the map and selects its flagged animation mode.
 static s32
 WorldMap_ApplyMapRotationAndMode(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -253,7 +253,7 @@ WorldMap_ApplyMapRotationAndMode(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Align the actor's sprite rotation to the map.
+/// Aligns the actor's sprite rotation to the map.
 static s32 WorldMap_ApplyMapRotation(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   struct MapRenderWork *work = gMapWork[0];
@@ -264,7 +264,7 @@ static s32 WorldMap_ApplyMapRotation(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Enable the actor's collision and align its sprite to the map.
+/// Enables the actor's collision and aligns its sprite to the map.
 static s32
 WorldMap_ApplyMapRotationAndCollision(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -276,7 +276,7 @@ WorldMap_ApplyMapRotationAndCollision(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Reset the map marker after the corresponding story progress.
+/// Resets the map marker after the corresponding story progress.
 static s32
 WorldMap_InitializeProgressMarker(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -291,7 +291,7 @@ WorldMap_InitializeProgressMarker(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-/// Blink a visible actor on alternating frames.
+/// Blinks a visible actor on alternating frames.
 static s32 WorldMap_BlinkActorSprite(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   if ((actor->spriteStorageKind & 1) && (gFrameCount & 1))
@@ -299,7 +299,7 @@ static s32 WorldMap_BlinkActorSprite(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Select the actors required by the current arrival event.
+/// Selects the actors required by the current arrival event.
 struct ScenePlacement *WorldMap_GetPlacements(void) {
   switch (gGameState.entrance) {
   case 49:
@@ -338,7 +338,7 @@ struct ScenePlacement *WorldMap_GetPlacements(void) {
   return gWorldMapPlacements;
 }
 
-/// Choose a passage exit from the side of the actor the leader approaches.
+/// Chooses a passage exit from the side of the actor the leader approaches.
 static void WorldMap_SelectExitByX(s32 trigger, s32 exitBefore, s32 exitAfter) {
   struct EventWork *work;
   struct FieldActor *subject;
@@ -355,7 +355,7 @@ static void WorldMap_SelectExitByX(s32 trigger, s32 exitBefore, s32 exitAfter) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
 }
 
-/// Choose a passage exit from the leader's north-south approach.
+/// Chooses a passage exit from the leader's north-south approach.
 static void WorldMap_SelectExitByZ(s32 trigger, s32 exitBefore, s32 exitAfter) {
   struct EventWork *work;
   struct FieldActor *subject;
@@ -399,10 +399,10 @@ static void Event_PassThroughFourthNorthSouthPassage(void) {
   WorldMap_SelectExitByZ(0x7D, 0x3B, 0x1E);
 }
 
-/// Return the world-map interaction table.
+/// Returns the world-map interaction table.
 struct SceneEvent *WorldMap_GetEvents(void) { return gWorldMapEvents; }
 
-/// Cull distant location sprites and detect the leader touching nearby ones.
+/// Culls distant location sprites and detects the leader touching nearby ones.
 static void WorldMap_UpdateLocationContacts(void) {
   struct FieldActor *leader;
   struct EventWork *work;
@@ -478,7 +478,7 @@ static void Event_LeaveEastward(void) {
   Engine_EventRequestExit(74);
 }
 
-/// Restore map state and run the scene selected by the arrival entrance.
+/// Restores map state and runs the scene selected by the arrival entrance.
 s32 WorldMap_Initialize(void) {
   struct GameState *state = &gGameState;
   s16 *entrance = &state->entrance;
@@ -662,7 +662,7 @@ static void WorldMap_BoardBunzasWagon(void) {
   Engine_EventEnd();
 }
 
-/// Stage the travelers' departure and their transfer to the next scene.
+/// Stages the travelers' departure and their transfer to the next scene.
 static void WorldMap_DepartWithTravelers(void) {
   struct FieldActor *actor;
   struct FieldActor *spriteActor;
@@ -928,13 +928,13 @@ static void WorldMap_DepartWithTravelers(void) {
   Engine_EventEnd();
 }
 
-/// Move to the next camera-shake point and hold it for four frames.
+/// Moves to the next camera-shake point and holds it for four frames.
 static inline void WorldMap_MoveShakeCamera(s32 x, s32 z) {
   Camera_MoveTo(x, -1, z, 1);
   Engine_TaskWait(4);
 }
 
-/// Shake the camera around the departure point.
+/// Shakes the camera around the departure point.
 static void WorldMap_ShakeTransferStartCamera(void) {
   WorldMap_MoveShakeCamera(PIXELS(5644), PIXELS(1784));
   WorldMap_MoveShakeCamera(PIXELS(5636), PIXELS(1788));
@@ -950,7 +950,7 @@ static void WorldMap_ShakeTransferStartCamera(void) {
   WorldMap_MoveShakeCamera(PIXELS(5640), PIXELS(1784));
 }
 
-/// Shake the camera around the landing point.
+/// Shakes the camera around the landing point.
 static void WorldMap_ShakeTransferLandingCamera(void) {
   WorldMap_MoveShakeCamera(PIXELS(5612), PIXELS(1736));
   WorldMap_MoveShakeCamera(PIXELS(5604), PIXELS(1740));
@@ -966,7 +966,7 @@ static void WorldMap_ShakeTransferLandingCamera(void) {
   WorldMap_MoveShakeCamera(PIXELS(5608), PIXELS(1736));
 }
 
-/// Keep the transferred actor above the guide and trigger its landing once.
+/// Keeps the transferred actor above the guide and triggers its landing once.
 static void WorldMap_UpdateTransferredActorLanding(void) {
   struct FieldActor *actor;
   struct FieldActor *guide;
@@ -986,7 +986,7 @@ static void WorldMap_UpdateTransferredActorLanding(void) {
   }
 }
 
-/// Stage the next leg of travel and leave through exit 102.
+/// Stages the next leg of travel and leaves through exit 102.
 static void WorldMap_TransferToExit102(void) {
   struct FieldActor *actor;
 
@@ -1008,7 +1008,7 @@ static void WorldMap_TransferToExit102(void) {
   Engine_EventEnd();
 }
 
-/// Stage the next leg of travel and leave through exit 103.
+/// Stages the next leg of travel and leaves through exit 103.
 static void WorldMap_TransferToExit103(void) {
   struct FieldActor *actor;
 
@@ -1036,7 +1036,7 @@ static void WorldMap_TransferToExit103(void) {
   Engine_EventEnd();
 }
 
-/// Stage the next leg of travel and leave through exit 104.
+/// Stages the next leg of travel and leaves through exit 104.
 static void WorldMap_TransferToExit104(void) {
   struct FieldActor *actor;
 
@@ -1064,7 +1064,7 @@ static void WorldMap_TransferToExit104(void) {
   Engine_EventEnd();
 }
 
-/// Stage the travelers' arrival in the ship interior.
+/// Stages the travelers' arrival in the ship interior.
 static void WorldMap_TransferToTolbiShipInteriors(void) {
   struct FieldActor *actor;
 
@@ -1092,7 +1092,7 @@ static void WorldMap_TransferToTolbiShipInteriors(void) {
   Engine_EventEnd();
 }
 
-/// Stage the next leg of travel and leave through exit 106.
+/// Stages the next leg of travel and leaves through exit 106.
 static void WorldMap_TransferToExit106(void) {
   struct FieldActor *actor;
 
@@ -1124,7 +1124,7 @@ static void WorldMap_TransferToExit106(void) {
   Engine_EventEnd();
 }
 
-/// Finish the journey and restore the leader's movement.
+/// Finishes the journey and restores the leader's movement.
 static void WorldMap_CompleteTransfer(void) {
   struct FieldActor *actor;
 
@@ -1149,7 +1149,7 @@ static void WorldMap_CompleteTransfer(void) {
   Engine_EventEnd();
 }
 
-/// Demonstrate setting a Djinni and placing it on standby.
+/// Demonstrates setting a Djinni and placing it on standby.
 static void WorldMap_ShowDjinnTutorial(void) {
   Battle_ClearObjectFlag5bWhenMode3();
   BattleFx_ScheduleRatioTransition(Q16_ONE, 6);
@@ -1386,7 +1386,7 @@ static void Event_MeetFlint(void) {
 
 s32 gWorldMapTriggerActor;
 
-/// Bring the carriage to a stop and let Isaac disembark.
+/// Brings the carriage to a stop and lets Isaac disembark.
 static void WorldMap_DisembarkCarriage(void) {
   struct FieldActor *actor;
 
@@ -1445,7 +1445,7 @@ static void WorldMap_DisembarkCarriage(void) {
   Engine_EventEnd();
 }
 
-/// Introduce the Black Orb and prompt Isaac to use it on the ship.
+/// Introduces the Black Orb and prompt Isaac to use it on the ship.
 static void WorldMap_RunBlackOrbScene(void) {
   struct FieldActor *leader;
 
@@ -1525,7 +1525,7 @@ static void WorldMap_RunBlackOrbScene(void) {
   Engine_EventEnd();
 }
 
-/// Enable the site actor and its world-map entrance trigger.
+/// Enables the site actor and its world-map entrance trigger.
 static void WorldMap_ActivateSite138(s32 actor) {
   s32 i;
 
@@ -1550,7 +1550,7 @@ static void WorldMap_ActivateSite138(s32 actor) {
   }
 }
 
-/// Restore the exit trigger after the ship event.
+/// Restores the exit trigger after the ship event.
 static void WorldMap_RestoreExitTrigger(void) {
   s32 i;
 
@@ -1770,7 +1770,7 @@ u16 gWorldMapBlend;
 #define WORLD_MAP_QUEUE_TRANSITION_FRAME(buffer, offset)                       \
   IO_WRITE_QUEUE_PUSH(0x06002000, (u32)((buffer) + (offset)), 0x84000140)
 
-/// Show Jenna and Kraden's closing scene before returning to the title.
+/// Shows Jenna and Kraden's closing scene before returning to the title.
 static void WorldMap_ShowEndingScene(void) {
   PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
   Engine_EventBegin();
@@ -1885,7 +1885,7 @@ static void WorldMap_ShowEndingScene(void) {
   Event_SetDestination((s32)&SceneId_Title, 10);
 }
 
-/// Start the sparkling travel transition and fade out to its destination.
+/// Starts the sparkling travel transition and fades out to its destination.
 static void WorldMap_StartTransitionEffect(void) {
   Engine_EventBegin();
   Engine_AudioPlayCue(SE_141);
@@ -1918,7 +1918,7 @@ static void WorldMap_StartTransitionEffect(void) {
   Engine_EventEnd();
 }
 
-/// Scatter transition particles and jitter the camera.
+/// Scatters transition particles and jitters the camera.
 static void WorldMap_UpdateTransitionEffect(void) {
   u32 x = (u32)Engine_RandomNext() * TRANSITION_EFFECT_WIDTH >> 16;
   u32 z = (u32)Engine_RandomNext() * TRANSITION_EFFECT_DEPTH >> 16;
@@ -1957,7 +1957,7 @@ static void WorldMap_UpdateTransitionEffect(void) {
   }
 }
 
-/// Move the arrival actor along the staged route to its exit.
+/// Moves the arrival actor along the staged route to its exit.
 static void WorldMap_MoveActorEightToExit(void) {
 
   struct FieldActor *actor;
@@ -1996,7 +1996,7 @@ static void WorldMap_MoveActorEightToExit(void) {
   Engine_EventRequestExit(110);
 }
 
-/// Subtract the opposing pair's rewards from the first pair's total.
+/// Subtracts the opposing pair's rewards from the first pair's total.
 static s32 WorldMap_ComputeOpposingRewardTotals(void) {
   s32 positiveTotal = WorldMap_GetSelectedReward(0);
   s32 negativeTotal;
@@ -2007,7 +2007,7 @@ static s32 WorldMap_ComputeOpposingRewardTotals(void) {
   return positiveTotal - negativeTotal;
 }
 
-/// Look up the reward selected by the first set progress flag.
+/// Looks up the reward selected by the first set progress flag.
 static s32 WorldMap_GetSelectedReward(u32 selection) {
   s32 flagBase = 0;
   u32 offset;
@@ -2033,7 +2033,7 @@ static s32 WorldMap_GetSelectedReward(u32 selection) {
   return 0;
 }
 
-/// Spawn a puff behind the moving actor at staggered intervals.
+/// Spawns a puff behind the moving actor at staggered intervals.
 static void WorldMap_SpawnActorEightPuff(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -2070,7 +2070,7 @@ static void WorldMap_SpawnActorEightPuff(void) {
   Engine_ObjectSetScript(actor, gActorEightPuffScript);
 }
 
-/// Stage the rising actor and its trailing puffs before the next arrival.
+/// Stages the rising actor and its trailing puffs before the next arrival.
 static void WorldMap_RunOpeningRise(void) {
   struct FieldActor *actor;
   struct FieldActor *spriteActor;
@@ -2106,7 +2106,7 @@ static void WorldMap_RunOpeningRise(void) {
   Engine_EventRequestExit(111);
 }
 
-/// Rotate the traveler and count down to the raised travel event.
+/// Rotates the traveler and counts down to the raised travel event.
 static void WorldMap_UpdateAirborneTravelTimer(void) {
 
   struct FieldActor *actor;
@@ -2128,7 +2128,7 @@ static void WorldMap_UpdateAirborneTravelTimer(void) {
   FieldGameFlag_SetByte(FLAG_SCENE_TEMP_F8, progress);
 }
 
-/// Move the selected actor toward the travel marker and start its timer.
+/// Moves the selected actor toward the travel marker and starts its timer.
 static void WorldMap_StartAirborneTravel(s32 targetActor) {
   s32 alreadyTraveling;
   struct FieldActor *actor;
@@ -2218,7 +2218,7 @@ static void Event_FinishAirborneTravel(void) {
   Event_SetDestination((s32)&SceneId_WorldMap, 27);
 }
 
-/// Refresh the transition's blend registers on alternating frames.
+/// Refreshes the transition's blend registers on alternating frames.
 static void WorldMap_UpdateTransitionBlend(void) {
 
   QueueIoWriteDelay2(0x04000050, 0x3f41);
@@ -2229,7 +2229,7 @@ static void WorldMap_UpdateTransitionBlend(void) {
   }
 }
 
-/// Jitter the view around the selected actor during the transition.
+/// Jitters the view around the selected actor during the transition.
 static void WorldMap_JitterTransitionCamera(void) {
 
   struct FieldActor *record;
@@ -2260,14 +2260,14 @@ static void WorldMap_JitterTransitionCamera(void) {
   }
 }
 
-/// Display a transition frame before advancing its animation delay.
+/// Displays a transition frame before advancing its animation delay.
 static inline void WorldMap_ShowTransitionFrame(u8 *buffer, s32 offset,
                                                 s32 frames) {
   WORLD_MAP_QUEUE_TRANSITION_FRAME(buffer, offset);
   Engine_EventWait(frames);
 }
 
-/// Animate the lighthouse transition frames, palette, and camera.
+/// Animates the lighthouse transition frames, palette, and camera.
 static void WorldMap_PlayLighthouseTransition(s32 palette) {
   u8 *buffer = Runtime_BumpAllocateAlternatePool(0x4000);
 
@@ -2332,7 +2332,7 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   Engine_GameFlagSet(0x101);
 }
 
-/// Blink an unused actor and periodically create its linked effects.
+/// Blinks an unused actor and periodically create its linked effects.
 UNUSED static void
 WorldMap_UpdateBlinkingLinkedEffects(struct FieldActor *actor) {
   if ((gFrameCount & 2) != 0) {
@@ -2345,7 +2345,7 @@ WorldMap_UpdateBlinkingLinkedEffects(struct FieldActor *actor) {
   }
 }
 
-/// Cycle an unused actor's palettes and periodically create linked effects.
+/// Cycles an unused actor's palettes and periodically create linked effects.
 UNUSED static void
 WorldMap_UpdateCyclingLinkedEffects(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0) {
@@ -2356,7 +2356,7 @@ WorldMap_UpdateCyclingLinkedEffects(struct FieldActor *actor) {
   }
 }
 
-/// Advance an unused actor's palette on odd frames.
+/// Advances an unused actor's palette on odd frames.
 UNUSED static void WorldMap_CycleActorPalettes(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0) {
     s32 slot = (gFrameCount >> 1) % 6;

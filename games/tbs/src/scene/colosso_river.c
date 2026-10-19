@@ -112,7 +112,7 @@ enum {
 
 // Shared Colosso routines (scene/common/colosso_*.c).
 
-/// Return the course entrance table.
+/// Returns the course entrance table.
 struct SceneEntrance *ColossoRiver_GetEntrances(void) {
   return gColossoRiver_Entrances;
 }
@@ -120,15 +120,15 @@ struct SceneEntrance *ColossoRiver_GetEntrances(void) {
 /// The course has no region table.
 const struct SceneRegion *ColossoRiver_GetRegions(void) { return 0; }
 
-/// Return the course exit table.
+/// Returns the course exit table.
 u32 *ColossoRiver_GetExits(void) { return gColossoRiver_Exits; }
 
-/// Return the course actor placements.
+/// Returns the course actor placements.
 struct ScenePlacement *ColossoRiver_GetPlacements(void) {
   return gColossoRiver_Placements;
 }
 
-/// Advance the bridge animation and its walkable collision cells.
+/// Advances the bridge animation and its walkable collision cells.
 static void ColossoRiver_UpdateBrokenBridge(void) {
   switch ((u32)gColossoRiver_Countdown) {
   case 66:
@@ -158,7 +158,7 @@ static void ColossoRiver_UpdateBrokenBridge(void) {
   gColossoRiver_Countdown--;
 }
 
-/// Stop the bridge task and restore its closed frame.
+/// Stops the bridge task and restores its closed frame.
 static void ColossoRiver_ResetBrokenBridge(void) {
   SceneTask task;
 
@@ -168,13 +168,13 @@ static void ColossoRiver_ResetBrokenBridge(void) {
   task();
 }
 
-/// Start the bridge's repeating opening sequence.
+/// Starts the bridge's repeating opening sequence.
 static void ColossoRiver_StartBrokenBridge(void) {
   gColossoRiver_Countdown = 66;
   FieldScheduler_AddCallback(ColossoRiver_UpdateBrokenBridge, 0xC80);
 }
 
-/// Wait for the crossing window, bounded by one bridge cycle.
+/// Waits for the crossing window, bounded by one bridge cycle.
 static void ColossoRiver_WaitForBridgeOpening(void) {
   s32 i;
 
@@ -271,7 +271,7 @@ static void Event_DousePipe(void) {
   Engine_EventEnd();
 }
 
-/// Move the leader and a course object together between cell centers.
+/// Moves the leader and a course object together between cell centers.
 static void ColossoRiver_MoveActorPairByOffset(s32 actorId, s32 dx, s32 dz) {
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -373,7 +373,7 @@ static void Event_RollLogEastWest(void) {
   Map_CopyCellAttributes(63, 25, 1, 3, column, 9);
 }
 
-/// Run the five frames that show water entering the Pipeworks channel.
+/// Runs the five frames that show water entering the Pipeworks channel.
 static inline void ColossoRiver_AnimatePipeworksWater(void) {
   Map_CopyCells(96, 29, 1, 3, 34, 38);
   Engine_EventWait(3);
@@ -459,7 +459,7 @@ static void Event_PushPipeworksBlock(void) {
   Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
 }
 
-/// Mark the course flag used by this unused event.
+/// Marks the course flag used by this unused event.
 UNUSED static void ColossoRiver_SetCourseFlag(void) { Engine_GameFlagSet(768); }
 
 /// Reaching the arena: the leader takes a prize (the Iron Shield if first, the
@@ -518,7 +518,7 @@ static void Event_PushRockOrCheckAhead(void) {
   }
 }
 
-/// Return the course event table.
+/// Returns the course event table.
 struct SceneEvent *ColossoRiver_GetEvents(void) { return gColossoRiver_Events; }
 
 /// Back from the battle: the two warriors stand in the arena as the result is
@@ -546,7 +546,7 @@ static void ColossoRiver_RestoreMatchResult(s32 result) {
   Engine_EventEnd();
 }
 
-/// Mark actors standing in the course's finish terrain.
+/// Marks actors standing in the course's finish terrain.
 static void ColossoRiver_MarkCourseTerrain(s32 actor) {
   struct FieldActor *courseActor;
   s32 column;
@@ -873,7 +873,7 @@ static void Event_TalkToRockAttendant(s32 scene) {
   }
 }
 
-/// Move a Pipeworks actor with the speed used throughout its demonstration.
+/// Moves a Pipeworks actor with the speed used throughout its demonstration.
 static inline void ColossoRiver_SetPipeHeight(struct FieldActor *actor,
                                               s32 height) {
   actor->motionFlags = 0;
@@ -1051,17 +1051,17 @@ static void Event_TalkToLumberAttendant(s32 scene) {
   Engine_EventEnd();
 }
 
-/// Set the leader's movement speed for the shared Colosso dialogue.
+/// Sets the leader's movement speed for the shared Colosso dialogue.
 static inline void InitializeActorZero(void) {
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
 }
 
-/// Set an attendant's movement speed for the shared Colosso dialogue.
+/// Sets an attendant's movement speed for the shared Colosso dialogue.
 static inline void InitializeSelectedActor(s32 actorId) {
   Engine_ActorSetSpeed(actorId, PIXELS(1), PIXELS(1) / 2);
 }
 
-/// Advance to the next message in the current explanation.
+/// Advances to the next message in the current explanation.
 static __inline__ void AdvanceMessage(s32 amount) {
   gEventWork->message += amount;
 }
@@ -1071,7 +1071,7 @@ static __inline__ void AdvanceMessage(s32 amount) {
 #include "common/item_equip.h"
 #include "common/colosso_task.h"
 
-/// Select a presentation script and reset its playback state.
+/// Selects a presentation script and resets its playback state.
 static void ColossoRiver_SelectPresentationScript(u32 mode, u32 param) {
   const s16 *script;
 
@@ -1203,7 +1203,7 @@ static void ColossoRiver_ShowMatchResult(s32 result) {
 #include "common/colosso_marker.h"
 #include "common/colosso_item_icon.h"
 
-/// Write eight hexadecimal digits and a terminating null.
+/// Writes eight hexadecimal digits and a terminating null.
 UNUSED static void Text_WriteU32AsHex(u8 *buf, u32 value) {
   s32 i;
 
@@ -1217,10 +1217,10 @@ UNUSED static void Text_WriteU32AsHex(u8 *buf, u32 value) {
   }
 }
 
-/// Provide the empty callback retained by the original event sequence.
+/// Provides the empty callback retained by the original event sequence.
 static void ColossoRiver_NoOp(void) {}
 
-/// Mark the shared stage state ready for the waiting event.
+/// Marks the shared stage state ready for the waiting event.
 UNUSED static void ColossoRiver_MarkStageReady(void) {
   s16 *ready = (s16 *)gSceneState;
   u16 nine = 9;
@@ -1228,7 +1228,7 @@ UNUSED static void ColossoRiver_MarkStageReady(void) {
   *ready = nine;
 }
 
-/// Wait until the stage's setup task reports readiness.
+/// Waits until the stage's setup task reports readiness.
 static void ColossoRiver_WaitForStageReady(void) {
   s16 *ready = (s16 *)gSceneState;
 
@@ -1273,7 +1273,7 @@ static void ColossoRiver_SpawnRandomEffect(union FieldObject *fieldObject) {
   }
 }
 
-/// Present the collected item above its collector and signal completion.
+/// Presents the collected item above its collector and signal completion.
 static s32
 ColossoRiver_PlaceFinishItemAboveActor(struct ScriptInterpreter *interpreter) {
   struct FieldActor *collector = (struct FieldActor *)interpreter;
@@ -1288,7 +1288,7 @@ ColossoRiver_PlaceFinishItemAboveActor(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-/// Move to the selected finish item and present it to the party.
+/// Moves to the selected finish item and presents it to the party.
 static s32 ColossoRiver_CollectFinishItem(s32 firstItem, s32 secondItem) {
 
   struct ColossoGaugeWork *work = (struct ColossoGaugeWork *)gColossoWork;
@@ -1362,7 +1362,7 @@ static s32 ColossoRiver_CollectFinishItem(s32 firstItem, s32 secondItem) {
 #include "common/colosso_scene_state.h"
 #include "common/object_findslot.h"
 
-/// Check the next cell and push its object one step if clear.
+/// Checks the next cell and pushes its object one step if clear.
 static void ColossoRiver_PushObjectAhead(void) {
 
   struct FieldActor *subject;

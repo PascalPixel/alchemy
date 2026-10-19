@@ -41,13 +41,13 @@ static void HammetPalace_FacePartyOutward(s32 waitFrames);
 static void HammetPalace_FacePartyNorth(s32 waitFrames);
 static void HammetPalace_HammetsHomecoming(void);
 
-/// Advance within the current conversation's consecutive message block.
+/// Advances within the current conversation's consecutive message block.
 static __inline__ void HammetPalace_AdvanceMessage(s32 amount) {
 
   gEventWork->message += amount;
 }
 
-/// Select the palace's entrances, or the fallback table for this overlay.
+/// Selects the palace's entrances, or the fallback table for this overlay.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -61,7 +61,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gHammetPalaceExits; }
 
-/// Apply placement clipping before returning the palace's actor rows.
+/// Applies placement clipping before returning the palace's actor rows.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_HammetPalace) {
     FieldScene_PrepareActors(gHammetPalacePlacements);
@@ -70,7 +70,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gHammetPalacePlacementsOther;
 }
 
-/// Select the palace's dialogue and doorway handlers.
+/// Selects the palace's dialogue and doorway handlers.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -150,7 +150,8 @@ static void Event_LeaveThroughDoor(void) {
   EV_END();
 }
 
-/// Open the palace with its window transition and run entrance-specific setup.
+/// Opens the palace with its window transition and runs entrance-specific
+/// setup.
 s32 Scene_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   if (gGameState.scene == (u32)&SceneId_HammetPalace) {
@@ -159,7 +160,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Set up the room the party enters by: Layana and Hammet in the audience
+/// Sets up the room the party enters by: Layana and Hammet in the audience
 /// hall (entrance 9), the opened door (10 and 11), or Ivan's report (20).
 static void HammetPalace_SetUpEntrance(void) {
   struct FieldActor *actor;
@@ -685,7 +686,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   EV_END();
 }
 
-/// Turn the party outward from the group, then optionally wait.
+/// Turns the party outward from the group, then optionally wait.
 static void HammetPalace_FacePartyOutward(s32 waitFrames) {
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   OBJ_DIR(GARET, FACING_NORTHEAST, 0);
@@ -696,7 +697,7 @@ static void HammetPalace_FacePartyOutward(s32 waitFrames) {
   }
 }
 
-/// Turn all four party members north toward Layana, then optionally wait.
+/// Turns all four party members north toward Layana, then optionally wait.
 static void HammetPalace_FacePartyNorth(s32 waitFrames) {
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   OBJ_DIR(GARET, FACING_NORTH, 0);

@@ -4,7 +4,7 @@
 #include "types.h"
 #include "field_obj.h"
 
-/// Stop the actor (paused, mode 1) when the target is nearer than range pixels
+/// Stops the actor (paused, mode 1) when the target is nearer than range pixels
 /// and lies ahead of it, within a sixteenth of a turn either side of its
 /// heading; force stops it regardless. Returns 1 when it stopped. A target out
 /// of range sets it walking again (mode 2).

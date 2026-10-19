@@ -55,7 +55,7 @@ static void CrossboneIsle_DrawBlockPuzzleFootprints(void);
 /// Unused callback with no effect.
 UNUSED static void CrossboneIsle_UnusedCallback(void) {}
 
-/// Select the entrance list for the current island room.
+/// Selects the entrance list for the current island room.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -80,10 +80,10 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 /// These rooms have no region table.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-/// Return the connections between island rooms.
+/// Returns the connections between island rooms.
 const u32 *Scene_GetExits(void) { return gCrossboneIsleExits; }
 
-/// Choose the actors for the current room.
+/// Chooses the actors for the current room.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -103,7 +103,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 // Shared source is included here in ROM order.
 #include "common/effect_advance.h"
 
-/// Emit a ring of effects around a moved block.
+/// Emits a ring of effects around a moved block.
 static void CrossboneIsle_SpawnBlockMovedBurst(s32 objectId) {
   struct FieldActor *actor;
   struct Vector3 velocity;
@@ -140,7 +140,7 @@ static void Event_FightFinalGuards(void) {
   EV_END();
 }
 
-/// Choose the interactions for the current room.
+/// Chooses the interactions for the current room.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -172,7 +172,7 @@ static void Event_CatchNut(void) {
   EV_END();
 }
 
-/// Restore puzzle changes and handle returning from a guard battle.
+/// Restores puzzle changes and handles returning from a guard battle.
 s32 Scene_Initialize(void) {
   struct FieldActor *actor;
   s32 scene;
@@ -555,7 +555,7 @@ static void Event_PushFirstRoomBlock(void) {
   EV_END();
 }
 
-/// Move the selected actor and puzzle block by the same pixel offset.
+/// Moves the selected actor and puzzle block by the same pixel offset.
 static void CrossboneIsle_MoveSelectedActorAndBlock(s32 actorId, s32 xOffset,
                                                     s32 zOffset) {
   struct FieldActor *selectedActor;
@@ -601,7 +601,7 @@ static void CrossboneIsle_MoveSelectedActorAndBlock(s32 actorId, s32 xOffset,
   EV_END();
 }
 
-/// Draw the three-cell horizontal footprint centered on this block.
+/// Draws the three-cell horizontal footprint centered on this block.
 static void CrossboneIsle_DrawHorizontalBlockFootprint(s32 actorId,
                                                        s32 sourceColumn,
                                                        s32 sourceRow,
@@ -624,7 +624,7 @@ static void CrossboneIsle_DrawHorizontalBlockFootprint(s32 actorId,
   }
 }
 
-/// Draw the three-cell vertical footprint centered on this block.
+/// Draws the three-cell vertical footprint centered on this block.
 static void CrossboneIsle_DrawVerticalBlockFootprint(s32 actorId,
                                                      s32 sourceColumn,
                                                      s32 sourceRow,
@@ -647,13 +647,13 @@ static void CrossboneIsle_DrawVerticalBlockFootprint(s32 actorId,
   }
 }
 
-/// Run the two animation changes used when touching a puzzle block.
+/// Runs the two animation changes used when touching a puzzle block.
 static void CrossboneIsle_AnimateTouchedBlock(int actorId) {
   OBJ_MODE(actorId, 1);
   OBJ_MODE(actorId, 2);
 }
 
-/// Draw all twelve block footprints in the sliding-block room.
+/// Draws all twelve block footprints in the sliding-block room.
 static void CrossboneIsle_DrawBlockPuzzleFootprints(void) {
   CrossboneIsle_DrawHorizontalBlockFootprint(8, 17, 30, 21);
   CrossboneIsle_DrawHorizontalBlockFootprint(10, 17, 31, 22);
@@ -705,7 +705,7 @@ static void Event_StepOnBlock14(void) { CrossboneIsle_AnimateTouchedBlock(14); }
 /// Stepping onto block 16: its animation plays from the start.
 static void Event_StepOnBlock16(void) { CrossboneIsle_AnimateTouchedBlock(16); }
 
-/// Test a step, then move the leader with the block-pushing animation.
+/// Tests a step, then moves the leader with the block-pushing animation.
 static s32 CrossboneIsle_TryHop(struct FieldActor *actor,
                                 struct FieldPosition *requested) {
   u8 *motionFlags = &actor->motionFlags;
@@ -853,8 +853,8 @@ static void Event_SlideBlock8North(void) {
   Map_CopyCellAttributes(0, 0, 3, 1, actorX - 1, actorZ);
 }
 
-/// Copy a horizontal block's old footprint to its new row, then clear the old
-/// row.
+/// Copies a horizontal block's old footprint to its new row, then clears the
+/// old row.
 static inline void
 CrossboneIsle_RedrawHorizontalBlockRoute(s32 actorId, s32 column, s32 row) {
   Engine_TaskWait(2);
@@ -868,8 +868,8 @@ CrossboneIsle_RedrawHorizontalBlockRoute(s32 actorId, s32 column, s32 row) {
   Map_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
-/// Copy a vertical block's old footprint to its new column, then clear the old
-/// one.
+/// Copies a vertical block's old footprint to its new column, then clears the
+/// old one.
 static inline void CrossboneIsle_RedrawVerticalBlockRoute(s32 actorId,
                                                           s32 column, s32 row) {
   Engine_TaskWait(2);

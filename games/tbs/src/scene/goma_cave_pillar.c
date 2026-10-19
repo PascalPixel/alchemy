@@ -156,7 +156,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gGomaCavePillar_Placements;
 }
 
-/// Copy the map cells for the west pillar on either side of its track.
+/// Copies the map cells for the west pillar on either side of its track.
 static inline void GomaCavePillar_CopyWestPillarCells(s32 sourceColumn) {
   Map_CopyCellAttributes(sourceColumn, 40, 6, 3, 18, 6);
 }
@@ -491,7 +491,7 @@ static void Event_WitnessCheersForgeCaught(void) {
   EV_END();
 }
 
-/// Put the pillars and the stump where the party left them. Entrance 99 shows
+/// Puts the pillars and the stump where the party left them. Entrance 99 shows
 /// the stump falling again; after a Djinni battle, the man's reaction starts.
 s32 Scene_Initialize(void) {
   struct FieldActor *actor;

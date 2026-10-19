@@ -51,7 +51,7 @@ enum { ACTOR_FEH = ACTOR_FIRST_PLACED, ACTOR_FEIZHI, ACTOR_HSU };
 #include "item_ids.h"
 #include "objcmd.h"
 
-/// Return arrival positions for the homes, shops and recovery room.
+/// Returns arrival positions for the homes, shops and recovery room.
 const struct SceneEntrance *XianInteriors_GetEntrances(void) {
   return gXianInteriors_Entrances;
 }
@@ -59,7 +59,7 @@ const struct SceneEntrance *XianInteriors_GetEntrances(void) {
 /// These interiors have no region table.
 const struct SceneRegion *XianInteriors_GetRegions(void) { return NULL; }
 
-/// Return the connections to Xian and the surrounding rooms.
+/// Returns the connections to Xian and the surrounding rooms.
 const u32 *XianInteriors_GetExits(void) { return gXianInteriors_Exits; }
 
 /// The room behind the school places only Master Feh, Feizhi and Hsu.
@@ -71,13 +71,13 @@ const struct ScenePlacement *XianInteriors_GetPlacements(void) {
   return gXianInteriors_Placements;
 }
 
-/// Read the leader's facing before a conversation changes actor state.
+/// Reads the leader's facing before a conversation changes actor state.
 static inline u32 XianInteriors_GetLeaderFacing(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   return leader->facing;
 }
 
-/// Open the weapon shop from its counter side, or discuss martial arts.
+/// Opens the weapon shop from its counter side, or discuss martial arts.
 static void XianInteriors_TalkToWeaponMerchant(void) {
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
@@ -96,7 +96,7 @@ static void XianInteriors_TalkToWeaponMerchant(void) {
   Engine_EventEnd();
 }
 
-/// Open the armor shop from its counter side, or discuss armor and kung fu.
+/// Opens the armor shop from its counter side, or discuss armor and kung fu.
 static void XianInteriors_TalkToArmorMerchant(void) {
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
@@ -115,7 +115,7 @@ static void XianInteriors_TalkToArmorMerchant(void) {
   Engine_EventEnd();
 }
 
-/// Open the item shop or ask whether the party will cross the desert.
+/// Opens the item shop or asks whether the party will cross the desert.
 static void XianInteriors_TalkToItemMerchant(void) {
 
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
@@ -134,7 +134,7 @@ static void XianInteriors_TalkToItemMerchant(void) {
   Engine_EventEnd();
 }
 
-/// Offer a room from the counter side, or discuss travel through Xian.
+/// Offers a room from the counter side, or discuss travel through Xian.
 static void XianInteriors_TalkToInnkeeper(void) {
 
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
@@ -153,7 +153,7 @@ static void XianInteriors_TalkToInnkeeper(void) {
   Engine_EventEnd();
 }
 
-/// Ask the resident whether something is wrong on the Silk Road.
+/// Asks the resident whether something is wrong on the Silk Road.
 static void XianInteriors_AskAboutSilkRoad(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianSomethingWrongOnSilkRoad);
@@ -161,7 +161,7 @@ static void XianInteriors_AskAboutSilkRoad(void) {
   Engine_EventEnd();
 }
 
-/// Ask what the party knows about the monsters in Altin.
+/// Asks what the party knows about the monsters in Altin.
 static void XianInteriors_AskAboutAltinMonsters(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianDidMonstersInAltinSpit);

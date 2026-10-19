@@ -9,7 +9,8 @@
 // WorldMap_CreateLinkedEffects attaches to a glowing actor, each an update
 // hook that lives 32 frames.
 
-/// Rise beside the linked actor, expanding and shrinking over half a sine wave.
+/// Rises beside the linked actor, expanding and shrinking over half a sine
+/// wave.
 static void Effect_AnimateVerticalPositive(union FieldObject *object) {
   struct FieldActor *self = &object->actor;
   struct FieldActor *anchor;
@@ -33,7 +34,7 @@ static void Effect_AnimateVerticalPositive(union FieldObject *object) {
   self->z.fixed = anchor->z.fixed + (Q16_ONE - amplitude) * 5 + PIXELS(8);
 }
 
-/// Mirror the rising particle vertically and pass behind the linked actor.
+/// Mirrors the rising particle vertically and passes behind the linked actor.
 static void Effect_AnimateVerticalNegative(union FieldObject *object) {
   struct FieldActor *self = &object->actor;
   struct FieldActor *anchor;

@@ -57,7 +57,7 @@ static void GondowanCave_RunSpinningLeap(s32 actorId);
 #include "item_ids.h"
 #include "objcmd.h"
 
-/// Select the entrance bounds for the current cave section.
+/// Selects the entrance bounds for the current cave section.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -283,7 +283,8 @@ static void Event_PushSecondObject(void) {
   Event_MoveSecondObject();
 }
 
-/// Hide the second object and show the one that stands in for it in its place.
+/// Hides the second object and shows the one that stands in for it in its
+/// place.
 static inline void GondowanCave_PlaceMovedSecondObject(s32 animation) {
   OBJ_POS_SET(SECOND_OBJECT, 0, 0);
   OBJ_POS_SET(SECOND_OBJECT_MOVED, 696, 288);
@@ -310,12 +311,12 @@ static void Event_MoveSecondObject(void) {
 /// Unused empty actor callback retained with the overlay's routines.
 static UNUSED void GondowanCave_UnusedActorCallback(void) {}
 
-/// Rotate the sprite during the airborne part of the leap.
+/// Rotates the sprite during the airborne part of the leap.
 static void GondowanCave_RotateLeapingObject(union FieldObject *fieldObject) {
   fieldObject->actor.sprite->rotation -= 0x400;
 }
 
-/// Wait at most forty frames for the actor to descend to the height limit.
+/// Waits at most forty frames for the actor to descend to the height limit.
 static void GondowanCave_WaitForDescent(struct FieldActor *actor,
                                         s32 heightLimit) {
   s32 framesRemaining = 40;
@@ -433,7 +434,7 @@ s32 gEffectScript2[] = {
     SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
-/// Pack signed pixel steps with X in the upper halfword and Z in the lower.
+/// Packs signed pixel steps with X in the upper halfword and Z in the lower.
 /// Shift the unsigned representation so westward steps remain defined C.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 

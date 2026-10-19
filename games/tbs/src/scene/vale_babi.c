@@ -69,7 +69,7 @@ enum ValeBabiActor {
   ACTOR_INNKEEPER = 13
 };
 
-/// Return the entrances, among them the scenes played on arrival.
+/// Returns the entrances, among them the scenes played on arrival.
 struct SceneEntrance *ValeBabi_GetEntrances(void) {
   return gValeBabi_Entrances;
 }
@@ -85,7 +85,7 @@ u32 *ValeBabi_GetExits(void) {
   return gValeBabi_Exits;
 }
 
-/// Place Babi's scholars, or Vale's villagers as the story has left them.
+/// Places Babi's scholars, or Vale's villagers as the story has left them.
 struct ScenePlacement *ValeBabi_GetPlacements(void) {
   struct ScenePlacement *table;
 
@@ -181,7 +181,7 @@ static void Event_AskWhetherMaskedManWasFelix(void) {
   Engine_EventEnd();
 }
 
-/// Stop storm lightning before fading through the requested exit.
+/// Stops storm lightning before fading through the requested exit.
 static void ValeBabi_CloseScreenAndExit(s32 exitId) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     FieldFx_StopLightning();
@@ -192,67 +192,67 @@ static void ValeBabi_CloseScreenAndExit(s32 exitId) {
   Engine_EventRequestExit(exitId);
 }
 
-/// Play the exit cue before leaving through trigger 1.
+/// Plays the exit cue before leaving through trigger 1.
 static void Event_ExitNorthwestArea(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(1);
 }
 
-/// Play the exit cue before leaving through trigger 2.
+/// Plays the exit cue before leaving through trigger 2.
 static void Event_ExitNorthArea(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(2);
 }
 
-/// Play the exit cue before leaving through trigger 3.
+/// Plays the exit cue before leaving through trigger 3.
 static void Event_ExitNortheastArea(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(3);
 }
 
-/// Play the exit cue before leaving through trigger 4.
+/// Plays the exit cue before leaving through trigger 4.
 static void Event_ExitWestAreaSouth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(4);
 }
 
-/// Play the alternate exit cue before leaving through trigger 5.
+/// Plays the alternate exit cue before leaving through trigger 5.
 static void Event_ExitWestAreaNorth(void) {
   Engine_AudioPlayCue(SE_128);
   ValeBabi_CloseScreenAndExit(5);
 }
 
-/// Play the exit cue before leaving through trigger 6.
+/// Plays the exit cue before leaving through trigger 6.
 static void Event_ExitCenterAreaSouth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(6);
 }
 
-/// Play the alternate exit cue before leaving through trigger 7.
+/// Plays the alternate exit cue before leaving through trigger 7.
 static void Event_ExitCenterAreaNorth(void) {
   Engine_AudioPlayCue(SE_128);
   ValeBabi_CloseScreenAndExit(7);
 }
 
-/// Play the exit cue before leaving through trigger 8.
+/// Plays the exit cue before leaving through trigger 8.
 static void Event_ExitSouthwestArea(void) {
   Engine_AudioPlayCue(SE_129);
   ValeBabi_CloseScreenAndExit(8);
 }
 
-/// Play the exit cue before leaving through trigger 9.
+/// Plays the exit cue before leaving through trigger 9.
 static void Event_ExitSouthAreaWest(void) {
   Engine_AudioPlayCue(SE_129);
   ValeBabi_CloseScreenAndExit(9);
 }
 
-/// Play the exit cue before leaving through trigger 10.
+/// Plays the exit cue before leaving through trigger 10.
 static void Event_ExitSouthAreaSouth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(10);
 }
 
-/// Play the exit cue before leaving through trigger 11.
+/// Plays the exit cue before leaving through trigger 11.
 static void Event_ExitSoutheastArea(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(11);
@@ -476,10 +476,10 @@ static void Event_DoraWakesIsaac(void) {
   Engine_EventRequestExit(20);
 }
 
-/// Select the hardware blend targets for the storm sequence.
+/// Selects the hardware blend targets for the storm sequence.
 static __inline__ void SetBlendTarget(u32 value) { REG_BLDCNT = value; }
 
-/// Set the packed hardware alpha coefficients.
+/// Sets the packed hardware alpha coefficients.
 static __inline__ void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
 
 struct PairWork {
@@ -801,7 +801,7 @@ static void Event_TalkToDora(void) {
   Engine_EventEnd();
 }
 
-/// Restore the room's tiles and collision patch outside the storm sequence.
+/// Restores the room's tiles and collision patch outside the storm sequence.
 static void ValeBabi_RestoreRoomPatch(void) {
   Map_CopyCellsTo(22, 85, 25, 85, 2, 2);
   Map_CopyCellAttributes(25, 15, 2, 2, 25, 25);
@@ -856,7 +856,7 @@ static void Event_ShowMythrilBag(void) {
   Engine_EventRequestExit(22);
 }
 
-/// Flash between two palettes and emit a paired effect every sixteen frames.
+/// Flashes between two palettes and emits a paired effect every sixteen frames.
 UNUSED static void
 ValeBabi_FlashPaletteAndSpawnPair(union FieldObject *object) {
   if ((gFrameCount & 2) != 0) {
@@ -869,7 +869,7 @@ ValeBabi_FlashPaletteAndSpawnPair(union FieldObject *object) {
   }
 }
 
-/// Cycle six palettes on odd frames and periodically emit paired effects.
+/// Cycles six palettes on odd frames and periodically emit paired effects.
 static void ValeBabi_CyclePaletteAndSpawnPair(union FieldObject *object) {
   if ((gFrameCount & 1) != 0) {
     Engine_ObjectSetPartPalettes(&object->actor, (gFrameCount >> 1) % 6);
@@ -879,7 +879,7 @@ static void ValeBabi_CyclePaletteAndSpawnPair(union FieldObject *object) {
   }
 }
 
-/// Advance deterministically through six palettes on odd frames.
+/// Advances deterministically through six palettes on odd frames.
 static void ValeBabi_CyclePaletteOnOddFrames(union FieldObject *object) {
   if ((gFrameCount & 1) != 0) {
     s32 slot = (gFrameCount >> 1) % 6;
@@ -891,7 +891,7 @@ static void ValeBabi_CyclePaletteOnOddFrames(union FieldObject *object) {
 // Shared vertical-effect callbacks precede their paired-effect creator.
 #include "common/effect_vertical.h"
 
-/// Copy the parent's terrain height into two oppositely moving vertical
+/// Copies the parent's terrain height into two oppositely moving vertical
 /// effects.
 static void ValeBabi_SpawnEffectPair(union FieldObject *object) {
   struct FieldActor *parent = &object->actor;
@@ -948,12 +948,12 @@ static void ValeBabi_SpawnEffectPair(union FieldObject *object) {
 // Shared Psynergy setup precedes the scene's effect wrappers.
 #include "common/effect_psynergy.h"
 
-/// Apply the cycling-palette update to actor 8.
+/// Applies the cycling-palette update to actor 8.
 UNUSED static void ValeBabi_CyclePaletteWithParticles(void) {
   ValeBabi_CyclePaletteAndSpawnPair((union FieldObject *)Object_GetById(8));
 }
 
-/// Apply the cycling-palette update to actor 17.
+/// Applies the cycling-palette update to actor 17.
 UNUSED static void ValeBabi_CyclePaletteWithoutParticles(void) {
   ValeBabi_CyclePaletteOnOddFrames((union FieldObject *)Object_GetById(17));
 }

@@ -279,7 +279,7 @@ static s32 VaultCave_IsSouthernBlockOnSwitch(void) {
   return 0;
 }
 
-/// Finish the southern switch only after the block reaches its target cell.
+/// Finishes the southern switch only after the block reaches its target cell.
 static inline void VaultCave_CompleteSouthernSwitch(void) {
   if (VaultCave_IsSouthernBlockOnSwitch() != 0) {
     GameFlag_Set(FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH);

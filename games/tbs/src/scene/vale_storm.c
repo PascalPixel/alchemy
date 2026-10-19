@@ -73,7 +73,7 @@ s32 Math_RemainderUnsigned(s32, s32);
 static s32 sShakeDone;
 static s32 sShakeShift;
 
-/// Choose a new random heading whenever the actor countdown expires.
+/// Chooses a new random heading whenever the actor countdown expires.
 static s32
 ValeStorm_RerollHeadingOnCountdown(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -92,7 +92,7 @@ ValeStorm_RerollHeadingOnCountdown(struct ScriptInterpreter *interpreter) {
 // Shared source is included here in ROM order.
 #include "common/object_pulse.h"
 
-/// Return the entrances to the paths outside on the stormy night.
+/// Returns the entrances to the paths outside on the stormy night.
 struct SceneEntrance *ValeStorm_GetEntrances(void) {
   return gValeStorm_Entrances;
 }
@@ -100,15 +100,15 @@ struct SceneEntrance *ValeStorm_GetEntrances(void) {
 /// The paths have no scene regions.
 struct SceneRegion *ValeStorm_GetRegions(void) { return NULL; }
 
-/// Return the storm scene exit table.
+/// Returns the storm scene exit table.
 u32 *ValeStorm_GetExits(void) { return gValeStorm_Exits; }
 
-/// Return the storm scene actor placements.
+/// Returns the storm scene actor placements.
 struct ScenePlacement *ValeStorm_GetPlacements(void) {
   return gValeStorm_Placements;
 }
 
-/// Return the storm scene event bindings.
+/// Returns the storm scene event bindings.
 struct SceneEvent *ValeStorm_GetEvents(void) { return gValeStorm_Events; }
 
 /// Walking onto the upper path: its collision cells change, remembered in
@@ -127,7 +127,7 @@ static void Event_ClearPathCellOverride(void) {
 // Shared source is included here in ROM order.
 #include "common/vale.h"
 
-/// Animate the doorway before taking backdrop exit 11.
+/// Animates the doorway before taking backdrop exit 11.
 UNUSED static void ValeStorm_OpenBackdropExit11(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps0, 45, 11);
@@ -136,25 +136,25 @@ UNUSED static void ValeStorm_OpenBackdropExit11(void) {
   Vale_RequestBackdropExit(11);
 }
 
-/// Play the exit cue and take backdrop exit 1.
+/// Plays the exit cue and takes backdrop exit 1.
 static void Event_LeaveByExit1(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropExit(1);
 }
 
-/// Play the exit cue and take backdrop exit 3.
+/// Plays the exit cue and takes backdrop exit 3.
 static void Event_LeaveByExit3(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropExit(3);
 }
 
-/// Play the exit cue and take backdrop exit 4.
+/// Plays the exit cue and takes backdrop exit 4.
 static void Event_LeaveByExit4(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropExit(4);
 }
 
-/// Let Garet leave before taking backdrop exit 2.
+/// Lets Garet leave before taking backdrop exit 2.
 static void Event_LeaveByExit2(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN) != 0 &&
@@ -164,7 +164,7 @@ static void Event_LeaveByExit2(void) {
   Vale_RequestBackdropExit(2);
 }
 
-/// Animate the doorway and take backdrop exit 5.
+/// Animates the doorway and takes backdrop exit 5.
 static void Event_LeaveByExit5(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps1, 54, 32);
@@ -191,7 +191,7 @@ static void Event_LeaveByExit6(void) {
   }
 }
 
-/// Animate the doorway and take backdrop exit 7.
+/// Animates the doorway and takes backdrop exit 7.
 static void Event_LeaveByExit7(void) {
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_05) == 0) {
     Engine_AudioPlayCue(SE_DOOR_OPEN);
@@ -202,7 +202,7 @@ static void Event_LeaveByExit7(void) {
   Vale_RequestBackdropExit(7);
 }
 
-/// Animate the doorway and take backdrop exit 8.
+/// Animates the doorway and takes backdrop exit 8.
 static void Event_LeaveByExit8(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps2, 49, 69);
@@ -211,7 +211,7 @@ static void Event_LeaveByExit8(void) {
   Vale_RequestBackdropExit(8);
 }
 
-/// Animate the doorway and take backdrop exit 9.
+/// Animates the doorway and takes backdrop exit 9.
 static void Event_LeaveByExit9(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps3, 52, 76);
@@ -220,7 +220,7 @@ static void Event_LeaveByExit9(void) {
   Vale_RequestBackdropExit(9);
 }
 
-/// Animate the doorway and take backdrop exit 10.
+/// Animates the doorway and takes backdrop exit 10.
 static void Event_LeaveByExit10(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_CellSteps1, 35, 74);
@@ -229,7 +229,7 @@ static void Event_LeaveByExit10(void) {
   Vale_RequestBackdropExit(10);
 }
 
-/// Animate the doorway and take backdrop exit 12.
+/// Animates the doorway and takes backdrop exit 12.
 static void Event_LeaveByExit12(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_CellSteps1, 35, 73);
@@ -238,7 +238,7 @@ static void Event_LeaveByExit12(void) {
   Vale_RequestBackdropExit(12);
 }
 
-/// Animate the doorway and take backdrop exit 13.
+/// Animates the doorway and takes backdrop exit 13.
 static void Event_LeaveByExit13(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_CellSteps2, 38, 72);
@@ -605,7 +605,7 @@ static void Event_Rock11Falls(void) {
   }
 }
 
-/// Apply the collision cells left by rock 11.
+/// Applies the collision cells left by rock 11.
 static void ValeStorm_SetStormCellAttributes(void) {
   Map_CopyCellAttributes(29, 64, 1, 1, 21, 57);
   Map_CopyCellAttributes(29, 64, 1, 1, 21, 58);
@@ -669,7 +669,7 @@ static void Event_Rock12Falls(void) {
   }
 }
 
-/// Apply the collision cells left by rock 12.
+/// Applies the collision cells left by rock 12.
 static void ValeStorm_ApplyRock12Collision(void) {
   Map_CopyCellAttributes(29, 23, 1, 1, 15, 53);
   Map_CopyCellAttributes(29, 23, 1, 1, 14, 53);
@@ -734,7 +734,7 @@ static void Event_Rock13Falls(void) {
   }
 }
 
-/// Apply the collision cells left by rock 13.
+/// Applies the collision cells left by rock 13.
 static void ValeStorm_ApplyRock13Collision(void) {
   Map_CopyCellAttributes(29, 22, 1, 1, 3, 42);
   Map_CopyCellAttributes(29, 21, 1, 1, 2, 42);
@@ -793,7 +793,7 @@ static void Event_Rock14Falls(void) {
   }
 }
 
-/// Apply the collision cells left by rock 14.
+/// Applies the collision cells left by rock 14.
 static void ValeStorm_ApplyRock14Collision(void) {
   Map_CopyCellAttributes(29, 20, 1, 1, 26, 71);
   Map_CopyCellAttributes(29, 20, 1, 1, 26, 70);
@@ -802,7 +802,7 @@ static void ValeStorm_ApplyRock14Collision(void) {
   Map_CopyCellAttributes(28, 22, 1, 1, 27, 72);
 }
 
-/// Stop the leader at exit 6 for the first villager conversation.
+/// Stops the leader at exit 6 for the first villager conversation.
 static void ValeStorm_MeetVillagerAtExit6(void) {
   s32 message;
 
@@ -887,7 +887,7 @@ static void Event_TalkToGaret(void) {
   }
 }
 
-/// Resolve the belongings conversation and bring Garet into the party.
+/// Resolves the belongings conversation and brings Garet into the party.
 static void ValeStorm_RunCallOutSequence(void) {
   struct FieldActor *leader;
   s32 agreedToLeaveBelongings;
@@ -1008,7 +1008,7 @@ static void Event_WarnAboutMtAleph(void) {
   Engine_EventEnd();
 }
 
-/// Bring Garet out to discuss a blocked path, then return him to Isaac.
+/// Brings Garet out to discuss a blocked path, then returns him to Isaac.
 static void ValeStorm_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   struct FieldActor *leaderAtStart;
   s32 speed = PIXELS(1);
@@ -1217,7 +1217,7 @@ static void Event_WatchBoulderFall(void) {
   }
 }
 
-/// Apply an animation parameter to each active entry of a single sprite.
+/// Applies an animation parameter to each active entry of a single sprite.
 static void Storm_SetActorFrameMode(struct FieldActor *actor, s32 mode) {
   if ((actor->spriteStorageKind & 0xf) == 1) {
     struct AnimationObject *animation = actor->sprite;
@@ -1244,7 +1244,7 @@ static void Storm_SetActorFrameMode(struct FieldActor *actor, s32 mode) {
   }
 }
 
-/// Alternate four actors between the normal and flashing parameters.
+/// Alternates four actors between the normal and flashing parameters.
 UNUSED static void ValeStorm_FlashBoulderSceneAnimationEntries(void) {
   if (((gFrameCount >> sShakeShift) & 3) != 0) {
     Storm_SetActorFrameMode(Object_GetById(32), 1);
@@ -1501,7 +1501,7 @@ static void Event_WitnessRiverRescue(void) {
   Engine_EventEnd();
 }
 
-/// Send the searchers along the river and ask Isaac to help.
+/// Sends the searchers along the river and asks Isaac to help.
 static void ValeStorm_RunRiverSearch(void) {
   struct FieldActor *villager;
   s32 random;
@@ -1790,7 +1790,7 @@ static void Event_GatherAfterRiverRescue(void) {
   }
 }
 
-/// Place an actor and its motion targets at the supplied coordinates.
+/// Places an actor and its motion targets at the supplied coordinates.
 static __inline__ void ValeStorm_PlaceActor(struct FieldActor *object,
                                             s32 horizontalPosition,
                                             s32 groundPosition) {
@@ -1802,7 +1802,7 @@ static __inline__ void ValeStorm_PlaceActor(struct FieldActor *object,
   object->targetZ = groundPosition;
 }
 
-/// Shake the scene at the impact cue and wait for the beat.
+/// Shakes the scene at the impact cue and waits for the beat.
 static __inline__ void ValeStorm_PlayImpactBeat(s32 shakeAmplitude,
                                                 s32 frames) {
   Map_SetShake(shakeAmplitude, shakeAmplitude, Q16_ONE);
@@ -1810,7 +1810,7 @@ static __inline__ void ValeStorm_PlayImpactBeat(s32 shakeAmplitude,
   Event_Wait(frames);
 }
 
-/// Follow the boulder downriver, then restore the riverbank actors.
+/// Follows the boulder downriver, then restores the riverbank actors.
 static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   struct AnimationObject *actorVisual;
   struct AnimationObject *groupVisual;
@@ -2159,7 +2159,7 @@ struct PairWork {
   u16 vramBlock;
 };
 
-/// Flash the scene layers before fading back to the storm palette.
+/// Flashes the scene layers before fading back to the storm palette.
 static void ValeStorm_FlashLightning(void) {
   Engine_TaskWait(20);
   GameFlag_Set(0x166);
@@ -2185,7 +2185,7 @@ static void ValeStorm_FlashLightning(void) {
   Map_ClearLayerEntryFlag(5);
 }
 
-/// Track the boulder and pulse its glow with the movement script phases.
+/// Tracks the boulder and pulses its glow with the movement script phases.
 static void ValeStorm_UpdatePulsingGlow(void) {
   struct FieldActor *source;
   struct FieldActor *glow;
@@ -2242,7 +2242,7 @@ static void ValeStorm_UpdatePulsingGlow(void) {
   }
 }
 
-/// Alternate the glow vertical offset on successive frames.
+/// Alternates the glow vertical offset on successive frames.
 static void ValeStorm_FlickerGlowOffset(void) {
   struct FieldActor *actor = Object_GetById(27);
   u32 frame = gFrameCount;
@@ -2315,7 +2315,7 @@ static void Event_VillagerAsksForHelp(void) {
   Engine_EventEnd();
 }
 
-/// Have Garet leave Isaac at the restored riverbank.
+/// Has Garet leave Isaac at the restored riverbank.
 static void ValeStorm_GaretLeavesIsaac(void) {
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
@@ -2348,7 +2348,7 @@ static void ValeStorm_GaretLeavesIsaac(void) {
   GameFlag_Set(FLAG_VALE_STORM_GARET_LEFT);
 }
 
-/// Redraw the riverbank cells after the boulder has passed.
+/// Redraws the riverbank cells after the boulder has passed.
 static void ValeStorm_RebuildRiverbank(void) {
   Map_CopyCellsTo(16, 96, 11, 73, 6, 3);
   Map_CopyCellsTo(16, 96, 34, 68, 14, 10);
@@ -2397,7 +2397,7 @@ static void Event_FightFourthMonster(void) {
   Engine_EventEnd();
 }
 
-/// Flash the actor palette and emit paired effects at the shake interval.
+/// Flashes the actor palette and emits paired effects at the shake interval.
 static void ValeStorm_FlashPaletteAndSpawnEffects(struct FieldActor *actor) {
   s32 spawnInterval;
 
@@ -2416,7 +2416,7 @@ static void ValeStorm_FlashPaletteAndSpawnEffects(struct FieldActor *actor) {
   }
 }
 
-/// Cycle six palettes and emit paired effects at the shake interval.
+/// Cycles six palettes and emits paired effects at the shake interval.
 static void ValeStorm_CyclePaletteAndSpawnEffects(struct FieldActor *actor) {
   s32 paletteFrame;
   s32 spawnInterval;
@@ -2432,7 +2432,7 @@ static void ValeStorm_CyclePaletteAndSpawnEffects(struct FieldActor *actor) {
   }
 }
 
-/// Cycle six actor palettes on alternate frames.
+/// Cycles six actor palettes on alternate frames.
 static void ValeStorm_CycleObjectPalettes(struct FieldActor *actor) {
   s32 paletteFrame;
 
@@ -2446,7 +2446,7 @@ static void ValeStorm_CycleObjectPalettes(struct FieldActor *actor) {
 // Shared source is included here in ROM order.
 #include "common/effect_vertical.h"
 
-/// Create the two linked effects that travel in opposite vertical directions.
+/// Creates the two linked effects that travel in opposite vertical directions.
 static void ValeStorm_SpawnEffectPair(struct FieldActor *parent) {
   struct FieldActor *pair[2];
   struct FieldActor *child;
@@ -2500,7 +2500,7 @@ static void ValeStorm_SpawnEffectPair(struct FieldActor *parent) {
 // Shared source is included here in ROM order.
 #include "common/effect_psynergy.h"
 
-/// Update the four boulder scene actors until the final reaction stops.
+/// Updates the four boulder scene actors until the final reaction stops.
 static void ValeStorm_UpdateBoulderSceneEffects(void) {
   ValeStorm_CyclePaletteAndSpawnEffects(Object_GetById(32));
   ValeStorm_CyclePaletteAndSpawnEffects(Object_GetById(33));
@@ -2510,12 +2510,12 @@ static void ValeStorm_UpdateBoulderSceneEffects(void) {
   }
 }
 
-/// Cycle the boulder sprite palette.
+/// Cycles the boulder sprite palette.
 static void ValeStorm_CycleBoulderPalette(void) {
   ValeStorm_CycleObjectPalettes(Object_GetById(19));
 }
 
-/// Keep Garet and actor 8 at the leader sprite priority.
+/// Keeps Garet and actor 8 at the leader sprite priority.
 static void ValeStorm_CopyLeaderSpritePriority(void) {
   struct AnimationObject *sourceSprite;
   struct AnimationObject *targetSprite;

@@ -135,7 +135,7 @@ struct Vec {
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-/// Refresh the actor presentation after its shrink script finishes.
+/// Refreshes the actor presentation after its shrink script finishes.
 static s32
 TunnelRuins_RefreshActorAfterShrinking(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -322,7 +322,8 @@ static s32 TunnelRuins_PuddleFollowsPillar(union FieldObject *fieldObject) {
 #endif
 }
 
-/// Wait up to 60 frames for landing, then stop vertical motion at the terrain.
+/// Waits up to 60 frames for landing, then stops vertical motion at the
+/// terrain.
 static void TunnelRuins_WaitForActorToLand(struct FieldActor *actor) {
   s32 remainingFrames = 60;
   s32 terrainHeight;
@@ -408,7 +409,7 @@ static void Event_HopDownStep(void) {
 // Shared source is included here in ROM order.
 #include "common/effect_radial.h"
 
-/// Select the entrance table for the current tunnel ruins scene.
+/// Selects the entrance table for the current tunnel ruins scene.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gGameState.scene;
 
@@ -421,7 +422,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTunnelRuinsEntrancesOther;
 }
 
-/// Return the region table only for the second ruins scene.
+/// Returns the region table only for the second ruins scene.
 const struct SceneRegion *Scene_GetRegions(void) {
   if (gGameState.scene == (s32)&SceneId_TunnelRuins2) {
     return gTunnelRuinsRegions2;
@@ -429,10 +430,10 @@ const struct SceneRegion *Scene_GetRegions(void) {
   return 0;
 }
 
-/// Return the tunnel ruins exit table.
+/// Returns the tunnel ruins exit table.
 u32 *TunnelRuins_GetExits(void) { return gTunnelRuinsExits; }
 
-/// Select the actor placements and prepare their scene state.
+/// Selects the actor placements and prepares their scene state.
 struct ScenePlacement *SceneData_SelectAndApplyTableBySceneId(void) {
   struct ScenePlacement *table;
 
@@ -575,7 +576,7 @@ static void Event_HopNorthUnlessAtCell30x52(void) {
   }
 }
 
-/// Draw an impact frame of the passage and start a decaying vertical shake.
+/// Draws an impact frame of the passage and starts a decaying vertical shake.
 static __inline__ void TunnelRuins_AnimateLoweringImpact(s32 sourceColumn,
                                                          s32 column, s32 row) {
   Engine_AudioPlayCue(SE_188);
@@ -1210,7 +1211,7 @@ static void Event_SearchLockedDoor(void) {
   EV_END();
 }
 
-/// Select the event bindings for the current tunnel ruins scene.
+/// Selects the event bindings for the current tunnel ruins scene.
 s32 TunnelRuins_SelectEvents(void) {
   if (gGameState.scene == (s32)&SceneId_TunnelRuins1) {
     return (s32)gTunnelRuinsEvents1;
@@ -1289,7 +1290,7 @@ static void TunnelRuins_UpdateBlockCells(void) {
   Map_CopyCellAttributes(22, 52, 1, 1, column, (actor->z.fixed >> 20));
 }
 
-/// Redraw the east pillars' row and mark the cells they stand on.
+/// Redraws the east pillars' row and marks the cells they stand on.
 static void TunnelRuins_MarkPushPillarCells(void) {
   Map_CopyCellAttributes(108, 19, 4, 1, 44, 19);
   StagedActor_FillGridAttributeRectangle(

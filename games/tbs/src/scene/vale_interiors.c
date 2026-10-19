@@ -54,7 +54,7 @@ static void ValeInteriors_SpawnDriftingSprite(void);
 // Shared source is included here in ROM order.
 #include "common/object_facing.h"
 
-/// Move and grow the sprite, using timer/work as signed 8.8 pixel steps.
+/// Moves and grows the sprite, using timer/work as signed 8.8 pixel steps.
 static s32
 ValeInteriors_AdvanceDriftingSprite(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -69,7 +69,7 @@ ValeInteriors_AdvanceDriftingSprite(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-/// Return the entrance positions and view bounds for the Vale interiors.
+/// Returns the entrance positions and view bounds for the Vale interiors.
 struct SceneEntrance *ValeInteriors_GetEntrances(void) {
   return gValeInteriors_Entrances;
 }
@@ -84,7 +84,7 @@ u32 *ValeInteriors_GetExits(void) {
   return gValeInteriors_Exits;
 }
 
-/// Prepare placements for the first departure or the later return to Vale.
+/// Prepares placements for the first departure or the later return to Vale.
 struct ScenePlacement *ValeInteriors_GetPlacements(void) {
   struct ScenePlacement *table;
 
@@ -99,7 +99,7 @@ struct ScenePlacement *ValeInteriors_GetPlacements(void) {
   return table;
 }
 
-/// Select dialogue and triggers for the current visit to Vale.
+/// Selects dialogue and triggers for the current visit to Vale.
 struct SceneEvent *ValeInteriors_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0)
     return gValeInteriors_StormEvents;
@@ -177,7 +177,7 @@ static void Event_WorryAboutTravelersHealth(void) {
   Engine_EventEnd();
 }
 
-/// Stop any lightning effect, close the window transition, and request the
+/// Stops any lightning effect, closes the window transition, and requests the
 /// exit.
 static void ValeInteriors_RequestWindowExit(s32 exitId) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0)
@@ -190,28 +190,28 @@ static void ValeInteriors_RequestWindowExit(s32 exitId) {
   Engine_EventRequestExit(exitId);
 }
 
-/// Leave through the doorway connected to exit 1.
+/// Leaves through the doorway connected to exit 1.
 static void Event_LeaveByDoor1(void) { ValeInteriors_RequestWindowExit(1); }
 
-/// Leave through the doorway connected to exit 2.
+/// Leaves through the doorway connected to exit 2.
 static void Event_LeaveByDoor2(void) { ValeInteriors_RequestWindowExit(2); }
 
-/// Leave through the doorway connected to exit 3.
+/// Leaves through the doorway connected to exit 3.
 static void Event_LeaveByDoor3(void) { ValeInteriors_RequestWindowExit(3); }
 
-/// Leave through the doorway connected to exit 4.
+/// Leaves through the doorway connected to exit 4.
 static void Event_LeaveByDoor4(void) { ValeInteriors_RequestWindowExit(4); }
 
-/// Leave through the doorway connected to exit 5.
+/// Leaves through the doorway connected to exit 5.
 static void Event_LeaveByDoor5(void) { ValeInteriors_RequestWindowExit(5); }
 
-/// Leave through the doorway connected to exit 6.
+/// Leaves through the doorway connected to exit 6.
 static void Event_LeaveByDoor6(void) { ValeInteriors_RequestWindowExit(6); }
 
-/// Leave through the doorway connected to exit 7.
+/// Leaves through the doorway connected to exit 7.
 static void Event_LeaveByDoor7(void) { ValeInteriors_RequestWindowExit(7); }
 
-/// Leave through the doorway connected to exit 8.
+/// Leaves through the doorway connected to exit 8.
 static void Event_LeaveByDoor8(void) { ValeInteriors_RequestWindowExit(8); }
 
 /// Arriving in a house: on the stormy night the residents are gone and
@@ -270,7 +270,7 @@ s32 ValeInteriors_Initialize(void) {
   return 0;
 }
 
-/// Open the weapon shop from the counter or speak to its owner.
+/// Opens the weapon shop from the counter or speak to its owner.
 static void Event_TalkToWeaponShopkeeper(void) {
   struct FieldActor *leader;
 
@@ -296,7 +296,7 @@ static void Event_TalkToWeaponShopkeeper(void) {
   Engine_EventEnd();
 }
 
-/// Open the armor shop from the counter or speak to its owner.
+/// Opens the armor shop from the counter or speak to its owner.
 static void Event_TalkToArmorShopkeeper(void) {
   struct FieldActor *actor;
 
@@ -319,7 +319,7 @@ static void Event_TalkToArmorShopkeeper(void) {
   }
 }
 
-/// Open the item shop or speak to its owner about the party's departure.
+/// Opens the item shop or speak to its owner about the party's departure.
 static void Event_TalkToItemShopkeeper(void) {
   struct FieldActor *actor;
 
@@ -353,7 +353,7 @@ static inline void ValeInteriors_FamilyNods(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_NOD);
 }
 
-/// Start the repeated motion before waiting for the requested animation.
+/// Starts the repeated motion before waiting for the requested animation.
 static inline void ValeInteriors_PlayRepeatedAnimationAndWait(s32 actorId,
                                                               s32 animation) {
   Engine_ActorStartRepeatedMotion(actorId, 1);
@@ -658,7 +658,7 @@ static void Event_GaretComesHome(void) {
   Engine_EventEnd();
 }
 
-/// Restart one drifting sprite at frames 10, 20, and 30 of each 180-frame
+/// Restarts one drifting sprite at frames 10, 20, and 30 of each 180-frame
 /// cycle.
 static void ValeInteriors_SpawnDriftingSprite(void) {
   s32 actorId;

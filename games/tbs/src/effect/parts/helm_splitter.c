@@ -233,7 +233,7 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 /// the first fragment in work->particles
 #define IMPACT_BURST_FIRST_FRAGMENT 61
 
-/// Open an impact flash and scatter sparks and fragments over 72 frames.
+/// Opens an impact flash and scatters sparks and fragments over 72 frames.
 /// Also rearrange the objects into formation during the first 36 frames.
 /// formation: layout used by BattleFx_PlaceFormationObjects
 /// x, y: impact position in 16.16 pixels

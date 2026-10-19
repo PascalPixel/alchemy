@@ -115,7 +115,7 @@ static void Event_CatchFloatingNut(void) {
   Engine_EventEnd();
 }
 
-/// Restore the frozen pillar's three collision cells, including its sides.
+/// Restores the frozen pillar's three collision cells, including its sides.
 static inline void Lunpa_ApplyFrozenPuddleCollision(void) {
   Map_CopyCellAttributes(17, 4, 1, 1, 14, 4);
   Map_CopyCellAttributes(15, 3, 1, 1, 15, 4);
@@ -542,7 +542,7 @@ static void Event_PressHiddenSwitch(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_02);
 }
 
-/// Copy one open or blocked source cell across the three-cell gateway.
+/// Copies one open or blocked source cell across the three-cell gateway.
 static inline void Lunpa_CopyGatewayCollision(s32 sourceColumn, s32 sourceRow) {
   Map_CopyCellAttributes(sourceColumn, sourceRow, 1, 1, 7, 11);
   Map_CopyCellAttributes(sourceColumn, sourceRow, 1, 1, 8, 11);

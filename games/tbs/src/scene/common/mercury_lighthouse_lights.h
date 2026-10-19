@@ -21,10 +21,10 @@
 // Mercury Lighthouse and its entrance: the lights that carry the leader over
 // the pool (mercury_lighthouse_pillar.h).
 
-/// Keep the lights' state st in work slot 35 for the floor's region, the pool's
-/// collision code. On an ordinary entrance the leader has no lights. When the
-/// party returns to where it was, the column of lights over the leader and the
-/// light under them in the pool are made again.
+/// Keeps the lights' state st in work slot 35 for the floor's region, the
+/// pool's collision code. On an ordinary entrance the leader has no lights.
+/// When the party returns to where it was, the column of lights over the leader
+/// and the light under them in the pool are made again.
 void MercuryLighthouse_RestoreLights(s32 region,
                                      struct MercuryLighthouseLights *st) {
   struct FieldActor *actor;

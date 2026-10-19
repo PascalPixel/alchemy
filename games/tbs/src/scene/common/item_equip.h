@@ -4,7 +4,7 @@
 #include "types.h"
 #include "inventory.h"
 
-/// Give the character the item, then equip every slot of their 15 that holds
+/// Gives the character the item, then equip every slot of their 15 that holds
 /// it.
 static void Scene_GiveAndEquipItem(s32 character, s32 item) {
   struct BattleUnit *unit = UnitGet(character);

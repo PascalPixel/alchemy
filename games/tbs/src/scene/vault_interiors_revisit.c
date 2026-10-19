@@ -54,7 +54,7 @@ enum { FLAG_WELCOMED_BACK = FLAG_SCENE_TEMP_00 + 0x100 };
 // Shared scene routines stay in their linked order.
 #include "common/vault_spotflag.h"
 
-/// Return the arrival positions for the revisited houses and shops.
+/// Returns the arrival positions for the revisited houses and shops.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gVaultInteriorsRevisit_Entrances;
 }
@@ -81,7 +81,7 @@ static void VaultInteriorsRevisit_ShowStandingActorDialogue(s32 actor) {
   Engine_EventEnd();
 }
 
-/// Face the leader and show this resident's dialogue while standing still.
+/// Faces the leader and shows this resident's dialogue while standing still.
 static inline void VaultInteriorsRevisit_FaceAndSpeak(s32 actor, s32 message) {
   Engine_EventSetMessage(message);
   Engine_ActorFaceEachOther(actor, ACTOR_PARTY_LEADER, 2);

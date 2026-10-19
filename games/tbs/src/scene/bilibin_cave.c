@@ -56,7 +56,7 @@ enum {
   FROST_TARGET_C = 17 ///< changes as a pushed actor reaches cell (35, 23)
 };
 
-/// Clear the scripted actor's sprite flags and complete this script command.
+/// Clears the scripted actor's sprite flags and complete this script command.
 static s32 BilibinCave_ClearScriptedActorSpriteFlags(
     struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -64,7 +64,7 @@ static s32 BilibinCave_ClearScriptedActorSpriteFlags(
   return 0;
 }
 
-/// Select the entrance bounds for the current cave section.
+/// Selects the entrance bounds for the current cave section.
 const struct SceneEntrance *BilibinCave_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -83,7 +83,7 @@ const struct SceneEntrance *BilibinCave_GetEntrances(void) {
 /// No clipping-region table is supplied by this overlay.
 const struct SceneRegion *BilibinCave_GetRegions(void) { return NULL; }
 
-/// Return the packed exits connecting the three cave sections.
+/// Returns the packed exits connecting the three cave sections.
 const u32 *BilibinCave_GetExits(void) { return gBilibinCaveExits; }
 
 /// Each cave section has its own movable actors and obstacles.
@@ -118,17 +118,17 @@ const struct SceneEvent *BilibinCave_GetEvents(void) {
   return gBilibinCaveEventsOther;
 }
 
-/// Replace the crossing cell with the attributes at source cell (1, 0).
+/// Replaces the crossing cell with the attributes at source cell (1, 0).
 static void Event_AlterCrossingCell(void) {
   Map_CopyCellAttributes(1, 0, 1, 1, 21, 14);
 }
 
-/// Restore the crossing cell from source cell (0, 0).
+/// Restores the crossing cell from source cell (0, 0).
 static void Event_RestoreCrossingCell(void) {
   Map_CopyCellAttributes(0, 0, 1, 1, 21, 14);
 }
 
-/// Replace the narrow tile strip and its two-row collision rectangle.
+/// Replaces the narrow tile strip and its two-row collision rectangle.
 static void Event_RevealHiddenPath(void) {
   {
     s32 width = 1;
@@ -144,7 +144,7 @@ static void Event_RevealHiddenPath(void) {
   }
 }
 
-/// Restore the strip's tiles and its one-row collision rectangle.
+/// Restores the strip's tiles and its one-row collision rectangle.
 static void Event_HideRevealedPath(void) {
   {
     s32 width = 1;
@@ -184,7 +184,7 @@ static void Event_DouseExitSectionTarget(void) {
   Engine_EventEnd();
 }
 
-/// Clear a Frost target's child effect, then play its freezing animation.
+/// Clears a Frost target's child effect, then plays its freezing animation.
 static inline void BilibinCave_FreezeTarget(s32 actor) {
   Engine_EventBegin();
   Engine_ActorSetChildValue(actor, 0);
@@ -266,19 +266,19 @@ static void Event_GrowPlant(void) {
   Engine_GameFlagSet(0x305);
 }
 
-/// Enable the map-work byte while crossing this touch trigger.
+/// Enables the map-work byte while crossing this touch trigger.
 static void Event_SetMapTriggerFlag(void) {
   struct MapState *map = gMapWork[0];
   map->unk17 = 1;
 }
 
-/// Clear the same map-work byte at the opposing trigger.
+/// Clears the same map-work byte at the opposing trigger.
 static void Event_ClearMapTriggerFlag(void) {
   struct MapState *map = gMapWork[0];
   map->unk17 = 0;
 }
 
-/// Restore the current section's saved puzzle state.
+/// Restores the current section's saved puzzle state.
 s32 BilibinCave_Initialize(void) {
   s16 variant = gGameState.scene;
 
@@ -292,7 +292,7 @@ s32 BilibinCave_Initialize(void) {
   return 0;
 }
 
-/// Restore the collision change already made by Growth.
+/// Restores the collision change already made by Growth.
 static void BilibinCave_RestoreGrowthSection(void) {
   if (Engine_GameFlagIsSet(0x305) != 0) {
 
@@ -301,7 +301,7 @@ static void BilibinCave_RestoreGrowthSection(void) {
   }
 }
 
-/// Open section 2 and restore its Douse target.
+/// Opens section 2 and restores its Douse target.
 static void BilibinCave_RestoreDouseSection(void) {
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -317,13 +317,13 @@ static void BilibinCave_RestoreDouseSection(void) {
   }
 }
 
-/// Clear the drawing flags of an actor used by the cave's animations.
+/// Clears the drawing flags of an actor used by the cave's animations.
 static inline void BilibinCave_ClearActorSpriteFlags(s32 actorId) {
   struct FieldActor *actor = Actor_Get(actorId);
   Engine_ActorSetSpriteFlags(actor, 0);
 }
 
-/// Initialize section 1's animated actors and persistent puzzle states.
+/// Initializes section 1's animated actors and persistent puzzle states.
 static void BilibinCave_RestoreIcePuzzleSection(void) {
   struct FieldActor *actor;
   s32 destinationCellX;
@@ -408,7 +408,7 @@ static void BilibinCave_RestoreIcePuzzleSection(void) {
 // The shared cell lookup retains its position before the push handler.
 #include "common/object_findcell.h"
 
-/// Push the actor ahead only when its next cell and movement probe are clear.
+/// Pushes the actor ahead only when its next cell and movement probe are clear.
 static void Event_PushActorAhead(void) {
   struct FieldActor *leader;
   struct FieldActor *target;
@@ -639,7 +639,7 @@ struct SceneEvent gBilibinCaveEvents1[] = {
 };
 // clang-format on
 
-/// Pack signed pixel steps with X in the upper halfword and Z in the lower.
+/// Packs signed pixel steps with X in the upper halfword and Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((dz) & 0xffff))
 
 s32 gBilibinCave_PushSteps[] = {

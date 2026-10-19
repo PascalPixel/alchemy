@@ -60,7 +60,7 @@ struct CursorSprite {
 
 #define MENU_SPRITE_SIZE_16 0x40000000
 
-/// Set sprite shape (attr0/attr1) and clear the remaining fields.
+/// Sets sprite shape (attr0/attr1) and clears the remaining fields.
 /* FAKEMATCH: the one-pass block keeps both attribute words ahead of the stores
  * that follow (the x/y fields in the list setup loops of ItemList_SelectEntry,
  * BattleMenu_RunActionSelection and SummonMenu_SelectSummon; the tile in
@@ -117,7 +117,7 @@ STATIC_ASSERT(offsetof(struct MenuCell, autoEnabled) == 0xd8);
 STATIC_ASSERT(offsetof(struct MenuCell, autoDelay) == 0xdc);
 STATIC_ASSERT(offsetof(struct MenuCell, autoMode) == 0xe0);
 
-/// Restore the previous selection: page, row and return row.
+/// Restores the previous selection: page, row and return row.
 /// A statement macro (S2: a layer, 4 sites): the three cursor reads stay
 /// together at every use; as a plain block, tbs-en differs.
 #define MenuCell_GetCursor(page_, row_, preferred_)                            \
@@ -127,7 +127,7 @@ STATIC_ASSERT(offsetof(struct MenuCell, autoMode) == 0xe0);
     (preferred_) = ((struct MenuCell *)gWindowWork[42])->preferredRow;         \
   } while (0)
 
-/// Save the selection: page, row and return row.
+/// Saves the selection: page, row and return row.
 /* FAKEMATCH: the do { } while (0) wrapper steers, so this is a device at each
  * of its 7 sites, not a layer (S2: not every use matches through it).
  * Battle_SelectAbility writes the same three stores plainly through its already

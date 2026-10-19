@@ -2769,7 +2769,7 @@ s32 ItemMenu_DrawNamePage(struct UiWindow *window, s32 unused,
   return 1;
 }
 
-/// Return 1, and do nothing; nothing calls them.
+/// Returns 1, and do nothing; nothing calls them.
 UNUSED s32 InventoryMenu_ItemNamePageReturnTrue(void) { return 1; }
 
 UNUSED void InventoryMenu_ItemNamePageNoOp(void) {}

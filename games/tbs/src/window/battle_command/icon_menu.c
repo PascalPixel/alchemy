@@ -30,7 +30,7 @@ struct WindowBuffer {
   struct WindowLine lines[160];
 };
 
-/// Draw the resource-menu icons, pulsing the selected icon with one affine
+/// Draws the resource-menu icons, pulsing the selected icon with one affine
 /// matrix. Update the horizontal window spans to reveal the active icon row.
 /// UB: native pointers traverse scalar link/span fields into adjacent fields
 /// and records. Use their real owners under UBFIX. Plain OAM field accesses
@@ -220,7 +220,7 @@ void AffineEffect_UpdateFrame(void) {
   }
 }
 
-/// Allocate and clear the resource-menu state, then schedule its icon pulse.
+/// Allocates and clears the resource-menu state, then schedules its icon pulse.
 /// The matching allocation size is the complete six-entry work block.
 void *AffineEffect_InitializeWork(void) {
   void *work;
@@ -230,7 +230,7 @@ void *AffineEffect_InitializeWork(void) {
   return work;
 }
 
-/// Stop the icon pulse, close the label window and release each loaded icon
+/// Stops the icon pulse, closes the label window and releases each loaded icon
 /// before freeing the resource-menu state.
 void Menu_EndResourceSelection(void) {
   struct UiWindow *labelWindow;
@@ -250,7 +250,7 @@ void Menu_EndResourceSelection(void) {
   WaitFrames(1U);
 }
 
-/// Select an icon position with wrapped directional input. A returns the
+/// Selects an icon position with wrapped directional input. A returns the
 /// position; B or Start returns -1. Redraw the label only after a move.
 s32 Menu_RunResourceSelectionLoop(s32 initial) {
   struct ResourceMenuWork *work = gMenuSelectWork;
@@ -294,14 +294,14 @@ redraw:
   }
 }
 
-/// Return the distance between lhs and rhs, reusing their supplied difference.
+/// Returns the distance between lhs and rhs, reusing their supplied difference.
 static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs) {
   if (diff >= 0)
     return diff;
   return rhs - lhs;
 }
 
-/// Animate a cursor from start to goal with table-driven delays. Draw each
+/// Animates a cursor from start to goal with table-driven delays. Draw each
 /// intervening label, pause at the destination, and return its position.
 s32 Menu_SelectResource(s32 start, s32 goal) {
   s16 resourceBase;
@@ -353,7 +353,7 @@ s32 Menu_SelectResource(s32 start, s32 goal) {
   return goal;
 }
 
-/// Decode one command-icon table entry into the requested VRAM cache slot.
+/// Decodes one command-icon table entry into the requested VRAM cache slot.
 void Menu_LoadResourceSlot(s32 slot, s32 index) {
   s32 size = 1024;
   void *buffer = MemAlloc(size);
@@ -365,7 +365,7 @@ void Menu_LoadResourceSlot(s32 slot, s32 index) {
   MemFree(buffer);
 }
 
-/// Append a command icon if fewer than six are present. Its initial position
+/// Appends a command icon if fewer than six are present. Its initial position
 /// is on the bottom icon row; a layout routine places the final row.
 void Menu_AppendResourceEntry(s32 icon) {
   struct ResourceMenuWork *work;
@@ -389,7 +389,7 @@ void Menu_AppendResourceEntry(s32 icon) {
   }
 }
 
-/// Center the icons and their label window together on the given tile row.
+/// Centers the icons and their label window together on the given tile row.
 /// A nonzero resourceBase supplies labels; otherwise use command-name IDs.
 void Menu_CenterResourceEntries(s32 row, s32 width, s32 resourceBase) {
   struct ResourceMenuWork *menu = gMenuSelectWork;
@@ -412,7 +412,7 @@ void Menu_CenterResourceEntries(s32 row, s32 width, s32 resourceBase) {
   menu->window = UiWindow_Create(x, row, menu->width, 3, 2);
 }
 
-/// Place icons at three-tile intervals from (x, y), then create their label
+/// Places icons at three-tile intervals from (x, y), then creates their label
 /// window immediately to the right. Coordinates and label width are in tiles.
 void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resourceBase) {
   struct ResourceMenuWork *work;
@@ -432,12 +432,12 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resourceBase) {
   work->window = UiWindow_Create(x, y, work->width, 3, 2);
 }
 
-/// Read the signed command-position mapping used by the top resource menu.
+/// Reads the signed command-position mapping used by the top resource menu.
 static __inline__ s32 ResourceMenu_ReadCommandPosition(s8 *table, s32 index) {
   return table[index];
 }
 
-/// Build the field command menu, omitting Djinn when none are owned. Translate
+/// Builds the field command menu, omitting Djinn when none are owned. Translate
 /// between command IDs and visible icon positions using the two lookup rows.
 s32 Menu_SelectTopEntry(s32 selection) {
   s32 group = 0;
@@ -484,7 +484,7 @@ s32 Menu_SelectTopEntry(s32 selection) {
 #define ANIMATE_ENTRIES_ROW 5
 #endif
 
-/// Open the field command menu and animate from start to the command's icon.
+/// Opens the field command menu and animates from start to the command's icon.
 /// Return the final icon position after closing the menu.
 s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   UiWindow_OpenMode1AndWaitFrame();
@@ -500,7 +500,7 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   return command;
 }
 
-/// Build the title menu from the save summaries and optional send flags.
+/// Builds the title menu from the save summaries and optional send flags.
 /// Translate the chosen visible position back to its save-action code.
 s32 Menu_SelectSaveSlotAction(void) {
   s32 fileState;
@@ -560,7 +560,7 @@ s32 Menu_SelectSaveSlotAction(void) {
 #define MODE_LABEL_RIGHT 80
 #endif
 
-/// Redraw the password-level explanation when the selected level changes.
+/// Redraws the password-level explanation when the selected level changes.
 void Menu_DrawModeLabel(void) {
   struct ResourceMenuWork *state = gMenuSelectWork;
 
@@ -615,7 +615,7 @@ void Menu_DrawModeLabel(void) {
 
 #if (LANGUAGE == LANGUAGE_FRENCH)
 
-/// Redraw password/cable transfer help when the chosen method changes.
+/// Redraws password/cable transfer help when the chosen method changes.
 /// The French layout keeps its distinct line splitting and redraw path.
 void Menu_DrawModeIndicator(void) {
   struct ResourceMenuWork *state = gMenuSelectWork;
@@ -663,7 +663,7 @@ void Menu_DrawModeIndicator(void) {
 }
 #endif
 
-/// Select either the transfer method (mode 0) or password level. Schedule the
+/// Selects either the transfer method (mode 0) or password level. Schedule the
 /// appropriate help redraw while the icon menu is active, then close both
 /// help windows and the icon menu.
 s32 Menu_SelectResourceLayout(s32 mode) {
@@ -748,7 +748,7 @@ s32 Menu_SelectResourceLayout(s32 mode) {
 // Icon numbers refer to ResourceId_CommandIcons.
 // Each shows the name of the icon under the cursor in a window.
 
-/// Select a shop command, icons 0x11-0x14 (Buy, Sell, Artifacts, Repair),
+/// Selects a shop command, icons 0x11-0x14 (Buy, Sell, Artifacts, Repair),
 /// centered on row 17.
 /// selection: initial position; return the selected position.
 s32 Menu_SelectShopCommand(s32 selection) {
@@ -765,7 +765,7 @@ s32 Menu_SelectShopCommand(s32 selection) {
   return result;
 }
 
-/// Select a sanctum service, icons 0x19-0x1c (Revive, Cure Poison, Repel
+/// Selects a sanctum service, icons 0x19-0x1c (Revive, Cure Poison, Repel
 /// Evil, Remove Curse), centered on row 17.
 s32 Menu_SelectSanctumService(s32 selection) {
   s32 result;
@@ -781,7 +781,7 @@ s32 Menu_SelectSanctumService(s32 selection) {
   return result;
 }
 
-/// Select Yes/No (icons 5/6); cancel returns 1 (No).
+/// Selects Yes/No (icons 5/6); cancels returns 1 (No).
 /// low: 0 places the menu on row 0; otherwise row 17.
 /// message: first name message, or 0 for command names.
 /// w: name window width, or 0 for width 3.
@@ -813,7 +813,7 @@ s32 Menu_RunConfirmSelection(s32 bottom, s32 message, s32 labelWidth,
   return selection;
 }
 
-/// Select Yes/No at (x, y); cancel returns 1 (No).
+/// Selects Yes/No at (x, y); cancels returns 1 (No).
 s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
   s32 message = MsgCommandYes;
 
@@ -838,7 +838,7 @@ s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
 #define PAIR_WIDTH 9
 #endif
 
-/// Select icons 0x20 and 0x21 (Coins, Lucky Medals) centered on row 17.
+/// Selects icons 0x20 and 0x21 (Coins, Lucky Medals) centered on row 17.
 /// selection: initial position; return the selected position.
 s32 Menu_SelectCoinsOrMedals(s32 selection) {
   s32 result;

@@ -106,18 +106,18 @@ static void VaultInteriors_EndMindRead(void);
 static void VaultInteriors_UpdateActorStops(void);
 static void VaultInteriors_StartActorStops(void);
 
-/// Return the entrances for the Vault interiors overlay.
+/// Returns the entrances for the Vault interiors overlay.
 struct SceneEntrance *Scene_GetEntrances(void) {
   return gVaultInteriors_Entrances;
 }
 
-/// Return the trigger regions for the Vault interiors overlay.
+/// Returns the trigger regions for the Vault interiors overlay.
 s16 *Scene_GetRegions(void) { return gVaultInteriors_Regions; }
 
-/// Return the exits for the Vault interiors overlay.
+/// Returns the exits for the Vault interiors overlay.
 u32 *Scene_GetExits(void) { return gVaultInteriors_Exits; }
 
-/// Select the attic placements for entrances 15–17 and prepare the actors.
+/// Selects the attic placements for entrances 15–17 and prepares the actors.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   struct ScenePlacement *table;
 
@@ -136,7 +136,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 }
 
 #if !TBS_PATCH_1
-/// Jump to the requested destination when its collision check succeeds.
+/// Jumps to the requested destination when its collision check succeeds.
 static s32 VaultInteriors_TryJumpTo(struct FixedPointPosition *pos) {
   struct FieldActor *leader;
   u8 *flags;
@@ -312,7 +312,7 @@ static void Event_SearchEmptyChest(void) {
   Engine_EventEnd();
 }
 
-/// Choose the attic events or the town events before and after the theft.
+/// Chooses the attic events or the town events before and after the theft.
 const struct SceneEvent *Scene_GetEvents(void) {
   switch (gGameState.entrance) {
   case 15:
@@ -326,7 +326,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gVaultInteriors_Events;
 }
 
-/// Stand the speaker, face the leader, and show the selected message.
+/// Stands the speaker, faces the leader, and shows the selected message.
 static void VaultInteriors_StandAndShowMessage(s32 x) {
   Engine_ActorSetAnimation(x, ANIM_STAND);
   VaultInteriors_FaceEachOtherAndWait(x, 0, 2);
@@ -336,7 +336,7 @@ static void VaultInteriors_StandAndShowMessage(s32 x) {
 // Shared source is included here in ROM order.
 #include "common/vault_talk.h"
 
-/// Face the leader and select the next reply when the answer is no.
+/// Faces the leader and selects the next reply when the answer is no.
 static void VaultInteriors_AskYesNoAndShowReply(s32 x) {
   VaultInteriors_FaceEachOtherAndWait(x, 0, 2);
   Engine_EventOpenMessage(x, 0);
@@ -495,7 +495,7 @@ static void Event_SuspectedLeaderDodges(void) {
   Engine_EventEnd();
 }
 
-/// Select a response script and advance the second suspect's route state.
+/// Selects a response script and advances the second suspect's route state.
 static inline void
 VaultInteriors_ApplySecondSuspectRoute(struct FieldActor *actor, s32 scriptRow,
                                        s32 routePair, u16 routeDelta) {
@@ -1329,7 +1329,7 @@ static void Event_BeginCorneringSuspects(void) {
   VaultInteriors_StartActorStops();
 }
 
-/// Have the suspects react to the party's return and reset their route states.
+/// Has the suspects react to the party's return and resets their route states.
 static void VaultInteriors_ResetSuspectRoutes(void) {
   Engine_EventWait(30);
   Engine_ActorRunRepeatedMotion(ACTOR_SUSPECTED_LEADER, 1);
@@ -1363,7 +1363,7 @@ static void VaultInteriors_ResetSuspectRoutes(void) {
   Map_CopyCellAttributes(14, 48, 4, 1, 14, 44);
 }
 
-/// Set the three party images to the priority used during the mind-reading
+/// Sets the three party images to the priority used during the mind-reading
 /// scene.
 static inline void VaultInteriors_SetPartyImagePriority(void) {
   {
@@ -1478,7 +1478,7 @@ static void Event_ReadCorneredSuspectsMinds(void) {
   Engine_EventEnd();
 }
 
-/// Show the party's branching conversation about what Ivan learned.
+/// Shows the party's branching conversation about what Ivan learned.
 static void VaultInteriors_DiscussMindReading(void) {
   s32 persistedWithQuestions;
 
@@ -1655,7 +1655,7 @@ static void Event_AdvanceSuspectRoutes(void) {
   }
 }
 
-/// Install a route script only when the suspect is in its expected state.
+/// Installs a route script only when the suspect is in its expected state.
 static void VaultInteriors_AdvanceSuspectRoute(s32 actor, s32 expected,
                                                s32 next, const s32 *actions) {
   struct FieldActor *suspect = Object_GetById(actor);
@@ -1799,7 +1799,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Keep both suspects facing the leader while they evade the party.
+/// Keeps both suspects facing the leader while they evade the party.
 static void VaultInteriors_FaceSuspectsTowardLeader(void) {
   struct FieldActor *origin = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldActor *first = Object_GetById(ACTOR_SUSPECTED_LEADER);
@@ -1811,7 +1811,7 @@ static void VaultInteriors_FaceSuspectsTowardLeader(void) {
                            origin->x.fixed - second->x.fixed);
 }
 
-/// Show the thieves' reaction after the party loses their battle.
+/// Shows the thieves' reaction after the party loses their battle.
 static void VaultInteriors_LoseToThieves(void) {
   struct FieldActor *actor;
   s32 priorityFlags;
@@ -1866,7 +1866,7 @@ static void VaultInteriors_LoseToThieves(void) {
   Engine_EventEnd();
 }
 
-/// Arrange the attic confrontation and restart the thieves' battle.
+/// Arranges the attic confrontation and restarts the thieves' battle.
 static void VaultInteriors_ConfrontThievesAgain(void) {
 
   Actor_SetPosition(ACTOR_THIEF_LEADER, PIXELS(792), PIXELS(416));
@@ -1918,7 +1918,7 @@ static void VaultInteriors_ConfrontThievesAgain(void) {
   Field_RequestBattleFromEncounterTable(12, 5);
 }
 
-/// Read Ivan's owned Venus Djinn count for the shared dialogue.
+/// Reads Ivan's owned Venus Djinn count for the shared dialogue.
 static s32 VaultInteriors_GetIvanVenusDjinnCount(void) {
   return UnitGet(IVAN)->djinnOwnedCounts[ELEMENT_VENUS];
 }
@@ -1926,7 +1926,7 @@ static s32 VaultInteriors_GetIvanVenusDjinnCount(void) {
 // Shared source is included here in ROM order.
 #include "common/vault_djinn.h"
 
-/// Stage the defeated thieves and gather the townspeople in the attic.
+/// Stages the defeated thieves and gathers the townspeople in the attic.
 static void VaultInteriors_DefeatThieves(void) {
   struct FieldActor *actor;
   struct EventWork *work;
@@ -2134,7 +2134,7 @@ static void VaultInteriors_DefeatThieves(void) {
   Engine_EventEnd();
 }
 
-/// Return the stolen goods and rod, thank the party, and clear the attic.
+/// Returns the stolen goods and rod, thank the party, and clears the attic.
 static void VaultInteriors_ReturnStolenGoods(void) {
   struct FieldActor *temporaryActor;
   struct FieldActor *actor;
@@ -2564,7 +2564,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   Engine_EventEnd();
 }
 
-/// Open the window transition and wait one frame after it finishes.
+/// Opens the window transition and waits one frame after it finishes.
 static void VaultInteriors_OpenWindowTransition(void) {
   struct EventWork *state;
 
@@ -2575,27 +2575,27 @@ static void VaultInteriors_OpenWindowTransition(void) {
   Engine_EventWait(1);
 }
 
-/// Show the selected actor message, then pause for the requested frames.
+/// Shows the selected actor message, then pauses for the requested frames.
 static void VaultInteriors_ShowMessageAndWait(s32 actorId, s32 waitFrames) {
   Engine_EventShowMessage(actorId, 0);
   Engine_EventWait(waitFrames);
 }
 
-/// Face one actor toward another, then pause for the requested frames.
+/// Faces one actor toward another, then pauses for the requested frames.
 static void VaultInteriors_FaceActorAndWait(s32 actorId, s32 targetId,
                                             s32 waitFrames) {
   Engine_ActorFaceActor(actorId, targetId, 0);
   Engine_EventWait(waitFrames);
 }
 
-/// Have two actors face each other, then pause for the requested frames.
+/// Has two actors face each other, then pauses for the requested frames.
 static void VaultInteriors_FaceEachOtherAndWait(s32 firstId, s32 secondId,
                                                 s32 waitFrames) {
   Engine_ActorFaceEachOther(firstId, secondId, 0);
   Engine_EventWait(waitFrames);
 }
 
-/// Wait for the animation to change before the following pause.
+/// Waits for the animation to change before the following pause.
 static void VaultInteriors_PlayAnimationAndWait(s32 actorId, s32 animation,
                                                 s32 waitFrames) {
   Engine_ActorSetAnimation(actorId, animation, waitFrames);
@@ -2603,7 +2603,7 @@ static void VaultInteriors_PlayAnimationAndWait(s32 actorId, s32 animation,
   Engine_EventWait(waitFrames);
 }
 
-/// Begin Mind Read, choose its target, and show its opening effect.
+/// Begins Mind Read, chooses its target, and shows its opening effect.
 static void VaultInteriors_BeginMindRead(s32 casterId, s32 targetId) {
   Engine_PsynergyBegin(ABILITY_MIND_READ, 1);
   Engine_PsynergySetTarget(casterId, targetId);
@@ -2612,7 +2612,7 @@ static void VaultInteriors_BeginMindRead(s32 casterId, s32 targetId) {
   Engine_TaskWait(1);
 }
 
-/// Finish Mind Read and release its scene effect objects.
+/// Finishes Mind Read and releases its scene effect objects.
 static void VaultInteriors_EndMindRead(void) {
   Engine_PsynergyPlayEffect(2);
   Engine_PsynergyLowerHands();
@@ -2622,7 +2622,8 @@ static void VaultInteriors_EndMindRead(void) {
 // Shared source is included here in ROM order.
 #include "common/vault_itemobj.h"
 
-/// Find the route node containing the actor's position on the eight-pixel grid.
+/// Finds the route node containing the actor's position on the eight-pixel
+/// grid.
 static struct VaultInteriorsStop *
 VaultInteriors_FindStopAtPosition(s32 *position) {
   s32 gridX = (position[0] - PIXELS(64)) >> 19;
@@ -2646,7 +2647,7 @@ VaultInteriors_FindStopAtPosition(s32 *position) {
   return result;
 }
 
-/// Choose the outgoing connection nearest the requested facing.
+/// Chooses the outgoing connection nearest the requested facing.
 static struct VaultInteriorsStop *
 VaultInteriors_SnapToNearestStop(struct VaultInteriorsStop *node,
                                  s16 *requestedFacing) {
@@ -2686,7 +2687,7 @@ VaultInteriors_SnapToNearestStop(struct VaultInteriorsStop *node,
   return &gVaultInteriors_Stops[stopIndex];
 }
 
-/// Check whether an actor's destination or current position lies within eight
+/// Checks whether an actor's destination or current position lies within eight
 /// pixels.
 static s32 VaultInteriors_IsActorWithinEightPixels(s32 x, s32 z, s32 id) {
   struct FieldActor *actor = Engine_ActorLookup(id);
@@ -2708,8 +2709,8 @@ static s32 VaultInteriors_IsActorWithinEightPixels(s32 x, s32 z, s32 id) {
   return 0;
 }
 
-/// Check whether an actor's destination or current position lies within sixteen
-/// pixels.
+/// Checks whether an actor's destination or current position lies within
+/// sixteen pixels.
 static s32 VaultInteriors_IsActorWithinSixteenPixels(s32 x, s32 z, s32 id) {
   struct FieldActor *actor = Engine_ActorLookup(id);
   s32 ax;
@@ -2728,7 +2729,7 @@ static s32 VaultInteriors_IsActorWithinSixteenPixels(s32 x, s32 z, s32 id) {
   return 0;
 }
 
-/// Reject route stops occupied by the leader, Ivan, or either suspect.
+/// Rejects route stops occupied by the leader, Ivan, or either suspect.
 static s32 VaultInteriors_CheckStopOccupancy(struct VaultInteriorsStop *stop) {
   s32 x;
   s32 z;
@@ -2747,14 +2748,14 @@ static s32 VaultInteriors_CheckStopOccupancy(struct VaultInteriorsStop *stop) {
   return 0;
 }
 
-/// Set the actor's destination to the route stop's cell center.
+/// Sets the actor's destination to the route stop's cell center.
 static void VaultInteriors_MoveActorToStop(struct FieldActor *actor,
                                            struct VaultInteriorsStop *stop) {
   Engine_ObjectSetPosition(actor, (stop->gridX << 19) + PIXELS(72), 0,
                            (stop->gridZ << 19) + PIXELS(632));
 }
 
-/// Steer Ivan and both suspects through the graph and detect a sustained
+/// Steers Ivan and both suspects through the graph and detects a sustained
 /// cornering.
 static void VaultInteriors_UpdateActorStops(void) {
   struct FieldActor *leader;
@@ -2868,7 +2869,7 @@ static void VaultInteriors_UpdateActorStops(void) {
   }
 }
 
-/// Arrange the chase, constrain its camera, and start the route callback.
+/// Arranges the chase, constrain its camera, and starts the route callback.
 static void VaultInteriors_StartActorStops(void) {
   Engine_EventBegin();
   Camera_MoveTo(PIXELS(168), -1, PIXELS(656), 1);
@@ -2900,7 +2901,8 @@ static void VaultInteriors_StartActorStops(void) {
 }
 
 // clang-format off
-// A missing edge keeps both sentinel bytes; valid facings use the angle's high byte.
+// A missing edge keeps both sentinel bytes; valid facings use the angle's high
+// byte.
 #define NO_CONNECTION {255, 0xff, {0, 0}}
 #define CONNECTION(stop, direction) {stop, (direction) >> 8, {0, 0}}
 struct VaultInteriorsStop gVaultInteriors_Stops[] = {

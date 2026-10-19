@@ -7,9 +7,9 @@
 // the map, in one of the states kept elsewhere in it (such as the water
 // raised or not), straight into the background's tile map.
 
-/// Draw the width by height cells at cell (x, y) of the map into screen block 5
-/// from cell (destX, destY), wrapped to 16 by 16 cells, in band plane (16 cell
-/// rows each): each cell is its block's tiles from Ram_MapBlocks.
+/// Draws the width by height cells at cell (x, y) of the map into screen block
+/// 5 from cell (destX, destY), wrapped to 16 by 16 cells, in band plane (16
+/// cell rows each): each cell is its block's tiles from Ram_MapBlocks.
 static void Map_DrawCellPanel(s32 x, s32 y, s32 width, s32 height, s32 plane,
                               s32 destX, s32 destY) {
   u32 *cell = (u32 *)Ram_MapCellBuffer + (y * 128 + x);

@@ -4,7 +4,7 @@
 
 #include "../battle_command_internal.h"
 
-/// Return the target selection category for an ability's effect.
+/// Returns the target selection category for an ability's effect.
 /// 0 other, 1 restore HP, 2 restore PP, 3 cure poison, 4 cure status ailments,
 /// 5 revive, 6 cure all status ailments.
 /// act: ability data
@@ -34,7 +34,7 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
   return targetKind;
 }
 
-/// Collect commands in party order, including target, cost and randomized
+/// Collects commands in party order, including target, cost and randomized
 /// priority. Cancelling returns to the preceding choice; linked battles
 /// exchange completion signatures before releasing the command UI.
 s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,

@@ -251,7 +251,8 @@ static void TretTreeBranch_UpdateBg3ScrollSplit(void) {
   sHofsBeforeSplit = horizontalOffset - (gFrameCount >> 2);
 }
 
-/// Run the BG3 scroll selection at every HBlank, updating the split each frame.
+/// Runs the BG3 scroll selection at every HBlank, updating the split each
+/// frame.
 static void TretTreeBranch_StartBg3Split(void) {
   Runtime_SetIrqHandler(IRQ_HBLANK, 0, TretTreeBranch_ApplyBg3ScrollAtScanline);
   FieldScheduler_AddCallback(TretTreeBranch_UpdateBg3ScrollSplit,

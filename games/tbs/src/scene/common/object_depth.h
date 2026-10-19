@@ -44,8 +44,8 @@ SceneActor_SetFlagBitByRelativeDepth(union FieldObject *fieldObject) {
 #endif
 }
 
-/// Unless actor first is south of actor second, swap their positions and wait a
-/// frame.
+/// Unless actor first is south of actor second, swaps their positions and waits
+/// a frame.
 static void SceneActor_SwapPositionsByDepth(s32 first, s32 second) {
   struct FieldActor *a = Object_GetById(first);
   struct FieldActor *b = Object_GetById(second);

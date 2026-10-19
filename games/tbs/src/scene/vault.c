@@ -119,23 +119,23 @@ static s32 Vault_UpdateRoofComplainerProximity(union FieldObject *fieldObject) {
 #endif
 }
 
-/// Return the town's entrance positions.
+/// Returns the town's entrance positions.
 struct SceneEntrance *Scene_GetEntrances(void) { return gVault_Entrances; }
 
 /// The town has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-/// Return the town's exits.
+/// Returns the town's exits.
 u32 *Scene_GetExits(void) { return gVault_Exits; }
 
-/// Select placements before or after the thieves are captured.
+/// Selects placements before or after the thieves are captured.
 struct ScenePlacement *Scene_GetPlacements(void) {
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0)
     return gVault_PlacementsAfterThieves;
   return gVault_Placements;
 }
 
-/// Count the Venus Djinn that must leave Ivan before he leaves the party.
+/// Counts the Venus Djinn that must leave Ivan before he leaves the party.
 static int Vault_GetIvanVenusDjinnCount(void) {
   return UnitGet(IVAN)->djinnOwnedCounts[ELEMENT_VENUS];
 }
@@ -199,14 +199,14 @@ static void Event_PeerIntoWell(void) {
   Engine_EventEnd();
 }
 
-/// Select interactions before or after the thieves are captured.
+/// Selects interactions before or after the thieves are captured.
 struct SceneEvent *Scene_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0)
     return gVault_EventsAfterThieves;
   return gVault_Events;
 }
 
-/// Ask the current question and select its ordinary or alternate reply.
+/// Asks the current question and selects its ordinary or alternates reply.
 static inline void Vault_AskYesNoAndShowReply(s32 speaker) {
   Engine_EventOpenMessage(speaker, 0);
   if (Engine_EventChooseYesNo(0, 0) != 0) {
@@ -341,7 +341,7 @@ static void Event_LookForRoofer(void) {
   Engine_EventEnd();
 }
 
-/// Stop an actor, face the leader and show the current message.
+/// Stops an actor, faces the leader and shows the current message.
 static void Vault_ShowStandingActorMessage(s32 actor) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(actor, ANIM_STAND);
@@ -585,7 +585,7 @@ static void Event_ReadMindOnRoofer(void) {
 // Shared source is included here in ROM order.
 #include "common/vault_toggle.h"
 
-/// Walk to the exit threshold and request the room's transition.
+/// Walks to the exit threshold and request the room's transition.
 static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkTo(ACTOR_PARTY_LEADER, x, y);
@@ -593,28 +593,28 @@ static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
   Engine_EventRequestExit(continuation);
 }
 
-/// Open and enter the southeastern house.
+/// Opens and enters the southeastern house.
 static void Event_EnterSoutheastHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVault_Scene5Cells, 56, 19);
   Vault_WalkThroughExit(408, 320, 5);
 }
 
-/// Open and enter the house east of the town's center.
+/// Opens and enters the house east of the town's center.
 static void Event_EnterCentralEastHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVault_Scene6Cells, 50, 18);
   Vault_WalkThroughExit(312, 304, 6);
 }
 
-/// Open and enter the central house.
+/// Opens and enters the central house.
 static void Event_EnterCentralHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVault_Scene7Cells, 44, 17);
   Vault_WalkThroughExit(216, 288, 7);
 }
 
-/// Enter the northeastern doorway behind its foreground tiles.
+/// Enters the northeastern doorway behind its foreground tiles.
 static void Event_EnterNortheastHouse(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
@@ -627,7 +627,7 @@ static void Event_EnterNortheastHouse(void) {
   Vault_WalkThroughExit(376, 224, 8);
 }
 
-/// Enter the northern doorway behind its foreground tiles.
+/// Enters the northern doorway behind its foreground tiles.
 static void Event_EnterNorthHouse(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
@@ -640,7 +640,7 @@ static void Event_EnterNorthHouse(void) {
   Vault_WalkThroughExit(296, 176, 9);
 }
 
-/// Open and enter the northwestern house.
+/// Opens and enters the northwestern house.
 static void Event_EnterNorthwestHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVault_Scene10Cells, 38, 6);
@@ -669,7 +669,7 @@ static void Event_EnterPassage(void) {
   Vault_WalkThroughExit(152, 264, 13);
 }
 
-/// Move an actor through a jump and wait up to sixty frames for it to settle.
+/// Moves an actor through a jump and waits up to sixty frames for it to settle.
 static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
                                      s32 verticalSpeed) {
   struct FieldActor *actor = Object_GetById(actorId);
@@ -873,19 +873,19 @@ s32 Scene_Initialize(void) {
 #include "common/object_distance.h"
 #include "common/vault_range.h"
 
-/// Show the current message and pause before continuing the scene.
+/// Shows the current message and pauses before continuing the scene.
 static void Vault_ShowMessageAndWait(s32 actor, s32 delay) {
   Engine_EventShowMessage(actor, 0);
   Engine_EventWait(delay);
 }
 
-/// Face another actor and pause before continuing the conversation.
+/// Faces another actor and pauses before continuing the conversation.
 static void Vault_FaceActorAndWait(s32 actor, s32 cue, s32 delay) {
   Engine_ActorFaceEachOther(actor, cue, 0);
   Engine_EventWait(delay);
 }
 
-/// Apply drift and gradually damp both rates toward zero.
+/// Applies drift and gradually damp both rates toward zero.
 /// This custom update uses speed/acceleration as its two drift rates and
 /// mirrors the resulting position into the actor's target coordinates.
 static void Vault_UpdateDriftingEffect(union FieldObject *fieldObject) {
@@ -912,7 +912,7 @@ static void Vault_UpdateDriftingEffect(union FieldObject *fieldObject) {
   effect->acceleration = verticalRate - Math_Divide(verticalRate, 28);
 }
 
-/// Spawn a drifting sprite near the dog, sharing its drawing priority.
+/// Spawns a drifting sprite near the dog, sharing its drawing priority.
 UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   struct FieldActor *anchor;
   struct FieldActor *effect;

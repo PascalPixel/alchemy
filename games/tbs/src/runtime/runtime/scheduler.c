@@ -126,7 +126,7 @@ s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order) {
 /// Empty scheduler callback; it leaves all runtime state unchanged.
 void Scheduler_Idle(void) {}
 
-/// Alternate empty scheduler callback with the same no-op behavior.
+/// Alternates empty scheduler callback with the same no-op behavior.
 void Scheduler_EmptyCallback(void) {}
 
 /// Unschedules the task running `callback`. Returns its old index, or -1.

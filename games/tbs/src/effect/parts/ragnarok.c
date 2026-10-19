@@ -12,7 +12,7 @@
 // flashes live in work->particles and the blade picture in the work sheet;
 // PARTICLES holds 340 sparks per column.
 
-/// Place flash graphics after the 64x128 sword image.
+/// Where the flash graphics start: after the 64x128 sword image.
 #define RAGNAROK_FLASH_CELLS (64 * 128)
 
 #define RAGNAROK_FRAMES 80

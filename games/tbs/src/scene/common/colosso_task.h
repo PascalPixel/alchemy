@@ -62,7 +62,7 @@ extern s16 gColosso_LetteringParam;
 extern s32 gColosso_LetteringPosition;
 extern s16 *gColosso_LetteringScript;
 
-/// Load lettering picture id into the lettering's VRAM block (taken once) and
+/// Loads lettering picture id into the lettering's VRAM block (taken once) and
 /// its palette into sprite palette 15. Picture 8 is picture 4 in another
 /// palette.
 static void Colosso_LoadLettering(s32 id) {

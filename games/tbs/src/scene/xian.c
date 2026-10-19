@@ -110,14 +110,14 @@ static void Xian_UpdateFrozenPuddleLayer(void) {
   }
 }
 
-/// Rotate the log during the student's strike and Force animation.
+/// Rotates the log during the student's strike and Force animation.
 static void Xian_RotateTrainingTree(void) {
   struct FieldActor *tree = Object_GetById(ACTOR_TRAINING_TREE);
   struct AnimationObject *sprite = tree->sprite;
   sprite->rotation += 0x1400;
 }
 
-/// Emit particles beside the student every fourth frame.
+/// Emits particles beside the student every fourth frame.
 /// The existing byte view keeps the Z load before the options-data store;
 /// typed FieldActor reads reorder three instructions in the English build.
 static void Xian_SpawnTrainingParticles(void) {
@@ -138,7 +138,7 @@ static void Xian_SpawnTrainingParticles(void) {
 // Shared source is included here in ROM order.
 #include "common/object_distance.h"
 
-/// Track a nearby target only within the actor's current facing sector.
+/// Tracks a nearby target only within the actor's current facing sector.
 static s32 Xian_UpdateCarrierTracking(struct FieldActor *actor,
                                       struct FieldActor *target,
                                       s32 distanceLimit, s32 forceTracking) {

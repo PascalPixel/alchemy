@@ -14,10 +14,10 @@ static __inline__ void WaitDma(volatile u32 *channel) {
   }
 }
 
-/// Start the ripple: its work (heap block 34) holds the mode and, for x and y,
+/// Starts the ripple: its work (heap block 34) holds the mode and, for x and y,
 /// the wave's frequency, its step each frame and its amplitude; two scene
-/// callbacks build each frame's table of line offsets and send it by DMA in the
-/// horizontal blank.
+/// callbacks build each frame's table of line offsets and sends it by DMA in
+/// the horizontal blank.
 void DisplayScroll_InitializeHBlankDma(s32 mode, s32 freqX, s32 stepX, s32 ampX,
                                        s32 freqY, s32 stepY, s32 ampY) {
   struct DisplayScrollWork *work;

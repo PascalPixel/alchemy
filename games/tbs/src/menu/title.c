@@ -45,13 +45,13 @@
 static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);
 
-/// Expose the title overlay entrance table to the scene loader.
+/// Exposes the title overlay entrance table to the scene loader.
 u8 *Title_GetEntrances(void) { return (u8 *)gTitleEntrances; }
 
 /// The title overlay needs no additional scene data.
 s32 SceneData_ReturnZero(void) { return 0; }
 
-/// Expose the title overlay exit table to the scene loader.
+/// Exposes the title overlay exit table to the scene loader.
 u8 *Title_GetExits(void) { return (u8 *)gTitleExits; }
 
 /// The title overlay has no placed field actors.
@@ -60,7 +60,7 @@ u8 *Title_GetPlacements(void) { return (u8 *)gTitlePlacements; }
 /// The title overlay has no field events.
 u8 *Title_GetEvents(void) { return (u8 *)gTitleEvents; }
 
-/// Route the logo, completion presentation and new-game title entrances.
+/// Routes the logo, completion presentation and new-game title entrances.
 s32 Title_Run(void) {
   s32 waitFrames;
 
@@ -135,7 +135,7 @@ s32 Title_Run(void) {
   return 0;
 }
 
-/// Decode the language-specific title sprites and upload their palette and
+/// Decodes the language-specific title sprites and upload their palette and
 /// tiles.
 static void Title_LoadSprites(s32 unused) {
   u8 *decodedSprites;
@@ -238,7 +238,7 @@ static void Title_UpdateSpriteReveal(void) {
   gTitleRevealFrame++;
 }
 
-/// Prepare the logo, reveal its sprites and then open the screen transition.
+/// Prepares the logo, reveals its sprites and then opens the screen transition.
 static void Title_RevealScreen(s32 unused) {
   s32 brightnessStep;
 
@@ -276,7 +276,7 @@ static void Title_RevealScreen(s32 unused) {
   gEventWork->transitionFrames = 60;
 }
 
-/// Load the logo palette and tiles, build its tilemap and reset scrolling.
+/// Loads the logo palette and tiles, builds its tilemap and resets scrolling.
 static void Title_LoadBackground(void) {
   u8 *encodedGraphics;
   s32 resourceId;

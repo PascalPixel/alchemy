@@ -69,7 +69,7 @@ static void FuchinTemple_AnimateRevealLesson(void);
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-/// Clear the scripted actor's sprite flags and complete the script command.
+/// Clears the scripted actor's sprite flags and complete the script command.
 static s32 FuchinTemple_ClearScriptedActorSpriteFlags(
     struct ScriptInterpreter *interpreter) {
   Engine_ActorSetSpriteFlags((struct FieldActor *)interpreter, 0);
@@ -93,7 +93,7 @@ static s32 FuchinTemple_FaceLeader(union FieldObject *object) {
 #endif
 }
 
-/// Choose the outside entrance table or the shared interior entrances.
+/// Chooses the outside entrance table or the shared interior entrances.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -107,7 +107,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gFuchinTempleExits; }
 
-/// Select the room's actors and apply the post-lesson placement changes.
+/// Selects the room's actors and applies the post-lesson placement changes.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_FuchinTemple1) {
     return gFuchinTemplePlacements1;
@@ -445,7 +445,7 @@ static void Event_StudentAsksAboutFeh(void) {
   EV_END();
 }
 
-/// Rotate the training tree through its westward arc and scatter particles.
+/// Rotates the training tree through its westward arc and scatters particles.
 static void FuchinTemple_ToppleTreeWest(void) {
   struct FieldActor *tree = Object_GetById(TRAINING_TREE);
   u32 turnStep;
@@ -472,8 +472,8 @@ static void FuchinTemple_ToppleTreeWest(void) {
                0xffff0000, 0x3333, 0, 0, 0);
 }
 
-/// Rotate the training tree through the opposite arc and reverse its horizontal
-/// scale.
+/// Rotates the training tree through the opposite arc and reverse its
+/// horizontal scale.
 static void FuchinTemple_ToppleTreeEast(void) {
   struct FieldActor *tree;
   u32 turnStep;
@@ -499,7 +499,7 @@ static void FuchinTemple_ToppleTreeEast(void) {
                0x3333, 0x6666, 0, 0, 0);
 }
 
-/// Slide the training tree north in four steps, then scatter particles.
+/// Slides the training tree north in four steps, then scatters particles.
 static void FuchinTemple_ToppleTreeNorth(void) {
   struct FieldActor *tree = Object_GetById(TRAINING_TREE);
   u32 stepIndex = 0;
@@ -525,7 +525,7 @@ static void FuchinTemple_ToppleTreeNorth(void) {
                tree->z.fixed + (160 << 12), 0x00003333, 0, 0xffff0000, 0, 0);
 }
 
-/// Slide the training tree south in four steps before the final displacement.
+/// Slides the training tree south in four steps before the final displacement.
 static void FuchinTemple_ToppleTreeSouth(void) {
   struct FieldActor *tree;
   u32 stepIndex;
@@ -559,7 +559,7 @@ static void FuchinTemple_ToppleTreeSouth(void) {
                particleSpeed, 0, 0x10000, 0, 0);
 }
 
-/// Route the student around the tree according to the leader's facing.
+/// Routes the student around the tree according to the leader's facing.
 static void FuchinTemple_StudentWalksAroundTree(void) {
   u32 leaderFacing;
   u32 quadrantLimit;
@@ -1332,7 +1332,7 @@ static void Event_ReadNyunpasLastWish(void) {
   EV_END();
 }
 
-/// Select the outdoor, school, or lesson event table.
+/// Selects the outdoor, school, or lesson event table.
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_FuchinTemple1) {
     return gFuchinTempleEvents1;
@@ -1343,7 +1343,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gFuchinTempleEvents;
 }
 
-/// Emit a falling particle beside the leader during the grotto entrance fade.
+/// Emits a falling particle beside the leader during the grotto entrance fade.
 static void FuchinTemple_SpawnGrottoEntryParticle(void) {
   struct EffectOptions options;
   struct FieldActor *leader;
@@ -1372,22 +1372,22 @@ static void FuchinTemple_SpawnGrottoEntryParticle(void) {
     Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 1);
 }
 
-/// Hop the leader one map cell north.
+/// Hops the leader one map cell north.
 static UNUSED void FuchinTemple_HopLeaderNorth(void) {
   FuchinTemple_HopLeaderByOffset(0, -32);
 }
 
-/// Hop the leader one map cell south.
+/// Hops the leader one map cell south.
 static UNUSED void FuchinTemple_HopLeaderSouth(void) {
   FuchinTemple_HopLeaderByOffset(0, 32);
 }
 
-/// Hop the leader one map cell west.
+/// Hops the leader one map cell west.
 static UNUSED void FuchinTemple_HopLeaderWest(void) {
   FuchinTemple_HopLeaderByOffset(-32, 0);
 }
 
-/// Hop the leader by a pixel offset, waiting for the movement to finish.
+/// Hops the leader by a pixel offset, waiting for the movement to finish.
 static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ) {
   EV_BEGIN();
   OBJ_SPEED(ACTOR_PARTY_LEADER, 5 * PIXELS(1) / 2, 5 * PIXELS(1) / 4);
@@ -2185,7 +2185,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Start the Mind Read demonstration for the requested caster and target.
+/// Starts the Mind Read demonstration for the requested caster and target.
 static void FuchinTemple_BeginMindReadDemonstration(s32 caster, s32 target) {
   u8 *effectWork;
 
@@ -2199,14 +2199,14 @@ static void FuchinTemple_BeginMindReadDemonstration(s32 caster, s32 target) {
   Engine_TaskWait(1);
 }
 
-/// Finish the demonstration's effect and lower the caster's hands.
+/// Finishes the demonstration's effect and lowers the caster's hands.
 static void FuchinTemple_FinishMindReadDemonstration(void) {
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
   Engine_PsynergyPlayEffect(2);
   Engine_PsynergyLowerHands();
 }
 
-/// Emit eight rising particles from Nyunpa, sounding every other shot.
+/// Emits eight rising particles from Nyunpa, sounding every other shot.
 static void FuchinTemple_SpawnNyunpasParticles(void) {
   struct EffectOptions options;
   struct FieldActor *nyunpa;
@@ -2229,7 +2229,7 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
   WAIT(60);
 }
 
-/// Alternate the lesson's child effect from the frame counter, not player
+/// Alternates the lesson's child effect from the frame counter, not player
 /// input.
 static void FuchinTemple_AlternateLessonChildEffect(union FieldObject *object) {
   if ((*(u32 *)&gFrameCount >> 1) & 1) {
@@ -2239,7 +2239,7 @@ static void FuchinTemple_AlternateLessonChildEffect(union FieldObject *object) {
   }
 }
 
-/// Animate Hama and Ivan's lesson effects, fade the palette and clear the
+/// Animates Hama and Ivan's lesson effects, fades the palette and clears the
 /// callbacks.
 static void FuchinTemple_AnimateRevealLesson(void) {
   struct EffectOptions options;

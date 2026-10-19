@@ -6,8 +6,8 @@
 #include "field_event.h"
 #include "songs.h"
 
-/// Bring every Djinni back from recovery (twenty rounds of it), then, if Ivan
-/// holds the first Venus Djinni, give it back to Isaac and recalculate both.
+/// Brings every Djinni back from recovery (twenty rounds of it), then, if Ivan
+/// holds the first Venus Djinni, gives it back to Isaac and recalculates both.
 static s32 Vault_ReturnIsaacsDjinni(void) {
   DjinnRecovery_TickTwenty();
   if ((UnitGet(IVAN)->djinnAvailable[ELEMENT_VENUS] & 1) != 0) {

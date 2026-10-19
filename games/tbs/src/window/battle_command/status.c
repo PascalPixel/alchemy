@@ -33,7 +33,7 @@ struct StatusCursor {
   s32 row;
 };
 
-/// Show a party member's stats and condition help until B or the link session
+/// Shows a party member's stats and condition help until B or the link session
 /// ends. The supplied list enables shoulder-button member switching. Measure
 /// stage deltas temporarily, then restore the unit from its snapshot.
 s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {

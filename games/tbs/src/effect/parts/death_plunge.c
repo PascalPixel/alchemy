@@ -165,7 +165,7 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
 
 #define BLADE_RAIN_FRAMES 120
 
-/// Drop 16 swords, one every 4 frames, slanting in towards the first target
+/// Drops 16 swords, one every 4 frames, slanting in towards the first target
 /// (the middle of the canvas, x 64) and sticking in the ground, where their
 /// bottom 4 pixels are hidden.
 ///

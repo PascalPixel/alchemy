@@ -23,9 +23,9 @@ struct FieldActor;
 struct FieldPosition;
 struct MenuSprite;
 
-/// Register a main-image scheduler callback. The scene layer's Task_AddCallback
-/// and FieldScheduler_AddOrUpdateCallback also use this wrapper, so overlays
-/// import this routine under one name.
+/// Registers a main-image scheduler callback. The scene layer's
+/// Task_AddCallback and FieldScheduler_AddOrUpdateCallback also use this
+/// wrapper, so overlays import this routine under one name.
 static inline s32 FieldScheduler_AddCallback(SchedulerCallback callback,
                                              s32 priority) {
   return Scheduler_AddOrUpdateCallback(callback, priority);
@@ -77,7 +77,7 @@ static inline s32 FieldUnit_AddHp(s32 owner, s32 delta) {
   return Unit_AddHp(owner, delta);
 }
 
-/// Decode type-01 compressed data. Scenes and the title and clear menus use
+/// Decodes type-01 compressed data. Scenes and the title and clear menus use
 /// this wrapper. The same decode in main-image field/lucky_dice.c uses call.h's
 /// tagged Value2 instead.
 static inline s32 FieldResource_DecodeType01(const void *source,

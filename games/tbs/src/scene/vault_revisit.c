@@ -67,7 +67,7 @@ enum {
 #include "common/vault_range.h"
 #include "common/vault_nearby.h"
 
-/// Return the revisited town's arrival positions.
+/// Returns the revisited town's arrival positions.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gVaultRevisit_Entrances;
 }
@@ -75,15 +75,15 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 /// This overlay has no clipping regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-/// Return the revisited town's packed exit routes.
+/// Returns the revisited town's packed exit routes.
 const u32 *Scene_GetExits(void) { return gVaultRevisit_Exits; }
 
-/// Return the villagers, dog, and Djinni placements.
+/// Returns the villagers, dog, and Djinni placements.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   return gVaultRevisit_Placements;
 }
 
-/// Stand the actor still while showing the message already selected.
+/// Stands the actor still while showing the message already selected.
 static void VaultRevisit_ShowStandingActorMessage(s32 actor) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(actor, ANIM_STAND);
@@ -305,7 +305,7 @@ static void Event_ReadMindOnJailKey(void) {
   }
 }
 
-/// Give the actor vertical velocity, move it, and wait briefly for it to
+/// Gives the actor vertical velocity, moves it, and waits briefly for it to
 /// settle.
 static void VaultRevisit_JumpActorToAndWait(int actor, int x, int z,
                                             int velocityY) {
@@ -350,7 +350,7 @@ static void Event_RingBell(void) {
   Engine_EventEnd();
 }
 
-/// Walk the leader into a doorway during the sixteen-frame exit delay.
+/// Walks the leader into a doorway during the sixteen-frame exit delay.
 static void Vault_WalkThroughExit(s32 x, s32 z, s32 exitId) {
   s32 leaderId = ACTOR_PARTY_LEADER;
 
@@ -360,28 +360,28 @@ static void Vault_WalkThroughExit(s32 x, s32 z, s32 exitId) {
   Engine_EventRequestExit(exitId);
 }
 
-/// Open and enter the southeast house.
+/// Opens and enters the southeast house.
 static void Event_EnterSoutheastHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_Scene5Cells, 56, 19);
   Vault_WalkThroughExit(408, 320, 5);
 }
 
-/// Open and enter the central east house.
+/// Opens and enters the central east house.
 static void Event_EnterCentralEastHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_Scene6Cells, 50, 18);
   Vault_WalkThroughExit(312, 304, 6);
 }
 
-/// Open and enter the central house.
+/// Opens and enters the central house.
 static void Event_EnterCentralHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_Scene7Cells, 44, 17);
   Vault_WalkThroughExit(216, 288, 7);
 }
 
-/// Open the northeast house and use its required sprite priority.
+/// Opens the northeast house and uses its required sprite priority.
 static void Event_EnterNortheastHouse(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
@@ -394,7 +394,7 @@ static void Event_EnterNortheastHouse(void) {
   Vault_WalkThroughExit(376, 224, 8);
 }
 
-/// Open the north house and use its required sprite priority.
+/// Opens the north house and uses its required sprite priority.
 static void Event_EnterNorthHouse(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
@@ -407,7 +407,7 @@ static void Event_EnterNorthHouse(void) {
   Vault_WalkThroughExit(296, 176, 9);
 }
 
-/// Open and enter the northwest house.
+/// Opens and enters the northwest house.
 static void Event_EnterNorthwestHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_Scene10Cells, 38, 6);
@@ -441,7 +441,7 @@ static void Event_TalkToVenusDjinni(void) {
   Djinn_JoinParty(ACTOR_VAULT_VENUS_DJINNI, 0, VAULT_VENUS_DJINNI_INDEX);
 }
 
-/// Jump at the hidden passage, then pause so the party can see the clue.
+/// Jumps at the hidden passage, then pauses so the party can see the clue.
 static inline void VaultRevisit_DogJumpAtPassage(void) {
   Engine_ActorJump(ACTOR_VAULT_DOG, 6, 0);
   Engine_EventWait(30);
@@ -469,14 +469,14 @@ static void Event_GiveBoneToDog(void) {
   Engine_EventEnd();
 }
 
-/// Cover the hidden passage when Reveal ends.
+/// Covers the hidden passage when Reveal ends.
 static void Event_HidePassage(void) {
 
   Map_CopyCellAttributes(41, 43, 1, 1, 13, 25);
   Map_CopyCellsTo(40, 42, 12, 22, 3, 3);
 }
 
-/// Restore the passage's visible tiles and collision cell during Reveal.
+/// Restores the passage's visible tiles and collision cell during Reveal.
 static void Event_RevealPassage(void) {
 
   Map_CopyCellAttributes(37, 43, 1, 1, 13, 25);
@@ -502,7 +502,7 @@ static void Event_TalkToDog(void) {
   Engine_EventEnd();
 }
 
-/// Describe the water heard at the bottom of the well.
+/// Describes the water heard at the bottom of the well.
 static void Event_PeerIntoWell(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
@@ -510,7 +510,7 @@ static void Event_PeerIntoWell(void) {
   Engine_EventEnd();
 }
 
-/// Return the town's talk, search, Psynergy, and doorway events.
+/// Returns the town's talk, search, Psynergy, and doorway events.
 const struct SceneEvent *Scene_GetEvents(void) { return gVaultRevisit_Events; }
 
 /// Patched editions keep the bell's Djinni position when preserving the party.
@@ -522,7 +522,7 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 #endif
 }
 
-/// Restore dog and Djinni progress, proximity reactions, and entrance flags.
+/// Restores dog and Djinni progress, proximity reactions, and entrance flags.
 s32 Scene_Initialize(void) {
 
   struct FieldActor *actor;

@@ -1213,7 +1213,7 @@ void Menu_EnsureCancelSound(void) {
   }
 }
 
-/// Set the window text colour: normal (15), no HP (2) and low HP (4).
+/// Sets the window text colour: normal (15), no HP (2) and low HP (4).
 void UiPalette_SetColor15(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL); }
 
 /// Selects text color 2 for the following drawing calls.

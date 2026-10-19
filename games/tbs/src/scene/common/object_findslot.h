@@ -3,7 +3,7 @@
 
 // Colosso Log, River and Wall, and Venus Lighthouse.
 
-/// Return the placed actor (8 to 65) whose cell, and 16-pixel step of height,
+/// Returns the placed actor (8 to 65) whose cell, and 16-pixel step of height,
 /// is that of the 16.16 position, or 0. self is not read.
 static void *SceneData_FindSlotAtPosition(void *position, void *self) {
   s32 *pos = position;

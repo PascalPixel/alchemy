@@ -54,7 +54,7 @@ struct EventGlobals {
   u8 *field;
 };
 
-/// Return the arrival positions for the Sol and Luna rooms.
+/// Returns the arrival positions for the Sol and Luna rooms.
 const struct SceneEntrance *SolSanctumLunaSolRooms_GetEntrances(void) {
   return gSolSanctumLunaSolRoomsEntrances;
 }
@@ -62,17 +62,17 @@ const struct SceneEntrance *SolSanctumLunaSolRooms_GetEntrances(void) {
 /// The Sol and Luna rooms have no region table.
 const struct SceneRegion *SolSanctumLunaSolRooms_GetRegions(void) { return 0; }
 
-/// Return the connections between the sanctum's puzzle rooms.
+/// Returns the connections between the sanctum's puzzle rooms.
 const u32 *SolSanctumLunaSolRooms_GetExits(void) {
   return gSolSanctumLunaSolRoomsExits;
 }
 
-/// Return the statues and party actors used by these rooms.
+/// Returns the statues and party actors used by these rooms.
 const struct ScenePlacement *SolSanctumLunaSolRooms_GetPlacements(void) {
   return gSolSanctumLunaSolRoomsPlacements;
 }
 
-/// Return the room triggers, statue interactions and Kraden's dialogue.
+/// Returns the room triggers, statue interactions and Kraden's dialogue.
 const struct SceneEvent *SolSanctumLunaSolRooms_GetEvents(void) {
   return gSolSanctumLunaSolRoomsEvents;
 }
@@ -178,7 +178,7 @@ static void Event_ClearBackdropColor(void) {
   *backdropColor = black;
 }
 
-/// Draw the light of each open seal, from four consecutive flags, with the
+/// Draws the light of each open seal, from four consecutive flags, with the
 /// tiles of the given source row.
 static inline void SolSanctumLunaSolRooms_DrawStatueLightTiles(s32 firstFlag,
                                                                s32 sourceRow) {
@@ -192,31 +192,31 @@ static inline void SolSanctumLunaSolRooms_DrawStatueLightTiles(s32 firstFlag,
     Map_CopyCellsTo(47, sourceRow + 1, 36, 11, 2, 1);
 }
 
-/// Draw the active lights from the current statue flags.
+/// Draws the active lights from the current statue flags.
 static void SolSanctumLunaSolRooms_DrawCurrentStatueLights(void) {
   SolSanctumLunaSolRooms_DrawStatueLightTiles(
       FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN, 28);
 }
 
-/// Draw the active lights from the saved statue flags.
+/// Draws the active lights from the saved statue flags.
 static void SolSanctumLunaSolRooms_DrawSavedStatueLights(void) {
   SolSanctumLunaSolRooms_DrawStatueLightTiles(
       FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN, 28);
 }
 
-/// Draw the current lights using their alternate tile rows.
+/// Draws the current lights using their alternate tile rows.
 static void SolSanctumLunaSolRooms_DrawAlternateCurrentStatueLights(void) {
   SolSanctumLunaSolRooms_DrawStatueLightTiles(
       FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN, 30);
 }
 
-/// Draw the saved lights using their alternate tile rows.
+/// Draws the saved lights using their alternate tile rows.
 static void SolSanctumLunaSolRooms_DrawAlternateSavedStatueLights(void) {
   SolSanctumLunaSolRooms_DrawStatueLightTiles(
       FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN, 30);
 }
 
-/// Flash both tile sets of the current statue lights at this pace.
+/// Flashes both tile sets of the current statue lights at this pace.
 static inline void SolSanctumLunaSolRooms_FlashCurrentStatueLights(s32 frames) {
   Event_PlayCue(SE_246);
   SolSanctumLunaSolRooms_DrawCurrentStatueLights();
@@ -226,7 +226,7 @@ static inline void SolSanctumLunaSolRooms_FlashCurrentStatueLights(s32 frames) {
   Engine_EventWait(frames);
 }
 
-/// Flash both tile sets of the saved statue lights at this pace.
+/// Flashes both tile sets of the saved statue lights at this pace.
 static inline void SolSanctumLunaSolRooms_FlashSavedStatueLights(s32 frames) {
   Event_PlayCue(SE_246);
   SolSanctumLunaSolRooms_DrawSavedStatueLights();
@@ -407,7 +407,7 @@ static void Event_KradenFindsHall(void) {
   }
 }
 
-/// Introduce the linked Sol and Luna rooms and Kraden's search request.
+/// Introduces the linked Sol and Luna rooms and Kraden's search request.
 static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   struct FieldActor *leader;
   s32 request;
@@ -542,7 +542,7 @@ static void Event_KradenStopsPartyLeaving(void) {
   Engine_EventEnd();
 }
 
-/// Animate the first falling light and manage the shared shake pulse.
+/// Animates the first falling light and manage the shared shake pulse.
 static void SolSanctumLunaSolRooms_UpdateFirstStatueLight(void) {
   if ((Random_Next() & 3) != 0) {
     switch (gSolSanctumLunaSolRooms_Light1Timer) {
@@ -587,7 +587,7 @@ static void SolSanctumLunaSolRooms_UpdateFirstStatueLight(void) {
   }
 }
 
-/// Animate the second falling light with its own random restart delay.
+/// Animates the second falling light with its own random restart delay.
 static void SolSanctumLunaSolRooms_UpdateSecondStatueLight(void) {
   if ((Engine_RandomNext() & 3) != 0) {
     switch (gSolSanctumLunaSolRooms_Light2Timer) {
@@ -624,7 +624,7 @@ static void SolSanctumLunaSolRooms_UpdateSecondStatueLight(void) {
   }
 }
 
-/// Animate the third falling light with its own random restart delay.
+/// Animates the third falling light with its own random restart delay.
 static void SolSanctumLunaSolRooms_UpdateThirdStatueLight(void) {
   if ((Engine_RandomNext() & 3) != 0) {
     switch (gSolSanctumLunaSolRooms_Light3Timer) {
@@ -661,7 +661,7 @@ static void SolSanctumLunaSolRooms_UpdateThirdStatueLight(void) {
   }
 }
 
-/// Animate the fourth falling light with its own random restart delay.
+/// Animates the fourth falling light with its own random restart delay.
 static void SolSanctumLunaSolRooms_UpdateFourthStatueLight(void) {
   if ((Engine_RandomNext() & 3) != 0) {
     switch (gSolSanctumLunaSolRooms_Light4Timer) {
@@ -698,7 +698,7 @@ static void SolSanctumLunaSolRooms_UpdateFourthStatueLight(void) {
   }
 }
 
-/// Prepare the statue-room tiles, camera and opening palette flash.
+/// Prepares the statue-room tiles, camera and opening palette flash.
 static void SolSanctumLunaSolRooms_PrepareStatueTransition(void) {
   Camera_MoveTo(-1, -1, -1, 0);
   Map_CopyCellsTo(30, 43, 32, 40, 8, 3);
@@ -728,7 +728,7 @@ static void SolSanctumLunaSolRooms_PrepareStatueTransition(void) {
   Engine_ColorBufferInterpolate(24);
 }
 
-/// Accelerate the statue lights, then let Kraden retreat from the trap.
+/// Accelerates the statue lights, then lets Kraden retreat from the trap.
 static void SolSanctumLunaSolRooms_SpringStatueTrap(void) {
   s32 twelveFrameFlashes;
   s32 eightFrameFlashes;
@@ -777,7 +777,7 @@ static void SolSanctumLunaSolRooms_SpringStatueTrap(void) {
   Engine_EventRequestExit(3);
 }
 
-/// Run the falling lights while Kraden retreats from the changed room.
+/// Runs the falling lights while Kraden retreats from the changed room.
 static void SolSanctumLunaSolRooms_RunStatueLightSequence(void) {
   s32 flash;
   Engine_EventBegin();
@@ -845,7 +845,7 @@ static void SolSanctumLunaSolRooms_RunStatueLightSequence(void) {
   Engine_EventRequestExit(4);
 }
 
-/// Reconcile the saved light flags and replay their accelerating flashes.
+/// Reconciles the saved light flags and replay their accelerating flashes.
 static void SolSanctumLunaSolRooms_AnimateSavedStatueLights(void) {
   s32 speaker;
   s32 twelveFrameFlashes;
@@ -985,7 +985,7 @@ static void Event_KradenSeesLunaPictureChange(void) {
   }
 }
 
-/// Show Kraden noticing that the floor symbol changed to Luna.
+/// Shows Kraden noticing that the floor symbol changed to Luna.
 static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void) {
   Engine_AudioPlayCue(MUS_021);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 184);
@@ -1166,7 +1166,7 @@ static void Event_RiseToElementalStarRoom(void) {
   }
 }
 
-/// Restore puzzle tiles and select the scene associated with this entrance.
+/// Restores puzzle tiles and selects the scene associated with this entrance.
 s32 SolSanctumLunaSolRooms_Initialize(void) {
   s32 playedEntrySequence;
   s32 anyLightLit;
@@ -1324,7 +1324,7 @@ static s32 SolSanctumLunaSolRooms_AreAllStatueLightsLit(void) {
   return allLit;
 }
 
-/// Advance the active dialogue and pause for the requested frames.
+/// Advances the active dialogue and pauses for the requested frames.
 static void SolSanctumLunaSolRooms_ShowMessageAndWait(s32 speaker,
                                                       s32 waitFrames) {
   Engine_EventShowMessage(speaker, 0);

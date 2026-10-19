@@ -1,50 +1,46 @@
-// Draft, differ 14 of 112: builds a message's render entries and draws them
-// into a window centred in 192 pixels, running the colour, outline, line
-// spacing and new line codes as ☀️ UiText_RenderWideStringAtOffset
-// (games/tbs/src/window/window.c) does; a message that starts with dashes
-// draws nothing and returns how many (0 to 3). Left: instruction order of
-// constant builds against loads (the three 0xf3x offsets, 0x1342 and 0xf42),
-// and the two-operand skip (codes 14, 15, 28): native steps once and jumps
-// into the one-operand skip; text++ twice is combined into one add of 4.
-// Tried: dash tests as a flat chain (differ 35 with the movs r0, #1 hoisted);
-// x not initialized (differ 71: x and count's zero take different registers).
+// Draft, differ 10 of 112 (2026-10-18): only scheduling remains; the native
+// loads the work pointer before it builds the count offset, and in the
+// colour, outline and line-spacing cases and the loop start it loads the
+// entry between the two instructions of the split offset. A barrier after the
+// work pointer moves the frame setup (18).
+// Draws message centred on a 192-pixel-wide text canvas with shadowed
+// glyphs, running the colour, outline, line spacing and new line codes as
+// ☀️'s UiText_RenderWideStringAtOffset does. A message starting "-" draws
+// nothing and returns 0, 1, 2 or 3 by how many dashes open it.
 #include "types.h"
 #include "ram_buffer.h"
 #include "window.h"
-#include "uiwindow.h"
 
 s32 UiText_BuildRenderEntries(s32 message, s32 mode);
-void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
-                                   u32 *outHeight, s32 mode);
+void UiText_MeasureEntryDimensions(s32 entry, s32 *width, s32 *height,
+                                   s32 flags);
 void UiWork_ResetCounters(void);
-s32 Func_0803cfd0(struct UiWindow *window, u32 code, s32 x, s32 y);
+s32 UiText_DrawShadowedGlyph(u8 *canvas, s32 ch, s32 x, s32 row);
 
-s32 Func_0803d020(s32 message, struct UiWindow *window) {
-  struct UiRenderWork *work = Ram_HeapSlots->windowTiles;
-  u32 width;
-  u32 height;
+s32 Func_0803d020(s32 message, u8 *canvas) {
+  struct UiRenderWork *work = (struct UiRenderWork *)Ram_HeapSlots->windowTiles;
+  s32 x = 0;
+  s32 y = 0;
   s32 entry;
+  s32 width;
+  s32 height;
   u16 *text;
   u32 code;
-  s32 x;
-  s32 y;
 
-  x = 0;
-  y = 0;
-  work->count = 0;
+  work->count = x;
   entry = UiText_BuildRenderEntries(message, 0);
   UiText_MeasureEntryDimensions(entry, &width, &height, 0);
   text = &work->entries[entry];
   if (text[0] == '-') {
-    if (text[1] == '-') {
-      if (text[2] == '-')
-        return text[3] == '-' ? 3 : 2;
-      return 1;
-    }
-    return 0;
+    if (text[1] != '-')
+      return 0;
+    if (text[2] == '-')
+      return text[3] == '-' ? 3 : 2;
+    return 1;
   }
-  x = (s32)(192 - width) / 2;
-  while ((code = *text++) != 0) {
+  x = (192 - width) / 2;
+  code = *text++;
+  while (code != 0) {
     if (code <= 30) {
       switch (code) {
       case 8:
@@ -62,6 +58,7 @@ s32 Func_0803d020(s32 message, struct UiWindow *window) {
       case 11:
       case 12:
       case 17:
+      skip:
         text++;
         break;
       case 7:
@@ -75,12 +72,12 @@ s32 Func_0803d020(s32 message, struct UiWindow *window) {
       case 15:
       case 28:
         text++;
-        text++;
-        break;
+        goto skip;
       }
     } else {
-      x += Func_0803cfd0(window, code, x, y);
+      x += UiText_DrawShadowedGlyph(canvas, code, x, y);
     }
+    code = *text++;
   }
   return 0;
 }

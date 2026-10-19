@@ -1034,9 +1034,9 @@ static void BabiLighthouse_UpdateMovedBlock(void) {
 
 /// Advances the staged pair only when the actor ahead is less than eight pixels
 /// away vertically.
-/// Trial: inverting the empty success arm changes two branch instructions
-/// (three text bytes in tbs-en); retain the existing branch order.
 static void BabiLighthouse_AdvanceNearbyPair(void) {
+  // Trial: inverting the empty success arm changes two branch instructions
+  // (three text bytes in tbs-en); retain the existing branch order.
   struct StagedActor *leader =
       (struct StagedActor *)Object_GetById(ACTOR_PARTY_LEADER);
   struct StagedActor *ahead = BabiLighthouse_FindActorAhead(leader);

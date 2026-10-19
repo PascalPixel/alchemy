@@ -42,12 +42,12 @@ void BattleSpoils_Clear(void) {
     items[index] = 0;
 }
 
-/// These reward rolls retain separate inline bodies: a die-size parameter
-/// adds eight bytes to BattleEnemy_RecordDefeat in EN.
 /// Adds one six-sided roll per ten levels plus one, with a bonus floor of 30
 /// percent of the base coins.
 static __inline__ s32 BattleEnemy_CalculateCoinReward(struct BattleUnit *unit,
                                                       u16 *reward) {
+  // These reward rolls retain separate inline bodies: a die-size parameter adds
+  // eight bytes to BattleEnemy_RecordDefeat in EN.
   s32 rollIndex;
   s32 bonus = 0;
   s32 base;

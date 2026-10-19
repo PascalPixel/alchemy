@@ -25,8 +25,9 @@ struct Vector3 {
 #endif
 };
 
-/// UB: transform routines index three coordinates from separate scalar members.
-/// UBFIX gives those routines a real array while preserving named components.
+/// Returns the vector's three coordinates as an array.
+// UB: transform routines index three coordinates from separate scalar members.
+// UBFIX gives those routines a real array while preserving named components.
 static inline const s32 *Vector3_Coordinates(const struct Vector3 *vector) {
 #ifdef UBFIX
   return vector->coordinates;

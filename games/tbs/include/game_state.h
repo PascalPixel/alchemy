@@ -129,8 +129,8 @@ extern struct GameState gGameState;
 #endif
 
 /// Sets the battle start type.
-/// A statement macro (S2: a layer, 34 sites): written as one, its store stays
-/// in place at every use; as a plain assignment, tbs-en differs.
+// A statement macro (S2: a layer, 34 sites): written as one, its store stays in
+// place at every use; as a plain assignment, tbs-en differs.
 #define Battle_SetStart(mode)                                                  \
   do {                                                                         \
     gGameState.battleStart = (mode);                                           \

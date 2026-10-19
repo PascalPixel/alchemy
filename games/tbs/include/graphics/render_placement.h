@@ -27,8 +27,9 @@ struct SpritePlacement {
 #endif
 };
 
-/// UB: the legacy renderer walks across the scalar members as an array.
-/// UBFIX supplies a real array; an always-on union changes producer scheduling.
+/// Returns the placement's values as an array.
+// UB: the legacy renderer walks across the scalar members as an array. UBFIX
+// supplies a real array; an always-on union changes producer scheduling.
 static inline const s32 *
 SpritePlacement_ReadValues(const struct SpritePlacement *placement) {
 #ifdef UBFIX

@@ -71,12 +71,13 @@ enum {
 /// Black Orb.
 enum { ENTRANCE_99 = 99 };
 
-/// The sprite's two priority bits of a ship piece or a party actor: 9 sets
-/// the first, any other the second. ACTOR_SPRITE reads actor->sprite through
-/// an s32, so each store reloads it as the native does; read as the field,
-/// the two stores share one load.
+/// The sprite of a ship piece or a party actor.
+// ACTOR_SPRITE reads actor->sprite through an s32, so each store reloads it as
+// the native does; read as the field, the two stores share one load.
 #define ACTOR_SPRITE(actor)                                                    \
   ((struct AnimationObject *)*(s32 *)((u8 *)(actor) + 0x50))
+/// Sets one of the sprite's two priority bits of a ship piece or a party
+/// actor: 9 sets the first, any other the second.
 #define SET_PRIORITY(actor, n)                                                 \
   ((n) == 9 ? (ACTOR_SPRITE(actor)->image.priority = 1)                        \
             : (ACTOR_SPRITE(actor)->shadow.priority = 1))

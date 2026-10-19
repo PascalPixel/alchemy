@@ -242,8 +242,8 @@ typedef void MenuBackdropResult;
 #else
 typedef s32 MenuBackdropResult;
 #endif
-/// The native wrapper forwards an implicit result; the defined interface is
-/// void.
+// The native wrapper forwards an implicit result; the defined interface is
+// void.
 MenuBackdropResult Menu_OpenBackdropScreen(void);
 s32 OwnerAction_DiffSlots(struct OwnerActionSlot *before,
                           struct OwnerActionSlot *after, u16 *actionsOut,

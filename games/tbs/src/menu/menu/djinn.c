@@ -450,10 +450,12 @@ void Graphics_AdjustPaletteBank(s32 brightnessDelta) {
 #define DJINN_PREVIEW_GAINED 0x8000
 #define DJINN_PREVIEW_LOST 0x4000
 
-/// UB: the implicit int call conflicts with DrawElementList's void definition.
-/// The sole caller ignores this wrapper's result. Plain void changes the native
-/// tbs-en return from pop {r1}; bx r1 to pop {r0}; bx r0.
+/// Draws the backdrop behind the Djinn menu's list: its window, tiles and
+/// palettes.
 MenuBackdropResult Menu_OpenBackdropScreen(void) {
+  // UB: the implicit int call conflicts with DrawElementList's void definition.
+  // The sole caller ignores this wrapper's result. Plain void changes the
+  // native tbs-en return from pop {r1}; bx r1 to pop {r0}; bx r0.
   struct DjinnMenuWork *menu = gMenuWork;
   struct DjinnMenuBackdrop *backdrop = menu->backdrop;
 

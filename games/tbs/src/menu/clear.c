@@ -940,10 +940,11 @@ struct PasswordOwner {
 
 /// Packs selected flags, levels, Djinn and optional stats/inventories/coins.
 /// Clamps the source base stats and levels in place; returns the raw byte
-/// count. A direct BattleUnit owner plus the real member table shrinks the
-/// native function from 0x400 to 0x3f4. The private view remains pending owner
-/// reconciliation; its fields below follow BattleUnit's actual base stats.
+/// count.
 static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
+  // A direct BattleUnit owner plus the real member table shrinks the native
+  // function from 0x400 to 0x3f4. The private view remains pending owner
+  // reconciliation; its fields below follow BattleUnit's actual base stats.
   s32 length;
   u32 levelBits;
   u32 djinnBits;

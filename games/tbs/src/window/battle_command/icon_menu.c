@@ -35,11 +35,12 @@ struct WindowBuffer {
 };
 
 /// Draws the resource-menu icons, pulsing the selected icon with one affine
-/// matrix. Update the horizontal window spans to reveal the active icon row.
-/// UB: native pointers traverse scalar link/span fields into adjacent fields
-/// and records. Use their real owners under UBFIX. Plain OAM field accesses
-/// and indexed scanlines each shrink the EN body from 0x348 to 0x344 bytes.
+/// matrix, and updates the horizontal window spans to reveal the active icon
+/// row.
 void AffineEffect_UpdateFrame(void) {
+  // UB: native pointers traverse scalar link/span fields into adjacent fields
+  // and records. Use their real owners under UBFIX. Plain OAM field accesses
+  // and indexed scanlines each shrink the EN body from 0x348 to 0x344 bytes.
   struct ResourceMenuWork *menu;
   struct ResourceMenuEntry *entry;
   struct AffineTransform transform;
@@ -225,8 +226,8 @@ void AffineEffect_UpdateFrame(void) {
 }
 
 /// Allocates and clears the resource-menu state, then schedules its icon pulse.
-/// The matching allocation size is the complete six-entry work block.
 void *AffineEffect_InitializeWork(void) {
+  // The matching allocation size is the complete six-entry work block.
   void *work;
   work = Runtime_AllocateBlock(58, 152);
   Dma_Fill32(0, work, 152);

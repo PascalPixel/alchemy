@@ -93,8 +93,9 @@ void DebugText_PrintBlanks(u32 count) {
 }
 
 #ifdef MODERN
-/// Camelot's compiler copied the task inline; a modern one calls memcpy,
-/// and the game links no C library
+/// Copies size bytes from source to destination, for the modern build.
+// Camelot's compiler copied the task inline; a modern one calls memcpy, and the
+// game links no C library.
 void *memcpy(void *destination, const void *source, unsigned long size) {
   u8 *to = destination;
   const u8 *from = source;

@@ -133,7 +133,8 @@ enum {
   OUTER_DOOR_FLAG = 0x35a
 };
 
-/// The native paired patrol computes this layer offset in floating point.
+/// The paired patrol's layer origin across: 136 pixels, in 16.16 fixed point.
+// The native paired patrol computes this layer offset in floating point.
 #define PAIRED_PATROL_LAYER_ORIGIN_X (136.0 * 65536)
 
 // Forward declarations.

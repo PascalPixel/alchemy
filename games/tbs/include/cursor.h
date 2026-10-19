@@ -24,8 +24,9 @@ STATIC_ASSERT(sizeof(struct ShopCursor) == 0x10);
 STATIC_ASSERT(offsetof(struct ShopCursor, targetX) == 0x08);
 STATIC_ASSERT(offsetof(struct ShopCursor, active) == 0x0c);
 
-/// Screens that write only the image pointer use the union to retain store
-/// order.
+/// A menu cursor: its render output, or the cursor that approaches its target.
+// Screens that write only the image pointer use the union to retain store
+// order.
 union MenuCursor {
   struct RenderOutput *output;
   struct ShopCursor cursor;

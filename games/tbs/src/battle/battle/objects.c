@@ -7,12 +7,12 @@
 
 #define UNIT_MAX 14 ///< the party's and the enemies' units together
 
-/// The two side walks stay separate: a shared priority helper changes EN
-/// register allocation despite the same 0x1ac-byte extent.
 /// Runs each frame of a battle: advances every unit's status icon, lifts an
-/// airborne unit's effect sprite above the others, and draws whichever side
-/// is nearer the camera in front.
+/// airborne unit's effect sprite above the others, and draws whichever side is
+/// nearer the camera in front.
 void BattleActor_UpdateSpritePriorities(void) {
+  // The two side walks stay separate: a shared priority helper changes EN
+  // register allocation despite the same 0x1ac-byte extent.
   u16 unitIds[UNIT_MAX];
   s32 sidePriorities[2]; // the party's, the enemies'
   s32 unitIndex;

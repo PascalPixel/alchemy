@@ -120,9 +120,9 @@ static void Xian_RotateTrainingTree(void) {
 }
 
 /// Emits particles beside the student every fourth frame.
-/// The existing byte view keeps the Z load before the options-data store;
-/// typed FieldActor reads reorder three instructions in the English build.
 static void Xian_SpawnTrainingParticles(void) {
+  // The existing byte view keeps the Z load before the options-data store;
+  // typed FieldActor reads reorder three instructions in the English build.
   u8 *studentActor = Object_GetById(ACTOR_KUNG_FU_STUDENT);
 
   if ((gFrameCount & 3) == 0) {

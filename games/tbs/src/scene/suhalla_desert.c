@@ -678,11 +678,11 @@ s32 Scene_Initialize(void) {
 }
 
 /// The first scene's storms on entry: a doused storm counts as risen, the
-/// others start small (unless the party is coming back to where it stood),
-/// and the sand haze is faded in if a storm has risen before.
-/// Trial: sharing the blend tail through an ordinary inline shrinks this
-/// function from 0x144 to 0x138 bytes in tbs-en; retain the original body.
+/// others start small (unless the party is coming back to where it stood), and
+/// the sand haze is faded in if a storm has risen before.
 static void SuhallaDesert_SetUpFirstSceneStorms(void) {
+  // Trial: sharing the blend tail through an ordinary inline shrinks this
+  // function from 0x144 to 0x138 bytes in tbs-en; retain the original body.
   struct FieldActor *actor;
   s32 stormId;
   s32 stormAlpha = 0;
@@ -724,9 +724,9 @@ static void SuhallaDesert_SetUpFirstSceneStorms(void) {
 /// The second scene's storms on entry, as the first scene's; the fourth storm's
 /// first sprite part takes parameter 10, and once the chasing storm has been
 /// doused it is gone for good.
-/// Trial: the same blend-tail inline shrinks this function from 0x158 to
-/// 0x14c bytes in tbs-en; retain the original body.
 static void SuhallaDesert_SetUpSecondSceneStorms(void) {
+  // Trial: the same blend-tail inline shrinks this function from 0x158 to 0x14c
+  // bytes in tbs-en; retain the original body.
   struct FieldActor *actor;
   struct AnimationObject *sprite;
   s32 stormId;

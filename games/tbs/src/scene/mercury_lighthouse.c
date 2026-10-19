@@ -838,10 +838,10 @@ static void MercuryLighthouse_ReleaseStairFloorSwitch(void) {
 }
 
 /// Chooses the random speed component used by stone-door particles.
-/// Sharing a centered-velocity helper with other sprays shrinks the fountain
-/// from 0x150 to 0x128 bytes and grows this door from 0x27c to 0x284 in
-/// English.
 static __inline__ s32 MercuryLighthouse_RandomDoorParticleSpeed(void) {
+  // Sharing a centered-velocity helper with other sprays shrinks the fountain
+  // from 0x150 to 0x128 bytes and grows this door from 0x27c to 0x284 in
+  // English.
   u32 drift = Engine_RandomNext();
 
   return ((drift << 3) >> 16) * 0x3333;

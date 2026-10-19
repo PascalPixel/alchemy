@@ -29,9 +29,9 @@ STATIC_ASSERT(offsetof(struct EffectObj, updateHook) == 0x6c);
 #ifdef UBFIX
 #define EFFECT_OBJECT_POOL ((struct EffectObj *)gObjectSlots)
 #else
-/// UB: gObjectSlots and gEventWork are separate globals. The named pool load
-/// changes register allocation and shrinks StartRandomParticleEmitter from
-/// 0x158 to 0x156 bytes (English, 2026-10-16); keep the native read here.
+// UB: gObjectSlots and gEventWork are separate globals. The named pool load
+// changes register allocation and shrinks StartRandomParticleEmitter from 0x158
+// to 0x156 bytes (English, 2026-10-16); keep the native read here.
 #define EFFECT_OBJECT_POOL (*(struct EffectObj **)((u8 *)&gEventWork - 88))
 #endif
 #define SPARKLE_OBJECT_ID 285
@@ -79,9 +79,9 @@ void Marker_MoveLeaderAway(void) {
 
 /// Starts the particle script and its first child at priority 1, if the spawn
 /// succeeded. Allocation failure leaves the effect absent.
-/// Sharing the offset and spawn as well changes literal/argument load order in
-/// both emitters, without changing their sizes (English, 2026-10-16).
 static inline void Object_InitializeSparkle(struct ObjectRuntime *obj) {
+  // Sharing the offset and spawn as well changes literal/argument load order in
+  // both emitters, without changing their sizes (English, 2026-10-16).
   if (obj != 0) {
     // Draw the sparkle at priority 1.
     ObjectDispatch_InitializeFar((struct DispatchObject *)obj,

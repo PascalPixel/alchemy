@@ -61,8 +61,8 @@ u16 EraseAtmelFlashSector(u16 sector) {
 }
 
 /// Erases thirty-two small sectors, trying each sector at most twice.
-/// Both structured retry-loop trials add four bytes to the native EN body.
 u16 EraseAtmelFlashBlock(u16 sector) {
+  // Both structured retry-loop trials add four bytes to the native EN body.
   u8 savedCode[64];
   u16 result;
   u16 smallSector;
@@ -136,9 +136,9 @@ u16 ProgramAtmelFlashSector(u32 sector, const u8 *source) {
 extern u16 gFlashNumRemainingBytes;
 
 /// Programs an Atmel block in small sectors, trying each sector at most twice.
-/// The ordinary decrementing retry loop shortens the native EN body by 16
-/// bytes.
 u16 ProgramAtmelFlashBlock(u16 sector, u8 *source) {
+  // The ordinary decrementing retry loop shortens the native EN body by 16
+  // bytes.
   u8 savedCode[64];
   u16 result;
   u16 smallSector;

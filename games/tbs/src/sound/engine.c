@@ -2,10 +2,10 @@
 #include "types.h"
 #include "../../include/system/io_reg.h"
 
-/// Taking the entry address folds its slot into a literal address. Direct
-/// indexing adds an address-adjustment instruction with the library compiler.
 /// Detaches a note through the command table entry installed by the driver.
 void AudioCommand_InvokeSlot34(struct SoundNote *note) {
+  // Taking the entry address folds its slot into a literal address. Direct
+  // indexing adds an address-adjustment instruction with the library compiler.
   void (*detachNote)(struct SoundNote *) =
       (void (*)(struct SoundNote *)) *
       (&gSound_CommandTable[SOUND_COMMAND_DETACH_NOTE]);
@@ -155,8 +155,8 @@ void AudioEngine_SetMode(u32 mode) {
 }
 
 /// Silences every PCM and CGB note while holding the sound work lock.
-/// Splitting the counter or typed iterators changes the native EN registers.
 void AudioEngine_StopAllChannels(void) {
+  // Splitting the counter or typed iterators changes the native EN registers.
   struct SoundWork *work = SOUND_WORK;
   s32 channelCounter;
   void *channel;

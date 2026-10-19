@@ -323,9 +323,9 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload) {
 /// next halfword of the outgoing packet (0xfefe between packets) and stores the
 /// halfword received from each console; a console's fourteenth halfword
 /// completes its packet.
-/// Measured plain do/while for the two receive channels adds 50 bytes to this
-/// function in tbs-en, so the matching single-backedge form remains.
 void SerialRuntime_HandleTransferInterrupt(void) {
+  // Measured plain do/while for the two receive channels adds 50 bytes to this
+  // function in tbs-en, so the matching single-backedge form remains.
   struct SerialRuntime *sendState;
   struct SerialRuntime *receiveState;
   struct SerialRuntime *tailState;
@@ -623,12 +623,13 @@ extern const u8 Rom_Start[];
 /// An empty routine the link test calls to waste time.
 void SerialTest_Delay(void) {}
 
-/// A link cable test left in the game: it shows a row of tiles, receives
-/// blocks into the map cell buffer and shows them as tiles, and sends a part
-/// of the ROM when A or B is held. It never returns.
-/// Measured outer receive loop with an inner completion break changes 9 text
-/// bytes in tbs-en: the key-address load is hoisted and the restart retargeted.
+/// A link cable test left in the game: it shows a row of tiles, receives blocks
+/// into the map cell buffer and shows them as tiles, and sends a part of the
+/// ROM when A or B is held. It never returns.
 void SerialTest_Run(void) {
+  // Measured outer receive loop with an inner completion break changes 9 text
+  // bytes in tbs-en: the key-address load is hoisted and the restart
+  // retargeted.
   u16 *tile;
   s32 value;
   s32 n;

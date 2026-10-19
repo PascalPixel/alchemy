@@ -217,9 +217,9 @@ static void DebugMenu_RaisePartyLevels(void) {
 }
 
 /// Attempts each consumable grant in order, including calls after a bag fills.
-/// A repeated-grant loop shrinks this native function from 0x626 to 0x12c;
-/// retain the individual calls and their original insertion order.
 static void DebugMenu_GiveConsumableTestStock(void) {
+  // A repeated-grant loop shrinks this native function from 0x626 to 0x12c;
+  // retain the individual calls and their original insertion order.
   UiText_ShowPositionedMessageAndWait(MsgDebugGotItem, 1);
   // Isaac's test inventory.
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
@@ -504,10 +504,10 @@ static void DebugMenu_GivePartyDjinn(void) {
 }
 
 /// Reduces HP and PP, then poisons and haunts Isaac and binds and venoms Garet.
-/// Named BattleUnit stores change address setup and store ordering in the
-/// native build; retain the byte cursor for poison (0x131), haunt (0x140) and
-/// restraint (0x130).
 static void DebugMenu_DamageAndAfflictParty(void) {
+  // Named BattleUnit stores change address setup and store ordering in the
+  // native build; retain the byte cursor for poison (0x131), haunt (0x140) and
+  // restraint (0x130).
   u8 *record;
 
   UiText_ShowPositionedMessageAndWait(MsgDebugBodyTornApart, 1);
@@ -671,9 +671,9 @@ static void DebugMenu_OpenItemBrowser(void) { DebugMenu_SelectItem(); }
 
 /// Adds the original treasure test stock, retaining duplicate tickets and
 /// medals.
-/// Sharing the duplicate grants through a counted loop shrinks this function
-/// from 0x194 to 0x120; retain the original calls.
 static void DebugMenu_GiveTreasureTestStock(void) {
+  // Sharing the duplicate grants through a counted loop shrinks this function
+  // from 0x194 to 0x120; retain the original calls.
   UiText_ShowPositionedMessageAndWait(MsgDebugGotTreasure, 1);
   // Isaac's test inventory.
   Inventory_AddItem(ISAAC, ITEM_HERMES_WATER);

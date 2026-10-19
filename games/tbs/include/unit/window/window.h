@@ -162,16 +162,16 @@ void RenderOutput_ClearList(void *outputs);
 void UiWindow_ClearInteriorTiles(const struct UiWindow *window, u32 left,
                                  u32 top, u32 right, u32 bottom);
 void RenderOutputList_UpdateTail(struct RenderOutputList *list);
-/// RenderOutput_AppendToList is called from battle_command.c with no prototype
-/// in scope: in one file its definition would come before RenderOutput_Create
-/// and DjinnMenu_ShowChangePreview, and RenderOutput_Create changes (2 of 61
-/// instructions in tbs-en). Split evidence for window|battle_command.
+// RenderOutput_AppendToList is called from battle_command.c with no prototype
+// in scope: in one file its definition would come before RenderOutput_Create
+// and DjinnMenu_ShowChangePreview, and RenderOutput_Create changes (2 of 61
+// instructions in tbs-en). Split evidence for window|battle_command.
 void RenderOutput_Release(struct RenderOutput *entry);
-/// UiText_QueueRenderEntries is called from battle_command.c with no prototype
-/// in scope: Party_ShowJoinedMessage, Party_ShowPairJoinedMessage and
-/// Djinn_ShowJoinedMessage pass five of its six arguments, and in one file,
-/// with its definition first, they would not compile. Split evidence for
-/// window|battle_command.
+// UiText_QueueRenderEntries is called from battle_command.c with no prototype
+// in scope: Party_ShowJoinedMessage, Party_ShowPairJoinedMessage and
+// Djinn_ShowJoinedMessage pass five of its six arguments, and in one file,
+// with its definition first, they would not compile. Split evidence for
+// window|battle_command.
 struct UiChannelSlot *UiText_StartBattleMessage(struct UiWindow *window,
                                                 s32 entry, s32 keepPosition);
 s32 Ui_ClearVramBlock(void);
@@ -213,10 +213,10 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
 void UiText_RenderGlyphTileAtWorkOffset(u16 *buffer,
                                         const struct UiWindow *work,
                                         s32 offsetX, s32 offsetY);
-/// UiText_RenderWideStringInWindow is called from battle_command.c with no
-/// prototype in scope: in one file its definition would come before
-/// DjinnMenu_ShowChangePreview's 17 calls, and that function changes by 18
-/// bytes in tbs-en. Split evidence for window|battle_command.
+// UiText_RenderWideStringInWindow is called from battle_command.c with no
+// prototype in scope: in one file its definition would come before
+// DjinnMenu_ShowChangePreview's 17 calls, and that function changes by 18
+// bytes in tbs-en. Split evidence for window|battle_command.
 u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width);
 u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no,
                              s32 plural, s32 *suffix);
@@ -234,11 +234,11 @@ void UiText_MeasureAllPages(s32 start, u32 *out_width, u32 *out_height,
                             u16 *spacing);
 s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
                      s32 mode);
-/// UiWindow_PutGlyph is called from battle_command.c with no prototype in
-/// scope, as in window.c above its definition: PartyStatusDraw,
-/// SummonMenu_SelectSummon and Battle_CollectPartyCommands pass four of its
-/// five arguments, and in one file, with its definition first, they would not
-/// compile. Split evidence for window|battle_command.
+// UiWindow_PutGlyph is called from battle_command.c with no prototype in
+// scope, as in window.c above its definition: PartyStatusDraw,
+// SummonMenu_SelectSummon and Battle_CollectPartyCommands pass four of its
+// five arguments, and in one file, with its definition first, they would not
+// compile. Split evidence for window|battle_command.
 void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
                               u32 mode);
 void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output);
@@ -405,8 +405,8 @@ s32 Menu_RunWorkspaceSelectionLoop(void);
 void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
                                  u8 *remap);
 s32 UiText_RenderStringTiles(u16 *script, u16 *tiles, u16 *mirror, s32 x);
-/// UiWindow_ClearTileAttributesInRect is called before its definition with no
-/// prototype in scope.
+// UiWindow_ClearTileAttributesInRect is called before its definition with no
+// prototype in scope.
 void UiWindow_MarkVisibleTileAttributes(void);
 void UiWork_SetAltFlagAndClearTable(s32 flag);
 void UiRender_ReservedNoOp(void);

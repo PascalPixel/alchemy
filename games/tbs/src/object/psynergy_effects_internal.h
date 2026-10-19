@@ -224,10 +224,10 @@ struct ItemBreakFragmentObject {
 };
 
 /// Both item fragments and Lift shed the same short-lived falling particle.
-/// Spawn and choose its position at the call site: combining the spawn here
-/// moves the kind load after the coordinate loads in the native English build.
 static inline void
 BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
+  // Spawn and choose its position at the call site: combining the spawn here
+  // moves the kind load after the coordinate loads in the native English build.
   if (fragment != NULL) {
     fragment->motionFlags = ACTOR_FALLS;
     fragment->gravity = 0x1999;

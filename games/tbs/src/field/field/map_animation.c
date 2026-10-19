@@ -132,12 +132,12 @@ void Map_DisableUpdateCallback(void) {
     Scheduler_ResumeTasks(MapAnimation_Update);
 }
 
-/// Each frame: runs the map's blend script. A 0x3NNN command sets BLDCNT;
-/// any other sets BLDALPHA (or BLDY when not alpha blending) and waits the
-/// halfword after it in frames; 0xfeNN jumps, 0xfeff stops and 0xffff loops.
-/// The retries stay gotos: as a for (;;) loop with continue, loop.c hoists
-/// blendControl's address and 118 bytes of tbs-en's code change.
+/// Each frame: runs the map's blend script. A 0x3NNN command sets BLDCNT; any
+/// other sets BLDALPHA (or BLDY when not alpha blending) and waits the halfword
+/// after it in frames; 0xfeNN jumps, 0xfeff stops and 0xffff loops.
 void DisplayBlend_RunScript(void) {
+  // The retries stay gotos: as a for (;;) loop with continue, loop.c hoists
+  // blendControl's address and 118 bytes of tbs-en's code change.
   struct MapState *mapState = gMapWork[0];
   struct BlendScriptState *blend;
   u16 *commands;

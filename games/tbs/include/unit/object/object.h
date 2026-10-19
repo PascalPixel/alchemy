@@ -174,11 +174,11 @@ void DisplayTransition_InitializeState(s32 value);
 void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
                                  s32 frames);
 void BattlePalette_UpdateBlend(void);
-/// BattleFx_BuildBuffer is called from psynergy_effects.c with no prototype in
-/// scope: in one file its definition would come before
-/// FieldFx_StartLightning and BattleFx_StartBufferBlend, and they change
-/// (6 of 67 and 6 of 74 instructions in tbs-en). Split evidence for
-/// object|psynergy_effects.
+// BattleFx_BuildBuffer is called from psynergy_effects.c with no prototype in
+// scope: in one file its definition would come before
+// FieldFx_StartLightning and BattleFx_StartBufferBlend, and they change
+// (6 of 67 and 6 of 74 instructions in tbs-en). Split evidence for
+// object|psynergy_effects.
 void BattleEffect_InitializeBuffers(void);
 void BattlePalette_StopBlendAndReleaseBuffer(void);
 void BattleFx_ApplyColorToTargetBuffer(s32 mode, s32 half);

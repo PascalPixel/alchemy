@@ -457,11 +457,11 @@ static s32 LinkLobby_CopyPartyOwnerIds(u16 *ownerIds) {
   return ownerCount;
 }
 
-/// Measured plain form: replacing only the final offer-transfer wait3/test3
-/// polling region with while(active transfers) adds 8 bytes in tbs-en.
 /// Sends up to three active owners, pads missing records, then sends recovery
 /// data. Returns zero on completion or the original serial failure.
 static s32 LinkLobby_SendPartyRecords(void) {
+  // Measured plain form: replacing only the final offer-transfer wait3/test3
+  // polling region with while(active transfers) adds 8 bytes in tbs-en.
   s32 result;
   u8 *slotMap;
   u16 ownerIds[8];
@@ -1111,9 +1111,9 @@ static s32 LinkLobby_ReportMonsterRecord(s32 actorId) {
 u8 *LinkLobby_GetEvents(void) { return (u8 *)gLinkLobbyEvents; }
 
 /// Shows saving/saved messages around the linked battle results save.
-/// A shared inline message-pair helper grows each save routine from 0x6c to
-/// 0x70 in the native build, so retain the two sequences.
 static s32 LinkLobby_SaveBattleResults(void) {
+  // A shared inline message-pair helper grows each save routine from 0x6c to
+  // 0x70 in the native build, so retain the two sequences.
   struct UiWindow *window;
 
   Engine_AudioPlayCue(MUS_085);
@@ -1130,8 +1130,8 @@ static s32 LinkLobby_SaveBattleResults(void) {
 }
 
 /// Shows saving/saved messages around the monster battle record save.
-/// See LinkLobby_SaveBattleResults for the measured shared-helper trial.
 static s32 LinkLobby_SaveMonsterBattleResults(void) {
+  // See LinkLobby_SaveBattleResults for the measured shared-helper trial.
   struct UiWindow *window;
 
   Engine_AudioPlayCue(MUS_085);

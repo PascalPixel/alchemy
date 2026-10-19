@@ -376,9 +376,9 @@ static void Event_MoveNorthernBlock(void) {
 
 /// Frost on the upper western target freezes it and changes its map cell;
 /// arriving again re-freezes every target whose flag is set.
-/// An ordinary shared Frost helper keeps the extents but saves r5-r7 instead
-/// of r5 alone and changes the map-copy argument registers in native English.
 static void Event_FreezeWestUpperTarget(void) {
+  // An ordinary shared Frost helper keeps the extents but saves r5-r7 instead
+  // of r5 alone and changes the map-copy argument registers in native English.
   struct FieldActor *target = Object_GetById(16);
 
   Map_CopyCellAttributes(26, 30, 1, 1, 23, 32);

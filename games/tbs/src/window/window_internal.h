@@ -115,9 +115,9 @@
 #endif
 
 #ifdef MODERN
-/// In the matching build these calls precede their declarations. Prototypes
-/// reorder three argument moves for ClearTileAttributesInRect and two for
-/// PutGlyph in the English image.
+// In the matching build these calls precede their declarations. Prototypes
+// reorder three argument moves for ClearTileAttributesInRect and two for
+// PutGlyph in the English image.
 void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode);
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 #endif

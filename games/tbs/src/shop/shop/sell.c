@@ -76,9 +76,9 @@ s32 Shop_PickUnit(void) {
 
 /// Selects an inventory slot and quantity to sell, repeating until cancelled or
 /// the inventory is empty.
-/// Shared previous/next-row inlines added four bytes to each sell, repair and
-/// use picker in the English native build; the direct row arithmetic remains.
 s32 Shop_SelectSell(s32 unitId) {
+  // Shared previous/next-row inlines added four bytes to each sell, repair and
+  // use picker in the English native build; the direct row arithmetic remains.
   struct UiWindow *descriptionWindow;
   struct ShopRuntime *shop;
   struct UiWindow *priceWindow;

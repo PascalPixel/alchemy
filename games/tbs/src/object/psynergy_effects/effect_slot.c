@@ -103,10 +103,10 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
   effect->z += Iwram_MulQ16(Trig_Sin(angle), speed);
 }
 
-/// Returns nonzero while an effect slot that stops at its target still has
-/// one (it has not arrived), 0 once it has arrived or when it never stops.
-/// A plain != changes the English instructions at the same extent.
+/// Returns nonzero while an effect slot that stops at its target still has one
+/// (it has not arrived), 0 once it has arrived or when it never stops.
 u32 EffectSlot_HasPendingTarget(struct EffectSlot *effect) {
+  // A plain != changes the English instructions at the same extent.
   u32 targetX;
 
   if (effect->stopAtTarget == 0) {

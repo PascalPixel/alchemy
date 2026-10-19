@@ -276,9 +276,9 @@ static __inline__ s32 Vitals_Clamp(s32 ratio) {
 }
 
 /// Recalculates HP and PP gauges, keeping at least one when any points remain.
-/// A statement macro, written do { } while (0): every site matches through
-/// that shape. Written out at each site, or as an inline function, the
-/// gauge loads are scheduled across the store before them.
+// A statement macro, written do { } while (0): every site matches through that
+// shape. Written out at each site, or as an inline function, the gauge loads
+// are scheduled across the store before them.
 #define Unit_UpdateGauges(unit)                                                \
   do {                                                                         \
     (unit)->hpGauge = Vitals_Clamp(((unit)->hp << 14) / (unit)->maxHp);        \

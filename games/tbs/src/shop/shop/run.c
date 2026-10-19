@@ -189,9 +189,9 @@ struct SelectorRecord {
 
 /// Resolves shop dialogue and waits for its window to finish, including the
 /// final frame.
-/// A shared message-resolution inline added four bytes to each dialogue caller
-/// in the English native build; both callers retain their direct resolution.
 void UiMessage_ShowAndWait(s32 messageId) {
+  // A shared message-resolution inline added four bytes to each dialogue caller
+  // in the English native build; both callers retain their direct resolution.
   struct ShopRuntime *shop = gMenuWork;
   s32 portraitResource = BattleFx_GetResourceIdFar(shop->keeperResource);
   s32 resolvedMessage = messageId;

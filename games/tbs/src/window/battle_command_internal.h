@@ -268,8 +268,8 @@ struct LinkRoundState {
   s32 unk38;
   s32 unk3c;
   s32 unk40;
-  /// A pointer field swaps two native initialization stores; keep its encoded
-  /// handle and convert at the window API boundaries.
+  // A pointer field swaps two native initialization stores; keep its encoded
+  // handle and convert at the window API boundaries.
   s32 displayHandle;
   s32 secondaryHandle;
   s32 timer;

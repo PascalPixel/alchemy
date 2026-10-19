@@ -311,10 +311,10 @@ void Shop_DrawMoney(void) {
 }
 
 /// Draws the item name and price, or its cannot-buy or not-broken note.
-/// A structured switch with early returns reduced the English native extent
-/// from 0x98 to 0x90, so the existing shared draw tail remains.
 void Shop_DrawItemPrice(struct UiWindow *window, s32 itemId, s32 price,
                         s32 priceKind) {
+  // A structured switch with early returns reduced the English native extent
+  // from 0x98 to 0x90, so the existing shared draw tail remains.
   s32 labelMessage;
 
   if (window == 0)
@@ -460,9 +460,9 @@ void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 itemId) {
 }
 /// Shows the quantity already carried and draws the member's existing inventory
 /// icons.
-/// A typed RenderOutput icon store kept the English text extent but changed
-/// 76 text bytes; retain the existing byte view of the sprite.
 void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
+  // A typed RenderOutput icon store kept the English text extent but changed 76
+  // text bytes; retain the existing byte view of the sprite.
 
   u8 *unitBytes;
   s32 x;

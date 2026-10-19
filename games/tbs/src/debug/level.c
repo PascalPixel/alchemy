@@ -161,10 +161,10 @@ static void ItemLevel_RunLevelEditor(void) {
 }
 
 /// Browses nonempty item definitions and gives the selected item to the party.
-/// Preserve independent key tests and the direction-specific empty-icon scans.
-/// Ordinary while scans grow the native function from 0x29c to 0x2a0;
-/// retain its current polling edges.
 static void ItemLevel_SelectItem(void) {
+  // Preserve independent key tests and the direction-specific empty-icon scans.
+  // Ordinary while scans grow the native function from 0x29c to 0x2a0; retain
+  // its current polling edges.
   struct UiWindow *window;
   struct UiWindow *details;
   s32 selectedItemId;
@@ -284,11 +284,11 @@ static void ItemLevel_SelectItem(void) {
 }
 
 #if TBS_PATCH_1
-/// Browses ability names and descriptions, skipping unavailable entries.
-/// B closes the sole window created by this browser.
-/// Ordinary while scans grow the native function from 0x248 to 0x260;
-/// retain the original polling edges.
+/// Browses ability names and descriptions, skipping unavailable entries. B
+/// closes the sole window created by this browser.
 static void ItemLevel_SelectAbility(void) {
+  // Ordinary while scans grow the native function from 0x248 to 0x260; retain
+  // the original polling edges.
   struct UiWindow *window;
 #ifndef UBFIX
   struct UiWindow *details;

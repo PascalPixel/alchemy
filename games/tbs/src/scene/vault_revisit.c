@@ -27,12 +27,33 @@
 #include "edition.h"
 #include "call.h"
 #include "flags.h"
+#include "songs.h"
+
+// Vault after the thieves escaped from jail, when the party passes through
+// again.
 
 enum {
+  ACTOR_ADMIRER = 8,          // "You're the warriors who captured the thieves"
+  ACTOR_LUNPA_GOSSIP = 11,    // rumors of thieves from Lunpa running wild
+  ACTOR_MAYORS_VISITOR = 12,  // "I was just talking about you with our mayor"
+  ACTOR_VOLCANO_WATCHER = 13, // if the volcano stays calm...
+  // The two who walk in circles by the well: "Hey, it's that warrior guy!"
+  ACTOR_FIRST_WALKER = 14,
+  ACTOR_SECOND_WALKER = 15, // "Grown-ups always get so scared"
+  ACTOR_JAIL_GOSSIP = 16,   // "Did you guys check out the jail?"
   ACTOR_VAULT_DOG = 18,
   ACTOR_VAULT_VENUS_DJINNI = 21,
   VAULT_VENUS_DJINNI_INDEX = 4,
   VAULT_PROXIMITY_REACTION_PAUSED = 2
+};
+
+// Scene flags: each Mind Read target first greets the party once.
+enum {
+  FLAG_WARRIOR_GUY_GREETED = FLAG_SCENE_TEMP_00 + 0x100,
+  FLAG_ADMIRER_RECOGNIZED_PARTY = FLAG_SCENE_TEMP_00 + 0x105,
+  FLAG_PARTY_PRAISED = FLAG_SCENE_TEMP_00 + 0x106,
+  FLAG_WALKER_SPOKE = FLAG_SCENE_TEMP_00 + 0x107,
+  FLAG_ASKED_ABOUT_JAIL = FLAG_SCENE_TEMP_00 + 0x108
 };
 
 // Shared effect and proximity routines precede the scene's entry points.
@@ -43,70 +64,75 @@ enum {
 #include "common/vault_nearby.h"
 
 // Return the revisited town's arrival positions.
-const struct SceneEntrance *VaultRevisit_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gVaultRevisit_Entrances;
 }
 
 // This overlay has no clipping regions.
-const struct SceneRegion *VaultRevisit_GetRegions(void) { return NULL; }
+const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 // Return the revisited town's packed exit routes.
-const u32 *VaultRevisit_GetExits(void) { return gVaultRevisit_Exits; }
+const u32 *Scene_GetExits(void) { return gVaultRevisit_Exits; }
 
 // Return the villagers, dog, and Djinni placements.
-const struct ScenePlacement *VaultRevisit_GetPlacements(void) {
+const struct ScenePlacement *Scene_GetPlacements(void) {
   return gVaultRevisit_Placements;
 }
 
 // Stand the actor still while showing the message already selected.
 static void VaultRevisit_ShowStandingActorMessage(s32 actor) {
   Engine_EventBegin();
-  Engine_ActorSetAnimation(actor, 1);
+  Engine_ActorSetAnimation(actor, ANIM_STAND);
   Engine_EventShowMessage(actor, 0);
   Engine_EventEnd();
 }
 
-// Record the villager's recognition of the warriors who caught the thieves.
-static void VaultRevisit_RecognizeReturningParty(void) {
+// "You're the warriors who captured the thieves a while back, aren't you?
+// You've returned to Vault!"
+static void Event_RecognizeThiefCatchers(void) {
   Engine_EventBegin();
-  Engine_ActorFaceActor(8, ACTOR_PARTY_LEADER, 2);
-  Engine_GameFlagSet(0x305);
+  Engine_ActorFaceActor(ACTOR_ADMIRER, ACTOR_PARTY_LEADER, 2);
+  Engine_GameFlagSet(FLAG_ADMIRER_RECOGNIZED_PARTY);
   Engine_EventSetMessage(MsgVaultWarriorsWhoCaptured);
-  Engine_EventShowMessage(8, 0);
+  Engine_EventShowMessage(ACTOR_ADMIRER, 0);
   Engine_EventEnd();
 }
 
-// Discuss the rumor about Lunpa's thieves while facing the leader.
-static void VaultRevisit_DiscussLunpaThieves(void) {
+// There are rumors of thieves from Lunpa running wild, yet they have been
+// quiet.
+static void Event_TalkOfLunpaThieves(void) {
 
   Engine_EventSetMessage(MsgVaultRumorsThievesLunpa);
-  Engine_ActorFaceEachOther(11, ACTOR_PARTY_LEADER, 2);
-  VaultRevisit_ShowStandingActorMessage(11);
+  Engine_ActorFaceEachOther(ACTOR_LUNPA_GOSSIP, ACTOR_PARTY_LEADER, 2);
+  VaultRevisit_ShowStandingActorMessage(ACTOR_LUNPA_GOSSIP);
 }
 
-// Record the conversation about the mayor and the escaped thieves.
-static void VaultRevisit_PraisePartyToMayor(void) {
+// The villager was just talking about the party with the mayor: they are so
+// strong, let those thieves attack.
+static void Event_PraisePartyStrength(void) {
 
   Engine_EventBegin();
-  Engine_ActorFaceActor(12, ACTOR_PARTY_LEADER, 2);
-  Engine_GameFlagSet(0x306);
+  Engine_ActorFaceActor(ACTOR_MAYORS_VISITOR, ACTOR_PARTY_LEADER, 2);
+  Engine_GameFlagSet(FLAG_PARTY_PRAISED);
   Engine_GameFlagSet(0x868);
   Engine_EventSetMessage(MsgVaultTalkingMayorStrong);
-  Engine_EventShowMessage(12, 0);
+  Engine_EventShowMessage(ACTOR_MAYORS_VISITOR, 0);
   Engine_EventEnd();
 }
 
-// Face the leader while discussing the volcano's continued calm.
-static void VaultRevisit_DiscussVolcanoAndBridge(void) {
+// If the volcano stays calm and the southern bridge stays fixed, there is
+// nothing to worry about.
+static void Event_HopeVolcanoStaysCalm(void) {
 
   Engine_EventSetMessage(MsgVaultVolcanoStaysCalm);
-  Engine_ActorFaceEachOther(13, ACTOR_PARTY_LEADER, 2);
-  VaultRevisit_ShowStandingActorMessage(13);
+  Engine_ActorFaceEachOther(ACTOR_VOLCANO_WATCHER, ACTOR_PARTY_LEADER, 2);
+  VaultRevisit_ShowStandingActorMessage(ACTOR_VOLCANO_WATCHER);
 }
 
-// Pause the proximity reaction, speak, then restore this actor's facing.
-static void VaultRevisit_WelcomeWarriorsBack(void) {
-  struct FieldActor *actor = Actor_Get(14);
+// The first walker stops circling: "Hey, it's that warrior guy!" and "Yeah,
+// and Ivan, too." the first time, then "I'm so glad you came back to Vault!"
+static void Event_GreetWarriorGuy(void) {
+  struct FieldActor *actor = Actor_Get(ACTOR_FIRST_WALKER);
   u16 facing = actor->facing;
   s32 text;
 
@@ -114,159 +140,164 @@ static void VaultRevisit_WelcomeWarriorsBack(void) {
   Engine_EventBegin();
   text = MsgVaultWarriorGuy;
   Engine_EventSetMessage(text);
-  Engine_ActorSetAnimation(14, 0);
-  Engine_ActorFaceEachOther(14, ACTOR_PARTY_LEADER, 2);
-  if (GameFlag_IsSet(0x300) == 0) {
-    Actor_ShowEmote(14, EMOTE_IN_FRONT, 60);
-    Event_ShowMessageAndWait(14, 0, 10);
-    Event_ShowMessageAndWait(14, 0, 10);
-    GameFlag_Set(0x300);
+  Engine_ActorSetAnimation(ACTOR_FIRST_WALKER, 0);
+  Engine_ActorFaceEachOther(ACTOR_FIRST_WALKER, ACTOR_PARTY_LEADER, 2);
+  if (GameFlag_IsSet(FLAG_WARRIOR_GUY_GREETED) == 0) {
+    Actor_ShowEmote(ACTOR_FIRST_WALKER, EMOTE_IN_FRONT, 60);
+    Event_ShowMessageAndWait(ACTOR_FIRST_WALKER, 0, 10);
+    Event_ShowMessageAndWait(ACTOR_FIRST_WALKER, 0, 10);
+    GameFlag_Set(FLAG_WARRIOR_GUY_GREETED);
   }
   Engine_EventSetMessage(text + 2);
-  Event_ShowMessageAndWait(14, 0, 10);
+  Event_ShowMessageAndWait(ACTOR_FIRST_WALKER, 0, 10);
   actor->facing = facing;
   Engine_TaskWait(1);
   Engine_EventEnd();
   actor->timer = 1;
-  GameFlag_Set(0x307);
+  GameFlag_Set(FLAG_WALKER_SPOKE);
 }
 
-// Preserve the actor's facing around its conversation about the elders.
-static void VaultRevisit_DiscussVaultsElders(void) {
+// The second walker stops: "I wish Vault's elders were as brave as you!"
+static void Event_WishEldersWereBrave(void) {
   struct FieldActor *actor;
   s16 originalFacing;
 
-  actor = Object_GetById(15);
+  actor = Object_GetById(ACTOR_SECOND_WALKER);
   originalFacing = actor->facing;
   actor->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultWishVaultsElders);
-  Engine_ActorSetAnimation(15, 0);
-  Engine_ActorFaceEachOther(15, ACTOR_PARTY_LEADER, 2);
-  Engine_EventShowMessageAndWait(15, 0, 10);
+  Engine_ActorSetAnimation(ACTOR_SECOND_WALKER, 0);
+  Engine_ActorFaceEachOther(ACTOR_SECOND_WALKER, ACTOR_PARTY_LEADER, 2);
+  Engine_EventShowMessageAndWait(ACTOR_SECOND_WALKER, 0, 10);
   actor->facing = originalFacing;
   Engine_TaskWait(1);
   Engine_EventEnd();
   actor->timer = 0;
 }
 
-// Ask the leader to check the jail and record that the request was heard.
-static void VaultRevisit_AskAboutJailEscape(void) {
+// "Did you guys check out the jail?" Yes: how did the thugs break out?
+// No: the thieves broke out and got away.
+static void Event_AskAboutJailbreak(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultGuysCheckJail);
-  Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 2);
-  Engine_EventOpenMessage(16, 0);
+  Engine_ActorFaceEachOther(ACTOR_JAIL_GOSSIP, ACTOR_PARTY_LEADER, 2);
+  Engine_EventOpenMessage(ACTOR_JAIL_GOSSIP, 0);
   if (Engine_EventChooseYesNo(0, 0) != 0) {
     gEventWork->message += 1;
   }
-  Engine_EventShowMessage(16, 0);
-  Engine_GameFlagSet(0x308);
+  Engine_EventShowMessage(ACTOR_JAIL_GOSSIP, 0);
+  Engine_GameFlagSet(FLAG_ASKED_ABOUT_JAIL);
   Engine_EventEnd();
 }
 
-// Mind Read on the unacknowledged villager first triggers recognition.
-static void VaultRevisit_RecognizePartyDuringMindRead(void) {
+// Mind Read on the admirer before he has spoken: he turns and recognizes the
+// party.
+static void Event_ReadMindAndRecognizeThiefCatchers(void) {
   Engine_EventBegin();
-  Engine_ActorRunRepeatedMotion(8, 1);
+  Engine_ActorRunRepeatedMotion(ACTOR_ADMIRER, 1);
   Engine_EventWait(20);
-  Engine_ActorFaceActor(8, ACTOR_PARTY_LEADER, 20);
-  Engine_GameFlagSet(0x305);
+  Engine_ActorFaceActor(ACTOR_ADMIRER, ACTOR_PARTY_LEADER, 20);
+  Engine_GameFlagSet(FLAG_ADMIRER_RECOGNIZED_PARTY);
   Engine_EventSetMessage(MsgVaultWarriorsWhoCaptured);
-  Engine_EventShowMessageAndWait(8, 0, 20);
+  Engine_EventShowMessageAndWait(ACTOR_ADMIRER, 0, 20);
   Engine_EventEnd();
 }
 
-// Temporarily mark actor 11 while showing its thoughts about Dodonpa.
-static void VaultRevisit_ReadDodonpaThoughts(void) {
+// Mind Read: since Dodonpa took over, Lunpa's outlaws are no better than
+// thieves.
+static void Event_ReadMindOnDodonpa(void) {
   Engine_EventSetMessage(MsgVaultOnceDodonpaTook);
-  Object_GetById(11)->paused = 1;
-  VaultRevisit_ShowStandingActorMessage(11);
-  Object_GetById(11)->paused = 0;
+  Object_GetById(ACTOR_LUNPA_GOSSIP)->paused = 1;
+  VaultRevisit_ShowStandingActorMessage(ACTOR_LUNPA_GOSSIP);
+  Object_GetById(ACTOR_LUNPA_GOSSIP)->paused = 0;
 }
 
-// Mind Read first acknowledges the conversation about the mayor.
-static void VaultRevisit_PraisePartyDuringMindRead(void) {
+// Mind Read before the villager has spoken: he turns and praises the party.
+static void Event_ReadMindAndPraisePartyStrength(void) {
   Engine_EventBegin();
-  Engine_ActorRunRepeatedMotion(12, 1);
+  Engine_ActorRunRepeatedMotion(ACTOR_MAYORS_VISITOR, 1);
   Engine_EventWait(20);
-  Engine_ActorFaceActor(12, ACTOR_PARTY_LEADER, 20);
-  Engine_GameFlagSet(0x306);
+  Engine_ActorFaceActor(ACTOR_MAYORS_VISITOR, ACTOR_PARTY_LEADER, 20);
+  Engine_GameFlagSet(FLAG_PARTY_PRAISED);
   Engine_GameFlagSet(0x868);
   Engine_EventSetMessage(MsgVaultTalkingMayorStrong);
-  Engine_EventShowMessageAndWait(12, 0, 20);
+  Engine_EventShowMessageAndWait(ACTOR_MAYORS_VISITOR, 0, 20);
   Engine_EventEnd();
 }
 
-// Temporarily mark actor 13 while showing its thoughts about the resolved
-// crisis.
-static void VaultRevisit_ReadResolvedCrisisThoughts(void) {
+// Mind Read: it would have been great to have everything solved before
+// winter.
+static void Event_ReadMindOnWinter(void) {
   Engine_EventSetMessage(MsgVaultGreatEverythingSolved);
-  Object_GetById(13)->paused = 1;
-  VaultRevisit_ShowStandingActorMessage(13);
-  Object_GetById(13)->paused = 0;
+  Object_GetById(ACTOR_VOLCANO_WATCHER)->paused = 1;
+  VaultRevisit_ShowStandingActorMessage(ACTOR_VOLCANO_WATCHER);
+  Object_GetById(ACTOR_VOLCANO_WATCHER)->paused = 0;
 }
 
-// Mind Read reuses the first conversation until actor 14 has spoken once.
-static void VaultRevisit_ReadReturningWarriorThoughts(void) {
-  Actor_Get(14)->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
+// Mind Read on the first walker: watching the party makes one feel brave, or,
+// before the walker has spoken, the greeting.
+static void Event_ReadMindOnFeelingBrave(void) {
+  Actor_Get(ACTOR_FIRST_WALKER)->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
   Engine_EventBegin();
-  if (GameFlag_IsSet(0x307) != 0) {
+  if (GameFlag_IsSet(FLAG_WALKER_SPOKE) != 0) {
     Engine_EventSetMessage(MsgVaultWatchingGuysMakes);
-    VaultRevisit_ShowStandingActorMessage(14);
+    VaultRevisit_ShowStandingActorMessage(ACTOR_FIRST_WALKER);
   } else {
-    VaultRevisit_WelcomeWarriorsBack();
-    GameFlag_Set(0x307);
+    Event_GreetWarriorGuy();
+    GameFlag_Set(FLAG_WALKER_SPOKE);
   }
   Engine_EventEnd();
-  Actor_Get(14)->timer = 1;
+  Actor_Get(ACTOR_FIRST_WALKER)->timer = 1;
 }
 
-// Pause the proximity reaction while reading actor 15's thoughts.
-static void VaultRevisit_ReadEldersThoughts(void) {
+// Mind Read on the second walker: grown-ups always get so scared.
+static void Event_ReadMindOnScaredGrownUps(void) {
   {
-    struct FieldActor *actor = Object_GetById(15);
+    struct FieldActor *actor = Object_GetById(ACTOR_SECOND_WALKER);
     actor->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
   }
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultGrownUpsAlways);
-  VaultRevisit_ShowStandingActorMessage(15);
+  VaultRevisit_ShowStandingActorMessage(ACTOR_SECOND_WALKER);
   Engine_EventEnd();
   {
     s32 clear = 0;
-    struct FieldActor *actor = Object_GetById(15);
+    struct FieldActor *actor = Object_GetById(ACTOR_SECOND_WALKER);
     actor->timer = clear;
   }
 }
 
-// Mind Read introduces the jail request once, then shows its later thought.
-static void VaultRevisit_ReadJailRumor(void) {
+// Mind Read on the jail gossip: before he has asked about the jail he asks
+// now; afterwards, the thieves must know the secret of the jail's lock.
+static void Event_ReadMindOnJailKey(void) {
   s32 requestHeard;
   s32 unpaused;
 
-  requestHeard = GameFlag_IsSet(0x308);
+  requestHeard = GameFlag_IsSet(FLAG_ASKED_ABOUT_JAIL);
   if (requestHeard == 0) {
     Engine_EventBegin();
-    Actor_Get(16)->paused = 1;
-    Engine_ActorSetAnimation(16, 1);
-    Engine_ActorRunRepeatedMotion(16, 1);
+    Actor_Get(ACTOR_JAIL_GOSSIP)->paused = 1;
+    Engine_ActorSetAnimation(ACTOR_JAIL_GOSSIP, ANIM_STAND);
+    Engine_ActorRunRepeatedMotion(ACTOR_JAIL_GOSSIP, 1);
     Engine_EventWait(20);
     Engine_EventSetMessage(MsgVaultGuysCheckJail);
-    Engine_ActorFaceEachOther(16, 0, 2);
-    Event_OpenMessage(16, 0);
+    Engine_ActorFaceEachOther(ACTOR_JAIL_GOSSIP, 0, 2);
+    Event_OpenMessage(ACTOR_JAIL_GOSSIP, 0);
     if (Engine_EventChooseYesNo(0, 0) != 0) {
       gEventWork->message++;
     }
-    Event_ShowMessage(16, 0);
-    Actor_Get(16)->paused = requestHeard;
-    Actor_SetBuiltinAction(16, 2);
+    Event_ShowMessage(ACTOR_JAIL_GOSSIP, 0);
+    Actor_Get(ACTOR_JAIL_GOSSIP)->paused = requestHeard;
+    Actor_SetBuiltinAction(ACTOR_JAIL_GOSSIP, 2);
     Engine_EventEnd();
-    GameFlag_Set(0x308);
+    GameFlag_Set(FLAG_ASKED_ABOUT_JAIL);
   } else {
     Engine_EventSetMessage(MsgVaultNotLikeEasy);
-    Actor_Get(16)->paused = 1;
-    VaultRevisit_ShowStandingActorMessage(16);
+    Actor_Get(ACTOR_JAIL_GOSSIP)->paused = 1;
+    VaultRevisit_ShowStandingActorMessage(ACTOR_JAIL_GOSSIP);
     unpaused = 0;
-    Actor_Get(16)->paused = unpaused;
+    Actor_Get(ACTOR_JAIL_GOSSIP)->paused = unpaused;
   }
 }
 
@@ -292,9 +323,9 @@ static void VaultRevisit_JumpActorToAndWait(int actor, int x, int z,
 }
 
 // Ringing the bell makes the Djinni jump out and move to its new position once.
-static void VaultRevisit_RingBell(void) {
+static void Event_RingBell(void) {
   Engine_EventBegin();
-  Event_PlayCue(100);
+  Event_PlayCue(SE_100);
   Engine_EventWait(40);
   if (GameFlag_IsSet(FLAG_VAULT_DJINNI_CALLED_BY_BELL) == 0) {
     Actor_SetAttachedEffect(ACTOR_VAULT_VENUS_DJINNI, 0x102);
@@ -324,32 +355,32 @@ static void Vault_WalkThroughExit(s32 x, s32 z, s32 exitId) {
 }
 
 // Open and enter the southeast house.
-static void VaultRevisit_EnterSoutheastHouse(void) {
-  Engine_AudioPlayCue(158);
+static void Event_EnterSoutheastHouse(void) {
+  Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_Scene5Cells, 56, 19);
   Vault_WalkThroughExit(408, 320, 5);
 }
 
 // Open and enter the central east house.
-static void VaultRevisit_EnterCentralEastHouse(void) {
-  Engine_AudioPlayCue(158);
+static void Event_EnterCentralEastHouse(void) {
+  Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_Scene6Cells, 50, 18);
   Vault_WalkThroughExit(312, 304, 6);
 }
 
 // Open and enter the central house.
-static void VaultRevisit_EnterCentralHouse(void) {
-  Engine_AudioPlayCue(158);
+static void Event_EnterCentralHouse(void) {
+  Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_Scene7Cells, 44, 17);
   Vault_WalkThroughExit(216, 288, 7);
 }
 
 // Open the northeast house and use its required sprite priority.
-static void VaultRevisit_EnterNortheastHouse(void) {
+static void Event_EnterNortheastHouse(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
 
-  Engine_AudioPlayCue(158);
+  Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_Scene8Cells, 54, 13);
   Map_CopyCellAttributes(33, 20, 1, 3, 23, 12);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -358,11 +389,11 @@ static void VaultRevisit_EnterNortheastHouse(void) {
 }
 
 // Open the north house and use its required sprite priority.
-static void VaultRevisit_EnterNorthHouse(void) {
+static void Event_EnterNorthHouse(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
 
-  Engine_AudioPlayCue(158);
+  Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_Scene9Cells, 49, 10);
   Map_CopyCellAttributes(33, 20, 1, 3, 18, 10);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -371,8 +402,8 @@ static void VaultRevisit_EnterNorthHouse(void) {
 }
 
 // Open and enter the northwest house.
-static void VaultRevisit_EnterNorthwestHouse(void) {
-  Engine_AudioPlayCue(158);
+static void Event_EnterNorthwestHouse(void) {
+  Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_Scene10Cells, 38, 6);
   Vault_WalkThroughExit(120, 144, 10);
 }
@@ -384,11 +415,11 @@ static void VaultRevisit_EnterNorthwestHouse(void) {
 #include "objcmd.h"
 
 // Open the west house and use its required sprite priority.
-static void VaultRevisit_EnterWestHouse(void) {
+static void Event_EnterWestHouse(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
 
-  Engine_AudioPlayCue(158);
+  Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_Scene12Cells, 35, 9);
   Map_CopyCellAttributes(33, 20, 1, 3, 4, 10);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
@@ -399,8 +430,8 @@ static void VaultRevisit_EnterWestHouse(void) {
 // Shared entrance toggles precede the Djinni and dog events.
 #include "common/vault_toggle.h"
 
-// Join the Venus Djinni in actor slot 21 to the party.
-static void VaultRevisit_RecruitVenusDjinni(void) {
+// The Venus Djinni the bell called out joins the party when spoken to.
+static void Event_TalkToVenusDjinni(void) {
   Djinn_JoinParty(ACTOR_VAULT_VENUS_DJINNI, 0, VAULT_VENUS_DJINNI_INDEX);
 }
 
@@ -410,8 +441,9 @@ static inline void VaultRevisit_DogJumpAtPassage(void) {
   Engine_EventWait(30);
 }
 
-// Consume the offered bone and make the dog indicate the hidden passage.
-static void VaultRevisit_FeedDogBone(void) {
+// Given a Bone, the dog runs to the hidden passage and jumps there three
+// times.
+static void Event_GiveBoneToDog(void) {
   PartyInventory_Discard(ITEM_BONE);
   Engine_EventBegin();
   Engine_EventWait(10);
@@ -432,27 +464,28 @@ static void VaultRevisit_FeedDogBone(void) {
 }
 
 // Cover the hidden passage when Reveal ends.
-static void VaultRevisit_ConcealHiddenPassage(void) {
+static void Event_HidePassage(void) {
 
   Map_CopyCellAttributes(41, 43, 1, 1, 13, 25);
   Map_CopyCellsTo(40, 42, 12, 22, 3, 3);
 }
 
 // Restore the passage's visible tiles and collision cell during Reveal.
-static void VaultRevisit_RevealHiddenPassage(void) {
+static void Event_RevealPassage(void) {
 
   Map_CopyCellAttributes(37, 43, 1, 1, 13, 25);
   Map_CopyCellsTo(36, 42, 12, 22, 3, 3);
 }
 
-// Bark at the leader and offer the bone interaction if the party has one.
-static void VaultRevisit_TalkToDog(void) {
+// The dog barks; carrying a Bone before it has shown the passage lets the
+// party give it one.
+static void Event_TalkToDog(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultRuffRrruff2);
   Engine_ActorSetAnimation(ACTOR_VAULT_DOG, 0);
   Engine_ActorFaceEachOther(ACTOR_VAULT_DOG, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(2);
-  Engine_EventShowMessage(18, 0);
+  Engine_EventShowMessage(ACTOR_VAULT_DOG, 0);
   Engine_ActorSetAnimation(ACTOR_VAULT_DOG, 1);
 
   if (PartyInventory_FindOwner(ITEM_BONE) != -1 &&
@@ -464,7 +497,7 @@ static void VaultRevisit_TalkToDog(void) {
 }
 
 // Describe the water heard at the bottom of the well.
-static void VaultRevisit_PeerIntoWell(void) {
+static void Event_PeerIntoWell(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
   Engine_MessageShowCentered(MsgVaultCanHearWaterRumblingDown, 1);
@@ -472,9 +505,7 @@ static void VaultRevisit_PeerIntoWell(void) {
 }
 
 // Return the town's talk, search, Psynergy, and doorway events.
-const struct SceneEvent *VaultRevisit_GetEvents(void) {
-  return gVaultRevisit_Events;
-}
+const struct SceneEvent *Scene_GetEvents(void) { return gVaultRevisit_Events; }
 
 // Patched editions keep the bell's Djinni position when preserving the party.
 static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
@@ -486,7 +517,7 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 }
 
 // Restore dog and Djinni progress, proximity reactions, and entrance flags.
-s32 VaultRevisit_Initialize(void) {
+s32 Scene_Initialize(void) {
 
   struct FieldActor *actor;
   s32 mode;
@@ -498,7 +529,7 @@ s32 VaultRevisit_Initialize(void) {
   Map_CopyCellsTo(45, 41, 8, 45, 3, 3);
   Engine_TaskWait(1);
   // Resume the two walking villagers' proximity reactions.
-  actor = Object_GetById(14);
+  actor = Object_GetById(ACTOR_FIRST_WALKER);
 #ifdef UBFIX
   actor->update = SceneActor_UpdateProximityToLeader;
 #else
@@ -506,19 +537,19 @@ s32 VaultRevisit_Initialize(void) {
       (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
 #endif
   {
-    struct FieldActor *actor = Object_GetById(14);
+    struct FieldActor *actor = Object_GetById(ACTOR_FIRST_WALKER);
     s32 mode = 1;
     actor->timer = mode;
   }
   mode = 0;
-  actor = Object_GetById(15);
+  actor = Object_GetById(ACTOR_SECOND_WALKER);
 #ifdef UBFIX
   actor->update = SceneActor_UpdateProximityToLeader;
 #else
   actor->update =
       (void (*)(union FieldObject *))SceneActor_UpdateProximityToLeader;
 #endif
-  Object_GetById(15)->timer = mode;
+  Object_GetById(ACTOR_SECOND_WALKER)->timer = mode;
   // Restore the dog's clue position and the bell's current Djinni position.
   if (Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE))
     Actor_SetPosition(ACTOR_VAULT_DOG, PIXELS(216), PIXELS(392));
@@ -700,50 +731,50 @@ struct SceneEvent gVaultRevisit_Events[] = {
     { EVENT_EXIT, 41, CONDITION_ALWAYS, 14 },
     { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_EnableAlternatePassageCells) },
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RestorePassageCells) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_EnterSoutheastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_EnterCentralEastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_EnterCentralHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_EnterNortheastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_EnterNorthHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_EnterNorthwestHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSoutheastHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCentralEastHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCentralHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNortheastHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthwestHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_OpenDoorwayAndEnter) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_EnterWestHouse) },
-    { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_RecognizeReturningParty) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterWestHouse) },
+    { EVENT_TALK, ACTOR_ADMIRER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RecognizeThiefCatchers) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgVaultYouveProbablyAlreadyHeardButThe) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgVaultIWonderWhatHappenedToHammet) },
-    { EVENT_TALK, 11, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_DiscussLunpaThieves) },
-    { EVENT_TALK, 12, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_PraisePartyToMayor) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_DiscussVolcanoAndBridge) },
-    { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_WelcomeWarriorsBack) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_DiscussVaultsElders) },
-    { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_AskAboutJailEscape) },
+    { EVENT_TALK, ACTOR_LUNPA_GOSSIP, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkOfLunpaThieves) },
+    { EVENT_TALK, ACTOR_MAYORS_VISITOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PraisePartyStrength) },
+    { EVENT_TALK, ACTOR_VOLCANO_WATCHER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HopeVolcanoStaysCalm) },
+    { EVENT_TALK, ACTOR_FIRST_WALKER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_GreetWarriorGuy) },
+    { EVENT_TALK, ACTOR_SECOND_WALKER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WishEldersWereBrave) },
+    { EVENT_TALK, ACTOR_JAIL_GOSSIP, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutJailbreak) },
     { EVENT_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgVaultTheThievesEscapedButIThink) },
-    { EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_TalkToDog) },
+    { EVENT_TALK, ACTOR_VAULT_DOG, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToDog) },
     { EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgVaultThereYouSeeTheRoofRepairs) },
-    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_RecruitVenusDjinni) },
-    { SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_RingBell) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, 0x305, EVENT_SCRIPT(VaultRevisit_RecognizePartyDuringMindRead) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgVaultICantBelieveTheyreHereWhat) },
+    { EVENT_TALK, ACTOR_VAULT_VENUS_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToVenusDjinni) },
+    { SEARCH(SEARCH_UNNAMED), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RingBell) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x408, FLAG_ADMIRER_RECOGNIZED_PARTY, EVENT_SCRIPT(Event_ReadMindAndRecognizeThiefCatchers) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ADMIRER, CONDITION_ALWAYS, MSGNO(MsgVaultICantBelieveTheyreHereWhat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgVaultWhenThoseGuysFromKalayCame) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgVaultYeahSomeWarriorsFromKalayCame) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_ReadDodonpaThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40c, 0x306, EVENT_SCRIPT(VaultRevisit_PraisePartyDuringMindRead) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgVaultThoseStupidThievesEscapedAndWe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_ReadResolvedCrisisThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40e, 0x307, EVENT_SCRIPT(VaultRevisit_ReadReturningWarriorThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_ReadReturningWarriorThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_ReadEldersThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x410, 0x308, EVENT_SCRIPT(VaultRevisit_ReadJailRumor) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_ReadJailRumor) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUNPA_GOSSIP, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnDodonpa) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40c, FLAG_PARTY_PRAISED, EVENT_SCRIPT(Event_ReadMindAndPraisePartyStrength) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYORS_VISITOR, CONDITION_ALWAYS, MSGNO(MsgVaultThoseStupidThievesEscapedAndWe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VOLCANO_WATCHER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnWinter) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x40e, FLAG_WALKER_SPOKE, EVENT_SCRIPT(Event_ReadMindOnFeelingBrave) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_WALKER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnFeelingBrave) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_WALKER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnScaredGrownUps) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x410, FLAG_ASKED_ABOUT_JAIL, EVENT_SCRIPT(Event_ReadMindOnJailKey) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JAIL_GOSSIP, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnJailKey) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgVaultIKeepWonderingWasOurStatue) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, IF_FLAG_SET(FLAG_VAULT_DOG_SHOWN_PASSAGE), MSGNO(MsgVaultCarefulSearchWillRevealPassage) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS, MSGNO(MsgVaultIfYouBringMeSomeBones) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_DOG, IF_FLAG_SET(FLAG_VAULT_DOG_SHOWN_PASSAGE), MSGNO(MsgVaultCarefulSearchWillRevealPassage) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VAULT_DOG, CONDITION_ALWAYS, MSGNO(MsgVaultIfYouBringMeSomeBones) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgVaultThatsTheLastOfTheRoof) },
-    { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_PeerIntoWell) },
-    { SEARCH(SEARCH_WOODEN_BOX), 101, 0xf4a, FIND_ITEM(ITEM_NUT) },
-    { 0xe714, 18, FLAG_VAULT_DOG_SHOWN_PASSAGE, EVENT_SCRIPT(VaultRevisit_FeedDogBone) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_RevealHiddenPassage) },
-    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(VaultRevisit_ConcealHiddenPassage) },
+    { SEARCH(SEARCH_UNNAMED), 90, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PeerIntoWell) },
+    { SEARCH(SEARCH_WOODEN_BOX), 101, FLAG_VAULT_BOX_NUT, FIND_ITEM(ITEM_NUT) },
+    { 0xe714, ACTOR_VAULT_DOG, FLAG_VAULT_DOG_SHOWN_PASSAGE, EVENT_SCRIPT(Event_GiveBoneToDog) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RevealPassage) },
+    { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HidePassage) },
     { SCENE_EVENTS_END },
 };
 // clang-format on

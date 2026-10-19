@@ -3,14 +3,54 @@
 #include "animspr.h"
 #include "metadata_lookup.h"
 #include "ram_buffer.h"
+#include "mem.h"
+#include "io_reg.h"
+#include "dma.h"
 
 #define ANIMATION_OBJECT_COUNT 64
 
 s32 Animation_LookupValueByKey(s32 key);
-
-void VramBlock_Reset93(void) { Resource_ResetEntry(93); }
+void Palette_LoadBasicObjColors(void);
 
 extern const u8 gData_0802e89c[];
+extern u8 Render_CopyStridedCode[];
+extern u8 Render_CopyStridedCodeSize[];
+
+// Takes the sprite and layer pools (from the fixed heap blocks in mode 3,
+// the heap otherwise) and clears them, loads the shadow tiles into VRAM cache
+// entry 93 and copies the strided tile copier into RAM, as ☀️'s function of
+// the same name.
+void ObjectSystem_Configure(s32 mode) {
+  void *sprites;
+  void *layers;
+  volatile u32 zero;
+
+  if (mode == 3) {
+    sprites = Runtime_AllocateBlock(16, ANIMATION_OBJECT_COUNT *
+                                            sizeof(struct AnimationObject));
+    layers = Runtime_AllocateBlock(12, ANIMATION_OBJECT_COUNT *
+                                           sizeof(struct AnimationEntry));
+  } else {
+    sprites = Runtime_AllocateHeapBlock(16, ANIMATION_OBJECT_COUNT *
+                                                sizeof(struct AnimationObject));
+    layers = Runtime_AllocateHeapBlock(12, ANIMATION_OBJECT_COUNT *
+                                               sizeof(struct AnimationEntry));
+  }
+  Palette_LoadBasicObjColors();
+  Dma_Fill32Cell(zero, 0, sprites,
+                 ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
+  Dma_Fill32Cell(zero, 0, layers,
+                 ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
+  VramCache_Load(93, 128, gData_0802e89c);
+  {
+    u32 size = (u32)Render_CopyStridedCodeSize;
+
+    Dma_Set(Render_CopyStridedCode, Runtime_AllocateHeapBlock(84, size),
+            (DMA_ENABLE | DMA_32BIT) << 16 | (size >> 2), REG_DMA3);
+  }
+}
+
+void VramBlock_Reset93(void) { Resource_ResetEntry(93); }
 
 void VramBlock_Load93(void) {
   const u8 *data = gData_0802e89c;

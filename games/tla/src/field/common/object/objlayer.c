@@ -83,7 +83,7 @@ void Func_080237e8(u8 *object) {
 }
 
 void Func_0802386c(void);
-void Func_08023e18(void);
+void ObjectSystem_UpdateCameraFixed(void);
 
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
 // Spanish and Italian builds use different names for these two far calls,
@@ -96,7 +96,7 @@ void Graphics_EnableObjLayerAndCallbacks(void) {
   u16 dispcnt;
 
   Scheduler_SuspendTasks(Func_0802386c);
-  Scheduler_SuspendTasks(Func_08023e18);
+  Scheduler_SuspendTasks(ObjectSystem_UpdateCameraFixed);
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
   Func_080c8368(0x10000, 1);
   BattleFx_ApplyColorToSourceBufferFar(1);
@@ -116,7 +116,7 @@ void ObjectDispatch_StopCallbacksAndHideLayers(void) {
   u16 dispcnt;
 
   Scheduler_ResumeTasks(Func_0802386c);
-  Scheduler_ResumeTasks(Func_08023e18);
+  Scheduler_ResumeTasks(ObjectSystem_UpdateCameraFixed);
   dispcnt = REG_DISPCNT;
   /* FAKEMATCH: ⚓️ reads DISPCNT before it builds the layer mask; the plain
    * statement starts the mask first (one pair of instructions swapped). */

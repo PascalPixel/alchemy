@@ -1,5 +1,6 @@
 .syntax unified
 	.thumb
+	.balign 4
 	.global Object_SetMoveTarget
 	.thumb_func
 Object_SetMoveTarget:

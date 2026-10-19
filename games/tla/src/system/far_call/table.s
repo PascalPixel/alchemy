@@ -68,7 +68,15 @@ Func_08020018:
 	.global Func_08020020
 	.thumb_func
 Func_08020020:
+	.ifdef TLA_EDITION_JA
 	overlay_veneer Func_0802254c
+	.else
+	.ifdef TLA_EDITION_EN
+	overlay_veneer Func_0802254c
+	.else
+	overlay_veneer Func_08022010
+	.endif
+	.endif
 	.ifdef TLA_EDITION_DE
 	.global ResourceMetadata_RegisterFar
 	.thumb_func

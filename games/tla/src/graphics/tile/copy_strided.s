@@ -43,3 +43,5 @@ AlchemyUncreditedEnd_080217a6:
 	bgt	.L_080217b8
 	pop	{r5, r6, r7, r8, r9, sl, fp}
 	bx	lr
+	.global Render_CopyStridedCodeSize
+	.set Render_CopyStridedCodeSize, . - Render_CopyStridedCode

@@ -1,154 +1,96 @@
-// Draft of FieldObject_Create: differ 12 of 181 (tla-en, 2026-10-18). Its
-// ☀️ twin is games/tbs/src/field/field.c's FieldObject_Create: it takes a
-// free runtime object, gives it one or two resource sprites by kind, places
-// it and sets its default motion.
-//
-// Left: instruction order only (an add of sl, one store and a branch sit
-// a few places apart; the pool loads move with them).
-
+// Near miss, differ 8 of 181: ☀️'s FieldObject_Create (games/tbs/src/field/
+// field.c) on The Lost Age's object, which also clears the four words at its
+// end. Left: the native loads the halfword zero for collisionFlags from the
+// pool right after the speedLimit store (sched2 here ranks it 6 against the
+// step zero's 7 and takes it seven rows later), which also moves the pool one
+// branch earlier (two pool offsets); and it stores the second sprite slot's
+// address after the first slot (add r2, sl one row later). Measured: the
+// same pin and barrier as the animationKind zero cannot hold it, as the
+// barrier would stop the 0x10000 and the motionFlags address the native
+// builds before the load; *entry = sprite; entry++; is the same as
+// *entry++.
+#include "types.h"
 #include "object_runtime.h"
 #include "metadata_lookup.h"
 #include "object_dispatch.h"
+#include "animspr.h"
 #include "ram_buffer.h"
 #include "io_reg.h"
 #include "dma.h"
 
-struct ObjectRuntimeDraft {
-  s32 *script;
-  s16 step;
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 terrainHeight;
-  s32 scaleX;
-  s32 scaleY;
-  u16 radius;
-  u8 terrainId;
-  u8 unk23;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 speedLimit;
-  s32 acceleration;
-  s32 targetX;
-  s32 targetY;
-  s32 targetZ;
-  s32 value44;
-  s32 value48;
-  s32 value4c;
-  void *animation;
-  u8 animationKind;
-  u8 flags;
-  u8 motionFlags;
-  u8 unk57[2];
-  u8 value59;
-  u8 actionFlags;
-  u8 movementState;
-  u8 unk5c[0x04];
-  void *callback;
-  union {
-    struct {
-      s16 action;
-      s16 unknown;
-    } motion;
-    struct {
-      s16 x;
-      s16 z;
-    } tile;
-  } value64;
-  struct ObjectRuntimeDraft *linkedObject;
-  u8 unk6c[0x04];
-  s32 movementDx;
-  s32 movementDy;
-  s32 movementDz;
-  struct ObjectRuntimeDraft *supportObject;
-};
-
-struct ObjectDraftWork {
-  u8 unk00[24];
-  s32 childListCursor;
-  u8 unk1c[64];
-};
-
-struct DispatchChild *ResourceObject_Create(s32 resource);
+void *ResourceObject_Create(s32 id);
 void *ObjectDispatch_FindFreeObject(void);
 
-typedef char
-    RuntimeDraft_size[sizeof(struct ObjectRuntimeDraft) == 128 ? 1 : -1];
-
-struct ObjectRuntimeDraft *FieldObject_Create(s32 resource, s32 x, s32 y,
-                                              s32 z) {
-  struct ObjectRuntimeDraft *object;
-  struct DispatchChild *child;
-  struct DispatchChild **entry;
-  struct ObjectDraftWork *work;
+struct ObjectRuntime *Func_08023220(s32 id, s32 x, s32 y, s32 z) {
+  struct ObjectRuntime *object;
+  void *sprite;
   s32 kind;
-  u32 zero;
-  u32 *src;
+  void **entry;
+  volatile u32 zero;
 
-  kind = resource / 4096;
-  resource &= 0xfff;
+  kind = id / 4096;
+  id &= 0xfff;
   object = ObjectDispatch_FindFreeObject();
-  if (object != 0) {
+  if (object != NULL) {
     object->radius = 16;
     switch (kind) {
     case 0:
-      child = ResourceObject_Create(resource);
-      if (child != 0) {
+      sprite = ResourceObject_Create(id);
+      if (sprite != NULL) {
         object->animationKind = 1;
-        object->animation = child;
-        object->radius = Resource_GetMetadataRecordFar(resource)->boxY >> 1;
+        object->animation = sprite;
+        object->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
       } else {
-        object->animationKind = 0;
+        /* FAKEMATCH: the native loads the halfword zero from the pool before
+         * it addresses animationKind (differ 2 without the pin and barrier).
+         */
+        register u16 none asm("r3") = 0;
+
+        /* FAKEMATCH: the barrier of the pin above. */
+        asm volatile("" : "+l"(none));
+        object->animationKind = none;
       }
       break;
     case 2:
-      work = (struct ObjectDraftWork *)Ram_HeapSlots->objectSystem;
-      entry = (struct DispatchChild **)((u8 *)work + 8 +
-                                        work->childListCursor++ * 4);
+      entry = (void **)((u32 *)Ram_HeapSlots->objectSystem +
+                        Ram_HeapSlots->objectSystem->count++ + 2);
       object->animationKind = kind;
-      src = &zero;
-      /* FAKEMATCH:ordinary constructor392/78 includes16 differing bytes in the
-       * real DMA-zero pointer/store/setup sequence. As with the measured
-       * release, tie only the initialized used src pointer before its existing
-       * store; no zero-word read. */
-      asm("" : "+r"(src));
       object->animation = entry;
-      *src = 0;
-      Dma_Set(src, entry, 0x85000004, REG_DMA3);
-      child = ResourceObject_Create(resource);
-      if (child != 0) {
-        object->radius = Resource_GetMetadataRecordFar(resource)->boxY >> 1;
-        *entry++ = child;
+      zero = 0;
+      Dma_Set(&zero, entry, 0x85000004, REG_DMA3);
+      sprite = ResourceObject_Create(id);
+      if (sprite != NULL) {
+        object->radius = Resource_GetMetadataRecordFar(id)->boxY >> 1;
+        *entry = sprite;
+        entry++;
       }
-      child = ResourceObject_Create(resource + 1);
-      if (child != 0)
-        *entry = child;
+      sprite = ResourceObject_Create(id + 1);
+      if (sprite != NULL)
+        *entry = sprite;
       break;
     }
   }
-  if (object != 0) {
-    Object_SetPositionAndResetMotion((struct ObjectRuntime *)object, x, y, z);
+  if (object != NULL) {
+    Object_SetPositionAndResetMotion(object, x, y, z);
     object->script = (s32 *)gObjectDispatch_Table6;
     object->speedLimit = 0x20000;
     object->step = 0;
     object->scaleX = 0x10000;
     object->scaleY = 0x10000;
     object->acceleration = 0x10000;
-    object->flags = 3;
-    object->value48 = 0x10000;
-    object->value44 = 0x4000;
-    object->value59 = 0;
+    object->motionFlags = 3;
+    object->gravity = 0x10000;
+    object->bounce = 0x4000;
+    object->collisionFlags = 0;
     object->actionFlags = 1;
-    object->value4c = 0;
     object->angle = 0x4000;
-    object->value64.tile.x = x / 65536;
-    object->value64.tile.z = z / 65536;
-    object->supportObject = 0;
-    object->movementDx = 0;
-    object->movementDy = 0;
-    object->movementDz = 0;
+    object->unk4c = 0;
+    object->action = x / 65536;
+    object->unk66 = z / 65536;
+    *(s32 *)&object->unk70[12] = 0;
+    *(s32 *)&object->unk70[0] = 0;
+    *(s32 *)&object->unk70[4] = 0;
+    *(s32 *)&object->unk70[8] = 0;
   }
   return object;
 }

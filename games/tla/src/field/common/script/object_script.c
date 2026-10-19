@@ -26,7 +26,7 @@ s32 Script_ApplyLinkedObjectPosition();
 s32 Script_ApplyLocalOffsetPosition();
 s32 Func_08025698();
 s32 Func_08025830();
-s32 Func_08025608();
+s32 Object_ApproachLinkedObject();
 s32 Func_08025160();
 s32 Script_RepeatOrJump();
 s32 Script_JumpToLabel();
@@ -251,7 +251,7 @@ const ScriptCommandFn gData_0802f204[54] = {
     Script_ApplyLocalOffsetPosition,     // 0x08 SC_MOVE_LOCAL
     Func_08025698,                       // 0x09 SC_WANDER
     Func_08025830,                       // 0x0a SC_WANDER_HOME
-    Func_08025608,                       // 0x0b SC_APPROACH_LINK
+    Object_ApproachLinkedObject,         // 0x0b SC_APPROACH_LINK
     Func_08025160,                       // 0x0c SC_CAMERA
     Script_RepeatOrJump,                 // 0x0d SC_LOOP
     Script_JumpToLabel,                  // 0x0e SC_JUMP

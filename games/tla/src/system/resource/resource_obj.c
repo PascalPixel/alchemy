@@ -30,56 +30,74 @@ typedef char
 
 void ResourceMetadata_ClearRecord(void *destination);
 
-#if !GAME_TLA
-// The Lost Age version (0x08022d40) is still an assembly listing.
 #include "metadata_lookup.h"
 #include "vram_tab.h"
+#include "ram_buffer.h"
 
-extern struct AnimationObject *gSpriteObjects;
+// The sprite as ResourceObject_Create fills it: the image's three attribute
+// words, its layout, then the shadow's three words.
+struct ResourceSprite {
+  u32 imageAttributes[3];
+  s32 scale;
+  u8 slot;
+  u8 retainCacheEntry : 1;
+  u8 useOwnScale : 1;
+  u8 unk11 : 6;
+  u16 rotation;
+  u8 width;
+  u8 height;
+  s8 offsetX;
+  s8 offsetY;
+  u8 lastNo;
+  u8 dirty;
+  u8 flags;
+  u8 count;
+  u32 shadowAttributes[3];
+  struct AnimationEntry *entries[4];
+};
 
-s32 ResourceMetadata_Register(struct AnimationObject *state, s32 id);
+s32 ResourceMetadata_Register(struct ResourceSprite *sprite, s32 id);
 
 //--------------------------------------------------------------------------
-// Create an animated sprite object for animation id.
-// Use one of 64 free objects and a VRAM cache entry.
+// Create an animated sprite object for animation id, as ☀️'s function of
+// the same name. Use one of 64 free objects and a VRAM cache entry.
 // Return the object, or NULL on failure.
 //--------------------------------------------------------------------------
 struct ResourceObject *ResourceObject_Create(s32 id) {
-  struct AnimationMetadata *meta;
-  struct AnimationObject *obj;
-  struct AnimationObject *found;
-  u32 *word;
+  struct AnimationMetadata *metadata;
+  struct ResourceSprite *sprite;
+  struct ResourceSprite *freeSprite;
+  u32 *attribute;
   s32 slot;
   s32 tile;
   s32 i;
   u32 shape;
 
-  found = NULL;
-  meta = Resource_GetMetadataRecordFar(id);
+  freeSprite = NULL;
+  metadata = Resource_GetMetadataRecordFar(id);
   slot = Resource_FindFreeEntry();
-  obj = gSpriteObjects;
-  if (meta->width == 0)
+  sprite = Ram_HeapSlots->unk0c[1];
+  if (metadata->width == 0)
     return NULL;
-  for (i = 0; i <= 63; i++, obj++) {
-    if (obj->width == 0) // Width 0 marks a free object.
-    {
-      found = obj;
+  for (i = 0; i < 64; i++, sprite++) {
+    if (sprite->width == 0) { // Width 0 marks a free object.
+      freeSprite = sprite;
       break;
     }
   }
-  if (found == NULL)
+  if (freeSprite == NULL)
     return NULL;
   if (slot == VRAM_CACHE_ENTRY_COUNT)
     return NULL;
   tile = VramCache_Load(slot, 0, 0);
   if (tile == 0)
     return NULL;
-  found->slot = slot;
-  found->rotation = 0;
-  found->flags = 1;
+  freeSprite->rotation = 0;
+  freeSprite->flags = 1;
+  freeSprite->slot = slot;
 
   // Derive OBJ shape and size bits (attributes 0 and 1) from pixel dimensions.
-  switch ((u32)((meta->width << 8) + meta->height)) {
+  switch ((u32)((metadata->width << 8) + metadata->height)) {
   case 0x0808: // 8x8
     shape = 0;
     break;
@@ -117,21 +135,29 @@ struct ResourceObject *ResourceObject_Create(s32 id) {
 
   // Part 0: 256 colors, priority 2.
   // Part 1: 16x8, 256 colors, tiles from VRAM cache 93, priority 2.
-  word = (u32 *)found;
-  *word++ = 0;
-  *word++ = shape | 0x2000;
-  *word++ = tile | 0x800;
-  *word++ = 0;
-  *word++ = 0x6000;
-  *word = (gVramBlockCache[93].offset >> 5) | 0x800;
-  if (ResourceMetadata_Register(obj, id) == -1) {
-    /* FAKEMATCH: native dead -1 after Register (movs/negs); empty arm
-       after a same-byte reload keeps the carrier (differ 32 -> 0). */
-    found->dirty = found->dirty;
+  attribute = (u32 *)freeSprite;
+  /* FAKEMATCH(barrier): the empty asm that has ⚓️ copy the sprite pointer
+   * before it builds the first word's zero; as no barrier here, 2 of 154
+   * instructions differ in tla-en. */
+  asm volatile("");
+  *attribute++ = 0;
+  /* FAKEMATCH(barrier): the empty asm that builds 0x2000 after the first
+   * store; as no barrier here, 4 of 154 instructions differ in tla-en. */
+  asm volatile("");
+  *attribute++ = shape | 0x2000;
+  *attribute = tile | 0x800;
+  attribute = freeSprite->shadowAttributes;
+  *attribute++ = 0;
+  *attribute++ = 0x6000;
+  *attribute = (gResourceTableEntries[93].offset >> 5) | 0x800;
+  if (ResourceMetadata_Register(sprite, id) == -1) {
+    /* FAKEMATCH(dead): a same-byte store that keeps the native's unused -1
+     * after Register (movs, negs) as ☀️'s twin does; as the plain call, 20
+     * of 154 instructions differ in tla-en. */
+    freeSprite->dirty = freeSprite->dirty;
   }
-  return (struct ResourceObject *)found;
+  return (struct ResourceObject *)freeSprite;
 }
-#endif
 
 //--------------------------------------------------------------------------
 // Release an object.

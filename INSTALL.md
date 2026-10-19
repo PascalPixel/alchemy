@@ -16,8 +16,13 @@ On other distributions, install the same packages under their local names.
 
 ```bash
 xcode-select --install
-brew install arm-none-eabi-binutils xz pkg-config libpng utf8proc
+brew install make arm-none-eabi-binutils xz pkg-config libpng utf8proc
+export PATH="$(brew --prefix make)/libexec/gnubin:$PATH"
 ```
+
+macOS's own `make` is GNU Make 3.81 from 2006, which stalls on the parallel
+builds here. The `export` line makes `make` mean Homebrew's GNU Make 4; add it
+to your shell's profile, or type `gmake` wherever these steps say `make`.
 
 **Windows:** open PowerShell, run `wsl --install`, restart, then open **Ubuntu** from the Start menu and follow the Linux steps inside it.
 

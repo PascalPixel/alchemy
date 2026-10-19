@@ -3,6 +3,13 @@
 # out/tbs-en/tbs-en.gba; `make compare-tbs-en` also checks it against
 # rom.sha1. Every rule the ROM is built by is in this file.
 
+# Each edition builds in its own make, all sharing one job pool. GNU Make
+# 3.81, macOS's /usr/bin/make, busy-waits on that pool, and a compare that
+# takes seconds takes many minutes; Make 4 or later is required.
+ifeq ($(filter 4.% 5.%,$(MAKE_VERSION)),)
+$(error GNU Make $(MAKE_VERSION) is too old: use GNU Make 4 or later (INSTALL.md))
+endif
+
 GAMES    := tbs tla
 LANGS    := ja en de es fr it
 EDITIONS := $(foreach game,$(GAMES),$(addprefix $(game)-,$(LANGS)))
@@ -297,7 +304,11 @@ $(BUILD)/modern/%.o: %.c | $(BUILD)/text/msg_ids.h
 	@mkdir -p $(@D)
 	$(MODERN_CC) $(if $(filter $(ARM_C),$<),-marm,-mthumb) $(MODERN_CFLAGS) \
 	    $(if $(filter $(SOUND_C) $(FLASH_C),$<),,-fcall-used-r4) -MMD -MP -c -o $@ $<
+# Read only when building modern: as included makefiles, make would check
+# every one before any other build, which slowed a ROM build by minutes.
+ifneq ($(filter modern,$(MAKECMDGOALS)),)
 -include $(MODERN_OBJS:.o=.d)
+endif
 endif
 
 ifndef EDITION

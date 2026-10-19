@@ -143,7 +143,7 @@ static void SolSanctumEntrance_InspectFirstMinotaurRelief(void) {
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefBothEyes, 1);
   } else {
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefOneEye, 1);
-    if (Engine_GameFlagIsSet(0xf01) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) != 0) {
       u16 *stateSlot = &gEventWork->unk172;
       u16 value = 1;
       *stateSlot = value;
@@ -176,7 +176,7 @@ static void SolSanctumEntrance_PlaceFirstSmallGem(void) {
   s32 oneCell;
   s32 reliefWidth;
 
-  if (GameFlag_IsSet(0xf01) == 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) == 0) {
   } else {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_FIRST_GEM_PLACED) != 0) {
     } else {
@@ -215,7 +215,8 @@ static void SolSanctumEntrance_InspectSecondMinotaurRelief(void) {
 
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED) != 0) {
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefBothEyes, 1);
-  } else if (Engine_GameFlagIsSet(0xf02) != 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND) !=
+             0) {
     work = gEventWork;
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefOneEye, 1);
     {
@@ -235,7 +236,7 @@ static void SolSanctumEntrance_InspectSecondMinotaurRelief(void) {
 static void SolSanctumEntrance_PlaceSecondSmallGem(void) {
   s32 message;
 
-  if (GameFlag_IsSet(3842) != 0 &&
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND) != 0 &&
       GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED) == 0) {
     Engine_EventBegin();
     Battle_ResetEffectCounter();
@@ -282,7 +283,8 @@ static void SolSanctumEntrance_UpdateOuterLeftBlock(void) {
     return;
   }
   column = block->x.fixed >> 20;
-  SolSanctumEntrance_RecordBlockColumn(column, 0x302, 93, 95);
+  SolSanctumEntrance_RecordBlockColumn(
+      column, FLAG_SOL_SANCTUM_OUTER_LEFT_BLOCK_EAST, 93, 95);
 }
 
 // Record the right outer block's current destination.
@@ -294,12 +296,12 @@ static void SolSanctumEntrance_UpdateOuterRightBlock(void) {
     return;
   }
   column = block->x.fixed >> 20;
-  GameFlag_Clear(0x300);
-  GameFlag_Clear(0x301);
+  GameFlag_Clear(FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_EAST);
+  GameFlag_Clear(FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_WEST);
   if (column == 115) {
-    Engine_GameFlagSet(0x300);
+    Engine_GameFlagSet(FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_EAST);
   } else if (column == 113) {
-    Engine_GameFlagSet(0x301);
+    Engine_GameFlagSet(FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_WEST);
   }
 }
 
@@ -312,7 +314,8 @@ static void SolSanctumEntrance_UpdateFirstInnerBlock(void) {
     return;
   }
   column = block->x.fixed >> 20;
-  SolSanctumEntrance_RecordBlockColumn(column, 0x310, 99, 101);
+  SolSanctumEntrance_RecordBlockColumn(
+      column, FLAG_SOL_SANCTUM_INNER_BLOCK_1_EAST, 99, 101);
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
@@ -325,7 +328,8 @@ static void SolSanctumEntrance_UpdateSecondInnerBlock(void) {
     return;
   }
   column = block->x.fixed >> 20;
-  SolSanctumEntrance_RecordBlockColumn(column, 0x312, 103, 105);
+  SolSanctumEntrance_RecordBlockColumn(
+      column, FLAG_SOL_SANCTUM_INNER_BLOCK_2_EAST, 103, 105);
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
@@ -338,7 +342,8 @@ static void SolSanctumEntrance_UpdateThirdInnerBlock(void) {
     return;
   }
   column = block->x.fixed >> 20;
-  SolSanctumEntrance_RecordBlockColumn(column, 0x314, 107, 109);
+  SolSanctumEntrance_RecordBlockColumn(
+      column, FLAG_SOL_SANCTUM_INNER_BLOCK_3_EAST, 107, 109);
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
@@ -351,7 +356,8 @@ static void SolSanctumEntrance_UpdateFourthInnerBlock(void) {
     return;
   }
   column = block->x.fixed >> 20;
-  SolSanctumEntrance_RecordBlockColumn(column, 0x316, 111, 113);
+  SolSanctumEntrance_RecordBlockColumn(
+      column, FLAG_SOL_SANCTUM_INNER_BLOCK_4_EAST, 111, 113);
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
@@ -364,7 +370,8 @@ static void SolSanctumEntrance_UpdateFifthInnerBlock(void) {
     return;
   }
   column = block->x.fixed >> 20;
-  SolSanctumEntrance_RecordBlockColumn(column, 0x318, 115, 117);
+  SolSanctumEntrance_RecordBlockColumn(
+      column, FLAG_SOL_SANCTUM_INNER_BLOCK_5_EAST, 115, 117);
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
@@ -376,7 +383,8 @@ static void SolSanctumEntrance_UpdateSixthInnerBlock(void) {
   if (block == NULL)
     return;
   column = block->x.fixed >> 20;
-  SolSanctumEntrance_RecordBlockColumn(column, 0x31a, 119, 121);
+  SolSanctumEntrance_RecordBlockColumn(
+      column, FLAG_SOL_SANCTUM_INNER_BLOCK_6_EAST, 119, 121);
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
@@ -464,7 +472,7 @@ s32 SolSanctumEntrance_Initialize(void) {
 static void SolSanctumEntrance_ApplyEntryState(void) {
   GameFlag_Set(0x144);
   gEventWork->startTransition = 0x100;
-  if (GameFlag_IsSet(0x814) != 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     gSolSanctumEntrance_CueTimer = 0;
     Task_AddCallback(SolSanctumEntrance_UpdateEruptionRumbles, 0xc80);
   }
@@ -486,7 +494,7 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
 static void SolSanctumEntrance_RestoreInteriorState(void) {
   s32 entrance;
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  if (Engine_GameFlagIsSet(0x814) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     BattleFx_SetQueuedSoundAndPlay(141);
     Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     InitializeSceneRecordBuffer();
@@ -533,13 +541,13 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     Engine_ActorSetSpriteFlags(Object_GetById(19), 0);
     if (Engine_GameFlagIsSet(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE) == 0)
       SolSanctumEntrance_KradenSuspectsHiddenPassage();
-    if (Engine_GameFlagIsSet(0x303) != 0)
+    if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_OUTER_LEFT_BLOCK_WEST) != 0)
       Actor_SetPosition(9, PIXELS(1496), PIXELS(136));
-    else if (GameFlag_IsSet(0x302) != 0)
+    else if (GameFlag_IsSet(FLAG_SOL_SANCTUM_OUTER_LEFT_BLOCK_EAST) != 0)
       Actor_SetPosition(9, PIXELS(1528), PIXELS(136));
-    if (Engine_GameFlagIsSet(0x301) != 0)
+    if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_WEST) != 0)
       Actor_SetPosition(10, PIXELS(1816), PIXELS(136));
-    else if (Engine_GameFlagIsSet(0x300) != 0)
+    else if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_EAST) != 0)
       Actor_SetPosition(10, PIXELS(1848), PIXELS(136));
     break;
 
@@ -553,10 +561,10 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     Engine_ActorSetSpriteFlags(Object_GetById(12), 0);
     Engine_ActorSetSpriteFlags(Object_GetById(13), 0);
     Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
-    if (Engine_GameFlagIsSet(0x825) == 0)
+    if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_INNER_STATUES_SEEN) == 0)
       SolSanctumEntrance_InspectInnerStatues();
     SolSanctumEntrance_RestoreInnerBlockCells(1);
-    Engine_GameFlagSet(0x234);
+    Engine_GameFlagSet(FLAG_SCENE_TEMP_34);
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED) != 0) {
       Map_CopyCellsTo(0, 71, 100, 71, 1, 1);
       Map_CopyCellsTo(122, 20, 120, 30, 1, 2);
@@ -904,7 +912,7 @@ static void SolSanctumEntrance_InspectInnerStatues(void) {
   }
   Engine_ActorWaitForMove(ACTOR_KRADEN);
   Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-  GameFlag_Set(0x825);
+  GameFlag_Set(FLAG_SOL_SANCTUM_INNER_STATUES_SEEN);
   Engine_EventEnd();
 }
 
@@ -917,78 +925,78 @@ static void SolSanctumEntrance_RestoreInnerBlockCells(s32 placeActors) {
   Map_CopyCellAttributes(122, 20, 1, 1, 112, 32);
   Map_CopyCellAttributes(122, 20, 1, 1, 116, 32);
   Map_CopyCellAttributes(122, 20, 1, 1, 120, 32);
-  if (GameFlag_IsSet(0x311) != 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_1_WEST) != 0) {
     Map_CopyCellAttributes(121, 20, 1, 1, 100, 32);
     if (placeActors != 0) {
       Actor_SetPosition(9, PIXELS(1592), PIXELS(520));
     }
   } else {
-    if (GameFlag_IsSet(0x310) != 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_1_EAST) != 0) {
       Map_CopyCellAttributes(121, 20, 1, 1, 100, 32);
       if (placeActors != 0) {
         Actor_SetPosition(9, PIXELS(1624), PIXELS(520));
       }
     }
   }
-  if (GameFlag_IsSet(0x313) != 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_2_WEST) != 0) {
     Map_CopyCellAttributes(121, 20, 1, 1, 104, 32);
     if (placeActors != 0) {
       Actor_SetPosition(10, PIXELS(1656), PIXELS(520));
     }
   } else {
-    if (GameFlag_IsSet(0x312) != 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_2_EAST) != 0) {
       Map_CopyCellAttributes(121, 20, 1, 1, 104, 32);
       if (placeActors != 0) {
         Actor_SetPosition(10, PIXELS(1688), PIXELS(520));
       }
     }
   }
-  if (GameFlag_IsSet(0x315) != 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_3_WEST) != 0) {
     Map_CopyCellAttributes(121, 20, 1, 1, 108, 32);
     if (placeActors != 0) {
       Actor_SetPosition(11, PIXELS(1720), PIXELS(520));
     }
   } else {
-    if (GameFlag_IsSet(0x314) != 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_3_EAST) != 0) {
       Map_CopyCellAttributes(121, 20, 1, 1, 108, 32);
       if (placeActors != 0) {
         Actor_SetPosition(11, PIXELS(1752), PIXELS(520));
       }
     }
   }
-  if (GameFlag_IsSet(0x317) != 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_4_WEST) != 0) {
     Map_CopyCellAttributes(121, 20, 1, 1, 112, 32);
     if (placeActors != 0) {
       Actor_SetPosition(12, PIXELS(1784), PIXELS(520));
     }
   } else {
-    if (GameFlag_IsSet(0x316) != 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_4_EAST) != 0) {
       Map_CopyCellAttributes(121, 20, 1, 1, 112, 32);
       if (placeActors != 0) {
         Actor_SetPosition(12, PIXELS(1816), PIXELS(520));
       }
     }
   }
-  if (GameFlag_IsSet(0x319) != 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_5_WEST) != 0) {
     Map_CopyCellAttributes(121, 20, 1, 1, 116, 32);
     if (placeActors != 0) {
       Actor_SetPosition(13, PIXELS(1848), PIXELS(520));
     }
   } else {
-    if (GameFlag_IsSet(0x318) != 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_5_EAST) != 0) {
       Map_CopyCellAttributes(121, 20, 1, 1, 116, 32);
       if (placeActors != 0) {
         Actor_SetPosition(13, PIXELS(1880), PIXELS(520));
       }
     }
   }
-  if (GameFlag_IsSet(0x31b) != 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_6_WEST) != 0) {
     Map_CopyCellAttributes(121, 20, 1, 1, 120, 32);
     if (placeActors != 0) {
       Actor_SetPosition(14, PIXELS(1912), PIXELS(520));
     }
   } else {
-    if (GameFlag_IsSet(0x31a) != 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_INNER_BLOCK_6_EAST) != 0) {
       Map_CopyCellAttributes(121, 20, 1, 1, 120, 32);
       if (placeActors != 0) {
         Actor_SetPosition(14, PIXELS(1944), PIXELS(520));
@@ -1071,8 +1079,8 @@ struct SceneEntrance gSolSanctumEntranceEntrances1[] = {
 
 u32 gSolSanctumEntrance_Exits[] = {
     SCENE_EXITS(19),
-    SCENE_EXIT_IF(1, 4, 2, 0x814),
-    SCENE_EXIT_IF(1, 10, 15, 0x815),
+    SCENE_EXIT_IF(1, 4, 2, FLAG_SOL_SANCTUM_ERUPTED),
+    SCENE_EXIT_IF(1, 10, 15, FLAG_PARTY_LEFT_VALE),
     SCENE_EXIT_IF(1, 4, 2, 0xffffffff),
     SCENE_EXIT_IF(2, 16, 8, 0xffffffff),
     SCENE_EXIT(0, 16, 0),
@@ -1202,7 +1210,7 @@ struct SceneEvent gSolSanctumEntranceEvents1[] = {
     { EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
     { EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
     { EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
-    { SEARCH(SEARCH_CHEST), 100, 0xf01, FIND_ITEM(0xe1) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND, FIND_ITEM(0xe1) },
     { 0xe104, 0x414, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_PlaceFirstSmallGem) },
     { SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_InspectFirstMinotaurRelief) },
     { SCENE_EVENTS_END },
@@ -1225,8 +1233,8 @@ struct SceneEvent gSolSanctumEntranceEvents1Entrances11To13[] = {
     { EVENT_EXIT, 14, CONDITION_ALWAYS, 14 },
     { EVENT_EXIT, 15, CONDITION_ALWAYS, 15 },
     { EVENT_EXIT, 16, CONDITION_ALWAYS, 16 },
-    { PSYNERGY_ON_ACTOR(0x8c), 9, 0x234, EVENT_SCRIPT(SolSanctumEntrance_UpdateOuterLeftBlock) },
-    { PSYNERGY_ON_ACTOR(0x8c), 10, 0x234, EVENT_SCRIPT(SolSanctumEntrance_UpdateOuterRightBlock) },
+    { PSYNERGY_ON_ACTOR(0x8c), 9, FLAG_SCENE_TEMP_34, EVENT_SCRIPT(SolSanctumEntrance_UpdateOuterLeftBlock) },
+    { PSYNERGY_ON_ACTOR(0x8c), 10, FLAG_SCENE_TEMP_34, EVENT_SCRIPT(SolSanctumEntrance_UpdateOuterRightBlock) },
     { 0x202, 22, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_PushFacedBlock) },
     { TOUCH_WALKING_INTO(FACING_EAST), 23, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_PushFacedBlock) },
     { TOUCH_WALKING_INTO(FACING_WEST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumEntrance_PushFacedBlock) },

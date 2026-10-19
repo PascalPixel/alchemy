@@ -36,6 +36,7 @@
 #include "facing_object.h"
 #include "fixed_math.h"
 #include "palbuf.h"
+#include "flags.h"
 
 // Forward declarations.
 static void SolSanctumElementalStarRoom_BagJupiterStar(void);
@@ -59,13 +60,6 @@ enum StarRoomActor {
   ACTOR_FELIX_MASKED,
   ACTOR_FELIX,
   ACTOR_ALEX
-};
-
-enum StarRoomFlag {
-  FLAG_STAR_ROOM_EXPLAINED = 0x83b,
-  FLAG_FIRST_STAR_BAGGED = 0x83c,
-  FLAG_MERCURY_STAR_BAGGED = 0x83d,
-  FLAG_STARS_GIVEN_TO_ALEX = 0x83e
 };
 
 enum { ITEM_MYTHRIL_BAG = 224 };
@@ -207,7 +201,7 @@ static void SolSanctumElementalStarRoom_CollectVenusStar(void) {
   Engine_TaskWait(1);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  Engine_GameFlagSet(0x83c);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED);
   Engine_EventEnd();
 }
 
@@ -307,7 +301,7 @@ static void SolSanctumElementalStarRoom_CollectMercuryStar(void) {
   Engine_TaskWait(1);
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  GameFlag_Set(FLAG_MERCURY_STAR_BAGGED);
+  GameFlag_Set(FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED);
   Engine_EventEnd();
 }
 
@@ -321,7 +315,7 @@ SolSanctumElementalStarRoom_CollectJupiterStarAndMeetIntruders(void) {
   SolSanctumElementalStarRoom_OfferHostageGuarantee();
   SolSanctumElementalStarRoom_UnmaskFelix();
   SolSanctumElementalStarRoom_AlexTakesStars();
-  Engine_GameFlagSet(FLAG_STARS_GIVEN_TO_ALEX);
+  Engine_GameFlagSet(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX);
   Engine_EventEnd();
   SolSanctumElementalStarRoom_LineUpFollowers();
 }
@@ -1212,11 +1206,11 @@ static void SolSanctumElementalStarRoom_CollectMarsStar(void) {
 // Let Kraden comment on the remaining stars or the hostage exchange.
 static void SolSanctumElementalStarRoom_TalkToKraden(void) {
   Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_STARS_GIVEN_TO_ALEX)) {
+  if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX)) {
     Engine_EventSetMessage(MsgSolSanctumKradenIAmResponsible);
     Engine_EventShowMessage(ACTOR_KRADEN, 0);
   } else {
-    if (Engine_GameFlagIsSet(FLAG_FIRST_STAR_BAGGED) == 0)
+    if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED) == 0)
       Engine_EventSetMessage(MsgSolSanctumKradenBringTheStarsHere);
     else
       Engine_EventSetMessage(MsgSolSanctumKradenFetchTheOthers);
@@ -1230,11 +1224,11 @@ static void SolSanctumElementalStarRoom_TalkToKraden(void) {
 // Let Jenna comment on collecting the stars or finding Felix alive.
 static void SolSanctumElementalStarRoom_TalkToJenna(void) {
   Engine_EventBegin();
-  if (Engine_GameFlagIsSet(FLAG_STARS_GIVEN_TO_ALEX)) {
+  if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX)) {
     Engine_EventSetMessage(MsgSolSanctumJennaMyBrotherIsAlive);
     Engine_EventShowMessage(JENNA, 0);
   } else {
-    if (Engine_GameFlagIsSet(FLAG_FIRST_STAR_BAGGED) == 0)
+    if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED) == 0)
       Engine_EventSetMessage(MsgSolSanctumJennaBeCareful);
     else
       Engine_EventSetMessage(MsgSolSanctumJennaKradenIsGiddy);
@@ -1945,7 +1939,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   }
   Engine_ActorWaitForMove(GARET);
   Actor_SetPosition(GARET, 0, 0);
-  GameFlag_Set(FLAG_STAR_ROOM_EXPLAINED);
+  GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED);
   Party_RemoveOwnerRestored(5);
   // Give out the bags and make the pedestal crossings available.
   SolSanctumElementalStarRoom_GiveMythrilBags();
@@ -1967,11 +1961,11 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
     Engine_ActorSetSpritePriority(ringActor++, 1);
   } while ((u32)ringActor <= 24);
   SolSanctum_SetupElementalRings(15, 16);
-  if (GameFlag_IsSet(0x83b) != 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) != 0) {
     Actor_SetPosition(9, PIXELS(456), PIXELS(360));
     Actor_SetPosition(5, PIXELS(440), PIXELS(346));
   }
-  if (Engine_GameFlagIsSet(0x83c) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED) != 0) {
     Map_CopyCellsTo(0, 40, 43, 66, 3, 3);
     Map_CopyCellsTo(83, 40, 96, 29, 3, 4);
     Map_CopyCellAttributes(0, 0, 1, 1, 41, 29);
@@ -1983,7 +1977,7 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
     Map_CopyCellAttributes(0, 0, 1, 1, 41, 10);
     Map_CopyCellsTo(87, 42, 41, 12, 1, 2);
   }
-  if (Engine_GameFlagIsSet(0x83d) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED) != 0) {
     Map_CopyCellsTo(0, 40, 43, 46, 3, 3);
     Map_CopyCellsTo(83, 40, 84, 4, 3, 4);
     Map_CopyCellAttributes(0, 0, 1, 1, 29, 4);
@@ -1995,7 +1989,7 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
     Map_CopyCellAttributes(0, 0, 1, 1, 21, 29);
     Map_CopyCellsTo(87, 42, 21, 31, 1, 2);
   }
-  if (Engine_GameFlagIsSet(0x83e) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX) != 0) {
     Map_CopyCellsTo(0, 40, 13, 66, 3, 3);
     Map_CopyCellsTo(83, 40, 65, 31, 3, 4);
     Map_CopyCellAttributes(0, 0, 1, 1, 10, 31);
@@ -2008,7 +2002,7 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
     Map_CopyCellsTo(87, 42, 36, 12, 1, 2);
     SolSanctumElementalStarRoom_LineUpFollowers();
   }
-  if (Engine_GameFlagIsSet(0x83b) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) == 0) {
     if (gGameState.entrance == 10) {
       SolSanctumElementalStarRoom_EnterStarRoom();
     }
@@ -2269,10 +2263,10 @@ struct SceneEvent gSolSanctumElementalStarRoom_Events[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumElementalStarRoom_PreventLeavingBeforeCollectingStars) },
     { TOUCH_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumElementalStarRoom_CheckLeaderAhead) },
     { TOUCH_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(SolSanctumElementalStarRoom_CheckLeaderAhead) },
-    { SEARCH(SEARCH_UNNAMED), 2, 0x83c, EVENT_SCRIPT(SolSanctumElementalStarRoom_CollectVenusStar) },
-    { SEARCH(SEARCH_UNNAMED), 3, 0x83d, EVENT_SCRIPT(SolSanctumElementalStarRoom_CollectMercuryStar) },
-    { SEARCH(SEARCH_UNNAMED), 4, 0x83e, EVENT_SCRIPT(SolSanctumElementalStarRoom_CollectJupiterStarAndMeetIntruders) },
-    { SEARCH(SEARCH_UNNAMED), 5, 0x83f, EVENT_SCRIPT(SolSanctumElementalStarRoom_CollectMarsStar) },
+    { SEARCH(SEARCH_UNNAMED), 2, FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED, EVENT_SCRIPT(SolSanctumElementalStarRoom_CollectVenusStar) },
+    { SEARCH(SEARCH_UNNAMED), 3, FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED, EVENT_SCRIPT(SolSanctumElementalStarRoom_CollectMercuryStar) },
+    { SEARCH(SEARCH_UNNAMED), 4, FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX, EVENT_SCRIPT(SolSanctumElementalStarRoom_CollectJupiterStarAndMeetIntruders) },
+    { SEARCH(SEARCH_UNNAMED), 5, FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED, EVENT_SCRIPT(SolSanctumElementalStarRoom_CollectMarsStar) },
     { SCENE_EVENTS_END },
 };
 

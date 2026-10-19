@@ -40,6 +40,10 @@
 #include "frame.h"
 #include "fixed_math.h"
 
+// Scene temporary flags: 00 is set once the Great Healer has warned Isaac
+// that leaving the village cannot be undone; 01 marks the visit after a
+// refusal, which skips the account of Sol Sanctum.
+
 // Forward declarations.
 static void Sanctum_RequestQuestAcceptance(void);
 static void Sanctum_ReceiveWiseOnesMission(void);
@@ -145,7 +149,7 @@ struct SceneEvent *Sanctum_GetEvents(void) {
 static void Sanctum_TalkAboutGoldenStatue(void) {
   Engine_EventBegin();
 
-  if (Engine_GameFlagIsSet(0x855) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0) {
     Engine_EventSetMessage(MsgSanctumWhenStrayFromYourWorldly);
   } else {
     Engine_EventSetMessage(MsgSanctumHealerMustWorriedAboutNever);
@@ -167,7 +171,7 @@ static void Sanctum_ReadStatueAttendantsMind(void) {
 
   Engine_EventBegin();
 
-  if (Engine_GameFlagIsSet(0x855) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
     Engine_EventSetMessage(MsgSanctumWonderIfEverSeeOur);
   } else {
     Engine_EventSetMessage(MsgSanctumChildHasAwakenedOurTeachings);
@@ -231,7 +235,7 @@ static void Sanctum_ReconsiderQuest(void) {
         Engine_EventWait(120);
         Engine_AudioPlayCue(86);
         AudioCommand_WaitForCompletion();
-        Engine_GameFlagSet(0x9f0);
+        Engine_GameFlagSet(FLAG_SANCTUM_QUEST_ACCEPTED);
         Engine_EventRequestExit(30);
       }
     }
@@ -292,29 +296,29 @@ s32 Sanctum_Initialize(void) {
   case 10:
   case 11:
   case 12:
-    if (Engine_GameFlagIsSet(0x855) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0) {
       Actor_SetPosition(10, PIXELS(200), PIXELS(80));
     }
-    Engine_GameFlagClear(0x12f);
+    Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
     break;
   case 20:
     Sanctum_RestoreCeremonyFloor();
-    if (Engine_GameFlagIsSet(0x109) == 0) {
+    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       Sanctum_RequestQuestAcceptance();
     }
     // Fall through.
   case 29:
   case 32:
   case 35:
-    Engine_GameFlagClear(0x12f);
+    Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
     break;
   case 21:
     Sanctum_RestoreCeremonyFloor();
-    Engine_GameFlagSet(0x201);
-    if (Engine_GameFlagIsSet(0x109) == 0) {
+    Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
+    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       Sanctum_RequestQuestAcceptance();
     }
-    Engine_GameFlagClear(0x12f);
+    Engine_GameFlagClear(FLAG_ARRIVAL_EVENT_PENDING);
     break;
   }
   return 0;
@@ -333,7 +337,7 @@ static void Sanctum_WarnBeforeLeavingVale(void) {
   Engine_EventWait(20);
   Engine_EventSetMessage(MsgSanctumOnceStepOutsideVillageCannot);
   Engine_EventShowMessage(8, 0);
-  Engine_GameFlagSet(0x200);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
   Engine_EventEnd();
 }
 
@@ -431,7 +435,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
 
   Engine_EventBegin();
   // A repeat visit skips the account of Sol Sanctum.
-  if (GameFlag_IsSet(0x201) != 0) {
+  if (GameFlag_IsSet(FLAG_SCENE_TEMP_01) != 0) {
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 8, 0);
     Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(11, ACTOR_PARTY_LEADER, 0);
@@ -928,7 +932,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_EventWait(120);
     Event_PlayCue(0x56);
     AudioCommand_WaitForCompletion();
-    GameFlag_Set(0x9f0);
+    GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
     Engine_EventRequestExit(30);
   } else {
     Engine_EventWait(30);
@@ -1887,7 +1891,7 @@ static void Sanctum_TalkToHealerByEntrance(void) {
   switch (entrance) {
   case 10:
   case 12:
-    if (Engine_GameFlagIsSet(0x855) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0) {
       Engine_EventSetMessage(MsgSanctumWasHandFateReturnedGold);
     } else {
       Engine_EventSetMessage(MsgSanctumWeWillHelpAnytimeAs);
@@ -1935,7 +1939,7 @@ static void Sanctum_TalkAboutAltinMonsters(void) {
 
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSanctumWasAfterEerieNightWhen);
-  if (Engine_GameFlagIsSet(0x909) != 0)
+  if (Engine_GameFlagIsSet(FLAG_HYDROS_STATUES_DEFEATED) != 0)
     Engine_EventSetMessage(MsgSanctumSavedAltinFromMonstersClearly);
   Engine_EventShowMessage(8, 0);
   Engine_EventEnd();
@@ -2156,7 +2160,7 @@ struct SceneEvent gSanctum_SceneTableA[] = {
 
 struct SceneEvent gSanctum_SceneTableB[] = {
     { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Sanctum_TalkToHealerByEntrance) },
-    { EVENT_TALK, 9, 0x855, EVENT_SCRIPT(Sanctum_TalkAboutGoldenStatue) },
+    { EVENT_TALK, 9, FLAG_VAULT_THIEVES_JAILED, EVENT_SCRIPT(Sanctum_TalkAboutGoldenStatue) },
     { EVENT_TALK, 9, CONDITION_ALWAYS, EVENT_SCRIPT(Sanctum_TalkAboutGoldenStatue) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSanctumGoOnIfThatEasesThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Sanctum_ReadStatueAttendantsMind) },
@@ -2181,7 +2185,7 @@ struct SceneEvent gSanctum_SceneTableD[] = {
     { EVENT_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgSanctumWasItRightToRefuseWhen) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgSanctumItsClearThatTheGreatHealer) },
     { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Sanctum_ShowRefusalEnding) },
-    { EVENT_TOUCH, 2, 0x200, EVENT_SCRIPT(Sanctum_WarnBeforeLeavingVale) },
+    { EVENT_TOUCH, 2, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Sanctum_WarnBeforeLeavingVale) },
     { SCENE_EVENTS_END },
 };
 
@@ -2211,7 +2215,7 @@ struct SceneEvent gSanctum_SceneTableG[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 40 },
     { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Sanctum_TalkAboutAltinMonsters) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Sanctum_TalkAboutAltinMonsters) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, 0x909, MSGNO(MsgSanctumPleaseSaveTheHelplessInAltin) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgSanctumPleaseSaveTheHelplessInAltin) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgSanctumAlmightyFateMustHaveHeardMe) },
     { SCENE_EVENTS_END },
 };

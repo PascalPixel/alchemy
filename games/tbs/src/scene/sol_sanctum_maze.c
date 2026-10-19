@@ -17,6 +17,7 @@
 #include "field_obj.h"
 
 #include "field_event.h"
+#include "flags.h"
 
 // A maze of Sol Sanctum, scene 14: two exits to scene 16 and one chest.
 
@@ -63,6 +64,7 @@ struct ScenePlacement gSolSanctumMazePlacements[] = {
 struct SceneEvent gSolSanctumMazeEvents[] = {
     {0x31, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},
-    {SEARCH(SEARCH_CHEST), 100, 0xf02, FIND_ITEM(0xe1)},
+    {SEARCH(SEARCH_CHEST), 100, FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND,
+     FIND_ITEM(0xe1)},
     {SCENE_EVENTS_END},
 };

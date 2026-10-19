@@ -28,6 +28,7 @@
 #include "fixed_math.h"
 #include "resource_37de_scene.h"
 #include "macros.h"
+#include "flags.h"
 
 #if TBS_PATCH_3
 #define SOL_SANCTUM_STATUE_BACK_SCROLL_ROW_Y_OFFSET 6
@@ -37,6 +38,9 @@
 
 #define SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT 9
 #define SOL_SANCTUM_STATUE_SPRITE_WIDTH 32
+
+// Scene temporary flag 07 is set once both beams have opened the hole in the
+// hall's floor.
 
 // Forward declarations.
 static void SolSanctumStatue_InitializeScrollingSprites(void);
@@ -53,19 +57,6 @@ static void SolSanctumStatue_OpenSeal(void);
 static void SolSanctumStatue_ShineLeftBeam(void);
 static void SolSanctumStatue_ShineRightBeam(void);
 static void Event_SayThenWait(s32 speaker, s32 frames);
-
-enum StatueHallFlag {
-  FLAG_NORTHWEST_SEAL_OPEN = 0x80b,
-  FLAG_NORTHEAST_SEAL_OPEN = 0x80c,
-  FLAG_SOUTHWEST_SEAL_OPEN = 0x80d,
-  FLAG_SOUTHEAST_SEAL_OPEN = 0x80e,
-  FLAG_ALL_STATUE_SEALS_OPEN = 0x80f,
-  FLAG_STATUE_TRAP_SPRUNG = 0x813,
-  FLAG_LEFT_BEAM_SHINING = 0x816,
-  FLAG_RIGHT_BEAM_SHINING = 0x817,
-  FLAG_CENTER_STATUE_MOVED = 0x818,
-  FLAG_CENTRAL_HOLE_OPEN = 0x207
-};
 
 #define NULL ((void *)0)
 
@@ -127,12 +118,12 @@ struct SceneEvent *SolSanctumStatue_GetEvents(void) {
 
 // Choose the next story scene from the saved state of the hall.
 static s32 SolSanctumStatue_SelectStoryExit(void) {
-  if (Engine_GameFlagIsSet(FLAG_CENTER_STATUE_MOVED) != 0) {
-    if (Engine_GameFlagIsSet(FLAG_STATUE_TRAP_SPRUNG) == 0) {
+  if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG) == 0) {
       Engine_EventRequestExit(3);
       return 1;
     }
-  } else if (Engine_GameFlagIsSet(0x812) == 0) {
+  } else if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) == 0) {
     Engine_EventRequestExit(4);
     return 1;
   }
@@ -161,7 +152,7 @@ static void SolSanctumStatue_OpenCentralHole(void) {
   {
     Map_CopyCellAttributes(0, 0, 2, 1, 17, 8);
   }
-  Engine_GameFlagSet(FLAG_CENTRAL_HOLE_OPEN);
+  Engine_GameFlagSet(FLAG_SCENE_TEMP_07);
   SolSanctumStatue_UpdateCenterStatue();
 }
 
@@ -647,7 +638,7 @@ static void SolSanctumStatue_CheckSouthPassage(void) {
 
 // Unused sequence moving the northwest statue to its seal position.
 UNUSED static void SolSanctumStatue_MoveUnusedNorthwestStatue(void) {
-  if (GameFlag_IsSet(FLAG_NORTHWEST_SEAL_OPEN) == 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) == 0) {
     Engine_EventBegin();
     Object_GetById(9);
     Actor_SetSpeed(9, PIXELS(1) / 5, PIXELS(1) / 10);
@@ -678,7 +669,7 @@ s32 SolSanctumStatue_Initialize(void) {
     Actor_SetPosition(JENNA, 0, 0);
     Actor_SetPosition(GARET, 0, 0);
   }
-  if (GameFlag_IsSet(FLAG_CENTER_STATUE_MOVED) != 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) != 0) {
     Actor_SetPosition(18, PIXELS(288), PIXELS(178));
     Actor_SetPosition(17, PIXELS(1608), PIXELS(1608));
     Actor_SetPosition(10, PIXELS(232), PIXELS(120));
@@ -689,8 +680,8 @@ s32 SolSanctumStatue_Initialize(void) {
     Map_CopyCellsTo(4, 59, 17, 38, 4, 3);
     Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
     Map_CopyCellAttributes(0, 1, 2, 1, 17, 7);
-  } else if (GameFlag_IsSet(FLAG_LEFT_BEAM_SHINING) != 0 &&
-             GameFlag_IsSet(FLAG_RIGHT_BEAM_SHINING) != 0) {
+  } else if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0 &&
+             GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
     Actor_SetPosition(10, PIXELS(232), PIXELS(120));
     Actor_SetPosition(12, PIXELS(344), PIXELS(120));
     Map_CopyCellsTo(0, 28, 17, 8, 2, 1);
@@ -701,58 +692,58 @@ s32 SolSanctumStatue_Initialize(void) {
     Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
     Map_CopyCellAttributes(0, 0, 2, 1, 17, 8);
   } else {
-    if (GameFlag_IsSet(FLAG_LEFT_BEAM_SHINING) != 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
       Actor_SetPosition(10, PIXELS(232), PIXELS(120));
       Map_CopyCellsTo(0, 59, 15, 38, 4, 3);
     }
-    if (GameFlag_IsSet(FLAG_RIGHT_BEAM_SHINING) != 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
       Actor_SetPosition(12, PIXELS(344), PIXELS(120));
       Map_CopyCellsTo(4, 59, 17, 38, 4, 3);
     }
   }
-  if (GameFlag_IsSet(FLAG_NORTHWEST_SEAL_OPEN) != 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0) {
     Actor_SetPosition(9, PIXELS(504), PIXELS(152));
     Map_CopyCellsTo(2, 28, 34, 10, 2, 1);
     Map_CopyCellsTo(2, 30, 16, 10, 2, 1);
     Map_CopyCellsTo(0, 55, 32, 40, 4, 3);
   }
-  if (GameFlag_IsSet(FLAG_NORTHEAST_SEAL_OPEN) != 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0) {
     Actor_SetPosition(11, PIXELS(648), PIXELS(152));
     Map_CopyCellsTo(4, 28, 36, 10, 2, 1);
     Map_CopyCellsTo(4, 30, 18, 10, 2, 1);
     Map_CopyCellsTo(4, 55, 36, 40, 4, 3);
   }
-  if (GameFlag_IsSet(FLAG_SOUTHWEST_SEAL_OPEN) != 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0) {
     Actor_SetPosition(13, PIXELS(504), PIXELS(200));
     Map_CopyCellsTo(2, 29, 34, 11, 2, 1);
     Map_CopyCellsTo(2, 31, 16, 11, 2, 1);
     Map_CopyCellsTo(0, 58, 32, 43, 4, 1);
   }
-  if (GameFlag_IsSet(FLAG_SOUTHEAST_SEAL_OPEN) != 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) != 0) {
     Actor_SetPosition(15, PIXELS(648), PIXELS(200));
     Map_CopyCellsTo(4, 29, 36, 11, 2, 1);
     Map_CopyCellsTo(4, 31, 18, 11, 2, 1);
     Map_CopyCellsTo(4, 58, 36, 43, 4, 1);
   }
   if (gGameState.entrance == 3) {
-    if (GameFlag_IsSet(0x30a) != 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_STATUE_HALL_VISITED) != 0) {
       Actor_SetPosition(GARET, 0, 0);
       Actor_SetPosition(JENNA, 0, 0);
-    } else if (GameFlag_IsSet(0x109) == 0) {
+    } else if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       SolSanctumStatue_VisitStatueHall();
-      GameFlag_Set(0x30a);
+      GameFlag_Set(FLAG_SOL_SANCTUM_STATUE_HALL_VISITED);
     }
   }
   if (gGameState.entrance == 4) {
-    if (GameFlag_IsSet(0x30b) != 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED) != 0) {
       Actor_SetPosition(GARET, 0, 0);
       Actor_SetPosition(JENNA, 0, 0);
-    } else if (GameFlag_IsSet(0x109) == 0) {
+    } else if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       SolSanctumStatue_ExplainStatuePuzzle();
-      GameFlag_Set(0x30b);
+      GameFlag_Set(FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED);
     }
   }
-  if (GameFlag_IsSet(0x814) != 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     BattleFx_SetQueuedSoundAndPlay(141);
     Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     InitializeSceneRecordBuffer();
@@ -900,7 +891,7 @@ static void SolSanctumStatue_UpdateCenterStatue(void) {
     statueZ = statue->z.fixed;
     Engine_EventBegin();
     if ((statueZ >> 20) == 8) {
-      if (Engine_GameFlagIsSet(FLAG_CENTRAL_HOLE_OPEN) == 0) {
+      if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_07) == 0) {
         leader = Object_GetById(0);
         if ((u32)(leader->z.fixed >> 19) <= 17) {
           Actor_WalkToAndWait(0, 289, 158);
@@ -908,9 +899,9 @@ static void SolSanctumStatue_UpdateCenterStatue(void) {
           leader->facing = FACING_NORTH;
         }
       }
-      if (Engine_GameFlagIsSet(FLAG_LEFT_BEAM_SHINING) != 0 &&
-          Engine_GameFlagIsSet(FLAG_RIGHT_BEAM_SHINING) != 0) {
-        Engine_GameFlagSet(FLAG_CENTER_STATUE_MOVED);
+      if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0 &&
+          Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
+        Engine_GameFlagSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED);
         Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
         Camera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
         Engine_CameraWaitForMove();
@@ -949,11 +940,11 @@ static void SolSanctumStatue_UpdateCenterStatue(void) {
         Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
         Engine_EventWait(60);
         Engine_AudioPlayCue(188);
-        if (Engine_GameFlagIsSet(FLAG_NORTHWEST_SEAL_OPEN) != 0 &&
-            Engine_GameFlagIsSet(FLAG_NORTHEAST_SEAL_OPEN) != 0 &&
-            Engine_GameFlagIsSet(FLAG_SOUTHWEST_SEAL_OPEN) != 0 &&
-            Engine_GameFlagIsSet(FLAG_SOUTHEAST_SEAL_OPEN) != 0) {
-          Engine_GameFlagSet(FLAG_ALL_STATUE_SEALS_OPEN);
+        if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0 &&
+            Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0 &&
+            Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0 &&
+            Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) != 0) {
+          Engine_GameFlagSet(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN);
         }
         Engine_EventWait(40);
         Engine_MessageShowCentered(MsgSolSanctumSomethingClicked, 1);
@@ -1125,7 +1116,7 @@ static void SolSanctumStatue_OpenNorthwestSeal(void) {
   scene->opened.destY = 10;
   scene->opened.width = 2;
   scene->opened.height = 1;
-  scene->flag = FLAG_NORTHWEST_SEAL_OPEN;
+  scene->flag = FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN;
   scene->facing = FACING_SOUTH;
   scene->destX = 500;
   scene->destZ = 132;
@@ -1180,7 +1171,7 @@ static void SolSanctumStatue_OpenNortheastSeal(void) {
   scene->opened.destY = 10;
   scene->opened.width = 2;
   scene->opened.height = 1;
-  scene->flag = FLAG_NORTHEAST_SEAL_OPEN;
+  scene->flag = FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN;
   scene->facing = FACING_SOUTH;
   scene->destX = 654;
   scene->destZ = 132;
@@ -1235,7 +1226,7 @@ static void SolSanctumStatue_OpenSouthwestSeal(void) {
   scene->opened.destY = 11;
   scene->opened.width = 2;
   scene->opened.height = 1;
-  scene->flag = FLAG_SOUTHWEST_SEAL_OPEN;
+  scene->flag = FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN;
   scene->facing = FACING_NORTH;
   scene->destX = 500;
   scene->destZ = 216;
@@ -1290,7 +1281,7 @@ static void SolSanctumStatue_OpenSoutheastSeal(void) {
   scene->opened.destY = 11;
   scene->opened.width = 2;
   scene->opened.height = 1;
-  scene->flag = FLAG_SOUTHEAST_SEAL_OPEN;
+  scene->flag = FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN;
   scene->facing = FACING_NORTH;
   scene->destX = 654;
   scene->destZ = 216;
@@ -1331,7 +1322,7 @@ static void SolSanctumStatue_OpenSeal(void) {
 
   exitResult = 0;
   Engine_EventBegin();
-  if (!Engine_GameFlagIsSet(FLAG_ALL_STATUE_SEALS_OPEN)) {
+  if (!Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN)) {
     // Show the configured seal and flash its two tile states.
     Engine_CameraSetSpeed(PIXELS(2), PIXELS(1) / 4);
     Engine_CameraMoveTo(PIXELS(576), -1, PIXELS(172), 1);
@@ -1352,7 +1343,7 @@ static void SolSanctumStatue_OpenSeal(void) {
     exitResult = SolSanctumStatue_SelectStoryExit();
     // Keep the statue reusable until the central statue has moved.
     if (exitResult == -1) {
-      if (!Engine_GameFlagIsSet(FLAG_CENTER_STATUE_MOVED)) {
+      if (!Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED)) {
         Engine_CameraFollowActor(0, 1);
         Object_GetById(0)->facing = scene->facing;
         Actor_SetSpeed(0, PIXELS(2), PIXELS(2));
@@ -1369,15 +1360,15 @@ static void SolSanctumStatue_OpenSeal(void) {
         Engine_GameFlagClear(scene->flag);
       }
     } else if (exitResult == 0 &&
-               Engine_GameFlagIsSet(FLAG_CENTER_STATUE_MOVED)) {
-      if (Engine_GameFlagIsSet(FLAG_NORTHWEST_SEAL_OPEN) &&
-          Engine_GameFlagIsSet(FLAG_SOUTHWEST_SEAL_OPEN) &&
-          Engine_GameFlagIsSet(FLAG_SOUTHEAST_SEAL_OPEN)) {
-        if (!GameFlag_IsSet(FLAG_ALL_STATUE_SEALS_OPEN)) {
-          Engine_GameFlagSet(FLAG_ALL_STATUE_SEALS_OPEN);
+               Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED)) {
+      if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) &&
+          Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) &&
+          Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN)) {
+        if (!GameFlag_IsSet(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN)) {
+          Engine_GameFlagSet(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN);
           SolSanctumStatue_RunSealOpenedSequence();
         }
-      } else if (Engine_GameFlagIsSet(0x812)) {
+      } else if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN)) {
         Engine_EventRequestExit(5);
         exitResult = 1;
       }
@@ -1393,20 +1384,20 @@ static void SolSanctumStatue_OpenSeal(void) {
 // Draw the left beam and open the floor when the right beam is also lit.
 static void SolSanctumStatue_ShineLeftBeam(void) {
   Engine_EventBegin();
-  if (GameFlag_IsSet(FLAG_CENTER_STATUE_MOVED) == 0) {
-    if (GameFlag_IsSet(FLAG_LEFT_BEAM_SHINING) == 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) == 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) == 0) {
       Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
       Camera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
       Engine_CameraWaitForMove();
       Event_PlayCue(186);
       Map_CopyCellsTo(0, 59, 15, 38, 4, 3);
-      if (GameFlag_IsSet(FLAG_RIGHT_BEAM_SHINING) != 0) {
+      if (GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
         Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
       }
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
       Engine_EventWait(30);
-      GameFlag_Set(FLAG_LEFT_BEAM_SHINING);
-      if (GameFlag_IsSet(FLAG_RIGHT_BEAM_SHINING) != 0) {
+      GameFlag_Set(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING);
+      if (GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
         SolSanctumStatue_OpenCentralHole();
       }
     }
@@ -1417,20 +1408,20 @@ static void SolSanctumStatue_ShineLeftBeam(void) {
 // Draw the right beam and open the floor when the left beam is also lit.
 static void SolSanctumStatue_ShineRightBeam(void) {
   Engine_EventBegin();
-  if (GameFlag_IsSet(FLAG_CENTER_STATUE_MOVED) == 0) {
-    if (GameFlag_IsSet(FLAG_RIGHT_BEAM_SHINING) == 0) {
+  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) == 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) == 0) {
       Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
       Camera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
       Engine_CameraWaitForMove();
       Event_PlayCue(186);
       Map_CopyCellsTo(4, 59, 17, 38, 4, 3);
-      if (GameFlag_IsSet(FLAG_LEFT_BEAM_SHINING) != 0) {
+      if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
         Map_CopyCellsTo(8, 60, 17, 39, 2, 2);
       }
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
       Engine_EventWait(30);
-      GameFlag_Set(FLAG_RIGHT_BEAM_SHINING);
-      if (GameFlag_IsSet(FLAG_LEFT_BEAM_SHINING) != 0) {
+      GameFlag_Set(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING);
+      if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
         SolSanctumStatue_OpenCentralHole();
       }
     }
@@ -1501,55 +1492,55 @@ struct SceneEvent gSolSanctumStatue_Events[] = {
      EVENT_SCRIPT(SolSanctumStatue_CheckNorthPassage)},
     {0x202, 11, CONDITION_ALWAYS,
      EVENT_SCRIPT(SolSanctumStatue_CheckSouthPassage)},
-    {PSYNERGY_ON_ACTOR(0x8c), 9, FLAG_NORTHWEST_SEAL_OPEN,
+    {PSYNERGY_ON_ACTOR(0x8c), 9, FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN,
      EVENT_SCRIPT(SolSanctumStatue_TryNorthwestSeal)},
-    {PSYNERGY_ON_ACTOR(0x8c), 11, FLAG_NORTHEAST_SEAL_OPEN,
+    {PSYNERGY_ON_ACTOR(0x8c), 11, FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN,
      EVENT_SCRIPT(SolSanctumStatue_TryNortheastSeal)},
-    {PSYNERGY_ON_ACTOR(0x8c), 13, FLAG_SOUTHWEST_SEAL_OPEN,
+    {PSYNERGY_ON_ACTOR(0x8c), 13, FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN,
      EVENT_SCRIPT(SolSanctumStatue_TrySouthwestSeal)},
-    {PSYNERGY_ON_ACTOR(0x8c), 15, FLAG_SOUTHEAST_SEAL_OPEN,
+    {PSYNERGY_ON_ACTOR(0x8c), 15, FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN,
      EVENT_SCRIPT(SolSanctumStatue_TrySoutheastSeal)},
-    {TOUCH_WALKING_INTO(FACING_EAST), 5, FLAG_NORTHWEST_SEAL_OPEN,
+    {TOUCH_WALKING_INTO(FACING_EAST), 5, FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN,
      EVENT_SCRIPT(SolSanctumStatue_PushNorthwestStatue)},
-    {TOUCH_WALKING_INTO(FACING_WEST), 6, FLAG_NORTHEAST_SEAL_OPEN,
+    {TOUCH_WALKING_INTO(FACING_WEST), 6, FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN,
      EVENT_SCRIPT(SolSanctumStatue_PushNortheastStatue)},
-    {TOUCH_WALKING_INTO(FACING_EAST), 7, FLAG_SOUTHWEST_SEAL_OPEN,
+    {TOUCH_WALKING_INTO(FACING_EAST), 7, FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN,
      EVENT_SCRIPT(SolSanctumStatue_PushSouthwestStatue)},
-    {TOUCH_WALKING_INTO(FACING_WEST), 8, FLAG_SOUTHEAST_SEAL_OPEN,
+    {TOUCH_WALKING_INTO(FACING_WEST), 8, FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN,
      EVENT_SCRIPT(SolSanctumStatue_PushSoutheastStatue)},
-    {0x10008c15, 10, FLAG_LEFT_BEAM_SHINING,
+    {0x10008c15, 10, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT_SCRIPT(SolSanctumStatue_BlockLeftTriggerCell)},
-    {PSYNERGY_ON_ACTOR(0x8c), 10, FLAG_LEFT_BEAM_SHINING,
+    {PSYNERGY_ON_ACTOR(0x8c), 10, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT_SCRIPT(SolSanctumStatue_TryLeftBeam)},
-    {0x10008c15, 12, FLAG_RIGHT_BEAM_SHINING,
+    {0x10008c15, 12, FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT_SCRIPT(SolSanctumStatue_BlockRightTriggerCell)},
-    {PSYNERGY_ON_ACTOR(0x8c), 12, FLAG_RIGHT_BEAM_SHINING,
+    {PSYNERGY_ON_ACTOR(0x8c), 12, FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT_SCRIPT(SolSanctumStatue_TryRightBeam)},
-    {TOUCH_WALKING_INTO(FACING_EAST), 20, FLAG_LEFT_BEAM_SHINING,
+    {TOUCH_WALKING_INTO(FACING_EAST), 20, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT_SCRIPT(SolSanctumStatue_PushLeftBeamStatueEast)},
-    {TOUCH_WALKING_INTO(FACING_EAST), 21, FLAG_LEFT_BEAM_SHINING,
+    {TOUCH_WALKING_INTO(FACING_EAST), 21, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT_SCRIPT(SolSanctumStatue_PushLeftBeamStatueEast)},
-    {TOUCH_WALKING_INTO(FACING_SOUTH), 21, FLAG_LEFT_BEAM_SHINING,
+    {TOUCH_WALKING_INTO(FACING_SOUTH), 21, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT_SCRIPT(SolSanctumStatue_PushLeftBeamStatueSouth)},
-    {TOUCH_WALKING_INTO(FACING_NORTH), 23, FLAG_LEFT_BEAM_SHINING,
+    {TOUCH_WALKING_INTO(FACING_NORTH), 23, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT_SCRIPT(SolSanctumStatue_PushLeftBeamStatueNorth)},
-    {TOUCH_WALKING_INTO(FACING_NORTH), 24, FLAG_LEFT_BEAM_SHINING,
+    {TOUCH_WALKING_INTO(FACING_NORTH), 24, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT_SCRIPT(SolSanctumStatue_PushLeftBeamStatueNorth)},
-    {TOUCH_WALKING_INTO(FACING_WEST), 25, FLAG_RIGHT_BEAM_SHINING,
+    {TOUCH_WALKING_INTO(FACING_WEST), 25, FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT_SCRIPT(SolSanctumStatue_PushRightBeamStatueWest)},
-    {TOUCH_WALKING_INTO(FACING_WEST), 26, FLAG_RIGHT_BEAM_SHINING,
+    {TOUCH_WALKING_INTO(FACING_WEST), 26, FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT_SCRIPT(SolSanctumStatue_PushRightBeamStatueWest)},
-    {TOUCH_WALKING_INTO(FACING_SOUTH), 26, FLAG_RIGHT_BEAM_SHINING,
+    {TOUCH_WALKING_INTO(FACING_SOUTH), 26, FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT_SCRIPT(SolSanctumStatue_PushRightBeamStatueSouth)},
-    {TOUCH_WALKING_INTO(FACING_NORTH), 28, FLAG_RIGHT_BEAM_SHINING,
+    {TOUCH_WALKING_INTO(FACING_NORTH), 28, FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT_SCRIPT(SolSanctumStatue_PushRightBeamStatueNorth)},
-    {TOUCH_WALKING_INTO(FACING_NORTH), 29, FLAG_RIGHT_BEAM_SHINING,
+    {TOUCH_WALKING_INTO(FACING_NORTH), 29, FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT_SCRIPT(SolSanctumStatue_PushRightBeamStatueNorth)},
-    {0x10008c15, 17, FLAG_CENTER_STATUE_MOVED,
+    {0x10008c15, 17, FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
      EVENT_SCRIPT(SolSanctumStatue_BlockCenterTriggerCells)},
-    {PSYNERGY_ON_ACTOR(0x8c), 17, FLAG_CENTER_STATUE_MOVED,
+    {PSYNERGY_ON_ACTOR(0x8c), 17, FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
      EVENT_SCRIPT(SolSanctumStatue_UpdateCenterStatue)},
-    {TOUCH_WALKING_INTO(FACING_NORTH), 32, FLAG_CENTER_STATUE_MOVED,
+    {TOUCH_WALKING_INTO(FACING_NORTH), 32, FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
      EVENT_SCRIPT(SolSanctumStatue_PushCenterStatueBack)},
     {SCENE_EVENTS_END},
 };

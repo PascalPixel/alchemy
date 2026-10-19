@@ -34,6 +34,7 @@
 #include "fixed_math.h"
 #include "palbuf.h"
 #include "macros.h"
+#include "flags.h"
 
 // Forward declarations.
 static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId);
@@ -67,8 +68,6 @@ enum { OBJECT_ELEMENTAL_STAR = 22, ITEM_MARS_STAR = 222 };
 #define ELEMENTAL_ARC_SCALE_X_DECREASE 7372
 #define EMBER_EMISSION_DISABLED 999
 #define ARC_SCAN_STILL_ACTIVE 888
-
-enum { FLAG_SOL_SANCTUM_ERUPTED = 0x814, FLAG_STAR_ROOM_COLLAPSED = 0x83f };
 
 struct PairWork {
   u8 unk00[70];
@@ -447,7 +446,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Camera_MoveTo(PIXELS(472), -1, PIXELS(300), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
-  GameFlag_Set(0x246);
+  GameFlag_Set(FLAG_SCENE_TEMP_46);
   // Raise and remove the departing group, leaving Isaac and Garet behind.
   Actor_SetSpeed(ACTOR_SATUROS, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetSpeed(ACTOR_MENARDI, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -666,7 +665,7 @@ static void SolSanctumEruption_StepEmbers(void) {
     angle = Math_RemainderUnsigned(Engine_RandomNext(), 0xffff);
     ember = Object_GetById(emberIndex + 16);
     if (gEmberState[emberIndex] == 0) {
-      if (Engine_GameFlagIsSet(0x246) == 0)
+      if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_46) == 0)
         Engine_AudioPlayCue(246);
       gEmberState[emberIndex] = 1;
       ember->motionFlags = 0;
@@ -1368,7 +1367,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_MapRenderWaitForValues();
   SceneEffect_CleanupSceneObjects();
   GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTED);
-  GameFlag_Set(FLAG_STAR_ROOM_COLLAPSED);
+  GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED);
   Engine_EventRequestExit(5);
   GameFlag_Set(0x100);
 }

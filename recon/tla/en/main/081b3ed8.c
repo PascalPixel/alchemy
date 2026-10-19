@@ -3,7 +3,9 @@
 // them) fix the byte read and the removal call; three swaps remain, each a load
 // the native issues earlier: the cursor store before the limit offset's shift,
 // the work pointer's pool load before 0x3ff's shift, and the root's load inside
-// the bucket offset's split constant.
+// the bucket offset's split constant. Also tried: the root pinned to r9 (16)
+// or, declared before the mask, to r0 (29), and declared before the mask
+// unpinned (16).
 #include "trackbuf.h"
 
 void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input) {

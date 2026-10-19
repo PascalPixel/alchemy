@@ -141,8 +141,10 @@
 #define SE_149 149
 #define SE_150 150
 #define SE_151 151
-#define SE_152 152
-#define SE_153 153
+// An actor jumps: ObjectMotion_Launch plays the high jump above 5 pixels a
+// frame.
+#define SE_JUMP 152
+#define SE_HIGH_JUMP 153
 #define SE_CAST 154
 #define SE_155 155
 #define SE_156 156

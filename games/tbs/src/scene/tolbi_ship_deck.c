@@ -398,7 +398,7 @@ static s32 TolbiShipDeck_LeapAtOuranos(struct ScriptInterpreter *interpreter) {
     if (obj->targetX == ACTOR_NO_TARGET && obj->targetY == obj->targetX &&
         obj->targetZ == obj->targetY) {
       obj->timer++;
-      Engine_AudioPlayCue(SE_152);
+      Engine_AudioPlayCue(SE_JUMP);
       if (obj->riseEnabled != 0) {
         Actor_FaceDirection(SEA_OURANOS, 0xb000, 0);
       } else {
@@ -468,7 +468,7 @@ static s32 TolbiShipDeck_LeapAtSean(struct ScriptInterpreter *interpreter) {
     if (obj->targetX == ACTOR_NO_TARGET && obj->targetY == obj->targetX &&
         obj->targetZ == obj->targetY) {
       obj->timer++;
-      Engine_AudioPlayCue(SE_152);
+      Engine_AudioPlayCue(SE_JUMP);
       if (obj->riseEnabled != 0) {
         Actor_FaceDirection(SEA_SEAN, 0xd000, 0);
       } else {

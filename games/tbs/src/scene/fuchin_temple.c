@@ -253,7 +253,7 @@ static void Event_NyunpaOffersTest(void) {
     WAIT(5);
     OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
     Object_GetById(NYUNPA)->paused = 0;
-    SE(SE_152);
+    SE(SE_JUMP);
     nyunpa = Actor_Get(NYUNPA);
     nyunpa->velocityY = 0x80000;
     OBJ_MODE(NYUNPA, ANIM_STAND);
@@ -269,7 +269,7 @@ static void Event_NyunpaOffersTest(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 168, 504);
     WAIT(5);
     OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
-    SE(SE_152);
+    SE(SE_JUMP);
     Object_GetById(NYUNPA)->paused = alreadyDeclinedTrial;
     nyunpa = Actor_Get(NYUNPA);
     nyunpa->velocityY = 0x80000;
@@ -1452,7 +1452,7 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
   Actor_SetAttachedEffect(NYUNPA, 0x102);
   WAIT(60);
   Object_GetById(NYUNPA)->paused = 0;
-  SE(SE_152);
+  SE(SE_JUMP);
   nyunpa = Actor_Get(NYUNPA);
   nyunpa->velocityY = 0x80000;
   OBJ_MODE(NYUNPA, ANIM_STAND);

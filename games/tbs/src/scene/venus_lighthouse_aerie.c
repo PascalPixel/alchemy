@@ -215,7 +215,7 @@ static void Event_JumpToNextPillar(void) {
     Object_SetMode(actor, 7);
     actor->speed = PIXELS(3);
     actor->acceleration = PIXELS(2);
-    Engine_AudioPlayCue(SE_152);
+    Engine_AudioPlayCue(SE_JUMP);
     actor->velocityY = PIXELS(4);
     actor->motionFlags &= 0x7e;
     Engine_ActorSetSpriteFlags(actor, 0);
@@ -426,9 +426,9 @@ static void VenusLighthouseAerie_EnterAndConfrontAntagonists(void) {
   leader->z.fixed = PIXELS(148);
   leader->facing = FACING_WEST;
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  Engine_AudioPlayCue(SE_152);
+  Engine_AudioPlayCue(SE_JUMP);
   leader->velocityY = PIXELS(4);
-  Engine_AudioPlayCue(SE_152);
+  Engine_AudioPlayCue(SE_JUMP);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 1);
   Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, 504, 148);
   Engine_EventWait(10);

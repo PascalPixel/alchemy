@@ -175,7 +175,7 @@ static void Event_BaneFirstEscape(void) {
     Engine_ActorRunRepeatedMotion(15, 2);
     WAIT(20);
     OBJ_SPEED(BANE, PIXELS(1), PIXELS(1) / 2);
-    SE(SE_152);
+    SE(SE_JUMP);
     djinni = Object_GetById(BANE);
     djinni->velocityY = PIXELS(8);
     Actor_WalkToAndWait(BANE, 584, 680);
@@ -206,7 +206,7 @@ static void Event_BaneSecondEscape(void) {
       Engine_ActorRunRepeatedMotion(15, 2);
       WAIT(20);
       OBJ_SPEED(BANE, PIXELS(1), PIXELS(1) / 2);
-      SE(SE_152);
+      SE(SE_JUMP);
       jumpingDjinni = Object_GetById(BANE);
       jumpingDjinni->velocityY = PIXELS(10);
       Actor_WalkToAndWait(BANE, 584, 664);
@@ -253,7 +253,7 @@ static void Event_BaneLastEscape(void) {
     djinni = Object_GetById(BANE);
     djinni->sprite->rotation = 0;
     ObjectDispatch_SetAnimationSpeed(djinni, 16);
-    SE(SE_152);
+    SE(SE_JUMP);
     djinni = Object_GetById(BANE);
     djinni->velocityY = PIXELS(8);
     OBJ_DIR(BANE, FACING_WEST, 30);
@@ -261,7 +261,7 @@ static void Event_BaneLastEscape(void) {
     Engine_ActorRunRepeatedMotion(15, 2);
     WAIT(20);
     OBJ_SPEED(BANE, PIXELS(1), PIXELS(1) / 2);
-    SE(SE_152);
+    SE(SE_JUMP);
     djinni = Object_GetById(BANE);
     djinni->velocityY = PIXELS(4);
     Actor_WalkToAndWait(BANE, 880, 680);

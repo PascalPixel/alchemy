@@ -22,7 +22,7 @@ static s32 StagedActor_RunStepEffect(struct StagedActorEffectRequest *request) {
     Engine_EventBegin();
     Object_SetMode((struct FieldActor *)actor, 6);
     Engine_TaskWait(6);
-    Engine_AudioPlayCue(SE_152);
+    Engine_AudioPlayCue(SE_JUMP);
     Object_SetMode((struct FieldActor *)actor, 7);
     actor->moveRateX = 0x30000;
     actor->moveRateZ = 0x20000;

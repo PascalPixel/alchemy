@@ -43,11 +43,11 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   WaitFrames(20);
 
   // Three hops, at 3, 5 and 7 pixels a frame.
-  AudioCommand_PlayFar(SE_152);
+  AudioCommand_PlayFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 3, 14);
-  AudioCommand_PlayFar(SE_152);
+  AudioCommand_PlayFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 5, 16);
-  AudioCommand_PlayFar(SE_152);
+  AudioCommand_PlayFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 7, 18);
   WaitFrames(20);
 
@@ -81,7 +81,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   // Rise 8 pixels a frame for 15 frames, then remove the Djinni and its
   // afterimages (and their VRAM block, unless it is the shared block 96).
   resourceId = resource->slot;
-  AudioCommand_PlayFar(SE_153);
+  AudioCommand_PlayFar(SE_HIGH_JUMP);
   djinni->motionFlags = 0;
   for (remaining = 14; remaining >= 0; remaining--) {
     djinni->y.fixed += 8 << 16;

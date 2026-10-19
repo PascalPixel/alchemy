@@ -630,7 +630,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
   Actor_SetSpeed(17, PIXELS(1), PIXELS(1) / 2);
   actor->bounce = Q16_ONE / 10;
   actor->gravity = 7 * PIXELS(1) / 10;
-  Event_PlayCue(SE_153);
+  Event_PlayCue(SE_HIGH_JUMP);
   actor->velocityY = PIXELS(8);
   Actor_SetDestination(17, 132, 360);
   Actor_SetDestination(18, 132, 360);

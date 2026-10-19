@@ -384,9 +384,9 @@ void ObjectMotion_Launch(u32 objectId, s32 speed, s32 frames) {
     *objectFlags = updatedFlags;
     object->velocityY = verticalVelocity;
     if (speed > 5) {
-      AudioCommand_PlayFar(SE_153);
+      AudioCommand_PlayFar(SE_HIGH_JUMP);
     } else {
-      AudioCommand_PlayFar(SE_152);
+      AudioCommand_PlayFar(SE_JUMP);
     }
     FieldEvent_WaitFrames(frames);
   }

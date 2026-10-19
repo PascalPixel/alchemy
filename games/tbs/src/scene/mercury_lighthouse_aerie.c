@@ -309,7 +309,7 @@ static void MercuryLighthouseAerie_JumpToPlatform(void) {
     MercuryLighthouseAerie_SettlePlatforms();
     Object_SetMode(actor, 6);
     Engine_TaskWait(6);
-    Engine_AudioPlayCue(SE_152);
+    Engine_AudioPlayCue(SE_JUMP);
     Object_SetMode(actor, 7);
     actor->speed = 0x30000;
     actor->acceleration = 0x20000;
@@ -701,7 +701,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_EventWait(40);
   Actor_SetSpeed(ACTOR_MENARDI, 0x30000, 0x20000);
   Actor_Get(ACTOR_MENARDI)->velocityY = 0x40000;
-  Event_PlayCue(SE_152);
+  Event_PlayCue(SE_JUMP);
   Actor_Get(ACTOR_MENARDI)->motionFlags &= 0x7e;
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_MENARDI), 0);
   Object_GetById(ACTOR_LIFT_PLATFORM_1)->motionFlags = 4;

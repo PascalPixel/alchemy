@@ -301,7 +301,7 @@ static void AltinPeak_RideLog(s32 log) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_JUMP);
   Engine_EventWait(10);
-  Engine_AudioPlayCue(SE_152);
+  Engine_AudioPlayCue(SE_JUMP);
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(16) / 5, PIXELS(8) / 5);
   // Leap by the height between leader and log, in quarter pixels, plus 4.
   leader->velocityY =
@@ -1100,7 +1100,7 @@ static void AltinPeak_UpdateBeastHops(union FieldObject *object) {
     motion->verticalStopped = 0;
   }
   if (motion->hopTimer == 0) {
-    Engine_AudioPlayCue(SE_152);
+    Engine_AudioPlayCue(SE_JUMP);
     motion->landingCuePending = 1;
     Object_SetMode(&object->actor, 2);
     motion->velocityY = PIXELS(3);
@@ -1174,7 +1174,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_ROOM1_BEAST, FACING_NORTHEAST + FACING_STEP, 20);
   Engine_ActorFaceDirection(ACTOR_ROOM1_BEAST, FACING_NORTH + FACING_STEP, 40);
-  Engine_AudioPlayCue(SE_153);
+  Engine_AudioPlayCue(SE_HIGH_JUMP);
   actor = Object_GetById(ACTOR_ROOM1_BEAST);
   actor->velocityY = PIXELS(4);
   Engine_ActorSetAnimation(ACTOR_ROOM1_BEAST, 2);
@@ -1206,7 +1206,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Engine_ActorSetSpeed(ACTOR_ROOM1_BEAST, PIXELS(7) / 5, PIXELS(7) / 10);
   actor = Object_GetById(ACTOR_ROOM1_BEAST);
   Engine_ActorSetSpriteFlags(actor, 0);
-  Engine_AudioPlayCue(SE_153);
+  Engine_AudioPlayCue(SE_HIGH_JUMP);
   jumpSpeed = PIXELS(5);
   actor = Object_GetById(ACTOR_ROOM1_BEAST);
   actor->velocityY = jumpSpeed;
@@ -1217,7 +1217,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Engine_ActorSetSpriteFlags(actor, 1);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
   Engine_EventWait(40);
-  Engine_AudioPlayCue(SE_153);
+  Engine_AudioPlayCue(SE_HIGH_JUMP);
   actor = Object_GetById(ACTOR_ROOM1_BEAST);
   actor->velocityY = jumpSpeed;
   Engine_ActorSetAnimation(ACTOR_ROOM1_BEAST, 3);
@@ -1285,7 +1285,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Actor_SetSpeed(ACTOR_ROOM1_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
   movingActor = Object_GetById(ACTOR_ROOM1_BEAST);
   Engine_ActorSetSpriteFlags(movingActor, 0);
-  Engine_AudioPlayCue(SE_153);
+  Engine_AudioPlayCue(SE_HIGH_JUMP);
   movingActor = Object_GetById(ACTOR_ROOM1_BEAST);
   movingActor->velocityY = PIXELS(4);
   Actor_SetAnimation(ACTOR_ROOM1_BEAST, 3);
@@ -2142,7 +2142,7 @@ static void AltinPeak_StopLogAndJumpOff(struct FieldActor *object) {
   sprite->entries[1] = NULL;
   sprite->dirty = 1;
   leader = Engine_ActorLookup(gGameState.selectedActor);
-  Engine_AudioPlayCue(SE_152);
+  Engine_AudioPlayCue(SE_JUMP);
   leader->x.fixed = x;
   leader->velocityY = PIXELS(6);
   leader->gravity = PIXELS(1);

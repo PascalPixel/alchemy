@@ -461,7 +461,7 @@ static void AltmillerCave_HopSelectedActor(void) {
     Engine_EventBegin();
     Object_SetMode(actor, 6);
     Engine_TaskWait(6);
-    Engine_AudioPlayCue(SE_152);
+    Engine_AudioPlayCue(SE_JUMP);
     Object_SetMode(actor, 7);
     actor->speed = PIXELS(3);
     actor->acceleration = PIXELS(2);

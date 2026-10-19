@@ -713,7 +713,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   Actor_WalkByAndWait(ACTOR_ANGRY_PASSENGER, 24, 0);
   Object_GetById(ACTOR_ANGRY_PASSENGER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkBy(ACTOR_ANGRY_PASSENGER, -16, 0);
-  Event_PlayCue(SE_153);
+  Event_PlayCue(SE_HIGH_JUMP);
   Actor_SetSpeed(ACTOR_TOUR_GUIDE, 0x26666, 0x13333);
   Actor_WalkByAndWait(ACTOR_TOUR_GUIDE, 16, 0);
   Engine_EventWait(10);

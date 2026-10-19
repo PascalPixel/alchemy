@@ -166,7 +166,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
     EV_BEGIN();
     Object_SetMode(actor, 6);
     Engine_TaskWait(6);
-    Engine_AudioPlayCue(SE_152);
+    Engine_AudioPlayCue(SE_JUMP);
     Object_SetMode(actor, 7);
 
     actor->speed = PIXELS(3);
@@ -358,7 +358,7 @@ static void Event_HopDownStep(void) {
   Object_SetMode(leader, 1);
   Engine_ActorSetSpriteFlags(leader, 0);
   leader->motionFlags |= ACTOR_FALLS;
-  Engine_AudioPlayCue(SE_152);
+  Engine_AudioPlayCue(SE_JUMP);
   leader->velocityY = PIXELS(4);
   Engine_ObjectSetPosition(leader, leader->x.fixed, leader->y.fixed,
                            leader->z.fixed + PIXELS(12));

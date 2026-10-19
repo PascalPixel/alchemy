@@ -474,7 +474,7 @@ static s32 CrossboneIslePillarRooms_TryJumpAcrossPillar(void) {
       EV_BEGIN();
       Object_SetMode(leader, 6);
       Engine_TaskWait(6);
-      Engine_AudioPlayCue(SE_152);
+      Engine_AudioPlayCue(SE_JUMP);
       Object_SetMode(leader, 7);
       leader->speed = PIXELS(3);
       leader->acceleration = PIXELS(2);

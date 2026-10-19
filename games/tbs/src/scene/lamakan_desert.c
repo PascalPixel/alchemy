@@ -502,7 +502,7 @@ static void CollapseFromHeat(void) {
     FieldObject_SetPosition(actor, spot->x, 0, spot->z);
   }
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
-  Event_PlayCue(SE_152);
+  Event_PlayCue(SE_JUMP);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   SceneActor_WaitObjectBelowHeight(leader,
                                    Actor_Get(ACTOR_PARTY_LEADER)->y.fixed);
@@ -555,7 +555,7 @@ static void CollapseFromHeat(void) {
         &puff);
   }
   Event_PlayCue(SE_288);
-  Event_PlayCue(SE_152);
+  Event_PlayCue(SE_JUMP);
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x60000;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
   Event_Wait(10);

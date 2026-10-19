@@ -28,13 +28,13 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   Shop_RestoreSceneTilesFar(0x201204);
   WaitFrames(30);
   djinni->visible = 0;
-  AudioCommand_PlayFar(SE_152);
+  AudioCommand_PlayFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 4, 15);
-  AudioCommand_PlayFar(SE_152);
+  AudioCommand_PlayFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 4, 15);
   WaitFrames(30);
   djinni->callback = BattleFx_AdvanceSpinAngle;
-  AudioCommand_PlayFar(SE_153);
+  AudioCommand_PlayFar(SE_HIGH_JUMP);
   ObjectMotion_Launch(djinniId, 8, 22);
   AudioCommand_PlayFar(SE_140);
   Map_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);

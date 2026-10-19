@@ -2450,7 +2450,7 @@ static void ValeStorm_SpawnEffectPair(struct FieldActor *parent) {
   struct PairWork *work = gEffectWork;
   s32 i;
 
-  Engine_AudioPlayCue(SE_152);
+  Engine_AudioPlayCue(SE_JUMP);
   for (i = 0; i < 2; ++i) {
     child = Engine_ObjectCreate(26, parent->x.fixed, parent->y.fixed,
                                 parent->z.fixed);

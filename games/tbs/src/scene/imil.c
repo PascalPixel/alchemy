@@ -878,7 +878,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4), PIXELS(2));
   Actor_SetSpeed(GARET, PIXELS(4), PIXELS(2));
   Actor_SetSpeed(IVAN, PIXELS(4), PIXELS(2));
-  Event_PlayCue(SE_152);
+  Event_PlayCue(SE_JUMP);
   Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Object_GetById(GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Object_GetById(IVAN)->steeringFlags &= ~ACTOR_FACES_MOTION;

@@ -294,7 +294,7 @@ static s32 Event_HopDownLedge(s32 unusedArgument) {
     Engine_EventBegin();
     Object_SetMode(leader, 6);
     Engine_TaskWait(6);
-    Engine_AudioPlayCue(SE_152);
+    Engine_AudioPlayCue(SE_JUMP);
     Object_SetMode(leader, 7);
     leader->speed = 0x30000;
     leader->acceleration = 0x20000;
@@ -331,7 +331,7 @@ static void Event_KiteRunsOff(void) {
     Engine_EventWait(20);
     Actor_SetSpeed(ACTOR_KITE, PIXELS(1), PIXELS(1) / 2);
     Actor_WalkToAndWait(ACTOR_KITE, 792, 248);
-    Engine_AudioPlayCue(SE_152);
+    Engine_AudioPlayCue(SE_JUMP);
     djinni = Actor_Get(ACTOR_KITE);
     djinni->velocityY = 0x80000;
     Actor_WalkToAndWait(ACTOR_KITE, 792, 280);

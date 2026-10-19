@@ -32,7 +32,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   AudioCommand_PlayFar(SE_140);
   djinni->update = BattleFx_AdvanceSpinAngle;
   WaitFrames(40);
-  AudioCommand_PlayFar(SE_153);
+  AudioCommand_PlayFar(SE_HIGH_JUMP);
   ObjectMotion_Launch(djinniId, 12, 22);
 
   // 24 light particles from where the Djinni is on screen.

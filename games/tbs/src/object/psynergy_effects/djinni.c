@@ -48,17 +48,17 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   dist = 16 << 16;
   Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)djinni,
                                              dist, dir);
-  AudioCommand_PlayFar(SE_152);
+  AudioCommand_PlayFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 4, 0);
   FieldObject_WaitForMoveFar(djinni);
   Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)djinni,
                                              dist, dir);
-  AudioCommand_PlayFar(SE_152);
+  AudioCommand_PlayFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 4, 0);
   FieldObject_WaitForMoveFar(djinni);
   Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)djinni,
                                              dist, dir);
-  AudioCommand_PlayFar(SE_152);
+  AudioCommand_PlayFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 4, 0);
   FieldObject_WaitForMoveFar(djinni);
   WaitFrames(20);

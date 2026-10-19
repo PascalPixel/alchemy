@@ -161,7 +161,7 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
     Engine_EventBegin();
     Object_SetMode(leader, 6);
     Engine_TaskWait(6);
-    Engine_AudioPlayCue(SE_152);
+    Engine_AudioPlayCue(SE_JUMP);
     Object_SetMode(leader, 7);
     leader->speed = PIXELS(3);
     leader->acceleration = PIXELS(2);
@@ -205,7 +205,7 @@ static void MogallForest_HopActorTo(s32 actorId, s32 targetX, s32 targetZ,
   actor = Object_GetById(actorId);
   Engine_ActorSetSpritePriority(actorId, 1);
   Actor_SetSpeed(actorId, PIXELS(3), PIXELS(3) / 2);
-  Engine_AudioPlayCue(SE_152);
+  Engine_AudioPlayCue(SE_JUMP);
   actor->velocityY = verticalSpeed;
   actor->gravity = PIXELS(1) / 2;
   actor->bounce = 0;

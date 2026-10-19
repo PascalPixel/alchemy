@@ -2591,7 +2591,7 @@ static void MercuryLighthouse_RideLift(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 7);
   Actor_Get(ACTOR_PARTY_LEADER)->speed = 0x30000;
   Actor_Get(ACTOR_PARTY_LEADER)->acceleration = 0x20000;
-  Engine_AudioPlayCue(SE_152);
+  Engine_AudioPlayCue(SE_JUMP);
   Actor_Get(ACTOR_PARTY_LEADER)->velocityY = 0x40000;
   Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetDestination(ACTOR_PARTY_LEADER, 736, 584);

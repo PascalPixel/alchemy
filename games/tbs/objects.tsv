@@ -273,8 +273,8 @@ main	rom_tail_00	games/common/sound/sequence/se_148	.rodata
 main	rom_tail_00	games/common/sound/sequence/se_149	.rodata
 main	rom_tail_00	games/common/sound/sequence/se_150	.rodata
 main	rom_tail_00	games/common/sound/sequence/se_151	.rodata
-main	rom_tail_00	games/common/sound/sequence/se_152	.rodata
-main	rom_tail_00	games/common/sound/sequence/se_153	.rodata
+main	rom_tail_00	games/common/sound/sequence/se_jump	.rodata
+main	rom_tail_00	games/common/sound/sequence/se_high_jump	.rodata
 main	rom_tail_00	games/common/sound/sequence/se_cast	.rodata
 main	rom_tail_00	games/common/sound/sequence/se_155	.rodata
 main	rom_tail_00	games/common/sound/sequence/se_156	.rodata

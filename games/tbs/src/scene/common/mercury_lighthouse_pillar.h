@@ -353,7 +353,7 @@ void MercuryLighthouse_RunActorMove(void) {
   }
   Object_SetMode(actor, 6);
   Engine_TaskWait(3);
-  Engine_AudioPlayCue(SE_152);
+  Engine_AudioPlayCue(SE_JUMP);
   Object_SetMode(actor, 7);
   actor->speed = 0x30000;
   actor->acceleration = 0x20000;

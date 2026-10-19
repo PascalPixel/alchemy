@@ -48,7 +48,7 @@ again:
     FieldEvent_Begin();
     ObjectDispatch_SelectAnimationFar(leader, 6);
     WaitFrames(6);
-    AudioCommand_PlayFar(SE_152);
+    AudioCommand_PlayFar(SE_JUMP);
     ObjectDispatch_SelectAnimationFar(leader, 7);
     leader->speedLimit = 0x30000;
     leader->acceleration = 0x20000;

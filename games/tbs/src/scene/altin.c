@@ -535,7 +535,7 @@ static void Beast_Hop(union FieldObject *fieldObject) {
     beast->onGround = 0;
   }
   if (beast->timer == 0) {
-    Event_PlayCue(SE_152);
+    Event_PlayCue(SE_JUMP);
     beast->counter = 1;
     Object_SetMode(beast, 2);
     beast->velocityY = 0x30000;

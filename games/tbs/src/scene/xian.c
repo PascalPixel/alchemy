@@ -528,7 +528,7 @@ static void Xian_JumpOverSpilledWater(void) {
       Engine_EventBegin();
       Object_SetMode(leader, 6);
       Engine_TaskWait(6);
-      Engine_AudioPlayCue(SE_152);
+      Engine_AudioPlayCue(SE_JUMP);
       Object_SetMode(leader, 7);
       leader->speed = 0x30000;
       leader->acceleration = 0x20000;

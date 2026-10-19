@@ -140,11 +140,11 @@ static void Event_LeaveByExit(void) {
 // when a sandstorm hit them, and tell of others who stopped the cyclones with
 // water and slew the monsters causing them. Iodem resolves to search the
 // desert for Sheba, and rejoins the party. Once the party has been to Babi
-// Lighthouse (flag 0x98a, set there), Iodem does not come.
+// Lighthouse (FLAG_IODEM_AT_BABI_LIGHTHOUSE), Iodem does not come.
 static void Event_IodemQuestionsWoundedSoldiers(void) {
   struct FieldActor *leader;
   GameFlag_Set(FLAG_IODEM_MET_WOUNDED_SOLDIERS);
-  if (GameFlag_IsSet(0x98a) == 0) {
+  if (GameFlag_IsSet(FLAG_IODEM_AT_BABI_LIGHTHOUSE) == 0) {
     Event_PlayCue(MUS_030);
     Event_Begin();
     // Frame the speakers and bring the leader over before the dialogue.

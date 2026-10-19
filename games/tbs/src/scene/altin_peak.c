@@ -972,8 +972,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
   message = MsgAltinWatchFallingRocks;
   Engine_MessageShowCentered(message, 1);
   if (GameFlag_IsSet(FLAG_ALTIN_PEAK_BOULDER_FALLEN) == 0 &&
-      GameFlag_IsSet(0xf14) == 0) {
-    // 0xf14: the Orb of Force's chest in Fuchin Falls, not yet opened.
+      GameFlag_IsSet(FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND) == 0) {
     // Bring Garet out to inspect the warning and demonstrate the danger.
     GameFlag_Set(FLAG_GARET_WATCHING_ROCKS);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);

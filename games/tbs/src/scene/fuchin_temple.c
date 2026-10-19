@@ -2108,7 +2108,7 @@ s32 Scene_Initialize(void) {
         OBJ_MODE(8, 6);
       } else {
         OBJ_MODE(8, 5);
-        if (Engine_GameFlagIsSet(0xf14) &&
+        if (Engine_GameFlagIsSet(FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND) &&
             !Engine_GameFlagIsSet(FLAG_NYUNPA_TAUGHT_FORCE) &&
             !Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
           FuchinTemple_NyunpaTeachesKi();
@@ -2162,7 +2162,8 @@ s32 Scene_Initialize(void) {
   } else {
     BattleFx_SetQueuedSoundAndPlay(SE_170);
     Object_GetById(9)->collisionFlags |= 16;
-    if (gGameState.entrance == 3 && Engine_GameFlagIsSet(0xf14) &&
+    if (gGameState.entrance == 3 &&
+        Engine_GameFlagIsSet(FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND) &&
         !Engine_GameFlagIsSet(FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST)) {
       Map_CopyCellAttributes(10, 84, 1, 1, 10, 24);
     }
@@ -2463,7 +2464,7 @@ struct SceneEvent gFuchinTempleEvents1[] = {
     { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_VisitorAsksAboutBridge) },
     { EVENT_TALK, FALLS_MONK, FLAG_NYUNPA_TEST_ACCEPTED, MSGNO(MsgFuchinTempleOmOmBlueLightsInThe) },
     { EVENT_TALK, FALLS_MONK, FLAG_FUCHIN_FALLS_GROTTO_OPENED, EVENT_SCRIPT(Event_MonkLetsPartyIntoGrotto) },
-    { EVENT_TALK, FALLS_MONK, 0xf14, MSGNO(MsgFuchinTempleTheTestOfFuchinFallsIs) },
+    { EVENT_TALK, FALLS_MONK, FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND, MSGNO(MsgFuchinTempleTheTestOfFuchinFallsIs) },
     { EVENT_TALK, FALLS_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleMasterNyunpaIsWaitingForYou) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleGemsFromTheSkyBlueLights) },
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleNyunpaHasNotEatenInDays) },
@@ -2479,7 +2480,7 @@ struct SceneEvent gFuchinTempleEvents1[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleIDontFeelSafeGoingHome) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FALLS_MONK, FLAG_NYUNPA_TEST_ACCEPTED, MSGNO(MsgFuchinTempleManyStarsFellFromTheSky) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FALLS_MONK, FLAG_FUCHIN_FALLS_GROTTO_OPENED, MSGNO(MsgFuchinTempleCanSuchYoungWarriorsEndureThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FALLS_MONK, 0xf14, MSGNO(MsgFuchinTempleCanSuchYoungWarriorsEndureThe) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FALLS_MONK, FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND, MSGNO(MsgFuchinTempleCanSuchYoungWarriorsEndureThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), FALLS_MONK, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleTheWarriorsHaveMasteredTheSecrets) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleThereIsNoPointInTraining) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleICantImagineFastingItGets) },

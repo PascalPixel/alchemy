@@ -122,7 +122,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
 static void Event_IodemAsksWhyTurningBack(void) {
   struct FieldActor *leader;
 
-  if (FLAG_CHECK(0x98a) == 0 && FLAG_CHECK(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
+  if (FLAG_CHECK(FLAG_IODEM_AT_BABI_LIGHTHOUSE) == 0 &&
+      FLAG_CHECK(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
     EV_BEGIN();
     // Bring Iodem out of the party before opening his question.
     Engine_ActorSetSpeed(IODEM, PIXELS(1), PIXELS(1) / 2);

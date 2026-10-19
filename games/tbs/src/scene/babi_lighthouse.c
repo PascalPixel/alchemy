@@ -372,8 +372,7 @@ static inline void BabiLighthouse_RegroupPartyMember(s32 actorId) {
 static void BabiLighthouse_DiscussPursuit(void) {
   // Bring the party to the witnesses gathered around the sealed door.
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED);
-  // Flag 0x98a is set with it; no scene of this overlay reads it.
-  GameFlag_Set(0x98a);
+  GameFlag_Set(FLAG_IODEM_AT_BABI_LIGHTHOUSE);
   Engine_EventBegin();
   Battle_ResetEffectCounter();
   Engine_EventSetMessage(MsgBabiYoureSureTheyWentThrough);

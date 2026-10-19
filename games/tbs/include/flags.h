@@ -141,6 +141,9 @@
 #define FLAG_BABI_LIGHTHOUSE_DOOR_OPEN 0x985
 // Iodem and Faran have asked the party to follow Sheba's kidnappers.
 #define FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED 0x988
+// Set with it: Iodem has come to Babi Lighthouse, and from then on he no
+// longer leaves the party in Suhalla's inn or Gondowan Cave.
+#define FLAG_IODEM_AT_BABI_LIGHTHOUSE 0x98a
 // The party has opened the door before Iodem and Faran, who stay behind.
 #define FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN 0x989
 #define FLAG_BABI_LIGHTHOUSE_LUCKY_PEPPER 0xfbc // the building site's chest
@@ -580,6 +583,8 @@
 #define FLAG_FUCHIN_FALLS_GROTTO_OPENED 0x892 // the monk stepped aside
 #define FLAG_NYUNPA_TAUGHT_FORCE 0x893        // the power the monks call Ki
 #define FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST 0x894
+// The Orb of Force's chest in Fuchin Falls has been opened.
+#define FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND 0xf14
 #define FLAG_FEH_WAITS_TO_SEE_CHI 0x898
 #define FLAG_FEH_CHI_DEMONSTRATION_DECLINED 0x899
 #define FLAG_FEH_SAW_CHI 0x89b

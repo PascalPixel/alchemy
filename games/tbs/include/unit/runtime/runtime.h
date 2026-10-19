@@ -80,7 +80,7 @@ s32 Scheduler_ResumeOverlayTasks(void);
 void Scheduler_RunPass(s32 key);
 
 u32 Random16(void);
-void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *position);
+void Vector_AddPolarOffset(s32 radius, s32 angle, void *position);
 s32 ArcTan2(s32 x, s32 y);
 s32 Math_IntegerSqrt(s32 value);
 s32 FixedSqrt(s32 value);

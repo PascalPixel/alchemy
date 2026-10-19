@@ -721,7 +721,7 @@ static s32 TryPushBlockingSceneActor(struct FieldActor *actor,
   {
     s32 direction = (actor->facing + 0x2000) & 0xc000;
 
-    Vector_AddPolarOffset(PIXELS(32), direction, (s32 *)&destination);
+    Vector_AddPolarOffset(PIXELS(32), direction, &destination);
   }
   // Keep the original motion flags while playing the leader's push step.
   if (FieldObject_CheckMovementCollision(actor, &destination) == 0) {

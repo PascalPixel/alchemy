@@ -7,7 +7,7 @@ s32 Scheduler_RemoveCallbackFar(SchedulerCallback callback);
 u32 Random16Far(void);
 s32 ArcTan2Far(s32 x, s32 y);
 s32 FixedSqrtFar(s32 value);
-void Vector_AddPolarOffsetFar(s32 radius, s32 angle, s32 *position);
+void Vector_AddPolarOffsetFar(s32 radius, s32 angle, void *position);
 void Runtime_SetIrqHandlerFar(u32 irq, s32 vcount, InterruptHandler handler);
 void *Runtime_AllocateHeapBlockFar(s32 kind, s32 size);
 void *Runtime_AllocateBlockFar(s32 kind, s32 size);

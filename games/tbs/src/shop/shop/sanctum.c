@@ -385,11 +385,11 @@ void BattleFx_UpdateRadialMotion(struct EffectSlot *effect) {
   if (state == 0) {
     position.x = effect->originX;
     position.z = effect->originZ;
-    Vector_AddPolarOffset(0x280000, Random16(), (s32 *)&position);
+    Vector_AddPolarOffset(0x280000, Random16(), &position);
     EffectSlot_SetPositionFar(effect, position.x, position.z);
     position.x = effect->originX;
     position.z = effect->originZ;
-    Vector_AddPolarOffset(0x40000, Random16(), (s32 *)&position);
+    Vector_AddPolarOffset(0x40000, Random16(), &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->maxSpeed = 0x20000;

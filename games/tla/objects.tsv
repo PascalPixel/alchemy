@@ -4327,9 +4327,14 @@ main	rom_main_05	recon/tla/fr/rom	.rom.000f2024	fr
 main	rom_main_05	recon/tla/es/rom	.rom.000f6024	es
 main	rom_main_05	recon/tla/de/rom	.rom.000fa030	de
 main	rom_main_05	recon/tla/raw/080ed030	.text	en
-main	rom_main_05	recon/tla/raw/080ed0a0	.text	en
-main	rom_main_05	recon/tla/raw/080ed2a4	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000ecf3c	ja
+main	rom_main_05	games/tla/src/battle/effect/world_map_scroll	.text
+main	rom_main_05	recon/tla/it/rom	.rom.000ed298	it
+main	rom_main_05	recon/tla/fr/rom	.rom.000f2298	fr
+main	rom_main_05	recon/tla/es/rom	.rom.000f6298	es
+main	rom_main_05	recon/tla/de/rom	.rom.000fa2a4	de
+main	rom_main_05	recon/tla/raw/080ed2a4	.text	en
+main	rom_main_05	recon/tla/ja/rom	.rom.000ed1b0	ja
 main	rom_main_05	games/tla/src/battle/effect/visibility_transition	.text
 main	rom_main_05	games/tla/src/battle/effect/arctiles	.rodata
 main	rom_main_05	games/tla/src/battle/effect/d00ed90c	.rodata

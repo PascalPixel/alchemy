@@ -3867,7 +3867,13 @@ EffectSlot_Initialize:
 	.section .rom.000f52ac, "ax"
 	.incbin "baserom.gba", 0x000f52ac, 0x00000cbc
 	.section .rom.000f6024, "ax"
-	.incbin "baserom.gba", 0x000f6024, 0x00000758
+	.global Func_080ed030
+	.type Func_080ed030, %function
+	.thumb_func
+Func_080ed030:
+	.incbin "baserom.gba", 0x000f6024, 0x00000070
+	.section .rom.000f6298, "ax"
+	.incbin "baserom.gba", 0x000f6298, 0x000004e4
 	.section .rom.000f8810, "ax"
 	.incbin "baserom.gba", 0x000f8810, 0x00000008
 	.section .rom.000fc978, "ax"

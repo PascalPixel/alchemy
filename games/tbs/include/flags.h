@@ -70,6 +70,19 @@
 #define FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE 0x9a2
 #define FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED 0x9a5
 
+// Lunpa
+// Set on the world map; from then on the east guard asks whether the party
+// came from Kalay.
+#define FLAG_GUARDS_SUSPECT_KALAY 0x85a
+// The gate's left guard has recognized Hammet with the party.
+#define FLAG_LUNPA_GATE_GUARD_SAW_HAMMET 0x9af
+#define FLAG_LUNPA_PSYNERGY_STONE 0xf27
+#define FLAG_LUNPA_GRAVE_SLEEP_BOMB 0xf88
+#define FLAG_LUNPA_BARREL_NUT 0xf89
+#define FLAG_LUNPA_WOODEN_BOX_LUCKY_MEDAL 0xf8a // in the town's buildings
+#define FLAG_LUNPA_BARREL_VIAL 0xf8b            // in the town's buildings
+#define FLAG_LUNPA_NUT_CAUGHT 0xfd1 // the nut floating over the town
+
 // Flags from 0x200 belong to the current scene: each scene keeps its puzzle
 // and event states in the same numbers, and names the ones it uses.
 #define FLAG_SCENE_TEMP_00 0x200
@@ -94,6 +107,11 @@
 #define FLAG_SCENE_TEMP_12 0x212 // Tret: lower middle southwest landing
 #define FLAG_SCENE_TEMP_13 0x213 // Tret: lower middle south landing
 #define FLAG_SCENE_TEMP_14 0x214 // Tret: lower middle southeast landing
+#define FLAG_SCENE_TEMP_40 0x240 // Lunpa gate: the guards block the gateway
+#define FLAG_SCENE_TEMP_41 0x241 // Lunpa gate: Cloak is cast
+#define FLAG_SCENE_TEMP_42 0x242 // Lunpa gate: the party enters the fortress
+#define FLAG_SCENE_TEMP_43 0x243 // Lunpa gate: Garet turns the leader back
+#define FLAG_SCENE_TEMP_44 0x244 // Lunpa gate: the guards caught the party
 #define FLAG_SCENE_TEMP_50                                                     \
   0x250 // Vault interiors: the leader is beside the Bone
 

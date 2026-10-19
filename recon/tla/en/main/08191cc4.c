@@ -11,6 +11,9 @@
 // 2.
 // 2026-10-18: each callee declared s32 in place of void, one at a time (2 or
 // 4).
+// 2026-10-19: battle held by an empty asm operand after the reads (42);
+// psynergy permute 5 minutes: nothing below 2. The one row is the TLA
+// pattern of a load issued between a constant's movs and its lsls.
 #include "types.h"
 #include "ram_buffer.h"
 #include "motobj.h"

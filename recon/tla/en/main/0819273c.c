@@ -12,6 +12,8 @@
 // texture's address stored before or between its two size fields (68, 78);
 // position.y before position.x (38); alchemy permute 5 minutes (nothing
 // below 4).
+// 2026-10-19: the -0x3f0000 offset in a local held by an empty asm operand
+// (41: the asm reorders the allocation).
 #include "types.h"
 #include "ram_buffer.h"
 #include "mem.h"

@@ -18,6 +18,11 @@
 // as 63 - ((y - 96) << 1) (123), through a local fall = y * 2 - 192 (83);
 // frames as 192 / |speed| + 1 with half = (frames - 1) >> 1 (66, the
 // native's order of the two).
+// 2026-10-19: the native recomputes y * 2 in the inner loop, where agscc
+// carries it out to the row: the inner loop as a goto loop (64), fall as a
+// running -192 + 2y (66, and with the goto loop 66), y + y or y << 1 (66),
+// the colour as an if/else chain (66, 70) and y held by an empty asm operand
+// in the inner loop (94, 126) all leave it carried out.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

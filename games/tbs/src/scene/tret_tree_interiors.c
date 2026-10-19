@@ -893,6 +893,8 @@ static void TretTreeInteriors_SpawnSwirlSparks(void) {
         spark->update = TretTreeInteriors_UpdateSwirlSpark;
       }
     }
+    // Each wave also plays the closing sound.
+    // fall through
   case 44:
     SE(SE_289);
     /* FAKEMATCH: the counter pointer is taken again here so it is dead

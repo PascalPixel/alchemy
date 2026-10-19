@@ -84,6 +84,7 @@ static void MercuryLighthouseAerie_FlickerBeacon(void);
 // Shared source is included here in ROM order.
 #include "common/effect_create.h"
 
+/// The event work, seen for its table of the scene's 66 actor slots.
 struct ActorTable {
   u8 unk00[0x14];
   struct FieldActor *actors[66];
@@ -1654,6 +1655,7 @@ static void SceneEffect_UpdateArcPosition(union FieldObject *fieldObject) {
   object->angle64 -= 0x200;
 }
 
+/// A spark the beacon flame throws off, swinging round the flame on its arc.
 struct BeaconSpark {
   u8 unk00[0x30];
   s32 swing;

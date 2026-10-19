@@ -13,6 +13,8 @@
 #include "edition.h"
 #include "farcall.h"
 
+/// The battle camera: its eye, the focus it turns about, and its pitch, yaw
+/// and distance. It lives in the HEAP_SLOT_CAMERA work slot.
 struct BattleCamera {
   s32 eye[3];
   s32 pos[3];
@@ -20,8 +22,8 @@ struct BattleCamera {
   s32 *followPos;
   s32 distance;
   u8 unk24[16];
-  u16 pitch;
-  u16 yaw;
+  u16 pitch; ///< 1/65536 turns
+  u16 yaw;   ///< 1/65536 turns
   u8 unk38[20];
 };
 
@@ -33,8 +35,10 @@ STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 0x36);
 
 extern struct BattleCamera *gCameraWork;
 
+/// The battle background's work slot as the camera reads it: the yaw the
+/// camera eases toward and the frames left to ease it.
 struct BattlePresentationTransition {
-  s32 targetYaw;
+  s32 targetYaw; ///< 1/65536 turns
   s32 frames;
   u8 unk08[8];
   s32 active;
@@ -54,6 +58,8 @@ STATIC_ASSERT(offsetof(struct BattlePresentationTransition, active) == 0x10);
 STATIC_ASSERT(sizeof(struct BattlePresentationWork) == 0x54);
 STATIC_ASSERT(offsetof(struct BattlePresentationWork, effect.actors) == 0x24);
 
+/// The battle background's work slot as the background code reads it: its
+/// display mode (2 draws it as an affine perspective plane).
 struct BattleBackgroundView {
   u8 unk00[8];
   s32 mode;
@@ -61,11 +67,15 @@ struct BattleBackgroundView {
   s32 busy;
 };
 
+/// The battle background's affine parameters and reference point, copied
+/// whole to the BG2PA registers.
 struct BattleAffine {
   u16 pa, pb, pc, pd;
   s32 x, y;
 };
 
+/// The battle background's scanline work in heap slot 10: two pages of
+/// per-line BG2CNT values, swapped each frame, and the affine parameters.
 struct BattleAffineHdma {
   u32 page;
   u8 unk04[12];

@@ -9,14 +9,16 @@
 #include "edition.h"
 #include "farcall.h"
 
+/// An animation's metadata: the sprite's size, scale and offsets, how its
+/// frames are drawn and decoded, its frames and its animation scripts.
 struct AnimationMetadata {
-  u8 width;
-  u8 height;
-  u16 scale;
+  u8 width;  ///< pixels
+  u8 height; ///< pixels
+  u16 scale; ///< 8.8 fixed point, 0x100 full size
   u8 drawKind;
   u8 animationCount;
-  s8 adjustX;
-  s8 adjustY;
+  s8 adjustX; ///< pixels
+  s8 adjustY; ///< pixels
   u8 boxX;
   u8 boxY;
   u8 frameCodec;

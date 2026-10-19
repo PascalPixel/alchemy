@@ -482,6 +482,8 @@ static __inline__ void SetBlendTarget(u32 value) { REG_BLDCNT = value; }
 /// Sets the packed hardware alpha coefficients.
 static __inline__ void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
 
+/// The effect work in slot 56, seen for the VRAM block the paired effects
+/// share.
 struct PairWork {
   u8 unk00[70];
   u16 vramBlock;

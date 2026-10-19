@@ -7,11 +7,12 @@
 
 #include "types.h"
 
+/// A scene actor's sprite, as far as the angle a scene turns it by.
 struct Sprite {
   u8 pad00[9];
   u8 flags9;
   u8 pad0a[20];
-  u16 angle;
+  u16 angle; ///< 1/65536 turns
   u8 pad20[6];
   u8 state26;
 };
@@ -40,6 +41,8 @@ struct Effect {
   u32 callback;
 };
 
+/// The options a scene passes to Effect_Spawn for a configured effect: its
+/// kind, mode, rates and callback.
 struct ConfiguredEffectOptions {
   s32 modeBits;
   s32 mode;

@@ -9,6 +9,8 @@
 #include "static_assert.h"
 #include "farcall.h"
 
+/// A view of the window system's work that names only its dirty bits and its
+/// menu busy flag.
 struct UiWork {
   u8 unk000[RENDER_DIRTY_OFFSET];
   unsigned dirty : 8;
@@ -16,20 +18,24 @@ struct UiWork {
   unsigned menuBusy : 8;
 };
 
+/// A cursor stop among the status screen's stats: its help entry, where the
+/// cursor points and the run of the row it highlights.
 struct OwnerStatusStatCursor {
   u8 entry;
-  u8 column;
-  u8 row;
-  u8 highlightColumn;
-  u8 highlightRow;
-  u8 highlightWidth;
+  u8 column;          ///< tiles
+  u8 row;             ///< tiles
+  u8 highlightColumn; ///< tiles
+  u8 highlightRow;    ///< tiles
+  u8 highlightWidth;  ///< tiles
   u8 unk06[2];
 };
 
+/// A cursor stop on the status screen's equipment or conditions: its help
+/// entry and where the cursor points.
 struct OwnerStatusCursor {
   u8 entry;
-  u8 column;
-  u8 row;
+  u8 column; ///< tiles
+  u8 row;    ///< tiles
   u8 unk03;
 };
 

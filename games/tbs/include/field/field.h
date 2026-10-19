@@ -65,6 +65,7 @@ struct EffectWork {
   u8 pad[80];
   struct EffectRecord *record;
 };
+/// An actor seen only as its priority flags at 0x23 (enum ActorPriorityFlag).
 struct Flags35 {
   u8 pad[35];
   u8 flags;
@@ -91,10 +92,13 @@ struct FieldObjectRecord {
   u8 pad54[1];
   u8 f55;
 };
+/// An actor seen only as the coordinate at 0x08, which Goma Cave's stump
+/// reads in 16-pixel map cells.
 struct OverlayActorPosition {
   u8 pad00[8];
-  s32 depthFixed;
+  s32 depthFixed; ///< 16.16 fixed-point pixels
 };
+/// An actor seen only as its priority flags at 0x23 (enum ActorPriorityFlag).
 struct OverlayActorState {
   u8 pad00[35];
   u8 flags;
@@ -113,12 +117,15 @@ struct OverlayEffectMotion {
   u8 pad44[32];
   s16 mode;
 };
+/// The Colosso rival's path player in the scene state: its mode (1 playing, 2
+/// recording, 9 finished), whether it mirrors the path, the actor, its place
+/// in the path and how long the actor has stood still.
 struct PathRecorder {
   s16 mode;
   s16 mirror;
   s16 actor;
   u16 pos;
-  s16 still;
+  s16 still; ///< frames
 };
 struct GridMarkActor {
   s32 f00;
@@ -139,10 +146,13 @@ struct Slot {
   u16 f04;
   u16 f06;
 };
+/// A Venus Lighthouse switch or pillar socket's map cell.
 struct SwitchCell {
-  u32 x;
-  u32 z;
+  u32 x; ///< 16-pixel map cells
+  u32 z; ///< 16-pixel map cells
 };
+/// A Venus Lighthouse gate effect, seen as whether it still runs and whether
+/// it has finished.
 struct SwitchEffect {
   s32 active;
   u8 unk04[0x5f];
@@ -152,10 +162,12 @@ struct T {
   u8 pad00[30];
   u16 f1e;
 };
+/// A log in Kolima Forest lying across four map cells, from its first cell
+/// across or, when vertical, down.
 struct TileRun {
   s16 id;
-  s16 x;
-  s16 y;
+  s16 x; ///< map cells
+  s16 y; ///< map cells
   s16 vertical;
   s16 unused08;
   s16 unused0a;

@@ -15,11 +15,13 @@
 // Kolima and its forest bridge: the sparkling dust that falls over the party
 // when Tret's curse strikes ("Watch out! It's happening again!").
 
+/// The point the curse dust falls around.
 struct SceneEffectOrigin {
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y; ///< 16.16 fixed-point pixels
+  s32 z; ///< 16.16 fixed-point pixels
 };
+/// The first map work slot, seen for the curse dust's origin.
 struct SceneEffectWork {
   struct SceneEffectOrigin *origin;
 };

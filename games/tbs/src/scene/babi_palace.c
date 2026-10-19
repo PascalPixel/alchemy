@@ -65,6 +65,7 @@ enum { ACTOR_FIRST_GUARD = 8, ACTOR_SECOND_GUARD = 9 };
 /// attendant back.
 enum { FLAG_ATTENDANT_SHOWED_BEDS = FLAG_SCENE_TEMP_00 };
 
+/// A party member's unit, seen for its maximum and current HP and PP.
 struct OwnerState {
   u8 unk00[0x34];
   u16 maxHp;

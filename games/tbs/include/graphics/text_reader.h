@@ -8,6 +8,8 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// A position in a Huffman-coded message: the previous code, which picks the
+/// next symbol's tree, and the message's remaining bits.
 struct TextReader {
   u32 previousCode;
   const u32 *words;

@@ -4,6 +4,8 @@
 
 #include "../object_internal.h"
 
+/// The object system's work (struct ObjectSystemWork), seen as the flag that
+/// suspends sprite projection while the menu opens.
 struct MenuCtrl {
   u8 unk00[4];
   u16 wait;

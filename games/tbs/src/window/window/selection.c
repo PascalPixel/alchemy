@@ -4,6 +4,7 @@
 
 #include "../window_internal.h"
 
+/// Two halfwords of a selection record, the second cleared as its cursor.
 struct GlyphCursor {
   u16 unused;
   u16 cursor;

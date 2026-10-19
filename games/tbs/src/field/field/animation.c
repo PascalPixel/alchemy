@@ -4,6 +4,8 @@
 
 #include "../field_internal.h"
 
+/// A row of gResourceSlot_NumberTable: the packed resource that holds an
+/// animation number's frames, ending at number 0.
 struct ResourceSlotNumber {
   u16 resource;
   s16 number;

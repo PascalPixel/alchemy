@@ -65,6 +65,7 @@ enum {
 /// Actors of the warehouse approach (Bilibin2).
 enum { RAISED_BLOCK = 8, GUST = 9 };
 
+/// Counts frames between the river effects, one every 30 frames.
 struct SpawnCounter {
   s16 frames;
 };

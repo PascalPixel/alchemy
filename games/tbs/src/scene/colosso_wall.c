@@ -150,12 +150,14 @@ enum {
 
 #define WORK_SLOT_STAGE 59
 
+/// A field object seen by the block push: the pusher or the block, with its
+/// position, push rates and collision flags.
 typedef struct ColossoWallSceneRecord {
   u8 pad00[6];
   u16 facing;
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y; ///< 16.16 fixed-point pixels
+  s32 z; ///< 16.16 fixed-point pixels
   u8 pad14[14];
   u8 state;
   u8 pad23;
@@ -168,12 +170,15 @@ typedef struct ColossoWallSceneRecord {
   u8 flags;
 } ColossoWallSceneRecord;
 
+/// A world position, used to look for objects in the cells around a block.
 typedef struct Position3 {
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y; ///< 16.16 fixed-point pixels
+  s32 z; ///< 16.16 fixed-point pixels
 } Position3;
 
+/// The rival's recorded-path playback state, held in the scene state; status
+/// 9 marks the rival finished.
 struct StageControl {
   s16 status;
   s16 f2;

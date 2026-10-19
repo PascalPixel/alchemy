@@ -1032,6 +1032,7 @@ static void HeatGauge_Draw(void) {
   MemFree(buffer);
 }
 
+/// A halfword holding the zero the gauge's slide and phase are cleared with.
 struct Half {
   u16 v;
 };

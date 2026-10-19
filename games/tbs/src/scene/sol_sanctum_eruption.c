@@ -75,6 +75,8 @@ enum { OBJECT_ELEMENTAL_STAR = 22 };
 #define EMBER_EMISSION_DISABLED 999
 #define ARC_SCAN_STILL_ACTIVE 888
 
+/// The effect work in slot 56, seen for the VRAM block the paired effects
+/// share.
 struct PairWork {
   u8 unk00[70];
   u16 vramBlock;

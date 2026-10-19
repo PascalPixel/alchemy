@@ -10,13 +10,15 @@
 
 struct AnimationObject;
 
+/// The menu work as the row of four figures reads it: each figure's object,
+/// screen position and motion phase.
 struct FourObjectMotionState {
   u8 unk000[0x144];
-  s16 verticalOrigins[4];
+  s16 verticalOrigins[4]; ///< screen pixels
   u8 unk14c[0xd8];
   struct AnimationObject *objects[4];
-  s16 positionsX[4];
-  s16 positionsY[4];
+  s16 positionsX[4]; ///< screen pixels
+  s16 positionsY[4]; ///< screen pixels
   s32 phases[4];
 };
 

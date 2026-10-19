@@ -24,6 +24,8 @@ enum BattleSideMask {
   BATTLE_SIDE_BOTH = BATTLE_SIDE_PARTY | BATTLE_SIDE_ENEMIES
 };
 
+/// A Djinni on standby or recovering: its element and index, its owner, and
+/// the turns until it is set again.
 struct DjinnRecoveryEntry {
   u8 element;
   u8 index;
@@ -33,11 +35,13 @@ struct DjinnRecoveryEntry {
 
 STATIC_ASSERT(sizeof(struct DjinnRecoveryEntry) == 4);
 
+/// One side's Djinn recovery list: up to 64 entries and their count.
 struct DjinnRecoveryList {
   struct DjinnRecoveryEntry entries[64];
   s32 count;
 };
 
+/// One side's Djinn recovery table, as Djinn_GetRecoveryTable returns it.
 struct DjinnRecoveryTable {
   u8 unk00[8];
   struct DjinnRecoveryList list;

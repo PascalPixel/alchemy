@@ -6,6 +6,8 @@
 
 #include "types.h"
 
+/// A floating Nut's sprite, seen as the attribute bits, palette and state its
+/// scenes set.
 typedef struct OrbitingSceneObjectSprite {
   u8 padding00[5];
   u8 flags05Low : 5;
@@ -21,19 +23,21 @@ typedef struct OrbitingSceneObjectSprite {
   u8 state;
 } OrbitingSceneObjectSprite;
 
+/// A floating Nut's actor: its position, the spot it sways around and how far
+/// through the sway it is, its sprite and its callback.
 typedef struct OrbitingSceneObject {
   u8 padding00[8];
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y; ///< 16.16 fixed-point pixels
+  s32 z; ///< 16.16 fixed-point pixels
   u8 padding14[15];
   u8 flags23;
   u8 padding24[12];
-  s32 orbitAngle;
+  s32 orbitAngle; ///< 1/65536 turns
   u8 padding34[4];
-  s32 orbitCenterX;
-  s32 orbitCenterY;
-  s32 orbitCenterZ;
+  s32 orbitCenterX; ///< 16.16 fixed-point pixels
+  s32 orbitCenterY; ///< 16.16 fixed-point pixels
+  s32 orbitCenterZ; ///< 16.16 fixed-point pixels
   u8 padding44[12];
   OrbitingSceneObjectSprite *sprite;
   u8 padding54;

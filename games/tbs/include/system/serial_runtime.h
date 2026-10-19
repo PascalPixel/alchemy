@@ -12,6 +12,8 @@
 #include "irq.h"
 #include "dma.h"
 
+/// A link cable packet: its sequence number, the consoles not yet heard from,
+/// its checksum and a 24-byte payload.
 struct SerialPacket {
   u8 sequence;
   u8 missingMask;
@@ -32,6 +34,8 @@ union SerialDataRegisters {
   u16 halfwords[4];
 };
 
+/// The link cable's runtime: its mode and phase, the consoles heard from, the
+/// send position and the packet buffers the interrupt handler fills.
 struct SerialRuntime {
   u8 mode;
   u8 phase;
@@ -59,6 +63,8 @@ STATIC_ASSERT(offsetof(struct SerialRuntime, transferEnabled) == 8);
 STATIC_ASSERT(offsetof(struct SerialRuntime, sendIndex) == 0x14);
 STATIC_ASSERT(offsetof(struct SerialRuntime, storage) == 0x60);
 
+/// A console's block transfer state, exchanged with the partner each VBlank:
+/// its block sequence, its status and flags, and a 20-byte block.
 struct SerialTransferState {
   u8 active;
   u8 status;

@@ -32,6 +32,8 @@
 // sweep's wave picture is its first 120x120 bytes), then eight dimmed copies
 // of the mote sheet.
 
+/// Judgment's work block: the sheet's pixels, then eight dimmed copies of the
+/// mote sheet.
 struct JudgmentWork {
   u8 sheet[0x2710];
   u8 ramp[8][MOTE_SET_BYTES];

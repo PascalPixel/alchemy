@@ -77,17 +77,20 @@ struct Actor {
   s32 callback;
 };
 
+/// The direction one dust puff of the stump's landing ring is thrown.
 struct Vec {
   s32 x;
   s32 y;
   s32 z;
 };
 
+/// A party member's unit, seen for the 15 items carried.
 struct Member_387 {
   u8 pad[216];
   u16 items[15];
 };
 
+/// An item's record, seen for its flags and whether it can be equipped.
 struct Item_387 {
   u8 pad[2];
   u16 flags;

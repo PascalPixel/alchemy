@@ -14,11 +14,14 @@ enum {
   OWNER_ACTION_ID_MASK = 0x3fff
 };
 
+/// An entry in a unit's action list: the action's id (OWNER_ACTION_ID_MASK)
+/// and marks for an action its class or an equipped item gave.
 struct OwnerActionSlot {
   u16 encodedAction;
   u16 unk02;
 };
 
+/// A unit's elemental power and resistance in one element.
 struct BattleElementStats {
   s16 power;
   s16 resistance;
@@ -133,6 +136,8 @@ enum AbilityEffect {
   ABILITY_EFFECT_PSY_LEECH = 69           ///< Psy Leech
 };
 
+/// An ability's definition, a row of gBattleAction_DefinitionTable: its
+/// targeting, kind, element, effect, range, PP cost and power.
 struct BattleAct {
   u8 targetMode;
   u8 flags;   ///< the kind (ABILITY_KIND_MASK) and where it can be used
@@ -151,6 +156,8 @@ enum BattleActionUse {
   ACTION_USABLE_IN_BATTLE = 0x80
 };
 
+/// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
+/// Djinn and ailments.
 struct BattleUnit {
   u8 name[0x0f];
   u8 level;

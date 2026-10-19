@@ -80,6 +80,8 @@ enum SoundFadeFlag { SOUND_FADE_PAUSE = 1, SOUND_FADE_IN = 2 };
 #define SOUND_FADE_FULL_VOLUME 0x100
 #define SOUND_FADE_STEP 16
 
+/// A voice a track plays its notes with: its kind and base key, the sample or
+/// wave it plays, and its attack, decay, sustain and release.
 struct SoundVoice {
   u8 kind;
   u8 baseKey;
@@ -92,6 +94,8 @@ struct SoundVoice {
   u8 release;
 };
 
+/// A PCM note, one of 12 the mixer renders: its state and envelope, its
+/// output levels, and its links to the other notes of its track.
 struct SoundNote {
   u8 state;
   u8 kind;
@@ -113,6 +117,8 @@ struct SoundNote {
   u8 unk38[8];
 };
 
+/// A note on one of the four CGB channels of the hardware: its state and
+/// envelope, its levels and pan, its frequency and its wave.
 struct CgbNote {
   u8 state;
   u8 kind;
@@ -191,6 +197,8 @@ enum SoundTrackWorkOperation {
   SOUND_WORK_LESS_BYTE
 };
 
+/// A track of a playing song: the song commands it runs, its voice and notes,
+/// and the pitch, volume, pan and modulation it gives them.
 struct SoundTrack {
   u8 flags;
   u8 unk01[7];
@@ -223,6 +231,8 @@ struct SoundTrack {
   u8 unk44[0x0c];
 };
 
+/// A song's header: its track count, priority and mode, its voices, and where
+/// each track's commands start.
 struct SequenceHeader {
   u8 trackCount;
   u8 unk01;
@@ -232,6 +242,8 @@ struct SequenceHeader {
   const u8 *tracks[1];
 };
 
+/// A player, which plays one song: its header and status, its tracks, its
+/// tempo and fade.
 struct SoundPlayer {
   const struct SequenceHeader *header;
   u32 status;
@@ -257,6 +269,8 @@ struct SoundPlayer {
   struct SoundPlayer *nextTickPlayer;
 };
 
+/// The sound driver's work: its lock, the mixer's rate and buffers, the PCM
+/// and CGB notes, and the routines the driver calls.
 struct SoundWork {
   u32 lock;
   /* FAKEMATCH: volatile steers library C only: without it
@@ -290,6 +304,8 @@ struct SoundWork {
   s8 buffers[2][0x630];
 };
 
+/// An entry of the player table: a player, its tracks and track count, and
+/// its priority check.
 struct PlayerSlot {
   struct SoundPlayer *player;
   struct SoundTrack *tracks;
@@ -298,6 +314,8 @@ struct PlayerSlot {
   u16 checkPriority;
 };
 
+/// An entry of the song table: a song's header and the player table entry
+/// that plays it.
 struct SongEntry {
   const struct SequenceHeader *header;
   u16 slot;

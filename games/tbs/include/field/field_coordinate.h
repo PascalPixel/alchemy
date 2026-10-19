@@ -7,11 +7,12 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// A field coordinate, read whole or as its fraction and its whole pixels.
 union FieldCoordinate {
-  s32 fixed;
+  s32 fixed; ///< 16.16 fixed-point pixels
   struct {
-    u16 fraction;
-    s16 pixel;
+    u16 fraction; ///< 1/65536 pixels
+    s16 pixel;    ///< pixels
   } part;
 };
 

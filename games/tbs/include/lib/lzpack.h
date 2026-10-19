@@ -11,12 +11,16 @@
 #include "static_assert.h"
 #include "audio_engine_symbols.h"
 
+/// A position of the LZ packer's window in the chain of the byte value it
+/// holds.
 struct LzPackNode {
   struct LzPackNode *next; ///< Next node with the same value.
   struct LzPackNode *prev; ///< Previous node, or the bucket field at the head.
   s32 slot;
 };
 
+/// The LZ packer's work: a node per window position, a chain head per byte
+/// value, the byte at each position, the best match and the output.
 struct LzPackWork {
   struct LzPackNode nodes[0x400];
   struct LzPackNode *bucket[0x100];

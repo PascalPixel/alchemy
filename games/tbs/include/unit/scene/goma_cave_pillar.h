@@ -14,6 +14,8 @@ extern s32 gGomaCavePillar_WitnessFrames;
 extern s32 gStagedActor_DirectionSteps[];
 extern u32 gStagedActor_FootprintKinds[];
 extern s32 gStagedActor_FootprintBounds[];
+/// The action scripts a pillar fragment can run, chosen by the low bits of
+/// its spawn value.
 struct GomaCavePillarFragmentScripts {
   const s32 *scripts[3];
 };

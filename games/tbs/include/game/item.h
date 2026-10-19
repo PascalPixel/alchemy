@@ -68,6 +68,8 @@ enum ItemEffectKind {
   ITEM_EFFECT_LURE ///< sets FLAG_LURE_CAP while worn: encounters come faster
 };
 
+/// One effect of an item while equipped: its kind (enum ItemEffectKind) and
+/// amount.
 struct ItemEffect {
   u8 kind;
   s8 amount;
@@ -78,6 +80,8 @@ STATIC_ASSERT(sizeof(struct ItemEffect) == 0x04);
 STATIC_ASSERT(offsetof(struct ItemEffect, kind) == 0x00);
 STATIC_ASSERT(offsetof(struct ItemEffect, amount) == 0x01);
 
+/// An item's definition: its price, type, who can equip it, its bonuses and
+/// unleash, its effects and the action it is used for.
 struct ItemDefinition {
   s16 price;
   u8 type;

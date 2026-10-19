@@ -13,6 +13,8 @@
 struct MapCell;
 struct FieldActor;
 
+/// A scene's row in gField_SceneTable: its overlay's resource, its group
+/// (the place it belongs to), a variant and its map.
 struct SceneRecord {
   s16 resourceId;
   s8 group;
@@ -23,15 +25,20 @@ struct SceneRecord {
 
 STATIC_ASSERT(sizeof(struct SceneRecord) == 8);
 
+/// A scene's exit region: the box that, while its condition holds, takes the
+/// party leader out through its exit.
 struct SceneRegion {
-  s16 minX, minY, minZ;
-  s16 maxX, maxY, maxZ;
+  s16 minX, minY, minZ; ///< pixels
+  s16 maxX, maxY, maxZ; ///< pixels
   s16 condition;
   s16 value;
 };
 
 STATIC_ASSERT(sizeof(struct SceneRegion) == 16);
 
+/// The entry table at the start of each scene overlay: its initialize
+/// function and the functions returning its entrances, exits, placements,
+/// events and regions, each behind a veneer word.
 struct SceneEntries {
   u32 initializeVeneer;
   s32 (*initialize)(void);
@@ -170,8 +177,9 @@ STATIC_ASSERT(offsetof(struct FieldWork, resolvingAction) == 0xcc6);
 STATIC_ASSERT(offsetof(struct FieldWork, castStarted) == 0xcc7);
 STATIC_ASSERT(offsetof(struct FieldWork, queuedSound) == 0xcc8);
 
+/// A position on the field.
 struct FieldPosition {
-  s32 x, y, z;
+  s32 x, y, z; ///< 16.16 fixed-point pixels
 };
 
 STATIC_ASSERT(sizeof(struct FieldPosition) == 12);

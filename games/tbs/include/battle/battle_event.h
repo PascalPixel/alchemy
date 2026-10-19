@@ -17,6 +17,8 @@ enum BattlePlaybackPhase {
   BATTLE_PLAYBACK_READY = 4
 };
 
+/// The battle event queue: up to 64 events, each an opcode (enum
+/// BattleEventOpcode) and one operand, in the order they play.
 struct BattleEventQueue {
   u8 opcodes[BATTLE_EVENT_CAPACITY];
   u32 operands[BATTLE_EVENT_CAPACITY];

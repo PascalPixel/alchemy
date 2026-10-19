@@ -16,6 +16,7 @@
 #define ARTICLE_KIND_MASK 7
 #endif
 
+/// The article written before a name of each article class.
 struct ArticleTable {
   s8 *text[ARTICLE_KINDS];
 };
@@ -254,6 +255,8 @@ enum {
 #if (LANGUAGE == LANGUAGE_FRENCH)
 extern s8 gUiText_ItemPronoun[];
 #else
+/// The possessive written before an item's name, chosen by the item's gender
+/// or by number.
 struct ItemPossessiveTable {
   s8 *text[ITEM_POSSESSIVE_TEXT_COUNT];
 };

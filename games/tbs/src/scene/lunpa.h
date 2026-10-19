@@ -172,10 +172,11 @@ enum {
   ITEM_ICON_TILE_BYTES = 128
 };
 
+/// One house door: the cell animation that opens it and where it plays.
 struct LunpaDoor {
   const u16 *steps;
-  u16 x;
-  u16 y;
+  u16 x; ///< map cells
+  u16 y; ///< map cells
 };
 
 extern struct LunpaDoor gLunpaDoors[];

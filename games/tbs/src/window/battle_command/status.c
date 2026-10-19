@@ -22,6 +22,8 @@
 #define STATUS_CURSOR_COMBAT_STATS 1
 #define STATUS_CURSOR_CONDITIONS 2
 
+/// The status screen's cursor: its place in each group, the help entry it
+/// shows and where it points.
 struct StatusCursor {
   /// XOR2 navigation can transiently use index3; keep all five positions.
   s8 groupPositions[5];
@@ -29,8 +31,8 @@ struct StatusCursor {
   s32 drawnHelpEntry;
   s32 group;
   s32 groupSize;
-  s32 column;
-  s32 row;
+  s32 column; ///< tiles
+  s32 row;    ///< tiles
 };
 
 /// Shows a party member's stats and condition help until B or the link session

@@ -9,6 +9,8 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// A colour buffer for all 512 palette colours: the source palette, the shown
+/// and target colour channels, their steps, and two pages of packed colours.
 struct PaletteFade {
   u16 palette[512];
   u16 current[0x600];
@@ -28,6 +30,9 @@ STATIC_ASSERT(offsetof(struct PaletteFade, delta) == 0x1c00);
 STATIC_ASSERT(offsetof(struct PaletteFade, packed) == 0x2800);
 STATIC_ASSERT(offsetof(struct PaletteFade, page) == 0x3000);
 
+/// The colour buffer (heap block 32) that fades the BG and OBJ palettes: the
+/// source palette, the shown and target colour channels, their per-frame
+/// steps, and two pages of packed RGB555 colours queued each frame.
 struct BattleEffectBuffers {
   u16 palette[0x1c0];
   u16 current[0x540];
@@ -35,8 +40,8 @@ struct BattleEffectBuffers {
   u16 delta[0x540];
   u16 packed[2][0x1c0];
   u8 page;
-  s8 duration;
-  s8 step;
+  s8 duration; ///< frames
+  s8 step;     ///< frames
   u8 padding2a03;
 };
 

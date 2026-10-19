@@ -8,21 +8,28 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// One screen line's ground-plane terms on the world map: its width scale and
+/// distance, from which its affine parameters are built.
 struct MapScanline {
   s32 scale, depth;
   s32 offsetX, offsetY;
   s16 pa, pc;
 };
 
+/// One screen line's affine parameters for a background, as the HBlank DMA
+/// copies them into the BG2 or BG3 registers.
 struct MapAffineLine {
   s16 pa, pb, pc, pd;
   s32 x, y;
 };
 
+/// One screen line's affine parameters for BG2 and BG3.
 struct MapAffinePair {
   struct MapAffineLine bg2, bg3;
 };
 
+/// The world map's frame work in heap slot 7: the scanline terms and two pages
+/// of per-line affine parameters, one built while the other is shown.
 struct MapFrameWork {
   struct MapScanline scanlines[160];
   struct MapAffinePair pages[2][160];

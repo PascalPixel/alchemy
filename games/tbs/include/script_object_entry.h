@@ -8,6 +8,7 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// A field object as the script commands' overlap checks see it.
 struct ScriptObjectEntry {
   void *data;
   u8 unk04[4];

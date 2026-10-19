@@ -5,6 +5,8 @@
 #include "../psynergy_effects_internal.h"
 
 #ifndef UBFIX
+/// The work slots from the window work's onward, seen as the window work and,
+/// twelve slots on, the event work in slot 27.
 struct WorkPointers {
   u8 *window;
   u8 unk04[0x2c];

@@ -7,6 +7,9 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// The storm's lightning work: the colours it flashes between and their
+/// difference, the countdown to the next flash and whether the thunder is
+/// loud.
 struct FieldBlendWork {
   s16 from[0x540];
   s16 to[0x540];

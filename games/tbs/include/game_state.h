@@ -9,6 +9,8 @@
 #include "static_assert.h"
 #include "battle_unit.h"
 
+/// The game's state: play time, coins, the scene and the leader's position,
+/// the active party and the options.
 struct GameState {
   u32 buildStamp;
   u32 playTime;
@@ -34,10 +36,10 @@ struct GameState {
   s16 special;
   u8 unk1d8[2];
   s16 map;
-  s32 x;
-  s32 y;
-  s32 z;
-  u32 heading;
+  s32 x;       ///< 16.16 fixed-point pixels
+  s32 y;       ///< 16.16 fixed-point pixels
+  s32 z;       ///< 16.16 fixed-point pixels
+  u32 heading; ///< 1/65536 turns
   u16 turn;
   s16 sceneCue;
   s16 cue;

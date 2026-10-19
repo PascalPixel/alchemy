@@ -35,9 +35,10 @@ struct ShopCursor;
 struct UiWindow;
 struct Work;
 
+/// A background's horizontal and vertical scroll offsets.
 struct ScrollPair {
-  u16 x;
-  u16 y;
+  u16 x; ///< pixels
+  u16 y; ///< pixels
 };
 extern u8 gMenu_SmallDownArrowTiles[];
 extern u8 gMenu_ArrowTiles[];

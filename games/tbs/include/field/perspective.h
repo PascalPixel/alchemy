@@ -7,6 +7,8 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// The world map's perspective view: the followed position, screen shake,
+/// view position, window, pitch and yaw, tile ids and zoom. Heap slot 8.
 struct PerspectiveWork {
   s32 *origin;
   s32 shakeX, shakeY, shakeDecay;
@@ -14,8 +16,8 @@ struct PerspectiveWork {
   u16 fade;
   u8 fadeStep;
   u8 unk017[0xe4 - 0x17];
-  s32 viewX;
-  s32 viewY;
+  s32 viewX; ///< 16.16 fixed-point pixels
+  s32 viewY; ///< 16.16 fixed-point pixels
   s32 scaleX;
   s32 scaleY;
   s32 limitX;
@@ -30,8 +32,8 @@ struct PerspectiveWork {
   u8 unk10a[6];
   void *tiles;
   u8 unk114[4];
-  u16 pitch;
-  u16 yaw;
+  u16 pitch; ///< 1/65536 turns
+  u16 yaw;   ///< 1/65536 turns
   u32 *resources;
   u8 unk120[0x18];
   u16 tileIds[256];
@@ -39,7 +41,7 @@ struct PerspectiveWork {
   s32 farPlane;
   s32 distance;
   s32 previousZoom;
-  s32 zoom;
+  s32 zoom; ///< 16.16 fixed point, 0x10000 full size
   u16 zoomTransitionFrames;
   s16 zoomTransitionStep;
 };

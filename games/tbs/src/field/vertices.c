@@ -14,11 +14,15 @@ struct RuntimeUnusedEntry {
   u32 target;
 };
 
+/// A runtime table entry whose two-argument target this routine calls, the
+/// arctangent.
 struct RuntimeMathBinaryEntry {
   u32 stub;
   s32 (*target)(s32 x, s32 y);
 };
 
+/// A runtime table entry whose one-argument target this routine calls, the
+/// sine or the cosine.
 struct RuntimeMathUnaryEntry {
   u32 stub;
   s32 (*target)(s32 angle);
@@ -44,6 +48,7 @@ STATIC_ASSERT(offsetof(struct RuntimeMathTable, cos) == 96);
 extern const struct RuntimeMathTable FarCall_RuntimeTable;
 extern u32 gScanlineAngle;
 
+/// The camera's eye or target point, as this routine reads it.
 struct Position {
   s32 x;
   s32 y;

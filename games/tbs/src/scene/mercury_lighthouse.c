@@ -187,6 +187,7 @@ static void MercuryLighthouse_StartDjinnBattle(void) {
 }
 
 #if TBS_PATCH_3
+/// The actor effect work, seen for the actor its overlay follows.
 struct LeaderEffectWork {
   u8 unk00[24];
   struct FieldActor *target;

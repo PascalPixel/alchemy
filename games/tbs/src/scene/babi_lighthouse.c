@@ -1162,6 +1162,8 @@ static void BabiLighthouse_MatchLeaderPriority(union FieldObject *fieldObject) {
 }
 #endif
 
+/// A field actor seen by the scene setup, for the moved block and the fallen
+/// men: position, sprite, collision and a staggered delay.
 struct RowActor {
   u8 unk00[8];
   union FieldCoordinate x;

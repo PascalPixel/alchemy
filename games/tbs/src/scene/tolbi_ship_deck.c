@@ -307,13 +307,15 @@ TolbiShipDeck_HoverAndDiveAtSean(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
+/// One of the map's scrolling layers, seen for its scroll.
 struct MapLayer {
   u8 unk00[8];
-  s32 x;
-  s32 y;
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y; ///< 16.16 fixed-point pixels
   u8 unk10[32];
 };
 
+/// The map work, seen for its camera and scrolling layers.
 struct MapWork {
   s32 *camera;
   u8 unk04[16];
@@ -2149,6 +2151,7 @@ static void TolbiShipDeck_ShowOar(s32 a) {
   }
 }
 
+/// An oar's animation object, seen for the tilt that follows its swing.
 struct OarSprite {
   s32 unk00[7];
   s16 unk1c;

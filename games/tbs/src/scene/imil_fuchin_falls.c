@@ -74,6 +74,7 @@ static void Imil_SlideActorAcrossIce(void);
 
 s32 gImilFuchinFalls_TrackLeader;
 
+/// The three action scripts cave dust can run, chosen by its spawn flags.
 struct CaveEffectScripts {
   const s32 *script[3];
 };

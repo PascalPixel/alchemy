@@ -4,10 +4,11 @@
 #include "types.h"
 #include "field_scene.h"
 
+/// A world position, used to look for the object in the cell ahead.
 typedef struct Position3 {
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y; ///< 16.16 fixed-point pixels
+  s32 z; ///< 16.16 fixed-point pixels
 } Position3;
 
 struct SceneEntrance *ColossoRiver_GetEntrances(void);

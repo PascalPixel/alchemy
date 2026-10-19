@@ -7,17 +7,19 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// The hopping water beast's view of its actor: height, rise speed, hop timer
+/// and the landing shake it is waiting to start.
 struct AltinPeakHopMotion {
   u8 unk00[12];
-  s32 height;
+  s32 height; ///< 16.16 fixed-point pixels
   u8 unk10[4];
-  s32 terrainHeight;
+  s32 terrainHeight; ///< 16.16 fixed-point pixels
   u8 unk18[16];
-  s32 velocityY;
+  s32 velocityY; ///< 16.16 fixed-point pixels per frame
   u8 unk2c[47];
   u8 verticalStopped;
   u8 unk5c[8];
-  s16 hopTimer, shakeDelay;
+  s16 hopTimer, shakeDelay; ///< frames
   s32 landingCuePending;
 };
 

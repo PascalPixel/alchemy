@@ -8,6 +8,8 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// The display transition state as the centre-line transition and the dissolve
+/// read it: the dissolve's tile pixels and the transition's progress.
 struct DisplayTransitionFrame {
   u8 unk000[0x508];
   u8 paletteNibbles[0x22];
@@ -16,21 +18,27 @@ struct DisplayTransitionFrame {
   u8 ditherToggle;
   s8 start;
   s8 end;
-  s8 duration;
-  s8 step;
+  s8 duration; ///< frames
+  s8 step;     ///< frames
 };
 
+/// The map work's display fields that transitions use: its display control
+/// bits and the lines where the centre-line transition shows and hides the
+/// screen, with the VCount interrupt's copies and phase.
 struct DisplayTransitionWindow {
   u32 unk000[5];
   u16 dispcnt;
   u8 unk016[0xea];
-  u16 firstLine;
-  u16 secondLine;
-  u16 irqFirstLine;
-  u16 irqSecondLine;
+  u16 firstLine;     ///< scanlines
+  u16 secondLine;    ///< scanlines
+  u16 irqFirstLine;  ///< scanlines
+  u16 irqSecondLine; ///< scanlines
   u16 irqPhase;
 };
 
+/// The display transition state (heap block 31): two pages of window edges for
+/// every line, the dissolve's solid tile, and the transition's mode and
+/// progress.
 struct DisplayTransitionState {
   u16 pages[2][322];
   u32 solidTile[8];
@@ -44,8 +52,8 @@ struct DisplayTransitionState {
   u8 page;
   s8 start;
   s8 end;
-  s8 duration;
-  s8 step;
+  s8 duration; ///< frames
+  s8 step;     ///< frames
   s8 nextMode;
 };
 

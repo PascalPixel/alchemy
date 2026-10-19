@@ -11,16 +11,18 @@
 struct MotionObject;
 struct SpriteEntry;
 
+/// A unit's place on the battlefield: its sprite object, resources and
+/// animations, its anchor spot and scale, and the conditions it shows.
 struct BattleObj {
   struct MotionObject *object;
   u16 resource;
   u16 overlay;
   u16 animation;
   u16 effect;
-  s32 anchorX;
-  s32 anchorZ;
+  s32 anchorX; ///< 16.16 fixed-point pixels
+  s32 anchorZ; ///< 16.16 fixed-point pixels
   s32 palette;
-  s32 scale;
+  s32 scale; ///< 16.16 fixed point, 0x10000 full size
   u16 activeConditions;
   u8 selectedCondition;
   s8 cycleTimer;
@@ -45,6 +47,8 @@ enum BattleCommand {
   CMD_FLEE = 99
 };
 
+/// A unit's chosen action for the turn: its command, the command's parameter,
+/// its target and range, and its priority in the turn order.
 struct BattleActionRecord {
   s16 unitId;
   u16 slot;
@@ -56,6 +60,8 @@ struct BattleActionRecord {
   s16 unk0e;
 };
 
+/// A battle's spoils so far: coins, experience, enemies defeated and up to
+/// four items.
 struct BattleSpoils {
   s32 coins;
   s32 experience;

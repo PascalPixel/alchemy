@@ -5,6 +5,8 @@
 #include "../object_internal.h"
 
 #ifndef UBFIX
+/// The map work in heap slot 8, seen as the halfwords of its view position:
+/// the high halves are the view's x and z in whole pixels.
 struct FadeView {
   u8 unk00[228];
   s16 camera[4];

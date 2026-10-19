@@ -14,6 +14,8 @@
 
 enum { UI_OUTPUT_COUNT = 64 };
 
+/// The window system's work: the windows' tilemap, the windows, the three text
+/// channels, the 64 render outputs, and the decoded message and its arguments.
 struct UiRenderWork {
   u16 tilemap[640];
   struct UiWindow windows[WINDOW_COUNT];

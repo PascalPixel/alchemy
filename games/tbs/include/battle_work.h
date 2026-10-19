@@ -11,11 +11,13 @@
 #include "battle_event.h"
 #include "battle_session.h"
 
+/// One OAM entry in a sprite list: the arrow that waits for the player to
+/// advance a battle message.
 struct BattlePromptSprite {
   struct BattlePromptSprite *next;
-  u16 y : 8;
+  u16 y : 8; ///< pixels
   u16 flags : 8;
-  u16 x : 9;
+  u16 x : 9; ///< pixels
   u16 size : 7;
   u16 tile : 10;
   u16 palette : 6;
@@ -24,12 +26,15 @@ struct BattlePromptSprite {
 
 struct UiWindow;
 
+/// The battle message's text channel, as far as its offset in the window.
 struct BattleDisplayOffset {
   s32 unk00;
-  u16 x;
-  u16 y;
+  u16 x; ///< 1/256 pixels
+  u16 y; ///< 1/256 pixels
 };
 
+/// The battle message display: its window, its text channel and whether the
+/// next message is marked.
 struct BattleDisplayWork {
   struct UiWindow *window;
   struct BattleDisplayOffset *offset;
@@ -41,6 +46,8 @@ STATIC_ASSERT(sizeof(struct BattleDisplayWork) == 12);
 STATIC_ASSERT(offsetof(struct BattleDisplayWork, marked) == 8);
 extern struct BattleDisplayWork *gBattleDisplayWork;
 
+/// The battle event queue and the state of its playback: the phase, the event
+/// playing and the advance arrow.
 struct BattleEventState {
   struct BattleEventQueue queue;
   s32 phase;
@@ -56,6 +63,9 @@ struct BattleEventState {
 /// Six enemies at most, and a turn's queue of up to 20 actions.
 enum { BATTLE_ENEMY_CAPACITY = 6, BATTLE_ACTION_CAPACITY = 20 };
 
+/// The battle's own work: its enemies, units and their objects, the turn's
+/// actions, the spoils, the background palette, the plan and the events. It
+/// lives in the HEAP_SLOT_BATTLE work slot.
 struct BattleWork {
   s32 enemyGroup;
   s16 spriteSlots[6];

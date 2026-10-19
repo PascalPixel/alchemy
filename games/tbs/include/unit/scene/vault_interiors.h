@@ -15,9 +15,10 @@ struct VaultInteriorsStopConnection {
   u8 padding[2];
 };
 
+/// A stop on the route network, two cells square, with its links to others.
 struct VaultInteriorsStop {
-  u8 gridX;
-  u8 gridZ;
+  u8 gridX; ///< 8-pixel cells from x 64
+  u8 gridZ; ///< 8-pixel cells from z 624
   u8 padding[2];
   struct VaultInteriorsStopConnection connections[3];
 };

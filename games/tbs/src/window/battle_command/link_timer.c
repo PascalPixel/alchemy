@@ -7,6 +7,8 @@
 #define COUNTDOWN_START_FRAMES 900
 #define FRAMES_PER_SECOND 60
 
+/// The partner console's signature as the link battle timer reads it: four
+/// letters that restart the countdown.
 struct LinkSignature {
   u8 padding000[8];
   u16 e;

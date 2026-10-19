@@ -246,6 +246,8 @@ s32 DjinnRecovery_TickTwenty(void) {
 /// Reserved empty routine.
 void Battle_ReservedNoOpF674(void) {}
 
+/// The order the two sides' units take their turn-end effects in, as
+/// BATTLE_SIDE_ masks.
 struct BattleGroupOrder {
   s32 group[2];
 };

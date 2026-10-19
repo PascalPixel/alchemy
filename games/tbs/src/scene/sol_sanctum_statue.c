@@ -72,15 +72,18 @@ static void Event_SayThenWait(s32 speaker, s32 frames);
 
 #define NULL ((void *)0)
 
+/// A block of map cells copied from one place in the map to another.
 struct CellCopy {
-  s32 srcX;
-  s32 srcY;
-  s32 destX;
-  s32 destY;
+  s32 srcX;  ///< map cells
+  s32 srcY;  ///< map cells
+  s32 destX; ///< map cells
+  s32 destY; ///< map cells
   s32 width;
   s32 height;
 };
 
+/// The seal being opened: its cell animations, its flag, where the leader
+/// jumps back to and where its statue returns if the story does not go on.
 struct SealScene {
   struct CellCopy open;
   struct CellCopy pulseA;
@@ -88,12 +91,12 @@ struct SealScene {
   struct CellCopy opened;
   s32 flag;
   s32 facing;
-  s32 destX;
-  s32 destZ;
+  s32 destX; ///< pixels
+  s32 destZ; ///< pixels
   struct CellCopy stairs[3];
   s32 actor;
-  s32 actorX;
-  s32 actorZ;
+  s32 actorX; ///< pixels
+  s32 actorZ; ///< pixels
   s32 unkc4[3];
 };
 

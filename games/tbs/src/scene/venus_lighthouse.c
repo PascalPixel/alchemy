@@ -115,6 +115,7 @@ enum {
   ACTOR_SWITCH_BLOCK = 13
 };
 
+/// The way a drifting floor carries the party: -1, 0 or 1 on x and on z.
 struct DirXZ {
   s32 x;
   s32 unused;
@@ -128,6 +129,7 @@ struct Vec {
   s32 z;
 };
 
+/// A field position, read as halfwords for its whole-pixel parts.
 union VecView {
   struct FieldPosition v;
   s16 h[6];
@@ -3203,10 +3205,13 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   Engine_EventRequestExit(21);
 }
 
+/// An animation the support's sprite holds, seen for its id.
 struct TrackAnimation {
   s16 id;
 };
 
+/// The animation object of the block a pushed block rests on, seen for its
+/// shape and animations.
 struct TrackSprite {
   u8 unk00[0x24];
   u8 shape;

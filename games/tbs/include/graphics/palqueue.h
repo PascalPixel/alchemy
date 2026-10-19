@@ -8,15 +8,19 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// A palette cycle: a run of up to 16 background palette colours, saved and
+/// rotated by one colour every delay + 1 frames.
 struct PaletteSnapshot {
   u16 *source;
   u16 position;
-  u16 timer;
-  s16 delay;
+  u16 timer; ///< frames
+  s16 delay; ///< frames
   u16 count;
   u16 colors[16];
 };
 
+/// The palette cycling queue (heap slot 28): four cycles and how many are in
+/// use.
 struct PaletteSnapshotWork {
   struct PaletteSnapshot entries[4];
   u16 count;

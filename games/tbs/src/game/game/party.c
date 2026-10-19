@@ -197,6 +197,8 @@ s32 Party_AdjustCoins(s32 amount) {
   return value;
 }
 
+/// The party's Djinn recovery table as the summon list reads it: a mask of
+/// summons, bit n for summon n.
 struct TradeFlags {
   u32 flags;
 };

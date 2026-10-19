@@ -150,25 +150,32 @@ static __inline__ void Map_CopyMetatileToScreen(u32 *cell, u8 *screenMap,
   *(u32 *)(screenTile + 64) = *metatileRows;
 }
 
+/// A row of gMap_LayeredScenes: a layered map's resources, counted from
+/// ResourceId_Map001: its header, palette, three tile sheets and layer data.
 struct LayeredSceneEntry {
   u16 resources[6];
 };
 
 extern struct LayeredSceneEntry gMap_LayeredScenes[];
 
+/// One background layer's setup in a layered map's header: its origin, its
+/// parallax and drift, and where it wraps.
 struct LayeredSceneLayer {
-  u8 x;
-  u8 y;
-  s8 scrollX;
-  s8 scrollY;
-  s8 speedX;
-  s8 speedY;
-  u8 periodX;
-  u8 periodY;
+  u8 x;       ///< 8-pixel tiles
+  u8 y;       ///< 8-pixel tiles
+  s8 scrollX; ///< sixteenths of the view's motion
+  s8 scrollY; ///< sixteenths of the view's motion
+  s8 speedX;  ///< 1/16 pixels per frame
+  s8 speedY;  ///< 1/16 pixels per frame
+  u8 periodX; ///< 8-pixel tiles
+  u8 periodY; ///< 8-pixel tiles
 };
 
+/// A layered map's header: the camera's bounds, the layers' priorities, tile
+/// bases and setup, and the offsets of its packed tiles, collision, tilemap,
+/// tile animation, blend script and event script.
 struct LayeredSceneHeader {
-  u8 origin[4];
+  u8 origin[4]; ///< 8-pixel tiles
   u8 priority[3];
   u8 charBase[3];
   u16 unk0a;
@@ -650,6 +657,8 @@ void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
   }
 }
 
+/// One step of a map edit sequence: the rectangle of cells to copy from and the
+/// wait after it.
 struct MapCopyCommand {
   u16 source;
   s16 y, width, height, delay;

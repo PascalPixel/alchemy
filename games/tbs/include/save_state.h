@@ -13,6 +13,8 @@
 #include "fixed_math.h"
 #include "flash.h"
 
+/// The header of a save sector in flash: its signature, the record it holds,
+/// its checksum and its sequence number.
 struct SaveSlotHeader {
   u8 signature[7];
   u8 recordId;
@@ -21,13 +23,15 @@ struct SaveSlotHeader {
   u8 reserved[4];
 };
 
+/// A save file's summary for the file screen: the leader's name, level and
+/// class, the area, play time, coins, Djinn and party.
 struct SaveSummary {
   u8 slotHeader[16];
   u8 name[12];
   u8 level;
   u8 classId;
   u16 area;
-  u32 playTime;
+  u32 playTime; ///< frames
   u32 coins;
   u8 djinn[4];
   s8 party[5];
@@ -41,6 +45,9 @@ struct SaveSummary {
   u32 checksum;
 };
 
+/// The save work: which of the 16 flash sectors hold a record, their record
+/// ids and sequence numbers, one sector's buffer and the three files'
+/// summaries.
 struct SaveWorkspace {
   u8 occupied[16];
   u8 recordId[16];

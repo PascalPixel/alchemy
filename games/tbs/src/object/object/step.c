@@ -6,6 +6,7 @@
 
 // The fields of struct BattleUnit that Field_ProcessStep reads (see its tag).
 #ifndef UBFIX
+/// A party member's battle unit, seen as the HP and poison a step reads.
 struct StepOwner {
   u8 unitFieldsBeforeHp[0x38];
   s16 hp;

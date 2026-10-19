@@ -9,6 +9,7 @@
 #include "window.h"
 #include "affine.h"
 
+/// A selection screen sprite: a list link and its OAM attributes.
 struct SelectionSprite {
   struct SelectionSprite *next;
   u8 y;
@@ -25,6 +26,8 @@ struct SelectionSprite {
   u16 palette : 4;
 };
 
+/// An icon of the selection screen: its list links, the entry it shows, its
+/// place and its slide toward a target, its zoom and its sprite.
 struct SelectionNode {
   struct SelectionNode *prev;
   struct SelectionNode *next;
@@ -32,21 +35,23 @@ struct SelectionNode {
   u16 kind;
   u16 slot;
   u16 tile;
-  s16 x;
-  s16 y;
-  s16 dx;
-  s16 dy;
-  s16 targetX;
-  s16 targetY;
+  s16 x;       ///< screen pixels
+  s16 y;       ///< screen pixels
+  s16 dx;      ///< pixels a frame
+  s16 dy;      ///< pixels a frame
+  s16 targetX; ///< screen pixels
+  s16 targetY; ///< screen pixels
   s16 homeX;
   s16 homeY;
   u16 message;
-  s16 scale;
-  s16 scaleStep;
-  s16 scaleEnd;
+  s16 scale;     ///< 8.8 fixed point, 0x100 full size
+  s16 scaleStep; ///< 8.8 fixed point a frame
+  s16 scaleEnd;  ///< 8.8 fixed point, 0x100 full size
   struct SelectionSprite sprite;
 };
 
+/// The selection screen (heap block 18): the row of icons the player picks
+/// from, with arrows at each end and a pointing hand over the chosen target.
 struct SelectionScreen {
   struct SelectionNode records[16];
   struct AffineTransform transform;
@@ -56,8 +61,8 @@ struct SelectionScreen {
   u16 kinds[16];
   u16 bases[16];
   u16 count;
-  u16 baseX;
-  u16 baseY;
+  u16 baseX; ///< screen pixels
+  u16 baseY; ///< screen pixels
   u16 unk39a;
   u16 top;
   u16 cursorIndex;

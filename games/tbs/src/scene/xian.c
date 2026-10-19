@@ -37,6 +37,7 @@
 #include "flags.h"
 #include "songs.h"
 
+/// The effect options for the particles thrown up beside the training student.
 struct PeriodicEffectConfig {
   s32 kind;
   s32 variant;
@@ -84,6 +85,7 @@ enum { ANIM_PUDDLE_FROZEN = 5 };
 /// for two seconds.
 enum { XIAN_TRIGGER_CARRIER_BLOCKED = 200, XIAN_CARRIER_BLOCKED_FRAMES = 120 };
 
+/// The effect options for the impact where the student strikes the tree.
 struct SpawnParams {
   s32 count;
   u8 unk04[20];

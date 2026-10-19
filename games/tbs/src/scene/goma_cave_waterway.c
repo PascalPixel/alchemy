@@ -118,6 +118,7 @@ static void GomaCaveWaterway_SpinStump(RotatingEffectWork *work) {
 // Shared source is included here in ROM order.
 #include "common/object_waitdown.h"
 
+/// The leaping stump's field object, as its fields or as its 112 bytes.
 union SceneActor {
   struct {
     u32 unk00[2];
@@ -140,6 +141,7 @@ union SceneActor {
   } fields;
   u8 bytes[112];
 };
+/// The direction one dust puff of the stump's landing ring is thrown.
 struct Vector {
   s32 x, y, z;
 };

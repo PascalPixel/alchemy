@@ -22,6 +22,8 @@ STATIC_ASSERT(sizeof(struct RenderInput) == 0x10);
 STATIC_ASSERT(offsetof(struct RenderInput, width) == 8);
 STATIC_ASSERT(offsetof(struct RenderInput, x) == 12);
 
+/// A sprite's OAM attribute 2 (tile index, priority and palette) and the
+/// halfword after it, as one word or as fields.
 union RenderTableValue {
   u32 value;
   struct {
@@ -53,12 +55,14 @@ struct RenderOam {
   u16 high;
 };
 
+/// A render output: a sprite in a window's output list (a character, an icon
+/// or a portrait), with its VRAM cache slot and OAM attributes.
 struct RenderOutput {
   struct RenderOutput *next;
   s8 kind;
   s8 active;
-  u16 x;
-  u16 y;
+  u16 x; ///< screen pixels
+  u16 y; ///< screen pixels
   u16 unk0a;
   u16 animStep;
   s8 index;
@@ -67,6 +71,7 @@ struct RenderOutput {
   struct RenderOam oam;
 };
 
+/// A list of render outputs: its first output and the link to append after.
 struct RenderOutputList {
   struct RenderOutput *head;
   struct RenderOutput **tailLink;

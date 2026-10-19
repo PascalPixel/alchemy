@@ -12,9 +12,11 @@
 #define TARGET_MYSTERY_NAME_CAPACITY 14
 #endif
 
+/// A target marker's track: where it is, its state flags and the target it
+/// follows.
 struct CursorSlot {
-  u8 x;
-  u8 y;
+  u8 x; ///< screen pixels
+  u8 y; ///< screen pixels
   u8 flags;
   s8 index;
 };

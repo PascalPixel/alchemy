@@ -8,6 +8,7 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// How many OAM entries are in use, and the most that may be.
 struct OamUsage {
   u16 used;
   u16 limit;

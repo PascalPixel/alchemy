@@ -7,6 +7,8 @@
 #include "unit/menu/menu.h"
 #include "types.h"
 
+/// A paged list for one party member: their unit, the list's length and pages,
+/// and the page and row of the entry chosen last.
 struct MenuResult {
   s32 ownerState;
   s32 unused04;

@@ -624,6 +624,8 @@ void FacingObject_TurnPairToFaceEachOther(struct FacingObject *firstObject,
 }
 
 #ifndef UBFIX
+/// The event work seen as its actor slots, which the actor commands index by
+/// actor number.
 struct ObjectSlotTable {
   u8 unk00[0x14];
   struct ObjectRuntime *slots[0];

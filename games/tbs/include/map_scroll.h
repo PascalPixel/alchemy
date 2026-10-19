@@ -9,16 +9,21 @@
 #include "static_assert.h"
 #include "map.h"
 
+/// One background layer of the field map: its scroll position, origin,
+/// parallax against the view, drift and wrap, and its first map cell.
 struct MapLayerScroll {
-  s32 x, y;
-  s32 offsetX, offsetY;
-  s32 scaleX, scaleY;
-  s32 speedX, speedY;
-  s32 phaseX, phaseY;
+  s32 x, y;             ///< 16.16 fixed-point pixels
+  s32 offsetX, offsetY; ///< 16.16 fixed-point pixels
+  s32 scaleX, scaleY;   ///< 16.16 fixed point, 0x10000 moves with the view
+  s32 speedX, speedY;   ///< 16.16 fixed-point pixels per frame
+  s32 phaseX, phaseY;   ///< 16.16 fixed-point pixels
   u16 maskX, maskY;
   struct MapCell *cells;
 };
 
+/// The field map's work: the followed position, screen shake, tile
+/// animations, blend script, view and its bounds, and three scrolling layers.
+/// Heap slot 8.
 struct MapScrollWork {
   s32 *origin;
   s32 shakeX, shakeY, shakeDecay;
@@ -28,8 +33,8 @@ struct MapScrollWork {
   u8 footprints;
   struct MapAnimation anim[16];
   struct BlendScriptState blend;
-  s32 viewX, viewY;
-  s32 minX, minY, maxX, maxY;
+  s32 viewX, viewY;           ///< 16.16 fixed-point pixels
+  s32 minX, minY, maxX, maxY; ///< 16.16 fixed-point pixels
   s8 animationActive;
   u8 unk0fd[3];
   u8 enabled[3];
@@ -48,8 +53,9 @@ STATIC_ASSERT(offsetof(struct MapScrollWork, viewX) == 0xe4);
 STATIC_ASSERT(offsetof(struct MapScrollWork, animationActive) == 0xfc);
 STATIC_ASSERT(offsetof(struct MapScrollWork, layers) == 0x104);
 
+/// A background's hardware scroll offsets.
 struct BgScroll {
-  u16 x, y;
+  u16 x, y; ///< pixels
 };
 
 extern struct BgScroll gBgScroll[];

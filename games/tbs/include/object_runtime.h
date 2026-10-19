@@ -9,26 +9,28 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// One of the 64 field objects in the object pool (heap slot 5): its script,
+/// position, motion toward a target, animation and update callback.
 struct ObjectRuntime {
   s32 *script;
   s16 step;
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 terrainHeight;
+  u16 angle;         ///< 1/65536 turns
+  s32 x;             ///< 16.16 fixed-point pixels
+  s32 y;             ///< 16.16 fixed-point pixels
+  s32 z;             ///< 16.16 fixed-point pixels
+  s32 terrainHeight; ///< 16.16 fixed-point pixels
   u8 unk18[0x08];
-  u16 radius;
+  u16 radius; ///< pixels
   u8 terrainId;
   u8 unk23;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 speedLimit;
+  s32 velocityX;  ///< 16.16 fixed-point pixels per frame
+  s32 velocityY;  ///< 16.16 fixed-point pixels per frame
+  s32 velocityZ;  ///< 16.16 fixed-point pixels per frame
+  s32 speedLimit; ///< 16.16 fixed-point pixels per frame
   s32 acceleration;
-  s32 targetX;
-  s32 targetY;
-  s32 targetZ;
+  s32 targetX; ///< 16.16 fixed-point pixels
+  s32 targetY; ///< 16.16 fixed-point pixels
+  s32 targetZ; ///< 16.16 fixed-point pixels
   u8 unk44[0x0c];
   void *animation;
   u8 animationKind;

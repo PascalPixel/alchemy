@@ -7,6 +7,8 @@
 #include "map_scroll.h"
 #include "static_assert.h"
 
+/// The wavy background's work: two pages of BG1 to BG3 scroll offsets for each
+/// of the 160 scanlines, and the sine wave that bends them on each axis.
 struct DisplayScrollWork {
   struct BgScroll rows[2][160][3];
   u8 page;
@@ -15,8 +17,8 @@ struct DisplayScrollWork {
   u8 unkf04[4];
   s32 freqX;
   s32 freqY;
-  s32 stepX;
-  s32 stepY;
+  s32 stepX; ///< 16.16 wave table entries a scanline, 256 a cycle
+  s32 stepY; ///< 16.16 wave table entries a scanline, 256 a cycle
   s32 ampX;
   s32 ampY;
 };

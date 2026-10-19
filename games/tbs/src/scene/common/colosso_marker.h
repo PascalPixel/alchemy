@@ -26,6 +26,8 @@
 // how it is crossed, a blinking pointer moves over the screen, and Isaac is
 // put back where he stood.
 
+/// The mode and stage bytes of the menu control work, set while Isaac is shown
+/// on the stage and reset when he is put back.
 struct CompetitorState {
   u8 unk00[6];
   u8 mode;
@@ -151,9 +153,10 @@ static void Colosso_EnsureMarkerSlot(void) {
   }
 }
 
+/// The pointer's glide start on one axis, read signed or unsigned.
 union MarkerCoordinate {
-  s16 signedValue;
-  u16 value;
+  s16 signedValue; ///< screen pixels
+  u16 value;       ///< screen pixels
 };
 
 extern s16 gColosso_MarkerSteps;

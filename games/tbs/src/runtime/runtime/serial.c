@@ -498,6 +498,7 @@ s32 SerialRuntime_GetActiveTransfers(void) {
 /// Clears the block transfer state.
 void BattleLink_ResetTransferState(void) { SerialRuntime_ResetTransferState(); }
 
+/// A record of one halfword.
 struct OneCell {
   u16 v;
 };

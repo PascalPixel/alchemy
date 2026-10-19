@@ -8,24 +8,26 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// A moving point of an effect: its position, its velocity and a value each
+/// effect uses its own way (a size, a timer, -1 for idle).
 struct EffectStep {
 #ifdef UBFIX
   union {
     struct {
-      s32 x;
-      s32 y;
-      s32 z;
+      s32 x; ///< 16.16 fixed-point pixels
+      s32 y; ///< 16.16 fixed-point pixels
+      s32 z; ///< 16.16 fixed-point pixels
     };
     s32 coordinates[3];
   };
 #else
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y; ///< 16.16 fixed-point pixels
+  s32 z; ///< 16.16 fixed-point pixels
 #endif
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
+  s32 velocityX; ///< 16.16 fixed-point pixels per frame
+  s32 velocityY; ///< 16.16 fixed-point pixels per frame
+  s32 velocityZ; ///< 16.16 fixed-point pixels per frame
   s32 variant;
 };
 
@@ -39,20 +41,21 @@ static inline const s32 *EffectStep_Coordinates(const struct EffectStep *step) {
 #endif
 }
 
+/// A point projected onto the screen, with its depth.
 struct EffectPosition {
 #ifdef UBFIX
   /// Projection writes three coordinates; effects read their named components.
   union {
     struct {
-      s32 x;
-      s32 y;
+      s32 x; ///< screen pixels
+      s32 y; ///< screen pixels
       s32 depth;
     };
     s32 coordinates[3];
   };
 #else
-  s32 x;
-  s32 y;
+  s32 x; ///< screen pixels
+  s32 y; ///< screen pixels
   s32 depth;
 #endif
 };

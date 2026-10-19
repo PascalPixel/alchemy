@@ -56,11 +56,15 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
   return levelTotal / enemyCount;
 }
 
+/// A formation that may be chosen for the party's level: its record and its
+/// enemies' average level.
 struct FormationCandidate {
   s16 recordId;
   s16 score;
 };
 
+/// A copy of a unit's base stats, from baseHp to its element stats, kept
+/// while its level is adjusted.
 struct BattleBaseStats {
   s16 baseHp;
   s16 basePp;

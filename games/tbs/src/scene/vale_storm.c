@@ -2154,6 +2154,8 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   FieldFx_ResumeLightning();
 }
 
+/// The effect work in slot 56, seen for the VRAM block the paired effects
+/// share.
 struct PairWork {
   u8 unk00[70];
   u16 vramBlock;

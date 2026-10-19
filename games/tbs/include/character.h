@@ -12,6 +12,8 @@
 
 struct BattleUnit;
 
+/// A character's definition: the growth curves of its stats, its element
+/// bonus, starting level and starting equipment.
 struct CharacterDefinition {
   u8 unk00[0x50];
   s16 hp[6];
@@ -27,26 +29,30 @@ struct CharacterDefinition {
   u8 unk0b2[2];
 };
 
+/// An ability a class teaches, and the level it is learned at.
 struct ClassAbility {
   u8 ability;
   u8 level;
   u8 unk02[2];
 };
 
+/// A class: its series, the element levels it needs, its stat multipliers and
+/// the abilities it teaches.
 struct ClassDefinition {
   long series;
   u8 required[4];
-  u8 hp;
-  u8 pp;
-  u8 atk;
-  u8 def;
-  u8 agi;
-  u8 luck;
+  u8 hp;   ///< tenths of the base stat
+  u8 pp;   ///< tenths of the base stat
+  u8 atk;  ///< tenths of the base stat
+  u8 def;  ///< tenths of the base stat
+  u8 agi;  ///< tenths of the base stat
+  u8 luck; ///< tenths of the base stat
   u8 unk0e[2];
   struct ClassAbility abilities[16];
   u8 unk50[4];
 };
 
+/// A Djinni: its ability and the stat bonuses it gives while set.
 struct DjinnDefinition {
   u16 abilityId;
   u8 unk02[2];
@@ -59,6 +65,8 @@ struct DjinnDefinition {
   u8 unk0a[2];
 };
 
+/// An enemy's definition: its level and stats, items, element preset, the
+/// actions it chooses from and its rewards.
 struct EnemyDefinition {
   u8 unk00[15];
   u8 level;
@@ -88,6 +96,8 @@ struct EnemyDefinition {
   u16 experience;
 };
 
+/// A level up's result: the level reached, an ability learned and the gain in
+/// each stat.
 struct LevelUpResult {
   s16 level;
   u16 ability;

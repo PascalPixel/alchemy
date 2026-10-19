@@ -2,6 +2,7 @@
 #include "field_obj.h"
 #include "field_scene.h"
 
+/// An actor's animation object, seen for the sprite number it is drawn with.
 struct SpriteNumber {
   u8 unk00[0x28];
   const s16 *number;

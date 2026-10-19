@@ -806,6 +806,7 @@ static void AltinPeak_ForceRockOver(void) {
   Event_End();
 }
 
+/// An actor read either as a field actor or as the water beast's hop motion.
 union AltinPeakHoppingActor {
   struct FieldActor actor;
   struct AltinPeakHopMotion motion;

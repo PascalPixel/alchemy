@@ -15,6 +15,8 @@ struct AnimationObject;
 
 struct BattleUnit;
 
+/// The Psynergy menu: its windows, icons and cursors, the party members' tabs
+/// and the Psynergy listed for the chosen member.
 struct PsynergyMenuState {
   u8 unk000[8];
   s32 selectedOwner;
@@ -39,9 +41,9 @@ struct PsynergyMenuState {
   u8 columnCount;
   u8 rowCount;
   struct AnimationObject *tabObjects[8];
-  s16 tabX[8];
-  s16 rowPositions[8];
-  s32 ownerScale[8];
+  s16 tabX[8];         ///< screen pixels
+  s16 rowPositions[8]; ///< screen pixels
+  s32 ownerScale[8];   ///< 16.16 fixed point, 0x10000 full size
   u16 paneRow[2];
   u16 paneAction[2];
   u8 unk17c[0x4c];

@@ -81,6 +81,8 @@ extern void *gRenderSlotHeads[];
 extern u8 gPartyStatusWork[];
 extern u8 gSelectionWorkspace[];
 extern const struct ArticleTable gUiText_ArticleTable;
+/// One row's masks for a pair of bar-pattern tiles: a word XORed into each
+/// tile's row.
 struct TileMask {
   u32 word0;
   u32 word1;

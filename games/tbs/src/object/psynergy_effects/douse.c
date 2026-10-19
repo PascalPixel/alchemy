@@ -25,8 +25,10 @@ struct Effect05Object {
   void (*callback)(union FieldObject *object); ///< per-frame update
 };
 
+/// Douse's effect work: the orb's destination (or the angle toward it), the
+/// target, and the flags that choose how the light falls.
 struct Effect05State {
-  s32 angle;
+  s32 angle;   ///< 1/65536 turns
   s32 x, y, z; ///< the ground under the orb's destination
   struct Object *target;
   s32 initialized;

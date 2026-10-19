@@ -36,21 +36,24 @@ struct SolSanctumRingObject {
   u8 state;
 };
 
+/// One floating light: its actor, its drift and its pulsing scale, and where it
+/// is while hidden.
 struct SolSanctumRingEntry {
   struct FieldActor *obj;
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y; ///< 16.16 fixed-point pixels
+  s32 z; ///< 16.16 fixed-point pixels
   s32 speedX;
   s32 speedY;
   s32 speedZ;
-  s32 scale;
-  s32 scaleStep;
+  s32 scale;     ///< 16.16 fixed point, where 0x10000 is full size
+  s32 scaleStep; ///< 16.16 fixed point
   u8 timer;
   u8 hold;
   u8 pad26[2];
 };
 
+/// The floating lights' work in work slot 33, one entry per light.
 struct SolSanctumRingList {
   struct SolSanctumRingEntry entries[SOL_SANCTUM_RING_MAX];
   u16 count;

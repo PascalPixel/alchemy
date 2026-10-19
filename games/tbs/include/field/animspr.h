@@ -32,6 +32,8 @@ enum SpriteColorMode {
   SPRITE_COLOR_HIDDEN = 15      ///< solid colour 0, transparent
 };
 
+/// One animation layer of a sprite: its animation id, frames, running script
+/// and timer.
 struct AnimationEntry {
   s16 animId;
   u16 timer;
@@ -48,11 +50,15 @@ struct AnimationEntry {
   u8 frameBase;
 };
 
+/// A resource slot: the tag of the animation loaded into it (slot number and
+/// animation id) and the buffer holding its frames.
 struct ResourceSlot {
   s32 tag;
   void *buffer;
 };
 
+/// The object system's work: the flag that suspends sprite projection, the
+/// outline's edge and fill colours, and the resource slots. Heap slot 6.
 struct ObjectSystemWork {
   u16 used;
   u8 unk02[2];
@@ -69,15 +75,17 @@ STATIC_ASSERT(offsetof(struct ObjectSystemWork, count) == 0x18);
 STATIC_ASSERT(offsetof(struct ObjectSystemWork, slots) == 0x1c);
 STATIC_ASSERT(sizeof(struct ObjectSystemWork) == 0x5c);
 
+/// The hardware sprite attributes one part of an animated sprite (its image or
+/// its shadow) is drawn with.
 struct AnimationSpritePart {
   u8 unk00[4];
-  u16 y : 8;
+  u16 y : 8; ///< screen pixels
   u16 affine : 2;
   u16 objectMode : 2;
   u16 mosaic : 1;
   u16 fullColor : 1;
   u16 shape : 2;
-  u16 x : 9;
+  u16 x : 9; ///< screen pixels
   u16 affineIndex : 5;
   u16 size : 2;
   u16 tile : 10;
@@ -86,19 +94,21 @@ struct AnimationSpritePart {
   u8 unk0a[2];
 };
 
+/// An animated sprite: its image and shadow, scale, rotation, size and up to
+/// four animation layers.
 struct AnimationObject {
   struct AnimationSpritePart image;
   struct AnimationSpritePart shadow;
-  s32 scale;
+  s32 scale; ///< 16.16 fixed point, 0x10000 full size
   u8 slot;
   u8 retainCacheEntry : 1;
   u8 useOwnScale : 1;
   u8 unk1d2 : 6;
-  u16 rotation;
-  u8 width;
-  u8 height;
-  s8 offsetX;
-  s8 offsetY;
+  u16 rotation; ///< 1/65536 turns
+  u8 width;     ///< pixels
+  u8 height;    ///< pixels
+  s8 offsetX;   ///< pixels
+  s8 offsetY;   ///< pixels
   u8 lastNo;
   u8 dirty;
   u8 flags;

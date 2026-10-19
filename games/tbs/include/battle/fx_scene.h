@@ -12,9 +12,11 @@
 struct AnimationObject;
 union FieldObject;
 
+/// A field object as Avoid's caster: its facing, its animation records and
+/// the phase and frame count of its per-frame callback.
 struct ArcEffectObject {
   u8 unk00[6];
-  u16 angle;
+  u16 angle; ///< 1/65536 turns
   u8 unk08[0x48];
   struct AnimationObject *records;
   u8 unk54[0x10];
@@ -24,11 +26,13 @@ struct ArcEffectObject {
   void (*callback)(union FieldObject *object);
 };
 
+/// The work of a Psynergy effect scene: its caster and target, where it takes
+/// place, the map state it restores and its 24 effect slots.
 struct BattleFxScene {
-  s32 angle;
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 angle; ///< 1/65536 turns
+  s32 x;     ///< 16.16 fixed-point pixels
+  s32 y;     ///< 16.16 fixed-point pixels
+  s32 z;     ///< 16.16 fixed-point pixels
   void *mainObject;
   void *child;
   s16 firstObjectId;

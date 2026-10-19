@@ -345,11 +345,14 @@ static s32 Clear_GetSaveRecoveryBlockMask(void) {
   return -((u32)(-sceneDifference | sceneDifference) >> 31);
 }
 
+/// A view of the scene state that names its copy of the play time, checked
+/// against the loaded game's.
 struct SaveMenuSceneState {
   u8 unk000[0x100];
-  s32 word100;
+  s32 word100; ///< frames
 };
 
+/// A linked console's signature: four letters naming its language and game.
 struct SaveLinkGreeting {
   u16 code[4];
   u8 reserved[16];
@@ -912,6 +915,7 @@ UNUSED static void SaveMenu_FillTileBlock(const struct UiWindow *window) {
   Runtime_BumpFree(buffer);
 }
 
+/// A party member's base stats, which the password clamps and packs.
 struct PasswordStats {
   s16 baseHp;
   s16 basePp;
@@ -922,6 +926,8 @@ struct PasswordStats {
   u8 baseLuck;
 };
 
+/// A party member as the password reads them: their level, base stats,
+/// inventory and Djinn.
 struct PasswordOwner {
   u8 unk00[0x0f];
   u8 level;

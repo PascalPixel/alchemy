@@ -48,6 +48,8 @@ static void SolSanctumLunaSolRooms_ShowFloatingEye(void);
 
 void InitializeSceneRecordBuffer(void);
 
+/// The work slot pointers from the event work onward, reaching the palette
+/// buffer work in slot 32.
 struct EventGlobals {
   struct EventWork *event;
   u8 unk04[0x10];

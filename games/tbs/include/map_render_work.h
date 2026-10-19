@@ -8,6 +8,8 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// The world map's perspective work (struct PerspectiveWork) as the world
+/// map scene sees it, for the map's rotation.
 struct MapRenderWork {
   u8 unk000[0xfc];
   s8 active;
@@ -15,7 +17,7 @@ struct MapRenderWork {
   s16 first;
   s16 second;
   u8 unk104[0x16];
-  u16 rotation;
+  u16 rotation; ///< 1/65536 turns
 };
 
 STATIC_ASSERT(offsetof(struct MapRenderWork, active) == 0xfc);

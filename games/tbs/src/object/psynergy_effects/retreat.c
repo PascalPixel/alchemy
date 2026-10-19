@@ -218,6 +218,8 @@ void BattleFx_UpdateDescendingParticleNegativeArc(
   particle->z.fixed = source->z.fixed - ((0x10000 - scale) * 5) + 0x100000;
 }
 
+/// A falling arc's sprite, seen as the attribute bits, resource slot and
+/// animation that Retreat sets on it.
 struct DescendingArcSprite {
   u8 padding00[5];
   u8 flags05_0 : 5;

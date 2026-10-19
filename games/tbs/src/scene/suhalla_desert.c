@@ -84,16 +84,19 @@ enum { WORLD_MAP_STORM_DROP = 27, WORLD_MAP_STORM_DROP_FOURTH = 77 };
 static void SuhallaDesert_SetUpFirstSceneStorms(void);
 static void SuhallaDesert_SetUpSecondSceneStorms(void);
 
+/// The game state, seen for the selected actor's id.
 struct SelectedActorId {
   u8 reserved000[500];
   s32 actorId;
 };
 
+/// A field actor, seen for the facing the storm spins.
 struct SelectedActorFacing {
   u8 reserved00[6];
   u16 presentation;
 };
 
+/// The event work, seen for the event the capture raises when it ends.
 struct StateMarkerWork {
   u8 reserved000[386];
   u16 stateOneMarker;
@@ -107,6 +110,7 @@ static u16 sSuhallaDesertSavedColor;
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
+/// The work slot pointers from the map work onward, reaching the event work.
 struct FieldGlobals {
   u8 *map;
   u8 unk04[0x48];

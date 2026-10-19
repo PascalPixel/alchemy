@@ -13,6 +13,8 @@
 #include "animspr.h"
 #include "cursor.h"
 
+/// A shop's work: its windows, the party members' icons, the stock, the cursor
+/// and its icons, and the particle effects.
 struct ShopRuntime {
   u8 unk000[0x0c];
   struct UiWindow *moneyWindow;
@@ -20,9 +22,9 @@ struct ShopRuntime {
   struct UiWindow *itemWindow;
   u8 unk024[0xf0];
   struct AnimationObject *partyMemberIcons[8];
-  s16 partyMemberX[8];
-  s16 partyMemberY[8];
-  s32 partyMemberScale[8];
+  s16 partyMemberX[8];     ///< pixels
+  s16 partyMemberY[8];     ///< pixels
+  s32 partyMemberScale[8]; ///< 16.16 fixed point, 0x10000 full size
   u8 unk174[0xf8];
   s16 stockItemIds[129];
   s16 partyMemberIds[9];

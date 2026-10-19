@@ -29,15 +29,20 @@ void BattleFx_StartWindowHBlankDma(void) {
           (volatile u32 *)dma0);
 }
 
+/// A run of screen lines in a transition shape: one window edge pair for every
+/// line, or, when that is 0, edges moving from left x0 and right y0 to left
+/// x1 and right y1 down the run.
 struct TransitionSpan {
-  u16 cnt;
+  u16 cnt; ///< lines
   u16 val;
-  u8 x0;
-  u8 x1;
-  u8 y0;
-  u8 y1;
+  u8 x0; ///< screen pixels
+  u8 x1; ///< screen pixels
+  u8 y0; ///< screen pixels
+  u8 y1; ///< screen pixels
 };
 
+/// One step of the shape window transition: the WININ and WINOUT values,
+/// swapped as the transition opens or closes, and three runs of lines.
 struct TransitionShape {
   u16 first;
   u16 second;

@@ -10,6 +10,8 @@
 #include "render_input.h"
 #include "cursor.h"
 
+/// The option screen's work (heap block 20): the settings being edited and
+/// how many values each takes, the page, and the cursor, markers and icons.
 struct WorkspaceWork {
   u8 unk000[0x574];
   u16 page;

@@ -201,6 +201,7 @@ struct CaptureObject {
 /// the Psynergy effect's work (gWorkSlot[56], gEffectWork)
 #define HEAP_SLOT_FX 56
 
+/// A particle's sprite, seen as the two fields Douse and Mind Read set on it.
 struct WaveFxSprite {
   u32 unk00[2];
   u8 unk08;

@@ -16,6 +16,8 @@ struct AnimationObject;
 
 struct UiWindow;
 
+/// The item menu's work, in the HEAP_SLOT_MENU work slot: its windows, the
+/// party figures, the items listed and the two choices a command makes.
 struct InventoryMenuState {
   u8 unk000[8];
   s32 selectedOwner;
@@ -43,9 +45,9 @@ struct InventoryMenuState {
   u8 columnCount;
   u8 rowCount;
   struct AnimationObject *ownerObjects[8];
-  s16 ownerX[8];
-  s16 ownerY[8];
-  s32 ownerScale[8];
+  s16 ownerX[8];     ///< screen pixels
+  s16 ownerY[8];     ///< screen pixels
+  s32 ownerScale[8]; ///< 16.16 fixed point, 0x10000 full size
   u16 selectedSlots[2];
   u16 selectedItems[2];
   struct RenderOutput *cursor;

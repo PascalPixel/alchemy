@@ -9,6 +9,7 @@
 #define GROWTH_FALL_OBJECT 217     ///< falling object
 #define GROWTH_FALL_LAST 4         ///< five falling objects, 0 to 4
 
+/// A point Growth works out round the effect's position.
 struct BurstParticleVector {
   s32 values[3]; ///< x, y, z
 };
@@ -35,6 +36,8 @@ struct BurstParticleVisual {
   } attributes;
 };
 
+/// A particle's sprite, seen as its two parts' attributes, which Growth copies
+/// from the first to the second.
 struct BurstParticleVisualGroup {
   struct BurstParticleVisual primary;
   struct BurstParticleVisual child;

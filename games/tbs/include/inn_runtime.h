@@ -8,6 +8,8 @@
 #include "static_assert.h"
 #include "types.h"
 
+/// An inn's work, in the menu work: the coins window and the innkeeper's
+/// portrait.
 struct InnRuntimeState {
   u8 padding000[0x0c];
   struct UiWindow *window;

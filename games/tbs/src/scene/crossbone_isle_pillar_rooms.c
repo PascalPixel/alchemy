@@ -62,6 +62,7 @@
 #define LEADER_ON_THIRD_POOL_FLAG FLAG_SCENE_TEMP_03
 #define PILLAR_SUNK_FLAG FLAG_SCENE_TEMP_04
 
+/// One map cell: its tile, layer, kind, height and event.
 struct MapCellFields {
   u32 tile : 12;
   u32 layer : 2;
@@ -586,17 +587,21 @@ static void Event_PushPillar(void) {
   EV_END();
 }
 
+/// A pillar slot's place and ground cell, without its flag; it holds one slot
+/// while two are swapped.
 struct PillarPlacement {
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16-pixel map cells
+  s32 y; ///< 16-pixel map cells
+  s32 z; ///< 16-pixel map cells
   struct MapCellFields cell;
 };
 
+/// Where one of room 4's pillars stands, the ground cell saved under it and its
+/// footprint flag.
 struct PillarSlot {
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16-pixel map cells
+  s32 y; ///< 16-pixel map cells
+  s32 z; ///< 16-pixel map cells
   struct MapCellFields cell;
   s32 flag;
 };
@@ -911,11 +916,12 @@ static void CrossboneIslePillarRooms_SortPillarActors(void) {
   }
 }
 
+/// One of room 4's pillars, seen as a field actor while it moves and settles.
 struct PillarActor {
   u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y; ///< 16.16 fixed-point pixels
+  s32 z; ///< 16.16 fixed-point pixels
   u8 unk14[14];
   u8 terrainId;
   u8 priorityFlags;

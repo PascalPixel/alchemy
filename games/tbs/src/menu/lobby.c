@@ -100,6 +100,8 @@ const s32 gLinkLobby_SlotValues[] = {
 
 #undef PEER_TAG
 
+/// The partner console's signature as the lobby reads it: a word for each
+/// slot column.
 struct LinkPeer {
   s32 values[6];
 };

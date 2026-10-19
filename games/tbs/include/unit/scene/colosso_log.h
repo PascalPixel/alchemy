@@ -4,41 +4,46 @@
 #include "types.h"
 #include "field_scene.h"
 
+/// A field object seen as one of the reunion particles after the battle: its
+/// position, scale and drifting velocity.
 typedef struct SceneParticle {
   u8 filler00[8];
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y; ///< 16.16 fixed-point pixels
+  s32 z; ///< 16.16 fixed-point pixels
   u8 filler14[4];
-  s32 scaleX;
-  s32 scaleY;
+  s32 scaleX; ///< 16.16 fixed point, where Q16_ONE is full size
+  s32 scaleY; ///< 16.16 fixed point, where Q16_ONE is full size
   u8 filler20[0x1c];
-  s32 anchorY;
+  s32 anchorY; ///< 16.16 fixed-point pixels
   u8 filler40[0x15];
   u8 state;
   u8 filler56[0xe];
-  s16 velocityX;
-  s16 velocityY;
+  s16 velocityX; ///< 1/256 pixels per step
+  s16 velocityY; ///< 1/256 pixels per step
 } SceneParticle;
 
+/// A field object seen as the moving source that scatters random effects
+/// around itself.
 typedef struct StageEffect {
   s32 reserved00;
   s32 reserved04;
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y; ///< 16.16 fixed-point pixels
+  s32 z; ///< 16.16 fixed-point pixels
   u8 reserved14[20];
   s32 verticalMotion;
   u8 reserved2c[41];
   u8 state;
 } StageEffect;
 
+/// A field object linked to the item actor it raises, by that actor's slot.
 typedef struct LinkedStageEffect {
   s32 reserved00;
   s32 reserved04;
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y; ///< 16.16 fixed-point pixels
+  s32 z; ///< 16.16 fixed-point pixels
   u8 reserved14[65];
   u8 state;
   u8 reserved56[14];

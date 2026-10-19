@@ -233,6 +233,7 @@ s32 DisplayScroll_RunSlideshow(void) {
   return 0;
 }
 
+/// An OAM entry of the credits: attributes 0 and 1, then attribute 2.
 struct DisplayScrollObject {
   u32 attr01;
   u32 attr2;

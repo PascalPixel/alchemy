@@ -16,6 +16,8 @@
 struct BattleUnit;
 struct OwnerActionSlot;
 
+/// The work of the member chooser and the Status menu, in the HEAP_SLOT_MENU
+/// work slot.
 struct CharacterMenuState {
   u8 unk000[8];
   s32 selectedOwner;
@@ -38,9 +40,9 @@ struct CharacterMenuState {
   u8 columnCount;
   u8 rowCount;
   struct AnimationObject *ownerObjects[8];
-  s16 ownerX[8];
-  s16 ownerY[8];
-  s32 ownerScale[8];
+  s16 ownerX[8];     ///< screen pixels
+  s16 ownerY[8];     ///< screen pixels
+  s32 ownerScale[8]; ///< 16.16 fixed point, 0x10000 full size
   u16 selectedSlots[2];
   u16 selectedActions[2];
   struct RenderOutput *statusCursor;
@@ -54,8 +56,8 @@ struct CharacterMenuState {
   u16 page;
   u8 unk222[2];
   struct AnimationObject *rowObjects[4];
-  s16 rowX[4];
-  s16 rowY[4];
+  s16 rowX[4]; ///< screen pixels
+  s16 rowY[4]; ///< screen pixels
 };
 
 STATIC_ASSERT(offsetof(struct CharacterMenuState, ownerWindow) == 0x10);

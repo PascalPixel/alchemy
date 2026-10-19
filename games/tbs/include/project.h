@@ -7,12 +7,14 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// The 3D projection onto the screen: its focal length, near and far depths,
+/// and the screen point the view centres on.
 struct Projection {
   s32 focal;
   s32 near;
   s32 far;
-  s32 centerX;
-  s32 centerY;
+  s32 centerX; ///< screen pixels
+  s32 centerY; ///< screen pixels
 };
 
 STATIC_ASSERT(sizeof(struct Projection) == 0x14);

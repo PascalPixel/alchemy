@@ -20,11 +20,15 @@
 #define TRANSFER_CABLE_HELP_LAST_Y 28
 #endif
 
+/// One line's horizontal window edges: window 0's and window 1's, each
+/// (left << 8 | right).
 struct WindowLine {
   u16 left;
   u16 span;
 };
 
+/// A page of the display transition's window edges: WININ and WINOUT, then
+/// each of the 160 lines' edges.
 struct WindowBuffer {
   u8 unk000[4];
   struct WindowLine lines[160];

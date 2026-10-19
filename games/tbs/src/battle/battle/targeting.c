@@ -6,6 +6,7 @@
 
 // Native-only view retained for the measured target-picker form below.
 #ifndef UBFIX
+/// BattleWork's unit lists, read as one array of halfwords.
 struct SlotArray {
   s16 items[64];
 };

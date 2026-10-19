@@ -254,6 +254,8 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
 /// Ram_MapCellBuffer.
 enum { FALLING_BOLT_COUNT = 64, FALLING_BOLT_SPARK_COUNT = 512 };
 
+/// Ram_MapCellBuffer as the falling bolts use it: window 0's scanline table,
+/// then the bolts' sparks.
 struct BoltSparkBuffer {
   u16 lines[160];
   struct EffectStep sparks[FALLING_BOLT_SPARK_COUNT];

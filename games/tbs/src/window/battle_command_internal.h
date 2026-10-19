@@ -316,6 +316,8 @@ struct SelectionEntry {
   s32 kind;
 };
 
+/// The command icon row's work block: the icons' shared palette, up to six
+/// icons, the label window, the pulsing icon's transform and the selection.
 struct SelectionWork {
   struct GlyphPalette palette;
   struct SelectionEntry entries[6];

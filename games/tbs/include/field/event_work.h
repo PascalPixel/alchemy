@@ -13,6 +13,9 @@ struct SceneEvent;
 struct FieldActor;
 struct ObjectRuntime;
 
+/// The running scene's event work: its placement and event tables, its
+/// actors, the triggers and exit it has hit, encounters, transitions and the
+/// message on show.
 struct EventWork {
   struct ScenePlacement *tables[4];
   struct SceneEvent *events;

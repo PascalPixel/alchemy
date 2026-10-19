@@ -9,6 +9,8 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// The object context a battle routine reads; most of its fields are still
+/// unnamed.
 struct B5Context {
   void *object;
   u8 padding04[8];

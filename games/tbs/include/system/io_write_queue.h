@@ -8,6 +8,8 @@
 #include "irqlock.h"
 #include "types.h"
 
+/// The I/O writes VBlank carries out: up to 32 entries, each a value, an
+/// address and a control word (delay frames << 16, or a DMA control word).
 struct IoWriteQueue {
   u16 count;
   u16 pad;

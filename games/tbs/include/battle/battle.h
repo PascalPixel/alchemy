@@ -64,26 +64,30 @@ struct SparkObject;
 struct TransitionActorList;
 struct WaveFxWork;
 
+/// The battle camera (struct BattleCamera) as the effects that swing it see it.
 struct CameraWork {
   u8 unk00[0x36];
-  u16 scroll;
+  u16 scroll; ///< the camera's yaw, in 1/65536 turns
 };
+/// A world position, as Camera_WorldToScreen converts it to the screen.
 struct EffectVector {
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y; ///< 16.16 fixed-point pixels
+  s32 z; ///< 16.16 fixed-point pixels
 };
+/// One of the star field's three rings, moving outward on the effect canvas.
 struct Ring {
-  s32 x;
-  s32 y;
-  s32 velX;
-  s32 velY;
-  s32 age;
+  s32 x;    ///< 1/1024 canvas pixels
+  s32 y;    ///< 1/1024 canvas pixels
+  s32 velX; ///< 1/1024 canvas pixels per frame
+  s32 velY; ///< 1/1024 canvas pixels per frame
+  s32 age;  ///< frames
 };
+/// The position an item-break effect spawns its objects and shards from.
 struct ScatterPosition {
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y; ///< 16.16 fixed-point pixels
+  s32 z; ///< 16.16 fixed-point pixels
 };
 extern u8 gAnimation_ChildPaletteCycle[];
 extern u8 gBattleCommand_SelectionWeights[3][8];

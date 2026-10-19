@@ -7,12 +7,16 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// One sprite of the race gauge's list: a link word, its position and shape
+/// attributes, and its tile.
 struct ColossoGaugeSprite {
   s32 link;
   s32 attr;
   s32 tile;
 };
 
+/// The Colosso race gauge's work at the start of work slot 59: its sprites,
+/// how far it has slid down, the racers and the finish.
 struct ColossoGaugeWork {
   struct ColossoGaugeSprite sprites[18];
   s16 vramBlock;
@@ -23,8 +27,8 @@ struct ColossoGaugeWork {
   u16 finishItemActorA;
   u16 finishItemActorB;
   s16 segments;
-  s32 finishX;
-  s32 finishZ;
+  s32 finishX; ///< 16.16 fixed-point pixels
+  s32 finishZ; ///< 16.16 fixed-point pixels
 };
 
 STATIC_ASSERT(sizeof(struct ColossoGaugeSprite) == 12);

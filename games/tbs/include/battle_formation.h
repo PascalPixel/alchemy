@@ -6,6 +6,8 @@
 
 #include "types.h"
 
+/// An enemy formation: its battle type and up to five kinds of enemy, each
+/// with the fewest and most of it that appear.
 struct BattleFormationRecord {
   u8 battleType;
   u8 memberIds[5];

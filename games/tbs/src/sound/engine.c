@@ -1009,6 +1009,7 @@ void MusicTrack_DispatchStreamCommand(struct SoundPlayer *player,
   gSound_ExtendedCommandTable[command](player, track);
 }
 
+/// A word put together from its four bytes, lowest first.
 union PackedWord {
   u32 value;
   struct {

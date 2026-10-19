@@ -11,6 +11,7 @@ enum {
   QUAKE_TIMING_SHAKE        ///< how far the screen shakes
 };
 
+/// The heights of Quake's rock pillars.
 struct RockWallHeights {
   s32 column[4]; ///< each pillar's height in pixels
 };

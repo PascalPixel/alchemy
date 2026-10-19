@@ -34,10 +34,11 @@ struct ObjectCameraObject {
   u8 unk5d[0x13];
 };
 
+/// A point the fixed camera looks from or at.
 struct ObjectCameraPoint {
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y; ///< 16.16 fixed-point pixels
+  s32 z; ///< 16.16 fixed-point pixels
 };
 
 /// The fixed camera.

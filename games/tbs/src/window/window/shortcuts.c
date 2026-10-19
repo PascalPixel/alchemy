@@ -84,6 +84,7 @@ UNUSED void OptionMenu_StepWindowHue(s32 keys) {
   gGameState.paletteGlow[0] = hue;
 }
 
+/// A Psynergy the debug shortcut picker lists: its owner and the Psynergy.
 struct AbilityListEntry {
   u16 owner;
   u16 ability;

@@ -13,6 +13,8 @@ extern void *gWorkSlot[64];
 /// offsets. (gWorkSlot[n] instead addresses from the table's start.)
 #define WORK_SLOT(n) (*(gWorkSlot + (n)))
 
+/// The heap's 64 work slots, the first two holding the next free EWRAM and
+/// IWRAM addresses.
 union HeapState {
   struct {
     void *nextEwram;

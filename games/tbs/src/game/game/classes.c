@@ -4,6 +4,7 @@
 
 #include "../game_internal.h"
 
+/// The elemental power and resistance of one element level.
 struct ElementLevelBonus {
   u16 power;
   u16 res;

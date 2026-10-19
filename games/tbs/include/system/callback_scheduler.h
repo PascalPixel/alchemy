@@ -15,6 +15,8 @@ enum SchedulerTaskLimits {
 
 typedef void (*SchedulerCallback)(void);
 
+/// A scheduled task: its routine's address, its order (see SCHEDULER_KEY_) and
+/// its flags, where bit 0 keeps it running while overlay tasks are suspended.
 struct SchedulerTask {
   u32 callback;
   u16 state;

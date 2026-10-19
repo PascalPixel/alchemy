@@ -154,6 +154,8 @@ static struct FieldActor *VaultCave_FindCollidableActorAtCell(s32 column,
   ((s32)(((u32)(u16)gVaultCave_DirectionSteps[(heading) * 2 + 1] << 16) |      \
          (u16)gVaultCave_DirectionSteps[(heading) * 2]))
 #else
+/// The step table read as one word per heading: the x step in pixels in the
+/// high halfword, the z step in the low.
 struct DirectionSteps {
   s32 xz[16];
 };

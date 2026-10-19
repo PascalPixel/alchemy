@@ -7,12 +7,14 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// A field object seen as one that turns toward its facing target: its facing,
+/// its ground position and the target.
 struct FacingObject {
   u8 unk00[6];
-  u16 facing;
-  s32 positionX;
+  u16 facing;    ///< 1/65536 turns
+  s32 positionX; ///< 16.16 fixed-point pixels
   u8 unk0c[4];
-  s32 positionZ;
+  s32 positionZ; ///< 16.16 fixed-point pixels
   u8 unk14[0x46];
   u8 facingFlags;
   u8 unk5b[9];

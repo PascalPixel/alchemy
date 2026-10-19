@@ -25,26 +25,28 @@ enum SceneTransitionStyle {
 
 union FieldObject;
 
+/// A field actor: a person or thing on the field with a position, motion
+/// toward a target, sprites and an update callback.
 struct FieldActor {
   u8 unk00[6];
-  u16 facing;
-  union FieldCoordinate x;
-  union FieldCoordinate y;
-  union FieldCoordinate z;
-  s32 terrainHeight;
-  s32 scaleX;
-  s32 scaleY;
-  u16 radius;
+  u16 facing;              ///< 1/65536 turns
+  union FieldCoordinate x; ///< 16.16 fixed-point pixels
+  union FieldCoordinate y; ///< 16.16 fixed-point pixels
+  union FieldCoordinate z; ///< 16.16 fixed-point pixels
+  s32 terrainHeight;       ///< 16.16 fixed-point pixels
+  s32 scaleX;              ///< 16.16 fixed point, 0x10000 full size
+  s32 scaleY;              ///< 16.16 fixed point, 0x10000 full size
+  u16 radius;              ///< pixels
   u8 terrainId;
   u8 priorityFlags;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 speed;
+  s32 velocityX; ///< 16.16 fixed-point pixels per frame
+  s32 velocityY; ///< 16.16 fixed-point pixels per frame
+  s32 velocityZ; ///< 16.16 fixed-point pixels per frame
+  s32 speed;     ///< 16.16 fixed-point pixels per frame
   s32 acceleration;
-  s32 targetX;
-  s32 targetY;
-  s32 targetZ;
+  s32 targetX; ///< 16.16 fixed-point pixels
+  s32 targetY; ///< 16.16 fixed-point pixels
+  s32 targetZ; ///< 16.16 fixed-point pixels
   s32 bounce;
   s32 gravity;
   s32 riseBaseY;

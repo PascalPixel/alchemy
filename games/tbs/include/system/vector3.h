@@ -7,6 +7,7 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// Three coordinates, x, y and z: a position, a velocity or a direction.
 struct Vector3 {
 #ifdef UBFIX
   union {

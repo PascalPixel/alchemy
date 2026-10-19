@@ -8,6 +8,7 @@
 #include "unit/field/field.h"
 #include "types.h"
 
+/// A field object as the object dispatcher's far calls take it.
 struct DispatchObject {
   u32 value00;
   s16 value04;

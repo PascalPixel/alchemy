@@ -4,6 +4,8 @@
 
 #include "../window_internal.h"
 
+/// Scratch values for a step of a window's zoom: the scaled part of a side,
+/// the scaled duration and their ratio.
 struct UiWindowInterpolationScratch {
   s32 scaledPart;
   s32 scaledDuration;

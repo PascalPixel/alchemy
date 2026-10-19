@@ -6,22 +6,24 @@
 
 #include "render_input.h"
 
+/// A window: a framed rectangle of the tilemap with its sprite outputs, its
+/// opening or closing animation and the rectangle it last drew.
 struct UiWindow {
   struct RenderOutputList output;
-  u16 width;
-  u16 height;
-  u16 x;
-  u16 y;
+  u16 width;  ///< tiles
+  u16 height; ///< tiles
+  u16 x;      ///< tiles
+  u16 y;      ///< tiles
   u16 unk10;
   u16 effect;
   u16 state;
   u16 flags;
   u16 frame;
-  s16 duration;
-  u16 previousX;
-  u16 previousY;
-  u16 previousWidth;
-  u16 previousHeight;
+  s16 duration;       ///< frames
+  u16 previousX;      ///< tiles
+  u16 previousY;      ///< tiles
+  u16 previousWidth;  ///< tiles
+  u16 previousHeight; ///< tiles
 };
 
 STATIC_ASSERT(sizeof(struct UiWindow) == 0x24);
@@ -29,10 +31,12 @@ STATIC_ASSERT(offsetof(struct UiWindow, width) == 8);
 STATIC_ASSERT(offsetof(struct UiWindow, frame) == 0x18);
 STATIC_ASSERT(offsetof(struct UiWindow, previousHeight) == 0x22);
 
+/// A text channel, one of three, which types decoded text into a window a few
+/// characters a frame and runs its control codes.
 struct UiChannelSlot {
   struct UiWindow *work;
-  u16 x;
-  u16 y;
+  u16 x; ///< 8.8 fixed-point pixels
+  u16 y; ///< 8.8 fixed-point pixels
   u16 spacing[4];
   u16 line;
   u16 entry;

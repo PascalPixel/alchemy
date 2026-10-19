@@ -10,6 +10,8 @@
 #include "edition.h"
 #include "farcall.h"
 
+/// An enemy class's battle sprite: its animation, size, attack effect,
+/// palette and defeat-sound kind.
 struct BattleSpriteDefinition {
   u16 animation;
   u8 spriteBit0 : 1;
@@ -24,12 +26,15 @@ struct BattleSpriteDefinition {
 STATIC_ASSERT(sizeof(struct BattleSpriteDefinition) == 8);
 extern struct BattleSpriteDefinition gSummon_EntryTable[];
 
+/// A summon: its name's message and the Djinn of each element it needs.
 struct SummonDefinition {
   u16 nameMessageId;
   u8 unk02[2];
   u8 djinnRequired[4];
 };
 
+/// The party's Djinn recovery table as summons read it: the mask of summons
+/// the party can call, bit n for summon n.
 struct BattleSummonState {
   u32 availableMask;
 };

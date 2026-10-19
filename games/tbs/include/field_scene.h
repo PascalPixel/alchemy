@@ -49,18 +49,20 @@ enum {
 
 enum { FLAG_PARTY_LEFT_VALE = 0x815 };
 
+/// A scene entrance: where and facing which way the party arrives, and the
+/// camera's bounds there (-1 for none).
 struct SceneEntrance {
   s16 entrance;
   s16 requiredFlag;
-  s16 x;
-  s16 y;
-  s16 z;
-  u16 facing;
+  s16 x;      ///< pixels
+  s16 y;      ///< pixels
+  s16 z;      ///< pixels
+  u16 facing; ///< 1/65536 turns (enum Facing)
   s16 unused1;
-  s16 cameraLeft;
-  s16 cameraTop;
-  s16 cameraRight;
-  s16 cameraBottom;
+  s16 cameraLeft;   ///< pixels
+  s16 cameraTop;    ///< pixels
+  s16 cameraRight;  ///< pixels
+  s16 cameraBottom; ///< pixels
   s16 unused2;
 };
 
@@ -74,14 +76,16 @@ STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
   (SCENE_EXIT(exit, scene, entrance) | 0x10000000), (u32)(flag)
 #define SCENE_EXITS_END 0x1ff
 
+/// An actor a scene places: its sprite, the condition for placing it, how it
+/// behaves, where it stands and which way it faces, and how it turns to talk.
 struct ScenePlacement {
   s16 sprite;
   s16 condition;
   s32 behavior;
-  s32 x;
-  s32 y;
-  s32 z;
-  u16 facing;
+  s32 x;      ///< 16.16 fixed-point pixels
+  s32 y;      ///< 16.16 fixed-point pixels
+  s32 z;      ///< 16.16 fixed-point pixels
+  u16 facing; ///< 1/65536 turns (enum Facing)
   u8 talkFacing;
   u8 flags;
 };
@@ -103,6 +107,8 @@ enum { ACTOR_PARTY_LEADER = 0, ACTOR_FIRST_PLACED = 8 };
 
 #define PIXELS(value) ((value) << 16)
 
+/// A scene event: its kind and detail, the trigger it answers, its condition
+/// and its value (a message or an event script).
 struct SceneEvent {
   u32 control;
   s16 trigger;

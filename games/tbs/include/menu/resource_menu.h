@@ -8,16 +8,20 @@
 #include "static_assert.h"
 #include "window.h"
 
+/// A command icon of the resource menu: its OAM attributes, its place and its
+/// VRAM cache slot.
 struct ResourceMenuEntry {
   u32 link;
   u32 attr01;
   u32 attr2;
-  s16 x;
-  s16 y;
+  s16 x; ///< screen pixels
+  s16 y; ///< screen pixels
   u16 unk10;
   u16 slot;
 };
 
+/// The resource menu: up to six command icons in a row, the windows of their
+/// labels, the icons' resource ids, the selection and the layout.
 struct ResourceMenuWork {
   struct ResourceMenuEntry entries[6];
   struct UiWindow *window;
@@ -26,9 +30,9 @@ struct ResourceMenuWork {
   u8 resourceIds[8];
   s16 selection;
   s16 count;
-  s16 width;
+  s16 width; ///< tiles
   s16 resourceBase;
-  s16 row;
+  s16 row; ///< tiles
   s16 previousMode;
 };
 

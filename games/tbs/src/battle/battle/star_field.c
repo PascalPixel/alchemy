@@ -4,11 +4,14 @@
 
 #include "../battle_internal.h"
 
+/// One of the star field's sparks, drawn inward to the centre.
 struct Spark {
-  s32 pos[6];
-  s32 life;
+  s32 pos[6]; ///< x, y, z, then their velocities, in 1/1024 canvas pixels
+  s32 life;   ///< frames left
 };
 
+/// The star field's work: its sprite sheet, 16 sparks and 3 rings. It lives
+/// in the HEAP_SLOT_BATTLE_EFFECT work slot.
 struct SparkWork {
   u8 sheet[0x11c0];
   struct Spark sparks[16];

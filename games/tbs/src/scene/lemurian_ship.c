@@ -184,6 +184,7 @@ struct WaveMapLayer {
   s32 unk10[8];
 };
 
+/// The map work, seen for the scrolling layers the swell moves.
 struct WaveMap {
   u8 unk00[20];
   struct WaveMapLayer layers[8];

@@ -204,6 +204,7 @@ void Graphics_ClearBg0Vofs(void) {
   REG_BG0VOFS = zero;
 }
 
+/// The display control and green swap registers, REG_DISPCNT onward.
 struct DisplayRegisters {
   u16 control;
   u16 greenSwap;

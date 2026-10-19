@@ -19,6 +19,8 @@
 
 enum { BATTLE_LIST_ROWS = 5 };
 
+/// A menu sprite: a list link and its OAM attributes, as two words or as
+/// fields.
 struct MenuSprite {
   struct MenuSprite *next;
   union {
@@ -44,6 +46,7 @@ struct MenuSprite {
   } oam;
 };
 
+/// A cursor or prompt sprite: a list link and its OAM attributes as fields.
 struct CursorSprite {
   struct CursorSprite *next;
   u16 y : 8;
@@ -76,23 +79,28 @@ struct CursorSprite {
     (sprite).oam.word.attr23 = 0;                                              \
   } while (0)
 
+/// The party status window's layout: its window, its place and size, and what
+/// it shows (PARTY_STATUS_ flags).
 struct PartyStatusWindow {
   struct UiWindow *window;
-  u16 x;
-  u16 y;
-  u16 width;
-  u16 height;
+  u16 x;      ///< tiles
+  u16 y;      ///< tiles
+  u16 width;  ///< tiles
+  u16 height; ///< tiles
   u16 flags;
 };
 
 STATIC_ASSERT(sizeof(struct PartyStatusWindow) == 16);
 STATIC_ASSERT(offsetof(struct PartyStatusWindow, flags) == 12);
 
+/// A point on the screen where a menu shows its cursor.
 struct MenuPoint {
-  s32 x;
-  s32 y;
+  s32 x; ///< screen pixels
+  s32 y; ///< screen pixels
 };
 
+/// The menu work that remembers the cursor between menus (page, row and
+/// commands chosen) and drives the Djinn tutorial's key presses.
 struct MenuCell {
   u8 unk00[0x28];
   s32 slideOffset;
@@ -106,7 +114,7 @@ struct MenuCell {
   s32 active;
   u8 unk50[0x88];
   s32 autoEnabled;
-  s32 autoDelay;
+  s32 autoDelay; ///< frames
   s32 autoMode;
 };
 

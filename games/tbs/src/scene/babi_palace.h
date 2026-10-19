@@ -7,6 +7,7 @@ extern struct EventWork *gEventWork;
 
 struct OwnerState;
 
+/// A work word, written whole or as its first halfword.
 union WorkCell {
   s32 w;
   u16 h;

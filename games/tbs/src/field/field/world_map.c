@@ -13,6 +13,8 @@ static __inline__ void Io_Put16(volatile u16 *reg, s32 value) { *reg = value; }
 typedef s32 (*WorldMapPlaneFn)(void *camera, s32 *position, void *lines,
                                void *out);
 
+/// One 32-pixel cell of the world map: its tile, its kind (21 selects the
+/// second graphics set) and a flag.
 struct WorldMapCell {
   u32 tile : 24;
   u32 kind : 7;

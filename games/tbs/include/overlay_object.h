@@ -12,18 +12,20 @@ struct OverlayObjectRecord {
   u8 flags;
 };
 
+/// A field object as a Mercury Lighthouse beacon spark sees it: its position
+/// and target, its angle round the flame and the flame it is linked to.
 struct OverlayObject {
   u8 unk00[6];
-  u16 angle;
-  s32 coordinate08;
+  u16 angle;        ///< 1/65536 turns
+  s32 coordinate08; ///< 16.16 fixed-point pixels
   u8 unk0c[4];
-  s32 coordinate10;
+  s32 coordinate10; ///< 16.16 fixed-point pixels
   u8 unk14[0x1c];
   s32 field30;
   u8 unk34[4];
-  s32 coordinate38;
+  s32 coordinate38; ///< 16.16 fixed-point pixels
   u8 unk3c[4];
-  s32 coordinate40;
+  s32 coordinate40; ///< 16.16 fixed-point pixels
   u8 unk44[0x0c];
   struct OverlayObjectRecord *record;
   u8 unk54;
@@ -32,7 +34,7 @@ struct OverlayObject {
   u8 unk59;
   u8 steeringFlags;
   u8 unk5b[9];
-  u16 angle64;
+  u16 angle64; ///< 1/65536 turns
   u8 unk66[2];
   struct OverlayObject *linkedObject;
 };

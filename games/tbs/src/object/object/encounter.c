@@ -28,6 +28,8 @@ typedef struct TerrainRule {
 /// An encounter zone (encounter.tsv).
 enum { ENCOUNTER_GROUP_COUNT = 8 };
 
+/// An encounter zone, a row of encounter.tsv: its rate, the level it is made
+/// for, and the enemy groups that can appear with their chances.
 struct EncounterZone {
   u16 rate;                           ///< the base encounter rate
   u16 level;                          ///< the party level the zone is made for

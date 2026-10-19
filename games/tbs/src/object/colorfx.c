@@ -285,11 +285,14 @@ void ReelGame_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   }
 }
 
+/// One of the slot machine's five reels: how far it has turned, its 21
+/// symbols, whether it is held, and the countdown to its stop (-1 until one
+/// starts).
 struct Reel {
-  s32 position;
+  s32 position; ///< pixels, 16 a symbol
   u8 symbols[21];
   u8 held;
-  s8 stop;
+  s8 stop; ///< frames
 };
 
 struct UiWindow;
@@ -306,6 +309,8 @@ enum ReelGameState {
   REEL_OUT_OF_SPINS = 20,  ///< the fourth spin lost: a pause, then the end
 };
 
+/// The slot machine's work in heap slot 45: its reels, state, bet and spins,
+/// keys, timer, winning lines, sprites and windows.
 struct ReelWork {
   struct Reel reels[5];
   s32 state;

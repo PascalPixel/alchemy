@@ -19,11 +19,14 @@
 #define DJINN_LIST_OWNERS 8
 #define DJINN_LIST_ROWS 10
 
+/// The Djinn menu's lists: each party member's Djinn entries and their count.
 struct DjinnListTable {
   u16 ids[DJINN_LIST_OWNERS][DJINN_LIST_ROWS];
   s8 counts[DJINN_LIST_OWNERS];
 };
 
+/// The Djinn menu's lists, the field tiles and palette it restores on closing,
+/// and the tutorial's state.
 struct DjinnMenuBackdrop {
   struct DjinnListTable list;
   u8 tiles[0x2000];
@@ -32,6 +35,7 @@ struct DjinnMenuBackdrop {
   long tutorialStep;
 };
 
+/// The Djinn menu's work, in the HEAP_SLOT_MENU work slot.
 struct DjinnMenuWork {
   u8 unk000[8];
   s32 owner;
@@ -49,8 +53,8 @@ struct DjinnMenuWork {
   u8 unk038[0xd4];
   struct UiWindow *helpWindow;
   u8 unk110[0x24];
-  s16 ownerX[8];
-  s16 ownerY[8];
+  s16 ownerX[8]; ///< screen pixels
+  s16 ownerY[8]; ///< screen pixels
   u8 unk154[0x20];
   u16 selection[2];
   u16 pairEntries[2];

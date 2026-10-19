@@ -12,25 +12,27 @@
 
 union FieldObject;
 
+/// An effect object that moves and draws one sprite: its position, scale,
+/// velocity and target, and its per-frame update.
 struct MotionObject {
   u8 unk00[0x06];
-  u16 angle;
-  s32 x;
-  s32 y;
-  s32 z;
+  u16 angle; ///< 1/65536 turns
+  s32 x;     ///< 16.16 fixed-point pixels
+  s32 y;     ///< 16.16 fixed-point pixels
+  s32 z;     ///< 16.16 fixed-point pixels
   u8 unk14[0x04];
-  s32 scaleX;
-  s32 scaleY;
+  s32 scaleX; ///< 16.16 fixed point, 0x10000 full size
+  s32 scaleY; ///< 16.16 fixed point, 0x10000 full size
   u16 height;
   u8 unk22[0x02];
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 speedLimit;
+  s32 velocityX;  ///< 16.16 fixed-point pixels per frame
+  s32 velocityY;  ///< 16.16 fixed-point pixels per frame
+  s32 velocityZ;  ///< 16.16 fixed-point pixels per frame
+  s32 speedLimit; ///< 16.16 fixed-point pixels per frame
   s32 acceleration;
-  s32 targetX;
-  s32 targetY;
-  s32 targetZ;
+  s32 targetX; ///< 16.16 fixed-point pixels
+  s32 targetY; ///< 16.16 fixed-point pixels
+  s32 targetZ; ///< 16.16 fixed-point pixels
   s32 verticalMotionPhase;
   s32 verticalMotionStrength;
   u8 unk4c[0x04];
@@ -45,6 +47,8 @@ struct MotionObject {
   void (*update)(union FieldObject *object);
 };
 
+/// A sprite of an animation record, as battle objects set its palette and
+/// drawing priority.
 struct SpriteEntry {
   u8 unk00[5];
   u8 palette;

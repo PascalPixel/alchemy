@@ -77,17 +77,20 @@ enum TolbiSpringActor {
 #define SPRING_CENTER_X PIXELS(120)
 #define SPRING_CENTER_Z PIXELS(71)
 
+/// The tossed coin or medal: its last four positions for the trail, its
+/// velocity and the frames the prize rings still pull it.
 struct SpringTossMotion {
   u8 unk00[2];
   s16 launchFrame;
-  struct Vector3 trail[4];
+  struct Vector3 trail[4]; ///< 16.16 fixed-point pixels
   struct Vector3 shadow;
-  struct Vector3 velocity;
+  struct Vector3 velocity; ///< 16.16 fixed-point pixels per frame
   s32 attractionFrames;
 };
 
+/// One of the four obstacles moving in the spring during a toss.
 struct SpringObstacle {
-  struct Vector3 position;
+  struct Vector3 position; ///< 16.16 fixed-point pixels
   s16 heading;
   s16 pauseOrPhase;
   s16 speedMode;
@@ -757,6 +760,8 @@ end:
   return 0;
 }
 
+/// A halfword holding the zero an actor's motion and sprite flags are cleared
+/// with.
 struct Half {
   u16 v;
 };

@@ -50,6 +50,8 @@ static __inline__ void Dma_Wait(volatile u32 *dma) {
     ;
 }
 
+/// One lettering piece as queued for drawing: a header word, then its OAM
+/// attributes.
 struct Sprite {
   u32 words[3];
 };

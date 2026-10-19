@@ -30,7 +30,7 @@ struct UiRenderWork {
   u16 outline;
   u16 colour;
   u16 entries[RENDER_ENTRY_MASK + 1];
-  u16 unknownBeforeCount;
+  u16 letterSpacing;
   u16 count;
   u16 messageStart;
   u16 glyphResource;

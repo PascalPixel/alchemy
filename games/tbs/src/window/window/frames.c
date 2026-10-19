@@ -235,7 +235,7 @@ void UiWork_ResetCounters(void) {
 
   state->colour = 15;
   state->lineSpacing = 10;
-  state->unknownBeforeCount = 9;
+  state->letterSpacing = 9;
   state->outline = 0;
   state->unknownAfterLineSpacing = 1;
 }
@@ -247,7 +247,7 @@ void UiWork_InitCountersWithResourceAndScheduleRefresh(void) {
   s32 priority;
 
   state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
-  state->unknownBeforeCount = 9;
+  state->letterSpacing = 9;
   state->lineSpacing = 10;
   state->outline = 0;
   state->colour = 15;
@@ -266,7 +266,7 @@ void UiWork_InitCountersAndScheduleRefresh(s32 loadGlyphTiles) {
 
   if (loadGlyphTiles != 0)
     state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
-  state->unknownBeforeCount = 9;
+  state->letterSpacing = 9;
   state->lineSpacing = 10;
   state->outline = 0;
   state->colour = 15;

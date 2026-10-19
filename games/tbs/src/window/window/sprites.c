@@ -16,7 +16,7 @@ typedef s32 (*GlyphRoutine)(struct UiWindow *, u32, u32, u32, const u8 *);
 s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
                      s32 mode) {
   struct UiRenderWork *work = UI_WORK;
-  u32 spacingX = work->unknownBeforeCount;
+  u32 spacingX = work->letterSpacing;
   s32 width;
   u32 spacingY = work->lineSpacing;
 

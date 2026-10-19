@@ -41,7 +41,7 @@ const s8 *const gUiText_ArticleTable[8] = {
     gUiText_ArticleEmpty,
 };
 
-/// The counted nouns (gUiText_NumberWords pairs them {singular, plural})
+// The counted nouns (gUiText_NumberWords pairs them {singular, plural}).
 const u8 gUiText_NumberWord0[] = "K\xe4pfe";
 const u8 gUiText_NumberWord1[] = "Kampf";
 const u8 gUiText_NumberWord2[] = "Tickets";

@@ -121,8 +121,8 @@ struct Model {
 
 typedef void (*ModelKernel)(struct Model *model);
 
-/// The rasterizer kernels, ARM code that runs from IWRAM, with their sizes in
-/// bytes and, for three of them, in DMA words.
+// The rasterizer kernels, ARM code that runs from IWRAM, with their sizes in
+// bytes and, for three of them, in DMA words.
 extern const u8 Data_08138fc8[];
 extern const u8 Data_081391c8[];
 extern const u8 Data_081393d8[];

@@ -5,9 +5,9 @@
 // Effect tables after the particle pictures.
 //--------------------------------------------------------------------------
 
-/// Six words of zero. The functions that read them also write to them (wave
-/// phases and two flags), but they lie in the cartridge, so the writes are
-/// lost and each stays zero.
+// Six words of zero. The functions that read them also write to them (wave
+// phases and two flags), but they lie in the cartridge, so the writes are
+// lost and each stays zero.
 const s32 gData_080f393c = 0;
 const s32 gData_080f3940 = 0;
 const s32 gData_080f3944 = 0;

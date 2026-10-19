@@ -8,9 +8,9 @@
 // names for them are in the comments. The names the listings use stay.
 //--------------------------------------------------------------------------
 
-/// Each callback takes the object and returns nonzero to go on with the
-/// script this frame. They take different views of the object, so the
-/// declarations leave the parameters unspecified.
+// Each callback takes the object and returns nonzero to go on with the
+// script this frame. They take different views of the object, so the
+// declarations leave the parameters unspecified.
 s32 ObjectMotion_StepAngle();
 s32 Object_ClearChildAndCollisionFlags();
 s32 Object_ClearChildFlags();

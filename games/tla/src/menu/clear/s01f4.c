@@ -1,7 +1,7 @@
 #include "types.h"
 #include "input.h"
 
-/// The two secret button codes: unlocked, held and progress of each.
+// The two secret button codes: unlocked, held and progress of each.
 extern s16 gData_020024f6;
 extern s16 gData_020024f8;
 extern s16 gData_020024fa;

@@ -42,8 +42,8 @@ struct PlacedObject {
   u8 unk55[0x2b];
 };
 
-/// The decoder's block: its code, tables and work area (constants.ld). Only
-/// the code and tables are copied.
+// The decoder's block: its code, tables and work area (constants.ld). Only
+// the code and tables are copied.
 extern u8 Render_DecodeFrameCode[];
 extern u8 Render_DecodeFrameCopyEnd[];
 extern u8 Render_DecodeFrameBlockSize[];

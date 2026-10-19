@@ -4,8 +4,8 @@
 #include "scene_ids.h"
 #include "field_event.h"
 
-/// Import stubs: the event runtime's begin and end, and the pending
-/// actions' resolution.
+// Import stubs: the event runtime's begin and end, and the pending
+// actions' resolution.
 void Func_02000fcc(void);
 void Func_02000fd4(void);
 void Func_0200104c(s32 skip);

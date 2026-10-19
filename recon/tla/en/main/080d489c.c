@@ -1,3 +1,12 @@
+// Near miss, differ 6 of 106: The Broken Seal twin
+// (BattleFx_ConfigureLinkedObject) with this game's calls: with flags & 3
+// zero it destroys the object's linked effect; otherwise (mode 2, or when the
+// linked effect is outside animation 0x108) it creates effect object 264 at
+// the object and links it, mode 1 keeping it as the object's resource and
+// mode 2 running gData_080f341c on it. Left: instruction order only: the
+// native loads the pool's zero one slot earlier, and in the copied-priority
+// branch reads the new visual's flags before the object's (ldrb r1, [r6, #9]
+// first) and starts the 12 after them.
 #include "types.h"
 
 void *ObjectTable_Get(u32 object);
@@ -5,7 +14,7 @@ void *ObjectTable_Get(u32 object);
 struct LinkedEffectVisual {
   u8 unk00[9];
   u8 flags;
-  u8 unk0a[28];
+  u8 unk0a[16];
   u8 value26;
 };
 
@@ -25,13 +34,14 @@ struct LinkedEffectObject {
   void (*callback)(void);
 };
 
-struct LinkedEffectObject *Func_080090c8(s32 kind, s32 x, s32 y, s32 z);
-void Func_08009098(struct LinkedEffectObject *object,
-                   const void *configuration);
-void Func_08009080(struct LinkedEffectObject *object, s32 mode);
-void Func_080090d0(struct LinkedEffectObject *object);
+struct LinkedEffectObject *Func_080200c0(s32 kind, s32 x, s32 y, s32 z);
+void ObjectDispatch_InitializeFar(struct LinkedEffectObject *object,
+                                  const void *script);
+void Object_SetMode(struct LinkedEffectObject *object, s32 mode);
+void Object_Destroy(struct LinkedEffectObject *object);
+s32 Object_IsOutsideAnimation108(struct LinkedEffectObject *object);
 void BattleFx_CopyLinkedObjectPosition(void);
-extern const u8 gData_0809fd38[];
+extern const u8 gData_080f341c[];
 
 void BattleFx_ConfigureLinkedObject(s32 id, s32 flags) {
   struct LinkedEffectObject *object = ObjectTable_Get(id);
@@ -46,14 +56,14 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags) {
     return;
 
   if ((flags & 3) != 0) {
-    if ((flags & 3) == 2 || object->resource == 0) {
-      child = Func_080090c8(209, object->x, object->y, object->z);
+    if ((flags & 3) == 2 || Object_IsOutsideAnimation108(object->resource)) {
+      child = Func_080200c0(264, object->x, object->y, object->z);
     }
   } else {
     child = object->resource;
     if (child == 0)
       return;
-    Func_080090d0(child);
+    Object_Destroy(child);
     /* FAKEMATCH: reuse the null visual value for the child link. */
     object->resource = (struct LinkedEffectObject *)visual;
     return;
@@ -65,13 +75,13 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags) {
   mode = flags & 3;
   switch (mode) {
   case 1:
-    Func_08009080(child, 1);
+    Object_SetMode(child, 1);
     object->resource = child;
     child->counter = 1;
     break;
   case 2:
-    Func_08009080(child, 2);
-    Func_08009098(child, gData_0809fd38);
+    Object_SetMode(child, 2);
+    ObjectDispatch_InitializeFar(child, gData_080f341c);
     child->counter = 1;
     break;
   }

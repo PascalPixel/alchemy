@@ -3134,22 +3134,16 @@ main	rom_main_05	recon/tla/ja/rom	.rom.000d5398	ja
 main	rom_main_05	games/tla/src/field/common/object/screen_position	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d5c64	it
 main	rom_main_05	recon/tla/it/rom	.rom.000d5d64	it
-main	rom_main_05	recon/tla/it/rom	.rom.000d5dd4	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000dac64	fr
 main	rom_main_05	recon/tla/fr/rom	.rom.000dad64	fr
-main	rom_main_05	recon/tla/fr/rom	.rom.000dadd4	fr
 main	rom_main_05	recon/tla/es/rom	.rom.000dec64	es
 main	rom_main_05	recon/tla/es/rom	.rom.000ded64	es
-main	rom_main_05	recon/tla/es/rom	.rom.000dedd4	es
 main	rom_main_05	recon/tla/de/rom	.rom.000e2c70	de
 main	rom_main_05	recon/tla/de/rom	.rom.000e2d70	de
-main	rom_main_05	recon/tla/de/rom	.rom.000e2de0	de
 main	rom_main_05	recon/tla/raw/080d5c70	.text	en
 main	rom_main_05	recon/tla/raw/080d5d70	.text	en
-main	rom_main_05	recon/tla/raw/080d5de0	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000d5c50	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000d5d50	ja
-main	rom_main_05	recon/tla/ja/rom	.rom.000d5dc0	ja
 main	rom_main_05	games/tla/src/field/common/object/context_start	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d5e6c	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000dae6c	fr
@@ -3186,26 +3180,19 @@ main	rom_main_05	recon/tla/ja/rom	.rom.000d6654	ja
 main	rom_main_05	recon/tla/ja/rom	.rom.000d67c8	ja
 main	rom_main_05	games/tla/src/field/common/effect/ground_particles	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d69e8	it
-main	rom_main_05	recon/tla/it/rom	.rom.000d6b84	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000db9e8	fr
-main	rom_main_05	recon/tla/fr/rom	.rom.000dbb84	fr
-main	rom_main_05	recon/tla/fr/rom	.rom.000dbe4c	fr
-main	rom_main_05	recon/tla/fr/rom	.rom.000dbf28	fr
 main	rom_main_05	recon/tla/es/rom	.rom.000df9e8	es
-main	rom_main_05	recon/tla/es/rom	.rom.000dfb84	es
 main	rom_main_05	recon/tla/de/rom	.rom.000e39f4	de
-main	rom_main_05	recon/tla/de/rom	.rom.000e3b90	de
-main	rom_main_05	recon/tla/de/rom	.rom.000e3e58	de
-main	rom_main_05	recon/tla/de/rom	.rom.000e3f34	de
 main	rom_main_05	recon/tla/raw/080d69f4	.text	en
-main	rom_main_05	recon/tla/raw/080d6b90	.text	en
-main	rom_main_05	recon/tla/raw/080d6c60	.text	en
-main	rom_main_05	recon/tla/raw/080d6e58	.text	en
-main	rom_main_05	recon/tla/raw/080d6f34	.text	en
 main	rom_main_05	recon/tla/ja/rom	.rom.000d69d4	ja
-main	rom_main_05	recon/tla/ja/rom	.rom.000d6b70	ja
-main	rom_main_05	recon/tla/ja/rom	.rom.000d6e38	ja
-main	rom_main_05	recon/tla/ja/rom	.rom.000d6f14	ja
+main	rom_main_05	games/tla/src/field/common/effect/rising_particles	.text
+main	rom_main_05	recon/tla/it/rom	.rom.000d6c54	it
+main	rom_main_05	recon/tla/es/rom	.rom.000dfc54	es
+main	rom_main_05	recon/tla/fr/rom	.rom.000dbc54	fr
+main	rom_main_05	recon/tla/de/rom	.rom.000e3c60	de
+main	rom_main_05	recon/tla/raw/080d6c60	.text	en
+main	rom_main_05	recon/tla/ja/rom	.rom.000d6c40	ja
+main	rom_main_05	games/tla/src/field/common/effect/motes	.text
 main	rom_main_05	games/tla/src/field/common/effect/sparkoff	.text
 main	rom_main_05	recon/tla/it/rom	.rom.000d7028	it
 main	rom_main_05	recon/tla/fr/rom	.rom.000dc028	fr

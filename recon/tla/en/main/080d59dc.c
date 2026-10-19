@@ -1,8 +1,10 @@
-// Near miss, differ 4 of 87: Func_080d5720 for the heap slot 0xa0
+// Near miss, differ 2 of 87: Func_080d5720 for the heap slot 0xa0
 // workspace's nodes (Func_080d5930), the render mode becoming 4: the leader
 // grabs the nearest node, saving its motion flags, frame and priority.
 // Returns 1, or 0 with none near. Left: as in 080d5720, instruction order
-// only: the native starts the priority flags' address one slot later.
+// only: the native starts the priority flags' address after the saved
+// priority's store; the flags read through a pointer brought it from 4 to 2,
+// and the barriers measured there do the same here.
 #include "types.h"
 #include "field_sprite.h"
 #include "object_runtime.h"
@@ -33,6 +35,7 @@ s32 Func_080d59dc(void) {
   struct ObjectRuntime *leader = ObjectTable_Get(gPartyState.currentOwner);
   struct FieldSprite *sprite = leader->animation;
   struct Work9cItemPosition *item = Func_080d5930(&leader->x);
+  u8 *flags;
 
   ((struct EventWorkGrab *)Ram_HeapSlots->eventWork)->grabState = 0;
   if (item == NULL)
@@ -46,9 +49,10 @@ s32 Func_080d59dc(void) {
   Object_SetPosition(leader, item->x, item->y, item->z);
   Object_CommitPosition(leader);
   leader->action = leader->motionFlags;
+  flags = &leader->priorityFlags;
   leader->unk66 = sprite->nextFrame;
   ((struct GrabSave *)leader)->priority = sprite->priority;
-  leader->priorityFlags &= ~1;
+  leader->priorityFlags = *flags & ~1;
   sprite->nextFrame = 0;
   sprite->priority = 1;
   gPartyState.renderMode = 4;

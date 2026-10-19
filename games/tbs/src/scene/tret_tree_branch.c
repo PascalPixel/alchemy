@@ -27,6 +27,17 @@
 #include "field_scene.h"
 #include "display_transition.h"
 #include "map_scroll.h"
+#include "flags.h"
+#include "songs.h"
+
+// Breeze, the Jupiter Djinni on the branch: Djinni 61 is the name message
+// "Breeze", and its placement is gone once its flag (FLAG_DJINNI_0 + 61) is
+// set.
+enum {
+  ACTOR_BREEZE = ACTOR_FIRST_PLACED,
+  SPRITE_JUPITER_DJINNI = 0x5d,
+  DJINNI_BREEZE = 61
+};
 
 // Starts the scanline-dependent BG3 scroll callbacks.
 static void TretTreeBranch_StartBg3Split(void);
@@ -37,9 +48,9 @@ static s32 sSplitLine;
 static u16 sHofsAtOrAfterSplit;
 static u16 sHofsBeforeSplit;
 
-// Starts the battle for Djinni 61, using actor 8 for its opening hop.
-static void TretTreeBranch_StartDjinniBattle(void) {
-  Field_RequestDjinnBattle(8, 61);
+// Talking to Breeze: the Djinni hops and its battle starts.
+static void Event_TalkToBreeze(void) {
+  Field_RequestDjinnBattle(ACTOR_BREEZE, DJINNI_BREEZE);
 }
 
 // Returns the branch entrances from the adjoining Tret rooms.
@@ -95,42 +106,43 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
   }
 }
 
-// Moves the leader and camera five cells along positive z.
-static void TretTreeBranch_AdvanceFiveCellsFirst(void) {
+// Touch trigger 10: the leader and camera move 80 pixels south at once.
+static void Event_ShiftSouthFiveCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 5);
 }
 
-// Moves the leader and camera five cells along negative z.
-static void TretTreeBranch_ReturnFiveCellsFirst(void) {
+// Touch trigger 11: the leader and camera move 80 pixels north at once.
+static void Event_ShiftNorthFiveCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -5);
 }
 
-// The second five-cell forward trigger uses the same displacement.
-static void TretTreeBranch_AdvanceFiveCellsSecond(void) {
+// Touch trigger 12: the same 80-pixel move south as trigger 10.
+static void Event_ShiftSouthFiveCellsSecond(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 5);
 }
 
-// The second five-cell return trigger reverses that displacement.
-static void TretTreeBranch_ReturnFiveCellsSecond(void) {
+// Touch trigger 13: the same 80-pixel move north as trigger 11.
+static void Event_ShiftNorthFiveCellsSecond(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -5);
 }
 
-// Moves the leader and camera six cells along positive z.
-static void TretTreeBranch_AdvanceSixCells(void) {
+// Touch trigger 14: the leader and camera move 96 pixels south at once.
+static void Event_ShiftSouthSixCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 6);
 }
 
-// Moves the leader and camera six cells along negative z.
-static void TretTreeBranch_ReturnSixCells(void) {
+// Touch trigger 15: the leader and camera move 96 pixels north at once.
+static void Event_ShiftNorthSixCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -6);
 }
 
-// Plays the exit cue and requests the exit number recorded by the trigger.
-static void TretTreeBranch_PlayCueAndSelectTouchedExit(void) {
+// Walking into one of exits 1 to 8: the exit sound plays and the party
+// leaves by the exit touched.
+static void Event_TakeTouchedExit(void) {
   struct EventWork *state = gEventWork;
   s16 *touchedExit;
 
-  Engine_AudioPlayCue(123);
+  Engine_AudioPlayCue(SE_MAP_EXIT);
   touchedExit = &state->touchedTrigger;
   Engine_EventRequestExit(*touchedExit);
 }
@@ -143,14 +155,15 @@ TretTreeBranch_SetRevealWindow(struct DisplayTransitionState *state) {
   state->value = 10;
 }
 
-// Reveal selects window-transition mode 9 and its blend/window parameters.
-static void TretTreeBranch_ConfigureReveal(void) {
+// Casting Reveal on the branch (its phase 2): the window transition and BG1's
+// blend over the rest of the screen are set again, as when the scene opened.
+static void Event_CastReveal(void) {
   struct DisplayTransitionState *transition;
 
   DisplayTransition_InitializeBattleEffectState(9);
 
-  REG_BLDCNT = 0x3f42;
-  REG_BLDALPHA = 0x0c04;
+  REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDALPHA = BLEND_ALPHA(4, 12);
 
   transition = gDisplayTransition;
   TretTreeBranch_SetRevealWindow(transition);
@@ -194,8 +207,8 @@ s32 TretTreeBranch_Initialize(void) {
 
   DisplayTransition_InitializeBattleEffectState(9);
 
-  REG_BLDCNT = 0x3f42;
-  REG_BLDALPHA = 0x0c04;
+  REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  REG_BLDALPHA = BLEND_ALPHA(4, 12);
 
   // UB: slot 31 lies past scalar gEventWork. Its named load adds six
   // bytes in the native EN trial (0x6a to 0x70).
@@ -239,7 +252,8 @@ static void TretTreeBranch_UpdateBg3ScrollSplit(void) {
 // Run the BG3 scroll selection at every HBlank, updating the split each frame.
 static void TretTreeBranch_StartBg3Split(void) {
   Runtime_SetIrqHandler(IRQ_HBLANK, 0, TretTreeBranch_ApplyBg3ScrollAtScanline);
-  FieldScheduler_AddCallback(TretTreeBranch_UpdateBg3ScrollSplit, 0xc80);
+  FieldScheduler_AddCallback(TretTreeBranch_UpdateBg3ScrollSplit,
+                             TASK_PRIORITY_SCENE);
 }
 
 struct SceneEntrance gTretTreeBranch_Entrances[] = {
@@ -264,45 +278,35 @@ u32 gTretTreeBranch_Exits[] = {
 
 // clang-format off
 struct ScenePlacement gTretTreeBranch_Placements[] = {
-    { 0x5d, 0x6d, ACTOR_STAND,
+    { SPRITE_JUPITER_DJINNI, FLAG_DJINNI_0 + DJINNI_BREEZE, ACTOR_STAND,
         PIXELS(648), 0, PIXELS(88), FACING_WEST, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
 // clang-format on
 
 struct SceneEvent gTretTreeBranch_Events[] = {
-    {0xa02, 1, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TretTreeBranch_PlayCueAndSelectTouchedExit)},
-    {0xa02, 2, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TretTreeBranch_PlayCueAndSelectTouchedExit)},
-    {0xa02, 3, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TretTreeBranch_PlayCueAndSelectTouchedExit)},
-    {0xa02, 4, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TretTreeBranch_PlayCueAndSelectTouchedExit)},
-    {0xa02, 5, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TretTreeBranch_PlayCueAndSelectTouchedExit)},
-    {0xa02, 6, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TretTreeBranch_PlayCueAndSelectTouchedExit)},
-    {0xa02, 7, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TretTreeBranch_PlayCueAndSelectTouchedExit)},
-    {0xa02, 8, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TretTreeBranch_PlayCueAndSelectTouchedExit)},
+    {0xa02, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeTouchedExit)},
+    {0xa02, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeTouchedExit)},
+    {0xa02, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeTouchedExit)},
+    {0xa02, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeTouchedExit)},
+    {0xa02, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeTouchedExit)},
+    {0xa02, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeTouchedExit)},
+    {0xa02, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeTouchedExit)},
+    {0xa02, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeTouchedExit)},
     {EVENT_TOUCH, 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TretTreeBranch_AdvanceFiveCellsFirst)},
+     EVENT_SCRIPT(Event_ShiftSouthFiveCells)},
     {EVENT_TOUCH, 11, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TretTreeBranch_ReturnFiveCellsFirst)},
+     EVENT_SCRIPT(Event_ShiftNorthFiveCells)},
     {EVENT_TOUCH, 12, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TretTreeBranch_AdvanceFiveCellsSecond)},
+     EVENT_SCRIPT(Event_ShiftSouthFiveCellsSecond)},
     {EVENT_TOUCH, 13, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TretTreeBranch_ReturnFiveCellsSecond)},
-    {EVENT_TOUCH, 14, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TretTreeBranch_AdvanceSixCells)},
-    {EVENT_TOUCH, 15, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TretTreeBranch_ReturnSixCells)},
-    {EVENT_TALK, 8, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TretTreeBranch_StartDjinniBattle)},
+     EVENT_SCRIPT(Event_ShiftNorthFiveCellsSecond)},
+    {EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShiftSouthSixCells)},
+    {EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShiftNorthSixCells)},
+    {EVENT_TALK, ACTOR_BREEZE, CONDITION_ALWAYS,
+     EVENT_SCRIPT(Event_TalkToBreeze)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 2), 0, CONDITION_ALWAYS,
-     EVENT_SCRIPT(TretTreeBranch_ConfigureReveal)},
+     EVENT_SCRIPT(Event_CastReveal)},
     {SCENE_EVENTS_END},
 };
 

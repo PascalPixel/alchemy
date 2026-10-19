@@ -21,6 +21,7 @@ u16 Func_0200217c(u32 length, u8 *p) {
     crc ^= *p << 8;
     j = 0;
   next_bit:
+    // One bit: shift, adding the polynomial when the top bit was set.
     {
       /* FAKEMATCH(pin): the polynomial's add, 0xffffefdf, loaded into r7
        * between the halves of 0x8000; as a plain local, 2 of 32

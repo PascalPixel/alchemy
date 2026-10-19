@@ -6,12 +6,12 @@
 
 struct SceneRegion;
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneRegion *Scene_GetRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
-s32 Scene_Initialize(void);
+const struct SceneEntrance *Lalivero_GetEntrances(void);
+const struct SceneRegion *Lalivero_GetRegions(void);
+const u32 *Lalivero_GetExits(void);
+const struct ScenePlacement *Lalivero_GetPlacements(void);
+const struct SceneEvent *Lalivero_GetEvents(void);
+s32 Lalivero_Initialize(void);
 extern s32 gLaliveroMournerSobs[];
 extern struct SceneEntrance gLaliveroEntrances[];
 extern u32 gLaliveroExits[];

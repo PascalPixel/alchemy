@@ -42,7 +42,7 @@ void ViewMove_SaveNearbySprites(void) {
     obj = *objects++;
     if (obj == NULL || obj->script == NULL || obj == scene->mainObject)
       continue;
-    if (Func_080cdac0((s16)(scene->animation | 0x100), scene->firstObjectId,
+    if (Func_080cdac0((s16)(scene->fieldKind | 0x100), scene->firstObjectId,
                       i) == -1)
       continue;
     group->objects[group->count] = obj;

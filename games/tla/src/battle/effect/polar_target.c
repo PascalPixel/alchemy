@@ -38,7 +38,7 @@ struct PartyPauseView {
 void BattleFx_ClearChildValueOnMismatch(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
 
-  if (scene->animation == 2) {
+  if (scene->fieldKind == 2) {
     struct PartyPauseView *party;
 
     BattleFx_FinishSceneAndReleaseHeapBlock();
@@ -56,7 +56,7 @@ void BattleFx_ClearChildValueOnMismatch(void) {
 void FieldEvent_RunTypeHandler(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
 
-  switch (scene->animation) {
+  switch (scene->fieldKind) {
   case 8:
     Func_080dd950();
     break;

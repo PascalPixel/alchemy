@@ -23,7 +23,7 @@ void Field_DispatchTypeHandler(s32 kind) {
 void _call_via_r3(s32, s32);
 
 // Casts the current Psynergy effect with no target: runs the body of its
-// kind (scene->animation).
+// kind (scene->fieldKind).
 void BattleFx_Run(void) {
   struct BattleFxScene *scene;
   struct FieldWork *runtime;
@@ -33,7 +33,7 @@ void BattleFx_Run(void) {
 
   scene = *(gWorkSlot + HEAP_SLOT_FX);
   runtime = *(gWorkSlot + HEAP_SLOT_EVENT);
-  kind = scene->animation;
+  kind = scene->fieldKind;
   targetId = scene->secondObjectId;
 
   switch (kind) {
@@ -112,7 +112,7 @@ void BattleFx_Run(void) {
 void BattleFx_DispatchRequestKind(void) {
   struct BattleFxScene *scene = *(gWorkSlot + HEAP_SLOT_FX);
   struct FieldWork *runtime = *(gWorkSlot + HEAP_SLOT_EVENT);
-  s32 kind = scene->animation;
+  s32 kind = scene->fieldKind;
   s32 targetId = scene->secondObjectId;
 
   scene->enabled = 0;
@@ -184,7 +184,7 @@ void BattleFx_DispatchRequestKind(void) {
 void BattleFx_ClearChildValueOnMismatch(void) {
   struct BattleFxScene *scene = gEffectWork;
 
-  if (scene->animation == FIELD_KIND_MIND_READ) {
+  if (scene->fieldKind == FIELD_KIND_MIND_READ) {
     BattleFx_FinishSceneAndReleaseHeapBlock();
     if (gGameState.pausedObject != scene->secondObjectId) {
       ((struct ObjectRuntime *)scene->child)->movementState = 0;
@@ -196,7 +196,7 @@ void BattleFx_ClearChildValueOnMismatch(void) {
 void FieldEvent_RunTypeHandler(void) {
   u32 kind;
 
-  kind = ((struct BattleFxScene *)gEffectWork)->animation;
+  kind = ((struct BattleFxScene *)gEffectWork)->fieldKind;
   switch (kind) {
   case FIELD_KIND_REVEAL:
     ResetSceneTransitionEffect();

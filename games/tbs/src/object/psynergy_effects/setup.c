@@ -23,7 +23,7 @@ void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
     work = *(gWorkSlot + HEAP_SLOT_FX);
   }
   work->action = abilityId;
-  work->animation = BattleActGet(abilityId)->type0c;
+  work->fieldKind = BattleActGet(abilityId)->type0c;
   running = ev->resolvingAction;
   if (running != 0)
     return;
@@ -42,7 +42,7 @@ void BattleFx_LoadActionEffectResources(s32 abilityId, s32 mode) {
   if (gGameState.map == (s32)&SceneId_MercuryLighthouse2)
     work->lit = 1;
   BattleFx_SetupObjectPair(gGameState.selectedActor, -1);
-  if (work->animation != FIELD_KIND_REVEAL)
+  if (work->fieldKind != FIELD_KIND_REVEAL)
     ev->effectTimerRunning = running;
   work->tileSlot = Resource_FindFreeEntry();
   VramCache_Load((s16)work->tileSlot, 256, gBattleFx_SparkTiles);
@@ -170,7 +170,7 @@ void BattleEffect_CleanupSceneObjects(void) {
     map->shakeX = scene->savedShakeX;
     map->shakeY = scene->savedShakeY;
     map->shakeDecay = scene->savedShakeDecay;
-    if (scene->animation != FIELD_KIND_REVEAL)
+    if (scene->fieldKind != FIELD_KIND_REVEAL)
       runtime->effectTimerRunning = 1;
     BattleFx_PlayQueuedSound();
     Runtime_ReleaseHeapBlock(HEAP_SLOT_FX);

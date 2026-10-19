@@ -113,7 +113,7 @@ void Field_DispatchTypeHandler(s32 kind) {
 void BattleFx_Run(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   u8 *event = Ram_HeapSlots->eventWork;
-  s32 animation = scene->animation;
+  s32 animation = scene->fieldKind;
   s32 targetId = scene->secondObjectId;
   s32 objectId;
 
@@ -213,7 +213,7 @@ void BattleFx_Run(void) {
 void BattleFx_DispatchRequestKind(void) {
   struct BattleFxScene *scene = Ram_HeapSlots->effectWork;
   u8 *event = Ram_HeapSlots->eventWork;
-  s32 animation = scene->animation;
+  s32 animation = scene->fieldKind;
   s32 targetId = scene->secondObjectId;
 
   scene->enabled = 0;

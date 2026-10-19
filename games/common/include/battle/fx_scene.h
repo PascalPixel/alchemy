@@ -30,7 +30,7 @@ struct BattleFxScene {
   s16 firstObjectId;
   s16 secondObjectId;
   u16 action;
-  s16 animation;
+  s16 fieldKind;
   s8 enabled;
   u8 mode;
   s8 visible;

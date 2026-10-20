@@ -115,9 +115,9 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
       UiText_GetResourceDimensionsAltFar(message, &left, &top, (u32 *)&width,
                                          (u32 *)&height);
       left = x - width / 2;
-      if (flags & 0x4000)
+      if (flags & SPEAKER_WINDOW_ABOVE)
         top = y - height - 1;
-      else if (!(flags & 0x8000) && y <= 8)
+      else if (!(flags & SPEAKER_WINDOW_BELOW) && y <= 8)
         top = y - height - 1;
       else
         top = y + 4;
@@ -127,11 +127,11 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
     if (win->mode != 0)
       margin = 5;
     column = x;
-    if (flags & 0x1000) {
+    if (flags & SPEAKER_PORTRAIT_LEFT) {
       column = x - margin - 2;
       if (column < 0)
         column = 0;
-    } else if (flags & 0x2000) {
+    } else if (flags & SPEAKER_PORTRAIT_RIGHT) {
       column += 2;
       if (column + margin > 29)
         column = 29 - margin;
@@ -310,52 +310,92 @@ s32 FieldEvent_AskYesNoAndShowResponse(s32 actor, s32 flags) {
 
 void BattleEventRuntime_EmptyCallback(void) {}
 
-/// Opens the event's current message for speaker, kept 32 pixels above or
-/// below a point and on screen, waits until it has been read and moves on to
-/// the next message.
+/// A speaker-message entry point retained by its overlay veneer, with no
+/// current scene caller. Records the speaker, waits for the message unless
+/// fast-forwarding, and advances the message index.
+/// XXX: this and Event_ShowMessageAtPosition apply a 32-unit offset and
+/// 312/220 limits before calling a window service that takes tiles. A caller
+/// establishing the intended position would settle its units and conversion.
 void Event_ShowSpeakerMessage(s32 speaker) {
-  // BUG: pos is never set, so the window goes wherever the stack's old
-  // contents put it.
+  // BUG: the native lookup discards its result and leaves pos unset.
+#ifdef UBFIX
+  s32 pos[3];
+  struct ObjectRuntime *object;
+#else
   struct {
     s32 x, y;
   } pos;
+#endif
   struct FieldWork *state = (struct FieldWork *)gEventWork;
 
   speaker &= 0xfff;
+#ifdef UBFIX
+  // Only the actor slots hold actor pointers; ObjectTable_Get's legacy range
+  // also exposes the event fields after them.
+  if ((u32)speaker < sizeof(state->actors) / sizeof(state->actors[0]))
+    object = ObjectTable_Get(speaker);
+  else
+    object = NULL;
+#else
   ObjectTable_Get(speaker);
+#endif
   state->speaker = speaker;
   if (state->fastForward == 0) {
+#ifdef UBFIX
+    s32 positionFound = 0;
+
+    // Supply the actual speaker position as UiText_OpenMessageAtObject does.
+    // A missing actor or failed projection has no position to open around;
+    // still consume the message, as the fast-forward path does.
+    if (object != NULL) {
+      if (state->mode == MODE_WORLD_MAP)
+        positionFound =
+            Render_ProjectPoint(
+                (const u8 *)object + offsetof(struct ObjectRuntime, x), pos) !=
+            0;
+      else
+        positionFound = Object_GetScreenPosition(speaker, pos) != -1;
+    }
+    if (positionFound) {
+      s32 px = pos[0];
+      s32 py = pos[1];
+      s32 win;
+#else
     s32 px = pos.x;
     s32 py = pos.y;
     s32 win;
+#endif
 
-    if (py > 119)
-      py += 32;
-    else
-      py -= 32;
-    px = px < 8 ? 8 : px;
-    if (px > 312)
-      px = 312;
-    py = py < 20 ? 20 : py;
-    if (py > 220)
-      py = 220;
-    win = (s32)UiText_OpenMessageWindowFar(state->message, px, py, 1);
-    state->messageWindow = win;
-    while (UiWork_IsIdleFar((struct UiWindow *)win) == 0)
-      WaitFrames(1);
+      if (py > 119)
+        py += 32;
+      else
+        py -= 32;
+      px = px < 8 ? 8 : px;
+      if (px > 312)
+        px = 312;
+      py = py < 20 ? 20 : py;
+      if (py > 220)
+        py = 220;
+      win = (s32)UiText_OpenMessageWindowFar(state->message, px, py, 1);
+      state->messageWindow = win;
+      while (UiWork_IsIdleFar((struct UiWindow *)win) == 0)
+        WaitFrames(1);
+#ifdef UBFIX
+    }
+#endif
   }
   state->message++;
 }
 
-/// Shows the current message near the screen point (x, y)
-/// (Event_ShowMessageAtPosition).
+/// Retained by its overlay veneer; no current caller establishes the
+/// coordinates forwarded to Event_ShowMessageAtPosition.
 void ObjectTable_CallRefreshHook(s32 unused0, s32 unused1, s32 x, s32 y) {
   Event_ShowMessageAtPosition(unused0, unused1, x, y);
 }
 
-/// Opens the event's current message 32 pixels above or below the screen
-/// point (x, y), kept on screen, waits until it has been read and moves on to
-/// the next message.
+/// A retained coordinate-message entry point: waits for the message and
+/// advances the event's message index. Its placement units are unresolved,
+/// as in Event_ShowSpeakerMessage.
 void Event_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
   struct FieldWork *state = (struct FieldWork *)gEventWork;
   s32 py = y;

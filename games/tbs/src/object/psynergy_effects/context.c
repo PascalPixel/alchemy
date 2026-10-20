@@ -11,7 +11,11 @@
 /// frames to open a message window above or below the leader.
 s32 Object_GetScreenPosition(s32 objectId, s32 *position) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
+#ifdef UBFIX
+  struct MapScrollWork *map;
+#else
   s32 *camera;
+#endif
   s32 cameraX;
   s32 cameraZ;
   s32 x;
@@ -19,12 +23,19 @@ s32 Object_GetScreenPosition(s32 objectId, s32 *position) {
 
   if (object == 0)
     return -1;
+  // UB: camera[1] crosses the viewX scalar; UBFIX reads the named pair.
+#ifdef UBFIX
+  map = gMapWork[0];
+  cameraX = map->viewX & 0xffff0000;
+  cameraZ = map->viewY & 0xffff0000;
+#else
   /* FAKEMATCH(temporary): the view position read as two adjacent words
    * through one pointer, so both loads share one base; as viewX and viewY
    * through gMapWork[0], 28 of 59 instructions differ in tbs-en. */
   camera = &((struct MapScrollWork *)gMapWork[0])->viewX;
   cameraX = camera[0] & 0xffff0000;
   cameraZ = camera[1] & 0xffff0000;
+#endif
   x = object->x - cameraX;
   z = object->z - cameraZ - object->y;
   *position++ = x / 0x10000;

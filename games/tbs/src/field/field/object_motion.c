@@ -57,12 +57,12 @@ s32 Object_IsTargetUnset(struct ObjectRuntime *object) {
   // motion flags only x and z.
   if (object->flags == 0) {
     second = object->targetX;
-    if (second != 0x80000000)
+    if (second != TARGET_UNSET)
       return 0;
     first = object->targetY;
   } else {
     first = object->targetX;
-    second = 0x80000000;
+    second = TARGET_UNSET;
   }
   if (first != second || object->targetZ != first)
     return 0;
@@ -602,21 +602,20 @@ void Object_UpdateAllMotion(void) {
     x += object->velocityX;
     y += object->velocityY;
     z += object->velocityZ;
-    // Arrived: the watched axis (ARRIVAL_AXIS_X, _Y, _Z) reached the target,
-    // or crossed it.
+    // Arrived: the watched axis reached the target, or crossed it.
     if (object->arrivalAxis != 0)
       switch (object->arrivalAxis) {
-      case 16:
+      case ARRIVAL_AXIS_X:
         if (x == object->targetX ||
             ((object->x - object->targetX) ^ (x - object->targetX)) < 0)
           arrivedAtTarget = 1;
         break;
-      case 17:
+      case ARRIVAL_AXIS_Y:
         if (y == object->targetY ||
             ((object->y - object->targetY) ^ (y - object->targetY)) < 0)
           arrivedAtTarget = 1;
         break;
-      case 18:
+      case ARRIVAL_AXIS_Z:
         if (z == object->targetZ ||
             ((object->z - object->targetZ) ^ (z - object->targetZ)) < 0)
           arrivedAtTarget = 1;

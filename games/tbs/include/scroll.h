@@ -27,7 +27,10 @@ STATIC_ASSERT(sizeof(struct DisplayScrollWork) == 0xf20);
 STATIC_ASSERT(offsetof(struct DisplayScrollWork, page) == 0xf00);
 STATIC_ASSERT(offsetof(struct DisplayScrollWork, freqX) == 0xf08);
 
+/// The wavy background's work, heap slot 34 under its own name, which
+/// DisplayScroll_InitializeHBlankDma takes for a scene's ripple.
 extern struct DisplayScrollWork *gHBlankScrollWork;
+/// One cycle of sine in 256 entries, 4.12 fixed point (4096 at the peak).
 extern const s16 gDisplayScroll_WaveSine[];
 
 #endif

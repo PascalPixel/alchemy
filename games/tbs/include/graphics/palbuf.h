@@ -11,6 +11,8 @@
 
 /// A colour buffer for all 512 palette colours: the source palette, the shown
 /// and target colour channels, their steps, and two pages of packed colours.
+/// The title intro's form of HEAP_SLOT_PALETTE_BUFFER, allocated by
+/// PaletteFade_Init.
 struct PaletteFade {
   /// The source palette, RGB555: 256 BG colours, then 256 OBJ colours.
   u16 palette[512];
@@ -37,6 +39,8 @@ STATIC_ASSERT(offsetof(struct PaletteFade, page) == 0x3000);
 /// The colour buffer (HEAP_SLOT_PALETTE_BUFFER) that fades the BG and OBJ
 /// palettes: the source palette, the shown and target colour channels, their
 /// per-frame steps, and two pages of packed RGB555 colours queued each frame.
+/// Field_RunScene allocates it on scene load (BattleEffect_InitializeBuffers),
+/// and gPaletteBufferWork reads it.
 struct BattleEffectBuffers {
   /// The source palette, RGB555: 224 BG colours, then 224 OBJ colours;
   /// palette[0] is the backdrop.
@@ -71,10 +75,16 @@ enum PaletteTransform {
   PALETTE_TRANSFORM_FROM_SOURCE = 0x8000,
   PALETTE_TRANSFORM_PLAIN = 0x10000, ///< each colour unchanged
   PALETTE_TRANSFORM_GREY = 0x10001,  ///< grey of brightness (2R + 4G + B) / 7
+  /// Brownish grey: the brightness (R + G + B) / 10, red at 4 times it plus
+  /// 5, green and blue 3 times plus 5, each held to 8 to 28.
   PALETTE_TRANSFORM_SEPIA = 0x10002,
+  /// Half R + 10, two thirds G + 8, B - 7; black stays black.
   PALETTE_TRANSFORM_WARM = 0x10003,
+  /// Each channel held to a narrow range (R 10 to 28, G 16 to 24, B 16 to 26),
+  /// then G and B + 2.
   PALETTE_TRANSFORM_MUTED = 0x10004,
-  PALETTE_TRANSFORM_PALE = 0x10005,
+  PALETTE_TRANSFORM_PALE = 0x10005, ///< half of each channel, plus their mean
+  /// R plus an eighth of G and of B; G and B two thirds.
   PALETTE_TRANSFORM_RED = 0x10006,
   PALETTE_TRANSFORM_WARM2 = 0x10007, ///< half R + 6, two thirds G + 4, B - 6
   /// From here the TINT, BLEND and SPLIT bits are tested, TINT and BLEND

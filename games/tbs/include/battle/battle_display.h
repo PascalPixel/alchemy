@@ -35,6 +35,7 @@ STATIC_ASSERT(offsetof(struct BattleCamera, followPos) == 0x1c);
 STATIC_ASSERT(offsetof(struct BattleCamera, pitch) == 0x34);
 STATIC_ASSERT(offsetof(struct BattleCamera, yaw) == 0x36);
 
+/// Work slot 12 (HEAP_SLOT_CAMERA) during a battle: the battle camera.
 extern struct BattleCamera *gCameraWork;
 
 /// The battle background's work slot as the camera reads it: the yaw the
@@ -51,10 +52,15 @@ struct BattlePresentationTransition {
   s32 unk1c; ///< cleared when the battle starts; not read by name in TBS
 };
 
-/// The effect updates its command while the presentation keeps animation state.
+/// A presentation step's stack work: the effect command it builds and runs,
+/// and the targets' sprite colour modes saved beside it. The BattlePres_Run
+/// and BattlePresentation_Run functions of staging.c and auto_battle.c,
+/// BattlePres_RunEntryTransition and BattleFx_PlayUnitElementEffect keep one
+/// as a local.
 struct BattlePresentationWork {
   struct BattleEffectArgument effect;
-  /// Each target's animation entries' param, saved before the effect.
+  /// Each target's layers' SpriteColorMode (AnimationEntry.param), all but its
+  /// last layer, saved before the effect; no code reads them back by name.
   u8 savedAnimationParameters[8][4];
 };
 
@@ -75,8 +81,10 @@ struct BattleBackgroundView {
 /// The battle background's affine parameters and reference point, copied
 /// whole to the BG2PA registers.
 struct BattleAffine {
+  /// BG2PA to BG2PD, 8.8 fixed point; BattleCamera_SetRange writes a plain
+  /// zoom (pb and pc 0, pa and pd one over the scale).
   u16 pa, pb, pc, pd;
-  s32 x, y;
+  s32 x, y; ///< BG2X and BG2Y, 8.8 fixed-point pixels
 };
 
 /// The battle background's scanline work in heap slot 10: two pages of
@@ -85,6 +93,8 @@ struct BattleAffineHdma {
   u32 page;     ///< the page of lines shown; the other one is built
   u8 unk04[12]; ///< not named by TBS code
   struct BattleAffine affine;
+  /// Each scanline's BG2CNT, one page per frame: which half of the picture a
+  /// line shows, or the plane off, with BGCNT_WRAP at a zoom of 1 or more.
   u16 lines[2][160];
 };
 

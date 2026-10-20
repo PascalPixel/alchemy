@@ -58,6 +58,11 @@ struct SaveSummary {
 /// The save work: which of the 16 flash sectors hold a record, their record
 /// ids and sequence numbers, one sector's buffer and the three files'
 /// summaries.
+///
+/// It lives in heap slot HEAP_SLOT_SAVE (gSaveWorkspace) only around each
+/// save, load, copy or delete and each scan of the files, as the title menu's
+/// (SaveState_ScanRecordFlags): SaveState_InitializeWorkspace takes it and
+/// scans the sectors into it, and SaveState_ReleaseWorkspace frees it.
 struct SaveWorkspace {
   u8 occupied[16];  ///< 1 for a sector holding the current copy of a record
   u8 recordId[16];  ///< each sector's record; 16 for none
@@ -86,10 +91,16 @@ STATIC_ASSERT(offsetof(struct SaveWorkspace, sequence) == 0x20);
 STATIC_ASSERT(offsetof(struct SaveSummary, flagCount) == 0x32);
 STATIC_ASSERT(offsetof(struct SaveSummary, unk38) == 0x38);
 
+/// The save work, heap slot HEAP_SLOT_SAVE under its own name; null between
+/// save operations.
 extern struct SaveWorkspace *gSaveWorkspace;
 
+/// DMA 3's enable bit in its count and control word, which the hardware
+/// clears when the transfer is done.
 #define DMA3_BUSY 0x80000000
 
+/// Starts a DMA 3 transfer; control_ is the unit count with the DMA_ flags
+/// << 16.
 #define START_DMA(source_, destination_, control_)                             \
   Dma_Set((const void *)(source_), (void *)(destination_), (control_), REG_DMA3)
 
@@ -98,8 +109,11 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
   }
 }
 
+/// Waits until a START_DMA transfer is done.
 #define WAIT_DMA() WaitDma(DMA3)
 
+/// Nonzero offers Send on the title menu: SaveState_ScanRecordFlags sets it
+/// when a file has its send flag set and R and Left are held.
 extern s16 gTitleSendOptionEnabled;
 
 #endif

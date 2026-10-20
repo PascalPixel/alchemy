@@ -3,6 +3,10 @@
 
 /// @file
 /// Scene numbers, named after their places.
+///
+/// Each SceneId_ is an absolute symbol whose value is the scene's row in
+/// gField_SceneTable (field/scenes.s); C takes the number as
+/// (s32)&SceneId_Name. Unnamed scenes have no symbol.
 
 extern char SceneId_Clear;
 extern char SceneId_Title;

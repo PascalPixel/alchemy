@@ -9,15 +9,17 @@
 #include "global_cells.h"
 #include "render_input.h"
 
-#define DJINN_ENTRY_INDEX 31
-#define DJINN_ENTRY_ELEMENT 0xe0
-#define DJINN_ENTRY_OWNER 0xf00
-#define DJINN_ENTRY_IS_SET 0x8000
+// A Djinni's list entry, as Djinn_ListOwnerEntries writes it into
+// DjinnListTable.ids. bits: 15 set | 11..8 owner | 7..5 element | 4..0 index
+#define DJINN_ENTRY_INDEX 31      ///< its number within its element, 0 to 19
+#define DJINN_ENTRY_ELEMENT 0xe0  ///< its element, 0 to 3
+#define DJINN_ENTRY_OWNER 0xf00   ///< the member holding it
+#define DJINN_ENTRY_IS_SET 0x8000 ///< set; an unset one is drawn in colour 2
 
 #define DJINN_ELEMENTS 4
 #define DJINN_PER_ELEMENT 20
-#define DJINN_LIST_OWNERS 8
-#define DJINN_LIST_ROWS 10
+#define DJINN_LIST_OWNERS 8 ///< list columns: one per party member
+#define DJINN_LIST_ROWS 10  ///< entries one member's list holds
 
 /// The Djinn menu's lists: each party member's Djinn entries and their count.
 struct DjinnListTable {
@@ -26,18 +28,20 @@ struct DjinnListTable {
 };
 
 /// The Djinn menu's lists, the field tiles and palette it restores on closing,
-/// and the tutorial's state.
+/// and the tutorial's state. The menu allocates it outside any slot, EWRAM
+/// first, as it opens, and frees it (MemFree) as it closes.
 struct DjinnMenuBackdrop {
   struct DjinnListTable list;
-  u8 tiles[0x2000];
-  u16 palette[64];
+  u8 tiles[0x2000];  ///< BG character block 1's first 0x2000 bytes
+  u16 palette[64];   ///< BG palettes 4 to 7
   s32 tutorialTimer; ///< frames into the tutorial's current step
   /// The Djinn tutorial's step: 0 outside it, else 1, 14, 27 or 28 to start,
   /// by flags 0x16f and 0x171.
   long tutorialStep;
 };
 
-/// The Djinn menu's work, in the HEAP_SLOT_MENU work slot.
+/// The Djinn menu's work, in the HEAP_SLOT_MENU work slot from the menu's
+/// opening to its closing.
 struct DjinnMenuWork {
   u8 unk000[8]; ///< not named by TBS code
   s32 owner;

@@ -12,6 +12,8 @@
 struct ItemDefinition;
 struct UiWindow;
 
+/// The palette editor's swatch tiles, compressed; it decompresses them to
+/// tile 0xd0 of character block 0, one tile a colour.
 extern const u8 gDebug_PaletteSwatchTiles[];
 void Engine_DebugClearWindow(struct UiWindow *window);
 void Engine_DebugDrawItemDetails(struct UiWindow *window, s32 item);

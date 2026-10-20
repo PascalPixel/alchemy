@@ -22,12 +22,17 @@ struct ArcEffectObject {
   u8 unk54[0x10];                  ///< not named through this view
   s16 phase;                       ///< 1 spins the caster 0xc00 a frame
   s16 step;                        ///< frames since the arcs started
+  /// FieldActor.linkedObject; no code reads it through this view.
   struct FieldActor *linkedObject;
   void (*callback)(union FieldObject *object); ///< run each frame
 };
 
 /// The work of a Psynergy effect scene: its caster and target, where it takes
 /// place, the map state it restores and its 24 effect slots.
+/// It is heap slot 56 (HEAP_SLOT_FX, read as gEffectWork), cleared when
+/// allocated: BattleFx_LoadActionEffectResources takes it for a Psynergy or
+/// item use, and BattleFx_InitializeSlots for the Djinn joining effects and
+/// Altmiller Cave's scene. The effect's end releases it.
 struct BattleFxScene {
   s32 angle;          ///< 1/65536 turns
   s32 x;              ///< 16.16 fixed-point pixels
@@ -72,7 +77,7 @@ struct BattleFxScene {
   ///@}
   struct EffectSlot slots[24];
   u8 unk718[2];    ///< not named by TBS code
-  s16 arcTileSlot; ///< resource entry of Avoid's and Retreat's arcs
+  s16 arcTileSlot; ///< resource entry of Avoid's falling arcs' tiles
   s8 messageMode;  ///< the announcement's box mode: 1, a scene adds 8
   u8 unk71d[3];    ///< not named by TBS code
 };
@@ -87,6 +92,8 @@ STATIC_ASSERT(offsetof(struct BattleFxScene, slots) == 0x58);
 STATIC_ASSERT(offsetof(struct BattleFxScene, arcTileSlot) == 0x71a);
 STATIC_ASSERT(offsetof(struct BattleFxScene, messageMode) == 0x71c);
 
+/// Returns the value step tenths of the way from `from` to `to`; the Psynergy
+/// effects that use it step from 0 to 10, one a frame.
 static __inline__ s32 BattleFx_Interpolate(s32 to, s32 from, s32 step) {
   return from + (to - from) * step / 10;
 }

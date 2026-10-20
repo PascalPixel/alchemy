@@ -7,6 +7,8 @@
 #include "types.h"
 #include "static_assert.h"
 
+/// A view of a 0x68-byte record that nothing in TBS reads; Kalay's scene
+/// includes the header.
 struct Resource3a8Effect {
   u8 unk00[0x06];
   u16 unk06;

@@ -32,6 +32,8 @@ struct BattleSpriteDefinition {
 };
 
 STATIC_ASSERT(sizeof(struct BattleSpriteDefinition) == 8);
+/// The enemy classes' battle sprites, one row per class 0 to 171 (sprites.tsv),
+/// read by the BattleClass_ getters; row 0 stands in for a class out of range.
 extern struct BattleSpriteDefinition gSummon_EntryTable[];
 
 /// A summon: its name's message and the Djinn of each element it needs.

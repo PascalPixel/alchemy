@@ -10,13 +10,13 @@
 
 /// A field object as the script commands' overlap checks see it.
 struct ScriptObjectEntry {
-  void *data;
-  u8 unk04[4];
-  s32 values08[6];
-  u16 value20;
-  u8 unk22[0x37];
-  u8 flags59;
-  u8 unk5a[0x16];
+  void *data;      ///< ObjectRuntime.script; null for a free object
+  u8 unk04[4];     ///< the script cursor and angle
+  s32 values08[6]; ///< x, y, z, terrainHeight, scaleX and scaleY
+  u16 value20;     ///< ObjectRuntime.radius, in pixels
+  u8 unk22[0x37];  ///< not named through this struct
+  u8 flags59;      ///< ObjectRuntime.collisionFlags: bit 0 solid
+  u8 unk5a[0x16];  ///< not named through this struct
 };
 
 STATIC_ASSERT(offsetof(struct ScriptObjectEntry, values08) == 0x08);

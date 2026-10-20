@@ -30,9 +30,13 @@ struct FieldActor;
 struct FieldPosition;
 struct MenuSprite;
 
-/// Registers a main-image scheduler callback. The scene layer's
-/// Task_AddCallback and FieldScheduler_AddOrUpdateCallback also use this
-/// wrapper, so overlays import this routine under one name.
+/// Schedules `callback` under the task key `priority` (TASK_PRIORITY_SCENE
+/// runs it every frame in the main loop pass), or gives the task already
+/// running it that key. Returns the slot it wrote, which the sort in the same
+/// call may already have moved, or -1 when all 20 task slots are taken. The
+/// scene layer's
+/// Task_AddCallback and FieldScheduler_AddOrUpdateCallback call it too, so
+/// overlays import the routine under one name.
 static inline s32 FieldScheduler_AddCallback(SchedulerCallback callback,
                                              s32 priority) {
   return Scheduler_AddOrUpdateCallback(callback, priority);
@@ -84,9 +88,10 @@ static inline s32 FieldUnit_AddHp(s32 owner, s32 delta) {
   return Unit_AddHp(owner, delta);
 }
 
-/// Decodes type-01 compressed data. Scenes and the title and clear menus use
-/// this wrapper. The same decode in main-image field/lucky_dice.c uses call.h's
-/// tagged Value2 instead.
+/// Decodes type-01 compressed data from `source` into `destination`. Scenes
+/// and the title and clear menus reach the decoder through it; main-image code
+/// calls Resource_DecodeType01 without it, LuckyDice_Run through call.h's
+/// Value2.
 static inline s32 FieldResource_DecodeType01(const void *source,
                                              void *destination) {
   return Resource_DecodeType01(source, destination);

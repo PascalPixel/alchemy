@@ -7,21 +7,34 @@
 
 #include "types.h"
 
+/// AudioCommand_UpdateToggleMask's command: the new gAudio_CommandMask, or
+/// with AUDIO_COMMAND_TOGGLE the bits to flip in it.
 enum AudioCommandMask {
   AUDIO_COMMAND_TOGGLE = 0x80,
   AUDIO_COMMAND_MASK = 0x7f
 };
 
+/// The sound driver's mode at start (Audio_Initialize, AudioEngine_SetMode):
+/// 8 PCM notes (bits 11..8), volume 15 (15..12), frame length 7 (19..16),
+/// 352 samples a frame or 21024 a second, and sound bias resolution 1 (from
+/// bits 23..20). Its reverb field, 0, leaves the reverb as it is.
 #define AUDIO_INITIAL_MODE 0x0097F800
 
+/// A cue for AudioCommand_Play: bits 11..0 the cue, 15..12 flags. The sound
+/// README's "What a cue number means" gives the ranges.
 enum AudioCueControl {
   AUDIO_CUE_ID_MASK = 0xfff,
   AUDIO_CUE_FLAGS_MASK = 0xf000,
-  AUDIO_CUE_START_SILENT = 0x1000,
-  AUDIO_CUE_FADE_BGM = 17,
-  AUDIO_CUE_KEEP_BGM = 18,
+  AUDIO_CUE_START_SILENT = 0x1000, ///< music fades in over 64 frames
+  AUDIO_CUE_FADE_BGM = 17, ///< fades the music out over 112 frames, once
+  AUDIO_CUE_KEEP_BGM = 18, ///< keeps the music that is playing
+  /// Fades player 3 out over 48 frames; also SE_289's number, so SE_289
+  /// never plays.
   AUDIO_CUE_FADE_SLOT3 = 0x121,
+  /// Cues 80 to 99 are fanfares; those below are music, but for 17 and 18.
   AUDIO_JINGLE_FIRST = 80,
+  /// Cues from 100 but 0x121 each play on the player gSound_SongTable names
+  /// for them.
   AUDIO_SONG_FIRST = 100
 };
 
@@ -31,20 +44,34 @@ void Bios_CpuSet(const void *source, void *destination, u32 control);
 
 struct SoundPlayer;
 struct LzPackWork;
+/// A flash library cell the LZ packer borrows as its work pointer (lzpack.h);
+/// IdentifyFlash sets it again before the flash code reads it.
 extern struct LzPackWork *gFlash_Handler3;
+/// Plays music; cue 17 fades it and a fanfare silences it until it ends.
 extern struct SoundPlayer gMusicPlayerBgm;
+/// Plays fanfares; the music returns once it stops.
 extern struct SoundPlayer gMusicPlayerFanfare;
-extern struct SoundPlayer gSound_Player3;
+extern struct SoundPlayer gSound_Player3; ///< the player cue 0x121 fades out
+/// The cue from 100 up (AUDIO_SONG_FIRST) each player last started, by player,
+/// not a volume: cues below 100 are not recorded, and SE_289 clears entry 3.
+/// Nothing in TBS reads it.
 extern u16 gMusicPlayerVolumes[8];
+/// VBlanks after a fanfare starts before the music waits for its end; held
+/// at 1 until the fanfare's player stops, then 0.
 extern u8 gMusicRestoreDelay;
 
+// The music's volume and its combined tempo and pitch, each ramped toward its
+// target by its step each VBlank, in 8.8 fixed point (MUSIC_UNITY_SCALE 1.0).
 extern u16 gMusicVolume;
 extern u16 gMusicVolumeTarget;
 extern u16 gMusicVolumeStep;
 extern u16 gMusicPitch;
 extern u16 gMusicPitchTarget;
 extern u16 gMusicPitchStep;
+/// The music cue AudioCommand_Play last chose: 0xff before any, MUS_019 after
+/// a fade; asking for it again changes nothing.
 extern u8 gAudioSecondaryState;
+/// Set by AudioCommand_UpdateToggleMask; nothing in TBS reads it.
 extern u8 gAudio_CommandMask;
 
 #endif

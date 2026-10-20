@@ -23,7 +23,8 @@ struct MapLayerScroll {
 
 /// The field map's work: the followed position, screen shake, tile
 /// animations, blend script, view and its bounds, and three scrolling layers.
-/// Heap slot 8.
+/// Heap slot 8 (HEAP_SLOT_MAP): Map_LoadLayeredScene takes and clears it as a
+/// field scene with a layered map starts, and the next scene change frees it.
 struct MapScrollWork {
   /// The followed point, read as x, height and z in 16.16 fixed-point pixels;
   /// Camera_FollowActor points it at the camera's position.
@@ -65,6 +66,9 @@ struct BgScroll {
   u16 x, y; ///< pixels
 };
 
+/// BG0 to BG3's scroll offsets, which the VBlank handler copies to
+/// REG_BG0HOFS to REG_BG3VOFS in the VBlank after WaitFrames sets
+/// gFrameRenderPending.
 extern struct BgScroll gBgScroll[];
 
 #endif

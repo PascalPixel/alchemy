@@ -16,11 +16,11 @@
 #define BATTLE_CHARACTER(no) (300 + (no)) ///< the character's battle sprite
 
 /// The childhood sprites, shown while flag 32 is set; the eight party
-/// members' sprites share their character numbers
+/// members' sprites share their character numbers.
 #define ISAAC_CHILD 18
 #define GARET_CHILD 19
 
-/// Portrait numbers
+/// The childhood portraits' numbers.
 #define FACE_ISAAC_CHILD 56
 #define FACE_GARET_CHILD 57
 

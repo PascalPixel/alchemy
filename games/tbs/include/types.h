@@ -40,9 +40,15 @@ typedef unsigned long long u64;
   ((u32)FIXED_LINKED_(modern_##linked, #linked) -                              \
    (u32)FIXED_LINKED_(modern_##from, #from))
 #else
+/// One of Camelot's fixed addresses, checked against the link, as a constant
+/// of `type`; `linked` names the symbol the modern build reaches it by.
 #define FIXED_ADDRESS(type, address, linked) (type address)
+/// The distance between two fixed places, `value`, which the modern build
+/// computes from their linked names.
 #define FIXED_OFFSET(value, linked, from) value
 #endif
+/// Marks one of the few proven handwritten helpers inside C; proof says what
+/// no C compiles to. It expands to nothing.
 #define CAMELOT_ASM(proof)
 
 #endif

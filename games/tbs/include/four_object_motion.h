@@ -10,15 +10,20 @@
 
 struct AnimationObject;
 
-/// The menu work as the row of four figures reads it: each figure's object,
-/// screen position and motion phase.
+/// The menu work (HEAP_SLOT_MENU) as the row of four figures reads it: each
+/// figure's object, screen position and scale.
 struct FourObjectMotionState {
-  u8 unk000[0x144];
-  s16 verticalOrigins[4]; ///< screen pixels
+  u8 unk000[0x144]; ///< the menu work before the party figures' ownerY
+  /// Screen pixels: the party figures' ownerY, which moves only the depth
+  /// slot.
+  s16 verticalOrigins[4];
   u8 unk14c[0xd8];
   struct AnimationObject *objects[4];
   s16 positionsX[4]; ///< screen pixels
-  s16 positionsY[4]; ///< screen pixels
+  /// Screen pixels; negative marks a recovering Djinni, which faces 0x8000.
+  s16 positionsY[4];
+  /// The Djinn menu's figure scales, 16.16: negative holds a scale of -phase,
+  /// else it closes a third of its gap to full size (0x10000) each frame.
   s32 phases[4];
 };
 

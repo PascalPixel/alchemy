@@ -27,21 +27,23 @@ struct MapLayer {
   u8 unk04[0x2c]; ///< the next layer's scroll values; not named by TBS code
 };
 
-/// The map's running blend script, which sets the blend registers over time.
+/// The map's running blend script, which sets the blend registers over time
+/// (DisplayBlend_RunScript, each frame from DisplayBlend_StartScript).
 struct BlendScriptState {
-  u16 *script;
-  u16 *cursor;
-  u16 delay; ///< frames
-  u16 paused;
+  u16 *script; ///< where 0xffff loops back to; null for none
+  u16 *cursor; ///< the next command
+  u16 delay;   ///< frames left before the next command
+  u16 paused;  ///< nonzero holds the script where it is
 };
 
 /// One of the 16 tile animation channels, which copy tiles into VRAM by
-/// script.
+/// script (MapAnimation_Update): groups of four halfwords, the source tile,
+/// the count, the destination tile and the frames to wait.
 struct MapAnimation {
-  const u16 *start;
-  const u16 *cursor;
-  u16 timer; ///< frames
-  u16 paused;
+  const u16 *start;  ///< where 0xffff loops back to; null for none
+  const u16 *cursor; ///< the next group
+  u16 timer;         ///< frames left of the current wait
+  u16 paused;        ///< nonzero, set by a scene, holds the channel
 };
 
 /// The map work in heap slot 8 (struct MapScrollWork), seen as its tile
@@ -77,14 +79,27 @@ struct WorldPosition {
   s32 y;      ///< 16.16 fixed-point pixels
 };
 
+/// The map's blocks, 32 KB of EWRAM at 0x02020000: each block 8 bytes, its
+/// four tile entries. Map_LoadLayeredScene decodes them in.
 extern u32 gMapBlocks[];
 
+/// The map's layer data, 16 KB of EWRAM at 0x02028000. A tile animation's
+/// source tiles numbered 0x600 and up (0x200 and up for 64-byte tiles) are
+/// read from here, tile 0x600 (0x200) at its first byte.
 extern u8 gMapLayerData[];
 
+/// The map's collision shapes, 16 KB of EWRAM at 0x0202c000: 4-byte entries
+/// that MapCell.attributeB indexes.
 extern u8 gMapCollision[];
 
+/// 32 KB of EWRAM at 0x02038000 holding background tiles, such as the world
+/// map's char blocks 2 and 3, which Map_ShowBg1FromBuffer copies back after
+/// the still view. The EWRAM pool's limit, 0x02040000, lies past it, so the
+/// pool's blocks can reach these bytes.
 extern u8 gBgTileBuffer[];
 
+/// Heap slot 7 under its own name, which no code reads; the world map keeps
+/// its struct MapFrameWork in the slot.
 extern u8 *gMapAnimationPages;
 
 #endif

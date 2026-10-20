@@ -5,7 +5,9 @@
 /// Song and sound effect ids, indices into gSound_SongTable. MUS_ ids are
 /// music and SE_ ids sound effects, as their sequences in sound/sequence are
 /// named. A sound whose meaning is shown has a name; the others keep their
-/// number.
+/// number. AudioCommand_Play tests the controls 17 and 0x121 first, then the
+/// ranges: from 100 on a song table player, 80 to 99 fanfares, below that
+/// music, where 18 is also a control (audio_engine_symbols.h).
 
 #define MUS_000 0
 #define MUS_001 1
@@ -24,9 +26,9 @@
 #define MUS_014 14
 #define MUS_015 15
 #define MUS_016 16
-#define MUS_017 17
-#define MUS_018 18
-#define MUS_019 19
+#define MUS_017 17 ///< not a song: fades the music out (AUDIO_CUE_FADE_BGM)
+#define MUS_018 18 ///< not a song: keeps the music (AUDIO_CUE_KEEP_BGM)
+#define MUS_019 19 ///< a song with no tracks: silence
 #define MUS_020 20
 #define MUS_021 21
 #define MUS_022 22
@@ -279,7 +281,7 @@
 #define SE_286 286
 #define SE_287 287
 #define SE_288 288
-#define SE_289 289
+#define SE_289 289 ///< not a sound: fades player 3 out (AUDIO_CUE_FADE_SLOT3)
 #define SE_290 290
 #define SE_291 291
 #define SE_292 292

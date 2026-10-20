@@ -37,9 +37,10 @@
 #define TBS_PATCH_LEVEL 0
 #endif
 
-#define TBS_PATCH_1 (TBS_PATCH_LEVEL >= 1)
+#define TBS_PATCH_1 (TBS_PATCH_LEVEL >= 1) ///< every edition but Japanese
+/// German, French, Spanish and Italian.
 #define TBS_PATCH_2 (TBS_PATCH_LEVEL >= 2)
-#define TBS_PATCH_3 (TBS_PATCH_LEVEL >= 3)
-#define TBS_PATCH_4 (TBS_PATCH_LEVEL >= 4)
+#define TBS_PATCH_3 (TBS_PATCH_LEVEL >= 3) ///< French, Spanish and Italian
+#define TBS_PATCH_4 (TBS_PATCH_LEVEL >= 4) ///< Spanish and Italian
 
 #endif

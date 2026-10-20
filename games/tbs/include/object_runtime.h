@@ -11,6 +11,10 @@
 
 /// One of the 64 field objects in the object pool (heap slot 5): its script,
 /// position, motion toward a target, animation and update callback.
+///
+/// ObjectSystem_Initialize takes the pool with the object system's work
+/// (heap slot 6), so it lives until the next scene change. struct FieldActor
+/// is the same 0x70 bytes as scenes see them.
 struct ObjectRuntime {
   s32 *script; ///< the object script it runs; null when the object is free
   s16 step;    ///< the script cursor, in words
@@ -81,7 +85,10 @@ STATIC_ASSERT(offsetof(struct ObjectRuntime, collisionFlags) == 0x59);
 STATIC_ASSERT(offsetof(struct ObjectRuntime, wait) == 0x5e);
 STATIC_ASSERT(offsetof(struct ObjectRuntime, footprintSide) == 0x66);
 
-enum { OBJECT_SNAPSHOT_CAPACITY = 32, OBJECT_SNAPSHOT_EMPTY = 255 };
+enum {
+  OBJECT_SNAPSHOT_CAPACITY = 32, ///< actors a snapshot keeps
+  OBJECT_SNAPSHOT_EMPTY = 255    ///< a free slot, and the end of the list
+};
 
 /// Actors kept across a battle or a saved scene, with parallel sprite state.
 /// The slot list ends in OBJECT_SNAPSHOT_EMPTY unless every entry is filled.
@@ -100,6 +107,10 @@ STATIC_ASSERT(offsetof(struct ObjectTableSnapshot, spriteFlags) == 0xe40);
 STATIC_ASSERT(offsetof(struct ObjectTableSnapshot, priorities) == 0xe60);
 STATIC_ASSERT(sizeof(struct ObjectTableSnapshot) == 0xe80);
 
+/// The one snapshot, in EWRAM outside the heap so that it outlives the scene
+/// change into and out of a battle. ObjectTable_Snapshot fills it before a
+/// random battle and when saving; ObjectTable_Restore puts the actors back
+/// when the party returns keeping its position (FLAG_KEEP_PARTY_POSITION).
 extern struct ObjectTableSnapshot gObjectSnapshots;
 
 #endif

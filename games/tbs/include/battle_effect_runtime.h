@@ -11,9 +11,12 @@
 #include "static_assert.h"
 #include "palbuf.h"
 
-/// An actor's animated sprite, as far as the pointer to its sprite id.
+/// An actor's animated sprite (struct AnimationObject), as far as the pointer
+/// to its sprite id.
 struct BattleAnimationState {
-  u8 unk00[0x28];
+  u8 unk00[0x28]; ///< AnimationObject's fields before its layers
+  /// AnimationObject.entries[0], its first layer, whose first halfword is the
+  /// sprite id it shows (AnimationEntry.animId); null for none.
   s16 *value28;
 };
 
@@ -30,18 +33,21 @@ struct BattleRenderObject {
   u8 unk3c[4];
   s32 unk40;
   u8 unk44[0x0c];
-  struct BattleAnimationState *animation;
-  u8 kind;
+  struct BattleAnimationState *animation; ///< ObjectRuntime.animation
+  u8 kind; ///< ObjectRuntime.animationKind: 1 for one animated sprite
 };
 
 /// A speaker definition, a row of gBattleFx_DefinitionTable: a sprite, its
-/// portrait (0xff for none) and the flags that choose its idle line.
+/// voice (0xff for none) and the flags that choose its idle line.
 struct BattleEffectEntry {
-  u16 id;
+  u16 id; ///< the sprite id
+  /// The first of its four voice blip sounds, less 256: a message plays sound
+  /// 256 + value as it types (BattleFx_GetResourceId); 0xff for none.
   u8 value;
-  u8 flags;
+  u8 flags; ///< choose its line when it has nothing to say (BattleFx_GetFlags)
 };
 
+/// The colour buffer, heap slot HEAP_SLOT_PALETTE_BUFFER under its own name.
 extern struct BattleEffectBuffers *gPaletteBufferWork;
 
 #endif

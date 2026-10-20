@@ -12,21 +12,28 @@
 #include "battle_session.h"
 
 /// One OAM entry in a sprite list: the arrow that waits for the player to
-/// advance a battle message.
+/// advance a battle message. The playback pushes it each frame it waits
+/// (Runtime_PushSlotEntry), and the three halfwords after the link are OAM
+/// attributes 0 to 2 as bit-fields.
 struct BattlePromptSprite {
+  /// The depth slot's next entry, set by Runtime_PushSlotEntry.
   struct BattlePromptSprite *next;
-  u16 y : 8; ///< pixels
-  u16 flags : 8;
-  u16 x : 9; ///< pixels
+  u16 y : 8;     ///< pixels; bobs with a sine of the frame count
+  u16 flags : 8; ///< attribute 0's high byte: 0xa0, a tall 256-colour sprite
+  u16 x : 9;     ///< pixels
+  /// Attribute 1's flip and size bits; 0, which with the tall shape is 8 by
+  /// 16 pixels.
   u16 size : 7;
-  u16 tile : 10;
+  u16 tile : 10; ///< the arrow frame's VRAM tile, reloaded each frame
+  /// Attribute 2's priority (bits 1..0) and palette (bits 5..2); 0 here.
   u16 palette : 6;
   u16 unk0a; ///< cleared with the tile word each frame; not named
 };
 
 struct UiWindow;
 
-/// The battle message's text channel, as far as its offset in the window.
+/// The battle message's text channel, as far as its offset in the window:
+/// the advance arrow is drawn at the window's corner plus this offset.
 struct BattleDisplayOffset {
   s32 unk00; ///< not named by TBS code
   u16 x;     ///< 1/256 pixels
@@ -44,12 +51,15 @@ struct BattleDisplayWork {
 STATIC_ASSERT(sizeof(struct BattleDisplayOffset) == 8);
 STATIC_ASSERT(sizeof(struct BattleDisplayWork) == 12);
 STATIC_ASSERT(offsetof(struct BattleDisplayWork, marked) == 8);
+
+/// The battle message display, in heap slot 37, which Battle_RunEncounter
+/// takes and zeroes for the battle.
 extern struct BattleDisplayWork *gBattleDisplayWork;
 
 /// The battle event queue and the state of its playback: the phase, the event
 /// playing and the advance arrow.
 struct BattleEventState {
-  struct BattleEventQueue queue;
+  struct BattleEventQueue queue; ///< the action's events, in play order
   s32 phase;      ///< enum BattlePlaybackPhase, or a message phase
   s32 eventIndex; ///< the next queued event to play
   s32 timer;      ///< frames to wait, or frames waited for the advance key
@@ -66,8 +76,12 @@ struct BattleEventState {
 enum { BATTLE_ENEMY_CAPACITY = 6, BATTLE_ACTION_CAPACITY = 20 };
 
 /// The battle's own work: its enemies, units and their objects, the turn's
-/// actions, the spoils, the background palette, the plan and the events. It
-/// lives in the HEAP_SLOT_BATTLE work slot.
+/// actions, the spoils, the background palette, the plan and the events.
+///
+/// It lives in the HEAP_SLOT_BATTLE work slot: Battle_RunEncounter takes and
+/// zeroes it, sets promptSlot to -1 and enemyGroup, and the next scene change
+/// clears the heap. Every battle part reads it through gBattleWork, and the
+/// battle effects read its background id and palette.
 struct BattleWork {
   s32 enemyGroup;     ///< the encounter's enemy formation
   s16 spriteSlots[6]; ///< the unit in each enemy sprite slot, 0 when free
@@ -102,13 +116,18 @@ struct BattleWork {
   s32 promptSlot; ///< resource entry of the advance arrow's tiles; -1 for none
   s16 partyUnits[7];                       ///< ends with BATTLE_UNIT_LIST_END
   s16 enemyIds[BATTLE_ENEMY_CAPACITY + 1]; ///< ends with BATTLE_UNIT_LIST_END
+  /// The units' battle objects, reached through placement (BattleObjGet).
   struct BattleObj slots[14];
-  /// Each unit's index in slots, enemies from 8; 0xff for none.
+  /// Each unit's index in slots, indexed by party unit id (0 to 7), or 8 + n
+  /// for enemy unit 0x80 + n: a party unit's place in the active party, an
+  /// enemy's own 8 + n; 0xff for a party unit with no object.
   u8 placement[14];
   u8 unk2ea[2]; ///< not named by TBS code
   /// The actions chosen for the turn.
   struct BattleActionRecord actions[BATTLE_ACTION_CAPACITY];
   u8 unk42c[0x104]; ///< not named by TBS code
+  /// What the defeated enemies leave; spoils.defeated, their count, is also
+  /// what Battle_RunEncounter returns after a win or a broken link.
   struct BattleSpoils spoils;
   u16 palette[128];  ///< the backdrop's colours, before scaling
   s32 brightness;    ///< the backdrop's brightness, 16.16, 0x10000 full
@@ -117,6 +136,7 @@ struct BattleWork {
   u16 highlightStep; ///< index into gBattleFx_HighlightBlendRamp
   u16 highlightMode; ///< nonzero while the units are highlighted
   u8 unk652[2];      ///< not named by TBS code
+  /// The action being carried out, as BattleCommand_BuildPlan lays it out.
   struct BattlePlan plan;
   struct BattleEventState events;
   /// A value Runtime_AdjustDebugValueWithButtons edits with the d-pad while
@@ -142,6 +162,7 @@ STATIC_ASSERT(offsetof(struct BattleWork, events) == 0x6b8);
 STATIC_ASSERT(offsetof(struct BattleEventState, phase) == 0x148);
 STATIC_ASSERT(offsetof(struct BattleEventState, flags) == 0x16c);
 
+/// The battle's work: gWorkSlot[HEAP_SLOT_BATTLE] under its own name.
 extern struct BattleWork *gBattleWork;
 
 #endif

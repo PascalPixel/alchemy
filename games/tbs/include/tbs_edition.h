@@ -6,12 +6,20 @@
 
 #include "version.h"
 
+// Lunpa Fortress's guard room fades in after its battle through a window
+// transition: the ellipse around the leader (mode 9) in Japanese, random bars
+// (mode 0) in the others.
 #if !TBS_PATCH_1
 #define LUNPA_RETURN_TRANSITION_VARIANT 9
 #else
 #define LUNPA_RETURN_TRANSITION_VARIANT 0
 #endif
 
+// The window renderer's work (struct UiRenderWork) is laid out anew outside
+// Japanese: 8 windows instead of 12, and a text ring of 512 codes instead of
+// 256. With it change the debug menus' columns, two icon menus' widths, and
+// the first enemy name suffix's character code (65 in Japanese, which has 26
+// suffixes; 49 in the others, which have 9).
 #if !TBS_PATCH_1
 #define RENDER_DIRTY_OFFSET 0xF33
 #define RENDER_MODE_OFFSET 0xF34
@@ -82,6 +90,9 @@
 
 #define MENU_TEXT_Y 60
 
+// The European editions' Colosso lettering keeps 192 bytes of palettes
+// before its tiles instead of 160, and the link lobby's opponent names take up
+// to 8 letters of prefix, then a space, instead of 5.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define COLOSSO_PALETTE_BYTES 192
@@ -91,6 +102,8 @@
 #define LOBBY_PREFIX_LIMIT 4
 #endif
 
+// The Kalay and Tolbi docks' ticket counter: its coins window, wider in the
+// European editions, and where the number sits in it.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define TICKET_COUNTER_WINDOW_X 18
@@ -106,6 +119,9 @@
 #endif
 #endif
 
+// The menus' layout: the shop's sell and repair price window, the help line
+// under the item and Psynergy menus, and the Status menu's switch help, page
+// rows and row count, which the localized editions widen or rearrange.
 #if !TBS_PATCH_1
 #define SHOP_LIST_X 16
 #define SHOP_LIST_WIDTH 14
@@ -129,6 +145,7 @@
 #define MENU_ROW_COUNT 8
 #endif
 
+// The shop's buying screen: the coins and price windows' widths.
 #if !TBS_PATCH_1
 #define SHOP_MONEY_WIDTH 11
 #define SHOP_PRICE_WIDTH 14
@@ -140,6 +157,7 @@
 #define SHOP_PRICE_WIDTH 15
 #endif
 
+// The window that announces a Djinni joining, wider in Italian.
 #if (LANGUAGE == LANGUAGE_ITALIAN)
 #define DJINN_JOIN_X 1
 #define DJINN_JOIN_WIDTH 28
@@ -148,6 +166,7 @@
 #define DJINN_JOIN_WIDTH 26
 #endif
 
+// The options screen's layout: its window, sliders, icons and setting columns.
 #if !TBS_PATCH_1
 #define OPTION_WINDOW_X 2
 #define OPTION_WINDOW_WIDTH 26
@@ -170,6 +189,7 @@
 #endif
 #endif
 
+// Where the item menu puts its "in stock" label after the count.
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define STOCK_LABEL_X 32
 #elif (LANGUAGE == LANGUAGE_SPANISH)
@@ -180,6 +200,7 @@
 #define STOCK_LABEL_X 24
 #endif
 
+// The reel game: its title's letters and where they start (nine in Spanish).
 #if (LANGUAGE == LANGUAGE_SPANISH)
 #define REEL_TITLE_LETTERS 9
 #define REEL_TITLE_X 8
@@ -188,6 +209,7 @@
 #define REEL_TITLE_X 24
 #endif
 
+// The reel game's help window, and the VRAM its jackpot and title tiles use.
 #if TBS_PATCH_1
 #define REEL_HELP_WINDOW_X 2
 #define REEL_HELP_WINDOW_WIDTH 26
@@ -202,6 +224,8 @@
 #define REEL_TITLE_TILES 0x380
 #endif
 
+// The reel game's prompt windows (stop, all held, start, hold, release),
+// placed and sized for each language's words.
 #if !TBS_PATCH_1
 #define REEL_STOP_X 23
 #define REEL_STOP_WIDTH 7
@@ -250,6 +274,9 @@
 #define REEL_RELEASE_X 23
 #define REEL_RELEASE_WIDTH 7
 #endif
+// The reel game's count of Game Tickets left after the bet: three digits in
+// French, Italian and Spanish, which also show the hold hint after every spin
+// but the fourth and last.
 #if (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN) ||         \
     (LANGUAGE == LANGUAGE_SPANISH)
 #define REEL_COIN_DIGITS 3
@@ -261,6 +288,8 @@
 #define REEL_HINT_BEFORE_LAST_SPIN 0
 #endif
 
+// The first area name message, for the place name shown on entering a new
+// place (UiTimedNotice_Create).
 #if !TBS_PATCH_1
 #define RENDER_RESOURCE_BASE 0x9D4
 #elif (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||       \
@@ -270,6 +299,7 @@
 #define RENDER_RESOURCE_BASE 0x99B
 #endif
 
+// The Status menu's Psynergy list: its range icon tiles, rows and columns.
 #if !TBS_PATCH_1
 #define RANGE_ICON_TILE 0xf200
 #define LIST_FIRST_ROW 1
@@ -290,6 +320,7 @@
 #define LIST_EMPTY_Y 17
 #endif
 
+// Where the save screen's file list puts the leader's name.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define SAVE_SLOT_NAME_X 6

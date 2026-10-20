@@ -30,9 +30,10 @@ STATIC_ASSERT(offsetof(struct AffineTransform, scaleY) == 2);
 STATIC_ASSERT(offsetof(struct AffineTransform, angle) == 4);
 STATIC_ASSERT(sizeof(union AffineMatrix) == 8);
 
-/// The matrices handed out this frame (up to 32), copied into OAM with the
-/// sprites
+/// Matrices handed out this frame (AffineMatrix_BuildForEffect), up to 32;
+/// Render_ResetFrame sets it back to 0 after each VBlank.
 extern u8 gObjAffineCount;
+/// This frame's 32 matrices, copied into OAM with the sprites.
 extern union AffineMatrix gObjAffineMatrices[];
 
 #endif

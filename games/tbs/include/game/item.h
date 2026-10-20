@@ -16,19 +16,25 @@ enum InventoryEncoding {
   ITEM_ID_MASK = 0x1ff,
   INVENTORY_EQUIPPED = 0x200,
   INVENTORY_BROKEN = 0x400,
+  /// The item id with its broken and equipped bits, all but the quantity.
   INVENTORY_ENTRY_MASK = 0x7ff,
+  /// The quantity field holds the count less one; a stack (ITEM_STACKABLE)
+  /// grows to 30 (Inventory_AddItem).
   INVENTORY_QUANTITY_SHIFT = 11,
-  INVENTORY_QUANTITY_STEP = 0x800,
+  INVENTORY_QUANTITY_STEP = 0x800, ///< one more in the stack
   INVENTORY_QUANTITY_MASK = 0xf800,
-  INVENTORY_SLOTS = 15
+  INVENTORY_SLOTS = 15 ///< BattleUnit.inventory's entries
 };
 
+/// The bits of ItemDefinition.flags.
 enum ItemFlags {
-  ITEM_CURSED = 1,
+  ITEM_CURSED = 1, ///< equipping it curses the wearer (BattleUnit.restraint)
+  /// Once equipped it cannot be taken off, or dropped while worn.
   ITEM_CANNOT_UNEQUIP = 2,
   ITEM_RARE = 4, ///< selects the shop's rare item offers
+  /// Never dropped; first among a battle's drops kept (BattleSpoils_RankItem).
   ITEM_INDISPENSABLE = 8,
-  ITEM_STACKABLE = 0x10
+  ITEM_STACKABLE = 0x10 ///< kept in one inventory entry with a quantity
 };
 
 /// What using an item costs (struct ItemDefinition's useType).
@@ -71,7 +77,7 @@ enum ItemEffectKind {
   ITEM_EFFECT_SCALE_AGILITY,
   ITEM_EFFECT_SCALE_LUCK,
   /// Element power and resistance, in the element order Venus, Mercury, Mars,
-  /// Jupiter
+  /// Jupiter.
   ITEM_EFFECT_ADD_VENUS_POWER,
   ITEM_EFFECT_ADD_MERCURY_POWER,
   ITEM_EFFECT_ADD_MARS_POWER,

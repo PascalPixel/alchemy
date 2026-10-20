@@ -21,9 +21,12 @@ enum BattlePlaybackPhase {
 };
 
 /// The battle event queue: up to 64 events, each an opcode (enum
-/// BattleEventOpcode) and one operand, in the order they play.
+/// BattleEventOpcode) and one operand, in the order they play. It lives in
+/// BattleWork.events.queue: BattleEvPush appends to it and playback reads it.
 struct BattleEventQueue {
-  u8 opcodes[BATTLE_EVENT_CAPACITY];
+  u8 opcodes[BATTLE_EVENT_CAPACITY]; ///< enum BattleEventOpcode
+  /// Each event's operand: a unit, item or ability id, a number, a message or
+  /// a sound.
   u32 operands[BATTLE_EVENT_CAPACITY];
   s32 targetIndex; ///< the plan's next target to resolve
   s32 count;       ///< events queued

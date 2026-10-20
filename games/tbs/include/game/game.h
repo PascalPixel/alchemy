@@ -17,29 +17,64 @@
 struct ItemDefinition;
 struct SummonDefinition;
 
+/// The 324 items by item id (items.tsv), read through Item_GetDirect (Item_Get
+/// in the overlays).
 extern struct ItemDefinition gItem_DefinitionTable[];
+/// The 16 summons (summons.tsv) by summon id, the numbers gSummon_OrderList
+/// lists; read through SummonDefinition_Get.
 extern const struct SummonDefinition gSummon_DefinitionTable[];
 
 struct BattleAct;
 struct EnemyDefinition;
 struct PresetValues;
 
+/// The 519 abilities by ability id (actions.tsv).
 extern struct BattleAct gBattleAction_DefinitionTable[];
+/// Each character's lighthouse group: 0 for Isaac, Garet, Felix and Jenna,
+/// whose PP a lit Venus or Mars Lighthouse restores; 1 for the others, by
+/// Mercury or Jupiter (Party_RestorePpOfLitElements).
 extern const u8 gCharacter_ElementGroupTable[];
+/// The experience each character needs for levels 1 to 99, 99 words a
+/// character (Unit_GetExperienceForLevel).
 extern u32 gCharacter_LevelExpTable[];
+/// The Djinni sprite of each element, Venus to Jupiter (90 to 93), whose
+/// picture Djinn_ShowJoinedMessage shows as the portrait.
 extern s16 gDjinn_ElementSprites[];
+/// The class series by a character's strongest and second element, a 4 by 4
+/// table read as [strongest * 4 + second] (Class_GetSeries).
 extern s32 gOwner_FourColumnValues[];
+/// The 80 Djinn, 20 of each element in element order (djinn.tsv).
 extern const struct DjinnDefinition gDjinn_DefinitionTable[];
+/// Pairs of an element difference (power less resistance) and what it adds to
+/// the multiplier in 256ths (256 = 1x), from 200 (+256) down to -200 (-256);
+/// Battle_GetElementMultiplier interpolates and adds 256.
 extern const s16 gElement_PowerResistCurve[5][2];
+/// The 165 enemies (enemies.tsv).
 extern const struct EnemyDefinition gEnemy_Definitions[];
+/// The enemies' element presets (elempre.tsv): attack element, levels and
+/// base power and resistance.
 extern struct PresetValues gEnemy_ElementPresetTable[];
+/// The game flags, 4096 bits in 512 bytes, saved with the game: flag n is bit
+/// n & 7 of byte GAME_FLAG_BYTE(n).
 extern u8 gGameFlagBytes[];
+/// The party's equipment put aside while the Colosso takes it away: a
+/// sentinel, four 15-slot inventories, the two shortcuts and the party order.
 extern u16 gInventorySnapshot[];
+/// How many of each rare item the shops may still sell, 0 to 99, by counter
+/// number (gItem_ArtifactSlotTable; ItemCounter_Adjust).
 extern u8 gItemCounters[128];
+/// The 64-byte save stamp, in the first half of the save buffer, that the link
+/// lobby writes into the current file alone.
 extern u8 gSaveStamp[];
+/// Each item's rare item counter number plus one, or 0 for an ordinary item
+/// (Item_AdjustCounter).
 extern u8 gItem_ArtifactSlotTable[];
+/// Each party member's sprite, by character: Felix's is 35.
 extern s16 gCharacter_SpriteTable[];
+/// Each party member's sprite during the prologue (FLAG_CHILDHOOD): Isaac 18,
+/// Garet 19, Felix 36, Jenna 48.
 extern s16 gCharacter_ChildSpriteTable[];
+/// The summons in menu order, 0 to 15 (Summon_ListLearned).
 extern u8 gSummon_OrderList[16];
 s32 Audio_Check(void);
 

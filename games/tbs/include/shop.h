@@ -15,6 +15,10 @@
 
 /// A shop's work: its windows, the party members' icons, the stock, the cursor
 /// and its icons, and the particle effects.
+///
+/// It is the HEAP_SLOT_MENU block, the same 0xa70 bytes as the field menu's
+/// work: Shop_InitializeCursorWork takes and clears it as a shop, the inn,
+/// the sanctum or the item picker opens, and Shop_ReleaseCursorWork frees it.
 struct ShopRuntime {
   u8 unk000[0x0c];              ///< not named by TBS code
   struct UiWindow *moneyWindow; ///< the coins window

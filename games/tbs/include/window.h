@@ -12,14 +12,22 @@
 #include "uiflow.h"
 #include "output.h"
 
+/// Render outputs in the shared pool: every sprite the windows show at once,
+/// glyphs, icons and portraits together.
 enum { UI_OUTPUT_COUNT = 64 };
 
 /// The window system's work: the windows' tilemap, the windows, the three text
 /// channels, the 64 render outputs, and the decoded message and its arguments.
+///
+/// It is heap slot HEAP_SLOT_WINDOW (gWindowWork), which
+/// UiWork_InitializeWithResourceCounters takes for the field and
+/// UiWork_Initialize for battle; it lasts until the next scene change. Its
+/// size and offsets differ between Japanese and the other editions
+/// (tbs_edition.h's RENDER_ values).
 struct UiRenderWork {
   u16 tilemap[640]; ///< the windows' BG tilemap, 32 by 20 tiles
-  struct UiWindow windows[WINDOW_COUNT];
-  struct UiChannelSlot channels[3];
+  struct UiWindow windows[WINDOW_COUNT]; ///< 12 in Japanese, 8 in the others
+  struct UiChannelSlot channels[3]; ///< the text channels, NULL work when free
   struct RenderOutput outputs[UI_OUTPUT_COUNT];
   struct RenderOutputList freeOutputs; ///< the outputs not in any window
   /// Per text tile (tiles 0x80 to 0xFF, then 0x200 to 0x27F): bit 0 once
@@ -117,6 +125,7 @@ STATIC_ASSERT(offsetof(struct UiRenderWork, spacingAfter) ==
               (RENDER_BUSY_OFFSET + 2));
 STATIC_ASSERT(sizeof(struct UiRenderWork) == RENDER_WORK_SIZE);
 
+/// The window renderer's work, heap slot HEAP_SLOT_WINDOW under its own name.
 extern u8 *gWindowWork[];
 
 #endif

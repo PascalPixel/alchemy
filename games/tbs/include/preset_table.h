@@ -10,8 +10,11 @@
 /// attacks with, its level in each element, and its base power and resistance
 /// in each element as packed halfword pairs.
 struct PresetValues {
-  s32 first;
+  s32 first; ///< the element it attacks with (Enemy_GetAttackElement)
+  /// Its level in each element; Unit_GetElementLevels returns ten times each.
   u8 digits[4];
+  /// Each element's struct BattleElementStats as one word: power in the low
+  /// halfword, resistance in the high (Unit_CalcBaseElements).
   s32 values[4];
 };
 

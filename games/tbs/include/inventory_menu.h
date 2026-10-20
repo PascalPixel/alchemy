@@ -17,7 +17,8 @@ struct AnimationObject;
 struct UiWindow;
 
 /// The item menu's work, in the HEAP_SLOT_MENU work slot: its windows, the
-/// party figures, the items listed and the two choices a command makes.
+/// party figures, the items listed and the two choices a command makes. The
+/// menu takes the slot as it opens and frees it as it closes.
 struct InventoryMenuState {
   u8 unk000[8];      ///< not named by TBS code
   s32 selectedOwner; ///< the party member chosen
@@ -70,8 +71,8 @@ struct InventoryMenuState {
   u8 unk224[0x36];    ///< not named by TBS code
   s16 messageOffset;  ///< the item use's result, after MsgItemUseResult
   s8 equipPreview;    ///< 1 while the stats preview a removal, not an equip
-  u8 listMode;        ///< the command chosen last; 0xff for none
-  u8 unk25e[2];       ///< not named by TBS code
+  u8 listMode;  ///< the command chosen last (ItemMenuCommand); 0xff for none
+  u8 unk25e[2]; ///< not named by TBS code
   s8 selectedIndexByOwner[8]; ///< each member's entry chosen last
   u8 mode;          ///< not named through this struct; PsynergyMenuState.mode
   u8 unk269[0x129]; ///< not named by TBS code
@@ -111,10 +112,12 @@ STATIC_ASSERT(offsetof(struct InventoryMenuState, mode) == 0x268);
 STATIC_ASSERT(offsetof(struct InventoryMenuState, resourceSlots) == 0x392);
 STATIC_ASSERT(sizeof(struct InventoryMenuState) == 0x398);
 
+/// The item command grid, by row * 3 + column: Use, Equip and Details on top,
+/// Give, Remove and Drop below (ItemMenu_ChooseCommand).
 enum ItemMenuCommand {
   ITEM_COMMAND_USE,
   ITEM_COMMAND_EQUIP,
-  ITEM_COMMAND_INSPECT,
+  ITEM_COMMAND_INSPECT, ///< Details
   ITEM_COMMAND_GIVE,
   ITEM_COMMAND_REMOVE,
   ITEM_COMMAND_DROP

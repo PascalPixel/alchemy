@@ -13,6 +13,8 @@ struct SpriteEntry;
 
 /// A unit's place on the battlefield: its sprite object, resources and
 /// animations, its anchor spot and scale, and the conditions it shows.
+/// BattleWork.slots holds the 14, reached by unit id through BattleObjGet;
+/// BattleObjMake fills one in when the unit is placed.
 struct BattleObj {
   struct MotionObject *object; ///< NULL once released
   u16 resource;                ///< the unit's sprite
@@ -21,8 +23,10 @@ struct BattleObj {
   u16 effect;    ///< an effect sprite drawn with the unit
   s32 anchorX;   ///< 16.16 fixed-point pixels
   s32 anchorZ;   ///< 16.16 fixed-point pixels
-  s32 palette;   ///< the unit sprite's palette
-  s32 scale;     ///< 16.16 fixed point, 0x10000 full size
+  /// The unit sprite's SpriteColorMode: an enemy class's own, 1 for a
+  /// character on the enemy side (a link opponent), else 0.
+  s32 palette;
+  s32 scale;                          ///< 16.16 fixed point, 0x10000 full size
   u16 activeConditions;               ///< a bit per status with an icon (ICON_)
   u8 selectedCondition;               ///< the status whose icon is shown
   s8 cycleTimer;                      ///< frames until the next status icon
@@ -50,7 +54,8 @@ enum BattleCommand {
 };
 
 /// A unit's chosen action for the turn: its command, the command's parameter,
-/// its target and range, and its priority in the turn order.
+/// its target and range, and its priority in the turn order. BattleWork.actions
+/// holds the turn's records.
 struct BattleActionRecord {
   s16 unitId;
   u16 slot;      ///< in a link battle, unitId as the opponent knows it
@@ -63,11 +68,14 @@ struct BattleActionRecord {
 };
 
 /// A battle's spoils so far: coins, experience, enemies defeated and up to
-/// four items.
+/// four items. BattleWork.spoils, cleared as the battle starts and added to as
+/// each enemy falls.
 struct BattleSpoils {
   s32 coins;
   s32 experience;
   s32 defeated; ///< enemies defeated
+  /// Item ids dropped, 0 for an empty place; each id once, and a fifth drop
+  /// replaces the lowest ranked (BattleSpoils_RankItem) if it ranks higher.
   u16 items[4];
 };
 

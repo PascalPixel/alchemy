@@ -46,7 +46,9 @@ struct DjinnRecoveryList {
   s32 count; ///< entries in use
 };
 
-/// One side's Djinn recovery table, as Djinn_GetRecoveryTable returns it.
+/// One side's Djinn recovery table, as Djinn_GetRecoveryTable returns it: the
+/// party's inside gGameState from its byte 12, the enemies' over battle unit
+/// 0x83's record.
 struct DjinnRecoveryTable {
   u8 unk00[8]; ///< its first word is BattleSummonState's availableMask
   struct DjinnRecoveryList list;

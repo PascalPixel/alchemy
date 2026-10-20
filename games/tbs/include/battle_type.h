@@ -8,7 +8,12 @@
 #include "static_assert.h"
 #include "battle_unit.h"
 
-enum { BATTLE_TARGET_CAPACITY = 14, BATTLE_PLAN_SIZE = 0x64 };
+enum {
+  /// Targets a plan can hold: as many units as BattleWork.slots holds, 8
+  /// party places and 6 enemies.
+  BATTLE_TARGET_CAPACITY = 14,
+  BATTLE_PLAN_SIZE = 0x64
+};
 
 /// BattlePlan.targetCritical: the critical hit rolled for each target.
 enum BattleCritical {

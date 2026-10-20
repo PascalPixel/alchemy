@@ -40,21 +40,25 @@ union RenderTableValue {
   } half;
 };
 
-/// Attributes zero through two copied to OAM, plus one unused word.
+/// Attributes zero through two copied to OAM, plus the halfword after them.
 struct RenderOam {
-  u16 y : 8;
-  u16 affineMode : 2;
-  u16 objectMode : 2;
+  u16 y : 8;          ///< screen pixels
+  u16 affineMode : 2; ///< 0 plain, 1 affine, 3 affine at double size
+  u16 objectMode : 2; ///< 0 normal, 1 semi-transparent, 2 OBJ window
   u16 mosaic : 1;
-  u16 palette256 : 1;
-  u16 shape : 2;
-  u16 x : 9;
+  u16 palette256 : 1; ///< 256 colours instead of a 16-colour palette
+  u16 shape : 2;      ///< 0 square, 1 wide, 2 tall
+  u16 x : 9;          ///< screen pixels
+  /// The affine matrix; for a plain sprite, 8 mirrors it left to right and 16
+  /// top to bottom.
   u16 matrix : 5;
-  u16 size : 2;
-  u16 index : 10;
+  u16 size : 2;   ///< with shape, the sprite's size
+  u16 index : 10; ///< first sprite tile in VRAM
+  /// 0 to 3: drawn over every background of the same or a larger priority
+  /// number.
   u16 priority : 2;
-  u16 palette : 4;
-  u16 high;
+  u16 palette : 4; ///< 16-colour palette
+  u16 high;        ///< not named by TBS code
 };
 
 /// A render output: a sprite in a window's output list (a character, an icon

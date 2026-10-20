@@ -8,10 +8,13 @@
 #include "edition.h"
 #include "static_assert.h"
 
+/// The record sizes the STATIC_ASSERTs below hold the structs to, and the
+/// action id's bits in an action list entry.
 enum {
-  BATTLE_ACTION_SIZE = 0x10,
+  BATTLE_ACTION_SIZE = 0x10, ///< bytes in a struct BattleAct
+  /// Bytes in a struct BattleUnit, which the code clears and copies whole.
   BATTLE_UNIT_SIZE = 0x14c,
-  OWNER_ACTION_ID_MASK = 0x3fff
+  OWNER_ACTION_ID_MASK = 0x3fff ///< OwnerActionSlot.encodedAction's action id
 };
 
 /// An entry in a unit's action list: the action's id (OWNER_ACTION_ID_MASK)

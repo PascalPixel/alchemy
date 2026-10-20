@@ -20,7 +20,11 @@ extern const u16 gSound_FrameLengths[];
 extern const u8 gSound_NoisePitchCodes[];
 extern u32 gSound_PcmFrequencySteps[];
 extern u8 gSound_PcmPitchCodes[];
+/// The sound engine's work, which Audio_Initialize sets up through
+/// AudioEngine_Initialize.
 extern struct SoundWork gSound_Work;
+/// The 16 work bytes every music player shares (SoundPlayer.workBytes), so
+/// one song can test what another has set (MusicTrack_OperateWorkByte).
 extern u8 gSound_WorkBytes[];
 void Audio_ResumeAllPlayers(void);
 void Audio_ResumePlayer(struct SoundPlayer *player);
@@ -59,8 +63,15 @@ void Sound_Mixer(void);
 /// The build stamp System_CopyBuildStamp copies to IWRAM at power-on: twelve
 /// digits and a zero word, at the bottom of the frame-wait stack.
 extern s32 gBuildStamp[];
+/// Nonzero once AUDIO_CUE_FADE_BGM has started the music's fade; further fade
+/// cues are ignored until the next music clears it.
 extern u8 gMusicFadeRequested;
+/// Cleared by the audio test, AudioTest_RunParameterController (reached only
+/// through a sound far-call veneer), which restarts a 20-frame timer when it
+/// finds it set; no other code names it (see the XXX there).
 extern s32 gSoundClipFlag;
+/// An EWRAM byte Audio_InitializeRuntimeDefaults clears and nothing else
+/// names.
 extern u8 gEwram_Data1;
 void Audio_Initialize(void);
 void Audio_PlaySound(u16 id);

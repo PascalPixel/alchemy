@@ -17,7 +17,7 @@ struct BattleUnit;
 struct OwnerActionSlot;
 
 /// The work of the member chooser and the Status menu, in the HEAP_SLOT_MENU
-/// work slot.
+/// work slot, which each takes as it opens and frees before it returns.
 struct CharacterMenuState {
   u8 unk000[8];      ///< not named by TBS code
   s32 selectedOwner; ///< the party member chosen
@@ -77,12 +77,14 @@ STATIC_ASSERT(offsetof(struct CharacterMenuState, rowObjects) == 0x224);
 STATIC_ASSERT(offsetof(struct CharacterMenuState, rowX) == 0x234);
 STATIC_ASSERT(sizeof(struct CharacterMenuState) == 0x244);
 
+/// The ailments the character menus show, as CharacterMenu_BuildAvailability
+/// fills them: one byte each, nonzero while the member has it.
 enum CharacterAilment {
-  CHARACTER_DOWN,
-  CHARACTER_POISON,
-  CHARACTER_VENOM,
-  CHARACTER_CURSE,
-  CHARACTER_HAUNT,
+  CHARACTER_DOWN,   ///< HP 0; listed only when the caller asks for it
+  CHARACTER_POISON, ///< BattleUnit.poison 1
+  CHARACTER_VENOM,  ///< BattleUnit.poison any other nonzero value
+  CHARACTER_CURSE,  ///< BattleUnit.restraint nonzero
+  CHARACTER_HAUNT,  ///< BattleUnit.haunt nonzero
   CHARACTER_AILMENT_COUNT
 };
 

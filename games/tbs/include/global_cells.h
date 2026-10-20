@@ -9,19 +9,31 @@
 
 struct DisplayTransitionState;
 
+/// The work slots from HEAP_SLOT_MAP on: gMapWork[0] is the map's work
+/// (struct MapScrollWork, or the world map's struct PerspectiveWork).
 extern void *gMapWork[];
+/// The menu work, heap slot HEAP_SLOT_MENU: each menu screen and the shop
+/// read it through their own struct while they are open.
 extern void *gMenuWork;
 
 // Read work slots in gWorkSlot order through their own names.
 extern void *gFieldBlendWork[];                           ///< From slot 30
 extern struct DisplayTransitionState *gDisplayTransition; ///< Slot 31
-extern s32 *gDisp;        ///< Slot 42: transition timer
+/// Slot 42, which holds the battle's entry transition timer in frames.
+extern s32 *gDisp;
 extern void *gEffectWork; ///< Slot 56: points to a scene-specific structure
 
 // EWRAM buffers
-extern struct EffectStep gMapCellBuffer[]; ///< Map cells; battle effects reuse
-                                           ///< this as a particle array.
+/// The map's cells at 0x02010000, 128 by 128 words: 64 KB, so while a map is
+/// loaded they run on through gActorSpriteSlots and gDecodeBuffer. Battle
+/// effects reuse the memory as a particle array.
+extern struct EffectStep gMapCellBuffer[];
+/// 16 KB of EWRAM at 0x0201c000. The map's cells fill it while a map is
+/// loaded, and the world map's still view keeps a copy of 8 KB of char block
+/// 1's tiles in it (WorldMap_BeginStillView).
 extern u8 gDecodeBuffer[];
+/// 16 KB of EWRAM at 0x02018000, where the battle's actor sprite buffers
+/// start, 16 KB a slot; the map's cells fill it while a map is loaded.
 extern u8 gActorSpriteSlots[];
 
 // Link communication

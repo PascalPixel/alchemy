@@ -65,11 +65,16 @@ union FieldObject {
   struct FieldEffect effect;
 };
 
+// The object script commands field effects' scripts are written with: the
+// same commands as objcmd.h's SC_WAIT, SC_POS, SC_LOOP and SC_FREE.
 #define SCRIPT_WAIT(frames) 0, (frames)
 #define SCRIPT_SET_POSITION(x, y, z) 2, (x), (y), (z)
 #define SCRIPT_REPEAT(count, label) 12, (count), (label)
 #define SCRIPT_DELETE 27
 
+/// The flags of a scene's effect spawner (EFFECT_SPAWN in
+/// scene/common/effect_spawn.h): a script number in the low bits and which of
+/// struct EffectOptions' fields to use.
 enum EffectSpawnFlags {
   /// Picks one of gEffectScripts; the object's mode is this plus 1.
   EFFECT_SCRIPT_MASK = 0x0f,

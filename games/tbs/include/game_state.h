@@ -11,6 +11,12 @@
 
 /// The game's state: play time, coins, the scene and the leader's position,
 /// the active party and the options.
+///
+/// It is the one gGameState in EWRAM, right after the 0x200 bytes of game
+/// flags; a save file's checksum covers the 968 words from gGameFlagBytes to
+/// the end of this struct (SaveState_BuildSummaryHeader). A new game sets its
+/// defaults (GameState_InitDefaults), and the field, battle, menus and scenes
+/// read and write it directly.
 struct GameState {
   /// Runtime_GetBuildStampTime's value when the game was last saved; its low
   /// half goes into the file's summary.
@@ -20,7 +26,7 @@ struct GameState {
   /// (Djinn_GetRecoveryTable) starts at byte 4, its first 8 bytes running
   /// over coins.
   u8 unk008[8];
-  s32 coins;
+  s32 coins; ///< 0 to 999999 (Party_AdjustCoins)
   /// The party's Djinn recovery list (struct DjinnRecoveryList), read through
   /// Djinn_GetRecoveryTable; not named by TBS code.
   u8 unk014[0x104];
@@ -33,8 +39,10 @@ struct GameState {
   /// awarded); 8 on the last variant given of each category.
   s8 wonPrizes[0x10];
   u8 unk13c[0x84]; ///< not named by TBS code
+  /// The scene being played: its index in gField_SceneTable (a SceneId_
+  /// symbol), or SCENE_BATTLE or another number above the field scenes.
   s16 scene;
-  s16 entrance;
+  s16 entrance;        ///< the entrance taken; in SCENE_BATTLE, the enemy group
   s16 savedScene;      ///< where a defeat returns to without a defeat point
   s16 savedEntrance;   ///< where a defeat returns to without a defeat point
   s16 defaultScene;    ///< the scene being run, kept as it starts
@@ -46,7 +54,9 @@ struct GameState {
   s16 defeatEntrance; ///< where a defeat returns to; -1 for none
   s16 special;        ///< the battle backdrop chosen for the scene or terrain
   u8 unk1d8[2];       ///< not named by TBS code
-  s16 map;            ///< the scene's map; SceneId_Clear for the world map
+  /// The scene record's map (mapIndex); the world map's is 1, which the
+  /// code compares as (s32)&SceneId_Clear.
+  s16 map;
   s32 x;              ///< 16.16 fixed-point pixels
   s32 y;              ///< 16.16 fixed-point pixels
   s32 z;              ///< 16.16 fixed-point pixels
@@ -59,12 +69,14 @@ struct GameState {
   s32 selectedActor;  ///< the leader: its unit and its actor
   u8 activeOwners[8]; ///< the party in order
   u8 unk200[5];       ///< not named by TBS code
-  u8 paletteGlow[2];  ///< window hue (0 to 24), brightness
+  u8 paletteGlow[2];  ///< window hue (0 to 23), brightness (0 to 14)
   u8 unk207[3];       ///< not named by TBS code
-  u8 speech;          ///< 1 shows speakers' portraits beside their messages
-  u8 unk20b;          ///< 1 on a new game; not read by name in TBS
-  u8 messageSpeed;    ///< 0 to 2; 1 on a new game
-  u8 unk20d[2];       ///< not named by TBS code
+  /// The voice sound option: 1, as on a new game, plays each speaker's voice
+  /// sound as their message types (BattleFx_GetResourceId).
+  u8 speech;
+  u8 unk20b;       ///< 1 on a new game; not read by name in TBS
+  u8 messageSpeed; ///< 0 to 2; 1 on a new game
+  u8 unk20d[2];    ///< not named by TBS code
   /// Set on saving at the end of the game; copied to the file's summary as
   /// sendFlag.
   u8 unk20f;
@@ -90,11 +102,15 @@ struct GameState {
   u8 unk225[5];        ///< not named by TBS code
   u8 idleSleepEnabled; ///< the option, saved from gIdleSleepEnabled
   u8 battleStart;      ///< how the next battle starts (Battle_SetStart)
-  /// Hazardous ground (the Lamakan Desert's heat): every hazardLimit steps the
-  /// party takes hazardDamage (bit 8 a flag, bits 7 to 0 the amount).
+  /// Hazardous ground (the Lamakan Desert's heat): when hazardSteps reaches
+  /// hazardLimit the party takes hazardDamage and the count starts again. A
+  /// fresh entry into a scene, not a return from battle, resets them to 1 HP
+  /// every 16 pixels walked on it; the desert sets 25 percent every 600
+  /// (Field_RunScene, LamakanDesert_Initialize).
   ///@{
-  s16 hazardLimit;
-  s16 hazardMode; ///< 0 counts on hazard cells only; 1 counts every step
+  s16 hazardLimit; ///< pixels walked on hazard cells (mode 0), or frames (1)
+  s16 hazardMode;  ///< 0 counts on hazard cells only; 1 counts every frame
+  /// bits: 8 the amount is a percentage of maximum HP | 7..0 the amount
   s16 hazardDamage;
   s16 hazardSteps; ///< reset on entering a new scene group
   ///@}
@@ -155,6 +171,7 @@ STATIC_ASSERT(offsetof(struct GameState, linkTallies) == 0x2a4);
 STATIC_ASSERT(offsetof(struct GameState, startStamp) == 0x2b8);
 
 #ifndef OWN_gGameState
+/// The game's state (system/ewram.s).
 extern struct GameState gGameState;
 #endif
 

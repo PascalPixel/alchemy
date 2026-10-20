@@ -17,6 +17,7 @@ struct OamUsage {
 STATIC_ASSERT(sizeof(struct OamUsage) == 4);
 STATIC_ASSERT(offsetof(struct OamUsage, limit) == 2);
 
+/// No code in the tree defines or reads it.
 extern struct OamUsage gOamUsage;
 
 #endif

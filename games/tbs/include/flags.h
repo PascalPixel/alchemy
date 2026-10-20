@@ -33,6 +33,7 @@
 /// The next scene keeps the music that is playing; scene.c clears
 /// FLAG_KEEP_MUSIC as it does, and leaves FLAG_KEEP_MUSIC_HELD set.
 #define FLAG_KEEP_MUSIC 0x11a
+/// As FLAG_KEEP_MUSIC, for as long as it is set.
 #define FLAG_KEEP_MUSIC_HELD 0x11b
 #define FLAG_NOT_ON_MAP 0x11c ///< the current place is not on the world map
 /// The leader left through an exit of kind 0x20 (SE_128, animation 26); the
@@ -51,7 +52,8 @@
 #define FLAG_NOTHING_HAPPENS 0x142
 #define FLAG_ITEM_USED_UP 0x143 ///< the item just used is removed afterwards
 /// Retreat is blocked, from Psynergy or an item. It "does not work here".
-/// Cleared on every scene entrance; the scenes that forbid Retreat set it.
+/// Cleared on every normal scene entrance (not a return keeping the party's
+/// position); the scenes that forbid Retreat set it.
 #define FLAG_RETREAT_BLOCKED 0x144
 #define FLAG_ITEM_USE 0x145 ///< the Psynergy comes from an item
 /// No random encounters while set (Encounter_SelectEnemyGroup), unless flag
@@ -63,9 +65,18 @@
 #define FLAG_DEBUG_STEPS_OFF 0x163
 /// Set while the Lure Cap is worn: random encounters come twice as fast.
 #define FLAG_LURE_CAP 0x167
+/// Auto battle: every living unit, party and enemies, makes a plain attack
+/// each round with no command menu (BattlePresentation_BuildSortedUnitEntries).
+/// The debug battle menu sets it, and clears it again for its chooser.
 #define FLAG_AUTO_BATTLE 0x16a
 #define FLAG_CHOOSING_COMMANDS 0x16b ///< set while the commands are chosen
+/// The next battle is a link battle (Battle_RunEncounter); the link lobby sets
+/// it, and every normal scene entrance (not a return keeping the party's
+/// position) clears it.
 #define FLAG_LINK_BATTLE 0x16c
+/// A battle plays the Djinn tutorial: the party strikes first, two tutorial
+/// messages follow each round, and no spoils are handed out. The world map's
+/// scene sets it.
 #define FLAG_DJINN_TUTORIAL 0x16e
 /// With FLAG_DJINN_TUTORIAL set, these two choose the part of the tutorial the
 /// Djinn menu plays: neither, step 1; only the second, step 14; only the first,
@@ -90,8 +101,16 @@
 #define FLAG_SHOP_ARTIFACTS_STOCKED 0x400
 /// Set while the Colosso holds the party's equipment (the inventory snapshot).
 #define FLAG_INVENTORY_SNAPSHOT 0x952
+/// The next field scene starts where the party was, as after a battle: the
+/// scene's flags are not reset, the actors come back from their snapshot, and
+/// the music saved in gGameState.returnCue resumes if there is one (a random
+/// battle clears it, so the scene's own music plays). Field_RunScene clears it
+/// once the scene starts.
 #define FLAG_KEEP_PARTY_POSITION 0x109
+/// The scene shows its place's name once it is on screen; entering a new
+/// place group sets it.
 #define FLAG_SHOW_LOCATION_NAME 0x12f
+/// The next layered map keeps the palette and tiles already loaded, once.
 #define FLAG_KEEP_LAYER_GRAPHICS 0x170
 #define FLAG_SANCTUM_VISIT_PLANNED 0x801
 #define FLAG_SOL_SANCTUM_ENTERED 0x802

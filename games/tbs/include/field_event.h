@@ -29,16 +29,23 @@
 #define STORE_CONST(place) (place)
 #endif
 
+/// 0x78 bytes of EWRAM where scene overlays keep state of their own, such as
+/// Altmiller Cave's rock puzzle. It lies outside the heap, so a scene change
+/// leaves it alone; GameState_InitDefaults clears it for a new game.
 extern u8 gSceneState[];
 
+/// The Colosso race work, heap slot HEAP_SLOT_COLOSSO_RACE under its own name.
 extern u8 *gColossoWork;
 
 #include "frame.h"
 
 #include "field_obj.h"
 
+/// The main loop pass's task key, 0xc80 (SCHEDULER_KEY_MAIN_LOOP): a scene's
+/// per-frame callbacks run once a frame with the field's own.
 enum { TASK_PRIORITY_SCENE = 3200 };
 
+/// Animation numbers of an actor's sprite, for Engine_ActorSetAnimation.
 enum ActorAnimation {
   ANIM_STAND = 1,
   ANIM_WALK = 2,
@@ -46,6 +53,8 @@ enum ActorAnimation {
   ANIM_SHAKE_HEAD = 4
 };
 
+/// Engine_ActorShowEmote: the bubble takes sprite priority 1 instead of its
+/// actor's. The low four bits pick the bubble's animation.
 #define EMOTE_IN_FRONT 0x100
 
 // Speaker bits above the actor id in a message command, as
@@ -56,11 +65,14 @@ enum ActorAnimation {
 #define SPEAKER_WINDOW_ABOVE 0x4000
 #define SPEAKER_WINDOW_BELOW 0x8000
 
+/// One step of a cell animation: copy the width by height cells at srcX, srcY
+/// over the destination, then wait frames.
 #define MAP_CELL_STEP(srcX, srcY, width, height, frames)                       \
   (srcX), (srcY), (width), (height), (frames)
-#define MAP_CELL_STEPS_END 0xffff
+#define MAP_CELL_STEPS_END 0xffff ///< a source column that ends the steps
 
-/// Cell replacement: procedure and destination cells
+/// A cell animation, such as a door opening: its steps and the cell they are
+/// copied to (Map_PlayMetatileCopySequence, which blocks until the last).
 struct MapCellAnim {
   /// MAP_CELL_STEP records, ended by MAP_CELL_STEPS_END, for
   /// Map_PlayMetatileCopySequence.
@@ -356,6 +368,7 @@ static inline void Actor_SetChildValue(s32 actor, s32 value) {
   Engine_ActorSetChildValue(actor, value);
 }
 
+/// Not used in TBS.
 #define ACTION_TABLE_STOP ((const u8 *)1)
 
 static inline void Map_CopyCellsTo(s32 srcX, s32 srcY, s32 destX, s32 destY,

@@ -9,14 +9,23 @@
 
 #include "event_work.h"
 
+/// The running field scene's work, heap slot HEAP_SLOT_EVENT, as the scenes
+/// read it; Field_RunScene takes it and frees it.
 extern struct EventWork *gEventWork;
 
+/// How a scene fades in and out: SCENE_TRANSITION's high byte, which
+/// DisplayTransition_Start and DisplayTransition_Finish read. Kinds 3, a
+/// dissolve, and 4, opening from the centre line, have no name here.
 enum SceneTransitionStyle {
-  TRANSITION_FADE = 0,
-  TRANSITION_BACKDROP_FADE = 1,
-  TRANSITION_WINDOW = 2
+  TRANSITION_FADE = 0,          ///< from or to black
+  TRANSITION_BACKDROP_FADE = 1, ///< from or to the backdrop colour
+  TRANSITION_WINDOW = 2         ///< a window shape the variant chooses
 };
 
+/// A scene transition as EventWork.startTransition holds it. For
+/// TRANSITION_WINDOW the variant is the window mode, listed at
+/// DisplayTransition_UpdateScanlineTable: 3 a circle at the centre, 9 an
+/// ellipse around the leader, and others.
 #define SCENE_TRANSITION(style, variant) ((style) << 8 | (variant))
 
 #include "field_coordinate.h"

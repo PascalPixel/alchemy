@@ -11,19 +11,19 @@
 
 /// A selection screen sprite: a list link and its OAM attributes.
 struct SelectionSprite {
-  struct SelectionSprite *next;
-  u8 y;
-  u8 affine : 2;
-  u8 mode : 2;
+  struct SelectionSprite *next; ///< the sprite queue's link
+  u8 y;                         ///< screen pixels
+  u8 affine : 2;                ///< 0 plain, 1 affine, 3 affine at double size
+  u8 mode : 2;                  ///< 0 normal, 1 semi-transparent, 2 OBJ window
   u8 mosaic : 1;
-  u8 colors : 1;
-  u8 shape : 2;
-  u16 x : 9;
-  u16 param : 5;
-  u16 size : 2;
-  u16 tile : 10;
+  u8 colors : 1; ///< 1 for 256 colours
+  u8 shape : 2;  ///< 0 square, 1 wide, 2 tall
+  u16 x : 9;     ///< screen pixels
+  u16 param : 5; ///< the affine matrix
+  u16 size : 2;  ///< with shape, the sprite's size
+  u16 tile : 10; ///< first sprite tile in VRAM
   u16 priority : 2;
-  u16 palette : 4;
+  u16 palette : 4; ///< 16-colour palette
 };
 
 /// An icon of the selection screen: its list links, the entry it shows, its

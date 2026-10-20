@@ -16,7 +16,8 @@ struct AnimationObject;
 struct BattleUnit;
 
 /// The Psynergy menu: its windows, icons and cursors, the party members' tabs
-/// and the Psynergy listed for the chosen member.
+/// and the Psynergy listed for the chosen member. It is the HEAP_SLOT_MENU
+/// block as this menu reads it, from the menu's opening to its closing.
 struct PsynergyMenuState {
   u8 unk000[8];      ///< not named by TBS code
   s32 selectedOwner; ///< the party member chosen

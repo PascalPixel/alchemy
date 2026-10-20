@@ -71,7 +71,7 @@ struct ObjectSystemWork {
   u8 fill;        ///< outline fill colour; 0 when the field sets up
   u8 unk08[0x10]; ///< the sprite group tables, taken in turn by count
   s32 count;      ///< sprite group tables taken from unk08
-  struct ResourceSlot slots[8];
+  struct ResourceSlot slots[8]; ///< found by tag (Animation_LookupValueByKey)
 };
 
 STATIC_ASSERT(offsetof(struct ObjectSystemWork, suspended) == 4);
@@ -87,18 +87,18 @@ struct AnimationSpritePart {
   u8 unk00[4];
   /// The OAM entry's attributes 0 to 2.
   ///@{
-  u16 y : 8;      ///< screen pixels
-  u16 affine : 2; ///< 0 plain, 1 affine, 3 affine at double size
-  u16 objectMode : 2;
+  u16 y : 8;          ///< screen pixels
+  u16 affine : 2;     ///< 0 plain, 1 affine, 3 affine at double size
+  u16 objectMode : 2; ///< 0 normal, 1 semi-transparent, 2 OBJ window
   u16 mosaic : 1;
-  u16 fullColor : 1; ///< 256 colours; set for both parts when created
-  u16 shape : 2;
+  u16 fullColor : 1;   ///< 256 colours; set for both parts when created
+  u16 shape : 2;       ///< 0 square, 1 wide, 2 tall
   u16 x : 9;           ///< screen pixels
   u16 affineIndex : 5; ///< affine matrix, or 8 for a mirrored plain sprite
-  u16 size : 2;
-  u16 tile : 10;    ///< first sprite tile in VRAM
-  u16 priority : 2; ///< 2 when created
-  u16 palette : 4;
+  u16 size : 2;        ///< with shape, the sprite's size
+  u16 tile : 10;       ///< first sprite tile in VRAM
+  u16 priority : 2;    ///< 2 when created
+  u16 palette : 4;     ///< 16-colour palette; unused at 256 colours
   ///@}
   u8 unk0a[2]; ///< zero when created; not named by TBS code
 };
@@ -107,6 +107,7 @@ struct AnimationSpritePart {
 /// four animation layers.
 struct AnimationObject {
   struct AnimationSpritePart image;
+  /// Its shadow, shown while flags bit 0 is set.
   struct AnimationSpritePart shadow;
   s32 scale; ///< 16.16 fixed point, 0x10000 full size
   u8 slot;   ///< VRAM cache entry holding its tiles

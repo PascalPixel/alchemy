@@ -55,8 +55,10 @@ typedef struct OrbitingSceneObject {
   u8 padding44[12];
   OrbitingSceneObjectSprite *sprite;
   u8 padding54;
-  u8 mode;  ///< FieldActor's motionFlags; the Nut's scenes zero it
-  u8 state; ///< FieldActor's first unk56 byte; Scene_FloatNut zeroes it
+  u8 mode; ///< FieldActor's motionFlags; the Nut's scenes zero it
+  /// ObjectRuntime.arrivalAxis, the axis watched for arrival; Scene_FloatNut
+  /// zeroes it.
+  u8 state;
   u8 padding57[5];
   /// FieldActor.retainSpriteCache: the Nut's scenes keep its sprite's VRAM
   /// cache entry.

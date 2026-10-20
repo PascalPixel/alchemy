@@ -21,9 +21,11 @@ struct FadeOverlayWork {
 
 STATIC_ASSERT(sizeof(struct FadeOverlayWork) == 28);
 
+/// Work slot 36: the fade overlay's work from BattleFx_StartFadeOverlay until
+/// the next scene change.
 extern struct FadeOverlayWork *gActorEffectWork;
 
-#define FIELD_WEATHER_PARTICLE_COUNT 32
+#define FIELD_WEATHER_PARTICLE_COUNT 32 ///< GroundParticleWork.particles
 
 /// One weather particle: OAM attributes followed by its world position.
 struct GroundParticle {
@@ -61,11 +63,12 @@ struct GroundParticleWork {
   s32 tileBase; ///< Their first tile in VRAM.
   struct GroundParticle particles[FIELD_WEATHER_PARTICLE_COUNT];
   s32 unk408;  ///< Unused by the weather effects.
-  s32 stopped; ///< Prevent new sparkle bursts while set.
+  s32 stopped; ///< Nonzero stops new sparkle bursts.
 };
 
 STATIC_ASSERT(sizeof(struct GroundParticleWork) == 0x410);
 
+/// Work slot 29: the running ground particles, motes or sparkles.
 extern struct GroundParticleWork *gParticleWork;
 
 #endif

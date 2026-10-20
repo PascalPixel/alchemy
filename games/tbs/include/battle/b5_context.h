@@ -2,15 +2,14 @@
 #define ALCHEMY_B5_CONTEXT_H
 
 /// @file
-/// B5Context, the object context a battle routine reads; most of its fields are
-/// still unnamed.
+/// B5Context, an object context layout that no code in the tree reads.
 
 #include "edition.h"
 #include "types.h"
 #include "static_assert.h"
 
-/// The object context a battle routine reads; most of its fields are still
-/// unnamed.
+/// An object context layout that many private headers and scenes include but
+/// no code reads, so nothing in the tree supports its field names.
 struct B5Context {
   void *object;
   u8 padding04[8];

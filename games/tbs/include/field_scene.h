@@ -9,6 +9,9 @@
 #include "scene_ids.h"
 #include "character_ids.h"
 
+/// Scene numbers as constants, for the exit tables (SCENE_EXITS, SCENE_EXIT),
+/// whose words pack the scene with other fields. Each is the scene's row in
+/// gField_SceneTable, the value of its SceneId_ symbol.
 enum SceneId {
   SCENE_WORLD_MAP = 2,
   SCENE_VAULT = 20,
@@ -22,6 +25,8 @@ enum SceneId {
   SCENE_SUHALLA_GATE = 169
 };
 
+/// The eight compass headings in 1/65536 turns, from east through south: a
+/// quarter turn is 0x4000, and the screen's y axis points south.
 enum Facing {
   FACING_EAST = 0x0000,
   FACING_SOUTHEAST = 0x2000,
@@ -33,20 +38,30 @@ enum Facing {
   FACING_NORTHEAST = 0xe000
 };
 
+/// A sixteenth of a turn, half the step between two headings.
 enum { FACING_STEP = 0x1000 };
 
+/// True for a heading strictly between FACING_NORTHWEST and FACING_NORTHEAST.
 #define FACING_IS_NORTH(facing)                                                \
   ((u32)((facing) - (FACING_NORTHWEST + 1)) <=                                 \
    FACING_NORTHEAST - FACING_NORTHWEST - 2)
 
+/// A table row's condition: CONDITION_ALWAYS, a flag number that must be
+/// clear, or IF_FLAG_SET of a flag that must be set
+/// (GameFlag_IsConditionActive).
 enum {
-  SCENE_TABLE_END = -1,
+  SCENE_TABLE_END = -1, ///< in the first column, ends a table
   CONDITION_ALWAYS = -1,
-  CONDITION_FLAG_SET = 0x1000
+  CONDITION_FLAG_SET = 0x1000 ///< the flag must be set, not clear
 };
 
+/// A condition that holds while flag is set.
 #define IF_FLAG_SET(flag) ((flag) | CONDITION_FLAG_SET)
 
+/// Set once the party has left Vale (the world map's entrance 1): Vale's
+/// scenes then place their later actors and lines, the Sanctum takes another
+/// event table and Healer line, and the Sol Sanctum approach moves its sentry,
+/// changes cell collision and stops sending its way down to scene 10.
 enum { FLAG_PARTY_LEFT_VALE = 0x815 };
 
 /// A scene entrance: where and facing which way the party arrives, and the
@@ -69,11 +84,20 @@ struct SceneEntrance {
 STATIC_ASSERT(sizeof(struct SceneEntrance) == 24);
 STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
 
+/// An exit table's header word: the scene whose exits follow. The table is
+/// read by Scene_TakeExit as the scene ends, with the exit kind it ended on.
 #define SCENE_EXITS(scene) ((u32)(scene))
+/// One exit: exit kind `exit` leads to `entrance` of `scene`. Kind 0xff
+/// matches any exit; kind 0 or the next header sends the party to the first
+/// exit's scene. bits: 27..20 exit kind | 19..12 entrance | 11..0 scene
 #define SCENE_EXIT(exit, scene, entrance)                                      \
   ((u32)(exit) << 20 | (u32)(entrance) << 12 | (u32)(scene))
+/// An exit with a flag word after it (bit 28). Despite the name, the exit is
+/// taken only while `flag` is clear; when it is set, the search goes on to
+/// the next exit.
 #define SCENE_EXIT_IF(exit, scene, entrance, flag)                             \
   (SCENE_EXIT(exit, scene, entrance) | 0x10000000), (u32)(flag)
+/// The last header word: it ends the last scene's exits and the table.
 #define SCENE_EXITS_END 0x1ff
 
 /// An actor a scene places: its sprite, the condition for placing it, how it
@@ -82,8 +106,10 @@ struct ScenePlacement {
   /// The actor's sprite; 0 to 7 are the party's characters, each in its own
   /// actor slot, and -1 ends the table.
   s16 sprite;
-  /// -1 always, a flag | 0x1000 set, else the flag clear; off the world map,
-  /// 48 to 127 also need condition + 80 to hold.
+  /// -1 always, a flag | 0x1000 set, else the flag clear. Off the world map,
+  /// a Djinni's flag (48 to 127) also needs flag + 80 clear, which
+  /// Djinn_ResolvePendingEvent sets after a lost or fled Djinni battle: the
+  /// Djinni stays hidden until the scene is entered normally again.
   s16 condition;
   /// A built-in action (enum ActorBehavior, 1 to 7) or an action script, for
   /// ObjectMotion_SetActionCallback.
@@ -99,18 +125,34 @@ struct ScenePlacement {
 STATIC_ASSERT(sizeof(struct ScenePlacement) == 24);
 STATIC_ASSERT(offsetof(struct ScenePlacement, talkFacing) == 22);
 
-enum ActorBehavior { ACTOR_STAND = 1, ACTOR_WANDER = 2 };
+/// The built-in actions a placement's behavior can name, which
+/// ObjectMotion_SetActionCallback turns into scripts: 1 stands, 2 to 4 wander,
+/// 5 follows the linked object, 6 faces the leader, 7 resets.
+enum ActorBehavior {
+  ACTOR_STAND = 1, ///< its script only ends
+  /// Wanders about where it stands (SC_WANDER_HOME); 3 and 4 do so at their
+  /// own speed and range.
+  ACTOR_WANDER = 2
+};
 
+/// How a placed actor turns when the leader talks to it (Scene_TalkToActor).
+/// With 0, 1 or 3 the leader stops and the two are linked; 3, unnamed, makes
+/// the actor follow the leader once the talk is over.
 enum ActorTalkFacing {
   TALK_FACE_PARTY = 0,
+  /// Faces the party, then turns back to its old heading.
   TALK_FACE_PARTY_AND_BACK = 1,
   TALK_KEEP_FACING = 2
 };
 
+/// ScenePlacement.flags: the actor takes the previous actor's sprite
+/// resource instead of loading its own, when both are single sprites.
 #define PLACEMENT_SHARE_PREVIOUS_SPRITE 0x01
 
+/// Actor ids: 0 to 7 the party's characters, the placed actors from 8.
 enum { ACTOR_PARTY_LEADER = 0, ACTOR_FIRST_PLACED = 8 };
 
+/// Whole pixels as 16.16 fixed point.
 #define PIXELS(value) ((value) << 16)
 
 /// A scene event: its kind and detail, the trigger it answers, its condition
@@ -135,23 +177,35 @@ struct SceneEvent {
 
 STATIC_ASSERT(sizeof(struct SceneEvent) == 12);
 
+/// SceneEvent.control's low four bits: what the event answers. Kind 7 is the
+/// talk event of an actor Halt has stopped (Scene_FindActorTalkEvent).
 enum SceneEventKind {
-  EVENT_TALK = 0,
+  EVENT_TALK = 0, ///< the A button on an actor; trigger is its id
+  /// Stepping onto a cell whose collision code is the trigger, when no touch
+  /// event answers it; value is the exit kind.
   EVENT_EXIT = 1,
-  EVENT_TOUCH = 2,
-  EVENT_SEARCH = 3,
-  EVENT_ITEM = 4,
+  EVENT_TOUCH = 2,  ///< stepping onto or pushing against a collision code
+  EVENT_SEARCH = 3, ///< the A button on what is ahead, when it is no actor
+  EVENT_ITEM = 4,   ///< an item used on a cell or an actor
   EVENT_PSYNERGY = 5,
-  EVENT_RAISED = 6
+  EVENT_RAISED = 6 ///< raised by code through FieldWork.event
 };
 
+/// A touch event that needs the leader to have pushed against it for more
+/// than 12 frames, or 2 with control bit 11.
 #define EVENT_TOUCH_WALKING 0x200
+/// A touch event that needs the leader to face within an eighth of a turn of
+/// the heading in control bits 15..12 (Scene_FindEvent).
 #define EVENT_TOUCH_FACING 0x400
 #define TOUCH_WALKING (EVENT_TOUCH | EVENT_TOUCH_WALKING)
+/// facing is an enum Facing; only its top four bits are compared.
 #define TOUCH_FACING(facing) (EVENT_TOUCH | EVENT_TOUCH_FACING | (facing))
 #define TOUCH_WALKING_INTO(facing)                                             \
   (EVENT_TOUCH | EVENT_TOUCH_WALKING | EVENT_TOUCH_FACING | (facing))
 
+/// Psynergy events run around the effect by phase, control bits 30..28
+/// (Field_UsePsynergy): 1 before it, 0 after it; 5 only aims the effect at
+/// the actor ahead; 3 and 2 serve a use that pays no PP.
 #define EVENT_PSYNERGY_ON_ACTOR 0x10
 #define PSYNERGY_ON_ACTOR(ability)                                             \
   (EVENT_PSYNERGY | EVENT_PSYNERGY_ON_ACTOR | (ability) << 8)
@@ -160,6 +214,7 @@ enum SceneEventKind {
 #define PSYNERGY_PHASE_ON_ACTOR(ability, phase)                                \
   ((u32)(phase) << 28 | PSYNERGY_ON_ACTOR(ability))
 
+/// A Psynergy event for any target, not a particular actor or cell.
 #define EVENT_PSYNERGY_IN_AREA 0x80
 #define PSYNERGY_IN_AREA(ability, phase)                                       \
   ((u32)(phase) << 28 | (ability) << 8 | EVENT_PSYNERGY_IN_AREA |              \
@@ -173,6 +228,9 @@ enum SceneEventKind {
 
 #define SEARCH(target) (EVENT_SEARCH | (target) << 4)
 
+/// What a search event is on, SEARCH()'s control bits 8..4. Target n shows
+/// message MsgTileChecked + n as the leader checks it, unless the trigger has
+/// bit 10; target 0 shows nothing.
 enum SearchTarget {
   SEARCH_UNNAMED = 0,
   SEARCH_CHEST = 1,
@@ -208,13 +266,19 @@ enum SearchTarget {
   SEARCH_WELL
 };
 
+/// What a search finds, a search event's value: a function when bits 27..24
+/// are set, else a type in its top twelve bits (type 5, a mimic chest's
+/// battle, has no macro).
 #define FIND_ITEM(item) (0x00100000 | (item))
 #define FIND_COINS(coins) (0x00200000 | (coins))
+/// A Psynergy Stone, which restores all PP.
 #define FIND_PSYNERGY_STONE 0x00300000
 #define FIND_MESSAGE(message) (0x00400000 | (message))
 
+/// An event function as a SceneEvent value; its address is above 0x10000, so
+/// it is never taken for a message.
 #define EVENT_SCRIPT(script) ((u32)(script))
-#define SCENE_EVENTS_END 0xffffffff
+#define SCENE_EVENTS_END 0xffffffff ///< ends an event table
 
 struct SceneRegion;
 

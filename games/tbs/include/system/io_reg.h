@@ -145,7 +145,12 @@ enum DisplayControl {
 #define BLEND_ALPHA(top, bottom) ((top) | ((bottom) << 8))
 #define REG_BLDY (*(volatile u16 *)0x04000054)
 
+/// Screen block 7: BG2's affine map of a battle effect's canvas, a byte a
+/// tile (EFFECT_WRITE_CANVAS_MAP_ROW).
 #define BG_CANVAS_MAP ((volatile s16 *)0x06003800)
+/// BG0HOFS as an address for a DMA: copies of gBgScroll over all four
+/// backgrounds' scroll registers start here, and Mind Read's HBlank DMA writes
+/// one halfword a line into it.
 #define REG_BG0HOFS ((void *)0x04000010)
 
 #define REG_DMA0 ((volatile u16 *)0x040000b0)
@@ -256,7 +261,7 @@ enum KeyMask {
   KEYS_SHOULDERS = KEY_R | KEY_L
 };
 
-#define KEYS_MASK 0x3ff
+#define KEYS_MASK 0x3ff ///< the ten keys' bits; KEYINPUT reads 0 for a held key
 
 #define REG_BG0CNT (*(volatile u16 *)0x04000008)
 #define REG_BG0VOFS (*(volatile u16 *)0x04000012)
@@ -312,8 +317,10 @@ enum KeyMask {
 /// Requires all ten keys together to prevent the reset chord retriggering it.
 #define KEYCNT_DISARMED 0xc3ff
 #define KEYCNT_SHOULDERS_WAKE 0xc300 ///< L and R, which wake the sleep.
-#define KEYCNT_SLEEP_WAKE 0xc304
+#define KEYCNT_SLEEP_WAKE 0xc304     ///< L, R and Select; no code uses it
 
+/// ROM wait states 3 and 1 with the prefetch buffer on, SRAM at 4; written by
+/// the power-on set-up.
 #define WAITCNT_GAME 0x4014
 
 #endif

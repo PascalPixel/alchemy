@@ -14,12 +14,21 @@ struct MapCell;
 struct FieldActor;
 
 /// A scene's row in gField_SceneTable: its overlay's resource, its group
-/// (the place it belongs to), a variant and its map.
+/// (the place it belongs to), a variant and its map. One row per scene
+/// number; field/scenes.s writes them, and its SceneId_ symbols are the row
+/// numbers.
 struct SceneRecord {
-  s16 resourceId;
+  s16 resourceId; ///< the overlay Resource_LoadCode loads into gOverlayArea
+  /// The place: entering a new group clears flags 0x300 to 0x3ff and the step
+  /// counters and moves Retreat's destination; flag 0x180 + group marks it
+  /// visited (Scene_ResetFlagsOnEnter).
   s8 group;
-  s8 variant; ///< copied to gGameState.sceneVariant; 2 sets flag 0x123
-  u16 mapIndex;
+  /// Copied to gGameState.sceneVariant: 2 for towns and their interiors (53
+  /// rows: Vale, Bilibin, Kalay, Tolbi and others), where walking restores no
+  /// PP, recovers no Djinn and does no poison damage, Retreat is blocked,
+  /// Avoid does not wear off and FLAG_SCENE_VARIANT_2 is set. 1 for the rest.
+  s8 variant;
+  u16 mapIndex; ///< the map loaded for it, copied to gGameState.map
   u16 reserved; ///< 0 in every row; not read
 };
 
@@ -60,11 +69,11 @@ STATIC_ASSERT(offsetof(struct SceneEntries, regions) == 0x2c);
 
 /// A map marker placed as an actor: a chest or a Psynergy stone.
 struct MarkerSlot {
-  struct ObjectRuntime *object;
-  u8 id;     ///< the trigger of its scene event
+  struct ObjectRuntime *object; ///< the actor placed for it
+  u8 id;                        ///< the trigger of its scene event, 100 to 239
   u8 unk05;  ///< cleared with the slot; not named by TBS code
   u8 column; ///< its 16-pixel cell
-  u8 row;
+  u8 row;    ///< its 16-pixel cell
 };
 
 STATIC_ASSERT(sizeof(struct MarkerSlot) == 8);
@@ -72,7 +81,9 @@ STATIC_ASSERT(offsetof(struct MarkerSlot, id) == 4);
 STATIC_ASSERT(offsetof(struct MarkerSlot, column) == 6);
 STATIC_ASSERT(offsetof(struct MarkerSlot, row) == 7);
 
-/// Full event work allocated by Field_RunScene (heap slot 27). The twelve
+/// A field scene's work, all of it: Field_RunScene allocates it in heap slot
+/// 27 (HEAP_SLOT_EVENT), zeroes it and frees it on the way out. The scene
+/// overlays read it as struct EventWork through gEventWork. The twelve
 /// requests from action to event are handled by the field loop.
 struct FieldWork {
   /// The placement tables placed so far, recorded by Event_SpawnObjectTable.
@@ -106,12 +117,16 @@ struct FieldWork {
   /// Frames the leader has pushed against something, counted by the player
   /// controls; touch events and push tiles need more than 12.
   s16 blockedSteps;
-  s16 mode;                 ///< MODE_WORLD_MAP (3) on the world map
-  u8 encounterGroups[8];    ///< encounter zone for each kind of ground
-  s32 encounterBias;        ///< randomized distance adjustment between battles
-  s32 encounterThreshold;   ///< encounter steps before a battle; 0x100000
-  s32 walkingDistanceScale; ///< scales movement for PP and status updates
-  s32 walkingDistance;      ///< accumulated 16.16 distance awaiting an update
+  s16 mode;               ///< MODE_WORLD_MAP (3) on the world map
+  u8 encounterGroups[8];  ///< encounter zone for each kind of ground
+  s32 encounterBias;      ///< randomized distance adjustment between battles
+  s32 encounterThreshold; ///< encounter steps before a battle; 0x100000
+  /// Scales the leader's speed into walkingDistance, 16.16 fixed point: 0x199
+  /// (about 1/160) on entry, 0 in a town.
+  s32 walkingDistanceScale;
+  /// Distance walked toward the next 0x10000, at which the party regains PP,
+  /// Djinn recover and poison hurts (Field_ProcessStep).
+  s32 walkingDistance;
   struct MapCell *currentTile;  ///< the cell the leader last stepped onto
   struct MapCell *previousTile; ///< the cell before it
   s32 transition;       ///< SCENE_TRANSITION(style, variant); 0x100 on entry
@@ -198,7 +213,10 @@ struct FieldPosition {
 
 STATIC_ASSERT(sizeof(struct FieldPosition) == 12);
 
+/// Every scene's record, by scene number (field/scenes.s).
 extern const struct SceneRecord gField_SceneTable[];
+/// The running scene's overlay, loaded into these 0x8000 bytes of EWRAM at
+/// each scene change; its code opens with its entry table.
 extern struct SceneEntries gOverlayArea;
 
 #endif

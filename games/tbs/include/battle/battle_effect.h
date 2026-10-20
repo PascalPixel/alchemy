@@ -9,25 +9,38 @@
 
 struct BattleEffectArgument;
 
+/// BattleFx_BuildBlitter's flags: which edges the built blitter clips at and
+/// how it mirrors the picture.
 enum {
+  /// Skips columns outside the canvas; without it a width mask wraps x.
   COMPOSITE_CLIP_X = 1,
-  COMPOSITE_CLIP_Y = 2,
-  COMPOSITE_FLIP_X = 4,
-  COMPOSITE_FLIP_Y = 8,
+  COMPOSITE_CLIP_Y = 2, ///< skips rows outside the canvas's height
+  COMPOSITE_FLIP_X = 4, ///< mirrors the picture left to right
+  COMPOSITE_FLIP_Y = 8, ///< mirrors the picture top to bottom
   COMPOSITE_FLIP = COMPOSITE_FLIP_X | COMPOSITE_FLIP_Y
 };
+/// BattleFx_BuildBlitter's modes: how a picture's pixels combine with the
+/// canvas's (the fragments in battle_effect_composite.s).
 enum {
-  COMPOSITE_COPY,
-  COMPOSITE_TRANSPARENT,
-  COMPOSITE_MAX,
-  COMPOSITE_ADDITIVE
+  COMPOSITE_COPY,        ///< writes every pixel
+  COMPOSITE_TRANSPARENT, ///< writes every nonzero pixel
+  COMPOSITE_MAX,         ///< keeps the brighter of the two
+  COMPOSITE_ADDITIVE     ///< adds the two, capped at 63
 };
 
+/// A blitter BattleFx_BuildBlitter writes into a heap slot: it draws a
+/// width by height picture from source onto the destination canvas with its
+/// top left at (x, y), in pixels.
 typedef s32 (*BattleEffectDrawRectangle)(void *destination, const void *source,
                                          s32 x, s32 y, s32 width, s32 height);
 typedef BattleEffectDrawRectangle DrawRectangle;
 typedef BattleEffectDrawRectangle DrawRectangleFn;
 
+/// An ability's kind (BattleAct.flags bits 3..0) as the menu's item and
+/// Psynergy use (menu/menu/use.c) reads it, which tests only
+/// BATTLE_DAMAGE_HP_HEAL and BATTLE_DAMAGE_PP_HEAL. The values are enum
+/// AbilityKind's, which says what each kind does; the other names here do not
+/// match it (5 is ABILITY_KIND_DAMAGE).
 enum {
   BATTLE_DAMAGE_PP_DIRECT = -1,
   BATTLE_DAMAGE_HP_HEAL = 1,

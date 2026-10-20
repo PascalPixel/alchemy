@@ -99,9 +99,9 @@ struct EnemyDefinition {
   u16 def;
   u16 agi;
   u8 luck;
-  u8 turns; ///< actions a round (BattleUnit.baseActionCount)
-  u8 hpRegen;
-  u8 ppRegen;
+  u8 turns;   ///< actions a round (BattleUnit.baseActionCount)
+  u8 hpRegen; ///< HP restored at each round's end (BattleUnit.baseHpRegen)
+  u8 ppRegen; ///< PP restored at each round's end (BattleUnit.basePpRegen)
   ///@}
   u8 unk1e[2];      ///< Reserved in enemies.tsv: 0 in every row.
   u32 rewards;      ///< 0 in every row; copied to BattleUnit.rewards
@@ -131,17 +131,23 @@ struct EnemyDefinition {
   u16 experience; ///< experience won
 };
 
-/// A level up's result: the level reached, an ability learned and the gain in
-/// each stat.
+/// A level up's result: the level reached and the gain in each stat. The
+/// caller provides it; Owner_LevelUp fills it, and
+/// Battle_AwardSpoils reports each gain that is not zero.
 struct LevelUpResult {
-  s16 level;
+  s16 level; ///< the level reached; the old level when it was already 99
+  /// Always 0xffff: Owner_LevelUp stores no ability here, and the spoils find
+  /// a new one by comparing the unit's actions with a copy taken before.
   u16 ability;
+  /// The gain in each base stat; the spoils read them as signed.
+  ///@{
   u16 hp;
   u16 pp;
   u16 atk;
   u16 def;
   u16 agi;
   u16 luck;
+  ///@}
 };
 
 STATIC_ASSERT(sizeof(struct CharacterDefinition) == 0xb4);
@@ -165,7 +171,9 @@ STATIC_ASSERT(offsetof(struct EnemyDefinition, coins) == 0x4c);
 STATIC_ASSERT(offsetof(struct EnemyDefinition, experience) == 0x52);
 STATIC_ASSERT(sizeof(struct LevelUpResult) == 0x10);
 
+/// The eight characters' definitions, by character id (game/chars.tsv).
 extern struct CharacterDefinition gCharacter_DefinitionTable[];
+/// The classes, by class index (game/classes.tsv, 203 rows).
 extern struct ClassDefinition gClass_DefinitionTable[];
 
 #endif

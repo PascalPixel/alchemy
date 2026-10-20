@@ -3,6 +3,10 @@
 
 /// @file
 /// Resource numbers, named where their contents are known.
+///
+/// Each ResourceId_ is an absolute symbol whose value is the resource's row
+/// in Resource_DirectoryTable (system/resource/directory.s); C takes the
+/// number as (s32)&ResourceId_Name.
 
 extern char ResourceId_BuildStamp;
 extern char ResourceId_PaletteFarCalls;

@@ -45,10 +45,16 @@ for one). A scene is one object: it has no parts.
   is 16 by 16 pixels (`x >> 20`).
 - **facing**: a 16-bit turn, `FACING_EAST` 0 to `FACING_NORTHEAST` 0xe000,
   clockwise as seen on the screen.
-- **flags**: game flags, from `flags.h` where a name is proven. 0x200 to 0x2ff
-  belong to the scene and are cleared on every ordinary entrance
-  (`FLAG_SCENE_TEMP_xx`, with what each scene uses it for); 0x300 to 0x3ff
-  belong to the group of scenes of one place. `FLAG_KEEP_PARTY_POSITION` is
+- **flags**: game flags, from `flags.h` where a name is proven: the party
+  and Djinn below 0x100, the system flags the engine shares from 0x100,
+  story flags from 0x800 and most chest and find flags from 0xe00, each place's
+  in its own section. 0x200 to 0x2ff belong to the scene and are cleared on
+  every ordinary entrance: they are written `FLAG_SCENE_TEMP_xx`, and each
+  scene says near its top (or beside a single use) what it keeps in them.
+  0x300 to 0x3ff belong to the group of scenes of one place, which reuses the
+  numbers: each scene names its own in its file, never in `flags.h`. A
+  placement whose condition is 0 is placed only within the view
+  (`Scene_AssignViewFlags`); that 0 is no flag. `FLAG_KEEP_PARTY_POSITION` is
   set when the party returns to where it was, as after a battle: a scene's
   initialization skips its arrival cutscenes then.
 - **messages** are linker symbols written by bare name; `MSGNO(name)` is the
@@ -128,6 +134,9 @@ The headers are named after the place or the job they share:
 | `effect_*.h` | many | Effect_Spawn and the small effects it places, cutscene Psynergy |
 | `object_*.h` | many | actors: pushed blocks and rolling logs, the floating Nut, lookups by cell and distance, turning and waiting |
 | `map_panel.h`, [`common/scroll_initialize_hblank_dma.h`](common/scroll_initialize_hblank_dma.h) | Crossbone Isle and Kolima; the Lemurian ship | a stretch of map drawn into the tile map; the water's ripple |
+
+A helper that some of the scenes including its header never call is
+`UNUSED`, so that a current GCC does not warn in those scenes.
 
 A header named after one place may be shared further:
 [`common/colosso_item_icon.h`](common/colosso_item_icon.h) also draws
@@ -273,5 +282,4 @@ Still unknown:
 - XXX: many functions in `common/` keep older descriptive names
   (`SceneActor_`, `SceneEffect_`, `OverlayObject_`, `FieldScene_`) until the
   scenes that call them are renamed with them.
-- XXX: the temporary flags' meanings are written per scene beside each use;
-  sounds without a proven name keep their numbers (`SE_188`).
+- XXX: sounds without a proven name keep their numbers (`SE_188`).

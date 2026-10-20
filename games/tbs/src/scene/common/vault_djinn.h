@@ -8,6 +8,8 @@
 
 /// Brings every Djinni back from recovery (twenty rounds of it), then, if Ivan
 /// holds the first Venus Djinni, gives it back to Isaac and recalculates both.
+///
+/// Called before Ivan leaves the party, at Vault's gates and in the loft.
 // UB: declared s32 with no return value, as the epilogue shows; UBFIX gives
 // the void form.
 #ifdef UBFIX

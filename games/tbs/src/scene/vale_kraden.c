@@ -56,12 +56,15 @@ const struct SceneRegion *ValeKraden_GetRegions(void) { return NULL; }
 
 const u32 *ValeKraden_GetExits(void) { return gValeKraden_Exits; }
 
-/// Returns the cottage residents and story actors.
+/// Returns the one placement table for every visit; ValeKraden_Initialize
+/// removes the actors a visit does not use.
 const struct ScenePlacement *ValeKraden_GetPlacements(void) {
   return gValeKraden_Placements;
 }
 
-/// Selects events for the current visit to Vale.
+/// Selects the events for the current visit to Vale: after Kalay
+/// (FLAG_REACHED_KALAY), on the stormy night (FLAG_VALE_STORM), else the day
+/// the story begins.
 const struct SceneEvent *ValeKraden_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
     return gValeKraden_EventsAfterKalay;
@@ -100,6 +103,9 @@ static __inline__ void ValeKraden_WalkTowardLeader(s32 companionId) {
 
 /// The child at the fence asks whether Isaac hears the growls beyond it; once
 /// the party has left Vale, he means to climb it someday.
+///
+/// Reached by talking to the onlooker at the fence (actor 12) in the day's
+/// events.
 static void Event_TalkToFenceOnlooker(void) {
   s32 message;
 
@@ -128,13 +134,18 @@ static void Event_TalkToFenceOnlooker(void) {
 
 /// Talking to Kraden outside his cottage: he talks Isaac, Garet and Jenna into
 /// a secret look at Sol Sanctum, then goes inside to prepare.
+///
+/// Reached by talking to Kraden (actor 13) in the day's events, until
+/// FLAG_SANCTUM_VISIT_PLANNED is set. Ends by taking exit 13 into the cottage
+/// (scene 8, entrance 22); the party comes back by entrance 10, where
+/// Event_KradenSetsOff goes on.
 static void Event_KradenPlansSanctumVisit(void) {
   struct FieldActor *leader;
   s32 x, z;
   s32 sneakingMessage;
 
   if (GameFlag_IsSet(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
-    // Gather Jenna and Garet around Kraden for the explanation.
+    // Isaac walks up to Kraden, who greets him.
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     Engine_EventSetMessage(MsgValeKradenOhIsaac);
@@ -144,6 +155,7 @@ static void Event_KradenPlansSanctumVisit(void) {
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, ACTOR_KRADEN, 20);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
+    // Garet and Jenna step out of Isaac and stand either side of him.
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     x = leader->x.part.pixel;
     z = leader->z.part.pixel;
@@ -157,6 +169,7 @@ static void Event_KradenPlansSanctumVisit(void) {
     Engine_ActorSetAnimation(JENNA, ANIM_STAND);
     Engine_ActorSetAnimation(GARET, ANIM_STAND);
     Engine_EventWait(4);
+    // Jenna sees something is bothering Kraden; he hedges.
     Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 0);
     Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 20);
     Engine_ActorSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
@@ -166,6 +179,7 @@ static void Event_KradenPlansSanctumVisit(void) {
     Engine_EventWait(10);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
+    // Garet names Saturos and Menardi; Kraden finds them persistent.
     Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 40);
     Engine_ActorRunRepeatedMotion(GARET, 2);
     Event_ShowMessageAndWait(GARET, 0, 10);
@@ -173,12 +187,14 @@ static void Event_KradenPlansSanctumVisit(void) {
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 10);
     Engine_ActorSetAnimation(ACTOR_KRADEN, ANIM_NOD);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 8);
+    // Jenna asks whether they wanted something from him; it seems so.
     Actor_FaceDirection(JENNA, FACING_SOUTHEAST + FACING_STEP, 20);
     Event_ShowMessageAndWait(JENNA, 0, 10);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Engine_EventWait(10);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 6);
+    // The three are puzzled, and Jenna asks what he means.
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
     Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 60);
@@ -186,6 +202,8 @@ static void Event_KradenPlansSanctumVisit(void) {
     Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 20);
     Engine_ActorRunRepeatedMotion(JENNA, 2);
     Event_ShowMessageAndWait(JENNA, 0, 10);
+    // Kraden: they spoke of Mt. Aleph and Sol Sanctum as if they had seen
+    // them.
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 2, 60);
     Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
@@ -194,6 +212,7 @@ static void Event_KradenPlansSanctumVisit(void) {
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 60);
     Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
     Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 0);
+    // Kraden looks from one to another and asks whether that is not strange.
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 20);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 40);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 40);
@@ -208,7 +227,7 @@ static void Event_KradenPlansSanctumVisit(void) {
     Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Engine_EventWait(10);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
-    // Debate whether the strangers can be trusted near Sol Sanctum.
+    // Jenna fears they are thieves; Garet would tell the high elders.
     Engine_EventSetMessage(MsgValeJennaTheyMightBeThieves);
     Engine_ActorRunRepeatedMotion(JENNA, 2);
     Actor_FaceDirection(JENNA, FACING_WEST, 10);
@@ -217,6 +236,7 @@ static void Event_KradenPlansSanctumVisit(void) {
     Engine_ActorJump(GARET, 4, 30);
     Actor_FaceDirection(GARET, FACING_EAST, 10);
     Event_ShowMessageAndWait(GARET, 0, 6);
+    // The three agree and turn to go.
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 10);
     Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, JENNA, 0);
     Actor_FaceActor(ACTOR_KRADEN, GARET, 10);
@@ -229,6 +249,8 @@ static void Event_KradenPlansSanctumVisit(void) {
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
     Actor_FaceDirection(GARET, FACING_SOUTH, 0);
     Actor_FaceDirection(JENNA, FACING_SOUTH, 16);
+    // Kraden stops them: nothing can be done until what he was told is
+    // confirmed.
     Actor_SetAttachedEffect(ACTOR_KRADEN, 0x102);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
     Engine_EventWait(10);
@@ -241,12 +263,15 @@ static void Event_KradenPlansSanctumVisit(void) {
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 6);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 6);
+    // Jenna asks what to do; Kraden means to go and confirm it.
     Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 10);
     Event_ShowMessageAndWait(JENNA, 0, 6);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
     Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Engine_EventWait(6);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
+    // The three start; Garet asks whether he means Sol Sanctum itself, and
+    // Jenna thinks it impossible.
     Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
     Engine_ActorJump(GARET, 2, 0);
     Engine_ActorJump(JENNA, 2, 10);
@@ -263,6 +288,8 @@ static void Event_KradenPlansSanctumVisit(void) {
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 6);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 30);
+    // Kraden asks whether the ban on climbing Mt. Aleph should stop them;
+    // either way, they will only look.
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 5, 0);
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 5, 0);
     Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 5, 80);
@@ -274,7 +301,7 @@ static void Event_KradenPlansSanctumVisit(void) {
       Engine_EventSetMessage(MsgValeKradenWeOnlyCheckMt);
     }
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 20);
-    // Agree to investigate without letting the strangers see the party.
+    // Garet asks Isaac whether it is fine if they are not seen.
     sneakingMessage = MsgValeFineIfTheyDontSee;
     Engine_EventSetMessage(sneakingMessage);
     Actor_FaceDirection(GARET, FACING_EAST, 10);
@@ -286,6 +313,8 @@ static void Event_KradenPlansSanctumVisit(void) {
       Engine_EventSetMessage((sneakingMessage + 2));
     }
     Event_ShowMessageAndWait(GARET, 0, 6);
+    // Jenna makes it their secret; a yes earns the warning not even to tell
+    // Isaac's mother, a no only nods and skips it.
     Engine_EventSetMessage(MsgValeJennaOurSecret);
     Actor_FaceDirection(JENNA, FACING_WEST, 10);
     Engine_ActorRunRepeatedMotion(JENNA, 1);
@@ -302,6 +331,7 @@ static void Event_KradenPlansSanctumVisit(void) {
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
       gEventWork->message++;
     }
+    // Kraden: then it is decided.
     Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
     Engine_EventWait(10);
     Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
@@ -312,6 +342,8 @@ static void Event_KradenPlansSanctumVisit(void) {
     Engine_EventWait(10);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
     Engine_EventWait(20);
+    // Kraden makes Isaac the leader; Garet and Jenna squabble over who would
+    // be nervous.
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
     Event_OpenMessage(ACTOR_KRADEN, 0);
     Engine_EventWait(4);
@@ -331,13 +363,15 @@ static void Event_KradenPlansSanctumVisit(void) {
     Actor_FaceDirection(GARET, FACING_WEST, 10);
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 30);
     Event_ShowMessageAndWait(GARET, 0, 10);
+    // Kraden hops, eager to start.
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 0, 40);
     Engine_ActorJump(ACTOR_KRADEN, 4, 40);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_FaceDirection(GARET, FACING_NORTH, 0);
     Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 20);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 10);
-    // Kraden goes inside to prepare; continue through the cottage exit.
+    // Kraden opens his gate and goes in to prepare; the screen closes and the
+    // party follows him through exit 13.
     Event_PlayCue(SE_DOOR_OPEN);
     Map_AnimateCells(gValeKraden_GateCells, 43, 8);
     Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
@@ -357,6 +391,10 @@ static void Event_KradenPlansSanctumVisit(void) {
 /// Arriving by entrance 10, from the cottage: Kraden comes out ready, and
 /// everyone joins Isaac for the mountain. "This is our best bet." The mountain
 /// is Mt. Aleph.
+///
+/// Called by ValeKraden_Initialize on entrance 10 unless the party keeps its
+/// position. Sets FLAG_SANCTUM_VISIT_PLANNED and FLAG_SCENE_TEMP_42 (the gate
+/// stays open), and removes Kraden, Garet, Jenna, Saturos and Menardi.
 static void Event_KradenSetsOff(void) {
   struct FieldActor *actor;
   s32 facing;
@@ -375,7 +413,7 @@ static void Event_KradenSetsOff(void) {
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(40);
-  // Kraden returns outside, then everyone merges into Isaac.
+  // Kraden comes out of the gate: this is their best bet.
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetPosition(ACTOR_KRADEN, PIXELS(230), PIXELS(220));
   Actor_WalkToAndWait(ACTOR_KRADEN, 230, 232);
@@ -386,6 +424,7 @@ static void Event_KradenSetsOff(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
+  // Isaac nods to Garet, then to Jenna.
   Actor_FaceDirection(GARET, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 10);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -400,6 +439,8 @@ static void Event_KradenSetsOff(void) {
   Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_SetSpeed(JENNA, PIXELS(4) / 5, PIXELS(2) / 5);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  // Garet, Jenna and Kraden walk into Isaac and vanish; the strangers are
+  // gone too.
   ValeKraden_WalkTowardLeader(GARET);
   ValeKraden_WalkTowardLeader(JENNA);
   ValeKraden_WalkTowardLeader(ACTOR_KRADEN);
@@ -421,6 +462,9 @@ static void Event_KradenSetsOff(void) {
 }
 
 /// Walking into the cottage: the gate opens unless Kraden left it open.
+///
+/// Reached by walking north into cell code 3, by day and after Kalay; takes
+/// exit 3 into the cottage.
 static void Event_EnterCottage(void) {
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_42) == 0) {
     Engine_AudioPlayCue(SE_DOOR_OPEN);
@@ -432,6 +476,10 @@ static void Event_EnterCottage(void) {
 
 /// Walking past the two strangers: Isaac, Garet and Jenna overhear Saturos and
 /// Menardi, confront them and are warned off.
+///
+/// Reached by stepping on cell code 7 in the day's events; runs once, setting
+/// FLAG_MET_SATUROS_AND_MENARDI. Saturos and Menardi are left turning to watch
+/// the leader.
 static void Event_MeetSaturosAndMenardi(void) {
   struct FieldActor *actor;
   s32 x, z;
@@ -446,11 +494,12 @@ static void Event_MeetSaturosAndMenardi(void) {
   Event_PlayCue(MUS_017);
   GameFlag_Set(FLAG_MET_SATUROS_AND_MENARDI);
 
-  // Overhear the strangers, then spread the party out to confront them.
+  // Saturos is overheard: the villagers know little of Sol Sanctum.
   strangersMessage = MsgValeTheyKnowLittleOfThe;
   Engine_EventSetMessage(strangersMessage);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
 
+  // Isaac hurries forward and Garet and Jenna step out beside him.
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 30);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 392, 328);
@@ -475,13 +524,15 @@ static void Event_MeetSaturosAndMenardi(void) {
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | 1, 30);
   ValeKraden_FacePartySouth();
+  // The camera pans down to the strangers, and their theme plays.
   Camera_SetSpeed(PIXELS(6), PIXELS(3) / 4);
   Camera_MoveTo(PIXELS(215), -1, PIXELS(345), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
   Event_PlayCue(MUS_061);
 
-  // Saturos and Menardi discuss the villagers before noticing Isaac.
+  // Saturos and Menardi talk of the elders and of using Kraden, stubborn
+  // and cunning as he is.
   Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   Engine_ActorSetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
@@ -496,6 +547,8 @@ static void Event_MeetSaturosAndMenardi(void) {
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
   Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 6);
+  // They sense they are watched; Saturos looks about, and both walk round to
+  // face the party.
   Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 0, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
   Engine_EventWait(20);
@@ -519,6 +572,8 @@ static void Event_MeetSaturosAndMenardi(void) {
   Engine_ActorSetAnimation(ACTOR_MENARDI, 0);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH + FACING_STEP, 30);
+  // Saturos demands what they are doing; Garet throws it back; Menardi asks
+  // whether they were eavesdropping.
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 60);
@@ -536,7 +591,9 @@ static void Event_MeetSaturosAndMenardi(void) {
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MENARDI, 0, 10);
   Engine_ActorRunRepeatedMotion(GARET, 2);
 
-  // Garet challenges the pair, who question what the party overheard.
+  // Garet accuses them of sneaking around; Menardi guesses Kraden's
+  // engagement was with the children, and Jenna says they are off to meet
+  // him.
   accusationMessage = MsgValeYoureTheOnesSneakingAround;
   Engine_EventSetMessage(accusationMessage);
   Event_ShowMessageAndWait(GARET, 0, 20);
@@ -551,6 +608,8 @@ static void Event_MeetSaturosAndMenardi(void) {
   Engine_ActorRunRepeatedMotion(JENNA, 2);
   Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | JENNA, 0, 20);
+  // Saturos asks whether their appointment is important enough to drive the
+  // strangers away.
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST, 20);
   Event_OpenMessage(ACTOR_SATUROS, 0);
@@ -569,7 +628,8 @@ static void Event_MeetSaturosAndMenardi(void) {
   Actor_FaceActor(ACTOR_SATUROS, JENNA, 30);
   Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 5, 80);
   Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
-  // The pair threaten the party and back away without turning around.
+  // Saturos lets them go; Jenna is surprised and Menardi doubts him, but he
+  // sees no reason to delay the children.
   Engine_EventSetMessage(MsgValeSaturosGo);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 6);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 0, 0);
@@ -596,6 +656,7 @@ static void Event_MeetSaturosAndMenardi(void) {
   Actor_SetSpeed(ACTOR_MENARDI, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetSpeed(ACTOR_SATUROS, PIXELS(1) / 2, PIXELS(1) / 4);
 
+  // The pair back away south without turning round.
   actor = Object_GetById(ACTOR_SATUROS);
   actor->steeringFlags &= ~ACTOR_FACES_MOTION;
   actor = Object_GetById(ACTOR_MENARDI);
@@ -613,6 +674,8 @@ static void Event_MeetSaturosAndMenardi(void) {
   Engine_ActorSetAnimation(ACTOR_SATUROS, 0);
   Engine_ActorSetAnimation(ACTOR_MENARDI, 0);
   Engine_EventWait(20);
+  // Garet: let's go. The village music returns and Garet and Jenna walk back
+  // into Isaac; the strangers keep turning to watch him.
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Event_ShowMessageAndWait(GARET, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, 1, 20);
@@ -627,10 +690,10 @@ static void Event_MeetSaturosAndMenardi(void) {
   ValeKraden_WalkTowardLeader(JENNA);
   Engine_ActorWaitForMove(JENNA);
   Actor_SetPosition(JENNA, 0, 0);
-  FieldObject_SetTargetAndCallback(14,
+  FieldObject_SetTargetAndCallback(ACTOR_SATUROS,
                                    ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                    gValeKraden_FaceTargetActions);
-  FieldObject_SetTargetAndCallback(15,
+  FieldObject_SetTargetAndCallback(ACTOR_MENARDI,
                                    ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
                                    gValeKraden_FaceTargetActions);
   Audio_PlayCueFromEventWork();
@@ -639,6 +702,9 @@ static void Event_MeetSaturosAndMenardi(void) {
 
 /// Walking up to the cottage: Kraden paces, wondering aloud who the strangers
 /// were and what they know of Sol Sanctum and the Elemental Stars.
+///
+/// Reached by stepping on cell code 5 in the day's events; runs once, setting
+/// FLAG_OVERHEARD_KRADEN.
 static void Event_OverhearKraden(void) {
   struct FieldActor *leader;
 
@@ -646,7 +712,8 @@ static void Event_OverhearKraden(void) {
   } else {
     Engine_EventBegin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-    // Kraden paces while recalling the strangers' knowledge.
+    // Kraden wonders aloud who they were, while Garet and Jenna step out of
+    // Isaac behind him.
     Engine_EventSetMessage(MsgValeWho);
     Engine_EventShowMessage(ACTOR_KRADEN, 0);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -667,6 +734,8 @@ static void Event_OverhearKraden(void) {
     Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 0);
     Actor_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST + FACING_STEP, 0);
+    // The camera goes up to the gate. Pacing, Kraden says they know more of
+    // Sol Sanctum than Vale's elders.
     Engine_CameraMoveTo(PIXELS(232), -1, PIXELS(240), 1);
     Engine_CameraWaitForMove();
     Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
@@ -681,6 +750,8 @@ static void Event_OverhearKraden(void) {
     Engine_ActorJump(ACTOR_KRADEN, 2, 10);
     Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_EAST, 10);
     Engine_EventShowMessageAndWait(ACTOR_KRADEN, 0, 10);
+    // He turns over what they said of the elements and the Elemental Stars,
+    // things even he does not know.
     Engine_ActorWalkToAndWait(ACTOR_KRADEN, 248, 232);
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -698,7 +769,8 @@ static void Event_OverhearKraden(void) {
     Engine_EventShowMessageAndWait(ACTOR_KRADEN, 0, 2);
     Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
     Engine_EventWait(20);
-    Engine_CameraFollowActor(0, 1);
+    // The camera returns to Isaac, and Garet and Jenna walk back into him.
+    Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
     Engine_CameraWaitForMove();
     Engine_ActorSetAnimation(GARET, ANIM_WALK);
     leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -723,6 +795,14 @@ static void Event_OverhearKraden(void) {
 
 /// Places the actors for the storm or for the day, and plays the arrival from
 /// the cottage.
+///
+/// The scene's initialize entry. On the stormy night (FLAG_VALE_STORM) it
+/// starts the lightning, removes the day's people, lays the survivor by the
+/// fence (unless FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) and blocks the cells
+/// the rockslide covers. By day it removes the rocks and Garet, runs
+/// Event_KradenSetsOff from entrance 10, removes Kraden and the strangers once
+/// FLAG_SANCTUM_VISIT_PLANNED is set, and places the cottage visitor after
+/// Kalay. Clears FLAG_SCENE_TEMP_42 when the party keeps its position.
 s32 ValeKraden_Initialize(void) {
   struct FieldActor *actor;
   s32 debrisRow;
@@ -791,10 +871,10 @@ s32 ValeKraden_Initialize(void) {
         Actor_SetPosition(ACTOR_SATUROS, PIXELS(392), PIXELS(376));
         Actor_SetPosition(ACTOR_MENARDI, PIXELS(376), PIXELS(376));
         FieldObject_SetTargetAndCallback(
-            14, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+            ACTOR_SATUROS, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
             gValeKraden_FaceTargetActions);
         FieldObject_SetTargetAndCallback(
-            15, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
+            ACTOR_MENARDI, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER,
             gValeKraden_FaceTargetActions);
       }
     }
@@ -808,6 +888,12 @@ s32 ValeKraden_Initialize(void) {
 
 /// The man hurt in the rockslide asks whether he will die: yes, and he gives
 /// up; no, and he finds he is unhurt and runs off to the plaza.
+///
+/// Reached on the stormy night by talking to him (actor 11), or by stepping
+/// on cell code 20 until he has given up. Sets
+/// FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP on yes, or
+/// FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED on no; once he has escaped it does
+/// nothing.
 static void Event_TalkToRockslideSurvivor(void) {
   struct FieldActor *leader;
   s32 message;
@@ -823,7 +909,8 @@ static void Event_TalkToRockslideSurvivor(void) {
       Engine_EventBegin();
       Engine_ActorStop(ACTOR_ROCKSLIDE_SURVIVOR);
       Engine_ActorRunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 1);
-      // Reassure the survivor or leave him convinced that he is dying.
+      // He gasps out the rockslide and the monsters; Isaac and Garet hurry
+      // over to him.
       message = MsgValeRockslideDestroyedFence;
       Engine_EventSetMessage(message);
       Engine_EventShowMessageAndWait(ACTOR_ROCKSLIDE_SURVIVOR, 0, 20);
@@ -839,6 +926,8 @@ static void Event_TalkToRockslideSurvivor(void) {
       Actor_FaceDirection(GARET, FACING_NORTHWEST, 40);
       Engine_ActorRunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
       Engine_EventWait(40);
+      // He asks whether he will die. Yes: he gives up and tells them to save
+      // themselves.
       Engine_EventOpenMessage(ACTOR_ROCKSLIDE_SURVIVOR, 0);
       if (Engine_EventChooseYesNo(0, 0) == 0) {
         Engine_ActorRunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
@@ -847,11 +936,13 @@ static void Event_TalkToRockslideSurvivor(void) {
         Engine_EventShowMessage(ACTOR_ROCKSLIDE_SURVIVOR, 0);
         Engine_GameFlagSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP);
       } else {
+        // No: he laments, then jumps up, finds he is not hurt at all, and
+        // warns them of the monsters on the way to the plaza.
         Engine_ActorRunRepeatedMotion(ACTOR_ROCKSLIDE_SURVIVOR, 2);
         Engine_EventWait(20);
         Engine_EventSetMessage((message + 3));
         Engine_EventShowMessageAndWait(ACTOR_ROCKSLIDE_SURVIVOR, 0, 40);
-        Engine_ActorFaceActor(ACTOR_ROCKSLIDE_SURVIVOR, 0, 0);
+        Engine_ActorFaceActor(ACTOR_ROCKSLIDE_SURVIVOR, ACTOR_PARTY_LEADER, 0);
         Engine_ActorSetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_STAND);
         Engine_ActorJump(ACTOR_ROCKSLIDE_SURVIVOR, 4, 40);
         Engine_ActorSetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, 6);
@@ -864,10 +955,12 @@ static void Event_TalkToRockslideSurvivor(void) {
         Engine_ActorSetAnimationAndWait(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_NOD);
         // Follow his escape until the party can see that he is unharmed.
         FieldObject_SetTargetAndCallback(ACTOR_PARTY_LEADER,
-                                         ACTOR_LINK_KEEP_MOTION | 11,
+                                         ACTOR_LINK_KEEP_MOTION |
+                                             ACTOR_ROCKSLIDE_SURVIVOR,
                                          gValeKraden_FaceTargetActions);
-        FieldObject_SetTargetAndCallback(GARET, ACTOR_LINK_KEEP_MOTION | 11,
-                                         gValeKraden_FaceTargetActions);
+        FieldObject_SetTargetAndCallback(
+            GARET, ACTOR_LINK_KEEP_MOTION | ACTOR_ROCKSLIDE_SURVIVOR,
+            gValeKraden_FaceTargetActions);
         Actor_RunActionScriptAndWait(
             ACTOR_ROCKSLIDE_SURVIVOR,
             gValeKraden_RockslideSurvivorEscapeActions);
@@ -879,6 +972,7 @@ static void Event_TalkToRockslideSurvivor(void) {
         Engine_ActorShowEmote(GARET, EMOTE_IN_FRONT | 5, 120);
         Engine_GameFlagSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED);
       }
+      // Garet walks back into Isaac.
       Engine_ActorSetAnimation(GARET, ANIM_WALK);
       leader = Object_GetById(ACTOR_PARTY_LEADER);
       if (leader != 0) {
@@ -893,6 +987,10 @@ static void Event_TalkToRockslideSurvivor(void) {
 }
 
 /// On the stormy night, a monster attacks by the broken fence.
+///
+/// Reached by stepping on cell code 10 until
+/// FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT is set. Sets it and
+/// FLAG_VALE_STORM_MONSTER_FOUGHT, and starts encounter 0 of table 12.
 static void Event_FightFirstMonster(void) {
   struct EventWork *work;
 
@@ -909,6 +1007,10 @@ static void Event_FightFirstMonster(void) {
 }
 
 /// On the stormy night, a second monster attacks by the broken fence.
+///
+/// Reached by stepping on cell code 11 until
+/// FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT is set. Sets it and
+/// FLAG_VALE_STORM_MONSTER_FOUGHT, and starts encounter 1 of table 12.
 static void Event_FightSecondMonster(void) {
   struct EventWork *work;
 
@@ -926,6 +1028,9 @@ static void Event_FightSecondMonster(void) {
 
 /// After the party has reached Kalay, a villager at the cottage asks Isaac
 /// about his memories of it.
+///
+/// Reached by talking to the cottage visitor (actor 16) in the events after
+/// Kalay.
 static void Event_TalkToCottageVisitor(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeMemoriesOfThisCottage);
@@ -1027,7 +1132,7 @@ struct SceneEvent gValeKraden_Events[] = {
     { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OverhearKraden) },
     { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MeetSaturosAndMenardi) },
     { PSYNERGY_ON_ACTOR(ABILITY_LIFT), 8, CONDITION_ALWAYS, 0 },
-    { SEARCH(SEARCH_JAR), 100, 0xf41, FIND_ITEM(ITEM_ELIXIR) },
+    { SEARCH(SEARCH_JAR), 100, FLAG_VALE_KRADEN_JAR_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
     { SCENE_EVENTS_END },
 };
 
@@ -1056,7 +1161,7 @@ struct SceneEvent gValeKraden_EventsAfterKalay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COTTAGE_VISITOR, CONDITION_ALWAYS, MSGNO(MsgValeLonelyWithoutKraden) },
     { PSYNERGY_ON_ACTOR(ABILITY_LIFT), 8, CONDITION_ALWAYS, 0 },
 #if TBS_PATCH_3
-    { SEARCH(SEARCH_JAR), 100, 0xf41, FIND_ITEM(ITEM_ELIXIR) },
+    { SEARCH(SEARCH_JAR), 100, FLAG_VALE_KRADEN_JAR_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
 #endif
     { SCENE_EVENTS_END },
 };

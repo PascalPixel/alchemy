@@ -40,6 +40,10 @@ enum ValeInteriorsActor {
   ACTOR_GARETS_FATHER = 10,
   /// Garet's mother. "As mothers, Dora and I will always worry about you."
   ACTOR_GARETS_MOTHER = 11,
+  /// Jenna's grandmother. "Please return my precious granddaughter, Jenna,
+  /// to me." Once Jenna is taken, actor 14 says she "grew sick with despair",
+  /// and she lies in bed.
+  ACTOR_JENNAS_GRANDMOTHER = 13,
   ACTOR_ITEM_SHOPKEEPER = 20,
   ACTOR_WEAPON_SHOPKEEPER = 21,
   ACTOR_ARMOR_SHOPKEEPER = 22,
@@ -53,12 +57,15 @@ static void ValeInteriors_SpawnDriftingSprite(void);
 
 #include "common/object_facing.h"
 
-/// Moves and grows the sprite, using timer/work as signed 8.8 pixel steps.
+/// Moves and grows a sprite drifting up from Garet's sleeping grandfather.
+///
+/// Called each frame by gValeInteriors_DriftingSpriteScript; the actor's
+/// timer and work are its x and y steps in signed 8.8 pixels, set by
+/// ValeInteriors_SpawnDriftingSprite.
 static s32
 ValeInteriors_AdvanceDriftingSprite(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
 
-  // This script uses timer and work as signed 8.8 pixel steps.
   actor->x.fixed += (s16)actor->timer * 256;
   actor->y.fixed += (s16)actor->work * 256;
   actor->scaleX += Q16_ONE / 40;
@@ -81,7 +88,9 @@ u32 *ValeInteriors_GetExits(void) {
   return gValeInteriors_Exits;
 }
 
-/// Prepares placements for the first departure or the later return to Vale.
+/// Selects the placements for the day the story begins, after the party has
+/// left Vale (FLAG_PARTY_LEFT_VALE), or after Kalay (FLAG_REACHED_KALAY), and
+/// marks which of their actors are in view.
 struct ScenePlacement *ValeInteriors_GetPlacements(void) {
   struct ScenePlacement *table;
 
@@ -96,7 +105,9 @@ struct ScenePlacement *ValeInteriors_GetPlacements(void) {
   return table;
 }
 
-/// Selects dialogue and triggers for the current visit to Vale.
+/// Selects the events for the current visit to Vale: the stormy night's
+/// (FLAG_VALE_STORM), after Kalay, after the party has left, or the day the
+/// story begins.
 struct SceneEvent *ValeInteriors_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0)
     return gValeInteriors_StormEvents;
@@ -109,6 +120,8 @@ struct SceneEvent *ValeInteriors_GetEvents(void) {
 
 /// A villager asks whether Isaac knew why Kraden came to Vale. He came to
 /// study Mt. Aleph.
+///
+/// Reached by talking to actor 15 on the day the story begins.
 static void Event_AskAboutKradensStudies(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeKradenCameToStudyMt);
@@ -118,6 +131,8 @@ static void Event_AskAboutKradensStudies(void) {
 }
 
 /// A villager asks Isaac to help scare Kraden's visitors.
+///
+/// Reached by talking to actor 19 on the day the story begins.
 static void Event_AskToScareVisitors(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeLetsScareKradensVisitors);
@@ -128,6 +143,11 @@ static void Event_AskToScareVisitors(void) {
 
 /// After the party has left Vale, the item shopkeeper gives Isaac a Herb as a
 /// farewell gift, and afterwards urges him to save Jenna.
+///
+/// Called by Event_TalkToItemShopkeeper away from the counter, after the party
+/// has left and before Kalay. Gives the Herb and sets
+/// FLAG_VALE_FAREWELL_HERB_RECEIVED once; afterwards the shopkeeper turns to
+/// watch the leader.
 static void ValeInteriors_GiveFarewellHerb(void) {
   s32 gift;
 
@@ -150,6 +170,8 @@ static void ValeInteriors_GiveFarewellHerb(void) {
 }
 
 /// A villager tells of the culprits' strange powers and asks about them.
+///
+/// Reached by talking to actor 16 after the party has left Vale.
 static void Event_AskAboutCulpritsPowers(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeTheCulpritsHadStrangePowers);
@@ -159,6 +181,8 @@ static void Event_AskAboutCulpritsPowers(void) {
 
 /// Back from Kalay, Garet's father asks whether Isaac heard them talking about
 /// Dora.
+///
+/// Reached by talking to Garet's father (actor 10) after Kalay.
 static void Event_AskAboutDora(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeDidYouHearAboutDora);
@@ -167,6 +191,8 @@ static void Event_AskAboutDora(void) {
 }
 
 /// Garet's mother hopes the travelers did not get sick on the way.
+///
+/// Reached by talking to Garet's mother (actor 11) after Kalay.
 static void Event_WorryAboutTravelersHealth(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeHopeDidntGet);
@@ -174,8 +200,8 @@ static void Event_WorryAboutTravelersHealth(void) {
   Engine_EventEnd();
 }
 
-/// Stops any lightning effect, closes the window transition, and requests the
-/// exit.
+/// Leaves a house through its door: the exit sound plays and the screen
+/// closes, stopping the lightning first on the stormy night.
 static void ValeInteriors_RequestWindowExit(s32 exitId) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0)
     FieldFx_StopLightning();
@@ -187,6 +213,7 @@ static void ValeInteriors_RequestWindowExit(s32 exitId) {
   Engine_EventRequestExit(exitId);
 }
 
+// The doors: stepping on cell code n, in every table, takes exit n.
 static void Event_LeaveByDoor1(void) { ValeInteriors_RequestWindowExit(1); }
 
 static void Event_LeaveByDoor2(void) { ValeInteriors_RequestWindowExit(2); }
@@ -206,6 +233,10 @@ static void Event_LeaveByDoor8(void) { ValeInteriors_RequestWindowExit(8); }
 /// Arriving in a house: on the stormy night the residents are gone and
 /// lightning flashes outside; back from Kalay, entering Garet's house the first
 /// time plays his homecoming.
+///
+/// The scene's initialize entry. Runs Event_GaretComesHome from entrance 6
+/// after Kalay until FLAG_GARET_CAME_HOME is set. From entrance 2, once the
+/// party has left Vale, Jenna's grandmother lies sick in bed.
 s32 ValeInteriors_Initialize(void) {
   struct FieldActor *actor;
   struct EventWork **eventSlot = &gEventWork;
@@ -246,20 +277,25 @@ s32 ValeInteriors_Initialize(void) {
     }
     Object_GetById(ACTOR_GARETS_FATHER)->collisionFlags |= 0x80;
   }
-  // Restore actor 13's pose and map layer after the party's first departure.
+  // Once Jenna is taken, her grandmother lies sick in bed.
   if (gGameState.entrance == 2) {
     if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-      Engine_ActorSetPosition(13, PIXELS(454), PIXELS(150));
-      actor = Object_GetById(13);
+      Engine_ActorSetPosition(ACTOR_JENNAS_GRANDMOTHER, PIXELS(454),
+                              PIXELS(150));
+      actor = Object_GetById(ACTOR_JENNAS_GRANDMOTHER);
       Engine_ActorSetSpriteFlags(actor, 0);
-      Engine_ActorSetAnimation(13, 5);
+      Engine_ActorSetAnimation(ACTOR_JENNAS_GRANDMOTHER, 5);
       Map_ClearLayerEntryFlag(4);
     }
   }
   return 0;
 }
 
-/// Opens the weapon shop from the counter or speaks to its owner.
+/// Opens the weapon shop across the counter, or the shopkeeper speaks.
+///
+/// Reached by talking to the weapon shopkeeper (actor 21) in every table but
+/// the stormy night's. Facing north, across the counter, opens shop 1; else
+/// the shopkeeper's line follows the story.
 static void Event_TalkToWeaponShopkeeper(void) {
   struct FieldActor *leader;
 
@@ -285,7 +321,10 @@ static void Event_TalkToWeaponShopkeeper(void) {
   Engine_EventEnd();
 }
 
-/// Opens the armor shop from the counter or speaks to its owner.
+/// Opens the armor shop across the counter, or the shopkeeper speaks.
+///
+/// Reached by talking to the armor shopkeeper (actor 22) in every table but
+/// the stormy night's; opens shop 2 when facing north.
 static void Event_TalkToArmorShopkeeper(void) {
   struct FieldActor *actor;
 
@@ -308,7 +347,11 @@ static void Event_TalkToArmorShopkeeper(void) {
   }
 }
 
-/// Opens the item shop or speaks to its owner about the party's departure.
+/// Opens the item shop across the counter, or the shopkeeper speaks.
+///
+/// Reached by talking to the item shopkeeper (actor 20) in every table but
+/// the stormy night's; opens shop 3 when facing north. After the party has
+/// left and before Kalay, ValeInteriors_GiveFarewellHerb speaks instead.
 static void Event_TalkToItemShopkeeper(void) {
   struct FieldActor *actor;
 
@@ -352,6 +395,10 @@ static inline void ValeInteriors_PlayRepeatedAnimationAndWait(s32 actorId,
 /// Back from Kalay, Garet comes home: his grandfather dozes, his parents argue
 /// over whether to look for him, and his grandmother spots him first. Garet
 /// introduces Ivan and Mia, the family sees them off, and his father paces.
+///
+/// Called by ValeInteriors_Initialize from entrance 6 after Kalay, until
+/// FLAG_GARET_CAME_HOME is set; sets it. Adds and removes the callback
+/// ValeInteriors_SpawnDriftingSprite, and leaves the father pacing.
 static void Event_GaretComesHome(void) {
   struct FieldActor *driftingSprite;
   struct FieldActor *actor;
@@ -359,7 +406,8 @@ static void Event_GaretComesHome(void) {
   SchedulerCallback timedUpdate;
   const s32 *partyScript;
 
-  // Stage the returning party and start the three drifting sprites.
+  // The party walks in while Garet's grandfather dozes, sleep drifting up
+  // from him.
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
@@ -406,7 +454,6 @@ static void Event_GaretComesHome(void) {
   Engine_ActorSetAnimation(GARET, ANIM_STAND);
   Engine_ActorSetAnimation(IVAN, ANIM_STAND);
   Engine_EventWait(10);
-  // Turn the party toward actor 10 while the household exchange begins.
   FieldObject_SetTargetAndCallback(ACTOR_PARTY_LEADER,
                                    ACTOR_LINK_KEEP_MOTION | ACTOR_GARETS_FATHER,
                                    gValeInteriors_FaceTargetScript);
@@ -421,11 +468,13 @@ static void Event_GaretComesHome(void) {
                                    gValeInteriors_FaceTargetScript);
   Engine_EventWait(300);
   Camera_GetEventObject()->motionFlags = motionFlags;
-  // Pan slowly into the household conversation and follow its reactions.
+  // The camera pans slowly up to Garet's parents. His father, pacing, asks
+  // whether they should look for Garet; Isaac still does not know about
+  // Dora. His mother teases that he misses Garet.
   Camera_SetSpeed(PIXELS(1) / 10, PIXELS(1) / 80);
   Camera_MoveTo(PIXELS(786), 0, PIXELS(430), 1);
   Engine_EventWait(240);
-  Engine_ActorStop(10);
+  Engine_ActorStop(ACTOR_GARETS_FATHER);
   Actor_ShowEmote(ACTOR_GARETS_FATHER, EMOTE_IN_FRONT | 2, 80);
   Actor_WalkToAndWait(ACTOR_GARETS_FATHER, 819, 405);
   Engine_EventWait(40);
@@ -433,7 +482,9 @@ static void Event_GaretComesHome(void) {
   Engine_EventWait(40);
   Actor_FaceDirection(ACTOR_GARETS_FATHER, FACING_NORTH + FACING_STEP, 20);
   Engine_EventSetMessage(MsgValeHey2);
-  Event_ShowMessageAndWait(0x9000 | ACTOR_GARETS_FATHER, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
+                               ACTOR_GARETS_FATHER,
+                           0, 20);
   Engine_ActorStop(ACTOR_PARTY_LEADER);
   Engine_ActorStop(GARET);
   Engine_ActorStop(IVAN);
@@ -442,19 +493,25 @@ static void Event_GaretComesHome(void) {
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_GARETS_FATHER, 2);
   Engine_EventWait(40);
-  Event_ShowMessageAndWait(0x9000 | ACTOR_GARETS_FATHER, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
+                               ACTOR_GARETS_FATHER,
+                           0, 10);
   Actor_FaceDirection(ACTOR_GARETS_MOTHER, FACING_SOUTH + FACING_STEP, 10);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_GARETS_FATHER, 2);
   Engine_EventWait(20);
-  Event_ShowMessageAndWait(0x9000 | ACTOR_GARETS_FATHER, 0, 20);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
+                               ACTOR_GARETS_FATHER,
+                           0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 80);
   Actor_ShowEmote(ACTOR_GARETS_MOTHER, EMOTE_IN_FRONT | 6, 40);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0, 40);
   Engine_ActorStartRepeatedMotion(ACTOR_GARETS_FATHER, 2);
   Actor_ShowEmote(ACTOR_GARETS_FATHER, EMOTE_IN_FRONT | 2, 20);
   Engine_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIM_SHAKE_HEAD);
-  Event_ShowMessageAndWait(0x9000 | ACTOR_GARETS_FATHER, 0, 10);
+  Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT |
+                               ACTOR_GARETS_FATHER,
+                           0, 10);
   ValeInteriors_PlayRepeatedAnimationAndWait(ACTOR_GARETS_MOTHER, ANIM_NOD);
   Engine_EventWait(20);
   ValeInteriors_PlayRepeatedAnimationAndWait(ACTOR_GARETS_FATHER,
@@ -462,6 +519,8 @@ static void Event_GaretComesHome(void) {
   ValeInteriors_PlayRepeatedAnimationAndWait(ACTOR_GARETS_MOTHER, ANIM_NOD);
   ValeInteriors_PlayRepeatedAnimationAndWait(ACTOR_GARETS_FATHER,
                                              ANIM_SHAKE_HEAD);
+  // Garet's grandmother sees him and chokes on her words; his mother asks if
+  // she is choking, his father thinks she misses Garet too.
   Actor_ShowEmote(ACTOR_GARETS_GRANDMOTHER, EMOTE_IN_FRONT | 5, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_GARETS_GRANDMOTHER, 1);
   Engine_EventWait(20);
@@ -483,6 +542,7 @@ static void Event_GaretComesHome(void) {
   Actor_FaceDirection(ACTOR_GARETS_FATHER, FACING_SOUTH + FACING_STEP, 40);
   Engine_ActorSetAnimationAndWait(ACTOR_GARETS_FATHER, ANIM_NOD);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_FATHER, 0, 10);
+  // No, it really is Garet: both parents turn and call his name together.
   Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDMOTHER, ANIM_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_GARETS_GRANDMOTHER, FACING_NORTH + FACING_STEP, 10);
   Engine_ActorJump(ACTOR_GARETS_GRANDMOTHER, 2, 0);
@@ -505,13 +565,14 @@ static void Event_GaretComesHome(void) {
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | GARET, 0, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 2);
-  // Stop the drifting sprites before the camera returns to the party.
+  // His grandfather wakes, and the sleep stops drifting.
   Engine_TaskRemoveCallback(timedUpdate);
   Engine_EventWait(40);
   Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, 6);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDFATHER, 0,
                            20);
+  // The grandfather looks about, then jumps up with Garet's name.
   Camera_MoveTo(PIXELS(750), 0, PIXELS(451), 1);
   Engine_EventWait(20);
   Actor_FaceDirection(ACTOR_GARETS_MOTHER, FACING_SOUTH + FACING_STEP, 0);
@@ -528,6 +589,8 @@ static void Event_GaretComesHome(void) {
   Engine_ActorJump(ACTOR_GARETS_GRANDFATHER, 6, 0);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARETS_GRANDFATHER, 0,
                            20);
+  // Garet goes to him; the grandfather asks whether the Wise One's mission
+  // is done, and a no skips one line of Garet's father.
   Actor_SetSpeed(GARET, PIXELS(8) / 5, PIXELS(4) / 5);
   Actor_WalkToAndWait(GARET, 789, 473);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST + FACING_STEP, 20);
@@ -550,7 +613,8 @@ static void Event_GaretComesHome(void) {
   Event_ShowMessage(ACTOR_GARETS_FATHER, 0);
   Engine_ActorSetAnimationAndWait(ACTOR_GARETS_MOTHER, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  // Ask about leaving again and give the companions their individual replies.
+  // His mother knows he is leaving again soon; his grandparents are glad to
+  // see him well.
   Engine_EventSetMessage(MsgValeYoureLeavingAgainSoon);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_GARETS_MOTHER, 0);
   Camera_MoveTo(PIXELS(777), 0, PIXELS(468), 1);
@@ -571,6 +635,7 @@ static void Event_GaretComesHome(void) {
   Engine_ActorSetAnimation(ACTOR_GARETS_GRANDMOTHER, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(ACTOR_GARETS_GRANDFATHER, ANIM_NOD);
   Engine_EventWait(20);
+  // Garet introduces his new friends.
   Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 20);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 80);
   Actor_FaceDirection(GARET, FACING_SOUTHWEST + FACING_STEP, 20);
@@ -585,7 +650,7 @@ static void Event_GaretComesHome(void) {
   Engine_EventWait(20);
   Actor_FaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
-  // Bring Ivan and Mia forward for their goodbyes.
+  // Ivan, then Mia, step forward and introduce themselves; the family nods.
   Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(IVAN, 819, 489);
   Actor_FaceDirection(IVAN, FACING_NORTHWEST + FACING_STEP, 40);
@@ -607,6 +672,7 @@ static void Event_GaretComesHome(void) {
   Engine_EventWait(20);
   Camera_MoveTo(PIXELS(777), 0, PIXELS(428), 1);
   Engine_EventWait(20);
+  // Garet's mother comes forward and asks them to look after young Garet.
   Actor_SetSpeed(ACTOR_GARETS_MOTHER, PIXELS(2) / 5, PIXELS(1) / 5);
   Actor_WalkToAndWait(ACTOR_GARETS_MOTHER, 835, 388);
   Actor_FaceDirection(ACTOR_GARETS_MOTHER, FACING_SOUTH + FACING_STEP, 0);
@@ -621,6 +687,7 @@ static void Event_GaretComesHome(void) {
   Engine_ActorSetAnimation(IVAN, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_EventWait(20);
+  // His father: enough chit-chat, relax and enjoy your stay.
   Engine_ActorRunRepeatedMotion(ACTOR_GARETS_FATHER, 1);
   Engine_EventWait(20);
   Engine_ActorSetAnimation(ACTOR_GARETS_FATHER, ANIM_NOD);
@@ -635,7 +702,6 @@ static void Event_GaretComesHome(void) {
   Engine_ActorSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_EventWait(20);
   Actor_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
-  // Send the companions out with the shared departure script.
   partyScript = gValeInteriors_PartyLeavesScript;
   Actor_SetActionScript(GARET, partyScript);
   Actor_SetActionScript(IVAN, partyScript);
@@ -647,8 +713,10 @@ static void Event_GaretComesHome(void) {
   Engine_EventEnd();
 }
 
-/// Restarts one drifting sprite at frames 10, 20, and 30 of each 180-frame
-/// cycle.
+/// Sends a sprite drifting up from Garet's sleeping grandfather, one of the
+/// three at frames 10, 20 and 30 of every 180.
+///
+/// A callback Event_GaretComesHome adds while the grandfather dozes.
 static void ValeInteriors_SpawnDriftingSprite(void) {
   s32 actorId;
   u32 cycleFrame;
@@ -919,7 +987,7 @@ struct SceneEvent gValeInteriors_Events[] = {
     { EVENT_TALK, ACTOR_GARETS_FATHER, CONDITION_ALWAYS, MSGNO(MsgValeGaretHasGrownQuiteStrongIn) },
     { EVENT_TALK, ACTOR_GARETS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeYouAndGaretAreOlderNow) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeMyGranddaughterJennaIsFinallyHappy) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeIHopeYouTwoWontBe) },
+    { EVENT_TALK, ACTOR_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIHopeYouTwoWontBe) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeJennaIsTheSpittingImageOf) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutKradensStudies) },
     { EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgValeIfThereAreVisitorsInTown) },
@@ -943,11 +1011,11 @@ struct SceneEvent gValeInteriors_Events[] = {
     { 0xc4f3, 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPsynergyStone)) },
     { 0xc4f3, 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeAuntNotebook)) },
     { 0xc4f3, 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookMakingGreatVillage)) },
-    { SEARCH(SEARCH_BARREL), 100, 0xf42, FIND_ITEM(ITEM_ANTIDOTE) },
-    { SEARCH(SEARCH_JAR), 101, 0xf43, FIND_COINS(6) },
-    { SEARCH(SEARCH_JAR), 102, 0xf44, FIND_COINS(2) },
-    { SEARCH(SEARCH_JAR), 103, 0xf45, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { SEARCH(SEARCH_JAR), 104, 0xf46, FIND_COINS(3) },
+    { SEARCH(SEARCH_BARREL), 100, FLAG_VALE_INTERIORS_BARREL_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
+    { SEARCH(SEARCH_JAR), 101, FLAG_VALE_INTERIORS_JAR_6_COINS, FIND_COINS(6) },
+    { SEARCH(SEARCH_JAR), 102, FLAG_VALE_INTERIORS_JAR_2_COINS, FIND_COINS(2) },
+    { SEARCH(SEARCH_JAR), 103, FLAG_VALE_INTERIORS_JAR_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { SEARCH(SEARCH_JAR), 104, FLAG_VALE_INTERIORS_JAR_3_COINS, FIND_COINS(3) },
     { SCENE_EVENTS_END },
 };
 
@@ -957,7 +1025,7 @@ struct SceneEvent gValeInteriors_EventsAfterLeaving[] = {
     { EVENT_TALK, ACTOR_GARETS_FATHER, CONDITION_ALWAYS, MSGNO(MsgValeImProudOfYouGaretMy) },
     { EVENT_TALK, ACTOR_GARETS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeAsMothersDoraAndIWill) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeIHeardThatJennaBrotherFelix) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValePleaseReturnMyPreciousGranddaughterJenna) },
+    { EVENT_TALK, ACTOR_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValePleaseReturnMyPreciousGranddaughterJenna) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeAfterJennaWasTakenGrandmotherGrew) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgValeItsBecauseKradenWasStudyingAlchemy) },
     { EVENT_TALK, 16, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutCulpritsPowers) },
@@ -975,7 +1043,7 @@ struct SceneEvent gValeInteriors_EventsAfterLeaving[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_FATHER, CONDITION_ALWAYS, MSGNO(MsgValeOnceGaretLeavesIWontBe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GARETS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIAmConcernedForGaretBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgValeFelixInheritedHisFathersSkillWith) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgValeJennaAnytimeYouFaceDangerJust) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeJennaAnytimeYouFaceDangerJust) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgValeWhyWouldFelixTakeHisSister) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgValeWeAlmostLostTheTownOver) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgValeIdLikeToBelieveThatOnly) },
@@ -990,11 +1058,11 @@ struct SceneEvent gValeInteriors_EventsAfterLeaving[] = {
     { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor6) },
     { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor7) },
     { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor8) },
-    { SEARCH(SEARCH_BARREL), 100, 0xf42, FIND_ITEM(ITEM_ANTIDOTE) },
-    { SEARCH(SEARCH_JAR), 101, 0xf43, FIND_COINS(6) },
-    { SEARCH(SEARCH_JAR), 102, 0xf44, FIND_COINS(2) },
-    { SEARCH(SEARCH_JAR), 103, 0xf45, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { SEARCH(SEARCH_JAR), 104, 0xf46, FIND_COINS(3) },
+    { SEARCH(SEARCH_BARREL), 100, FLAG_VALE_INTERIORS_BARREL_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
+    { SEARCH(SEARCH_JAR), 101, FLAG_VALE_INTERIORS_JAR_6_COINS, FIND_COINS(6) },
+    { SEARCH(SEARCH_JAR), 102, FLAG_VALE_INTERIORS_JAR_2_COINS, FIND_COINS(2) },
+    { SEARCH(SEARCH_JAR), 103, FLAG_VALE_INTERIORS_JAR_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { SEARCH(SEARCH_JAR), 104, FLAG_VALE_INTERIORS_JAR_3_COINS, FIND_COINS(3) },
     { SEARCH(SEARCH_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
     { SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
     { 0xc4f3, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },
@@ -1010,7 +1078,7 @@ struct SceneEvent gValeInteriors_EventsAfterKalay[] = {
     { EVENT_TALK, ACTOR_GARETS_FATHER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutDora) },
     { EVENT_TALK, ACTOR_GARETS_MOTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WorryAboutTravelersHealth) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgValeOhSoYouStillHaventRescued) },
-    { EVENT_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgValeIGetOverColdsQuicklyBut) },
+    { EVENT_TALK, ACTOR_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeIGetOverColdsQuicklyBut) },
     { EVENT_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgValeAColdIsGoingAroundI) },
     { EVENT_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgValeWhatWasThatAlchemyThatKraden) },
     { EVENT_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgValeEarthquakesStillStrikeOnceInA) },
@@ -1029,7 +1097,7 @@ struct SceneEvent gValeInteriors_EventsAfterKalay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOPKEEPER, FLAG_VALE_FAREWELL_HERB_RECEIVED, MSGNO(MsgValeWhatHappenedToJennaHaventYou) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgValeIGaveHimAFarewellGift) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS, MSGNO(MsgValeWillIEverSeeJennaAnd) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgValeDoraSaysItsJustACold) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_JENNAS_GRANDMOTHER, CONDITION_ALWAYS, MSGNO(MsgValeDoraSaysItsJustACold) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS, MSGNO(MsgValeIKnowThatThereAreAlways) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgValeEvenIfTheEruptionHadNo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgValeEveryTimeTheGroundShakesI) },
@@ -1044,11 +1112,11 @@ struct SceneEvent gValeInteriors_EventsAfterKalay[] = {
     { EVENT_TOUCH, 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor6) },
     { EVENT_TOUCH, 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor7) },
     { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByDoor8) },
-    { SEARCH(SEARCH_BARREL), 100, 0xf42, FIND_ITEM(ITEM_ANTIDOTE) },
-    { SEARCH(SEARCH_JAR), 101, 0xf43, FIND_COINS(6) },
-    { SEARCH(SEARCH_JAR), 102, 0xf44, FIND_COINS(2) },
-    { SEARCH(SEARCH_JAR), 103, 0xf45, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    { SEARCH(SEARCH_JAR), 104, 0xf46, FIND_COINS(3) },
+    { SEARCH(SEARCH_BARREL), 100, FLAG_VALE_INTERIORS_BARREL_ANTIDOTE, FIND_ITEM(ITEM_ANTIDOTE) },
+    { SEARCH(SEARCH_JAR), 101, FLAG_VALE_INTERIORS_JAR_6_COINS, FIND_COINS(6) },
+    { SEARCH(SEARCH_JAR), 102, FLAG_VALE_INTERIORS_JAR_2_COINS, FIND_COINS(2) },
+    { SEARCH(SEARCH_JAR), 103, FLAG_VALE_INTERIORS_JAR_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
+    { SEARCH(SEARCH_JAR), 104, FLAG_VALE_INTERIORS_JAR_3_COINS, FIND_COINS(3) },
     { SEARCH(SEARCH_BOOKCASE), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBooksAboutContinents)) },
     { SEARCH(SEARCH_BOOKCASE), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookLawsOfVale)) },
     { 0xc4f3, 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeBookPowerOfNature)) },

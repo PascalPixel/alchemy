@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void Vault_PlaceItemIcon(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z);
+void Vault_PlaceItemIcon(s32 item, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 
 #endif

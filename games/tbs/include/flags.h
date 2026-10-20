@@ -8,7 +8,11 @@
 /// (Party_AddActiveOwner).
 #define FLAG_IN_PARTY(character) (character)
 #define FLAG_CHILDHOOD 0x20 ///< the prologue: Isaac and Garet are children
-#define FLAG_DJINNI_0 48    ///< the flag of Djinni 0, set once it is caught
+/// The young Isaac wears the tunic Dora made him take on the stormy night:
+/// placed child sprites get its child part (226), and Isaac's grown sprite is
+/// 0x11. Party_EndChildhood clears it.
+#define FLAG_ISAAC_WEARS_TUNIC 0x21
+#define FLAG_DJINNI_0 48 ///< the flag of Djinni 0, set once it is caught
 /// The next scene change is silent: the scene loader clears it in place of
 /// playing SE_288, once. The world map sets it after its lighthouse
 /// transition.
@@ -17,6 +21,10 @@
 #define FLAG_IN_BATTLE 0x103
 /// Set while the field menu is open; scenes hold their moving actors still.
 #define FLAG_MENU_OPEN 0x106
+/// While set, opening the field menu or the pause menu, or pressing a shortcut,
+/// raises event 250 instead (Field_RunScene, Field_RequestShortcut); Vault's
+/// inn sets it while the party corners the suspects.
+#define FLAG_MENUS_RAISE_EVENT 0x107
 // Lit lighthouses: the adepts of a lit element regain PP faster
 #define FLAG_VENUS_LIGHTHOUSE_LIT 0x110
 #define FLAG_MERCURY_LIGHTHOUSE_LIT 0x111
@@ -198,6 +206,8 @@
 #define FLAG_BABI_SPOKE_AFTER_COLOSSO 0x96f
 #define FLAG_BABI_PALACE_CLOAK_BALL 0xf31  ///< lent by Babi after Colosso
 #define FLAG_BABI_PALACE_LUCKY_MEDAL 0xf9f ///< in a barrel
+/// A jar in the scholars' room, which is drawn on Vale's map (vale_babi.c).
+#define FLAG_BABI_PALACE_HARD_NUT 0xf9e
 // Bilibin
 #define FLAG_BILIBIN_JILL_RESCUED 0x848 ///< Jill, a tree, pulled from the river
 #define FLAG_BILIBIN_JILL_GIFT_RECEIVED 0x849 ///< her thanks, a Hard Nut
@@ -438,6 +448,9 @@
 #define FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT 0x87e
 /// A monster was fought on the stormy night: Vale's music changes (song 23).
 #define FLAG_VALE_STORM_MONSTER_FOUGHT 0x900
+/// The jar's Elixir by the cottage; after Kalay it is searchable only from the
+/// third patch.
+#define FLAG_VALE_KRADEN_JAR_ELIXIR 0xf41
 
 // Vale, the plaza
 /// A villager asked whether Isaac is going to Kraden's cottage.
@@ -492,17 +505,35 @@
 #define FLAG_READ_THOUGHTS_ABOUT_DORA 0x81c
 /// Isaac visited Dora in her sickbed and she got up.
 #define FLAG_VISITED_SICK_DORA 0x81e
+/// The containers, set once each is searched; the last three hold their finds
+/// only once the party is back from Kalay.
+#define FLAG_VALE_WOODEN_BOX_HERB 0xf47
+#define FLAG_VALE_JAR_COINS 0xf48   ///< 5 coins
+#define FLAG_VALE_BARREL_COIN 0xf49 ///< 1 coin
+#define FLAG_VALE_JAR_VIAL 0x8ad
+#define FLAG_VALE_BARREL_COINS 0x8ae ///< 123 coins
+#define FLAG_VALE_PSYNERGY_STONE 0x8af
 
 // Vale, houses and shops
 /// The item shopkeeper gave Isaac a Herb as a farewell gift.
 #define FLAG_VALE_FAREWELL_HERB_RECEIVED 0x81b
 /// Back from Kalay, Garet surprised his family at home.
 #define FLAG_GARET_CAME_HOME 0x81d
+// The houses' containers, set once each is searched (not on the stormy night)
+#define FLAG_VALE_INTERIORS_BARREL_ANTIDOTE 0xf42
+#define FLAG_VALE_INTERIORS_JAR_6_COINS 0xf43
+#define FLAG_VALE_INTERIORS_JAR_2_COINS 0xf44
+#define FLAG_VALE_INTERIORS_JAR_SMOKE_BOMB 0xf45
+#define FLAG_VALE_INTERIORS_JAR_3_COINS 0xf46
 
 // Vale during the eruption
 /// Isaac and Garet followed the elders into the sanctum. They came down
 /// Mt. Aleph to do so.
 #define FLAG_VALE_RETURNED_FROM_MT_ALEPH 0x879
+
+// Vale Cave, where Kite hides
+#define FLAG_VALE_CAVE_HALT_GEM 0xfc2 ///< the second room's chest
+#define FLAG_VALE_CAVE_NUT 0xfc3      ///< the second room's other chest
 // Vault: the stolen Shaman's Rod, and its containers, set once each is
 // searched
 /// Set when Ivan first shows the party his strange powers at the mayor's.
@@ -522,6 +553,10 @@
 #define FLAG_VAULT_SUSPECTS_MIND_READ 0x853
 /// Set as the three thieves are confronted in the attic, before the battle.
 #define FLAG_VAULT_THIEVES_CONFRONTED 0x854
+/// Set when, back in Vault after the thieves broke out, the mayor or the
+/// villager who spoke with him has warned the party of them.
+/// XXX: no scene here reads it; its reader would say what it gates.
+#define FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES 0x868
 #define FLAG_VAULT_BOX_NUT 0xf4a
 
 // Vault interiors: their containers, set once each is searched

@@ -56,14 +56,20 @@
 /// The flag of Kite, set once it is caught.
 #define FLAG_KITE (FLAG_DJINNI_0 + 3 * 20 + 4)
 
-// FLAG_SCENE_TEMP_00 and _01: in the second room, the western and eastern
-// objects sunk into their holes, or, in Kite's part of it, its first and second
-// escape. FLAG_SCENE_TEMP_02 to _05: in the third room, the object pushed off
-// the ledge, the object pushed over its edge, and the object slid north, ending
-// on the northern or the southern row (row 20). Group flag 0x301: the sliding
-// objects are at their eastern end. Group flag 0x302: Kite has run behind the
-// ledge and keeps away from the party. Both last while the party stays in the
-// cave.
+// The cave's scene flags:
+// - FLAG_SCENE_TEMP_00 and _01: in the second room, the western and eastern
+//   objects sunk into their holes, or, in Kite's part of it, its first and
+//   second escape.
+// - FLAG_SCENE_TEMP_02 to _05: in the third room, the object pushed off the
+//   ledge, the object pushed over its edge, and the object slid north, ending
+//   on the northern or the southern row (row 20).
+
+// The cave's place flags. The second and third rooms are one place group, so
+// these last while the party goes between them; the first room is another.
+/// The sliding objects of the second room are at their eastern end.
+#define FLAG_VALE_CAVE_SLIDERS_EAST 0x301
+/// Kite has run behind the ledge and keeps to its far side.
+#define FLAG_VALE_CAVE_KITE_BEHIND_LEDGE 0x302
 
 static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row);
 static void ValeCave_ApplyEntryState(void);
@@ -72,7 +78,10 @@ static void ValeCave_ApplyEntryState(void);
 #include "common/effect_spawn.h"
 #include "common/object_staged_actor.h"
 
-/// Reaching Kite: it joins the party.
+/// Talking to Kite after Halt: it joins the party.
+///
+/// Scene_TalkToActor selects this kind 7 event while Kite is the paused actor.
+/// Gives Jupiter Djinni 4, setting FLAG_KITE so neither room places Kite again.
 static void Event_TalkToKite(void) { Djinn_JoinParty(ACTOR_KITE, 3, 4); }
 
 /// Waits for an actor to land, bounded by a one-second timeout.
@@ -88,7 +97,10 @@ static void ValeCave_WaitForActorLanding(struct FieldActor *actor) {
   actor->y.fixed = actor->terrainHeight;
 }
 
-// Keep an actor facing the party leader after the escape sequence.
+/// Turns Kite to face the party leader each frame.
+///
+/// Kite's update hook once it has run behind the ledge, set by
+/// Event_KiteRunsBehindLedge and again by ValeCave_ApplyEntryState.
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 38 to 36 bytes in tbs-en.
 #ifdef UBFIX
@@ -154,11 +166,16 @@ const struct ScenePlacement *ValeCave_GetPlacements(void) {
 }
 
 /// Reveal ends: the hidden tile is hidden again.
+///
+/// Reached by Reveal's phase 4 anywhere in the second room.
 static void Event_HideRevealedTile(void) {
   Map_CopyCells(16, 15, 1, 1, 15, 15);
 }
 
-/// Reveal shows a hidden tile in the first room.
+/// Reveal shows a hidden tile in the second room.
+///
+/// Reached by Reveal's phase 5 anywhere in the second room; copies cell
+/// (16, 17) over cell (15, 15) until Event_HideRevealedTile puts it back.
 static void Event_RevealHiddenTile(void) {
   Map_CopyCells(16, 17, 1, 1, 15, 15);
 }
@@ -182,6 +199,10 @@ ValeCave_SinkObjectWithParticles(s32 actorId, s32 baseX, s32 baseZ,
 
 /// Move on the western object: once over its hole, Isaac steps aside and the
 /// object sinks into the floor in a cloud of dust.
+///
+/// Reached by Move on the western object (actor 9) in the second room, until
+/// FLAG_SCENE_TEMP_00 is set. Over its hole (column 23) it sets
+/// FLAG_SCENE_TEMP_00 and makes the hole's cells walkable.
 static void Event_MoveWestObjectIntoHole(void) {
   struct EffectOptions options;
   struct EffectOptions *particleOptions;
@@ -223,6 +244,11 @@ static void Event_MoveWestObjectIntoHole(void) {
 }
 
 /// Move on the eastern object: once over its hole, it sinks into the floor.
+///
+/// Reached by Move on the eastern object (actor 10) in the second room, until
+/// FLAG_SCENE_TEMP_01 is set, and from Event_PushEastObjectIntoHole. Over its
+/// hole (column 27) it sets FLAG_SCENE_TEMP_01 and makes the hole's cells
+/// walkable.
 static void Event_MoveEastObjectIntoHole(void) {
   struct EffectOptions options;
   struct EffectOptions *particleOptions;
@@ -260,6 +286,9 @@ static void Event_MoveEastObjectIntoHole(void) {
 }
 
 /// Pushing the eastern object: it moves a cell, and sinks if over its hole.
+///
+/// Reached by walking into cell code 24 in the second room, until
+/// FLAG_SCENE_TEMP_01 is set.
 static void Event_PushEastObjectIntoHole(void) {
   Engine_EventBegin();
   StagedActor_AdvancePair();
@@ -268,6 +297,9 @@ static void Event_PushEastObjectIntoHole(void) {
 }
 
 /// Walking south off the ledge: Isaac hops down if the cell below is free.
+///
+/// Reached by walking south into cell code 21 in the second room. Returns 1
+/// when the leader hopped, 0 when the landing cell is blocked.
 static s32 Event_HopDownLedge(s32 unusedArgument) {
 
   union FieldCoordinate landingPosition[3];
@@ -288,7 +320,8 @@ static s32 Event_HopDownLedge(s32 unusedArgument) {
   landingPosition[2].fixed = leader->z.fixed + 0x200000;
 #endif
   // Keep the normal motion flags while staging the hop.
-  if (FieldObject_CheckMovementCollision(leader, landingPosition) == 0) {
+  if (FieldObject_CheckMovementCollision(
+          leader, (struct FieldPosition *)landingPosition) == 0) {
     Engine_EventBegin();
     Object_SetMode(leader, 6);
     Engine_TaskWait(6);
@@ -312,6 +345,9 @@ static s32 Event_HopDownLedge(s32 unusedArgument) {
 
 /// Coming near Kite: the camera finds it; it notices the party and hops away
 /// up the ledge.
+///
+/// Reached by stepping on cell code 40 in the second room until Kite is
+/// caught (FLAG_KITE); runs once, setting FLAG_SCENE_TEMP_00.
 static void Event_KiteRunsOff(void) {
 
   struct FieldActor *djinni;
@@ -341,6 +377,11 @@ static void Event_KiteRunsOff(void) {
 }
 
 /// Coming near again: Kite runs behind the ledge and turns to watch the party.
+///
+/// Reached by stepping on cell code 41 in the second room until Kite is
+/// caught, once Event_KiteRunsOff has run. Sets FLAG_SCENE_TEMP_01 and
+/// FLAG_VALE_CAVE_KITE_BEHIND_LEDGE, and gives Kite the update hook
+/// ValeCave_FaceActorTowardLeader.
 static void Event_KiteRunsBehindLedge(void) {
 
   struct FieldActor *djinni;
@@ -348,7 +389,7 @@ static void Event_KiteRunsBehindLedge(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) != 0) {
     if (GameFlag_IsSet(FLAG_SCENE_TEMP_01) == 0) {
       GameFlag_Set(FLAG_SCENE_TEMP_01);
-      GameFlag_Set(0x302);
+      GameFlag_Set(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE);
       Engine_EventBegin();
       Actor_SetAttachedEffect(ACTOR_KITE, 0x102);
       Engine_ActorRunRepeatedMotion(ACTOR_KITE, 2);
@@ -368,6 +409,10 @@ static void Event_KiteRunsBehindLedge(void) {
 
 /// Walking around the ledge: Kite keeps to the far side of it, unless Halt has
 /// stopped it.
+///
+/// Reached by stepping on cell codes 45 to 56 in the second room until Kite is
+/// caught, once FLAG_VALE_CAVE_KITE_BEHIND_LEDGE is set; each code sends Kite
+/// to its row of gValeCave_WalkTargets at the leader's speed.
 static void Event_KiteKeepsAway(void) {
   struct FieldActor *djinni;
   struct FieldActor *leader;
@@ -377,7 +422,7 @@ static void Event_KiteKeepsAway(void) {
   struct EventWork *event;
 
   event = gEventWork;
-  if (Engine_GameFlagIsSet(0x302) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0) {
     if (gGameState.pausedObject != ACTOR_KITE) {
       // Preserve the speed reads before resolving this route point.
       routeIndex = event->touchedTrigger;
@@ -401,6 +446,8 @@ static void Event_KiteKeepsAway(void) {
 }
 
 /// Halt on Kite: it stops where it stands.
+///
+/// Reached by Halt on Kite (actor 8) in the second room.
 static void Event_HaltKite(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_KITE, 0);
@@ -409,6 +456,9 @@ static void Event_HaltKite(void) {
 
 /// Pushing an object along the ledge: at its edge the object falls off,
 /// opening the way.
+///
+/// Reached by walking into cell code 20 in the third room. When the object
+/// falls (column 17) it sets FLAG_SCENE_TEMP_03 and clears the cells it held.
 static void Event_PushObjectOverEdge(void) {
   struct FieldActor *movedObject;
   s32 stationaryMotion;
@@ -418,6 +468,7 @@ static void Event_PushObjectOverEdge(void) {
   Engine_EventBegin();
   if (StagedActor_FindClearPosition(&probe) != 0) {
     SceneActor_MoveAndRedraw(probe);
+    // At the ledge's edge (column 17) the object slides west and drops.
     if ((probe.positionX >> 20) == 17) {
       Engine_ActorSetAnimation(probe.actorSlot, 3);
       stationaryMotion = 0;
@@ -438,6 +489,7 @@ static void Event_PushObjectOverEdge(void) {
 
         movedObject->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       }
+      // The cells it held on the ledge, and its landing, become open floor.
       clearedRows = 4;
       StagedActor_FillGridAttributeRectangle(0, (probe.positionX >> 20),
                                              ((probe.positionZ >> 20) - 2), 1,
@@ -456,6 +508,9 @@ static void Event_PushObjectOverEdge(void) {
 }
 
 /// Pushing the western object east: it falls off the ledge, opening the way.
+///
+/// Reached by walking east into cell code 21 in the third room. Sets
+/// FLAG_SCENE_TEMP_02 and clears the cells the object held.
 static void Event_PushObjectOffLedge(void) {
 
   struct FieldActor *pushedObject;
@@ -498,6 +553,10 @@ static void Event_PushObjectOffLedge(void) {
 }
 
 /// Pushing the object north: it slides a cell, opening the way.
+///
+/// Reached by walking into cell code 22 in the third room. Sets
+/// FLAG_SCENE_TEMP_05 when it stops on row 20, else FLAG_SCENE_TEMP_04, and
+/// then opens the cells above it.
 static void Event_PushObjectNorth(void) {
   struct StagedActorProbe probe;
 
@@ -551,6 +610,10 @@ const struct SceneEvent *ValeCave_GetEvents(void) {
 }
 
 /// Chooses the entry transition and restores the room's puzzle state.
+///
+/// The scene's initialize entry. The first room fades in from the backdrop
+/// and clears FLAG_SHOW_LOCATION_NAME; the others open with the window
+/// transition.
 s32 ValeCave_Initialize(void) {
   s32 *request = &gEventWork->startTransition;
 
@@ -567,6 +630,9 @@ s32 ValeCave_Initialize(void) {
 }
 
 /// The first room's exits play the exit sound before leaving.
+///
+/// Reached by stepping on cell codes 1 to 3 in the first room; takes the exit
+/// of the same number.
 static void Event_LeaveRoom(void) {
   s32 exitId = gEventWork->touchedTrigger;
 
@@ -578,7 +644,7 @@ static void Event_LeaveRoom(void) {
 static void ValeCave_UpdateSlidingObjectPassage(void) {
   Map_CopyCellAttributes(0, 34, 13, 3, 23, 34);
 
-  if (Engine_GameFlagIsSet(0x301) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VALE_CAVE_SLIDERS_EAST) != 0) {
     ValeCave_CenterActorOnCell(SLIDING_OBJECT, 35, 35);
     Map_CopyCellAttributes(24, 34, 1, 3, 23, 34);
   } else {
@@ -590,24 +656,30 @@ static void ValeCave_UpdateSlidingObjectPassage(void) {
 #include "common/object_pairmove.h"
 
 /// Walking east onto the sliding objects: they slide to the eastern end.
+///
+/// Reached by walking east into cell code 20 in the second room. Sets
+/// FLAG_VALE_CAVE_SLIDERS_EAST.
 static void Event_SlideObjectsEast(void) {
 
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(SLIDING_OBJECT, 112, 0);
   SceneActor_PlacePairAtOffset(SLIDING_OBJECT, 80, 0);
-  Engine_GameFlagSet(0x301);
+  Engine_GameFlagSet(FLAG_VALE_CAVE_SLIDERS_EAST);
   Engine_TaskWait(2);
   ValeCave_UpdateSlidingObjectPassage();
   Engine_AudioPlayCue(SE_289);
 }
 
 /// Walking west onto the sliding objects: they slide back to the western end.
+///
+/// Reached by walking west into cell code 21 in the second room. Clears
+/// FLAG_VALE_CAVE_SLIDERS_EAST.
 static void Event_SlideObjectsWest(void) {
 
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(SLIDING_OBJECT, -112, 0);
   SceneActor_PlacePairAtOffset(SLIDING_OBJECT, -80, 0);
-  Engine_GameFlagClear(0x301);
+  Engine_GameFlagClear(FLAG_VALE_CAVE_SLIDERS_EAST);
   Engine_TaskWait(2);
   ValeCave_UpdateSlidingObjectPassage();
   Engine_AudioPlayCue(SE_289);
@@ -627,6 +699,11 @@ static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row) {
 }
 
 /// Restores the Djinni route and completed movable-object puzzles on entry.
+///
+/// Called by ValeCave_Initialize. In Kite's part of the second room
+/// (entrances 5 to 7), while Kite is free and FLAG_VALE_CAVE_KITE_BEHIND_LEDGE
+/// is set, it sets FLAG_SCENE_TEMP_00 (and _01 from entrance 5) and puts Kite
+/// back behind the ledge.
 static void ValeCave_ApplyEntryState(void) {
   s32 northernObjectMoved;
 
@@ -647,7 +724,7 @@ static void ValeCave_ApplyEntryState(void) {
       if (Engine_GameFlagIsSet(FLAG_KITE) != 0) {
         break;
       }
-      if (Engine_GameFlagIsSet(0x302) == 0) {
+      if (Engine_GameFlagIsSet(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) == 0) {
         break;
       }
       Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
@@ -658,12 +735,14 @@ static void ValeCave_ApplyEntryState(void) {
       if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
         break;
       }
+      // Kite waits behind the ledge, watching the leader.
       Actor_SetPosition(ACTOR_KITE, PIXELS(792), PIXELS(280));
       Object_GetById(ACTOR_KITE)->update = VALE_CAVE_FACE_LEADER_CALLBACK;
       break;
     case 8:
     case 9:
     case 10:
+      // The holes' part: the sliders' passage, and the holes already filled.
       OverlayObject_CreateConfiguredObject(PIXELS(642), 0, PIXELS(552), 20);
       Map_CopyCellAttributes(23, 34, 13, 3, 0, 34);
       ValeCave_UpdateSlidingObjectPassage();
@@ -680,6 +759,8 @@ static void ValeCave_ApplyEntryState(void) {
     case 1:
     case 2:
     case 3:
+      // Each object already pushed leaves open floor; else its footprint
+      // blocks its cells again.
       if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02) != 0) {
         StagedActor_FillGridAttributeRectangle(0, 12, 16, 1, 4, 0);
         StagedActor_FillGridAttributeRectangle(0, 13, 16, 1, 4, 0);
@@ -710,6 +791,8 @@ static void ValeCave_ApplyEntryState(void) {
 }
 
 /// Touching the sliding objects restarts their animation.
+///
+/// Reached by stepping on cell code 20 or 21 in the second room.
 static void Event_TouchSlidingObjects(void) {
   Engine_ActorSetAnimation(SLIDING_OBJECT, 1);
   Engine_ActorSetAnimation(SLIDING_OBJECT, 2);
@@ -934,8 +1017,8 @@ struct SceneEvent gValeCave_Events2[] = {
     { EVENT_TOUCH, 55, FLAG_KITE, EVENT_SCRIPT(Event_KiteKeepsAway) },
     { EVENT_TOUCH, 56, FLAG_KITE, EVENT_SCRIPT(Event_KiteKeepsAway) },
     { 0x7, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToKite) },
-    { SEARCH(SEARCH_CHEST), 100, 0xfc2, FIND_ITEM(ITEM_HALT_GEM) }, // the Halt Gem
-    { SEARCH(SEARCH_CHEST), 101, 0xfc3, FIND_ITEM(ITEM_NUT) },
+    { SEARCH(SEARCH_CHEST), 100, FLAG_VALE_CAVE_HALT_GEM, FIND_ITEM(ITEM_HALT_GEM) },
+    { SEARCH(SEARCH_CHEST), 101, FLAG_VALE_CAVE_NUT, FIND_ITEM(ITEM_NUT) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RevealHiddenTile) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HideRevealedTile) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), WESTERN_MOVABLE_OBJECT, FLAG_SCENE_TEMP_00, EVENT_SCRIPT(Event_MoveWestObjectIntoHole) },

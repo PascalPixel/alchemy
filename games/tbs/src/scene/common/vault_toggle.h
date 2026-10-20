@@ -8,13 +8,15 @@
 #include "field_event.h"
 #include "flags.h"
 
-/// Touch trigger 1: use the alternate collision, copied from cell (55, 26).
+/// Cell code 1 selects the passage's alternate collision and sets
+/// FLAG_SCENE_TEMP_00, which restores that choice on entrance.
 static void Vault_EnableAlternatePassageCells(void) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
   Map_CopyCellAttributes(55, 26, 4, 2, 23, 26);
 }
 
-/// Touch trigger 2: restore the usual collision, copied from cell (23, 23).
+/// Cell code 2 restores the passage's usual collision and clears
+/// FLAG_SCENE_TEMP_00.
 static void Vault_RestorePassageCells(void) {
   Engine_GameFlagClear(FLAG_SCENE_TEMP_00);
   Map_CopyCellAttributes(23, 23, 4, 2, 23, 26);

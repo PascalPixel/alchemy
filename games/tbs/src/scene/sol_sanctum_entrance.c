@@ -53,6 +53,17 @@
 #define FLAG_SOL_SANCTUM_INNER_BLOCK_6_EAST 0x31a
 #define FLAG_SOL_SANCTUM_INNER_BLOCK_6_WEST 0x31b
 
+// Scene flags, cleared on every ordinary entrance:
+// - FLAG_SCENE_TEMP_34: set on entering the inner block room (entrances 14 to
+//   16); the outer block room's Move rows apply only while it is clear.
+//   XXX: the two rooms are entered separately, so the flag is clear whenever
+//   the outer room's table is read; a return after a battle
+//   (FLAG_KEEP_PARTY_POSITION) would settle whether it is ever set there.
+
+// An exit's flag word of -1 stands for no flag: GameFlag_TestFar reads it as
+// flag 0xfff, which nothing sets, so the exit is always taken.
+#define EXIT_FLAG_NONE 0xffffffff
+
 static void SolSanctumEntrance_ApplyEntryState(void);
 static void SolSanctumEntrance_RestoreInteriorState(void);
 static void SolSanctumEntrance_IntroduceSanctum(void);
@@ -65,6 +76,8 @@ s32 gSolSanctumEntrance_RumbleTimer __attribute__((section(".bss")));
 
 void InitializeSceneRecordBuffer();
 
+/// Returns the approach's entrances (scene 19) or the halls' (scene 16), which
+/// share this overlay.
 const struct SceneEntrance *SolSanctumEntrance_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -84,6 +97,9 @@ const u32 *SolSanctumEntrance_GetExits(void) {
 }
 
 /// Selects the actors for the current map and puzzle room.
+/// Inside, entrances 11 to 13 (the outer block room) and 14 to
+/// 16 (the inner one) place Kraden and the blocks, the rest of the halls
+/// Kraden and actor 9; the approach places its sentry.
 const struct ScenePlacement *SolSanctumEntrance_GetPlacements(void) {
   struct ScenePlacement *table;
   s32 firstBlockEntrance = 11;
@@ -108,7 +124,8 @@ const struct ScenePlacement *SolSanctumEntrance_GetPlacements(void) {
   return gSolSanctumEntrancePlacementsOther;
 }
 
-/// Selects the interactions for the current map and puzzle room.
+/// Selects the events for the current map and puzzle room, by the same
+/// entrances as SolSanctumEntrance_GetPlacements.
 const struct SceneEvent *SolSanctumEntrance_GetEvents(void) {
   s32 firstBlockEntrance = 11;
 
@@ -131,6 +148,8 @@ const struct SceneEvent *SolSanctumEntrance_GetEvents(void) {
 }
 
 /// Walking up to the sanctum's door: it slides open and the leader walks in.
+/// Reached by walking north into the door (cell code 2) on the approach.
+/// Takes exit 2, into the halls at entrance 8.
 static void Event_OpenDoorAndEnter(void) {
   s32 width;
   s32 height;
@@ -160,8 +179,10 @@ static void Event_OpenDoorAndEnter(void) {
 
 /// Searching the first minotaur relief: one eye sparkles, or both once the
 /// Small Jewel is set. "The right eye is sparkling, but there's a hole where
-/// the left eye should be." Holding the jewel sets the event work's unk172;
-/// what reads it is not known.
+/// the left eye should be." Reached by searching the relief (cell code 20) in
+/// the halls. Once the first Small Jewel is found, and until it is set, it
+/// requests the field menu (the event work's unk172, FieldWork's menu), which
+/// opens when the search ends so that the jewel can be used.
 static void Event_InspectFirstMinotaurRelief(void) {
 
   Engine_EventBegin();
@@ -199,7 +220,11 @@ static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
 
 /// Using the Small Jewel on the first relief: the leader sets it in and a
 /// passage opens. "set the small gem into the empty socket.", "You hear the
-/// sound of shifting stone."
+/// sound of shifting stone." Reached by using the Small Jewel on the relief
+/// (trigger 0x414: cell code 20, with its own message); does nothing until the
+/// first Small Jewel is found, or once it is set. Sets
+/// FLAG_SOL_SANCTUM_FIRST_GEM_PLACED and FLAG_ITEM_USED_UP, which takes the
+/// jewel.
 static void Event_SetFirstSmallJewel(void) {
   s32 message;
   s32 oneCell;
@@ -235,7 +260,9 @@ static void Event_SetFirstSmallJewel(void) {
   }
 }
 
-/// Searching the second minotaur relief, as the first.
+/// Searching the second minotaur relief, as the first. Reached by searching it
+/// (cell code 21) in the inner block room; once the second Small Jewel is
+/// found, and until it is set, it requests the field menu.
 static void Event_InspectSecondMinotaurRelief(void) {
 
   struct EventWork *work;
@@ -262,7 +289,10 @@ static void Event_InspectSecondMinotaurRelief(void) {
 }
 
 /// Using the Small Jewel on the second relief: as the first, and the inner
-/// doorway opens.
+/// doorway opens. Reached by using the Small Jewel on it (trigger 0x415: cell
+/// code 21, with its own message) in the inner block room, once the second
+/// Small Jewel is found and until it is set. Sets
+/// FLAG_SOL_SANCTUM_SECOND_GEM_PLACED and FLAG_ITEM_USED_UP.
 static void Event_SetSecondSmallJewel(void) {
   s32 message;
 
@@ -305,6 +335,10 @@ static inline void SolSanctumEntrance_RecordBlockColumn(s32 column,
 }
 
 /// Moving the outer left block with Move: the column it stops in is saved.
+/// Reached by Move on actor 9 in the outer block room while FLAG_SCENE_TEMP_34
+/// is clear, and called by Event_PushBlock there. Sets one of
+/// FLAG_SOL_SANCTUM_OUTER_LEFT_BLOCK_EAST and _WEST, or clears both when the
+/// block stands in neither column.
 static void Event_OuterLeftBlockMoved(void) {
   struct FieldActor *block = Object_GetById(ACTOR_OUTER_LEFT_BLOCK);
   s32 column;
@@ -318,6 +352,8 @@ static void Event_OuterLeftBlockMoved(void) {
 }
 
 /// Moving the outer right block with Move: the column it stops in is saved.
+/// Reached by Move on actor 10, as the left block. Sets one of
+/// FLAG_SOL_SANCTUM_OUTER_RIGHT_BLOCK_EAST and _WEST, or clears both.
 static void Event_OuterRightBlockMoved(void) {
   struct FieldActor *block = Object_GetById(ACTOR_OUTER_RIGHT_BLOCK);
   s32 column;
@@ -336,7 +372,9 @@ static void Event_OuterRightBlockMoved(void) {
 }
 
 /// Moving an inner block with Move: the column it stops in is saved and the
-/// floor under all six is set again.
+/// floor under all six is set again. Reached by Move on actor 9 in the inner
+/// block room, and called by Event_PushBlock there. Sets one of
+/// FLAG_SOL_SANCTUM_INNER_BLOCK_1_EAST and _WEST, or clears both.
 static void Event_InnerBlock1Moved(void) {
   struct FieldActor *block = Object_GetById(ACTOR_INNER_BLOCK_1);
   s32 column;
@@ -350,7 +388,7 @@ static void Event_InnerBlock1Moved(void) {
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
-/// As Event_InnerBlock1Moved, for the second block.
+/// As Event_InnerBlock1Moved, for the second block (actor 10).
 static void Event_InnerBlock2Moved(void) {
   struct FieldActor *block = Object_GetById(ACTOR_INNER_BLOCK_2);
   s32 column;
@@ -364,7 +402,7 @@ static void Event_InnerBlock2Moved(void) {
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
-/// As Event_InnerBlock1Moved, for the third block.
+/// As Event_InnerBlock1Moved, for the third block (actor 11).
 static void Event_InnerBlock3Moved(void) {
   struct FieldActor *block = Object_GetById(ACTOR_INNER_BLOCK_3);
   s32 column;
@@ -378,7 +416,7 @@ static void Event_InnerBlock3Moved(void) {
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
-/// As Event_InnerBlock1Moved, for the fourth block.
+/// As Event_InnerBlock1Moved, for the fourth block (actor 12).
 static void Event_InnerBlock4Moved(void) {
   struct FieldActor *block = Object_GetById(ACTOR_INNER_BLOCK_4);
   s32 column;
@@ -392,7 +430,7 @@ static void Event_InnerBlock4Moved(void) {
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
-/// As Event_InnerBlock1Moved, for the fifth block.
+/// As Event_InnerBlock1Moved, for the fifth block (actor 13).
 static void Event_InnerBlock5Moved(void) {
   struct FieldActor *block = Object_GetById(ACTOR_INNER_BLOCK_5);
   s32 column;
@@ -406,7 +444,7 @@ static void Event_InnerBlock5Moved(void) {
   SolSanctumEntrance_RestoreInnerBlockCells(0);
 }
 
-/// As Event_InnerBlock1Moved, for the sixth block.
+/// As Event_InnerBlock1Moved, for the sixth block (actor 14).
 static void Event_InnerBlock6Moved(void) {
   struct FieldActor *block = Object_GetById(ACTOR_INNER_BLOCK_6);
   s32 column;
@@ -422,7 +460,9 @@ static void Event_InnerBlock6Moved(void) {
 #include "common/object_findcell.h"
 
 /// Walking into a block: the leader pushes it one cell, and its column is
-/// saved.
+/// saved. Reached by walking into a block's cell: code 22, or 23 facing east
+/// and 25 facing west, in the outer block room, and code 24 in the inner one.
+/// Updates the room's block flags through the Moved events.
 static void Event_PushBlock(void) {
   struct FieldActor *leader;
   struct FieldActor *block;
@@ -487,7 +527,8 @@ static void Event_PushBlock(void) {
   }
 }
 
-/// Restores the outdoor or interior state for this entrance.
+/// Restores the outdoor or interior state for this entrance. Called by
+/// Field_RunScene once the actors exist.
 s32 SolSanctumEntrance_Initialize(void) {
   s32 scene = gGameState.scene;
 
@@ -499,7 +540,12 @@ s32 SolSanctumEntrance_Initialize(void) {
   return 0;
 }
 
-/// Restores the approach's rumbling, collision and actor positions.
+/// Sets up the approach: after the eruption it rumbles now and then, the
+/// collision of two rows of cells changes with FLAG_VALE_RETURNED_FROM_MT_ALEPH
+/// and FLAG_PARTY_LEFT_VALE, and with the latter the sentry stands at
+/// another spot. Called by
+/// SolSanctumEntrance_Initialize for scene 19. Sets FLAG_RETREAT_BLOCKED and
+/// starts SolSanctumEntrance_UpdateEruptionRumbles after the eruption.
 static void SolSanctumEntrance_ApplyEntryState(void) {
   // Retreat does not work here (flag 0x144).
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
@@ -515,14 +561,20 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
     Map_CopyCellAttributes(0, 1, 3, 1, 6, 5);
   }
   if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-    Actor_SetPosition(ACTOR_KRADEN, PIXELS(120), PIXELS(232));
+    Actor_SetPosition(ACTOR_APPROACH_SENTRY, PIXELS(120), PIXELS(232));
     Map_CopyCellAttributes(2, 10, 1, 1, 6, 14);
     Map_CopyCellAttributes(2, 10, 1, 1, 7, 14);
     Map_CopyCellAttributes(2, 10, 1, 1, 8, 14);
   }
 }
 
-/// Restores opened passages and the current room's block positions.
+/// Restores opened passages and the current room's block positions, and plays
+/// a room's first cutscene. Called by SolSanctumEntrance_Initialize for scene
+/// 16. Entrance 8, the way in, sets the Retreat point there and introduces the
+/// sanctum until FLAG_SOL_SANCTUM_ENTERED is set; the outer block room plays
+/// Kraden's search until FLAG_SEARCHING_FOR_HIDDEN_PASSAGE is set, the inner
+/// one shows the statues out of reach until FLAG_SOL_SANCTUM_INNER_STATUES_SEEN
+/// is set and sets FLAG_SCENE_TEMP_34.
 static void SolSanctumEntrance_RestoreInteriorState(void) {
   s32 entrance;
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -607,7 +659,11 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   }
 }
 
-/// Introduces Kraden's first visit to Sol Sanctum.
+/// Kraden welcomes the party into Sol Sanctum on their first visit, asking
+/// whether it is their first time here. Called by
+/// SolSanctumEntrance_RestoreInteriorState at entrance 8 until
+/// FLAG_SOL_SANCTUM_ENTERED is set. Sets FLAG_SOL_SANCTUM_ENTERED and clears
+/// FLAG_SHOW_LOCATION_NAME.
 static void SolSanctumEntrance_IntroduceSanctum(void) {
   struct FieldActor *leader;
 
@@ -655,7 +711,8 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 40);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
   Engine_ActorJump(ACTOR_KRADEN, 4, 20);
-  // Ask whether this is the party's first visit, then rejoin the leader.
+  // Kraden: "This is your first time here, right?" Yes: "Take a good look at
+  // it." No: "I doubt that..."
   Engine_EventSetMessage(MsgSolSanctumKradenFirstTimeAtSol);
   Event_AskYesNo(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   Engine_EventWait(20);
@@ -690,7 +747,11 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Engine_EventEnd();
 }
 
-/// Surveys the room while Kraden explains the hidden-passage puzzle.
+/// Kraden looks around the outer block room and decides a hidden passage must
+/// lead deeper in; Garet asks whether to split up. Called by
+/// SolSanctumEntrance_RestoreInteriorState in the outer block room until
+/// FLAG_SEARCHING_FOR_HIDDEN_PASSAGE is set. Sets
+/// FLAG_SEARCHING_FOR_HIDDEN_PASSAGE and clears FLAG_SHOW_LOCATION_NAME.
 static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   struct FieldActor *leader;
 
@@ -778,11 +839,12 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHWEST, 10);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 20);
-  // Discuss Kraden's suspicion that a passage is hidden here.
+  // Garet: "What's wrong, Kraden?"
   Engine_EventSetMessage(MsgSolSanctumWrongKraden);
   Event_ShowMessageAndWait(GARET, 0, 10);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 2, 60);
   Engine_ActorStartRepeatedMotion(ACTOR_KRADEN, 2);
+  // Kraden: those two spoke of a hidden passage leading deeper in.
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
@@ -793,6 +855,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(20);
+  // Kraden: the sanctum always looked strange to him, not as he imagined.
   Event_ShowMessage(ACTOR_KRADEN, 0);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
@@ -804,8 +867,10 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHWEST, 20);
   Engine_ActorRunRepeatedMotion(JENNA, 2);
+  // Jenna: "What do you mean?"
   Event_ShowMessageAndWait(JENNA, 0, 10);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
+  // Kraden: a sanctum built in honour of the sun ought to show it somewhere.
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 40);
@@ -818,19 +883,24 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(10);
+  // Kraden: "If there is a hidden passage, then maybe it leads to..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 20);
   Engine_ActorJump(ACTOR_KRADEN, 2, 20);
 
+  // Kraden hops: "Let's see if we can find it!"
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 40);
   Actor_FaceDirection(GARET, FACING_EAST, 20);
-  // Garet questions whether the party should split up to search.
+  // Garet: "I think he's serious! Should we help him?"
   Event_OpenMessage(GARET, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
+    // Yes: Garet says it is too dangerous to split up; they stay together.
     Engine_EventSetMessage(MsgSolSanctumDangerousSplitStay);
     Engine_ActorRunRepeatedMotion(GARET, 1);
     Engine_EventShowMessageAndWait(1, 0, 10);
   } else {
+    // No: Jenna objects to turning back now; Isaac nods and Garet agrees to
+    // help Kraden.
     Engine_EventSetMessage(MsgSolSanctumCantSeriouslyWant);
     Actor_FaceDirection(JENNA, FACING_WEST, 20);
     Event_ShowMessageAndWait(JENNA, 0, 10);
@@ -894,7 +964,9 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Engine_EventEnd();
 }
 
-/// Shows the inner statues that Kraden cannot reach.
+/// Shows the inner statues that Kraden cannot reach; he asks Isaac to try
+/// Psynergy. Called by SolSanctumEntrance_RestoreInteriorState in the inner
+/// block room until FLAG_SOL_SANCTUM_INNER_STATUES_SEEN is set, which it sets.
 static void SolSanctumEntrance_InspectInnerStatues(void) {
   struct FieldActor *leader;
 
@@ -930,11 +1002,13 @@ static void SolSanctumEntrance_InspectInnerStatues(void) {
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 30);
+  // Kraden: "More statues... It doesn't look like we can reach them".
   Engine_EventSetMessage(MsgSolSanctumMoreStatuesOutOfReach);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT, 40);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 20);
+  // Kraden: "Perhaps Psynergy is the key..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
   Engine_ActorSetAnimation(ACTOR_KRADEN, 2);
   leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -948,7 +1022,8 @@ static void SolSanctumEntrance_InspectInnerStatues(void) {
   Engine_EventEnd();
 }
 
-/// Restores block collision cells and, on entry, the saved actors.
+/// Restores the inner blocks' collision cells and, when placeActors is
+/// nonzero (on entry), moves the blocks to their saved columns.
 static void SolSanctumEntrance_RestoreInnerBlockCells(s32 placeActors) {
   // Clear all six destinations before restoring occupied cells.
   Map_CopyCellAttributes(122, 20, 1, 1, 100, 32);
@@ -1038,6 +1113,7 @@ static void SolSanctumEntrance_RestoreInnerBlockCells(s32 placeActors) {
 }
 
 /// Searching the door beside the way in. "The door is tightly locked."
+/// Reached by searching cell code 10 on the approach.
 static void Event_DoorTightlyLocked(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
@@ -1045,6 +1121,8 @@ static void Event_DoorTightlyLocked(void) {
 }
 
 /// After the eruption the approach rumbles now and then, and each shake fades.
+/// Run each frame as a callback that SolSanctumEntrance_ApplyEntryState adds
+/// once FLAG_SOL_SANCTUM_ERUPTED is set.
 static void SolSanctumEntrance_UpdateEruptionRumbles(void) {
   s32 randomValue;
   s32 *timer;
@@ -1109,29 +1187,32 @@ struct SceneEntrance gSolSanctumEntranceEntrances1[] = {
     {SCENE_TABLE_END},
 };
 
+// The approach (scene 19), then the halls inside (scene 16). The approach's
+// way down leads to Vale (scene 4) until the eruption, then to scene 10 until
+// the party has left Vale.
 u32 gSolSanctumEntrance_Exits[] = {
     SCENE_EXITS(19),
     SCENE_EXIT_IF(1, 4, 2, FLAG_SOL_SANCTUM_ERUPTED),
     SCENE_EXIT_IF(1, 10, 15, FLAG_PARTY_LEFT_VALE),
-    SCENE_EXIT_IF(1, 4, 2, 0xffffffff),
-    SCENE_EXIT_IF(2, 16, 8, 0xffffffff),
-    SCENE_EXIT(0, 16, 0),
-    SCENE_EXIT_IF(1, 15, 2, 0xffffffff),
-    SCENE_EXIT_IF(2, 16, 11, 0xffffffff),
-    SCENE_EXIT_IF(3, 16, 12, 0xffffffff),
-    SCENE_EXIT_IF(4, 16, 9, 0xffffffff),
-    SCENE_EXIT_IF(5, 15, 1, 0xffffffff),
-    SCENE_EXIT_IF(6, 16, 13, 0xffffffff),
-    SCENE_EXIT_IF(7, 14, 1, 0xffffffff),
-    SCENE_EXIT_IF(8, 19, 2, 0xffffffff),
-    SCENE_EXIT_IF(9, 16, 4, 0xffffffff),
-    SCENE_EXIT_IF(10, 16, 15, 0xffffffff),
-    SCENE_EXIT_IF(11, 16, 2, 0xffffffff),
-    SCENE_EXIT_IF(12, 16, 3, 0xffffffff),
-    SCENE_EXIT_IF(13, 16, 6, 0xffffffff),
-    SCENE_EXIT_IF(14, 14, 2, 0xffffffff),
-    SCENE_EXIT_IF(15, 16, 10, 0xffffffff),
-    SCENE_EXIT_IF(16, 11, 1, 0xffffffff),
+    SCENE_EXIT_IF(1, 4, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(2, 16, 8, EXIT_FLAG_NONE),
+    SCENE_EXITS(16),
+    SCENE_EXIT_IF(1, 15, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(2, 16, 11, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(3, 16, 12, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(4, 16, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(5, 15, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(6, 16, 13, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(7, 14, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(8, 19, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(9, 16, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(10, 16, 15, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(11, 16, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(12, 16, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(13, 16, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(14, 14, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(15, 16, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_IF(16, 11, 1, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

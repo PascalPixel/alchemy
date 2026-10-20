@@ -28,8 +28,8 @@ static inline void Vault_DrawDoorwayFrame(s32 sourceColumn) {
                   VAULT_DOOR_HALF_SIZE);
 }
 
-/// Touch trigger 11, walking north: open the doorway, make its cells passable,
-/// draw the leader behind the background and walk through exit 11.
+/// Walking north into cell code 11 opens the doorway to the Sanctum.
+/// The leader passes behind the doorframe through exit 11.
 static void Vault_OpenDoorwayAndEnter(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;

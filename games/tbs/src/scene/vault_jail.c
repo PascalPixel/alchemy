@@ -69,9 +69,11 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gJailEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
+/// Returns the exits to Vault, to the revisited Vault and to Lunpa.
 const u32 *Scene_GetExits(void) { return gJailExits; }
 
-/// The revisit entrance replaces the thieves with the lone prisoner.
+/// Places the three jailed thieves, or, entered from the revisited Vault
+/// (entrance 10, after they have broken out), the lone prisoner.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.entrance == JAIL_ENTRANCE_FROM_VAULT_REVISIT) {
     return gJailPrisonerPlacements;
@@ -79,7 +81,8 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gJailThiefPlacements;
 }
 
-/// Selects the events belonging to the same entrance-dependent occupants.
+/// Returns the thieves' events, or the prisoner's when the party came in from
+/// the revisited Vault, matching Scene_GetPlacements.
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.entrance == JAIL_ENTRANCE_FROM_VAULT_REVISIT) {
     return gJailPrisonerEvents;
@@ -89,6 +92,9 @@ const struct SceneEvent *Scene_GetEvents(void) {
 
 /// The jailed leader glares at each of his men and snaps at them, then turns to
 /// the party: they got us this time, but you'll pay for this. "Shut yer yaps!"
+///
+/// Reached by talking to the thieves' leader (actor 8) while
+/// FLAG_VAULT_THIEVES_JAILED is set.
 static void Event_LeaderSilencesThieves(void) {
   Engine_EventBegin();
 
@@ -98,6 +104,7 @@ static void Event_LeaderSilencesThieves(void) {
   Engine_ActorFaceActor(ACTOR_THIEF_LEADER, ACTOR_RIGHT_THIEF, 0);
   Engine_EventWait(40);
 
+  // "Shut yer yaps!"; the two thieves start.
   Engine_EventSetMessage(MsgVaultThiefLeaderSilencesThieves);
   Engine_EventShowMessage(ACTOR_THIEF_LEADER, 0);
 
@@ -119,6 +126,9 @@ static void Event_LeaderSilencesThieves(void) {
 
 /// The left thief wishes they had escaped to the cave northeast of the Goma
 /// Range.
+///
+/// Reached by talking to the left thief (actor 9) while
+/// FLAG_VAULT_THIEVES_JAILED is set.
 static void Event_LeftThiefRegretsEscape(void) {
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
@@ -129,6 +139,9 @@ static void Event_LeftThiefRegretsEscape(void) {
 }
 
 /// The right thief shakes his head: they should have skipped town sooner.
+///
+/// Reached by talking to the right thief (actor 10) while
+/// FLAG_VAULT_THIEVES_JAILED is set.
 static void Event_RightThiefRegretsStaying(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
@@ -139,6 +152,9 @@ static void Event_RightThiefRegretsStaying(void) {
 }
 
 /// Mind Read on the leader: he'll be out of this jail before you know it.
+///
+/// Reached by Mind Read on actor 8 while FLAG_VAULT_THIEVES_JAILED is set; the
+/// two below are reached the same way on actors 9 and 10.
 static void Event_ReadLeaderMind(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultThiefLeaderThoughts);
@@ -163,12 +179,21 @@ static void Event_ReadRightThiefMind(void) {
 }
 
 /// The party steps out of the jail into Vault.
+///
+/// Reached by stepping on the Vault door (cell code 1) while the thieves are
+/// held; takes exit 1 to Vault's entrance 12. The prisoner's events leave by
+/// exit 2 instead, to the revisited Vault.
 static void Event_LeaveForVault(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventRequestExit(JAIL_EXIT_TO_VAULT);
 }
 
-/// Sets the transition and the collision flags of the entrance's occupants.
+/// Opens the scene through a window transition and makes the occupants solid.
+///
+/// Called by the engine once the actors are placed. Coming up from Lunpa
+/// (entrance 2) clears FLAG_SHOW_LOCATION_NAME, so no place name is shown;
+/// otherwise it adds collision flags 0x14 to the prisoner or to the three
+/// thieves.
 s32 Scene_Initialize(void) {
   s16 entrance;
 

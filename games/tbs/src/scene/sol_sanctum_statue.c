@@ -51,8 +51,9 @@
 #define SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT 9
 #define SOL_SANCTUM_STATUE_SPRITE_WIDTH 32
 
-// Scene temporary flag 07 is set once both beams have opened the hole in the
-// hall's floor.
+// Scene flags, cleared on every ordinary entrance:
+// - FLAG_SCENE_TEMP_07: both beams have opened the hole in the hall's floor;
+//   until then, Move on the centre statue first walks the leader clear of it.
 
 static void SolSanctumStatue_InitializeScrollingSprites(void);
 static void Event_CenterStatueMoved(void);
@@ -73,12 +74,12 @@ static void Event_SayThenWait(s32 speaker, s32 frames);
 
 /// A block of map cells copied from one place in the map to another.
 struct CellCopy {
-  s32 srcX;  ///< map cells
-  s32 srcY;  ///< map cells
-  s32 destX; ///< map cells
-  s32 destY; ///< map cells
-  s32 width;
-  s32 height;
+  s32 srcX;   ///< map cells
+  s32 srcY;   ///< map cells
+  s32 destX;  ///< map cells
+  s32 destY;  ///< map cells
+  s32 width;  ///< map cells
+  s32 height; ///< map cells
 };
 
 /// The seal being opened: its cell animations, its flag, where the leader
@@ -89,15 +90,17 @@ struct SealScene {
   struct CellCopy pulseB;
   struct CellCopy opened;
   s32 flag;
-  s32 facing;
-  s32 destX; ///< pixels
-  s32 destZ; ///< pixels
+  s32 facing; ///< 1/65536 turns
+  s32 destX;  ///< pixels
+  s32 destZ;  ///< pixels
   struct CellCopy stairs[3];
   s32 actor;
-  s32 actorX; ///< pixels
-  s32 actorZ; ///< pixels
-  s32 unkc4[3];
+  s32 actorX;    ///< pixels
+  s32 actorZ;    ///< pixels
+  s32 unused[3]; ///< never read or written; the bss keeps its 12 bytes
 };
+
+STATIC_ASSERT(offsetof(struct SealScene, unused) == 0xc4);
 
 /// The placed actors: Kraden, the eight statues, and the centre statue in its
 /// two places. Of the statues, four are pushed onto seals and two shine beams
@@ -132,17 +135,23 @@ struct SceneRegion *SolSanctumStatue_GetRegions(void) { return NULL; }
 
 u32 *SolSanctumStatue_GetExits(void) { return gSolSanctumStatue_Exits; }
 
-/// Returns the statues and companions placed in the hall.
+/// Returns Kraden (actor 8), the eight statues (9 to 16), the centre statue
+/// (17) and its moved copy (18), then Jenna and Garet.
 struct ScenePlacement *SolSanctumStatue_GetPlacements(void) {
   return gSolSanctumStatue_Placements;
 }
 
-/// Returns the movement triggers and statue interactions.
+/// Returns the statues' Move and push events, each row only until its seal or
+/// beam is done.
 struct SceneEvent *SolSanctumStatue_GetEvents(void) {
   return gSolSanctumStatue_Events;
 }
 
-/// Chooses the next story scene from the saved state of the hall.
+/// Chooses the cutscene in the Luna and Sol rooms that a newly opened seal
+/// leads to, and requests its exit: the trap (exit 3) once the centre statue
+/// has moved, until FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG is set; the falling
+/// lights (exit 4) before then, until FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN is
+/// set. Returns 1 when it requests an exit, otherwise -1.
 static s32 SolSanctumStatue_SelectStoryExit(void) {
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) != 0) {
     if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG) == 0) {
@@ -156,7 +165,9 @@ static s32 SolSanctumStatue_SelectStoryExit(void) {
   return -1;
 }
 
-/// Animates the floor opening after both light beams meet.
+/// Animates the floor opening after both light beams meet, then lets the
+/// centre statue drop in if it stands there. Called by the beams, the second
+/// one shining. Sets FLAG_SCENE_TEMP_07.
 static void SolSanctumStatue_OpenCentralHole(void) {
   s32 flash;
 
@@ -182,7 +193,11 @@ static void SolSanctumStatue_OpenCentralHole(void) {
   Event_CenterStatueMoved();
 }
 
-/// Shows Kraden discovering the hall and examining its two sides.
+/// Kraden comes back after the trap to find the hole in the floor, has the
+/// party tell how it opened, and decides the statue disarmed the trap. Called
+/// by SolSanctumStatue_Initialize at entrance 3 (back from the trap) until
+/// FLAG_SOL_SANCTUM_STATUE_HALL_VISITED is set, which the caller sets. Clears
+/// FLAG_SHOW_LOCATION_NAME.
 static void SolSanctumStatue_VisitStatueHall(void) {
   struct FieldActor *leader;
 
@@ -193,8 +208,8 @@ static void SolSanctumStatue_VisitStatueHall(void) {
   Engine_EventWaitForScreen();
   Engine_EventWait(20);
   Actor_SetPosition(ACTOR_KRADEN, PIXELS(576), PIXELS(232));
-  // Kraden crosses the hall while the camera follows each side.
   Engine_EventWait(1);
+  // Kraden, from the south: "You found it, Isaac!" Jenna: "Kraden!"
   Engine_EventSetMessage(MsgSolSanctumKradenYouFoundIt);
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Actor_SetPosition(ACTOR_KRADEN, PIXELS(576), PIXELS(280));
@@ -210,6 +225,7 @@ static void SolSanctumStatue_VisitStatueHall(void) {
   Engine_EventWait(6);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST + FACING_STEP, 0);
   Engine_EventWait(10);
+  // The camera swings west to the hole at the centre and back.
   Camera_SetSpeed(PIXELS(28) / 5, PIXELS(7) / 10);
   Camera_MoveTo(PIXELS(287), -1, PIXELS(176), 1);
   Engine_CameraWaitForMove();
@@ -221,6 +237,7 @@ static void SolSanctumStatue_VisitStatueHall(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Engine_EventWait(10);
+  // Kraden hops up to the party: "Excellent work, Isaac!"
   Engine_ActorJump(ACTOR_KRADEN, 6, 0);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3), PIXELS(2));
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 184);
@@ -228,6 +245,8 @@ static void SolSanctumStatue_VisitStatueHall(void) {
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
   Engine_EventWait(40);
+  // The screen closes and opens on Kraden by the hole: "Where did that hole
+  // come from?" Then back to the party.
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   gEventWork->transitionFrames = 16;
   Engine_EventCloseScreen();
@@ -254,13 +273,15 @@ static void SolSanctumStatue_VisitStatueHall(void) {
   Camera_MoveTo(PIXELS(574), -1, PIXELS(157), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
-  // Let the party question Kraden before agreeing to investigate.
+  // Garet: two beams shot out of the statues Isaac moved, and the hole
+  // appeared. Jenna: Isaac dropped the statue into it.
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Event_SayThenWait(GARET, 20);
   Engine_ActorSetAnimationAndWait(JENNA, ANIM_NOD);
   Event_SayThenWait(JENNA, 6);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(40);
+  // Kraden: "Good work, everyone!" and "So the statue puzzle was the trap..."
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_SayThenWait(ACTOR_KRADEN, 80);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | 2, 0);
@@ -274,6 +295,8 @@ static void SolSanctumStatue_VisitStatueHall(void) {
   Engine_EventWait(60);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Engine_EventWait(30);
+  // Kraden: the other statue was there to disarm the trap, and now they
+  // should be all right.
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
@@ -291,6 +314,7 @@ static void SolSanctumStatue_VisitStatueHall(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  // Kraden: he will observe from the Luna room. He leaves south.
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Camera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
   Camera_MoveTo(PIXELS(576), -1, PIXELS(215), 1);
@@ -328,7 +352,11 @@ static void SolSanctumStatue_VisitStatueHall(void) {
   Engine_EventEnd();
 }
 
-/// Has Kraden explain the statues before leaving the puzzle to Isaac.
+/// Kraden comes back after the falling lights to warn that the statues are a
+/// trap, and leaves the mystery to the party. Called by
+/// SolSanctumStatue_Initialize at entrance 4 (back from the falling lights)
+/// until FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED is set, which the caller
+/// sets. Clears FLAG_SHOW_LOCATION_NAME.
 static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   struct EventWork *work;
   struct FieldActor *leader;
@@ -342,8 +370,8 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_EventWait(20);
   Engine_ActorSetPosition(ACTOR_KRADEN, PIXELS(576), PIXELS(296));
   Engine_EventWait(1);
+  // Kraden, from the south: "Wait, Isaac!" Jenna: "What's wrong, Kraden?"
   Engine_EventSetMessage(MsgSolSanctumWait);
-  // Kraden returns to the statues and demonstrates the puzzle's layout.
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Camera_MoveTo(PIXELS(574), -1, PIXELS(180), 1);
@@ -372,18 +400,21 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3), PIXELS(2));
   Actor_WalkToAndWait(ACTOR_KRADEN, 576, 184);
   Engine_EventWait(40);
+  // Kraden: "This is a most interesting mechanism you've found, Isaac."
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimation(JENNA, 3);
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(40);
+  // Kraden: "But this is clearly... some kind of trap." All three start.
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
   Engine_ActorJump(GARET, 2, 0);
   Engine_ActorJump(JENNA, 2, 0);
   Engine_EventWait(30);
+  // Garet: "This is...a trap?" Kraden: "Go look in the Luna room".
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Event_SayThenWait(GARET, 6);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
@@ -422,6 +453,8 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3), PIXELS(2));
   Engine_ActorWalkToAndWait(ACTOR_KRADEN, 576, 184);
   Engine_EventWait(80);
+  // Kraden: they are looking in the right place, but moving one statue
+  // springs the trap. Jenna: why would anyone put a trap here?
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
   Event_SayThenWait(ACTOR_KRADEN, 20);
@@ -434,6 +467,8 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_EventWait(40);
   Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Engine_EventWait(30);
+  // Kraden: they have hidden something very important, perhaps the key to
+  // Alchemy itself.
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
@@ -445,8 +480,9 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_EventWait(40);
   Engine_ActorFaceEachOther(JENNA, ACTOR_PARTY_LEADER, 0);
   Engine_EventWait(40);
+  // Kraden: "Should I tell you more?" Either answer, he thinks they would not
+  // understand yet.
   UiText_OpenMessageAtObject(ACTOR_KRADEN, 0);
-  // Ask whether Isaac understands, then finish the explanation.
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
   Actor_FaceDirection(JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
@@ -456,6 +492,8 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
     Engine_EventSetMessage(MsgSolSanctumHmphWellTold);
   }
   Event_SayThenWait(ACTOR_KRADEN, 6);
+  // Kraden: "We must try to find a solution to this mystery." Garet:
+  // "Sheesh... Another mystery?" Kraden will keep checking the Luna room.
   Engine_EventSetMessage(MsgSolSanctumTryFindSolution);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_SayThenWait(ACTOR_KRADEN, 6);
@@ -476,6 +514,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Engine_EventWait(40);
+  // Kraden, leaving: his intuition says the light is the key to the secret.
   Event_SayThenWait(ACTOR_KRADEN, 6);
   Engine_ActorFaceDirection(ACTOR_KRADEN, FACING_NORTH, 0);
   Engine_EventWait(30);
@@ -491,6 +530,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_EventWait(20);
   Engine_ActorFaceDirection(JENNA, FACING_EAST, 0);
   Engine_EventWait(10);
+  // Jenna: "let's see if we can't figure this out ourselves."
   Event_SayThenWait(JENNA, 6);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(JENNA, 3);
@@ -519,7 +559,10 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_EventEnd();
 }
 
-/// Pans toward the central seal, opens it, then restores the camera origin.
+/// Pans toward the seals' lights, which flash ever faster until the stairway
+/// in the floor is uncovered, then restores the camera. Called by
+/// SolSanctumStatue_OpenSeal once the seals are open after the centre statue
+/// has moved.
 static void SolSanctumStatue_RunSealOpenedSequence(void) {
   struct MapScrollWork *map;
   struct FieldActor *leader;
@@ -597,7 +640,8 @@ static void SolSanctumStatue_RunSealOpenedSequence(void) {
   map->origin = savedOrigin;
 }
 
-/// Draws the three parallax rows while they overlap the screen.
+/// Draws the three parallax rows while they overlap the screen. Run each frame
+/// as a callback that SolSanctumStatue_InitializeScrollingSprites adds.
 static void SolSanctumStatue_UpdateScrollingSprites(void) {
   struct MapScrollWork *map = gMapWork[0];
   struct AnimationSpritePart *sprite = sScrollingSprites.parts;
@@ -648,7 +692,7 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
   gSolSanctumStatue_ScrollPhase += 128;
 }
 
-/// Walking north over trigger 10: the way ahead is checked as on any field.
+/// Walking north over cell code 10: the way ahead is checked as on any field.
 static void Event_CheckAheadFacingNorth(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader->facing == FACING_NORTH) {
@@ -656,7 +700,7 @@ static void Event_CheckAheadFacingNorth(void) {
   }
 }
 
-/// Walking south over trigger 11: the way ahead is checked as on any field.
+/// Walking south over cell code 11: the way ahead is checked as on any field.
 static void Event_CheckAheadFacingSouth(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (leader->facing == FACING_SOUTH) {
@@ -675,7 +719,14 @@ UNUSED static void SolSanctumStatue_MoveUnusedNorthwestStatue(void) {
   }
 }
 
-/// Restores the hall graphics, statues and arrival conversations.
+/// Restores the hall's statues, beams and seals from their flags and plays
+/// Kraden's arrival cutscenes. Called by Field_RunScene once the actors exist.
+/// Sets FLAG_RETREAT_BLOCKED; starts the parallax rows; at entrance 3 plays
+/// SolSanctumStatue_VisitStatueHall and at entrance 4
+/// SolSanctumStatue_ExplainStatuePuzzle, each once (setting
+/// FLAG_SOL_SANCTUM_STATUE_HALL_VISITED or
+/// FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED), and not on a return after a
+/// battle.
 s32 SolSanctumStatue_Initialize(void) {
   struct FieldActor *centerEffect;
 
@@ -827,6 +878,8 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
 }
 
 /// Moving the northwest statue with Move: on its seal, the seal opens.
+/// Reached by Move on actor 9 until FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN is
+/// set.
 static void Event_NorthwestStatueMoved(void) {
   if (SolSanctumStatue_IsActorAtCell(ACTOR_NORTHWEST_STATUE, 31, 9) != 0) {
     SolSanctumStatue_OpenNorthwestSeal();
@@ -834,6 +887,8 @@ static void Event_NorthwestStatueMoved(void) {
 }
 
 /// Moving the northeast statue with Move: on its seal, the seal opens.
+/// Reached by Move on actor 11 until FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN is
+/// set.
 static void Event_NortheastStatueMoved(void) {
   if (SolSanctumStatue_IsActorAtCell(ACTOR_NORTHEAST_STATUE, 40, 9) != 0) {
     SolSanctumStatue_OpenNortheastSeal();
@@ -841,6 +896,8 @@ static void Event_NortheastStatueMoved(void) {
 }
 
 /// Moving the southwest statue with Move: on its seal, the seal opens.
+/// Reached by Move on actor 13 until FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN is
+/// set.
 static void Event_SouthwestStatueMoved(void) {
   if (SolSanctumStatue_IsActorAtCell(ACTOR_SOUTHWEST_STATUE, 31, 12) != 0) {
     SolSanctumStatue_OpenSouthwestSeal();
@@ -848,6 +905,8 @@ static void Event_SouthwestStatueMoved(void) {
 }
 
 /// Moving the southeast statue with Move: on its seal, the seal opens.
+/// Reached by Move on actor 15 until FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN is
+/// set.
 static void Event_SoutheastStatueMoved(void) {
   if (SolSanctumStatue_IsActorAtCell(ACTOR_SOUTHEAST_STATUE, 40, 12) != 0) {
     SolSanctumStatue_OpenSoutheastSeal();
@@ -855,7 +914,8 @@ static void Event_SoutheastStatueMoved(void) {
 }
 
 /// Moving the left beam statue with Move: its cell is freed, and in front of
-/// the centre it shines its beam.
+/// the centre it shines its beam. Reached by Move on actor 10 until
+/// FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING is set.
 static void Event_LeftBeamStatueMoved(void) {
   Field_SetMapCellCollision(2, PIXELS(208), PIXELS(112), 0);
   if (SolSanctumStatue_IsActorAtCell(ACTOR_LEFT_BEAM_STATUE, 14, 7) != 0) {
@@ -863,7 +923,8 @@ static void Event_LeftBeamStatueMoved(void) {
   }
 }
 
-/// Moving the right beam statue with Move: as the left one.
+/// Moving the right beam statue with Move: as the left one. Reached by Move on
+/// actor 12 until FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING is set.
 static void Event_RightBeamStatueMoved(void) {
   Field_SetMapCellCollision(2, PIXELS(352), PIXELS(112), 0);
   if (SolSanctumStatue_IsActorAtCell(ACTOR_RIGHT_BEAM_STATUE, 21, 7) != 0) {
@@ -872,7 +933,8 @@ static void Event_RightBeamStatueMoved(void) {
 }
 
 /// Starting Move beside the centre statue: its cells are blocked while the
-/// leader stands in their row.
+/// leader stands in their row. Reached by the first phase of Move on actor 17
+/// until FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED is set.
 static void Event_BlockCenterTriggerCells(void) {
   struct FieldActor *leaderPosition;
   s32 column;
@@ -890,7 +952,8 @@ static void Event_BlockCenterTriggerCells(void) {
 }
 
 /// Starting Move beside the left beam statue: its cell is blocked while the
-/// leader stands beside it.
+/// leader stands beside it. Reached by the first phase of Move on actor 10
+/// until FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING is set.
 static void Event_BlockLeftTriggerCell(void) {
   s32 column = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20;
   s32 row = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 20;
@@ -900,7 +963,7 @@ static void Event_BlockLeftTriggerCell(void) {
   }
 }
 
-/// Starting Move beside the right beam statue: as the left one.
+/// Starting Move beside the right beam statue: as the left one, on actor 12.
 static void Event_BlockRightTriggerCell(void) {
   s32 column = Object_GetById(ACTOR_PARTY_LEADER)->x.fixed >> 20;
   s32 row = Object_GetById(ACTOR_PARTY_LEADER)->z.fixed >> 20;
@@ -912,7 +975,11 @@ static void Event_BlockRightTriggerCell(void) {
 
 /// Moving the centre statue with Move, or a beam completing the pair: with
 /// both beams shining the statue slides into the opened floor and the hall
-/// shakes. "Something clicked!"
+/// shakes. "Something clicked!" Reached by Move on actor 17 until
+/// FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED is set, and called by
+/// SolSanctumStatue_OpenCentralHole. Sets FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
+/// and FLAG_SOL_SANCTUM_ALL_SEALS_OPEN when the four seals are open; actor 18
+/// takes the statue's place in the hole.
 static void Event_CenterStatueMoved(void) {
   struct FieldActor *statue;
   struct FieldActor *leader;
@@ -936,6 +1003,8 @@ static void Event_CenterStatueMoved(void) {
       if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0 &&
           Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
         Engine_GameFlagSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED);
+        // The statue slides south into the hole; actor 18 stands in for it
+        // there and the hall shakes hard, then settles.
         Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
         Camera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
         Engine_CameraWaitForMove();
@@ -992,6 +1061,8 @@ static void Event_CenterStatueMoved(void) {
 }
 
 /// Walking into the centre statue from the south: the leader pushes it north.
+/// Reached by walking north into cell code 32 until
+/// FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED is set.
 static void Event_PushCenterStatueNorth(void) {
   struct FieldActor *movingActor;
 
@@ -1015,37 +1086,47 @@ static void Event_PushCenterStatueNorth(void) {
 }
 
 /// Walking into the northwest statue: the leader pushes it onto its seal.
+/// Reached by walking east into cell code 5 until
+/// FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN is set.
 static void Event_PushNorthwestStatue(void) {
   SolSanctumStatue_PushStatue(ACTOR_NORTHWEST_STATUE, 31, 9, 30, 9);
   SolSanctumStatue_OpenNorthwestSeal();
 }
 
 /// Walking into the northeast statue: the leader pushes it onto its seal.
+/// Reached by walking west into cell code 6 until
+/// FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN is set.
 static void Event_PushNortheastStatue(void) {
   SolSanctumStatue_PushStatue(ACTOR_NORTHEAST_STATUE, 40, 9, 41, 9);
   SolSanctumStatue_OpenNortheastSeal();
 }
 
 /// Walking into the southwest statue: the leader pushes it onto its seal.
+/// Reached by walking east into cell code 7 until
+/// FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN is set.
 static void Event_PushSouthwestStatue(void) {
   SolSanctumStatue_PushStatue(ACTOR_SOUTHWEST_STATUE, 31, 12, 30, 12);
   SolSanctumStatue_OpenSouthwestSeal();
 }
 
 /// Walking into the southeast statue: the leader pushes it onto its seal.
+/// Reached by walking west into cell code 8 until
+/// FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN is set.
 static void Event_PushSoutheastStatue(void) {
   SolSanctumStatue_PushStatue(ACTOR_SOUTHEAST_STATUE, 40, 12, 41, 12);
   SolSanctumStatue_OpenSoutheastSeal();
 }
 
 /// Walking into the left beam statue from the west: it slides east in front
-/// of the centre and shines its beam.
+/// of the centre and shines its beam. Reached by walking east into cell codes
+/// 20 and 21 until FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING is set.
 static void Event_PushLeftBeamStatueEast(void) {
   SolSanctumStatue_PushStatue(ACTOR_LEFT_BEAM_STATUE, 14, 7, 13, 7);
   SolSanctumStatue_ShineLeftBeam();
 }
 
 /// Walking into the left beam statue from the north: it slides one cell south.
+/// Reached by walking south into cell code 21 until the beam shines.
 static void Event_PushLeftBeamStatueSouth(void) {
   struct FieldActor *statue = Object_GetById(ACTOR_LEFT_BEAM_STATUE);
   s32 row;
@@ -1059,6 +1140,7 @@ static void Event_PushLeftBeamStatueSouth(void) {
 }
 
 /// Walking into the left beam statue from the south: it slides one cell north.
+/// Reached by walking north into cell codes 23 and 24 until the beam shines.
 static void Event_PushLeftBeamStatueNorth(void) {
   struct FieldActor *statue = Object_GetById(ACTOR_LEFT_BEAM_STATUE);
   if (statue != NULL) {
@@ -1067,13 +1149,16 @@ static void Event_PushLeftBeamStatueNorth(void) {
   }
 }
 
-/// Walking into the right beam statue from the east: as the left one.
+/// Walking into the right beam statue from the east: as the left one. Reached
+/// by walking west into cell codes 25 and 26 until
+/// FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING is set.
 static void Event_PushRightBeamStatueWest(void) {
   SolSanctumStatue_PushStatue(ACTOR_RIGHT_BEAM_STATUE, 21, 7, 22, 7);
   SolSanctumStatue_ShineRightBeam();
 }
 
 /// Walking into the right beam statue from the north: it slides one cell south.
+/// Reached by walking south into cell code 26 until the beam shines.
 static void Event_PushRightBeamStatueSouth(void) {
   struct FieldActor *statue = Object_GetById(ACTOR_RIGHT_BEAM_STATUE);
   if (statue != NULL) {
@@ -1083,6 +1168,7 @@ static void Event_PushRightBeamStatueSouth(void) {
 }
 
 /// Walking into the right beam statue from the south: it slides one cell north.
+/// Reached by walking north into cell codes 28 and 29 until the beam shines.
 static void Event_PushRightBeamStatueNorth(void) {
   struct FieldActor *statue = Object_GetById(ACTOR_RIGHT_BEAM_STATUE);
   if (statue != NULL) {
@@ -1114,6 +1200,7 @@ static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
   Engine_EventEnd();
 }
 
+/// Returns 1 when the actor stands in the given map cell.
 static s32 SolSanctumStatue_IsActorAtCell(s32 actorId, s32 column, s32 row) {
   struct FieldActor *actor = Object_GetById(actorId);
   if (actor == NULL || (actor->x.fixed >> 20) != column) {
@@ -1350,6 +1437,10 @@ static void SolSanctumStatue_OpenSoutheastSeal(void) {
                   (copy).width, (copy).height)
 
 /// Animates the seal and either advances the story or resets its statue.
+/// Called by the four OpenXSeal functions with sSealScene filled in. Sets the
+/// seal's flag; when no cutscene follows and the centre statue has not moved,
+/// the statue slides back, the leader jumps clear and the flag is cleared
+/// again.
 static void SolSanctumStatue_OpenSeal(void) {
   struct SealScene *scene;
   s32 exitResult;
@@ -1398,6 +1489,7 @@ static void SolSanctumStatue_OpenSeal(void) {
       }
     } else if (exitResult == 0 &&
                Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED)) {
+      // DEAD: SelectStoryExit returns only 1 or -1, so this branch cannot run.
       if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) &&
           Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) &&
           Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN)) {
@@ -1419,6 +1511,8 @@ static void SolSanctumStatue_OpenSeal(void) {
 }
 
 /// Draws the left beam and opens the floor when the right beam is also lit.
+/// Called when the left beam statue reaches its place in front of the centre,
+/// until the centre statue has moved. Sets FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING.
 static void SolSanctumStatue_ShineLeftBeam(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) == 0) {
@@ -1443,6 +1537,7 @@ static void SolSanctumStatue_ShineLeftBeam(void) {
 }
 
 /// Draws the right beam and opens the floor when the left beam is also lit.
+/// As the left one; sets FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING.
 static void SolSanctumStatue_ShineRightBeam(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) == 0) {

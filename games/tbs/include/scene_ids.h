@@ -2,34 +2,60 @@
 #define ALCHEMY_SCENE_IDS_H
 
 /// @file
-/// Scene numbers, named after their places.
+/// Scene numbers, named after their places, in the order of gField_SceneTable
+/// (field/scenes.s).
 ///
-/// Each SceneId_ is an absolute symbol whose value is the scene's row in
-/// gField_SceneTable (field/scenes.s); C takes the number as
-/// (s32)&SceneId_Name. Unnamed scenes have no symbol.
+/// Each SceneId_ is an absolute symbol whose value is the scene's row in the
+/// table; C takes the number as (s32)&SceneId_Name, and the exit tables name a
+/// scene by its place (SCENE_EXIT).
 
-extern char SceneId_Clear;
 extern char SceneId_Title;
-
+extern char SceneId_Clear;
 extern char SceneId_WorldMap;
+extern char SceneId_ValeStorm;
 extern char SceneId_Vale;
 extern char SceneId_ValeHome;
+extern char SceneId_ValeKraden;
+extern char SceneId_ValeInteriors;
 extern char SceneId_ValeBabi;
+extern char SceneId_Sanctum;
+extern char SceneId_ValeEruption;
+extern char SceneId_SolSanctumLunaSolRooms;
+extern char SceneId_SolSanctumStatue;
+extern char SceneId_SolSanctumPsynergyStone;
+extern char SceneId_SolSanctumMaze;
+extern char SceneId_SolSanctumCorridor;
 extern char SceneId_SolSanctumEntrance1;
+extern char SceneId_SolSanctumElementalStarRoom;
+extern char SceneId_SolSanctumEruption;
 extern char SceneId_SolEntrance;
+extern char SceneId_Vault;
 extern char SceneId_VaultInteriors;
+extern char SceneId_VaultJail;
+extern char SceneId_VaultRevisit;
+extern char SceneId_VaultInteriorsRevisit;
+extern char SceneId_GomaCaveEntrance;
+extern char SceneId_GomaCavePond;
+extern char SceneId_GomaCavePillar;
 extern char SceneId_GomaCaveWaterway1;
 extern char SceneId_GomaCaveWaterway2;
 extern char SceneId_Bilibin;
+extern char SceneId_BilibinInteriors;
 extern char SceneId_BilibinTreasury;
 extern char SceneId_McCoyPalace;
 extern char SceneId_McCoyPalaceGarden;
 extern char SceneId_BilibinBarricade;
 extern char SceneId_Kolima;
+extern char SceneId_KolimaInteriors;
 extern char SceneId_KolimaTunnel;
 extern char SceneId_KolimaBridge;
 extern char SceneId_KolimaForestBridge;
+extern char SceneId_KolimaForestClearing;
+extern char SceneId_KolimaForestRiver;
+extern char SceneId_KolimaForestBend;
+extern char SceneId_KolimaForestTree;
 extern char SceneId_TretTreeInteriors;
+extern char SceneId_TretTreeBranch;
 extern char SceneId_BilibinCave1;
 extern char SceneId_BilibinCave2;
 extern char SceneId_BilibinCaveEntrance;
@@ -42,6 +68,7 @@ extern char SceneId_MercuryLighthouse2;
 extern char SceneId_MercuryLighthouse3;
 extern char SceneId_MercuryLighthouse4;
 extern char SceneId_MercuryLighthouseAerie1;
+extern char SceneId_MercuryLighthouseAerie2;
 extern char SceneId_FuchinTemple1;
 extern char SceneId_FuchinTemple2;
 extern char SceneId_FuchinFallsCave1;
@@ -53,6 +80,9 @@ extern char SceneId_FuchinFallsCave6;
 extern char SceneId_MogallForest1;
 extern char SceneId_MogallForest2;
 extern char SceneId_MogallForest3;
+extern char SceneId_MogallForest4;
+extern char SceneId_Xian;
+extern char SceneId_XianInteriors;
 extern char SceneId_AlpineCrossing;
 extern char SceneId_Altin;
 extern char SceneId_AltinInteriors;
@@ -89,35 +119,42 @@ extern char SceneId_WestLunpaCave;
 extern char SceneId_KalayDocks;
 extern char SceneId_KalayTolbiDocks2;
 extern char SceneId_TolbiShipDeck;
+extern char SceneId_TolbiShipMast;
 extern char SceneId_TolbiShipInteriors;
 extern char SceneId_TolbiDocks;
-extern char SceneId_CrossboneIslePillarRooms1;
-extern char SceneId_CrossboneIslePillarRooms2;
-extern char SceneId_CrossboneIslePillarRooms3;
-extern char SceneId_CrossboneIslePillarRooms4;
-extern char SceneId_CrossboneIslePillarRooms5;
-extern char SceneId_ColosseumFinal1;
-extern char SceneId_ColosseumFinal2;
-extern char SceneId_CrossboneIslePlatformRooms1;
-extern char SceneId_CrossboneIslePlatformRooms2;
-extern char SceneId_CrossboneIslePlatformRooms3;
-extern char SceneId_BabiPalace2;
-extern char SceneId_ColosseumFinal3;
-
-extern char SceneId_Colosseum;
-extern char SceneId_ColosseumTunnel;
-extern char SceneId_ColosseumEntrance;
-
 extern char SceneId_CrossboneIsle;
 extern char SceneId_CrossboneIsle2;
+extern char SceneId_CrossboneIslePillarRooms1;
+extern char SceneId_CrossboneIslePillarRooms2;
+extern char SceneId_CrossboneIslePlatformRooms1;
+extern char SceneId_CrossboneIslePlatformRooms2;
+extern char SceneId_CrossboneIslePillarRooms3;
+extern char SceneId_CrossboneIslePlatformRooms3;
+extern char SceneId_CrossboneIslePillarRooms4;
+extern char SceneId_CrossboneIslePillarRooms5;
 extern char SceneId_CrossboneIsle3;
 extern char SceneId_CrossboneIsle4;
 extern char SceneId_PirateShip;
 extern char SceneId_CrossboneIsle6;
+extern char SceneId_CrossboneIsle7;
+extern char SceneId_CrossboneIsle8;
+extern char SceneId_CrossboneIsle9;
+extern char SceneId_CrossboneIsle10;
+extern char SceneId_CrossboneIsle11;
+extern char SceneId_CrossboneIsle12;
+extern char SceneId_CrossboneIsle13;
 extern char SceneId_CrossboneIsle14;
+extern char SceneId_Tolbi;
 extern char SceneId_TolbiInteriors;
 extern char SceneId_TolbiSpring1;
-
+extern char SceneId_BabiPalace1;
+extern char SceneId_BabiPalace2;
+extern char SceneId_Colosseum;
+extern char SceneId_ColosseumTunnel;
+extern char SceneId_ColosseumEntrance;
+extern char SceneId_ColosseumFinal1;
+extern char SceneId_ColosseumFinal2;
+extern char SceneId_ColosseumFinal3;
 extern char SceneId_AltmillerCave1;
 extern char SceneId_AltmillerCave2;
 extern char SceneId_AltmillerCave3;
@@ -129,27 +166,28 @@ extern char SceneId_KalayTunnelEntrance;
 extern char SceneId_KalayTunnel1;
 extern char SceneId_KalayTunnel2;
 extern char SceneId_KalayTunnel3;
+extern char SceneId_GondowanCave1;
+extern char SceneId_GondowanCave2;
 extern char SceneId_LunpaFortressGates;
 extern char SceneId_LunpaFortress1;
 extern char SceneId_LunpaFortress2;
 extern char SceneId_LunpaFortress3;
 extern char SceneId_LunpaFortress4;
-extern char SceneId_SuhallaGate1;
-extern char SceneId_SuhallaGate2;
-extern char SceneId_GatewayCave;
 extern char SceneId_SuhallaDesert1;
 extern char SceneId_SuhallaDesert2;
 extern char SceneId_SuhallaDesert3;
-
-extern char SceneId_GondowanCave1;
-extern char SceneId_GondowanCave2;
-
+extern char SceneId_Suhalla;
+extern char SceneId_SuhallaInteriors;
+extern char SceneId_SuhallaGate1;
+extern char SceneId_SuhallaGate2;
+extern char SceneId_GatewayCave;
 extern char SceneId_TunnelRuins1;
 extern char SceneId_TunnelRuins2;
 extern char SceneId_BabiLighthouse1;
 extern char SceneId_BabiLighthouse2;
 extern char SceneId_BabiLighthouseEntry;
 extern char SceneId_RoadToBabiLighthouse;
+extern char SceneId_Lalivero;
 extern char SceneId_LaliveroInteriors1;
 extern char SceneId_LaliveroInteriors2;
 extern char SceneId_VenusLighthouseEntry;
@@ -158,8 +196,19 @@ extern char SceneId_VenusLighthouse2;
 extern char SceneId_VenusLighthouse3;
 extern char SceneId_VenusLighthouse4;
 extern char SceneId_VenusLighthouse5;
+extern char SceneId_VenusLighthouseAerie;
+extern char SceneId_LemurianShip;
 extern char SceneId_TolbiSpring2;
 extern char SceneId_LinkLobby;
-extern char SceneId_VenusLighthouseAerie;
+extern char SceneId_TestRoom0;
+extern char SceneId_TestRoom1;
+extern char SceneId_TestRoom2;
+extern char SceneId_TestRoom3;
+extern char SceneId_TestRoom4;
+extern char SceneId_TestRoom5;
+extern char SceneId_TestRoom6;
+extern char SceneId_TestRoom7;
+extern char SceneId_IncreaseItemAndLevel;
+extern char SceneId_MenuTest;
 
 #endif

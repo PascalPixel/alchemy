@@ -151,9 +151,10 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
   s32 resource;
   s32 i;
   s32 wispSheet = TARGET_STRIKE_SMOKE_CELLS;
-  DrawRectangle *lower = &EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE];
+  DrawRectangle *lower;
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
+  lower = (DrawRectangle *)&EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   particleSheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;

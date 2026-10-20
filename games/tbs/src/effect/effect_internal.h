@@ -128,16 +128,15 @@ enum CanvasTransferMode {
   CANVAS_COPY_AND_BRIGHTEN ///< copy, then brighten the canvas by transferValue
 };
 
-/// gBattleFxWork points at the effect's first work slot,
-/// HEAP_SLOT_BATTLE_EFFECT, which holds its work block; the canvas is in the
-/// slot after it. Effects read both by walking a cursor along the slots.
+/// The work block and canvas occupy adjacent slots, starting at
+/// HEAP_SLOT_BATTLE_EFFECT. A cursor reads them in that order.
 #define EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas)                       \
   ((work) = *(cursor)++, (canvas) = *(cursor))
 
-/// The same from the start: `slots` keeps gBattleFxWork for the other slots
-/// (EFFECT_SLOT) while `cursor` walks.
+/// Starts at the effect's entry in the whole work-slot array. Earlier slots,
+/// such as the camera, then stay within that array while cursor walks ahead.
 #define EFFECT_GET_SLOTS(slots, cursor, work, canvas)                          \
-  ((slots) = gBattleFxWork, (cursor) = (slots),                                \
+  ((slots) = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT], (cursor) = (slots),          \
    EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas))
 
 /// Marks particles[0] to particles[count - 1] free: a particle whose variant

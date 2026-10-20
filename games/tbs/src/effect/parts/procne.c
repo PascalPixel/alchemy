@@ -74,11 +74,9 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
   struct SpritePlacement place;
   struct SpriteScale scale;
 
-  slots = &gBattleFxWork[1];
+  slots = &gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
   canvas = slots[0];
-  camera = *(
-      struct BattleCamera **)((u8 *)slots +
-                              (HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_CANVAS) * 4);
+  camera = CANVAS_SLOT(slots, HEAP_SLOT_CAMERA);
   work = slots[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
   graphics = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;

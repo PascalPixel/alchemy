@@ -109,6 +109,8 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
   // The centre moves from the user to the goal, 60 pixels up, over frames
   // 6 to 45.
   SET_VECTOR(center, user->x, 0, user->z);
+  // Every caller passes a literal anchor: 0, 1, 2 or 4 (Vine), never table
+  // data. The goal is therefore set before the interpolation starts.
   switch (anchor) {
   case 0:
     SET_VECTOR(goal, target->x, 0x3c0000, target->z);
@@ -428,10 +430,7 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   s32 x;
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  // The camera's slot, read back from the effect's.
-  camera = *(struct BattleCamera **)((u8 *)slots - (HEAP_SLOT_BATTLE_EFFECT -
-                                                    HEAP_SLOT_CAMERA) *
-                                                       sizeof(void *));
+  camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   soundCooldown = 0;
   work->effect = effect;

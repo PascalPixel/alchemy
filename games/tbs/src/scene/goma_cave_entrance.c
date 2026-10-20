@@ -24,6 +24,7 @@
 #include "edition.h"
 #include "call.h"
 #include "battle_system.h"
+#include "battle_unit.h"
 #include "item.h"
 #include "inventory.h"
 #include "text/msg_ids.h"
@@ -35,6 +36,7 @@
 #include "songs.h"
 #include "event.h"
 #include "item_ids.h"
+#include "vector3.h"
 
 // The room's actors: Garet and Ivan take their party slots, the rest follow
 // the placement table from 8.
@@ -52,51 +54,6 @@ static void GomaCaveEntrance_GiveShamansRod(void);
 // Shared effects stay at their native positions in the overlay.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
-
-/// A legacy actor view that also reads sprite rotation as a signed halfword.
-struct Actor {
-  u8 pad00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 pad14[10];
-  s16 angle;
-  u8 pad20[2];
-  u8 flags34;
-  u8 pad23[5];
-  s32 speed;
-  u8 pad2c[12];
-  s32 hover;
-  u8 pad3c[12];
-  s32 accel;
-  u8 pad4c[4];
-  struct Actor *sprite;
-  u8 pad54;
-  u8 layer;
-  u8 pad56[22];
-  s32 callback;
-};
-
-/// The direction one dust puff of the stump's landing ring is thrown.
-struct Vec {
-  s32 x;
-  s32 y;
-  s32 z;
-};
-
-/// A party member's unit, seen for the 15 items carried.
-struct Member_387 {
-  u8 pad[216];
-  u16 items[15];
-};
-
-/// An item's record, seen for its flags and whether it can be equipped.
-struct Item_387 {
-  u8 pad[2];
-  u16 flags;
-  u8 pad4[8];
-  u8 equippable;
-};
 
 /// Shows the next message over the speaker, then pauses.
 static void GomaCaveEntrance_SayThenWait(s32 actorId, s32 frames) {
@@ -242,8 +199,7 @@ s32 Scene_Initialize(void) {
   }
   if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE) != 0) {
     Engine_ActorSetPosition(EAST_PILLAR, PIXELS(376), PIXELS(280));
-    ((struct Flags35 *)Object_GetById(EAST_PILLAR))->flags =
-        ACTOR_PRIORITY_UNDERFOOT;
+    Object_GetById(EAST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     v5 = 0;
     Object_GetById(EAST_PILLAR)->motionFlags = v5;
     movedObject = Object_GetById(EAST_PILLAR);
@@ -462,21 +418,20 @@ static void Event_IvanRejoins(void) {
   }
 }
 
-/// Move on the freed stump: from row 11 it spins, leaps away and lies where it
-/// lands.
+/// Move on the freed stump: from column 11 it spins, leaps away and lies where
+/// it lands.
 static void Event_MoveStump(void) {
-  s32 depth;
-  struct OverlayActorState *state;
+  s32 column;
+  struct FieldActor *stump;
 
   EV_BEGIN();
-  depth =
-      ((struct OverlayActorPosition *)Object_GetById(STUMP))->depthFixed >> 20;
-  if (depth == 11) {
+  column = Object_GetById(STUMP)->x.fixed >> 20;
+  if (column == 11) {
     GomaCaveEntrance_LeapStump(STUMP);
-    state = Object_GetById(STUMP);
-    state->flags |= 2;
+    stump = Object_GetById(STUMP);
+    stump->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Map_CopyCellAttributes(39, 12, 3, 1, 8, 12);
-    Map_CopyCellAttributes(43, 11, 3, 1, 12, depth);
+    Map_CopyCellAttributes(43, 11, 3, 1, 12, column);
     Engine_GameFlagSet(FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED);
   }
   EV_END();
@@ -503,7 +458,7 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
 
 /// The leaping stump's update hook turns its sprite a fixed amount per frame.
 static void GomaCaveEntrance_SpinStump(union FieldObject *fieldObject) {
-  struct FieldActor *obj = (struct FieldActor *)fieldObject;
+  struct FieldActor *obj = &fieldObject->actor;
   struct AnimationObject *state = obj->sprite;
   s32 v = state->rotation - 0x800;
 
@@ -516,27 +471,28 @@ static void GomaCaveEntrance_SpinStump(union FieldObject *fieldObject) {
 /// The stump spins in place, leaps and lands with a shake and a ring of dust,
 /// then comes to rest a little further on.
 static void GomaCaveEntrance_LeapStump(s32 id) {
-  struct Vec dir;
+  struct Vector3 dir;
   struct EffectOptions params;
-  struct Vec *v;
+  struct Vector3 *v;
   struct EffectOptions *p;
-  struct Actor *actor;
+  struct FieldActor *actor;
   u32 i;
 
-  actor = (struct Actor *)Object_GetById(id);
-  actor->layer = 0;
+  actor = Object_GetById(id);
+  actor->motionFlags = 0;
   for (i = 0; i <= 17; i++) {
     Engine_TaskWait(1);
-    actor->sprite->angle += -256;
-    actor->x -= Engine_MathCos((u16)actor->sprite->angle) / 2;
-    actor->hover = 0x80000000;
+    // The corresponding signed halfword view retains the negative literal.
+    *(s16 *)&actor->sprite->rotation += -256;
+    actor->x.fixed -= Engine_MathCos(actor->sprite->rotation) / 2;
+    actor->targetX = ACTOR_NO_TARGET;
   }
-  actor->callback = (s32)GomaCaveEntrance_SpinStump;
+  actor->update = GomaCaveEntrance_SpinStump;
   OBJ_SPEED(id, PIXELS(3), 3 * PIXELS(1) / 2);
   Engine_ActorSetDestination(id, 160, 192);
-  actor->accel = 0xcccc;
-  actor->layer = 3;
-  actor->flags34 = 0;
+  actor->gravity = 0xcccc;
+  actor->motionFlags = 3;
+  actor->terrainId = 0;
   Engine_ActorWaitForMove(id);
   SceneActor_WaitObjectBelowHeight(actor, 0x200000);
   Engine_AudioPlayCue(SE_188);
@@ -548,21 +504,29 @@ static void GomaCaveEntrance_LeapStump(s32 id) {
     SET_POSITION(v, Engine_MathCos(i << 12), 0, Engine_MathSin(i << 12));
     v->x -= v->x / 4;
     v->z -= v->z / 2;
-    Effect_Spawn(actor->x, actor->y, actor->z, v->x, v->y, v->z, 0, NULL);
+    Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, v->x, v->y,
+                 v->z, 0, NULL);
   }
-  actor->speed = 0x50000;
+  actor->velocityY = 0x50000;
   Engine_ActorSetDestination(id, 139, 196);
   Engine_ActorWaitForMove(id);
   SceneActor_WaitObjectBelowHeight(actor, 0x200000);
-  actor->callback = 0;
-  actor->sprite->angle = 0x1000;
+  // UB: the native integer store aliases the update pointer. A typed clear
+  // swaps this store with the following sprite-pointer load.
+#ifdef UBFIX
+  actor->update = NULL;
+#else
+  *(s32 *)&actor->update = 0;
+#endif
+  actor->sprite->rotation = 0x1000;
   p = &params;
   p->type = 214;
   p->startScaleX = 0x8000;
   p->startScaleY = 0xcccc;
   p->targetScaleX = 0x18000;
   p->targetScaleY = 0x13333;
-  Effect_Spawn(actor->x, actor->y, actor->z, 0, 0, 0, 0x1c0000, p);
+  Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0,
+               0x1c0000, p);
   Engine_AudioPlayCue(SE_CAST);
   OBJ_MODE(id, 3);
   Engine_MapWaitWorkValuesBelow256();
@@ -572,10 +536,10 @@ static void GomaCaveEntrance_LeapStump(s32 id) {
 #include "common/item_equip.h"
 
 /// Gives Ivan the Shaman's Rod and equips it. With his items full, he drops
-/// another to make room; later patches stop dropping items whose byte 3 is 8.
+/// another to make room; later patches skip items marked only indispensable.
 static void GomaCaveEntrance_GiveShamansRod(void) {
-  struct Member_387 *member;
-  struct Item_387 *item;
+  struct BattleUnit *member;
+  struct ItemDefinition *item;
   s32 tries;
   s32 i;
   s32 id;
@@ -586,36 +550,38 @@ static void GomaCaveEntrance_GiveShamansRod(void) {
 retry:
   if (++tries > 1000) {
 #if TBS_PATCH_3
-    for (i = 0; i <= 14; i++) {
-      item = Item_Get(member->items[i]);
-      if (((u8 *)item)[3] != 8) {
+    for (i = 0; i <= INVENTORY_SLOTS - 1; i++) {
+      item = Item_Get(member->inventory[i]);
+      if (item->flags != ITEM_INDISPENSABLE) {
         Inventory_Discard(IVAN, i);
         break;
       }
     }
-    if (i == 15)
+    if (i == INVENTORY_SLOTS)
 #endif
-      member->items[14] = 0;
+      member->inventory[INVENTORY_SLOTS - 1] = 0;
   }
   if (Inventory_AddItem(IVAN, id) == -1) {
-    for (i = 0; i <= 14; i++) {
-      item = Item_Get(member->items[i]);
-      if (((u8 *)item)[2] == 1) {
+    for (i = 0; i <= INVENTORY_SLOTS - 1; i++) {
+      item = Item_Get(member->inventory[i]);
+      if (item->type == ITEM_TYPE_WEAPON) {
         Inventory_Discard(IVAN, i);
         goto retry;
       }
     }
-    for (i = 0; i <= 14; i++) {
-      item = Item_Get(member->items[i]);
-      if ((item->flags & 0x8ff) == 0 && item->equippable == 1) {
+    for (i = 0; i <= INVENTORY_SLOTS - 1; i++) {
+      item = Item_Get(member->inventory[i]);
+      if (item->type == ITEM_TYPE_NONE &&
+          (item->flags & ITEM_INDISPENSABLE) == 0 &&
+          item->useType == ITEM_USE_CONSUMED) {
         Inventory_Discard(IVAN, i);
         goto retry;
       }
     }
     goto retry;
   }
-  for (i = 0; i <= 14; i++) {
-    if (member->items[i] == id)
+  for (i = 0; i <= INVENTORY_SLOTS - 1; i++) {
+    if (member->inventory[i] == id)
       Inventory_Equip(IVAN, i);
   }
 }

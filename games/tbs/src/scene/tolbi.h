@@ -62,19 +62,8 @@ struct TolbiUiWork {
   u8 renderMode;
 };
 
-/// A running child, as its update reads it: the field actor's facing,
-/// position, paused byte and the word the scene keeps the child's flags in.
-struct TolbiKid {
-  u8 unknown00[6];
-  u16 facing;
-  s32 x, y, z;
-  u8 unknown14[71];
-  u8 paused;
-  u8 unknown5c[8];
-  u16 kidFlags;
-};
-
-/// TolbiKid.kidFlags
+/// The running children keep these flags in FieldActor.timer, their scene
+/// scratch halfword. Bits: 1 talking | 0 chases the younger sibling.
 enum {
   KID_CHASES_YOUNGER = 1, ///< set on the older brother, who runs after actor 17
   KID_TALKING = 2,        ///< set while the party talks to this child

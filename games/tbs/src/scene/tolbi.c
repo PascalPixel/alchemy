@@ -46,15 +46,24 @@ static void Tolbi_JoinEmber(void) {
 /// The child stops when the target is within one facing step of where it
 /// looks; for the party leader, within two steps either side.
 /// Returns 1 when the child stopped.
-static s32 Tolbi_KidStopForTarget(struct TolbiKid *kid, struct TolbiKid *target,
-                                  s32 range, s32 force) {
+static s32 Tolbi_KidStopForTarget(struct FieldActor *kid,
+                                  struct FieldActor *target, s32 range,
+                                  s32 force) {
   s32 stopped = 0;
-  s32 *targetPos = &target->x;
-  s32 *kidPos = &kid->x;
+  // UB: the distance helper walks separate coordinates as an array. Real
+  // arrays add copies and a 36-byte English frame; UBFIX gives it those arrays.
+#ifdef UBFIX
+  s32 targetPos[3] = {target->x.fixed, target->y.fixed, target->z.fixed};
+  s32 kidPos[3] = {kid->x.fixed, kid->y.fixed, kid->z.fixed};
+#else
+  s32 *targetPos = &target->x.fixed;
+  s32 *kidPos = &kid->x.fixed;
+#endif
 
   if (FixedPoint_Distance(targetPos, kidPos) < range || force != 0) {
     // The heading to the target, and the eight-way directions around it.
-    u32 heading = (u16)ArcTan2(target->z - kid->z, *targetPos - *kidPos);
+    u32 heading =
+        (u16)ArcTan2(target->z.fixed - kid->z.fixed, *targetPos - *kidPos);
     u32 farLeft = (heading - 2 * FACING_STEP) & 0xf000;
     u32 farRight = (heading + 2 * FACING_STEP) & 0xf000;
     u32 left = (heading - FACING_STEP) & 0xf000;
@@ -91,15 +100,15 @@ static void Tolbi_UpdateKid(union FieldObject *fieldObject) {
 #else
 static s32 Tolbi_UpdateKid(union FieldObject *fieldObject) {
 #endif
-  struct TolbiKid *self = (struct TolbiKid *)fieldObject;
+  struct FieldActor *self = &fieldObject->actor;
   u8 **workAreas = (u8 **)gWindowWork;
   struct TolbiUiWork *ui = (struct TolbiUiWork *)workAreas[0];
   u8 *work12 = workAreas[12];
-  u16 *kidFlags = &self->kidFlags;
+  u16 *kidFlags = (u16 *)&self->timer;
   s32 force = 0;
   s32 range = 18;
-  struct TolbiKid *other;
-  struct TolbiKid *leader;
+  struct FieldActor *other;
+  struct FieldActor *leader;
 
   if ((*kidFlags & KID_CHASES_YOUNGER) != 0) {
     other = Object_GetById(TOLBI_YOUNGER_SIBLING);
@@ -152,7 +161,7 @@ static void Tolbi_GrowSprout(void) {
     sprout->collisionFlags = 0;
   }
   sprout = Object_GetById(TOLBI_SPROUT);
-  Engine_ActorSetSpriteFlags((s32)sprout, 0);
+  Engine_ActorSetSpriteFlags(sprout, 0);
   Field_SetMapCellCollision(0, PIXELS(544), PIXELS(288), 253);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
 }
@@ -187,14 +196,14 @@ static void Tolbi_ReadLuckyMedalSign(void) {
 /// he speaks, then turns back the way he was going.
 static void Tolbi_TalkToOlderBrother(void) {
   struct EventWork *work = gEventWork;
-  struct TolbiKid *kid;
+  struct FieldActor *kid;
   s16 facing;
   s32 msg;
 
   kid = Object_GetById(TOLBI_OLDER_BROTHER);
   facing = kid->facing;
   Engine_EventBegin();
-  kid->kidFlags |= KID_TALKING;
+  kid->timer |= KID_TALKING;
   if (work->psynergyRequest == 0) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       msg = MsgTolbiYayEasyRun;
@@ -218,21 +227,21 @@ static void Tolbi_TalkToOlderBrother(void) {
   Engine_EventShowMessageAndWait(TOLBI_OLDER_BROTHER, 0, 10);
   kid->facing = facing;
   Engine_TaskWait(1);
-  kid->kidFlags &= KID_CHASES_YOUNGER;
+  kid->timer &= KID_CHASES_YOUNGER;
   Engine_EventEnd();
 }
 
 /// Talking to the younger sibling, or reading the child's mind, as above.
 static void Tolbi_TalkToYoungerSibling(void) {
   struct EventWork *work = gEventWork;
-  struct TolbiKid *kid;
+  struct FieldActor *kid;
   s16 facing;
   s32 msg;
 
   kid = Object_GetById(TOLBI_YOUNGER_SIBLING);
   facing = kid->facing;
   Engine_EventBegin();
-  kid->kidFlags |= KID_TALKING;
+  kid->timer |= KID_TALKING;
   if (work->psynergyRequest == 0) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       msg = MsgTolbiHaHaHa;
@@ -256,7 +265,7 @@ static void Tolbi_TalkToYoungerSibling(void) {
   Engine_EventShowMessageAndWait(TOLBI_YOUNGER_SIBLING, 0, 10);
   kid->facing = facing;
   Engine_TaskWait(1);
-  kid->kidFlags &= KID_CHASES_YOUNGER;
+  kid->timer &= KID_CHASES_YOUNGER;
   Engine_EventEnd();
 }
 
@@ -363,7 +372,7 @@ static void Tolbi_EnterDoor(void) {
   }
   door = work->touchedTrigger - 1;
   Engine_AudioPlayCue(SE_DOOR_OPEN);
-  Map_AnimateCells((s32)gTolbiDoors[door].steps, gTolbiDoors[door].x,
+  Map_AnimateCells(gTolbiDoors[door].steps, gTolbiDoors[door].x,
                    gTolbiDoors[door].y);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
   Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
@@ -409,13 +418,13 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
 #else
   kidUpdate = (void (*)(union FieldObject *))Tolbi_UpdateKid;
 #endif
-  ((struct TolbiKid *)actor)->kidFlags = KID_CHASES_YOUNGER;
+  actor->timer = KID_CHASES_YOUNGER;
   actor->update = kidUpdate;
   clearFlags = 0;
   Engine_ActorSetPosition(TOLBI_YOUNGER_SIBLING, PIXELS(368), PIXELS(320));
   Actor_SetActionScript(TOLBI_YOUNGER_SIBLING, gTolbiYoungerSiblingRun);
   actor = Object_GetById(TOLBI_YOUNGER_SIBLING);
-  ((struct TolbiKid *)actor)->kidFlags = clearFlags;
+  actor->timer = clearFlags;
   actor->update = kidUpdate;
   actor = Object_GetById(TOLBI_PLAYER_COPY);
   actor->update = Tolbi_CopyLeaderPriority;

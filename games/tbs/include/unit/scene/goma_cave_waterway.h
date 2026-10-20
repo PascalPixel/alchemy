@@ -9,16 +9,6 @@ struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
 
-typedef struct {
-  u8 padToAngle[30];
-  u16 angle;
-} RotatingEffectRecord;
-
-typedef struct {
-  u8 padToRecord[80];
-  RotatingEffectRecord *record;
-} RotatingEffectWork;
-
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
 const u32 *Scene_GetExits(void);

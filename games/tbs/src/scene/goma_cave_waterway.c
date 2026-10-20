@@ -8,7 +8,6 @@
 #include "unit/field/field.h"
 #include "field_obj.h"
 #include "types.h"
-#include "configured_effect_spawn.h"
 #include "field_event.h"
 #include "battle.h"
 #include "debug.h"
@@ -30,6 +29,7 @@
 #include "event.h"
 #include "item_ids.h"
 #include "ability_ids.h"
+#include "vector3.h"
 
 #define STUMP 8
 
@@ -108,69 +108,36 @@ s32 Scene_Initialize(void) {
 }
 
 /// The leaping stump's update hook turns its sprite a fixed amount per frame.
-static void GomaCaveWaterway_SpinStump(RotatingEffectWork *work) {
-  RotatingEffectRecord *record = work->record;
+static void GomaCaveWaterway_SpinStump(union FieldObject *object) {
+  struct AnimationObject *sprite = object->actor.sprite;
 
-  record->angle -= 0x800;
+  sprite->rotation -= 0x800;
 }
 
 #include "common/object_waitdown.h"
 
-/// The leaping stump's field object, as its fields or as its 112 bytes.
-union SceneActor {
-  struct {
-    u32 unk00[2];
-    s32 x, y, z;
-    u32 unk14[3];
-    u8 unk20[2];
-    u8 field22;
-    u8 unk23[5];
-    s32 field28;
-    u32 unk2c[3];
-    u32 field38;
-    u32 unk3c[3];
-    s32 velocityY;
-    u32 unk4c;
-    struct Sprite *sprite;
-    u8 unk54;
-    u8 mode;
-    u8 unk56[22];
-    u32 callback;
-  } fields;
-  u8 bytes[112];
-};
-/// The direction one dust puff of the stump's landing ring is thrown.
-struct Vector {
-  s32 x, y, z;
-};
-
-void Effect_Spawn();
-
 /// The stump spins in place, leaps and lands with a shake and a ring of dust,
 /// then comes to rest a little further on.
 static void GomaCaveWaterway_LeapStump(s32 no) {
-  union SceneActor *work;
+  struct FieldActor *work;
   u32 cnt;
-  struct Vector vec;
-  union {
-    struct ConfiguredEffectOptions fields;
-    u8 bytes[sizeof(struct ConfiguredEffectOptions)];
-  } opt;
+  struct Vector3 vec;
+  struct EffectOptions opt;
 
-  work = (union SceneActor *)Object_GetById(no);
-  work->fields.mode = 0;
+  work = Object_GetById(no);
+  work->motionFlags = 0;
   for (cnt = 0; cnt < 18; cnt++) {
     Engine_TaskWait(1);
-    work->fields.sprite->angle -= 256;
-    work->fields.x -= Trig_Cos(work->fields.sprite->angle) / 2;
-    work->fields.field38 = 0x80000000;
+    work->sprite->rotation -= 256;
+    work->x.fixed -= Trig_Cos(work->sprite->rotation) / 2;
+    work->targetX = ACTOR_NO_TARGET;
   }
-  work->fields.callback = (u32)GomaCaveWaterway_SpinStump;
+  work->update = GomaCaveWaterway_SpinStump;
   OBJ_SPEED(no, PIXELS(3), 3 * PIXELS(1) / 2);
   Actor_SetDestination(no, 376, 288);
-  work->fields.velocityY = 0xcccc;
-  work->fields.mode = 3;
-  work->fields.field22 = 0;
+  work->gravity = 0xcccc;
+  work->motionFlags = 3;
+  work->terrainId = 0;
   Engine_ActorWaitForMove(no);
   SceneActor_WaitObjectBelowHeight(work, 0);
   Engine_AudioPlayCue(SE_188);
@@ -183,22 +150,28 @@ static void GomaCaveWaterway_LeapStump(s32 no) {
     vec.z = Trig_Sin(cnt << 12);
     vec.x -= vec.x / 4;
     vec.z -= vec.z / 2;
-    Effect_Spawn(work->fields.x, work->fields.y, work->fields.z, vec.x, vec.y,
+    Effect_Spawn(work->x.fixed, work->y.fixed, work->z.fixed, vec.x, vec.y,
                  vec.z, 0, NULL);
   }
-  work->fields.field28 = 0x50000;
+  work->velocityY = 0x50000;
   Actor_SetDestination(no, 346, 292);
   Engine_ActorWaitForMove(no);
   SceneActor_WaitObjectBelowHeight(work, 0);
-  work->fields.callback = 0;
-  work->fields.sprite->angle = 0x1000;
-  opt.fields.kind = 214;
-  opt.fields.accum18 = 0x8000;
-  opt.fields.accum1c = 0xcccc;
-  opt.fields.target30 = 0x18000;
-  opt.fields.target34 = 0x13333;
-  Effect_Spawn(work->fields.x, work->fields.y, work->fields.z, 0, 0, 0,
-               0x1c0000, &opt.fields);
+  // UB: the native integer store aliases the update pointer. A typed clear
+  // swaps this store with the following sprite-pointer load.
+#ifdef UBFIX
+  work->update = NULL;
+#else
+  *(u32 *)&work->update = 0;
+#endif
+  work->sprite->rotation = 0x1000;
+  opt.type = 214;
+  opt.startScaleX = 0x8000;
+  opt.startScaleY = 0xcccc;
+  opt.targetScaleX = 0x18000;
+  opt.targetScaleY = 0x13333;
+  Effect_Spawn(work->x.fixed, work->y.fixed, work->z.fixed, 0, 0, 0, 0x1c0000,
+               &opt);
   Engine_AudioPlayCue(SE_CAST);
   OBJ_MODE(no, 3);
   Map_WaitForShakeToSettle();

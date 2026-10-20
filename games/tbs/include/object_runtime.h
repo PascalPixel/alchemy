@@ -71,11 +71,29 @@ struct ObjectRuntime {
   u8 unk6c[0x04];
 };
 
-/// Up to 32 actors saved by ObjectTable_Snapshot for ObjectTable_Restore.
-extern struct ObjectRuntime gObjectSnapshots[32];
-
 STATIC_ASSERT(sizeof(struct ObjectRuntime) == 0x70);
 STATIC_ASSERT(offsetof(struct ObjectRuntime, arrivalAxis) == 0x56);
 STATIC_ASSERT(offsetof(struct ObjectRuntime, snapToTarget) == 0x58);
+
+enum { OBJECT_SNAPSHOT_CAPACITY = 32, OBJECT_SNAPSHOT_EMPTY = 255 };
+
+/// Actors kept across a battle or a saved scene, with parallel sprite state.
+/// The slot list ends in OBJECT_SNAPSHOT_EMPTY unless every entry is filled.
+struct ObjectTableSnapshot {
+  u8 slots[OBJECT_SNAPSHOT_CAPACITY]; ///< actor numbers, or
+                                      ///< OBJECT_SNAPSHOT_EMPTY
+  struct ObjectRuntime actors[OBJECT_SNAPSHOT_CAPACITY]; ///< copied by DMA
+  u8 animations[OBJECT_SNAPSHOT_CAPACITY];  ///< each sprite's lastNo
+  u8 spriteFlags[OBJECT_SNAPSHOT_CAPACITY]; ///< restored through the dispatcher
+  u8 priorities[OBJECT_SNAPSHOT_CAPACITY];  ///< both image and shadow priority
+};
+
+STATIC_ASSERT(offsetof(struct ObjectTableSnapshot, actors) == 0x20);
+STATIC_ASSERT(offsetof(struct ObjectTableSnapshot, animations) == 0xe20);
+STATIC_ASSERT(offsetof(struct ObjectTableSnapshot, spriteFlags) == 0xe40);
+STATIC_ASSERT(offsetof(struct ObjectTableSnapshot, priorities) == 0xe60);
+STATIC_ASSERT(sizeof(struct ObjectTableSnapshot) == 0xe80);
+
+extern struct ObjectTableSnapshot gObjectSnapshots;
 
 #endif

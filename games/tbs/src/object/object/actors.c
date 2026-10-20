@@ -471,29 +471,30 @@ void *ObjectTable_Get(u32 actorIndex) {
 }
 
 /// Saves up to 32 actors (only the party's 8 on the world map) into
-/// gObjectSnapshots, with each one's animation, sprite flags and priority, so
-/// that ObjectTable_Restore can put them back. The 32 bytes before
-/// gObjectSnapshots list the saved slots, ended by 255.
+/// gObjectSnapshots, with each one's slot, animation, sprite flags and
+/// priority, so that ObjectTable_Restore can put them back.
 ///
 /// Called by Field_RunScene before a random battle, by the save menu through
 /// SaveState_CaptureObjectTableFar, and by two scenes (Tolbi's spring and the
 /// Venus Lighthouse aerie).
 void ObjectTable_Snapshot(void) {
-  struct ObjectRuntime *snapshot = gObjectSnapshots;
-  u8 *animations = (u8 *)&gObjectSnapshots[32];
-  u8 *spriteFlags = animations + 32;
-  u8 *priorities = animations + 64;
-  u8 *indices = (u8 *)gObjectSnapshots - 32;
+  struct FieldWork *work;
+  struct ObjectRuntime *snapshot = gObjectSnapshots.actors;
+  u8 *animations = gObjectSnapshots.animations;
+  u8 *spriteFlags = gObjectSnapshots.spriteFlags;
+  u8 *priorities = gObjectSnapshots.priorities;
+  u8 *indices = gObjectSnapshots.slots;
   u32 savedCount = 0;
-  s32 actorLimit = 66;
+  s32 actorLimit = sizeof(work->actors) / sizeof(work->actors[0]);
   struct ObjectRuntime *object;
   s32 actorIndex;
   u32 animation;
   u32 spriteFlagBits;
   u32 priority;
 
-  if (((struct FieldWork *)gEventWork)->mode == MODE_WORLD_MAP)
-    actorLimit = 8;
+  work = (struct FieldWork *)gEventWork;
+  if (work->mode == MODE_WORLD_MAP)
+    actorLimit = ACTOR_FIRST_PLACED;
   // Keep each actor and its three sprite-state bytes at matching save indices.
   for (actorIndex = 0; actorIndex < actorLimit; actorIndex++) {
     object = ObjectTable_Get(actorIndex);
@@ -518,11 +519,12 @@ void ObjectTable_Snapshot(void) {
     *priorities++ = priority;
     savedCount++;
     snapshot++;
-    if (savedCount > 31)
+    if (savedCount > OBJECT_SNAPSHOT_CAPACITY - 1)
       break;
   }
-  for (actorIndex = savedCount; actorIndex < 32; actorIndex++)
-    *indices++ = 255;
+  for (actorIndex = savedCount; actorIndex < OBJECT_SNAPSHOT_CAPACITY;
+       actorIndex++)
+    *indices++ = OBJECT_SNAPSHOT_EMPTY;
 }
 
 /// Puts back the actors ObjectTable_Snapshot saved, and moves the camera to the
@@ -533,11 +535,11 @@ void ObjectTable_Snapshot(void) {
 /// ObjectTable_RestoreFar. Only actors whose slots are filled again are
 /// restored; the leader is set idle.
 void ObjectTable_Restore(void) {
-  struct ObjectRuntime *snapshot = gObjectSnapshots;
-  u8 *indices = (u8 *)gObjectSnapshots - 32;
-  u8 *animations = (u8 *)&gObjectSnapshots[32];
-  u8 *spriteFlags = animations + 32;
-  u8 *priorities = animations + 64;
+  struct ObjectRuntime *snapshot = gObjectSnapshots.actors;
+  u8 *indices = gObjectSnapshots.slots;
+  u8 *animations = gObjectSnapshots.animations;
+  u8 *spriteFlags = gObjectSnapshots.spriteFlags;
+  u8 *priorities = gObjectSnapshots.priorities;
   s32 restoredCount;
   struct ObjectRuntime *object;
   struct AnimationObject *sprite;
@@ -553,7 +555,7 @@ void ObjectTable_Restore(void) {
 
   restoredCount = 0;
   actorIndex = *indices++;
-  while (actorIndex != 255) {
+  while (actorIndex != OBJECT_SNAPSHOT_EMPTY) {
     object = ObjectTable_Get(actorIndex);
     if (object != NULL) {
       sprite = object->animation;
@@ -586,7 +588,7 @@ void ObjectTable_Restore(void) {
     spriteFlags++;
     priorities++;
     restoredCount++;
-    if (restoredCount > 31)
+    if (restoredCount > OBJECT_SNAPSHOT_CAPACITY - 1)
       break;
     actorIndex = *indices++;
   }

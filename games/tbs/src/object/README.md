@@ -105,6 +105,13 @@ the exit `EXIT_NONE` (999), so the next pass of the loop leaves the scene;
 the battle runs as a scene of its own, and the field scene is loaded again
 afterwards, with the party where it was.
 
+The saved actors and their parallel slot, animation, sprite-flag and priority
+arrays form `ObjectTableSnapshot` in
+[`object_runtime.h`](../../include/object_runtime.h). The slot list ends at an
+empty entry, or at the snapshot's capacity when full. Restore keeps aside each
+current actor's sprite before copying its saved state, then reinstalls that
+pointer: the old actor state must not replace the new scene's sprite ownership.
+
 Because requests are fields, not a queue, each kind holds at most one, and
 raising one twice before it is handled is the same as raising it once. An
 event's value is the event to run, or a negative code: -1 when characters

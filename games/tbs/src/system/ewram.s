@@ -25,10 +25,11 @@ gSceneState:
 	.space 0x00000078
 	.global gInventorySnapshot
 gInventorySnapshot:
-	.space 0x000000ac
+	.space 0x0000008c
+	@ Slot ids, actor copies and their sprite state: ObjectTableSnapshot.
 	.global gObjectSnapshots
 gObjectSnapshots:
-	.space 0x00000edc
+	.space 0x00000efc
 	.global gSleepActive
 gSleepActive:
 	.space 0x00000004

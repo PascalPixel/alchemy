@@ -98,8 +98,8 @@ s32 BattlePresentation_WaitForAdvance(void) {
         ((gFrameCount >> 2) & 7) * 128 + (s32)gBattlePres_AdvanceArrowTiles;
     window = gBattleDisplayWork->window;
     offset = gBattleDisplayWork->offset;
-    QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
-    QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
+    IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
+    IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
     Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
     *(u32 *)&prompt->attr0 = ADVANCE_ARROW_ATTR0;
     *(u32 *)&prompt->attr2 = 0;
@@ -148,8 +148,8 @@ s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y) {
   prompt = &promptStorage;
   tileSlot = VramCache_AllocEntry(128);
   while (1) {
-    QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
-    QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
+    IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
+    IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
     Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
     ((s32 *)prompt)[1] = MENU_SPRITE_SIZE_16;
     ((s32 *)prompt)[2] = 0;

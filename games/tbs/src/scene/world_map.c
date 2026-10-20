@@ -2286,11 +2286,11 @@ static void Event_FinishAirborneTravel(void) {
 /// Refreshes the transition's blend registers on alternating frames.
 static void WorldMap_UpdateTransitionBlend(void) {
 
-  QueueIoWriteDelay2(0x04000050, 0x3f41);
+  IoWriteQueue_Store16(0x04000050, 0x3f41);
   if ((gFrameCount & 2) != 0) {
-    QueueIoWriteDelay2(0x04000052, gWorldMapBlend | 0x0c);
+    IoWriteQueue_Store16(0x04000052, gWorldMapBlend | 0x0c);
   } else {
-    QueueIoWriteDelay2(0x04000052, gWorldMapBlend | 0x10);
+    IoWriteQueue_Store16(0x04000052, gWorldMapBlend | 0x10);
   }
 }
 

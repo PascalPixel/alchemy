@@ -3,7 +3,8 @@
 
 /// The signature that marks a save record
 const u8 gSave_Signature[] = "CAMELOT";
-const u8 gSave_HeaderTemplate[8] = "CAMELOTT";
+/// The record header's first eight bytes, with no terminator.
+const u8 gSave_HeaderTemplate[8] = {'C', 'A', 'M', 'E', 'L', 'O', 'T', 'T'};
 
 const u32 gLink_TestWord = 0;
 

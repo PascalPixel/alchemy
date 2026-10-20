@@ -5,7 +5,8 @@
 #include "../runtime_internal.h"
 
 /// Advances the game's random number generator (the C library's classic
-/// linear congruential one) and returns 16 bits of it.
+/// linear congruential one), stores the new seed and returns 16 bits of it.
+/// Called throughout the game.
 u32 Random16(void) {
   enum { MULTIPLIER = 0x41c64e6d, INCREMENT = 0x3039 };
   u32 value = gRandomSeed * MULTIPLIER + INCREMENT;
@@ -35,11 +36,14 @@ s32 ArcTan2(s32 x, s32 y) {
   s32 ratio;
   s32 result;
 
+  // Handle axes without dividing by zero; the quadrant correction below
+  // supplies the half-turn for a vector along -y.
   if (x == 0) {
     result = 0;
   } else if (y == 0) {
     result = 0x4000;
   } else {
+    // Search only the first quadrant, with |x| / |y| in 8.8 fixed point.
     ratio = y;
     if (ratio < 0)
       ratio = -ratio;
@@ -48,8 +52,12 @@ s32 ArcTan2(s32 x, s32 y) {
       value = -value;
 
     ratio = (value << 8) / ratio;
+    // Beyond entry 255's tangent, use the quarter-turn limit instead of
+    // the largest angle the eight search bits can represent.
     result = 0x4000;
     if (ratio <= 0xFB6A) {
+      // Eight comparisons choose angle bits 0x2000 down to 0x40. Halving
+      // each table step retains the interval selected by the earlier bits.
       table = &gMath_TanTable[127];
       result = 0;
 
@@ -101,6 +109,7 @@ s32 ArcTan2(s32 x, s32 y) {
     }
   }
 
+  // Restore the signs after searching magnitudes alone.
   if (y < 0)
     result = 0x8000 - result;
   if (x < 0)
@@ -109,13 +118,16 @@ s32 ArcTan2(s32 x, s32 y) {
   return (u16)result;
 }
 
-/// Returns the integer square root of `value`, a bit at a time.
+/// Returns the integer square root of `value`, a bit at a time. Reached
+/// through the far-call table.
 s32 Math_IntegerSqrt(s32 value) {
   s32 trial;
   s32 remainder;
   s32 bit;
   s32 result;
 
+  // remainder is value - result squared. Each trial is the extra square
+  // cost of setting the next bit, preserving the higher bits already chosen.
   remainder = value;
   result = 0;
   bit = 0xf;

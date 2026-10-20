@@ -543,9 +543,9 @@ void BattleFx_HideBg1AndRestoreBackdrop(void) {
               ->secondMode;
   battle = Ram_WorkSlot[HEAP_SLOT_BATTLE];
   *flag = 1;
-  QueueIoWriteDelay2((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
-                                            DISPCNT_BG0_ON | DISPCNT_BG2_ON |
-                                            DISPCNT_OBJ_ON);
+  IoWriteQueue_Store16((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
+                                              DISPCNT_BG0_ON | DISPCNT_BG2_ON |
+                                              DISPCNT_OBJ_ON);
   WaitFrames(1);
   BattlePresentation_ConfigurePaletteFadeFar(2, battle->background, 0);
   WaitFrames(1);

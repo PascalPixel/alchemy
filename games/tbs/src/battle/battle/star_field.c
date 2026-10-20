@@ -382,14 +382,14 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
   WaitFrames(1);
   BattlePresentation_ConfigurePaletteFade(1, battle->background, 0);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
-  QueueIoWriteDelay2((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
-                                            DISPCNT_BG0_ON | DISPCNT_BG1_ON |
-                                            DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
-                                            DISPCNT_WIN0_ON);
-  QueueIoWriteDelay2((u32)&REG_BG2CNT, BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
-                                           BGCNT_SCREEN_BASE(7));
-  QueueIoWriteDelay2((u32)&REG_BLDCNT,
-                     BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
+  IoWriteQueue_Store16((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
+                                              DISPCNT_BG0_ON | DISPCNT_BG1_ON |
+                                              DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                                              DISPCNT_WIN0_ON);
+  IoWriteQueue_Store16((u32)&REG_BG2CNT, BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
+                                             BGCNT_SCREEN_BASE(7));
+  IoWriteQueue_Store16((u32)&REG_BLDCNT,
+                       BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   WaitFrames(1);
   Io_Write16(WIN_RANGE(0, 240), &REG_WIN0H);
   Io_Write16(WIN_RANGE(16, 136), &REG_WIN0V);
@@ -399,7 +399,7 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
     // The star field for 45 frames, darkening the background a level a
     // frame for its first 25 and keeping BG2's canvas centred on the unit
     // (its origin queued to BG2X and BG2Y with interrupts off).
-    QueueIoWriteDelay2((u32)&REG_BLDALPHA, BLEND_ALPHA(14, 16));
+    IoWriteQueue_Store16((u32)&REG_BLDALPHA, BLEND_ALPHA(14, 16));
     BattleFx_InitializeStarField(element);
     for (frame = 0, projectedPosition = &position; frame <= 44; frame++) {
       brightness = &battle->brightness;

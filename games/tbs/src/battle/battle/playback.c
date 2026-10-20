@@ -272,8 +272,8 @@ void BattleEvent_Playback(void) {
       if (events->displaySource == -1)
         events->displaySource = work->promptSlot;
       UiWork_ClearValueNameTablesFar();
-      QueueIoWriteDelay10((u32)&REG_WINOUT, 4);
-      QueueIoWriteDelay6((u32)&REG_WINOUT, 16);
+      IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
+      IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
       ((u32 *)prompt)[1] = 0xa000;
       ((u32 *)prompt)[2] = x;
       prompt->tile = VramCache_Reload(events->displaySource, frameTiles);

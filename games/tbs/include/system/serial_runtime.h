@@ -1,5 +1,5 @@
-#ifndef GUARD_SERIAL_RUNTIME_H
-#define GUARD_SERIAL_RUNTIME_H
+#ifndef ALCHEMY_SERIAL_RUNTIME_H
+#define ALCHEMY_SERIAL_RUNTIME_H
 
 /// @file
 /// The link cable's runtime: serial packets, registers and transfer state.
@@ -9,6 +9,7 @@
 #include "static_assert.h"
 #include "system.h"
 #include "io_reg.h"
+#include "dma.h"
 #include "irq.h"
 #include "dma.h"
 
@@ -112,14 +113,6 @@ STATIC_ASSERT(offsetof(struct SerialTransferState, peerFlags) == 3);
 STATIC_ASSERT(offsetof(struct SerialTransferState, payload) == 4);
 
 #define SERIAL_RUNTIME (&gSerialRuntime)
-#define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
-
-#define START_DMA(source_, destination_, control_)                             \
-  do {                                                                         \
-    DMA3->source = (u32)(source_);                                             \
-    DMA3->destination = (u32)(destination_);                                   \
-    DMA3->control = (control_);                                                \
-  } while (0)
 
 extern struct SerialTransferState gSerialTransfer;
 extern struct SerialRuntime gSerialRuntime;
@@ -155,15 +148,15 @@ static __inline__ void SerialRuntime_ResetTransferState(void) {
   u32 saved;
   u32 zero;
 
-  /* FAKEMATCH: the blocks preserve IME write order; the repeated state
-   * assignment keeps its allocation priority above the IME pointer. */
+  /* FAKEMATCH(one-pass): the blocks preserve IME write order; the repeated
+   * state assignment keeps its allocation priority above the IME pointer. */
   do {
     state = &gSerialTransfer;
     ime = &REG_IME;
   } while (0);
   do {
     saved = *ime;
-    *ime = (u16)ime;
+    *ime = (u16)(u32)ime;
   } while (0);
   do {
     zero = 0;

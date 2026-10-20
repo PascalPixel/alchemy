@@ -7,7 +7,8 @@
 // Debug text: a 32x20-character screen of window font tiles in BG0, written
 // from gDebugTextCursor onwards; characters are tile numbers in palette 15.
 
-/// Writes `value` as eight hexadecimal digits to the number buffer.
+/// Writes `value` as eight hexadecimal digits to the number buffer. Called by
+/// DebugText_PrintHex.
 void NumberText_FormatHex(u32 value) {
   u8 *buffer = gNumberTextBuffer;
   const u8 *digits = gText_HexDigits;
@@ -26,7 +27,8 @@ void NumberText_FormatHex(u32 value) {
 }
 
 /// Writes `number` to the number buffer as eleven characters: spaces, a sign
-/// (a space or '-') and its decimal digits, right-aligned.
+/// (a space or '-') and its decimal digits, right-aligned. Called by
+/// DebugText_PrintDecimal and the Djinn preview's number text.
 void NumberText_FormatDecimal(s32 number) {
   u32 *placeValues;
   s8 *output;
@@ -82,7 +84,8 @@ void NumberText_FormatDecimal(s32 number) {
   output[1] = 0;
 }
 
-/// Writes `count` blank characters at the debug text cursor.
+/// Writes `count` blank characters at the debug text cursor and moves it on.
+/// Reached through the far-call table.
 void DebugText_PrintBlanks(u32 count) {
   u16 *dst = gDebugTextCursor;
   u32 index;
@@ -107,7 +110,9 @@ void *memcpy(void *destination, const void *source, unsigned long size) {
 #endif
 
 /// Prints the string `src` (at most 32 characters) at the debug text cursor,
-/// wrapping from the end of the screen to its start, when debug text is on.
+/// wrapping from the end of the screen to its start, when debug text is on;
+/// the cursor moves past it. Called by the hex and decimal printers and
+/// through the far-call table.
 void DebugText_Print(const u8 *src) {
   if (gDebugTextEnabled != 0) {
     u32 addr = ((u32)&gDebugTextCursor);
@@ -135,7 +140,7 @@ void DebugText_Print(const u8 *src) {
 }
 
 /// Prints the last `digits` hexadecimal digits of `value` (1 to 8; anything
-/// else prints all 8).
+/// else prints all 8). Reached through the far-call table.
 void DebugText_PrintHex(u32 value, s32 digits) {
   s32 n;
 
@@ -148,7 +153,7 @@ void DebugText_PrintHex(u32 value, s32 digits) {
 }
 
 /// Prints the last `digits` characters of `value` in signed decimal (1 to 10;
-/// anything else prints 10).
+/// anything else prints 10). Reached through the far-call table.
 void DebugText_PrintDecimal(s32 value, s32 digits) {
   s32 n;
 
@@ -161,6 +166,7 @@ void DebugText_PrintDecimal(s32 value, s32 digits) {
 }
 
 /// Blanks the debug text screen, homes the cursor and points BG0 at it.
+/// Called by System_Initialize, Game_ResetForNewGame and the debug modes.
 void DebugText_Clear(void) {
   Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 0x500);
   gDebugTextCursor = (u16 *)BG_SCREEN_BLOCK(4);
@@ -169,10 +175,11 @@ void DebugText_Clear(void) {
 
 /// Loads the window font and frame tiles into BG character block 0, the window
 /// palette into BG palette 15 with its gradient colours, and the basic sprite
-/// palettes.
+/// palettes. Called by System_Initialize and by the modes that replace those
+/// graphics and must put them back (the debug battle, the palette editor).
 void Ui_LoadWindowGraphics(void) {
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
-          BG_CHAR_BLOCK(0), (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
+          BG_CHAR_BLOCK(0), DMA_COPY_WORDS(0x800), REG_DMA3);
   Dma_Set(gUi_WindowPalette, (void *)&BG_PLTT_COLOR(15, 0),
           DMA_ENABLE << 16 | 0x10, REG_DMA3);
   Io_Write16(0, &PLTT_BACKDROP);
@@ -187,7 +194,8 @@ void Ui_LoadWindowGraphics(void) {
           REG_DMA3);
 }
 
-/// Loads the basic sprite palettes (palettes 0 to 13).
+/// Loads the basic sprite palettes (palettes 0 to 13). Called by
+/// Ui_LoadWindowGraphics and the field object setup.
 void Palette_LoadBasicObjColors(void) {
   Dma_Set(gSystem_BasicColorPalette, (void *)OBJ_PLTT, DMA_ENABLE << 16 | 0xe0,
           REG_DMA3);

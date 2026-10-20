@@ -281,7 +281,7 @@ static void ItemLevel_SelectItem(void) {
 #if TBS_PATCH_1
 /// Browses ability names and descriptions, skipping unavailable entries. B
 /// closes the sole window created by this browser.
-static void ItemLevel_SelectAbility(void) {
+UNUSED static void ItemLevel_SelectAbility(void) {
   // Ordinary while scans grow the native function from 0x248 to 0x260; retain
   // the original polling edges.
   struct UiWindow *window;
@@ -437,7 +437,7 @@ static void ItemLevel_ShowGlyphCaptions(void) {
   struct UiWindow *window;
   /* FAKEMATCH: an unread 32-byte text buffer, the native frame's 32 extra
    * bytes. Without it: differ 4 (sp moves 4 for 36). */
-  u8 text[32];
+  UNUSED u8 text[32];
 
   window = UiWindow_Create(0, 13, 30, 6, 2);
   UiText_DrawStringInWindow(gItemLevelGlyphsUpper, window, 0, 0);

@@ -15,7 +15,7 @@
 	.set import.Resource_DecodeType01, 1
 	.set import.Resource_ResetEntry, 1
 	.set import.Engine_VramLoad, 1
-	.set import.QueueIoWriteDelay2, 1
+	.set import.IoWriteQueue_Store16, 1
 	.set import.AnimationObjects_SelectAnimation, 1
 	.set import.Object_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1

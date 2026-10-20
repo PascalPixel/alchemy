@@ -36,6 +36,8 @@
 #define CREDITS_COLUMNS 6
 #define CREDITS_RING_ROWS 32
 #define CREDITS_LINE_TILES 24
+#define CREDITS_RING_TILES (CREDITS_RING_ROWS * CREDITS_LINE_TILES)
+#define CREDITS_RING_BYTES (CREDITS_RING_TILES * TILE_SIZE_4BPP)
 #define CREDITS_BUFFER_BYTES 0x900
 #define CREDITS_RASTER_STRIDE 256
 #define CREDITS_DECODER_HEAP_SLOT 49
@@ -43,7 +45,8 @@
 #define CREDITS_OAM_ENTRIES 128
 
 /// Fills 30 KB of 256-color tiles with color 1 and clears 128 palette colors.
-/// alternate: 0 selects the first half (VRAM 0x06000000, palette 0-127).
+/// Called by the credits slideshow before loading a backdrop into a half.
+/// @param alternate 0 selects the first half (VRAM 0x06000000, palette 0-127).
 ///      1 selects the second half (VRAM 0x06008000, palette 128-255, fill 129).
 void Graphics_ClearCharacterBlockAndPalette(s32 alternate) {
   u32 fillColor;
@@ -51,6 +54,8 @@ void Graphics_ClearCharacterBlockAndPalette(s32 alternate) {
   void *paletteDestination;
   volatile u32 dmaFill;
 
+  // Use a solid pixel in the palette being cleared, producing an opaque
+  // black layer for the next crossfade.
   if (alternate == 0) {
     fillColor = 0x01010101;
     tileDestination = BG_CHAR_BLOCK(0);
@@ -107,6 +112,7 @@ const u32 gDisplayScroll_SlideResources[] = {
 
 /// Loads a credits backdrop into one of the two tile/palette halves. A zero
 /// resource clears that half; the second half offsets its palette indices.
+/// Called by DisplayScroll_RunSlideshow for each picture.
 void Graphics_LoadCharacterBlockAndPalette(u32 resourceId, s32 alternate) {
   const u8 *resourceData;
   u32 paletteDestination;
@@ -127,23 +133,29 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resourceId, s32 alternate) {
     tileDestination = BG_CHAR_BLOCK(2);
     paletteDestination = (u32)&BG_PLTT[128];
   }
+  // Offset every pixel into the selected palette half so both backdrops
+  // can remain visible throughout a crossfade.
   RamCode_LoadSlot(CREDITS_DECODER_HEAP_SLOT, BattleEffect_Expand,
                    BattleEffect_ExpandCodeSize);
   ((PackedDecoder)gWorkSlot[CREDITS_DECODER_HEAP_SLOT])(
       resourceData + 256, tileDestination, paletteOffset);
   Runtime_ReleaseHeapBlock(CREDITS_DECODER_HEAP_SLOT);
 
+  // Queue palette RAM writes for VBlank rather than transferring colours
+  // during the active display.
   IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)resourceData,
-                      (DMA_ENABLE | DMA_32BIT) << 16 | 0x40);
+                      DMA_COPY_WORDS(0x40));
 }
 
 /// Builds the 512 tilemap words surrounding a sliding credits backdrop:
 /// blank margins, 240 consecutive tile pairs, then a zero-filled tail.
+/// Called by DisplayScroll_RunSlideshow.
 void DisplayScroll_BuildHblankWordTable(u32 *destination) {
   s32 remaining;
   u32 blankTiles = 0x01FF01FF;
   u32 tilePair = 0x10000;
 
+  // Pad above and below the picture so vertical wrapping stays blank.
   remaining = 31;
   do {
     remaining--;
@@ -168,7 +180,8 @@ void DisplayScroll_BuildHblankWordTable(u32 *destination) {
   } while (remaining >= 0);
 }
 
-/// Slides both backdrop layers one pixel left every fourth frame.
+/// A VBlank task of the credits slideshow: drifts both backdrops together,
+/// keeping their horizontal offsets aligned throughout the crossfade.
 void DisplayScroll_StepPositionEveryFourFrames(void) {
   if ((gFrameTick & 3) == 0) {
     u32 decrement = 0xffff;
@@ -178,8 +191,10 @@ void DisplayScroll_StepPositionEveryFourFrames(void) {
   }
 }
 
-/// Crossfades the credits backdrop sequence through alternating tile banks,
-/// then restores the display for the following screen.
+/// Crossfades the credits backdrop sequence through alternating tile banks
+/// while the staff names scroll over it, then restores the display for the
+/// following screen. Reached through the scroll far-call table at the end of
+/// the game.
 s32 DisplayScroll_RunSlideshow(void) {
   u32 slide;
   s32 alpha;
@@ -190,7 +205,9 @@ s32 DisplayScroll_RunSlideshow(void) {
   gIdleSleepEnabled = 0;
   Scheduler_ResetTaskTable();
   Scheduler_AddOrUpdateCallback(DisplayScroll_StepPositionEveryFourFrames,
-                                0x480);
+                                SCHEDULER_KEY_VBLANK);
+  // Each layer owns its map, tiles and palette half. Load the invisible
+  // half while the other remains on screen.
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   DisplayScroll_BuildHblankWordTable((u32 *)BG_SCREEN_BLOCK(15));
   DisplayScroll_BuildHblankWordTable((u32 *)BG_SCREEN_BLOCK(31));
@@ -207,8 +224,11 @@ s32 DisplayScroll_RunSlideshow(void) {
   Io_Write16(BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG3 |
                  BLDCNT_TGT2_BD,
              &REG_BLDCNT);
+  // Give the names a five-second lead before the first backdrop.
   DisplayScroll_InitObjectTable();
   WaitFrames(300);
+  // Alternate the hidden layer after each 64-frame crossfade. Loading it
+  // cannot overwrite the picture that is still showing.
   for (slide = 0; slide < sizeof(gDisplayScroll_SlideResources) /
                               sizeof(gDisplayScroll_SlideResources[0]);
        slide++) {
@@ -883,8 +903,9 @@ const void *gDisplayScroll_LineTable[] = {
 
 #include "../display/glyph_widths.h"
 
-/// Moves the sixteen visible credits rows through the 32-row tile ring and
-/// copies their sprites to OAM. End-of-text holds the scroll position.
+/// A VBlank task scheduled by DisplayScroll_InitObjectTable: maps the visible
+/// sixteen rows onto the tile ring and uploads their sprites. Advances one
+/// pixel every fourth frame until the end-of-text latch stops the scroll.
 void DisplayScroll_UpdateObjects(void) {
   u32 frame = gFlash_Handler3;
   u32 scrollWithinTile = frame & 7;
@@ -901,18 +922,18 @@ void DisplayScroll_UpdateObjects(void) {
                     ((column * 32 + 24) << 16) | 0x40004000;
       *oamWords++ = tileIndex;
       tileIndex += 4;
-      if (tileIndex == 0x300)
+      if (tileIndex == CREDITS_RING_TILES)
         tileIndex = 0;
     }
   }
-  Dma_Set(SCROLL_OBJECTS, OAM, (DMA_ENABLE | DMA_32BIT) << 16 | 0x100,
-          REG_DMA3);
+  Dma_Set(SCROLL_OBJECTS, OAM, DMA_COPY_WORDS(OAM_SIZE / 4), REG_DMA3);
   if ((*(s16 *)&gFlash_Handler0) == 0 && (gFrameTick & 3) == 0)
     gFlash_Handler3++;
 }
 
-/// Renders a new line into the tile-ring row sixteen rows ahead of the
-/// visible top. A null table entry latches the end-of-text state.
+/// A main-loop task scheduled by DisplayScroll_InitObjectTable: renders each
+/// entering line sixteen rows ahead of the visible top, into the hidden half
+/// of the tile ring. A null table entry latches the end-of-text state.
 void DisplayScroll_RenderEnteringLine(void) {
   u32 scrollPosition;
   s32 lineIndex;
@@ -932,7 +953,9 @@ void DisplayScroll_RenderEnteringLine(void) {
 }
 
 /// Allocates the credits sprites, builds the blank border and text rows,
-/// clears the tile ring and schedules scrolling and line rendering.
+/// clears the tile ring and schedules scrolling and line rendering. Called by
+/// DisplayScroll_RunSlideshow; the credits keep their state in borrowed
+/// flash-library cells (see the graphics README).
 void DisplayScroll_InitObjectTable(void) {
   // Sharing the three border-strip loops through an ordinary inline helper
   // changes registers at the same 0x178-byte native English extent.
@@ -943,21 +966,25 @@ void DisplayScroll_InitObjectTable(void) {
 
   SCROLL_OBJECTS = Runtime_BumpAllocateAlternatePool(
       CREDITS_OAM_ENTRIES * sizeof(struct DisplayScrollObject));
-  Dma_Fill32Cell(dmaFill, 0, (void *)OBJ_VRAM0, 0x6000);
-  Dma_Fill32Cell(dmaFill, 0x11111111, (void *)0x06016000, 0x100);
+  // Solid border sprites immediately after the ring mask the partial text
+  // rows at the top and bottom of the window.
+  Dma_Fill32Cell(dmaFill, 0, (void *)OBJ_VRAM0, CREDITS_RING_BYTES);
+  Dma_Fill32Cell(dmaFill, 0x11111111, (void *)(OBJ_VRAM0 + CREDITS_RING_BYTES),
+                 0x100);
 
+  // OAM attributes 0 and 1 share the first word; attribute 2 is the second.
   oamWords = (u32 *)SCROLL_OBJECTS;
   for (row = 0; row < 8; row++) {
     *oamWords++ = (row << 21) | 0x80004000;
-    *oamWords++ = 0x300;
+    *oamWords++ = CREDITS_RING_TILES;
   }
   for (row = 0; row < 8; row++) {
     *oamWords++ = (row << 21) | 0x80004088;
-    *oamWords++ = 0x300;
+    *oamWords++ = CREDITS_RING_TILES;
   }
   for (row = 0; row < 8; row++) {
     *oamWords++ = (row << 21) | 0x40004098;
-    *oamWords++ = 0x300;
+    *oamWords++ = CREDITS_RING_TILES;
   }
   for (row = 0; row < CREDITS_VISIBLE_ROWS; row++) {
     for (column = 0; column < CREDITS_COLUMNS; column++) {
@@ -968,21 +995,28 @@ void DisplayScroll_InitObjectTable(void) {
   }
   for (row = 0; row < 8; row++) {
     *oamWords++ = 0x00c000c0;
-    *oamWords++ = 0x300;
+    *oamWords++ = CREDITS_RING_TILES;
   }
+  // The state, in borrowed flash-library cells: gFlash_Handler3 the scroll
+  // position in pixels, gFlash's low half the position of the last line
+  // drawn, and gFlash_Handler0's low half the end-of-text latch.
   gFlash_Handler3 = 0;
   *(s16 *)&gFlash = 0;
   (*(s16 *)&gFlash_Handler0) = 0;
-  Scheduler_AddOrUpdateCallback(DisplayScroll_UpdateObjects, 0x480);
-  Scheduler_AddOrUpdateCallback(DisplayScroll_RenderEnteringLine, 0xc80);
+  Scheduler_AddOrUpdateCallback(DisplayScroll_UpdateObjects,
+                                SCHEDULER_KEY_VBLANK);
+  Scheduler_AddOrUpdateCallback(DisplayScroll_RenderEnteringLine,
+                                SCHEDULER_KEY_MAIN_LOOP);
   for (row = 0; row < CREDITS_RING_ROWS; row++)
     DisplayScroll_DrawLine(gDisplayScroll_LineTable[0],
                            row * CREDITS_LINE_TILES, 1);
 }
 
 /// Centers, right-aligns or left-aligns one credits line in a 192-pixel row.
-/// Rasterizes its glyphs and shadow, packs 4-bit pixels and uploads 24 tiles.
-/// Returns -1 at the null end marker, otherwise zero.
+/// Rasterizes its glyphs and shadow, packs 4-bit pixels and uploads 24 tiles
+/// beginning at firstTile. Called by the line-rendering task and, for the blank
+/// rows, by DisplayScroll_InitObjectTable. Returns -1 at the null end marker,
+/// otherwise zero.
 s32 DisplayScroll_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   u8 *linePixels = Runtime_BumpAllocateAlternatePool(CREDITS_BUFFER_BYTES);
   s32 startX = 0;
@@ -1003,7 +1037,7 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   /* FAKEMATCH: unused local; its 32 bytes are the native frame space no
    * instruction touches. Without it differ 4 on tbs-ja, tbs-en and tbs-de: sub
    * sp, #12 for #44 and the matching add. */
-  u32 unused[8];
+  UNUSED u32 unused[8];
 
   if (text == NULL) {
     // BUG: the end marker is checked after allocation, leaking one line
@@ -1014,6 +1048,8 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
 #endif
     return -1;
   }
+  // The ninth raster row holds the shadow below this line. Carry it into
+  // the next line before clearing the rest of the reused scratch buffer.
   if (!GameFlag_TestFar(FLAG_SCENE_TEMP_00)) {
     Iwram_FillWords(linePixels, CREDITS_BUFFER_BYTES, 0);
     GameFlag_SetBitFar(FLAG_SCENE_TEMP_00);

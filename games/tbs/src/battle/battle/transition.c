@@ -349,10 +349,11 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       REG_WIN1V = WIN_RANGE(0, 136);
       REG_WININ = BATTLE_WININ;
       REG_WINOUT = BATTLE_WINOUT;
-      QueueIoWriteDelay2((u32)&REG_DISPCNT,
-                         DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
-                             DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
-                             DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
+      IoWriteQueue_Store16((u32)&REG_DISPCNT,
+                           DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
+                               DISPCNT_BG0_ON | DISPCNT_BG1_ON |
+                               DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
+                               DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
       // The opening runs from the callbacks while the status window opens
       // and the encounter is announced.
       BattlePres_SetupTransitionScene(0, 0, 0, 180);
@@ -364,8 +365,8 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       WaitFrames(1);
       UiWindow_CreateWithLayoutBoundsFar(gBattleWork->partyStatus);
       WaitFrames(20);
-      QueueIoWriteDelay10((u32)&REG_BG0CNT, 2);
-      QueueIoWriteDelay6((u32)&REG_BG0CNT, 0);
+      IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, 2);
+      IoWriteQueue_SetBits16((u32)&REG_BG0CNT, 0);
       BattleIntro_AnnounceEncounter(enemyCount);
       Scheduler_RemoveCallback(BattlePres_AdvanceTransitionTimer);
       Scheduler_RemoveCallback(BattlePres_DrawTransitionRows);
@@ -414,8 +415,8 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
     WaitFrames(1);
     WaitFrames(20);
     UiWindow_CreateWithLayoutBoundsFar(gBattleWork->partyStatus);
-    QueueIoWriteDelay10((u32)&REG_BG0CNT, 2);
-    QueueIoWriteDelay6((u32)&REG_BG0CNT, 0);
+    IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, 2);
+    IoWriteQueue_SetBits16((u32)&REG_BG0CNT, 0);
     // Every unit's sprites appear; the party's fade in over 16 frames as
     // semi-transparent sprites.
     REG_BLDCNT = BLEND_SPRITES_OVER_ALL;

@@ -44,8 +44,12 @@ struct CgbNote;
 struct SoundPlayer;
 struct SoundTrack;
 
+/// A command table entry: the driver calls it with the player and the track.
 typedef void (*SoundCommand)(struct SoundPlayer *player,
                              struct SoundTrack *track);
+/// Converts between SoundCommand and a table entry that takes other
+/// parameters, through the generic function type so neither cast warns.
+#define SOUND_COMMAND_CAST(type, routine) ((type)(void (*)(void))(routine))
 
 /// Entries of gSound_CommandTable, in gSound_CommandTableTemplate's order. A
 /// song byte from 0xB1 to 0xCE runs entry (byte - 0xB1) for its track; bytes

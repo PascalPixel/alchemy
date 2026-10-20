@@ -82,9 +82,9 @@ static inline void *Iwram_Decompress(const void *source, void *destination) {
   return Iwram_DecompressEntry(source, destination);
 }
 
-static inline s32 Iwram_CopyWords(void *destination, const void *source,
-                                  s32 size) {
-  return Iwram_CopyWordsEntry(destination, source, size);
+static inline s32 Iwram_CopyWords(volatile void *destination,
+                                  const volatile void *source, s32 size) {
+  return Iwram_CopyWordsEntry((void *)destination, (const void *)source, size);
 }
 
 #ifdef MODERN

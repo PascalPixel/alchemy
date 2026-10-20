@@ -609,7 +609,7 @@ void BattlePres_SetActorModes(u16 *selectedUnits, s32 mode) {
     REG_BLDY = mode;
     BattlePres_ClearAllActorRecordModes();
     WaitFrames(1);
-    QueueIoWriteDelay2((u32)&REG_BLDCNT, 0);
+    IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
   }
   if (battle != 0 && mode != 0) {
     battle->highlightMode = mode;
@@ -637,7 +637,7 @@ void BattlePres_SetActorModes(u16 *selectedUnits, s32 mode) {
       }
     }
     WaitFrames(1);
-    QueueIoWriteDelay2((u32)&REG_BLDCNT, 0);
+    IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
     Scheduler_AddOrUpdateCallback(Graphics_AdvancePaletteCycle, 0x480);
   }
 }

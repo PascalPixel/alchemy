@@ -6,7 +6,7 @@
 	.set import.Scheduler_AddOrUpdateCallback, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Vector_AddPolarOffset, 1
-	.set import.QueueIoWriteDelay2, 1
+	.set import.IoWriteQueue_Store16, 1
 	.set import.Object_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1

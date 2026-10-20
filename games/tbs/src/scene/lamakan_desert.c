@@ -963,9 +963,9 @@ static void HeatGauge_Draw(void) {
   }
   palette = (u32 *)0x050003cc;
   word = (u32 *)(buffer + 12);
-  QueueIoWriteDelay3((u32)palette++, *word++);
-  QueueIoWriteDelay3((u32)palette++, *word++);
-  QueueIoWriteDelay3((u32)palette++, *word++);
+  IoWriteQueue_Store32((u32)palette++, *word++);
+  IoWriteQueue_Store32((u32)palette++, *word++);
+  IoWriteQueue_Store32((u32)palette++, *word++);
 
   gHeatGaugeLevel = gGameState.hazardSteps * 120 / gGameState.hazardLimit;
   if (gHeatGaugeLevel > 118) {

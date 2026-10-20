@@ -9,11 +9,6 @@ struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 
-typedef struct {
-  u8 filler0[9];
-  u8 unk9;
-} Struct_Sub;
-
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *SceneData_ReturnZero(void);
 const u32 *SceneData_GetPrimaryTable(void);
@@ -100,13 +95,13 @@ extern struct SceneEvent gVenusLighthouseEvents3[];
 extern struct SceneEvent gVenusLighthouseEvents4[];
 extern struct SceneEvent gVenusLighthouseEvents5[];
 extern struct SceneEvent gVenusLighthouseEvents6[];
-extern u8 *gVenusSwitchShapes[];
+extern const u8 *gVenusSwitchShapes[];
 extern s32 *gVenusSwitchPushScript0[];
 extern s32 *gVenusSwitchPushScript1[];
 extern s32 *gVenusSwitchPushScript2[];
 extern s32 *gVenusSwitchPushScript3[];
 extern s32 **gVenusSwitchPushScripts[];
-extern u8 *gVenusPillarShapes[];
+extern const u8 *gVenusPillarShapes[];
 extern s32 *gVenusPillarPushScript0[];
 extern s32 *gVenusPillarPushScript1[];
 extern s32 *gVenusPillarPushScript2[];

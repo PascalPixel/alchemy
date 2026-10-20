@@ -62,14 +62,21 @@
 #define LEADER_ON_THIRD_POOL_FLAG FLAG_SCENE_TEMP_03
 #define PILLAR_SUNK_FLAG FLAG_SCENE_TEMP_04
 
-/// One map cell: its tile, layer, kind, height and event.
-struct MapCellFields {
-  u32 tile : 12;
-  u32 layer : 2;
-  u8 kind : 2;
-  u8 height;
-  u8 event;
+/// A copied map cell, also read in the two flag pairs the pillar redraw keeps.
+union CrossboneIslePillarCell {
+  struct MapCell cell;
+  struct CrossboneIslePillarCellBits {
+    u32 metatile : 12;
+    u32 lowFlags : 2; ///< bits 13..12 of MapCell.metatileAndFlags
+    u8 highFlags : 2; ///< bits 15..14, read by Map_GetCellHighFlags
+    u8 collisionCode;
+    u8 attributeB;
+  } bits;
 };
+
+STATIC_ASSERT(sizeof(union CrossboneIslePillarCell) == sizeof(struct MapCell));
+STATIC_ASSERT(offsetof(union CrossboneIslePillarCell, bits.collisionCode) == 2);
+STATIC_ASSERT(offsetof(union CrossboneIslePillarCell, bits.attributeB) == 3);
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
@@ -259,40 +266,53 @@ static s32 CrossboneIslePillarRooms_RestoreGroundFootprint(s32 actorId) {
 }
 
 /// Reads one map cell through DMA, waiting until the transfer finishes.
-static void CrossboneIslePillarRooms_ReadMapCell(s32 layer, s32 x, s32 y,
-                                                 struct MapCellFields *dst) {
-  struct MapState *map = gMapWork[0];
+static void
+CrossboneIslePillarRooms_ReadMapCell(s32 layer, s32 x, s32 y,
+                                     union CrossboneIslePillarCell *dst) {
+  struct MapScrollWork *map = gMapWork[0];
 
   if (map != 0) {
-    u32 *cell = (u32 *)map->layers[layer].cells;
+    struct MapCell *cell = map->layers[layer].cells;
 
     cell += x + (y << 7);
-    Dma_Set(cell, dst, 0x84000001, REG_DMA3);
+    Dma_Set(cell, dst,
+            ((u32)(DMA_ENABLE | DMA_32BIT) << 16) | sizeof(*cell) / sizeof(u32),
+            REG_DMA3);
     {
       volatile u32 *dma = REG_DMA3;
 
-      while (dma[2] & 0x80000000)
+      while (dma[2] & ((u32)DMA_ENABLE << 16))
         ;
     }
   }
 }
 
-/// Copies the cell's layer, kind, height, and event without replacing its tile.
-static void CrossboneIslePillarRooms_SetCellAttributes(s32 layer, s32 x, s32 y,
-                                                       struct MapCell *source) {
-  struct MapCellFields *src = (struct MapCellFields *)source;
-  struct MapState *map = gMapWork[0];
+/// Copies the cell's flags and collision attributes without replacing its tile.
+static void CrossboneIslePillarRooms_SetCellAttributes(
+    s32 layer, s32 x, s32 y, const union CrossboneIslePillarCell *source) {
+  struct MapScrollWork *map = gMapWork[0];
 
   if (map != 0) {
-    struct MapCellFields *cell =
-        (struct MapCellFields *)map->layers[layer].cells;
+    // UB: the native bitfield view aliases MapCell storage. Byte writes keep
+    // its fields separate without that alias (tbs-en: 88 to 84 bytes).
+#ifdef UBFIX
+    u8 *cell = (u8 *)map->layers[layer].cells;
+
+    cell += sizeof(struct MapCell) * (x + (y << 7));
+    cell[1] = (source->bits.lowFlags << 4) | (cell[1] & ~0x30);
+    cell[1] = (source->bits.highFlags << 6) | (cell[1] & ~0xc0);
+    cell[2] = source->cell.collisionCode;
+    cell[3] = source->cell.attributeB;
+#else
+    struct CrossboneIslePillarCellBits *cell =
+        (struct CrossboneIslePillarCellBits *)map->layers[layer].cells;
 
     cell += x + (y << 7);
-
-    cell->layer = src->layer;
-    cell->kind = src->kind;
-    cell->height = src->height;
-    cell->event = src->event;
+    cell->lowFlags = source->bits.lowFlags;
+    cell->highFlags = source->bits.highFlags;
+    cell->collisionCode = source->bits.collisionCode;
+    cell->attributeB = source->bits.attributeB;
+#endif
   }
 }
 
@@ -589,7 +609,7 @@ struct PillarPlacement {
   s32 x; ///< 16-pixel map cells
   s32 y; ///< 16-pixel map cells
   s32 z; ///< 16-pixel map cells
-  struct MapCellFields cell;
+  union CrossboneIslePillarCell cell;
 };
 
 /// Where one of room 4's pillars stands, the ground cell saved under it and its
@@ -598,12 +618,12 @@ struct PillarSlot {
   s32 x; ///< 16-pixel map cells
   s32 y; ///< 16-pixel map cells
   s32 z; ///< 16-pixel map cells
-  struct MapCellFields cell;
+  union CrossboneIslePillarCell cell;
   s32 flag;
 };
 
 static struct PillarSlot sPillarSlots[4];
-static s32 sProbePosition[3];
+static struct FieldPosition sProbePosition;
 static u8 sShakenScroll[12];
 static s32 sShakeChance;
 
@@ -625,11 +645,9 @@ static void CrossboneIslePillarRooms_JitterBackgroundScroll(void) {
   *reg = *src;
 }
 
-#define DMA3 ((volatile u32 *)0x040000d4)
-
 /// Waits until the DMA channel clears its enable bit.
 static __inline__ void Dma_Wait(volatile u32 *dma) {
-  while (dma[2] & 0x80000000)
+  while (dma[2] & ((u32)DMA_ENABLE << 16))
     ;
 }
 
@@ -887,18 +905,36 @@ static void CrossboneIslePillarRooms_SortPillarActors(void) {
           firstActor->z.fixed < secondActor->z.fixed) {
         continue;
       }
-      Dma_Set(secondActor, &savedActor, 0x8400001c, DMA3);
-      Dma_Wait(DMA3);
-      Dma_Set(firstActor, secondActor, 0x8400001c, DMA3);
-      Dma_Wait(DMA3);
-      Dma_Set(&savedActor, firstActor, 0x8400001c, DMA3);
-      Dma_Wait(DMA3);
-      Dma_Set(&sPillarSlots[j], &savedPlacement, 0x84000004, DMA3);
-      Dma_Wait(DMA3);
-      Dma_Set(&sPillarSlots[i], &sPillarSlots[j], 0x84000004, DMA3);
-      Dma_Wait(DMA3);
-      Dma_Set(&savedPlacement, &sPillarSlots[i], 0x84000004, DMA3);
-      Dma_Wait(DMA3);
+      Dma_Set(secondActor, &savedActor,
+              ((u32)(DMA_ENABLE | DMA_32BIT) << 16) |
+                  sizeof(savedActor) / sizeof(u32),
+              REG_DMA3);
+      Dma_Wait(REG_DMA3);
+      Dma_Set(firstActor, secondActor,
+              ((u32)(DMA_ENABLE | DMA_32BIT) << 16) |
+                  sizeof(savedActor) / sizeof(u32),
+              REG_DMA3);
+      Dma_Wait(REG_DMA3);
+      Dma_Set(&savedActor, firstActor,
+              ((u32)(DMA_ENABLE | DMA_32BIT) << 16) |
+                  sizeof(savedActor) / sizeof(u32),
+              REG_DMA3);
+      Dma_Wait(REG_DMA3);
+      Dma_Set(&sPillarSlots[j], &savedPlacement,
+              ((u32)(DMA_ENABLE | DMA_32BIT) << 16) |
+                  sizeof(struct PillarPlacement) / sizeof(u32),
+              REG_DMA3);
+      Dma_Wait(REG_DMA3);
+      Dma_Set(&sPillarSlots[i], &sPillarSlots[j],
+              ((u32)(DMA_ENABLE | DMA_32BIT) << 16) |
+                  sizeof(struct PillarPlacement) / sizeof(u32),
+              REG_DMA3);
+      Dma_Wait(REG_DMA3);
+      Dma_Set(&savedPlacement, &sPillarSlots[i],
+              ((u32)(DMA_ENABLE | DMA_32BIT) << 16) |
+                  sizeof(struct PillarPlacement) / sizeof(u32),
+              REG_DMA3);
+      Dma_Wait(REG_DMA3);
       if (Engine_GameFlagIsSet(sPillarSlots[i].flag) &&
           !Engine_GameFlagIsSet(sPillarSlots[j].flag)) {
         Engine_GameFlagClear(sPillarSlots[i].flag);
@@ -912,55 +948,41 @@ static void CrossboneIslePillarRooms_SortPillarActors(void) {
   }
 }
 
-/// One of room 4's pillars, seen as a field actor while it moves and settles.
-struct PillarActor {
-  u8 unk00[8];
-  s32 x; ///< 16.16 fixed-point pixels
-  s32 y; ///< 16.16 fixed-point pixels
-  s32 z; ///< 16.16 fixed-point pixels
-  u8 unk14[14];
-  u8 terrainId;
-  u8 priorityFlags;
-  s32 velocityX;
-  s32 velocityY;
-  u8 unk2c[0x29];
-  u8 motionFlags;
-};
-
 /// Move or Carry on one of room 4's pillars, and after each push there: the
 /// pillars settle, and their footprints follow them.
 static void Event_MovePillar(void) {
   u32 id;
-  struct PillarActor *actor;
+  struct FieldActor *actor;
   u8 *flags;
   u32 i;
   u32 k;
-  struct PillarActor *other;
-  struct MapCellFields cell;
+  struct FieldActor *other;
+  union CrossboneIslePillarCell cell;
 
   for (id = 8; id <= 11; id++) {
-    actor = (struct PillarActor *)Object_GetById(id);
+    actor = Object_GetById(id);
     actor->terrainId = 2;
     i = id - 8;
-    if ((actor->x >> 20) == sPillarSlots[i].x &&
-        (actor->z >> 20) == sPillarSlots[i].z && actor->velocityY == 0) {
+    if ((actor->x.fixed >> 20) == sPillarSlots[i].x &&
+        (actor->z.fixed >> 20) == sPillarSlots[i].z && actor->velocityY == 0) {
       continue;
     }
-    Dma_Set(&actor->x, sProbePosition, 0x84000003, DMA3);
-    Dma_Wait(DMA3);
-    if (FieldObject_CheckMovementCollision(actor, sProbePosition) == -1) {
+    Dma_Set(&actor->x, &sProbePosition,
+            ((u32)(DMA_ENABLE | DMA_32BIT) << 16) |
+                sizeof(sProbePosition) / sizeof(u32),
+            REG_DMA3);
+    Dma_Wait(REG_DMA3);
+    if (FieldObject_CheckMovementCollision(actor, &sProbePosition) == -1) {
       actor->motionFlags = 3;
     }
     flags = &actor->motionFlags;
     CrossboneIslePillarRooms_SetCellAttributes(
-        0, sPillarSlots[i].x, sPillarSlots[i].z,
-        (struct MapCell *)&sPillarSlots[i].cell);
+        0, sPillarSlots[i].x, sPillarSlots[i].z, &sPillarSlots[i].cell);
     CrossboneIslePillarRooms_SetCellAttributes(
-        2, sPillarSlots[i].x, sPillarSlots[i].z,
-        (struct MapCell *)&sPillarSlots[i].cell);
+        2, sPillarSlots[i].x, sPillarSlots[i].z, &sPillarSlots[i].cell);
     // Falling pillars either reach a ledge, shrink away, or settle on ground.
     if (*flags & 1) {
-      if (GetMapCellCollision(2, actor->x, actor->z) == 50) {
+      if (GetMapCellCollision(2, actor->x.fixed, actor->z.fixed) == 50) {
         Engine_AudioPlayCue(SE_189);
         // Both u8 accesses are alias set 0, and the view is no struct reference
         // (MEM_IN_STRUCT_P).
@@ -970,44 +992,47 @@ static void Event_MovePillar(void) {
         *(u8 *)&actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
         CrossboneIslePillarRooms_LowerActorToLedge(id, 1);
         *(u8 *)&actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-      } else if (GetMapCellCollision(2, actor->x, actor->z) == 51) {
-        CrossboneIslePillarRooms_StopAtGroundOrHeight(
-            (struct FieldActor *)actor, 0);
+      } else if (GetMapCellCollision(2, actor->x.fixed, actor->z.fixed) == 51) {
+        CrossboneIslePillarRooms_StopAtGroundOrHeight(actor, 0);
         Engine_AudioPlayCue(SE_189);
-        actor->y = 0;
+        actor->y.fixed = 0;
         actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
         CrossboneIslePillarRooms_ShrinkPillar(id);
-        SET_POSITION(actor, 0, 0, 0);
+        actor->x.fixed = 0;
+        actor->y.fixed = 0;
+        actor->z.fixed = 0;
         actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       } else {
-        CrossboneIslePillarRooms_SettleActorOnGround(
-            (struct FieldActor *)actor);
+        CrossboneIslePillarRooms_SettleActorOnGround(actor);
       }
       *flags = 0;
     }
     // Save the new ground cell before applying the pillar's height attributes.
-    CrossboneIslePillarRooms_ReadMapCell(0, actor->x >> 20, actor->z >> 20,
-                                         &sPillarSlots[i].cell);
-    if (actor->y >= 0) {
-      CrossboneIslePillarRooms_ReadMapCell(0, 27, (actor->y >> 20) + 6, &cell);
+    CrossboneIslePillarRooms_ReadMapCell(
+        0, actor->x.fixed >> 20, actor->z.fixed >> 20, &sPillarSlots[i].cell);
+    if (actor->y.fixed >= 0) {
+      CrossboneIslePillarRooms_ReadMapCell(0, 27, (actor->y.fixed >> 20) + 6,
+                                           &cell);
+      CrossboneIslePillarRooms_SetCellAttributes(0, actor->x.fixed >> 20,
+                                                 actor->z.fixed >> 20, &cell);
+      cell.bits.highFlags = sPillarSlots[i].cell.bits.highFlags;
       CrossboneIslePillarRooms_SetCellAttributes(
-          0, actor->x >> 20, actor->z >> 20, (struct MapCell *)&cell);
-      cell.kind = sPillarSlots[i].cell.kind;
-      CrossboneIslePillarRooms_SetCellAttributes(
-          2, actor->x >> 20, actor->z >> 20, (struct MapCell *)&cell);
+          2, *(s32 *)((u8 *)actor + offsetof(struct FieldActor, x)) >> 20,
+          *(s32 *)((u8 *)actor + offsetof(struct FieldActor, z)) >> 20, &cell);
     }
-    sPillarSlots[i].x = actor->x >> 20;
-    sPillarSlots[i].y = actor->y >> 20;
-    sPillarSlots[i].z = actor->z >> 20;
+    sPillarSlots[i].x = actor->x.fixed >> 20;
+    sPillarSlots[i].y = actor->y.fixed >> 20;
+    sPillarSlots[i].z = actor->z.fixed >> 20;
     // Mark pillars covered by this one, then restore their sort order.
     for (k = 0; k <= 3; k++) {
       if (k == i) {
         continue;
       }
       Engine_GameFlagClear(sPillarSlots[k].flag);
-      other = (struct PillarActor *)Object_GetById(k + 8);
-      if ((actor->x >> 20) == (other->x >> 20) &&
-          (actor->z >> 20) == (other->z >> 20) && actor->y > other->y) {
+      other = Object_GetById(k + 8);
+      if ((actor->x.fixed >> 20) == (other->x.fixed >> 20) &&
+          (actor->z.fixed >> 20) == (other->z.fixed >> 20) &&
+          actor->y.fixed > other->y.fixed) {
         Engine_GameFlagSet(sPillarSlots[k].flag);
       }
     }

@@ -157,7 +157,8 @@ Measured:
   offsetof(struct FieldActor, field))`, where `p->field` goes through
   FieldActor's single/group union and moves a load
   ([`scene/common/effect_spawn.h`](scene/common/effect_spawn.h),
-  [`scene/common/mercury_lighthouse_pillar.h`](scene/common/mercury_lighthouse_pillar.h)).
+  [`scene/common/mercury_lighthouse_pillar.h`](scene/common/mercury_lighthouse_pillar.h),
+  [`scene/crossbone_isle_pillar_rooms.c`](scene/crossbone_isle_pillar_rooms.c)).
 - Another struct's view of the same object (`struct SolSanctumRingObject`
   for a FieldActor) in
   [`scene/common/sol_sanctum_elemental_star_ring_setup.h`](scene/common/sol_sanctum_elemental_star_ring_setup.h).

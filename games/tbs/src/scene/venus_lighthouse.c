@@ -128,12 +128,6 @@ struct Vec {
   s32 z;
 };
 
-/// A field position, read as halfwords for its whole-pixel parts.
-union VecView {
-  struct FieldPosition v;
-  s16 h[6];
-};
-
 static __inline__ void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
 
 /// Sets up a passage effect's motion, collision and child value.
@@ -690,9 +684,8 @@ static s32 Event_JumpAcrossGap(void) {
       leader->velocityY = 0x40000;
       *motionFlags &= 0x7e;
       Engine_ActorSetSpriteFlags(leader, 0);
-      Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER,
-                                ((union VecView *)&landing)->h[1],
-                                ((union VecView *)&landing)->h[5]);
+      Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, landing.x >> 16,
+                                landing.z >> 16);
       Object_SetMode(leader, 6);
       Engine_ActorSetSpriteFlags(leader, 1);
       *motionFlags = savedMotionFlags;
@@ -1520,8 +1513,8 @@ static void Event_MoveSwitchBlock(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldActor *block;
   struct FieldActor *other;
-  struct SwitchEffect *firstGateEffect;
-  struct SwitchEffect *secondGateEffect;
+  struct FieldActor *firstGateEffect;
+  struct FieldActor *secondGateEffect;
   u8 *flags;
   u32 blockId;
   u32 candidateIndex;
@@ -1610,13 +1603,15 @@ static void Event_MoveSwitchBlock(void) {
     }
     // Once all three blocks settle, run the paired scripts that open the gate.
     firstGateEffect =
-        (struct SwitchEffect *)VenusLighthouse_CreateScriptedGateEffect(
-            888, 680, gVenusSettleScriptA);
+        VenusLighthouse_CreateScriptedGateEffect(888, 680, gVenusSettleScriptA);
     secondGateEffect =
-        (struct SwitchEffect *)VenusLighthouse_CreateScriptedGateEffect(
-            888, 680, gVenusSettleScriptB);
-    while (firstGateEffect->active != 0 || secondGateEffect->active != 0) {
-      if (firstGateEffect->finished != 0 || secondGateEffect->finished != 0) {
+        VenusLighthouse_CreateScriptedGateEffect(888, 680, gVenusSettleScriptB);
+    // SC_FREE clears the script pointer; work value 0x28 signals the
+    // opening cue earlier, while the gate effects are still running.
+    while (((struct ScriptInterpreter *)firstGateEffect)->script != 0 ||
+           ((struct ScriptInterpreter *)secondGateEffect)->script != 0) {
+      if (firstGateEffect->riseEnabled != 0 ||
+          secondGateEffect->riseEnabled != 0) {
         Engine_EventWait(30);
         Engine_AudioPlayCue(SE_DOOR_OPEN);
         Engine_MapAnimateCells(gVenusSettleCells, 109, 37);
@@ -1682,10 +1677,10 @@ static void VenusLighthouse_LowerFloatingBlocks(s32 waitFrames) {
   if (waitFrames != 0) {
     Engine_AudioPlayCue(SE_180);
   }
-  FieldObject_SetPosition((s32)westSupport, westSupport->x.fixed,
+  FieldObject_SetPosition(westSupport, westSupport->x.fixed,
                           gVenusBlockHeights[westSupport->timer],
                           westSupport->z.fixed);
-  FieldObject_SetPosition((s32)eastSupport, eastSupport->x.fixed,
+  FieldObject_SetPosition(eastSupport, eastSupport->x.fixed,
                           gVenusBlockHeights[eastSupport->timer],
                           eastSupport->z.fixed);
   Engine_ActorWaitForMove(8);
@@ -2119,27 +2114,25 @@ static void Event_MovePillarSwitchBlock(void) {
     if ((firstBlock->priorityFlags & secondBlock->priorityFlags &
          thirdBlock->priorityFlags & fourthBlock->priorityFlags) &
         2) {
-      struct SwitchEffect *firstGateEffect;
-      struct SwitchEffect *secondGateEffect;
+      struct FieldActor *firstGateEffect;
+      struct FieldActor *secondGateEffect;
 
       Camera_SetSpeed(0x10000, 0x2000);
       Object_PlaceCurrentWithinCameraBounds(14, 1);
       Camera_WaitForMove();
-      firstGateEffect =
-          (struct SwitchEffect *)VenusLighthouse_CreateScriptedGateEffect(
-              136, FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN,
-              gVenusFirstGateScript);
+      firstGateEffect = VenusLighthouse_CreateScriptedGateEffect(
+          136, 776, gVenusFirstGateScript);
       Event_Wait(30);
       Camera_SetSpeed(0x6666, 0xccc);
       Camera_MoveTo(PIXELS(216), -1, PIXELS(632), 1);
       ObjectDispatch_WaitForValue16(firstGateEffect);
-      Object_SetScript((struct FieldActor *)firstGateEffect,
-                       gVenusFirstGateOpenScript);
-      secondGateEffect =
-          (struct SwitchEffect *)VenusLighthouse_CreateScriptedGateEffect(
-              216, 0x2f8, gVenusSecondGateScript);
-      while (firstGateEffect->active != 0 || secondGateEffect->active != 0) {
-        if (firstGateEffect->finished != 0 || secondGateEffect->finished != 0) {
+      Object_SetScript(firstGateEffect, gVenusFirstGateOpenScript);
+      secondGateEffect = VenusLighthouse_CreateScriptedGateEffect(
+          216, 760, gVenusSecondGateScript);
+      while (((struct ScriptInterpreter *)firstGateEffect)->script != 0 ||
+             ((struct ScriptInterpreter *)secondGateEffect)->script != 0) {
+        if (firstGateEffect->riseEnabled != 0 ||
+            secondGateEffect->riseEnabled != 0) {
           Event_Wait(30);
           Map_AnimateCells(gVenusGateCells, 77, 35);
           Map_CopyCellAttributes(13, 35, 1, 1, 13, 36);
@@ -2280,7 +2273,9 @@ s32 Scene_RunEntrySetup(void) {
       VenusLighthouse_PrepareStandingActor(8);
       break;
     case 5:
-      Engine_GameFlagClear(0x120);
+      Engine_GameFlagClear(FLAG_EXIT_ARRIVAL_PENDING);
+      // The other scholar setup still applies.
+      // fall through
     case 3:
     case 4:
     case 6:
@@ -2320,6 +2315,8 @@ s32 Scene_RunEntrySetup(void) {
       break;
     case 26:
       Engine_GameFlagClear(0x121);
+      // Restore the same passage tiles as entrances 22 and 23.
+      // fall through
     case 22:
     case 23:
       Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
@@ -2454,6 +2451,8 @@ s32 Scene_RunEntrySetup(void) {
     case 11:
       gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
       Object_GetById(ACTOR_PARTY_LEADER)->y.fixed = -PIXELS(2);
+      // These entrances share the tile-wave setup.
+      // fall through
     case 7:
     case 8:
       BattleFx_SetQueuedSoundAndPlay(SE_170);
@@ -2648,6 +2647,8 @@ s32 Scene_RunEntrySetup(void) {
     case 19:
       gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
       Object_GetById(ACTOR_PARTY_LEADER)->y.fixed = -PIXELS(2);
+      // Restore the same spray and passage state.
+      // fall through
     case 3:
     case 4:
     case 5:
@@ -2788,7 +2789,7 @@ static void VenusLighthouse_StepActorWithDust(struct DirXZ *direction) {
   s32 actorId;
   struct FieldActor *viewCenter;
   struct FieldActor *actor;
-  s32 nextPosition[3];
+  struct FieldPosition nextPosition;
   struct EffectOptions options;
   s32 collision;
   s32 framePhase;
@@ -2801,12 +2802,12 @@ static void VenusLighthouse_StepActorWithDust(struct DirXZ *direction) {
     viewCenter = event->viewCenter;
   }
   actor = Object_GetById(actorId);
-  SET_VECTOR(
-      nextPosition,
-      actor->x.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x * 3, 15),
-      actor->y.fixed,
-      actor->z.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z * 3, 15));
-  collision = FieldObject_CheckMovementCollision(actor, nextPosition);
+  nextPosition.x =
+      actor->x.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x * 3, 15);
+  nextPosition.y = actor->y.fixed;
+  nextPosition.z =
+      actor->z.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z * 3, 15);
+  collision = FieldObject_CheckMovementCollision(actor, &nextPosition);
   framePhase = gFrameCount & 4;
   if (framePhase == 0) {
     options.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
@@ -2834,28 +2835,30 @@ static void VenusLighthouse_StepActorWithDust(struct DirXZ *direction) {
     Engine_TaskWait(3);
     return;
   }
-  SET_VECTOR(nextPosition,
-             actor->x.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x, 19),
-             actor->y.fixed,
-             actor->z.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z, 19));
-  collision = FieldObject_CheckMovementCollision(actor, nextPosition);
+  nextPosition.x =
+      actor->x.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x, 19);
+  nextPosition.y = actor->y.fixed;
+  nextPosition.z =
+      actor->z.fixed + VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z, 19);
+  collision = FieldObject_CheckMovementCollision(actor, &nextPosition);
   if (collision > 0) {
     return;
   }
-  SET_VECTOR(nextPosition,
-             actor->x.fixed + direction->x * 0x5b333 - direction->z * 0x5b333,
-             actor->y.fixed,
-             actor->z.fixed + direction->z * 0x5b333 - direction->x * 0x5b333);
-  collision = FieldObject_CheckMovementCollision(actor, nextPosition);
+  nextPosition.x =
+      actor->x.fixed + direction->x * 0x5b333 - direction->z * 0x5b333;
+  nextPosition.y = actor->y.fixed;
+  nextPosition.z =
+      actor->z.fixed + direction->z * 0x5b333 - direction->x * 0x5b333;
+  collision = FieldObject_CheckMovementCollision(actor, &nextPosition);
   if (collision > 0) {
     actor->x.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z * 3, 15);
     actor->z.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x * 3, 15);
     return;
   }
-  SET_VECTOR(
-      nextPosition, (direction->x + direction->z) * 0x5b333 + actor->x.fixed,
-      actor->y.fixed, (direction->x + direction->z) * 0x5b333 + actor->z.fixed);
-  collision = FieldObject_CheckMovementCollision(actor, nextPosition);
+  nextPosition.x = (direction->x + direction->z) * 0x5b333 + actor->x.fixed;
+  nextPosition.y = actor->y.fixed;
+  nextPosition.z = (direction->x + direction->z) * 0x5b333 + actor->z.fixed;
+  collision = FieldObject_CheckMovementCollision(actor, &nextPosition);
   if (collision > 0) {
     actor->x.fixed -= VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z * 3, 15);
     actor->z.fixed -= VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x * 3, 15);
@@ -4379,7 +4382,7 @@ struct SceneEvent gVenusLighthouseEvents6[] = {
 };
 // clang-format on
 
-u8 *gVenusSwitchShapes[] = {
+const u8 *gVenusSwitchShapes[] = {
     gVenusSwitchShape0,
     gVenusSwitchShape1,
     gVenusSwitchShape2,
@@ -4421,7 +4424,7 @@ s32 **gVenusSwitchPushScripts[] = {
     gVenusSwitchPushScript3,
 };
 
-u8 *gVenusPillarShapes[] = {
+const u8 *gVenusPillarShapes[] = {
     gVenusPillarShape0,     gVenusPillarShape1,     gVenusPillarShape1 + 1,
     gVenusPillarShape2 + 1, gVenusPillarShape3 + 1, gVenusPillarShape4 + 1,
     gVenusPillarShape5,     gVenusPillarShape6,

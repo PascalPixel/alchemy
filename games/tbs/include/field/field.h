@@ -90,13 +90,6 @@ struct SwitchCell {
   u32 x; ///< 16-pixel map cells
   u32 z; ///< 16-pixel map cells
 };
-/// A Venus Lighthouse gate effect, seen as whether it still runs and whether
-/// it has finished.
-struct SwitchEffect {
-  s32 active;
-  u8 unk04[0x5f];
-  u8 finished;
-};
 struct T {
   u8 pad00[30];
   u16 f1e;

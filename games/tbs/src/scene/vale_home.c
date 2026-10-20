@@ -502,7 +502,7 @@ static inline void Event_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ, s32 x,
 /// In Vale, opens the northwest door, into a house (scene 7, entrance 8).
 static void Event_OpenNorthwestDoor(void) {
   Event_OpenDoorAndWalkThrough(44, 7, 248, 279);
-  Vale_RequestBackdropExit(1);
+  Vale_RequestBackdropExit(VALE_HOME_TO_VALE_INTERIORS_EAST);
 }
 
 /// In Vale back from Kalay, opens the northeast doorway in two stages and
@@ -519,27 +519,27 @@ static void Event_OpenNortheastDoor(void) {
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 352, 306);
   Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 3);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 352, 296);
-  Vale_RequestBackdropExit(2);
+  Vale_RequestBackdropExit(VALE_HOME_TO_VALE_BABI_NORTH);
 }
 
 /// In Vale, enters through the western door of the middle row of houses
 /// (scene 7, entrance 3).
 static void Event_OpenCentralWestDoor(void) {
   Event_OpenDoorAndWalkThrough(43, 15, 230, 407);
-  Vale_RequestBackdropExit(3);
+  Vale_RequestBackdropExit(VALE_HOME_TO_VALE_INTERIORS_NORTH);
 }
 
 /// In Vale, enters through the eastern door of the middle row of houses
 /// (scene 7, entrance 7).
 static void Event_OpenCentralEastDoor(void) {
   Event_OpenDoorAndWalkThrough(52, 18, 374, 419);
-  Vale_RequestBackdropExit(4);
+  Vale_RequestBackdropExit(VALE_HOME_TO_VALE_INTERIORS_SOUTH);
 }
 
 /// In Vale, opens the southwest door, into Vale's shops (scene 7, entrance 4).
 static void Event_OpenSouthwestDoor(void) {
   Event_OpenDoorAndWalkThrough(41, 32, 200, 546);
-  Vale_RequestBackdropExit(5);
+  Vale_RequestBackdropExit(VALE_HOME_TO_VALE_INTERIORS_WEST);
 }
 
 /// In Vale, opens the door at the west edge, into another part of Vale (scene
@@ -553,7 +553,7 @@ static void Event_OpenWestEdgeDoor(void) {
 /// entrance 4).
 static void Event_OpenSoutheastDoor(void) {
   Event_OpenDoorAndWalkThrough(51, 39, 358, 670);
-  Vale_RequestBackdropExit(VALE_HOME_TO_VALE_BABI_WEST);
+  Vale_RequestBackdropExit(VALE_HOME_TO_VALE_BABI_SOUTH);
 }
 
 /// In Vale on the stormy night, leaves by the west passage, back to the
@@ -1951,17 +1951,17 @@ s32 gValeHome_Actor25StepActions[] = {
 
 struct SceneEntrance gValeHome_Entrances[] = {
     { 0, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 1, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 2, CONDITION_ALWAYS, 352, 0, 308, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 3, CONDITION_ALWAYS, 230, 0, 423, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 4, CONDITION_ALWAYS, 374, 0, 435, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 5, CONDITION_ALWAYS, 200, 0, 562, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 6, CONDITION_ALWAYS, 102, 0, 627, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 7, CONDITION_ALWAYS, 358, 0, 678, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 8, CONDITION_ALWAYS, 27, 0, 338, FACING_EAST, 0, -1, -1, -1, -1, 0 },
-    { 10, CONDITION_ALWAYS, 217, 0, 843, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { 11, CONDITION_ALWAYS, 186, 0, 474, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 12, CONDITION_ALWAYS, 180, 0, 618, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_HOME_FROM_VALE_INTERIORS_NORTH, CONDITION_ALWAYS, 248, 0, 295, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_HOME_FROM_VALE_BABI_NORTH, CONDITION_ALWAYS, 352, 0, 308, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_HOME_FROM_VALE_INTERIORS_WEST, CONDITION_ALWAYS, 230, 0, 423, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_HOME_FROM_VALE_INTERIORS_EAST, CONDITION_ALWAYS, 374, 0, 435, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_HOME_FROM_VALE_INTERIORS_SOUTH, CONDITION_ALWAYS, 200, 0, 562, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_HOME_FROM_VALE_BABI_WEST, CONDITION_ALWAYS, 102, 0, 627, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_HOME_FROM_VALE_BABI_SOUTH, CONDITION_ALWAYS, 358, 0, 678, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_HOME_FROM_VALE, CONDITION_ALWAYS, 27, 0, 338, FACING_EAST, 0, -1, -1, -1, -1, 0 },
+    { VALE_HOME_FROM_WORLD_MAP, CONDITION_ALWAYS, 217, 0, 843, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_HOME_FROM_GOMA_CAVE_WATERWAY_1, CONDITION_ALWAYS, 186, 0, 474, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_HOME_FROM_SANCTUM, CONDITION_ALWAYS, 180, 0, 618, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { 15, CONDITION_ALWAYS, 184, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { 19, CONDITION_ALWAYS, 27, 0, 338, FACING_EAST, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
@@ -1969,13 +1969,13 @@ struct SceneEntrance gValeHome_Entrances[] = {
 
 u32 gValeHome_Exits[] = {
     SCENE_EXITS(ValeHome),
-    SCENE_EXIT(1, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_EAST),
-    SCENE_EXIT(2, ValeBabi, VALE_BABI_FROM_VALE_HOME_NORTHEAST),
-    SCENE_EXIT(3, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_NORTH),
-    SCENE_EXIT(4, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_SOUTH),
-    SCENE_EXIT(5, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_WEST),
+    SCENE_EXIT(VALE_HOME_TO_VALE_INTERIORS_EAST, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_EAST),
+    SCENE_EXIT(VALE_HOME_TO_VALE_BABI_NORTH, ValeBabi, VALE_BABI_FROM_VALE_HOME_NORTHEAST),
+    SCENE_EXIT(VALE_HOME_TO_VALE_INTERIORS_NORTH, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_NORTH),
+    SCENE_EXIT(VALE_HOME_TO_VALE_INTERIORS_SOUTH, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_SOUTH),
+    SCENE_EXIT(VALE_HOME_TO_VALE_INTERIORS_WEST, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_WEST),
     SCENE_EXIT(6, ValeBabi, VALE_BABI_FROM_VALE_HOME_NORTHWEST),
-    SCENE_EXIT(VALE_HOME_TO_VALE_BABI_WEST, ValeBabi, VALE_BABI_FROM_VALE_HOME_WEST),
+    SCENE_EXIT(VALE_HOME_TO_VALE_BABI_SOUTH, ValeBabi, VALE_BABI_FROM_VALE_HOME_WEST),
     SCENE_EXIT(VALE_HOME_TO_VALE, Vale, VALE_FROM_VALE_HOME),
     SCENE_EXIT(VALE_HOME_TO_TITLE, Title, TITLE_FROM_VALE_HOME),
     SCENE_EXIT(VALE_HOME_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_VALE_HOME),
@@ -1991,13 +1991,13 @@ u32 gValeHome_Exits[] = {
 
 u32 gValeHome_StormExits[] = {
     SCENE_EXITS(ValeHome),
-    SCENE_EXIT(1, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_EAST),
-    SCENE_EXIT(2, ValeBabi, VALE_BABI_FROM_VALE_HOME_NORTHEAST),
-    SCENE_EXIT(3, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_NORTH),
-    SCENE_EXIT(4, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_SOUTH),
-    SCENE_EXIT(5, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_WEST),
+    SCENE_EXIT(VALE_HOME_TO_VALE_INTERIORS_EAST, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_EAST),
+    SCENE_EXIT(VALE_HOME_TO_VALE_BABI_NORTH, ValeBabi, VALE_BABI_FROM_VALE_HOME_NORTHEAST),
+    SCENE_EXIT(VALE_HOME_TO_VALE_INTERIORS_NORTH, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_NORTH),
+    SCENE_EXIT(VALE_HOME_TO_VALE_INTERIORS_SOUTH, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_SOUTH),
+    SCENE_EXIT(VALE_HOME_TO_VALE_INTERIORS_WEST, ValeInteriors, VALE_INTERIORS_FROM_VALE_HOME_WEST),
     SCENE_EXIT(6, ValeBabi, VALE_BABI_FROM_VALE_HOME_NORTHWEST),
-    SCENE_EXIT(VALE_HOME_TO_VALE_BABI_WEST, ValeBabi, VALE_BABI_FROM_VALE_HOME_WEST),
+    SCENE_EXIT(VALE_HOME_TO_VALE_BABI_SOUTH, ValeBabi, VALE_BABI_FROM_VALE_HOME_WEST),
     SCENE_EXIT(VALE_HOME_TO_VALE, ValeStorm, VALE_STORM_FROM_VALE_HOME),
     SCENE_EXIT(VALE_HOME_TO_TITLE, Title, TITLE_FROM_VALE_HOME),
     SCENE_EXITS_END,

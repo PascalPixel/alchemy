@@ -354,13 +354,13 @@ static void Event_ApproachMtAleph(void) {
 /// Touch cell 3 in Vale: exit 3, to ValeKraden's entrance 1.
 static void Event_TakeExit3(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  Engine_EventRequestExit(3);
+  Engine_EventRequestExit(VALE_TO_VALE_KRADEN_NORTH);
 }
 
 /// Touch cell 4 in Vale: exit 4, to ValeKraden's entrance 2.
 static void Event_TakeExit4(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  Engine_EventRequestExit(4);
+  Engine_EventRequestExit(VALE_TO_VALE_KRADEN_SOUTH);
 }
 
 /// Touch cell 5 in Vale: exit 2, to ValeHome's entrance 8.
@@ -384,7 +384,7 @@ static void Event_EnterInteriorsRoom5(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimB, 45, 39);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 262, 805);
-  Engine_EventRequestExit(6);
+  Engine_EventRequestExit(VALE_TO_VALE_INTERIORS);
 }
 
 /// The door of Isaac's house in Vale (touch cell 8): after the party has left
@@ -3102,18 +3102,18 @@ s32 gDustBurstScript[] = {
 
 struct SceneEntrance gVale_Entrances[] = {
     { 0, CONDITION_ALWAYS, 167, 0, 1281, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 1, CONDITION_ALWAYS, 256, 0, 440, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 2, CONDITION_ALWAYS, 113, 0, 303, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 3, CONDITION_ALWAYS, 38, 0, 636, FACING_EAST, 0, -1, -1, -1, -1, 0 },
-    { 4, CONDITION_ALWAYS, 29, 0, 792, FACING_EAST, 0, -1, -1, -1, -1, 0 },
-    { 5, CONDITION_ALWAYS, 458, 0, 1393, FACING_WEST, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_SANCTUM, CONDITION_ALWAYS, 256, 0, 440, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_SOL_ENTRANCE, CONDITION_ALWAYS, 113, 0, 303, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_KRADEN_NORTH, CONDITION_ALWAYS, 38, 0, 636, FACING_EAST, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_KRADEN_SOUTH, CONDITION_ALWAYS, 29, 0, 792, FACING_EAST, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_HOME, CONDITION_ALWAYS, 458, 0, 1393, FACING_WEST, 0, -1, -1, -1, -1, 0 },
     { 6, CONDITION_ALWAYS, 406, 0, 743, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 7, CONDITION_ALWAYS, 262, 0, 821, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 8, CONDITION_ALWAYS, 340, 0, 904, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_VALE_BABI, CONDITION_ALWAYS, 340, 0, 904, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 9, CONDITION_ALWAYS, 326, 0, 1142, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 10, CONDITION_ALWAYS, 374, 0, 1254, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 11, CONDITION_ALWAYS, 102, 0, 1222, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 16, CONDITION_ALWAYS, 400, 0, 852, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { VALE_FROM_TITLE, CONDITION_ALWAYS, 400, 0, 852, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { 17, CONDITION_ALWAYS, 400, 0, 852, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
@@ -3122,15 +3122,15 @@ u32 gVale_Exits[] = {
     SCENE_EXITS(Vale),
     SCENE_EXIT(VALE_TO_SOL_ENTRANCE, SolEntrance, SOL_ENTRANCE_FROM_VALE),
     SCENE_EXIT(VALE_TO_VALE_HOME, ValeHome, VALE_HOME_FROM_VALE),
-    SCENE_EXIT(3, ValeKraden, VALE_KRADEN_FROM_VALE_NORTH),
-    SCENE_EXIT(4, ValeKraden, VALE_KRADEN_FROM_VALE_SOUTH),
+    SCENE_EXIT(VALE_TO_VALE_KRADEN_NORTH, ValeKraden, VALE_KRADEN_FROM_VALE_NORTH),
+    SCENE_EXIT(VALE_TO_VALE_KRADEN_SOUTH, ValeKraden, VALE_KRADEN_FROM_VALE_SOUTH),
     SCENE_EXIT(VALE_TO_VALE_INTERIORS_EAST, ValeInteriors, VALE_INTERIORS_FROM_VALE_EAST),
-    SCENE_EXIT(6, ValeInteriors, VALE_INTERIORS_FROM_VALE_SOUTH),
+    SCENE_EXIT(VALE_TO_VALE_INTERIORS, ValeInteriors, VALE_INTERIORS_FROM_VALE_SOUTH),
     SCENE_EXIT(VALE_TO_VALE_BABI, ValeBabi, VALE_BABI_FROM_VALE),
     SCENE_EXIT(VALE_TO_VALE_INTERIORS_NORTH, ValeInteriors, VALE_INTERIORS_FROM_VALE_NORTH),
     SCENE_EXIT(9, ValeInteriors, VALE_INTERIORS_FROM_VALE_WEST),
     SCENE_EXIT(10, ValeInteriors, VALE_INTERIORS_FROM_VALE_NORTH),
-    SCENE_EXIT(VALE_TO_SANCTUM, Sanctum, SANCTUM_FROM_VALE),
+    SCENE_EXIT(VALE_TO_SANCTUM, Sanctum, 1),
     SCENE_EXIT(12, Vale, 17),
     SCENE_EXITS_END,
 };

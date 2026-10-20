@@ -1047,7 +1047,7 @@ static void Event_TalkToMiniMazeAttendant(s32 attendant) {
   s32 result;
   struct FieldActor *actor;
 
-  if (gGameState.entrance == 2) {
+  if (gGameState.entrance == COLOSSEUM_FINAL_2_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
     Engine_EventBegin();
@@ -1091,7 +1091,7 @@ static void Event_TalkToMiniMazeAttendant(s32 attendant) {
 static void Event_TalkToShiftingFloorAttendant(s32 attendant) {
   s32 result;
 
-  if (gGameState.entrance == 2) {
+  if (gGameState.entrance == COLOSSEUM_FINAL_2_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
     Engine_EventBegin();
@@ -1137,7 +1137,7 @@ static void Event_TalkToShiftingFloorAttendant(s32 attendant) {
 static void Event_TalkToLogRollingAttendant(s32 attendant) {
   s32 result;
 
-  if (gGameState.entrance == 2) {
+  if (gGameState.entrance == COLOSSEUM_FINAL_2_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
     Engine_EventBegin();
@@ -1193,7 +1193,7 @@ static void Event_TalkToWallAttendant(s32 attendant) {
   struct FieldActor *actor;
   s32 result;
 
-  if (gGameState.entrance == 2) {
+  if (gGameState.entrance == COLOSSEUM_FINAL_2_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
     return;
   }
@@ -1290,7 +1290,7 @@ static void ColossoWall_PushBlockToCell(s32 obstacleId, s32 column, s32 row) {
 static void Event_TalkToBoardWalkAttendant(s32 attendant) {
   s32 result;
 
-  if (gGameState.entrance == 2) {
+  if (gGameState.entrance == COLOSSEUM_FINAL_2_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
     return;
   }
@@ -1866,7 +1866,7 @@ u32 gColossoWall_DirectionSteps[] = {
 
 struct SceneEntrance gColossoWallEntrances[] = {
     { 1, CONDITION_ALWAYS, 1272, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 2, CONDITION_ALWAYS, 1224, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { COLOSSEUM_FINAL_2_FROM_COLOSSEUM_EAST, CONDITION_ALWAYS, 1224, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { 10, CONDITION_ALWAYS, 384, 0, 264, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };

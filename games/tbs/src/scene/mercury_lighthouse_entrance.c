@@ -794,7 +794,7 @@ s32 gPaletteCycleBlue = 0;
 
 struct SceneEntrance gMercuryLighthouseEntrance_Entrances[] = {
     { 0, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 1, CONDITION_ALWAYS, 136, 0, 280, FACING_NORTH, 0, 16, 32, 256, 320, 0 },
+    { MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_4, CONDITION_ALWAYS, 136, 0, 280, FACING_NORTH, 0, 16, 32, 256, 320, 0 },
     { 2, CONDITION_ALWAYS, 136, 0, 120, FACING_SOUTH, 0, 16, 32, 256, 320, 0 },
     { 3, CONDITION_ALWAYS, 200, 0, 648, FACING_NORTH, 0, 80, 432, 320, 688, 0 },
     { 4, CONDITION_ALWAYS, 120, 0, 520, FACING_SOUTH, 0, 80, 432, 320, 688, 0 },
@@ -836,10 +836,10 @@ u32 gMercuryLighthouseEntrance_Exits[] = {
     SCENE_EXIT(7, MercuryLighthouseEntrance, 4),
     SCENE_EXIT(8, MercuryLighthouseEntrance, 5),
     SCENE_EXIT(9, MercuryLighthouseEntrance, 19),
-    SCENE_EXIT(10, MercuryLighthouse1, 1),
-    SCENE_EXIT(11, MercuryLighthouse1, 2),
-    SCENE_EXIT(12, MercuryLighthouse1, 7),
-    SCENE_EXIT(13, MercuryLighthouse1, 4),
+    SCENE_EXIT(MERCURY_LIGHTHOUSE_ENTRANCE_TO_MERCURY_LIGHTHOUSE_1_WEST, MercuryLighthouse1, MERCURY_LIGHTHOUSE_1_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST),
+    SCENE_EXIT(11, MercuryLighthouse1, MERCURY_LIGHTHOUSE_1_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST),
+    SCENE_EXIT(12, MercuryLighthouse1, MERCURY_LIGHTHOUSE_1_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_SOUTHWEST),
+    SCENE_EXIT(13, MercuryLighthouse1, MERCURY_LIGHTHOUSE_1_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST),
     SCENE_EXIT(14, MercuryLighthouseEntrance, 18),
     SCENE_EXIT(15, MercuryLighthouseEntrance, 20),
     SCENE_EXIT(16, MercuryLighthouseEntrance, 7),

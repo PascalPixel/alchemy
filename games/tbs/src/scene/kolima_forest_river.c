@@ -143,8 +143,8 @@ s32 gStagedActor_FootprintBounds[] = {
 
 struct SceneEntrance gKolimaForestRiverEntrances[] = {
     { 0, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 1, CONDITION_ALWAYS, 320, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { 2, CONDITION_ALWAYS, 480, 0, 104, FACING_WEST, 0, -1, -1, -1, -1, 0 },
+    { KOLIMA_FOREST_RIVER_FROM_KOLIMA_FOREST_CLEARING, CONDITION_ALWAYS, 320, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { KOLIMA_FOREST_RIVER_FROM_KOLIMA_FOREST_BEND, CONDITION_ALWAYS, 480, 0, 104, FACING_WEST, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 

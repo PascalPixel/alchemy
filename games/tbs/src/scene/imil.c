@@ -719,7 +719,7 @@ s32 Imil_Initialize(void) {
     // Restore each interior's occupants before running its arrival event.
     gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     entrance = gGameState.entrance;
-    if (entrance == 1) {
+    if (entrance == IMIL_INTERIORS_HOUSE_SOUTHWEST) {
       Engine_ActorSetChildValue(21, 15);
       Object_GetById(21)->collisionFlags |= 8;
       Engine_ActorSetSpritePriority(21, 1);
@@ -756,12 +756,12 @@ s32 Imil_Initialize(void) {
           Actor_SetBuiltinAction(ACTOR_OLD_WOMAN, 2);
         }
       }
-    } else if (entrance == 2) {
+    } else if (entrance == IMIL_INTERIORS_FROM_IMIL_WEST_SOUTHWEST) {
       if (!Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         Object_GetById(11)->work = 1;
         Actor_SetActionScript(11, gImil_ShiverScript);
       }
-    } else if (entrance == 4) {
+    } else if (entrance == IMIL_INTERIORS_HOUSE_NORTHEAST) {
       if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         Actor_SetPosition(ACTOR_WEAPON_MERCHANT, PIXELS(364), PIXELS(578));
         Engine_ActorSetSpritePriority(ACTOR_WEAPON_MERCHANT, 2);
@@ -778,7 +778,7 @@ s32 Imil_Initialize(void) {
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ARMOR_MERCHANT), 0);
         Engine_ActorSetAnimation(ACTOR_ARMOR_MERCHANT, 5);
       }
-    } else if (entrance == 3) {
+    } else if (entrance == IMIL_INTERIORS_HOUSE_WEST) {
       if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         Actor_SetPosition(ACTOR_ITEM_MERCHANT, PIXELS(460), PIXELS(258));
         Engine_ActorSetSpritePriority(ACTOR_ITEM_MERCHANT, 2);
@@ -796,7 +796,7 @@ s32 Imil_Initialize(void) {
         Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ITEM_MERCHANT), 0);
         Engine_ActorSetAnimation(ACTOR_ITEM_MERCHANT, 5);
       }
-    } else if (entrance == 7) {
+    } else if (entrance == IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST) {
       if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         Object_GetById(ACTOR_SECOND_APPRENTICE)->facing =
             FACING_SOUTHEAST + FACING_STEP;
@@ -1644,50 +1644,50 @@ s32 gImil_FollowMiaOutScript[] = {
 
 struct SceneEntrance gImil_TownEntrances[] = {
     { 0, CONDITION_ALWAYS, 380, 0, 433, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 1, CONDITION_ALWAYS, 288, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { IMIL_FROM_HOUSE_SOUTHWEST, CONDITION_ALWAYS, 288, 0, 488, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { 2, CONDITION_ALWAYS, 480, 0, 280, FACING_WEST, 0, -1, -1, -1, -1, 0 },
-    { 3, CONDITION_ALWAYS, 312, 0, 424, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 4, CONDITION_ALWAYS, 424, 0, 392, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 5, CONDITION_ALWAYS, 456, 0, 248, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 6, CONDITION_ALWAYS, 376, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 7, CONDITION_ALWAYS, 120, 0, 208, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 8, CONDITION_ALWAYS, 64, 0, 360, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 9, CONDITION_ALWAYS, 229, 0, 88, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { IMIL_FROM_HOUSE_WEST, CONDITION_ALWAYS, 312, 0, 424, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { IMIL_FROM_HOUSE_NORTHEAST, CONDITION_ALWAYS, 424, 0, 392, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { IMIL_FROM_IMIL_INTERIORS_EAST, CONDITION_ALWAYS, 456, 0, 248, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { IMIL_FROM_IMIL_INTERIORS_NORTHEAST, CONDITION_ALWAYS, 376, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { IMIL_FROM_IMIL_INTERIORS_WEST, CONDITION_ALWAYS, 120, 0, 208, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { IMIL_FROM_IMIL_INTERIORS_SOUTHWEST, CONDITION_ALWAYS, 64, 0, 360, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { IMIL_FROM_IMIL_FALLS_CAVE, CONDITION_ALWAYS, 229, 0, 88, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gImil_InteriorEntrances[] = {
     { 0, CONDITION_ALWAYS, 136, 0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { 1, CONDITION_ALWAYS, 144, 0, 242, FACING_NORTH, 0, 32, 52, 256, 280, 0 },
-    { 2, CONDITION_ALWAYS, 143, 0, 596, FACING_NORTH, 0, 42, 424, 256, 631, 0 },
-    { 3, CONDITION_ALWAYS, 399, 0, 322, FACING_NORTH, 0, 320, 58, 536, 360, 0 },
-    { 4, CONDITION_ALWAYS, 400, 0, 659, FACING_NORTH, 0, 307, 382, 545, 697, 0 },
-    { 5, CONDITION_ALWAYS, 129, 0, 915, FACING_NORTH, 0, 50, 706, 350, 949, 0 },
+    { IMIL_INTERIORS_HOUSE_SOUTHWEST, CONDITION_ALWAYS, 144, 0, 242, FACING_NORTH, 0, 32, 52, 256, 280, 0 },
+    { IMIL_INTERIORS_FROM_IMIL_WEST_SOUTHWEST, CONDITION_ALWAYS, 143, 0, 596, FACING_NORTH, 0, 42, 424, 256, 631, 0 },
+    { IMIL_INTERIORS_HOUSE_WEST, CONDITION_ALWAYS, 399, 0, 322, FACING_NORTH, 0, 320, 58, 536, 360, 0 },
+    { IMIL_INTERIORS_HOUSE_NORTHEAST, CONDITION_ALWAYS, 400, 0, 659, FACING_NORTH, 0, 307, 382, 545, 697, 0 },
+    { IMIL_INTERIORS_FROM_IMIL_SOUTH_SOUTHWEST, CONDITION_ALWAYS, 129, 0, 915, FACING_NORTH, 0, 50, 706, 350, 949, 0 },
     { 6, CONDITION_ALWAYS, 446, 0, 825, FACING_SOUTH, 0, 402, 740, 670, 921, 0 },
-    { 7, CONDITION_ALWAYS, 687, 0, 264, FACING_NORTH, 0, 594, 49, 806, 295, 0 },
+    { IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST, CONDITION_ALWAYS, 687, 0, 264, FACING_NORTH, 0, 594, 49, 806, 295, 0 },
     { 8, CONDITION_ALWAYS, 182, 0, 772, FACING_SOUTH, 0, 50, 706, 350, 949, 0 },
     { SCENE_TABLE_END },
 };
 
 u32 gImil_Exits[] = {
     SCENE_EXITS(Imil),
-    SCENE_EXIT(1, ImilInteriors, 1),
-    SCENE_EXIT(2, ImilInteriors, 5),
-    SCENE_EXIT(3, ImilInteriors, 3),
-    SCENE_EXIT(4, ImilInteriors, 4),
-    SCENE_EXIT(5, ImilInteriors, 2),
-    SCENE_EXIT(6, ImilInteriors, 7),
+    SCENE_EXIT(IMIL_TO_HOUSE_SOUTHWEST, ImilInteriors, IMIL_INTERIORS_HOUSE_SOUTHWEST),
+    SCENE_EXIT(IMIL_TO_IMIL_INTERIORS_2, ImilInteriors, IMIL_INTERIORS_FROM_IMIL_SOUTH_SOUTHWEST),
+    SCENE_EXIT(IMIL_TO_HOUSE_WEST, ImilInteriors, IMIL_INTERIORS_HOUSE_WEST),
+    SCENE_EXIT(IMIL_TO_HOUSE_NORTHEAST, ImilInteriors, IMIL_INTERIORS_HOUSE_NORTHEAST),
+    SCENE_EXIT(IMIL_TO_IMIL_INTERIORS_EAST, ImilInteriors, IMIL_INTERIORS_FROM_IMIL_WEST_SOUTHWEST),
+    SCENE_EXIT(IMIL_TO_IMIL_INTERIORS_NORTHEAST, ImilInteriors, IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST),
     SCENE_EXIT(IMIL_TO_IMIL_FALLS_CAVE, ImilFallsCave, IMIL_FALLS_CAVE_FROM_IMIL),
     SCENE_EXIT(IMIL_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_IMIL_SOUTH),
     SCENE_EXIT(IMIL_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_IMIL_NORTH),
     SCENE_EXITS(ImilInteriors),
-    SCENE_EXIT(1, Imil, 3),
-    SCENE_EXIT(2, Imil, 7),
-    SCENE_EXIT(3, Imil, 5),
-    SCENE_EXIT(4, Imil, 6),
-    SCENE_EXIT(5, Imil, 4),
+    SCENE_EXIT(IMIL_INTERIORS_HOUSE_WEST_TO_IMIL, Imil, IMIL_FROM_HOUSE_WEST),
+    SCENE_EXIT(IMIL_INTERIORS_TO_IMIL_WEST_SOUTHWEST, Imil, IMIL_FROM_IMIL_INTERIORS_WEST),
+    SCENE_EXIT(IMIL_INTERIORS_TO_IMIL_EAST, Imil, IMIL_FROM_IMIL_INTERIORS_EAST),
+    SCENE_EXIT(IMIL_INTERIORS_TO_IMIL, Imil, IMIL_FROM_IMIL_INTERIORS_NORTHEAST),
+    SCENE_EXIT(IMIL_INTERIORS_TO_IMIL_SOUTH_SOUTHWEST, Imil, IMIL_FROM_HOUSE_NORTHEAST),
     SCENE_EXIT(6, ImilInteriors, 8),
-    SCENE_EXIT(7, Imil, 8),
+    SCENE_EXIT(IMIL_INTERIORS_TO_IMIL_EAST_NORTHEAST, Imil, IMIL_FROM_IMIL_INTERIORS_SOUTHWEST),
     SCENE_EXIT(8, ImilInteriors, 6),
     SCENE_EXITS_END,
 };

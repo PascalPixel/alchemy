@@ -727,7 +727,7 @@ UNUSED static void ColossoLog_RunCompetitorTalk(s32 competitorId) {
   work = gEventWork;
   actorId = gGameState.selectedActor;
   entrance = gGameState.entrance;
-  if (entrance == 2) {
+  if (entrance == COLOSSEUM_FINAL_3_FROM_COLOSSEUM_SOUTH) {
     Engine_EventBegin();
     messageOffset = competitorId * 3;
     Engine_EventSetMessage(messageOffset + MsgColossoDidntThinkBattles);
@@ -1386,7 +1386,7 @@ static void Event_TalkToScalesAttendant(s32 guideId) {
   struct FieldActor *back2;
   s32 promptResult;
 
-  if (gGameState.entrance == 2) {
+  if (gGameState.entrance == COLOSSEUM_FINAL_3_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
     return;
   }
@@ -1450,7 +1450,7 @@ static void Event_TalkToSteppingStoneAttendant(s32 guideId) {
   s32 promptResult;
   s32 x;
 
-  if (gGameState.entrance == 2) {
+  if (gGameState.entrance == COLOSSEUM_FINAL_3_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
     return;
   }
@@ -1506,7 +1506,7 @@ static void Event_TalkToWallWedgeAttendant(s32 guideId) {
   struct EventWork *work;
   s32 promptResult;
 
-  if (gGameState.entrance == 2) {
+  if (gGameState.entrance == COLOSSEUM_FINAL_3_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
     Engine_EventBegin();
@@ -1568,7 +1568,7 @@ static void Event_TalkToFreeClimbAttendant(s32 guideId) {
   s32 raisedHeight;
   s32 shiftedX;
 
-  if (gGameState.entrance == 2) {
+  if (gGameState.entrance == COLOSSEUM_FINAL_3_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
     Engine_EventBegin();
@@ -1657,7 +1657,7 @@ static void Event_TalkToMovingSidewalkAttendant(s32 guideId) {
   s32 result;
   struct FieldActor *actor;
 
-  if (gGameState.entrance == 2) {
+  if (gGameState.entrance == COLOSSEUM_FINAL_3_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
     Engine_EventBegin();
@@ -1715,7 +1715,7 @@ static void Event_TalkToMovingSidewalkAttendant(s32 guideId) {
 static void Event_TalkToLogRollingAttendant(s32 actor) {
   s32 state;
 
-  if (gGameState.entrance == 2) {
+  if (gGameState.entrance == COLOSSEUM_FINAL_3_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(actor);
     return;
   }
@@ -2244,7 +2244,7 @@ u32 gStagedActor_DirectionSteps[] = {
 struct SceneEntrance gColossoLogEntrances[] = {
     { 0, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 1, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { 2, CONDITION_ALWAYS, 136, 0, 392, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { COLOSSEUM_FINAL_3_FROM_COLOSSEUM_SOUTH, CONDITION_ALWAYS, 136, 0, 392, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { 4, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 5, CONDITION_ALWAYS, 88, 0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },

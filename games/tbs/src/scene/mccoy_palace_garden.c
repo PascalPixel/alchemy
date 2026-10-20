@@ -438,8 +438,8 @@ s32 gGuardWatchesParty[] = {
 };
 
 struct SceneEntrance gMcCoyPalaceGardenEntrances[] = {
-    { 1, CONDITION_ALWAYS, 320, 0, 328, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    { 2, CONDITION_ALWAYS, 328, 0, 272, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { MCCOY_PALACE_GARDEN_FROM_BILIBIN, CONDITION_ALWAYS, 320, 0, 328, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
+    { MCCOY_PALACE_GARDEN_FROM_MCCOY_PALACE, CONDITION_ALWAYS, 328, 0, 272, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 

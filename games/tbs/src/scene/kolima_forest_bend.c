@@ -589,8 +589,8 @@ s8 gKolimaForestBend_PushStepZ[] = {0, 8, 0, -8};
 
 struct SceneEntrance gKolimaForestBendEntrances[] = {
     { 0, CONDITION_ALWAYS, 407, 0, 276, FACING_WEST, 0, -1, -1, -1, -1, 0 },
-    { 1, CONDITION_ALWAYS, 50, 32, 369, FACING_EAST, 0, -1, -1, -1, -1, 0 },
-    { 2, CONDITION_ALWAYS, 162, 32, 84, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { KOLIMA_FOREST_BEND_FROM_KOLIMA_FOREST_RIVER, CONDITION_ALWAYS, 50, 32, 369, FACING_EAST, 0, -1, -1, -1, -1, 0 },
+    { KOLIMA_FOREST_BEND_FROM_KOLIMA_FOREST_TREE, CONDITION_ALWAYS, 162, 32, 84, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 

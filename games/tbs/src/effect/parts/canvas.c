@@ -303,7 +303,7 @@ void ObjectGroup_TickMemberTimers(void) {
 /// clears the canvas. It also stops any shake and saves BG1's scroll, which
 /// BattleFx_EndCanvasLayer restores.
 ///
-/// Called at the start of nearly every canvas effect, most often through
+/// Called at the start of nearly every canvas effect, directly or through
 /// EFFECT_BEGIN_NARROW_CANVAS, and by BattleFx_BeginTiledCanvas. Waits five
 /// frames of its own. Writes BLDCNT, BLDALPHA, BG2CNT and BG2's affine
 /// registers, the windows, WININ and WINOUT, and queues DISPCNT; writes BG2's

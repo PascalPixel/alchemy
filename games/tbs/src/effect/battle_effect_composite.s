@@ -1,7 +1,7 @@
 @ The pieces BattleFx_BuildBlitter (parts/blitter.c) builds canvas blitters
 @ from.
 @ None of this code runs where it is: the builder copies its words into a
-@ heap block, one routine per cell size, mirroring, clip and mode.
+@ heap block, one routine per canvas size, mirroring, clip and mode.
 @
 @ Each pixel fragment combines picture pixels, read through r1, into the
 @ canvas, written through r9: Copy writes them, Transparent skips zeros, Max

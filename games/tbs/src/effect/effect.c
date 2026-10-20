@@ -36,8 +36,8 @@
 /// (PARTICLES) belong to the handler for as long as it runs; it frees the
 /// blitters itself before it returns.
 ///
-/// README.md in this folder explains the ideas: the canvas, blitters, the
-/// frame loop, particles, pictures and how to change an effect.
+/// README.md in this folder explains the ideas: how a move picks its effect,
+/// the frame loop, the canvas, particles, blitters and pictures.
 
 #include "effect_internal.h"
 

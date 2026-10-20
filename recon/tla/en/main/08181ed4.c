@@ -21,7 +21,7 @@
 // speed (the native copies speed and multiplies by the result): 258;
 // speed's +32 folded into its first assignment: 240; speed and angle
 // declared the other way round: no change.
-// 2026-10-19 (run 33): psynergy permute (5 minutes) found the target's
+// 2026-10-19 (run 33): alchemy-devtools permute (5 minutes) found the target's
 // actors pointer taken before Func_081180e8 at frame 20: 240 to 142. It
 // holds r5 across the call, which moves the drop loop's speed to r7 and the
 // angle to r5 as the native has them; the frame-20 block itself is now

@@ -5,7 +5,7 @@
 // the frame is its 92 bytes: 317; frame declared after canvas, its slot
 // above camera's: 289; the segment's angle and vertex offset written as
 // j * length and j * 8, which loop.c reduces after the hoisted camera + 3 as
-// in the native's slot order: 272. psynergy permute (6 minutes from 272):
+// in the native's slot order: 272. alchemy-devtools permute (6 minutes from 272):
 // nothing better. Left: inside the segment loop the native keeps radiusX in
 // r6 and radiusY in r7 and saves wobble, width and the angle around the
 // calls (sp+16, 12, 8); here the allocation differs there.

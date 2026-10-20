@@ -18,25 +18,25 @@ Alchemy rebuilds Golden Sun: **The Broken Seal** (☀️, build `tbs`) and **The
 - `games/<game>/objects.tsv` lists every object in link order with its sections and editions; `games/<game>/main.ld` is the one main script, chosen by `--defsym <GAME>_EDITION_<LANG>=1`. ☀️'s overlays link through `games/tbs/src/system/overlay/overlay.ld`; ⚓️'s are one script each under `recon/tla/raw/overlays`.
 - `recon/tla` holds ⚓️'s not-yet-C work: `raw/` listings, `<lang>/` scaffolds, `en/main/<address>.c` drafts. ☀️ has no `recon/`.
 - `games/tbs/src/effect/effect.c` is one object written as parts: it includes `effect_internal.h`, the private header every part also includes, then the files under `effect/parts/` in ROM order (S3).
-- The `Makefile` builds everything; `tools/` holds the small C programs it runs (`ags-*`); the optional `psynergy` submodule holds the Rust matching aids and the progress count. `out/` and `tools/out/` are build output.
+- The `Makefile` builds everything; `tools/` holds the small C programs it runs (`ags-*`); the optional `alchemy-devtools` submodule holds the Rust matching aids and the progress count. `out/` and `tools/out/` are build output.
 
 ## Commands
 
 Setup is in `INSTALL.md`; ROMs go under `roms/` as `tla-ja.gba` and so on, checked against `rom.sha1`, never committed.
 
 ```sh
-git submodule update --init --recursive agscc
+git submodule update --init --recursive alchemy-gcc
 make bootstrap         # the tools, the pinned compilers, GAS 2.10 and libgcc
 make compare-editions  # all twelve editions: required before every commit (W5)
 make -j8 compare-tbs   # the six ☀️ editions; compare-tla-en for one edition
 make modern            # ☀️'s C with a current GCC: no errors
 make test              # the build tools' tests
-git submodule update --init psynergy && make psynergy  # optional, Rust
+git submodule update --init alchemy-devtools && make devtools  # optional, Rust
 git config core.hooksPath .hooks   # send verified measurements when pushing main
 make progress          # DONE code and data (C2)
 make land              # on main, before a landing (W2, C3)
-psynergy/target/release/psynergy diff DRAFT.c [ADDR] [--show|--heat|--rtl]
-psynergy/target/release/psynergy permute DRAFT.c [ADDR] [--minutes N]
+alchemy-devtools/target/release/alchemy-devtools diff DRAFT.c [ADDR] [--show|--heat|--rtl]
+alchemy-devtools/target/release/alchemy-devtools permute DRAFT.c [ADDR] [--minutes N]
 ```
 
 `make compare-editions` prints a lot: send it to a log file and count the `: OK` lines.
@@ -45,7 +45,7 @@ psynergy/target/release/psynergy permute DRAFT.c [ADDR] [--minutes N]
 
 Always: keep all twelve editions byte-identical (W5, W8); tag every compiler-steering device with its measured difference (S2); name only from evidence (S3); commit each verified step, attempts included (S4, W7); look at how pret does it first (W3).
 
-Ask Pascal first: any compiler, option, routing or agscc change (K1 to K3); anything that changes what counts (C2, W6); deleting what cannot be restored; pushing, pulling, fetching or publishing outside the verified humanization sync authorized in Workflow 6.
+Ask Pascal first: any compiler, option, routing or alchemy-gcc change (K1 to K3); anything that changes what counts (C2, W6); deleting what cannot be restored; pushing, pulling, fetching or publishing outside the verified humanization sync authorized in Workflow 6.
 
 Never: commit or publish a ROM or game files (L1); use another project's Golden Sun work (L2), or leaked Nintendo or Camelot code or SDKs or anything derived from them (L3); let the ROM steer the build or count (O1); write a function as inline assembly, patch compiler output or give a function its own compiler option (S2, K1); treat old history or deleted files as evidence (O5); add JSON, Python, shell or TypeScript programs (A5, W1).
 
@@ -84,8 +84,8 @@ The reference ROM judges the build and never feeds it. Reconstructing Camelot's 
 
 ### Source
 
-- **S1** `games/` holds only real source: C from an approved compiler, or proven assembly written as instructions, never copied bytes. Assembly is proven as the compiler library, as whole 8-byte far-call stubs, or as handwritten, which it is only with an instruction, frame or pattern agscc cannot emit (rrx; a branch, adc or sbc on a shift's carry; r11 as an ordinary register; a callee save without lr; CPSR/SPSR; swi; computed pc into code; stores into code; unpaired multiply halves; a pc-relative block load of data; a mode switch inside a function; movs with no shift; ldm or stm writing back off sp other than a block copy from r0 or a doubleword pair; a conditional branch on flags with no compare; one literal pool shared by two functions) or a linkage no procedure-call standard produces. Anything else stays in `recon/` until it matches as C.
-- **S2** Compiler-steering devices, by kind (`wrapper`, `volatile`, `temporary` for a forced temporary, `dead` for dead code, `one-pass` for a once-only block or loop, `barrier` for an empty asm, `pin` for a fixed-register variable), count, as in pret, when each carries a tag inside its function in one form, `/* FAKEMATCH(<kind>): the form kept; as <plain form>, N of M instructions differ in tbs-en. */`, where the kind is one of the devices listed here and N comes from a whole-function `psynergy diff` (or the function's instructions in its object's assembly) against the edition named; dates and attempts go in commit messages; removing them is humanizing. In ☀️ their counts, and the count of `goto`, may only fall; ⚓️, whose compiler is not yet right, may add tagged devices to reach a match (Pascal); trading one device for another is no progress unless the new form is the source's. A device is for instruction order, register choice, a frame gap one unused local of a real type explains, or a form the bytes prove the source had; it comes only after reshaping has failed, and a function is never inline assembly. A `goto` is plain C and untagged, but one that only forces a layout goes when its loop is found. `CAMELOT_ASM("proof")` marks the proven handwritten helpers inside C: `Dma_Set`, `Transform_SetIdentity`, `Iwram_Call2`, `WaitFrames`' stack switch, `MulQ16`, and the `swi 2` and `swi 3` BIOS calls. A layer that explains a habit of the whole game is source, not a device: the ☀️ scene script layer (`field_event.h`, `field_service.h`), the IWRAM call layer (`iwram_call.h`) and the engine call layer (`engine_call.h`). A statement macro takes the shape its sites match with: `do { } while (0)` is no device where every use matches through it, but it compiles as a one-pass block in agscc, so comma expressions and plain `{ }` blocks are often what match; a device inside a macro counts at each use. Never patch compiler output.
+- **S1** `games/` holds only real source: C from an approved compiler, or proven assembly written as instructions, never copied bytes. Assembly is proven as the compiler library, as whole 8-byte far-call stubs, or as handwritten, which it is only with an instruction, frame or pattern alchemy-gcc cannot emit (rrx; a branch, adc or sbc on a shift's carry; r11 as an ordinary register; a callee save without lr; CPSR/SPSR; swi; computed pc into code; stores into code; unpaired multiply halves; a pc-relative block load of data; a mode switch inside a function; movs with no shift; ldm or stm writing back off sp other than a block copy from r0 or a doubleword pair; a conditional branch on flags with no compare; one literal pool shared by two functions) or a linkage no procedure-call standard produces. Anything else stays in `recon/` until it matches as C.
+- **S2** Compiler-steering devices, by kind (`wrapper`, `volatile`, `temporary` for a forced temporary, `dead` for dead code, `one-pass` for a once-only block or loop, `barrier` for an empty asm, `pin` for a fixed-register variable), count, as in pret, when each carries a tag inside its function in one form, `/* FAKEMATCH(<kind>): the form kept; as <plain form>, N of M instructions differ in tbs-en. */`, where the kind is one of the devices listed here and N comes from a whole-function `alchemy-devtools diff` (or the function's instructions in its object's assembly) against the edition named; dates and attempts go in commit messages; removing them is humanizing. In ☀️ their counts, and the count of `goto`, may only fall; ⚓️, whose compiler is not yet right, may add tagged devices to reach a match (Pascal); trading one device for another is no progress unless the new form is the source's. A device is for instruction order, register choice, a frame gap one unused local of a real type explains, or a form the bytes prove the source had; it comes only after reshaping has failed, and a function is never inline assembly. A `goto` is plain C and untagged, but one that only forces a layout goes when its loop is found. `CAMELOT_ASM("proof")` marks the proven handwritten helpers inside C: `Dma_Set`, `Transform_SetIdentity`, `Iwram_Call2`, `WaitFrames`' stack switch, `MulQ16`, and the `swi 2` and `swi 3` BIOS calls. A layer that explains a habit of the whole game is source, not a device: the ☀️ scene script layer (`field_event.h`, `field_service.h`), the IWRAM call layer (`iwram_call.h`) and the engine call layer (`engine_call.h`). A statement macro takes the shape its sites match with: `do { } while (0)` is no device where every use matches through it, but it compiles as a one-pass block in alchemy-gcc, so comma expressions and plain `{ }` blocks are often what match; a device inside a macro counts at each use. Never patch compiler output.
 - **S3** Humanize: readable modern C in English, as pret writes its games. The bytes stay identical; nothing has to look like the original's source.
   - Layout: lowercase, short file names, the same folders in both games; `NAME.S` is assembly the C preprocessor reads, `name.s` plain assembly. Rename a file with its includes and object list rows. Each game keeps its own copy of code both use; a function goes into the module of its linker neighbours. An object the ROM shows as one may be written in parts: one `.c` file that includes them at its end in ROM order, each part one family or run, opening with what it holds and then saying it is compiled only through that file; the parts are ours, not Camelot's files.
   - Language: C89 with the GNU extensions the compilers accept, `//` comments included; prototypes, `typedef`, `enum`, structs; types, signedness and scopes from the program and the matching evidence.
@@ -132,17 +132,17 @@ The reference ROM judges the build and never feeds it. Reconstructing Camelot's 
 
 ### Compilers
 
-The set is frozen: three C generators built from the pinned `agscc` submodule, six profiles, no research and no new compiler, option, route or agscc commit. The one exception is a host fix that leaves every compile of the twelve editions byte-identical. Matching shows practical compatibility, not Camelot's exact compiler.
+The set is frozen: three C generators built from the pinned `alchemy-gcc` submodule, six profiles, no research and no new compiler, option, route or alchemy-gcc commit. The one exception is a host fix that leaves every compile of the twelve editions byte-identical. Matching shows practical compatibility, not Camelot's exact compiler.
 
-- **K1** Game Thumb C: agscc (GCC of 2000-07-31) with `-O2 -mthumb -mcpu=arm7tdmi -nostdinc -fcall-used-r4`, plus `-mthumb-interwork` for ☀️ and K2's options for ⚓️; libgcc C with `-O2 -mthumb -mcpu=arm7tdmi -fno-inline`. ARM C: GCC 2.95.2 with `-O2 -mthumb-interwork -fomit-frame-pointer -fcall-used-r4`. Sound and flash: pret's `old_agbcc` (`-O2` and `-O`, `-mthumb-interwork`). The Makefile's SOUND_C, FLASH_C and ARM_C are the only routes; `make modern` adds none.
+- **K1** Game Thumb C: alchemy-gcc (GCC of 2000-07-31) with `-O2 -mthumb -mcpu=arm7tdmi -nostdinc -fcall-used-r4`, plus `-mthumb-interwork` for ☀️ and K2's options for ⚓️; libgcc C with `-O2 -mthumb -mcpu=arm7tdmi -fno-inline`. ARM C: GCC 2.95.2 with `-O2 -mthumb-interwork -fomit-frame-pointer -fcall-used-r4`. Sound and flash: pret's `old_agbcc` (`-O2` and `-O`, `-mthumb-interwork`). The Makefile's SOUND_C, FLASH_C and ARM_C are the only routes; `make modern` adds none.
 - **K2** ⚓️ adds, for every Thumb file, `-mthumb-split-constants`, `-mthumb-call-via-lr` and the stock `-mtune=arm9tdmi`, habits measured across its whole code; no other scheduler or allocator change. An instruction-order mismatch alone is no reason to change compilers.
-- **K3** A compiler change needs one option set that explains most of a game's code, no public compiler of the time that already does, a plausible Camelot-style change with its evidence recorded here and in agscc's README, and Pascal's approval.
+- **K3** A compiler change needs one option set that explains most of a game's code, no public compiler of the time that already does, a plausible Camelot-style change with its evidence recorded here and in alchemy-gcc's README, and Pascal's approval.
 
 ### Work
 
-- **W1** A plain Makefile whose every rule can be read; a build tool is a small tested C program for a step make cannot do; Rust only in the optional Psynergy; no TypeScript, JavaScript, Python or shell beyond a command line; tooling nothing needs is removed.
+- **W1** A plain Makefile whose every rule can be read; a build tool is a small tested C program for a step make cannot do; Rust only in the optional Alchemy Devtools; no TypeScript, JavaScript, Python or shell beyond a command line; tooling nothing needs is removed.
 - **W2** Work on a branch; `main` is the only long-lived branch; land with `make land`.
-- **W3** The Makefile owns compiling and linking, `tools/` the C encoders and small tools (`ags-` prefix), Psynergy the matching aids and count. Follow pret where it settles a question, and never be stricter: far-call banks are pinned per edition in the linker scripts; packer leftovers are tagged literal bytes beside their asset; each encoder takes one rule for all its streams, and a stream Camelot edited after packing takes a patch file of measured literals.
+- **W3** The Makefile owns compiling and linking, `tools/` the C encoders and small tools (`ags-` prefix), Alchemy Devtools the matching aids and count. Follow pret where it settles a question, and never be stricter: far-call banks are pinned per edition in the linker scripts; packer leftovers are tagged literal bytes beside their asset; each encoder takes one rule for all its streams, and a stream Camelot edited after packing takes a patch file of measured literals.
 - **W4** Match first what other unfinished code calls, with the structures it shares, then the largest with nothing left to name.
 - **W5** Before every commit, `make compare-editions` prints OK for all twelve editions.
 - **W6** A change to what counts, a rule, an option or routing lands as its own commit with DONE before and after.
@@ -151,11 +151,11 @@ The set is frozen: three C generators built from the pinned `agscc` submodule, s
 
 ## What matching has measured
 
-Not rules; facts about agscc that keep coming back.
+Not rules; facts about alchemy-gcc that keep coming back.
 
 - `p[n]` and `*(p + n)`, and `&p[n]` and `&*(p + n)`, can compile differently: each site keeps the spelling it matches with.
 - A struct object declared before its type is complete keeps a smaller alignment and changes the code that reads it: a header includes its structs' headers first.
-- agscc pads every struct to 4 bytes, and a field after the first is addressed from the table's base: a table read by columns is a `[][N]` array with an `enum` naming the columns.
+- alchemy-gcc pads every struct to 4 bytes, and a field after the first is addressed from the table's base: a table read by columns is a `[][N]` array with an `enum` naming the columns.
 - Locals declared in an inner block take their pseudos later and change register allocation.
 - A file that tests `LANGUAGE` without including `edition.h` silently gets the Japanese branch.
 - Within one object, code and data follow definition order after preprocessing; only the object list orders objects. Every Thumb function starts on 4 bytes, so code shows no object boundary; data can, through a gap no type alignment explains.
@@ -163,6 +163,6 @@ Not rules; facts about agscc that keep coming back.
 - An empty asm counts 4 estimated bytes when arm_reorg places literal pools, and emits none. A one-pass block's loop-end note ends CSE's block and is a scheduling barrier; sched2 breaks ties by RTL order. A halfword constant that survives to a register loads from the pool.
 - CSE reuses a register holding 0 or 1, so a native store of a register is often a constant in the source. Unused locals do not make frame gaps; allocation does.
 - Japanese is often an older layout of a function with its own `#if`, or stays on its scaffold. Nested functions adopt with their parent. A function that saves r9 and never uses it is a nested function storing its static chain.
-- ⚓️ near misses: of 796 drafts, 400 differ only in instruction order and 48 only in register choice; the native most often issues a literal-pool load earlier than agscc. That corpus is where a K3 question about ⚓️'s scheduling would start. Another row recurs: after a store, the native puts some other instruction (often the second half of a constant) before a load through a different base, where agscc issues the load at once; no single barrier reproduces it. A one-pass block holding the statement before a pool load and the assignment that needs it can move the load up (BattleFx_UpdatePairedArcSpawner).
+- ⚓️ near misses: of 796 drafts, 400 differ only in instruction order and 48 only in register choice; the native most often issues a literal-pool load earlier than alchemy-gcc. That corpus is where a K3 question about ⚓️'s scheduling would start. Another row recurs: after a store, the native puts some other instruction (often the second half of a constant) before a load through a different base, where alchemy-gcc issues the load at once; no single barrier reproduces it. A one-pass block holding the statement before a pool load and the assignment that needs it can move the load up (BattleFx_UpdatePairedArcSpawner).
 - To measure a rewrite in seconds, compile its one object to assembly for one edition with the Makefile's command and diff it against a baseline with `.L` label numbers ignored; then `make compare-editions`.
 - Builds from another branch leave `out/*/deps.mk` and `out/*/objects.mk` that break this one: delete them. After switching to a branch whose tools differ: `rm -rf tools/out/obj tools/out/ags-* && make tools`. In zsh, a variable holding several flags is one word unless written `${=VAR}`; `git grep -E` has no `\b`, so use `-w`.

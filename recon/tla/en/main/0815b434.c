@@ -8,7 +8,7 @@
 // (the sum keeps the product as its first operand), center declared before
 // last (register choice). Tried: the multiply's operands swapped, scale
 // through a forced temporary (differ 88), the map through a local.
-// 2026-10-18: psynergy permute (6 min, 2 jobs, seed 31): no candidate below
+// 2026-10-18: alchemy-devtools permute (6 min, 2 jobs, seed 31): no candidate below
 // the draft.
 #include "types.h"
 #include "fixed_math.h"

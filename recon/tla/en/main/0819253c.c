@@ -18,7 +18,7 @@
 // (16 to 6; before the red clamp or before red &= color: 8; before the blue
 // clamp: 6 as well). Left: the two TLA load-before-
 // shift rows, REG_BG1HOFS's zero and the colour loop's 31, each one row
-// early in the native. psynergy permute 6 minutes from here: nothing below 6.
+// early in the native. alchemy-devtools permute 6 minutes from here: nothing below 6.
 #include "types.h"
 #include "ram_buffer.h"
 #include "io_reg.h"

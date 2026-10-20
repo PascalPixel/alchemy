@@ -1,4 +1,4 @@
-// Draft, differ 96 (psynergy diff ... 08046414; the stand-in parent's 26
+// Draft, differ 96 (alchemy-devtools diff ... 08046414; the stand-in parent's 26
 // instructions count as draft-only): a nested function of Func_080464dc, the
 // stat comparison window, which saves its static chain in its first frame
 // slot and reads the parent's window from it. It puts an up or down arrow

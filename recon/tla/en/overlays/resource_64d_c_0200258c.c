@@ -7,7 +7,7 @@
 // separate pseudos; here the shared local takes r0 for both. Measured: a
 // frame local apart from the tile (32, the tile base hoisting returns in
 // part), the frame pinned to r3 (28, or 15 with the frame read again for the
-// shift), five minutes of psynergy permute (nothing under 22).
+// shift), five minutes of alchemy-devtools permute (nothing under 22).
 #include "types.h"
 #include "ram_buffer.h"
 

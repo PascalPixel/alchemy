@@ -1,5 +1,5 @@
 // Draft, differ 15 of 26 (the nested function's 26 instructions all match;
-// the 15 are the stub parent's, psynergy diff DRAFT 08122cd0):
+// the 15 are the stub parent's, alchemy-devtools diff DRAFT 08122cd0):
 // BattleSprite_ClearTiles, the function nested in BattleEvent_Playback
 // (08122d10), as in ☀️'s (games/tbs/src/battle/battle.c): clears a
 // record's sprite tiles in OBJ VRAM through the resident IwramClearWords.

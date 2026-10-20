@@ -1,4 +1,4 @@
-// Near misses, one draft for the two listings (psynergy diff on a copy that
+// Near misses, one draft for the two listings (alchemy-devtools diff on a copy that
 // keeps one function). Func_080d3940, differ 6 of 99: the native loads
 // object->z (ldr r2, [r2, #16]) before lsls r3, r3, #8 and stores it before
 // the ands, and builds the flags' address (mov r1, r8) after the strb of the

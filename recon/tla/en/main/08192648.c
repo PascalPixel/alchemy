@@ -17,10 +17,10 @@
 // recomputed); its argument x - size / 2 rather than x - half (40: the
 // expression is then not one GCSE carries out of the loop, and x stays
 // spilled at sp+24); the large drop's y - 20 in a local before the call
-// (16, a psynergy permute find). Left, all one-row orders: x's spill before
+// (16, a alchemy-devtools permute find). Left, all one-row orders: x's spill before
 // the copy of small, the second blitter word loaded into r3 (r4 natively),
 // the large drop's 20 and y - 20, the small drop's x reload, and the
-// trail's sheet base and 0x700. psynergy permute (8 minutes twice, seeds 1
+// trail's sheet base and 0x700. alchemy-devtools permute (8 minutes twice, seeds 1
 // and 7): nothing below 16; x held in memory by an asm operand: 32 to 34.
 #include "types.h"
 #include "ram_buffer.h"

@@ -3,7 +3,7 @@
 // (games/tbs/src/window/glyph_arm.c) as ⚓️ English has it: the kana-mark
 // test of ☀️'s Japanese and English editions, without English's bound on
 // codes above 143, and no FAKEMATCH device. The listing is mixed-mode,
-// which psynergy diff cannot compare; checked instead by objcopying the
+// which alchemy-devtools diff cannot compare; checked instead by objcopying the
 // --arm draft's .text and the listing's ARM words: the 792 bytes are
 // identical (196 instructions, the two pool words gUiText_GlyphWidths and
 // gUiText_Glyphs at the same places). Its entry is 0x080385e4.

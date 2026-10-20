@@ -4,7 +4,7 @@
 // UiText_DrawString (since adopted, games/tla/src/graphics/text/draw_string.c),
 // UiText_DrawStringAtOffset, UiText_DrawStringInWindow and the number writers
 // (adopted, games/tla/src/graphics/text/render.c), and
-// UiText_DrawPrefixedNumberAtOffset (listing 0x08042274). psynergy diff
+// UiText_DrawPrefixedNumberAtOffset (listing 0x08042274). alchemy-devtools diff
 // against the listing reports differ 1071, which measures nothing.
 
 #include "mem.h"

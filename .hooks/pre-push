@@ -1,3 +1,3 @@
 #!/bin/sh
 # A push to main sends that commit's measurement (make land) for CI.
-exec psynergy/target/release/psynergy progress --pre-push "$2"
+exec alchemy-devtools/target/release/alchemy-devtools progress --pre-push "$2"

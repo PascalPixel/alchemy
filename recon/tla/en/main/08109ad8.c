@@ -7,7 +7,7 @@
 // with the result and the window takes r7. The A and B tests also differ: the
 // native ands into the pressed word's register and reloads it for B. Tried:
 // the style 2 as literals, the input through a pointer; five minutes of
-// psynergy permute found nothing better.
+// alchemy-devtools permute found nothing better.
 #include "types.h"
 #include "input.h"
 #include "ram_buffer.h"

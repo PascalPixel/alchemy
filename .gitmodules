@@ -1,6 +1,6 @@
-[submodule "agscc"]
-	path = agscc
-	url = https://github.com/PascalPixel/agscc.git
-[submodule "psynergy"]
-	path = psynergy
-	url = https://github.com/PascalPixel/psynergy.git
+[submodule "alchemy-gcc"]
+	path = alchemy-gcc
+	url = https://github.com/PascalPixel/alchemy-gcc.git
+[submodule "alchemy-devtools"]
+	path = alchemy-devtools
+	url = https://github.com/PascalPixel/alchemy-devtools.git

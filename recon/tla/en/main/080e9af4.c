@@ -10,7 +10,7 @@
 // the ROM keeps it in r4 and saves it around the call (one i for every loop
 // takes r5, 38 -> 20); the slot is stored before the tile (46 -> 38), the
 // countdown is a for loop (20 -> 18) and the list is indexed (18 -> 16, order
-// in four places, before the barriers). psynergy permute (5 minutes, before the
+// in four places, before the barriers). alchemy-devtools permute (5 minutes, before the
 // barriers): 14 with a one-pass block around the three stores after the fall.
 #include "types.h"
 #include "ram_buffer.h"

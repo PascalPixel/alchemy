@@ -20,7 +20,7 @@
 // its store does not hold back the sprite's reads; the word at +28 is
 // stored through a pointer of its own (the native's add, and the
 // mid-function pool lands where it does); width is stored before 0x10000
-// (psynergy permute).
+// (alchemy-devtools permute).
 
 // Left: two single-row order differences, each the native issuing a load
 // one slot earlier, as a load latency of 3 would: the reload of r8 for the
@@ -28,7 +28,7 @@
 // before the 0x10000 constant after AnimationObject_AllocateEmpty.
 // Tried: the bit as a plain u8 cleared with &= ~1 (the first row matches,
 // but the mask becomes 254: 9) or s8 (4); every order of the four first
-// stores and of the four stores after the allocation; psynergy permute 11
+// stores and of the four stores after the allocation; alchemy-devtools permute 11
 // minutes, two seeds: nothing below 4.
 
 #include "types.h"

@@ -26,7 +26,7 @@ brew install arm-none-eabi-binutils xz pkg-config libpng utf8proc
 ```bash
 git clone https://github.com/PascalPixel/alchemy
 cd alchemy
-git submodule update --init --recursive agscc
+git submodule update --init --recursive alchemy-gcc
 make bootstrap
 make tbs-en
 ```
@@ -52,7 +52,7 @@ Dump your own cartridge and put the file in `roms/` as `tla-en.gba` (or `tla-ja.
 ## If something fails
 
 - **`png.h`, `utf8proc.h` or `arm-none-eabi-as` not found:** one of the packages in step 1 is missing.
-- **`agscc` is empty:** rerun `git submodule update --init --recursive agscc`, then `make bootstrap`.
+- **`alchemy-gcc` is empty:** rerun `git submodule update --init --recursive alchemy-gcc`, then `make bootstrap`.
 - **Odd path errors:** clone into a folder whose path has no spaces.
 
 `make help` lists every other command.

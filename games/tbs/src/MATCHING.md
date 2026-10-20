@@ -20,7 +20,7 @@ ROM judges the build and never feeds it. That makes the check all or
 nothing. One wrong byte anywhere fails its edition, and the hash does not say
 where. To find the byte, compile the one object you changed to assembly with
 the `Makefile`'s command and diff it against a baseline with `.L` label
-numbers ignored, or use the optional `psynergy diff` on a function.
+numbers ignored, or use the optional `alchemy-devtools diff` on a function.
 
 The ☀️ editions need no ROM. The ⚓️ editions need your own ROMs under
 `roms/`, because what is not yet C comes from `.incbin "baserom.gba"`

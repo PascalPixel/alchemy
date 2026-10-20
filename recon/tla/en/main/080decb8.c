@@ -3,7 +3,7 @@
 // effect scene, sets its mode directly and schedules the ground check at
 // 0x480 where ☀️ uses 0xc80.
 // The callback order through a local set before the stores after the loop
-// (found by psynergy permute, tagged) gives the native's allocation: the
+// (found by alchemy-devtools permute, tagged) gives the native's allocation: the
 // flicker count in r5, the 2 in r6. Left: four loads one row late after the
 // loop (the check literal, the party state literal, the event work from the
 // stack, and the check copied to r0 for the call); a one-pass block round the

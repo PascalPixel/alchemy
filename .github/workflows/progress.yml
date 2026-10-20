@@ -26,8 +26,8 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Initialize Psynergy
-        run: git submodule update --init psynergy
+      - name: Initialize Alchemy Devtools
+        run: git submodule update --init alchemy-devtools
 
       - name: Check out the published progress
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -42,14 +42,14 @@ jobs:
         run: >-
           gh release download decomp-reports --dir measured --pattern "${GITHUB_SHA}.tsv" --pattern "${GITHUB_SHA}.pb"
 
-      - name: Build Psynergy
+      - name: Build Alchemy Devtools
         run: |
           rustup toolchain install "$RUSTUP_TOOLCHAIN" --profile minimal
-          cargo build --locked --release --manifest-path psynergy/Cargo.toml -p psynergy
+          cargo build --locked --release --manifest-path alchemy-devtools/Cargo.toml -p alchemy-devtools
 
       - name: Record the measurement and draw both figures
         run: >-
-          psynergy/target/release/psynergy progress --publish "measured/${GITHUB_SHA}.tsv" progress
+          alchemy-devtools/target/release/alchemy-devtools progress --publish "measured/${GITHUB_SHA}.tsv" progress
 
       - name: Publish the progress branch
         working-directory: progress

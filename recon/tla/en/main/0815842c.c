@@ -33,7 +33,7 @@
 // ☀️'s body with The Lost Age's names; the cel sizes as u32
 // (they divide unsigned)                                  20
 
-// 2026-10-18: psynergy permute (6 min, 2 jobs, seed 31): no candidate below
+// 2026-10-18: alchemy-devtools permute (6 min, 2 jobs, seed 31): no candidate below
 // the draft.
 #include "types.h"
 #include "battle_effect_work.h"

@@ -30,7 +30,7 @@ help:
 	  'make compare-editions   all twelve editions; ⚓️ needs your own ROMs in roms/' \
 	  'make modern             the six ☀️ editions'\'' C through a current GCC (MODERN_CC)' \
 	  'make test               test the C build tools' \
-	  'make psynergy           build the optional reconstruction tools (requires Rust)' \
+	  'make devtools           build the optional reconstruction tools (requires Rust)' \
 	  'make progress           DONE code and data in each edition built' \
 	  'make land               on main before committing: all twelve, the tests, the measurement'
 
@@ -65,7 +65,7 @@ clean:
 # --- Tools ---------------------------------------------------------------
 
 TOOLS    := tools/out
-PSYNERGY := psynergy/target/release/psynergy
+DEVTOOLS := alchemy-devtools/target/release/alchemy-devtools
 COMPILER := tools/out/compilers
 
 XGCC   := $(COMPILER)/xgcc -B$(COMPILER)/
@@ -137,7 +137,7 @@ ROM_END_tla := 0x09000000
 INCLUDES := -Igames/$(GAME)/include \
             $(addprefix -Igames/$(GAME)/include/,battle field game graphics lib menu sound system)
 
-# Game C (K1, K2): agscc's GCC of July 2000, one option set per game.
+# Game C (K1, K2): alchemy-gcc's GCC of July 2000, one option set per game.
 CFLAGS_tbs := -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi -nostdinc -fcall-used-r4
 CFLAGS_tla := -O2 -mthumb -mcpu=arm7tdmi -nostdinc -fcall-used-r4 \
               -mtune=arm9tdmi -mthumb-split-constants -mthumb-call-via-lr
@@ -313,12 +313,12 @@ endif
 ifndef EDITION
 # --- Toolchain (K1) --------------------------------------------------------
 # `make bootstrap` builds the pinned compilers from source into
-# tools/out/compilers, as pret installs agbcc: agscc's three C generators,
+# tools/out/compilers, as pret installs agbcc: alchemy-gcc's three C generators,
 # GAS 2.10 from GNU's archive (it assembles their output), and the eight
-# libgcc members the games link, from agscc's own sources.
+# libgcc members the games link, from alchemy-gcc's own sources.
 
 TOOLCHAIN := tools/out/toolchain
--include agscc/config/host.mk
+-include alchemy-gcc/config/host.mk
 SHA256 := $(shell command -v sha256sum >/dev/null 2>&1 && echo sha256sum || echo shasum -a 256)
 GAS_SHA256 := fd7d227c0dd15cf5448385e56b8ad8313cd491839834b57c0c086ac7b7819a15
 GAS_CFLAGS := -O2 -std=gnu89 -D_POSIX_C_SOURCE=200809L -DNSIG=32 -Wno-implicit-int \
@@ -329,13 +329,13 @@ bootstrap: tools compilers $(CCAS) $(LIBGCC)
 compilers: $(COMPILER)/xgcc
 
 $(COMPILER)/xgcc:
-	$(MAKE) -C agscc
-	$(MAKE) -C agscc generated-check
-	$(MAKE) -C agscc/arm probe
+	$(MAKE) -C alchemy-gcc
+	$(MAKE) -C alchemy-gcc generated-check
+	$(MAKE) -C alchemy-gcc/arm probe
 	@mkdir -p $(COMPILER)/agbcc
-	cp agscc/build/gcc/xgcc agscc/build/gcc/cpp0 agscc/build/gcc/tradcpp0 agscc/build/gcc/cc1 $(COMPILER)/
-	cp agscc/arm/build/gcc/cc1 $(COMPILER)/gcc2952_arm
-	cp agscc/agbcc/gcc/old_agbcc $(COMPILER)/agbcc/old_agbcc
+	cp alchemy-gcc/build/gcc/xgcc alchemy-gcc/build/gcc/cpp0 alchemy-gcc/build/gcc/tradcpp0 alchemy-gcc/build/gcc/cc1 $(COMPILER)/
+	cp alchemy-gcc/arm/build/gcc/cc1 $(COMPILER)/gcc2952_arm
+	cp alchemy-gcc/agbcc/gcc/old_agbcc $(COMPILER)/agbcc/old_agbcc
 
 $(TOOLCHAIN)/binutils-2.10.tar.gz:
 	@mkdir -p $(@D)
@@ -361,8 +361,8 @@ $(CCAS): $(TOOLCHAIN)/binutils-2.10.tar.gz
 LIBGCC_WORK := $(TOOLCHAIN)/libgcc
 LIBGCC_MEMBERS := _call_via_rX _addsub_df _si_to_df _df_to_si _pack_df _unpack_df _thenan_df _lshrdi3
 LIBGCC_CFLAGS := -O2 -mthumb -mcpu=arm7tdmi -nostdinc -DCROSS_COMPILE -DIN_GCC -DIN_LIBGCC2 \
-                 -D__GCC_FLOAT_NOT_NEEDED -Dinhibit_libc -fno-inline -isystem $(CURDIR)/agscc/gcc/ginclude
-LIBGCC_INCLUDES := -I$(CURDIR)/agscc/gcc -I$(CURDIR)/agscc/gcc/config -I$(CURDIR)/agscc/include
+                 -D__GCC_FLOAT_NOT_NEEDED -Dinhibit_libc -fno-inline -isystem $(CURDIR)/alchemy-gcc/gcc/ginclude
+LIBGCC_INCLUDES := -I$(CURDIR)/alchemy-gcc/gcc -I$(CURDIR)/alchemy-gcc/gcc/config -I$(CURDIR)/alchemy-gcc/include
 LIBGCC_CC := $(CURDIR)/$(COMPILER)/xgcc -B$(CURDIR)/$(COMPILER)/ $(LIBGCC_CFLAGS)
 LIBGCC_TOOLS := | $(COMPILER)/xgcc $(CCAS)
 
@@ -371,12 +371,12 @@ $(LIBGCC): $(addprefix $(LIBGCC_WORK)/,$(addsuffix .o,$(LIBGCC_MEMBERS)))
 	rm -f $@
 	cd $(LIBGCC_WORK) && $(PREFIX)ar crsD $(CURDIR)/$@ $(notdir $^)
 
-$(LIBGCC_WORK)/_call_via_rX.o: agscc/gcc/config/arm/lib1funcs.asm $(LIBGCC_TOOLS)
+$(LIBGCC_WORK)/_call_via_rX.o: alchemy-gcc/gcc/config/arm/lib1funcs.asm $(LIBGCC_TOOLS)
 	@mkdir -p $(@D)
 	cp $< $(@D)/lib1funcs.asm
 	cd $(@D) && $(LIBGCC_CC) $(LIBGCC_INCLUDES) -DL_call_via_rX -xassembler-with-cpp lib1funcs.asm -c -o $(@F)
 
-$(LIBGCC_WORK)/dp-bit.c: agscc/gcc/config/fp-bit.c
+$(LIBGCC_WORK)/dp-bit.c: alchemy-gcc/gcc/config/fp-bit.c
 	@mkdir -p $(@D)
 	printf '#ifndef __ARMEB__\n#define FLOAT_BIT_ORDER_MISMATCH\n#define FLOAT_WORD_ORDER_MISMATCH\n#endif\n' > $@
 	cat $< >> $@
@@ -385,9 +385,9 @@ LIBGCC_DPBIT := _addsub_df _si_to_df _df_to_si _pack_df _unpack_df _thenan_df
 $(addprefix $(LIBGCC_WORK)/,$(addsuffix .o,$(LIBGCC_DPBIT))): $(LIBGCC_WORK)/%.o: $(LIBGCC_WORK)/dp-bit.c $(LIBGCC_TOOLS)
 	cd $(@D) && $(LIBGCC_CC) $(LIBGCC_INCLUDES) -DFINE_GRAINED_LIBRARIES -DL$* $(CURDIR)/$< -c -o $(@F)
 
-$(LIBGCC_WORK)/_lshrdi3.o: agscc/gcc/libgcc2.c $(LIBGCC_TOOLS)
+$(LIBGCC_WORK)/_lshrdi3.o: alchemy-gcc/gcc/libgcc2.c $(LIBGCC_TOOLS)
 	@mkdir -p $(@D)
-	cp agscc/config/arm/tconfig.h agscc/config/arm/tm.h $(@D)/
+	cp alchemy-gcc/config/arm/tconfig.h alchemy-gcc/config/arm/tm.h $(@D)/
 	cd $(@D) && $(LIBGCC_CC) -I. $(LIBGCC_INCLUDES) -DL_lshrdi3 $(CURDIR)/$< -c -o $(@F)
 
 # --- Tools and tests -------------------------------------------------------
@@ -416,19 +416,19 @@ format-check:
 
 # Reconstruction work is optional. Normal builds use only the C tools above.
 CARGO ?= cargo
-.PHONY: psynergy test-psynergy progress land
-psynergy:
-	@test -f psynergy/Cargo.toml || { echo 'Initialize Psynergy with: git submodule update --init psynergy' >&2; exit 1; }
-	$(CARGO) build --locked --release --manifest-path psynergy/Cargo.toml -p psynergy
+.PHONY: devtools test-devtools progress land
+devtools:
+	@test -f alchemy-devtools/Cargo.toml || { echo 'Initialize Alchemy Devtools with: git submodule update --init alchemy-devtools' >&2; exit 1; }
+	$(CARGO) build --locked --release --manifest-path alchemy-devtools/Cargo.toml -p alchemy-devtools
 
-test-psynergy: psynergy
-	ALCHEMY_ROOT=$(CURDIR) $(CARGO) test --locked --release --workspace --manifest-path psynergy/Cargo.toml
+test-devtools: devtools
+	ALCHEMY_ROOT=$(CURDIR) $(CARGO) test --locked --release --workspace --manifest-path alchemy-devtools/Cargo.toml
 
-progress: psynergy
-	$(PSYNERGY) progress
+progress: devtools
+	$(DEVTOOLS) progress
 
 # Before landing on main: all twelve editions, both test suites, then the
 # measurement the pre-push hook sends for CI (C3).
-land: compare-editions test test-psynergy
-	$(PSYNERGY) progress
+land: compare-editions test test-devtools
+	$(DEVTOOLS) progress
 endif

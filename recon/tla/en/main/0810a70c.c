@@ -4,7 +4,7 @@
 // #1). As plain C (key first) 4 of 27 differ; the empty volatile barrier after
 // the table's load brings the load above the mask but also above movs r3, #128
 // (differ 2). Non-volatile with an r3 clobber gives the same; three minutes of
-// psynergy permute found nothing better.
+// alchemy-devtools permute found nothing better.
 #include "types.h"
 
 struct ForgeRecipe {

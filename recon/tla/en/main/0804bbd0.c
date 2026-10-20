@@ -1,4 +1,4 @@
-// Draft, differ 19 of 24 (psynergy diff ... 0804bbd0; the stand-in parent's
+// Draft, differ 19 of 24 (alchemy-devtools diff ... 0804bbd0; the stand-in parent's
 // 17 instructions count as draft-only): a nested function of Func_0804bc08
 // (2,200 lines, not drafted), which saves its static chain in its frame and
 // reads the parent's work block through it. It copies message 0xc59 (up to

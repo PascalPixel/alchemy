@@ -31,8 +31,10 @@ s32 Script_SetByte54(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Polls a field object's common movement state until it arrives, up to 600
-/// frames. Actor, camera and effect-object views share this pointer boundary.
+/// Waits a frame at a time until a field object has arrived at its target, at
+/// most 600 frames. It takes void * because callers pass every view of an
+/// object. Called through FieldObject_WaitForMoveFar by the Psynergy effects
+/// and by about 50 scene overlays.
 void FieldObject_WaitForMove(void *fieldObject) {
   s32 waitedFrames;
 
@@ -45,11 +47,14 @@ void FieldObject_WaitForMove(void *fieldObject) {
 
 /// Returns 1 when the object has no movement target: none of its target
 /// coordinates set, or for an object moved by the ground (any motion flag)
-/// neither its target x nor z.
+/// neither its target x nor z. Called by FieldObject_WaitForMove and SC_SYNC
+/// (Script_WaitForArrival).
 s32 Object_IsTargetUnset(struct ObjectRuntime *object) {
   s32 first;
   s32 second;
 
+  // One compare of three values: all must equal TARGET_UNSET, or with
+  // motion flags only x and z.
   if (object->flags == 0) {
     second = object->targetX;
     if (second != 0x80000000)
@@ -69,6 +74,9 @@ static __inline__ s32 ObjectMotion_Square(s32 value) { return value * value; }
 /// Advances all 64 field objects by one frame, as Object_UpdateAll does for
 /// the eight script objects, with the field's extras: free flight in 3D,
 /// terrain following, floating, and solid objects that refuse to overlap.
+/// ObjectSystem_Initialize schedules it as the per-frame object update in
+/// every mode but the battle's (4). Writes each live object's position,
+/// velocity, target, wait and facing.
 void Object_UpdateAllThumb(void) {
   struct ScriptMotionObject *object;
 #ifdef UBFIX
@@ -107,6 +115,7 @@ void Object_UpdateAllThumb(void) {
     if (script == NULL)
       continue;
 
+    // The hook runs even for a paused object, and may free it.
     if (object->hook != NULL) {
       object->hook((union FieldObject *)object);
       script = object->script;
@@ -117,6 +126,8 @@ void Object_UpdateAllThumb(void) {
       continue;
 
     // Count down a wait, or run commands until one yields for this frame.
+    // Words above 63 are labels and are stepped over; a command may replace
+    // the script, so it is read again after each one.
     if (object->wait != 0) {
       object->wait--;
     } else {
@@ -201,6 +212,8 @@ void Object_UpdateAllThumb(void) {
           distance =
               Iwram_Sqrt(ObjectMotion_Square(dx) + ObjectMotion_Square(dz))
               << 16;
+          // Under 256 pixels, measure again in 16.16 for sub-pixel accuracy;
+          // further away the squares would overflow.
           if (distance <= 0x00ffffff) {
             dx = object->targetX - x;
             dz = object->targetZ - z;
@@ -361,7 +374,8 @@ void Object_UpdateAllThumb(void) {
 
     SET_POSITION(object, x, y, z);
 
-    // Turn to face the direction of travel, at most 0x1000 a frame.
+    // Turn to face the direction of travel, at most a sixteenth of a turn
+    // (0x1000) a frame.
     if ((object->steeringFlags & 1) != 0) {
       x = object->velocityX;
       z = object->velocityZ;
@@ -382,7 +396,9 @@ void Object_UpdateAllThumb(void) {
 }
 
 /// Places the object at (x, y, z), in 16.16 pixels, clears its movement target
-/// and stops it.
+/// and stops it. Reached through SC_POS and FieldObject_Create, and as
+/// Object_SetPositionAndResetMotionFar from the Psynergy effects and the
+/// field scene's actors.
 void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
                                       s32 y, s32 z) {
   object->z = z;
@@ -400,6 +416,10 @@ void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
 /// to halfway when that is further, as the object coasts on. Picks the
 /// axis to watch for arrival: the one with the furthest to go (y only for a
 /// free-flying object).
+///
+/// Reached through SC_MOVE and the other move commands, the player control,
+/// and as Object_SetMoveTargetFar from the battle's motion, the battle
+/// effects and the Psynergy effects. Sets the target and arrivalAxis.
 void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
   s32 dx;
   s32 distance;
@@ -412,6 +432,7 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
   dz = (z - object->z) / 0x10000;
   squaredZ = dz * dz;
   distance = Iwram_Sqrt(dx * dx + distance * distance + squaredZ) << 16;
+  // Under 16 whole pixels, measure again in 16.16 for sub-pixel accuracy.
   if (distance < 0x100000) {
     dx = x - object->x;
     distance = y - object->y;
@@ -437,6 +458,8 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
       brakingDistance = distance - brakingDistance / 2;
     else
       brakingDistance = distance / 2;
+    // Scale the offset to the target by the shortened distance's share of
+    // the whole.
     distance = Iwram_RatioMulQ14(distance, brakingDistance);
     x = object->x + Iwram_MulQ16(x - object->x, distance);
     y = object->y + Iwram_MulQ16(y - object->y, distance);
@@ -474,6 +497,8 @@ UNUSED void Object_RunUpdateAllFromHeap(void) {
 /// Advances the first 14 objects' motion by one frame, without running their
 /// scripts: steering towards a target or braking, gravity and bouncing,
 /// arrival, and turning to face the direction of travel.
+/// ObjectSystem_Initialize schedules it in place of Object_UpdateAllThumb in
+/// mode 4, the battle's.
 void Object_UpdateAllMotion(void) {
   struct ScriptMotionObject *object;
   s32 objectsRemaining;
@@ -488,6 +513,8 @@ void Object_UpdateAllMotion(void) {
   s32 ratio;
   s32 facingStep;
 
+  // Fourteen objects, as many as the battle has units (UNIT_MAX in
+  // battle/battle/objects.c).
   object = (struct ScriptMotionObject *)gObjectSlots;
   for (objectsRemaining = 13; objectsRemaining >= 0;
        objectsRemaining--, object++) {
@@ -506,6 +533,8 @@ void Object_UpdateAllMotion(void) {
 #ifndef UBFIX
       arrivedAtTarget = 0;
 #endif
+      // Steer in the XZ plane as Object_UpdateAllThumb does on the ground,
+      // or brake; this loop has no free flight, terrain or floating.
       if (object->targetX != TARGET_UNSET) {
         dx = (object->targetX - x) / 65536;
         dz = (object->targetZ - z) / 65536;
@@ -556,6 +585,7 @@ void Object_UpdateAllMotion(void) {
           }
         }
       }
+      // Gravity, and a bounce that loses energy on landing.
       if (object->motionFlags & 2) {
         if (y > object->terrainHeight) {
           object->velocityY -= object->gravity;
@@ -572,6 +602,8 @@ void Object_UpdateAllMotion(void) {
     x += object->velocityX;
     y += object->velocityY;
     z += object->velocityZ;
+    // Arrived: the watched axis (ARRIVAL_AXIS_X, _Y, _Z) reached the target,
+    // or crossed it.
     if (object->arrivalAxis != 0)
       switch (object->arrivalAxis) {
       case 16:
@@ -607,6 +639,7 @@ void Object_UpdateAllMotion(void) {
       object->arrivalAxis = 0;
     }
     SET_POSITION(object, x, y, z);
+    // Turn to face the direction of travel, a sixteenth of a turn a frame.
     if (object->steeringFlags & 1) {
       x = object->velocityX;
       z = object->velocityZ;

@@ -16,12 +16,15 @@
 /// cell's height samples after its kind byte and a pixel (x, y) within the
 /// 16x16 cell, and returns the ground height there in 16.16 pixels. This one
 /// is flat: the first sample everywhere.
+/// Each is reached only through that table, by the low four bits of the
+/// cell's kind byte: this one is kind 0, and the rest follow in order.
 s32 Curve_GetFirstSampleA(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   return CURVE_HEIGHT_FIXED(samples[0]);
 }
 
 /// A slope along x: from sample 0 at x = 0 towards sample 1 at x = 16.
+/// Kind 1.
 s32 Curve_LerpTwoSamples(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 startHeight;
@@ -36,6 +39,7 @@ s32 Curve_LerpTwoSamples(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 }
 
 /// A slope along y: from sample 0 at y = 0 towards sample 1 at y = 16.
+/// Kind 2.
 s32 Curve_LerpTwoSamplesB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 startHeight;
@@ -51,6 +55,7 @@ s32 Curve_LerpTwoSamplesB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 
 /// A step across the diagonal x + y = 15: sample 0 before it, sample 1 after
 /// it and the higher of the two on it.
+/// Kind 3.
 s32 Curve_StepAtSummedPosition(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 firstHeight;
@@ -76,6 +81,7 @@ s32 Curve_StepAtSummedPosition(const u8 *heightBytes, s32 x, s32 y) {
 
 /// A step across the diagonal x = y: sample 0 where y < x, sample 1 where
 /// y > x and the higher of the two on it.
+/// Kind 4.
 s32 Curve_StepAtDifferencePosition(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 firstHeight;
@@ -103,6 +109,7 @@ s32 Curve_StepAtDifferencePosition(const u8 *heightBytes, s32 x, s32 y) {
 
 /// A slope that bends on the diagonal x + y = 15: from sample 0 at the top
 /// left corner to sample 1 on the diagonal to sample 2 at the bottom right.
+/// Kind 5.
 s32 Curve_LerpThreeSamplesByRatio(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 firstHeight;
@@ -129,6 +136,8 @@ s32 Curve_LerpThreeSamplesByRatio(const u8 *heightBytes, s32 x, s32 y) {
 
 /// A slope that bends on the diagonal x = y: from sample 0 at the top right
 /// corner to sample 1 on the diagonal to sample 2 at the bottom left.
+/// Kind 6. It divides by 16 with a shift where kind 5 divides by 15, so its
+/// slopes are 15/16 as steep and it never reaches sample 2 exactly.
 s32 Curve_LerpThreeSamplesAtDifference(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 firstHeight;
@@ -164,6 +173,7 @@ s32 Curve_LerpThreeSamplesAtDifference(const u8 *heightBytes, s32 x, s32 y) {
 
 /// A raised or sunken rounded square: sample 1 where gCurve_LerpWeightTable is
 /// 1, sample 0 in the corners.
+/// Kind 7.
 s32 Curve_LerpTwoSamplesByTable(const u8 *heightBytes, s32 x, s32 y) {
   const s8 *samples = (const s8 *)heightBytes;
   s32 startHeight;
@@ -174,6 +184,7 @@ s32 Curve_LerpTwoSamplesByTable(const u8 *heightBytes, s32 x, s32 y) {
 }
 
 /// A step along x: sample 0 for x < 8, sample 1 from x = 8.
+/// Kind 8.
 s32 Curve_StepAtHalf(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   u32 cellX = pixelX;
@@ -186,6 +197,7 @@ s32 Curve_StepAtHalf(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 }
 
 /// A step along y: sample 0 for y < 8, sample 1 from y = 8.
+/// Kind 9.
 s32 Curve_StepAtHalfB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   u32 cellY = pixelY;
@@ -199,6 +211,7 @@ s32 Curve_StepAtHalfB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 
 /// A slope along x that bends at the middle: sample 0 at x = 0, sample 1 at
 /// x = 8, towards sample 2 at x = 16.
+/// Kind 10.
 s32 Curve_LerpThreeSamplesAtHalf(const u8 *heightBytes, s32 pixelX,
                                  s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
@@ -232,7 +245,9 @@ s32 Curve_LerpThreeSamplesAtHalf(const u8 *heightBytes, s32 pixelX,
   }
 }
 
-/// An unsigned-sample slope along y that bends at the middle.
+/// A slope along y that bends at the middle, as kind 10 does along x.
+/// Kind 11. Its samples are read unsigned: 128 to 255 are heights, where the
+/// other kinds read them as -128 to -1.
 s32 Curve_LerpThreeSamplesAtHalfB(const u8 *heightBytes, s32 pixelX,
                                   s32 pixelY) {
   const u8 *samples = heightBytes;
@@ -265,6 +280,7 @@ s32 Curve_LerpThreeSamplesAtHalfB(const u8 *heightBytes, s32 pixelX,
 }
 
 /// The sample gCurve_SampleIndexTable picks for (x, y).
+/// Kind 12.
 s32 Curve_LookupSampleByTable(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   u32 cellX = pixelX;
@@ -274,6 +290,7 @@ s32 Curve_LookupSampleByTable(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 }
 
 /// The same, with the table mirrored left to right.
+/// Kind 13.
 s32 Curve_LookupSampleByTableReversed(const u8 *heightBytes, s32 pixelX,
                                       s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
@@ -284,13 +301,13 @@ s32 Curve_LookupSampleByTableReversed(const u8 *heightBytes, s32 pixelX,
                                       CURVE_FULL_STEPS - 1]]);
 }
 
-/// Flat, as Curve_GetFirstSampleA.
+/// Flat, as Curve_GetFirstSampleA. Kind 14.
 s32 Curve_GetFirstSampleB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   return CURVE_HEIGHT_FIXED(samples[0]);
 }
 
-/// Flat, as Curve_GetFirstSampleA.
+/// Flat, as Curve_GetFirstSampleA. Kind 15.
 s32 Curve_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   return CURVE_HEIGHT_FIXED(samples[0]);
@@ -300,6 +317,11 @@ s32 Curve_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 
 /// Returns the ground height of a layer at (x, y) in 16.16 pixels: the
 /// height function of the cell's terrain kind applied to its samples.
+/// y is the map's down axis, an object's z.
+///
+/// Called each frame by Object_UpdateAllThumb for objects that follow the
+/// terrain, by the player control, and as Map_GetTerrainHeightFar by the
+/// field scene's objects, the Psynergy effects and about ten scene overlays.
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y) {
   struct MapState *work = gMapWork[0];
   struct MapCell *cell;
@@ -311,6 +333,8 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y) {
   if (work != NULL) {
     cell = work->layers[layer & 3].cells;
   }
+  // Cells are 16 pixels, 128 to a row. A cell's collision record is four
+  // bytes: the kind, then up to three height samples.
   cell += x / 16 + (y / 16 << 7);
   heightBytes = Ram_MapCollision + cell->attributeB * 4;
   // UB: sequence the kind-byte read before passing the remaining samples.
@@ -328,6 +352,8 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y) {
 
 /// Returns the terrain kind (the low four bits of the first collision byte)
 /// of a layer's cell at (x, y) in 16.16 pixels.
+/// Called through Map_GetCellAttributeLowNibbleFar by the Psynergy Move
+/// effect.
 s32 Map_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
   struct MapState *state = gMapWork[0];
   struct MapCell *cells;
@@ -349,6 +375,9 @@ s32 Map_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
 }
 
 /// Returns the collision code of a layer's cell at (x, y) in 16.16 pixels.
+/// The shift by 20 takes 16.16 pixels straight to 16-pixel cells. Called
+/// through GetMapCellCollisionFar by the Psynergy climbing and by scenes
+/// (Altin Peak, Colosso, Imil, Crossbone Isle).
 s32 GetMapCellCollision(s32 layer, s32 x, s32 y) {
   struct MapState *state;
   struct MapCell *cell;
@@ -365,6 +394,10 @@ s32 GetMapCellCollision(s32 layer, s32 x, s32 y) {
 }
 
 /// Sets the collision code of a layer's cell at (x, y) in 16.16 pixels.
+/// Writes the cell in the map's grid; does nothing before the map is set up.
+/// Called through SetMapCellCollisionFar by scenes
+/// (Colosso, Altin Peak, Crossbone Isle, Venus Lighthouse, Tolbi, Sol
+/// Sanctum).
 void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collisionCode) {
   struct MapState *state = gMapWork[0];
 
@@ -391,6 +424,10 @@ UNUSED s32 Map_GetCellHighFlags(s32 x, s32 y) {
 /// Returns whether an object can step to position: 2 when the cell there is
 /// a wall (collision code 0xff), 1 when the ground is more than 8 pixels
 /// higher than the object's, -1 when it is more than 12 pixels lower, else 0.
+///
+/// Called by the player control and the script commands that pick a free
+/// step, and as Map_CheckObjectStepFar by the Psynergy effects (Move, Carry,
+/// Force, climbing). A terrainId above 2 reads the grid from its start.
 s32 Map_CheckObjectStep(struct ObjectRuntime *object,
                         struct FieldPosition *position) {
   struct MapState *mapState;
@@ -436,6 +473,9 @@ s32 Map_CheckObjectStep(struct ObjectRuntime *object,
 
 /// Returns 0 when the cell under position (its x, and y less its height) in
 /// layer 2 is a wall (collision code 0xff), else -1.
+/// The name says the opposite of what it returns: 0 is the blocked answer.
+/// Called by the player control and, as CheckMapPositionCellOccupiedFar, by
+/// the Psynergy climbing.
 s32 CheckMapPositionCellOccupied(struct WorldPosition *position) {
   s32 pixelX;
   s32 pixelY;
@@ -459,6 +499,9 @@ s32 CheckMapPositionCellOccupied(struct WorldPosition *position) {
 /// Returns the world map's collision value (1-15) at position: from the upper
 /// collision layer where it has one, else the lower, else 7. Each layer is a
 /// tile map of 4-bit collision pixels.
+///
+/// Called by the player control, CheckWorldMapWalkable and
+/// GetWorldMapTerrainBehavior.
 s32 GetWorldMapCollision(struct WorldPosition *position) {
   s32 halfPixelX = position->x >> 17;
   s32 y = position->y;
@@ -469,9 +512,14 @@ s32 GetWorldMapCollision(struct WorldPosition *position) {
   u8 packedCollisions;
   u32 result;
 
+  // Coordinates in 2-pixel units. A collision tile covers 16x16 pixels as
+  // 4x4 values of 4 bits, two to a byte, 8 bytes a tile; the maps of tile
+  // numbers are 64 tiles square and wrap.
   collisionCell = (((halfPixelY / 8) & 63) << 6) + ((halfPixelX / 8) & 63);
   pixelOffset = (((halfPixelY / 2) & 3) << 1) + ((halfPixelX / 4) & 1);
 
+  // The upper layer: its tile map in screen block 10, its tiles 0x800 bytes
+  // into the collision buffer.
   collisionTile = BG_SCREEN_BLOCK(10)[collisionCell];
   packedCollisions =
       *(Ram_MapCollision + 0x800 + (collisionTile << 3) + pixelOffset);
@@ -484,6 +532,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position) {
       return result;
   }
 
+  // The lower layer: its tile map in screen block 8, its tiles at the start.
   collisionTile = BG_SCREEN_BLOCK(8)[collisionCell];
   packedCollisions = *(Ram_MapCollision + (collisionTile << 3) + pixelOffset);
   if (packedCollisions != 0) {
@@ -500,6 +549,9 @@ s32 GetWorldMapCollision(struct WorldPosition *position) {
 
 /// Returns 0 when the world map at position can be walked on (collision 5 to
 /// 12), else -1.
+/// The first argument is not read; the player control passes its object.
+/// Called by the player control as it probes the steps around the object it
+/// moves.
 s32 CheckWorldMapWalkable(s32 unused, struct WorldPosition *position) {
   if ((GetWorldMapCollision(position) - 5) <= 7U) {
     return 0;
@@ -510,6 +562,8 @@ s32 CheckWorldMapWalkable(s32 unused, struct WorldPosition *position) {
 /// Returns the world map's terrain behaviour at position from
 /// gWorldMap_TerrainBehaviorTable, and stores the block's terrain kind in
 /// terrainKind.
+/// Called through GetWorldMapTerrainBehaviorFar by the world map's
+/// encounters (Encounter_ResolveWorldMapZoneAndBackdrop).
 s32 GetWorldMapTerrainBehavior(struct WorldPosition *position,
                                s32 *terrainKind) {
   s32 collisionKind = GetWorldMapCollision(position);
@@ -520,6 +574,8 @@ s32 GetWorldMapTerrainBehavior(struct WorldPosition *position,
   u32 index;
   u32 *blockWord;
 
+  // Blocks are 32 pixels, 32 to a row; the bias rounds a negative coordinate
+  // towards zero, as division would.
   if (x < 0)
     x += 0x1fffff;
   blockX = (x >> 21) & 31;
@@ -532,6 +588,7 @@ s32 GetWorldMapTerrainBehavior(struct WorldPosition *position,
   if (((u8 *)blockWord)[3] & 0x80)
     behaviorBank = 0x10;
 
+  // The terrain kind is bits 24 to 30 of the block word.
   *terrainKind = (*blockWord << 1) >> 25;
   if (*terrainKind == 21)
     behaviorBank = 0x20;

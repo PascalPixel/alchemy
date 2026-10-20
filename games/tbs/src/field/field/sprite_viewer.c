@@ -22,6 +22,10 @@ struct UiIconColumn {
 /// turns a layer on or off. Pressing Start toggles the shadows; B turns the
 /// ring when it is rebuilt with Start held. Select reloads the far-call
 /// resources (the alternate set unless B is held) and starts over.
+///
+/// It has a bare veneer in the field far-call table, and no caller names it.
+/// Takes heap slot 9 for the ring of ten positions and runs
+/// Battle_PlaceActorsByFormationKind each frame to draw the copies.
 void Ui_RunIconMonitor(void) {
   struct UiIconColumn layers[4];
   struct AnimationMetadata *spriteMetadata;
@@ -49,6 +53,7 @@ void Ui_RunIconMonitor(void) {
   volatile u32 *repeatedKeys;
   u32 i;
 
+  // The ring's centre, in pixels.
   x = 144;
   y = 96;
   editMode = 1;
@@ -69,10 +74,13 @@ void Ui_RunIconMonitor(void) {
   layers[0].on = 1;
   gDebugMode = 2;
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+  // A green backdrop (BGR555 green 15).
   PLTT_BACKDROP = 0x01E0;
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_OBJ_ON;
   Fade_FromBlack(1);
 
+  // Rebuilt from here whenever layer 0's sprite changes or Select reloads
+  // the resources.
 restart:
   Runtime_InitializeHeap();
   Scheduler_ResetTaskTable();
@@ -85,6 +93,8 @@ restart:
     ResourceSlot_Load(1, (u32 *)Ram_ActorSpriteSlots, layers[0].number + 1, 0);
   }
 
+  // Ten copies of the sprite; for a sprite of draw kind 20 every other copy
+  // shows its second part, number + 1, from resource slot 1.
   for (i = 0; i <= 9; i++) {
     spriteMetadata = Resource_GetMetadataRecordFar(layers[0].number);
     spriteWork.resourceOffset = 0;
@@ -115,6 +125,7 @@ restart:
   }
 
   Map_BuildProbeRing(x, y, ring);
+  // Order 3200 (0xc80), where the field camera runs.
   Scheduler_AddOrUpdateCallback(Battle_PlaceActorsByFormationKind, 3200);
 
 next:
@@ -164,6 +175,8 @@ next:
     }
 
     switch (editMode) {
+    // Mode 0, the animation: layer 1 follows layer 0's and is not edited on
+    // its own; 0 to 99.
     case 0:
       if (selectedLayer == 1) {
         break;
@@ -213,6 +226,7 @@ next:
       if (changed == 0) {
         break;
       }
+      // A new sprite on layer 0 changes the ring and the copies: start over.
       if (selectedLayer == 0) {
         goto restart;
       }
@@ -313,8 +327,9 @@ next:
   }
 }
 
-/// Finds the next sprite with an image, stepping in direction (1 or -1)
-/// and wrapping within 0-511, that has an image.
+/// Returns the next sprite id after spriteId, stepping by direction (1 or
+/// -1) and wrapping within 0-511, whose metadata has an image (a nonzero
+/// width). Called by Ui_RunIconMonitor.
 s32 Ui_FindNextSpriteWithImage(s32 spriteId, s32 direction) {
   for (;;) {
     spriteId += direction;
@@ -341,6 +356,7 @@ s32 Ui_FindNextSpriteWithImage(s32 spriteId, s32 direction) {
 /// Lays out the sprite viewer's ring around pixel (x, z): one position per
 /// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite
 /// pairs for kind 20), 56 pixels out (40 for kind 20). B held turns the ring.
+/// Called by Ui_RunIconMonitor when it starts and while Start moves the ring.
 void Map_BuildProbeRing(s32 centerX, s32 centerY,
                         struct SpritePlacement *positions) {
   struct SpritePlacement *pairedPositions;
@@ -354,6 +370,9 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
   facingKind = gSpriteObjects->entries[0]->kind;
   if ((gKeysHeld & KEY_B) != 0)
     angle = (s16)(gFrameTick << 8);
+  // 0x2aaa, 0x2000, 0x1999 and 0x4000 are a sixth, an eighth, a tenth and
+  // a quarter of a turn; 0x380000 is 56 pixels. Unused positions of the ten
+  // are skipped.
   switch ((u32)facingKind) {
   case 3:
     for (facingIndex = 0; facingIndex < 6; facingIndex++) {
@@ -467,7 +486,9 @@ UI_DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnParameter, param)
 UI_DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnPriority, priority)
 
 /// Starts animationIndex on layerIndex of each of the viewer's ten sprites,
-/// each one 16 timer units behind the last.
+/// each one a frame (16 timer units) behind the last, so the copies are
+/// staggered. Also sets each copy's offsetY and clears its rotation.
+/// Called by Ui_RunIconMonitor.
 void Ui_FillGridColumnFromMetadata(s32 layerIndex, s32 animationIndex) {
   s32 spriteIndex;
   struct AnimationObject *spriteGroup;
@@ -499,10 +520,13 @@ void Ui_FillGridColumnFromMetadata(s32 layerIndex, s32 animationIndex) {
 }
 
 /// Sets spriteId on layerIndex of each of the viewer's ten sprites.
+/// Resets each layer from its new metadata. Called by Ui_RunIconMonitor when
+/// a layer other than 0 gets a new sprite.
 void Ui_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
   struct AnimationObject *spriteGroup = gSpriteObjects;
   s32 spriteIndex;
 
+  // The ROM looks the metadata up here and drops the result.
   Resource_GetMetadataRecordFar(spriteId);
   layerIndex &= 3;
   for (spriteIndex = 0; spriteIndex < 10; spriteIndex++) {
@@ -516,6 +540,9 @@ void Ui_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
 
 /// Each frame in the sprite viewer: places each copy of the sprite at its
 /// ring position, facing the way that position stands for.
+/// Despite its name it belongs to the sprite viewer, which schedules it; its
+/// ring is the placements in heap slot 9 (HEAP_SLOT_BATTLE) and its sprites
+/// the pool in heap slot 4.
 void Battle_PlaceActorsByFormationKind(void) {
   struct AnimationObject *sprite = WORK_SLOT(4);
   u32 facingKind = sprite->entries[0]->kind;

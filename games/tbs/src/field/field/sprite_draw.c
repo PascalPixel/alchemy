@@ -15,6 +15,13 @@ typedef void (*SpriteUploadFn)(const void *src, u32 w, u32 h, void *vram);
 /// layers composed by priority into one pixel buffer, an optional outline,
 /// and the result uploaded to the sprite's VRAM tiles. Returns 1 when layer
 /// 0's frame for this facing is drawn mirrored.
+///
+/// Called for each sprite drawn, every frame, by Render_ApplyProjectedPlacement
+/// and Render_PlaceProjectedSprite. Writes the layers' script position,
+/// timer and frame, the sprite's dirty flag and tile, its tiles in OBJ VRAM,
+/// and the ObjectSystemWork's count of bytes composed; takes heap slot
+/// HEAP_SLOT_FRAME_SCRATCH for the decoder when no caller holds it, and frees
+/// it again.
 s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
   s32 mirrored;
   u32 size;
@@ -99,6 +106,10 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
         layer->frameBase = 255;
         layer->script = 0;
         frame = 255;
+        // XXX: ending any layer lowers the sprite's layer count, so the last
+        // layer stops being stepped and drawn even when another one ended; a
+        // sprite whose layer other than the last ends would show whether that
+        // is a bug.
         obj->count--;
         goto select_direction;
       // Unused commands, skipped. 251 is not among them: it shows as a frame.
@@ -119,12 +130,16 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
       }
       goto read_command;
     }
+    // Time is left on this frame: count it down by the layer's step (16, the
+    // normal speed, takes a frame off each frame).
     layer->timer = layer->timer - layer->step;
   framed:
     frame = layer->frameBase;
   select_direction:
     // The facing table of the layer's kind gives an offset from the base
     // frame (low three bits) and whether to mirror it (bit 7).
+    // The facing is cut into 8 (kinds 1, 2, 20, 22, 8 and 88), 16 (3, 5) or
+    // 64 (4, 6) sectors; kinds 8 and 88 centre theirs on the directions.
     switch (layer->kind) {
     case 1:
       facing = gAnimationFacing_Kind1[dir >> 13];
@@ -284,6 +299,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
     }
 
     // Upload the pixels to the sprite's tiles in VRAM.
+    // The tile number counts 32-byte tiles.
     tile = VramCache_Load(obj->slot, size, 0);
     {
       void *vram = (void *)(OBJ_VRAM0 + (tile << 5));
@@ -305,7 +321,8 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
 /// Positions a sprite's image (part 0) and shadow (part 1) on the screen: the
 /// image centred on screenX and raised height above screenY, the shadow at
 /// groundHeight. scale is the sprite's (x, y) scale (16.16); above 1.0 both
-/// parts use the double-size affine mode.
+/// parts use the double-size affine mode. It has a bare veneer in the field
+/// far-call table, and no caller names it.
 void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
                                 s32 height, s32 screenY, s32 groundHeight,
                                 s32 *scale) {
@@ -349,6 +366,10 @@ void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
 /// sprite is mirrored, scaled or rotated, queues the shadow (when the sprite
 /// has one) and then the image in a draw slot by depth; an object 100 pixels
 /// or more below the ground takes slot 1 instead, its shadow slot 0.
+///
+/// Called by ObjectSystem_UpdateCamera for each one-sprite object on a
+/// layered map, by the sprite viewer, and as Object_ApplyProjectedPlacementFar
+/// by the battle effects, the Psynergy effects and the menus.
 void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
                                     const struct SpritePlacement *position,
                                     const struct SpriteScale *scale,
@@ -401,6 +422,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
     shadowHalfWidth = 16;
     shadowHalfHeight = 8;
   }
+  // Draw slot by screen row, one slot per two rows from slot 10.
   if (height <= -0x640000) {
     slot = 1;
     depth = 0;
@@ -423,6 +445,8 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
   x = (screenX >> 16) - halfWidth + ((sprite->offsetX * scaleX + 0xffff) >> 16);
   y = ((screenY - height) >> 16) - halfHeight -
       ((scaleY * ((sprite->height >> 1) - sprite->offsetY) + 0xffff) >> 16);
+  // Only the right and bottom edges are tested; OAM wraps a negative
+  // position.
   if (x < 240 && y < 160) {
     part = &sprite->image;
     part->x = x;
@@ -439,6 +463,10 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
 /// the ground below. depth 0 sorts it by distance; any other value is its draw
 /// slot. A sprite off screen gives up its VRAM cache entry unless
 /// retainCacheEntry holds it.
+///
+/// Called by ObjectSystem_UpdateCameraFixed for each object on the world map
+/// and in the battle; while a menu suspends projection
+/// (ObjectSystemWork.suspended) every sprite is treated as off screen.
 void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
                                  s32 *scale, s32 facing, s32 depth) {
   s32 flip;
@@ -514,6 +542,8 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
         image->affine = affine;
         image->affineIndex = z;
       }
+      // The slot falls as the projected depth screen[2] rises, and stays at
+      // 1 or above: slot 0 is the shadows'.
       if (depth == 0) {
         slot = (0x200 - screen[2]) / 2 + 128;
         if (slot <= 0)
@@ -552,6 +582,9 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
 
 /// Sets the draw parameter of each of a sprite's layers to value, except
 /// layers whose parameter is 15, and marks the sprite for redrawing.
+/// Called by Animation_ApplyChildValues and, as
+/// ObjectGroup_SetChildValueUnlessFifteenFar, by the Psynergy effects, the
+/// Sanctum and the Altmiller Cave scene.
 void ObjectGroup_SetChildValueUnlessFifteen(void *rawSprite, u32 value) {
   struct AnimationObject *sprite = rawSprite;
   if (sprite != 0) {

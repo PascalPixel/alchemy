@@ -8,7 +8,9 @@
 /// colours) one pixel is cleared, in gMap_TileDissolveOrder's order; each
 /// tile runs one step ahead of the last, and only tiles whose step is 64-127
 /// clear a pixel. obj is the sprite (struct AnimationObject), pos the step
-/// (0-127).
+/// (0-127). Writes the sprite's tiles in OBJ VRAM. Called by the two
+/// functions below and, as render_animated_tile_frameFar, by the battle's
+/// playback (battle/battle/playback.c).
 void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
   u16 *tile;
   s32 tileCount;
@@ -31,6 +33,9 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
     indexMask = 0x3f;
     offsetMask = 0x3e;
 
+    // A tile is 64 bytes (32 halfwords) at 8 bits a pixel. The unsigned
+    // test passes only steps 64 to 127, so later tiles start clearing
+    // first and the dissolve sweeps across the sprite.
     for (; i < tileCount; i++, tile += 32, pos++) {
       if ((pos - 64) <= 63) {
         u8 pixel;
@@ -52,6 +57,8 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
 }
 
 /// Dissolves a sprite pixel by pixel, four steps a frame, over 32 frames.
+/// Called through Map_RenderAnimatedTileFramesForObjectFar by the auto
+/// battle (battle/battle/auto_battle.c).
 void Map_RenderAnimatedTileFramesForObject(u8 *sprite) {
   u32 step;
 
@@ -68,6 +75,8 @@ void Map_RenderAnimatedTileFramesForObject(u8 *sprite) {
 }
 
 /// Dissolves count sprites together, pixel by pixel, over 32 frames.
+/// Called through Map_RenderAllAnimatedTileFramesFar by the battle's staging
+/// (battle/battle/staging.c), after the unit is taken off its lists.
 void Map_RenderAllAnimatedTileFrames(u8 **sprites, s32 count) {
   u8 **firstSprite;
   u8 **spriteCursor;
@@ -124,6 +133,8 @@ s32 Map_GetScreenRelativePosition(struct ObjectRuntime *object,
 #endif
   x = object->x - viewX;
   y = object->z - viewZ;
+  // Across, from 32 pixels left of the screen to 32 past its 240; down,
+  // below the view's top and above 224.
   if ((x >= -0x1fffff && x <= 0x10fffff) && y > 0 && y < 0xe00000) {
     *screenPosition++ = x >> 16;
     *screenPosition = y >> 16;
@@ -137,6 +148,12 @@ s32 Map_GetScreenRelativePosition(struct ObjectRuntime *object,
 /// Sets up the object system: allocates and zeroes the 64 objects and
 /// registers the per-frame updates. Mode 4 moves objects with
 /// Object_UpdateAllMotion; modes 3 and 4 use the fixed camera.
+///
+/// Called through ObjectSystem_InitializeFar by the field scene runner
+/// (object/object/run_scene.c: 2 for a layered map, MODE_WORLD_MAP for the
+/// world map) and the battle's encounter (4), and directly by the sprite
+/// viewer (2). Allocates heap slot 6 for the ObjectSystemWork and slot 5 for
+/// the objects, and sets the sprite outline colours.
 void ObjectSystem_Initialize(s32 controlMode) {
   struct ObjectSystemWork *objectSystem;
   struct ObjectRuntime *objectPool;
@@ -147,6 +164,8 @@ void ObjectSystem_Initialize(s32 controlMode) {
   ObjectSystem_Configure(controlMode);
   Dma_Fill32Cell(fill, 0, objectPool, 64 * sizeof(*objectPool));
   Dma_Fill32Cell(fill, 0, objectSystem, sizeof(*objectSystem));
+  // The scheduler runs higher orders first: the objects move (0xc8a) before
+  // the camera follows them (0xc80).
   if (controlMode == 4)
     Scheduler_AddOrUpdateCallback(Object_UpdateAllMotion, 0xc8a);
   else
@@ -167,6 +186,7 @@ UNUSED void ResourceTable_ReservedNoOpC0C4(void) {}
 UNUSED void ResourceTable_ReservedNoOp2(void) {}
 
 /// Returns the first of the 64 objects not in use (with no script), or 0.
+/// Called by FieldObject_Create.
 void *ObjectDispatch_FindFreeObject(void) {
   struct ObjectRuntime *object = gObjectSlots;
   void *freeObject = 0;
@@ -184,6 +204,10 @@ void *ObjectDispatch_FindFreeObject(void) {
 }
 
 /// Releases an object's sprites and zeroes it, freeing it.
+/// Clearing the script lets ObjectDispatch_FindFreeObject hand the object out
+/// again. Reached through SC_FREE (Script_FreeObject) and, as
+/// ObjectDispatch_ReleaseFar, from the battle, the Psynergy effects and the
+/// field scene's objects.
 void ObjectDispatch_Release(struct DispatchObject *object) {
   s32 spritesRemaining;
   void **sprites;
@@ -210,6 +234,13 @@ void ObjectDispatch_Release(struct DispatchObject *object) {
 /// Creates a field object at (x, y, z), in 16.16 pixels, or returns 0 when
 /// none is free. id / 4096 is the kind (0: one sprite, 2: two sprites, id
 /// and id + 1) and the low 12 bits the sprite's animation id.
+///
+/// Called as Object_CreateFar by the battle's placement, the Psynergy
+/// effects, the field scene's actors and markers and the scene scripts, and
+/// directly by the player control for footprints (25) and ripples (24).
+/// Gives the object gObjectDispatch_DefaultScript (a lone SC_END), its home
+/// position and the default motion values; a group's sprite list is taken from
+/// the ObjectSystemWork's group tables.
 struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
                                          s32 z) {
   struct ObjectRuntime *object;
@@ -220,6 +251,7 @@ struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
   s32 spriteStorageKind;
   void **spriteSlots;
 
+  // The ROM searches twice and drops the first result.
   ObjectDispatch_FindFreeObject();
   spriteStorageKind = encodedSprite / 4096;
   encodedSprite &= 0xfff;
@@ -260,6 +292,8 @@ struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
     motion = (struct ScriptMotionObject *)object;
     scripted = (struct ScriptObjectRuntime *)object;
     Object_SetPositionAndResetMotion(object, x, y, z);
+    // Up to 2 pixels a frame, gaining 1 a frame; unit scale; facing a
+    // quarter turn.
     object->script = (s32 *)gObjectDispatch_DefaultScript;
     object->speedLimit = 0x20000;
     object->step = 0;
@@ -281,6 +315,10 @@ struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
 }
 
 /// Gives an object a script and starts it from the top.
+/// Sets the script and clears the cursor, the pause, the loop count and the
+/// last flag test. Called by the Start functions below and the player
+/// control, and as ObjectDispatch_InitializeFar by the battle's placement,
+/// the Psynergy effects and the field scene's events.
 void ObjectDispatch_Initialize(struct DispatchObject *object,
                                const s32 *script) {
   if (object != 0) {
@@ -403,21 +441,27 @@ void ObjectDispatch_StartApproachLink(struct DispatchObject *object,
 }
 
 /// Starts an object on the script that runs SC_KEY_COUNT every frame.
+/// The field scene runner (object/object/run_scene.c) gives it to the leader
+/// when gGameState.movementMode is 2.
 void ObjectDispatch_StartKeyCheck(struct DispatchObject *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_KeyCheckScript);
 }
 
 /// Starts an object on the script that moves it by the keys (SC_KEYS).
+/// The field scene runner gives it to the leader when gGameState.movementMode
+/// is 1.
 void ObjectDispatch_StartMoveByKeys(struct DispatchObject *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_KeysScript);
 }
 
 /// Starts an object on the player control script (SC_PLAYER).
+/// The field scene runner's usual choice for the leader on a layered map.
 void ObjectDispatch_StartPlayerControl(struct DispatchObject *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_PlayerScript);
 }
 
 /// Starts an object on the world map control script (SC_WORLD).
+/// The field scene runner gives it to the leader on the world map.
 void ObjectDispatch_StartWorldMapControl(struct DispatchObject *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_WorldMapScript);
 }
@@ -429,7 +473,9 @@ void ObjectDispatch_StartIdle(struct DispatchObject *object) {
 
 /// Starts an object on the camera script (SC_CAMERA). With a leader to
 /// follow, it also gets a speed limit of 4 pixels a frame and an
-/// acceleration of 0.5 (value30 and value34 are those fields).
+/// acceleration of 0.5 (value30 and value34 are those fields). Called through
+/// ObjectDispatch_StartCameraFar by the field scene's actors, the Psynergy
+/// camera and the Colosso and Kolima Forest scenes.
 void ObjectDispatch_StartCamera(struct DispatchObject *object,
                                 s32 linkedObjectHandle) {
   ObjectDispatch_Initialize(object, gObjectDispatch_CameraScript);
@@ -442,6 +488,9 @@ void ObjectDispatch_StartCamera(struct DispatchObject *object,
 }
 
 /// Waits until the object's script reaches SC_END (0x10), at most 300 frames.
+/// Called through ObjectDispatch_WaitForValue16Far by the Psynergy actor
+/// commands and by scenes that wait for a scripted move (Colosso, Venus
+/// Lighthouse, Vale).
 void ObjectDispatch_WaitForValue16(void *rawObject) {
   struct ScriptInterpreter *interpreter = rawObject;
   s32 waitedFrames;
@@ -467,6 +516,8 @@ void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *object,
 }
 
 /// Sets the OAM blend mode of a one-sprite object's sprite.
+/// This one and the next two test the whole kind byte, not its low four
+/// bits, so an object with high kind bits set is left alone.
 void ObjectDispatch_SetChildBlendMode(struct DispatchObject *object, u32 mode) {
   if (object != 0 && object->kind == 1) {
     struct AnimationObject *sprite = object->target.child;
@@ -492,7 +543,10 @@ void Animation_ApplyChildValues(struct DispatchObject *object, u32 param) {
 }
 
 /// Suspends the object camera updates, starts the palette back to normal and,
-/// a frame later, shows BG0 and the sprites with BG1-3 hidden.
+/// a frame later, shows BG0 and the sprites with BG1-3 hidden. Called through
+/// Graphics_EnableObjLayerAndCallbacksFar by scenes (Colosso, the Tolbi
+/// ship, Vale, Venus Lighthouse), which pair it with
+/// ObjectDispatch_StopCallbacksAndHideLayers.
 void Graphics_EnableObjLayerAndCallbacks(void) {
   Scheduler_SuspendTasks(ObjectSystem_UpdateCamera);
   Scheduler_SuspendTasks(ObjectSystem_UpdateCameraFixed);
@@ -505,6 +559,8 @@ void Graphics_EnableObjLayerAndCallbacks(void) {
 }
 
 /// Resumes the object camera updates and hides BG1-3 and the sprites.
+/// Called through ObjectDispatch_StopCallbacksAndHideLayersFar by the same
+/// scenes except Colosso.
 void ObjectDispatch_StopCallbacksAndHideLayers(void) {
   Scheduler_ResumeTasks(ObjectSystem_UpdateCamera);
   Scheduler_ResumeTasks(ObjectSystem_UpdateCameraFixed);

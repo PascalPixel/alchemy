@@ -32,7 +32,10 @@
 #include "fx_scene.h"
 #include "songs.h"
 
-// Edition-specific text and window layout values.
+// Edition-specific text and window layout values: outside Japanese the item
+// browser's details window is 28 tiles wide rather than 13, and its
+// MsgItemPlainName line is drawn as tiles (UiText_DrawCharacterAtOffset)
+// rather than into the window's canvas (UiText_DrawResource).
 #if TBS_PATCH_1
 #define ITEM_DEBUG_DETAILS_WIDTH 28
 #define ITEM_DEBUG_DRAW_ITEM_NAME UiText_DrawCharacterAtOffset
@@ -41,13 +44,14 @@
 #define ITEM_DEBUG_DRAW_ITEM_NAME UiText_DrawResource
 #endif
 
-#define ITEM_COUNT 270
-#define ABILITY_COUNT 270
-#define BROWSER_ROW_STEP 10
-#define BROWSER_PAGE_STEP 30
+#define ITEM_COUNT 270      ///< The browser's item numbers, 0 to 269, wrapping.
+#define ABILITY_COUNT 270   ///< The ability browser's numbers, 0 to 269.
+#define BROWSER_ROW_STEP 10 ///< Right and Left move ten numbers.
+#define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
 
 u8 *ItemLevel_GetEntrances(void) { return (u8 *)gItemLevelEntrances; }
 
+/// The room has no exit regions: its regions entry returns none.
 s32 SceneData_ReturnZero(void) { return 0; }
 
 u8 *ItemLevel_GetExits(void) { return (u8 *)gItemLevelExits; }
@@ -56,14 +60,18 @@ u8 *ItemLevel_GetPlacements(void) { return (u8 *)gItemLevelPlacements; }
 
 #if TBS_PATCH_1
 /// Sets the test message before displaying the first emote on actor 13.
-/// The emote's actual type remains unnamed.
+/// Talking to actor 13. 0x102 is bubble animation 2 in front of the actor
+/// (EMOTE_IN_FRONT); it stays a literal because what bubble animation 2 shows
+/// is not known.
 static void ItemLevel_ShowMessageThenEmote(void) {
   Engine_EventSetMessage(MsgDebugWontStopYou);
   Actor_ShowEmote(13, 0x102, 0);
   Engine_EventShowMessage(13, 0);
 }
 
-/// Displays the other test emote before setting actor 13's message.
+/// Displays the other test emote before setting actor 13's message: bubble
+/// animation 5 in front (0x105). Talking to actor 14, though the emote and
+/// the message are actor 13's.
 static void ItemLevel_ShowEmoteThenMessage(void) {
   Actor_ShowEmote(13, 0x105, 0);
   Engine_EventSetMessage(MsgDebugWontStopYou);
@@ -81,7 +89,8 @@ static void ItemLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
   UnitCalc(ownerId);
 }
 
-/// Applies the level change to the owners returned by the active-party service.
+/// Applies the level change to the owners returned by the active-party service
+/// (FieldParty_ListActiveOwners): every member of the party.
 static void ItemLevel_AdjustPartyLevels(s32 amount) {
   u16 ownerIds[16];
   u16 *owner;
@@ -99,7 +108,10 @@ static void ItemLevel_AdjustPartyLevels(s32 amount) {
 }
 
 /// Displays the selected owner's level and changes all active owners.
-/// B closes the window and recalculates the original four heroes.
+/// B closes the window and recalculates the original four heroes. Talking to
+/// actor 11: under `Raise everyone's level.` it shows the leader's name and
+/// level; Start or Select raises the whole party five levels with fanfare
+/// MUS_093, A one level with MUS_091.
 static void ItemLevel_RunLevelEditor(void) {
   struct BattleUnit *unit;
   struct UiWindow *window;
@@ -156,6 +168,10 @@ static void ItemLevel_RunLevelEditor(void) {
 }
 
 /// Browses nonempty item definitions and gives the selected item to the party.
+/// Talking to actor 8. Up and Down step one number, Right and Left ten, R and
+/// L thirty, passing over numbers whose item has no icon; A gives the item to
+/// the first member with room (SE_175), and B, or A with every bag full,
+/// closes the browser.
 static void ItemLevel_SelectItem(void) {
   // Preserve independent key tests and the direction-specific empty-icon scans.
   // Ordinary while scans grow the native function from 0x29c to 0x2a0; retain
@@ -175,7 +191,10 @@ static void ItemLevel_SelectItem(void) {
   redraw = 1;
   window = UiWindow_Create(0, 0, 30, 7, 2);
   details = UiWindow_Create(0, 8, ITEM_DEBUG_DETAILS_WIDTH, 10, 2);
-  // Copy the existing sprite palette into the debug window palettes.
+  // Copy the existing sprite palette into the debug window palettes: sprite
+  // palette 0 into BG palette 14, then BG palette 15's colour 4 over BG
+  // palette 14's colour 14, as the battle background does for BG palette 5.
+  // XXX: which layer draws with palette 14 here would say why.
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
           DMA_ENABLE << 16 | 0x10, REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(14, 14),
@@ -184,6 +203,7 @@ static void ItemLevel_SelectItem(void) {
   while (1) {
     if (redraw) {
       redraw = 0;
+      // Wrap the number into 0 to 269 (a step back from 0 is 269).
       selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
       RenderOutput_RedrawSavedRect(window);
       Engine_DebugClearWindow(window);
@@ -250,7 +270,8 @@ static void ItemLevel_SelectItem(void) {
       redraw = 1;
       Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
-    // Skip definitions with no icon/availability byte in the chosen direction.
+    // Skip definitions with no icon/availability byte in the chosen direction:
+    // for an item, its definition's icon.
     if (seekDirection == -1) {
       selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
       goto check_back;
@@ -280,7 +301,9 @@ static void ItemLevel_SelectItem(void) {
 
 #if TBS_PATCH_1
 /// Browses ability names and descriptions, skipping unavailable entries. B
-/// closes the sole window created by this browser.
+/// closes the sole window created by this browser. Talking to actor 12 in
+/// English and German; in French, Spanish and Italian the room keeps the
+/// function and the actor but no event, and moves the actor to x 80.
 UNUSED static void ItemLevel_SelectAbility(void) {
   // Ordinary while scans grow the native function from 0x248 to 0x260; retain
   // the original polling edges.
@@ -362,7 +385,8 @@ UNUSED static void ItemLevel_SelectAbility(void) {
       redraw = 1;
       Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
     }
-    // Skip definitions with no icon/availability byte in the chosen direction.
+    // Skip definitions with no icon/availability byte in the chosen direction:
+    // byte 4 of an ability is the icon the menus draw (BattleAct).
     if (seekDirection == -1) {
       selectedAbilityId = (selectedAbilityId + ABILITY_COUNT) % entryCount;
       goto check_back;
@@ -403,7 +427,11 @@ UNUSED static void ItemLevel_RequestExit(void) {
 }
 
 /// Starts the window transition and edition-specific actor scale/animation
-/// setup. Returns zero through the exported scene entry.
+/// setup. Returns zero through the exported scene entry. The room's
+/// initialize entry, which Field_RunScene runs on entry and whose result it
+/// ignores: the level editor, actor 11, is drawn 1.6 times its size (1.7 in
+/// Japanese; 16.16 scales), and outside Japanese actors 13 and 14 start
+/// animations 5 and 2.
 s32 FieldScene_RunEntrySetup(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   gEventWork->transitionFrames = 24;
@@ -421,6 +449,9 @@ s32 FieldScene_RunEntrySetup(void) {
 
 #if !TBS_PATCH_1
 /// Runs the Japanese animation test, then moves actor 11 to its test position.
+/// Force cast at actor 10: actor 10 takes animation 2 (ANIM_WALK) and actor
+/// 11 animation 4 (ANIM_SHAKE_HEAD); once actor 10's animation has changed,
+/// actor 11 moves to (312, 416).
 static void ItemLevel_RunMotionTest(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(10, 2);
@@ -432,7 +463,8 @@ static void ItemLevel_RunMotionTest(void) {
 #endif
 
 #if TBS_PATCH_1
-/// Displays the three character-set caption rows in a debug window.
+/// Displays the three character-set caption rows in a debug window. Force cast
+/// at actor 10, outside Japanese. The window is left open.
 static void ItemLevel_ShowGlyphCaptions(void) {
   struct UiWindow *window;
   /* FAKEMATCH(dead): an unread text buffer for the frame's 32 bytes; as no
@@ -446,16 +478,21 @@ static void ItemLevel_ShowGlyphCaptions(void) {
 }
 #endif
 
+/// Keeps Force from moving actor 10: run at phase 1 of Force cast at it, this
+/// sets the effect's childMode, and Force's shot then leaves its target where
+/// it is (object/psynergy_effects/force.c).
 static void ItemLevel_EnableEffectChildMode(void) {
   struct BattleFxScene *effect = (struct BattleFxScene *)gEffectWork;
 
   effect->childMode = 1;
 }
 
-/// Returns the icon browser's status to the event dispatcher.
+/// Returns the icon browser's status to the event dispatcher. Talking to
+/// actor 9.
 static int ItemLevel_OpenIconBrowser(void) { return DebugMenu_BrowseIcons(); }
 
-/// Returns the entry-glyph browser's status to the event dispatcher.
+/// Returns the entry-glyph browser's status to the event dispatcher. Talking
+/// to actor 10.
 static int ItemLevel_OpenGlyphBrowser(void) {
   return DebugMenu_BrowseEntryGlyphs();
 }
@@ -477,6 +514,7 @@ char gItemLevelPsyHelp[12] = "B:Return";
 #endif
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
+/// The glyph captions' first row; it has no I.
 char gItemLevelGlyphsUpper[28] = "A B C D E F G H J K L M N O";
 #endif
 
@@ -493,10 +531,15 @@ struct SceneEntrance gItemLevelEntrances[] = {
     {SCENE_TABLE_END},
 };
 
+/// No exits: 511 is SCENE_EXITS_END's value.
 u32 gItemLevelExits[] = {
     SCENE_EXITS(511),
 };
 
+/// The room's actors, numbered from 8 in this order: 8 the item browser, 9
+/// the icon browser, 10 the glyph browser and the Force tests, 11 the level
+/// editor; outside Japanese 12 the ability browser (English and German only)
+/// and 13 and 14 the emote tests (gItemLevelEvents).
 // clang-format off
 struct ScenePlacement gItemLevelPlacements[] = {
     {0x1f4, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(792), 0, PIXELS(864), FACING_SOUTHEAST,

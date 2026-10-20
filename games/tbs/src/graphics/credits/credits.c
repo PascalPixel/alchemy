@@ -41,17 +41,23 @@
 #define CREDITS_VISIBLE_ROWS 16
 #define CREDITS_COLUMNS 6
 #define CREDITS_RING_ROWS 32
-#define CREDITS_LINE_TILES 24
+#define CREDITS_LINE_TILES 24 ///< A line's 4bpp tiles, 192 / 8.
 #define CREDITS_RING_TILES (CREDITS_RING_ROWS * CREDITS_LINE_TILES)
 #define CREDITS_RING_BYTES (CREDITS_RING_TILES * TILE_SIZE_4BPP)
+/// A line's raster: nine rows of 256 one-byte pixels, the ninth for the
+/// shadow below the eighth.
 #define CREDITS_BUFFER_BYTES 0x900
 #define CREDITS_RASTER_STRIDE 256
+/// The heap slot the backdrop decoder is copied into for each load.
 #define CREDITS_DECODER_HEAP_SLOT 49
+/// OAM entries 0 to 23: the opaque strips above and below the text.
 #define CREDITS_BORDER_SPRITES 24
+/// The whole OAM: the borders, 96 text sprites and 8 parked off screen.
 #define CREDITS_OAM_ENTRIES 128
 
 /// Fills 30 KB of 256-color tiles with color 1 and clears 128 palette colors.
-/// Called by the credits slideshow before loading a backdrop into a half.
+/// Called by the credits slideshow before loading a backdrop into a half. The
+/// 30 KB are a backdrop's 480 tiles, 256 by 120 pixels.
 /// @param alternate 0 selects the first half (VRAM 0x06000000, palette 0-127).
 ///      1 selects the second half (VRAM 0x06008000, palette 128-255, fill 129).
 void Graphics_ClearCharacterBlockAndPalette(s32 alternate) {
@@ -118,7 +124,11 @@ const u32 gDisplayScroll_SlideResources[] = {
 
 /// Loads a credits backdrop into one of the two tile/palette halves. A zero
 /// resource clears that half; the second half offsets its palette indices.
-/// Called by DisplayScroll_RunSlideshow for each picture.
+/// Called by DisplayScroll_RunSlideshow for each picture. A backdrop resource
+/// is its 128 colours (256 bytes) and then its packed tiles. The decoder
+/// runs from a copy in heap slot CREDITS_DECODER_HEAP_SLOT, released before
+/// returning; the colours reach palette RAM at the next VBlank, through the
+/// I/O write queue.
 void Graphics_LoadCharacterBlockAndPalette(u32 resourceId, s32 alternate) {
   const u8 *resourceData;
   u32 paletteDestination;
@@ -155,7 +165,11 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resourceId, s32 alternate) {
 
 /// Builds the 512 tilemap words surrounding a sliding credits backdrop:
 /// blank margins, 240 consecutive tile pairs, then a zero-filled tail.
-/// Called by DisplayScroll_RunSlideshow.
+/// Called by DisplayScroll_RunSlideshow. In 32-tile rows: two rows of tile
+/// 511, the picture's tiles 0 to 479 in fifteen rows, three rows of tile 511
+/// (160 pixels in all, the screen), then twelve rows of zeros below it. Each
+/// map follows its picture's 30 KB of tiles in the same 32 KB, so tile 511 is
+/// the map's own last 64 bytes, which the zeros keep transparent.
 void DisplayScroll_BuildHblankWordTable(u32 *destination) {
   s32 remaining;
   u32 blankTiles = 0x01FF01FF;
@@ -187,7 +201,10 @@ void DisplayScroll_BuildHblankWordTable(u32 *destination) {
 }
 
 /// A VBlank task of the credits slideshow: drifts both backdrops together,
-/// keeping their horizontal offsets aligned throughout the crossfade.
+/// keeping their horizontal offsets aligned throughout the crossfade. Each
+/// fourth frame both scrolls fall by one (adding 0xffff to the 16-bit
+/// value), moving the pictures a pixel right; a picture is as wide as its
+/// map, 256 pixels, so it wraps without a seam.
 void DisplayScroll_StepPositionEveryFourFrames(void) {
   if ((gFrameTick & 3) == 0) {
     u32 decrement = 0xffff;
@@ -200,7 +217,12 @@ void DisplayScroll_StepPositionEveryFourFrames(void) {
 /// Crossfades the credits backdrop sequence through alternating tile banks
 /// while the staff names scroll over it, then restores the display for the
 /// following screen. Reached through the scroll far-call table at the end of
-/// the game.
+/// the game: Title_Run calls it as ScrollFar_Entry00 at the title scene's
+/// entrance 9, MUS_067 playing, before the clear screen. Its waits come to
+/// 11223 frames, about 3 minutes 8 seconds, besides the loads: a 300-frame
+/// lead, then 33 slides of a 64-frame fade and a 267-frame hold, the last a
+/// fade to black. Returns 0 with BG2, BG3 and blending off and the OAM copy
+/// back on; the three tasks it schedules are still scheduled.
 s32 DisplayScroll_RunSlideshow(void) {
   u32 slide;
   s32 alpha;
@@ -240,6 +262,8 @@ s32 DisplayScroll_RunSlideshow(void) {
        slide++) {
     Graphics_LoadCharacterBlockAndPalette(gDisplayScroll_SlideResources[slide],
                                           (slide & 1) ^ 1);
+    // Fade the new half in: an even slide went to BG2, the first target
+    // (BLDALPHA bits 4..0), an odd one to BG3, the second (bits 12..8).
     // The two weights are written out, bottom first: through BLEND_ALPHA
     // the operands swap and the crossfade's registers change.
     for (alpha = 1; alpha <= 16; alpha++) {
@@ -273,6 +297,10 @@ extern u16 gFlash_Handler3;
 // ewram.s reserves four bytes for each cell. The credits replace the task table
 // and borrow them while flash operations are inactive: a sprite-buffer pointer,
 // the last rendered pixel position, and a zero/-1 end-of-text latch.
+// Borrowing them is harmless because the flash library sets them again before
+// it reads them: IdentifyFlash, which SaveState_InitializeWorkspace runs before
+// each use of the save, writes gFlash, gFlash_Handler0 and gFlash_Handler3, and
+// each program routine sets gFlashNumRemainingBytes.
 // UB: the native casts alias the flash declarations and store a pointer through
 // a declared u16. UBFIX gives these assembler-backed cells their credits views.
 #ifdef UBFIX
@@ -308,7 +336,9 @@ static const u8 sBlankCreditLine[] = "";
 #define CREDITS_ARTWORK_LABEL "Artwork"
 #endif
 
-/// Credits text, one row per line, terminated by 0.
+/// Credits text, one row per line, terminated by 0. A line is 8 pixels of
+/// scroll, 32 frames; the text is drawn with gDisplayScroll_Font, ASCII 0x20
+/// to 0x7f.
 // clang-format off
 const void *gDisplayScroll_LineTable[] = {
     sBlankCreditLine,
@@ -938,6 +968,8 @@ void DisplayScroll_UpdateObjects(void) {
   u32 *oamWords = (u32 *)(SCROLL_OBJECTS + CREDITS_BORDER_SPRITES);
   s32 row;
 
+  // Sixteen rows of six 32x8 sprites from y 16 and x 24, raised by the
+  // scroll within a line, showing the ring from the line at the top.
   for (row = 0; row < CREDITS_VISIBLE_ROWS; row++) {
     s32 column;
 
@@ -962,6 +994,8 @@ void DisplayScroll_RenderEnteringLine(void) {
   u32 scrollPosition;
   s32 lineIndex;
 
+  // A line is 8 pixels, so a new one is drawn each time the scroll crosses
+  // into the next line, every 32 frames.
   if (CREDITS_END_OF_TEXT == 0) {
     scrollPosition = gFlash_Handler3;
     if ((s16)gFlash_Handler3 / 8 != CREDITS_LAST_LINE_POSITION / 8) {
@@ -979,7 +1013,9 @@ void DisplayScroll_RenderEnteringLine(void) {
 /// Allocates the credits sprites, builds the blank border and text rows,
 /// clears the tile ring and schedules scrolling and line rendering. Called by
 /// DisplayScroll_RunSlideshow; the credits keep their state in borrowed
-/// flash-library cells (see the graphics README).
+/// flash-library cells (see the graphics README). The 1 KB sprite buffer
+/// comes from the alternate bump pool and is never freed; each line buffer
+/// is taken from the pool after it and given back.
 void DisplayScroll_InitObjectTable(void) {
   // Sharing the three border-strip loops through an ordinary inline helper
   // changes registers at the same 0x178-byte native English extent.
@@ -997,11 +1033,16 @@ void DisplayScroll_InitObjectTable(void) {
                  0x100);
 
   // OAM attributes 0 and 1 share the first word; attribute 2 is the second.
+  // Here row counts the sprites across, 32 pixels apart (row << 21 is x).
+  // The top strip: eight 32x16 sprites over y 0 to 15. Coming first in OAM,
+  // the strips are drawn over the text.
   oamWords = (u32 *)SCROLL_OBJECTS;
   for (row = 0; row < 8; row++) {
     *oamWords++ = (row << 21) | 0x80004000;
     *oamWords++ = CREDITS_RING_TILES;
   }
+  // The bottom strip: eight 32x16 sprites at y 136 and eight 32x8 at y 152,
+  // over y 136 to 159.
   for (row = 0; row < 8; row++) {
     *oamWords++ = (row << 21) | 0x80004088;
     *oamWords++ = CREDITS_RING_TILES;
@@ -1010,6 +1051,8 @@ void DisplayScroll_InitObjectTable(void) {
     *oamWords++ = (row << 21) | 0x40004098;
     *oamWords++ = CREDITS_RING_TILES;
   }
+  // The text sprites, as DisplayScroll_UpdateObjects rebuilds them each
+  // VBlank.
   for (row = 0; row < CREDITS_VISIBLE_ROWS; row++) {
     for (column = 0; column < CREDITS_COLUMNS; column++) {
       u32 tileIndex = (row * 3) * 8 + column * 4;
@@ -1017,6 +1060,7 @@ void DisplayScroll_InitObjectTable(void) {
       *oamWords++ = tileIndex;
     }
   }
+  // The last eight entries are parked off screen at (192, 192).
   for (row = 0; row < 8; row++) {
     *oamWords++ = 0x00c000c0;
     *oamWords++ = CREDITS_RING_TILES;
@@ -1037,7 +1081,9 @@ void DisplayScroll_InitObjectTable(void) {
 /// Rasterizes its glyphs and shadow, packs 4-bit pixels and uploads 24 tiles
 /// beginning at firstTile. Called by the line-rendering task and, for the blank
 /// rows, by DisplayScroll_InitObjectTable. Returns -1 at the null end marker,
-/// otherwise zero.
+/// otherwise zero. alignment 1 centres, 2 right-aligns and any other value
+/// left-aligns; every caller passes 1. The glyphs are colour 15 with a colour
+/// 1 shadow a pixel down and right.
 s32 DisplayScroll_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   u8 *linePixels = Runtime_BumpAllocateAlternatePool(CREDITS_BUFFER_BYTES);
   s32 startX = 0;
@@ -1070,6 +1116,10 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   }
   // The ninth raster row holds the shadow below this line. Carry it into
   // the next line before clearing the rest of the reused scratch buffer.
+  // The buffer comes back at the same address each call (MemFree rewinds the
+  // pool), so the last line's ninth row is still there. FLAG_SCENE_TEMP_00,
+  // here a line has been drawn, is clear on entering the scene
+  // (Scene_ResetFlagsOnEnter), so the first line starts from a clean buffer.
   if (!GameFlag_TestFar(FLAG_SCENE_TEMP_00)) {
     Iwram_FillWords(linePixels, CREDITS_BUFFER_BYTES, 0);
     GameFlag_SetBitFar(FLAG_SCENE_TEMP_00);

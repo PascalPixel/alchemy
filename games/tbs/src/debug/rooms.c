@@ -19,15 +19,21 @@
 
 u8 *TestRooms_GetEntrances(void) { return (u8 *)gTestRooms_Entrances; }
 
+/// The room has no exit regions: its regions entry returns none.
 s32 SceneData_ReturnZero(void) { return 0; }
 
 u8 *TestRooms_GetExits(void) { return (u8 *)gTestRooms_Exits; }
 
-/// Places one Djinni of each element in the test room.
+/// Places one Djinni of each element in the test room: actors 8 to 11,
+/// Flint, Fizz, Forge and Gust, each placed while its caught flag (the
+/// placement's condition) is clear.
 u8 *TestRooms_GetPlacements(void) { return (u8 *)gTestRooms_Placements; }
 
 /// Grants the first Djinni of an element, then clears its found flag for
-/// testing.
+/// testing. Djinn_JoinParty plays the element's capture effect on the actor,
+/// frees its slot and gives Djinni 0 of the element to the member with the
+/// fewest Djinn; clearing the flag the placement tests lets the room place
+/// the Djinni again on the next entry.
 static __inline__ void TestRooms_GiveDjinniForTesting(s32 actorId,
                                                       s32 element) {
   Djinn_JoinParty(actorId, element, 0);
@@ -50,11 +56,17 @@ static void TestRooms_ReceiveGust(void) {
   TestRooms_GiveDjinniForTesting(11, ELEMENT_JUPITER);
 }
 
-/// Bind each Djinni actor to its test grant callback.
+/// The room's events: talking to Djinni actor 8, 9, 10 or 11 gives that
+/// Djinni.
 u8 *TestRooms_GetEvents(void) { return (u8 *)gTestRooms_Events; }
 
+/// The room's initialize entry, which Field_RunScene runs on entry: nothing
+/// to set up.
 s32 Scene_RunEmptyScene(void) { return 0; }
 
+/// Eight rows of seven words that nothing reads by name; the menu test room
+/// keeps the same 56 words (gDebugItemPromptHead, test.c). XXX: what they
+/// hold is not known; a reader of them, or their source, would say.
 u32 gTestRooms_EntrancesHead[] = {
     0x500050, 0, 80,  0x500000, 0x10003, 2, 0,
     0x780078, 0, 120, 0x780000, 0x10003, 2, 0,

@@ -9,7 +9,10 @@ extern FlashWaitProc gFlash_Handler3;
 
 u16 _call_via_r3(s32 mode, u8 *address, u8 expected, FlashWaitProc wait);
 
-/// Issues the chip-erase command and waits for an erased byte.
+/// Issues the chip-erase command and waits for an erased byte. Returns 0, or
+/// 0xc003 when byte 0 has not read 0xff within the chip-erase time. The
+/// erase-chip routine (gFlash_Handler1) of every chip but Atmel; nothing in
+/// ☀️ calls through that cell.
 u16 EraseFlashChip(void) {
   u8 savedCode[64];
   u16 result;
@@ -35,7 +38,11 @@ u16 EraseFlashChip(void) {
 }
 
 /// Erases one of sixteen sectors, restoring the cartridge wait setting
-/// afterward.
+/// afterward: the chip's own SRAM wait while erasing, 3 after. Returns 0,
+/// 0x80ff for a sector above 15, or 0xc002 when the sector's first byte has
+/// not read 0xff within the sector-erase time. The erase-sector routine
+/// (gEraseFlashSector) of every chip but Atmel, and the first step of
+/// ProgramFlashSector and ProgramFlashSectorWithEraseRetry.
 u16 EraseFlashSector(u16 sector) {
   u8 savedCode[64];
   u16 result;
@@ -78,6 +85,8 @@ u16 EraseFlashSector(u16 sector) {
 }
 
 /// Issues a byte-program command and waits for its destination to match.
+/// Returns 0, or 0xc001 when the byte does not read back in time. The caller
+/// sets the wait state and the RAM byte reader first.
 u16 ProgramFlashByte(u8 *source, u8 *destination) {
   FlashWaitProc *wait;
 
@@ -91,7 +100,12 @@ u16 ProgramFlashByte(u8 *source, u8 *destination) {
 
 extern u16 gFlashNumRemainingBytes;
 
-/// Erases and verifies a sector with retries, then programs its bytes.
+/// Erases and verifies a sector with retries, then programs its bytes. The
+/// program routine (gFlash_Handler0) of the SST and unknown chips, which
+/// SaveState_WriteWorkspaceSlot calls with 4 KB at `source`. Returns 0,
+/// 0x80ff for a sector above 15, the last erase or check error after 81
+/// failed tries (0x8004 for a sector that would not read blank), or 0xc001
+/// for the first byte that did not read back in time.
 u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
   u8 ramCode[96];
   u16 status;
@@ -113,6 +127,8 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
 
   destination = (u8 *)((sector << gFlash->sector.shift) + 0x0E000000);
 
+  // Run the blank check from a copy in ramCode; the byte reader replaces it
+  // there once the sector is blank.
   sourceCode = (u16 *)((s32)CountRemainingErasedFlashBytes ^ 1);
   destinationCode = (u16 *)ramCode;
   remaining =
@@ -140,7 +156,10 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
     }
   }
 
-  // A previously failed erase receives six more conditioning erases.
+  // A previously failed erase receives six more conditioning erases; one that
+  // was blank at once receives one. XXX: why a sector that already reads
+  // blank is erased again is not known; the SST chip's published erase
+  // procedure would say.
   rounds = 1;
   if (attempt != 0) {
     rounds = 6;
@@ -176,7 +195,9 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
   return status;
 }
 
-/// Returns how many bytes remain when the first non-erased byte is found.
+/// Returns how many bytes remain when the first non-erased byte is found: 0
+/// when the sector at cursor reads 0xff throughout. Runs from a RAM copy
+/// (ProgramFlashSectorWithEraseRetry).
 s32 CountRemainingErasedFlashBytes(u8 *cursor) {
   s32 remaining;
 
@@ -187,7 +208,8 @@ s32 CountRemainingErasedFlashBytes(u8 *cursor) {
   return remaining;
 }
 
-/// Converts a nonzero erased-byte remainder into the flash verification error.
+/// Converts a nonzero erased-byte remainder into the flash verification error:
+/// returns 0 when `verify` finds the sector blank, else 0x8004.
 s32 RunFlashEraseVerifier(u8 *sector, s32 (*verify)(u8 *)) {
   if (verify(sector) != 0)
     return 0x8004;

@@ -60,7 +60,12 @@ void MusicTrack_SetVoicePanOrSweep(struct SoundPlayer *player,
                                    struct SoundTrack *track);
 void Runtime_CallWorkEntryWithArgs();
 
-/// Sequence commands copied for each player, and driver entry points.
+/// The command table AudioEngine_Initialize copies into gSound_CommandTable
+/// (Sound_LoadCommandTable, 36 entries): entries 0 to 29 run song bytes 0xB1
+/// to 0xCE and 30 to 35 are the driver's helpers (SOUND_COMMAND_ in
+/// audio_engine_types.h); a byte with nothing to do ends the track.
+/// CgbAudio_Initialize writes nine entries again, of which only 8 (the
+/// work-byte command) and 28 (the extended command) differ from these.
 // clang-format off
 const SoundFunc gSound_CommandTableTemplate[] = {
     MusicTrack_FinishSequence,
@@ -101,7 +106,9 @@ const SoundFunc gSound_CommandTableTemplate[] = {
     SoundDriver_ClearBuffer
 };
 
-/// PCM pitches: the high four bits hold the octave, the low four the note.
+/// Each PCM key's code, keys 0 to 179 (Pcm_KeyToFrequency): the low four bits
+/// pick its semitone in gSound_PcmFrequencySteps, the high four bits how many
+/// octaves to shift that down, 14 for key 0, 9 for key 60 and 0 for key 168.
 const u8 gSound_PcmPitchCodes[] = {
     0xe0, 0xe1, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9, 0xea, 0xeb,
     0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd6, 0xd7, 0xd8, 0xd9, 0xda, 0xdb,
@@ -120,19 +127,24 @@ const u8 gSound_PcmPitchCodes[] = {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b
 };
 
-/// Frequencies by note at octave zero, in 32-bit fixed point.
+/// The top octave's step for each semitone n, 2^31 times 2^(n / 12)
+/// (0xb504f334 is 2^31 times the square root of 2).
 const u32 gSound_PcmFrequencySteps[] = {
     0x80000000, 0x879c7c97, 0x8facd61e, 0x9837f052,
     0xa14517cc, 0xaadc0848, 0xb504f334, 0xbfc886bb,
     0xcb2ff52a, 0xd744fccb, 0xe411f03a, 0xf1a1bf39
 };
 
-/// Samples per frame for each playback frequency setting.
+/// Samples mixed a frame for frame lengths 1 to 12 (mode bits 19..16,
+/// SoundWork.rate); each, times 59.7275, is its sample rate, 5734 to 42048 a
+/// second. The game plays at 7, 352 samples (AUDIO_INITIAL_MODE).
 const u16 gSound_FrameLengths[] = {
     96, 132, 176, 224, 264, 304, 352, 448, 528, 608, 672, 704
 };
 
-/// CGB channel pitches.
+/// Each tone key's code, keys 36 to 167 (Cgb_KeyToFrequency): the low four
+/// bits pick its semitone in gSound_CgbFrequencySteps, the high four bits how
+/// many octaves to halve that period.
 const u8 gSound_CgbPitchCodes[] = {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b,
@@ -147,12 +159,14 @@ const u8 gSound_CgbPitchCodes[] = {
     0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xab
 };
 
-/// Frequencies by note for CGB channels.
+/// The negative period of each semitone of the lowest octave, from key 36;
+/// adding 2048 gives the tone channels' frequency value.
 const s16 gSound_CgbFrequencySteps[] = {
     -2004, -1891, -1785, -1685, -1591, -1501, -1417, -1337, -1262, -1192, -1125, -1062
 };
 
-/// Noise channel pitches.
+/// The NR43 value for each noise key, 21 to 80 (Cgb_KeyToFrequency); bit 3,
+/// the counter width, comes from the voice instead (Cgb_UpdateChannels).
 const u8 gSound_NoisePitchCodes[] = {
     0xd7, 0xd6, 0xd5, 0xd4, 0xc7, 0xc6, 0xc5, 0xc4, 0xb7, 0xb6, 0xb5, 0xb4,
     0xa7, 0xa6, 0xa5, 0xa4, 0x97, 0x96, 0x95, 0x94, 0x87, 0x86, 0x85, 0x84,
@@ -161,12 +175,15 @@ const u8 gSound_NoisePitchCodes[] = {
     0x17, 0x16, 0x15, 0x14, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00
 };
 
-/// CGB channel 3 waveform volumes.
+/// Channel 3's NR32 volume code for each envelope level 0 to 15. The channel
+/// has five volumes: 0x00 mute, 0x60 a quarter, 0x40 half, 0x80 three
+/// quarters and 0x20 full.
 const u8 gSound_Cgb3LevelCodes[] = {
     0x00, 0x00, 0x60, 0x60, 0x60, 0x60, 0x40, 0x40, 0x40, 0x40, 0x80, 0x80, 0x80, 0x80, 0x20, 0x20
 };
 
-/// Note durations in clock ticks.
+/// The ticks each length code 0 to 48 stands for; the song player
+/// (clear_buffer.s) reads it for the lengths of its waits and notes.
 const u8 gSound_ClockLengths[] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
     16, 17, 18, 19, 20, 21, 22, 23, 24, 28, 30, 32, 36, 40, 42, 44,
@@ -174,7 +191,9 @@ const u8 gSound_ClockLengths[] = {
     96
 };
 
-/// Extended commands; entries zero and three do nothing.
+/// The extended commands, song byte 0xCD and then the index: 1, 2 and 4 to 11
+/// set a field of the track's voice or its note tail, and 0 and 3 end the
+/// track (Runtime_CallWorkEntryWithArgs).
 const SoundCommand gSound_ExtendedCommandTable[] = {
     (SoundCommand)Runtime_CallWorkEntryWithArgs,
     MusicTrack_ReadVoiceTarget,

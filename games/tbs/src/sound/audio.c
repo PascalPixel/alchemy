@@ -8,7 +8,10 @@ extern u8 gSound_PcmPitchCodes[];
 extern u32 gSound_PcmFrequencySteps[];
 
 /// Interpolates adjacent key frequencies and scales them by the wave sample
-/// frequency. Called by the song player for each PCM note.
+/// frequency. Called by the song player for each PCM note. Returns the wave's
+/// frequency word (offset 4) times 2^((key - 60) / 12) / 1024, with `pitch`
+/// (0 to 255) moving it in a straight line towards the next key; keys above
+/// 178 play key 178 at pitch 255.
 s32 Pcm_KeyToFrequency(void *wave, u8 key, u8 pitch) {
   u32 keyIndex;
   u32 pitchScale;
@@ -22,6 +25,8 @@ s32 Pcm_KeyToFrequency(void *wave, u8 key, u8 pitch) {
     pitchScale = 255U << 24;
   }
 
+  // A key's code: the low four bits pick the semitone's step (2^31 times
+  // 2^(n / 12)), the high four bits the octaves to shift it down, 9 for key 60.
   lowerFrequency = gSound_PcmPitchCodes[keyIndex];
   lowerFrequency =
       gSound_PcmFrequencySteps[lowerFrequency & 15] >> (lowerFrequency >> 4);
@@ -35,7 +40,8 @@ s32 Pcm_KeyToFrequency(void *wave, u8 key, u8 pitch) {
           Audio_UmulHigh32(upperFrequency - lowerFrequency, pitchScale));
 }
 
-/// Provides the empty callback retained by the sound driver.
+/// Does nothing; nothing in ☀️ refers to it. The driver's empty callback is
+/// Audio_EmptyCallback (empty_callback.c).
 void Audio_NoopStub(void) {}
 
 // The sound data's symbols supply the player count and maximum track count.
@@ -89,7 +95,9 @@ void Audio_ResumePlayer(struct SoundPlayer *player) {
   }
 }
 
-/// Starts a fade under the player lock, resuming the player for fade-ins.
+/// Starts a fade under the player lock, resuming the player for fade-ins:
+/// MusicPlayer_StepFade moves the level 16 of 0x100 every `period` frames, so
+/// a whole fade takes 16 * period frames.
 static __inline__ void MusicPlayer_SetFadeParameters(struct SoundPlayer *player,
                                                      u16 period, u16 volume) {
   if (player->lock == SOUND_LOCK) {
@@ -135,10 +143,15 @@ void Audio_Initialize(void) {
   }
 }
 
+/// Runs one frame of the sound driver (AudioEngine_RunMixerTick,
+/// MusicPlayer2000's SoundMain). Exported first in the sound far-call table
+/// as AudioEngine_RunMixerFar; nothing in ☀️ calls it by that name.
 void AudioEngine_RunMixer(void) { AudioEngine_RunMixerTick(); }
 
 /// Starts the song on the player selected by its song-table entry. Called by
-/// AudioCommand_Play.
+/// AudioCommand_Play for music and fanfares; it starts sound effects (cues
+/// from 100) itself, so that those naming player 7 can take a free player
+/// from 7 down to 4.
 void Audio_PlaySound(u16 songId) {
   const struct PlayerSlot *slots = gSound_PlayerSlots;
   const struct SongEntry *songs = gSound_SongTable;
@@ -268,7 +281,8 @@ UNUSED void MusicPlayer_ResetActiveTracks(struct SoundPlayer *player) {
 
 /// Resets the CGB sound hardware, installs the CGB-aware command handlers and
 /// callbacks in the sound work, and clears the four channel records `notes`.
-/// Called by Audio_Initialize.
+/// Called by Audio_Initialize. The hardware reset happens even when the
+/// driver's lock is held; the rest is then skipped.
 void CgbAudio_Initialize(struct CgbNote *notes) {
   struct SoundWork *work;
   u32 lock;
@@ -314,7 +328,8 @@ void CgbAudio_Initialize(struct CgbNote *notes) {
   work->cgbFrequency = Cgb_KeyToFrequency;
   work->maxLines = SOUND_MAX_LINES;
 
-  // Clear note state, then assign the four hardware routing masks.
+  // Clear note state, then assign the four hardware routing masks: channel
+  // n's NR51 bits, n - 1 for the right speaker and n + 3 for the left.
   {
     u32 zero = 0;
 

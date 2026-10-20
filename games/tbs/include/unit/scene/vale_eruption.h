@@ -4,11 +4,11 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct SceneEntrance *ValeEruption_GetEntrances(void);
-struct SceneRegion *ValeEruption_GetRegions(void);
-u32 *ValeEruption_GetExits(void);
-struct ScenePlacement *ValeEruption_GetPlacements(void);
-struct SceneEvent *ValeEruption_GetEvents(void);
+const struct SceneEntrance *ValeEruption_GetEntrances(void);
+const struct SceneRegion *ValeEruption_GetRegions(void);
+const u32 *ValeEruption_GetExits(void);
+const struct ScenePlacement *ValeEruption_GetPlacements(void);
+const struct SceneEvent *ValeEruption_GetEvents(void);
 s32 ValeEruption_Initialize(void);
 extern s32 gValeEruption_LeaderWalksDown[];
 extern s32 gValeEruption_GaretWalksDown[];

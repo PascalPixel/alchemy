@@ -15,8 +15,8 @@ typedef struct {
 } Struct_Sub;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
-s32 SceneData_ReturnZero(void);
-u8 *SceneData_GetPrimaryTable(void);
+const struct SceneRegion *SceneData_ReturnZero(void);
+const u32 *SceneData_GetPrimaryTable(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
 s32 Scene_RunEntrySetup(void);

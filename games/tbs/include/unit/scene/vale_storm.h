@@ -4,11 +4,11 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct SceneEntrance *ValeStorm_GetEntrances(void);
-struct SceneRegion *ValeStorm_GetRegions(void);
-u32 *ValeStorm_GetExits(void);
-struct ScenePlacement *ValeStorm_GetPlacements(void);
-struct SceneEvent *ValeStorm_GetEvents(void);
+const struct SceneEntrance *ValeStorm_GetEntrances(void);
+const struct SceneRegion *ValeStorm_GetRegions(void);
+const u32 *ValeStorm_GetExits(void);
+const struct ScenePlacement *ValeStorm_GetPlacements(void);
+const struct SceneEvent *ValeStorm_GetEvents(void);
 s32 ValeStorm_Initialize(void);
 extern u8 gValeStorm_FrameModes[];
 extern s32 gValeStorm_ActorTwentyScript[];

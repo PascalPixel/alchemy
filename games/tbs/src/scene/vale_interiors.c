@@ -75,14 +75,14 @@ ValeInteriors_AdvanceDriftingSprite(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-struct SceneEntrance *ValeInteriors_GetEntrances(void) {
+const struct SceneEntrance *ValeInteriors_GetEntrances(void) {
   return gValeInteriors_Entrances;
 }
 
-struct SceneRegion *ValeInteriors_GetRegions(void) { return NULL; }
+const struct SceneRegion *ValeInteriors_GetRegions(void) { return NULL; }
 
 /// On the stormy night, the doors lead out into the storm.
-u32 *ValeInteriors_GetExits(void) {
+const u32 *ValeInteriors_GetExits(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0)
     return gValeInteriors_StormExits;
   return gValeInteriors_Exits;
@@ -91,7 +91,7 @@ u32 *ValeInteriors_GetExits(void) {
 /// Selects the placements for the day the story begins, after the party has
 /// left Vale (FLAG_PARTY_LEFT_VALE), or after Kalay (FLAG_REACHED_KALAY), and
 /// marks which of their actors are in view.
-struct ScenePlacement *ValeInteriors_GetPlacements(void) {
+const struct ScenePlacement *ValeInteriors_GetPlacements(void) {
   struct ScenePlacement *table;
 
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY)) {
@@ -108,7 +108,7 @@ struct ScenePlacement *ValeInteriors_GetPlacements(void) {
 /// Selects the events for the current visit to Vale: the stormy night's
 /// (FLAG_VALE_STORM), after Kalay, after the party has left, or the day the
 /// story begins.
-struct SceneEvent *ValeInteriors_GetEvents(void) {
+const struct SceneEvent *ValeInteriors_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0)
     return gValeInteriors_StormEvents;
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)

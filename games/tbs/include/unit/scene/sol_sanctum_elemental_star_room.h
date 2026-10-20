@@ -4,11 +4,11 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct SceneEntrance *SolSanctumElementalStarRoom_GetEntrances(void);
-struct SceneRegion *SolSanctumElementalStarRoom_GetRegions(void);
-u32 *SolSanctumElementalStarRoom_GetExits(void);
-struct ScenePlacement *SolSanctumElementalStarRoom_GetPlacements(void);
-struct SceneEvent *SolSanctumElementalStarRoom_GetEvents(void);
+const struct SceneEntrance *SolSanctumElementalStarRoom_GetEntrances(void);
+const struct SceneRegion *SolSanctumElementalStarRoom_GetRegions(void);
+const u32 *SolSanctumElementalStarRoom_GetExits(void);
+const struct ScenePlacement *SolSanctumElementalStarRoom_GetPlacements(void);
+const struct SceneEvent *SolSanctumElementalStarRoom_GetEvents(void);
 s32 SolSanctumElementalStarRoom_Initialize(void);
 extern s32 gEffectScript0[];
 extern s32 gEffectScript1[];

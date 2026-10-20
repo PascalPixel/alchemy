@@ -95,14 +95,16 @@ static s32 Sanctum_FaceActorNamedByTimer(union FieldObject *fieldObject) {
 }
 
 /// Returns the entrances shared by all Sanctum visits.
-struct SceneEntrance *Sanctum_GetEntrances(void) { return gSanctum_Entrances; }
+const struct SceneEntrance *Sanctum_GetEntrances(void) {
+  return gSanctum_Entrances;
+}
 
-struct SceneRegion *Sanctum_GetRegions(void) { return NULL; }
+const struct SceneRegion *Sanctum_GetRegions(void) { return NULL; }
 
-u32 *Sanctum_GetExits(void) { return gSanctum_Exits; }
+const u32 *Sanctum_GetExits(void) { return gSanctum_Exits; }
 
 /// Chooses the actors for the current entrance.
-struct ScenePlacement *Sanctum_GetPlacements(void) {
+const struct ScenePlacement *Sanctum_GetPlacements(void) {
   switch (gGameState.entrance) {
   case 1:
   case 2:
@@ -128,7 +130,7 @@ struct ScenePlacement *Sanctum_GetPlacements(void) {
 }
 
 /// Chooses interactions for the entrance and current story flags.
-struct SceneEvent *Sanctum_GetEvents(void) {
+const struct SceneEvent *Sanctum_GetEvents(void) {
   switch (gGameState.entrance) {
   case 10:
   case 12:

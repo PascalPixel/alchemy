@@ -217,7 +217,7 @@ const struct SceneRegion *Scene_GetRegions(void) {
 }
 
 /// The four scenes share one exit table.
-u8 *BabiLighthouse_GetExits(void) { return gBabiLighthouse_Exits; }
+const u32 *BabiLighthouse_GetExits(void) { return gBabiLighthouse_Exits; }
 
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
@@ -1471,9 +1471,11 @@ struct SceneEntrance gBabiLighthouse_EntrancesOther[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gBabiLighthouse_Regions3[] = {
-    96,  -20, 320, 112, -4, 336, -1, 4, 288, -20, 320, 304, -4, 336, -1, 5,
-    304, -20, 96,  320, -4, 112, -1, 6, -1,  0,   0,   0,   0,  0,   0,  0,
+struct SceneRegion gBabiLighthouse_Regions3[] = {
+    {96, -20, 320, 112, -4, 336, CONDITION_ALWAYS, 4},
+    {288, -20, 320, 304, -4, 336, CONDITION_ALWAYS, 5},
+    {304, -20, 96, 320, -4, 112, CONDITION_ALWAYS, 6},
+    {SCENE_TABLE_END},
 };
 
 u32 gBabiLighthouse_Exits[] = {

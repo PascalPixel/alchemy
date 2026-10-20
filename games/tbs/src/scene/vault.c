@@ -116,13 +116,15 @@ static s32 Vault_UpdateRoofComplainerProximity(union FieldObject *fieldObject) {
 #endif
 }
 
-struct SceneEntrance *Scene_GetEntrances(void) { return gVault_Entrances; }
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  return gVault_Entrances;
+}
 
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-u32 *Scene_GetExits(void) { return gVault_Exits; }
+const u32 *Scene_GetExits(void) { return gVault_Exits; }
 
-struct ScenePlacement *Scene_GetPlacements(void) {
+const struct ScenePlacement *Scene_GetPlacements(void) {
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0)
     return gVault_PlacementsAfterThieves;
   return gVault_Placements;
@@ -191,7 +193,7 @@ static void Event_PeerIntoWell(void) {
   Engine_EventEnd();
 }
 
-struct SceneEvent *Scene_GetEvents(void) {
+const struct SceneEvent *Scene_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0)
     return gVault_EventsAfterThieves;
   return gVault_Events;

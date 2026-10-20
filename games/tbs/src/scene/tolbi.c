@@ -132,13 +132,15 @@ static s32 Tolbi_UpdateKid(union FieldObject *fieldObject) {
 #endif
 }
 
-u8 *Tolbi_GetEntrances(void) { return (u8 *)gTolbiEntrances; }
+const struct SceneEntrance *Tolbi_GetEntrances(void) { return gTolbiEntrances; }
 
-s32 Tolbi_GetRegions(void) { return 0; }
+const struct SceneRegion *Tolbi_GetRegions(void) { return 0; }
 
-u8 *Tolbi_GetExits(void) { return (u8 *)gTolbiExits; }
+const u32 *Tolbi_GetExits(void) { return gTolbiExits; }
 
-u8 *Tolbi_GetPlacements(void) { return (u8 *)gTolbiPlacements; }
+const struct ScenePlacement *Tolbi_GetPlacements(void) {
+  return gTolbiPlacements;
+}
 
 /// Growth on the sprout: the grown plant no longer blocks the party, and its
 /// map cell becomes climbable.
@@ -259,14 +261,14 @@ static void Tolbi_TalkToYoungerSibling(void) {
 }
 
 /// Picks the event table for Tolbi's current mood.
-u8 *Tolbi_SelectEvents(void) {
+const struct SceneEvent *Tolbi_SelectEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
-    return (u8 *)gTolbiEventsAfterColosso;
+    return gTolbiEventsAfterColosso;
   }
   if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
-    return (u8 *)gTolbiEventsFinalsDay;
+    return gTolbiEventsFinalsDay;
   }
-  return (u8 *)gTolbiEventsFestival;
+  return gTolbiEventsFestival;
 }
 
 /// A townsperson asks whether someone can live to be more than 100 years old;

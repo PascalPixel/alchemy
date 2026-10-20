@@ -6,11 +6,11 @@
 
 struct FieldActor;
 
-s32 TolbiShipInteriors_SelectEntrances(void);
-s32 TolbiShipInteriors_GetRegions(void);
-s32 TolbiShipInteriors_GetExits(void);
-s32 TolbiShipInteriors_SelectPlacements(void);
-struct SceneEvent *TolbiShipInteriors_SelectEvents(void);
+const struct SceneEntrance *TolbiShipInteriors_SelectEntrances(void);
+const struct SceneRegion *TolbiShipInteriors_GetRegions(void);
+const u32 *TolbiShipInteriors_GetExits(void);
+const struct ScenePlacement *TolbiShipInteriors_SelectPlacements(void);
+const struct SceneEvent *TolbiShipInteriors_SelectEvents(void);
 s32 TolbiShipInteriors_ApplyEntryState(void);
 extern s32 gTolbiShipInteriors_TurnSteps[];
 extern s32 gTolbiShipInteriors_LeaveHold[];

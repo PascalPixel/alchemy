@@ -55,18 +55,20 @@ static inline void TolbiInteriors_AskYesNo(s32 question, s32 speaker) {
   Engine_EventShowMessage(speaker, 0);
 }
 
-u8 *TolbiInteriors_GetEntrances(void) { return gTolbiInteriorsEntrances; }
+const struct SceneEntrance *TolbiInteriors_GetEntrances(void) {
+  return gTolbiInteriorsEntrances;
+}
 
-s32 TolbiInteriors_GetRegions(void) { return 0; }
+const struct SceneRegion *TolbiInteriors_GetRegions(void) { return 0; }
 
-u8 *TolbiInteriors_GetExits(void) { return gTolbiInteriorsExits; }
+const u32 *TolbiInteriors_GetExits(void) { return gTolbiInteriorsExits; }
 
 /// After Colosso the rooms hold a different crowd.
-s32 TolbiInteriors_SelectPlacements(void) {
+const struct ScenePlacement *TolbiInteriors_SelectPlacements(void) {
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
-    return (s32)gTolbiInteriorsPlacementsAfterColosso;
+    return gTolbiInteriorsPlacementsAfterColosso;
   }
-  return (s32)gTolbiInteriorsPlacements;
+  return gTolbiInteriorsPlacements;
 }
 
 #if TBS_PATCH_4
@@ -78,7 +80,7 @@ static void TolbiInteriors_AskWhetherBabiWasMissing(s32 speaker) {
 #endif
 
 /// Picks the event table for the current point in the Colosso story.
-u8 *TolbiInteriors_SelectEvents(void) {
+const struct SceneEvent *TolbiInteriors_SelectEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
     return gTolbiInteriorsEventsAfterColosso;
   }

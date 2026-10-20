@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "field_scene.h"
+#include "field_runtime.h"
 #include "static_assert.h"
 
 struct SceneEvent;
@@ -26,9 +27,9 @@ struct VaultInteriorsStop {
 STATIC_ASSERT(sizeof(struct VaultInteriorsStopConnection) == 4);
 STATIC_ASSERT(sizeof(struct VaultInteriorsStop) == 16);
 
-struct SceneEntrance *Scene_GetEntrances(void);
-s16 *Scene_GetRegions(void);
-u32 *Scene_GetExits(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneRegion *Scene_GetRegions(void);
+const u32 *Scene_GetExits(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
@@ -60,7 +61,7 @@ extern s32 gVaultInteriors_PairScriptP[];
 extern s32 gVaultInteriors_PairScriptQ[];
 extern s32 gVaultInteriors_PairScriptR[];
 extern struct SceneEntrance gVaultInteriors_Entrances[];
-extern s16 gVaultInteriors_Regions[];
+extern struct SceneRegion gVaultInteriors_Regions[];
 extern u32 gVaultInteriors_Exits[];
 extern struct ScenePlacement gVaultInteriors_Placements[];
 extern struct ScenePlacement gVaultInteriors_AtticPlacements[];

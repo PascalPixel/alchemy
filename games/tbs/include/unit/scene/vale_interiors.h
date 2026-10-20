@@ -4,11 +4,11 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct SceneEntrance *ValeInteriors_GetEntrances(void);
-struct SceneRegion *ValeInteriors_GetRegions(void);
-u32 *ValeInteriors_GetExits(void);
-struct ScenePlacement *ValeInteriors_GetPlacements(void);
-struct SceneEvent *ValeInteriors_GetEvents(void);
+const struct SceneEntrance *ValeInteriors_GetEntrances(void);
+const struct SceneRegion *ValeInteriors_GetRegions(void);
+const u32 *ValeInteriors_GetExits(void);
+const struct ScenePlacement *ValeInteriors_GetPlacements(void);
+const struct SceneEvent *ValeInteriors_GetEvents(void);
 s32 ValeInteriors_Initialize(void);
 extern s32 gValeInteriors_FaceTargetScript[];
 extern s32 gValeInteriors_FatherPacingScript[];

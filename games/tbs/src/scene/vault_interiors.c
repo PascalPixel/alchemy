@@ -146,15 +146,17 @@ static void VaultInteriors_EndMindRead(void);
 static void VaultInteriors_UpdateActorStops(void);
 static void VaultInteriors_StartActorStops(void);
 
-struct SceneEntrance *Scene_GetEntrances(void) {
+const struct SceneEntrance *Scene_GetEntrances(void) {
   return gVaultInteriors_Entrances;
 }
 
 /// Returns the one exit region: the box around (648, 416) in the room with the
 /// crate, which takes exit 13 back out to Vault.
-s16 *Scene_GetRegions(void) { return gVaultInteriors_Regions; }
+const struct SceneRegion *Scene_GetRegions(void) {
+  return gVaultInteriors_Regions;
+}
 
-u32 *Scene_GetExits(void) { return gVaultInteriors_Exits; }
+const u32 *Scene_GetExits(void) { return gVaultInteriors_Exits; }
 
 /// Places the townspeople, or, for the inn's loft (entrances 15 to 17), the
 /// roofer, the mayor, the thieves, their crates and the found treasures.
@@ -3616,9 +3618,9 @@ struct SceneEntrance gVaultInteriors_Entrances[] = {
     { SCENE_TABLE_END },
 };
 
-s16 gVaultInteriors_Regions[] = {
-    639, 33, 407, 657, 51, 425, -1, 13,
-    -1, 0, 0, 0, 0, 0, 0, 0,
+struct SceneRegion gVaultInteriors_Regions[] = {
+    {639, 33, 407, 657, 51, 425, CONDITION_ALWAYS, 13},
+    {SCENE_TABLE_END},
 };
 
 u32 gVaultInteriors_Exits[] = {

@@ -108,15 +108,15 @@ enum { ANIM_HAMMER = 11 };
 
 #include "common/object_staged_actor.h"
 
-struct SceneEntrance *Vale_GetEntrances(void) { return gVale_Entrances; }
+const struct SceneEntrance *Vale_GetEntrances(void) { return gVale_Entrances; }
 
-struct SceneRegion *Vale_GetRegions(void) { return NULL; }
+const struct SceneRegion *Vale_GetRegions(void) { return NULL; }
 
-u32 *Vale_GetExits(void) { return gVale_Exits; }
+const u32 *Vale_GetExits(void) { return gVale_Exits; }
 
 /// Places the villagers for the story so far, or for the roof repair (entrance
 /// 16).
-struct ScenePlacement *Vale_GetPlacements(void) {
+const struct ScenePlacement *Vale_GetPlacements(void) {
   u8 *scene_state = (u8 *)&gGameState;
   if (((struct GameState *)scene_state)->entrance == 16)
     return gVale_RepairPlacements;
@@ -148,7 +148,7 @@ static void Event_CatchNutAfterKalay(void) {
 }
 
 /// The villagers talk of the story so far.
-struct SceneEvent *Vale_GetEvents(void) {
+const struct SceneEvent *Vale_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
     return gVale_EventsAfterKalay;
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0)

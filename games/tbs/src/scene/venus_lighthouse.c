@@ -723,11 +723,13 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gVenusLighthouseEntrancesOther;
 }
 
-/// These scenes supply no placement-clipping regions.
-s32 SceneData_ReturnZero(void) { return 0; }
+/// These scenes supply no exit regions.
+const struct SceneRegion *SceneData_ReturnZero(void) { return 0; }
 
 /// Returns the packed exits shared by the lighthouse scenes.
-u8 *SceneData_GetPrimaryTable(void) { return gVenusLighthousePrimaryTable; }
+const u32 *SceneData_GetPrimaryTable(void) {
+  return gVenusLighthousePrimaryTable;
+}
 
 /// Selects and clips the placement rows using the original scene dispatch.
 const struct ScenePlacement *Scene_GetPlacements(void) {

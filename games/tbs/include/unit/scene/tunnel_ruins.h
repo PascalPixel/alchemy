@@ -11,8 +11,8 @@ struct SceneRegion;
 
 const struct SceneEntrance *TunnelRuins_GetEntrances(void);
 const struct SceneRegion *TunnelRuins_GetRegions(void);
-u32 *TunnelRuins_GetExits(void);
-struct ScenePlacement *TunnelRuins_GetPlacements(void);
+const u32 *TunnelRuins_GetExits(void);
+const struct ScenePlacement *TunnelRuins_GetPlacements(void);
 const struct SceneEvent *TunnelRuins_GetEvents(void);
 s32 TunnelRuins_Initialize(void);
 extern s32 gStagedActor_DirectionSteps[];

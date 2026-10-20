@@ -4,11 +4,11 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct SceneEntrance *Vale_GetEntrances(void);
-struct SceneRegion *Vale_GetRegions(void);
-u32 *Vale_GetExits(void);
-struct ScenePlacement *Vale_GetPlacements(void);
-struct SceneEvent *Vale_GetEvents(void);
+const struct SceneEntrance *Vale_GetEntrances(void);
+const struct SceneRegion *Vale_GetRegions(void);
+const u32 *Vale_GetExits(void);
+const struct ScenePlacement *Vale_GetPlacements(void);
+const struct SceneEvent *Vale_GetEvents(void);
 s32 Vale_Initialize(void);
 extern s32 gStagedActor_DirectionSteps[];
 extern u32 gStagedActor_FootprintKinds[];

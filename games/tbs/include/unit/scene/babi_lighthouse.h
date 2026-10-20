@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "field_scene.h"
+#include "field_runtime.h"
 
 struct SceneEntrance;
 struct SceneEvent;
@@ -11,7 +12,7 @@ struct SceneRegion;
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
-u8 *BabiLighthouse_GetExits(void);
+const u32 *BabiLighthouse_GetExits(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
 s32 BabiLighthouse_SetupScene(void);
@@ -27,7 +28,7 @@ extern struct SceneEntrance gBabiLighthouse_Entrances3[];
 extern struct SceneEntrance gBabiLighthouse_Entrances2[];
 extern struct SceneEntrance gBabiLighthouse_Entrances1[];
 extern struct SceneEntrance gBabiLighthouse_EntrancesOther[];
-extern s16 gBabiLighthouse_Regions3[];
+extern struct SceneRegion gBabiLighthouse_Regions3[];
 extern u32 gBabiLighthouse_Exits[];
 extern struct ScenePlacement gBabiLighthouse_NoPlacements[];
 extern struct ScenePlacement gBabiLighthouse_Placements3[];

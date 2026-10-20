@@ -91,14 +91,14 @@ enum ValeBabiPlaceFlag {
 /// Babi's palace (its exit 11), 20 where a new game begins (menu/clear.c, and
 /// ValeHome's exit 50), 21 from this scene's own exit 20, and 22 from Kraden's
 /// cottage (ValeKraden's exit 13).
-struct SceneEntrance *ValeBabi_GetEntrances(void) {
+const struct SceneEntrance *ValeBabi_GetEntrances(void) {
   return gValeBabi_Entrances;
 }
 
-struct SceneRegion *ValeBabi_GetRegions(void) { return NULL; }
+const struct SceneRegion *ValeBabi_GetRegions(void) { return NULL; }
 
 /// On the stormy night the exits lead into the storm.
-u32 *ValeBabi_GetExits(void) {
+const u32 *ValeBabi_GetExits(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     return gValeBabi_StormExits;
   }
@@ -106,7 +106,7 @@ u32 *ValeBabi_GetExits(void) {
 }
 
 /// Places Babi's scholars, or Vale's villagers as the story has left them.
-struct ScenePlacement *ValeBabi_GetPlacements(void) {
+const struct ScenePlacement *ValeBabi_GetPlacements(void) {
   struct ScenePlacement *table;
 
   if (gGameState.entrance == 19)
@@ -140,7 +140,7 @@ static void Event_ScholarAsksAboutKraden(s32 speakerId) {
 
 /// Chooses the events: Babi's scholars talk differently once the Colosso
 /// finals are over; Vale's villagers follow the storm and the story.
-struct SceneEvent *ValeBabi_GetEvents(void) {
+const struct SceneEvent *ValeBabi_GetEvents(void) {
   if (gGameState.entrance == 19) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
       return gValeBabi_ScholarsLaterEvents;

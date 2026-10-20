@@ -4,11 +4,11 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct SceneEntrance *ValeBabi_GetEntrances(void);
-struct SceneRegion *ValeBabi_GetRegions(void);
-u32 *ValeBabi_GetExits(void);
-struct ScenePlacement *ValeBabi_GetPlacements(void);
-struct SceneEvent *ValeBabi_GetEvents(void);
+const struct SceneEntrance *ValeBabi_GetEntrances(void);
+const struct SceneRegion *ValeBabi_GetRegions(void);
+const u32 *ValeBabi_GetExits(void);
+const struct ScenePlacement *ValeBabi_GetPlacements(void);
+const struct SceneEvent *ValeBabi_GetEvents(void);
 s32 ValeBabi_Initialize(void);
 extern s32 gValeBabi_LeaveHouseScript[];
 extern s32 gValeBabi_DoraLeavesScript[];

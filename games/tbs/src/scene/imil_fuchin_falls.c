@@ -142,7 +142,7 @@ const struct SceneEntrance *ImilFuchinFalls_GetEntrances(void) {
 const struct SceneRegion *ImilFuchinFalls_GetRegions(void) { return NULL; }
 
 /// Returns the exit connections shared by these rooms.
-u32 *ImilFuchinFalls_GetExits(void) { return gImilFuchinFalls_Exits; }
+const u32 *ImilFuchinFalls_GetExits(void) { return gImilFuchinFalls_Exits; }
 
 const struct ScenePlacement *ImilFuchinFalls_GetPlacements(void) {
   s16 sceneId = gGameState.scene;

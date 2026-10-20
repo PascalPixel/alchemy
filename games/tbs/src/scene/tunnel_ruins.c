@@ -429,11 +429,11 @@ const struct SceneRegion *TunnelRuins_GetRegions(void) {
   return 0;
 }
 
-u32 *TunnelRuins_GetExits(void) { return gTunnelRuinsExits; }
+const u32 *TunnelRuins_GetExits(void) { return gTunnelRuinsExits; }
 
 /// The first ruins' actors or the other ruins' (the enums above), each prepared
 /// to appear only when it lies in the view.
-struct ScenePlacement *TunnelRuins_GetPlacements(void) {
+const struct ScenePlacement *TunnelRuins_GetPlacements(void) {
   struct ScenePlacement *table;
 
   if (gGameState.scene == (s32)&SceneId_TunnelRuins1) {

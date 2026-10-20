@@ -76,7 +76,7 @@ const struct SceneEntrance *LaliveroInteriors_GetEntrances(void) {
   return gLaliveroEntrances;
 }
 
-const s16 *LaliveroInteriors_GetRegions(void) {
+const struct SceneRegion *LaliveroInteriors_GetRegions(void) {
   if (gGameState.scene == (s32)&SceneId_LaliveroInteriors1) {
     return gLaliveroSanctumRegions;
   }
@@ -790,14 +790,14 @@ struct SceneEntrance gLaliveroEntrances[] = {
 };
 
 // clang-format off
-s16 gLaliveroSanctumRegions[] = {
-    196, 28, 595, 204, 36, 603, -1, 10,
-    -1, 0, 0, 0, 0, 0, 0, 0,
+struct SceneRegion gLaliveroSanctumRegions[] = {
+    {196, 28, 595, 204, 36, 603, CONDITION_ALWAYS, 10},
+    {SCENE_TABLE_END},
 };
 
-s16 gLaliveroRegions[] = {
-    212, 28, 83, 220, 36, 91, -1, 22,
-    -1, 0, 0, 0, 0, 0, 0, 0,
+struct SceneRegion gLaliveroRegions[] = {
+    {212, 28, 83, 220, 36, 91, CONDITION_ALWAYS, 22},
+    {SCENE_TABLE_END},
 };
 
 u32 gLaliveroExits[] = {

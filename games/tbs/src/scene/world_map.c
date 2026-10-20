@@ -237,11 +237,13 @@ WorldMap_InitializeFirstDjinni(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-struct SceneEntrance *WorldMap_GetEntrances(void) { return gWorldMapEntrances; }
+const struct SceneEntrance *WorldMap_GetEntrances(void) {
+  return gWorldMapEntrances;
+}
 
-struct SceneRegion *WorldMap_GetRegions(void) { return NULL; }
+const struct SceneRegion *WorldMap_GetRegions(void) { return NULL; }
 
-u32 *WorldMap_GetExits(void) { return gWorldMapExits; }
+const u32 *WorldMap_GetExits(void) { return gWorldMapExits; }
 
 /// Aligns the actor to the map and selects its flagged animation mode.
 static s32
@@ -303,7 +305,7 @@ static s32 WorldMap_BlinkActorSprite(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-struct ScenePlacement *WorldMap_GetPlacements(void) {
+const struct ScenePlacement *WorldMap_GetPlacements(void) {
   switch (gGameState.entrance) {
   case 49:
     if (Engine_GameFlagIsSet(FLAG_BUNZAS_WAGON_LEFT) == 0 &&
@@ -407,7 +409,7 @@ static void Event_PassThroughFourthNorthSouthPassage(void) {
   WorldMap_SelectExitByZ(0x7D, 0x3B, 0x1E);
 }
 
-struct SceneEvent *WorldMap_GetEvents(void) { return gWorldMapEvents; }
+const struct SceneEvent *WorldMap_GetEvents(void) { return gWorldMapEvents; }
 
 /// Culls distant location sprites and detects the leader touching nearby ones.
 /// Run each frame on the world map; WorldMap_Initialize adds it.

@@ -123,15 +123,15 @@ static inline void InitializeSelectedActor(s32 actorId) {
 
 extern s32 gColossoParticleCount;
 
-struct SceneEntrance *ColossoLog_GetEntrances(void) {
+const struct SceneEntrance *ColossoLog_GetEntrances(void) {
   return gColossoLogEntrances;
 }
 
 const struct SceneRegion *ColossoLog_GetRegions(void) { return 0; }
 
-u32 *ColossoLog_GetExits(void) { return gColossoLogExits; }
+const u32 *ColossoLog_GetExits(void) { return gColossoLogExits; }
 
-struct ScenePlacement *ColossoLog_GetPlacements(void) {
+const struct ScenePlacement *ColossoLog_GetPlacements(void) {
   return gColossoLogPlacements;
 }
 
@@ -764,7 +764,9 @@ static void Event_PushWeightOrCheckAhead(void) {
   }
 }
 
-struct SceneEvent *ColossoLog_GetEvents(void) { return gColossoLogEvents; }
+const struct SceneEvent *ColossoLog_GetEvents(void) {
+  return gColossoLogEvents;
+}
 
 /// Restores obstacle progress, then enters practice, introduction or battle
 /// aftermath.

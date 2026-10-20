@@ -4,11 +4,11 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct SceneEntrance *Scene_GetEntrances(void);
+const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
-u32 *Scene_GetExits(void);
-struct ScenePlacement *Scene_GetPlacements(void);
-struct SceneEvent *Scene_GetEvents(void);
+const u32 *Scene_GetExits(void);
+const struct ScenePlacement *Scene_GetPlacements(void);
+const struct SceneEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
 extern s32 gEffectScript0[];
 extern s32 gEffectScript1[];

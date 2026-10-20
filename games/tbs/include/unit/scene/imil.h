@@ -9,8 +9,8 @@ struct SceneEvent;
 struct ScenePlacement;
 
 const struct SceneEntrance *Imil_GetEntrances(void);
-struct SceneRegion *Imil_GetRegions(void);
-u32 *Imil_GetExits(void);
+const struct SceneRegion *Imil_GetRegions(void);
+const u32 *Imil_GetExits(void);
 const struct ScenePlacement *Imil_GetPlacements(void);
 const struct SceneEvent *Imil_GetEvents(void);
 s32 Imil_Initialize(void);

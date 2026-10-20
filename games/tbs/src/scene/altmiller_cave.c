@@ -167,13 +167,13 @@ static void AltmillerCave_StartDjinnBattle(void) {
 }
 
 /// The six rooms share one entrance table.
-struct SceneEntrance *AltmillerCave_GetEntrances(void) {
+const struct SceneEntrance *AltmillerCave_GetEntrances(void) {
   return gAltmillerCave_Entrances;
 }
 
-struct SceneRegion *AltmillerCave_GetRegions(void) { return NULL; }
+const struct SceneRegion *AltmillerCave_GetRegions(void) { return NULL; }
 
-u32 *AltmillerCave_GetExits(void) { return gAltmillerCave_Exits; }
+const u32 *AltmillerCave_GetExits(void) { return gAltmillerCave_Exits; }
 
 const struct ScenePlacement *AltmillerCave_GetPlacements(void) {
   s16 scene = gGameState.scene;

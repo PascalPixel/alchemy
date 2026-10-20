@@ -48,23 +48,25 @@ static void Event_ReturnFromMtAleph(void);
 
 /// Returns where the party appears: entrance 15 is the path down from the
 /// mountain, Mt. Aleph.
-struct SceneEntrance *ValeEruption_GetEntrances(void) {
+const struct SceneEntrance *ValeEruption_GetEntrances(void) {
   return gValeEruption_Entrances;
 }
 
-struct SceneRegion *ValeEruption_GetRegions(void) { return NULL; }
+const struct SceneRegion *ValeEruption_GetRegions(void) { return NULL; }
 
 /// Returns the one exit, into the sanctum (Sanctum's entrance 20), which
 /// Event_ReturnFromMtAleph takes.
-u32 *ValeEruption_GetExits(void) { return gValeEruption_Exits; }
+const u32 *ValeEruption_GetExits(void) { return gValeEruption_Exits; }
 
 /// Returns Garet and the villagers gathered before the sanctum.
-struct ScenePlacement *ValeEruption_GetPlacements(void) {
+const struct ScenePlacement *ValeEruption_GetPlacements(void) {
   return gValeEruption_Placements;
 }
 
 /// The square has no events of its own: everything happens on arrival.
-struct SceneEvent *ValeEruption_GetEvents(void) { return gValeEruption_Events; }
+const struct SceneEvent *ValeEruption_GetEvents(void) {
+  return gValeEruption_Events;
+}
 
 /// Plays the return from the mountain when the party arrives by entrance 15.
 /// Called by Field_RunScene once the actors are placed; entrance 15 is where

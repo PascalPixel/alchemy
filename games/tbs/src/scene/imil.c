@@ -133,9 +133,9 @@ const struct SceneEntrance *Imil_GetEntrances(void) {
   return gImil_TownEntrances;
 }
 
-struct SceneRegion *Imil_GetRegions(void) { return NULL; }
+const struct SceneRegion *Imil_GetRegions(void) { return NULL; }
 
-u32 *Imil_GetExits(void) { return gImil_Exits; }
+const u32 *Imil_GetExits(void) { return gImil_Exits; }
 
 /// Once the epidemic is cured (flag 0x881), the townspeople are well again and
 /// the old man is up and about.

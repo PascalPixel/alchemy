@@ -109,15 +109,15 @@ enum {
   PRIZE_B = 25
 };
 
-struct SceneEntrance *ColossoRiver_GetEntrances(void) {
+const struct SceneEntrance *ColossoRiver_GetEntrances(void) {
   return gColossoRiver_Entrances;
 }
 
 const struct SceneRegion *ColossoRiver_GetRegions(void) { return 0; }
 
-u32 *ColossoRiver_GetExits(void) { return gColossoRiver_Exits; }
+const u32 *ColossoRiver_GetExits(void) { return gColossoRiver_Exits; }
 
-struct ScenePlacement *ColossoRiver_GetPlacements(void) {
+const struct ScenePlacement *ColossoRiver_GetPlacements(void) {
   return gColossoRiver_Placements;
 }
 
@@ -510,7 +510,9 @@ static void Event_PushRockOrCheckAhead(void) {
   }
 }
 
-struct SceneEvent *ColossoRiver_GetEvents(void) { return gColossoRiver_Events; }
+const struct SceneEvent *ColossoRiver_GetEvents(void) {
+  return gColossoRiver_Events;
+}
 
 /// Back from the battle: the two warriors stand in the arena as the result is
 /// shown.

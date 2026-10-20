@@ -340,23 +340,29 @@ static s32 TolbiShipInteriors_LayFlat(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-s32 TolbiShipInteriors_SelectEntrances(void) {
+const struct SceneEntrance *TolbiShipInteriors_SelectEntrances(void) {
   if (gGameState.scene == (s32)&SceneId_TolbiShipInteriors) {
-    return (s32)gTolbiShipInteriors_Entrances;
+    return gTolbiShipInteriors_Entrances;
   }
-  return (s32)gTolbiShipInteriors_EntrancesOther;
+  return gTolbiShipInteriors_EntrancesOther;
 }
 
-s32 TolbiShipInteriors_GetRegions(void) { return 0; }
+const struct SceneRegion *TolbiShipInteriors_GetRegions(void) { return 0; }
 
-s32 TolbiShipInteriors_GetExits(void) {
-  return (s32)&gTolbiShipInteriors_Exits;
+const u32 *TolbiShipInteriors_GetExits(void) {
+  return gTolbiShipInteriors_Exits;
 }
+
+/// A byte view keeps the native address arithmetic; direct row-field writes
+/// choose different bases and registers. The layout still belongs to the row.
+#define TOLBI_SHIP_TALK_FACING(bytes, row)                                     \
+  ((bytes)[(row) * sizeof(struct ScenePlacement) +                             \
+           offsetof(struct ScenePlacement, talkFacing)])
 
 /// Picks the placements for the room entered and the voyage's stage. Some
 /// stages change who turns to face the party when talked to (talkFacing) in the
 /// shared tables.
-s32 TolbiShipInteriors_SelectPlacements(void) {
+const struct ScenePlacement *TolbiShipInteriors_SelectPlacements(void) {
   u8 *placementBytes;
 
   switch (gGameState.entrance) {
@@ -364,33 +370,33 @@ s32 TolbiShipInteriors_SelectPlacements(void) {
   case 2:
   case 11:
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
-      return (s32)gTolbiShipInteriors_HoldPlacements;
+      return gTolbiShipInteriors_HoldPlacements;
     } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED) !=
                0) {
       if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
         // Update talkFacing in the placement rows, preserving their write
         // order.
         placementBytes = (u8 *)gTolbiShipInteriors_HoldPlacementsAtSea;
-        placementBytes[22] = 2;
-        placementBytes[70] = 2;
-        placementBytes[118] = 2;
-        placementBytes[142] = 2;
-        placementBytes[214] = 2;
-        placementBytes[190] = 2;
-        placementBytes[166] = 1;
-        placementBytes[94] = 2;
+        TOLBI_SHIP_TALK_FACING(placementBytes, 0) = TALK_KEEP_FACING;
+        TOLBI_SHIP_TALK_FACING(placementBytes, 2) = TALK_KEEP_FACING;
+        TOLBI_SHIP_TALK_FACING(placementBytes, 4) = TALK_KEEP_FACING;
+        TOLBI_SHIP_TALK_FACING(placementBytes, 5) = TALK_KEEP_FACING;
+        TOLBI_SHIP_TALK_FACING(placementBytes, 8) = TALK_KEEP_FACING;
+        TOLBI_SHIP_TALK_FACING(placementBytes, 7) = TALK_KEEP_FACING;
+        TOLBI_SHIP_TALK_FACING(placementBytes, 6) = TALK_FACE_PARTY_AND_BACK;
+        TOLBI_SHIP_TALK_FACING(placementBytes, 3) = TALK_KEEP_FACING;
       }
-      return (s32)gTolbiShipInteriors_HoldPlacementsAtSea;
+      return gTolbiShipInteriors_HoldPlacementsAtSea;
     } else if (Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
       if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
-        gTolbiShipInteriors_HoldPlacements[0].talkFacing = 2;
-        gTolbiShipInteriors_HoldPlacements[4].talkFacing = 2;
-        gTolbiShipInteriors_HoldPlacements[1].talkFacing = 2;
-        gTolbiShipInteriors_HoldPlacements[3].talkFacing = 2;
+        gTolbiShipInteriors_HoldPlacements[0].talkFacing = TALK_KEEP_FACING;
+        gTolbiShipInteriors_HoldPlacements[4].talkFacing = TALK_KEEP_FACING;
+        gTolbiShipInteriors_HoldPlacements[1].talkFacing = TALK_KEEP_FACING;
+        gTolbiShipInteriors_HoldPlacements[3].talkFacing = TALK_KEEP_FACING;
       }
-      return (s32)gTolbiShipInteriors_HoldPlacements;
+      return gTolbiShipInteriors_HoldPlacements;
     } else {
-      return (s32)gTolbiShipInteriors_HoldPlacementsEmpty;
+      return gTolbiShipInteriors_HoldPlacementsEmpty;
     }
     break;
   case 4:
@@ -401,57 +407,61 @@ s32 TolbiShipInteriors_SelectPlacements(void) {
   case 21:
   case 23:
   case 24:
-    return (s32)gTolbiShipInteriors_RowingDeckPlacements;
+    return gTolbiShipInteriors_RowingDeckPlacements;
     break;
   case 15:
   case 17:
   case 19:
     placementBytes = (u8 *)gTolbiShipInteriors_RowingDeckPlacements;
-    placementBytes[22] = 2;
-    placementBytes[46] = 2;
-    placementBytes[94] = 1;
-    placementBytes[118] = 2;
-    placementBytes[142] = 2;
-    placementBytes[166] = 2;
-    placementBytes[190] = 2;
-    placementBytes[214] = 1;
-    placementBytes[238] = 2;
-    return (s32)placementBytes;
+    TOLBI_SHIP_TALK_FACING(placementBytes, 0) = TALK_KEEP_FACING;
+    TOLBI_SHIP_TALK_FACING(placementBytes, 1) = TALK_KEEP_FACING;
+    TOLBI_SHIP_TALK_FACING(placementBytes, 3) = TALK_FACE_PARTY_AND_BACK;
+    TOLBI_SHIP_TALK_FACING(placementBytes, 4) = TALK_KEEP_FACING;
+    TOLBI_SHIP_TALK_FACING(placementBytes, 5) = TALK_KEEP_FACING;
+    TOLBI_SHIP_TALK_FACING(placementBytes, 6) = TALK_KEEP_FACING;
+    TOLBI_SHIP_TALK_FACING(placementBytes, 7) = TALK_KEEP_FACING;
+    TOLBI_SHIP_TALK_FACING(placementBytes, 8) = TALK_FACE_PARTY_AND_BACK;
+    TOLBI_SHIP_TALK_FACING(placementBytes, 9) = TALK_KEEP_FACING;
+    return (const struct ScenePlacement *)placementBytes;
   case 5:
     if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
-      return (s32)gTolbiShipInteriors_CabinPlacementsArrived;
+      return gTolbiShipInteriors_CabinPlacementsArrived;
     } else if (Engine_GameFlagIsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
       if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
         if (GameFlag_IsSet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
-          gTolbiShipInteriors_CabinPlacementsWarriors[1].talkFacing = 1;
+          gTolbiShipInteriors_CabinPlacementsWarriors[1].talkFacing =
+              TALK_FACE_PARTY_AND_BACK;
         }
         if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
           if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND) == 0) {
-            gTolbiShipInteriors_CabinPlacementsWarriors[0].talkFacing = 0;
+            gTolbiShipInteriors_CabinPlacementsWarriors[0].talkFacing =
+                TALK_FACE_PARTY;
           }
         }
-        return (s32)gTolbiShipInteriors_CabinPlacementsWarriors;
+        return gTolbiShipInteriors_CabinPlacementsWarriors;
       }
-      return (s32)gTolbiShipInteriors_PlacementsNone;
+      return gTolbiShipInteriors_PlacementsNone;
     } else {
-      return (s32)gTolbiShipInteriors_CabinPlacements;
+      return gTolbiShipInteriors_CabinPlacements;
     }
     break;
   case 10:
   case 13:
   case 14:
   case 22:
-    return (s32)gTolbiShipInteriors_CabinPlacements;
+    return gTolbiShipInteriors_CabinPlacements;
     break;
   default:
-    return (s32)gTolbiShipInteriors_PlacementsNone;
+    return gTolbiShipInteriors_PlacementsNone;
     break;
   }
-  return (s32)placementBytes;
+  return (const struct ScenePlacement *)placementBytes;
 }
 
+#undef TOLBI_SHIP_TALK_FACING
+
 /// Chooses the room's interactions for the current stage of the voyage.
-struct SceneEvent *TolbiShipInteriors_SelectEvents(void) {
+const struct SceneEvent *TolbiShipInteriors_SelectEvents(void) {
   s32 entrance = gGameState.entrance;
 
   switch (entrance) {

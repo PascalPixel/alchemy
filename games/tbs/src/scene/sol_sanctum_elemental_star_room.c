@@ -83,24 +83,24 @@ static __inline__ void SolSanctumElementalStarRoom_SkipMessages(s32 amount) {
 
 #include "common/object_facing.h"
 
-struct SceneEntrance *SolSanctumElementalStarRoom_GetEntrances(void) {
+const struct SceneEntrance *SolSanctumElementalStarRoom_GetEntrances(void) {
   return gSolSanctumElementalStarRoom_Entrances;
 }
 
-struct SceneRegion *SolSanctumElementalStarRoom_GetRegions(void) {
+const struct SceneRegion *SolSanctumElementalStarRoom_GetRegions(void) {
   return NULL;
 }
 
-u32 *SolSanctumElementalStarRoom_GetExits(void) {
+const u32 *SolSanctumElementalStarRoom_GetExits(void) {
   return gSolSanctumElementalStarRoom_Exits;
 }
 
-struct ScenePlacement *SolSanctumElementalStarRoom_GetPlacements(void) {
+const struct ScenePlacement *SolSanctumElementalStarRoom_GetPlacements(void) {
   return gSolSanctumElementalStarRoom_Placements;
 }
 
 /// Returns the star, dialogue, and boundary interactions.
-struct SceneEvent *SolSanctumElementalStarRoom_GetEvents(void) {
+const struct SceneEvent *SolSanctumElementalStarRoom_GetEvents(void) {
   return gSolSanctumElementalStarRoom_Events;
 }
 

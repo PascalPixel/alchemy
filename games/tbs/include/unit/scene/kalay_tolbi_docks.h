@@ -11,7 +11,7 @@ struct SceneRegion;
 
 const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void);
 const struct SceneRegion *KalayTolbiDocks_GetRegions(void);
-u8 *KalayTolbiDocks_GetExits(void);
+const u32 *KalayTolbiDocks_GetExits(void);
 const struct ScenePlacement *KalayTolbiDocks_GetPlacements(void);
 const struct SceneEvent *KalayTolbiDocks_GetEvents(void);
 s32 KalayTolbiDocks_Initialize(void);

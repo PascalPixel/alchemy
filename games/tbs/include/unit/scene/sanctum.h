@@ -4,11 +4,11 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct SceneEntrance *Sanctum_GetEntrances(void);
-struct SceneRegion *Sanctum_GetRegions(void);
-u32 *Sanctum_GetExits(void);
-struct ScenePlacement *Sanctum_GetPlacements(void);
-struct SceneEvent *Sanctum_GetEvents(void);
+const struct SceneEntrance *Sanctum_GetEntrances(void);
+const struct SceneRegion *Sanctum_GetRegions(void);
+const u32 *Sanctum_GetExits(void);
+const struct ScenePlacement *Sanctum_GetPlacements(void);
+const struct SceneEvent *Sanctum_GetEvents(void);
 s32 Sanctum_Initialize(void);
 extern u32 gSanctum_LeaderCircleScript[];
 extern u32 gSanctum_GaretCircleScript[];

@@ -12,7 +12,7 @@ struct SceneRegion;
 
 const struct SceneEntrance *KalayInteriors_GetEntrances(void);
 const struct SceneRegion *KalayInteriors_GetRegions(void);
-u8 *KalayInteriors_GetExits(void);
+const u32 *KalayInteriors_GetExits(void);
 const struct ScenePlacement *KalayInteriors_GetPlacements(void);
 const struct SceneEvent *KalayInteriors_GetEvents(void);
 s32 KalayInteriors_Initialize(void);

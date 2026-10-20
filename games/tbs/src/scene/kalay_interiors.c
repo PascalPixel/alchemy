@@ -50,7 +50,7 @@ const struct SceneEntrance *KalayInteriors_GetEntrances(void) {
 
 const struct SceneRegion *KalayInteriors_GetRegions(void) { return NULL; }
 
-u8 *KalayInteriors_GetExits(void) { return gKalayInteriors_Exits; }
+const u32 *KalayInteriors_GetExits(void) { return gKalayInteriors_Exits; }
 
 /// The inn rooms share a placement table, clipped to the current view.
 const struct ScenePlacement *KalayInteriors_GetPlacements(void) {

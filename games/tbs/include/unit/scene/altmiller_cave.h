@@ -8,9 +8,9 @@ struct SceneEvent;
 struct ScenePlacement;
 struct LightWheel;
 
-struct SceneEntrance *AltmillerCave_GetEntrances(void);
-struct SceneRegion *AltmillerCave_GetRegions(void);
-u32 *AltmillerCave_GetExits(void);
+const struct SceneEntrance *AltmillerCave_GetEntrances(void);
+const struct SceneRegion *AltmillerCave_GetRegions(void);
+const u32 *AltmillerCave_GetExits(void);
 const struct ScenePlacement *AltmillerCave_GetPlacements(void);
 const struct SceneEvent *AltmillerCave_GetEvents(void);
 s32 AltmillerCave_Initialize(void);

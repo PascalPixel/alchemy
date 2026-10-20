@@ -101,15 +101,15 @@ static inline s32 ValeHome_TurnAndWaitValue(s32 actor, s32 facing, s32 frames) {
 
 #include "common/object_facing.h"
 
-struct SceneEntrance *ValeHome_GetEntrances(void) {
+const struct SceneEntrance *ValeHome_GetEntrances(void) {
   return gValeHome_Entrances;
 }
 
-struct SceneRegion *ValeHome_GetRegions(void) { return NULL; }
+const struct SceneRegion *ValeHome_GetRegions(void) { return NULL; }
 
 /// Returns the stormy night's exits while FLAG_VALE_STORM is set, else the
 /// day's.
-u32 *ValeHome_GetExits(void) {
+const u32 *ValeHome_GetExits(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     return gValeHome_StormExits;
   }
@@ -118,7 +118,7 @@ u32 *ValeHome_GetExits(void) {
 
 /// Selects the placements: the stormy night's, the farewell's (entrance 12),
 /// after Kalay, else the day's.
-struct ScenePlacement *ValeHome_GetPlacements(void) {
+const struct ScenePlacement *ValeHome_GetPlacements(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     return gValeHome_StormPlacements;
   }
@@ -149,7 +149,7 @@ static void Event_UsePsynergyStone(void) {
 
 /// Selects the events: after Kalay, after the party has left, the farewell's
 /// (entrance 12), the stormy night's, else the day's.
-struct SceneEvent *ValeHome_GetEvents(void) {
+const struct SceneEvent *ValeHome_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
     return gValeHome_EventsAfterKalay;
   }

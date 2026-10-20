@@ -5,11 +5,11 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-u8 *Tolbi_GetEntrances(void);
-s32 Tolbi_GetRegions(void);
-u8 *Tolbi_GetExits(void);
-u8 *Tolbi_GetPlacements(void);
-u8 *Tolbi_SelectEvents(void);
+const struct SceneEntrance *Tolbi_GetEntrances(void);
+const struct SceneRegion *Tolbi_GetRegions(void);
+const u32 *Tolbi_GetExits(void);
+const struct ScenePlacement *Tolbi_GetPlacements(void);
+const struct SceneEvent *Tolbi_SelectEvents(void);
 s32 Tolbi_ApplyEntryState(s32 unused);
 extern s32 gTolbiMirroredActor[];
 extern s32 gTolbiOlderBrotherRun[];

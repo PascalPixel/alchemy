@@ -127,23 +127,23 @@ static union {
   s32 words[3 * SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT * 3];
 } sScrollingSprites;
 
-struct SceneEntrance *SolSanctumStatue_GetEntrances(void) {
+const struct SceneEntrance *SolSanctumStatue_GetEntrances(void) {
   return gSolSanctumStatue_Entrances;
 }
 
-struct SceneRegion *SolSanctumStatue_GetRegions(void) { return NULL; }
+const struct SceneRegion *SolSanctumStatue_GetRegions(void) { return NULL; }
 
-u32 *SolSanctumStatue_GetExits(void) { return gSolSanctumStatue_Exits; }
+const u32 *SolSanctumStatue_GetExits(void) { return gSolSanctumStatue_Exits; }
 
 /// Returns Kraden (actor 8), the eight statues (9 to 16), the centre statue
 /// (17) and its moved copy (18), then Jenna and Garet.
-struct ScenePlacement *SolSanctumStatue_GetPlacements(void) {
+const struct ScenePlacement *SolSanctumStatue_GetPlacements(void) {
   return gSolSanctumStatue_Placements;
 }
 
 /// Returns the statues' Move and push events, each row only until its seal or
 /// beam is done.
-struct SceneEvent *SolSanctumStatue_GetEvents(void) {
+const struct SceneEvent *SolSanctumStatue_GetEvents(void) {
   return gSolSanctumStatue_Events;
 }
 

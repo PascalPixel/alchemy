@@ -139,19 +139,19 @@ ValeStorm_RerollHeadingOnCountdown(struct ScriptInterpreter *interpreter) {
 
 /// Returns where the party appears; entrance 15 is where Dora and Isaac run
 /// in from the south-west of Vale (ValeBabi's exit 21).
-struct SceneEntrance *ValeStorm_GetEntrances(void) {
+const struct SceneEntrance *ValeStorm_GetEntrances(void) {
   return gValeStorm_Entrances;
 }
 
-struct SceneRegion *ValeStorm_GetRegions(void) { return NULL; }
+const struct SceneRegion *ValeStorm_GetRegions(void) { return NULL; }
 
-u32 *ValeStorm_GetExits(void) { return gValeStorm_Exits; }
+const u32 *ValeStorm_GetExits(void) { return gValeStorm_Exits; }
 
-struct ScenePlacement *ValeStorm_GetPlacements(void) {
+const struct ScenePlacement *ValeStorm_GetPlacements(void) {
   return gValeStorm_Placements;
 }
 
-struct SceneEvent *ValeStorm_GetEvents(void) { return gValeStorm_Events; }
+const struct SceneEvent *ValeStorm_GetEvents(void) { return gValeStorm_Events; }
 
 /// Swaps the upper path's collision cells as the leader steps onto it.
 /// Reached by stepping on cell code 15. Sets FLAG_SCENE_TEMP_10,

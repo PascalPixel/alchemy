@@ -77,24 +77,26 @@ enum { OBJECT_ELEMENTAL_STAR = 22 };
 #define EMBER_EMISSION_DISABLED 999
 #define ARC_SCAN_STILL_ACTIVE 888
 
-struct SceneEntrance *SolSanctumEruption_GetEntrances(void) {
+const struct SceneEntrance *SolSanctumEruption_GetEntrances(void) {
   return gSolSanctumEruption_Entrances;
 }
 
-struct SceneRegion *SolSanctumEruption_GetRegions(void) { return NULL; }
+const struct SceneRegion *SolSanctumEruption_GetRegions(void) { return NULL; }
 
-u32 *SolSanctumEruption_GetExits(void) { return gSolSanctumEruption_Exits; }
+const u32 *SolSanctumEruption_GetExits(void) {
+  return gSolSanctumEruption_Exits;
+}
 
 /// Returns Garet and Jenna, then the departure glow (actor 8), Kraden,
 /// Saturos, Menardi, Felix masked and unmasked, Alex, the Wise One (15) and
 /// sixteen rocks (16 to 31), all placed off the map until the cutscene moves
 /// them.
-struct ScenePlacement *SolSanctumEruption_GetPlacements(void) {
+const struct ScenePlacement *SolSanctumEruption_GetPlacements(void) {
   return gSolSanctumEruption_Placements;
 }
 
 /// Returns the empty event table: the scene is one cutscene.
-struct SceneEvent *SolSanctumEruption_GetEvents(void) {
+const struct SceneEvent *SolSanctumEruption_GetEvents(void) {
   return gSolSanctumEruption_Events;
 }
 

@@ -3,17 +3,18 @@
 
 #include "types.h"
 #include "field_scene.h"
+#include "field_runtime.h"
 
 const struct SceneEntrance *LaliveroInteriors_GetEntrances(void);
-const s16 *LaliveroInteriors_GetRegions(void);
+const struct SceneRegion *LaliveroInteriors_GetRegions(void);
 const u32 *LaliveroInteriors_GetExits(void);
 const struct ScenePlacement *LaliveroInteriors_GetPlacements(void);
 const struct SceneEvent *LaliveroInteriors_GetEvents(void);
 s32 Scene_Initialize(void);
 extern s32 gLaliveroMaidChores[];
 extern struct SceneEntrance gLaliveroEntrances[];
-extern s16 gLaliveroSanctumRegions[];
-extern s16 gLaliveroRegions[];
+extern struct SceneRegion gLaliveroSanctumRegions[];
+extern struct SceneRegion gLaliveroRegions[];
 extern u32 gLaliveroExits[];
 extern struct ScenePlacement gLaliveroPlacements[];
 extern struct ScenePlacement gFaranHousePlacements[];

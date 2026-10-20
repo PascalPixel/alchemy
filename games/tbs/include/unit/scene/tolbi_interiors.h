@@ -5,11 +5,11 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-u8 *TolbiInteriors_GetEntrances(void);
-s32 TolbiInteriors_GetRegions(void);
-u8 *TolbiInteriors_GetExits(void);
-s32 TolbiInteriors_SelectPlacements(void);
-u8 *TolbiInteriors_SelectEvents(void);
+const struct SceneEntrance *TolbiInteriors_GetEntrances(void);
+const struct SceneRegion *TolbiInteriors_GetRegions(void);
+const u32 *TolbiInteriors_GetExits(void);
+const struct ScenePlacement *TolbiInteriors_SelectPlacements(void);
+const struct SceneEvent *TolbiInteriors_SelectEvents(void);
 s32 TolbiInteriors_ApplyEntryState(void);
 extern s32 gTolbiInteriorsSquashStretch[];
 extern struct SceneEntrance gTolbiInteriorsEntrances[];

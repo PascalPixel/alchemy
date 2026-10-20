@@ -87,7 +87,7 @@ const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void) {
 const struct SceneRegion *KalayTolbiDocks_GetRegions(void) { return NULL; }
 
 /// The docks list no numbered exits.
-u8 *KalayTolbiDocks_GetExits(void) { return gKalayTolbiDocks_Exits; }
+const u32 *KalayTolbiDocks_GetExits(void) { return gKalayTolbiDocks_Exits; }
 
 /// Each map has its people before the ship sails, once it has gone and not
 /// come back (flag 0x93e), and once the passengers are stranded (flag 0x950).

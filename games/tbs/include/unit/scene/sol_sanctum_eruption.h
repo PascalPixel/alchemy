@@ -4,11 +4,11 @@
 #include "types.h"
 #include "field_scene.h"
 
-struct SceneEntrance *SolSanctumEruption_GetEntrances(void);
-struct SceneRegion *SolSanctumEruption_GetRegions(void);
-u32 *SolSanctumEruption_GetExits(void);
-struct ScenePlacement *SolSanctumEruption_GetPlacements(void);
-struct SceneEvent *SolSanctumEruption_GetEvents(void);
+const struct SceneEntrance *SolSanctumEruption_GetEntrances(void);
+const struct SceneRegion *SolSanctumEruption_GetRegions(void);
+const u32 *SolSanctumEruption_GetExits(void);
+const struct ScenePlacement *SolSanctumEruption_GetPlacements(void);
+const struct SceneEvent *SolSanctumEruption_GetEvents(void);
 s32 SolSanctumEruption_Initialize(void);
 extern s32 gEruption_ArcOriginsHead[];
 extern s32 gEruption_ArcOrigins[];

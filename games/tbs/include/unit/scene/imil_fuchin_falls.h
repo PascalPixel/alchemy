@@ -13,7 +13,7 @@ struct SceneRegion;
 extern s32 gImilFuchinFalls_TrackLeader;
 const struct SceneEntrance *ImilFuchinFalls_GetEntrances(void);
 const struct SceneRegion *ImilFuchinFalls_GetRegions(void);
-u32 *ImilFuchinFalls_GetExits(void);
+const u32 *ImilFuchinFalls_GetExits(void);
 const struct ScenePlacement *ImilFuchinFalls_GetPlacements(void);
 const struct SceneEvent *ImilFuchinFalls_GetEvents(void);
 s32 ImilFuchinFalls_Initialize(void);

@@ -1,6 +1,6 @@
 # Battle effects
 
-Battle effects are the animations you watch while Psynergy, a Djinni, a
+Battle effects are the animations the player watches while Psynergy, a Djinni, a
 summon, an item or an enemy's attack plays out: everything drawn over the
 battle until the move is over.
 
@@ -101,7 +101,7 @@ Every handler opens with a documentation comment of the same shape. Quake's:
 /// effect: the targets; variant picks the row of gQuake_Timings.
 ```
 
-It starts with a short name for what you see and one sentence about it. The
+It starts with a short name for what the player sees and one sentence about it. The
 `Abilities:` line follows, with the kind; a kind no ability uses says
 `Abilities: none (kind N).`, and a summon's scene says `(scene kind N)`. Then
 comes what the player sees, frame by frame where the effect is long, which

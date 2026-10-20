@@ -20,7 +20,7 @@ along with the tables every ability reads, is in
 | `battle_internal.h` | what the parts share: the includes and the names two or more parts use; each part includes it too |
 | `battle/*.c` | the code, in 24 parts, each compiled only through `battle.c` |
 | `battle_data.s`, `battle_vars.s` | the battle's smaller tables and pictures in their ROM order, including where the `.tsv` tables below land in the ROM |
-| `advarrow.s` | the arrow that bobs beside a battle message while it waits for you, built from `advarrow.png`, which holds sixteen 8 by 16 frames; the code cycles through the first eight, one every four frames |
+| `advarrow.s` | the arrow that bobs beside a battle message while it waits for the player, built from `advarrow.png`, which holds sixteen 8 by 16 frames; the code cycles through the first eight, one every four frames |
 | `presentation/` | the opening curtain's tiles and their variants, and the brightness steps of a unit's highlight (`highlight_ramp.s`) |
 | `effect/` | two 32 by 16 sparks the field Psynergy effects draw, which `../object/arcspark.s` places |
 | `battle_calc.s` | the fall-off tables: how much of a damage, healing or effect chance a target gets by its distance from the aimed one |
@@ -119,7 +119,7 @@ the open questions at the end.
 
 ## How a battle runs
 
-A battle is a series of rounds. At the start of each you choose a command for
+A battle is a series of rounds. At the start of each the player chooses a command for
 everyone in the party, the enemies choose theirs, and then everybody acts in
 turn, fastest first. Each turn and each round end with their own
 bookkeeping, and it all goes on until one side is gone or the party gets
@@ -177,11 +177,11 @@ the rest of its round (`BattleWork.encounterMode`).
 Running away (`BattleEscape_CheckSuccess`, `round.c`) starts at a 50 percent
 chance, gains 20 for every failed try in the same battle, and moves 5 for
 each level the party's average is above or below the enemies'. It never
-works in a battle you can't run from (`BATTLE_START_NO_ESCAPE`).
+works in a battle the party can't run from (`BATTLE_START_NO_ESCAPE`).
 
 ## How an ability resolves
 
-Whatever you pick in the menu, the battle turns it into an ability id: Attack
+Whatever the player picks in the menu, the battle turns it into an ability id: Attack
 is ability 1, Quake 3, Flint 300. The id is a row number, the same row in
 every ability table, so any move can be followed from the menu to the damage
 it does by reading its rows. Quake, for example, is row 3 of
@@ -333,7 +333,7 @@ The queue (`struct BattleEventQueue`, up to 64 events) is where the rules
 hand over to the show. `BattleTargetExec` never draws or waits. It pushes
 events with `BattleEvPush`: the names and numbers a message needs, then the
 message, then the flinch, the defeat, the status redraw, a sound. They go in
-the order you see them, and a message's arguments always come before it,
+the order the player sees them, and a message's arguments always come before it,
 because the message takes them from the window system's argument table when
 it's decoded. The same queue can also be played straight through, without
 frames between events, by `BattleEv_DispatchQueued`. That's how the battle

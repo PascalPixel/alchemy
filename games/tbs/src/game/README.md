@@ -1,8 +1,8 @@
 # Game rules
 
-The game keeps its rules in one place: who's in your party, what each of them
+The game keeps its rules in one place: who's in the party, what each of them
 carries, how they level up and change class, the Djinn they hold, and the
-flags that remember your journey.
+flags that remember the journey.
 
 Nearly every other part of the game comes here to ask or change something. A
 scene asks whether a chest has been opened, a shop what an item costs, a menu
@@ -74,13 +74,13 @@ function here can be known by two names, its own and its far-call one.
 ## Words used here
 
 - **owner** and **unit**: an owner is a number, and a unit is the record that
-  number gets you, the `struct BattleUnit` that `UnitGet(owner)` returns,
+  number leads to, the `struct BattleUnit` that `UnitGet(owner)` returns,
   with its stats, HP and PP, inventory and Djinn. Owners 0 to 7 are the eight
   characters, kept in the game state: Isaac (`ISAAC`, 0) to Piers (`PIERS`,
   7) in `games/tbs/include/game/character_ids.h`. Owners 128 to 133 (0x80 to
   0x85 in hexadecimal, the way the code writes them) are the enemies of the
   current battle.
-- **party** and **active owners**: the characters travelling with you, in
+- **party** and **active owners**: the characters travelling together, in
   order (`gGameState.activeOwners`, `Party_CountActiveOwners`). Game flags 0
   to 7 say who's in it.
 - **inventory entry**: one of a unit's 15 inventory slots, a halfword (two
@@ -157,7 +157,7 @@ past the last name message says `(no name message)`. `item_ids.h`,
 
 ### Flags are bits that can also be read as bytes
 
-The game remembers 4,096 yes-or-no facts about your journey: whether a chest
+The game remembers 4,096 yes-or-no facts about the journey: whether a chest
 has been opened, a boss beaten, a Djinni found. Each one is a flag, and each
 flag is a bit, a single on-or-off. Eight bits make a byte, so all the flags
 together fill 512 bytes, the array `gGameFlagBytes`. Flags 48 to 127, for

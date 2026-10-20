@@ -1,8 +1,8 @@
 # Field objects
 
-A field scene is any area you can walk around in: a room, a stretch of town,
+A field scene is any area the player can walk around in: a room, a stretch of town,
 a dungeon floor, or the world map. The code here runs one. It sets the scene
-up, hands the leader to you, and then waits for something to interrupt the
+up, hands the leader to the player, and then waits for something to interrupt the
 walk, such as an event underfoot, a random battle, the A button, a menu or
 an exit. Around that loop sits what a field scene needs: random encounters,
 the scene's actors and events, using items and Psynergy on the field, the
@@ -121,7 +121,7 @@ markers you'll see in comments.
 
 ### A scene runs as a loop of requests
 
-While you walk around, the scene loop has very little to do: the leader
+While the player walks around, the scene loop has very little to do: the leader
 moves under its own control script, and once a frame the loop looks at the
 ground underfoot. Anything that should interrupt the walk (stepping onto a
 cell with an event, a random battle, pressing A, opening the menu, taking an
@@ -207,7 +207,7 @@ written 0x10000 in hexadecimal and the threshold of 16 is 0x100000.
 A field scene's zones come from `gBattle_LocationRules`
 (`location_rules.s`). The first rule that matches the scene and entrance,
 and whose game flag (if it has one) isn't set, gives the first zone. A game
-flag is one of the yes-or-no facts the game remembers about your journey,
+flag is one of the yes-or-no facts the game remembers about the journey,
 such as whether a chest is open; [Game rules](../game/README.md) explains
 them. Ordinary ground (ground 0) normally has no battles, and grounds 1 to 7 take
 consecutive zones from the rule's first one. A rule can also move the first
@@ -265,13 +265,13 @@ since the after event is the conversation it reads.
 ### The world map screen
 
 On the world map the two shortcut keys, L and R, don't use their shortcuts:
-L zooms the view out while you hold it, and R brings up a still picture of
-the whole world. Every place you've visited has a marker, the party's own
-place blinks, and a cursor moves with the pad, faster the longer you hold
-it; holding L or R puts it on your current place. The place nearest the
+L zooms the view out while the player holds it, and R brings up a still picture of
+the whole world. Every place the party has visited has a marker, the party's own
+place blinks, and a cursor moves with the pad, faster the longer the player holds
+it; holding L or R puts it on the party's current place. The place nearest the
 cursor gets a blinking frame and its name in a window, and A or B closes the
 screen. In the German, French, Spanish and Italian releases the cursor also
-glides onto the nearest place when you let go of the pad.
+glides onto the nearest place when the player lets go of the pad.
 
 In code, R on the world map raises event -888, and the scene loop calls
 `Map_ShowWorldMap`. It decodes the picture into `gMapCellBuffer`, the map
@@ -291,10 +291,10 @@ rows belong to the actors in order from slot 11, and each marker is drawn
 where its actor stands. A row of zeros is a gap, an actor with no marker,
 and a row of -1 ends the table.
 
-Only the places you've visited are drawn, and their markers go into the
+Only the places the party has visited are drawn, and their markers go into the
 screen's sprite list one after another, not at a fixed entry per actor.
 The frame round the nearest place comes after them, and the cursor has the
-list's last entry. That way a place you haven't been to costs no sprite,
+list's last entry. That way a place the party hasn't been to costs no sprite,
 while each row still belongs to the same actor.
 
 ## How it fits with the rest of the game
@@ -308,7 +308,7 @@ until the party takes an exit. The overlay is the scene's own code, from
 initialization.
 
 The scenes of one place share a group, which picks their music, place name
-and the flags kept while you're inside. Entering a new group clears the
+and the flags kept while the party is inside. Entering a new group clears the
 group flags (0x300 to 0x3ff) and the step counters, shows the place name,
 makes the entrance Retreat's destination, and sets the group's visited flag,
 which is what puts the place's marker on the world map screen. Towns and

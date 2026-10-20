@@ -1,6 +1,6 @@
 # Windows
 
-Nearly everything you read in The Broken Seal comes to you in a window: a
+Nearly everything the player reads in The Broken Seal comes in a window: a
 villager's line, a battle message, the save screen, the name entry keyboard.
 The windows are framed boxes drawn into one background layer that the whole
 game shares. The code here draws them, decodes the game's compressed
@@ -52,7 +52,7 @@ blocks of memory the game hands out to its systems) and is reached as
 `UI_WORK` or `gWindowWork[0]`. In it are the tilemap, the window slots, the
 three message channels, the 64 render outputs and the decoded text.
 
-Each box you see on screen is a **window**, a `struct UiWindow` slot: a
+Each box on screen is a **window**, a `struct UiWindow` slot: a
 framed rectangle of the tilemap. It zooms open over 8 frames and closed over
 4, unless it's `UI_WINDOW_INSTANT`. Its `x`, `y`, `width` and `height` count
 8-pixel tiles on the 30 by 20 tile screen (240 by 160 pixels), while offsets

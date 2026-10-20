@@ -79,7 +79,7 @@ builds its list from every item of its type whose counter is above zero
   and sets game flag 0x400 (1024) plus the row number
   (`FLAG_SHOP_ARTIFACTS_STOCKED` plus the row) so it never does so again
   (`EventTable_ApplyRowAbilities`). Game flags are the 4,096 yes-or-no facts
-  the game remembers about your journey, and this one only means that the
+  the game remembers about the journey, and this one only means that the
   shop's artifacts have been counted in.
 - Buying one takes one away, once the purchase is complete, and the quantity
   the player can buy stops at what the counter holds.

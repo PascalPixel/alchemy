@@ -1,7 +1,7 @@
 # Field
 
-Whenever you're walking around in The Broken Seal, in a town, a dungeon or
-out on the world map, the field engine is what you're looking at. It draws
+Whenever the player is walking around in The Broken Seal, in a town, a dungeon or
+out on the world map, the field engine is what's on the screen. It draws
 the sprites of people and things and keeps up to 64 field objects moving,
 each under a small script of its own. It turns the direction pad into steps,
 loads and scrolls the layered maps of towns and dungeons, and tilts the
@@ -160,10 +160,10 @@ script command run once a frame.
 
 ![Isaac walking through the snow in Imil, leaving footprints that fade behind him](https://alchemy.pascalpixel.com/guides/field/snow.gif)
 
-In Imil's snow you can watch that happen. Every 18 frames of walking, or 12
+Imil's snow shows it happening. Every 18 frames of walking, or 12
 of running, the player's control creates a footprint, field object kind 25,
 and starts it on a script two words long, `SC_WAIT(120), SC_FREE`
-(`gWorldMap_FootprintActions`, in `facing.c`). Each footprint you see is one
+(`gWorldMap_FootprintActions`, in `facing.c`). Each footprint on screen is one
 of the 64 objects, waiting out its four seconds before it frees itself.
 
 A script is an array of 32-bit words, and its cursor is a word index into
@@ -222,7 +222,7 @@ unused.
 
 ### How the player moves
 
-When the scene loop hands control back to you, it starts one of the
+When the scene loop hands control back to the player, it starts one of the
 engine's own scripts on the leader: `SC_PLAYER` on a layered map, `SC_WORLD`
 on the world map, `SC_KEYS` (8-pixel steps by the direction pad) while
 climbing, or only `SC_KEY_COUNT`, a check of the configured keys, while the
@@ -361,7 +361,7 @@ at the bottom of the screen, and that is all it takes for the ground to tilt
 away.
 
 The map is made of 32-pixel cells, and the tiles around the player are
-loaded one a frame as you walk (`Map_PreloadCurrentTileBlock`). There are
+loaded one a frame as the party walks (`Map_PreloadCurrentTileBlock`). There are
 two graphics sets, `gWorldMap_GraphicsResources`, and
 `WorldMap_LoadGraphics` takes the second where the ground is terrain kind
 21.

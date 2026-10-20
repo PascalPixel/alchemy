@@ -1,6 +1,6 @@
 # System
 
-When you switch Golden Sun on, the first of the game's own code to run is
+When the player switches Golden Sun on, the first of the game's own code to run is
 here, and everything after it stands on what it sets up. `System_Entry` puts
 the processor's stacks in place and hands over to the runtime. From then on,
 what's here decides where everything lives in memory, which routines sit in
@@ -8,7 +8,7 @@ the Game Boy Advance's fast internal RAM, how one part of the program calls
 another, and how the code for a town or a dungeon is packed so that it can be
 unpacked into RAM when the party walks in. It also holds the directory that
 every picture, table and overlay is found through, and the library that
-writes your save to the cartridge's flash chip.
+writes the save to the cartridge's flash chip.
 
 Nearly all of it is assembly. Some of that is code no C compiler would
 produce, and each such file says in its header what gives it away; the rest

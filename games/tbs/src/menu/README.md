@@ -189,7 +189,7 @@ them:
 | 3 Item | `ItemMenu_Run` | [`menu/item.c`](menu/item.c) |
 | 4 Status | `StatusMenu_Run` | [`menu/status.c`](menu/status.c) |
 
-When you back out of a screen, it returns -1 and the four icons come up
+When the player backs out of a screen, it returns -1 and the four icons come up
 again; the Djinn screen always returns 1, which does the same. Psynergy or an
 item used on a party member takes effect inside the screen, but Psynergy or
 an item meant for the field isn't used by the menu at all. The Psynergy

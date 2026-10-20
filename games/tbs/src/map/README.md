@@ -2,7 +2,7 @@
 
 Every town, dungeon and house the party walks through stands on a map: a grid
 of 16-pixel squares, each saying what's drawn there, what shape the ground
-has and whether you can walk on it. All of The Broken Seal's maps are here as
+has and whether the party can walk on it. All of The Broken Seal's maps are here as
 tables you can read: 182 layered maps for the towns, dungeons and interiors,
 the world map's ground, and the paths the rivals run in the Colosso finals.
 

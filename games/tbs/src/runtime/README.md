@@ -1,9 +1,9 @@
 # Runtime
 
 Underneath everything Golden Sun puts on the screen there's a layer of code
-you never see directly. It starts the game when the Game Boy Advance is
+the player never sees directly. It starts the game when the Game Boy Advance is
 switched on, keeps time one frame at a time, reads the buttons, hands out
-memory, gathers each frame's sprites, fades the screen in and out, saves your
+memory, gathers each frame's sprites, fades the screen in and out, saves the player's
 game to the cartridge and talks to a second console over the link cable. The
 field, the battles, the menus and every scene are built on it, and all of
 them come back to it whenever they let time pass, through one function,
@@ -360,7 +360,7 @@ would then release with it.
 
 ### Saving next to the old copy
 
-The cartridge keeps your saves in flash memory, 16 sectors of 4 KB. Each
+The cartridge keeps the saves in flash memory, 16 sectors of 4 KB. Each
 sector holds one record: a 16-byte header (signature, record id, a checksum
 of the payload and a sequence number) and a payload of 0xff0 bytes, of which
 the checksum covers the first 0xfe8. The three save files on the file select

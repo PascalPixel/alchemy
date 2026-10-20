@@ -457,10 +457,13 @@ struct AnimationEntry *AnimationObject_Allocate(s32 id) {
     }
     if (found != NULL) {
       // Bind the metadata and start its first animation at command zero.
-      // Read as a word, the frames load does not wait on the animId store, so
-      // the zero for pos and param loads first as native; as metadata->frames,
-      // 1 of 61 instructions differs in tbs-en.
+      // UB: the word view aliases a pointer field. It keeps the zero load
+      // ahead of frames as native; reading the pointer swaps those loads.
+#ifdef UBFIX
+      frames = metadata->frames;
+#else
       frames = (void **)*(s32 *)&metadata->frames;
+#endif
       layer = found;
       layer->animId = id;
       if (frames == 0)

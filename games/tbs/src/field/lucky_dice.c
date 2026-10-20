@@ -292,6 +292,8 @@ void LuckyDice_Run(void) {
   s32 resultKind;
   s32 winnings;
   s32 payoutTimer;
+  // RESULT frame 20 sets the number's digit count before A can enter PAYOUT.
+  // It persists across frames to clear the same numeric field afterward.
   s32 digits;
   s32 spriteCount;
   struct EffectStep *rollingDie;

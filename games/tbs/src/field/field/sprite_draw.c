@@ -46,11 +46,18 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
   // The object system's work and the frame decoder sit in the heap slot
   // table; load the decoder into RAM for this call if no one else has.
   mirrored = 0;
-  system = (*(void *(*)[]) & gMenuCtrlWork)[0];
+  system = gMenuCtrlWork;
   decoderWasLoaded = 1;
+  // UB: gMenuCtrlWork is one pointer, not an array reaching the decoder cell.
+  // The native form derives both cell addresses from this one base; using
+  // WORK_SLOT directly changes allocation and adds a literal-pool entry.
+#ifdef UBFIX
+  decodeFrame = (SpriteDrawFn)WORK_SLOT(HEAP_SLOT_FRAME_SCRATCH);
+#else
   decodeFrame =
       (SpriteDrawFn)(*(void *(*)[]) & gMenuCtrlWork)[HEAP_SLOT_FRAME_SCRATCH -
                                                      HEAP_SLOT_MENU_CONTROL];
+#endif
   if (decodeFrame == 0) {
     code = Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_SCRATCH,
                                      (s32)Render_DecodeFrameCodeSize);
@@ -58,9 +65,13 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *obj, u16 dir) {
             (((u32)gRender_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2) |
                 (DMA_ENABLE | DMA_32BIT) << 16,
             REG_DMA3);
+#ifdef UBFIX
+    decodeFrame = (SpriteDrawFn)WORK_SLOT(HEAP_SLOT_FRAME_SCRATCH);
+#else
     decodeFrame =
         (SpriteDrawFn)(*(void *(*)[]) & gMenuCtrlWork)[HEAP_SLOT_FRAME_SCRATCH -
                                                        HEAP_SLOT_MENU_CONTROL];
+#endif
     decoderWasLoaded = 0;
   }
 

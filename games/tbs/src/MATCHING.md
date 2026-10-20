@@ -137,6 +137,11 @@ Measured:
 
 ### Scenes
 
+- Calling a helper before its declaration, or with its exact `void`
+  prototype in scope. In the affected Colosso and Kolima Forest bend helpers,
+  adding the prototype changes the argument setup order. Their unit headers
+  provide the correct declarations under `UBFIX`; the matching build keeps
+  the call before the declaration.
 - A field read or written through its offset, `*(T *)((u8 *)p +
   offsetof(struct FieldActor, field))`, where `p->field` goes through
   FieldActor's single/group union and moves a load
@@ -145,9 +150,12 @@ Measured:
 - Another struct's view of the same object (`struct SolSanctumRingObject`
   for a FieldActor) in
   [`scene/common/sol_sanctum_elemental_star_ring_setup.h`](scene/common/sol_sanctum_elemental_star_ring_setup.h).
-- A byte store through a `u8 *` and `offsetof` in place of a struct field
-  (`Colosso_RestoreCompetitor`).
-- `gMapWork[0]` read as a `u32` (`SceneActor_MoveAndRedraw`).
+- Byte-addressed field stores with `sizeof` and `offsetof` rather than direct
+  struct members (`Colosso_RestoreCompetitor` and
+  `TolbiShipInteriors_SelectPlacements`). These valid byte views keep the
+  native address bases and registers.
+- The native `u32` view of `gMapWork[0]` (`SceneActor_MoveAndRedraw`). It
+  aliases a pointer field; `UBFIX` reads the pointer directly.
 - A command of `event.h` and the service it names; each site keeps the one it
   matches with.
 

@@ -16,9 +16,12 @@ struct FacingObject {
   u8 unk0c[4];
   s32 positionZ; ///< 16.16 fixed-point pixels
   u8 unk14[0x46];
+  /// The steering flags (SW_STEERING); bit 0, turning toward its velocity, is
+  /// cleared while it turns toward its target.
   u8 facingFlags;
   u8 unk5b[9];
-  s16 unk64;
+  s16 unk64; ///< work value 0x23 (actionParameter); not read through this view
+  /// The linked object (work value 0x25), or null.
   struct FacingObject *facingTarget;
 };
 

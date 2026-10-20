@@ -29,7 +29,10 @@ s32 IwramRatioMulQ14FarArm(s32 divisor, s32 value);
 /// run its hook, then its script (unless it waits or is paused); steer it
 /// towards its target, or brake it when it has none; apply gravity and
 /// bounce off the ground; detect arrival at the target; and turn it to face
-/// the way it moves. Copied to RAM and run from there.
+/// the way it moves. Copied to RAM and run from there. Writes each object's
+/// position, velocity and facing, and unsets its target on arrival. Only
+/// Object_RunUpdateAllFromHeap copies and runs it, and nothing calls that;
+/// the field runs Object_UpdateAllThumb instead.
 void Object_UpdateAll(void) {
   struct ScriptMotionObject *object;
   s32 y;
@@ -132,6 +135,9 @@ void Object_UpdateAll(void) {
         }
       } else {
         // No target: brake by the acceleration until the object stops.
+        // XXX: this branch calls the far-call stubs where the steering above
+        // calls the IWRAM routines by address; both reach the same routines,
+        // and only the bytes show the difference, not why.
         deltaX = object->velocityX;
         deltaZ = object->velocityZ;
         distance =
@@ -193,6 +199,8 @@ void Object_UpdateAll(void) {
         arrived = 1;
       break;
     }
+    // Snapping stops the object on the target; it takes the target's height
+    // too only when its motion flags are all clear.
     if (arrived) {
       if (object->snapToTarget) {
         x = object->targetX;

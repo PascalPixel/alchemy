@@ -59,20 +59,20 @@ struct Position {
 /// fills x (the line's width scale) and z (its depth); the rest caches the
 /// rotation terms this routine computes from them for the current angle.
 struct ScanVertex {
-  s32 x;
-  s32 z;
-  s32 dx;
-  s32 dz;
-  s16 u;
-  s16 v;
+  s32 x;  ///< the line's width scale
+  s32 z;  ///< the line's depth
+  s32 dx; ///< the texture x offset from the origin, before >> 8
+  s32 dz; ///< the texture y offset from the origin, before >> 8
+  s16 u;  ///< the cached BG2PA
+  s16 v;  ///< the cached BG2PC
 };
 
 /// One background's affine registers, BG2PA to BG2Y.
 struct BgAffine {
   s16 pa;
-  s16 pb;
+  s16 pb; ///< not written by this routine
   s16 pc;
-  s16 pd;
+  s16 pd; ///< not written by this routine
   s32 x;
   s32 y;
 };
@@ -80,9 +80,11 @@ struct BgAffine {
 /// Builds the world map's per-scanline affine table for one frame: the ground
 /// plane seen from eye towards target. line points at the 160 scanlines'
 /// ground terms, whose rotation terms stay cached while the yaw
-/// (gScanlineAngle) is unchanged;
-/// affine receives each line's parameters twice, for BG2 and then BG3, as the
-/// HBlank DMA writes both. Copied to RAM and run from there.
+/// (gScanlineAngle) is unchanged; affine receives each line's parameters
+/// twice, for BG2 and then BG3, as the HBlank DMA writes both. Copied to RAM
+/// (heap slot 46) by Map_InitializePerspectiveScene, which runs it once, and
+/// run from there each frame by WorldMap_UpdateView into the affine page of
+/// the frame's parity. Writes gScanlineAngle when the yaw changes.
 void Transform_UpdateVertices(struct Position *eye, struct Position *target,
                               struct ScanVertex *line,
                               struct BgAffine *affine) {

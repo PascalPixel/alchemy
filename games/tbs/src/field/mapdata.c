@@ -8,7 +8,8 @@
 
 /// Terrain height functions, chosen by the low four bits of a cell's first
 /// collision byte and called with (the remaining samples, x within the cell,
-/// y within the cell). Each reads only the arguments it needs.
+/// y within the cell). Each reads only the arguments it needs. Read by
+/// Map_GetTerrainHeight and Map_CheckObjectStep (terrain.c).
 const TerrainHeightFn gMap_TerrainHeightFunctions[16] = {
     Curve_GetFirstSampleA,
     Curve_LerpTwoSamples,
@@ -30,7 +31,7 @@ const TerrainHeightFn gMap_TerrainHeightFunctions[16] = {
 
 /// World map terrain behaviour, indexed by the collision value plus 0x10 when
 /// the block word's top bit is set, or plus 0x20 (whatever that bit) for
-/// terrain kind 21.
+/// terrain kind 21. Read only by GetWorldMapTerrainBehavior.
 // clang-format off
 const u8 gWorldMap_TerrainBehaviorTable[48] = {
     0, 0, 0, 0, 0, 1, 7, 1, 1, 2, 1, 1, 1, 1, 0, 0,
@@ -39,13 +40,15 @@ const u8 gWorldMap_TerrainBehaviorTable[48] = {
 };
 // clang-format on
 
-/// The eight compass directions as (x, y) offsets of radius 40.
+/// The eight compass directions as (x, y) offsets of radius 40. No code in
+/// The Broken Seal names it.
 const s8 gWorldMap_DirectionOffsets[8][2] = {
     {0, -40}, {28, -28}, {40, 0},  {28, 28},
     {0, 40},  {-28, 28}, {-40, 0}, {-28, -28},
 };
 
-/// Two 1.0s (Q16); battle effects read them as a unit scale.
+/// Two 1.0s (Q16). No code in The Broken Seal names it; The Lost Age's
+/// battle effects read its copy as a unit scale.
 const u32 gWorldMap_UnitScale[2] = {
     0x10000,
     0x10000,

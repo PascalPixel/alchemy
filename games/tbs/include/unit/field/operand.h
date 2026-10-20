@@ -5,6 +5,9 @@
 
 struct ScriptOperands;
 
+/// A work value's handler: by operation (enum ScriptOperandOperation in
+/// script_commands.c) it sets the object field it names to value, adds value
+/// to it, or stores whether it equals value in conditionResult.
 typedef void (*OperandFunc)(struct ScriptOperands *state, s32 operation,
                             s32 value);
 

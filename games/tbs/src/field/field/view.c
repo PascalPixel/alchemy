@@ -5,7 +5,10 @@
 #include "../field_internal.h"
 
 /// Shakes the screen: sets the map's x and y shake amplitude and its decay
-/// (16.16), leaving any negative value unchanged.
+/// (16.16), leaving any negative value unchanged. Writes shakeX, shakeY and
+/// shakeDecay in the map work. Scenes reach it through Map_SetShake
+/// (field_event.h) and the far alias Map_SetScreenShakeFar; about 35 scenes
+/// shake the screen.
 void Map_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay) {
   struct MapScrollWork *work;
 
@@ -22,13 +25,16 @@ void Map_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay) {
 }
 
 /// Waits until the screen shake has died down (both amplitudes under 1/256
-/// pixel), at most 300 frames, then stops it.
+/// pixel), at most 300 frames, then stops it by clearing shakeDecay. Scenes
+/// import it through Map_WaitForShakeToSettleFar under three local names
+/// (overlay.inc); about 20 scenes wait on a shake.
 void Map_WaitForShakeToSettle(void) {
   struct MapScrollWork *work;
   s32 waitedFrames;
 
   work = gMapWork[0];
   waitedFrames = 0;
+  // 300 frames is five seconds.
   while (waitedFrames < 300 && (work->shakeX > 255 || work->shakeY > 255)) {
     WaitFrames(1);
     waitedFrames++;
@@ -39,6 +45,8 @@ void Map_WaitForShakeToSettle(void) {
 /// Copies TileMap_DrawRows (ARM code) to the heap and runs it once: it draws
 /// the rows that lines describes (32 bytes a row) into pixels, from the tiles
 /// in the BG tile buffer's second half and the map in the decode buffer.
+/// Called by MapAnimation_Start for the first frame of a world map animation;
+/// the heap slot (49) is freed again before it returns.
 void TileMap_DrawRowsFromRam(s32 lines, s32 pixels) {
   u8 *base;
 
@@ -58,7 +66,9 @@ void TileMap_DrawRowsFromRam(s32 lines, s32 pixels) {
 /// pitch (depth is its cotangent): for each of the 160 lines, where its ray
 /// meets the ground, the line's width scale and its distance, or zeros above
 /// the horizon. Transform_UpdateVertices turns these into the affine
-/// parameters each frame.
+/// parameters each frame. Called by Map_InitializePerspectiveScene and by
+/// WorldMap_UpdateView when the pitch changes; it writes all 160 entries of
+/// scanline.
 void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
                                  struct MapScanline *scanline) {
   s32 groundPoint[3];
@@ -90,6 +100,8 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
     if (difference == 0)
       difference = 1;
     scale = Iwram_RatioMulQ14(difference, horizon);
+    // A negative scale is a line below the horizon, whose ray meets the
+    // ground; the lines above it are sky and get zeros.
     if (scale < 0) {
       diagonal = Iwram_MulQ16(-scale, 0x8000);
       scanline->scale = Iwram_RatioMulQ14(gProjection.focal, diagonal);
@@ -99,6 +111,7 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
       horizontalSquared = Iwram_MulQ16(horizontal, horizontal);
       verticalSquared = Iwram_MulQ16(vertical, vertical);
       verticalSquared = Iwram_Sqrt(horizontalSquared + verticalSquared) << 12;
+      // The ground distance takes the sign of the vertical term.
       if (vertical < 0)
         verticalSquared = -verticalSquared;
       scanline->depth = Iwram_MulQ16(verticalSquared, 0x8000);

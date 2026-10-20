@@ -14,23 +14,23 @@ struct ObjectCameraTile {
 
 /// A field object, as the camera reads it.
 struct ObjectCameraObject {
-  u32 active;
+  u32 active; ///< zero for a free slot
   u16 unk04;
-  u16 angle;
+  u16 angle; ///< the sprite's facing, before the camera's angle is added
   s32 x;
-  s32 y;
+  s32 y; ///< up; the on-screen test uses z - y
   s32 z;
-  s32 height;
-  s32 scaleX;
-  s32 scaleY;
+  s32 height; ///< the ground height under the object
+  s32 scaleX; ///< Q16
+  s32 scaleY; ///< Q16
   u8 unk20[2];
-  u8 layer;
-  u8 flags;
+  u8 layer; ///< the map layer it stands on; the cell under it may change it
+  u8 flags; ///< bits: 2 draw 320 pixels down | 1 up | 0 priority from cell
   u8 unk24[0x2c];
-  void *sprite;
-  u8 kind; ///< 1: one sprite, 2: up to four
+  void *sprite; ///< a sprite, or for kind 2 an array of four sprite pointers
+  u8 kind;      ///< 1: one sprite, 2: up to four
   u8 unk55[7];
-  u8 held;
+  u8 held; ///< nonzero keeps the sprite and its VRAM off screen or suspended
   u8 unk5d[0x13];
 };
 
@@ -51,6 +51,11 @@ struct ObjectCameraFixed {
 /// Each frame, with the scrolling camera: places every object's sprite on the
 /// screen. An object on or near the screen takes its layer and priority from
 /// the cell under it; one off screen gives up its VRAM cache entry.
+/// ObjectSystem_Initialize schedules it (order 0xc80, after the objects move)
+/// for every mode but 3 and 4; Graphics_EnableObjLayerAndCallbacks suspends
+/// it. Resets the system's used count, may change an object's layer and its
+/// sprite's priorities, and holds the frame decoder in heap slot
+/// HEAP_SLOT_FRAME_SCRATCH only while it runs.
 void ObjectSystem_UpdateCamera(void) {
   /* FAKEMATCH(dead): an unused local for the room the native frame keeps for
    * three points above the position; without it, 2 of 267 instructions differ
@@ -105,12 +110,17 @@ void ObjectSystem_UpdateCamera(void) {
   for (objectIndex = 0; objectIndex < 64; objectIndex++, object++) {
     if (object->active == 0)
       continue;
+    // An object at (x, z) = (0, 0) is not placed; only its sprite's VRAM is
+    // given up.
     if (object->x != 0 || object->z != 0) {
       kind = object->kind & 15;
       if (kind == 0)
         continue;
+      // This camera places single sprites only; groups (kind 2) are left.
       if (kind != 1)
         continue;
+      // While a menu has sprite projection suspended, only held objects are
+      // drawn.
       if (system->suspended != 0 && object->held == 0) {
         struct AnimationObject *frozen = object->sprite;
 
@@ -122,6 +132,8 @@ void ObjectSystem_UpdateCamera(void) {
       dz = object->z - viewZ;
       screenTop = dz - object->y;
       sprite = object->sprite;
+      // From 32 pixels left of the screen to 32 past its 240, and from 32
+      // pixels above it to 224.
       if (dx > -0x200000 && dx < 0x1100000 && screenTop > -0x200000 &&
           screenTop < 0xe00000) {
         // The cell under the object.
@@ -143,6 +155,8 @@ void ObjectSystem_UpdateCamera(void) {
         drawPosition.height = object->y;
         drawPosition.y = dz;
         drawPosition.groundHeight = object->height;
+        // XXX: flag bits 1 and 2 draw the object 320 pixels up or down the
+        // map from where it is; the scenes that set them would say why.
         if (object->flags & 2) {
           drawPosition.height += 0xfec00000; // -320 pixels
           drawPosition.y += 0xfec00000;
@@ -157,6 +171,8 @@ void ObjectSystem_UpdateCamera(void) {
                                        object->angle);
         continue;
       }
+      // Off screen: the sprite's VRAM goes back to the cache, and dirty makes
+      // it redraw when it comes back.
       if (object->held == 0) {
         if (!sprite->retainCacheEntry) {
           VramCache_ReleaseVram(sprite->slot);
@@ -183,7 +199,9 @@ UNUSED s32 ObjectCamera_ReturnTrue(void) { return 1; }
 /// 64th object down, facing them by the angle from the eye to the target.
 /// While battle commands are chosen (flag 363, set by
 /// BattlePresentation_BuildActions) it uses the fixed view matrix and 1.0
-/// scale.
+/// scale. ObjectSystem_Initialize schedules it (order 0xc80) for modes 3 (the
+/// world map) and 4 (battle); Graphics_EnableObjLayerAndCallbacks suspends it.
+/// Resets the system's used count.
 void ObjectSystem_UpdateCameraFixed(void) {
   s32 i;
   struct ObjectCameraFixed *camera;
@@ -225,6 +243,8 @@ void ObjectSystem_UpdateCameraFixed(void) {
   angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
   system->used = 0;
   Render_ResetTransformState();
+  // Under the fixed view matrix every sprite also faces an eighth of a turn
+  // (0x2000) further back.
   if (GameFlag_TestFar(FLAG_CHOOSING_COMMANDS)) {
     angle += 0xffffe000;
     Iwram_TransformMatrix(gCamera_FixedViewMatrix);
@@ -259,6 +279,8 @@ void ObjectSystem_UpdateCameraFixed(void) {
         groupScale[0] = fixedScale;
         groupScale[1] = fixedScale;
       }
+      // A group's sprite field points to its four sprite pointers; empty
+      // ones are null.
       sprites = object->sprite;
       for (spritesRemaining = 3; spritesRemaining >= 0; spritesRemaining--) {
         sprite = *sprites++;

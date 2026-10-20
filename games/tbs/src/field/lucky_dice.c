@@ -24,7 +24,10 @@
 #include "macros.h"
 
 /// Starts the Lucky Dice minigame: leaves only the backdrop on screen, starts
-/// song MUS_009 and plays until the player quits. Returns 0.
+/// song MUS_009 and plays until the player quits. Returns 0. Reached through
+/// Runtime_BlankDisplayAndRunFar from RunLuckyDice (object/object/scene.c),
+/// which saves background palettes 14 and 15 around it and passes an
+/// entrance this function does not take.
 s32 Runtime_BlankDisplayAndRun(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   AudioCommand_PlayFar(MUS_009);
@@ -35,6 +38,8 @@ s32 Runtime_BlankDisplayAndRun(void) {
 /// Puts the 3D camera back at its scene defaults: at the origin, unturned,
 /// pitched to 152 and 510 units away, following nothing. Recomputes the eye
 /// and sets the projection's focal length (250), near plane and far plane.
+/// Called only by LuckyDice_Run, once the camera's heap block is allocated;
+/// writes gCameraWork's fields and gProjection.
 void Camera_ResetSceneDefaults(void) {
   struct BattleCamera *camera = gCameraWork;
   s32 offset[3];
@@ -199,7 +204,7 @@ enum LuckyDiceState {
 
 /// Copies count RGB555 colours from source to destination with each channel
 /// multiplied by scale (16.16: 0 is black, 0x10000 unchanged), for fades.
-/// Returns 0.
+/// Returns 0. Called only by LuckyDice_Run, to fade both palettes in and out.
 s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
                                s32 count) {
   s32 remaining;
@@ -241,6 +246,9 @@ s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
 /// stops in give four numbers. Four of a kind pays 5 times the bet (15 or 25
 /// times when it matches one of the two lucky numbers shown at the top),
 /// three of a kind 3 times, two pairs twice and one pair the bet back.
+/// Called by Runtime_BlankDisplayAndRun. Takes the bet from and pays the
+/// winnings into gGameState.coins, resets the scheduler's task table, and
+/// frees the five heap slots it allocates before it returns.
 void LuckyDice_Run(void) {
   u16 bgPalette[256];
   s32 spriteDepth[DICE_RESULT_COUNT]; // the two dice, then their shadows
@@ -671,6 +679,7 @@ void LuckyDice_Run(void) {
       // Projection reads the record's three coordinate words directly.
       // Copying them to an array grows native EN from 0x1274 to 0x1294 bytes.
       Render_ProjectPoint(rollingDie, screen);
+      // Depth is clamped to 350..650; the nearer, the larger the die.
       if (screen[2] < 0x15e) {
         screen[2] = 0x15e;
       }
@@ -681,6 +690,9 @@ void LuckyDice_Run(void) {
       halfSize = 0x800 / (spriteDepth[drawOrder[index]] / 2 + 128);
       dieX = screen[0] - halfSize;
       dieY = screen[1] - halfSize;
+      // An affine, double-size, 256-colour sprite using the die's own
+      // affine matrix (attr1 bits 9 to 13); 0x278 and 0x160 wrap in OAM's 9-
+      // and 8-bit fields to 120 across and 96 down.
       if (dieY + 96 > -16) {
         sprites->obj[spriteCount].attr01 =
             ((drawOrder[index] << 25) | (((dieX + 0x278) & 0x1ff) << 16) |
@@ -716,6 +728,7 @@ void LuckyDice_Run(void) {
       SET_VECTOR(groundPoint, diceWork->particles[index].x, 0,
                  diceWork->particles[index].z);
       Render_ProjectPoint(groundPoint, screen);
+      // A shadow shrinks as its die rises.
       if (screen[2] < 0x15e) {
         screen[2] = 0x15e;
       }
@@ -836,6 +849,7 @@ void LuckyDice_Run(void) {
         SET_VELOCITY(rollingDie, rollingDie->velocityX * 63 / 64,
                      rollingDie->velocityY * 63 / 64,
                      rollingDie->velocityZ * 63 / 64);
+        // The roll angle wraps at six faces of 0xc00.
         rollingDie->variant += spinRate[index];
         if (rollingDie->variant > 0x47ff) {
           rollingDie->variant -= 0x4800;
@@ -925,11 +939,14 @@ void LuckyDice_Run(void) {
 
     // Hide the unused sprites, write the four affine matrices (one per die
     // and shadow, scaled by depth) and copy the sprites to OAM.
+    // An unused sprite is parked at x 240, just past the right edge.
     for (; spriteCount != 128; spriteCount++) {
       sprites->obj[spriteCount].attr01 = 0x40f02000;
       sprites->obj[spriteCount].attr2 = 0;
     }
 
+    // OAM keeps affine matrix n in the fourth halfwords of entries 4n to
+    // 4n + 3, which attr2's high half covers here.
     for (index = 0; index != DICE_RESULT_COUNT; index++) {
       affineScale = spriteDepth[index] / 2 + 128;
       affineA = affineScale;

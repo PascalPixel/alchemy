@@ -4,8 +4,9 @@
 
 // World map graphics: a palette and five tile sets for each of its two looks.
 
-/// Each set is a palette and five tile sets; the loader takes the second set
-/// when the cell it loads at has terrain kind 21. Not const: the loader reads
+/// Each set is a palette and five tile sets; WorldMap_LoadGraphics takes the
+/// second set when the cell it loads at has terrain kind 21, and keeps the
+/// set's row in the perspective work's resources. Not const: the loader reads
 /// it through a u32 *.
 u32 gWorldMap_GraphicsResources[2][6] = {
     {

@@ -1,6 +1,39 @@
 /// @file
-/// Goma Cave's entrance: the stump caught in ivy, the two pillars, and Ivan,
-/// who rejoins the party and blows the ivy away with Whirlwind.
+/// Goma Cave Entrance (GomaCaveEntrance, scene 25), the mouth of the cave in
+/// the Goma Range that leads from Vault to Bilibin, where Ivan rejoins the
+/// party.
+///
+/// Vault's mayor sent the party here: `Look for a cave in the mountains of the
+/// Goma Range, northeast of us. Once you've passed it, you'll reach Bilibin.`
+/// In Vault, Ivan, Master Hammet's servant, had joined the party to find the
+/// Shaman's Rod that thieves stole from Hammet, reading the townspeople's
+/// minds; once the thieves were caught he took the rod and set out for Lunpa,
+/// where Hammet was said to be heading.
+///
+/// A stump caught in ivy blocks the way on, and Move on it runs
+/// Event_IvanRejoins while FLAG_GOMA_CAVE_IVAN_REJOINED is clear. Garet says
+/// their Psynergy is not strong enough to free it. If the thieves in Vault are
+/// jailed (FLAG_VAULT_THIEVES_JAILED), Ivan walks up, blows the ivy off with
+/// Whirlwind, tells them he could not get into Lunpa and asks to join their
+/// quest; he rejoins with the Shaman's Rod equipped, and the flag is set.
+/// Otherwise Garet only falls back into line. Once Ivan is back, Move on the
+/// stump runs Event_MoveStump instead: when the stump has been moved to the
+/// right column it spins, leaps and lands out of the way
+/// (FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED).
+///
+/// Two pillars and a second ivy are puzzles on the way. The west pillar is
+/// pushed by walking into it or moved with Move, and stands on one of three
+/// columns, which two flags record
+/// (FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP and _TWO_STEPS). The east
+/// pillar, moved with Move to its last column, settles into the floor so it can
+/// be walked over (FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE). Whirlwind
+/// blows the second ivy away for good (FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY),
+/// and its placement row is skipped from then on.
+///
+/// Scene_Initialize blocks Retreat and puts everything back as these flags say:
+/// the stump where it landed, the pillars on their columns and the map cells
+/// that go with them. Exit 1 leads into Goma Cave (GomaCaveWaterway1, scene 28)
+/// and exit 2 out to the world map.
 #include "unit/scene/goma_cave_entrance.h"
 #include "version.h"
 #include "unit/scene/common/effect_spawn.h"
@@ -73,8 +106,9 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gGomaCaveEntrancePlacements;
 }
 
-/// Move on the west pillar, and after each push: the pillar stands on one of
-/// three columns, and the map cells and flags follow it.
+/// Move on the west pillar at Goma Cave Entrance, and after each push: the
+/// pillar stands on one of three columns, and the map cells and flags follow
+/// it.
 static void Event_MoveWestPillar(void) {
   struct FieldActor *pillar;
   s32 column;
@@ -94,8 +128,8 @@ static void Event_MoveWestPillar(void) {
   }
 }
 
-/// Move on the east pillar: once it reaches column 23 it settles into the floor
-/// and can be walked over.
+/// Move on the east pillar at Goma Cave Entrance: once it reaches column 23 it
+/// settles into the floor and can be walked over.
 static void Event_MoveEastPillar(void) {
   struct FieldActor *pillar;
   s32 column;
@@ -112,8 +146,8 @@ static void Event_MoveEastPillar(void) {
   }
 }
 
-/// Walking into the west pillar from the west (trigger 5) or the east
-/// (trigger 6): the leader leans on it and pushes it one step.
+/// Walking into the west pillar at Goma Cave Entrance from the west (trigger 5)
+/// or the east (trigger 6): the leader leans on it and pushes it one step.
 static void Event_PushWestPillar(void) {
   struct EventWork *work;
   s32 offsetX;
@@ -144,7 +178,8 @@ UNUSED static void GomaCaveEntrance_NoOpA(void) {}
 /// A second reserved hook, also unused by the scene.
 UNUSED static void GomaCaveEntrance_NoOpB(void) {}
 
-/// Whirlwind on the other ivy: it is blown away for good.
+/// Whirlwind on the second ivy at Goma Cave Entrance: it is blown away for
+/// good.
 static void Event_BlowAwayIvy(void) {
   EV_BEGIN();
   Engine_GameFlagSet(FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY);
@@ -155,8 +190,9 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gGomaCaveEntranceEvents;
 }
 
-/// Puts the stump and pillars where the party left them, and the stump's ivy
-/// away once Ivan has blown it off.
+/// Sets up Goma Cave Entrance: Retreat is blocked, and the stump and pillars
+/// stand where the party left them, the stump's ivy gone once Ivan has blown
+/// it off.
 s32 Scene_Initialize(void) {
   struct FieldActor *movedObject;
   s32 v5;
@@ -209,10 +245,11 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Move on the stump while the ivy holds it: Garet says their Psynergy is not
-/// strong enough. Once the thieves in Vault are jailed, Ivan turns up, blows
-/// the ivy away with Whirlwind and asks to join the party, and gets back the
-/// Shaman's Rod.
+/// Move on the stump at Goma Cave Entrance while the ivy holds it: Garet says
+/// their Psynergy is not strong enough. Once the thieves in Vault are jailed
+/// (FLAG_VAULT_THIEVES_JAILED), Ivan turns up, blows the ivy away with
+/// Whirlwind, says he could not get into Lunpa and asks to join the party; he
+/// rejoins with the Shaman's Rod equipped (FLAG_GOMA_CAVE_IVAN_REJOINED).
 static void Event_IvanRejoins(void) {
   struct FieldActor *leader;
 
@@ -418,8 +455,8 @@ static void Event_IvanRejoins(void) {
   }
 }
 
-/// Move on the freed stump: from column 11 it spins, leaps away and lies where
-/// it lands.
+/// Move on the freed stump at Goma Cave Entrance: from column 11 it spins,
+/// leaps away and lies where it lands (FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED).
 static void Event_MoveStump(void) {
   s32 column;
   struct FieldActor *stump;

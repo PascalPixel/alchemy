@@ -1,6 +1,47 @@
 /// @file
-/// Vault's houses, shops and inn on the party's return, after the thieves have
-/// escaped from jail.
+/// Vault's houses, shops and inn (scene 24, a row with no SceneId_ name; the
+/// area names call it Vault) as the party finds them once it has reached
+/// Kalay. They replace the first visit's interiors (vault_interiors.c) as
+/// Vault's revisit scene (vault_revisit.c) replaces the town: each of its
+/// doors 5 to 10 leads to the entrance of the same number here, and each room
+/// leads back out to it.
+///
+/// The thieves the party caught have broken out of jail, and the talk is of
+/// them and of Colosso, the festival about to begin in Tolbi: a villager heard
+/// the prisoners say they wanted to break out before it began. The rooms, by
+/// entrance:
+/// - 5, the house of a man whose precious stone, he says, a cat ate; his wife
+///   thought she saw the cat paw it, and does not believe him. Arriving here
+///   sets him on the floor and copies a 4-by-3 block of cells from (0, 120)
+///   to (8, 67) (XXX: what they show is not known).
+/// - 6, the house of a child who wonders whether the thieves were from Lunpa
+///   at all, since Dodonpa's henchmen never attacked.
+/// - 7 and 11, the inn: the innkeeper behind the counter, and the girl at the
+///   inn, as the Bone's description calls her, who offers Bones left over
+///   from dinner. A Bone also lies on the floor beside her. Trigger 8 leads to
+///   the inn's other room (entrance 12), where a cook works, and trigger 7
+///   back.
+/// - 8, the item shop, with a couple who talk of Colosso.
+/// - 9, the weapon and armor shops.
+/// - 10, the mayor's house. The mayor welcomes Isaac back and tells him the
+///   thieves have escaped (FLAG_WELCOMED_BACK, a place flag, and
+///   FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES); a Mind Read on him before that
+///   plays the welcome first. His wife says the family urn the thieves stole is
+///   on display.
+///
+/// The Bones are how the party gets the dog in Vault to show its hidden
+/// passage. The girl's offer gives one Bone each time it is accepted
+/// (FLAG_VAULT_BONE_RECEIVED, shared with vault_interiors.c, changes only her
+/// words), and searching the floor Bone (search trigger 41, Vault_FindBone)
+/// gives another. While the leader stands beside the floor Bone,
+/// Vault_UpdateBoneProximityFlag sets FLAG_SCENE_TEMP_50, which disables her
+/// talk row, so that the A button there searches the Bone instead of talking
+/// to her. The shopkeepers open their shops only when spoken to across the
+/// counter, facing north, and otherwise only talk. The placements' condition
+/// 0 is replaced as the scene loads with whether each actor stands inside the
+/// room's view bounds, so only the people of the room entered appear. A jar,
+/// two barrels and a wooden box keep the first visit's flags, so what the
+/// party took then stays taken, and two books can be read.
 
 #include "game_state.h"
 #include "unit/scene/vault_interiors_revisit.h"
@@ -34,9 +75,10 @@ enum {
   ACTOR_CHILD = 11,           ///< a child. "Daddy hasn't been paying attention"
   ACTOR_COLOSSO_HUSBAND = 12, ///< would like to see Colosso once more
   ACTOR_COLOSSO_WIFE = 13,
-  ACTOR_MAYOR = 16, ///< before the theft was solved, his wife called him that
+  ACTOR_MAYOR = 16, ///< "our mayor", as the villagers call him
   ACTOR_MAYORS_WIFE = 17,
-  ACTOR_COOK = 23, ///< did some cooking and has bones to spare
+  ACTOR_COOK = 23, ///< in the inn's other room; did some cooking
+  /// The girl at the inn, as the Bone's description calls her.
   ACTOR_VAULT_BONE_GIVER = 18,
   ACTOR_VAULT_WEAPON_MERCHANT = 19,
   ACTOR_VAULT_ARMOR_MERCHANT = 20,
@@ -62,7 +104,9 @@ const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gVaultInteriorsRevisit_Exits; }
 
-/// Applies view conditions to the placements before the field spawns them.
+/// Gives the placements' condition 0 whether each lies inside the view bounds
+/// of the room entered (FieldScene_PrepareActors), so only that room's people
+/// appear.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   struct ScenePlacement *placements = gVaultInteriorsRevisit_Placements;
 
@@ -85,28 +129,32 @@ static inline void VaultInteriorsRevisit_FaceAndSpeak(s32 actor, s32 message) {
   VaultInteriorsRevisit_ShowStandingActorDialogue(actor);
 }
 
-/// The wife thought she saw the cat paw the gemstone on the table, and then
-/// the treasure was gone.
+/// In the house behind door 5, the wife thought she saw the cat paw the
+/// gemstone on the table, and then the treasure was gone.
 static void Event_WifeSawCatTakeGem(void) {
   VaultInteriorsRevisit_FaceAndSpeak(ACTOR_GEM_OWNERS_WIFE,
                                      MsgVaultThoughtSawCatGetUp);
 }
 
-/// The child points out Dodonpa's henchmen never attacked: maybe the thieves
-/// weren't from Lunpa after all.
+/// In the house behind door 6, the child points out Dodonpa's henchmen never
+/// attacked: maybe the thieves weren't from Lunpa after all.
 static void Event_ChildDoubtsThievesWereFromLunpa(void) {
   VaultInteriorsRevisit_FaceAndSpeak(ACTOR_CHILD,
                                      MsgVaultDodonpasHenchmenNeverAttackedUs);
 }
 
-/// The husband would like to see Colosso in Tolbi once more before he dies.
+/// In the item shop, the husband would like to see Colosso in Tolbi once more
+/// before he dies.
 static void Event_HusbandLongsForColosso(void) {
   VaultInteriorsRevisit_FaceAndSpeak(ACTOR_COLOSSO_HUSBAND,
                                      MsgVaultItsNearTimeForColosso);
 }
 
-/// The mayor welcomes Isaac back: the thieves he caught escaped from jail.
-/// Asked whether the party has met them, a yes and a no get different warnings.
+/// In his house, the mayor welcomes Isaac back: the thieves he caught have
+/// escaped from jail, and Vault feared they would come after him. Asked
+/// whether the party has run into them, a yes and a no get different warnings.
+/// Sets FLAG_WELCOMED_BACK, after which the mayor only warns of their revenge,
+/// and FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES (0x868).
 static void Event_WelcomeIsaacBack(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultIsaacYouveComeBackVault);
@@ -136,13 +184,17 @@ static void Event_WarnOfThievesRevenge(void) {
 }
 
 /// The cook has useless bones left from cooking and asks if the party wants
-/// some.
+/// some, but gives none. The cook's earlier talk row, a plain message with no
+/// condition, always answers first (Scene_FindEvent takes the first match), so
+/// this is never shown.
 static void Event_OfferLeftoverBones(void) {
   VaultInteriorsRevisit_FaceAndSpeak(ACTOR_COOK, MsgVaultDidSomeCookingNowIve);
 }
 
-/// The bone giver offers leftover bones from dinner (again, once one was
-/// taken); a yes gets a Bone if there is room, a no a nod.
+/// The girl at the inn offers leftover bones from dinner, or more of them once
+/// one was taken (FLAG_VAULT_BONE_RECEIVED); a yes gets a Bone if there is
+/// room, a no a nod. Her talk row needs FLAG_SCENE_TEMP_50 clear, that is, the
+/// leader not standing beside the floor Bone.
 static void Event_OfferBones(void) {
   Engine_EventBegin();
   Engine_ActorFaceEachOther(ACTOR_VAULT_BONE_GIVER, ACTOR_PARTY_LEADER, 0);
@@ -183,8 +235,8 @@ static void Event_OfferBones(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read on the mayor before the welcome: he notices and welcomes Isaac
-/// back.
+/// Mind Read on the mayor before the welcome: he notices the party and
+/// welcomes Isaac back.
 static void Event_ReadMindAndWelcomeIsaacBack(void) {
   u8 *paused;
   u8 unpaused = 0;
@@ -205,7 +257,7 @@ static void Event_ReadMindAndWelcomeIsaacBack(void) {
 #include "common/vault_bone.h"
 
 /// Across the counter the weapon shop opens; from elsewhere the merchant talks
-/// of a river of fire. It lies beyond Mt. Aleph.
+/// of a river of fire on the other side of Mt. Aleph.
 static void Event_TalkToWeaponMerchant(void) {
   u32 leaderFacing;
 
@@ -276,9 +328,8 @@ static void Event_TalkToInnkeeper(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read on the bone giver: hungry while cooking, or, once a Bone was
-/// given, wondering about a calcium deficiency. The thought is whether "he" has
-/// one.
+/// Mind Read on the girl at the inn: hungry while cooking, or, once a Bone was
+/// given, wondering whether "he" has a calcium deficiency.
 static void Event_ReadBoneGiverMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_VAULT_BONE_RECEIVED) == 0) {
@@ -295,7 +346,10 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gVaultInteriorsRevisit_Events;
 }
 
-/// Initializes the selected interior: lowers actor 8 or starts the spot check.
+/// Opens the room through a window transition. Entering the house behind door
+/// 5 sets its owner on the floor and copies a block of cells; entering the inn
+/// (entrance 7 or 11) places the floor Bone beside the girl and starts
+/// Vault_UpdateBoneProximityFlag.
 s32 Scene_Initialize(void) {
   s32 entrance;
   s32 clearedState;

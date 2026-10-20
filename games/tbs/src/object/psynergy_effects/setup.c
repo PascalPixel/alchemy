@@ -14,7 +14,7 @@ void BattleFx_UpdateAllEffectSlots(void) { FieldFx_UpdateSceneSlots(); }
 /// Field_UsePsynergy and the item uses (object/items.c) call it before an
 /// effect and BattleEffect_CleanupSceneObjects after it, which releases the
 /// work, the spark tiles' resource entry and the scheduler callback started
-/// here. Goma Cave's entrance calls it too, for Ivan's Whirlwind on the
+/// here. Goma Cave Entrance calls it too, for Ivan's Whirlwind on the
 /// stump's ivy.
 /// The caster is the leader, with no target until BattleFx_SetupObjectPair
 /// names one.
@@ -200,7 +200,7 @@ void BattleEffect_CleanupSceneObjects(void) {
 /// still. With flag 0x140 the caster's colours keep cycling and it
 /// takes pose 21; otherwise the caster's hook stops. Sets the field work's
 /// castStarted, which BattleEffect_CleanupSceneObjects clears. Called by
-/// Field_UsePsynergy and Goma Cave's entrance once the effect's caster and
+/// Field_UsePsynergy and Goma Cave Entrance once the effect's caster and
 /// target are set up.
 void EventObject_Initialize(void) {
   s32 ability;

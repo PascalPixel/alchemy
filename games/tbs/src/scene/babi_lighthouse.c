@@ -1,13 +1,57 @@
 /// @file
-/// Babi Lighthouse, the lighthouse Babi is building on old ruins near
-/// Lalivero. Four scenes share this overlay:
+/// Babi Lighthouse, which Babi is having built on ancient ruins just north of
+/// Lalivero, and the road up to it: four scenes that share this overlay,
+/// three places in the game's area names, met in this order. The Road to
+/// Babi Lighthouse is BabiLighthouse4 (scene 177), the Babi Lighthouse Entry
+/// BabiLighthouse3 (scene 176), and Babi Lighthouse itself BabiLighthouse2
+/// and BabiLighthouse1 (scenes 175 and 174), rooms 2 and 1 here. The four
+/// share one exit table, the getters pick the rest by gGameState.scene, and
+/// BabiLighthouse_SetupScene restores the scene being entered.
 ///
-/// - room 1, the stone door Sheba's kidnappers went through, where Iodem and
-///   Faran ask the party to follow them; a switch only Reveal shows opens it;
-/// - room 2, inside, where the party drops between floors, with a Djinni;
-/// - room 3, where the kidnappers knocked down four men on their way, with two
-///   blocks on ledges and a sprout for Growth;
-/// - the building site outside, with its workers and a block to move.
+/// The party comes here from Lalivero with Iodem, whom Babi sent with it
+/// (babi_palace.c). Sheba, the holy child of Lalivero, has been taken
+/// hostage by Felix and the others, who went into the ruins, and Faran, the
+/// master of Lalivero, has followed them (lalivero.c). On the Road to Babi
+/// Lighthouse, entered from the world map, four workers have not been
+/// ordered to start work and talk of the strange folk who went to the ruins
+/// with Faran after them; a block there, moved by Move or Carry, settles in
+/// its cell at a height of 48 pixels (BabiLighthouse_UpdateMovedBlock), and a
+/// chest holds Lucky Pepper.
+///
+/// At the Babi Lighthouse Entry four men lie where the group knocked them
+/// down on its way in (`Only two of those six ever attacked anyone...`), on
+/// ground their fire scorched. Two blocks on ledges are pushed or moved with
+/// Move, a leader left on a ledge jumping off (BabiLighthouse_JumpFromLedge);
+/// in the editions from TBS_PATCH_2 on they also sort against the leader
+/// (BabiLighthouse_MatchLeaderPriority). Growth grows a sprout into a vine
+/// the party climbs (BabiLighthouse_OpenGrowthPassage, place flag 0x300), and
+/// three exit regions drop the party to the floor below, TunnelRuins2's
+/// entrances 1 to 3 (tunnel_ruins.c), which the game still calls Babi
+/// Lighthouse; the way back up comes out here (entrances 4 to 6).
+/// Retreat anywhere in the lighthouse leads back to the Entry.
+///
+/// In room 2 the party falls from floor to floor through the lighthouse
+/// (BabiLighthouse_LandWithParticles, BabiLighthouse_FallToExit) and rises
+/// again on touches 25 to 28; a door is locked, and Luff, a Jupiter Djinni,
+/// starts its battle when spoken to. Room 1 lies before a stone door the
+/// group went through. Walking up to it the first time plays
+/// BabiLighthouse_DiscussPursuit (FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED,
+/// FLAG_IODEM_AT_BABI_LIGHTHOUSE): Faran and the onlookers argue whether
+/// anyone could have opened it, Iodem tells them that the party has chased
+/// Sheba's kidnappers from the far north, and Faran, unwilling to leave
+/// Sheba's fate to children, asks the party to prove itself by opening the
+/// door. Its switch shows only under Reveal
+/// (BabiLighthouse_RefreshTruthDoorTiles, BabiLighthouse_HideTruthDoorSwitch);
+/// searched without it, it reads `The truth of this door is open to those
+/// seeing with their true heart.`, and searched under it, it is flipped and the
+/// door slides open (BabiLighthouse_InspectTruthDoorSwitch,
+/// FLAG_BABI_LIGHTHOUSE_DOOR_OPEN). The first time,
+/// BabiLighthouse_ExplainTruthDoor plays: everyone marvels, the door shuts
+/// again as Iodem moves to follow, the party reasons that it keeps out those
+/// without Psynergy, and Iodem and Faran leave Sheba's rescue to the party
+/// (FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN). Walking through the open door shuts it
+/// behind the party (BabiLighthouse_CloseTruthDoor, place flag 0x301), and
+/// beyond lies the Tunnel Ruins (exit 1).
 
 #include "game_state.h"
 #include "version.h"
@@ -62,11 +106,11 @@ enum {
   ACTOR_FARAN = 14
 };
 
-/// Room 2's Djinni.
+/// Room 2's Djinni, Luff.
 enum { ACTOR_DJINNI = 8 };
 
-/// Room 3: the two blocks on the ledges, the sprout for Growth and the four
-/// men the kidnappers knocked down on their way in.
+/// The Entry (BabiLighthouse3): the two blocks on the ledges, the sprout for
+/// Growth and the four men the kidnappers knocked down on their way in.
 enum {
   ACTOR_LEFT_BLOCK = 8,
   ACTOR_RIGHT_BLOCK = 9,
@@ -74,12 +118,13 @@ enum {
   ACTOR_FIRST_FALLEN_MAN = 11
 };
 
-/// The building site outside: four workers and the block for Move and Carry.
-enum { ACTOR_SITE_BLOCK = 12 };
+/// The Road to Babi Lighthouse (BabiLighthouse4): four workers and the block
+/// for Move and Carry.
+enum { ACTOR_ROAD_BLOCK = 12 };
 
 /// The lighthouse keeps two flags in the area flags from 0x300.
 enum {
-  /// Growth has grown room 3's sprout into a vine.
+  /// Growth has grown the Entry's sprout into a vine.
   FLAG_GROWTH_PASSAGE_OPEN = 0x300,
   /// The party is on the far side of room 1's stone door.
   FLAG_BEYOND_DOOR = 0x301
@@ -102,7 +147,8 @@ static __inline__ s32 UNUSED Entrance_Divide(s32 dividend, s32 divisor) {
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-/// Talking to the Djinni in room 2 starts the battle for Djinni 66.
+/// Talking to the Djinni in Babi Lighthouse's room 2 starts the battle with
+/// Luff, a Jupiter Djinni.
 static void BabiLighthouse_StartDjinnBattle(void) {
   Field_RequestDjinnBattle(ACTOR_DJINNI, DJINNI_LUFF);
 }
@@ -161,8 +207,8 @@ static void BabiLighthouse_LandWithParticles(void) {
   Engine_EventEnd();
 }
 
-/// Arriving at one of room 2's drop entrances: the leader drops in and falls
-/// on, out through the given exit.
+/// Arriving at one of the drop entrances of Babi Lighthouse's room 2: the
+/// leader drops in and falls on, out through the given exit.
 static void BabiLighthouse_FallToExit(s32 exit) {
   struct FieldActor *leader;
 
@@ -207,7 +253,8 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gBabiLighthouse_EntrancesOther;
 }
 
-/// Only room 3 has regions.
+/// Only the Entry has regions: the three spots that drop into the Tunnel
+/// Ruins.
 const struct SceneRegion *Scene_GetRegions(void) {
   if (gGameState.scene == (s32)&SceneId_BabiLighthouse3) {
     return gBabiLighthouse_Regions3;
@@ -233,8 +280,9 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gBabiLighthouse_PlacementsOther;
 }
 
-/// After Move on one of room 3's blocks, or a push: a leader left standing on
-/// a block's ledge cell jumps off it, and the blocks' cells are redrawn.
+/// After Move on one of the blocks at the Babi Lighthouse Entry, or a push: a
+/// leader left standing on a block's ledge cell jumps off it, and the blocks'
+/// cells are redrawn.
 static void BabiLighthouse_JumpFromLedge(void) {
   struct FieldActor *leader;
 
@@ -265,7 +313,7 @@ static void BabiLighthouse_JumpFromLedge(void) {
   Engine_EventEnd();
 }
 
-/// Walking into one of room 3's blocks pushes it.
+/// Walking into one of the blocks at the Babi Lighthouse Entry pushes it.
 static void BabiLighthouse_AdvancePairAndJump(void) {
   Engine_EventBegin();
   StagedActor_AdvancePair();
@@ -273,8 +321,9 @@ static void BabiLighthouse_AdvancePairAndJump(void) {
   Engine_EventEnd();
 }
 
-/// Walking south off room 3's ledge: pushes the block below on the leader's
-/// side if it stands at the ledge's foot, and otherwise climbs down.
+/// Walking south off the ledge at the Babi Lighthouse Entry: pushes the block
+/// below on the leader's side if it stands at the ledge's foot, and otherwise
+/// climbs down.
 static void BabiLighthouse_ClimbDownOrAdvancePair(void) {
   struct FieldActor *block = Object_GetById(ACTOR_RIGHT_BLOCK);
 
@@ -340,7 +389,7 @@ static void BabiLighthouse_RiseToAlternateExit(void) {
   Engine_EventEnd();
 }
 
-/// Searching room 2's door. "It seems to be locked."
+/// Searching the door in Babi Lighthouse's room 2. "It seems to be locked."
 static void BabiLighthouse_InspectLockedDoor(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -361,10 +410,10 @@ static inline void BabiLighthouse_RegroupPartyMember(s32 actorId) {
   Actor_SetPosition(actorId, 0, 0);
 }
 
-/// Walking up to room 1's stone door the first time: Faran asks whether the
-/// kidnappers really went through it; the onlookers argue, and Iodem,
-/// arriving with the party, tells who they are, and Faran, doubting them,
-/// asks them to prove they can follow by opening the door.
+/// Walking up to the stone door in Babi Lighthouse's room 1 the first time:
+/// Faran asks whether the kidnappers really went through it; the onlookers
+/// argue, and Iodem, arriving with the party, tells who they are, and Faran,
+/// doubting them, asks them to prove they can follow by opening the door.
 static void BabiLighthouse_DiscussPursuit(void) {
   // Bring the party to the witnesses gathered around the sealed door.
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED);
@@ -997,16 +1046,16 @@ BabiLighthouse_FindActorAhead(struct FieldActor *actor) {
   return StagedActor_FindAtTile(target, actor);
 }
 
-/// Carry's first phase on the building site's block sets the effect's
-/// childOption; what that changes is not known.
+/// Carry's first phase on the block on the Road to Babi Lighthouse sets the
+/// effect's childOption; what that changes is not known.
 static void BabiLighthouse_EnableChildOption(void) {
   ((struct BattleFxScene *)gEffectWork)->childOption = 1;
 }
 
-/// After Move or Carry on the building site's block: in its cell at (20, 12)
-/// it settles at a height of 48 pixels.
+/// After Move or Carry on the block on the Road to Babi Lighthouse: in its cell
+/// at (20, 12) it settles at a height of 48 pixels.
 static void BabiLighthouse_UpdateMovedBlock(void) {
-  struct FieldActor *block = Object_GetById(ACTOR_SITE_BLOCK);
+  struct FieldActor *block = Object_GetById(ACTOR_ROAD_BLOCK);
   s32 column = block->x.fixed >> 20;
 
   if (column == 20) {
@@ -1093,7 +1142,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gBabiLighthouse_EventsOther;
 }
 
-/// Growth on room 3's sprout: it grows into a vine the party can climb.
+/// Growth on the sprout at the Babi Lighthouse Entry: it grows into a vine the
+/// party can climb.
 static void BabiLighthouse_OpenGrowthPassage(void) {
 
   Map_CopyCellAttributes(82, 7, 1, 2, 18, 7);
@@ -1101,7 +1151,8 @@ static void BabiLighthouse_OpenGrowthPassage(void) {
   Engine_GameFlagSet(FLAG_GROWTH_PASSAGE_OPEN);
 }
 
-/// Redraws room 3's ledge cells, then blocks the cells under its two blocks.
+/// Redraws the ledge cells of the Babi Lighthouse Entry, then blocks the cells
+/// under its two blocks.
 static void BabiLighthouse_RefreshMovableBlockTiles(void) {
   struct FieldActor *leftBlock = Object_GetById(ACTOR_LEFT_BLOCK);
 
@@ -1123,8 +1174,9 @@ static void BabiLighthouse_RefreshMovableBlockTiles(void) {
 }
 
 #if TBS_PATCH_2
-/// Update callback of room 3's blocks (TBS_PATCH_2 and later): each is drawn
-/// in front of the leader when nearer the screen, and on its layer otherwise.
+/// Update callback of the blocks at the Babi Lighthouse Entry (TBS_PATCH_2 and
+/// later): each is drawn in front of the leader when nearer the screen, and
+/// on its layer otherwise.
 static void BabiLighthouse_MatchLeaderPriority(union FieldObject *fieldObject) {
   struct AnimationObject *sprite;
   struct FieldActor *actor;
@@ -1154,9 +1206,9 @@ static void BabiLighthouse_MatchLeaderPriority(union FieldObject *fieldObject) {
 }
 #endif
 
-/// Sets up the scene being entered: Retreat leads back to room 3; the site's
-/// block, room 3's blocks, vine and fallen men, room 2's arrivals by falling,
-/// and room 1's door and onlookers are restored. Returns 0.
+/// Sets up the scene being entered: Retreat leads back to the Entry; the
+/// road's block, the Entry's blocks, vine and fallen men, room 2's arrivals by
+/// falling, and room 1's door and onlookers are restored. Returns 0.
 s32 BabiLighthouse_SetupScene(void) {
   struct FieldActor *actor;
   struct FieldActor *placedActor;
@@ -1176,9 +1228,9 @@ s32 BabiLighthouse_SetupScene(void) {
     state->retreatScene = (s32)&SceneId_BabiLighthouse3;
     sceneCopy = state->scene;
   }
-  // Restore the moved block's collision in the construction-area room.
+  // The road: the moved block's collision where it stands.
   if (scene == (s32)&SceneId_BabiLighthouse4) {
-    placedActor = Object_GetById(ACTOR_SITE_BLOCK);
+    placedActor = Object_GetById(ACTOR_ROAD_BLOCK);
     x = placedActor->x.fixed >> 20;
     if (x == 20) {
       z = placedActor->z.fixed >> 20;
@@ -1631,11 +1683,11 @@ struct SceneEvent gBabiLighthouse_EventsOther[] = {
      EVENT_SCRIPT(BabiLighthouse_AdvanceNearbyPair)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 51, CONDITION_ALWAYS,
      EVENT_SCRIPT(BabiLighthouse_ClimbOrAdvancePair)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SITE_BLOCK, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROAD_BLOCK, CONDITION_ALWAYS,
      EVENT_SCRIPT(BabiLighthouse_UpdateMovedBlock)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, 1), ACTOR_SITE_BLOCK,
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, 1), ACTOR_ROAD_BLOCK,
      CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_EnableChildOption)},
-    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_SITE_BLOCK, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_ROAD_BLOCK, CONDITION_ALWAYS,
      EVENT_SCRIPT(BabiLighthouse_UpdateMovedBlock)},
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
     {EVENT_EXIT, 2, CONDITION_ALWAYS, 2},

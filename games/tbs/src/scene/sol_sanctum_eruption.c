@@ -1,6 +1,42 @@
 /// @file
-/// Sol Sanctum collapsing as the volcano erupts: Saturos and his group take
-/// Jenna and Kraden away, and the Wise One rescues Isaac and Garet.
+/// Elemental Star Room (SolSanctumEruption, scene 18), the chamber of scene 17
+/// (sol_sanctum_elemental_star_room.c) as it collapses: one scripted scene,
+/// with no events of its own. Isaac has just taken the Mars Star, the last of
+/// the four Elemental Stars, while Saturos and Menardi hold Jenna and Kraden,
+/// and without the stars' power to contain it the magma beneath Mt. Aleph flows
+/// again.
+///
+/// SolSanctumEruption_Initialize plays it on arrival at entrance 10, the cut
+/// from scene 17's exit 2, in two parts:
+/// - SolSanctumEruption_PlayHostageScene: the chamber quakes and its water
+///   drains away. A floating rock appears and stills the quake; Kraden wonders
+///   whether it is the Wise One, and Saturos takes it for the guardian of the
+///   Elemental Stars. Embers rain from it. Felix would escape while they can,
+///   and Alex agrees, so Saturos leaves the Mars Star behind; at Alex's word
+///   they take Jenna, so that Isaac and Garet, if they live, will bring the
+///   star to win her back, and Kraden too, "connected to all of this". Felix
+///   protests that Alex is breaking their promise, but goes with them, and one
+///   by one they rise out of the chamber. Jenna leaves the party.
+/// - SolSanctumEruption_PlayWiseOneRescue: left behind, Isaac and Garet face
+///   the Wise One, which holds the breaking floor together with Psynergy. It
+///   tells them the Elemental Djinn have returned, has Isaac take out the Mars
+///   Star and return it to its bag, so he keeps it, and warns that if the stars
+///   light the four lighthouses, the power of Alchemy will be released upon the
+///   world. As the volcano erupts it sends the two away in a white flash: it
+///   sets FLAG_SOL_SANCTUM_ERUPTED, which every room of Sol Sanctum tests from
+///   then on, and FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED, and takes exit 5 to the
+///   rooms of Sol and Luna (scene 11, entrance 8).
+///
+/// The effects are the scene's own. Sixteen rocks thrown out in a ring
+/// (SolSanctumEruption_ThrowEruptionRing) become embers launched from a pool at
+/// a varying rate (SolSanctumEruption_StepEmbers and
+/// SolSanctumEruption_UpdateEmberFrequency, callbacks the first part adds and
+/// the second removes); once Saturos's group starts to leave
+/// (FLAG_SCENE_TEMP_46), they fall silently. The breaking floor's tiles flicker
+/// by callback until the Wise One holds them, ten arcs of light rise at each of
+/// the chamber's four corners as the Wise One tells of the stars moving away
+/// (SolSanctumEruption_RaiseElementalArcs), and the Wise One glows through a
+/// cycle of palettes.
 
 #include "script.h"
 #include "game_state.h"
@@ -110,11 +146,12 @@ static inline void SolSanctumEruption_PlaceHostageGroup(void) {
   Actor_SetPosition(ACTOR_ALEX, PIXELS(479), PIXELS(362));
 }
 
+/// Elemental Star Room, collapsing: the Wise One stills the first quake,
 /// Saturos's group argues over the Mars Star and leaves with Jenna and Kraden
-/// as hostages, before the Wise One rescues Isaac and Garet. Called by
-/// SolSanctumEruption_Initialize at entrance 10, the arrival from the
-/// Elemental Star room. Sets FLAG_SCENE_TEMP_46, plays
-/// SolSanctumEruption_PlayWiseOneRescue and then removes Jenna from the party.
+/// as hostages, and the Wise One then rescues Isaac and Garet. Called by
+/// SolSanctumEruption_Initialize at entrance 10, the cut from scene 17. Sets
+/// FLAG_SCENE_TEMP_46, plays SolSanctumEruption_PlayWiseOneRescue and then
+/// removes Jenna from the party.
 static void SolSanctumEruption_PlayHostageScene(void) {
   void Actor_ShowEmote();
   void ColorBuffer_ApplyTarget();
@@ -561,8 +598,8 @@ UNUSED static void SolSanctumEruption_UnusedCallbackA(void) {}
 
 UNUSED static void SolSanctumEruption_UnusedCallbackB(void) {}
 
-/// Plays the eruption at entrance 10, the arrival from the Elemental Star
-/// room. Called by Field_RunScene once the actors exist.
+/// Plays the collapse at entrance 10, the cut from the Elemental Star Room's
+/// scene 17. Called by Field_RunScene once the actors exist.
 s32 SolSanctumEruption_Initialize(void) {
   if (gGameState.entrance == 10) {
     FieldEffect_InitSparkles();
@@ -784,11 +821,12 @@ static inline void SolSanctumEruption_FinishMaterialization(void) {
   Actor_SetChildValue(ACTOR_WISE_ONE, 0);
 }
 
-/// Left behind, Isaac and Garet face the Wise One, who makes the Mars Star
-/// glow, warns them of Alchemy's threat and sends them out as the volcano
-/// erupts. Isaac keeps the Star. Called by SolSanctumEruption_PlayHostageScene.
-/// Sets FLAG_SOL_SANCTUM_ERUPTED and FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED and
-/// takes exit 5, to the Luna and Sol rooms (scene 11, entrance 8).
+/// Elemental Star Room, collapsing: left behind, Isaac and Garet face the Wise
+/// One, which makes the Mars Star glow, warns them of Alchemy's threat and
+/// sends them out as the volcano erupts. Isaac keeps the Star. Called by
+/// SolSanctumEruption_PlayHostageScene. Sets FLAG_SOL_SANCTUM_ERUPTED and
+/// FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED and takes exit 5, to the rooms of Sol
+/// and Luna (scene 11, entrance 8).
 static void SolSanctumEruption_PlayWiseOneRescue(void) {
   struct GroundParticleWork *sparkles;
   struct FieldActor *wiseOne;

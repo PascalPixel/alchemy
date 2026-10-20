@@ -1,7 +1,30 @@
 /// @file
-/// Crossbone Isle's pillar rooms: pillars to push, jump across, Move and Carry,
-/// the switch that raises the water in room 3, and the pools Frost freezes in
-/// room 5.
+/// Five of the side rooms of Crossbone Isle Cave, the cave beneath Crossbone
+/// Isle. Each opens off one of the nine rooms of its corridor
+/// (crossbone_isle.c) through two doors: the corridor room's east door leads
+/// to entrance 1 and its west door to entrance 2, and exits 1 and 2 lead back
+/// out the same way. Each is a pillar puzzle with four chests, and all five
+/// take the area name Crossbone Isle Cave. In the order the party meets them:
+///
+/// - CrossboneIslePillarRooms1 (scene 115), off the first corridor room:
+///   walking into a pillar jumps two cells across it where the cells allow,
+///   and otherwise pushes it (Event_JumpOrPushPillar).
+/// - CrossboneIslePillarRooms2 (scene 116), off the second: pillars to push.
+/// - CrossboneIslePillarRooms3 (scene 119), off the fifth: a switch
+///   (Event_FlipWaterSwitch) raises the water or drains it, and its seven
+///   pillars stand higher or lower with it; the water level lasts only while
+///   the party stays (FLAG_SCENE_TEMP_00, kept through a battle).
+/// - CrossboneIslePillarRooms4 (scene 121), off the seventh: four pillars that
+///   Move and Carry shift, and that settle and redraw their footprints after
+///   every push (Event_MovePillar), a ladder, and pillars to jump across.
+/// - CrossboneIslePillarRooms5 (scene 122), off the eighth: three pools that
+///   Frost freezes into pillars of ice. Frost on the third makes the pillar
+///   beside it rise and thaws a frozen second pool, and the third freezes only
+///   if the leader was not standing on it; a pillar moved with Move sinks into
+///   place at column 16.
+///
+/// The other three side rooms are in crossbone_isle_platform_rooms.c, and the
+/// ninth room's in crossbone_isle.c.
 #include "script.h"
 #include "game_state.h"
 #include "map_scroll.h"
@@ -53,11 +76,13 @@
 #include "macros.h"
 
 #define WATER_ACTOR 16
-/// Room 3: the water has been raised.
+/// CrossboneIslePillarRooms3: the water has been raised.
 #define WATER_RAISED_FLAG FLAG_SCENE_TEMP_00
-// Room 4 keeps FLAG_SCENE_TEMP_00 to 03 for its four pillars' footprints.
-// Room 5: FLAG_SCENE_TEMP_00 to 02 the three pools are frozen, 03 the leader
-// stood on the third when Frost began, 04 the sinking pillar has sunk.
+// CrossboneIslePillarRooms4 keeps FLAG_SCENE_TEMP_00 to 03 for its four
+// pillars' footprints.
+// CrossboneIslePillarRooms5: FLAG_SCENE_TEMP_00 to 02 the three pools are
+// frozen, 03 the leader stood on the third when Frost began, 04 the sinking
+// pillar has sunk.
 #define FIRST_FROZEN_POOL_FLAG FLAG_SCENE_TEMP_00
 #define LEADER_ON_THIRD_POOL_FLAG FLAG_SCENE_TEMP_03
 #define PILLAR_SUNK_FLAG FLAG_SCENE_TEMP_04
@@ -562,7 +587,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
-/// Returns the shared exits for the pillar rooms.
+/// Returns the exits the five rooms share.
 const u32 *Scene_GetExits(void) { return gCrossboneIslePillarRoomsExits; }
 
 const struct ScenePlacement *Scene_GetPlacements(void) {
@@ -583,8 +608,8 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gCrossboneIslePillarRoomsPlacementsOther;
 }
 
-/// Walking into a pillar in room 1: jump two cells across it where the cells
-/// allow, otherwise push it.
+/// Walking into a pillar in CrossboneIslePillarRooms1: jump two cells across it
+/// where the cells allow, otherwise push it.
 static void Event_JumpOrPushPillar(void) {
   EV_BEGIN();
   if (CrossboneIslePillarRooms_TryJumpAcrossPillar() == 0)
@@ -592,7 +617,8 @@ static void Event_JumpOrPushPillar(void) {
   EV_END();
 }
 
-/// Walking into a pillar in rooms 2 and 3: push it if the cell beyond is clear.
+/// Walking into a pillar in CrossboneIslePillarRooms2 and 3: push it if the
+/// cell beyond is clear.
 static void Event_PushPillar(void) {
   struct StagedActorProbe out;
 
@@ -611,8 +637,8 @@ struct PillarPlacement {
   union CrossboneIslePillarCell cell;
 };
 
-/// Where one of room 4's pillars stands, the ground cell saved under it and its
-/// footprint flag.
+/// Where one of CrossboneIslePillarRooms4's pillars stands, the ground cell
+/// saved under it and its footprint flag.
 struct PillarSlot {
   s32 x; ///< 16-pixel map cells
   s32 y; ///< 16-pixel map cells
@@ -711,8 +737,9 @@ static void CrossboneIslePillarRooms_AnimateWaterLevel(void) {
   Engine_TaskWait(30);
 }
 
-/// Searching the switch in room 3 flips it. "Isaac flipped the switch." The
-/// water rises, or drains, and the pillars stand higher or lower with it.
+/// Searching the switch in CrossboneIslePillarRooms3 flips it. "Isaac flipped
+/// the switch." The water rises, or drains, and the pillars stand higher or
+/// lower with it.
 static void Event_FlipWaterSwitch(void) {
   s32 waterRaised;
   struct FieldActor *water;
@@ -947,8 +974,8 @@ static void CrossboneIslePillarRooms_SortPillarActors(void) {
   }
 }
 
-/// Move or Carry on one of room 4's pillars, and after each push there: the
-/// pillars settle, and their footprints follow them.
+/// Move or Carry on one of CrossboneIslePillarRooms4's pillars, and after each
+/// push there: the pillars settle, and their footprints follow them.
 static void Event_MovePillar(void) {
   u32 id;
   struct FieldActor *actor;
@@ -1036,8 +1063,8 @@ static void Event_MovePillar(void) {
   CrossboneIslePillarRooms_SortPillarActors();
 }
 
-/// Walking into a pillar in room 4: jump across if possible, otherwise push
-/// it, and the pillars settle.
+/// Walking into a pillar in CrossboneIslePillarRooms4: jump across if possible,
+/// otherwise push it, and the pillars settle.
 static void Event_JumpOrPushRoom4Pillar(void) {
   EV_BEGIN();
 #if TBS_PATCH_3
@@ -1057,11 +1084,11 @@ static void Event_JumpOrPushRoom4Pillar(void) {
   EV_END();
 }
 
-/// Walking north at room 4's ladder: climb up.
+/// Walking north at CrossboneIslePillarRooms4's ladder: climb up.
 static void Event_ClimbUp(void) { Field_ClimbUp(); }
 
-/// Walking south at room 4's ladder: push the pillar below, jump, or climb
-/// down.
+/// Walking south at CrossboneIslePillarRooms4's ladder: push the pillar below,
+/// jump, or climb down.
 static void Event_PushOrClimbDown(void) {
   struct FieldActor *leader = Object_GetById(0);
   struct FieldPosition pos;
@@ -1077,16 +1104,16 @@ static void Event_PushOrClimbDown(void) {
   }
 }
 
-/// Stepping on trigger 40 in room 4: the fade overlay follows the leader, and
-/// the leader's rise counter starts.
+/// Stepping on trigger 40 in CrossboneIslePillarRooms4: the fade overlay
+/// follows the leader, and the leader's rise counter starts.
 static void Event_StartRising(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   ((struct FadeOverlayWork *)WORK_SLOT(36))->actor = leader;
   leader->riseCounter = 1;
 }
 
-/// Stepping on trigger 41 in room 4: the overlay lets the leader go, and the
-/// rise counter stops.
+/// Stepping on trigger 41 in CrossboneIslePillarRooms4: the overlay lets the
+/// leader go, and the rise counter stops.
 static void Event_StopRising(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -1143,17 +1170,19 @@ static void CrossboneIslePillarRooms_FreezePool(s32 id) {
   EV_END();
 }
 
-/// Frost on the first pool in room 5: it freezes into a pillar of ice.
+/// Frost on the first pool in CrossboneIslePillarRooms5: it freezes into a
+/// pillar of ice.
 static void Event_FreezeFirstPool(void) {
   CrossboneIslePillarRooms_FreezePool(11);
 }
 
-/// Frost on the second pool in room 5.
+/// Frost on the second pool in CrossboneIslePillarRooms5.
 static void Event_FreezeSecondPool(void) {
   CrossboneIslePillarRooms_FreezePool(12);
 }
 
-/// Frost begins on the third pool: note whether the leader stands on it.
+/// Frost begins on the third pool in CrossboneIslePillarRooms5: note whether
+/// the leader stands on it.
 static void Event_FrostBeginsOnThirdPool(void) {
   struct FieldActor *leader;
   struct FieldActor *pillar;
@@ -1171,8 +1200,8 @@ static void Event_FrostBeginsOnThirdPool(void) {
   }
 }
 
-/// Later in the same Frost: the third pool shrinks back, and the pillar beside
-/// it (actor 14) rises 32 pixels.
+/// Later in the same Frost in CrossboneIslePillarRooms5: the third pool shrinks
+/// back, and the pillar beside it (actor 14) rises 32 pixels.
 static void Event_FrostRaisesPillar(void) {
   struct FieldActor *pillar;
 
@@ -1274,8 +1303,8 @@ CrossboneIslePillarRooms_SpawnThawParticle(union FieldObject *fieldObject) {
 #endif
 }
 
-/// Frost ends on the third pool: unless the leader stood on it, it freezes,
-/// and a frozen second pool thaws back to water.
+/// Frost ends on the third pool in CrossboneIslePillarRooms5: unless the leader
+/// stood on it, it freezes, and a frozen second pool thaws back to water.
 static void Event_FreezeThirdPool(void) {
   s32 set;
 
@@ -1318,7 +1347,8 @@ static void Event_FreezeThirdPool(void) {
   }
 }
 
-/// Move begins on room 5's sinking pillar: its cell is cleared.
+/// Move begins on CrossboneIslePillarRooms5's sinking pillar: its cell is
+/// cleared.
 static void Event_StartMovingSinkingPillar(void) {
   struct FieldActor *pillar = Object_GetById(10);
   s32 x;
@@ -1333,8 +1363,8 @@ static void Event_StartMovingSinkingPillar(void) {
   EV_END();
 }
 
-/// Move on room 5's sinking pillar, and after each push: once it reaches
-/// column 16 it sinks two pixels into place for good.
+/// Move on CrossboneIslePillarRooms5's sinking pillar, and after each push:
+/// once it reaches column 16 it sinks two pixels into place for good.
 static void Event_MoveSinkingPillar(void) {
   struct FieldActor *pillar;
   s32 alreadyLowered;
@@ -1357,7 +1387,8 @@ static void Event_MoveSinkingPillar(void) {
   EV_END();
 }
 
-/// Walking into room 5's sinking pillar: push it if the cell beyond is clear.
+/// Walking into CrossboneIslePillarRooms5's sinking pillar: push it if the cell
+/// beyond is clear.
 static void Event_PushSinkingPillar(void) {
   struct StagedActorProbe probe;
 
@@ -1540,7 +1571,8 @@ s32 Scene_Initialize(void) {
       }
     }
   } else if (gGameState.scene == (s32)&SceneId_CrossboneIslePillarRooms5) {
-    // Restore room 5's moved pillar, frozen pools, and raised pillar pair.
+    // Restore CrossboneIslePillarRooms5's moved pillar, frozen pools, and
+    // raised pillar pair.
     OBJ_MODE(10, 2);
     Engine_ActorSetChildValue(10, 6);
     FieldScene_RedrawActorFootprint(8);

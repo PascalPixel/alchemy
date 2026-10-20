@@ -1,14 +1,53 @@
 /// @file
-/// Altin, the mining village flooded by the water the hydros statues in the
-/// mine spew. Two scenes share this overlay:
+/// Altin, the mining village north of the Alpine Crossing, in two scenes that
+/// share this overlay and the area name Altin: Altin1 (scene 75), the village
+/// outdoors, and Altin2 (scene 76), inside its houses, shops and inn. The
+/// getters pick each scene's tables by gGameState.scene, both share one exit
+/// table, and a third, empty set of tables serves any other scene.
 ///
-/// - the village itself, where the water drops in three stages as the party
-///   drains the mine, a water beast spits water at the houses until the
-///   party drives it off, and the shopkeepers wait for their shops to dry;
-/// - the houses and the inn, where families sheltering from the flood go
-///   home as the water recedes.
+/// The party comes up here when boulders have closed Silk Road at the Alpine
+/// Crossing, and finds the village under water. The day the gems fell from
+/// the sky, water-spewing monsters appeared in Altin Mine, the mine whose
+/// scenes the area names call Altin Peak (altin_peak.c), and flooded the
+/// village and the mine. Two things in Altin's code follow the party's work
+/// down there. The water drops in three stages with the three drains it
+/// opens by beating the mine's water beasts (FLAG_ALTIN_MINE_FIRST_DRAIN to
+/// _THIRD_DRAIN): Scene_Initialize turns them into three scene flags, the
+/// water dropped once, twice, or drained (the second and third drains both),
+/// and Village_ApplyWaterLevel copies the map block for that level over the
+/// village, with its collision, and leaves out whoever would be standing in
+/// the water. And every villager has two sets of lines and thoughts, before
+/// and after FLAG_HYDROS_STATUES_DEFEATED, whether the party has beaten the
+/// hydros statues at the bottom of the mine; the row that needs the flag
+/// clear comes first in each table, so the first row that matches picks the
+/// time. Before, they ask who will slay the beasts and wonder whether they
+/// were Altin's own guardian statues; after, they thank the party and talk of
+/// the ancient ruins it found at the bottom of the mine.
 ///
-/// A third, empty set of tables serves any other scene number.
+/// In the village (Altin1), three villagers come home one by one as the water
+/// drops, and the armor and item sellers wait outside their flooded shops
+/// until theirs dry (the item seller's after the first drop, the armor
+/// seller's after the second). A water beast spits water at the houses, its
+/// sound and its spray running from Village_ApplyWaterLevel, until the party
+/// steps near it (Village_ScareOffBeast): it stops, cries out and hops away
+/// into the flood for good (FLAG_ALTIN_WATER_BEAST_LEFT). Doors (touches 2 to
+/// 9, Village_EnterDoor) lead into Altin2 and into the Altin Sanctum, whose
+/// wide door is redrawn by hand; coming back out of the Sanctum (entrance 3)
+/// the area name is not shown again. Three doorways (touches 10 to 12,
+/// Village_WalkThroughDoorway) and exit 13 lead into the mine, to Altin Peak's
+/// AltinPeak1, AltinPeak4, AltinPeak8 and AltinPeak7. A block that Move pushes
+/// to column 22 stays there (FLAG_ALTIN_BLOCK_MOVED).
+///
+/// Inside (Altin2), two families shelter in the inn's Room One and Room Two,
+/// as the game calls them, until the first and the second drop send them home
+/// (Houses_PlaceSheltering), and the weapon seller waits in the inn until the
+/// water has drained. Each seller opens across the counter once the shop has
+/// dried, and a cook from Xian paces between his pots
+/// (gAltinHouses_CookScript). The villagers point the party to a passage west
+/// at the bottom of the mine, the way on while Silk Road is closed; once the
+/// statues are beaten they also speak of a girl from Xian who asked after
+/// young warriors and bought up the soaked goods, of the landslide on Silk
+/// Road, and of a small temple west of the mine, Lama Temple.
 
 #include "game_state.h"
 #include "version.h"
@@ -99,11 +138,13 @@ enum {
 };
 
 enum {
-  ENTRANCE_FROM_MINE = 3,
-  /// The door triggers are numbered from 2 in the village's event table.
+  /// Coming out of the Sanctum (its exit 40).
+  ENTRANCE_FROM_SANCTUM = 3,
+  /// The door triggers are numbered from 2 in the village's event table, and
+  /// each takes the exit of its own number.
   FIRST_DOOR_TRIGGER = 2,
-  DOOR_MINE = 1,
-  DOOR_WITH_WINDOW = 3,
+  /// The Sanctum's door, trigger 3 and exit 3 (the Sanctum's entrance 29).
+  DOOR_SANCTUM = 1,
   DOOR_STRAIGHT_IN = 6
 };
 
@@ -192,8 +233,9 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gAltinOther_Events;
 }
 
-/// A villager asks whether this is the party's first visit; either way, the
-/// flood has changed Altin.
+/// A villager in Altin's village, before the hydros statues are beaten, asks
+/// whether this is the party's first visit; either way, the flood has changed
+/// Altin.
 static void Village_AskAboutFirstVisit(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgAltinYourFirstTimeVisitAltin);
@@ -210,7 +252,8 @@ static void Village_AskAboutFirstVisit(void) {
   Engine_EventEnd();
 }
 
-/// A villager asks whether the slain hydros creatures gushed water.
+/// A villager in Altin's village, once the hydros statues are beaten, asks
+/// whether the slain hydros creatures gushed water.
 static void Village_AskAboutHydros(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgAltinDidSeeWaterGushingOut);
@@ -218,9 +261,10 @@ static void Village_AskAboutHydros(void) {
   Engine_EventEnd();
 }
 
-/// While the beasts live, this villager complains that their water cannot be
-/// drunk, and the first time the camera pans to the water beast spitting at
-/// the houses. Once the statues are gone, he asks for help rebuilding.
+/// A villager in Altin's village. While the beasts live, he complains that
+/// their water cannot be drunk, and the first time the camera pans to the water
+/// beast spitting at the houses. Once the statues are gone, he asks for help
+/// rebuilding.
 static void Village_TalkToThirstyVillager(void) {
 
   struct FieldActor *beast;
@@ -255,7 +299,8 @@ static void Village_TalkToThirstyVillager(void) {
   Engine_EventEnd();
 }
 
-/// A villager asks whether the party really found ruins deep in the mine.
+/// A villager in Altin's village, once the hydros statues are beaten, asks
+/// whether the party really found ruins deep in the mine.
 static void Village_AskAboutRuins(void) {
 
   Engine_EventBegin();
@@ -264,7 +309,9 @@ static void Village_AskAboutRuins(void) {
   Engine_EventEnd();
 }
 
-/// A guest asks whether the party is who the girl from Xian was looking for.
+/// Inside Altin, once the hydros statues are beaten, one of the family that
+/// sheltered in the inn's Room One asks whether the party is who the girl from
+/// Xian was looking for.
 static void Houses_AskAboutXianGirl(void) {
 
   Engine_EventBegin();
@@ -273,8 +320,9 @@ static void Houses_AskAboutXianGirl(void) {
   Engine_EventEnd();
 }
 
-/// A guest asks whether the party seeks the way west, and points to the
-/// bottom of the mine.
+/// Inside Altin, before the hydros statues are beaten, one of the family
+/// sheltering in the inn's Room Two asks whether the party seeks the way west,
+/// and points to the bottom of the mine.
 static void Houses_AskAboutWayWest(void) {
 
   Engine_EventBegin();
@@ -283,7 +331,9 @@ static void Houses_AskAboutWayWest(void) {
   Engine_EventEnd();
 }
 
-/// The grateful villager asks whether the party defeated the monsters.
+/// Inside Altin, before the hydros statues are beaten, a villager back home
+/// asks whether the party defeated the monsters, and thanks the leader with a
+/// kiss either way.
 static void Houses_AskAboutMonsters(void) {
 
   Engine_EventBegin();
@@ -292,7 +342,8 @@ static void Houses_AskAboutMonsters(void) {
   Engine_EventEnd();
 }
 
-/// A miner asks whether the remaining beasts are deep below.
+/// A miner staying at Altin's inn, once the hydros statues are beaten, asks
+/// whether the remaining beasts are deep below.
 static void Houses_AskAboutMineBeasts(void) {
 
   Engine_EventBegin();
@@ -312,8 +363,9 @@ static s32 Leader_FacesCounter(void) {
   return 0;
 }
 
-/// The weapon seller: until the water drains he cannot sell; afterwards he
-/// opens his shop when spoken to across the counter.
+/// Altin's weapon seller: until the water drains he waits in the inn and
+/// cannot sell; afterwards he opens his shop when spoken to across the
+/// counter.
 static void Houses_TalkToWeaponSeller(void) {
 
   if (Engine_GameFlagIsSet(FLAG_WATER_DRAINED) == 0) {
@@ -339,9 +391,9 @@ static void Houses_TalkToWeaponSeller(void) {
   Engine_EventEnd();
 }
 
-/// The armor seller, in either scene: outside, while his shop is under water,
-/// he laments; once it has dried after the second drop, he sells across his
-/// counter in the houses.
+/// Altin's armor seller, in either scene: outside, while his shop is under
+/// water, he laments; once it has dried after the second drop, he sells across
+/// his counter in the houses.
 static void Altin_TalkToArmorSeller(void) {
 
   if (Engine_GameFlagIsSet(FLAG_WATER_DROPPED_TWICE) == 0) {
@@ -366,7 +418,7 @@ static void Altin_TalkToArmorSeller(void) {
   Engine_EventEnd();
 }
 
-/// The item seller, the same way: she reopens after the first drop.
+/// Altin's item seller, the same way: she reopens after the first drop.
 static void Altin_TalkToItemSeller(void) {
   if (Engine_GameFlagIsSet(FLAG_WATER_DROPPED_ONCE) == 0) {
     Engine_EventBegin();
@@ -390,8 +442,8 @@ static void Altin_TalkToItemSeller(void) {
   Engine_EventEnd();
 }
 
-/// The innkeeper opens the inn across the counter, and otherwise talks about
-/// the flood or, once it is over, the temple west of the mine.
+/// Altin's innkeeper opens the inn across the counter, and otherwise talks
+/// about the flood or, once it is over, the temple west of the mine.
 static void Houses_TalkToInnkeeper(void) {
   struct FieldActor *leader;
 
@@ -415,9 +467,9 @@ static void Houses_TalkToInnkeeper(void) {
   Engine_EventEnd();
 }
 
-/// Walking north into one of the village's doors: everyone stops, the door
-/// opens and the party leader walks in. The mine's wide door is redrawn in
-/// two halves by hand; the others play their opening pictures.
+/// Walking north into one of the doors of Altin's village: everyone stops, the
+/// door opens and the party leader walks in. The Sanctum's wide door is redrawn
+/// in two halves by hand; the others play their opening pictures.
 static void Village_EnterDoor(void) {
   u32 actorId;
   struct EventWork *event;
@@ -448,8 +500,8 @@ static void Village_EnterDoor(void) {
   coordinatesByteOffset = doorByteOffset + 4;
   column = *(s16 *)(doorBytes + coordinatesByteOffset);
   row = *(s16 *)(doorBytes + coordinatesByteOffset + 2);
-  if (doorIndex == DOOR_MINE) {
-    // The mine's door slides open with SE_188, as Lama Temple's does.
+  if (doorIndex == DOOR_SANCTUM) {
+    // The Sanctum's door slides open with SE_188, as Bilibin's does.
     Event_PlayCue(SE_188);
     Map_CopyCellsTo(42, 33, column, row, 2, 2);
     rightColumn = column + 2;
@@ -460,7 +512,9 @@ static void Village_EnterDoor(void) {
     Engine_EventWait(4);
   } else {
     Event_PlayCue(SE_DOOR_OPEN);
-    if (doorIndex == DOOR_WITH_WINDOW) {
+    // XXX: the fourth door (exit 5) also redraws two cells at (8, 17), far
+    // from it; what they show would settle why.
+    if (doorIndex == 3) {
       Map_CopyCellsTo(33, 42, 8, 17, 1, 2);
     }
     Map_AnimateCells(gAltinVillage_Doors[doorIndex].steps, column, row);
@@ -474,7 +528,7 @@ static void Village_EnterDoor(void) {
   if (doorIndex == DOOR_STRAIGHT_IN) {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, 0);
   } else {
-    if (doorIndex != DOOR_MINE) {
+    if (doorIndex != DOOR_SANCTUM) {
       Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -4);
     } else {
       Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
@@ -488,7 +542,8 @@ static void Village_EnterDoor(void) {
   Engine_EventEnd();
 }
 
-/// Walking north into a doorway without a door: the leader walks out.
+/// Walking north into one of the doorways of Altin's village that lead into
+/// the mine: the leader walks out.
 static void Village_WalkThroughDoorway(void) {
   struct EventWork *work;
 
@@ -503,9 +558,9 @@ static void Village_WalkThroughDoorway(void) {
   Engine_EventEnd();
 }
 
-/// Update callback of the hopping water beast: once a second it leaps up,
-/// falls back with a splash that shakes the screen briefly, and stands while
-/// on the ground.
+/// Update callback of the hopping water beast in Altin's village: once a
+/// second it leaps up, falls back with a splash that shakes the screen
+/// briefly, and stands while on the ground.
 static void Beast_Hop(union FieldObject *fieldObject) {
   struct FieldActor *beast = &fieldObject->actor;
   s16 *shakeFrames = (s16 *)&beast->work;
@@ -605,10 +660,10 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Sets up the village: the map half showing the current water level (the
-/// cells kept in four 32 by 32 blocks), the villagers and sellers present at
-/// that level, the water beast with its spray while it remains, and the
-/// pushed block. Then redraws the map around the leader.
+/// Sets up Altin's village (Altin1): the map block for the current water
+/// level (one of four 32 by 32 cell blocks kept on the map), the villagers and
+/// sellers present at that level, the water beast with its spray while it
+/// remains, and the pushed block. Then redraws the map around the leader.
 static void Village_ApplyWaterLevel(void) {
   struct FieldActor *leader;
 
@@ -647,7 +702,7 @@ static void Village_ApplyWaterLevel(void) {
     Engine_ActorSetAnimation(ACTOR_WATER_BEAST, ANIM_BEAST_SPIT);
     FieldScheduler_AddCallback(Beast_SpawnSpray, TASK_PRIORITY_SCENE);
   }
-  if (gGameState.entrance == ENTRANCE_FROM_MINE) {
+  if (gGameState.entrance == ENTRANCE_FROM_SANCTUM) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
   Map_CopyCellAttributes(0, 33, 4, 3, 20, 41);
@@ -680,9 +735,9 @@ static void Village_ApplyWaterLevel(void) {
   Engine_TaskWait(1);
 }
 
-/// Sets up the houses: the families still sheltering in the inn's rooms, the
-/// weapon seller waiting there until the water drains, and the shopkeepers
-/// kept from wandering.
+/// Sets up inside Altin's buildings (Altin2): the families still sheltering
+/// in the inn's rooms, the weapon seller waiting there until the water
+/// drains, and the shopkeepers kept from wandering.
 static void Houses_PlaceSheltering(void) {
   struct FieldActor *actor;
 
@@ -771,8 +826,8 @@ static void Beast_SpawnSpray(void) {
   }
 }
 
-/// Stepping near the water beast: the camera pans to it, it stops spitting,
-/// turns to the party, cries out and hops away into the flood.
+/// Stepping near the water beast in Altin's village: the camera pans to it, it
+/// stops spitting, turns to the party, cries out and hops away into the flood.
 static void Village_ScareOffBeast(void) {
   Engine_EventBegin();
   Camera_SetSpeed(0x6666, 0xccc);
@@ -1157,9 +1212,10 @@ struct SceneEvent gAltinHouses_Events[] = {
 };
 // clang-format on
 
-/// The opening pictures of the village's doors, two cells square. The mine's
-/// door (the second) is wider and redrawn by hand instead.
-u16 gAltinVillage_MineDoorCells[] = {
+/// The opening pictures of the village's doors, two cells square. The
+/// Sanctum's door (the second) is wider, and Village_EnterDoor redraws it by
+/// hand instead.
+u16 gAltinVillage_SanctumDoorCells[] = {
     MAP_CELL_STEP(42, 33, 2, 2, 0),
     MAP_CELL_STEP(42, 35, 2, 2, 5),
     MAP_CELL_STEP(40, 33, 2, 2, 0),
@@ -1205,7 +1261,7 @@ u16 gAltinVillage_DoorCellsE[] = {
 
 /// Each door trigger's opening picture and cell, from trigger 2.
 struct MapCellAnim gAltinVillage_Doors[] = {
-    {gAltinVillage_DoorCellsA, 41, 5},  {gAltinVillage_MineDoorCells, 51, 6},
+    {gAltinVillage_DoorCellsA, 41, 5},  {gAltinVillage_SanctumDoorCells, 51, 6},
     {gAltinVillage_DoorCellsC, 57, 17}, {gAltinVillage_DoorCellsD, 39, 17},
     {gAltinVillage_DoorCellsE, 48, 25}, {gAltinVillage_DoorCellsF, 59, 9},
     {gAltinVillage_DoorCellsG, 42, 23}, {gAltinVillage_DoorCellsD, 41, 27},

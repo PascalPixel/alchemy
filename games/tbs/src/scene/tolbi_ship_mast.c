@@ -1,6 +1,45 @@
 /// @file
-/// The mast of the ship across the Karagol Sea, where the lookout announces the
-/// course, the approaching monsters and land, and an Anchor Charm can be found.
+/// Tolbi-bound Ship (TolbiShipMast, scene 110), the top of its mast, the
+/// Crow's Nest, where the ship's lookout (actor 8) keeps watch: one of the
+/// ship's three scenes on its voyage from Kalay to Tolbi, told in
+/// tolbi_ship_deck.c. The party climbs up by the deck's ladder (entrance 1)
+/// and climbs down again by touch cell 10 and the region of exit 1 (the deck's
+/// entrance 4); entrances 10 to 14 are the voyage's cutscenes here, each
+/// leading on into the next. In story order:
+///
+/// - At Kalay, while the ship waits for its replacement: the captain's anchor
+///   charm, gone from his cabin, lies up here. Searching for it (search code
+///   11) finds the Anchor Charm (FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND), but only
+///   once the party has confronted the crewman on deck or the warriors have
+///   gone to the captain (FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED or
+///   FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN). Until the first attack, Mind
+///   Read on the lookout has him wonder whether the party has worked out that
+///   he hid it ("I wonder if they figured out I was the one who hid the
+///   anchor"), and he leaves the monsters to Kaja's crew and the party.
+///   Once the charm is back, the setup moves him to his lookout spot. XXX: the
+///   crewman on deck and actor 10 in the hold also think they hid it.
+/// - Under sail: entrance 10, from the deck, has him scan both sides and call
+///   the course clear, then leads below to the cast-off; the first time the
+///   leader is moved out of view, on later departures he stands by. The
+///   attacks: entrance 11, "Avast! Monsters sighted!", as four monsters close
+///   in on a rotating approach (FLAG_TOLBI_SHIP_MONSTERS_SIGHTED, which plays
+///   the monsters' theme); 12, "Monsters!", for the second; 13, two more
+///   landing, for the third, each leading below or to the deck. During these
+///   the scene a defeat returns to (gGameState.savedScene) is set to the
+///   interiors' entrance 30, which starts the voyage over.
+/// - Land: entrance 14, where seven actors drift past and away before "Land
+///   ho!". The rowing values of the passengers chosen to row
+///   (gTolbiShipMast_PassengerRowValues) decide where the ship comes in: those
+///   at the first and third seats less those at the second and fourth, and a
+///   balance of exactly 11 takes exit 15, to the deck's entrance 19, off
+///   course to the island; any other takes exit 14, to entrance 17 and Tolbi.
+///   Once the rowers have switched sides at the island the balance is the
+///   opposite, so the ship comes in to Tolbi.
+///
+/// While the ship is under way (rowing, or at sea after the first attack,
+/// and neither at the island nor at Tolbi) the setup makes the view sway. At
+/// sea the lookout says he is the lookout, not an oarsman; at the island he
+/// warns of monsters and wonders at its treasures.
 
 #include "script.h"
 #include "game_state.h"
@@ -165,7 +204,7 @@ TolbiShipMast_ShrinkAndStopActor(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Returns the entrances from the ship's deck and scripted sequences.
+/// Returns the entrances: from the deck's ladder, and the voyage's cutscenes.
 const struct SceneEntrance *TolbiShipMast_GetEntrances(void) {
   return gTolbiShipMast_Entrances;
 }
@@ -178,7 +217,7 @@ const struct SceneRegion *TolbiShipMast_GetRegions(void) {
 /// Returns exits to the deck and the continuing ship scenes.
 const u32 *TolbiShipMast_GetExits(void) { return gTolbiShipMast_Exits; }
 
-/// Returns the lookout's initial placement table.
+/// Returns the lookout, the only actor placed.
 const struct ScenePlacement *TolbiShipMast_GetPlacements(void) {
   return gTolbiShipMast_Placements;
 }
@@ -188,10 +227,13 @@ const struct SceneEvent *TolbiShipMast_GetEvents(void) {
   return gTolbiShipMast_Events;
 }
 
-/// Touching the ladder starts the descent.
+/// Walking south onto the ladder at the mast's top (touch cell 10): the
+/// leader climbs down.
 static void TolbiShipMast_ClimbDownLadder(void) { Field_ClimbDown(); }
 
-/// Gives the Anchor Charm once either discovery flag permits the search.
+/// Searching the mast's top for the captain's anchor charm (search code 11):
+/// gives the Anchor Charm once the crewman has been confronted or the warriors
+/// have gone to the captain.
 static void TolbiShipMast_FindAnchorCharm(void) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED) != 0 ||
       Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
@@ -203,7 +245,9 @@ static void TolbiShipMast_FindAnchorCharm(void) {
   }
 }
 
-/// Starts the ship sway when allowed, then runs this entrance's mast sequence.
+/// The mast's setup: sways the view while the ship is under way, puts the
+/// lookout to his spot once the charm is back, and plays what the entrance
+/// calls for: the climb up from the deck (1) or a cutscene (10 to 14).
 s32 TolbiShipMast_Initialize(void) {
   struct FieldActor *leader;
 
@@ -296,8 +340,8 @@ static void TolbiShipMast_SetupVisibleLeaderLookout(void) {
   Engine_EventEnd();
 }
 
-/// The lookout scans both sides, announces a clear course and leaves by
-/// exit 10.
+/// On the mast at entrance 10: the lookout scans both sides, announces a clear
+/// course and leaves by exit 10, to the cast-off below decks.
 static void TolbiShipMast_AnnounceClearCourse(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_EventOpenScreen();
@@ -319,7 +363,8 @@ static void TolbiShipMast_AnnounceClearCourse(void) {
   Engine_EventRequestExit(10);
 }
 
-/// Stages four approaching actors and the lookout's reaction. "Avast!"
+/// On the mast at entrance 11, the first attack: four monsters close in and
+/// the lookout cries out. "Avast!"
 static void TolbiShipMast_RunAvastScene(void) {
   s32 *placement = ((struct MapScrollWork *)gMapWork[0])->origin;
   struct FieldActor *actor;
@@ -442,7 +487,8 @@ static inline void TolbiShipMast_PrepareGroupDeparture(void) {
   Actor_SetSpeed(15, PIXELS(3), 3 * PIXELS(1) / 2);
 }
 
-/// Repeats actor 9's approach before the lookout reports monsters.
+/// On the mast at entrance 12, the second attack: actor 9's approach repeats
+/// before the lookout reports monsters.
 static void TolbiShipMast_ShowMonsters(void) {
   struct FieldActor *approachingActor;
   struct FieldActor *leader;
@@ -552,7 +598,8 @@ static void TolbiShipMast_InitializeDriftingActor(s32 actorId) {
   Actor_SetActionScript(actorId, gTolbiShipMast_DriftActions);
 }
 
-/// Moves the drifting group aside, then stages the two landing actors.
+/// On the mast at entrance 13, the third attack: the drifting group moves
+/// aside, then the two landing actors are staged.
 static void TolbiShipMast_RunLandingSequence(void) {
   u32 frame;
   struct FieldActor *actor;
@@ -653,7 +700,8 @@ static void TolbiShipMast_RunLandingSequence(void) {
   Engine_EventEnd();
 }
 
-/// Walks the seven actors away, then the lookout announces land.
+/// On the mast at entrance 14: the seven actors walk away, then the lookout
+/// announces land, and the rowing balance chooses the exit.
 static void TolbiShipMast_AnnounceLand(void) {
   Engine_EventBegin();
   Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
@@ -690,8 +738,8 @@ static void TolbiShipMast_AnnounceLand(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
-  // How evenly the passengers row picks the next scene: a balance of 11 takes
-  // exit 15.
+  // The rowing balance picks where the ship comes in: exactly 11 takes exit
+  // 15, off course to the island.
   gGameState.savedScene = (s32)&SceneId_TolbiShipInteriors;
   gGameState.savedEntrance = 2;
   if (TolbiShipMast_GetRowingBalance() == 11) {
@@ -719,8 +767,8 @@ static void TolbiShipMast_UpdateSway(void) {
   gTolbiShipMast_SwayY &= 0xffff;
 }
 
-/// How evenly the chosen passengers row: the values of those at the west seats
-/// (the first and third filled) less those at the east seats.
+/// The rowing balance of the chosen passengers: the values of those at the west
+/// seats (the first and third filled) less those at the east seats.
 static s32 TolbiShipMast_GetRowingBalance(void) {
   s32 westSeats;
   s32 eastSeats;

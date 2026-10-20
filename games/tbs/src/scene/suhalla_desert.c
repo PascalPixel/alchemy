@@ -1,11 +1,61 @@
 /// @file
-/// The Suhalla Desert in three scenes. Sandstorms rise as the party nears
-/// them; one that catches the leader spins the party and, unless Douse stops
-/// it and its monster is fought, carries the party off to the world map. In
-/// the second scene one storm gives chase, and Reveal shows what the sand
-/// hides. Travelling with the party, Iodem warns of the storms, and, once he
-/// has heard the wounded soldiers in Suhalla, asks whether to search on for
-/// Sheba or press on to Lalivero.
+/// Suhalla Desert (SuhallaDesert1 to 3, scenes 164 to 166), the desert of
+/// sandstorms between Suhalla and Suhalla Gate.
+///
+/// After Babi's audience the party crosses it with Iodem, who commands
+/// Babi's soldiers and travels with the party, looking for Sheba, the holy
+/// child of Lalivero: the soldiers escorting her home were caught in the
+/// sandstorms, and in Suhalla the survivors said she had not been caught with
+/// them. The three scenes, in the order the party meets them:
+/// - Suhalla Desert (scene 164), entered from the world map near Suhalla
+///   (exit 1, the world map's entrance 28); exit 2 leads on into scene 165.
+///   Five storms stand here.
+/// - Suhalla Desert (scene 165), with four storms and a fifth that gives
+///   chase. Its exit 2 leads out onto the world map (entrance 55), and exits
+///   3 and 4 into scene 166. Flash, a Mars Djinni, waits here and fights when
+///   spoken to (Event_FightDjinni). Near the way out, once Iodem has
+///   questioned the soldiers (FLAG_IODEM_MET_WOUNDED_SOLDIERS), he steps out
+///   of the party: `Sheba is nowhere to be found.` He asks whether to search
+///   on or press on to Lalivero, and either way decides to head first for
+///   the guard gate ahead and leave Sheba to its soldiers
+///   (Event_IodemAsksWhetherToPressOn, once,
+///   FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA).
+/// - Suhalla Desert (scene 166), whose exits lead only back into scene 165
+///   and between its own two parts; it places nothing and plays a sound on
+///   entry.
+///
+/// The storms are actors 8 to 12 of the first two scenes, and their logic is
+/// the desert's:
+/// - As the party nears a storm (cell codes 61 to 65 and 71 to 73) it rises,
+///   growing to full size, and the sand haze fades in the first time
+///   (SuhallaDesert_RaiseStorm). The first storm to rise while Iodem travels
+///   with the party brings him out to warn, `If we don't get past here, we'll
+///   never make it to Babi Lighthouse.` (FLAG_SUHALLA_DESERT_IODEM_WARNED).
+/// - Walking into a storm (cell codes 41 to 45 and 51 to 54) draws the leader
+///   to its centre and lifts the party, spinning, for 180 frames
+///   (SuhallaDesert_CatchInStorm). Douse cast at it in that time stops it,
+///   and the monster in it attacks (Event_DouseStorm): the water the wounded
+///   soldiers in Suhalla saw others use.
+/// - When the time runs out the storm rises into the sky with the party and
+///   drops it on the world map outside Suhalla (the world map's entrance 27,
+///   where Suhalla's exit 10 also leaves), which is why everyone the storms
+///   catch winds up there; the second scene's fourth storm drops it at
+///   entrance 77 instead, one of the world map's entrances that resume
+///   airborne travel.
+/// - In the second scene, cell code 81 brings the fifth storm up behind the
+///   party to chase it (SuhallaDesert_ChaseLeader); it catches a leader on
+///   the move.
+///
+/// A doused storm's flag (0x301 to 0x305, 0x311 to 0x315) is a place flag:
+/// the storm stays gone until the party leaves the desert's place group,
+/// except the chasing storm, which once doused is gone for good
+/// (FLAG_SUHALLA_DESERT_CHASING_STORM_DOUSED). In the second scene Reveal
+/// shows an object the sand hides, at 248, 712, changes two cells and moves
+/// map object 100 while one palette colour pulses; in Suhalla a villager
+/// cannot remember a saying about the storms, and Mind Read finds half of it,
+/// about eyes of truth. Chests hold a
+/// Virtuous Armlet, a Lucky Medal and a Cookie, a fourth chest is a mimic,
+/// and searching finds a Psynergy Stone (place flag 0x351).
 
 #include "script.h"
 #include "flags.h"
@@ -78,8 +128,9 @@ enum {
 /// Frames a caught party spins before the storm carries it away.
 enum { STORM_CAPTURE_FRAMES = 180 };
 
-/// Where a storm drops the party on the world map: the second scene's fourth
-/// storm drops it elsewhere.
+/// Where a storm drops the party on the world map: outside Suhalla, or, for
+/// the second scene's fourth storm, at an entrance that resumes airborne
+/// travel.
 enum { WORLD_MAP_STORM_DROP = 27, WORLD_MAP_STORM_DROP_FOURTH = 77 };
 
 static void SuhallaDesert_SetUpFirstSceneStorms(void);
@@ -94,7 +145,8 @@ static u16 sSuhallaDesertSavedColor;
 
 void QueueSceneSound(s32 cue);
 
-/// Talking to the Djinni starts its battle.
+/// In the Suhalla Desert's second scene (165), talking to Flash, a Mars
+/// Djinni, starts its battle.
 static void Event_FightDjinni(void) {
   Field_RequestDjinnBattle(DJINNI, DJINNI_FLASH);
 }
@@ -136,7 +188,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 /// Where each exit of the three scenes leads.
 const u32 *Scene_GetExits(void) { return gSuhallaDesertExits; }
 
-/// The storms, Iodem, and in the second scene the Djinni and what Reveal shows.
+/// The storms, Iodem, and in the second scene Flash and what Reveal shows.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 selector = gGameState.scene;
 
@@ -219,28 +271,32 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
   }
 }
 
-/// The leader walks into the first storm of the scene.
+/// In Suhalla Desert (scenes 164 and 165), the leader walks into the scene's
+/// first storm (cell code 41 or 51).
 static void Event_CaughtByFirstStorm(void) {
   SuhallaDesert_CatchInStorm(STORM_FIRST);
 }
 
-/// The leader walks into the second storm.
+/// In Suhalla Desert (scenes 164 and 165), the leader walks into the second
+/// storm (cell code 42 or 52).
 static void Event_CaughtBySecondStorm(void) {
   SuhallaDesert_CatchInStorm(STORM_FIRST + 1);
 }
 
-/// The leader walks into the third storm.
+/// In Suhalla Desert (scenes 164 and 165), the leader walks into the third
+/// storm (cell code 43 or 53).
 static void Event_CaughtByThirdStorm(void) {
   SuhallaDesert_CatchInStorm(STORM_FIRST + 2);
 }
 
-/// The leader walks into the fourth storm.
+/// In Suhalla Desert (scenes 164 and 165), the leader walks into the fourth
+/// storm (cell code 44 or 54).
 static void Event_CaughtByFourthStorm(void) {
   SuhallaDesert_CatchInStorm(STORM_FIRST + 3);
 }
 
-/// The leader walks into the first scene's fifth storm, or the chasing storm
-/// reaches the moving leader.
+/// In Suhalla Desert, the leader walks into scene 164's fifth storm (cell code
+/// 45), or scene 165's chasing storm reaches the moving leader (event 55).
 static void Event_CaughtByFifthStorm(void) {
   SuhallaDesert_CatchInStorm(STORM_FIRST + 4);
 }
@@ -331,36 +387,43 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   Engine_EventEnd();
 }
 
-/// The party nears the first storm.
+/// In Suhalla Desert (scenes 164 and 165), the party nears the scene's first
+/// storm (cell code 61 or 71).
 static void Event_FirstStormRises(void) {
   SuhallaDesert_RaiseStorm(STORM_FIRST);
 }
 
-/// The party nears the second storm.
+/// In Suhalla Desert (scenes 164 and 165), the party nears the second storm
+/// (cell code 62 or 72).
 static void Event_SecondStormRises(void) {
   SuhallaDesert_RaiseStorm(STORM_FIRST + 1);
 }
 
-/// The party nears the third storm.
+/// In Suhalla Desert (scenes 164 and 165), the party nears the third storm
+/// (cell code 63 or 73).
 static void Event_ThirdStormRises(void) {
   SuhallaDesert_RaiseStorm(STORM_FIRST + 2);
 }
 
-/// The party nears the fourth storm.
+/// In Suhalla Desert (scene 164), the party nears the fourth storm (cell code
+/// 64).
 static void Event_FourthStormRises(void) {
   SuhallaDesert_RaiseStorm(STORM_FIRST + 3);
 }
 
-/// The party nears the fifth storm.
+/// In Suhalla Desert (scene 164), the party nears the fifth storm (cell code
+/// 65).
 static void Event_FifthStormRises(void) {
   SuhallaDesert_RaiseStorm(STORM_FIRST + 4);
 }
 
-/// Near the second scene's way out to the world map, once Iodem has heard the
-/// wounded soldiers: he steps out of the party. "Sheba is nowhere to be found.
-/// Should we search the desert once more or press on to Lalivero?" Whatever the
-/// answer, Iodem decides to go on to Tolbi's guard gate ahead and leave the
-/// search to its soldiers, and rejoins the party.
+/// In Suhalla Desert (scene 165), near its way out to the world map
+/// (cell code 9), once Iodem has heard the wounded soldiers in Suhalla: he
+/// steps out of the party. "Sheba is nowhere to be found. Should we search
+/// the desert once more or press on to Lalivero?" Whatever the answer, Iodem
+/// decides to head first for the guard gate ahead, Suhalla Gate, and leave
+/// Sheba to the soldiers there, and rejoins the party. Sets
+/// FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA.
 static void Event_IodemAsksWhetherToPressOn(void) {
   struct FieldActor *leader;
 
@@ -467,8 +530,8 @@ static s32 SuhallaDesert_ChaseLeader(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// In the second scene, until the chasing storm has been doused: it appears
-/// behind the party and gives chase.
+/// In Suhalla Desert (scene 165), until the chasing storm has been doused: it
+/// appears behind the party and gives chase.
 static void Event_StormGivesChase(void) {
   if (GameFlag_IsSet(FLAG_SUHALLA_DESERT_CHASING_STORM_DOUSED) == 0) {
     GameFlag_Set(FLAG_SCENE_TEMP_0E);
@@ -477,15 +540,17 @@ static void Event_StormGivesChase(void) {
   }
 }
 
-/// Douse cast at the storm that caught the leader: sets the Psynergy effect's
+/// In Suhalla Desert (scenes 164 and 165), Douse cast at the storm that caught
+/// the leader: sets the Psynergy effect's
 /// child option (its meaning unknown).
 static void Event_DouseCastAtStorm(void) {
   u8 *state = gEffectWork;
   ((struct BattleFxScene *)state)->childOption = 1;
 }
 
-/// Douse stops the storm that caught the leader: it is doused for good, and
-/// the monster in it attacks. The second scene's fourth and chasing storms
+/// In Suhalla Desert (scenes 164 and 165), Douse stops the storm that caught
+/// the leader: it is doused for good, and the monster in it attacks. Scene
+/// 165's fourth and chasing storms
 /// hold other monsters.
 static void Event_DouseStorm(s32 unused, s32 stormId) {
   struct GameState *state;
@@ -521,8 +586,10 @@ static void Event_DouseStorm(s32 unused, s32 stormId) {
   Object_GetById(gGameState.selectedActor)->motionFlags = 3;
 }
 
-/// The spinning runs out: the storm rises into the sky with the party, the
-/// screen closes, and the party lands on the world map.
+/// In Suhalla Desert (scenes 164 and 165), the spinning runs out (event 99):
+/// the storm rises into the sky with the party, the screen closes, and the
+/// party lands falling (flag 0x122, FLAG_ARRIVE_FALLING) on the world map
+/// outside Suhalla, or where the second scene's fourth storm drops it.
 static void Event_StormCarriesPartyAway(void) {
   s32 stormId;
   struct FieldActor *selectedActor;
@@ -577,8 +644,8 @@ static void SuhallaDesert_PulseRevealPalette(void) {
   SUHALLA_REVEAL_PALETTE_COLOR = ((u32)color << 16) >> 16;
 }
 
-/// Reveal ends, or a scene is entered: in the second scene, what Reveal showed
-/// is hidden again and the pulsing color is put back.
+/// Reveal ends, or a scene is entered: in Suhalla Desert's scene 165, what
+/// Reveal showed is hidden again and the pulsing color is put back.
 // Native event return forms: see MATCHING.md.
 #ifdef UBFIX
 static void Event_RevealEnds(void) {
@@ -606,8 +673,8 @@ static s32 Event_RevealEnds(void) {
   }
 }
 
-/// Reveal in the second scene: the hidden object appears at 248, 712, map
-/// cells and the map object at 100 change, and a palette color pulses.
+/// Reveal in Suhalla Desert (scene 165): the hidden object appears at 248, 712,
+/// map cells and the map object at 100 change, and a palette color pulses.
 #ifdef UBFIX
 static void Event_RevealStarts(void) {
 #else

@@ -1,7 +1,8 @@
 /// @file
-/// Colosso Log, River and Wall, and Crossbone Isle's platform rooms: an actor
-/// drawn as an item's menu icon, such as the two items at a Colosso course's
-/// finish or the Red Key on Crossbone Isle.
+/// Colosseum Final 1, 2 and 3, and three of Crossbone Isle Cave's side rooms
+/// (CrossboneIslePlatformRooms1 to 3): an actor drawn as an item's menu icon,
+/// such as the two prizes at a finals match's arena or the keys in
+/// CrossboneIslePlatformRooms1.
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

@@ -1,5 +1,5 @@
 /// @file
-/// Kolima's forest bridge and river: the hop east onto actor 10 (the third
+/// Kolima Forest (scenes 40 and 42): the hop east onto actor 10 (the third
 /// placement).
 #include "types.h"
 #include "engine_call.h"

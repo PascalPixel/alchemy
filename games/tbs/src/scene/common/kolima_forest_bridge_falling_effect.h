@@ -13,8 +13,8 @@
 #include "map_scroll.h"
 #include "songs.h"
 
-// Kolima and its forest bridge: the sparkling dust that falls over the party
-// when Tret's curse strikes ("Watch out! It's happening again!").
+// Kolima and Kolima Forest (scene 40): the sparkling dust that falls over the
+// party when Tret's curse strikes ("Watch out! It's happening again!").
 
 s32 gFallingEffectOffset __attribute__((section(".bss")));
 s32 gFallingEffectWidth __attribute__((section(".bss")));

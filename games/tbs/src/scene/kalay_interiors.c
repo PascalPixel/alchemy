@@ -1,6 +1,26 @@
 /// @file
-/// Kalay's homes, inn, dining rooms and sanctum. The inn changes when the
-/// Colosso tour group leaves; room entrances select their shared actor tables.
+/// Inside Kalay: the houses and the inn, and the Kalay Sanctum.
+///
+/// - Kalay (KalayInteriors1, scene 100), one map holding every house and the
+///   inn, each entered from its own door in the town (kalay.c) at an entrance
+///   of its own, and left by the matching exit. Entrances 9 to 15 and 17 are
+///   the inn's rooms and take the inn's placements and events; every other
+///   entrance takes the houses'. The inn is full of tourists on their way to
+///   see Colosso in Tolbi. The innkeeper offers a room when spoken to across
+///   the counter; from elsewhere he asks `Are you going to Tolbi also?`, and
+///   the tour's guide in the dining room says `Please finish eating if you
+///   are taking the tour!` Either sets FLAG_KALAY_HEARD_OF_COLOSSO_TOUR, after
+///   which leaving the town plays the tour group's departure. Once the tour
+///   has left (FLAG_KALAY_COLOSSO_TOUR_LEFT), its guests are gone from the
+///   inn, two people are gone from the houses, one of whom was about to join
+///   it, and those who stay say so. Searching the ovens shows what the cooks
+///   are making; the oven with roasted eggplant first gives a Smoke Bomb (its
+///   find comes first in the table, under the same trigger), and barrels hold
+///   11 coins and an Elixir. The inn's table and the houses' both carry these
+///   searches.
+/// - Kalay Sanctum (KalayInteriors2, scene 101), whose priest offers the
+///   Sanctum's services when spoken to across the counter. Its exit leads
+///   back to the town's entrance 8.
 
 #include "game_state.h"
 #include "scene_ids.h"
@@ -35,7 +55,8 @@ enum KalayInteriorsActor {
 
 static void KalayInteriors_ApplyRoomState(void);
 
-/// Selects the entrance table for the rooms or sanctum in this scene.
+/// Selects the entrance table of Kalay's houses and inn, or of the Kalay
+/// Sanctum.
 const struct SceneEntrance *KalayInteriors_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -52,7 +73,8 @@ const struct SceneRegion *KalayInteriors_GetRegions(void) { return NULL; }
 
 const u32 *KalayInteriors_GetExits(void) { return gKalayInteriors_Exits; }
 
-/// The inn rooms share a placement table, clipped to the current view.
+/// The inn's rooms share one placement table and the houses another, chosen
+/// by entrance and clipped to the current view.
 const struct ScenePlacement *KalayInteriors_GetPlacements(void) {
   s32 scene = gGameState.scene;
 
@@ -111,9 +133,9 @@ const struct SceneEvent *KalayInteriors_GetEvents(void) {
   return gKalayInteriors_NoEvents;
 }
 
-/// The tour guide in the inn's dining room: now the party has heard of the
-/// tour. "Please finish eating if you are taking the tour! We'll be leaving
-/// soon!"
+/// The tour's guide in the dining room of Kalay's inn: now the party has heard
+/// of the tour. `Please finish eating if you are taking the tour! We'll be
+/// leaving soon!`
 static void KalayInteriors_TalkToTourGuide(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayPleaseFinishEatingIfTaking);
@@ -122,8 +144,8 @@ static void KalayInteriors_TalkToTourGuide(void) {
   Engine_EventEnd();
 }
 
-/// A resident asks whether the party knows the continent south of Tolbi, and
-/// answers either way.
+/// Someone in one of Kalay's houses asks whether the party knows the continent
+/// south of Tolbi, and answers either way.
 static void KalayInteriors_AskAboutSouthernContinent(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgKalayDoKnowAboutContinentSouth);
@@ -131,9 +153,10 @@ static void KalayInteriors_AskAboutSouthernContinent(void) {
   Engine_EventEnd();
 }
 
-/// Spoken to across the counter, the leader facing west, the innkeeper offers a
-/// room. From any other side he asks whether the party is going to Tolbi too,
-/// or, once the tour has left, says how empty the inn feels.
+/// Spoken to across the counter of Kalay's inn, the leader facing west, the
+/// innkeeper offers a room. From any other side he asks whether the party is
+/// going to Tolbi too, or, once the tour has left, says how empty the inn
+/// feels.
 static void KalayInteriors_TalkToInnkeeper(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -155,8 +178,9 @@ static void KalayInteriors_TalkToInnkeeper(void) {
   }
 }
 
-/// Spoken to across the counter, the leader facing north, the priest offers the
-/// sanctum's services; from elsewhere he says Kalay is a peaceful place.
+/// Spoken to across the counter of the Kalay Sanctum, the leader facing north,
+/// the priest offers the Sanctum's services; from elsewhere he says Kalay is a
+/// peaceful place.
 static void KalayInteriors_TalkToPriest(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -172,7 +196,9 @@ static void KalayInteriors_TalkToPriest(void) {
   }
 }
 
-/// Stops the room actors, opens the selected door and walks the leader out.
+/// Walking north into one of four doors inside Kalay's houses and inn
+/// (triggers 12, 13, 16 and 19): stops the room's actors, opens the door and
+/// walks the leader out.
 static void KalayInteriors_OpenDoorAndExit(void) {
   struct EventWork *work = gEventWork;
   u32 slot;
@@ -240,8 +266,9 @@ s32 KalayInteriors_Initialize(void) {
   return 0;
 }
 
-/// Once the Colosso tour has left, its guests are gone from the inn, and two
-/// residents from the houses. Entrance 3 instead redraws a rectangle of cells.
+/// Once the Colosso tour has left, its guests are gone from Kalay's inn, and
+/// two people from the houses. Entrance 3 instead redraws a rectangle of
+/// cells.
 static void KalayInteriors_ApplyRoomState(void) {
   s16 entrance = gGameState.entrance;
 

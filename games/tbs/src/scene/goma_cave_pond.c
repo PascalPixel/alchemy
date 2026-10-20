@@ -1,5 +1,15 @@
 /// @file
-/// Goma Cave: the room the stump in the room above falls into.
+/// Goma Cave (GomaCavePond, scene 26), the room below the room of two pillars
+/// and a stump, in the cave in the Goma Range that the mayor of Vault tells the
+/// party to pass through on the way to Bilibin.
+///
+/// The room is reached only from the room above (goma_cave_pillar.c): its
+/// three exits lead back up to that room's entrances 4, 5 and 3. It has no
+/// events of its own. Its one placed actor is the stump the party pushes over
+/// the edge up there with Move: once it has fallen (FLAG_GOMA_CAVE_STUMP_FELL),
+/// entering finds it lying flat underfoot where it landed, and the map cells it
+/// covers change to match. The flag is a place flag, so the stump is back up
+/// in the room above once the party leaves Goma Cave's four scenes.
 #include "unit/scene/goma_cave_pond.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -46,8 +56,8 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 
 const struct SceneEvent *Scene_GetEvents(void) { return gGomaCavePondEvents; }
 
-/// Once the stump in the room above has been pushed over, it lies fallen
-/// here: put it in place and copy the map cells it covers.
+/// Sets up the room as the party enters. Once the stump in the room above has
+/// been pushed over, it lies here underfoot, and the cells it covers change.
 s32 Scene_Initialize(void) {
   struct EventWork *work;
 

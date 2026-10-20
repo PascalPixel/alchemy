@@ -17,10 +17,15 @@ enum TolbiInteriorsActor {
   TOLBI_INTERIORS_CHEF = 26,
   TOLBI_INTERIORS_WAITER = 27,
   TOLBI_INTERIORS_PRIEST = 30,
-  TOLBI_INTERIORS_ANGRY_SAILOR = 31,
-  TOLBI_INTERIORS_SAILOR_B = 32,
-  TOLBI_INTERIORS_SAILOR_C = 33,
-  TOLBI_INTERIORS_WOULD_BE_WARRIOR = 35,
+  /// After Colosso, passengers stranded at an inn because no ship sails: the
+  /// angry one, his wife and a third. "Making passengers row their own cruise
+  /// ship is unprecedented!"
+  TOLBI_INTERIORS_ANGRY_PASSENGER = 31,
+  TOLBI_INTERIORS_PASSENGER_WIFE = 32,
+  TOLBI_INTERIORS_THIRD_PASSENGER = 33,
+  /// After Colosso, a man who rode the ship from Kalay with the party. "It's
+  /// me! We rode the same ship from Kalay!"
+  TOLBI_INTERIORS_FELLOW_PASSENGER = 35,
 };
 
 /// Map objects the party can search.

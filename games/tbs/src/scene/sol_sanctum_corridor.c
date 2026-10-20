@@ -1,5 +1,14 @@
 /// @file
-/// A corridor of Sol Sanctum, scene 15: two exits to scene 16 and nothing else.
+/// Sol Sanctum (SolSanctumCorridor, scene 15), a passage between two parts of
+/// the sanctum's rooms inside its door, scene 16 (sol_sanctum_entrance.c),
+/// which Isaac, Garet, Jenna and Kraden explore together.
+///
+/// It places nobody and holds no event of its own: its only rows are its two
+/// exits, and they are the passage's two ends. Exit 1 leads to scene 16's
+/// entrance 5 and exit 2 to its entrance 1; scene 16's exits 5 and 1 come back
+/// in at entrances 1 and 2. Its setup is the one it shares with scene 14
+/// (sol_sanctum_maze.c), SolSanctumRooms_Initialize: once Mt. Aleph has erupted
+/// (FLAG_SOL_SANCTUM_ERUPTED), the passage rumbles and shakes.
 
 #include "unit/scene/sol_sanctum_corridor.h"
 #include "unit/scene/common/sol_sanctum_init_zoom.h"
@@ -33,7 +42,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gSolSanctumCorridorPlacements;
 }
 
-/// The two exits.
+/// Returns the passage's two exits, its only events.
 const struct SceneEvent *Scene_GetEvents(void) {
   return gSolSanctumCorridorEvents;
 }

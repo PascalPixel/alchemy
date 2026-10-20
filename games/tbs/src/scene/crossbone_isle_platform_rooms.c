@@ -1,6 +1,31 @@
 /// @file
-/// Crossbone Isle's platform rooms: the room of keys, the room of pursuers
-/// that Cloak and Halt get past, and the room of blocks where Bane hides.
+/// Three of the side rooms of Crossbone Isle Cave, the cave beneath Crossbone
+/// Isle, each opening off one of its corridor's nine rooms (crossbone_isle.c)
+/// as the pillar puzzles do (crossbone_isle_pillar_rooms.c), with four chests
+/// each. All three take the area name Crossbone Isle Cave. In the order the
+/// party meets them:
+///
+/// - CrossboneIslePlatformRooms1 (scene 117), off the third corridor room, a
+///   room of locked doors. Four Blue Keys lie about it until Catch takes them,
+///   and a Red Key shows only while Reveal lasts. Walking into one of the four
+///   blue doors in a row with a Blue Key opens it and uses the key up (four
+///   flags from FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN), and the Red Key
+///   opens the red door beyond them (FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN). The
+///   keys taken and the doors opened are restored on entry.
+/// - CrossboneIslePlatformRooms2 (scene 118), off the fourth, where five
+///   pursuers wait. As the leader crosses each one's stretch of the room it
+///   steps out after him unless he is hidden by Cloak, and goes back home
+///   once he is past (FLAG_SCENE_TEMP_20 while one is after him); Halt stops
+///   one where it stands, and Reveal clears the translucent layer over the
+///   room while it lasts.
+/// - CrossboneIslePlatformRooms3 (scene 120), off the sixth, where Bane, a
+///   Venus Djinni, hides. Five blocks to push or move with Move, a ladder and
+///   a puddle that Frost freezes into a pillar of ice make a way across the
+///   room. The first three times the party comes near, Bane flees, the third
+///   time to the room's last corner (FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE to
+///   _LAST_ESCAPE); there it runs to whichever spot the leader steps toward
+///   unless Halt holds it. Once the battle with Bane is won, Bane joins the
+///   party.
 #include "game_state.h"
 #include "version.h"
 #include "global_cells.h"
@@ -66,16 +91,18 @@ static void CrossboneIslePlatformRooms_InitializeScene1(void);
 static void CrossboneIslePlatformRooms_InitializeScene2(void);
 static void CrossboneIslePlatformRooms_InitializeScene3(void);
 
-/// The Djinni Bane, in the block room: Venus Djinni 6 (name message 1125).
+/// Bane, a Venus Djinni, hiding in CrossboneIslePlatformRooms3; DJINNI_BANE is
+/// its number among the Venus Djinn.
 enum { BANE = 15 };
 #define DJINNI_BANE 6
 
 enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
 
-// The block room's temporary flags: FLAG_SCENE_TEMP_00 the puddle is frozen,
-// 01 to 05 end Move on each block, 06 the second block's platform has reached
-// the ladder, 07 selects the ladder cell's other attributes. The pursuer room
-// keeps FLAG_SCENE_TEMP_20 while a pursuer is after the leader.
+// CrossboneIslePlatformRooms3's temporary flags: FLAG_SCENE_TEMP_00 the puddle
+// is frozen, 01 to 05 end Move on each block, 06 the second block's platform
+// has reached the ladder, 07 selects the ladder cell's other attributes.
+// CrossboneIslePlatformRooms2 keeps FLAG_SCENE_TEMP_20 while a pursuer is
+// after the leader.
 
 /// Publishes the next raised-event trigger.
 static __inline__ void SceneState_StoreStep(s16 *field, s32 step) {
@@ -94,7 +121,8 @@ static __inline__ void LiftBlock(s32 column, u8 motionFlags) {
 
 #include "common/object_staged_actor.h"
 
-/// Raised once the battle with Bane is won: Bane joins the party.
+/// Raised in CrossboneIslePlatformRooms3 once the battle with Bane is won:
+/// Bane, a Venus Djinni, joins the party.
 static void Event_BaneJoins(void) {
   Djinn_JoinParty(BANE, ELEMENT_VENUS, DJINNI_BANE);
 }
@@ -135,7 +163,8 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gCrossboneIslePlatformRoomsPlacementsOther;
 }
 
-/// Halt on a pursuer: nothing beyond the Psynergy's own effect.
+/// Halt on a pursuer in CrossboneIslePlatformRooms2: nothing beyond the
+/// Psynergy's own effect, which keeps it from stepping out.
 static void Event_HaltPursuer(void) {}
 
 // Turn the Djinni toward the party leader each frame.
@@ -160,7 +189,8 @@ static s32 CrossboneIslePlatformRooms_FaceBaneTowardLeader(
 #endif
 }
 
-/// The first time the party comes near: Bane notices them and hops away.
+/// In CrossboneIslePlatformRooms3, the first time the party comes near
+/// (trigger 20): Bane notices them and hops away.
 static void Event_BaneFirstEscape(void) {
   struct FieldActor *djinni;
 
@@ -184,8 +214,9 @@ static void Event_BaneFirstEscape(void) {
   }
 }
 
-/// Coming near again: Bane hops, dashes across the platforms and crashes into
-/// the far wall, shaking the room, and is left squashing and stretching.
+/// In CrossboneIslePlatformRooms3, coming near again (trigger 21): Bane hops,
+/// dashes across the platforms and crashes into the far wall, shaking the room,
+/// and is left squashing and stretching.
 static void Event_BaneSecondEscape(void) {
   struct FieldActor *spinningDjinni;
   s32 escapeComplete;
@@ -240,8 +271,9 @@ static void Event_BaneSecondEscape(void) {
   }
 }
 
-/// The third time: Bane recovers, hops down a winding path to the room's last
-/// corner and keeps watching the leader.
+/// In CrossboneIslePlatformRooms3, the third time (trigger 22): Bane recovers,
+/// hops down a winding path to the room's last corner and keeps watching the
+/// leader.
 static void Event_BaneLastEscape(void) {
   struct FieldActor *djinni;
 
@@ -293,8 +325,9 @@ static void Event_BaneLastEscape(void) {
   }
 }
 
-/// Stepping on the triggers around Bane's corner (30 to 41): Bane runs to the
-/// matching spot, as fast as the leader, unless Halt holds it.
+/// In CrossboneIslePlatformRooms3, stepping on the triggers around Bane's
+/// corner (30 to 41): Bane runs to the matching spot, as fast as the leader,
+/// unless Halt holds it.
 static void Event_BaneKeepsAway(void) {
   struct FieldActor *djinni;
   struct FieldActor *leader;
@@ -324,7 +357,7 @@ static void Event_BaneKeepsAway(void) {
   }
 }
 
-/// Halt on Bane: it freezes in place.
+/// Halt on Bane in CrossboneIslePlatformRooms3: it freezes in place.
 static void Event_HaltBane(void) {
   EV_BEGIN();
   OBJ_MODE(15, 0);
@@ -346,7 +379,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gCrossboneIslePlatformRoomsEventsOther;
 }
 
-/// Walking south into the third or fourth blue door: look at what is ahead.
+/// Walking south into CrossboneIslePlatformRooms1's third or fourth blue door:
+/// look at what is ahead.
 static void Event_CheckLeaderAhead(void) { Engine_LeaderCheckAhead(); }
 
 /// Opens the selected blue-key passage, optionally playing its opening.
@@ -381,8 +415,8 @@ static void CrossboneIslePlatformRooms_OpenPlatformPassage(s32 passageInfo) {
   Map_CopyCellAttributes(6, 49, 1, 1, 6, 51);
 }
 
-/// Facing the red door with the Red Key: the door rumbles open, and the key is
-/// used up.
+/// Facing CrossboneIslePlatformRooms1's red door with the Red Key (trigger
+/// 50): the door rumbles open, and the key is used up.
 static void Event_UseRedKey(void) {
   struct FieldActor *leader;
 
@@ -419,18 +453,18 @@ static void CrossboneIslePlatformRooms_UseBlueKey(s32 doorIndex) {
   PartyInventory_Remove(ITEM_BLUE_KEY);
 }
 
-/// Touching the first blue door.
+/// Touching CrossboneIslePlatformRooms1's first blue door (trigger 51).
 static void Event_OpenFirstBlueDoor(void) {
   CrossboneIslePlatformRooms_UseBlueKey(0);
 }
 
-/// Touching the second blue door.
+/// Touching CrossboneIslePlatformRooms1's second blue door (trigger 52).
 static void Event_OpenSecondBlueDoor(void) {
   CrossboneIslePlatformRooms_UseBlueKey(1);
 }
 
-/// Touching the third blue door; pressing on it from the north looks ahead
-/// every dozen blocked steps.
+/// Touching CrossboneIslePlatformRooms1's third blue door (trigger 53);
+/// pressing on it from the north looks ahead every dozen blocked steps.
 static void Event_OpenThirdBlueDoor(void) {
   struct FieldActor *leader;
   s16 *blockedSteps;
@@ -448,8 +482,8 @@ static void Event_OpenThirdBlueDoor(void) {
   }
 }
 
-/// Touching the fourth blue door; pressing on it from the north looks ahead
-/// every dozen blocked steps.
+/// Touching CrossboneIslePlatformRooms1's fourth blue door (trigger 54);
+/// pressing on it from the north looks ahead every dozen blocked steps.
 static void Event_OpenFourthBlueDoor(void) {
   struct FieldActor *leader;
   s16 *blockedSteps;
@@ -467,7 +501,8 @@ static void Event_OpenFourthBlueDoor(void) {
   }
 }
 
-/// Reveal in the key room: the hidden Red Key appears on its tile.
+/// Reveal in CrossboneIslePlatformRooms1: the hidden Red Key appears on its
+/// tile.
 static void Event_ShowRedKey(void) {
   s32 keyActorId = 12;
   s32 x = PIXELS(408);
@@ -479,7 +514,8 @@ static void Event_ShowRedKey(void) {
   WAIT(1);
 }
 
-/// Reveal wears off: the Red Key's tile is hidden again.
+/// Reveal wears off in CrossboneIslePlatformRooms1: the Red Key's tile is
+/// hidden again.
 static void Event_HideRedKey(void) {
   Map_CopyCells(24, 48, 1, 2, 25, 48);
   OBJ_POS_SET(12, 8, 8);
@@ -496,27 +532,27 @@ static inline void CrossboneIslePlatformRooms_CollectKey(s32 actorId,
   Engine_GameFlagSet(collectedFlag);
 }
 
-/// Catch on the first Blue Key: the party gets it.
+/// Catch on CrossboneIslePlatformRooms1's first Blue Key: the party gets it.
 static void Event_CatchFirstBlueKey(void) {
   CrossboneIslePlatformRooms_CollectKey(8, ITEM_BLUE_KEY, 0xee7);
 }
 
-/// Catch on the second Blue Key.
+/// Catch on CrossboneIslePlatformRooms1's second Blue Key: the party gets it.
 static void Event_CatchSecondBlueKey(void) {
   CrossboneIslePlatformRooms_CollectKey(9, ITEM_BLUE_KEY, 0xee8);
 }
 
-/// Catch on the third Blue Key.
+/// Catch on CrossboneIslePlatformRooms1's third Blue Key: the party gets it.
 static void Event_CatchThirdBlueKey(void) {
   CrossboneIslePlatformRooms_CollectKey(10, ITEM_BLUE_KEY, 0xee9);
 }
 
-/// Catch on the fourth Blue Key.
+/// Catch on CrossboneIslePlatformRooms1's fourth Blue Key: the party gets it.
 static void Event_CatchFourthBlueKey(void) {
   CrossboneIslePlatformRooms_CollectKey(11, ITEM_BLUE_KEY, 0xeea);
 }
 
-/// Catch on the revealed Red Key.
+/// Catch on CrossboneIslePlatformRooms1's revealed Red Key: the party gets it.
 static void Event_CatchRedKey(void) {
   CrossboneIslePlatformRooms_CollectKey(12, ITEM_RED_KEY, 0xeeb);
 }
@@ -536,7 +572,8 @@ static void CrossboneIslePlatformRooms_CheckFirstPursuerTrigger(void) {
   }
 }
 
-/// Lets the first pursuer follow the leader, then returns it home.
+/// Raised in CrossboneIslePlatformRooms2 (91): the first pursuer follows the
+/// leader, then goes back home.
 static void Event_DodgeFirstPursuer(void) {
   struct FieldActor *leader;
 
@@ -574,7 +611,8 @@ static void CrossboneIslePlatformRooms_CheckSecondPursuerTrigger(void) {
   }
 }
 
-/// Lets the second pursuer follow the leader, then returns it home.
+/// Raised in CrossboneIslePlatformRooms2 (92): the second pursuer follows the
+/// leader, then goes back home.
 static void Event_DodgeSecondPursuer(void) {
   struct FieldActor *leader;
 
@@ -623,10 +661,14 @@ static void CrossboneIslePlatformRooms_TrackPursuerColumn(s32 pursuerIndex) {
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 }
 
+/// Touching trigger 53 in CrossboneIslePlatformRooms2: the third pursuer keeps
+/// to the leader's column.
 static void Event_TrackThirdPursuerColumn(void) {
   CrossboneIslePlatformRooms_TrackPursuerColumn(0);
 }
 
+/// Touching trigger 54 in CrossboneIslePlatformRooms2: the fourth pursuer
+/// keeps to the leader's column.
 static void Event_TrackFourthPursuerColumn(void) {
   CrossboneIslePlatformRooms_TrackPursuerColumn(1);
 }
@@ -635,7 +677,8 @@ UNUSED static void CrossboneIslePlatformRooms_TrackFifthPursuerColumn(void) {
   CrossboneIslePlatformRooms_TrackPursuerColumn(2);
 }
 
-/// Lets the third pursuer follow the leader, then returns it home.
+/// Touching trigger 61 in CrossboneIslePlatformRooms2: the third pursuer
+/// follows the leader, then goes back home.
 static void Event_DodgeThirdPursuer(void) {
   struct FieldActor *leader;
 
@@ -661,7 +704,8 @@ static void Event_DodgeThirdPursuer(void) {
   }
 }
 
-/// Aligns the fourth pursuer before sending it after the leader.
+/// Touching trigger 62 in CrossboneIslePlatformRooms2: the fourth pursuer lines
+/// up and goes after the leader.
 static void Event_DodgeFourthPursuer(void) {
   struct FieldActor *leader;
   s32 leaderColumn;
@@ -713,7 +757,8 @@ static void CrossboneIslePlatformRooms_CheckFifthPursuerTrigger(void) {
   }
 }
 
-/// Lets the fifth pursuer follow the leader, then returns it home.
+/// Raised in CrossboneIslePlatformRooms2 (96): the fifth pursuer follows the
+/// leader, then goes back home.
 static void Event_DodgeFifthPursuer(void) {
   struct FieldActor *leader;
 
@@ -736,8 +781,8 @@ static void Event_DodgeFifthPursuer(void) {
   GameFlag_Clear(FLAG_SCENE_TEMP_20);
 }
 
-/// Reveal in the pursuer room: the translucent layer over the room vanishes
-/// while it lasts.
+/// Reveal in CrossboneIslePlatformRooms2: the translucent layer over the room
+/// vanishes while it lasts.
 static void Event_BeginRevealBlend(void) {
   u32 coefficient = 208;
 
@@ -745,15 +790,17 @@ static void Event_BeginRevealBlend(void) {
   REG_BLDALPHA = coefficient;
 }
 
-/// Reveal wears off: the translucent layer returns.
+/// Reveal wears off in CrossboneIslePlatformRooms2: the translucent layer
+/// returns.
 static void Event_EndRevealBlend(void) {
   u16 value = 0x0607;
 
   REG_BLDALPHA = value;
 }
 
-/// At the ladder by the second block: climb up or down, look ahead to the
-/// east, or push the first block from the floor to the west.
+/// At CrossboneIslePlatformRooms3's ladder by the second block (trigger 60):
+/// climb up or down, look ahead to the east, or push the first block from the
+/// floor to the west.
 static void Event_UseLadder(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   u16 facing = leader->facing;
@@ -791,8 +838,8 @@ static void Event_UseLadder(void) {
 
 UNUSED static void CrossboneIslePlatformRooms_UnusedCallback(void) {}
 
-/// Frost on the puddle: it freezes into a pillar of ice the party can stand
-/// on.
+/// Frost on CrossboneIslePlatformRooms3's puddle: it freezes into a pillar of
+/// ice the party can stand on.
 static void Event_FreezePuddle(void) {
   struct FieldActor *puddle = Object_GetById(13);
 
@@ -807,8 +854,8 @@ static void Event_FreezePuddle(void) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
 }
 
-/// Walking into the first block from the ladder side (trigger 70): facing east,
-/// look ahead; otherwise push the block.
+/// Walking into CrossboneIslePlatformRooms3's first block from the ladder side
+/// (trigger 70): facing east, look ahead; otherwise push the block.
 static void Event_LookAheadOrPushFirstBlock(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -850,7 +897,8 @@ static void CrossboneIslePlatformRooms_RestoreWestUnderfootCell(void) {
   Object_GetById(8)->priorityFlags = 2;
 }
 
-/// Rebuilds the first block support cells from its height and column.
+/// Move on CrossboneIslePlatformRooms3's first block: its support cells are
+/// rebuilt from its height and column.
 static void Event_UpdateFirstBlockTerrain(void) {
   struct FieldActor *actor = Object_GetById(8);
   s32 x = actor->x.fixed;
@@ -879,8 +927,8 @@ static void Event_UpdateFirstBlockTerrain(void) {
   }
 }
 
-/// Pushing the first block (trigger 51); standing at the ladder in column 38,
-/// the leader climbs instead.
+/// Pushing CrossboneIslePlatformRooms3's first block (trigger 51); standing at
+/// the ladder in column 38, the leader climbs instead.
 static void Event_PushFirstBlock(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldActor *block = Object_GetById(8);
@@ -918,7 +966,8 @@ static void CrossboneIslePlatformRooms_ReleaseSecondBlockPlatform(void) {
   FLAG_SET(FLAG_SCENE_TEMP_06);
 }
 
-/// Releases the second block platform when it reaches the ladder cell.
+/// Move on CrossboneIslePlatformRooms3's second block: the platform riding on
+/// it is released when it reaches the ladder cell.
 static void Event_UpdateSecondBlockTerrain(void) {
   struct FieldActor *block = Object_GetById(9);
   s32 column = block->x.fixed / PIXELS(16);
@@ -929,8 +978,8 @@ static void Event_UpdateSecondBlockTerrain(void) {
   }
 }
 
-/// Pushing the second block (trigger 52); at the ladder, the platform riding
-/// on it stays there.
+/// Pushing CrossboneIslePlatformRooms3's second block (trigger 52); at the
+/// ladder, the platform riding on it stays there.
 static void Event_PushSecondBlock(void) {
   StagedActor_AdvancePair();
   Event_UpdateSecondBlockTerrain();
@@ -957,7 +1006,8 @@ static void CrossboneIslePlatformRooms_RestoreThirdBlockEastCell(void) {
   Object_GetById(10)->motionFlags = 0;
 }
 
-/// Rebuilds support for the third block from its height and destination.
+/// Move on CrossboneIslePlatformRooms3's third block: its support is rebuilt
+/// from its height and destination.
 static void Event_UpdateThirdBlockTerrain(void) {
   struct FieldActor *block = Object_GetById(10);
   s32 heightCells = block->y.fixed / PIXELS(16);
@@ -981,15 +1031,15 @@ static void Event_UpdateThirdBlockTerrain(void) {
   }
 }
 
-/// Pushing the third block (trigger 50).
+/// Pushing CrossboneIslePlatformRooms3's third block (trigger 50).
 static void Event_PushThirdBlock(void) {
   CrossboneIslePlatformRooms_RestoreThirdBlockTerrain();
   StagedActor_AdvancePair();
   Event_UpdateThirdBlockTerrain();
 }
 
-/// Walking into the third block (trigger 54): facing south, the rising
-/// sequence plays; otherwise the block is pushed.
+/// Walking into CrossboneIslePlatformRooms3's third block (trigger 54): facing
+/// south, the rising sequence plays; otherwise the block is pushed.
 static void Event_TouchThirdBlock(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -1024,19 +1074,21 @@ static void CrossboneIslePlatformRooms_RepaintFourthAndFifthBlockCells(void) {
   Map_CopyCellAttributes(53, 55, 1, 1, column, 55);
 }
 
-/// Refreshes the shared support row after the fourth block moves.
+/// Move on CrossboneIslePlatformRooms3's fourth block: the support row it
+/// shares with the fifth is refreshed.
 static void Event_UpdateFourthBlockTerrain(void) {
   CrossboneIslePlatformRooms_RepaintFourthAndFifthBlockCells();
 }
 
-/// Pushing the fourth block (trigger 53).
+/// Pushing CrossboneIslePlatformRooms3's fourth block (trigger 53).
 static void Event_PushFourthBlock(void) {
   CrossboneIslePlatformRooms_RestoreFourthAndFifthBlockTerrain();
   StagedActor_AdvancePair();
   Event_UpdateFourthBlockTerrain();
 }
 
-/// Refreshes the shared support row after the fifth block moves.
+/// Move on CrossboneIslePlatformRooms3's fifth block: the support row it shares
+/// with the fourth is refreshed.
 static void Event_UpdateFifthBlockTerrain(void) {
   CrossboneIslePlatformRooms_RepaintFourthAndFifthBlockCells();
 }
@@ -1090,7 +1142,9 @@ static void CrossboneIslePlatformRooms_UpdateBlockPriorities(void) {
   Object_GetById(12)->priorityFlags = priority;
 }
 
-/// Initializes the key, pursuer or movable-block room.
+/// Sets up whichever of the three rooms the party enters: the keys and doors
+/// of CrossboneIslePlatformRooms1, the pursuers of CrossboneIslePlatformRooms2,
+/// or the blocks and Bane of CrossboneIslePlatformRooms3.
 s32 Scene_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (gGameState.scene == (s32)&SceneId_CrossboneIslePlatformRooms1) {

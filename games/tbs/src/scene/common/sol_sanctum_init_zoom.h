@@ -1,5 +1,5 @@
 /// @file
-/// Sol Sanctum's corridor and maze: the scenes' initialization.
+/// The initialization that two rooms of Sol Sanctum share, scenes 14 and 15.
 #include "types.h"
 #include "field_obj.h"
 #include "songs.h"

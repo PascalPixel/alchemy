@@ -1,6 +1,38 @@
 /// @file
-/// West Lunpa Cave: a gate puzzle of switches and puddles that Frost freezes
-/// into pillars, and Bunza, whose wagon carries the party out of Lunpa.
+/// West Lunpa Cave (WestLunpaCave, scene 106), the cave between Lunpa and the
+/// world map. The party comes in from Lunpa (Lunpa's exit to the cave) at
+/// entrance 2 and from the world map at entrance 1; trigger 2 leads back up
+/// into Lunpa (its entrance 3) and trigger 1 out to the world map (its entrance
+/// 49). Entrance 3, which no exit names, repeats entrance 2 with a shorter
+/// camera.
+///
+/// A gate blocks the cave. Its puzzle runs on scene flags, which last until the
+/// party next enters a scene other than by returning from a battle, and which
+/// Scene_Initialize redraws: the lowering switch (search trigger 3) brings the
+/// gate down (FLAG_SCENE_TEMP_01) and the raising switch (search trigger 4)
+/// lifts it (FLAG_SCENE_TEMP_02), each doing nothing while the gate already
+/// stands where it would put it, or while the frozen puddle under it props it
+/// open (FLAG_SCENE_TEMP_00). Frost on that puddle freezes it into a pillar,
+/// and a gate that was not up rises onto it with the puzzle-solved tune. Frost
+/// also freezes a puddle to the south into a pillar that can be climbed
+/// (FLAG_SCENE_TEMP_04, which changes one cell's collision) and one to the
+/// north (FLAG_SCENE_TEMP_03). A fourth puddle actor stands at (0, 0, 0),
+/// outside the cave's camera bounds.
+///
+/// The cave's scripted scene follows the rescue of Hammet, the lord of Kalay,
+/// whom Dodonpa's thieves held in Lunpa Fortress. Once Dodonpa's father Donpa
+/// has judged Dodonpa and let the party leave with Hammet
+/// (FLAG_LUNPA_TRADE_REOPENED, set in lunpa_fortress.c), stepping onto trigger
+/// 10 the first time (FLAG_LUNPA_CAVE_REUNION_SEEN) brings out a man who hid
+/// behind a rock when the gate moved. Hammet calls out and names him, Bunza, a
+/// Kalay merchant, and Bunza knows Hammet's voice; he had come to sell to
+/// Lunpa's villagers though he despised Dodonpa. Bunza has a wagon nearby and
+/// offers to take everyone back to Kalay before Dodonpa's henchmen find Hammet
+/// again, and the party's yes-or-no answers (WagonChoice_Run) decide whether it
+/// rides. Riding, all set off for Kalay and Hammet's wife, Lady Layana, by exit
+/// 3 to the world map's entrance 49, where world_map.c plays the wagon's
+/// departure. Staying, Ivan goes on with his friends, Hammet and Bunza leave
+/// alone, and FLAG_BUNZAS_WAGON_LEFT is set.
 
 #include "game_state.h"
 #include "scene_ids.h"
@@ -50,7 +82,8 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// Routes switches, Frost targets and the reunion trigger to their handlers.
 const struct SceneEvent *Scene_GetEvents(void) { return gCaveEvents; }
 
-/// Frost on the hidden puddle: it freezes, and no flag remembers it.
+/// Frost on the puddle placed at (0, 0, 0), outside the cave's camera bounds:
+/// it freezes, and no flag remembers it.
 static void Event_FreezeHiddenPuddle(void) {
   struct FieldActor *puddle;
 
@@ -190,9 +223,14 @@ static void Event_FlipRaisingSwitch(void) {
   }
 }
 
-/// Walking past Bunza's hiding place once Lunpa's trade has reopened: Bunza
-/// steps out, Hammet knows his voice, and the reunion and the wagon talk
-/// follow.
+/// Stepping onto trigger 10, by the rock Bunza hides behind, after Donpa has
+/// let the party leave the fortress with Hammet (FLAG_LUNPA_TRADE_REOPENED):
+/// Bunza steps out, the party and Hammet gather behind the leader, Garet and
+/// Mia think they saw someone, and Ivan asks whether Dodonpa's henchmen have
+/// found them (a yes: Garet will fight; a no: Garet wonders what else it
+/// could be). Hammet calls out and names Bunza, Bunza knows Hammet's voice,
+/// and the reunion and the wagon talk follow. Sets
+/// FLAG_LUNPA_CAVE_REUNION_SEEN, so it plays once.
 static void Event_HammetFindsBunza(void) {
   struct FieldActor *leader;
   s32 sighting;
@@ -246,7 +284,7 @@ static void Event_HammetFindsBunza(void) {
     Actor_FaceDirection(GARET, FACING_NORTH, 0);
     Engine_EventWait(30);
 
-    // The party spots someone ahead, before Hammet recognizes Bunza's voice.
+    // The party spots someone ahead, before Bunza recognizes Hammet's voice.
     Engine_ActorRunRepeatedMotion(GARET, 1);
     sighting = MsgLunpaThinkSawSomeone;
     Engine_EventSetMessage(sighting + SIGHTING_GARET_SAW_SOMEONE);
@@ -312,7 +350,10 @@ static void Event_HammetFindsBunza(void) {
   }
 }
 
-/// Explains Bunza's arrival and offers his wagon as a way out of Lunpa.
+/// The reunion, with the screen closed and reopened on the group: Hammet and
+/// Ivan tell how the party came to his rescue, Bunza tells how he came to
+/// Lunpa and found the cave, warns that Dodonpa's henchmen are combing the
+/// area, and offers his wagon as a way out of Lunpa.
 static void Reunion_Converse(void) {
   s32 reunion;
   s32 plan;
@@ -608,6 +649,13 @@ static void Reunion_Converse(void) {
 }
 
 /// Reconciles the party's answers until they either ride or stay behind.
+/// Garet asks whether to ride: a yes brings Bunza's question whether the party
+/// has unfinished business (a no rides), a no brings Garet's and Mia's
+/// questions whether it really will not ride. Answers that point to staying
+/// meet Garet's check that nothing is left to do (a yes rides) and Bunza's
+/// apology that he cannot wait, after which Mia asks whether the party will
+/// stay; a no to Mia's "You do want to go with them?" leaves Ivan confused and
+/// Garet asking again.
 static void WagonChoice_Run(void) {
   s32 wagon;
   s32 insisted;

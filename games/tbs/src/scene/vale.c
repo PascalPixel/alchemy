@@ -1,16 +1,60 @@
 /// @file
-/// Vale's plaza and the paths around it in daytime: the game opens here three
-/// years after the storm with Isaac mending his roof (entrances 16 and 17), and
-/// the villagers talk of the story before the party leaves, after it has left
-/// and after its return from Kalay.
+/// Vale (scene 4), Isaac's village by day, outside the houses: the door of
+/// Isaac's house, the houses of Garet's family and of Jenna's grandparents,
+/// the Sanctum and the paths out to Mt. Aleph and Kraden's cottage. The
+/// placements and events come in three sets, chosen by the story flags: before
+/// the party leaves Vale, after it has left (FLAG_PARTY_LEFT_VALE) and back
+/// from Kalay (FLAG_REACHED_KALAY); entrance 16 has a set of its own. In story
+/// order:
 ///
-/// FLAG_SCENE_TEMP_02: the roof has just been mended. FLAG_SCENE_TEMP_04: Isaac
-/// is in the northern passage. FLAG_SCENE_TEMP_10: the upper path's cells are
-/// in place. FLAG_SCENE_TEMP_41: the villager watching Isaac is paused. Group
-/// flags 0x303 and 0x304: Garet has talked with his sister and with the
-/// villager he asks to protect his family. 0x305: set by an unused scene.
-/// 0x307: a villager asked about the lack of travelers. 0x308: the roof-mending
-/// end has played. 0x314 to 0x316: the movable object's column.
+/// - The day the story begins, three years after the storm (vale_babi.c), which
+///   took Jenna's family and Isaac's father, Kyle. The game opens at entrance
+///   16 with Event_MendingTheRoof: under the caption "Three years later...",
+///   Isaac is mending the roof of his house while Dora, his mother, calls up to
+///   him; Garet, who will travel with him, trains his Psynergy nearby, and
+///   Jenna comes by, and the two speak of that day before going to fetch Isaac
+///   to go to Kraden's. Exit 12 brings the party back in at entrance 17, where
+///   Event_RoofMended plays once (group flag 0x308): Dora praises the roof,
+///   remembers Kyle, and sends the three off on their climb of Mt. Aleph with
+///   Kraden, the scholar who teaches them Alchemy (FLAG_SCENE_TEMP_02); for the
+///   rest of that visit Dora frets about the hole clumsy Garet left.
+/// - Vale before the party leaves. Until Kraden has planned the visit to Sol
+///   Sanctum (FLAG_SANCTUM_VISIT_PLANNED), Jenna stops Isaac on the path to Mt.
+///   Aleph; a villager jumps out to warn him against sneaking up the sacred
+///   peak (FLAG_VALE_WARNED_AGAINST_MT_ALEPH) and then keeps watching him,
+///   asking again whenever he comes near (touch cells 51 to 53). Three
+///   puppies (actors 15 to 17) play; walking up to them from either side
+///   (touch cells 20 and 21) sets them barking, until the party has met Saturos
+///   and Menardi, of the strangers staying at the inn
+///   (FLAG_MET_SATUROS_AND_MENARDI); then the setup removes them. Villagers
+///   talk of the mayor, Garet's grandfather, and of not going beyond Kraden's
+///   cottage, one scolds Garet, and Dora says Isaac can fix the hole later.
+/// - After the party has left Vale (FLAG_PARTY_LEFT_VALE): Dora will not open
+///   the door of Isaac's house to him ("My Isaac would keep his promise... Go
+///   away."), and the villagers speak of the tremors and of Kraden, who has
+///   not come back.
+/// - Back from Kalay (FLAG_REACHED_KALAY): Garet meets his sister (group flag
+///   0x303) and asks one of his family to protect it while he is gone (0x304),
+///   a villager asks whether Jenna is back (FLAG_VALE_ASKED_IF_JENNA_IS_BACK),
+///   another feels a tremor, another asks about the lack of travellers since
+///   the eruption (0x307). Isaac's house opens again: Dora lies ill inside
+///   (vale_babi.c).
+///
+/// In every set: a Nut to catch with Catch (its flag 0xfd0; actor 26, or 20
+/// back from Kalay), an object to push or Move, whose column the setup restores
+/// from group flags 0x314 to 0x316, a passage the leader moves through on touch
+/// cells 100 and 101 (FLAG_SCENE_TEMP_04 while inside), and cells of an upper
+/// path that change while the leader is on it (FLAG_SCENE_TEMP_10); after a
+/// battle (FLAG_KEEP_PARTY_POSITION) the setup restores both. Exits: 1 up Mt.
+/// Aleph to Sol Entrance (SolSanctumEntrance2, scene 19), 2 to ValeHome (scene
+/// 5), 3 and 4 to ValeKraden (scene 6), the doors 5, 6, 8, 9 and 10 into the
+/// houses (scene 7, vale_interiors.c, rooms 6, 5, 2, 1 and 2), 7 into Isaac's
+/// house (ValeBabi, scene 8) and 11 into Vale Sanctum (Sanctum, scene 9). Two
+/// scenes no table reaches remain: HouseScene_RunRepairMorning, a copy of the
+/// roof's end, and FieldScene_RunCompanionActorSequence, which sets group flag
+/// 0x305. FLAG_SCENE_TEMP_41 pauses the villager who watches Isaac while a menu
+/// is open. The TBS_PATCH_4 editions also set Dora's sprite priority before
+/// Kalay.
 
 #include "game_state.h"
 #include "vram_tab.h"
@@ -127,7 +171,7 @@ const struct ScenePlacement *Vale_GetPlacements(void) {
   return gVale_Placements;
 }
 
-/// Catch on the Nut hanging in the plaza: the party gets it.
+/// Catch on the Nut in Vale: the party gets it.
 static void Event_CatchNut(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(26, 0, 0);
@@ -147,7 +191,8 @@ static void Event_CatchNutAfterKalay(void) {
   Engine_EventEnd();
 }
 
-/// The villagers talk of the story so far.
+/// Vale's events for the story so far: before leaving, after leaving, or back
+/// from Kalay.
 const struct SceneEvent *Vale_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0)
     return gVale_EventsAfterKalay;
@@ -156,7 +201,8 @@ const struct SceneEvent *Vale_GetEvents(void) {
   return gVale_Events;
 }
 
-/// Asks about the mayor before departure, or the tremors after returning.
+/// A villager in Vale (actor 10) asks about the mayor before the party leaves,
+/// and speaks of the tremors after.
 static void Event_TalkAboutTheMayorAndTremors(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
@@ -170,7 +216,9 @@ static void Event_TalkAboutTheMayorAndTremors(void) {
   Engine_EventEnd();
 }
 
-/// Warns about the mountain path, with a shorter repeat greeting.
+/// A villager in Vale (actor 14) asks whether Isaac is going to Kraden's
+/// cottage and warns him not to go beyond it; after the party has left, says
+/// Kraden has not come back.
 static void Event_WarnAboutGoingBeyondKradensCottage(void) {
   s32 flag = FLAG_VALE_ASKED_IF_GOING_TO_KRADEN;
   Engine_EventBegin();
@@ -190,7 +238,8 @@ static void Event_WarnAboutGoingBeyondKradensCottage(void) {
   Engine_EventEnd();
 }
 
-/// A villager scolds Garet; afterwards the villager only threatens him.
+/// A villager in Vale (actor 18) scolds Garet; afterwards the villager only
+/// threatens him.
 /// "Garet, you make me so mad sometimes!"
 static void Event_ArgueWithTheAngryVillager(void) {
   Engine_EventBegin();
@@ -215,8 +264,11 @@ static void Event_ArgueWithTheAngryVillager(void) {
   Engine_EventEnd();
 }
 
-/// A villager talks of the weather, differently right after the roof repair.
-static void Event_TalkAboutTheWeather(void) {
+/// Talking to Dora in Vale (actor 21) before the party leaves: right after
+/// the roof is mended (FLAG_SCENE_TEMP_02) she frets about the hole clumsy
+/// Garet left; otherwise, since it will not rain for a while, Isaac can fix it
+/// later.
+static void Event_DoraFretsAboutTheRoof(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_02) != 0) {
     Engine_EventSetMessage(MsgValeIToldGaretItWas);
@@ -227,7 +279,7 @@ static void Event_TalkAboutTheWeather(void) {
   Engine_EventEnd();
 }
 
-/// Back from Kalay, a villager asks whether Jenna is back.
+/// Back from Kalay, a villager in Vale (actor 10) asks whether Jenna is back.
 static void Event_AskWhetherJennaHasReturned(void) {
   Engine_EventBegin();
   Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 10, 20);
@@ -237,7 +289,8 @@ static void Event_AskWhetherJennaHasReturned(void) {
   Engine_EventEnd();
 }
 
-/// Shakes the view before the villager reacts to another tremor.
+/// Back from Kalay, a villager in Vale (actor 17) feels another tremor, and
+/// the view shakes.
 static void Event_ReactToAnotherTremor(void) {
   Engine_EventBegin();
   Map_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
@@ -250,7 +303,8 @@ static void Event_ReactToAnotherTremor(void) {
   Engine_EventEnd();
 }
 
-/// Asks about the quiet roads after the eruption.
+/// Back from Kalay, a villager in Vale (actor 19) asks about the lack of
+/// travellers since the eruption; sets group flag 0x307.
 static void Event_AskAboutTheLackOfTravelers(void) {
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(19, 2);
@@ -262,20 +316,22 @@ static void Event_AskAboutTheLackOfTravelers(void) {
   Engine_EventEnd();
 }
 
-/// Walking onto the upper path: its collision cells change, remembered in
-/// FLAG_SCENE_TEMP_10.
+/// Walking onto the upper path in Vale (touch cell 15): its collision cells
+/// change, remembered in FLAG_SCENE_TEMP_10.
 static void Event_SetPathCellOverride(void) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_10);
   Map_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
-/// Walking off the upper path restores its collision cells.
+/// Walking off the upper path in Vale (touch cell 14) restores its collision
+/// cells.
 static void Event_ClearPathCellOverride(void) {
   Engine_GameFlagClear(FLAG_SCENE_TEMP_10);
   Map_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
-/// Opens the sanctum door, walks inside and takes its scene exit.
+/// The door of Vale Sanctum (touch cell 1): it opens, the leader walks in, and
+/// exit 11 leads into the Sanctum.
 static void Event_EnterSanctum(void) {
   Event_PlayCue(SE_188);
   Map_AnimateCells(gValeCellAnimC, 45, 11);
@@ -283,8 +339,9 @@ static void Event_EnterSanctum(void) {
   Engine_EventRequestExit(11);
 }
 
-/// The mountain path: Jenna stops Isaac until Kraden has planned the visit.
-/// The path leads to Mt. Aleph; Jenna says "Kraden is waiting for us".
+/// The path to Mt. Aleph in Vale (touch cell 2): Jenna stops Isaac until
+/// Kraden has planned the visit (FLAG_SANCTUM_VISIT_PLANNED); then exit 1 leads
+/// up to Sol Entrance. Jenna says "Kraden is waiting for us".
 static void Event_ApproachMtAleph(void) {
   if (Engine_GameFlagIsSet(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
     Vale_HaveJennaStopTheAlephDetour();
@@ -294,42 +351,45 @@ static void Event_ApproachMtAleph(void) {
   }
 }
 
-/// The northern path toward Kraden's cottage.
-static void Event_LeaveByNorthPath(void) {
+/// Touch cell 3 in Vale: exit 3, to ValeKraden's entrance 1.
+static void Event_TakeExit3(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventRequestExit(3);
 }
 
-/// The southern path toward Kraden's cottage.
-static void Event_LeaveBySouthPath(void) {
+/// Touch cell 4 in Vale: exit 4, to ValeKraden's entrance 2.
+static void Event_TakeExit4(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventRequestExit(4);
 }
 
-/// Leaves through the exit leading back to the house.
-static void Event_LeaveTowardHome(void) {
+/// Touch cell 5 in Vale: exit 2, to ValeHome's entrance 8.
+static void Event_TakeExit2(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventRequestExit(2);
 }
 
-/// Animates the eastern house door before entering.
-static void Event_EnterEastHouse(void) {
+/// The door of the house of Garet's family in Vale (touch cell 6): it opens and
+/// exit 5 leads in (room 6 of scene 7).
+static void Event_EnterGaretsHouse(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimA, 54, 32);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 406, 727);
   Engine_EventRequestExit(5);
 }
 
-/// Animates the central house door before entering.
-static void Event_EnterCentralHouse(void) {
+/// A house door in Vale (touch cell 7): it opens and exit 6 leads in
+/// (room 5 of scene 7).
+static void Event_EnterInteriorsRoom5(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimB, 45, 39);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 262, 805);
   Engine_EventRequestExit(6);
 }
 
-/// Isaac's house: after the party has left and before Kalay, Dora will not
-/// open. "My Isaac would keep his promise... Go away."
+/// The door of Isaac's house in Vale (touch cell 8): after the party has left
+/// and before Kalay, Dora will not open. "My Isaac would keep his promise...
+/// Go away." Otherwise exit 7 leads in (ValeBabi's entrance 6).
 static void Event_EnterIsaacsHouse(void) {
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0 &&
       Engine_GameFlagIsSet(FLAG_REACHED_KALAY) == 0) {
@@ -355,31 +415,39 @@ static void Event_EnterIsaacsHouse(void) {
   }
 }
 
-/// Opens the southeastern door and enters its interior.
-static void Event_EnterSoutheastHouse(void) {
+/// The door of the house of Jenna's grandparents in Vale (touch cell 9): it
+/// opens and exit 8 leads in (room 2 of scene 7).
+static void Event_EnterJennasGrandparentsHouse(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimB, 49, 69);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 326, 1126);
   Engine_EventRequestExit(8);
 }
 
-/// Opens the far southern door and enters its interior.
-static void Event_EnterFarSouthHouse(void) {
+/// A house door in Vale (touch cell 10): it opens and exit 9 leads in
+/// (room 1 of scene 7).
+static void Event_EnterInteriorsRoom1(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimD, 52, 76);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 374, 1238);
   Engine_EventRequestExit(9);
 }
 
-/// Opens the southwestern door and enters its interior.
-static void Event_EnterSouthwestHouse(void) {
+/// A second door in Vale into the house of Jenna's grandparents (touch cell
+/// 11): it opens and exit 10 leads in (room 2 of scene 7). XXX: likely a slip
+/// in the exit table, because exit 10 sends this door, beside entrance 11,
+/// into room 2, whose door returns the party at entrance 9 by the other door,
+/// and no exit leads to entrance 11; entering the room by this door in a
+/// play-through would settle it.
+static void Event_EnterJennasGrandparentsHouseByExit10(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeCellAnimA, 35, 74);
   Actor_WalkTo(ACTOR_PARTY_LEADER, 102, 1206);
   Engine_EventRequestExit(10);
 }
 
-/// Brings Jenna out to remind Isaac that Kraden is waiting.
+/// On the path to Mt. Aleph in Vale, before the visit is planned: Jenna comes
+/// out to remind Isaac that Kraden is waiting, and he turns back.
 static void Vale_HaveJennaStopTheAlephDetour(void) {
   struct FieldActor *leader;
   struct FieldActor *jenna;
@@ -419,7 +487,9 @@ static void Vale_HaveJennaStopTheAlephDetour(void) {
   Engine_EventEnd();
 }
 
-/// Pans down to the puppies and returns the camera to the leader.
+/// The puppies in Vale (touch cell 20), until the party has met Saturos and
+/// Menardi: they bark, the camera pans down to them and back, and the leader
+/// turns away.
 static void Event_WatchThePuppies(void) {
   struct MapScrollWork *map;
   s32 *savedOrigin;
@@ -467,7 +537,8 @@ static void Event_WatchThePuppies(void) {
   }
 }
 
-/// Shows the puppies message from the opposite approach.
+/// The puppies in Vale from the other side (touch cell 21): the same barking,
+/// without the camera pan.
 static void Event_TurnBackFromThePuppies(void) {
   s32 msg;
 
@@ -485,7 +556,8 @@ static void Event_TurnBackFromThePuppies(void) {
   }
 }
 
-/// Changes the passage collision and moves through its northern end.
+/// Touch cell 100 in Vale: the passage's collision changes and the leader
+/// moves through it from its northern end (FLAG_SCENE_TEMP_04 set).
 static void Event_EnterNorthernPassage(void) {
   Engine_EventBegin();
   Map_CopyCellAttributes(49, 53, 8, 4, 20, 50);
@@ -494,7 +566,8 @@ static void Event_EnterNorthernPassage(void) {
   Engine_EventEnd();
 }
 
-/// Moves back through the passage and restores its collision attributes.
+/// Touch cell 101 in Vale: the leader moves back through the passage, and its
+/// collision is restored (FLAG_SCENE_TEMP_04 cleared).
 static void Event_ReturnThroughSouthernPassage(void) {
   Engine_EventBegin();
   Vale_MoveActorAlongHigherZPath(0, 13, 10, 1);
@@ -503,7 +576,8 @@ static void Event_ReturnThroughSouthernPassage(void) {
   Engine_EventEnd();
 }
 
-/// A villager jumps out in front of Isaac, then keeps watching him.
+/// A villager in Vale (actor 22, touch cell 50) jumps out in front of Isaac,
+/// then keeps watching him; sets FLAG_VALE_WARNED_AGAINST_MT_ALEPH.
 /// "You're not planning on sneaking up to Mt. Aleph...?"
 static void Event_WarnAgainstSneakingUpMtAleph(void) {
   struct FieldActor *villager;
@@ -1174,8 +1248,11 @@ UNUSED static void HouseScene_RunRepairMorning(void) {
   Engine_EventEnd();
 }
 
-/// Arriving: play the roof mending (entrance 16) or its end (entrance 17,
-/// once), place the Nut and the movable object, and restore the paths' cells.
+/// Vale's setup: plays the roof mending (entrance 16) or its end (entrance
+/// 17, once), floats the Nut, places the object by its column, sets the
+/// watching villager going, removes the puppies once Saturos and Menardi have
+/// been met, and after a battle restores the passage's and the upper path's
+/// cells.
 s32 Vale_Initialize(void) {
   struct FieldActor *actor;
   s32 set;
@@ -1297,8 +1374,8 @@ s32 Vale_Initialize(void) {
   return 0;
 }
 
-/// Back from Kalay, Garet meets his sister. "Ah! It's been a while... You're
-/// back?" ("Sis...").
+/// Back from Kalay, Garet meets his sister in Vale (actor 8); sets group flag
+/// 0x303. "Ah! It's been a while... You're back?" ("Sis...").
 static void Event_GaretMeetsHisSister(void) {
   struct FieldActor *record;
   s32 msg;
@@ -1372,8 +1449,9 @@ static void Event_GaretMeetsHisSister(void) {
   Engine_EventEnd();
 }
 
-/// Back from Kalay, Garet asks a villager to protect his family. "WHATEVER YOU
-/// DO, you must protect the family while I'm gone."
+/// Back from Kalay, Garet asks one of his family in Vale (actor 9) to protect
+/// it while he is gone; sets group flag 0x304. "WHATEVER YOU DO, you must
+/// protect the family while I'm gone."
 static void Event_GaretAsksToProtectFamily(void) {
   struct FieldActor *record;
 
@@ -1581,8 +1659,10 @@ static void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode) {
   }
 }
 
-/// Arriving by entrance 16, the game's opening: Isaac is mending the roof.
-/// "Three years later... Isaac! Haven't you finished mending the roof yet?"
+/// Arriving by entrance 16, the game's opening in Vale: Isaac is mending the
+/// roof of his house, Garet trains his Psynergy, and Jenna comes by; the two
+/// speak of the storm three years ago before going to fetch Isaac. "Three
+/// years later... Isaac! Haven't you finished mending the roof yet?"
 static void Event_MendingTheRoof(void) {
   u32 i;
   /* FAKEMATCH(dead): repairActor's zero initializer, never read, keeps the
@@ -1899,8 +1979,9 @@ static void Event_MendingTheRoof(void) {
   Engine_EventEnd();
 }
 
-/// Arriving by entrance 17 after the opening: Dora praises the mended roof.
-/// "Good job, Isaac. You patched it nicely."
+/// Arriving by entrance 17 after the opening, in Vale: Dora praises the mended
+/// roof, remembers Kyle, and sends Isaac, Garet and Jenna off to Mt. Aleph
+/// with Kraden. "Good job, Isaac. You patched it nicely."
 static void Event_RoofMended(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -2730,7 +2811,8 @@ static void Effect_UpdateParticlePosition(struct FieldActor *particle,
   }
 }
 
-/// Pushing the movable object (actor 20; 21 after Kalay) moves it a cell.
+/// Pushing the object in Vale (actor 20; 21 after Kalay; touch cells 30 and
+/// 31) moves it a cell.
 static void Event_PushObject(void) {
 #if !TBS_PATCH_1
   // Japanese edition only: look up a villager but do not use the return value.
@@ -2778,7 +2860,7 @@ static void Effect_PlayStepSound(void) {
     Engine_AudioPlayCue(SE_131);
 }
 
-/// Tells the player that this door will not open.
+/// Searching a locked door in Vale (search code 24).
 static void Event_SearchTheLockedDoor(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgValeDoorWontOpen, 1);
@@ -3211,19 +3293,19 @@ struct SceneEvent gVale_Events[] = {
     { EVENT_TALK, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WarnAboutGoingBeyondKradensCottage) },
     { EVENT_TALK, 18, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ArgueWithTheAngryVillager) },
     { EVENT_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgValeYoureInTroubleNowGaretYour) },
-    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutTheWeather) },
+    { EVENT_TALK, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DoraFretsAboutTheRoof) },
     { EVENT_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephIsASacredPeak) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSanctum) },
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ApproachMtAleph) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByNorthPath) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBySouthPath) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveTowardHome) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterEastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCentralHouse) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit3) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit4) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit2) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterGaretsHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterInteriorsRoom5) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterIsaacsHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSoutheastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterFarSouthHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSouthwestHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJennasGrandparentsHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterInteriorsRoom1) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJennasGrandparentsHouseByExit10) },
     { EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetPathCellOverride) },
     { EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClearPathCellOverride) },
     { EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WatchThePuppies) },
@@ -3265,15 +3347,15 @@ struct SceneEvent gVale_EventsAfterLeaving[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS, MSGNO(MsgValeThePeopleOfValeWillNever) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSanctum) },
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ApproachMtAleph) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByNorthPath) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBySouthPath) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveTowardHome) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterEastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCentralHouse) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit3) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit4) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit2) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterGaretsHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterInteriorsRoom5) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterIsaacsHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSoutheastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterFarSouthHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSouthwestHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJennasGrandparentsHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterInteriorsRoom1) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJennasGrandparentsHouseByExit10) },
     { EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetPathCellOverride) },
     { EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClearPathCellOverride) },
     { EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WatchThePuppies) },
@@ -3318,15 +3400,15 @@ struct SceneEvent gVale_EventsAfterKalay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS, MSGNO(MsgValeHavingNoTravelersIsNoFun) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSanctum) },
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ApproachMtAleph) },
-    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveByNorthPath) },
-    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveBySouthPath) },
-    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveTowardHome) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterEastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCentralHouse) },
+    { EVENT_TOUCH, 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit3) },
+    { EVENT_TOUCH, 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit4) },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TakeExit2) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterGaretsHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterInteriorsRoom5) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterIsaacsHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSoutheastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterFarSouthHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSouthwestHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJennasGrandparentsHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterInteriorsRoom1) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJennasGrandparentsHouseByExit10) },
     { EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetPathCellOverride) },
     { EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClearPathCellOverride) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthernPassage) },

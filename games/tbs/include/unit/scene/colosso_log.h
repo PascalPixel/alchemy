@@ -11,7 +11,7 @@ const struct ScenePlacement *ColossoLog_GetPlacements(void);
 const struct SceneEvent *ColossoLog_GetEvents(void);
 s32 ColossoLog_Initialize(void);
 extern const s32 gColossoLog_Record30Script[];
-extern const s8 gColossoLog_LogPattern[][6];
+extern const s8 gColossoLog_WallWedgePattern[][6];
 extern const u16 gColossoEarlySequenceData[];
 extern const s32 gColossoSceneEventEffect[];
 extern const u8 gColosso_LetteringPaletteOffsets[];

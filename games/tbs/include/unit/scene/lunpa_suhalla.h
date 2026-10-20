@@ -14,7 +14,7 @@ extern const u32 gInteriorExits[];
 extern const struct ScenePlacement gInteriorPlacements[];
 extern const struct SceneEvent gInteriorSealedEvents[];
 extern const struct SceneEvent gInteriorReopenedEvents[];
-extern const struct SceneEvent gSuhallaGateHouseEvents[];
+extern const struct SceneEvent gGateToSuhallaEvents[];
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
 const u32 *Scene_GetExits(void);

@@ -1,6 +1,28 @@
 /// @file
-/// Kolima's houses and shops, whose residents stand as trees while the curse
-/// lasts.
+/// Kolima (scene 37, a row of the scene table with no name of its own): the
+/// village's houses, shops and inn, all in one map. Some of its exits join its
+/// own rooms (1, 2, 5, 6 and 10 to 13), five lead back out to the village
+/// (scene 36) and one into Kolima Tunnel (scene 38, exit 14).
+///
+/// Like the people outside, the fifteen residents (actors 8 to 22) were turned
+/// into trees when the curse fell, and until it is lifted in Kolima Forest
+/// (FLAG_KOLIMA_CURSE_LIFTED) KolimaInteriors_GetPlacements gives them tree
+/// sprites that stand still: they answer only Mind Read, each with the thoughts
+/// of someone stuck as a tree ("Who caused all this? Someone must have tried to
+/// cut down Tret!"). Once the curse is lifted they talk, of the warriors said
+/// to have saved the village, of McCoy's halted palace and the lumberjacks'
+/// lost work, of a father's secret treasure "hidden deep in the forest", and
+/// the weapon, armor and item sellers and the innkeeper serve the party across
+/// their counters. Three bookcases hold books on the holy tree ("Tret and
+/// Laurel are the spirits of the holy trees protecting Kolima forest"), on
+/// trees and flowers and on logging; a jar holds a Lucky Medal and a barrel 7
+/// coins.
+///
+/// KolimaInteriors_Initialize opens with a window transition and draws one room
+/// in two ways: entered by its door from the village (entrance 7), or from
+/// behind, by the village's south-facing doorway (entrance 8) or from Kolima
+/// Tunnel (entrance 9), when other cells are drawn and the father's family
+/// (actors 10 to 12) is put out of sight.
 
 #include "game_state.h"
 #include "flags.h"
@@ -66,10 +88,10 @@ const struct SceneEntrance *KolimaInteriors_GetEntrances(void) {
 
 const struct SceneRegion *KolimaInteriors_GetRegions(void) { return NULL; }
 
-/// Returns the doors and stairs linking the interiors.
+/// The exits between the rooms, back to the village and into Kolima Tunnel.
 const u32 *KolimaInteriors_GetExits(void) { return gKolimaInteriors_Exits; }
 
-/// Applies the curse before preparing the residents' placement records.
+/// Kolima's residents, turned into trees first while the curse lasts.
 const struct ScenePlacement *KolimaInteriors_GetPlacements(void) {
   struct ScenePlacement *placements;
 
@@ -81,7 +103,9 @@ const struct ScenePlacement *KolimaInteriors_GetPlacements(void) {
   return placements;
 }
 
-/// Offers weapons at the counter or discusses Fuchin Temple.
+/// Kolima's weapon shop, once the curse is lifted: spoken to across the counter
+/// (facing north), the shop opens; from any other side, the seller says Fuchin
+/// Temple is on the other side of the river.
 static void KolimaInteriors_TalkToWeaponMerchant(void) {
   u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
@@ -95,7 +119,9 @@ static void KolimaInteriors_TalkToWeaponMerchant(void) {
   Engine_EventEnd();
 }
 
-/// Offers armor at the counter or discusses the bridge.
+/// Kolima's armor shop, once the curse is lifted: across the counter the shop
+/// opens; otherwise the seller calls the grand bridge across the river the
+/// pride of Kolima.
 static void KolimaInteriors_TalkToArmorMerchant(void) {
   u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
@@ -109,7 +135,8 @@ static void KolimaInteriors_TalkToArmorMerchant(void) {
   Engine_EventEnd();
 }
 
-/// Offers items at the counter or discusses life after the curse.
+/// Kolima's item shop, once the curse is lifted: across the counter the shop
+/// opens; otherwise, "When I was a tree, I learned to appreciate the sun."
 static void KolimaInteriors_TalkToItemMerchant(void) {
   u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
@@ -123,7 +150,9 @@ static void KolimaInteriors_TalkToItemMerchant(void) {
   Engine_EventEnd();
 }
 
-/// Offers a room at the counter or discusses McCoy's construction.
+/// Kolima's inn, once the curse is lifted: across the counter the inn opens;
+/// otherwise the innkeeper says McCoy has halted the palace's construction, so
+/// the lumberjacks who came for the work will leave.
 static void KolimaInteriors_TalkToInnkeeper(void) {
   u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
@@ -139,12 +168,14 @@ static void KolimaInteriors_TalkToInnkeeper(void) {
   Engine_EventEnd();
 }
 
-/// Returns the residents' conversations, thoughts and searchable objects.
+/// The exits, the residents' words and thoughts, the shops, the bookcases, the
+/// jar and the barrel.
 const struct SceneEvent *KolimaInteriors_GetEvents(void) {
   return gKolimaInteriors_Events;
 }
 
-/// Clears resident sprite flags and selects the room layout for this entrance.
+/// Opens with a window transition, sets the trees' sprites while the curse
+/// lasts, and draws the father's room for the way it is entered.
 s32 KolimaInteriors_Initialize(void) {
   struct EventWork *work = gEventWork;
   s32 actorId;

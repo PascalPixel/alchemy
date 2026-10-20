@@ -1,6 +1,6 @@
 /// @file
-/// The Colosso finals' three courses (Colosso Log, River and Wall): a helper
-/// for the race gauge that no scene calls.
+/// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
+/// a helper for the race gauge that no scene calls.
 #include "types.h"
 #include "heap_state.h"
 #include "colosso_gauge.h"

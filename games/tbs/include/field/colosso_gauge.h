@@ -24,7 +24,7 @@ struct ColossoGaugeSprite {
 /// and the finish.
 struct ColossoGaugeWork {
   /// The bar, its ends and the racers' marks: 2 * segments + 6 sprites, all
-  /// 18 for the Colosso Log's six segments.
+  /// 18 for Colosseum Final 3's six segments.
   struct ColossoGaugeSprite sprites[18];
   /// The VRAM cache entry holding the gauge's tiles: released while the gauge
   /// is hidden, and loaded again when it slides back down.
@@ -45,8 +45,8 @@ struct ColossoGaugeWork {
   /// The second finisher's prize; that finisher stops at finishZ plus 16
   /// pixels.
   u16 finishItemActorB;
-  /// 16-pixel bar pieces either side of the centre: 6 in the Colosso Log, 4
-  /// in the River and 5 in the Wall.
+  /// 16-pixel bar pieces either side of the centre: 6 in Colosseum Final 3,
+  /// 4 in Final 1 and 5 in Final 2.
   s16 segments;
   /// 16.16 fixed-point pixels: the rival starts opposite Isaac across it and
   /// runs its path mirrored across it.

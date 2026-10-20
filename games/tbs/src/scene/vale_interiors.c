@@ -1,7 +1,36 @@
 /// @file
-/// The houses and shops of Vale. Garet's family lives in the house at entrance
-/// 6: his grandfather, his grandmother, and his parents ("Mom, Dad... I'm
-/// home...").
+/// Vale (scene 7, a row the scene table leaves unnamed): the insides of the
+/// village's houses and shops, all on one map. Each room is an entrance with a
+/// camera box of its own, and its door (cell code n in room n) takes exit n
+/// back out: rooms 1, 2, 5 and 6 open onto the village (Vale, scene 4), and
+/// rooms 3, 4, 7 and 8 onto the part of Vale with the Psynergy Stone
+/// (SceneId_ValeHome, scene 5). Garet's family lives in room 6: his
+/// grandfather the mayor, his grandmother and his parents. Jenna's
+/// grandparents (actors 12 and 13) live in room 2, and room 4 holds the item,
+/// weapon and armor shops, each opened across its counter. The placements
+/// and events follow the story:
+///
+/// - The stormy night of the prologue (FLAG_VALE_STORM). Everyone is out:
+///   ValeInteriors_Initialize removes every resident and flashes the
+///   lightning outside, and the doors of rooms 1, 2, 5 and 6 lead into the
+///   storm's map (Vale, scene 3) instead (ValeInteriors_GetExits). The jars
+///   and the barrel are empty, and six more bookcases than by day can be read,
+///   a notebook called "Study of Alchemy" among them.
+/// - Three years later, the day the story begins. The villagers talk of
+///   Kraden's visitors and of Vale's law that keeps Psynergy secret from
+///   outsiders, and the jars and the barrel hold coins, an Antidote and a
+///   Smoke Bomb, each found once.
+/// - After the party has left Vale (FLAG_PARTY_LEFT_VALE), Jenna having been
+///   taken on Mt. Aleph. Her grandmother lies sick in bed (Initialize, from
+///   entrance 2), the villagers talk of the quest and of Felix, and the item
+///   shopkeeper gives Isaac a Herb as a farewell gift
+///   (FLAG_VALE_FAREWELL_HERB_RECEIVED).
+/// - Back from Kalay (FLAG_REACHED_KALAY), with Ivan and Mia in the party. The
+///   first time the party enters Garet's house, Event_GaretComesHome plays
+///   (FLAG_GARET_CAME_HOME): his parents are wondering whether to look for
+///   him when his grandmother sees him, the family greets him, Ivan and Mia
+///   introduce themselves ("I am Mia, from Imil."), and his father is left
+///   pacing. The villagers now worry about Dora, ill since Isaac left.
 
 #include "script.h"
 #include "game_state.h"
@@ -31,7 +60,8 @@
 #include "songs.h"
 
 enum ValeInteriorsActor {
-  /// Garet's grandfather. "Isaac, please take care of my grandson, Garet."
+  /// Garet's grandfather, the mayor ("your grandpa's the mayor", vale.c).
+  /// "Isaac, please take care of my grandson, Garet."
   ACTOR_GARETS_GRANDFATHER = 8,
   /// Garet's grandmother. "Grandma! What's the matter? Are you choking?"
   ACTOR_GARETS_GRANDMOTHER = 9,
@@ -118,8 +148,8 @@ const struct SceneEvent *ValeInteriors_GetEvents(void) {
   return gValeInteriors_Events;
 }
 
-/// A villager asks whether Isaac knew why Kraden came to Vale. He came to
-/// study Mt. Aleph.
+/// In a house of Vale on the day the story begins, a villager asks whether
+/// Isaac knew why Kraden came to Vale. He came to study Mt. Aleph.
 ///
 /// Reached by talking to actor 15 on the day the story begins.
 static void Event_AskAboutKradensStudies(void) {
@@ -130,7 +160,8 @@ static void Event_AskAboutKradensStudies(void) {
   Engine_EventEnd();
 }
 
-/// A villager asks Isaac to help scare Kraden's visitors.
+/// In a house of Vale on the day the story begins, a villager asks Isaac to
+/// help scare Kraden's visitors with Psynergy.
 ///
 /// Reached by talking to actor 19 on the day the story begins.
 static void Event_AskToScareVisitors(void) {
@@ -141,8 +172,8 @@ static void Event_AskToScareVisitors(void) {
   Engine_EventEnd();
 }
 
-/// After the party has left Vale, the item shopkeeper gives Isaac a Herb as a
-/// farewell gift, and afterwards urges him to save Jenna.
+/// In Vale's shops after the party has left Vale, the item shopkeeper gives
+/// Isaac a Herb as a farewell gift, and afterwards urges him to save Jenna.
 ///
 /// Called by Event_TalkToItemShopkeeper away from the counter, after the party
 /// has left and before Kalay. Gives the Herb and sets
@@ -169,7 +200,8 @@ static void ValeInteriors_GiveFarewellHerb(void) {
   Engine_EventEnd();
 }
 
-/// A villager tells of the culprits' strange powers and asks about them.
+/// In a house of Vale after the party has left, a villager tells of the
+/// culprits' strange powers and asks about them.
 ///
 /// Reached by talking to actor 16 after the party has left Vale.
 static void Event_AskAboutCulpritsPowers(void) {
@@ -179,8 +211,8 @@ static void Event_AskAboutCulpritsPowers(void) {
   Engine_EventEnd();
 }
 
-/// Back from Kalay, Garet's father asks whether Isaac heard them talking about
-/// Dora.
+/// In Garet's house in Vale, back from Kalay, Garet's father asks whether
+/// Isaac heard them talking about Dora.
 ///
 /// Reached by talking to Garet's father (actor 10) after Kalay.
 static void Event_AskAboutDora(void) {
@@ -190,7 +222,8 @@ static void Event_AskAboutDora(void) {
   Engine_EventEnd();
 }
 
-/// Garet's mother hopes the travelers did not get sick on the way.
+/// In Garet's house in Vale, back from Kalay, Garet's mother hopes the
+/// travelers did not get sick on the way.
 ///
 /// Reached by talking to Garet's mother (actor 11) after Kalay.
 static void Event_WorryAboutTravelersHealth(void) {
@@ -213,24 +246,38 @@ static void ValeInteriors_RequestWindowExit(s32 exitId) {
   Engine_EventRequestExit(exitId);
 }
 
-// The doors: stepping on cell code n, in every table, takes exit n.
+// The rooms' doors: stepping on cell code n, in every table, takes room n's
+// exit n back out into Vale. On the stormy night, doors 1, 2, 5 and 6 lead to
+// the storm's map (scene 3) instead of Vale (scene 4).
+
+/// Leaving room 1 of Vale's houses, for Vale (scene 4, entrance 10).
 static void Event_LeaveByDoor1(void) { ValeInteriors_RequestWindowExit(1); }
 
+/// Leaving Jenna's grandparents' house, for Vale (scene 4, entrance 9).
 static void Event_LeaveByDoor2(void) { ValeInteriors_RequestWindowExit(2); }
 
+/// Leaving room 3 of Vale's houses, for SceneId_ValeHome (scene 5, entrance
+/// 3).
 static void Event_LeaveByDoor3(void) { ValeInteriors_RequestWindowExit(3); }
 
+/// Leaving Vale's shops, for SceneId_ValeHome (scene 5, entrance 5).
 static void Event_LeaveByDoor4(void) { ValeInteriors_RequestWindowExit(4); }
 
+/// Leaving room 5 of Vale's houses, for Vale (scene 4, entrance 7).
 static void Event_LeaveByDoor5(void) { ValeInteriors_RequestWindowExit(5); }
 
+/// Leaving Garet's house, for Vale (scene 4, entrance 6).
 static void Event_LeaveByDoor6(void) { ValeInteriors_RequestWindowExit(6); }
 
+/// Leaving room 7 of Vale's houses, for SceneId_ValeHome (scene 5, entrance
+/// 4).
 static void Event_LeaveByDoor7(void) { ValeInteriors_RequestWindowExit(7); }
 
+/// Leaving room 8 of Vale's houses, for SceneId_ValeHome (scene 5, entrance
+/// 1).
 static void Event_LeaveByDoor8(void) { ValeInteriors_RequestWindowExit(8); }
 
-/// Arriving in a house: on the stormy night the residents are gone and
+/// Arriving in a house of Vale: on the stormy night the residents are gone and
 /// lightning flashes outside; back from Kalay, entering Garet's house the first
 /// time plays his homecoming.
 ///
@@ -242,7 +289,7 @@ s32 ValeInteriors_Initialize(void) {
   struct EventWork **eventSlot = &gEventWork;
 
   (*eventSlot)->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  // The late visit hides residents while lightning plays outside the house.
+  // On the stormy night every resident is out, and lightning flashes outside.
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     Engine_ActorSetPosition(8, 0, 0);
     Engine_ActorSetPosition(9, 0, 0);
@@ -291,7 +338,8 @@ s32 ValeInteriors_Initialize(void) {
   return 0;
 }
 
-/// Opens the weapon shop across the counter, or the shopkeeper speaks.
+/// In Vale's shops, opens the weapon shop across the counter, or the
+/// shopkeeper speaks.
 ///
 /// Reached by talking to the weapon shopkeeper (actor 21) in every table but
 /// the stormy night's. Facing north, across the counter, opens shop 1; else
@@ -321,7 +369,8 @@ static void Event_TalkToWeaponShopkeeper(void) {
   Engine_EventEnd();
 }
 
-/// Opens the armor shop across the counter, or the shopkeeper speaks.
+/// In Vale's shops, opens the armor shop across the counter, or the shopkeeper
+/// speaks.
 ///
 /// Reached by talking to the armor shopkeeper (actor 22) in every table but
 /// the stormy night's; opens shop 2 when facing north.
@@ -347,7 +396,8 @@ static void Event_TalkToArmorShopkeeper(void) {
   }
 }
 
-/// Opens the item shop across the counter, or the shopkeeper speaks.
+/// In Vale's shops, opens the item shop across the counter, or the shopkeeper
+/// speaks.
 ///
 /// Reached by talking to the item shopkeeper (actor 20) in every table but
 /// the stormy night's; opens shop 3 when facing north. After the party has
@@ -392,9 +442,11 @@ static inline void ValeInteriors_PlayRepeatedAnimationAndWait(s32 actorId,
   Engine_ActorSetAnimationAndWait(actorId, animation);
 }
 
-/// Back from Kalay, Garet comes home: his grandfather dozes, his parents argue
-/// over whether to look for him, and his grandmother spots him first. Garet
-/// introduces Ivan and Mia, the family sees them off, and his father paces.
+/// In Garet's house in Vale, back from Kalay, Garet comes home: his
+/// grandfather dozes, his parents argue over whether to look for him, and his
+/// grandmother spots him first. Garet introduces Ivan and Mia, his mother asks
+/// them to look after him, and his father tells them to enjoy their stay; the
+/// three walk back into Isaac, and the father is left pacing.
 ///
 /// Called by ValeInteriors_Initialize from entrance 6 after Kalay, until
 /// FLAG_GARET_CAME_HOME is set; sets it. Adds and removes the callback

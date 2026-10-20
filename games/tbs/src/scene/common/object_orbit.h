@@ -1,7 +1,7 @@
 #include "orbit.h"
 #include "flags.h"
 
-// Crossbone Isle, Kalay, Kolima's forest clearing, Lunpa, McCoy's palace
+// Crossbone Isle, Kalay, Kolima Forest (scene 41), Lunpa, McCoy's palace
 // garden, Mogall Forest and Vale: a Nut floating where it lies, until it is
 // taken.
 

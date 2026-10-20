@@ -1,7 +1,10 @@
 /// @file
-/// Kolima Forest's clearing, between the bridge and the river. Three logs lie
-/// in the grass for the party to push, and a Nut circles out of reach until
-/// Catch pulls it in.
+/// Kolima Forest (KolimaForestClearing, scene 41), the second of the forest's
+/// five maps, on the party's way to Tret between scenes 40 and 42. Three logs
+/// lie in the grass to be rolled by walking into them, and a Nut floats out of
+/// reach until Catch pulls it in (FLAG_KOLIMA_FOREST_NUT_CAUGHT). Until Tret
+/// lifts the curse (FLAG_KOLIMA_CURSE_LIFTED), KolimaPalette_Curse gives the
+/// forest redder, darker colours.
 
 #include "battle_effect_runtime.h"
 #include "flags.h"
@@ -35,14 +38,14 @@ enum { NUT = 11 };
 
 #include "common/object_staged_actor.h"
 
-/// Where the party enters from the bridge and the river.
+/// Where the party enters, from scenes 40 and 42.
 const struct SceneEntrance *KolimaForestClearing_GetEntrances(void) {
   return gKolimaForestClearing_Entrances;
 }
 
 const struct SceneRegion *KolimaForestClearing_GetRegions(void) { return 0; }
 
-/// The paths to the river and back to the bridge.
+/// The ways on into the forest (scene 42) and back (scene 40).
 const u32 *KolimaForestClearing_GetExits(void) {
   return gKolimaForestClearing_Exits;
 }
@@ -52,7 +55,8 @@ const struct ScenePlacement *KolimaForestClearing_GetPlacements(void) {
   return gKolimaForestClearing_Placements;
 }
 
-/// Walking into a log: it rolls ahead until something stops it.
+/// Kolima Forest (scene 41), walking into a log: it rolls ahead until
+/// something stops it.
 static void KolimaForestClearing_PushLog(void) {
   struct StagedActorProbe result;
   Engine_EventBegin();
@@ -61,7 +65,8 @@ static void KolimaForestClearing_PushLog(void) {
   Engine_EventEnd();
 }
 
-/// Catch on the circling Nut: it vanishes and the party finds a Nut.
+/// Kolima Forest (scene 41), Catch on the floating Nut (until
+/// FLAG_KOLIMA_FOREST_NUT_CAUGHT): it vanishes and the party finds a Nut.
 static void KolimaForestClearing_CatchNut(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(NUT, 0, 0);
@@ -71,12 +76,12 @@ static void KolimaForestClearing_CatchNut(void) {
   Engine_EventEnd();
 }
 
-/// The logs, the Nut and the two paths.
+/// The logs, the Nut and the two ways out.
 const struct SceneEvent *KolimaForestClearing_GetEvents(void) {
   return gKolimaForestClearing_Events;
 }
 
-/// On entry the Nut circles until it is caught, the logs mark the cells they
+/// On entry the Nut floats until it is caught, the logs mark the cells they
 /// cover, and the forest keeps its cursed colours until the curse is lifted.
 s32 KolimaForestClearing_Initialize(void) {
 
@@ -129,7 +134,7 @@ struct SceneEntrance gKolimaForestClearing_Entrances[] = {
     { SCENE_TABLE_END },
 };
 
-/// Exit 1 to the river (scene 42), exit 2 to the bridge (scene 40).
+/// Exit 1 on into the forest (scene 42), exit 2 back (scene 40).
 u32 gKolimaForestClearing_Exits[] = {
     SCENE_EXITS(41),
     SCENE_EXIT(1, 42, 1),

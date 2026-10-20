@@ -1,8 +1,62 @@
 /// @file
-/// Vale's village: its doors, the Psynergy Stone, the stormy night when the
-/// villagers send Isaac to the elders and he overhears the two surviving
-/// travelers, the villagers' farewell when the party sets out (entrance 12),
-/// and the village after the party's return from Kalay.
+/// Vale (scene 5, SceneId_ValeHome): the part of the village with the
+/// Psynergy Stone and the town gate, Vale's way out to the world. The scene
+/// sees the prologue end and the journey begin, and ValeHome_GetPlacements
+/// and ValeHome_GetEvents pick its people and events by the time of the
+/// story. In story order:
+///
+/// - The stormy night of the prologue (FLAG_VALE_STORM), when the villagers
+///   have gathered in the plaza here. Isaac and Garet come from the river
+///   (Vale, scene 3, by its exit 2), where Felix has fallen in. Walking up to
+///   the villagers (cell code 20) plays Event_SentToAidElders: Garet's
+///   grandfather, the mayor, sends two villagers to aid the elders holding
+///   the Boulder, then sends Isaac and Garet back to show Jenna and a man
+///   whose Psynergy the Psynergy Stone has restored the way to the river
+///   (FLAG_VALE_STORM_SENT_TO_AID_ELDERS). Others have spent their Psynergy,
+///   and one lifts a small rock to show he has a little left
+///   (Event_DemonstrateLevitation). Later, when the Boulder has swept Kyle,
+///   Jenna's parents and Felix away and Garet has gone after Isaac
+///   (FLAG_VALE_STORM_GARET_LEFT), arriving here plays
+///   Event_MeetSurvivingTravelers: Isaac overhears two strangers saying only
+///   the two of them survived Sol Sanctum's fury, Garet catches up, and the
+///   strangers fight the boys to make them forget (ValeHome_FightTravelers,
+///   encounter 4 of table 12). Win or lose, the battle returns to entrance
+///   19, where the strangers leave the boys lying in the storm, the storm
+///   ends (FLAG_VALE_STORM is cleared) and exit 9 leads to the title shown
+///   after the prologue, which opens on Vale three years later
+///   (menu/title.c). The game names the two only three years later, as
+///   Saturos and Menardi (vale_kraden.c); their sprites here are the same.
+/// - Three years later, the day the story begins. The villagers talk of
+///   meditating on Mt. Aleph, of the travelers who stopped by, and of the
+///   storm, in which Isaac lost his father and Jenna her whole family; one
+///   shows off his Psynergy, shaking the ground (Event_DemonstratePsynergy).
+/// - The farewell (entrance 12), once Isaac and Garet have accepted the Wise
+///   One's quest in the Vale Sanctum (sanctum.c). Event_DepartForQuest
+///   restores the party's HP and PP and plays the village seeing them off at
+///   the town gate: Garet's sister gives a Herb, and another villager the
+///   Catch Beads that Aunty Dora sent, for Dora herself does not come. Exit
+///   10 leads out to the world map.
+/// - After the party has left (FLAG_PARTY_LEFT_VALE), the villagers point the
+///   way to Vault and talk of the eruption, whose sparkles they take for
+///   crushed Psynergy Stones; a large Psynergy Stone has fallen on the hut,
+///   whose roof ValeHome_Initialize redraws. Only now does the town gate lead
+///   out (Event_LeaveThroughTownGate).
+/// - Back from Kalay (FLAG_REACHED_KALAY), the villagers welcome Isaac home,
+///   the hut's owner finds the stone gone, leaving a hole in his roof
+///   (Event_PsynergyStoneIsGone), and a door in the north-east opens.
+///
+/// The Psynergy Stone (search 100) restores the party's PP at every time but
+/// the farewell. Three objects (actors 8 to 10, sprite 0xf8) can be blown
+/// away with Whirlwind, each one's flag keeping it gone. The doors lead into
+/// the houses (scene 7) and into another part of Vale (scene 8), the path
+/// west to the village (Vale, scene 4) or, on the stormy night, back to the
+/// storm's map (scene 3), and the exit row of cell code 11 to exit 11, which
+/// the exit table sends to Goma Cave (scene 28, entrance 5).
+///
+/// Entrances 97 to 99 are in no entrance table and no exit leads to them: 97
+/// replays the strangers' departure, 98 sets FLAG_CHILDHOOD and takes exit 50
+/// into Vale (scene 8), and 99 sets a preset of story flags and takes exit 40
+/// (ValeHome_SetProgressFlagsAndExit).
 
 #include "game_state.h"
 #include "flags.h"
@@ -124,7 +178,7 @@ const struct ScenePlacement *ValeHome_GetPlacements(void) {
   return gValeHome_Placements;
 }
 
-/// Searching the Psynergy Stone restores the party's PP.
+/// In Vale, searching the Psynergy Stone restores the party's PP.
 ///
 /// Reached by searching cell code 100 in every table but the farewell's.
 /// Clears FLAG_NOTHING_HAPPENS.
@@ -158,7 +212,8 @@ const struct SceneEvent *ValeHome_GetEvents(void) {
   return gValeHome_Events;
 }
 
-/// A villager asks whether Isaac meditates on the mountain each day.
+/// In Vale on the day the story begins, a villager asks whether Isaac
+/// meditates on Mt. Aleph each day.
 ///
 /// Reached by talking to actor 23 on the day the story begins.
 static void Event_AskAboutMeditation(void) {
@@ -169,8 +224,8 @@ static void Event_AskAboutMeditation(void) {
   Engine_EventEnd();
 }
 
-/// A villager recalls the difficult time three years ago and asks Isaac
-/// about it.
+/// In Vale on the day the story begins, a villager recalls the difficult time
+/// three years ago and asks Isaac about it.
 ///
 /// Reached by talking to actor 24 on the day the story begins.
 static void Event_RecallThreeYearsAgo(void) {
@@ -181,7 +236,8 @@ static void Event_RecallThreeYearsAgo(void) {
   Engine_EventEnd();
 }
 
-/// A villager asks whether the travelers went to meet the mayor.
+/// In Vale on the day the story begins, a villager asks whether the travelers
+/// who stopped by went to meet the mayor.
 ///
 /// Reached by talking to actor 15 on the day the story begins.
 static void Event_AskAboutTheTravelers(void) {
@@ -192,8 +248,9 @@ static void Event_AskAboutTheTravelers(void) {
   Engine_EventEnd();
 }
 
-/// Before the party sets out, a villager shows Isaac his Psynergy and shakes
-/// the ground; later he asks whether they worry about crossing the land so few.
+/// In Vale before the party sets out, a villager shows Isaac his Psynergy and
+/// shakes the ground; later he asks whether they worry about crossing the land
+/// so few.
 ///
 /// Reached by talking to actor 17 on the day the story begins and after the
 /// party has left. The display adds and removes the callback
@@ -264,8 +321,9 @@ static void Event_DemonstratePsynergy(void) {
   Engine_EventEnd();
 }
 
-/// A villager asks whether Isaac can use Psynergy, then about the Wise One,
-/// then about the journey.
+/// In Vale, a villager answers Isaac about Psynergy on the stormy night, asks
+/// about the Wise One after the party has left, and about the journey after
+/// Kalay.
 ///
 /// Reached by talking to actor 11 on the stormy night and after the party has
 /// left, and to actor 15 after Kalay; the story state picks the question.
@@ -292,7 +350,8 @@ static void Event_AskAboutJourney(void) {
   Engine_EventEnd();
 }
 
-/// A villager tells how the stone fell, and the camera looks at it.
+/// In Vale after the party has left, a villager shows Isaac the large Psynergy
+/// Stone that fell on the hut, and the camera looks at it.
 ///
 /// Reached by talking to actor 26 after the party has left Vale.
 static void Event_TalkAboutFallenStone(void) {
@@ -313,7 +372,9 @@ static void Event_TalkAboutFallenStone(void) {
   Engine_EventEnd();
 }
 
-/// A villager with some Psynergy left lifts actor 20 into the air.
+/// In Vale on the stormy night, a villager with some Psynergy left lifts a
+/// small rock (actor 20, the storm's rock sprite at three tenths of its size)
+/// into the air.
 ///
 /// Reached by talking to actor 15 on the stormy night. Adds and removes the
 /// callbacks ValeHome_UpdateActor15Psynergy and
@@ -362,8 +423,8 @@ static void Event_DemonstrateLevitation(void) {
   Engine_EventEnd();
 }
 
-/// On the stormy night, a villager tells Isaac which way the others went, or,
-/// once he has been sent to the elders, to help them.
+/// In Vale on the stormy night, a villager tells Isaac which way Jenna went,
+/// or, once he has been sent back to the river, to help Felix.
 ///
 /// Reached by talking to actor 16 on the stormy night.
 static void Event_TalkAboutHelping(void) {
@@ -379,8 +440,8 @@ static void Event_TalkAboutHelping(void) {
   Engine_EventEnd();
 }
 
-/// Back from Kalay, a villager welcomes Isaac home; later he only says this
-/// is Vale.
+/// In Vale back from Kalay, a villager welcomes Isaac home; later he only says
+/// this is Vale.
 ///
 /// Reached by talking to actor 11 after Kalay. Sets FLAG_VALE_WELCOMED_HOME.
 static void Event_WelcomeIsaacHome(void) {
@@ -395,8 +456,8 @@ static void Event_WelcomeIsaacHome(void) {
   Engine_EventEnd();
 }
 
-/// The villager searching the ground stops and tells Isaac the Psynergy Stone
-/// is gone.
+/// In Vale back from Kalay, the villager searching the ground stops and tells
+/// Isaac the Psynergy Stone that fell on his roof is gone.
 ///
 /// Reached after Kalay by talking to actor 21, or by Mind Read on it until
 /// FLAG_VALE_PSYNERGY_STONE_GONE_TOLD is set; sets it and restarts the search.
@@ -434,14 +495,18 @@ static inline void Event_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ, s32 x,
   Actor_WalkTo(ACTOR_PARTY_LEADER, x, z);
 }
 
-// The doors: walking north into cell code n opens door n and takes exit n
-// (Vale_RequestBackdropExit).
+// Vale's doors here: walking north into cell code n opens door n and takes
+// exit n (Vale_RequestBackdropExit), into the houses (scene 7) or another
+// part of Vale (scene 8).
+
+/// In Vale, opens the northwest door, into a house (scene 7, entrance 8).
 static void Event_OpenNorthwestDoor(void) {
   Event_OpenDoorAndWalkThrough(44, 7, 248, 279);
   Vale_RequestBackdropExit(1);
 }
 
-/// Opens the northeast doorway in two stages and walks inside.
+/// In Vale back from Kalay, opens the northeast doorway in two stages and
+/// walks inside (Vale, scene 8, entrance 3).
 ///
 /// Reached by walking north into cell code 2 after Kalay; the other tables
 /// have no door 2.
@@ -457,52 +522,61 @@ static void Event_OpenNortheastDoor(void) {
   Vale_RequestBackdropExit(2);
 }
 
-/// Enters through the western door in the village's middle row.
+/// In Vale, enters through the western door of the middle row of houses
+/// (scene 7, entrance 3).
 static void Event_OpenCentralWestDoor(void) {
   Event_OpenDoorAndWalkThrough(43, 15, 230, 407);
   Vale_RequestBackdropExit(3);
 }
 
-/// Enters through the eastern door in the village's middle row.
+/// In Vale, enters through the eastern door of the middle row of houses
+/// (scene 7, entrance 7).
 static void Event_OpenCentralEastDoor(void) {
   Event_OpenDoorAndWalkThrough(52, 18, 374, 419);
   Vale_RequestBackdropExit(4);
 }
 
+/// In Vale, opens the southwest door, into Vale's shops (scene 7, entrance 4).
 static void Event_OpenSouthwestDoor(void) {
   Event_OpenDoorAndWalkThrough(41, 32, 200, 546);
   Vale_RequestBackdropExit(5);
 }
 
+/// In Vale, opens the door at the west edge, into another part of Vale (scene
+/// 8, entrance 1).
 static void Event_OpenWestEdgeDoor(void) {
   Event_OpenDoorAndWalkThrough(35, 36, 102, 611);
   Vale_RequestBackdropExit(6);
 }
 
+/// In Vale, opens the southeast door, into another part of Vale (scene 8,
+/// entrance 4).
 static void Event_OpenSoutheastDoor(void) {
   Event_OpenDoorAndWalkThrough(51, 39, 358, 670);
   Vale_RequestBackdropExit(7);
 }
 
-/// Leaves by the west passage: stepping on cell code 9 on the stormy night
-/// takes exit 8.
+/// In Vale on the stormy night, leaves by the west passage, back to the
+/// storm's map: stepping on cell code 9 takes exit 8, to scene 3's entrance 5.
 static void Event_LeaveThroughWestPassage(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropExit(8);
 }
 
-/// Leaves by the south passage once the party has begun its journey.
+/// In Vale, leaves by the town gate for the world map, once the party has
+/// begun its journey.
 ///
 /// Reached by stepping on cell code 8; takes exit 10 once FLAG_PARTY_LEFT_VALE
-/// is set, else does nothing.
-static void Event_LeaveThroughSouthPassage(void) {
+/// is set, else does nothing. The farewell (Event_DepartForQuest) shows the
+/// villagers gathered at the gate and leaves by the same exit.
+static void Event_LeaveThroughTownGate(void) {
   if (Engine_GameFlagIsSet(FLAG_PARTY_LEFT_VALE) != 0) {
     Engine_AudioPlayCue(SE_MAP_EXIT);
     Vale_RequestBackdropExit(10);
   }
 }
 
-/// Whirlwind clears the first target (actor 8).
+/// In Vale, Whirlwind clears the first target (actor 8).
 ///
 /// Reached by Whirlwind on actor 8 by day, until it is cleared; sets
 /// FLAG_VALE_FIRST_WHIRLWIND_TARGET_CLEARED.
@@ -510,7 +584,7 @@ static void Event_ClearFirstWhirlwindTarget(void) {
   Engine_GameFlagSet((FLAG_VALE_FIRST_WHIRLWIND_TARGET_CLEARED));
 }
 
-/// Whirlwind clears the second target (actor 9).
+/// In Vale, Whirlwind clears the second target (actor 9).
 ///
 /// Reached by Whirlwind on actor 9 by day, until it is cleared; sets
 /// FLAG_VALE_SECOND_WHIRLWIND_TARGET_CLEARED.
@@ -518,7 +592,7 @@ static void Event_ClearSecondWhirlwindTarget(void) {
   Engine_GameFlagSet((FLAG_VALE_SECOND_WHIRLWIND_TARGET_CLEARED));
 }
 
-/// Whirlwind clears the third target (actor 10).
+/// In Vale, Whirlwind clears the third target (actor 10).
 ///
 /// Reached by Whirlwind on actor 10 by day, until it is cleared; sets
 /// FLAG_VALE_THIRD_WHIRLWIND_TARGET_CLEARED.
@@ -526,15 +600,16 @@ static void Event_ClearThirdWhirlwindTarget(void) {
   Engine_GameFlagSet((FLAG_VALE_THIRD_WHIRLWIND_TARGET_CLEARED));
 }
 
-/// Arriving: hide the cleared Whirlwind targets, run entrances 97 to 99 (the
-/// return from the travelers' battle and two debug presets), and set up the
-/// storm, the farewell or the village after Kalay.
+/// Arriving in this part of Vale: hides the cleared Whirlwind targets, runs
+/// entrances 97 to 99 (the strangers' departure and two presets), and sets up
+/// the storm, the farewell or the village after Kalay.
 ///
 /// The scene's initialize entry. Entrance 98 sets FLAG_CHILDHOOD and takes
 /// exit 50; entrance 12 runs Event_DepartForQuest; entrance 19 (and 97)
-/// Event_TravelersLeaveAfterBattle; on the stormy night, once Garet has left
-/// Isaac (FLAG_VALE_STORM_GARET_LEFT), Event_MeetSurvivingTravelers. Once
-/// Isaac has been sent to the elders, it removes the villagers who sent him.
+/// Event_TravelersLeaveAfterBattle; on the stormy night, once Garet has gone
+/// after Isaac (FLAG_VALE_STORM_GARET_LEFT), Event_MeetSurvivingTravelers.
+/// Once the boys have been sent back to the river, it removes the two
+/// villagers who left to aid the elders, Jenna and the man who went with them.
 s32 ValeHome_Initialize(void) {
   struct FieldActor *actor;
   s32 flag;
@@ -652,11 +727,15 @@ static inline void ValeHome_RejoinParty(s32 actorId) {
   Engine_ActorSetPosition(actorId, 0, 0);
 }
 
-/// On the stormy night, villagers send Isaac and his companion to aid the
-/// elders holding back the Boulder. "Go aid the elders!"
+/// In Vale's plaza on the stormy night, Garet's grandfather, the mayor, sends
+/// two villagers to aid the elders holding back the Boulder, then sends Isaac
+/// and Garet back to the river to show Jenna and a man whose Psynergy is
+/// restored the way. "Go aid the elders!"
 ///
 /// Reached by stepping on cell code 20 on the stormy night, until
-/// FLAG_VALE_STORM_SENT_TO_AID_ELDERS is set; sets it.
+/// FLAG_VALE_STORM_SENT_TO_AID_ELDERS is set; sets it. The flag is named for
+/// the mayor's first order, but what it records is the boys being sent back:
+/// the river's gathering (vale_storm.c) waits for it.
 static void Event_SentToAidElders(void) {
   struct FieldActor *leader;
   s32 skipReply = 0;
@@ -804,8 +883,9 @@ static void Event_SentToAidElders(void) {
   }
 }
 
-/// On the stormy night, Isaac overhears the two travelers who survived Sol
-/// Sanctum. "Only the two of us survived..."
+/// In Vale on the stormy night, after the river, Isaac overhears two travelers
+/// who survived Sol Sanctum's fury, the game's first sight of Saturos and
+/// Menardi. "Only the two of us survived..."
 ///
 /// Called by ValeHome_Initialize on the stormy night once
 /// FLAG_VALE_STORM_GARET_LEFT is set; goes on into ValeHome_FightTravelers.
@@ -816,8 +896,9 @@ static void Event_MeetSurvivingTravelers(void) {
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
-  // The screen opens on the storm by the river path; the village music plays
-  // as Isaac walks up and hears the first traveler.
+  // The screen opens on the storm at the west path, where Isaac comes in from
+  // the river; the village music plays as he walks up and hears the first
+  // traveler.
   Engine_CameraMoveTo(PIXELS(64), PIXELS(144), PIXELS(350), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
@@ -876,8 +957,9 @@ static void Event_MeetSurvivingTravelers(void) {
   Engine_EventEnd();
 }
 
-/// The travelers catch Isaac eavesdropping and fight; win or lose, the party
-/// returns by entrance 19. "You must forget everything you heard."
+/// In Vale on the stormy night, the travelers catch Isaac eavesdropping and
+/// fight; win or lose, the party returns by entrance 19.
+/// "You must forget everything you heard."
 ///
 /// Called by Event_MeetSurvivingTravelers. Starts encounter 4 of table 12
 /// with both outcomes leading back to this scene's entrance 19, and sets
@@ -988,11 +1070,12 @@ static void ValeHome_FightTravelers(void) {
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
 }
 
-/// After the battle the travelers leave Isaac and his companion lying in the
-/// storm, and the storm ends.
+/// In Vale after the battle, the travelers leave Isaac and Garet lying in the
+/// storm, and the storm, and the prologue, end.
 ///
 /// Called by ValeHome_Initialize from entrance 19, after the battle, or 97.
-/// Clears FLAG_VALE_STORM and takes exit 9.
+/// Clears FLAG_VALE_STORM and takes exit 9, to the title (scene 0, entrance
+/// 1), which then opens on Vale three years later (menu/title.c).
 static void Event_TravelersLeaveAfterBattle(void) {
   struct FieldActor *actor;
   s32 gravityQ8;
@@ -1073,11 +1156,13 @@ static void Event_TravelersLeaveAfterBattle(void) {
   Engine_EventEnd();
 }
 
-/// The villagers give their supplies and farewells before the party leaves
-/// Vale.
+/// In Vale, at the town gate, the villagers give their supplies and farewells
+/// as Isaac and Garet set out on the Wise One's quest.
 ///
-/// Called by ValeHome_Initialize from entrance 12. Restores the party's HP
-/// and PP, gives a Herb and the Catch Beads (from Dora), and takes exit 10.
+/// Called by ValeHome_Initialize from entrance 12, the way out of the Vale
+/// Sanctum once the quest is accepted. Restores the party's HP and PP, gives a
+/// Herb (from Garet's sister) and the Catch Beads (from Dora), and takes exit
+/// 10, to the world map.
 static void Event_DepartForQuest(void) {
   struct FieldActor *actor;
   struct EventWork *work;
@@ -2115,7 +2200,7 @@ struct SceneEvent gValeHome_Events[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenSouthwestDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenWestEdgeDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenSoutheastDoor) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughSouthPassage) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughTownGate) },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 8 },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, (FLAG_VALE_FIRST_WHIRLWIND_TARGET_CLEARED), EVENT_SCRIPT(Event_ClearFirstWhirlwindTarget) },
@@ -2178,7 +2263,7 @@ struct SceneEvent gValeHome_EventsAfterLeaving[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenSouthwestDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenWestEdgeDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenSoutheastDoor) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughSouthPassage) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughTownGate) },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 8 },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, (FLAG_VALE_FIRST_WHIRLWIND_TARGET_CLEARED), EVENT_SCRIPT(Event_ClearFirstWhirlwindTarget) },
@@ -2219,7 +2304,7 @@ struct SceneEvent gValeHome_EventsAfterKalay[] = {
     { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenSouthwestDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenWestEdgeDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenSoutheastDoor) },
-    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughSouthPassage) },
+    { EVENT_TOUCH, 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveThroughTownGate) },
     { EVENT_EXIT, 9, CONDITION_ALWAYS, 8 },
     { EVENT_EXIT, 11, CONDITION_ALWAYS, 11 },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, (FLAG_VALE_FIRST_WHIRLWIND_TARGET_CLEARED), EVENT_SCRIPT(Event_ClearFirstWhirlwindTarget) },

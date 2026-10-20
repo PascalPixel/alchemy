@@ -1,12 +1,48 @@
 /// @file
-/// The garden before Lord McCoy's palace in Bilibin. Two guards keep the palace
-/// gate and let only brave warriors through; once Kolima's curse is lifted,
-/// they arrest the party for breaking it and take them to McCoy.
+/// McCoy's Palace (McCoyPalaceGarden, scene 34), outside the palace of Lord
+/// McCoy, the lord of Bilibin. The palace itself (McCoyPalace, scene 33,
+/// mccoy_palace.c) has the same area name. Workers build a new palace here
+/// for Lady McCoy, who waits among them, and two guards keep the gate of
+/// McCoy's own.
 ///
-/// Scene flags: FLAG_SCENE_TEMP_00, the palace gate is open;
-/// FLAG_SCENE_TEMP_01, the east guard has scolded the party for keeping McCoy
-/// waiting. Flag 0x304, reused from place to place, is set in Bilibin when
-/// McCoy is looking for the party.
+/// Where it falls in the story: the people of Kolima have been turned into
+/// trees, and Bilibin calls it the curse of the holy tree, the tree of Kolima
+/// Forest that McCoy had cut down to build his wife a grand palace. McCoy is
+/// hiring warriors to end the curse, and his guards let in only brave ones.
+/// Before the curse is lifted (FLAG_KOLIMA_CURSE_LIFTED clear), the workers
+/// speak of the lumber from Kolima that vanished and of the barricade they
+/// built on the road to Kolima, and Lady McCoy, who had the tree cut down for
+/// her palace, calls herself the victim: she only wants to live in a big
+/// palace.
+///
+/// Talking to the east guard (Event_TalkToEastGuard) is the way in. Until the
+/// party is admitted (FLAG_MCCOY_PALACE_ADMITTED), he asks whether they are
+/// up to meeting his lord; on yes the guards confer, the gate opens
+/// (Garden_OpenPalaceGate, which sets FLAG_SCENE_TEMP_00) and the west guard
+/// goes in ahead. Walking north into the open gate (trigger 2,
+/// Event_EnterPalace) takes exit 2 into the palace, its entrance 1. Admitted
+/// but not yet inside the palace, the party that comes back from Bilibin
+/// (which sets place flag 0x304) is scolded once (FLAG_SCENE_TEMP_01): McCoy
+/// is angry because he could not find them.
+///
+/// In the palace McCoy turns the party away as too young, and his captain
+/// lets slip that the barricade may not need a key
+/// (FLAG_MCCOY_PALACE_BARRICADE_HINT); after that the guards will tell no more.
+/// Once the curse is lifted the building has stopped and Lady McCoy complains
+/// that McCoy loves the holy tree more than her. The first time the party
+/// arrives then, until McCoy has rewarded them
+/// (FLAG_MCCOY_PALACE_PARTY_REWARDED), the guards stop them
+/// (Event_GuardsArrestParty): witnesses saw them in the forest, and the guards
+/// repeat the accusation until the player admits breaking the curse, then put
+/// them under arrest and march them to McCoy (exit 10, the palace's entrance
+/// 29), where he rewards them. Afterwards the guards admire the party.
+///
+/// Setup (Garden_ApplyProgress) places the guards by the same flags and floats
+/// a Nut over the grounds until Catch takes it
+/// (FLAG_MCCOY_PALACE_GARDEN_NUT_CAUGHT). A dry well can be searched. Exit 1
+/// leads back to Bilibin (Bilibin1, scene 30, entrance 2). The patched
+/// editions (TBS_PATCH_3) add one more actor, sprite 0xf8 (XXX: what it is is
+/// not known).
 
 #include "game_state.h"
 #include "scene_ids.h"
@@ -48,7 +84,7 @@
 enum {
   ACTOR_WEST_WORKER = 8,
   ACTOR_NORTH_WORKER = 9,
-  ACTOR_LORD_MCCOY = 10,
+  ACTOR_LADY_MCCOY = 10,
   ACTOR_WEST_GUARD = 11,
   ACTOR_EAST_GUARD = 12,
   ACTOR_FLOATING_NUT = 13
@@ -68,9 +104,9 @@ const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gMcCoyPalaceGardenExits; }
 
-/// The garden's people. Once McCoy has turned the party away, the east guard
-/// turns back after talking, and once the curse is lifted McCoy faces the
-/// party.
+/// The people outside McCoy's Palace. Once McCoy has turned the party away,
+/// the east guard turns back after talking, and once the curse is lifted Lady
+/// McCoy faces the party.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_McCoyPalaceGarden) {
     if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_BARRICADE_HINT) != 0)
@@ -82,7 +118,8 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gMcCoyPalaceGardenPlacementsOther;
 }
 
-/// Catch on the nut floating over the garden: the party gets it.
+/// McCoy's Palace, outside: Catch on the Nut floating over the grounds gives
+/// it to the party.
 static void Event_CatchFloatingNut(void) {
   Engine_EventBegin();
   Engine_ActorSetPosition(ACTOR_FLOATING_NUT, 0, 0);
@@ -92,7 +129,7 @@ static void Event_CatchFloatingNut(void) {
   Engine_EventEnd();
 }
 
-/// Searching the dry well.
+/// McCoy's Palace, outside: searching the dry well.
 static void Event_SearchWell(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
@@ -100,7 +137,7 @@ static void Event_SearchWell(void) {
   Engine_EventEnd();
 }
 
-/// What the party can talk to, search and catch in the garden.
+/// What the party can talk to, search and catch outside McCoy's Palace.
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_McCoyPalaceGarden) {
     return gMcCoyPalaceGardenEvents;
@@ -108,7 +145,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gMcCoyPalaceGardenEventsOther;
 }
 
-/// The north worker asks whether the party has seen the barricade.
+/// McCoy's Palace, outside, before the curse is lifted: the north worker asks
+/// whether the party has seen the barricade they built on the road to Kolima.
 static void Event_TalkToNorthWorker(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinHaveYouSeenBarricadeWe);
@@ -116,15 +154,19 @@ static void Event_TalkToNorthWorker(void) {
   Engine_EventEnd();
 }
 
-/// McCoy asks whether the palace work makes him responsible for the curse.
-static void Event_TalkToMcCoy(void) {
+/// McCoy's Palace, outside, before the curse is lifted: Lady McCoy asks
+/// whether the party blames her for the curse: on yes she calls herself the
+/// victim, on no she calls the curse a superstition, and either way she wants
+/// her palace.
+static void Event_TalkToLadyMcCoy(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinTellingMeImResponsibleFor);
-  Engine_EventAskYesNo(ACTOR_LORD_MCCOY, 0);
+  Engine_EventAskYesNo(ACTOR_LADY_MCCOY, 0);
   Engine_EventEnd();
 }
 
-/// The young west guard asks whether he can become a warrior like them.
+/// McCoy's Palace, outside, after the reward: the west guard asks whether he
+/// can become as fine a warrior as the leader.
 static void Event_TalkToWestGuard(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinDoThinkCanBecomeAs);
@@ -132,9 +174,11 @@ static void Event_TalkToWestGuard(void) {
   Engine_EventEnd();
 }
 
-/// The east guard: until he lets them in, he asks whether they are brave
-/// enough to meet McCoy and, on yes, opens the gate and walks in with his
-/// partner; after, he scolds them once for keeping McCoy waiting.
+/// McCoy's Palace, outside, until McCoy turns the party away: the east guard
+/// asks whether they are brave enough to meet his lord and, on yes, the gate
+/// opens and the west guard walks in; once they are admitted, he reminds them
+/// that McCoy is a difficult man, and scolds them once for keeping him
+/// waiting.
 static void Event_TalkToEastGuard(void) {
   Engine_EventBegin();
   // Once admitted, the party only receives the guard's current reminder.
@@ -215,8 +259,8 @@ static void Event_TalkToEastGuard(void) {
   Engine_EventEnd();
 }
 
-/// Walking into the palace gate: it opens if still shut and the leader walks
-/// in.
+/// McCoy's Palace, outside, trigger 2: walking north into the palace gate opens
+/// it if it is still shut, and the leader walks into the palace.
 static void Event_EnterPalace(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) == 0) {
@@ -231,8 +275,8 @@ static void Event_EnterPalace(void) {
   Engine_EventEnd();
 }
 
-/// Sets the garden up: the west worker drawn in front, and the guards, McCoy
-/// and the arrest as the story stands.
+/// Sets up the grounds outside McCoy's Palace: the west worker drawn in
+/// front, and the guards, Lady McCoy and the arrest as the story stands.
 s32 Scene_Initialize(void) {
   struct EventWork *work = gEventWork;
   struct FieldActor *actor;
@@ -251,8 +295,8 @@ s32 Scene_Initialize(void) {
 }
 
 /// The guards stand where the party left them; once the curse is lifted,
-/// McCoy waits in the garden and, the first time, the guards arrest the
-/// party.
+/// Lady McCoy stands before the palace and, until McCoy has rewarded the
+/// party, the guards arrest them.
 static void Garden_ApplyProgress(void) {
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
     Engine_GameFlagClear(FLAG_SCENE_TEMP_00);
@@ -272,10 +316,10 @@ static void Garden_ApplyProgress(void) {
       }
     }
   }
-  // McCoy's outdoor meeting and the arrest happen only after the curse lifts.
+  // Lady McCoy's new place and the arrest come only after the curse lifts.
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
-    Actor_SetPosition(ACTOR_LORD_MCCOY, PIXELS(224), PIXELS(292));
-    Actor_FaceDirection(ACTOR_LORD_MCCOY, FACING_SOUTH, 0);
+    Actor_SetPosition(ACTOR_LADY_MCCOY, PIXELS(224), PIXELS(292));
+    Actor_FaceDirection(ACTOR_LADY_MCCOY, FACING_SOUTH, 0);
     Engine_ActorFaceDirection(ACTOR_WEST_WORKER, FACING_EAST, 0);
     if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_PARTY_REWARDED) == 0) {
       Event_GuardsArrestParty();
@@ -283,9 +327,9 @@ static void Garden_ApplyProgress(void) {
   }
 }
 
-/// Kolima's curse is lifted: the guards stop the party, ask whether they
-/// broke the holy tree's curse until they answer yes, and march them into
-/// the palace to McCoy.
+/// McCoy's Palace, outside, on entry once Kolima's curse is lifted: the guards
+/// stop the party, ask whether they broke the curse of the holy tree until
+/// they answer yes, and march them into the palace to McCoy.
 static void Event_GuardsArrestParty(void) {
 
   // Bring the leader into view before the guards interrupt.
@@ -372,7 +416,7 @@ static void Event_GuardsArrestParty(void) {
   Engine_EventEnd();
 }
 
-/// The palace gate swings open.
+/// The gate of McCoy's Palace swings open.
 static void Garden_OpenPalaceGate(void) {
   Engine_AudioPlayCue(SE_188);
   Engine_MapAnimateCells(gPalaceGateOpenSteps, 52, 11);
@@ -442,8 +486,8 @@ struct SceneEvent gMcCoyPalaceGardenEvents[] = {
     { EVENT_TALK, ACTOR_WEST_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinNowThatTheCurseIsBroken) },
     { EVENT_TALK, ACTOR_NORTH_WORKER, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Event_TalkToNorthWorker) },
     { EVENT_TALK, ACTOR_NORTH_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinItsOverOverMilordDecidedNot) },
-    { EVENT_TALK, ACTOR_LORD_MCCOY, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Event_TalkToMcCoy) },
-    { EVENT_TALK, ACTOR_LORD_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinHmphMyPalaceIsNotFinished) },
+    { EVENT_TALK, ACTOR_LADY_MCCOY, FLAG_KOLIMA_CURSE_LIFTED, EVENT_SCRIPT(Event_TalkToLadyMcCoy) },
+    { EVENT_TALK, ACTOR_LADY_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinHmphMyPalaceIsNotFinished) },
     { EVENT_TALK, ACTOR_WEST_GUARD, FLAG_MCCOY_PALACE_BARRICADE_HINT, MSGNO(MsgBilibinLordMccoyIsSoUpsetAbout) },
     { EVENT_TALK, ACTOR_WEST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinICantTellYouAnythingElse) },
     { EVENT_TALK, ACTOR_WEST_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWestGuard) },
@@ -454,8 +498,8 @@ struct SceneEvent gMcCoyPalaceGardenEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinWedStillBeWorkingIfWe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_NORTH_WORKER, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIAmGladIDidntKnow) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_NORTH_WORKER, CONDITION_ALWAYS, MSGNO(MsgBilibinThatWasCloseBuildingACursed) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LORD_MCCOY, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIfAllThisTroubleWasCaused) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LORD_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinHeSaidHeStoppedConstructionSo) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LADY_MCCOY, FLAG_KOLIMA_CURSE_LIFTED, MSGNO(MsgBilibinIfAllThisTroubleWasCaused) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LADY_MCCOY, CONDITION_ALWAYS, MSGNO(MsgBilibinHeSaidHeStoppedConstructionSo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD, FLAG_MCCOY_PALACE_ADMITTED, MSGNO(MsgBilibinNoOneBelievedTheyWouldTurn) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD, FLAG_MCCOY_PALACE_REWARD_TAKEN, MSGNO(MsgBilibinThatBarricadeIsPrettyShabbyIt) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD, CONDITION_ALWAYS, MSGNO(MsgBilibinIWillBeAReliableWarrior) },

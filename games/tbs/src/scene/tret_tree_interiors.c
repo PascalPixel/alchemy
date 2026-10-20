@@ -1,6 +1,53 @@
 /// @file
-/// Inside Tret, the great tree: cracked floors that give way under the leader
-/// on the second step, and Tret's face, which attacks the party.
+/// Tret Tree (TretTreeInteriors, scene 45), the inside of Tret, the holy tree
+/// of Kolima Forest, and the first of Tret Tree's two scenes. Tret turned the
+/// people of Kolima into trees and is withering. In Kolima Forest Tret's
+/// wrathful side answers for him and will not let the party do anything to him
+/// ("I control Tret's heart! I shall not let you do anything to him!",
+/// kolima_forest_tree.c); the way on is into Tret himself, to face it.
+/// FLAG_TRET_DEFEATED, whether that battle is won and Tret has spoken with the
+/// party since, decides most of the scene.
+///
+/// The scene is six rooms, the six camera boxes of its entrance table. The
+/// party comes in from Kolima Forest (KolimaForestTree, scene 44) at entrance
+/// 1 and leaves by exit 1; exits 2 to 9 lead out to Tret Tree's other scene
+/// (TretTreeBranch, scene 46), and exits 10 to 15 lead from room to room,
+/// three of them (10, 12 and 14) through regions 28 to 36 pixels up.
+///
+/// Webs hold cocoons, each a touch cell (21 to 29, 31, 32 and 50 to 59) with
+/// a temporary flag of its own (FLAG_SCENE_TEMP_00 to _14). The first step on
+/// a cocoon tears it: its cell is redrawn and its flag set. The next step on a
+/// torn cocoon breaks through, and the leader spins and falls to the room
+/// below, arriving at the entrance numbered as the cocoon (FLAG_ARRIVE_FALLING
+/// plays the landing). The map draws four cocoons already torn (22, 52, 54 and
+/// 58) and the setup sets their flags, so they give way at the first step. A
+/// latch in the scene state (sLastCocoon) keeps a step from counting twice
+/// until the leader walks on. Cocoon 50 is the way down to Tret: entrances 50,
+/// 40, 30 and 20 each let the leader fall on to the entrance numbered ten
+/// lower, and at entrance 10 the leader lands in a ring of dust as the map
+/// shakes, in front of Tret. Torn cocoons stay torn across a battle: after one
+/// (FLAG_KEEP_PARTY_POSITION) the setup redraws them from
+/// gTretTreeInteriors_MapPatches.
+///
+/// Tret's face (ACTOR_TRET) and a second Tret actor at the same spot speak his
+/// lines. Walking up to him (touch cell 40, while FLAG_TRET_DEFEATED is clear)
+/// runs Event_FightTret: he roars, the party gathers in front of him, and the
+/// evil within him scorns them before the battle with Tret. The battle returns
+/// to entrance 19, where the setup plays the conversation after it: a passage
+/// opens in his room, he comes to himself, thanks the party and asks whether
+/// they need something, realises that he turned the people of Kolima into
+/// trees ("I turned the people of Kolima into trees?"), tries to free them
+/// but cannot reach that far, and his face sinks away as the party resolve to
+/// heal him. Only then is FLAG_TRET_DEFEATED set; in Kolima Forest it lets
+/// Hermes' Water heal Tret and lift the curse. Once it is set, the setup
+/// moves both Tret actors away, opens that passage and redraws cells near
+/// entrance 20; before, it keeps the passage closed.
+///
+/// The setup also saves the background palettes and starts a slow tint that
+/// shifts them every 32 frames (not after the battle until the conversation
+/// ends; casting Reveal stops it), and scales the first map layer to the room.
+/// Two chests hold a Healing Ring and a Nut, and a Psynergy Stone lies here
+/// (search events 100 to 102).
 
 #include "battle_effect_runtime.h"
 #include "version.h"
@@ -56,10 +103,10 @@ enum {
 #define SPEAKER(actor) (SPEAKER_WINDOW_BELOW | (actor))
 
 // The scene's temporary flags: FLAG_SCENE_TEMP_00 to _14 are set the first
-// time each cracked floor tile is stepped on; the next step makes it give
-// way (gTretTreeInteriors_MapPatches lists them).
+// time each cocoon is stepped on, tearing it; the next step breaks through
+// (gTretTreeInteriors_MapPatches lists them).
 
-#define FLOOR_FALL_SPIN_FRAMES 30
+#define COCOON_FALL_SPIN_FRAMES 30
 #define SWIRL_SPARK_LAST_FRAME 79
 #define SWIRL_SPARK_SHRINK_LAST_FRAME 39
 #define TRET_TINT_COLOR_COUNT 63
@@ -75,7 +122,7 @@ static void TretTreeInteriors_RunLandingDustScene(void);
 
 static struct FieldPosition sSparkOrigin;
 static s32 sSparkFrame;
-static s16 *sLastFloorEntrance;
+static s16 *sLastCocoon;
 
 #include "common/effect_create.h"
 
@@ -84,29 +131,31 @@ static s16 *sLastFloorEntrance;
 #include "item_ids.h"
 #include "objcmd.h"
 
-/// Returns the interior entrance and landing positions.
+/// Returns the scene's entrances, the cocoons' landing spots among them.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTretTreeInteriorsEntrances;
 }
 
-/// Returns the upper exit regions for the tree interior.
+/// Returns the three exit regions 28 to 36 pixels up (exits 10, 12 and 14).
 const struct SceneRegion *Scene_GetRegions(void) {
   return gTretTreeInteriorsRegions;
 }
 
 const u32 *Scene_GetExits(void) { return gTretTreeInteriorsExits; }
 
-/// Returns the staged party and Tret actors.
+/// Returns the party's other slots (Garet, Ivan and, once she has joined,
+/// Mia), placed for the scripted scenes, and the two Tret actors.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   return gTretTreeInteriorsPlacements;
 }
 
-/// Stepping on a cracked floor tile: the first step cracks it further and sets
-/// its temporary flag; the next step breaks it, and the leader spins and falls
-/// through, to land at the given entrance.
-static void TretTreeInteriors_StepOnCrackedFloor(s32 floorFlag,
-                                                 s32 sourceColumn,
-                                                 s32 sourceRow, s32 entrance) {
+/// Stepping on a cocoon in Tret Tree: the first step tears it, copying its
+/// torn picture from the staging cell (row 35) and setting its temporary flag;
+/// the next step breaks through (row 36's cell), and the leader spins and
+/// falls, to land at the given entrance, numbered as the cocoon. The latch
+/// ignores the same cocoon again until the leader walks on.
+static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
+                                           s32 sourceRow, s32 entrance) {
   s32 destinationColumn;
   s32 destinationRow;
   s32 selectedActorId;
@@ -117,17 +166,17 @@ static void TretTreeInteriors_StepOnCrackedFloor(s32 floorFlag,
   destinationRow = gGameState.z >> 20;
   selectedActorId = gGameState.selectedActor;
   actor = Object_GetById(selectedActorId);
-  if (entrance == *sLastFloorEntrance)
+  if (entrance == *sLastCocoon)
     return;
-  *sLastFloorEntrance = entrance;
-  if (FLAG_CHECK(floorFlag) == 0) {
+  *sLastCocoon = entrance;
+  if (FLAG_CHECK(cocoonFlag) == 0) {
     Map_CopyCells(sourceColumn, sourceRow, 1, 1, destinationColumn,
                   destinationRow);
-    FLAG_SET(floorFlag);
+    FLAG_SET(cocoonFlag);
     return;
   }
   // On the next touch, replace the tile and spin the actor into the fall.
-  *sLastFloorEntrance = -1;
+  *sLastCocoon = -1;
   Map_CopyCells(sourceColumn, sourceRow + 1, 1, 1, destinationColumn,
                 destinationRow);
   SE(SE_206);
@@ -145,7 +194,7 @@ static void TretTreeInteriors_StepOnCrackedFloor(s32 floorFlag,
   WAIT(3);
   actor->terrainId = 2;
   Engine_ActorSetSpritePriority(selectedActorId, 3);
-  for (spinFrame = FLOOR_FALL_SPIN_FRAMES - 1; spinFrame >= 0; spinFrame--) {
+  for (spinFrame = COCOON_FALL_SPIN_FRAMES - 1; spinFrame >= 0; spinFrame--) {
 
     actor->facing += 2 * FACING_STEP;
     Engine_TaskWait(1);
@@ -154,106 +203,111 @@ static void TretTreeInteriors_StepOnCrackedFloor(s32 floorFlag,
     FLAG_SET(0x122);
 }
 
-static void Event_FloorGivesWayToUpperMiddleNorthwest(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_00, 64, 35, 21);
+// The cocoons' touch events in Tret Tree, one per cocoon: each passes its
+// flag, the staging cell of its torn picture and its own number, the landing
+// entrance, to TretTreeInteriors_StepOnCocoon.
+
+static void Event_StepOnCocoon21(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_00, 64, 35, 21);
 }
 
-static void Event_FloorGivesWayToUpperMiddleNortheast(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_01, 65, 35, 22);
+static void Event_StepOnCocoon22(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_01, 65, 35, 22);
 }
 
-static void Event_FloorGivesWayToUpperMiddleWestUpper(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_02, 66, 35, 23);
+static void Event_StepOnCocoon23(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_02, 66, 35, 23);
 }
 
-static void Event_FloorGivesWayToUpperMiddleWestLower(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_03, 67, 35, 24);
+static void Event_StepOnCocoon24(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_03, 67, 35, 24);
 }
 
-static void Event_FloorGivesWayToUpperMiddleSouthwestUpper(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_04, 68, 35, 25);
+static void Event_StepOnCocoon25(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_04, 68, 35, 25);
 }
 
-static void Event_FloorGivesWayToUpperMiddleSouthUpper(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_05, 69, 35, 26);
+static void Event_StepOnCocoon26(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_05, 69, 35, 26);
 }
 
-static void Event_FloorGivesWayToUpperMiddleSouthwestLower(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_06, 70, 35, 27);
+static void Event_StepOnCocoon27(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_06, 70, 35, 27);
 }
 
-static void Event_FloorGivesWayToUpperMiddleSouthLower(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_07, 71, 35, 28);
+static void Event_StepOnCocoon28(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_07, 71, 35, 28);
 }
 
-static void Event_FloorGivesWayToUpperMiddleSoutheastLower(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_08, 72, 35, 29);
+static void Event_StepOnCocoon29(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_08, 72, 35, 29);
 }
 
-static void Event_FloorGivesWayToUpperRightNorthwest(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_09, 73, 35, 31);
+static void Event_StepOnCocoon31(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_09, 73, 35, 31);
 }
 
-static void Event_FloorGivesWayToUpperRightNortheast(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_0A, 74, 35, 32);
+static void Event_StepOnCocoon32(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_0A, 74, 35, 32);
 }
 
-static void Event_FloorGivesWayToLowerMiddleCenter(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_0B, 79, 35, 50);
+static void Event_StepOnCocoon50(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_0B, 79, 35, 50);
 }
 
-static void Event_FloorGivesWayToLowerMiddleNorthwest(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_0C, 75, 35, 51);
+static void Event_StepOnCocoon51(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_0C, 75, 35, 51);
 }
 
-static void Event_FloorGivesWayToLowerMiddleNorth(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_0D, 76, 35, 52);
+static void Event_StepOnCocoon52(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_0D, 76, 35, 52);
 }
 
-static void Event_FloorGivesWayToLowerMiddleNortheast(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_0E, 77, 35, 53);
+static void Event_StepOnCocoon53(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_0E, 77, 35, 53);
 }
 
-static void Event_FloorGivesWayToLowerMiddleWestA(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_0F, 78, 35, 54);
+static void Event_StepOnCocoon54(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_0F, 78, 35, 54);
 }
 
-static void Event_FloorGivesWayToLowerMiddleEast(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_10, 80, 35, 55);
+static void Event_StepOnCocoon55(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_10, 80, 35, 55);
 }
 
-/// A second cracked floor over the same lower middle west landing.
-static void Event_FloorGivesWayToLowerMiddleWestB(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_11, 81, 35, 56);
+/// Cocoon 56 lands at the same spot as cocoon 54: their entrances agree.
+static void Event_StepOnCocoon56(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_11, 81, 35, 56);
 }
 
-static void Event_FloorGivesWayToLowerMiddleSouthwest(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_12, 82, 35, 57);
+static void Event_StepOnCocoon57(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_12, 82, 35, 57);
 }
 
-static void Event_FloorGivesWayToLowerMiddleSouth(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_13, 83, 35, 58);
+static void Event_StepOnCocoon58(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_13, 83, 35, 58);
 }
 
-static void Event_FloorGivesWayToLowerMiddleSoutheast(void) {
-  TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_14, 84, 35, 59);
+static void Event_StepOnCocoon59(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_14, 84, 35, 59);
 }
 
-/// Walking off a cracked floor tile lets the next step on it count again.
-static void Event_ResetFloorLatchWhenClear(void) {
+/// Walking on over a cocoon in Tret Tree clears the latch, so the next step on
+/// a cocoon counts again.
+static void Event_ResetCocoonLatch(void) {
   if (Engine_LeaderCheckAhead() == 0)
-    *sLastFloorEntrance = -1;
+    *sLastCocoon = -1;
 }
 
-/// Returns the floor, story, Reveal and search event bindings.
+/// Returns the exits, the cocoons, Tret, Reveal and the chests' events.
 const struct SceneEvent *Scene_GetEvents(void) {
   return gTretTreeInteriorsEvents;
 }
 
-/// Walking up to Tret (touch trigger 40, until FLAG_TRET_DEFEATED): he roars,
-/// the party gathers in front of him, and he scorns them before the battle with
-/// him starts. "Hm... HROOOM!!!" and "You hoped to find my kindly self?" The
-/// battle returns to entrance 19.
+/// Walking up to Tret in Tret Tree (touch cell 40, while FLAG_TRET_DEFEATED is
+/// clear): he roars, the party gathers in front of him, and the evil within
+/// him scorns them before the battle with Tret starts. "Hm... HROOOM!!!" and
+/// "You hoped to find my kindly self?" The battle returns to entrance 19.
 static void Event_FightTret(void) {
   s32 hasMia;
   struct FieldActor *leader;
@@ -332,12 +386,13 @@ static void Event_FightTret(void) {
   EV_END();
 }
 
-/// After the battle: a passage opens beside Tret, who comes to, thanks the
-/// party and says good-bye. "Oh... Mmmmm..." Garet and Ivan stop him and he
-/// asks whether they need something; answering no earns the leader a
-/// scolding. Tret learns he turned the people of Kolima into trees, tries to
-/// free them in a swirl of sparks but cannot, and the party resolve to heal
-/// him. Sets FLAG_TRET_DEFEATED.
+/// After the battle with Tret, in Tret Tree: a passage opens in his room, and
+/// he comes to, thanks the party and says good-bye. "Oh... Mmmmm..." Garet and
+/// Ivan stop him and he asks whether they need something; answering no earns
+/// the leader a scolding. Tret realises that he turned the people of Kolima
+/// into trees, tries to free them in a swirl of sparks but cannot, and the
+/// party resolve to heal him. Sets FLAG_TRET_DEFEATED, which lets Hermes'
+/// Water heal him in Kolima Forest.
 static void TretTreeInteriors_PlayPostBattleConversation(void) {
   s32 hasMia;
   struct FieldActor *partyActor;
@@ -384,7 +439,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   Camera_MoveTo(PIXELS(168), -1, PIXELS(152), 1);
   Engine_CameraWaitForMove();
   WAIT(10);
-  // Open the passage beside Tret before continuing the conversation.
+  // Open the passage in Tret's room before continuing the conversation.
   openingColumn = 10;
   SE(SE_MAP_EXIT);
   Map_CopyCellAttributes(26, 3, 1, 2, openingColumn, 8);
@@ -543,7 +598,10 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   EV_END();
 }
 
-/// Restores the post-battle map and optionally plays its conversation.
+/// Sets the map by FLAG_TRET_DEFEATED: the passage in Tret's room closed
+/// before, open after, with cells near entrance 20 redrawn. With
+/// playRecoveryScene it first plays the conversation after the battle, unless
+/// FLAG_KEEP_PARTY_POSITION is set.
 static void TretTreeInteriors_ApplyPostBattleState(s32 playRecoveryScene) {
   if (playRecoveryScene != 0 && FLAG_CHECK(FLAG_KEEP_PARTY_POSITION) == 0)
     TretTreeInteriors_PlayPostBattleConversation();
@@ -566,7 +624,11 @@ static void TretTreeInteriors_ApplyPostBattleState(s32 playRecoveryScene) {
   }
 }
 
-/// Restores the room, tint and entry fall before continuing its story event.
+/// Tret Tree's setup: places or removes the Tret actors, starts the tint,
+/// redraws the torn cocoons after a battle, sets the map by
+/// FLAG_TRET_DEFEATED, and plays what the entrance calls for: the falls on
+/// from entrances 50, 40, 30 and 20, the landing at entrance 10, or the
+/// conversation after the battle at entrance 19.
 s32 TretTreeInteriors_EnterRoom(void) {
   struct FieldActor *tret;
   struct FieldActor *actor;
@@ -577,8 +639,8 @@ s32 TretTreeInteriors_EnterRoom(void) {
   s32 selectedActorId;
 
   tret = Object_GetById(ACTOR_TRET);
-  // Restore scene-local floor state and the saved palette first.
-  sLastFloorEntrance = (s16 *)gSceneState;
+  // Point the cocoon latch at the scene state and save the palette first.
+  sLastCocoon = (s16 *)gSceneState;
   TretPalette_SaveSceneColors();
   tret->motionFlags = 0;
   tret->y.fixed = -PIXELS(10);
@@ -606,7 +668,8 @@ s32 TretTreeInteriors_EnterRoom(void) {
   layer->offsetY += Iwram_MulQ16(mapWork->minY + PIXELS(136), 0x1999);
   layer->scaleX = 0xe666;
   layer->scaleY = 0xe666;
-  // Four floors start out cracked through: the first step on them gives way.
+  // The map draws four cocoons already torn: the first step on them breaks
+  // through.
   FLAG_SET(FLAG_SCENE_TEMP_01);
   FLAG_SET(FLAG_SCENE_TEMP_0D);
   FLAG_SET(FLAG_SCENE_TEMP_0F);
@@ -618,9 +681,9 @@ s32 TretTreeInteriors_EnterRoom(void) {
   entrance = gGameState.entrance;
   selectedActorId = gGameState.selectedActor;
   actor = Object_GetById(selectedActorId);
-  // Entrances 20, 30, 40 and 50: the leader falls on through the floor, to
+  // Entrances 20, 30, 40 and 50: the leader falls on through the room, to
   // the entrance numbered ten lower. Entrance 10: the leader lands in a cloud
-  // of dust.
+  // of dust in front of Tret.
   // Entrance 19: back from the battle with Tret.
   if (entrance == 50 || entrance == 40 || entrance == 30 || entrance == 20) {
     Engine_EventOpenScreen();
@@ -888,7 +951,8 @@ static void TretTreeInteriors_SpawnSwirlSparks(void) {
   }
 }
 
-/// Restores each enabled single-cell patch whose puzzle flag is set.
+/// Redraws each torn cocoon whose flag is set, as the party left it before a
+/// battle.
 static void TretTreeInteriors_ApplyFlaggedMapPatches(void) {
   s32 patchOffset;
 
@@ -903,14 +967,17 @@ static void TretTreeInteriors_ApplyFlaggedMapPatches(void) {
   }
 }
 
-/// Stops the scene tint while Reveal is active.
+/// Casting Reveal in Tret Tree (its phase 5) stops the scene tint until the
+/// scene is entered again.
 static void Event_CastReveal(void) {
   Engine_TaskRemoveCallback(TretPalette_UpdateSceneTint);
 }
 
 #include "common/effect_advance.h"
 
-/// Drops the leader into the room with a ring of landing particles.
+/// Entrance 10, at the end of the fall from cocoon 50: the leader drops in
+/// from 130 pixels up in front of Tret, lands in a ring of dust and the map
+/// shakes.
 static void TretTreeInteriors_RunLandingDustScene(void) {
   struct EffectOptions options;
   struct FieldPosition velocity;
@@ -984,9 +1051,9 @@ s32 gEffectScript2[] = {
     SC_POS(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
-/// The cracked floors redrawn when the room is restored: floor flag, whether
-/// it is redrawn (not the four that start cracked), source cell x/y,
-/// destination cell x/y.
+/// The torn cocoons redrawn after a battle: the cocoon's flag, whether it is
+/// redrawn (0 for the four the map draws torn), the staging cell x/y and the
+/// cocoon's cell x/y.
 // clang-format off
 s16 gTretTreeInteriors_MapPatches[] = {
     FLAG_SCENE_TEMP_00, 1, 64, 35, 113, 6,
@@ -1238,89 +1305,68 @@ struct SceneEvent gTretTreeInteriorsEvents[] = {
     {EVENT_EXIT, 13, CONDITION_ALWAYS, 13},
     {EVENT_EXIT, 15, CONDITION_ALWAYS, 15},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 21, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 22, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 23, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 24, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 25, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 26, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 27, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 28, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 29, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 31, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 32, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 50, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 51, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 52, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 53, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 54, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 55, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 56, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 57, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 58, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 59, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetFloorLatchWhenClear)},
-    {EVENT_TOUCH, 21, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToUpperMiddleNorthwest)},
-    {EVENT_TOUCH, 22, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToUpperMiddleNortheast)},
-    {EVENT_TOUCH, 23, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToUpperMiddleWestUpper)},
-    {EVENT_TOUCH, 24, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToUpperMiddleWestLower)},
-    {EVENT_TOUCH, 25, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToUpperMiddleSouthwestUpper)},
-    {EVENT_TOUCH, 26, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToUpperMiddleSouthUpper)},
-    {EVENT_TOUCH, 27, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToUpperMiddleSouthwestLower)},
-    {EVENT_TOUCH, 28, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToUpperMiddleSouthLower)},
-    {EVENT_TOUCH, 29, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToUpperMiddleSoutheastLower)},
-    {EVENT_TOUCH, 31, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToUpperRightNorthwest)},
-    {EVENT_TOUCH, 32, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToUpperRightNortheast)},
-    {EVENT_TOUCH, 50, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToLowerMiddleCenter)},
-    {EVENT_TOUCH, 51, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToLowerMiddleNorthwest)},
-    {EVENT_TOUCH, 52, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToLowerMiddleNorth)},
-    {EVENT_TOUCH, 53, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToLowerMiddleNortheast)},
-    {EVENT_TOUCH, 54, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToLowerMiddleWestA)},
-    {EVENT_TOUCH, 55, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToLowerMiddleEast)},
-    {EVENT_TOUCH, 56, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToLowerMiddleWestB)},
-    {EVENT_TOUCH, 57, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToLowerMiddleSouthwest)},
-    {EVENT_TOUCH, 58, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToLowerMiddleSouth)},
-    {EVENT_TOUCH, 59, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_FloorGivesWayToLowerMiddleSoutheast)},
+     EVENT_SCRIPT(Event_ResetCocoonLatch)},
+    {EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon21)},
+    {EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon22)},
+    {EVENT_TOUCH, 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon23)},
+    {EVENT_TOUCH, 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon24)},
+    {EVENT_TOUCH, 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon25)},
+    {EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon26)},
+    {EVENT_TOUCH, 27, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon27)},
+    {EVENT_TOUCH, 28, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon28)},
+    {EVENT_TOUCH, 29, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon29)},
+    {EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon31)},
+    {EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon32)},
+    {EVENT_TOUCH, 50, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon50)},
+    {EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon51)},
+    {EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon52)},
+    {EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon53)},
+    {EVENT_TOUCH, 54, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon54)},
+    {EVENT_TOUCH, 55, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon55)},
+    {EVENT_TOUCH, 56, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon56)},
+    {EVENT_TOUCH, 57, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon57)},
+    {EVENT_TOUCH, 58, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon58)},
+    {EVENT_TOUCH, 59, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon59)},
     {EVENT_TOUCH, 40, FLAG_TRET_DEFEATED, EVENT_SCRIPT(Event_FightTret)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_CastReveal)},

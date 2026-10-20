@@ -1,6 +1,49 @@
 /// @file
-/// Xian: the water carrier who spills her water, Frost on the spill, the kung
-/// fu student and his training tree, Feizhi, and a Mercury Djinni.
+/// Xian (scene 72), the village of kinu, silk, reached through Mogall Forest,
+/// which sends its silk along Silk Road to Tolbi and where martial arts are
+/// taught at Master Feh's school. Its
+/// houses, shops and inn are xian_interiors.c; the school itself is a room of
+/// the Fuchin Temple overlay (FuchinTemple2's entrance 2, fuchin_temple.c).
+///
+/// The village's talk turns on FLAG_XIAN_HEARD_HSU_TRAPPED, which Master
+/// Hama's Reveal lesson at Lama Temple sets: every villager's talk and Mind
+/// Read has a row for each side of it. Before, they welcome the travelers who
+/// came through Mogall Forest (one asks; a no, claiming Altin, is a lie,
+/// since Silk Road is blocked) and talk of silk, kung fu and Master Feh's
+/// school. Feizhi, Master Feh's daughter, stands by the village's south exit
+/// once she has left the school sure that Hsu is in danger
+/// (FLAG_FEIZHI_WENT_TO_HSU, set in fuchin_temple.c), asking whether the
+/// party, "the warriors from the school", are strong, and hoping someone will
+/// take her west; she is gone once she has found the road blocked at Alpine
+/// Crossing (FLAG_FEIZHI_SAW_ROCKSLIDE) or Xian has heard the news.
+/// After, the villagers say that Hsu, Master Feh's apprentice, was trapped
+/// under a boulder in a rockslide on Silk Road, that everyone went to clear
+/// the rocks, and that young warriors saved Altin. Xian_Initialize then also
+/// turns villager 13 west and stands the kung fu student where his strike
+/// leaves him, and Xian_GetPlacements turns villager 15 to face the party.
+///
+/// Two small scenes run on scene flags, which last until the party next
+/// enters a scene other than by returning from a battle:
+/// - the water carrier walks her round (gXian_WaterCarrierRoute). Spoken to
+///   on its eastern part, she spills her water (FLAG_SCENE_TEMP_00): a puddle
+///   spreads at her feet, its cell takes a collision that walking into jumps
+///   the leader over it (Xian_JumpOverSpilledWater), and she walks back for
+///   more. Frost freezes the puddle (FLAG_SCENE_TEMP_01) into ice that can be
+///   stood on. A leader who stands in her way for two seconds makes her raise
+///   trigger 200 (Xian_WatchWaterCarrierPath), and both walk back to the
+///   start of her round.
+/// - the kung fu student shows his strike on the tree before him once
+///   (FLAG_SCENE_TEMP_02), and Force on the tree makes it jump on its own, to
+///   his surprise (FLAG_SCENE_TEMP_03 picks his second line).
+///
+/// Mist, a Mercury Djinni, waits in the village until she joins, which she
+/// does when spoken to.
+///
+/// A jar holds a Lucky Medal. Doors 1 to 5 lead into the houses, shops and
+/// inn (scene 73), door 6 into Xian Sanctum, its sliding door playing SE_188,
+/// door 7 into Master Feh's school, and trigger 8 out to the world map.
+/// Coming back from the school (entrance 10) or the Sanctum (entrance 11)
+/// clears FLAG_SHOW_LOCATION_NAME, so the name is not shown again.
 
 #include "game_state.h"
 #include "unit/import.h"
@@ -60,7 +103,7 @@ enum {
   ACTOR_PUDDLE,
   /// Force's mark on the training tree.
   ACTOR_FORCE_TARGET,
-  ACTOR_DJINNI,
+  ACTOR_MIST, ///< Mist, a Mercury Djinni
   /// The first of three actors kept below the others.
   ACTOR_FIRST_DECORATION
 };
@@ -71,9 +114,10 @@ enum { ANIM_PUDDLE_FROZEN = 5 };
 /// for two seconds.
 enum { XIAN_TRIGGER_CARRIER_BLOCKED = 200, XIAN_CARRIER_BLOCKED_FRAMES = 120 };
 
-/// Talking to the Djinni: it joins the party (Mercury Djinni 2).
-static void Xian_RecruitVillageDjinni(void) {
-  Djinn_JoinParty(ACTOR_DJINNI, ELEMENT_MERCURY, 2);
+/// Talking to Mist in Xian: Mist, a Mercury Djinni (Mercury's Djinni 2),
+/// joins the party.
+static void Xian_MistJoins(void) {
+  Djinn_JoinParty(ACTOR_MIST, ELEMENT_MERCURY, 2);
 }
 
 /// Draws the frozen puddle under the leader while the leader stands on top of
@@ -221,8 +265,9 @@ const struct ScenePlacement *Xian_GetPlacements(void) {
   return gXian_Placements;
 }
 
-/// Asks about the young warriors' way here.
-/// "Young warriors, very gallant! You came through Mogall Forest?"
+/// Villager 9 asks about the young warriors' way here, before Xian hears of
+/// Hsu. "Young warriors, very gallant! You came through Mogall Forest?" A yes
+/// earns respect; a no is a lie, since Silk Road from Altin is blocked.
 static void Xian_AskAboutYoungWarriors(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianYoungWarriorsVeryGallantCame);
@@ -488,8 +533,10 @@ static void Xian_TalkToKungFuStudent(void) {
   }
 }
 
-/// Talking to Feizhi.
-/// "You are the warriors from the school... Are you strong warriors?"
+/// Talking to Feizhi by the south exit, after she has left Master Feh's school
+/// and before Xian hears of Hsu. "You are the warriors from the school... Are
+/// you strong warriors?" A yes: she hopes they will go west; a no: very few
+/// warriors would call themselves weak.
 static void Xian_TalkToFeizhi(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianWarriorsFromSchoolStrongWarriors);
@@ -549,7 +596,9 @@ static void Xian_WalkThroughExit(s32 exitId) {
   Engine_EventRequestExit(exitId);
 }
 
-/// Walking into one of Xian's doors: it opens and the party goes in.
+/// Walking north into one of Xian's doors: it opens and the party goes in.
+/// Doors 1 to 5 lead into the houses, shops and inn, door 6 into Xian
+/// Sanctum (SE_188) and door 7 into Master Feh's school.
 static void Xian_OpenDoorAndLeave(void) {
   struct EventWork *event = gEventWork;
 
@@ -663,8 +712,13 @@ static void Xian_MoveAsideForWaterCarrier(void) {
 
 const struct SceneEvent *Xian_GetEvents(void) { return gXian_Events; }
 
-/// Queues sound 169 and sets up the village as the story and this visit left
-/// it.
+/// Queues and plays SE_169 and sets up the village as the story and this visit
+/// left it: after the news of Hsu (or, back from a battle, after his strike)
+/// the kung fu student stands where his strike leaves him; Feizhi is gone
+/// after the news or once she has seen the rockslide; back from a battle, the
+/// frozen puddle keeps its ice; the water carrier is hooked to
+/// Xian_WatchWaterCarrierPath; and the training tree, its Force mark and the
+/// three actors kept below the others are set in place.
 s32 Xian_Initialize(void) {
   struct FieldActor *actor;
   u32 decorationIndex;
@@ -963,7 +1017,7 @@ struct SceneEvent gXian_Events[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgXianIWasHappyToSeeGems) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEIZHI, CONDITION_ALWAYS, MSGNO(MsgXianWhereAreTheMerchantsNoOne) },
     { SEARCH(SEARCH_JAR), 101, FLAG_XIAN_LUCKY_MEDAL_JAR, FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { EVENT_TALK, ACTOR_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_RecruitVillageDjinni) },
+    { EVENT_TALK, ACTOR_MIST, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_MistJoins) },
     { EVENT_RAISED, XIAN_TRIGGER_CARRIER_BLOCKED, CONDITION_ALWAYS, EVENT_SCRIPT(Xian_MoveAsideForWaterCarrier) },
     { SCENE_EVENTS_END },
 };

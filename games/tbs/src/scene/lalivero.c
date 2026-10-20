@@ -1,10 +1,41 @@
 /// @file
-/// Lalivero, the desert town below Babi Lighthouse.
+/// Lalivero (scene 178), the town by Babi Lighthouse and Venus Lighthouse,
+/// which has been "the symbol of Lalivero since the olden days". The story
+/// brings the party here twice, and Lalivero_GetPlacements and
+/// Lalivero_GetEvents pick the town's people and events for the visit by
+/// FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE, whether the party is back from Venus
+/// Lighthouse (set at its aerie after Sheba's fall).
 ///
-/// Two visits share this scene. On the first, the party and Iodem find Tolbi's
-/// soldiers beaten by Saturos's group, who took Sheba to the ruins under the
-/// lighthouse. After Venus Lighthouse, the party comes back through the aerie's
-/// exit and Iodem gives them the Black Orb that sails Babi's ship.
+/// The party first comes in from the world map (entrance 20 or 21) with Iodem
+/// of Tolbi, and WatchWoundedSoldiers plays
+/// (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN): more of Tolbi's soldiers lie beaten
+/// in the street. They tell Iodem that seven people beat them, the same group
+/// the soldiers had been following, and headed for the ruins beneath Babi
+/// Lighthouse; one of the seven was Sheba, "the holy child of Lalivero", whom
+/// the scholar Kraden was protecting, and Faran, the master of Lalivero,
+/// followed them into the ruins. Iodem resolves to follow, and the story moves
+/// on to Babi Lighthouse. Until the party comes back, the townsfolk mourn
+/// Sheba, whom Tolbi had taken from them, and the guard at the wharf
+/// (WHARF_GUARD) lets no one near "Babi's most precious belonging".
+///
+/// The party comes back from Venus Lighthouse, where Sheba fell from the top
+/// into the sea, by way of Faran's house (lalivero_interiors.c), and Iodem has
+/// asked it to wait for him outside. Its first step onto trigger 50 then plays
+/// ReceiveBlackOrb (FLAG_IODEM_FAREWELL_SEEN): Garet stops the leader, Iodem
+/// comes out of Faran's house and says that the misty island the party saw
+/// from the lighthouse may be Lemuria, the island of the ancients, which could
+/// save Babi's life, and gives the party the Black Orb that sails Babi's ship,
+/// "the ship of the ancients", docked at the edge of town. The wharf's guard
+/// now lets the party through (FLAG_LALIVERO_WHARF_OPEN), trigger 51 turns the
+/// party back toward the ship, a sign stands at the north exit ("No
+/// trespassing. Danger beyond this point."), and the townsfolk talk of the
+/// beacon of Venus Lighthouse and of Sheba's fall.
+///
+/// On both visits Torch, a Mars Djinni, waits in the town until it joins; doors
+/// (EnterDoor) lead into the houses, shops and inn (scenes 179 and 180) and,
+/// through a gate (trigger 6), into the Lalivero Sanctum; exits 20 and 21 lead
+/// to the world map; and a jar, a stone pillar and a chest hold a Water of
+/// Life, a Psy Crystal and a Warrior's Helm.
 
 #include "game_state.h"
 #include "unit/scene/lalivero.h"
@@ -36,8 +67,10 @@ static void TalkToIodemAboutTheShip(void);
 enum {
   ENTRANCE_WORLD_MAP_SOUTH = 20,
   ENTRANCE_WORLD_MAP_NORTH = 21,
-  /// Arriving from Venus Lighthouse's aerie: 90 also plays the talk about the
-  /// ship the party saw from the lighthouse.
+  /// Entrances that set up the later visit, 90 as if the party had also seen
+  /// the ship at Idejima (FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE). XXX: no exit
+  /// leads to them and the entrance table has no row for them, while the
+  /// aerie's exit leads into Faran's house instead; likely starts for testing.
   ENTRANCE_FROM_AERIE = 90,
   ENTRANCE_FROM_AERIE_QUIETLY = 91
 };
@@ -51,12 +84,13 @@ enum {
   WANDERER_WEST = 17,
   WHARF_GUARD = 18, ///< keeps the door to Babi's ship
   IODEM = 22,
-  TORCH = 23,             ///< the Mars Djinni
-  NORTH_EXIT_SPRITE = 24, ///< placed after Venus Lighthouse
+  TORCH = 23, ///< Torch, a Mars Djinni, placed until it joins
+  /// Placed after Venus Lighthouse. "No trespassing. Danger beyond this point."
+  NORTH_EXIT_SIGN = 24,
   ACTOR_BLACK_ORB = 25
 };
 
-/// The door at trigger 6 is a gate two cells wide.
+/// The door at trigger 6, into the Lalivero Sanctum, is a gate two cells wide.
 enum { GATE_TRIGGER = 6 };
 
 enum {
@@ -66,8 +100,9 @@ enum {
   ITEM_ICON_TILE_BYTES = 128
 };
 
-/// Torch, Mars Djinni 6, joins the party.
-static void TalkToTorch(void) { Djinn_JoinParty(TORCH, 2, 6); }
+/// Lalivero, either visit: talking to Torch, a Mars Djinni, makes it join the
+/// party.
+static void TalkToTorch(void) { Djinn_JoinParty(TORCH, ELEMENT_MARS, 6); }
 
 const struct SceneEntrance *Lalivero_GetEntrances(void) {
   return gLaliveroEntrances;
@@ -86,8 +121,8 @@ const struct ScenePlacement *Lalivero_GetPlacements(void) {
   return gLaliveroPlacements;
 }
 
-/// The villager mourning Sheba stops sobbing to answer, faces north again and
-/// goes back to sobbing.
+/// Lalivero, the first visit: the villager mourning Sheba stops sobbing to
+/// say she was taken to the ruins, faces north again and goes back to sobbing.
 static void TalkToMourner(s32 actor) {
   void Actor_FaceDirection();
 
@@ -104,8 +139,8 @@ static void TalkToMourner(s32 actor) {
   Actor_SetActionScript(actor, gLaliveroMournerSobs);
 }
 
-/// After Venus Lighthouse: a villager asks whether the party is leaving
-/// Lalivero, and answers yes or no.
+/// Lalivero, after Venus Lighthouse: a villager asks whether the party is
+/// leaving Lalivero, and wishes it well either way.
 static void TalkToVillagerAskingIfLeaving(s32 actor) {
   s32 message = MsgLaliveroLeavingLalivero;
   Engine_EventSetMessage(message);
@@ -119,8 +154,9 @@ static void TalkToVillagerAskingIfLeaving(s32 actor) {
   Engine_EventShowMessage(actor, 0);
 }
 
-/// Once Iodem has given the Black Orb, the guard at the wharf door lets the
-/// party through and steps aside.
+/// Lalivero, after Venus Lighthouse: the guard at the wharf's door ("I was
+/// told to let you in if you showed up...") lets the party through and steps
+/// aside (sets FLAG_LALIVERO_WHARF_OPEN).
 static void TalkToWharfGuard(void) {
 
   Engine_GameFlagSet(FLAG_LALIVERO_WHARF_OPEN);
@@ -132,8 +168,9 @@ static void TalkToWharfGuard(void) {
   Engine_EventWait(10);
 }
 
-/// The leader walks into a doorway: the door (or the gate) swings open, the
-/// leader steps in and the exit of the touched trigger is taken.
+/// Lalivero: the leader walks into a doorway: the door (or the Sanctum's gate)
+/// swings open, the leader steps in and the exit of the touched trigger is
+/// taken.
 static void EnterDoor(void) {
   s32 door = gEventWork->touchedTrigger;
   s32 x = gLaliveroDoorCells[door][0];
@@ -153,7 +190,8 @@ static void EnterDoor(void) {
   Engine_EventRequestExit(door);
 }
 
-/// An exit with no door: leave by the touched trigger's exit.
+/// Lalivero: a doorway with no door (triggers 8 and 11); leave by the touched
+/// trigger's exit.
 static void TakeTouchedExit(void) {
   struct EventWork *work = gEventWork;
   s16 *trigger = (s16 *)&work->touchedTrigger;
@@ -163,9 +201,13 @@ static void TakeTouchedExit(void) {
   Engine_EventRequestExit(exit);
 }
 
-/// The first visit, arriving from the world map: the party and Iodem find
-/// Tolbi's soldiers beaten in the street. Seven attackers took Sheba to the
-/// ruins under Babi Lighthouse, and Faran followed them.
+/// Lalivero, the first visit, arriving from the world map: the party and Iodem
+/// find more of Tolbi's soldiers beaten in the street. Iodem asks whether they
+/// fought a group of six; there were seven, the same group the soldiers had
+/// been following, and one of them was Sheba, with the scholar Kraden
+/// protecting her. They headed for the ruins beneath Babi Lighthouse, and
+/// Faran, the master of Lalivero, followed them in. The soldiers send the party
+/// on, and Iodem sets off for Babi Lighthouse.
 static void WatchWoundedSoldiers(void) {
   struct FieldActor *leader;
 
@@ -356,10 +398,13 @@ static void WatchWoundedSoldiers(void) {
   Engine_EventEnd();
 }
 
-/// Trigger 50 after Venus Lighthouse, until Iodem has spoken: Garet stops
-/// the leader, Iodem comes out of his house and tells the party that the
-/// misty island they saw may be Lemuria, which could save Babi, and gives them
-/// the Black Orb that sails Babi's ship.
+/// Lalivero, trigger 50 after Venus Lighthouse, until Iodem has spoken
+/// (FLAG_IODEM_FAREWELL_SEEN): Garet stops the leader, for Iodem asked them to
+/// wait. Iodem comes out of Faran's house and tells the party that the misty
+/// island they saw from the lighthouse may be Lemuria, which could save Babi's
+/// life. The party promised Babi to find it, though it means first to find
+/// Jenna, whom it is searching for, and Iodem gives it the Black Orb that
+/// sails Babi's ship. Garet is glad to see the ocean at last.
 static void ReceiveBlackOrb(void) {
   struct FieldActor *leader;
 
@@ -652,8 +697,8 @@ static void ReceiveBlackOrb(void) {
   Engine_EventEnd();
 }
 
-/// The ship the party saw from the lighthouse was not Babi's but, Garet
-/// guesses, Saturos's.
+/// The ship the party saw at Idejima was not Babi's, which is here in
+/// Lalivero, but, Garet guesses, Saturos's.
 static void TalkToIodemAboutTheShip(void) {
   Engine_EventSetMessage(MsgLaliveroThoughtShipWeSawAt);
   Engine_EventWait(20);
@@ -694,9 +739,9 @@ static void TalkToIodemAboutTheShip(void) {
   Event_ShowMessage(IVAN, 0);
 }
 
-/// Trigger 51 at the town exit: Garet turns the leader back toward Babi's
-/// ship and the wharf the guard was keeping.
-static void TurnBackFromTheGate(void) {
+/// Lalivero, trigger 51 after Venus Lighthouse: Garet turns the leader back
+/// toward Babi's ship and the wharf the guard was keeping.
+static void TurnBackToTheShip(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLaliveroWhereGoingArentWeTaking);
   Event_ShowMessage(GARET, 0);
@@ -713,9 +758,9 @@ const struct SceneEvent *Lalivero_GetEvents(void) {
   return gLaliveroEvents;
 }
 
-/// Sets Lalivero up as the party enters: the Black Orb prop, the wounded
-/// soldiers of the first visit (and its cutscene), or the north exit closed
-/// after Venus Lighthouse.
+/// Sets Lalivero up as the party enters: the Black Orb Iodem will hold out,
+/// the wounded soldiers of the first visit (and its cutscene), or the sign at
+/// the north exit after Venus Lighthouse.
 s32 Lalivero_Initialize(void) {
   union FieldObject *object;
   struct AnimationObject *sprite;
@@ -760,10 +805,11 @@ s32 Lalivero_Initialize(void) {
   Engine_HeapRelease(HEAP_ITEM_ICON);
 
   if (GameFlag_IsSet(FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE)) {
-    // Something now stands at the north exit, and its three cells take the
-    // attributes of cell (20, 23).
-    Engine_ActorSetSpriteFlags(Actor_Get(NORTH_EXIT_SPRITE), 0);
-    Actor_Get(NORTH_EXIT_SPRITE)->collisionFlags = 0;
+    // A sign now stands at the north exit, and three cells there take the
+    // attributes of cell (20, 23). XXX: likely closing the way north, since
+    // the sign warns of danger and the townsfolk say the peninsula is flooded.
+    Engine_ActorSetSpriteFlags(Actor_Get(NORTH_EXIT_SIGN), 0);
+    Actor_Get(NORTH_EXIT_SIGN)->collisionFlags = 0;
     Map_CopyCellAttributes(20, 23, 1, 1, 14, 4);
     Map_CopyCellAttributes(20, 23, 1, 1, 15, 4);
     Map_CopyCellAttributes(20, 23, 1, 1, 16, 4);
@@ -1007,7 +1053,7 @@ struct SceneEvent gLaliveroEvents[] = {
 
 struct SceneEvent gLaliveroEventsAfterLighthouse[] = {
     { EVENT_TOUCH, 50, FLAG_IODEM_FAREWELL_SEEN, EVENT_SCRIPT(ReceiveBlackOrb) },
-    { EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(TurnBackFromTheGate) },
+    { EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(TurnBackToTheShip) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(EnterDoor) },

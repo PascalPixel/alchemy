@@ -1,6 +1,23 @@
 /// @file
-/// A branch of Tret, the great tree, where Breeze, a Jupiter Djinni, waits;
-/// touch triggers move the leader and the camera along the branch.
+/// Tret Tree (TretTreeBranch, scene 46), the second of Tret Tree's two scenes.
+/// Tret, the holy tree of Kolima Forest, turned Kolima's people into trees;
+/// the party goes inside him to fight the evil within him, the story
+/// tret_tree_interiors.c (TretTreeInteriors, scene 45) tells. This scene has
+/// no story event and tests no story flag.
+///
+/// Its eight exits (1 to 8) lead back into scene 45; walking into one plays
+/// the exit sound and leaves at once. Touch cells 10 to 15 move the leader and
+/// the camera five or six cells north or south in one step, with no walk.
+/// Breeze, a Jupiter Djinni, stands here until it has joined the party: its
+/// own flag (FLAG_DJINNI_0 + DJINNI_BREEZE) removes its placement. Talking to
+/// it starts a battle with it.
+///
+/// The setup opens the scene with a backdrop fade, blends BG1 over the rest of
+/// the screen and splits BG3's scroll at a scanline that follows the map's
+/// vertical scroll: above the split BG3 drifts one pixel left every four
+/// frames, below it BG3 scrolls with the map. Casting Reveal sets the blend and
+/// the window again as at entry. The overlay also keeps three unused hooks and
+/// a link-cable input exchange no table reaches.
 
 #include "unit/scene/tret_tree_branch.h"
 #include "unit/object/object.h"
@@ -36,9 +53,8 @@
 #include "songs.h"
 #include "event.h"
 
-/// Breeze, the Jupiter Djinni on the branch: Djinni 61 is the name message
-/// "Breeze", and its placement is gone once its flag (FLAG_DJINNI_0 + 61) is
-/// set.
+/// Breeze, a Jupiter Djinni (DJINNI_BREEZE), the only placed actor; its
+/// placement is gone once its flag (FLAG_DJINNI_0 + DJINNI_BREEZE) is set.
 enum { ACTOR_BREEZE = ACTOR_FIRST_PLACED, SPRITE_JUPITER_DJINNI = 0x5d };
 
 /// Starts the scanline-dependent BG3 scroll callbacks.
@@ -50,7 +66,8 @@ static s32 sSplitLine;
 static u16 sHofsAtOrAfterSplit;
 static u16 sHofsBeforeSplit;
 
-/// Talking to Breeze: the Djinni hops and its battle starts.
+/// Talking to Breeze in Tret Tree: the Djinni hops and the battle with it
+/// starts.
 static void Event_TalkToBreeze(void) {
   Field_RequestDjinnBattle(ACTOR_BREEZE, DJINNI_BREEZE);
 }
@@ -104,38 +121,42 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
   }
 }
 
-/// Touch trigger 10: the leader and camera move 80 pixels south at once.
+/// Touch cell 10 in Tret Tree: the leader and camera move 80 pixels south at
+/// once.
 static void Event_ShiftSouthFiveCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 5);
 }
 
-/// Touch trigger 11: the leader and camera move 80 pixels north at once.
+/// Touch cell 11 in Tret Tree: the leader and camera move 80 pixels north at
+/// once.
 static void Event_ShiftNorthFiveCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -5);
 }
 
-/// Touch trigger 12: the same 80-pixel move south as trigger 10.
+/// Touch cell 12 in Tret Tree: the same 80-pixel move south as cell 10.
 static void Event_ShiftSouthFiveCellsSecond(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 5);
 }
 
-/// Touch trigger 13: the same 80-pixel move north as trigger 11.
+/// Touch cell 13 in Tret Tree: the same 80-pixel move north as cell 11.
 static void Event_ShiftNorthFiveCellsSecond(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -5);
 }
 
-/// Touch trigger 14: the leader and camera move 96 pixels south at once.
+/// Touch cell 14 in Tret Tree: the leader and camera move 96 pixels south at
+/// once.
 static void Event_ShiftSouthSixCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 6);
 }
 
-/// Touch trigger 15: the leader and camera move 96 pixels north at once.
+/// Touch cell 15 in Tret Tree: the leader and camera move 96 pixels north at
+/// once.
 static void Event_ShiftNorthSixCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -6);
 }
 
-/// Walking into one of exits 1 to 8: the exit sound plays and the party
-/// leaves by the exit touched.
+/// Walking into one of exits 1 to 8 in Tret Tree: the exit sound plays and the
+/// party leaves by the exit touched, into Tret Tree's other scene (45).
 static void Event_TakeTouchedExit(void) {
   struct EventWork *state = gEventWork;
   s16 *touchedExit;
@@ -153,7 +174,7 @@ TretTreeBranch_SetRevealWindow(struct DisplayTransitionState *state) {
   state->value = 10;
 }
 
-/// Casting Reveal on the branch (its phase 2): the window transition and BG1's
+/// Casting Reveal in Tret Tree (its phase 2): the window transition and BG1's
 /// blend over the rest of the screen are set again, as when the scene opened.
 static void Event_CastReveal(void) {
   struct DisplayTransitionState *transition;
@@ -167,7 +188,7 @@ static void Event_CastReveal(void) {
   TretTreeBranch_SetRevealWindow(transition);
 }
 
-/// Returns the touch, talk, exit and Reveal events for this branch.
+/// Returns the scene's exit, touch, talk and Reveal events.
 const struct SceneEvent *TretTreeBranch_GetEvents(void) {
   return gTretTreeBranch_Events;
 }

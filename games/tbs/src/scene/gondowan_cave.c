@@ -1,6 +1,56 @@
 /// @file
-/// Gondowan Cave: the soldiers guarding the bridge to Gondowan, Iodem waiting
-/// there on the way to Babi Lighthouse, and the cave's moving puzzles.
+/// Gondowan Passage, the guarded bridge into Gondowan, and Gondowan Cave, the
+/// cave east of it.
+///
+/// - Gondowan Passage (GondowanCave1, scene 152), between two points of the
+///   world map (exits 1 and 2, its entrances 25 and 54). Three soldiers guard
+///   the bridge to Gondowan, and Retreat does not work here
+///   (FLAG_RETREAT_BLOCKED, set on every entry). At first the first soldier
+///   asks `Do you wish to cross into Gondowan?` and lets the party pass either
+///   way, sending them to watch Colosso in Tolbi until it is over
+///   (FLAG_COLOSSO_OVER); the second grumbles in his mind about missing it,
+///   and the third warns that no one gets through the cave to the east
+///   to Kalay: those who tried never returned.
+///
+///   After Colosso, Lord Babi of Tolbi asks the party to go to Venus
+///   Lighthouse with Iodem, who commands his soldiers, and Iodem goes ahead
+///   to wait for them at the passage. Once Babi has spoken
+///   (FLAG_BABI_SPOKE_AFTER_COLOSSO) the scene takes other placements and
+///   events: Iodem stands in the passage, and the soldiers talk of him.
+///   Talking to him, or walking up to him while he is not with the party
+///   (trigger 11), makes him join it (FLAG_IODEM_FOLLOWING_PARTY): `I've been
+///   waiting for you, Isaac! We should go to Babi Lighthouse soon.` While he
+///   travels with them, entering keeps his actor out of sight, and until he
+///   has reached Babi Lighthouse (FLAG_IODEM_AT_BABI_LIGHTHOUSE) turning back
+///   (trigger 10) brings him out to ask `Why are you going back, Isaac?` If
+///   the party has something to fetch, he stays to wait, and a defeat now
+///   returns them to the Tolbi Sanctum (TolbiInteriors, entrance 30); if not,
+///   he rejoins them.
+/// - Gondowan Cave (GondowanCave2 and GondowanCave3, scenes 157 and 158), the
+///   cave that, the soldiers say, no one gets through. Someone in Tolbi's
+///   houses thinks the same (tolbi_interiors.c, Mind Read on actor 29):
+///   `Not unless you can lift boulders, at any rate.` Both ways in are in
+///   scene 158 (exits 1 and 6, the world map's entrances 26 and 41), and
+///   scene 157 lies between two parts of it (158's exits 2 and 5 lead in,
+///   157's exits 1 and 4 back).
+///
+///   In scene 158 a stump answers Move from column 30 or less: it spins,
+///   leaps across and lies where it lands, freeing the cell where it stood
+///   (FLAG_GONDOWAN_CAVE_FIRST_LEAP_COMPLETE). A pillar is pushed by walking
+///   into it, east or west, or moved with Move; once it is past column 42 it
+///   drops into its place for good, shown from then on by a second actor
+///   (FLAG_GONDOWAN_CAVE_SECOND_OBJECT_MOVED). Both are story flags, so the
+///   cave stays solved. Lift raises a boulder in each scene; in 158 it also
+///   takes away the invisible actor beside it (actor 12, sprite 0x16). Two
+///   chests in scene 157 hold an Apple and a Lucky Medal (each scene's table
+///   carries their search events). Arriving by entrance 1 always gives cell
+///   (107, 17) the attributes it takes when the pillar drops, and leaving by
+///   exit 1 runs an event: with temporary flag 0x204 set, which no code in
+///   this overlay sets, it first puts the puzzle's flags into one
+///   arrangement.
+///
+/// Every scene shares one exit table; the getters choose each scene's other
+/// tables, and an empty set serves any other scene number.
 #include "game_state.h"
 #include "global_cells.h"
 #include "scene_ids.h"
@@ -31,14 +81,14 @@
 #include "songs.h"
 #include "event.h"
 
-// The first room's actors: the soldiers who guard the bridge, and Iodem.
+// Gondowan Passage's actors: the soldiers who guard the bridge, and Iodem.
 #define SOLDIER_1 8
 #define SOLDIER_2 9
 #define SOLDIER_3 10
 #define IODEM 11
 
-// The third room's actors: two objects the party moves, and the one that
-// stands in for the second once it has moved.
+// Gondowan Cave's actors in scene 158: the stump and the pillar the party
+// moves, and the actor that stands in for the pillar once it has dropped.
 #define FIRST_OBJECT 8
 #define SECOND_OBJECT 9
 #define SECOND_OBJECT_MOVED 10
@@ -74,10 +124,11 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-/// All cave sections share the exit table.
+/// Every scene of the overlay shares one exit table.
 const u32 *Scene_GetExits(void) { return gGondowanCaveExits; }
 
-/// Iodem waits in the first room once he is on his way to Babi Lighthouse.
+/// Iodem waits in Gondowan Passage once Babi has spoken to the party after
+/// Colosso.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -96,7 +147,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gGondowanCavePlacementsOther;
 }
 
-/// Each room's events, with Iodem's in the first room when he is there.
+/// Each scene's events, with Iodem's in Gondowan Passage when he is there.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -115,9 +166,10 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gGondowanCaveEventsOther;
 }
 
-/// Walking back (trigger 10) with Iodem in the party: he steps out and
-/// asks why Isaac is going back. Yes: he waits here for the party's return.
-/// No: he rejoins the party and Isaac steps away from the trigger.
+/// Turning back in Gondowan Passage (trigger 10) with Iodem in the party,
+/// until he has reached Babi Lighthouse: he steps out and asks why Isaac is
+/// going back. Yes: he waits here for the party's return. No: he rejoins the
+/// party and Isaac steps away from the trigger.
 static void Event_IodemAsksWhyTurningBack(void) {
   struct FieldActor *leader;
 
@@ -169,9 +221,9 @@ static void Event_IodemAsksWhyTurningBack(void) {
   }
 }
 
-/// Talking to Iodem where he waits, or walking up to him (trigger 11): he joins
-/// the party again. "I've been waiting for you, Isaac! We should go to Babi
-/// Lighthouse soon."
+/// Talking to Iodem where he waits in Gondowan Passage, or walking up to him
+/// (trigger 11) while he is not with the party: he joins it. `I've been
+/// waiting for you, Isaac! We should go to Babi Lighthouse soon.`
 static void Event_IodemRejoins(void) {
   EV_BEGIN();
   OBJ_FACE(IODEM, ACTOR_PARTY_LEADER, 0);
@@ -196,10 +248,12 @@ static void Event_IodemRejoins(void) {
   EV_END();
 }
 
-/// Talking to the first soldier, who asks whether the party will cross into
-/// Gondowan. "Do you wish to cross into Gondowan?" Yes: "I won't stop you, but
-/// I wouldn't go unless I had business there." No: "That's a good idea. They
-/// wouldn't let you into Babi Lighthouse, anyway."
+/// Talking to the first soldier in Gondowan Passage before Babi has spoken
+/// after Colosso: he asks whether the party will cross into Gondowan. `Do you
+/// wish to cross into Gondowan?` Yes: `I won't stop you, but I wouldn't go
+/// unless I had business there.`, with advice to watch Colosso until it is
+/// over. No: `That's a good idea. They wouldn't let you into Babi Lighthouse,
+/// anyway.`
 static void Event_SoldierAsksAboutCrossing(void) {
   s32 firstMessage;
 
@@ -220,9 +274,10 @@ static void Event_SoldierAsksAboutCrossing(void) {
   }
 }
 
-/// Mind Read on the second soldier: once flag 0x950 is set and until Iodem
-/// waits here, he grumbles that guard duty made him miss all of Colosso;
-/// before, that the warriors fight while he guards the bridge.
+/// Mind Read on the second soldier in Gondowan Passage, before Babi has
+/// spoken after Colosso: once Colosso is over (FLAG_COLOSSO_OVER) he grumbles
+/// that guard duty made him miss all of it; before, that the warriors fight
+/// while he guards the bridge.
 static void Event_ReadSoldierMind(void) {
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0 &&
       Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0)
@@ -232,8 +287,9 @@ static void Event_ReadSoldierMind(void) {
   MESSAGE_PUT(SOLDIER_2, 0);
 }
 
-/// Leaving the third room by its first exit (trigger 1). With temporary flag
-/// 0x204 set, the puzzle's saved flags return to one arrangement first.
+/// Leaving Gondowan Cave's scene 158 by its first exit (collision code 1), out
+/// to the world map. With temporary flag 0x204 set, the puzzle's saved flags
+/// return to one arrangement first.
 static void Event_LeaveThroughEntrance(void) {
   struct EventWork *event;
 
@@ -253,12 +309,13 @@ static void Event_LeaveThroughEntrance(void) {
   EV_END();
 }
 
-/// Walking into the second object from the east or the west (triggers 10
-/// and 11): look at what is ahead, which starts the push.
+/// Walking into the pillar in Gondowan Cave (scene 158) from the west or the
+/// east (triggers 10 and 11): look at what is ahead, which starts the push.
 static void Event_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
-/// Move on the first object: from column 30 or less it spins and leaps across,
-/// freeing the cell where it stood.
+/// Move on the stump in Gondowan Cave (scene 158), until it has leapt: from
+/// column 30 or less it spins and leaps across, freeing the cell where it
+/// stood.
 static void Event_MoveFirstObject(void) {
   Object_GetById(FIRST_OBJECT);
   EV_BEGIN();
@@ -274,23 +331,22 @@ static void Event_MoveFirstObject(void) {
   EV_END();
 }
 
-/// Pushing the second object (trigger 50): it moves a step, then may have
-/// reached its place.
+/// Pushing the pillar in Gondowan Cave (scene 158, trigger 50): it moves a
+/// step, then may have reached its place.
 static void Event_PushSecondObject(void) {
   StagedActor_AdvancePair();
   Event_MoveSecondObject();
 }
 
-/// Hides the second object and shows the one that stands in for it in its
-/// place.
+/// Hides the pillar and shows the actor that stands in for it in its place.
 static inline void GondowanCave_PlaceMovedSecondObject(s32 animation) {
   OBJ_POS_SET(SECOND_OBJECT, 0, 0);
   OBJ_POS_SET(SECOND_OBJECT_MOVED, 696, 288);
   OBJ_MODE(SECOND_OBJECT_MOVED, animation);
 }
 
-/// Move on the second object, and after each push: past column 42 it drops
-/// into its place for good.
+/// Move on the pillar in Gondowan Cave (scene 158), and after each push: past
+/// column 42 it drops into its place for good.
 static void Event_MoveSecondObject(void) {
   EV_BEGIN();
   if ((Object_GetById(SECOND_OBJECT)->x.fixed >> 20) > 42) {
@@ -383,11 +439,13 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
 
 static UNUSED void GondowanCave_UnusedSceneCallback(void) {}
 
-/// Lift on the third room's actor 11 also takes away actor 12 beside it.
+/// Lift on the boulder in Gondowan Cave (scene 158, actor 11) also takes away
+/// the invisible actor beside it (actor 12, sprite 0x16).
 static void Event_LiftObject(void) { Engine_ActorSetPosition(12, 0, 0); }
 
-/// The first room keeps Iodem out of sight while he travels with the party;
-/// the third puts the moved objects where the party left them.
+/// Sets up the scene as the party enters. Gondowan Passage blocks Retreat and
+/// keeps Iodem out of sight while he travels with the party; Gondowan Cave's
+/// scene 158 puts the stump and the pillar where the party left them.
 s32 Scene_Initialize(void) {
   struct FieldActor *actor;
 

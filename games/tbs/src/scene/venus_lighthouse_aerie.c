@@ -1,7 +1,59 @@
 /// @file
-/// Venus Lighthouse's aerie: the pillars the leader jumps between, the Shaman's
-/// Rod handed over for Sheba, and the battle with Saturos and Menardi, who
-/// fuse.
+/// Lighthouse Aerie (VenusLighthouseAerie, scene 187), the top of Venus
+/// Lighthouse, where the pursuit of Saturos and Menardi ends. The scene is one
+/// scripted sequence cut by two battles and two trips to the world map; each
+/// part starts in VenusLighthouseAerie_Initialize from the entrance the part
+/// before sent the party to, and every arrival blocks Retreat and sets
+/// FLAG_VENUS_LIGHTHOUSE_LIT.
+///
+/// Saturos and Menardi, who call themselves the Fire Clan of the north, have
+/// reached the beacon with Felix, whom Menardi calls Isaac's childhood friend,
+/// and Sheba, the girl they took from Lalivero, whom Faran raised: they keep
+/// her because they cannot enter Jupiter Lighthouse without a Wind Adept.
+/// Felix has sent Jenna and the others ahead to the dock at Idejima. In story
+/// order:
+/// - The arrival (entrance 1, from VenusLighthouse6;
+///   VenusLighthouseAerie_OverhearSaturosAndMenardi). A pillar carries the
+///   leader up, and the party overhears Saturos and Menardi about to light the
+///   beacon and Felix demanding that they free Sheba as they promised. They
+///   turn on him, and Garet, Ivan and Mia see their only chance to stop the
+///   beacon being lit (a yes or a no, then on).
+/// - Six pillars to jump between before the beacon (triggers 10 and 11); each
+///   dips under the leader as he lands (FLAG_SCENE_TEMP_50 while he stands on
+///   one).
+/// - The confrontation (touch trigger 5, Event_ConfrontSaturosAndMenardi).
+///   Sheba, reading the party's minds, thinks the rod it carries is the one
+///   that reaches Jupiter Lighthouse; Saturos promises not to harm her for the
+///   Shaman's Rod, Isaac hands it over through Felix (FLAG_SHAMANS_ROD_OWNER
+///   plus the member who carried it), and Saturos says he never said he would
+///   let her go. The battle follows (encounter table 98, entry 1).
+/// - After it (entrance 2, VenusLighthouseAerie_CombineSaturosAndMenardi).
+///   Felix will still have the beacons lit, Saturos throws the Venus Star into
+///   the lighthouse, and the beacon's light restores the two Fire Adepts'
+///   Psynergy; Menardi taunts Felix over his childhood friend until he leaves
+///   with Sheba, and Saturos and Menardi fuse. Party_RestorePpOfLitElements
+///   refills the PP of the party's Adepts whose lighthouses are lit, and the
+///   second battle follows (entry 0).
+/// - After that (entrance 3,
+///   VenusLighthouseAerie_FinishSaturosAndMenardiBattle). Saturos and Menardi
+///   fall into the lighthouse; the party wonders whether it has won; Felix,
+///   who says he must still light the beacons, takes Sheba and goes; the
+///   beacon erupts and splits the aerie, its light lifts the party away, and
+///   the world map (its entrance 91) plays the lighthouse's transition and
+///   sends the party back to entrance 93.
+/// - A look back (entrance 93, VenusLighthouseAerie_ShowShebaInDanger): Felix
+///   calls to Sheba as she clings to the broken aerie, and the world map
+///   returns (exit 1, its entrance 73) with its music kept, then sends the
+///   party back to entrance 4.
+/// - Sheba's fall (entrance 4, VenusLighthouseAerie_StageShebasFall). The
+///   foundations crumble, Sheba lets go, and Felix leaps after her. The party
+///   resolves to find Jenna and the others at Idejima, but a long search finds
+///   no sign of Jenna, and the party is taken to Lalivero (exit 2, scene 180's
+///   entrance 99) with FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE set.
+///
+/// A lost battle brings the party to entrance 9, which gives the Shaman's Rod
+/// back to whoever carried it and leaves for Lalivero Sanctum (exit 9, scene
+/// 179's entrance 12).
 
 #include "script.h"
 #include "game_state.h"
@@ -71,7 +123,7 @@
 #define FLAG_SHAMANS_ROD_OWNER 0x345
 
 static void Event_SteadyPillars(void);
-static void VenusLighthouseAerie_EnterAndConfrontAntagonists(void);
+static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void);
 static void VenusLighthouseAerie_ShowPartyMember(s32 actor, s32 shown);
 static void VenusLighthouseAerie_FlashActorPalette(struct FieldActor *actor);
 static void
@@ -186,7 +238,8 @@ const u32 *VenusLighthouseAerie_GetExits(void) {
   return gVenusLighthouseAerieExits;
 }
 
-/// Returns the platforms, antagonists, companions and beacon effects.
+/// Returns the floor sections, pillars, Saturos and Menardi, Felix and Sheba,
+/// the party and the beacon effects.
 const struct ScenePlacement *VenusLighthouseAerie_GetPlacements(void) {
   return gVenusLighthouseAeriePlacements;
 }
@@ -294,7 +347,11 @@ const struct SceneEvent *VenusLighthouseAerie_GetEvents(void) {
   return gVenusLighthouseAerieEvents;
 }
 
-/// Restores the platforms and runs the scene selected by the arrival.
+/// Sets up the floor sections and the six pillars, then runs the part of the
+/// sequence the entrance selects (the arrival only when not back from a
+/// battle), or, after a lost battle, gives back the Shaman's Rod and leaves
+/// for Lalivero Sanctum. Back from a battle, the pillar nearest the leader
+/// stands still.
 s32 VenusLighthouseAerie_Initialize(void) {
   s32 mirroredScale;
   u32 pillarId;
@@ -329,7 +386,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
   switch (entrance) {
   case AERIE_ENTRANCE_ARRIVAL:
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-      VenusLighthouseAerie_EnterAndConfrontAntagonists();
+      VenusLighthouseAerie_OverhearSaturosAndMenardi();
     }
     break;
   case AERIE_ENTRANCE_AFTER_FIRST_BATTLE:
@@ -383,7 +440,7 @@ static void VenusLighthouseAerie_FaceActor(s32 actor, s32 facing) {
 }
 
 /// Brings the party onto the aerie and reveals the argument over Sheba.
-static void VenusLighthouseAerie_EnterAndConfrontAntagonists(void) {
+static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   struct FieldActor *arrivalPlatform;
   struct FieldActor *leader;
 
@@ -683,9 +740,14 @@ static void VenusLighthouseAerie_ShowPartyMember(s32 actorId, s32 shown) {
   }
 }
 
-/// Walking up to Saturos and Menardi: they promise not to harm Sheba for the
-/// Shaman's Rod, Felix carries it over, they will not let her go, and the
-/// battle begins.
+/// Walking up to Saturos and Menardi (touch trigger 5): Felix refuses to be
+/// rescued, Sheba reads the party's minds for the rod that reaches Jupiter
+/// Lighthouse, they promise not to harm her for the Shaman's Rod, Felix
+/// carries it over, they will not let her go, and the first battle begins. It
+/// sets FLAG_SHAMANS_ROD_OWNER plus the member who carried the rod, and 0x350
+/// as the battle starts (XXX: VenusLighthouse3 uses 0x350, in the same place
+/// group, for its Psynergy Stone; nothing here reads it, so what it marks is
+/// not known).
 static void Event_ConfrontSaturosAndMenardi(void) {
   s32 rodOwner;
   struct FieldActor *object;
@@ -1207,7 +1269,12 @@ static inline void VenusLighthouseAerie_ShowGroupEmote(s32 emote,
   Actor_ShowEmote(MIA, emote, waitFrames);
 }
 
-/// Shows the Venus Star lighting the beacon and the antagonists combining.
+/// Back from the first battle (entrance 2): Felix will still have the beacons
+/// lit, Saturos throws the Venus Star into the lighthouse, its light restores
+/// Saturos and Menardi, Felix leaves with Sheba, and the two fuse. Refills the
+/// PP of the party's Adepts whose lighthouses are lit, starts the second
+/// battle and sets 0x351 (XXX: VenusLighthouse6's Psynergy Stone flag, as 0x350
+/// is in Event_ConfrontSaturosAndMenardi).
 static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   struct EffectOptions menardiBurst;
   s32 velocity[3];
@@ -1316,7 +1383,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
     gEventWork->message++;
   }
 
-  // The defeated antagonists recover before using the Venus Star.
+  // Saturos and Menardi recover from their defeat before using the Venus Star.
   Actor_Stop(ACTOR_SATUROS);
   Actor_Stop(ACTOR_MENARDI);
   Task_Wait(1);
@@ -1659,7 +1726,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Actor_StartRepeatedMotion(GARET, 2);
   VenusLighthouseAerie_ShowMessage(GARET);
   Event_PlayCue(MUS_017);
-  // Flash the antagonists and release their matching radial bursts.
+  // Flash Saturos and Menardi and release their matching radial bursts.
   ColorBuffer_ApplyTarget(0x40250d, 1);
   ColorBuffer_Interpolate(40);
   VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH + FACING_STEP);
@@ -1893,7 +1960,8 @@ static void VenusLighthouseAerie_UpdateBeamActors(void) {
   }
 }
 
-/// Plays the antagonists' defeat, the party discussion and the beacon eruption.
+/// Plays Saturos and Menardi's defeat, the party's discussion and the beacon's
+/// eruption.
 static void VenusLighthouseAerie_FinishSaturosAndMenardiBattle(void) {
   Engine_EventBegin();
   VenusLighthouseAerie_ShowSaturosAndMenardiFall();
@@ -1902,8 +1970,9 @@ static void VenusLighthouseAerie_FinishSaturosAndMenardiBattle(void) {
   Engine_EventEnd();
 }
 
-/// A look back from the world map: Felix cries out as Sheba clings to the
-/// broken aerie, then the world map returns with its music still playing.
+/// A look back from the world map (entrance 93, after the world map's
+/// lighthouse transition): Felix cries out as Sheba clings to the broken
+/// aerie, then the world map returns with its music still playing (exit 1).
 static void VenusLighthouseAerie_ShowShebaInDanger(void) {
   Engine_EventBegin();
   VenusLighthouseAerie_RestorePartyOnBrokenAerie();
@@ -1919,7 +1988,9 @@ static void VenusLighthouseAerie_ShowShebaInDanger(void) {
   Engine_EventEnd();
 }
 
-/// Stages the broken aerie for the fall sequence and the party escape.
+/// Back from the world map (entrance 4): stages the broken aerie for Sheba's
+/// fall and the party's escape, plays them, sets
+/// FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE and leaves for Lalivero (exit 2).
 static void VenusLighthouseAerie_StageShebasFall(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -2530,7 +2601,9 @@ static void VenusLighthouseAerie_TryToPreventFall(void) {
   VenusLighthouseAerie_ShowMessage(SHEBA);
 }
 
-/// Shows Sheba falling, Felix jumping after her and the party escaping.
+/// Shows Sheba falling, Felix jumping after her and the party escaping: it
+/// resolves to find Jenna and the others at Idejima, and a long search finds
+/// no sign of Jenna.
 static void VenusLighthouseAerie_PlayShebasFall(void) {
   struct FieldActor *actor;
   s32 stepPending;

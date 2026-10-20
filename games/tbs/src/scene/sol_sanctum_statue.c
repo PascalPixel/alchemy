@@ -1,7 +1,62 @@
 /// @file
-/// Sol Sanctum's statue hall: four statues pushed onto their seals and two that
-/// shine their beams at the centre open a hole in the hall's floor, and Kraden
-/// explains the puzzle.
+/// Sol Sanctum (scene 12, a row of the scene table with no symbol), the room
+/// of what Kraden calls the statue puzzle.
+///
+/// Isaac, Garet and Jenna have come into the sanctum with Kraden, the sage
+/// who teaches in Vale, looking for the hidden passage that two strangers,
+/// Saturos and Menardi, spoke of. Kraden has found the Luna and Sol rooms
+/// (scene 11) and waits there, sending the party to look farther up the
+/// passage; this room opens off them (its exit 1, their entrance 2), and its
+/// exit 2 leads into a room with a Psynergy Stone (scene 13).
+///
+/// Eight statues stand here around a ninth in the centre. Four can be pushed,
+/// or moved with Move, onto seals in the floor; two others, pushed in front
+/// of the centre statue, shine a beam at it; the last two never move. Each
+/// statue answers both ways: walking into it pushes it a cell
+/// (SolSanctumStatue_PushStatue), and Move ends in a check of where it
+/// stands. Every move's event row carries the flag of what it achieves (a
+/// seal open, a beam shining, the centre statue moved), so a statue stops
+/// answering once it has done its part; SolSanctumStatue_Initialize redraws
+/// the room from those story flags on every entry, statues in their places
+/// and seals and beams drawn in.
+///
+/// The puzzle is a trap, and the room's logic follows it in story order:
+/// - Until the centre statue has moved (FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED),
+///   the scene cuts away when a seal first opens (SolSanctumStatue_OpenSeal):
+///   SolSanctumStatue_SelectStoryExit takes exit 4 to the Luna and Sol rooms,
+///   where the quarter of the pictures the seal lights flashes and lights
+///   fall through the Luna room around Kraden
+///   (FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) and he cries `Stop!!! You're
+///   about to make a big mistake!` He runs here after the party (entrance 4)
+///   to warn that moving one statue springs the sanctum's trap, set by
+///   someone who hid something very important here, perhaps the key to
+///   Alchemy, and that the light must be the key to the secret
+///   (SolSanctumStatue_ExplainStatuePuzzle, once,
+///   FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED). After that a seal opened too
+///   soon closes again: its statue slides back and the leader jumps clear.
+/// - The beams are the way through. With both shining, the floor before the
+///   centre statue opens (SolSanctumStatue_OpenCentralHole), and the centre
+///   statue, moved south with Move, slides into the hole and the room shakes:
+///   `Something clicked!` (Event_CenterStatueMoved).
+/// - From then on the seals stay open. The first one opened cuts away by exit
+///   3: in the Luna and Sol rooms the quarter it lights only flashes, and
+///   Kraden runs off to see what Isaac has found
+///   (FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG), and he comes here (entrance 3) to
+///   find the hole. Garet and Jenna tell him how it opened; he decides that
+///   the statue puzzle was the trap and the centre statue there to disarm it,
+///   and goes back to watch from the Luna room
+///   (SolSanctumStatue_ExplainTrapDisarmed, once,
+///   FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED). Once all four seals are open,
+///   the picture of Luna in the Luna and Sol rooms has changed to Sol, and
+///   the way on is found there.
+///
+/// Both of Kraden's visits are scripted scenes that hold Jenna and Garet in
+/// place beside the leader, then walk them back into the party; any other
+/// arrival hides them. Retreat does not work here, a callback draws three
+/// rows of sprites that drift sideways at different speeds
+/// (SolSanctumStatue_UpdateScrollingSprites), and once Mt. Aleph has erupted
+/// (FLAG_SOL_SANCTUM_ERUPTED) the room rumbles and shakes gently, as the rest
+/// of the sanctum does.
 
 #include "game_state.h"
 #include "version.h"
@@ -39,7 +94,7 @@
 
 // Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another place group, and other places use the numbers for their own.
-#define FLAG_SOL_SANCTUM_STATUE_HALL_VISITED 0x30a
+#define FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED 0x30a
 #define FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED 0x30b
 
 #if TBS_PATCH_3
@@ -52,7 +107,7 @@
 #define SOL_SANCTUM_STATUE_SPRITE_WIDTH 32
 
 // Scene flags, cleared on every ordinary entrance:
-// - FLAG_SCENE_TEMP_07: both beams have opened the hole in the hall's floor;
+// - FLAG_SCENE_TEMP_07: both beams have opened the hole in the floor;
 //   until then, Move on the centre statue first walks the leader clear of it.
 
 static void SolSanctumStatue_InitializeScrollingSprites(void);
@@ -102,10 +157,11 @@ struct SealScene {
 
 STATIC_ASSERT(offsetof(struct SealScene, unused) == 0xc4);
 
-/// The placed actors: Kraden, the eight statues, and the centre statue in its
-/// two places. Of the statues, four are pushed onto seals and two shine beams
-/// at the centre; the other two never move.
-enum StatueHallActor {
+/// The placed actors: Kraden, who stays out of sight until his two visits,
+/// the eight statues, and the centre statue in its two places. Of the
+/// statues, four are pushed onto seals and two shine beams at the centre; the
+/// other two never move.
+enum SolSanctumStatueActor {
   ACTOR_KRADEN = ACTOR_FIRST_PLACED,
   ACTOR_NORTHWEST_STATUE,
   ACTOR_LEFT_BEAM_STATUE,
@@ -147,11 +203,12 @@ const struct SceneEvent *SolSanctumStatue_GetEvents(void) {
   return gSolSanctumStatue_Events;
 }
 
-/// Chooses the cutscene in the Luna and Sol rooms that a newly opened seal
-/// leads to, and requests its exit: the trap (exit 3) once the centre statue
-/// has moved, until FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG is set; the falling
-/// lights (exit 4) before then, until FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN is
-/// set. Returns 1 when it requests an exit, otherwise -1.
+/// Chooses the scripted scene in the Luna and Sol rooms that a newly opened
+/// seal leads to, and requests its exit: once the centre statue has moved,
+/// the quarter it lit flashing in the Luna and Sol rooms (exit 3), until
+/// FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG is set; before then, the falling
+/// lights (exit 4), until FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN is set.
+/// Returns 1 when it requests an exit, otherwise -1.
 static s32 SolSanctumStatue_SelectStoryExit(void) {
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) != 0) {
     if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG) == 0) {
@@ -165,9 +222,9 @@ static s32 SolSanctumStatue_SelectStoryExit(void) {
   return -1;
 }
 
-/// Animates the floor opening after both light beams meet, then lets the
-/// centre statue drop in if it stands there. Called by the beams, the second
-/// one shining. Sets FLAG_SCENE_TEMP_07.
+/// Animates the floor opening before the centre statue once both beams shine,
+/// then lets the statue drop in if Move has already brought it there. Called
+/// by whichever beam shines second. Sets FLAG_SCENE_TEMP_07.
 static void SolSanctumStatue_OpenCentralHole(void) {
   s32 flash;
 
@@ -193,12 +250,16 @@ static void SolSanctumStatue_OpenCentralHole(void) {
   Event_CenterStatueMoved();
 }
 
-/// Kraden comes back after the trap to find the hole in the floor, has the
-/// party tell how it opened, and decides the statue disarmed the trap. Called
-/// by SolSanctumStatue_Initialize at entrance 3 (back from the trap) until
-/// FLAG_SOL_SANCTUM_STATUE_HALL_VISITED is set, which the caller sets. Clears
-/// FLAG_SHOW_LOCATION_NAME.
-static void SolSanctumStatue_VisitStatueHall(void) {
+/// Kraden's second visit, a scripted scene: the first seal opened after the
+/// centre statue dropped has set the quarter it lit flashing in the Luna and
+/// Sol rooms, and Kraden comes to find the hole in the floor. "You found
+/// it, Isaac!"
+/// Garet and Jenna tell him how it opened; he decides the statue puzzle was
+/// the trap and the centre statue there to disarm it, and leaves to observe
+/// from the Luna room. Called by SolSanctumStatue_Initialize at entrance 3
+/// until FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED is set, which the caller
+/// sets. Clears FLAG_SHOW_LOCATION_NAME.
+static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   struct FieldActor *leader;
 
   Engine_EventBegin();
@@ -352,11 +413,15 @@ static void SolSanctumStatue_VisitStatueHall(void) {
   Engine_EventEnd();
 }
 
-/// Kraden comes back after the falling lights to warn that the statues are a
-/// trap, and leaves the mystery to the party. Called by
-/// SolSanctumStatue_Initialize at entrance 4 (back from the falling lights)
-/// until FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED is set, which the caller
-/// sets. Clears FLAG_SHOW_LOCATION_NAME.
+/// Kraden's first visit, a scripted scene: the party's first seal has sent
+/// lights falling through the Luna room around him, and he runs
+/// here to warn that the mechanism is a trap. "Wait, Isaac!" Moving one statue
+/// springs it; whoever set it hid something very important, perhaps the key
+/// to Alchemy itself, and his intuition says the light is the key to the
+/// secret. He goes back to the Luna room and Jenna sets the party to work it
+/// out. Called by SolSanctumStatue_Initialize at entrance 4 until
+/// FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED is set, which the caller sets.
+/// Clears FLAG_SHOW_LOCATION_NAME.
 static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   struct EventWork *work;
   struct FieldActor *leader;
@@ -559,10 +624,10 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_EventEnd();
 }
 
-/// Pans toward the seals' lights, which flash ever faster until the stairway
-/// in the floor is uncovered, then restores the camera. Called by
-/// SolSanctumStatue_OpenSeal once the seals are open after the centre statue
-/// has moved.
+/// Pans the camera away from the leader while a patch of the floor flashes
+/// ever faster, redraws a larger block of the floor, then restores the camera.
+/// Called only from the branch of SolSanctumStatue_OpenSeal that is marked
+/// DEAD.
 static void SolSanctumStatue_RunSealOpenedSequence(void) {
   struct MapScrollWork *map;
   struct FieldActor *leader;
@@ -719,12 +784,12 @@ UNUSED static void SolSanctumStatue_MoveUnusedNorthwestStatue(void) {
   }
 }
 
-/// Restores the hall's statues, beams and seals from their flags and plays
-/// Kraden's arrival cutscenes. Called by Field_RunScene once the actors exist.
+/// Restores the room's statues, beams and seals from their flags and plays
+/// Kraden's two visits. Called by Field_RunScene once the actors exist.
 /// Sets FLAG_RETREAT_BLOCKED; starts the parallax rows; at entrance 3 plays
-/// SolSanctumStatue_VisitStatueHall and at entrance 4
+/// SolSanctumStatue_ExplainTrapDisarmed and at entrance 4
 /// SolSanctumStatue_ExplainStatuePuzzle, each once (setting
-/// FLAG_SOL_SANCTUM_STATUE_HALL_VISITED or
+/// FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED or
 /// FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED), and not on a return after a
 /// battle.
 s32 SolSanctumStatue_Initialize(void) {
@@ -806,12 +871,12 @@ s32 SolSanctumStatue_Initialize(void) {
     Map_CopyCellsTo(4, 58, 36, 43, 4, 1);
   }
   if (gGameState.entrance == 3) {
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_STATUE_HALL_VISITED) != 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED) != 0) {
       Actor_SetPosition(GARET, 0, 0);
       Actor_SetPosition(JENNA, 0, 0);
     } else if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-      SolSanctumStatue_VisitStatueHall();
-      GameFlag_Set(FLAG_SOL_SANCTUM_STATUE_HALL_VISITED);
+      SolSanctumStatue_ExplainTrapDisarmed();
+      GameFlag_Set(FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED);
     }
   }
   if (gGameState.entrance == 4) {
@@ -974,7 +1039,7 @@ static void Event_BlockRightTriggerCell(void) {
 }
 
 /// Moving the centre statue with Move, or a beam completing the pair: with
-/// both beams shining the statue slides into the opened floor and the hall
+/// both beams shining the statue slides into the opened floor and the room
 /// shakes. "Something clicked!" Reached by Move on actor 17 until
 /// FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED is set, and called by
 /// SolSanctumStatue_OpenCentralHole. Sets FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
@@ -1004,7 +1069,7 @@ static void Event_CenterStatueMoved(void) {
           Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
         Engine_GameFlagSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED);
         // The statue slides south into the hole; actor 18 stands in for it
-        // there and the hall shakes hard, then settles.
+        // there and the room shakes hard, then settles.
         Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
         Camera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
         Engine_CameraWaitForMove();
@@ -1438,9 +1503,9 @@ static void SolSanctumStatue_OpenSoutheastSeal(void) {
 
 /// Animates the seal and either advances the story or resets its statue.
 /// Called by the four OpenXSeal functions with sSealScene filled in. Sets the
-/// seal's flag; when no cutscene follows and the centre statue has not moved,
-/// the statue slides back, the leader jumps clear and the flag is cleared
-/// again.
+/// seal's flag; when no scripted scene follows and the centre statue has not
+/// moved, the statue slides back, the leader jumps clear and the flag is
+/// cleared again.
 static void SolSanctumStatue_OpenSeal(void) {
   struct SealScene *scene;
   s32 exitResult;

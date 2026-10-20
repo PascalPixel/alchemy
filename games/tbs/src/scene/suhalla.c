@@ -1,7 +1,32 @@
 /// @file
-/// Suhalla, the town at the edge of the Suhalla Desert. Once Babi's audience
-/// after Colosso has been held, its people stand and talk differently: the
-/// sandstorms have brought Tolbi's soldiers to the town.
+/// Suhalla (scene 167), the desert village of Gondowan on the way to
+/// Lalivero, at the edge of the Suhalla Desert.
+///
+/// Its people and their talk come in two sets, each a placement table and an
+/// event table, chosen by whether Babi has held his audience after Colosso
+/// (FLAG_BABI_SPOKE_AFTER_COLOSSO). Before it, the village talks of the
+/// sandstorms that make the desert impossible to cross, of its distrust of
+/// Angara, and of Sheba, the holy child of Lalivero, whom Tolbi's ruler took
+/// as a hostage; one villager asks whether the party is trying to get to
+/// Lalivero (Event_AskIfGoingToLalivero).
+///
+/// At that audience Babi sent the party to Venus Lighthouse with Iodem, who
+/// commands his soldiers, and Sheba left Tolbi for Lalivero with soldiers
+/// bound for Babi Lighthouse. Afterwards the village talks of those soldiers:
+/// caught in the sandstorms, nearly all perished, and the survivors lie in a
+/// house of the village (scene 168, where Iodem questions them). The storms
+/// attack people as if they were alive, and one villager asks whether a
+/// sandstorm brought the party to Suhalla (Event_AskIfBroughtBySandstorm),
+/// for everyone the storms catch winds up here.
+///
+/// Doors 1 to 5 open as the leader walks north into them and lead into the
+/// village's buildings (scene 168), the wide door of trigger 2 into Suhalla
+/// Sanctum. Exits 10 to 12 lead out onto the world map, exit 10 to its
+/// entrance 27, where the desert's sandstorms also drop the party. A chest
+/// and two jars hold a Hard Nut, a Lucky Medal and 5 coins, and Growth on a
+/// sprout grows it and changes its cell (FLAG_SCENE_TEMP_01, a scene flag, so
+/// the grown sprout is redrawn only on a return that keeps the party's
+/// position, as after a battle).
 
 #include "game_state.h"
 #include "unit/scene/suhalla.h"
@@ -27,7 +52,10 @@
 
 // FLAG_SCENE_TEMP_01: Growth has made the sprout grow.
 
-/// Arriving by this entrance also marks Babi's audience as held.
+/// Arriving by this entrance also marks Babi's audience as held. The entrance
+/// table does not list it and no exit of the game leads to it. XXX: likely a
+/// debug start into the story after the audience, because Babi's Palace and
+/// the Tolbi docks have entrances 90 and 91 that set story flags the same way.
 enum { ENTRANCE_90 = 90 };
 
 /// The sprout at 72, 144, the last of the placements.
@@ -41,7 +69,7 @@ const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gSuhallaExits; }
 
-/// The townsfolk, who stand elsewhere after Babi's audience.
+/// Suhalla's people, who stand elsewhere after Babi's audience.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gSuhallaPlacementsLater;
@@ -49,8 +77,10 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gSuhallaPlacements;
 }
 
-/// A villager asks about Lalivero and answers yes or no.
-/// "Are you trying to get to Lalivero?"
+/// In Suhalla before Babi's audience, talking to actor 9, who asks about
+/// Lalivero. "Are you trying to get to Lalivero?" Yes, and the sandstorms
+/// make it impossible; no, and the villager doubts it, for Angarans who come
+/// to Suhalla are always going to Lalivero.
 static void Event_AskIfGoingToLalivero(s32 actorId) {
   s32 firstMessage = MsgSuhallaTryingGetLalivero;
   Engine_EventSetMessage(firstMessage);
@@ -64,8 +94,9 @@ static void Event_AskIfGoingToLalivero(s32 actorId) {
   Engine_EventShowMessage(actorId, 0);
 }
 
-/// After Babi's audience a villager asks whether the sandstorm brought the
-/// party to Suhalla, and answers yes or no.
+/// In Suhalla after Babi's audience, talking to actor 13, who asks whether the
+/// sandstorm brought the party to Suhalla. Yes, and everyone the storms catch
+/// winds up here; no, and the villager wonders why there are so many storms.
 static void Event_AskIfBroughtBySandstorm(s32 actorId) {
   s32 firstMessage = MsgSuhallaBroughtSuhallaSandstorm;
   Engine_EventSetMessage(firstMessage);
@@ -79,15 +110,16 @@ static void Event_AskIfBroughtBySandstorm(s32 actorId) {
   Engine_EventShowMessage(actorId, 0);
 }
 
-/// Growth on the sprout: the plant grows, and its map cell takes the
-/// attributes of the grown plant's cell.
+/// Growth on Suhalla's sprout: the plant grows, and its map cell takes the
+/// attributes of the grown plant's cell. Sets FLAG_SCENE_TEMP_01.
 static void Event_GrowSprout(void) {
   Map_CopyCellAttributes(25, 9, 1, 1, 4, 9);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
 }
 
-/// The leader walks north into a doorway: the door opens, the leader steps
-/// through and the party leaves by that exit.
+/// Walking north into one of Suhalla's doors (triggers 1, 3, 4 and 5): the
+/// door opens, the leader steps through and the party leaves by that exit
+/// into the village's buildings.
 static void Event_EnterDoor(void) {
   struct EventWork *work = gEventWork;
   s32 exitTrigger = work->touchedTrigger;
@@ -102,7 +134,7 @@ static void Event_EnterDoor(void) {
   Engine_EventRequestExit(exitTrigger);
 }
 
-/// The same through the wide door of trigger 2.
+/// The same through the wide door of trigger 2, into Suhalla Sanctum.
 static void Event_EnterWideDoor(void) {
   struct EventWork *work = gEventWork;
   s32 exitTrigger = work->touchedTrigger;
@@ -116,8 +148,8 @@ static void Event_EnterWideDoor(void) {
   Engine_EventRequestExit(exitTrigger);
 }
 
-/// The doors, the townsfolk, the treasure and the sprout, before or after
-/// Babi's audience.
+/// Suhalla's doors, people, treasure and sprout, before or after Babi's
+/// audience.
 const struct SceneEvent *Scene_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gSuhallaEventsLater;
@@ -125,8 +157,10 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gSuhallaEvents;
 }
 
-/// Sets Suhalla up as the party enters, with the sprout grown if Growth was
-/// used on it.
+/// Sets Suhalla up as the party enters: the screen opens with the backdrop
+/// fade, and the sprout is drawn grown if Growth was used on it before a
+/// return that keeps the party's position. Entrance 90 sets
+/// FLAG_BABI_SPOKE_AFTER_COLOSSO.
 s32 Scene_Initialize(void) {
   struct EventWork *work;
 

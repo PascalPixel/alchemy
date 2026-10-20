@@ -1,7 +1,49 @@
 /// @file
-/// A Colosso finals course: Isaac races another warrior through the Rock
-/// Challenge, the Pipeworks, the Broken Bridge and the Lumber Water Crossing
-/// Area to the arena, where the two fight.
+/// Colosseum Final 1 (ColossoRiver, scene 143), the site of the first finals
+/// match, where Isaac races Azart, the second-best of the warriors who cleared
+/// the trials, through four stages to the arena and fights him there.
+///
+/// Babi has put Isaac in the finals himself, and only Isaac may race; Garet,
+/// Ivan and Mia help from the stages. The stages, by their attendants'
+/// names, are the Rock Challenge, the Pipeworks, the Broken Bridge and the
+/// Lumber Water Crossing Area. Isaac comes here three times, each time at its
+/// own entrance, and ColossoRiver_Initialize blocks Retreat and sets up the
+/// visit that entrance stands for after restoring the stages from the group's
+/// flags (0x301 to 0x303 and the rock's column in byte flag 0x310), so that
+/// what the friends changed stays changed for the race.
+///
+/// - Entrance 3, the tour, from the Colosseum's east passage. The guide
+///   (ColossoRiver_ExplainFinalsRules) tells the party that warriors enter
+///   without their own equipment and race through the stages to the arena,
+///   where the first to arrive takes the better of two prizes and keeps it for
+///   the next match, and he pans over the stages if asked. Each stage's
+///   attendant names it, the first time with a demonstration (Isaac appears on
+///   the stage to show how it is crossed, or, at the Pipeworks, a pointer shows
+///   how the pipes work), and offers a place to cheer there:
+///   the friend Isaac picks walks to the stage and leaves the party
+///   (Colosso_OfferCheeringSpot). When all three are placed, the guide sends
+///   Isaac on to the Colosseum's waiting room (exit 11).
+/// - Entrance 2, after the warriors have marched out. The lettering reads `Lend
+///   a Hand`, and Garet, Ivan and Mia in turn are the party alone, starting
+///   where they chose to cheer. Each may use Psynergy on the stages for Isaac:
+///   Douse on the Pipeworks' west pipe fills it, Growth grows the plant before
+///   the Broken Bridge, Move shifts the Rock Challenge's rocks. Using Psynergy
+///   (Colosso_TakePlaceForMatch) or telling a stage's attendant they are done
+///   (Colosso_AskDoneCheering) ends that friend's turn, and where they stand is
+///   kept as their place; after Mia, exit 10 starts the race.
+/// - Entrance 1, the race. Isaac runs alone against Azart, who follows a
+///   recorded path (Colosso_StartRival), with a gauge at the top of the screen
+///   showing how near each is to the finish (Colosso_StartRaceGauge), after the
+///   lettering `Match 1` and a count of three. At the arena (Event_ReachArena)
+///   the first to arrive takes the Iron Shield and the second the Padded
+///   Gloves, which Isaac is given and equipped with, and the two fight: the
+///   battle is encounter table 72's first or second group, the Azart who has
+///   the shield or the one who has not.
+///
+/// A win returns to entrance 4, which shows the result and sends Isaac back to
+/// the Colosseum (exit 4, its entrance 21); a loss returns to entrance 5, and
+/// exit 5 wakes the party in Babi's Palace, where Isaac's friends tell him he
+/// was only dreaming of the finals.
 
 #include "script.h"
 #include "version.h"
@@ -87,11 +129,12 @@ static void ColossoRiver_PushObjectAhead(void);
 
 typedef void (*SceneTask)(void);
 
-/// The course's actors, by the guide's and attendants' explanations: four
-/// stages (the Rock Challenge, the Pipeworks, the Broken Bridge and the Lumber
-/// Water Crossing Area) lead to the arena where the two warriors fight.
+/// The first finals match's actors, by the guide's and attendants'
+/// explanations: four stages (the Rock Challenge, the Pipeworks, the Broken
+/// Bridge and the Lumber Water Crossing Area) lead to the arena where the two
+/// warriors fight.
 enum {
-  OPPONENT = 8, ///< the warrior racing Isaac to the arena
+  OPPONENT = 8, ///< Azart, racing Isaac to the arena
   ROCK_A = 9,   ///< the Rock Challenge's three rocks
   ROCK_B = 10,
   ROCK_C = 11,
@@ -186,8 +229,9 @@ static void ColossoRiver_WaitForBridgeOpening(void) {
   }
 }
 
-/// After a rock is moved: a rock resting on the floor becomes a step (the
-/// second rock's column is kept in byte flag 0x310).
+/// Move on a rock in the Rock Challenge, and after each push: a rock resting on
+/// the floor becomes a step (the second rock's column is kept in byte flag
+/// 0x310).
 static void Event_SettleRocks(void) {
 
   struct FieldActor *actor;
@@ -220,15 +264,15 @@ static void Event_SettleRocks(void) {
   }
 }
 
-/// Walking into a rock pushes it one cell.
+/// Walking into a rock in the Rock Challenge pushes it one cell.
 static void Event_PushRock(void) {
 
   ColossoRiver_PushObjectAhead();
   Event_SettleRocks();
 }
 
-/// Growth on the plant: it grows and its cell becomes walkable (0x303 keeps it
-/// grown).
+/// Growth on the plant before the Broken Bridge: it grows and its cell becomes
+/// walkable (0x303 keeps it grown).
 static void Event_GrowPlant(void) {
   {
 
@@ -237,8 +281,8 @@ static void Event_GrowPlant(void) {
   Engine_GameFlagSet(0x303);
 }
 
-/// Douse on the west pipe: the camera turns to the Pipeworks and the two pipes
-/// rise as it fills (0x301).
+/// Douse on the Pipeworks' west pipe: the camera turns to the Pipeworks and the
+/// two pipes move as it fills (0x301).
 static void Event_DousePipe(void) {
   struct FieldActor *actor;
   s32 none;
@@ -266,7 +310,7 @@ static void Event_DousePipe(void) {
   Engine_EventEnd();
 }
 
-/// Moves the leader and a course object together between cell centers.
+/// Moves the leader and a stage object together between cell centers.
 static void ColossoRiver_MoveActorPairByOffset(s32 actorId, s32 dx, s32 dz) {
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -305,8 +349,8 @@ static void ColossoRiver_MoveActorPairByOffset(s32 actorId, s32 dx, s32 dz) {
   Engine_EventEnd();
 }
 
-/// Walking into the north-south log rolls it, with the leader, to the other
-/// bank.
+/// Walking into the Lumber Water Crossing Area's north-south log rolls it, with
+/// the leader, to the other bank.
 static void Event_RollLogNorthSouth(void) {
   struct FieldActor *actor;
   s32 row;
@@ -325,8 +369,8 @@ static void Event_RollLogNorthSouth(void) {
   Map_CopyCellAttributes(64, 24, 3, 1, 64, row);
 }
 
-/// Walking into the east-west log rolls it, with the leader, the way the pad
-/// is held.
+/// Walking into the Lumber Water Crossing Area's east-west log rolls it, with
+/// the leader, the way the pad is held.
 static void Event_RollLogEastWest(void) {
   struct FieldActor *actor;
   s32 column;
@@ -381,8 +425,8 @@ static inline void ColossoRiver_AnimatePipeworksWater(void) {
   Map_CopyCells(100, 29, 1, 3, 34, 38);
 }
 
-/// Pushing the Pipeworks block west: water runs into the channel, and the first
-/// time the pipes rise (0x302, 0x301).
+/// Walking west into the Pipeworks' block pushes it: water runs into the
+/// channel, and the first time the pipes move (0x302, 0x301).
 static void Event_PushPipeworksBlock(void) {
   s32 leaderId;
   struct FieldActor *leader;
@@ -458,10 +502,11 @@ static void Event_PushPipeworksBlock(void) {
 
 UNUSED static void ColossoRiver_SetCourseFlag(void) { Engine_GameFlagSet(768); }
 
-/// Reaching the arena: the leader takes a prize (the Iron Shield if first, the
-/// Padded Gloves if second), and he and his opponent face off and fight.
-/// FLAG_SCENE_TEMP_11 says the arena was already reached; the arena's touch
-/// works while FLAG_SCENE_TEMP_10 is clear.
+/// Reaching Colosseum Final 1's arena: the leader takes a prize (the Iron
+/// Shield if first, the Padded Gloves if second), and he and Azart face off and
+/// fight; the battle's group follows who took the shield. FLAG_SCENE_TEMP_11
+/// says the arena was already reached; the arena's touch works while
+/// FLAG_SCENE_TEMP_10 is clear.
 static void Event_ReachArena(void) {
   s32 approach;
   s32 n;
@@ -503,7 +548,8 @@ static void Event_ReachArena(void) {
   GameFlag_Set(FLAG_KEEP_MUSIC);
 }
 
-/// Walking into something: a rock is pushed, anything else is checked.
+/// Walking into something in the Rock Challenge (trigger 90): a rock is
+/// pushed, anything else is checked.
 static void Event_PushRockOrCheckAhead(void) {
 
   if (Colosso_FindActorAhead() == 0) {
@@ -517,8 +563,8 @@ const struct SceneEvent *ColossoRiver_GetEvents(void) {
   return gColossoRiver_Events;
 }
 
-/// Back from the battle: the two warriors stand in the arena as the result is
-/// shown.
+/// Back from the battle (entrance 4 or 5): Isaac and Azart stand in the arena
+/// as the result is shown.
 static void ColossoRiver_RestoreMatchResult(s32 result) {
 
   Engine_ActorDestroy(PRIZE_A);
@@ -542,24 +588,25 @@ static void ColossoRiver_RestoreMatchResult(s32 result) {
   Engine_EventEnd();
 }
 
-/// Marks actors standing in the course's finish terrain.
-static void ColossoRiver_MarkCourseTerrain(s32 actor) {
-  struct FieldActor *courseActor;
+/// Marks actors standing in the stages' finish terrain.
+static void ColossoRiver_MarkFinishTerrain(s32 actor) {
+  struct FieldActor *target;
   s32 column;
   s32 row;
 
-  courseActor = Object_GetById(actor);
-  if (courseActor != 0) {
-    column = courseActor->x.fixed >> 19;
-    row = courseActor->z.fixed >> 19;
+  target = Object_GetById(actor);
+  if (target != 0) {
+    column = target->x.fixed >> 19;
+    row = target->z.fixed >> 19;
     if (column >= 94 && column <= 95 && row > 23 && row <= 26) {
-      courseActor->terrainId = 1;
+      target->terrainId = 1;
     }
   }
 }
 
-/// Restores the stages as they were left, then by the arrival: the race (1 and
-/// 2), the guide's explanation (3), or the match won (4) or lost (5).
+/// Sets up Colosseum Final 1: restores the stages as they were left, then by
+/// the arrival: the race (1), the friends' turns to lend a hand (2), the
+/// guide's tour (3), or the match won (4) or lost (5).
 s32 ColossoRiver_Initialize(void) {
   struct FieldActor *actor;
   s32 hit;
@@ -640,9 +687,9 @@ s32 ColossoRiver_Initialize(void) {
       Engine_AudioPlayCue(MUS_017);
       Colosso_ControlCharacterAlone(0);
       Colosso_PlaceFriendsAtCheeringSpots();
-      ColossoRiver_MarkCourseTerrain(1);
-      ColossoRiver_MarkCourseTerrain(2);
-      ColossoRiver_MarkCourseTerrain(3);
+      ColossoRiver_MarkFinishTerrain(1);
+      ColossoRiver_MarkFinishTerrain(2);
+      ColossoRiver_MarkFinishTerrain(3);
       ColossoRiver_ShowRoundIntroduction(1);
     }
     Object_LinkObjectAndSetCallback(1, 0);
@@ -678,8 +725,9 @@ s32 ColossoRiver_Initialize(void) {
   return 0;
 }
 
-/// The guide shows the party the first finals course: the race through the
-/// stages to the arena, the prizes there, and where the companions cheer from.
+/// The tour of Colosseum Final 1 (entrance 3): the guide shows the party the
+/// site of the first finals match, the race through the stages to the arena,
+/// the prizes there, and that the companions choose where to cheer from.
 static void ColossoRiver_ExplainFinalsRules(s32 guide) {
   struct FieldActor *actor;
   s32 x;
@@ -810,8 +858,10 @@ static void ColossoRiver_ExplainFinalsRules(s32 guide) {
   Engine_EventEnd();
 }
 
-/// The Rock Challenge's attendant: the first time, a warrior shows how to push
-/// the rocks into steps; then the objective.
+/// The Rock Challenge's attendant, stage 1 of Colosseum Final 1: the first
+/// time, Isaac appears on the stage and pushes the rocks into steps; then the
+/// objective, and a place for a friend to cheer. With a friend alone on the
+/// stages (entrance 2) he asks whether they are done cheering instead.
 static void Event_TalkToRockAttendant(s32 scene) {
   s32 path;
 
@@ -878,8 +928,9 @@ static inline void ColossoRiver_SetPipeHeight(struct FieldActor *actor,
   Engine_ObjectSetPosition(actor, actor->x.fixed, height, actor->z.fixed);
 }
 
-/// The Pipeworks' attendant: a marker shows how the pipes rise and fall like
-/// scales; then the objective.
+/// The Pipeworks' attendant, stage 2 of Colosseum Final 1: the first time, a
+/// pointer shows how the pipes rise and fall like scales; then the objective,
+/// and a place for a friend to cheer.
 static void Event_TalkToPipeworksAttendant(s32 attendant) {
   s32 path;
   struct FieldActor *second;
@@ -940,8 +991,9 @@ static void Event_TalkToPipeworksAttendant(s32 attendant) {
   }
 }
 
-/// The Broken Bridge's attendant: a warrior times his crossing; then the
-/// objective.
+/// The Broken Bridge's attendant, stage 3 of Colosseum Final 1: the first time,
+/// Isaac appears and times his crossing; then that the bridge's operator will
+/// cheer for him, and a place for a friend to cheer.
 static void Event_TalkToBridgeAttendant(s32 scene) {
   s32 path;
 
@@ -983,8 +1035,9 @@ static void Event_TalkToBridgeAttendant(s32 scene) {
   }
 }
 
-/// The Lumber Water Crossing Area's attendant: a warrior rolls a log across;
-/// then the objective.
+/// The Lumber Water Crossing Area's attendant, stage 4 of Colosseum Final 1:
+/// the first time, a pointer shows the water tank and Isaac appears and rolls a
+/// log across; then the objective, and a place for a friend to cheer.
 static void Event_TalkToLumberAttendant(s32 scene) {
   s32 path;
 
@@ -1089,7 +1142,8 @@ static void ColossoRiver_SelectPresentationScript(u32 mode, u32 param) {
   gColosso_LetteringPosition = 0;
 }
 
-/// The match opens: portraits of the warriors and the round announced.
+/// The lettering a visit opens with: `Lend a Hand` for the friends' turns
+/// (round 0), or for the race `Match 1`, then 3, 2, 1 and `Go!`.
 static void ColossoRiver_ShowRoundIntroduction(s32 round) {
   if (round == 0) {
     Engine_EventBegin();
@@ -1136,7 +1190,8 @@ static void ColossoRiver_ShowRoundIntroduction(s32 round) {
   }
 }
 
-/// The result: the winner's portrait and fanfare, then the course closes.
+/// The result: `Won` or `Lose` in large lettering with its fanfare, then the
+/// screen closes.
 static void ColossoRiver_ShowMatchResult(s32 result) {
 
   s32 kind;

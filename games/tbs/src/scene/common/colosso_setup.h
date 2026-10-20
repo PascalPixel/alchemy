@@ -1,5 +1,5 @@
 /// @file
-/// Colosso Log and Colosso River: setting up a race against the rival, with
+/// Colosseum Final 1 and 3: setting up a race against the rival, with
 /// the race gauge at the top of the screen and the rival running a recorded
 /// path (colosso_path_rival.h).
 #include "types.h"

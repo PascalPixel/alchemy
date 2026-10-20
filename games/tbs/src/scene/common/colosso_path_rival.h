@@ -18,16 +18,16 @@
 #include "io_reg.h"
 #include "flags.h"
 
-// The Colosso finals' three courses (Colosso Log, River and Wall): the rival
-// who races Isaac by running a recorded path, and the race gauge that shows
-// how near each of them is to the finish.
+// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
+// the rival who races Isaac by running a recorded path, and the race gauge that
+// shows how near each of them is to the finish.
 
 /// The race's work in HEAP_SLOT_COLOSSO_RACE, allocated whole when the gauge
 /// starts: the gauge, then the rival's path.
 struct ColossoRaceWork {
   struct ColossoGaugeWork gauge;
   /// Pixels, as pairs of x and z, one pair a frame, ending with (0, 0):
-  /// decoded from the course's resource, or recorded in mode 2.
+  /// decoded from the scene's resource, or recorded in mode 2.
   s16 path[0x3840];
 };
 

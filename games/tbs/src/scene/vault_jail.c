@@ -1,6 +1,30 @@
 /// @file
-/// Vault's jail, where the thieves who stole Hammet's Shaman's Rod are held; on
-/// the party's return a lone prisoner takes their place.
+/// Vault's jail (VaultJail, scene 22), one map of two rooms that the area
+/// names tell apart by entrance. The entrance also picks the tables: the
+/// thieves' for entrances 1 and 2, the prisoner's for entrance 10.
+///
+/// - Vault (entrances 1 and 10), the cell behind Vault's jail door. In the
+/// inn's
+///   loft the party beats the three thieves who stole Hammet's Shaman's Rod
+///   and the town's treasures during the eruption, and the mayor has them
+///   locked up "for a long, long time" (FLAG_VAULT_THIEVES_JAILED, set in
+///   vault_interiors.c). From then on, coming in from Vault (entrance 1), the
+///   party finds the three behind the bars: their leader, who glares at his
+///   two men, tells them to "Shut yer yaps!" and promises the party will pay,
+///   one who wishes they had escaped to the cave northeast of Goma Range, and
+///   one who knew they should have skipped town sooner. Mind Read hears each
+///   one's thoughts. Once the party has reached Kalay, Vault becomes its
+///   revisit scene (vault_revisit.c), where the villagers say the thieves have
+///   broken out. Its jail door brings the party in by entrance 10, which places
+///   a lone prisoner instead, jailed for hitting somebody, with his own talk
+///   and Mind Read and a plain exit back to that Vault.
+/// - Lunpa (entrance 2), the map's other room, which Lunpa's hidden passage
+///   reaches (lunpa.c). Its six chests hold a Water of Life, a Smoke Bomb, a
+///   Lucky Medal, an Antidote, 44 coins and an Elixir, each opened once
+///   (FLAG_JAIL_CHEST_*), and trigger 2 leads back up into Lunpa. Arriving this
+///   way clears FLAG_SHOW_LOCATION_NAME, so no place name is shown. The room
+///   uses the thieves' tables, so its chests and its exit sit in the same event
+///   table as the thieves' talk and the Vault door.
 
 #include "game_state.h"
 #include "unit/scene/vault_jail.h"
@@ -64,16 +88,18 @@ enum JailSprite {
 
 enum { CELL_COLLISION_FLAGS = 0x14 };
 
-/// Returns the entrances from Vault, Lunpa and the revisited Vault.
+/// Returns the entrances from Vault, from Lunpa and from Vault's revisit scene.
 const struct SceneEntrance *Scene_GetEntrances(void) { return gJailEntrances; }
 
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-/// Returns the exits to Vault, to the revisited Vault and to Lunpa.
+/// Returns the exits to Vault, to Vault's revisit scene and to Lunpa, each to
+/// that scene's entrance 12.
 const u32 *Scene_GetExits(void) { return gJailExits; }
 
-/// Places the three jailed thieves, or, entered from the revisited Vault
-/// (entrance 10, after they have broken out), the lone prisoner.
+/// Places the three jailed thieves (each only once FLAG_VAULT_THIEVES_JAILED
+/// is set), or, entered from Vault's revisit scene (entrance 10, after they
+/// have broken out), the lone prisoner.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.entrance == JAIL_ENTRANCE_FROM_VAULT_REVISIT) {
     return gJailPrisonerPlacements;
@@ -81,8 +107,9 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gJailThiefPlacements;
 }
 
-/// Returns the thieves' events, or the prisoner's when the party came in from
-/// the revisited Vault, matching Scene_GetPlacements.
+/// Returns the thieves' events, which also hold the Lunpa room's chests and
+/// exit, or the prisoner's when the party came in from Vault's revisit scene,
+/// matching Scene_GetPlacements.
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.entrance == JAIL_ENTRANCE_FROM_VAULT_REVISIT) {
     return gJailPrisonerEvents;
@@ -90,11 +117,12 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gJailThiefEvents;
 }
 
-/// The jailed leader glares at each of his men and snaps at them, then turns to
-/// the party: they got us this time, but you'll pay for this. "Shut yer yaps!"
+/// In Vault's jail, the thieves' leader glares at each of his men and snaps
+/// "Shut yer yaps!", so that both start, then turns to the party: they got us
+/// this time, but next time they'll pay for this.
 ///
-/// Reached by talking to the thieves' leader (actor 8) while
-/// FLAG_VAULT_THIEVES_JAILED is set.
+/// Reached by talking to the leader (actor 8) while FLAG_VAULT_THIEVES_JAILED
+/// is set.
 static void Event_LeaderSilencesThieves(void) {
   Engine_EventBegin();
 
@@ -124,11 +152,10 @@ static void Event_LeaderSilencesThieves(void) {
   Engine_EventEnd();
 }
 
-/// The left thief wishes they had escaped to the cave northeast of the Goma
-/// Range.
+/// In Vault's jail, the thief on the left wishes they had escaped to the cave
+/// northeast of Goma Range.
 ///
-/// Reached by talking to the left thief (actor 9) while
-/// FLAG_VAULT_THIEVES_JAILED is set.
+/// Reached by talking to him (actor 9) while FLAG_VAULT_THIEVES_JAILED is set.
 static void Event_LeftThiefRegretsEscape(void) {
   Engine_EventBegin();
   Engine_ActorRunRepeatedMotion(ACTOR_LEFT_THIEF, 2);
@@ -138,10 +165,10 @@ static void Event_LeftThiefRegretsEscape(void) {
   Engine_EventEnd();
 }
 
-/// The right thief shakes his head: they should have skipped town sooner.
+/// In Vault's jail, the thief on the right shakes his head: he knew they
+/// should have skipped town sooner.
 ///
-/// Reached by talking to the right thief (actor 10) while
-/// FLAG_VAULT_THIEVES_JAILED is set.
+/// Reached by talking to him (actor 10) while FLAG_VAULT_THIEVES_JAILED is set.
 static void Event_RightThiefRegretsStaying(void) {
   Engine_EventBegin();
   Engine_ActorSetAnimationAndWait(ACTOR_RIGHT_THIEF, ANIM_SHAKE_HEAD);
@@ -151,7 +178,8 @@ static void Event_RightThiefRegretsStaying(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read on the leader: he'll be out of this jail before you know it.
+/// Mind Read on the thieves' leader in Vault's jail: he'll be out of this jail
+/// before you know it.
 ///
 /// Reached by Mind Read on actor 8 while FLAG_VAULT_THIEVES_JAILED is set; the
 /// two below are reached the same way on actors 9 and 10.
@@ -162,7 +190,7 @@ static void Event_ReadLeaderMind(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read on the left thief: will he ever run free again?
+/// Mind Read on the thief on the left: will he ever run free again?
 static void Event_ReadLeftThiefMind(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultLeftThiefThoughts);
@@ -170,7 +198,8 @@ static void Event_ReadLeftThiefMind(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read on the right thief: is this for stealing Hammet's Shaman's Rod?
+/// Mind Read on the thief on the right: is this because they stole Hammet's
+/// Shaman's Rod?
 static void Event_ReadRightThiefMind(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultRightThiefThoughts);
@@ -178,22 +207,24 @@ static void Event_ReadRightThiefMind(void) {
   Engine_EventEnd();
 }
 
-/// The party steps out of the jail into Vault.
+/// The party steps out of Vault's jail into Vault, with the exit sound.
 ///
-/// Reached by stepping on the Vault door (cell code 1) while the thieves are
-/// held; takes exit 1 to Vault's entrance 12. The prisoner's events leave by
-/// exit 2 instead, to the revisited Vault.
+/// Reached by stepping on the door's cell (collision code 1) under the
+/// thieves' table, that is, entered from Vault or Lunpa; takes exit 1 to
+/// Vault's entrance 12. The prisoner's table leaves by a plain exit 2 instead,
+/// to Vault's revisit scene.
 static void Event_LeaveForVault(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_EventRequestExit(JAIL_EXIT_TO_VAULT);
 }
 
-/// Opens the scene through a window transition and makes the occupants solid.
+/// Opens the scene through a window transition and makes the jail's occupants
+/// solid.
 ///
-/// Called by the engine once the actors are placed. Coming up from Lunpa
-/// (entrance 2) clears FLAG_SHOW_LOCATION_NAME, so no place name is shown;
-/// otherwise it adds collision flags 0x14 to the prisoner or to the three
-/// thieves.
+/// Called by the engine once the actors are placed. Coming in through Lunpa's
+/// hidden passage (entrance 2) clears FLAG_SHOW_LOCATION_NAME, so no place
+/// name is shown; otherwise it adds collision flags 0x14 to the prisoner or to
+/// the three thieves.
 s32 Scene_Initialize(void) {
   s16 entrance;
 

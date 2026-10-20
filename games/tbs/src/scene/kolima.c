@@ -1,7 +1,47 @@
 /// @file
-/// Kolima, whose villagers the forest's curse has turned into trees, in three
-/// maps: the village, an interior and the bridge. On the first visit the party
-/// sees the curse fall and the bridge collapse.
+/// Kolima's overlay, which holds three places, each a scene of its own. The
+/// village's houses and shops are another overlay (kolima_interiors.c), and so
+/// is each map of Kolima Forest.
+///
+/// - Kolima (Kolima1, scene 36), the village of lumberjacks, to which Lord
+///   McCoy has barricaded the road from Bilibin since the trouble began. The
+///   party's first entry from the world map (entrance 1) plays
+///   Kolima_WitnessForestCurse, unless the party has already seen it in Kolima
+///   Forest (FLAG_KOLIMA_CURSE_WITNESSED): every villager has been turned into
+///   a tree, sparkles fall from the sky and press the party down until domes
+///   of their own Psynergy shield them, and two unseen voices speak. They are
+///   Tret and Laurel, "the spirits of the holy trees protecting Kolima forest",
+///   as a book in the village puts it. Tret is dying and his heart has torn in
+///   two; his wrathful side turned Kolima's people into trees for taking their
+///   axes to him, and Laurel tells the party that to save them it must reawaken
+///   his gentle side, and to "Look for Tret deep within the forest." The party
+///   resolves to try, and the story moves on to Kolima Forest.
+///
+///   Until the curse is lifted in Kolima Forest (FLAG_KOLIMA_CURSE_LIFTED),
+///   Kolima_GetPlacements gives the nine villagers (actors 8 to 16) tree
+///   sprites that stand still, glints twinkle on the ground (actors 23 to 26,
+///   and five more that Kolima_Initialize places), and the villagers answer
+///   only Mind Read, with the thoughts of people stuck as trees. Afterwards
+///   they are people again and talk of the curse, the holy tree and McCoy's
+///   money, and the healer among them (actor 16) offers the Sanctum's services
+///   across his counter. Granite, a Venus Djinni (actor 27), waits in the
+///   village and joins when spoken to. Five doorways (triggers 5 to 9) lead
+///   into the houses and shops (scene 37), exits 1 and 2 to the world map and
+///   exit 10 into Kolima Tunnel.
+/// - Kolima Tunnel (Kolima2, scene 38), a passage with no one in it from one of
+///   the houses (scene 37, entrance 9) to the village (entrance 8). It shares
+///   the village's event table, whose exits 1 and 2 are its two ways out, and
+///   that table's two jars, an Apple and an Herb, are in one of the two maps.
+/// - Kolima Bridge (Kolima3, scene 39), "the grand bridge across the river" and
+///   "the pride of Kolima" to the village's armor seller, with the world map at
+///   both ends. A villager stands beside it, a tree while the curse lasts
+///   (actor 9) and a man afterwards (actor 8), who says that for a while he
+///   thought no one would ever cross it again. The first time the party then
+///   steps onto the bridge (trigger 10), Kolima_ShowBridgeCollapse plays: he
+///   asks whether they are going to cross, waves them on, and the bridge falls
+///   apart in front of the leader (FLAG_KOLIMA_BRIDGE_COLLAPSED).
+///   Kolima_RestoreBridgeState draws it broken on every later visit, and an
+///   object on the world map changes with the same flag.
 
 #include "script.h"
 #include "flags.h"
@@ -47,6 +87,17 @@ static void Kolima_FaceActorAndWait(s32 actorId, s32 facing, s32 waitFrames);
 static void Kolima_SpawnCurseSparkle(void);
 static void Kolima_RestoreBridgeState(void);
 
+/// Actors of Kolima (Kolima1). Garet, Ivan and Mia stand in their own slots
+/// for the curse; the placement rows after them start at actor 8, the nine
+/// villagers (8 to 16), then the two voices, the four domes (19 to 22) and the
+/// four glints (23 to 26).
+enum {
+  /// Tret's wrathful side, unseen while the curse falls. "Hroom!"
+  TRET = 17,
+  LAUREL = 18,
+  GRANITE = 27 ///< placed until Granite has joined
+};
+
 /// Applies the deferred pose change requested by the falling-effect script.
 static s32 Kolima_ApplyPendingPose(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -57,7 +108,9 @@ static s32 Kolima_ApplyPendingPose(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Alternates an ambient actor's child appearance with a random timer.
+/// Each frame of a glint on Kolima's ground: its timer runs on at random, and
+/// it shows its bright frame (7) past 1000 and its dim one (10) before; at
+/// 1200 the timer starts over.
 static s32 Kolima_UpdateTimedAppearance(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
   s32 randomValue = Engine_RandomNext();
@@ -75,7 +128,9 @@ static s32 Kolima_UpdateTimedAppearance(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Replaces the nine villagers' placement sprites with their cursed trees.
+/// While the curse lasts, gives Kolima's nine villagers (placement rows 3 to
+/// 11, actors 8 to 16) tree sprites, 105 or, for rows 9 and 10, 110; they
+/// stand still and keep their facing when spoken to.
 static void
 Kolima_InitializeCursedVillagers(struct ScenePlacement *placements) {
   struct ScenePlacement *villager = &placements[3];
@@ -97,7 +152,8 @@ Kolima_InitializeCursedVillagers(struct ScenePlacement *placements) {
   }
 }
 
-/// Moves, enlarges and releases one bridge fragment after its lifetime.
+/// Each frame of a piece of Kolima Bridge as it falls: it moves, grows, and is
+/// released when its timer runs out.
 static s32 Kolima_UpdateFallingDebris(struct ScriptInterpreter *interpreter) {
   struct FieldActor *debris = (struct FieldActor *)interpreter;
   debris->x.fixed += debris->velocityX;
@@ -117,7 +173,7 @@ static s32 Kolima_UpdateFallingDebris(struct ScriptInterpreter *interpreter) {
 
 #include "common/object_facing.h"
 
-/// Selects the entrance table for the village, interior or bridge.
+/// Selects the entrances of Kolima, Kolima Tunnel or Kolima Bridge.
 const struct SceneEntrance *Kolima_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -130,7 +186,7 @@ const struct SceneEntrance *Kolima_GetEntrances(void) {
   return gKolimaEntrances;
 }
 
-/// Returns the interior's regions; the other maps have none.
+/// Only Kolima Tunnel has regions: its two ways out, exits 1 and 2.
 const struct SceneRegion *Kolima_GetRegions(void) {
   if (gGameState.scene == (s32)&SceneId_Kolima2) {
     return gKolimaRegions2;
@@ -138,10 +194,14 @@ const struct SceneRegion *Kolima_GetRegions(void) {
   return 0;
 }
 
-/// Returns the shared packed exit table.
+/// The exits of all three scenes, each scene's after its header word (an exit
+/// of kind 0): Kolima's to the world map, the houses (scene 37) and Kolima
+/// Tunnel, Kolima Bridge's to the world map, and Kolima Tunnel's to a house
+/// and the village.
 const u32 *Kolima_GetExits(void) { return gKolimaExits; }
 
-/// Selects placements and applies tree sprites while the villagers are cursed.
+/// Selects the people of Kolima or Kolima Bridge; Kolima Tunnel has none. In
+/// Kolima the villagers are trees until the curse is lifted.
 const struct ScenePlacement *Kolima_GetPlacements(void) {
   s32 scene = gGameState.scene;
 
@@ -157,7 +217,10 @@ const struct ScenePlacement *Kolima_GetPlacements(void) {
   return gKolimaPlacements;
 }
 
-/// Offers sanctum services to a north-facing leader, or discusses the trees.
+/// Kolima, once the curse is lifted: talking to the healer (actor 16) across
+/// his counter (facing north) opens the Sanctum's services; from any other
+/// side he asks whether the holy tree's rage was the only cause of the curse,
+/// and either answer agrees that something changed when the gems fell.
 static void Kolima_TalkToHealer(void) {
   struct FieldActor *leader = Object_GetById(0);
   s32 facing = leader->facing;
@@ -171,10 +234,12 @@ static void Kolima_TalkToHealer(void) {
   Engine_EventEnd();
 }
 
-/// Lets the village's Djinni join the party.
-static void Kolima_RecruitDjinni(void) { Djinn_JoinParty(27, 0, 1); }
+/// Kolima: talking to Granite, a Venus Djinni, makes it join the party.
+static void Kolima_GraniteJoins(void) {
+  Djinn_JoinParty(GRANITE, ELEMENT_VENUS, 1);
+}
 
-/// Selects the village or bridge event table.
+/// Selects Kolima Bridge's events, or the table Kolima and Kolima Tunnel share.
 const struct SceneEvent *Kolima_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_Kolima3) {
     return gKolimaEvents3;
@@ -182,7 +247,8 @@ const struct SceneEvent *Kolima_GetEvents(void) {
   return gKolimaEvents;
 }
 
-/// Walks the leader northward through the selected exit.
+/// Walks the leader north through a door of Kolima into the exit of the same
+/// number.
 static void Kolima_WalkThroughExit(s32 exitId) {
   Object_GetById(0)->motionFlags = 0;
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -192,8 +258,11 @@ static void Kolima_WalkThroughExit(s32 exitId) {
   Engine_EventRequestExit(exitId);
 }
 
-/// Animates the touched map cells or leaves through the southern exit.
-static void Kolima_AnimateSwitchOrExit(void) {
+/// Kolima: walking into one of the five doorways (triggers 5 to 9) into the
+/// houses and shops. The door sound plays; the four entered walking north open
+/// their door (gKolima_DoorCells) and the leader walks in, while the one
+/// entered walking south (trigger 9) has no door to draw.
+static void Kolima_EnterDoor(void) {
   struct EventWork *work = gEventWork;
   s32 x = 0;
   s32 y = 0;
@@ -226,12 +295,18 @@ static void Kolima_AnimateSwitchOrExit(void) {
     Engine_EventEnd();
     return;
   }
-  Engine_MapAnimateCells(gKolima_SwitchCells, x, y);
+  Engine_MapAnimateCells(gKolima_DoorCells, x, y);
   Kolima_WalkThroughExit(work->touchedTrigger);
   Engine_EventEnd();
 }
 
-/// Shows the villager's crossing and the bridge collapsing into debris.
+/// Kolima Bridge, the first time the party steps onto it (trigger 10, until
+/// FLAG_KOLIMA_BRIDGE_COLLAPSED): the villager beside it (actor 8) asks
+/// whether they are going to cross, and at the leader's nod says "Go right
+/// ahead!" and hops aside. The bridge then falls apart in front of the leader
+/// in four ever quicker steps of map cells, ten pieces scatter and drop, the
+/// screen shakes and the leader jumps back. From then on the villager keeps
+/// turning to face the leader. Sets FLAG_KOLIMA_BRIDGE_COLLAPSED.
 static void Kolima_ShowBridgeCollapse(void) {
   u32 debrisIndex;
 
@@ -307,7 +382,7 @@ static void Kolima_ShowBridgeCollapse(void) {
   Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
   Engine_EventWait(20);
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  // From now on the villager on the far side turns to keep facing the leader.
+  // From now on the villager turns to keep facing the leader.
   FieldObject_SetTargetAndCallback(
       8, ACTOR_LINK_KEEP_MOTION | ACTOR_PARTY_LEADER, gKolima_FaceLeaderScript);
   Engine_EventWait(60);
@@ -316,7 +391,14 @@ static void Kolima_ShowBridgeCollapse(void) {
   Engine_EventEnd();
 }
 
-/// Restores the current map and plays the first visit to cursed Kolima.
+/// Sets up whichever scene is entered: Kolima Bridge as the curse and the
+/// bridge leave it (Kolima_RestoreBridgeState), Kolima Tunnel with a window
+/// transition, and Kolima itself. There the four glints twinkle, the
+/// villagers stand as trees while the curse lasts (and three cells around
+/// (14, 8) take the attributes of cell (13, 9)), and the first entry from the
+/// world map plays Kolima_WitnessForestCurse. Once that has been seen, here or
+/// in Kolima Forest, Garet, Ivan and Mia, the two voices and the domes are
+/// taken away and five more glints are placed.
 s32 Kolima_Initialize(void) {
   s16 scene;
   u32 actor;
@@ -364,8 +446,8 @@ s32 Kolima_Initialize(void) {
     Engine_ActorDestroy(GARET);
     Engine_ActorDestroy(IVAN);
     Engine_ActorDestroy(MIA);
-    Engine_ActorDestroy(17);
-    Engine_ActorDestroy(18);
+    Engine_ActorDestroy(TRET);
+    Engine_ActorDestroy(LAUREL);
     Engine_ActorDestroy(19);
     Engine_ActorDestroy(20);
     Engine_ActorDestroy(21);
@@ -376,7 +458,8 @@ s32 Kolima_Initialize(void) {
   return 0;
 }
 
-/// Shows a protective field on its assigned alternating frame.
+/// Shows one of the domes of Psynergy on its frames, even or odd, and lifts it
+/// 500 pixels out of sight on the others.
 static __inline__ void Kolima_SetProtectiveFieldHeight(s32 actorId,
                                                        s32 visibleOnOddFrames) {
   struct FieldActor *field = Object_GetById(actorId);
@@ -390,7 +473,7 @@ static __inline__ void Kolima_SetProtectiveFieldHeight(s32 actorId,
   }
 }
 
-/// Alternates the four protective sprites between visible and hidden heights.
+/// Makes the four domes flicker, two on even frames and two on odd.
 static void Kolima_AlternateProtectiveFieldHeights(void) {
   Kolima_SetProtectiveFieldHeight(19, 0);
   Kolima_SetProtectiveFieldHeight(20, 1);
@@ -398,7 +481,7 @@ static void Kolima_AlternateProtectiveFieldHeights(void) {
   Kolima_SetProtectiveFieldHeight(22, 1);
 }
 
-/// Begins Mind Read on one of the villagers transformed into a tree.
+/// Begins Mind Read on one of Kolima's villagers turned into a tree.
 static void Kolima_ReadVillagerThoughts(s32 actorId, s32 targetId) {
   Engine_PsynergyBegin(ABILITY_MIND_READ, 1);
   Engine_PsynergySetTarget(actorId, targetId);
@@ -422,8 +505,22 @@ static __inline__ void Kolima_NodTogether(void) {
   Engine_ActorSetAnimationAndWait(IVAN, 3);
 }
 
-/// Shows the forest's curse, the party's protective Psynergy and the trees'
-/// appeal.
+/// Kolima, the first entry from the world map (entrance 1), until
+/// FLAG_KOLIMA_CURSE_WITNESSED: the party sees the curse fall. The leader,
+/// Garet and Ivan, with Mia if she has joined, walk into a silent village.
+/// Ivan reads a tree's mind ("This tree...was a person"), Garet sees that
+/// everyone in Kolima has been turned into a tree and asks the leader whether
+/// he knows why, and Ivan notices "sparkly stuff on the ground". Sparkles rain
+/// from the sky and press the party down until domes of their own Psynergy rise
+/// over each of them; they argue over whether it was their Psynergy, since no
+/// one was concentrating, and Ivan decides that some Psynergy acts only when it
+/// is needed. A second shower raises the domes again, and Tret and Laurel,
+/// unseen, wonder at people immune to Tret's glamour: Tret, dying and torn in
+/// two, will not forgive Kolima's axes, and Laurel tells the party to reawaken
+/// his gentle side and look for Tret deep within the forest. Whatever the
+/// leader answers to Ivan and Garet, the party resolves to save Kolima. Mia's
+/// lines and moves are skipped without her. Sets FLAG_KOLIMA_CURSE_WITNESSED;
+/// KolimaForestBridge_WitnessForestCurse plays the same scene in Kolima Forest.
 static void Kolima_WitnessForestCurse(void) {
   struct FieldActor *actor;
   s32 *partyLayout;
@@ -1004,7 +1101,7 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ActorRunRepeatedMotion(IVAN, 2);
   Engine_EventWait(60);
   Kolima_FaceActorAndWait(IVAN, FACING_NORTH, 10);
-  // A second shower tests the barriers before the forest spirits speak.
+  // A second shower raises the domes again before Tret and Laurel speak.
   Engine_EventSetMessage(MsgKolimaWatchOutItsHappeningAgain);
   Kolima_ShowMessageAndWait(IVAN, 10);
   Kolima_FaceActorAndWait(GARET, FACING_NORTH, 10);
@@ -1038,30 +1135,30 @@ static void Kolima_WitnessForestCurse(void) {
   do {
     Engine_TaskWait(1);
   } while (gFallingEffectState != 0);
-  // Hear the trees debate the party's immunity to Tret's glamour.
-  Kolima_ShowMessageAndWait(17, 80);
-  Kolima_ShowMessageAndWait(18, 20);
+  // Tret and Laurel, unseen, wonder at the party's immunity to the glamour.
+  Kolima_ShowMessageAndWait(TRET, 80);
+  Kolima_ShowMessageAndWait(LAUREL, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 0);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 0);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 0);
   Engine_EventWait(60);
-  Kolima_ShowMessageAndWait(18, 20);
+  Kolima_ShowMessageAndWait(LAUREL, 20);
   Kolima_NodTogether();
-  Kolima_ShowMessageAndWait(18, 10);
+  Kolima_ShowMessageAndWait(LAUREL, 10);
   Kolima_NodTogether();
-  Kolima_ShowMessageAndWait(18, 10);
+  Kolima_ShowMessageAndWait(LAUREL, 10);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT, 0);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT, 0);
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT, 0);
   Engine_EventWait(40);
-  Kolima_ShowMessageAndWait(17, 10);
+  Kolima_ShowMessageAndWait(TRET, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(MIA, FACING_EAST, 0);
   Kolima_FaceActorAndWait(IVAN, FACING_NORTH, 40);
-  Kolima_ShowMessageAndWait(18, 10);
+  Kolima_ShowMessageAndWait(LAUREL, 10);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
   Actor_SetAttachedEffect(GARET, 0x102);
   Actor_SetAttachedEffect(IVAN, 0x102);
@@ -1070,12 +1167,12 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Kolima_FaceActorAndWait(MIA, FACING_NORTH, 80);
-  Kolima_ShowMessageAndWait(18, 10);
+  Kolima_ShowMessageAndWait(LAUREL, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Kolima_FaceActorAndWait(MIA, 0, 40);
-  Kolima_ShowMessageAndWait(17, 10);
+  Kolima_ShowMessageAndWait(TRET, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
@@ -1085,14 +1182,14 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ActorSetAnimation(MIA, 4);
   Engine_ActorSetAnimationAndWait(IVAN, 4);
   Engine_EventWait(60);
-  Kolima_ShowMessageAndWait(18, 10);
+  Kolima_ShowMessageAndWait(LAUREL, 10);
   Kolima_NodTogether();
-  Kolima_ShowMessageAndWait(18, 20);
+  Kolima_ShowMessageAndWait(LAUREL, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Kolima_FaceActorAndWait(MIA, 0, 20);
-  Kolima_ShowMessageAndWait(18, 10);
+  Kolima_ShowMessageAndWait(LAUREL, 10);
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Engine_ActorStartRepeatedMotion(GARET, 2);
   Engine_ActorStartRepeatedMotion(MIA, 2);
@@ -1101,28 +1198,28 @@ static void Kolima_WitnessForestCurse(void) {
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Actor_FaceDirection(MIA, FACING_NORTH, 0);
-  Kolima_ShowMessageAndWait(18, 20);
+  Kolima_ShowMessageAndWait(LAUREL, 20);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Kolima_FaceActorAndWait(MIA, 0, 20);
-  Kolima_ShowMessageAndWait(17, 20);
+  Kolima_ShowMessageAndWait(TRET, 20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
   Actor_SetAttachedEffect(GARET, 0x102);
   Actor_SetAttachedEffect(MIA, 0x102);
   Actor_SetAttachedEffect(IVAN, 0x102);
   Engine_EventWait(40);
-  Kolima_ShowMessageAndWait(18, 10);
+  Kolima_ShowMessageAndWait(LAUREL, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Actor_FaceDirection(IVAN, FACING_NORTH, 0);
   Kolima_FaceActorAndWait(MIA, FACING_NORTH, 10);
-  Kolima_ShowMessageAndWait(18, 10);
+  Kolima_ShowMessageAndWait(LAUREL, 10);
   Kolima_NodTogether();
   Engine_EventWait(60);
-  // End the forest's appeal and let the party decide whether to help.
-  Event_ShowMessage(18, 0);
-  Event_ShowMessage(17, 0);
+  // Laurel's and Tret's last words; then the party decides whether to help.
+  Event_ShowMessage(LAUREL, 0);
+  Event_ShowMessage(TRET, 0);
   Engine_TaskRemoveCallback(Kolima_UpdateCurseDust);
   Engine_EventWait(80);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
@@ -1401,7 +1498,13 @@ s32 gKolima_PendingPose __attribute__((section(".bss")));
 s32 gKolima_MiaInParty __attribute__((section(".bss")));
 s32 gKolima_EffectActive __attribute__((section(".bss")));
 
-/// Restores the bridge's villagers and collision after its collapse.
+/// Sets up Kolima Bridge. While the curse lasts, the villager as a man
+/// (actor 8) is put out of sight, leaving him a tree (actor 9), and the row of
+/// cells at (9, 18) takes the attributes of the row above it; afterwards the
+/// tree is put out of sight instead. Once the bridge has fallen
+/// (FLAG_KOLIMA_BRIDGE_COLLAPSED), it is drawn broken and its cells changed to
+/// match. XXX: the row likely closes the bridge while the curse lasts, because
+/// the bridge's one event (trigger 10) needs the man who is a tree until then.
 static void Kolima_RestoreBridgeState(void) {
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     Engine_ActorSetPosition(8, 0, 0);
@@ -1491,6 +1594,8 @@ s32 gKolima_ProtectiveFieldShrinkActions[] = {
     SC_END,
 };
 
+/// The glints on Kolima's ground: three quarters of their size, passed
+/// through, twinkling at random (Kolima_UpdateTimedAppearance).
 s32 gKolima_EntryActions[] = {
     SC_SET(SW_SCALE_X, 3 * Q16_ONE / 4),
     SC_SET(SW_SCALE_Y, 3 * Q16_ONE / 4),
@@ -1511,12 +1616,15 @@ s32 gKolima_FaceLeaderScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-u16 gKolima_SwitchCells[] = {
+/// A door opening: two frames of a cell column two cells high.
+u16 gKolima_DoorCells[] = {
     MAP_CELL_STEP(66, 32, 1, 2, 4),
     MAP_CELL_STEP(67, 32, 1, 2, 4),
     MAP_CELL_STEPS_END,
 };
 
+/// Kolima's entrances: 1 from the world map, 3 to 7 from the houses' doors, 8
+/// from Kolima Tunnel.
 struct SceneEntrance gKolimaEntrances[] = {
     {0, CONDITION_ALWAYS, 232, 0, 120, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {1, CONDITION_ALWAYS, 44, 0, 267, FACING_EAST, 0, -1, -1, -1, -1, 0},
@@ -1551,6 +1659,8 @@ struct SceneRegion gKolimaRegions2[] = {
     {-1, 0, 0, 0, 0, 0, 0, 0},
 };
 
+/// Kolima's exits, then Kolima Bridge's (from the header word for scene 39)
+/// and Kolima Tunnel's (from the one for scene 38).
 u32 gKolimaExits[] = {
     SCENE_EXITS(36),
     SCENE_EXIT(1, 2, 7),
@@ -1574,6 +1684,10 @@ struct ScenePlacement gKolimaPlacements[] = {
     { SCENE_TABLE_END },
 };
 
+/// Kolima's people: Garet, Ivan and Mia for the curse, the nine villagers,
+/// Tret's and Laurel's voices and the four domes until the curse has been seen
+/// (FLAG_KOLIMA_CURSE_WITNESSED), four glints while it lasts, and Granite until
+/// it joins (its Djinni flag, 0x31).
 struct ScenePlacement gKolimaPlacements1[] = {
     { GARET, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
@@ -1624,6 +1738,8 @@ struct ScenePlacement gKolimaPlacements1[] = {
     { SCENE_TABLE_END },
 };
 
+/// Five more glints, placed by Kolima_Initialize once the curse has been seen
+/// and kept while it lasts.
 struct ScenePlacement gKolima_EntryScript[] = {
     { 0x11d, FLAG_KOLIMA_CURSE_LIFTED, 7,
         PIXELS(120), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -1638,6 +1754,8 @@ struct ScenePlacement gKolima_EntryScript[] = {
     { SCENE_TABLE_END },
 };
 
+/// Kolima Bridge's villager, as a man (actor 8) and as a tree (actor 9), in
+/// the same place; Kolima_RestoreBridgeState puts one of them out of sight.
 struct ScenePlacement gKolimaPlacements3[] = {
     { 0x65, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(234), 0, PIXELS(200), FACING_SOUTH + FACING_STEP, 3, 0 },
@@ -1646,15 +1764,18 @@ struct ScenePlacement gKolimaPlacements3[] = {
     { SCENE_TABLE_END },
 };
 
+/// The events Kolima and Kolima Tunnel share: the exits and doorways, the
+/// villagers' words once the curse is lifted and their thoughts before and
+/// after, the healer, Granite and two jars.
 struct SceneEvent gKolimaEvents[] = {
     { EVENT_EXIT, 99, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_AnimateSwitchOrExit) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_AnimateSwitchOrExit) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_AnimateSwitchOrExit) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_AnimateSwitchOrExit) },
-    { TOUCH_WALKING_INTO(FACING_SOUTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_AnimateSwitchOrExit) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
+    { TOUCH_WALKING_INTO(FACING_SOUTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_EnterDoor) },
     { EVENT_EXIT, 10, CONDITION_ALWAYS, 10 },
     { EVENT_TALK, 8, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaThisIsKolimaVillageOfLumberjacks) },
     { EVENT_TALK, 9, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaWeRelyOnTheForestsSo) },
@@ -1665,7 +1786,7 @@ struct SceneEvent gKolimaEvents[] = {
     { EVENT_TALK, 14, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIDidntMindBeingATree) },
     { EVENT_TALK, 15, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaYawnTreesAreSoSleepy) },
     { EVENT_TALK, 16, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), EVENT_SCRIPT(Kolima_TalkToHealer) },
-    { EVENT_TALK, 27, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_RecruitDjinni) },
+    { EVENT_TALK, 27, CONDITION_ALWAYS, EVENT_SCRIPT(Kolima_GraniteJoins) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaForAWhileIThoughtId) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaTheForestTreesAreAliveJust) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(FLAG_KOLIMA_CURSE_LIFTED), MSGNO(MsgKolimaIWonderIfIdLiveLonger) },
@@ -1689,6 +1810,7 @@ struct SceneEvent gKolimaEvents[] = {
     { SCENE_EVENTS_END },
 };
 
+/// Kolima Bridge's events: its two ends, the bridge's fall and the villager.
 struct SceneEvent gKolimaEvents3[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },

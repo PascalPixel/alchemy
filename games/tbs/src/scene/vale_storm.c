@@ -1,6 +1,68 @@
 /// @file
-/// Vale on the stormy night: the paths and doors the party passes as the storm
-/// rages, with Dora and Kyle on the first arrival.
+/// Vale (scene 3, SceneId_ValeStorm) on the night of the storm, the game's
+/// prologue, when Isaac and Garet are children. A storm rages over the
+/// village, and on Mt. Aleph above it the elders hold back a great Boulder,
+/// "the Mt. Aleph Boulder", with their Psynergy. The scene stands in for the
+/// village's main scene (Vale, scene 4) on that one night, on a map of its
+/// own: the doors that lead to scene 4 by day lead here instead.
+/// ValeStorm_Initialize sets FLAG_VALE_STORM, which tells Vale's other scenes
+/// the storm is on, until the night ends in vale_home.c. The night runs:
+///
+/// - Isaac and his mother Dora come out into the storm (entrance 15, by the
+///   door of exit 7) to find Kyle, who asks Dora to take good care of Isaac;
+///   three years later a villager reminds Isaac that he lost his father that
+///   night (vale_home.c). Kyle means to help evacuate the other villagers,
+///   Dora insists on going with him, and she sends Isaac on alone to take
+///   refuge in the plaza (Event_DoraSendsIsaacToThePlaza,
+///   FLAG_VALE_STORM_SENT_TO_PLAZA). This first time, the scene's lightning
+///   starts with the cutscene rather than on arrival.
+/// - On the way, rocks fall across the paths at four spots (Event_Rock11Falls
+///   to Event_Rock14Falls). Each rock's _FELL flag puts it back on later
+///   visits, blocking the cells it covers, and its _PASSED flag keeps the
+///   fall from replaying. The first time Isaac tries the door of exit 6, a
+///   villager running for the plaza bursts out and shoves him
+///   (FLAG_VALE_STORM_BUMPED_INTO_VILLAGER). Garet is struggling to save his
+///   chest of valuables (FLAG_VALE_STORM_HEARD_GARET once Isaac has heard
+///   him); talking to him, walking off past him, or meeting him further on
+///   brings him along, and either way the chest is left behind
+///   (FLAG_VALE_STORM_GARET_JOINED). With Garet along, the first fallen rock
+///   has him say they must find another way, and the path north has him turn
+///   Isaac back, since it leads to Mt. Aleph. Two cells start a monster
+///   battle each, once (encounters 2 and 3 of table 12).
+/// - Further on, the Boulder slips toward Vale while the elders strain to
+///   hold it, and they tell the boys to run (Event_WatchBoulderFall,
+///   FLAG_VALE_BOULDER_FELL; from then on it stays where it slipped to).
+/// - At the river, Jenna's brother Felix has fallen in and is clinging on
+///   while Kyle and Jenna's parents try to save him
+///   (Event_WitnessRiverRescue, FLAG_VALE_STORM_SAW_RIVER_RESCUE). No one has
+///   Psynergy left, so Dora goes north for help, sends Jenna to the plaza and
+///   asks Isaac and Garet to help: either answer sends them to the plaza, a
+///   yes after Jenna (ValeStorm_RunRiverSearch). Exit 2 leads there (Vale,
+///   scene 5, entrance 8), where Garet's grandfather sends the boys back to
+///   show Jenna and a man whose Psynergy the Psynergy Stone has restored the
+///   way to the river (FLAG_VALE_STORM_SENT_TO_AID_ELDERS,
+///   vale_home.c).
+/// - Back at the river (Event_GatherAfterRiverRescue,
+///   FLAG_VALE_STORM_RIVER_GATHERING_SEEN), Jenna finds her parents again and
+///   Dora calls everyone down to save Felix; then the Boulder comes down the
+///   mountain into the river, and once it has passed, Kyle, Jenna's parents
+///   and Felix are gone (ValeStorm_ShowBoulderSweepingDownriver). The man who
+///   came to help can no longer move. Leaving by exit 2 now, Isaac goes for
+///   help and Garet resolves to go after him (ValeStorm_GaretFollowsIsaac,
+///   FLAG_VALE_STORM_GARET_LEFT); on the way Isaac overhears two strangers,
+///   Garet catches up, and the night ends (vale_home.c).
+///
+/// ValeStorm_Initialize rebuilds the night from those flags on every arrival:
+/// the fallen rocks, the Boulder, Garet struggling with his chest until he
+/// joins, and the people at the river at their stage of the scene. The doors
+/// play their opening cells and leave through Vale_RequestBackdropExit
+/// (common/vale.h), which stops the lightning first; they lead into the
+/// houses (scene 7, exits 5, 6 and 8 to 11), into the part of Vale around
+/// Kraden's cottage (scene 6, exits 3 and 4), into another part of Vale
+/// (scene 8, exits 7, 12 and 13) and to the gathered villagers (scene 5, exit
+/// 2). FLAG_SCENE_TEMP_05 and _06 record the two doors left open, and
+/// FLAG_SCENE_TEMP_10 the upper path, whose collision cells are swapped while
+/// the leader is on it.
 
 #include "script.h"
 #include "game_state.h"
@@ -54,7 +116,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void);
 static void ValeStorm_FlashLightning(void);
 static void ValeStorm_UpdatePulsingGlow(void);
 static void ValeStorm_FlickerGlowOffset(void);
-static void ValeStorm_GaretLeavesIsaac(void);
+static void ValeStorm_GaretFollowsIsaac(void);
 static void ValeStorm_RebuildRiverbank(void);
 static void ValeStorm_FlashPaletteAndSpawnEffects(struct FieldActor *actor);
 static void ValeStorm_SpawnEffectPair(struct FieldActor *parent);
@@ -68,8 +130,10 @@ enum { STORM_CALLBACK_PRIORITY = 3200 };
 /// elders holding back the Boulder (gValeStorm_BoulderWatchers) follow as 28
 /// to 33.
 enum StormNightActor {
-  /// Worn out from holding the Boulder: "I... I'll go!", then "It's no use. I
-  /// can't move..."
+  /// The man who comes back to the river with Jenna, his Psynergy restored at
+  /// the Psynergy Stone (vale_home.c: "Enough to save Felix"); after the
+  /// Boulder has passed he tries to go for help and cannot. "I... I'll go!",
+  /// then "It's no use. I can't move..."
   ACTOR_EXHAUSTED_VILLAGER = ACTOR_FIRST_PLACED,
   ACTOR_DORA,
   ACTOR_KYLE,
@@ -109,7 +173,7 @@ enum StormNightPlaceFlag {
 };
 
 // Scene flags, cleared on every ordinary entrance:
-// - FLAG_SCENE_TEMP_05: the door of exit 7, from which Dora and Kyle came,
+// - FLAG_SCENE_TEMP_05: the door of exit 7, from which Dora and Isaac came,
 //   stands open.
 // - FLAG_SCENE_TEMP_06: the villager has run out of exit 6's door, leaving it
 //   open.
@@ -137,8 +201,9 @@ ValeStorm_RerollHeadingOnCountdown(struct ScriptInterpreter *interpreter) {
 
 #include "common/object_pulse.h"
 
-/// Returns where the party appears; entrance 15 is where Dora and Isaac run
-/// in from the south-west of Vale (ValeBabi's exit 21).
+/// Returns where the party appears; entrance 15 is where Dora and Isaac come
+/// out of the door of exit 7, from another part of Vale (SceneId_ValeBabi,
+/// scene 8, its exit 21).
 const struct SceneEntrance *ValeStorm_GetEntrances(void) {
   return gValeStorm_Entrances;
 }
@@ -153,7 +218,8 @@ const struct ScenePlacement *ValeStorm_GetPlacements(void) {
 
 const struct SceneEvent *ValeStorm_GetEvents(void) { return gValeStorm_Events; }
 
-/// Swaps the upper path's collision cells as the leader steps onto it.
+/// In Vale on the stormy night, swaps the upper path's collision cells as the
+/// leader steps onto it.
 /// Reached by stepping on cell code 15. Sets FLAG_SCENE_TEMP_10,
 /// which ValeStorm_Initialize reads to swap them again.
 static void Event_SetPathCellOverride(void) {
@@ -161,7 +227,8 @@ static void Event_SetPathCellOverride(void) {
   Map_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
-/// Restores the upper path's collision cells as the leader steps off it.
+/// In Vale on the stormy night, restores the upper path's collision cells as
+/// the leader steps off it.
 /// Reached by stepping on cell code 14. Clears FLAG_SCENE_TEMP_10.
 static void Event_ClearPathCellOverride(void) {
   Engine_GameFlagClear(FLAG_SCENE_TEMP_10);
@@ -170,8 +237,8 @@ static void Event_ClearPathCellOverride(void) {
 
 #include "common/vale.h"
 
-/// Opens a door and takes exit 11, to ValeInteriors' entrance 1. No event row
-/// names it.
+/// Opens a door and takes exit 11, into a house of Vale (scene 7, entrance 1).
+/// No event row names it.
 UNUSED static void ValeStorm_OpenBackdropExit11(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps0, 45, 11);
@@ -180,43 +247,49 @@ UNUSED static void ValeStorm_OpenBackdropExit11(void) {
   Vale_RequestBackdropExit(11);
 }
 
-/// Stepping on cell code 2 requests exit 1, which has no table row.
-/// Scene_TakeExit therefore falls back to scene 5, entrance 0 (ValeHome),
-/// using the first exit's scene.
+/// In Vale on the stormy night, stepping on cell code 2 requests exit 1, which
+/// has no table row; Scene_TakeExit therefore falls back to the first exit's
+/// scene, Vale's SceneId_ValeHome (scene 5), at entrance 0.
 static void Event_LeaveByExit1(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropExit(1);
 }
 
-/// Reached by stepping on cell code 3; takes exit 3, to Kraden's cottage
-/// (ValeKraden's entrance 1).
+/// In Vale on the stormy night, leaves for the part of Vale around Kraden's
+/// cottage.
+/// Reached by stepping on cell code 3; takes exit 3, to SceneId_ValeKraden
+/// (scene 6) entrance 1.
 static void Event_LeaveByExit3(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropExit(3);
 }
 
-/// Reached by stepping on cell code 4; takes exit 4, to Kraden's cottage
-/// (ValeKraden's entrance 2).
+/// In Vale on the stormy night, leaves for the part of Vale around Kraden's
+/// cottage by its second path.
+/// Reached by stepping on cell code 4; takes exit 4, to SceneId_ValeKraden
+/// (scene 6) entrance 2.
 static void Event_LeaveByExit4(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropExit(4);
 }
 
-/// Reached by stepping on cell code 5; takes exit 2, to ValeHome's entrance 8.
-/// After the river gathering Garet first leaves Isaac
-/// (ValeStorm_GaretLeavesIsaac).
+/// In Vale on the stormy night, leaves for the plaza, where the villagers have
+/// gathered (SceneId_ValeHome, scene 5).
+/// Reached by stepping on cell code 5; takes exit 2, to entrance 8. After the
+/// river gathering, Garet first resolves to go after Isaac
+/// (ValeStorm_GaretFollowsIsaac).
 static void Event_LeaveByExit2(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM_RIVER_GATHERING_SEEN) != 0 &&
       Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_LEFT) == 0) {
-    ValeStorm_GaretLeavesIsaac();
+    ValeStorm_GaretFollowsIsaac();
   }
   Vale_RequestBackdropExit(2);
 }
 
-/// Opens the door and goes in.
-/// Reached by walking north into cell code 6; takes exit 5, to Vale's houses
-/// (ValeInteriors' entrance 6).
+/// In Vale on the stormy night, opens the door of Garet's house and goes in.
+/// Reached by walking north into cell code 6; takes exit 5, to scene 7's
+/// entrance 6, the house where Garet's family lives.
 static void Event_LeaveByExit5(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps1, 54, 32);
@@ -225,12 +298,13 @@ static void Event_LeaveByExit5(void) {
   Vale_RequestBackdropExit(5);
 }
 
-/// Isaac's first time at the door of exit 6: a villager runs out and shoves
-/// him; afterwards the door opens as usual. "Huh? Isaac?"
+/// In Vale on the stormy night, Isaac's first time at the door of exit 6: a
+/// villager runs out and shoves him; afterwards the door opens as usual.
+/// "Huh? Isaac?"
 /// Reached by walking north into cell code 7. The shove plays until
 /// FLAG_VALE_STORM_BUMPED_INTO_VILLAGER or FLAG_VALE_STORM_SECOND_ROCK_FELL is
-/// set, and sets FLAG_SCENE_TEMP_06; otherwise takes exit 6, to
-/// ValeInteriors' entrance 5.
+/// set, and sets FLAG_SCENE_TEMP_06; otherwise takes exit 6, into a house of
+/// Vale (scene 7, entrance 5).
 static void Event_LeaveByExit6(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_06) == 0) {
     Event_PlayCue(SE_DOOR_OPEN);
@@ -247,9 +321,10 @@ static void Event_LeaveByExit6(void) {
   }
 }
 
-/// Opens the door, unless Dora and Kyle left it open, and goes in.
-/// Reached by walking north into cell code 8; takes exit 7, to the south-west
-/// of Vale (ValeBabi's entrance 6).
+/// In Vale on the stormy night, goes back in through the door Dora and Isaac
+/// came out of, opening it unless they left it open.
+/// Reached by walking north into cell code 8; takes exit 7, to
+/// another part of Vale (SceneId_ValeBabi, scene 8) entrance 6.
 static void Event_LeaveByExit7(void) {
   if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_05) == 0) {
     Engine_AudioPlayCue(SE_DOOR_OPEN);
@@ -260,9 +335,9 @@ static void Event_LeaveByExit7(void) {
   Vale_RequestBackdropExit(7);
 }
 
-/// Opens the door and goes in.
-/// Reached by walking north into cell code 9; takes exit 8, to
-/// ValeInteriors' entrance 2.
+/// In Vale on the stormy night, opens a door and goes in.
+/// Reached by walking north into cell code 9; takes exit 8, into a house of
+/// Vale (scene 7, entrance 2).
 static void Event_LeaveByExit8(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps2, 49, 69);
@@ -271,9 +346,9 @@ static void Event_LeaveByExit8(void) {
   Vale_RequestBackdropExit(8);
 }
 
-/// Opens the door and goes in.
-/// Reached by walking north into cell code 10; takes exit 9, to
-/// ValeInteriors' entrance 1.
+/// In Vale on the stormy night, opens a door and goes in.
+/// Reached by walking north into cell code 10; takes exit 9, into a house of
+/// Vale (scene 7, entrance 1).
 static void Event_LeaveByExit9(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gValeStorm_CellSteps3, 52, 76);
@@ -282,9 +357,9 @@ static void Event_LeaveByExit9(void) {
   Vale_RequestBackdropExit(9);
 }
 
-/// Opens the door and goes in.
-/// Reached by walking north into cell code 11; takes exit 10, to
-/// ValeInteriors' entrance 1.
+/// In Vale on the stormy night, opens a door and goes in.
+/// Reached by walking north into cell code 11; takes exit 10, into the same
+/// house of Vale (scene 7, entrance 1).
 static void Event_LeaveByExit10(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_CellSteps1, 35, 74);
@@ -293,9 +368,9 @@ static void Event_LeaveByExit10(void) {
   Vale_RequestBackdropExit(10);
 }
 
-/// Opens the door and goes in.
-/// Reached by walking north into cell code 12; takes exit 12, to ValeBabi's
-/// entrance 11.
+/// In Vale on the stormy night, opens a door and goes in.
+/// Reached by walking north into cell code 12; takes exit 12, to
+/// another part of Vale (SceneId_ValeBabi, scene 8) entrance 11.
 static void Event_LeaveByExit12(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_CellSteps1, 35, 73);
@@ -304,9 +379,9 @@ static void Event_LeaveByExit12(void) {
   Vale_RequestBackdropExit(12);
 }
 
-/// Opens the door and goes in.
-/// Reached by walking north into cell code 13; takes exit 13, to ValeBabi's
-/// entrance 12.
+/// In Vale on the stormy night, opens a door and goes in.
+/// Reached by walking north into cell code 13; takes exit 13, to
+/// another part of Vale (SceneId_ValeBabi, scene 8) entrance 12.
 static void Event_LeaveByExit13(void) {
   Event_PlayCue(SE_DOOR_OPEN);
   Map_AnimateCells(gValeStorm_CellSteps2, 38, 72);
@@ -315,9 +390,9 @@ static void Event_LeaveByExit13(void) {
   Vale_RequestBackdropExit(13);
 }
 
-/// Restores the fallen rocks, the river scene and the Boulder from their
-/// flags, starts the storm, and plays the scene with Dora and Kyle on the
-/// first arrival by entrance 15.
+/// Arriving in Vale on the stormy night: restores the fallen rocks, the river
+/// scene and the Boulder from their flags, starts the storm, and plays the
+/// scene with Dora and Kyle on the first arrival by entrance 15.
 /// Called by Field_RunScene once the actors are placed. Sets FLAG_VALE_STORM;
 /// after a battle (FLAG_KEEP_PARTY_POSITION) the two doors close again.
 /// Garet, until he joins, is shown struggling with his things.
@@ -534,8 +609,9 @@ s32 ValeStorm_Initialize(void) {
   return 0;
 }
 
-/// Dora and Kyle come out into the storm with Isaac and send him to the plaza
-/// while they go to help. "Kyle... Will they be able to stop the Boulder?"
+/// In Vale on the stormy night, Dora comes out into the storm with Isaac to
+/// Kyle, and the two send Isaac on to the plaza while they go to help.
+/// "Kyle... Will they be able to stop the Boulder?"
 /// Called by ValeStorm_Initialize on arrival by entrance 15 until
 /// FLAG_VALE_STORM_SENT_TO_PLAZA is set. Sets it and
 /// FLAG_SCENE_TEMP_05, clears FLAG_SHOW_LOCATION_NAME, and
@@ -642,8 +718,8 @@ static void Event_DoraSendsIsaacToThePlaza(void) {
   Engine_EventEnd();
 }
 
-/// Walking past: rock 11 falls across the path, and Garet, once with Isaac,
-/// says they cannot get around it.
+/// In Vale on the stormy night, walking past: rock 11 falls across the path,
+/// and Garet, once with Isaac, says they cannot get around it.
 /// Reached by stepping on cell code 41 until FLAG_VALE_STORM_FIRST_ROCK_PASSED
 /// is set, which this sets. Sets FLAG_VALE_STORM_FIRST_ROCK_FELL as the rock
 /// falls; with Garet along, before the river gathering, his first comment on
@@ -721,7 +797,7 @@ static void ValeStorm_ApplyRock11Collision(void) {
   Map_CopyCellAttributes(28, 20, 1, 1, 20, 57);
 }
 
-/// Walking past: rock 12 falls down the path.
+/// In Vale on the stormy night, walking past: rock 12 falls down the path.
 /// Reached by stepping on cell code 42; the second rock, as Event_Rock11Falls
 /// does the first, with FLAG_VALE_STORM_SECOND_ROCK_FELL and
 /// FLAG_VALE_STORM_SECOND_ROCK_PASSED.
@@ -797,7 +873,7 @@ static void ValeStorm_ApplyRock12Collision(void) {
   Map_CopyCellAttributes(13, 55, 1, 1, 15, 55);
 }
 
-/// Walking past: rock 13 falls down the path.
+/// In Vale on the stormy night, walking past: rock 13 falls down the path.
 /// Reached by stepping on cell code 43; the third rock, as Event_Rock11Falls
 /// does the first, with FLAG_VALE_STORM_THIRD_ROCK_FELL and
 /// FLAG_VALE_STORM_THIRD_ROCK_PASSED.
@@ -868,7 +944,7 @@ static void ValeStorm_ApplyRock13Collision(void) {
   Map_CopyCellAttributes(23, 20, 3, 1, 2, 43);
 }
 
-/// Walking past: rock 14 falls down the path.
+/// In Vale on the stormy night, walking past: rock 14 falls down the path.
 /// Reached by stepping on cell code 44; the fourth rock, as Event_Rock11Falls
 /// does the first, with FLAG_VALE_STORM_FOURTH_ROCK_FELL and
 /// FLAG_VALE_STORM_FOURTH_ROCK_PASSED.
@@ -972,7 +1048,8 @@ static void ValeStorm_MeetVillagerAtExit6(void) {
   Engine_EventEnd();
 }
 
-/// Isaac hears Garet struggling with his things. "Ugh... Hrnghhh..."
+/// In Vale on the stormy night, Isaac hears Garet struggling with his things.
+/// "Ugh... Hrnghhh..."
 /// Reached by stepping on cell code 30, until Garet has joined. Sets
 /// FLAG_VALE_STORM_HEARD_GARET.
 static void Event_HearGaretStruggling(void) {
@@ -993,8 +1070,8 @@ static void Event_HearGaretStruggling(void) {
   }
 }
 
-/// Walking away from him, Garet calls after Isaac, asking whether he will just
-/// leave him there.
+/// In Vale on the stormy night, walking away from him: Garet calls after
+/// Isaac, asking whether he will just leave him there.
 /// Reached by stepping on cell code 31 once Isaac has heard Garet and before
 /// Garet joins; ValeStorm_RunCallOutSequence brings him along.
 static void Event_GaretCallsAfterIsaac(void) {
@@ -1009,8 +1086,8 @@ static void Event_GaretCallsAfterIsaac(void) {
   }
 }
 
-/// Talking to Garet: whether to leave his things behind, or, after the river,
-/// the Boulder.
+/// In Vale on the stormy night, talking to Garet: whether to leave his things
+/// behind, or, after the river, the Boulder.
 /// Reached by talking to Garet (actor 22): before he joins,
 /// ValeStorm_RunCallOutSequence brings him along.
 static void Event_TalkToGaret(void) {
@@ -1075,7 +1152,8 @@ static void ValeStorm_RunCallOutSequence(void) {
   Engine_GameFlagSet(FLAG_VALE_STORM_GARET_JOINED);
 }
 
-/// Garet catches up and joins Isaac. "Hey! Isaac!"
+/// In Vale on the stormy night, Garet catches up and joins Isaac.
+/// "Hey! Isaac!"
 /// Reached by stepping on cell code 32 until Garet has joined. Sets
 /// FLAG_VALE_STORM_GARET_JOINED and puts Garet in the party.
 static void Event_GaretJoinsIsaac(void) {
@@ -1126,7 +1204,8 @@ static void Event_GaretJoinsIsaac(void) {
   }
 }
 
-/// Garet warns where the path north leads. It leads to Mt. Aleph.
+/// In Vale on the stormy night, Garet turns Isaac back from the path north,
+/// which leads to Mt. Aleph.
 /// Reached by stepping on cell code 33, every time; Isaac is walked back south.
 static void Event_WarnAboutMtAleph(void) {
   struct FieldActor *leader;
@@ -1196,8 +1275,12 @@ static void ValeStorm_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   Engine_ActorSetPosition(ACTOR_GARET, 0, 0);
 }
 
-/// The Boulder falls toward Vale while the elders hold it with their Psynergy.
+/// In Vale on the stormy night, the Boulder slips toward the village while the
+/// elders hold it with their Psynergy, and they tell the boys to run.
 /// "Ahhh! The Boulder! It's falling!"
+/// Reached by stepping on cell code 34 until FLAG_VALE_BOULDER_FELL is set,
+/// which this sets. The six elders (gValeStorm_BoulderWatchers, actors 28 to
+/// 33) are placed for the scene and removed after it.
 static void Event_WatchBoulderFall(void) {
   u32 i;
   struct FieldActor *movingActor;
@@ -1415,8 +1498,11 @@ UNUSED static void ValeStorm_FlashBoulderSceneAnimationEntries(void) {
   }
 }
 
-/// At the river, Jenna cries out for her brother as the villagers try to save
-/// Felix. "Oh no! My brother!"
+/// In Vale on the stormy night, at the river, Jenna cries out for her brother
+/// Felix, who has fallen in, as Kyle and her parents try to save him.
+/// "Oh no! My brother!"
+/// Reached by stepping on cell code 35 until FLAG_VALE_STORM_SAW_RIVER_RESCUE
+/// is set, which this sets after ValeStorm_RunRiverSearch.
 static void Event_WitnessRiverRescue(void) {
   const s32 *pulseScript;
 
@@ -1658,7 +1744,9 @@ static void Event_WitnessRiverRescue(void) {
   Engine_EventEnd();
 }
 
-/// Sends the searchers along the river and asks Isaac to help.
+/// Dora goes north for help and sends Jenna to the plaza, then asks Isaac and
+/// Garet to help: a yes sends them after Jenna, a no to the plaza all the
+/// same.
 static void ValeStorm_RunRiverSearch(void) {
   struct FieldActor *villager;
   s32 random;
@@ -1799,7 +1887,10 @@ static void ValeStorm_RunRiverSearch(void) {
   Actor_SetPosition(ACTOR_GARET, 0, 0);
 }
 
-/// A villager at the river talks of rescuing Felix.
+/// In Vale on the stormy night, Kyle, at the river, tells Isaac and Garet they
+/// do not have enough Psynergy to save Felix and should find help.
+/// Reached by talking to Kyle (actor 10); the first time he greets Isaac and
+/// sets FLAG_VALE_STORM_KYLE_GREETED_ISAAC.
 static void Event_TalkAboutRescuingFelix(void) {
   s32 facing = FACING_SOUTHEAST;
   const s32 *pulseScript;
@@ -1835,8 +1926,12 @@ static void Event_TalkAboutRescuingFelix(void) {
   Engine_EventEnd();
 }
 
-/// Jenna comes back to the river, and the scene ends with the Boulder sweeping
-/// down it. "Mom! Dad! We're back!"
+/// In Vale on the stormy night, Jenna comes back to the river with Isaac,
+/// Garet and the man whose Psynergy is restored, and the scene ends with the
+/// Boulder sweeping down it. "Mom! Dad! We're back!"
+/// Reached by stepping on cell code 36 once FLAG_VALE_STORM_SENT_TO_AID_ELDERS
+/// is set (vale_home.c), until FLAG_VALE_STORM_RIVER_GATHERING_SEEN is set,
+/// which this sets.
 static void Event_GatherAfterRiverRescue(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -2411,7 +2506,10 @@ static void ValeStorm_FlickerGlowOffset(void) {
   }
 }
 
-/// A villager who cannot move asks Isaac to get help. "I can't move..."
+/// In Vale on the stormy night, after the Boulder, the man who came to help
+/// tries to go for help himself and cannot move. "I can't move..."
+/// Reached by talking to him (actor 8); the first time sets
+/// FLAG_VALE_STORM_VILLAGER_TRIED_TO_GO.
 static void Event_VillagerAsksForHelp(void) {
   struct FieldActor *villager;
   struct FieldActor *leader;
@@ -2473,8 +2571,12 @@ static void Event_VillagerAsksForHelp(void) {
   Engine_EventEnd();
 }
 
-/// Has Garet leave Isaac at the restored riverbank.
-static void ValeStorm_GaretLeavesIsaac(void) {
+/// As Isaac leaves the river to get help, Garet will not let him go alone and
+/// goes after him. "I can't let him go alone..."
+/// Called by Event_LeaveByExit2 after the river gathering; sets
+/// FLAG_VALE_STORM_GARET_LEFT, which has the two meet the strangers on the
+/// way (vale_home.c).
+static void ValeStorm_GaretFollowsIsaac(void) {
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_ActorStop(ACTOR_GARET);
@@ -2526,8 +2628,10 @@ static void ValeStorm_RebuildRiverbank(void) {
   Engine_MapRedraw();
 }
 
-/// On the stormy night, a monster attacks on the paths (encounter 2 of table
-/// 12).
+/// In Vale on the stormy night, a monster attacks on the paths (encounter 2 of
+/// table 12).
+/// Reached by stepping on cell code 16 until
+/// FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT is set.
 static void Event_FightThirdMonster(void) {
   struct EventWork *state;
 
@@ -2541,7 +2645,10 @@ static void Event_FightThirdMonster(void) {
   Engine_EventEnd();
 }
 
-/// On the stormy night, another monster attacks (encounter 3 of table 12).
+/// In Vale on the stormy night, another monster attacks (encounter 3 of table
+/// 12).
+/// Reached by stepping on cell code 17 until
+/// FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT is set.
 static void Event_FightFourthMonster(void) {
   struct EventWork *state;
 
@@ -2670,7 +2777,8 @@ static void ValeStorm_CycleBoulderPalette(void) {
   ValeStorm_CycleObjectPalettes(Object_GetById(ACTOR_BOULDER));
 }
 
-/// Keeps Garet and actor 8 at the leader sprite priority.
+/// Keeps Garet and the man who came to help (actor 8) at the leader's sprite
+/// priority while they stand by the river.
 static void ValeStorm_CopyLeaderSpritePriority(void) {
   struct AnimationObject *sourceSprite;
 #if !TBS_PATCH_3
@@ -2691,13 +2799,16 @@ static void ValeStorm_CopyLeaderSpritePriority(void) {
 #endif
 }
 
-/// The door won't open: the impact knocked it off its hinges.
+/// In Vale on the stormy night, searching a broken door: it won't open, the
+/// impact having knocked it off its hinges.
 static void Event_SearchBrokenDoor(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgValeDoorWontOpen, 1);
   Engine_EventEnd();
 }
 
+/// In Vale on the stormy night, searching the chest Garet was trying to save.
+/// "It's Garet's chest of valuables."
 static void Event_SearchValuablesChest(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgValeSChestValuables, 1);

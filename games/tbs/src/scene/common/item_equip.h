@@ -1,5 +1,5 @@
 /// @file
-/// Colosso Log, River and Wall, and Goma Cave's entrance: giving a character an
+/// Colosseum Final 1, 2 and 3, and Goma Cave Entrance: giving a character an
 /// item and putting it on.
 #include "types.h"
 #include "inventory.h"

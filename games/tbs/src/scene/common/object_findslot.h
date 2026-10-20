@@ -2,7 +2,7 @@
 #include "field_obj.h"
 #include "field_runtime.h"
 
-// Colosso Log, River and Wall, and Venus Lighthouse.
+// Colosseum Final 1, 2 and 3, and Venus Lighthouse.
 
 /// Returns the placed actor (8 to 65) whose cell, and 16-pixel step of height,
 /// is that of the 16.16 position, or 0. self is not read.

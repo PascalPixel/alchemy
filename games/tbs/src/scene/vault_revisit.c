@@ -1,6 +1,47 @@
 /// @file
-/// Vault after the thieves escaped from jail, when the party passes through
-/// again.
+/// Vault (VaultRevisit, scene 23), the town as the party finds it once it has
+/// reached Kalay, on the same map as Vault's first scene (vault.c). The world
+/// map still leads into that first scene, but once FLAG_REACHED_KALAY is set
+/// (entering Kalay sets it) its setup sends the party straight on here by its
+/// exit 14, to entrance 1 at the town's south edge whichever side it came
+/// from; Vault Sanctum, Vault Cave and the houses (vault_interiors_revisit.c)
+/// lead back here directly. This copy of the town replaces the first for the
+/// rest of the game.
+///
+/// Much has changed since the party left. The three thieves it caught here,
+/// who had stolen Hammet's Shaman's Rod, have broken out of jail; the bridge
+/// to Kalay has been fixed, warriors from Kalay have come asking after Hammet,
+/// who went to Lunpa, and a villager says Lunpa's outlaws have become no
+/// better than thieves since Dodonpa took over. Most townspeople say this in
+/// plain message rows. Four speak through event functions that remember who
+/// has spoken in place flags (FLAG_SCENE_TEMP_00 + 0x100 to + 0x108, which
+/// last until the party leaves Vault's group of scenes), so that a Mind Read
+/// on one not yet spoken to plays the conversation first: the greeter
+/// recognizes "the warriors who captured the thieves", the villager who was
+/// talking with the mayor praises the party's strength, the watchman asks
+/// whether it has checked the jail (a yes and a no get different replies), and
+/// the first of two villagers who walk in circles together greets the party
+/// and Ivan. The praise also sets FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES, as the
+/// mayor's welcome indoors does.
+///
+/// Two secrets wait here. Searching the bell rings it, and a ring while
+/// FLAG_VAULT_DJINNI_CALLED_BY_BELL is clear calls Sap, a Venus Djinni, out of
+/// hiding to stand by the bell and sets the flag; spoken to, Sap joins the
+/// party. Coming in from the world map clears the call, so Sap hides again
+/// until it has joined. The dog, given a Bone (the girl at the inn hands them
+/// out), runs to a spot and jumps there three times
+/// (FLAG_VAULT_DOG_SHOWN_PASSAGE, shared with vault.c), and its thoughts then
+/// hint at a passage underground: Reveal shows the passage at that spot, and
+/// its trigger 40 leads down into Vault Cave (scene 96). Trigger 41 is a second
+/// way into Vault Cave (scene 98). A wooden box holds a Nut, and the well
+/// rumbles with water.
+///
+/// The town's other exits lead to the world map (exits 1 and 2), through six
+/// doors into the houses, shops and inn (scene 24, each door's number its
+/// entrance there), into Vault Sanctum (exit 11, the Sanctum's entrance 11)
+/// and into the jail (exit 12, the jail's entrance 10, where a lone prisoner
+/// sits in the thieves' place). Touch triggers 1 and 2 swap the collision of a
+/// 4-by-2 block of cells (common/vault_toggle.h), as in vault.c.
 
 #include "game_state.h"
 #include "window.h"
@@ -45,13 +86,14 @@ enum {
   ACTOR_SECOND_WALKER = 15,
   ACTOR_WATCHMAN = 16, ///< Vault's watchman. "Did you guys check out the jail?"
   ACTOR_VAULT_DOG = 18,
-  ACTOR_VAULT_VENUS_DJINNI = 21,
-  VAULT_VENUS_DJINNI_INDEX = 4,
+  ACTOR_VAULT_VENUS_DJINNI = 21, ///< Sap, hiding until the bell calls it
+  VAULT_VENUS_DJINNI_INDEX = 4,  ///< Sap's index among the Venus Djinn
   VAULT_PROXIMITY_REACTION_PAUSED = 2
 };
 
-/// Scene flags: what the townspeople have already said. A Mind Read before
-/// someone has spoken plays the conversation first.
+/// Place flags, kept while the party stays in Vault's scenes: what the
+/// townspeople have already said. A Mind Read before someone has spoken plays
+/// the conversation first.
 enum {
   FLAG_WARRIOR_GUY_GREETED = FLAG_SCENE_TEMP_00 + 0x100,
   FLAG_GREETER_RECOGNIZED_PARTY = FLAG_SCENE_TEMP_00 + 0x105,
@@ -109,7 +151,8 @@ static void Event_TalkOfLunpaThieves(void) {
 }
 
 /// The villager was just talking about the party with the mayor: they are so
-/// strong, let those thieves attack.
+/// strong, let those thieves attack. Sets FLAG_PARTY_PRAISED and
+/// FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES (0x868).
 static void Event_PraisePartyStrength(void) {
 
   Engine_EventBegin();
@@ -130,8 +173,10 @@ static void Event_HopeVolcanoStaysCalm(void) {
   VaultRevisit_ShowStandingActorMessage(ACTOR_VOLCANO_WATCHER);
 }
 
-/// The first walker stops circling. "Hey, it's that warrior guy!" and "Yeah,
-/// and Ivan, too." the first time, then "I'm so glad you came back to Vault!"
+/// The first of the two walkers stops circling. "Hey, it's that warrior guy!"
+/// and "Yeah, and Ivan, too." the first time (FLAG_WARRIOR_GUY_GREETED), then
+/// "I'm so glad you came back to Vault!" Bit 1 of the walker's timer keeps
+/// Vault_UpdateWalkingVillager from moving it while it talks.
 static void Event_GreetWarriorGuy(void) {
   struct FieldActor *actor = Actor_Get(ACTOR_FIRST_WALKER);
   u16 facing = actor->facing;
@@ -177,8 +222,8 @@ static void Event_WishEldersWereBrave(void) {
   actor->timer = 0;
 }
 
-/// Asks about the jail. "Did you guys check out the jail?" Yes: how did the
-/// thugs break out? No: the thieves broke out and got away.
+/// The watchman asks about the jail. "Did you guys check out the jail?" Yes:
+/// how did the thugs break out? No: the thieves broke out and got away.
 static void Event_AskAboutJailbreak(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultGuysCheckJail);
@@ -205,8 +250,9 @@ static void Event_ReadMindAndRecognizeThiefCatchers(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read: since Dodonpa took over, Lunpa's outlaws are no better than
-/// thieves.
+/// Mind Read on the villager who talks of Lunpa's thieves: since Dodonpa took
+/// over, Lunpa's outlaws are no better than thieves, and there must be a reason
+/// they are so quiet.
 static void Event_ReadMindOnDodonpa(void) {
   Engine_EventSetMessage(MsgVaultOnceDodonpaTook);
   Object_GetById(ACTOR_LUNPA_GOSSIP)->paused = 1;
@@ -324,8 +370,9 @@ static void VaultRevisit_JumpActorToAndWait(int actor, int x, int z,
   jumpingActor->gravity = PIXELS(1);
 }
 
-/// Ringing the bell makes the Djinni jump out and move to its new position
-/// once.
+/// Searching the bell rings it (SE_100). The first ring since the party came in
+/// from the world map makes Sap jump out of hiding and walk to the bell, at
+/// (408, 120), and sets FLAG_VAULT_DJINNI_CALLED_BY_BELL.
 static void Event_RingBell(void) {
   Engine_EventBegin();
   Event_PlayCue(SE_100);
@@ -357,26 +404,33 @@ static void Vault_WalkThroughExit(s32 x, s32 z, s32 exitId) {
   Engine_EventRequestExit(exitId);
 }
 
-static void Event_EnterSoutheastHouse(void) {
+/// Door 5 opens into the house of the man whose precious stone a cat ate.
+static void Event_EnterGemOwnersHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_Scene5Cells, 56, 19);
   Vault_WalkThroughExit(408, 320, 5);
 }
 
-static void Event_EnterCentralEastHouse(void) {
+/// Door 6 opens into the house of the child who doubts the thieves were from
+/// Lunpa.
+static void Event_EnterChildsHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_Scene6Cells, 50, 18);
   Vault_WalkThroughExit(312, 304, 6);
 }
 
-static void Event_EnterCentralHouse(void) {
+/// Door 7 opens into the inn.
+static void Event_EnterInn(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_Scene7Cells, 44, 17);
   Vault_WalkThroughExit(216, 288, 7);
 }
 
-/// Opens the northeast house and uses its required sprite priority.
-static void Event_EnterNortheastHouse(void) {
+/// Door 8 opens into the item shop, where the couple who talk of Colosso also
+/// stand. The leader is drawn at sprite priority 3 as he walks in, as at
+/// doors 9 and 12, and the collision of the doorway, a column of three cells
+/// at (23, 12), is replaced so he can pass.
+static void Event_EnterItemShop(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
 
@@ -388,8 +442,8 @@ static void Event_EnterNortheastHouse(void) {
   Vault_WalkThroughExit(376, 224, 8);
 }
 
-/// Opens the north house and uses its required sprite priority.
-static void Event_EnterNorthHouse(void) {
+/// Door 9 opens into the weapon and armor shop, drawn like door 8.
+static void Event_EnterWeaponAndArmorShop(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
 
@@ -401,7 +455,8 @@ static void Event_EnterNorthHouse(void) {
   Vault_WalkThroughExit(296, 176, 9);
 }
 
-static void Event_EnterNorthwestHouse(void) {
+/// Door 10 opens into the mayor's house.
+static void Event_EnterMayorsHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_Scene10Cells, 38, 6);
   Vault_WalkThroughExit(120, 144, 10);
@@ -413,7 +468,8 @@ static void Event_EnterNorthwestHouse(void) {
 #include "item_ids.h"
 #include "objcmd.h"
 
-/// The jail door opens and the party walks in, drawn behind the doorway.
+/// The jail door opens and the party walks in, drawn behind the doorway, to
+/// the jail's entrance 10, where the lone prisoner sits.
 static void Event_EnterJail(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
@@ -429,7 +485,7 @@ static void Event_EnterJail(void) {
 // Shared entrance toggles precede the Djinni and dog events.
 #include "common/vault_toggle.h"
 
-/// The Venus Djinni the bell called out joins the party when spoken to.
+/// Talking to Sap, a Venus Djinni: it joins the party.
 static void Event_TalkToVenusDjinni(void) {
   Djinn_JoinParty(ACTOR_VAULT_VENUS_DJINNI, 0, VAULT_VENUS_DJINNI_INDEX);
 }
@@ -440,8 +496,10 @@ static inline void VaultRevisit_DogJumpAtPassage(void) {
   Engine_EventWait(30);
 }
 
-/// Given a Bone, the dog runs to the hidden passage and jumps there three
-/// times.
+/// Using a Bone on the dog: it takes the Bone, runs to the hidden passage at
+/// (216, 408) and jumps there three times, then steps back and sets
+/// FLAG_VAULT_DOG_SHOWN_PASSAGE, which places it there, a step back, on later
+/// arrivals.
 static void Event_GiveBoneToDog(void) {
   PartyInventory_Discard(ITEM_BONE);
   Engine_EventBegin();
@@ -462,14 +520,16 @@ static void Event_GiveBoneToDog(void) {
   Engine_EventEnd();
 }
 
-/// Covers the hidden passage when Reveal ends.
+/// Covers the hidden passage again, tiles and collision, when Reveal ends.
 static void Event_HidePassage(void) {
 
   Map_CopyCellAttributes(41, 43, 1, 1, 13, 25);
   Map_CopyCellsTo(40, 42, 12, 22, 3, 3);
 }
 
-/// Restores the passage's visible tiles and collision cell during Reveal.
+/// Reveal shows the hidden passage where the dog jumps: its tiles, and the
+/// collision of cell (13, 25), which lets the party step onto trigger 40 and
+/// down into Vault Cave.
 static void Event_RevealPassage(void) {
 
   Map_CopyCellAttributes(37, 43, 1, 1, 13, 25);
@@ -477,7 +537,7 @@ static void Event_RevealPassage(void) {
 }
 
 /// The dog barks; carrying a Bone before it has shown the passage lets the
-/// party give it one.
+/// party give it one (gEventWork->unk172).
 static void Event_TalkToDog(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultRuffRrruff2);
@@ -506,7 +566,8 @@ static void Event_PeerIntoWell(void) {
 /// Returns the town's talk, search, Psynergy, and doorway events.
 const struct SceneEvent *Scene_GetEvents(void) { return gVaultRevisit_Events; }
 
-/// Patched editions keep the bell's Djinni position when preserving the party.
+/// Patched editions keep Sap by the bell when the party keeps its position,
+/// as on a return from battle.
 static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 #if TBS_PATCH_1
   return Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION);
@@ -515,7 +576,17 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 #endif
 }
 
-/// Restores dog and Djinni progress, proximity reactions, and entrance flags.
+/// On arrival: restores the collision block of touch triggers 1 and 2, creates
+/// configured object 223 at (128, 420) and copies a 3-by-3 block of cells from
+/// (45, 41) to (8, 45), which vault.c does not (XXX: what the copy shows is not
+/// known), and hooks the two walkers to Vault_UpdateWalkingVillager. The dog
+/// waits at the hidden passage once it has shown it. Coming in from the world
+/// map (entrances 0 to 2) before Sap has joined clears
+/// FLAG_VAULT_DJINNI_CALLED_BY_BELL, so Sap is hidden again; while it is
+/// called and has not joined, it stands by the bell. Coming out of Vault
+/// Sanctum (entrance 11) clears FLAG_SHOW_LOCATION_NAME, and coming up from
+/// Vault Cave (entrance 13) clears FLAG_EXIT_ARRIVAL_PENDING (0x120), so the
+/// leader's arrival animation does not play.
 s32 Scene_Initialize(void) {
 
   struct FieldActor *actor;
@@ -737,12 +808,12 @@ struct SceneEvent gVaultRevisit_Events[] = {
     { EVENT_EXIT, 41, CONDITION_ALWAYS, 14 },
     { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_EnableAlternatePassageCells) },
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RestorePassageCells) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSoutheastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCentralEastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCentralHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNortheastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthwestHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterGemOwnersHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterChildsHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterInn) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterItemShop) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterWeaponAndArmorShop) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterMayorsHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_OpenDoorwayAndEnter) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJail) },
     { EVENT_TALK, ACTOR_GREETER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RecognizeThiefCatchers) },

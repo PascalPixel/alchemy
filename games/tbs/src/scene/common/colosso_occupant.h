@@ -3,7 +3,7 @@
 #include "field_runtime.h"
 #include "game_state.h"
 
-// The Colosso finals' three courses (Colosso Log, River and Wall).
+// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3).
 
 /// Returns the placed actor standing one cell, or else two cells, ahead of the
 /// actor the player moves (straight ahead in the nearest of the four

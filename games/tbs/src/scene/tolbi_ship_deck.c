@@ -1,10 +1,64 @@
 /// @file
-/// The deck of the ship across the Karagol Sea, from Kalay to Tolbi: the wait
-/// at the Kalay dock while the replacement ship fails to come, setting sail
-/// with the passengers at the oars, the sea monsters and the Kraken, the
-/// arrival at Tolbi, and the stop at anchor off the island. Entrances 10 to 19
-/// chain the voyage's cutscenes, each leaving by an exit that comes back to the
-/// next.
+/// Tolbi-bound Ship (TolbiShipDeck, scene 109), its deck: the ship that
+/// carries the party across the Karagol Sea from Kalay to Tolbi, with Silk
+/// Road blocked and a tour group of passengers bound for Colosso. Its other
+/// two scenes are the mast (tolbi_ship_mast.c, scene 110) and below decks
+/// (tolbi_ship_interiors.c, scene 111). The deck's placements and events
+/// follow the voyage's stage, read from its flags: at Kalay, at sea once the
+/// first attack is fought off (FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED), while
+/// the oars move (FLAG_TOLBI_SHIP_ROWING), at anchor off the island
+/// (FLAG_TOLBI_SHIP_AT_ISLAND) and at Tolbi (FLAG_TOLBI_SHIP_REACHED_TOLBI).
+/// The setup draws the deck for that stage (the cells as under way, at
+/// anchor), rocks it and scrolls the sea while under sail, sets the oars
+/// rowing, and plays the cutscene its entrance names. Entrances 10 to 19 are
+/// the voyage's cutscenes on deck; each leaves by an exit into the next
+/// cutscene in another of the ship's scenes or on the world map (scene 2,
+/// entrances 65 to 75, the ship's legs), and the chain comes back here. In
+/// story order:
+///
+/// - Boarding at Kalay: Kalay Docks (scene 107) lead aboard at entrance 5,
+///   and exit 4 leads back. Walking into one of the ways below deck (touch
+///   cells 1 to 3, the two doors and the hatch) leads below by exits 1 to 3,
+///   and the ladder up the mast by exit 5. The ship is waiting for its
+///   replacement from Tolbi. Once the tour group has left Kalay
+///   (FLAG_KALAY_COLOSSO_TOUR_LEFT) the passengers on deck grow impatient,
+///   and walking up to the crew (touch cell 10) plays the captain, Kaja, the
+///   deck's fighter, and a crewman talking over the delay: the captain will
+///   sail trusting his anchor charm, the crewman calls it superstition and
+///   slips below ("Not if I have anything to say about it."),
+///   FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY. Coming up to the door he took
+///   (touch cells 11 and 12) brings him out denying everything
+///   (FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED); Mind Read shows he hid the charm on
+///   top of the mast. Below decks the captain then refuses to sail without
+///   it, and once it is given back (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) the
+///   passengers who promised to row stand on deck.
+/// - Setting sail without the replacement, the party having agreed below to
+///   guard the oarsmen: entrance 10 has Kaja bring the word that all is ready
+///   ("Preparations... Ready!") and leads to the lookout on the mast; later
+///   departures, with the party aboard, play the same with Kaja reporting.
+/// - The monster attacks: entrance 11, sea monsters sighted ("Aye, Captain!
+///   Sea monsters!"); 12, they leap aboard; 13, they harry Ouranos and Sean,
+///   the warriors bound for Colosso who guard the deck with Kaja; 14, a great
+///   shape rises from the sea and a monster drops onto the deck. Entrance 11
+///   leads to the cabin, where the captain turns the ship (TolbiShipInteriors,
+///   entrance 14); 12, 13 and 14 each lead below to the fights among the oars
+///   (interiors entrances 15, 17 and 19). At 15 the party jumps down to the
+///   deck and fights the Kraken (encounter table 62, entry 3),
+///   returning to 16, where Kaja thanks Isaac (FLAG_TOLBI_SHIP_KRAKEN_DEFEATED)
+///   and another oarsman is lost.
+/// - Off course: the lookout's call of land on the mast leads either to
+///   entrance 17, where land is sighted and the ship comes in to Tolbi, or,
+///   by how the passengers chosen to row pull (tolbi_ship_mast.c), to 19,
+///   where the coast proves not to be Tolbi's and the crew head for an island
+///   to get their bearings. At anchor off it (the island is Crossbone Isle,
+///   scene 113, reached across the world map by exit 7) Sean asks the party
+///   to scout it for the tour group (FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED);
+///   back aboard at entrance 6, the crew have found the course to Tolbi, the
+///   rowers below switch sides, and the ship sails on, to entrance 17 this
+///   time.
+/// - At Tolbi: entrance 18, where the passengers who rowed come up one by one
+///   and the leader is thanked; exit 6 leads ashore to Tolbi Docks (scene
+///   112).
 
 #include "script.h"
 #include "flags.h"
@@ -80,7 +134,7 @@ static void TolbiShipDeck_CopyUnderwayCells(void);
 static void TolbiShipDeck_CopyAnchoredCells(void);
 static void TolbiShipDeck_Say(s32 a);
 static void TolbiShipDeck_Turn(s32 a, s32 b);
-static void TolbiShipDeck_ArriveAtTolbi(void);
+static void TolbiShipDeck_SightIsland(void);
 static void TolbiShipDeck_ReturnFromIsland(void);
 static void TolbiShipDeck_PlaceLeaderOnDeck(void);
 
@@ -93,12 +147,14 @@ static void TolbiShipDeck_PlaceLeaderOnDeck(void);
 #define SPEAKER(actor, window) ((window) << 12 | (actor))
 
 /// Who is who on deck. At Kalay (gTolbiShipDeckPlacementsWaiting) the captain
-/// asks Kaja, the deck's fighter, how the oarsmen are ("Say, Kaja, how are the
-/// oarsmen doing?"). At sea gTolbiShipDeck_CrewScript places Kaja and the
-/// warriors Ouranos and Sean, who help him guard the deck ("That'll be me,
-/// Ouranos, and Sean on deck").
+/// talks the delay over with Kaja, the deck's fighter, and a crewman, who asks
+/// Kaja how the oarsmen are ("Say, Kaja, how are the oarsmen doing?"). At sea
+/// gTolbiShipDeck_CrewScript places Kaja and the warriors Ouranos and Sean,
+/// who help him guard the deck ("That'll be me, Ouranos, and Sean on deck").
 enum TolbiShipDeckActor {
-  KALAY_CREWMAN = 20, ///< denies everything. "I didn't do anything..."
+  /// The crewman, who hid the captain's anchor charm on the mast and denies
+  /// everything. "I didn't do anything..."
+  KALAY_CREWMAN = 20,
   KALAY_CAPTAIN = 22,
   KALAY_KAJA = 23,
   SEA_KAJA = 20,
@@ -590,10 +646,10 @@ const struct SceneEvent *TolbiShipDeck_GetEvents(void) {
   return gTolbiShipDeckEvents;
 }
 
-/// A passenger at Kalay. What he says follows the delay: impatient at first,
-/// alarmed once the warriors storm off to the captain, relieved
-/// once the party has agreed to protect the ship. While alarmed he
-/// paces at random intervals.
+/// A passenger on deck at Kalay. What he says follows the delay: impatient at
+/// first, alarmed once the warriors storm off to the captain, relieved once the
+/// party has agreed to protect the ship. While alarmed he paces at random
+/// intervals.
 static void TolbiShipDeck_TalkToWaitingPassenger21(void) {
   struct FieldActor *passenger;
   s32 random;
@@ -724,9 +780,12 @@ static void TolbiShipDeck_GoBelowWhileFacingWest(void) {
 }
 #endif
 
-/// At Kalay, once the party has heard of the delay (flag 0x911): the crew
-/// wonder what happened to the replacement ship and decide to set sail anyway;
-/// the crewman runs off through the second door. Plays once.
+/// On deck at Kalay, once the tour group has left Kalay
+/// (FLAG_KALAY_COLOSSO_TOUR_LEFT; touch cell 10): the captain, Kaja and the
+/// crewman wonder what happened to the replacement ship, and the captain
+/// decides to set sail anyway, trusting his anchor charm; the crewman runs off
+/// through the second door. Plays once
+/// (FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY).
 static void TolbiShipDeck_WatchCrewDecideToSail(void) {
   struct FieldActor *record;
 
@@ -840,9 +899,10 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
   }
 }
 
-/// Approaching from the east side of the door: the crewman comes out, protests
-/// and slips away round the party to the bow. "I didn't do anything..." Runs
-/// until the party has confronted the crewman.
+/// On deck at Kalay, approaching from the east side of the door (touch cell
+/// 11): the crewman comes out, protests and slips away round the party to the
+/// bow. "I didn't do anything..." Runs until the party has confronted the
+/// crewman.
 static void TolbiShipDeck_CatchCrewmanFromEast(void) {
   u8 bits;
 
@@ -887,7 +947,7 @@ static void TolbiShipDeck_CatchCrewmanFromEast(void) {
   }
 }
 
-/// The same, approaching from the west side.
+/// The same, approaching from the west side (touch cell 12).
 static void TolbiShipDeck_CatchCrewmanFromWest(void) {
   u8 bits;
 
@@ -1055,7 +1115,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
     }
     return;
   case 19:
-    TolbiShipDeck_ArriveAtTolbi();
+    TolbiShipDeck_SightIsland();
     return;
   }
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
@@ -1233,8 +1293,8 @@ static void TolbiShipDeck_SetUpAtAnchor(void) {
   Engine_EventEnd();
 }
 
-/// Entrance 10, setting sail before the party is on deck: actor 23 brings word
-/// to actor 21 that all is ready.
+/// Entrance 10, setting sail from Kalay before the party is on deck: Kaja
+/// (actor 23) brings word to actor 21 that all is ready.
 static void TolbiShipDeck_DepartFromKalay(void) {
   struct FieldActor *record;
 
@@ -1260,7 +1320,8 @@ static void TolbiShipDeck_DepartFromKalay(void) {
   TolbiShipDeck_AnnouncePreparationsReady(23, 21);
 }
 
-/// Entrance 10 with the party aboard: Kaja brings word to actor 23.
+/// Entrance 10 on later departures, with the party aboard: Kaja brings word to
+/// actor 23.
 static void TolbiShipDeck_DepartWithParty(void) {
   struct FieldActor *record;
 
@@ -2396,9 +2457,11 @@ static void TolbiShipDeck_Turn(s32 a, s32 b) {
   Engine_ActorFaceDirection(a, b, 10);
 }
 
-/// Entrance 19: the ship reaches Tolbi and the crew talk it over before Kaja
-/// goes below.
-static void TolbiShipDeck_ArriveAtTolbi(void) {
+/// Entrance 19, after the lookout's call: Ouranos thinks they have reached
+/// Tolbi, but Kaja sees the coast is not Tolbi's and the ship is off course,
+/// and the crew head for an island to get their bearings before Kaja goes
+/// below. Exit 16 leads on below decks, toward the island.
+static void TolbiShipDeck_SightIsland(void) {
   Engine_EventBegin();
   sSeaScroll[0] = 0x40000;
   sSeaSpeed[0] = -0x8000;
@@ -2464,8 +2527,9 @@ static void TolbiShipDeck_ArriveAtTolbi(void) {
   Engine_EventRequestExit(16);
 }
 
-/// At anchor: the party is asked to scout the island; Garet and Ivan may argue
-/// before the party agrees.
+/// At anchor off the island, talking to Sean or Ouranos: the party is asked to
+/// scout the island for the arguing tour group; Garet and Ivan may argue
+/// before the party agrees (FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED).
 static void TolbiShipDeck_OfferToScoutIsland(void) {
   struct FieldActor *leader;
   u8 bits;

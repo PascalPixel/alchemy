@@ -1,7 +1,45 @@
 /// @file
-/// Tolbi's interiors: the houses, inns, shops and sanctum of the festival
-/// town. Like the town outside, the rooms change with the Colosso story
-/// flags: the festival, finals day and the quiet after Colosso.
+/// The buildings of Tolbi (TolbiInteriors, scene 136): its houses, inns and
+/// shops, which the area names call Tolbi, and Tolbi Sanctum, as the same
+/// scene is named at entrances 8 and 30.
+///
+/// - Tolbi, the rooms behind the town's doors 1 to 3 and 5 to 8 (scene 135's
+///   exits of those numbers lead in, and this scene's exits 1 to 9 lead back
+///   out). During the festival one household lines up beds and becomes a
+///   makeshift inn, visitors have rented another house, and the weapon,
+///   armor and item shops (shops 26 to 28) open across their counters. The
+///   inn behind door 3 is full, `Inn Full / No Vacancies`; its exits 10 and 11
+///   join it to the part of the inn whose doors and exits (12 to 19) lead into
+///   four guest rooms.
+/// - Tolbi Sanctum, behind door 9 (entrance 8), whose priest opens the
+///   sanctum across the counter. Entrance 30 is where a defeat returns the
+///   party while Iodem waits at Gondowan Passage.
+///
+/// The rooms' talk follows Colosso in the same three stages as the town, each
+/// with its own event table (TolbiInteriors_SelectEvents) and, after
+/// Colosso, a placement table of its own. During the festival Babi is
+/// missing and the town is full of visitors, among them a tour group from
+/// Kalay that reserved only two rooms. On finals day (FLAG_BABI_SAVED) Babi
+/// has shown himself at the finals; the Spanish and Italian editions add a
+/// question about it (TBS_PATCH_4). After Colosso (FLAG_COLOSSO_OVER) no ship
+/// sails the Karagol, and the visitors are stranded; one of them says they
+/// made it to Tolbi with the party's help.
+///
+/// After Colosso two short scripted scenes play, each once, on entering their
+/// rooms (TolbiInteriors_ApplyEntryState). In one guest room (entrance 19) a
+/// woman finds something on the floor, starts at the sight of the party and
+/// hides it behind the trash pile (TolbiInteriors_WatchWomanHideMedal,
+/// FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN): a Lucky Medal, which the party can
+/// then take from that barrel (FLAG_TOLBI_INTERIORS_MEDAL_TAKEN), after which
+/// she greets them, startled, and Mind Read hears her hope its owner will not
+/// ask for it back. In another (entrance 16) stranded passengers argue that
+/// the captain will not sail although they agreed to do whatever it takes
+/// (TolbiInteriors_WatchPassengersArgue, a place flag). A man who rode the
+/// ship from Kalay with the party greets it as `the would-be warrior`, and he
+/// and actor 36 leave once the party has watched the passengers confront the
+/// tour guide on the Tolbi docks (FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN).
+/// Barrels hold a Vial and a Lucky Medal, and searching the ovens shows what
+/// is cooking.
 
 #include "game_state.h"
 #include "unit/scene/tolbi_interiors.h"
@@ -20,7 +58,8 @@
 
 // Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another place group, and other places use the numbers for their own.
-#define FLAG_TOLBI_INTERIORS_SAILORS_SEEN 0x300 ///< their argument has played
+/// The stranded passengers' argument has played.
+#define FLAG_TOLBI_INTERIORS_PASSENGERS_SEEN 0x300
 
 #if !TBS_PATCH_1
 #define TOLBI_INTERIORS_INN_CAMERA_MAX_Z 736
@@ -72,8 +111,8 @@ const struct ScenePlacement *TolbiInteriors_SelectPlacements(void) {
 }
 
 #if TBS_PATCH_4
-/// The Spanish and Italian editions add a question on finals day: was Babi
-/// missing at all, since he showed himself at the finals?
+/// In Tolbi on finals day, the Spanish and Italian editions add a question: was
+/// Babi missing at all, since he showed himself at the finals?
 static void TolbiInteriors_AskWhetherBabiWasMissing(s32 speaker) {
   TolbiInteriors_AskYesNo(MsgTolbiInteriorsBabiShowedHimselfAtFinals, speaker);
 }
@@ -99,8 +138,8 @@ UNUSED static void TolbiInteriors_ExitThroughWindow(void) {
   Engine_EventRequestExit();
 }
 
-/// Walking into one of the four doors at triggers 14 to 17: every placed
-/// actor stops, the door opens and the leader walks through it.
+/// In Tolbi, walking into one of the four doors at triggers 14 to 17: every
+/// placed actor stops, the door opens and the leader walks through it.
 static void TolbiInteriors_EnterDoor(void) {
   u32 actorId;
   struct FieldActor *actor;
@@ -129,10 +168,10 @@ static void TolbiInteriors_EnterDoor(void) {
   Engine_EventRequestExit(*trigger);
 }
 
-/// After Colosso, entering by entrance 19: a woman finds something on the
-/// floor, is startled to see the party and hides it in the barrel behind the
-/// trash pile. "Hey, what's this?" The thing is a Lucky Medal, found later in
-/// that barrel.
+/// In Tolbi after Colosso, entering the guest room of entrance 19: a woman
+/// finds something on the floor, is startled to see the party and hides it in
+/// the barrel behind the trash pile. "Hey, what's this?" The thing is a Lucky
+/// Medal, found later in that barrel.
 static void TolbiInteriors_WatchWomanHideMedal(void) {
   struct FieldActor *sparkle;
 
@@ -200,54 +239,57 @@ static void TolbiInteriors_WatchWomanHideMedal(void) {
   Engine_EventEnd();
 }
 
-/// After Colosso, entering by entrance 16: three sailors argue about their
-/// captain, who won't sail the ship.
-static void TolbiInteriors_WatchSailorsArgue(void) {
+/// In Tolbi after Colosso, entering the guest room of entrance 16: three
+/// stranded passengers argue about the captain, who won't sail the ship. "He
+/// won't sail the ship, even though we agreed to do whatever it takes?"
+static void TolbiInteriors_WatchPassengersArgue(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiHeWontSailShipEven);
   Engine_EventWait(30);
-  Engine_ActorJump(TOLBI_INTERIORS_ANGRY_SAILOR, 4, 13);
-  Engine_ActorJump(TOLBI_INTERIORS_ANGRY_SAILOR, 4, 30);
-  Engine_EventShowMessage(TOLBI_INTERIORS_ANGRY_SAILOR, 0);
+  Engine_ActorJump(TOLBI_INTERIORS_ANGRY_PASSENGER, 4, 13);
+  Engine_ActorJump(TOLBI_INTERIORS_ANGRY_PASSENGER, 4, 30);
+  Engine_EventShowMessage(TOLBI_INTERIORS_ANGRY_PASSENGER, 0);
   Engine_EventWait(10);
 
-  Engine_ActorShowEmote(TOLBI_INTERIORS_SAILOR_B, EMOTE_IN_FRONT | 2, 50);
+  Engine_ActorShowEmote(TOLBI_INTERIORS_PASSENGER_WIFE, EMOTE_IN_FRONT | 2, 50);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_SAILOR_B, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_PASSENGER_WIFE, ANIM_NOD);
   Engine_EventWait(30);
-  Engine_EventShowMessage(TOLBI_INTERIORS_SAILOR_B, 0);
+  Engine_EventShowMessage(TOLBI_INTERIORS_PASSENGER_WIFE, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_SAILOR_C, ANIM_SHAKE_HEAD);
+  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_THIRD_PASSENGER,
+                                  ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  Engine_EventShowMessage(TOLBI_INTERIORS_SAILOR_C, 0);
+  Engine_EventShowMessage(TOLBI_INTERIORS_THIRD_PASSENGER, 0);
   Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(TOLBI_INTERIORS_ANGRY_SAILOR, 2);
+  Engine_ActorRunRepeatedMotion(TOLBI_INTERIORS_ANGRY_PASSENGER, 2);
   Engine_EventWait(20);
-  Engine_EventShowMessage(TOLBI_INTERIORS_ANGRY_SAILOR, 0);
+  Engine_EventShowMessage(TOLBI_INTERIORS_ANGRY_PASSENGER, 0);
   Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_SAILOR_B, ANIM_NOD);
+  Engine_ActorSetAnimationAndWait(TOLBI_INTERIORS_PASSENGER_WIFE, ANIM_NOD);
   Engine_EventWait(30);
   Engine_EventEnd();
 }
 
 /// Sets up the rooms on entry. After Colosso: a row of three map cells takes
-/// new attributes, two of the sailors are drawn at a fixed priority, the medal
-/// woman stands where she hid the medal, the two short scenes play once each
-/// on their entrances, and the would-be warrior and actor 36 have left once
-/// the docks refunded the tickets.
+/// new attributes, two of the passengers are drawn at a fixed priority, the
+/// medal woman stands where she hid the medal, the two short scenes play once
+/// each on their entrances, and the passenger who rode the ship with the party
+/// and actor 36 have left once the party has seen the tour guide on the Tolbi
+/// docks tell a passenger his ticket was refunded.
 s32 TolbiInteriors_ApplyEntryState(void) {
   s32 clearedPriorityFlags;
   struct FieldActor *actor;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
-    // Restore the changed room tiles and the sailors' fixed draw priority.
+    // Restore the changed room tiles and the passengers' fixed draw priority.
     Map_CopyCellAttributes(51, 47, 3, 1, 51, 45);
-    actor = Object_GetById(TOLBI_INTERIORS_ANGRY_SAILOR);
+    actor = Object_GetById(TOLBI_INTERIORS_ANGRY_PASSENGER);
     // Stored as a plain byte: the field store allocates the zero differently.
     *(u8 *)&actor->priorityFlags = clearedPriorityFlags = 0;
     actor->sprite->image.priority = 2;
-    actor = Object_GetById(TOLBI_INTERIORS_SAILOR_B);
+    actor = Object_GetById(TOLBI_INTERIORS_PASSENGER_WIFE);
     actor->priorityFlags = clearedPriorityFlags;
     actor->sprite->image.priority = 2;
     if (GameFlag_IsSet(FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN) != 0) {
@@ -263,23 +305,23 @@ s32 TolbiInteriors_ApplyEntryState(void) {
       }
     }
     if (gGameState.entrance == 16) {
-      if (GameFlag_IsSet(FLAG_TOLBI_INTERIORS_SAILORS_SEEN) == 0) {
-        Engine_GameFlagSet(FLAG_TOLBI_INTERIORS_SAILORS_SEEN);
+      if (GameFlag_IsSet(FLAG_TOLBI_INTERIORS_PASSENGERS_SEEN) == 0) {
+        Engine_GameFlagSet(FLAG_TOLBI_INTERIORS_PASSENGERS_SEEN);
         Engine_EventOpenScreen();
-        TolbiInteriors_WatchSailorsArgue();
+        TolbiInteriors_WatchPassengersArgue();
       }
     }
     // Once the docks' confrontation (the refund) is seen, these two have left.
     if (Engine_GameFlagIsSet(FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN) != 0) {
-      Engine_ActorSetPosition(TOLBI_INTERIORS_WOULD_BE_WARRIOR, 0, 0);
+      Engine_ActorSetPosition(TOLBI_INTERIORS_FELLOW_PASSENGER, 0, 0);
       Engine_ActorSetPosition(36, 0, 0);
     }
   }
   return 0;
 }
 
-/// The item shopkeeper: from across the counter (the leader facing west) opens
-/// shop 28; from elsewhere talks about the finals.
+/// In Tolbi, the item shopkeeper: from across the counter (the leader facing
+/// west) opens shop 28; from elsewhere talks about the finals.
 static void TolbiInteriors_TalkToItemShopkeeper(s32 speaker) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_WEST) {
@@ -295,8 +337,8 @@ static void TolbiInteriors_TalkToItemShopkeeper(s32 speaker) {
   }
 }
 
-/// The weapon shopkeeper: across the counter (the leader facing north)
-/// opens the shop; otherwise talks about Colosso.
+/// In Tolbi, the weapon shopkeeper: across the counter (the leader facing
+/// north) opens the shop; otherwise talks about Colosso.
 static void TolbiInteriors_TalkToWeaponShopkeeper(s32 speaker) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
@@ -315,7 +357,7 @@ static void TolbiInteriors_TalkToWeaponShopkeeper(s32 speaker) {
   }
 }
 
-/// The armor shopkeeper: across the counter (the leader facing north)
+/// In Tolbi, the armor shopkeeper: across the counter (the leader facing north)
 /// opens the shop; otherwise talks about the finals.
 static void TolbiInteriors_TalkToArmorShopkeeper(s32 speaker) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -335,14 +377,14 @@ static void TolbiInteriors_TalkToArmorShopkeeper(s32 speaker) {
   }
 }
 
-/// The chef asks whether the party watched Colosso, which he missed.
+/// In Tolbi, the chef asks whether the party watched Colosso, which he missed.
 static void TolbiInteriors_TalkToChef(s32 speaker) {
   Engine_EventBegin();
   TolbiInteriors_AskYesNo(MsgTolbiLookLikeWarrior, speaker);
   Engine_EventEnd();
 }
 
-/// After Colosso, a waiter grumbles about the chef's bad mood.
+/// In Tolbi after Colosso, a waiter grumbles about the chef's bad mood.
 static void TolbiInteriors_TalkToWaiter(s32 speaker) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiGrrrChefInBadMood);
@@ -350,15 +392,15 @@ static void TolbiInteriors_TalkToWaiter(s32 speaker) {
   Engine_EventEnd();
 }
 
-/// During the festival, a resident offers the party a bed.
+/// In Tolbi during the festival, a resident offers the party a bed.
 static void TolbiInteriors_TalkToHost(s32 speaker) {
   Engine_EventBegin();
   TolbiInteriors_AskYesNo(MsgTolbiWantStay, speaker);
   Engine_EventEnd();
 }
 
-/// The woman who hid the Lucky Medal. Until the party takes it from the
-/// barrel she teases; once it is gone she greets them, startled, the first
+/// In Tolbi, the woman who hid the Lucky Medal. Until the party takes it from
+/// the barrel she teases; once it is gone she greets them, startled, the first
 /// time, and then claims she is fine.
 static void TolbiInteriors_TalkToMedalWoman(s32 speaker) {
   Engine_EventBegin();
@@ -379,7 +421,7 @@ static void TolbiInteriors_TalkToMedalWoman(s32 speaker) {
   Engine_EventEnd();
 }
 
-/// Mind Read on the medal woman gives the hiding place away.
+/// In Tolbi, Mind Read on the medal woman gives the hiding place away.
 static void TolbiInteriors_ReadMedalWomanMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_TOLBI_INTERIORS_MEDAL_MISSED) == 0) {
@@ -391,24 +433,26 @@ static void TolbiInteriors_ReadMedalWomanMind(void) {
   Engine_EventEnd();
 }
 
-/// The angry sailor complains the ships won't sail after Colosso.
-static void TolbiInteriors_TalkToAngrySailor(s32 speaker) {
+/// In Tolbi after Colosso, the angry passenger complains the ships won't sail.
+/// "Grrr! What a scam!"
+static void TolbiInteriors_TalkToAngryPassenger(s32 speaker) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiGrrrScamWhyWontThey);
-  Actor_ShowEmote(TOLBI_INTERIORS_ANGRY_SAILOR, EMOTE_IN_FRONT | 3, 40);
+  Actor_ShowEmote(TOLBI_INTERIORS_ANGRY_PASSENGER, EMOTE_IN_FRONT | 3, 40);
   Event_ShowMessage(speaker, 0);
   Engine_EventEnd();
 }
 
-/// After Colosso, the would-be warrior asks whether the party remembers him.
-static void TolbiInteriors_TalkToWouldBeWarrior(s32 speaker) {
+/// In Tolbi after Colosso, the man who rode the ship from Kalay with the party
+/// asks whether it remembers him. "Hey! You're the would-be warrior!"
+static void TolbiInteriors_TalkToFellowPassenger(s32 speaker) {
   Engine_EventBegin();
   TolbiInteriors_AskYesNo(MsgTolbiWarriorRemember, speaker);
   Engine_EventEnd();
 }
 
-/// The priest: across the counter (the leader facing north) opens the
-/// sanctum; otherwise talks about the festival.
+/// In Tolbi Sanctum, the priest: across the counter (the leader facing north)
+/// opens the sanctum; otherwise talks about the festival.
 static void TolbiInteriors_TalkToPriest(s32 speaker) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
@@ -834,7 +878,7 @@ struct SceneEvent gTolbiInteriorsEventsAfterColosso[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 29, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYoudThinkYouCouldGetThrough) },
     { EVENT_TALK, TOLBI_INTERIORS_PRIEST, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToPriest) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 30, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsYouAllGotToSeeColosso) },
-    { EVENT_TALK, TOLBI_INTERIORS_ANGRY_SAILOR, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToAngrySailor) },
+    { EVENT_TALK, TOLBI_INTERIORS_ANGRY_PASSENGER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToAngryPassenger) },
     { EVENT_TALK, 32, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsOnceThisGuyGetsMadTheres) },
     { EVENT_TALK, 33, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIWonderIfThisReallyIs) },
     { EVENT_TALK, 34, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTolbiGetsSoBoringOnceThe) },
@@ -842,7 +886,7 @@ struct SceneEvent gTolbiInteriorsEventsAfterColosso[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 32, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsTheCrewIsSayingThatIf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 33, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsImSickOfStayingAtThis) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 34, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIfMomHadJustBoughtMe) },
-    { EVENT_TALK, TOLBI_INTERIORS_WOULD_BE_WARRIOR, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToWouldBeWarrior) },
+    { EVENT_TALK, TOLBI_INTERIORS_FELLOW_PASSENGER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiInteriors_TalkToFellowPassenger) },
     { EVENT_TALK, 36, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsIGotToSeeColossoSo) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 35, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsThatVoyageAcrossTheSeaWas) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 36, CONDITION_ALWAYS, MSGNO(MsgTolbiInteriorsNoMatterWhatHappensImComing) },

@@ -1,7 +1,45 @@
 /// @file
-/// Suhalla's houses, shop, inn and sanctum. After Babi's audience the inn holds
-/// two of Tolbi's soldiers, wounded in the sandstorms, and Iodem comes to
-/// question them about Sheba.
+/// The buildings of Suhalla (SuhallaInteriors, scene 168): the village's
+/// houses, its one shop and its inn, which the area names call Suhalla, and
+/// Suhalla Sanctum, as the same scene is named at entrances 2 and 6.
+///
+/// - Suhalla, the houses, shop and inn behind the village's doors 1, 3, 4 and
+///   5 (scene 167's exits lead to the entrances of the same numbers, and
+///   leaving by them goes back out). Exits 10 to 13 join the inn's rooms
+///   within the scene.
+/// - Suhalla Sanctum, behind the village's wide door (exit 2, entrance 2),
+///   whose priest offers the sanctum's services.
+///
+/// The rooms' people and talk come in two sets, chosen by whether Babi has
+/// held his audience after Colosso (FLAG_BABI_SPOKE_AFTER_COLOSSO). Before
+/// it, Suhalla talks of Lalivero across the Nol River, under Tolbi's rule and
+/// out of reach, and of the travelers the sandstorms will send its inn once
+/// Tolbi's festival ends. The shopkeeper, the innkeeper and the priest serve
+/// the party across their counters and otherwise chat by the same flag.
+///
+/// At that audience Babi sent the party to Venus Lighthouse with Iodem, who
+/// commands his soldiers and travels with the party; Sheba, the holy child of
+/// Lalivero whom Babi held as a hostage, had already left Tolbi for Lalivero
+/// with soldiers bound for Babi Lighthouse. Afterwards two of those soldiers
+/// lie wounded in the house of a man who, his child says, aids anyone in
+/// trouble; the inn is full of travelers the storms blew back, and two
+/// villagers talk of the death storms in the middle of the Suhalla; one says
+/// there was a saying about them he cannot remember, and Mind Read finds half
+/// of it, `"Ye who seek..." Something about eyes of truth...` Stepping into
+/// that house (cell code 50) runs a scripted scene once
+/// (Event_IodemQuestionsWoundedSoldiers, FLAG_IODEM_MET_WOUNDED_SOLDIERS):
+/// Iodem steps out of the party to question the soldiers, who woke in these
+/// beds and do not know where Sheba is, only that she was not in the sandstorm,
+/// and who warn that monsters cause the storms, that others got through them
+/// with water and slew the beasts. Iodem asks whether these others are the ones
+/// the party is following and, whatever the answer, resolves to find Sheba and
+/// to cross the Suhalla Desert after them, then rejoins the party. Iodem only
+/// does this before he has reached Babi Lighthouse
+/// (FLAG_IODEM_AT_BABI_LIGHTHOUSE); what he says in the desert and at Suhalla
+/// Gate later depends on FLAG_IODEM_MET_WOUNDED_SOLDIERS.
+///
+/// Searching the ovens finds a Smoke Bomb, once (flag 0xfb0), and shows what
+/// is cooking.
 
 #include "game_state.h"
 #include "field_event.h"
@@ -18,16 +56,18 @@
 #include "flags.h"
 #include "songs.h"
 
-/// Arriving by this entrance also marks Babi's audience as held.
+/// Arriving by this entrance also marks Babi's audience as held, as Suhalla's
+/// own entrance 90 does (see suhalla.c).
 enum { ENTRANCE_90 = 90 };
 
 /// The actors this scene's code names, by their place in the placement tables.
 enum {
   SHOPKEEPER = 12,
   INNKEEPER = 13,
-  PRIEST = 18, ///< keeps the sanctum
+  PRIEST = 18, ///< keeps Suhalla Sanctum
   IODEM = 19,
-  SOLDIER_SOUTH = 20, ///< the wounded soldiers in the inn's beds
+  /// The wounded soldiers, lying in the beds of a house after Babi's audience.
+  SOLDIER_SOUTH = 20,
   SOLDIER_NORTH = 21
 };
 
@@ -43,8 +83,8 @@ const struct SceneRegion *Scene_GetRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSuhallaInteriorsExits; }
 
-/// The townsfolk, joined after Babi's audience by Iodem, the wounded soldiers
-/// and the travelers the sandstorms brought.
+/// Suhalla's people, joined after Babi's audience by Iodem, the wounded
+/// soldiers and the travelers the sandstorms brought.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gSuhallaInteriorsPlacementsAfterAudience;
@@ -52,9 +92,10 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gSuhallaInteriorsPlacements;
 }
 
-/// Spoken to facing north, across the counter, the shopkeeper opens the shop;
-/// otherwise the shopkeeper says Suhalla's is the only store, or, after Babi's
-/// audience, asks whether the party is surprised to find so few shops.
+/// Suhalla's shopkeeper. Spoken to facing north, across the counter, the
+/// shopkeeper opens the shop; otherwise says Suhalla's is the only store, or,
+/// after Babi's audience, asks whether the party is surprised to find so few
+/// shops.
 static void Event_TalkToShopkeeper(s32 actorId) {
   u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
   if (facing == FACING_NORTH) {
@@ -76,9 +117,9 @@ static void Event_TalkToShopkeeper(s32 actorId) {
   }
 }
 
-/// Spoken to facing north, across the counter, the innkeeper offers a room;
-/// otherwise the innkeeper has nothing to do until Tolbi's festival ends, or,
-/// after Babi's audience, has been busy since the sandstorms began.
+/// Suhalla's innkeeper. Spoken to facing north, across the counter, the
+/// innkeeper offers a room; otherwise has nothing to do until Tolbi's festival
+/// ends, or, after Babi's audience, has been busy since the sandstorms began.
 static void Event_TalkToInnkeeper(s32 actorId) {
   u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
   if (facing == FACING_NORTH) {
@@ -92,9 +133,10 @@ static void Event_TalkToInnkeeper(s32 actorId) {
   }
 }
 
-/// Spoken to facing north, across the counter, the priest offers the
-/// sanctum's services; otherwise the priest talks of Lalivero under Tolbi's
-/// rule, or, after Babi's audience, wonders why there are so many sandstorms.
+/// Suhalla Sanctum's priest. Spoken to facing north, across the counter, the
+/// priest offers the sanctum's services; otherwise talks of Lalivero under
+/// Tolbi's rule, or, after Babi's audience, wonders why there are so many
+/// sandstorms.
 static void Event_TalkToPriest(s32 actorId) {
   u16 facing = (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
   if (facing == FACING_NORTH) {
@@ -108,8 +150,10 @@ static void Event_TalkToPriest(s32 actorId) {
   }
 }
 
-/// A traveler asks whether the party was blown here on the way to Babi
-/// Lighthouse, and answers yes or no.
+/// In Suhalla after Babi's audience, a traveler the storms blew back asks
+/// whether the party was blown here on the way to Babi Lighthouse: yes, and
+/// the traveler means to give up and follow the northern mountain back to
+/// Tolbi; no, and tells of setting out to open a business at the lighthouse.
 static void Event_AskIfBlownHere(s32 actorId) {
   s32 question = MsgSuhallaSupposeFolkBlown;
   Engine_EventSetMessage(question);
@@ -123,7 +167,8 @@ static void Event_AskIfBlownHere(s32 actorId) {
   Engine_EventShowMessage(actorId, 0);
 }
 
-/// The party leaves by the touched exit.
+/// The doors of Suhalla and Suhalla Sanctum, and the inn's inner exits 10 to
+/// 13: the party leaves by the touched exit.
 static void Event_LeaveByExit(void) {
   struct EventWork *state = gEventWork;
   s16 *touchedTrigger = (s16 *)&state->touchedTrigger;
@@ -132,12 +177,15 @@ static void Event_LeaveByExit(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
 }
 
-/// After Babi's audience, on entering the inn: Iodem steps out of the party and
-/// questions the two wounded soldiers. They were escorting Sheba to Lalivero
-/// when a sandstorm hit them, and tell of others who stopped the cyclones with
-/// water and slew the monsters causing them. Iodem resolves to search the
-/// desert for Sheba, and rejoins the party. Once the party has been to Babi
-/// Lighthouse (FLAG_IODEM_AT_BABI_LIGHTHOUSE), Iodem does not come.
+/// In Suhalla after Babi's audience, stepping into the house where the two
+/// wounded soldiers lie (cell code 50), once: Iodem steps out of the party and
+/// questions them. "Iodem..." They were escorting Sheba to Lalivero when a
+/// sandstorm hit them, and tell of others who stopped the cyclones with water
+/// and slew the monsters causing them. Iodem asks whether these are the ones
+/// the party follows, resolves either way to search the desert for Sheba and
+/// pursue them, and rejoins the party. Sets
+/// FLAG_IODEM_MET_WOUNDED_SOLDIERS either way; once Iodem has reached Babi
+/// Lighthouse (FLAG_IODEM_AT_BABI_LIGHTHOUSE), the scene does not play.
 static void Event_IodemQuestionsWoundedSoldiers(void) {
   struct FieldActor *leader;
   GameFlag_Set(FLAG_IODEM_MET_WOUNDED_SOLDIERS);
@@ -405,7 +453,8 @@ static void Event_IodemQuestionsWoundedSoldiers(void) {
   }
 }
 
-/// The doors, the townsfolk and the ovens, before or after Babi's audience.
+/// The doors and inner exits, people and ovens of Suhalla's buildings and
+/// Suhalla Sanctum, before or after Babi's audience.
 const struct SceneEvent *Scene_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gSuhallaInteriorsEventsAfterAudience;
@@ -413,8 +462,9 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gSuhallaInteriorsEvents;
 }
 
-/// Sets the houses up as the party enters: the shopkeeper and innkeeper behind
-/// their counters, and the two wounded soldiers lying in their beds.
+/// Sets Suhalla's buildings up as the party enters: the shopkeeper and
+/// innkeeper behind their counters, and the two wounded soldiers lying in
+/// their beds. Entrance 90 sets FLAG_BABI_SPOKE_AFTER_COLOSSO.
 s32 Scene_Initialize(void) {
   struct FieldActor *actor;
   if (gGameState.entrance == ENTRANCE_90)

@@ -1,9 +1,56 @@
 /// @file
-/// Suhalla Gate in three scenes: the gate with the house beside it, a second
-/// scene where a Djinni waits, and a third. Before Babi's audience after
-/// Colosso two guards keep the gate and step together to block the passage.
-/// After it, the party arrives with Iodem to find the guards beaten by strange
-/// wanderers: Iodem questions them and sets out after the attackers.
+/// Suhalla Gate (SuhallaGate1 and SuhallaGate2, scenes 169 and 170) and
+/// Gateway Cave (SuhallaGate3, scene 171), the pass that Babi's soldiers
+/// guard on the way to Babi Lighthouse.
+///
+/// The party comes here after the Suhalla Desert, and the three scenes are
+/// the pass in the order it is crossed:
+/// - Suhalla Gate (scene 169), the gate itself. The world map leads in from
+///   the south (exit 1, entrance 1) and from the east (exit 5, entrance 5),
+///   each way into its own part of the map; beside the gate stands a house
+///   whose door (exit 3) leads into Gate to Suhalla, the house's own area
+///   name (scene 105, entrance 10). The passage north (exit 2) and the
+///   eastern part (exit 4) both lead into scene 170.
+///
+///   Before Babi's audience after Colosso (FLAG_BABI_SPOKE_AFTER_COLOSSO), two
+///   of Babi's soldiers keep the passage: only those with travel papers may
+///   pass, and the party has none (Event_TalkToEastGuard). Whenever the
+///   leader comes near it (cell code 10) they step together in front of it
+///   and the cells there change (Event_GuardsBlockPassage).
+///
+///   At that audience Babi sent the party to Venus Lighthouse with Iodem, who
+///   commands his soldiers and now travels with the party. Afterwards the
+///   scene places the two guards lying wounded and a third soldier east of
+///   the gate, and the same cell runs a scripted scene once
+///   (Event_IodemQuestionsGuards, FLAG_SUHALLA_GATE_ATTACK_SEEN): Iodem steps
+///   out of the party, `What is the meaning of this!?`, and the guards tell
+///   of a strange group without papers whose strange powers beat them. He
+///   asks whether it was Felix, Jenna's brother, who travels with the band
+///   that raided Sol Sanctum; if he has already questioned the wounded
+///   soldiers in Suhalla (FLAG_IODEM_MET_WOUNDED_SOLDIERS), he adds that they
+///   must find Sheba, the girl from Lalivero the soldiers were escorting home,
+///   before tracking down the monsters. The guards send them on after the
+///   attackers, and Iodem rejoins the party. The third soldier, talked to or
+///   read with Mind Read, gasps `Venus Lighthouse was... attacked by
+///   strange... wanderers...`, flickers and vanishes for good
+///   (Event_SoldierVanishes, FLAG_SUHALLA_GATE_SOLDIER_VANISHED). Once Iodem
+///   has questioned the guards, a defeat with no defeat point returns the
+///   party to the house beside the gate.
+/// - Suhalla Gate (scene 170), beyond the passage, in two parts that exits 2
+///   and 3 join. Dew, a Mercury Djinni, waits here and fights when spoken to
+///   (Event_FightDjinni), and a chest holds a Mint. Exit 5 leads into Gateway
+///   Cave.
+/// - Gateway Cave (scene 171), entered from scene 170's exit 5; its exit 4
+///   leads out onto the world map (the world map's entrance 33). Searching in
+///   it finds a Psynergy Stone, kept by a place flag (0x350) and so back on
+///   every new visit.
+///
+/// Scene_Initialize also remembers, in FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH
+/// and _EAST, which way the party came in from the world map, so that Retreat
+/// from the house leads back out that way. In the Spanish, French and Italian
+/// editions the wounded soldiers lie a few pixels apart without collision, and
+/// the gate's cell attributes are patched around them and the vanishing
+/// soldier.
 
 #include "game_state.h"
 #include "version.h"
@@ -47,7 +94,7 @@ enum {
   /// attack on Venus Lighthouse and vanishes, and Iodem.
   VANISHING_SOLDIER = 10,
   IODEM = 11,
-  /// In the second scene.
+  /// In the second scene: Dew, a Mercury Djinni.
   DJINNI = 13
 };
 
@@ -55,10 +102,12 @@ enum {
 /// the house beside it, and from the world map to the east.
 enum { ENTRANCE_SOUTH = 1, ENTRANCE_FROM_HOUSE = 3, ENTRANCE_EAST = 5 };
 
-/// The house beside the gate is Lunpa Suhalla's entrance 10.
-enum { LUNPA_SUHALLA_GATE_HOUSE = 10 };
+/// The house beside the gate, Gate to Suhalla, is entrance 10 of scene 105
+/// (LunpaSuhalla).
+enum { GATE_TO_SUHALLA_ENTRANCE = 10 };
 
-/// Talking to the Djinni starts its battle.
+/// Suhalla Gate's second scene (170): talking to Dew, a Mercury Djinni,
+/// starts its battle.
 static void Event_FightDjinni(void) {
   Field_RequestDjinnBattle(DJINNI, DJINNI_DEW);
 }
@@ -79,7 +128,8 @@ const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gSuhallaGateExits; }
 
-/// The guards, wounded after Babi's audience, and the Djinni.
+/// Suhalla Gate's guards, standing or, after Babi's audience, lying wounded
+/// beside the vanishing soldier and Iodem; Dew and the second scene's sprouts.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -95,7 +145,8 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gSuhallaGatePlacementsOther;
 }
 
-/// The events of the gate, the Djinni's scene or the third scene.
+/// The events of Suhalla Gate's second scene (170), of Gateway Cave (171), or
+/// of the gate itself (169) for any other scene.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -108,18 +159,20 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gSuhallaGateEventsOther;
 }
 
-/// Sets the gate up as the party enters. Once the attack has been seen, the
-/// house beside the gate is the saved place. In the first scene the vanished
-/// soldier stays hidden, the side the party came in by is remembered for
-/// Retreat, and arriving from the south before Babi's audience changes cells
-/// by the passage. The Spanish, French and Italian editions also change cells
-/// around the wounded guards.
+/// Sets up whichever of the pass's scenes is entered. Once Iodem has
+/// questioned the guards, a defeat returns the party to the house beside the
+/// gate. In Suhalla Gate (169) the vanished soldier stays hidden, the side the
+/// party came in by is remembered for Retreat, and arriving from the south
+/// before Babi's audience changes cells by the passage; the Spanish, French
+/// and Italian editions also change cells around the wounded guards. In the
+/// second scene (170) the first five actors take their frames, actor 15 is
+/// stretched and one cell changes.
 s32 Scene_Initialize(void) {
   s32 scene;
 
   if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_ATTACK_SEEN)) {
     gGameState.savedScene = (s32)&SceneId_LunpaSuhalla;
-    gGameState.savedEntrance = LUNPA_SUHALLA_GATE_HOUSE;
+    gGameState.savedEntrance = GATE_TO_SUHALLA_ENTRANCE;
   }
   scene = gGameState.scene;
   if (scene == (s32)&SceneId_SuhallaGate1) {
@@ -165,8 +218,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// The leader walks north into the house's door: it opens in two frames and
-/// the leader steps inside.
+/// In Suhalla Gate (169), walking north into the door of the house beside it:
+/// the door opens in two frames and the leader steps into Gate to Suhalla.
 static void Event_EnterHouse(void) {
   s32 exitTrigger;
   s32 cellSize;
@@ -183,8 +236,8 @@ static void Event_EnterHouse(void) {
   Engine_EventRequestExit(exitTrigger);
 }
 
-/// The party leaves for the world map by trigger 1 or 5, forgetting the side
-/// it came in by.
+/// In Suhalla Gate (169), the party leaves for the world map by trigger 1
+/// (south) or 5 (east), forgetting the side it came in by.
 static void Event_LeaveForWorldMap(void) {
   s16 exitTrigger = gEventWork->touchedTrigger;
 
@@ -194,8 +247,9 @@ static void Event_LeaveForWorldMap(void) {
   Engine_EventRequestExit(exitTrigger);
 }
 
-/// Before Babi's audience, as the party nears the passage: the two guards step
-/// together in front of it, and the map cells around them change.
+/// In Suhalla Gate (169) before Babi's audience, each time the party nears the
+/// passage north (cell code 10): the two guards step together in front of it,
+/// and the map cells around them change.
 static void Event_GuardsBlockPassage(void) {
   Engine_EventBegin();
   Actor_SetSpeed(GUARD_WEST, 65536, 32768);
@@ -215,11 +269,13 @@ static void Event_GuardsBlockPassage(void) {
   Engine_EventEnd();
 }
 
-/// After Babi's audience, on reaching the gate: Iodem steps out of the party
-/// and asks what happened. The wounded guards tell of a strange group without
-/// papers whose powers beat them; Iodem asks whether it was the party's foe,
-/// and the guards send the party on after the attackers. Iodem rejoins the
-/// party.
+/// In Suhalla Gate (169) after Babi's audience, on reaching the passage (cell
+/// code 10), once: Iodem steps out of the party and demands to know what
+/// happened. "What is the meaning of this!?" The wounded guards tell of a
+/// strange group without papers whose strange powers beat them; Iodem asks
+/// whether it was Felix, the party's foe, and the guards send the party on
+/// after the attackers, toward Babi Lighthouse. Iodem rejoins the party. Sets
+/// FLAG_SUHALLA_GATE_ATTACK_SEEN.
 static void Event_IodemQuestionsGuards(void) {
   struct FieldActor *leader;
 #if !TBS_PATCH_3
@@ -271,7 +327,7 @@ static void Event_IodemQuestionsGuards(void) {
   Engine_ActorStartRepeatedMotion(GUARD_EAST, 3);
   Event_ShowMessageAndWait(GUARD_EAST, 0, 20);
   Actor_FaceDirection(IODEM, FACING_SOUTH + FACING_STEP, 20);
-  // Iodem: "It must have been ...!", and the party answers yes or no. Once he
+  // Iodem: "It must have been Felix!", and the party answers yes or no. Once he
   // has heard the wounded soldiers in Suhalla he adds that they must find
   // Sheba, then track down the monsters that did this.
   Event_AskYesNo(IODEM, 0);
@@ -329,10 +385,11 @@ static void Event_IodemQuestionsGuards(void) {
   Engine_EventEnd();
 }
 
-/// Before the attack the east guard asks whether the party is bound for Babi
-/// Lighthouse. "Do you want to go to Babi Lighthouse?" Yes, and the party must
-/// show travel papers it does not have; no, and the guard calls them strange.
-/// Afterwards the guard vows to settle the score.
+/// In Suhalla Gate (169), talking to the east guard. Until Iodem has questioned
+/// the guards he asks whether the party is bound for Babi Lighthouse, `Do you
+/// want to go to Babi Lighthouse?`: yes, and the party must show travel papers
+/// it does not have; no, and he calls them strange. Afterwards, wounded, he
+/// vows to settle the score.
 static void Event_TalkToEastGuard(void) {
   Engine_EventBegin();
 
@@ -361,8 +418,10 @@ static void Event_TalkToEastGuard(void) {
   Engine_EventEnd();
 }
 
-/// The soldier east of the gate gasps that Venus Lighthouse was attacked by
-/// strange wanderers, then flickers, slowly and then fast, and vanishes.
+/// In Suhalla Gate (169) after Babi's audience, talking to the soldier east of
+/// the gate or reading his mind, until he has vanished: he gasps that Venus
+/// Lighthouse was attacked by strange wanderers, then flickers, slowly and
+/// then fast, and vanishes. Sets FLAG_SUHALLA_GATE_SOLDIER_VANISHED.
 static void Event_SoldierVanishes(void) {
   unsigned int beat;
 

@@ -1,7 +1,46 @@
 /// @file
-/// The cave above Vale: three rooms of Psynergy puzzles, where the Jupiter
-/// Djinni Kite hides. Djinn_JoinParty(ACTOR_KITE, 3, 4) gives Jupiter Djinni 4,
-/// and the fifth Jupiter Djinni the text names is Kite.
+/// Vale Cave's overlay, which holds three rooms, each a scene of its own: the
+/// way in, which the game still calls Vale, and two rooms of Vale Cave proper.
+/// Kite, a Jupiter Djinni, hides in the second. No story flag is read here
+/// and no message is shown: the cave is a side trip from the part of Vale
+/// around Kraden's cottage, a run of Psynergy puzzles whose progress lives in
+/// scene and place flags.
+///
+/// - Vale (scene 93, SceneId_ValeCave1), the way in, a place group of its own
+///   (29). Its exits 1 and 3 lead back to Kraden's part of Vale
+///   (SceneId_ValeKraden, scene 6), whose exits 4 and 6 lead here; exit 2
+///   goes on into the cave. Each exit plays the exit sound first
+///   (Event_LeaveRoom). On arrival ValeCave_Initialize fades the room in from
+///   the backdrop and clears FLAG_SHOW_LOCATION_NAME: entering a new place
+///   group sets that flag, but this is still Vale.
+/// - Vale Cave (scene 94, SceneId_ValeCave2), one map in three parts, each with
+///   its own entrances and camera box; walking south into a ledge's cells
+///   hops the leader down it (Event_HopDownLedge). In the first part
+///   (entrances 1 to 4) Reveal shows a hidden tile while it lasts
+///   (Event_RevealHiddenTile). In Kite's part (entrances 5 to 7), coming near
+///   makes Kite hop away (Event_KiteRunsOff) and then run behind a ledge
+///   (Event_KiteRunsBehindLedge, setting FLAG_VALE_CAVE_KITE_BEHIND_LEDGE);
+///   from then on twelve trigger cells send it to the matching point on the
+///   ledge's far side as the leader walks round (Event_KiteKeepsAway), so it
+///   cannot be reached until Halt stops it. A stopped Kite can be talked to and
+///   joins the party (Event_TalkToKite), setting FLAG_KITE, which removes it
+///   from the placements. The room's chests hold the Halt Gem, which gives
+///   Halt, and a Nut. In the holes' part (entrances 8 to 10)
+///   two objects sink into holes in the floor once Move or a push leaves them
+///   over one (FLAG_SCENE_TEMP_00 and _01), opening the way, and a pair of
+///   sliding objects crosses the passage when walked into from the west or
+///   the east (FLAG_VALE_CAVE_SLIDERS_EAST). Its exits lead back to the first
+///   room, on to the third, and between its own parts.
+/// - Vale Cave (scene 95, SceneId_ValeCave3), the inner room, with three
+///   objects to push: one off a ledge (Event_PushObjectOffLedge), one along
+///   the ledge until it drops at its edge (Event_PushObjectOverEdge) and one
+///   north (Event_PushObjectNorth), each clearing the cells it held. Its exits
+///   lead back into the second room and between its own parts.
+///
+/// The second and third rooms are one place group (30), so their place flags
+/// (0x301, 0x302) last while the party goes between them. On every arrival
+/// ValeCave_ApplyEntryState rebuilds the cells of each puzzle already solved
+/// and, once Kite has run behind its ledge, puts it back there.
 
 #include "game_state.h"
 #include "version.h"
@@ -53,7 +92,9 @@
 #define ACTOR_LANDING_TIMEOUT 60
 #define FIRST_DJINNI_ROUTE_TRIGGER 45
 
-/// The flag of Kite, set once it is caught.
+/// The flag of Kite, set once it is caught: Kite is number 4 of the Jupiter
+/// Djinn, whose flags follow the three elements before Jupiter, twenty flags
+/// to an element.
 #define FLAG_KITE (FLAG_DJINNI_0 + 3 * 20 + 4)
 
 // The cave's scene flags:
@@ -78,10 +119,12 @@ static void ValeCave_ApplyEntryState(void);
 #include "common/effect_spawn.h"
 #include "common/object_staged_actor.h"
 
-/// Talking to Kite after Halt: it joins the party.
+/// In Vale Cave's second room, talking to Kite once Halt has stopped it: Kite,
+/// a Jupiter Djinni, joins the party.
 ///
 /// Scene_TalkToActor selects this kind 7 event while Kite is the paused actor.
-/// Gives Jupiter Djinni 4, setting FLAG_KITE so neither room places Kite again.
+/// Djinn_JoinParty gives Jupiter Djinni number 4, Kite, and sets FLAG_KITE, so
+/// neither room places Kite again.
 static void Event_TalkToKite(void) { Djinn_JoinParty(ACTOR_KITE, 3, 4); }
 
 /// Waits for an actor to land, bounded by a one-second timeout.
@@ -165,14 +208,14 @@ const struct ScenePlacement *ValeCave_GetPlacements(void) {
   return gValeCave_Placements1;
 }
 
-/// Reveal ends: the hidden tile is hidden again.
+/// In Vale Cave's second room, Reveal ends and the hidden tile is hidden again.
 ///
 /// Reached by Reveal's phase 4 anywhere in the second room.
 static void Event_HideRevealedTile(void) {
   Map_CopyCells(16, 15, 1, 1, 15, 15);
 }
 
-/// Reveal shows a hidden tile in the second room.
+/// In Vale Cave's second room, Reveal shows a hidden tile.
 ///
 /// Reached by Reveal's phase 5 anywhere in the second room; copies cell
 /// (16, 17) over cell (15, 15) until Event_HideRevealedTile puts it back.
@@ -197,8 +240,9 @@ ValeCave_SinkObjectWithParticles(s32 actorId, s32 baseX, s32 baseZ,
   }
 }
 
-/// Move on the western object: once over its hole, Isaac steps aside and the
-/// object sinks into the floor in a cloud of dust.
+/// In Vale Cave's second room, Move on the western object: once it is over its
+/// hole, Isaac steps aside and the object sinks into the floor in a cloud of
+/// dust.
 ///
 /// Reached by Move on the western object (actor 9) in the second room, until
 /// FLAG_SCENE_TEMP_00 is set. Over its hole (column 23) it sets
@@ -243,7 +287,8 @@ static void Event_MoveWestObjectIntoHole(void) {
   Engine_EventEnd();
 }
 
-/// Move on the eastern object: once over its hole, it sinks into the floor.
+/// In Vale Cave's second room, Move on the eastern object: once it is over its
+/// hole, it sinks into the floor.
 ///
 /// Reached by Move on the eastern object (actor 10) in the second room, until
 /// FLAG_SCENE_TEMP_01 is set, and from Event_PushEastObjectIntoHole. Over its
@@ -285,7 +330,8 @@ static void Event_MoveEastObjectIntoHole(void) {
   Engine_EventEnd();
 }
 
-/// Pushing the eastern object: it moves a cell, and sinks if over its hole.
+/// In Vale Cave's second room, pushing the eastern object: it moves a cell,
+/// and sinks if it is then over its hole.
 ///
 /// Reached by walking into cell code 24 in the second room, until
 /// FLAG_SCENE_TEMP_01 is set.
@@ -296,7 +342,8 @@ static void Event_PushEastObjectIntoHole(void) {
   Event_MoveEastObjectIntoHole();
 }
 
-/// Walking south off the ledge: Isaac hops down if the cell below is free.
+/// In Vale Cave's second room, walking south off a ledge: Isaac hops down if
+/// the cell below is free.
 ///
 /// Reached by walking south into cell code 21 in the second room. Returns 1
 /// when the leader hopped, 0 when the landing cell is blocked.
@@ -343,8 +390,8 @@ static s32 Event_HopDownLedge(s32 unusedArgument) {
   return 0;
 }
 
-/// Coming near Kite: the camera finds it; it notices the party and hops away
-/// up the ledge.
+/// In Kite's part of Vale Cave's second room, coming near Kite: the camera
+/// finds it; it notices the party and hops away up the ledge.
 ///
 /// Reached by stepping on cell code 40 in the second room until Kite is
 /// caught (FLAG_KITE); runs once, setting FLAG_SCENE_TEMP_00.
@@ -376,7 +423,8 @@ static void Event_KiteRunsOff(void) {
   }
 }
 
-/// Coming near again: Kite runs behind the ledge and turns to watch the party.
+/// In Kite's part of Vale Cave's second room, coming near again: Kite runs
+/// behind the ledge and turns to watch the party.
 ///
 /// Reached by stepping on cell code 41 in the second room until Kite is
 /// caught, once Event_KiteRunsOff has run. Sets FLAG_SCENE_TEMP_01 and
@@ -407,8 +455,8 @@ static void Event_KiteRunsBehindLedge(void) {
   }
 }
 
-/// Walking around the ledge: Kite keeps to the far side of it, unless Halt has
-/// stopped it.
+/// In Kite's part of Vale Cave's second room, walking around the ledge: Kite
+/// keeps to the far side of it, unless Halt has stopped it.
 ///
 /// Reached by stepping on cell codes 45 to 56 in the second room until Kite is
 /// caught, once FLAG_VALE_CAVE_KITE_BEHIND_LEDGE is set; each code sends Kite
@@ -445,7 +493,8 @@ static void Event_KiteKeepsAway(void) {
   }
 }
 
-/// Halt on Kite: it stops where it stands.
+/// In Vale Cave's second room, Halt on Kite: it stops where it stands, and the
+/// party can walk up to it and talk to it (Event_TalkToKite).
 ///
 /// Reached by Halt on Kite (actor 8) in the second room.
 static void Event_HaltKite(void) {
@@ -454,8 +503,8 @@ static void Event_HaltKite(void) {
   Engine_EventEnd();
 }
 
-/// Pushing an object along the ledge: at its edge the object falls off,
-/// opening the way.
+/// In Vale Cave's third room, pushing an object along the ledge: at its edge
+/// the object falls off, opening the way.
 ///
 /// Reached by walking into cell code 20 in the third room. When the object
 /// falls (column 17) it sets FLAG_SCENE_TEMP_03 and clears the cells it held.
@@ -507,7 +556,8 @@ static void Event_PushObjectOverEdge(void) {
   Engine_EventEnd();
 }
 
-/// Pushing the western object east: it falls off the ledge, opening the way.
+/// In Vale Cave's third room, pushing the western object east: it falls off
+/// the ledge, opening the way.
 ///
 /// Reached by walking east into cell code 21 in the third room. Sets
 /// FLAG_SCENE_TEMP_02 and clears the cells the object held.
@@ -552,7 +602,8 @@ static void Event_PushObjectOffLedge(void) {
   Engine_EventEnd();
 }
 
-/// Pushing the object north: it slides a cell, opening the way.
+/// In Vale Cave's third room, pushing the object north: it slides a cell,
+/// opening the way.
 ///
 /// Reached by walking into cell code 22 in the third room. Sets
 /// FLAG_SCENE_TEMP_05 when it stops on row 20, else FLAG_SCENE_TEMP_04, and
@@ -609,11 +660,12 @@ const struct SceneEvent *ValeCave_GetEvents(void) {
   return gValeCave_EventsOther;
 }
 
-/// Chooses the entry transition and restores the room's puzzle state.
+/// Arriving in any of the three rooms: chooses the entry transition and
+/// restores the room's puzzle state.
 ///
-/// The scene's initialize entry. The first room fades in from the backdrop
-/// and clears FLAG_SHOW_LOCATION_NAME; the others open with the window
-/// transition.
+/// The scene's initialize entry. The first room, Vale, fades in from the
+/// backdrop and clears FLAG_SHOW_LOCATION_NAME, so the place name is not shown
+/// again; the two rooms of Vale Cave open with the window transition.
 s32 ValeCave_Initialize(void) {
   s32 *request = &gEventWork->startTransition;
 
@@ -629,7 +681,8 @@ s32 ValeCave_Initialize(void) {
   return 0;
 }
 
-/// The first room's exits play the exit sound before leaving.
+/// In Vale, the cave's way in (scene 93), each exit plays the exit sound
+/// before leaving.
 ///
 /// Reached by stepping on cell codes 1 to 3 in the first room; takes the exit
 /// of the same number.
@@ -655,7 +708,8 @@ static void ValeCave_UpdateSlidingObjectPassage(void) {
 
 #include "common/object_pairmove.h"
 
-/// Walking east onto the sliding objects: they slide to the eastern end.
+/// In Vale Cave's second room, walking east onto the sliding objects: they
+/// slide to the eastern end.
 ///
 /// Reached by walking east into cell code 20 in the second room. Sets
 /// FLAG_VALE_CAVE_SLIDERS_EAST.
@@ -670,7 +724,8 @@ static void Event_SlideObjectsEast(void) {
   Engine_AudioPlayCue(SE_289);
 }
 
-/// Walking west onto the sliding objects: they slide back to the western end.
+/// In Vale Cave's second room, walking west onto the sliding objects: they
+/// slide back to the western end.
 ///
 /// Reached by walking west into cell code 21 in the second room. Clears
 /// FLAG_VALE_CAVE_SLIDERS_EAST.
@@ -790,7 +845,8 @@ static void ValeCave_ApplyEntryState(void) {
   }
 }
 
-/// Touching the sliding objects restarts their animation.
+/// In Vale Cave's second room, touching the sliding objects restarts their
+/// animation.
 ///
 /// Reached by stepping on cell code 20 or 21 in the second room.
 static void Event_TouchSlidingObjects(void) {

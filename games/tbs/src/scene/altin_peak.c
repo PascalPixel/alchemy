@@ -1,8 +1,57 @@
 /// @file
-/// Altin Mine, the eleven rooms under Altin where the hydros statues flood the
-/// village. The party rides rolling logs, freezes puddles into pillars with
-/// Frost, fights the water beasts, lowers the water three times and finds the
-/// ancient ruins at the bottom.
+/// Altin Peak, the mine below Altin that its villagers and the Alpine
+/// Crossing's signpost call Altin Mine: eleven scenes, AltinPeak1 to
+/// AltinPeak11 (scenes 77 to 87), whose area name is Altin Peak, except that
+/// the international editions call AltinPeak4 the Alpine Crossing when the
+/// party comes in from there (its entrances 6 and 7). Each scene is a room of
+/// the mine, numbered here as its scene id is (room 1 is AltinPeak1). The
+/// getters pick each room's tables by gGameState.scene, all the rooms share
+/// one exit table, and Scene_Initialize calls the setup of the room being
+/// entered (AltinPeak_RestoreRoom1 and so on), which puts back what the party
+/// has already done there.
+///
+/// The party comes down from Altin, by doorways into rooms 1, 4, 7 and 8,
+/// while boulders block Silk Road; the villagers say a passage at the bottom
+/// of the mine leads west. The water-spewing monsters that flooded Altin have
+/// flooded the mine too, and a water beast waits in rooms 1, 3 and 5. In room
+/// 1 the first one shows the way: stepping near it (touch 10,
+/// AltinPeak_ShowFirstBeastRoute) it cries out, hops around the room, freezes
+/// the wide puddle with Frost and hops across, and stepping near it again
+/// (touch 11) it hops back and settles down to spit. Talking to a beast, or
+/// reading its mind, starts its battle, and the party comes back to the room
+/// by entrance 99, where the room's setup runs a drain: the water layer sinks
+/// and flickers away (AltinPeak_DrainFirstWater and the two after it), and
+/// FLAG_ALTIN_MINE_FIRST_DRAIN to _THIRD_DRAIN remember the three drains,
+/// which Altin's code reads to lower the water in the village too. Back from
+/// the first battle, in room 1, the party finds the Frost Jewel before the
+/// water drains, and from then on Frost freezes the mine's puddles into ice
+/// pillars to stand on (scene flags keep them frozen only within one visit).
+/// Room 4's water stands until the second drain and room 6's until the third.
+///
+/// The rooms between are built from a few mechanisms: logs the party rides
+/// (talking to one, AltinPeak_RollLog), which roll along the turns their
+/// route's cells mark; floor switches in rooms 3, 5, 6 and 7, each remembered
+/// by a place flag (0x323 and 0x325 to 0x327) and redrawn on entry; and a
+/// block in room 7 that Move or a push slides along. Spritz, a Mercury Djinni,
+/// waits in room 7, placed until it has joined, and talking to it starts its
+/// battle. In room 9 a sign warns `Watch for falling rocks! Do not strike the
+/// wall! Rocks may fall!` at what looks like a dead end: while the party has
+/// no Orb of Force, Garet steps out and strikes the wall anyway, and with it
+/// Force does the same (AltinPeak_ForceRockOver); either way a boulder rolls
+/// after the leader down the path and crashes into the wall at the bottom,
+/// leaving rubble (FLAG_ALTIN_PEAK_BOULDER_FALLEN).
+///
+/// Room 10, at the bottom, is a tiled room of carved stone, part of ruins
+/// buried in the mine. Stepping toward its guardian statue
+/// (AltinPeak_StartHydrosBattle) wakes it and starts the battle with the
+/// Hydros statues. Back from it (FLAG_HYDROS_STATUES_DEFEATED, which Altin's
+/// villagers read), Garet, Ivan and Mia step out and wonder why Altin's
+/// guardian statues turned into monsters, the statue sinks into the floor,
+/// and a chest behind it holds the Lifting Gem. Its Lift is what frees Hsu at
+/// the Alpine Crossing (alpine_crossing_lama_temple.c), and in the mine the
+/// boulders of rooms 3, 8 and 11 have Lift rows that run nothing of their own.
+/// Room 4 opens onto the Alpine Crossing (its exits 6 and 7, the Crossing's
+/// entrances 4 and 5) and room 11 onto the world map.
 
 #include "script.h"
 #include "version.h"
@@ -134,7 +183,8 @@ enum { ACTOR_STATUE = 8, ACTOR_STATUE_SHADOW = 9 };
 
 enum { ACTOR_ROOM11_BOULDER = 8, ACTOR_ROOM11_BLOCK = 9 };
 
-/// The rooms' puzzles, kept while the party stays in the mine.
+/// The rooms' frozen puddles and Garet at the sign: scene flags, kept within
+/// one visit to a room, across its battles.
 enum {
   /// Frost has frozen the room's first puddle.
   FLAG_PUDDLE_FROZEN = FLAG_SCENE_TEMP_00,
@@ -163,8 +213,8 @@ extern s32 gAltinPeak_SprayDirection;
 extern s32 gAltinPeak_SprayOrigin[3];
 extern u16 gAltinPeak_FlickerTimer;
 
-/// Talking to the Djinni in room 7 makes it hop and starts the battle for
-/// Djinni 23.
+/// Talking to the Djinni in room 7 starts the battle with Spritz, a Mercury
+/// Djinni.
 static void AltinPeak_TalkToDjinni(void) {
   Field_RequestDjinnBattle(ACTOR_DJINNI, DJINNI_SPRITZ);
 }
@@ -954,11 +1004,11 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   GameFlag_Set(FLAG_ALTIN_PEAK_BOULDER_FALLEN);
 }
 
-/// Searching room 9's sign, which can bring the rockfall. "Watch for falling
-/// rocks! Do not strike the wall!" Before the rockfall, while the party has no
-/// Orb of Force, Garet steps out, grumbles at the dead end and strikes the
-/// wall; the ground shakes, he tells the leader to run and runs down the path,
-/// and the rockfall follows.
+/// Searching room 9's sign, which can bring the rockfall. `Watch for falling
+/// rocks! Do not strike the wall! Rocks may fall!` Before the rockfall, while
+/// the party has no Orb of Force, Garet steps out, grumbles at the dead end
+/// and strikes the wall; the ground shakes, he tells the leader to run and
+/// runs down the path, and the rockfall follows.
 static void AltinPeak_ReadFallingRockSign(void) {
   struct FieldActor *actor;
   s32 message;
@@ -1479,8 +1529,8 @@ static void AltinPeak_RestoreRoom3(void) {
   }
 }
 
-/// Room 4: its water is up until the second drain; entrances 6 and 7 skip
-/// the arrival event.
+/// Room 4: its water is up until the second drain. Arriving from the Alpine
+/// Crossing, at entrance 6 or 7, shows no place name.
 static void AltinPeak_RestoreRoom4(void) {
   if (GameFlag_IsSet(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0) {
     ((struct MapScrollWork *)gMapWork[0])->flags &= ~0x200;
@@ -1488,7 +1538,7 @@ static void AltinPeak_RestoreRoom4(void) {
     Map_CopyCellAttributes(52, 42, 1, 1, 53, 42);
   }
   {
-    // Entrances 6 and 7 do not run the pending arrival event.
+    // Entrances 6 and 7, from the Alpine Crossing.
     if ((u32)(((u16)gGameState.entrance - 6) << 16) <= 0x10000) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     }
@@ -2857,6 +2907,7 @@ struct SceneEvent gAltinPeak_Events3[] = {
     {SEARCH(SEARCH_UNNAMED), 83, CONDITION_ALWAYS, EVENT_SCRIPT(AltinPeak_FlipRoom3Switch)},
     {SEARCH(SEARCH_CHEST), 100, FLAG_ALTIN_PEAK_COOKIE, FIND_ITEM(ITEM_COOKIE)},
     {SCENE_EVENTS_END},
+    // Two rows past the end marker, which no lookup reaches.
     {EVENT_EXIT, 3, CONDITION_ALWAYS, 3},
     {SEARCH(SEARCH_CHEST), 100, 0xf05, FIND_ITEM(ITEM_HERB)},
     {SCENE_EVENTS_END},

@@ -1,10 +1,35 @@
 /// @file
-/// The Lemurian ship's hidden harbor at Lalivero, and the end of the game.
+/// Lemurian ship (scene 188, a scene-table row with no SceneId_ symbol; its
+/// area name, Lemurian ship, comes from the group 58 rule), the last scene of
+/// the game: the edge of Lalivero, where Babi's ship lies under the water.
 ///
-/// The leader steps up with the Black Orb: it glows, spray rises and the
-/// ancient ship comes up out of the water. The party boards, talks over the
-/// journey so far and sails; curtains close and the game goes to the clear
-/// screen.
+/// Where it falls in the story: back in Lalivero from Venus Lighthouse, Iodem
+/// of Tolbi gives the party the Black Orb, which they need to sail Babi's ship,
+/// "the ship of the ancients", docked at the edge of town; Babi, the ruler of
+/// Tolbi, crossed the sea in it, and the party has promised him to find
+/// Lemuria. The ship will also help them search for Jenna, swept out to sea
+/// with Idejima.
+///
+/// The scene's one story event is using the Black Orb at the water's edge
+/// (cell code 10, RaiseTheShip): the orb glows, spray rises and the ship comes
+/// up out of the water 90 pixels. SetSail then plays the departure: Garet, Ivan
+/// and Mia step out and talk over the journey ("It looks like it's finally time
+/// to leave Gondowan."), and the player answers three questions with yes or no,
+/// each choosing one of two replies: Garet's, whether the journey ends once
+/// they find Jenna; Mia's, whether they must find Jenna before going to
+/// Lemuria; and Mia's, whether they will be all right on the rough seas. The
+/// party boards, the ship sails east as curtains close (Curtain_Start), and
+/// the game goes to the clear screen, the title's entrance 9, with the music
+/// kept (FLAG_KEEP_MUSIC). The callbacks RaiseTheShip adds (the swell, the
+/// spray and the ship's glow) run until then.
+///
+/// Setup (LemurianShip_SetupScene) sinks the ship's two pieces 90 pixels,
+/// draws them and the party behind the water layers and starts the water's
+/// ripple, which Reveal stops while it shows the scene. Arriving by entrance
+/// 99, which the entrance table does not list, first gives the leader the
+/// Black Orb (XXX: what arrives that way is not known). Stepping back on cell
+/// code 1 (LeaveTheShip) takes exit 1, back to Lalivero (LaliveroInteriors2,
+/// scene 180, entrance 31).
 
 #include "script.h"
 #include "version.h"
@@ -101,15 +126,15 @@ const struct ScenePlacement *LemurianShip_GetPlacements(void) {
   return gLemurianShipPlacements;
 }
 
-/// The way out, back into Lalivero's interiors: leaves and clears the
-/// backdrop colour.
+/// Lemurian ship, the way back to Lalivero: leaves and clears the backdrop
+/// colour.
 /// Reached by stepping on cell code 1 (gLemurianShipEvents); takes exit 1.
 static void LeaveTheShip(void) {
   Engine_EventRequestExit(gEventWork->touchedTrigger);
   Io_Write16(0, &PLTT_BACKDROP);
 }
 
-/// Stops the water's ripple while Reveal shows the scene.
+/// Lemurian ship: stops the water's ripple while Reveal shows the scene.
 /// Reached by Reveal's phase 5 anywhere in the scene; Ripple_Start, at
 /// phase 4, starts the ripple again.
 static void Ripple_StopForReveal(void) { Ripple_Stop(); }
@@ -312,9 +337,10 @@ static s32 Ivan_StepOnDeck(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-/// The others step out and talk over the journey while three questions
-/// shape their replies, everyone boards, and the ship sails east as the
-/// curtains close and the game goes to the clear screen.
+/// Lemurian ship, the departure: the others step out and talk over the
+/// journey while three questions shape their replies, everyone boards, and
+/// the ship sails east as the curtains close and the game goes to the clear
+/// screen.
 /// Called by RaiseTheShip once the ship has risen. Sets FLAG_KEEP_MUSIC and
 /// sends the party to the clear screen (SceneId_Title, entrance 9).
 static void SetSail(void) {
@@ -355,7 +381,7 @@ static void SetSail(void) {
   Engine_ActorSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_EventWait(60);
   // The first question, Garet's: will the journey be over once they find
-  // Sheba? The answer picks which of his two replies he says.
+  // Jenna? The answer picks which of his two replies he says.
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(30);
   Engine_ActorFaceDirection(GARET, FACING_NORTHEAST, 0);
@@ -373,7 +399,7 @@ static void SetSail(void) {
     Engine_EventShowMessage(GARET, 0);
   }
   Engine_EventWait(10);
-  // Ivan reminds Garet of their promise to Babi, and Lemuria comes up.
+  // Ivan and Mia remind Garet of their promise to Babi, and Lemuria comes up.
   Engine_ActorFaceDirection(IVAN, FACING_WEST, 0);
   Engine_EventWait(30);
   Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | 1, 50);
@@ -399,7 +425,7 @@ static void SetSail(void) {
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  // The second question, Mia's: must they find Sheba before going to
+  // The second question, Mia's: must they find Jenna before going to
   // Lemuria? Garet answers either way.
   UiText_OpenMessageAtObject(3, 0);
   if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
@@ -457,7 +483,7 @@ static void SetSail(void) {
     Engine_EventShowMessage(MIA, 0);
   }
   Engine_EventWait(10);
-  // Garet: "Well... Shall we, then?" Ivan: "To sea..." Mia: Sheba is waiting
+  // Garet: "Well... Shall we, then?" Ivan: "To sea..." Mia: Jenna is waiting
   // for them. The departure theme starts.
   Actor_FaceDirection(GARET, FACING_NORTH, 0);
   Engine_EventWait(30);
@@ -575,8 +601,8 @@ static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base) {
          base;
 }
 
-/// The Black Orb glows, the water lights up, spray rises and the ship comes
-/// up out of the sea 90 pixels; then the party sets sail.
+/// Lemurian ship: the Black Orb glows, the water lights up, spray rises and
+/// the ship comes up out of the sea 90 pixels; then the party sets sail.
 /// Reached by using the Black Orb at the water's edge (cell code 10). Adds
 /// the swell and glow callbacks, which run to the end of the game, and calls
 /// SetSail.
@@ -677,8 +703,8 @@ static void RaiseTheShip(void) {
   SetSail();
 }
 
-/// Sets the harbor up: the ship sunk 90 pixels, its pieces and the party
-/// drawn behind the water layers, and the ripple running.
+/// Sets the Lemurian ship's scene up: the ship sunk 90 pixels, its pieces and
+/// the party drawn behind the water layers, and the ripple running.
 /// The scene's initialization; arriving by entrance 99, which the entrance
 /// table does not list, first gives the leader the Black Orb.
 s32 LemurianShip_SetupScene(void) {

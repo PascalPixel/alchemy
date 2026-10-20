@@ -1,6 +1,33 @@
 /// @file
-/// Xian's houses, shops and inn, and the room behind Master Feh's school, where
-/// Master Feh, Feizhi and Hsu wait once Hsu is back.
+/// Xian's houses, shops and inn (scene 73, a row with no SceneId_ name; the
+/// area names call it Xian), and the room behind Master Feh's school.
+///
+/// Xian's doors 1 to 4 lead to entrances 1 to 4 here, and door 5 to entrance
+/// 6; each room leads back out to its door. Rooms 1 to 3 are villagers'
+/// houses, entrance 4 opens into the inn, whose second room (entrance 5) is
+/// linked to it by triggers 5 and 7, and entrance 6 into the weapon, armor and
+/// item shops. As in the village, every line has a row for each side of
+/// FLAG_XIAN_HEARD_HSU_TRAPPED: before, the villagers talk of silk, Silk Road
+/// to Tolbi and the mine at Altin, and wonder why the merchants have not come;
+/// after, of Hsu's injury, of Silk Road and Lamakan Desert closed, and of
+/// Altin's water monsters as Feizhi told of them, two villagers asking the
+/// party what it knows (a yes and a no get different replies). The
+/// shopkeepers and the innkeeper serve the party only when spoken to across
+/// the counter, and otherwise talk. Searching the ovens and shelves shows what
+/// the cooks are making and what lies about, such as a kimono for the inn's
+/// guests; a barrel holds an Elixir and a jar a Sleep Bomb.
+///
+/// The room behind Master Feh's school (entrance 8) is reached only from the
+/// school (FuchinTemple2's exit 4, in fuchin_temple.c) and has its own tables.
+/// Once Xian has heard of Hsu, Master Feh, Feizhi and Hsu are there, Hsu in
+/// his pose (animation 6). Master Feh says Feizhi's prediction came true, Hsu
+/// says he was injured on his way from Lama Temple, and Mind Read hears that
+/// he knew help would come, however he was freed. If the party helped free him
+/// (FLAG_HSU_RESCUED_WITHOUT_PARTY clear, written as 0x8b3 in the table),
+/// Feizhi thanks it and Master Hama, and her thoughts praise the party's power
+/// as well as Hama's; otherwise she thanks Master Hama alone, and her thoughts
+/// are glad some of Hama's power passed to her. Arriving here clears
+/// FLAG_SHOW_LOCATION_NAME.
 
 #include "game_state.h"
 #include "unit/scene/xian_interiors.h"
@@ -36,7 +63,8 @@ enum {
 };
 
 /// The room reached from Master Feh's school (scene 61's exit 4), where Master
-/// Feh, Feizhi and Hsu wait once Hsu is back: its own actors and events.
+/// Feh, Feizhi and Hsu stand once Xian has heard of Hsu: its own actors and
+/// events.
 enum { XIAN_INTERIORS_ENTRANCE_FROM_SCHOOL = 8 };
 
 /// The actors placed in that room, as its dialogue shows them: Master Feh
@@ -58,7 +86,9 @@ const struct SceneRegion *XianInteriors_GetRegions(void) { return NULL; }
 
 const u32 *XianInteriors_GetExits(void) { return gXianInteriors_Exits; }
 
-/// The room behind the school places only Master Feh, Feizhi and Hsu.
+/// The room behind the school places only Master Feh, Feizhi and Hsu. Every
+/// other room shares one table, whose condition 0 SceneTable_Prepare replaces
+/// with whether each actor stands inside the view bounds of the room entered.
 const struct ScenePlacement *XianInteriors_GetPlacements(void) {
   if (gGameState.entrance == XIAN_INTERIORS_ENTRANCE_FROM_SCHOOL) {
     return gXianInteriors_SchoolRoomPlacements;
@@ -149,7 +179,9 @@ static void XianInteriors_TalkToInnkeeper(void) {
   Engine_EventEnd();
 }
 
-/// Asks the resident whether something is wrong on the Silk Road.
+/// After the news of Hsu, villager 10, in the house behind door 2, asks
+/// whether something is wrong on Silk Road and in Lamakan Desert. A yes: no
+/// one can use Silk Road; a no: it is good to hear the desert is fine.
 static void XianInteriors_AskAboutSilkRoad(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianSomethingWrongOnSilkRoad);
@@ -157,7 +189,9 @@ static void XianInteriors_AskAboutSilkRoad(void) {
   Engine_EventEnd();
 }
 
-/// Asks what the party knows about the monsters in Altin.
+/// After the news of Hsu, villager 12, in the house behind door 3, asks
+/// whether the monsters in Altin spat water. A yes: how strange; a no: but why
+/// would Feizhi lie?
 static void XianInteriors_AskAboutAltinMonsters(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianDidMonstersInAltinSpit);
@@ -165,8 +199,9 @@ static void XianInteriors_AskAboutAltinMonsters(void) {
   Engine_EventEnd();
 }
 
-/// Feizhi, when the party helped free Hsu, welcomes the party, looks at Hsu,
-/// then thanks the party and Master Hama. "Oh, warrior! Welcome!"
+/// In the room behind Master Feh's school, when the party helped free Hsu
+/// (FLAG_HSU_RESCUED_WITHOUT_PARTY clear), Feizhi welcomes the party, looks at
+/// Hsu, then thanks the party and Master Hama. "Oh, warrior! Welcome!"
 static void XianInteriors_FeizhiThanksParty(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgXianWarriorWelcome);
@@ -187,8 +222,10 @@ const struct SceneEvent *XianInteriors_GetEvents(void) {
   return gXianInteriors_Events;
 }
 
-/// Places the interiors' effect objects; in the room behind the school, Hsu
-/// takes his pose.
+/// Opens the room through a window transition and creates its configured
+/// objects (kind 20): one in the inn (entrances 4 and 7), two in the shops
+/// (entrance 6). In the room behind the school, it clears
+/// FLAG_SHOW_LOCATION_NAME and Hsu takes his pose.
 s32 XianInteriors_Initialize(void) {
   s16 entrance;
 

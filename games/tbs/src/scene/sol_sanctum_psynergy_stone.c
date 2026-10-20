@@ -1,5 +1,16 @@
 /// @file
-/// The Sol Sanctum room that holds a Psynergy Stone, scene 13.
+/// Sol Sanctum (scene 13, a row of the scene table with no symbol), a room
+/// that holds a Psynergy Stone.
+///
+/// It opens off the room of the statue puzzle (scene 12), whose exit 2 leads
+/// here (entrance 1); this room's only exit leads back (that room's entrance
+/// 2). Searching in it finds the Psynergy Stone, which restores all PP. The
+/// stone is kept by a place flag (FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN,
+/// 0x350) rather than a story flag: Scene_ResetFlagsOnEnter clears it
+/// whenever the party enters another place group, so the stone is back on
+/// every new visit to the sanctum. The room places no actors. Retreat does
+/// not work here, and once Mt. Aleph has erupted the room rumbles and shakes
+/// gently, as the rest of the sanctum does.
 
 #include "unit/scene/sol_sanctum_psynergy_stone.h"
 #include "battle.h"
@@ -43,8 +54,9 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gSolSanctumPsynergyStoneEvents;
 }
 
-/// The room opens through a window. After the eruption it rumbles and shakes
-/// gently, as the rest of the sanctum does.
+/// Opens the scene with the window transition and blocks Retreat. Once Mt.
+/// Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED), the room rumbles (SE_141)
+/// and shakes gently, as the rest of the sanctum does.
 s32 Scene_Initialize(void) {
   s32 shakeX = PIXELS(1);
   s32 shakeY = PIXELS(1);

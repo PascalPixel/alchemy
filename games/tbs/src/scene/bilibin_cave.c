@@ -1,8 +1,48 @@
 /// @file
-/// The cave that leads past Bilibin, in three sections walked in turn: the
-/// entrance section (BilibinCave3) with a Growth plant, the middle section
-/// (BilibinCave2) with Reveal and Douse, and the exit section (BilibinCave1),
-/// a puzzle of Douse, Frost and pushed actors.
+/// The Bilibin Cave Entrance and Bilibin Cave, two places on the way north
+/// from Bilibin toward Imil that share this overlay: the Bilibin Cave Entrance
+/// is BilibinCave3 (scene 49), and Bilibin Cave is BilibinCave2 (scene 48)
+/// and, beyond it, BilibinCave1 (scene 47), whose far end opens onto the world
+/// map farther north. No one speaks here: each scene is a run of Psynergy
+/// puzzles, the getters pick its tables by gGameState.scene, and
+/// BilibinCave_Initialize restores what the party has already solved in the
+/// scene being entered.
+///
+/// At the Bilibin Cave Entrance, entered from the world map, Growth on a
+/// sprout (GROWTH_TARGET) grows it into a vine and changes the collision of
+/// its cell (Event_GrowPlant); place flag 0x305 keeps it grown until the party
+/// leaves the Bilibin Cave Entrance, into the cave beyond or out to the world
+/// map, since both are other groups of scenes. Two exits lead on into Bilibin
+/// Cave. Beside one of them, touch 10 turns its exit cell off and
+/// touch 11, a step further out, turns it back on (Event_DisableExitToCave,
+/// Event_EnableExitToCave); XXX: likely so that only walking straight in
+/// enters the cave, because the touch cells flank the exit on both sides.
+///
+/// In BilibinCave2 a fire burns between two torches (CAVE2_DOUSE_TARGET), and
+/// Douse puts it out for good (FLAG_BILIBIN_CAVE_SECOND_DOUSE_TARGET_CLEARED).
+/// Reveal shows a hidden path, a strip of tiles and the cells under them,
+/// which Event_HideRevealedPath takes away again when Reveal wears off. A chest
+/// holds the Elven Rapier.
+///
+/// BilibinCave1 holds the cave's one puzzle of several steps, built from
+/// fires, torches and puddles that Frost freezes into ice pillars and the heat
+/// of a fire or a torch melts back. A fire (CAVE1_DOUSE_TARGET) burns beside
+/// the first puddle: while it burns, Frost on the puddle only melts back
+/// (BilibinCave_FreezeTarget plays the melting). Douse puts the fire out
+/// (FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED), and the puddle freezes into
+/// a pillar drawn underfoot, which the party walks over. The second puddle
+/// stands beside a torch that cannot be moved, and Frost on it always melts
+/// back. The third is an ice pillar: two of the six torches (PUSHED_ACTOR_A
+/// and PUSHED_ACTOR_B) can be pushed or moved with Move, and while either
+/// stands beside the pillar, on cell (35, 23), the pillar melts into a puddle
+/// and the cells north and south of it change with it; when both leave it
+/// freezes again (BilibinCave_UpdateFrostTargetFromMovableActors). Place flags
+/// 0x303 and 0x304 remember which torch stands there and 0x302 that the pillar
+/// has melted, so coming back from BilibinCave2 puts the torches and the
+/// pillar back; leaving Bilibin Cave resets them. Nine more puddles and
+/// pillars (actors 18 to 26) only stand there. Its chests hold a Vial, a Psy
+/// Crystal and Water of Life, and touches 20 and 21 set and clear a byte of
+/// the map's work (MapState.unk17).
 
 #include "script.h"
 #include "game_state.h"
@@ -34,26 +74,32 @@
 #include "flags.h"
 #include "songs.h"
 
-// The entry points dispatch to the section-specific setup routines below.
-static void BilibinCave_RestoreGrowthSection(void);
-static void BilibinCave_RestoreDouseSection(void);
-static void BilibinCave_RestoreIcePuzzleSection(void);
+// BilibinCave_Initialize calls one of these for the scene being entered.
+static void BilibinCave_RestoreEntrance(void);
+static void BilibinCave_RestoreCave2(void);
+static void BilibinCave_RestoreCave1(void);
 static void BilibinCave_EmptyActorSetupHook(s32 actorId);
 
-/// Actors of the entrance section, named by the Psynergy that works on them.
-enum { GROWTH_TARGET = 8 };
-
-/// Actors of the middle section.
-enum { MIDDLE_DOUSE_TARGET = 9 };
-
-/// Actors of the exit section.
+/// Actors of the Bilibin Cave Entrance (BilibinCave3), named, as in the other
+/// two scenes, by the Psynergy that works on them.
 enum {
-  EXIT_DOUSE_TARGET = 8,
-  PUSHED_ACTOR_A = 11, ///< moved by Move or pushed
-  PUSHED_ACTOR_B = 12,
-  FROST_TARGET_A = 15, ///< walkable once the Douse target is gone
-  FROST_TARGET_B = 16,
-  FROST_TARGET_C = 17 ///< changes as a pushed actor reaches cell (35, 23)
+  GROWTH_TARGET = 8 ///< a sprout Growth grows into a vine
+};
+
+/// Actors of BilibinCave2.
+enum {
+  CAVE2_DOUSE_TARGET = 9 ///< a fire between two torches
+};
+
+/// Actors of BilibinCave1.
+enum {
+  CAVE1_DOUSE_TARGET = 8, ///< a fire beside the first puddle
+  PUSHED_ACTOR_A = 11,    ///< a torch, moved by Move or pushed
+  PUSHED_ACTOR_B = 12,    ///< a torch, moved by Move or pushed
+  FROST_TARGET_A = 15,    ///< a puddle, walkable once the fire is out
+  FROST_TARGET_B = 16,    ///< a puddle beside a torch that stays put
+  /// An ice pillar, melted while a torch stands on cell (35, 23).
+  FROST_TARGET_C = 17
 };
 
 /// Clears the scripted actor's sprite flags and completes this script command.
@@ -113,17 +159,22 @@ const struct SceneEvent *BilibinCave_GetEvents(void) {
   return gBilibinCaveEventsOther;
 }
 
-/// Replaces the crossing cell with the attributes at source cell (1, 0).
-static void Event_AlterCrossingCell(void) {
+/// Stepping on touch 10 at the Bilibin Cave Entrance, on either side of the
+/// way into Bilibin Cave: the way's cell (21, 14), whose collision code 2 is
+/// the exit into the cave, takes the attributes of source cell (1, 0), which
+/// has none.
+static void Event_DisableExitToCave(void) {
   Map_CopyCellAttributes(1, 0, 1, 1, 21, 14);
 }
 
-/// Restores the crossing cell from source cell (0, 0).
-static void Event_RestoreCrossingCell(void) {
+/// Stepping on touch 11 at the Bilibin Cave Entrance, a cell further out: the
+/// way's cell (21, 14) takes back the exit, from source cell (0, 0).
+static void Event_EnableExitToCave(void) {
   Map_CopyCellAttributes(0, 0, 1, 1, 21, 14);
 }
 
-/// Replaces the narrow tile strip and its two-row collision rectangle.
+/// Reveal in Bilibin Cave (BilibinCave2) shows the hidden path: a strip of
+/// tiles and two rows of the cells under it.
 static void Event_RevealHiddenPath(void) {
   {
     s32 width = 1;
@@ -139,7 +190,8 @@ static void Event_RevealHiddenPath(void) {
   }
 }
 
-/// Restores the strip's tiles and its one-row collision rectangle.
+/// As Reveal wears off in Bilibin Cave (BilibinCave2), the path is hidden
+/// again: the strip's tiles and one row of its cells are restored.
 static void Event_HideRevealedPath(void) {
   {
     s32 width = 1;
@@ -155,19 +207,20 @@ static void Event_HideRevealedPath(void) {
   }
 }
 
-/// Douse on the middle section's target: it disappears, for good.
-static void Event_DouseMiddleSectionTarget(void) {
+/// Douse on the fire in Bilibin Cave (BilibinCave2), until it is out: it goes
+/// out for good.
+static void Event_DouseCave2Target(void) {
   Engine_EventBegin();
-  Engine_ActorSetPosition(MIDDLE_DOUSE_TARGET, 0, 0);
+  Engine_ActorSetPosition(CAVE2_DOUSE_TARGET, 0, 0);
   Engine_GameFlagSet(FLAG_BILIBIN_CAVE_SECOND_DOUSE_TARGET_CLEARED);
   Engine_EventEnd();
 }
 
-/// Douse on the exit section's target: it disappears, and the first Frost
-/// target settles into a surface the party can walk over.
-static void Event_DouseExitSectionTarget(void) {
+/// Douse on the fire in Bilibin Cave (BilibinCave1), until it is out: it goes
+/// out, and the puddle beside it freezes into a pillar the party can walk over.
+static void Event_DouseCave1Target(void) {
   Engine_EventBegin();
-  Actor_SetPosition(EXIT_DOUSE_TARGET, 0, 0);
+  Actor_SetPosition(CAVE1_DOUSE_TARGET, 0, 0);
   GameFlag_Set(FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED);
   Engine_EventWait(40);
   // Match the replacement's drawing priority to its collision cell.
@@ -179,7 +232,9 @@ static void Event_DouseExitSectionTarget(void) {
   Engine_EventEnd();
 }
 
-/// Clears a Frost target's child effect, then plays its freezing animation.
+/// Frost on a puddle in Bilibin Cave (BilibinCave1) that heat keeps from
+/// freezing: clears the Psynergy's child effect and plays the ice melting back
+/// into a puddle.
 static inline void BilibinCave_FreezeTarget(s32 actor) {
   Engine_EventBegin();
   Engine_ActorSetChildValue(actor, 0);
@@ -189,24 +244,27 @@ static inline void BilibinCave_FreezeTarget(s32 actor) {
   Engine_EventEnd();
 }
 
-/// Frost on the first target, before the Douse target is gone.
+/// Frost on the first puddle in Bilibin Cave (BilibinCave1), while the fire
+/// beside it burns.
 static void Event_FreezeFirstTarget(void) {
   BilibinCave_FreezeTarget(FROST_TARGET_A);
 }
 
-/// Frost on the second target.
+/// Frost on the second puddle in Bilibin Cave (BilibinCave1), beside a torch
+/// that stays put.
 static void Event_FreezeSecondTarget(void) {
   BilibinCave_FreezeTarget(FROST_TARGET_B);
 }
 
-/// Frost on the third target, while 0x302 is set.
+/// Frost on the third puddle in Bilibin Cave (BilibinCave1), while a torch
+/// beside it keeps it melted (0x302).
 static void Event_FreezeThirdTarget(void) {
   BilibinCave_FreezeTarget(FROST_TARGET_C);
 }
 
-/// After a push or Move: while either pushed actor stands on cell (35, 23)
-/// (0x303 and 0x304), the third Frost target changes with a sound, and 0x302
-/// says so; when both leave, it changes back.
+/// After a push or Move in Bilibin Cave (BilibinCave1): while either movable
+/// torch stands on cell (35, 23) (0x303 and 0x304), the ice pillar beside it
+/// melts with a sound, and 0x302 says so; when both leave, it freezes again.
 static void BilibinCave_UpdateFrostTargetFromMovableActors(void) {
   struct FieldActor *firstActor;
   struct FieldActor *secondActor;
@@ -253,42 +311,44 @@ static void BilibinCave_UpdateFrostTargetFromMovableActors(void) {
   }
 }
 
-/// Growth on the entrance section's target: the plant grows and its cell's
-/// collision changes; 0x305 keeps it grown.
+/// Growth on the sprout at the Bilibin Cave Entrance, until it has grown: it
+/// grows into a vine and its cell's collision changes; 0x305 keeps it grown.
 static void Event_GrowPlant(void) {
 
   Map_CopyCellAttributes(31, 0, 1, 1, 8, 13);
   Engine_GameFlagSet(0x305);
 }
 
-/// Enables the map-work byte while crossing this touch trigger.
+/// Stepping on touch 20 in Bilibin Cave (BilibinCave1) sets a byte of the map's
+/// work.
 static void Event_SetMapTriggerFlag(void) {
   struct MapState *map = gMapWork[0];
   map->unk17 = 1;
 }
 
-/// Clears the same map-work byte at the opposing trigger.
+/// Stepping on touch 21 in Bilibin Cave (BilibinCave1) clears the same byte.
 static void Event_ClearMapTriggerFlag(void) {
   struct MapState *map = gMapWork[0];
   map->unk17 = 0;
 }
 
-/// Restores the current section's saved puzzle state.
+/// Sets up the scene being entered, the Bilibin Cave Entrance or one of
+/// Bilibin Cave's two, with the puzzles already solved there.
 s32 BilibinCave_Initialize(void) {
   s16 variant = gGameState.scene;
 
   if (variant == (s32)&SceneId_BilibinCave3) {
-    BilibinCave_RestoreGrowthSection();
+    BilibinCave_RestoreEntrance();
   } else if (variant == (s32)&SceneId_BilibinCave2) {
-    BilibinCave_RestoreDouseSection();
+    BilibinCave_RestoreCave2();
   } else if (variant == (s32)&SceneId_BilibinCave1) {
-    BilibinCave_RestoreIcePuzzleSection();
+    BilibinCave_RestoreCave1();
   }
   return 0;
 }
 
-/// Restores the collision change already made by Growth.
-static void BilibinCave_RestoreGrowthSection(void) {
+/// Sets up the Bilibin Cave Entrance: the vine Growth has grown, with its cell.
+static void BilibinCave_RestoreEntrance(void) {
   if (Engine_GameFlagIsSet(0x305) != 0) {
 
     Map_CopyCellAttributes(31, 0, 1, 1, 8, 13);
@@ -296,8 +356,9 @@ static void BilibinCave_RestoreGrowthSection(void) {
   }
 }
 
-/// Opens section 2 and restores its Douse target.
-static void BilibinCave_RestoreDouseSection(void) {
+/// Sets up Bilibin Cave's BilibinCave2: its two torches, and its fire, gone
+/// once Douse has put it out.
+static void BilibinCave_RestoreCave2(void) {
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
 
@@ -306,9 +367,9 @@ static void BilibinCave_RestoreDouseSection(void) {
 
   if (Engine_GameFlagIsSet(FLAG_BILIBIN_CAVE_SECOND_DOUSE_TARGET_CLEARED) !=
       0) {
-    Engine_ActorSetPosition(MIDDLE_DOUSE_TARGET, 0, 0);
+    Engine_ActorSetPosition(CAVE2_DOUSE_TARGET, 0, 0);
   } else {
-    Engine_ActorSetSpriteFlags(Object_GetById(MIDDLE_DOUSE_TARGET), 0);
+    Engine_ActorSetSpriteFlags(Object_GetById(CAVE2_DOUSE_TARGET), 0);
   }
 }
 
@@ -318,8 +379,9 @@ static inline void BilibinCave_ClearActorSpriteFlags(s32 actorId) {
   Engine_ActorSetSpriteFlags(actor, 0);
 }
 
-/// Initializes section 1's animated actors and persistent puzzle states.
-static void BilibinCave_RestoreIcePuzzleSection(void) {
+/// Sets up Bilibin Cave's BilibinCave1: its torches, puddles and pillars, and
+/// the steps of its puzzle already solved.
+static void BilibinCave_RestoreCave1(void) {
   struct FieldActor *actor;
   s32 destinationCellX;
 
@@ -366,7 +428,7 @@ static void BilibinCave_RestoreIcePuzzleSection(void) {
   BilibinCave_EmptyActorSetupHook(14);
   // Restore the surface exposed by Douse, including its collision and priority.
   if (GameFlag_IsSet(FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED) != 0) {
-    Actor_SetPosition(EXIT_DOUSE_TARGET, 0, 0);
+    Actor_SetPosition(CAVE1_DOUSE_TARGET, 0, 0);
     Engine_ActorSetAnimation(FROST_TARGET_A, 5);
     Actor_Get(FROST_TARGET_A)->motionFlags = 0;
     Actor_Get(FROST_TARGET_A)->y.fixed = -PIXELS(4);
@@ -374,8 +436,8 @@ static void BilibinCave_RestoreIcePuzzleSection(void) {
     Engine_ActorSetSpritePriority(FROST_TARGET_A, 2);
     Map_CopyCellAttributes(0, 0, 1, 1, 18, 14);
   } else {
-    Engine_ActorSetAnimation(EXIT_DOUSE_TARGET, 2);
-    actor = Actor_Get(EXIT_DOUSE_TARGET);
+    Engine_ActorSetAnimation(CAVE1_DOUSE_TARGET, 2);
+    actor = Actor_Get(CAVE1_DOUSE_TARGET);
     Engine_ActorSetSpriteFlags(actor, 0);
     Engine_ActorSetAnimation(FROST_TARGET_A, 1);
   }
@@ -403,7 +465,8 @@ static void BilibinCave_RestoreIcePuzzleSection(void) {
 // The shared cell lookup retains its position before the push handler.
 #include "common/object_findcell.h"
 
-/// Pushes the actor ahead only when its next cell and movement probe are clear.
+/// Pushing one of the two movable torches in Bilibin Cave (BilibinCave1): it
+/// moves only when its next cell and movement probe are clear.
 static void Event_PushActorAhead(void) {
   struct FieldActor *leader;
   struct FieldActor *target;
@@ -591,8 +654,8 @@ struct SceneEvent gBilibinCaveEvents3[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
     { EVENT_EXIT, 3, CONDITION_ALWAYS, 3 },
-    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AlterCrossingCell) },
-    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RestoreCrossingCell) },
+    { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DisableExitToCave) },
+    { EVENT_TOUCH, 11, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnableExitToCave) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), GROWTH_TARGET, 0x305, EVENT_SCRIPT(Event_GrowPlant) },
     { SCENE_EVENTS_END },
 };
@@ -607,7 +670,7 @@ struct SceneEvent gBilibinCaveEvents2[] = {
     { SEARCH(SEARCH_CHEST), 100, 0xf5d, FIND_ITEM(ITEM_ELVEN_RAPIER) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RevealHiddenPath) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, 4), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Event_HideRevealedPath) },
-    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), MIDDLE_DOUSE_TARGET, FLAG_BILIBIN_CAVE_SECOND_DOUSE_TARGET_CLEARED, EVENT_SCRIPT(Event_DouseMiddleSectionTarget) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), CAVE2_DOUSE_TARGET, FLAG_BILIBIN_CAVE_SECOND_DOUSE_TARGET_CLEARED, EVENT_SCRIPT(Event_DouseCave2Target) },
     { SCENE_EVENTS_END },
 };
 
@@ -619,7 +682,7 @@ struct SceneEvent gBilibinCaveEvents1[] = {
     { EVENT_EXIT, 5, CONDITION_ALWAYS, 5 },
     { EVENT_TOUCH, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetMapTriggerFlag) },
     { EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClearMapTriggerFlag) },
-    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), EXIT_DOUSE_TARGET, FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED, EVENT_SCRIPT(Event_DouseExitSectionTarget) },
+    { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), CAVE1_DOUSE_TARGET, FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED, EVENT_SCRIPT(Event_DouseCave1Target) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_A, FLAG_BILIBIN_CAVE_FIRST_DOUSE_TARGET_CLEARED, EVENT_SCRIPT(Event_FreezeFirstTarget) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_B, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FreezeSecondTarget) },
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), FROST_TARGET_C, IF_FLAG_SET(0x302), EVENT_SCRIPT(Event_FreezeThirdTarget) },

@@ -1,8 +1,47 @@
 /// @file
-/// Tolbi, the town of the Colosso festival. The town has three moods, chosen
-/// by story flags: the festival during the trials, finals day, and the quiet
-/// after Colosso has ended. Each mood has its own event table; the actors and
-/// their scripts are shared.
+/// Tolbi (scene 135), the town of Babi, its ruler, where Colosso, a festival
+/// of warriors, is held each year in the colosseum.
+///
+/// The party comes to Tolbi across the Karagol Sea from Kalay while the
+/// festival is on, and the town's talk follows the Colosso story in three
+/// stages. Tolbi_SelectEvents gives each stage its own event table; one
+/// placement table serves all three, and Tolbi_ApplyEntryState moves the
+/// actors whose places change:
+/// - The festival (neither story flag set). The trials have begun at the
+///   colosseum, but Babi is not there, and his soldiers are searching the
+///   town. The first time the party steps on cell code 20, two of them stop
+///   it to show his picture, `Have you seen anyone who looks like this?`, and
+///   go their way whatever it answers (Tolbi_MeetSearchingSoldiers,
+///   FLAG_TOLBI_SEARCHERS_MET).
+/// - Finals day (FLAG_BABI_SAVED), once the party has saved Babi in
+///   Altmiller Cave: he has shown himself at the finals, the town hurries to
+///   the colosseum, and the scalper who slept under the archway has moved,
+///   sending people to his buddy for seats.
+/// - After Colosso (FLAG_COLOSSO_OVER): the visitors have left, so the family
+///   seen at the festival and four others are moved off the map, and those
+///   who stay talk of the quiet and of the ships that no longer sail the
+///   Karagol. The snack vendor gives away her leftover corn, once
+///   (FLAG_TOLBI_CORN_GIVEN).
+///
+/// In every stage two children run a loop around the plaza
+/// (gTolbiOlderBrotherRun, gTolbiYoungerSiblingRun), each stopping when it
+/// runs up behind the other or finds the leader in its way (Tolbi_UpdateKid),
+/// and quarrel over their allowance. A gambler stands at the gate of Tolbi
+/// Spring; once the party agrees to test its luck he steps aside for good
+/// (Tolbi_TalkToGambler, FLAG_TOLBI_SPRING_OPENED), and the gate leads into
+/// Tolbi Spring (scene 189, exit 30). Ember, a Mars Djinni, joins the party
+/// when spoken to. Growth raises a sprout and Frost freezes a puddle, each a
+/// scene flag kept only through a return that keeps the party's position;
+/// Reveal uncovers a chest with Power Bread, and a barrel and a jar hold 9
+/// coins and a Lucky Medal (during the festival, the international editions
+/// find the jar only when the party faces north).
+///
+/// Doors 1 to 3 and 5 to 8 lead into Tolbi's houses, inns and shops and door
+/// 9 into Tolbi Sanctum (all scene 136); door 4 and exit 13 lead into the
+/// Lucky Dice and Lucky Wheels rooms (scene 137, whose area name is also
+/// Tolbi). Exit 10 leads to Babi's Palace (scene 139),
+/// exit 11 to the Colosseum Entrance (scene 142) and exit 12 out onto the
+/// world map.
 
 #include "unit/scene/tolbi.h"
 #include "unit/object/object.h"
@@ -33,8 +72,8 @@
 
 static void Tolbi_FreezePuddle(void);
 
-/// Talking to Ember, the Mars Djinni hiding in town, makes it join the party.
-/// Its index among the Mars Djinn is 4, the fifth Mars name in the game text.
+/// Talking to Ember, a Mars Djinni, makes it join the party. Its index among
+/// the Mars Djinn is 4, the fifth Mars name in the game text.
 static void Tolbi_JoinEmber(void) {
   Djinn_JoinParty(TOLBI_EMBER, ELEMENT_MARS, 4);
 }
@@ -274,8 +313,9 @@ const struct SceneEvent *Tolbi_SelectEvents(void) {
   return gTolbiEventsFestival;
 }
 
-/// A townsperson asks whether someone can live to be more than 100 years old;
-/// either way the talk turns to Babi, who is older still.
+/// In Tolbi during the festival, actor 15 asks whether someone can live to
+/// be more than 100 years old; either way the talk turns to Babi, who is older
+/// still.
 static void Tolbi_AskAboutLivingPastHundred(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiSomeoneLiveMore);
@@ -381,8 +421,9 @@ static void Tolbi_EnterDoor(void) {
   Engine_EventEnd();
 }
 
-/// The update of actor 14: gives it the leader's sprite priority every frame,
-/// for both of its sprite parts.
+/// The update of actor 14, the man who during the festival says he is 65 and
+/// that Babi was already old when he was born: gives it the leader's sprite
+/// priority every frame, for both of its sprite parts.
 static void Tolbi_CopyLeaderPriority(union FieldObject *object) {
   s32 priority;
 
@@ -482,7 +523,8 @@ static void Tolbi_TalkToGambler(void) {
   Engine_EventEnd();
 }
 
-/// The gate to Tolbi Spring, once the gambler has stepped aside.
+/// The gate to Tolbi Spring (cell code 239), once the gambler has stepped
+/// aside: exit 30 leads into Tolbi Spring (scene 189).
 static void Tolbi_EnterSpring(void) {
   Engine_EventRequestExit(30);
   Engine_EventEnd();
@@ -495,8 +537,10 @@ static void Tolbi_RequestTouchedExit(void) {
   Engine_EventRequestExit(*trigger);
 }
 
-/// During the festival, two soldiers searching for the missing Babi stop the
-/// party and show his picture. They leave either way the party answers.
+/// During the festival, the first time the party steps on cell code 20, two
+/// soldiers searching for the missing Babi stop the party and show his
+/// picture. "Have you seen anyone who looks like this?" They leave either way
+/// the party answers. Sets FLAG_TOLBI_SEARCHERS_MET.
 static void Tolbi_MeetSearchingSoldiers(void) {
   s32 firstMsg;
 

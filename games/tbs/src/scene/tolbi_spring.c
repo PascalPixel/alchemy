@@ -1,7 +1,34 @@
 /// @file
-/// Tolbi's spring and the game rooms beside it: Lucky Medals or coins tossed
-/// into the spring win prizes, and the attendants run Lucky Dice and Lucky
-/// Wheels.
+/// Two scenes of Tolbi where the party plays for prizes whenever it is in
+/// town; neither has a story event.
+///
+/// - Tolbi (TolbiSpring1, scene 137), the rooms of Lucky Dice and Lucky
+///   Wheels; exits 1 and 2 lead back into Tolbi (scene 135). The Lucky Dice
+///   attendant asks ten coins for each level of the party's average level:
+///   the coin total is saved in the scene state and the party goes to the
+///   Lucky Dice game, which returns to entrance 13, where the setup has the
+///   attendant announce the coins won or lost, with a fanfare by the size of
+///   the win. The Lucky Wheels attendant takes Game Tickets and warns when the
+///   bag has six free slots or fewer; the game returns to entrance 12 with the
+///   prize categories won, and the setup has the attendant hand over an item
+///   for each, a different one of the category's three than last time (Moons
+///   choose any category), or offers another game when nothing was won. Signs
+///   give both games' rules and the Lucky Wheels prizes. A soldier talks of
+///   Lucky Dice until Babi is saved (FLAG_BABI_SAVED, the finals day), then of
+///   the scalpers at the Colosso finals, and is gone once they have been
+///   fought (FLAG_COLOSSO_OVER).
+/// - Tolbi Spring (TolbiSpring2, scene 189); exit 1 leads back into Tolbi
+///   (entrance 20). Searching the spring raises it and blends it into view the
+///   first time in each visit (FLAG_SCENE_TEMP_00), stands the leader with
+///   their back to it, and offers a coin or a Lucky Medal to toss. The toss is
+///   a small physics game: the token flies over the spring past four moving
+///   obstacles and is pulled toward the prize rings until it settles in one of
+///   five. A coin wins 20, 10, 2 or 1 coins by ring, or nothing in the fifth; a
+///   medal wins an item drawn by weight from fifteen prizes, the nearer the
+///   centre the fewer and better (Assassin Blade first, Water of Life last),
+///   and the item won has its weight halved for later tosses. The spring opens
+///   to show the prize as it is given. In the editions before TBS_PATCH_1 the
+///   coin and medal counts show an `=` after each number.
 
 #include "keystate.h"
 #include "unit/scene/tolbi_spring.h"
@@ -54,7 +81,8 @@ static s32 TolbiSpring_RunToss(s32 tossKind);
 
 enum SpringTossKind { SPRING_TOSS_COIN, SPRING_TOSS_MEDAL };
 
-/// The game room's actors, numbered in the order of its placement table from 8.
+/// The actors of the Lucky Dice and Lucky Wheels rooms (TolbiSpring1),
+/// numbered in the order of its placement table from 8.
 enum TolbiSpringGameRoomActor {
   TOLBI_SPRING_WHEELS_ATTENDANT = 8,
   TOLBI_SPRING_DICE_ATTENDANT = 9,
@@ -64,7 +92,7 @@ enum TolbiSpringGameRoomActor {
   TOLBI_SPRING_SOLDIER = 17,
 };
 
-/// The spring's own actors, numbered the same way.
+/// Tolbi Spring's own actors (TolbiSpring2), numbered the same way.
 enum TolbiSpringActor {
   /// Asks for a medal. "Do you have a Lucky Medal?"
   TOLBI_SPRING_MEDAL_SEEKER = 27,
@@ -110,7 +138,8 @@ const struct SceneRegion *TolbiSpring_GetRegions(void) { return NULL; }
 
 const u32 *TolbiSpring_GetExits(void) { return gTolbiSpring_Exits; }
 
-/// Selects the actors for the spring or its nearby games.
+/// Selects the actors of Tolbi Spring or of the Lucky Dice and Lucky Wheels
+/// rooms.
 const struct ScenePlacement *TolbiSpring_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_TolbiSpring2) {
     return gTolbiSpringPlacements2;
@@ -118,7 +147,7 @@ const struct ScenePlacement *TolbiSpring_GetPlacements(void) {
   return gTolbiSpringPlacementsOther;
 }
 
-/// Asks whether the party has a Lucky Medal.
+/// A visitor at Tolbi Spring asks whether the party has a Lucky Medal.
 static void TolbiSpring_AskAboutLuckyMedal(s32 actorId) {
   s32 question = MsgTolbiLuckyMedal;
   Engine_EventSetMessage(question);
@@ -132,7 +161,7 @@ static void TolbiSpring_AskAboutLuckyMedal(s32 actorId) {
   Engine_EventShowMessage(actorId, 0);
 }
 
-/// Asks whether this is the party's first Lucky Dice game.
+/// A Lucky Dice player in Tolbi asks whether this is the party's first game.
 static void TolbiSpring_AskAboutFirstDiceGame(s32 actorId) {
   s32 question = MsgTolbiYerFirstTime;
   Engine_EventSetMessage(question);
@@ -146,7 +175,9 @@ static void TolbiSpring_AskAboutFirstDiceGame(s32 actorId) {
   Engine_EventShowMessage(actorId, 0);
 }
 
-/// Reveals the spring once, then positions the leader to toss into it.
+/// Searching Tolbi Spring: the spring rises into view the first time in the
+/// visit, and the leader stands with their back to it to toss a coin or a
+/// Lucky Medal.
 static void TolbiSpring_TossCoinOrMedal(void) {
   s32 leader = gGameState.selectedActor;
 
@@ -161,7 +192,7 @@ static void TolbiSpring_TossCoinOrMedal(void) {
   Engine_EventEnd();
 }
 
-/// Reads the Lucky Wheels rules sign.
+/// Reads the Lucky Wheels rules sign in Tolbi.
 static void TolbiSpring_ReadLuckyWheelsRules(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiLuckyWheelsRulesPullLever);
@@ -169,7 +200,7 @@ static void TolbiSpring_ReadLuckyWheelsRules(void) {
   Engine_EventEnd();
 }
 
-/// Reads the Lucky Wheels prize sign.
+/// Reads the Lucky Wheels prize sign in Tolbi.
 static void TolbiSpring_ReadLuckyWheelsPrizes(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgTolbiLuckyWheelsPrizesPrizesDetermined);
@@ -177,11 +208,13 @@ static void TolbiSpring_ReadLuckyWheelsPrizes(void) {
   Engine_EventEnd();
 }
 
+/// Talking to the Lucky Wheels attendant in Tolbi.
 static void TolbiSpring_TalkToWheelsAttendant(void) {
   TolbiSpring_OfferLuckyWheels(0);
 }
 
-/// Selects interactions for the spring or the game attendants.
+/// Selects the events of Tolbi Spring or of the Lucky Dice and Lucky Wheels
+/// rooms.
 const struct SceneEvent *TolbiSpring_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_TolbiSpring2) {
     return gTolbiSpringEvents2;
@@ -189,7 +222,12 @@ const struct SceneEvent *TolbiSpring_GetEvents(void) {
   return gTolbiSpringEventsOther;
 }
 
-/// Prepares the spring or settles rewards from the nearby games.
+/// The setup of both scenes. Tolbi Spring: the blend, actors 24 and 25
+/// mirrored and drawn underfoot and, from Tolbi (entrance 1), the toss's
+/// obstacles, with the spring shown at once if it has risen in this visit. The
+/// Lucky Dice and Lucky Wheels rooms: the soldier removed after
+/// FLAG_COLOSSO_OVER, and the returns from the games, entrance 13 announcing
+/// Lucky Dice's coins and entrance 12 handing over Lucky Wheels' prizes.
 s32 TolbiSpring_Initialize(void) {
   s32 coinChange;
   s8 *wonPrizes;
@@ -375,7 +413,9 @@ static void TolbiSpring_RiseAndFadeIn(void) {
   }
 }
 
-/// Checks tickets and inventory space before sending the party to Lucky Wheels.
+/// The Lucky Wheels attendant in Tolbi checks tickets and inventory space
+/// before sending the party to the game, which returns to entrance 12;
+/// `spoken` is 1 after a game with no prize, to offer another.
 static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
   s32 tickets = PartyInventory_CountItem(ITEM_GAME_TICKET);
   s32 room;
@@ -430,7 +470,9 @@ static void TolbiSpring_OfferLuckyWheels(s32 spoken) {
   Event_SetNextDestination((s32)&SceneId_TolbiSpring1, 12);
 }
 
-/// Offers Lucky Dice and saves the coin total for the return visit.
+/// Talking to the Lucky Dice attendant in Tolbi: offers a game for ten coins a
+/// level of the party's average level and saves the coin total for the return
+/// to entrance 13.
 static void TolbiSpring_OfferLuckyDice(void) {
   u32 cost;
   u32 coins;

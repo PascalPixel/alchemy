@@ -1,6 +1,17 @@
 /// @file
-/// A maze of Sol Sanctum, scene 14: two exits to scene 16 and the chest that
-/// holds the second Small Jewel (item 0xe1).
+/// Sol Sanctum (scene 14, SceneId_SolSanctumMaze), the room that holds the
+/// second Small Jewel.
+///
+/// Both its ways out lead into scene 16, the rooms inside Sol Sanctum's door,
+/// with two minotaur reliefs and the statues the party pushes or moves with
+/// Move (exit 1 to its entrance 7, exit 2 to its entrance 14), and scene 16's
+/// exits 7 and 14 lead in. The room places no actors; its one event of its own
+/// is the chest (FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND). Each relief in
+/// scene 16 has a sparkling right eye and an empty socket for the left, and
+/// the jewel from this chest is the one the second relief takes, `You hear
+/// the sound of shifting stone.` The entry code is SolSanctumRooms_Initialize,
+/// which this room shares with scene 15: once Mt. Aleph has erupted the room
+/// rumbles and shakes.
 
 #include "unit/scene/sol_sanctum_maze.h"
 #include "unit/scene/common/sol_sanctum_init_zoom.h"

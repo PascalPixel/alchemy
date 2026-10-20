@@ -1,9 +1,12 @@
 /// @file
-/// Kolima Forest's bend, between the river and Tret's tree. A floodgate switch
-/// raises and lowers the river: with the water high the logs float (26 pixels
-/// up) and can be rolled along it; with it low they lie on the riverbed. A
-/// short log slides between two places, and a sign warns the party off the
-/// switch.
+/// Kolima Forest (KolimaForestBend, scene 43), the fourth of the forest's five
+/// maps, between scene 42 and the map where Tret stands (scene 44). A Floodgate
+/// Switch, beside a sign that reads "Do not touch Floodgate Switch!", raises
+/// and lowers the river: with the water high the logs float (26 pixels up) and
+/// can be rolled along it; with it low they lie on the riverbed. A short log
+/// slides between two places, the leader can jump south across a gap
+/// (trigger 10), and a chest holds a Fur Coat. The forest keeps its cursed
+/// colours until Tret lifts the curse (FLAG_KOLIMA_CURSE_LIFTED).
 ///
 /// The water level, the short log's place and each log's cells are kept in
 /// gSceneState (gKolimaForestBendLayout, gKolimaForestBendReturned and
@@ -56,14 +59,14 @@ static void KolimaForestBend_MarkShortLogCells(void);
 static void KolimaForestBend_CreateLogs(struct BendLog *log);
 static void KolimaForestBend_RollLog(struct BendLog *logs);
 
-/// Where the party enters from the river and from Tret's tree.
+/// Where the party enters, from scene 42 and from scene 44.
 const struct SceneEntrance *KolimaForestBend_GetEntrances(void) {
   return gKolimaForestBendEntrances;
 }
 
 const struct SceneRegion *KolimaForestBend_GetRegions(void) { return 0; }
 
-/// The paths back to the river and on to Tret's tree.
+/// The ways back (scene 42) and on to Tret (scene 44).
 const u32 *KolimaForestBend_GetExits(void) { return gKolimaForestBendExits; }
 
 /// The short log, the switch and the sign.
@@ -76,8 +79,8 @@ const struct SceneEvent *KolimaForestBend_GetEvents(void) {
   return gKolimaForestBendEvents;
 }
 
-/// Walking into a log: it rolls ahead, and the cells of the logs are marked
-/// again where they now lie.
+/// Kolima Forest (scene 43), walking into a log: it rolls ahead, and the cells
+/// of the logs are marked again where they now lie.
 static void KolimaForestBend_PushLog(void) {
   KolimaForestBend_RollLog(gKolimaForestBendRecords);
   Map_CopyCellAttributes(0, 0x40, 0x20, 0x20, 0, 0);
@@ -85,7 +88,8 @@ static void KolimaForestBend_PushLog(void) {
   KolimaForestBend_MarkShortLogCells();
 }
 
-/// Walking south into the gap: the leader jumps across.
+/// Kolima Forest (scene 43), walking south into the gap (trigger 10): the
+/// leader jumps across.
 static void KolimaForestBend_JumpSouth(void) { Field_TryJumpForward(); }
 
 #include "common/map_panel.h"
@@ -201,10 +205,10 @@ static void KolimaForestBend_CaptureShakeScroll(void) {
   scroll[5] += 0xb0;
 }
 
-/// Searching the floodgate switch flips it. "Isaac flipped the switch." The
-/// camera turns to the floodgate, which opens or closes; the ground rumbles
-/// and the top of the screen shakes harder for 100 frames, and the river rises
-/// or falls.
+/// Kolima Forest (scene 43), searching the Floodgate Switch flips it. "Isaac
+/// flipped the switch." The camera turns to the floodgate, which opens or
+/// closes; the ground rumbles and the top of the screen shakes harder for 100
+/// frames, and the river rises or falls.
 static void KolimaForestBend_FlipFloodgateSwitch(void) {
   s32 nextShakeChance;
 
@@ -302,7 +306,8 @@ static void KolimaForestBend_FlipFloodgateSwitch(void) {
   Engine_EventEnd();
 }
 
-/// Walking west into the short log: the leader shoves it west to x 72.
+/// Kolima Forest (scene 43), walking west into the short log: the leader
+/// shoves it west to x 72.
 static void KolimaForestBend_PushShortLogWest(void) {
 
   Engine_EventBegin();
@@ -328,7 +333,8 @@ static void KolimaForestBend_PushShortLogWest(void) {
   Engine_EventEnd();
 }
 
-/// Walking east into the short log: the leader shoves it east to x 104.
+/// Kolima Forest (scene 43), walking east into the short log: the leader
+/// shoves it east to x 104.
 static void KolimaForestBend_PushShortLogEast(void) {
 
   Engine_EventBegin();
@@ -588,7 +594,7 @@ struct SceneEntrance gKolimaForestBendEntrances[] = {
     { SCENE_TABLE_END },
 };
 
-/// Exit 1 to the river (scene 42), exit 2 to Tret's tree (scene 44).
+/// Exit 1 back (scene 42), exit 2 on to Tret (scene 44).
 u32 gKolimaForestBendExits[] = {
     SCENE_EXITS(43),
     SCENE_EXIT(1, 42, 2),

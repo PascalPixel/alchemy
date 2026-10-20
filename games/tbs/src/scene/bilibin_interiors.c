@@ -1,6 +1,38 @@
 /// @file
-/// Bilibin's shops, inn and dining room before and after Kolima's curse ends.
-/// The event table keeps the two sets of conversations in their native order.
+/// Inside Bilibin's buildings: scene 31, a row the scene table leaves without
+/// a symbol, whose area name is Bilibin. Six of Bilibin's doors (Bilibin1's
+/// exits 3 to 8, in bilibin.c) lead into its rooms, and each room's door leads
+/// back out to the door it was entered by. One room holds the weapon and armor
+/// shops, another the item shop, a third the inn with the restaurant beside
+/// it, whose inner door (exits 7 and 8) leads to one more room; three other
+/// buildings hold villagers. BilibinInteriors_GetPlacements leaves out the
+/// actors of the rooms not in view.
+///
+/// The party first comes in while Kolima's curse holds
+/// (FLAG_KOLIMA_CURSE_LIFTED clear), and the townsfolk explain what the street
+/// outside only hints at. The tree at the village entrance is a man cursed by
+/// the sacred tree, because McCoy, the lord of this town, had the trees cut
+/// down to build his wife, Lady McCoy, a grand palace; a fairy named Tret is
+/// said to live in the holy tree, and the lighthouse near Imil once held the
+/// Water of Hermes, which could heal all injuries. In the restaurant the head
+/// chef, born in Kolima, is too worried about his parents to cook, while his
+/// kitchen worker, the waitress and the diners wait. Once the curse is lifted
+/// the palace work has stopped and the road to Kolima is open again, and the
+/// head chef cooks so hard his kitchen cannot keep up: the first time the
+/// party talks to him (place flag 0x300, kept until the party leaves Bilibin)
+/// he shouts a string of orders and the kitchen worker answers, and from then
+/// on he sends the party to the waitress (Event_TalkToBusyChef).
+///
+/// gBilibinInteriorsEvents keeps both times in one table, in the ROM's order:
+/// every row that needs FLAG_KOLIMA_CURSE_LIFTED clear comes before the rows
+/// for afterwards, so the first row that matches picks the time. The
+/// shopkeepers and the innkeeper open the shop or the inn only when the leader
+/// faces them across the counter (facing north), and otherwise talk of the
+/// time; Mind Read on the villager who admires Mia depends on whether she is in
+/// the party. Searching finds an Antidote, a Sleep Bomb and a Hard Nut, egg
+/// soup and omelettes in the ovens, and a book called "All About Items".
+/// BilibinInteriors_Initialize opens the rooms with a window transition and
+/// draws one diner at a fixed sprite priority.
 
 #include "unit/scene/bilibin_interiors.h"
 #include "flags.h"
@@ -38,10 +70,10 @@ enum {
   BILIBIN_ARMOR_SHOPKEEPER = 17,
   BILIBIN_ITEM_SHOPKEEPER = 18,
   BILIBIN_INNKEEPER = 19,
-  BILIBIN_CHEF = 21,
+  BILIBIN_CHEF = 21, ///< the restaurant's head chef, born in Kolima
   BILIBIN_KITCHEN_WORKER = 22,
   BILIBIN_WAITRESS = 23,
-  BILIBIN_HUNGRY_DINER = 24,
+  BILIBIN_HUNGRY_DINER = 24, ///< a businessman waiting for his dinner
   BILIBIN_DINER = 27
 };
 
@@ -59,7 +91,9 @@ const struct ScenePlacement *BilibinInteriors_GetPlacements(void) {
   return gBilibinInteriorsPlacements;
 }
 
-/// Opens the weapon shop from across the counter; otherwise discusses Kolima.
+/// Bilibin's weapon shopkeeper: across the counter the shop opens; otherwise,
+/// before the curse is lifted, the shopkeeper mourns Vale's lost healer, and
+/// after, recommends Altin's store.
 static void Event_TalkToWeaponShopkeeper(void) {
   u32 leaderFacing;
 
@@ -80,7 +114,9 @@ static void Event_TalkToWeaponShopkeeper(void) {
   Engine_EventEnd();
 }
 
-/// Opens the item shop from across the counter, or talks about the curse.
+/// Bilibin's item shopkeeper: across the counter the shop opens; otherwise,
+/// before the curse is lifted, the shopkeeper says Lord McCoy could use
+/// travelers like the party, and after, that his hired warriors were useless.
 static void Event_TalkToItemShopkeeper(void) {
   u32 leaderFacing;
 
@@ -106,7 +142,9 @@ const struct SceneEvent *BilibinInteriors_GetEvents(void) {
   return gBilibinInteriorsEvents;
 }
 
-/// Opens the armor shop across the counter, or asks about seeing the ocean.
+/// Bilibin's armor shopkeeper: across the counter the shop opens; otherwise,
+/// before the curse is lifted, the shopkeeper asks whether the party has heard
+/// of the ocean, and after, dreams aloud of it.
 static void Event_TalkToArmorShopkeeper(void) {
   u32 leaderFacing;
 
@@ -130,7 +168,8 @@ static void Event_TalkToArmorShopkeeper(void) {
   Engine_EventEnd();
 }
 
-/// The chef cannot concentrate on cooking while his hometown is cursed.
+/// The head chef in Bilibin's restaurant, before the curse is lifted: born in
+/// Kolima, he is too worried to focus on his cooking.
 static void Event_TalkToWorriedChef(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinImReallyWorriedAboutKolima);
@@ -140,7 +179,8 @@ static void Event_TalkToWorriedChef(void) {
   Engine_EventEnd();
 }
 
-/// A diner's growling stomach leads into a yes/no question about the sound.
+/// A diner in Bilibin's restaurant, before the curse is lifted, still waiting
+/// for his dinner: his stomach growls, and he asks whether the party heard it.
 static void Event_TalkToHungryDiner(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinGrrr);
@@ -156,7 +196,9 @@ static void Event_TalkToHungryDiner(void) {
   Engine_EventEnd();
 }
 
-/// Asks whether a tree spirit can curse a person, then turns back to the table.
+/// A diner in Bilibin's restaurant, before the curse is lifted, asks whether a
+/// tree spirit can curse a man; on yes, sends the party to hear Lord McCoy's
+/// story. Then the diner turns back to the table.
 static void Event_AskAboutTreeSpirit(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinDoBelieveTreeSpiritCan);
@@ -171,7 +213,8 @@ static void Event_AskAboutTreeSpirit(void) {
   Engine_EventEnd();
 }
 
-/// Asks whether Kolima's holy tree survived.
+/// A villager in Bilibin, once the curse is lifted, asks whether the holy tree
+/// of Kolima Forest survived.
 static void Event_AskAboutHolyTree(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinDoKnowIfHolyTree);
@@ -179,7 +222,9 @@ static void Event_AskAboutHolyTree(void) {
   Engine_EventEnd();
 }
 
-/// Asks whether the party knows what silk is.
+/// A villager in Bilibin, once the curse is lifted, asks whether the party
+/// knows what silk is; on yes, that Xian, across the river, makes it, at the
+/// start of Silk Road.
 static void Event_AskAboutSilk(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinDoKnowSilk);
@@ -187,7 +232,9 @@ static void Event_AskAboutSilk(void) {
   Engine_EventEnd();
 }
 
-/// Opens the inn across the counter, or discusses the curse in Kolima.
+/// Bilibin's innkeeper: across the counter the inn opens; otherwise, before
+/// the curse is lifted, the innkeeper is scared of the curse on Kolima, and
+/// after, asks whether it wasn't horrifying.
 static void Event_TalkToInnkeeper(void) {
   u32 leaderFacing;
 
@@ -207,12 +254,13 @@ static void Event_TalkToInnkeeper(void) {
   Engine_EventEnd();
 }
 
-/// The chef calls out orders once, then refers diners to the waitress.
+/// The head chef in Bilibin's restaurant, once the curse is lifted: he calls
+/// out orders once, then sends the party to the waitress.
 static void Event_TalkToBusyChef(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(0x300) == 0) {
-    // The first time (0x300, kept while in the rooms), the chef shouts orders
-    // and the kitchen worker answers.
+    // The first time (0x300, kept until the party leaves Bilibin), the chef
+    // shouts orders and the kitchen worker answers.
     Engine_EventSetMessage(MsgBilibinTwoSpecialsOneDinnerOne);
     Event_ShowMessage(BILIBIN_CHEF, 0);
     Actor_FaceDirection(BILIBIN_CHEF, FACING_WEST, 20);
@@ -232,7 +280,8 @@ static void Event_TalkToBusyChef(void) {
   Engine_EventEnd();
 }
 
-/// The kitchen worker complains about the chef's renewed energy.
+/// The kitchen worker in Bilibin's restaurant, once the curse is lifted,
+/// cannot keep up with the head chef's energy.
 static void Event_TalkToKitchenWorker(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinReallyThinkHeadChefHas);
@@ -243,7 +292,8 @@ static void Event_TalkToKitchenWorker(void) {
   Engine_EventEnd();
 }
 
-/// The waitress works through serving water and laying the silverware.
+/// The waitress in Bilibin's restaurant, once the curse is lifted, hurries
+/// through her work before the head chef yells.
 static void Event_TalkToWaitress(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinLetsSeeServeThemWater);
@@ -254,7 +304,8 @@ static void Event_TalkToWaitress(void) {
   Engine_EventEnd();
 }
 
-/// A satisfied diner asks whether the party enjoys the food.
+/// A diner in Bilibin's restaurant, once the curse is lifted and the food
+/// flows, asks whether the party loves it too.
 static void Event_TalkAboutMeal(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgBilibinWasSomeMealDontJust);
@@ -262,8 +313,10 @@ static void Event_TalkAboutMeal(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read on the villager who admires Mia: with Mia in the party (flags 0 to
-/// 7 say who is), even frozen Imil must feel warm with her around.
+/// Mind Read on the villager in Bilibin who admires Mia, before the curse is
+/// lifted: with Mia in the party (flags 0 to 7 say who is), even frozen Imil
+/// must feel warm with her around; without her, the villager hopes to see her
+/// again in spring.
 static void Event_ReadMiaAdmirersMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
@@ -275,8 +328,9 @@ static void Event_ReadMiaAdmirersMind(void) {
   Engine_EventEnd();
 }
 
-/// The rooms open through a window; the diner at the dining room table is drawn
-/// at sprite priority 2, never by the automatic priority.
+/// Sets up Bilibin's buildings: the rooms open through a window, and the diner
+/// at the restaurant's table is drawn at sprite priority 2, never by the
+/// automatic priority.
 s32 BilibinInteriors_Initialize(void) {
   struct FieldActor *actor;
   u8 *record;

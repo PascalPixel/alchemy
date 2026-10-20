@@ -1,11 +1,54 @@
 /// @file
-/// The Djinni's ice room by Imil and Fuchin Falls, in seven maps: the ice room,
-/// then Fuchin Falls' four platform rooms, the room of the Ki inscription and
-/// the dragon statue's room.
+/// Imil Falls Cave, north of Imil, and Fuchin Falls Cave, the waterfall
+/// grotto of Fuchin Temple's test: two places in seven scenes.
 ///
-/// Flags 0x301 to 0x315 belong to the cave and hold the platforms' stops: 0x301
-/// to 0x303 the first room's, 0x304 to 0x307 the second's, 0x308 to 0x312 the
-/// third's and 0x313 to 0x315 the fourth's.
+/// - Imil Falls Cave (ImilFuchinFalls1, scene 52), up the way north out of
+///   Imil; its only exit leads back down (Imil's entrance 9). Fever, a Mars
+///   Djinni, waits on its ice and joins the party when spoken to, without a
+///   battle. Every normal entry blocks Retreat and walks the leader up toward
+///   Fever, and stepping onto the ice (collision code 10) slides the leader in
+///   the held direction, turning toward it as he goes, until a blocked cell
+///   or one too high stops him.
+/// - Fuchin Falls Cave (ImilFuchinFalls2 to ImilFuchinFalls7, scenes 62 to
+///   67), the waterfall grotto. Master Nyunpa of Fuchin Temple tells the
+///   party they must survive its test before he will tell them how to pass
+///   through Mogall Forest. The test ends at the chest of the Orb of Force
+///   (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), and back at the temple Nyunpa
+///   names the power they have gained Ki (fuchin_temple.c). The way in and
+///   out is scene 62's exit 1, to Fuchin Temple's entrance 3. The code names
+///   the rooms by scene: the first to fourth rooms (scenes 62 to 65), the
+///   room of the Ki inscription (66) and the dragon statue's room (67).
+///
+///   The first four rooms are crossed on floating logs, which the code calls
+///   platforms. Walking into a log's trigger cell pushes it along the water to
+///   its next stop, the leader moving with it (SceneActor_PlacePairAtOffset);
+///   touching the cell plays the log's two rolling animations. Each stop is a
+///   place flag, 0x301 to 0x303 for the first room's logs, 0x304 to 0x307 the
+///   second's, 0x308 to 0x312 the third's and 0x313 to 0x315 the fourth's, so
+///   the logs are back where they started once the party leaves the cave's
+///   scenes. After each move, and on entry, the room's rebuild function puts
+///   every log at the cell its flags name and rewrites the cells of each
+///   log's track to match. In the third room the logs block one another, so
+///   where a log stops depends on where the others lie; in the second and
+///   third rooms the leader hops across gaps a log's stop leaves.
+///
+///   Zephyr, a Jupiter Djinni, waits in the second room (scene 63) and fights
+///   when spoken to. In the first room a chest holds a mimic, whose battle
+///   its find value starts (type 5); the fourth room's chest holds an Arctic
+///   Blade, and the Ki room's the Orb of Force. Arriving in the third room by
+///   entrance 1 before the Dragon's Eye is taken (flag 0xf13) shows it, and
+///   searching there takes it.
+///
+///   The dragon statue's room is dark until the eye is set: entering by
+///   entrances 1 to 6 darkens the palette. Entrances 1, 2 and 5 start the
+///   fade overlay (object/object/fade_overlay.c), following the leader except
+///   from entrance 5, and triggers 15 and 16 start and stop its following.
+///   When Reveal ends, the room goes dark again. The statue is `an eyeless
+///   dragon`; using the Dragon's Eye on it flashes the room, blows dust from
+///   the cave mouth as the room brightens, redraws the cells of the hidden
+///   path and uses the eye up (FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET). The first
+///   room's inscription points the way: `The dragon's flame illuminates the
+///   path of truth in darkness.`
 
 #include "script.h"
 #include "game_state.h"
@@ -51,13 +94,13 @@
 #include "item_ids.h"
 
 enum ImilFuchinFallsActor {
-  ACTOR_IMIL_DJINNI = 8, ///< in the ice room
-  /// The platforms, in each platform room
+  ACTOR_FEVER = 8, ///< a Mars Djinni, in Imil Falls Cave
+  /// The floating logs, in each of Fuchin Falls Cave's first four rooms
   ACTOR_FIRST_PLATFORM = 8,
   ACTOR_SECOND_PLATFORM = 9,
   ACTOR_THIRD_PLATFORM = 10,
   ACTOR_FOURTH_PLATFORM = 11,
-  ACTOR_FUCHIN_DJINNI = 11 ///< in the second platform room
+  ACTOR_ZEPHYR = 11 ///< a Jupiter Djinni, in the second room
 };
 
 enum {
@@ -68,7 +111,7 @@ static void Fuchin_RebuildFirstRoomPlatforms(void);
 static void Fuchin_RebuildSecondRoomPlatforms(void);
 static void Fuchin_RebuildThirdRoomPlatforms(void);
 static void Fuchin_RebuildFourthRoomPlatforms(void);
-static void Imil_WalkTowardDjinni(void);
+static void Imil_WalkTowardFever(void);
 static void ImilFuchinFalls_PrepareRoom(void);
 static void ImilFuchinFalls_RebuildPlatformRoom(void);
 static void ImilFuchinFalls_HopBy(s32 dx, s32 dz);
@@ -101,13 +144,14 @@ STATIC_ASSERT(offsetof(struct CaveDustOptions, targetScaleX) ==
 STATIC_ASSERT(offsetof(struct CaveDustOptions, targetScaleY) ==
               offsetof(struct EffectOptions, targetScaleY));
 
-/// Talking to the Djinni in the ice room adds it to the party.
-static void Imil_RecruitDjinni(void) {
-  Djinn_JoinParty(ACTOR_IMIL_DJINNI, ELEMENT_MARS, 1);
+/// Talking to Fever, a Mars Djinni, in Imil Falls Cave adds it to the party.
+static void Imil_RecruitFever(void) {
+  Djinn_JoinParty(ACTOR_FEVER, ELEMENT_MARS, 1);
 }
 
-/// Talking to the Djinni in the second platform room starts its battle.
-static void Fuchin_StartDjinnBattle(void) {
+/// Talking to Zephyr, a Jupiter Djinni, in Fuchin Falls Cave's second room
+/// (scene 63) starts its battle.
+static void Fuchin_FightZephyr(void) {
   Field_RequestDjinnBattle(11, DJINNI_ZEPHYR);
 }
 
@@ -115,7 +159,7 @@ const struct SceneEntrance *ImilFuchinFalls_GetEntrances(void) {
   s16 sceneId = gGameState.scene;
 
   if (sceneId == (s32)&SceneId_ImilFuchinFalls1) {
-    return gImilFuchinFalls_DjinniRoomEntrances;
+    return gImilFuchinFalls_ImilFallsCaveEntrances;
   }
   if (sceneId == (s32)&SceneId_ImilFuchinFalls2) {
     return gImilFuchinFalls_FirstRoomEntrances;
@@ -140,14 +184,14 @@ const struct SceneEntrance *ImilFuchinFalls_GetEntrances(void) {
 
 const struct SceneRegion *ImilFuchinFalls_GetRegions(void) { return NULL; }
 
-/// Returns the exit connections shared by these rooms.
+/// Returns the exit table every scene of the overlay shares.
 const u32 *ImilFuchinFalls_GetExits(void) { return gImilFuchinFalls_Exits; }
 
 const struct ScenePlacement *ImilFuchinFalls_GetPlacements(void) {
   s16 sceneId = gGameState.scene;
 
   if (sceneId == (s32)&SceneId_ImilFuchinFalls1) {
-    return gImilFuchinFalls_DjinniRoomPlacements;
+    return gImilFuchinFalls_ImilFallsCavePlacements;
   }
   if (sceneId == (s32)&SceneId_ImilFuchinFalls2) {
     return gImilFuchinFalls_FirstRoomPlacements;
@@ -169,13 +213,15 @@ const struct ScenePlacement *ImilFuchinFalls_GetPlacements(void) {
 
 #include "common/object_pairmove.h"
 
-/// Lets the platform settle before rebuilding its room's collision cells.
+/// Lets the log settle before rebuilding its room's collision cells.
 static inline void Fuchin_FinishPlatformMove(void (*rebuildPlatforms)(void)) {
   Engine_AudioPlayCue(SE_289);
   Engine_TaskWait(2);
   rebuildPlatforms();
 }
 
+/// Fuchin Falls Cave, first room (scene 62): pushing the first log east
+/// (trigger 11) floats it 224 pixels east (0x301 set).
 static void Fuchin_FirstRoom_MoveFirstPlatformEast(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, 112, 0);
@@ -186,6 +232,8 @@ static void Fuchin_FirstRoom_MoveFirstPlatformEast(void) {
   Fuchin_RebuildFirstRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, first room (scene 62): pushing the first log west
+/// (trigger 12) floats it 224 pixels back (0x301 clear).
 static void Fuchin_FirstRoom_MoveFirstPlatformWest(void) {
   s32 offset = 112;
 
@@ -199,6 +247,8 @@ static void Fuchin_FirstRoom_MoveFirstPlatformWest(void) {
   Fuchin_RebuildFirstRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, first room (scene 62): pushing the second log south
+/// (trigger 13) floats it 64 pixels south (0x302 clear).
 static void Fuchin_FirstRoom_MoveSecondPlatformSouth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, 0, 64);
@@ -208,6 +258,8 @@ static void Fuchin_FirstRoom_MoveSecondPlatformSouth(void) {
   Fuchin_RebuildFirstRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, first room (scene 62): pushing the second log north
+/// (trigger 14) floats it 64 pixels north (0x302 set).
 static void Fuchin_FirstRoom_MoveSecondPlatformNorth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, 0, -64);
@@ -217,6 +269,8 @@ static void Fuchin_FirstRoom_MoveSecondPlatformNorth(void) {
   Fuchin_RebuildFirstRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, first room (scene 62): pushing the third log south
+/// (trigger 15) floats it 64 pixels south (0x303 clear).
 static void Fuchin_FirstRoom_MoveThirdPlatformSouth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, 64);
@@ -226,6 +280,8 @@ static void Fuchin_FirstRoom_MoveThirdPlatformSouth(void) {
   Fuchin_RebuildFirstRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, first room (scene 62): pushing the third log north
+/// (trigger 16) floats it 64 pixels north (0x303 set).
 static void Fuchin_FirstRoom_MoveThirdPlatformNorth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, -64);
@@ -235,6 +291,8 @@ static void Fuchin_FirstRoom_MoveThirdPlatformNorth(void) {
   Fuchin_RebuildFirstRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, second room (scene 63): pushing the first log east
+/// (trigger 11), while 0x306 is clear, floats it 144 pixels east (0x304 set).
 static void Fuchin_SecondRoom_MoveFirstPlatformToEastEnd(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, 144, 0);
@@ -244,6 +302,8 @@ static void Fuchin_SecondRoom_MoveFirstPlatformToEastEnd(void) {
   Fuchin_RebuildSecondRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, second room (scene 63): pushing the first log west
+/// (trigger 12) floats it 144 pixels west (0x304 clear, 0x305 set).
 static void Fuchin_SecondRoom_MoveFirstPlatformToWestEnd(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, -144, 0);
@@ -254,6 +314,8 @@ static void Fuchin_SecondRoom_MoveFirstPlatformToWestEnd(void) {
   Fuchin_RebuildSecondRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, second room (scene 63): pushing the first log west
+/// (trigger 11) floats it 14 pixels west (0x305 set).
 static void Fuchin_SecondRoom_NudgeFirstPlatformWest(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, -14, 0);
@@ -263,6 +325,9 @@ static void Fuchin_SecondRoom_NudgeFirstPlatformWest(void) {
   Fuchin_RebuildSecondRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, second room (scene 63): pushing the first log east
+/// (trigger 17) moves it one cell when the second log lies south (0x306; 0x305
+/// clear), else 144 pixels (0x304 set).
 static void Fuchin_SecondRoom_MoveFirstPlatformEast(void) {
   Engine_AudioPlayCue(SE_241);
 
@@ -278,6 +343,8 @@ static void Fuchin_SecondRoom_MoveFirstPlatformEast(void) {
   Fuchin_FinishPlatformMove(Fuchin_RebuildSecondRoomPlatforms);
 }
 
+/// Fuchin Falls Cave, second room (scene 63): pushing the second log south
+/// (trigger 13) floats it 64 pixels south (0x306 set).
 static void Fuchin_SecondRoom_MoveSecondPlatformSouth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, 0, 64);
@@ -287,6 +354,8 @@ static void Fuchin_SecondRoom_MoveSecondPlatformSouth(void) {
   Fuchin_RebuildSecondRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, second room (scene 63): pushing the second log north
+/// (trigger 14) floats it 64 pixels north (0x306 clear).
 static void Fuchin_SecondRoom_MoveSecondPlatformNorth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, 0, -64);
@@ -296,6 +365,8 @@ static void Fuchin_SecondRoom_MoveSecondPlatformNorth(void) {
   Fuchin_RebuildSecondRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, second room (scene 63): pushing the third log south
+/// (trigger 15) floats it 272 pixels south (0x307 clear).
 static void Fuchin_SecondRoom_MoveThirdPlatformSouth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, 144);
@@ -306,6 +377,8 @@ static void Fuchin_SecondRoom_MoveThirdPlatformSouth(void) {
   Fuchin_RebuildSecondRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, second room (scene 63): pushing the third log north
+/// (trigger 16) floats it 272 pixels north (0x307 set).
 static void Fuchin_SecondRoom_MoveThirdPlatformNorth(void) {
   s32 depth = -96;
 
@@ -319,6 +392,9 @@ static void Fuchin_SecondRoom_MoveThirdPlatformNorth(void) {
   Fuchin_RebuildSecondRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, third room (scene 64): pushing the first log west
+/// (trigger 10): 48 pixels (0x309 set) when the third log lies at 0x30d or the
+/// fourth at 0x310, else 96 (0x308 set).
 static void Fuchin_ThirdRoom_MoveFirstPlatformWest(void) {
   Engine_AudioPlayCue(SE_241);
 
@@ -335,6 +411,8 @@ static void Fuchin_ThirdRoom_MoveFirstPlatformWest(void) {
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
+/// Fuchin Falls Cave, third room (scene 64): pushing the first log east
+/// (trigger 11) floats it 48 pixels east (0x308 and 0x309 clear).
 static void Fuchin_ThirdRoom_MoveFirstPlatformEastFromMiddle(void) {
   Engine_AudioPlayCue(SE_241);
   Engine_GameFlagClear(0x308);
@@ -343,6 +421,9 @@ static void Fuchin_ThirdRoom_MoveFirstPlatformEastFromMiddle(void) {
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
+/// Fuchin Falls Cave, third room (scene 64): pushing the first log west
+/// (trigger 11), unless the third log lies at 0x30d or the fourth at 0x310,
+/// floats it 48 pixels west (0x308 set).
 static void Fuchin_ThirdRoom_MoveFirstPlatformWestIfClear(void) {
   if (Engine_GameFlagIsSet(0x310) != 0) {
     return;
@@ -360,6 +441,8 @@ static void Fuchin_ThirdRoom_MoveFirstPlatformWestIfClear(void) {
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
+/// Fuchin Falls Cave, third room (scene 64): pushing the first log east
+/// (trigger 12) floats it 96 pixels east (0x308 and 0x309 clear).
 static void Fuchin_ThirdRoom_MoveFirstPlatformEastFromWestEnd(void) {
   Engine_AudioPlayCue(SE_241);
   Engine_GameFlagClear(0x308);
@@ -368,6 +451,8 @@ static void Fuchin_ThirdRoom_MoveFirstPlatformEastFromWestEnd(void) {
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
+/// Fuchin Falls Cave, third room (scene 64): pushing the second log west
+/// (trigger 14) floats it 32 pixels west (0x30a set).
 static void Fuchin_ThirdRoom_MoveSecondPlatformWest(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, -32, 0);
@@ -377,6 +462,8 @@ static void Fuchin_ThirdRoom_MoveSecondPlatformWest(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, third room (scene 64): pushing the second log east
+/// (trigger 13) floats it 32 pixels east (0x30a clear).
 static void Fuchin_ThirdRoom_MoveSecondPlatformEast(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, 32, 0);
@@ -386,6 +473,9 @@ static void Fuchin_ThirdRoom_MoveSecondPlatformEast(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, third room (scene 64): pushing the third log north
+/// (trigger 15): 64 pixels (0x30c) when the first log lies at 0x308, else 128
+/// (0x30b).
 static void Fuchin_ThirdRoom_MoveThirdPlatformNorthFromSouthEnd(void) {
   Engine_AudioPlayCue(SE_241);
   if (Engine_GameFlagIsSet(0x308) != 0) {
@@ -404,6 +494,10 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformNorthFromSouthEnd(void) {
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
+/// Fuchin Falls Cave, third room (scene 64): pushing the third log south
+/// (trigger 16): one cell (0x30c) when the first log lies at 0x308 or the
+/// fourth at 0x310, 64 pixels (0x30d) when the fourth lies at 0x311, else 128
+/// (its stops clear).
 static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromNorthEnd(void) {
   Engine_AudioPlayCue(SE_241);
 
@@ -435,6 +529,8 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromNorthEnd(void) {
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
+/// Fuchin Falls Cave, third room (scene 64): pushing the third log north
+/// (trigger 17) moves it one cell (0x30b).
 static void Fuchin_ThirdRoom_NudgeThirdPlatformNorth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, -16);
@@ -447,6 +543,10 @@ static void Fuchin_ThirdRoom_NudgeThirdPlatformNorth(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, third room (scene 64): pushing the third log south
+/// (trigger 17), unless the first log lies at 0x308: 48 pixels (0x30d) when the
+/// fourth lies at 0x311, 32 (0x30c) when it lies at 0x310, else 112 (its stops
+/// clear).
 static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromUpperStop(void) {
   Engine_AudioPlayCue(SE_241);
   if (Engine_GameFlagIsSet(0x311) != 0) {
@@ -472,6 +572,8 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromUpperStop(void) {
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
+/// Fuchin Falls Cave, third room (scene 64): pushing the third log north
+/// (trigger 18) floats it 64 pixels north (0x30b).
 static void Fuchin_ThirdRoom_MoveThirdPlatformNorthFromMiddle(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, -64);
@@ -482,6 +584,9 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformNorthFromMiddle(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, third room (scene 64): pushing the third log south
+/// (trigger 18), unless the fourth lies at 0x310, floats it 64 pixels south
+/// (its stops clear).
 static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromMiddle(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, 64);
@@ -494,6 +599,8 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromMiddle(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, third room (scene 64): pushing the third log north
+/// (trigger 19) floats it 80 pixels north (0x30b).
 static void Fuchin_ThirdRoom_MoveThirdPlatformNorthFromLowerStop(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, -80);
@@ -506,6 +613,8 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformNorthFromLowerStop(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, third room (scene 64): pushing the third log south
+/// (trigger 19) floats it 64 pixels south (its stops clear).
 static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromLowerStop(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 0, 64);
@@ -518,6 +627,9 @@ static void Fuchin_ThirdRoom_MoveThirdPlatformSouthFromLowerStop(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, third room (scene 64): pushing the fourth log north
+/// (trigger 20): 64 pixels (0x311) when the first log lies at 0x308 or the
+/// third at 0x30d, 112 (0x310) when the third lies at 0x30c, else 128 (0x30f).
 static void Fuchin_ThirdRoom_MoveFourthPlatformNorth(void) {
   Engine_AudioPlayCue(SE_241);
 
@@ -551,6 +663,9 @@ static void Fuchin_ClearFourthPlatformStops(void) {
   Engine_GameFlagClear(0x312);
 }
 
+/// Fuchin Falls Cave, third room (scene 64): pushing the fourth log south
+/// (trigger 21), unless the first log lies at 0x308, floats it 128 pixels south
+/// (its stops clear).
 static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromNorthEnd(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, 128);
@@ -558,6 +673,8 @@ static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromNorthEnd(void) {
   Fuchin_FinishPlatformMove(Fuchin_RebuildThirdRoomPlatforms);
 }
 
+/// Fuchin Falls Cave, third room (scene 64): pushing the fourth log north
+/// (trigger 22) moves it one cell (0x30f).
 static void Fuchin_ThirdRoom_NudgeFourthPlatformNorth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, -16);
@@ -570,6 +687,8 @@ static void Fuchin_ThirdRoom_NudgeFourthPlatformNorth(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, third room (scene 64): pushing the fourth log south
+/// (trigger 22) floats it 112 pixels south (its stops clear).
 static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromUpperStop(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, 112);
@@ -579,6 +698,8 @@ static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromUpperStop(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, third room (scene 64): pushing the fourth log south
+/// (trigger 23) floats it 64 pixels south (its stops clear).
 static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromMiddle(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, 64);
@@ -588,6 +709,10 @@ static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromMiddle(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, third room (scene 64): walking north into trigger 24
+/// floats the fourth log 80 pixels south (its stops clear). XXX: the table and
+/// the move disagree on the direction; the map around trigger 24 would settle
+/// which is meant.
 static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromLowerStop(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, 80);
@@ -597,6 +722,8 @@ static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromLowerStop(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, third room (scene 64): pushing the fourth log south
+/// (trigger 24) floats it 48 pixels south (its stops clear).
 static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromLastStop(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FOURTH_PLATFORM, 0, 48);
@@ -606,6 +733,8 @@ static void Fuchin_ThirdRoom_MoveFourthPlatformSouthFromLastStop(void) {
   Fuchin_RebuildThirdRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, fourth room (scene 65): pushing the first log south
+/// (trigger 11) floats it 112 pixels south (0x313 set).
 static void Fuchin_FourthRoom_MoveFirstPlatformSouth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, 0, 112);
@@ -615,6 +744,8 @@ static void Fuchin_FourthRoom_MoveFirstPlatformSouth(void) {
   Fuchin_RebuildFourthRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, fourth room (scene 65): pushing the first log north
+/// (trigger 12) floats it 112 pixels north (0x313 clear).
 static void Fuchin_FourthRoom_MoveFirstPlatformNorth(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_FIRST_PLATFORM, 0, -112);
@@ -624,6 +755,9 @@ static void Fuchin_FourthRoom_MoveFirstPlatformNorth(void) {
   Fuchin_RebuildFourthRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, fourth room (scene 65): pushing the second log west
+/// (trigger 13), while the first log lies north (0x313 clear), floats it 128
+/// pixels west (0x314 set).
 static void Fuchin_FourthRoom_MoveSecondPlatformWest(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, -128, 0);
@@ -633,6 +767,8 @@ static void Fuchin_FourthRoom_MoveSecondPlatformWest(void) {
   Fuchin_RebuildFourthRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, fourth room (scene 65): pushing the second log east
+/// (trigger 14) floats it 128 pixels east (0x314 clear).
 static void Fuchin_FourthRoom_MoveSecondPlatformEast(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_SECOND_PLATFORM, 128, 0);
@@ -642,6 +778,8 @@ static void Fuchin_FourthRoom_MoveSecondPlatformEast(void) {
   Fuchin_RebuildFourthRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, fourth room (scene 65): pushing the third log east
+/// (trigger 15) floats it 160 pixels east (0x315 set).
 static void Fuchin_FourthRoom_MoveThirdPlatformEast(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, 160, 0);
@@ -651,6 +789,8 @@ static void Fuchin_FourthRoom_MoveThirdPlatformEast(void) {
   Fuchin_RebuildFourthRoomPlatforms();
 }
 
+/// Fuchin Falls Cave, fourth room (scene 65): pushing the third log west
+/// (trigger 16) floats it 160 pixels west (0x315 clear).
 static void Fuchin_FourthRoom_MoveThirdPlatformWest(void) {
   Engine_AudioPlayCue(SE_241);
   SceneActor_PlacePairAtOffset(ACTOR_THIRD_PLATFORM, -160, 0);
@@ -660,25 +800,29 @@ static void Fuchin_FourthRoom_MoveThirdPlatformWest(void) {
   Fuchin_RebuildFourthRoomPlatforms();
 }
 
-/// Advances the first platform through its two rolling animations.
+/// Touching the first log's trigger cell in Fuchin Falls Cave plays its two
+/// rolling animations.
 static void Fuchin_AnimateFirstPlatform(void) {
   Engine_ActorSetAnimation(ACTOR_FIRST_PLATFORM, 1);
   Engine_ActorSetAnimation(ACTOR_FIRST_PLATFORM, 2);
 }
 
-/// Advances the second platform through its two rolling animations.
+/// Touching the second log's trigger cell in Fuchin Falls Cave plays its two
+/// rolling animations.
 static void Fuchin_AnimateSecondPlatform(void) {
   Engine_ActorSetAnimation(ACTOR_SECOND_PLATFORM, 1);
   Engine_ActorSetAnimation(ACTOR_SECOND_PLATFORM, 2);
 }
 
-/// Advances the third platform through its two rolling animations.
+/// Touching the third log's trigger cell in Fuchin Falls Cave plays its two
+/// rolling animations.
 static void Fuchin_AnimateThirdPlatform(void) {
   Engine_ActorSetAnimation(ACTOR_THIRD_PLATFORM, 1);
   Engine_ActorSetAnimation(ACTOR_THIRD_PLATFORM, 2);
 }
 
-/// Advances the fourth platform through its two rolling animations.
+/// Touching the fourth log's trigger cell in Fuchin Falls Cave (third room)
+/// plays its two rolling animations.
 static void Fuchin_AnimateFourthPlatform(void) {
   Engine_ActorSetAnimation(ACTOR_FOURTH_PLATFORM, 1);
   Engine_ActorSetAnimation(ACTOR_FOURTH_PLATFORM, 2);
@@ -704,7 +848,7 @@ const struct SceneEvent *ImilFuchinFalls_GetEvents(void) {
   s16 sceneId = gGameState.scene;
 
   if (sceneId == (s32)&SceneId_ImilFuchinFalls1) {
-    return gImilFuchinFalls_DjinniRoomEvents;
+    return gImilFuchinFalls_ImilFallsCaveEvents;
   }
   if (sceneId == (s32)&SceneId_ImilFuchinFalls2) {
     return gImilFuchinFalls_FirstRoomEvents;
@@ -727,8 +871,9 @@ const struct SceneEvent *ImilFuchinFalls_GetEvents(void) {
   return gImilFuchinFalls_NoEvents;
 }
 
-/// Faces the leader south and leaves the Imil Djinn room.
-static void Imil_LeaveDjinnRoom(void) {
+/// Walking into the way out of Imil Falls Cave (trigger 1): faces the leader
+/// south and leaves for Imil.
+static void Imil_LeaveFallsCave(void) {
   struct FieldActor *leader;
 
   Engine_EventBegin();
@@ -740,10 +885,11 @@ static void Imil_LeaveDjinnRoom(void) {
   Engine_EventRequestExit(1);
 }
 
-/// Starts sliding the selected actor in the held direction.
+/// Stepping onto the ice in Imil Falls Cave (collision code 10) slides the
+/// selected actor in the held direction.
 static void Imil_MoveAcrossIce(void) { Imil_SlideActorAcrossIce(); }
 
-/// Centers a platform on its cell and gives it underfoot priority.
+/// Centers a log on its cell and gives it underfoot priority.
 static void Fuchin_PlacePlatformAtCell(s32 id, s32 column, s32 row) {
   struct FieldActor *actor = Object_GetById(id);
 
@@ -756,7 +902,8 @@ static void Fuchin_PlacePlatformAtCell(s32 id, s32 column, s32 row) {
   }
 }
 
-/// Restores platform positions and collision cells in the first puzzle room.
+/// Puts the logs of Fuchin Falls Cave's first room (scene 62) at the cells
+/// their flags name, and rewrites the cells of their tracks to match.
 static void Fuchin_RebuildFirstRoomPlatforms(void) {
   {
     s32 column = 8;
@@ -813,7 +960,8 @@ static void Fuchin_RebuildFirstRoomPlatforms(void) {
   }
 }
 
-/// Restores platform positions and collision cells in the second puzzle room.
+/// Puts the logs of Fuchin Falls Cave's second room (scene 63) at the cells
+/// their flags name, and rewrites the cells of their tracks to match.
 static void Fuchin_RebuildSecondRoomPlatforms(void) {
   {
     s32 column = 12;
@@ -897,8 +1045,8 @@ static void Fuchin_RebuildSecondRoomPlatforms(void) {
   }
 }
 
-/// Restores the interacting platform stops and collision cells in the third
-/// room.
+/// Puts the four logs of Fuchin Falls Cave's third room (scene 64) at the cells
+/// their flags name, and rewrites the cells of their tracks to match.
 static void Fuchin_RebuildThirdRoomPlatforms(void) {
   {
     Map_CopyCellAttributes(12, 3, 9, 16, 12, 21);
@@ -1004,8 +1152,8 @@ static void Fuchin_RebuildThirdRoomPlatforms(void) {
   }
 }
 
-/// Restores both halves of the fourth puzzle room from its saved platform
-/// stops.
+/// Puts the logs of Fuchin Falls Cave's fourth room (scene 65), in both of its
+/// halves, at the cells their flags name.
 static void Fuchin_RebuildFourthRoomPlatforms(void) {
   if (((u32)((u16)gGameState.entrance - 1) << 16) <= 0x10000) {
     {
@@ -1070,7 +1218,8 @@ static void Fuchin_RebuildFourthRoomPlatforms(void) {
   }
 }
 
-/// Attaches the active cave light to the party leader.
+/// Touching trigger 15 in Fuchin Falls Cave's dragon statue room makes the fade
+/// overlay follow the leader, once it has been started there.
 static void Fuchin_FollowLeaderWithLight(void) {
   if (gImilFuchinFalls_TrackLeader != 0) {
     struct FadeOverlayWork *work = *(gWorkSlot + 36);
@@ -1079,7 +1228,8 @@ static void Fuchin_FollowLeaderWithLight(void) {
   }
 }
 
-/// Detaches the active cave light from the party leader.
+/// Touching trigger 16 in the dragon statue room stops the fade overlay
+/// following the leader.
 static void Fuchin_StopLightFollowingLeader(void) {
   if (gImilFuchinFalls_TrackLeader != 0) {
     struct FadeOverlayWork *work = *(gWorkSlot + 36);
@@ -1088,26 +1238,27 @@ static void Fuchin_StopLightFollowingLeader(void) {
   }
 }
 
-/// Entering the Djinni's ice room the first time, the leader walks toward the
-/// Djinni; otherwise each room restores its platforms, eye and lighting.
+/// Sets up the scene as the party enters. Every normal entry into Imil Falls
+/// Cave blocks Retreat and walks the leader toward Fever; otherwise each room
+/// of Fuchin Falls Cave restores its logs, the Dragon's Eye and its lighting.
 s32 ImilFuchinFalls_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0 &&
       gGameState.scene == (s32)&SceneId_ImilFuchinFalls1) {
     Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
-    Imil_WalkTowardDjinni();
+    Imil_WalkTowardFever();
   } else {
     ImilFuchinFalls_PrepareRoom();
   }
   return 0;
 }
 
-/// Shows the Imil Djinni and walks the leader toward it.
-static void Imil_WalkTowardDjinni(void) {
+/// Shows Fever, in Imil Falls Cave, and walks the leader toward it.
+static void Imil_WalkTowardFever(void) {
   struct FieldActor *actor;
 
   Engine_EventBegin();
-  actor = Object_GetById(ACTOR_IMIL_DJINNI);
+  actor = Object_GetById(ACTOR_FEVER);
   Engine_ActorSetSpriteFlags(actor, 0);
   Engine_EventOpenScreen();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1) / 10);
@@ -1115,7 +1266,9 @@ static void Imil_WalkTowardDjinni(void) {
   Engine_EventEnd();
 }
 
-/// Restores room props and the cave light for this entrance.
+/// Sets up a room of Fuchin Falls Cave for its entrance: its logs, the Dragon's
+/// Eye and two foreground sprites in the third room, and the darkness and the
+/// fade overlay in the dragon statue's room.
 static void ImilFuchinFalls_PrepareRoom(void) {
   struct FieldActor *actor;
   /* FAKEMATCH(temporary): one variable holds the zeros and then the slot word,
@@ -1169,7 +1322,8 @@ static void ImilFuchinFalls_PrepareRoom(void) {
   }
 }
 
-/// Restores the collision templates for the current platform room.
+/// Restores the collision templates for the current log room of Fuchin Falls
+/// Cave.
 static void ImilFuchinFalls_RebuildPlatformRoom(void) {
   if (gGameState.scene == (s32)&SceneId_ImilFuchinFalls2) {
     Map_CopyCellAttributes(8, 29, 15, 5, 8, 42);
@@ -1191,7 +1345,9 @@ static void ImilFuchinFalls_RebuildPlatformRoom(void) {
   }
 }
 
-/// Hops across a platform edge when its current stop permits it.
+/// Hops across a gap in Fuchin Falls Cave: west or north in the second room
+/// (triggers 13, 14 and 17), south in the third (trigger 25) when its first
+/// log lies at 0x309.
 static void ImilFuchinFalls_HopOnTrigger(void) {
   s32 trigger = gEventWork->touchedTrigger;
 
@@ -1208,10 +1364,12 @@ static void ImilFuchinFalls_HopOnTrigger(void) {
   }
 }
 
-/// Hops the leader one gap north.
+/// Hops the leader one gap north, in Fuchin Falls Cave's third room (triggers
+/// 11 and 12).
 static void Fuchin_HopNorth(void) { ImilFuchinFalls_HopBy(0, -32); }
 
-/// Hops the leader one gap west.
+/// Hops the leader one gap west, in Fuchin Falls Cave's third room (trigger
+/// 23).
 static void Fuchin_HopWest(void) { ImilFuchinFalls_HopBy(-32, 0); }
 
 /// Jumps the leader by a pixel offset while using the hopping animations.
@@ -1226,7 +1384,7 @@ static void ImilFuchinFalls_HopBy(s32 dx, s32 dz) {
   Engine_EventEnd();
 }
 
-/// Creates the collectible eye and uploads its item icon.
+/// Shows the Dragon's Eye in Fuchin Falls Cave's third room, as its item icon.
 static void ImilFuchinFalls_PlaceDragonsEye(void) {
   struct FieldActor *actor;
   struct AnimationObject *sprite;
@@ -1250,7 +1408,8 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
   }
 }
 
-/// Gives the eye to the party and removes its displayed actor.
+/// Searching where the Dragon's Eye lies, in Fuchin Falls Cave's third room
+/// (trigger 30), gives it to the party (flag 0xf13).
 static void Fuchin_CollectDragonsEye(void) {
   Engine_EventBegin();
 
@@ -1364,7 +1523,9 @@ static void ImilFuchinFalls_BlowCaveMouthDust(void) {
       (const struct EffectOptions *)&options);
 }
 
-/// Inserts the eye, lights the dragon room and reveals its hidden path.
+/// Using the Dragon's Eye on the dragon statue in Fuchin Falls Cave (trigger
+/// 20), until it is set: inserts the eye, lights the room and reveals its
+/// hidden path.
 static void Fuchin_LightDragonWithEye(void) {
   u32 pass;
 
@@ -1412,28 +1573,33 @@ static void Fuchin_LightDragonWithEye(void) {
   Engine_EventEnd();
 }
 
-/// Reads the inscription describing the dragon flame.
+/// Searching the inscription in Fuchin Falls Cave's first room (trigger 1):
+/// `The dragon's flame illuminates the path of truth in darkness.`
 static void Fuchin_ReadDragonFlameInscription(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFuchinDragonFlameShowsPath, 1);
   Engine_EventEnd();
 }
 
-/// Reads the inscription about the secret power of Ki.
+/// Searching the inscription in Fuchin Falls Cave's Ki room (trigger 7): `The
+/// secret of Ki shall be revealed to the disciples of truth.`
 static void Fuchin_ReadKiInscription(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFuchinSecretKiRevealed, 1);
   Engine_EventEnd();
 }
 
-/// Reads the inscription about light revealing shadows.
+/// Searching the inscription in Fuchin Falls Cave's dragon statue room
+/// (trigger 19): `Rays of light give birth to shadows, revealing the way.`
 static void Fuchin_ReadShadowInscription(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFuchinLightRevealsShadows, 1);
   Engine_EventEnd();
 }
 
-/// Describes the dragon eyes or offers to insert the carried eye.
+/// Searching the dragon statue in Fuchin Falls Cave (trigger 20): its burning
+/// red eyes once set, else its empty sockets, and with the Dragon's Eye carried
+/// the offer to set it.
 static void Fuchin_SearchDragonStatue(void) {
   Engine_EventBegin();
 
@@ -1448,7 +1614,8 @@ static void Fuchin_SearchDragonStatue(void) {
   Engine_EventEnd();
 }
 
-/// Restores the dark cave lighting when Reveal expires.
+/// When Reveal ends in Fuchin Falls Cave's dragon statue room, before the eye
+/// is set, the room goes dark again.
 static void Fuchin_EndRevealLighting(void) {
   struct BattleFxScene *scene;
   struct DisplayTransitionState *transition;
@@ -1467,7 +1634,8 @@ static void Fuchin_EndRevealLighting(void) {
   }
 }
 
-/// Turns the sliding actor gradually toward the held direction.
+/// Turns the actor sliding on Imil Falls Cave's ice gradually toward the held
+/// direction.
 static void Imil_TurnSkaterTowardHeldDirection(union FieldObject *object) {
   struct FieldActor *actor = &object->actor;
   s32 timer;
@@ -1497,7 +1665,8 @@ static void Imil_TurnSkaterTowardHeldDirection(union FieldObject *object) {
                                    IMIL_SLIDE_ANIMATION_STEP);
 }
 
-/// Slides along the ice until terrain or a collision boundary ends the move.
+/// Slides along Imil Falls Cave's ice until terrain or a collision boundary
+/// ends the move.
 static void Imil_SlideActorAcrossIce(void) {
   struct FieldActor *actor;
   struct FieldPosition probe;
@@ -1611,7 +1780,7 @@ struct SceneEntrance gImilFuchinFalls_NoEntrances[] = {
     { SCENE_TABLE_END },
 };
 
-struct SceneEntrance gImilFuchinFalls_DjinniRoomEntrances[] = {
+struct SceneEntrance gImilFuchinFalls_ImilFallsCaveEntrances[] = {
     { 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { 1, CONDITION_ALWAYS, 264, 0, 289, FACING_NORTH, 0, 135, 62, 376, 328, 0 },
     { SCENE_TABLE_END },
@@ -1728,7 +1897,7 @@ struct ScenePlacement gImilFuchinFalls_NoPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-struct ScenePlacement gImilFuchinFalls_DjinniRoomPlacements[] = {
+struct ScenePlacement gImilFuchinFalls_ImilFallsCavePlacements[] = {
     { 0x5c, 0x59, ACTOR_STAND,
         PIXELS(263), 0, PIXELS(204), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
@@ -1788,10 +1957,10 @@ struct SceneEvent gImilFuchinFalls_NoEvents[] = {
     { SCENE_EVENTS_END },
 };
 
-struct SceneEvent gImilFuchinFalls_DjinniRoomEvents[] = {
-    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_LeaveDjinnRoom) },
+struct SceneEvent gImilFuchinFalls_ImilFallsCaveEvents[] = {
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_LeaveFallsCave) },
     { EVENT_TOUCH, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_MoveAcrossIce) },
-    { EVENT_TALK, ACTOR_IMIL_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RecruitDjinni) },
+    { EVENT_TALK, ACTOR_FEVER, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_RecruitFever) },
     { SCENE_EVENTS_END },
 };
 
@@ -1842,7 +2011,7 @@ struct SceneEvent gImilFuchinFalls_SecondRoomEvents[] = {
     { EVENT_TOUCH, 16, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_AnimateThirdPlatform) },
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TALK, ACTOR_FUCHIN_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_StartDjinnBattle) },
+    { EVENT_TALK, ACTOR_ZEPHYR, CONDITION_ALWAYS, EVENT_SCRIPT(Fuchin_FightZephyr) },
     { SCENE_EVENTS_END },
 };
 

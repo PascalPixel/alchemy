@@ -16,10 +16,10 @@
 #include "animspr.h"
 #include "text/msg_ids.h"
 
-// The Colosso finals' three courses (Colosso Log, River and Wall): before
-// Isaac runs, Garet, Ivan and Mia each look around the course on their own and
-// choose where to cheer from, and the guide at each stage describes it and
-// offers a friend's cheering there.
+// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
+// before Isaac runs, Garet, Ivan and Mia each look around the stages on their
+// own and choose where to cheer from, and the guide at each stage describes it
+// and offers a friend's cheering there.
 
 // Byte flags (eight flags each) holding where a friend cheers from: the cell
 // column at COLOSSO_CHEER_COLUMN + 16 * character and the cell row at
@@ -118,7 +118,7 @@ void Colosso_ControlCharacterAlone(s32 id) {
   Engine_EventClearInvalidPackedValues();
 }
 
-/// A scene callback while a friend looks around the course alone (entrance 2):
+/// A scene callback while a friend looks around the stages alone (entrance 2):
 /// when the Psynergy request names that friend and flag 0x141 is set, raise
 /// event 99, Colosso_TakePlaceForMatch.
 void Colosso_RaiseTakePlaceOnPsynergy(void) {
@@ -258,7 +258,7 @@ void Colosso_AskDoneCheering(s32 id) {
   Engine_EventEnd();
 }
 
-/// The guide at the course's start. Once the friends have all gone to cheer
+/// The guide where the stages start. Once the friends have all gone to cheer
 /// (Isaac is the party), "Isaac, did you get a good look around?": on yes the
 /// guide steps aside, Isaac walks past and the party leaves by exit 11.
 /// Otherwise "Wait, shouldn't you decide where the best place to cheer for
@@ -305,8 +305,8 @@ void Colosso_ClearCheeringSpots(void) {
 }
 
 /// A stage's guide names the stage and decides what to do next. "This is stage
-/// N of the first finals match." (Colosso River; the second is Colosso Wall
-/// and the third Colosso Log). Returns what the guide does next:
+/// N of the first finals match." (in Colosseum Final 1; the second in Final 2
+/// and the third in Final 3). Returns what the guide does next:
 /// 0: describe the stage (yes to "Would you like to hear a description of this
 ///    stage?", asked the first time, or "Descriptions" afterwards);
 /// 1: no description, then offer a friend's cheering;

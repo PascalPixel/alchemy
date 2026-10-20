@@ -1,9 +1,12 @@
 /// @file
-/// Kolima Forest's river, between the clearing and the bend. Of its three logs,
-/// the one pushed west to the bank tips into the river and floats there, a
-/// bridge to the far side.
+/// Kolima Forest (KolimaForestRiver, scene 42), the third of the forest's five
+/// maps, between scenes 41 and 43. Of its three logs, rolled by walking into
+/// them, the one pushed west to the water's edge tips into the river and floats
+/// there, cells the party can cross to the far side, and from the bank the
+/// leader can hop east (trigger 11, KolimaForest_HopEast). The forest keeps its
+/// cursed colours until Tret lifts the curse (FLAG_KOLIMA_CURSE_LIFTED).
 ///
-/// FLAG_SCENE_TEMP_01: the log is in the river.
+/// FLAG_SCENE_TEMP_01: the log is in the river, until the party next comes in.
 
 #include "battle_effect_runtime.h"
 #include "flags.h"
@@ -51,9 +54,10 @@ const struct ScenePlacement *KolimaForestRiver_GetPlacements(void) {
   return gKolimaForestRiverPlacements;
 }
 
-/// Walking into a log: it rolls ahead until something stops it. The river
-/// log, stopped at the bank (cell column 12), tips over with a splash and
-/// floats in the water; its cells become ground the party can cross.
+/// Kolima Forest (scene 42), walking into a log: it rolls ahead until
+/// something stops it. The river log, stopped at the bank (cell column 12),
+/// tips over with a splash and floats in the water; its cells become ground
+/// the party can cross (sets FLAG_SCENE_TEMP_01).
 static void KolimaForestRiver_PushLog(void) {
   struct StagedActorProbe result;
   Engine_EventBegin();
@@ -79,7 +83,7 @@ static void KolimaForestRiver_PushLog(void) {
 
 #include "common/kolima_jump.h"
 
-/// The logs, the two paths and the jump east from the bank.
+/// The logs, the two ways out and the hop east from the bank.
 const struct SceneEvent *KolimaForestRiver_GetEvents(void) {
   return gKolimaForestRiverEvents;
 }
@@ -144,7 +148,7 @@ struct SceneEntrance gKolimaForestRiverEntrances[] = {
     { SCENE_TABLE_END },
 };
 
-/// Exit 1 to the bend (scene 43), exit 2 to the clearing (scene 41).
+/// Exit 1 on into the forest (scene 43), exit 2 back (scene 41).
 u32 gKolimaForestRiverExits[] = {
     SCENE_EXITS(42),
     SCENE_EXIT(1, 43, 1),

@@ -5,7 +5,7 @@
 #include "field_event.h"
 #include "field_scene.h"
 
-enum InnerSanctumActor { ACTOR_KRADEN = ACTOR_FIRST_PLACED + 8 };
+enum SolSanctumLunaSolRoomsActor { ACTOR_KRADEN = ACTOR_FIRST_PLACED + 8 };
 
 extern u16 gSolSanctumLunaSolRooms_Light1Timer;
 extern s32 gSolSanctumLunaSolRooms_FlashState;

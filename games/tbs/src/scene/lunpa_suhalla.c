@@ -1,7 +1,29 @@
 /// @file
-/// The buildings of Lunpa, and the house by the gate to Suhalla: homes, the
-/// weapon, armor and item shops, the inn and the temple. The shops and the inn
-/// only trade once Lunpa has reopened.
+/// The buildings of Lunpa (LunpaSuhalla, scene 105), one scene whose area name
+/// follows the door the party comes in by: Lunpa for the homes, the shops and
+/// the inn (entrances 1 to 6, 8 and 9), Lunpa Temple (entrances 7 and 11) and
+/// Gate to Suhalla (entrance 10).
+///
+/// - Lunpa, the homes, the weapon and armor shop, the item shop and the inn,
+///   entered by the town's doors (lunpa.c); exits 1 to 8 lead back out, the
+///   temple's included. While Dodonpa keeps the town sealed
+///   (FLAG_LUNPA_TRADE_REOPENED clear, gInteriorSealedEvents), the merchants
+///   cannot buy or sell, the innkeeper has no guests, and the residents talk of
+///   Lunpa, the noble thief lost in the great flood while traveling with Babi,
+///   of Donpa and of Dodonpa. The inn's chef has been taking meals into the
+///   fortress since the caravan was captured: talking to him or reading his
+///   mind tells the party of the prisoner he takes meals to, Hammet
+///   (FLAG_LUNPA_HEARD_OF_PRISONER). Once Donpa has judged Dodonpa in Lunpa
+///   Fortress (gInteriorReopenedEvents), across their counters the merchants
+///   sell and the innkeeper rents rooms, and the inn makes ready for Donpa's
+///   guests. A wooden box and a barrel hold a Lucky Medal and a Vial, and the
+///   chef's ovens hold Thieves' Stew and Thieves' Cookies.
+/// - Lunpa Temple, whose priest offers the Sanctum's services across the
+///   counter and otherwise talks of Dodonpa.
+/// - Gate to Suhalla, the house beside Suhalla Gate (suhalla_gate.c), entered
+///   from there and left by exit 10. A traveling priest offers the same
+///   services (gGateToSuhallaEvents), and Scene_Initialize makes it the place
+///   a defeated party wakes.
 
 #include "game_state.h"
 #include "field_event.h"
@@ -37,7 +59,7 @@ const struct SceneEntrance gInteriorEntrances[] = {
     { ROOM_TEMPLE, CONDITION_ALWAYS, 688, 0, 280, FACING_NORTH, 0, 568, 32, 808, 304, 0 },
     { ROOM_EIGHTH, CONDITION_ALWAYS, 560, 0, 880, FACING_NORTH, 0, 400, 656, 640, 912, 0 },
     { ROOM_NINTH, CONDITION_ALWAYS, 672, 0, 888, FACING_NORTH, 0, 520, 656, 760, 896, 0 },
-    { ROOM_SUHALLA_GATE_HOUSE, CONDITION_ALWAYS, 832, 0, 848, FACING_NORTH, 0, 680, 656, 920, 896, 0 },
+    { ROOM_GATE_TO_SUHALLA, CONDITION_ALWAYS, 832, 0, 848, FACING_NORTH, 0, 680, 656, 920, 896, 0 },
     { ROOM_TEMPLE_SECOND_ENTRANCE, CONDITION_ALWAYS, 688, 0, 184, FACING_NORTH, 0, 568, 32, 808, 288, 0 },
     { SCENE_TABLE_END },
 };
@@ -52,7 +74,7 @@ const u32 gInteriorExits[] = {
     SCENE_EXIT(ROOM_INN, SCENE_LUNPA, LUNPA_ENTRANCE_FROM_INN),
     SCENE_EXIT(ROOM_TEMPLE, SCENE_LUNPA, LUNPA_ENTRANCE_FROM_TEMPLE),
     SCENE_EXIT(ROOM_EIGHTH, SCENE_LUNPA, LUNPA_ENTRANCE_FROM_EIGHTH_ROOM),
-    SCENE_EXIT(ROOM_SUHALLA_GATE_HOUSE, SCENE_SUHALLA_GATE, SUHALLA_GATE_ENTRANCE_FROM_LUNPA),
+    SCENE_EXIT(ROOM_GATE_TO_SUHALLA, SCENE_SUHALLA_GATE, SUHALLA_GATE_ENTRANCE_FROM_LUNPA),
     SCENE_EXITS_END,
 };
 
@@ -234,8 +256,8 @@ const struct SceneEvent gInteriorReopenedEvents[] = {
 };
 // clang-format on
 
-const struct SceneEvent gSuhallaGateHouseEvents[] = {
-    ROOM_DOOR(ROOM_SUHALLA_GATE_HOUSE),
+const struct SceneEvent gGateToSuhallaEvents[] = {
+    ROOM_DOOR(ROOM_GATE_TO_SUHALLA),
     {EVENT_TALK, ACTOR_TRAVELING_PRIEST, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_TalkToTravelingPriest)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELING_PRIEST,
@@ -251,15 +273,16 @@ const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gInteriorExits; }
 
-/// The townsfolk, shopkeepers and the counters.
+/// The townsfolk, shopkeepers and counters of all three places.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   return gInteriorPlacements;
 }
 
-/// The gate house's events, or the town's before and after it reopens.
+/// The events of Gate to Suhalla, or those of Lunpa's buildings before and
+/// after Donpa's judgment.
 const struct SceneEvent *Scene_GetEvents(void) {
-  if (gGameState.entrance == ROOM_SUHALLA_GATE_HOUSE) {
-    return gSuhallaGateHouseEvents;
+  if (gGameState.entrance == ROOM_GATE_TO_SUHALLA) {
+    return gGateToSuhallaEvents;
   }
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
     return gInteriorReopenedEvents;
@@ -267,8 +290,9 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gInteriorSealedEvents;
 }
 
-/// Across the counter after Lunpa reopens, a room at the inn; otherwise the
-/// innkeeper offers a room or, while Lunpa is sealed, a bed at home.
+/// Lunpa, the inn: across the counter after Donpa's judgment, a room at the
+/// inn; otherwise the innkeeper offers a room or, while Lunpa is sealed, a bed
+/// at home.
 static void Event_TalkToInnkeeper(void) {
   struct FieldActor *leader;
 
@@ -290,8 +314,9 @@ static void Event_TalkToInnkeeper(void) {
   Engine_EventEnd();
 }
 
-/// The chef offers the story of taking meals to the fortress; either way
-/// the party has heard of the prisoner.
+/// Lunpa, the inn, before Donpa's judgment: the chef offers the story of
+/// taking meals to the fortress; either way the party has heard of the
+/// prisoner.
 static void Event_TalkToChef(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaChefOffersStory);
@@ -300,7 +325,8 @@ static void Event_TalkToChef(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read on the chef, who pities the prisoner in the dungeon.
+/// Lunpa, the inn: Mind Read on the chef, who pities the prisoner in the
+/// dungeon.
 static void Event_ReadChefsThoughts(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaChefThinksOfPrisoner);
@@ -309,7 +335,8 @@ static void Event_ReadChefsThoughts(void) {
   Engine_EventEnd();
 }
 
-/// The inn's clerk asks whether the party is Donpa's guest.
+/// Lunpa, the inn, after Donpa's judgment: the clerk asks whether the party is
+/// Donpa's guest.
 static void Event_TalkToInnClerk(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgLunpaInnClerkAsksAboutGuest);
@@ -317,8 +344,8 @@ static void Event_TalkToInnClerk(void) {
   Engine_EventEnd();
 }
 
-/// Across the counter, the sanctum; otherwise the priest talks about
-/// Dodonpa.
+/// Lunpa Temple: across the counter, the Sanctum's services; otherwise the
+/// priest talks about Dodonpa.
 static void Event_TalkToTemplePriest(void) {
   struct FieldActor *leader;
 
@@ -338,7 +365,7 @@ static void Event_TalkToTemplePriest(void) {
   }
 }
 
-/// Mind Read on the item merchant.
+/// Lunpa, the item shop: Mind Read on the merchant.
 static void Event_ReadItemMerchantsThoughts(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
     Engine_EventBegin();
@@ -353,7 +380,7 @@ static void Event_ReadItemMerchantsThoughts(void) {
   }
 }
 
-/// Across the counter, the item shop; otherwise small talk.
+/// Lunpa, the item shop: across the counter, the shop; otherwise small talk.
 static void Event_TalkToItemMerchant(void) {
   struct FieldActor *leader;
 
@@ -373,7 +400,7 @@ static void Event_TalkToItemMerchant(void) {
   }
 }
 
-/// Mind Read on the weapon merchant.
+/// Lunpa, the weapon and armor shop: Mind Read on the weapon merchant.
 static void Event_ReadWeaponMerchantsThoughts(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
     Engine_EventSetMessage(MsgLunpaWeaponMerchantReopenedThoughts);
@@ -384,8 +411,8 @@ static void Event_ReadWeaponMerchantsThoughts(void) {
   }
 }
 
-/// After Lunpa reopens, across the counter, the weapon shop; otherwise
-/// small talk.
+/// Lunpa, the weapon and armor shop: after Donpa's judgment, across the
+/// counter, the weapon shop; otherwise small talk.
 static void Event_TalkToWeaponMerchant(void) {
   struct FieldActor *leader;
   s32 facing;
@@ -407,7 +434,7 @@ static void Event_TalkToWeaponMerchant(void) {
   }
 }
 
-/// Mind Read on the armor merchant.
+/// Lunpa, the weapon and armor shop: Mind Read on the armor merchant.
 static void Event_ReadArmorMerchantsThoughts(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
     Engine_EventSetMessage(MsgLunpaArmorMerchantReopenedThoughts);
@@ -418,8 +445,8 @@ static void Event_ReadArmorMerchantsThoughts(void) {
   }
 }
 
-/// After Lunpa reopens, across the counter, the armor shop; otherwise
-/// small talk.
+/// Lunpa, the weapon and armor shop: after Donpa's judgment, across the
+/// counter, the armor shop; otherwise small talk.
 static void Event_TalkToArmorMerchant(void) {
   struct FieldActor *leader;
   s32 facing;
@@ -441,14 +468,14 @@ static void Event_TalkToArmorMerchant(void) {
   }
 }
 
-/// Sets the buildings up: the gate house is where a defeated party wakes,
-/// and the counters are drawn behind their keepers.
+/// Sets the buildings up: entered by Gate to Suhalla, the house is where a
+/// defeated party wakes, and the counters are drawn behind their keepers.
 s32 Scene_Initialize(void) {
   s16 entrance;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   entrance = gGameState.entrance;
-  if (entrance == ROOM_SUHALLA_GATE_HOUSE) {
+  if (entrance == ROOM_GATE_TO_SUHALLA) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     gGameState.savedScene = (s32)&SceneId_LunpaSuhalla;
     gGameState.savedEntrance = entrance;
@@ -459,8 +486,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// The traveling priest: across the counter, the temple priest's sanctum;
-/// otherwise his good will.
+/// Gate to Suhalla: the traveling priest offers the Sanctum's services across
+/// the counter; otherwise he speaks of his good will.
 static void Event_TalkToTravelingPriest(void) {
   struct FieldActor *leader;
 

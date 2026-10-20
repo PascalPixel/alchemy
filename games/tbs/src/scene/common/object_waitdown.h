@@ -1,7 +1,7 @@
 #include "types.h"
 #include "field_obj.h"
 
-// Goma Cave's entrance and waterway, and the Lamakan Desert.
+// Goma Cave Entrance and Goma Cave, and the Lamakan Desert.
 
 /// Waits until the object has come down to height (16.16), a second at most.
 static void SceneActor_WaitObjectBelowHeight(struct FieldActor *object,

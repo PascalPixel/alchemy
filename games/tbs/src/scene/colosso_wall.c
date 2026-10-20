@@ -1,7 +1,36 @@
 /// @file
-/// Colosso's second finals course: Isaac races another warrior through the
-/// Mini-Maze, the shifting floor, the Log-Rolling Stage, the Wall and the Board
-/// Walk to the arena.
+/// Colosseum Final 2 (ColossoWall, scene 144), the site of the second finals
+/// match, where Isaac, having won the first, races Satrage, the fourth-ranked
+/// warrior, through five stages to the arena and fights him there.
+///
+/// It works as Colosseum Final 1 does (colosso_river.c), and is reached by the
+/// Colosseum's west passage. The stages run from east to west, through the
+/// Mini-Maze, the shifting floor stage, the Log-Rolling Stage, The Wall and the
+/// Board Walk. Isaac comes here three times, each at its own entrance, and
+/// ColossoWall_Initialize restores the stages from the group's flags (0x330 to
+/// 0x335, and the Mini-Maze rocks' columns in byte flags 0x340, 0x348 and
+/// 0x350) before setting up the visit its entrance stands for:
+///
+/// - Entrance 3, the tour (ColossoWall_IntroduceSecondFinals). The guide only
+///   greets the party, since the first finals match's guide explained the
+///   rules; the five stages' attendants describe their stages and offer a place
+///   for each friend to cheer, and the guide then sends Isaac back to the west
+///   passage (exit 11).
+/// - Entrance 2, `Lend a Hand`: Garet, Ivan and Mia in turn may use Psynergy on
+///   the stages. Move shifts the Mini-Maze's rocks and the rock by The Wall,
+///   Halt stops the lifts' operator and with him the shifting floor, Frost
+///   freezes two targets on the Log-Rolling Stage, Growth grows a plant up The
+///   Wall, and Force knocks an obstacle down onto the Board Walk. After Mia,
+///   exit 10 starts the race.
+/// - Entrance 1, the race against Satrage, who follows a recorded path, after
+///   the lettering `Match 2` and a count of three. At the arena the first to
+///   arrive takes the Chain Mail and the second the Cotton Shirt, and the
+///   battle is encounter table 72's third or fourth group, the Satrage with or
+///   without the mail.
+///
+/// A win returns to entrance 4 and on to the Colosseum's entrance 31 (exit 4),
+/// which sets FLAG_COLOSSO_SECOND_MATCH_WON; a loss returns to entrance 5, and
+/// exit 5 wakes the party in Babi's Palace from what it takes for a dream.
 
 #include "script.h"
 #include "game_state.h"
@@ -125,12 +154,12 @@ static s32 ColossoWall_ApproachFinishAndTakeItem(s32 firstItem, s32 secondItem);
 static void ColossoWall_StartRivalPath(s32 pathResource);
 static void ColossoWall_PushAdjacentObstacle(void);
 
-/// The second course's actors, by the guide's and attendants' explanations: the
-/// Mini-Maze, the shifting floor, the Log-Rolling Stage, the Wall and the Board
-/// Walk lead to the arena. The lifts are actors 22 to 25
-/// (COLOSSO_WALL_FIRST_PLATFORM to COLOSSO_WALL_LAST_PLATFORM).
+/// The second finals match's actors, by the guide's and attendants'
+/// explanations: the Mini-Maze, the shifting floor stage, the Log-Rolling
+/// Stage, The Wall and the Board Walk lead to the arena. The lifts are actors
+/// 22 to 25 (COLOSSO_WALL_FIRST_PLATFORM to COLOSSO_WALL_LAST_PLATFORM).
 enum {
-  OPPONENT = 8, ///< the warrior racing Isaac to the arena
+  OPPONENT = 8, ///< Satrage, racing Isaac to the arena
   ROLLING_LOG_WEST = 15,
   ROLLING_LOG_EAST = 16,
   ROLLING_LOG_CENTER = 17,
@@ -142,7 +171,7 @@ enum {
   LIFT_OPERATOR = 31,
   RIDING_LOG_NORTH = 32, ///< the Log-Rolling Stage's two logs
   RIDING_LOG_SOUTH = 33,
-  GUIDE = 34, ///< explains the second course
+  GUIDE = 34, ///< explains the second finals match
   MINI_MAZE_ATTENDANT = 35,
   SHIFTING_FLOOR_ATTENDANT = 36,
   LOG_ROLLING_ATTENDANT = 37,
@@ -168,21 +197,23 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
-/// Returns the packed course and battle-result exits.
+/// Returns the packed stage and battle-result exits.
 const u32 *Scene_GetExits(void) { return gColossoWallExits; }
 
-/// Returns the course's competitors, obstacles and attendants.
+/// Returns Colosseum Final 2's competitors, obstacles and attendants.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   return gColossoWallPlacements;
 }
 
-/// Move on the first two rocks does nothing.
+/// Move on the Board Walk's two rocks does nothing.
 static void Event_IgnoreMove(void) {}
 
-/// Pushes the obstacle immediately ahead of the selected actor.
+/// Walking into a rock in Colosseum Final 2 (trigger 21) pushes the obstacle
+/// immediately ahead of the selected actor.
 static void Event_PushRock(void) { ColossoWall_PushAdjacentObstacle(); }
 
-/// Updates the first movable obstacle's collision after Move.
+/// Move on the rock by The Wall, and after each push: its cell is updated, and
+/// 0x335 keeps whether it stands at column 36.
 static void Event_UpdateMovedRockCell(void) {
   struct FieldActor *obstacle;
   s32 column;
@@ -202,13 +233,16 @@ static void Event_UpdateMovedRockCell(void) {
   }
 }
 
-/// Pushes an obstacle, then restores the first obstacle's collision cell.
+/// Walking into the rock by The Wall (triggers 20 and 26) pushes it, then
+/// updates its cell.
 static void Event_PushRockAndUpdateCells(void) {
   ColossoWall_PushAdjacentObstacle();
   Event_UpdateMovedRockCell();
 }
 
-/// Saves the movable obstacles' columns and rebuilds their collision cells.
+/// Move on a rock in the Mini-Maze, and after each push: the three rocks'
+/// columns are kept (byte flags 0x340, 0x348 and 0x350) and their cells
+/// rebuilt.
 static void Event_SaveMovedRockColumns(void) {
 
   struct FieldActor *obstacle;
@@ -232,15 +266,16 @@ static void Event_SaveMovedRockColumns(void) {
   Map_CopyCellAttributes(71, 16, 1, 1, column, 16);
 }
 
-/// Enables the child effect for Force on the course obstacle.
+/// Force on the target over the Board Walk, before its effect plays: the effect
+/// takes its child mode.
 static void Event_PrepareForce(void) {
   u8 *effectWork = gEffectWork;
 
   ((struct BattleFxScene *)effectWork)->childMode = 1;
 }
 
-/// Force on the target: the obstacle spins down into place and the way past it
-/// opens (0x330).
+/// Force on the target over the Board Walk: the obstacle spins down into place
+/// and the way past it opens (0x330).
 static void Event_KnockDownObstacle(void) {
   struct FieldActor *obstacle;
   s32 fallFrames;
@@ -283,12 +318,13 @@ static void Event_KnockDownObstacle(void) {
   obstacle->z.fixed = PIXELS(264);
   obstacle->velocityY = 0;
   obstacle->velocityX = 0;
-  // Keep both the course and its saved collision strip in the new state.
+  // Keep both the stage and its saved collision strip in the new state.
   Map_CopyCellAttributes(19, 16, 1, 1, 20, 16);
   Map_CopyCellAttributes(20, 80, 1, 1, 21, 80);
 }
 
-/// Frost on the western target: it freezes and its crossing opens (0x331).
+/// Frost on the Log-Rolling Stage's western target: it freezes and its crossing
+/// opens (0x331).
 static void Event_FreezeWestTarget(void) {
   struct FieldActor *obstacle;
 
@@ -301,7 +337,8 @@ static void Event_FreezeWestTarget(void) {
   }
 }
 
-/// Frost on the eastern target: it freezes and its crossing opens (0x332).
+/// Frost on the Log-Rolling Stage's eastern target: it freezes and its crossing
+/// opens (0x332).
 static void Event_FreezeEastTarget(void) {
   struct FieldActor *obstacle;
 
@@ -314,7 +351,8 @@ static void Event_FreezeEastTarget(void) {
   }
 }
 
-/// Growth on the plant: it grows into a strip that can be climbed (0x333).
+/// Growth on the plant by The Wall: it grows into a strip that can be climbed
+/// (0x333).
 static void Event_GrowPlant(void) {
   Engine_GameFlagSet(0x333);
   {
@@ -323,11 +361,14 @@ static void Event_GrowPlant(void) {
   }
 }
 
-/// Runs the rising-object sequence for the actor touching the obstacle.
+/// Walking south into the obstacle at trigger 30 in Colosseum Final 2 runs the
+/// rising-object sequence for the actor touching it.
 static void Event_RunRisingSequence(void) {
   FieldBattleFx_RunRisingObjectSequence(gGameState.selectedActor, 6, 0);
 }
 
+/// Walking west into the obstacle at trigger 30 in Colosseum Final 2 only
+/// checks what is ahead.
 static void Event_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
 /// Moves a riding log and its pusher to aligned cell centers.
@@ -379,7 +420,8 @@ static void ColossoWall_MovePusherAndLog(s32 logId, s32 offsetX, s32 offsetZ) {
   Engine_EventEnd();
 }
 
-/// Moves the aligned riding log in the direction the player holds.
+/// Standing on one of the Log-Rolling Stage's logs (trigger 22): it carries the
+/// rider across the water the way the player holds.
 static void Event_RideLog(void) {
   struct FieldActor *pusher = Object_GetById(gGameState.selectedActor);
   s32 column = pusher->x.fixed >> 20;
@@ -475,6 +517,9 @@ static void ColossoWall_UpdateRollingLogCollision(void) {
   Map_CopyCellAttributes(13, 28, 4, 1, 18, cell);
 }
 
+/// The Board Walk's logs: walking into the western one from the east (trigger
+/// 24) or the west (25), or into the eastern one from the east (28) or the west
+/// (27), rolls it the way the leader walks.
 static void Event_RollWestLogWest(void) {
   ColossoWall_RollLogToCell(ROLLING_LOG_WEST, 29, 26);
   ColossoWall_UpdateRollingLogCollision();
@@ -507,8 +552,8 @@ static UNUSED void ColossoWall_RollCenterLogSouth(void) {
   ColossoWall_UpdateRollingLogCollision();
 }
 
-/// Carries the selected actor on the moving platforms and alternates their
-/// routes.
+/// The shifting floor's callback: carries the selected actor on the lifts and
+/// alternates their routes every two seconds, until Halt stops the operator.
 static void ColossoWall_UpdateMovingPlatforms(void) {
   s32 platformId;
   struct FieldActor *rider;
@@ -564,8 +609,8 @@ static void ColossoWall_UpdateMovingPlatforms(void) {
     rider->z.fixed = riderZ;
   }
   // The final platform's destination selects the collision tiles for the row.
-  if (gColossoWall_SpectatorTimer != 0 && platform->targetX == 0x80000000) {
-    if (gColossoWall_SpectatorPhase == 0) {
+  if (gColossoWall_LiftTimer != 0 && platform->targetX == 0x80000000) {
+    if (gColossoWall_LiftPhase == 0) {
       Map_CopyCellAttributes(58, 28, 7, 1, 58, 13);
     } else {
       Map_CopyCellAttributes(58, 10, 1, 1, 58, 11);
@@ -575,9 +620,9 @@ static void ColossoWall_UpdateMovingPlatforms(void) {
     Map_CopyCellAttributes(58, 14, 7, 1, 58, 13);
   }
   // Start the next alternating route when the two-second cycle wraps.
-  if (gColossoWall_SpectatorTimer == 0) {
-    gColossoWall_SpectatorPhase ^= 1;
-    if (gColossoWall_SpectatorPhase != 0) {
+  if (gColossoWall_LiftTimer == 0) {
+    gColossoWall_LiftPhase ^= 1;
+    if (gColossoWall_LiftPhase != 0) {
       platformActor = Object_GetById(22);
       FieldObject_SetPosition(platformActor, PIXELS(936), 0, PIXELS(184));
       platformActor = Object_GetById(23);
@@ -599,18 +644,18 @@ static void ColossoWall_UpdateMovingPlatforms(void) {
       Engine_ActorSetAnimation(LIFT_OPERATOR, 10);
     }
   }
-  gColossoWall_SpectatorTimer++;
-  if ((u32)gColossoWall_SpectatorTimer >= COLOSSO_WALL_PLATFORM_CYCLE_FRAMES) {
+  gColossoWall_LiftTimer++;
+  if ((u32)gColossoWall_LiftTimer >= COLOSSO_WALL_PLATFORM_CYCLE_FRAMES) {
     if (GameFlag_IsSet(0x104) == 0) {
-      gColossoWall_SpectatorTimer = 0;
+      gColossoWall_LiftTimer = 0;
     }
   }
 }
 
 /// Stops the moving-platform task and restores its starting row.
 static void ColossoWall_ResetMovingPlatforms(void) {
-  gColossoWall_SpectatorTimer = 0;
-  gColossoWall_SpectatorPhase = 0;
+  gColossoWall_LiftTimer = 0;
+  gColossoWall_LiftPhase = 0;
   Engine_TaskRemoveCallback(ColossoWall_UpdateMovingPlatforms);
   Actor_SetPosition(22, PIXELS(936), PIXELS(216));
   Actor_SetPosition(23, PIXELS(968), PIXELS(216));
@@ -632,8 +677,8 @@ static void ColossoWall_WaitForPlatformCrossingPhase(void) {
   Engine_TaskWait(10);
 
   elapsedFrames = 0;
-  while (gColossoWall_SpectatorPhase != 0 ||
-         gColossoWall_SpectatorTimer != COLOSSO_WALL_PLATFORM_CROSSING_FRAME) {
+  while (gColossoWall_LiftPhase != 0 ||
+         gColossoWall_LiftTimer != COLOSSO_WALL_PLATFORM_CROSSING_FRAME) {
     Engine_TaskWait(1);
     elapsedFrames++;
     if (elapsedFrames >= COLOSSO_WALL_DEMONSTRATION_TIMEOUT_FRAMES) {
@@ -642,13 +687,14 @@ static void ColossoWall_WaitForPlatformCrossingPhase(void) {
   }
 }
 
-/// Halt on the lift operator: the lifts stop and leave a crossing (0x334).
+/// Halt on the shifting floor's lift operator: the lifts stop and leave a
+/// crossing (0x334).
 static void Event_HaltLifts(void) {
   BattleEffect_PauseObject(LIFT_OPERATOR);
   Engine_GameFlagSet(820);
 
-  if (gColossoWall_SpectatorPhase != 0) {
-    gColossoWall_SpectatorTimer = 0;
+  if (gColossoWall_LiftPhase != 0) {
+    gColossoWall_LiftTimer = 0;
   }
 
   Engine_TaskWait(30);
@@ -660,8 +706,9 @@ static void Event_HaltLifts(void) {
   Map_CopyCellAttributes(57, 11, 1, 1, 58, 11);
 }
 
-/// Reaching the arena: the leader takes a prize (the Chain Mail if first, the
-/// Cotton Shirt if second), and he and his opponent face off and fight.
+/// Reaching Colosseum Final 2's arena: the leader takes a prize (the Chain Mail
+/// if first, the Cotton Shirt if second), and he and Satrage face off and
+/// fight; the battle's group follows who took the mail.
 /// FLAG_SCENE_TEMP_11 says the arena was already reached; the arena's touch
 /// works while FLAG_SCENE_TEMP_10 is clear.
 static void Event_ReachArena(void) {
@@ -708,11 +755,11 @@ static void Event_ReachArena(void) {
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
 }
 
-/// Returns the course's obstacle interactions and attendant dialogue.
+/// Returns Colosseum Final 2's obstacle interactions and attendant dialogue.
 const struct SceneEvent *Scene_GetEvents(void) { return gColossoWallEvents; }
 
-/// Back from the battle: the two warriors stand in the arena as the result is
-/// shown.
+/// Back from the battle (entrance 4 or 5): Isaac and Satrage stand in the arena
+/// as the result is shown.
 static void ColossoWall_StageBattleResult(s32 result) {
 
   Engine_ActorDestroy(PRIZE_A);
@@ -736,7 +783,9 @@ static void ColossoWall_StageBattleResult(s32 result) {
   Engine_EventEnd();
 }
 
-/// Restores obstacle progress and sets up the selected course entrance.
+/// Sets up Colosseum Final 2: restores obstacle progress, then by the arrival:
+/// the race (1), the friends' turns to lend a hand (2), the guide's tour (3),
+/// or the match won (4) or lost (5).
 s32 ColossoWall_Initialize(void) {
   struct FieldActor *actor;
   s32 x;
@@ -864,7 +913,8 @@ s32 ColossoWall_Initialize(void) {
   Colosso_ShowItemIcon(PRIZE_B, 89);
   Colosso_ShowItemIcon(PRIZE_A, 77);
   Engine_ActorSetChildValue(OPPONENT, 1);
-  // Entrances distinguish the race, solo practice, briefing and battle results.
+  // Entrances: the race (1), the friends' turns (2), the tour (3), and the
+  // battle's result (4 and 5).
   switch (gGameState.entrance) {
   case 1:
     FieldScene_BuildDescriptorAndInstallTask(ACTOR_PARTY_LEADER, OPPONENT, 5,
@@ -916,7 +966,9 @@ s32 ColossoWall_Initialize(void) {
   return 0;
 }
 
-/// Introduces the second finals course, then gathers the party behind Isaac.
+/// The tour of Colosseum Final 2 (entrance 3): the guide welcomes the party to
+/// the second finals match's stages and leaves them to their attendants, then
+/// Garet, Ivan and Mia walk back into Isaac.
 static void ColossoWall_IntroduceSecondFinals(s32 attendantId) {
   s32 attendantZ;
   s32 attendantX;
@@ -986,8 +1038,10 @@ static void ColossoWall_IntroduceSecondFinals(s32 attendantId) {
   Engine_EventEnd();
 }
 
-/// The Mini-Maze's attendant: the first time, a warrior runs the maze; then the
-/// objective.
+/// The Mini-Maze's attendant, stage 1 of Colosseum Final 2: the first time,
+/// Isaac appears and runs the maze; then the objective, and a place for a
+/// friend to cheer. With a friend alone on the stages (entrance 2) he asks
+/// whether they are done cheering instead.
 static void Event_TalkToMiniMazeAttendant(s32 attendant) {
   s32 result;
   struct FieldActor *actor;
@@ -1030,8 +1084,9 @@ static void Event_TalkToMiniMazeAttendant(s32 attendant) {
   }
 }
 
-/// The shifting floor's attendant: the first time, a warrior rides the lifts;
-/// then, that the lifts' operator will cheer for Isaac.
+/// The shifting floor stage's attendant, stage 2 of Colosseum Final 2: the
+/// first time, Isaac appears and rides the lifts; then, that the lifts'
+/// operator will cheer for Isaac, and a place for a friend to cheer.
 static void Event_TalkToShiftingFloorAttendant(s32 attendant) {
   s32 result;
 
@@ -1075,8 +1130,9 @@ static void Event_TalkToShiftingFloorAttendant(s32 attendant) {
   }
 }
 
-/// The Log-Rolling Stage's attendant: a warrior rides a log across; then the
-/// objective.
+/// The Log-Rolling Stage's attendant, stage 3 of Colosseum Final 2: the first
+/// time, Isaac appears and rides a log across; then the objective, and a place
+/// for a friend to cheer.
 static void Event_TalkToLogRollingAttendant(s32 attendant) {
   s32 result;
 
@@ -1128,7 +1184,9 @@ static void Event_TalkToLogRollingAttendant(s32 attendant) {
   }
 }
 
-/// The Wall's attendant: a warrior climbs it; then the objective.
+/// The Wall's attendant, stage 4 of Colosseum Final 2: the first time, Isaac
+/// appears and climbs it; then the objective, and a place for a friend to
+/// cheer.
 static void Event_TalkToWallAttendant(s32 attendant) {
   s32 z;
   struct FieldActor *actor;
@@ -1225,8 +1283,9 @@ static void ColossoWall_PushBlockToCell(s32 obstacleId, s32 column, s32 row) {
   Engine_EventWait(15);
 }
 
-/// The Board Walk's attendant: a warrior rolls a log into a path; then the
-/// objective.
+/// The Board Walk's attendant, stage 5 of Colosseum Final 2: the first time,
+/// Isaac appears and rolls a log into a path; then the objective, and a place
+/// for a friend to cheer.
 static void Event_TalkToBoardWalkAttendant(s32 attendant) {
   s32 result;
 
@@ -1308,7 +1367,8 @@ static void ColossoWall_StartLetteringAnimation(u32 mode, u32 tileVariant) {
   gColosso_LetteringPosition = 0;
 }
 
-/// Shows the course-opening lettering and plays its timed audio cues.
+/// The lettering a visit opens with: `Lend a Hand` for the friends' turns
+/// (mode 0), or for the race `Match 2`, then 3, 2, 1 and `Go!`.
 static void ColossoWall_ShowRoundStartLettering(s32 mode) {
   if (mode == 0) {
     Engine_EventBegin();
@@ -1362,7 +1422,7 @@ static void ColossoWall_ShowRoundStartLettering(s32 mode) {
   Engine_GameFlagSet(0x123);
 }
 
-/// Shows the win-or-loss lettering and the appropriate competitor's reaction.
+/// The result: `Won` or `Lose` in large lettering, and the loser's reaction.
 static void ColossoWall_ShowBattleResultLettering(s32 result) {
 
   s32 reactingActor;
@@ -1899,9 +1959,9 @@ struct ScenePlacement gColossoWallPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-s32 gColossoWall_SpectatorPhase = 0;
+s32 gColossoWall_LiftPhase = 0;
 
-s32 gColossoWall_SpectatorTimer = 0;
+s32 gColossoWall_LiftTimer = 0;
 
 struct SceneEvent gColossoWallEvents[] = {
     { TOUCH_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RunRisingSequence) },

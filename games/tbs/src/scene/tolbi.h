@@ -24,7 +24,10 @@
 enum TolbiActor {
   TOLBI_SPROUT = 8,
   TOLBI_PUDDLE = 9,
-  TOLBI_PLAYER_COPY = 14, ///< copies the leader's sprite priority every frame
+  /// A man who, during the festival, says he is 65 and that Babi was already
+  /// old when he was born; later he talks of the Lucky Guess. Copies the
+  /// leader's sprite priority every frame.
+  TOLBI_PLAYER_COPY = 14,
   TOLBI_OLDER_BROTHER = 16,
   TOLBI_YOUNGER_SIBLING = 17,
   TOLBI_SNACK_VENDOR = 19,

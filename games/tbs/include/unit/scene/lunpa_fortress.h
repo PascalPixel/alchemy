@@ -19,7 +19,7 @@ extern s32 gLunpaFortressRandomPick;
 extern s32 gSecondPatrolRoute[];
 extern s32 gFirstPatrolRoute[];
 extern s32 gDonpaSleeps[];
-extern s32 gOuterPatrolRoute[];
+extern s32 gFortress1PatrolRoute[];
 extern s32 gHallPatrolRoute[];
 extern struct SceneEntrance gLunpaFortressEntrances1[];
 extern struct SceneEntrance gLunpaFortressEntrances2[];
@@ -39,9 +39,9 @@ extern struct SceneEvent gLunpaFortressEvents1[];
 extern struct SceneEvent gLunpaFortressEvents2[];
 extern struct SceneEvent gLunpaFortressEvents3[];
 extern struct SceneEvent gLunpaFortressEventsOther[];
-extern u32 gRescueRoomDoorCells[];
-extern u32 gColumnRoomDoorCells[];
-extern u32 gGuardRoomDoorCells[];
-extern u32 gOuterDoorCells[];
+extern u32 gLunpaFortressDoorCells4[];
+extern u32 gLunpaFortressDoorCells3[];
+extern u32 gLunpaFortressDoorCells2[];
+extern u32 gLunpaFortressDoorCells1[];
 
 #endif

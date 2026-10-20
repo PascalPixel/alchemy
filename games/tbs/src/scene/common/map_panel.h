@@ -3,9 +3,10 @@
 #include "map.h"
 #include "io_reg.h"
 
-// Crossbone Isle's pillar rooms and Kolima's forest bend: drawing a stretch of
-// the map, in one of the states kept elsewhere in it (such as the water
-// raised or not), straight into the background's tile map.
+// Crossbone Isle Cave (CrossboneIslePillarRooms1 to 5) and Kolima Forest
+// (scene 43): drawing a stretch of the map, in one of the states kept elsewhere
+// in it (such as the water raised or not), straight into the background's tile
+// map.
 
 /// Draws the width by height cells at cell (x, y) of the map into screen block
 /// 5 from cell (destX, destY), wrapped to 16 by 16 cells, in band plane (16

@@ -1,5 +1,26 @@
 /// @file
-/// Goma Cave: the waterway rooms, where a stump leaps away under Move.
+/// The first and last rooms of Goma Cave (GomaCaveWaterway1 and
+/// GomaCaveWaterway2, scenes 28 and 29), the cave in the Goma Range that the
+/// mayor of Vault tells the party to pass through on the way to Bilibin.
+///
+/// - Goma Cave, scene 28. The party walks in from the Goma Cave Entrance (its
+///   exit 1, entrance 1 here) at the bottom of the room. A stump answers Move:
+///   pushed to column 24, it spins in place, leaps away, lands with a shake
+///   and a ring of dust and lies flat underfoot, and the cells where it lands
+///   change (FLAG_GOMA_CAVE_WATERWAY_STUMP_MOVED, a story flag, so it stays
+///   there for good). A chest holds Power Bread. Exits lead back to the Goma
+///   Cave Entrance (exit 1), into the room of two pillars (goma_cave_pillar.c;
+///   exits 2 and 3, its entrances 1 and 2) and north into scene 29 (exit 4).
+///   Exit 5, on collision code 1, leads to Vale (vale_home.c, scene 5,
+///   entrance 11), and Vale's exit 11 leads back in at entrance 5, which
+///   arrives without the place name. No exit leads to entrance 99.
+/// - Goma Cave, scene 29, the way out. It has no actors and only its two
+///   exits: back south into scene 28 (exit 1, its entrance 4) and out onto
+///   the world map (exit 2, its entrance 40), toward Bilibin. The world map's
+///   exit 40 leads back in at entrance 2.
+///
+/// The getters give scene 29 its own tables; any other scene number takes
+/// scene 28's.
 #include "game_state.h"
 #include "unit/scene/goma_cave_waterway.h"
 #include "unit/scene/common/effect_spawn.h"
@@ -57,8 +78,9 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gGomaCaveWaterwayPlacementsOther;
 }
 
-/// Move on the stump: from column 24 it spins, leaps away and lies where it
-/// lands.
+/// Move on the stump in Goma Cave (scene 28), until it has leapt
+/// (FLAG_GOMA_CAVE_WATERWAY_STUMP_MOVED): from column 24 it spins, leaps away
+/// and lies where it lands.
 static void Event_MoveStump(void) {
   struct FieldActor *stump;
   struct FieldActor *landed;
@@ -83,8 +105,9 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gGomaCaveWaterwayEventsOther;
 }
 
-/// Arriving by entrance 5 shows no place name; otherwise the stump lies
-/// where the party moved it.
+/// Sets up Goma Cave's scene 28 as the party enters (scene 29 needs nothing).
+/// Arriving by entrance 5 shows no place name; otherwise the stump lies where
+/// the party moved it.
 s32 Scene_Initialize(void) {
   struct FieldActor *stump;
 

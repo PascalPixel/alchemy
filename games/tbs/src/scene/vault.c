@@ -1,6 +1,49 @@
 /// @file
-/// Vault after the eruption, while Hammet's Shaman's Rod is missing and after
-/// the party has jailed the thieves.
+/// Vault (scene 20, SceneId_Vault), "the town at the heart of Angara", as the
+/// party first finds it, just after Mt. Aleph's eruption: the first town on
+/// the journey, where Vale's villagers send the party (vale_home.c). In the
+/// chaos of the eruption thieves struck: Master Hammet, a wealthy landowner
+/// and merchant from Kalay, had his precious rod, the Shaman's Rod, stolen,
+/// and his servant Ivan was left at the mayor's and cannot go home until he
+/// recovers it. This scene is the town's streets, with the townspeople's
+/// talk, Ivan's comings and goings, the bell and the dog; the houses, the
+/// inn and its loft, where the story plays out, are vault_interiors.c.
+/// Scene_GetPlacements and Scene_GetEvents choose by
+/// FLAG_VAULT_THIEVES_JAILED.
+///
+/// - While the rod is missing, the townspeople talk of the eruption, of the
+///   stolen rod, and of strange travelers who left in a hurry: two women and
+///   four men, the young girl and the old man among them unhappy to be there.
+///   Read with Mind Read, they blame the three strangers staying at the inn.
+///   One of the three loiters in town, denying everything, until the party
+///   has confronted them in the loft (FLAG_VAULT_THIEVES_CONFRONTED removes
+///   him). A man complains of the hole a fiery rock burnt through a roof;
+///   once the suspects' minds have been read (FLAG_VAULT_SUSPECTS_MIND_READ)
+///   he is missing and someone walks about looking for him, for he went up
+///   into the inn's loft to fix its roof and was tied up there.
+/// - Once Ivan has joined the search (FLAG_VAULT_IVAN_JOINED_ROD_SEARCH),
+///   walking out of either gate (triggers 20 and 21, before exits 1 and 2)
+///   has him stay behind to wait in Vault (Event_IvanStaysBehind): he hands
+///   back any Venus Djinni of Isaac's he holds and leaves the party. Coming
+///   back in by a gate (entrances 0 to 2) or out of the Vault Sanctum
+///   (entrance 11), Scene_Initialize has him greet the two and rejoin.
+/// - After the thieves are jailed, the townspeople thank the party, Ivan has
+///   gone out to Lunpa to rescue Hammet, and the dog, given a Bone
+///   (Event_GiveBoneToDog, FLAG_VAULT_DOG_SHOWN_PASSAGE), runs to a spot and
+///   jumps there three times. Its thoughts then hint at a passage leading
+///   underground, which opens only in the town's later scene
+///   (vault_revisit.c).
+///
+/// Sap, a Venus Djinni, hides near the bell. Searching the bell rings it, and
+/// the first ring since the party came in by a gate
+/// (FLAG_VAULT_DJINNI_CALLED_BY_BELL) calls Sap out to stand beside it; no
+/// event here lets the party talk to Sap, which joins only in the town's
+/// later scene. The well rumbles with water and a wooden box holds a Nut.
+/// The doors lead into the houses, shops and inn (scene 21, each door's exit
+/// number its entrance there), the jail (scene 22) and the Vault Sanctum
+/// (scene 9, entrance 10), and the two gates to the world map. Once the
+/// party has reached Kalay (FLAG_REACHED_KALAY), Scene_Initialize sends it
+/// straight on to the later scene (exit 14, SceneId_VaultRevisit).
 
 #include "game_state.h"
 #include "animspr.h"
@@ -59,15 +102,18 @@ enum {
   ACTOR_SECOND_WALKER = 15,
   /// Keeps watch. "Nobody's stealing anything on my watch!"
   ACTOR_WATCHMAN = 16,
-  /// A thief. "Are you accusing us of stealing...?"
+  /// One of the three thieves, sprite 0x40 as in the loft. "Are you accusing
+  /// us of stealing...?"
   ACTOR_LOITERING_THIEF = 17,
   ACTOR_STRANDED_TRAVELER = 18, ///< was leaving town when the volcano erupted
   ACTOR_VAULT_DOG = 19,
-  ACTOR_ROOFER = 20, ///< a fiery rock burnt a hole through the roof
+  /// Fixes the roof himself, and is later found tied up in the inn's loft. "A
+  /// fiery rock burnt a hole through the roof."
+  ACTOR_ROOFER = 20,
   /// Complains of the roofer. "He should be fixing the roof now"
   ACTOR_ROOF_COMPLAINER = 21,
-  ACTOR_VAULT_VENUS_DJINNI = 23,
-  VAULT_VENUS_DJINNI_INDEX = 4
+  ACTOR_SAP = 23, ///< Sap, a Venus Djinni, hiding until the bell calls it
+  SAP_INDEX = 4   ///< Sap's number among the Venus Djinn (DJINNI_SAP)
 };
 
 static void Vault_ShowStandingActorMessage(s32 actor);
@@ -137,10 +183,10 @@ static int Vault_GetIvanVenusDjinnCount(void) {
 
 #include "common/vault_djinn.h"
 
-/// Exits 1 and 2 (triggers 20 and 21): while Ivan is helping search for the
-/// rod and the thieves are free, he walks out to the gate, says he is still
-/// worried about the rod and will wait in Vault, leaves any Venus Djinni with
-/// Isaac and leaves the party.
+/// Leaving Vault by either gate (triggers 20 and 21, before exits 1 and 2):
+/// while Ivan is helping search for the rod and the thieves are free, he walks
+/// out to the gate, says he is still worried about the rod and will wait in
+/// Vault, leaves any Venus Djinni with Isaac and leaves the party.
 static void Event_IvanStaysBehind(void) {
   struct FieldActor *actor;
   struct EventWork *eventWork;
@@ -185,7 +231,7 @@ static void Event_IvanStaysBehind(void) {
   Engine_EventEnd();
 }
 
-/// Isaac peers into the well and hears water rumbling down there.
+/// In Vault, Isaac peers into the well and hears water rumbling down there.
 static void Event_PeerIntoWell(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
@@ -210,8 +256,9 @@ static inline void Vault_AskYesNoAndShowReply(s32 speaker) {
   Engine_EventShowMessage(speaker, 0);
 }
 
-/// Asks about the eruption. "Wasn't the eruption of Mt. Aleph incredible?"
-/// Yes: too terrified to sleep for days. No: aren't you courageous!
+/// In Vault while the rod is missing, a townsperson asks about the eruption.
+/// "Wasn't the eruption of Mt. Aleph incredible?" Yes: too terrified to sleep
+/// for days. No: aren't you courageous!
 static void Event_AskAboutEruption(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultWasntEruptionMtAlephIncredible);
@@ -225,9 +272,9 @@ static void Event_AskAboutEruption(void) {
   Engine_EventEnd();
 }
 
-/// Travelers left town in a big hurry: did the party see them? Yes: two women
-/// and four men, the girl and old man unhappy to be there. No: maybe they left
-/// earlier.
+/// In Vault while the rod is missing, a townsperson says travelers left town
+/// in a big hurry: did the party see them? Yes: two women and four men, the
+/// girl and old man unhappy to be there. No: maybe they left earlier.
 static void Event_AskAboutFleeingTravelers(void) {
 
   Engine_EventBegin();
@@ -238,8 +285,9 @@ static void Event_AskAboutFleeingTravelers(void) {
   Engine_EventEnd();
 }
 
-/// One of the thieves asks whether the party accuses them; either answer gets a
-/// denial. "Are you accusing us of stealing Hammet's treasured Shaman's Rod?"
+/// In Vault, one of the thieves loitering in town asks whether the party
+/// accuses them; either answer gets a denial.
+/// "Are you accusing us of stealing Hammet's treasured Shaman's Rod?"
 static void Event_ThiefDeniesTheft(void) {
 
   Engine_EventBegin();
@@ -249,8 +297,9 @@ static void Event_ThiefDeniesTheft(void) {
   Engine_EventEnd();
 }
 
-/// Asks whether the party is off on an adventure. "Off on an adventure, are
-/// you?" Yes: impressive for youngsters. No: see the Sanctum while you're here.
+/// In Vault while the rod is missing, a traveler stranded by the eruption asks
+/// whether the party is off on an adventure. "Off on an adventure, are you?"
+/// Yes: impressive for youngsters. No: see the Sanctum while you're here.
 static void Event_AskAboutAdventure(void) {
 
   Engine_EventBegin();
@@ -260,7 +309,8 @@ static void Event_AskAboutAdventure(void) {
   Engine_EventEnd();
 }
 
-/// Some folks got robbed during the chaos of the eruption.
+/// In Vault while the rod is missing, a townsperson says some folks got robbed
+/// during the chaos of the eruption.
 static void Event_TalkOfEruptionThefts(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultGuessFolksGot);
@@ -268,8 +318,8 @@ static void Event_TalkOfEruptionThefts(void) {
   Engine_EventEnd();
 }
 
-/// The watchman: nobody steals on his watch, the thieves must be from out of
-/// town.
+/// In Vault while the rod is missing, the watchman: nobody steals on his
+/// watch, the thieves must be from out of town.
 static void Event_WatchmanSuspectsOutsiders(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultNobodysStealingAnything);
@@ -277,7 +327,7 @@ static void Event_WatchmanSuspectsOutsiders(void) {
   Engine_EventEnd();
 }
 
-/// The dog stops and barks.
+/// In Vault while the rod is missing, the dog stops and barks.
 static void Event_TalkToDog(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultRuffRrruff);
@@ -287,8 +337,8 @@ static void Event_TalkToDog(void) {
   Engine_EventEnd();
 }
 
-/// The first walker stops: poor Ivan was left at the mayor's to look for the
-/// stolen rod.
+/// In Vault while the rod is missing, the first walker stops: poor Ivan was
+/// left at the mayor's to look for the stolen rod.
 static void Event_PityIvan(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_FIRST_WALKER);
   s16 savedFacing = actor->facing;
@@ -305,8 +355,8 @@ static void Event_PityIvan(void) {
   actor->timer &= 1;
 }
 
-/// The second walker stops: Hammet's caravan left as soon as the eruption
-/// stopped.
+/// In Vault while the rod is missing, the second walker stops: Hammet's
+/// caravan left as soon as the eruption stopped.
 static void Event_TalkOfHammetsCaravan(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_SECOND_WALKER);
   s16 savedFacing = actor->facing;
@@ -323,7 +373,8 @@ static void Event_TalkOfHammetsCaravan(void) {
   actor->timer &= 1;
 }
 
-/// The roofer should be fixing the roof, but is probably in back slacking off.
+/// In Vault, once the suspects' minds are read, someone looking for the
+/// roofer: he should be fixing the roof, but is probably in back slacking off.
 static void Event_LookForRoofer(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultFixingRoofCant);
@@ -345,8 +396,8 @@ static void Vault_ShowStandingActorMessage(s32 actor) {
 
 #include "common/vault_talk.h"
 
-/// After the thieves are jailed, asks whether the party is leaving again.
-/// "So, you're hitting the road again?"
+/// In Vault after the thieves are jailed, the greeter asks whether the party
+/// is leaving again. "So, you're hitting the road again?"
 static void Event_AskAboutLeavingAgain(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultYoureHittingRoadAgain);
@@ -355,7 +406,8 @@ static void Event_AskAboutLeavingAgain(void) {
   Engine_EventEnd();
 }
 
-/// Praises the thieves' capture. "It's great that you caught those thieves!"
+/// In Vault after the thieves are jailed, a townsperson praises their capture.
+/// "It's great that you caught those thieves!"
 static void Event_PraiseThievesCapture(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultGreatCaughtThieves);
@@ -363,8 +415,9 @@ static void Event_PraiseThievesCapture(void) {
   Engine_EventEnd();
 }
 
-/// Ivan went out to Lunpa, or, with Ivan in the party, rescuing Hammet must
-/// have been impossible.
+/// In Vault after the thieves are jailed, a townsperson says Ivan went out to
+/// Lunpa, or, with Ivan in the party, that rescuing Hammet must have been
+/// impossible.
 static void Event_TalkAboutIvan(void) {
   struct EventWork *workspace;
   Engine_EventBegin();
@@ -378,8 +431,9 @@ static void Event_TalkAboutIvan(void) {
   Engine_EventEnd();
 }
 
-/// The eruption devastated the roads; once the southern bridge is repaired,
-/// you can head toward Kalay.
+/// In Vault after the thieves are jailed, a townsperson says the eruption
+/// devastated the roads; once the southern bridge is repaired, you can head
+/// toward Kalay.
 static void Event_TalkOfDamagedRoads(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultEruptionDevastatedRoads);
@@ -387,8 +441,9 @@ static void Event_TalkOfDamagedRoads(void) {
   Engine_EventEnd();
 }
 
-/// The first walker hopes Ivan didn't go to Lunpa alone, or, with Ivan in the
-/// party, asks when he joined up with Isaac.
+/// In Vault after the thieves are jailed, the first walker hopes Ivan didn't
+/// go to Lunpa alone, or, with Ivan in the party, asks when he joined up with
+/// Isaac.
 static void Event_AskWhetherIvanWentToLunpa(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_FIRST_WALKER);
   s16 savedFacing = actor->facing;
@@ -407,7 +462,8 @@ static void Event_AskWhetherIvanWentToLunpa(void) {
   actor->timer &= 1;
 }
 
-/// The second walker: everyone is grateful the party captured the thieves.
+/// In Vault after the thieves are jailed, the second walker: everyone is
+/// grateful the party captured the thieves.
 static void Event_ThankForCapturingThieves(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_SECOND_WALKER);
   s16 savedFacing = actor->facing;
@@ -424,9 +480,10 @@ static void Event_ThankForCapturingThieves(void) {
   actor->timer &= 1;
 }
 
-/// Asks about the prisoners. "Those men you captured... They're in jail now?"
-/// Yes: the prison hadn't been used in a long time. No: they're upset; maybe go
-/// see them.
+/// In Vault after the thieves are jailed, the watchman asks about the
+/// prisoners. "Those men you captured... They're in jail now?" Yes: the
+/// prison hadn't been used in a long time. No: they're upset; maybe go see
+/// them.
 static void Event_AskAboutPrisoners(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultThoseMenCapturedTheyreIn);
@@ -436,7 +493,8 @@ static void Event_AskAboutPrisoners(void) {
   Engine_EventEnd();
 }
 
-/// Asks who captured the thieves; either answer is praised.
+/// In Vault after the thieves are jailed, the traveler asks who captured the
+/// thieves; either answer is praised.
 /// "Are you the ones who captured the thieves?"
 static void Event_AskWhoCapturedThieves(void) {
   Engine_EventBegin();
@@ -446,8 +504,8 @@ static void Event_AskWhoCapturedThieves(void) {
   Engine_EventEnd();
 }
 
-/// The dog barks; carrying a Bone before it has shown the passage lets the
-/// party give it one.
+/// In Vault after the thieves are jailed, the dog barks; carrying a Bone
+/// before it has shown the passage lets the party give it one.
 static void Event_TalkToDogAfterCapture(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultRuffRrruff2);
@@ -465,7 +523,8 @@ static void Event_TalkToDogAfterCapture(void) {
   Engine_EventEnd();
 }
 
-/// Thanks the party before it leaves.
+/// In Vault after the thieves are jailed, the roofer the party freed thanks it
+/// before it leaves.
 /// "Thank you for the other day. Are you leaving town already?"
 static void Event_ThankBeforeDeparture(void) {
   Engine_EventBegin();
@@ -477,8 +536,8 @@ static void Event_ThankBeforeDeparture(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read: stealing during an eruption is unforgivable, or how should the
-/// prisoners be punished?
+/// In Vault, Mind Read on a townsperson: stealing during an eruption is
+/// unforgivable, or how should the prisoners be punished?
 static void Event_ReadMindOnTheft(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0)
@@ -489,8 +548,9 @@ static void Event_ReadMindOnTheft(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read: the strange travelers headed for the northeast of the Goma
-/// Range, or the only way out is the cave in the Goma Range.
+/// In Vault, Mind Read on a townsperson: the strange travelers headed for the
+/// northeast of the Goma Range, or the only way out is the cave in the Goma
+/// Range.
 static void Event_ReadMindOnTravelers(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -502,8 +562,9 @@ static void Event_ReadMindOnTravelers(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read on the first walker: the three creeps at the inn stole the rod,
-/// or where did Ivan go (when did they join him, with Ivan in the party)?
+/// In Vault, Mind Read on the first walker: the three creeps at the inn stole
+/// the rod, or where did Ivan go (when did they join him, with Ivan in the
+/// party)?
 static void Event_ReadMindOnIvan(void) {
   Object_GetById(ACTOR_FIRST_WALKER)->timer |= 2;
   Engine_EventBegin();
@@ -519,8 +580,8 @@ static void Event_ReadMindOnIvan(void) {
   Object_GetById(ACTOR_FIRST_WALKER)->timer &= 1;
 }
 
-/// Mind Read on the second walker: riches can't save you from a volcano, or the
-/// party must be stronger than they look.
+/// In Vault, Mind Read on the second walker: riches can't save you from a
+/// volcano, or the party must be stronger than they look.
 static void Event_ReadMindOnWealth(void) {
   Object_GetById(ACTOR_SECOND_WALKER)->timer |= 2;
   Engine_EventBegin();
@@ -533,8 +594,8 @@ static void Event_ReadMindOnWealth(void) {
   Object_GetById(ACTOR_SECOND_WALKER)->timer &= 1;
 }
 
-/// Mind Read on the watchman: everyone knows the three at the inn stole the
-/// rod, or he feels much better with them behind bars.
+/// In Vault, Mind Read on the watchman: everyone knows the three at the inn
+/// stole the rod, or he feels much better with them behind bars.
 static void Event_ReadMindOnSuspects(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0)
@@ -545,9 +606,9 @@ static void Event_ReadMindOnSuspects(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read on the dog: humans value money over their lives; after the
-/// thieves are jailed, bring a bone for something useful, and once fed, a
-/// careful search will reveal a passage.
+/// In Vault, Mind Read on the dog: humans value money over their lives; after
+/// the thieves are jailed, bring a bone for something useful, and once fed, a
+/// careful search will reveal a passage leading underground.
 static void Event_ReadDogMind(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_VAULT_DOG);
   actor->paused = 1;
@@ -566,7 +627,8 @@ static void Event_ReadDogMind(void) {
   actor->paused = 0;
 }
 
-/// Mind Read: that sneak is wasting time instead of fixing the roof.
+/// In Vault, Mind Read on the one looking for the roofer: that sneak is
+/// wasting time instead of fixing the roof.
 static void Event_ReadMindOnRoofer(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgVaultSneakWastingTime);
@@ -584,29 +646,33 @@ static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
   Engine_EventRequestExit(continuation);
 }
 
-/// Opens and enters the southeastern house.
+/// In Vault, door 5 opens into the southeastern house, where a man keeps a
+/// sparkling rock the volcano threw (scene 21, entrance 5).
 static void Event_EnterSoutheastHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVault_Scene5Cells, 56, 19);
   Vault_WalkThroughExit(408, 320, 5);
 }
 
-/// Opens and enters the house east of the town's center.
+/// In Vault, door 6 opens into the house east of the town's center, a child's
+/// home (scene 21, entrance 6).
 static void Event_EnterCentralEastHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVault_Scene6Cells, 50, 18);
   Vault_WalkThroughExit(312, 304, 6);
 }
 
-/// Opens and enters the central house.
-static void Event_EnterCentralHouse(void) {
+/// In Vault, door 7 opens into the inn, where the three suspects stay (scene
+/// 21, entrance 7).
+static void Event_EnterInn(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVault_Scene7Cells, 44, 17);
   Vault_WalkThroughExit(216, 288, 7);
 }
 
-/// Enters the northeastern doorway behind its foreground tiles.
-static void Event_EnterNortheastHouse(void) {
+/// In Vault, door 8 opens into the item shop, an old couple's home too (scene
+/// 21, entrance 8); the leader walks in behind the doorway's foreground tiles.
+static void Event_EnterItemShop(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
 
@@ -618,8 +684,9 @@ static void Event_EnterNortheastHouse(void) {
   Vault_WalkThroughExit(376, 224, 8);
 }
 
-/// Enters the northern doorway behind its foreground tiles.
-static void Event_EnterNorthHouse(void) {
+/// In Vault, door 9 opens into the weapon and armor shop (scene 21, entrance
+/// 9), entered as door 8 is.
+static void Event_EnterWeaponAndArmorShop(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
 
@@ -631,8 +698,9 @@ static void Event_EnterNorthHouse(void) {
   Vault_WalkThroughExit(296, 176, 9);
 }
 
-/// Opens and enters the northwestern house.
-static void Event_EnterNorthwestHouse(void) {
+/// In Vault, door 10 opens into the mayor's house, where Ivan waits (scene 21,
+/// entrance 10).
+static void Event_EnterMayorsHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVault_Scene10Cells, 38, 6);
   Vault_WalkThroughExit(120, 144, 10);
@@ -640,7 +708,8 @@ static void Event_EnterNorthwestHouse(void) {
 
 #include "common/vault_scene_cells.h"
 
-/// The jail door opens and the party walks in, drawn behind the doorway.
+/// In Vault, the jail door opens and the party walks in, drawn behind the
+/// doorway (exit 12, the jail's entrance 1).
 static void Event_EnterJail(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct AnimationObject *sprite = actor->sprite;
@@ -653,7 +722,8 @@ static void Event_EnterJail(void) {
   Vault_WalkThroughExit(72, 160, 12);
 }
 
-/// The party walks through the doorless entrance into the interiors (exit 13).
+/// In Vault, the party walks through a doorless entrance into the room with
+/// the crate (exit 13, scene 21's entrance 13).
 static void Event_EnterPassage(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vault_WalkThroughExit(152, 264, 13);
@@ -680,29 +750,32 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
   actor->gravity = PIXELS(1);
 }
 
-/// Isaac rings the bell; the first time, the Venus Djinni hiding nearby jumps
-/// out and comes to the bell.
+/// In Vault, Isaac rings the bell; the first time since the party came in by a
+/// gate, Sap, the Venus Djinni hiding nearby, jumps out and comes to the bell
+/// (FLAG_VAULT_DJINNI_CALLED_BY_BELL). No event here lets the party talk to
+/// it; it joins in the town's later scene (vault_revisit.c).
 static void Event_RingBell(void) {
   Engine_EventBegin();
   Event_PlayCue(SE_100);
   Engine_EventWait(40);
   if (GameFlag_IsSet(FLAG_VAULT_DJINNI_CALLED_BY_BELL) == 0) {
-    Actor_SetAttachedEffect(ACTOR_VAULT_VENUS_DJINNI, 0x102);
-    Engine_ActorJump(ACTOR_VAULT_VENUS_DJINNI, 4, 0);
+    Actor_SetAttachedEffect(ACTOR_SAP, 0x102);
+    Engine_ActorJump(ACTOR_SAP, 4, 0);
     Engine_EventWait(12);
-    Engine_ActorJump(ACTOR_VAULT_VENUS_DJINNI, 4, 0);
+    Engine_ActorJump(ACTOR_SAP, 4, 0);
     Engine_EventWait(20);
-    Vault_JumpActorToAndWait(ACTOR_VAULT_VENUS_DJINNI, 392, 104, PIXELS(7));
+    Vault_JumpActorToAndWait(ACTOR_SAP, 392, 104, PIXELS(7));
     Engine_EventWait(20);
-    Actor_WalkToAndWait(ACTOR_VAULT_VENUS_DJINNI, 408, 104);
-    Actor_WalkToAndWait(ACTOR_VAULT_VENUS_DJINNI, 408, 120);
+    Actor_WalkToAndWait(ACTOR_SAP, 408, 104);
+    Actor_WalkToAndWait(ACTOR_SAP, 408, 120);
     GameFlag_Set(FLAG_VAULT_DJINNI_CALLED_BY_BELL);
   }
   Engine_EventEnd();
 }
 
-/// Given a Bone, the dog runs to the hidden passage and jumps there three
-/// times.
+/// In Vault after the thieves are jailed, the dog, given a Bone, runs to the
+/// hidden passage and jumps there three times
+/// (FLAG_VAULT_DOG_SHOWN_PASSAGE).
 static void Event_GiveBoneToDog(void) {
   PartyInventory_Discard(ITEM_BONE);
   Engine_EventBegin();
@@ -725,7 +798,7 @@ static void Event_GiveBoneToDog(void) {
   Engine_EventEnd();
 }
 
-/// On arrival: restores the dog's and the Djinni's places, sets the walkers
+/// Arriving in Vault: restores the dog's and Sap's places, sets the walkers
 /// and the roof complainer stopping near the leader, and, while Ivan waits in
 /// Vault for the party, has him greet the two and rejoin.
 s32 Scene_Initialize(void) {
@@ -734,8 +807,8 @@ s32 Scene_Initialize(void) {
   s32 lowBit;
   s32 zero;
 
-  // Later in the story (flag 0x87a, set in Kalay and the Lamakan Desert) the
-  // town is replaced by its revisit scene.
+  // Once the party has reached Kalay (FLAG_REACHED_KALAY), the town is its
+  // later scene, SceneId_VaultRevisit (vault_revisit.c).
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
     Engine_EventRequestExit(14);
   }
@@ -816,7 +889,7 @@ s32 Scene_Initialize(void) {
     }
   }
   if (Engine_GameFlagIsSet(FLAG_VAULT_DJINNI_CALLED_BY_BELL) != 0) {
-    Actor_SetPosition(ACTOR_VAULT_VENUS_DJINNI, PIXELS(408), PIXELS(120));
+    Actor_SetPosition(ACTOR_SAP, PIXELS(408), PIXELS(120));
   }
   // The same welcome at the western entrance (entrance 11) while Ivan is out of
   // the party (flag 2 clear).
@@ -1190,7 +1263,7 @@ struct ScenePlacement gVault_Placements[] = {
         PIXELS(168), 0, PIXELS(312), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0xf8, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x5a, FLAG_DJINNI_0 + VAULT_VENUS_DJINNI_INDEX, ACTOR_STAND,
+    { 0x5a, FLAG_DJINNI_0 + SAP_INDEX, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(96), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -1226,7 +1299,7 @@ struct ScenePlacement gVault_PlacementsAfterThieves[] = {
         PIXELS(168), 0, PIXELS(312), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
     { 0xf8, CONDITION_ALWAYS, 7,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { 0x5a, FLAG_DJINNI_0 + VAULT_VENUS_DJINNI_INDEX, ACTOR_STAND,
+    { 0x5a, FLAG_DJINNI_0 + SAP_INDEX, ACTOR_STAND,
         PIXELS(344), 0, PIXELS(96), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SCENE_TABLE_END },
 };
@@ -1238,10 +1311,10 @@ struct SceneEvent gVault_Events[] = {
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RestorePassageCells) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSoutheastHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCentralEastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCentralHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNortheastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthwestHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterInn) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterItemShop) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterWeaponAndArmorShop) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterMayorsHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_OpenDoorwayAndEnter) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJail) },
     { EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterPassage) },
@@ -1286,10 +1359,10 @@ struct SceneEvent gVault_EventsAfterThieves[] = {
     { EVENT_TOUCH, 2, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_RestorePassageCells) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterSoutheastHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCentralEastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterCentralHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNortheastHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthHouse) },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterNorthwestHouse) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterInn) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterItemShop) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterWeaponAndArmorShop) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterMayorsHouse) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_OpenDoorwayAndEnter) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterJail) },
     { EVENT_TOUCH, 13, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterPassage) },

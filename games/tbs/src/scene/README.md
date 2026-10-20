@@ -125,7 +125,7 @@ The headers are named after the place or the job they share:
 
 | Headers | Scenes | What they hold |
 | --- | --- | --- |
-| `colosso_*.h`, `item_equip.h` | the Colosso finals' courses (Colosso Log, River and Wall) | the friends' cheering spots, the stage guides, the race gauge, the rival's recorded path, the guide's pointer and the start lettering |
+| `colosso_*.h`, `item_equip.h` | the sites of the Colosso finals matches (Colosseum Final 1, 2 and 3) | the friends' cheering spots, the stage guides, the race gauge, the rival's recorded path, the guide's pointer and the start lettering |
 | `vault_*.h` | Vault and its interiors | the walking villagers, the Bone, the doorway, Ivan's farewell |
 | `mercury_lighthouse_*.h` | Mercury Lighthouse and its entrance | the pool's lights that carry the leader over it, the passages between floors, the pool's shimmer |
 | `kolima_*.h` | Kolima and its forest | the cursed forest's colours, the dust of Tret's curse, the hop onto the river's actor |

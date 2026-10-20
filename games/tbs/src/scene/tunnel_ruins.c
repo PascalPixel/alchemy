@@ -1,8 +1,54 @@
 /// @file
-/// The tunnel ruins, in two scenes of Psynergy puzzles: pillars to push or
-/// Move, blocks, bushes for Whirlwind, sinking pillars and puddles for Frost in
-/// the first; a pillar for Douse, balance platforms, statues that vanish under
-/// Reveal and more pillars in the other.
+/// The Tunnel Ruins, under Babi Lighthouse, in two scenes of Psynergy puzzles
+/// with no story event. The party comes in through the stone door in Babi
+/// Lighthouse whose switch shows only under Reveal, after the group that took
+/// Sheba (babi_lighthouse.c), and the ruins lead on to Venus Lighthouse; Babi's
+/// scholars in Tolbi speak of an extremely long tunnel beneath the ruins at the
+/// site of Babi Lighthouse, whose end no one has reached (vale_babi.c). Both
+/// scenes share the setup, which works room by room, one case for each room's
+/// entrances, and the walking events (hops across gaps, jumps off ledges and
+/// steps), keyed on the cell codes under the leader. In both, the retreat point
+/// is set and a fade overlay follows the leader in the rooms that need it
+/// (TunnelRuins_UpdateTrackedActor).
+///
+/// - Tunnel Ruins (TunnelRuins1, scene 172), entered at entrance 1 from Babi
+///   Lighthouse (BabiLighthouse1, scene 174), where exit 1 leads back;
+///   Retreat returns to entrance 1. In the first room a statue (search code
+///   40) speaks to the leader's soul: those who would climb Venus Lighthouse
+///   must seek the lady's leave. Once the statue in Venus Lighthouse has
+///   opened one of its two paths (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or
+///   _SECOND_PATH) it says instead that the path will not open here, and the
+///   setup redraws this room and the room of entrances 5 to 7 to match the
+///   path. The rooms that follow hold two pairs of pillars to push or Move,
+///   three blocks with three bushes for Whirlwind (bushes A and B,
+///   FLAG_SCENE_TEMP_00 and _01, change what block C can do; bush C stays gone,
+///   FLAG_TUNNEL_RUINS_BUSH_BLOWN_AWAY), and two pillars that sink into the
+///   floor once moved onto their columns (FLAG_TUNNEL_RUINS_PILLAR_A_SUNK and
+///   _B_SUNK, B only after Douse has soaked it, FLAG_SCENE_TEMP_02); each
+///   sunk pillar carries a puddle that Frost freezes into a pillar of ice
+///   (FLAG_SCENE_TEMP_00 and _01 in that room), after which some of the hops
+///   beside it no longer run. Exits 15, 17 and 18 lead on into TunnelRuins2.
+/// - Tunnel Ruins (TunnelRuins2, scene 173), whose entrances 1 to 3 the area
+///   names call Babi Lighthouse: they are where the three drops in Babi
+///   Lighthouse Entry (BabiLighthouse3, scene 176) land, and from those rooms
+///   Retreat leads back up there, the place name not shown; regions for exits
+///   15 to 17 lead back up to it. There two pillars to push or Move keep their
+///   places between visits (FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST and
+///   _B_PUSHED_WEST). Elsewhere: a pillar that Douse soaks
+///   (FLAG_SCENE_TEMP_03), after which its puddle follows it and Frost freezes
+///   the puddle into a pillar of ice (FLAG_SCENE_TEMP_04); two balance
+///   platforms, each block set on one with Carry (FLAG_SCENE_TEMP_00 to _02)
+///   sinking it a step and raising the other, set out with all three blocks on
+///   them when the party comes in at entrance 5; two false statues that block
+///   their cells until Reveal's phase 5 makes them vanish; the rooms of
+///   entrances 8 to 11, redrawn for the path the statue in Venus Lighthouse
+///   opened; and five coloured statues of a woman before a door. Searching a
+///   statue there (search code 42) speaks to the soul, Mind Read on the five
+///   tells which colour shines in which direction, and with all five moved onto
+///   their marks the door opens (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN), closing
+///   again if one is moved off. Two chests hold an Oracle's Robe and Asura's
+///   Armor. Exits 1, 3 and 12 lead back into TunnelRuins1, and exit 14 into
+///   Venus Lighthouse (VenusLighthouse3, scene 183, entrance 18).
 
 #include "script.h"
 #include "version.h"
@@ -45,8 +91,8 @@
 #include "event.h"
 #include "item_ids.h"
 
-/// The ruins' first scene (SceneId_TunnelRuins1), in the order of its
-/// placements: two pairs of pillars to push or Move, three blocks, three bushes
+/// The actors of TunnelRuins1, in the order of its placements: two pairs of
+/// pillars to push or Move, three blocks, three bushes
 /// for Whirlwind, two pillars that sink into the floor, and two puddles for
 /// Frost, both placed with the first sinking pillar.
 enum {
@@ -66,10 +112,10 @@ enum {
   ACTOR_PUDDLE_B
 };
 
-/// The other ruins scenes: a pillar for Douse with a puddle for Frost, two
-/// balance platforms with three blocks to Carry onto them, two statues that
-/// vanish under Reveal, two pillars to push in the east, and five statues of
-/// the lady to Move before the door.
+/// The actors of TunnelRuins2 and any other scene: a pillar for Douse with a
+/// puddle for Frost, two balance platforms with three blocks to Carry onto
+/// them, two statues that vanish under Reveal, two pillars to push in the
+/// east, and five coloured statues of a woman to Move before the door.
 enum {
   ACTOR_DOUSE_PILLAR = ACTOR_FIRST_PLACED,
   ACTOR_DOUSE_PUDDLE,
@@ -102,10 +148,10 @@ enum {
   SPRITE_LADY_STATUE = 500
 };
 
-// The scene's temporary flags, by room. First ruins: FLAG_SCENE_TEMP_00 and
+// The scene's temporary flags, by room. TunnelRuins1: FLAG_SCENE_TEMP_00 and
 // _01 are bushes A and B blown away beside the blocks, and in the sinking
 // pillars' room puddles A and B frozen; FLAG_SCENE_TEMP_02 is pillar B
-// soaked by Douse. Other ruins: FLAG_SCENE_TEMP_00 to _02 are the blocks set
+// soaked by Douse. TunnelRuins2: FLAG_SCENE_TEMP_00 to _02 are the blocks set
 // on the balance, FLAG_SCENE_TEMP_03 the pillar soaked by Douse and
 // FLAG_SCENE_TEMP_04 its puddle frozen.
 
@@ -185,8 +231,8 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
 }
 
 /// Walking south into a gap: the leader hops 32 pixels across it.
-/// Reached by walking south into cell codes 29, 30 and 50 in the first ruins
-/// and 29 in the other ruins.
+/// Reached by walking south into cell codes 29, 30 and 50 in TunnelRuins1
+/// and 29 in TunnelRuins2.
 static void Event_HopSouth(void) {
   struct FieldPosition target;
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
@@ -198,8 +244,8 @@ static void Event_HopSouth(void) {
 }
 
 /// Walking north into a gap: the leader hops 32 pixels across it.
-/// Reached by walking north into cell codes 29 and 30 in the first ruins and
-/// 29 in the other ruins.
+/// Reached by walking north into cell codes 29 and 30 in TunnelRuins1 and
+/// 29 in TunnelRuins2.
 static void Event_HopNorth(void) {
   struct FieldPosition target;
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -345,8 +391,8 @@ static void TunnelRuins_WaitForActorToLand(struct FieldActor *actor) {
 
 /// Walking south off a step: the leader hops 12 pixels forward and slides 16
 /// pixels down, kicking up dust behind.
-/// Reached by walking south into cell code 25 in the first ruins and 27 in the
-/// other ruins.
+/// Reached by walking south into cell code 25 in TunnelRuins1 and 27 in
+/// TunnelRuins2.
 static void Event_HopDownStep(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   struct EffectOptions options;
@@ -401,7 +447,8 @@ static void Event_HopDownStep(void) {
 
 #include "common/effect_radial.h"
 
-/// The entrances of the first ruins, the second, or the rooms beyond.
+/// The entrances of TunnelRuins1, TunnelRuins2, or a table for any other scene
+/// number.
 const struct SceneEntrance *TunnelRuins_GetEntrances(void) {
   s16 sceneId = gGameState.scene;
 
@@ -423,8 +470,8 @@ const struct SceneRegion *TunnelRuins_GetRegions(void) {
 
 const u32 *TunnelRuins_GetExits(void) { return gTunnelRuinsExits; }
 
-/// The first ruins' actors or the other ruins' (the enums above), each prepared
-/// to appear only when it lies in the view.
+/// The actors of TunnelRuins1 or of TunnelRuins2 (the enums above), each
+/// prepared to appear only when it lies in the view.
 const struct ScenePlacement *TunnelRuins_GetPlacements(void) {
   struct ScenePlacement *table;
 
@@ -438,7 +485,7 @@ const struct ScenePlacement *TunnelRuins_GetPlacements(void) {
 }
 
 /// Walking into the first pair of pillars pushes them along.
-/// Reached by walking into cell code 24 in the first ruins.
+/// Reached by walking into cell code 24 in TunnelRuins1.
 static void Event_PushFirstPillars(void) {
   EV_BEGIN();
   Map_CopyCellAttributes(73, 38, 5, 5, 9, 38);
@@ -448,8 +495,8 @@ static void Event_PushFirstPillars(void) {
 }
 
 /// Walking west into a gap: the leader hops 32 pixels across it.
-/// Reached by walking west into the gaps' cells: codes 23, 31 and 32 in the
-/// first ruins (31 until puddle A is frozen), 26 and 30 in the other ruins.
+/// Reached by walking west into the gaps' cells: codes 23, 31 and 32 in
+/// TunnelRuins1 (31 until puddle A is frozen), 26 and 30 in TunnelRuins2.
 static void Event_HopWest(void) {
   struct FieldPosition target;
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -461,7 +508,7 @@ static void Event_HopWest(void) {
 }
 
 /// Walking into the second pair of pillars pushes them along.
-/// Reached by walking into cell code 26 in the first ruins.
+/// Reached by walking into cell code 26 in TunnelRuins1.
 static void Event_PushSecondPillars(void) {
   EV_BEGIN();
   Map_CopyCellAttributes(93, 30, 6, 5, 29, 30);
@@ -471,16 +518,16 @@ static void Event_PushSecondPillars(void) {
 }
 
 /// Walking south off a ledge: the leader jumps down.
-/// Reached by walking south into cell codes 23 and 27 (first ruins) and 26 (the
-/// other ruins).
+/// Reached by walking south into cell codes 23 and 27 (TunnelRuins1) and 26
+/// (TunnelRuins2).
 static void Event_JumpDownLedge(void) {
   FieldBattleFx_RunRisingObjectSequence(ACTOR_PARTY_LEADER, 6, 0);
 }
 
 /// Walking east into a gap: the leader hops 32 pixels across it.
 /// Reached by walking east into the gaps' cells: codes 27, 29, 31, 32 and 50
-/// in the first ruins, some only until the puddle beside them is frozen, and 30
-/// in the other ruins.
+/// in TunnelRuins1, some only until the puddle beside them is frozen, and 30
+/// in TunnelRuins2.
 static void Event_HopEast(void) {
   struct FieldPosition target;
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
@@ -492,7 +539,7 @@ static void Event_HopEast(void) {
 }
 
 /// Walking into the blocks pushes the one in front along.
-/// Reached by walking into cell code 28 in the first ruins.
+/// Reached by walking into cell code 28 in TunnelRuins1.
 static void Event_PushBlocks(void) {
   EV_BEGIN();
   Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
@@ -504,7 +551,7 @@ static void Event_PushBlocks(void) {
 
 /// Walking south at the blocks: the leader hops a gap if there is one, and
 /// pushes the block in front otherwise.
-/// Reached by walking south into cell code 28 in the first ruins.
+/// Reached by walking south into cell code 28 in TunnelRuins1.
 static void Event_HopSouthOrPushBlocks(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldPosition target;
@@ -565,7 +612,7 @@ static void Event_BlowAwayBushC(void) {
 }
 
 /// Hops west as Event_HopWest, except from cell (32, 50).
-/// Reached by walking west into cell code 50 in the first ruins.
+/// Reached by walking west into cell code 50 in TunnelRuins1.
 static void Event_HopWestUnlessAtCell32x50(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -575,7 +622,7 @@ static void Event_HopWestUnlessAtCell32x50(void) {
 }
 
 /// Hops north as Event_HopNorth, except from cell (30, 52).
-/// Reached by walking north into cell code 50 in the first ruins.
+/// Reached by walking north into cell code 50 in TunnelRuins1.
 static void Event_HopNorthUnlessAtCell30x52(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 
@@ -652,7 +699,7 @@ static void Event_SinkPillarA(void) {
 
 /// Walking into sinking pillar A pushes it, and it sinks if it reaches column
 /// 46 (until FLAG_TUNNEL_RUINS_PILLAR_A_SUNK).
-/// Reached by walking into cell code 29 in the first ruins.
+/// Reached by walking into cell code 29 in TunnelRuins1.
 static void Event_PushSinkingPillarA(void) {
   EV_BEGIN();
   StagedActor_AdvancePair();
@@ -733,7 +780,7 @@ static void Event_SinkPillarB(void) {
 /// Walking into sinking pillar B pushes it, and it sinks if it is soaked and
 /// reaches column 48.
 /// Reached by walking into cell code 30, or east into 32 before Douse has
-/// soaked it, in the first ruins.
+/// soaked it, in TunnelRuins1.
 static void Event_PushSinkingPillarB(void) {
   EV_BEGIN();
   StagedActor_AdvancePair();
@@ -768,11 +815,12 @@ static void Event_FreezePuddleB(void) {
   FLAG_SET(FLAG_SCENE_TEMP_01);
 }
 
-/// Searching the first statue: it speaks to the leader's soul of the lady
-/// whose leave opens the way up Venus Lighthouse, or, once the statue at
-/// Venus Lighthouse has answered (flag 0x982 or 0x983), that the path will not
+/// Searching the statue in TunnelRuins1's first room: it speaks to the
+/// leader's soul of the lady whose leave opens the way up Venus Lighthouse,
+/// or, once the statue in Venus Lighthouse has opened a path
+/// (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH), that the path will not
 /// open here.
-/// Reached by searching cell code 40 in the first ruins.
+/// Reached by searching cell code 40 in TunnelRuins1.
 static void Event_ReadFirstStatue(void) {
   EV_BEGIN();
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -794,7 +842,7 @@ static void Event_MoveDousePillar(void) {
 }
 
 /// Walking into the Douse pillar pushes it along.
-/// Reached by walking into cell code 25 in the other ruins.
+/// Reached by walking into cell code 25 in TunnelRuins2.
 static void Event_PushDousePillar(void) {
   EV_BEGIN();
   StagedActor_AdvancePair();
@@ -1048,7 +1096,7 @@ static void Event_SetBlockOnBalance(void) {
 }
 
 /// Walking into a pushable object pushes it along.
-/// Reached by walking into cell codes 28 and 30 in the other ruins.
+/// Reached by walking into cell codes 28 and 30 in TunnelRuins2.
 static void Event_PushObject(void) {
   EV_BEGIN();
   StagedActor_AdvancePair();
@@ -1079,7 +1127,7 @@ static void Event_MoveEastPillar(void) {
 }
 
 /// Walking into an east pillar pushes it along, and its place is kept.
-/// Reached by walking east into cell code 29 in the other ruins.
+/// Reached by walking east into cell code 29 in TunnelRuins2.
 static void Event_PushEastPillar(void) {
   EV_BEGIN();
   StagedActor_AdvancePair();
@@ -1102,7 +1150,7 @@ static void Event_ShowFalseStatues(void) {
 
 /// At Reveal's phase 5 the two false statues vanish and their cells can be
 /// walked through.
-/// Reached by Reveal's phase 5 anywhere in the other ruins.
+/// Reached by Reveal's phase 5 anywhere in TunnelRuins2.
 static void Event_HideFalseStatues(void) {
   Map_CopyCellAttributes(8, 113, 1, 1, 8, 49);
   Map_CopyCellAttributes(49, 107, 1, 1, 49, 43);
@@ -1112,9 +1160,9 @@ static void Event_HideFalseStatues(void) {
   Actor_SetPosition(ACTOR_FALSE_STATUE_B, 0, 0);
 }
 
-/// Moving a statue of the lady: with all five on their marks (cells (25, 49),
-/// (23, 49), (25, 47), (23, 47) and (24, 48)) the camera turns to the door
-/// as it opens; moving one off again closes it.
+/// Moving one of the five coloured statues in TunnelRuins2: with all five on
+/// their marks (cells (25, 49), (23, 49), (25, 47), (23, 47) and (24, 48)) the
+/// camera turns to the door as it opens; moving one off again closes it.
 /// Reached by Move on any of the five statues, and called by
 /// Event_PushLadyStatue; sets FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN as the door
 /// opens and clears it as it closes.
@@ -1226,8 +1274,9 @@ static void Event_MoveLadyStatue(void) {
   EV_END();
 }
 
-/// Walking into a statue of the lady pushes it along, then checks the door.
-/// Reached by walking into cell code 41 in the other ruins.
+/// Walking into one of the five coloured statues pushes it along, then checks
+/// the door.
+/// Reached by walking into cell code 41 in TunnelRuins2.
 static void Event_PushLadyStatue(void) {
   EV_BEGIN();
   {
@@ -1238,8 +1287,9 @@ static void Event_PushLadyStatue(void) {
   EV_END();
 }
 
-/// Searching the second statue. "The statue seems to speak to your soul..."
-/// Reached by searching cell code 42 in the other ruins.
+/// Searching the statue in TunnelRuins2's room of the five coloured statues.
+/// "The statue seems to speak to your soul..."
+/// Reached by searching cell code 42 in TunnelRuins2.
 static void Event_ReadSecondStatue(void) {
   EV_BEGIN();
   OBJ_MODE(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -1247,15 +1297,15 @@ static void Event_ReadSecondStatue(void) {
   EV_END();
 }
 
-/// Searching the door: it is tightly locked.
-/// Reached by searching cell code 20 in the other ruins.
+/// Searching the door in TunnelRuins2: it is tightly locked.
+/// Reached by searching cell code 20 in TunnelRuins2.
 static void Event_SearchLockedDoor(void) {
   EV_BEGIN();
   Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
   EV_END();
 }
 
-/// The first ruins' events, or the other ruins'.
+/// The events of TunnelRuins1, or of TunnelRuins2 and any other scene.
 const struct SceneEvent *TunnelRuins_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_TunnelRuins1) {
     return gTunnelRuinsEvents1;
@@ -1350,10 +1400,10 @@ static void TunnelRuins_MarkPushPillarCells(void) {
       Object_GetById(ACTOR_EAST_PILLAR_B)->z.fixed >> 20, 1, 1, 0xff);
 }
 
-/// On entering a room: the puzzle as it was left, and the route the statue at
-/// Venus Lighthouse chose (flag 0x982 or 0x983). Retreat leads back to the
-/// first ruins' entrance 1, or from the other ruins' first rooms to Babi
-/// Lighthouse.
+/// On entering a room: the puzzle as it was left, and the path the statue in
+/// Venus Lighthouse opened (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH).
+/// Retreat leads back to TunnelRuins1's entrance 1, or from TunnelRuins2's
+/// entrances 1 to 3 to Babi Lighthouse Entry.
 /// The scene's initialization. Entering rooms 8 to 11 sets flag 0x973.
 /// XXX: no other code of the game reads flag 0x973; a reader elsewhere would
 /// say what it records.

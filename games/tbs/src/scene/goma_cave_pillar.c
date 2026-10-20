@@ -1,5 +1,37 @@
 /// @file
-/// Goma Cave: the room with two pillars, a stump and the Djinni Forge.
+/// Goma Cave (GomaCavePillar, scene 27), the room of two pillars and a stump,
+/// in the cave in the Goma Range that the mayor of Vault tells the party to
+/// pass through on the way to Bilibin.
+///
+/// The party comes in from the cave's first room (goma_cave_waterway.c), and
+/// the room's puzzle is Move on three things. The west pillar slides between
+/// two places a step apart, and the map cells along its track follow it
+/// (FLAG_GOMA_CAVE_WEST_PILLAR_MOVED says which). The stump is pushed a step
+/// at a time; once it reaches the edge at column 25 it teeters, shedding
+/// dust, tips over and falls into the room below (goma_cave_pond.c) with a
+/// crash that shakes the screen, and the cells at the edge change
+/// (FLAG_GOMA_CAVE_STUMP_FELL). The east pillar can also be pushed by walking
+/// into it; when it reaches cell (38, 14) it sinks two pixels into the floor
+/// with a burst of fragments and stays there
+/// (FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE). Arriving by entrance 2 or 3 then
+/// finds it set into the floor underfoot, with the cells along it changed.
+/// All three are place flags, so the room is as it started again once the
+/// party leaves Goma Cave's four scenes. Walking west into a gap (collision
+/// code 20) jumps the leader across it, and a chest holds a Lucky Medal.
+///
+/// Forge, a Mars Djinni, waits here beside a man who once fought it: `Did you
+/// see something strange over there? I fought it, but it fled.` Talking to
+/// Forge makes him jump in surprise, and the Djinni's battle begins. After a
+/// win the room reloads with the Djinni's event still pending, so the man
+/// fidgets on a timer while Forge joins the party; once it has, the timer
+/// raises event 99, and the man is amazed and walks away for good
+/// (FLAG_GOMA_CAVE_WITNESS_LEFT). After a loss or an escape Forge hides until
+/// the room is entered again (flag 0xa8, Forge's flag + 80), and the man says
+/// `Hmmm... It must be hiding somewhere again...`.
+///
+/// Exits 1 and 5 lead back to the first room (its entrances 2 and 3), exits 2
+/// to 4 down to the room below (its entrances 1 to 3). Entrance 99, which no
+/// exit names, replays the stump being pushed to the edge and falling.
 #include "script.h"
 #include "version.h"
 #include "global_cells.h"
@@ -59,8 +91,8 @@ enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 // Shared movement routines stay in their linked order.
 #include "common/object_staged_actor.h"
 
-/// Talking to Forge: the man beside it jumps in surprise, and the battle with
-/// the Djinni begins.
+/// Talking to Forge, a Mars Djinni, in Goma Cave: the man beside it jumps in
+/// surprise, and the battle with the Djinni begins.
 static void Event_FightForge(void) {
   OBJ_EMOTE(WITNESS, EMOTE_IN_FRONT, 0);
   Engine_ActorJump(WITNESS, 2, 0);
@@ -161,8 +193,8 @@ static inline void GomaCavePillar_CopyWestPillarCells(s32 sourceColumn) {
   Map_CopyCellAttributes(sourceColumn, 40, 6, 3, 18, 6);
 }
 
-/// Move on the west pillar: it slides between its two places, and the map
-/// cells follow it.
+/// Move on the west pillar in Goma Cave: it slides between its two places,
+/// and the map cells follow it.
 static void Event_MoveWestPillar(void) {
   struct FieldActor *actor;
   s32 x;
@@ -252,9 +284,9 @@ static void GomaCavePillar_SpawnStumpDust(void) {
 
 s32 gGomaCavePillar_WitnessFrames;
 
-/// Move on the stump: once it is pushed to the edge (column 25), it teeters
-/// shedding dust, tips over and falls into the room below with a crash that
-/// shakes the screen.
+/// Move on the stump in Goma Cave, until it falls (FLAG_GOMA_CAVE_STUMP_FELL):
+/// once it is pushed to the edge (column 25), it teeters shedding dust, tips
+/// over and falls into the room below with a crash that shakes the screen.
 static void Event_PushStumpOver(void) {
   s32 column;
   s32 zero;
@@ -382,14 +414,16 @@ static void GomaCavePillar_SettleEastPillar(void) {
   }
 }
 
-/// Move on the east pillar.
+/// Move on the east pillar in Goma Cave, until it is in its place
+/// (FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE).
 static void Event_MoveEastPillar(void) {
   EV_BEGIN();
   GomaCavePillar_SettleEastPillar();
   EV_END();
 }
 
-/// Walking into the east pillar pushes it a step.
+/// Walking into the east pillar in Goma Cave pushes it a step, until it is in
+/// its place.
 static void Event_PushEastPillar(void) {
   EV_BEGIN();
   StagedActor_AdvancePair();
@@ -397,8 +431,8 @@ static void Event_PushEastPillar(void) {
   EV_END();
 }
 
-/// Walking west at the gap: the leader jumps across it. Later patches use the
-/// shared forward jump.
+/// Walking west into the gap in Goma Cave (collision code 20): the leader
+/// jumps across it. Later patches use the shared forward jump.
 static void Event_JumpGapWest(void) {
 #if TBS_PATCH_1
   Field_TryJumpForward();
@@ -441,8 +475,8 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gGomaCavePillar_Events;
 }
 
-/// While the battle with Forge runs, the man reacts on a timer; once the
-/// Djinni event is over, it raises event 99.
+/// Back from a won battle with Forge, the man reacts on a timer while the
+/// Djinni joins the party; once the Djinni event is over, it raises event 99.
 static void GomaCavePillar_FidgetWhileForgeFights(void) {
   struct EventWork *work;
   s32 frame;
@@ -469,7 +503,9 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
     work->raisedTrigger = 99;
 }
 
-/// Raised once Forge is caught: the man is amazed, then walks off.
+/// Raised in Goma Cave once Forge has joined the party: the man who fought it
+/// is amazed, `You got it? Wow, that's pretty impressive!`, then walks off for
+/// good.
 static void Event_WitnessCheersForgeCaught(void) {
   Engine_TaskRemoveCallback(GomaCavePillar_FidgetWhileForgeFights);
   EV_BEGIN();
@@ -491,8 +527,9 @@ static void Event_WitnessCheersForgeCaught(void) {
   EV_END();
 }
 
-/// Puts the pillars and the stump where the party left them. Entrance 99 shows
-/// the stump falling again; after a Djinni battle, the man's reaction starts.
+/// Sets up the room as the party enters: the pillars and the stump where the
+/// party left them. Entrance 99 shows the stump falling again; after a won
+/// battle with Forge, the man's reaction starts.
 s32 Scene_Initialize(void) {
   struct FieldActor *actor;
   struct EventWork *work;

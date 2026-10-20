@@ -18,7 +18,7 @@ extern s16 gImil_KeyHeadings[];
 extern s16 gImil_SwayHeadings[];
 extern s32 gImil_ColdVillagerScript[];
 extern s32 gImil_ShiverScript[];
-extern s32 gImil_CaretakerHurryScript[];
+extern s32 gImil_OldWomanHurryScript[];
 extern s32 gImil_LeaderStepAsideScript[];
 extern s32 gImil_BobScript[];
 extern s32 gImil_SparkScript[];

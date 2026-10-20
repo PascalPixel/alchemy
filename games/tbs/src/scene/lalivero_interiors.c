@@ -1,8 +1,36 @@
 /// @file
-/// Lalivero's buildings, on two maps. The first holds the shops, the sanctum
-/// and the houses along the streets; the second holds Faran's house and the
-/// inn, where the party reports to Faran after Venus Lighthouse and Iodem asks
-/// them to meet him outside.
+/// Lalivero's buildings, in two scenes with the area name Lalivero: the town
+/// whose master, Faran, raised Sheba, the girl Lalivero received from the sky.
+///
+/// Where they fall in the story: when the party first comes to Lalivero,
+/// Sheba has been taken hostage and Faran has followed her captors into the
+/// ruins; the town talks of little else, and of the lighthouse Babi is
+/// building. The party comes back from Venus Lighthouse by the Lighthouse
+/// Aerie's way down (entrance 90, which sets
+/// FLAG_RETURNED_FROM_VENUS_LIGHTHOUSE), and from then on each scene reads its
+/// "after" tables: the people speak of the rough seas since the beacon was lit
+/// and of the search for Sheba, who fell from the lighthouse into the sea.
+///
+/// - LaliveroInteriors1 (scene 179): the houses, three shops and the Sanctum,
+///   whose area name is Lalivero Sanctum by entrances 11 and 12. Shopkeepers
+///   trade across their counters (shops 32 to 34) and the priest offers the
+///   Sanctum's services; entering the Sanctum by entrance 12 makes it the place
+///   a defeated party wakes. Barrels hold a Lucky Medal and an Antidote. The
+///   doors lead back out into Lalivero (lalivero.c, scene 178).
+/// - LaliveroInteriors2 (scene 180): Faran's house, the inn, and the way out to
+///   the edge of town where Babi's ship lies (exit 31, the Lemurian ship's
+///   entrance 1). Before Venus Lighthouse, Faran's household waits for news,
+///   and a maid too worried about Sheba to work apologizes once
+///   (FLAG_MAID_APOLOGIZED) and goes back to her chores. Back from the
+///   lighthouse, entrance 99 runs the report (ReportToFaran): Faran and Iodem
+///   have found no sign of Sheba; the party tells what became of Jenna and the
+///   others, in one of two versions by whether they saw the ship from the
+///   lighthouse (FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE), and will go on searching
+///   for Jenna; Faran is sure Sheba lived, Iodem tells him what an Adept is,
+///   and Faran sends them off. Stepping on trigger 51 afterwards, Iodem asks
+///   the party to wait for him outside Faran's house
+///   (FLAG_IODEM_ASKED_TO_MEET), where he gives them the Black Orb
+///   (lalivero.c).
 
 #include "script.h"
 #include "game_state.h"
@@ -32,7 +60,7 @@
 #include "objcmd.h"
 #include "songs.h"
 #include "flags.h"
-static void TellFaranAboutFelix(void);
+static void TellFaranAboutJenna(void);
 
 enum {
   /// Stepping into the sanctum makes it where a defeated party wakes.
@@ -45,12 +73,12 @@ enum {
 
 /// The actors this scene's code moves, by their place in the placement tables.
 enum {
-  /// In Faran's house.
+  /// In Faran's house and the inn (LaliveroInteriors2).
   FARAN = 11,
   IODEM = 12,
   INNKEEPER = 13,
   MAID = 14,
-  // In the shops and the sanctum.
+  // In the shops and the Sanctum (LaliveroInteriors1).
   SHOPKEEPER_32 = 18, ///< runs shop 32
   SHOPKEEPER_33 = 19,
   SHOPKEEPER_34 = 20,
@@ -66,7 +94,7 @@ enum { FLAG_MAID_APOLOGIZED = 0x300 };
 /// party talks across it.
 #define ACTOR_BEHIND_COUNTER 4
 
-/// The maid sighs between chores.
+/// LaliveroInteriors2: the maid sighs between chores.
 static s32 Maid_Sigh(struct ScriptInterpreter *interpreter) {
   Actor_SetAttachedEffect(MAID, EMOTE_IN_FRONT | 2);
   return 0;
@@ -85,7 +113,7 @@ const struct SceneRegion *LaliveroInteriors_GetRegions(void) {
 
 const u32 *LaliveroInteriors_GetExits(void) { return gLaliveroExits; }
 
-/// The people of each map; Faran's house fills up after Venus Lighthouse.
+/// The people of each scene; Faran's house fills up after Venus Lighthouse.
 const struct ScenePlacement *LaliveroInteriors_GetPlacements(void) {
   if (gGameState.scene == (s32)&SceneId_LaliveroInteriors2) {
     // Faran's house and the inn.
@@ -104,8 +132,10 @@ static inline u16 Leader_GetSide(void) {
   return (Object_GetById(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
 }
 
-/// A shopkeeper across the counter opens shop 32; from elsewhere they talk
-/// about Sheba, asking whether the party will go after her.
+/// Lalivero (LaliveroInteriors1): a shopkeeper across the counter opens shop
+/// 32; from elsewhere, before Venus Lighthouse, they ask whether the party has
+/// heard that Sheba was taken hostage and Faran went after her, and after it
+/// tell of the rough sea.
 static void TalkToShopkeeper32(s32 keeper) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   // Leader_GetSide's rounding, written with the mask 0xc000, which
@@ -132,7 +162,8 @@ static void TalkToShopkeeper32(s32 keeper) {
   }
 }
 
-/// Shop 33 across the counter; otherwise small talk.
+/// Lalivero (LaliveroInteriors1): shop 33 across the counter; otherwise small
+/// talk.
 static void TalkToShopkeeper33(s32 keeper) {
   if (Leader_GetSide() == FACING_NORTH) {
     Shop_Run(33, keeper);
@@ -145,7 +176,8 @@ static void TalkToShopkeeper33(s32 keeper) {
   }
 }
 
-/// Shop 34 across the counter; otherwise small talk.
+/// Lalivero (LaliveroInteriors1): shop 34 across the counter; otherwise small
+/// talk.
 static void TalkToShopkeeper34(s32 keeper) {
   if (Leader_GetSide() == FACING_NORTH) {
     Shop_Run(34, keeper);
@@ -158,7 +190,8 @@ static void TalkToShopkeeper34(s32 keeper) {
   }
 }
 
-/// The sanctum's services across the counter; otherwise small talk.
+/// Lalivero Sanctum: the priest offers the Sanctum's services across the
+/// counter; otherwise small talk of Babi's lighthouse.
 static void TalkToPriest(s32 priest) {
   if (Leader_GetSide() == FACING_NORTH) {
     Shop_ConfirmAct(priest);
@@ -171,7 +204,8 @@ static void TalkToPriest(s32 priest) {
   }
 }
 
-/// A room for the night across the counter (inn 11); otherwise small talk.
+/// Lalivero (LaliveroInteriors2), the inn: a room for the night across the
+/// counter (inn 11); otherwise small talk.
 static void TalkToInnkeeper(s32 innkeeper) {
   if (Leader_GetSide() == FACING_NORTH) {
     Inn_CheckIn(11, innkeeper);
@@ -184,9 +218,9 @@ static void TalkToInnkeeper(s32 innkeeper) {
   }
 }
 
-/// The maid stops her chores to apologize: worry for Sheba keeps her from
-/// concentrating. A leader standing west of her steps aside to the south
-/// before she starts again.
+/// Lalivero (LaliveroInteriors2), before Venus Lighthouse: the maid stops her
+/// chores to apologize: worry for Sheba keeps her from concentrating. A leader
+/// standing west of her steps aside to the south before she starts again.
 static void TalkToMaid(void) {
   s16 side;
 
@@ -220,8 +254,8 @@ static void TalkToMaid(void) {
   Engine_EventEnd();
 }
 
-/// Trigger 51 in Faran's house after the report: the camera finds Iodem, who
-/// asks the party to wait for him outside.
+/// Lalivero (LaliveroInteriors2), trigger 51 in Faran's house after the
+/// report: the camera finds Iodem, who asks the party to wait for him outside.
 static void IodemCallsOut(void) {
 
   Engine_GameFlagSet(FLAG_IODEM_ASKED_TO_MEET);
@@ -241,7 +275,8 @@ static void IodemCallsOut(void) {
   Engine_EventEnd();
 }
 
-/// Iodem, talked to before he has given the Black Orb, repeats his request.
+/// Lalivero (LaliveroInteriors2): Iodem, talked to before he has given the
+/// Black Orb, repeats his request.
 static void TalkToIodem(void) {
 
   Engine_GameFlagSet(FLAG_IODEM_ASKED_TO_MEET);
@@ -249,7 +284,8 @@ static void TalkToIodem(void) {
   Engine_EventShowMessage(IODEM, 0);
 }
 
-/// A doorway out: take the touched trigger's exit with the exit sound.
+/// Both scenes, a doorway out: take the touched trigger's exit with the exit
+/// sound.
 static void LeaveBuilding(void) {
   struct EventWork *work = gEventWork;
   s16 *trigger = (s16 *)&work->touchedTrigger;
@@ -258,7 +294,7 @@ static void LeaveBuilding(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
 }
 
-/// What the party can talk to, touch and search on each map, before and
+/// What the party can talk to, touch and search in each scene, before and
 /// after Venus Lighthouse.
 const struct SceneEvent *LaliveroInteriors_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_LaliveroInteriors2) {
@@ -273,9 +309,10 @@ const struct SceneEvent *LaliveroInteriors_GetEvents(void) {
   return gLaliveroEvents;
 }
 
-/// Back from Venus Lighthouse, the party reports to Faran with Iodem: no sign
-/// of Sheba or of Felix, Faran's faith that Sheba lived, what an Adept is,
-/// and a farewell as the party sets out after Felix.
+/// Lalivero (LaliveroInteriors2), entrance 99 back from Venus Lighthouse: the
+/// party reports to Faran and Iodem. No sign of Sheba, nor of Jenna and the
+/// others; Faran's faith that Sheba lived, what an Adept is, and a farewell as
+/// the party sets out to search for Jenna.
 static void ReportToFaran(void) {
   struct FieldActor *leader;
 
@@ -329,10 +366,10 @@ static void ReportToFaran(void) {
   Engine_EventWait(10);
   Actor_ShowEmote(FARAN, EMOTE_IN_FRONT | 5, 50);
   Engine_EventShowMessage(FARAN, 0);
-  // The party tells what became of Felix; the version that saw the ship from
-  // the lighthouse knows Idejima was swept away with it.
+  // The party tells what became of Jenna and the others; the version that saw
+  // the ship from the lighthouse knows Idejima was swept away with it.
   if (GameFlag_IsSet(FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE) == 0) {
-    TellFaranAboutFelix();
+    TellFaranAboutJenna();
   } else {
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(FARAN, 2);
@@ -609,9 +646,10 @@ static void ReportToFaran(void) {
   Engine_EventEnd();
 }
 
-/// The party tells Faran and Iodem what became of Felix, when it did not
-/// see the ship from the lighthouse.
-static void TellFaranAboutFelix(void) {
+/// The party tells Faran and Iodem what became of Jenna and the others, when
+/// it did not see the ship from the lighthouse: Felix said he sent Jenna
+/// ahead to the ship.
+static void TellFaranAboutJenna(void) {
   Engine_EventSetMessage(MsgLaliveroTellOthers);
   Engine_EventWait(20);
 
@@ -671,8 +709,8 @@ static void TellFaranAboutFelix(void) {
   Engine_EventOpenMessage(IVAN | SPEAKER_PORTRAIT_RIGHT, 0);
 }
 
-/// Sets the maps up as the party enters: shopkeepers and the innkeeper
-/// behind their counters, the sanctum as the place to wake after a defeat,
+/// Sets both scenes up as the party enters: shopkeepers and the innkeeper
+/// behind their counters, the Sanctum as the place to wake after a defeat,
 /// the maid back at her chores, and the report to Faran on coming back from
 /// Venus Lighthouse.
 s32 Scene_Initialize(void) {

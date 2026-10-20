@@ -1,7 +1,63 @@
 /// @file
-/// Imil, in two maps: the town and its interiors. The townspeople are sick
-/// until the epidemic is cured (flag 0x881); Mia heals the old man, and the
-/// cold villager waits for her.
+/// Imil, the snowbound village north of the Goma Range, near the lighthouse
+/// that long ago held the Water of Hermes, and its houses and Sanctum.
+/// Mia, the healer the party meets here, is of the Mercury Clan, who once
+/// lived in Imil and guarded the lighthouse; she is the last of them.
+///
+/// An epidemic has struck the village. Until the party has beaten Saturos at
+/// Mercury Lighthouse (FLAG_SATUROS_BEATEN_AT_MERCURY), by which time the
+/// lighthouse is lit and the fountain at its foot flows again, the villagers
+/// are sick or waiting for Mia; afterwards both scenes take their cured
+/// placements and lines, and the villagers talk of Mia leaving with the
+/// party. Some lines also change while she travels with them
+/// (FLAG_IN_PARTY(MIA)).
+///
+/// - Imil (Imil1, scene 50), the village. A man shivers and sneezes in the
+///   snow, waiting for Mia, and a child counts out his exercises against the
+///   cold. Six doors (triggers 51 to 56) open into the houses, the shops, the
+///   inn and the Sanctum (scene 51), exits 11 and 12 lead out to the world
+///   map, and the way north (trigger 4) leads into Imil Falls Cave; coming
+///   back out of it (entrance 9) the leader walks down into the village. Two
+///   callbacks run while the party is here: one makes puffs rise at five
+///   places, staggered over each second, and one sets the map layer the
+///   leader walks on from where he stands (layer 0 near the middle of the
+///   village, layer 1 elsewhere). Stepping onto ice (collision code 90)
+///   slides the leader in the held direction, turning toward it as he goes,
+///   until a blocked cell or one too high stops him. Move pushes the snowman,
+///   which stays where it lands at cell (15, 7) for the rest of the visit
+///   (a temporary flag). Searching finds 9 coins, a Vial and a Lucky Medal.
+/// - Imil (Imil2, scene 51), inside the houses, the shops and the inn; by
+///   entrance 7 the same scene is the Imil Sanctum. While the epidemic lasts
+///   the weapon and armor sellers are sick: searching their counters pans the
+///   camera to them, and they say the shop is closed. The item seller's
+///   daughter minds that shop for her mother. In the Sanctum Mia's two
+///   apprentices keep her place: one offers healing across the counter, the
+///   first time saying she can act as the party's healer
+///   (FLAG_IMIL_APPRENTICE_OFFERED_HEALING), and the other asks whether the
+///   party has visited the old couple who live near the entrance of town,
+///   where Mia went (FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE). In the old couple's
+///   house (entrance 1) the old man moans for help, and talking to him sends
+///   his wife hurrying to fetch Mia. Either sets flag 0x82c, which changes the
+///   couple's lines and where they stand.
+///
+///   Mia's healing is this scene's first scripted sequence. Entering the old
+///   couple's house once the apprentice has told the party where Mia went,
+///   before they have met her, finds her at the old man's bedside: she heals
+///   him with Ply, asks who the party are, and the Mercury Lighthouse flashes.
+///   `Was that... the lighthouse?` She runs out, and the party follows her
+///   (FLAG_IMIL_MET_MIA); at the lighthouse she goes on with them. Afterwards
+///   the old man lies in bed feeling much better, and talking or Mind Read
+///   across the bed (actor 10) reaches him.
+///
+///   Once Saturos is beaten the sellers are well and open their shops across
+///   the counters. The second sequence is Mia's farewell, the first time the
+///   party then enters the Sanctum (FLAG_IMIL_MIA_SAID_FAREWELL): her
+///   apprentices tell her the lighthouse has been lit, and Mia tells them she
+///   will join Isaac's quest to protect the world. They promise to protect
+///   Imil themselves, as members of the Mercury Clan, and she leaves the
+///   village in their hands, Megan and Justin. Searching finds an Empty
+///   Bottle, a Sleep Bomb and Lucky Pepper, the last first from the oven with
+///   the stew.
 
 #include "script.h"
 #include "animspr.h"
@@ -46,32 +102,37 @@
 #include "character_ids.h"
 #include "songs.h"
 
-/// Imil's two maps share actor numbers; each is named on the map it is proved.
+/// Imil's two scenes share actor numbers; each is named in the scene it is
+/// proved.
 enum ImilActor {
-  // Town
+  // The village (Imil1)
   ACTOR_COLD_VILLAGER = 8, ///< shivering and sneezing in the snow
   ACTOR_GREETER = 9,
   ACTOR_COUNTING_CHILD = 10,
   ACTOR_SNOWMAN = 11,
-  // Interiors
+  // The houses and the Sanctum (Imil2)
   ACTOR_OLD_WOMAN = 8, ///< the old couple's house
   ACTOR_OLD_MAN = 9,
+  /// Beside the old man's bed: once Mia has healed him, talking or Mind Read
+  /// here reaches him.
+  ACTOR_OLD_MAN_BEDSIDE = 10,
   ACTOR_WEAPON_MERCHANT = 12,
   ACTOR_ARMOR_MERCHANT = 13,
   ACTOR_ITEM_SHOP_CHILD = 14, ///< minds the shop while the mother is sick
   ACTOR_ITEM_MERCHANT = 15,
   ACTOR_INNKEEPER = 16,
   ACTOR_RESTAURANT_OWNER = 18,
-  ACTOR_APPRENTICE = 19, ///< Mia's apprentices, the first in the sanctum
+  ACTOR_APPRENTICE = 19, ///< Mia's apprentices; the first keeps the Sanctum
   ACTOR_SECOND_APPRENTICE = 20
 };
 
-/// The town's own flags, kept while the party is there.
+/// The village's own temporary flags, which last until the party leaves the
+/// scene.
 enum ImilTownFlag {
   /// Which map layer the leader walks on, from where he stands.
   FLAG_IMIL_MAP_LAYER_0 = FLAG_SCENE_TEMP_00,
   FLAG_IMIL_MAP_LAYER_1 = FLAG_SCENE_TEMP_01,
-  FLAG_IMIL_SNOWMAN_ON_CHIMNEY = FLAG_SCENE_TEMP_03
+  FLAG_IMIL_SNOWMAN_MOVED = FLAG_SCENE_TEMP_03
 };
 
 // Keep native call forms while UBFIX uses the declared void contracts.
@@ -85,8 +146,8 @@ static void Imil_MeetMiaAtOldCouplesHouse(void);
 static void Imil_MiaCastsPlyOnOldMan(void);
 static void Imil_SpawnAmbientEffects(void);
 static void Imil_UpdateMapLayerByLeaderPosition(void);
-static void Imil_MoveSnowmanToChimney(void);
-static void Imil_ShowFirstArrival(void);
+static void Imil_PlaceMovedSnowman(void);
+static void Imil_ArriveFromFallsCave(void);
 static void Imil_MiaSaysFarewellToApprentices(void);
 static void Imil_RunIceSlide(void);
 
@@ -125,7 +186,7 @@ static s32 Imil_UpdateShiver(struct ScriptInterpreter *interpreter) {
 
 #include "common/object_facing.h"
 
-/// Imil is two maps: the town and its interiors.
+/// Imil is two scenes: the village, and its houses and Sanctum.
 const struct SceneEntrance *Imil_GetEntrances(void) {
   if (gGameState.scene == (s32)&SceneId_Imil2) {
     return gImil_InteriorEntrances;
@@ -137,8 +198,8 @@ const struct SceneRegion *Imil_GetRegions(void) { return NULL; }
 
 const u32 *Imil_GetExits(void) { return gImil_Exits; }
 
-/// Once the epidemic is cured (flag 0x881), the townspeople are well again and
-/// the old man is up and about.
+/// Once Saturos is beaten at Mercury Lighthouse, the villagers are well again
+/// and the old man is up and about.
 const struct ScenePlacement *Imil_GetPlacements(void) {
   struct ScenePlacement *script;
 
@@ -162,10 +223,11 @@ const struct ScenePlacement *Imil_GetPlacements(void) {
   return gImil_TownPlacements;
 }
 
-/// Stepping onto the ice starts a slide.
+/// Stepping onto the ice in Imil (collision code 90) starts a slide.
 static void Imil_StartIceSlide(void) { Imil_RunIceSlide(); }
 
-/// The town's or the interiors' conversations and Psynergy targets.
+/// The village's, or the houses' and the Sanctum's, conversations and
+/// Psynergy targets.
 const struct SceneEvent *Imil_GetEvents(void) {
   if (gGameState.scene == (s32)&SceneId_Imil2) {
     return gImil_InteriorEvents;
@@ -173,8 +235,9 @@ const struct SceneEvent *Imil_GetEvents(void) {
   return gImil_TownEvents;
 }
 
-/// The cold villager sneezes and shivers, waiting for Mia; once she travels
-/// with the party (flag 3), he says that even her healing can't help them all.
+/// In Imil, until Saturos is beaten at Mercury Lighthouse: the cold villager
+/// sneezes and shivers, waiting for Mia; once she travels with the party, he
+/// says that even her healing can't help them all.
 static void Imil_TalkToColdVillager(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
@@ -190,8 +253,9 @@ static void Imil_TalkToColdVillager(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read on the cold villager: Mia should be here by now, or, once she
-/// has joined the party, he can't understand why she left.
+/// Mind Read on the cold villager in Imil, until Saturos is beaten: Mia should
+/// be here by now, or, once she has joined the party, he can't understand why
+/// anyone would exercise in the cold.
 static void Imil_ReadColdVillagerMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
@@ -203,7 +267,8 @@ static void Imil_ReadColdVillagerMind(void) {
   Engine_EventEnd();
 }
 
-/// A villager turns to the leader and asks whether he is new in Imil.
+/// A villager in Imil, until Saturos is beaten, turns to the leader and asks
+/// whether he is new in Imil.
 static void Imil_GreetVisitor(void) {
   Engine_EventBegin();
   Engine_ActorFaceActor(ACTOR_GREETER, ACTOR_PARTY_LEADER, 10);
@@ -212,8 +277,9 @@ static void Imil_GreetVisitor(void) {
   Engine_EventEnd();
 }
 
-/// The counting child stops, turns to the leader and goes back to
-/// counting.
+/// The counting child in Imil stops his exercises, turns to the leader and
+/// goes back to counting; once Saturos is beaten, he wonders what he trained
+/// so hard for.
 static void Imil_TalkToCountingChild(void) {
   Engine_EventBegin();
 
@@ -246,9 +312,10 @@ static void Imil_TalkToCountingChild(void) {
   Engine_EventEnd();
 }
 
-/// The old man moans for help until the old woman hurries to fetch Mia; after
-/// Mia's healing he feels much better, and once the town is cured he asks
-/// whether the party really thought he would die.
+/// The old man in the old couple's house moans for help, and his wife hurries
+/// to fetch Mia (flag 0x82c); after Mia's healing he feels much better, and
+/// once Saturos is beaten he asks whether the party really thought he would
+/// die.
 static void Imil_TalkToOldMan(void) {
 
   struct FieldActor *oldMan;
@@ -285,7 +352,7 @@ static void Imil_TalkToOldMan(void) {
       Event_ShowMessageAndWait(ACTOR_OLD_WOMAN, 0, 20);
       Actor_SetActionScript(ACTOR_PARTY_LEADER, gImil_LeaderStepAsideScript);
       Actor_SetSpeed(ACTOR_OLD_WOMAN, PIXELS(8) / 5, PIXELS(4) / 5);
-      Actor_RunActionScriptAndWait(ACTOR_OLD_WOMAN, gImil_CaretakerHurryScript);
+      Actor_RunActionScriptAndWait(ACTOR_OLD_WOMAN, gImil_OldWomanHurryScript);
       Engine_EventWait(40);
       Engine_ActorJump(ACTOR_OLD_WOMAN, 2, 0);
       Engine_ActorStartRepeatedMotion(ACTOR_OLD_WOMAN, 2);
@@ -303,8 +370,9 @@ static void Imil_TalkToOldMan(void) {
   }
 }
 
-/// Once the epidemic is cured, the weapon merchant asks whether the party
-/// wants weapons.
+/// Talking to the weapon seller of Imil, until Saturos is beaten: he asks
+/// whether the party wants weapons, cannot sell them until he is cured, and
+/// blames the travellers from the south for the disease.
 static void Imil_AskAboutWeapons(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MSGNO(MsgImilDoWantWeapons));
@@ -312,7 +380,7 @@ static void Imil_AskAboutWeapons(void) {
   Engine_EventEnd();
 }
 
-/// Once the epidemic is cured, the restaurant owner offers the menu.
+/// The restaurant owner of Imil, until Saturos is beaten, offers the menu.
 static void Imil_AskAboutRestaurantMenu(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MSGNO(MsgImilDoWantSeeRestaurantMenu));
@@ -320,8 +388,10 @@ static void Imil_AskAboutRestaurantMenu(void) {
   Engine_EventEnd();
 }
 
-/// Mia's second apprentice asks whether the party has visited the old couple,
-/// where Mia went; once Mia has joined, she says everyone counts on her.
+/// Mia's second apprentice, in the Imil Sanctum until Saturos is beaten, asks
+/// whether the party has visited the old couple, where Mia went
+/// (FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE, and flag 0x82c); once Mia has joined
+/// the party, she says everyone counts on her.
 static void Imil_TalkToSecondApprentice(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
@@ -336,8 +406,8 @@ static void Imil_TalkToSecondApprentice(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read on the second apprentice: Mia had a bad feeling, or, once she has
-/// joined, they must help her.
+/// Mind Read on the second apprentice in the Imil Sanctum, until Saturos is
+/// beaten: Mia had a bad feeling, or, once she has joined, they must help her.
 static void Imil_ReadSecondApprenticeMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
@@ -349,8 +419,8 @@ static void Imil_ReadSecondApprenticeMind(void) {
   Engine_EventEnd();
 }
 
-/// Once the epidemic is cured, the old woman asks what happened at the
-/// lighthouse.
+/// The old woman of the old couple's house, after Mia's healing and until
+/// Saturos is beaten, asks what happened at the lighthouse.
 static void Imil_TalkToOldWoman(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MSGNO(MsgImilHappenedInLighthouseNortheast));
@@ -359,8 +429,9 @@ static void Imil_TalkToOldWoman(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read on the old woman: about Mia's clan, her husband's exaggerating,
-/// or Mia running all over town.
+/// Mind Read on the old woman of the old couple's house, until Saturos is
+/// beaten: about Mia's clan, her husband's exaggerating, or Mia running all
+/// over town.
 static void Imil_ReadOldWomanMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_IMIL_MET_MIA) != 0) {
@@ -374,19 +445,22 @@ static void Imil_ReadOldWomanMind(void) {
   Engine_EventEnd();
 }
 
-/// After Mia's visit, speaking across the bed reaches the old man.
+/// After Mia's visit, speaking across the bed in the old couple's house
+/// reaches the old man.
 static void Imil_TalkToOldManInBed(void) { Imil_TalkToOldMan(); }
 
-/// Mind Read on the counting child: admiration for Mia.
-static void Imil_ReadCountingChildMind(void) {
+/// After Mia's visit, Mind Read across the bed in the old couple's house
+/// reaches the old man: he admires Mia, and wishes he had a daughter like her.
+static void Imil_ReadOldManInBedMind(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MSGNO(MsgImilMiaIsAGoodGirlI));
-  Engine_EventShowMessage(ACTOR_COUNTING_CHILD, 0);
+  Engine_EventShowMessage(ACTOR_OLD_MAN_BEDSIDE, 0);
   Engine_EventEnd();
 }
 
-/// Mind Read on Mia's apprentice: she will do her best, or, once Mia has
-/// joined, she feels grown up.
+/// Mind Read on Mia's apprentice in the Imil Sanctum, until Saturos is beaten:
+/// she thinks the party are not bad people, or, once Mia has joined, she feels
+/// grown up serving as a healer.
 static void Imil_ReadApprenticeMind(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
@@ -398,8 +472,9 @@ static void Imil_ReadApprenticeMind(void) {
   Engine_EventEnd();
 }
 
-/// Walking north into a door, everyone stops, the door opens and the leader
-/// walks in; door 6 has its own sound and a slower walk.
+/// Walking north into one of Imil's six doors (triggers 51 to 56): everyone
+/// stops, the door opens and the leader walks in; the Sanctum's door (6) has
+/// its own sound and a slower walk.
 static void Imil_OpenDoorAndExit(void) {
   struct EventWork *event;
   struct FieldActor *actor;
@@ -442,8 +517,10 @@ static void Imil_OpenDoorAndExit(void) {
   Engine_EventEnd();
 }
 
-/// Across the counter, the leader facing north, the weapon shop opens once the
-/// town is cured; before, the sick merchant says the shop is closed.
+/// Imil's weapon shop. Once Saturos is beaten, talking to the seller across
+/// the counter, the leader facing north, opens the shop, and from elsewhere he
+/// is eager for business. Before, searching the counter from the same side
+/// pans the camera to him, sick, and he says the shop is closed.
 static void Imil_TalkToWeaponMerchant(void) {
   s32 facing;
 
@@ -477,8 +554,9 @@ static void Imil_TalkToWeaponMerchant(void) {
   }
 }
 
-/// Across the counter, the leader facing north, the armor shop opens once the
-/// town is cured; before, the merchant is too sick for business.
+/// Imil's armor shop, as the weapon shop: once Saturos is beaten the seller
+/// opens across the counter; before, searching the counter pans to him, too
+/// sick for business.
 static void Imil_TalkToArmorMerchant(void) {
   s32 facing;
 
@@ -512,9 +590,9 @@ static void Imil_TalkToArmorMerchant(void) {
   }
 }
 
-/// The item shop: once the town is cured the mother sells again; before, her
-/// child minds the counter while she is sick, or talks of the lumberjack
-/// father.
+/// Imil's item shop: once Saturos is beaten the mother sells again; before,
+/// her daughter minds the counter while she is sick, or, away from it, talks
+/// of her father, a lumberjack working in Kolima.
 static void Imil_TalkToItemMerchant(void) {
   s32 facing;
 
@@ -550,8 +628,9 @@ static void Imil_TalkToItemMerchant(void) {
   }
 }
 
-/// Across the counter, the leader facing north, the inn opens; otherwise the
-/// innkeeper talks of the two groups of travellers, or of the party's leaving.
+/// Across the counter of Imil's inn, the leader facing north, the inn opens;
+/// otherwise the innkeeper wonders why two groups of travellers came through
+/// the snow, or, once Saturos is beaten, talks of the party's leaving.
 static void Imil_TalkToInnkeeper(void) {
   struct FieldActor *leader;
 
@@ -573,9 +652,9 @@ static void Imil_TalkToInnkeeper(void) {
   }
 }
 
-/// Across the counter, the leader facing north, Mia's apprentice offers the
-/// sanctum, the first time saying she can act as healer; otherwise she talks of
-/// Mia.
+/// Across the counter of the Imil Sanctum, the leader facing north, Mia's
+/// apprentice offers the Sanctum, the first time saying she can act as healer;
+/// otherwise she talks of Mia.
 static void Imil_TalkToApprentice(void) {
   struct FieldActor *leader;
 
@@ -606,8 +685,10 @@ static void Imil_TalkToApprentice(void) {
   }
 }
 
-/// The town gets its rising effects, map layers and snowman, and the first
-/// arrival walks in; each interior restores its people for the town's state.
+/// Sets up the scene as the party enters. The village gets its rising puffs,
+/// map layers and snowman, and coming from Imil Falls Cave the leader walks
+/// in; inside, each room restores its people for the village's state, and the
+/// old couple's house and the Sanctum start Mia's healing and her farewell.
 s32 Imil_Initialize(void) {
   struct FieldActor *leader;
   s32 entrance;
@@ -626,12 +707,12 @@ s32 Imil_Initialize(void) {
     FieldScheduler_AddCallback(Imil_UpdateMapLayerByLeaderPosition,
                                TASK_PRIORITY_SCENE);
     Engine_ActorSetSpritePriority(ACTOR_SNOWMAN, 1);
-    if (Engine_GameFlagIsSet(FLAG_IMIL_SNOWMAN_ON_CHIMNEY)) {
-      Imil_MoveSnowmanToChimney();
+    if (Engine_GameFlagIsSet(FLAG_IMIL_SNOWMAN_MOVED)) {
+      Imil_PlaceMovedSnowman();
     }
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) &&
         gGameState.entrance == 9) {
-      Imil_ShowFirstArrival();
+      Imil_ArriveFromFallsCave();
     }
   } else if (gGameState.scene == (s32)&SceneId_Imil2) {
     // Restore each interior's occupants before running its arrival event.
@@ -730,9 +811,9 @@ s32 Imil_Initialize(void) {
   return 0;
 }
 
-/// After hearing where Mia went, the party finds her at the old couple's
-/// house. She heals the old man with Ply when the Mercury Lighthouse flashes;
-/// Mia runs out and the party follows her.
+/// Mia's healing, in the old couple's house in Imil: after hearing where Mia
+/// went, the party finds her at the old man's bedside. She heals him with Ply,
+/// the Mercury Lighthouse flashes, and Mia runs out; the party follows her.
 static void Imil_MeetMiaAtOldCouplesHouse(void) {
   struct FieldActor *leader;
   const s32 *table;
@@ -1018,7 +1099,7 @@ static inline void Imil_StartRisingEffect(union FieldObject *object) {
   }
 }
 
-/// Effects rise at five places in the town, staggered over each second.
+/// Puffs rise at five places in Imil, staggered over each second.
 static void Imil_SpawnAmbientEffects(void) {
   // volatile: the type of &gFrameCount (tagged in frame.h); the six editions
   // build the same bytes without it
@@ -1053,8 +1134,8 @@ static void Imil_SpawnAmbientEffects(void) {
   }
 }
 
-/// The leader walks on map layer 0 near the middle of town and on layer 1
-/// elsewhere.
+/// In Imil the leader walks on map layer 0 near the middle of the village and
+/// on layer 1 elsewhere.
 static void Imil_UpdateMapLayerByLeaderPosition(void) {
   struct FieldActor *actor;
   s32 x;
@@ -1096,8 +1177,11 @@ static void Imil_UpdateMapLayerByLeaderPosition(void) {
   return;
 }
 
-/// Moved onto the chimney, the snowman stays there and blocks its cell.
-static void Imil_MoveSnowmanToChimney(void) {
+/// Move on Imil's snowman, while the leader walks on map layer 1: once it is
+/// at cell (15, 7) it stays there for the rest of the visit, and that cell
+/// takes the attributes of the cell north of it. Before patch 3 any Move on
+/// it does so, wherever it stops.
+static void Imil_PlaceMovedSnowman(void) {
   s32 a;
   s32 b;
 
@@ -1110,10 +1194,10 @@ static void Imil_MoveSnowmanToChimney(void) {
   b = actor->z.fixed >> 20;
   if (b != 7)
     return;
-  Engine_GameFlagSet(FLAG_IMIL_SNOWMAN_ON_CHIMNEY);
+  Engine_GameFlagSet(FLAG_IMIL_SNOWMAN_MOVED);
   Engine_ActorSetSpritePriority(ACTOR_SNOWMAN, 3);
 #else
-  Engine_GameFlagSet(FLAG_IMIL_SNOWMAN_ON_CHIMNEY);
+  Engine_GameFlagSet(FLAG_IMIL_SNOWMAN_MOVED);
   Engine_ActorSetSpritePriority(ACTOR_SNOWMAN, 3);
   a = 15;
   b = 7;
@@ -1121,7 +1205,8 @@ static void Imil_MoveSnowmanToChimney(void) {
   Map_CopyCellAttributes(15, 6, 1, 1, a, b);
 }
 
-/// Walking into the north path, the leader faces north and leaves the town.
+/// Walking into the way north out of Imil (trigger 4): the leader faces north
+/// and goes into Imil Falls Cave (exit 8).
 static void Imil_LeaveNorth(void) {
   struct FieldActor *work;
 
@@ -1134,8 +1219,9 @@ static void Imil_LeaveNorth(void) {
   Engine_EventRequestExit(8);
 }
 
-/// Arriving for the first time, the leader walks into town.
-static void Imil_ShowFirstArrival(void) {
+/// Coming back out of Imil Falls Cave (entrance 9), the leader walks down into
+/// the village.
+static void Imil_ArriveFromFallsCave(void) {
   Engine_EventBegin();
   Engine_EventOpenScreen();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2), PIXELS(1) / 10);
@@ -1143,8 +1229,9 @@ static void Imil_ShowFirstArrival(void) {
   Engine_EventEnd();
 }
 
-/// Once the town is cured, Mia says farewell to her two apprentices in the
-/// sanctum before leaving with the party.
+/// Mia's farewell, in the Imil Sanctum the first time the party comes once
+/// Saturos is beaten: she says farewell to her two apprentices, Megan and
+/// Justin, before leaving with the party.
 static void Imil_MiaSaysFarewellToApprentices(void) {
 
   struct FieldActor *leader;
@@ -1298,7 +1385,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Engine_EventEnd();
 }
 
-/// While sliding, the leader turns toward the held direction.
+/// While sliding on Imil's ice, the leader turns toward the held direction.
 static void Imil_TurnSlidingActor(union FieldObject *object) {
   struct FieldActor *actor;
   s32 z;
@@ -1334,7 +1421,7 @@ static void Imil_TurnSlidingActor(union FieldObject *object) {
   ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)actor, 0x30);
 }
 
-/// The leader slides along the ice until something stops him.
+/// The leader slides along Imil's ice until something stops him.
 static void Imil_RunIceSlide(void) {
 
   struct FieldActor *subject;
@@ -1460,7 +1547,7 @@ s32 gImil_ShiverScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gImil_CaretakerHurryScript[] = {
+s32 gImil_OldWomanHurryScript[] = {
     SC_ARG(2),
     SC_MOVE(PIXELS(136), 0, PIXELS(192)),
     SC_SYNC,
@@ -1669,7 +1756,7 @@ struct ScenePlacement gImil_InteriorPlacements[] = {
 struct SceneEvent gImil_TownEvents[] = {
     { EVENT_EXIT, 60, CONDITION_ALWAYS, 11 },
     { EVENT_EXIT, 61, CONDITION_ALWAYS, 12 },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, FLAG_IMIL_MAP_LAYER_0, EVENT_SCRIPT(Imil_MoveSnowmanToChimney) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 11, FLAG_IMIL_MAP_LAYER_0, EVENT_SCRIPT(Imil_PlaceMovedSnowman) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 51, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 52, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(Imil_OpenDoorAndExit) },
@@ -1728,7 +1815,7 @@ struct SceneEvent gImil_InteriorEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_IMIL_MET_MIA, MSGNO(MsgImilOoohIDontFeelSoGood) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, 0x881, MSGNO(MsgImilMiaIsAGoodGirlI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS, MSGNO(MsgImilNowMiaCanLeaveTheVillage) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(FLAG_IMIL_MET_MIA), EVENT_SCRIPT(Imil_ReadCountingChildMind) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, IF_FLAG_SET(FLAG_IMIL_MET_MIA), EVENT_SCRIPT(Imil_ReadOldManInBedMind) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, 0x881, MSGNO(MsgImilHerPalmsShineWithABlue) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS, MSGNO(MsgImilThatBlueLightFromHerHands) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, 0x881, MSGNO(MsgImilWhoAreThesePeopleTheyMust) },

@@ -1,12 +1,23 @@
 /// @file
-/// Kolima Forest's bridge, where the road from the world map enters the forest.
-/// Of its three logs, the one pushed west to the bank tips into the river and
-/// bridges it. Arriving from the world map before the party has seen the curse
-/// in Kolima, they see it fall here: sparkles of Tret's glamour rain down,
-/// domes of their own Psynergy shield them, and Tret and Laurel, unseen, speak
-/// of the dying forest.
+/// Kolima Forest (KolimaForestBridge, scene 40), the first of the forest's five
+/// maps, entered from the world map (entrance 4). In Kolima, Laurel has told
+/// the party to look for Tret "deep within the forest", and this is the way in.
+/// If the party comes here before it has been to Kolima, the curse's scene
+/// plays here instead (KolimaForestBridge_WitnessForestCurse, until
+/// FLAG_KOLIMA_CURSE_WITNESSED): sparkles of Tret's glamour rain down, domes of
+/// the party's own Psynergy shield it, and Tret and Laurel, unseen, speak of
+/// the dying forest. Five glints lie on the ground until Tret lifts the curse
+/// (FLAG_KOLIMA_CURSE_LIFTED).
 ///
-/// FLAG_SCENE_TEMP_00: the log is in the river.
+/// Three logs lie here, rolled by walking into them; the one pushed west to the
+/// water's edge tips into the river and floats there, cells the party can
+/// cross, and from the bank the leader can hop east (trigger 11,
+/// KolimaForest_HopEast). Exit 1 leads on into the forest (scene 41), exit 4
+/// back to the world map.
+///
+/// FLAG_SCENE_TEMP_00: the log is in the river. Like every scene flag it is
+/// cleared when the party next comes in, so the log is back on the bank, but a
+/// battle keeps it.
 
 #include "script.h"
 #include "flags.h"
@@ -102,14 +113,15 @@ KolimaForestBridge_TwinkleGroundSparkle(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Where the party enters from the clearing and the world map.
+/// Where the party enters, from the next map of the forest (scene 41) and from
+/// the world map.
 const struct SceneEntrance *KolimaForestBridge_GetEntrances(void) {
   return gKolimaForestBridge_Entrances;
 }
 
 const struct SceneRegion *KolimaForestBridge_GetRegions(void) { return 0; }
 
-/// The paths to the clearing and the world map.
+/// The ways on into the forest (scene 41) and back to the world map.
 const u32 *KolimaForestBridge_GetExits(void) {
   return gKolimaForestBridge_Exits;
 }
@@ -120,9 +132,10 @@ const struct ScenePlacement *KolimaForestBridge_GetPlacements(void) {
   return gKolimaForestBridge_Placements;
 }
 
-/// Walking into a log: it rolls ahead until something stops it. The river
-/// log, stopped at the bank (cell column 20), tips over with a splash and
-/// floats in the water; its cells become ground the party can cross.
+/// Kolima Forest (scene 40), walking into a log: it rolls ahead until
+/// something stops it. The river log, stopped at the bank (cell column 20),
+/// tips over with a splash and floats in the water; its cells become ground
+/// the party can cross (sets FLAG_SCENE_TEMP_00).
 static void KolimaForestBridge_PushLog(void) {
   struct StagedActorProbe res;
   Engine_EventBegin();
@@ -151,7 +164,7 @@ static void KolimaForestBridge_PushLog(void) {
 
 #include "common/kolima_jump.h"
 
-/// The logs, the jump east from the bank and the two paths.
+/// The logs, the hop east from the bank and the two ways out.
 const struct SceneEvent *KolimaForestBridge_GetEvents(void) {
   return gKolimaForestBridge_Events;
 }
@@ -185,14 +198,17 @@ s32 KolimaForestBridge_Initialize(void) {
   return 0;
 }
 
-/// The party, on the bridge, sees the curse fall. Ivan notices sparkly stuff
-/// on the ground; sparkles rain from the sky, the party sinks under them, and
-/// domes of Psynergy rise around each member before the sparkles reach them.
-/// They argue over whose Psynergy it was, the sparkles fall again and the
-/// domes rise again, and Tret and Laurel speak: Tret turned Kolima's people
-/// into trees for cutting him, and only his gentle side, deep in the forest,
-/// can save them. Lines and choices for Mia are skipped when she is not in
-/// the party.
+/// Kolima Forest, the first entry from the world map before the curse has been
+/// seen in Kolima (FLAG_KOLIMA_CURSE_WITNESSED clear): the party sees the
+/// curse fall, the same scene as Kolima_WitnessForestCurse without the trees
+/// that were people. Ivan notices sparkly stuff on the ground; sparkles rain
+/// from the sky, the party sinks under them, and domes of Psynergy rise around
+/// each member before the sparkles reach them. They argue over whether it was
+/// their Psynergy, the sparkles fall again and the domes rise again, and Tret
+/// and Laurel speak: Tret turned Kolima's people into trees for cutting him,
+/// and Laurel tells them to reawaken his gentle side and look for Tret deep
+/// within the forest. Lines and choices for Mia are skipped when she is not in
+/// the party. Sets FLAG_KOLIMA_CURSE_WITNESSED.
 static void KolimaForestBridge_WitnessForestCurse(void) {
   struct FieldActor *record;
   s32 *party;
@@ -1252,7 +1268,7 @@ struct SceneEntrance gKolimaForestBridge_Entrances[] = {
     {SCENE_TABLE_END},
 };
 
-/// Exit 1 to the clearing (scene 41) and exit 4 to the world map (scene 2).
+/// Exit 1 on into the forest (scene 41) and exit 4 to the world map (scene 2).
 /// Exits 2 and 3, which no event uses, lead into this map (scene 40).
 u32 gKolimaForestBridge_Exits[] = {
     SCENE_EXITS(40),      SCENE_EXIT(1, 41, 1), SCENE_EXIT(2, 40, 1),

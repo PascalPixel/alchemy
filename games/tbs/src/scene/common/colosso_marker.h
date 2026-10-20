@@ -21,10 +21,10 @@
 #include "vram_block.h"
 #include "songs.h"
 
-// The Colosso finals' three courses (Colosso Log, River and Wall): what a
-// stage's guide uses to describe the stage. Isaac appears on the stage to show
-// how it is crossed, a blinking pointer moves over the screen, and Isaac is
-// put back where he stood.
+// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
+// what a stage's guide uses to describe the stage. Isaac appears on the stage
+// to show how it is crossed, a blinking pointer moves over the screen, and
+// Isaac is put back where he stood.
 
 /// Isaac (id) appears at pixel (x, z) on the stage, facing south: he fades in
 /// through the backgrounds while he stretches from thin and tall to his own

@@ -6,27 +6,27 @@
 #include "field_scene.h"
 #include "flags.h"
 
-/// Inside (scene 16), Kraden follows the party as actor 8.
+/// In Sol Sanctum (scene 16), Kraden follows the party as actor 8.
 enum { ACTOR_KRADEN = ACTOR_FIRST_PLACED };
 
-/// On the approach (scene 19), actor 8 is the man left on watch, who warns the
-/// party away while the volcano is active and, read with Mind Read, complains
-/// that the Great Healer left him there alone.
-enum { ACTOR_APPROACH_SENTRY = ACTOR_FIRST_PLACED };
+/// At Sol Entrance (scene 19), actor 8 is a man who stands in the path once the
+/// party has left Vale and warns everyone away while Mt. Aleph is active; read
+/// with Mind Read, he is all alone in this dangerous place and asks how the
+/// Great Healer can treat him like this.
+enum { ACTOR_WARNING_MAN = ACTOR_FIRST_PLACED };
 
-/// The blocks Move pushes, placed after Kraden: two in the outer block room
-/// (entrances 11 to 13) and six in the inner one (entrances 14 to 16).
+/// The statues that can be pushed, placed after Kraden: two of the eleven in
+/// the room of entrances 11 to 13, and all six of the row in the room of
+/// entrances 14 to 16. They share sprite 0xcb, which Kraden calls statues
+/// ("More statues...").
+enum { ACTOR_WEST_STATUE = ACTOR_FIRST_PLACED + 1, ACTOR_EAST_STATUE };
 enum {
-  ACTOR_OUTER_LEFT_BLOCK = ACTOR_FIRST_PLACED + 1,
-  ACTOR_OUTER_RIGHT_BLOCK
-};
-enum {
-  ACTOR_INNER_BLOCK_1 = ACTOR_FIRST_PLACED + 1,
-  ACTOR_INNER_BLOCK_2,
-  ACTOR_INNER_BLOCK_3,
-  ACTOR_INNER_BLOCK_4,
-  ACTOR_INNER_BLOCK_5,
-  ACTOR_INNER_BLOCK_6
+  ACTOR_ROW_STATUE_1 = ACTOR_FIRST_PLACED + 1,
+  ACTOR_ROW_STATUE_2,
+  ACTOR_ROW_STATUE_3,
+  ACTOR_ROW_STATUE_4,
+  ACTOR_ROW_STATUE_5,
+  ACTOR_ROW_STATUE_6
 };
 
 extern s32 gSolSanctumEntrance_RumbleTimer;

@@ -200,7 +200,8 @@
 /// Iodem and Faran have asked the party to follow Sheba's kidnappers.
 #define FLAG_BABI_LIGHTHOUSE_PURSUIT_ASKED 0x988
 /// Set with it: Iodem has come to Babi Lighthouse, and from then on he no
-/// longer leaves the party in Suhalla's inn or Gondowan Cave.
+/// longer steps out of the party to question the wounded soldiers in Suhalla,
+/// or to ask in Gondowan Passage why the party is turning back.
 #define FLAG_IODEM_AT_BABI_LIGHTHOUSE 0x98a
 /// The party has opened the door before Iodem and Faran, who stay behind.
 #define FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN 0x989
@@ -269,13 +270,13 @@
 #define FLAG_KALAY_DOCKS_TICKET_HANDED_OVER 0x8a7 ///< the party may board
 #define FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED 0x8a8
 #define FLAG_KALAY_DOCKS_WENT_ASHORE 0x8a9 ///< off the ship after boarding
-/// A passenger on the Tolbi docks walked up to the party as it arrived.
-#define FLAG_TOLBI_DOCKS_PASSENGER_MET_PARTY 0x8aa
+/// A man on Tolbi Docks walked up to the party as it came off the ship.
+#define FLAG_TOLBI_DOCKS_ARRIVALS_GREETED 0x8aa
 /// The passengers confronted the tour guides and their bodyguard.
 #define FLAG_TOLBI_DOCKS_CONFRONTATION_SEEN 0x8ab
 #define FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL 0x8ac
 // Kolima
-/// The party has seen the curse fall, in Kolima or on the forest bridge.
+/// The party has seen the curse fall, in Kolima or in Kolima Forest (scene 40).
 #define FLAG_KOLIMA_CURSE_WITNESSED 0x843
 /// Kolima's bridge fell as the party crossed it.
 #define FLAG_KOLIMA_BRIDGE_COLLAPSED 0x847
@@ -284,7 +285,8 @@
 #define FLAG_KOLIMA_FOREST_NUT_CAUGHT 0xfd3 ///< Catch took the clearing's Nut
 
 // Lamakan Desert
-#define FLAG_LAMAKAN_SAND_MONSTER_BEATEN 0x90a ///< on the third map
+/// The Manticore, on the third map, is beaten.
+#define FLAG_LAMAKAN_MANTICORE_BEATEN 0x90a
 
 // Lalivero
 /// The party is back from Venus Lighthouse, by the aerie's exit.
@@ -337,20 +339,20 @@
 #define FLAG_LUNPA_FORTRESS_CHEST_POWER_BREAD 0xfa7
 #define FLAG_LUNPA_FORTRESS_CELL_KEY 0xf2e ///< caught or taken from its hook
 
-// McCoy Palace and its garden, in Bilibin
+// McCoy's Palace in Bilibin (McCoyPalace and McCoyPalaceGarden)
 /// The gate guards have let the party into the palace.
 #define FLAG_MCCOY_PALACE_ADMITTED 0x84a
 #define FLAG_MCCOY_PALACE_VISITED 0x84b ///< set on every entry to the palace
-/// After McCoy turned the party away, his escort let slip that the
+/// After McCoy turned the party away, his captain let slip that the
 /// barricade may not need a key.
 #define FLAG_MCCOY_PALACE_BARRICADE_HINT 0x84f
-/// The escort has seen the party off after McCoy's reward.
+/// McCoy's captain has seen the party off after McCoy's reward.
 #define FLAG_MCCOY_PALACE_PARTY_REWARDED 0x85e
 /// The party refused McCoy's job at the first audience.
 #define FLAG_MCCOY_PALACE_JOB_REFUSED 0x85f
 #define FLAG_MCCOY_PALACE_BARREL_ELIXIR 0xf55
 #define FLAG_MCCOY_PALACE_BARREL_SMOKE_BOMB 0xf56
-#define FLAG_MCCOY_PALACE_GARDEN_NUT_CAUGHT 0xfd2 ///< the floating nut
+#define FLAG_MCCOY_PALACE_GARDEN_NUT_CAUGHT 0xfd2 ///< the Nut floating outside
 // Mercury Lighthouse
 /// Mia has told the party she senses someone inside the lighthouse.
 #define FLAG_MIA_SENSED_SOMEONE_INSIDE 0x870
@@ -385,7 +387,8 @@
 /// Set at Babi's palace as his audience after Colosso begins; afterwards
 /// Suhalla's people talk of the Tolbi soldiers the sandstorms brought there.
 /// Also uses FLAG_BABI_SPOKE_AFTER_COLOSSO.
-/// Iodem has found the wounded soldiers at Suhalla's inn and asked for Sheba.
+/// Iodem has found the wounded soldiers in a house in Suhalla and asked for
+/// Sheba.
 #define FLAG_IODEM_MET_WOUNDED_SOLDIERS 0x9b0
 
 // Suhalla Gate
@@ -506,7 +509,8 @@
 /// Jenna came back to the river and the scene there ended with
 /// ValeStorm_ShowBoulderSweepingDownriver. "Mom! Dad! We're back!"
 #define FLAG_VALE_STORM_RIVER_GATHERING_SEEN 0x841
-/// Garet ran off, leaving Isaac alone. "Isaac!"
+/// After the Boulder swept the river, Isaac went for help and Garet set off
+/// after him. "I can't let him go alone..."
 #define FLAG_VALE_STORM_GARET_LEFT 0x842
 /// Dora and Kyle sent Isaac to the plaza.
 #define FLAG_VALE_STORM_SENT_TO_PLAZA 0x87b
@@ -514,8 +518,9 @@
 #define FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT 0x87f
 
 // Vale, the village
-/// On the stormy night, the villagers sent Isaac to aid the elders holding
-/// back the Boulder.
+/// On the stormy night, in the plaza, Garet's grandfather sent two villagers
+/// to aid the elders holding back the Boulder, and the boys back to the river
+/// with Jenna to show the way.
 #define FLAG_VALE_STORM_SENT_TO_AID_ELDERS 0x840
 /// Whirlwind cleared the three targets (actors 8 to 10) in the village.
 #define FLAG_VALE_FIRST_WHIRLWIND_TARGET_CLEARED 0x90b
@@ -573,7 +578,7 @@
 #define FLAG_VAULT_IVAN_JOINED_ROD_SEARCH 0x856
 /// Set once Ivan has read the minds of the two cornered suspects.
 #define FLAG_VAULT_SUSPECTS_MIND_READ 0x853
-/// Set as the three thieves are confronted in the attic, before the battle.
+/// Set as the three thieves are confronted in the loft, before the battle.
 #define FLAG_VAULT_THIEVES_CONFRONTED 0x854
 /// Set when, back in Vault after the thieves broke out, the mayor or the
 /// villager who spoke with him has warned the party of them.
@@ -643,17 +648,21 @@
 /// The four blue doors in a row, then the red door.
 #define FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN 0x9c0
 #define FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN 0x9c4
-/// Bane's three escapes in the block room.
+/// Bane's three escapes in CrossboneIslePlatformRooms3.
 #define FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE 0x9c8
 #define FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE 0x9c9
 #define FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE 0x9ca
-/// The ivy in the first room: four flags from this one.
+/// The ivy on Crossbone Isle itself (CrossboneIsle1): four flags from this
+/// one.
 #define FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY 0x8c4
-/// The nine guarded rooms: one flag each from these, in room order.
+/// The nine corridor rooms of Crossbone Isle Cave (CrossboneIsle6 to 14): one
+/// flag each from these, in room order, for the monsters at the east door
+/// beaten and for the block sunk into the floor.
 #define FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED 0x8c8
 #define FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED 0x8d2
-#define FLAG_CROSSBONE_ISLE_FINAL_GUARDS_DEFEATED 0x8d1
-/// Crossbone Isle's pursuer room: a pursuer is after the leader.
+#define FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED 0x8d1 ///< on the Pirate Ship
+// CrossboneIslePlatformRooms2 keeps FLAG_SCENE_TEMP_20 set while one of its
+// pursuers is after the leader.
 
 // Sol Sanctum
 /// Kraden has found the hall of statues. "This is it! We've found it!"

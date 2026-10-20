@@ -1,7 +1,49 @@
 /// @file
-/// Sol Sanctum's Elemental Star room: the party bags the four stars from their
-/// pedestals, Saturos and Menardi take Jenna and Kraden hostage, and Alex takes
-/// the stars.
+/// Elemental Star Room (SolSanctumElementalStarRoom, scene 17), the chamber
+/// Isaac and Kraden rise to through the floor of the rooms of Sol and Luna
+/// (scene 11), where the four Elemental Stars lie on their pedestals. Kraden
+/// came to Sol Sanctum to learn whether Saturos and Menardi, who spoke of the
+/// stars at his cottage, had been there; here the two take the stars, and Jenna
+/// and Kraden with them.
+///
+/// - Arriving (entrance 10) the first time
+///   (SolSanctumElementalStarRoom_EnterStarRoom), Isaac appears in a glow,
+///   Garet and Jenna step out of him, and Kraden follows: `They really exist...
+///   The Elemental Stars exist!` He explains the four elements, earth, water,
+///   fire and wind, and the stars that hold their purified essence, shows each
+///   pedestal in turn, the Venus, Mercury, Mars and Jupiter Stars, and speaks
+///   of the Wisdom Stone and the power of a single gem. The floor is too
+///   slippery for him, so Jenna has Isaac and Garet fetch the stars, and Kraden
+///   gives them four Mythril Bags he brought from his cottage
+///   (FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED). Walking north into cell code 1,
+///   back the way they came, has Kraden call them back: `There aren't any
+///   Elemental Stars out there!`
+/// - Searching a pedestal (cell codes 2 to 5) flashes and shakes the room and
+///   opens new crossings between the pedestals, and the star goes into a
+///   Mythril Bag. The Venus Star (FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED) and the
+///   Mercury Star (FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED) come first; Kraden and
+///   Jenna, spoken to, urge the two on.
+/// - Bagging the Jupiter Star brings Saturos and Menardi out with Jenna and
+///   Kraden as their hostages (Event_BagJupiterStarAndMeetSaturos). They demand
+///   the stars, and as a guarantee Menardi has the masked man with them remove
+///   his mask: he is Felix, Jenna's brother, whom Isaac and Garet thought dead
+///   since the day of the Boulder, three years ago, and whom Saturos and
+///   Menardi found floating in the river and saved. Garet carries the three
+///   stars over, and Alex, "another of our companions", appears and takes them,
+///   then demands the last one as well (FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX).
+///   From then on the captors stand round Jenna and Kraden, and each has a word
+///   about the last star when spoken to.
+/// - Searching the Mars Star's pedestal, the last, bags it, and the room quakes
+///   until the scene cuts to the chamber's collapse (Event_TakeMarsStar, exit 2
+///   to scene 18, sol_sanctum_eruption.c), which sets
+///   FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED.
+///
+/// Each pedestal's search row lasts until its own flag is set, so a star is
+/// taken once. On every entry SolSanctumElementalStarRoom_Initialize redraws
+/// the crossings each bagged star opened and, once Alex holds the stars, lines
+/// up the captors again (SolSanctumElementalStarRoom_LineUpFollowers), so a
+/// return after a battle finds the room as it was. Ten lights float about the
+/// room (SolSanctum_StartFloatingLights), and Retreat does not work here.
 
 #include "game_state.h"
 #include "unit/import.h"
@@ -98,13 +140,15 @@ const struct ScenePlacement *SolSanctumElementalStarRoom_GetPlacements(void) {
   return gSolSanctumElementalStarRoom_Placements;
 }
 
-/// Returns the star, dialogue, and boundary interactions.
+/// Returns the pedestals' searches, the talk and Mind Read rows, and the cells
+/// that call the party back or check the way ahead.
 const struct SceneEvent *SolSanctumElementalStarRoom_GetEvents(void) {
   return gSolSanctumElementalStarRoom_Events;
 }
 
-/// Searching the Venus Star's pedestal: the room flashes, new crossings open
-/// between the pedestals, and the star goes into a Mythril Bag.
+/// Elemental Star Room: searching the Venus Star's pedestal (cell code 2). The
+/// room flashes, new crossings open between the pedestals, and the star goes
+/// into a Mythril Bag. Sets FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED.
 static void Event_BagVenusStar(void) {
   u32 i;
   s32 itemOwner;
@@ -204,7 +248,9 @@ static void Event_BagVenusStar(void) {
   Engine_EventEnd();
 }
 
-/// Searching the Mercury Star's pedestal: as the Venus Star.
+/// Elemental Star Room: searching the Mercury Star's pedestal (cell code 3), as
+/// the Venus Star; Kraden: "Good, good! Now, go fetch the others!" Sets
+/// FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED.
 static void Event_BagMercuryStar(void) {
   u32 i;
   s32 itemOwner;
@@ -304,8 +350,10 @@ static void Event_BagMercuryStar(void) {
   Engine_EventEnd();
 }
 
-/// Searching the Jupiter Star's pedestal: the star is bagged, then Saturos and
-/// Menardi appear, take Jenna and Kraden hostage, and Alex takes the stars.
+/// Elemental Star Room: searching the Jupiter Star's pedestal (cell code 4).
+/// The star is bagged, then Saturos and Menardi appear with Jenna and Kraden as
+/// hostages, Felix is unmasked, and Alex takes the three stars. Sets
+/// FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX, which ends the row.
 static void Event_BagJupiterStarAndMeetSaturos(void) {
   Engine_EventBegin();
   SolSanctumElementalStarRoom_BagJupiterStar();
@@ -319,7 +367,7 @@ static void Event_BagJupiterStarAndMeetSaturos(void) {
   SolSanctumElementalStarRoom_LineUpFollowers();
 }
 
-/// Reveals the Jupiter crossings and places the star in a mythril bag.
+/// Reveals the Jupiter Star's crossings and puts the star in a Mythril Bag.
 static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   u32 i;
   s32 itemOwner;
@@ -393,7 +441,8 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   Engine_MessageShowCentered(MsgSolSanctumJupiterStarBagged, 1);
 }
 
-/// Brings Isaac and Garet back to discover Jenna and Kraden's captors.
+/// Isaac and Garet turn back to find Saturos and Menardi holding Jenna and
+/// Kraden on the centre platform.
 static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void) {
   struct FieldActor *leader;
 
@@ -449,7 +498,8 @@ static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void) {
   Engine_EventWait(40);
 }
 
-/// Reveals the masked intruder while the captors demand the stars.
+/// Saturos and Menardi demand the stars, and the masked man with them, Felix,
+/// appears beside them.
 static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   u8 *motionFlags;
   u8 *spriteFlags;
@@ -614,7 +664,9 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
 }
 
-/// Has the captors offer a guarantee for their hostages' safety.
+/// Menardi offers a guarantee of the hostages' safety: the masked man must
+/// remove his mask. Isaac and Garet hear the name Felix, Jenna's brother, whom
+/// they thought lost on the day of the Boulder.
 static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
   Actor_FaceDirection(JENNA, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 0);
@@ -712,7 +764,8 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
   Actor_FaceDirection(ACTOR_FELIX_MASKED, FACING_NORTHWEST + FACING_STEP, 40);
 }
 
-/// Reveals Felix's identity and lets Isaac decide how to hand over the stars.
+/// Felix unmasks and tells Jenna he survived, saved by Saturos and Menardi;
+/// Garet asks whether to give them the stars, and either way takes them over.
 static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   struct FieldActor *actor;
   struct FieldActor *other;
@@ -900,7 +953,8 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   Engine_ActorSetAnimation(GARET, ANIM_STAND);
 }
 
-/// Has Alex collect the stars and returns the party to the final pedestal.
+/// Alex appears, takes the three stars from Garet and demands the last one;
+/// the Venus, Mercury and Jupiter Stars leave the party's items.
 static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   u32 i;
   struct FieldActor *actor;
@@ -1081,7 +1135,8 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   PartyInventory_Discard(223);
 }
 
-/// Arranges the captors and hostages after the exchange.
+/// Stands Saturos, Menardi, Felix and Alex round Jenna and Kraden after the
+/// exchange, all turning to face the leader.
 static void SolSanctumElementalStarRoom_LineUpFollowers(void) {
   struct FieldActor *leader;
   struct FieldActor *actor;
@@ -1132,8 +1187,10 @@ static void SolSanctumElementalStarRoom_LineUpFollowers(void) {
   Engine_EventEnd();
 }
 
-/// Searching the Mars Star's pedestal: Isaac takes the last star and the room
-/// begins to shake.
+/// Elemental Star Room: searching the Mars Star's pedestal (cell code 5), until
+/// FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED is set. Isaac bags the last star, and
+/// the room quakes until the scene cuts away by exit 2 to the chamber's
+/// collapse (scene 18).
 static void Event_TakeMarsStar(void) {
   u8 pass;
   s32 itemOwner;
@@ -1206,7 +1263,8 @@ static void Event_TakeMarsStar(void) {
   Engine_EventRequestExit(2);
 }
 
-/// Talking to Kraden: about the stars still to bag, or the hostages.
+/// Elemental Star Room: talking to Kraden, about the stars still to bag, or,
+/// once Alex holds them, Kraden's regret: "I am responsible for all of this."
 static void Event_TalkToKraden(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX)) {
@@ -1224,7 +1282,8 @@ static void Event_TalkToKraden(void) {
   Engine_EventEnd();
 }
 
-/// Talking to Jenna, or reading her mind: about the stars, or Felix alive.
+/// Elemental Star Room: talking to Jenna, or Mind Read on her, about the stars,
+/// or once Alex holds them, her brother alive.
 static void Event_TalkToJenna(void) {
   Engine_EventBegin();
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX)) {
@@ -1242,7 +1301,7 @@ static void Event_TalkToJenna(void) {
   Engine_EventEnd();
 }
 
-/// Talking to Saturos: he demands the last star.
+/// Elemental Star Room: talking to Saturos, who demands the last star.
 static void Event_TalkToSaturos(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSolSanctumSaturosBringTheFinalStar);
@@ -1250,7 +1309,8 @@ static void Event_TalkToSaturos(void) {
   Engine_EventEnd();
 }
 
-/// Talking to Menardi, or reading her mind: she demands the last one.
+/// Elemental Star Room: talking to Menardi, or Mind Read on her; she demands
+/// the last gem.
 static void Event_TalkToMenardi(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSolSanctumMenardiBringTheFinalGem);
@@ -1258,7 +1318,7 @@ static void Event_TalkToMenardi(void) {
   Engine_EventEnd();
 }
 
-/// Talking to Felix: he says nothing. "..."
+/// Elemental Star Room: talking to Felix, who says nothing. "..."
 static void Event_TalkToFelix(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSolSanctumFelixSilence);
@@ -1266,7 +1326,7 @@ static void Event_TalkToFelix(void) {
   Engine_EventEnd();
 }
 
-/// Talking to Alex: only one star is left.
+/// Elemental Star Room: talking to Alex: only one star is left.
 static void Event_TalkToAlex(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSolSanctumAlexOnlyOneLeft);
@@ -1274,8 +1334,8 @@ static void Event_TalkToAlex(void) {
   Engine_EventEnd();
 }
 
-/// Heading out before the stars are bagged: the party is called back.
-/// "There aren't any Elemental Stars out there!"
+/// Elemental Star Room: walking north into cell code 1, back the way the party
+/// came, has Kraden call it back. "There aren't any Elemental Stars out there!"
 static void Event_KradenStopsPartyLeaving(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSolSanctumNoStarsOutThere);
@@ -1283,7 +1343,8 @@ static void Event_KradenStopsPartyLeaving(void) {
   Engine_EventEnd();
 }
 
-/// Walking into trigger 10 or 11: the way ahead is checked as on any field.
+/// Elemental Star Room: walking into cell code 10 or 11 checks the way ahead
+/// as on any field.
 static void Event_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
 /// Shows a pedestal while Kraden describes it, then returns to the party.
@@ -1301,8 +1362,11 @@ SolSanctumElementalStarRoom_ShowPedestal(s32 cameraX, s32 cameraZ, s32 actorX,
   Engine_CameraWaitForMove();
 }
 
-/// Introduces the room, explains the Elemental Stars, and gives out mythril
-/// bags.
+/// Elemental Star Room, the first arrival: Isaac appears, Garet and Jenna step
+/// out, Kraden follows, explains the Elemental Stars at the four pedestals, and
+/// gives out the Mythril Bags. Called by SolSanctumElementalStarRoom_Initialize
+/// at entrance 10 until FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED is set, which it
+/// sets; clears FLAG_SHOW_LOCATION_NAME.
 static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   u16 i;
   u8 *leaderMotion;
@@ -1962,7 +2026,10 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_EventEnd();
 }
 
-/// Restores pedestal state and runs the first-arrival scene when needed.
+/// Sets up the Elemental Star Room: Retreat is blocked, the floating lights
+/// start, the crossings of each bagged star are redrawn, Kraden and Jenna stand
+/// where the explanation left them, the captors line up once Alex holds the
+/// stars, and the first arrival at entrance 10 plays its scene.
 s32 SolSanctumElementalStarRoom_Initialize(void) {
   s32 ringActor;
 
@@ -2066,7 +2133,8 @@ static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
   return owner;
 }
 
-/// Makes inventory room and gives the party four bags, preserving the dialogue.
+/// Makes room among the items and gives the party four Mythril Bags, keeping
+/// the dialogue's place.
 static void SolSanctumElementalStarRoom_GiveMythrilBags(void) {
   struct EventWork *work = gEventWork;
   s16 savedMessage = work->message;

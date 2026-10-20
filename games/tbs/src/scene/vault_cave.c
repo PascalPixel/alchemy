@@ -1,6 +1,51 @@
 /// @file
-/// Vault's cave puzzles: movable switches, Frost targets, falling objects
-/// and the rumbling mechanism restored when the party returns.
+/// Vault Cave's overlay, which holds three rooms, each a scene of its own and
+/// all named Vault Cave (scenes 96 to 98, SceneId_VaultCave1 to 3, place group
+/// 31). The cave opens off Vault as the party finds it on its return
+/// (SceneId_VaultRevisit, scene 23), whose exits 13 and 14 lead into the first
+/// and third rooms. No story flag is read here and no one speaks: the cave is
+/// a side trip of puzzles for Move, Frost and Whirlwind, and only "The door is
+/// tightly locked." and "Isaac flipped the switch." are shown.
+///
+/// - Vault Cave (scene 96, SceneId_VaultCave1), the way in. Entrance 10 is the
+///   cave's mouth, where a region takes exit 10 back out to Vault (entrance
+///   13); Retreat also leads there (Scene_Initialize). Searching the switch
+///   flips it (Event_FlipSwitch, FLAG_VAULT_CAVE_SWITCH_FLIPPED): the switch
+///   turns, the cave rumbles and shakes for eight seconds, and its map
+///   changes as it fades (VaultCave_RunRumble). The change reaches the second
+///   room too: arriving in its first part (entrances 1 to 4), Scene_Initialize
+///   draws it closed until the switch is flipped and opens its cells after.
+///   Arriving at the mouth clears the flag again, so the switch is reset each
+///   time the party comes in from Vault; arriving elsewhere in the room
+///   (entrances 5 to 8 and 13) redraws the flipped switch and its changed
+///   cells. The room's chest is a mimic (search value type 5, battle 3).
+/// - Vault Cave (scene 97, SceneId_VaultCave2). In one part a block (actor 9)
+///   goes onto its switch by pushing (Event_PushSouthernBlock) or Move
+///   (Event_MoveSouthernBlock); once it rests there the puzzle chime plays and
+///   the switch opens the way (FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH). In
+///   another, six objects (actors 10 to 15) fall at random, one every 64
+///   frames, over six targets (actors 16 to 21) that Frost freezes. A frozen
+///   target changes its map cell, and an object falling onto it stops 32
+///   pixels up instead of reaching the floor
+///   (VaultCave_UpdateFrostControlledFallingObjects); while the leader is 16
+///   pixels or more above the floor, the targets are drawn beneath him. The
+///   six frozen states are FLAG_SCENE_TEMP_00 to _05, read by index, and the
+///   room's entry code freezes again every target whose flag is set.
+///   Whirlwind blows away an object (actor 22) for as long as the party stays
+///   in the cave (FLAG_WHIRLWIND_USED, a place flag). A chest holds the
+///   Vambrace.
+/// - Vault Cave (scene 98, SceneId_VaultCave3). Four objects (actors 11 to 14)
+///   fall on a fixed schedule (gVaultCave_ScheduleFrames) while the party
+///   pushes or Moves a block (actor 10) onto its switch
+///   (FLAG_VAULT_CAVE_NORTH_BLOCK_ON_SWITCH). A falling object that lands on
+///   that block marks it struck (FLAG_NORTH_BLOCK_STRUCK, SE_204), and a struck
+///   block no longer opens the switch until the room is entered again. Exit 1
+///   leads out to Vault (entrance 14).
+///
+/// Each room has a door that only says it is locked (Event_ShowLockedDoor).
+/// The pushes share VaultCave_PushBlockAhead, which moves the block the leader
+/// faces one cell unless another actor or the terrain is in the way, and the
+/// falling objects run as scene callbacks started by Scene_Initialize.
 
 #include "game_state.h"
 #include "unit/field/field.h"
@@ -224,12 +269,14 @@ static void VaultCave_PushBlockAhead(void) {
   Object_SetMode(leader, 1);
 }
 
-/// Whirlwind on the target in the second map blows it away for good.
+/// In Vault Cave's second room, Whirlwind on its target blows it away for as
+/// long as the party stays in the cave (FLAG_WHIRLWIND_USED is a place flag).
 static void Event_UseWhirlwind(void) {
   Engine_GameFlagSet(FLAG_WHIRLWIND_USED);
 }
 
-/// Searching the locked door. "The door is tightly locked."
+/// In any room of Vault Cave, searching the locked door only says so.
+/// "The door is tightly locked."
 static void Event_ShowLockedDoor(void) {
   Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
 }
@@ -282,8 +329,8 @@ static inline void VaultCave_CompleteSouthernSwitch(void) {
   }
 }
 
-/// Pushing the southern block; once it rests on its switch, the puzzle chime
-/// plays and the switch opens the way.
+/// In Vault Cave's second room, pushing the southern block; once it rests on
+/// its switch, the puzzle chime plays and the switch opens the way.
 static void Event_PushSouthernBlock(void) {
   if (GameFlag_IsSet(FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH) == 0) {
     VaultCave_PushBlockAhead();
@@ -298,7 +345,8 @@ static void VaultCave_ApplySouthernSwitchCells(void) {
   Map_CopyCellAttributes(16, 52, 1, 1, 16, 53);
 }
 
-/// Move on the southern block, with the same switch check.
+/// In Vault Cave's second room, Move on the southern block, with the same
+/// switch check.
 static void Event_MoveSouthernBlock(void) {
   if (GameFlag_IsSet(FLAG_VAULT_CAVE_SOUTH_BLOCK_ON_SWITCH) == 0) {
     VaultCave_CompleteSouthernSwitch();
@@ -350,23 +398,25 @@ static inline void VaultCave_CompleteNorthernSwitch(void) {
   }
 }
 
-/// Pushing the northern block; it opens its switch only if no falling object
-/// has struck it.
+/// In Vault Cave's third room, pushing the northern block; it opens its
+/// switch only if no falling object has struck it.
 static void Event_PushNorthernBlock(void) {
   VaultCave_PushBlockAhead();
   VaultCave_CompleteNorthernSwitch();
 }
 
-/// Move on the southern block in the third map does nothing.
+/// In Vault Cave's third room, Move on the southern block does nothing.
 static void Event_IgnoreMove(void) {}
 
-/// Move on the northern block, with the same switch check.
+/// In Vault Cave's third room, Move on the northern block, with the same
+/// switch check.
 static void Event_MoveNorthernBlock(void) {
   VaultCave_CompleteNorthernSwitch();
 }
 
-/// Frost on the upper western target freezes it and changes its map cell;
-/// arriving again re-freezes every target whose flag is set.
+/// In Vault Cave's second room, Frost on the upper western target freezes it
+/// and changes its map cell; arriving again re-freezes every target whose
+/// flag is set.
 static void Event_FreezeWestUpperTarget(void) {
   // An ordinary shared Frost helper keeps the extents but saves r5-r7 instead
   // of r5 alone and changes the map-copy argument registers in native English.
@@ -383,6 +433,8 @@ static void Event_FreezeWestUpperTarget(void) {
   Engine_GameFlagSet(FLAG_WEST_UPPER_FROZEN);
 }
 
+/// In Vault Cave's second room, Frost on the lower western target, as on the
+/// upper one.
 static void Event_FreezeWestLowerTarget(void) {
   struct FieldActor *target = Object_GetById(17);
 
@@ -397,6 +449,7 @@ static void Event_FreezeWestLowerTarget(void) {
   Engine_GameFlagSet(FLAG_WEST_LOWER_FROZEN);
 }
 
+/// In Vault Cave's second room, Frost on the inner lower western target.
 static void Event_FreezeInnerWestLowerTarget(void) {
   struct FieldActor *target = Object_GetById(18);
 
@@ -411,6 +464,7 @@ static void Event_FreezeInnerWestLowerTarget(void) {
   Engine_GameFlagSet(FLAG_INNER_WEST_LOWER_FROZEN);
 }
 
+/// In Vault Cave's second room, Frost on the upper eastern target.
 static void Event_FreezeEastUpperTarget(void) {
   struct FieldActor *target = Object_GetById(19);
 
@@ -426,6 +480,7 @@ static void Event_FreezeEastUpperTarget(void) {
   Engine_GameFlagSet(FLAG_EAST_UPPER_FROZEN);
 }
 
+/// In Vault Cave's second room, Frost on the lower eastern target.
 static void Event_FreezeEastLowerTarget(void) {
   struct FieldActor *target = Object_GetById(20);
 
@@ -441,6 +496,7 @@ static void Event_FreezeEastLowerTarget(void) {
   Engine_GameFlagSet(FLAG_EAST_LOWER_FROZEN);
 }
 
+/// In Vault Cave's second room, Frost on the far eastern target.
 static void Event_FreezeFarEastTarget(void) {
   struct FieldActor *target = Object_GetById(21);
 
@@ -545,9 +601,11 @@ static void VaultCave_RunRumble(void) {
   Engine_EventEnd();
 }
 
-/// Flips the switch. "Isaac flipped the switch." The first time, the switch
-/// turns, the cave rumbles and shakes for eight seconds and the map changes as
-/// it fades.
+/// In Vault Cave's first room, searching the switch flips it.
+/// "Isaac flipped the switch." The first time since the party came in from
+/// Vault, the switch turns, the cave rumbles and shakes for eight seconds and
+/// the map changes as it fades; FLAG_VAULT_CAVE_SWITCH_FLIPPED then keeps the
+/// change until the party comes in by the cave's mouth again.
 static void Event_FlipSwitch(void) {
   s32 destinationRow;
   s32 destinationColumn;
@@ -787,7 +845,8 @@ static void VaultCave_StartTimedFalls(void) {
                              TASK_PRIORITY_SCENE);
 }
 
-/// Restores each room's puzzles and actors, then sets the Retreat destination.
+/// Arriving in any room of Vault Cave: restores the room's puzzles and actors,
+/// then sets the Retreat destination, the cave's mouth.
 s32 Scene_Initialize(void) {
   ((struct FieldWork *)gEventWork)->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, 4);

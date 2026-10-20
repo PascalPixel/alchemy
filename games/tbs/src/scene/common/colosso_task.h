@@ -22,11 +22,12 @@
 #include "io_reg.h"
 #include "io_write_queue.h"
 
-/// The Colosso finals' three courses (Colosso Log, River and Wall): the large
-/// lettering a race starts with. It reads "Match 1", "3", "2", "1", "Go!", from
-/// the pictures of games/tbs/src/graphics/colosso/lettering.tsv, in this order:
-/// 0 Lend a Hand, 1 to 3 Match 1 to 3, 4 Won and Lose, 5 the 3 and the 2,
-/// 6 the 1 and 7 Go. Each picture is 0x400 bytes of tiles after the palettes.
+/// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
+/// the large lettering a race starts with. It reads "Match 1", "3", "2", "1",
+/// "Go!", from the pictures of games/tbs/src/graphics/colosso/lettering.tsv, in
+/// this order: 0 Lend a Hand, 1 to 3 Match 1 to 3, 4 Won and Lose, 5 the 3 and
+/// the 2, 6 the 1 and 7 Go. Each picture is 0x400 bytes of tiles after the
+/// palettes.
 ///
 /// The lettering moves by a script of 16-bit words, a command and its values:
 enum ColossoLetteringCommand {

@@ -1,11 +1,60 @@
 /// @file
-/// Altmiller Cave, six dark rooms where the party finds Babi, the ruler of
-/// Tolbi, invisible and unable to move. He sends the party for the Mystic
-/// Draught behind a wall deep in the cave, which opens to five rocks turned
-/// in the order of the colored lights over them. Restored, Babi is found by
-/// two Tolbi soldiers and invites the party to fight in Colosso's finals.
+/// Altmiller Cave, six scenes (AltmillerCave1 to AltmillerCave6, scenes 146 to
+/// 151) whose area name is Altmiller Cave: rooms one after another, each
+/// numbered here as its scene id is (room 1 is AltmillerCave1), entered from
+/// the world map at room 1. The rooms share one entrance table, and the
+/// getters pick the rest of each room's tables by gGameState.scene;
+/// AltmillerCave_Initialize sends an entry from outside the cave to the
+/// room's first entrance, darkens the dark rooms and puts back what the party
+/// has done.
 ///
-/// The cave darkens as the party walks in, and Reveal lights it up.
+/// The party comes here during Colosso's trials, while Babi, the ruler of
+/// Tolbi, is missing: in his palace it has heard Iodem's soldiers report that
+/// they searched this cave for him in vain, and Iodem say that he has seen
+/// Babi vanish into it before (babi_palace.c). The cave is dark: room 1
+/// darkens by steps as the party walks in (touches 60 to 65), the other dark
+/// rooms all at once, and Reveal lights them while it lasts
+/// (AltmillerCave_StartReveal, AltmillerCave_EndReveal; scene flag FLAG_DARK).
+///
+/// In room 2 the party meets someone it can hear but not see, wrapped in
+/// Psynergetic light (ACTOR_INVISIBLE_BABI). Talking to him the first time
+/// (AltmillerCave_MeetInvisibleBabi, FLAG_MET_INVISIBLE_BABI), he says he ran
+/// out of his draught and cannot move, and asks the party to fetch it from
+/// deep in the cave: five rocks there, turned the ends first, bring out
+/// colored lights, and turning the rock of each light's color, `blue, green,
+/// white, yellow, and red` from the left, opens a hidden door left by an
+/// ancient civilization. The party argues over whether to help him. Walking
+/// away the first time he calls the party back to say the draught is on a
+/// table behind the door (AltmillerCave_BabiCallsPartyBack), and until it is
+/// found he repeats the order (AltmillerCave_RepeatRockOrder).
+///
+/// Rooms 3 to 5 lead on, with a chest in rooms 3 and 5. Room 4 is lit; in it
+/// Squall, a Jupiter Djinni, starts its battle when spoken to, three obstacles
+/// move when pushed (as three do in room 6), a block that Move slides into
+/// its cell opens the way beside it (which the editions from TBS_PATCH_1 on
+/// also keep open after a battle, FLAG_BLOCK_IN_PLACE), and a puddle the
+/// party hops over (AltmillerCave_HopSelectedActor) until Frost freezes it,
+/// unless something stands on it (AltmillerCave_CheckFrostTargetCollision).
+/// Room 6, also lit, holds the five rocks, whose colors show only while Reveal
+/// shines. Talking to one turns it (AltmillerCave_TurnRock): the leftmost and
+/// then the rightmost bring out a ring of five lights above them, which spins
+/// and stops with one light on top; turning that light's rock spins it again, a
+/// wrong rock puts the lights away and starts over, and after three matches
+/// the wall bursts (AltmillerCave_ReleaseWallBurst) and the chest beyond
+/// holds the Mystic Draught (FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT). The
+/// puzzle's state is kept in the scene's work, and coming back up to the
+/// rocks (entrance 52) starts it over.
+///
+/// Back in room 2, talking to him with the draught plays
+/// AltmillerCave_RestoreBabiAndInviteParty (FLAG_BABI_SAVED): he drinks it
+/// and appears, and Ivan reads his mind and finds him to be Babi, the ruler of
+/// Tolbi, who hid himself with the power of an ancient civilization, not
+/// Psynergy, and has been searching for Lemurians to escape growing old. Two
+/// men from Tolbi, sent by Iodem, find him and take him back for the finals,
+/// and Babi invites the party to fight in them. Stuck in Tolbi until Colosso
+/// is over anyway, Garet asks whether they should enter: on yes it is decided,
+/// and on no they will wait until Tolbi and let Isaac decide there, where the
+/// story goes on (colosseum_entrance.c, babi_palace.c).
 
 #include "game_state.h"
 #include "version.h"
@@ -54,8 +103,8 @@
 #include "flags.h"
 #include "songs.h"
 
-/// Room 2's actors: Babi while invisible and once seen, and the two Tolbi
-/// soldiers who come looking for him.
+/// Room 2's actors: Babi while invisible and once seen, and the two men from
+/// Tolbi who come looking for him.
 enum {
   ACTOR_INVISIBLE_BABI = 8,
   ACTOR_BABI = 9,
@@ -64,7 +113,7 @@ enum {
 };
 
 /// Rooms 4 and 6 place first the three obstacles the party pushes; room 4
-/// then a puddle, a block for Move and Djinni 65.
+/// then a puddle, a block for Move and Squall, a Jupiter Djinni.
 enum {
   ACTOR_FIRST_OBSTACLE = 8,
   ACTOR_ROOM4_PUDDLE = 11,
@@ -161,7 +210,8 @@ struct LightWheel gAltmillerCave_LightWheelState
 
 #include "common/object_staged_actor.h"
 
-/// Talking to the Djinni in room 4 starts the battle for Djinni 65.
+/// Talking to the Djinni in room 4 starts the battle with Squall, a Jupiter
+/// Djinni.
 static void AltmillerCave_StartDjinnBattle(void) {
   Field_RequestDjinnBattle(ACTOR_DJINNI, DJINNI_SQUALL);
 }
@@ -746,9 +796,9 @@ static __inline__ void AltmillerCave_FacePartyNorth(void) {
 
 /// Bringing Babi the Mystic Draught: he drinks it and appears, startling the
 /// party; Ivan reads his mind and finds him to be Babi, the ruler of Tolbi,
-/// who sought Lemurians to escape growing old. Two Tolbi soldiers find him
-/// and lead him home, and he invites the party to Colosso's finals; Garet
-/// asks whether they should take part.
+/// who sought Lemurians to escape growing old. Two men from Tolbi find him and
+/// take him back, and he invites the party to Colosso's finals; Garet asks
+/// whether they should take part.
 static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   struct DisplayTransitionState *display;
   struct FieldActor *actor;
@@ -1059,7 +1109,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_OpenMessage(ACTOR_BABI, 0);
   Engine_EventSetMessage(MsgAltmillerBabi);
   Engine_EventChooseYesNo(0, 0);
-  // The cave brightens as two Tolbi soldiers arrive: "Babi!"
+  // The cave brightens as two men from Tolbi arrive: "Babi!"
   display = gDisplayTransition;
   {
     u16 *slot = &display->value;
@@ -1103,7 +1153,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_ActorFollow(GARET, ACTOR_FIRST_GUARD);
   Engine_ActorFollow(MIA, ACTOR_FIRST_GUARD);
   Engine_ActorFollow(IVAN, ACTOR_FIRST_GUARD);
-  // The soldiers greet Babi; he invites the party to the finals.
+  // The two men greet Babi; he invites the party to the finals.
   Actor_SetSpeed(ACTOR_FIRST_GUARD, PIXELS(7) / 5, PIXELS(7) / 10);
   Actor_SetSpeed(ACTOR_SECOND_GUARD, PIXELS(7) / 5, PIXELS(7) / 10);
   Actor_SetActionScript(ACTOR_FIRST_GUARD, gAltmillerCave_GuardsArrivePath);
@@ -1296,7 +1346,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_EventWait(30);
   Engine_ActorSetAnimationAndWait(ACTOR_BABI, ANIM_NOD);
   Engine_EventWait(30);
-  // Send Babi and his guards back toward the cave entrance.
+  // Babi and the two men walk back toward the cave entrance.
   Actor_SetActionScript(ACTOR_SECOND_GUARD,
                         gAltmillerCave_SecondGuardLeavePath);
   Actor_SetActionScript(ACTOR_FIRST_GUARD, gAltmillerCave_FirstGuardLeavePath);
@@ -1937,7 +1987,7 @@ s32 AltmillerCave_Initialize(void) {
       actor->sprite->rotation = 0x4000;
     }
   }
-  // Restore moved obstacles and the frozen puddle in the fourth chamber.
+  // Restore room 4's moved obstacles and frozen puddle.
   if (gGameState.scene == (s32)&SceneId_AltmillerCave4) {
     Engine_GameFlagClear(FLAG_DARK);
     AltmillerCave_RedrawObstacleFootprints();
@@ -2256,7 +2306,7 @@ u32 gAltmillerCave_PulseScales[] = {
     11 * Q16_ONE / 10,
 };
 
-/// The two soldiers walk in to Babi.
+/// The two men from Tolbi walk in to Babi.
 s32 gAltmillerCave_GuardsArrivePath[] = {
     SC_ARG(ANIM_WALK),
     SC_MOVE_BY(0, 0, -PIXELS(32)),
@@ -2269,7 +2319,7 @@ s32 gAltmillerCave_GuardsArrivePath[] = {
     SC_END,
 };
 
-/// Babi and the soldiers walk out of the room, each by his own path.
+/// Babi and the two men walk out of the room, each by his own path.
 s32 gAltmillerCave_SecondGuardLeavePath[] = {
     SC_ARG(ANIM_WALK),
     SC_MOVE_BY(PIXELS(16), 0, 0),

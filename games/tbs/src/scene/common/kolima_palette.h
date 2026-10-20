@@ -12,7 +12,7 @@
 #include "io_reg.h"
 #include "battle_effect_runtime.h"
 
-// Kolima's forest, while Tret's curse lasts (FLAG_KOLIMA_CURSE_LIFTED clear):
+// Kolima Forest, while Tret's curse lasts (FLAG_KOLIMA_CURSE_LIFTED clear):
 // the forest's colours turned redder and darker, and both sets of colours kept
 // for the scene where the curse lifts.
 

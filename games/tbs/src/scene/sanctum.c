@@ -1,6 +1,56 @@
 /// @file
-/// A sanctum: Vale's, where the Great Healer asks Isaac to go to Sol Sanctum
-/// and a refusal ends the game, or another town's, with its healer.
+/// The Sanctum of Vale and of four towns on the party's way, which holds six
+/// places in one scene (SceneId_Sanctum, scene 9): the entrance the party comes
+/// in by decides which, and Sanctum_GetPlacements and Sanctum_GetEvents choose
+/// that place's tables by it. Spoken to from the front, each place's healer
+/// opens the Sanctum's services (Engine_SanctumOpen); from any other side the
+/// healer talks. Each place's door leads back out to its own town.
+///
+/// - Vale Sanctum (entrances 1, 2, 20 and 21), the Great Healer's, entered from
+///   Vale at entrance 1. Before the trip up Mt. Aleph, the Great Healer and two
+///   other healers (actors 9 and 10) speak of Psynergy: "Wielders of Psynergy
+///   are called Adepts." After the eruption, the Great Healer brings Isaac and
+///   Garet in from Vale (vale_eruption.c) to entrance 20, where Isaac's mother
+///   Dora, the Mayor, who is Garet's grandfather, and the two healers hear what
+///   happened on the mountain, Isaac and Garet acting it out in sepia
+///   (Sanctum_ReenactSolSanctum): Jenna and Kraden are prisoners. The Great
+///   Healer has seen the hovering stone in dreams: it is the Wise One, guardian
+///   of the Elemental Stars. Vale will be safe, but the elemental lighthouses
+///   will loose the stars' power upon the world, and recovering the stars is
+///   Isaac's and Garet's fate alone. Garet leaves the choice to Isaac
+///   (Sanctum_RequestQuestAcceptance). If he accepts, the Wise One appears to
+///   the Great Healer, who relays its guidance (find the lighthouses, seek the
+///   Djinn); the two are to leave the next day (Sanctum_ReceiveWiseOnesMission,
+///   FLAG_SANCTUM_QUEST_ACCEPTED), and exit 30 takes them to scene 5
+///   (vale_home.c). If he refuses, the others talk of his choice, the Great
+///   Healer asks again when spoken to (Event_ReconsiderQuest), heading for the
+///   door draws a warning that the choice is final once outside the village,
+///   and leaving anyway ends the game: `And so the world began drifting toward
+///   its fated destruction...` The player can start again from the Great
+///   Healer, by exit 20 to entrance 21, which skips the account, or leave by
+///   exit 50 to scene 1 (Event_LeaveAfterRefusing). After the party has left
+///   Vale (FLAG_PARTY_LEFT_VALE), and again after it has reached Kalay
+///   (FLAG_REACHED_KALAY), the three talk of what the eruption and the Wise One
+///   changed.
+/// - Vault Sanctum (entrances 10 and 12). Its healer and the other person there
+///   (actor 9) miss a gold statue stolen during the eruption, until the party
+///   has the thieves jailed and the statue is returned
+///   (FLAG_VAULT_THIEVES_JAILED); then actor 10, placed off the map until then,
+///   stands behind the healer (XXX: likely the statue, because it appears only
+///   then).
+/// - Bilibin Sanctum (entrance 35), whose healer and the other person there
+///   (actor 9) talk of Kolima's curse, before and after it is lifted
+///   (FLAG_KOLIMA_CURSE_LIFTED).
+/// - Xian Sanctum (entrance 32), whose healer came to Xian from very distant
+///   lands.
+/// - Altin Sanctum (entrance 29), whose healer tells of the water-spewing
+///   beasts in the mine until the party has saved Altin from them
+///   (FLAG_HYDROS_STATUES_DEFEATED).
+/// - Vault Sanctum again (entrance 11), when the party passes through Vault
+///   later (vault_revisit.c): the statue has been polished, and the healer
+///   worries about earthquakes on Mt. Aleph.
+/// - Sanctum, the name the game gives every other entrance, which leaves only
+///   entrance 0; no exit leads there, and it places nobody.
 
 #include "battle_effect_runtime.h"
 #include "flags.h"
@@ -45,14 +95,14 @@
 #include "fixed_math.h"
 #include "songs.h"
 
-// Scene temporary flags: 00 is set once the Great Healer has warned Isaac
-// that leaving the village cannot be undone; 01 marks the visit after a
-// refusal, which skips the account of Sol Sanctum.
+// Scene temporary flags, in Vale Sanctum: 00 is set once the Great Healer has
+// warned Isaac that leaving the village cannot be undone; 01 marks the visit
+// after a refusal (entrance 21), which skips the account of Sol Sanctum.
 
-/// The first placed actor is the sanctum's healer: the Great Healer in Vale,
-/// the town's healer elsewhere. At the quest (entrances 20 and 21) Dora says
-/// "Mother would never doubt your courage", the Wise One appears, and a copy
-/// of the healer draws its afterimage.
+/// The first placed actor is the place's healer: the Great Healer in Vale
+/// Sanctum, its own healer elsewhere. At the quest (entrances 20 and 21) Dora,
+/// Isaac's mother, is actor 11 and the Mayor actor 12, the Wise One appears as
+/// actor 13, and a copy of the Great Healer draws the afterimages.
 enum {
   ACTOR_HEALER = ACTOR_FIRST_PLACED,
   ACTOR_DORA = ACTOR_FIRST_PLACED + 3,
@@ -70,7 +120,7 @@ static s32 Sanctum_ChooseRestartOption(void);
 static void Sanctum_ReenactSolSanctum(void);
 static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY, s32 fixedZ);
 static void Sanctum_SpawnActorSpark(s32 id);
-static void Sanctum_RestoreCeremonyFloor(void);
+static void Sanctum_RestoreQuestFloor(void);
 
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 44 to 42 bytes in tbs-en.
@@ -94,7 +144,7 @@ static s32 Sanctum_FaceActorNamedByTimer(union FieldObject *fieldObject) {
 #endif
 }
 
-/// Returns the entrances shared by all Sanctum visits.
+/// Returns the entrances, shared by all six places.
 const struct SceneEntrance *Sanctum_GetEntrances(void) {
   return gSanctum_Entrances;
 }
@@ -103,7 +153,10 @@ const struct SceneRegion *Sanctum_GetRegions(void) { return NULL; }
 
 const u32 *Sanctum_GetExits(void) { return gSanctum_Exits; }
 
-/// Chooses the actors for the current entrance.
+/// Chooses the actors by entrance: Vale Sanctum's Great Healer and two healers
+/// (1 and 2), the quest's gathering (20 and 21), the healer and actor 9
+/// of Vault Sanctum and Bilibin Sanctum (10 to 12 and 35), the healer alone in
+/// Altin Sanctum and Xian Sanctum (29 and 32), and nobody otherwise.
 const struct ScenePlacement *Sanctum_GetPlacements(void) {
   switch (gGameState.entrance) {
   case 1:
@@ -129,7 +182,10 @@ const struct ScenePlacement *Sanctum_GetPlacements(void) {
   }
 }
 
-/// Chooses interactions for the entrance and current story flags.
+/// Chooses the events by entrance, and in Vale Sanctum before and after the
+/// quest by story flag: table A before the party has left Vale, E once it has
+/// (FLAG_PARTY_LEFT_VALE), F once it has reached Kalay (FLAG_REACHED_KALAY);
+/// D for the quest's visits (20, 21 and 50).
 const struct SceneEvent *Sanctum_GetEvents(void) {
   switch (gGameState.entrance) {
   case 10:
@@ -160,8 +216,9 @@ const struct SceneEvent *Sanctum_GetEvents(void) {
   return gSanctum_SceneTableA;
 }
 
-/// Talking to the attendant (actor 9) in Vale's Sanctum: about the golden
-/// statue and the healer.
+/// Vault Sanctum: talking to actor 9, about the stolen gold statue until the
+/// thieves are jailed (FLAG_VAULT_THIEVES_JAILED) and about fate afterwards;
+/// on the later visit (entrance 11), the statue polished.
 static void Event_TalkAboutGoldenStatue(void) {
   Engine_EventBegin();
 
@@ -182,7 +239,9 @@ static void Event_TalkAboutGoldenStatue(void) {
   Engine_EventEnd();
 }
 
-/// Reading the attendant's mind (actor 9): about the statue and Psynergy.
+/// Vault Sanctum: Mind Read on actor 9, about the stolen statue, or once it is
+/// back, about Isaac awakening to the Sanctum's teachings; on the later visit,
+/// the statue cleaned up.
 static void Event_ReadMindAboutGoldenStatue(void) {
 
   Engine_EventBegin();
@@ -205,8 +264,9 @@ static void Event_ReadMindAboutGoldenStatue(void) {
   Engine_EventEnd();
 }
 
-/// Talking to the Great Healer after refusing: changing his mind, Isaac
-/// accepts after all. "Are you sure?"
+/// Vale Sanctum: talking to the Great Healer after Isaac has refused the quest.
+/// "Are you sure?" Changing his mind, Isaac can accept after all, and the
+/// quest goes on as if he had accepted at once.
 static void Event_ReconsiderQuest(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgSanctumAreYouSure);
@@ -268,8 +328,11 @@ static void Event_ReconsiderQuest(void) {
 #define SANCTUM_NEW_FRIENDS_SPEAKER 1
 #endif
 
-/// Talking to actor 9 after the party grows: the actor asks about the new
-/// friends. "Isaac, are your new friends Adepts?"
+/// Vale Sanctum, once the party has reached Kalay: talking to actor 9, who asks
+/// about the party's new friends. "Isaac, are your new friends Adepts by any
+/// chance?" Denied, a friend's silence says they must be: in every edition
+/// but the Japanese, that friend is Ivan, placed for it; in the Japanese,
+/// Garet.
 static void Event_AskAboutNewAdepts(void) {
   Engine_EventBegin();
 #if TBS_PATCH_1
@@ -289,8 +352,8 @@ static void Event_AskAboutNewAdepts(void) {
   Engine_EventEnd();
 }
 
-/// Talking to actor 10 after the party has left Vale: does Isaac feel a change
-/// in his Psynergy?
+/// Vale Sanctum, once the party has left Vale: talking to actor 10, who asks
+/// whether Isaac feels any change in his Psynergy.
 static void Event_AskAboutPsynergyChanges(void) {
 
   Engine_EventBegin();
@@ -307,7 +370,11 @@ static void Event_AskAboutPsynergyChanges(void) {
   Engine_EventEnd();
 }
 
-/// Prepares the current visit and starts its opening scene.
+/// Sets up the place for its entrance and plays its opening scene. Vault
+/// Sanctum places actor 10 once the thieves are jailed; Vale Sanctum's quest
+/// visits (20, and 21 after a refusal, which sets FLAG_SCENE_TEMP_01) restore
+/// the floor and play the request, unless the party is returning after a
+/// battle.
 s32 Sanctum_Initialize(void) {
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
@@ -323,7 +390,7 @@ s32 Sanctum_Initialize(void) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     break;
   case 20:
-    Sanctum_RestoreCeremonyFloor();
+    Sanctum_RestoreQuestFloor();
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       Sanctum_RequestQuestAcceptance();
     }
@@ -334,7 +401,7 @@ s32 Sanctum_Initialize(void) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
     break;
   case 21:
-    Sanctum_RestoreCeremonyFloor();
+    Sanctum_RestoreQuestFloor();
     Engine_GameFlagSet(FLAG_SCENE_TEMP_01);
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
       Sanctum_RequestQuestAcceptance();
@@ -345,9 +412,10 @@ s32 Sanctum_Initialize(void) {
   return 0;
 }
 
-/// Walking toward the door after refusing: the Great Healer warns that the
-/// choice is final. "Once you step outside the village, you cannot take back
-/// your decision."
+/// Vale Sanctum: heading for the door after refusing the quest (cell code 2,
+/// until FLAG_SCENE_TEMP_00 is set, which it sets). The Great Healer warns
+/// that the choice is final: "Once you step outside the village, you cannot
+/// take back your decision."
 static void Event_WarnBeforeLeaving(void) {
   Engine_EventBegin();
   Engine_CameraSetSpeed(PIXELS(1), PIXELS(1) / 8);
@@ -364,8 +432,10 @@ static void Event_WarnBeforeLeaving(void) {
   Engine_EventEnd();
 }
 
-/// Leaving after refusing: the room turns sepia and the game offers to start
-/// again. "And so the world began drifting..."
+/// Vale Sanctum: leaving after refusing the quest (cell code 1) ends the game.
+/// The room turns sepia: `And so the world began drifting toward its fated
+/// destruction...` Starting again from the Great Healer takes exit 20, back to
+/// entrance 21; the other choices take exit 50, to scene 1.
 static void Event_LeaveAfterRefusing(void) {
   struct BattleEffectBuffers *paletteWork;
 
@@ -425,8 +495,9 @@ static s32 Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
 #endif
 }
 
-/// Has the party and four witnesses nod, waiting for the final witness.
-static inline void Sanctum_NodCeremonyGroup(void) {
+/// Has Isaac, Garet, Dora, the Mayor and the two healers nod, waiting for the
+/// last of them.
+static inline void Sanctum_NodAll(void) {
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimation(GARET, ANIM_NOD);
   Engine_ActorSetAnimation(ACTOR_DORA, 3);
@@ -435,8 +506,8 @@ static inline void Sanctum_NodCeremonyGroup(void) {
   Engine_ActorSetAnimationAndWait(10, 3);
 }
 
-/// Starts the six group motions and waits for the final witness.
-static inline void Sanctum_StartCeremonyGroupMotion(void) {
+/// Starts the same six's repeated motions and waits for the last of them.
+static inline void Sanctum_StartAllRepeatedMotion(void) {
   Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Engine_ActorStartRepeatedMotion(GARET, 1);
   Engine_ActorStartRepeatedMotion(ACTOR_DORA, 1);
@@ -445,8 +516,8 @@ static inline void Sanctum_StartCeremonyGroupMotion(void) {
   Engine_ActorRunRepeatedMotion(10, 1);
 }
 
-/// Shows the same foreground reaction on the party and four witnesses.
-static inline void Sanctum_ShowCeremonyGroupEmotes(void) {
+/// Shows the same emote on the same six.
+static inline void Sanctum_ShowAllEmotes(void) {
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
   Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 2, 0);
@@ -455,7 +526,12 @@ static inline void Sanctum_ShowCeremonyGroupEmotes(void) {
   Actor_ShowEmote(10, EMOTE_IN_FRONT | 2, 0);
 }
 
-/// Discusses Sol Sanctum and asks Isaac to accept the quest.
+/// Vale Sanctum, entrances 20 and 21: the gathering hears what happened in
+/// Sol Sanctum (skipped after a refusal), the Great Healer explains the Wise
+/// One's warning, and asks Isaac to accept responsibility for the fate of the
+/// land. Accepting plays Sanctum_ReceiveWiseOnesMission, sets
+/// FLAG_SANCTUM_QUEST_ACCEPTED and takes exit 30; refusing leaves the room to
+/// table D's events.
 static void Sanctum_RequestQuestAcceptance(void) {
   u32 effectIndex;
 
@@ -684,7 +760,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_EventWait(32);
     Actor_SetChildValue(ACTOR_HEALER, 0);
     Engine_EventWait(30);
-    // Return to the witnesses and finish the departure conversation.
+    // Return to the gathering and finish the departure conversation.
     Sanctum_HideHealerAfterimage();
     Engine_ActorSetAnimation(ACTOR_HEALER, 1);
     Engine_ActorRunRepeatedMotion(ACTOR_HEALER, 2);
@@ -978,7 +1054,9 @@ static void Sanctum_RequestQuestAcceptance(void) {
   Engine_EventEnd();
 }
 
-/// Brings in the Wise One and prepares the party for its mission.
+/// Vale Sanctum, once Isaac accepts: Garet and the Mayor react, the Wise One
+/// appears before the Great Healer and accepts the two, and the healer relays
+/// its guidance; they are to leave the next day.
 static void Sanctum_ReceiveWiseOnesMission(void) {
 
   u32 sparkIndex;
@@ -1018,7 +1096,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_EventWait(30);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_EventWait(20);
-  // Garet and the witnesses react to Isaac accepting the burden.
+  // Garet and the Mayor react to Isaac accepting the burden.
   Engine_EventSetMessage(MsgSanctumAcceptIsaacCantMean);
   Event_ShowMessage(GARET, 0);
   Engine_EventWait(20);
@@ -1108,7 +1186,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_EventWait(60);
   Engine_ActorRunRepeatedMotion(ACTOR_HEALER, 2);
   Engine_EventWait(20);
-  Sanctum_StartCeremonyGroupMotion();
+  Sanctum_StartAllRepeatedMotion();
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_DORA, 0);
   Engine_EventWait(30);
@@ -1137,13 +1215,13 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_HEALER, 0);
   Engine_EventWait(20);
-  Sanctum_ShowCeremonyGroupEmotes();
+  Sanctum_ShowAllEmotes();
   Engine_EventWait(30);
   Actor_ShowEmote(ACTOR_HEALER, EMOTE_IN_FRONT | 2, 0);
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_HEALER, 0);
   Engine_EventWait(20);
-  Sanctum_NodCeremonyGroup();
+  Sanctum_NodAll();
   Engine_EventWait(20);
   Engine_ActorSetAnimationAndWait(ACTOR_HEALER, 3);
   Engine_EventWait(180);
@@ -1163,7 +1241,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_EventWait(30);
   Actor_ShowEmote(ACTOR_HEALER, EMOTE_IN_FRONT | 1, 0);
   Engine_EventWait(60);
-  Sanctum_StartCeremonyGroupMotion();
+  Sanctum_StartAllRepeatedMotion();
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_DORA, 0);
   Engine_EventWait(20);
@@ -1178,15 +1256,15 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_HEALER, 1);
   Engine_ActorShowEmote(ACTOR_HEALER, EMOTE_IN_FRONT | 6, 0);
   Engine_EventWait(20);
-  Sanctum_StartCeremonyGroupMotion();
+  Sanctum_StartAllRepeatedMotion();
   Engine_EventWait(40);
   Event_ShowMessage(ACTOR_HEALER, 0);
   Engine_EventWait(20);
-  Sanctum_NodCeremonyGroup();
+  Sanctum_NodAll();
   Engine_EventWait(30);
   Event_ShowMessage(ACTOR_HEALER, 0);
   Engine_EventWait(30);
-  Sanctum_NodCeremonyGroup();
+  Sanctum_NodAll();
   Engine_EventWait(120);
   Engine_ActorRunRepeatedMotion(GARET, 1);
   Engine_EventWait(20);
@@ -1246,7 +1324,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_ActorWaitForMove(ACTOR_HEALER);
   Actor_SetPosition(ACTOR_HEALER, 0, 0);
   Engine_EventWait(60);
-  Sanctum_ShowCeremonyGroupEmotes();
+  Sanctum_ShowAllEmotes();
   Engine_EventWait(60);
   Engine_EventWait(120);
   Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
@@ -1530,7 +1608,8 @@ static s32 Sanctum_ChooseRestartOption(void) {
   return choice;
 }
 
-/// Has Isaac and Garet act out the events at Sol Sanctum.
+/// Vale Sanctum, the quest's account: Isaac and Garet act out, in sepia, what
+/// happened in Sol Sanctum.
 static void Sanctum_ReenactSolSanctum(void) {
 
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
@@ -1861,8 +1940,9 @@ static void Sanctum_SpawnActorSpark(s32 id) {
   sprite->image.priority = actor->sprite->image.priority;
 }
 
-/// Restores the two floor rectangles changed during the ceremony.
-static void Sanctum_RestoreCeremonyFloor(void) {
+/// Copies two blocks of map cells for the quest's visits, the tiles of one and
+/// the collision of the other.
+static void Sanctum_RestoreQuestFloor(void) {
   {
     Map_CopyCellsTo(0, 64, 11, 68, 3, 2);
   }
@@ -1881,8 +1961,10 @@ static s32 Sanctum_IsLeaderFacingHealer(void) {
   return 0;
 }
 
-/// Talking to the healer: healing from the front, otherwise words that follow
-/// the story.
+/// Vale Sanctum: talking to the Great Healer outside the quest. From the front
+/// the healer opens the Sanctum's services; otherwise the words follow the
+/// story, from "Wielders of Psynergy are called Adepts" before the party has
+/// left Vale to the closed path to Sol Sanctum once it has reached Kalay.
 static void Event_TalkToHealer(void) {
   if (Sanctum_IsLeaderFacingHealer() != 0) {
     Engine_SanctumOpen(ACTOR_HEALER);
@@ -1900,8 +1982,11 @@ static void Event_TalkToHealer(void) {
   Engine_EventEnd();
 }
 
-/// Talking to the healer on a later visit: healing from the front, otherwise
-/// words for this visit.
+/// Vault Sanctum: talking to the healer. From the front the healer opens the
+/// Sanctum's services; otherwise the healer speaks of the gold statue or, on
+/// the later visit, of the earthquakes. Its case for the quest's entrances (20,
+/// 21 and 50) passes to Event_ReconsiderQuest, though their table D calls that
+/// directly.
 static void Event_TalkToHealerOnVisit(void) {
   s32 entrance;
 
@@ -1940,7 +2025,8 @@ static void Event_TalkToHealerOnVisit(void) {
   Engine_EventEnd();
 }
 
-/// Talking to this sanctum's healer: about the curse, lifted or not.
+/// Bilibin Sanctum: talking to the healer, about Kolima's curse, lifted or not;
+/// from the front, the Sanctum's services.
 static void Event_TalkAboutCurse(void) {
   if (Sanctum_IsLeaderFacingHealer() != 0) {
     Engine_SanctumOpen(ACTOR_HEALER);
@@ -1956,8 +2042,8 @@ static void Event_TalkAboutCurse(void) {
   Engine_EventEnd();
 }
 
-/// Talking to this sanctum's healer: about the monsters, and the party's help
-/// in Altin.
+/// Altin Sanctum: talking to the healer, about the beasts in the mine, or the
+/// party's saving Altin from them; from the front, the Sanctum's services.
 static void Event_TalkAboutAltinMonsters(void) {
   if (Sanctum_IsLeaderFacingHealer() != 0) {
     Engine_SanctumOpen(ACTOR_HEALER);
@@ -1972,7 +2058,8 @@ static void Event_TalkAboutAltinMonsters(void) {
   Engine_EventEnd();
 }
 
-/// Talking to this sanctum's healer, come from Xian.
+/// Xian Sanctum: talking to the healer, who came to Xian from very distant
+/// lands; from the front, the Sanctum's services.
 static void Event_TalkAboutJourneyFromXian(void) {
   if (Sanctum_IsLeaderFacingHealer() != 0) {
     Engine_SanctumOpen(ACTOR_HEALER);

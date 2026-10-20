@@ -1,8 +1,67 @@
 /// @file
-/// Babi Palace in Tolbi. Two scenes share this overlay: the palace, where the
-/// party stays as Colosso's guests and where Sheba is held, and its
-/// courtyard with the well. Both change three times: while Babi is missing,
-/// once he has been rescued and the finals are on, and after Colosso.
+/// Babi's Palace in Tolbi, the palace of Babi, the ruler of Tolbi, in two
+/// scenes that share this overlay and the area name Babi's Palace:
+/// BabiPalace2 (scene 139), outside, between the town and the palace door,
+/// with two guards and a well, and BabiPalace1 (scene 138), the palace
+/// itself, a set of rooms joined by doors (BabiPalace_LeaveThroughDoor). From
+/// the palace one door leads into a room of Babi's scholars (exit 11, which
+/// vale_babi.c holds) and another into the Colosseum Tunnel (exit 13). Each
+/// scene has three sets of placements and events, chosen by the story
+/// (Scene_GetPlacements, Scene_GetEvents): before Babi is saved, during the
+/// finals (FLAG_BABI_SAVED), and after Colosso (FLAG_COLOSSO_OVER).
+/// BabiPalace_ApplyEntryState plays the scenes that wait for the party on
+/// arrival, by the entrance it comes in by.
+///
+/// The party first comes here on the day Colosso should begin, with Babi
+/// missing. During Colosso visitors may enter, the guards outside say, and
+/// Babi opens rooms to the warriors who fight in it. Inside, an attendant
+/// leads the party to four beds (BabiPalace_ShowBeds), and searching them puts
+/// it to bed, talking it over the first night (BabiPalace_RestInPalaceBeds,
+/// FLAG_BABI_PALACE_FIRST_NIGHT); warriors nurse injuries before the trials,
+/// one doubled up with indigestion (gBabiPalace_IndigestionScript). Walking
+/// past Iodem (touch 60) plays BabiPalace_HearSoldiersReport: the soldiers he
+/// sent to search Altmiller Cave come back without Babi, Iodem tells how he
+/// has seen Babi vanish into that cave before, though this time his bed was
+/// not slept in, and leaves for the colosseum in Babi's stead
+/// (FLAG_IODEM_HEARD_SOLDIERS, after which he and the soldiers are gone). In
+/// another room is Sheba, a girl from the town of Lalivero on the Gondowan
+/// continent, held as Babi's guest; she says herself that he holds her
+/// hostage to complete his lighthouse in Lalivero. The first Mind Read on her
+/// she feels (BabiPalace_ReadShebasMind, FLAG_SHEBA_NOTICED_MIND_READ).
+/// Babi's diary reads `This Colosso may be my last...`. The story goes on in
+/// Altmiller Cave, where the party finds Babi and saves him
+/// (altmiller_cave.c).
+///
+/// During the finals the guards outside pass on Babi's word that he is
+/// waiting at the colosseum (BabiPalace_PassOnBabisWord), and one thanks the
+/// party once for saving him (BabiPalace_ThankForSavingBabi). Inside, the
+/// attendant offers a rest before the match (BabiPalace_OfferRest). A lost
+/// match brings the party back here by entrance 98 (colosso_river.c,
+/// colosso_wall.c): its HP and PP are made full, Garet, Ivan and Mia rejoin
+/// and the inventory Colosso held is returned
+/// (BabiPalace_RestorePartyAndInventory), and the leader wakes from what his
+/// friends call a dream of fighting in the finals
+/// (BabiPalace_WakeFromFinalsDream), free to go back and try again.
+///
+/// The third match, won or lost, ends Colosso and brings the party back by
+/// entrance 99 (colosso_log.c): the leader wakes long after the finals, and
+/// Babi wants to see him (BabiPalace_WakeAfterFinals). Coming into Babi's
+/// room (entrance 33) the first time plays BabiPalace_MeetBabiAfterColosso
+/// (FLAG_BABI_SPOKE_AFTER_COLOSSO): Babi praises the party's fighting, and
+/// has Iodem bring the victor's prize if it won (FLAG_WON_COLOSSO). He saw its
+/// Psynergy through his Cloak Ball, and tells of Lemuria, the city of an
+/// ancient people far out at sea, where he went at the time of the great
+/// flood, a hundred years ago, and whose draught has kept him alive since and
+/// is running out. He built Babi Lighthouse to find Lemuria again, and asks
+/// the party to sail his Lemurian ship, which only an Adept can; learning that
+/// it must beat Felix and the others to Venus Lighthouse, he sends Iodem with
+/// it, to meet at Gondowan Passage. The Cloak Ball on show (ACTOR_CLOAK_BALL,
+/// drawn from its item icon) Babi lends for the quest
+/// (BabiPalace_OfferCloakBall, FLAG_BABI_PALACE_CLOAK_BALL), and Sheba has left
+/// for Lalivero with the soldiers going to Babi Lighthouse. Arriving by
+/// entrance 90 sets FLAG_BABI_SAVED, and by 91 FLAG_COLOSSO_OVER as well (XXX:
+/// no exit table in the scenes leads to either; what does would say what they
+/// are for).
 
 #include "game_state.h"
 #include "version.h"
@@ -43,7 +102,8 @@
 /// on: before Babi is rescued, during the finals and after Colosso.
 ///
 /// Before the rescue: the attendant who shows the party its beds, Iodem and
-/// the two soldiers he sent to Altmiller Cave; Sheba is held here throughout.
+/// the two soldiers he sent to Altmiller Cave; Sheba is held here until
+/// Colosso is over.
 enum {
   ACTOR_BED_ATTENDANT = 9,
   ACTOR_IODEM = 20,
@@ -58,7 +118,7 @@ enum { ACTOR_FINALS_ATTENDANT = 10 };
 /// number.
 enum { ACTOR_BABI = 14, ACTOR_CLOAK_BALL = 16 };
 
-/// The courtyard's two guards.
+/// The two guards outside the palace (BabiPalace2).
 enum { ACTOR_FIRST_GUARD = 8, ACTOR_SECOND_GUARD = 9 };
 
 /// The attendant has led the party to the beds; talking again sends the
@@ -127,8 +187,8 @@ static inline void BabiPalace_ShowQuestionAnswer(s32 actorId, s32 question) {
   Engine_EventShowMessage(actorId, 0);
 }
 
-/// Asks about Babi's soldiers.
-/// "Did you run into any of Babi's soldiers in town?"
+/// A guest in the palace, while Babi is missing, asks whether the party ran
+/// into Babi's soldiers in town.
 static void BabiPalace_AskAboutSoldiers(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiRunBabisSoldiers);
 }
@@ -232,8 +292,9 @@ static void BabiPalace_OfferRest(s32 actorId) {
   Event_End();
 }
 
-/// A warrior asks whether the party is entering Colosso, and either hurries
-/// it to the trials or asks whether it got hurt too.
+/// A warrior in the palace, while Babi is missing, asks whether the party is
+/// entering Colosso, and either hurries it to the trials or asks whether it
+/// got hurt too.
 static void BabiPalace_AskAboutColosso(s32 actorId) {
   s32 question = MsgTolbiPlanningEnterColosso;
 
@@ -251,8 +312,8 @@ static void BabiPalace_AskAboutColosso(s32 actorId) {
   Engine_EventShowMessage(actorId, 0);
 }
 
-/// The warrior with indigestion tries to shrug it off, doubles up, and gives
-/// up on entering Colosso.
+/// The warrior in the palace with indigestion, while Babi is missing, tries to
+/// shrug it off, doubles up, and gives up on entering Colosso.
 static void BabiPalace_TalkToIndigestedWarrior(s32 actorId) {
   struct FieldActor *actor;
   const s32 *indigestionScript;
@@ -290,8 +351,9 @@ static void BabiPalace_TalkToIndigestedWarrior(s32 actorId) {
   Event_End();
 }
 
-/// Mind Read on Sheba: she cannot escape to Lalivero alone; the first time,
-/// she feels it, ends the Psynergy and asks about it. "Did you just..."
+/// Mind Read on Sheba in the palace, while Babi is missing: she cannot escape
+/// to Lalivero alone; the first time, she feels it, ends the Psynergy and
+/// asks about it. "Did you just..."
 static void BabiPalace_ReadShebasMind(s32 unused0, s32 actorId) {
   Event_Begin();
   Event_SetMessage(MsgTolbiEvenIfEscapedBabiPalace);
@@ -312,14 +374,14 @@ static void BabiPalace_ReadShebasMind(s32 unused0, s32 actorId) {
   Event_End();
 }
 
-/// Asks about meeting Babi. "Did you meet with Babi?"
+/// A guest in the palace, after Colosso, asks whether the party has met with
+/// Babi.
 static void BabiPalace_AskAboutMeetingBabi(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiMeetBabi);
 }
 
-/// Asks whether the party wants to go back to the eastern shores. "So, you're
-/// all from the eastern shores of the Karagol Sea, huh? Do you want to go back
-/// already?"
+/// A guest in the palace, after Colosso, asks whether the party wants to go
+/// back already to the eastern shores of the Karagol Sea.
 static void BabiPalace_AskAboutEasternShores(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiEasternShoresKaragol);
 }
@@ -2169,7 +2231,8 @@ static void BabiPalace_LeaveThroughDoor(void) {
   Event_End();
 }
 
-/// Walking north into the courtyard's door: it opens and the leader goes in.
+/// Walking north into the palace's door from outside: it opens and the leader
+/// goes in.
 static void BabiPalace_LeaveThroughAnimatedDoor(void) {
   Event_Begin();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384);
@@ -2181,9 +2244,9 @@ static void BabiPalace_LeaveThroughAnimatedDoor(void) {
   Event_End();
 }
 
-/// A courtyard guard during the finals passes on Babi's word. "You're Isaac,
-/// aren't you? Babi left word that he would be waiting for you at the
-/// colosseum."
+/// A guard outside the palace during the finals passes on Babi's word.
+/// "You're Isaac, aren't you? Babi left word that he would be waiting for you
+/// at the colosseum."
 static void BabiPalace_PassOnBabisWord(void) {
   s32 question;
   GameFlag_Set(FLAG_BABI_PALACE_GUARD_GAVE_WORD);
@@ -2242,9 +2305,8 @@ static void BabiPalace_ThankForSavingBabi(void) {
   }
 }
 
-/// Asks whether the party is leaving, like the other warriors. "All the
-/// warriors who stayed in the palace left when Colosso ended. Are you folks
-/// leaving too?"
+/// A guard outside the palace, after Colosso, asks whether the party is
+/// leaving like the other warriors who stayed in the palace.
 static void BabiPalace_AskAboutRemainingWarriors(s32 actorId) {
   s32 question = MsgTolbiWarriorsWhoStayed;
 
@@ -2259,7 +2321,8 @@ static void BabiPalace_AskAboutRemainingWarriors(s32 actorId) {
   }
 }
 
-/// Searching the courtyard's well. "It's filled with fresh, clean water."
+/// Searching the well outside the palace. "It's filled with fresh, clean
+/// water."
 static void BabiPalace_ExamineWell(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);

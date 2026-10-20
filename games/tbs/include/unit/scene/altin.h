@@ -26,7 +26,7 @@ extern struct ScenePlacement gAltinHouses_Placements[];
 extern struct SceneEvent gAltinOther_Events[];
 extern struct SceneEvent gAltinVillage_Events[];
 extern struct SceneEvent gAltinHouses_Events[];
-extern u16 gAltinVillage_MineDoorCells[];
+extern u16 gAltinVillage_SanctumDoorCells[];
 extern u16 gAltinVillage_DoorCellsA[];
 extern u16 gAltinVillage_DoorCellsF[];
 extern u16 gAltinVillage_DoorCellsG[];

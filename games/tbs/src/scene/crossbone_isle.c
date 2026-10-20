@@ -1,6 +1,50 @@
 /// @file
-/// Crossbone Isle: the first room's plants, ivy and Nut, the sliding-block
-/// room, the nine guarded rooms with their Move puzzles, and the last guards.
+/// Crossbone Isle, an island reached from the world map, and the main line of
+/// the cave beneath it, in three places by their area names:
+/// Crossbone Isle, Crossbone Isle Cave and the Pirate Ship.
+///
+/// No one on the island speaks: it is a run of Psynergy puzzles and battles
+/// that ends with Deadbeard on the Pirate Ship. Its places are met in this
+/// order:
+///
+/// - Crossbone Isle (CrossboneIsle1, scene 113), the island itself, reached
+///   from the world map (its exit 75; exit 1 leads back to it). Whirlwind
+///   blows four ivies away for good (four flags from
+///   FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY, the first also opening a cell),
+///   Growth grows four plants so they can be crossed, for this visit only
+///   (FLAG_SCENE_TEMP_40 to _43), two blocks can be pushed, and a Nut circles
+///   until Catch takes it (0xfd7). Exit 2 leads down into the cave.
+/// - Crossbone Isle Cave (CrossboneIsle2, scene 114), the cave's mouth, with
+///   only its two exits.
+/// - Crossbone Isle Cave (CrossboneIsle6 to CrossboneIsle14, scenes 126 to
+///   134), nine rooms in a row on one map, entered from the east (entrance 1)
+///   and left to the west (exit 2). Each has two doors in its north wall into
+///   a side room of its own. The first time the party walks into the east door
+///   (Event_OpenEastDoor), the monsters behind it attack: encounter table 63
+///   for the first four rooms and 84 for the next five, one group per room.
+///   Back from the battle (entrance 5) the door opens and the party walks
+///   through, and from then on it simply opens (one flag per room from
+///   FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED); the west door always opens.
+///   Between the doors stands a block that, pushed or moved with Move to
+///   column 40, sinks into the floor and opens the corridor (one flag per room
+///   from FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED). In the first room a chest
+///   is a mimic (0xef4). The side rooms of the first eight rooms are in
+///   crossbone_isle_pillar_rooms.c and crossbone_isle_platform_rooms.c.
+/// - Crossbone Isle Cave (CrossboneIsle3, scene 123), the ninth room's side
+///   room: twelve blocks that slide with the leader standing on them until
+///   another block or the wall stops them, and hops from block to block, lead
+///   to its four chests.
+/// - Crossbone Isle Cave (CrossboneIsle4, scene 124), the passage from the
+///   ninth room to the Pirate Ship.
+/// - Pirate Ship (CrossboneIsle5, scene 125), at the end. Stepping on trigger
+///   10 (Event_FightDeadbeard) sets off the battle with Deadbeard, encounter
+///   table 84's sixth group; when the party comes back (entrance 5)
+///   FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED is set and a chest with the Demon
+///   Mail appears. A second chest is a mimic (0xef7).
+///
+/// Scene_Initialize restores each scene as its flags say: the ivy and plants on
+/// the island, the sliding blocks' footprints, the corridor's sunk blocks and
+/// the chests the mimics leave.
 #include "game_state.h"
 #include "version.h"
 #include "global_cells.h"
@@ -39,8 +83,8 @@
 #include "songs.h"
 #include "event.h"
 
-static void CrossboneIsle_RestoreMovedRoomBlock(void);
-static void CrossboneIsle_LeaveClearedRoom(void);
+static void CrossboneIsle_RestoreSunkBlock(void);
+static void CrossboneIsle_OpenEastDoorAfterBattle(void);
 static void CrossboneIsle_RestoreIvy(void);
 static void CrossboneIsle_DrawBlockPuzzleFootprints(void);
 
@@ -94,7 +138,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 
 #include "common/effect_advance.h"
 
-/// Emits a ring of effects around a moved block.
+/// Emits a ring of dust around a corridor room's block as it sinks.
 static void CrossboneIsle_SpawnBlockMovedBurst(s32 objectId) {
   struct FieldActor *actor;
   struct Vector3 velocity;
@@ -120,9 +164,9 @@ static void CrossboneIsle_SpawnBlockMovedBurst(s32 objectId) {
   }
 }
 
-/// Stepping on trigger 10 in the fifth room: the last guards attack, and the
-/// party comes back to this room's entrance 5.
-static void Event_FightFinalGuards(void) {
+/// Stepping on trigger 10 on the Pirate Ship: Deadbeard attacks (encounter
+/// table 84's sixth group), and the party comes back to the ship's entrance 5.
+static void Event_FightDeadbeard(void) {
 
   EV_BEGIN();
   Event_SetNextDestination(gGameState.scene, 5);
@@ -152,7 +196,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gCrossboneIsleEventsOther;
 }
 
-/// Catch on the Nut circling in the first room: the party gets it.
+/// Catch on the Nut circling on Crossbone Isle: the party gets it (0xfd7).
 static void Event_CatchNut(void) {
   EV_BEGIN();
   Engine_ActorSetPosition(8, 0, 0);
@@ -162,7 +206,11 @@ static void Event_CatchNut(void) {
   EV_END();
 }
 
-/// Restores puzzle changes and handles returning from a guard battle.
+/// Restores each scene's puzzles from its flags: the sliding blocks' footprints
+/// in CrossboneIsle3; on the Pirate Ship the mimic's chest and, after
+/// Deadbeard, the Demon Mail's; on Crossbone Isle the ivy, plants and Nut; in
+/// the corridor rooms the mimic's chest, the sunk blocks and the door opened
+/// after a battle.
 s32 Scene_Initialize(void) {
   struct FieldActor *actor;
   s32 scene;
@@ -170,7 +218,7 @@ s32 Scene_Initialize(void) {
   s32 first;
 
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  // The sliding-block room restores its map footprints independently.
+  // CrossboneIsle3's sliding blocks restore their map footprints alone.
   scene = gGameState.scene;
   if (scene == (s32)&SceneId_CrossboneIsle3) {
     CrossboneIsle_DrawBlockPuzzleFootprints();
@@ -184,11 +232,11 @@ s32 Scene_Initialize(void) {
     }
     if (gGameState.scene == scene) {
       if (gGameState.entrance != 5) {
-        if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FINAL_GUARDS_DEFEATED) == 0) {
+        if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED) == 0) {
           return 0;
         }
       }
-      FLAG_SET(FLAG_CROSSBONE_ISLE_FINAL_GUARDS_DEFEATED);
+      FLAG_SET(FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED);
       Map_CopyCellAttributes(0, 1, 1, 1, 13, 30);
       MapObject_SetPosition(100, PIXELS(216), PIXELS(488));
       return 0;
@@ -243,7 +291,8 @@ s32 Scene_Initialize(void) {
     Scene_FloatNut(8);
     return 0;
   }
-  // Rooms 6-14 share the guard, moved-block, and return-entrance protocol.
+  // The nine corridor rooms (CrossboneIsle6 to 14) share their door battle,
+  // sunk block and return entrance.
   first = (s32)&SceneId_CrossboneIsle6;
   if (current == first) {
     if (FLAG_CHECK(0xef4) == 0) {
@@ -254,18 +303,18 @@ s32 Scene_Initialize(void) {
   current = gGameState.scene;
   if (current >= first) {
     if (current <= (s32)&SceneId_CrossboneIsle14) {
-      CrossboneIsle_RestoreMovedRoomBlock();
+      CrossboneIsle_RestoreSunkBlock();
       if (gGameState.entrance == 5) {
-        CrossboneIsle_LeaveClearedRoom();
+        CrossboneIsle_OpenEastDoorAfterBattle();
       }
     }
   }
   return 0;
 }
 
-/// In a guarded room whose Move puzzle is solved, the block stays sunk in its
-/// place.
-static void CrossboneIsle_RestoreMovedRoomBlock(void) {
+/// In a corridor room of Crossbone Isle Cave whose block has been sunk, it
+/// stays sunk in its place.
+static void CrossboneIsle_RestoreSunkBlock(void) {
   struct FieldActor *actor;
   s32 cleared;
 
@@ -286,8 +335,10 @@ static void CrossboneIsle_RestoreMovedRoomBlock(void) {
   }
 }
 
-/// Move on a guarded room's block, and after each push: once it reaches column
-/// 40 it sinks into the floor in a ring of dust, and the way on is open.
+/// Move on a corridor room's block in Crossbone Isle Cave, and after each push:
+/// once it reaches column 40 it sinks into the floor in a ring of dust, and the
+/// corridor is open (a flag per room from
+/// FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED).
 static void Event_MoveBlock(void) {
   struct FieldActor *block;
   s16 *sceneNumber;
@@ -326,7 +377,7 @@ static void Event_MoveBlock(void) {
   block->motionFlags = 0;
   block->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 
-  // Replace the blocked cell and remember the room's completed Move puzzle.
+  // Replace the blocked cell and remember that the room's block is sunk.
   Map_CopyCellAttributes(42, 10, 1, 1, column, 10);
 
 #if !TBS_PATCH_1
@@ -337,7 +388,8 @@ static void Event_MoveBlock(void) {
                                      (s32)&SceneId_CrossboneIsle6));
 }
 
-/// Walking into a guarded room's block (trigger 20): push it a step.
+/// Walking into a corridor room's block in Crossbone Isle Cave (trigger 20):
+/// push it a step.
 static void Event_PushBlock(void) {
   EV_BEGIN();
   StagedActor_AdvancePair();
@@ -345,17 +397,19 @@ static void Event_PushBlock(void) {
   Event_MoveBlock();
 }
 
-/// Walking north into the western door (trigger 4): it opens, and the party
-/// goes through.
+/// Walking north into a corridor room's west door in Crossbone Isle Cave
+/// (trigger 4): it opens, and the party goes through to the side room.
 static void Event_OpenWestDoor(void) {
   Engine_MapAnimateCells(gCrossboneIsle_EntranceCells, 37, 7);
   Engine_AudioPlayCue(SE_183);
   Engine_EventRequestExit(4);
 }
 
-/// Walking north into a guarded room's door (trigger 3): the first time, the
-/// room's guards attack; once they are beaten, the door opens.
-static void Event_EnterGuardedRoom(void) {
+/// Walking north into a corridor room's east door in Crossbone Isle Cave
+/// (trigger 3): the first time, the monsters behind it attack, and the party
+/// comes back to entrance 5; once they are beaten, the door opens onto the
+/// side room.
+static void Event_OpenEastDoor(void) {
   if (Engine_GameFlagIsSet(gGameState.scene +
                            (FLAG_CROSSBONE_ISLE_FIRST_GUARDS_DEFEATED -
                             (s32)&SceneId_CrossboneIsle6)) == 0) {
@@ -400,9 +454,9 @@ static void Event_EnterGuardedRoom(void) {
   }
 }
 
-/// Back from beating a room's guards: the door opens, and the party walks
-/// through.
-static void CrossboneIsle_LeaveClearedRoom(void) {
+/// Back from the battle at a corridor room's east door (entrance 5): the door
+/// opens, and the party walks through.
+static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   EV_BEGIN();
   OBJ_SPEED(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   Engine_EventOpenScreen();
@@ -416,7 +470,8 @@ static void CrossboneIsle_LeaveClearedRoom(void) {
   EV_END();
 }
 
-/// Growth on the first plant (actor 11): it grows, and its cell can be crossed.
+/// Growth on Crossbone Isle's first plant (actor 11): it grows, and its cell
+/// can be crossed.
 static void Event_GrowPlant11(s32 actorId) {
   s32 fixedX = PIXELS(304);
   s32 fixedZ = PIXELS(368);
@@ -430,7 +485,7 @@ static void Event_GrowPlant11(s32 actorId) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_40);
 }
 
-/// Growth on the second plant (actor 12).
+/// Growth on Crossbone Isle's second plant (actor 12).
 static void Event_GrowPlant12(s32 actorId) {
   s32 fixedX = PIXELS(80);
   s32 fixedZ = PIXELS(368);
@@ -444,7 +499,7 @@ static void Event_GrowPlant12(s32 actorId) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_41);
 }
 
-/// Growth on the third plant (actor 13).
+/// Growth on Crossbone Isle's third plant (actor 13).
 static void Event_GrowPlant13(s32 actorId) {
   s32 fixedX = PIXELS(96);
   s32 fixedZ = PIXELS(336);
@@ -458,7 +513,7 @@ static void Event_GrowPlant13(s32 actorId) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_42);
 }
 
-/// Growth on the fourth plant (actor 14), which opens two cells.
+/// Growth on Crossbone Isle's fourth plant (actor 14), which opens two cells.
 static void Event_GrowPlant14(s32 actorId) {
   s32 fixedX = PIXELS(144);
   s32 fixedZ = PIXELS(320);
@@ -475,7 +530,8 @@ static void Event_GrowPlant14(s32 actorId) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_43);
 }
 
-/// Whirlwind on the first ivy (actor 15): it is blown away for good.
+/// Whirlwind on Crossbone Isle's first ivy (actor 15): it is blown away for
+/// good, and its cell opens.
 static void Event_BlowAwayIvy15(void) {
   Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY);
   {
@@ -484,22 +540,22 @@ static void Event_BlowAwayIvy15(void) {
   }
 }
 
-/// Whirlwind on the second ivy (actor 16).
+/// Whirlwind on Crossbone Isle's second ivy (actor 16).
 static void Event_BlowAwayIvy16(void) {
   Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1);
 }
 
-/// Whirlwind on the third ivy (actor 17).
+/// Whirlwind on Crossbone Isle's third ivy (actor 17).
 static void Event_BlowAwayIvy17(void) {
   Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2);
 }
 
-/// Whirlwind on actor 18, a fourth ivy.
+/// Whirlwind on Crossbone Isle's fourth ivy (actor 18).
 static void Event_BlowAwayIvy18(void) {
   Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3);
 }
 
-/// Ivy blown away stays gone; the rest stands tall.
+/// On Crossbone Isle, ivy blown away stays gone; the rest stands tall.
 static void CrossboneIsle_RestoreIvy(void) {
   struct FieldActor *actor;
 
@@ -530,9 +586,9 @@ static void CrossboneIsle_RestoreIvy(void) {
   }
 }
 
-/// Walking into one of the first room's blocks: push it if the cell beyond is
-/// clear.
-static void Event_PushFirstRoomBlock(void) {
+/// Walking into one of Crossbone Isle's two blocks: push it if the cell beyond
+/// is clear.
+static void Event_PushIsleBlock(void) {
   struct StagedActorProbe probe;
 
   EV_BEGIN();
@@ -640,7 +696,7 @@ static void CrossboneIsle_AnimateTouchedBlock(int actorId) {
   OBJ_MODE(actorId, 2);
 }
 
-/// Draws all twelve block footprints in the sliding-block room.
+/// Draws all twelve block footprints in Crossbone Isle Cave (CrossboneIsle3).
 static void CrossboneIsle_DrawBlockPuzzleFootprints(void) {
   CrossboneIsle_DrawHorizontalBlockFootprint(8, 17, 30, 21);
   CrossboneIsle_DrawHorizontalBlockFootprint(10, 17, 31, 22);
@@ -656,40 +712,46 @@ static void CrossboneIsle_DrawBlockPuzzleFootprints(void) {
   CrossboneIsle_DrawVerticalBlockFootprint(16, 6, 30, 36);
 }
 
-/// Stepping onto block 8: its animation plays from the start.
+// Crossbone Isle Cave (CrossboneIsle3), the ninth room's side room: its twelve
+// sliding blocks. Stepping onto a block plays its animation from the start;
+// walking onto one in a direction it moves slides it that way with the leader
+// on it until another block or the wall stops it; walking against a block's
+// edge hops the leader 32 pixels if the landing is clear.
+
+/// Stepping onto block 8.
 static void Event_StepOnBlock8(void) { CrossboneIsle_AnimateTouchedBlock(8); }
 
-/// Stepping onto block 10: its animation plays from the start.
+/// Stepping onto block 10.
 static void Event_StepOnBlock10(void) { CrossboneIsle_AnimateTouchedBlock(10); }
 
-/// Stepping onto block 11: its animation plays from the start.
+/// Stepping onto block 11.
 static void Event_StepOnBlock11(void) { CrossboneIsle_AnimateTouchedBlock(11); }
 
-/// Stepping onto block 12: its animation plays from the start.
+/// Stepping onto block 12.
 static void Event_StepOnBlock12(void) { CrossboneIsle_AnimateTouchedBlock(12); }
 
-/// Stepping onto block 13: its animation plays from the start.
+/// Stepping onto block 13.
 static void Event_StepOnBlock13(void) { CrossboneIsle_AnimateTouchedBlock(13); }
 
-/// Stepping onto block 15: its animation plays from the start.
+/// Stepping onto block 15.
 static void Event_StepOnBlock15(void) { CrossboneIsle_AnimateTouchedBlock(15); }
 
-/// Stepping onto block 17: its animation plays from the start.
+/// Stepping onto block 17.
 static void Event_StepOnBlock17(void) { CrossboneIsle_AnimateTouchedBlock(17); }
 
-/// Stepping onto block 18: its animation plays from the start.
+/// Stepping onto block 18.
 static void Event_StepOnBlock18(void) { CrossboneIsle_AnimateTouchedBlock(18); }
 
-/// Stepping onto block 9: its animation plays from the start.
+/// Stepping onto block 9.
 static void Event_StepOnBlock9(void) { CrossboneIsle_AnimateTouchedBlock(9); }
 
-/// Stepping onto block 19: its animation plays from the start.
+/// Stepping onto block 19.
 static void Event_StepOnBlock19(void) { CrossboneIsle_AnimateTouchedBlock(19); }
 
-/// Stepping onto block 14: its animation plays from the start.
+/// Stepping onto block 14.
 static void Event_StepOnBlock14(void) { CrossboneIsle_AnimateTouchedBlock(14); }
 
-/// Stepping onto block 16: its animation plays from the start.
+/// Stepping onto block 16.
 static void Event_StepOnBlock16(void) { CrossboneIsle_AnimateTouchedBlock(16); }
 
 /// Tests a step, then moves the leader with the block-pushing animation.
@@ -746,8 +808,7 @@ static s32 CrossboneIsle_TryHop(struct FieldActor *actor,
   return 0;
 }
 
-/// Walking north against a block's edge: hop 32 pixels north if the landing is
-/// clear.
+/// Walking north against a block's edge.
 static s32 Event_HopNorth(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
@@ -758,8 +819,7 @@ static s32 Event_HopNorth(void) {
   return CrossboneIsle_TryHop(actor, &destination);
 }
 
-/// Walking south against a block's edge: hop 32 pixels south if the landing is
-/// clear.
+/// Walking south against a block's edge, or at the Pirate Ship's trigger 20.
 static s32 Event_HopSouth(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
@@ -770,8 +830,7 @@ static s32 Event_HopSouth(void) {
   return CrossboneIsle_TryHop(actor, &destination);
 }
 
-/// Walking west against a block's edge: hop 32 pixels west if the landing is
-/// clear.
+/// Walking west against a block's edge.
 static s32 Event_HopWest(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
@@ -782,8 +841,7 @@ static s32 Event_HopWest(void) {
   return CrossboneIsle_TryHop(actor, &destination);
 }
 
-/// Walking east against a block's edge: hop 32 pixels east if the landing is
-/// clear.
+/// Walking east against a block's edge.
 static s32 Event_HopEast(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
@@ -794,8 +852,7 @@ static s32 Event_HopEast(void) {
   return CrossboneIsle_TryHop(actor, &destination);
 }
 
-/// Walking north onto block 8: it slides north with the leader on it until
-/// another block or the wall stops it.
+/// Walking north onto block 8.
 static void Event_SlideBlock8North(void) {
   s32 actorX = Object_GetById(8)->x.fixed >> 20;
   s32 actorZ = Object_GetById(8)->z.fixed >> 20;
@@ -870,8 +927,7 @@ static inline void CrossboneIsle_RedrawVerticalBlockRoute(s32 actorId,
   Map_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
-/// Walking south onto block 8: it slides south with the leader on it until
-/// another block or the wall stops it.
+/// Walking south onto block 8.
 static void Event_SlideBlock8South(void) {
   s32 column = Object_GetById(8)->x.fixed >> 20;
   s32 row = Object_GetById(8)->z.fixed >> 20;
@@ -897,8 +953,7 @@ static void Event_SlideBlock8South(void) {
   CrossboneIsle_RedrawHorizontalBlockRoute(8, column, row);
 }
 
-/// Walking north onto block 10: it slides north with the leader on it until
-/// another block or the wall stops it.
+/// Walking north onto block 10.
 static void Event_SlideBlock10North(void) {
   s32 column = Object_GetById(10)->x.fixed >> 20;
   s32 row = Object_GetById(10)->z.fixed >> 20;
@@ -928,8 +983,7 @@ static void Event_SlideBlock10North(void) {
   CrossboneIsle_RedrawHorizontalBlockRoute(10, column, row);
 }
 
-/// Walking south onto block 10: it slides south with the leader on it until
-/// another block or the wall stops it.
+/// Walking south onto block 10.
 static void Event_SlideBlock10South(void) {
   s32 column = Object_GetById(10)->x.fixed >> 20;
   s32 row = Object_GetById(10)->z.fixed >> 20;
@@ -945,8 +999,7 @@ static void Event_SlideBlock10South(void) {
   }
 }
 
-/// Walking west onto block 11: it slides west with the leader on it until
-/// another block or the wall stops it.
+/// Walking west onto block 11.
 static void Event_SlideBlock11West(void) {
   s32 column = Object_GetById(11)->x.fixed >> 20;
   s32 row = Object_GetById(11)->z.fixed >> 20;
@@ -968,8 +1021,7 @@ static void Event_SlideBlock11West(void) {
   }
 }
 
-/// Walking east onto block 11: it slides east with the leader on it until
-/// another block or the wall stops it.
+/// Walking east onto block 11.
 static void Event_SlideBlock11East(void) {
   s32 column = Object_GetById(11)->x.fixed >> 20;
   s32 row = Object_GetById(11)->z.fixed >> 20;
@@ -987,8 +1039,7 @@ static void Event_SlideBlock11East(void) {
   }
 }
 
-/// Walking west onto block 12: it slides west with the leader on it until
-/// another block or the wall stops it.
+/// Walking west onto block 12.
 static void Event_SlideBlock12West(void) {
   s32 column = Object_GetById(12)->x.fixed >> 20;
   s32 row = Object_GetById(12)->z.fixed >> 20;
@@ -1005,8 +1056,7 @@ static void Event_SlideBlock12West(void) {
   CrossboneIsle_RedrawVerticalBlockRoute(12, column, row);
 }
 
-/// Walking east onto block 12: it slides east with the leader on it until
-/// another block or the wall stops it.
+/// Walking east onto block 12.
 static void Event_SlideBlock12East(void) {
   s32 column = Object_GetById(12)->x.fixed >> 20;
   s32 row = Object_GetById(12)->z.fixed >> 20;
@@ -1022,8 +1072,7 @@ static void Event_SlideBlock12East(void) {
   CrossboneIsle_RedrawVerticalBlockRoute(12, column, row);
 }
 
-/// Walking west onto block 13: it slides west with the leader on it until
-/// another block or the wall stops it.
+/// Walking west onto block 13.
 static void Event_SlideBlock13West(void) {
   s32 column = Object_GetById(13)->x.fixed >> 20;
   s32 row = Object_GetById(13)->z.fixed >> 20;
@@ -1073,8 +1122,7 @@ static void Event_SlideBlock13West(void) {
   CrossboneIsle_RedrawVerticalBlockRoute(13, column, row);
 }
 
-/// Walking east onto block 13: it slides east with the leader on it until
-/// another block or the wall stops it.
+/// Walking east onto block 13.
 static void Event_SlideBlock13East(void) {
   s32 column = Object_GetById(13)->x.fixed >> 20;
   s32 row = Object_GetById(13)->z.fixed >> 20;
@@ -1095,8 +1143,7 @@ static void Event_SlideBlock13East(void) {
   CrossboneIsle_RedrawVerticalBlockRoute(13, column, row);
 }
 
-/// Walking west onto block 15: it slides west with the leader on it until
-/// another block or the wall stops it.
+/// Walking west onto block 15.
 static void Event_SlideBlock15West(void) {
   s32 column = Object_GetById(15)->x.fixed >> 20;
   s32 row = Object_GetById(15)->z.fixed >> 20;
@@ -1130,8 +1177,7 @@ static void Event_SlideBlock15West(void) {
   CrossboneIsle_RedrawVerticalBlockRoute(15, column, row);
 }
 
-/// Walking east onto block 15: it slides east with the leader on it until
-/// another block or the wall stops it.
+/// Walking east onto block 15.
 static void Event_SlideBlock15East(void) {
   s32 column = Object_GetById(15)->x.fixed >> 20;
   s32 row = Object_GetById(15)->z.fixed >> 20;
@@ -1179,8 +1225,7 @@ static void Event_SlideBlock15East(void) {
   CrossboneIsle_RedrawVerticalBlockRoute(15, column, row);
 }
 
-/// Walking north onto block 17: it slides north with the leader on it until
-/// another block or the wall stops it.
+/// Walking north onto block 17.
 static void Event_SlideBlock17North(void) {
   s32 column = Object_GetById(17)->x.fixed >> 20;
   s32 row = Object_GetById(17)->z.fixed >> 20;
@@ -1203,8 +1248,7 @@ static void Event_SlideBlock17North(void) {
   CrossboneIsle_RedrawHorizontalBlockRoute(17, column, row);
 }
 
-/// Walking south onto block 17: it slides south with the leader on it until
-/// another block or the wall stops it.
+/// Walking south onto block 17.
 static void Event_SlideBlock17South(void) {
   s32 column = Object_GetById(17)->x.fixed >> 20;
   s32 row = Object_GetById(17)->z.fixed >> 20;
@@ -1222,8 +1266,7 @@ static void Event_SlideBlock17South(void) {
 /// These three columns form the crossing lane for the vertical blocks.
 #define IS_IN_BLOCK_CROSSING_COLUMNS(x) ((x) >= 6 && (x) <= 8)
 
-/// Walking north onto block 18: it slides north with the leader on it until
-/// another block or the wall stops it.
+/// Walking north onto block 18.
 static void Event_SlideBlock18North(void) {
   s32 column;
   s32 row;
@@ -1297,8 +1340,7 @@ static void Event_SlideBlock18North(void) {
 
 #undef IS_IN_BLOCK_CROSSING_COLUMNS
 
-/// Walking south onto block 18: it slides south with the leader on it until
-/// another block or the wall stops it.
+/// Walking south onto block 18.
 static void Event_SlideBlock18South(void) {
   s32 column;
   s32 row;
@@ -1357,8 +1399,7 @@ static void Event_SlideBlock18South(void) {
 #undef IS_IN_BLOCK_CROSSING_COLUMNS
 #define IS_IN_BLOCK_CROSSING_COLUMNS(x) ((x) >= 9 && (x) <= 11)
 
-/// Walking north onto block 9: it slides north with the leader on it until
-/// another block or the wall stops it.
+/// Walking north onto block 9.
 static void Event_SlideBlock9North(void) {
   s32 column;
   s32 row;
@@ -1433,8 +1474,7 @@ static void Event_SlideBlock9North(void) {
 
 #undef IS_IN_BLOCK_CROSSING_COLUMNS
 
-/// Walking south onto block 9: it slides south with the leader on it until
-/// another block or the wall stops it.
+/// Walking south onto block 9.
 static void Event_SlideBlock9South(void) {
   s32 column;
   s32 row;
@@ -1496,8 +1536,7 @@ static void Event_SlideBlock9South(void) {
   Map_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
-/// Walking west onto block 19: it slides west with the leader on it until
-/// another block or the wall stops it.
+/// Walking west onto block 19.
 static void Event_SlideBlock19West(void) {
   s32 column;
   s32 row;
@@ -1567,8 +1606,7 @@ static void Event_SlideBlock19West(void) {
   Map_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
-/// Walking east onto block 19: it slides east with the leader on it until
-/// another block or the wall stops it.
+/// Walking east onto block 19.
 static void Event_SlideBlock19East(void) {
   s32 column;
   s32 row;
@@ -1619,8 +1657,7 @@ static void Event_SlideBlock19East(void) {
   Map_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
-/// Walking west onto block 14: it slides west with the leader on it until
-/// another block or the wall stops it.
+/// Walking west onto block 14.
 static void Event_SlideBlock14West(void) {
   s32 column;
   s32 row;
@@ -1672,8 +1709,7 @@ static void Event_SlideBlock14West(void) {
   Map_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
 }
 
-/// Walking east onto block 14: it slides east with the leader on it until
-/// another block or the wall stops it.
+/// Walking east onto block 14.
 static void Event_SlideBlock14East(void) {
   s32 column;
   s32 row;
@@ -1718,8 +1754,7 @@ static void Event_SlideBlock14East(void) {
   Map_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
 }
 
-/// Walking west onto block 16: it slides west with the leader on it until
-/// another block or the wall stops it.
+/// Walking west onto block 16.
 static void Event_SlideBlock16West(void) {
   s32 column;
   s32 row;
@@ -1768,8 +1803,7 @@ static void Event_SlideBlock16West(void) {
   Map_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
 }
 
-/// Walking east onto block 16: it slides east with the leader on it until
-/// another block or the wall stops it.
+/// Walking east onto block 16.
 static void Event_SlideBlock16East(void) {
   s32 column;
   s32 row;
@@ -1910,7 +1944,8 @@ struct SceneEntrance gCrossboneIsleEntrances4[] = {
 struct SceneEntrance gCrossboneIsleEntrances5[] = {
     { 1, CONDITION_ALWAYS, 312, 0, 656, FACING_WEST, 0, -1, -1, -1, -1, 0 },
     { 5, CONDITION_ALWAYS, 216, 0, 544, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    // All other rooms enter through this shared tail.
+    // The nine corridor rooms (CrossboneIsle6 to 14) enter through this
+    // shared tail.
 
     { 1, CONDITION_ALWAYS, 840, 0, 176, FACING_WEST, 0, 432, 32, 880, 352, 0 },
     { 2, CONDITION_ALWAYS, 488, 0, 176, FACING_EAST, 0, 432, 32, 880, 352, 0 },
@@ -2048,7 +2083,7 @@ struct ScenePlacement gCrossboneIslePlacements6To14[] = {
 struct SceneEvent gCrossboneIsleEventsOther[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterGuardedRoom) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenEastDoor) },
     { TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenWestDoor) },
     { EVENT_TOUCH | EVENT_TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushBlock) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MoveBlock) },
@@ -2074,8 +2109,8 @@ struct SceneEvent gCrossboneIsleEvents1[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 18, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3, EVENT_SCRIPT(Event_BlowAwayIvy18) },
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushFirstRoomBlock) },
-    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushFirstRoomBlock) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushIsleBlock) },
+    { EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushIsleBlock) },
     { 0x8413, 100, 0xec0, FIND_COINS(1) },
     { 0xc413, 100, 0xec0, FIND_COINS(1) },
     { 0xa413, 100, 0xec0, FIND_COINS(1) },
@@ -2168,8 +2203,8 @@ struct SceneEvent gCrossboneIsleEvents4[] = {
 
 struct SceneEvent gCrossboneIsleEvents5[] = {
     {EVENT_EXIT, 1, CONDITION_ALWAYS, 1},
-    {EVENT_TOUCH, 10, FLAG_CROSSBONE_ISLE_FINAL_GUARDS_DEFEATED,
-     EVENT_SCRIPT(Event_FightFinalGuards)},
+    {EVENT_TOUCH, 10, FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED,
+     EVENT_SCRIPT(Event_FightDeadbeard)},
     {TOUCH_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_HopSouth)},
     {SEARCH(SEARCH_CHEST), 100, 0xee6, FIND_ITEM(ITEM_DEMON_MAIL)},

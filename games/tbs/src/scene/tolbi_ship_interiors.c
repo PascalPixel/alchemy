@@ -1,9 +1,71 @@
 /// @file
-/// Below the decks of the ship across the Karagol Sea: the captain's cabin, the
-/// passengers' hold and the rowing deck. After each monster attack the party
-/// chooses which passenger rows at the empty seat; the attacks fought off
-/// number the seat being filled, and each seat has a group of flags, one for
-/// each passenger.
+/// Tolbi-bound Ship (TolbiShipInteriors, scene 111), below its decks: one of
+/// the ship's three scenes on its voyage from Kalay to Tolbi, told in
+/// tolbi_ship_deck.c. The scene is four rooms, each a camera box of the
+/// entrance table: the passengers' hold (entrances 1, 2, 11 and 30), a side
+/// room (3), the rowing deck where the oarsmen row (4, 12, 15 to 21, 23 and
+/// 24) and the captain's cabin (5, 10, 13, 14 and 22). Exits 1, 3 and 5 lead
+/// up to the deck (its entrances 1 to 3), and exits 2 and 4 join the hold and
+/// the rowing deck. The placements and events are chosen by the room and the
+/// voyage's stage; most of the voyage's cutscenes play here, at entrances 10
+/// to 24, through the shared operations of TolbiShipInteriors_RunSceneCommand.
+/// In story order:
+///
+/// - At Kalay, while the ship waits for its replacement from Tolbi. Once the
+///   tour group has left Kalay (FLAG_KALAY_COLOSSO_TOUR_LEFT), walking into
+///   the hold (touch cell 11) has Ouranos, a warrior bound for Colosso who
+///   "can't stand water", threaten to go ashore, and he and his friend Sean
+///   go to make the captain sail (FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN). The
+///   crew's talk of the delay plays here (touch cell 10) if it has not on
+///   deck. In the cabin the warriors and passengers press the captain, who
+///   has just decided to sail (FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL);
+///   Ouranos and Sean offer to guard the deck with Kaja, Sean thinks of the
+///   young warriors among the passengers, and then the captain finds his
+///   lucky anchor charm gone and will not sail without it. Giving him the
+///   Anchor Charm, found on the mast, plays
+///   TolbiShipInteriors_ReturnLuckyAnchor: Sean names the party to guard the
+///   oarsmen, and the party agrees (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED).
+/// - Setting sail: on the rowing deck Kaja tells the oarsmen they sail without
+///   the replacement (FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT), the party
+///   guarding them below while he, Ouranos and Sean guard the deck, and that
+///   if an oarsman falls the party must choose a passenger to row in his
+///   place, keeping the two teams balanced. After the deck and the mast, the
+///   captain casts off in the cabin (entrance 10, raising the charm), a
+///   passenger is called to the oars (11) and the rowing deck rows (12),
+///   which leads to the world map for the next leg.
+/// - The attacks, each called by the lookout on the mast or the deck; before
+///   the first, the captain in the cabin hears of monsters (13) and turns the
+///   ship (14). Then monsters are belowdecks (15, 17 and 19, for the first,
+///   second and third attacks). While they are aboard the stairs are barred
+///   (FLAG_TOLBI_SHIP_MONSTERS_ABOARD) and the leader is turned back from them;
+///   talking to a monster on the rowing deck fights it (encounter table 62,
+///   entry 0, 1 or 2 by the attack), returning to 16, 18 or 20, which record
+///   the attack fought off (FLAG_TOLBI_SHIP_FIRST_ATTACK_REPELLED,
+///   _SECOND_ATTACK_REPELLED and _THIRD_ATTACK_REPELLED) and leave an oarsman
+///   hurt. The party then chooses a passenger in the hold to row: the attacks
+///   fought off number the seat being filled, and each seat has a group of nine
+///   flags, one for each passenger (FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS and the
+///   rest); the passenger follows the party (FLAG_TOLBI_SHIP_ROWER_CHOSEN) to
+///   the rowing deck (entrance 4), where Kaja takes them on. Each passenger
+///   answers being asked in their own way, and their rowing values on the mast
+///   decide the course.
+/// - The Kraken: entrance 21, the ship rocking, "there's a huge sea monster
+///   on the ship!" (FLAG_TOLBI_SHIP_KRAKEN_ABOARD shakes the scene until it is
+///   defeated on deck).
+/// - The island: off course, a short scene in the cabin (22) leads by the
+///   world map to 23, where the rowers rest at the island
+///   (FLAG_TOLBI_SHIP_AT_ISLAND) and the hold and cabin have their own talk.
+///   Back from it, entrance 24 has Kaja switch the left and right teams, the
+///   left team's timing having taken the ship off course, and the ship sets
+///   off for Tolbi.
+/// - Entrance 30, where a defeat at sea returns: it clears the voyage's flags
+///   from FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT to _KRAKEN_DEFEATED and
+///   the rowers chosen, sets flag 0x902 and leads up to the deck, so the
+///   voyage starts over.
+///
+/// A travelling healer opens a Sanctum in the hold. At Tolbi
+/// (FLAG_TOLBI_SHIP_REACHED_TOLBI) the cabin and the hold have their own
+/// placements.
 
 #include "script.h"
 #include "flags.h"
@@ -133,7 +195,7 @@ static void TolbiShipInteriors_StartThirdAttack(void);
 static void TolbiShipInteriors_EndThirdAttack(void);
 static void TolbiShipInteriors_NoticeShipRocking(void);
 static void TolbiShipInteriors_ShakeWhileKrakenAboard(void);
-static void TolbiShipInteriors_ShowCabinBeforeKraken(void);
+static void TolbiShipInteriors_ShowCabinBeforeIsland(void);
 static void TolbiShipInteriors_ReachIsland(void);
 static void TolbiShipInteriors_DismissReplacementRowers(void);
 static void TolbiShipInteriors_SwapRowerSelections(s32 firstSeatFlags,
@@ -502,8 +564,10 @@ const struct SceneEvent *TolbiShipInteriors_SelectEvents(void) {
   return gTolbiShipInteriors_EventsOther;
 }
 
-/// Once the warriors want to see the captain, actor 10 asks whether the party
-/// wants to join them in forcing the launch.
+/// In the captain's cabin at Kalay, once the warriors want to see the captain:
+/// actor 10 asks whether the party wants to see him too, and on yes the
+/// passengers' pressure on the captain plays
+/// (FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL).
 static void TolbiShipInteriors_TalkToCaptainsCabinActor10(void) {
   Engine_EventBegin();
   Battle_ResetEffectCounter();
@@ -1276,10 +1340,10 @@ static void TolbiShipInteriors_AskToRow(s32 speaker, s32 question,
   Engine_EventEnd();
 }
 
-/// The travelling priest. From in front of him (the leader facing roughly east)
-/// he opens his sanctum; otherwise he talks by the voyage's stage. Under sail,
-/// until the ship is docked, he is actor 17, else actor 15.
-static void TolbiShipInteriors_TalkToPriest(void) {
+/// The travelling healer in the hold. From in front of him (the leader facing
+/// roughly east) he opens his Sanctum; otherwise he talks by the voyage's
+/// stage. Under sail, until the ship is docked, he is actor 17, else actor 15.
+static void TolbiShipInteriors_TalkToHealer(void) {
   struct FieldActor *leader;
 
   leader = Object_GetById(0);
@@ -1316,8 +1380,8 @@ static void TolbiShipInteriors_TalkToPriest(void) {
 }
 
 /// Talking to one of the monsters in the hold (actors 36 to 38) starts the
-/// battle with them: group 62, its variant and the entrance the party comes
-/// back to chosen by how far the voyage has gone.
+/// battle with them: encounter table 62, its entry and the entrance the party
+/// comes back to chosen by how far the voyage has gone.
 static void TolbiShipInteriors_FightMonstersInHold(void) {
 
   Engine_EventBegin();
@@ -1355,8 +1419,10 @@ static void TolbiShipInteriors_TurnBackFromStairs(void) {
   }
 }
 
-/// Once the warriors have gone to the captain, the three crewmen
-/// wonder what could have happened to the replacement ship.
+/// Below decks at Kalay, once the warriors have gone to the captain (touch
+/// cell 10): the captain, Kaja and the crewman wonder what could have happened
+/// to the replacement ship, as on deck
+/// (FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY).
 static void TolbiShipInteriors_WatchCrewWonderAtDelay(void) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0)
     return;
@@ -1390,10 +1456,10 @@ static void TolbiShipInteriors_WatchCrewWonderAtDelay(void) {
   Engine_EventEnd();
 }
 
-/// Once the party has heard of the delay at Kalay: Ouranos threatens to go
-/// ashore if the ship doesn't sail. Actor 12 can't say when it will, so Sean
-/// and Ouranos set off to make the captain set sail, and actor 12 ("I don't
-/// want any violence!") hurries after them past the party.
+/// In the hold at Kalay, once the tour group has left Kalay (touch cell 11):
+/// Ouranos threatens to go ashore if the ship doesn't sail. Actor 12 can't say
+/// when it will, so Sean and Ouranos set off to make the captain set sail, and
+/// actor 12 ("I don't want any violence!") hurries after them past the party.
 static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
   s32 actor12Speaker;
   s32 seanSpeaker;
@@ -1518,7 +1584,9 @@ static void TolbiShipInteriors_WatchWarriorsStormOff(void) {
   }
 }
 
-/// The passengers pressure the captain to launch despite the missing anchor.
+/// In the captain's cabin at Kalay: the passengers press the captain to
+/// launch; Ouranos and Sean offer to guard the deck, and the captain finds his
+/// lucky anchor charm gone and refuses to sail without it.
 static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   s32 actor12Speech;
   s32 actor11Speech;
@@ -1764,7 +1832,10 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   GameFlag_Set(FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL);
 }
 
-/// Returns the captain's lucky anchor and agrees to protect the ship.
+/// In the captain's cabin at Kalay, using the Anchor Charm on the captain: he
+/// has his lucky anchor back, Sean names the party to guard the oarsmen, and
+/// the party agrees to protect the ship
+/// (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED).
 static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   struct FieldActor *actor;
   s32 requestA;
@@ -2147,7 +2218,7 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
     }
     break;
   case 22:
-    TolbiShipInteriors_ShowCabinBeforeKraken();
+    TolbiShipInteriors_ShowCabinBeforeIsland();
     break;
   case 23:
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -2361,8 +2432,10 @@ static void TolbiShipInteriors_PlaceFoundActors(s32 gated) {
   }
 }
 
-/// The crew explains the missing replacements and asks the party to find
-/// rowers.
+/// On the rowing deck, once the charm is back: Kaja tells the oarsmen the ship
+/// sails without its replacement and asks the party to bring a passenger to
+/// row whenever an oarsman falls, keeping the teams balanced; leads to the
+/// deck's entrance 10 (FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT).
 static void TolbiShipInteriors_AskForReplacementOarsmen(void) {
   struct FieldActor *actor;
   s32 mode;
@@ -3506,7 +3579,8 @@ static void TolbiShipInteriors_EndThirdAttack(void) {
   Engine_EventEnd();
 }
 
-/// The party notices the ship rocking and discusses the rowers' progress.
+/// Entrance 21, on the rowing deck: the ship rocks, a huge sea monster is on
+/// the ship, and the party goes up on deck (FLAG_TOLBI_SHIP_KRAKEN_ABOARD).
 static void TolbiShipInteriors_NoticeShipRocking(void) {
   s32 secondRower;
   s32 thirdRower;
@@ -3652,8 +3726,10 @@ static void TolbiShipInteriors_ShakeWhileKrakenAboard(void) {
   }
 }
 
-/// Plays the short cabin exchange before returning to the voyage.
-static void TolbiShipInteriors_ShowCabinBeforeKraken(void) {
+/// Entrance 22, in the captain's cabin, after the ship has come off course:
+/// a short exchange, then exit 21 leads by the world map to the island
+/// (entrance 23).
+static void TolbiShipInteriors_ShowCabinBeforeIsland(void) {
   Engine_EventBegin();
   TolbiShipInteriors_RunSceneCommand(SHIP_SETUP_CAPTAINS_CABIN, 1, 0);
   TolbiShipInteriors_PlaceActor(9, 468, 616, 32768);
@@ -3667,7 +3743,8 @@ static void TolbiShipInteriors_ShowCabinBeforeKraken(void) {
   TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCENE, 21, 0);
 }
 
-/// Rests the rowers at the island and plays the selected passengers' responses.
+/// Entrance 23, on the rowing deck at the island: Kaja rests the rowers, and
+/// each chosen passenger answers (FLAG_TOLBI_SHIP_AT_ISLAND).
 static void TolbiShipInteriors_ReachIsland(void) {
   s32 fourthRower;
   s32 secondRower;
@@ -3792,8 +3869,9 @@ static void TolbiShipInteriors_ReachIsland(void) {
   Engine_EventEnd();
 }
 
-/// Returns the replacement rowers to their seats and exchanges their
-/// selections.
+/// Entrance 24, on the rowing deck back from the island: Kaja switches the
+/// left and right teams, the left team's timing having taken the ship off
+/// course; the chosen passengers swap seats and the ship sets off again.
 static void TolbiShipInteriors_DismissReplacementRowers(void) {
   s32 firstRower;
   s32 fourthRower;
@@ -4296,7 +4374,7 @@ struct SceneEvent gTolbiShipInteriors_HoldEvents[] = {
     { EVENT_TALK, 11, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipInteriorsYoureGoingToTolbiToSee) },
     { EVENT_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsINeverThoughtIdGetTo) },
     { EVENT_TALK, 12, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsYouAllAgreedToHelpOf) },
-    { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToPriest) },
+    { EVENT_TALK, 15, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipInteriorsMaybeIShouldJustForgetAbout) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIfSomethingHappensToOurOarsmen) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipInteriorsTheyreJustTakingAdvantageOfUs) },
@@ -4317,7 +4395,7 @@ struct SceneEvent gTolbiShipInteriors_HoldEvents[] = {
 struct SceneEvent gTolbiShipInteriors_HoldEventsChoosingRowers[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToPriest) },
+    { EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIsThisCruelOrdealPartOf) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_AskPassenger8ToRow) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_AskPassenger10ToRow) },
@@ -4354,7 +4432,7 @@ struct SceneEvent gTolbiShipInteriors_HoldEventsChoosingRowers[] = {
 struct SceneEvent gTolbiShipInteriors_HoldEventsAtIsland[] = {
     { EVENT_EXIT, 1, CONDITION_ALWAYS, 1 },
     { EVENT_EXIT, 2, CONDITION_ALWAYS, 2 },
-    { EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToPriest) },
+    { EVENT_TALK, 17, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToHealer) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsInAPerfectWorldThereWouldnt) },
     { EVENT_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsYouCantGoOntoTheIsland) },
     { EVENT_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsButThereWereMonstersAtSea) },

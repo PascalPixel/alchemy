@@ -1,5 +1,5 @@
-#ifndef FIELD_H
-#define FIELD_H
+#ifndef ALCHEMY_FIELD_FIELD_H
+#define ALCHEMY_FIELD_FIELD_H
 
 /// @file
 /// The field engine's shared routines, globals and object scripts.
@@ -29,7 +29,6 @@ struct BurstParticle;
 struct DispatchObject;
 struct FieldEffectObject;
 struct EffectPosition;
-struct EffectRecord;
 struct EffectStep;
 struct FacingObject;
 struct FieldActor;
@@ -49,48 +48,15 @@ struct FieldSceneObject;
 struct ScenePlacement;
 struct SceneRegion;
 struct SparkleFrame;
-struct Sub;
 struct Swirl;
 struct TileRun2;
 struct V;
 union FieldObject;
 
-struct FacingStateActor {
-  u8 reserved00[6];
-  u16 facing;
-  u8 reserved08[92];
-  u16 stateFlags;
-};
-struct EffectWork {
-  u8 pad[80];
-  struct EffectRecord *record;
-};
 /// An actor seen only as its priority flags at 0x23 (enum ActorPriorityFlag).
 struct Flags35 {
   u8 pad[35];
   u8 flags;
-};
-struct Flags9 {
-  u8 pad[9];
-  u8 low : 2;
-  u8 mode : 2;
-};
-struct HeightTrackedObject {
-  u8 pad00[12];
-  s32 height;
-};
-struct FieldObjectRecord {
-  u8 pad00[0x18];
-  s32 f18;
-  u8 pad1c[7];
-  u8 f23;
-  u8 pad24[12];
-  s32 f30;
-  s32 f34;
-  u8 pad38[24];
-  struct Sub *f50;
-  u8 pad54[1];
-  u8 f55;
 };
 /// An actor seen only as the coordinate at 0x08, which Goma Cave's stump
 /// reads in 16-pixel map cells.
@@ -103,20 +69,6 @@ struct OverlayActorState {
   u8 pad00[35];
   u8 flags;
 };
-struct OverlayEffectMotion {
-  u8 pad00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 pad14[28];
-  s32 horizontalRate;
-  s32 verticalRate;
-  s32 shadowX;
-  s32 shadowY;
-  s32 shadowZ;
-  u8 pad44[32];
-  s16 mode;
-};
 /// The Colosso rival's path player in the scene state: its mode (1 playing, 2
 /// recording, 9 finished), whether it mirrors the path, the actor, its place
 /// in the path and how long the actor has stood still.
@@ -126,19 +78,6 @@ struct PathRecorder {
   s16 actor;
   u16 pos;
   s16 still; ///< frames
-};
-struct GridMarkActor {
-  s32 f00;
-  s32 f04;
-  s32 f08;
-  s32 f0c;
-  s32 f10;
-  u8 pad14[15];
-  u8 f23;
-};
-struct ScrollLayer {
-  u8 unk00[8];
-  s32 x;
 };
 struct Slot {
   u16 f00;
@@ -171,18 +110,6 @@ struct TileRun {
   s16 vertical;
   s16 unused08;
   s16 unused0a;
-};
-struct V6 {
-  s32 a;
-  s32 b;
-  s32 c;
-  s32 d;
-  s32 e;
-  s32 f;
-};
-struct WorldMapVramBlock {
-  u16 base;
-  u16 offset;
 };
 extern s16 gAltinPeak_PaletteHold;
 extern s16 gAltinPeak_PaletteStep;

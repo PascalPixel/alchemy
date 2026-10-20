@@ -11,6 +11,7 @@
 // and the highest sequence number of a record id is its current copy.
 
 enum {
+  SAVE_FLASH_TIMER = 2,
   SAVE_FLASH_IDENTIFY_ATTEMPTS = 8,
   SAVE_SECTOR_COUNT = 16,
   SAVE_RECORD_NONE = 16,
@@ -35,8 +36,10 @@ s32 SaveState_InitializeWorkspace(void) {
 
   work = Runtime_AllocateBlock(HEAP_SLOT_SAVE, sizeof(*work));
   Dma_Fill32(0, work, sizeof(*work));
-  SetFlashTimerIntr(2, &gIrqHandlers[IRQ_TIMER2]);
+  SetFlashTimerIntr(SAVE_FLASH_TIMER, &gIrqHandlers[IRQ_TIMER2]);
 
+  // Yield after every failed probe, including the last one, before
+  // reporting that no flash chip answered.
   for (index = 0; index < SAVE_FLASH_IDENTIFY_ATTEMPTS; index++) {
     if ((u16)IdentifyFlash() == 0)
       break;
@@ -58,6 +61,8 @@ s32 SaveState_InitializeWorkspace(void) {
     WAIT_DMA();
     slot = &header;
 
+    // Not a save sector, or one for no record, or a damaged one: it stays
+    // free. A sector with the signature still keeps its sequence number.
     if (SaveState_CompareBytes(slot->signature, (u8 *)gSave_Signature, 7) != 0)
       continue;
     work->sequence[index] = slot->sequence;
@@ -70,6 +75,9 @@ s32 SaveState_InitializeWorkspace(void) {
 
     work->occupied[index] = 1;
     work->recordId[index] = record;
+    // An interrupted replacement can leave both copies valid. Retain the
+    // larger sequence, preferring the earlier sector when they tie; status
+    // is the successful checksum result (0), reused as the scan cursor.
     if (status < index) {
       do {
         if (work->recordId[status] == (u8)record) {
@@ -197,11 +205,15 @@ s32 SaveState_WriteRecord(s32 recordId, void *source) {
 
   if (SaveState_WriteWorkspaceSlot(slot) != 0)
     return 1;
+  // A power loss before invalidation leaves two valid copies; the next
+  // scan chooses the new one by its higher sequence.
   if (current < SAVE_SECTOR_COUNT && SaveState_InvalidateSlot(current) != 0)
     return 1;
 
   if (header.sequence > SAVE_SEQUENCE_LIMIT) {
-    // Restart sequence numbering only after the replacement was written.
+    // Sequence order is ordinary, not modular. Keep the high-sequence copy
+    // valid until the old sector has been rewritten and verified as 1, then
+    // invalidate the high copy so it cannot win the next scan.
     header.sequence = 1;
     START_DMA(&header, &work->slot.record.header, DMA_COPY_WORDS(4));
     WAIT_DMA();

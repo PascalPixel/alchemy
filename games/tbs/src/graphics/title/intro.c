@@ -105,9 +105,10 @@ const u8 gTitle_PromptBlendLevels[60] = {
   INTRO_OBJ((i) + 2).attr2 = (tile);                                           \
   INTRO_OBJ((i) + 3).attr2 = (tile)
 
-/// A VBlank task of the title intro: places the rising sprites along the
-/// slope of the scrolling background, alternating two sets every other frame
-/// so twice as many show, hides the rest and copies the list to OAM.
+/// A VBlank task of the title intro, scheduled by Title_ShowIntro: places the
+/// rising sprites along the slope of the scrolling background, alternating two
+/// sets every other frame so twice as many show, hides the rest and copies the
+/// list to OAM.
 void Title_UpdateIntroSprites(void) {
   /* FAKEMATCH: the OAM shadow it builds is struct OamShadow, volatile words
    * (tag in oambuf.h): without the qualifier differ 205, 471 instructions for
@@ -128,6 +129,8 @@ void Title_UpdateIntroSprites(void) {
   }
   slopeBaseY = 48 - gBgScroll[1].y;
   slopeTopY = 144 - work->rise;
+  // Alternating the two groups fits six shapes into twelve OAM entries;
+  // each group is visible every other frame.
   if (work->frame < 0x118) {
     if ((work->tick & 1) == 0) {
       PLACE_ON_SLOPE(0, 16);
@@ -157,6 +160,8 @@ void Title_UpdateIntroSprites(void) {
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(14, 14);
   Dma_Set(&INTRO_OBJ(0), OAM, DMA_COPY_WORDS((spriteCount * 8) >> 2), REG_DMA3);
+  // The strip follows the back layer and occupies the first OAM entry
+  // beyond the 120-entry list; it reuses a hidden shadow-buffer entry.
   stripY = 32 - gBgScroll[1].y;
   WRAP_TO_BYTE(stripY);
   INTRO_OBJ(12).attr01 = stripY | 0xc05c2000;
@@ -167,7 +172,8 @@ void Title_UpdateIntroSprites(void) {
 }
 
 /// Loads the title intro's two scrolling backgrounds and its sprite tiles,
-/// builds their maps and sets the blending and windows.
+/// builds their maps and sets the blending and windows. Called by
+/// Title_ShowIntro.
 void Title_LoadIntroBackgrounds(void) {
   struct IntroWork *work;
   u8 *resourceData;
@@ -283,8 +289,9 @@ void Title_LoadIntroBackgrounds(void) {
 /// Plays the title intro: the backgrounds scroll down and the sprites rise
 /// until frame 278 (A or Start skips ahead), then the screen flashes white
 /// into the title picture. With `prompt` set the "Press Start" prompt pulses
-/// for up to a minute, otherwise the picture stays five seconds. Returns 1
-/// when A or Start was pressed on the title picture.
+/// for up to a minute, otherwise the picture stays five seconds. Reached
+/// through the palette far-call table from the title screen. Returns 1 when A
+/// or Start was pressed on the title picture.
 s32 Title_ShowIntro(s32 prompt) {
   struct IntroWork *work;
   s32 result;
@@ -311,15 +318,23 @@ s32 Title_ShowIntro(s32 prompt) {
   Title_LoadIntroBackgrounds();
   PaletteFade_Init();
   PaletteFade_SetCurrent(2, 0);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, 0xf740, 0x20000);
+  // This screen supplies its own OAM list in VBlank. Keep the normal OAM
+  // copy disabled until its sprite callback is removed at the white flash.
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
+                      DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
+                          DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
+                          DISPCNT_WIN1_ON | DISPCNT_OBJWIN_ON,
+                      IO_WRITE_16);
   PaletteFade_Start(60);
-  Scheduler_AddOrUpdateCallback(Title_UpdateIntroSprites, 0x480);
+  Scheduler_AddOrUpdateCallback(Title_UpdateIntroSprites, SCHEDULER_KEY_VBLANK);
 
   for (;;) {
     s32 frame;
     s32 nextFrame;
     s32 tick;
 
+    // A skip retains the final approach to the flash rather than replacing
+    // the animated screen at an arbitrary scroll position.
     frame = work->frame;
     if (frame > 20 && frame < 239 &&
         (gKeysPressed & (KEY_A | KEY_START)) != 0) {
@@ -330,6 +345,9 @@ s32 Title_ShowIntro(s32 prompt) {
     nextFrame = frame + 1;
     work->frame = nextFrame;
     if (nextFrame <= 278) {
+      // The back layer (BG1) scrolls a pixel every third tick, the front
+      // (BG2) every other one; each new row of eight pixels copies the next
+      // band of the picture from the decode buffer before it becomes visible.
       tick = work->tick;
       if (tick % 3 == 0) {
         s32 y;
@@ -355,6 +373,8 @@ s32 Title_ShowIntro(s32 prompt) {
                     (u8 *)0x0600e4c0 - work->frontRows * 1920,
                     DMA_ENABLE << 16 | 0x3c0, REG_DMA3);
           } else {
+            // Once the finite picture is exhausted, clear incoming bands
+            // so wrapped tile memory cannot expose earlier picture rows.
             clearValue = 0;
             Dma_Set(&clearValue,
                     (u8 *)0x06004ec0 + (160 - work->frontRows * 8) % 160 * 240,
@@ -373,10 +393,13 @@ s32 Title_ShowIntro(s32 prompt) {
       if (work->frame == 239)
         work->state = 1;
     } else if (nextFrame == 281) {
+      // The frame-280 branch below exits before these later states can run.
       work->state = 2;
     } else if (nextFrame == 289) {
       work->state = 0;
     } else if (nextFrame == 280) {
+      // Hide the background replacement behind white, and restore the
+      // normal OAM uploader before drawing the title prompt.
       Fade_ToWhite(1);
       Scheduler_RemoveCallback(Title_UpdateIntroSprites);
       gOamCopyEnabled = 1;
@@ -398,6 +421,8 @@ s32 Title_ShowIntro(s32 prompt) {
     }
     WaitFrames(1);
   }
+  // Blank the two off-screen columns so the 30-tile picture occupies a
+  // complete 32-tile hardware map row.
   for (; i < 20; i++) {
     for (j = 0; j < 30; j++)
       *tilemap++ = tile++;
@@ -460,6 +485,8 @@ s32 Title_ShowIntro(s32 prompt) {
         sprite++;
       }
 #endif
+      // The prompt pulses once a second: its blend weight over the picture
+      // (written out: as BLEND_ALPHA(level, 16 - level) the bytes differ).
       level = gTitle_PromptBlendLevels[i % 60];
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG0 |
                    BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
@@ -485,8 +512,8 @@ UNUSED void Title_NoOpPalette(void) {}
 
 /// Shows the Nintendo logo with its jingle. With `mode` 0 it fades in and
 /// holds two seconds; otherwise it waits a second, fades in, holds three
-/// seconds and fades out, faster once skipped. Returns -1 when A or Start
-/// skipped it.
+/// seconds and fades out, faster once skipped. Called by Title_Run. Returns -1
+/// when A or Start skipped it.
 s32 Title_ShowSplashScreen(s32 mode) {
   s32 result;
   u8 *resourceData;
@@ -509,11 +536,13 @@ s32 Title_ShowSplashScreen(s32 mode) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   result = 0;
   gBgScroll[2].y = result;
+  // The resource begins with 224 colours; its packed tiles follow them.
   resourceData = Resource_GetTableEntry(resourceId);
   Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(0x70), REG_DMA3);
   Resource_DecodeType01(resourceData + 448, Ram_MapCellBuffer);
   Dma_Set(Ram_MapCellBuffer, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(0x2580),
           REG_DMA3);
+  // Pad the 30-tile picture to the hardware map's 32-tile row width.
   tileIndex = 256;
   tilemap = (u16 *)BG_SCREEN_BLOCK(6);
   for (rowOrHoldFrame = 0; rowOrHoldFrame < 20; rowOrHoldFrame++) {
@@ -543,6 +572,8 @@ s32 Title_ShowSplashScreen(s32 mode) {
     }
     return result;
   }
+  // Otherwise a second of black, a second's fade in, three seconds held and
+  // a second's fade out; a skip shortens each fade to eight frames.
   for (rowOrHoldFrame = 0; rowOrHoldFrame < 60; rowOrHoldFrame++) {
     if (gKeysPressed & (KEY_A | KEY_START)) {
       result = -1;
@@ -573,7 +604,8 @@ s32 Title_ShowSplashScreen(s32 mode) {
 }
 
 /// Shows the Camelot logo for two seconds, cycling its four frames of tiles.
-/// A or Start ends it early. Returns 0.
+/// A or Start ends it early. Reached through the palette far-call table from
+/// the title sequence. Returns 0.
 s32 Title_ShowAnimatedSplash(void) {
   s32 result;
   u32 workIndex;
@@ -596,6 +628,8 @@ s32 Title_ShowAnimatedSplash(void) {
    * (31 differ). */
   workIndex = (u32)Ram_MapCellBuffer;
   Resource_DecodeType01(Resource_GetTableEntry(resourceId), (u8 *)workIndex);
+  // The decoded resource: 224 colours, the map, the still tiles, then four
+  // animation frames of 0x400 bytes each.
   resourceData = (u8 *)workIndex;
   Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(0x1c0 / 4), REG_DMA3);
   resourceData += 0x1c0;
@@ -615,6 +649,8 @@ s32 Title_ShowAnimatedSplash(void) {
   Fade_Wait();
   REG_DISPCNT =
       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
+  // Replace only the animated tiles; the rest of the decoded logo stays
+  // in VRAM while the four animation frames cycle.
   for (workIndex = 0; workIndex < 120; workIndex++) {
     Dma_Set(((gFrameCount >> 3) & 3) * 0x400 + resourceData,
             BG_CHAR_BLOCK(1) + 0x100, DMA_COPY_WORDS(0x340 / 4), REG_DMA3);
@@ -633,7 +669,7 @@ UNUSED void Graphics_NoOpColor(void) {}
 
 /// Computes each of the 1536 colour components' change per frame from the
 /// current components to the target (nothing when `frames` is not
-/// positive).
+/// positive). Called by PaletteFade_Start.
 void PaletteFade_ComputeSteps(s16 *sourceComponents, s16 *targetComponents,
                               s16 *componentSteps, s32 frames) {
   s32 remaining;
@@ -654,9 +690,10 @@ void PaletteFade_ComputeSteps(s16 *sourceComponents, s16 *targetComponents,
   }
 }
 
-/// A task that steps the palette fade each frame: adds the step to every
-/// colour component until the fade is done, packs the components into the
-/// spare RGB555 copy of the palettes and queues both halves for VBlank.
+/// A task scheduled by PaletteFade_Init: steps the palette fade each frame,
+/// adding the step to every colour component until the fade is done, packs
+/// the components into the spare RGB555 copy of the palettes and queues both
+/// halves for VBlank.
 void PaletteFade_Update(void) {
   struct PaletteFade *work = (struct PaletteFade *)gPaletteBufferWork;
   u16 *componentSteps = work->delta;
@@ -676,6 +713,8 @@ void PaletteFade_Update(void) {
     Dma_Set(work->target, work->current, DMA_COPY_WORDS(0x300), REG_DMA3);
     work->duration = 0;
   }
+  // The queued DMA keeps a pointer until VBlank. Build into the spare page
+  // so packing this frame cannot overwrite the last frame's pending colours.
   packedColors = work->packed[work->page ^ 1];
   blueMask = 0x7c00;
   remaining = 512;
@@ -705,6 +744,7 @@ void PaletteFade_Update(void) {
 /// (plain, grey, sepia and the others); the TINT, BLEND and SPLIT flags carry
 /// a colour in their low bits; anything else is the address of components to
 /// copy. paletteHalf 1 does only the background palettes, 2 only the sprites'.
+/// Called by PaletteFade_Init and the palette fade's setters.
 void Palette_Transform(u32 mode, u16 *source, u16 *destination,
                        s32 paletteHalf) {
   u32 colorIndex;
@@ -960,7 +1000,8 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
 }
 
 /// Allocates the palette fade, saves both hardware palettes in it as the
-/// starting colours and schedules PaletteFade_Update.
+/// starting colours and schedules PaletteFade_Update. Called by
+/// Title_ShowIntro.
 void PaletteFade_Init(void) {
   struct PaletteFade *buffer;
   s32 callbackPriority;
@@ -972,26 +1013,28 @@ void PaletteFade_Init(void) {
           REG_DMA3);
   Palette_Transform(PALETTE_TRANSFORM_PLAIN, buffer->palette, buffer->target,
                     0);
-  callbackPriority = 3200;
+  callbackPriority = SCHEDULER_KEY_MAIN_LOOP;
   Scheduler_AddOrUpdateCallback(PaletteFade_Update, callbackPriority);
 }
 
-/// Stops the palette fade and frees its buffers.
-void PaletteFade_Release(void) {
+/// Unschedules the palette fade and frees its buffers. Nothing in ☀️ calls
+/// it.
+UNUSED void PaletteFade_Release(void) {
   Scheduler_RemoveCallback(&PaletteFade_Update);
   Runtime_ReleaseHeapBlock(0x20);
 }
 
 /// Sets the fade target by transforming the saved background and/or sprite
-/// palettes through the requested mode.
-void PaletteFade_SetTarget(s32 mode, s32 paletteHalf) {
+/// palettes through the requested mode. Nothing in ☀️ calls it.
+UNUSED void PaletteFade_SetTarget(s32 mode, s32 paletteHalf) {
   struct PaletteFade *fade = (struct PaletteFade *)gPaletteBufferWork;
 
   if (fade != NULL)
     Palette_Transform(mode, fade->palette, fade->target, paletteHalf);
 }
 
-/// Sets the colours shown now by transforming the saved palettes.
+/// Sets the colours shown now by transforming the saved palettes. Called by
+/// Title_ShowIntro.
 void PaletteFade_SetCurrent(s32 mode, s32 paletteHalf) {
   struct PaletteFade *fade = (struct PaletteFade *)gPaletteBufferWork;
 
@@ -999,8 +1042,8 @@ void PaletteFade_SetCurrent(s32 mode, s32 paletteHalf) {
     Palette_Transform(mode, fade->palette, fade->current, paletteHalf);
 }
 
-/// Replaces the first saved colour, the backdrop.
-void PaletteFade_SetBackdrop(s32 color) {
+/// Replaces the first saved colour, the backdrop. Nothing in ☀️ calls it.
+UNUSED void PaletteFade_SetBackdrop(s32 color) {
   struct PaletteFade *fade = (struct PaletteFade *)gPaletteBufferWork;
 
   if (fade != NULL)
@@ -1008,6 +1051,7 @@ void PaletteFade_SetBackdrop(s32 color) {
 }
 
 /// Starts fading the shown colours to the target over the requested frames.
+/// Called by Title_ShowIntro for the opening fade from black.
 void PaletteFade_Start(s32 frames) {
   struct PaletteFade *fade = (struct PaletteFade *)gPaletteBufferWork;
 
@@ -1019,7 +1063,7 @@ void PaletteFade_Start(s32 frames) {
   }
 }
 
-/// Clamps a five-bit colour channel to 0..31.
+/// Clamps a five-bit colour channel to 0..31. Called by Palette_Transform.
 s32 Graphics_ClampRgb555Channel(s32 value) {
   if (value > 31)
     return 31;
@@ -1029,7 +1073,8 @@ s32 Graphics_ClampRgb555Channel(s32 value) {
 }
 
 /// Caps a colour component at 0x7c00, the largest a five-bit channel shifted
-/// into the high bits reaches. There is no lower bound.
+/// into the high bits reaches. There is no lower bound. Called by
+/// Palette_Transform.
 s32 Graphics_ClampRgb555Component(s32 value) {
   if (value > 0x7c00)
     value = 0x7c00;

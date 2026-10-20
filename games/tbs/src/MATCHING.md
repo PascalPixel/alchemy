@@ -159,9 +159,11 @@ Measured:
   ([`scene/common/effect_spawn.h`](scene/common/effect_spawn.h),
   [`scene/common/mercury_lighthouse_pillar.h`](scene/common/mercury_lighthouse_pillar.h),
   [`scene/crossbone_isle_pillar_rooms.c`](scene/crossbone_isle_pillar_rooms.c)).
-- Another struct's view of the same object (`struct SolSanctumRingObject`
-  for a FieldActor) in
-  [`scene/common/sol_sanctum_elemental_star_ring_setup.h`](scene/common/sol_sanctum_elemental_star_ring_setup.h).
+- An actor read as `struct FieldEffect`, union FieldObject's effect view of
+  the same object, whose sprite pointer is a plain member: through
+  FieldActor's sprite union the flags address moves after the next store
+  (`SolSanctum_StartFloatingLights` in
+  [`scene/common/sol_sanctum_elemental_star_ring_setup.h`](scene/common/sol_sanctum_elemental_star_ring_setup.h)).
 - Byte-addressed field stores with `sizeof` and `offsetof` rather than direct
   struct members (`Colosso_RestoreCompetitor` and
   `TolbiShipInteriors_SelectPlacements`). These valid byte views keep the

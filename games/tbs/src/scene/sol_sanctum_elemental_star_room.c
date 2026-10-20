@@ -21,7 +21,6 @@
 #include "field_event.h"
 #include "field_scene.h"
 #include "create_configured_overlay_object.h"
-#include "overlay_object.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"

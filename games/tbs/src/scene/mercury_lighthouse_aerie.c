@@ -17,7 +17,6 @@
 #include "field_event.h"
 #include "engine_call.h"
 #include "field_scene.h"
-#include "overlay_object.h"
 #include "create_configured_overlay_object.h"
 #include "global_cells.h"
 #include "battle.h"
@@ -33,6 +32,7 @@
 #include "map_scroll.h"
 #include "text/msg_ids.h"
 #include "field_obj.h"
+#include "field_runtime.h"
 #include "macros.h"
 #include "flags.h"
 #include "songs.h"
@@ -81,12 +81,6 @@ static void MercuryLighthouseAerie_FlickerBeacon(void);
 #define NULL ((void *)0)
 
 #include "common/effect_create.h"
-
-/// The event work, seen for its table of the scene's 66 actor slots.
-struct ActorTable {
-  u8 unk00[0x14];
-  struct FieldActor *actors[66];
-};
 
 #include "common/effect_spawn.h"
 #include "objcmd.h"
@@ -1521,13 +1515,14 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
 /// MercuryLighthouseAerie_LowerLift passes its lift as a third
 /// argument, which this function does not take.
 static void MercuryLighthouseAerie_FindLiftRiders(s32 *out, s32 y) {
-  struct ActorTable *table;
+  struct FieldWork *work;
   u32 slot;
 
-  table = (struct ActorTable *)gEventWork;
+  work = (struct FieldWork *)gEventWork;
   y = 64 - (y >> 20);
-  for (slot = 0; slot <= 65; slot++) {
-    struct FieldActor *actor = table->actors[slot];
+  for (slot = 0; slot < sizeof(work->actors) / sizeof(work->actors[0]);
+       slot++) {
+    struct FieldActor *actor = work->actors[slot];
 
     if (actor != 0) {
       s32 cell = actor->x.fixed >> 20;
@@ -1631,44 +1626,29 @@ UNUSED static void MercuryLighthouseAerie_AlexCastsPly(void) {
   BattleEffect_CleanupSceneObjects();
 }
 
-/// A beacon spark's update: it swings round the flame, its angle stepping
-/// back each frame.
+/// A beacon spark's update: it swings round the flame it is linked to, its
+/// angle (its timer, in 1/65536 turns) stepping back each frame; its speed
+/// holds the swing's radius in pixels, less 28.
 static void SceneEffect_UpdateArcPosition(union FieldObject *fieldObject) {
-  struct OverlayObject *object = (struct OverlayObject *)fieldObject;
-  struct OverlayObject *parent;
+  struct FieldActor *spark = &fieldObject->actor;
+  struct FieldActor *flame;
   u16 angle;
 
-  parent = object->linkedObject;
-  angle = object->angle64;
-  object->coordinate08 =
-      parent->coordinate08 + Engine_MathCos(angle) * (object->field30 + 28);
-  object->coordinate10 = (Engine_MathSin(angle) << 4) + 0x900000;
-  object->coordinate38 = object->coordinate08;
-  object->coordinate40 = object->coordinate10;
-  object->angle64 -= 0x200;
+  flame = spark->linkedObject;
+  angle = spark->timer;
+  spark->x.fixed = flame->x.fixed + Engine_MathCos(angle) * (spark->speed + 28);
+  spark->z.fixed = (Engine_MathSin(angle) << 4) + 0x900000;
+  spark->targetX = spark->x.fixed;
+  spark->targetZ = spark->z.fixed;
+  spark->timer -= 0x200;
 }
-
-/// A spark the beacon flame throws off, swinging round the flame on its arc.
-struct BeaconSpark {
-  u8 unk00[0x30];
-  s32 swing;
-  u8 unk34[0x1c];
-  struct AnimationObject *sprite;
-  u8 unk54;
-  u8 motionFlags;
-  u8 unk56[0x0e];
-  u16 angle;
-  u16 turn;
-  struct FieldActor *source;
-  void (*update)();
-};
 
 /// Every frame: while the view is near the top the beacon flame flickers
 /// between two sizes, and every 16 frames it throws off a spark that swings
 /// round it.
 static void MercuryLighthouseAerie_FlickerBeacon(void) {
   struct FieldActor *beacon;
-  struct BeaconSpark *spark;
+  struct FieldActor *spark;
   struct AnimationObject *sprite;
   struct MapScrollWork *map;
   s32 height;
@@ -1700,25 +1680,23 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   if (tick != 0) {
     return;
   }
-  spark = (struct BeaconSpark *)Object_Create(
-      0x11c, beacon->x.fixed + 0x80000, beacon->y.fixed + height + 0x80000,
-      beacon->z.fixed);
+  spark = Object_Create(0x11c, beacon->x.fixed + 0x80000,
+                        beacon->y.fixed + height + 0x80000, beacon->z.fixed);
   height = height / 0x60000;
   height <<= 16;
   if (spark == NULL) {
     return;
   }
   sprite = spark->sprite;
-  Engine_ObjectSetScript((struct FieldActor *)spark,
-                         gMercuryLighthouseAerie_SparkScript);
-  ObjectGroup_SetChildValue((struct FieldActor *)spark, 3);
+  Engine_ObjectSetScript(spark, gMercuryLighthouseAerie_SparkScript);
+  ObjectGroup_SetChildValue(spark, 3);
   spark->motionFlags = tick;
   angle = Engine_RandomNext() & 0x0ffff000;
-  spark->angle = angle;
-  spark->turn = tick;
-  spark->source = beacon;
+  spark->timer = angle;
+  spark->work = tick;
+  spark->linkedObject = beacon;
   spark->update = SceneEffect_UpdateArcPosition;
-  spark->swing = (Engine_MathSin((height & 0xfffff) >> 4) * 24) >> 16;
+  spark->speed = (Engine_MathSin((height & 0xfffff) >> 4) * 24) >> 16;
   /* FAKEMATCH: the byte view keeps this store ahead of the beacon's reload; the
    * field store lets the reload schedule first (score 210). Field store:
    * differ 2. */

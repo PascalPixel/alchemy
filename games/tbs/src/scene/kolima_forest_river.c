@@ -27,7 +27,6 @@
 #include "tbs_edition.h"
 
 #include "staged_actor.h"
-#include "staged_actor_effect.h"
 #include "field_obj.h"
 #include "game_state.h"
 #include "field_event.h"

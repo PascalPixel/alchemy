@@ -23,7 +23,6 @@
 #include "field_event.h"
 #include "field_scene.h"
 #include "field_effect.h"
-#include "overlay_object.h"
 #include "staged_actor.h"
 #include "battle.h"
 #include "debug.h"
@@ -87,8 +86,7 @@
 #define VENUS_DESCENT_COLLISION_WIDTH 5
 #endif
 
-struct DirXZ;
-static void VenusLighthouse_StepActorWithDust(struct DirXZ *direction);
+static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction);
 static void VenusLighthouse_AnimatePairedTileWaves(void);
 static void VenusLighthouse_EmitWestPassageParticles(void);
 static void VenusLighthouse_EmitEastPassageParticles(void);
@@ -112,20 +110,6 @@ enum {
   ACTOR_DOOR_SCHOLAR = 10,
   ACTOR_WALL_BLOCK = 12,
   ACTOR_SWITCH_BLOCK = 13
-};
-
-/// The way a drifting floor carries the party: -1, 0 or 1 on x and on z.
-struct DirXZ {
-  s32 x;
-  s32 unused;
-  s32 z;
-};
-
-/// The shared radial-effect helper uses this module-provided vector type.
-struct Vec {
-  s32 x;
-  s32 y;
-  s32 z;
 };
 
 static __inline__ void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
@@ -2749,7 +2733,7 @@ s32 Scene_RunEntrySetup(void) {
 /// Standing on this floor carries the party north in a trail of dust; at a
 /// ledge they drop down.
 static void Event_DriftNorth(void) {
-  struct DirXZ args;
+  struct Vector3 args;
 
   args.x = 0;
   args.z = -1;
@@ -2758,7 +2742,7 @@ static void Event_DriftNorth(void) {
 
 /// As Event_DriftNorth, south.
 static void Event_DriftSouth(void) {
-  struct DirXZ args;
+  struct Vector3 args;
 
   args.x = 0;
   args.z = 1;
@@ -2767,7 +2751,7 @@ static void Event_DriftSouth(void) {
 
 /// As Event_DriftNorth, west.
 static void Event_DriftWest(void) {
-  struct DirXZ args;
+  struct Vector3 args;
 
   args.x = -1;
   args.z = 0;
@@ -2776,7 +2760,7 @@ static void Event_DriftWest(void) {
 
 /// As Event_DriftNorth, east.
 static void Event_DriftEast(void) {
-  struct DirXZ args;
+  struct Vector3 args;
 
   args.x = 1;
   args.z = 0;
@@ -2785,7 +2769,9 @@ static void Event_DriftEast(void) {
 
 /// Follows the selected actor through the passage, adjusting for walls and
 /// drops.
-static void VenusLighthouse_StepActorWithDust(struct DirXZ *direction) {
+/// @param direction The way the drifting floor carries the party: -1, 0 or 1
+/// on x and on z; y is not read.
+static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
   s32 actorId;
   struct FieldActor *viewCenter;
   struct FieldActor *actor;

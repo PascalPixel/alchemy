@@ -17,25 +17,6 @@
 
 enum { SOL_SANCTUM_RING_MAX = 10 };
 
-/// Legacy actor view used only while setting up the sprite flags.
-struct SolSanctumRingObject {
-  u8 pad00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  u8 pad14[4];
-  s32 scaleX;
-  s32 scaleY;
-  u8 pad20[24];
-  s32 baseX;
-  s32 baseY;
-  s32 baseZ;
-  u8 pad44[12];
-  u8 *anim;
-  u8 pad54;
-  u8 state;
-};
-
 /// One floating light: its actor, its drift and its pulsing scale, and where it
 /// is while hidden.
 struct SolSanctumRingEntry {
@@ -194,13 +175,13 @@ static void SolSanctum_UpdateRing(void) {
 /// Starts the floating lights: count actors (at most 10) from first, each drawn
 /// translucent and starting at its largest scale.
 void SolSanctum_StartFloatingLights(s32 first, u32 count) {
-  // The actors are read through struct SolSanctumRingObject, the plain-C view
-  // this site matches with (scene/README.md): it keeps the sprite-flags address
-  // before the ring-entry store, where FieldActor and AnimationObject swap the
-  // two instructions. The callback reads FieldActor.
+  // Each light is read here as FieldEffect, union FieldObject's effect view of
+  // the same object, the plain-C form this site matches with (MATCHING.md):
+  // through FieldActor's sprite union, the sprite-flags address moves after
+  // the ring-entry store. The callback reads FieldActor.
   struct SolSanctumRingList *list;
   struct SolSanctumRingEntry *entry;
-  struct SolSanctumRingObject *obj;
+  struct FieldEffect *light;
   u32 i;
   s32 none;
   s32 cleared;
@@ -215,14 +196,14 @@ void SolSanctum_StartFloatingLights(s32 first, u32 count) {
   if (count != 0) {
     cleared = none;
     do {
-      obj = (struct SolSanctumRingObject *)Object_GetById(first);
+      light = &((union FieldObject *)Object_GetById(first))->effect;
       {
-        u8 *frame = &obj->anim[38];
+        u8 *flags = &light->sprite->flags;
 
-        entry->obj = (struct FieldActor *)obj;
-        *frame = cleared;
+        entry->obj = (struct FieldActor *)light;
+        *flags = cleared;
       }
-      obj->state = cleared;
+      light->motionFlags = cleared;
       Engine_ObjectSetBlendMode(Object_GetById(first),
                                 OBJECT_BLEND_TRANSLUCENT);
       entry->scale = gSolSanctumRing_MaxScales[i];

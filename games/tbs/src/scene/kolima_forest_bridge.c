@@ -35,7 +35,6 @@
 #include "field_scene.h"
 #include "kolima.h"
 #include "staged_actor.h"
-#include "staged_actor_effect.h"
 #include "text/msg_ids.h"
 #include "objcmd.h"
 #include "songs.h"

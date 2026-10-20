@@ -66,16 +66,14 @@ static void Event_EscortHintsAtBarricade(void);
 static void Event_McCoyRewardsParty(void);
 static void Event_PresentRewardChests(void);
 
-/// The talkFacing bytes of placement rows 6 to 9: actors 14 to 17.
-struct PalacePlacementTalkFacingView {
-  u8 unk000[166];
-  u8 startledResident;
-  u8 unk167[23];
-  u8 admirer;
-  u8 unk191[23];
-  u8 kolimaWatcher;
-  u8 unk215[23];
-  u8 rewardKeeper;
+/// gMcCoyPalacePlacements up to the rows the reward changes: rows 6 to 9 place
+/// actors 14 to 17.
+struct McCoyPalacePlacementRows {
+  struct ScenePlacement unk[6]; ///< rows 0 to 5; not changed by the reward
+  struct ScenePlacement startledResident;
+  struct ScenePlacement admirer;
+  struct ScenePlacement kolimaWatcher;
+  struct ScenePlacement rewardKeeper;
 };
 
 // The shared facing callback precedes the scene's entry points.
@@ -100,16 +98,16 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
     FieldScene_PrepareActors(placements);
 
     if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
-      /* FAKEMATCH: a byte view of placement rows 6 to 9 keeps the native
-       * base+166 addressing; as direct talkFacing fields, it splits into
+      /* FAKEMATCH: a struct of the table's rows keeps the native base+166
+       * addressing; as placements[6].talkFacing and on, it splits into
        * base+144 and member+22. */
-      struct PalacePlacementTalkFacingView *facings =
-          (struct PalacePlacementTalkFacingView *)placements;
+      struct McCoyPalacePlacementRows *rows =
+          (struct McCoyPalacePlacementRows *)placements;
 
-      facings->startledResident = TALK_KEEP_FACING;
-      facings->admirer = TALK_FACE_PARTY;
-      facings->kolimaWatcher = 3;
-      facings->rewardKeeper = TALK_FACE_PARTY_AND_BACK;
+      rows->startledResident.talkFacing = TALK_KEEP_FACING;
+      rows->admirer.talkFacing = TALK_FACE_PARTY;
+      rows->kolimaWatcher.talkFacing = 3;
+      rows->rewardKeeper.talkFacing = TALK_FACE_PARTY_AND_BACK;
     }
 
     return placements;

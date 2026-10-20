@@ -1,4 +1,10 @@
 #include "unit/graphics/credits/credits.h"
+#ifdef UBFIX
+// This object uses the credits' views of the borrowed flash work cells.
+#define OWN_Flash_Handler0
+#define OWN_gFlash
+#define OWN_gFlashNumRemainingBytes
+#endif
 #include "unit/runtime/runtime.h"
 #include "dma.h"
 #include "io_reg.h"
@@ -253,18 +259,36 @@ s32 DisplayScroll_RunSlideshow(void) {
   return 0;
 }
 
-/// An OAM entry of the credits: attributes 0 and 1, then attribute 2.
+/// One eight-byte OAM entry in the credits' private sprite buffer.
 struct DisplayScrollObject {
-  u32 attr01;
-  u32 attr2;
+  u32 attr01; ///< Attribute 0 in the low half, attribute 1 in the high half.
+  u32 attr2;  ///< Attribute 2 in the low half; the unused high half stays zero.
 };
 
-/// The credits reuse a flash-library work word.
+STATIC_ASSERT(sizeof(struct DisplayScrollObject) == 8);
+
+/// Credits scroll position in pixels, in the low half of a flash work cell.
 extern u16 gFlash_Handler3;
 
-/// 128 entries sent to OAM, also stored in flash-library work space.
+// ewram.s reserves four bytes for each cell. The credits replace the task table
+// and borrow them while flash operations are inactive: a sprite-buffer pointer,
+// the last rendered pixel position, and a zero/-1 end-of-text latch.
+// UB: the native casts alias the flash declarations and store a pointer through
+// a declared u16. UBFIX gives these assembler-backed cells their credits views.
+#ifdef UBFIX
+extern struct DisplayScrollObject *gFlashNumRemainingBytes;
+extern s16 gFlash;
+extern s16 gFlash_Handler0;
+
+#define SCROLL_OBJECTS gFlashNumRemainingBytes
+#define CREDITS_LAST_LINE_POSITION gFlash
+#define CREDITS_END_OF_TEXT gFlash_Handler0
+#else
 #define SCROLL_OBJECTS                                                         \
   (*(struct DisplayScrollObject **)&gFlashNumRemainingBytes)
+#define CREDITS_LAST_LINE_POSITION (*(s16 *)&gFlash)
+#define CREDITS_END_OF_TEXT (*(s16 *)&gFlash_Handler0)
+#endif
 
 /// Blank credits line
 static const u8 sBlankCreditLine[] = "";
@@ -927,7 +951,7 @@ void DisplayScroll_UpdateObjects(void) {
     }
   }
   Dma_Set(SCROLL_OBJECTS, OAM, DMA_COPY_WORDS(OAM_SIZE / 4), REG_DMA3);
-  if ((*(s16 *)&gFlash_Handler0) == 0 && (gFrameTick & 3) == 0)
+  if (CREDITS_END_OF_TEXT == 0 && (gFrameTick & 3) == 0)
     gFlash_Handler3++;
 }
 
@@ -938,12 +962,12 @@ void DisplayScroll_RenderEnteringLine(void) {
   u32 scrollPosition;
   s32 lineIndex;
 
-  if ((*(s16 *)&gFlash_Handler0) == 0) {
+  if (CREDITS_END_OF_TEXT == 0) {
     scrollPosition = gFlash_Handler3;
-    if ((s16)gFlash_Handler3 / 8 != *(s16 *)&gFlash / 8) {
+    if ((s16)gFlash_Handler3 / 8 != CREDITS_LAST_LINE_POSITION / 8) {
       lineIndex = (s16)gFlash_Handler3 / 8;
-      *(s16 *)&gFlash = scrollPosition;
-      (*(s16 *)&gFlash_Handler0) = DisplayScroll_DrawLine(
+      CREDITS_LAST_LINE_POSITION = scrollPosition;
+      CREDITS_END_OF_TEXT = DisplayScroll_DrawLine(
           gDisplayScroll_LineTable[lineIndex],
           ((lineIndex + CREDITS_VISIBLE_ROWS) & (CREDITS_RING_ROWS - 1)) *
               CREDITS_LINE_TILES,
@@ -997,12 +1021,9 @@ void DisplayScroll_InitObjectTable(void) {
     *oamWords++ = 0x00c000c0;
     *oamWords++ = CREDITS_RING_TILES;
   }
-  // The state, in borrowed flash-library cells: gFlash_Handler3 the scroll
-  // position in pixels, gFlash's low half the position of the last line
-  // drawn, and gFlash_Handler0's low half the end-of-text latch.
   gFlash_Handler3 = 0;
-  *(s16 *)&gFlash = 0;
-  (*(s16 *)&gFlash_Handler0) = 0;
+  CREDITS_LAST_LINE_POSITION = 0;
+  CREDITS_END_OF_TEXT = 0;
   Scheduler_AddOrUpdateCallback(DisplayScroll_UpdateObjects,
                                 SCHEDULER_KEY_VBLANK);
   Scheduler_AddOrUpdateCallback(DisplayScroll_RenderEnteringLine,

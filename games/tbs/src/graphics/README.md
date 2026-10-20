@@ -78,8 +78,9 @@ and the tile memory needed does not grow with the length of the credits.
 
 The credits run with the engine's usual frame mostly switched off: they reset
 the task table, stop the VBlank's OAM copy (`gOamCopyEnabled`) and send their
-own 128 sprites, which they keep in the flash library's work space
-(`gFlashNumRemainingBytes`), unused while nothing is being saved.
+own 128 sprites from a heap buffer. Its pointer occupies the otherwise idle
+flash-library cell `gFlashNumRemainingBytes`; the other borrowed cells hold
+the scroll position and end-of-text state.
 
 ## Evidence and open questions
 
@@ -89,5 +90,5 @@ the credits' and title's functions from what they draw.
 
 Still unknown:
 
-- XXX: why the credits keep their sprite table in the flash library's work
-  space rather than in a heap block.
+- XXX: why the credits borrow flash-library cells for their state instead
+  of dedicated globals.

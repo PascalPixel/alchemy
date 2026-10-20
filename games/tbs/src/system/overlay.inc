@@ -75,8 +75,8 @@
 	import Fade_Wait, Fade_WaitFar
 	import SerialRuntime_Initialize, SerialRuntime_InitializeFar
 	import SerialRuntime_PollAndTransfer, SerialRuntime_PollAndTransferFar
-	import QueueIoWriteDelay2, QueueIoWriteDelay2Far
-	import QueueIoWriteDelay3, QueueIoWriteDelay3Far
+	import IoWriteQueue_Store16, IoWriteQueue_Store16Far
+	import IoWriteQueue_Store32, IoWriteQueue_Store32Far
 	import SerialRuntime_RemoveIrqHandlers, SerialRuntime_RemoveIrqHandlersFar
 	import Sound_LoadPresetParameters, Sound_LoadPresetParametersFar
 	import SerialRuntime_BeginSend, SerialRuntime_BeginSendFar

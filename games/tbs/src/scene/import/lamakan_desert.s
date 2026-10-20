@@ -12,7 +12,7 @@
 	.set import.Engine_VramLoad, 1
 	.set import.Resource_FindFreeEntry, 1
 	.set import.Runtime_PushSlotEntry, 1
-	.set import.QueueIoWriteDelay3, 1
+	.set import.IoWriteQueue_Store32, 1
 	.set import.Object_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1

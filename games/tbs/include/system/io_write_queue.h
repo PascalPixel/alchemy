@@ -2,44 +2,59 @@
 #define ALCHEMY_IO_WRITE_QUEUE_H
 
 /// @file
-/// The I/O write queue that VBlank carries out frames later.
+/// The register write queue that VBlank carries out after each finished frame.
 
 #include "edition.h"
 #include "irqlock.h"
 #include "types.h"
 
-/// The I/O writes VBlank carries out: up to 32 entries, each a value, an
-/// address and a control word (delay frames << 16, or a DMA control word).
+/// The register writes VBlank carries out once the frame loop has finished a
+/// frame; IoWriteQueue_FlushPending empties it.
 struct IoWriteQueue {
-  u16 count;
+  u16 count; ///< Entries waiting, at most 32.
   u16 pad;
+  /// Each entry is the value, the address and the control word, in that order.
+  /// A control word with a width (IO_WRITE_8 to IO_WRITE_32) is a register
+  /// write; one without is a DMA, whose three words go to DMA3's source,
+  /// destination and control registers.
   u32 entries[32][3];
 };
 
 extern struct IoWriteQueue gIoWriteQueue;
 
-void QueueIoWriteDelay1(u32 address, u32 value);
-void QueueIoWriteDelay2(u32 address, u32 value);
-void QueueIoWriteDelay3(u32 address, u32 value);
-void QueueIoWriteDelay5(u32 address, u32 value);
-void QueueIoWriteDelay6(u32 address, u32 value);
-void QueueIoWriteDelay7(u32 address, u32 value);
-void QueueIoWriteDelay9(u32 address, u32 value);
-void QueueIoWriteDelay10(u32 address, u32 value);
-void QueueIoWriteDelay11(u32 address, u32 value);
+// A control word's bits 16 and 17 give a register write's width and bits 18
+// and 19 its operation; Resource_ExecuteTransfer reads them.
 
-/// Disables interrupts to enqueue one I/O write; a full 32-entry queue is
-/// ignored. address: destination, value: value to write, control: delay frames
-/// << 16 or a DMA control word.
-/* FAKEMATCH: the count is read and stored through count_, a u16 pointer to
- * q->count held in a local; written as q->count, 15 linked sections of tbs-en
- * differ (measured 2026-10-13: the nine QueueIoWriteDelay writers, 18 functions
- * with inline pushes in 12 objects, and the overlays). It replaces the earlier
- * tagged cast store *(u16 *)&q->count, so it is the same device in another
- * form. The body is braces alone, not do { } while (0): an outer one-pass block
- * changes 8 linked sections of tbs-en (the QueueIoWriteDelay writers, six
- * objects with inline pushes and the overlays; ⚓️ unchanged; measured
- * 2026-10-13). */
+/// Writes a byte.
+#define IO_WRITE_8 (1 << 16)
+/// Writes a halfword.
+#define IO_WRITE_16 (2 << 16)
+/// Writes a word.
+#define IO_WRITE_32 (3 << 16)
+/// ORs the value into the register instead of storing it.
+#define IO_WRITE_SET (4 << 16)
+/// Clears the value's bits in the register instead of storing it.
+#define IO_WRITE_CLEAR (8 << 16)
+
+void IoWriteQueue_Store8(u32 address, u32 value);
+void IoWriteQueue_Store16(u32 address, u32 value);
+void IoWriteQueue_Store32(u32 address, u32 value);
+void IoWriteQueue_SetBits8(u32 address, u32 value);
+void IoWriteQueue_SetBits16(u32 address, u32 value);
+void IoWriteQueue_SetBits32(u32 address, u32 value);
+void IoWriteQueue_ClearBits8(u32 address, u32 value);
+void IoWriteQueue_ClearBits16(u32 address, u32 value);
+void IoWriteQueue_ClearBits32(u32 address, u32 value);
+
+/// Disables interrupts to add one register write or DMA to the queue; a write
+/// to a full queue is dropped.
+/// @param control a width (IO_WRITE_8 to IO_WRITE_32), with IO_WRITE_SET or
+/// IO_WRITE_CLEAR to change bits; or a DMA control word.
+// The body is braces alone: as do { } while (0), 8 linked sections of tbs-en
+// differ (the nine writers, six objects with inline pushes and the overlays).
+/* FAKEMATCH(temporary): count_ holds &q->count; as q->count, 15 linked
+ * sections of tbs-en differ (the nine writers, 18 inline pushes, the
+ * overlays). */
 #define IO_WRITE_QUEUE_PUSH(address, value, control)                           \
   {                                                                            \
     struct IoWriteQueue *q = &gIoWriteQueue;                                   \
@@ -62,10 +77,8 @@ void QueueIoWriteDelay11(u32 address, u32 value);
 
 /// Like IO_WRITE_QUEUE_PUSH, but keeps IME's address in the caller's ime
 /// variable while disabling and restoring interrupts.
-/* FAKEMATCH: the count goes through count_ as in IO_WRITE_QUEUE_PUSH (see its
- * tag): written as q->count, BattleFx_PlayUnitElementEffect and
- * BattleFx_RunJudgment, its users, are among the sections that
- * differ. */
+/* FAKEMATCH(temporary): count_ as in IO_WRITE_QUEUE_PUSH; as q->count, its
+ * users BattleFx_PlayUnitElementEffect and BattleFx_RunJudgment differ. */
 #define IO_WRITE_QUEUE_PUSH_IME(ime, address, value, control)                  \
   {                                                                            \
     struct IoWriteQueue *q;                                                    \

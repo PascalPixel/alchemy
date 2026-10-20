@@ -1,37 +1,38 @@
 /// @file
-/// The register write queue that VBlank carries out frames later.
+/// The register write queue that VBlank carries out after each finished frame.
 /// Part of runtime.c, the runtime object, compiled only through it.
 
 #include "../runtime_internal.h"
 
 typedef void (*QueueFlushRoutine)(struct IoWriteQueue *queue, u32 count);
 
-/// The queued register writers: each adds a write of `value` to `address` that
-/// the VBlank handler carries out `delay` frames later (the delay sits in the
-/// high half of the entry's control word).
-#define IO_QUEUE_DEFINE_WRITE(name, delay)                                     \
+/// The queued register writers: each adds a write of `value` to `address`
+/// that the VBlank handler carries out once the frame loop has finished the
+/// frame. The control word gives the width and whether the value is stored,
+/// ORed in or cleared.
+#define IO_QUEUE_DEFINE_WRITE(name, control)                                   \
   void name(u32 address, u32 value) {                                          \
-    IO_WRITE_QUEUE_PUSH(address, value, delay);                                \
+    IO_WRITE_QUEUE_PUSH(address, value, control);                              \
   }
 
-/// Queues a register write for the next VBlank.
-IO_QUEUE_DEFINE_WRITE(QueueIoWriteDelay1, 1 << 16)
-/// Queues a register write two frames ahead.
-IO_QUEUE_DEFINE_WRITE(QueueIoWriteDelay2, 2 << 16)
-/// Queues a register write three frames ahead.
-IO_QUEUE_DEFINE_WRITE(QueueIoWriteDelay3, 3 << 16)
-/// Queues a register write five frames ahead.
-IO_QUEUE_DEFINE_WRITE(QueueIoWriteDelay5, 5 << 16)
-/// Queues a register write six frames ahead.
-IO_QUEUE_DEFINE_WRITE(QueueIoWriteDelay6, 6 << 16)
-/// Queues a register write seven frames ahead.
-IO_QUEUE_DEFINE_WRITE(QueueIoWriteDelay7, 7 << 16)
-/// Queues a register write nine frames ahead.
-IO_QUEUE_DEFINE_WRITE(QueueIoWriteDelay9, 9 << 16)
-/// Queues a register write ten frames ahead.
-IO_QUEUE_DEFINE_WRITE(QueueIoWriteDelay10, 10 << 16)
-/// Queues a register write eleven frames ahead.
-IO_QUEUE_DEFINE_WRITE(QueueIoWriteDelay11, 11 << 16)
+/// Queues a byte store.
+IO_QUEUE_DEFINE_WRITE(IoWriteQueue_Store8, IO_WRITE_8)
+/// Queues a halfword store.
+IO_QUEUE_DEFINE_WRITE(IoWriteQueue_Store16, IO_WRITE_16)
+/// Queues a word store.
+IO_QUEUE_DEFINE_WRITE(IoWriteQueue_Store32, IO_WRITE_32)
+/// Queues setting a byte register's bits.
+IO_QUEUE_DEFINE_WRITE(IoWriteQueue_SetBits8, IO_WRITE_SET | IO_WRITE_8)
+/// Queues setting a halfword register's bits.
+IO_QUEUE_DEFINE_WRITE(IoWriteQueue_SetBits16, IO_WRITE_SET | IO_WRITE_16)
+/// Queues setting a word register's bits.
+IO_QUEUE_DEFINE_WRITE(IoWriteQueue_SetBits32, IO_WRITE_SET | IO_WRITE_32)
+/// Queues clearing a byte register's bits.
+IO_QUEUE_DEFINE_WRITE(IoWriteQueue_ClearBits8, IO_WRITE_CLEAR | IO_WRITE_8)
+/// Queues clearing a halfword register's bits.
+IO_QUEUE_DEFINE_WRITE(IoWriteQueue_ClearBits16, IO_WRITE_CLEAR | IO_WRITE_16)
+/// Queues clearing a word register's bits.
+IO_QUEUE_DEFINE_WRITE(IoWriteQueue_ClearBits32, IO_WRITE_CLEAR | IO_WRITE_32)
 
 /// Called from VBlank: runs the queued register writes, with a copy of the
 /// executor routine on the stack.

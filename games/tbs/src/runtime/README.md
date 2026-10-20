@@ -42,9 +42,8 @@ crosses folders.
   once a VBlank, in the order of its order value; up to 20 at a time
   (`scheduler.c`).
 - **queued write**: a register write, or a DMA, that the VBlank handler
-  carries out once the frame loop has finished a frame (`QueueIoWriteDelay1`
-  and its kin, `io_queue.c`; see the design below for what the number in
-  their names is).
+  carries out once the frame loop has finished a frame (`IoWriteQueue_Store16`,
+  `IoWriteQueue_SetBits16` and their kin, `io_queue.c`).
 - **cache entry**: one of the 96 entries of the sprite VRAM cache, which owns a
   run of the 512 blocks of 64 bytes of sprite tile memory (`vram_cache.c`).
   An entry whose offset is `0xffff` is free.
@@ -64,7 +63,7 @@ crosses folders.
 | --- | --- |
 | `System_`, `Runtime_`, `Code_` | power-up, interrupts, the heap and code loading |
 | `Input_` | key repeat and the keypad interrupt |
-| `IoWriteQueue_`, `QueueIoWriteDelay` | the register write queue |
+| `IoWriteQueue_` | the register write queue |
 | `Fade_` | screen fades through the blend registers |
 | `Render_`, `AffineMatrix_` | the frame's sprite lists and affine matrices |
 | `VramCache_` | the sprite VRAM cache |
@@ -247,19 +246,20 @@ What depends on this order:
   not say so.
 
 The register write queue (`io_queue.c`) holds up to 32 entries of a value,
-an address and a control word, and is emptied by each flush. The number in
-`QueueIoWriteDelay1` to `11` is not a delay. `Resource_ExecuteTransfer`
-(`system/resource/decode_01.s`), the routine that carries the queue out,
-reads bits 16 and 17 of the control word as the width (1 a byte, 2 a
-halfword, 3 a word; 0 means the entry is a DMA, whose three words go to DMA3)
-and bits 18 and 19 as the operation (4 sets the value's bits, 8 clears them,
-neither stores it). So `QueueIoWriteDelay6(&REG_WINOUT, 16)` sets a bit of a
-halfword register and `QueueIoWriteDelay10(&REG_WINOUT, 4)` clears one, and
-the callers use them that way. The flush copies that routine onto the stack
-and runs it there: it is ARM code, and the stack is in IWRAM, where ARM code
-runs fastest. XXX: why the stack rather than a heap block is not known; a
-heap block allocated inside the interrupt would sit above the frame's
-scratch block, which the rule above would then release with it.
+an address and a control word, and is emptied by each flush.
+`Resource_ExecuteTransfer` (`system/resource/decode_01.s`), the routine that
+carries the queue out, reads bits 16 and 17 of the control word as the width
+(1 a byte, 2 a halfword, 3 a word; 0 means the entry is a DMA, whose three
+words go to DMA3) and bits 18 and 19 as the operation (4 sets the value's
+bits, 8 clears them, neither stores it); `io_write_queue.h` names them
+`IO_WRITE_8` to `IO_WRITE_32`, `IO_WRITE_SET` and `IO_WRITE_CLEAR`. So
+`IoWriteQueue_SetBits16(&REG_WINOUT, 16)` sets a bit of a halfword register
+and `IoWriteQueue_ClearBits16(&REG_WINOUT, 4)` clears one. The flush copies
+that routine onto the stack and runs it there: it is ARM code, and the stack
+is in IWRAM, where ARM code runs fastest. XXX: why the stack rather than a
+heap block is not known; a heap block allocated inside the interrupt would
+sit above the frame's scratch block, which the rule above would then release
+with it.
 
 ## Limits
 
@@ -280,10 +280,6 @@ slots, the save code's from the flash records it writes. Constants such as
 
 Still unknown:
 
-- XXX: the `QueueIoWriteDelayN` names and the comments in
-  `include/system/io_write_queue.h` describe the number as frames of delay;
-  the executor shows it is a width and an operation. The functions need new
-  names in a rename across folders.
 - XXX: whether any task calls `WaitFrames`, which would overwrite the saved
   stack.
 - XXX: `gSavedStack` holds 0xc50 bytes, though a caller's stack below the

@@ -78,15 +78,15 @@ FarCall_RuntimeTable:
 	overlay_veneer RuntimeDispatch_ReservedNoOpE
 	export SerialRuntime_InitializeFar, SerialRuntime_Initialize
 	export SerialRuntime_PollAndTransferFar, SerialRuntime_PollAndTransfer
-	overlay_veneer QueueIoWriteDelay1
-	export QueueIoWriteDelay2Far, QueueIoWriteDelay2
-	export QueueIoWriteDelay3Far, QueueIoWriteDelay3
-	overlay_veneer QueueIoWriteDelay5
-	overlay_veneer QueueIoWriteDelay6
-	overlay_veneer QueueIoWriteDelay7
-	overlay_veneer QueueIoWriteDelay9
-	overlay_veneer QueueIoWriteDelay10
-	overlay_veneer QueueIoWriteDelay11
+	overlay_veneer IoWriteQueue_Store8
+	export IoWriteQueue_Store16Far, IoWriteQueue_Store16
+	export IoWriteQueue_Store32Far, IoWriteQueue_Store32
+	overlay_veneer IoWriteQueue_SetBits8
+	overlay_veneer IoWriteQueue_SetBits16
+	overlay_veneer IoWriteQueue_SetBits32
+	overlay_veneer IoWriteQueue_ClearBits8
+	overlay_veneer IoWriteQueue_ClearBits16
+	overlay_veneer IoWriteQueue_ClearBits32
 	overlay_veneer Input_ResetKeyRepeat
 	overlay_veneer Transform_ApplyLookAt
 	overlay_veneer SerialRuntime_WaitForStatusMask

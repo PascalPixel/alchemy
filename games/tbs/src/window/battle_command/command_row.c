@@ -281,9 +281,9 @@ s32 Menu_RunCommandRow(s32 mode) {
       command = selectionUi->commandKinds[0];
       break;
     }
-    QueueIoWriteDelay2((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
-                                              DISPCNT_BG0_ON | DISPCNT_BG1_ON |
-                                              DISPCNT_BG2_ON | DISPCNT_OBJ_ON);
+    IoWriteQueue_Store16((u32)&REG_DISPCNT,
+                         DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
+                             DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON);
     render->menuBusy = 0;
     WaitFrames(1);
   }

@@ -532,8 +532,8 @@ static void VaultCave_RunRumble(void) {
   frame = 0;
   upperFadeBits = fadeLevel << 10;
   do {
-    QueueIoWriteDelay2(0x4000052,
-                       upperFadeBits | (fadeLevel << 5) | lowFadeLevel);
+    IoWriteQueue_Store16(0x4000052,
+                         upperFadeBits | (fadeLevel << 5) | lowFadeLevel);
     Engine_EventWait(1);
     if (frame % 20 == 0) {
       lowFadeLevel--;

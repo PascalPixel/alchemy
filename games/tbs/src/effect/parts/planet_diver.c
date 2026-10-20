@@ -23,15 +23,16 @@
 /// One chip of the impact, laid over the same 28-byte records as PARTICLES
 /// but with its velocities in other places than struct EffectStep's.
 struct ImpactChip {
-  s32 x; ///< canvas position, 16.16 fixed point
-  s32 y;
-  s32 velocityX;
-  s32 unused0c;
-  s32 velocityY;
-  s32 unused14;
-  s32 life; ///< frames left
+  s32 x;         ///< canvas position, 16.16 fixed point
+  s32 y;         ///< canvas position, 16.16; the ground is y 112
+  s32 velocityX; ///< 16.16 pixels a frame, damped to 56/64 each frame
+  s32 unused0c;  ///< an EffectStep's velocityX; never read
+  s32 velocityY; ///< 16.16 pixels a frame, with 1/8 pixel of gravity
+  s32 unused14;  ///< an EffectStep's velocityZ; never read
+  s32 life;      ///< frames left; 0 is free
 };
 
+/// Ram_MapCellBuffer seen as Planet Diver's chips.
 #define PLANET_DIVER_IMPACT_CHIPS ((struct ImpactChip *)Ram_MapCellBuffer)
 
 #define PLANET_DIVER_FRAMES 88
@@ -45,6 +46,9 @@ struct ImpactChip {
 ///
 /// 88 frames. effect->side says which way the ball falls; actors[0] is where it
 /// lands.
+///
+/// Moves the user's object: it leaps on frame 4 and falls from frame 18. The
+/// flash's sheet and palette are replaced by the fireball's on frame 16.
 void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   BlitterPair draw;
@@ -76,9 +80,10 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
   draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
-                        75); // trails keep 3/4 a frame
+  // Trails keep 3/4 a frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
+  // Four times as many chips are freed as the burst uses.
   for (i = 0; i != PLANET_DIVER_CLEARED_CHIPS; i++)
     PLANET_DIVER_IMPACT_CHIPS[i].life = 0;
   actor = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -93,15 +98,16 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
     struct BattleCamera *camera = gCameraWork;
 
     EFFECT_VIEW_FROM_CAMERA(camera);
-    // The user's screen position is taken on frame 0 and from frame 18 on,
-    // and held in between.
+    // Frame loop. The user's screen position is taken on frame 0 and from
+    // frame 18 on, and held in between, so the flash stays where the leap
+    // began.
     if (frame > 17 || frame == 0) {
       EffectPosition_ProjectBattler(work->effect->actor, &screenPosition);
       screenPosition.x /= 2;
     }
 
     // The flash: frames 2 and 3 on the user, frames 4 to 15 spreading in
-    // 16 directions.
+    // 16 directions through six 32x64 images, two frames each.
     if (frame >= 2 && frame <= 3)
       draw[0](canvas, work->sheet, screenPosition.x - 16, screenPosition.y - 64,
               32, 64);
@@ -122,8 +128,10 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
       actor->verticalMotionStrength = 0xab85;
       actor->autoFaceMotion = 0;
       actor->snapToTarget = 0;
-      Object_SetMoveTargetFar(actor, actor->x * 3, 0, actor->z);
+      Object_SetMoveTargetFar((struct ObjectRuntime *)actor, actor->x * 3, 0,
+                              actor->z);
       ObjectDispatch_SelectAnimationFar(actor, 2);
+      // A 4-frame shake: frame is 4 here.
       work->shakeFrames = frame;
       AudioCommand_PlayFar(SE_136);
     }
@@ -138,7 +146,7 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
       actor->velocityX = 0;
       actor->velocityY = 0;
       actor->z = target->z;
-      ObjectDispatch_StartIdleFar(actor);
+      ObjectDispatch_StartIdleFar((struct DispatchObject *)actor);
     }
     // From frame 18: fall 15 pixels across and 8 down a frame; on reaching
     // the ground, throw out 256 chips, and the target recoils and flashes
@@ -147,6 +155,11 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
       if (actor->y > 0) {
         actor->x += dx;
         actor->y -= 8 << 16;
+        // The nudge after drawing lasts only to this frame's landing test,
+        // where the chips start; the next frame projects the user afresh.
+        // XXX: likely meant as screenPosition.x += 8, because side 0 moves
+        // x; a capture of an enemy's Planet Diver would show where its chips
+        // start.
         if (work->effect->side == 0) {
           draw[0](canvas, work->sheet, screenPosition.x - 20,
                   screenPosition.y - 52, 40, 64);
@@ -184,7 +197,8 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
     }
 
     // Chips: slow to 56/64 of their speed each frame, fall, and bounce at
-    // half speed off y 112; only those on the canvas are drawn.
+    // half speed off y 112; only those on the canvas are drawn, shrinking
+    // a size every 8 frames of life.
     for (i = 0; i != PLANET_DIVER_CHIPS; i++) {
       struct ImpactChip *chip = &PLANET_DIVER_IMPACT_CHIPS[i];
       s32 y;
@@ -229,6 +243,9 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
 /// and a skull that reaches the centre is no longer drawn. The effect layer
 /// ripples throughout. PARTICLES holds 64 skulls per target, of which the first
 /// 8 are used.
+///
+/// Adds BattleFx_ArmBg2AffineHBlankDma, which feeds the ripple in
+/// work->bg2xLines to BG2X line by line, and removes it before it returns.
 void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   s32 point[3];
@@ -250,6 +267,8 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
   Resource_DecodeType01(palette, work->sheet);
+  // The skulls are drawn in the pink burst's colours, which replace the
+  // skull sheet's own.
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
@@ -262,6 +281,7 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
   // 4 off every pixel each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
 
+  // Every skull starts up to 64 pixels from its centre on each axis.
   for (i = 0; i != HAUNT_SCATTERED; i++) {
     PARTICLES[i].x = ((Random16() & 255) - 127) << 15;
     PARTICLES[i].y = ((Random16() & 255) - 127) << 15;
@@ -273,10 +293,14 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
     s32 *row;
 
     camera = gCameraWork;
-    if (frame == 96) // the battle shows the damage
+    // Frame loop: 32 frames a target, then 96 more. The battle shows the
+    // damage on frame 96, whatever the number of targets.
+    if (frame == 96)
       EFFECT_SHOW_DAMAGE(0);
 
-    // Ripple the canvas sideways, line by line.
+    // Ripple the canvas sideways, line by line: a 16.16 value >> 10 is a
+    // quarter of it in BG2X's 20.8, so the sine swings 1.5 texels either
+    // way, about a 1.5-texel offset against the enemies.
     row = work->bg2xLines;
     if (work->effect->side == 0) {
       for (i = 0; i != 160; i++)
@@ -291,7 +315,8 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
           GetBattleObjectSlotFar(work->effect->actors[k])->object;
 
       // Centre on the point 20 pixels above the target and spin the group
-      // about it.
+      // about it; target k's turn starts on frame 32k, its skull i on frame
+      // 4 * (8k + i), and it flashes 32 frames into its turn.
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, target->x, 20 << 16, target->z);
       SceneTransform_ApplyPosition(point);
@@ -301,8 +326,10 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
           ObjectGroup_UpdateMembers(work->effect->actors[k], SPRITE_COLOR_WHITE,
                                     POSE_DAMAGE, k, 32);
 
-        // Each skull steps one pixel nearer the centre a frame; skulls take
-        // one of three images in turn.
+        // Each skull steps one pixel nearer the centre a frame (its
+        // position less itself over its distance in pixels); skulls take
+        // one of three 24x24 images in turn. variant counts its steps but is
+        // never read.
         for (i = 0; i != HAUNT_SKULLS; i++) {
           struct EffectStep *skull = &PARTICLES[k * HAUNT_SLOTS + i];
 
@@ -329,6 +356,7 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
 
+  // Finish: both callbacks before the blocks they read.
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
   EFFECT_RELEASE_BLITTERS();
@@ -343,9 +371,9 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
 ///
 /// Abilities: none (kind 34).
 ///
-/// The effect layer ripples throughout. Signed sine/cosine results are scaled
-/// by multiplication: negative left shifts were undefined, while these products
-/// stay within signed 32 bits.
+/// The effect layer ripples throughout, through
+/// BattleFx_ArmBg2AffineHBlankDma, which it adds and removes. It never lets
+/// the battle show damage, and leaves the targets' flash timers alone.
 void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -374,7 +402,11 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
                                 EFFECT_CALLBACK_ORDER);
   // Trails keep half a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
-  // On the party's side the canvas is scrolled 104 pixels left.
+  // On the party's side the canvas is scrolled 104 texels (BG2X is 20.8),
+  // and the spirals are drawn 112 further left.
+  // XXX: the ripple below rewrites BG2X every line with a 112-texel lead,
+  // so whether this 104 ever shows is unknown; the HBlank DMA's start
+  // timing would settle it.
   if (work->effect->side == 1) {
     REG_BG2X = -0x6800;
     offsetX = -112;
@@ -386,7 +418,9 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
     s32 *row;
     s32 i;
 
-    // Ripple the canvas sideways, line by line.
+    // Frame loop. Ripple the canvas sideways, line by line, 2 texels either
+    // way (16.16 >> 10 is a quarter in BG2X's 20.8; the products keep the
+    // signed sine out of a left shift).
     camera = gCameraWork;
     row = work->bg2xLines;
     if (work->effect->side == 0) {
@@ -412,6 +446,8 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
         struct MotionObject *obj;
 
         obj = GetBattleObjectSlotFar(work->effect->actors[member])->object;
+        // Target `member` has its turn from frame 16 * member, and takes
+        // its damage pose 32 frames in.
         if (frame > member * 16 &&
             frame < (member * 16) + ORBITING_SPIRALS_LIFE) {
           s32 spin;
@@ -444,6 +480,7 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
     }
     EFFECT_PRESENT_FRAME(work);
   }
+  // Finish: both callbacks before the blocks they read.
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
   EFFECT_RELEASE_BLITTERS();

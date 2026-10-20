@@ -4,8 +4,21 @@
 
 #include "../battle_internal.h"
 
-/// Fades to black while increasing mosaic size over sixteen frames; preserves
-/// the four background controls and consumes four random draws each frame.
+/// The formation the Fusion Dragon leads (row 347 of formatn.tsv, whose first
+/// member is enemy 140), fought on the Venus Lighthouse aerie: it opens with
+/// the storm instead of the curtain.
+#define TRANSITION_STORM_FORMATION 0x15b
+
+/// The curtain's map entries: tile 128 + n of CURTAIN_TILE, palette 15.
+#define TRANSITION_CURTAIN_ENTRY(n) (0xf080 + (n))
+
+/// Fades the screen to black over sixteen frames as every background's
+/// mosaic grows, then shows no layer.
+/// Reached only through its entry in the battle bank's far-call table
+/// (FarCall_BattleTable), which no code in TBS names. Sets REG_BLDCNT to
+/// darken the backgrounds, leaves REG_MOSAIC at its largest and REG_DISPCNT
+/// in mode 1 with every layer off; the four BGxCNT are put back as they were.
+/// It draws four random numbers a frame, which only advances the sequence.
 s32 BattlePres_RunMosaicFadeOut(void) {
   /* FAKEMATCH(volatile): the four saved BGxCNT values kept on the stack, each
    * stored and loaded again as in the ROM; without volatile, 28 of 90
@@ -26,8 +39,12 @@ s32 BattlePres_RunMosaicFadeOut(void) {
   *registerCursor = bg2cnt | BGCNT_MOSAIC;
   bg3cnt = *++registerCursor;
   *registerCursor = bg3cnt | BGCNT_MOSAIC;
+  // 0x21 halfwords on from REG_BG3CNT is REG_BLDCNT.
   registerCursor += 0x21;
-  *registerCursor = 0x3eee;
+  *registerCursor = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
+                    BLDCNT_TGT1_BD | BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_BG1 |
+                    BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ |
+                    BLDCNT_TGT2_BD;
 
   Fade_ToBlack(16);
   for (mosaicSize = 0; mosaicSize <= 15; mosaicSize++) {
@@ -49,14 +66,17 @@ s32 BattlePres_RunMosaicFadeOut(void) {
   return 0;
 }
 
-/// Tiles: builds a map of sequential byte indices.
-/// Writes byte sequences 0..255 and 0..223, then fills the remaining 544 bytes
-/// with 0xff, for 1024 bytes total.
+/// Builds the perspective plane's 32 by 32 affine map: tiles 0 to 255 in its
+/// first eight rows, 0 to 223 in the next seven, and 0xff in the rest.
+/// The two runs show the background picture's two halves, which the
+/// scanline BG2CNT values (BattleCamera_SetRange) read from character blocks 2
+/// and 3. Called with screen block 7 by BattleBackground_Load and
+/// BattlePresentation_ConfigurePaletteFade.
 void Graphics_BuildSequentialTileTable(s32 *destination) {
   u32 packedIndices;
   s32 wordIndex;
 
-  // Advance four indices per iteration because each store writes four bytes.
+  // Four tile numbers to a word.
   packedIndices = 0x03020100;
   wordIndex = 0;
   do {
@@ -76,12 +96,17 @@ void Graphics_BuildSequentialTileTable(s32 *destination) {
   Iwram_FillWords(destination, 544, -1);
 }
 
-/// Builds the background's padded tilemap around sequential tile pairs
-/// 0x200..0x3df.
+/// Builds BG1's flat map of the same picture: rows 0 to 3 0xffff, rows 4 and
+/// 5 tile 0x3ff, rows 6 to 20 tiles 0x200 to 0x3df in order, then tile 0x3ff.
+/// In 256 colours from character block 0, tile 0x200 is the start of block 2,
+/// where BattleBackground_Load decodes the picture. Called with screen block
+/// 31 (BATTLE_BG1CNT) by BattleBackground_Load and
+/// BattlePresentation_ConfigurePaletteFade.
 void BattlePresentation_BuildTilemap(s32 *destination) {
   s32 entry;
   u32 index;
 
+  // Iwram_FillWords counts bytes; the pointer steps in words.
   Iwram_FillWords(destination, 0x100, -1);
   destination += 0x40;
   Iwram_FillWords(destination, 0x80, 0x03ff03ff);
@@ -96,8 +121,12 @@ void BattlePresentation_BuildTilemap(s32 *destination) {
   Iwram_FillWords(destination, 0x280, 0x03ff03ff);
 }
 
-/// Installs the active scanline page and affine registers while the battle
-/// background uses mode 2.
+/// Shows the perspective plane's finished page each frame while the
+/// background is in mode 2: its first line's BG2CNT now, the rest by HBlank
+/// DMA 0, and its affine parameters into BG2PA to BG2Y.
+/// Runs each frame as a scheduler callback, added by BattleBackground_Load
+/// and BattlePresentation_ConfigurePaletteFade; BattleCamera_SetRange builds
+/// the pages.
 void BattlePres_UpdateHBlankScroll(void) {
   struct BattleAffineHdma *scanlines;
   u16 *line;
@@ -114,8 +143,11 @@ void BattlePres_UpdateHBlankScroll(void) {
   }
 }
 
-/// Uploads one of eight 32-byte curtain tile frames while the transition timer
-/// is 1..32.
+/// Copies one of eight curtain tiles from gBattlePres_TileVariants into
+/// CURTAIN_TILE(0), a new one every four frames while the transition timer
+/// (gDisp) runs from 1 to 32.
+/// XXX: no code in TBS names it; a scheduler or table entry that reaches it
+/// would show which transition used it.
 void BattlePresentation_UploadTileVariant(void) {
   u32 variant = *gDisp - 1;
   if (variant <= 31)
@@ -123,8 +155,13 @@ void BattlePresentation_UploadTileVariant(void) {
             DMA_COPY_WORDS(8), REG_DMA3);
 }
 
-/// Advances the entry camera turn and curtain scroll, then settles at the
-/// normal zoom.
+/// Advances the curtain opening by a frame: scrolls BG0 from 32 pixels to 0
+/// over frames 20 to 52, and over frames 0 to 80 turns the camera round to
+/// YAW_PARTY_TURN and zooms it from 180 to 100 percent.
+/// Runs each frame as a scheduler callback added by
+/// BattlePres_RunEntryTransition, which removes it once the encounter is
+/// announced. Advances the timer in gDisp's slot (heap slot 42), and writes
+/// gBgScroll[0].y and the camera's yaw.
 void BattlePres_AdvanceTransitionTimer(void) {
   s32 scroll;
   struct BattleCamera *camera;
@@ -143,6 +180,7 @@ void BattlePres_AdvanceTransitionTimer(void) {
   if (scroll < 0)
     scroll = 0;
   offset->y = scroll;
+  // 360 a frame from 0xaf80 reaches 0x12000, YAW_PARTY_TURN, at frame 80.
   if (frame <= 0x50U)
     camera->yaw = 45 * frame * 8 + 0xaf80;
   next = (*timer = *timer + 1);
@@ -153,7 +191,12 @@ void BattlePres_AdvanceTransitionTimer(void) {
   BattlePres_SetupTransitionScene(0, 0, 0, 0x64);
 }
 
-/// Draws the mirrored curtain rows as the eighty-frame entry transition opens.
+/// Draws a frame of the curtain opening on BG1: over 80 frames a row moves up
+/// from row 13 to row 4 and its vertically flipped twin down to row 20, the
+/// row's tile stepping through CURTAIN_TILE(1) to (8), the last one clear.
+/// Runs each frame as a scheduler callback added by
+/// BattlePres_RunEntryTransition, reading the frame from gDisp's timer;
+/// writes BG1's map in screen block 12.
 void BattlePres_DrawTransitionRows(void) {
   u32 column;
   s32 transitionFrame;
@@ -165,6 +208,8 @@ void BattlePres_DrawTransitionRows(void) {
   transitionFrame = *gDisp;
   if (transitionFrame >= 0 && transitionFrame <= 79) {
     tileEntry = (7 & transitionFrame) + 0xf081;
+    // transitionFrame / 8 as signed division rounds it; the frame is never
+    // negative here.
     if (transitionFrame >= 0) {
       alignedFrame = transitionFrame;
     } else {
@@ -179,6 +224,7 @@ void BattlePres_DrawTransitionRows(void) {
       tilemap++;
     } while (column != 32);
 
+    // The lower half: the same tile flipped vertically.
     tileEntry |= 0x800;
     alignedFrame = transitionFrame;
     if (transitionFrame < 0) {
@@ -197,7 +243,10 @@ void BattlePres_DrawTransitionRows(void) {
   }
 }
 
-/// Clears BG0 vertical scroll from the entry transition's interrupt handler.
+/// Clears REG_BG0VOFS, so that BG0's scroll applies only above the line the
+/// interrupt fires on.
+/// Installed by BattlePres_RunEntryTransition as the VCount interrupt's
+/// handler at line 32, while gBgScroll[0].y holds BG0 scrolled.
 void Graphics_ClearBg0Vofs(void) {
   u32 zero = 0;
 
@@ -206,12 +255,18 @@ void Graphics_ClearBg0Vofs(void) {
 
 /// The display control and green swap registers, REG_DISPCNT onward.
 struct DisplayRegisters {
-  u16 control;
-  u16 greenSwap;
+  u16 control;   ///< REG_DISPCNT
+  u16 greenSwap; ///< the undocumented green swap register after it
 };
 
-/// Runs the curtain entrance or the Venus Aerie storm entrance, announces the
-/// enemies and restores the normal battle display and interrupt handlers.
+/// Opens a battle: the curtain opening, or for the Fusion Dragon the storm
+/// on the Venus Lighthouse aerie; then announces the enemies and leaves the
+/// battle's display set.
+/// Called once by Battle_RunEncounter with the enemy count and formation.
+/// Uses heap slot 42 for the opening's frame timer and frees it; leaves BG1 on
+/// BATTLE_BG1CNT, BG0's priority lowered by 2 again, REG_DISPCNT showing BG0,
+/// BG2 and the sprites, and no VCount handler. The storm also sets
+/// BattleWork.background to the aerie's storm backdrop.
 void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
   volatile u32 fill;
   struct BattlePresentationWork presentation;
@@ -232,9 +287,10 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
 
   background = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
   timer = Runtime_AllocateHeapBlock(42, 4);
-  if (encounterId != 0x15b) {
+  if (encounterId != TRANSITION_STORM_FORMATION) {
+    // The curtain: its seven edge tiles, and the display off while BG1 is
+    // set up.
     {
-
       volatile u32 *dma;
 
       Dma_Set(gBattlePres_CurtainTiles, CURTAIN_TILE(1), DMA_COPY_WORDS(8),
@@ -258,6 +314,8 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       asm volatile("" : "+l"(dma));
       ((struct DisplayRegisters *)((u8 *)dma - 212))->control = 1;
     }
+    // Tile 128 solid colour 3 and tile 136 clear; BG1 shows the curtain
+    // from screen block 12 behind BG0, whose priority is raised by 2.
     background->secondMode = 1;
     background->mode = 1;
     background->busy = 0;
@@ -266,18 +324,21 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
     REG_BG1CNT = BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(12);
     REG_BG0CNT |= BGCNT_PRIORITY(2);
     background->mode = 2;
+    // A closed curtain: solid rows 0 to 20, clear below.
     tilemap = (u16 *)BG_SCREEN_BLOCK(12);
     for (index = 0; index <= 31; index++) {
       if (index <= 20)
-        tile = 0xf080;
+        tile = TRANSITION_CURTAIN_ENTRY(0);
       else
-        tile = 0xf088;
+        tile = TRANSITION_CURTAIN_ENTRY(8);
       for (column = 0; column <= 31; column++)
         *tilemap++ = tile;
     }
     {
       s32 start = 0;
 
+      // Display on, with windows 0 and 1 over the field above the status
+      // window (lines 0 to 136).
       gBgScroll[0].y = 32;
       gBgScroll[1].y = 32;
       gBgScroll[1].x = 8;
@@ -292,11 +353,13 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
                          DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                              DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
                              DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
+      // The opening runs from the callbacks while the status window opens
+      // and the encounter is announced.
       BattlePres_SetupTransitionScene(0, 0, 0, 180);
       *timer = start;
       Scheduler_AddOrUpdateCallback(BattlePres_AdvanceTransitionTimer, 3200);
       Scheduler_AddOrUpdateCallback(BattlePres_DrawTransitionRows, 0x480);
-      Runtime_SetIrqHandler(2, 32, Graphics_ClearBg0Vofs);
+      Runtime_SetIrqHandler(IRQ_VCOUNT, 32, Graphics_ClearBg0Vofs);
       gBgScroll[0].y = 32;
       WaitFrames(1);
       UiWindow_CreateWithLayoutBoundsFar(gBattleWork->partyStatus);
@@ -307,14 +370,20 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       Scheduler_RemoveCallback(BattlePres_AdvanceTransitionTimer);
       Scheduler_RemoveCallback(BattlePres_DrawTransitionRows);
       gBgScroll[0].y = start;
-      Runtime_SetIrqHandler(2, 0, 0);
+      Runtime_SetIrqHandler(IRQ_VCOUNT, 0, 0);
     }
   } else {
+    // The storm: every unit but class 148 drawn at 0.7 scale (16.16), the
+    // display blank but for the windows.
     battle = WORK_SLOT(HEAP_SLOT_BATTLE);
     background->secondMode = 1;
     background->busy = 0;
     count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)unitIds);
     for (index = 0; index != count; index++) {
+      // The list's index taken as a unit id: 0 to 7, then 128 onward.
+      // BUG: unitIds is never read. A gap among party ids can make
+      // BattleObjGet return NULL before the loop reaches the enemy ids,
+      // and the scale store then goes near address 0.
       id = index + 120;
       if ((s32)index <= 7)
         id = index;
@@ -330,6 +399,7 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
     {
       s32 start = 0;
 
+      // The enemies alone take part in the shattering opening.
       battle->background = (u32)&ResourceId_VenusLighthouseAerieStormBackdrop;
       presentation.effect.count = BattleParty_ListActorIds(
           BATTLE_SIDE_ENEMIES, presentation.effect.actors);
@@ -340,12 +410,14 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       BattlePres_SetupTransitionScene(0, 0, 0, 100);
       *timer = start;
     }
-    Runtime_SetIrqHandler(2, 32, Graphics_ClearBg0Vofs);
+    Runtime_SetIrqHandler(IRQ_VCOUNT, 32, Graphics_ClearBg0Vofs);
     WaitFrames(1);
     WaitFrames(20);
     UiWindow_CreateWithLayoutBoundsFar(gBattleWork->partyStatus);
     QueueIoWriteDelay10((u32)&REG_BG0CNT, 2);
     QueueIoWriteDelay6((u32)&REG_BG0CNT, 0);
+    // Every unit's sprites appear; the party's fade in over 16 frames as
+    // semi-transparent sprites.
     REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
     visibleUnits = visibleUnitIds;
     visibleCount =
@@ -365,9 +437,10 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
     BattleIntro_AnnounceEncounter(enemyCount);
     gBgScroll[0].y = 0;
     WaitFrames(1);
-    Runtime_SetIrqHandler(2, 0, 0);
+    Runtime_SetIrqHandler(IRQ_VCOUNT, 0, 0);
   }
-  Runtime_SetIrqHandler(2, 0, 0);
+  // Both: the battle's own BG1 and display.
+  Runtime_SetIrqHandler(IRQ_VCOUNT, 0, 0);
   REG_BG1CNT = BATTLE_BG1CNT;
   WaitFrames(1);
   REG_BG1CNT = BATTLE_BG1CNT;
@@ -377,3 +450,6 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
                 DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   Runtime_ReleaseHeapBlock(42);
 }
+
+#undef TRANSITION_CURTAIN_ENTRY
+#undef TRANSITION_STORM_FORMATION

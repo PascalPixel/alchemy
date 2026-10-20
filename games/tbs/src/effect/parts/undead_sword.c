@@ -4,13 +4,19 @@
 
 #include "../effect_internal.h"
 
+/// The blast sheet's seven spark pictures, after the lime column's 14x80
+/// picture.
+#define UNDEAD_SWORD_SPARK_SHEET (14 * 80)
+
 /// Two mirrored columns of light rise at the first target's feet and sink
 /// again, scattering 16 sparks that drift upward; the target is struck on frame
 /// 10.
 ///
 /// Abilities: Undead Sword (kind 320).
 ///
-/// 54 frames.
+/// 54 frames. BG2 is moved so that the canvas's centre line stands on the
+/// target. The sparks are work->particles 0 to 15, variant their age in
+/// frames.
 void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -35,21 +41,21 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
   sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
-  BattleFx_BeginCanvasLayer(0);
-  REG_BG2PA = Q_8_8(1); // Normal horizontal scale too
+  EFFECT_BEGIN_NARROW_CANVAS(0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work->sheet, 1,
                              1);
-  Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet + 0x460,
-                             1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
+                             work->sheet + UNDEAD_SWORD_SPARK_SHEET, 1, 0);
   BattleFx_FetchRectangleBlitters(work->effect->side, draw);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75); // 3/4 afterimage
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
-  // Shift so that canvas x = 64 lines up with the target.
+  // Shift BG2 so that canvas x 64 lines up with the target.
   EffectPosition_ProjectBattler(work->effect->actors[0], &screenPosition);
   REG_BG2X = (64 - screenPosition.x) << 8;
 
-  // Scatter sparks in all directions from (64, 112), then drift upward.
+  // Scatter sparks in all directions from (64, 112), then drift upward; each
+  // starts 0 to 7 frames old, so they die at different times.
   for (i = 0, spark = work->particles; i != 16; i++) {
     speed = (Random16() & 0x1ff) + 128;
     angle = Random16() & 0xffff;
@@ -62,6 +68,7 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
   }
   work->shakeFrames = 8;
   for (frame = 0; frame != 54; frame++) {
+    // Frame 10: the strike, with a second 8-frame shake.
     if (frame == 10) {
       work->shakeFrames = 8;
       EFFECT_SHOW_DAMAGE(SE_212);
@@ -70,8 +77,10 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
                                 POSE_DAMAGE, 0, 8);
     }
 
-    // Columns grow 12 pixels per frame on frames 8-31, then shrink 6 per frame.
-    // Use comparison compositing while held at 80 pixels, otherwise additive.
+    // The columns grow 12 pixels a frame from frame 8 and shrink 6 a frame
+    // after frame 31, held at 80 pixels between. Held, they are drawn
+    // brightest-wins, otherwise additive; each half builds its own blitter
+    // and releases it at once.
     if (frame > 7) {
       if (frame <= 31)
         height = frame * 12 - 96;
@@ -99,7 +108,9 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
     }
 
     // Two more sparks start each frame from frame 8; each advances to the
-    // next of seven pictures every three frames and drifts upward.
+    // next of seven pictures every three frames and drifts upward until it is
+    // 29 frames old. The blitters are fetched and released each frame, as the
+    // columns took the slot.
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
     for (i = 0, particle = work->particles; i != 16; i++) {
       if (frame >= i / 2 + 8 && particle->variant <= 28) {
@@ -111,7 +122,8 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
         py = Q_16_16_TO_INT(particle->y);
         if (cell > 6)
           cell = 6;
-        src = work->sheet + gUndeadSword_SparkCells[cell] + 0x460;
+        src = work->sheet + gUndeadSword_SparkCells[cell] +
+              UNDEAD_SWORD_SPARK_SHEET;
         size = gUndeadSword_SparkSizes[cell];
         draw[0](canvas, src, px - size / 2, py - size / 2, size, size);
         particle->variant++;
@@ -129,3 +141,5 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
+
+#undef UNDEAD_SWORD_SPARK_SHEET

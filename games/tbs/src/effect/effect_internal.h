@@ -94,8 +94,10 @@
 #define EFFECT_WINOUT (WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL)
 
 /// A work slot read through a pointer to the effect's own slot,
-/// gWorkSlot[HEAP_SLOT_BATTLE_EFFECT], or to the canvas slot just after it.
+/// gWorkSlot[HEAP_SLOT_BATTLE_EFFECT].
 #define EFFECT_SLOT(slots, slot) ((slots)[(slot) - HEAP_SLOT_BATTLE_EFFECT])
+/// A work slot read through a pointer to the canvas slot,
+/// gWorkSlot[HEAP_SLOT_BATTLE_CANVAS], just after the effect's own.
 #define CANVAS_SLOT(slots, slot) ((slots)[(slot) - HEAP_SLOT_BATTLE_CANVAS])
 
 /// Index of DMAxCNT_H, the control half, in a channel's 16-bit registers.
@@ -106,7 +108,8 @@
 
 /// Stops a DMA channel: clears its repeat and start timing bits, then its
 /// enable bit, and reads the control register back so the stop takes effect
-/// before the channel is set up again.
+/// before the channel is set up again. The HBlank DMA arms in display.c,
+/// dispatch.c, burst_shower.c and particle_streams.c call it first.
 static inline void Dma_Stop(volatile u16 *channel) {
   channel[DMA_CONTROL_HALF] &= (u16)~DMA_START_TIMING_DRQ_REPEAT;
   channel[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
@@ -250,11 +253,11 @@ enum CanvasTransferMode {
 /// effects write it only on lines outside window 0's vertical range.
 #define WINDOW_SPAN_INVERTED WIN_RANGE(1, 0)
 
-/// Scheduler orders (Scheduler_AddOrUpdateCallback sorts the frame's callbacks
-/// by them): every per-frame effect callback takes EFFECT_CALLBACK_ORDER; the
-/// palette fade and the element streaks take EFFECT_PLAYBACK_ORDER, where the
-/// battle's own playback runs.
+/// The scheduler order of every per-frame effect callback
+/// (Scheduler_AddOrUpdateCallback sorts the frame's callbacks by order).
 #define EFFECT_CALLBACK_ORDER 0x480
+/// The order where the battle's own playback runs, which the palette fade and
+/// the element streaks take.
 #define EFFECT_PLAYBACK_ORDER 0xc80
 
 /// The full-screen picture Graphics_ConvertBackgroundToBlueRamp (bind.c)

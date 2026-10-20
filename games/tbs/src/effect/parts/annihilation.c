@@ -11,7 +11,7 @@
 ///
 /// Abilities: Annihilation (kind 55).
 ///
-/// The scene runs for 64 frames:
+/// Its frames:
 ///
 ///   4 on       64 shards scatter from the target and fall
 ///   6 to 11    a fire streak flares in front of the user
@@ -82,7 +82,7 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
     if (frame == 8)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (work->effect->variant != 0 && frame == 8)
-      AudioCommand_PlayFar(0xd4);
+      AudioCommand_PlayFar(SE_212);
     EffectPosition_ProjectScaledBattler(work->effect->actor, &position);
     // The fire streak, one picture a frame in front of the user, drawn
     // additively and mirrored for side 1 with a blitter made for this one
@@ -97,15 +97,16 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
                             COMPOSITE_ADDITIVE);
       blitters[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
       if (work->effect->side == 0)
-        blitters[0](canvas, work->sheet + (frame - 6) * 0xd80,
+        blitters[0](canvas, work->sheet + (frame - 6) * (48 * 72),
                     position.x / 2 - 24, position.y - 24, 48, 72);
       else
-        blitters[0](canvas, work->sheet + (frame - 6) * 0xd80, position.x / 2,
-                    position.y - 24, 48, 72);
+        blitters[0](canvas, work->sheet + (frame - 6) * (48 * 72),
+                    position.x / 2, position.y - 24, 48, 72);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     }
     // The fire burst over the target grows a step every two frames up to
-    // the third; a nonzero variant takes the second strip of pictures.
+    // the third (frame 20) and holds it to frame 47; a nonzero variant takes
+    // the second strip of pictures.
     if (frame >= 16 && frame <= 47) {
       s32 step = (frame - 16) / 2;
       s32 strip;
@@ -114,15 +115,21 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
       blitters[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
       if (step > 2)
         step = 2;
+      // Each strip holds three 40x80 pictures.
       if (work->effect->variant == 0)
         strip = 0;
       else
-        strip = 0x2580;
-      blitters[0](canvas, Ram_MapCellBuffer + strip + step * 0xc80,
+        strip = 3 * (40 * 80);
+      blitters[0](canvas, Ram_MapCellBuffer + strip + step * (40 * 80),
                   origin.x / 2 - 20, origin.y - 48, 40, 80);
+      // A busy delay before the blitter is freed (BattleFx_CallDoNothing).
+      // XXX: why it waits, as nothing here depends on the time; the Lost
+      // Age's Annihilation would show whether it is a leftover.
       BattleFx_CallDoNothing(10000);
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
     }
+    // The strike fills the canvas with level 63, a flash that the transfer
+    // then fades.
     if (frame == 8) {
       Dma_Fill32(0x3f3f3f3f, canvas, CANVAS_BYTES);
     }

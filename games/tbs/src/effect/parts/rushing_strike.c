@@ -7,6 +7,9 @@
 /// Packs 288 rows of 40 bytes to half width, keeping every second byte
 /// (the bytes of the odd columns win).
 ///
+/// Called by BattleFx_RunRushingStrike and twice by the casting impacts, to
+/// squeeze a 40-pixel-wide sheet into 20-pixel pictures. Writes only dst.
+///
 /// src: the rows to pack.
 /// dst: receives the packed rows, half the stride apart.
 /// stride: the bytes in one row of src.
@@ -61,6 +64,13 @@ void BattleFx_RunHeadbutt(struct BattleEffectArgument *effect) {
 /// frame 10; a ring flares where it hits and 64 sparks scatter, over 60
 /// frames in all.
 ///
+/// Called by the four wrappers above. work->particles holds the sparks, each
+/// variant its frames left; the six packed ring pictures go to
+/// Ram_MapCellBuffer. Moves the user with BattleFx_SetApproachMotion and does
+/// not bring it back. Copies the mode's palette over the first 128 bytes of
+/// BG palette RAM, sets work->shakeFrames on the strike, and ends with the
+/// transfer callback removed, the blitters freed and the canvas layer closed.
+///
 /// effect: the user and the targets.
 /// mode   : the palette: 0 fire pillar, 1 ice block, 2 pink burst, 3 blast.
 void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect, s32 mode) {
@@ -87,7 +97,6 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect, s32 mode) {
   s32 paletteId;
   u8 *cells;
 
-  // The work, the canvas and the camera.
   cells = Ram_MapCellBuffer;
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
@@ -109,7 +118,9 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect, s32 mode) {
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 
-  // Pictures and palette: the ring is the yellow orb packed to half width.
+  // Pictures and palette: the ring is the yellow orb packed to half width,
+  // six 20x48 pictures, into the map cell buffer, so that the blue burst can
+  // take its place in the sheet.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1,
                              0);
@@ -133,8 +144,9 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect, s32 mode) {
   Iwram_CopyWords((void *)BG_PLTT, Resource_GetTableEntry(paletteId), 128);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
-  // Send the user in and ready the sparks at the target (they fly towards
-  // the middle of the field).
+  // Send the user in, 80% of the way over 10 frames, and ready the sparks
+  // at the target (they fly towards the middle of the field). Spark i lives
+  // 16 + i / 2 frames.
   BattleFx_SetApproachMotion(work->effect->actor, work->effect->actors[0], 10);
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
   for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {
@@ -147,12 +159,13 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect, s32 mode) {
                  ((Random16() & 255) - 128) << 11);
     if (newSpark->x > 0)
       newSpark->velocityX = -newSpark->velocityX;
-    newSpark->variant = i / 2 + 16; // frames left
+    newSpark->variant = i / 2 + 16;
   }
   EffectPosition_ProjectBattler(work->effect->actors[0], &origin);
 
   for (frame = 0; frame != RUSHING_STRIKE_FRAMES; frame++) {
-    // For 15 frames, draw the burst at the user in two halves.
+    // For 15 frames, draw the burst at the user as it rushes in: the top
+    // half, then the bottom half flipped below it.
     if (frame <= 14) {
       EffectPosition_ProjectBattler(work->effect->actor, &screen);
       draw[0](canvas, work->sheet, screen.x / 2 - 16, screen.y - 48, 40, 32);
@@ -173,7 +186,8 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect, s32 mode) {
       draw[0](canvas, cells + ring * RUSHING_STRIKE_RING_BYTES,
               origin.x / 2 - 16, screen.y - 40, 20, 48);
     }
-    // The sparks shrink as their lives run out and sink slightly.
+    // From frame 8 the sparks fly, shrinking as their lives run out and
+    // sinking slightly.
     if (ringFrame >= 0 && ringFrame <= 55) {
       EFFECT_VIEW_FROM_CAMERA(camera);
       for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {

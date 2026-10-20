@@ -27,6 +27,17 @@
 ///   395        : the targets fall back to the ground.
 /// Pressing A or B skips to frame 160, or from there to frame 395. At the
 /// end the battle shows the damage and the targets go back to their places.
+///
+/// work->particles hold the dust (0 to 23 drawn), then from frame 160 the
+/// gathering motes (0 to 31), the comets' rings (32 to 59) and the four
+/// comets (60 to 63). PARTICLES 0 to 511 hold the sparks, 128 for each comet
+/// of which 96 are thrown. The scene moves the targets' objects (position,
+/// height, angle and gravity) and puts back their places and angles at the
+/// end; it loads the whirlwind's and then the comets' palette into the first
+/// 64 background colours, moves gProjection.centerX to 72 from frame 160 and
+/// back to 120, and sets work->shakeFrames on each comet. It spawns the nine
+/// objects of the block on frame 160 and releases them before closing the
+/// canvas.
 void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   void **slots;
@@ -87,10 +98,11 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
 
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
-                        50); // trails keep half a frame
+  // Trails keep half of each pixel a frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
-  // wave is where the block of objects sways, drift a push from each comet.
+  // wave is where the block of objects sways, from (128, 40); drift is a
+  // push from each comet.
   wave.x = 0x800000;
   wave.y = 0x280000;
   drift.x = 0;
@@ -112,7 +124,11 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
     object->verticalMotionStrength = 0;
   }
 
-  // The dust: each mote starts 120 out, after a random delay (variant).
+  // The dust: each mote starts 120 out, after a random delay (variant). z
+  // is its distance from the whirlwind's axis; velocityY is its heading
+  // round the axis and, doubled, its rise; velocityX the turn added to it.
+  // The draw before the delay is discarded but still advances the random
+  // sequence.
   index = 0;
   do {
     point = &work->particles[index];
@@ -199,22 +215,24 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
       }
     }
 
-    // The whirlwind: three images in turn, growing up from the ground over
-    // frames 16 to 159, a second section above it from frame 48, and both
-    // at full height from frame 160 to 399.
+    // The whirlwind: three 48x64 images in turn, growing up from the ground
+    // over frames 16 to 159 (its bottom rows first), a second section above
+    // it from frame 48, and both at full height from frame 160 to 399.
     if ((u32)(frame - 16) <= 143) {
       size = frame * 2 - 32;
       if (size > 48)
         size = 48;
-      draw[0](canvas, &work->sheet[frame / 4 % 3 * 3072 + (width - size) * 48],
-              32, 112 - size, width, size);
+      draw[0](canvas,
+              &work->sheet[frame / 4 % 3 * (48 * 64) + (width - size) * 48], 32,
+              112 - size, width, size);
     }
 
     if ((u32)(frame - 48) <= 111) {
       size = frame * 2 - 96;
       if (size > 64)
         size = 64;
-      draw[0](canvas, &work->sheet[frame / 4 % 3 * 3072 + (64 - size) * 48], 32,
+      draw[0](canvas,
+              &work->sheet[frame / 4 % 3 * (48 * 64) + (64 - size) * 48], 32,
               64 - size, width, size);
     }
 
@@ -294,6 +312,8 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
         object->y = ((Random16() & 15) + 8) << 16;
       }
 
+      // The block and its comets are projected about a centre left of the
+      // screen's.
       gProjection.centerX = 72;
 
       index = 0;
@@ -528,6 +548,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
     frame++;
   } while (frame != 400);
 
+  // The end.
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
   // Put the targets back.

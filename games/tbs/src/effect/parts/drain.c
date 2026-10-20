@@ -4,7 +4,6 @@
 
 #include "../effect_internal.h"
 
-// Break: ice shards burst from each target.
 #define DRAIN_ICE_SHARDS_PER_TARGET 128 ///< shards for each target
 
 /// Ice shards burst up from each target in turn, 20 frames apart, tinting the
@@ -12,7 +11,10 @@
 ///
 /// Abilities: Break (kind 43).
 ///
-/// effect: the targets.
+/// Target n's 128 shards are PARTICLES n * 128 onwards, screen positions on
+/// the half-width canvas in 16.16; a shard's variant counts its frames and is
+/// -1 once it has gone. Loads the ice block palette into the first 64 colours
+/// of the background palette.
 void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -44,8 +46,9 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
 
   EFFECT_VIEW_FROM_CAMERA(camera);
 
-  // Scatter the shards around the middle of each body; they spread sideways
-  // and jump up.
+  // Setup: scatter the shards around the middle of each body, a narrow
+  // ellipse taller than it is wide; each moves up to 1 pixel a frame
+  // sideways and jumps up at 2 to 4.
   EFFECT_FOR_EACH_TARGET(member, work->effect) {
     struct MotionObject *object;
     s32 offset;
@@ -78,6 +81,8 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
+  // Target n starts on frame n * 20 with a sound and a 20-frame tint; the
+  // last target's shards get 56 frames to fall.
   for (frame = 0; frame != work->effect->count * 20 + 56; frame++) {
     if (frame == 32)
       EFFECT_SHOW_DAMAGE(0);
@@ -90,7 +95,9 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
         ObjectGroup_UpdateMembers(work->effect->actors[member],
                                   SPRITE_COLOR_WHITE, -1, member, 20);
       }
-      // A shard that falls back past y = 112 goes out.
+      // A shard falls with one of four gravities by its index (1/8 to 1/2
+      // pixel a frame per frame, gDrain_Gravities) and goes out once it
+      // falls back past y = 112. Its size, 1 to 3, also follows its index.
       if (frame > member * 20) {
         struct EffectStep *shard;
 
@@ -117,9 +124,6 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-// Gathering motes: motes of light leave the targets and are drawn into the
-// user.
-
 #define DRAIN_MOTES_PER_TARGET 128 ///< motes for each target
 #define DRAIN_DRAWN 32             ///< motes drawn for each target
 
@@ -129,8 +133,10 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
 /// Abilities: Drain, Psy Drain (kind 42).
 ///
 /// Each target flashes in its damage pose for 42 frames as its motes burst, and
-/// the user glows from frame 40 until 20 frames before the end. A negative
-/// variant marks a mote that has gone out.
+/// the user glows from frame 40 until 20 frames before the end. Target n's
+/// motes are PARTICLES n * 128 onwards, battle positions in 16.16; only the
+/// first 32 of each 128 are moved and drawn. A negative variant marks a mote
+/// that has gone out.
 ///
 /// effect: the targets; variant 0 takes the ice block palette, any other
 ///         the blast palette.
@@ -195,6 +201,9 @@ void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
   AudioCommand_PlayFar(SE_142);
 
+  // Frame 0 plays the drain sound; target n bursts on frame n * 20; frame 40
+  // starts the user's glow and frame 64 shows the damage. The last target's
+  // motes get 72 frames to reach the user.
   for (frame = 0; frame != work->effect->count * 20 + 72; frame++) {
     struct MotionObject *user;
     s32 halfHeight;

@@ -4,16 +4,12 @@
 
 #include "../effect_internal.h"
 
-// Gaia, the rising wall, rebuilds its pictures from one decoded sheet: nine
-// one-line rows of the growing wall stretched to 32 lines, the top and the
-// foot of the standing wall and three frames of swelling ground. The ground
-// swells, the wall grows row by row, stands while rocks (animation objects)
-// tumble up its face, and sinks.
-
-// The standing wall's top (48x96, stretched from 48x32) and foot (48x21)
-// in the rebuilt sheet.
+/// The standing wall's top in the rebuilt sheet, 48x96 (stretched from 48x32).
 #define GAIA_WALL_TOP_CELLS 0x13c0
+/// The standing wall's foot in the rebuilt sheet, 48x21.
 #define GAIA_WALL_FOOT_CELLS 0x25c0
+#define GAIA_WALL_FOOT_BYTES (48 * 21)
+#define GAIA_FRAMES 192
 #define GAIA_ROCKS 11 ///< rocks that tumble up the wall
 
 /// Rising wall: the ground swells, a wall of rock rises from it, stands while
@@ -53,11 +49,12 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
 
-  // The higher the variant, the wider the wall.
+  // The higher the variant, the wider the wall: BG2 stretches the canvas 1.25
+  // or 1.5 times, or twice as BattleFx_BeginCanvasLayer left it.
   if (work->effect->variant == 0)
-    REG_BG2PA = Q_8_8(0.8); // 1.25 times the width
+    REG_BG2PA = Q_8_8(0.8);
   else if (work->effect->variant == 1)
-    REG_BG2PA = Q_8_8(1.0 / 1.5); // 1.5 times the width
+    REG_BG2PA = Q_8_8(1.0 / 1.5);
   if (work->effect->side == 1) {
     wallX = 8;
     if (work->effect->variant == 0)
@@ -120,7 +117,7 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
     }
     src += 48;
   }
-  for (i = 0; i != 1008; i++)
+  for (i = 0; i != GAIA_WALL_FOOT_BYTES; i++)
     work->sheet[sheetIndex++] = *src++;
   for (i = 0; i != 3; i++) {
     for (k = 0; k != gGaia_MoundWidths[i] * gGaia_MoundHeights[i]; k++)
@@ -128,7 +125,8 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
-  // The rock objects.
+  // The rock objects, made from resource 390: objects 0 to 3 play animation
+  // 0, 4 to 7 animation 1 and 8 to 10 animation 2.
   for (i = 0; i != GAIA_ROCKS; i++) {
     struct AnimationObject *rock = ResourceObject_CreateFar(390);
 
@@ -147,8 +145,8 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
-                        75); // trails, fading to 3/4
+  // Trails: each transfer keeps 3/4 of every canvas level.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   // Rocks: x is the column, y counts down from 128 by z, velocityX cycles
   // through 1 to 12, and variant is the wait before the rock appears.
@@ -164,7 +162,8 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   for (i = 0; i != 6; i++)
     work->particles[16 + i].x = gGaia_LateRockColumns[i];
 
-  // Dust rises from the foot of the wall.
+  // Dust rises from the foot of the wall, half a pixel to 1.5 pixels a
+  // frame, each mote after a random wait of up to 31 frames (its variant).
   for (i = 0; i != 256; i++) {
     struct EffectStep *dust = &PARTICLES[i];
 
@@ -175,8 +174,10 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   }
   REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
+  // The screen shakes throughout: 250 frames outlast the effect, and the
+  // ranges given to Camera_ApplyShake below set how hard.
   work->shakeFrames = 250;
-  for (frame = 0; frame != 192; frame++) {
+  for (frame = 0; frame != GAIA_FRAMES; frame++) {
     if (frame == 0)
       AudioCommand_PlayFar(SE_212);
     if (frame == 40)
@@ -353,4 +354,6 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
 
 #undef GAIA_WALL_TOP_CELLS
 #undef GAIA_WALL_FOOT_CELLS
+#undef GAIA_WALL_FOOT_BYTES
+#undef GAIA_FRAMES
 #undef GAIA_ROCKS

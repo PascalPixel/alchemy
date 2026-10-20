@@ -1,15 +1,15 @@
 /// @file
 /// The blitter builder, BattleFx_BuildBlitter.
-/// Part of effect.c, the battle effect object, compiled only through it.
+/// Part of effect.c, the battle effect object, compiled only through it. The
+/// folder README describes the routine it writes, block by block, under
+/// "Blitters"; the fragments' registers and modes are described at the top of
+/// battle_effect_composite.s.
 
 #include "../effect_internal.h"
 
-// Builds canvas blitters from the resident ARM kernels.
-// The folder README describes the routine, block by block, under "Blitters".
-
-// The fragments' registers and modes are described at the top of
-// battle_effect_composite.s.
-
+/// The 24-bit displacement field of an ARM branch at `site` to `target`: in
+/// words, counted from the branch plus 8 bytes, as the processor reads two
+/// words ahead.
 #define BRANCH_FIELD(site, target)                                             \
   ((((u32)(target) - (u32)(site) - 8) >> 2) & 0x00FFFFFF)
 
@@ -256,11 +256,28 @@
   PUT(*templateWords++);                                                       \
   PUT(*templateWords++)
 
-/// Installs a canvas blitter in heap slot `slot`. widthShift and heightShift
-/// are the cell's dimensions as powers of two; flags select clipping and
-/// mirroring, and mode how source pixels combine with the destination.
-/// Returns nonzero when the walk ended exactly at gBattleFx_MoteCells,
-/// the expected end of the template.
+/// Writes a drawing routine for the canvas into heap slot `slot`, built from
+/// the template BattleFx_Composite for one clip, mirroring and blend mode.
+///
+/// Called through EFFECT_LOAD_BLITTER by nearly every canvas effect and by
+/// BattleFx_FetchRectangleBlitters, directly by the particle streams for a
+/// canvas 256 pixels wide, and from other banks through its far stub,
+/// BattleEffect_LoadWorkFar (the star field in battle/star_field.c and
+/// object/colorfx.c).
+///
+/// It allocates the slot's block (from IWRAM when it fits) at exactly the
+/// routine's size. A slot that already holds a block keeps it, whatever its
+/// size, and the routine is written over it: callers release the slot first
+/// when the new routine may be longer. The caller calls the slot's block as a
+/// DrawRectangle.
+///
+/// widthShift, heightShift: the canvas's width and height as powers of two.
+/// flags: the COMPOSITE_CLIP_ and COMPOSITE_FLIP_ bits.
+/// mode: how source pixels combine with the canvas (COMPOSITE_COPY,
+/// COMPOSITE_TRANSPARENT, COMPOSITE_MAX or COMPOSITE_ADDITIVE).
+///
+/// Returns nonzero when the walk ended exactly at gBattleFx_MoteCells, the end
+/// of the template; no caller reads it.
 s32 BattleFx_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
                           u32 mode) {
   const u32 *templateWords;
@@ -286,7 +303,9 @@ s32 BattleFx_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
 #define MARK(site)
 #define PATCH(site)
 
-  // First walk: count the words selected by clipping, mirroring and blend mode.
+  // First walk: count the words selected by clipping, mirroring and blend
+  // mode. Branch sites are only marked in the second walk, so this one needs
+  // no buffer.
   wordCount = 0;
   templateWords = BattleFx_Composite;
 
@@ -337,7 +356,10 @@ s32 BattleFx_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
     *(site) |= BRANCH_FIELD(site, codeWords);                                  \
   } while (0)
 
-  // Second walk: allocate, copy the selected kernels and patch their branches.
+  // Second walk: allocate, copy the selected fragments with DMA 3 and patch
+  // their branches. A forward branch is written with its template word, its
+  // site marked, and its displacement ORed in when the walk reaches its
+  // target; a backward branch is written whole at once.
   codeWords = (u32 *)Runtime_AllocateHeapBlock(slot, wordCount << 2);
   templateWords = BattleFx_Composite;
 

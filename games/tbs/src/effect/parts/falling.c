@@ -18,29 +18,20 @@
       (line)[i] = WINDOW_SPAN_INVERTED;                                        \
   }
 
-/// Falling shards and bolts, streak volleys and the mote fountain: four effects
-/// that throw many small pictures at the targets.
-///
-/// - The falling shards (Ice) and bolts (Douse) rain diagonally onto the
-///   targets' side. Both show the canvas only inside a slanted band of
-///   window 0, whose edges an HBlank DMA feeds line by line from a table at
-///   the start of PARTICLES. Each particle falls until it passes y 80,
-///   then lands: shards shatter and kick up sparkle puffs, bolts flash and
-///   throw a fountain of sparks. A small timing table per effect picks the
-///   count, spacing and duration from effect->variant.
-/// - The streak volley fires three streaks of light from the user at each
-///   target in turn; a settings row per style says whether the streak
-///   animates and how a hit looks.
-/// - The mote fountain bursts motes out of the user that float upwards and
-///   wobble while each target reacts.
-///
-/// Particle slots: the shards use work->particles, 0 to 31 for the shards and
-/// 32 to 63 for their puffs; the bolts use work->particles for the bolts and
-/// Ram_MapCellBuffer, after the window table, for their sparks; the streaks use
-/// work->particles, one per target and streak; the motes use PARTICLES. A
-/// falling particle's variant is -1 until it lands, then counts the frames
-/// since. Shards and bolts are positioned in eighths of a pixel; sparks,
-/// streaks and motes in 16.16 fixed point.
+// The falling shards (Ice) and bolts (Douse) rain diagonally onto the
+// targets' side. Both show the canvas only inside a slanted band of window 0,
+// whose edges BattleFx_ArmWin0HBlankDma feeds line by line from a table at the
+// start of Ram_MapCellBuffer. Each particle falls until it passes y 80, then
+// lands: shards shatter and kick up sparkle puffs, bolts flash and throw a
+// fountain of sparks. A falling particle's variant is -1 until it lands, then
+// counts the frames since. Shards and bolts are positioned in eighths of a
+// pixel, sparks in 16.16 fixed point.
+//
+// A WIN0H value is the left edge << 8 | the right edge, so a slant whose two
+// edges both lose one per line moves the band one pixel left a line.
+
+/// Ice keeps its shards in work->particles 0 to 31 and their puffs in 32
+/// to 63.
 enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 
 /// A falling shard or bolt keeps falling while its y (in eighths of a pixel)
@@ -76,18 +67,19 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   sparkles = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
-  // Load the shard and puff images before shaping their visible canvas.
+  // Setup: the narrow canvas, the shard sheet and the sparkle dots in the
+  // sheet slot, then the display; window 1 hides BG2.
   EFFECT_BEGIN_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_IceShardSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sparkles, 0, 0);
   BattleFx_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  // window 1 hides BG2
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
 
   // Line the shards up above the screen, each one 8 pixels higher and
-  // further back along the slant than the one before.
+  // further back along the slant than the one before; x is a random 24 to
+  // 94 shifted onto the targets' half.
   {
     s32 y;
     s32 slant;
@@ -130,8 +122,10 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)
                 ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
 
-  // Window 0's edges, one per scanline: a band slanting the way the shards
-  // fall, then a fixed span down to line 135, and nothing below that.
+  // Window 0's edges, one per scanline: a 128-pixel band slanting one pixel
+  // a line the way the shards fall (on line 8 from x 104 against the
+  // enemies, moving left; from x 32 against the party, moving right), then a
+  // fixed span down to line 135.
   if (work->effect->side == 0) {
     line = (u16 *)Ram_MapCellBuffer;
     FALLING_BUILD_SLANTED_WINDOW(line, i, 103, (0xf0 - i) | ((0x70 - i) << 8),
@@ -144,6 +138,7 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
 
   Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma,
                                 EFFECT_CALLBACK_ORDER);
+  // Trails: variant 1 keeps 75% of each pixel a frame, the others 50%.
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (work->effect->variant == 1)
     work->transferValue = 75;
@@ -155,8 +150,8 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   for (frame = 0;
        frame != gFalling_IceCounts[work->effect->variant][ICE_FRAMES];
        frame++) {
-    // 16 frames before the end, the battle shows the damage, with sound
-    // 132 as each target is hit.
+    // Frame loop. 16 frames before the end, the battle shows the damage,
+    // with sound 132 as each target is hit.
     if (frame == gFalling_IceCounts[work->effect->variant][ICE_FRAMES] - 16)
       EFFECT_SHOW_DAMAGE(SE_132);
 
@@ -195,7 +190,8 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
         s32 y = shard->y / 8;
 
         // Shattering: frames 1 to 14 step through the sheet's 32x32 images
-        // 1 to 5.
+        // 1 to 5, three frames each (0x400 bytes a picture); frame 15 ends
+        // it.
         if (shard->variant >= 1 && shard->variant <= 14) {
           draw[work->effect->variant == 2 ? 1 : 0](
               canvas, work->sheet + 0x400 + ((shard->variant / 3) << 10), x, y,
@@ -238,11 +234,13 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
       }
     }
     ObjectGroup_TickMemberTimers();
+    // Shakes while work->shakeFrames, which each landing sets to 2, lasts.
     Camera_ApplyShake(4, 4);
     EFFECT_PRESENT_FRAME(work);
   }
 
-  // Tear down in the reverse order.
+  // Finish: the callbacks before the blocks they read, in the reverse of
+  // the order they were added.
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Scheduler_RemoveCallback(BattleFx_ArmWin0HBlankDma);
   EFFECT_RELEASE_BLITTERS();
@@ -250,17 +248,18 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   BattleFx_ConfigureEffectDisplay();
 }
 
-/// The falling bolts keep their sparks after window 0's scanline table in
-/// Ram_MapCellBuffer.
+/// Douse's bolts are work->particles 0 to 63; their sparks follow window 0's
+/// scanline table in Ram_MapCellBuffer.
 enum { FALLING_BOLT_COUNT = 64, FALLING_BOLT_SPARK_COUNT = 512 };
 
 /// Ram_MapCellBuffer as the falling bolts use it: window 0's scanline table,
 /// then the bolts' sparks.
 struct BoltSparkBuffer {
-  u16 lines[160];
-  struct EffectStep sparks[FALLING_BOLT_SPARK_COUNT];
+  u16 lines[160]; ///< WIN0H for each screen line, read by the HBlank DMA
+  struct EffectStep sparks[FALLING_BOLT_SPARK_COUNT]; ///< free while -1
 };
 
+/// Ram_MapCellBuffer seen as Douse's struct BoltSparkBuffer.
 #define FALLING_BOLT_SPARKS ((struct BoltSparkBuffer *)Ram_MapCellBuffer)
 
 #define DOUSE_FALLING_CELL 0x604 ///< the falling bolt picture in the sheet
@@ -294,7 +293,8 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  // The beam and its sparks use separate images but the same clipped canvas.
+  // Setup: the bolt pictures go after the spark cells, which the particle
+  // sheet decodes at the start of work->sheet; window 1 hides BG2.
   EFFECT_BEGIN_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBeamSheet,
                              work->sheet + DOUSE_FALLING_CELL, 1, 1);
@@ -302,7 +302,6 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
                              0);
   BattleFx_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  // window 1 hides BG2
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
 
@@ -316,7 +315,8 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
                         FALLING_BOLT_SPARK_COUNT);
 
   // Line the bolts up above the screen along the slant, FALLING_BOLT_SPACING
-  // apart.
+  // apart; all 64 are placed, though a variant drops only its first
+  // FALLING_BOLT_WAVE_COUNT.
   for (i = 0; i != FALLING_BOLT_COUNT; i++) {
     s32 x;
     s32 y;
@@ -334,9 +334,8 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
     bolt->variant = -1; // still falling
   }
 
-  // Window 0's edges, one per scanline: a band slanting the way the bolts
-  // fall, then a fixed span down to line 135, and nothing below that.
-
+  // Window 0's edges, one per scanline: a 128-pixel band slanting half a
+  // pixel a line, as the bolts fall, then a fixed span down to line 135.
   if (work->effect->side == 0) {
     line = (u16 *)Ram_MapCellBuffer;
     FALLING_BUILD_SLANTED_WINDOW(line, i, 103,
@@ -364,14 +363,14 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
   for (frame = 0;
        frame != gFalling_Counts[work->effect->variant][FALLING_BOLT_DURATION];
        frame++) {
-    // 64 frames before the end, the battle shows the damage, with sound
-    // 132 as each target is hit.
+    // Frame loop. 64 frames before the end, the battle shows the damage,
+    // with sound 132 as each target is hit.
     if (frame ==
         gFalling_Counts[work->effect->variant][FALLING_BOLT_DURATION] - 64)
       EFFECT_SHOW_DAMAGE(SE_132);
 
     // Bolts: fall 8 pixels a frame (4 across) until they pass y 80, then
-    // burst and play a two-image flash.
+    // flash for frames 0 to 3 and burst for 4 to 7; the count stops at 15.
     for (i = 0;
          i != gFalling_Counts[work->effect->variant][FALLING_BOLT_WAVE_COUNT];
          i++) {
@@ -391,7 +390,8 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
           bolt->y += 64;
         } else {
           // Landed: throw this bolt's sparks out from its tip, mostly
-          // upwards, each living 16 to 31 frames.
+          // upwards (variant 2's can also fall), each living 16 to 31
+          // frames. Bolt i owns its own run of sparks.
           bolt->variant = 0;
           for (k = 0; k != gFalling_Counts[work->effect->variant]
                                           [FALLING_BOLT_SPARKS_PER_BOLT];
@@ -446,7 +446,7 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
 
-  // Stop both transfers before releasing the blitters and canvas.
+  // Finish: stop both transfers before releasing the blitters and canvas.
   Scheduler_RemoveCallback(BattleFx_ArmWin0HBlankDma);
   EFFECT_FINISH_CANVAS();
   BattleFx_ConfigureEffectDisplay();

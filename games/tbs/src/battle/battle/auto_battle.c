@@ -7,7 +7,8 @@
 /// Auto battle: gives every living unit a plain attack and sorts them into
 /// turn order. The party act at their Agility and target the first enemy;
 /// enemies act at half their Agility plus a random part of it and target a
-/// random party member. Returns how many actions there are.
+/// random party member. Returns how many actions there are. Called by
+/// Battle_RunEncounter each round under FLAG_AUTO_BATTLE; fills entries.
 s32 BattlePresentation_BuildSortedUnitEntries(
     struct BattleActionRecord *entries) {
   struct BattleActionRecord swap;
@@ -20,6 +21,7 @@ s32 BattlePresentation_BuildSortedUnitEntries(
   struct BattleActionRecord *entry;
   struct BattleUnit *unit;
 
+  // The party's actions. The four lookups' results are never used.
   partyCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unitIds);
   for (index = 0; index != 4; index++)
     UnitGetFar(index);
@@ -35,6 +37,9 @@ s32 BattlePresentation_BuildSortedUnitEntries(
     entry->target = FIRST_ENEMY_UNIT;
     count++;
   }
+  // The enemies' actions. Random16() * n >> 16 is a roll from 0 to n - 1;
+  // the target is that number taken as a unit id, which BattlePres_RunAction
+  // replaces if the unit is down.
   enemyCount = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, unitIds);
   entry = &entries[partyCount];
   targetRange = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, NULL);
@@ -54,6 +59,8 @@ s32 BattlePresentation_BuildSortedUnitEntries(
   }
 
   // Bubble the faster units forward until a pass swaps nothing.
+  // BUG: count - 2 passes at most, one short of a full sort; with two
+  // actions nothing is sorted.
   for (index = count - 2; index > 0; index--) {
     s32 swaps = 0;
     s32 pos;
@@ -72,12 +79,14 @@ s32 BattlePresentation_BuildSortedUnitEntries(
   return count;
 }
 
-/// Turns the camera while L or R is held.
+/// Turns the camera while L or R is held. Nothing in the source calls it.
 DEFINE_ADJUST_CAMERA(BattlePres_AdjustCameraByShoulderKeys)
 
 /// Auto battle: plays one action. A unit already down does nothing (-1);
 /// a defeated target is replaced by a living unit of its side first.
-/// Returns 1 when the party got away, 0 otherwise.
+/// Returns 1 when the party got away, 0 otherwise. Called by
+/// Battle_RunEncounter for each action under FLAG_AUTO_BATTLE. Turns the
+/// camera to the actor's side (gTransitionWork) and rewrites action->target.
 s32 BattlePres_RunAction(struct BattleActionRecord *action) {
   struct BattlePresentationTransition *transition;
   s32 actorId;
@@ -91,6 +100,7 @@ s32 BattlePres_RunAction(struct BattleActionRecord *action) {
 
   action->target = BattleTarget_ReplaceDefeated(action);
   transition = gTransitionWork;
+  // Here any unit id above 4 counts as an enemy.
   if (action->unitId > 4)
     yaw = YAW_ENEMY_TURN;
   else
@@ -131,6 +141,7 @@ s32 BattlePres_RunAction(struct BattleActionRecord *action) {
 }
 
 /// Returns 0 for a party member's or an enemy's unit id, -1 for any other.
+/// Called by the auto battle's action players.
 s32 BattleObject_IsValidId(u32 unitId) {
   if (unitId <= 7) {
     return 0;
@@ -143,7 +154,7 @@ s32 BattleObject_IsValidId(u32 unitId) {
 
 /// Auto battle: the party tries to run, and gets away 15 times in 16, each
 /// living member running off in turn. Returns 1 when they got away; else
-/// shows "But there's no escape!"... and returns 0.
+/// shows MsgCannotEscape and returns 0. Called by BattlePres_RunAction.
 s32 BattleEscape_PlayRun(struct BattleActionRecord *action) {
   s16 partyMembers[14];
   s32 partySize;
@@ -151,6 +162,7 @@ s32 BattleEscape_PlayRun(struct BattleActionRecord *action) {
   s32 memberSlot;
 
   (void)action;
+  // The roll's top four bits: escape unless all are clear, 15 in 16.
   if (((Random16() << 4) >> 16) != 0) {
     partySize = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, partyMembers);
     animated = 0;
@@ -172,6 +184,7 @@ s32 BattleEscape_PlayRun(struct BattleActionRecord *action) {
 
 /// Auto battle: shows that a standing unit is defending. The message is
 /// `<unit> is defending`. Returns -1 for an invalid unit id, 0 otherwise.
+/// Called by BattlePres_RunAction.
 s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *action) {
   s32 unitId;
   s32 result;
@@ -196,7 +209,9 @@ s32 BattlePres_ShowDefendMessage(const struct BattleActionRecord *action) {
 /// the caster raises its hand; the target side fades out, its living units
 /// are readied alone, the Psynergy's effect (kind action->parameter) plays
 /// on them, and everyone fades back in. Returns -1 for an invalid actor or
-/// target.
+/// target. Called by BattlePres_RunAction for CMD_PSYNERGY. Writes
+/// REG_BLDCNT and REG_BLDALPHA and the actors' record modes, and leaves the
+/// battle objects readied again.
 s32 BattlePresentation_RunPairedUnitTransition(
     struct BattleActionRecord *action) {
   u16 visibleUnits[14];
@@ -221,10 +236,12 @@ s32 BattlePresentation_RunPairedUnitTransition(
 
   {
     struct BattlePresentationTransition *transition = gTransitionWork;
+    // An enemy caster turns the camera to 0x5000, not YAW_ENEMY_TURN.
     transition->targetYaw = action->unitId > 4 ? 0x5000 : YAW_PARTY_TURN;
     transition->frames = 60;
   }
   WaitFrames(10);
+  // A roll nothing uses, which still advances the random sequence.
   Random16();
   actorRecord = BattleObjGet(actorId)->object;
 
@@ -255,7 +272,9 @@ s32 BattlePresentation_RunPairedUnitTransition(
   }
   PartyStatusDrawFar(9);
 
-  // Ready only the target side's living units, and play the effect.
+  // Ready only the target side's living units, and play the effect. The
+  // walk counts unit ids up from the side's first until it has found as
+  // many living units as the side has.
   if (targetId > FIRST_ENEMY_UNIT - 1) {
     u32 count = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, visibleUnits);
     for (index = 0; livingCount != count; index++) {
@@ -309,10 +328,11 @@ s32 BattlePresentation_RunPairedUnitTransition(
 
 /// Auto battle: an attack. Shows `<unit> attacks!`, sends the attacker up
 /// to its target, plays the blow and sends both back. Returns -1 for an
-/// invalid attacker or target.
+/// invalid attacker or target. Nothing in the source calls it.
 s32 BattlePres_RunApproachAction(struct BattleActionRecord *input) {
   struct BattlePresentationWork work;
 
+  // A short wait when the camera already faces the party's turn.
   if (gTransitionWork->targetYaw == YAW_PARTY_TURN) {
     gTransitionWork->targetYaw = YAW_PARTY_TURN;
     WaitFrames(10);
@@ -329,14 +349,16 @@ s32 BattlePres_RunApproachAction(struct BattleActionRecord *input) {
   if (BattleObject_IsValidId(work.effect.actors[0]) < 0)
     return -1;
 
+  // Lookups whose results are unused, and a roll that only advances the
+  // random sequence.
   UnitGetFar(work.effect.actor);
   UnitGetFar(work.effect.actors[0]);
   Random16();
   UiWork_PushValueSlotFar(work.effect.actor, VALUE_UNIT_NAME);
   UiText_ShowMessageAndWaitCoreFar(MsgActorAttacks);
   BattleMotion_ApproachTarget(work.effect.actor, work.effect.actors[0], 13, 0);
-  ObjectDispatch_SetAnimationSpeedFar(BattleObjGet(work.effect.actor)->object,
-                                      16);
+  ObjectDispatch_SetAnimationSpeedFar(
+      (struct DispatchObject *)BattleObjGet(work.effect.actor)->object, 16);
   BattleObjGet(work.effect.actors[0]);
 
   work.effect.count = 1;
@@ -356,7 +378,8 @@ s32 BattlePres_RunApproachAction(struct BattleActionRecord *input) {
 /// Auto battle: an attack or an item. Turns the camera to the actor's side,
 /// poses the actor and plays the effect (kind action->parameter) on the
 /// first living unit of the target's side, then sends both back. Returns -1
-/// for an invalid actor.
+/// for an invalid actor. Called by BattlePres_RunAction for CMD_ATTACK,
+/// CMD_ITEM and any other command but fleeing, defending and Psynergy.
 s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
   struct BattlePresentationWork work;
   struct BattlePresentationTransition *transition = gTransitionWork;
@@ -389,9 +412,11 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
     work.effect.count =
         BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, work.effect.actors);
   PartyStatusDrawFar(gBattleWork->partyStatus & ~1);
+  // The actor raises its hand (pose 3); then only the first living unit of
+  // the target's side takes the effect.
   object = BattleObjGet(work.effect.actor)->object;
   ObjectDispatch_SelectAnimationFar(object, 3);
-  ObjectDispatch_SetAnimationSpeedFar(object, 16);
+  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
   if ((u16)action->target <= 7) {
     work.effect.side = 1;
     BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, work.effect.actors);
@@ -440,6 +465,7 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
 /// comes first; then `<unit> takes <damage> damage!`, and `<unit> goes down...`
 /// or `<unit> has been downed!` when the HP runs out.
 /// context, if null, is replaced by four cleared bytes nothing reads.
+/// Nothing in the source calls it. Lowers unit->hp, no lower than 0.
 void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
                                         u8 *context) {
   u8 localContext[4];
@@ -496,17 +522,19 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
 
 /// For a unit whose HP has run out: plays its falling animation to the last
 /// frame and marks its object for release (BattleObj_MarkForRelease).
+/// Called by BattlePresentation_ApplyUnitDamage.
 void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
   struct AnimationEntry *actorData;
   struct AnimationObject *object;
   if (UnitGetFar(unitId)->hp <= 0) {
+    // Animation 5, its first entry set to frame 0xff, past its last.
     object = BattleObjGet(unitId)->object->records;
     AnimationObjects_SelectAnimationFar(object, 5);
     actorData = object->entries[0];
     actorData->param = 6;
     actorData->frame = 0xFF;
     WaitFrames(4);
-    Map_RenderAnimatedTileFramesForObjectFar(object);
+    Map_RenderAnimatedTileFramesForObjectFar((u8 *)object);
     BattleObj_MarkForRelease(unitId);
   }
 }
@@ -515,7 +543,8 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
 #define TARGET_SIDE_DEFEATED 0x100
 
 /// Returns the action's target, or a random living unit of its side when
-/// the target is down; TARGET_SIDE_DEFEATED when none is left.
+/// the target is down; TARGET_SIDE_DEFEATED when none is left. Called by
+/// BattlePres_RunAction.
 s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action) {
   u16 livingUnits[14];
   s32 targetId;

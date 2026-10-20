@@ -4,21 +4,15 @@
 
 #include "../effect_internal.h"
 
-// Smoke, glints and status pictures centered on battle targets.
-// Mote modes choose how the particles gather or spread around each target.
-
-// Swirling motes around each target, in eight styles.
-//
-// Around each target in turn, 8 frames apart, motes turn about a point 20
-// pixels up, either closing in on it or rising, while the effect layer
-// ripples line by line and the target flashes. Each mote cycles through six
-// images, 4 frames each, and then starts again: a closing mote where it is, a
-// rising one at a new random point below.
+// Swirling motes around each target, in eight styles of one runner,
+// BattleFx_RunTargetMotes. Each mote cycles through six images, 4 frames
+// each, and then starts again: a closing mote where it is, a rising one at a
+// new random point below.
 //
 // The motes live in PARTICLES, 64 slots for each target, of which the first
 // 16, 24 or 32 are drawn; their variant counts the frames of the current
-// image cycle. The bouncing sheep (Sleep) and the target markers (Curse) that
-// follow keep theirs in work->particles.
+// image cycle. The bouncing sheep (Sleep) that follow keep theirs in
+// PARTICLES too, and the flames of Curse in work->particles.
 
 /// Lime smoke (effect->variant 0) or pink smoke.
 ///
@@ -97,6 +91,18 @@ enum { TARGET_MOTES_GLINT_CELLS = 0x2580 };
 /// mode : 0 lime smoke, 1 pink smoke, 2 cyan smoke, 3 smoke with glints,
 ///        4 hearts, 5 glowing orbs, 6 vortex motes, 7 orbs in Mars Djinn
 ///        colours, with the user stepping up to strike the first target.
+///
+/// Called by the wrappers above: BattleFx_RunTaint (mode 0 or 1),
+/// BattleFx_RunDelude (2), BattleFx_RunParalyze (3), BattleFx_RunHeartrender
+/// (4), BattleFx_RunMysticFlame (5), BattleFx_RunDrown (6) and
+/// BattleFx_RunDemonFire (7).
+///
+/// Overwrites PARTICLES 0 to 511, loads the mode's palette into the first 64
+/// background colours, and in the rippling modes writes work->bg2xLines each
+/// frame for BattleFx_ArmBg2AffineHBlankDma, which it schedules and removes.
+/// It builds both blitters afresh for each target every frame and releases
+/// them again, mode 3 a mirrored one for each glint too, so it ends with
+/// none held. Mode 7 sets work->shakeFrames.
 void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
@@ -175,10 +181,12 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
   if (TARGET_MOTES_RIPPLE(mode))
     Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma,
                                   EFFECT_CALLBACK_ORDER);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
-                        75); // trails keep 3/4 a frame
+  // Trails keep 75% of each pixel a frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   AudioCommand_PlayFar(SE_142);
 
+  // Target n's turn starts on frame n * 8; the effect ends 64 frames (wide
+  // styles) or 32 after the last one starts.
   for (frame = 0; frame != total; frame++) {
     struct BattleCamera *camera = gCameraWork;
 
@@ -196,7 +204,9 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
     } else if (frame == total - 32) {
       EFFECT_SHOW_DAMAGE(SE_133);
     }
-    // Ripple the canvas sideways, line by line.
+    // Ripple the canvas sideways, line by line: BG2's x (20.8) sways 0 to 2
+    // pixels, a wave of 1/32 turn a line that moves 1/16 turn a frame. The
+    // table is filled in every mode but read only where the HBlank DMA runs.
     row = work->bg2xLines;
     for (i = 0; i != 160; i++)
       *row++ = (0x40000 - ((Trig_Sin((frame << 12) + i * 0x800) * 4))) >> 10;
@@ -339,7 +349,10 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
 ///
 /// Abilities: Sleep (kind 37).
 ///
-/// 148 frames.
+/// 148 frames. PARTICLES 0 to 31 are the sheep, canvas pixels in 16.16; only
+/// the first twelve fall. Loads the sheep palette into the first 64
+/// background colours and sets REG_BLDCNT and BG2's affine registers (the
+/// narrow canvas, moved over the party's side when side is 1).
 void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -358,7 +371,8 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
   EFFECT_BEGIN_NARROW_CANVAS(0);
-  REG_BLDCNT = 0; // drawn solid
+  // Drawn solid.
+  REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_SheepSheet, work->sheet, 1, 1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
@@ -379,8 +393,9 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
     current->z = Random16() & 3;
     current->variant = Random16() & 255;
   }
+  // Over the party's side: the canvas moves 112 pixels right.
   if (work->effect->side == 1)
-    REG_BG2X = -0x7000; // over the party's side
+    REG_BG2X = -0x7000;
   // Redraw from blank each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   AudioCommand_PlayFar(SE_142);
@@ -408,6 +423,8 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
       if (frame > particleIndex * 4 && current->y <= 0x7fffff) {
         s32 cell;
 
+        // Eight 32x32 images (1024 bytes each), the last four drawn from the
+        // first four mirrored both ways; z sets how fast a sheep tumbles.
         cell = (current->variant / 16) & 7;
         if (cell < 4)
           drawUpright(canvas, work->sheet + (cell << 10),
@@ -446,6 +463,11 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
 /// 32.
 ///
 /// Abilities: Curse (kind 41); Lucid Prophecy (kind 354).
+///
+/// work->particles' variants give each flame its starting point in its
+/// animation. Loads the flame column palette into the first 64 background
+/// colours and sets REG_BLDCNT and BG2's affine registers (the narrow canvas,
+/// moved over the party's side when side is 1).
 void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
   void **slot;
   struct BattleEffectWork *work;
@@ -466,15 +488,19 @@ void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
   work = slot[-1];
   work->effect = effect;
   EFFECT_BEGIN_NARROW_CANVAS(1);
-  REG_BLDCNT = 0; // drawn solid
+  // Drawn solid.
+  REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work->sheet, 1,
                              1);
+  // Over the party's side: the canvas moves 112 pixels right, and the
+  // targets' x is moved back by the same below.
   if (work->effect->side == 1) {
-    REG_BG2X = -0x7000; // over the party's side
+    REG_BG2X = -0x7000;
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  work->transferMode = CANVAS_COPY_AND_CLEAR; // redraw from blank each frame
+  // Redraw from blank each frame.
+  work->transferMode = CANVAS_COPY_AND_CLEAR;
   work->transferValue = 0;
   draw[0] = (DrawRectangle)CANVAS_SLOT(slot, HEAP_SLOT_BLITTER);
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,

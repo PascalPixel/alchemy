@@ -4,13 +4,6 @@
 
 #include "../effect_internal.h"
 
-// The palette particles scene raises embers from the user's side while
-// flashes, sparks and falling streaks fly; in mode 0 a formation of eight
-// objects sweeps in with them and explodes at the end. PARTICLES holds 512
-// embers, and work->particles hold 24 flashes, 16 streaks and 24 sparks, in
-// that order. An idle particle's variant is -1; a live one's counts its age
-// up until it goes out.
-
 /// The rising embers from the user's side, in the LightningBolt colours.
 ///
 /// Abilities: Dragon Driver (kind 385).
@@ -27,7 +20,7 @@ void BattleFx_RunTiamat(struct BattleEffectArgument *effect) {
 #define PALETTE_PARTICLES_FRAMES 208
 /// Falling streaks, work->particles 24 to 39.
 #define PALETTE_PARTICLES_STREAKS 16
-// the first streak in work->particles
+/// The first streak in work->particles.
 #define PALETTE_PARTICLES_FIRST_STREAK 24
 #define PALETTE_PARTICLES_FIRST_SPARK 40 ///< the first spark in work->particles
 #define PALETTE_PARTICLES_EMBERS 512     ///< embers in PARTICLES
@@ -52,6 +45,16 @@ void BattleFx_RunTiamat(struct BattleEffectArgument *effect) {
 ///   particles[0..23]   flashes: one a frame over 129 to 175, thrown across
 ///   particles[24..39]  streaks: fall at a slant from the top and, below
 ///                      y 55, play their images over and over
+/// An idle particle's variant is -1; a live one's counts its age up until it
+/// goes out (a streak's counts down its wait first).
+///
+/// Called by BattleFx_RunTiamat (mode 0) and BattleFx_RunDragonDriver
+/// (mode 1). Sets REG_BLDALPHA and REG_BG2CNT (the canvas in front, priority
+/// 0), loads the flash and later the streak palette (or the lightning bolt's)
+/// into the first 64 background colours and brightens them over frames 160
+/// to 175, sets work->shakeFrames, and tints and shakes the targets. Mode 0
+/// spawns the eight formation objects and releases them after the impact
+/// burst.
 void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
                                   s32 mode) {
   struct EffectPosition origin;
@@ -70,10 +73,8 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
   cursor = &gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
   canvas = cursor[0];
   camera = cursor[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_CANVAS];
-  work = cursor[HEAP_SLOT_BATTLE_EFFECT -
-                HEAP_SLOT_BATTLE_CANVAS]; // [39] the effect work
-  sheet = cursor[HEAP_SLOT_BATTLE_SHEET -
-                 HEAP_SLOT_BATTLE_CANVAS]; // [41] the particle images
+  work = cursor[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
+  sheet = cursor[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -100,8 +101,8 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                     128);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
-                        75); // trails keep 3/4 a frame
+  // Trails keep 75% of each pixel a frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   // Mode 1 mirrors everything when the user is on the right (side 1).
   if (mode == 0)
@@ -110,6 +111,8 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
     dir = -1;
   else
     dir = 1;
+  // Mode 1's sparks and flashes start at a fixed point on the user's side:
+  // the user's projected x is overwritten.
   if (mode == 1) {
     EffectPosition_ProjectScaledBattler(work->effect->actor, &origin);
     origin.x /= 2;
@@ -133,7 +136,8 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
     else
       streak->x = (Random16() & 127) - 128;
     streak->y = (Random16() & 7) - 72;
-    streak->variant = -(Random16() & 31); // frames to wait before falling
+    // Frames to wait before falling.
+    streak->variant = -(Random16() & 31);
   }
   EFFECT_FREE_PARTICLES(i, PARTICLES, PALETTE_PARTICLES_EMBERS);
   if (mode == 0) {
@@ -145,6 +149,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
   for (frame = 0; frame != PALETTE_PARTICLES_FRAMES; frame++) {
     // A or B skips to frame 160.
     if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 48 && frame <= 159) {
+      // What frames 128 and 138 would have done.
       if (mode == 0) {
         AnimationObjects_SelectAnimationFar(work->objects[0], 8);
         AnimationObjects_SelectAnimationFar(work->objects[1], 9);
@@ -180,7 +185,8 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
 
     // Start new particles.
 
-    // Embers: from y 112, moving up.
+    // Embers: from y 112, moving up; their speeds take a base from
+    // gTiamat_DropSpeeds by index.
     if (frame >= 33 && frame <= 175) {
       s32 spawned = 0;
       s32 limit = 1;
@@ -409,6 +415,7 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
     EFFECT_END_FRAME(work);
   }
 
+  // The impact burst builds its own blitters and transfer.
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   if (mode == 0) {

@@ -10,23 +10,26 @@ struct BattleEffectArgument;
 struct EffectPosition;
 struct EffectStep;
 
-/// The large effects BattleFx_RunSceneEffect runs, by kind: the summons, and
-/// Meteor's scene (kind 0 runs it too).
+/// The large effects BattleFx_RunSceneEffect runs, by kind: the twelve
+/// summons. A summon's row of actflags.tsv has effect 0x8000 plus its kind;
+/// kind 0, which no row uses, runs Meteor's scene too.
 enum SceneEffectKind {
-  SCENE_EFFECT_RAMSES = 1,
-  SCENE_EFFECT_NEREID,
-  SCENE_EFFECT_KIRIN,
-  SCENE_EFFECT_ATALANTA,
-  SCENE_EFFECT_CYBELE,
-  SCENE_EFFECT_NEPTUNE,
-  SCENE_EFFECT_TIAMAT,
-  SCENE_EFFECT_PROCNE,
-  SCENE_EFFECT_JUDGMENT,
-  SCENE_EFFECT_BOREAS,
-  SCENE_EFFECT_METEOR,
-  SCENE_EFFECT_THOR
+  SCENE_EFFECT_RAMSES = 1, ///< BattleFx_RunRamses (ramses.c)
+  SCENE_EFFECT_NEREID,     ///< BattleFx_RunNereid (nereid.c)
+  SCENE_EFFECT_KIRIN,      ///< BattleFx_RunKirin (kirin.c)
+  SCENE_EFFECT_ATALANTA,   ///< BattleFx_RunAtalanta (atalanta.c)
+  SCENE_EFFECT_CYBELE,     ///< BattleFx_RunCybele (cybele.c)
+  SCENE_EFFECT_NEPTUNE,    ///< BattleFx_RunNeptune (neptune.c)
+  SCENE_EFFECT_TIAMAT,     ///< BattleFx_RunTiamat (tiamat.c)
+  SCENE_EFFECT_PROCNE,     ///< BattleFx_RunProcne (procne.c)
+  SCENE_EFFECT_JUDGMENT,   ///< BattleFx_RunJudgment (judgment.c)
+  SCENE_EFFECT_BOREAS,     ///< BattleFx_RunBoreas (boreas.c)
+  SCENE_EFFECT_METEOR,     ///< BattleFx_RunMeteor (particle_streams.c)
+  SCENE_EFFECT_THOR        ///< BattleFx_RunThor (thor.c)
 };
 
+/// An effect handler: plays one effect over the battle, frame by frame, and
+/// returns when it is over.
 typedef void (*BattleFxHandler)(struct BattleEffectArgument *effect);
 /// Effect kinds: the kind an ability's gBattle_ActionFlags entry selects, by
 /// the handler that plays it; a later kind that shares a handler adds its
@@ -65,7 +68,7 @@ enum BattleFxKind {
   BATTLE_FX_WEAKEN = 31,
   BATTLE_FX_TAINT = 32,
   BATTLE_FX_DELUDE = 33,
-  BATTLE_FX_ORBITING_SPIRALS = 34,
+  BATTLE_FX_ORBITING_SPIRALS = 34, ///< no ability uses it
   BATTLE_FX_HEARTRENDER = 35,
   BATTLE_FX_PARALYZE = 36,
   BATTLE_FX_SLEEP = 37,
@@ -97,7 +100,7 @@ enum BattleFxKind {
   BATTLE_FX_DEMON_FIRE = 64,
   BATTLE_FX_VORPAL_SLASH = 65,
   BATTLE_FX_DROWN = 66,
-  BATTLE_FX_TRIANGLE_STRIKE = 67,
+  BATTLE_FX_TRIANGLE_STRIKE = 67, ///< no ability uses it
   BATTLE_FX_ASTRAL_BLAST = 68,
   BATTLE_FX_GRANITE = 200,
   BATTLE_FX_REVIVE_201 = 201,
@@ -183,7 +186,7 @@ enum BattleFxKind {
   BATTLE_FX_OUTER_SPACE = 384,
   BATTLE_FX_DRAGON_DRIVER = 385,
   BATTLE_FX_DRAIN_FANG = 386,
-  BATTLE_FX_SPARK_APPROACH_VARIANT3 = 387,
+  BATTLE_FX_SPARK_APPROACH_VARIANT3 = 387, ///< no ability uses it
   BATTLE_FX_THRASH = 388,
   BATTLE_FX_RECOVERY = 389,
   BATTLE_FX_FIRE_BLESSING = 400,
@@ -194,9 +197,11 @@ enum BattleFxKind {
   BATTLE_FX_STORM_BLESSING = 405,
   BATTLE_FX_EVIL_BLESSING = 406,
   BATTLE_FX_DEADLY_GAS = 407,
-  BATTLE_FX_KIND_COUNT = 408
+  BATTLE_FX_KIND_COUNT = 408 ///< one more than the last kind
 };
 
+/// The handlers by kind less one (effect_table.c); BattleFx_RunTableEffect
+/// calls the one an effect's kind selects.
 extern BattleFxHandler gBattleFx_EffectHandlers[];
 
 /// What BattleFx_BuildCenteredIndexList (unused) reads: a value to find in a
@@ -226,14 +231,15 @@ typedef struct {
 #define Q_16_16_TO_INT(v) (((s16 *)&(v))[1])
 #endif
 
-/// Two-dimensional {x, y} pair for position or velocity.
+/// Two-dimensional {x, y} pair for position or velocity, a local of the
+/// summon scenes (Nereid, Procne, Tiamat and Ramses).
 struct Point2D {
-  s32 x;
-  s32 y;
+  s32 x; ///< 16.16 pixels in every scene that uses it
+  s32 y; ///< 16.16 pixels
 };
 
-/// Effect renderer pair: BattleFx_BuildBlitter creates [0] in
-/// HEAP_SLOT_BLITTER and [1] in HEAP_SLOT_BLITTER_ALTERNATE.
+/// A blitter pair: [0] built in HEAP_SLOT_BLITTER and [1] in
+/// HEAP_SLOT_BLITTER_ALTERNATE (BattleFx_FetchRectangleBlitters fills one).
 /// Many effects keep this pair in their stack frame.
 typedef DrawRectangle BlitterPair[2];
 

@@ -28,27 +28,31 @@
 /// to equip and up to two abilities to teach. A row whose owner is -1 ends a
 /// preset.
 struct DebugPartyEntry {
-  s8 owner;
-  u8 level;
-  s8 djinnCounts[NUM_ELEMENTS];
-  u16 items[4];
-  u16 abilities[2];
-  u16 unused; ///< 0 in every row
+  s8 owner;                     ///< the party member, or DEBUG_PRESET_END
+  u8 level;                     ///< the level the member is raised to
+  s8 djinnCounts[NUM_ELEMENTS]; ///< Djinn of each element to give and Set
+  u16 items[4];                 ///< items to add and equip; 0 for none
+  u16 abilities[2];             ///< abilities to teach; 0 for none
+  u16 unused;                   ///< 0 in every row
 };
 
 extern struct DebugPartyEntry gDebug_PartyPresets[];
 
+/// The last row of presets.tsv; the scan reports a missing preset past it.
 #define DEBUG_PRESET_LAST_ROW 332
 #define DEBUG_PRESET_END -1
 
 /// Debug: replaces the party with the members of preset number preset.
-/// Each member is raised to the row's level, given the row's djinn (Set, in
+/// Each member is raised to the row's level, given the row's Djinn (Set, in
 /// order of their numbers across the party), the row's abilities, and an
-/// emptied inventory holding the row's items, each equipped.
+/// emptied inventory holding the row's items, each equipped. Called by
+/// DebugBattle_RunMenu and, through its far stub, by the link lobby's
+/// LinkLobby_ChooseDebugPartyPreset. Changes the active party and each
+/// member's level, Djinn, abilities and inventory.
 /// Returns 1 when the table ends before that preset, 0 otherwise.
 s32 DebugParty_LoadPreset(s32 preset) {
-  s32 nextDjinn[NUM_ELEMENTS]; // the next djinn number of each element to hand
-                               // out
+  // The next Djinni number of each element to hand out.
+  s32 nextDjinn[NUM_ELEMENTS];
   struct BattleUnit *member;
   s32 owner;
   s32 notFound;
@@ -58,7 +62,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
   s32 i;
 
   notFound = 0;
-  // Replace the active party before scanning the requested preset's rows.
+  // Empty the active party; the preset's rows add its members back.
   Party_RemoveActiveOwnerFar(ISAAC);
   Party_RemoveActiveOwnerFar(GARET);
   Party_RemoveActiveOwnerFar(IVAN);
@@ -69,6 +73,8 @@ s32 DebugParty_LoadPreset(s32 preset) {
   for (i = 0; i < NUM_ELEMENTS; i++)
     nextDjinn[i] = 0;
 
+  // Presets are runs of rows each ended by a DEBUG_PRESET_END row; skip
+  // to the run numbered preset and apply its rows.
   for (row = 0;; row++) {
     owner = gDebug_PartyPresets[row].owner;
     if (row < 0 || row > DEBUG_PRESET_LAST_ROW) {
@@ -96,7 +102,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
       member->djinnActive[i] = 0;
     }
     // The slot's first halfword, its encodedAction, stored through a cast:
-    // the zero comes from the literal pool, as in the ROM (README.md).
+    // the zero comes from the literal pool, as in the ROM (MATCHING.md).
     for (i = 0; i < 32; i++)
       *(u16 *)&member->actionSlots[i] = 0;
     for (i = 0; i < 2; i++) {
@@ -104,6 +110,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
         Unit_LearnPsynergyFar(owner, gDebug_PartyPresets[row].abilities[i]);
     }
 
+    // Djinn are numbered across the party, so no two members get the same.
     for (i = 0; i < NUM_ELEMENTS; i++) {
       for (djinnIndex = 0; djinnIndex < gDebug_PartyPresets[row].djinnCounts[i];
            djinnIndex++) {
@@ -139,7 +146,10 @@ s32 DebugParty_LoadPreset(s32 preset) {
 /// in the second range, from DEBUG_SECOND_FORM. Right and Left step the
 /// index, R and L step it by ten, Up and Down pick the range, and B
 /// alternates between the ranges, moving on one message each time it leaves
-/// the first. A closes the window and shows the message again.
+/// the first. A closes the window and shows the message again. Called by
+/// DebugBattle_RunMenu when Start is pressed. Renames party member 0, sets
+/// REG_DISPCNT and gGameState.messageSpeed, and clears the window work's
+/// message busy byte after each window.
 void DebugBattle_ViewMessages(void) {
   u16 text[64];
   s32 secondRange = 0;
@@ -149,7 +159,7 @@ void DebugBattle_ViewMessages(void) {
   struct UiWindow *messageWindow;
   s32 message;
 
-  // Supply a readable sample name before entering the message browser.
+  // Party member 0's name is the sample a `<unit>` blank shows.
   Ui_AdjustValueWithoutLimitFar(MsgDebugSampleName, text);
   for (i = 0; i < UNIT_NAME_LENGTH; i++) {
     unit->name[i] = text[i];
@@ -219,7 +229,7 @@ void DebugBattle_ViewMessages(void) {
         WaitFrames(1);
       }
       UiWork_DrainPendingFar(1);
-      // Finish this window before opening the newly selected message.
+      // Close the window and free the message system for the next one.
       UiWork_FinalizeFar(messageWindow, 1);
       (*(u8 **)&gWindowWork)[WINDOW_WORK_MESSAGE_BUSY] = 0;
     }
@@ -235,7 +245,11 @@ void DebugBattle_ViewMessages(void) {
 /// the start opens the chooser: Right and Left step the encounter, Up and
 /// Down by ten, R and L pick the party preset, Start opens the message
 /// viewer and A fights; B marks every later battle with start mode 5.
-/// Holding Down when A is pressed makes it a link battle.
+/// Holding Down when A is pressed makes it a link battle. Exported as
+/// DebugBattle_RunMenuFar; nothing in the source calls it. Sets
+/// FLAG_DEBUG_BATTLE and, as chosen, FLAG_AUTO_BATTLE, FLAG_LINK_BATTLE and
+/// FLAG_DJINN_TUTORIAL, and resets the task table, heap and VRAM cache
+/// before each battle.
 void DebugBattle_RunMenu(void) {
   s32 startModeSet = 0;
   s32 encounter;
@@ -288,8 +302,7 @@ restart:
         }
         WaitFrames(1);
       }
-      // The chooser's current input also determines whether this is a link
-      // battle.
+      // A fights: Down still held makes it a link battle.
       if (gKeysHeld & KEY_DOWN)
         GameFlag_SetBitFar(FLAG_LINK_BATTLE);
       UnitCalcFar(0);
@@ -298,6 +311,7 @@ restart:
         GameFlag_SetBitFar(FLAG_DJINN_TUTORIAL);
       GameFlag_SetBitFar(FLAG_DEBUG_BATTLE);
       Battle_RunEncounter(encounter);
+      // Rebuild what the battle replaced, then return to the chooser.
       Ui_LoadWindowGraphics();
       DebugText_Clear();
       Scheduler_ResetTaskTable();
@@ -305,6 +319,7 @@ restart:
       VramCache_Reset();
     }
   }
+  // Without Down: the same auto battle, over and over.
   GameFlag_SetBitFar(FLAG_DEBUG_BATTLE);
   Battle_RunEncounter(DEBUG_FIRST_ENCOUNTER);
   goto restart;

@@ -14,23 +14,20 @@
 /// The violet mote in the second part's sheet.
 #define THOR_MOTE_CELLS 0x6000
 
-// Storm summons: a circle of light forms in the dusk sky and sends down a
-// beam; then a pillar of lightning and a storm of violet bolts strike the
-// targets, pushing them back, and the effect ends in an impact burst.
-//
-// effect: the targets.
-
 #define THOR_PARTICLE_COUNT 910 ///< particles in THOR_PARTICLES
 #define THOR_DIMMED_DOTS 10000  ///< the darker copies of the dot pictures
 #define THOR_DIMMED_DOT_BYTES MOTE_SET_BYTES ///< bytes in each darker copy
 #define THOR_DUSK_FRAMES 170      ///< frames, at most, of the dusk part
 #define THOR_LIGHTNING_FRAMES 192 ///< frames of the lightning part
 #define THOR_BOLTS 30             ///< violet bolts after the pillar
+#define THOR_BOLT_SIZE 72         ///< each of the three bolt pictures is 72x72
+#define THOR_BOLT_BYTES (THOR_BOLT_SIZE * THOR_BOLT_SIZE)
 
 /// Launches up to max sparks from (px, py), 16.16, into the free slots
 /// (variant 0) of THOR_PARTICLES, walking them with spark and counting with
-/// index. Each flies at angle
-/// at a random speed of 32 to 1054 and lives 32 to 39 frames.
+/// index. Each flies at angle at a random speed of 32 to 1054 (128ths of a
+/// pixel a frame) and lives 32 to 39 frames. Used for the pillar's 512
+/// sparks and each bolt's 16; the mote's sparks are launched inline.
 #define THOR_LAUNCH_SPARKS(spark, index, px, py, angleExpr, max)               \
   {                                                                            \
     s32 spawned = 0;                                                           \
@@ -135,6 +132,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   work->scrollInterval = 2;
   work->scrollStepX = 1;
   work->scrollStepY = 0;
+  // The dusk clouds scroll a pixel every other frame; busy keeps the battle
+  // camera off BG1's scroll meanwhile.
   view->busy = 1;
   Scheduler_AddOrUpdateCallback(BattleFx_AdvanceScrollOnInterval,
                                 EFFECT_CALLBACK_ORDER);
@@ -143,6 +142,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   work->transferMode = CANVAS_COPY;
   BattleFx_WipeCanvas(0, 0);
   BattleBackground_LoadFar(1, (s32)&ResourceId_DuskCloudsBackdrop, 0);
+  // The projection centre moves down to line 240 for the dusk part;
+  // BattleFx_SetupBlendedDisplay puts it back.
   gProjection.centerY = 240;
   BattleFx_WipeCanvas(0, 1);
   REG_BG2PA = Q_8_8(0.5);
@@ -186,6 +187,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
     if (gKeysRepeat & (KEY_A | KEY_B)) {
       break;
     }
+    // Red, green and blue sway a third of a turn apart, so the canvas
+    // colours cycle through the hues.
     Graphics_UpdatePhasePalette(frame * 2, 0xaaab, 0x5555, 0);
     // The frame before the beam clears the canvas instead of fading it.
     if (frame == 150) {
@@ -262,7 +265,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
     // The circle of up to 128 dots, two more each frame, darkening once
     // the beam has fallen: from frame 140 it takes the brighter pixel
     // instead of adding, and from frame 157 each frame draws it with a
-    // darker copy of the dots, down to the seventh.
+    // darker copy of the dots, down to the seventh. The test on frame 179
+    // always holds, as the part has 170 frames.
     if (frame <= 179) {
       DrawRectangle drawAlt;
       s32 level = 0;
@@ -357,6 +361,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   Scheduler_RemoveCallback(BattleFx_AdvanceScrollOnInterval);
   BattleFx_SetupBlendedDisplay();
   BattleFx_SelectLivingTargets(work->effect);
+  // Nine objects of resource 0x173, the formation (formation 0 of
+  // BattleFx_PlaceFormationObjects), released at the end.
   BattleFx_SpawnObjects(9, 0x173, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer,
                              1, 0);
@@ -383,6 +389,9 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
     for (i = 0; i != THOR_PARTICLE_COUNT; i++) {
       THOR_PARTICLES[i].variant = 0;
     }
+    // XXX: nothing in Thor reads these 16 particles, and
+    // BattleFx_RunImpactBurst overwrites them; what they were for is open,
+    // and the Lost Age's twin of this scene may show it.
     for (i = 0; i != 16; i++) {
       work->particles[i].x = (Random16() & 31) - 16;
       work->particles[i].y = Random16() & 63;
@@ -455,7 +464,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
               EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                                   EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
               EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE](
-                  canvas, work->sheet + i % 3 * 0x1440, boltX, boltY, 72, 72);
+                  canvas, work->sheet + i % 3 * THOR_BOLT_BYTES, boltX, boltY,
+                  THOR_BOLT_SIZE, THOR_BOLT_SIZE);
               Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
             }
             if (frame == i * 2 + 80) {
@@ -465,7 +475,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
               EFFECT_FOR_EACH_TARGET(j, work->effect) {
                 ObjectGroup_UpdateMembers(work->effect->actors[j],
                                           gThor_TargetPalettes[Random16() & 3],
-                                          5, j, 4);
+                                          POSE_DAMAGE, j, 4);
                 BattleMotion_ApplyVariantMotionFar(work->effect->actors[j], 4);
               }
             }
@@ -617,5 +627,7 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
 #undef THOR_DUSK_FRAMES
 #undef THOR_LIGHTNING_FRAMES
 #undef THOR_BOLTS
+#undef THOR_BOLT_SIZE
+#undef THOR_BOLT_BYTES
 #undef THOR_LAUNCH_SPARKS
 #undef THOR_SPRITES_CELLS

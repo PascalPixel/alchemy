@@ -4,8 +4,11 @@
 
 #include "../battle_internal.h"
 
-/// Ranks a spoil item by its indispensable flag, flag 4 and item ID; an empty
-/// entry ranks zero.
+/// Ranks an item among the spoils, 0 for none: an indispensable item first,
+/// then one with flag 4, then the higher item id.
+/// The rank's bits: 10 ITEM_INDISPENSABLE | 9 flag 4 | 8..0 the item id.
+/// Called by BattleEnemy_RecordDefeat, to keep the best four drops, and by
+/// Battle_AwardSpoils, to hand them out best first.
 u32 BattleSpoils_RankItem(u32 inventoryEntry) {
   u32 priority = 0;
   u32 itemId = inventoryEntry & ITEM_ID_MASK;
@@ -14,7 +17,9 @@ u32 BattleSpoils_RankItem(u32 inventoryEntry) {
   {
     u8 flags = Item_GetDirectFar(itemId)->flags;
 
-    if (flags & 8)
+    // XXX: flag 4 has no name in enum ItemFlags; the items that set it in
+    // items.tsv would name it.
+    if (flags & ITEM_INDISPENSABLE)
       priority = 1;
     priority <<= 1;
     if (flags & 4)
@@ -25,8 +30,8 @@ u32 BattleSpoils_RankItem(u32 inventoryEntry) {
   return priority;
 }
 
-/// Clears pending items and the battle's coin, experience, defeat and item
-/// spoils.
+/// Empties the battle's spoils (BattleWork.spoils) and gGameState.pendingItem.
+/// Called once by Battle_RunEncounter as the battle opens.
 void BattleSpoils_Clear(void) {
   struct BattleWork *battle = gBattleWork;
   struct BattleSpoils *spoils = &battle->spoils;
@@ -42,8 +47,9 @@ void BattleSpoils_Clear(void) {
     items[index] = 0;
 }
 
-/// Adds one six-sided roll per ten levels plus one, with a bonus floor of 30
-/// percent of the base coins.
+/// Returns an enemy's coins with the Djinn bonus: its own, plus a six-sided
+/// die for every ten levels and one more, at least 30 percent of its own.
+/// Used by BattleEnemy_RecordDefeat.
 static __inline__ s32 BattleEnemy_CalculateCoinReward(struct BattleUnit *unit,
                                                       u16 *reward) {
   // These reward rolls retain separate inline bodies: a die-size parameter adds
@@ -62,8 +68,9 @@ static __inline__ s32 BattleEnemy_CalculateCoinReward(struct BattleUnit *unit,
   return bonus + base;
 }
 
-/// Adds one four-sided roll per ten levels plus one, with a bonus floor of 30
-/// percent of base experience.
+/// Returns an enemy's experience with the Djinn bonus: its own, plus a
+/// four-sided die for every ten levels and one more, at least 30 percent of
+/// its own. Used by BattleEnemy_RecordDefeat.
 static __inline__ s32
 BattleEnemy_CalculateExperienceReward(struct BattleUnit *unit, u16 *reward) {
   s32 rollIndex;
@@ -80,8 +87,17 @@ BattleEnemy_CalculateExperienceReward(struct BattleUnit *unit, u16 *reward) {
   return bonus + base;
 }
 
-/// Records an enemy defeat and its coins and experience, applying the Djinn
-/// bonus when earned and retaining higher-ranked distinct item drops.
+/// Counts a fallen enemy and adds its coins, experience and perhaps its item
+/// to the spoils.
+/// Returns -1 for a party unit and -2 for a party member fought as an enemy,
+/// else 0. It notes the class for the victory message (firstDefeated,
+/// defeatState). In a monster battle it adds nothing more; otherwise it sets
+/// the class's ENEMY_DEFEATED_FLAG, adds the rewards (with the Djinn bonus,
+/// djinnBonus nonzero, the rolls above) and rolls the item: 1 in
+/// 2^(itemChance - 1), two powers likelier with the bonus. An item not yet
+/// among the four kept replaces the lowest ranked, if it ranks higher.
+/// Called as each enemy falls by BattleEv_DispatchQueued and
+/// BattleEvent_Playback.
 s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   struct BattleUnit *unit;
   struct EnemyDefinition *enemy;
@@ -111,6 +127,10 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   }
   if (itemOrClassIndex != 6)
     classSlot = itemOrClassIndex;
+  // The earliest listed class to fall names the victory message, and a
+  // second defeat makes it DEFEAT_SEVERAL (encounter.c).
+  // XXX: likely meant DEFEAT_BY_PARTY_MEMBER, because encounter.c names no
+  // state 2 and sets 3 for that case, so this test never fails.
   if (battle->defeatState != 2) {
     if (classSlot < battle->firstDefeated)
       battle->firstDefeated = classSlot;
@@ -120,8 +140,8 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   spoils->defeated++;
   if (GameFlag_TestFar(FLAG_MONSTER_BATTLE))
     return 0;
-  GameFlag_SetBitFar(unit->classId + 0x600);
-  enemy = Enemy_GetDefinitionFar(unit->classId);
+  GameFlag_SetBitFar(ENEMY_DEFEATED_FLAG(unit->classId));
+  enemy = (struct EnemyDefinition *)Enemy_GetDefinitionFar(unit->classId);
   if (djinnBonus != 0) {
     if (enemy->coins != 0)
       spoils->coins += BattleEnemy_CalculateCoinReward(unit, &enemy->coins);
@@ -148,6 +168,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
     dropShift -= 2;
   if (dropShift < 0)
     dropShift = 0;
+  // 0x20000 >> n against a 16-bit random number: 1 in 2^(n - 1).
   if ((0x20000 >> dropShift) > (BattleRandomFar() & 0xffff)) {
     lowestSlot = -1;
     lowestItemPriority = 0x40000000;
@@ -164,9 +185,14 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   return 0;
 }
 
-/// Awards living party members experience and level gains, reports newly
-/// learned Psynergy, gives coins and distributes ranked item drops until
-/// inventory overflow.
+/// Hands out the spoils after a victory: the experience to each party member
+/// still standing, with every level gained and what it brings, then the
+/// coins, then the items best first.
+/// Each level up shows its message, every Psynergy newly learned and each
+/// stat that rose. An item the inventory cannot take goes to gOverflowItem
+/// and ends the handing out. Called by Battle_RunEncounter once the battle is
+/// won. Changes the members' experience, levels and stats, the party's coins
+/// and inventory.
 void Battle_AwardSpoils(void) {
   struct BattleSpoils *spoils;
   s32 count;
@@ -192,6 +218,8 @@ void Battle_AwardSpoils(void) {
     UiText_ShowMessageAndWaitCoreFar(MsgExpGained);
     BattlePresentation_WaitForAdvance();
   }
+  // Experience and level ups: each member is copied before every level it
+  // may gain, so that what the level brought can be read against the copy.
   unitIds = units;
   count = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unitIds);
   beforeLevelUp = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
@@ -208,6 +236,7 @@ void Battle_AwardSpoils(void) {
       UiWork_PushValueSlotFar(unit->level, VALUE_NUMBER);
       UiText_ShowMessageAndWaitCoreFar(MsgLevelUp);
       BattlePresentation_WaitForAdvance();
+      // A class ability (bit 15) the copy lacks is newly learned.
       for (abilityIndex = 0; abilityIndex < 32; abilityIndex++) {
         encodedAbility = unit->actionSlots[abilityIndex].encodedAction;
         if ((encodedAbility & OWNER_ACTION_ID_MASK) && (encodedAbility >> 15)) {
@@ -267,6 +296,8 @@ void Battle_AwardSpoils(void) {
     Party_AdjustCoinsFar(spoils->coins);
     BattlePresentation_WaitForAdvance();
   }
+  // The items, the highest ranked first; the first the inventory cannot
+  // take is left in gOverflowItem.
   overflowItem = &gOverflowItem;
   for (;;) {
     highestItemSlot = -1;
@@ -293,5 +324,5 @@ void Battle_AwardSpoils(void) {
   }
 }
 
-/// Reserved empty routine used by the debug battle menu.
+/// Does nothing; the debug battle menu (DebugBattle_RunMenu) calls it.
 void Battle_ReservedNoOp2A08(void) {}

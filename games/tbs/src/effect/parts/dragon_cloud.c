@@ -6,7 +6,7 @@
 
 #define DRAGON_CLOUD_FRAMES 150
 #define DRAGON_CLOUD_STRIKE_FRAME 83 ///< the flame strikes the first target
-#define DRAGON_CLOUD_TRAIL_CELL_BYTES 936 ///< bytes in each trail copy
+#define DRAGON_CLOUD_TRAIL_CELL_BYTES (24 * 39) ///< bytes in each trail copy
 #define DRAGON_CLOUD_FIRST_EMBER 8      ///< the first ember in work->particles
 #define DRAGON_CLOUD_FIRST_FLASH 48     ///< the first flash in work->particles
 #define DRAGON_CLOUD_TRAIL_CELLS 0x1680 ///< the trail picture in the sheet
@@ -194,7 +194,8 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
     // The flame leans with its smoothed vertical motion (drift, -8 to 8):
-    // one of five cells, from rising to falling.
+    // one of five 24x48 cells, from rising to falling. Its position is the
+    // path's, halved across for the wide canvas and mirrored on side 1.
     if (frame >= 18 && frame <= DRAGON_CLOUD_STRIKE_FRAME) {
       s32 lift;
 
@@ -216,7 +217,7 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
       lift = drift / 4 + 2;
       trail[0].x = position.x - 12;
       trail[0].y = position.y - 20;
-      draw[0](canvas, &work->sheet[lift * 0x480], trail[0].x - 6,
+      draw[0](canvas, &work->sheet[lift * (24 * 48)], trail[0].x - 6,
               trail[0].y - 2, 24, 48);
     }
     if (frame == DRAGON_CLOUD_STRIKE_FRAME) {
@@ -225,6 +226,8 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
                                 POSE_DAMAGE, 0, 8);
       BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 1);
     }
+    // After the strike the embers rise and fall back, 0x2000 a frame, until
+    // they drop below the ground.
     if (frame > DRAGON_CLOUD_STRIKE_FRAME) {
       // Embers are motes sized by depth. Only records 56 to 63 play the
       // six flash pictures, two frames each; the first eight flashes, at 48
@@ -242,10 +245,15 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
             position.depth = 160;
           if (position.depth > 799)
             position.depth = 799;
+          // Nearer is larger: 9 pixels at depth 160 or less.
+          // XXX: from depth 736 on the size is 0, and EFFECT_DRAW_MOTE would
+          // read gBattleFx_MoteCells[-1]; whether an ember ever gets that far
+          // needs a run of the effect to settle.
           size = 9 - (position.depth - 160) / 64;
           if (i > 47) {
             if (ember->variant <= 11) {
-              draw[0](canvas, Ram_MapCellBuffer + ember->variant / 2 * 0x800,
+              draw[0](canvas,
+                      Ram_MapCellBuffer + ember->variant / 2 * (32 * 64),
                       position.x - 16, position.y - 32, 32, 64);
               ember->variant++;
             }

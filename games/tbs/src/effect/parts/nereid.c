@@ -4,11 +4,10 @@
 
 #include "../effect_internal.h"
 
-// Nereid's ember columns draw three wrapping columns of fire over a band
-// rising along the canvas floor. Its embers burst from one point, fall back
-// under gravity, and from frame 80 rise away; one that falls below the band
-// goes out and its slot is lit again. The falling sword (Titan Blade) shares
-// these embers.
+// Nereid's embers burst from one point, fall back under gravity, and from
+// frame 80 rise away; one that falls below the band goes out and its slot
+// is lit again. The Titan Blade (titan_blade.c) throws its dust the same
+// way.
 
 #define NEREID_FRAMES 124
 
@@ -29,6 +28,12 @@
 /// while three columns of fire stream upwards over frames 32 to 79 and the
 /// targets bounce. At the end the formation explodes with
 /// BattleFx_RunImpactBurst; the battle shows the damage on frame 120.
+///
+/// The embers are PARTICLES 0 to 1023, canvas pixels in 16.16, a variant of
+/// -1 marking an idle one. Loads the water spray palette into the first 64
+/// background colours, sets REG_BLDALPHA, spawns the twelve formation objects
+/// (released at the end) and gives the targets an upward speed and the usual
+/// battle gravity at each bounce.
 void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **cursor;
@@ -37,12 +42,10 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
   u8 *graphics;
   u8 *palette;
 
-  // cursor points at WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS), the canvas.
   cursor = &gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
   canvas = cursor[0];
   work = cursor[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
-  graphics = cursor[HEAP_SLOT_BATTLE_SHEET -
-                    HEAP_SLOT_BATTLE_CANVAS]; // the particle images
+  graphics = cursor[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -59,8 +62,8 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
   Resource_DecodeType01(palette, work->sheet + NEREID_COLUMN_IMAGE);
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
-                        75); // trails keep 3/4 a frame
+  // Trails keep 75% of each pixel a frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   {
     struct Point2D focus;
     struct Point2D velocity;
@@ -78,6 +81,8 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
     focus.y = 88 << 16;
     velocity.x = -(16 << 16);
     velocity.y = -(4 << 16);
+    // work->particles 24 to 39 are given a place and a delay that nothing in
+    // the scene reads again.
     EFFECT_FREE_PARTICLES(k, work->particles, 64);
     for (k = 0; k != 16; k++) {
       point = &work->particles[24 + k];
@@ -100,6 +105,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
         frame = 98;
       if (frame == 120)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+      // The band rises 2 pixels a frame for the first 16 frames.
       if (frame <= 15)
         rise += 2;
 
@@ -247,6 +253,7 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
       EFFECT_PRESENT_FRAME(work);
     }
 
+    // The impact burst builds its own blitters and transfer.
     Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
     EFFECT_RELEASE_BLITTERS();
     BattleFx_RunImpactBurst(1, focus.x, focus.y);

@@ -4,14 +4,6 @@
 
 #include "../effect_internal.h"
 
-// Boreas, the rock and ice scene, is the longest of the effects. Its first
-// half opens a window on a field of rocks that crumble in three waves,
-// throwing up chips, while a big ice block drops in and bursts into spray
-// trailed by smoke. Its second half rains ice blocks on the targets while
-// boulders rise and crumble into chunks that bounce on the ground. Each half
-// is a loop over frames whose steps run in the order the original drew and
-// moved things, since the order of the random draws is part of the effect.
-
 // The smoke trails behind the spray, after the 128 particles in PARTICLES.
 #define BOREAS_ICE_BLOCK_TRAILS                                                \
   ((struct EffectStep *)(Ram_MapCellBuffer + 0xe00))
@@ -28,10 +20,32 @@
 ///
 /// Abilities: Boreas (scene kind 10).
 ///
-/// effect: the targets.
+/// The longest of the effects, in two halves. The first (288 frames, which A
+/// or B cuts short after frame 16) opens a window on a field of 16 rocks over
+/// the violet sky and nine animation objects; the rocks crumble in three
+/// waves (frames 32, 64 and 104), throwing up chips, a big ice block drops in
+/// on frames 160 to 175 and, from frame 224, bursts into spray trailed by
+/// smoke. The second (146 frames) gives the battle background back and rains
+/// ice blocks on the targets while boulders rise, crumble on frame 72 and
+/// bounce on the ground; the targets tint blue from frame 32 and the damage
+/// shows on frame 96.
+///
+/// Particles, by half: in the first, PARTICLES 0 to 63 are the chips (screen
+/// pixels in 16.16; a negative variant is one not yet thrown), then 0 to 127
+/// the spray, with its smoke at BOREAS_ICE_BLOCK_TRAILS; in the second,
+/// work->particles 0 to 63 are the falling ice blocks and then the boulder
+/// chips, and PARTICLES 0 to 63 the smoke puffs, in whole pixels.
+///
+/// Also clears background colours 0 and 1 for the wipe and then loads the
+/// ice block palette over the first 64, writes the window registers and the
+/// window-edge table at Ram_MapCellBuffer (through
+/// BattleFx_BuildWindowEdgeTable), gBgScroll[1] for the shake,
+/// gProjection.centerY and work->shakeFrames; it releases the nine objects
+/// before the second half and its callbacks and blitters at the end.
 void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
-  s32 rockPoints[32][2]; // a copy of gBoreas_Points that nothing reads
+  // A copy of gBoreas_Points that nothing reads.
+  UNUSED s32 rockPoints[32][2];
   struct SpritePlacement position;
   void *canvas;
   struct BattleEffectWork *work;
@@ -84,6 +98,8 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   EFFECT_SHOW_WIDE_CANVAS(16);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
+  // Mark the chips unthrown. Their positions here are never drawn: each chip
+  // gets a new one when its wave throws it.
   for (i = 0; i != 64; i++) {
     PARTICLES[i].x = (Random16() & 63) + 32;
     PARTICLES[i].y = (Random16() & 31) + 120;
@@ -138,8 +154,10 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
       count = 10;
     }
 
-    // Shake: random until frame 167, from the table on frames 176 to 179.
-    // The backdrop (BG1) sits 32 lines down.
+    // Shake: random until frame 167, from the table on frames 176 to 179,
+    // when the big block lands. The backdrop (BG1) sits 32 lines down, and
+    // the rocks and objects are drawn offset by the same amount, so they
+    // shake with it.
     if (frame <= 167) {
       shakeX = (Random16() & 3) - 1;
       shakeY = (Random16() & 3) - 1;
@@ -227,7 +245,9 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
     }
     Render_ResetTransformState();
 
-    // Each time rocks crumble, throw up 32 chips.
+    // Each time rocks crumble, throw up 32 chips: the first and third waves
+    // reuse chips 0 to 31, the second takes 32 to 63, and all fall at 1/8
+    // pixel a frame per frame.
     if (frame == 32) {
       for (i = 0; i != 32; i++) {
         PARTICLES[i].x = ((Random16() & 31) + 68) << 16;
@@ -347,8 +367,9 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   for (i = 0; i != 9; i++) {
     ResourceObject_ReleaseFar(work->objects[i]);
   }
-  // Blend the canvas, set the ice blocks above the canvas to the right, and
-  // stagger the smoke puffs, each i / 2 frames after the first.
+  // Blend the canvas fully over the battle background, set the ice blocks
+  // above the canvas to the right, and stagger the smoke puffs, puff i
+  // waiting i / 2 frames (its negative variant) before it shows.
   BattleFx_SetupBlendedDisplay();
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   AudioCommand_PlayFar(SE_289);
@@ -375,7 +396,8 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
     if (frame == 16) {
       work->shakeFrames = 32;
     }
-    // Raise one boulder every 2 frames, up to 16.
+    // Raise one boulder every 2 frames from frame 18, up to 16; frame 16
+    // starts a 32-frame shake and frames 9 to 71 play a thud every 4.
     if (frame > 16) {
       count = (frame - 16) / 2;
       if (count > 16) {
@@ -388,7 +410,8 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
     if (frame == 72) {
       AudioCommand_PlayFar(SE_145);
     }
-    // A 40x80 block falls diagonally from the top right.
+    // From frame 65 a 40x80 block falls diagonally from the top right, 7
+    // pixels left and 14 down a frame.
     if (frame > 64) {
       draw(canvas, work->sheet + BOREAS_FALLING_BLOCK_CELLS,
            (64 - frame) * 7 + 88, frame * 14 - 992, 40, 80);
@@ -402,7 +425,9 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
              gBoreas_BoulderWidths[cell], gBoreas_BoulderHeights[cell]);
       }
     }
-    // The boulders crumble, throwing up 64 chips from where they stood.
+    // Frame 72: the boulders crumble, throwing up 64 chips from where they
+    // stood, four from each, and the ice blocks are gone; the chips take
+    // over work->particles. The second frame 72 test is redundant.
     if (frame == 72) {
       for (i = 0; i != 64; i++) {
         work->particles[i].x = (BOREAS_POINT_X(i & 15) - 56) << 16;
@@ -415,8 +440,8 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
       }
     }
     // Chips, 32 on the first frame and 64 after: one below y 135 is gone, and
-    // one that lands fast at y 120 bounces back at a quarter of its speed,
-    // jolting the screen.
+    // one that lands faster than 8 pixels a frame at y 120 bounces back at a
+    // quarter of its speed, jolting the screen for a frame.
     if (frame > 71) {
       count = 32;
       if (frame != 72) {
@@ -462,8 +487,8 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
       }
     }
 
-    // Smoke (from frame 73): until frame 127, each puff that ends starts
-    // again somewhere new.
+    // Smoke (from frame 73): a puff lives 18 frames; until frame 127, each
+    // puff that ends starts again somewhere new, lower as the frames pass.
     if (frame > 72) {
       for (i = 0; i != 64; i++) {
         if (PARTICLES[i].variant >= 0 && PARTICLES[i].variant < 18) {
@@ -481,6 +506,7 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
       }
     }
 
+    // The camera shakes hard while the boulders crumble, gently otherwise.
     if (frame >= 72 && frame < 80) {
       Camera_ApplyShake(8, 8);
     } else {

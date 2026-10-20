@@ -4,8 +4,10 @@
 
 #include "../battle_internal.h"
 
-/// Returns the enemy sprite's defeat-sound layout kind; values above four
-/// become -1.
+/// Returns the class's defeat-sound kind, 0 to 4, or -1 for none; a fallen
+/// enemy's sound is SE_146 plus it.
+/// Called by BattleEvent_Playback as an enemy falls. Reads any index
+/// unchecked.
 u32 BattleClass_GetDefeatSoundKind(s32 index) {
   u32 kind = gSummon_EntryTable[index].layoutKind;
 
@@ -14,27 +16,32 @@ u32 BattleClass_GetDefeatSoundKind(s32 index) {
   return kind;
 }
 
-/// The last class with a row in gSummon_EntryTable.
+/// The last class with a row in gSummon_EntryTable (sprites.tsv).
 #define ENEMY_CLASS_LAST 171
 
-/// Returns the enemy-class sprite animation, using row zero for an invalid
-/// class.
+/// Returns the class's battle sprite, row 0's for a class out of range.
+/// Called by BattleObjMake and SummonSlot_RegisterActorSprites.
 s32 BattleClass_GetSprite(s32 index) {
   if (index < 0 || index > ENEMY_CLASS_LAST)
     return gSummon_EntryTable[0].animation;
   return gSummon_EntryTable[index].animation;
 }
 
-/// Returns the enemy-class palette/layout bits. An invalid class returns row
-/// zero's animation field.
+/// Returns the class's sprite palette.
+/// For a class out of range it returns row 0's sprite, not a palette.
+/// XXX: likely a slip copied from BattleClass_GetSprite, because no other
+/// getter here returns another column for a bad index. Called by
+/// BattleObjMake and SummonSlot_RegisterActorSprites.
 s32 BattleClass_GetPalette(s32 index) {
   if (index < 0 || index > ENEMY_CLASS_LAST)
     return gSummon_EntryTable[0].animation;
   return gSummon_EntryTable[index].layoutBits1;
 }
 
-/// Returns whether the enemy class uses a single sprite slot; invalid classes
-/// return zero.
+/// Returns 1 for a small class, which takes one enemy sprite slot instead of
+/// two and stands closer to its neighbours; 0 out of range.
+/// Called by the formation and placement code (BattleFormation_BuildEnemyList,
+/// Summon_LayoutPositions) and by motion.c.
 s32 BattleClass_IsSmall(s32 index) {
   s32 result;
 
@@ -46,8 +53,10 @@ s32 BattleClass_IsSmall(s32 index) {
   return result;
 }
 
-/// Returns the class's attack-effect kind, substituting one for zero or an
-/// invalid class.
+/// Returns the effect a class's plain attack shows, 1 for none or out of
+/// range.
+/// Called by BattleCommand_BuildPlan, which stages it by id range
+/// (STAGING_BY_ID_RANGE).
 u32 BattleClass_GetAttackEffect(u32 index) {
   u16 value;
 
@@ -57,7 +66,10 @@ u32 BattleClass_GetAttackEffect(u32 index) {
   return value ? value : 1;
 }
 
-/// Returns the class's attack-hop height, or zero for an invalid class.
+/// Returns how high a class hops as it runs up to attack, in pixels; 0 out
+/// of range.
+/// Called by BattlePres_RunAttack, which passes it to
+/// BattleMotion_ApproachTarget, and reached through FarCall_BattleTable.
 u32 BattleClass_GetAttackHop(u32 index) {
   u16 value;
 
@@ -67,14 +79,19 @@ u32 BattleClass_GetAttackHop(u32 index) {
   return value ? value : 0;
 }
 
-/// Returns layout bit zero for an enemy class, or zero for an invalid class.
+/// Returns 1 for a class whose blow lands with SE_HEAVY_IMPACT instead of
+/// SE_133; 0 out of range.
+/// Called by the beam effects (beams.c) through its far stub.
 s32 Summon_IsEntrySecondaryFlagged(s32 index) {
   if (index < 0 || index > ENEMY_CLASS_LAST)
     return 0;
   return gSummon_EntryTable[index].layoutBit0;
 }
 
-/// Returns the class's effect-height byte, or zero for an invalid class.
+/// Returns the height an effect is drawn at over a class, in pixels, or 0
+/// for its size's default; 0 out of range.
+/// Called by BattleUnit_GetEffectHeight, and reached through
+/// FarCall_BattleTable.
 s32 BattleClass_GetEffectHeight(s32 index) {
   if (index < 0 || index > ENEMY_CLASS_LAST)
     return 0;

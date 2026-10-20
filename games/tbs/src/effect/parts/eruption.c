@@ -9,7 +9,8 @@
 ///
 /// Abilities: Smoke Bomb, Sleep Bomb (kind 380).
 ///
-/// It always uses the second count-table row.
+/// It always uses the second row of gEruption_Counts: 32 motes, 16 puffs, 80
+/// frames.
 void BattleFx_RunSmokeBomb(struct BattleEffectArgument *effect) {
   BattleFx_RunEruption(effect, 1);
 }
@@ -30,12 +31,14 @@ enum {
 /// The mote pictures in the sheet: two sets, MOTE_SET_BYTES apart.
 #define ERUPTION_FIELD_MOTE_CELLS 0x3200
 
-/// Shared by BattleFx_RunBlast (mode 0) and BattleFx_RunSmokeBomb (mode 1).
+/// A fountain of motes and puffs of smoke bursts up beside the targets and
+/// falls back, hitting the targets one frame apart from frame 6.
 ///
-/// A fountain of motes and puffs of smoke bursts up beside the
-/// targets and falls back, hitting the targets one frame apart from frame
-/// 6. A sound and a 6-frame screen shake start on frame 2, and the battle
-/// shows the damage 48 frames before the end.
+/// Called by BattleFx_RunBlast (mode 0) and BattleFx_RunSmokeBomb (mode 1).
+/// A sound and a 6-frame screen shake start on frame 2, and the battle shows
+/// the damage 48 frames before the end. Writes the first 64 BG colours, sets
+/// work->shakeFrames, and ends with the transfer callback removed, the
+/// blitter freed and the canvas layer closed.
 ///
 /// effect: the targets.
 /// mode: 0 burns (the fire streak palette, the effect's variant picks the
@@ -59,6 +62,8 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
+  // Smoke Bomb's palette is a ramp of greys, two levels to each step of
+  // brightness, 0 to 31; Blast takes the fire streak's.
   if (mode == 1) {
     for (i = 0; i != 64; i++) {
       s32 level = i / 2;
@@ -73,7 +78,9 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     variant = work->effect->variant;
   }
 
-  // The puffs and the motes start 50 pixels to the side and scatter up.
+  // The puffs and the motes start 50 pixels to the side and scatter up;
+  // the motes leave at up to twice the puffs' speed. All 32 puffs and 1024
+  // motes are placed, more than any row of gEruption_Counts uses.
   for (i = 0; i != 32; i++) {
     struct EffectStep *puff = &work->particles[i];
 
@@ -118,7 +125,8 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
       EFFECT_SHOW_DAMAGE(SE_133);
 
     // The motes still above the ground, sized 9 down to 1 over depths 160
-    // to 799, alternating the two mote sets.
+    // to 799, alternating the two mote sets. The half-width x is shifted 16
+    // pixels left, or right on side 1.
     for (i = 0; i != gEruption_Counts[variant][ERUPTION_FIELD_MOTES]; i++) {
       struct EffectStep *mote = &PARTICLES[i];
 
@@ -172,6 +180,8 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
 
+    // The hits, one target a frame from frame 6; Blast's targets also recoil
+    // (battle motion 2).
     if (mode == 0) {
       EFFECT_FOR_EACH_TARGET(i, work->effect) {
         if (frame == i + 6) {
@@ -198,11 +208,15 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
 
 /// Creates the effect's animation objects in gBattleFxWork's objects.
 ///
+/// Called by the summon scenes (Ramses, Nereid, Kirin, Atalanta, Cybele,
+/// Neptune, Tiamat, Procne, Boreas, Thor), Judgment and the particle streams.
+/// Fills work->objects[0] to [entryCount - 1]: object n plays animation n,
+/// with its flags cleared and its sprite priority set. A slot whose object
+/// could not be created is left NULL.
+///
 /// entryCount: how many objects to create.
 /// source: the resource object every one of them is made from.
 /// priority: the sprite priority they take.
-/// Object n plays animation n. A slot whose object could not be created is
-/// left NULL.
 void BattleFx_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   s32 entryIndex = 0;
@@ -223,6 +237,8 @@ void BattleFx_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
   } while (entryIndex != entryCount);
 }
 
+/// Does nothing. BattleFx_CallDoNothing calls it in a loop, 10000 times for
+/// Annihilation, a busy wait.
 void BattleFx_DoNothing(void) {}
 
 #undef ERUPTION_FIELD_MOTE_CELLS

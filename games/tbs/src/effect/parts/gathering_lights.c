@@ -32,12 +32,19 @@ void BattleFx_RunHaunting(struct BattleEffectArgument *effect) {
 }
 #define GATHERING_LIGHTS_SLOTS 128 ///< particles reserved for each target
 
-/// For each target in turn, 20 frames apart, lights burst out of the user;
-/// 30 frames after each one appears it is pulled towards the middle of the
-/// target's body and goes out when it is within 32 pixels across and in
-/// depth. Each light takes one of three images. Each target is struck 70
-/// frames after its turn starts, and the battle shows the damage at frame 80.
-/// The effect layer ripples throughout.
+/// For each target in turn, 20 frames apart, lights burst out of the user,
+/// one every 2 frames; from 30 frames into the turn, one more each frame is
+/// pulled towards the middle of the target's body, and goes out when it is
+/// within 32 pixels across and in depth. Each light takes one of three
+/// images. Each target is struck 70 frames after its turn starts, and the
+/// battle shows the damage at frame 80. The effect layer ripples throughout.
+///
+/// Called by BattleFx_RunDemonNight, BattleFx_RunRumble and
+/// BattleFx_RunHaunting. Loads its colours over the first 64 of the
+/// background palette, uses PARTICLES 0 to 1023, writes work->bg2xLines each
+/// frame and adds BattleFx_ArmBg2AffineHBlankDma to feed it to BG2X; removes
+/// both its callbacks before it returns.
+///
 /// mode : the colours (0 pink, 1 Mars Djinn, 2 Mercury Djinn) and the row of
 ///        gGatheringLights_Counts: lights per target and frames.
 void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
@@ -58,6 +65,8 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
+  // Setup. The sheet is the first field of the work block, so the pictures
+  // decode to `work` itself: three 20x32 lights.
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_MemberBurstImage), work);
   if (mode == 0)
@@ -90,8 +99,8 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
 
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma,
                                 EFFECT_CALLBACK_ORDER);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
-                        75); // trails keep 3/4 a frame
+  // Trails keep 3/4 a frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   AudioCommand_PlayFar(SE_146);
 
   for (frame = 0;
@@ -100,6 +109,8 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
        frame++) {
     s32 *row;
 
+    // Frame loop. The damage shows on frame 80 whatever the number of
+    // targets, with the mode's hit sound.
     if (frame == 80) {
       if (mode == 0)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -108,7 +119,8 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
 
-    // Ripple the canvas sideways, line by line.
+    // Ripple the canvas sideways, line by line: 4 texels either way about a
+    // 4-texel offset (16.16 >> 10 is a quarter in BG2X's 20.8).
     row = work->bg2xLines;
     for (i = 0; i != 160; i++)
       *row++ = (0x100000 - Trig_Sin((frame + i) << 10) * 16) >> 10;
@@ -138,6 +150,7 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
             draw[0](canvas, work->sheet + i % 3 * (20 * 32),
                     screenPosition.x - 10, screenPosition.y - 16, 20, 32);
             EffectStep_AdvanceWithGravity3D(mote, 62, 0);
+            // The pull: 1/512 of the distance added to the speed each frame.
             if (frame > k * 20 + i + 30) {
               s32 dx = (target->x - mote->x) >> 9;
               s32 dy = (target->y + half - mote->y) >> 9;
@@ -157,6 +170,8 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
     EFFECT_END_FRAME(work);
   }
 
+  // Finish: the transfer goes before the blitters and the DMA callback
+  // before the layer closes.
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);

@@ -5,7 +5,11 @@
 #include "../battle_internal.h"
 
 /// Readies the sprite of every unit in the battle (releasing those of units
-/// that left) and sets each one's display mode and motion afresh.
+/// that left) and sets each one's display mode and motion afresh. Called by
+/// Battle_RunEncounter as the battle is set up, by
+/// BattlePresentation_DispatchAction, BattlePresentation_RunUnitTransition,
+/// the auto battle and BattleTargetExec after a call for help, and through
+/// the far stub BattleActor_CommitPlacementFar by BattleFx_RunParticleStreams.
 void BattleObjPut(void) {
   s16 unitIds[14];
 
@@ -14,7 +18,7 @@ void BattleObjPut(void) {
 }
 
 /// Readies the sprite of every unit in the battle (releasing those of units
-/// that left), keeping their modes and motions.
+/// that left), keeping their modes and motions. Called by BattlePres_RunAttack.
 void BattleParty_ListAllUnitsAndSubmit(void) {
   s16 unitIds[14];
 
@@ -22,6 +26,9 @@ void BattleParty_ListAllUnitsAndSubmit(void) {
   BattleActor_SpawnObjectsForList(unitIds, 0);
 }
 
+/// Returns the palette of unit id's battle object. Called by
+/// BattleEvent_Playback and BattleMotion_FlashHit, and through its far stub
+/// by the effect dispatcher (effect/parts/dispatch.c).
 s32 BattleMotion_GetSlotPalette(s32 id) { return BattleObjGet(id)->palette; }
 
 /// The battle has six enemy sprite slots; a large enemy takes two side by
@@ -30,7 +37,7 @@ s32 BattleMotion_GetSlotPalette(s32 id) { return BattleObjGet(id)->palette; }
 
 /// Returns 1 if an enemy of class classId would find room among the enemy
 /// sprite slots: one free slot for a small enemy, two free side by side for
-/// a large one.
+/// a large one. Called by BattleTargetExec before an enemy calls for help.
 s32 EnemyCheck(s32 classId) {
   struct BattleWork *battle;
   s32 needsSingleSlot;
@@ -55,7 +62,8 @@ s32 EnemyCheck(s32 classId) {
 /// records the unit as their owner. Two sprites take a second part,
 /// loaded the same way into further slots. Returns the first slot and the
 /// sprite as (slot << 12) | sprite, or 0 for a party member's unit or when
-/// a load fails.
+/// a load fails. Called by BattleObjMake. Writes gBattleWork->spriteSlots
+/// and the slots' 16 KB sprite buffers at Ram_ActorSpriteSlots.
 s32 SummonSlot_RegisterActorSprites(s32 unitId) {
   s32 spritePart;
   struct BattleWork *battle = gBattleWork;
@@ -74,9 +82,12 @@ s32 SummonSlot_RegisterActorSprites(s32 unitId) {
   result.halves[1] = 0;
   sprite = BattleClass_GetSprite(unit->classId);
   spritePart = result.value;
+  // Once for the sprite, and again for its second part if it has one.
   do {
     s32 slot;
 
+    // A unit with a classIndex is no enemy: nothing is loaded and the
+    // result stays 0.
     if (unit->classIndex != 0)
       continue;
 
@@ -95,6 +106,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unitId) {
 
     {
       s32 palette = BattleClass_GetPalette(unit->classId);
+      // Each slot owns 16 KB of sprite buffer.
       s32 spriteBuffer = (slot << 14) + (s32)Ram_ActorSpriteSlots;
 
       if (ResourceSlot_LoadFar(slot, (u32 *)spriteBuffer, sprite + spritePart,
@@ -122,6 +134,7 @@ s32 SummonSlot_RegisterActorSprites(s32 unitId) {
 }
 
 /// Frees every enemy sprite slot unit unitId holds, unloading its sprite.
+/// Called by BattleObj_MarkForRelease. Clears those gBattleWork->spriteSlots.
 s32 BattleMotion_ReleaseObjectSlotByValue(s32 unitId) {
   struct BattleWork *battle = gBattleWork;
   s32 spriteSlot;
@@ -142,10 +155,11 @@ s32 BattleMotion_ReleaseObjectSlotByValue(s32 unitId) {
 
 /// Returns the kind of the weapon whose item id is itemId (0 to 5), which
 /// picks a party member's attack animation, or WEAPON_KIND_NONE for an item
-/// the list lacks.
+/// the list lacks. Called by BattleUnit_LookupWeaponValueByClass.
 s32 BattleUnit_GetWeaponKind(s32 itemId) {
+  /// gResource_SlotAssignments seen as volatile, for the FAKEMATCH below.
   struct SlotAssignmentView {
-    volatile u16 entries[52];
+    volatile u16 entries[52]; ///< bits: 15..9 weapon kind | 8..0 item id
   };
   s32 assignmentIndex;
   s32 assignment;
@@ -174,7 +188,8 @@ s32 BattleUnit_GetWeaponKind(s32 itemId) {
 
 /// Returns the weapon sprite a party member's attack shows for the kind of
 /// weapon they have equipped (gBattleUnit_WeaponAnimsClass*), or 0 for no
-/// weapon, for Felix, or for a unit that is no party member.
+/// weapon, for Felix, or for a unit that is no party member. Called by
+/// BattleObjMake.
 s32 BattleUnit_LookupWeaponValueByClass(s32 unitId) {
   struct BattleUnit *unit;
   s32 slot;

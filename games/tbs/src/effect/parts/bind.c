@@ -9,14 +9,21 @@
 // rune there. The triangle is drawn as the ring and star effects draw their
 // outlines: its corners are projected onto the canvas and stored in the
 // velocity fields of EffectStep records, then each edge is sampled at evenly
-// spaced points and a flare is stamped at each. The blue-ramp helper here
-// also converts a full-screen tiled picture in place, for Condemn.
+// spaced points and a flare is stamped at each. Both runners write the same
+// frame loop; only the prelude, the step towards the target and the vertex
+// table differ. The blue-ramp helper here, which nothing calls, converts a
+// full-screen tiled picture in place.
 
 /// Turns the screen into shades of blue, top down, with a ragged edge. Works
 /// on a copy of the screen in Ram_MapCellBuffer. Each column starts up to 63
 /// lines late, and the edge speeds up a little every frame; after at most 27
 /// frames the picture moves onto a second blue ramp at colours 96 to 127.
-/// Takes 256 random numbers, one a column. Nothing calls it.
+/// Takes 256 random numbers, one a column.
+///
+/// Nothing calls it or takes its address. Writes background colours 32 to 63
+/// and then 96 to 127, the 0x7800 bytes of BG character block 2 (the
+/// backdrop's picture) and Ram_MapCellBuffer, keeps its delays in the sheet
+/// slot, and waits a frame for each step of the edge.
 UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
   s32 i, x, y, row, end, speed;
   s32 red, green, blue;
@@ -34,6 +41,8 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
     i++;
   } while (i != 32);
   delays = *(u8 **)&gWorkSlot[HEAP_SLOT_BATTLE_SHEET];
+  // The edge moves speed / 4 lines a frame, speed rising by one a frame
+  // from 16.
   end = 0;
   speed = 16;
   Iwram_CopyWords(BLUE_RAMP_PIXELS, (void *)BG_CHAR_BLOCK(2), 0x7800);
@@ -75,6 +84,7 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
     }
     Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS, 0x7800);
     WaitFrames(1);
+    // Past line 248 every column (120 lines, lagging at most 63) is done.
     if (end > 248)
       break;
     i++;
@@ -104,6 +114,12 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
 ///
 /// When effect->prelude is 1 a Jupiter Djinni appears first, sways and rises
 /// away. The canvas darkens a little faster every 16 frames.
+///
+/// Runs BattleFx_RunDjinniEntrance first when effect->prelude is 1. Moves
+/// BG2X so the canvas's x 64 is on the first target, cycles the palette
+/// each frame through Graphics_UpdatePhasePalette, raises
+/// work->transferValue every 16 frames, keeps the triangle's corners in
+/// work->particles 0 to 2, and builds and frees its blitters every frame.
 void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   struct EffectPosition anchor;
   // World input and projected vertices reuse one coordinate workspace.
@@ -145,7 +161,8 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
                                &originY);
   REG_BG2PA = Q_8_8(1);
 
-  // The rune, the motes at 0x1000 and the Djinni at 0x2000.
+  // Setup. The rune, the flares at 0x1000 and the Djinni at 0x2000, in the
+  // rune's colours; the Djinni sheet's palette is skipped.
   palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
@@ -158,16 +175,19 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet);
   palette += 128;
   Resource_DecodeType01(palette, work->sheet + 0x2000);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN,
-                        0x04040404); // 4 off every pixel each frame
+  // 4 off every pixel each frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
   EffectPosition_ProjectScaledBattler(work->effect->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
   AudioCommand_PlayFar(SE_142);
 
   for (frame = 0; frame != work->effect->count * 20 + 72; frame++) {
+    // Frame loop: 20 frames a target and 72 more, though only the first
+    // target is drawn.
     if (frame == 64)
       EFFECT_SHOW_DAMAGE(0);
+    // Red, green and blue sway a third of a turn apart.
     Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
 
     // The Djinni sways 20 pixels either way and from frame 32 rises 2
@@ -186,9 +206,8 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
         draw[1](canvas, work->sheet + 0x2000, x, y, 40, 40);
       EFFECT_RELEASE_BLITTERS();
     }
-    // Load the plain and mirrored max blitters, darken the canvas a step
-    // faster every 16 frames, spin the triangle onto the first target and
-    // stand the rune there, then present the frame.
+    // The blitters, plain and mirrored, keeping the brighter pixel; from
+    // frame 32 the canvas darkens one level faster every 16 frames.
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
@@ -207,11 +226,15 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
         position.world.y = object->y;
         position.world.z = object->z;
         EffectPosition_ProjectPoint(&position.world, &screen);
+        // Always canvas x 64, where BG2X puts the target; only the
+        // projected y is kept.
         screen.x = anchor.x + shift;
         screen.y -= 24;
         // The triangle: its three corners, turned a third of a circle apart and
         // shrinking as they spin, are projected into the particles' velocity
-        // fields; each side is 24 flares.
+        // fields; each side is 24 flares. Over 64 frames the scale falls from
+        // 2.625 by 3/128 a frame while its roll and yaw turn steadily back
+        // to 0; frames 64 to 67 hold it still.
         if (tick <= 67) {
           for (j = 0; j != 3; j++) {
             point = &work->particles[member * 32 + j];
@@ -233,6 +256,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
             struct EffectStep *from = &work->particles[j + member * 32];
             struct EffectStep *to = &work->particles[(j + 1) % 3 + member * 32];
 
+            // Flares shrink from size 5 to 1, a size every 16 frames.
             size = 5 - tick / 16;
             for (k = 0; k != 24; k++) {
               s32 x =
@@ -257,6 +281,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
     EFFECT_PRESENT_FRAME(work);
   }
 
+  // Finish: the blitters were freed each frame.
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
@@ -265,6 +290,10 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
 /// frame 46 the user steps up to the first target.
 ///
 /// Abilities: none (kind 67).
+///
+/// Its own vertex, gBind_TriangleStrikeVertex, sets the triangle's size.
+/// Changes the same state as BattleFx_RunBind, on the narrow canvas, and
+/// starts the user's approach through BattleMotion_ApproachTargetFar.
 void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   struct EffectPosition anchor;
   // World input and projected vertices reuse one coordinate workspace.
@@ -300,7 +329,7 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   work->effect = effect;
   EFFECT_BEGIN_NARROW_CANVAS(0);
 
-  // The rune, and the motes at 0x1000.
+  // Setup, as for Bind: the rune, and the flares at 0x1000.
   palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
@@ -317,15 +346,13 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   AudioCommand_PlayFar(SE_142);
 
   for (frame = 0; frame != work->effect->count * 20 + 72; frame++) {
+    // Frame loop, as in BattleFx_RunBind.
     if (frame == 64)
       EFFECT_SHOW_DAMAGE(0);
     if (frame == 46)
       BattleMotion_ApproachTargetFar(work->effect->actor,
                                      work->effect->actors[0], 16, 0);
     Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
-    // Load the plain and mirrored max blitters, darken the canvas a step
-    // faster every 16 frames, spin the triangle onto the first target and
-    // stand the rune there, then present the frame.
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
@@ -346,9 +373,6 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
         EffectPosition_ProjectPoint(&position.world, &screen);
         screen.x = anchor.x + shift;
         screen.y -= 24;
-        // The triangle: its three corners, turned a third of a circle apart and
-        // shrinking as they spin, are projected into the particles' velocity
-        // fields; each side is 24 flares.
         if (tick <= 67) {
           for (j = 0; j != 3; j++) {
             point = &work->particles[member * 32 + j];

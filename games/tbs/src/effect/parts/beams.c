@@ -4,14 +4,20 @@
 
 #include "../effect_internal.h"
 
-// The beam sequence draws a growing beam picture and its projected sparks
-// over the first target. The ring-and-spark scene plays a strike of rings and
-// sparks, restoring the user's motion afterwards.
-
 /// Draws the selected beam and its projected sparks over the first target: a
 /// beam, arc or wave shoots from the user; from frame 4 the target is hit,
 /// a yellow orb flashes over it and sparks fly off, for 32 frames in all.
 /// effect->kind picks the picture.
+///
+/// Reached through BattleFx_DispatchByIdRange for kinds 136 to 199 and,
+/// through its unsigned test, every kind below 100; BattlePres_RunPlainAttack
+/// (battle/staging.c) sends every plain attack there. Only kinds 0 to 5 have
+/// pictures. Shows the canvas on BG1 (BattleFx_SetupCanvasTileMap), loads
+/// palette colours 0 to 63, scrolls BG1 through gBgScroll[1] and uses
+/// work->particles 0 to 63 (only 0 to 31 fly) and both blitter slots; at the
+/// end it removes the transfer callback, frees the blitters, sets
+/// gBgScroll[1].y back to 32 and hides BG1 again
+/// (BattleFx_HideBg1AndRestoreBackdrop).
 void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   struct EffectPosition anchor;
@@ -20,7 +26,7 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
-  s32 shake;
+  s32 scrollX;
   u8 *sheet;
   struct BattleCamera *camera;
   s32 kind;
@@ -121,23 +127,24 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
-  // Scroll BG1 so the first target is on screen; shake is that scroll,
-  // between -128 and 0, and anchor the target's scrolled position.
+  // Scroll BG1 so the first target is on screen: the scroll is held between
+  // -128 and 0, and anchor becomes the target's scrolled position.
   EffectPosition_ProjectSprite(work->effect->actors[0], &anchor);
   if (work->effect->side == 0)
-    shake = 96 - anchor.x;
+    scrollX = 96 - anchor.x;
   else
-    shake = 32 - anchor.x;
-  if (shake > 0)
-    shake = 0;
-  if (shake < -128)
-    shake = -128;
-  anchor.x += shake;
-  gBgScroll[1].x = shake;
+    scrollX = 32 - anchor.x;
+  if (scrollX > 0)
+    scrollX = 0;
+  if (scrollX < -128)
+    scrollX = -128;
+  anchor.x += scrollX;
+  gBgScroll[1].x = scrollX;
   gBgScroll[1].y = 80;
   WaitFrames(1);
   // 64 sparks start at the first target's middle and fly away from the
-  // centre of the field at random speeds; variant is a spark's life.
+  // centre of the field at random speeds; variant is a spark's life, 16 to
+  // 79 frames, so the later sparks are larger and last longer.
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
   half = BattleUnit_GetEffectHeightFar(work->effect->actors[0]) / 2;
   for (i = 0; i != 64; i++) {
@@ -153,6 +160,7 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
     spark->variant = i + 16;
   }
 
+  // 32 frames: the picture plays from frame 0, the hit lands on frame 4.
   for (frame = 0; frame != 32; frame++) {
     // On frame 5 the battle shows the damage, with the heavy impact if the
     // user's class is flagged in the summon table and SE_133 otherwise. On
@@ -174,20 +182,22 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
     if (kind == 4) {
       if (frame <= 11) {
         if (work->effect->side == 0)
-          draw[1](canvas, work->sheet + (5 - frame / 2) * 0x300,
-                  screenPosition.x + shake - 48, screenPosition.y - 8, 48, 16);
+          draw[1](canvas, work->sheet + (5 - frame / 2) * (48 * 16),
+                  screenPosition.x + scrollX - 48, screenPosition.y - 8, 48,
+                  16);
         else
-          draw[1](canvas, work->sheet + (5 - frame / 2) * 0x300,
-                  screenPosition.x + shake, screenPosition.y - 8, 48, 16);
+          draw[1](canvas, work->sheet + (5 - frame / 2) * (48 * 16),
+                  screenPosition.x + scrollX, screenPosition.y - 8, 48, 16);
       }
     } else if ((u32)kind <= 2 || kind == 5) {
       if (frame <= 11) {
         if (work->effect->side == 0)
-          draw[1](canvas, work->sheet + frame / 2 * 0xd80,
-                  screenPosition.x + shake - 48, screenPosition.y - 40, 48, 72);
+          draw[1](canvas, work->sheet + frame / 2 * (48 * 72),
+                  screenPosition.x + scrollX - 48, screenPosition.y - 40, 48,
+                  72);
         else
-          draw[1](canvas, work->sheet + frame / 2 * 0xd80,
-                  screenPosition.x + shake, screenPosition.y - 40, 48, 72);
+          draw[1](canvas, work->sheet + frame / 2 * (48 * 72),
+                  screenPosition.x + scrollX, screenPosition.y - 40, 48, 72);
       }
     } else {
       if (frame <= 17) {
@@ -195,12 +205,12 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
 
         if (work->effect->side == 0)
           draw[1](canvas, work->sheet + gBeams_Cells[cell],
-                  screenPosition.x + gBeams_CellReaches[cell] + shake - 58,
+                  screenPosition.x + gBeams_CellReaches[cell] + scrollX - 58,
                   screenPosition.y - gBeams_CellHeights[cell] / 2,
                   gBeams_CellWidths[cell], gBeams_CellHeights[cell]);
         else
           draw[1](canvas, work->sheet + gBeams_Cells[cell],
-                  screenPosition.x - gBeams_CellReaches[cell] + shake -
+                  screenPosition.x - gBeams_CellReaches[cell] + scrollX -
                       gBeams_CellWidths[cell] + 58,
                   screenPosition.y - gBeams_CellHeights[cell] / 2,
                   gBeams_CellWidths[cell], gBeams_CellHeights[cell]);
@@ -209,7 +219,7 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
     // Frames 4 to 15: the yellow orb flashes over the target, six 40x48
     // cells, two frames each.
     if (frame >= 4 && frame <= 15)
-      draw[0](canvas, Ram_MapCellBuffer + (frame - 4) / 2 * 0x780,
+      draw[0](canvas, Ram_MapCellBuffer + (frame - 4) / 2 * (40 * 48),
               anchor.x - 16, anchor.y - 24, 40, 48);
     EFFECT_VIEW_FROM_CAMERA(camera);
     // From frame 4 the sparks fly. Only the first 32 move: each is drawn
@@ -224,7 +234,7 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
 
         if (size > 0) {
           Render_ProjectPoint(&spark->x, EffectPosition_Coordinates(&point));
-          point.x += shake;
+          point.x += scrollX;
           size >>= 3;
           size += 2;
           EFFECT_DRAW_FLARE(draw[pair & 1], canvas, sheet, point.x, point.y,
@@ -248,6 +258,17 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
 /// frames while it stands still; then star burst and crescent rings flash
 /// over the canvas and sparks fly from the first target for 32 frames, and
 /// the background palette fades back in.
+///
+/// Reached through BattleFx_DispatchByIdRange for kinds 200 and up, which
+/// BattlePres_RunAttack (battle/staging.c) makes by adding 200 to the kind of
+/// a critical hit; so the gathering always plays. Shows the canvas on BG1,
+/// keeps the battle's transition centred between the user and the first
+/// target while it loads, scrolls BG1 through gBgScroll[1] and uses
+/// work->particles 0 to 63, work->imageStorage, Ram_MapCellBuffer and both
+/// blitter slots. While the motes gather it adds Palette_StepFadeTransfer and
+/// stops the user's motion, and restores both after. At the end it removes
+/// the transfer callback, frees the blitters, sets gBgScroll[1].y back to 32,
+/// steps the background palette level from 6 back to 0 and hides BG1 again.
 void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   struct EffectPosition anchor;
@@ -257,7 +278,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
-  s32 shake;
+  s32 scrollX;
   u8 *sheet;
   struct BattleCamera *camera;
   s32 velocityX;
@@ -349,7 +370,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
       SET_VELOCITY(mote, Random16() & 0xffff, Random16() & 0xffff,
                    Random16() & 0xffff);
     }
-    ObjectDispatch_SetAnimationSpeedFar(object, 0);
+    ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 0);
     velocityX = object->velocityX;
     velocityY = object->velocityY;
     velocityZ = object->velocityZ;
@@ -359,8 +380,8 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     object->acceleration = 0;
     object->verticalMotionStrength = 0;
     EffectPosition_ProjectScaledBattler(work->effect->actor, &screenPosition);
-    shake = 64 - screenPosition.x;
-    gBgScroll[1].x = shake;
+    scrollX = 64 - screenPosition.x;
+    gBgScroll[1].x = scrollX;
     gBgScroll[1].y = 80;
     work->fadeFrames = 24;
     work->fadeStep = 0;
@@ -392,7 +413,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
       EFFECT_PRESENT_FRAME(work);
     }
     Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-    ObjectDispatch_SetAnimationSpeedFar(object, 16);
+    ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
     SET_VELOCITY(object, velocityX, velocityY, velocityZ);
     object->acceleration = acceleration;
     object->verticalMotionStrength = strength;
@@ -408,16 +429,16 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
                BGCNT_SCREEN_BASE(31);
   EffectPosition_ProjectScaledBattler(work->effect->actors[0], &anchor);
   if (work->effect->side == 0)
-    shake = 32 - anchor.x;
+    scrollX = 32 - anchor.x;
   else
-    shake = 96 - anchor.x;
-  if (shake > 0)
-    shake = 0;
-  if (shake < -128)
-    shake = -128;
-  anchor.x += shake;
+    scrollX = 96 - anchor.x;
+  if (scrollX > 0)
+    scrollX = 0;
+  if (scrollX < -128)
+    scrollX = -128;
+  anchor.x += scrollX;
   gBgScroll[1].y = 80;
-  gBgScroll[1].x = shake;
+  gBgScroll[1].x = scrollX;
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
   half = BattleUnit_GetEffectHeightFar(work->effect->actors[0]) / 2;
   for (i = 0; i != 64; i++) {
@@ -443,7 +464,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     if (frame <= 1)
       draw[0](canvas, work->imageStorage, 0, 0, 120, 120);
     else if (frame <= 3)
-      draw[0](canvas, work->imageStorage + 0x3840, 0, 0, 120, 120);
+      draw[0](canvas, work->imageStorage + (120 * 120), 0, 0, 120, 120);
     else if (frame <= 5)
       draw[0](canvas, Ram_MapCellBuffer, 0, 0, 120, 120);
     else if (frame <= 7)
@@ -459,7 +480,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
 
         if (size > 0) {
           EffectPosition_ProjectPoint(&spark->x, &spot);
-          spot.x += shake;
+          spot.x += scrollX;
           size >>= 3;
           size += 2;
           spot.y += 16;

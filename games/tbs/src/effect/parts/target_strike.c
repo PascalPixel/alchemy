@@ -7,14 +7,17 @@
 // Target strikes: repeated slashes or columns of light on the first target.
 // The folder README describes them under "Effect families".
 
-/// The strike sparks live after the motes in PARTICLES.
+/// The strike sparks, 512 of them, live after the motes in PARTICLES. Only
+/// the first 128 are drawn; a heavy hit lights all 512.
 #define TARGET_STRIKE_SPARKS ((struct EffectStep *)(Ram_MapCellBuffer + 0x3800))
 
-/// The smoke pictures in the sheet.
+/// The smoke pictures in the sheet: six 24x48 puffs.
 #define TARGET_STRIKE_SMOKE_CELLS 0x3200
 
-/// gTargetStrike_Records has seven entries for each style.
+/// Column `field` of style `mode`'s row of gTargetStrike_Records.
 #define TARGET_STRIKE_VALUE(mode, field) gTargetStrike_Records[(mode)][(field)]
+
+/// The columns of gTargetStrike_Records.
 enum {
   TARGET_STRIKE_KIND,         ///< STRIKE_KIND_SLASH or STRIKE_KIND_COLUMN
   TARGET_STRIKE_HITS,         ///< how many times the target is struck
@@ -120,6 +123,14 @@ void BattleFx_RunDrainFang(struct BattleEffectArgument *effect) {
 /// Strikes the first target TARGET_STRIKE_HITS times with a sideways slash or a
 /// column of light, with the extras its flags choose, and lets the battle
 /// show the damage on the hits.
+///
+/// Called by the twelve wrappers above, from BattleFx_RunNumbingSting to
+/// BattleFx_RunDrainFang. Loads the style's colours over the first 64 of the
+/// background palette; uses work->particles 0 to 63 for smoke, PARTICLES 0
+/// to 127 for motes and TARGET_STRIKE_SPARKS for sparks; builds and frees its
+/// blitters in both slots every frame, sets work->shakeFrames on each hit and
+/// lights the user while an absorb runs. Leaves the canvas layer closed.
+///
 /// mode : the style, 0 to 11, a row of gTargetStrike_Records.
 void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition ground;
@@ -152,7 +163,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
     BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
-  // The images: glints at the start of the sheet, the slashes or the
+  // Setup. The images: glints at the start of the sheet, the slashes or the
   // columns at 0xc80, smoke at TARGET_STRIKE_SMOKE_CELLS, and the style's
   // palette.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, particleSheet,
@@ -222,7 +233,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
         TARGET_STRIKE_SPARKS[i].velocityY = ((Random16() & 255) - 128) << 11;
         TARGET_STRIKE_SPARKS[i].velocityZ = ((Random16() & 255) - 128) << 11;
       } else {
-        if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & 16) {
+        // The heavy slash throws its sparks twice as wide.
+        if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_HEAVY) {
           TARGET_STRIKE_SPARKS[i].velocityX = (Random16() & 0x1ff) << 11;
           TARGET_STRIKE_SPARKS[i].velocityY = ((Random16() & 0x1ff) - 256)
                                               << 11;
@@ -233,8 +245,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
           TARGET_STRIKE_SPARKS[i].velocityY = ((Random16() & 255) - 128) << 11;
           TARGET_STRIKE_SPARKS[i].velocityZ = ((Random16() & 255) - 128) << 11;
         }
-        if (TARGET_STRIKE_SPARKS[i].x >
-            0) // slashes throw sparks towards the middle
+        // Slashes throw sparks towards the middle of the field.
+        if (TARGET_STRIKE_SPARKS[i].x > 0)
           TARGET_STRIKE_SPARKS[i].velocityX =
               -TARGET_STRIKE_SPARKS[i].velocityX;
       }
@@ -242,8 +254,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
     }
   }
 
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
-                        75); // trails keep 3/4 a frame
+  // Trails keep 3/4 a frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   // Strike halfway between the target's middle and its feet.
   EffectPosition_ProjectScaledBattler(work->effect->actors[0], &targetPosition);
@@ -252,6 +264,9 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
 
   for (frame = 0; frame != TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FRAMES);
        frame++) {
+    // Frame loop: the strike, then glints, then smoke, motes and sparks,
+    // each drawn over the last. Hit n lights particle group n, found as
+    // frame / (6 * IMAGE_FRAMES).
     s32 span = TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_HITS) *
                TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES);
     s32 length = span * 4;
@@ -294,8 +309,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
             EFFECT_SHOW_DAMAGE(SE_133);
           }
           // A heavy hit lights every spark at once; otherwise the hit
-          // lights the next 32. Each hit also starts the next 8 smoke
-          // puffs.
+          // lights the next 32. Each hit also starts 8 smoke puffs, the
+          // first half of its group of 16.
           if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_HEAVY) {
             work->shakeFrames = 8;
             EFFECT_STRIKE_TARGET(work->effect, 0, 12, 4);
@@ -367,8 +382,12 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
       if (frame % (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 4) ==
           TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 3) {
         // A hit: the target flashes; the last hit lets the battle show the
-        // damage, the others only play the hit sound. Each hit lights the
-        // next sparks, smoke puffs and motes.
+        // damage, the others only play the hit sound. Each hit lights a
+        // group of 64 sparks, 8 smoke puffs and 16 motes.
+        // XXX: the group is frame / (6 * IMAGE_FRAMES), a slash's period,
+        // though column hits are four images apart, so a three-hit column's
+        // second and third hits light the same group; a capture of Acid Bite
+        // would show whether the third hit throws anything new.
         ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, 0, 8);
         work->shakeFrames = 4;
@@ -465,7 +484,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
       }
       // Motes burst out of the target, then after 10 frames are pulled
       // into the user, who glows from frame 55 to 90; a mote goes out when
-      // it reaches the user.
+      // it is within 16 pixels of the user across the ground (dx and dz are
+      // 1/256 of the distance).
       if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_ABSORB) {
         s32 size = 3;
 
@@ -529,6 +549,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
     EFFECT_END_FRAME(work);
   }
 
+  // Finish: the blitters were freed each frame.
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }

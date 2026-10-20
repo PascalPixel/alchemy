@@ -11,8 +11,9 @@
 /// To find the effect a move plays, search for the move's English name: each
 /// handler's "Abilities:" comment lists the abilities that reach it, and each
 /// row of gBattleFx_EffectHandlers (effect_table.c) gives its kind, its part
-/// and its first ability. README.md gives the prefixes and the spellings the
-/// parts use. The shared machinery:
+/// and its first ability. README.md gives the words and prefixes the parts
+/// use, and ../MATCHING.md the spellings some sites keep to match. The shared
+/// machinery:
 ///
 ///   Entry points    dispatch.c: BattleFx_RunTableEffect,
 ///                   BattleFx_RunSceneEffect; positions.c:
@@ -32,9 +33,8 @@
 
 #include "effect_internal.h"
 
-// The effect object's code, in ROM order. Each part is compiled here, as
-// part of this one object, never on its own: the order of these includes is
-// the order of the code in the ROM.
+// The parts, in ROM order: the order of these includes is the order of the
+// code in the ROM.
 #include "parts/display.c"
 #include "parts/falling.c"
 #include "parts/streaks.c"

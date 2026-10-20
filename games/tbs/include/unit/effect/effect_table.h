@@ -31,15 +31,18 @@ extern u8 gBattleFx_GlintCellWidths[];
 extern u8 gBattleFx_GlintCellHeights[];
 
 /// Each Ice variant: its shards and how many frames it runs.
-enum { ICE_SHARD_COUNT, ICE_FRAMES };
+enum {
+  ICE_SHARD_COUNT, ///< shards that fall
+  ICE_FRAMES       ///< the effect's frames; the damage shows 16 before
+};
 extern u8 gFalling_IceCounts[][2];
 
 /// Each Douse variant: its bolt waves, sparks per bolt, spacing and frames.
 enum {
-  FALLING_BOLT_WAVE_COUNT,
-  FALLING_BOLT_SPARKS_PER_BOLT,
-  FALLING_BOLT_SPACING,
-  FALLING_BOLT_DURATION
+  FALLING_BOLT_WAVE_COUNT,      ///< bolts that drop, of the 64 placed
+  FALLING_BOLT_SPARKS_PER_BOLT, ///< sparks each bolt throws
+  FALLING_BOLT_SPACING,         ///< pixels between bolts along the slant
+  FALLING_BOLT_DURATION         ///< the effect's frames
 };
 extern u8 gFalling_Counts[][4];
 
@@ -71,7 +74,10 @@ extern s8 gSpiderWeb_CellBiasY[];
 
 /// Each gathering-lights mode: the lights per target and the frames before the
 /// targets' turns.
-enum { GATHERING_LIGHTS_COUNT, GATHERING_LIGHTS_FRAMES };
+enum {
+  GATHERING_LIGHTS_COUNT, ///< lights for each target
+  GATHERING_LIGHTS_FRAMES ///< frames before the targets' turns
+};
 extern u8 gGatheringLights_Counts[][2];
 
 extern u16 gMirroredWall_Cells[];
@@ -107,25 +113,41 @@ extern u8 gTiamat_StreakDrops[];
 extern u16 gTiamat_StreakOffsets[];
 
 /// The foot of each of Nereid's columns of fire.
-enum { NEREID_COLUMN_X, NEREID_COLUMN_Y };
+enum {
+  NEREID_COLUMN_X, ///< canvas x of the column's middle
+  NEREID_COLUMN_Y  ///< canvas y of its foot
+};
 extern u8 gNereid_Columns[][2];
 
 extern s32 gNereid_Gravity[];
 
 /// Each Froth variant: its motes and frames.
-enum { FROTH_MOTE_COUNT, FROTH_FRAMES };
+enum {
+  FROTH_MOTE_COUNT, ///< motes, at most FROTH_MOTES (vortices.c)
+  FROTH_FRAMES      ///< the effect's frames; the damage shows 16 before
+};
 extern u8 gVortices_Counts[][2];
 
 /// Each Whirlwind variant: its tornadoes, their sway and the screen shake.
-enum { WHIRLWIND_TORNADOES, WHIRLWIND_SWAY, WHIRLWIND_SHAKE };
+enum {
+  WHIRLWIND_TORNADOES, ///< tornadoes drawn
+  WHIRLWIND_SWAY,      ///< how far each sways across, in pixels
+  WHIRLWIND_SHAKE      ///< Camera_ApplyShake's range
+};
 extern u8 gVortices_Shapes[][3];
 
 /// Where each Prism shard starts in the crystal.
-enum { PRISM_SHARD_START_X, PRISM_SHARD_START_Y };
+enum {
+  PRISM_SHARD_START_X, ///< pixels from the crystal's left
+  PRISM_SHARD_START_Y  ///< pixels from its top
+};
 extern u8 gPrism_ShardStarts[][2];
 
 /// Each Prism variant: its crystals and frames.
-enum { PRISM_CRYSTAL_COUNT, PRISM_FRAMES };
+enum {
+  PRISM_CRYSTAL_COUNT, ///< crystals drawn
+  PRISM_FRAMES         ///< the effect's frames
+};
 extern u8 gPrism_Counts[][2];
 
 extern u8 gPrism_ShardWidths[];
@@ -133,7 +155,10 @@ extern u8 gPrism_ShardHeights[];
 extern s32 gPrism_ShardOffsets[];
 
 /// Each Plasma variant: the sparks per pillar and the frames of shake.
-enum { PLASMA_SPARKS, PLASMA_SHAKE_FRAMES };
+enum {
+  PLASMA_SPARKS,      ///< sparks each lightning pillar throws
+  PLASMA_SHAKE_FRAMES ///< frames the screen shakes at each strike
+};
 extern u16 gPlasma_Sparks[][2];
 
 extern u8 gPlasma_Columns[][7];
@@ -141,7 +166,11 @@ extern u8 gPlasma_Counts[];
 
 /// Each spark group variant: sparks per burst, bursts, and from
 /// SPARK_GROUPS_OFFSET each burst's offset across.
-enum { SPARK_GROUPS_SPARKS, SPARK_GROUPS_BURSTS, SPARK_GROUPS_OFFSET };
+enum {
+  SPARK_GROUPS_SPARKS, ///< sparks each burst throws
+  SPARK_GROUPS_BURSTS, ///< bursts, 8 frames apart
+  SPARK_GROUPS_OFFSET  ///< burst i's offset across, in pixels, at [2 + i]
+};
 extern u16 gPlasma_Shapes[][5];
 
 extern u8 gPlasma_FlashCells[];
@@ -151,7 +180,10 @@ extern u8 gVolcano_StartFrames[];
 extern u8 gTargetMotes_GlintFlips[];
 
 /// Cybele's waving poses: the animations of objects 3 and 4.
-enum { CYBELE_POSE_OBJECT3, CYBELE_POSE_OBJECT4 };
+enum {
+  CYBELE_POSE_OBJECT3, ///< object 3's animation
+  CYBELE_POSE_OBJECT4  ///< object 4's animation
+};
 extern u8 gCybele_ObjectPoses[][2];
 
 extern u16 gCybele_ThornOffsets[];
@@ -196,7 +228,10 @@ extern u8 gFire_FlareBiasY[];
 extern u16 gFire_FlareCells[];
 
 /// Where each rising-motes ice column stands: x and the y of its foot.
-enum { RISING_MOTES_COLUMN_X, RISING_MOTES_COLUMN_FOOT };
+enum {
+  RISING_MOTES_COLUMN_X,   ///< canvas x of the column's left edge
+  RISING_MOTES_COLUMN_FOOT ///< canvas y of its foot
+};
 extern u8 gFrost_ColumnSpots[][2];
 
 extern u8 gFrost_Timings[][3];
@@ -260,7 +295,10 @@ extern u8 gThor_TargetPalettes[];
 extern u8 gThor_SmokeFlips[];
 
 /// Where each Spire shard starts, before its rock's offset across.
-enum { SPIRE_SHARD_X, SPIRE_SHARD_Y };
+enum {
+  SPIRE_SHARD_X, ///< canvas x
+  SPIRE_SHARD_Y  ///< canvas y
+};
 extern u8 gSpire_ShardOffsets[][2];
 
 extern s8 gSpire_RockX[];

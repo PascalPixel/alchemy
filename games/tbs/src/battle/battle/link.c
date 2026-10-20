@@ -26,7 +26,9 @@ enum LinkPartyPacketSize {
 /// member at a time, and puts the "Enemy" label (MsgEnemyLabel) before each
 /// name; then receives the opponent's Djinn recovery list. Stops early if a
 /// transfer cannot start. Returns how many of the received units are
-/// members (a unit sent with side 0 is an empty place).
+/// members (a unit sent with side 0 is an empty place). Nothing in the
+/// source calls it. Overwrites enemy units 128 to 130 and the opponent's
+/// recovery table.
 s32 LinkBattle_ReceiveParty(void) {
   u16 label[24];
   void *buffer;
@@ -39,7 +41,6 @@ s32 LinkBattle_ReceiveParty(void) {
   buffer = Runtime_BumpAllocateAlternatePool(LINK_PARTY_UNIT_BYTES);
   memberCount = 0;
   partySlot = 0;
-  // Receive each fixed-size member record before adding the localized prefix.
   while (partySlot < LINK_PARTY_SIZE) {
     opponent = UnitGetFar(partySlot + FIRST_ENEMY_UNIT);
     if (SerialRuntime_BeginReceive(opponent) == -1) {
@@ -51,7 +52,8 @@ s32 LinkBattle_ReceiveParty(void) {
     }
     WaitFrames(2);
 
-    // Shift the name right to make room for the label, then write it in.
+    // Measure the label (at most NAME_LIMIT + 1 characters), shift the name
+    // right to make room for it, then write it in; the name's end is cut.
     Ui_AdjustValueWithoutLimitFar(MsgEnemyLabel, label);
     i = 0;
     if (label[i] != 0) {
@@ -92,7 +94,8 @@ s32 LinkBattle_ReceiveParty(void) {
 /// Link battle: sends the party, one member at a time and three places in
 /// all (an empty place has side 0), then the Djinn recovery list with each
 /// owner given the unit id the opponent knows them by. Records that id of
-/// each member in ownerSlots.
+/// each member in gBattleWork->ownerSlots (0xff for none). Nothing in the
+/// source calls it.
 s32 LinkBattle_SendParty(void) {
   u8 *buffer;
   struct BattleWork *work;
@@ -154,11 +157,13 @@ s32 LinkBattle_SendParty(void) {
   MemFree(buffer);
 }
 
-/// Unused. Copies the first four characters of a name and a terminator (five
+/// Copies the first four characters of a name and a terminator (five
 /// bytes) into a buffer on its own stack, an underscore for each one that is
 /// missing, and returns a pointer to the terminator in that buffer, which no
 /// longer exists once it returns. Its first two arguments are ignored.
-u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source) {
+/// Nothing calls it.
+UNUSED u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1,
+                                               u16 *source) {
   u8 buffer[5];
   u8 *base = buffer;
   u32 fill = '_';
@@ -178,6 +183,7 @@ u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source) {
     count--;
   } while (count >= 0);
   base[4] = 0;
+  // BUG: buffer is this function's own stack, gone once it returns.
   return dst;
 }
 
@@ -185,6 +191,8 @@ u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source) {
 /// waits up to 30 frames for it to show the same. Returns 0 once both do (or
 /// outside a link battle), and -1 if the battle is paused, the link is lost
 /// for more than LINK_MAX_MISSED_FRAMES frames or the signatures never meet.
+/// Called by BattlePresentation_BuildActions. Writes the first eight bytes
+/// of gSerialTransfer.payload.
 s32 BattlePres_WaitSync(void) {
   struct BattleWork *work = gBattleWork;
   u16 *peer;
@@ -195,10 +203,12 @@ s32 BattlePres_WaitSync(void) {
   if (work->twoSided != 0) {
     u32 other = work->linkSide ^ 1;
 
+    // gLinkPeerSignatures[other]: a peer's payload holds four bytes before
+    // its signature.
     peer = (u16 *)(gSerialPeerPayloads[other] + 4);
     signature = (u16 *)gSerialTransfer.payload;
     if (work->linkPaused == 0) {
-      // Publish the execution signature, then wait for the peer's final pair.
+      // The other console is in step once its second pair reads "EC".
       signature[0] = 'E';
       signature[1] = 'X';
       signature[2] = 'E';
@@ -228,7 +238,9 @@ s32 BattlePres_WaitSync(void) {
 /// for the other console to show it too, failing if the other console
 /// shows a different earlier step. Returns -1 if the battle is paused, the
 /// link is lost for more than LINK_MAX_MISSED_FRAMES frames, or the steps
-/// disagree; 0 once in step, or outside a link battle.
+/// disagree; 0 once in step, or outside a link battle. Called by
+/// Battle_RunEncounter. Writes the first sixteen bytes of
+/// gSerialTransfer.payload.
 s32 BattlePres_SyncTurn(void) {
   struct BattleWork *work = gBattleWork;
   u16 *peer;
@@ -236,7 +248,7 @@ s32 BattlePres_SyncTurn(void) {
   s32 missed = 0;
   /* FAKEMATCH(dead): an unused array for the twenty bytes of frame no
    * instruction touches; without it, 8 of 232 instructions differ in tbs-en. */
-  u16 spare[10];
+  UNUSED u16 spare[10];
 
   if (work->twoSided != 0) {
     peer = gLinkPeerSignatures[work->linkSide ^ 1];
@@ -339,7 +351,9 @@ s32 BattlePres_SyncTurn(void) {
 }
 
 /// Records, for each party member, the unit id the link opponent knows them
-/// by (FIRST_ENEMY_UNIT plus their place in the party).
+/// by (FIRST_ENEMY_UNIT plus their place in the party), in
+/// gBattleWork->ownerSlots. Called by Battle_RunEncounter as a link battle
+/// is set up.
 s32 BattleParty_AssignMemberSlots(void) {
   u16 activeMembers[8];
   struct BattleWork *battleState = gBattleWork;
@@ -354,7 +368,8 @@ s32 BattleParty_AssignMemberSlots(void) {
   }
 }
 
-/// Clears the link transfer's payload, the signatures included.
+/// Clears the link transfer's payload, the signatures included. Called by
+/// Battle_RunEncounter on each way out of the battle but fleeing.
 s32 Battle_ClearSerialTransferPayload(void) {
   return Iwram_ClearWords(gSerialTransfer.payload, 16);
 }

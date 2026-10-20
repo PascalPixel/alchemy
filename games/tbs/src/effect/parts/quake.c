@@ -28,6 +28,11 @@ struct RockWallHeights {
 ///
 /// Each pillar is capped with a strip of ground cut from the background.
 ///
+/// Writes REG_BG2PA, REG_BLDCNT and, on side 1, REG_BG2X; overwrites the
+/// first 0x8000 bytes of Ram_MapCellBuffer with BG tiles; sets the targets'
+/// vertical velocity and gravity; arms work->shakeFrames. Ends with the
+/// transfer callback removed, the blitter freed and the canvas layer closed.
+///
 /// effect: the targets; variant picks the row of gQuake_Timings.
 void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
   static s32 wallHeights[4] = {
@@ -59,8 +64,9 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
   camera = ((struct BattleCamera *)WORK_SLOT(HEAP_SLOT_CAMERA));
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
-  REG_BG2PA = Q_8_8(1); // the canvas at its own width
-  REG_BLDCNT = 0;       // no blending
+  // The canvas at its own width, opaque: the pillars hide what is behind.
+  REG_BG2PA = Q_8_8(1);
+  REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_RockWallSheet,
                              work->sheet + QUAKE_WALL_CELLS, 1, 1);
 
@@ -90,11 +96,16 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   draw = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+  // particles[member].variant becomes 1 once that target has landed.
   EFFECT_FOR_EACH_TARGET(member, work->effect)
-    work->particles[member].variant = 0; // 1 once the target has landed
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
-                        0); // each transfer clears the canvas
+    work->particles[member].variant = 0;
+  // Each transfer clears the canvas: the pillars are redrawn every frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  // The heights are negative; the sine below is taken as its size, so each
+  // pillar still rises up to 32 pixels.
   heights = (*(const struct RockWallHeights *)&wallHeights);
+  // The screen shakes for 128 frames: all of Quake (80) and Earthquake (112),
+  // and all but the last 16 of Quake Sphere (144).
   work->shakeFrames = 128;
   AudioCommand_PlayFar(SE_141);
 
@@ -102,16 +113,17 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
        frame != gQuake_Timings[work->effect->variant][QUAKE_TIMING_FRAMES];
        frame++) {
     EFFECT_VIEW_FROM_CAMERA(camera);
+    // The damage shows 16 frames before the end.
     if (frame ==
         gQuake_Timings[work->effect->variant][QUAKE_TIMING_FRAMES] - 16)
-      EFFECT_SHOW_DAMAGE(SE_133); // 16 frames before the end
+      EFFECT_SHOW_DAMAGE(SE_133);
 
     // The pillars rise from frames 16, 20 and 24.
     for (column = 0; column != 3; column++) {
       s32 riseFrame = column * 4 + 16;
 
-      if ((frame & 31) + 32 ==
-          riseFrame) // never true: the left side is 32 or more
+      // Never true: the left side is 32 or more and riseFrame at most 24.
+      if ((frame & 31) + 32 == riseFrame)
         heights.column[column] += 32;
       if (frame >= riseFrame &&
           frame < riseFrame + gQuake_Timings[work->effect->variant]
@@ -143,7 +155,9 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
               screen.x <=
                   column * QUAKE_PILLAR_WIDTH + 8 + QUAKE_PILLAR_WIDTH &&
               screen.y >= top) {
-            object->velocityY = 12 << 16; // 12 pixels a frame upwards
+            // 12 pixels a frame upwards, under the gravity the battle's own
+            // motions use (ObjMotRst in battle/motion.c).
+            object->velocityY = 12 << 16;
             object->verticalMotionStrength = 0xab85;
           }
           if (object->y < 0)

@@ -4,11 +4,6 @@
 
 #include "../effect_internal.h"
 
-// The burst shower fires one burst a frame from the user at random points
-// near the targets, and hits each target every 8 frames. One mode draws a
-// lightning bolt instead. Each burst is one particle slot, its variant
-// counting the 24 frames it lives (-1 when free).
-
 // The burst shower's second picture in the sheet, after the tornado.
 #define BURST_SHOWER_CELLS 0xC56
 #define BURST_SHOWER_BURSTS 48     ///< one fired a frame from frame 0
@@ -28,6 +23,11 @@ enum BurstShowerMode {
 
 /// Arms DMA 0 to copy one word of gBattleFxWork's bg2xLines table into BG2X at
 /// each horizontal blank, bending BG2 line by line.
+///
+/// Runs each frame as a scheduler callback added by the target motes, the
+/// casting impacts, Condemn, the gathering lights, Torch and Planet Diver,
+/// each of which removes it before it returns. Stops DMA 0 and restarts it
+/// from the top of the table.
 void BattleFx_ArmBg2AffineHBlankDma(void) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   volatile u16 *channel = REG_DMA0;
@@ -91,6 +91,13 @@ void BattleFx_RunDeadlyGas(struct BattleEffectArgument *effect) {
 /// hit every 8 frames. Each burst lives 24 frames. A sound plays on frame 4
 /// and the battle shows the damage on frame 24 (frame 60 in the grey mode).
 ///
+/// Called by the seven blessing wrappers above. Each burst is one of
+/// work->particles, its variant counting the frames it has lived (-1 when
+/// free). Writes REG_BLDALPHA, the first 64 BG colours (all but modes 5 and
+/// 7), REG_BLDCNT in the grey mode and REG_BG2PA in the lightning mode; sets
+/// work->shakeFrames on each hit. Ends with the transfer callback removed,
+/// the blitters freed and the canvas layer closed.
+///
 /// effect: the user and the targets.
 /// mode: the burst and its palette: 0 flash bursts, 1 in the ice block
 ///       palette, 2 in the water spray palette, 3 pink and fired from 16
@@ -118,6 +125,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   s32 width;
   s32 height;
 
+  // The slots are read from the canvas's, not the work block's.
   slots = (u32 *)&gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
   canvas = (void *)slots[0];
   work = (struct BattleEffectWork *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_EFFECT);
@@ -126,6 +134,8 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_BeginCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
+  // The faces are drawn facing each way by side; the others take the usual
+  // pair for the side.
   if (mode == BURST_SHOWER_MODE_FACES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
     draw[0] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_BLITTER);
@@ -136,7 +146,8 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
   }
 
-  // The pictures and the palette.
+  // The pictures and the palette. The tornado is loaded first in every mode
+  // but never drawn here; its size fixes where the burst pictures start.
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   if (mode == BURST_SHOWER_MODE_LIGHTNING) {
     Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetA,
@@ -181,6 +192,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
     }
   }
 
+  // The faces leave shorter trails than the bursts.
   if (mode == BURST_SHOWER_MODE_FACES) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   } else {
@@ -189,11 +201,12 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
 
-  // Where the bursts start: the user, moved for some modes.
   for (i = 0; i != 64; i++) {
     work->particles[i].variant = -1;
   }
 
+  // Where the bursts start: the user, moved for some modes. The lightning's
+  // canvas is shown at three times its width, so its x is a third.
   EffectPosition_ProjectSprite(work->effect->actor, &origin);
   if (mode == BURST_SHOWER_MODE_PINK) {
     origin.y -= 16;
@@ -227,6 +240,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
 
   frame = 0;
   do {
+    // The bursts aim at the targets in turn, one a frame.
     target = frame % work->effect->count;
     if (frame == 4) {
       AudioCommand_PlayFar(SE_136);
@@ -241,8 +255,9 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
 
-    // Mode 5 draws the lightning from the user; the others fire one burst
-    // a frame for 48 frames at a random point near a target.
+    // Mode 5 draws the lightning from the user, stepping through its three
+    // 72x62 pictures every 3 frames (0x1200 bytes apart); the others fire one
+    // burst a frame for 48 frames at a random point near a target.
     if (mode == BURST_SHOWER_MODE_LIGHTNING) {
       if (work->effect->side == 1) {
         draw[0](canvas,
@@ -269,7 +284,9 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
       }
     }
 
-    // Move and draw the bursts; each lasts 24 frames.
+    // Move and draw the bursts; each lasts 24 frames and steps through the
+    // 32x64 pictures (0x800 bytes apart) every 4. The faces have one picture,
+    // mirrored on side 1.
     i = 0;
     width = 32;
     height = 64;
@@ -312,7 +329,8 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
       i += 1;
     } while (i != 64);
 
-    // Hit each target every 8 frames, once its turn has come.
+    // Hit each target every 8 frames, once its turn has come: target i on
+    // frames whose low three bits are i.
     if (mode == BURST_SHOWER_MODE_LIGHTNING) {
       i = 0;
       while (i != work->effect->count) {
@@ -345,6 +363,8 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     Camera_ApplyShake(4, 4);
+    // In the grey mode the flash timers never run down, so the targets stay
+    // black.
     if (mode != BURST_SHOWER_MODE_GREY) {
       ObjectGroup_TickMemberTimers();
     }

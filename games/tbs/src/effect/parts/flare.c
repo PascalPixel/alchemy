@@ -11,7 +11,9 @@
 ///
 /// Abilities: Flare, Flare Wall, Flare Storm (kind 11).
 ///
-/// Each target is hit in turn, 8 frames apart from frame 16.
+/// Each target flashes red in turn, 8 frames apart from frame 16. Writes
+/// REG_BLDCNT and REG_BLDALPHA, and ends with the blitter freed, the transfer
+/// callback removed and the canvas layer closed.
 ///
 /// effect: the targets. variant 1 adds a second flame 16 pixels above each
 ///         one, variant 2 a third 32 pixels above (and longer trails).
@@ -75,6 +77,7 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
     arcFlame++;
   } while (i != FLARE_ARC_COUNT);
 
+  // Trails keep half of each level, or three quarters for Flare Storm.
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (work->effect->variant == 2) {
     work->transferValue = 75;
@@ -86,12 +89,14 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
   AudioCommand_PlayFar(SE_136);
   frame = 0;
   do {
-    // Frame 24 lets the battle show the damage.
+    // Frame 24 lets the battle show the damage, with SE_133 as the hit sound.
     if (frame == 24) {
       EFFECT_SHOW_DAMAGE(SE_133);
     }
 
-    // Each flame shows six pictures, 4 frames each, and goes out.
+    // Each flame shows six pictures, 4 frames each, and goes out; the last
+    // flame (delay -32) is out after frame 55. Each puff cell stands on its
+    // own baseline (gBattleFx_PuffArcCellBiasY) and is centred across x.
     i = 0;
     flame = work->particles;
     do {
@@ -144,6 +149,7 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
       flame++;
     } while (i != FLARE_ARC_COUNT);
 
+    // The targets flash red, 8 frames apart from frame 16.
     i = 0;
     while (i != work->effect->count) {
       if (frame == (i * 8) + 16) {
@@ -163,6 +169,9 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
 /// List the indices within indexRadius of where currentValue sits in values,
 /// keeping only those from 0 to entryLimit - 1. Writes the indices to output
 /// and returns how many there are.
+///
+/// Only the first indexRadius * 2 + 1 values are searched, and with no match
+/// the window centres on index 0. Changes nothing but output. Nothing calls it.
 UNUSED s32 BattleFx_BuildCenteredIndexList(BattleEffectIndexWindow *window,
                                            s16 *output) {
   s32 windowLength = window->indexRadius * 2 + 1;

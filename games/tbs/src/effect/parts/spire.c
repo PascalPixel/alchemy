@@ -4,9 +4,14 @@
 
 #include "../effect_internal.h"
 
+#define SPIRE_ROCK_WIDTH 34  ///< the boulder picture, the first in the sheet
+#define SPIRE_ROCK_HEIGHT 62 ///< the boulder picture's height
 /// The shard pictures in the sheet, after the boulder.
-#define SPIRE_SHARD_CELLS 0x83c
+#define SPIRE_SHARD_CELLS (SPIRE_ROCK_WIDTH * SPIRE_ROCK_HEIGHT)
 #define SPIRE_SHARDS 21 ///< shards per rock
+/// Frames a boulder falls, from its drop frame (gSpire_DropFrames) until it
+/// lands, shakes the screen and strikes the targets.
+#define SPIRE_FALL_FRAMES 18
 
 /// Shattering rocks: boulders drop along the row of targets, centred on it, and
 /// burst into tumbling shards, hitting every target as each lands.
@@ -41,6 +46,8 @@ void BattleFx_RunSpire(struct BattleEffectArgument *effect) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   blit = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
+  // BG2 is scrolled so that canvas column 64 is the middle of the row of
+  // targets.
   EffectPosition_ProjectScaledBattler(work->effect->actors[0], &first);
   EffectPosition_ProjectScaledBattler(
       work->effect->actors[work->effect->count - 1], &last);
@@ -54,7 +61,9 @@ void BattleFx_RunSpire(struct BattleEffectArgument *effect) {
     rock->y = -0x400000;
     rock->velocityY = 0;
   }
-  // Each rock breaks into 21 shards, thrown up from where it lands.
+  // Each rock breaks into 21 shards, thrown up from where it lands: under a
+  // pixel a frame to either side and 1 to 5 pixels a frame up. z is the
+  // shard's tumbling speed and variant how far it has tumbled.
   for (i = 0; i != rockCount; i++) {
     for (j = 0; j != SPIRE_SHARDS; j++) {
       struct EffectStep *shard = &PARTICLES[i * SPIRE_SHARDS + j];
@@ -68,16 +77,19 @@ void BattleFx_RunSpire(struct BattleEffectArgument *effect) {
       shard->variant = 0;
     }
   }
+  // The scene lasts until 80 frames after the last rock drops; the damage
+  // shows 30 frames after that rock lands.
   for (frame = 0; frame != gSpire_DropFrames[rockCount - 1] + 80; frame++) {
     if (frame == gSpire_DropFrames[rockCount - 1] + 48)
       EFFECT_SHOW_DAMAGE(SE_132);
     for (i = 0; i != rockCount; i++) {
       rock = &work->particles[i];
-      if (frame == gSpire_DropFrames[i] + 18) {
+      if (frame == gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         AudioCommand_PlayFar(SE_HEAVY_IMPACT);
         work->shakeFrames = 4;
       }
-      if (frame >= gSpire_DropFrames[i] + 18) {
+      // From its landing on, the rock is gone and its shards fly.
+      if (frame >= gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         for (j = 0; j != SPIRE_SHARDS; j++) {
           shard = &PARTICLES[i * SPIRE_SHARDS + j];
           // Five shard shapes, each tumbling through three pictures; z is the
@@ -106,19 +118,19 @@ void BattleFx_RunSpire(struct BattleEffectArgument *effect) {
             shard->z--;
         }
       }
-      // The rock falls from its drop frame and lands 18 frames later, never
-      // lower than y 50.
-      if (frame < gSpire_DropFrames[i] + 18) {
+      // The rock falls from its drop frame, a pixel a frame faster each
+      // frame, never lower than y 50; it is drawn centred over its column.
+      if (frame < gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         if (frame >= gSpire_DropFrames[i])
-          blit(canvas, work->sheet, gSpire_RockX[i] + 47,
-               Q_16_16_TO_INT(rock->y), 34, 62);
+          blit(canvas, work->sheet, gSpire_RockX[i] + 64 - SPIRE_ROCK_WIDTH / 2,
+               Q_16_16_TO_INT(rock->y), SPIRE_ROCK_WIDTH, SPIRE_ROCK_HEIGHT);
         rock->y += rock->velocityY;
         if (frame > gSpire_DropFrames[i])
           rock->velocityY += 0x10000;
         if (rock->y > 0x320000)
           rock->y = 0x320000;
       }
-      if (frame == gSpire_DropFrames[i] + 18) {
+      if (frame == gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         EFFECT_FOR_EACH_TARGET(j, work->effect)
           ObjectGroup_UpdateMembers(work->effect->actors[j], SPRITE_COLOR_WHITE,
                                     POSE_DAMAGE, j, 8);
@@ -130,5 +142,8 @@ void BattleFx_RunSpire(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
+#undef SPIRE_ROCK_WIDTH
+#undef SPIRE_ROCK_HEIGHT
 #undef SPIRE_SHARD_CELLS
 #undef SPIRE_SHARDS
+#undef SPIRE_FALL_FRAMES

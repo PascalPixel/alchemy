@@ -12,7 +12,12 @@
 /// target (frames 30 to 69); the Djinni appears there on frame 83. Then,
 /// for each target in turn, 8 frames apart, sparkles spiral in on it with
 /// the recovery sound and a glow, while the Djinni sways and finally flies
-/// off. No effect table entry points here.
+/// off. No effect table entry points here, and nothing calls it.
+///
+/// PARTICLES 0 to 63 hold the swirl's motes (the first 32 drawn), then 0 to
+/// 511 the healing sparkles, 64 for each target; both are offsets from the
+/// point the transform is centred on, in 16.16. work->sheet holds the
+/// Djinni, the battle sheet slot first the motes and then the sparkle dots.
 UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -54,11 +59,13 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
                  (Trig_Cos(heading) * speed) >> 5);
     spark->variant = 0;
   }
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
-                        75); // trails keep 3/4 a frame
+  // Trails keep 75% of each pixel a frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
-  // The swirl travels from the user's feet to 90 pixels above the first
-  // target over frames 30 to 69.
+  // The swirl: frame 8 plays its sound, frames 30 to 69 carry it from the
+  // user's feet to 90 pixels above the first target, frame 80 plays the
+  // Djinni's sound and frame 83 shows it. target keeps that point for the
+  // healing.
   SET_VECTOR(position, actor->x, 0, actor->z);
   SET_VECTOR(target, goal->x, 180 << 15, 0);
   SET_VECTOR(delta, (target[0] - position[0]) / 40,
@@ -132,7 +139,9 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
     }
     EFFECT_PRESENT_FRAME(work);
   }
-  // The healing: sparkles scattered round each target.
+  // The healing: sparkles scattered round each target, x and z within 64
+  // pixels and 32 to 95 up, as BattleFx_RunHealingMotes scatters them for
+  // Ply. Target n starts on frame n * 8; the last gets 72 frames.
   for (i = 0; i != 512; i++) {
     struct EffectStep *spark = &PARTICLES[i];
     SET_POSITION(spark, ((Random16() & 0xff) - 127) << 15,
@@ -210,10 +219,14 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Scheduler callback: turns the battle camera by cameraDelta. The effect
-/// sets cameraPhase to 1 after each of its frames; the callback then turns
-/// the whole delta once, and half of it on the frames in between, so the
-/// turn stays smooth whatever the effect's frame rate.
+/// Turns the battle camera by cameraDelta. The effect sets cameraPhase to 1
+/// after each of its frames; the callback then turns the whole delta once,
+/// and half of it on the frames in between, so the turn stays smooth whatever
+/// the effect's frame rate.
+///
+/// Runs each frame as a scheduler callback added by BattleFx_RunFire
+/// (fire.c) and BattleFx_RunFroth (vortices.c), which remove it before they
+/// return. Changes the camera slot's yaw and work->cameraPhase.
 void Camera_ApplyPhasedDelta(void) {
   // Both come from the one slot table; a separate camera base compiles 4
   // bytes longer.

@@ -196,9 +196,12 @@ const struct SceneEvent *LamakanDesert_GetEvents(void) {
 /// Reveal's end (phase 4), and every entry: the pits and Smog vanish under
 /// the sand again (cells 70, 68 or 69, 99 over the saved patches), the chests
 /// hide and the heat haze shimmers.
+// Native event return forms: see MATCHING.md.
+#ifdef UBFIX
+static void Reveal_HideSecrets(void) {
+#else
 static s32 Reveal_HideSecrets(void) {
-  // Declared s32 but returns no value: the native ends pop {r1}; bx r1
-  // without setting r0.
+#endif
   s32 mapObjectId;
 
   Engine_GameFlagClear(FLAG_SECRETS_REVEALED);
@@ -263,7 +266,11 @@ static s32 Reveal_HideSecrets(void) {
 
 /// Reveal (phase 5): the saved patches of sand come back, the pits and the
 /// monster stand where they are, the chests show and the haze stops.
+#ifdef UBFIX
+static void Reveal_ShowSecrets(void) {
+#else
 static s32 Reveal_ShowSecrets(void) {
+#endif
   s32 i;
 
   Engine_GameFlagClear(FLAG_HAZARDS_PAUSED);
@@ -473,7 +480,8 @@ static void CollapseFromHeat(void) {
     points = gLamakanDesertRecoveryPointsOther;
   }
   left = count;
-  // Keep the nearest recovery point, choosing the later point on a tie.
+  // The selected table has 2, 3 or 5 points. The square root fits in 16 bits,
+  // below best, so the first iteration always sets nearest; ties use the last.
   point = points;
   if (count != 0) {
     offset = 0;

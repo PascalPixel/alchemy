@@ -45,6 +45,8 @@
 #include "objcmd.h"
 #include "iowrite.h"
 #include "songs.h"
+#include "heap_state.h"
+#include "map.h"
 
 // FLAG_SCENE_TEMP_06 to _0A: storms 8 to 12 have risen during this visit.
 // FLAG_SCENE_TEMP_0E: the chasing storm has set off after the party.
@@ -83,37 +85,12 @@ enum { WORLD_MAP_STORM_DROP = 27, WORLD_MAP_STORM_DROP_FOURTH = 77 };
 static void SuhallaDesert_SetUpFirstSceneStorms(void);
 static void SuhallaDesert_SetUpSecondSceneStorms(void);
 
-/// The game state, seen for the selected actor's id.
-struct SelectedActorId {
-  u8 reserved000[500];
-  s32 actorId;
-};
-
-/// A field actor, seen for the facing the storm spins.
-struct SelectedActorFacing {
-  u8 reserved00[6];
-  u16 presentation;
-};
-
-/// The event work, seen for the event the capture raises when it ends.
-struct StateMarkerWork {
-  u8 reserved000[386];
-  u16 stateOneMarker;
-};
-
 static u16 sSuhallaDesertSavedColor;
 
 #define SUHALLA_REVEAL_PALETTE_COLOR (*(volatile u16 *)0x0500019e)
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
-
-/// The work slot pointers from the map work onward, reaching the event work.
-struct FieldGlobals {
-  u8 *map;
-  u8 unk04[0x48];
-  struct EventWork *event;
-};
 
 void QueueSceneSound(s32 cue);
 
@@ -125,17 +102,17 @@ static void Event_FightDjinni(void) {
 /// A storm's placement script: clears its sprite and collision flags.
 static s32 SuhallaDesert_ClearActorSpriteAndCollisionFlags(
     struct ScriptInterpreter *interpreter) {
-  u8 *actorBytes = (u8 *)interpreter;
-  Engine_ActorSetSpriteFlags(actorBytes, 0);
-  ((struct FieldActor *)actorBytes)->collisionFlags = 0;
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
+  Engine_ActorSetSpriteFlags(actor, 0);
+  actor->collisionFlags = 0;
   return 0;
 }
 
 /// A storm's placement script: toggles its single-sprite storage.
 static s32
 SuhallaDesert_ToggleActorActive(struct ScriptInterpreter *interpreter) {
-  u8 *actorBytes = (u8 *)interpreter;
-  ((struct FieldActor *)actorBytes)->spriteStorageKind ^= 1;
+  struct FieldActor *actor = (struct FieldActor *)interpreter;
+  actor->spriteStorageKind ^= 1;
   return 1;
 }
 
@@ -178,19 +155,18 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// Each frame while caught: spins the leader, and counts down to raising event
 /// 99, the storm carrying the party away.
 static void SuhallaDesert_UpdateCaptureTimer(void) {
-  struct SelectedActorFacing *selectedActor;
-  struct StateMarkerWork *requests;
+  struct FieldActor *selectedActor;
+  struct EventWork *requests;
   s32 remainingFrames;
 
-  selectedActor =
-      Object_GetById(((struct SelectedActorId *)((s16 *)&gGameState))->actorId);
-  requests = *(struct StateMarkerWork **)((u8 *)&gEventWork);
-  selectedActor->presentation = (gFrameCount << 12);
+  selectedActor = Object_GetById(gGameState.selectedActor);
+  requests = gEventWork;
+  selectedActor->facing = (gFrameCount << 12);
 
   remainingFrames = FieldGameFlag_GetByte(FLAG_SCENE_TEMP_10);
   if (remainingFrames != 0) {
     if (remainingFrames == 1) {
-      requests->stateOneMarker = 99;
+      requests->raisedTrigger = 99;
     } else if (Engine_GameFlagIsSet(FLAG_MENU_OPEN) == 0) {
       remainingFrames -= 1;
     }
@@ -205,38 +181,36 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
   s32 captureActive;
   struct FieldActor *selectedActor;
   struct FieldActor *storm;
-  u8 *selectedActorBits;
-  u8 *gameBytes;
+  s32 selectedActorId;
 
   // The event-selected actor is pulled toward the storm before being lifted.
-  gameBytes = (u8 *)((s16 *)&gGameState);
-  selectedActorBits = *(u8 **)(gameBytes + 500);
+  selectedActorId = gGameState.selectedActor;
   stormIdCopy = stormId;
-  selectedActor = Object_GetById((s32)selectedActorBits);
+  selectedActor = Object_GetById(selectedActorId);
   Actor_Get(stormIdCopy);
   captureActive = GameFlag_IsSet(FLAG_SCENE_TEMP_0F);
   if (captureActive == 0) {
     Engine_EventBegin();
-    Actor_SetAttachedEffect((s32)selectedActorBits, 0x101);
-    Engine_ActorSetAnimation((s32)selectedActorBits, 9);
+    Actor_SetAttachedEffect(selectedActorId, 0x101);
+    Engine_ActorSetAnimation(selectedActorId, 9);
     storm = Object_GetById(stormIdCopy);
     if (storm != 0) {
-      Actor_SetDestination((s32)selectedActorBits, storm->x.part.pixel,
+      Actor_SetDestination(selectedActorId, storm->x.part.pixel,
                            storm->z.part.pixel);
     }
-    Engine_ActorWaitForMove((s32)selectedActorBits);
+    Engine_ActorWaitForMove(selectedActorId);
     // Start the capture countdown once the approach finishes.
     Event_PlayCue(SE_244);
     FieldScheduler_AddCallback(SuhallaDesert_UpdateCaptureTimer,
                                TASK_PRIORITY_SCENE);
     selectedActor->motionFlags = captureActive;
-    Engine_ObjectSetPosition((s32)selectedActor, selectedActor->x.fixed,
+    Engine_ObjectSetPosition(selectedActor, selectedActor->x.fixed,
                              selectedActor->y.fixed + PIXELS(32),
                              selectedActor->z.fixed);
-    Engine_ActorWaitForMove((s32)selectedActorBits);
+    Engine_ActorWaitForMove(selectedActorId);
     selectedActor->velocityY = captureActive;
     selectedActor->motionFlags = 4;
-    *(gameBytes + 498) = 2;
+    gGameState.movementMode = 2;
     GameFlag_Set(FLAG_SCENE_TEMP_0F);
     FieldGameFlag_SetByte(FLAG_SCENE_TEMP_18, stormIdCopy);
     FieldGameFlag_SetByte(FLAG_SCENE_TEMP_10, STORM_CAPTURE_FRAMES);
@@ -561,7 +535,12 @@ static void Event_StormCarriesPartyAway(void) {
   Engine_EventBegin();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_AudioPlayCue(SE_219);
+  // BUG: the native passes an actor id where the sprite helper needs a pointer.
+#ifdef BUGFIX
+  Engine_ActorSetSpriteFlags(selectedActor, 0);
+#else
   Engine_ActorSetSpriteFlags((struct FieldActor *)gGameState.selectedActor, 0);
+#endif
   storm->motionFlags = 0;
   selectedActor->motionFlags = 0;
   selectedActor->velocityY = 0;
@@ -600,9 +579,13 @@ static void SuhallaDesert_PulseRevealPalette(void) {
 
 /// Reveal ends, or a scene is entered: in the second scene, what Reveal showed
 /// is hidden again and the pulsing color is put back.
+// Native event return forms: see MATCHING.md.
+#ifdef UBFIX
+static void Event_RevealEnds(void) {
+#else
 static s32 Event_RevealEnds(void) {
   s32 removalResult;
-
+#endif
   if (gGameState.scene == (s32)&SceneId_SuhallaDesert2) {
     Object_GetById(REVEALED_OBJECT)->priorityFlags = 2;
     Object_GetById(REVEALED_OBJECT)->motionFlags = 3;
@@ -611,15 +594,25 @@ static s32 Event_RevealEnds(void) {
     MapObject_SetPosition(100, 0, 0);
     Map_CopyCellAttributes(12, 71, 1, 1, 127, 127);
     Map_CopyCellAttributes(11, 71, 1, 1, 12, 71);
+#ifdef UBFIX
+    Engine_TaskRemoveCallback(SuhallaDesert_PulseRevealPalette);
+#else
     removalResult = Engine_TaskRemoveCallback(SuhallaDesert_PulseRevealPalette);
+#endif
     Io_Write16(sSuhallaDesertSavedColor, &SUHALLA_REVEAL_PALETTE_COLOR);
+#ifndef UBFIX
     return removalResult;
+#endif
   }
 }
 
 /// Reveal in the second scene: the hidden object appears at 248, 712, map
 /// cells and the map object at 100 change, and a palette color pulses.
+#ifdef UBFIX
+static void Event_RevealStarts(void) {
+#else
 static s32 Event_RevealStarts(void) {
+#endif
   if (gGameState.scene == (s32)&SceneId_SuhallaDesert2) {
     Object_GetById(REVEALED_OBJECT)->priorityFlags = 2;
     Object_GetById(REVEALED_OBJECT)->motionFlags = 0;
@@ -628,8 +621,13 @@ static s32 Event_RevealStarts(void) {
     MapObject_SetPosition(100, -1, -1);
     Marker_MoveLeaderAway();
     Map_CopyCellAttributes(127, 127, 1, 1, 12, 71);
+#ifdef UBFIX
+    FieldScheduler_AddCallback(SuhallaDesert_PulseRevealPalette,
+                               TASK_PRIORITY_SCENE);
+#else
     return FieldScheduler_AddCallback(SuhallaDesert_PulseRevealPalette,
                                       TASK_PRIORITY_SCENE);
+#endif
   }
 }
 
@@ -645,10 +643,10 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// Sets a scene up as the party enters: a capture goes on spinning, Reveal's
 /// color is saved, and the first two scenes set up their storms.
 s32 Scene_Initialize(void) {
-  u8 *map;
+  struct MapState *map;
 
-  map = (*(struct FieldGlobals *)gMapWork).map;
-  (*(struct FieldGlobals *)gMapWork).event->startTransition =
+  map = WORK_SLOT(HEAP_SLOT_MAP);
+  ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, 1);
   if (FieldGameFlag_GetByte(FLAG_SCENE_TEMP_10) != 0) {
     gGameState.movementMode = 2;
@@ -668,7 +666,7 @@ s32 Scene_Initialize(void) {
     Engine_AudioPlayCue(SE_288);
   }
   if (gGameState.entrance == 0) {
-    *(u16 *)(map + 20) &= ~0x200;
+    map->flags &= ~DISPCNT_BG1_ON;
   }
   return 0;
 }

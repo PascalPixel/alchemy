@@ -44,6 +44,7 @@
 #include "macros.h"
 #include "songs.h"
 #include "item_ids.h"
+#include "heap_state.h"
 
 enum {
   SHORT_LOG = 8, ///< slides between x 72 and x 104
@@ -361,7 +362,7 @@ s32 KolimaForestBend_Initialize(void) {
   struct FieldActor *actor;
 
   gKolimaForestBendReturned = (u16 *)gSceneState;
-  (*(u16 **)&gKolimaForestBendLayout) = (u16 *)gSceneState + 1;
+  gKolimaForestBendLayout = (s16 *)gSceneState + 1;
   // The return flag and water level occupy the first two halfwords.
   gKolimaForestBendRecords = (struct BendLog *)(gSceneState + 2 * sizeof(u16));
   Map_CopyCells(32, 0, 64, 32, 0, 64);
@@ -371,7 +372,7 @@ s32 KolimaForestBend_Initialize(void) {
     Dma_Set(gKolimaForestBend_DefaultRecords, gKolimaForestBendRecords,
             (DMA_ENABLE | DMA_32BIT) << 16 | 0x12, REG_DMA3);
     *gKolimaForestBendReturned = 0;
-    *(*(u16 **)&gKolimaForestBendLayout) = 1;
+    *gKolimaForestBendLayout = 1;
   }
   KolimaForestBend_CreateLogs(gKolimaForestBendRecords);
   State_StampRecordCells(gKolimaForestBend_DefaultRecords, 255);
@@ -491,6 +492,7 @@ static s32 KolimaForestBend_CheckLogFits(s32 x, s32 z, s32 mode) {
 /// eleven cells or until a cell is not free; the leader follows its shove.
 static void KolimaForestBend_RollLog(struct BendLog *runs) {
   struct FieldActor *actor;
+  struct FieldWork *work;
   struct BendLog *run;
   s32 point[3];
   s32 facing;
@@ -545,8 +547,8 @@ static void KolimaForestBend_RollLog(struct BendLog *runs) {
   Engine_ObjectSetPosition(actor, x, 0, z);
   Engine_EventWait(6);
   Engine_ActorSetAnimation(0, 2);
-  ObjectDispatch_StartCamera(*(s32 *)(Runtime_AllocateBlock(27, 0xccc) + 0x1e0),
-                             actor);
+  work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(*work));
+  ObjectDispatch_StartCamera((struct DispatchObject *)work->camera, (s32)actor);
   Actor_SetSpeed(0, 0x4ccc, 0x3333);
   Actor_SetDestinationOffset(0, gKolimaForestBend_PushStepX[quarter],
                              gKolimaForestBend_PushStepZ[quarter]);

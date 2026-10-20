@@ -1204,7 +1204,7 @@ u16 gAltinVillage_DoorCellsE[] = {
 };
 
 /// Each door trigger's opening picture and cell, from trigger 2.
-struct DoorAnim gAltinVillage_Doors[] = {
+struct MapCellAnim gAltinVillage_Doors[] = {
     {gAltinVillage_DoorCellsA, 41, 5},  {gAltinVillage_MineDoorCells, 51, 6},
     {gAltinVillage_DoorCellsC, 57, 17}, {gAltinVillage_DoorCellsD, 39, 17},
     {gAltinVillage_DoorCellsE, 48, 25}, {gAltinVillage_DoorCellsF, 59, 9},

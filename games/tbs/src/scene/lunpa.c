@@ -1111,7 +1111,9 @@ u16 gLunpaDoorSteps[DOOR_COUNT][11] = {
      MAP_CELL_STEPS_END},
 };
 
-struct LunpaDoor gLunpaDoors[] = {
+/// Each door's opening animation and the map cell it plays at, by its
+/// trigger from TRIGGER_FIRST_HOME_DOOR.
+struct MapCellAnim gLunpaDoors[] = {
     {gLunpaDoorSteps[0], 46, 9},  {gLunpaDoorSteps[1], 52, 12},
     {gLunpaDoorSteps[2], 52, 18}, {gLunpaDoorSteps[3], 45, 20},
     {gLunpaDoorSteps[4], 51, 5},  {gLunpaDoorSteps[5], 37, 9},

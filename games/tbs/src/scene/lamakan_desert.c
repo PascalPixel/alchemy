@@ -1035,16 +1035,10 @@ static void HeatGauge_Draw(void) {
   MemFree(buffer);
 }
 
-/// A halfword holding the zero the gauge's slide and phase are cleared with.
-struct Half {
-  u16 v;
-};
-
 /// Loads the gauge's tiles, claims VRAM for them and starts drawing it.
 void HeatGauge_Start(void) {
   s32 slot;
   u16 *slotAddress;
-  struct Half zero;
 
   FieldResource_DecodeType01(gLamakanDesert_SandEffectTiles,
                              gLamakanDesert_SandTileBuffer);
@@ -1052,9 +1046,8 @@ void HeatGauge_Start(void) {
   slot = Resource_FindFreeEntry();
   *slotAddress = slot;
   Engine_VramLoad((s16)slot, 0x480, 0);
-  zero.v = 0;
-  gHeatGaugeSlide = zero.v;
-  gLamakanDesert_SandPhase = zero.v;
+  gHeatGaugeSlide = 0;
+  gLamakanDesert_SandPhase = 0;
   FieldScheduler_AddCallback(HeatGauge_Draw, 0xc76);
 }
 

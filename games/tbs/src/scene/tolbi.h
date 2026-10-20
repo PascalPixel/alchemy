@@ -7,7 +7,9 @@
 #include "field_scene.h"
 #include "field_effect.h"
 #include "tbs_edition.h"
-extern u8 gWindowWork[];
+#include "window.h"
+#include "field_runtime.h"
+#include "heap_state.h"
 
 #define NULL ((void *)0)
 
@@ -53,14 +55,6 @@ enum TolbiMapObject {
 /// before the yes/no choice under the "Missing Person" window. What reads it
 /// is not yet traced.
 #define EVENT_WORK_1F4 (*(s32 *)((u8 *)gEventWork + 0x1f4))
-
-/// The window state the running children consult before they widen their
-/// stopping range. RENDER_MODE_OFFSET is the edition's offset of this byte in
-/// the UI render work.
-struct TolbiUiWork {
-  u8 unknown[RENDER_MODE_OFFSET];
-  u8 renderMode;
-};
 
 /// The running children keep these flags in FieldActor.timer, their scene
 /// scratch halfword. Bits: 1 talking | 0 chases the younger sibling.

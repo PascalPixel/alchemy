@@ -27,6 +27,7 @@
 #include "iowrite.h"
 #include "fixed_math.h"
 #include "palbuf.h"
+#include "heap_state.h"
 #include "flags.h"
 #include "songs.h"
 #include "item_ids.h"
@@ -51,16 +52,6 @@ static void SolSanctumLunaSolRooms_ShowMessageAndWait(s32 speaker,
 static void SolSanctumLunaSolRooms_ShowFloatingEye(void);
 
 void InitializeSceneRecordBuffer(void);
-
-/// The work slot pointers from the event work (slot 27) onward, reaching the
-/// palette buffer work in slot 32.
-struct EventGlobals {
-  struct EventWork *event; ///< slot 27, gEventWork
-  void *slots28To31[4];    ///< not read here
-  u8 *paletteBufferWork;   ///< slot 32, gPaletteBufferWork
-};
-
-STATIC_ASSERT(offsetof(struct EventGlobals, paletteBufferWork) == 0x14);
 
 const struct SceneEntrance *SolSanctumLunaSolRooms_GetEntrances(void) {
   return gSolSanctumLunaSolRoomsEntrances;
@@ -1440,7 +1431,10 @@ static void SolSanctumLunaSolRooms_ShowFloatingEye(void) {
   Engine_TaskWait(1);
   Actor_SetPosition(GARET, PIXELS(280), PIXELS(134));
   Actor_FaceDirection(GARET, FACING_NORTHWEST, 0);
-  gEventWork->transitionFrames = 1;
+  // This event reads its work slots from one address: slot 32, the palette
+  // buffer work, is reached from the event work's slot. As gEventWork and
+  // gPaletteBufferWork they would load two.
+  ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->transitionFrames = 1;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_ColorBufferApplyTarget(0x2051cc, 1);
@@ -1507,14 +1501,7 @@ static void SolSanctumLunaSolRooms_ShowFloatingEye(void) {
   }
   Engine_ActorWaitForMove(GARET);
   Engine_ActorSetPosition(GARET, 0, 0);
-  // UB: EventGlobals traverses beyond scalar gEventWork to slot 32. Its
-  // named load keeps native EN size 0x310 but changes address setup.
-#ifdef UBFIX
-  palette = gPaletteBufferWork;
-#else
-  palette = (struct BattleEffectBuffers *)((struct EventGlobals *)&gEventWork)
-                ->paletteBufferWork;
-#endif
+  palette = WORK_SLOT(32);
   palette->target[0] = 0;
   palette->target[1] = 0;
   palette->target[2] = 0;
@@ -1523,8 +1510,9 @@ static void SolSanctumLunaSolRooms_ShowFloatingEye(void) {
   palette->step = 1;
   palette->padding2a03 = 1;
   Io_Write16(0, &PLTT_BACKDROP);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-  gEventWork->transitionFrames = 16;
+  ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->transitionFrames = 16;
   Engine_EventEnd();
 }
 

@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "field_scene.h"
+#include "field_effect.h"
 
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
@@ -14,13 +15,7 @@ extern s32 gGomaCavePillar_WitnessFrames;
 extern s32 gStagedActor_DirectionSteps[];
 extern u32 gStagedActor_FootprintKinds[];
 extern s32 gStagedActor_FootprintBounds[];
-/// The action scripts a pillar fragment can run, chosen by the low bits of
-/// its spawn value.
-struct GomaCavePillarFragmentScripts {
-  const s32 *scripts[3];
-};
-
-extern struct GomaCavePillarFragmentScripts gGomaCavePillar_FragmentScripts;
+extern struct EffectScripts gGomaCavePillar_FragmentScripts;
 extern s32 gGomaCavePillar_FragmentScript0[];
 extern s32 gGomaCavePillar_FragmentScript1[];
 extern s32 gGomaCavePillar_FragmentScript2[];

@@ -77,11 +77,6 @@ static void Imil_SlideActorAcrossIce(void);
 
 s32 gImilFuchinFalls_TrackLeader;
 
-/// The three action scripts cave dust can run, chosen by its spawn flags.
-struct CaveEffectScripts {
-  const s32 *script[3];
-};
-
 /// EffectOptions cut after its scales: the caller's frame holds only these 24
 /// bytes.
 struct CaveDustOptions {
@@ -1301,8 +1296,7 @@ void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
   /* FAKEMATCH: needed to match: copying three scripts keeps the 12-byte frame
    * and prevents an early scale-script load. Reading
    * gImilFuchinFalls_DustScripts in place: differ 107. */
-  struct CaveEffectScripts scripts =
-      *(const struct CaveEffectScripts *)gImilFuchinFalls_DustScripts;
+  struct EffectScripts scripts = gImilFuchinFalls_DustScripts;
 
   effect = (struct FieldEffect *)Engine_ObjectCreate(222, x, y, z);
   if (effect == 0)
@@ -1595,11 +1589,12 @@ tail:
   Engine_EventEnd();
 }
 
-s32 *gImilFuchinFalls_DustScripts[] = {
+/// The three scripts cave dust can run, chosen by its spawn flags.
+struct EffectScripts gImilFuchinFalls_DustScripts = {{
     gImilFuchinFalls_DustScript0,
     gImilFuchinFalls_DustScript1,
     gImilFuchinFalls_DustScript2,
-};
+}};
 
 // clang-format off
 s16 gImilFuchinFalls_KeyHeadings[] = {

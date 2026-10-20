@@ -151,16 +151,6 @@ enum {
 
 #define WORK_SLOT_STAGE 59
 
-/// The rival's recorded-path playback state, held in the scene state; status
-/// 9 marks the rival finished.
-struct StageControl {
-  s16 status;
-  s16 f2;
-  s16 f4;
-  s16 f6;
-  s16 f8;
-};
-
 /// Sets the party leader's walking speed and acceleration.
 static inline void InitializeActorZero(void) {
   Engine_ActorSetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -1435,13 +1425,13 @@ static UNUSED void Text_WriteU32AsHex(u8 *destination, u32 value) {
 static void SceneState_EmptyHook(void) {}
 
 static UNUSED void ColossoWall_MarkRivalFinished(void) {
-  ((struct StageControl *)gSceneState)->status = 9;
+  ((struct PathRecorder *)gSceneState)->mode = 9;
 }
 
 static void ColossoWall_WaitForRivalFinish(void) {
-  s16 *status = &((struct StageControl *)gSceneState)->status;
+  s16 *mode = &((struct PathRecorder *)gSceneState)->mode;
 
-  while (*status != 9) {
+  while (*mode != 9) {
     Engine_TaskWait(1);
   }
 }
@@ -1618,16 +1608,16 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 leaderId, s32 rivalId,
 /// Decodes the rival's recorded path and starts its playback task.
 static void ColossoWall_StartRivalPath(s32 pathResource) {
   u8 *raceWork = *(u8 **)((u8 *)gWorkSlot + WORK_SLOT_STAGE * 4);
-  struct StageControl *pathState = (struct StageControl *)gSceneState;
+  struct PathRecorder *recorder = (struct PathRecorder *)gSceneState;
 
   FieldResource_DecodeType01(Resource_GetTableEntry(pathResource),
                              raceWork + 240);
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-    pathState->status = 1;
-    pathState->f2 = 1;
-    pathState->f4 = *(u16 *)(raceWork + 224);
-    pathState->f8 = 0;
-    pathState->f6 = 0;
+    recorder->mode = 1;
+    recorder->mirror = 1;
+    recorder->actor = *(u16 *)(raceWork + 224);
+    recorder->still = 0;
+    recorder->pos = 0;
   }
   FieldScheduler_AddCallback(Colosso_UpdatePathRival, 0xc85);
 }

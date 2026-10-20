@@ -26,28 +26,21 @@
 // how it is crossed, a blinking pointer moves over the screen, and Isaac is
 // put back where he stood.
 
-/// The mode and stage bytes of the menu control work, set while Isaac is shown
-/// on the stage and reset when he is put back.
-struct CompetitorState {
-  u8 unk00[6];
-  u8 mode;
-  u8 stage;
-};
-
 /// Isaac (id) appears at pixel (x, z) on the stage, facing south: he fades in
 /// through the backgrounds while he stretches from thin and tall to his own
-/// shape, settles and nods. His position and facing are kept for
+/// shape, settles and nods. While he is shown his sprite is outlined, in edge
+/// colour 1 and fill colour 4. His position and facing are kept for
 /// Colosso_RestoreCompetitor.
 void Colosso_FadeInCompetitor(s32 id, s32 x, s32 z) {
-  struct CompetitorState *state;
+  struct ObjectSystemWork *objects;
   struct FieldActor *actor;
   struct AnimationObject *sprite;
   s32 i;
 
-  state = (struct CompetitorState *)gMenuCtrlWork;
+  objects = gMenuCtrlWork;
   actor = Object_GetById(id);
-  state->mode = 1;
-  state->stage = 4;
+  objects->edge = 1;
+  objects->fill = 4;
   gColosso_CompetitorStartX = actor->x.fixed;
   gColosso_CompetitorStartZ = actor->z.fixed;
   sprite = (struct AnimationObject *)actor->sprite;
@@ -88,14 +81,15 @@ void Colosso_FadeInCompetitor(s32 id, s32 x, s32 z) {
 
 /// Puts Isaac (id) back where Colosso_FadeInCompetitor found him: he stands
 /// (or turns south, nods and waits half a second), then returns to his kept
-/// position and facing with his motion stopped.
+/// position and facing with his motion stopped, and the outline colours are
+/// the field's again (edge 15, fill 0).
 void Colosso_RestoreCompetitor(s32 id) {
-  struct CompetitorState *state;
+  struct ObjectSystemWork *objects;
   struct FieldActor *actor;
   s32 zero;
   u8 *control;
 
-  state = (struct CompetitorState *)gMenuCtrlWork;
+  objects = gMenuCtrlWork;
   actor = Object_GetById(id);
   if (gGameState.movementMode == 1) {
     gGameState.movementMode = 0;
@@ -106,14 +100,14 @@ void Colosso_RestoreCompetitor(s32 id) {
     Engine_EventWait(30);
   }
   zero = 0;
-  // Stored as bytes through a pointer, the plain-C form of state->stage and
-  // state->mode this site matches with (scene/README.md): a struct-field store
-  // at a varying address may pass the load of gColosso_CompetitorStartX
+  // Stored as bytes through a pointer, the plain-C form of objects->fill and
+  // objects->edge this site matches with (scene/README.md): a struct-field
+  // store at a varying address may pass the load of gColosso_CompetitorStartX
   // (fixed_scalar_and_varying_struct_p), and a byte store is no struct
   // reference.
-  control = (u8 *)state;
-  control[offsetof(struct CompetitorState, stage)] = zero;
-  control[offsetof(struct CompetitorState, mode)] = 15;
+  control = (u8 *)objects;
+  control[offsetof(struct ObjectSystemWork, fill)] = zero;
+  control[offsetof(struct ObjectSystemWork, edge)] = 15;
   actor->x.fixed = gColosso_CompetitorStartX;
   actor->z.fixed = gColosso_CompetitorStartZ;
   actor->facing = gColosso_CompetitorStartAngle;

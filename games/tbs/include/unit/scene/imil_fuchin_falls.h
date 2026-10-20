@@ -3,8 +3,8 @@
 
 #include "types.h"
 #include "field_scene.h"
+#include "field_effect.h"
 
-struct EffectOptions;
 struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
@@ -20,7 +20,7 @@ s32 ImilFuchinFalls_Initialize(void);
 void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
                                s32 velocityY, s32 velocityZ, u32 flags,
                                const struct EffectOptions *extra);
-extern s32 *gImilFuchinFalls_DustScripts[];
+extern struct EffectScripts gImilFuchinFalls_DustScripts;
 extern s16 gImilFuchinFalls_KeyHeadings[];
 extern s16 gImilFuchinFalls_SlideHeadings[];
 extern struct FieldActor *gImilFuchinFalls_DragonsEye;

@@ -22,18 +22,16 @@
 // who races Isaac by running a recorded path, and the race gauge that shows
 // how near each of them is to the finish.
 
-/// The race's work: the gauge (struct ColossoGaugeWork) and then the path, in
-/// pixels, as pairs of x and z, one pair a frame, ending with (0, 0).
-struct PathWork {
-  u8 unk00[224];
-  u16 rivalActor;
-  u16 finishItemActorA;
-  u16 finishItemActorB;
-  u16 unke6;
-  s32 finishX;
-  s32 finishZ;
+/// The race's work in work slot 59, allocated whole when the gauge starts: the
+/// gauge, then the rival's path.
+struct ColossoRaceWork {
+  struct ColossoGaugeWork gauge;
+  /// Pixels, as pairs of x and z, one pair a frame, ending with (0, 0):
+  /// decoded from the course's resource, or recorded in mode 2.
   s16 path[0x3840];
 };
+
+STATIC_ASSERT(sizeof(struct ColossoRaceWork) == 0x7170);
 
 /// The rival's scene callback. Mode 1 plays the path back: each frame the rival
 /// steps to the next point (mirrored across the finish when asked), turning by
@@ -43,7 +41,7 @@ struct PathWork {
 /// finished). Mode 2 records the actor's own path instead, up to 0x383e
 /// halfwords, then plays it back with the rival.
 static void Colosso_UpdatePathRival(void) {
-  struct PathWork *work = (struct PathWork *)gColossoWork;
+  struct ColossoRaceWork *work = (struct ColossoRaceWork *)gColossoWork;
   struct PathRecorder *rec = (struct PathRecorder *)gSceneState;
   struct FieldActor *obj;
   s32 x, z, d;
@@ -60,17 +58,17 @@ static void Colosso_UpdatePathRival(void) {
       s32 fz;
       rec->mode = 9;
       Object_SetMode(obj, 1);
-      if (work->finishX < obj->x.fixed) {
-        x = work->finishX + 0xc0000;
+      if (work->gauge.finishX < obj->x.fixed) {
+        x = work->gauge.finishX + 0xc0000;
       } else {
-        x = work->finishX - 0xc0000;
+        x = work->gauge.finishX - 0xc0000;
       }
       if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_11)) {
-        fz = work->finishZ + 0x100000;
-        itemActor = &work->finishItemActorB;
+        fz = work->gauge.finishZ + 0x100000;
+        itemActor = &work->gauge.finishItemActorB;
       } else {
-        fz = work->finishZ - 0x100000;
-        itemActor = &work->finishItemActorA;
+        fz = work->gauge.finishZ - 0x100000;
+        itemActor = &work->gauge.finishItemActorA;
       }
       obj->timer = *itemActor;
       obj->acceleration = 0x4000;
@@ -83,7 +81,7 @@ static void Colosso_UpdatePathRival(void) {
     x <<= 16;
     z <<= 16;
     if (rec->mirror != 0) {
-      x = work->finishX * 2 - x;
+      x = work->gauge.finishX * 2 - x;
     }
     if (obj->x.fixed != x || obj->z.fixed != z) {
       {
@@ -116,7 +114,7 @@ static void Colosso_UpdatePathRival(void) {
     if ((s16)rec->pos == 0x383e) {
       work->path[(s16)rec->pos++] = 0;
       work->path[(s16)rec->pos] = 0;
-      rec->actor = work->rivalActor;
+      rec->actor = work->gauge.rivalActor;
       rec->pos = 0;
       rec->mode = 1;
     }

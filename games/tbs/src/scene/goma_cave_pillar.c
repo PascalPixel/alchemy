@@ -109,7 +109,7 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
                                          s32 secondRate,
                                          s32 scriptAndChildValue,
                                          s32 planeAndPriority) {
-  struct GomaCavePillarFragmentScripts table;
+  struct EffectScripts table;
   struct FieldActor *leader;
   struct FieldActor *fragment;
   struct AnimationObject *sprite;
@@ -122,7 +122,7 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
     return;
   sprite = fragment->sprite;
   Object_SetMode(fragment, (scriptAndChildValue + 1) & 15);
-  Engine_ObjectSetScript(fragment, table.scripts[scriptAndChildValue & 15]);
+  Engine_ObjectSetScript(fragment, table.script[scriptAndChildValue & 15]);
   ObjectGroup_SetChildValue(fragment, ((u32)scriptAndChildValue >> 16) & 15);
   fragment->motionFlags = 0;
   sprite->flags = 0;
@@ -567,7 +567,9 @@ s32 gStagedActor_FootprintBounds[] = {
     -8, -32, 8, 32,
 };
 
-struct GomaCavePillarFragmentScripts gGomaCavePillar_FragmentScripts = {{
+/// The scripts a pillar fragment can run, chosen by the low bits of its spawn
+/// value.
+struct EffectScripts gGomaCavePillar_FragmentScripts = {{
     gGomaCavePillar_FragmentScript0,
     gGomaCavePillar_FragmentScript1,
     gGomaCavePillar_FragmentScript2,

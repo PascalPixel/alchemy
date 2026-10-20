@@ -9,14 +9,6 @@ struct SceneEntrance;
 struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
-/// Each village door the party can walk through: its opening picture and the
-/// cell it is drawn at.
-struct DoorAnim {
-  const u16 *steps;
-  s16 x;
-  s16 y;
-};
-
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
 const u32 *Scene_GetExits(void);
@@ -41,6 +33,6 @@ extern u16 gAltinVillage_DoorCellsG[];
 extern u16 gAltinVillage_DoorCellsC[];
 extern u16 gAltinVillage_DoorCellsD[];
 extern u16 gAltinVillage_DoorCellsE[];
-extern struct DoorAnim gAltinVillage_Doors[];
+extern struct MapCellAnim gAltinVillage_Doors[];
 
 #endif

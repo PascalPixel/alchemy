@@ -86,6 +86,13 @@ enum EffectSpawnFlags {
   EFFECT_USE_UPDATE = 0x1000000     ///< options.update
 };
 
+/// The three scripts a scene's own effect spawner picks from by
+/// EFFECT_SCRIPT_MASK, wrapped so that the spawner can copy them into its frame
+/// whole.
+struct EffectScripts {
+  const s32 *script[3];
+};
+
 /// The options of a spawned field effect, each used when its EFFECT_USE_ flag
 /// (or EFFECT_SCALE_TO_TARGET) is set.
 struct EffectOptions {

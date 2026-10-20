@@ -84,8 +84,9 @@ static s32 Tolbi_KidStopForTarget(struct FieldActor *kid,
 
 // The update of the two children running around the plaza. Each stops when
 // it runs up behind the other, and otherwise when the party leader is in its
-// way. While a window is up (the range widens to 26 pixels) the child the
-// party is talking to stops whatever the direction.
+// way. While the party talks to someone or Mind Read shows thoughts (the range
+// widens to 26 pixels), the child being talked to stops whatever the
+// direction.
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void removes its zero result; its aligned extent stays 152 bytes.
 #ifdef UBFIX
@@ -94,9 +95,10 @@ static void Tolbi_UpdateKid(union FieldObject *fieldObject) {
 static s32 Tolbi_UpdateKid(union FieldObject *fieldObject) {
 #endif
   struct FieldActor *self = &fieldObject->actor;
-  u8 **workAreas = (u8 **)gWindowWork;
-  struct TolbiUiWork *ui = (struct TolbiUiWork *)workAreas[0];
-  u8 *work12 = workAreas[12];
+  u8 **workAreas = gWindowWork;
+  struct UiRenderWork *ui = (struct UiRenderWork *)workAreas[0];
+  struct FieldWork *field =
+      (struct FieldWork *)workAreas[HEAP_SLOT_EVENT - HEAP_SLOT_WINDOW];
   u16 *kidFlags = (u16 *)&self->timer;
   s32 force = 0;
   s32 range = 18;
@@ -118,8 +120,7 @@ static s32 Tolbi_UpdateKid(union FieldObject *fieldObject) {
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
 
-  // The halfword at 376 in work area 12 is another window state.
-  if (*(s16 *)(work12 + 376) != 0 || ui->renderMode != 0) {
+  if ((s16)field->descriptor != 0 || ui->mode != 0) {
     range = 26;
     if ((*kidFlags & KID_TALKING) != 0) {
       force = 1;

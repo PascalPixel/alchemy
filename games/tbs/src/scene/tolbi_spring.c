@@ -744,12 +744,6 @@ end:
   return 0;
 }
 
-/// A halfword holding the zero an actor's motion and sprite flags are cleared
-/// with.
-struct Half {
-  u16 v;
-};
-
 /// Chooses an item variant in the prize category, avoiding its last variant.
 static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category) {
   s32 previousVariant;
@@ -784,15 +778,12 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
   u32 entryCount;
 
   if (actor != 0) {
-    struct Half zero;
-
     actor->x.fixed = *coordinate++;
     actor->y.fixed = *coordinate++;
     actor->z.fixed = *coordinate;
     actor->facing = facing;
-    zero.v = 0;
-    actor->motionFlags = zero.v;
-    actor->sprite->flags = zero.v;
+    actor->motionFlags = 0;
+    actor->sprite->flags = 0;
     ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)actor,
                                      childValue);
   }

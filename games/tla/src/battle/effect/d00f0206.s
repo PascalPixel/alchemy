@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's gDisplayTransition_DitherTable, byte for byte
+@ A copy of The Broken Seal's gDisplayTransition_DitherTable
 	.global gData_080f0206
 gData_080f0206:
 	.byte 0, 12, 35, 3, 29, 39, 6, 7, 50, 59, 4, 11, 18, 40, 46, 31

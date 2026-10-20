@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's sSpecialItemPrices, byte for byte
+@ A copy of The Broken Seal's sSpecialItemPrices
 	.global Data_0810c38e
 Data_0810c38e:
 	.2byte 300, 300, 300, 300, 300

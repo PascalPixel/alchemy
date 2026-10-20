@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's gFieldFx_GroundParticleFrames, byte for byte
+@ A copy of The Broken Seal's gFieldFx_GroundParticleFrames
 	.global Data_080f0ab0
 Data_080f0ab0:
 	.2byte -8, -12, 20, 0, 1

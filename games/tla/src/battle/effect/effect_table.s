@@ -156,7 +156,7 @@ Data_0819762a:
 	.byte 23, 47, 25, 40, 20, 53, 28, 29, 23, 14, 35, 17, 18, 14, 15, 12
 	.byte 13, 37, 38, 41, 60, 41, 15, 45, 59, 41, 26, 50, 21, 35, 12, 57
 	.byte 11, 0
-@ The Broken Seal's gDeathPlunge_PieceCells, byte for byte
+@ A copy of The Broken Seal's gDeathPlunge_PieceCells
 	.global Data_0819764c
 Data_0819764c:
 	.2byte 0, 483, 1423, 2023, 3223, 3923, 7580, 8112, 8779, 8986, 9294
@@ -317,7 +317,7 @@ gData_0819781a:
 	.global gData_08197826
 gData_08197826:
 	.byte 14, 10, 7, 13, 14, 14, 32, 30, 24, 38, 20, 20, 0, 0
-@ The Broken Seal's gPrism_ShardOffsets, byte for byte
+@ A copy of The Broken Seal's gPrism_ShardOffsets
 	.global gData_08197834
 gData_08197834:
 	.4byte 0, 70, 170, 247, 429, 597
@@ -1413,7 +1413,7 @@ Data_0819855e:
 	.global Data_08198562
 Data_08198562:
 	.byte 0, 4, 8, 12
-@ The Broken Seal's gSpire_ShardOffsets, byte for byte
+@ A copy of The Broken Seal's gSpire_ShardOffsets
 	.global Data_08198566
 Data_08198566:
 	.byte 65, 104, 68, 95, 64, 93, 61, 93, 64, 87, 72, 85, 56, 88, 51, 80

@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's gDisplayTransition_Shapes, byte for byte
+@ A copy of The Broken Seal's gDisplayTransition_Shapes
 	.global Data_080f2e9c
 Data_080f2e9c:
 	.2byte 1, 32639

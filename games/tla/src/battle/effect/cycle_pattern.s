@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's gBattleFx_CyclePatternWords, byte for byte
+@ A copy of The Broken Seal's gBattleFx_CyclePatternWords
 	.global gBattleFx_CyclePatternWords
 gBattleFx_CyclePatternWords:
 	.2byte 0xffff, 0x0000, 0x8000, 0xffff, 0xc000, 0xffff, 0xffff, 0xc000

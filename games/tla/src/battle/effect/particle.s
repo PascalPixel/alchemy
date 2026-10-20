@@ -73,7 +73,7 @@ gData_080f0e78:
 	.4byte 0x00, 10
 	.4byte 0x26
 
-@ The Broken Seal's gAnimation_ChildPaletteCycle, byte for byte
+@ A copy of The Broken Seal's gAnimation_ChildPaletteCycle
 	.global gData_080f0e9c
 gData_080f0e9c:
 	.byte 1, 2, 3, 4, 3, 2, 1, 0

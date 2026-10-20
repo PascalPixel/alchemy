@@ -5,7 +5,7 @@
 @ 0x16 set, 0x17 add, 0x26 free, 0x2e call; a label is 0x80000000 | n << 16
 @ and a branch to it 0xc0000000 | n << 16.
 
-@ The Broken Seal's gWorldMap_CursorDirectionAngles, byte for byte: the
+@ A copy of The Broken Seal's gWorldMap_CursorDirectionAngles: the
 @ direction of each pad state in eight ways, 0xffff for none
 	.global gBattleFx_EightWayHeadingWords
 gBattleFx_EightWayHeadingWords:
@@ -14,7 +14,7 @@ gBattleFx_EightWayHeadingWords:
 	.2byte 0x4000, 0x2000, 0x6000, 0x4000
 	.2byte 0xffff, 0x0000, 0x8000, 0xffff
 
-@ The Broken Seal's gBattleFx_QuadrantModes, byte for byte
+@ A copy of The Broken Seal's gBattleFx_QuadrantModes
 	.global Data_080f0ee4
 Data_080f0ee4:
 	.byte 3, 1, 2, 1
@@ -45,7 +45,7 @@ gData_080f0ef8:
 	.4byte 0x00, 128
 	.4byte 0x26
 
-@ The Broken Seal's gBattleFx_RandomChildValues, byte for byte
+@ A copy of The Broken Seal's gBattleFx_RandomChildValues
 	.global gBattleFx_RandomChildValues
 gBattleFx_RandomChildValues:
 	.byte 0, 0, 1, 2, 3, 4, 5, 6

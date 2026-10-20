@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's gWorldMap_CursorDirectionAngles again, byte for byte;
+@ Another copy of The Broken Seal's gWorldMap_CursorDirectionAngles;
 @ read by Func_080ec4d4
 	.global Data_080f1120
 Data_080f1120:

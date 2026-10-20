@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's gResourceSlot_ConversionTables, byte for byte
+@ A copy of The Broken Seal's gResourceSlot_ConversionTables
 	.global gResourceSlot_ConversionTables
 gResourceSlot_ConversionTables:
 	.incbin "games/tla/src/system/resource/colconv0.table"

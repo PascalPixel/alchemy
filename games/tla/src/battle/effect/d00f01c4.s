@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's gDisplayTransition_NoiseWidths, byte for byte
+@ A copy of The Broken Seal's gDisplayTransition_NoiseWidths
 	.global Data_080f01c4
 Data_080f01c4:
 	.byte 0, 1, 2, 2, 2, 2, 3, 3, 4, 4, 5, 6, 7, 8, 9, 11, 13

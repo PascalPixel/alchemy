@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's gOwner_FourColumnValues, byte for byte
+@ A copy of The Broken Seal's gOwner_FourColumnValues
 	.global Data_080c6604
 Data_080c6604:
 	.4byte 1, 3, 4, 5, 8, 6, 9, 10

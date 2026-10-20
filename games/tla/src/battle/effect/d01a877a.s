@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's gBattlePalette_ChannelCurve, byte for byte
+@ A copy of The Broken Seal's gBattlePalette_ChannelCurve
 	.global Data_081a877a
 Data_081a877a:
 	.2byte 0x0000, 0x020c, 0x042f, 0x066b, 0x08c0, 0x0b2f, 0x0db9, 0x105f

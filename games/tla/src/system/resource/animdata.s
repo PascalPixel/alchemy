@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's gObject_ShadowTiles, byte for byte
+@ A copy of The Broken Seal's gObject_ShadowTiles
 	.global gData_0802e89c
 gData_0802e89c:
 	.incbin "games/tla/src/system/resource/shadow.8bpp"

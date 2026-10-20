@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's gCurve_LerpWeightTable, byte for byte
+@ A copy of The Broken Seal's gCurve_LerpWeightTable
 	.global gCurve_LerpWeightTable
 gCurve_LerpWeightTable:
 	.byte 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0
@@ -18,7 +18,7 @@ gCurve_LerpWeightTable:
 	.byte 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0
 	.byte 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0
 	.byte 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0
-@ The Broken Seal's gCurve_SampleIndexTable, byte for byte
+@ A copy of The Broken Seal's gCurve_SampleIndexTable
 	.global gCurve_SampleIndexTable
 gCurve_SampleIndexTable:
 	.byte 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0

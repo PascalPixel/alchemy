@@ -1,5 +1,5 @@
 	.section .rodata
-@ The Broken Seal's gElement_PowerResistByLevel, byte for byte
+@ A copy of The Broken Seal's gElement_PowerResistByLevel
 	.global Data_080c6644
 Data_080c6644:
 	.2byte 75, 85

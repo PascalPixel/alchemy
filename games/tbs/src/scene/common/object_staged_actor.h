@@ -143,7 +143,7 @@ UNUSED static void StagedActor_AdvancePair(void) {
 static s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
                                                   u32 width, u32 height,
                                                   s32 value) {
-  struct MapState *map = gMapWork[0];
+  struct MapScrollWork *map = gMapWork[0];
   struct MapCell *cells;
   u32 row;
   u32 column;
@@ -368,10 +368,6 @@ found:
 /// Its cells are blocked (collision 255) at its new place, through the map's
 /// layer 1 offset, and its old place is given back what was under it.
 UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
-  // gMapWork[0] is read as a u32, the plain-C form this site matches with
-  // (scene/README.md): a u32 may alias the probe's s32 fields, so the load
-  // stays after the probe's four stores; read as the void * it is, it is
-  // scheduled above them.
   struct MapScrollWork *workspace;
   struct StagedActor *actor;
   struct StagedActorProbePosition originalPosition;
@@ -381,7 +377,13 @@ UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
   s32 horizontalExtent;
   s32 verticalExtent;
 
+  // UB: reading the pointer slot through u32 aliases its declared type. The
+  // direct pointer read moves ahead of the probe stores in native English.
+#ifdef UBFIX
+  workspace = gMapWork[0];
+#else
   workspace = (struct MapScrollWork *)*(u32 *)gMapWork;
+#endif
   direction = ((struct StagedActor *)Object_GetById(0))->directionAndKind >> 12;
   actor = (struct StagedActor *)Object_GetById(probe.actorSlot);
   footprintTable = (u8 *)gStagedActor_FootprintBounds;

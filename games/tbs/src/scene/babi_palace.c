@@ -16,6 +16,7 @@
 #include "unit/game/game.h"
 #include "unit/shop/shop.h"
 #include "battle.h"
+#include "battle_unit.h"
 #include "debug.h"
 #include "field.h"
 #include "game.h"
@@ -28,7 +29,6 @@
 #include "io_reg.h"
 #include "field_service.h"
 #include "field_scene.h"
-#include "babi_palace.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "field_event.h"
@@ -65,20 +65,11 @@ enum { ACTOR_FIRST_GUARD = 8, ACTOR_SECOND_GUARD = 9 };
 /// attendant back.
 enum { FLAG_ATTENDANT_SHOWED_BEDS = FLAG_SCENE_TEMP_00 };
 
-/// A party member's unit, seen for its maximum and current HP and PP.
-struct OwnerState {
-  u8 unk00[0x34];
-  u16 maxHp;
-  u16 maxPp;
-  u16 hp;
-  u16 pp;
-};
-
 /// After a night in the palace's beds: the party's HP and PP are full,
 /// Garet, Ivan and Mia rejoin, and the inventory Colosso held is returned.
 static __inline__ void BabiPalace_RestorePartyAndInventory(void) {
   s16 owners[8];
-  struct OwnerState *state;
+  struct BattleUnit *state;
   s32 ownerCount;
   s32 i;
 
@@ -103,10 +94,12 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 }
 
 /// The palace has no regions; the table is empty.
-s32 BabiPalace_GetRegions(void) { return (s32)gBabiPalace_Regions; }
+const struct SceneRegion *BabiPalace_GetRegions(void) {
+  return gBabiPalace_Regions;
+}
 
 /// Both scenes share one exit table.
-s32 BabiPalace_GetExits(void) { return (s32)gBabiPalace_Exits; }
+const u32 *BabiPalace_GetExits(void) { return gBabiPalace_Exits; }
 
 /// Returns the actor placements for the scene and the story: before Babi's
 /// rescue, during the finals or after Colosso.
@@ -959,19 +952,19 @@ static void BabiPalace_WakeAfterFinals(void) {
   Actor_FaceDirection(GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(MIA, FACING_EAST, 0);
   Actor_FaceDirection(IVAN, FACING_WEST, 0);
-  event = (struct EventWork *)((u8 **)&gEventWork)[0];
+  event = gEventWork;
   event->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   event->transitionFrames = 12;
   Task_Wait(1);
   DisplayTransition_InitializeBattleEffectState(9);
   // UB: slot 31 lies past scalar gEventWork. Its named load adds four
-  // bytes in the native EN trial (0x82c to 0x830).
+  // bytes in the native English trial (0x82c to 0x830).
 #ifdef UBFIX
   work = gDisplayTransition;
 #else
   work = (struct DisplayTransitionState *)((u8 **)&gEventWork)[4];
 #endif
-  SetHalf(&work->value, 0);
+  work->value = 0;
   work->mask = 0x1f1f;
   work->active = 1;
   Engine_EventOpenScreen();
@@ -988,7 +981,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     work->value = step;
   }
   work->active = 31;
-  event = (struct EventWork *)((u8 **)&gEventWork)[0];
+  event = gEventWork;
   event->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   event->transitionFrames = 24;
   Event_Wait(20);
@@ -1038,7 +1031,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     Actor_Jump(GARET, 4, 13);
     Actor_Jump(GARET, 4, 30);
     Event_ShowMessage(GARET, 0);
-    ((struct EventWork *)((u8 **)&gEventWork)[0])->message++;
+    gEventWork->message++;
   } else {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 34);
@@ -1046,7 +1039,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 3, 40);
     Actor_Jump(GARET, 4, 13);
     Actor_Jump(GARET, 4, 30);
-    ((struct EventWork *)((u8 **)&gEventWork)[0])->message++;
+    gEventWork->message++;
     Event_ShowMessage(GARET, 0);
   }
   Event_Wait(10);
@@ -1085,13 +1078,13 @@ static void BabiPalace_WakeAfterFinals(void) {
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 7, 40);
     Event_ShowMessage(GARET, 0);
     pick = 0;
-    ((struct EventWork *)((u8 **)&gEventWork)[0])->message++;
+    gEventWork->message++;
   } else {
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 34);
     Event_Wait(20);
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 7, 40);
-    ((struct EventWork *)((u8 **)&gEventWork)[0])->message++;
+    gEventWork->message++;
     pick = 1;
     Event_ShowMessage(GARET, 0);
   }
@@ -1129,9 +1122,9 @@ static void BabiPalace_WakeAfterFinals(void) {
     Actor_RunRepeatedMotion(GARET, 2);
     Event_Wait(30);
     Event_ShowMessage(GARET, 0);
-    ((struct EventWork *)((u8 **)&gEventWork)[0])->message += 2;
+    gEventWork->message += 2;
   } else {
-    ((struct EventWork *)((u8 **)&gEventWork)[0])->message += 2;
+    gEventWork->message += 2;
     Event_Wait(10);
     Actor_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
     Event_Wait(20);
@@ -1221,7 +1214,7 @@ static void BabiPalace_WakeAfterFinals(void) {
 /// Learning that the party is bound for Venus Lighthouse, he sends Iodem
 /// with it, to meet at Gondowan Passage.
 static void BabiPalace_MeetBabiAfterColosso(void) {
-  s16 *position;
+  struct FieldActor *position;
 
   Event_PlayCue(MUS_030);
   Event_Begin();
@@ -2120,19 +2113,22 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Actor_SetAnimation(GARET, ANIM_WALK);
   position = Actor_Get(ACTOR_PARTY_LEADER);
   if (position != 0)
-    Engine_ActorSetDestination(GARET, position[5], position[9]);
+    Engine_ActorSetDestination(GARET, position->x.part.pixel,
+                               position->z.part.pixel);
   Actor_WaitForMove(GARET);
   Actor_SetPosition(GARET, 0, 0);
   Actor_SetAnimation(IVAN, ANIM_WALK);
   position = Actor_Get(ACTOR_PARTY_LEADER);
   if (position != 0)
-    Engine_ActorSetDestination(IVAN, position[5], position[9]);
+    Engine_ActorSetDestination(IVAN, position->x.part.pixel,
+                               position->z.part.pixel);
   Actor_WaitForMove(IVAN);
   Actor_SetPosition(IVAN, 0, 0);
   Actor_SetAnimation(MIA, ANIM_WALK);
   position = Actor_Get(ACTOR_PARTY_LEADER);
   if (position != 0)
-    Engine_ActorSetDestination(MIA, position[5], position[9]);
+    Engine_ActorSetDestination(MIA, position->x.part.pixel,
+                               position->z.part.pixel);
   Actor_WaitForMove(MIA);
   Actor_SetPosition(MIA, 0, 0);
   Event_Wait(10);
@@ -2145,7 +2141,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
 static void BabiPalace_LeaveThroughDoor(void) {
   struct EventWork *work;
 
-  work = (struct EventWork *)((u8 **)&gEventWork)[0];
+  work = gEventWork;
   Event_Begin();
   Event_PlayCue(SE_DOOR_OPEN);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
@@ -2440,8 +2436,8 @@ struct SceneEntrance gBabiPalace_Entrances2[] = {
     { SCENE_TABLE_END },
 };
 
-s16 gBabiPalace_Regions[] = {
-    -1, 0, 0, 0, 0, 0, 0, 0,
+struct SceneRegion gBabiPalace_Regions[] = {
+    { SCENE_TABLE_END },
 };
 
 u32 gBabiPalace_Exits[] = {

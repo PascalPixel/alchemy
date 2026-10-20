@@ -44,6 +44,7 @@
 #include "orbit.h"
 #include "fixed_math.h"
 #include "field_runtime.h"
+#include "heap_state.h"
 
 #include "flags.h"
 #include "songs.h"
@@ -175,7 +176,7 @@ const struct SceneEntrance *Kalay_GetEntrances(void) {
 const struct SceneRegion *Kalay_GetRegions(void) { return NULL; }
 
 /// The numbered exits of all six maps.
-u8 *Kalay_GetExits(void) { return (u8 *)gKalay_Exits; }
+const u32 *Kalay_GetExits(void) { return gKalay_Exits; }
 
 /// The people of the town, palace gate, cave and tunnel.
 const struct ScenePlacement *Kalay_GetPlacements(void) {
@@ -1037,25 +1038,40 @@ static void Kalay_StartWindowTransition(void) {
 /// The tunnel: the fade overlay follows the leader unless he came in by
 /// entrance 4; pushed blocks, frozen target and opened passages are restored.
 static void Kalay_PrepareTunnel(void) {
+#if TBS_PATCH_1
   s32 resumedScene;
+#endif
   struct FieldActor *actor;
   s32 trackingValue;
   s32 column;
   struct FadeOverlayWork *effectWork;
-  // The resident engine stores fade-overlay work in pointer slot nine.
-  u8 **workSlots = (u8 **)&gEventWork;
+  // Slot 36 is nine slots after the event work; index the actual slot array,
+  // not adjacent storage reached past the scalar gEventWork declaration.
+  void **workSlots = gWorkSlot + HEAP_SLOT_EVENT;
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  ((struct EventWork *)workSlots[0])->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   BattleFx_StartFadeOverlay(0);
 #if TBS_PATCH_1
   resumedScene = GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION);
   if (resumedScene != 0) {
-    effectWork = (struct FadeOverlayWork *)workSlots[9];
+    effectWork = workSlots[9];
     trackingValue = GameFlag_IsSet(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
+#ifdef UBFIX
+    if (trackingValue != 0) {
+      actor = Object_GetById(ACTOR_PARTY_LEADER);
+    } else {
+      actor = NULL;
+    }
+    effectWork->actor = actor;
+#else
+    // The original integer temporary carries an actor pointer too. The typed
+    // branch adds a jump and a zero load in the native English trial.
     if (trackingValue != 0) {
       trackingValue = Object_GetById(ACTOR_PARTY_LEADER);
     }
     effectWork->actor = (struct FieldActor *)trackingValue;
+#endif
   } else {
     GameFlag_Set(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
     if (gGameState.entrance == 4) {
@@ -1066,12 +1082,22 @@ static void Kalay_PrepareTunnel(void) {
 #else
   GameFlag_Set(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
-    effectWork = (struct FadeOverlayWork *)workSlots[9];
+    effectWork = workSlots[9];
     trackingValue = GameFlag_IsSet(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
+#ifdef UBFIX
+    if (trackingValue != 0) {
+      actor = Object_GetById(ACTOR_PARTY_LEADER);
+    } else {
+      actor = NULL;
+    }
+    effectWork->actor = actor;
+#else
+    // As in the earlier-edition branch, the integer also carries a pointer.
     if (trackingValue != 0) {
       trackingValue = Object_GetById(ACTOR_PARTY_LEADER);
     }
     effectWork->actor = (struct FieldActor *)trackingValue;
+#endif
   } else if (gGameState.entrance == 4) {
     ((struct FadeOverlayWork *)workSlots[9])->actor = NULL;
     GameFlag_Clear(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
@@ -1206,7 +1232,7 @@ static void Kalay_StartTouristFidgeting(s32 actorId) {
   actor->timer = actorId;
   random = Engine_RandomNext();
   actor->work = (random * 5) >> 12;
-  Engine_ObjectSetScript(actor, (s32)gKalay_TouristFidgetScript);
+  Engine_ObjectSetScript(actor, gKalay_TouristFidgetScript);
 }
 
 /// The guides speed up and start pacing in turn.
@@ -2018,7 +2044,7 @@ static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
       particle->unk61 = 1;
     }
     Object_SetMode(particle, 1);
-    Engine_ObjectSetScript(particle, (s32)gKalay_TunnelParticleScript);
+    Engine_ObjectSetScript(particle, gKalay_TunnelParticleScript);
   }
 }
 

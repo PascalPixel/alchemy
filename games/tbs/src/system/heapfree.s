@@ -9,8 +9,8 @@
 @ which reaches forward over its own bx lr and the whole of MemFree; and
 @ Runtime_ReleaseHeapBlock is the routine with the lsrs r3, r1, #22 / beq
 @ above.
-@ Admitted under Pascal's delegation, 2026-10-09. The two-byte alignment
-@ before MemFree remains linker fill, outside the credited code.
+@ The two-byte alignment before MemFree is linker fill, outside the credited
+@ code.
 @ Thumb LDR cannot relocate across these sections in the stock assembler;
 @ retain the native PC-relative operands for their one shared word.
 .syntax unified

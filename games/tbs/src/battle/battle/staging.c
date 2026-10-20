@@ -960,7 +960,7 @@ void BattleMotion_ShowDowned(s32 unitId) {
     WaitFrames(4);
     BattleActor_RemoveFromLists(unitId);
     // A dot at a time.
-    Map_RenderAllAnimatedTileFramesFar(records, recordCount);
+    Map_RenderAllAnimatedTileFramesFar((u8 **)records, recordCount);
     BattleObj_MarkForRelease(unitId);
   }
 }

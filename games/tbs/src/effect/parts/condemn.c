@@ -216,7 +216,8 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
       target->verticalMotionStrength = 0;
       target->autoFaceMotion = 0;
       target->snapToTarget = 0;
-      Object_SetMoveTargetFar(target, target->x << 1, 0, target->z);
+      Object_SetMoveTargetFar((struct ObjectRuntime *)target, target->x << 1, 0,
+                              target->z);
       ObjectGroup_UpdateMembers(work->effect->actors[0], -1, POSE_DAMAGE, -1,
                                 0);
     }

@@ -85,7 +85,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   s32 scale;
   /* FAKEMATCH: the unused 12-byte vector preserves both stack
    * adjustments and camera-load order. */
-  s32 unused[3];
+  UNUSED s32 unused[3];
 
   camera = gCameraWork;
   object = GetBattleObjectSlotFar(unit)->object;

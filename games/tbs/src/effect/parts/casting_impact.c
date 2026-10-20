@@ -387,7 +387,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   }
   // Stop the acting unit, saving its motion for after the gathering, and
   // place the Djinni 80 pixels overhead.
-  ObjectDispatch_SetAnimationSpeedFar(casterActor, 0);
+  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)casterActor, 0);
   position = &djinnPos;
   SET_POSITION(position, casterActor->x, casterActor->y + 0x500000,
                casterActor->z);
@@ -521,7 +521,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
     BattleFx_RunProjectileVolley(effect, 8);
     return;
   }
-  ObjectDispatch_SetAnimationSpeedFar(casterActor, 16);
+  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)casterActor, 16);
   SET_VELOCITY(casterActor, savedVelocityX, savedVelocityY, savedVelocityZ);
   casterActor->acceleration = savedAcceleration;
   casterActor->verticalMotionStrength = savedVerticalStrength;
@@ -629,7 +629,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
       mode == CASTING_IMPACT_IMPACT_FORCIBLE_ARM ||
       mode == CASTING_IMPACT_IMPACT_TRUNCHEON_FIST || mode == 100) {
     duration = 32;
-  } else if (mode >= 0 && mode <= 3 ||
+  } else if ((mode >= 0 && mode <= 3) ||
              mode == CASTING_IMPACT_IMPACT_TERRA_STRIKE ||
              mode == CASTING_IMPACT_IMPACT_POISON_CLOUD ||
              mode == CASTING_IMPACT_IMPACT_DEADLY_POISON ||

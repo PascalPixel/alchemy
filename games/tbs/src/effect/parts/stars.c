@@ -55,7 +55,7 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
   ObjectDispatch_SelectAnimationFar(caster, 2);
-  ObjectDispatch_SetAnimationSpeedFar(caster, 48);
+  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)caster, 48);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
   work->transferValue = 75;
@@ -166,11 +166,13 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
           target->velocityY = 0x50000;
           target->verticalMotionStrength = 0xab85;
           target->autoFaceMotion = 0;
-          ObjectDispatch_StartIdleFar(target);
+          ObjectDispatch_StartIdleFar((struct DispatchObject *)target);
           if (target->x < 0)
-            Object_SetMoveTargetFar(target, target->x - 0x280000, 0, target->z);
+            Object_SetMoveTargetFar((struct ObjectRuntime *)target,
+                                    target->x - 0x280000, 0, target->z);
           else
-            Object_SetMoveTargetFar(target, target->x + 0x280000, 0, target->z);
+            Object_SetMoveTargetFar((struct ObjectRuntime *)target,
+                                    target->x + 0x280000, 0, target->z);
           if (i == 2) {
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {

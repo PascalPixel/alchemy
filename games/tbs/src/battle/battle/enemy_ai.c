@@ -77,7 +77,7 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
   if (retry != 0 && request->command != CMD_ABILITY)
     return;
 
-  enemy = Enemy_GetDefinitionFar(unit->classId);
+  enemy = (struct EnemyDefinition *)Enemy_GetDefinitionFar(unit->classId);
   selectionMemory = (struct BattleAutomaticState *)&unit->rewards;
   actionStrategy = &enemy->actionStrategy;
   itemActionMask = &enemy->itemActions;

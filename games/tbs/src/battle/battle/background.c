@@ -65,8 +65,8 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 unusedResource,
     IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT, BATTLE_BG1CNT, 0x20000);
   }
 
-  Dma_Set((void *)OBJ_PLTT, &BG_PLTT_COLOR(5, 0), DMA_COPY_HALFWORDS(16),
-          REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   *(u16 *)&BG_PLTT_COLOR(5, 14) = *(u16 *)&BG_PLTT_COLOR(15, 4);
 
   if (fade == 0x80) {
@@ -151,8 +151,8 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
     Graphics_ScaleRgb555Clamped(palette, BATTLE_BG_PALETTE,
                                 battle->brightness = 0x10000 - level * 1092,
                                 128);
-  Dma_Set((void *)OBJ_PLTT, &BG_PLTT_COLOR(5, 0), DMA_COPY_HALFWORDS(16),
-          REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
   *(u16 *)&BG_PLTT_COLOR(5, 14) = *(u16 *)&BG_PLTT_COLOR(15, 4);
   Graphics_BuildSequentialTileTable(BG_SCREEN_BLOCK(7));
   BattlePresentation_BuildTilemap(BG_SCREEN_BLOCK(31));

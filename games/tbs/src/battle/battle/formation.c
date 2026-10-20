@@ -27,7 +27,7 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
   s32 enemyCount;
   /* FAKEMATCH(dead): an unused array for the frame's 28 bytes; without it, 2
    * of 94 instructions differ in tbs-en. */
-  s32 levels[7];
+  UNUSED s32 levels[7];
 
   enemyCount = 0;
   levelTotal = 0;
@@ -42,7 +42,7 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
     if (record->maximumCounts[memberIndex] == 0)
       continue;
     enemyId = record->memberIds[memberIndex];
-    enemy = Enemy_GetDefinitionFar(enemyId + 8);
+    enemy = (struct EnemyDefinition *)Enemy_GetDefinitionFar(enemyId + 8);
     if (enemy == 0)
       continue;
     if (enemy->level > 3 && !GameFlag_TestFar(0x174) &&

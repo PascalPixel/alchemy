@@ -507,7 +507,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     u8 counts[4];
     /* FAKEMATCH(dead): an unused array for the frame's 8 bytes below counts;
      * without it, 34 of 1393 instructions differ in tbs-en. */
-    u8 unused[8];
+    UNUSED u8 unused[8];
     s32 index;
 
     // Check whether enough Djinn of each element are on standby.

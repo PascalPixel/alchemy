@@ -60,7 +60,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   BattleFx_FetchRectangleBlitters(work->effect->side, blit);
   // The user takes its action pose and animates fast until the end.
   ObjectDispatch_SelectAnimationFar(user, 2);
-  ObjectDispatch_SetAnimationSpeedFar(user, 48);
+  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)user, 48);
 
   Resource_LoadAndDecompress((s32)&ResourceId_FlameBladeSheet, work->sheet, 1,
                              1);
@@ -270,7 +270,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
     frame++;
   } while (frame != RAGNAROK_FRAMES);
 
-  ObjectDispatch_SetAnimationSpeedFar(user, 16);
+  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)user, 16);
   EFFECT_FINISH_CANVAS();
 }
 

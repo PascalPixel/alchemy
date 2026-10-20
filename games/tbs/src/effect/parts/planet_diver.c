@@ -122,7 +122,8 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
       actor->verticalMotionStrength = 0xab85;
       actor->autoFaceMotion = 0;
       actor->snapToTarget = 0;
-      Object_SetMoveTargetFar(actor, actor->x * 3, 0, actor->z);
+      Object_SetMoveTargetFar((struct ObjectRuntime *)actor, actor->x * 3, 0,
+                              actor->z);
       ObjectDispatch_SelectAnimationFar(actor, 2);
       work->shakeFrames = frame;
       AudioCommand_PlayFar(SE_136);
@@ -138,7 +139,7 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
       actor->velocityX = 0;
       actor->velocityY = 0;
       actor->z = target->z;
-      ObjectDispatch_StartIdleFar(actor);
+      ObjectDispatch_StartIdleFar((struct DispatchObject *)actor);
     }
     // From frame 18: fall 15 pixels across and 8 down a frame; on reaching
     // the ground, throw out 256 chips, and the target recoils and flashes

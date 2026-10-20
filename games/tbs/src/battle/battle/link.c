@@ -154,11 +154,12 @@ s32 LinkBattle_SendParty(void) {
   MemFree(buffer);
 }
 
-/// Unused. Copies the first four characters of a name and a terminator (five
+/// Copies the first four characters of a name and a terminator (five
 /// bytes) into a buffer on its own stack, an underscore for each one that is
 /// missing, and returns a pointer to the terminator in that buffer, which no
 /// longer exists once it returns. Its first two arguments are ignored.
-u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source) {
+UNUSED u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1,
+                                               u16 *source) {
   u8 buffer[5];
   u8 *base = buffer;
   u32 fill = '_';
@@ -178,6 +179,7 @@ u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source) {
     count--;
   } while (count >= 0);
   base[4] = 0;
+  // BUG: buffer is this function's own stack, gone once it returns.
   return dst;
 }
 
@@ -236,7 +238,7 @@ s32 BattlePres_SyncTurn(void) {
   s32 missed = 0;
   /* FAKEMATCH(dead): an unused array for the twenty bytes of frame no
    * instruction touches; without it, 8 of 232 instructions differ in tbs-en. */
-  u16 spare[10];
+  UNUSED u16 spare[10];
 
   if (work->twoSided != 0) {
     peer = gLinkPeerSignatures[work->linkSide ^ 1];

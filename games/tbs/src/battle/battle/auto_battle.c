@@ -335,8 +335,8 @@ s32 BattlePres_RunApproachAction(struct BattleActionRecord *input) {
   UiWork_PushValueSlotFar(work.effect.actor, VALUE_UNIT_NAME);
   UiText_ShowMessageAndWaitCoreFar(MsgActorAttacks);
   BattleMotion_ApproachTarget(work.effect.actor, work.effect.actors[0], 13, 0);
-  ObjectDispatch_SetAnimationSpeedFar(BattleObjGet(work.effect.actor)->object,
-                                      16);
+  ObjectDispatch_SetAnimationSpeedFar(
+      (struct DispatchObject *)BattleObjGet(work.effect.actor)->object, 16);
   BattleObjGet(work.effect.actors[0]);
 
   work.effect.count = 1;
@@ -391,7 +391,7 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
   PartyStatusDrawFar(gBattleWork->partyStatus & ~1);
   object = BattleObjGet(work.effect.actor)->object;
   ObjectDispatch_SelectAnimationFar(object, 3);
-  ObjectDispatch_SetAnimationSpeedFar(object, 16);
+  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
   if ((u16)action->target <= 7) {
     work.effect.side = 1;
     BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, work.effect.actors);
@@ -506,7 +506,7 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
     actorData->param = 6;
     actorData->frame = 0xFF;
     WaitFrames(4);
-    Map_RenderAnimatedTileFramesForObjectFar(object);
+    Map_RenderAnimatedTileFramesForObjectFar((u8 *)object);
     BattleObj_MarkForRelease(unitId);
   }
 }

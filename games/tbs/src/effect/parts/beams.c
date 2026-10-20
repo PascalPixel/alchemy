@@ -349,7 +349,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
       SET_VELOCITY(mote, Random16() & 0xffff, Random16() & 0xffff,
                    Random16() & 0xffff);
     }
-    ObjectDispatch_SetAnimationSpeedFar(object, 0);
+    ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 0);
     velocityX = object->velocityX;
     velocityY = object->velocityY;
     velocityZ = object->velocityZ;
@@ -392,7 +392,7 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
       EFFECT_PRESENT_FRAME(work);
     }
     Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-    ObjectDispatch_SetAnimationSpeedFar(object, 16);
+    ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
     SET_VELOCITY(object, velocityX, velocityY, velocityZ);
     object->acceleration = acceleration;
     object->verticalMotionStrength = strength;

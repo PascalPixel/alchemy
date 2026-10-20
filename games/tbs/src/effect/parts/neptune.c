@@ -72,7 +72,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
   Scheduler_AddOrUpdateCallback(Graphics_ResetBg2Pa, EFFECT_CALLBACK_ORDER);
-  Runtime_SetIrqHandler(2, 0, (s32)Graphics_SetBg2AffineScaleHalf);
+  Runtime_SetIrqHandler(2, 0, Graphics_SetBg2AffineScaleHalf);
   work->transferMode = CANVAS_COPY;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
@@ -234,7 +234,7 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
     // Frame 152: only the lines from 96 down stay stretched, and the battle
     // backdrop's colours darken over 24 frames.
     if (frame == 152) {
-      Runtime_SetIrqHandler(2, 96, (s32)Graphics_SetBg2AffineScaleHalf);
+      Runtime_SetIrqHandler(2, 96, Graphics_SetBg2AffineScaleHalf);
       work->fadeFrames = 24;
       work->fadeStep = 0;
     }

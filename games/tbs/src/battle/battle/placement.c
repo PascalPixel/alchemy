@@ -32,7 +32,7 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
 
   fixedX = x * 65536;
   fixedZ = y * 65536;
-  object = Object_CreateFar(0xf000, fixedX, 0, fixedZ);
+  object = (struct MotionObject *)Object_CreateFar(0xf000, fixedX, 0, fixedZ);
   unit = UnitGetFar(unitId);
   palette = 0;
   registeredSprite = SummonSlot_RegisterActorSprites(unitId);

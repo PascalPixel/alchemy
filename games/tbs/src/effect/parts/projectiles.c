@@ -302,9 +302,9 @@ void BattleFx_RunWingBeat(struct BattleEffectArgument *effect) {
 /// while its animation runs fast.
 static inline void
 BattleFx_RunVolleyWithAction(struct BattleEffectArgument *effect, s32 mode) {
-  s32 user;
+  struct DispatchObject *user;
 
-  user = (s32)GetBattleObjectSlotFar(effect->actor)->object;
+  user = (struct DispatchObject *)GetBattleObjectSlotFar(effect->actor)->object;
   ObjectDispatch_SelectAnimationFar(user, 2);
   ObjectDispatch_SetAnimationSpeedFar(user,
                                       PROJECTILE_VOLLEY_ANIMATION_STEP_FAST);
@@ -934,8 +934,9 @@ void BattleFx_InitializeRisingObject(s32 id) {
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   object->snapToTarget = 1;
-  ObjectDispatch_StartIdleFar(object);
-  Object_SetMoveTargetFar(object, slot->anchorX, 0, slot->anchorZ);
+  ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+  Object_SetMoveTargetFar((struct ObjectRuntime *)object, slot->anchorX, 0,
+                          slot->anchorZ);
   ObjectDispatch_SelectAnimationFar(object, 1);
 }
 
@@ -969,8 +970,8 @@ void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   object->velocityY = 0;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 1;
-  ObjectDispatch_StartIdleFar(object);
-  Object_SetMoveTargetFar(object, x, 0, z);
+  ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+  Object_SetMoveTargetFar((struct ObjectRuntime *)object, x, 0, z);
   ObjectDispatch_SelectAnimationFar(object, 2);
 }
 

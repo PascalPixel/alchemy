@@ -281,8 +281,8 @@ s32 BattlePres_SetActorModeAndAction(s32 unitId) {
   }
 
   ObjectDispatch_SelectAnimationFar(BattleObjGet(unitId)->object, pose);
-  ObjectDispatch_SetAnimationSpeedFar(BattleObjGet(unitId)->object,
-                                      (unitId & 3) + 14);
+  ObjectDispatch_SetAnimationSpeedFar(
+      (struct DispatchObject *)BattleObjGet(unitId)->object, (unitId & 3) + 14);
 }
 
 /// Releases every sprite unitId's object holds and leaves it with none.
@@ -515,7 +515,7 @@ void *BattleMotion_DestroyAllSlotObjects(void) {
     }
     battleObject = BattleObjGet(unitId);
     if ((battleObject != NULL) && (battleObject->active != 0)) {
-      ObjectDispatch_ReleaseFar((s32)battleObject->object);
+      ObjectDispatch_ReleaseFar((struct DispatchObject *)battleObject->object);
       battleObject->object = NULL;
       battleObject->active = 0;
     }

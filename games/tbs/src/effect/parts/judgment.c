@@ -437,7 +437,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
                BGCNT_SCREEN_BASE(7);
 
   fill = 0;
-  Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+  Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
 
   // The rings' centre in the wave picture (cx, cy), their width in eighths
   // (sx, which also scales them above the centre), their depth below it
@@ -453,7 +453,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   fill = shift;
-  Dma_Set(&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
+  Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
 
   // The sweep, on its own frame clock: the impact on the aerial view (0 to
   // 149), the beach (150 to 213), the forest (214 to 279), and from 280 the
@@ -500,7 +500,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2PA, Q_8_8(0.5), 0x20000);
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, 0, 0x30000);
       fill = 0;
-      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
       Resource_LoadAndDecompress((s32)&ResourceId_ExplosionSheet,
                                  work->sheet + JUDGMENT_SHEET_EXPLOSION, 1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_OverlayImageA,
@@ -519,7 +519,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     // Frames 69, 182 and 238 flash the whole canvas.
     if (frame == 69) {
       fill = 0x3f3f3f3f;
-      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
     }
 
     if (frame == 70) {
@@ -536,9 +536,9 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       fill = 0;
       rings = 4;
       squash = 8;
-      Dma_Set(&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
+      Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
       fill = 0x3f3f3f3f;
-      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
       BattleBackground_LoadFar(1, (s32)&ResourceId_BeachBackdrop, 0);
     }
 
@@ -546,9 +546,9 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     // floor, those further right drawn smaller.
     if (frame == 214) {
       fill = 0;
-      Dma_Set(&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
+      Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
       fill = 0x3f3f3f3f;
-      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
       BattleBackground_LoadFar(1, (s32)&ResourceId_ForestBackdrop, 0);
       for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
         particle = &work->particles[i];
@@ -566,9 +566,9 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
       // where the explosion front now scrolls back from.
       BattleFx_SetupBlendedDisplay();
       fill = 0;
-      Dma_Set(&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
+      Dma_Set((const void *)&fill, work, JUDGMENT_DMA_FILL_WAVE, REG_DMA3);
       fill = 0x01010101;
-      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
       ctrl->active = 0;
       REG_BLDALPHA = BLEND_ALPHA(16, 16);
       for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
@@ -610,7 +610,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
 
     if (frame == 182) {
       fill = 0x3f3f3f3f;
-      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
     }
 
     // Frames 0 to 63: a flare falls onto the aerial view, drawn as four
@@ -852,7 +852,7 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
 
     if (frame == 238) {
       fill = 0x3f3f3f3f;
-      Dma_Set(&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
+      Dma_Set((const void *)&fill, canvas, JUDGMENT_DMA_FILL_CANVAS, REG_DMA3);
     }
 
     // Frames 214 to 279: the forest scrolls 8 pixels a frame, and from 246

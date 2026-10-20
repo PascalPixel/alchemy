@@ -175,7 +175,7 @@ s32 BattleFx_InitializeStarField(s32 mode) {
   s32 zero;
   /* FAKEMATCH(dead): an unused Spark for the frame's 28 bytes; without it, 2
    * of 246 instructions differ in tbs-en. */
-  struct Spark unused;
+  UNUSED struct Spark unused;
 
   ((s32 *)gTransitionWork)[2] = 1;
   work = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
@@ -314,7 +314,7 @@ void BattleFx_PlayUnitElementEffect(s32 unitId, s32 element, s32 mode,
                                     s32 variant) {
   /* FAKEMATCH(dead): an unused array for the frame's 40 bytes; without it, 2
    * of 249 instructions differ in tbs-en. */
-  s32 spare[10];
+  UNUSED s32 spare[10];
   struct EffectPosition position;
   struct EffectPosition position2;
   struct BattlePresentationWork launch;

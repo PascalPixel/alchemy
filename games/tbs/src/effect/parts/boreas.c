@@ -31,7 +31,7 @@
 /// effect: the targets.
 void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
-  s32 rockPoints[32][2]; // a copy of gBoreas_Points that nothing reads
+  UNUSED s32 rockPoints[32][2]; // a copy of gBoreas_Points that nothing reads
   struct SpritePlacement position;
   void *canvas;
   struct BattleEffectWork *work;

@@ -37,6 +37,8 @@
 #include "facing_object.h"
 #include "songs.h"
 
+// UB: this calls a void function through an s32 function type, the call the
+// bytes show; UBFIX calls it as declared. Its use is tagged.
 #ifdef UBFIX
 #define MCCOY_GARDEN_SET_ACTOR_POSITION Engine_ActorSetPosition
 #else
@@ -192,8 +194,9 @@ static void Event_TalkToEastGuard(void) {
       Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_NORTH, 10);
       Garden_OpenPalaceGate();
       Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 246);
-      // UB: called as returning a value, which loads the actor id after the
-      // two zeros; UBFIX calls it as declared.
+      /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
+       * show, which loads the actor id after the two zeros; as a call by its
+       * void declaration, 1 of 233 instructions differ in tbs-en. */
       MCCOY_GARDEN_SET_ACTOR_POSITION(ACTOR_WEST_GUARD, 0, 0);
       /* FAKEMATCH(one-pass): the block keeps r0 last among the call above's
          arguments; as a plain call, 1 of 233 instructions differ in tbs-en. */

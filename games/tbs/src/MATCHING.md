@@ -37,7 +37,10 @@ matching tree, or behind `BUGFIX`.
   original instructions, inside the function it steers. N is measured over
   the whole function against the edition named. The kinds:
   - `wrapper`: a call made through a helper, a cast or a library routine in
-    place of the plain call or operator;
+    place of the plain call or operator; a call through a cast to another
+    function type is one wherever the callee has a declared type, with the
+    declared call behind `UBFIX`, unlike a call to code with no function type
+    (see Runtime);
   - `volatile`: a qualifier that forces a load or store to stay where it is
     written; one that is a macro's own form, such as the fill word of
     `Dma_Fill32` (pret's `DmaFill32`), is no device;
@@ -84,13 +87,6 @@ are one idea each, and can compile differently.
 - A function whose result nothing reads keeps its `s32` return where `void`
   changes its epilogue; `UBFIX` gives the `void` form. An update hook that
   the bytes show returning a value does the same, with `// UB:` above it.
-- A function called through a cast to another function type, with the
-  declared call behind `UBFIX`: `Scheduler_AddOrUpdateCallback` as a `void`
-  function (`Map_LoadLayeredScene`), and the `void` function
-  `Engine_ActorSetPosition` as `s32 (*)()` (`Event_TalkToEastGuard` through
-  `MCCOY_GARDEN_SET_ACTOR_POSITION`, and the Colosso and Imil scenes), which
-  loads the actor id after the two zeros where the declared call sets r0
-  first.
 - Palette RAM and VRAM through a volatile pointer or a plain one. Palette RAM
   as `BG_PLTT_COLOR`, which is volatile, or through a plain pointer to it
   such as `(u16 *)&BG_PLTT_COLOR(14, 0)`; `BattleFx_RunJudgment`'s

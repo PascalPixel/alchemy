@@ -371,8 +371,9 @@ s32 Map_LoadLayeredScene(s32 index) {
 #ifdef UBFIX
   Scheduler_AddOrUpdateCallback(Map_UpdateLayerScroll, 0xc85);
 #else
-  // Called through a cast as void (*)(void (*)(void), s32); called as its
-  // prototype, 2 of 349 instructions differ in tbs-en.
+  /* FAKEMATCH(wrapper): called through a cast to the void call the bytes
+   * show, which loads the callback before its order; as a call by its
+   * prototype, 2 of 349 instructions differ in tbs-en. */
   ((void (*)(void (*)(void), s32))Scheduler_AddOrUpdateCallback)(
       Map_UpdateLayerScroll, 0xc85);
 #endif

@@ -26,7 +26,13 @@ void System_Initialize(void) {
   Dma_Fill32(0, (void *)0x03000000, 0x7800);
   Runtime_InitializeHeap();
   Runtime_InstallIwramAndIrqs();
+  // UB: the count and its pad are cleared with one word store
+#ifdef UBFIX
+  gIoWriteQueue.count = 0;
+  gIoWriteQueue.pad = 0;
+#else
   *(u32 *)&gIoWriteQueue.count = 0;
+#endif
   gDebugTextEnabled = 0;
   gDebugMode = 0;
   gCpuLoadDisplayEnabled = 0;
@@ -125,7 +131,7 @@ void System_CopyBuildStamp(void) {
   struct BuildStampCopy *copy;
 
   stamp = Resource_GetTableEntry((u32)&ResourceId_BuildStamp);
-  copy = (struct BuildStampCopy *)&gIwramHi_Data1;
+  copy = (struct BuildStampCopy *)gBuildStamp;
   Dma_Set(stamp, copy, DMA_COPY_WORDS(3), REG_DMA3);
   copy->terminator = 0;
 }

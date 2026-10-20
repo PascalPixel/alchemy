@@ -378,4 +378,8 @@ s32 SaveState_LoadSummaryRecords(void) {
 u32 SaveState_ReleaseWorkspace(void) {
   Runtime_SetIrqHandler(IRQ_TIMER2, 0, NULL);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_SAVE);
+  // UB: nothing is returned, and no caller reads the result
+#ifdef UBFIX
+  return 0;
+#endif
 }

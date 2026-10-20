@@ -138,11 +138,13 @@ void AudioTest_RunParameterController(void) {
 
   row = 0;
   preset = 2;
-  /* FAKEMATCH: the one-pass block keeps the state-address load after preset
+  /* FAKEMATCH(one-pass): the block keeps the state-address load after preset
    * setup and the state store before timer setup. Plain store: differ 8 or more
    * in nine statement orders. */
+  // XXX: this overwrites the first four digits of the build stamp copy; why
+  // the audio test clears them is not known.
   do {
-    gIwramHi_Data1 = 0;
+    gBuildStamp[0] = 0;
   } while (0);
   timer = 20;
 

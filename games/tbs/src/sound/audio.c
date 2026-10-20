@@ -283,9 +283,10 @@ void CgbAudio_Initialize(struct CgbNote *notes) {
       MusicTrack_DispatchStreamCommand;
   gSound_CommandTable[SOUND_COMMAND_RELEASE_KEY] = MusicTrack_ReleaseKey;
   gSound_CommandTable[SOUND_COMMAND_PCM_RATE] =
-      (SoundCommand)AudioEngine_SetPcmRate;
+      SOUND_COMMAND_CAST(SoundCommand, AudioEngine_SetPcmRate);
   gSound_CommandTable[SOUND_COMMAND_STOP_TRACK] = MusicTrack_Stop;
-  gSound_CommandTable[SOUND_COMMAND_FADE] = (SoundCommand)MusicPlayer_StepFade;
+  gSound_CommandTable[SOUND_COMMAND_FADE] =
+      SOUND_COMMAND_CAST(SoundCommand, MusicPlayer_StepFade);
   gSound_CommandTable[SOUND_COMMAND_CALCULATE_OUTPUT] = MusicTrack_CalcOutput;
 
   work->cgbNotes = notes;

@@ -180,7 +180,7 @@ static void DebugMenu_EnableEffectChildMode(void) {
 
 #if TBS_PATCH_3
 /// Gives a Nut through the ordinary party gift and full-inventory dialogue.
-static void DebugMenu_GiveItemToParty(void) {
+UNUSED static void DebugMenu_GiveItemToParty(void) {
   PartyInventory_GiveItem(ITEM_NUT, 0);
 }
 #endif
@@ -406,7 +406,7 @@ static void DebugMenu_GivePartyDjinn(void) {
   /* FAKEMATCH: the benchmark's buffer, unused outside Japanese, keeps the
    * native's 256 untouched frame bytes; declared inside the benchmark's #if,
    * 4 instructions differ in tbs-en. */
-  u8 benchmarkBuffer[256];
+  UNUSED u8 benchmarkBuffer[256];
 #if !TBS_PATCH_1
   s32 pass;
   s32 characterIndex;
@@ -642,7 +642,7 @@ static void DebugMenu_SelectItem(void) {
   Engine_DebugFinalizeWindow(details, 1);
 }
 
-static void DebugMenu_OpenItemBrowser(void) { DebugMenu_SelectItem(); }
+UNUSED static void DebugMenu_OpenItemBrowser(void) { DebugMenu_SelectItem(); }
 
 /// Adds the original treasure test stock, retaining duplicate tickets and
 /// medals.

@@ -106,7 +106,7 @@ void WaitFrames(s32 frames) {
     gSavedStackSize = top - base;
     Dma_Set(base, gSavedStack, DMA_COPY_WORDS(gSavedStackSize >> 2), REG_DMA3);
     CAMELOT_ASM("the stack switch, a write to sp no C can express")
-    __asm__ volatile("mov sp, %0" : : "r"(top) : "sp", "memory");
+    __asm__ volatile("mov sp, %0" : : "r"(top) : "memory");
   }
   for (frameIndex = 0; frameIndex < frames; frameIndex++) {
     // Run the main-loop tasks and build this frame's sprites
@@ -252,7 +252,7 @@ void WaitFrames(s32 frames) {
       sp = base;
       CAMELOT_ASM(
           "restore the hardware stack pointer after the proven stack copy")
-      __asm__ volatile("mov sp, %0" : : "r"(sp) : "sp", "memory");
+      __asm__ volatile("mov sp, %0" : : "r"(sp) : "memory");
       /* FAKEMATCH: complementary conditions, which emit nothing, end the
        * restore CSE block and keep the size-address reload in r3; reusing size
        * for nextSize, 4 instructions differ in tbs-en. */

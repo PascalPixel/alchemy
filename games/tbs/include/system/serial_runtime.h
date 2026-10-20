@@ -114,13 +114,6 @@ STATIC_ASSERT(offsetof(struct SerialTransferState, payload) == 4);
 
 #define SERIAL_RUNTIME (&gSerialRuntime)
 
-#define START_DMA(source_, destination_, control_)                             \
-  do {                                                                         \
-    DMA3->source = (u32)(source_);                                             \
-    DMA3->destination = (u32)(destination_);                                   \
-    DMA3->control = (control_);                                                \
-  } while (0)
-
 extern struct SerialTransferState gSerialTransfer;
 extern struct SerialRuntime gSerialRuntime;
 extern u16 gSerialExchangeActive;
@@ -155,15 +148,15 @@ static __inline__ void SerialRuntime_ResetTransferState(void) {
   u32 saved;
   u32 zero;
 
-  /* FAKEMATCH: the blocks preserve IME write order; the repeated state
-   * assignment keeps its allocation priority above the IME pointer. */
+  /* FAKEMATCH(one-pass): the blocks preserve IME write order; the repeated
+   * state assignment keeps its allocation priority above the IME pointer. */
   do {
     state = &gSerialTransfer;
     ime = &REG_IME;
   } while (0);
   do {
     saved = *ime;
-    *ime = (u16)ime;
+    *ime = (u16)(u32)ime;
   } while (0);
   do {
     zero = 0;

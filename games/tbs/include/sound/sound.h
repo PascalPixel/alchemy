@@ -56,9 +56,9 @@ void MusicTrack_SetModulationFromCommand(struct SoundPlayer *player,
 void MusicTrack_Stop(struct SoundPlayer *player, struct SoundTrack *track);
 void Sound_Mixer(void);
 
-#ifndef OWN_IwramHi_Data1
-extern s32 gIwramHi_Data1;
-#endif
+/// The build stamp System_CopyBuildStamp copies to IWRAM at power-on: twelve
+/// digits and a zero word, at the bottom of the frame-wait stack.
+extern s32 gBuildStamp[];
 extern u8 gMusicFadeRequested;
 extern s32 gSoundClipFlag;
 extern u8 gEwram_Data1;

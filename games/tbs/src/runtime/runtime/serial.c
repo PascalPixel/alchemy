@@ -331,7 +331,20 @@ void SerialRuntime_HandleTransferInterrupt(void) {
   volatile u32 *sioControl;
   s32 channel;
 
+  // The four consoles' halfwords, SIOMULTI0 to 3.
+  // UB: the u16 array is written through one doubleword store
+#ifdef UBFIX
+  {
+    volatile u16 *multi = (volatile u16 *)REG_SIODATA32;
+
+    recv[0] = multi[0];
+    recv[1] = multi[1];
+    recv[2] = multi[2];
+    recv[3] = multi[3];
+  }
+#else
   *(u64 *)recv = *(volatile u64 *)REG_SIODATA32;
+#endif
   sioControl = &REG_SIOCNT;
   sendState = &gSerialRuntime;
   sendState->isParent = (*sioControl << 25) >> 31;

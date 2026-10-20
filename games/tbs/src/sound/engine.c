@@ -7,16 +7,16 @@ void AudioCommand_InvokeSlot34(struct SoundNote *note) {
   // Taking the entry address folds its slot into a literal address. Direct
   // indexing adds an address-adjustment instruction with the library compiler.
   void (*detachNote)(struct SoundNote *) =
-      (void (*)(struct SoundNote *)) *
-      (&gSound_CommandTable[SOUND_COMMAND_DETACH_NOTE]);
+      SOUND_COMMAND_CAST(void (*)(struct SoundNote *),
+                         *(&gSound_CommandTable[SOUND_COMMAND_DETACH_NOTE]));
 
   detachNote(note);
 }
 
 /// Clears a 64-byte player or track prefix through the driver command table.
 void AudioCommand_InvokeSlot35(void *block) {
-  void (*clearWork)(void *) =
-      (void (*)(void *)) * (&gSound_CommandTable[SOUND_COMMAND_CLEAR_WORK]);
+  void (*clearWork)(void *) = SOUND_COMMAND_CAST(
+      void (*)(void *), *(&gSound_CommandTable[SOUND_COMMAND_CLEAR_WORK]));
 
   clearWork(block);
 }

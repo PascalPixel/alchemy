@@ -59,8 +59,9 @@ struct DmaRegisters {
 /// into `channel`'s registers with one stmia.
 CAMELOT_ASM("stmia of three registers with no paired ldmia, which no agscc "
             "pattern emits")
-static __inline__ void Dma_Set(const void *source, void *destination,
-                               u32 control, volatile u32 *channel) {
+static __inline__ void Dma_Set(const volatile void *source,
+                               volatile void *destination, u32 control,
+                               volatile u32 *channel) {
   // The channel is an input only, so callers keep it in a register across
   // adjacent transfers and form nearby I/O addresses from it.
   register volatile u32 *dma __asm__("r3") = channel;

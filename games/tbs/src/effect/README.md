@@ -167,7 +167,7 @@ phases begins.
 
 Most effects draw into one canvas: 128 by 128 pixels, one byte each (8-bit
 colour), stored the way the hardware stores a background, as 16 by 16 tiles of
-8 by 8 pixels. BG2, the background layer the hardware can scale and rotate,
+8 by 8 pixels. `BG2`, the background layer the hardware can scale and rotate,
 shows it blended over the battle and stretched to twice its width so that it
 spans the screen. `BattleFx_BeginCanvasLayer`
 ([`parts/canvas.c`](parts/canvas.c)) sets that up; an effect that wants the
@@ -183,13 +183,13 @@ clears them, keeps half or three quarters of each pixel's level, or darkens or
 brightens them. Canvas pixels are levels in a palette ramp, so fading the levels
 makes trails die away without any bookkeeping per particle.
 
-Two kinds of effect also use another background layer, BG1. For the beam
-scenes, `BattleFx_SetupCanvasTileMap` moves the canvas itself to BG1 and shows
+Two kinds of effect also use another background layer, `BG1`. For the beam
+scenes, `BattleFx_SetupCanvasTileMap` moves the canvas itself to `BG1` and shows
 it there without stretching it. The particle streams of Meteor and Outer Space
-keep BG2 as well: while the streams rise they draw a full-screen picture into
-`Ram_MapCellBuffer` and show it on BG1, flushed by
-`BattleFx_FlushPendingGraphicsTransfer`, as they scroll BG2, and the burst that
-follows sets BG2 back to the half-scale canvas.
+keep `BG2` as well: while the streams rise they draw a full-screen picture into
+`Ram_MapCellBuffer` and show it on `BG1`, flushed by
+`BattleFx_FlushPendingGraphicsTransfer`, as they scroll `BG2`, and the burst that
+follows sets `BG2` back to the half-scale canvas.
 
 ### Particles
 
@@ -327,9 +327,9 @@ Effects move a lot of memory around with `Iwram_CopyWords`, `Iwram_ClearWords`
 and `Iwram_FillWords`. Despite the names, the sizes they're given are in bytes,
 not words.
 
-BG2's scale (`REG_BG2PA`) is 8.8 fixed point, so `0x100` is 1 and `0x80` a
+`BG2`'s scale (`REG_BG2PA`) is 8.8 fixed point, so `0x100` is 1 and `0x80` a
 half, and its reference point (`REG_BG2X`) is 20.8. On the wide canvas, which
-BG2 stretches to twice its width, a point x pixels across the screen is at x / 2
+`BG2` stretches to twice its width, a point x pixels across the screen is at x / 2
 on the canvas.
 
 ### Pictures and colours
@@ -389,7 +389,7 @@ each frame, each in its own random rotation. A Djinni's impact (impacts 0 to 7)
 shows its Djinni 80 pixels above the caster once the first sparks have gone
 out.
 
-Next, BG2 is placed so the impact sits over the target. A few impacts stop here
+Next, `BG2` is placed so the impact sits over the target. A few impacts stop here
 and hand the canvas on: 15 to projectile volley 9, 24 to Mystic Flame's orbs,
 26 to projectile volley 8 and 35 (Severe Blow) to the spark bursts, while 17
 simply ends.

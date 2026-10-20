@@ -15,9 +15,9 @@ each place's [Scenes](../scene/README.md) overlay gives it its events, and
 the map data the engine loads lives in [Maps](../map/README.md).
 
 A little about the Game Boy Advance helps here. The console builds its
-picture from up to four background layers, BG0 to BG3, with the hardware
+picture from up to four background layers, `BG0` to `BG3`, with the hardware
 sprites drawn among them. Each background is a grid of 8 by 8 pixel tiles
-held in video memory (VRAM), and two of them, BG2 and BG3, can be affine:
+held in video memory (VRAM), and two of them, `BG2` and `BG3`, can be affine:
 the hardware scales and rotates them as it draws. The processor speaks two
 instruction sets, compact 16-bit Thumb, in which almost all of the game is
 written, and 32-bit ARM, which runs fastest from the small internal RAM, so
@@ -34,7 +34,7 @@ that replaces repeated runs of bytes with references back to earlier ones.
 | `field_internal.h` | the parts' includes, and the few names more than one part uses; it places no bytes |
 | `field/*.c` | the 14 parts, each compiled only through `field.c` |
 | `update.c` | `Object_UpdateAll`, an ARM version of the object update for the first eight objects, written to be copied to RAM and run there; only the unused `Object_RunUpdateAllFromHeap` would run it |
-| `vertices.c` | `Transform_UpdateVertices`, the ARM routine that turns the world map's ground plane into BG2's affine values, one set per scanline |
+| `vertices.c` | `Transform_UpdateVertices`, the ARM routine that turns the world map's ground plane into `BG2`'s affine values, one set per scanline |
 | `object_script.c`, `operand.c` | the object scripts the engine starts by itself, the script command table, and the handlers of the work values |
 | `facing.c` | the facing tables, then small constant tables the parts read: the order a sprite's tile dissolves in, the fixed camera's matrix, the wave a floating object bobs on, the idle script, the direction pad's headings, the footprint and dust scripts, and how far the world map camera leans for each pad direction |
 | `curve_data.c`, `mapdata.c` | the terrain height tables; the height function of each terrain kind, the world map's terrain behaviour table, and two small tables nothing in The Broken Seal reads |
@@ -98,7 +98,7 @@ word in a grid 128 cells wide. Its low halfword (16 bits) holds the
 and above that four flag bits, the layer and priority an object standing
 there takes. Its third byte is the collision code that walls, exits and
 events are keyed on, and its fourth picks its ground shape. A layered map
-has three map **layers**, on BG3, BG2 and BG1, which have nothing to do with
+has three map **layers**, on `BG3`, `BG2` and `BG1`, which have nothing to do with
 a sprite's layers.
 
 Positions are fixed-point numbers of pixels: the upper half of each 32-bit
@@ -301,29 +301,41 @@ matches with.
 
 ### The layered map
 
-Towns and dungeons are drawn on three of the GBA's four background layers
-(BG0 to BG3), all of them windows onto one shared grid of cells. Each layer
-has its own parallax, drift and wrap, so it can scroll at its own rate as
-the view moves, or drift by itself.
+A town or a dungeon is drawn in three map layers, stacked on three of the
+console's four background layers, and the actors are sprites drawn between
+them. All three layers are windows onto one shared grid of cells, and each
+has its own parallax, drift and wrap, so it can scroll at its own rate as the
+view moves, or drift by itself.
 
-![Vale pulled apart into its layers: BG3 at the back, then BG2, the sprites and BG1 in front](https://alchemy.pascalpixel.com/guides/field/layers-3d.gif)
+- The **ground layer** (`MAP_LAYER_GROUND`, on `BG3`) is at the back.
+- The **middle layer** (`MAP_LAYER_MIDDLE`, on `BG2`) holds walls and edges,
+  drawn under the actors.
+- The **overhead layer** (`MAP_LAYER_OVERHEAD`, on `BG1`) holds roofs and tree
+  tops, drawn over the actors.
+- The fourth background, `BG0`, is the **window layer**, where every message
+  and menu is drawn.
+
+![Vale pulled apart into its layers: the ground at the back, then the middle layer, the actors and the overhead layer in front](https://alchemy.pascalpixel.com/guides/field/layers-3d.gif)
 
 Here is Vale pulled apart into its layers and put back together. At the back
-is BG3, the ground. In front of it, BG2 holds the Sanctum's walls and door and
-the cliff edges. Then come the sprites, Isaac among them, and BG1 goes in front
-of everything with the tree top, the Sanctum's roof and the tops of the stair
-posts. That's how Isaac can walk under a roof or behind a tree: he's drawn
-between two layers of the same map.
+is the ground layer. In front of it, the middle layer holds the Sanctum's
+walls and door and the cliff edges. Then come the actors, Isaac among them,
+and the overhead layer goes in front of everything with the tree top, the
+Sanctum's roof and the tops of the stair posts. That's how Isaac can walk
+under a roof or behind a tree: he's drawn between two layers of the same map.
+
+What puts the overhead layer in front is its priority. Each layer's priority
+comes from the map's header, and most maps give the three layers 3, 2 and 1,
+where a lower number is drawn nearer the front. The field draws its sprites at
+priority 2, the same as the middle layer, and a sprite wins a tie, so the
+actors stand on the middle layer and under the overhead one. A layer's
+priority also switches it on: `Map_LoadLayeredScene` shows a layer only when
+its priority isn't zero, and nine maps show only their ground.
 
 The grid is 128 by 128 cells, 64 KB, decoded into `Ram_MapCellBuffer`. Each
 layer's window starts at the cell its header gives (`Map_LoadLayeredScene`
 sets `layers[n].cells` to the cell at half the header's 8-pixel tile
 position, since a cell is 2 by 2 tiles).
-
-Layer 0 shows on BG3, layer 1 on BG2 and layer 2 on BG1, which leaves BG0
-for the windows. A layer's priority byte in the header doubles as its
-switch: `Map_LoadLayeredScene` turns a layer on only when its priority isn't
-zero, so map layers use priorities 1 to 3.
 
 Collision and height work per layer too. An object's `terrainId` names the
 layer whose ground it follows, and code that asks about the ground reads
@@ -333,7 +345,7 @@ map format, and how the build makes it, are in [Maps](../map/README.md).
 ### The world map
 
 The world map is drawn in perspective, with the ground tilting away towards
-the horizon. The map itself is flat: BG2 and BG3 are affine backgrounds,
+the horizon. The map itself is flat: `BG2` and `BG3` are affine backgrounds,
 and their scaling changes on every scanline of the screen to make the ground
 recede. When the camera's pitch
 changes, `WorldMap_BuildScanlineTable` gives each line of the screen a width
@@ -359,7 +371,7 @@ two graphics sets, `gWorldMap_GraphicsResources`, and
 21.
 
 When a menu or event starts on the world map, `WorldMap_BeginStillView`
-freezes the perspective view as a still picture on BG1: it draws the current
+freezes the perspective view as a still picture on `BG1`: it draws the current
 affine frame into pixels with the ARM routine `TileMap_DrawRows`
 (through `TileMap_DrawRowsFromRam`) and shows them as 256-colour tiles.
 `Map_LoadAreaGraphics` reloads the area's palette and tiles afterwards and

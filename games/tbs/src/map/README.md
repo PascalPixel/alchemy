@@ -144,7 +144,7 @@ its layers out side by side or one above another in the grid: map 000's three
 layers start at tiles 0, 60 and 120 across, and Venus Lighthouse's entrance
 puts its layers at (0, 0), (64, 0) and (0, 68).
 
-Layer 0 shows on BG3, layer 1 on BG2 and layer 2 on BG1, and BG0 stays free
+Layer 0 shows on `BG3`, layer 1 on `BG2` and layer 2 on `BG1`, and `BG0` stays free
 for the windows. A layer's priority byte is also its switch: a layer with
 priority 0 isn't shown. Most maps use 3, 2 and 1; nine give 0 to their second
 and third layers and show only the first.

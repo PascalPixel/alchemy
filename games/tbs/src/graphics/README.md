@@ -134,13 +134,13 @@ entrance 9, with `MUS_067` playing. They run a little over three minutes: a
 
 A crossfade needs both pictures on screen at the same time, so the credits
 split the 256-colour background tile memory and the background palette into
-two halves. BG3 draws from tiles at 0x06000000 with colours 0 to 127, and BG2
+two halves. `BG3` draws from tiles at 0x06000000 with colours 0 to 127, and `BG2`
 from tiles at 0x06008000 with colours 128 to 255. A backdrop has 128 colours,
 and `Graphics_LoadCharacterBlockAndPalette` adds 128 to every pixel it unpacks
 into the second half, so the same picture works in either.
 
 `DisplayScroll_RunSlideshow` loads each backdrop into the half that isn't
-showing, then steps the blend weights between BG2 and BG3 over 16 steps of 4
+showing, then steps the blend weights between `BG2` and `BG3` over 16 steps of 4
 frames, and holds. The halves swap roles from one backdrop to the next, so a
 backdrop is never loaded while it's being shown. The colours go to palette RAM
 through the I/O write queue at the next VBlank, and the tiles are unpacked by
@@ -172,7 +172,7 @@ table, stop the VBlank's copy of the sprite list to OAM, the hardware's list
 of sprites on screen (`gOamCopyEnabled`), and send their own 128 sprites from
 a 1 KB buffer that is never freed. They also turn off the CPU load display,
 the debug text and the idle sleep that would otherwise come after three idle
-minutes. When they finish, BG2, BG3 and blending are off, the window graphics
+minutes. When they finish, `BG2`, `BG3` and blending are off, the window graphics
 are reloaded and the OAM copy is back on; the three tasks they scheduled stay
 scheduled.
 

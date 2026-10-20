@@ -46,6 +46,17 @@ struct MapAnimation {
   u16 paused;        ///< nonzero, set by a scene, holds the channel
 };
 
+/// A layered map's three layers, by what they hold. Most maps give them
+/// priorities 3, 2 and 1, and the field draws sprites at priority 2, so the
+/// ground is at the back, the middle layer under the actors and the overhead
+/// layer over them. Each shows on its own background: `BG3`, `BG2` and `BG1`.
+enum MapLayerIndex {
+  MAP_LAYER_GROUND = 0,   ///< `BG3`: the ground, at the back
+  MAP_LAYER_MIDDLE = 1,   ///< `BG2`: walls and edges, under the actors
+  MAP_LAYER_OVERHEAD = 2, ///< `BG1`: roofs and tree tops, over the actors
+  MAP_LAYER_COUNT = 3
+};
+
 /// The map work in heap slot 8 (struct MapScrollWork), seen as its tile
 /// animation channels, blend script and layers' cells.
 struct MapState {

@@ -17,16 +17,14 @@ on it, and [Scenes](../scene/README.md) are the main users of its overlays.
 
 ## Where everything lives
 
-The Game Boy Advance gives a game a few memory areas, each at a fixed
-address. Addresses are written in hexadecimal, as the code, the link map and
-any debugger show them: 0x02000000 is a base-16 number, and each hex digit
-stands for four bits, so its eight digits make up the 32 bits of an address.
-Sizes are counted in bytes of eight bits. The areas this game uses, as
-`main.ld` declares them, are 256 KB of
-work RAM (EWRAM) from 0x02000000; 32 KB of the small, fast internal RAM
-(IWRAM) from 0x03000000; video RAM (VRAM) from 0x06000000, which holds the
-tiles and maps the screen is drawn from; and the cartridge ROM itself, up to
-32 MB from 0x08000000.
+The Game Boy Advance gives a game a few memory areas, each at a fixed place.
+The ones this game uses, as `main.ld` declares them, are 256 KB of work RAM
+(EWRAM), where most of the game's variables live; 32 KB of the small, fast
+internal RAM (IWRAM), where the code that has to run quickly is copied; video
+RAM (VRAM), which holds the tiles and maps the screen is drawn from; and the
+cartridge ROM itself, up to 32 MB. The tables below give each area's layout
+with its addresses, in hexadecimal as the link map and any debugger show them;
+the rest of this page names the places instead.
 
 The addresses below are tbs-en's, from its link map (`out/tbs-en/tbs-en.map`).
 German moves a few IWRAM variables (`ram_buffer.h`).
@@ -64,17 +62,15 @@ on screen is built from, and the maps that say which tile goes where:
 
 - Background tiles go in four 16 KB character blocks (`BG_CHAR_BLOCK(n)`) and
   background maps in 2 KB screen blocks (`BG_SCREEN_BLOCK(n)`), sharing the
-  same 64 KB. The window system's tilemap is at 0x06002000
-  (`UI_TILEMAP_VRAM`, screen block 4) and its text canvas tiles at 0x06002500
-  (`UI_CANVAS_VRAM`,
+  same 64 KB. The window system's tilemap is screen block 4
+  (`UI_TILEMAP_VRAM`) and its text canvas tiles follow it (`UI_CANVAS_VRAM`,
   [`unit/window/window.h`](../../include/unit/window/window.h)).
-- Screens that load two pictures in turn split the background in halves: VRAM
-  from 0x06000000 with background colours 0 to 127 is one half, and VRAM from
-  0x06008000 with colours 128 to 255 the other
-  (`Graphics_LoadCharacterBlockAndPalette`,
+- Screens that load two pictures in turn split the background in halves: the
+  first 32 KB with background colours 0 to 127, and the second with colours
+  128 to 255 (`Graphics_LoadCharacterBlockAndPalette`,
   `games/tbs/src/graphics/credits/credits.c`).
-- Sprite tiles take the 32 KB from 0x06010000 (`OBJ_VRAM0`), which the sprite
-  VRAM cache hands out as 512 blocks of 64 bytes
+- Sprite tiles take the last 32 KB (`OBJ_VRAM0`), which the sprite VRAM cache
+  hands out as 512 blocks of 64 bytes
   (`games/tbs/src/runtime/runtime/vram_cache.c`).
 
 ## Why the program is cut into banks
@@ -92,19 +88,20 @@ calls such a function at its own address. It calls the table's entry instead,
 by the function's `...Far` name, so `WaitFramesFar` reaches `WaitFrames`. In
 `objects.tsv` the table is the first row of every `rom_main_NN` place from 01
 on (a `far_call/*.S` file). The runtime bank's table, `FarCall_RuntimeTable`,
-sits right after the cartridge header at 0x080000c0, and the resource bank's
-opens `rom_tail_01`.
+sits right after the cartridge header, and the resource bank's opens
+`rom_tail_01`.
 
 Distance doesn't explain this. A Thumb `bl`, the call instruction most of the
-game uses, reaches 4 MB either way, and the whole main image, from 0x08000000
-to the last bank's table below 0x08190000, is within reach of every bank. What
+game uses, reaches 4 MB either way, and the whole main image, a little over
+1.5 MB from the start of the ROM to the last bank's table, is within reach of
+every bank. What
 the arrangement buys is independence: another bank knows only where a bank
 starts and the place of each export in its table, so a bank can grow or
 shrink inside its gap without moving a single address that other code holds.
 
 The starts differ by edition because each edition's banks hold a different
-amount of code. Most of German's starts fall on 256-byte steps (0x08013d00,
-0x0807ae00), where the other editions' sit on 2 or 4 KB ones.
+amount of code. Most of German's starts fall on 256-byte steps, where the
+other editions' sit on 2 or 4 KB ones.
 XXX: likely Camelot linked each bank on its own against the others' tables,
 because fixed starts and tables are what that would need; but the bytes show
 only the starts and the tables, not how the game was built.
@@ -124,17 +121,18 @@ routines can be reached through the same stubs.
 
 The code for each place the party walks around in, a town, a dungeon or the
 world map, isn't in the main image. It's an overlay: one compressed resource
-in the cartridge, unpacked into the 32 KB at 0x02008000 when its scene loads.
-There are 96 of them, numbered 0x36F to 0x3CE in the resource directory; some
-places share one (the three `VaultCave` scenes all load 0x3a7), and the title
-screen and a few other screens that are mostly menus are overlays too.
+in the cartridge, unpacked into the overlay area (`gOverlayArea`, 32 KB of
+EWRAM) when its scene loads. There are 96 of them, each a resource of its own,
+listed in the scene table (`field/scenes.s`). Some places share one (the three
+`VaultCave` scenes all load the same overlay), and the title screen and a few
+other screens that are mostly menus are overlays too.
 
 An overlay runs from EWRAM, 96 MB below the ROM, out of any `bl`'s reach, so
 every call it makes into the main image has to load an address into a
 register. It does that through its import table, the last of its three
 objects (`import/<place>.s`): the overlay's code makes a short `bl` to a local
 stub, and the stub's word holds the main-image address. The overlay is linked
-on its own at 0x2008000 (`overlay/overlay.ld`), after the main image and
+on its own at the overlay area (`overlay/overlay.ld`), after the main image and
 against its symbols (`-R` in the `Makefile`'s overlay rule), so the import
 table is where its calls into the main image are written down.
 
@@ -200,8 +198,8 @@ In the directory, a row added in the middle renumbers every row after it.
 Code that names a resource by its symbol follows a renumbering, but numbers
 travel without symbols in several places, and those would silently point at
 the wrong row. The scene table
-(`games/tbs/src/field/scenes.s`) gives each scene its overlay as a number
-(`scene Vault, 0x382, ...`), and the first column of `objects.tsv` numbers
+(`games/tbs/src/field/scenes.s`) gives each scene its overlay as a resource
+number, and the first column of `objects.tsv` numbers
 each overlay's rows the same way. The layered map table
 (`games/tbs/src/field/layered.tsv`) holds row numbers counted from
 `ResourceId_Map001` (`Map_LoadLayeredScene`), so the rows after that one keep

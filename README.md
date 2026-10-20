@@ -23,12 +23,12 @@ Alchemy is a hobby project I started in July 2026 to enjoy making things again a
 - **The Broken Seal** builds entirely from this repository, in all six languages. No ROM needed.
 - **The Lost Age** builds too and is well on its way. The parts not yet rewritten still come from your own cartridge dump.
 
-<img src="https://pascalpixel.github.io/alchemy-docs/PROGRESS_CHART.png" width="838" alt="How much of each game's code and data is rebuilt, day by day since 16 July 2026" />
-<img src="https://pascalpixel.github.io/alchemy-docs/PROGRESS.png" width="838" alt="A map of the project's files by size" />
+<img src="https://alchemy.pascalpixel.com/PROGRESS_CHART.png" width="838" alt="How much of each game's code and data is rebuilt, day by day since 16 July 2026" />
+<img src="https://alchemy.pascalpixel.com/PROGRESS.png" width="838" alt="A map of the project's files by size" />
 
 ## Try it
 
-[Read the documentation](https://pascalpixel.github.io/alchemy-docs/) to browse the games' code and folder guides.
+[Read the documentation](https://alchemy.pascalpixel.com/) to browse the games' code and folder guides.
 
 [INSTALL.md](INSTALL.md) has the few commands to build it on Linux, macOS or Windows. Anyone with their own cartridges can check the result against these hashes:
 

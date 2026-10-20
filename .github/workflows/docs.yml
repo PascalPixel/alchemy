@@ -17,11 +17,11 @@ permissions:
   contents: read
 
 concurrency:
-  group: docs-dispatch
+  group: docs-deploy
   cancel-in-progress: false
 
 jobs:
-  dispatch:
+  deploy:
     if: >-
       github.repository == 'PascalPixel/alchemy' &&
       (github.event_name == 'workflow_dispatch' ||
@@ -41,29 +41,16 @@ jobs:
           jq -e '.path == ".github/workflows/build.yml" and .head_branch == "main" and .conclusion == "success" and (.event == "push" or .event == "workflow_dispatch") and .head_repository.full_name == "PascalPixel/alchemy"' "$RUNNER_TEMP/run.json"
           source=$(jq -r .head_sha "$RUNNER_TEMP/run.json")
           latest=$(gh api repos/PascalPixel/alchemy/commits/main --jq .sha)
-          echo "sha=$source" >> "$GITHUB_OUTPUT"
-          echo "run=$RUN_ID" >> "$GITHUB_OUTPUT"
           if test "$source" = "$latest"; then
             echo "current=true" >> "$GITHUB_OUTPUT"
           else
             echo "Skipping a superseded source revision."
           fi
 
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-        if: steps.source.outputs.current == 'true'
-        with:
-          ref: ${{ steps.source.outputs.sha }}
-          persist-credentials: false
-
-      - name: Trigger the pinned docs generator in its own repository
+      - name: Start the site build on Vercel
         if: steps.source.outputs.current == 'true'
         env:
-          GH_TOKEN: ${{ secrets.ALCHEMY_DOCS_TOKEN }}
-          SOURCE_SHA: ${{ steps.source.outputs.sha }}
-          SOURCE_RUN: ${{ steps.source.outputs.run }}
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
         run: |
-          test -n "$GH_TOKEN" || { echo 'Set ALCHEMY_DOCS_TOKEN: a fine-grained token for alchemy-docs with Actions write permission.' >&2; exit 1; }
-          docs=$(cat .github/docs.ref)
-          [[ "$docs" =~ ^[0-9a-f]{40}$ ]]
-          gh workflow run pages.yml --repo PascalPixel/alchemy-docs --ref main \
-            -f alchemy_commit="$SOURCE_SHA" -f alchemy_run="$SOURCE_RUN" -f docs_commit="$docs"
+          test -n "$HOOK" || { echo 'Set VERCEL_DEPLOY_HOOK: the deploy hook of the alchemy Vercel project.' >&2; exit 1; }
+          curl --fail --silent --show-error --request POST "$HOOK"

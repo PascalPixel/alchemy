@@ -22,25 +22,23 @@ immutable `<commit>.site.tar.gz` containing only the two PNG figures,
 artifact retention. `combined_report`, containing `report.pb`, remains a CI
 artifact for decomp.dev.
 
-`docs.yml` runs after successful CI and dispatches `alchemy-docs` with the
-exact source commit, CI run ID and generator revision from `docs.ref`.
-`alchemy-docs` verifies them, builds Doxygen and the fonts, and owns the Pages
-deployment at <https://pascalpixel.github.io/alchemy-docs/>. Changes to that
-repository run build checks; publication waits for a successful Alchemy CI.
-There is no schedule and no generated Git branch. Both repositories reject
-superseded source revisions before publication; Pages keeps the last
-successful deployment on failure.
+`docs.yml` runs after successful CI on main, refuses a superseded revision and
+starts the site build through the Vercel deploy hook in the `VERCEL_DEPLOY_HOOK`
+secret. Vercel builds `alchemy-docs` at its main branch: it clones Alchemy's
+main, generates the pages from the source and takes the accepted figures from
+the release, then serves them at <https://alchemy.pascalpixel.com/>, where
+README shows the figures. A push to `alchemy-docs` builds the same way. There
+is no schedule and no generated Git branch; Vercel keeps the last successful
+deployment on failure.
 
 ## Setup and recovery
 
-Alchemy's `ALCHEMY_DOCS_TOKEN` secret is a fine-grained GitHub token restricted
-to `PascalPixel/alchemy-docs`, with **Actions: read and write** permission.
-It dispatches a workflow; Pages uses alchemy-docs' own short-lived token.
-Renew the secret before its chosen expiration. Configure Pages in
-alchemy-docs to build with GitHub Actions.
+The `VERCEL_DEPLOY_HOOK` secret is the URL of a deploy hook on the `alchemy`
+Vercel project for branch `main`; anyone holding it can start a build, nothing
+more. To replace it, create a new hook with `vercel deploy-hooks create`,
+store its URL in the secret and remove the old hook.
 
-To publish a generator change, verify and push it in alchemy-docs, update
-`docs.ref` here to its full commit SHA, then make a normal verified landing.
+A generator change publishes when it is pushed to `alchemy-docs`.
 To retry publication, rerun the failed job. The `Publish docs` workflow also
 accepts the ID of a successful main CI run; it refuses a superseded revision.
 If the build fails before reports are archived, fix the build first.

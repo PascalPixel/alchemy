@@ -1155,29 +1155,12 @@ static void BabiLighthouse_MatchLeaderPriority(union FieldObject *fieldObject) {
 }
 #endif
 
-/// A field actor seen by the scene setup, for the moved block and the fallen
-/// men: position, sprite, collision and a staggered delay.
-struct RowActor {
-  u8 unk00[8];
-  union FieldCoordinate x;
-  union FieldCoordinate y;
-  union FieldCoordinate z;
-  u8 unk14[0x0f];
-  u8 priorityFlags;
-  u8 unk24[0x2c];
-  struct AnimationObject *sprite;
-  u8 unk54[5];
-  u8 collisionFlags;
-  u8 unk5a[4];
-  u16 delay;
-};
-
 /// Sets up the scene being entered: Retreat leads back to room 3; the site's
 /// block, room 3's blocks, vine and fallen men, room 2's arrivals by falling,
 /// and room 1's door and onlookers are restored. Returns 0.
 s32 BabiLighthouse_SetupScene(void) {
   struct FieldActor *actor;
-  struct RowActor *row;
+  struct FieldActor *placedActor;
   s32 scene;
   s32 sceneCopy;
   struct GameState *state;
@@ -1196,10 +1179,10 @@ s32 BabiLighthouse_SetupScene(void) {
   }
   // Restore the moved block's collision in the construction-area room.
   if (scene == (s32)&SceneId_BabiLighthouse4) {
-    row = (struct RowActor *)Object_GetById(ACTOR_SITE_BLOCK);
-    x = row->x.fixed >> 20;
+    placedActor = Object_GetById(ACTOR_SITE_BLOCK);
+    x = placedActor->x.fixed >> 20;
     if (x == 20) {
-      z = row->z.fixed >> 20;
+      z = placedActor->z.fixed >> 20;
       if (z == 12) {
         Map_CopyCellAttributes(38, 12, 1, 1, x, z);
       }
@@ -1225,49 +1208,49 @@ s32 BabiLighthouse_SetupScene(void) {
       Object_GetById(ACTOR_SPROUT)->collisionFlags = 0xfe;
       BabiLighthouse_OpenGrowthPassage();
     }
-    row = (struct RowActor *)Object_GetById(ACTOR_FIRST_FALLEN_MAN);
-    row->collisionFlags = 0;
-    row->priorityFlags = 0;
-    row->delay = 0;
-    ((u8 *)row->sprite)[9] |= 12;
+    // Their script waits stagger the four fallen men's first animations.
+    placedActor = Object_GetById(ACTOR_FIRST_FALLEN_MAN);
+    placedActor->collisionFlags = 0;
+    placedActor->priorityFlags = 0;
+    placedActor->unk5e = 0;
+    placedActor->sprite->image.priority = 3;
     zero = 0;
-    ((u8 *)row->sprite)[38] = zero;
-    row->sprite->rotation = 0xc000;
+    placedActor->sprite->flags = zero;
+    placedActor->sprite->rotation = 0xc000;
     Engine_ActorSetAnimation(ACTOR_FIRST_FALLEN_MAN, 0);
-    row = (struct RowActor *)Object_GetById(ACTOR_FIRST_FALLEN_MAN + 1);
-    row->collisionFlags = zero;
-    row->priorityFlags = zero;
-    row->delay = 30;
-    ((u8 *)row->sprite)[9] |= 12;
-    ((u8 *)row->sprite)[38] = zero;
-    row->sprite->rotation = 0x4000;
+    placedActor = Object_GetById(ACTOR_FIRST_FALLEN_MAN + 1);
+    placedActor->collisionFlags = zero;
+    placedActor->priorityFlags = zero;
+    placedActor->unk5e = 30;
+    placedActor->sprite->image.priority = 3;
+    placedActor->sprite->flags = zero;
+    placedActor->sprite->rotation = 0x4000;
     Engine_ActorSetAnimation(ACTOR_FIRST_FALLEN_MAN + 1, 0);
-    row = (struct RowActor *)Object_GetById(ACTOR_FIRST_FALLEN_MAN + 2);
-    row->collisionFlags = zero;
-    row->priorityFlags = zero;
-    row->delay = 60;
-    ((u8 *)row->sprite)[9] |= 12;
-    ((u8 *)row->sprite)[38] = zero;
-    row->sprite->rotation = 0x8000;
+    placedActor = Object_GetById(ACTOR_FIRST_FALLEN_MAN + 2);
+    placedActor->collisionFlags = zero;
+    placedActor->priorityFlags = zero;
+    placedActor->unk5e = 60;
+    placedActor->sprite->image.priority = 3;
+    placedActor->sprite->flags = zero;
+    placedActor->sprite->rotation = 0x8000;
     Engine_ActorSetAnimation(ACTOR_FIRST_FALLEN_MAN + 2, 0);
-    row = (struct RowActor *)Object_GetById(ACTOR_FIRST_FALLEN_MAN + 3);
-    row->collisionFlags = zero;
-    row->priorityFlags = zero;
-    row->delay = 90;
-    ((u8 *)row->sprite)[9] |= 12;
-    ((u8 *)row->sprite)[38] = zero;
-    row->sprite->rotation = 0x8000;
+    placedActor = Object_GetById(ACTOR_FIRST_FALLEN_MAN + 3);
+    placedActor->collisionFlags = zero;
+    placedActor->priorityFlags = zero;
+    placedActor->unk5e = 90;
+    placedActor->sprite->image.priority = 3;
+    placedActor->sprite->flags = zero;
+    placedActor->sprite->rotation = 0x8000;
     Engine_ActorSetAnimation(ACTOR_FIRST_FALLEN_MAN + 3, 0);
   } else if (sceneCopy == (s32)&SceneId_BabiLighthouse2) {
     // Match the arrival effect and fall to the entrance used in this room.
     switch (state->entrance) {
     case 10:
-      // Once the party has come in at entrance 10, flag 0x980 keeps three
-      // cells there redrawn from (120, 7) and one cell's attributes changed.
-      GameFlag_Set(0x980);
-      // Fall through: both entrances restore the same remembered tile changes.
+      GameFlag_Set(FLAG_BABI_LIGHTHOUSE_ROOM2_ENTRANCE_10_USED);
+      // Both entrances restore the same remembered tile changes.
+      // fall through
     case 11:
-      if (GameFlag_IsSet(0x980) != 0) {
+      if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_ROOM2_ENTRANCE_10_USED) != 0) {
         Map_CopyCellsTo(120, 7, 109, 7, 1, 3);
         Map_CopyCellAttributes(45, 8, 1, 1, 45, 9);
       }

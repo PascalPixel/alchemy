@@ -5,7 +5,7 @@
 #include "../effect_internal.h"
 
 // The shockwave scene (Judgment).
-// The folder README describes them under "Effect families".
+// The folder README describes it under "Effect families".
 
 /// Judgment's work block: the sheet's pixels, then eight dimmed copies of the
 /// mote sheet.

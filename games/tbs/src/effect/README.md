@@ -191,6 +191,47 @@ too slow. The routines live in two heap slots, and an effect usually takes
 them as a `BlitterPair`: `[0]` is the picture as drawn and `[1]` another mode
 or its mirror, so one picture can be drawn on both sides of the screen.
 
+The builder walks a template word by word and splices in the pixel fragments
+of the mode asked for. Some template words are copied as they are, some are
+chosen by the flags, and some have an immediate or a branch displacement added
+before they are written. The routine it writes has five blocks, in order:
+
+1. **Prologue**: three entry words, the three-word mask for additive
+   compositing, then one of four alternatives that set up the walk for the
+   mirroring asked for (X only 3 words, Y only 4, both 3, neither 1).
+2. **Vertical clip**, for vertically clipped cells only: eight words, the
+   third chosen by the vertical mirroring and the last two carrying the cell
+   height.
+3. **Columns**: a test and a forward branch that skips the whole routine when
+   no rows remain, then either a width mask (unclipped) or twelve clip words
+   whose shifts carry the cell width as an ARM rotated immediate
+   (`gBattleFx_BitOperands`, in `effect_bits.c`). A second test and branch
+   skip everything when no columns remain. Six words, then one or two, then
+   five more finish the set-up.
+4. **Row loop**: four loop-head words carrying the row count and the width's
+   shift, and a fifth when unclipped. Each row then draws a leading partial
+   run, pixel by pixel up to the first 8-pixel boundary; the full-cell loop,
+   eight pixels a pass from the mode's 8-pixel fragment; and a trailing
+   partial run like the leading one. A forward branch skips each of the three
+   when it is empty. Three words advance to the next row and a fourth branches
+   back to the loop head.
+5. **Exit**: two final words, where the two skip branches of block 3 land.
+
+Where the template offers alternatives, the builder's cursor moves past all
+of them, whichever it writes, so the walk ends on the template's last word for
+every combination; `BattleFx_BuildBlitter` checks that it does. In each
+partial run and in the full-cell loop the template keeps four words where the
+routine gets its mode's fragment, and those four are skipped too.
+
+Forward branches are written with a zero displacement, their word index
+remembered, and patched when the walk reaches their target; backward branches
+are computed at once. An ARM branch displacement counts words from the branch
+plus two, as the processor reads two words ahead. The walk runs twice: first
+with no output buffer, to count the words, then into a heap block of exactly
+that size. Branch locations are word indices, so the counting pass needs no
+buffer. The fragments' registers and modes are described at the top of
+`battle_effect_composite.s`.
+
 ### The frame loop
 
 Every effect has the same shape. Its setup opens the canvas, builds the
@@ -256,6 +297,133 @@ values are levels: a picture drawn with additive or max compositing needs its
 levels in the same ramp as the canvas palette the effect loads. A fade draws
 from darker copies of a picture built before the first frame, and a symmetric
 picture is drawn left of its centre line and then mirrored to the right.
+
+### Effect families
+
+The largest parts each hold a family of effects that share their particles,
+pictures and frame loop. What the code cannot say in one place, the order of a
+family's phases and which particle ranges hold what, is said here once; each
+part points here.
+
+**Casting impacts** (`casting_impact.c`). A casting impact is chosen by its
+number in `enum CastingImpact`, the ability's effect kind less 100, and runs
+in four phases. While the caster gathers, 64 sparks close in on it over 32
+frames, four more each frame, each in its own random rotation; a Djinni
+impact (Bane to Sap, impacts 0 to 7) shows its Djinni 80 pixels over the
+caster once the first sparks have gone out. Then BG2 is placed so the impact
+sits over the target; impacts 15, 17, 24, 26 and 35 (Severe Blow) stop here
+and hand the canvas to another effect. The impact itself lasts 20 to 80
+frames, depending on the impact: the caster's overlay, an orb, sparks and the
+impact's own animation are drawn while the background palette steps towards
+the impact's palette, a Djinni flies to the target over the first six frames,
+and the target is hit on frame 6. Last, the canvas and its callbacks are
+released, or impact 21 (Meltdown) hands them to the stat reduction. The
+particles are used twice: `work->particles` holds the gathering sparks and
+then, from the impact on, 32 scattering sparks whose `variant` is their
+lifetime; the 64 records at `Ram_MapCellBuffer + 0x4000` belong to the
+impact's own animation. An impact that hands off to another runner first
+removes its prelude callbacks and releases the blitters that runner will
+replace.
+
+**Djinn attacks** (`djinn_attacks.c`). Each attack draws one of the small
+Djinn on the canvas and throws its element at the targets. The Mercury Djinni
+spirals through the centre of the field and fires five blue flames to the
+left, each shattering into motes. The Jupiter Djinni spirals the other way
+while eight flameballs fall from the top right and shatter on the ground. The
+Venus Djinni sways while ten flame columns rise from the ground, each throwing
+motes upwards. The Mars Djinni flares from a glowing orb, dives to the ground
+and sets nine flames erupting in an arc while embers rise. The motes the
+flames shatter into live in `PARTICLES`, 32 slots a flame; the flames, rocks
+and chips themselves live in `work->particles`. The appearance prelude leaves
+the canvas ready for the attack that called it, and each attack removes its
+callbacks before it returns.
+
+**Judgment** (`judgment.c`). The shockwave scene runs in two parts, each with
+its own frame clock. The gathering, on the violet sky backdrop, lasts
+`JUDGMENT_GATHER_FRAMES`: a projected formation of sixteen objects moves
+forward while rotating motes shrink in on its centre, then a burst grows
+there, shards fly from it and a ring of dimming motes spreads outward. The
+sweep lasts `JUDGMENT_SWEEP_FRAMES`: the formation gives way to debris objects
+and the scene cuts to an aerial backdrop, then to beach and forest ones,
+swapping palettes, backdrop and debris on set frames. Meanwhile expanding
+elliptical rings are drawn into a wave picture that persists in the work
+block, explosion cells fan out from the impact, and the debris rises and is
+recycled behind a scrolling explosion front. A or B skips ahead in both parts,
+by different rules: the gathering simply ends after frame 4, while the sweep
+jumps to its next transition frame (150, 214 or 280). The gathering's motes
+are `PARTICLES` 0 to 127 and its sparks 128 to 255 (`JUDGMENT_SPARKS`); the
+sweep's debris are particles 0 to 15, one for each debris object. The work
+block is laid out as `struct JudgmentWork`: the sheet's pixels first (the
+wave picture is its first 120x120 bytes), then eight dimmed copies of the
+mote sheet.
+
+**Spark bursts** (`plasma.c`). A spark burst is a large flash, a ring of small
+flashes that fade, and a spray of sparks that fall and bounce on the ground.
+The spark groups scene strikes one to three such bursts, 8 frames apart, and
+the sword effects build their strikes from the same parts. A flash is an
+`EffectStep` whose x and y are an offset from its burst's centre and whose
+`variant` counts down its life; it is drawn only for its last 18 frames, from
+a 32x64 flash picture chosen by its age. A spark moves in 16.16 fixed point
+under its own gravity, and its `variant` is its remaining life; below the
+floor it bounces back at half speed instead of being drawn, and it shrinks as
+its life runs out. A strike makes every target flash and recoil at once. The
+spark groups scene keeps its flashes in `work->particles`, sixteen a burst
+(only the first twelve are drawn), and its sparks in `PARTICLES`, one run a
+burst.
+
+**Projectile volleys and rushing strikes** (`projectiles.c`). A projectile
+volley fires a row of shots from the user at each target. The mode (0 to 11)
+picks the shot picture, how the shots are aimed and which sounds play; the
+mode's row gives its number of shots a target, their flight time and the
+stagger between shots and targets. The mode rows keep their table indices,
+and the wrappers name the mode of each ability. Every frame runs four steps in
+order: each launched shot moves one step along its aim and is drawn on the
+half-width canvas; a shot that passes its target's x on the target's side of
+the field hits once, starting a hit flash, throwing sparks, shaking the camera
+and making the target reel; comet volleys draw each hit flash for 12 frames,
+as half a picture drawn again flipped for the other half; and the sparks
+thrown by hits fall and bounce while those left behind fireballs rise. All of
+these particles share `PARTICLES`: hit flashes from 0, sparks from 100 and
+fireball trails from 512. A particle's `variant` is its frames left (0 when
+free), and a flash's z counts the frames it has shown. The shots themselves
+live in `work->particles`, one for each target and shot, whose `variant` is
+set once the shot has hit. The rushing strike sends the user at the first
+target; on frame 10 it strikes, a ring flares and 64 sparks scatter, over 60
+frames in all.
+
+**Stat reductions and the scenes after them** (`stat_change.c`). A stat
+reduction shows the dagger or the shield over each target, 4 frames apart,
+and breaks it into 24 shards that fly off and darken through seven dimmed
+copies of the shard picture. Its shards live in `PARTICLES`, 64 for each
+target, and are drawn with trails: each transfer of the canvas fades or
+darkens what is already there. The scenes after it each throw a pattern of
+particles and play it out over a fixed number of frames. Flare raises nine
+flames one after another along a half circle, optionally stacked two or three
+high. Quake raises three rock pillars that throw the targets into the air.
+Fire's homing embers fly out of the user, hang, and then home in on the
+targets, striking with a flare where they reach the ground. Frost's rising
+motes spiral up around the target while ice columns spring up, then burst:
+the motes spread and fall, chips fly and smoke rises over the heights they
+span. The blast (Blast, Smoke Bomb) bursts a fountain of motes and puffs of
+smoke up beside the targets, which fall back under gravity. A free or waiting
+particle is usually marked by a negative `variant`, which otherwise counts the
+frames of its animation, and `effect->variant` picks each scene's counts and
+timing from the named columns of its table.
+
+**Target strikes** (`target_strike.c`). One runner, `BattleFx_RunTargetStrike`,
+plays all twelve styles of repeated slashes or columns of light on the first
+target. Each style's row gives its kind (0 for a sideways slash, 1 for a
+column of light), its number of hits, its extras (smoke, an absorbing drain,
+glints, sparks or one heavy hit), its palette, the frames each picture is
+held, the column's composite mode and the scene's duration; the wrappers above
+the runner name the style of each effect. The setup loads the pictures and the
+style's palette, then parks every particle, idle, where it will start: 64
+smoke puffs at the target's feet, and 128 motes and 512 sparks 20 pixels up
+its body, each with a random velocity. A particle is idle while its `variant`
+is -1. Each frame first draws the strike (a slash sweep or a column) and, on a
+hit frame, shakes and flashes the target and lights the next group of
+particles; glints are then scattered around the target, and the lit smoke,
+motes and sparks are drawn and moved. The finish releases the canvas layer.
 
 ## How to change an effect
 

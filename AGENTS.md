@@ -45,7 +45,7 @@ psynergy/target/release/psynergy permute DRAFT.c [ADDR] [--minutes N]
 
 Always: keep all twelve editions byte-identical (W5, W8); tag every compiler-steering device with its measured difference (S2); name only from evidence (S3); commit each verified step, attempts included (S4, W7); look at how pret does it first (W3).
 
-Ask Pascal first: any compiler, option, routing or agscc change (K1 to K3); anything that changes what counts (C2, W6); deleting what cannot be restored; pushing, pulling, fetching or publishing.
+Ask Pascal first: any compiler, option, routing or agscc change (K1 to K3); anything that changes what counts (C2, W6); deleting what cannot be restored; pushing, pulling, fetching or publishing outside the verified humanization sync authorized in Workflow 6.
 
 Never: commit or publish a ROM or game files (L1); use another project's Golden Sun work (L2), or leaked Nintendo or Camelot code or SDKs or anything derived from them (L3); let the ROM steer the build or count (O1); write a function as inline assembly, patch compiler output or give a function its own compiler option (S2, K1); treat old history or deleted files as evidence (O5); add JSON, Python, shell or TypeScript programs (A5, W1).
 
@@ -56,7 +56,7 @@ Never: commit or publish a ROM or game files (L1); use another project's Golden 
 3. Draft in `recon/<game>/en/main/<address>.c`; a near miss stays a draft with its remaining difference in its header (S4).
 4. Adopt a match into the module of its linker neighbours, in every edition whose bytes agree, and commit (C1, S4).
 5. Humanize in passes, each byte-identical (Goal).
-6. Land with `make land`; push only when Pascal asks (W2, C3).
+6. Land with `make land`; Pascal authorizes syncing each verified humanization batch on local `main` to `origin/main`, including its progress measurement (W2, C3). Other pushes need his request.
 
 ## Rules
 

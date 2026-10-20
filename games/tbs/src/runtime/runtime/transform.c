@@ -12,15 +12,21 @@
 
 typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 
-/// Allocates the one-level save area and resets the transform to identity.
+/// Allocates the one-level save area (heap slot HEAP_SLOT_TRANSFORM_STACK),
+/// clears gTransformStackDepth and resets gTransform to identity. Called by
+/// the battle scene setup and the field camera before a scene's first
+/// transform.
 void Render_ResetTransformState(void) {
-  gTransformStackTop = Runtime_AllocateBlock(2, sizeof(gTransform));
+  gTransformStackTop =
+      Runtime_AllocateBlock(HEAP_SLOT_TRANSFORM_STACK, sizeof(gTransform));
   gTransformStackDepth = 0;
   CAMELOT_ASM("the fixed-register identity store of transform.h")
   Transform_ResetCurrent();
 }
 
-/// Saves the transform (one level deep; a second save is ignored).
+/// Saves gTransform into the save area (one level deep; a second save is
+/// ignored). Called by the battle effects that draw a part with its own
+/// transform, with Transform_Pop after.
 void Transform_Push(void) {
   if (gTransformStackDepth <= 0) {
     Dma_Set(gTransform, gTransformStackTop, TRANSFORM_DMA, REG_DMA3);
@@ -29,14 +35,17 @@ void Transform_Push(void) {
   }
 }
 
+/// Copies gTransform to `dst`. Called by BattleFx_RunAtalanta.
 void Transform_Store(void *dst) {
   Dma_Set(gTransform, dst, TRANSFORM_DMA, REG_DMA3);
 }
 
+/// Copies the matrix at `src` into gTransform. Called by BattleFx_RunAtalanta.
 void Transform_Load(const void *src) {
   Dma_Set(src, gTransform, TRANSFORM_DMA, REG_DMA3);
 }
 
+/// Restores gTransform from the save area, if Transform_Push saved it.
 void Transform_Pop(void) {
   if (gTransformStackDepth > 0) {
     --gTransformStackDepth;
@@ -45,14 +54,15 @@ void Transform_Pop(void) {
   }
 }
 
-/// Resets the transform to identity.
+/// Resets gTransform to identity. Reached through the far-call table.
 void SceneTransform_ResetMatrix(void) {
   CAMELOT_ASM("the fixed-register identity store of transform.h")
   Transform_ResetCurrent();
 }
 
-/// Rotates the transform by angles[0], angles[1] and angles[2] about the X,
-/// Y and Z axes.
+/// Rotates gTransform by angles[0], angles[1] and angles[2] about the X, Y and
+/// Z axes, in that order, with one combined matrix. Reached through the
+/// far-call table.
 void SceneTransform_ApplyRotation(s32 *angles) {
   s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
   s32 matrix[12];
@@ -82,7 +92,8 @@ void SceneTransform_ApplyRotation(s32 *angles) {
   Iwram_TransformMatrix(matrix);
 }
 
-/// Rotates the transform about the X axis.
+/// Rotates gTransform about the X axis by `angle`. Called by the battle and
+/// field cameras.
 void SceneTransform_ApplyPitch(s32 angle) {
   s32 matrix[12];
   s32 sine = Trig_Sin(angle);
@@ -97,7 +108,8 @@ void SceneTransform_ApplyPitch(s32 angle) {
   Iwram_TransformMatrix(matrix);
 }
 
-/// Rotates the transform about the Y axis.
+/// Rotates gTransform about the Y axis by `angle`. Called by the battle and
+/// field cameras.
 void SceneTransform_ApplyYaw(s32 angle) {
   s32 matrix[12];
   s32 sine = Trig_Sin(angle);
@@ -112,7 +124,8 @@ void SceneTransform_ApplyYaw(s32 angle) {
   Iwram_TransformMatrix(matrix);
 }
 
-/// Rotates the transform about the Z axis.
+/// Rotates gTransform about the Z axis by `angle`. Called by battle effects
+/// that spin their picture.
 void SceneTransform_ApplyRoll(s32 angle) {
   s32 matrix[12];
   s32 sine = Trig_Sin(angle);
@@ -127,7 +140,8 @@ void SceneTransform_ApplyRoll(s32 angle) {
   Iwram_TransformMatrix(matrix);
 }
 
-/// Translates the transform by `position` (x, y, z in 16.16).
+/// Translates gTransform by `position` (x, y, z in 16.16). Called by the
+/// battle and field cameras and effects.
 void SceneTransform_ApplyPosition(const s32 *position) {
   s32 matrix[12];
 
@@ -139,7 +153,8 @@ void SceneTransform_ApplyPosition(const s32 *position) {
   Iwram_TransformMatrix(matrix);
 }
 
-/// Scales the transform by `scale` (x, y, z factors in 16.16).
+/// Scales gTransform by `scale` (x, y, z factors in 16.16). Called by a few
+/// battle effects (Bind, Astral Blast, Thor).
 void SceneTransform_ApplyScale(const s32 *scale) {
   s32 matrix[12];
 
@@ -151,7 +166,8 @@ void SceneTransform_ApplyScale(const s32 *scale) {
   Iwram_TransformMatrix(matrix);
 }
 
-/// Rotates by `angles` and translates by `position` in one matrix.
+/// Rotates gTransform by `angles` and translates it by `position` in one
+/// matrix. Reached through the far-call table.
 void SceneTransform_ApplyRotationTranslation(s32 *angles, s32 *position) {
   s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
   s32 matrix[12];
@@ -222,7 +238,8 @@ void SceneTransform_ApplyScaledRotation(s32 *angles, s32 *position,
 }
 
 /// Builds in `out` the camera matrix of an eye at `eye` looking at `target`.
-/// The camera's sideways axis is kept level (no Y component).
+/// The camera's sideways axis is kept level (no Y component). Called by
+/// Transform_SetLookAt and Transform_ApplyLookAt.
 void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   u32 code[7];
   s32 dx, dy, dz;
@@ -296,12 +313,14 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
   out[11] = -dot(ex, dx, ey, dy, ez, dz);
 }
 
-/// Makes the camera at `eye` looking at `target` the whole transform.
+/// Makes the camera at `eye` looking at `target` the whole of gTransform.
+/// Called by the battle cameras.
 void Transform_SetLookAt(s32 *eye, s32 *target) {
   Transform_BuildLookAt(eye, target, gTransform);
 }
 
-/// Multiplies the camera at `eye` looking at `target` into the transform.
+/// Multiplies the camera at `eye` looking at `target` into gTransform. Called
+/// by the battle and field object cameras.
 void Transform_ApplyLookAt(s32 *eye, s32 *target) {
   s32 work[12];
 
@@ -309,9 +328,10 @@ void Transform_ApplyLookAt(s32 *eye, s32 *target) {
   Iwram_TransformMatrix(work);
 }
 
-/// Sets the perspective projection from a vertical field of view: the focal
-/// length is 80 (half the screen height) over the tangent of half the angle.
-/// Points nearer than `nearDepth` or farther than `farDepth` are not drawn.
+/// Sets gProjection from a vertical field of view: the focal length is 80
+/// (half the screen height) over the tangent of half the angle. Points nearer
+/// than `nearDepth` or farther than `farDepth` are not drawn. Reached through
+/// the far-call table.
 void Projection_SetFieldOfView(u32 fieldOfView, s32 nearDepth, s32 farDepth) {
   s32 halfAngle;
   s32 sine;
@@ -325,7 +345,8 @@ void Projection_SetFieldOfView(u32 fieldOfView, s32 nearDepth, s32 farDepth) {
   gProjection.far = farDepth;
 }
 
-/// Sets the perspective projection's focal length and depth range directly.
+/// Sets gProjection's focal length and depth range directly. Called by the
+/// battle cameras and effects.
 void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth) {
   struct Projection *projection = &gProjection;
 
@@ -334,11 +355,12 @@ void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth) {
   projection->far = farDepth;
 }
 
-/// Reads three word-aligned coordinates from `point` and projects them to the
-/// screen: screen[0] and screen[1]
-/// are its pixel position and screen[2] its whole-unit depth. Returns the
+/// Reads three word-aligned coordinates from `point`, transforms them by
+/// gTransform and projects them to the screen: screen[0] and screen[1] are
+/// its pixel position and screen[2] its whole-unit depth. Returns the
 /// projection scale (16.16), or 0 when the point is outside the depth range,
-/// when only the transformed point is written.
+/// when only the transformed point is written. Called by the battle and field
+/// code that places sprites in 3D.
 s32 Render_ProjectPoint(const void *point, s32 *screen) {
   struct Projection *projection;
   s32 depth;

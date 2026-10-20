@@ -30,7 +30,10 @@ static __inline__ void System_SoftReset(void) {
 /// Installs `handler` for interrupt `irq` and enables that interrupt, or with a
 /// null handler disables it and installs the do-nothing handler. The three
 /// display interrupts are also switched in DISPSTAT; for VCount, `vcount` is
-/// the line it fires on.
+/// the line it fires on. Writes REG_IE, REG_DISPSTAT and gIrqHandlers with
+/// interrupts disabled. Called by System_Initialize, the link cable and save
+/// code for their timer and serial interrupts, and the battle transitions for
+/// their HBlank and VCount effects.
 void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler) {
   if (irq <= IRQ_GAMEPAK) {
     u32 ime;
@@ -82,10 +85,15 @@ enum {
 /// VBlank and then reads the keys. Holding L and R for three seconds, or three
 /// idle minutes with idle sleep on, puts the system into Stop until L and R are
 /// pressed again. A soft reset requested by the keypad interrupt happens here.
+/// Called everywhere the game waits: every scene, menu and battle step that
+/// lets time pass goes through it.
 ///
-/// Tasks may call WaitFrames deep inside their own call chains, so a caller
+/// Code may call WaitFrames deep inside its own call chains, so a caller
 /// whose stack has grown below the frame-wait stack top has its stack copied
-/// aside first, and the loop runs at that top; the copy is put back on return.
+/// aside into gSavedStack first, and the loop runs at that top; the copy is
+/// put back on return. Each frame it allocates and releases the frame scratch
+/// heap slot, sets gFrameRenderPending, and counts up gFrameCount and
+/// gPlayTimeFrames.
 void WaitFrames(s32 frames) {
   u8 *sp;
   u32 frameIndex;
@@ -280,11 +288,12 @@ void WaitFrames(s32 frames) {
 /// Restarts the key repeat delay, so held keys wait the full delay again.
 void Input_ResetKeyRepeat(void) { gKeyRepeatTimer = INPUT_KEY_REPEAT_FIRST; }
 
-/// Runs once a frame after VBlank. When the repeat timer has run out, the held
-/// keys repeat into gKeysRepeat. gKeysRepeatDirected is the same keys with at
-/// most one D-pad direction: of several held directions it keeps the one
-/// added last (gKeysDirection remembers it), and with all four it keeps none.
-/// Last, the keys newly held since the previous frame go to gKeysPressed.
+/// Runs once a frame after VBlank, called by WaitFrames. When the repeat timer
+/// has run out, the held keys repeat into gKeysRepeat. gKeysRepeatDirected is
+/// the same keys with at most one D-pad direction: of several held directions
+/// it keeps the one added last (gKeysDirection remembers it), and with all
+/// four it keeps none. Last, the keys newly held since the previous frame go
+/// to gKeysPressed, and gKeysHeldLast takes gKeysHeld.
 void Input_UpdateKeyRepeatAndDirection(void) {
   s32 delay = gKeyRepeatTimer;
   u32 keys;
@@ -355,11 +364,13 @@ void Input_UpdateKeyRepeatAndDirection(void) {
 #define SOUND_PRESET_COUNT 5
 #define SOUND_PRESET_SIZE 152
 
-/// The VBlank interrupt handler. It trades the link cable payloads, steps the
-/// music fades and the screen fade, and when the frame loop has finished a
-/// frame copies its OAM list and BG scroll registers and flushes the queued
-/// register writes. Then it runs the one-shot VBlank hook and the VBlank
-/// tasks, reads the keypad and finally mixes the next sound buffer.
+/// The VBlank interrupt handler, installed by System_Initialize. It trades the
+/// link cable payloads, steps the music fades and the screen fade, and when
+/// the frame loop has finished a frame copies its OAM list and BG scroll
+/// registers, flushes the queued register writes and clears
+/// gFrameRenderPending. Then it runs and clears the one-shot gVBlankHook, runs
+/// the VBlank tasks, reads the keypad into gKeysHeld and gKeysPressed, sets
+/// gVBlankDone and finally mixes the next sound buffer.
 void System_VBlankHandler(void) {
   u32 keys;
   void (*hook)(void);
@@ -423,7 +434,8 @@ void System_VBlankHandler(void) {
 }
 
 /// Copies the mixer code for sound preset `preset` (0 to 4; anything else is 0)
-/// from ROM into its place in IWRAM. Always returns 0.
+/// from ROM into IwramSoundPresetCode. Called by the battle and the link lobby
+/// for their music, and by the audio test. Always returns 0.
 s32 Sound_LoadPresetParameters(s32 preset) {
   s32 index;
 
@@ -442,9 +454,9 @@ UNUSED void Sound_ReservedNoOpA(void) {}
 /// Nothing calls it.
 UNUSED void Sound_ReservedNoOpB(void) {}
 
-/// The keypad interrupt: A+B+Select+Start was pressed, so ask the frame loop
-/// for a soft reset and disarm the interrupt. During sleep the same interrupt
-/// only wakes the CPU.
+/// The keypad interrupt, from the handler table: A+B+Select+Start was pressed,
+/// so it sets gResetRequested for the frame loop and disarms the interrupt.
+/// During sleep the same interrupt only wakes the CPU.
 void Input_HandleKeyInterrupt(void) {
   if (gSleepActive == 0) {
     Io_Write16(KEYCNT_DISARMED, &REG_KEYCNT);

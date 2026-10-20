@@ -5,7 +5,8 @@
 #include "../runtime_internal.h"
 
 /// Advances the game's random number generator (the C library's classic
-/// linear congruential one) and returns 16 bits of it.
+/// linear congruential one), stores the new seed and returns 16 bits of it.
+/// Called throughout the game.
 u32 Random16(void) {
   enum { MULTIPLIER = 0x41c64e6d, INCREMENT = 0x3039 };
   u32 value = gRandomSeed * MULTIPLIER + INCREMENT;
@@ -109,7 +110,8 @@ s32 ArcTan2(s32 x, s32 y) {
   return (u16)result;
 }
 
-/// Returns the integer square root of `value`, a bit at a time.
+/// Returns the integer square root of `value`, a bit at a time. Reached
+/// through the far-call table.
 s32 Math_IntegerSqrt(s32 value) {
   s32 trial;
   s32 remainder;

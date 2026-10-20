@@ -7,7 +7,8 @@
 extern u8 IwramClearWords[];
 
 /// Starts a new frame of sprites: frees the affine matrices and empties the
-/// 256 depth slots sprites are linked into.
+/// 256 depth slots sprites are linked into. Called by WaitFrames after each
+/// VBlank.
 void Render_ResetFrame(void) {
   gObjAffineCount = 0;
   _call_via_r3(((u32)&gRenderSlotHeads), 0x400, ((u32)&gObjAffineCount),
@@ -19,9 +20,10 @@ typedef void (*OamBuildRoutine)(void *work);
 enum { OBJ_AFFINE_MATRIX_COUNT = 32, RENDER_DEPTH_SLOT_COUNT = 256 };
 
 /// Hands out the next OAM affine matrix for a sprite drawn with `source`'s
-/// scale and rotation and fills it in. Returns the matrix number, 0 to 31.
-/// When all 32 are taken it fills nothing and still returns 0, which a caller
-/// cannot tell from matrix 0: the sprite is drawn with whatever matrix 0 holds.
+/// scale and rotation and fills it in. Called by the field sprites and the
+/// windows' scaled sprites. Returns the matrix number, 0 to 31. When all 32
+/// are taken it fills nothing and still returns 0, which a caller cannot tell
+/// from matrix 0: the sprite is drawn with whatever matrix 0 holds.
 s32 AffineMatrix_BuildForEffect(struct AffineTransform *source) {
   union AffineMatrix *matrix;
   s16 *coefficient;
@@ -72,7 +74,8 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source) {
 }
 
 /// Links a sprite entry into depth slot `slot` (clamped to 0..255) for this
-/// frame. The entry's first word becomes its link to the next entry.
+/// frame. The entry's first word becomes its link to the next entry. Called
+/// by everything that draws a sprite, before WaitFrames builds the OAM list.
 void Runtime_PushSlotEntry(void *slotEntry, s32 slot) {
   void **head;
   void *previousHead;
@@ -88,7 +91,8 @@ void Runtime_PushSlotEntry(void *slotEntry, s32 slot) {
 }
 
 /// Builds this frame's OAM list in `work` from the sprites linked into the
-/// depth slots, with a RAM copy of the ARM builder.
+/// depth slots, with a RAM copy of the ARM builder. Called by WaitFrames into
+/// the frame scratch heap slot.
 void Render_BuildOamList(void *work) {
   OamBuildRoutine routine;
 

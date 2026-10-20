@@ -273,6 +273,14 @@ with it.
 
 ## Evidence and open questions
 
+`gSavedStack` holds 0xc50 bytes, though a caller's stack below the
+frame-wait top and above the heap's end is at most 0x200. Its size is what is
+left of the EWRAM block it ends: `ewram.s` lays EWRAM out in 4 KB blocks, each
+starting a new owner (`gSceneState` at 0x02001000, `gSleepActive` and the
+link cells at 0x02002000, the music state at 0x02003000), and `gSavedStack`
+is the last cell of the 0x02002000 block, running up to 0x02003000. It could
+hold a stack that had run 0xa50 bytes into the heap.
+
 The names come from what the code does: `WaitFrames` from its loop,
 `Scheduler_` from the table it keeps, the heap's from its two pointers and its
 slots, the save code's from the flash records it writes. Constants such as
@@ -282,7 +290,4 @@ Still unknown:
 
 - XXX: whether any task calls `WaitFrames`, which would overwrite the saved
   stack.
-- XXX: `gSavedStack` holds 0xc50 bytes, though a caller's stack below the
-  frame-wait top and above the heap's end is at most 0x200; why it is that
-  large is not known, unless the stack was expected to run into the heap.
 - XXX: what `RuntimeDispatch_` and the reserved empty exports were for.

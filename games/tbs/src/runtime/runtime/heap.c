@@ -8,7 +8,10 @@
 // in EWRAM up to its end (0x02040000), and 62 named slots for long-lived
 // blocks (enum HeapSlot). Nothing is freed one block at a time.
 
-/// Empties the heap and both pools.
+/// Empties the heap: clears the 64 words of gWorkSlot (both pool pointers and
+/// every named slot) and sets the pools' next addresses to gIwramHeap and
+/// gEwramHeap. Called by System_Initialize, by Game_ResetForNewGame and by
+/// the debug modes that start over, so every earlier block is forgotten.
 void Runtime_InitializeHeap(void) {
   union HeapState *work = (union HeapState *)gWorkSlot;
 
@@ -17,23 +20,30 @@ void Runtime_InitializeHeap(void) {
   work->heap.nextEwram = gEwramHeap;
 }
 
-/// Returns the IWRAM bytes left to allocate.
+/// Returns the IWRAM bytes left to allocate, up to gCartridgeResetMarker
+/// (0x03007800), the same end the allocators test. Battle_RunEncounter calls
+/// it around each action and ignores the result.
 s32 Runtime_GetRemainingIwram(void) {
   union HeapState *work = (union HeapState *)gWorkSlot;
 
   return (s32)(*(u8 (*)[]) & gCartridgeResetMarker) - (s32)work->heap.nextIwram;
 }
 
-/// Returns the EWRAM bytes left to allocate.
+/// Returns the EWRAM bytes left to allocate, up to the end of EWRAM.
+/// Battle_RunEncounter calls it around each action and ignores the result.
 s32 Runtime_GetRemainingEwram(void) {
   union HeapState *work = (union HeapState *)gWorkSlot;
 
   return 0x02040000 - (s32)work->heap.nextEwram;
 }
 
-/// Returns heap slot `kind`'s block, first allocating `size` bytes for it,
-/// from IWRAM when they fit and EWRAM otherwise. Returns NULL when neither has
-/// room.
+/// Returns heap slot `kind`'s block, first allocating `size` bytes for it
+/// (rounded up to words), from IWRAM when they fit and EWRAM otherwise. A new
+/// block advances that pool's next address and is stored in the slot, so
+/// later calls with the same `kind` return it until Runtime_ReleaseHeapBlock
+/// frees it. Returns NULL when neither pool has room. Called throughout the
+/// game for long-lived work blocks, and by WaitFrames for each frame's OAM
+/// list.
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size) {
   union HeapState *work;
   s32 alignedSize;
@@ -65,7 +75,8 @@ void *Runtime_AllocateHeapBlock(s32 kind, s32 size) {
   return (void *)cachedAddress;
 }
 
-/// As Runtime_AllocateHeapBlock, but tries EWRAM first.
+/// As Runtime_AllocateHeapBlock, but tries EWRAM first, for blocks that need
+/// room more than speed: the battle, shop and save work, among others.
 void *Runtime_AllocateBlock(s32 kind, s32 size) {
   union HeapState *work;
   u32 alignedSize;
@@ -97,8 +108,10 @@ void *Runtime_AllocateBlock(s32 kind, s32 size) {
   return (void *)cachedAddress;
 }
 
-/// Allocates `size` bytes (rounded up to words), from IWRAM when they fit and
-/// EWRAM otherwise. Returns NULL when neither has room.
+/// Allocates `size` bytes (rounded up to words) with no slot, from IWRAM when
+/// they fit and EWRAM otherwise, and advances that pool's next address.
+/// Returns NULL when neither has room. Called for short-lived buffers (decode
+/// buffers, RAM copies of code), which MemFree rewinds the pool over.
 void *MemAlloc(s32 size) {
   union HeapState *work = (union HeapState *)gWorkSlot;
   u32 nextAddress;
@@ -122,7 +135,8 @@ void *MemAlloc(s32 size) {
   return (void *)allocationAddress;
 }
 
-/// As MemAlloc, but tries EWRAM first.
+/// As MemAlloc, but tries EWRAM first. Called mostly by the battle code and
+/// the credits for buffers too large to want IWRAM.
 void *Runtime_BumpAllocateAlternatePool(s32 size) {
   union HeapState *work = (union HeapState *)gWorkSlot;
   u32 alternateNextAddress;

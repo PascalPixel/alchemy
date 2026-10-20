@@ -27,7 +27,9 @@ enum {
 };
 
 /// Dispatches a packed cue: fade controls, allocated sound effects, fanfares,
-/// or background music with an optional silent start.
+/// or background music with an optional silent start. Reached through the
+/// sound far-call table as AudioCommand_PlayFar, which the whole game calls to
+/// play music and sound effects; it updates the music layer's cue records.
 void AudioCommand_Play(s32 id) {
   s32 flags;
   s32 player;
@@ -86,6 +88,7 @@ void AudioCommand_Play(s32 id) {
 
 /// Restores BGM after a fanfare and steps its volume and combined tempo/pitch
 /// ramps once per VBlank, clamping each ramp when it crosses its target.
+/// Called by System_VBlankHandler through the sound far-call table.
 void MusicPlayer_StepVolumeAndPitchTowardTargets(void) {
   s32 delta;
 
@@ -130,6 +133,8 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void) {
 
 /// Runs the audio test's three cue selectors and five mixer presets forever.
 /// Buttons play, fade or adjust the selected cue while frames keep advancing.
+/// Reached only through the sound far-call table's veneer; nothing in ☀️
+/// names it.
 void AudioTest_RunParameterController(void) {
   s32 cues[3] = {0, 80, 100};
   s32 preset;
@@ -190,7 +195,9 @@ void AudioTest_RunParameterController(void) {
   }
 }
 
-/// Starts the sound driver, resets BGM ramps and clears all player cue records.
+/// Starts the sound driver, resets the BGM ramps (gMusicVolume and its kin)
+/// and clears all player cue records. Called by System_Initialize through the
+/// sound far-call table.
 void Audio_InitializeRuntimeDefaults(void) {
   s16 *playerVolume;
   s32 remaining;
@@ -216,30 +223,35 @@ void Audio_InitializeRuntimeDefaults(void) {
   } while (remaining >= 0);
 }
 
-/// Sets the BGM tempo scale directly; 0x100 preserves its native tempo.
+/// Sets the BGM tempo scale directly; 0x100 preserves its native tempo. Called
+/// through the far-call table, by the Lemurian ship's sailing among others.
 void MusicCommand_SetPitchAndUpdateFrequency(u16 tempoScale) {
   MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, tempoScale);
 }
 
-/// Applies a pitch offset to every active BGM track.
+/// Applies a pitch offset to every active BGM track. Reached only through the
+/// sound far-call table's veneer.
 void MusicCommand_SetPitch(u16 pitch) {
   MusicPlayer_SetPitch(&gMusicPlayerBgm, MUSIC_ALL_TRACKS, pitch);
 }
 
 /// Sets the target and per-frame step of the combined BGM tempo/pitch ramp.
+/// Reached only through the sound far-call table's veneer.
 void Audio_SetWorkPairB(u16 targetScale, u16 step) {
   gMusicPitchTarget = targetScale;
   gMusicPitchStep = step;
 }
 
 /// Sets BGM volume immediately and cancels any outstanding volume ramp.
+/// Reached only through the sound far-call table's veneer.
 void MusicCommand_SetVolume(s16 volume) {
   MusicPlayer_SetVolume(&gMusicPlayerBgm, MUSIC_ALL_TRACKS, volume);
   gMusicVolumeTarget = volume;
   gMusicVolume = volume;
 }
 
-/// Sets the BGM volume target and its per-frame adjustment.
+/// Sets the BGM volume target and its per-frame adjustment. Reached only
+/// through the sound far-call table's veneer.
 void Audio_SetMusicVolumeTargetAndStep(u16 targetVolume, u16 step) {
   gMusicVolumeTarget = targetVolume;
   gMusicVolumeStep = step;
@@ -253,7 +265,8 @@ void AudioCommand_StopAllPlayers(void) { Audio_StopAllPlayers(); }
 
 void AudioCommand_ResumeAllPlayers(void) { Audio_ResumeAllPlayers(); }
 
-/// Replaces the audio command mask, or toggles its requested bits when flagged.
+/// Replaces the audio command mask, or toggles its requested bits when
+/// flagged. Reached only through the sound far-call table's veneer.
 void AudioCommand_UpdateToggleMask(u32 command) {
   u32 toggle = command & AUDIO_COMMAND_TOGGLE;
 
@@ -267,7 +280,9 @@ void AudioCommand_UpdateToggleMask(u32 command) {
 /// Returns the last BGM cue or fade state selected by AudioCommand_Play.
 s32 AudioCommand_GetSecondaryStateByte(void) { return gAudioSecondaryState; }
 
-/// Waits for fanfare restoration, giving up after 300 frames.
+/// Waits a frame at a time for fanfare restoration, giving up after 300
+/// frames. Called by scenes before they go on after a fanfare (Sol Sanctum's
+/// quest acceptance among them).
 void AudioCommand_WaitForCompletion(void) {
   s32 framesWaited = 0;
 
@@ -279,8 +294,9 @@ void AudioCommand_WaitForCompletion(void) {
   } while (framesWaited < MUSIC_WAIT_TIMEOUT_FRAMES);
 }
 
-/// Returns the mixer preset chosen by the cue dispatcher.
-s32 AudioCommand_GetWidth(s32 command) {
+/// Returns the mixer preset chosen by the cue dispatcher. Nothing in ☀️ calls
+/// it.
+UNUSED s32 AudioCommand_GetWidth(s32 command) {
   if (command == MUS_070 || command == MUS_075 || command == MUS_067)
     return 3;
   return 2;

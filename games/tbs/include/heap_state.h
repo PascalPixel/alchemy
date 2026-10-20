@@ -31,6 +31,7 @@ STATIC_ASSERT(offsetof(union HeapState, heap.nextIwram) == 4);
 STATIC_ASSERT(offsetof(union HeapState, heap.blocks) == 8);
 
 enum HeapSlot {
+  HEAP_SLOT_TRANSFORM_STACK = 2, ///< The 3D transform's one saved level.
   HEAP_SLOT_MENU_CONTROL = 6,
   HEAP_SLOT_MAP = 8,
   HEAP_SLOT_BATTLE = 9,

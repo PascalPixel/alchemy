@@ -204,9 +204,11 @@ invariants, and what follows from each:
    against these numbers (`heap.c`); `gCartridgeResetMarker` sits at the
    first, and the system stack lives above it.
 6. **The sound mixer is at 0x03007000** (`.iwram_mixer`, 0x3a4 bytes),
-   copied by `Audio_Initialize`, and `Sound_LoadPresetParameters` copies
-   152-byte presets into it. It lies inside the IWRAM heap's range, which
-   runs from `gIwramHeap` to 0x03007800; see the open questions.
+   copied by `Audio_Initialize`; `Sound_LoadPresetParameters` copies its
+   152-byte presets into the resident code at `IwramSoundPresetCode`
+   (0x03000bd8), not into the mixer. The mixer lies inside the IWRAM heap's
+   range, which runs from `gIwramHeap` (0x03002000) to 0x03007800; see the
+   open questions.
 7. **The frame wait's stack top is 0x03007a00** (`Ram_FrameWaitStackTop`):
    the 512 bytes between it and the heap's end are what the frame loop, its
    tasks and the VBlank work always have (see
@@ -301,9 +303,18 @@ Still unknown:
 - XXX: whether Camelot linked the banks separately, which the fixed bank
   starts suggest but do not prove.
 - XXX: whether the IWRAM heap ever grows past 0x03007000, where it would
-  overwrite the sound mixer; nothing in `heap.c` keeps it below.
-- XXX: AGENTS says each fixed address is checked against the link; this tree
-  has no step that compares the literal with the symbol's linked address
-  beyond `make modern` building with the name.
+  overwrite the sound mixer (0x3a4 bytes) and the 0x45c unnamed bytes after
+  it. Nothing in `heap.c` keeps it below: the allocators test against
+  0x03007800, and even `Runtime_GetRemainingIwram`, which `Battle_RunEncounter`
+  calls around every action and then ignores, measures up to 0x03007800, so
+  the game's own measure counts the mixer as free. The heap has 0x5000 bytes
+  below the mixer. Settling it needs the heap's high-water mark from play.
+- XXX: AGENTS says each fixed address is checked against the link; no build
+  step compares a `FIXED_ADDRESS` literal with the symbol's linked address
+  (`make modern` only builds with the name). A one-off comparison of all 27
+  `FIXED_ADDRESS` uses with the six ☀️ linker maps found every literal equal
+  to its symbol in each edition its `#if` selects (the German
+  `Ram_BgScroll`, `Ram_VramBlockCache` and `Ram_WorkSlot` in tbs-de, the
+  others' in the other five).
 - XXX: why the directory keeps its own address and `FarCall_FieldTable` as
   resources (its rows 1 and 3).

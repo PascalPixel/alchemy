@@ -158,6 +158,14 @@ actor wandering near its home and a footprint waiting to disappear are all
 scripts, and so is the leader, since the player's control is itself a
 script command run once a frame.
 
+![Isaac walking through the snow in Imil, leaving footprints that fade behind him](https://alchemy.pascalpixel.com/guides/field/snow.gif)
+
+In Imil's snow you can watch that happen. Every 18 frames of walking, or 12
+of running, the player's control creates a footprint, field object kind 25,
+and starts it on a script two words long, `SC_WAIT(120), SC_FREE`
+(`gWorldMap_FootprintActions`, in `facing.c`). Each footprint you see is one
+of the 64 objects, waiting out its four seconds before it frees itself.
+
 A script is an array of 32-bit words, and its cursor is a word index into
 it. Each frame, for each live object, the update first runs the object's
 hook (even for a paused object, which does nothing else that frame). Then it
@@ -228,6 +236,11 @@ both with an acceleration of a quarter pixel (0x4000); with game flag 383
 (0x17f) set, holding B moves at 4. On the world map, `Object_MoveOnWorldMap` walks at
 half a pixel a frame and 1 with a dash key, and L raises the limit to 4
 pixels with no debug test or flag guarding it.
+
+![Isaac walking right through Vale, then running back the other way](https://alchemy.pascalpixel.com/guides/field/walk-run.gif)
+
+Here Isaac walks right for two seconds and then runs back with B held: the
+same two seconds take him about half as far again.
 
 Before each step the control probes ahead. On a layered map it tries 8
 pixels the way the pad points and the headings 22.5 and 45 degrees either
@@ -301,6 +314,15 @@ Towns and dungeons are drawn on three of the GBA's four background layers
 has its own parallax, drift and wrap, so it can scroll at its own rate as
 the view moves, or drift by itself.
 
+![Vale pulled apart into its layers: BG3 at the back, then BG2, the sprites and BG1 in front](https://alchemy.pascalpixel.com/guides/field/layers-3d.gif)
+
+Here is Vale pulled apart into its layers and put back together. At the back
+is BG3, the ground. In front of it, BG2 holds the Sanctum's walls and door and
+the cliff edges. Then come the sprites, Isaac among them, and BG1 goes in front
+of everything with the tree top, the Sanctum's roof and the tops of the stair
+posts. That's how Isaac can walk under a roof or behind a tree: he's drawn
+between two layers of the same map.
+
 The grid is 128 by 128 cells, 64 KB, decoded into `Ram_MapCellBuffer`. Each
 layer's window starts at the cell its header gives (`Map_LoadLayeredScene`
 sets `layers[n].cells` to the cell at half the header's 8-pixel tile
@@ -330,6 +352,13 @@ first scanline's values and starts a DMA transfer that runs in the short
 pause after each scanline (the HBlank), feeding the rest of the lines theirs
 as the screen is drawn. There are two pages, and the frames alternate
 between them.
+
+![Isaac walking and running on the world map, the ground tilting away towards the horizon](https://alchemy.pascalpixel.com/guides/field/world-map-walk.gif)
+
+The map under Isaac here is flat. Only the scaling changes from one scanline
+to the next: a line near the horizon covers far more of the map than a line
+at the bottom of the screen, and that is all it takes for the ground to tilt
+away.
 
 The map is made of 32-pixel cells, and the tiles around the player are
 loaded one a frame as you walk (`Map_PreloadCurrentTileBlock`). There are

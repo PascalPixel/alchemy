@@ -4,8 +4,16 @@
 
 #include "../battle_command_internal.h"
 
-/// Selects a Psynergy-list position, or -1 on cancel. The list shows PP cost
-/// and range, and confirmation rejects abilities the unit cannot use.
+/// The battle Psynergy list for unit `unitId`: `count` abilities of `actions`
+/// (ended by 0), five to a page, each with its icon, name, PP cost, element
+/// and range icon, in colour 4 when not usable in battle, colour 2 when the
+/// unit's PP fall short and colour 9 while its Psynergy is sealed; the
+/// window above describes the one under the cursor. Returns the chosen
+/// ability's place in `actions`, or -1 when cancelled, when the link
+/// battle's time runs out or when the list is empty. Only an ability not
+/// usable in battle is refused here, silently: one the PP cannot pay for, or
+/// a sealed member's, can be chosen. The Psynergy command runs it
+/// (Battle_CollectPartyCommands), listing only abilities usable in battle.
 s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
   struct UiRenderWork *render;
   s32 drawnFirstEntry;
@@ -108,6 +116,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
             UiWork_SetParamNibble(9);
           }
 
+          // The name and cost take BG palette 5 (UiRenderWork.level).
           render->level = 5;
           UiText_DrawCharacterAtOffset(encodedAction + MsgAbilityName, window,
                                        16, i * 16);
@@ -115,6 +124,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
           UiWork_SetParamNibble(15);
           render->level = 15;
 
+          // Element 4 is none: no element icon.
           if (action->element != 4) {
             UiWindow_SetTilemapEntry(window, action->element + 0x5001, 15,
                                      i * 2, 0);
@@ -150,6 +160,8 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
       render->menuBusy = 0;
     }
 
+    // Each frame: the current page's number lit 12 frames in 16, and the
+    // page arrows on the window's top edge (y -1).
     if (count > BATTLE_LIST_ROWS) {
       for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
         iconTile = i + 0xf301;

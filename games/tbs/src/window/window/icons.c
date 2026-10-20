@@ -4,10 +4,20 @@
 
 #include "../window_internal.h"
 
+// The builders that load an icon into VRAM take heap slot 17 (gGlyphWork) for
+// the build and free it before returning; ItemIcon_Compose and the
+// Ui_PrepareTransfer functions draw into the slot their caller holds. An icon
+// is 2 by 2 tiles, 16x16 pixels: 0x80 bytes of sprite tiles in its VRAM cache
+// entry (a portrait, UiGlyph_LoadEntryWithPalette's, is 4 by 4).
+
+/// Returns how many item icons the icon table holds; UiIcon_BuildItemIconTiles
+/// draws icon 0 for a number past them.
 s32 UiIcon_CountItemIcons(void) {
   return gUiIcon_ItemIconPointersEnd - gUiIcon_ItemIconPointers;
 }
 
+/// Returns how many Psynergy icons the icon table holds;
+/// UiIcon_BuildAbilityIconTiles draws icon 0 for a number past them.
 s32 UiIcon_CountPsynergyIcons(void) {
   return gUiIcon_PsynergyIconPointersEnd - gUiIcon_PsynergyIconPointers;
 }
@@ -16,7 +26,8 @@ s32 UiIcon_CountPsynergyIcons(void) {
 /// it into a sprite tile slot: *slot, or a free one when reuse is 0. Returns
 /// the tile in *tileOut.
 /// Frame decode is opaque; the command layer is then composited with
-/// transparency.
+/// transparency. With no free slot, *slot is VRAM_CACHE_ENTRY_COUNT and the
+/// load fails (*tileOut 0).
 void Ui_BuildPairedPatternsToSlot(s32 overlayIcon, s32 frameIcon, s32 *slot,
                                   s32 *tileOut, s32 reuse) {
   GlyphTransfer *work;
@@ -60,6 +71,7 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   if (glyph >= UiIcon_CountItemIcons())
     glyph = 0;
 
+  // Frame 2 is the icon frame items and Psynergy share.
   if (withBase != 0) {
     work->encoded = gUiIcon_FramePointerTable[2];
     work->width = 2;
@@ -80,18 +92,25 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   Runtime_ReleaseHeapBlock(0x11);
 }
 
+// The layers ItemIcon_Compose draws over an item's icon. Callers combine them:
+// 0x1a (count above one, equipped, broken) in Resource_LoadByMode, 0x3a (those
+// and the artifact mark) and 0x2a (0x3a without the broken mark) for
+// Resource_LoadByModeIntoSlot's kinds 2 and 7.
 #define ICON_FRAME 1
-#define ICON_COUNT_ABOVE_ONE 2
-#define ICON_COUNT 4
-#define ICON_EQUIPPED 8
-#define ICON_BROKEN 16
+#define ICON_COUNT_ABOVE_ONE 2 ///< the count, unless it is 1
+#define ICON_COUNT 4           ///< the count, always
+#define ICON_EQUIPPED 8        ///< mark 1 on an equipped item (code 0x400)
+#define ICON_BROKEN 16         ///< mark 0 on a broken item (code 0x200)
+/// Mark 2 on a cursed item that cannot be unequipped (ITEM_CURSED and
+/// ITEM_CANNOT_UNEQUIP) when its code has the broken bit.
 #define ICON_ARTIFACT 32
 
 /// Draws an item's icon into the glyph work buffer from its inventory code
 /// (item id in the low 9 bits, broken 0x200, equipped 0x400, count less one in
 /// the top 5 bits) with the layers asked for (ICON_ flags): the frame, the
 /// equipped, broken and artifact marks, and the count. Returns 256, or -1 when
-/// there is no glyph work buffer.
+/// there is no glyph work buffer. The caller allocates the buffer (heap slot
+/// 17, gGlyphWork) and uploads its tiles.
 s32 ItemIcon_Compose(u32 code, u32 layers) {
   s32 overlay;
   struct ItemDefinition *item;
@@ -144,6 +163,8 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
     count = (code & 0xf800) >> 11;
     count++;
   }
+  // Counts up to 30 show: the ones digit from digits 0 to 9, the tens from a
+  // second set at 10 to 12.
   if (count != 0 && count <= 30) {
     s32 ones = count % 10;
 
@@ -162,7 +183,8 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
 }
 
 /// Composes an inventory icon with the requested layers and loads it into
-/// cacheSlot. The temporary glyph block is released after the upload.
+/// cacheSlot. The temporary glyph block is released after the upload. No
+/// caller reads its result.
 s32 UiIcon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
   GlyphTransfer *work;
 
@@ -173,7 +195,8 @@ s32 UiIcon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
   return 1;
 }
 
-/// Builds one of the other icons and loads it into sprite tile slot cacheSlot.
+/// Builds one of the other icons (gUiIcon_MiscIconPointers) and loads it into
+/// sprite tile slot cacheSlot. No caller reads its result.
 s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 cacheSlot) {
   GlyphTransfer *work;
 
@@ -185,8 +208,12 @@ s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 cacheSlot) {
 }
 extern const u8 *gRenderResource_PairSourceTable[];
 
-/// Loads one of four small fixed images into the sprite tile slot named by
-/// slot.
+/// Loads 32 bytes, one sprite tile, from the start of
+/// gRenderResource_PairSourceTable into the VRAM cache entry slot. Every value
+/// loads the same bytes: all four cases name the table itself.
+/// XXX: those bytes are the table's eight label pointers, not a picture, and
+/// what the cases were meant to load is not known. A use would settle it, but
+/// the one caller, RenderOutput_CreateFromTable, has no caller in the tree.
 s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
   // Three more names of the one table: the ROM keeps a literal for each case,
   // and with one name the switch folds into a single load.
@@ -213,7 +240,8 @@ s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
   return 1;
 }
 
-/// Draws an item's icon from its inventory code into the glyph work buffer.
+/// Draws an item's icon from its inventory code into the glyph work buffer,
+/// with no frame or marks; code 0 draws icon 0. The caller holds the buffer.
 void Ui_PrepareTransferForItem(s32 code) {
   GlyphTransfer *glyph = gGlyphWork;
   struct ItemDefinition *item = Item_GetDirectFar(0x1ff & code);
@@ -236,6 +264,8 @@ void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                                tile, reuse);
 }
 
+/// The heap slot UiIcon_Decode copies its decoding routines into, one at a
+/// time, for the length of one call each.
 #define ROUTINE_BLOCK 49
 
 /// Builds the Psynergy icon glyph, over the icon frame when withBase is set,
@@ -286,7 +316,8 @@ void Ui_PrepareTransferFromTableEntry(u32 iconIndex) {
 /// Loads a 32x32 icon from the icon resource into sprite tile slot *slot (a
 /// free slot unless reuse is set) and its colours into the sprite palette
 /// named by palette. Returns the tile in *tile.
-/// This resource stores its palette before the encoded tile payload.
+/// This resource stores its palette before the encoded tile payload: 16
+/// colours, 32 bytes. Portraits (CreateSideObject) come through here.
 void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                                   s32 palette, s32 reuse) {
   GlyphTransfer *work;
@@ -296,6 +327,8 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
 
   work = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
   offsets = Resource_GetTableEntry((s32)&ResourceId_Icons);
+  // A number below 128 is the entry itself; the other speakers' portraits,
+  // numbered from 128 (Localization_LookupEntryId), are entries 16 on.
   if (icon <= 127)
     index = icon;
   else
@@ -313,12 +346,13 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
           REG_DMA3);
 }
 
+/// An empty function. Nothing in the tree names it but its prototype.
 void UiGlyph_ReservedNoOp(void) {}
 
 /// Decodes a compressed icon into the glyph buffer and expands it to tiles,
 /// opaque for the first layer or masked over what is there when outlined is
 /// set. Releases each copied decoder before loading the next routine into the
-/// same slot.
+/// same slot. glyph->width and height are the icon's size in tiles.
 void UiIcon_Decode(GlyphTransfer *glyph, s32 outlined) {
   RamCode_LoadSlot(ROUTINE_BLOCK, Tile_Decompress4bpp,
                    Tile_Decompress4bppCodeSize);

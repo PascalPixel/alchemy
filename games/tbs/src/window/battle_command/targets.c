@@ -13,17 +13,35 @@
 #endif
 
 /// A target marker's track: where it is, its state flags and the target it
-/// follows.
+/// follows. Track 0 follows the aimed unit, track i the unit i places after
+/// it and track 6 - i the unit i places before.
 struct CursorSlot {
   u8 x; ///< screen pixels
   u8 y; ///< screen pixels
+  /// bits: 7..2 frames to stay put (the byte drops by 4 a frame) | 1 in the
+  /// current spread | 0 easing halfway to its unit each frame
   u8 flags;
-  s8 index;
+  s8 index; ///< the place it follows from the aimed one; 6 when unused
 };
 
-/// Chooses a party/enemy target and animates its selection markers. Return the
-/// encoded side and party position, or -1 on cancel. Healing and status-cure
-/// categories choose an appropriate initial ally and supply condition help.
+/// Lets the player choose the target of an action of unit `selection`, with
+/// a cursor over the aimed unit and smaller markers on the others its range
+/// covers. `mode` is the action's targetMode: 2 the party, 4 only `selection`
+/// itself, anything else the enemies. `spread` is its range: 1 one unit, n
+/// the aimed one and n - 1 either side, ABILITY_RANGE_ALL every one (the
+/// cursor does not move); 0 counts as 1. `kind` is Battle_ClassifyEntryKind's
+/// class, or 7 for setting a Djinni: on a party member it opens a window of
+/// what the action would do (its HP or PP, the ailments it cures, "Set
+/// Djinni"), and a reviving or curing action (kinds 3 to 6) not aimed at
+/// everyone starts on the first member who needs it. On an enemy a window
+/// across the screen names it.
+///
+/// Returns 0x100 | the party place or 0x180 | the enemy place of the unit
+/// chosen with A, or -1 when cancelled or when the link battle's time runs
+/// out. While it runs, the battle scene slides (targetSceneOffset of
+/// BattleMenuWork: -2 for the party, 16 for the enemies) and the covered
+/// units are marked (BattlePres_SetActorModesFar). The Djinn tutorial
+/// presses A every 60 frames.
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   u16 candidateIds[8];
   struct SelectionSprite cursorSprites[6];
@@ -101,6 +119,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 #endif
   for (i = 0; i < 6; i++)
     cursorTracks[i].flags = 0;
+  // The candidates: the party, the acting unit alone, or the enemies. 0xfe
+  // is an empty place, skipped; 0xff ends the list.
   targetIndex = -1;
   if (mode == 2) {
     for (i = 0; i <= 5 && battle->partyUnits[i] != 0xFF; i++) {
@@ -119,7 +139,10 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   // Keep the candidate list separate from the markers drawn for a spread.
   candidateIds[targetCount] = 0xFF;
   candidateCount = targetCount;
-  // Restorative actions prefer an ally who benefits from their effect.
+  // Restorative actions prefer an ally who benefits from their effect: 5
+  // revives the downed, 3 cures poison, 4 and 6 the ailments they list
+  // below. Otherwise the cursor starts on the acting unit when it is a
+  // candidate.
   if (mode == 2) {
     if (spread != ABILITY_RANGE_ALL && kind != 0) {
       found = 0;
@@ -167,6 +190,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     if (j != targetCount)
       targetIndex = j;
   }
+  // Else the middle one; then step back past empty places and, in a link
+  // battle, past downed enemies.
   if (targetIndex < 0)
     targetIndex = (targetCount - 1) / 2;
   while (candidateIds[targetIndex] == 0xFE ||
@@ -175,6 +200,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     targetIndex = targetIndex + targetCount - 1;
     targetIndex %= targetCount;
   }
+  // Aimed at enemies or itself, the cursor starts at the acting unit (at y
+  // 128), stays two frames, then eases to the target.
   if (mode != 2) {
     BattleMotion_ProjectConditionalPositionFar(
         selection, EffectPosition_Coordinates(&actorPosition));
@@ -204,6 +231,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           *(u16 *)((u8 *)candidateIds + t),
           EffectPosition_Coordinates(&selectedPosition));
     }
+    // The cursor: a 16x16, 256-colour sprite of 32 frames (256 bytes each),
+    // a frame every four frames, bobbing 2 pixels each way every 16 frames.
     ((s32 *)firstSprite)[1] = 0x40002000;
     ((s32 *)firstSprite)[2] = 0;
     firstSprite->tile =
@@ -211,6 +240,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                                          (s32)gMenu_AnimatedCursorTiles);
     selectedPosition.y += Trig_Sin(gFrameCount << 12) / 32768;
     y = selectedPosition.y;
+    // Ease halfway each frame; the other markers show once the cursor is
+    // within 7 pixels of its target.
     if (cursorTracks[0].flags & 1) {
       cursorX = (selectedPosition.x + cursorTracks[0].x) / 2;
       cursorY = (y + cursorTracks[0].y) / 2;
@@ -237,6 +268,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     firstSprite->x = selectedPosition.x - 8;
     firstSprite->y = (u8)(selectedPosition.y - 16);
     Runtime_PushSlotEntry((s32 *)firstSprite, 240);
+    // The other markers' scale in 8.8: 176 (0.69 times) beside an aimed one,
+    // full size when the action takes every unit.
     if (spread == ABILITY_RANGE_ALL) {
       effect.scaleX = 256;
       effect.scaleY = 256;
@@ -268,6 +301,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     effect.angle = 0;
 #endif
     matrix = AffineMatrix_BuildForEffect(&effect);
+    // The aim moved: list the units the range covers, the aimed one first,
+    // mark them, and redraw the window for the aimed one.
     if (redraw & 1) {
       targetCount = 0;
       for (i = 0; i < 6; i++)
@@ -303,6 +338,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       }
       spreadActorIds[targetCount] = 0xFF;
       BattlePres_SetActorModesFar(spreadActorIds, 1);
+      // A party member (units 0 to 7): the window of what the action does,
+      // placed by the member's tile column (anchor) and kept on screen.
       if (candidateIds[targetIndex] <= 7) {
         if (spread != ABILITY_RANGE_ALL && kind != 0) {
           unit = UnitGetFar(candidateIds[targetIndex]);
@@ -605,6 +642,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           }
         }
       } else if (spread != ABILITY_RANGE_ALL) {
+        // An enemy: its name, centred under it and kept on the 224 pixels
+        // of the window; enemies 122 and 125 are "Mystery Man" and "Mystery
+        // Woman".
         target = UnitGetFar(candidateIds[targetIndex]);
         BattleMotion_ProjectConditionalPositionFar(
             candidateIds[targetIndex],
@@ -687,6 +727,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         gLinkCountdownWork->tutorialDelay--;
       }
     }
+    // A: the aimed unit's side and place; the loop ends after this frame.
     if (pressed & KEY_A) {
       s32 id;
       s32 k;

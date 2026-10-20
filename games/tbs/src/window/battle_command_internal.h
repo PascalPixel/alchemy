@@ -109,7 +109,13 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
                                        s32 offsetX, s32 offsetY, s32 variant);
 #endif
 
-// Edition-specific text and window layout values.
+// Edition-specific text and window layout values: places and widths in
+// tiles, except where a note says pixels.
+//
+// The Djinn preview's columns of old values (HP and PP, then Attack, Defense
+// and Agility), and how many leading characters of the 11-character number
+// text the stats skip: 7 leaves four digits, 8 three. The help line under
+// them ("R: Psynergy Gained") is placed in pixels.
 #if !TBS_PATCH_1
 #define DJINN_PREVIEW_VITALS_X 4
 #else
@@ -130,6 +136,8 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 #define DJINN_PREVIEW_HELP_X 24
 #endif
 
+// The second of the two UI tiles before a Psynergy's PP cost in the lists
+// (the first is tile 0x1f).
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
 #define PSYNERGY_COST_SECOND_TILE 0xf005
@@ -137,12 +145,14 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 #define PSYNERGY_COST_SECOND_TILE 0xf01e
 #endif
 
+// The status screen's level label, after the member's name, in pixels.
 #if (LANGUAGE == LANGUAGE_FRENCH)
 #define OWNER_STATUS_LEVEL_X 51
 #else
 #define OWNER_STATUS_LEVEL_X 56
 #endif
 
+// The summon list's window.
 #if TBS_PATCH_1
 #define SUMMON_MENU_WINDOW_X 13
 #define SUMMON_MENU_WINDOW_WIDTH 17
@@ -151,24 +161,31 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 #define SUMMON_MENU_WINDOW_WIDTH 14
 #endif
 
+// While a member's commands are chosen (Battle_CollectPartyCommands): the
+// screen x of the member's portrait sprite, in pixels.
 #if TBS_PATCH_1
 #define BATTLE_CLASS_ICON_X 0
 #else
 #define BATTLE_CLASS_ICON_X 4
 #endif
 
+// Where "Attack" is written in its window once chosen, in pixels.
 #if (LANGUAGE == LANGUAGE_FRENCH)
 #define BATTLE_COMMAND_NAME_X 14
 #else
 #define BATTLE_COMMAND_NAME_X 16
 #endif
 
+// The screen x of the chosen command's icon, in pixels, while the summon
+// list is open.
 #if TBS_PATCH_1
 #define BATTLE_SUMMON_ICON_X 80
 #else
 #define BATTLE_SUMMON_ICON_X 104
 #endif
 
+// The chosen summon's window, and the columns of its first Djinn cost: the
+// element icon, then the count.
 #if TBS_PATCH_1
 #define BATTLE_SUMMON_WINDOW_WIDTH 17
 #else
@@ -183,6 +200,7 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 #define BATTLE_SUMMON_COST_COLUMN 11
 #endif
 
+// The chosen item's window.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define BATTLE_ITEM_WINDOW_WIDTH 16
@@ -190,6 +208,9 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 #define BATTLE_ITEM_WINDOW_WIDTH 15
 #endif
 
+// The password level menu (Menu_SelectResourceLayout, mode 1): its heading
+// window ("Password Selection") and, outside the Japanese edition, the
+// explanation window under it.
 #if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
 #define RESOURCE_MODE0_WINDOW_X 7
@@ -213,6 +234,9 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 #define RESOURCE_MODE1_WINDOW_WIDTH 25
 #endif
 
+// The transfer method menu (Menu_SelectResourceLayout, mode 0): its heading
+// window ("Transfer Method"), the heading's x in it in pixels, and the help
+// window.
 #if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN)
 #define TRANSFER_METHOD_WINDOW_X 6
 #define TRANSFER_METHOD_WINDOW_WIDTH 18
@@ -245,6 +269,8 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 #define TRANSFER_HELP_WINDOW_WIDTH 21
 #endif
 
+// The width inside the frame of the name window of the shop's commands
+// (icons 0x11 to 0x14) and of the Sanctum's services (icons 0x19 to 0x1c).
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define ENTRY11_COMMAND_LABEL_WIDTH 8
 #elif TBS_PATCH_1
@@ -265,14 +291,17 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 #define OUTPUT_SIZE_16X16 0x40000000
 #define OUTPUT_SIZE_32X32 0x80000000
 
-// The two portrait slots of the UI work, and the palette the first one uses
-// (the second uses the next).
+// The two portrait slots of the UI work (UiRenderWork.resourceIds and
+// outputIds), and their palette.
 #define PORTRAIT_SLOT_COUNT 2
-#define PORTRAIT_PALETTE 14
+#define PORTRAIT_PALETTE 14 ///< OBJ palette of slot 0; slot 1 uses 15
+/// resourceIds value of a free slot, as UiWork_ClearPortraitSlots writes it.
 #define PORTRAIT_SLOT_EMPTY 999
 
 // The battle menus' message buffers, in halfwords, and the copier that fills
-// them.
+// them: the Japanese edition decodes the message (UiText_DecodeMessage), the
+// others copy its text (UiText_CopyMessageString). The callers' buffers hold
+// 64 halfwords either way.
 #if TBS_PATCH_1
 #define BATTLE_MENU_MESSAGE_CAPACITY 52
 #define BATTLE_MENU_MESSAGE_COPY UiText_CopyMessageString
@@ -282,41 +311,68 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 #endif
 
 /// Tiles the battle lists draw over their window's top edge: the page numbers
-/// and arrows, and the summon list's element icon.
+/// and arrows, and the summon list's element icon. The digit and arrow tiles
+/// are built when the party's commands open (Battle_CollectPartyCommands).
 enum {
-  SUMMON_ELEMENT_TILE = 0x5001,       ///< Element icon
-  LIST_TILE_PAGE_NUMBER = 0xf301,     ///< Page number
-  LIST_TILE_PAGE_NUMBER_LIT = 0xf30b, ///< Current page number
-  LIST_TILE_PAGES_LEFT = 0xf334,      ///< Left arrow
-  LIST_TILE_PAGES_RIGHT = 0xf335      ///< Right arrow
+  /// Element icon: + enum Element, in BG palette 5.
+  SUMMON_ELEMENT_TILE = 0x5001,
+  /// Page n's number: + n gives digit n + 1, tile 0x301 on, the UI digits
+  /// with colour 1 drawn as 10 (Graphics_ExpandVramTilesByColorTable).
+  LIST_TILE_PAGE_NUMBER = 0xf301,
+  /// The current page's number, the same digits in their own colours.
+  LIST_TILE_PAGE_NUMBER_LIT = 0xf30b,
+  /// Left arrow, tile 0x334, which Link_DrawShiftedTilePair slides.
+  LIST_TILE_PAGES_LEFT = 0xf334,
+  LIST_TILE_PAGES_RIGHT = 0xf335 ///< Right arrow, tile 0x335
 };
 
-#define BATTLE_OK 0x80 ///< flags: usable in battle
+#define BATTLE_OK 0x80 ///< BattleAct.flags: usable in battle
 
-/// The command icon row's work block and one of its icons: pictures.c loads
-/// the icons, command_row.c runs the row.
+/// One icon of the command row (struct SelectionWork): its sprite, where it
+/// stands and the command it stands for. pictures.c loads it, command_row.c
+/// runs the row.
 struct SelectionEntry {
+  /// The icon as a 32x32 sprite, drawn only while it is selected (pulsing);
+  /// the others show as tiles of BG1.
   struct MenuSprite sprite;
+  /// resource: the VRAM cache entry its sprite's tiles go into, one 1 KB
+  /// entry that every icon of the row shares, reloaded with the selected
+  /// icon. unused is never read.
   u16 resource, unused;
+  /// Screen pixels: the sprite's top left before the pulse moves it.
   s32 posX, posY;
-  s32 kind;
+  s32 kind; ///< its command: MsgCommandName + kind names it
 };
 
-/// The command icon row's work block: the icons' shared palette, up to six
-/// icons, the label window, the pulsing icon's transform and the selection.
+/// The command row's work block: the icons' shared palette, up to six icons,
+/// the label window, the pulsing icon's transform and the selection.
+/// Menu_RunCommandRow takes it from the alternate pool and frees it on return.
 struct SelectionWork {
+  /// BG palette slots for the icons' 256-colour pixels, filled as each icon
+  /// is loaded (UiText_LoadRemappedGlyph).
   struct GlyphPalette palette;
   struct SelectionEntry entries[6];
-  struct UiWindow *window;
+  struct UiWindow *window; ///< shows the selected command's name
   s32 iconCount;
+  /// The selected icon's scale, 8.8 fixed point: it pulses between 304 and
+  /// 336 (1.19 and 1.31 times) every 16 frames.
   struct AffineTransform affine;
+  /// affineIndex: the OAM matrix built from affine this frame. selectedIndex:
+  /// the icon under the cursor. drawnIndex: the icon whose name the window
+  /// shows, -1 before the first is drawn.
   s32 affineIndex, selectedIndex, drawnIndex;
+  /// The commands in row order, ended by -1 when fewer than six (see
+  /// Menu_RunCommandRow for the kinds).
   s32 commandKinds[6];
 };
 
 // The Djinn menu's blinking tile, and where each element's Djinn count sits in
-// the party status window, in tiles, to blink while it has Djinn on standby
-// (windata.s).
+// the party status window, in tiles, to blink while the Djinni under the
+// cursor is of that element, on standby and ready to summon (windata.s).
+/// The arrow tile Battle_SelectAbility copies to BG tiles 0x328 and 0x329 each
+/// frame: 0x328 blinks (four frames shown, four blank), 0x329 stays. The
+/// Djinn preview draws one of them, flipped, between the old and new class:
+/// the blinking one when the class changes.
 extern const u8 gDjinnMenu_BlinkTile[32];
 extern const u8 gDjinnMenu_ElementXOffsets[4];
 extern const u8 gDjinnMenu_ElementYOffsets[4];

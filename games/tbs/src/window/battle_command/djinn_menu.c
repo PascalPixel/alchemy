@@ -14,17 +14,28 @@
 #define TURNS_X 40
 #endif
 
+/// The party status window's layout, whose Djinn column the menu blinks.
 #define CURSOR_OWNER (*(struct PartyStatusWindow **)gPartyStatusWork)
 
-// A selected Djinni packs its element/index, standby bit and recovery turns.
-#define DJINN_ENTRY_STANDBY 0x10000
+// A selected Djinni packs its element/index, standby bit and recovery turns:
+// bits 11..8 element | 7..0 number in the element, and these.
+#define DJINN_ENTRY_STANDBY 0x10000 ///< on standby or recovering (not Set)
+/// bits 21..17: turns until a recovering Djinni is back; 0 when ready.
 #define DJINN_ENTRY_RECOVERY_MASK 0x3e0000
 #define DJINN_ENTRY_RECOVERY_SHIFT 17
-#define DJINN_ENTRY_END 0x80000000
+#define DJINN_ENTRY_END 0x80000000 ///< ends the list
 
-/// Selects a Djinni for the current battle command. Entries encode its element,
-/// index, standby state and recovery turns; -1 means cancel. R opens the
-/// stat/Psynergy preview, and tutorial input follows the normal input path.
+/// The battle Djinn menu for unit `owner`: its Djinn in element and number
+/// order, five to a page, set ones plain, standby ones in colour 2 and
+/// recovering ones in colour 4 with their turns, the one under the cursor
+/// described above the list with its change preview beside it
+/// (DjinnMenu_ShowChangePreview; holding R shows the Psynergy pages, Left
+/// and Right turn them). Returns the chosen Djinni's entry (element << 8 |
+/// number, with DJINN_ENTRY_STANDBY when on standby), or -1 when cancelled,
+/// when the link battle's time runs out, or when the member has no Djinn. A
+/// recovering Djinni, or one an earlier command this round chose
+/// (BattleMenuWork.chosenDjinn), is refused. Battle_CollectPartyCommands runs
+/// it for the Djinn command; the Djinn tutorial presses A every 60 frames.
 s32 Battle_SelectAbility(s32 owner, s32 unused) {
   struct CursorSprite cursor;
   u16 messageText[64];
@@ -70,6 +81,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
   previewWindow = 0;
   drawnRow = -1;
   cursorSlot = VramCache_AllocEntry(0x80);
+  // 84 words: room for 4 elements of 20 Djinn and the end.
   djinnEntries = Runtime_BumpAllocateAlternatePool(0xa8 * 2);
   djinnCount = 0;
   drawnFirstEntry = -1;
@@ -97,6 +109,9 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
       } else if (unit->djinnAvailable[element] & (u32)(1 << djinnIndex)) {
         u32 v;
         s32 k;
+        // Owned but not set: look for its recovery in its side's list
+        // (units above 7 are enemies). When it is not there, k ends at the
+        // count and the turns read come from the first unused entry.
         recovery = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
                          (u32)owner > 7 ? 1 : 0))
                         ->list;
@@ -126,7 +141,11 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
    * in tbs-en. */
   cursorSprite = &cursor;
   for (;;) {
-    // Rebuild descriptions only when the selection or preview page changes.
+    // Rebuild descriptions only when the selection or preview page changes:
+    // the message ("Cannot use the same Djinni twice.", "Ready to summon."
+    // for a ready standby Djinni, the Djinni's effect otherwise, or "You have
+    // no Djinn."), the preview, the list page, the page numbers and the row's
+    // highlight.
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow ||
         redraw != 0) {
       selectedDjinn = djinnEntries[firstEntry + selectedRow];
@@ -178,6 +197,9 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
             previewPage = 0;
           }
         } else if (selectedDjinn & DJINN_ENTRY_STANDBY) {
+          // A recovering Djinni: its effect, with the turns as the argument
+          // (MSG_ARG_NUMBER), and no preview. A ready one: the preview and
+          // "Ready to summon.", its element blinking in the party window.
           if (selectedDjinn & DJINN_ENTRY_RECOVERY_MASK) {
             UiWork_PushValueSlot(
                 (s32)((selectedDjinn & DJINN_ENTRY_RECOVERY_MASK) >>
@@ -272,6 +294,9 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
       render->menuBusy = 0;
     }
 
+    // Each frame: the current page's number lit 12 frames in 16 (steady while
+    // R is held), and the page arrows, which give way to the plain frame
+    // while R turns the preview's pages instead.
     if (djinnCount > BATTLE_LIST_ROWS) {
       for (j = 0; j < (djinnCount + 4) / BATTLE_LIST_ROWS; j++) {
         s32 tile = j + 0xf301;
@@ -324,6 +349,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
       encodedDjinn = -1;
       break;
     }
+    // A takes a Djinni that is ready and not chosen already; a recovering
+    // one is refused with "Your Djinni is still recovering.".
     if (pressed & KEY_A) {
       u32 selection;
       u32 turns;
@@ -377,6 +404,8 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         }
         preferredRow = selectedRow;
       } else if (held & KEY_R) {
+        // R held: the preview's page numbers and arrows on its top edge; the
+        // first frame turns to page 1, then Left and Right turn the pages.
         if (previewWindow != 0) {
           for (i = 0; i < previewPages; i++) {
             s32 tile = i + 0xf301;
@@ -423,6 +452,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           }
         }
       } else if (previewPage != 0) {
+        // R let go: back to the stats page.
         if (previewWindow != 0) {
           RenderOutput_ClearList(previewWindow);
         }
@@ -495,6 +525,9 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
     if (djinnCount != 0) {
       Runtime_PushSlotEntry(cursorSprite, 242);
     }
+    // In the party status window's Djinn column (PARTY_STATUS_SHOW_DJINN),
+    // the element of a ready standby Djinni under the cursor blinks between
+    // palettes 14 and 15 every four frames; then the arrow tiles' blink.
     partyStatus = CURSOR_OWNER;
     blinkPhase = gFrameCount & 4;
     iconWindow = partyStatus->window;
@@ -519,6 +552,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
     WaitFrames(1);
   }
 
+  // Leave the Djinn column in palette 15.
   if (CURSOR_OWNER->flags & 2) {
     Ui_SetRectHighlight(CURSOR_OWNER->window->x + 1,
                         CURSOR_OWNER->window->y + 1, 4, 4, 15);

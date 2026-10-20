@@ -5,15 +5,17 @@
 #include "../window_internal.h"
 
 /// Scratch values for a step of a window's zoom: the scaled part of a side,
-/// the scaled duration and their ratio.
+/// the scaled duration and their ratio. A local of UiWindow_DrawZoomFrame.
 struct UiWindowInterpolationScratch {
-  s32 scaledPart;
-  s32 scaledDuration;
-  s32 result;
+  s32 scaledPart;     ///< frame (or frames left) times a side in tiles, << 16
+  s32 scaledDuration; ///< the zoom's duration << 17
+  s32 result; ///< scaledPart / scaledDuration, 16.16 fixed point (in tiles)
 };
 
 /// The per-frame window update: steps each window's zoom while it opens or
-/// closes, draws it in full once open, and frees its slot once closed.
+/// closes, draws it in full once open, and frees its slot once closed. The
+/// first step of UiWork_ProcessAll. A window opens over 8 frames (frame 7 down
+/// to 0, then the full draw) and closes over 4 (frame 0 up to its duration).
 void UiWork_ProcessDirectWork(void) {
   struct UiRenderWork *state = UI_WORK;
   struct UiWindow *work = state->windows;
@@ -21,8 +23,11 @@ void UiWork_ProcessDirectWork(void) {
   u8 dirty;
 
 loop:
+  // Flags 0 with a duration left means closing (UiWork_Finalize clears the
+  // flags first).
   if (work->flags != 0) {
-    // Opening: zoom out one step a frame, then draw the window in full.
+    // Opening: zoom out one step a frame, then draw the window in full, which
+    // clears the duration.
     if ((s16)work->frame != 0) {
       UiWindow_DrawZoomFrame(work, 0);
       work->frame = (s16)work->frame - 1;
@@ -30,7 +35,8 @@ loop:
       UiWindow_DrawOpened(work);
     }
   } else if (work->duration != 0) {
-    // Closing: zoom in one step a frame, then erase it and free its slot.
+    // Closing: zoom in one step a frame, then erase it and free its slot. Each
+    // step erases the rectangle the step before drew (previousX and its kin).
     if ((s16)work->frame != work->duration) {
       UiWindow_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
                                (s16)work->previousWidth,
@@ -85,6 +91,10 @@ void UiWindow_DrawZoomFrame(void *windowArg, s32 savePosition) {
   frame = (s16)window->frame;
   duration = window->duration;
   remaining = duration - frame;
+  // Iwram_RatioMulQ14(d, v) is v / d in 16.16 fixed point. The left edge
+  // moves in by frame / duration of half the width (result >> 16), and the
+  // width is (duration - frame) / duration of the whole (result >> 15, twice
+  // the half); the same for the top and the height.
   scratch.scaledPart = (frame * window->width) << 16;
   scratch.scaledDuration = duration << 17;
   scratch.result =
@@ -127,7 +137,10 @@ u16 *Memory_FillHalfwordsDma(u16 *dst, s32 value, s32 count) {
 }
 
 /// Draws an empty window: a frame around a filled interior, at tile (x, y) of
-/// width by height tiles. Sizes outside 2 to 30 tiles draw nothing.
+/// width by height tiles, and frees the text tiles the rectangle showed. Sizes
+/// outside 2 to 30 tiles draw nothing; the caller keeps the rectangle within
+/// the tilemap's 20 rows, as nothing here checks it. While UiRenderWork.mode is
+/// set (Mind Read) every corner is the one round tile, flipped to fit.
 void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height) {
   struct UiRenderWork *canvas = UI_WORK;
   u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)canvas->tilemap);
@@ -172,7 +185,9 @@ void UiWindow_DrawFrame(s32 x, s32 y, u32 width, u32 height) {
 }
 
 /// Maps the text canvas tiles into the interior of a window at tile (x, y).
-/// With fullWidth set the canvas covers the side frame columns too.
+/// With fullWidth set the canvas covers the side frame columns too. The canvas
+/// has 120 tiles, so the interior (rows times columns) must not exceed it:
+/// a full-width battle window of 30 by 6 tiles uses all of them.
 void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
                                  s32 fullWidth) {
   struct UiRenderWork *canvas = UI_WORK;
@@ -182,7 +197,9 @@ void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
 
   if (width <= 1 || height <= 1 || width > 30 || height > 30)
     return;
-  // Canvas tiles run down each column of the interior.
+  // Canvas tiles run down each column of the interior: the tile at interior
+  // row r (from 1) of column c (from 0) is UI_CANVAS_FIRST_TILE - 1 + r plus c
+  // columns of height - 2 tiles.
   cursor += 32;
   if (fullWidth == 0) {
     for (row = 1; row < height - 1; row++) {
@@ -206,7 +223,9 @@ void UiWindow_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
 }
 
 /// Returns 1 when every message channel has finished its text (or is idle),
-/// and 0 while one is still typing.
+/// and 0 while one is still typing. The message routines wait on it a frame at
+/// a time; a window whose text has ended counts as finished though it is still
+/// open.
 s32 UiWork_IsComplete(void) {
   struct UiChannelSlot *ch;
   s32 i;
@@ -220,8 +239,11 @@ s32 UiWork_IsComplete(void) {
 }
 
 /// Returns 1 when a window is fully closed (its slot free), and 0 while it is
-/// open or closing.
+/// open or closing. The slot may since have been taken by a new window, which
+/// then reads as not closed.
 s32 UiWork_IsIdle(struct UiWindow *window) {
+  // Japanese only: a NULL window counts as closed; the other editions read
+  // through it.
 #if !TBS_PATCH_1
   if (window == NULL)
     return 1;
@@ -232,7 +254,8 @@ s32 UiWork_IsIdle(struct UiWindow *window) {
 }
 
 /// Resets the text style glyphs are drawn with: colour 15, no outline, line
-/// spacing 10.
+/// spacing 10 and letter spacing 9. UiWindow_Create calls it for every new
+/// window, and UiText_RenderWideStringAtOffset on TEXT_COLOURS_RESET.
 void UiWork_ResetCounters(void) {
   struct UiRenderWork *state = UI_WORK;
 
@@ -243,30 +266,37 @@ void UiWork_ResetCounters(void) {
   state->unknownAfterLineSpacing = 1;
 }
 
-/// Loads the glyph tiles, resets the text style and starts the per-frame
-/// window update (UiWork_ProcessAll).
+/// Reserves the glyph sprites' tiles, resets the text style, starts the ring
+/// of decoded text from its beginning and starts the per-frame window update
+/// (UiWork_ProcessAll). Called by the field's setup,
+/// UiWork_InitializeWithResourceCounters.
 void UiWork_InitCountersWithResourceAndScheduleRefresh(void) {
   struct UiRenderWork *state = UI_WORK;
   s32 priority;
 
+  // VRAM cache entry 95 with no source: 128 << 6 is 8192 bytes, 256 sprite
+  // tiles, the four of a 16x16 glyph for each of the 64 render outputs.
   state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
   state->letterSpacing = 9;
   state->lineSpacing = 10;
   state->outline = 0;
   state->colour = 15;
   state->count = 0;
+  // 200 << 4 is 0xc80, SCHEDULER_KEY_MAIN_LOOP: the update runs in the main
+  // loop's pass.
   priority = 200;
   priority <<= 4;
   Scheduler_AddOrUpdateCallback(UiWork_ProcessAll, priority);
 }
 
 /// Resets the text style and starts the per-frame window update
-/// (UiWork_ProcessAll), loading the glyph tiles first when loadGlyphTiles is
-/// set.
+/// (UiWork_ProcessAll), reserving the glyph sprites' tiles first when
+/// loadGlyphTiles is set. Called by the battle's setup, UiWork_Initialize.
 void UiWork_InitCountersAndScheduleRefresh(s32 loadGlyphTiles) {
   struct UiRenderWork *state = UI_WORK;
   s32 priority;
 
+  // As in the field's setup above.
   if (loadGlyphTiles != 0)
     state->glyphTiles = VramCache_Load(95, 128 << 6, 0);
   state->letterSpacing = 9;
@@ -279,7 +309,8 @@ void UiWork_InitCountersAndScheduleRefresh(s32 loadGlyphTiles) {
   Scheduler_AddOrUpdateCallback(UiWork_ProcessAll, priority);
 }
 
-/// Closes the battle message window, if one is open.
+/// Closes the battle message window at once, if one is open, and forgets it,
+/// so the next battle message (UiText_PrepareMessageWork) opens a new one.
 void UiWork_FinalizeSharedSlot(void) {
   struct BattleDisplayWork *display = gBattleDisplayWork;
   struct UiWindow *window = display->window;
@@ -291,7 +322,11 @@ void UiWork_FinalizeSharedSlot(void) {
 }
 
 /// Shows a message in the battle message window, opening the window (a
-/// full-width text canvas along the bottom of the screen) if it is not open.
+/// full-width text canvas along the bottom of the screen) if it is not open,
+/// and returns without waiting. The window stays open from message to message
+/// until UiWork_FinalizeSharedSlot closes it; the channel typing the message
+/// is kept in the battle display's work (BattleDisplayWork.offset), NULL when
+/// none was free.
 void UiText_PrepareMessageWork(s32 argument) {
   s32 entryIndex;
   struct UiChannelSlot *channel;
@@ -303,15 +338,19 @@ void UiText_PrepareMessageWork(s32 argument) {
   state = UI_WORK;
   control = (struct BattleDisplayWork *)
       gWindowWork[HEAP_SLOT_BATTLE_DISPLAY - HEAP_SLOT_WINDOW];
-  // result starts as NULL, though it is assigned again before it is read; the
+  // channel starts as NULL, though it is assigned again before it is read; the
   // same zero clears marked below
   channel = NULL;
+  // menuState 2 while decoding marks a battle message: the Japanese decoder
+  // then sets names off with spaces and style codes, and doubles each space.
   state->menuState = 2;
   entryIndex = UiText_BuildRenderEntries(argument, 1);
   state->menuState = 1;
 
   if (state->entries[entryIndex] != 0) {
     previousWindow = control->window;
+    // A frameless canvas whose interior is rows 16 to 19, the bottom four, and
+    // the full 30 columns: all 120 canvas tiles.
     if (previousWindow == NULL) {
       messageWindow = UiWindow_Create(
           0, 15, 30, 6, UI_WINDOW_INSTANT | UI_WINDOW_TEXT_CANVAS);
@@ -326,6 +365,8 @@ void UiText_PrepareMessageWork(s32 argument) {
           UiText_StartBattleMessage(messageWindow, entryIndex, control->marked);
       control->offset = (struct BattleDisplayOffset *)channel;
       control->marked = 0;
+      // With no channel free the window is closed, though control->window
+      // still names its slot.
       if (channel == NULL) {
         UiWork_Finalize(messageWindow, 1);
       }
@@ -342,10 +383,11 @@ void UiText_ShowMessageAndWaitCore(s32 argument) {
   WaitFrames(1);
 }
 
-/// Types a message into an open window from its top
-/// left. Returns the channel typing it (as an integer), or 0 when the message
-/// is empty, window is NULL or no channel is free. The result is the channel
-/// pointer encoded as a word, not a message-completion status.
+/// Types a message into an open window from its top left, keeping the window's
+/// size from page to page, with no voice blips. Returns the channel typing it
+/// (as an integer), or 0 when the message is empty, window is NULL or no
+/// channel is free. The result is the channel pointer encoded as a word, not a
+/// message-completion status.
 s32 UiText_OpenEntryMessage(struct UiWindow *window, s32 message) {
   struct UiRenderWork *work = UI_WORK;
   s32 entry;
@@ -371,7 +413,9 @@ s32 UiText_OpenEntryMessage(struct UiWindow *window, s32 message) {
 /// (UiText_BuildRenderEntries): flags bit 0 (spacingBefore) makes it halting
 /// speech, a short pause before each character, broken off with an ellipsis
 /// after the first word; bit 1 (spacingAfter) puts code 222 after certain
-/// characters in English and Japanese. UiText_OpenMessageWindow clears both.
+/// characters in English and Japanese. Flags already set stay set: only
+/// UiText_OpenMessageWindow clears both, once it has started a message typing,
+/// so they also apply to every message decoded before that.
 void UiWork_SetBusyFlags(s32 flags) {
   struct UiRenderWork *work;
 
@@ -391,7 +435,8 @@ void UiWork_SetBusyFlags(s32 flags) {
 /// zoom open rather than appear at once; bit 3: a text canvas; bit 4: keep the
 /// bottom edge; bit 5: keep the left edge) and the speaker's voice sound in
 /// bits 16 to 27. Returns the window, or NULL when the message is empty or no
-/// window or channel is free.
+/// window or channel is free. It returns once the window is open (after the
+/// zoom), without waiting for the text.
 struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y,
                                           u32 packed) {
   s32 entry;
@@ -414,6 +459,8 @@ struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y,
   entry = UiText_BuildRenderEntries(message, 1);
   if (work->entries[entry] == 0)
     return NULL;
+  // bounds receives each line's extra gap between characters, which the
+  // channel spreads the line with.
   UiWindow_FitOnScreen(entry, &x, &y, &width, &height, (out = bounds), 0);
   if (width == 0 && height == 0)
     return NULL;
@@ -474,6 +521,8 @@ void UiText_ShowPositionedMessageAndWait(s32 message, s32 flags) {
   } else {
     s32 actorTileY;
 
+    // The character's screen y in pixels, as a tile row. In the lower half
+    // the window's top goes 5 rows above it; otherwise 4 rows below.
     Object_GetScreenPositionFar(gGameState.selectedActor, actorPosition);
     actorTileY = actorPosition[1] >> 3;
     if (actorTileY > 9) {
@@ -510,7 +559,8 @@ void UiText_ShowPositionedMessageAndWait(s32 message, s32 flags) {
 }
 
 /// The window system's per-frame callback: windows, then message channels,
-/// then sprite animation.
+/// then sprite animation. Both setups schedule it in the main loop's pass
+/// (0xc80); nothing here removes it.
 void UiWork_ProcessAll(void) {
   UiWork_ProcessDirectWork();
   UiWork_ProcessRenderChannels();

@@ -4,14 +4,18 @@
 
 #include "../window_internal.h"
 
-/// Two halfwords of a selection record, the second cleared as its cursor.
+/// Two halfwords of a selection record from its base field on, the second
+/// cleared as its cursor: UiGlyph_ResetWorkState frees records 7 and 8 through
+/// it (MATCHING.md lists the spelling).
 struct GlyphCursor {
-  u16 unused;
-  u16 cursor;
+  u16 unused; ///< the record's base
+  u16 cursor; ///< the record's kind
 };
 
 /// Allocates and resets the selection screen: the row of icons the player picks
 /// from, with arrows at each end and a pointing hand over the chosen target.
+/// The work is heap slot 18 (gResQueueWork), which Resource_ResetOwnerEntries
+/// frees; the hand's picture takes a VRAM cache entry for that long.
 void UiGlyph_ResetWorkState(void) {
   struct SelectionScreen *work;
   struct SelectionSprite *visual;
@@ -25,10 +29,14 @@ void UiGlyph_ResetWorkState(void) {
   work->window = NULL;
   work->unk39a = clear;
   work->top = clear;
+  // Bit 7: the first list starts from its first entry. Until the list is
+  // first cleared the row is drawn 32 pixels lower and takes no input.
   work->cursorIndex = 128;
   work->verticalScroll = 32;
   work->count = clear;
   work->locked = 999;
+  // The records: 0 and 1 the end arrows, 2 to 8 the row's icons, 9 to 13 the
+  // chosen icons, 14 the pointing hand and 15 the large icon.
   i = 0;
   do {
     work->records[i + 2].kind = 0;
@@ -43,6 +51,7 @@ void UiGlyph_ResetWorkState(void) {
   work->records[1].kind = 0;
   work->records[0].y = 0;
   work->records[1].y = 0;
+  // The hand: a 16x16 sprite of 256 colours, 256 bytes a frame.
   table = gMenu_AnimatedCursorTiles;
   work->records[14].slot = Resource_FindFreeEntry();
   work->records[14].tile = VramCache_Load(work->records[14].slot, 256, table);
@@ -77,7 +86,9 @@ void Resource_ClearOwnerListAndCounters(void) {
 }
 
 /// Adds an entry (kind and id) to the selection screen's list, up to 16.
-/// The count starts at 0 when the screen is created or cleared.
+/// The count starts at 0 when the screen is created or cleared. The kinds
+/// SelectionScreen_SetupIcon draws: 1 a command (6 a yes or no command), 2 an
+/// item, 4 a Psynergy; base is the command's, item's or ability's number.
 void Resource_PushPendingPair(u32 kind, u32 base) {
   struct SelectionScreen *state = gResQueueWork;
   u16 entryCount = state->count;
@@ -124,6 +135,7 @@ void MenuSelection_BuildEntries(u32 unused) {
     entryIndex++;
   }
 
+  // Icons are 16 pixels apart: the row is centred on x 100, at y 140.
   screen->baseX = 100 - rowPosition * 8;
   screen->baseY = 140;
   // Reuse the count as a pixel offset while placing the completed row.
@@ -138,6 +150,7 @@ void MenuSelection_BuildEntries(u32 unused) {
     previous->y = y;
     previous->targetX = x;
     previous->targetY = y;
+    // While locked is 0 a yes or no row sits at the top of the screen.
     if (previous->kind == 6 && screen->locked == 0) {
       previous->y = 6;
       previous->targetY = 6;
@@ -149,6 +162,8 @@ void MenuSelection_BuildEntries(u32 unused) {
   SelectionScreen_LoadLargeIcon();
 }
 
+/// An empty function, reached only through a bare entry of the window
+/// far-call table (system/far_call/WINDOW.S).
 void UiWork_ReservedNoOp(void) {}
 
 /// Returns a free selection icon record: one of the seven row icons (kind 0) or
@@ -171,7 +186,8 @@ struct SelectionNode *SelectionScreen_FindFreeIcon(s32 kind) {
   return NULL;
 }
 
-/// Starts drawing the selection screen each frame.
+/// Starts drawing the selection screen each frame, in the main loop's pass
+/// (0xc80).
 void Resource_ScheduleOwnerResetDelayed(void) {
   Scheduler_AddOrUpdateCallback(SelectionScreen_Draw, 0xC80);
 }
@@ -183,7 +199,11 @@ void Resource_ScheduleOwnerReset(void) {
 
 /// The selection screen's per-frame callback: slides and draws the row of
 /// icons, the large icon over the chosen one, the end arrows, the icons already
-/// chosen and the pointing hand.
+/// chosen and the pointing hand. The depth slots: 240 for the row and the
+/// chosen icons, 241 for the icon under the cursor, 248 for the large icon and
+/// the hand, 238 for the arrows. In battle the sprites are semi-transparent
+/// (OBJ mode 1) while the hand is shown, and a command's (kind 1) icon and the
+/// large icon always.
 void SelectionScreen_Draw(void) {
   struct SelectionScreen *state = gResQueueWork;
   struct SelectionSprite *cursorEntry = &state->records[14].sprite;
@@ -198,7 +218,9 @@ void SelectionScreen_Draw(void) {
   struct EffectPosition pos;
 
   node = state->head;
-  // Move and queue the visible row before drawing its overlays.
+  // Move and queue the visible row before drawing its overlays. An icon
+  // slides dx pixels a frame until it reaches its target; the one under the
+  // cursor, once still, points the hand at its battle target.
   while (node != 0) {
     sprite = &node->sprite;
     sprite->affine = 0;
@@ -267,6 +289,9 @@ void SelectionScreen_Draw(void) {
     commandSprite->shape = 0;
     commandSprite->priority = 0;
     commandSprite->tile = transfer->tile;
+    // A 32x32 sprite (size 2) over the icon, bobbing by half the cursor's
+    // bob; while it zooms in, the double-size area moves it 16 up and left
+    // (0xfff0 is -16 in the 9-bit x, 0xf0 in the 8-bit y).
     commandSprite->x = node->x - 4;
     commandSprite->y =
         node->y + (gMenu_CursorBobOffsets[(gFrameTick >> 1) & 15] >> 1) - 4;
@@ -325,7 +350,9 @@ void SelectionScreen_Draw(void) {
     Runtime_PushSlotEntry(sprite, 240);
     node = node->next;
   }
-  // Point at the selected battle target, smoothing each axis separately.
+  // Point at the selected battle target, smoothing each axis separately: the
+  // hand covers half the distance left each frame. Its 16 frames of 256 bytes
+  // change every 4 frames.
   if (cursor->kind != 0) {
     entryIndex = (s32)gMenu_AnimatedCursorTiles;
     {
@@ -364,7 +391,8 @@ void SelectionScreen_Draw(void) {
 }
 
 /// Draws the selection screen's left (index 0) or right (1) arrow, nudged
-/// outwards while it flashes after a scroll.
+/// outwards while it flashes after a scroll: the record's base holds the
+/// frames left of the nudge (8 after each scroll) and is the nudge in pixels.
 void SelectionScreen_DrawArrow(struct SelectionScreen *state, s32 side) {
   u32 animationStep = (gFrameTick >> 2) & 7;
   struct SelectionSprite *arrow;
@@ -401,7 +429,9 @@ void SelectionScreen_DrawArrow(struct SelectionScreen *state, s32 side) {
 /// Opens or refits the name window above the selection row and writes the name
 /// of the icon under the cursor, or that nothing is known (mode 4, Psynergy)
 /// or held (mode 2, items). mode 6 is a yes or no question, placed at the
-/// bottom or top of the screen.
+/// bottom or top of the screen. count is the name's width in tiles inside the
+/// frame; 0 keeps the open window as it is. The window stays open until
+/// Resource_ResetOwnerEntries closes it.
 void Menu_OpenSelectionWindow(s32 mode, u32 count) {
   struct SelectionScreen *screen;
   struct SelectionNode *node;
@@ -413,6 +443,10 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count) {
   slot = &screen->window;
   window = *slot;
   if (window == 0) {
+    // A yes or no window, 5 by 3 tiles, from column 17 at the bottom, or the
+    // top while locked is 0. Otherwise a window count + 2 tiles wide at row
+    // 17, centred about 24.5 tiles from the left. Both take flags 6:
+    // UI_WINDOW_INSTANT and bit 2, which no flag names.
     if (mode == 6) {
       if (screen->locked != 0) {
         *slot = UiWindow_Create(17, 17, 5, 3, mode);
@@ -446,7 +480,9 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count) {
   }
 }
 
-/// Closes the selection screen and frees its icons, tiles and work block.
+/// Closes the selection screen and frees its icons, tiles and work block (heap
+/// slot 18). The chosen icons go too, so the choices are only in the indexes
+/// the loops returned.
 void Resource_ResetOwnerEntries(void) {
   struct SelectionScreen *state = gResQueueWork;
   struct SelectionNode *node;
@@ -471,6 +507,8 @@ void Resource_ResetOwnerEntries(void) {
     node = node->next;
   }
   Resource_ResetPendingTransfer();
+  // An arrow's y is nonzero once SelectionScreen_SetupArrow has given it a
+  // slot. The right arrow's slot is freed on the left arrow's y, read twice.
   if (state->records[0].y != 0) {
     Resource_ResetEntry(state->records[0].slot);
     if (state->records[0].y != 0) {
@@ -509,7 +547,9 @@ void Menu_SetupSelectionBothSides(void) {
 }
 
 /// Sets up the left (index 0) or right (1) arrow of the selection row, shown
-/// when there are entries beyond that end.
+/// when there are entries beyond that end. The first call takes the arrow's
+/// VRAM cache entry, which it keeps until Resource_ResetOwnerEntries; later
+/// calls only move it and decide whether it shows.
 void SelectionScreen_SetupArrow(struct SelectionScreen *state, s32 side) {
   struct SelectionSprite *arrow = &state->records[side].sprite;
   const u8 *arrowTiles = 0;
@@ -530,6 +570,7 @@ void SelectionScreen_SetupArrow(struct SelectionScreen *state, s32 side) {
       count = 5;
     }
     arrowTiles = right;
+    // Just past the last of the at most five icons shown.
     state->records[1].x = state->baseX + 16 * (count - 1) + 17;
   } else {
     arrowTiles = gMenu_CursorLeftObjectTiles;
@@ -578,13 +619,15 @@ struct SelectionNode *Selection_GetCursorNode(struct SelectionScreen *screen) {
 
 /// Runs the selection row until the player chooses (the chosen entry's index)
 /// or, when mode allows it, cancels with B (-1). SELECTION_FIXED allows no
-/// moving or choosing.
+/// moving or choosing; any mode but 0 allows cancelling. Reached only through
+/// a bare entry of the window far-call table.
 s32 Menu_SelectionLoop(s32 mode) {
   struct SelectionScreen *screen = gResQueueWork;
 
   SelectionScreen_HighlightIcon(screen, 0);
   for (;;) {
     WaitFrames(1);
+    // No input while the row is pushed down.
     if (screen->verticalScroll != 0) {
       continue;
     }
@@ -624,6 +667,8 @@ u32 Menu_WaitForSelectionInput(u32 mode) {
       }
 
       if (gKeysPressed & KEY_A) {
+        // On a yes or no row, entry 0 (yes) sounds as a confirm and the
+        // other as a cancel.
         result = screen->top + screen->cursorIndex;
         if (screen->head->kind == NODE_KIND_YES_NO) {
           if (result == 0)
@@ -717,6 +762,11 @@ void Menu_StepRight(struct SelectionScreen *state) {
   state->status = NODE_STATUS_SCROLLING;
   WaitFrames(1);
   state->cursorIndex++;
+  // With more entries than the five shown, stepping past the last gathers the
+  // icons at the row's start (12 pixels a frame), refills them from the first
+  // entry and fans them out again; stepping onto the fifth place with more to
+  // come scrolls the row instead, the cursor staying on the fourth. A short
+  // row just wraps the cursor.
   if (state->count > 5) {
     end = state->top + state->cursorIndex;
     if (end == state->count) {
@@ -783,6 +833,10 @@ void Menu_StepLeft(struct SelectionScreen *state) {
   SelectionScreen_RedrawIcon(state, state->cursorIndex);
   state->status = NODE_STATUS_SCROLLING;
   WaitFrames(1);
+  // As Menu_StepRight, mirrored: from the second place with entries before
+  // it the row scrolls back; from the first entry the icons gather at the
+  // row's last place (12 pixels a frame), refill from the last five entries
+  // and fan out again, with the cursor on the last.
   if (state->count > 5) {
     if ((state->cursorIndex | state->top) != 0) {
       if (state->cursorIndex == 1 && state->top != 0) {
@@ -849,7 +903,8 @@ void Menu_StepLeft(struct SelectionScreen *state) {
   WaitFrames(1);
 }
 
-/// Redraws the command icon at row place rowIndex in its plain state.
+/// Redraws the command icon at row place rowIndex in its plain state, in its
+/// own VRAM cache entry. Other kinds of icon are left alone.
 void SelectionScreen_RedrawIcon(struct SelectionScreen *state, u32 rowIndex) {
   struct SelectionNode *node = state->head;
   u32 tile;
@@ -868,6 +923,8 @@ void SelectionScreen_RedrawIcon(struct SelectionScreen *state, u32 rowIndex) {
 }
 
 /// Redraws the command icon at row place rowIndex and loads its large icon.
+/// The small icon is drawn the same as SelectionScreen_RedrawIcon draws it;
+/// the highlight is the large icon.
 void SelectionScreen_HighlightIcon(struct SelectionScreen *state,
                                    u32 rowIndex) {
   struct SelectionNode *node = state->head;
@@ -887,7 +944,10 @@ void SelectionScreen_HighlightIcon(struct SelectionScreen *state,
   }
 }
 
-/// Tells the battle presentation how many icons the row shows.
+/// Stops the battle's highlight of units (BattlePres_SetActorModesFar with
+/// mode 0); Menu_ConfirmSelection calls it as an entry is chosen. It passes a
+/// unit list with one place an icon, of which only the end marker (0xff,
+/// BATTLE_UNIT_LIST_END) is written; mode 0 never reads the list.
 void Menu_SendNodeCountList(struct SelectionScreen *screen) {
   u16 data[6];
   struct SelectionNode *node = screen->head;
@@ -904,7 +964,8 @@ void Menu_SendNodeCountList(struct SelectionScreen *screen) {
 /// Scrolls the row one entry: forward brings an icon in from the right as the
 /// leftmost shrinks away, and back the reverse; waits until it has moved.
 /// Releases the departing cache slot only after its shrinking animation
-/// finishes.
+/// finishes. The icons move 2 pixels a frame and zoom by 32 (in 8.8) a frame,
+/// so a scroll takes 8 frames.
 void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
   struct SelectionNode *node;
   struct SelectionNode *last;
@@ -1001,8 +1062,9 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
 }
 
 /// Loads the icon of an entry of kind mode (1 and 6 commands, 2 items, 4
-/// Psynergy, 9 fixed images) into a free sprite tile slot and returns it, or
-/// -1.
+/// Psynergy, 9 the one tile RenderResource_LoadTableEntry loads) into a free
+/// sprite tile slot and returns it, or -1. Items show their count above one
+/// and their equipped and broken marks (0x1a). The caller frees the slot.
 s32 Resource_LoadByMode(s32 mode, s32 value) {
   s32 output;
   s32 result = -1;
@@ -1032,8 +1094,11 @@ s32 Resource_LoadByMode(s32 mode, s32 value) {
 }
 
 /// Loads the icon of an entry of kind mode into sprite tile slot result (a free
-/// slot when -1) and returns the slot. Kind 7 is an item icon without its
-/// count, 8 one of the other icons.
+/// slot when -1) and returns the slot, or -1 when none was free. Kind 2 is an
+/// item icon with its count above one and its equipped, broken and artifact
+/// marks (0x3a); kind 7 the same without the broken mark (0x2a); 8 one of the
+/// other icons. For a command option is the frame drawn under the icon; for
+/// Psynergy, whether the icon frame is drawn.
 s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
   s32 output;
   s32 original = result;
@@ -1072,6 +1137,8 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
 /// Sets up a selection icon for an entry: its icon tiles (in its old slot when
 /// reuse is set), its name message and its sprite.
 /// kind must select a command, item or Psynergy with the matching base ID.
+/// Items and Psynergy are drawn over the icon frame; the sprite is 16x16 at
+/// full size (0x100).
 void SelectionScreen_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
                                s32 reuse) {
   s32 cacheSlot;
@@ -1123,7 +1190,10 @@ void SelectionScreen_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
 /// vanish, and it joins the chosen icons at the top left. Returns the entry's
 /// index.
 /// The selected row node and a free chosen-icon record must exist before
-/// confirming.
+/// confirming. The row is emptied (head NULL) and the hand, arrows and large
+/// icon put away, so the caller lists the next row; bit 7 is set in
+/// cursorIndex, which restarts that list at its first entry. The place the
+/// choice was made from is kept in pathTop and pathCursor.
 u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   struct SelectionNode *node;
   struct SelectionNode *other = NULL;
@@ -1148,6 +1218,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   }
   node->homeX = node->x;
   node->homeY = node->y;
+  // The others slide halfway in each of two frames, then vanish.
   for (other = screen->head; other != NULL; other = other->next) {
     if (other != node) {
       other->targetX = node->x;
@@ -1164,6 +1235,9 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   screen->head = node;
   node->prev = NULL;
   node->next = NULL;
+  // The chosen icons line up from x 4, 16 pixels apart; the new one goes
+  // after the last, reaching its place over two frames, and its record moves
+  // to the chosen list.
   node->targetX = 4;
   for (other = screen->path, nodeIndex = 0; other != NULL;
        other = other->next) {
@@ -1217,7 +1291,8 @@ u32 Menu_ConfirmSelection(struct SelectionScreen *screen) {
   return chosenIndex;
 }
 
-/// Six empty functions; nothing calls the first, the fourth or the fifth.
+/// Six empty functions; nothing calls the first, the fourth or the fifth. The
+/// others are reached only through bare entries of the window far-call table.
 UNUSED void UiTextResource_NoOpCallback(void) {}
 void UiTextResource_NoOpCallbackBank(void) {}
 void UiTextResource_NoOpCallback1(void) {}
@@ -1245,7 +1320,8 @@ void UiTextResource_Initialize(struct MenuSprite *sprite, s32 *slot) {
   sprite->oam.f.priority = 0;
 }
 
-/// Places an arrow sprite at (x, y) and queues it for drawing.
+/// Places an arrow sprite at screen pixel (x, y) and queues it for drawing
+/// this frame, at depth slot 252; the caller calls it every frame it shows.
 void UiTextResource_SetPosition(struct MenuSprite *sprite, s32 x, s32 y) {
   sprite->oam.f.x = x;
   sprite->oam.f.y = y;
@@ -1255,7 +1331,11 @@ void UiTextResource_SetPosition(struct MenuSprite *sprite, s32 x, s32 y) {
 /// Frees an arrow sprite's tile slot.
 void UiTextResource_Release(s32 value) { Resource_ResetEntry(value); }
 
-/// Loads the large icon of the command under the cursor, zooming in.
+/// Loads the large icon of the command under the cursor, zooming in: 32x32 in
+/// 256 colours (0x400 bytes, record 15), its scale stepping from 40 to 240 by
+/// 40 a frame, after which SelectionScreen_Draw shows it at its own size.
+/// Other kinds of entry show none. The icon keeps its VRAM cache entry until
+/// Resource_ResetPendingTransfer.
 void SelectionScreen_LoadLargeIcon(void) {
   struct SelectionScreen *state = gResQueueWork;
   struct SelectionNode *selected = Selection_GetCursorNode(state);
@@ -1271,6 +1351,7 @@ void SelectionScreen_LoadLargeIcon(void) {
   buffer = Runtime_AllocateHeapBlock(17, sizeof(GlyphTransfer));
   transfer = &state->records[15];
   resourceId = selected->base;
+  // The resource starts with a halfword offset per command icon.
   table = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
   {
     u8 **tiles = &buffer->encoded;
@@ -1307,7 +1388,11 @@ void Resource_ResetPendingTransfer(void) {
 #endif
 
 /// Runs the field menu until the player picks something that leaves it, and
-/// returns that choice's result.
+/// returns the chosen screen's result. Cancelling the menu returns an
+/// undefined value, the missing result of UiWork_CloseAndRelease (0 under
+/// UBFIX); its one caller, Field_RunScene, ignores the result. Its case for
+/// command 0, which stores the trigger tile ahead in the event work's
+/// facingTrigger, is unreachable.
 s32 Menu_RunTopSelection(void) {
   s32 ret;
   s32 selection;
@@ -1319,6 +1404,9 @@ s32 Menu_RunTopSelection(void) {
   for (;;) {
     UiWindow_OpenMode1AndWaitFrame();
     selection = Menu_SelectTopEntry(selection);
+    // German, Spanish, French and Italian: mark a menu open (event work byte
+    // 0xcca, which pauses Reveal's sparkles) and, while Reveal is active
+    // (FieldWork.revealActive at 0xcb8), clear its sparkles.
 #if defined(HAS_LOCALIZED_MENU_GUARD)
     state[0xcca] = 1;
     if (*(s16 *)(state + 0xcb8) != 0) {
@@ -1335,6 +1423,11 @@ s32 Menu_RunTopSelection(void) {
     ret = UiWork_CloseAndRelease();
 #endif
 
+    // The commands of gMenu_TopEntryCommandByPosition: 1 Psynergy, 2 Djinn,
+    // 3 Item, 4 Status. A screen left without a choice (-1, or nonzero from
+    // the Djinn screen) opens the field menu again. Case 0 is unreachable:
+    // Menu_SelectTopEntry returns 1 to 4 or -1; it would store the trigger
+    // tile ahead of the leader (0xff for none) in facingTrigger.
     switch (selection) {
     case 0:
       ret = Object_GetTriggerTileAheadOfCurrentFar();
@@ -1374,13 +1467,15 @@ s32 Menu_RunTopSelection(void) {
   return ret;
 }
 
-/// Opens the field menu's window and waits a frame.
+/// Opens the party status window that shows with the field menu (flags 1)
+/// and waits a frame.
 void UiWindow_OpenMode1AndWaitFrame(void) {
   UiWindow_CreateWithLayoutBounds(1);
   WaitFrames(1);
 }
 
-/// Closes the window kept in heap block 16 and frees the block.
+/// Closes the party status window, kept in heap block 16 (gPartyStatusWork),
+/// and frees the block.
 void UiWork_CloseAndRelease(void) { PartyStatus_Close(); }
 
 /// Sets up an empty selection screen and waits a frame.
@@ -1394,10 +1489,14 @@ UNUSED void SelectionScreen_CreateEmpty(void) {
 /// Runs a selection row with the cursor on entry initialIndex, cancellable,
 /// and returns the entry chosen or -1.
 /// initialIndex is a row index; cancellation returns -1 encoded as u32.
+/// The caller sets up the screen and lists its entries first; this closes the
+/// screen and frees it before returning.
 u32 Menu_RunSelectionForValue(u32 initialIndex) {
   struct SelectionScreen *screen = gResQueueWork;
   u32 result;
 
+  // locked 1: a yes or no row stays at the bottom. The name window is 5
+  // tiles wide inside its frame.
   screen->cursorIndex = initialIndex;
   screen->locked = 1;
   MenuSelection_BuildEntries(initialIndex);

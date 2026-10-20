@@ -23,20 +23,28 @@
 /// One line's horizontal window edges: window 0's and window 1's, each
 /// (left << 8 | right).
 struct WindowLine {
-  u16 left;
-  u16 span;
+  u16 left; ///< window 0's edges, for WIN0H
+  u16 span; ///< window 1's edges, for WIN1H
 };
 
 /// A page of the display transition's window edges: WININ and WINOUT, then
 /// each of the 160 lines' edges.
 struct WindowBuffer {
-  u8 unk000[4];
+  u8 unk000[4]; ///< WININ and WINOUT, not touched here
   struct WindowLine lines[160];
 };
 
 /// Draws the resource-menu icons, pulsing the selected icon with one affine
 /// matrix, and updates the horizontal window spans to reveal the active icon
-/// row.
+/// row. A scheduler callback of the command icon menus
+/// (AffineEffect_InitializeWork). Each icon is a 32x32, 256-colour sprite;
+/// the selected one is double-size affine, pulsing between 1.19 and 1.31
+/// times, on layer 246, the others on 245, and one at x 0 is not drawn.
+/// While a window transition runs (gDisplayTransition), it widens window 1
+/// over the icon row so the icons show through: from the first icon on the
+/// row's 24 lines, keeping each line's right edge, and around the selected
+/// icon on the lines it overhangs (below a row at the top, above one at the
+/// bottom, whose lines are 136 to 159).
 void AffineEffect_UpdateFrame(void) {
   // UB: native pointers traverse scalar link/span fields into adjacent fields
   // and records. Use their real owners under UBFIX. Plain OAM field accesses
@@ -78,6 +86,8 @@ void AffineEffect_UpdateFrame(void) {
     if (index == menu->selection) {
       s32 left = x + pulseScale * 7 / 512 - 20;
 
+      // On the top row the double-size box starts above the screen: its y
+      // wraps within OAM's 8 bits.
       if (entry->y != 0)
         spriteY = entry->y + pulseScale * 3 / 256 - 20;
       else
@@ -225,6 +235,9 @@ void AffineEffect_UpdateFrame(void) {
 }
 
 /// Allocates and clears the resource-menu state, then schedules its icon pulse.
+/// The work (struct ResourceMenuWork, 152 bytes) lives in heap slot 58 until
+/// Menu_EndResourceSelection frees it; it is returned, and also reached as
+/// gMenuSelectWork. Every command icon menu starts here.
 void *AffineEffect_InitializeWork(void) {
   // The matching allocation size is the complete six-entry work block.
   void *work;
@@ -235,7 +248,8 @@ void *AffineEffect_InitializeWork(void) {
 }
 
 /// Stops the icon pulse, closes the label window and releases each loaded icon
-/// before freeing the resource-menu state.
+/// before freeing the resource-menu state (heap slot 58, 0x3a), then waits a
+/// frame.
 void Menu_EndResourceSelection(void) {
   struct UiWindow *labelWindow;
   s32 i;
@@ -255,7 +269,9 @@ void Menu_EndResourceSelection(void) {
 }
 
 /// Selects an icon position with wrapped directional input. A returns the
-/// position; B or Start returns -1. Redraws the label only after a move.
+/// position; B or Start returns -1. Redraws the label only after a move. The
+/// label is message resourceBase + position when the layout set a
+/// resourceBase, else the icon's command name (MsgCommandName + its icon).
 s32 Menu_RunResourceSelectionLoop(s32 initial) {
   struct ResourceMenuWork *work = gMenuSelectWork;
   s32 resource;
@@ -307,6 +323,10 @@ static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs) {
 
 /// Animates a cursor from start to goal with table-driven delays. Draws each
 /// intervening label, pauses at the destination, and returns its position.
+/// It moves one icon at a time with the cursor sound, waiting
+/// gMenu_SelectionStepDelays[icons still to go] frames at each (12 more at
+/// the first), then 48 frames on the goal before the confirm sound: a menu
+/// choice made for the player to watch (Menu_AnimateSelectionToEntry).
 s32 Menu_SelectResource(s32 start, s32 goal) {
   s16 resourceBase;
   s16 selection;
@@ -357,7 +377,8 @@ s32 Menu_SelectResource(s32 start, s32 goal) {
   return goal;
 }
 
-/// Decodes one command-icon table entry into the requested VRAM cache slot.
+/// Decodes one command-icon table entry into the requested VRAM cache slot,
+/// through a 1 KB block it allocates and frees.
 void Menu_LoadResourceSlot(s32 slot, s32 index) {
   s32 size = 1024;
   void *buffer = MemAlloc(size);
@@ -370,7 +391,9 @@ void Menu_LoadResourceSlot(s32 slot, s32 index) {
 }
 
 /// Appends a command icon if fewer than six are present. Its initial position
-/// is on the bottom icon row; a layout routine places the final row.
+/// is on the bottom icon row; a layout routine places the final row. The
+/// icon's number (ResourceId_CommandIcons) is also its command name's
+/// (MsgCommandName + icon). Its VRAM slot is taken unchecked.
 void Menu_AppendResourceEntry(s32 icon) {
   struct ResourceMenuWork *work;
   struct ResourceMenuEntry *entry;
@@ -395,6 +418,9 @@ void Menu_AppendResourceEntry(s32 icon) {
 
 /// Centers the icons and their label window together on the given tile row.
 /// A nonzero resourceBase supplies labels; otherwise command-name IDs do.
+/// The icons stand three tiles apart and the label window, `width` + 2 tiles
+/// wide and 3 tall, follows them; the centring counts two thirds of the
+/// window's width.
 void Menu_CenterResourceEntries(s32 row, s32 width, s32 resourceBase) {
   struct ResourceMenuWork *menu = gMenuSelectWork;
   s32 x;
@@ -443,7 +469,10 @@ static __inline__ s32 ResourceMenu_ReadCommandPosition(s8 *table, s32 index) {
 
 /// Builds the field command menu, omitting Djinn when none are owned.
 /// Translates between command IDs and visible icon positions using the two
-/// lookup rows.
+/// lookup rows. The icons are Psynergy, Djinn, Item and Status on row 17;
+/// `selection` is the command to start on and the result the command
+/// chosen: 1 Psynergy, 2 Djinn, 3 Item, 4 Status, or -1 when cancelled. The
+/// field's menu runs it (window/window/selection.c).
 s32 Menu_SelectTopEntry(s32 selection) {
   s32 group = 0;
   s32 offset;
@@ -490,7 +519,10 @@ s32 Menu_SelectTopEntry(s32 selection) {
 #endif
 
 /// Opens the field command menu and animates from start to the command's icon.
-/// Returns the final icon position after closing the menu.
+/// Returns the final icon position after closing the menu. The Djinn icon is
+/// always shown, so `command` (1 to 4, as Menu_SelectTopEntry gives it) is
+/// position command - 1. The world map's scenes show it picking Djinn
+/// (scene/world_map.c).
 s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   UiWindow_OpenMode1AndWaitFrame();
   AffineEffect_InitializeWork();
@@ -506,7 +538,17 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
 }
 
 /// Builds the title menu from the save summaries and optional send flags.
-/// Translates the chosen visible position back to its save-action code.
+/// Translates the chosen visible position back to its save-action code:
+/// 0 New Game, 1 Continue, 2 Copy, 3 Erase, 4 Battle, 5 Send, or -1 when
+/// cancelled or the backup memory cannot be read. With no files it returns 0
+/// at once. The icons, by SaveState_ScanRecordFlags' count: New Game,
+/// Continue, Copy and Erase for one or two files (starting on Continue);
+/// no New Game or Copy with three; with every file cleared no Continue, and
+/// only Erase with three such files. Battle and Send follow when enabled.
+/// XXX: with Send shown but not Battle, Send's place maps to 4 (Battle),
+/// because gMenu_SaveSlotActionByPosition lists Battle before Send in every
+/// row; whether a file can ever be cleared without any of flags 48-127 set
+/// is not established. The file menu runs it (menu/clear.c).
 s32 Menu_SelectSaveSlotAction(void) {
   s32 fileState;
   s32 result;
@@ -566,6 +608,10 @@ s32 Menu_SelectSaveSlotAction(void) {
 #endif
 
 /// Redraws the password-level explanation when the selected level changes.
+/// A scheduler callback of the password level menu: what each level's
+/// password carries, from MsgPasswordLevel on: Gold (0) "Level", "Djinn",
+/// "Character stats", "Items" and "Coins", Silver (1) the first three,
+/// Bronze (2) the first two.
 void Menu_DrawModeLabel(void) {
   struct ResourceMenuWork *state = gMenuSelectWork;
 
@@ -621,7 +667,8 @@ void Menu_DrawModeLabel(void) {
 #if (LANGUAGE == LANGUAGE_FRENCH)
 
 /// Redraws password/cable transfer help when the chosen method changes.
-/// The French layout keeps its distinct line splitting and redraw path.
+/// The French layout keeps its distinct line splitting and redraw path. A
+/// scheduler callback of the transfer method menu: Password (0) or Cable.
 void Menu_DrawModeIndicator(void) {
   struct ResourceMenuWork *state = gMenuSelectWork;
 
@@ -641,6 +688,8 @@ void Menu_DrawModeIndicator(void) {
   }
 }
 #else
+/// Redraws password/cable transfer help when the chosen method changes. A
+/// scheduler callback of the transfer method menu: Password (0) or Cable.
 void Menu_DrawModeIndicator(void) {
   struct ResourceMenuWork *state = gMenuSelectWork;
   s16 *shown = &state->previousMode;
@@ -670,7 +719,9 @@ void Menu_DrawModeIndicator(void) {
 
 /// Selects either the transfer method (mode 0) or password level. Schedules the
 /// appropriate help redraw while the icon menu is active, then closes both
-/// help windows and the icon menu.
+/// help windows and the icon menu. Mode 0 offers Password and Cable (icons
+/// 44 and 45), mode 1 Gold, Silver and Bronze (46 to 48). Returns the place
+/// chosen, or -1 when cancelled. The Send screens run it (menu/clear.c).
 s32 Menu_SelectResourceLayout(s32 mode) {
   struct ResourceMenuWork *work;
   struct UiWindow *window;
@@ -754,8 +805,8 @@ s32 Menu_SelectResourceLayout(s32 mode) {
 // Each shows the name of the icon under the cursor in a window.
 
 /// Selects a shop command, icons 0x11-0x14 (Buy, Sell, Artifacts, Repair),
-/// centered on row 17.
-/// selection: initial position; returns the selected position.
+/// centered on row 17, starting on position `selection`. Returns the
+/// position chosen, or -1 when cancelled.
 s32 Menu_SelectShopCommand(s32 selection) {
   s32 result;
 
@@ -770,8 +821,9 @@ s32 Menu_SelectShopCommand(s32 selection) {
   return result;
 }
 
-/// Selects a sanctum service, icons 0x19-0x1c (Revive, Cure Poison, Repel
-/// Evil, Remove Curse), centered on row 17.
+/// Selects a Sanctum service, icons 0x19-0x1c (Revive, Cure Poison, Repel
+/// Evil, Remove Curse), centered on row 17, starting on position
+/// `selection`. Returns the position chosen, or -1 when cancelled.
 s32 Menu_SelectSanctumService(s32 selection) {
   s32 result;
 
@@ -786,11 +838,11 @@ s32 Menu_SelectSanctumService(s32 selection) {
   return result;
 }
 
-/// Selects Yes/No (icons 5/6); canceling returns 1 (No).
-/// bottom: 0 places the menu on row 0; otherwise row 17.
-/// message: first name message, or 0 for command names.
-/// labelWidth: name window width, or 0 for width 3.
-/// selection: initial position
+/// Selects Yes/No (icons 5/6), returning 0 for Yes and 1 for No; cancelling
+/// returns 1 (No). The menu sits on row 17 when `bottom` is nonzero, else on
+/// row 0. `message` is the first of the two names to show, or 0 for the
+/// command names; `labelWidth` is the name window's width inside its frame,
+/// or 0 for 3. The cursor starts on position `selection`.
 s32 Menu_RunConfirmSelection(s32 bottom, s32 message, s32 labelWidth,
                              s32 selection) {
   s32 row;
@@ -818,7 +870,8 @@ s32 Menu_RunConfirmSelection(s32 bottom, s32 message, s32 labelWidth,
   return selection;
 }
 
-/// Selects Yes/No at (x, y); canceling returns 1 (No).
+/// Selects Yes/No with the icons from tile (x, y) and the name window after
+/// them, returning 0 for Yes and 1 for No; cancelling returns 1 (No).
 s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
   s32 message = MsgCommandYes;
 
@@ -843,8 +896,9 @@ s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
 #define PAIR_WIDTH 9
 #endif
 
-/// Selects icons 0x20 and 0x21 (Coins, Lucky Medals) centered on row 17.
-/// selection: initial position; returns the selected position.
+/// Selects icons 0x20 and 0x21 (Coins, Lucky Medals) centered on row 17,
+/// starting on position `selection`. Returns the position chosen, or -1 when
+/// cancelled. Tolbi's spring asks it (scene/tolbi_spring.c).
 s32 Menu_SelectCoinsOrMedals(s32 selection) {
   s32 result;
 

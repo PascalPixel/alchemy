@@ -79,6 +79,13 @@ UNUSED void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
 /// the same entries in mirror) at them. Colour codes change the text colour.
 /// Returns how many tiles the text covers.
 /// The canvas is eight rows of 256 pixels; the pen must stay within each row.
+/// Text is one line: a new line code only moves the pen a space on. A tilemap
+/// entry that already names a text tile keeps its tile, which is redrawn;
+/// others get a new one, marked taken (attribute 1) until the tilemap stops
+/// showing it (UiWindow_MarkVisibleTileAttributes) or its rectangle is cleared.
+/// With every text tile taken, the search gives up and reuses the tile it
+/// ends on. tiles is the work block's tilemap and mirror the same place in
+/// VRAM, both written at once.
 s32 UiText_RenderStringTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   /* FAKEMATCH(dead): an unused array for the frame's 32 extra bytes; as no
    * array, 2 of 402 instructions differ in tbs-en. */
@@ -103,6 +110,12 @@ s32 UiText_RenderStringTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
   paletteBits = work->level << 12;
   Iwram_ClearWords(pens, 16);
+  // pens maps a font pixel, 1 or 3 (the font's two shades), to a colour; 0
+  // leaves the background. In the UI palette (15) shade 1 takes the colour's
+  // pen (gUiText_ColourPens) and shade 3 colour 3, over the window
+  // background, colour 4; in another palette (UiRenderWork.level, as the
+  // party status window sets for its numbers) shade 1 takes the colour itself
+  // and shade 3 colour 1, over colour 14.
   if (paletteBits == 0xF000) {
     pens[1] = gUiText_ColourPens[work->colour & 15];
     pens[3] = 3;
@@ -125,12 +138,16 @@ s32 UiText_RenderStringTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
           work->colour = *text++;
           pens[1] = gUiText_ColourPens[work->colour & 15];
           break;
+        // TEXT_COLOURS_RESET, TEXT_OUTLINE and TEXT_LINE_SPACING all reset the
+        // colour here, and the last two leave their operand to be read as the
+        // next code.
         case 7:
         case 9:
         case 10:
           work->colour = 15;
           pens[1] = gUiText_ColourPens[work->colour];
           break;
+        // A new line is a space's width: tile text is one line.
         case 3:
 #if (LANGUAGE != LANGUAGE_JAPANESE)
           x += gUiText_GlyphWidths[0];
@@ -154,6 +171,9 @@ s32 UiText_RenderStringTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
           break;
         }
       } else {
+        // A tilemap code (such as 0xf01d) draws window tile glyphCode & 0xff.
+        // In Japanese a kana mark moves back 3 pixels onto the character
+        // before it and draws from glyphs 254 and 255.
         glyphCode &= 0xFF;
 #if (LANGUAGE == LANGUAGE_JAPANESE)
         if (glyphCode == 222 || glyphCode == 223) {
@@ -161,6 +181,7 @@ s32 UiText_RenderStringTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
           glyphCode += 32;
         }
 #endif
+        // Each glyph is an 8x8 tile of the window tiles, a word a row.
         src = (u32 *)(glyphs + glyphCode * 32);
         dst = canvas + x;
         for (index = 0; index < 8; index++) {
@@ -180,6 +201,9 @@ s32 UiText_RenderStringTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
           }
           dst += 248;
         }
+        // The sign tiles UiText_DrawPrefixedNumberAtOffset writes (0xf01d to
+        // 0xf01f, and 0xf005 in Spanish, French and Italian) advance 8 or 3
+        // pixels; a character its font width, and any other tile below 32 one.
         if (code == 0xF01D || code == 0xF01F)
           x += 8;
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
@@ -238,6 +262,8 @@ s32 UiText_RenderStringTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
 
     if (work->alt != 0)
       mask = 255;
+    // Attribute n is text tile 0x80 + n, and with alt set 128 to 255 are
+    // tiles 0x200 to 0x27f.
     tile = *tiles & 0x3FF;
     if ((tile < 0x80 || tile > 0xFF) &&
         (work->alt == 0 || tile < 0x200 || tile > 0x27F)) {
@@ -270,9 +296,11 @@ s32 UiText_RenderStringTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   return tileCount;
 }
 
-/// Marks the text tiles under a tilemap rectangle (x, y, width and height in
-/// tiles) as no longer shown, for reuse.
-/// Only the dynamic text-tile ranges have allocation attributes to clear.
+/// Frees the text tiles under a tilemap rectangle (x, y, width and height in
+/// tiles) for reuse: their taken and shown bits are cleared. The callers do
+/// this before overwriting the rectangle's entries.
+/// Only the dynamic text-tile ranges have allocation attributes to clear;
+/// the second range only while alt is set.
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height) {
   u8 *base = gWindowWork[0];
   u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)base);
@@ -295,7 +323,12 @@ void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height) {
   }
 }
 
-/// Marks the text tiles the tilemap shows, and frees those it no longer shows.
+/// Marks the text tiles the tilemap shows, and frees those it no longer shows:
+/// a tile taken but not marked shown (attribute exactly 1). The shown bit
+/// stays set afterwards, until the tile's rectangle is cleared. The field
+/// menus (menu/menu/djinn.c, djinn_preview.c, item.c, psynergy.c and status.c)
+/// and the battle menus (battle_command/djinn_menu.c, party_commands.c and
+/// status.c) call it.
 void UiWindow_MarkVisibleTileAttributes(void) {
   u8 *base = gWindowWork[0];
   u16 *cursor = (u16 *)base;
@@ -304,6 +337,9 @@ void UiWindow_MarkVisibleTileAttributes(void) {
   s32 row;
   s32 x;
 
+  // The cursor never skips the two hidden columns that end each 32-entry
+  // row, so the scan covers the tilemap's first 600 entries in order: row 18
+  // from column 24 on and row 19 are never marked shown.
   for (row = 20; row != 0; row--) {
     for (x = 0; x < width; x++) {
       u32 tileId = *cursor++ & 0x3ff;
@@ -323,9 +359,13 @@ void UiWindow_MarkVisibleTileAttributes(void) {
   }
 }
 
-/// Frees every text tile, and with flag set lets text tiles take the second
-/// tile range (0x200 to 0x27f) too.
-/// The second range extends text capacity from 128 to 256 tiles.
+/// Frees the text tiles of the second range (attributes 128 to 255, tiles
+/// 0x200 to 0x27f), and with allowAlternateTiles set lets text tiles take that
+/// range too; the first range's tiles keep their state. Both branches clear
+/// the same 128 attributes.
+/// The second range extends text capacity from 128 to 256 tiles. The field's
+/// Djinn, item, Psynergy and status menus and the battle's Djinn menu set it
+/// while open and clear it on leaving.
 void UiWork_SetAltFlagAndClearTable(s32 allowAlternateTiles) {
   s32 i;
   s32 j;
@@ -520,21 +560,28 @@ void UiWindow_DrawDividerLine(struct UiWindow *win, u32 x1, u32 y1, u32 x2,
   }
 }
 
-/// Sets the text colour (0 to 15) of drawn text.
+/// Sets the text colour (0 to 15) of drawn text. The menus colour the HP
+/// figures with it (menu/menu/common.c, battle_command/party_status.c), and
+/// set colour 15 back after.
 void UiWork_SetParamNibble(s32 param) {
   struct UiRenderWork *work = UI_WORK;
 
   work->colour = param & 15;
 }
 
-/// Sets the text style (UiRenderWork.outline) of drawn text.
+/// Sets the text style (UiRenderWork.outline) of drawn text: 1 outlined, 2 to
+/// 5 a motion of glyph sprites. Reached only through a bare entry of the
+/// window far-call table.
 void UiWork_SetRenderWord(u16 value) {
   struct UiRenderWork *work = UI_WORK;
 
   work->outline = value;
 }
 
-/// Decodes a message and draws it into a text canvas window at pixel (x, y).
+/// Decodes a message and draws it into a text canvas window at pixel (x, y),
+/// all at once. It decodes from the start of the ring of decoded text (count
+/// 0), overwriting whatever decoded text was there, and uses up the message
+/// arguments.
 void UiText_DrawResource(s32 message, struct UiWindow *window, s32 x, s32 y) {
   struct UiRenderWork *canvas = UI_WORK;
   u16 *counter = &canvas->count;
@@ -548,7 +595,10 @@ void UiText_DrawResource(s32 message, struct UiWindow *window, s32 x, s32 y) {
 }
 
 /// Decodes a message and draws it as tiles in a window at pixel (offsetX,
-/// offsetY) of its interior.
+/// offsetY) of its interior. offsetY is rounded down to a tile row; offsetX
+/// picks the tile, and its remainder is where the text starts in it. As
+/// UiText_DrawResource, it decodes from the ring's start. Nothing is drawn
+/// when the place falls outside the tilemap's 32 by 20 entries.
 void UiText_DrawCharacterAtOffset(s32 message, const struct UiWindow *window,
                                   u32 offsetX, u32 offsetY) {
   s32 byteOffset;
@@ -595,7 +645,8 @@ static __inline__ void UiText_WidenByteString(const u8 *input, u16 *output) {
 
 /// Draws a byte string into a text canvas window at pixel (x, y).
 /// The 256-halfword scratch requires at most 255 input bytes before the
-/// terminator.
+/// terminator. The scratch comes from EWRAM, or IWRAM when EWRAM is full
+/// (Runtime_BumpAllocateAlternatePool), and is freed before returning.
 void UiText_DrawString(const u8 *text, struct UiWindow *window, s32 x, s32 y) {
   s16 *buffer;
   const u8 *input;
@@ -635,6 +686,8 @@ void UiText_DrawStringAtOffset(const u8 *text, const struct UiWindow *work,
     src = (s32)canvas->tilemap + cell;
     phase = offsetX & 7;
     UiText_RenderStringTiles((u16 *)buffer, (u16 *)src, (u16 *)dst, phase);
+    // The scratch is freed only here: a place outside the tilemap leaves it
+    // allocated.
     MemFree(buffer);
   }
 }
@@ -683,9 +736,11 @@ void UiText_DrawNumberInWindow(s32 value, s32 width, struct UiWindow *window,
                             window, x, y);
 }
 
-/// Draws a four-digit number after a two-glyph sign (window tiles 0x1d and
-/// 0x1e, or 0x1f and 0x1e with variant set) as tiles in window work at pixel
-/// (offsetX, offsetY) of its interior.
+/// Draws a four-digit number after a two-glyph sign as tiles in window work at
+/// pixel (offsetX, offsetY) of its interior: window tiles 0x1d and 0x1e for
+/// variant 0, the party status window's HP; 0x1f and 0x1e for variant 1, its
+/// PP (0x1f and 0x05 in Spanish, French and Italian). The number is padded
+/// to four places with spaces.
 void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
                                        s32 offsetX, s32 offsetY, s32 variant) {
   u8 formatted[UI_NUMBER_BUFFER_SIZE];

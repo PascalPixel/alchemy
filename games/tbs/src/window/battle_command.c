@@ -22,7 +22,7 @@
 ///                   of djinn_menu.c, summon_menu.c, item_menu.c,
 ///                   psynergy_menu.c and targets.c
 ///   Icon menus      icon_menu.c: Menu_SelectTopEntry,
-///   Menu_SelectSaveSlotAction
+///                   Menu_SelectSaveSlotAction
 
 #include "battle_command_internal.h"
 

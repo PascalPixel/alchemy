@@ -51,6 +51,8 @@ struct RenderOutput *RenderOutput_Create(s32 slot, s32 oamFlags,
   output->x = x;
   output->y = y;
   output->index = slot;
+  // Kind 1: the output owns the slot, which is freed with it. Its motion is
+  // UI_SPRITE_STILL.
   output->kind = 1;
   output->active = 1;
   RenderOutput_AppendToList(&window->output, output);
@@ -59,7 +61,8 @@ struct RenderOutput *RenderOutput_Create(s32 slot, s32 oamFlags,
 
 /// Loads resource `resource` in loading mode `mode` into a VRAM slot and shows
 /// it as a 16x16 sprite at (x, y) in `window`. Returns NULL when it cannot be
-/// loaded.
+/// loaded. The field menus' item and Psynergy icons come through here, by far
+/// call (menu/menu).
 struct RenderOutput *RenderOutput_CreateFromResource(s32 mode, s32 resource,
                                                      struct UiWindow *window,
                                                      s32 x, s32 y) {
@@ -74,7 +77,8 @@ struct RenderOutput *RenderOutput_CreateFromResource(s32 mode, s32 resource,
 
 /// Copies icon `icon` (with `layers` passed on to the copier) into a free VRAM
 /// slot and shows it as a 16x16 sprite at (x, y) in `window`. Returns NULL
-/// when no slot is free.
+/// when no slot is free. The shops' item icons come through here, by far
+/// call.
 struct RenderOutput *RenderOutput_CreateLoaded(s32 icon, s32 layers,
                                                struct UiWindow *window, s32 x,
                                                s32 y) {
@@ -92,7 +96,7 @@ struct RenderOutput *RenderOutput_CreateLoaded(s32 icon, s32 layers,
 
 /// Builds a 16x16 icon from frame pattern 1 with overlay pattern `icon` drawn
 /// over it, and shows it at (x, y) in `window` on draw layer 251. Returns NULL
-/// when no VRAM slot is free.
+/// when no VRAM slot is free. Nothing calls it.
 struct RenderOutput *RenderOutput_CreateWithTransform(s32 icon,
                                                       struct UiWindow *window,
                                                       s32 x, s32 y) {
@@ -106,6 +110,7 @@ struct RenderOutput *RenderOutput_CreateWithTransform(s32 icon,
   }
   Ui_BuildPairedPatternsToSlot(icon, 1, &slot, &unusedTile, 1);
   output = RenderOutput_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
+  // Not checked: with every output in use, this stores through NULL.
   output->sentinel = 251;
   return output;
 }
@@ -134,7 +139,10 @@ struct RenderOutput *RenderOutput_CreateFromTable(s32 tableEntry,
 /// is tried first). Each slot has its own palette, 14 or 15. In the prologue,
 /// characters 0 and 1 show portraits 18 and 19 instead. `unused` is
 /// passed on to the loader, which ignores it. Returns the sprite, or NULL when
-/// the character has no portrait or both slots are taken.
+/// the character has no portrait or both slots are taken. The slot records
+/// the portrait and its VRAM slot (UiRenderWork.resourceIds and outputIds);
+/// the message windows' speaker portraits come through here
+/// (window/messages.c).
 struct RenderOutput *CreateSideObject(s32 character, s32 unused, s32 side,
                                       struct UiWindow *window, s32 x, s32 y) {
   struct UiRenderWork *work = UI_WORK;
@@ -155,6 +163,7 @@ struct RenderOutput *CreateSideObject(s32 character, s32 unused, s32 side,
   if (icon == -1)
     return portrait;
 
+  // No side given: the second slot if it is free, else the first.
   if ((u32)side > 1) {
     side = 1;
     if (work->resourceIds[1] != PORTRAIT_SLOT_EMPTY) {
@@ -172,6 +181,8 @@ struct RenderOutput *CreateSideObject(s32 character, s32 unused, s32 side,
     portrait->kind = 2;
   }
 
+  // Recorded even when no output was free and RenderOutput_Create released
+  // the VRAM slot.
   work->resourceIds[side] = icon;
   work->outputIds[side] = slot;
   return portrait;
@@ -181,7 +192,8 @@ struct RenderOutput *CreateSideObject(s32 character, s32 unused, s32 side,
 /// 1), keeping its sprite: used to change the picture of a portrait already on
 /// screen. With any other `side`, the slot already showing that character's
 /// portrait is used, and nothing happens when none does. `unused` is passed on
-/// to the loader, which ignores it.
+/// to the loader, which ignores it. The field menus reload portrait slot 0
+/// with it by far call (menu/menu/common.c).
 void Ui_LoadCharacterEntryForSlot(u32 side, s32 character, s32 unused) {
   s32 tile;
   s32 slot;
@@ -232,10 +244,16 @@ void RenderOutput_SetInvertedSentinel(void *output, s32 priority) {
 
 typedef void (*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
 
-/// Fills `spans` with the horizontal extent of the windows on each of the 20
-/// tile rows, read from the UI tilemap by the ARM routine Tile_BuildMetatiles
-/// copied into RAM. With no UI work, every row is filled with 0xe0e0 (no
-/// window).
+/// Fills `spans`, a page of the display transition's window edges past its
+/// WININ and WINOUT, with the window frames' horizontal extent on each of the
+/// 160 scan lines: (left << 8) | right in the second halfword (WIN1H) of each
+/// line's pair, read from the UI tilemap by the ARM routine
+/// Tile_BuildMetatiles, copied into RAM for the call. Each frame of a window
+/// transition calls it (DisplayTransition_UpdateScanlineTable). With no UI
+/// work it writes 0xe0e0, an empty extent, over 0x140 bytes: both halfwords
+/// of the first 80 lines only.
+/// XXX: likely meant to cover all 160 lines, because each line takes 4 bytes;
+/// what the lower half then shows is not established.
 void UiWindow_FillFromScene(void *spans) {
   void *tilemap = gWindowWork[0];
 

@@ -81,7 +81,11 @@ void UiWindow_BuildLayoutBounds(s32 flags) {
 }
 
 /// Opens the party status window with `flags` (see PARTY_STATUS_*) in a new
-/// heap block and draws it. The UI is held busy while it is drawn.
+/// heap block, PARTY_STATUS_BLOCK, which PartyStatus_Close frees, and draws
+/// it; the tilemap upload is held back (menuBusy) while it is drawn. A battle
+/// opens it with flags 9, which lays it out with the PP row and leaves it
+/// erased until the battle draws it (Battle_RunEncounter); the field opens it
+/// with flags 1 (object/object/events.c).
 void UiWindow_CreateWithLayoutBounds(s32 flags) {
   s32 zero;
   struct PartyStatusWindow *layout;
@@ -157,7 +161,9 @@ void UiWindow_DrawColumnBorders(struct UiWindow *window, u32 flags) {
 // empty bar, the bottom three otherwise. Outside battle it first loads the
 // basic colours into BG palette 14, its colour 14 taken from colour 4 of
 // palette 15.
-// The matching return type keeps pop {r1}; bx r1; void uses r0 instead.
+// It is declared to return s32 but returns no value, and no caller reads one;
+// UBFIX makes it void, which changes the register its epilogue returns
+// through.
 #ifdef UBFIX
 void UiWindow_DrawStatusBarTiles(struct UiWindow *window, s32 x, s32 y,
                                  s32 length) {
@@ -184,7 +190,9 @@ s32 UiWindow_DrawStatusBarTiles(struct UiWindow *window, s32 x, s32 y,
   x += window->x;
   y += window->y;
   for (i = 0; i < 5; i++, x++) {
-    // This tile's eight pixels: filled up to `length`, empty after.
+    // This tile's eight pixels: filled up to `length`, empty after. A row is
+    // 8 nibbles, the leftmost pixel lowest, so shifting the empty pattern
+    // left by 4 * length bits leaves room for that many filled pixels.
     tile = work->tilemap[y * 32 + x];
     bar = 0x22222222;
     shadow = 0xcccccccc;
@@ -254,6 +262,7 @@ void PartyStatusDraw(s32 flags) {
   u8 standbyDjinn[4];
 
   // List the members shown: those fighting in battle, the party otherwise.
+  // In battle the window is a row shorter and its text starts a row higher.
   if (work->menuState != 0) {
     count = BattleParty_PrepareActiveOwnersFar(0);
     y = -1;
@@ -314,6 +323,8 @@ void PartyStatusDraw(s32 flags) {
       UiWork_SetParamNibble(4);
     else
       UiWork_SetParamNibble(15);
+    // The numbers' tiles take BG palette 14 in the field and 5 in battle
+    // (UiRenderWork.level); the name keeps palette 15.
     work->level = 14;
     if (work->menuState != 0)
       work->level = 5;
@@ -389,8 +400,14 @@ void PartyStatus_Close(void) {
 /// Sets (`set` 1) or clears (0) bit 12 of the tilemap entries of the
 /// `width` x `height` tile rectangle at (x, y) inside `window`, clipped to the
 /// screen: bit 12 is the lowest bit of the entry's palette number, so this
-/// switches the rectangle between two palettes. The clip uses 29 for the
-/// bottom edge test and 20 for the clipped height.
+/// switches the rectangle between two palettes, such as 15 and 14. Nothing
+/// calls it.
+///
+/// The clip, which the other rectangle routines here repeat, tests both edges
+/// against 29: a rectangle reaching row 29 or beyond is cut to end at row
+/// 19, the tilemap's last, but one ending on rows 20 to 28 is not cut and
+/// writes past the 20-row tilemap. XXX: likely the column test's 29 repeated
+/// for rows, because the height it then sets uses 20.
 void UiWindow_SetTileAttributeBitRect(const struct UiWindow *window, s32 x,
                                       s32 y, s32 width, s32 height, u32 set) {
   struct UiRenderWork *work = UI_WORK;

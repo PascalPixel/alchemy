@@ -1,16 +1,19 @@
+/// @file
+/// Window text tables: each edition's articles and possessives, the kana
+/// marks and the sprite motion curves.
+
 #include "unit/window/articles.h"
 #include "types.h"
 #include "edition.h"
 #include "text_font.h"
 
-// Window text tables: each edition's articles and possessives, the kana
-// marks and the sprite motion curves.
-
 // Articles and possessives, by edition. An item or name carries an article
 // class (the {article_class:N} code of its message), and the message builder
-// (UiText_AppendArticleName in window.c) copies the class's word in front of
-// the name. window.c copies each table whole as a struct ArticleTable. Each
-// table's words come before it in .rodata.
+// (UiText_AppendArticleName in window/decode.c) copies the class's word in
+// front of the name. The decoder copies each article table whole as a struct
+// ArticleTable and each possessive table as a struct ItemPossessiveTable;
+// French's one pronoun is a plain string. Each table's words come before it in
+// .rodata.
 
 #if (LANGUAGE == LANGUAGE_GERMAN)
 
@@ -170,8 +173,8 @@ const u16 gUiText_MarkGlyphCodes[] = {
 };
 #endif
 
-/// The pointing hand's bob: a smooth rise and fall of 8 pixels over 80
-/// frames.
+/// The next-page arrow's bob (UI_SPRITE_PAGE_ARROW): a smooth rise and fall
+/// of 8 pixels over 80 frames.
 const u8 gUiSprite_CursorBobOffsets[80] = {
     0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5,
     5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7,
@@ -181,7 +184,8 @@ const u8 gUiSprite_CursorBobOffsets[80] = {
 };
 
 /// A swing along an arc of radius 4, as {x, y} pairs: x runs 0, 4, 0, -4, 0
-/// while y rises at each side.
+/// while y rises at each side. UI_SPRITE_WOBBLE takes one of its 20 steps
+/// every other frame.
 const s8 gUiSprite_WobbleOffsets[40] = {
     0, 4, 1, 4, 2, 3, 3, 2,
     4, 1, 4, 0, 4, 1, 3, 2,
@@ -195,7 +199,8 @@ const u8 gUiSprite_WobbleTail[16] = {
     4, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-/// A hop of up to 8 pixels over 16 frames.
+/// A hop of up to 8 pixels over 16 frames, up for UI_SPRITE_HOP_UP and down
+/// for the hops down.
 const u8 gUiSprite_BounceOffsets[16] = {
     0, 1, 1, 2, 3, 4, 6, 8, 6, 4, 3, 2, 1, 1, 0, 0,
 };

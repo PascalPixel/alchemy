@@ -14,6 +14,10 @@ typedef s32 (*GlyphRoutine)(struct UiWindow *, u32, u32, u32, const u8 *);
 /// (x, y) of the window's interior and returns how far the text advances. A
 /// text canvas window draws it into the canvas; other windows show it as a
 /// sprite carried by the window. mode 1 shows the next-page arrow instead.
+/// A sprite glyph takes a render output and its four tiles from the glyph
+/// sheet (UiRenderWork.glyphTiles, four for each output); with no output free
+/// nothing is drawn and it returns 0. The sprite stays until its window is
+/// cleared or closed.
 s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
                      s32 mode) {
   struct UiRenderWork *work = UI_WORK;
@@ -21,7 +25,10 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
   s32 width;
   u32 spacingY = work->lineSpacing;
 
-  // A text canvas window draws the glyph into its canvas.
+  // A text canvas window draws the glyph into its canvas. In the battle
+  // message window a space only advances 3 pixels; Japanese draws there with
+  // the small font, and every canvas outside Japanese with the window tiles'
+  // 8x8 font; the two lookups there whose results go unused change nothing.
   if (mode != 1 && (window->flags & UI_WINDOW_TEXT_CANVAS) != 0) {
     u8 *font;
     GlyphRoutine draw;
@@ -77,6 +84,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
     output = RenderOutput_AcquireFree();
     if (output == NULL)
       return 0;
+    // The output's own four tiles of the glyph sheet.
     index = (output - work->outputs) * 4;
     output->active = UI_SPRITE_STILL;
     output->kind = 0;
@@ -115,7 +123,9 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
     }
 
     if ((u8)output->active == UI_SPRITE_PAGE_ARROW) {
-      // The page arrow sits in the window's bottom-right corner.
+      // The page arrow sits in the window's bottom-right corner. Its picture
+      // is loaded each frame (UiWork_AnimateSpriteSlots) into a VRAM cache
+      // entry of its own, taken here when none is held.
       sprite = SPRITE_CELL(output);
       if (work->glyphResource == NO_GLYPH_RESOURCE)
         work->glyphResource = Resource_FindFreeEntry();
@@ -126,7 +136,10 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
       sprite->y = (window->y << 3) + ((window->height - 2) << 3) - 1;
 #endif
     } else {
-      // Copy the glyph's tiles to its sprite tiles (OBJ VRAM) and place it.
+      // Copy the glyph's tiles to its sprite tiles (OBJ VRAM) and place it:
+      // half the line spacing below y and half the letter spacing right of x,
+      // in screen pixels. 0x4000 in attribute 1 is size 1, with the square
+      // shape a 16x16 sprite.
       Dma_Set(tiles, (void *)(OBJ_VRAM0 + (work->glyphTiles + index) * 32),
               DMA_COPY32(32), REG_DMA3);
 #if (LANGUAGE == LANGUAGE_JAPANESE)
@@ -139,6 +152,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
       ((u16 *)&output->oam)[2] = work->glyphTiles + index;
       sprite = SPRITE_CELL(output);
     }
+    // Glyphs are drawn at depth slot 254.
     output->sentinel = 254;
     output->x = sprite->x;
     output->y = sprite->y;
@@ -150,21 +164,25 @@ done:
   return width;
 }
 
+// The view is a struct of its own for matching: read through a cast of
+// RenderOutput.unk10 instead, UiWork_AnimateSpriteSlots does not match (578
+// instructions become 605), and through RenderOutput itself UiWindow_PutGlyph's
+// position stores move.
+
 /// A view of struct RenderOutput with its sprite cell (from offset 0x10) as the
-/// member attr. Read through a cast of RenderOutput.unk10 instead,
-/// UiWork_AnimateSpriteSlots does not match (578 instructions become 605), and
-/// through RenderOutput itself UiWindow_PutGlyph's position stores move.
+/// member attr, for the code that moves and queues the sprite. Its fields are
+/// RenderOutput's.
 struct SpriteOutput {
   struct SpriteOutput *next;
   u8 kind;
-  u8 active;
-  u16 x;
-  u16 y;
+  u8 active; ///< its UI_SPRITE_ motion
+  u16 x;     ///< screen pixels, where the motion is centred
+  u16 y;     ///< screen pixels, where the motion is centred
   u16 unk0a;
-  u16 animStep;
+  u16 animStep; ///< step of its motion's animation
   u8 index;
-  u8 sentinel;
-  struct CursorSprite attr;
+  u8 sentinel;              ///< depth slot it is drawn at
+  struct CursorSprite attr; ///< the sprite cell queued each frame
 };
 
 STATIC_ASSERT(offsetof(struct SpriteOutput, x) ==
@@ -184,7 +202,8 @@ STATIC_ASSERT(offsetof(struct SpriteOutput, attr) ==
 
 /// Puts a character into a window's tilemap as a tile at tile (x, y) of its
 /// interior. mode 1 shows the next-page arrow sprite in the window's corner
-/// instead.
+/// instead. The code is the tile's number in palette 15, so only codes up to
+/// 0xff are drawn; a place beyond the bottom or right frame is ignored.
 void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
   void *work = gWindowWork[0];
   u8 *base = work;
@@ -213,6 +232,8 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
     slot = &((struct UiRenderWork *)base)->glyphResource;
     if (*slot == NO_GLYPH_RESOURCE)
       *slot = Resource_FindFreeEntry();
+    // 0xfffe and 254 are -2: the arrow sits on the interior's last tile, 4
+    // pixels right and 1 up.
     column = 0xfffe;
     attr->x = (win->x + (column + *(u16 *)&win->width)) * 8 + 4;
 #ifdef UBFIX
@@ -232,6 +253,7 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
       out->active = mode;
     RenderOutput_AppendToList(&win->output, (struct RenderOutput *)out);
   } else if (tile <= 0xff) {
+    // Past the frame's top-left tile, and only inside the tilemap.
     x++;
     y++;
     pos = (win->y + y) * 32 + (win->x + x);
@@ -323,12 +345,13 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
 
 #endif
 
+/// How UiWindow_SetTilemapEntry writes its value (its mode argument).
 enum {
-  TILEMAP_ENTRY_PLAIN,
-  TILEMAP_ENTRY_NONE,
-  TILEMAP_ENTRY_PALETTE_14,
-  TILEMAP_ENTRY_PALETTE_15,
-  TILEMAP_ENTRY_PALETTE_1
+  TILEMAP_ENTRY_PLAIN,      ///< as given, palette bits included
+  TILEMAP_ENTRY_NONE,       ///< nothing
+  TILEMAP_ENTRY_PALETTE_14, ///< the tile number in palette 14
+  TILEMAP_ENTRY_PALETTE_15, ///< the tile number in palette 15, the UI palette
+  TILEMAP_ENTRY_PALETTE_1   ///< the tile number in palette 1
 };
 
 #define TILEMAP_WIDTH 32
@@ -336,7 +359,11 @@ enum {
 
 /// Writes value into a window's tilemap at tile (x, y) of its interior, with
 /// the palette mode names (TILEMAP_ENTRY_), or as it is for
-/// TILEMAP_ENTRY_PLAIN; TILEMAP_ENTRY_NONE writes nothing.
+/// TILEMAP_ENTRY_PLAIN; TILEMAP_ENTRY_NONE writes nothing. y -1 is the frame's
+/// top row, where the menus put their page numbers and arrows
+/// (menu/menu/common.c); a place beyond the bottom or right frame, or outside
+/// the tilemap, is ignored. The entry is not uploaded until the tilemap is
+/// next marked dirty.
 void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
                               u32 mode) {
   struct UiRenderWork *work = UI_WORK;
@@ -387,8 +414,11 @@ void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
 }
 
 /// Steps a scaling sprite's animation (UI_SPRITE_SWELL to
-/// UI_SPRITE_SHRINK_HALF) and sets its affine scale for this frame.
+/// UI_SPRITE_SHRINK_HALF) and sets its affine scale for this frame. The swells
+/// loop over gUi_BounceScales' 32 steps; the shrinks take its second half,
+/// every other entry, over 8 frames and then stay at full size.
 void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output) {
+  // Scales are 8.8 fixed point: 256 is the sprite's own size.
   s32 scale = 256;
   struct CursorSprite *sprite = SPRITE_CELL(output);
   struct AffineTransform effect;
@@ -419,6 +449,8 @@ void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output) {
     effect.scaleY = scale;
     effect.angle = 0;
     sprite->affineIndex = AffineMatrix_BuildForEffect(&effect);
+    // Larger than its size the sprite needs the double-size affine mode (3),
+    // whose 32x32 area starts 8 pixels up and left; smaller, plain affine (1).
     if (scale > 256) {
       sprite->affine = 3;
       // x read through a u16 pointer, which loads the -8 first; as output->x
@@ -434,7 +466,9 @@ void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output) {
 }
 
 /// The per-frame sprite update: moves each sprite that an open window carries
-/// by its animation mode (UI_SPRITE_) and queues it for drawing.
+/// by its animation mode (UI_SPRITE_) and queues it for drawing, at its depth
+/// slot (RenderOutput.sentinel). The last step of UiWork_ProcessAll. While a
+/// window swells (UI_WINDOW_EFFECT_SWELL) all its sprites pulse.
 void UiWork_AnimateSpriteSlots(void) {
   struct UiRenderWork *work = UI_WORK;
   struct UiWindow *window = work->windows;
@@ -448,6 +482,7 @@ void UiWork_AnimateSpriteSlots(void) {
     if (!(window->flags & UI_WINDOW_OPEN))
       continue;
     output = (struct SpriteOutput *)window->output.head;
+    // The page arrow's frame: one of 8, each shown for 4 frames.
     phase = (gFrameTick >> 2) & 7;
     while (output != NULL) {
       struct CursorSprite *sprite = &output->attr;
@@ -458,6 +493,9 @@ void UiWork_AnimateSpriteSlots(void) {
       }
       switch (output->active) {
       case UI_SPRITE_PAGE_ARROW:
+        // 0x60 is VRAM_CACHE_ENTRY_COUNT: no entry was free for the arrow.
+        // Its 128-byte frame is an 8x16 sprite of 256 colours (colors 1,
+        // shape 2, size 0), bobbing over 80 frames.
         if (work->glyphResource != 0x60) {
           const u8 *tiles = &gUiSprite_CursorFrameTiles[phase * 128];
 
@@ -475,6 +513,8 @@ void UiWork_AnimateSpriteSlots(void) {
         }
         break;
       case UI_SPRITE_SHAKE:
+        // Every other frame each axis moves -1 to 1 pixels from its place:
+        // half the sum of two random 0 to 2, less 1.
         if (gFrameTick & 1) {
           sprite->x =
               output->x +
@@ -485,6 +525,8 @@ void UiWork_AnimateSpriteSlots(void) {
         }
         break;
       case UI_SPRITE_POP:
+        // Double size (512 in 8.8) for animStep frames, which UiText_DrawGlyph
+        // starts at 8.
         if (output->animStep == 0) {
           sprite->affineIndex = 0;
           sprite->affine = 0;
@@ -502,6 +544,8 @@ void UiWork_AnimateSpriteSlots(void) {
         output->animStep--;
         break;
       case UI_SPRITE_SPIN:
+        // animStep is the angle, 65536 a turn: 768 a frame, a turn in about
+        // 85 frames, while the sprite circles its place.
         effect.scaleX = 256;
         effect.scaleY = 256;
         output->animStep += 768;
@@ -512,6 +556,7 @@ void UiWork_AnimateSpriteSlots(void) {
         sprite->y = output->y - (Trig_Cos(effect.angle + 0x6800) >> 14) - 2;
         break;
       case UI_SPRITE_WOBBLE:
+        // One step of the 20 of gUiSprite_WobbleOffsets every other frame.
         if (gFrameTick & 1)
           output->animStep++;
         sprite->x =
@@ -535,6 +580,7 @@ void UiWork_AnimateSpriteSlots(void) {
         sprite->y = output->y + gUiSprite_BounceOffsets[output->animStep & 15];
         break;
       case UI_SPRITE_PULSE:
+        // 1.25 times (320 in 8.8) for animStep frames, then its own size.
         if (output->animStep != 0) {
           effect.scaleX = 320;
           effect.scaleY = 320;
@@ -558,6 +604,7 @@ void UiWork_AnimateSpriteSlots(void) {
         RenderOutput_UpdateScaleAnimation((struct RenderOutput *)output);
         break;
       }
+      // Queue it unless it is hidden, or an arrow with no picture.
       if (output->active == UI_SPRITE_PAGE_ARROW) {
         if (work->glyphResource != 0x60)
           Runtime_PushSlotEntry(sprite, output->sentinel);

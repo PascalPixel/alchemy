@@ -94,7 +94,12 @@
 #include "macros.h"
 #include "flags.h"
 
-// Edition-specific text and window layout values.
+// Edition-specific text and window layout values. The possessives
+// (gUiText_ItemPossessives) are by number in Spanish, singular and plural, and
+// by item gender in German and Italian; MSG_EM_DASH starts with
+// TEXT_ARGUMENT_SPACE, which only the international decoder writes; a
+// space in a window of sprite glyphs advances UI_SPRITE_SPACE_WIDTH pixels,
+// as UiText_MeasureEntryDimensions counts it.
 #if (LANGUAGE == LANGUAGE_SPANISH)
 #define ITEM_POSSESSIVE_TEXT_COUNT 2
 #else
@@ -127,41 +132,52 @@ void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 
 // UiRenderWork owns three message channels, each with four line gaps.
 #define UI_MESSAGE_CHANNEL_COUNT 3
-#define UI_MESSAGE_LINE_COUNT 4
-#define UI_TEXT_DEFAULT_COLOUR 15
-#define UI_TEXT_DEFAULT_LINE_SPACING 10
+#define UI_MESSAGE_LINE_COUNT 4   ///< lines a page; spacing has one gap each
+#define UI_TEXT_DEFAULT_COLOUR 15 ///< a channel's text colour at start
+#define UI_TEXT_DEFAULT_LINE_SPACING 10 ///< a channel's line spacing at start
+/// The palette of the text tiles (UiRenderWork.level), the UI palette.
 #define UI_TILEMAP_PALETTE 15
 
 // Window animation lengths and the palette slot's unused marker.
 #define UI_WINDOW_OPEN_FRAMES 8
 #define UI_WINDOW_CLOSE_FRAMES 4
-#define UI_PALETTE_SLOT_FREE 999
+#define UI_PALETTE_SLOT_FREE 999 ///< a portrait palette slot no one holds
+/// Eight 4bpp pixels of colour 4, the window background, for filling the
+/// text canvas a word at a time.
 #define UI_CANVAS_BACKGROUND_WORD 0x44444444
 
 // Scratch capacities are in bytes unless the name says halfwords.
-#define UI_NUMBER_BUFFER_SIZE 16
+#define UI_NUMBER_BUFFER_SIZE 16 ///< UiText_FormatNumber writes 14 of them
+/// A byte string widened to codes: 255 bytes and the terminator.
 #define UI_BYTE_STRING_BUFFER_SIZE 0x200
+/// A name the decoder writes out into a message, decoded first into a buffer
+/// of this many halfwords.
 #define UI_MESSAGE_NAME_HALFWORDS 24
-#define UI_ARGUMENT_SLOT_COUNT 8
-#define UI_SELECTION_ENTRY_LIMIT 16
-#define UI_AREA_NOTICE_FRAMES 90
+#define UI_ARGUMENT_SLOT_COUNT 8    ///< the message argument table's places
+#define UI_SELECTION_ENTRY_LIMIT 16 ///< entries a selection row can list
+#define UI_AREA_NOTICE_FRAMES 90    ///< how long the area's name shows
 
 /// The control codes of decoded message text (UiRenderWork.entries). Codes
 /// from TEXT_SPACE up are characters.
 enum {
-  TEXT_END = 0,
+  TEXT_END = 0,  ///< the text ends; the window stays open
   TEXT_PAGE = 1, ///< wait for a button, then clear the window for a new page
   TEXT_WAIT_KEY = 2, ///< wait for a button, then close the window
   TEXT_NEWLINE = 3,
   TEXT_PAUSE_LONG = 4,    ///< a 60-frame pause
   TEXT_PAUSE_SHORT = 5,   ///< a 20-frame pause a button can cut short
   TEXT_PAUSE_LONGEST = 6, ///< a 120-frame pause a button can cut short
-  TEXT_COLOURS_RESET = 7,
+  TEXT_COLOURS_RESET = 7, ///< colour 15, style 0 and line spacing 10 again
   TEXT_COLOUR = 8,        ///< the next entry is the text colour
-  TEXT_OUTLINE = 9,       ///< the next entry is the outline colour
-  TEXT_LINE_SPACING = 10, ///< the next entry is the line spacing
+  /// The next entry is the text style (UiRenderWork.outline): 1 outlined
+  /// glyphs, 2 to 5 a motion of the glyph sprites (UiText_DrawGlyph).
+  TEXT_OUTLINE = 9,
+  /// The next entry is the line spacing; a glyph sprite sits half of it below
+  /// its line's top.
+  TEXT_LINE_SPACING = 10,
   TEXT_WINDOW_STATE = 15, ///< the next entry is the window effect to run
-  TEXT_END_ALT = 30,
+  TEXT_END_ALT = 30,      ///< ends the text as TEXT_END does
+  /// The channel runs the codes below it as control codes and draws the rest.
   TEXT_COMMANDS = 31,
   TEXT_SPACE = 32,
   TEXT_VOICED_MARK = 222,    ///< dakuten
@@ -183,10 +199,14 @@ enum {
 /// whose window is the battle message window.
 enum { HEAP_SLOT_BATTLE_DISPLAY = 37 };
 
-/// The heap block the message decoder routine is copied into to run.
+/// The heap block the message decoder routine is copied into to run, for the
+/// length of one message's decoding (UiText_BuildRenderEntries), or of one
+/// UiText_DecodeMessage call when the block is empty.
 #define TEXT_WORK_BLOCK 50
 
-/// The glyph transfer work in IWRAM (system/iwram.s), which icons are built in.
+/// Heap slot 17's pointer, kept in IWRAM (system/iwram.s, after gWindowWork
+/// and gPartyStatusWork): the glyph transfer work icons are built in. Each
+/// icon builder allocates the slot for its build and frees it after.
 extern GlyphTransfer *gGlyphWork;
 
 /// Each message context bank's Huffman models and their offsets, which the

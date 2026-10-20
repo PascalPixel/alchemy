@@ -29,7 +29,8 @@
 
 /// The Colosso choice of what to do: "Descriptions", "Cheer" or "Nothing",
 /// chosen with a pointing hand. Returns the choice (0-2), or -1 when
-/// cancelled with B.
+/// cancelled with B. The Colosso scenes ask it (scene/common/colosso_solo.h).
+/// It takes a VRAM slot for the hand and frees it before returning.
 s32 PartyTalkMenu_Choose(s32 unused) {
   struct UiWindow *window;
   struct ShopCursor cursor;
@@ -102,7 +103,10 @@ s32 PartyTalkMenu_Choose(s32 unused) {
 /// Shows that a Djinni joined a member while the join fanfare (sound 81)
 /// plays, until it ends or A, B, L or R is pressed. The message is
 /// `The <element> Djinni <name> joined <member>.`, with the element's Djinni
-/// portrait. `djinn` is the Djinni's number in its element.
+/// portrait. `djinn` is the Djinni's number in its element. The field's
+/// Djinni events reach it by far call (object/psynergy_effects/djinni.c). It
+/// closes the window at once (UiWork_Finalize with instant set), waits a
+/// frame and frees the portrait's VRAM slot.
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   struct UiRenderWork *work = (struct UiRenderWork *)*gWindowWork;
   s32 name;
@@ -130,16 +134,19 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     UiGlyph_LoadEntryWithPalette(id, zero, &handle, &palette, 14, zero);
 
     // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
-    // a link word, attributes 0 and 1 (32x32 at y 12) and attribute 2.
+    // a link word, attributes 0 and 1 (32x32 at y 12) and attribute 2, its
+    // tile with OBJ palette 14.
     p = entry;
     *p++ = zero;
     *p++ = 0x8000000c | ((DJINN_JOIN_X * 8 + 4) << 16);
     *p = palette | 0xe000;
 
+    // No voice blips while the message types.
     work->speakerVoiceSound = zero;
     work->speakerVoiceCountdown = zero;
 
-    // The Djinni's name is ability 300 + 20 * element + djinn.
+    // The message's arguments: the member (MSG_ARG_ACTOR) and the Djinni's
+    // name, ability 300 + 20 * element + djinn (MSG_ARG_ABILITY).
     UiWork_PushValueSlot(member, 1);
     UiWork_PushValueSlot(element * 20 + djinn + 300, 4);
 
@@ -176,7 +183,8 @@ s32 Party_LookupCharacterValueByFlag32(u32 index) {
 
 /// Shows that a member joined the party while the join fanfare (sound 81)
 /// plays, until it ends or A, B, L or R is pressed. The message is
-/// `<member> joined your party.`, with the member's portrait.
+/// `<member> joined your party.`, with the member's portrait. The field's
+/// party events reach it by far call (object/psynergy_effects/events.c).
 void Party_ShowJoinedMessage(s32 member) {
   struct UiRenderWork *work = (struct UiRenderWork *)*gWindowWork;
   struct UiWindow *window = NULL;
@@ -229,14 +237,17 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   u32 zero;
   s32 *p;
 
-  // The window starts as NULL, though it is assigned before it is read; the
-  // same zero is the style argument below.
   window = NULL;
   entry1 = sprite1;
   window = UiWindow_Create(1, 1, 28, 5, 0);
   zero = 0;
 
   if (window != NULL) {
+    // BUG: from (8, 0) to (4, 4) is neither across nor down, so
+    // UiWindow_DrawDividerLine draws nothing and the window has no divider.
+    // XXX: likely meant (8, 0, 8, 4), because the single joins draw
+    // (4, 0, 4, 4) half a tile before their text at x 36, as column 8 is
+    // before this one's at x 68.
     UiWindow_DrawDividerLine(window, 8, 0, 4, 4);
 
     ((struct UiRenderWork *)work)->dirty = 1;

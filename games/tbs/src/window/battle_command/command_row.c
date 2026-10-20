@@ -15,16 +15,29 @@ struct UiWindow *UiText_ShowMessageAndWaitComplete(s32 message, s32 x, s32 y) {
   return result;
 }
 
+// The tile column where a member's command row ends and its name window
+// begins.
 #if TBS_PATCH_1
-#define WINDOW_X 22 /* Window X position */
+#define WINDOW_X 22
 #else
 #define WINDOW_X 23
 #endif
 
-/// Selects a command icon, returning its kind, -1 for cancel or -2 for a
-/// shoulder-button switch. Mode 0 is the top menu; the other mode selects
-/// a battle command and remembers its own cursor. Tutorial input is replayed
-/// through the same selection path.
+/// Runs a battle command row: the commands as icons along the bottom of the
+/// screen, the selected one pulsing as a sprite and named in a window, until
+/// a command is chosen. Returns the command chosen (its name is
+/// MsgCommandName + command), -1 when B cancels, or -2 when L or R asks for
+/// the status screen; the last two in a member's row only. When the link
+/// battle's time runs out the row takes its first command.
+/// Battle_CollectPartyCommands runs both rows.
+///
+/// Mode 0 is the party's row at the start of a round: Fight (14), Flee (4)
+/// and Status (7). Any other mode is a member's row: Attack (0), Psynergy
+/// (1), Djinn (15) once the party's Djinn are enough for a summon
+/// (BattleSummonState.availableMask), Summon (16) while any Djinni is on
+/// standby, Item (2) and Defend (3). Each row remembers its choice in
+/// BattleMenuWork.commandSelection. While the Djinn tutorial runs, the row
+/// presses the keys for the player.
 s32 Menu_RunCommandRow(s32 mode) {
   u8 party[4];
   struct UiRenderWork *render;
@@ -37,10 +50,12 @@ s32 Menu_RunCommandRow(s32 mode) {
   s32 i, kindCount;
 
   render = UI_WORK;
+  // One 1 KB entry for the selected icon's 32x32, 256-colour sprite.
   iconSlot = VramCache_AllocEntry(0x400);
   stripDirty = 1;
   tradeCount = 0;
   selectionUi = Runtime_BumpAllocateAlternatePool(sizeof(*selectionUi));
+  // No icon colour placed yet; the shared palette starts at BG entry 1.
   for (i = 255; i >= 0; i--)
     selectionUi->palette.slot[i] = 255;
   selectionUi->palette.count = 1;
@@ -49,6 +64,8 @@ s32 Menu_RunCommandRow(s32 mode) {
   else
     selectionUi->window = UiWindow_Create(WINDOW_X, 17, 30 - WINDOW_X, 3, 6);
   selectionUi->drawnIndex = -1;
+  // The commands, as listed above. tradeCount counts the party's standby
+  // Djinn.
   if (mode == 0) {
     kindCount = 0;
     selectionUi->commandKinds[kindCount++] = 14;
@@ -71,6 +88,9 @@ s32 Menu_RunCommandRow(s32 mode) {
     }
     selectionUi->commandKinds[kindCount++] = 2;
     selectionUi->commandKinds[kindCount++] = 3;
+    // UB: with all six commands this -1 lands in commandKinds[6], one word
+    // past the end of the block; the loops below stop at six and never read
+    // it.
     selectionUi->commandKinds[kindCount] = -1;
   }
   // Decode each visible command through one shared remapped palette.
@@ -85,6 +105,8 @@ s32 Menu_RunCommandRow(s32 mode) {
   selectionUi->affine.scaleX = 320;
   selectionUi->affine.scaleY = 304;
   selectionUi->affine.angle = 0;
+  // Icons 24 pixels apart on line 136 (tile row 17), the last ending by the
+  // name window.
   entryIndex = 0;
   if (entryIndex < selectionUi->iconCount) {
     do {
@@ -96,15 +118,23 @@ s32 Menu_RunCommandRow(s32 mode) {
       entryIndex++;
     } while (entryIndex < selectionUi->iconCount);
   }
+  // BG1 shows the icons: behind the other layers above line 136, in front
+  // from there down (Graphics_SetBg1Priority3).
   Scheduler_AddOrUpdateCallback(Graphics_SetBg1Priority3, 0x480);
   Runtime_SetIrqHandler(2, 136, Graphics_SetBg1Priority0);
 
   for (;;) {
+    // 304 to 336 in 8.8 (1.19 to 1.31 times), over 16 frames.
     pulseScale = gUi_BounceScales[(gFrameCount * 2) & 31];
     pulseScale = (pulseScale - 256) / 4 + 304;
     selectionUi->affine.scaleY = selectionUi->affine.scaleX = pulseScale;
+    // Scrolled up 32 pixels, BG1's map rows 21 to 23 show on rows 17 to 19.
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;
+    // Draw the strip once, six panels of 3x3 tiles ending at the name
+    // window: the panels left empty as UI_TILE(0x7f) in the UI tilemap,
+    // then each icon's top-left 3x3 tiles in BG1's map (screen block 31 at
+    // 0x0600f800), the UI tilemap cleared to 0 over them.
     if (stripDirty != 0) {
       stripDirty = 0;
       render->menuBusy = 1;
@@ -182,6 +212,8 @@ s32 Menu_RunCommandRow(s32 mode) {
         }
       }
     }
+    // The selection moved: name the new command and load its icon into the
+    // sprite's entry.
     if (selectionUi->drawnIndex != selectionUi->selectedIndex) {
       RenderOutput_PrepareForRedraw(selectionUi->window);
       UiText_DrawCharacterAtOffset(
@@ -195,6 +227,8 @@ s32 Menu_RunCommandRow(s32 mode) {
     }
     selectionUi->affineIndex =
         AffineMatrix_BuildForEffect(&selectionUi->affine);
+    // Only the selected icon is drawn as a sprite: double-size affine (mode
+    // 3), on layer 0xf1, moved with the pulse. The others are BG1 tiles.
     for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++) {
       struct SelectionEntry *entry = &selectionUi->entries[entryIndex];
       if (entryIndex == selectionUi->selectedIndex) {
@@ -210,7 +244,11 @@ s32 Menu_RunCommandRow(s32 mode) {
         entry->sprite.oam.f.affine = 0;
       }
     }
-    // The tutorial drives the same command selection using synthetic keys.
+    // The Djinn tutorial presses keys for the player, one each delay (1 is A,
+    // 16 Right, 32 Left). In the party's row it takes Fight. Unit 1 moves left
+    // to Defend and takes it; unit 0 moves right to Summon, or to Djinn while
+    // no Djinni is on standby, shows that command's hint at tutorial step 1
+    // and takes it on the next press. Other members take Attack.
     keys = gKeysPressed;
     repeat = gKeysRepeat;
     navigation = gLinkCountdownWork;
@@ -277,9 +315,11 @@ s32 Menu_RunCommandRow(s32 mode) {
           (selectionUi->selectedIndex + selectionUi->iconCount - 1) %
           selectionUi->iconCount;
     } else if (gLinkCountdownWork->timer == 0) {
+      // The link battle's time is up.
       command = selectionUi->commandKinds[0];
       break;
     }
+    // BG1 on while the row is open; the exit below turns it off again.
     IoWriteQueue_Store16((u32)&REG_DISPCNT,
                          DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                              DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON);
@@ -290,10 +330,12 @@ s32 Menu_RunCommandRow(s32 mode) {
     gLinkCountdownWork->commandSelection[1] = selectionUi->selectedIndex;
   else
     gLinkCountdownWork->commandSelection[0] = selectionUi->selectedIndex;
+  // Every icon names the same entry, so it is released once per icon.
   for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++)
     Resource_ResetEntry(selectionUi->entries[entryIndex].resource);
   render->menuBusy = 1;
   UiWork_Finalize(selectionUi->window, 1);
+  // Cover the strip again: seven panels of UI_TILE(0x7f) from column 5.
   {
     s32 panel;
     for (panel = 0; panel <= 6; panel++) {
@@ -323,8 +365,12 @@ s32 Menu_RunCommandRow(s32 mode) {
   return command;
 }
 
-/// Sets bit 12 of each tile in a screen-space rectangle, preserving the other
-/// tile attributes. Keep the original bottom-edge test (29) and height (20).
+/// Switches the UI tilemap entries of the `width` x `height` tile rectangle
+/// at screen tile (x, y) to palette 15 or 14 by bit 12, keeping the rest of
+/// each entry: the menus' row highlight. `paletteBit` is the palette number,
+/// of which only the low bit counts (15 plain, 14 highlighted). Clipped as
+/// UiWindow_SetTileAttributeBitRect clips; each row changed is marked for
+/// upload.
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
   struct UiRenderWork *render = UI_WORK;
 
@@ -368,9 +414,12 @@ void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
   }
 }
 
-/// Dims the party strip, then highlight the actor IDs up to the 0xff
-/// terminator.
-/// Missing IDs are ignored; the search stops at the party's own terminator.
+/// Clears the highlight from the party status window's member columns, then
+/// highlights the columns of the units in `ids` (up to four, ended by 0xff):
+/// the member whose commands are being chosen. A unit not in the party is
+/// skipped. The window is right-aligned on the 30-tile row, so its member
+/// columns start at column 29 - 6 * members (the Djinn column, when shown,
+/// lies left of them). Returns 0. Battle_CollectPartyCommands calls it.
 s32 BattleLayout_HighlightPartyPanels(u16 *ids) {
   struct BattleWork *battle = gBattleWork;
   s32 count;

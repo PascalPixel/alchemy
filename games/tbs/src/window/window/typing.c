@@ -11,7 +11,9 @@
 #define CANVAS_KEPT_ROWS 8 ///< the top 8 pixel rows stay put
 
 /// Scrolls the battle message canvas up by 6 pixel rows per step, below its
-/// top 8 rows, and clears the rows this uncovers.
+/// top 8 rows, and clears the rows this uncovers. A typing channel calls it
+/// with step 1 on each of the two frames of a line scroll
+/// (UiText_StartCanvasScroll).
 void UiText_ScrollCanvasUp(s32 step) {
   s32 shift = step * 6;
   u32 *base = UI_CANVAS_VRAM;
@@ -36,7 +38,9 @@ enum {
 
 /// The per-frame message update: each message channel whose window is fully
 /// open runs its window effect or types more text, and on the text's end marks
-/// the window done (state 1) or closes it.
+/// the window done (state 1) or closes it. A channel whose window has closed
+/// is freed here. UiWork_ProcessAll runs it each frame after the windows'
+/// zooms.
 void UiWork_ProcessRenderChannels(void) {
   struct UiChannelSlot *channel = UI_WORK->channels;
   s32 channelNo = 0;
@@ -44,9 +48,11 @@ void UiWork_ProcessRenderChannels(void) {
   do {
     struct UiWindow *current = channel->work;
 
+    // A zooming window is left alone until its zoom ends.
     if (current != NULL && current->frame == 0 && current->duration == 0) {
       u16 flags = current->flags;
 
+      // Flags 0 with no zoom left: the window has closed.
       if (flags == 0) {
         channel->work = NULL;
       } else {
@@ -87,10 +93,13 @@ void UiWork_ProcessRenderChannels(void) {
 
 /// Types one frame's share of a channel's text: runs control codes (new line,
 /// new page, pauses, colours) and draws characters, playing the speaker's voice
-/// blips. Returns a CHANNEL_STEP_ result.
+/// blips. Returns a CHANNEL_STEP_ result. The share is the message speed's
+/// glyphs a frame (gUiText_SpeedSteps) outside battle, where a space or a
+/// control code also ends it; in battle it is 8 glyphs, or 13 after a frame
+/// that took two VBlanks or more.
 s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
   struct UiRenderWork *work = UI_WORK;
-  // Preserve the native's initial volatile sample, separate from later reads.
+  // The ROM reads gKeysHeld here once and never uses the value.
   u32 keys = gKeysHeld;
   s32 glyphsLeft = gUiText_SpeedSteps[gGameState.messageSpeed];
   s32 lag;
@@ -113,8 +122,9 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
 
   (void)keys;
 
-  // In battle, text runs at 3 glyphs a frame, and 5 more for each frame the
-  // game is running behind (up to two).
+  // In battle, text runs at 3 glyphs a frame and 5 more for each VBlank the
+  // last frame took (gLagFramesShown, 1 for a frame on time), counting at most
+  // two.
   if (work->menuState != 0) {
     lag = gLagFramesShown;
     CLAMP(lag, 0, 2);
@@ -160,12 +170,17 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
         break;
 
       case TEXT_PAGE:
+        // The countdown only holds the channel on this code while it waits: it
+        // is set to 919 each frame and counted down once, so it is below 900
+        // only on the wait's first frame. Then, under Mind Read, presses
+        // latched before the wait are dropped.
         if (work->mode != 0 && channel->countdown < 900)
           gKeysPressedLatch = 0;
         channel->countdown = 919;
         if (UiText_CheckTextDismissed(channel) == 0) {
           // Until the button: show the next-page arrow in the bottom-right
-          // corner.
+          // corner. Outside Japanese, a window with no size (as
+          // UiText_ShowCenteredMessage opens with mode 0) shows none.
           struct UiWindow *pane = channel->work;
 
 #if TBS_PATCH_1
@@ -181,7 +196,9 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
           work->pageArrowShown = 1;
           break;
         }
-        // Clear the window, and refit it to the next page's text.
+        // Clear the window, and refit it to the next page's text. A channel
+        // started with flags set keeps the window's size; the frame is drawn
+        // again only when text follows the break.
         window = channel->work;
         x = window->x;
         y = window->y;
@@ -209,7 +226,9 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
                 y = 0;
             }
             if (!(window->flags & UI_WINDOW_FIXED_X)) {
-              // Keep the window centred where it was.
+              // Shift the window by a quarter of the change in width (tiles),
+              // part way to keeping its centre, which a half would keep; then
+              // fit it on the screen again at its new size (flags 2).
               x += (s32)(oldWidth - newWidth) / 4;
               UiWindow_FitOnScreen(entryIndex, &x, &y, &newWidth, &newHeight,
                                    channel->spacing, 2);
@@ -225,6 +244,8 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
         channel->x = channel->startX;
         channel->y = 0;
         channel->line = 0;
+        // The French, Spanish and Italian releases also start each page in the
+        // default style.
 #if TBS_PATCH_3
         channel->colour = 15;
         channel->outline = 0;
@@ -236,6 +257,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
         break;
 
       case TEXT_WAIT_KEY:
+        // The same hold as a page break's.
         if (work->mode != 0 && channel->countdown < 900)
           gKeysPressedLatch = 0;
         if (UiText_CheckTextDismissed(channel) != 0)
@@ -289,6 +311,9 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
         break;
 
       case TEXT_WINDOW_STATE:
+        // The effect lasts while the countdown of 10 runs out
+        // (UiWindow_StepSwellEffect counts it down); typing then resumes after
+        // the operand.
         channel->entry = (channel->entry + 1) & RENDER_ENTRY_MASK;
         channel->work->effect = work->entries[channel->entry];
         channel->countdown = 10;
@@ -301,6 +326,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
         return CHANNEL_STEP_ENDED;
       }
 
+      // Outside battle a control code ends this frame's typing.
       if (work->menuState == 0)
         glyphsLeft = 1;
     } else {
@@ -309,6 +335,8 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
       pixelY = (channel->y + 128) / 256;
       voiceGap = gUiText_SpeedCueGaps[gGameState.messageSpeed];
       nextEntryIndex = channel->entry;
+      // Under Mind Read the text starts 8 pixels further in (Japanese and
+      // English), in the window UiWindow_FitOnScreen made 2 tiles wider.
 #if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
       if (work->mode != 0)
         pixelX += 8;
@@ -327,7 +355,9 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
 #endif
 #if (LANGUAGE != LANGUAGE_JAPANESE)
       // Two narrow characters that fit in one 16-pixel cell together are drawn
-      // as one pair, the second in the code's high byte.
+      // as one pair, the second in the code's high byte: 15 pixels of glyph
+      // widths at most, and in Spanish 14 with an outline (style 1), which
+      // widens each glyph by one.
 #if (LANGUAGE == LANGUAGE_SPANISH)
       if (!(channel->work->flags & UI_WINDOW_TEXT_CANVAS) &&
           code > TEXT_SPACE && nextCode > TEXT_SPACE) {
@@ -358,8 +388,8 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
       channel->glyphDelay = gUiText_SpeedDelays[gGameState.messageSpeed];
       if (glyphWidth != 0) {
         // The speaker's voice blip (speakerVoiceSound, the first of four
-        // sounds) every few characters, and the pen moves on by the glyph's
-        // width.
+        // sounds, one picked by the code's low two bits) every few characters
+        // (gUiText_SpeedCueGaps), and the pen moves on by the glyph's width.
         if (work->speakerVoiceSound != 0) {
           if (work->speakerVoiceCountdown == 0) {
             if (code != TEXT_SPACE) {
@@ -379,10 +409,14 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
 #endif
         channel->x += glyphAdvance;
       }
+      // In Japanese a character that advances nothing (UiText_DrawGlyph
+      // returns 0, as it does when no render output is free) closes the
+      // window.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
       else
         return CHANNEL_STEP_CLOSE;
 #endif
+      // Outside battle a space ends this frame's typing.
       if (code == TEXT_SPACE && work->menuState == 0)
         glyphsLeft = 1;
     }

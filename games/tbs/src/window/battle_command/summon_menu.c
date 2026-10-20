@@ -4,22 +4,32 @@
 
 #include "../battle_command_internal.h"
 
+// The tile column of a summon's first Djinn cost in the list: its element
+// icon, the count after it, two tiles for each element it needs.
 #if TBS_PATCH_1
-#define SUMMON_COST_X 13 ///< Column for the required Djinni count
+#define SUMMON_COST_X 13
 #else
 #define SUMMON_COST_X 10
 #endif
 
-#define SUMMON_END 32 ///< End of summon list
+/// Ends the summon lists, and marks a summon already moved to the front.
+#define SUMMON_END 32
 
-/// Shows learned summons four per page; returns the selected summon number.
-/// Cancel returns -1.
-/// standby: number of standby Djinn for each element
+/// The battle summon list: the summons the party holds enough Djinn for
+/// (Summon_ListLearnedFar, BattleSummonState.availableMask), four to a page,
+/// those `standby` can pay for first, each with its Djinn cost by element,
+/// the others in colour 2. Above it the summon's description, and the
+/// standby Djinn of each element, the elements it needs blinking. `standby`
+/// is what the earlier commands this round leave
+/// (BattleMenuWork.standbyDjinn). Returns the chosen summon, even one that
+/// cannot be paid for (Battle_CollectPartyCommands then plays the error
+/// sound and goes on), or -1 when cancelled or when the link battle's time
+/// runs out. The Djinn tutorial presses A every 120 frames.
 s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
   struct CursorSprite cursor;
   struct MenuSprite sprites[4];
-  u8 learnedSummons[33]; // Learned summons
-  u8 orderedSummons[33]; // Order with usable summons first
+  u8 learnedSummons[33]; // The callable summons, in menu order
+  u8 orderedSummons[33]; // Those standby can pay for first
   u16 text[64];
   s32 iconSlots[4];
   u8 visibleSummons[4];
@@ -69,7 +79,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
   }
 
   // Move usable summons to the front in reverse traversal; keep others in
-  // order.
+  // order. So the affordable ones come in reverse menu order
+  // (gSummon_OrderList), the rest after them in menu order.
   count = Summon_ListLearnedFar(learnedSummons);
   /* FAKEMATCH(one-pass): the first scan's exit inside a block that runs once
    * leaves the main loop's select block in place; as a plain block, 88 of 946
@@ -117,7 +128,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
                           window->width - 2, 1, 15);
       Ui_FillVramBlockPattern();
 
-      // Description and required Djinni elements.
+      // Description and required Djinni elements: mask has bit n for each
+      // element n the summon needs, which blink below.
       {
         const struct SummonDefinition *definition;
         s32 element;
@@ -271,7 +283,8 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
     pressed = gKeysPressed;
     repeated = gKeysRepeat;
 
-    // Automatic input confirms every 120 frames.
+    // Automatic input confirms every 120 frames, while the Djinn tutorial
+    // runs.
     if (navigation->tutorialStep != 0) {
       repeated = 0;
       pressed = 0;
@@ -283,6 +296,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
         navigation->tutorialDelay--;
       }
     }
+    // A takes the summon under the cursor, affordable or not.
     if (pressed & KEY_A) {
       result = orderedSummons[firstEntry + selectedRow];
       break;

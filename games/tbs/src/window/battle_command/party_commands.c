@@ -4,10 +4,14 @@
 
 #include "../battle_command_internal.h"
 
-/// Returns the target selection category for an ability's effect.
-/// 0 other, 1 restore HP, 2 restore PP, 3 cure poison, 4 cure status ailments,
-/// 5 revive, 6 cure all status ailments.
-/// act: ability data
+/// Classifies ability `act` for the target selection (the `kind` of
+/// BattleTarget_RunSelection), which shows what it would do on a party
+/// member and, for kinds 3 to 6, starts on one who needs it: 0 none of
+/// these, 1 heals HP, 2 restores PP, 3 cures poison
+/// (ABILITY_EFFECT_CURE_POISON), 4 cures what Restore cures
+/// (ABILITY_EFFECT_RESTORE), 5 revives (Battle_IsReviveEffectFar), 6 cures
+/// every ailment (ABILITY_EFFECT_CURE_ALL). A later test wins: an effect
+/// over the kind, revival over all.
 s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
   s32 signedEffect;
   s32 abilityKind;
@@ -33,9 +37,25 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
   return targetKind;
 }
 
-/// Collects commands in party order, including target, cost and randomized
-/// priority. Cancelling returns to the preceding choice; linked battles
-/// exchange completion signatures before releasing the command UI.
+/// Collects the party's commands for a round into `commands`, one
+/// for each of the `commandCount` units in `actors` (a member with two
+/// actions is listed twice), and returns how many it wrote: commandCount, 1
+/// when the party flees (CMD_FLEE for the first actor), or -1 when the link
+/// fails. Each record gets its command (CMD_), parameter (the ability, the
+/// summon, the Djinni entry or the inventory place), target
+/// (BattleTarget_RunSelection's code), range and priority: the unit's
+/// Agility plus up to a sixteenth more at random, halved for its second
+/// action in a row. Attack keeps the parameter, and Defend the parameter and
+/// target, that the command chosen before it left (0 and 256 at first).
+///
+/// It runs the party's row (Fight, Flee, Status), then each member's row and
+/// the menus its command opens; B in a menu goes back a step, B on a
+/// member's row to the member before, and from the first back to the
+/// party's row. In a link battle both consoles first wait for each other
+/// ("VSST" in the link signature), publish "EDVS" when done, and wait for
+/// the partner to finish ("Waiting for opponent's input."). Its work,
+/// BattleMenuWork (gLinkCountdownWork), lives in heap slot 57 until it
+/// returns. BattlePres_BuildUnitEntries calls it (battle/battle/round.c).
 s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
                                 u16 *actors, s32 commandCount) {
   struct BattleMenuWork *state;
@@ -60,7 +80,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
   s32 k;
   s32 priority;
 
-  // An empty ID list dims every party panel before the next actor is chosen.
+  // An empty ID list clears every party panel's highlight and marks no unit
+  // before the next actor is chosen.
   void BattleMenu_ClearPartyHighlights(void) {
     u16 data[2];
     data[0] = 0xff;
@@ -68,7 +89,10 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
     BattlePres_SetActorModesFar(data, 1);
   }
 
-  // Set up the shared command UI before the optional link handshake.
+  // Set up the shared command UI before the optional link handshake: VRAM
+  // for the chosen command's 32x32 icon (1 KB) and the member's portrait,
+  // the lists' page numbers (tile 0x300), page arrows (0x334) and range
+  // icons (0x314), and no Djinni chosen yet (0x80000000).
   target = 256;
   commandKind = 0;
   parameter = 0;
@@ -94,7 +118,11 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
   state->linkTimer = 0;
   state->timerHidden = 0;
   state->timerWindow = 0;
-  // Both peers announce the command-entry phase before accepting commands.
+  // Both peers announce the command-entry phase before accepting commands:
+  // this side writes "VSST" into halfwords 4 to 7 of its signature, then
+  // waits for the partner's "VSST" (or "EDVS", already done) while its first
+  // four read "EXEC". A pause, 25 frames without the link, or a partner not
+  // in "EXEC" gives up (-1).
   if (battle->twoSided != 0) {
     state->linkTimer = 1;
     transferWords = (u16 *)gSerialTransfer.payload;
@@ -147,11 +175,14 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       state->tutorialStep = 1;
       state->tutorialDelay = 60;
     }
+    // The party's row; with no member to choose, as if Fight were taken.
     if (commandCount > 0) {
       mode = Menu_RunCommandRow(0);
     } else {
       mode = 14;
     }
+    // Status: the party's status screens, from the first member; the
+    // debug build with Start held lists the enemies (side mask 2) instead.
     if (mode == 7) {
       void *block;
       s32 selection;
@@ -169,6 +200,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       MemFree(block);
       continue;
     }
+    // Flee, unless the battle forbids it: one CMD_FLEE (99) for the party,
+    // first in the round (priority 0x7ffe).
     if (mode == 4) {
       if (UiText_ShowLocalizedMessageAndWait() != 0) {
         continue;
@@ -191,6 +224,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       break;
     }
 
+    // Each member in turn. A command starts from the standby Djinn the
+    // earlier ones leave, so two summons cannot spend the same Djinn.
     for (;;) {
       if (commandIndex == 0) {
         BattleParty_CountStandbyDjinnFar(0, state->standbyDjinn[0]);
@@ -214,6 +249,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
        * instructions differ in tbs-en. */
       unit = (struct BattleUnit *)(s32)((s64 (*)(s32))UnitGetFar)(actorId);
 #endif
+      // The member's row starts on Attack; its portrait shows at the left.
       gLinkCountdownWork->commandActor = actorId;
       gLinkCountdownWork->commandSelection[1] = 0;
       iconSprite = &gLinkCountdownWork->icons[2];
@@ -245,6 +281,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       signatureHeader[0] = 0;
       signatureHeader[0] = 0;
       signatureHeader[0] = 0;
+      // signatureHeader is the member alone, 0xff-ended: marked in the
+      // battle and highlighted in the party status window.
       signatureHeader[0] = (u16)actorId;
       signatureHeader[1] = 255;
       BattlePres_SetActorModesFar(signatureHeader, 1);
@@ -266,6 +304,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         continue;
       }
       BattlePres_SetActorModesFar(signatureHeader, 0);
+      // B: back to the member before, or from the first to the party's row.
       if (mode == -1) {
         if (commandIndex == 0) {
           break;
@@ -274,6 +313,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         continue;
       }
 
+      // Out of time in a link battle: Defend.
       if (gLinkCountdownWork->timer == 0) {
         mode = 3;
       }
@@ -289,8 +329,12 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       }
       iconSprite->oam.f.y = 136;
       state->iconShown[0] = 1;
+      // Each command's menus; commandKind is the CMD_ value recorded. B in a
+      // target selection goes back to the command's list (for Attack, to the
+      // member's row), B in a list to the row.
       switch (mode) {
       case 0:
+        // Attack: one enemy (target mode 1, range 1); CMD_ATTACK.
         commandWindow = UiWindow_Create(11, 17, 11, 3, 6);
         UiText_DrawCharacterAtOffset(MsgCommandName, commandWindow,
                                      BATTLE_COMMAND_NAME_X, 0);
@@ -318,6 +362,10 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         s32 k;
         s32 entryValue;
 
+        // Psynergy: the member's abilities usable in battle, from its 32
+        // action slots (pick keeps each one's slot); then the ability's
+        // window, colour 2 when the PP fall short and 9 while sealed, and
+        // its target; CMD_PSYNERGY with the ability as parameter.
         AudioCommand_PlayFar(SE_MENU_CONFIRM);
         mode = 0;
         BATTLE_MENU_SET_CURSOR(mode, mode, mode);
@@ -351,6 +399,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         parameter =
             unit->actionSlots[pick[mode]].encodedAction & ACTION_ID_MASK;
         ability = BattleActGet(parameter);
+        // cost holds the ability's range, not its PP.
         cost = ability->range;
         iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);
@@ -379,6 +428,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         UiText_DrawNumberAtOffset(ability->ppCost, 2, commandWindow, 104, 0);
         ui->level = 15;
         UiWork_SetParamNibble(15);
+        // 61471 is 0xf01f, the PP label's first tile; 20481 below is 0x5001,
+        // SUMMON_ELEMENT_TILE.
         UiWindow_SetTilemapEntry(commandWindow, 61471, 11, 0, 0);
         UiWindow_SetTilemapEntry(commandWindow, PSYNERGY_COST_SECOND_TILE, 12,
                                  0, 0);
@@ -411,6 +462,11 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         s32 j;
         s32 n;
 
+        // Summon (the labels djinn_menu here and summon_menu under Djinn
+        // have each other's names): the summon list from this command's
+        // standby Djinn, the summon's window with its cost (its name in
+        // colour 2 and the error sound when it cannot be paid for), and its
+        // target; CMD_SUMMON with the summon as parameter.
         AudioCommand_PlayFar(SE_MENU_CONFIRM);
         BATTLE_MENU_SET_CURSOR(0, 0, 0);
       djinn_menu:
@@ -480,6 +536,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         if (mode == -1) {
           goto djinn_menu;
         }
+        // Spend the cost from this command's standby Djinn: an element that
+        // falls short is left at 0, and the elements after it are not spent.
         for (j = 0; j <= 3; j++) {
           if (summon->djinnRequired[j] > state->standbyDjinn[commandIndex][j]) {
             state->standbyDjinn[commandIndex][j] = 0;
@@ -498,6 +556,11 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         s32 element;
         s32 index;
 
+        // Djinn: the member's Djinn list; CMD_DJINN with the Djinni's entry
+        // as parameter, kept in chosenDjinn so no later command takes it. A
+        // set Djinni is unleashed: its ability's target, then in the
+        // tutorial a hint. A standby one is set on the member itself
+        // ("Set Djinni", target mode 4, kind 7), its name in colour 2.
         AudioCommand_PlayFar(SE_MENU_CONFIRM);
         BATTLE_MENU_SET_CURSOR(0, 0, 0);
       summon_menu:
@@ -575,6 +638,10 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         s32 entryValue;
         s32 selection;
 
+        // Item: the member's 15 inventory places, the usable items first
+        // and the rest after (pick keeps each one's place); then the item's
+        // window and its action's target; CMD_ITEM with the place as
+        // parameter.
         AudioCommand_PlayFar(SE_MENU_CONFIRM);
         mode = 0;
         BATTLE_MENU_SET_CURSOR(mode, mode, mode);
@@ -660,6 +727,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       }
 
       case 3:
+        // Defend: CMD_DEFEND, nothing to choose.
         commandKind = 3;
         break;
       }
@@ -676,6 +744,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
           actors[commandIndex] == actors[commandIndex - 1]) {
         command->priority = (s16)priority / 2;
       }
+      // A priority past 32767 reads negative as s16 and becomes 2000.
       if ((s16)command->priority < 0) {
         command->priority = 2000;
       }
@@ -722,6 +791,10 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
 #endif
     }
 
+    // The wait message shows only when the countdown never opened its
+    // window, that is while the partner is still choosing; a timer window
+    // was closed above and is only forgotten here. mode counts the frames
+    // without the link: 25 give up (-1).
     linkBattle = gBattleWork;
     mode = 0;
     if (state->timerWindow == 0 && linkBattle->linkPaused == 0) {

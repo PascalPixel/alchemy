@@ -16,6 +16,9 @@ UNUSED void DebugMenu_ScheduleSceneSelector(void) {
 }
 
 /// Draws the debug scene and entrance numbers with their category/area labels.
+/// The first line has the scene's name (MsgDebugCategoryName + scene) and,
+/// beside it, the area its entrance leads to (MsgDebugEntryName + area); the
+/// numbers, three digits each, go under them.
 void Menu_DrawSelectionRow(struct UiWindow *work, s32 scene,
                            const s16 *entrance) {
   s16 sceneIndex = scene;
@@ -30,6 +33,11 @@ void Menu_DrawSelectionRow(struct UiWindow *work, s32 scene,
   UiText_DrawResource(label, work, MENU_LABEL_X, 0);
 }
 
+// The debug scene selector: a scene and an entrance number, starting from
+// the scene being run (Menu_HandleSelectionRowInput has the keys). A warps
+// there (Event_SetDestinationFar), B closes it. The field opens it in debug
+// mode when the Start button's menu (Save your quest, Sleep, Change
+// settings) is opened with B held (object/object/run_scene.c).
 // The scheduler and the debug menu's far call ignore this selection result.
 // Plain void removes two result moves (252 to 248 bytes in tbs-en) and
 // reorders Event_SetDestinationFar's argument setup.
@@ -54,6 +62,7 @@ s16 Menu_RunSelection(void) {
   Menu_DrawSelectionRow(window, scene, &entrance);
   UiTextResource_Initialize(&cursor, &cursorSlot);
 
+  // Wait for the keys that opened it to be let go.
   while (gKeysHeld != 0)
     WaitFrames(1);
 
@@ -89,6 +98,12 @@ s16 Menu_RunSelection(void) {
 
 /// Edits the debug scene or entrance, returning -1 to warp and -2 to cancel.
 /// Shoulder buttons step by ten; it keeps the original 99-step entrance wrap.
+/// Otherwise it returns the scene after this frame's keys. Up and Down
+/// switch the field (`selectedField`: 0 scene, 1 entrance), Left and Right
+/// step by one, wrapping scenes 0 to 200 and entrances 0 to 99. R and L
+/// step a scene by ten, setting the entrance to 0, and past either end go
+/// to the other (195 + 10 gives 0); they step an entrance by ten, wrapping
+/// by 99 (95 + 10 gives 6).
 s32 Menu_HandleSelectionRowInput(struct UiWindow *window, s16 scene,
                                  s16 *entrance, s16 *selectedField) {
   if (gKeysRepeat & KEY_A)
@@ -150,7 +165,10 @@ s32 Menu_HandleSelectionRowInput(struct UiWindow *window, s16 scene,
 }
 
 /// Shows a 16x16 flag grid per page and processes input until closed.
-/// Starts on page 8 and always returns 0.
+/// Starts on page 8 and always returns 0. A page is 256 game flags, page 8
+/// flags 0x800 to 0x8ff (Menu_HandleFlagGridInput has the keys). The field
+/// opens it in debug mode when the main menu (Psynergy, Djinn, Item, Status)
+/// is opened with B and Select held (object/object/run_scene.c).
 s32 Menu_RunSelectionWithCursorObject(void) {
   struct MenuSprite cursorSprite; // Cursor object
   s32 cursor[2];                  // Cursor column and row
@@ -205,6 +223,8 @@ void Text_FormatHex(u32 value, u32 count, u8 *out) {
 }
 
 /// Draws one page of 256 flags as sixteen rows of hexadecimal labels and bits.
+/// Each row: its first flag's number in three hex digits, then its 16 flags
+/// as 0 or 1, lowest first, under a heading of hex digits.
 void Menu_DrawFlagBitTable(struct UiWindow *window, s32 page) {
   s32 row;
   s32 y;
@@ -240,6 +260,9 @@ void Menu_DrawFlagBitTable(struct UiWindow *window, s32 page) {
 
 /// Moves within the flag grid, changes pages, or toggles the selected flag.
 /// Returns 1 when flags/page need redrawing, -1 to close, and 0 otherwise.
+/// A toggles flag page * 256 + row * 16 + column; B or Select closes. L and
+/// R turn a page, wrapping 0 to 15; with Start held they jump ten, to the
+/// other end when that passes it (5 - 10 gives 15).
 s32 Menu_HandleFlagGridInput(struct UiWindow *window, s32 *page, s32 *cursor) {
   s32 *row = &cursor[1];
 
@@ -288,10 +311,11 @@ s32 Menu_HandleFlagGridInput(struct UiWindow *window, s32 *page, s32 *cursor) {
   return 0;
 }
 
-/// Reserved menu entry.
+/// Reserved menu entry. Nothing calls it.
 void Menu_ReservedNoOp(void) {}
 
 /// Sets the Djinni's collected flag, then adds it to the specified owner.
+/// The flag is FLAG_DJINNI_0 + 20 * element + index. Nothing calls it.
 void Djinn_SetFoundFlagAndAdd(s32 owner, s32 element, s32 index) {
   GameFlag_SetBitFar((element * 0x14) + index + FLAG_DJINNI_0);
   Djinn_AddToOwnerFar(owner, element, index);
@@ -299,7 +323,8 @@ void Djinn_SetFoundFlagAndAdd(s32 owner, s32 element, s32 index) {
 
 /// Handles Save, Sleep and Options from the field workspace. A cancelled save
 /// or options screen reopens the workspace; cancelling the workspace returns
-/// -1.
+/// -1. Sleep shows its message and sets gSleepRequested. Otherwise returns
+/// 0. The field reaches it by far call (object/object/run_scene.c).
 s32 Menu_RunWorkspaceResultLoop(void) {
   s32 result;
 
@@ -324,6 +349,10 @@ s32 Menu_RunWorkspaceResultLoop(void) {
 
 /// Browses pages of item, Psynergy and status-pattern icons, suspending the
 /// menu controller while the browser owns its window and cache entries.
+/// L and R switch the kind, Left and Right turn its 8 pages of 32 icons
+/// (item and Psynergy icons page * 32 on; the status patterns are 0 to 31 on
+/// every page, whatever the heading says), A or B closes it. Returns 0. The
+/// debug menus open it (debug/test.c, debug/level.c).
 s32 DebugMenu_BrowseIcons(void) {
   s32 redraw;
   s32 tile;
@@ -418,6 +447,9 @@ s32 DebugMenu_BrowseIcons(void) {
 
 /// Browses the character and sprite portrait maps as one circular list. Shows
 /// each entry's glyph and label, then releases both windows on A or B.
+/// Left and Right step one entry, L and R ten; a sprite map entry's portrait
+/// is its value + 128, shown in the second portrait slot's VRAM. Returns 0.
+/// The debug level menu opens it (debug/level.c).
 s32 DebugMenu_BrowseEntryGlyphs(void) {
   struct UiRenderWork *work;
   struct UiWindow *portrait;

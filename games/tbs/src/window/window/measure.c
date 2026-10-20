@@ -13,7 +13,9 @@
 /// on the screen. flags: bit 0 measures every page (UiText_MeasureAllPages)
 /// rather than the first; bit 1 takes the size in *pw and *ph as given, in
 /// tiles, instead of measuring. Measuring returns the size in tiles in *pw and
-/// *ph and fills spacing with each line's extra character gap.
+/// *ph and fills spacing with each line's extra character gap. An empty text
+/// (size 0 by 0) leaves the position as it was. Under Mind Read (Japanese and
+/// English) the window is 2 tiles wider and kept off the screen's last column.
 void UiWindow_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
                           u32 *windowWidth, u32 *windowHeight, u16 *spacing,
                           u32 flags) {
@@ -46,7 +48,10 @@ void UiWindow_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
   if (*windowWidth == 0 && *windowHeight == 0)
     return;
 
-  // Pixels to tiles, with room for the frame and a margin.
+  // Pixels to tiles, with room for the frame and a margin: + 19 is the two
+  // frame tiles (16) and 3, so a width rounds up to the next tile only past
+  // 4 pixels into it. Lines are 15 pixels, so 1 to 4 lines are 3, 5, 7 and 9
+  // tiles tall.
   if (!(flags & 2)) {
     *windowWidth = (*windowWidth + 19) >> 3;
     *windowHeight = (*windowHeight + 15) >> 3;
@@ -58,7 +63,7 @@ void UiWindow_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
 #endif
   }
 
-  // Slide the window back onto the screen (limit tiles by 20).
+  // Slide the window back onto the screen, rightLimit columns by 20 rows.
   right = x + *windowWidth;
   if (right > rightLimit) {
     overflow = right - rightLimit;
@@ -89,7 +94,9 @@ void UiWindow_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
   *windowY = y;
 }
 
-/// Decodes message no and returns its text's width and height in pixels.
+/// Decodes message and returns its text's width and height in pixels. The
+/// argument table is left as it is (clear 0), so the message can be decoded
+/// again to be shown.
 void UiText_MeasureResourceEntries(s32 message, s32 *x, s32 *y) {
   UiText_MeasureEntryDimensions(UiText_BuildRenderEntries(message, 0), (u32 *)x,
                                 (u32 *)y, 0);
@@ -102,7 +109,11 @@ DEFINE_GET_RESOURCE_DIMENSIONS(UiText_GetResourceDimensionsAlt, 1)
 /// width of the longest line and the height (15 pixels a line) in pixels. With
 /// spacing set, fills one entry per line with the extra gap between characters,
 /// in 1/256 pixel, that spreads the line to fill the window. spacing, when
-/// non-NULL, has room for four line entries.
+/// non-NULL, has room for four line entries. A page of more than four lines
+/// keeps measuring into the fourth. It sets UiRenderWork.outline to each
+/// TEXT_OUTLINE operand it passes and leaves it at the last, the style the
+/// next glyphs are drawn in unless the style is reset first (UiWindow_Create
+/// resets it).
 void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
                                    u32 *outHeight, u16 *spacing) {
   struct UiRenderWork *work;
@@ -135,7 +146,12 @@ void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
     code = work->entries[entryIndex];
     entryIndex = (entryIndex + 1) & RENDER_ENTRY_MASK;
     // A character adds its width. Spaces (in Japanese every character) are
-    // counted as the points the line can be stretched at.
+    // counted as the points the line can be stretched at. A space is
+    // UI_SPRITE_SPACE_WIDTH pixels. Style 1 (outlined) draws a glyph a pixel
+    // wider. XXX: style 5 (spinning) is counted a pixel wider too, though
+    // UiText_RenderGlyphPair widens only style 1. No message in the six
+    // catalogs uses style 5 ({text_effect:6}), so none shows whether the pixel
+    // is meant; a use of the style would settle it.
     if (code > 31) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
       if (code == 32) {
@@ -153,7 +169,9 @@ void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
         if (code == 32) {
           lineWidth += 7;
         } else {
-          // Punctuation at the end of a line takes less room than its cell.
+          // Punctuation at the end of a line takes less room than its cell:
+          // 1 pixel less for code 0xa5, 3 for code 0x21 and 6 for codes 0xa1
+          // and 0xa4.
           if (code == 0xa5)
             trailing = -1;
           else if (code == 0x21)
@@ -183,6 +201,8 @@ void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
 #endif
       goto done;
     case TEXT_NEWLINE:
+      // Outside Japanese, count is the line's spaces plus one, its words: the
+      // gap is spread over the spaces.
 #if (LANGUAGE != LANGUAGE_JAPANESE)
       count++;
 #else
@@ -200,6 +220,8 @@ void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
       break;
 #if TBS_PATCH_3
     case TEXT_PAGE:
+      // The French, Spanish and Italian releases end the style at a page
+      // break, as their channels do (UiWork_StepChannelScript).
       work->outline = 0;
       goto done;
 #endif
@@ -237,7 +259,10 @@ done:
   *outWidth = width;
   *outHeight = height;
   // Each line's extra gap between characters, in 1/256 pixel, to spread it
-  // across the window's inner width.
+  // across the window's inner width: the window's width in tiles, as
+  // UiWindow_FitOnScreen makes it, less the frame, in pixels, and 4 pixels of
+  // margin. Outside Japanese a gap over 12 pixels (0xc00) falls back to 2; in
+  // Japanese one over 8 is dropped and the rest held to at most 1.
   width = (width + 19) >> 3;
   width = (width << 3) - 16;
   if (spacing != NULL) {
@@ -271,7 +296,12 @@ done:
 /// page's longest line and the height of its tallest page, in pixels, with each
 /// line's extra character gap in spacing as UiText_MeasureEntryDimensions.
 /// The text must fit 16 page-height slots; this routine does not clamp the page
-/// count.
+/// count. Unlike UiText_MeasureEntryDimensions it puts no ceiling on the gaps
+/// outside Japanese, and a page break restarts neither the line count nor the
+/// line's width, so the gaps past the first page do not fit their lines; its
+/// one caller, UiWindow_FitOnScreen with flags bit 0, is reached only from
+/// UiText_GetResourceDimensionsAlt, which passes no spacing. It changes
+/// UiRenderWork.outline as UiText_MeasureEntryDimensions does.
 void UiText_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
                             u16 *spacing) {
   u32 pageHeights[16];

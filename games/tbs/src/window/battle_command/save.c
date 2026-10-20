@@ -75,8 +75,9 @@ u32 SaveState_FindFreeSummarySlot(void) {
 }
 
 /// Returns how many save files there are, leaving out those whose summary has
-/// its send flag set when `excludeSent` is nonzero, or SAVE_ERROR_NO_MEMORY
-/// when the backup memory cannot be read.
+/// its send flag set (the files saved at the end of the game) when
+/// `excludeSent` is nonzero, or SAVE_ERROR_NO_MEMORY when the backup memory
+/// cannot be read. It opens and releases the save workspace itself.
 s32 SaveState_CountRecordsExcludingFlagged(s32 excludeSent) {
   s32 file;
   s32 count;
@@ -105,9 +106,10 @@ s32 SaveState_CountRecordsExcludingFlagged(s32 excludeSent) {
 /// Loads the save file summaries for the title menu and returns how many files
 /// there are: plus 100 when every file has its send flag set, or
 /// SAVE_ERROR_NO_MEMORY when the backup memory cannot be read. Sets
-/// gTitleExtraOptionEnabled when a file has any of game flags 48-127 set, and
-/// gTitleSendOptionEnabled when a file has its send flag set and R and Left are
-/// held.
+/// gTitleExtraOptionEnabled, which offers Battle, when a file has any of game
+/// flags 48-127 set, and gTitleSendOptionEnabled, which offers Send, when a
+/// file has its send flag set and R and Left are held.
+/// Menu_SelectSaveSlotAction reads all three.
 s32 SaveState_ScanRecordFlags(void) {
   s32 error;
   s32 sentCount;
@@ -169,6 +171,12 @@ u32 SaveState_BuildSummaryHeader(void) {
   summary = (struct SaveSummary *)((u32)gSaveBuffer - 16);
   gGameState.buildStamp = Runtime_GetBuildStampTimeFar(0);
   gGameState.playTime = gPlayTimeFrames;
+  // A second copy of the play time, 256 bytes from gSceneState: past its
+  // 0x78 bytes, in gInventorySnapshot's last word. gSceneState opens the save
+  // buffer's second half, so this lands at offset 0x110 of the file's second
+  // record (after its 16-byte header), which
+  // SaveState_LoadSummaryRecords reads back into SaveSummary.unk38: the file
+  // menu lists a file whose two play times differ as corrupted.
   {
     u32 *copy = (u32 *)gSceneState;
     copy[64] = gPlayTimeFrames;
@@ -209,6 +217,7 @@ u32 SaveState_BuildSummaryHeader(void) {
     u32 *frame = &gGameState.buildStamp;
     u32 frames;
 
+    // The checksum covers 242 * 4 = 968 words (3872 bytes) from the flags.
     n = 242;
     /* FAKEMATCH(one-pass): a never-taken null arm's one-pass block ends CSE
      * with the bound constant ahead of the frame load; with no arm, 2 of 174
@@ -239,8 +248,11 @@ u32 SaveState_BuildSummaryHeader(void) {
 }
 
 /// Saves the game to the current file (gSaveSlot): builds the summary and
-/// writes both halves of the save buffer. Returns 0, gSaveSlot itself (-1)
-/// when no file is chosen, or a SAVE_ERROR_* after showing its message.
+/// writes both halves of the save buffer, as records gSaveSlot and
+/// gSaveSlot + SAVE_FILE_COUNT. Returns 0, gSaveSlot itself (-1) when no
+/// file is chosen, or a SAVE_ERROR_* after showing its message. Unlike
+/// Save_WriteSelectedSlot it asks nothing and does not capture the object
+/// table first (SaveState_CaptureObjectTableFar).
 s16 SaveState_WriteCurrentSlotPair(void) {
   s16 file;
   s16 result;
@@ -303,7 +315,10 @@ s32 SaveState_WriteSlotPair(s32 file) {
 /// Writes the 64-byte save stamp (gSaveStamp, which lies in the first half of
 /// the save buffer) into the current file's first record, leaving the rest of
 /// the record as it was saved. Returns 0, -1 when no file is chosen, or a
-/// SAVE_ERROR_* after showing its message.
+/// SAVE_ERROR_* after showing its message. The link lobby saves its battle
+/// results this way (LinkLobby_SaveBattleResults). The record's 4 KB buffer
+/// is taken from the alternate pool and freed before it returns, except when
+/// no file is chosen.
 s32 SaveState_ProcessSelectedSlot(void) {
   void *record;
   s32 result;
@@ -312,6 +327,7 @@ s32 SaveState_ProcessSelectedSlot(void) {
 
   record = Runtime_BumpAllocateAlternatePool(SAVE_RECORD_BYTES);
   result = 0;
+  // BUG: returns without freeing the record buffer.
   if (gSaveSlot == -1)
     return -1;
   error = SaveState_InitializeWorkspace();
@@ -320,6 +336,8 @@ s32 SaveState_ProcessSelectedSlot(void) {
     result = SAVE_ERROR_NO_MEMORY;
   } else {
     error = SaveState_ReadRecordPayload(gSaveSlot, record);
+    // A failed read is reported, but the record is still written below from
+    // whatever the buffer holds.
     if (error != 0) {
       UiText_ShowPositionedMessageAndWait(MsgSaveFailed, 1);
       result = SAVE_ERROR_READ;
@@ -368,8 +386,9 @@ UNUSED s32 SaveState_ConfirmAndProcessSelectedSlot(void) {
   return result;
 }
 
-/// The file menu's Copy: lets the player choose a file, reads both of its
-/// records into the save buffer and writes them to the first empty file.
+/// The file menu's Copy (menu/clear.c): lets the player choose a file, reads
+/// both of its records into the save buffer, overwriting it, and writes them
+/// to the first empty file.
 /// Returns 0, -1 when cancelled, or a SAVE_ERROR_* after showing its message
 /// (the game says "Failed to erase." both when no file is empty and when the
 /// write fails).
@@ -421,10 +440,10 @@ s32 SaveState_CopySlotPair(void) {
   return result;
 }
 
-/// The file menu's Erase: lets the player choose a file, asks whether to erase
-/// it and on Yes deletes both of its records. "OK to erase this?" Returns 0
-/// (also when the player answers No), -1 when cancelled, or a SAVE_ERROR_*
-/// after showing its message.
+/// The file menu's Erase (menu/clear.c): lets the player choose a file, asks
+/// whether to erase it and on Yes deletes both of its records. "OK to erase
+/// this?" Returns 0 (also when the player answers No), -1 when cancelled, or
+/// a SAVE_ERROR_* after showing its message.
 s32 SaveState_DeleteSelectedSlot(void) {
   s32 error;
   s32 file;
@@ -467,8 +486,11 @@ s32 SaveState_DeleteSelectedSlot(void) {
 
 /// A scheduler callback that makes colours 8-11 of BG palette 14 glow: each
 /// follows a sine wave of the frame counter, eight frames behind the one
-/// before. With s the sine from -1 to 1, the colour is red 22 + 2s, green
-/// 16 + s and blue 20 + s (of 31).
+/// before. With n the sine as a whole number from -4 to 4 (Trig_Sin's 16.16
+/// result over 16384, rounded toward zero), the colour is red 22 + 2n, green
+/// 16 + n and blue 20 + n (of 31): red 14 to 30, green 12 to 20 and blue 16
+/// to 24. The step of 0x300 a frame, in 1/65536 turns, makes a cycle of about
+/// 85 frames. PaletteGlow_Start runs it while the save file menu is open.
 void PaletteGlow_UpdateSine(void) {
   s32 *tick;
   volatile u16 *palette;
@@ -533,7 +555,9 @@ void PaletteGlow_Stop(void) {
 
 /// Fills the `width` x `height` tile rectangle at (x, y) inside `window`,
 /// clipped to the screen as UiWindow_SetTileAttributeBitRect clips, with the
-/// blank tile entry 0xe006 of the UI tilemap.
+/// tile entry 0xe006: tile 6 in BG palette 14, the palette
+/// PaletteGlow_UpdateSine animates. The save file menu marks the file under
+/// the cursor with it.
 void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width,
                               s32 height) {
   u16 *tilemap = (u16 *)gWindowWork[0];
@@ -612,6 +636,7 @@ void SaveMenu_ShowPartySprites(struct UiWindow *window, s32 x, s32 y,
     menu->partyMemberX[i] =
         (x + window->x + i * SAVE_MENU_SPRITE_SPACING) * 8 + 16;
     menu->partyMemberY[i] = (y + window->y) * 8 + 16;
+    // 1.0 in 16.16.
     menu->partyMemberScale[i] = 0x10000;
   }
 
@@ -809,14 +834,17 @@ void SaveMenu_DrawFileSummary(struct UiWindow *window,
 }
 
 /// What the save file menu is choosing a file for, which decides the files
-/// the cursor may stop on.
+/// the cursor may stop on. Each mode also indexes the heading the menu shows
+/// (gRenderResource_PairSourceTable: Save, Continue, Copy, Erase, Battle,
+/// Link).
 enum SaveMenuMode {
   SAVE_MENU_SAVE,     ///< saving: any file, empty ones too
   SAVE_MENU_CONTINUE, ///< continuing: files not yet cleared
   SAVE_MENU_COPY,     ///< copying: any file with data
   SAVE_MENU_ERASE,    ///< erasing: any file with data
-  SAVE_MENU_EXTRA,    ///< files with any of game flags 48-127 set
-  SAVE_MENU_CLEARED   ///< cleared files only
+  /// The title's Battle: files with any of game flags 48-127 set.
+  SAVE_MENU_EXTRA,
+  SAVE_MENU_CLEARED ///< the title's Send: cleared files only
 };
 
 /// SaveMenu_SelectSlot's result when no file can be chosen in its mode.
@@ -876,6 +904,8 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
   render = *(gWorkSlot + HEAP_SLOT_WINDOW);
   buildStamp = Runtime_GetBuildStampTimeFar();
   // Start on the first file the mode allows.
+  // BUG: when none is, the jump to done returns SAVE_MENU_NO_FILE without
+  // releasing spriteWork's HEAP_SLOT_MENU block.
   if (selectedFile < 0)
     selectedFile = 0;
 #if TBS_PATCH_1
@@ -941,7 +971,9 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
     if (summary->level == 0) {
       UiText_DrawResource(MsgSaveNoData, fileList, 10, y);
     } else if (summary->frames < buildStamp) {
-      // Saved by an older build.
+      // Saved by an older build: "(Continue from a Sanctum)", since such a
+      // file resumes at GameState.savedScene, not where it was saved
+      // (menu/clear.c).
       UiText_DrawResource(MsgSaveContinue, fileList, 10, y);
     } else if (summary->playTime != *(u32 *)summary->unk38) {
       UiText_DrawResource(MsgSaveCorrupted, fileList, 10, y);
@@ -1016,7 +1048,7 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
     if (save->summary[i].level == 0) {
       UiText_DrawResource(MsgSaveNoData, fileList, 10, i * 16);
     } else if (save->summary[i].frames < buildStamp) {
-      // Saved by an older build.
+      // Saved by an older build: see the other editions' list above.
       UiText_DrawResource(MsgSaveContinue, fileList, 10, i * 16);
     } else if (save->summary[i].playTime != *(u32 *)save->summary[i].unk38) {
       UiText_DrawResource(MsgSaveCorrupted, fileList, 10, i * 16);
@@ -1107,7 +1139,8 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
 #endif
     RenderOutput_BobPair(modePicture);
     WaitFrames(1);
-    // Up and down move to the previous or next file the mode allows.
+    // Up and down move to the previous or next file the mode allows; saving
+    // allows every file, an empty one too.
     if (gKeysRepeat & KEY_UP) {
       AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       summaryDirty = 1;
@@ -1157,6 +1190,7 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
   PaletteGlow_Stop();
 #else
 #endif
+  // 55 is HEAP_SLOT_MENU, spriteWork's block.
   Runtime_ReleaseHeapBlock(55);
   PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
   WaitFrames(1);
@@ -1227,7 +1261,8 @@ done:
 /// Lets the player choose a file in save menu `mode` (see SaveMenuMode) and
 /// loads it into the save buffer as the current file, restoring its play time
 /// and options. Returns 0, -1 when cancelled, or a SAVE_ERROR_* after showing
-/// its message.
+/// its message. The title's Continue (mode 1), Battle (4) and Send (5) load
+/// through here (menu/clear.c).
 s32 SaveState_LoadRecordIntoWork(s32 mode) {
   s32 result = 0;
   s32 error = SaveState_InitializeWorkspace();
@@ -1264,7 +1299,11 @@ s32 SaveState_LoadRecordIntoWork(s32 mode) {
 }
 
 /// Loads the pointing hand cursor's tiles (gResource_FixedBlockBTiles, 128
-/// bytes) into a free VRAM slot and returns the slot.
+/// bytes) into a free VRAM slot and returns the slot, which the caller frees
+/// with Resource_ResetEntry. The slot is not checked: with the cache full
+/// the load is given VRAM_CACHE_ENTRY_COUNT. Colosso's markers
+/// (scene/common/colosso_marker.h) and, by far call, the world map's cursor
+/// (object/psynergy_effects/world_map.c) use it.
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
   s32 slot;
 

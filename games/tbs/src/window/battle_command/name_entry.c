@@ -85,7 +85,9 @@ void UiWindow_CopyTilemapRegion(const struct UiWindow *window,
 
 /// Like UiWindow_SetTileAttributeBitRect, but ORs all of `palette` into the
 /// palette number of each entry (bits 12-15) after clearing only its lowest
-/// bit.
+/// bit. On entries of palette 15 or 14 that sets them to `palette`, 15 or
+/// 14: the name entry's key and the Colosso choice under the cursor flash
+/// this way.
 void UiWindow_SetTileAttributeRect(const struct UiWindow *window, s32 x, s32 y,
                                    s32 width, s32 height, u32 palette) {
   u8 *tilemap = gWindowWork[0];
@@ -147,7 +149,9 @@ void Resource_CopyFixedBlockA(s32 slot) {
 
 #if TBS_PATCH_1
 /// Puts the string `str` into the UI's text entries and returns its width in
-/// pixels.
+/// pixels. It overwrites the start of the decoded text ring
+/// (UiRenderWork.entries), so any message decoded there is lost; the name
+/// entry measures the name with it to place its caret.
 s32 UiText_SetRenderString(const u8 *str) {
   struct UiRenderWork *work;
   u16 *dst;
@@ -175,9 +179,10 @@ s32 UiText_SetRenderString(const u8 *str) {
 /// byte that follows ({text_color:N} in the message catalogs).
 #define TEXT_COLOR_COMMAND 8
 
-/// Draws the name being entered, `name`, at the top left of `window`, with
-/// the free places up to its seventh character shown as underscores in text
-/// colour 2.
+/// Draws the name being entered, `name`, at the top left of `window`,
+/// followed in text colour 2 by an underscore for each of the
+/// NAME_MAX_LETTERS places still free: the loop fills the text to 7 bytes,
+/// the name and the two-byte colour code before the underscores.
 void UiText_DrawPaddedLabel(struct UiWindow *window, u8 *name) {
   u8 text[20];
   s32 length = 0;
@@ -229,6 +234,12 @@ void UiText_DrawPaddedLabel(struct UiWindow *window, u8 *name) {
 /// Start, which jumps there). A puts the key under the cursor into the name,
 /// B or Delete removes the last letter, and B on an empty name cancels. Ending
 /// with an empty name keeps the old one. Returns 0, or -1 when cancelled.
+/// The new name is written over the member's unit name only on End. The
+/// title's new game (menu/clear.c) and the debug menu reach it.
+///
+/// The keyboard: letter keys in columns 0 to 16, in groups of five with gaps
+/// at columns 5, 11 and 17, rows 0 to 5; column 18 holds Delete (row 4) and
+/// End (row 5).
 s32 NameEntry_EditOwnerName(s32 member) {
   struct UiWindow *nameWindow;
   s32 result = 0;
@@ -260,7 +271,8 @@ s32 NameEntry_EditOwnerName(s32 member) {
 #endif
   UiWindow_DrawDividerLine(keyboardWindow, 18, 0, 18, 7);
   render->dirty = textDirty;
-  // Reserve a zero byte before editedName for the empty-name backspace test.
+  // A zero byte before editedName, as in the Japanese entry, where it is the
+  // letter before the first; nothing here reads it.
   text[0] = result;
   {
     s32 i;
@@ -278,6 +290,9 @@ s32 NameEntry_EditOwnerName(s32 member) {
   editedName[NAME_MAX_BYTES] = 0;
   UiText_DrawPaddedLabel(nameWindow, originalName);
   vramSlot = Resource_FindFreeEntry();
+  // The cursor starts on End. 95 is the last of the VRAM_CACHE_ENTRY_COUNT
+  // slots; without a free one a sprite is not made, though the loop below
+  // still uses it.
   keyColumn = NAME_COMMAND_COLUMN;
   keyRow = 5;
   if (vramSlot <= 95) {
@@ -297,6 +312,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
     nameCaret.output = output;
     output->sentinel = 255;
     output->oam.priority = 0;
+    // The caret stands after the name, at its width in pixels.
     ShopCursor_SetPositionImmediateFar(
         &nameCaret.cursor, UiText_SetRenderString(editedName) + 70, 22);
   }
@@ -309,6 +325,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
   while (1) {
     s32 width = 1;
 
+    // Delete and End are wider than a letter key.
     if (keyColumn == NAME_COMMAND_COLUMN) {
       if (keyRow == 4)
         width = 3;
@@ -351,6 +368,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
         if (keyRow == -1)
           keyRow = 5;
       } else {
+        // In the command column up and down swap Delete and End.
         keyRow = (keyRow != 3);
         keyRow = 5 - keyRow;
       }
@@ -371,6 +389,8 @@ s32 NameEntry_EditOwnerName(s32 member) {
       AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn--;
+      // Left of column 0 wraps to the command column on the rows it has keys,
+      // else to the last letter column.
       if (keyColumn == -1) {
         keyColumn = NAME_COMMAND_COLUMN;
         if (keyRow < 4 || keyRow > 5)
@@ -416,6 +436,9 @@ s32 NameEntry_EditOwnerName(s32 member) {
     AudioCommand_PlayFar(SE_MENU_CONFIRM);
     if (keyColumn == NAME_COMMAND_COLUMN) {
       if (keyRow == 5) {
+        // End: an empty name shows the old one again for 10 frames, the
+        // caret hidden (UI_SPRITE_HIDDEN), and keeps it; otherwise the 14
+        // name bytes and their terminator are copied over the unit's name.
         if (letterCount == 0) {
           nameCaret.output->active = 13;
           RenderOutput_PrepareForRedraw(nameWindow);
@@ -463,6 +486,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       *end++ = letter;
       *end = 0;
       letterCount++;
+      // A full name sends the cursor to End.
       if (letterCount == NAME_MAX_LETTERS) {
         keyColumn = NAME_COMMAND_COLUMN;
         keyRow = 5;
@@ -486,6 +510,11 @@ s32 NameEntry_EditOwnerName(s32 member) {
 /// Start, which jumps there). A puts the key under the cursor into the name,
 /// B or Delete removes the last letter, and B on an empty name cancels. Ending
 /// with an empty name keeps the old one. Returns 0, or -1 when cancelled.
+/// A voicing mark joins the letter before it and does not count as a letter.
+///
+/// The keyboard: letter keys in columns 0 to 16, in groups of five with gaps
+/// at columns 5, 11 and 17, on rows 0 to 4 and 6 to 10; column 18 holds the
+/// keyboard switch (row 0, or Select), Delete (row 8) and End (row 10).
 s32 NameEntry_EditOwnerName(s32 member) {
   struct UiWindow *nameWindow;
   s32 result = 0;
@@ -514,7 +543,8 @@ s32 NameEntry_EditOwnerName(s32 member) {
   UiWindow_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
   UiWindow_DrawDividerLine(keyboardWindow, 18, 0, 18, 12);
   render->dirty = textDirty;
-  // Reserve a zero byte before editedName for the empty-name backspace test.
+  // A zero byte before editedName: the letter before the first, which
+  // NameEntry_AcceptsMark reads when a voicing mark is entered first.
   text[0] = result;
   {
     s32 i;
@@ -553,6 +583,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
     nameCaret.output = output;
     output->sentinel = 255;
     output->oam.priority = 0;
+    // The caret stands after the name: its letters are 10 pixels apart.
     x = 72 + NameEntry_CountLetters(editedName) * 10;
     ShopCursor_SetPositionImmediateFar(&nameCaret.cursor, x, 22);
   }
@@ -564,6 +595,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
   while (1) {
     s32 width = 1;
 
+    // The command keys are wider than a letter key.
     if (keyColumn == NAME_COMMAND_COLUMN) {
       if (keyRow == 0)
         width = 4;
@@ -604,6 +636,8 @@ s32 NameEntry_EditOwnerName(s32 member) {
       AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow--;
+      // Letters skip the gap row 5; the command column cycles the switch,
+      // Delete and End.
       if (keyColumn != NAME_COMMAND_COLUMN) {
         if (keyRow == -1)
           keyRow = 10;
@@ -686,6 +720,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
     if (gKeysRepeat & KEY_B) {
       AudioCommand_PlayFar(SE_MENU_CANCEL);
     remove_character:
+      // A letter with a voicing mark goes with its mark.
       if (letterCount != 0) {
         letterCount--;
         bytes--;
@@ -765,6 +800,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       // The keyboard's handakuten key.
       if (letter == 0xff)
         letter = NAME_SEMIVOICED_MARK;
+      // A full name still takes a voicing mark on its last letter.
       if (letterCount == NAME_MAX_LETTERS &&
           (u8)(letter - NAME_VOICED_MARK) > 1)
         continue;

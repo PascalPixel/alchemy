@@ -4,10 +4,12 @@
 
 #include "../battle_command_internal.h"
 
-/// Checks whether an item can be used in battle.
-/// Return: 0 usable, 1 unusable, 2 unusable in battle.
-/// unit: character index
-/// item: inventory item value
+/// Says whether member `unit` can use inventory entry `item` in battle: 0
+/// yes; 1 no, "Using this will have no effect." (no item, an item that only
+/// teaches Psynergy while equipped, one with no action, or equipment the
+/// member cannot equip); 2 not in battle, "Cannot be used during battle."
+/// (its action lacks BATTLE_OK). A broken item (INVENTORY_BROKEN) is not
+/// tested here. The item command lists the usable items first by it.
 s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
   s32 itemUseStatus;
   struct ItemDefinition *definition;
@@ -33,16 +35,28 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
   return 0;
 }
 
-/// Copies one 4bpp VRAM tile, ignoring the palette and flip bits of each
-/// entry.
+/// Copies one 4bpp tile of BG character block 0 to another, each given as a
+/// tilemap entry whose palette and flip bits are ignored. The battle lists
+/// copy the frame's top and bottom tees to tiles 0x200, 0x201, 0x210 and
+/// 0x211 as they open. XXX: what shows those copies is not found; tiles
+/// 0x200 to 0x27f are also the second text-tile range
+/// (UiWork_SetAltFlagAndClearTable), and a tilemap entry naming one of the
+/// four would settle it.
 void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
   Dma_Set(BG_CHAR_BLOCK(0) + (sourceTile & 0x3ff) * TILE_SIZE_4BPP,
           BG_CHAR_BLOCK(0) + (destinationTile & 0x3ff) * TILE_SIZE_4BPP,
           DMA_COPY32(8), REG_DMA3);
 }
 
-/// Chooses an inventory-list position for battle use, or -1 on cancel. Keeps
-/// unavailable items visible with their help text, but rejects confirmation.
+/// The battle item list for unit `owner`: `count` inventory entries (ended by
+/// 0), five to a page, each with its icon and name: plain when usable,
+/// colour 4 when Item_ClassifyUseAbility refuses it, colour 2 when broken;
+/// the window above names the one under the cursor (MsgItemPlainName), or
+/// says it cannot be used in battle. Returns the chosen entry's
+/// place in `entries`, or -1 when cancelled, when the link battle's time
+/// runs out, or when there are no items. A refused item stays on the list
+/// with its reason ("It's broken.", and the classifier's messages). The
+/// item command runs it (Battle_CollectPartyCommands).
 s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
   struct UiRenderWork *render;
   s32 drawnFirstEntry;
@@ -165,6 +179,8 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
       render->menuBusy = 0;
     }
 
+    // Each frame: the current page's number lit 12 frames in 16, and the
+    // page arrows on the window's top edge (y -1).
     if (count > BATTLE_LIST_ROWS) {
       for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
         iconTile = i + LIST_TILE_PAGE_NUMBER;
@@ -210,6 +226,8 @@ s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
     BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
     navigation = gLinkCountdownWork;
 
+    // A takes a usable item; a broken or refused one plays the error sound
+    // and shows why.
     if ((gKeysPressed & KEY_A) != 0) {
       if (count != 0) {
         result = firstEntry + selectedRow;

@@ -4,13 +4,17 @@
 
 #include "../battle_command_internal.h"
 
-/// The decimal formatter writes eleven characters plus a terminator. Keep
-/// the original two trailing bytes in the widened copy as well.
+/// How many bytes of gNumberTextBuffer are widened: the eleven characters
+/// NumberText_FormatDecimal writes, its terminator and the two bytes after.
 #define NUMBER_TEXT_WIDE_LENGTH 14
 
-// Formats a decimal number, then widens the first 14 shared-buffer bytes
-// into halfwords. The caller supplies space for 14 output halfwords.
-// Void changes pop {r1}; bx r1 to r0 and reorders three preview argument pairs.
+// Writes `value` into `out` as NumberText_FormatDecimal's eleven-character,
+// right-aligned decimal text, widened to halfwords for
+// UiText_RenderWideStringInWindow: out + 7 is its last four characters,
+// out + 8 its last three. `out` needs room for 14 halfwords.
+// It is declared to return s32 but returns no value, and no caller reads one;
+// UBFIX makes it void, which changes its epilogue and the argument setup of
+// three calls in DjinnMenu_ShowChangePreview.
 #ifdef UBFIX
 void UiText_FormatNumberToHalfwords(s16 *out, s32 value) {
 #else
@@ -29,13 +33,17 @@ s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value) {
 }
 
 // Preview marks are separate from the action ID in the low fourteen bits.
-#define DJINN_PREVIEW_ABILITY_GAINED 0x8000
-#define DJINN_PREVIEW_ABILITY_LOST 0x4000
+#define DJINN_PREVIEW_ABILITY_GAINED 0x8000 ///< new with the change; colour 4
+#define DJINN_PREVIEW_ABILITY_LOST 0x4000   ///< gone with the change; colour 2
+/// Entries of the change list: the new list's 32 and the lost ones after.
 #define DJINN_PREVIEW_ABILITY_CAPACITY 48
 
-/// List Psynergy in the new grid, marking newly gained entries with bit 15,
-/// then append lost entries with bit 14. Return the number of entries and
-/// report the gained/lost counts separately.
+/// Lists into `out` the abilities usable in battle (BATTLE_OK) of the action
+/// list `newGrid`, in its order, marking with DJINN_PREVIEW_ABILITY_GAINED
+/// those `oldGrid` lacks; then appends those of `oldGrid` that `newGrid`
+/// lacks, marked DJINN_PREVIEW_ABILITY_LOST. Both lists are 32 slots, ended
+/// early by a 0 action. Returns the entries written, and the gained and lost
+/// counts through `gained` and `lost`.
 s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid,
                                const struct OwnerActionSlot *newGrid, u16 *out,
                                s32 *gained, s32 *lost) {
@@ -83,9 +91,12 @@ s32 DjinnMenu_ListChangedDjinn(const struct OwnerActionSlot *oldGrid,
   return count;
 }
 
-// Loads an ability icon into the first free VRAM cache slot and requests a
-// 16x16 sprite at pixel (x, y) inside the window. Skips a full VRAM cache.
-// The matching return type keeps pop {r1}; bx r1; void uses r0 instead.
+// Loads the icon of ability `abilityId` into the first free VRAM cache slot
+// and shows it as a 16x16 sprite at pixel (x, y) inside `window`, whose
+// output list then owns the slot. Does nothing when the cache is full.
+// It is declared to return s32 but returns no value, and no caller reads one;
+// UBFIX makes it void, which changes the register its epilogue returns
+// through.
 #ifdef UBFIX
 void Ui_CreateOutputFromResourceSlot(struct UiWindow *window, s32 x, s32 y,
                                      s32 abilityId) {
@@ -103,9 +114,17 @@ s32 Ui_CreateOutputFromResourceSlot(struct UiWindow *window, s32 x, s32 y,
   }
 }
 
-/// Temporarily toggle a Djinni and recalculate its owner's stats to show the
-/// change. Page 0 compares stats; later pages show gained and lost Psynergy.
-/// Restore the complete unit snapshot before returning the preview window.
+/// Shows what setting or removing Djinni `encodedDjinn` (element << 8 |
+/// index) would change for `owner`: closes the preview window `win`, opens a
+/// new one and returns it, or NULL when none could be opened. Page 0
+/// compares the class and stats, old against new, with an arrow by each stat
+/// that rises or falls; pages 1 on list, five a page, the unit's battle
+/// abilities after the change (unchanged ones in colour 15, new ones in
+/// colour 4) and then those it would lose (colour 2), and *pageCount is set
+/// to their number (at least 1).
+/// The Djinni is toggled and the unit recalculated (UnitCalcFar) only to
+/// measure: the unit is restored from a copy before it returns.
+/// Battle_SelectAbility calls it as the cursor moves.
 struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
                                              s32 encodedDjinn, s32 page,
                                              s32 *pageCount) {
@@ -132,7 +151,9 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
   s32 rising;
   s32 i;
 
-  // Attach the rising/falling stat arrow to the preview window captured here.
+  // Attach the rising/falling stat arrow to the preview window captured here:
+  // a 16x16 sprite on layer 240 at pixel (x, y) of the window, in a VRAM
+  // cache entry of its own that the window's output list frees (kind 1).
   void DjinnMenu_DrawStatArrow(s32 x, s32 y, s32 rising) {
     struct RenderOutput *output = RenderOutput_AcquireFree();
     struct PreviewSprite *entry;
@@ -205,6 +226,7 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
   abilityCount =
       DjinnMenu_ListChangedDjinn(savedUnit->actionSlots, unit->actionSlots,
                                  changedAbilities, &gained, &lost);
+  // Five abilities a page; a page past the list shows the last.
   pages = ((abilityCount - 1) / 5) + 1;
   *pageCount = pages;
   if (page * 5 - 5 >= abilityCount)
@@ -221,6 +243,7 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
     UiText_DrawCharacterAtOffset(label + 4, win, 0, 40);
     UiText_DrawCharacterAtOffset(label + 5, win, 0, 48);
 
+    // The old values, by the labels; the new ones go at column 11 below.
     oldHp = savedUnit->hp;
     UiText_FormatNumberToHalfwords(numberText, oldHp);
     UiText_RenderWideStringInWindow(numberText + 7, win, DJINN_PREVIEW_VITALS_X,
@@ -248,6 +271,7 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
     UiText_RenderWideStringInWindow(numberText + 8, win, 5, 6);
 
     UiWindow_DrawDividerLine(win, 0, 8, 19, 8);
+    // "R: Psynergy Gained" stands out in colour 2 when the Psynergy changes.
     if (gained != 0 || lost != 0)
       UiWork_SetParamNibble(2);
     UiText_DrawCharacterAtOffset(MsgBattleAdditionalPsynergyHelp, win,
@@ -268,6 +292,7 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
         UiWindow_SetTilemapEntry(win, 0x5001 + ability->element, 15,
                                  visibleRow * 2, 0);
 
+      // Its element icon, range icon, icon, name and PP cost.
       rangePattern = ability->range;
       if (rangePattern == ABILITY_RANGE_ALL)
         rangePattern = 11;
@@ -316,6 +341,8 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
     UiText_DrawCharacterAtOffset(MsgClassName + savedUnit->classIndex, win, 0,
                                  0);
     UiText_DrawCharacterAtOffset(MsgClassName + unit->classIndex, win, 80, 0);
+    // The arrow between the classes, flipped (0x400): tile 0x328 blinks
+    // when the class changes, 0x329 stays (gDjinnMenu_BlinkTile).
     if (savedUnit->classIndex != unit->classIndex)
       UiWindow_SetTilemapEntry(win, 0xf728, 9, 0, page);
     else

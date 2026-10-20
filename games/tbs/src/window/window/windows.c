@@ -5,7 +5,10 @@
 #include "../window_internal.h"
 
 /// Takes the first render output from the free list, or returns NULL when every
-/// output is in use.
+/// output is in use. The output belongs to the caller until it is appended to a
+/// window's list, which then frees it when the window is cleared or closed
+/// (RenderOutput_ClearList). Glyph sprites, icons and portraits all come from
+/// here.
 struct RenderOutput *RenderOutput_AcquireFree(void) {
   struct UiRenderWork *work = UI_WORK;
   struct RenderOutput *out = work->freeOutputs.head;
@@ -25,6 +28,7 @@ struct RenderOutput *RenderOutput_AcquireFree(void) {
 void RenderOutput_ReleaseFree(struct RenderOutput *out) {
   struct UiRenderWork *work = UI_WORK;
 
+  // freeOutputs follows the pool directly, so its address is the pool's end.
   if ((u32)out >= (u32)work->outputs &&
       (u32)out < (u32)&work->freeOutputs.head) {
     struct RenderOutput **tail = work->freeOutputs.tailLink;
@@ -45,6 +49,7 @@ void RenderOutput_InitFreeList(void) {
   work = UI_WORK;
   out = work->outputs;
   work->freeOutputs.head = out;
+  // Links outputs 0 to 62 to the next; the last, 63, ends the list.
   remainingLinks = UI_OUTPUT_COUNT - 2;
   do {
     next = out + 1;
@@ -59,7 +64,11 @@ void RenderOutput_InitFreeList(void) {
 /// Sets up the window system for the field (and the other screens outside
 /// battle): allocates and clears the work block, blanks the tilemap, frees
 /// every render output and starts the two per-frame callbacks, the tilemap
-/// upload and the window update.
+/// upload and the window update. Reached from Field_RunScene
+/// (object/object/run_scene.c), the debug message viewer
+/// (DebugBattle_ViewMessages), Lucky Dice and the reel game (ReelGame_Run).
+/// The work block (heap slot HEAP_SLOT_WINDOW) lives until the slot is next
+/// allocated; nothing here frees it.
 void UiWork_InitializeWithResourceCounters(void) {
   struct UiRenderWork *work;
 #if TBS_PATCH_1
@@ -85,7 +94,8 @@ void UiWork_InitializeWithResourceCounters(void) {
 #else
   Iwram_FillWords(work, sizeof(work->tilemap), UI_TILE_PAIR(UI_TILE_BLANK));
 #endif
-  // Make the output and palette pools available, then start the updates.
+  // Make the output and palette pools available, then start the updates. The
+  // upload's order, 0x480, is SCHEDULER_KEY_VBLANK: it runs in vertical blank.
   RenderOutput_InitFreeList();
   UiWork_ClearPortraitSlots();
   Scheduler_AddOrUpdateCallback(UiWork_UploadDirtyBlocks, 0x480);
@@ -94,8 +104,11 @@ void UiWork_InitializeWithResourceCounters(void) {
 
 /// Sets up the window system for battle, as
 /// UiWork_InitializeWithResourceCounters does for the field, and marks the work
-/// block as in battle (menuState 1). loadGlyphTiles is set only when the Djinn
-/// tutorial flag is set: it loads the glyph tiles the tutorial's messages use.
+/// block as in battle (menuState 1). Battle_RunEncounter's setup
+/// (battle/battle/encounter.c) passes loadGlyphTiles set only while
+/// FLAG_DJINN_TUTORIAL is set: it reserves the glyph sprites' tiles, which
+/// only windows other than text canvases need. Unlike the field setup it does
+/// not mark the portrait slots free (999): they stay 0 from the clear.
 void UiWork_Initialize(s32 loadGlyphTiles) {
   struct UiRenderWork *work;
 #if TBS_PATCH_1
@@ -104,7 +117,8 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
   s32 tileIndex;
 
   // Copies pixel rows 4 to 6 of UI tile src to rows 0 to 2 of tile dst and
-  // clears the rest of dst.
+  // clears the rest of dst. A 4bpp row is 4 bytes: the copy takes rows 4 to 7
+  // (16 bytes from byte 16), and the clear then blanks rows 3 to 7.
   s32 UiWork_CopyTileTail(u32 sourceTile, u32 destinationTile) {
     sourceTile &= 0x3ff;
     destinationTile &= 0x3ff;
@@ -115,7 +129,6 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
         BG_CHAR_BLOCK(0) + destinationTile * TILE_SIZE_4BPP + 12, 20);
   }
 
-  // Battle windows share the field's pools but use the canvas tile set.
   work = (struct UiRenderWork *)Runtime_AllocateBlock(HEAP_SLOT_WINDOW,
                                                       RENDER_WORK_SIZE);
 #if TBS_PATCH_1
@@ -143,6 +156,9 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
   UiWork_CopyTileTail(UI_TILE_FRAME_BOTTOM_LEFT, 128);
   UiWork_CopyTileTail(UI_TILE_FRAME_BOTTOM, 129);
   UiWork_CopyTileTail(UI_TILE_FRAME_BOTTOM_RIGHT, 130);
+  // Tiles 128 to 130 are also the first three text tiles. Attribute 4 is
+  // neither allocated nor shown, but nonzero, so the text tile search skips
+  // them and no clear of the shown bits ever frees them.
   {
     u8 mode = 4;
 
@@ -165,6 +181,7 @@ void UiWork_UploadDirtyBlocks(void) {
     if (bands) {
       dst = UI_TILEMAP_VRAM;
       src = (u8 *)work->tilemap;
+      // Bit 0 asks for all five bands; after the shift bit n is band n.
       if (bands & 1)
         bands = 63;
       bands &= 63;
@@ -182,8 +199,11 @@ void UiWork_UploadDirtyBlocks(void) {
 }
 
 /// Erases a window's rectangle of the tilemap (x, y, width and height in
-/// tiles), clamped to the screen. In battle the rows below row 16 take tile
-/// 0x7f instead of the blank tile.
+/// tiles) and frees the text tiles it showed. The height is cut at the
+/// screen's 20th row, and width and height are clamped to 2 to 30 tiles. In
+/// battle the rows below row 16 take tile 0x7f, the tile the battle command
+/// row fills its empty panels with (battle_command/command_row.c), instead of
+/// the blank tile.
 void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   struct UiRenderWork *canvas = UI_WORK;
   u16 *cursor = (u16 *)((y * 32 + x) * 2 + (u32)canvas->tilemap);
@@ -192,6 +212,7 @@ void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   u32 row;
   u8 *inBattle;
 
+  // 240 << 8 is UI_TILE_BLANK.
   tile = 240;
   bottom = y + height;
   tile <<= 8;
@@ -206,7 +227,7 @@ void UiWindow_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
   if (height > 30)
     height = 30;
 
-  // Clear glyph ownership before replacing the corresponding tile entries.
+  // Free the text tiles while the tilemap still names them.
   UiWindow_ClearTileAttributesInRect(x, y, width, height);
 
   row = 0;
@@ -302,6 +323,8 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
     found->output.tailLink = &slot->output.head;
     found->unk10 = 1;
     found->flags = UI_WINDOW_OPEN;
+    // Every new window starts the shared text style afresh. The function
+    // takes no arguments: x is passed and ignored.
     UiWork_ResetCounters(x);
     if (attrs & UI_WINDOW_TEXT_CANVAS) {
       found->flags |= UI_WINDOW_TEXT_CANVAS;
@@ -345,7 +368,11 @@ void UiWindow_WaitZoom(struct UiWindow *window) {
 
 /// Closes a window: clears its contents and remembers its last rectangle.
 /// With instant set the window is erased and its slot freed at once; otherwise
-/// it zooms closed over four frames first. Does nothing for NULL.
+/// it zooms closed over four frames first, and its slot stays taken until
+/// UiWork_ProcessDirectWork frees it (UiWork_IsIdle says when). It returns
+/// without waiting. Unless the window is a text canvas, its render outputs go
+/// back to the pool at once; a message channel typing into it lets go of it
+/// once it has closed (UiWork_ProcessRenderChannels). Does nothing for NULL.
 void UiWork_Finalize(struct UiWindow *window, s32 instant) {
   u16 zero;
 
@@ -381,7 +408,8 @@ void UiWork_Finalize(struct UiWindow *window, s32 instant) {
     window->previousWidth = zero;
     window->previousHeight = zero;
   } else {
-    // Zoom closed over four frames (UiWork_ProcessDirectWork).
+    // Zoom closed over four frames (UiWork_ProcessDirectWork), from frame 0:
+    // instant is 0 here.
     window->frame = instant;
     window->duration = UI_WINDOW_CLOSE_FRAMES;
   }
@@ -491,8 +519,10 @@ void RenderOutput_AppendToList(struct RenderOutputList *list,
   }
 }
 
-/// Frees a render output: returns it to the free list, releases its resource,
-/// and for a kind-2 output frees its palette slot too.
+/// Frees a render output: returns it to the free list, releases its VRAM cache
+/// entry unless it is a glyph (kind 0), and for a portrait (kind 2) frees its
+/// palette slot too. Its one caller, RenderOutput_ClearList, has detached the
+/// list first: the free list reuses the output's link.
 void RenderOutput_Release(struct RenderOutput *entry) {
   RenderOutput_ReleaseFree(entry);
   if ((u8)entry->kind != 0) {
@@ -509,9 +539,11 @@ void RenderOutput_Release(struct RenderOutput *entry) {
 
 /// Starts a free message channel typing the decoded text that begins at entry
 /// into window, with the pen at pixel (x, y). spacing gives each of four lines
-/// an extra gap between characters (or none for NULL); flags is kept with the
-/// channel (nonzero keeps the window's size from page to page). Returns the
-/// channel, or NULL when all three are busy.
+/// an extra gap between characters, in 1/256 pixels (or none for NULL), and is
+/// copied, so the caller's array need not outlive the call; flags is kept with
+/// the channel (nonzero keeps the window's size from page to page). Returns
+/// the channel, or NULL when all three are busy. The channel stays taken
+/// until its window closes.
 struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window,
                                                 s32 entry, s32 x, s32 y,
                                                 u16 *spacing, s32 flags) {
@@ -553,7 +585,8 @@ struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window,
 /// Starts a channel typing the decoded text at entry into the battle message
 /// window. A channel that already serves a finished window continues below its
 /// last line (scrolling up once both lines are used) unless keepPosition is
-/// set. Returns the channel, or NULL when all three are busy.
+/// set; UiText_PrepareMessageWork passes the battle display's marked flag
+/// there. Returns the channel, or NULL when all three are busy.
 struct UiChannelSlot *UiText_StartBattleMessage(struct UiWindow *window,
                                                 s32 entry, s32 keepPosition) {
   struct UiChannelSlot *slot;
@@ -622,7 +655,9 @@ s32 Ui_FillVramBlockPattern(void) {
 }
 
 /// Resets the pen and text style of the first idle message channel, clearing
-/// the canvas when the channel still has a window.
+/// the canvas when the channel still has a window. The auto battle
+/// (battle/battle/auto_battle.c) calls it after playing each action, so the
+/// next battle message starts on a clear canvas at its first line.
 void UiWork_ResetFreeChannel(void) {
   struct UiChannelSlot *slot = UI_WORK->channels;
   struct UiChannelSlot *selection = 0;
@@ -657,7 +692,9 @@ void UiText_ApplyChannelStyle(struct UiChannelSlot *channel) {
   work->lineSpacing = channel->lineSpacing;
 }
 
-/// Starts a channel scrolling its canvas up a line, over two frames.
+/// Starts a channel scrolling its canvas up a line: 12 pixel rows, 6 a frame
+/// over two frames (UiWork_StepChannelScript, UiText_ScrollCanvasUp), during
+/// which the channel types nothing.
 void UiText_StartCanvasScroll(struct UiChannelSlot *channel) {
   channel->transition = 2;
 }

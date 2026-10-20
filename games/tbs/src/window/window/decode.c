@@ -31,7 +31,11 @@ struct ArticleTable {
 // suffix tracks what the text last ended with, for the suffix codes (1: an s,
 // or in German s or z; 2: the end of a sentence, so the next word is
 // capitalised; 0: anything else). With mode set (battle messages) the name is
-// set off with spaces and the style codes around it.
+// set off with spaces and style codes: a space and line spacing 10 before it,
+// line spacing 8 and a space after. Only the Japanese decoder sets mode
+// (UiRenderWork.menuState bit 1, which UiText_PrepareMessageWork sets while it
+// decodes); the others always pass 0. The write position wraps at 0x1ff, the
+// ring's mask (RENDER_ENTRY_MASK) outside Japanese.
 
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
@@ -68,6 +72,8 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
     entries[writePosition] = 0x0a;
     writePosition = (writePosition + 1) & 0x1ff;
   }
+  // A name's leading article class (code 29, MSG_ARTICLE_CLASS, and its
+  // operand) is never copied.
 #if (LANGUAGE == LANGUAGE_SPANISH)
   if (count == 0 || count == 4) {
 #else
@@ -94,6 +100,8 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 #else
     p = table.text[kind & ARTICLE_KIND_MASK];
 #endif
+    // At most 8 letters, the first capitalised (less 0x20) at the start of a
+    // sentence.
     for (cnt = 0; cnt < 8; cnt++) {
       if ((c8 = *p++) == 0)
         break;
@@ -160,6 +168,9 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
     kind = 0;
     table = gUiText_ArticleTable;
     head = name[0];
+    // The class operand is stored one above its value. A name with no class
+    // takes "an" (class 2) before a capital vowel and "a" (class 1) before
+    // anything else.
     if (head == 29) {
       kind = name[1] - 1;
       name += 2;
@@ -213,37 +224,62 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 writePosition,
 #endif
 
 /// The control codes of a message as stored (the PO catalogs' names), which
-/// UiText_BuildRenderEntries expands into decoded text.
+/// UiText_BuildRenderEntries expands into decoded text. Codes it does not
+/// name here are kept as they are; an operand is stored one above its value.
 enum {
-  MSG_END = 0,
-  MSG_PAGE_BREAK = 1,
-  MSG_END_WAIT = 2,
-  MSG_LINE_BREAK = 3,
-  MSG_TEXT_COLOR = 8,
+  MSG_END = 0,        ///< kept as TEXT_END: the window stays open
+  MSG_PAGE_BREAK = 1, ///< kept as TEXT_PAGE
+  MSG_END_WAIT = 2,   ///< kept as TEXT_WAIT_KEY: a button closes the window
+  MSG_LINE_BREAK = 3, ///< kept as TEXT_NEWLINE
+  MSG_TEXT_COLOR = 8, ///< kept with its operand as TEXT_COLOUR
+  /// Kept with its operand as TEXT_OUTLINE: the style of sprite text, 1
+  /// outlined (UiText_RenderGlyphPair), 2 to 5 a motion (UiText_DrawGlyph).
   MSG_TEXT_EFFECT = 9,
   /// German: a counted noun; Italian: a gender ending; Spanish and French: the
   /// plural suffix
   MSG_LOCALIZED_WORD = 13,
+  /// The name of the unit gGameState.selectedActor names.
   MSG_PROTAGONIST_NAME = 16,
-  MSG_ACTOR_NAME = 17,
+  MSG_ACTOR_NAME = 17, ///< the name of the unit its operand names
+  // The argument codes write out the next message argument of their kind
+  // (MSG_ARG_). Outside Japanese the actor, class and item codes have an
+  // operand, the article form.
   MSG_ARGUMENT_ACTOR_NAME = 18,
   MSG_ARGUMENT_CLASS_NAME = 19,
   MSG_ARGUMENT_ITEM_NAME = 20,
   MSG_ARGUMENT_ABILITY_NAME = 21,
+  /// The number argument, with a minus sign when negative; outside Japanese
+  /// any number but -1, 0 and 1 makes what follows plural.
   MSG_ARGUMENT_SIGNED_NUMBER = 22,
   MSG_ARGUMENT_LOCATION_NAME = 23,
+  /// TEXT_ARGUMENT_SPACE (code 143 in English, a space in German, Spanish,
+  /// French and Italian) and a hyphen, and in those four a space after; the
+  /// Japanese decoder keeps the code as it is.
   MSG_EM_DASH = 24,
   /// English: the plural suffix; German, Spanish, French and Italian: the
   /// item's possessive
   MSG_PLURAL_SUFFIX = 25,
+  /// A button drawn as two characters, codes 128 + 2 * n and the next for
+  /// operand value n; the Japanese decoder keeps the code as it is.
   MSG_BUTTON_ICON = 26,
+  /// English: an apostrophe, and an s unless the name ended in s; German: an
+  /// apostrophe after s or z, else an s; nothing in Spanish, French and
+  /// Italian. The Japanese decoder keeps the code as it is.
   MSG_POSSESSIVE_SUFFIX = 27,
+  /// The article class of the name it starts, in item and class names, which
+  /// UiText_AppendArticleName reads and drops.
   MSG_ARTICLE_CLASS = 29,
+  /// Kept as TEXT_END_ALT, which the channel ends as it ends TEXT_END.
   MSG_END_NOW = 30,
 };
 
-/// What halting speech (UiWork_SetBusyFlags) puts between characters.
+/// What the decoding effects of UiWork_SetBusyFlags put between characters.
+/// Halting speech (spacingBefore): a short pause before each decoded code; in
+/// English and Japanese not at a line's start or before a kana mark.
 #define ENTRY_NARROW_GAP TEXT_PAUSE_SHORT
+/// With spacingAfter (English and Japanese): code 222 after a character of
+/// codes 128 to 256, other than the kana marks and codes 161, 164 and 165,
+/// unless the code after it is a kana mark.
 #define ENTRY_WIDE_GAP TEXT_VOICED_MARK
 
 #if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN) ||         \
@@ -272,7 +308,10 @@ extern u8 *gUiText_NumberWords[];
 /// (UiWork_PushValueSlot), and clear empties the table afterwards. Names,
 /// numbers and articles are written out; style codes are kept with their
 /// operands for the message channel to run.
-/// script -1 reuses messageStart; clear consumes argument slots after decoding.
+/// The message is written at UiRenderWork.count, which it leaves just past
+/// the message's terminator, and is cut at the ring's length. The decoder
+/// routine is copied into heap slot TEXT_WORK_BLOCK for the call and freed at
+/// its end.
 s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
   struct UiRenderWork *work = UI_WORK;
   u32 code = 0;
@@ -358,6 +397,8 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
       previousCode = code;
 #endif
       code = (u32)decode(&reader);
+      // These editions have no characters above 255: such a symbol becomes
+      // code 64.
       if (code > 255)
         code = 64;
 
@@ -402,6 +443,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             decode(&reader);
             break;
           case MSG_PAGE_BREAK:
+            // The message ends at its first page, waiting for a button.
             running = 0;
             code = 2;
             break;
@@ -414,7 +456,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           }
         }
       } else {
-        // Halting speech pauses before each character.
+        // Halting speech pauses before each code.
         if (work->spacingBefore != 0
 #if (LANGUAGE == LANGUAGE_ENGLISH)
             && lineStart == 0 && code != 222 && code != 223
@@ -448,6 +490,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             if (decodedCount > 10)
               code = 32;
           }
+          // Every other double quote, the opening one, becomes code 142.
           if (code == 34) {
             quote ^= 1;
             if (quote != 0)
@@ -527,6 +570,10 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             form = no & 7;
 #endif
             argument = UiText_LookupArgument(MSG_ARG_ITEM, clear);
+            // The argument is an inventory code: its low 9 bits are the item,
+            // a mask that RENDER_ENTRY_MASK's 0x1ff spells here. In German,
+            // Spanish, French and Italian, forms 2 and 4, and 3 after a plural
+            // number, take the item's plural name.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
             argument &= RENDER_ENTRY_MASK;
@@ -576,6 +623,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             writePosition = nextPosition;
             break;
           case MSG_PROTAGONIST_NAME:
+            // A unit's name is 15 bytes, widened here to codes.
             nameBytes = UnitGetFar(gGameState.selectedActor)->name;
             nameOutput = name;
             i = 0;
@@ -677,6 +725,8 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
 #endif
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_ITALIAN)
           case MSG_PLURAL_SUFFIX:
+            // The item argument is only looked at (clear 0), so the item's
+            // name code after the possessive still takes it.
 #if (LANGUAGE == LANGUAGE_SPANISH)
             UiText_LookupArgument(MSG_ARG_ITEM, 0);
             possessives = gUiText_ItemPossessives;
@@ -764,6 +814,9 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
       decodedCount++;
     } while (running != 0 && decodedCount <= RENDER_ENTRY_MASK);
 
+    // The code that ended the message goes in too (TEXT_END, TEXT_WAIT_KEY or
+    // TEXT_END_ALT, or the last code of a message cut at the ring's length),
+    // then a 0; the next message starts after both.
     entry[writePosition] = (u16)code;
     writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
     entry[writePosition] = 0;
@@ -817,7 +870,9 @@ extern __inline__ u32 UiText_AppendArticleName(s32 mode, u16 *name,
 }
 
 /// The Japanese UiText_BuildRenderEntries, as above with no articles or
-/// plurals.
+/// plurals. A battle message (menuState bit 1) has its names set off with
+/// spaces and style codes and each space doubled, and in battle the units of
+/// classes 122 and 125 are named Mystery Man and Mystery Woman.
 /// script -1 reuses messageStart; clear consumes argument slots after decoding.
 s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
   struct UiRenderWork *work = UI_WORK;
@@ -932,6 +987,8 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
         // A character. Halting speech breaks off with an ellipsis at the
         // first space or after 11 characters.
         if (code > 31) {
+          // A battle message doubles each space. The ellipsis here is three
+          // of code 165, then code 161.
           if (mode != 0 && code == ' ') {
             entry[writePosition] = code;
             writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
@@ -1023,6 +1080,8 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
           case MSG_ARGUMENT_ACTOR_NAME:
             unit = UnitGetFar(UiText_LookupArgument(MSG_ARG_ACTOR, clear));
+            // In battle a unit of class 122 is called Mystery Man and one of
+            // class 125 Mystery Woman (MsgMysteryPersonName and the next).
             if (work->menuState != 0 &&
                 (unit->classId == 122 || unit->classId == 125)) {
               message = MsgMysteryPersonName;

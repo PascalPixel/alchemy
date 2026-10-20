@@ -4,13 +4,15 @@
 
 #include "../battle_command_internal.h"
 
-#define COUNTDOWN_START_FRAMES 900
+#define COUNTDOWN_START_FRAMES 900 ///< 15 seconds
 #define FRAMES_PER_SECOND 60
 
-/// The partner console's signature as the link battle timer reads it: four
-/// letters that restart the countdown.
+/// The partner console's link signature (gLinkPeerSignatures) as the timer
+/// reads it: halfwords 4 to 7 read "EDVS" once the partner has chosen its
+/// commands (Battle_CollectPartyCommands), which starts this side's
+/// countdown.
 struct LinkSignature {
-  u8 padding000[8];
+  u8 padding000[8]; ///< halfwords 0 to 3, "EXEC" while the link holds
   u16 e;
   u16 d;
   u16 v;
@@ -18,8 +20,15 @@ struct LinkSignature {
   u8 padding010[8];
 };
 
-/// Advances the link command-entry timer, slides the battle panels, and redraws
-/// the remaining seconds. Pause flags and peer signatures stop the timer.
+/// A scheduler callback while the party's commands are chosen
+/// (Battle_CollectPartyCommands): eases the battle scene a third of the way
+/// to BattleMenuWork.targetSceneOffset each frame (a pixel at least), draws
+/// the sprites of BattleMenuWork.icons that are shown (the chosen command's
+/// and ability's icons, the member's portrait) and slides the page arrows.
+/// In a link battle it also runs the timer: once the partner has chosen its
+/// commands, 15 seconds, shown in a window at the top left with a tone at
+/// each whole second; at 0 the menus end as if cancelled, or take their
+/// first command. A paused link sets the timer to 0 at once.
 void UpdateLinkSessionCountdown(void) {
   struct BattleMenuWork *state = gLinkCountdownWork;
   struct BattleWork *runtime;
@@ -82,6 +91,7 @@ void UpdateLinkSessionCountdown(void) {
     timer = state->timer;
     goto signature_done;
 
+    // -1 until the partner's signature reads "EDVS", then the countdown.
   load_timer:
     timer = state->timer;
     if (timer >= 0)
@@ -97,6 +107,7 @@ void UpdateLinkSessionCountdown(void) {
     if (timer < 0)
       return;
 
+    // The window opens the first frame the status screen is not up.
   timer_ready:
     if (state->timerWindow == 0 && state->timerHidden == 0) {
       state->timerWindow = (s32)Link_CreateCountdownLabelWindow();
@@ -122,8 +133,13 @@ void UpdateLinkSessionCountdown(void) {
   }
 }
 
-/// Tests whether this battle forbids escape. Show the reason until A/B or the
-/// link timer expires, returning 1 when escape is forbidden and 0 otherwise.
+/// Tests whether the party may not run from this battle: battle starts 3 and
+/// 4 (the battles a scene starts, and link battles; see
+/// BATTLE_START_NO_ESCAPE in battle/battle/round.c) and a party once
+/// challenged (BattleWork.challengeFlag). When it may not, shows "This is no
+/// time to be running away!" until A or B is pressed or the link battle's
+/// time runs out, and returns 1; else returns 0. The Flee command asks it
+/// (Battle_CollectPartyCommands).
 s32 UiText_ShowLocalizedMessageAndWait(void) {
   s16 buffer[64];
   struct UiWindow *work;

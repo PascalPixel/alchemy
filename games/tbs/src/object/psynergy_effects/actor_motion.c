@@ -4,16 +4,20 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// Script step: clears an object's sprite flags and its collision flags.
+/// Script step of action 7: clears an object's sprite flags and its collision
+/// flags, so nothing collides with it. Returns 0, so SC_CALL moves on at
+/// once (gObjectMotion_ResetActionScript then ends).
 s32 Object_ClearChildAndCollisionFlags(void *obj) {
   ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
   ((struct ScriptObjectRuntime *)obj)->flags59 = 0;
   return 0;
 }
 
-/// Script step of action 5: follows the linked object. While at least action
-/// pixels away the object walks toward it (a step of 16 / action of the
-/// distance, in 16-pixel units); closer, it stands.
+/// Script step of action 5: follows the linked object. While it is at least
+/// action pixels away the object walks (animation 2) toward a point 16 /
+/// action of the way there, so with action 16 it heads for the linked
+/// object itself; closer, it stands (animation 1). Returns 1, so SC_CALL
+/// runs it again every frame until the actor's script is replaced.
 s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object) {
   s32 step;
   struct ObjectRuntime *target;
@@ -27,6 +31,7 @@ s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object) {
 
   target = object->linkedObject;
   if (target != 0) {
+    // Whole pixels, rounded toward zero as a division by 0x10000 would.
     deltaX = target->x - object->x;
     if (deltaX < 0)
       deltaX += 0xffff;
@@ -38,8 +43,9 @@ s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object) {
     distance = Iwram_Sqrt(pixelsX * pixelsX + pixelsZ * pixelsZ);
     step = object->action;
     if (distance >= step) {
-      // Offsets can be negative. Shift their word representation before
-      // reading it as a signed displacement, rather than shifting a negative.
+      // << 20 is 16 pixels in 16.16 per pixel of distance. Offsets can be
+      // negative: shift their word representation before reading it as a
+      // signed displacement, rather than shifting a negative.
       newX = object->x + (s32)((u32)pixelsX << 20) / step;
       newZ = object->z + (s32)((u32)pixelsZ << 20) / step;
       Object_SetMoveTargetFar(object, newX, object->y, newZ);
@@ -52,7 +58,8 @@ s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object) {
 }
 
 /// Script step of action 6: turns the object toward its linked object, at most
-/// 1/16 turn a frame.
+/// 1/16 turn a frame. Returns 1, so SC_CALL runs it again every frame until
+/// the actor's script is replaced.
 s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object) {
   s16 turnStep;
   u16 currentAngle;
@@ -61,6 +68,7 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object) {
 
   target = object->linkedObject;
   if (target != NULL) {
+    // Clear ACTOR_FACES_MOTION, so moving does not turn it away again.
     object->actionFlags &= 0xfe;
     targetAngle = (u16)ArcTan2(target->z - object->z, target->x - object->x);
     currentAngle = object->angle;
@@ -78,7 +86,12 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object) {
 
 /// Starts an actor's action script: 1 to 4 the fixed action scripts, 5 follow
 /// the linked object, 6 face the leader, 7 reset. Any other value is itself
-/// the script to run.
+/// the script to run. In scripts.s, action 1's script only ends, and 2 to 4
+/// wander about where the actor stands (SC_WANDER_HOME): 2 and 3 at the same
+/// speed, within 16 and 8 pixels, and 4 within 6 pixels at its own speed
+/// (field.h). Reached from a placement's behavior column (object/actors.c),
+/// from Scene_TalkToActor after a talk (object/events.c), from the actor
+/// commands and from Lalivero's interiors (Engine_ActorSetActionCallback).
 void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action) {
   switch ((action - 1)) {
   case 0:
@@ -113,7 +126,10 @@ void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action) {
 
 /// Finds the nearest animated object to self within 40 pixels and 48 pixels of
 /// height, ignoring objects more than 3/16 turn to either side once they are
-/// over 23 pixels away. Returns it if it shows sprite, otherwise NULL.
+/// over 23 pixels away. Returns it if it shows sprite, otherwise NULL: the
+/// sprite is tested only on the nearest object, so a nearer object of
+/// another sprite hides a matching one. Field_TryJumpForward (climbing.c)
+/// asks it for a platform, sprite 207 or 205, where the leader lands.
 struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
                                                      s32 sprite) {
   struct ObjectRuntime *entry;
@@ -137,6 +153,7 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
       continue;
     if (entry->animationKind != 1)
       continue;
+    // 0x2fffff: under 48 pixels apart in height, either way.
     heightDifference = entry->y - self->y;
     if (heightDifference >= 0) {
       if (heightDifference > 0x2fffff)

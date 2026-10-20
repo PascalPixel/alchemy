@@ -4,12 +4,18 @@
 
 #include "../psynergy_effects_internal.h"
 
-#define CLOAK_TILE 0xfb  ///< the tile attribute Cloak can stay hidden on
-#define CLOAK_END 0x2092 ///< field command when Cloak can no longer hide
+/// The step code of the cells Cloak can stay hidden on: byte 2 of a cell
+/// (MapCell.collisionCode), or of a 4-byte gMapBlocks entry on the world map.
+#define CLOAK_TILE 0xfb
+/// The Psynergy request that ends Cloak: ACT_PACKED (0x2000, no PP) |
+/// ABILITY_CLOAK (0x92).
+#define CLOAK_END 0x2092
 
 /// Scheduler callback of Cloak: when the tile under the leader is not
 /// CLOAK_TILE, requests CLOAK_END. On the world map (event mode 3) it reads
-/// the 32-pixel gMapBlocks, elsewhere the 16-pixel terrain map.
+/// the 32-pixel gMapBlocks, elsewhere the 16-pixel terrain map. Runs once a
+/// frame from FieldFx_StartCloak, and again from FieldFx_ResumeCloakCheck
+/// when a scene loads with the leader still cloaked.
 void FieldFx_CheckCloakTile(void) {
 #ifndef UBFIX
   u32 slot;
@@ -33,6 +39,7 @@ void FieldFx_CheckCloakTile(void) {
   tile = (u8 *)*(struct MapState **)(slot - 76); // gMapWork[0]
 #endif
 
+  // Whole blocks or cells, rounded toward zero as a division would be.
   if (field->mode == MODE_WORLD_MAP) {
     u32 tx;
     u32 ty;
@@ -73,7 +80,11 @@ void FieldFx_CheckCloakTile(void) {
 }
 
 /// Ends Cloak: stops the tile check and makes the leader blink back into
-/// sight, clearing cloaked.
+/// sight, clearing cloaked. The leader is white (SPRITE_COLOR_WHITE) for the
+/// first five blinks, its outline (sprite flag bit 1) on and off; the last
+/// five alternate white and its own colours (param 0). Each half is 2
+/// frames. The leader ends with its shadow back (flags 1).
+/// FieldEvent_RunTypeHandler runs it when the CLOAK_END request is handled.
 void FieldFx_EndCloak(void) {
   struct ObjectRuntime *obj;
   struct AnimationObject *anim;
@@ -113,7 +124,8 @@ void FieldFx_EndCloak(void) {
   gGameState.cloaked = 0;
 }
 
-/// Starts the Cloak tile check if the leader is hidden.
+/// Starts the Cloak tile check if the leader is hidden. Field_RunScene calls
+/// it as a scene loads, since gGameState.cloaked outlives the scene.
 void FieldFx_ResumeCloakCheck(void) {
   if (gGameState.cloaked != 0) {
     Scheduler_AddOrUpdateCallback(FieldFx_CheckCloakTile, 0xc80);
@@ -124,6 +136,11 @@ void FieldFx_ResumeCloakCheck(void) {
 /// starts; where the leader cannot hide it shows again at once.
 ///
 /// Abilities: Cloak (field kind 10).
+///
+/// Hidden, the leader is drawn as an outline only (sprite flags 2: outlined,
+/// no shadow), and while gGameState.cloaked is set no random battles come
+/// (Encounter_SelectEnemyGroup). Called by BattleFx_Run and
+/// BattleFx_DispatchRequestKind.
 void FieldFx_StartCloak(void) {
   struct FieldWork *field = (struct FieldWork *)gEventWork;
   struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);
@@ -150,6 +167,8 @@ void FieldFx_StartCloak(void) {
   entry->param = n;
   animation->flags = 2;
   animation->dirty = 1;
+  // Check the tile at once: off a Cloak tile, unhide and drop the request
+  // the check just raised (n is 0 here).
   check = FieldFx_CheckCloakTile;
   Scheduler_AddOrUpdateCallback(check, 0xc80);
   gGameState.cloaked = 1;

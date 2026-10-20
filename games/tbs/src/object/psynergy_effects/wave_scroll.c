@@ -40,7 +40,9 @@ void DisplayScroll_ArmHBlankDma(void) {
 
 /// Scheduler callback for the wavy background: fills the hidden page with each
 /// scanline's BG3, BG2 and BG1 offsets, the scroll plus a sine wave for x and
-/// for y (an axis with no step stays flat), then shows that page.
+/// for y (an axis with no step stays flat), then shows that page. All three
+/// layers take the same wave; DisplayScroll_ArmHBlankDma feeds the shown page
+/// to the scroll registers from the next frame.
 void DisplayScroll_BuildAndSwapHBlankPage(void) {
   struct DisplayScrollWork *work = gHBlankScrollWork;
   s32 x3 = (s16)gBgScroll[3].x;
@@ -70,6 +72,8 @@ void DisplayScroll_BuildAndSwapHBlankPage(void) {
     u16 b = x2;
     u16 c = x1;
 
+    // The sine is 4096 at its peak, so the wave reaches
+    // 4096 * ampX / 0x10000 / 256 pixels: 16 for an ampX of 0x10000.
     amplitude = work->ampX;
     for (scanline = 0; scanline != 160; scanline++) {
       wave = Iwram_MulQ16(gDisplayScroll_WaveSine[(phase >> 16) & 255],

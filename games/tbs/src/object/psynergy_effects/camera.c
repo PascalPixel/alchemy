@@ -6,7 +6,9 @@
 
 /// The event command "camera follow actor": the camera (the event's view
 /// centre) follows actor. Unless keepPosition is set it jumps there at once
-/// and, off the world map, the map is redrawn around it.
+/// and, off the world map, the map is redrawn around it. FieldEvent_End
+/// calls it with the leader and keepPosition 1, so after an event the view
+/// follows the leader again from where it is, without a jump.
 void Camera_FollowActor(s32 actor, s32 keepPosition) {
   struct ObjectRuntime *subject;
   struct ObjectRuntime *camera;
@@ -14,6 +16,8 @@ void Camera_FollowActor(s32 actor, s32 keepPosition) {
   struct MapScrollWork *map;
 
   subject = ObjectTable_Get(actor);
+  // The slot already holds the field work, which this returns; the camera
+  // commands here all find it this way.
   work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
   camera = work->camera;
   map = gMapWork[0];
@@ -68,7 +72,10 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
   camera = runtimeBlock->camera;
   map = gMapWork[0];
 
-  // Half a screen (120 by 64 to 96 pixels) inside the map's bounds.
+  // Keep the screen inside the map: the view centre stays 120 pixels from
+  // either side, 96 from the top and 64 from the bottom (it sits 96 pixels
+  // down the 160-pixel screen), the z limits moved down the map by its
+  // height, since it shows at z less its height.
   minimumX = map->minX + 0x780000;
   cameraY = camera->y;
   minimumZ = map->minY + cameraY + 0x600000;
@@ -114,6 +121,7 @@ void Object_PlaceCurrentWithinCameraBounds(s32 actor, s32 glide) {
   struct ObjectRuntime *subject;
 
   subject = ObjectTable_Get(actor);
+  // The field work (slot 27, 0xccc bytes), looked up and not used.
   Runtime_AllocateBlock(0x1B, 0xCCC);
   if (subject != NULL) {
     Camera_MoveWithinMapBounds(subject->x, -1, subject->z, glide);

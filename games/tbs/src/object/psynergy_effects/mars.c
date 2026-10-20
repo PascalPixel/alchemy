@@ -133,7 +133,8 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   BattleFx_ClearActiveSlotsAndScheduleUpdates();
 }
 
-/// Spins and shrinks an object by 0x400 a frame, then releases it.
+/// Spins and shrinks an object by 0x400 a frame, then releases it: 53 frames
+/// from full size.
 DEFINE_SHRINK_AND_DESTROY(BattleFx_ShrinkObjectAndDestroyFast, 0xFFFFFC00)
 
 /// Per-frame update of a Venus Djinni's falling motes: each circles the
@@ -170,7 +171,8 @@ void BattleFx_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
 /// at a random point 10 to 20 pixels round the leader and flies 120 pixels up
 /// the screen, over and over (states 0 and 1); set to 2, it is freed once it
 /// arrives. Set by BattleFx_RunVenusDjinnCapture in venus.c; a particle
-/// that starts on an odd frame plays SE_144.
+/// that starts on an odd frame plays SE_144. It speeds up by 1 pixel a frame
+/// to at most 5, straight at its target.
 void BattleFx_UpdateRadialSpread(struct EffectSlot *effect) {
   struct EffectVector position;
   struct ObjectRuntime *source;

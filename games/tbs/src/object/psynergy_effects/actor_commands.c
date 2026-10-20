@@ -28,10 +28,10 @@ void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit,
   }
 }
 
-/// Gives an actor an action script (ObjectMotion_SetActionCallback) and lets
-/// it run: sets bit 0 of its actionFlags. Scene scripts reach it as
-/// Engine_ActorEnableActionCallback (Actor_SetActionScript and
-/// Actor_SetBuiltinAction).
+/// Gives an actor an action script (ObjectMotion_SetActionCallback) and makes
+/// it face where it moves: sets ACTOR_FACES_MOTION, bit 0 of its
+/// actionFlags. Scene scripts reach it as Engine_ActorEnableActionCallback
+/// (Actor_SetActionScript and Actor_SetBuiltinAction).
 void ObjectMotion_EnableActionAndSetCallback(u32 objectId, s32 action) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
@@ -44,8 +44,9 @@ void ObjectMotion_EnableActionAndSetCallback(u32 objectId, s32 action) {
 }
 
 /// The event command "stop actor": stops its action and puts it back under
-/// event control (dispatch script 6), setting bit 0 of its actionFlags. Scene
-/// scripts reach it as Engine_ActorStop (Actor_Stop), about 22 of them.
+/// event control, on the idle script (a lone SC_END), and sets
+/// ACTOR_FACES_MOTION, bit 0 of its actionFlags. Scene scripts reach it as
+/// Engine_ActorStop (Actor_Stop), about 22 of them.
 void ObjectMotion_EnableActionAndResetMotion(u32 objectId) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
   u8 enabled;
@@ -81,8 +82,10 @@ void Object_RefreshSelectorById(u32 objectId) {
     ObjectDispatch_WaitForValue16Far(object);
 }
 
-/// Starts a built-in action or supplied script, then waits up to 300 frames for
-/// its script to end. Scene script calls use Actor_RunActionScriptAndWait.
+/// Starts a built-in action or supplied script, as
+/// ObjectMotion_EnableActionAndSetCallback does, then waits up to 300 frames
+/// for its script to end. Scene script calls use
+/// Actor_RunActionScriptAndWait.
 void Object_SetActionCallbackAndRefreshById(u32 objectId, s32 action) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 
@@ -96,7 +99,8 @@ void Object_SetActionCallbackAndRefreshById(u32 objectId, s32 action) {
 }
 
 /// The event command "set actor destination": the actor heads for (x, z), in
-/// pixels, keeping its current animation. Clears its movementState. Scene
+/// pixels, keeping its current animation. Clears its movementState, so a
+/// paused actor moves again, as the other move commands here do. Scene
 /// scripts reach it as Engine_ActorSetDestination (Actor_SetDestination).
 void ObjectMotion_ResetAndSetPosition(u32 objectId, s32 x, s32 z) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
@@ -165,8 +169,9 @@ void ObjectMotion_CenterOnColumn(u32 objectId, s32 priority, s32 zOffset) {
 
   object = ObjectTable_Get(objectId);
   if (object != NULL) {
-    // Round down to the column's left edge (toward minus infinity, so the
-    // same holds left of 0); the column's middle is 8 pixels in.
+    // The column's left edge, from a division by 16 that rounds toward zero
+    // (left of x = 0 it finds the edge to the right); its middle is 8 pixels
+    // in.
     pixelX = ((union FieldCoordinate *)&object->x)->part.pixel;
     columnX = pixelX;
     if (pixelX < 0) {
@@ -292,8 +297,14 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
     object->x = x;
     object->z = z;
     // Swap the old ground's height for the new one, so the actor's height
-    // above the ground is kept. The tile coordinates round toward minus
-    // infinity.
+    // above the ground is kept. The coordinates are whole pixels, rounded
+    // toward zero.
+    // Map_GetTerrainHeight takes 16.16 coordinates and returns 16.16 pixels,
+    // so these pixel coordinates read the layer's first cell, and the << 16
+    // keeps only the result's low 16 bits (0 on a flat cell).
+    // XXX: likely written for an older interface in pixels, because weather.c
+    // makes the same call; a scene placing an actor this way on raised
+    // ground would show what the game does.
     if (1 & object->flags) {
       terrainId = object->terrainId;
       tileX = x;
@@ -314,8 +325,9 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
 }
 
 /// Puts the actor at (x, y, z), 16.16 pixels, at rest; an actor that follows
-/// the ground (flag 1) is raised by the terrain height there. Nothing in ☀️
-/// calls it.
+/// the ground (flag 1) is raised by the terrain height there, read as
+/// ObjectMotion_SetHorizontalPositionWithTerrain reads it (see the XXX
+/// there). Nothing in ☀️ calls it.
 void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
   struct ObjectRuntime *object;
   s32 terrainHeight;
@@ -409,10 +421,10 @@ void ObjectMotion_NoOp(void) {}
 
 /// The event command "actor jump": throws the actor upward at speed pixels per
 /// frame with a jump sound (a higher one above 5), then waits frames frames.
-/// Sets bit 1 of the actor's motion flags and its velocityY. Scene scripts
-/// reach it
-/// as Engine_ActorJump (Actor_Jump), about 40 of them; the scenes of Djinn
-/// joining the party (djinni.c and the four element parts) call it too.
+/// Sets bit 1 of the actor's motion flags, so gravity brings it down, and its
+/// velocityY. Scene scripts reach it as Engine_ActorJump (Actor_Jump), about
+/// 40 of them; the scenes of Djinn joining the party (djinni.c and the four
+/// element parts) call it too.
 void ObjectMotion_Launch(u32 objectId, s32 speed, s32 frames) {
   struct ObjectRuntime *object;
   u8 *objectFlags;
@@ -541,11 +553,13 @@ void FieldFx_SpawnBurstParticle(struct FieldActor *source, s32 param) {
 
 /// Makes an actor jump down off a ledge in front of it (the field runs it for
 /// the leader when the player presses down at a ledge): it shows pose for 10
-/// frames, hops, spins round while sinking 28 pixels with a dust puff every
-/// other frame (none when param is -1), then jumps 16 pixels forward and lands.
-/// The landing plays the queued sound (BattleFx_PlayQueuedSound). Called by
-/// Field_RunPushTileEvent for a ledge (collision code 0xfc) with pose 6 and
-/// param 0.
+/// frames, hops 12 pixels south, turns toward angle 0x5000 (1/16 turn past
+/// FACING_SOUTH) while sinking 28 pixels with a dust puff every other frame
+/// (none when param is -1), then jumps on to 16 pixels south of where it
+/// started and lands. The landing plays the queued sound
+/// (BattleFx_PlayQueuedSound). Called by Field_RunPushTileEvent for a ledge
+/// (collision code 0xfc) with pose 6 and param 0, and by seven scenes through
+/// FieldBattleFx_RunRisingObjectSequence; Mercury Lighthouse passes -1.
 void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
   s32 nextY;
   s32 startZ;
@@ -571,7 +585,8 @@ void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
     Object_SetMoveTargetFar(object, object->x, object->y, startZ + 0xC0000);
     WaitFrames(6);
 
-    // Spin and sink 2 pixels a frame for 14 frames, raising dust.
+    // Turn and sink 2 pixels a frame for 14 frames, raising dust, in free
+    // flight (motion flags 0: no gravity, no terrain).
     AudioCommand_PlayFar(SE_217);
     // From here pose counts frames.
     pose = 0;
@@ -588,7 +603,8 @@ void Actor_JumpDownLedge(s32 actor, s32 pose, s32 param) {
       pose++;
     } while ((u32)pose <= 0xD);
 
-    // Jump 16 pixels forward and wait (at most 180 frames) to land.
+    // Jump 16 pixels forward and wait (at most 180 frames) to land, following
+    // the terrain and falling again (motion flags 3).
     *objectFlags = 3;
     object->velocityY = 0x30000;
     Object_SetMoveTargetFar(object, object->x, object->y, startZ + 0x100000);
@@ -795,10 +811,11 @@ void ObjectGroup_SetChildValue(struct FieldActor *actor, s32 param) {
 }
 
 /// Links an actor to the actor in the low 8 bits of targetId and starts script
-/// on it. Unless ACTOR_LINK_KEEP_MOTION is set it takes action 40 and the
-/// target's top speed with twice its acceleration, to keep up with it. Called
-/// by Vale's, Bilibin's, Imil's, Kolima's and McCoy's palace scene scripts,
-/// among others.
+/// on it. Unless ACTOR_LINK_KEEP_MOTION is set it takes a follow distance of
+/// 40 pixels (action 40, read by ObjectMotion_MoveTowardTarget), the target's
+/// top speed with twice its acceleration, to keep up with it, and no collision
+/// flags, so it cannot block the target. Called by Vale's, Bilibin's, Imil's,
+/// Kolima's and McCoy's palace scene scripts, among others.
 void Object_SetTargetAndCallback(u32 objectId, s32 targetId,
                                  const void *script) {
   struct ObjectRuntime *follower = ObjectTable_Get(objectId);
@@ -818,8 +835,9 @@ void Object_SetTargetAndCallback(u32 objectId, s32 targetId,
 
 /// Script step that turns an actor toward the angle kept in its action: the
 /// whole way when within 1/16 turn, otherwise 1/32 turn. Returns the turn
-/// made, 0 once the actor faces that way. gObjectMotion_StepAngleScript and
-/// gObjectMotion_LaunchScript run it through their script command 34.
+/// made, 0 once the actor faces that way: SC_CALL runs it again each frame
+/// while it is nonzero, so the script ends once the turn is done.
+/// gObjectMotion_StepAngleScript and gObjectMotion_LaunchScript run it.
 s32 ObjectMotion_StepAngle(struct ObjectRuntime *object) {
   s32 delta = 0;
 

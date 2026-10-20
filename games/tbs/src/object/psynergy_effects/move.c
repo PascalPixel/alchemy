@@ -6,13 +6,14 @@
 
 /// Returns the direction of the d-pad (0x10000 a full turn): right 0, down
 /// 0x4000, left 0x8000, up 0xc000; 0xffff when none or a diagonal is held.
+/// Opposite directions cancel, so a third held direction still counts.
 s32 Input_GetDpadAngle(u32 unused) {
   // Indexed by the right, left, up and down bits.
   return gBattleFx_CyclePatternWords[(gKeysHeld >> 4) & 15];
 }
 
-/// Per-frame update of a broken item's main fragment: turns it toward the
-/// object it is linked to, at most 1/16 turn a frame, and sheds a particle
+/// Per-frame update of Move's hand (BattleFx_StartItemBreak): turns it toward
+/// the object it is linked to, at most 1/16 turn a frame, and sheds a particle
 /// (object 0x11d) round it.
 void BattleFx_UpdateItemBreakFragment(union FieldObject *fieldObject) {
   struct FieldActor *source = (struct FieldActor *)fieldObject;
@@ -35,6 +36,7 @@ void BattleFx_UpdateItemBreakFragment(union FieldObject *fieldObject) {
         turn = -0x1000;
       source->facing += turn;
     }
+    // ACTOR_FACES_MOTION off: its motion must not undo the turn.
     source->steeringFlags = 0;
   }
 
@@ -83,7 +85,9 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
   work = gEffectWork;
   user = work->mainObject;
   target = work->child;
-  angle = work->angle + 0x8000; // opposite work->angle
+  // work->angle is the way the caster faces; the hand's side of the target
+  // is the opposite way, toward the caster.
+  angle = work->angle + 0x8000;
   moved = 0;
   if (target == NULL)
     return;
@@ -106,10 +110,13 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
   Object_SetMoveTargetFar((struct ObjectRuntime *)pusher, candidate->x,
                           candidate->y, candidate->z);
   BattleFx_SnapScaleToFull((struct MotionObject *)pusher);
+  // The hand floats (motion flag bit 2) at up to 4 pixels a frame. The
+  // target cycles its colours, keeps its facing while it moves, and reads
+  // its ground from layer 2.
   pusher->speed = 4 << 16;
   pusher->acceleration = 0x8000;
   pusher->motionFlags = 4;
-  target->update = ObjectGroup_ApplyRandomChildValues; // cycle its colours
+  target->update = ObjectGroup_ApplyRandomChildValues;
   target->speed = 0x6666;
   target->acceleration = 0x3333;
   target->steeringFlags = moved;
@@ -152,6 +159,8 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
     beyond.y = target->y.fixed;
     beyond.z = target->z.fixed;
     Vector_AddPolarOffset(32 << 16, direction, &beyond);
+    // A wall (2) or ground more than 8 pixels higher (1) stops the push;
+    // level ground or a drop does not.
     if (Map_CheckObjectStepFar((struct ObjectRuntime *)target,
                                (struct FieldPosition *)&position) > 0) {
       ObjectDispatch_SelectAnimationFar(pusher, 4);
@@ -183,6 +192,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
       }
       if (cellX == (beyond.x & MOVE_CELL_MASK) &&
           cellZ == (beyond.z & MOVE_CELL_MASK)) {
+        // The caster can be pushed only onto terrain kind 0.
         if (Map_GetCellAttributeLowNibbleFar(user->terrainId, beyond.x,
                                              beyond.z) != 0) {
           ObjectDispatch_SelectAnimationFar(pusher, 4);
@@ -195,7 +205,9 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
     }
 
     // Push: the hand's animation comes from the turn between angle and the
-    // push (in quarter turns).
+    // push (in quarter turns): 2 pushing away from its side, 3 drawing toward
+    // it, 1 sideways. Target and hand then move 16 pixels at 0.2 pixels a
+    // frame, and a caster in the way is carried along with them.
     AudioCommand_PlayFar(SE_175);
     x = position.x;
     z = position.z;
@@ -220,6 +232,7 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
       Object_SetMoveTargetFar((struct ObjectRuntime *)user, beyond.x, beyond.y,
                               beyond.z);
     }
+    // Land exactly on the tile, whatever the braking left.
     FieldObject_WaitForMoveFar(target);
     target->x.fixed = x;
     target->z.fixed = z;
@@ -242,7 +255,8 @@ void BattleFx_SteerPushedTarget(s32 targetId) {
 }
 
 /// Effect slot callback of a particle that flies 30 pixels out from where it
-/// started, comes back and is freed.
+/// started, comes back and is freed. It goes out straight at up to 4 pixels a
+/// frame and comes back turning at most 1/64 turn a frame, so it curves home.
 void BattleFx_UpdateOrbitAndReturn(struct EffectSlot *slot) {
   // Forward state-1 fallthrough keeps the callback extent but changes native
   // instructions; retain the immediate retry until a plain form matches.
@@ -289,7 +303,7 @@ next_state:
     BattleFx_ClearOwnedSlot(slot);
 }
 
-/// Shows the broken item beside the caster for 30 frames, then turns it into
+/// Shows the hand beside the caster for 30 frames, then turns it into
 /// particles.
 ///
 /// Abilities: Move (field kind 1), cast with no target.
@@ -317,9 +331,10 @@ void FieldFx_RunMove(void) {
   UpdateRisingParticleBurst(object);
 }
 
-/// Spawns the broken item (object 215) 16 pixels above object and moves it 16
-/// pixels the way object faces (to the nearest quarter turn), with 8
-/// particles round it. Returns the item, or 0.
+/// Spawns Move's hand (object 215) 16 pixels above object, at quarter size,
+/// and moves it 16 pixels the way object faces (to the nearest quarter
+/// turn), with 8 particles round it. Returns the hand, or 0 when it cannot be
+/// spawned (Object_Spawn); the caller releases it (UpdateRisingParticleBurst).
 void *BattleFx_StartItemBreak(void *object) {
   struct MotionObject *source = object;
   struct MotionObject *parent;
@@ -336,7 +351,7 @@ void *BattleFx_StartItemBreak(void *object) {
       215, source->x, source->y + (16 << 16), source->z);
   if (parent == 0)
     return 0;
-  parent->scaleY = 0x4000; // from 0.25
+  parent->scaleY = 0x4000;
   parent->scaleX = 0x4000;
   parent->update = BattleFx_UpdateItemBreakFragment;
   parent->speedLimit = 2 << 16;
@@ -372,8 +387,10 @@ void *BattleFx_StartItemBreak(void *object) {
   return parent;
 }
 
-/// Per-frame update: grows an object's scale by 1/16 a frame up to full size
-/// and fixes its position.
+/// Sets an object's scale at once to full size (its first step of 1/16 past
+/// 0xffff: 0x10000 from a multiple of 1/16) when it is smaller, then waits,
+/// at most 600 frames, for it to arrive at its target. Called by both Move
+/// effects on the hand.
 void BattleFx_SnapScaleToFull(struct MotionObject *obj) {
   s32 next;
   s32 scale;
@@ -392,8 +409,10 @@ void BattleFx_SnapScaleToFull(struct MotionObject *obj) {
   }
 }
 
-/// Per-frame update: the object spins as it rises for 31 frames, shrinks, and
-/// bursts into 8 particles.
+/// Ends a hand: over 31 frames it rises 1 pixel, turns 1/8 turn and shrinks
+/// by 1/32 of full size a frame, then bursts into 8 particles and is
+/// released. Not a per-frame update: it waits the frames itself. Called by
+/// the Move effects and Lift.
 void UpdateRisingParticleBurst(void *object) {
   struct MotionObject *src = object;
   struct MotionObject *child;

@@ -5,36 +5,47 @@
 #include "../object_internal.h"
 
 /// A field scene's encounter zones (gBattle_LocationRules, location_rules.s),
-/// ended by scene -1.
+/// ended by scene -1. Encounter_SelectSceneZones takes the first rule that
+/// matches the scene and entrance and is not turned off.
 struct BattleLocationRule {
-  s16 scene;
+  s16 scene;                 ///< -1 ends the table
   s16 entrance;              ///< -1 for any entrance
   s16 flag : 15;             ///< -1, or a flag that turns the rule off once set
   s16 firstZoneOnGround : 1; ///< the first zone is for ground 0, not 1
-  s16 firstZone;             ///< the first of up to seven consecutive zones
+  /// The first of up to seven consecutive zones, rows of encounter.tsv; 0 for
+  /// none on any ground.
+  s16 firstZone;
 };
 
 extern const struct BattleLocationRule gBattle_LocationRules[];
 
 /// The world map's encounter zone for each kind of terrain
-/// (gWorldMap_EncounterRules, zonedata.c), ended by kind -1.
+/// (gWorldMap_EncounterRules, zonedata.c), ended by kind -1. Read by
+/// Encounter_ResolveWorldMapZoneAndBackdrop, first match first.
 typedef struct TerrainRule {
-  s16 kind;     ///< the terrain kind of the map block
-  s16 behavior; ///< the terrain's behavior, or -1 for any
-  s16 flag;     ///< -1, or a flag that turns the rule off once set
-  s16 zone;
+  s16 kind; ///< the terrain kind of the map block; -1 ends the table
+  /// The terrain's behavior, which also picks the backdrop (1 to 7,
+  /// Battle_SelectTerrainBackdrop), or -1 for any.
+  s16 behavior;
+  s16 flag; ///< -1, or a flag that turns the rule off once set
+  s16 zone; ///< a row of encounter.tsv
 } TerrainRule;
 
 /// The number of enemy groups an encounter zone can hold.
 enum { ENCOUNTER_GROUP_COUNT = 8 };
 
-/// An encounter zone, a row of encounter.tsv: its rate, the level it is made
-/// for, and the enemy groups that can appear with their chances.
+/// An encounter zone, a row of encounter.tsv (gEncounter_EnemyGroupTable): its
+/// rate, the level it is made for, and the enemy groups that can appear with
+/// their chances. 28 bytes, the 14 halfwords Encounter_GetEnemyGroupAtSlot
+/// counts a zone as.
 struct EncounterZone {
-  u16 rate;                           ///< the base encounter rate
-  u16 level;                          ///< the party level the zone is made for
-  u16 enemies[ENCOUNTER_GROUP_COUNT]; ///< the enemy groups that can appear
-  u8 weights[ENCOUNTER_GROUP_COUNT];  ///< each group's relative chance
+  /// The base encounter rate; 0 for zone 0 (no encounters) and for a zone only
+  /// scripted battles, mimics and Djinn use.
+  u16 rate;
+  u16 level; ///< the party level the zone is made for
+  /// The enemy groups that can appear, rows of battle/formatn.tsv.
+  u16 enemies[ENCOUNTER_GROUP_COUNT];
+  u8 weights[ENCOUNTER_GROUP_COUNT]; ///< each group's relative chance
 };
 
 /// Chooses the current scene's encounter zones, one for each kind of ground
@@ -42,10 +53,12 @@ struct EncounterZone {
 /// EffectRuntime_LookupByTableEntry), from the first rule matching the scene
 /// and entrance. Ground 0 has none, and grounds 1 to 7 take consecutive zones
 /// from the rule's first one. With useRules 0, or no matching rule, no ground
-/// has encounters. Also resets the encounter counters and chooses the battle
-/// backdrop. Called by Field_RunScene on scene load, with useRules 0 on the
-/// world map and 1 in a field scene; writes work->encounterGroups,
-/// encounterBias and encounterThreshold, and gGameState.special.
+/// has encounters. Also resets the random bias and the battle threshold (the
+/// count itself, gGameState.encounterSteps, is reset only when a random battle
+/// starts or a new scene group is entered) and chooses the battle backdrop.
+/// Called by Field_RunScene on scene load, with useRules 0 on the world map and
+/// 1 in a field scene; writes work->encounterGroups, encounterBias and
+/// encounterThreshold, and gGameState.special.
 void Encounter_SelectSceneZones(s32 useRules) {
   struct FieldWork *work;
   s32 scene;
@@ -120,10 +133,15 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
 }
 
 /// Advances the encounter counter for zone and returns the enemy group to
-/// fight, or 0 for no battle. steps (16.16) scales how far the counter moves;
-/// a battle starts once it reaches encounterThreshold. FLAG_NO_ENCOUNTERS,
-/// flag 353 and gGameState.cloaked prevent battles. Flag 351 skips the checks
-/// and the counting and draws a group at once.
+/// fight (a row of formatn.tsv), or 0 for no battle. steps (16.16) scales how
+/// far the counter moves; a battle starts once it reaches encounterThreshold.
+/// FLAG_NO_ENCOUNTERS, flag 353 (0x161) and gGameState.cloaked (Cloak) prevent
+/// battles. Flag 0x161 is set by Venus Lighthouse while its Reveal path is
+/// shown (English and later editions), by Mercury Lighthouse while the leader
+/// carries the pillar's lights and by the world map's debug entrance 99, and
+/// cleared by every entry that does not keep the party's position. Flag 351
+/// (0x15f), which no ☀️ C code sets, skips the checks and the counting and
+/// draws a group at once.
 /// Called by Encounter_RollTerrain and Encounter_RollWorldMap; adds to
 /// gGameState.encounterSteps, sets or clears work->encounterBias, and on a
 /// battle sets gGameState.sceneCue.
@@ -156,8 +174,11 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
     rate = entry->rate;
     if (rate == 0)
       return 0;
-    // With flag 5 set, there are no encounters while unit 5 has more than 130
-    // experience points.
+    // Flag 5 is FLAG_IN_PARTY(JENNA): with Jenna in the party, there are no
+    // encounters while she has more than 130 experience points. XXX: why is
+    // unknown. Vale adds her with Garet (Event_RoofMended, scene/vale.c) and
+    // the debug battle's presets can add her (battle/battle/debug.c); her
+    // experience there, and where she leaves the party, would settle it.
     if (GameFlag_TestFar(5) != 0) {
       level = UnitGetFar(5)->experience;
       if (level > 130)
@@ -172,8 +193,9 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
       return 0;
     rate += level * 5;
 
-    // A random bias, the sum of four random numbers, varies the distance
-    // between battles; it is drawn again after each battle.
+    // A random bias varies the distance between battles: two differences of
+    // random numbers, halved, so from -65535 to 65535 and most often near 0.
+    // It is drawn again after each battle.
     bias = work->encounterBias;
     if (bias == 0) {
       s32 a = Random16();
@@ -218,7 +240,8 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
 }
 
 /// Rolls a random battle on the encounter zone of the ground underfoot.
-/// terrain: the terrain number, 0 for ordinary ground.
+/// terrain: the ground, an index into work->encounterGroups: 0 for ordinary
+/// ground, 1 and 2 for cells of collision code 240 and 241.
 /// steps: the step weight, passed on to Encounter_SelectEnemyGroup.
 /// Returns the enemy group to fight, or 0 for no battle.
 /// Called by Field_ProcessStep in a field scene, which stores the result in
@@ -267,7 +290,7 @@ struct SceneInteractionEntry {
   s16 entrance : 15; ///< -1 for any entrance
   u16 idIsScene : 1; ///< 1 when id is a scene, 0 when it is a group
   s16 flag;          ///< -1, or a flag that must be set
-  s16 music;
+  s16 music;         ///< the song (songs.h's MUS_ numbers)
 };
 
 extern const struct SceneInteractionEntry gScene_InteractionRuleTable[];
@@ -313,13 +336,17 @@ struct SceneAreaNameRule {
   s16 id;             ///< a scene, or a scene group
   s16 entrance : 15;  ///< -1 for any entrance
   u16 useSceneId : 1; ///< 1 when id is a scene, 0 when it is a group
-  s32 areaNameIndex;  ///< the place name
+  /// The place name, as an offset that most readers add to MsgDebugEntryName.
+  /// 0 is the title screen's name (group 0's rule), which a scene no rule
+  /// matches also gets.
+  s32 areaNameIndex;
 };
 
 extern const struct SceneAreaNameRule gScene_AreaNameRules[];
 
 /// Returns the place name of scene and entrance, from the first rule matching
-/// the scene or its group; 0 when none does. Called by the save, debug and
+/// the scene or its group; 0, the title screen's name, when none does. No
+/// reader treats 0 apart. Called by the save, debug and
 /// location windows through Scene_GetAreaNameIndexFar, and by
 /// Map_UpdateWorldMapMarkers; most add it to MsgDebugEntryName for the
 /// message. The save stores it as its area (save_state.h).
@@ -389,6 +416,7 @@ void Battle_SelectSceneBackdrop(void) {
 
   if (entry != 0 && entry != target) {
     do {
+      // A backdrop marker: bit 31 set, the backdrop's resource id below.
       if (entry & 0x80000000) {
         backdrop = entry & 0xFFFF;
       }
@@ -453,6 +481,7 @@ void BattleFx_SelectBattleCue(s32 zone, s32 slot) {
         break;
       if (value == key)
         break;
+      // A song marker: bit 15 set, the song in the low 12 bits.
       if (value & 0x8000)
         music = value & 0xfff;
     }

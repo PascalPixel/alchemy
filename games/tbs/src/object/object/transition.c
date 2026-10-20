@@ -38,19 +38,23 @@ void BattleFx_StartWindowHBlankDma(void) {
 /// line, or, when that is 0, edges moving from left x0 and right y0 to left
 /// x1 and right y1 down the run.
 struct TransitionSpan {
-  u16 cnt; ///< lines
+  u16 cnt; ///< lines; 0 for an unused run
+  /// The (left << 8 | right) pair every line of the run takes, or 0 for the
+  /// sloped edges below.
   u16 val;
-  u8 x0; ///< screen pixels
-  u8 x1; ///< screen pixels
-  u8 y0; ///< screen pixels
-  u8 y1; ///< screen pixels
+  u8 x0; ///< screen pixels: the left edge on the run's first line
+  u8 x1; ///< screen pixels: the left edge the run moves toward
+  u8 y0; ///< screen pixels: the right edge on the run's first line
+  u8 y1; ///< screen pixels: the right edge the run moves toward
 };
 
-/// One step of the shape window transition: the WININ and WINOUT values,
-/// swapped as the transition opens or closes, and three runs of lines.
+/// One step of the shape window transition (mode 1), a row of
+/// gDisplayTransition_Shapes chosen by the progress: the WININ and WINOUT
+/// values, swapped as the transition opens or closes, and three runs of lines
+/// written one after another from the top of the screen.
 struct TransitionShape {
-  u16 first;
-  u16 second;
+  u16 first;  ///< WINOUT while opening, WININ while closing
+  u16 second; ///< WININ while opening, WINOUT while closing
   struct TransitionSpan spans[3];
 };
 
@@ -151,6 +155,10 @@ void DisplayTransition_UpdateScanlineTable(void) {
     }
   }
 
+  // Build the page not shown. Its line pairs start as the open UI windows'
+  // edges (UiWindow_FillFromSceneFar; with no UI work, 0xe0e0 over the first
+  // 80 lines only, as its XXX notes); each mode below then writes window 0's
+  // edge of every pair and leaves window 1's.
   scanlineData = state->pages[1 ^ state->page];
   UiWindow_FillFromSceneFar(scanlineData + 2);
 
@@ -592,12 +600,13 @@ struct DisplayTransitionState *DisplayTransition_AllocateAndClearState(void) {
 
 /// Fades the screen in over frames frames. mode's high byte chooses how: 0
 /// from black, 1 from the backdrop colour, 2 a window transition (its low
-/// byte the mode), 3 a dissolve, 4 opening from the centre line (low byte 1
-/// flickers).
+/// byte the mode), 3 a dissolve, 4 opening from the centre line (a non-zero
+/// low byte flickers). It returns after one frame while the fade runs on: a
+/// caller that must wait for it, as Field_RunScene does, waits itself.
 ///
 /// Called by Field_RunScene to fade a scene in with work->transition and
 /// work->transitionFrames, and by Event_StartScreenTransition for scene
-/// scripts. Kinds 2 to 4 add a scheduler callback (and kind 4 the VCount
+/// scripts. Kinds 2 to 4 add a scheduler callback (and kind 4 the HBlank
 /// handler, IRQ 1) that runs the transition; every kind ORs the map's display
 /// bits into DISPCNT through the I/O write queue.
 void DisplayTransition_Start(s32 mode, s32 frames) {
@@ -694,7 +703,8 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
 /// Called by Field_RunScene as a scene ends, by Field_StartEncounterTransition
 /// before a battle (kinds 0x401 and 0x207), and by Event_FinishScreenTransition
 /// for scene scripts. The window and dissolve kinds run from value 32 to 64,
-/// the centre line from 0 to 80.
+/// the centre line from 0 to 80. Like DisplayTransition_Start it does not
+/// wait for the fade: Field_RunScene waits transitionFrames after it.
 void DisplayTransition_Finish(s32 mode, s32 frames) {
   s32 variant;
   s32 transitionKind;
@@ -790,7 +800,7 @@ void DisplayState_ClearFlags(s32 clearBg3, s32 clearBg2, s32 clearBg1) {
 ///
 /// A scheduler callback added by DisplayTransition_Start and
 /// DisplayTransition_Finish for kind 4, variant 0; when its run ends it removes
-/// itself and the VCount handler.
+/// itself and the HBlank handler.
 void DisplayTransition_Update(void) {
   struct DisplayTransitionFrame *state = *Ram_DisplayWork;
   struct DisplayTransitionWindow *display =
@@ -869,13 +879,14 @@ void DisplayTransition_UpdateFromCentre(void) {
   }
 }
 
-/// The VCount interrupt of the centre-line transition: switches the display
+/// The HBlank interrupt of the centre-line transition: switches the display
 /// to mode 2 (nothing shown) at the first line and back to mode 0 at the
 /// second.
 ///
-/// Installed as IRQ handler 1 by DisplayTransition_Start and
-/// DisplayTransition_Finish for kind 4. Phases: 0 waits for a line on screen,
-/// 1 for whichever edge line comes first, 2 and 3 for the other one; 9 is done.
+/// Installed as IRQ handler 1 (IRQ_HBLANK) by DisplayTransition_Start and
+/// DisplayTransition_Finish for kind 4, so it runs after every line and reads
+/// the line from REG_VCOUNT. Phases: 0 waits for a line on screen, 1 for
+/// whichever edge line comes first, 2 and 3 for the other one; 9 is done.
 void DisplayTransition_UpdateScanline(void) {
   u32 scanline;
   struct DisplayTransitionWindow *state;
@@ -922,7 +933,12 @@ again:
 
 /// Each frame of the dissolve: moves the value toward its end and sets two
 /// more of the solid tile's 64 pixels, in the order of
-/// gDisplayTransition_DitherTable, to colour 15 (or 0 when closing).
+/// gDisplayTransition_DitherTable: to colour 0 while the screen opens (values
+/// 1 to 32 clear the cover DisplayTransition_Start filled with colour 15), and
+/// to colour 15 while it closes (values 33 to 64 fill the clear tile
+/// DisplayTransition_Finish starts from). Each frame sets only the current
+/// value's two pixels, so over fewer than 32 frames some values, and their
+/// pixels, are skipped, and over more some repeat.
 ///
 /// The dissolve's scheduler callback (kind 3 of DisplayTransition_Start and
 /// DisplayTransition_Finish, and DisplayTransition_InitializeState). Queues the
@@ -972,7 +988,8 @@ void DisplayTransition_UpdateFrame(void) {
 }
 
 /// Fills background screen block 4 with tile 0 in palette 15 and, unless color
-/// is -1, makes tile 0 solid color.
+/// is -1, makes tile 0 solid color. The fill is 0x500 bytes: the block's first
+/// 20 rows of 32 entries, the screen's height.
 ///
 /// Sets up the dissolve for DisplayTransition_Start (colour 15),
 /// DisplayTransition_Finish and DisplayTransition_InitializeState (colour 0).

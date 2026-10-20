@@ -5,8 +5,9 @@
 #include "../object_internal.h"
 
 /// Returns how far, in pixels, a field Psynergy of the given kind reaches:
-/// gBattleFx_TargetRangeByMode pairs kinds with ranges, ended by -1, and a kind
-/// not listed reaches 16 pixels. Called by Field_FindNearbyPsynergyTarget.
+/// gBattleFx_TargetRangeByMode (fxdata.c) pairs kinds with ranges, ended by -1,
+/// and a kind not listed reaches 16 pixels. Called by
+/// Field_FindNearbyPsynergyTarget.
 s32 Field_GetPsynergyTargetRange(s32 kind) {
   s16 *rangeEntry = gBattleFx_TargetRangeByMode;
   s32 range = 16;
@@ -26,8 +27,9 @@ s32 Field_GetPsynergyTargetRange(s32 kind) {
 
 /// Returns the actor nearest to actor id that it could talk to, or -1: within
 /// 48 pixels of height and 32 pixels of distance and, beyond 11 pixels, within
-/// 0x2fff of the direction it faces. Actors with collision flag 8 are skipped,
-/// and those with flag 4 count as 10/13 as far.
+/// 0x2fff (about 67 degrees) of the direction it faces. Actors with collision
+/// flag 8 are skipped, and those with flag 4 count as 10/13 as far, so they
+/// can be talked to from up to 41 pixels.
 /// Called with the leader by Field_RunScene for the A button, and by the item
 /// code (items.c) to find whom an item is used on.
 s32 Field_FindNearbyTalkTarget(s32 id) {
@@ -175,8 +177,8 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
     if (distance >= nearestDistance)
       continue;
 
-    // The cone: 0x1800 either side up to 19 pixels, 0x1000 beyond; 0x2000
-    // for Mind Read.
+    // The cone: 0x1800 (about 34 degrees) either side up to 19 pixels,
+    // 0x1000 (22.5 degrees) beyond; 0x2000 (45 degrees) for Mind Read.
     angle = (u16)ArcTan2(candidate->z - source->z, candidate->x - source->x);
     coneHalfAngle = 0x1800;
     if (distance > 19)

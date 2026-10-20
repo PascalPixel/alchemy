@@ -109,7 +109,10 @@ void FadeOverlay_DrawMarks(void) {
 /// 1, VRAM cache block 94) and registers FadeOverlay_DrawMarks. Called by
 /// seven scene overlays (Venus and Mercury Lighthouses, Kalay, the tunnel
 /// ruins, Crossbone Isle, the ice room by Imil and Fuchin Falls); Crossbone
-/// Isle then switches it on and off by setting the work's actor.
+/// Isle then switches it on and off by setting the work's actor. No ☀️ code
+/// stops it (FadeOverlay_Suspend has no named caller): the work and the
+/// callback last until the next scene change resets the heap and the task
+/// table (Game_ResetForNewGame).
 void BattleFx_StartFadeOverlay(void *object) {
   struct FadeOverlayWork *work;
   u8 *tiles;

@@ -8,12 +8,16 @@ STATIC_ASSERT(offsetof(struct ObjectRuntime, velocityY) == 0x28);
 STATIC_ASSERT(offsetof(struct ObjectRuntime, flags) == 0x55);
 STATIC_ASSERT(offsetof(struct ObjectRuntime, animation) == 0x50);
 
-/// An actor as these effects see it.
+/// An object of the 64-object pool (struct ObjectRuntime, 0x70 bytes), seen
+/// as the found item's picture, the sparkles and the Reveal marks use it.
 struct EffectObj {
-  s32 scriptWord; ///< the encoded script pointer
+  /// The script pointer, as a word; 0 while the pool object is free.
+  s32 scriptWord;
   u8 pad0[0x24];
-  s32 velocityY;
+  s32 velocityY; ///< 16.16 fixed-point pixels a frame; up is positive
   u8 pad1[0x1c];
+  /// 16.16 fixed-point pixels taken off velocityY each frame while the object
+  /// falls (motion bit 1); 0x10000 when created.
   s32 gravity;
   u8 pad2[4];
   struct AnimationObject *animation;
@@ -34,7 +38,7 @@ STATIC_ASSERT(offsetof(struct EffectObj, updateHook) == 0x6c);
 // to 0x156 bytes in tbs-en; keep the native read here.
 #define EFFECT_OBJECT_POOL (*(struct EffectObj **)((u8 *)&gEventWork - 88))
 #endif
-#define SPARKLE_OBJECT_ID 285
+#define SPARKLE_OBJECT_ID 285 ///< the sprite of one sparkle
 
 /// Keeps the party leader off the markers: a leader within 16 pixels of a
 /// marker cell's centre is moved 20 pixels from that centre, in the direction
@@ -80,7 +84,8 @@ void Marker_MoveLeaderAway(void) {
 }
 
 /// Starts the particle script and its first child at priority 1, if the spawn
-/// succeeded. Allocation failure leaves the effect absent.
+/// succeeded. Allocation failure leaves the effect absent. The script sinks
+/// the sparkle a quarter pixel a frame for 60 frames, then frees it.
 static inline void Object_InitializeSparkle(struct ObjectRuntime *obj) {
   // Sharing the offset and spawn as well changes literal/argument load order in
   // both emitters, without changing their sizes.
@@ -102,9 +107,9 @@ void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
   struct ObjectRuntime *obj;
   u32 randomRadius;
 
-  // Clear the flags once the picture's rise has all but stopped.
-  // XXX: what the flags at 0x55 hold here is unknown; the object system's
-  // readers of ObjectRuntime.flags would settle it.
+  // Once the picture's rise has all but stopped (under 1/256 pixel a frame),
+  // clearing its motion flags (bit 1 falls, bit 0 follows the terrain;
+  // field_obj.h) ends gravity, so it hangs at the top of its rise.
   if (emitter->velocityY >= -255 && emitter->velocityY <= 255)
     emitter->flags = 0;
 
@@ -123,11 +128,14 @@ void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
 }
 
 /// Shows the picture of item (0 for none) at the centre of the cell 16 pixels
-/// in front of character actor, 16 pixels up, with sparkles. While Reveal is
-/// active, its sparkles are cleared first. Returns the picture's actor, or 0.
-/// The picture is object 22, thrown up (velocityY 2 << 16, gravity 0x4000),
-/// its icon drawn through heap block 17 and loaded into VRAM. Called by
-/// Field_SearchTile for coins and items found, and by
+/// in front of character actor, at a height of 16 pixels whatever the actor's,
+/// with sparkles. While Reveal is active, its marks and sparkles are cleared
+/// first. Returns the picture's actor, or 0 without the actor or a free
+/// object. The picture is object 22, thrown up (velocityY 2 << 16, gravity
+/// 0x4000: it rises for 8 frames) while it grows to full size, its icon drawn
+/// through heap block 17, which is released again, and loaded into VRAM. The
+/// caller owns the picture: Field_SearchTile releases it once the find is
+/// told. Called by Field_SearchTile for coins and items found, and by
 /// BattleFx_PlayCueAndStartEmitterOnTarget.
 struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
   struct EffectObj *picture;
@@ -183,6 +191,8 @@ struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
     struct AnimationObject *sprite = picture->animation;
     void *iconBuffer;
 
+    // No shadow, outline or animation layers: a 16-colour sprite in OBJ
+    // palette 0 whose tiles are the item's icon.
     sprite->flags = 0;
     sprite->count = 0;
     sprite->image.fullColor = 0;
@@ -225,6 +235,8 @@ void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object) {
     return;
 
   leader = ObjectTable_Get(gGameState.selectedActor);
+  // Up to 2 pixels a frame, gaining 1 a frame, in free flight (motion flags
+  // 0: no gravity, no terrain).
   object->acceleration = 1 << 16;
   object->speedLimit = 2 << 16;
   object->flags = 0;
@@ -269,7 +281,9 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags) {
 /// Shows the picture of item 36 pixels above the party leader for 80 frames;
 /// flags bit 0 adds sparkles and bit 1 raises it as a found item. Then it
 /// releases the picture and the leader returns to animation 1. Scene overlays
-/// call it as Engine_ItemShowFound (41 of them).
+/// call it as Engine_ItemShowFound (41 of them). When no object is free, heap
+/// block 17, taken for the icon, is not released (the scene change's heap
+/// reset frees it).
 void BattleFx_StartEffectObject22(s32 item, s32 flags) {
   struct FieldActor *leader = ObjectTable_Get(gGameState.selectedActor);
   void *iconBuffer = Runtime_AllocateHeapBlock(17, 0x608);
@@ -308,10 +322,14 @@ void BattleFx_StartEffectObject22(s32 item, s32 flags) {
 #endif
 
 #if defined(PARTICLES_PAUSE_FOR_MENU)
-#define MENU_OPEN_OFFSET 0xcca ///< in gEventWork: non-zero while a menu is open
+/// In gEventWork, the byte after queuedSound: Menu_RunTopSelection sets it
+/// once Menu_SelectTopEntry first returns, a cancel included, and clears it as
+/// it returns.
+#define MENU_OPEN_OFFSET 0xcca
 
-/// While Reveal is active, destroys all its sparkles. Called by the pause
-/// menu (window/selection.c) when it opens over Reveal.
+/// While Reveal is active, destroys all its sparkles, leaving its marks. Called
+/// by the field menu (Menu_RunTopSelection, window/selection.c) each time
+/// Menu_SelectTopEntry returns, a cancel included, while Reveal is active.
 void BattleFx_ClearRandomParticles(void) {
   if (((struct FieldWork *)gEventWork)->revealActive != 0) {
     struct EffectObj *effect = EFFECT_OBJECT_POOL;
@@ -357,7 +375,8 @@ void RevealMarker_EmitSparkles(union FieldObject *fieldObject) {
 }
 
 /// Returns 1 while Reveal is active, else 0. Run by a Reveal marker's object
-/// script (gBattleFx_MarkerParticleScript) through SC_CALL.
+/// script (gBattleFx_MarkerParticleScript) through SC_CALL: the marker stays
+/// while it returns 1 and frees itself once it returns 0.
 s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
   s16 revealState;
   u32 isActive = 0;

@@ -31,7 +31,9 @@ const u8 gField_TileMessageOffsets[6] = {
 };
 
 /// {field Psynergy kind, range in pixels}, ended by -1; a kind not listed
-/// reaches 16 pixels.
+/// reaches 16 pixels. Field_GetPsynergyTargetRange reads it for the search
+/// for a target: 16 pixels for Ply, Frost, Lift, Carry and Growth, 32 for
+/// Mind Read, Move, Whirlwind, Douse and Halt, 48 for Force and Catch.
 // clang-format off
 const s16 gBattleFx_TargetRangeByMode[25] = {
     3, 16,
@@ -49,7 +51,8 @@ const s16 gBattleFx_TargetRangeByMode[25] = {
     -1,
 };
 
-/// The palette cycle of Animation_ChildPaletteCycle ((gFrameCount >> 1) & 7).
+/// The palette cycle of Mind Read's caster (Animation_ApplyChildPalette,
+/// (gFrameCount >> 1) & 7): palettes 1 to 4 and back to 0, two frames each.
 const u8 gAnimation_ChildPaletteCycle[8] = {1, 2, 3, 4, 3, 2, 1, 0};
 
 /// Grows from half size to full size, a step every 2 frames.
@@ -71,7 +74,8 @@ const s32 gBattleFx_ParticleEmitterScript[] = {
     SC_END,
 };
 
-/// Pulses twice, then rests, over and over.
+/// Pulses twice, to 1.5 times full size (0x18000), then rests, over and
+/// over: the found item's picture held over the leader (object/field_fx.c).
 const s32 gBattleFx_RisingPulseScript[] = {
     SC_WAIT(10),
     SC_SET(SW_SCALE_X, 0x16000),
@@ -103,7 +107,8 @@ const s32 gBattleFx_RisingPulseScript[] = {
     SC_END,
 };
 
-/// Rises for 60 frames, then disappears.
+/// Sinks a quarter pixel a frame (y, the height, less 0x4000) for 60 frames,
+/// then disappears.
 const s32 gBattleFx_ParticleScript[] = {
     SC_ADD(SW_Y, -0x4000),
     SC_WAIT(1),
@@ -111,6 +116,8 @@ const s32 gBattleFx_ParticleScript[] = {
     SC_FREE,
 };
 
+/// A Reveal marker: stays while Field_IsRevealActive returns nonzero (SC_CALL
+/// runs it again each frame), and frees itself once Reveal ends.
 const s32 gBattleFx_MarkerParticleScript[] = {
     SC_CALL(Field_IsRevealActive),
     SC_FREE,
@@ -136,7 +143,11 @@ const u8 gDisplayTransition_DitherTable[64] = {
     62, 45, 19, 60, 57, 49, 25, 55, 38, 14, 44, 13, 33, 37, 1, 21,
 };
 
-/// Colour channel curves (0 to 31, to channels up to 0x7c00).
+/// Colour channel curves of the palette transforms (object/color.c): each
+/// maps a 5-bit channel (0 to 31) to a colour buffer channel, shifted up 10
+/// bits, so 31 is 0x7c00. All three darken the middle tones: 16 becomes
+/// about 11.4 here (0x2dc3), 12.4 in the Light curve, 12.5 in the Contrast
+/// curve, which also reaches 31 already at 25.
 const u16 gBattlePalette_ChannelCurve[32] = {
     0x0000, 0x020c, 0x042f, 0x066b, 0x08c0, 0x0b2f, 0x0db9, 0x105f,
     0x1322, 0x1603, 0x1903, 0x1c22, 0x1f63, 0x22c5, 0x264b, 0x29f4,
@@ -158,8 +169,11 @@ const u16 gBattlePalette_ChannelCurveContrast[32] = {
     0x729c, 0x7c00, 0x7c00, 0x7c00, 0x7c00, 0x7c00, 0x7c00, 0x7c00,
 };
 
-/// Speaker definitions: {sprite, portrait (0xff for none), idle line flags}.
-/// BattleFx_FindDefinition searches all 131; the last is the default.
+/// Speaker definitions: {sprite, voice (0xff for none), idle line flags}.
+/// The voice is the first of four blip sounds less 256: a message plays
+/// sound 256 + voice as it types (BattleFx_GetResourceId), so the values
+/// step by 4. BattleFx_FindDefinition compares the first 130 and returns
+/// the last, never compared, as the default.
 const struct BattleEffectEntry gBattleFx_DefinitionTable[131] = {
     {0, 16, 0x00},
     {1, 16, 0x00},
@@ -340,7 +354,8 @@ const s32 gObjectMotion_VariantScripts[97] = {
     SC_END,
 };
 
-/// A child value by frame ((gFrameCount >> 1) & 3).
+/// A blinking actor's sprite param by frame ((gFrameCount >> 1) & 3,
+/// ObjectGroup_ApplyIndexedChildValue): 7 for two frames out of eight.
 const u8 gObjectGroup_BlinkChildValues[4] = {7, 0, 0, 0};
 
 /// Sine times 4096, 256 steps to a turn.
@@ -379,7 +394,12 @@ const s16 gDisplayScroll_WaveSine[256] = {
     -799, -700, -601, -501, -401, -301, -200, -100,
 };
 
-/// {dx, dy, tile, shape, size} for each of 16 frames.
+/// {dx, dy, tile, shape, size} for each of 16 frames of a ground particle
+/// (weather.c): dx and dy in screen pixels from its spot, tile from its
+/// first tile. Its timer counts down, so the rows play from the last: it
+/// comes down from 64 pixels right and 160 up, 8 left and 16 down a frame,
+/// then stays 8 pixels left and 12 up of its spot for seven frames while its
+/// tile goes from 8 to 20.
 const s16 gFieldFx_GroundParticleFrames[80] = {
     -8, -12, 20, 0, 1,
     -8, -12, 20, 0, 1,
@@ -399,7 +419,11 @@ const s16 gFieldFx_GroundParticleFrames[80] = {
     64, -160, 0, 2, 2,
 };
 
-/// {dy, tile}
+/// {dy, tile} of a sparkle (weather.c): dy in screen pixels from its spot, a
+/// row every two frames. Its timer counts down, so the rows play from the
+/// one it starts at (row 15 for a burst's first sparkle, as far as row 29
+/// for the rest) to row 0: it comes down to its spot, slowing as it nears
+/// it, its tile going 0, 4, 8, 12.
 const struct SparkleFrame gFieldFx_SparkleFrames[32] = {
     {-2, 12},
     {-4, 12},
@@ -435,8 +459,9 @@ const struct SparkleFrame gFieldFx_SparkleFrames[32] = {
     {-120, 0},
 };
 
-/// Two scales that alternate ((gFrameTick >> 2) & 1); nothing reads the third
-/// word.
+/// Two scales that alternate ((gFrameTick >> 2) & 1): full size and 0.97 of
+/// it (BattleFx_SetObjectAlternatingWords, jupiter.c); nothing reads the
+/// third word.
 const u32 gBattleFx_PulseScales[3] = {0x10000, 0xf851, 16};
 
 /// [0] only frees the actor, +1 waits for it to arrive and frees it; +3 is
@@ -447,12 +472,17 @@ const s32 gBattleFx_CommonParticleScript[] = {
     SC_FREE,
 };
 
+/// Faces the linked object every frame, forever: the caster holding its
+/// target while Move, Carry or Lift has it (each gives the caster its target
+/// first).
 const s32 gBattleFx_SourceHoldScript[] = {
     SC_FACE_LINK,
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// A shard or particle: waits to arrive, slows to 1/16 pixel a frame, and
+/// frees itself 10 frames later.
 const s32 gBattleFx_FragmentScript[] = {
     SC_SYNC,
     SC_SET(SW_SPEED, 0x1000),
@@ -462,7 +492,9 @@ const s32 gBattleFx_FragmentScript[] = {
 };
 
 /// An angle for each value of the right, left, up and down bits of the
-/// +Control Pad; 0xffff for none.
+/// +Control Pad; 0xffff for none (Input_GetDpadAngle, move.c). Opposite
+/// directions cancel, and a diagonal gives none, so Move pushes only along
+/// the four directions.
 const u16 gBattleFx_CyclePatternWords[16] = {
     0xffff, 0x0000, 0x8000, 0xffff,
     0xc000, 0xffff, 0xffff, 0xc000,
@@ -470,9 +502,12 @@ const u16 gBattleFx_CyclePatternWords[16] = {
     0xffff, 0x0000, 0x8000, 0xffff,
 };
 
+/// Move's hand animation by the quarter turns from its side of the target to
+/// the push (move.c): 3 toward its side, 2 away from it, 1 either way across.
 const u8 gBattleFx_QuadrantModes[4] = {3, 1, 2, 1};
 
-/// Word +4 is gBattleFx_HeavyImpactScript.
+/// Waits 60 frames and frees the object. Word +4 is
+/// gBattleFx_HeavyImpactScript.
 const s32 gBattleFx_BurstParticleObjectScript[] = {
     SC_WAIT(60),
     SC_FREE,
@@ -481,6 +516,8 @@ const s32 gBattleFx_BurstParticleObjectScript[] = {
 /// The same four bytes as gBattleFx_QuadrantModes; nothing reads them.
 const u8 gUnused_BattleFxBytes[4] = {3, 1, 2, 1};
 
+/// Waits to arrive, sets off SpawnHeavyImpactEffect (lift.c) and frees the
+/// object.
 const s32 gBattleFx_HeavyImpactScript[] = {
     SC_SYNC,
     SC_CALL(SpawnHeavyImpactEffect),
@@ -503,9 +540,14 @@ const s32 gBattleFx_LongEffectScript[] = {
     SC_FREE,
 };
 
+/// The sprite params a paused object flickers through at random
+/// (BattleEffect_SetRandomTableValueOnObject, halt.c): 0 twice as often as
+/// each of 1 to 6.
 const s8 gBattleFx_RandomChildValues[8] = {0, 0, 1, 2, 3, 4, 5, 6};
 
-/// The brightness of the world map markers ((gFrameCount >> 1) & 31).
+/// The world map markers' blend weight in sixteenths, against the picture's
+/// 16 less it ((gFrameCount >> 1) & 31, Map_UpdateWorldMapMarkers): solid
+/// for 32 frames, then down to half and back over the next 32.
 const u8 gWorldMap_MarkerBlendCycle[32] = {
     16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
     16, 15, 15, 14, 12, 10, 9, 9, 8, 9, 9, 10, 12, 14, 14, 15,

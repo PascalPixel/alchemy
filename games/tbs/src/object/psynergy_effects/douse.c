@@ -4,44 +4,52 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// A FieldActor seen with the halfword at 0x5e (here its phase), which
-/// FieldActor does not name.
+/// A FieldActor as Douse's orb and drops use it; the notes give the
+/// FieldActor fields at the same offsets.
 struct Effect05Object {
   u8 reserved00[8];
-  s32 x, y, z;
-  s32 altitude; ///< the height it falls to
+  s32 x, y, z;  ///< 16.16 fixed-point pixels
+  s32 altitude; ///< terrainHeight: a drop's height to fall to
   s32 scaleX, scaleY;
   u8 reserved20[8];
-  s32 velocityY;
+  s32 velocityY; ///< 16.16 fixed-point pixels per frame, up
   u8 reserved2c[4];
-  s32 speed;
+  s32 speed; ///< speed limit, 16.16 fixed-point pixels per frame
   u8 reserved34[0x1c];
   struct WaveFxSprite *sprite;
   u8 reserved54;
-  u8 flag;
+  u8 flag; ///< motionFlags: 2 falls, 0 free flight
   u8 reserved56[8];
+  /// wait: frames its script waits before it runs on; 2 or 6 here, before
+  /// gBattleFx_CommonParticleScript frees it.
   s16 phase;
   u8 reserved60[0xc];
   void (*callback)(union FieldObject *object); ///< per-frame update
 };
 
-/// Douse's effect work: the orb's destination (or the angle toward it), the
-/// target, and the flags that choose how the light falls.
+/// The effect scene (struct BattleFxScene, gEffectWork) as Douse reads it;
+/// the notes give the BattleFxScene fields at the same offsets.
 struct Effect05State {
-  s32 angle;   ///< 1/65536 turns
-  s32 x, y, z; ///< the ground under the orb's destination
-  struct Object *target;
-  s32 initialized;
+  s32 angle;             ///< 1/65536 turns: the way the caster faces
+  s32 x, y, z;           ///< the ground under the orb's destination
+  struct Object *target; ///< mainObject: the caster, despite the name
+  s32 initialized;       ///< child: the target's object, 0 for none
   u8 reserved18[8];
+  /// enabled: set at the start, cleared when a scene event names the target
+  /// (BattleFx_DispatchRequestKind). Set, 10 particles fall; cleared, 24
+  /// drops, or 30 swaying particles in Mercury Lighthouse.
   u8 highArc;
   u8 reserved21[0x13];
-  u8 variant;
+  u8 variant; ///< childOption: set by a scene, the orb stops 80 pixels up
   u8 reserved35[0x10];
+  /// lit: set in two Mercury Lighthouse maps (setup.c), where swaying
+  /// particles (object 0x11c) fall rather than splashing drops.
   u8 alternate;
 };
 
-/// Per-frame update of a falling particle: on reaching altitude, it scatters
-/// three small particles.
+/// Per-frame update of a falling drop: on reaching altitude it is freed 2
+/// frames later and scatters three half-size splashes, which hop toward
+/// points 32 pixels away and are freed after 6 frames.
 void FieldFx_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
   struct Effect05Object *particle = (struct Effect05Object *)fieldObject;
   s32 i;
@@ -81,8 +89,9 @@ void FieldFx_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
   }
 }
 
-/// Per-frame update: drifts from side to side as it slowly falls, and is
-/// released on reaching the ground.
+/// Per-frame update: drifts from side to side, up to a pixel a frame, as it
+/// falls 0.3 pixels a frame, and is released on reaching its ground height.
+/// Douse's swaying particles in Mercury Lighthouse.
 void BattleFx_UpdateDriftingFallObject(union FieldObject *fieldObject) {
   struct ObjectRuntime *particle = (struct ObjectRuntime *)fieldObject;
   s32 drift;
@@ -101,14 +110,15 @@ void BattleFx_UpdateDriftingFallObject(union FieldObject *fieldObject) {
 /// Abilities: Douse (field kind 5), cast on a target.
 void FieldFx_RunDouseOnTarget(s32 unused) { FieldFx_RunDouse(); }
 
-/// An orb of light rises from 16 pixels above the target to 32 pixels above the
+/// An orb rises from 16 pixels above the caster to 32 pixels above the
 /// destination (80 with variant) over 10 frames, growing as it goes, rains
 /// particles, and returns.
 ///
 /// Abilities: Douse (field kind 5).
 ///
-/// With no destination yet, the destination is 16 pixels from the target toward
-/// angle.
+/// The destination is the target's position (BattleFx_SetupObjectPair);
+/// with no target it is 16 pixels in front of the caster, on the ground.
+/// Called by BattleFx_Run, and through FieldFx_RunDouseOnTarget.
 void FieldFx_RunDouse(void) {
   struct EffectVector pos;
   struct EffectVector start;
@@ -129,6 +139,7 @@ void FieldFx_RunDouse(void) {
     return;
   BattleEffect_InitializeSharedScene();
   AudioCommand_PlayFar(SE_ITEM_BREAK);
+  // No target: 16 pixels in front of the caster, at the ground's height.
   if (work->initialized == 0) {
     work->x = target->pos.x;
     work->z = target->pos.z;

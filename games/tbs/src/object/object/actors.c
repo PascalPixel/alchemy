@@ -5,13 +5,16 @@
 #include "../object_internal.h"
 
 enum {
-  ACTOR_DJINNI_FLAG_COUNT = NUM_ELEMENTS * 20, ///< 20 flags per element
+  /// 20 flags per element: the Djinn's caught flags are 48 to 127.
+  ACTOR_DJINNI_FLAG_COUNT = NUM_ELEMENTS * 20,
+  /// The tunic's child part, drawn over a child sprite while
+  /// FLAG_ISAAC_WEARS_TUNIC is set.
   ACTOR_TUNIC_ANIMATION = 226
 };
 
 /// Returns the sprite of character, which is the character itself except that
-/// FLAG_CHILDHOOD gives characters 0 and 1 sprites 0x12 and 0x13, and
-/// FLAG_ISAAC_WEARS_TUNIC gives grown Isaac sprite 0x11.
+/// FLAG_CHILDHOOD gives characters 0 and 1 sprites 0x12 and 0x13 (ISAAC_CHILD
+/// and GARET_CHILD), and FLAG_ISAAC_WEARS_TUNIC gives grown Isaac sprite 0x11.
 ///
 /// Called by Event_SpawnObjectTable for every placement, and by
 /// PsynergyMenu_InitializeEntryObjects (through
@@ -66,8 +69,12 @@ extern const struct ScenePlacement gField_DefaultPlacements[2];
 /// characters and take their own actor slot; other placements take the actor
 /// slots from slot on, one each, up to slot 65. A placement whose condition
 /// does not hold is skipped, as is a Djinni hidden after a lost battle outside
-/// the world map. An existing actor is moved back to its place unless the
-/// party keeps its position.
+/// the world map, but it still uses up its slot: actor slot + n is always row
+/// n, counted from 0, of the table's rows of sprite 8 or more, as
+/// Scene_FindActorPlacement counts them. An existing actor is moved back to
+/// its place unless the party keeps its position. The table is kept by
+/// address, so it must last as long as the scene (the overlay's own tables
+/// do).
 ///
 /// Called by ObjectTable_ResetForObject (the leader, then the scene's table),
 /// BattleEffect_ClearAllObjects and Event_CallWithLastActiveObjectId. Records
@@ -116,7 +123,10 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
     object = ObjectTable_Get(actorIndex);
     if (object == 0) {
       object = Object_CreateFar(spriteId, entry->x, entry->y, entry->z);
-      // Placement flag 1: share the previous actor's sprite resource.
+      // Placement flag 1: share the previous actor's sprite resource. The new
+      // sprite draws from the previous one's VRAM cache entry, its own entry
+      // is freed, and both are marked to keep the shared entry when either
+      // is released.
       if (entry->flags & PLACEMENT_SHARE_PREVIOUS_SPRITE) {
         previous = ObjectTable_Get(actorIndex - 1);
         if (previous->animationKind == 1 && object->animationKind == 1) {
@@ -140,25 +150,32 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
 
     if (object) {
       ObjectDispatch_SelectAnimationFar(object, 1);
-      // Start each idle animation at a random frame.
+      // lastNo is the animation last selected, which selecting again skips: a
+      // random 0 to 29 makes the second selection below restart animation 1
+      // from its first frame, unless it happens to be 1. XXX: likely meant to
+      // start each idle at a random frame, because the value is random; as it
+      // stands it only forces the restart.
       if (object->animationKind == 1 && (sprite = object->animation) != 0)
         sprite->lastNo = ((u32)(Random16()) % (u32)30);
       object->angle = entry->facing;
+      // Solid (collision bit 0).
       object->collisionFlags = 1;
       ObjectMotion_SetActionCallback(object, entry->behavior);
       ObjectDispatch_SelectAnimationFar(object, 1);
       ((struct ScriptObjectRuntime *)object)->homeX = object->x / 0x10000;
       ((struct ScriptObjectRuntime *)object)->homeZ = object->z / 0x10000;
-      // A placement with a height is lifted half a pixel more and takes flags
-      // 4; outside the world map every height is then counted from the
-      // terrain below.
+      // A placement with a height is lifted half a pixel more and takes motion
+      // flags 4, floating: it neither follows the terrain nor falls (bits 0 and
+      // 1, field_obj.h). Outside the world map every height is then counted
+      // from the terrain below.
       if (object->y != 0) {
         object->flags = 4;
         object->y += 0x8000;
       }
       if (work->mode == MODE_WORLD_MAP) {
-        // World-map placements use single sprites. While the tunic flag is
-        // set, all keep their native scale; otherwise they draw at 3/4 size.
+        // World-map placements use single sprites and do not follow the
+        // terrain (motion bit 0). While the tunic flag is set, all keep their
+        // native scale; otherwise they draw at 3/4 size.
         object->flags &= 0xfe;
         if (!GameFlag_TestFar(FLAG_ISAAC_WEARS_TUNIC)) {
           // UB: sprite creation can fail while the actor slot stays live.
@@ -212,8 +229,8 @@ void ObjectTable_DestroyAtIndex(s32 actorIndex) {
 ///
 /// Called by Field_RunScene on entering a scene, and by
 /// Event_RunObjectHookAndWait.
-/// Empties every actor slot and table first; sets work->camera, the map's
-/// origin and gGameState.movementMode.
+/// Empties every actor slot and table first, without destroying the actors in
+/// them; sets work->camera, the map's origin and gGameState.movementMode.
 void ObjectTable_ResetForObject(struct ScenePlacement *table) {
   struct FieldWork *work;
   struct ScenePlacement *entry;
@@ -228,7 +245,8 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
   work = (struct FieldWork *)gEventWork;
   leader = gGameState.selectedActor;
   // Build the leader's temporary placement before the scene's placed actors.
-  // The two-row table lives in the event work at 0x200.
+  // The two-row table, the leader's row and an end row, lives in the event
+  // work at 0x200 (FieldWork's unk200) and lasts with it.
   entry = (struct ScenePlacement *)((u8 *)work + 0x200);
   entry[0] = gField_DefaultPlacements[0];
   entry[1] = gField_DefaultPlacements[1];
@@ -243,6 +261,9 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
   Event_SpawnObjectTable(table, ACTOR_FIRST_PLACED);
 
   object = (struct ObjectRuntime *)work->actors[leader];
+  // gGameState.turn keeps the leader's map layer (Field_RunScene saves its
+  // terrainId there). Its cell: 16 pixels square, 128 to a row, so above is
+  // the cell north of it.
   object->terrainId = gGameState.turn;
   pos = (object->x / 0x100000) + (object->z / 0x100000) * 128;
   cell = &MAP_CELLS[pos];
@@ -262,7 +283,8 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
   }
 
   // The camera follows this leader and starts at its resolved ground height;
-  // the map scrolls by the camera's position.
+  // the map scrolls by the camera's position. Id 0x8000 is object kind 8
+  // (id / 4096, FieldObject_Create), which takes no sprite.
   camera = Object_CreateFar(0x8000, object->x, object->y, object->z);
   camera->terrainHeight = object->terrainHeight;
   ObjectDispatch_StartCameraFar((struct DispatchObject *)camera, (s32)object);
@@ -391,8 +413,10 @@ void BattleEffect_ClearOutOfBoundsObjects(void) {
           u8 *removed = &actor->spriteStorageKind;
           u32 flags;
 
-          // Release the sprite's retained cache entry when destroying the
-          // actor.
+          // Kind 1 makes the release free the actor's one sprite, and clearing
+          // retainCacheEntry (bit 0 of sprite byte 29) frees its VRAM cache
+          // entry with it, even one shared with a neighbour
+          // (PLACEMENT_SHARE_PREVIOUS_SPRITE).
           *removed = 1;
           sprite = (u8 *)actor->sprite;
           flags = sprite[29];
@@ -423,6 +447,8 @@ void BattleEffect_ClearAllObjects(void) {
     struct FieldActor *actor = work->actors[ACTOR_FIRST_PLACED + slotIndex];
 
     if (actor != 0) {
+      // As in BattleEffect_ClearOutOfBoundsObjects: free the sprite and its
+      // VRAM cache entry with the actor.
       actor->spriteStorageKind = 1;
       actor->sprite->retainCacheEntry = 0;
       ObjectDispatch_ReleaseFar((struct DispatchObject *)actor);
@@ -566,6 +592,10 @@ void ObjectTable_Restore(void) {
   while (actorIndex != OBJECT_SNAPSHOT_EMPTY) {
     object = ObjectTable_Get(actorIndex);
     if (object != NULL) {
+      // The copy also brings back the sprite pointer saved with the actor.
+      // The animation and sprite flags below are set through that pointer;
+      // the priorities go to the sprite the actor has now, which is then put
+      // back.
       sprite = object->animation;
       Dma_Set(snapshot, object,
               (DMA_ENABLE | DMA_32BIT) << 16 |

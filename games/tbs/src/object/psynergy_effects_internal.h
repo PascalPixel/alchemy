@@ -99,19 +99,21 @@
 /// The effect slots of a Psynergy effect's scene (gEffectWork->slots).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
 
-/// gGameState.pendingDjinnEvent of Djinni 0 (requests.c, djinni.c).
+/// gGameState.pendingDjinnEvent of Djinni 0 (requests.c, djinni.c): a Djinni
+/// battle's event is 300 plus the Djinni's number (element * 20 + index),
+/// with DJINN_NO_HOP (0x800) beside it.
 #define DJINNI_0 300
 
 /// A FieldActor seen with its position as one vector, to pass it whole. The
 /// gaps are FieldActor fields this view does not use.
 struct Object {
   u8 pad0[6];
-  u16 angle;
-  struct EffectVector pos;
+  u16 angle;               ///< FieldActor.facing, 1/65536 turns
+  struct EffectVector pos; ///< 16.16 fixed-point pixels
   u8 pad1[14];
-  u8 kind;
+  u8 kind; ///< FieldActor.terrainId; not read through this view
   u8 pad2[0x2d];
-  struct AnimationObject *sprite;
+  struct AnimationObject *sprite; ///< FieldActor.sprite
 };
 
 /// Per-frame update of an afterimage: closes half the distance to the object
@@ -126,7 +128,9 @@ BattleFx_MoveAfterimageHalfway(union FieldObject *fieldObject) {
   afterimage->z.fixed += (target->z.fixed - afterimage->z.fixed) / 2;
 }
 
-/// Runs the update of each of the 24 effect slots.
+/// Runs the update of each of the 24 effect slots. The scheduler callbacks
+/// BattleFx_UpdateAllEffectSlots (setup.c) and BattleFx_UpdateAllSlots
+/// (djinni.c) run it once a frame.
 static __inline__ void FieldFx_UpdateSceneSlots(void) {
   struct EffectSlot *slot;
   s32 remainingSlots;
@@ -142,46 +146,50 @@ static __inline__ void FieldFx_UpdateSceneSlots(void) {
 
 /// A FieldActor seen with the halfword at 0x64 unsigned and the one at 0x66
 /// signed, as the bytes read them (FieldActor's own types change the code).
+/// A Venus Djinni's falling motes (BattleFx_UpdateDescendingOrbitObject).
 struct DescendingOrbitObject {
   u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y; ///< 16.16 fixed-point pixels
+  s32 z; ///< 16.16 fixed-point pixels
   u8 unk14[80];
-  u16 timer;
-  s16 angle;
+  u16 timer; ///< FieldActor.timer: frames left of the spiral, 100 at the start
+  s16 angle; ///< FieldActor.work: its start on the circle, 1/65536 turns
 };
 
-/// A FieldActor seen with the halfword at 0x5e (lifetime), which FieldActor
-/// does not name.
+/// A FieldActor as the Venus Djinni's joining uses the Djinni, the leader and
+/// its motes and sparks; the notes give the FieldActor fields at the same
+/// offsets, some under other names.
 struct CaptureObject {
   u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 baseY;
+  s32 x;     ///< 16.16 fixed-point pixels
+  s32 y;     ///< 16.16 fixed-point pixels
+  s32 z;     ///< 16.16 fixed-point pixels
+  s32 baseY; ///< terrainHeight: a spark's ground, set to where it starts
   s32 scaleX;
   s32 scaleY;
   u8 unk20[8];
+  /// velocityY, despite the name: a spark is thrown up at 5 pixels a frame.
   s32 gravity;
   u8 unk2c[4];
-  s32 speed;
+  s32 speed; ///< speed limit, 16.16 fixed-point pixels per frame
   u8 unk34[33];
-  u8 mode;
+  u8 mode; ///< motionFlags: 0 for the motes, 2 (falls) for the sparks
   u8 unk56[5];
-  u8 visible;
+  u8 visible; ///< paused, despite the name: 0 lets the Djinni move
   u8 unk5c[2];
-  u16 lifetime;
+  u16 lifetime; ///< wait: frames its script waits before freeing it
   u8 unk60[4];
-  u16 timer;
-  u16 angle;
+  u16 timer; ///< as DescendingOrbitObject.timer
+  u16 angle; ///< work: as DescendingOrbitObject.angle
   struct FieldActor *linkedObject;
-  void (*callback)(union FieldObject *object);
+  void (*callback)(union FieldObject *object); ///< update: run each frame
 };
 
 /// Defines a per-frame update that spins an object 1/8 turn a frame while its
 /// scale changes by step, releasing the object once the scale falls below
-/// 0x3000.
+/// 0x3000 (3/16 of full size). step is negative: from full size the object
+/// lasts 0xd000 / -step frames, rounded down, plus one.
 #define DEFINE_SHRINK_AND_DESTROY(name, step)                                  \
   void name(union FieldObject *fieldObject) {                                  \
     void *obj = fieldObject;                                                   \
@@ -198,32 +206,40 @@ struct CaptureObject {
     }                                                                          \
   }
 
-/// the Psynergy effect's work (gWorkSlot[56], gEffectWork)
+/// The heap slot of the Psynergy effect's work, struct BattleFxScene
+/// (gWorkSlot[56], gEffectWork). A field Psynergy holds it from
+/// BattleFx_LoadActionEffectResources to BattleEffect_CleanupSceneObjects, a
+/// Djinni's joining from BattleFx_InitializeSlots to
+/// BattleFx_ClearActiveSlotsAndScheduleUpdates.
 #define HEAP_SLOT_FX 56
 
-/// A particle's sprite, seen as the two fields Douse and Mind Read set on it.
+/// A particle's sprite (struct AnimationObject), seen as the two fields
+/// Douse and Mind Read set on it; the notes give the AnimationObject fields
+/// at the same offsets.
 struct WaveFxSprite {
   u32 unk00[2];
   u8 unk08;
   u32 unk09_0 : 2;
-  u32 mode : 2;
+  u32 mode : 2; ///< image.priority, despite the name
   u32 unk09_4 : 4;
   u8 unk0a[0x1c];
-  u8 palette;
+  u8 palette; ///< flags, despite the name: 0 drops shadow and outline
 };
 
-/// A FieldActor seen with the halfword at 0x5e (its lifetime), which
-/// FieldActor does not name.
+/// A FieldActor as the particles Move's hand and Carry shed use it; the notes
+/// give the FieldActor fields at the same offsets.
 struct ItemBreakFragmentObject {
   u8 reserved00[72];
-  s32 gravity;
+  s32 gravity; ///< 16.16 fixed-point pixels per frame, each frame
   u8 reserved4c[9];
   u8 motionFlags;
   u8 reserved56[8];
-  u16 lifetime;
+  u16 lifetime; ///< wait: frames its script waits before freeing it
 };
 
-/// Both item fragments and Lift shed the same short-lived falling particle.
+/// Move's hand and Carry shed the same short-lived falling particle: it falls
+/// under a gravity of 0.1 pixel a frame, each frame, and is freed after 12
+/// frames.
 static inline void
 BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
   // Spawn and choose its position at the call site: combining the spawn here
@@ -241,9 +257,10 @@ BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
 /// The shards DEFINE_ITEM_BREAK_EFFECT's effects scatter.
 #define ITEM_BREAK_SHARD_MAX 24
 
-/// Defines an effect cast with no target: spawn makes an object 16 pixels
-/// above the effect's position and 32 pixels to either side; each moves 24
-/// pixels its way, then 24 shards scatter 8 to 32 pixels.
+/// Defines an effect cast with no target: spawn makes a hand 16 pixels above
+/// the effect's position and 32 pixels to either side, each facing the
+/// middle; each moves 24 pixels inward, then 24 shards scatter 8 to 32
+/// pixels. Carry's and Lift's no-target effects are made with it.
 #define DEFINE_ITEM_BREAK_EFFECT(name, spawn)                                  \
   void name(void) {                                                            \
     struct BattleFxScene *work;                                                \
@@ -297,13 +314,13 @@ BattleFx_InitializeFallingFragment(struct ItemBreakFragmentObject *fragment) {
 
 #define ABOVE (16 << 16) ///< 16 pixels up
 
-/// A FieldActor seen with the halfword at 0x5e (its lifetime), which
-/// FieldActor does not name.
+/// A FieldActor as Ply's spark emitter and its sparks use it (ply.c); the
+/// notes give the FieldActor fields at the same offsets.
 struct SparkObject {
   u8 unk00[8];
-  s32 x;
-  s32 y;
-  s32 z;
+  s32 x; ///< 16.16 fixed-point pixels
+  s32 y; ///< 16.16 fixed-point pixels
+  s32 z; ///< 16.16 fixed-point pixels
   u8 unk14[4];
   s32 scaleX;
   s32 scaleY;
@@ -314,11 +331,13 @@ struct SparkObject {
   u8 unk4c[9];
   u8 motionFlags; ///< as in FieldActor
   u8 unk56[8];
-  u16 lifetime;
+  u16 lifetime; ///< wait: frames its script waits before freeing it
   u8 unk60[4];
-  s16 phase; ///< phase of the sway (128 frames a cycle)
+  /// timer: phase of the sway, 128 frames a cycle for a spark and 64 for the
+  /// emitter, which -1 holds still.
+  s16 phase;
   u8 unk66[6];
-  void (*update)(union FieldObject *object);
+  void (*update)(union FieldObject *object); ///< run each frame
 };
 
 #endif

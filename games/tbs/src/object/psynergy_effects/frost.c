@@ -4,7 +4,8 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// Per-frame update: flashes (animation 2) for 2 frames in every 8.
+/// Per-frame update Frost leaves on its target: sprite param 2 for 2 frames in
+/// every 8, otherwise 0, so the target glints.
 void BattleFx_UpdateOrbitingParticleMain(union FieldObject *fieldObject) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
   s32 frame = gFrameCount & 7;
@@ -30,8 +31,10 @@ void BattleFx_UpdateOrbitingParticleFade(union FieldObject *fieldObject) {
   }
 }
 
-/// Both winding directions share the countdown and position update. timer is
-/// initialized to 60; preserve its halfword narrowing before computing radius.
+/// Both winding directions share the countdown and position update. timer
+/// starts at 60 (FieldFx_RunFrost). The particle circles its target point
+/// (targetX to targetZ) at a radius of 2 pixels and an angle of 1/32 turn for
+/// each frame left, so it closes in from 118 pixels.
 static inline void FieldFx_UpdateSpiralParticle(union FieldObject *fieldObject,
                                                 s32 clockwise) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
@@ -40,6 +43,7 @@ static inline void FieldFx_UpdateSpiralParticle(union FieldObject *fieldObject,
   s32 decrementedTimer;
 
   if (particle != NULL) {
+    // Keep the countdown's halfword narrowing before it sets the radius.
     decrementedTimer = (u16)particle->timer - 1;
     particle->timer = decrementedTimer;
     remainingFrames = decrementedTimer;
@@ -81,6 +85,7 @@ void FieldFx_RunFrostOnTarget(s32 unused) {
   struct FieldActor *target = scene->child;
 
   if (target != 0) {
+    // enabled set skips the target's part of FieldFx_RunFrost.
     if (scene->childMode != 0) {
       scene->enabled = 1;
     }
@@ -93,6 +98,13 @@ void FieldFx_RunFrostOnTarget(s32 unused) {
 /// times; without childOption the target takes mode 2.
 ///
 /// Abilities: Frost (field kind 6).
+///
+/// The target's part runs only when a scene event named the target
+/// (BattleFx_DispatchRequestKind clears enabled) and no scene set
+/// childMode: it flashes, takes animation 2 with SE_220 unless childOption
+/// is set, keeps glinting (BattleFx_UpdateOrbitingParticleMain) and runs
+/// the scene's Frost event. Called by BattleFx_Run and
+/// FieldFx_RunFrostOnTarget.
 void FieldFx_RunFrost(void) {
   s32 eventTarget;
   struct EffectVector pos;

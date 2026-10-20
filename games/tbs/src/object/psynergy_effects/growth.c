@@ -14,18 +14,20 @@ struct BurstParticleVector {
   s32 values[3]; ///< x, y, z
 };
 
-/// A particle sprite's attributes.
+/// A sprite part's OAM attributes (struct AnimationSpritePart) as Growth
+/// copies them; the notes give the AnimationSpritePart fields, some under
+/// other names here.
 struct BurstParticleVisual {
   u8 reserved00[5];
-  u8 flagsALow : 5;
-  u8 flip : 1;
-  u8 flagsAHigh : 2;
+  u8 flagsALow : 5;  ///< affine, objectMode and mosaic
+  u8 flip : 1;       ///< fullColor, despite the name
+  u8 flagsAHigh : 2; ///< shape
   u8 reserved06;
-  u8 flagsBLow : 6;
-  u8 flagsBHigh : 2;
+  u8 flagsBLow : 6;  ///< x's top bit and affineIndex
+  u8 flagsBHigh : 2; ///< size
   union {
     struct {
-      u16 shape : 10;
+      u16 shape : 10; ///< tile, despite the name
       u16 unused : 6;
     } bits;
     struct {
@@ -37,7 +39,8 @@ struct BurstParticleVisual {
 };
 
 /// A particle's sprite, seen as its two parts' attributes, which Growth copies
-/// from the first to the second.
+/// from the first to the second: the image and the shadow
+/// (AnimationObject.image and shadow).
 struct BurstParticleVisualGroup {
   struct BurstParticleVisual primary;
   struct BurstParticleVisual child;
@@ -47,6 +50,10 @@ struct BurstParticleVisualGroup {
 /// under it.
 ///
 /// Abilities: Growth (field kind 12), cast on a target.
+///
+/// The target plays animation 2, stops being solid (collision flags 0),
+/// loses its shadow and is depth-sorted as if 320 pixels higher
+/// (ACTOR_PRIORITY_UNDERFOOT); the effect leaves it so.
 void FieldFx_RunGrowthOnTarget(s32 unused) {
   struct FieldActor *target;
 
@@ -68,6 +75,9 @@ void FieldFx_RunGrowthOnTarget(s32 unused) {
 /// position.
 ///
 /// Abilities: Growth (field kind 12), cast with no target.
+///
+/// The objects (217) appear 2 or 3 frames apart and each lasts 60 frames
+/// (gBattleFx_BurstParticleObjectScript).
 void FieldFx_RunGrowth(void) {
   struct BattleFxScene *work = gEffectWork;
   struct BurstParticleVector pos;
@@ -103,7 +113,9 @@ void FieldFx_RunGrowth(void) {
 
 /// Sends 24 particles, one every 2 frames, from in front of the caster to
 /// points round the effect's position. They start 10 pixels up facing south,
-/// 24 pixels up facing north, and 10 pixels up and 10 ahead otherwise.
+/// 24 pixels up facing north, and 10 pixels up and 10 ahead otherwise. Each
+/// flies at 1.5 pixels a frame and is freed on arrival; facing north, the
+/// points are 14 pixels further north.
 void BattleEffect_SpawnBurstParticleField(void) {
   struct BattleFxScene *work;
   struct FieldActor *caster;
@@ -133,7 +145,11 @@ void BattleEffect_SpawnBurstParticleField(void) {
       Vector_AddPolarOffset(0xa0000, work->angle, pos);
     }
 
-    // Copy the flip, shape and palette to the child sprite.
+    // The shadow part takes the image's colour mode, shape, size, tile and
+    // palette, so the shadow (turned on by sprite flag 1 below) is drawn with
+    // the particle's picture.
+    // BUG: the copy comes before the NULL test, so a failed spawn (a full
+    // object table) is read through.
     particle = (struct FieldActor *)Object_Spawn(GROWTH_PARTICLE_OBJECT, pos[0],
                                                  pos[1], pos[2]);
     visual = &((struct BurstParticleVisualGroup *)particle->sprite)->primary;

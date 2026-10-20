@@ -65,7 +65,9 @@ s32 FieldFx_StepRatioTransition(void) {
 }
 
 /// Starts a zoom to zoom (16.16) over frames frames, on the world map (event
-/// mode 3) only.
+/// mode 3) only. The perspective work keeps the inverse, which scales the
+/// view's distance (farPlane times it, FieldFx_StepRatioTransition): a zoom
+/// of 2 halves the distance. Event_WaitForZoomTransition waits for it.
 void BattleFx_ScheduleRatioTransition(s32 zoom, s32 frames) {
   struct PerspectiveWork *work = gMapWork[0];
   s32 inverse;
@@ -81,6 +83,8 @@ void BattleFx_ScheduleRatioTransition(s32 zoom, s32 frames) {
   work->zoom = inverse;
   work->zoomTransitionFrames = frames;
   work->zoomTransitionStep = 0;
+  // 0xc94: a main-loop callback (high byte 0xc, as SCHEDULER_KEY_MAIN_LOOP)
+  // at priority 0x94.
 #ifdef UBFIX
   Scheduler_AddOrUpdateCallback(FieldFx_StepRatioTransition, 0xc94);
 #else
@@ -144,7 +148,9 @@ s32 BattleFx_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
 /// The event command "actor show emote": shows an emote bubble (object 21)
 /// over an actor, then waits wait frames. The low 4 bits of emote pick the
 /// bubble's animation (6 also plays sound 110); with 0x100 the bubble takes
-/// sprite priority 1, otherwise the actor's.
+/// sprite priority 1, otherwise the actor's. The bubble rides the actor and
+/// frees itself after 46 frames (gBattleFx_LinkedObjectScript: 16 frames of
+/// squash and stretch, then 30), whatever wait is.
 void BattleFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
   struct FieldActor *target;
 
@@ -206,8 +212,12 @@ void BattleFx_SpawnLinked(s32 actor, s32 emote, s32 wait) {
 /// The event command "actor set attached effect": with mode (the low 2 bits)
 /// 0 removes the object attached to an actor; 1 attaches one (object 209,
 /// animation 1) that stays until removed; 2 shows a one-off one (animation 2)
-/// that ends by itself. With 0x100 the object takes sprite priority 1,
-/// otherwise the actor's.
+/// that ends by itself (gObjectMotion_WaitScript, 40 frames). With 0x100 the
+/// object takes sprite priority 1, otherwise the actor's. The attached object
+/// is kept as the actor's linkedObject, so mode 1 does nothing while the
+/// actor has one, and mode 0 releases whatever it is; a one-off is never
+/// recorded there. The leader's step runs all three for hazard ground
+/// (object/step.c).
 void BattleFx_ConfigureLinkedObject(s32 actor, s32 flags) {
   struct FieldActor *object = ObjectTable_Get(actor);
   struct FieldActor *effect;

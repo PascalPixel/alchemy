@@ -9,21 +9,29 @@
 /// A party member's battle unit, seen as the HP and poison a step reads.
 struct StepOwner {
   u8 unitFieldsBeforeHp[0x38];
-  s16 hp;
+  s16 hp; ///< struct BattleUnit's hp: current HP, 0 when downed
   u8 unitFieldsBeforePoison[0x131 - 0x3a];
-  u8 poison;
+  u8 poison; ///< struct BattleUnit's poison: 1 poisoned, 2 deadly poison
 };
 #endif
 
-/// The collision codes of map cells that mean something when stepped on.
+/// The collision codes of map cells that mean something when stepped on (a
+/// map cell's byte 2). Codes 242 to 247 are search spots instead
+/// (Field_SearchTile).
 enum StepTileEvent {
-  STEP_EVENT_FIRST = 1, ///< 1 to 239: the scene's step events
+  /// 1 to 239: the scene's step events, touch (kind 2) or exit (kind 1)
+  /// events whose trigger is the code (Scene_RunTouchOrExit).
+  STEP_EVENT_FIRST = 1,
   STEP_EVENT_LAST = 239,
-  STEP_TERRAIN_FIRST = 240, ///< 240 and 241: ground with its own encounters
+  /// 240 and 241: ground with its own encounters, grounds 1 and 2 of
+  /// work->encounterGroups.
+  STEP_TERRAIN_FIRST = 240,
   STEP_TERRAIN_LAST = 241,
-  STEP_EVENT_HAZARD = 250, ///< ground that hurts the party over time
-  STEP_WARP_FIRST = 252,   ///< 252 to 254: ledges and climbing spots the
-                           ///< leader pushes against (Field_RunPushTileEvent)
+  /// Ground that hurts the party over time, as gGameState's hazard fields
+  /// count it: the Lamakan Desert's sand, whose scene sets those fields.
+  STEP_EVENT_HAZARD = 250,
+  STEP_WARP_FIRST = 252, ///< 252 to 254: ledges and climbing spots the
+                         ///< leader pushes against (Field_RunPushTileEvent)
   STEP_WARP_LAST = 254
 };
 
@@ -65,7 +73,8 @@ s32 Field_CountRequests(void) {
 /// Returns the collision code of the map cell 16 pixels ahead of the party
 /// leader (a world map block on the world map), or 0 without a leader.
 ///
-/// Called from items.c, where using an item looks at what the leader faces.
+/// Called by Field_FindItemEvent and BattleFx_FindMatchingEvent (items.c),
+/// which match an item or Psynergy event to the tile the leader faces.
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *work;
   struct ObjectRuntime *leader;
@@ -127,8 +136,10 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 }
 
 /// Takes the exit of the first of the scene's exit regions that contains the
-/// position (x, y, z) and whose condition holds: records the region's exit
-/// value for Field_RunScene, plays the exit sound and starts leaving the scene.
+/// position (x, y, z), in 16.16 pixels, and whose condition holds: records the
+/// region's exit value for Field_RunScene, plays the exit sound and starts
+/// leaving the scene. A region's bounds are whole pixels, its maxima
+/// exclusive; a table whose first minX is -1, or no table, has no exits.
 ///
 /// Called by Field_ProcessStep when the leader steps on a cell with a non-zero
 /// collision code. Sets work->exit and stops the leader.
@@ -187,7 +198,8 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
 /// leader flinches and characters who fall are listed in the field work.
 ///
 /// Called by Field_RunScene each frame while the party walks (in debug mode,
-/// flag 0x163 skips it). Sets work->action, input, battle, command and event
+/// flag 0x163, FLAG_DEBUG_STEPS_OFF, skips it), so the counts below advance
+/// per frame. Sets work->action, input, battle, command and event
 /// (-1 when someone fell), work->currentTile and previousTile, walkingDistance,
 /// fallenOwners and survivorCount, and gGameState's hazard and Avoid counts.
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
@@ -289,7 +301,10 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
       partyHurt = BattleParty_ApplyStatusDamage();
     }
 
-    // Hazardous ground: entering it starts the count half way.
+    // Hazardous ground: entering it starts the count half way; then each
+    // frame walked on it adds the leader's speed limit in whole pixels, so
+    // the count follows the distance walked there (the Lamakan Desert's
+    // limit is 600).
     if (gGameState.hazardMode == 0 && event == STEP_EVENT_HAZARD) {
       if (work->previousTile->collisionCode == STEP_EVENT_HAZARD)
         gGameState.hazardSteps += leader->speedLimit / 0x10000;
@@ -310,9 +325,10 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     }
   }
 
-  // In hazard mode 1 the count rises each step. Half way, object 209 is
-  // attached to the leader until removed (0x101, at sprite priority 1); at
-  // the limit it is removed (0x100) and the party takes the hazard's damage.
+  // In hazard mode 1, which no ☀️ code sets, the count rises by one each call,
+  // that is each frame the field loop runs. Half way, object 209 is attached
+  // to the leader until removed (0x101, at sprite priority 1); at the limit
+  // it is removed (0x100) and the party takes the hazard's damage.
   if (gGameState.hazardMode == 1) {
     gGameState.hazardSteps++;
     if (gGameState.hazardSteps == gGameState.hazardLimit / 2)
@@ -328,9 +344,10 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     partyHurt++;
   }
 
-  // The leader flinches (velocityY) and shows a one-off object 209 (0x102);
-  // each character whose HP reached 0 on this step is listed, loses its
-  // poison and raises event -1, which Field_RunScene handles.
+  // The leader flinches (velocityY, a hop of 4 pixels a frame) and shows a
+  // one-off object 209 (0x102); each character whose HP reached 0 on this
+  // step is listed, loses its poison and raises event -1, which
+  // Field_RunScene handles.
   if (partyHurt) {
     work->fallenCount = 0;
     work->survivorCount = 0;
@@ -372,6 +389,11 @@ void BattleParty_ApplyDrain(s32 amount, s32 unused) {
 /// the positive magnitude of amount. Damage flashes and plays an impact sound;
 /// healing plays the recovery sound.
 ///
+/// XXX: likely the fallback was meant to keep the damage's sign, because as
+/// written a damaging percentage that truncates to zero heals instead; the
+/// one percentage hazard, the Lamakan Desert's 25%, truncates only below 4
+/// maximum HP.
+///
 /// Called by Field_ProcessStep for hazardous ground.
 void BattleParty_ApplyHealthDelta(s32 amount, s32 percent) {
   s32 partyCount;
@@ -409,8 +431,11 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 percent) {
 }
 
 /// Hurts each poisoned character in the party: poison takes a twentieth of
-/// their maximum HP and venom a tenth (at least 1). Returns 0 when nobody was
-/// hurt, else the worst status found (1 poison, 2 venom), after a flash.
+/// their maximum HP and deadly poison a tenth, rounded to the nearest and at
+/// least 1.
+/// Returns 0 when nobody was hurt, else the worst status found (1 poison,
+/// 2 deadly poison), after a flash; Field_ProcessStep counts a non-zero result
+/// as the party being hurt.
 ///
 /// Called by Field_ProcessStep at each tick of the distance walked.
 s32 BattleParty_ApplyStatusDamage(void) {
@@ -460,7 +485,10 @@ s32 BattleParty_ApplyStatusDamage(void) {
 /// Called by Field_RunScene around the handling of most requests, by the
 /// Djinni effect and by the world map scene; each call is paired with
 /// WorldMap_EndEvent. Changes the display transition state in
-/// heap slot 31 (0x1F, HEAP_SLOT_TRANSITION) only when it is running.
+/// heap slot 31 (0x1F, HEAP_SLOT_TRANSITION) only when it is running. Both
+/// allocations return the slot's block when it has one; with slot 31 free, the
+/// world map takes a new, uncleared block there, kept until the scene ends,
+/// whose step is then leftover memory.
 void WorldMap_BeginEvent(void) {
   struct FieldWork *work;
   struct DisplayTransitionState *transition;

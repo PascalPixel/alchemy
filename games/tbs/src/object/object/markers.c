@@ -15,18 +15,21 @@ void ObjectMotion_SnapToTerrain(void *object) {
   actor->terrainHeight = terrainHeight;
 }
 
-/// The start of the map's work.
+/// The map's work (gMapWork[0], heap slot 8), seen as its marker list.
 struct MarkerMap {
   u8 unk00[0x10];
-  u8 *markers; ///< (column, row, id) triples, ended by 255, 255
+  /// (column, row, id) triples, ended by 255, 255: a 16-pixel cell and the
+  /// trigger of the scene event there; NULL for a map with none.
+  u8 *markers;
 };
 
-/// Places an actor at each of the map's markers (ids 100 to 239) that the
-/// scene has an event for, up to ten: a chest (actor 20) for a chest event,
+/// Places an object at each of the map's markers (ids 100 to 239) that the
+/// scene has an event for, up to ten: a chest (sprite 20) for a chest event,
 /// shown open once its flag is set and gone once its mimic was beaten, and a
-/// Psynergy stone (actor 28) for a search event giving one, until it is taken.
-/// A marker with no such event takes no slot. Called by Field_RunScene on
-/// scene load; clears and fills work->markers.
+/// Psynergy stone (sprite 28) for a search event giving one, until it is
+/// taken. A marker with no such event takes no slot. The objects are kept in
+/// work->markers, not in actor slots. Called by Field_RunScene on scene load;
+/// clears and fills work->markers.
 void Field_PlaceMapMarkers(void) {
   u32 id;
   struct MarkerMap *map = gMapWork[0];
@@ -74,7 +77,8 @@ void Field_PlaceMapMarkers(void) {
           ObjectDispatch_SetSingleChildFlagsFar(
               (struct DispatchObject *)markerActor, 0);
           // An opened chest shows open (animation 2); an opened mimic's chest
-          // is not placed at all.
+          // is not placed at all. A mimic's flag is set only after its battle,
+          // when the one enemy was defeated (Djinn_ResolvePendingEvent).
           if (GameFlag_TestFar(event->condition)) {
             if ((event->value & 0xfff00000) == 0x500000) {
               ObjectDispatch_ReleaseFar((struct DispatchObject *)markerActor);
@@ -134,7 +138,8 @@ void Field_PlaceMapMarkers(void) {
 }
 
 /// Returns the marker slot (0 to 9) whose event trigger is id, or -1. Called
-/// by the Marker_ functions below.
+/// by the Marker_ functions below. Unused slots hold id 0, which no marker
+/// has (ids are 100 to 239).
 s32 Marker_FindSlot(s32 id) {
   s32 slotIndex;
   s32 matchingSlot;
@@ -233,8 +238,9 @@ struct ObjectRuntime *Marker_GetActor(s32 id) {
   return marker->object;
 }
 
-/// Hides the actor of marker id by clearing its animationKind. Called by
-/// Field_SearchTile once a Psynergy stone is taken.
+/// Hides the actor of marker id by clearing its animationKind: kind 0 draws no
+/// sprite, and the object stays in its slot. Called by Field_SearchTile once a
+/// Psynergy stone is taken.
 void Marker_Hide(s32 id) {
   s32 slotIndex;
   struct MarkerSlot *marker;

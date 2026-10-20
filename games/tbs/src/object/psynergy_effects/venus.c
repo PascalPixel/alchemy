@@ -33,6 +33,7 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   // mercury.c spells out for its blue.
   Shop_SaveAndTintFieldPaletteFar(0x201204);
   WaitFrames(30);
+  // Unpause the Djinni (CaptureObject.visible is FieldActor.paused).
   djinni->visible = 0;
   AudioCommand_PlayFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 4, 15);
@@ -129,7 +130,9 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   position.y = leader->y + 0x120000;
   position.z = leader->z;
   // 8 sparks from 18 pixels above the leader, each thrown 32 pixels in a
-  // random direction; stop at the first that cannot be spawned.
+  // random direction at 1.4 to 2.4 pixels a frame and 5 up (gravity is
+  // FieldActor.velocityY), falling, and freed after 8 frames; stop at the
+  // first that cannot be spawned.
   for (remaining = 0; remaining <= 7; remaining++) {
     djinni = (struct CaptureObject *)Object_Spawn(284, position.x, position.y,
                                                   position.z);
@@ -155,11 +158,12 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
 }
 
 /// Effect slot callback of a Mercury Djinni's droplets: each falls from 100
-/// pixels above to a random point near the leader (state 0), and where it
-/// lands splashes 12 pixels in a random direction with SE_143. In state 1 it
-/// then falls again 6 frames later (back to state 0); once
-/// BattleFx_RunMercuryDjinnCapture sets state 2, its next splash is its last
-/// (state 3, which frees it).
+/// pixels above (on screen) to a random point 2 to 8 pixels round a spot 15
+/// to 20 pixels over the leader, at 3 to 6 pixels a frame (state 0), and
+/// where it lands splashes 12 pixels in a random direction, at half size,
+/// with SE_143. In state 1 it then falls again 6 frames later (back to state
+/// 0); once BattleFx_RunMercuryDjinnCapture sets state 2, its next splash is
+/// its last (state 3, which frees it).
 void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect) {
   struct ObjectRuntime *source;
   struct EffectVector position;

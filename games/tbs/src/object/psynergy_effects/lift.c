@@ -4,10 +4,11 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// An object appears 32 pixels to either side, each moves 14 pixels in, and
+/// A hand appears 32 pixels to either side, each moves 14 pixels in, and
 /// they lift the target 32 pixels with them. Called by
-/// BattleFx_DispatchRequestKind; leaves the target raised, with its update set
-/// to ObjectGroup_ApplyRandomChildValues.
+/// BattleFx_DispatchRequestKind; leaves the target raised and floating
+/// (motion flag bit 2), with its update set to
+/// ObjectGroup_ApplyRandomChildValues.
 ///
 /// Abilities: Lift (field kind 7), cast on a target.
 void FieldFx_RunLiftOnTarget(s32 unused) {
@@ -73,17 +74,20 @@ void FieldFx_RunLiftOnTarget(s32 unused) {
   BattleFx_PrepareBufferInterpolation();
 }
 
-/// Lift cast with no target: objects appear above the caster and to either
-/// side, move apart and scatter into shards.
+/// Lift cast with no target: two hands appear 16 pixels above the spot in
+/// front of the caster and 32 pixels to either side, close in 24 pixels and
+/// scatter into shards.
 ///
 /// Abilities: Lift (field kind 7), cast with no target. Called by
 /// BattleFx_Run.
 DEFINE_ITEM_BREAK_EFFECT(FieldFx_RunLift, BattleFx_SpawnItemBreakMode3)
 
-/// Spawns object 215 and grows it, spinning, from a quarter to full size over
-/// 24 frames; angle is the way it faces once grown. Makes Lift's two hands,
-/// for FieldFx_RunLiftOnTarget and FieldFx_RunLift; returns NULL when no object
-/// could be spawned.
+/// Spawns a hand (object 215) and grows it, spinning, from a quarter to full
+/// size over 24 frames; angle is the way it faces once grown. Makes Lift's
+/// two hands, for FieldFx_RunLiftOnTarget and FieldFx_RunLift; returns NULL
+/// when no object could be spawned. Unlike Carry's
+/// (BattleFx_SpawnItemBreakMode1) it takes animation 3, not 1, and keeps
+/// autoFaceMotion as created; both are at sprite priority 0 (Object_Spawn).
 struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
                                                   s32 angle) {
   struct MotionObject *fragment;
@@ -170,10 +174,11 @@ again:
     BattleFx_ClearOwnedSlot(slot);
 }
 
-/// A heavy impact: places object 0x11b 32 pixels below the source and scatters
-/// 12 shards from it. Reached through SC_CALL in gBattleFx_HeavyImpactScript
-/// (fxdata.c), where the interpreter is the object running the script.
-/// Returns 0.
+/// A heavy impact: places object 0x11b 32 pixels below the source for 20
+/// frames and scatters 12 shards from it. Reached through SC_CALL in
+/// gBattleFx_HeavyImpactScript (fxdata.c), where the interpreter is the
+/// object running the script, which Force's thrown object runs (force.c).
+/// Returns 0, so the script moves on and frees the object.
 s32 SpawnHeavyImpactEffect(struct ScriptInterpreter *interpreter) {
   struct MotionObject *source = (struct MotionObject *)interpreter;
   struct EffectVector pos;

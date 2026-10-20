@@ -4,7 +4,10 @@
 
 #include "../psynergy_effects_internal.h"
 
-// Edition-specific text and window layout values.
+// When a gift goes to another member, `<leader> gave <item> to <member>.`
+// follows `<leader> got <item>.`; it is MsgGaveItemToMember, the next
+// message, in every edition. Japanese and English show it with window flags
+// 3 (zoom, busy while it shows), the European releases with 1 (zoom only).
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define GIFT_RECEIVED_MESSAGE MsgGaveItemToMember
 #define GIFT_RECEIVED_MESSAGE_MODE 1
@@ -34,7 +37,9 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
 
 /// Debug only: while debug mode is on, R makes every event wait
 /// (FieldEvent_WaitFrames) end at once and L restores normal waits. Runs as a
-/// scheduler callback for the length of an event (FieldEvent_Begin).
+/// scheduler callback for the length of an event (FieldEvent_Begin). R also
+/// skips the actors' messages, which open nothing while fastForward is set
+/// (UiText_OpenMessageAtObject).
 void Event_UpdateDebugSkip(void) {
   struct FieldWork *runtime = (struct FieldWork *)gEventWork;
 
@@ -189,6 +194,7 @@ s32 Event_ValidatePackedId(u32 shortcut) {
 
   if (member > 7)
     return -1;
+  // Flags 0 to 7 say who is in the party (FLAG_IN_PARTY).
   if (GameFlag_TestFar(member) == 0)
     return -2;
   if (Unit_KnowsActionFar(member, ability) == 0)

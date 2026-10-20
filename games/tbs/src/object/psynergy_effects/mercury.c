@@ -10,7 +10,10 @@
 /// bounces twice and hops three times ever higher, then rises 120 pixels out
 /// of sight trailing eight afterimages. The leader turns to the camera and
 /// plays animation 28 while 24 droplets rain round it, one a frame
-/// (BattleFx_UpdateRandomTargetParticle); then the colours return.
+/// (BattleFx_UpdateRandomTargetParticle); then the colours return. Called
+/// by Djinn_JoinParty for a Mercury Djinni, which then clears the Djinni's
+/// actor slot; the Djinni's object and its afterimages are released here.
+/// Uses all 24 effect slots (BattleFx_InitializeSlots).
 void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   struct FieldActor *djinni;
   struct FieldActor *copy;
@@ -36,6 +39,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   effectScene = gEffectWork;
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TRANSFORM_TINT | RGB(4, 4, 16));
   WaitFrames(30);
+  // Unpause the Djinni, so its script and motion run.
   djinni->paused = 0;
   AudioCommand_PlayFar(SE_173);
   Motion_SetVarCbAndRefresh(djinniId, 1);
@@ -52,8 +56,9 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   ObjectMotion_Launch(djinniId, 7, 18);
   WaitFrames(20);
 
-  // Eight afterimages of the same sprite, each closing half the distance to
-  // the one before it every frame.
+  // Eight afterimages of the same sprite at 15/16 size, each closing half
+  // the distance to the one before it every frame, sharing one VRAM cache
+  // entry, as in Djinn_RunBattleStartHop.
   kind = djinni->sprite->entries[0]->animId;
   resource = NULL;
   previous = djinni;
@@ -80,7 +85,8 @@ void BattleFx_RunMercuryDjinnCapture(s32 djinniId) {
   }
 
   // Rise 8 pixels a frame for 15 frames, then remove the Djinni and its
-  // afterimages (and their VRAM block, unless it is the shared block 96).
+  // afterimages, and free their shared VRAM cache entry (96,
+  // VRAM_CACHE_ENTRY_COUNT, is none).
   resourceId = resource->slot;
   AudioCommand_PlayFar(SE_HIGH_JUMP);
   djinni->motionFlags = 0;

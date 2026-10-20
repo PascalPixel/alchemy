@@ -8,7 +8,8 @@
 /// the particle appeared; state 1 waits to arrive, then goes on to 2; state 2
 /// heads for a point 4 pixels round 8 pixels above the effect's position on
 /// screen; state 3 frees the slot on arrival. Set on the 16 particles of
-/// BattleEffect_RunFallbackObjectTransition.
+/// BattleEffect_RunFallbackObjectTransition. They fly out straight at up to
+/// 4 pixels a frame and come back turning at most 1/16 turn a frame.
 void BattleFx_UpdateRadialCamera(struct EffectSlot *effect) {
   // A for/continue retry grows the native English callback 0x100 -> 0x104.
   // Retain the immediate state-1-to-state-2 transition on arrival.
@@ -169,7 +170,9 @@ void BattleEffect_SetRandomTableValueOnObject(union FieldObject *fieldObject) {
 /// BattleFx_DispatchRequestKind for Halt, which then record the id in
 /// gGameState.pausedObject, and by the Colosso scenes to stop their operators.
 /// Sets gGameState.pausedUpdate and pausedPose, the object's update and paused
-/// fields, and stops its animation.
+/// fields, and stops its animation. gGameState keeps one object's state, so
+/// Halt resumes the one it stopped before it stops another; the paused
+/// object flickers through random sprite params meanwhile.
 void BattleEffect_PauseObject(s32 actorId) {
   struct FieldActor *object;
   struct AnimationEntry *entry;
@@ -211,8 +214,10 @@ void BattleFx_ResumeObject(s32 actorId) {
   }
 }
 
-/// Returns id, or -1 (no target) when the current effect's definition has
-/// flags 0xff. Called by BattleFx_Run on the nearest Halt target.
+/// Returns id, or -1 (no target) when actor id's sprite has flags 0xff in
+/// gBattleFx_DefinitionTable (BattleFx_GetFlags): the 20 rows before the
+/// default. Called by BattleFx_Run on the nearest Halt target, so Halt does
+/// not stop those actors; an unlisted sprite takes the default row's flags 0.
 s32 BattleFx_FilterObjectIdByFlags(s32 id) {
   if (BattleFx_GetFlags(id) == 0xff)
     return -1;

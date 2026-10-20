@@ -13,7 +13,10 @@ void ObjectMotion_MoveHalfwayTowardTarget(union FieldObject *fieldObject) {
 
 /// A Djinni's battle start: the Djinni (actor id) bounces twice, turns to face
 /// the leader, hops back 16 pixels three times, then leaps 64 pixels at the
-/// party trailing eight afterimages tinted for its element.
+/// party trailing eight afterimages tinted for its element. Only
+/// Field_RequestDjinnBattle calls it, when DJINN_NO_HOP is clear. Nothing
+/// here releases the afterimages: they last until the scene is left for the
+/// battle.
 void Djinn_RunBattleStartHop(s32 djinniId) {
   struct FieldActor *djinni;
   struct FieldActor *copy;
@@ -40,6 +43,9 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   WaitFrames(20);
   ObjectMotion_ArmCallback(djinniId, back, 0);
   WaitFrames(10);
+  // Sprite priority 0, over every background, until the end. With
+  // ACTOR_FACES_MOTION off it keeps facing the leader as it hops away, and
+  // with motionFlags bit 1 alone it falls without following the terrain.
   djinni->sprite->image.priority = 0;
   djinni->facing = back;
   Object_GetById(djinniId)->steeringFlags &= ~1;
@@ -64,8 +70,11 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   FieldObject_WaitForMoveFar(djinni);
   WaitFrames(20);
 
-  // Afterimages of the same sprite, each chasing the one before it, tinted
-  // by the Djinni's sprite (90, 91 and 92).
+  // Afterimages of the same sprite at 15/16 size, each closing half the
+  // distance to the one before it every frame, tinted by the Djinni's
+  // sprite: the Venus sprite (90) takes param 2, Mars (92) 10, and Mercury
+  // (91) and Jupiter (93) 9 (the scenes' Djinni placements show which
+  // sprite is which element). They share one VRAM cache entry.
   sprite = djinni->sprite->entries[0]->animId;
   tint = 9;
   if (sprite == 90)
@@ -98,7 +107,8 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
     }
   }
 
-  // Leap 64 pixels at the leader and stop there.
+  // Leap 64 pixels at the leader, 12 pixels a frame upward, and after 24
+  // frames freeze wherever it is, landed or not.
   Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)djinni,
                                              64 << 16, dir + 0x8000);
   AudioCommand_PlayFar(SE_136);
@@ -121,6 +131,11 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 /// is set. Unless slot is -1, the Djinni's actor slot first plays its
 /// element's capture effect and is freed. Ends with
 /// `<Djinni> joined <member>.`
+///
+/// Nothing happens when Djinn_AddToLeastLoadedOwner refuses the Djinni: -1
+/// when it was found before, -2 when no member has room; its actor then
+/// stays. Called by Djinn_ResolvePendingEvent after a won Djinni battle, by
+/// 13 scenes directly and by the debug rooms.
 void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   struct FieldWork *work;
   s32 owner;
@@ -137,6 +152,8 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
     FieldEvent_Begin();
     WorldMap_BeginEvent();
     if (slot != -1) {
+      // On the world map the actors far from the view are removed while the
+      // effect plays and placed again after it.
       if (work->mode == MODE_WORLD_MAP)
         BattleEffect_ClearOutOfBoundsObjects();
 
@@ -164,15 +181,20 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
 /// Djinni battle (pendingDjinnEvent 300 to 380, FLAG_KEEP_PARTY_POSITION set,
 /// the battle over) the scene actor placed for that Djinni (condition = its
 /// flag) goes back to its placement, or 32 pixels north of the leader when the
-/// event has 0x800 set.
+/// event has DJINN_NO_HOP (0x800) set, and stands (animation 1).
+/// Field_RunScene calls it as it rebuilds the scene, only while an event is
+/// still pending after Djinn_ResolvePendingEvent's first call, that is after
+/// a won battle; the second call then makes this actor join the party.
 void FieldObject_PlaceSceneActors(void) {
   s32 flags = gGameState.pendingDjinnEvent & 0xf000;
   u32 event = gGameState.pendingDjinnEvent & 0xfff;
   s32 id;
 
+  // Kind 0 is a Djinni battle; a mimic chest's event (0x1000) is skipped.
   if (GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION) != 0 && flags == 0) {
     flags = event & 0x800;
     event &= 0x7ff;
+    // event is unsigned, so events below DJINNI_0 fail the range test too.
     if (event - DJINNI_0 <= 80 && gGameState.sceneChangeReason > 0) {
       for (id = 8; id <= 65; id++) {
         struct ScenePlacement *desc = Scene_FindActorPlacement(id);
@@ -183,6 +205,9 @@ void FieldObject_PlaceSceneActors(void) {
         obj = ObjectTable_Get(id);
         if (obj == NULL)
           continue;
+        // Without DJINN_NO_HOP, back at its placement in a new actor's
+        // ground state: no ground height yet, and motion flags 3 (follows
+        // the terrain and falls).
         if (flags == 0) {
           obj->terrainHeight = flags;
           obj->flags = 3;
@@ -200,12 +225,19 @@ void FieldObject_PlaceSceneActors(void) {
   }
 }
 
-/// Settles a pending Djinni battle as a scene loads. The field calls it with
-/// shown 0 while it builds the scene and with shown nonzero once the scene is
-/// on screen. After a won battle (sceneChangeReason above 0) the second call
-/// makes the Djinni join the party (Djinn_JoinParty); otherwise
-/// the first call sets flag 128 + the Djinni's number and drops the event. An
-/// event of kind 0x1000 instead sets its flag when sceneChangeReason is 1.
+/// Settles a pending Djinni battle as a scene loads, from the battle's result
+/// in sceneChangeReason (the enemies defeated, 999 when the party fled, -1
+/// when it lost). Field_RunScene calls it with shown 0 while it builds the
+/// scene and, while the event is still pending, with shown nonzero once the
+/// scene is on screen.
+///
+/// After a won battle the first call leaves the event pending and the second
+/// makes the Djinni join the party, 40 frames in (Djinn_JoinParty).
+/// Otherwise the first call sets flag 128 + the Djinni's number
+/// (FLAG_DJINNI_0 + 80 + it), which hides the Djinni's actor until the scene
+/// is entered normally again (object/actors.c), and drops the event. A mimic
+/// chest's event (kind 0x1000, object/events.c) sets the chest's flag when
+/// the battle ended with exactly one enemy defeated, and is dropped.
 void Djinn_ResolvePendingEvent(s32 shown) {
   struct GameState *st = &gGameState;
   s16 *pending = &st->pendingDjinnEvent;
@@ -217,8 +249,10 @@ void Djinn_ResolvePendingEvent(s32 shown) {
       flag &= 0x7ff;
       if (flag < DJINNI_0 || flag > DJINNI_0 + 80)
         return;
+      // Won: the event waits for the call once the scene is shown.
       if (st->sceneChangeReason > 0 && st->sceneChangeReason != 999)
         return;
+      // 300 + n less 172 is 128 + n, the Djinni's hiding flag.
       GameFlag_SetBitFar(flag - 172);
       *pending = kind;
     } else if (kind == 0x1000) {
@@ -257,17 +291,22 @@ void Djinn_ResolvePendingEvent(s32 shown) {
 void BattleFx_UpdateAllSlots(void) { FieldFx_UpdateSceneSlots(); }
 
 /// Allocates and clears the effect slots (heap block 56) and starts their
-/// update callback.
+/// update callback. The block is a whole effect scene, gEffectWork, the slot
+/// a Psynergy effect's scene also takes. Called by the Djinn joining effects
+/// (jupiter.c, mars.c, venus.c and mercury.c) and Altmiller Cave's scene;
+/// each ends with BattleFx_ClearActiveSlotsAndScheduleUpdates.
 void BattleFx_InitializeSlots(void) {
   void *work;
 
   work = Runtime_AllocateHeapBlock(HEAP_SLOT_FX, sizeof(struct BattleFxScene));
   Dma_Fill32(0, work, sizeof(struct BattleFxScene));
+  // 3200 is SCHEDULER_KEY_MAIN_LOOP: the slots update once a frame.
   Scheduler_AddOrUpdateCallback(BattleFx_UpdateAllSlots, 3200);
 }
 
 /// Stops the effect slots: removes their callback, frees every slot still in
-/// use and releases their heap block.
+/// use and releases their heap block, gEffectWork with it. Then waits a
+/// frame. Pairs with BattleFx_InitializeSlots.
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct EffectSlot *slot;
@@ -291,7 +330,10 @@ void BattleFx_AdvanceSpinAngle(union FieldObject *fieldObject) {
 
 /// Effect slot callback of a Jupiter Djinni's light particles: each circles
 /// its centre while it widens for 60 frames, circles 40, drifts toward a point
-/// 20 pixels over the leader for 40, closes in for 60 and is freed.
+/// 20 pixels over the leader for 40, closes in for 60 and is freed. It turns
+/// 1/32 turn a frame throughout, and its radius grows, then shrinks, by 1
+/// pixel a frame. The slot's origin is the centre, in screen coordinates
+/// (Camera_WorldToScreen).
 void BattleFx_RunAngledApproachPhases(struct EffectSlot *particle) {
   struct MotionObject *target;
   struct EffectVector position;
@@ -315,6 +357,7 @@ void BattleFx_RunAngledApproachPhases(struct EffectSlot *particle) {
     position.x = target->x;
     position.y = target->y + 0x140000;
     position.z = target->z;
+    // The centre moves 1/8 of the way to the leader's screen point a frame.
     Camera_WorldToScreen(&position);
     particle->originX += (position.x - particle->originX) / 8;
     particle->originZ += (position.z - particle->originZ) / 8;
@@ -332,6 +375,7 @@ void BattleFx_RunAngledApproachPhases(struct EffectSlot *particle) {
   } else if (particle->state == 4) {
     BattleFx_ClearOwnedSlot(particle);
   }
+  // orbitAngle is in 1/32 turns: << 11 makes it 1/65536 turns.
   position.x = particle->originX;
   position.z = particle->originZ;
   Vector_AddPolarOffset(particle->orbitRadius << 16, particle->orbitAngle << 11,

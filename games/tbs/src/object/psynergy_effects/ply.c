@@ -76,6 +76,8 @@ void BattleFx_RunSparkEmitter(union FieldObject *fieldObject) {
     SET_VECTOR(pos, emitter->x, emitter->y + (2 << 16), emitter->z);
     Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
     spark = (struct SparkObject *)Object_Spawn(0x11d, pos[0], pos[1], pos[2]);
+    // Each falls under a gravity of 458 (0.007 pixels a frame, each frame)
+    // and is freed after 72 frames, its script's wait (lifetime).
     if (spark != 0) {
       spark->update = BattleFx_SwayParticle;
       spark->scaleX = spark->scaleY = 0x9999; // 0.6
@@ -187,6 +189,8 @@ void FieldFx_RunPly(void) {
   }
 
   // Fly away: 192 pixels at angle 0xe800, and release it once it arrives.
+  // Its timer is the emitter's phase: -1 stops the sway that would hold it
+  // in place.
   if (target != 0) {
     target->timer = -1;
     target->speed = 0x50000;

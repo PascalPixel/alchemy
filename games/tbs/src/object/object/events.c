@@ -58,6 +58,7 @@ found:
 
 /// Returns whether an event condition holds: -1 always holds; a condition with
 /// bit 0x1000 holds while that flag is set, any other while its flag is clear.
+/// The flag is the low 12 bits, since GameFlag_Test ignores bit 12.
 ///
 /// Used for every condition column of a scene's tables: events
 /// (Scene_FindEvent, Field_SearchTile), placements (Event_SpawnObjectTable),
@@ -167,11 +168,13 @@ struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 target) {
 /// Nothing calls this.
 UNUSED void Runtime_CallWorkBlockEntry(void) { gOverlayArea.initialize(); }
 
-/// Returns the talk event of actor id: for the actor the party has stopped, its
-/// kind 7 event if it has one.
+/// Returns the talk event of actor id, or 0: for the actor stopped with Halt
+/// (gGameState.pausedObject), its kind 7 event if it has one, the event for
+/// talking to it while it is stopped (Crossbone Isle's Bane has one).
 ///
 /// Called by Field_RunScene for the A button, to choose between talking and
-/// searching, and by the field Psynergy dispatch.
+/// searching, and by the field Psynergy dispatch, which Halts only an actor
+/// with a talk event; both test the result only for non-zero.
 s32 Scene_FindActorTalkEvent(s32 id) {
   struct EffectDescriptor *talkEvent = Scene_FindEvent(EVENT_TALK, id);
   s32 pausedActor = gGameState.pausedObject;
@@ -187,10 +190,12 @@ s32 Scene_FindActorTalkEvent(s32 id) {
 }
 
 /// Talks to actor id: shows its event's message or calls its event function,
-/// with the actor stopped and turned as its placement says. For the actor the
-/// party has stopped, its kind 7 event comes first; without one, a talk event
-/// that is a function gives a random line from MsgPonderEllipsis ("...")
-/// instead. Returns 0 when an event ran, -1 when there was none.
+/// with the actor stopped and turned as its placement says. For the actor
+/// stopped with Halt, its kind 7 event comes first; without one, a talk event
+/// that is a function gives one of two lines at random instead, from
+/// MsgPonderEllipsis on (dots spoken with pauses). Returns 0 when an event ran,
+/// -1 when there was none or such a line stood in for it; Field_RunScene
+/// ignores the result.
 ///
 /// Called by Field_RunScene for its talk request (work->descriptor). Resumes
 /// the stopped actor and sets gGameState.pausedObject back to -1 afterwards.
@@ -357,8 +362,10 @@ s32 Scene_RunTouchOrExit(s32 value) {
   } else {
     exit = Scene_FindEvent(EVENT_EXIT, value);
     if (exit != 0) {
-      // Bits 5 and 4 choose the exit's sound: 0 the usual one, 32 and 48
-      // their own sound and context effect, 16 none.
+      // Bits 5 and 4 choose how the leader leaves: 0 with the usual sound,
+      // 16 silently, 32 and 48 with their own sound and leaving animation (26
+      // and 25), whose flag (0x120, 0x121) makes the next scene play the
+      // matching arrival.
       exitKind = exit->flags & 0x30;
       switch (exitKind) {
       case 0:
@@ -450,8 +457,10 @@ s32 Field_SearchTile(s32 tile) {
     if (event != NULL) {
       s32 flags = event->control;
 
-      // Bits 4 to 8 choose what the leader says on checking; if the event
-      // leaves FLAG_NOTHING_HAPPENS set, the matching result line follows.
+      // Bits 8 to 4, the search target (enum SearchTarget), choose what the
+      // leader checks ("checked the chest...") unless trigger bit 10 says the
+      // event has its own message; if the event leaves FLAG_NOTHING_HAPPENS
+      // set, the matching result line follows ("but the chest was empty.").
       condition = event->condition;
       messageOffset = (flags >> 4) & 31;
       if ((event->trigger & 0x400) == 0 && messageOffset != 0) {
@@ -534,6 +543,10 @@ s32 Field_SearchTile(s32 tile) {
               if (condition != -1) {
                 condition = gGameState.pendingDjinnEvent = condition | 0x1000;
               }
+              // Start 2 (BATTLE_START_NO_ESCAPE, battle/battle/round.c): no
+              // first strike or surprise, and every attempt to run fails; the
+              // command menu still offers it, refusing outright only for
+              // starts 3 and 4.
               work->battle =
                   Encounter_GetEnemyGroupAtSlot(99, (u16)event->value);
               Battle_SetStart(2);

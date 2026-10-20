@@ -4,6 +4,8 @@
 
 #include "../psynergy_effects_internal.h"
 
+/// Runs Catch cast on a target, through FieldFx_RunCatch.
+///
 /// Abilities: Catch (field kind 13), cast on a target.
 ///
 /// Called by BattleFx_DispatchRequestKind; the target is ignored.
@@ -15,10 +17,11 @@ void FieldFx_RunCatchOnTarget(s32 unused) { FieldFx_RunCatch(); }
 ///
 /// Abilities: Catch (field kind 13).
 ///
-/// The goal is 32 pixels in front of the caster with scene->enabled, otherwise
-/// the effect's position, 32 pixels up in both cases. Called by BattleFx_Run
-/// and FieldFx_RunCatchOnTarget. Moves the effect scene's child to (-9, -9)
-/// when there is one, and releases object 215 at the end.
+/// Object 215 is the hand of Move and Carry. The goal is 32 pixels in front
+/// of the caster with scene->enabled (no scene event named the target),
+/// otherwise the effect's position, 32 pixels up in both cases. Called by
+/// BattleFx_Run and FieldFx_RunCatchOnTarget. Moves the effect scene's child
+/// to (-9, -9) when there is one, and releases object 215 at the end.
 void FieldFx_RunCatch(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct MotionObject *actor = scene->mainObject;

@@ -5,8 +5,9 @@
 #include "../psynergy_effects_internal.h"
 
 /// End of the effect: switches the caster's display flags between 3 and 1 on
-/// a 5-frame cycle. FieldFx_RunAvoid schedules it (order 0xc80) for its last
-/// 70 frames and removes it again.
+/// a 5-frame cycle, so its outline (bit 1) blinks beside its shadow (bit 0).
+/// FieldFx_RunAvoid schedules it (order 0xc80) for its last 70 frames and
+/// removes it again.
 void FieldFx_BlinkAvoidCaster(void) {
   struct ArcEffectObject *caster;
   struct AnimationObject *rec;
@@ -28,8 +29,10 @@ void FieldFx_BlinkAvoidCaster(void) {
 }
 
 /// The caster during the effect: sheds a pair of falling arcs every 5 frames
-/// (7 on the world map), and spins in phase 1. FieldFx_RunAvoid makes it the
-/// caster's callback; it counts the caster's step and turns its angle.
+/// (7 on the world map), and spins in phase 1, 3/64 turn a frame.
+/// FieldFx_RunAvoid makes it the caster's callback; it counts the caster's
+/// step and turns its angle. The arcs draw with the tiles FieldFx_RunAvoid
+/// loads into scene->arcTileSlot.
 void BattleFx_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
   struct ArcEffectObject *caster = (struct ArcEffectObject *)fieldObject;
   s16 phase;
@@ -38,6 +41,7 @@ void BattleFx_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
   phase = caster->phase;
   elapsedFrames = caster->step++;
 
+  // SceneId_Clear is the world map's map (Field_RunScene).
   if (gGameState.map == (s32)&SceneId_Clear) {
     if (elapsedFrames % 7 == 0)
       BattleFx_SpawnDescendingArcParticles((struct FieldActor *)caster);
@@ -98,6 +102,8 @@ void FieldFx_RunAvoid(void) {
     s16 *tileSlot = &scene->arcTileSlot;
     s32 zero = 0;
 
+    // The arcs' tiles (256 bytes) stay loaded until the effect's end; the
+    // distance is 2,400 pixels in 16.16.
     *tileSlot = slot;
     VramCache_Load((s16)slot, 0x100, gBattleFx_ArcSparkTiles);
     gGameState.avoidDistance = 0x09600000;

@@ -4,8 +4,9 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// Passes value (as animation timer steps) to every one of the 64 objects
-/// whose first sprite part shows sprite 200.
+/// Gives every live object of the 64 whose first sprite layer shows sprite 200
+/// the sprite param value, and marks it to be redrawn. Reveal sets 6 as it
+/// starts and 0 as it ends.
 void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
   struct ObjectRuntime *object = gObjectSlots;
   s32 remainingActors = 63;
@@ -32,7 +33,9 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
 /// Scheduler callback of the timed effect (kind 8): asks for it to end once
 /// the leader is 60 pixels from its centre or its time has run out. The
 /// centre and the time are in the event work from 0xcb8 on
-/// (FieldFx_RunReveal).
+/// (FieldFx_RunReveal). The time counts only while effectTimerRunning is
+/// set, so menus and other effects pause it. It asks every frame until
+/// ResetSceneTransitionEffect removes it.
 void FieldEffect_WatchLeaderDistance(void) {
   struct FieldWork *work;
   struct ObjectRuntime *actor;
@@ -48,12 +51,16 @@ void FieldEffect_WatchLeaderDistance(void) {
       (*timer)--;
   }
 
-  // x is scaled by 0xd105 (about 0.82) for the comparison.
+  // On screen pixels (y is z less the height). x is scaled by 0xd105 (about
+  // 0.82) for the comparison, so the edge is an ellipse 60 pixels up and
+  // down from the centre and about 73 to either side.
   distanceX = Iwram_MulQ16(work->revealCenterX - actor->x / 0x10000, 0xd105);
   distanceZ = work->revealCenterY - (actor->z - actor->y) / 0x10000;
   if (distanceX * distanceX + distanceZ * distanceZ >= 3600 ||
       work->revealFrames == 0) {
-    u16 *slot = (u16 *)&work->command; // psynergyRequest
+    // Raise Reveal as a Psynergy request that pays no PP (ACT_PACKED 0x2000
+    // | ABILITY_REVEAL 0x90), which runs its ending events.
+    u16 *slot = (u16 *)&work->command;
     u32 request = 0x2090;
 
     *slot = request;
@@ -64,6 +71,12 @@ void FieldEffect_WatchLeaderDistance(void) {
 /// there is one, and puts markers round the leader.
 ///
 /// Abilities: Reveal (field kind 8).
+///
+/// The transition is window transition mode 8, a wobbling circle round the
+/// leader stepped over 19 frames, and the BG colours turn grey. Reveal lasts
+/// 600 frames of its own time, or until the leader leaves its circle
+/// (FieldEffect_WatchLeaderDistance), and ResetSceneTransitionEffect ends it.
+/// Called by BattleFx_Run and BattleFx_DispatchRequestKind.
 void FieldFx_RunReveal(void) {
   struct FieldWork *field;
   struct DisplayTransitionState *transition;
@@ -79,6 +92,8 @@ void FieldFx_RunReveal(void) {
   target = ObjectTable_Get(gGameState.selectedActor);
   transition->centreX = target->x.fixed;
   transition->centreY = target->z.fixed - target->y.fixed;
+  // From the plain colours (PALETTE_TRANSFORM_PLAIN, 0x10000) the BG half
+  // turns grey (PALETTE_TRANSFORM_GREY, 0x10001) in one frame.
   BattleFx_ApplyColorToSourceBuffer(0x10000, 0);
   BattleFx_ApplyColorToTargetBuffer(0x10001, 1);
   BattleFx_StartBufferInterpolation(1);
@@ -112,7 +127,10 @@ void FieldFx_RunReveal(void) {
 #define REVEAL_END_EVENT 0x40000005 ///< Psynergy event, stage 4
 
 /// Ends Reveal if it is running: stops its watch, brings the colours back
-/// from black over 30 frames and runs stage 4 of the Psynergy event.
+/// from black over 30 frames and runs stage 4 of the Psynergy event. Unless a
+/// scene set childOption, the window transition is then reset at once (next
+/// mode 0, one frame). Called as Reveal ends (FieldEvent_RunTypeHandler) and
+/// before Mind Read starts its own colours.
 void ResetSceneTransitionEffect(void) {
 #ifdef UBFIX
   struct BattleFxScene *work = gEffectWork;

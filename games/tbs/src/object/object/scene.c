@@ -7,7 +7,8 @@
 // The scene overlay's exit table: a header word holding a scene id, then that
 // scene's exits, one packed word each (and a flag word after it when
 // EXIT_HAS_FLAG is set). Scene id EXIT_TABLE_END ends the exits of a scene and
-// the whole table.
+// the whole table. SCENE_EXIT and SCENE_EXIT_IF (field_scene.h) give an exit
+// word's bits.
 #define EXIT_SCENE_MASK 0xfff
 #define EXIT_ENTRANCE(word) (((word) & 0xff000) >> 12)
 #define EXIT_KIND(word) (((word) & 0x0ff00000) >> 20)
@@ -19,9 +20,10 @@
 /// scene. exitKind is the kind of exit Field_RunScene ended on; the scene's
 /// exit table gives the first exit of that kind (or of any kind) whose flag, if
 /// it has one, is not set. An exit of kind 0 or the end of the scene's exits
-/// falls back to the scene of its first exit. Called by Game_ResetForNewGame
-/// with Field_RunScene's result; sets gGameState.scene and .entrance, and
-/// leaves them alone for EXIT_NONE or a scene with no header in the table.
+/// falls back to the scene of its first exit, at entrance 0. Called by
+/// Game_ResetForNewGame with Field_RunScene's result; sets gGameState.scene and
+/// .entrance, and leaves them alone for EXIT_NONE, whose destination is set
+/// already, or for a scene with no header in the table.
 void Scene_TakeExit(s32 exitKind) {
   s16 currentScene;
   const u32 *exitTable;
@@ -86,11 +88,12 @@ void Scene_TakeExit(s32 exitKind) {
 /// Chooses where the game continues after a battle or another scene that is
 /// not a field map (see Game_ResetForNewGame). result is that scene's result:
 /// -1 when the party was defeated, which revives the leader with 1 HP (and,
-/// with FLAG_CHILDHOOD, fully heals the first two characters) and returns to
-/// the defeat point, or to the last saved point when none is set. Any other
-/// result goes to the next scene the event set, or to the default scene with
-/// the party keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
-/// Game_ResetForNewGame after each scene above SCENE_BLANK; stores result in
+/// with FLAG_CHILDHOOD, fully heals Isaac and Garet, characters 0 and 1) and
+/// returns to the defeat point, or to the last saved point when none is set.
+/// Any other result goes to the next scene the event set, or to the default
+/// scene (the field scene the battle or minigame was started from) with the
+/// party keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
+/// Game_ResetForNewGame after each scene from SCENE_BLANK on; stores result in
 /// gGameState.sceneChangeReason and sets gGameState.scene and .entrance.
 void Scene_ReturnFromBattle(s32 result) {
   struct BattleUnit *unit;
@@ -157,10 +160,17 @@ s32 BattleFx_GetResourceGroup(s32 scene) {
   return gField_SceneTable[scene].group;
 }
 
-/// The minigames borrow the final two 16-colour background palettes.
-enum { MINIGAME_PALETTE_FIRST = 14, MINIGAME_PALETTE_BYTES = 64 };
+/// The last two 16-colour background palettes, which the minigame runners save
+/// and restore around a minigame; palette 15 holds the window colours
+/// (PaletteGlow_Update).
+enum {
+  MINIGAME_PALETTE_FIRST = 14, ///< BG palette 14
+  MINIGAME_PALETTE_BYTES = 64  ///< palettes 14 and 15: 2 x 16 colours x 2 bytes
+};
 
-/// Runs the Lucky Dice minigame, preserving BG palettes 14 and 15.
+/// Runs the Lucky Dice minigame, preserving BG palettes 14 and 15 in a 64-byte
+/// MemAlloc copy freed afterwards. Returns the minigame's result, 0, for
+/// Scene_ReturnFromBattle.
 static __inline__ s32 RunLuckyDice(s32 entrance) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
   void *saved = MemAlloc(MINIGAME_PALETTE_BYTES);
@@ -177,7 +187,8 @@ static __inline__ s32 RunLuckyDice(s32 entrance) {
   return result;
 }
 
-/// Runs the slot machine, preserving BG palettes 14 and 15.
+/// Runs the slot machine (Lucky Wheels), preserving BG palettes 14 and 15 as
+/// RunLuckyDice does. Returns ReelGame_Start's result, 0.
 static __inline__ s32 RunReelGame(s32 entrance) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
   void *saved = MemAlloc(MINIGAME_PALETTE_BYTES);
@@ -219,12 +230,14 @@ void Game_ResetForNewGame(s32 mode) {
     gGameState.scene = (s32)&SceneId_Title;
     gGameState.entrance = 2;
   }
+  // The window colours from the options: hue, then brightness.
   PaletteGlow_UpdateFar(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
   VramCache_Reset();
   Scheduler_ResetTaskTable();
   Scheduler_ResetTaskTable();
   for (;;) {
-    // Flag 0x101 skips SE_288 for one scene change, then clears itself.
+    // Flag 0x101 (FLAG_SKIP_SCENE_CHANGE_SOUND) skips SE_288 for one scene
+    // change, then clears itself.
     if (GameFlag_TestFar(0x101))
       GameFlag_ClearBitFar(0x101);
     else
@@ -240,6 +253,8 @@ void Game_ResetForNewGame(s32 mode) {
       dma0[5] &= ~DMA_ENABLE;
       dma0[5];
     }
+    // Drop the tasks, the HBlank and VCount handlers (IRQs 1 and 2) and every
+    // heap block the last scene, battle or minigame left.
     Scheduler_ResetTaskTable();
     Runtime_SetIrqHandler(1, 0, 0);
     Runtime_SetIrqHandler(2, 0, 0);
@@ -272,13 +287,17 @@ void Game_ResetForNewGame(s32 mode) {
                             GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION));
     Scene_ResolveInteractionResult();
     if (!GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION)) {
-      // Flags 0x11a and 0x11b keep the music that is playing.
+      // Either flag keeps the music that is playing: FLAG_KEEP_MUSIC for this
+      // one change, FLAG_KEEP_MUSIC_HELD for as long as it stays set.
       if (GameFlag_TestFar(FLAG_KEEP_MUSIC) ||
           GameFlag_TestFar(FLAG_KEEP_MUSIC_HELD))
         GameFlag_ClearBitFar(FLAG_KEEP_MUSIC);
       else
         Audio_PlayCueFromEventWork();
     } else if (gGameState.returnCue != -1) {
+      // Back where the party was: resume the music saved when the pause menu
+      // last opened (run_scene.c). A random battle and every normal entry set
+      // returnCue to -1, so the scene's own music plays instead.
       AudioCommand_PlayFar(gGameState.returnCue);
     } else {
       Audio_PlayCueFromEventWork();
@@ -335,6 +354,7 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
       GameFlag_ClearBitFar(flag);
     GameFlag_ClearBitFar(FLAG_LINK_BATTLE);
     GameFlag_ClearBitFar(FLAG_RETREAT_BLOCKED);
+    // Flag 0x161 (353) stops random battles (Encounter_SelectEnemyGroup).
     GameFlag_ClearBitFar(0x161);
     GameFlag_ClearBitFar(0x123);
     GameFlag_ClearBitFar(FLAG_NOT_ON_MAP);
@@ -342,7 +362,8 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
   }
   gGameState.sceneGroup = group;
   GameFlag_SetBitFar((group & 0x7f) + 0x180);
-  // Flag 0x123 marks scenes of variant 2.
+  // Flag 0x123 (FLAG_SCENE_VARIANT_2) marks a scene of variant 2; see
+  // SceneRecord.variant (field_runtime.h) for which scenes those are.
   gGameState.sceneVariant = SCENE_RECORD(gGameState.scene)->variant;
   if (gGameState.sceneVariant == 2)
     GameFlag_SetBitFar(0x123);

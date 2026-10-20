@@ -4,12 +4,16 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// Work slot 22 of the wave effect, 0x298 bytes (RunSceneTransitionEffect).
+/// Work slot 22 of the wave effect, 0x298 bytes (gBattleBgFxWork). It lives
+/// from RunSceneTransitionEffect to BattleFx_FinishSceneAndReleaseHeapBlock,
+/// after the conversation Mind Read reads.
 struct WaveFxWork {
-  u16 lines[2][162]; ///< each scanline's offset, two pages written in turn
-  u16 phase;         ///< the wave's phase
-  u8 page;           ///< the page being written
-  s8 red;            ///< the hue as a colour (red, green, blue, 4 to 11 each)
+  /// Each scanline's BG0 horizontal scroll in pixels, two pages written in
+  /// turn; 160 of each page's 162 are used.
+  u16 lines[2][162];
+  u16 phase; ///< the wave's phase, 4 more a frame
+  u8 page;   ///< the page shown (the HBlank DMA's); the other is written
+  s8 red;    ///< the hue as a colour (red, green, blue, 4 to 11 each)
   s8 green;
   s8 blue;
   u16 hue;      ///< hue, 0 to 359 degrees
@@ -19,11 +23,15 @@ struct WaveFxWork {
   u8 counter;   ///< particle spawn cycle (0 to 60)
 };
 
-/// Starts the wave effect of caster sourceId on target targetId: fades the
+/// Starts the wave effect of caster x on target y (actor ids): fades the
 /// palettes toward a hue that shifts with the frame counter, and starts its
 /// per-frame update (FieldFx_UpdateMindReadWave) after 8 frames.
 ///
 /// Abilities: Mind Read (field kind 2).
+///
+/// The effect stays up until BattleFx_ClearChildValueOnMismatch ends it
+/// after the after event; meanwhile the message windows show thoughts
+/// (Ui_FillBank15PaletteGrey sets the window mode).
 void RunSceneTransitionEffect(s32 x, s32 y) {
   struct WaveFxWork *work;
 
@@ -32,6 +40,7 @@ void RunSceneTransitionEffect(s32 x, s32 y) {
   Dma_Fill32(0, work, 0x298);
   work->hue = ((u32)(gFrameCount << 1) % (u32)360);
   BattleFx_AdvanceHueCycle();
+  // 0x200000 is PALETTE_TRANSFORM_TINT: the BG colours tinted by the hue.
   BattleFx_ApplyColorToTargetBuffer(
       RGB(work->red, work->green, work->blue) | 0x200000, 1);
   BattleFx_StartBufferInterpolation(8);
@@ -79,14 +88,15 @@ void FieldFx_UpdateMindReadWave(void) {
     return;
   }
 
-  // The 160 scanlines' offsets, a sine wave of 4 pixels either way, on the
-  // hidden page; then show that page.
+  // The 160 scanlines' offsets, a sine wave of 4 pixels either way (a 16.16
+  // sine >> 14), on the hidden page; then show that page.
   line = work->lines[work->page ^ 1];
   for (scanline = 0; scanline < 160; scanline++)
     *line++ =
         Trig_Sin(((u32)((work->phase + scanline * 8) << 16) / (u32)160)) >> 14;
   work->phase += 4;
   work->page ^= 1;
+  // Every other frame the tint takes the next hue, in one frame.
   if (work->page != 0) {
     BattleFx_ApplyColorToTargetBuffer(
         RGB(work->red, work->green, work->blue) | 0x200000, 1);
@@ -121,6 +131,7 @@ void FieldFx_UpdateMindReadWave(void) {
         particle->acceleration = 0xa3d7;
         particle->facing = ArcTan2(from.z - to.z, from.x - to.x);
         particle->update = BattleFx_SetCallbackWhenTargetUnset;
+        // No shadow or outline, sprite priority 1.
         sprite->palette = 0;
         sprite->mode = 1;
         Object_SetMoveTargetFar((struct ObjectRuntime *)particle, from.x,
@@ -226,8 +237,9 @@ s32 Fixed_Remainder(s32 value, s32 divisor) {
   return value - Iwram_MulQ16(quot & 0xffff0000, divisor);
 }
 
-/// Per-frame update: once the object has arrived (no destination left), runs
-/// the script for untargeted objects.
+/// Per-frame update: once the object has arrived (no destination left on any
+/// axis), frees it: gBattleFx_UntargetedObjectScript is a lone SC_FREE.
+/// Mind Read's particles end this way at the caster.
 void BattleFx_SetCallbackWhenTargetUnset(union FieldObject *fieldObject) {
   struct ObjectRuntime *object = (struct ObjectRuntime *)fieldObject;
   s32 targetY;
@@ -245,10 +257,12 @@ void BattleFx_SetCallbackWhenTargetUnset(union FieldObject *fieldObject) {
 }
 
 /// Turns colours 1 and 3 to 12 of BG palette 15 grey and starts the BG0
-/// scanline scroll (BattleFx_ArmBg0HBlankDma).
+/// scanline scroll (BattleFx_ArmBg0HBlankDma) at each VBlank.
 void Ui_FillBank15PaletteGrey(void) {
   volatile u16 *p;
 
+  // Window mode 1: messages show as thoughts until
+  // Ui_SetBank15PaletteAndClearRenderMode clears it.
   ((struct UiRenderWork *)gWindowWork[0])->mode = 1;
   p = &BG_PLTT_COLOR(15, 1);
   *p = MIND_READ_GREY;
@@ -272,6 +286,7 @@ void Ui_FillBank15PaletteGrey(void) {
   *p = MIND_READ_GREY;
   p += 1;
   *p = MIND_READ_GREY;
+  // 0x480 is SCHEDULER_KEY_VBLANK.
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg0HBlankDma, 0x480);
 }
 

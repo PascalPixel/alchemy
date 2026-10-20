@@ -4,23 +4,29 @@
 
 #include "../object_internal.h"
 
-/// The object system's work (struct ObjectSystemWork), seen as the flag that
-/// suspends sprite projection while the menu opens.
+/// The object system's work (struct ObjectSystemWork, gMenuCtrlWork in heap
+/// slot 6), seen as the flag that suspends sprite projection while the menu
+/// opens.
 struct MenuCtrl {
   u8 unk00[4];
+  /// ObjectSystemWork's suspended: while nonzero, sprites not held are not
+  /// drawn and give up their VRAM (object_camera.c, sprite_draw.c).
   u16 wait;
 };
 
 /// Runs the current field scene, which the party entered by entrance, until it
-/// leaves; returns the exit kind it left by (for Scene_TakeExit), or 999 when
-/// the party fell outside battle. Sets the scene up (map, actors, encounters,
-/// return points), runs its initialization, fades it in, then runs the field
-/// loop: the party walks (Field_ProcessStep each frame) until a request is
-/// made, and then the requests are handled until none is left.
+/// leaves; returns the exit kind it left by, for Scene_TakeExit, or EXIT_NONE
+/// (999) when the next scene is already in gGameState: a random battle, a
+/// party that fell outside battle, Retreat or an event's destination. Sets the
+/// scene up (map, actors, encounters, return points), runs its initialization,
+/// fades it in, then runs the field loop: the party walks (Field_ProcessStep
+/// each frame) until a request is made, and then the requests are handled
+/// until none is left.
 ///
 /// Called from Game_ResetForNewGame's main loop for every field scene, which
 /// passes the result to Scene_TakeExit. Allocates the field work in heap slot
-/// 27 (HEAP_SLOT_EVENT) and frees it on the way out, sets gGameState's default,
+/// 27 (HEAP_SLOT_EVENT), cleared, and frees it on the way out, with every
+/// block the scene took after it from the same pool; sets gGameState's default,
 /// next and defeat destinations, and clears FLAG_IN_BATTLE and, once the scene
 /// has started, FLAG_KEEP_PARTY_POSITION.
 s32 Field_RunScene(s32 entrance) {
@@ -48,6 +54,7 @@ s32 Field_RunScene(s32 entrance) {
     mode = MODE_WORLD_MAP;
     Encounter_SelectSceneZones(0);
   } else {
+    // Mode 2: a layered field map.
     Map_LoadLayeredSceneFar(gGameState.map);
     mode = 2;
     Encounter_SelectSceneZones(1);
@@ -117,6 +124,9 @@ s32 Field_RunScene(s32 entrance) {
         DisplayTransition_Start(work->transition, work->transitionFrames);
         work->transitionActive = 1;
         PLTT_BACKDROP = 0;
+        // An arrival the last scene asked for
+        // (ObjectEffect_RunPendingFlagEvent) plays through the fade; with none,
+        // wait out half of it.
         if (ObjectEffect_RunPendingFlagEvent() == 0)
           WaitFrames((work->transitionFrames + 1) / 2);
       }
@@ -211,6 +221,8 @@ s32 Field_RunScene(s32 entrance) {
           work->event = 0;
         } else if (work->battle != 0) {
           // A random encounter: save the actors and go to the battle scene.
+          // Field_StartEncounterTransition closes the screen itself and
+          // clears transitionActive, so the scene ends without another fade.
           Leader_StopMoving();
           ObjectTable_Snapshot();
           gGameState.returnCue = -1;
@@ -241,6 +253,7 @@ s32 Field_RunScene(s32 entrance) {
             mode = Scene_FindActorTalkEvent(object) != 0;
           }
           if (mode != 0) {
+            // 0x1000 keeps actor 0's request non-zero; the handler masks it.
             work->descriptor = object | 0x1000;
             work->menu = 0;
           } else {
@@ -321,8 +334,10 @@ s32 Field_RunScene(s32 entrance) {
             UiTimedNotice_CloseIfActiveFar();
             gGameState.returnCue = AudioCommand_GetSecondaryStateByteFar();
             if (GameFlag_TestFar(FLAG_IN_LINK_LOBBY) == 0) {
-              // Wait a frame first when fewer than 136 of the 512 resource
-              // blocks are free.
+              // With fewer than 136 of the 512 sprite VRAM blocks (64 bytes
+              // each) free, sprite drawing stays suspended while the menu
+              // runs, and a frame passes so that the field's sprites give
+              // their VRAM back before it opens.
               struct MenuCtrl *ctrl = (struct MenuCtrl *)gMenuCtrlWork;
               u8 *owner = gResourceBlockOwners;
               s32 free = 0;
@@ -349,8 +364,10 @@ s32 Field_RunScene(s32 entrance) {
         }
       }
 
-      // Hand the leader back to the player, as climbing (mode 1), mode 2, on
-      // the world map or walking, and step until the next request.
+      // Hand the leader back to the player, as climbing (mode 1), carried
+      // through the air (mode 2, which Suhalla Desert's storms and the world
+      // map's airborne travel set: only a key check runs), on the world map
+      // or walking, and step until the next request.
       GameFlag_ClearBitFar(0x104);
       actor = work->actors[gGameState.selectedActor];
       if (actor != NULL) {
@@ -388,18 +405,18 @@ done:
 /// A field actor (struct FieldActor), seen with its position as one vector.
 struct Object {
   u8 pad0[6];
-  u16 angle;
-  struct EffectVector pos;
+  u16 angle;               ///< 1/65536 turns
+  struct EffectVector pos; ///< 16.16 fixed-point pixels
   u8 pad1[14];
-  u8 kind;
+  u8 kind; ///< ObjectRuntime's terrainId: the map layer of its ground
   u8 pad2[0x2d];
   struct AnimationObject *sprite;
 };
 
 /// Returns the collision code of the map cell 16 pixels ahead of the party
 /// leader when there is something to search there: a tile code from 242 to 247
-/// whose ground is no more than 64 pixels above the leader, or a code the
-/// scene has a search event for. Returns 0 otherwise.
+/// whose ground is level with the leader or up to 64 pixels above it, or a
+/// code the scene has a search event for. Returns 0 otherwise.
 ///
 /// Called by Field_RunScene for the A button (a non-zero result becomes
 /// work->tile, for Field_SearchTile), and by Menu_RunTopSelection's search
@@ -432,6 +449,7 @@ s32 Object_GetTriggerTileAheadOfCurrent(void) {
                             (((probePosition.vector.z / 0x200000) & 31) << 5))
                            << 2);
     } else {
+      // Layer 0's cells, MapState's layers[0].cells at 0x130.
       cells = *(u8 **)(mapBytes + 0x130);
       cell = cells + (((probePosition.vector.x / 0x100000) +
                        ((probePosition.vector.z / 0x100000) << 7))

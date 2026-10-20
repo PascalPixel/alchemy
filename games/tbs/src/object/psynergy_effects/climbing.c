@@ -16,7 +16,8 @@
 /// and back. Each jump adds two tiles to work->walkingDistance, as walking
 /// them would, and the leader keeps jumping while it lands on another jump
 /// spot (collision 0xf9). Returns 0 after a jump, -1 when the leader cannot
-/// jump.
+/// jump; a chain that is blocked after its first jump also returns -1, with
+/// the leader standing on the jump spot it reached.
 ///
 /// Called by Field_RunPushTileEvent when the leader has pushed against a jump
 /// spot (0xf9 or 0xfe) for more than 12 frames, and by the gap jumps of Goma
@@ -39,7 +40,9 @@ s32 Field_TryJumpForward(void) {
 
   pos = &position;
 again:
-  // The middle of the tile in front, then of the tile beyond.
+  // The middle of the tile in front, then of the tile beyond. The tile
+  // jumped over may be a wall (2) or a drop (-1), but not ground more than
+  // 8 pixels higher (1); the landing must be within a step's height (0).
   SET_POSITION(pos, (leader->x & 0xfff00000) + 0x80000, leader->y,
                (leader->z & 0xfff00000) + 0x80000);
   Vector_AddPolarOffset(0x100000, angle, pos);
@@ -49,8 +52,9 @@ again:
                (leader->z & 0xfff00000) + 0x80000);
   Vector_AddPolarOffset(0x200000, angle, pos);
   if (Map_CheckObjectStepFar(leader, pos) == 0) {
-    // Suspend terrain following while airborne. Restore the original motion
-    // and sprite flags after landing, before returning field control.
+    // Suspend terrain following and the shadow (sprite flag bit 0) while
+    // airborne: 4 pixels a frame up, 3 a frame across. Restore the original
+    // motion and sprite flags after landing, before returning field control.
     if (leader->animationKind == 1)
       spriteFlags = ((struct AnimationObject *)leader->animation)->flags;
     FieldEvent_Begin();
@@ -110,7 +114,7 @@ again:
 /// when the cell south of the leader's is the same climbable cell, the leader
 /// turns round, grabs the wall and climbs down onto it (climbing pose 13).
 /// While climbing, the leader lets go and drops to the ground. Returns 0, or -1
-/// when there is nothing to climb or the way is blocked.
+/// when there is nothing to climb or the way is blocked by a wall cell.
 ///
 /// Called by Field_RunPushTileEvent for a climbing spot (0xfd) with Down held,
 /// and imported by the scenes with ladders and climbable walls (Babi's
@@ -139,14 +143,16 @@ s32 Field_ClimbDown(void) {
       s32 vector[6];
       struct FieldPosition *position = (struct FieldPosition *)vector;
 
-      // Nothing may stand on the wall 16 pixels below.
+      // The ground under the point 16 pixels lower may not be a wall cell
+      // (collision 0xff) of layer 2: the check returns nonzero for a wall.
       SET_POSITION(position, object->x, object->y - 0x100000, object->z);
       result =
           CheckMapPositionCellOccupiedFar((struct WorldPosition *)position);
       if (result != 0)
         goto failure;
 
-      // Step to the middle of the tile, face north and climb down a tile.
+      // Step to the middle of the tile, face north and climb down a tile at
+      // 1 pixel a frame, in free flight (motion flags 0) with no shadow.
       ObjectMotion_SetPositionAndCommit(gGameState.selectedActor, gridX, gridZ);
       object->speedLimit = 0x10000;
       ObjectMotion_ArmCallback(gGameState.selectedActor, 0xc000, 0);
@@ -163,7 +169,9 @@ s32 Field_ClimbDown(void) {
       goto failure;
     }
   } else {
-    // Let go of the wall and fall.
+    // Let go of the wall and fall: terrain following and gravity again
+    // (motion flags 3) after a hop of 4 pixels a frame, the ground taken as
+    // where the leader is until the terrain is read, and the shadow back.
     ObjectDispatch_SelectAnimationFar(object, 10);
     object->flags = 3;
     object->velocityY = 0x40000;
@@ -187,7 +195,7 @@ failure:
 /// the cell north of the leader's is the same climbable cell, the leader jumps
 /// onto the wall and holds on (climbing pose 12). While climbing, the leader
 /// climbs over the top onto the ground. Returns 0, or -1 when there is nothing
-/// to climb or the way is blocked.
+/// to climb or the way is blocked by a wall cell.
 ///
 /// Called by Field_RunPushTileEvent for a climbing spot (0xfd) with Up held,
 /// and imported by the scenes with ladders and climbable walls (Babi's
@@ -219,6 +227,8 @@ s32 Field_ClimbUp(void) {
       s32 vector[6];
       struct FieldPosition *position = (struct FieldPosition *)vector;
 
+      // The ground under the leader may not be a wall cell (collision 0xff)
+      // of layer 2.
       SET_POSITION(position, object->x, object->y, object->z);
       result =
           CheckMapPositionCellOccupiedFar((struct WorldPosition *)position);

@@ -6,8 +6,9 @@
 
 STATIC_ASSERT(sizeof(struct EffectVector) == 0x0c);
 
-/// Per-frame update: drops one particle round the lifted object, 8 to 24
-/// pixels above it and 0 to 48 pixels away in a random direction.
+/// Scheduler callback while Carry holds its target: drops one particle a
+/// frame round the lifted object, 8 to 24 pixels above it and 0 to 48 pixels
+/// away in a random direction (BattleFx_InitializeFallingFragment).
 void BattleFx_SpawnFallingParticles(void) {
   struct FieldActor *liftedObject;
   struct EffectVector position;
@@ -29,8 +30,9 @@ void BattleFx_SpawnFallingParticles(void) {
 
 #define CARRY_SHARD_MAX 20 ///< shards
 
-/// Tests the target's move with its terrain reference raised 16 pixels.
-/// Restore the reference before returning the collision result.
+/// Tests the target's move with its terrain reference raised 16 pixels, so a
+/// carried target passes over ground up to 24 pixels above its own (a step
+/// allows 8). Restores the reference before returning the collision result.
 static __inline__ s32
 BattleFx_CheckRaisedTargetCollision(struct FieldActor *target,
                                     struct EffectVector *position) {
@@ -103,7 +105,8 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   right->x.fixed = p->x - (16 << 16);
   right->velocityX = 0;
 
-  // Lift to 24 pixels above the ground.
+  // Lift to 24 pixels above the ground, 3/8 pixel a frame, floating (motion
+  // flag bit 2) with no shadow and its colours cycling.
   target->update = ObjectGroup_ApplyRandomChildValues;
   Scheduler_AddOrUpdateCallback(BattleFx_SpawnFallingParticles, 0xc80);
   AudioCommand_PlayFar(SE_130);
@@ -121,6 +124,8 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   hands[0]->acceleration = 0x8000;
   hands[1]->speed = 4 << 16;
   hands[1]->acceleration = 0x8000;
+  // As in Move: the target keeps its facing and reads its ground from layer
+  // 2 while it is carried.
   target->speed = 0x6666;
   target->acceleration = 0x3333;
   target->steeringFlags = 0;
@@ -191,6 +196,8 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
       ObjectDispatch_SelectAnimationFar(hands[0], 4);
       ObjectDispatch_SelectAnimationFar(hands[1], 4);
       WaitFrames(15);
+      // i is the overlap test's 0 here: unpause the target and, once it is
+      // on the tile, stop it dead. It moves at 0.2 pixels a frame.
       target->paused = i;
       target->speed = 0x3333;
       target->acceleration = 0x3333;
@@ -251,7 +258,8 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   ObjectDispatch_ReleaseFar((struct DispatchObject *)hands[1]);
 
   // Restore the target's look and motion, and throw it up at 10 pixels a
-  // frame.
+  // frame: it falls and follows the terrain again (motion flags 3), keeping
+  // 0.2 of its speed as it bounces, and reads its ground from layer 0.
   Animation_ApplyChildValuesFar((struct DispatchObject *)target,
                                 work->savedPalette);
   ObjectDispatch_InitializeFar((struct DispatchObject *)target,
@@ -278,15 +286,18 @@ void BattleFx_SteerLiftedTarget(s32 targetId) {
   }
 }
 
-/// Carry cast with no target: objects appear above the caster and to either
-/// side, move apart and scatter into shards.
+/// Carry cast with no target: two hands appear 16 pixels above the spot in
+/// front of the caster and 32 pixels to either side, close in 24 pixels and
+/// scatter into shards.
 ///
 /// Abilities: Carry (field kind 11), cast with no target.
 DEFINE_ITEM_BREAK_EFFECT(FieldFx_RunCarry, BattleFx_SpawnItemBreakMode1)
 
-/// Spawns object 215 with the item break sound, in animation 1, and grows it,
-/// spinning, from a quarter to full size over 24 frames; angle is the way it
-/// faces once grown.
+/// Spawns a hand (object 215) with the item break sound, in animation 1, and
+/// grows it, spinning 1/8 turn a frame, from a quarter to full size over 24
+/// frames; angle is the way it faces once grown. Returns the hand, or NULL
+/// when it cannot be spawned (Object_Spawn); Carry and its no-target effect
+/// release it.
 struct MotionObject *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
                                                   s32 angle) {
   struct MotionObject *fragment;

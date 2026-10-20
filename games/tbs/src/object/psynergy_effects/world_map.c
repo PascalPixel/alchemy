@@ -4,21 +4,31 @@
 
 #include "../psynergy_effects_internal.h"
 
+/// The generated marker pictures: four 16-colour 8 by 8 tiles, 32 bytes each.
 #define WORLD_MAP_MARKER_TILE_BYTES 0x80
-#define WORLD_MAP_SCREEN_WIDTH 240
-#define WORLD_MAP_SCREEN_HEIGHT 160
+#define WORLD_MAP_SCREEN_WIDTH 240  ///< the picture's width, the screen's
+#define WORLD_MAP_SCREEN_HEIGHT 160 ///< the picture's height, the screen's
+/// The world map's size in field pixels each way, which the picture shows at
+/// 240 by 160.
 #define WORLD_MAP_WORLD_SIZE 4096
-#define WORLD_MAP_X_ORIGIN PIXELS(4096)
+#define WORLD_MAP_X_ORIGIN PIXELS(4096) ///< field x of the picture's left edge
+/// The first ordinary place actor, the first slot with a row of
+/// gWorldMap_PlaceMarkers whatever the leader is.
 #define WORLD_MAP_FIRST_PLACE_ACTOR 11
-#define WORLD_MAP_MARKER_CAPACITY 66
+#define WORLD_MAP_MARKER_CAPACITY 66 ///< one marker per actor slot
+/// The cursor's sprite entry, after the markers'.
 #define WORLD_MAP_CURSOR_PART WORLD_MAP_MARKER_CAPACITY
-#define WORLD_MAP_CURSOR_MIN_SPEED PIXELS(1)
-#define WORLD_MAP_CURSOR_MAX_SPEED PIXELS(6)
+#define WORLD_MAP_CURSOR_MIN_SPEED PIXELS(1) ///< screen pixels a frame
+#define WORLD_MAP_CURSOR_MAX_SPEED PIXELS(6) ///< screen pixels a frame
+/// Added to the cursor's speed each frame the d-pad is held.
 #define WORLD_MAP_CURSOR_ACCELERATION (PIXELS(1) / 8)
-#define WORLD_MAP_MARKER_BLEND_STEPS 32
+#define WORLD_MAP_MARKER_BLEND_STEPS 32 ///< gWorldMap_MarkerBlendCycle's rows
+/// The cursor's limits, in screen pixels; y goes from 0.
+///@{
 #define WORLD_MAP_CURSOR_MIN_X 16
 #define WORLD_MAP_CURSOR_MAX_X (WORLD_MAP_SCREEN_WIDTH - 1)
 #define WORLD_MAP_CURSOR_MAX_Y 141
+///@}
 
 /// The renderer's linked sprite entry and the three words that initialize it.
 union WorldMapMarkerPart {
@@ -414,7 +424,8 @@ void Map_UpdateWorldMapMarkers(void) {
     }
   }
 
-  // Pulse the markers' transparency.
+  // Pulse the markers' transparency: they weigh blend sixteenths against
+  // the picture's 16 less blend (REG_BLDALPHA's EVA and EVB).
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL, IO_WRITE_16);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend,
                       IO_WRITE_16);
@@ -453,6 +464,9 @@ void Map_ShowWorldMap(s32 picture) {
   menu->suspended = 1;
   WaitFrames(1);
   blend = REG_BLDALPHA;
+  // The picture's 224 BG colours (448 bytes), then its 240 by 160 pixels of
+  // 256 colours, a byte each, decoded into the borrowed buffer and copied
+  // to BG1's tiles.
   graphics = Resource_GetTableEntry(resource);
   Dma_Set(graphics, (void *)BG_PLTT,
           (u32)(DMA_ENABLE | DMA_32BIT) << 16 | (448 / 4), REG_DMA3);
@@ -532,6 +546,9 @@ void Field_UpdateObjectVisibilityBounds(void) {
 }
 
 /// On the world map, zooms the view out (0x9d89) while L is held, then back.
+/// Each zoom takes 6 frames; 0x9d89 is about 0.62, which sets the view 1.6
+/// times as far (BattleFx_ScheduleRatioTransition). Field_RunScene runs it
+/// for event -889; the overlay tasks are suspended meanwhile.
 void BattleFx_RunVisibilityTransition(void) {
   struct FieldWork *field =
       Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));

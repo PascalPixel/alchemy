@@ -54,37 +54,44 @@ void FieldFx_UpdateScaledArcObjectB(union FieldObject *fieldObject) {
   arc->z.fixed = anchor->z.fixed - (0x10000 - scale) * 5 + 0x100000;
 }
 
-/// A sprite as the arcs set it up: its three OAM attributes and its
-/// bookkeeping.
+/// A sprite (struct AnimationObject) as the arcs set it up: its image's three
+/// OAM attributes and its bookkeeping; the notes give the AnimationObject
+/// fields at the same offsets.
 struct ArcSprite {
   u8 pad00[4];
-  u16 y : 8;
+  u16 y : 8; ///< screen pixels
   u16 affine : 1;
   u16 doubleSize : 1;
   u16 mode : 2;
   u16 mosaic : 1;
   u16 color : 1; ///< 1 = 256 colours
-  u16 shape : 2;
-  u16 x : 9;
+  u16 shape : 2; ///< 1 wide
+  u16 x : 9;     ///< screen pixels
   u16 unused : 3;
   u16 hflip : 1;
   u16 vflip : 1;
   u16 size : 2;
-  u16 tile : 10;
+  u16 tile : 10; ///< first sprite tile in VRAM
   u16 priority : 2;
   u16 palette : 4;
   u8 pad0a[18];
-  u8 slot; ///< VRAM block
+  u8 slot; ///< VRAM cache entry holding its tiles
+  /// retainCacheEntry: set, releasing the arc leaves the effect's spark tiles
+  /// (scene->tileSlot), which it borrows, loaded.
   u8 active : 1;
   u8 displayFlags : 7;
   u8 pad1e[8];
-  u8 flags;
+  u8 flags; ///< bit 0 draws its shadow; the arcs clear it
   u8 pad27;
-  struct AnimationEntry *child;
+  struct AnimationEntry *child; ///< entries[0], its first layer
 };
 
 /// Spawns the two swelling arcs (object 26) on an object, A and B (B upside
-/// down); they follow it for 32 frames.
+/// down); they follow it for 32 frames, then free themselves. They draw
+/// with the effect's spark tiles, so they need the effect's work; the
+/// casting hooks below spawn them every 16 frames, and
+/// BattleEffect_CleanupSceneObjects waits for the last to end (at most 30
+/// frames).
 void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked) {
   struct BattleFxScene *scene = gEffectWork;
   struct FieldActor *source = scene->mainObject;
@@ -130,7 +137,8 @@ void BattleFx_SpawnScaledArcObjects(struct FieldActor *linked) {
 }
 
 /// Per-frame update: flashes an object between sprite param 7 and 0 every 2
-/// frames and spawns the swelling arcs on it every 16.
+/// frames and spawns the swelling arcs on it every 16. EventObject_Initialize
+/// gives it to the caster as a cast starts with a flash (scene->visible).
 void BattleFx_FlickerObjectAndTick(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   if ((gFrameCount & 2) != 0) {
@@ -145,6 +153,8 @@ void BattleFx_FlickerObjectAndTick(union FieldObject *fieldObject) {
 
 /// Per-frame update: cycles an object through sprite params 0 to 5, one step
 /// every 2 frames, and spawns the swelling arcs on it every 16.
+/// EventObject_Initialize gives it to the caster in place of the flicker
+/// while flag 0x140 is set.
 void FieldFx_CycleObjectValueByCounter(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   if ((gFrameCount & 1) != 0) {

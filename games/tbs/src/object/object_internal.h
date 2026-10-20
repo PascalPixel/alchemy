@@ -96,20 +96,27 @@
 #include "macros.h"
 #include "ability_ids.h"
 
-/// Field_RunScene's result when the scene was not left (scene.c, run_scene.c).
+/// The exit request whose destination is already in gGameState.scene and
+/// .entrance, so that Scene_TakeExit leaves them as they are. Random battles,
+/// Retreat and the event commands that set a destination (Event_SetDestination)
+/// raise it, and Field_RunScene returns it when the whole party falls;
+/// Scene_TakeExit also uses it for "no exit found" (scene.c, run_scene.c).
 #define EXIT_NONE 999
 
 /// Scene ids above the field maps, which Game_ResetForNewGame runs without a
-/// map.
+/// map; each returns a result to Scene_ReturnFromBattle instead of an exit.
 enum {
+  /// Runs nothing and returns 0; no ☀️ code sends the party there.
   SCENE_BLANK = 0x1fb,
-  SCENE_REEL_GAME = 0x1fc,
-  SCENE_LUCKY_DICE = 0x1fd,
+  SCENE_REEL_GAME = 0x1fc,  ///< Lucky Wheels at Tolbi's spring (colorfx.c)
+  SCENE_LUCKY_DICE = 0x1fd, ///< Lucky Dice at Tolbi's spring (lucky_dice.c)
+  /// A battle; the entrance is the enemy group, and the result -1 a defeat.
   SCENE_BATTLE = 0x1fe
 };
 
-/// The polar-offset routine walks three array elements. Named coordinates
-/// remain useful to callers; the union gives that array real storage.
+/// A 16.16 position that Vector_AddPolarOffset moves by a distance and a
+/// heading: the routine walks the coordinates as three words, and the callers
+/// read the result by name.
 union PolarOffsetPosition {
   struct EffectVector vector;
   s32 coordinates[3];
@@ -120,19 +127,35 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 /// A scene region's bounds, in pixels, as 16.16 fixed point.
 #define REGION_FIXED(value) ((s32)((u32)(s32)(value) << 16))
 
-// A field Psynergy or item use, packed into one value (items.c, psynergy.c).
+// A field Psynergy or item use, packed into one value (items.c, psynergy.c),
+// as work->command and work->item hold it. bits: 13..10 the user (13 is
+// ACT_PACKED) | 9..0 the Psynergy or item. Since ACT_PACKED is the user's top
+// bit, a packed use names user 8 or above.
 #define ABILITY_ID(c) ((c) & 0x3ff)    ///< the Psynergy
 #define ACT_UNIT(c) (((c) >> 10) & 15) ///< who uses it
 #define ACT_PACKED 0x2000              ///< use it without paying PP
+/// No user named: Field_UsePsynergy takes character 0, and Field_UseItem
+/// whoever holds the item in the most inventory slots.
 #define UNIT_NONE 15
-#define ALLY_MAX 7 ///< the last party member
+#define ALLY_MAX 7 ///< the last party member; only users up to it pay PP
 
-#define EXIT_RETREAT 999 ///< the exit Retreat takes
+/// EXIT_NONE's value: Retreat writes its destination itself.
+#define EXIT_RETREAT 999
 
-#define FLAG_PSYNERGY_EFFECT 0x140 ///< play the usual effect
-#define FLAG_PSYNERGY_TARGET 0x141 ///< aim the effect at the target
+/// Play the kind's usual effect. Field_UsePsynergy sets it for each use and
+/// clears it when the after event has trigger bit 0x400 and plays its own; the
+/// before event's script may clear it too.
+#define FLAG_PSYNERGY_EFFECT 0x140
+/// Aim the effect at the actor ahead (BattleFx_DispatchRequestKind) rather
+/// than run the kind's untargeted body (BattleFx_Run, where Halt still stops
+/// the nearest actor when it has a talk event, and Force and Reveal run their
+/// phase 5 event). Field_UsePsynergy keeps it set only when a scene event
+/// applies to what the leader faces.
+#define FLAG_PSYNERGY_TARGET 0x141
 
-/// The flags of a Psynergy event (kind 5) in the given phase.
+/// The control word of a Psynergy event (kind 5) in the given phase, as
+/// BattleFx_FindMatchingEvent compares it (bits 30..28 phase | 3..0 kind). The
+/// phases are listed in field_scene.h, above EVENT_PSYNERGY_ON_ACTOR.
 #define PSYNERGY_EV(phase) ((phase) << 28 | EVENT_PSYNERGY)
 #define PSYNERGY_EV_ANY PSYNERGY_EV(7) ///< any phase
 

@@ -20,7 +20,10 @@ struct WorkPointers {
 /// bits of actor are the speaker (0 to 7, a party member, speaks from the
 /// leader); its high bits place the windows: 0x1000 portrait on the left,
 /// 0x2000 on the right, 0x4000 message above the speaker, 0x8000 never above.
-/// Returns the message window.
+/// Returns the message window once its text is typed out; the caller waits
+/// for it to be read. Records the speaker and both windows in the field work
+/// (speaker, messageWindow, sideWindow). With the debug fastForward set
+/// nothing opens and it returns NULL, but the message still advances.
 struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
   struct UiRenderWork *win;
   struct FieldWork *work;
@@ -123,7 +126,10 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
         top = y + 4;
     }
 
-    // Place the portrait beside the speaker, on the side with more room.
+    // Place the portrait beside the speaker, on the side with more room. The
+    // screen is 30 tiles wide (columns 0 to 29) and margin is the room the
+    // portrait takes, in tiles: 5 while Mind Read shows thoughts (the window
+    // mode), else 4.
     if (win->mode != 0)
       margin = 5;
     column = x;
@@ -146,7 +152,8 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
     }
 
     // A speaker with a portrait: put the portrait's 5 rows just above or
-    // below the message, and grow the message to the portrait's height.
+    // below the message, within the screen's rows 0 to 19, and grow the
+    // message to the portrait's height.
 #if TBS_PATCH_1
     found = Localization_LookupEntryIdFar(sprite);
     if (found != -1) {
@@ -207,8 +214,11 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
     else if (column + margin > 29)
       column = 29 - margin;
 
-    // Open the message (with the speaker's voice outside mode 1) and the
-    // portrait, and wait for both to be drawn.
+    // Open the message and the portrait, and wait until the text is typed
+    // out.
+    // Mind Read's thoughts (window mode set) open after 8 frames with no
+    // voice; spoken messages zoom open (option bit 0) with the speaker's
+    // voice in bits 16 and up.
     if (win->mode != 0) {
       WaitFrames(8);
       if (extra != 0)
@@ -242,9 +252,14 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 actor, s32 unused) {
 }
 
 /// The event command "show message": opens the current message at actor
-/// (UiText_OpenMessageAtObject) and waits until it has been read. The message
-/// closes by itself after 600 frames, or at once while Select, L, R and A are
-/// all held.
+/// (UiText_OpenMessageAtObject) and waits until it has been read and its
+/// window has closed; the speaker's portrait is closed once the text is typed
+/// out. The message closes by itself after 600 frames, or at once while
+/// Select, L, R and A are all held. About 70 scenes reach it as
+/// Engine_EventShowMessage (Event_ShowMessage, MESSAGE_PUT); the scene event
+/// runner (object/events.c), Field_RunEventAction (dispatch.c), Field_UseItem
+/// for an item event that is a message (object/items.c) and the debug menu's
+/// message test call it too.
 void FieldEvent_ShowMessageAndWait(s32 actor, s32 flags) {
   s32 member;
   struct FieldWork *runtime = (struct FieldWork *)gEventWork;
@@ -254,6 +269,8 @@ void FieldEvent_ShowMessageAndWait(s32 actor, s32 flags) {
 
   frames = 0;
   WaitFrames(1);
+  // A party member the scene does not place has its portrait under its
+  // character id, as UiText_OpenMessageAtObject opened it.
   sprite = ObjectTable_ReadActiveValue(actor);
   if (actor <= 7) {
     member = actor & 0x0fff;
@@ -287,7 +304,9 @@ void BattlePres_RunActionThenWaitIfModeZero(s32 actor, s32 flags, s32 wait) {
 
 /// The event command "ask yes or no": opens the question at actor, lets the
 /// leader answer, then shows the next message for yes or the one after it for
-/// no. Returns 0 for yes, 1 for no.
+/// no. Returns 0 for yes, 1 for no. Either way the event's message number
+/// ends past both answers, so the script goes on with the same message
+/// whatever was chosen.
 s32 FieldEvent_AskYesNoAndShowResponse(s32 actor, s32 flags) {
   s32 answer;
   struct FieldWork *runtime;

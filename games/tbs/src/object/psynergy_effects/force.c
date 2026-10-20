@@ -20,6 +20,11 @@ BattleFx_GetPositionAboveActor(struct FieldActor *obj,
 /// afterimages; what it hits (scene->child) is pushed 16 pixels.
 ///
 /// Abilities: Force (field kind 4).
+///
+/// The shot is object 215, the hand of Move and Carry, flying at 4 pixels a
+/// frame; where it lands it makes a heavy impact (gBattleFx_HeavyImpactScript,
+/// SpawnHeavyImpactEffect). Called by BattleFx_Run, and through
+/// FieldFx_RunForceOnTarget.
 void FieldFx_RunForce(void) {
   struct FieldActor *target;
   s32 eventTarget;
@@ -58,7 +63,7 @@ void FieldFx_RunForce(void) {
   }
 
   // The shot: 8 pixels in front of the caster, growing from 0.25 to full
-  // size.
+  // size by 0x500 a frame (39 frames).
   caster = scene->mainObject;
   pos.x = caster->x.fixed;
   pos.y = caster->y.fixed + ABOVE;
@@ -109,8 +114,11 @@ void FieldFx_RunForce(void) {
   }
   resourceSlot = sharedAnimation->slot;
 
-  // Destination: 56 pixels in front of the caster with scene->enabled set,
-  // otherwise the effect's position.
+  // Destination: 56 pixels in front of the caster with scene->enabled set
+  // (no scene event named the target), otherwise the effect's position.
+  // The shot's script waits to arrive and makes the impact
+  // (gBattleFx_BurstParticleObjectScript + 4 is gBattleFx_HeavyImpactScript);
+  // each afterimage follows 3 frames apart and is freed on arrival.
   if (scene->enabled != 0) {
     caster = scene->mainObject;
     pos.x = caster->x.fixed;
@@ -143,8 +151,10 @@ void FieldFx_RunForce(void) {
        i++)
     WaitFrames(1);
 
-  // Push what was hit 16 pixels if nothing is in the way (it hops with
-  // childOption).
+  // Push what was hit 16 pixels, at 1 pixel a frame, if nothing is in the
+  // way: the ground there must be within a step (Map_CheckObjectStep 0) and
+  // free of objects. It hops (8 pixels a frame) with childOption; a scene's
+  // childMode leaves it be.
   if (target != NULL && scene->childMode == 0) {
     if (scene->childOption != 0)
       target->velocityY = 8 << 16;
@@ -170,6 +180,7 @@ void FieldFx_RunForce(void) {
   WaitFrames(10);
   BattleFx_PrepareBufferInterpolation();
   WaitFrames(20);
+  // 96 (0x60), the VRAM cache's entry count, means no entry to free.
   if (resourceSlot != 96)
     Resource_ResetEntry(resourceSlot);
 }

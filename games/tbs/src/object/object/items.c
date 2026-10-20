@@ -4,15 +4,16 @@
 
 #include "../object_internal.h"
 
-/// An item's own field routine, which the scene's item event may name.
+/// The function a scene's item event may name instead of a message, called
+/// with the item, its user and its inventory slot; its result is not read.
 typedef s32 (*BattleItemCallback)(s32 item, s32 actor, s32 slot);
 
 /// Returns the scene's item event (kind 4) for item that applies to what the
 /// leader faces, or 0 (item 0 matches any item). The event's trigger names an
 /// actor (control flag 0x10) or a tile code, and may also require the leader
-/// to face within 0x17ff of a direction. Called by Field_UseItem, and by
-/// BattleFx_HasTrigger (psynergy.c) to test whether an item would do anything
-/// here.
+/// to face within 0x17ff (about 34 degrees) of a direction. Called by
+/// Field_UseItem, and by BattleFx_HasTrigger (psynergy.c) to test whether an
+/// item would do anything here.
 s32 Field_FindItemEvent(s32 item) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   const struct SceneEvent *event = work->events;
@@ -59,6 +60,8 @@ s32 Field_FindItemEvent(s32 item) {
 /// faces runs if there is one; otherwise an item with a field action uses it
 /// (Retreat asks first and leaves the scene). FLAG_NOTHING_HAPPENS still set
 /// afterwards says "But nothing happens."; FLAG_ITEM_USED_UP removes the item.
+/// Returns 0 when the scene's event ran or Retreat was declined, else -1, the
+/// item's own action included; Field_RunScene ignores it.
 /// Called by Field_RunScene for the item request (work->item and
 /// work->itemArgument). Retreat sets gGameState.scene and .entrance to the
 /// Retreat point and raises work->exit.

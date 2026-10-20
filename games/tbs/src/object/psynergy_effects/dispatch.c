@@ -265,8 +265,9 @@ s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
 }
 
 /// Per-frame update: sets every part of an object's sprite to param
-/// frame % 6, which cycles its colours. Assigned to the target while Move,
-/// Lift, Carry or Retreat holds it.
+/// frame % 6, which cycles its colours. Move, Lift and Carry give it to the
+/// target they hold, Retreat to its caster. A sprite that keeps its VRAM
+/// cache entry (retainCacheEntry) is left alone.
 void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject) {
   struct ObjectRuntime *owner = (struct ObjectRuntime *)fieldObject;
   s32 kind;
@@ -367,7 +368,10 @@ Sprite_ShareVramCache(struct AnimationObject *sourceSprite,
 /// Creates an object for an effect, at the caster's ground height, with
 /// sprite priority 0 and animation 1. An object without animation is released
 /// and NULL returned. The effects spawn their orbs, hands and particles
-/// through it, and check for NULL: the object table may be full.
+/// through it, and check for NULL: the object table may be full. The object
+/// floats (motion flags 4), is depth-sorted as if 320 pixels lower (priority
+/// flag bit 2) and has no shadow; its creator releases it, or its script
+/// frees it.
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
   struct BattleFxScene *work = gEffectWork;
   struct ObjectRuntime *object;

@@ -24,8 +24,10 @@ void EffectSlot_Update(struct EffectSlot *effect) {
 }
 
 /// Draws an effect slot's sprite at its screen position and scale, when it is
-/// near the screen. With flag 4 the slot's z also lifts it (0x1fc pixels
-/// less z).
+/// near the screen: x from -32 to 272 pixels and z from -32 to 224, both
+/// exclusive. With flag 4 the slot's z also lifts it (0x1fc pixels less z):
+/// it is placed at y 508 pixels and raised back to z, so it shows at the
+/// same point but sorts as if at 508.
 void BattleFx_DrawScaledObject(struct EffectSlot *object) {
   struct AnimationObject *sprite;
   s32 offset;
@@ -66,6 +68,8 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
     return;
   deltaX = effect->targetX - effect->x;
   deltaZ = effect->targetZ - effect->z;
+  // The distance in whole pixels first; under 128 pixels, the exact 16.16
+  // one decides whether it is within 8 pixels.
   if (effect->stopAtTarget != 0) {
     pixelX = deltaX / 0x10000;
     pixelZ = deltaZ / 0x10000;
@@ -103,8 +107,9 @@ void EffectSlot_UpdateMotion(struct EffectSlot *effect) {
   effect->z += Iwram_MulQ16(Trig_Sin(angle), speed);
 }
 
-/// Returns nonzero while an effect slot that stops at its target still has one
-/// (it has not arrived), 0 once it has arrived or when it never stops.
+/// Returns 1 while an effect slot that stops at its target still has one
+/// (it has not arrived), 0 once it has arrived or when it never stops. The
+/// slot callbacks poll it each frame to step their states.
 u32 EffectSlot_HasPendingTarget(struct EffectSlot *effect) {
   // A plain != changes the English instructions at the same extent.
   u32 targetX;
@@ -112,6 +117,7 @@ u32 EffectSlot_HasPendingTarget(struct EffectSlot *effect) {
   if (effect->stopAtTarget == 0) {
     return 0;
   }
+  // (-t | t) >> 31 is 1 for any nonzero t: targetX is not EFFECT_NO_TARGET.
   targetX = effect->targetX ^ (u32)EFFECT_NO_TARGET;
   return ((0u - targetX) | targetX) >> 31;
 }
@@ -140,7 +146,11 @@ void EffectSlot_SetCallback(struct EffectSlot *effect,
 }
 
 /// Fills an effect slot with a new sprite of kind at (x, z): stopping at its
-/// target, top speed 2, acceleration and scale 1, drawn, animation 1.
+/// target, top speed 2, acceleration and scale 1, drawn, animation 1. The
+/// slot owns the sprite until BattleFx_ClearOwnedSlot. Its turn is limited
+/// with maxTurnStep 0, so it holds heading 0 until its callback clears
+/// limitTurnStep or gives a step, as the first states of the callbacks that
+/// steer to a target do.
 void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
   s32 unit;
   struct AnimationObject *object;
@@ -176,7 +186,9 @@ void EffectSlot_Initialize(struct EffectSlot *effect, s32 kind, s32 x, s32 z) {
   EffectSlot_SetObjectMode(effect, 1);
 }
 
-/// Frees an effect slot and its sprite.
+/// Frees an effect slot and its sprite, clearing the slot to zero (inactive).
+/// Slot callbacks call it on their own slot as their last state; the slot
+/// update then neither moves nor draws it.
 void BattleFx_ClearOwnedSlot(struct EffectSlot *slot) {
   if (slot->object)
     ResourceObject_ReleaseFar(slot->object);

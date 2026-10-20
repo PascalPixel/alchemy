@@ -70,7 +70,8 @@ s32 Field_StartEncounterTransition(s32 unused) {
   AudioCommand_PlayFar(SE_147);
   if (work->mode == MODE_WORLD_MAP) {
     // On the world map the flash colours BG palette colour 243 instead.
-    // The world map closes with transition 0x401, a field scene with 0x207.
+    // The world map closes with transition 0x401 (style 4, variant 1), a
+    // field scene with 0x207 (TRANSITION_WINDOW, variant 7), both 16 frames.
     Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
     DisplayTransition_Finish(0x401, 16);
     work->transitionActive = 0;
@@ -111,6 +112,7 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   zero = 0;
   param = 15;
 
+  // No shadow (sprite flag bit 0) as the leader leaves.
   context->flags = zero;
   effect->param = param;
   // Positions are 16.16 fixed point and tiles 16 pixels: keep the tile and
@@ -162,6 +164,8 @@ void ObjectEffect_EndContextEffect(s32 animation) {
   leader->z &= mask;
   ObjectDispatch_SelectAnimationFar(leader, animation);
   WaitFrames(30);
+  // Back to one sprite part, with its shadow, walking 8 pixels south at 1
+  // pixel a frame.
   spriteAnimation->count = 1;
   ResourceMetadata_ClearRecordFar(spriteAnimation->entries[1]);
   spriteAnimation->entries[1] = (void *)zero;
@@ -206,6 +210,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         // and let gravity bring the leader down to the ground.
         leader->y += 0x00a00000;
         Camera_MoveWithinMapBounds(-1, -1, -1, 0);
+        // Until the next frame's fall would reach the ground.
         while (leader->y + leader->velocityY > leader->terrainHeight) {
           WaitFrames(1);
         }

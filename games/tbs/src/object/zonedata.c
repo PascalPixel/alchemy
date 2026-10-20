@@ -3,7 +3,15 @@
 
 /// The world map's encounter zones (struct TerrainRule): {terrain kind, terrain
 /// behavior (-1 for any), flag (-1, or a flag that turns the rule off once
-/// set), zone}, ended by kind -1.
+/// set), zone}, ended by kind -1. The first matching rule wins
+/// (Encounter_ResolveWorldMapZoneAndBackdrop), and terrain no rule matches
+/// has no random battles.
+///
+/// Each kind is a region of the map, whose zones are made for party levels
+/// from 3 (kind 1) to 22 (kind 6). Each region has two zones: behavior 2
+/// (forest in encounter.tsv's zone names; behavior 6 in kind 21) takes the
+/// second, with a rate of 9 against the first's 20 or 25. No rule uses a
+/// flag or any-behavior.
 const s16 gWorldMap_EncounterRules[132] = {
     1,  4,  -1, 7,  1,  7,  -1, 7,  1,  1,  -1, 7,  1,  2,  -1, 8,  2,  4,  -1,
     13, 2,  7,  -1, 13, 2,  1,  -1, 13, 2,  2,  -1, 14, 21, 5,  -1, 29, 21, 6,
@@ -15,7 +23,9 @@ const s16 gWorldMap_EncounterRules[132] = {
 };
 
 /// The encounter of each Djinni battle (Encounter_GetDjinnEnemyGroup): {zone,
-/// slot}.
+/// slot}, by Djinni number (element * 20 + index). The 20 rows of an element
+/// all use its zone (100 Venus, 101 Mercury, 102 Mars, 103 Jupiter), slot
+/// index % 8, so Djinn 8 apart fight the same group.
 const u16 gEncounter_AreaEntryTable[160] = {
     100, 0, 100, 1, 100, 2, 100, 3, 100, 4, 100, 5, 100, 6, 100, 7, 100, 0,
     100, 1, 100, 2, 100, 3, 100, 4, 100, 5, 100, 6, 100, 7, 100, 0, 100, 1,

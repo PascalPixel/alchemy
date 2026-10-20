@@ -14,6 +14,9 @@
 /// Frost, Reveal) find it themselves. An after event whose trigger has flag
 /// 0x400 plays the effect itself. Called by Field_RunScene for the Psynergy
 /// request (work->command); sets work->resolvingAction while the effect plays.
+/// On the world map, placed actors far from the view are destroyed for the
+/// effect, and all placed actors are placed again afterwards. Returns 0
+/// whatever happens; Field_RunScene ignores it.
 s32 Field_UsePsynergy(u32 code) {
   s32 abilityId = ABILITY_ID(code);
   struct FieldWork *work = (struct FieldWork *)gEventWork;

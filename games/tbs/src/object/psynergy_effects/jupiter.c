@@ -6,7 +6,11 @@
 
 /// A Jupiter Djinni joins the party: it bounces three times, spins, leaps out
 /// of sight and bursts into 24 light particles that circle and close in on
-/// the leader, who turns to the camera and plays animation 28.
+/// the leader, who turns to the camera and plays animation 28. Called by
+/// Djinn_JoinParty for a Jupiter Djinni, which then clears the Djinni's actor
+/// slot; the Djinni's object is released here. Uses all 24 effect slots
+/// (BattleFx_InitializeSlots), tints the field palette and fades it back at
+/// the end.
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct EffectVector position;
   struct MotionObject *djinni;
@@ -20,6 +24,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
     return;
   BattleFx_InitializeSlots();
   scene = gEffectWork;
+  // Tint the screen yellow: PALETTE_TRANSFORM_TINT | RGB(12, 12, 4).
   Shop_SaveAndTintFieldPaletteFar(0x20118c);
   AudioCommand_PlayFar(SE_173);
   Motion_SetVarCbAndRefresh(djinniId, 1);
@@ -45,6 +50,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   AudioCommand_PlayFar(SE_164);
   slot = scene->slots;
   remainingParticles = 23;
+  // One a frame, each with a random sprite param of 0 to 6.
   do {
     EffectSlot_Initialize(slot, 284, position.x, position.z);
     EffectSlot_SetCallback(slot, BattleFx_RunAngledApproachPhases);
@@ -82,7 +88,8 @@ struct RampedSpinObject {
 };
 
 /// Per-frame update: makes an object pulse, switching its scale between the
-/// two values of gBattleFx_PulseScales every 4 frames.
+/// two values of gBattleFx_PulseScales every 4 frames. The Mars Djinni's
+/// joining sets it on the leader, and clears it to end the pulse.
 void BattleFx_SetObjectAlternatingWords(union FieldObject *fieldObject) {
   u8 *object = (u8 *)fieldObject;
   u32 *table = gBattleFx_PulseScales;
@@ -93,7 +100,9 @@ void BattleFx_SetObjectAlternatingWords(union FieldObject *fieldObject) {
 }
 
 /// Per-frame update: spins an object ever faster, from 1/16 turn a frame up to
-/// 1/8.
+/// just over 1/8 (0x2040), 0x50 more each frame for 52 frames. The caller
+/// zeroes the frame count first (FieldActor.timer), as the Mars Djinni's
+/// joining does.
 void BattleFx_AdvanceAngleWithRamp(union FieldObject *fieldObject) {
   void *obj = (void *)fieldObject;
   struct RampedSpinObject *spin = obj;
@@ -106,14 +115,16 @@ void BattleFx_AdvanceAngleWithRamp(union FieldObject *fieldObject) {
   }
 }
 
-/// Spins and shrinks an object by 0x1c0 a frame, then releases it.
+/// Spins and shrinks an object by 0x1c0 a frame, then releases it: 119 frames
+/// from full size. The Mars Djinni's joining shrinks the Djinni away with it.
 DEFINE_SHRINK_AND_DESTROY(BattleFx_ShrinkObjectAndDestroySlow, 0xFFFFFE40)
 
 /// Effect slot callback of a Mars Djinni's sparks. States 0 and 1 repeat: the
 /// spark flies 120 pixels up the screen (give or take 3/32 turn) from its
-/// origin and starts over. Set to 2, it stops where it arrives; 40 frames
-/// later, states 3 and 4 swarm it round a point 20 pixels over the leader.
-/// Set to 5, it is freed once it arrives.
+/// origin at up to 5 pixels a frame and starts over. Set to 2, it stops where
+/// it arrives, hidden; 40 frames later, states 3 and 4 swarm it to points
+/// within 4 pixels of one 20 pixels over the leader. Set to 5, it is freed
+/// once it arrives. Djinn_RunMarsJoinEffect sets states 2 and 5.
 void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
   struct Object *owner;
   struct EffectVector position;
@@ -138,6 +149,8 @@ void BattleEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     effect->limitTurnStep = state;
     effect->state++;
 
+    // At the leader's sprite priority, until state 1 brings it in front
+    // (priority 0, z lifting the sprite) after 3 frames.
     ((struct AnimationObject *)effect->object)->image.priority =
         owner->sprite->image.priority;
     effect->flags = 0;

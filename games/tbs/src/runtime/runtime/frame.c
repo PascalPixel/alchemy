@@ -7,9 +7,8 @@
 /// Restarts the game from the cartridge entry point. The marker word it leaves
 /// in IWRAM is cleared again by System_Initialize; nothing else reads it.
 static __inline__ void System_SoftReset(void) {
-  /* FAKEMATCH: the restart entry is called as returning s32, so its address is
-   * built in r0 as the native does at both resets; through a void (*)(void)
-   * pointer it is built in r1 (differ 4 in all six editions). */
+  // The entry is called as returning s32, which builds its address in r0 as
+  // the ROM does at both resets.
   s32 (*reset)(void) = (s32 (*)(void))Cart_Restart;
 
   gCartridgeResetMarker = 0x19670704;
@@ -248,22 +247,22 @@ void WaitFrames(s32 frames) {
     u32 *size = &gSavedStackSize;
 
     if (*size) {
-      /* FAKEMATCH: tying the old base to the hardware read keeps the 8-byte
-       * frame and no copy through ip; as an output only ("=r"), 67
-       * instructions differ in tbs-en. */
+      /* FAKEMATCH(dead): the read also takes the old base as an input ("+r"),
+       * which keeps base in sl and the frame at 8 bytes; as an output only
+       * ("=r"), 44 of 403 instructions differ in tbs-en. */
       CAMELOT_ASM("read the hardware stack pointer for its restore copy")
       __asm__ volatile("mov %0, sp" : "+r"(base));
-      /* FAKEMATCH: needed to match: the volatile reread keeps this saved-size
-       * load separate from the conditional read (7 aligned differences
-       * without this qualification). */
+      /* FAKEMATCH(volatile): the size reread through a volatile pointer, a
+       * load apart from the test's; as *size, 2 of 403 instructions differ in
+       * tbs-en. */
       base -= *(volatile u32 *)size;
       sp = base;
       CAMELOT_ASM(
           "restore the hardware stack pointer after the proven stack copy")
       __asm__ volatile("mov sp, %0" : : "r"(sp) : "memory");
-      /* FAKEMATCH: complementary conditions, which emit nothing, end the
-       * restore CSE block and keep the size-address reload in r3; reusing size
-       * for nextSize, 4 instructions differ in tbs-en. */
+      /* FAKEMATCH(dead): size cleared and nextSize set under complementary
+       * tests, which end the CSE block so the size address reloads; as
+       * *size >> 2 through size, 4 of 403 instructions differ in tbs-en. */
       size = NULL;
       {
         u32 *nextSize = NULL;

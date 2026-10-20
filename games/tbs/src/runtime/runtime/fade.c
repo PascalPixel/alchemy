@@ -42,9 +42,9 @@ void Fade_Update(void) {
       level = gBlendTargetLevel;
       delta = gBlendStartLevel - gBlendTargetLevel;
       step = *remaining;
-      /* FAKEMATCH: an explicit libgcc call clobbers memory, so the zero test
-       * reloads *remaining after it as the native does; with the / operator,
-       * 37 instructions differ in every edition. */
+      /* FAKEMATCH(wrapper): the division as a call to __divsi3, which clobbers
+       * memory, so the zero test reloads *remaining; as delta * step /
+       * gBlendDuration, 8 of 46 instructions differ in tbs-en. */
       level += __divsi3(delta * step, gBlendDuration);
       REG_BLDY = level;
       if (*remaining == 0)

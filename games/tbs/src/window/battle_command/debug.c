@@ -445,12 +445,11 @@ s32 DebugMenu_BrowseEntryGlyphs(void) {
   }
   entryCount = characterCount + i;
 
-  /* FAKEMATCH: the count-derived mask keeps the mask in r9 and work in fp; as
-   * cancel = KEY_B, 12 of 179 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): a zero from the count keeps the mask in r9 and work in
+   * fp; as cancelKey = KEY_B, 7 of 179 instructions differ in tbs-en. */
   cancelKey = ((u32)(u16)characterCount >> 16) | KEY_B;
-  /* FAKEMATCH: defining the offset before the loop keeps its load in r1;
-   * defining it inside redraw uses r3 (4 instructions differ in all six
-   * editions). */
+  /* FAKEMATCH(temporary): the offset defined before the loop keeps its load in
+   * r1; as work->outputIds[1], 3 of 179 instructions differ in tbs-en. */
   slotOffset = RENDER_SLOT_VALUE_OFFSET + 2;
   while (1) {
     if (gKeysRepeat & KEY_LEFT) {

@@ -157,9 +157,9 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           alreadySelected = 1;
         } else {
           for (;;) {
-            /* FAKEMATCH: the flag, zero on every continuation, keeps k an
-             * index rather than a pointer; as k++, 35 instructions differ in
-             * tbs-en. */
+            /* FAKEMATCH(dead): the flag, zero on every continuation, keeps k
+             * an index rather than a pointer; as k++, 1 of 1201 instructions
+             * differ in tbs-en. */
             k += 1 - alreadySelected;
             if (k > 7)
               break;

@@ -31,9 +31,8 @@ void SerialRuntime_Initialize(void) {
   s32 index;
   struct SerialRuntime *state;
 
-  /* FAKEMATCH: IRQ_LOCK written out with the IME address set inside the save
-   * statement, so the IME load comes before sub sp, #4; as IRQ_LOCK, 2 of 123
-   * instructions differ in tbs-en. */
+  // IRQ_LOCK written out, with the IME address set inside the save, which
+  // reads IME before the frame is made.
   IME_SAVE((ime = &REG_IME), interruptEnable);
   IME_DISABLE(ime);
   // Replace both interrupt handlers before configuring multiplayer transfers.
@@ -53,9 +52,6 @@ void SerialRuntime_Initialize(void) {
   REG_SIOCNT16 = REG_SIOCNT16 | SIO_INTR_ENABLE | SIO_115200_BPS;
   state = &gSerialRuntime;
   REG_IME = 1;
-  /* FAKEMATCH: Dma_Fill32's fill word is volatile, so the zero is stored
-   * through its address (mov r0, sp; str r3, [r0]); as a plain u32, 6
-   * instructions differ in tbs-en. */
   Dma_Fill32(0, state, sizeof(*state));
   state->sendIndex = -1;
   state->sendBuffer[0] = (u16 *)(state->storage + 0);
@@ -244,9 +240,9 @@ s32 SerialRuntime_ExchangePayloads(void *send, void *receive) {
 /// as halfwords. Then restarts the send position and the timer. Called by
 /// both exchanges.
 void SerialRuntime_PrepareSendPacket(void *payload) {
-  /* FAKEMATCH: volatile keeps the second load of sr->sendBuffer[0], as the
-   * bytes do; through a plain pointer CSE reuses the first (differ 8, 48
-   * instructions either way). */
+  /* FAKEMATCH(volatile): sr is volatile, so sendBuffer[0] is loaded again for
+   * the checksum; as a plain pointer, 4 of 48 instructions differ in
+   * tbs-en. */
   volatile struct SerialRuntime *sr;
   u32 i;
   u32 sum;
@@ -546,16 +542,16 @@ struct OneCell {
 /// blocks again. A finished send or receive clears gSerialSendSource or
 /// gSerialReceiveDest.
 void SerialRuntime_StepBlockTransfer(void) {
-  /* FAKEMATCH: gSerialSendSize and gSerialBlockSequence are volatile
-   * (serial_runtime.h), so every access is its own load or store; as a plain
-   * gSerialBlockSequence, 258 instructions differ in tbs-en. */
+  /* FAKEMATCH(volatile): gSerialSendSize and gSerialBlockSequence are volatile
+   * (serial_runtime.h), so each access is its own load or store; as plain
+   * globals, 99 of 257 instructions differ in tbs-en. */
   struct SerialTransferState *peer;
   u32 id;
   struct SerialTransferState *own;
   u32 gap;
-  /* FAKEMATCH: the halfword record is a HImode 1 loaded from the pool into r8
-   * at entry; it is not protocol state. As the constant 1 at both stores, 55
-   * of 257 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): the 1 kept in a halfword record, loaded from the
+   * pool into r8 at entry; as the constant 1 at both stores, 44 of 257
+   * instructions differ in tbs-en. */
   struct OneCell one;
 
   id = ~((REG_SIOCNT << 26) >> 30) & 1;

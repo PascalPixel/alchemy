@@ -31,11 +31,8 @@
 /// chosen with a pointing hand. Returns the choice (0-2), or -1 when
 /// cancelled with B.
 s32 PartyTalkMenu_Choose(s32 unused) {
-  /* FAKEMATCH: the shared cursor union preserves pointer-store ordering; an
-   * equal-size struct changes stack-address construction in all six editions.
-   */
   struct UiWindow *window;
-  union MenuCursor cursor;
+  struct ShopCursor cursor;
   s32 slot;
   s32 row;
   s32 moved;
@@ -50,8 +47,8 @@ s32 PartyTalkMenu_Choose(s32 unused) {
   row = 0;
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(slot, 128, gResource_FixedBlockBTiles);
-    cursor.output = RenderOutput_Create(slot, OUTPUT_SIZE_16X16, window, 0, 0);
-    ShopCursor_SetPositionImmediateFar(&cursor.cursor, window->x * 8 - 3,
+    cursor.anchor = RenderOutput_Create(slot, OUTPUT_SIZE_16X16, window, 0, 0);
+    ShopCursor_SetPositionImmediateFar(&cursor, window->x * 8 - 3,
                                        window->y * 8 + 9);
   }
   // The choice under the cursor flashes between palette 15 and palette 14,
@@ -68,10 +65,10 @@ s32 PartyTalkMenu_Choose(s32 unused) {
                                   15);
     if (moved) {
       moved = 0;
-      Shop_SetCursorFar(&cursor.cursor, window->x * 8 - 3,
+      Shop_SetCursorFar(&cursor, window->x * 8 - 3,
                         (window->y + row * 2) * 8 + 9, 3);
     }
-    ShopCursor_AdvanceFar(&cursor.cursor);
+    ShopCursor_AdvanceFar(&cursor);
     if (gKeysRepeat & KEY_UP) {
       AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       row--;

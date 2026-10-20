@@ -80,8 +80,8 @@ UNUSED void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
 /// Returns how many tiles the text covers.
 /// The canvas is eight rows of 256 pixels; the pen must stay within each row.
 s32 UiText_RenderStringTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
-  /* FAKEMATCH: needed to match: an unread 32-byte reserve, the native frame's
-   * extra bytes (the frame is 36 bytes without it). */
+  /* FAKEMATCH(dead): an unused array for the frame's 32 extra bytes; as no
+   * array, 2 of 402 instructions differ in tbs-en. */
   UNUSED u32 reserve[8];
   u8 pens[16];
   struct UiRenderWork *work;

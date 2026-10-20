@@ -227,9 +227,9 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
         VramCache_Reload((u16)cursorHandle, (s32)gResource_FixedBlockBTiles);
     cur->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
     cur->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
-    /* FAKEMATCH: the cursor pushed through sprite, re-pointed at it here, keeps
-     * the frame loop's registers; as &cursor or cur pushed directly, 87
-     * instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): the cursor pushed through sprite, re-pointed at it
+     * here, keeps the frame loop's registers; as &cursor or cur pushed
+     * directly, 41 of 946 instructions differ in tbs-en. */
     sprite = (struct MenuSprite *)&cursor;
     Runtime_PushSlotEntry(sprite, 242);
 

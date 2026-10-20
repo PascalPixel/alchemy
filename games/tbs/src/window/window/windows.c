@@ -477,11 +477,11 @@ UNUSED void RenderOutputList_UpdateTail(struct RenderOutputList *list) {
 /// Adds a render output to the end of a list; NULL lists are ignored.
 void RenderOutput_AppendToList(struct RenderOutputList *list,
                                struct RenderOutput *node) {
-  /* FAKEMATCH: storing the new tail as a RenderOutput * keeps both stores in
-   * one alias set and in order; as list->tailLink = &node->next, 2
-   * instructions differ in tbs-en. */
   if (list != NULL) {
     *list->tailLink = node;
+    // UB: the new tail is stored as node (next is its first member) through
+    // a RenderOutput * view of tailLink, which keeps both stores in one alias
+    // set and in this order.
 #ifdef UBFIX
     // Store the address of next through the tail link's actual pointer type.
     list->tailLink = &node->next;

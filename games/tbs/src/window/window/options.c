@@ -309,8 +309,6 @@ void OptionMenu_Release(void) {
 /// sliders with their markers, the cursor and the setting icons. Returns the
 /// window.
 struct UiWindow *OptionMenu_Open(void) {
-  /* FAKEMATCH: the shared cursor union keeps pointer stores before window
-   * reads; an equal-size struct reorders these moves in all six editions. */
   struct WorkspaceWork *work;
   struct UiWindow *window;
   struct RenderOutput *marker;

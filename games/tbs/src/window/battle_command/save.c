@@ -109,9 +109,6 @@ s32 SaveState_CountRecordsExcludingFlagged(s32 excludeSent) {
 /// gTitleSendOptionEnabled when a file has its send flag set and R and Left are
 /// held.
 s32 SaveState_ScanRecordFlags(void) {
-  /* FAKEMATCH: the signed cursor from the party tail keeps the native literal
-   * base 0x1070 and flag offsets 1 and 2; as summary[i].sendFlag and
-   * .flagCount, 4 instructions differ in tbs-en. */
   s32 error;
   s32 sentCount;
   s32 fileCount;
@@ -124,6 +121,8 @@ s32 SaveState_ScanRecordFlags(void) {
     s8 *flags;
 
     fileCount = SaveState_LoadSummaryRecords();
+    // A signed byte cursor from the party's end keeps the native literal base
+    // 0x1070 and flag offsets 1 and 2.
     flags = (s8 *)&gSaveWorkspace->summary[0].party[4];
     gTitleSendOptionEnabled = 0;
     (*(s16 *)&gTitleExtraOptionEnabled) = 0;

@@ -78,8 +78,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   redraw = 0xFFFF;
   cursorSlot = VramCache_AllocEntry(256);
 #if TBS_PATCH_4
-  /* FAKEMATCH: this value-preserving null initializer keeps infoWin in r10;
-   * as infoWin = 0, 94 instructions differ in tbs-es. */
+  /* FAKEMATCH(dead): a null derived from selection keeps conditionWindow in
+   * sl; as conditionWindow = 0, 47 of 1684 instructions differ in tbs-es. */
   conditionWindow = (struct UiWindow *)((u32)(u16)selection >> 16);
 #else
   conditionWindow = 0;
@@ -189,9 +189,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     {
       s32 t = targetIndex * 2;
 
-      /* FAKEMATCH: the separate switch arms, which emit no branch, end CSE
-       * before the call and keep the offset reload ahead of the ids load; as
-       * ids[cursor], 2 instructions differ in tbs-en. */
+      /* FAKEMATCH(dead): the switch arms, which emit no branch, end CSE before
+       * the call and keep the offset reload ahead of the ids load; as
+       * candidateIds[targetIndex], 1 of 1585 instructions differ in tbs-en. */
       switch (t) {
       case 0:
         t = targetIndex * 2;

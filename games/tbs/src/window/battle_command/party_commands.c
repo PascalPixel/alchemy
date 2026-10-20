@@ -209,9 +209,9 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
 #ifdef UBFIX
       unit = UnitGetFar(actorId);
 #else
-      /* FAKEMATCH: called through a cast as returning a doubleword, the call
-       * also sets r1, so sched2 loads i * 2 before in, as native; by its
-       * prototype, 2 instructions differ in tbs-en. */
+      /* FAKEMATCH(wrapper): called as returning a doubleword, which sets r1,
+       * so sched2 loads i * 2 first; as UnitGetFar(actorId), 1 of 1727
+       * instructions differ in tbs-en. */
       unit = (struct BattleUnit *)(s32)((s64 (*)(s32))UnitGetFar)(actorId);
 #endif
       gLinkCountdownWork->commandActor = actorId;

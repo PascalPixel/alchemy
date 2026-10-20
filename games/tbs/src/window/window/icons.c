@@ -188,9 +188,8 @@ extern const u8 *gRenderResource_PairSourceTable[];
 /// Loads one of four small fixed images into the sprite tile slot named by
 /// slot.
 s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
-  /* FAKEMATCH: three more names of the one table keep each case's own literal
-   * slot; with the one name in every case the switch folds away, differ 21 on
-   * tbs-en (9 instructions for 24). */
+  // Three more names of the one table: the ROM keeps a literal for each case,
+  // and with one name the switch folds into a single load.
   extern const u8 *PairSource1[] __asm__("gRenderResource_PairSourceTable"),
       *PairSource2[] __asm__("gRenderResource_PairSourceTable"),
       *PairSource3[] __asm__("gRenderResource_PairSourceTable");

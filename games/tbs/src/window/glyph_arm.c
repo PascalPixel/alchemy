@@ -62,9 +62,8 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
   u32 glyphIndex;
 #endif
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-  /* FAKEMATCH: these records reserve the native frame's 64-byte unused area.
-   * Without them 6 of 193 differ in tbs-ja (sub sp, #36 for #100, and the
-   * stacked argument's offset). */
+  /* FAKEMATCH(dead): an unused array for the frame's 64 extra bytes; as no
+   * array, 3 of 193 instructions differ in tbs-ja. */
   UNUSED struct RenderInput unusedFrame[4];
 #endif
 
@@ -116,9 +115,8 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
         u8 *vram;
 
         column = 0;
-        /* FAKEMATCH: needed to match: the row increment is written in both
-         * arms, which puts ADD between CMP and BEQ; written once ahead of the
-         * test it is scheduled before CMP (JA differ 2). */
+        // The increment is written in both arms, which keeps it after the
+        // compare; written once ahead of the test it is scheduled before it.
         if (bits == 0)
           nextRow = row + 1;
         else {

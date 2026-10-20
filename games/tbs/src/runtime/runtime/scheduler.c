@@ -45,10 +45,9 @@ UNUSED void Scheduler_CopyWords(u32 *destination, u32 *source, u32 byteCount) {
 /// tasks from the highest order down; removed tasks (order 0x7fff) rise to the
 /// front. Called by Scheduler_AddOrUpdateCallback with interrupts disabled.
 void Scheduler_SortTasks(void) {
-  /* FAKEMATCH: the initializer repeats the first pass's assignment, so the
-   * table loads before the loop and at the top of every pass; without it, 28
-   * instructions differ in tbs-en. */
   struct SchedulerTask saved;
+  // DEAD: every pass sets task again; this initializer is the table's load
+  // before the loop.
   struct SchedulerTask *task = gSchedulerTaskTable;
   s32 pass;
   s32 index;

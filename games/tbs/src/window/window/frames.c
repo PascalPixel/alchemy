@@ -350,9 +350,8 @@ s32 UiText_OpenEntryMessage(struct UiWindow *window, s32 message) {
   struct UiRenderWork *work = UI_WORK;
   s32 entry;
   s32 channel = 0;
-  /* FAKEMATCH: never read: the native frame keeps 8 bytes above the two
-   * outgoing arguments, exactly these four slots; without them the frame is 8
-   * bytes, not 16 (differ 4 in tbs-en). */
+  /* FAKEMATCH(dead): an unused array for the frame's 8 bytes above the
+   * outgoing arguments; as no array, 2 of 42 instructions differ in tbs-en. */
   UNUSED u16 frameReserve[4];
 
   work->speakerVoiceSound = 0;

@@ -152,7 +152,8 @@ done:
 
 /// A view of struct RenderOutput with its sprite cell (from offset 0x10) as the
 /// member attr. Read through a cast of RenderOutput.unk10 instead,
-/// UiWork_AnimateSpriteSlots does not match (578 instructions become 605).
+/// UiWork_AnimateSpriteSlots does not match (578 instructions become 605), and
+/// through RenderOutput itself UiWindow_PutGlyph's position stores move.
 struct SpriteOutput {
   struct SpriteOutput *next;
   u8 kind;
@@ -223,9 +224,6 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
     row = (u8)win->y + (row = (u8)win->height + 254);
 #endif
     attr->y = row * 8 - 1;
-    /* FAKEMATCH: needed to match: the embedded OAM view preserves
-     * packed/logical position store order changed by byte-span and scalar
-     * views. */
     out->x = attr->x;
     out->y = attr->y;
     out->next = NULL;
@@ -247,9 +245,9 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
 /// The Japanese UiWindow_PutGlyph, which also places the kana marks.
 void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
   u8 *work = gWindowWork[0];
-  /* FAKEMATCH: this XOR pair folds away but keeps work and base as separate
-   * lifetimes, with the native r8/r12 copy; as a direct copy, 17 instructions
-   * differ in tbs-en. */
+  /* FAKEMATCH(dead): two XORs with tile that cancel keep work and base apart,
+   * with the native ip to r8 copy; as base = work, 2 of 141 instructions
+   * differ in tbs-ja. */
   u8 *base = (u8 *)((unsigned long)work ^ tile);
   struct SpriteOutput *out;
   s32 idx;
@@ -289,9 +287,6 @@ void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode) {
     row = (u8)win->y + (row = (u8)win->height + 254);
 #endif
     attr->y = row * 8 + 1;
-    /* FAKEMATCH: needed to match: the embedded OAM view preserves
-     * packed/logical position store order changed by byte-span and scalar
-     * views. */
     out->x = attr->x;
     out->y = attr->y;
     out->next = NULL;
@@ -426,8 +421,8 @@ void RenderOutput_UpdateScaleAnimation(struct RenderOutput *output) {
     sprite->affineIndex = AffineMatrix_BuildForEffect(&effect);
     if (scale > 256) {
       sprite->affine = 3;
-      /* FAKEMATCH: needed to match: the unsigned halfword read of the x cell; a
-       * cast of the signed member swaps the x load and the -8 pool load. */
+      // x read through a u16 pointer, which loads the -8 first; as output->x
+      // the two loads swap.
       sprite->x = *(u16 *)&output->x - 8;
       sprite->y = (u16)output->y - 8;
     } else {

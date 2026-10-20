@@ -100,9 +100,8 @@ void AffineEffect_UpdateFrame(void) {
 
 #ifndef UBFIX
       nativeAttributes = &entry->link;
-      /* FAKEMATCH: needed to match: reading the y halfword through attr
-       * keeps the attribute-pointer copy before its load; sprite->y
-       * moves the copy two instructions later. */
+      // Read through the attribute pointer, y keeps the pointer copy before
+      // its load.
       spriteY = ((s16 *)nativeAttributes)[7];
       *nativeAttributes++ = 0;
 #else

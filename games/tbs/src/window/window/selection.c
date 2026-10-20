@@ -10,13 +10,6 @@ struct GlyphCursor {
   u16 cursor;
 };
 
-static __inline__ void ResetCursor(struct GlyphCursor *cursor) {
-  /* FAKEMATCH: the helper takes the node's base field, so each row store forms
-   * base + 372 and stores at #2; as work->records[7].kind = 0, 6 instructions
-   * differ in tbs-en. */
-  cursor->cursor = 0;
-}
-
 /// Allocates and resets the selection screen: the row of icons the player picks
 /// from, with arrows at each end and a pointing hand over the chosen target.
 void UiGlyph_ResetWorkState(void) {
@@ -42,8 +35,10 @@ void UiGlyph_ResetWorkState(void) {
     work->records[i + 9].kind = 0;
     i++;
   } while (i != 5);
-  ResetCursor((struct GlyphCursor *)&work->records[7].base);
-  ResetCursor((struct GlyphCursor *)&work->records[8].base);
+  // Cleared through a view from each record's base field, which forms
+  // work + 372 and stores at #2; through kind the address differs.
+  ((struct GlyphCursor *)&work->records[7].base)->cursor = 0;
+  ((struct GlyphCursor *)&work->records[8].base)->cursor = 0;
   work->records[0].kind = 0;
   work->records[1].kind = 0;
   work->records[0].y = 0;

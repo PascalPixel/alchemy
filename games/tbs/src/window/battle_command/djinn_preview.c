@@ -140,28 +140,22 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
     if (output) {
       output->active = 1;
       output->kind = 1;
-      /* FAKEMATCH: this char store and the two typed stores below keep the
-         index store ahead of the attribute word; as plain stores, 2
-         instructions differ in tbs-en. */
+      // Stored through a cast, the index stays ahead of the attribute word.
       *(s8 *)&output->index = VramCache_AllocEntry(128);
       entry = (struct PreviewSprite *)((u8 *)output + 16);
       output->sentinel = 240;
       output->x = 120;
       output->y = 120;
       // UB: the two stores below write the attribute and tile words through
-      // pointer types; UBFIX writes the unions' words.
+      // pointer types, which keeps sched2's order of the stores around them;
+      // UBFIX writes the unions' words.
 #ifdef UBFIX
       entry->attributes.word = 0x40000400;
       zero = 0;
       entry->tile.value = zero;
 #else
-      /* FAKEMATCH: typed like the window pointer, the word store waits for the
-       * window load but not for the x and y stores, so sched2 places the entry
-       * copy before them */
       *(struct UiWindow **)&entry->attributes = (struct UiWindow *)0x40000400;
       zero = 0;
-      /* FAKEMATCH: a pointer-typed clear does not wait for the x and y stores
-       * (sched2 order) */
       *(void **)&entry->tile = (void *)zero;
 #endif
       entry->attributes.bits.x = win->x * 8 + x;

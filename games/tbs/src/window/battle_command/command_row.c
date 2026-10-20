@@ -125,16 +125,16 @@ s32 Menu_RunCommandRow(s32 mode) {
             s32 col;
             for (col = 0; col <= 2; col++) {
               s32 tmp;
-              /* FAKEMATCH: vram, offset and mask keep the row loop's index
-               * and tile pattern in the order the bytes show; as constants in
-               * place, 24 instructions differ in tbs-en. */
+              /* FAKEMATCH(temporary): vram, offset and mask keep the row
+               * loop's index and tile pattern; as constants in place, 6 of
+               * 1037 instructions differ in tbs-en. */
               volatile u16 *vram =
                   (volatile u16 *)0x0600f800 + 21 * 32 + WINDOW_X;
               s32 offset = 0x100;
               s32 mask = 3;
-              /* FAKEMATCH: tmp, set twice, is no giv, so the tile is
-               * recomputed in the column loop as the bytes show; as no tmp,
-               * 267 instructions differ in tbs-en. */
+              /* FAKEMATCH(temporary): tmp, set twice, is no induction variable,
+               * so the tile is recomputed in the column loop; as the two values
+               * in place, 128 of 1037 instructions differ in tbs-en. */
               vram[panel * 3 + entryIndex * 32 + (col & mask) - count * 3] =
                   tmp = panel * 16 + entryIndex * 4 + col + offset;
               tmp = col & mask;
@@ -165,14 +165,13 @@ s32 Menu_RunCommandRow(s32 mode) {
             s32 col;
             for (col = 0; col <= 2; col++) {
               s32 tmp;
-              /* FAKEMATCH: as in mode 1: vram, offset and mask keep the tile
-               * pattern in the column loop through loop.c's first pass,
-               * volatile keeps the VRAM add apart from its store. */
+              /* FAKEMATCH(temporary): vram, offset and mask, as in mode 1; as
+               * constants in place, 6 of 1037 instructions differ in tbs-en. */
               volatile u16 *vram = (volatile u16 *)0x0600f800 + 21 * 32 + 20;
               s32 offset = 0x100;
               s32 mask = 3;
-              /* FAKEMATCH: needed to match: tmp, as in mode 1 (271 differ
-               * without it, 846 in both modes). */
+              /* FAKEMATCH(temporary): tmp, as in mode 1; as the two values in
+               * place, 129 of 1037 instructions differ in tbs-en. */
               vram[panel * 3 + entryIndex * 32 + (col & mask) - count * 3] =
                   tmp = panel * 16 + entryIndex * 4 + col + offset;
               tmp = col & mask;

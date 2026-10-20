@@ -50,7 +50,7 @@ s32 SaveState_InitializeWorkspace(void) {
     work->recordId[index] = SAVE_RECORD_NONE;
     work->sequence[index] = 0;
     status = SaveState_ReadSlotAndCheckChecksum(index);
-    START_DMA(&work->slot, &header, (DMA_ENABLE | DMA_32BIT) << 16 | 4);
+    START_DMA(&work->slot, &header, DMA_COPY_WORDS(4));
     WAIT_DMA();
     slot = &header;
 
@@ -143,7 +143,7 @@ s32 SaveState_ReadSlotAndCheckChecksum(s32 index) {
 
   work = gSaveWorkspace;
   ReadFlash(index, 0, work->slot.bytes, sizeof(work->slot));
-  Dma_Set(&work->slot, &header, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
+  Dma_Set(&work->slot, &header, DMA_COPY_WORDS(4), REG_DMA3);
   WAIT_DMA();
   checksum = SaveState_ChecksumWorkspace();
   return (u16)checksum - header.checksum;
@@ -175,16 +175,14 @@ s32 SaveState_WriteRecord(s32 recordId, void *source) {
     return 1;
 
   // Build the new sector before changing which old sector counts as current.
-  START_DMA(source, work->slot.record.payload,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 0x3fc);
+  START_DMA(source, work->slot.record.payload, DMA_COPY_WORDS(0x3fc));
   WAIT_DMA();
-  START_DMA(gSave_HeaderTemplate, &header, (DMA_ENABLE | DMA_32BIT) << 16 | 2);
+  START_DMA(gSave_HeaderTemplate, &header, DMA_COPY_WORDS(2));
   WAIT_DMA();
   header.recordId = recordId;
   header.checksum = SaveState_ChecksumWorkspace();
   header.sequence = SaveState_GetLatestSequence(recordId) + 1;
-  START_DMA(&header, &work->slot.record.header,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 4);
+  START_DMA(&header, &work->slot.record.header, DMA_COPY_WORDS(4));
   WAIT_DMA();
 
   if (SaveState_WriteWorkspaceSlot(slot) != 0)
@@ -195,8 +193,7 @@ s32 SaveState_WriteRecord(s32 recordId, void *source) {
   if (header.sequence > SAVE_SEQUENCE_LIMIT) {
     // Restart sequence numbering only after the replacement was written.
     header.sequence = 1;
-    START_DMA(&header, &work->slot.record.header,
-              (DMA_ENABLE | DMA_32BIT) << 16 | 4);
+    START_DMA(&header, &work->slot.record.header, DMA_COPY_WORDS(4));
     WAIT_DMA();
     if (SaveState_WriteWorkspaceSlot(current) != 0)
       return 1;
@@ -222,8 +219,7 @@ u32 SaveState_ReadRecordPayload(s32 recordId, void *destination) {
   if (index >= SAVE_SECTOR_COUNT)
     return 1;
   SaveState_ReadSlotAndCheckChecksum(index);
-  START_DMA(work->slot.record.payload, destination,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 0x3fc);
+  START_DMA(work->slot.record.payload, destination, DMA_COPY_WORDS(0x3fc));
   WAIT_DMA();
   return 0;
 }
@@ -298,12 +294,11 @@ s32 SaveState_InvalidateSlot(s32 index) {
   work = gSaveWorkspace;
   Dma_Fill32(0, &header, sizeof(header));
   WAIT_DMA();
-  START_DMA(gSave_HeaderTemplate, &header, (DMA_ENABLE | DMA_32BIT) << 16 | 2);
+  START_DMA(gSave_HeaderTemplate, &header, DMA_COPY_WORDS(2));
   WAIT_DMA();
   header.recordId = SAVE_RECORD_NONE;
   header.sequence = 0;
-  START_DMA(&header, &work->slot.record.header,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 4);
+  START_DMA(&header, &work->slot.record.header, DMA_COPY_WORDS(4));
   WAIT_DMA();
   if (SaveState_WriteWorkspaceSlot(index) != 0)
     return 1;

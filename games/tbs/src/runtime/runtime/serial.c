@@ -246,7 +246,7 @@ void SerialRuntime_PrepareSendPacket(void *payload) {
     sum = 0;
     pkt[1] = recv ^ cur;
     *(u16 *)(pkt + 2) = sum;
-    Dma_Set(payload, pkt + 4, (DMA_ENABLE | DMA_32BIT) << 16 | 6, REG_DMA3);
+    Dma_Set(payload, pkt + 4, DMA_COPY_WORDS(6), REG_DMA3);
   }
   {
     u16 *pkt;
@@ -306,8 +306,8 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload) {
       sum += packet[k];
     if (flags[i] == 1 && (s16)sum == -1) {
       Dma_Set(gSerialRuntime.pendingBuffer[i] + 2,
-              (u8 *)payload + i * SERIAL_PAYLOAD_BYTES,
-              (DMA_ENABLE | DMA_32BIT) << 16 | 6, REG_DMA3);
+              (u8 *)payload + i * SERIAL_PAYLOAD_BYTES, DMA_COPY_WORDS(6),
+              REG_DMA3);
       gSerialRuntime.currentMask |= 1 << i;
     }
     if ((s16)sum == -1)
@@ -530,15 +530,13 @@ void SerialRuntime_StepBlockTransfer(void) {
           own->active = 0;
           switch (peer->peerFlags) {
           case 1:
-            Dma_Set(peer->payload, (void *)dest,
-                    (DMA_ENABLE | DMA_32BIT) << 16 | 5, REG_DMA3);
+            Dma_Set(peer->payload, (void *)dest, DMA_COPY_WORDS(5), REG_DMA3);
             *receive += SERIAL_BLOCK_BYTES;
             gSerialReceivedSize += SERIAL_BLOCK_BYTES;
             own->status = (own->status + 1) | 0x80;
             break;
           case 2:
-            Dma_Set(peer->payload, (void *)dest,
-                    (DMA_ENABLE | DMA_32BIT) << 16 | 5, REG_DMA3);
+            Dma_Set(peer->payload, (void *)dest, DMA_COPY_WORDS(5), REG_DMA3);
             gSerialReceivedSize += SERIAL_BLOCK_BYTES;
             own->flags = 2;
             own->status = 0;
@@ -576,8 +574,7 @@ void SerialRuntime_StepBlockTransfer(void) {
           gSerialBlockSequence &= 0x7f;
         }
         if (gSerialSendSize != 0) {
-          Dma_Set((void *)*send, own->payload,
-                  (DMA_ENABLE | DMA_32BIT) << 16 | 5, REG_DMA3);
+          Dma_Set((void *)*send, own->payload, DMA_COPY_WORDS(5), REG_DMA3);
           gSerialSendSize += -SERIAL_BLOCK_BYTES;
           if (gSerialSendSize != 0) {
             own->peerFlags = 1;
@@ -654,8 +651,8 @@ restart:
       } while (tick >= 0);
     }
     if (gSerialReceiveDest == 0) {
-      Dma_Set(gMapCellBuffer, (void *)0x06001000,
-              (DMA_ENABLE | DMA_32BIT) << 16 | 0xa0, REG_DMA3);
+      Dma_Set(gMapCellBuffer, (void *)0x06001000, DMA_COPY_WORDS(0xa0),
+              REG_DMA3);
       goto restart;
     }
     WaitFrames(1);

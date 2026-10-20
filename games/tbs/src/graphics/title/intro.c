@@ -156,15 +156,14 @@ void Title_UpdateIntroSprites(void) {
     INTRO_OBJ(spriteCount).attr01 = 0x400020a0;
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(14, 14);
-  Dma_Set(&INTRO_OBJ(0), OAM,
-          (DMA_ENABLE | DMA_32BIT) << 16 | ((spriteCount * 8) >> 2), REG_DMA3);
+  Dma_Set(&INTRO_OBJ(0), OAM, DMA_COPY_WORDS((spriteCount * 8) >> 2), REG_DMA3);
   stripY = 32 - gBgScroll[1].y;
   WRAP_TO_BYTE(stripY);
   INTRO_OBJ(12).attr01 = stripY | 0xc05c2000;
   INTRO_OBJ(12).attr2 = 0x800;
-  Dma_Set(&INTRO_OBJ(12), (u8 *)OAM + spriteCount * 8,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 2, REG_DMA3);
-  Dma_Set(&INTRO_OBJ(0), OAM, (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+  Dma_Set(&INTRO_OBJ(12), (u8 *)OAM + spriteCount * 8, DMA_COPY_WORDS(2),
+          REG_DMA3);
+  Dma_Set(&INTRO_OBJ(0), OAM, DMA_COPY_WORDS(8), REG_DMA3);
 }
 
 /// Loads the title intro's two scrolling backgrounds and its sprite tiles,
@@ -181,16 +180,14 @@ void Title_LoadIntroBackgrounds(void) {
   work = Ram_WorkSlot[43];
   REG_DISPCNT = 0;
   resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsA);
-  Dma_Set(resourceData, (void *)OBJ_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
-          REG_DMA3);
+  Dma_Set(resourceData, (void *)OBJ_PLTT, DMA_COPY_WORDS(0x80), REG_DMA3);
   OBJ_PLTT[0] = 0;
   resourceData += 0x200;
   Resource_DecodeByteLz(resourceData, Ram_MapCellBuffer);
   Dma_Set(Ram_MapCellBuffer, (void *)OBJ_VRAM0, DMA_ENABLE << 16 | 0xf00,
           REG_DMA3);
   resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsC);
-  Dma_Set(resourceData, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
-          REG_DMA3);
+  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(0x80), REG_DMA3);
   BG_PLTT[0] = 0;
   resourceData += 0x200;
   Resource_DecodeByteLz(resourceData, Ram_MapCellBuffer);
@@ -251,7 +248,7 @@ void Title_LoadIntroBackgrounds(void) {
   work->tick = 0;
   work->rise = 0;
   work->state = 0;
-  Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
+  Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
   REG_BLDCNT = BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -388,8 +385,7 @@ s32 Title_ShowIntro(s32 prompt) {
       REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
       gBgScroll[2].y = 0;
       resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsB);
-      Dma_Set(resourceData, (void *)BG_PLTT,
-              (DMA_ENABLE | DMA_32BIT) << 16 | 0x78, REG_DMA3);
+      Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(0x78), REG_DMA3);
       BG_PLTT[0] = 0;
       resourceData += 0x200;
       Resource_DecodeByteLz(resourceData, Ram_MapCellBuffer);
@@ -514,11 +510,10 @@ s32 Title_ShowSplashScreen(s32 mode) {
   result = 0;
   gBgScroll[2].y = result;
   resourceData = Resource_GetTableEntry(resourceId);
-  Dma_Set(resourceData, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
-          REG_DMA3);
+  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(0x70), REG_DMA3);
   Resource_DecodeType01(resourceData + 448, Ram_MapCellBuffer);
-  Dma_Set(Ram_MapCellBuffer, BG_CHAR_BLOCK(1),
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
+  Dma_Set(Ram_MapCellBuffer, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(0x2580),
+          REG_DMA3);
   tileIndex = 256;
   tilemap = (u16 *)BG_SCREEN_BLOCK(6);
   for (rowOrHoldFrame = 0; rowOrHoldFrame < 20; rowOrHoldFrame++) {
@@ -531,7 +526,7 @@ s32 Title_ShowSplashScreen(s32 mode) {
     gBgScroll[rowOrHoldFrame].y = 0;
     gBgScroll[rowOrHoldFrame].x = 0;
   }
-  Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
+  Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
   Ui_LoadWindowGraphics();
   DebugText_Clear();
   REG_DISPCNT =
@@ -602,20 +597,18 @@ s32 Title_ShowAnimatedSplash(void) {
   workIndex = (u32)Ram_MapCellBuffer;
   Resource_DecodeType01(Resource_GetTableEntry(resourceId), (u8 *)workIndex);
   resourceData = (u8 *)workIndex;
-  Dma_Set(resourceData, (void *)BG_PLTT,
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x1c0 / 4, REG_DMA3);
+  Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(0x1c0 / 4), REG_DMA3);
   resourceData += 0x1c0;
-  Dma_Set(resourceData, BG_SCREEN_BLOCK(6),
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x800 / 4, REG_DMA3);
+  Dma_Set(resourceData, BG_SCREEN_BLOCK(6), DMA_COPY_WORDS(0x800 / 4),
+          REG_DMA3);
   resourceData += 0x800;
-  Dma_Set(resourceData, BG_CHAR_BLOCK(1),
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x4000 / 4, REG_DMA3);
+  Dma_Set(resourceData, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(0x4000 / 4), REG_DMA3);
   resourceData += 0x4000;
   for (workIndex = 0; workIndex < 4; workIndex++) {
     gBgScroll[workIndex].y = 0;
     gBgScroll[workIndex].x = 0;
   }
-  Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
+  Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
   Ui_LoadWindowGraphics();
   DebugText_Clear();
   Fade_FromWhite(1);
@@ -624,8 +617,7 @@ s32 Title_ShowAnimatedSplash(void) {
       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   for (workIndex = 0; workIndex < 120; workIndex++) {
     Dma_Set(((gFrameCount >> 3) & 3) * 0x400 + resourceData,
-            BG_CHAR_BLOCK(1) + 0x100,
-            (DMA_ENABLE | DMA_32BIT) << 16 | 0x340 / 4, REG_DMA3);
+            BG_CHAR_BLOCK(1) + 0x100, DMA_COPY_WORDS(0x340 / 4), REG_DMA3);
     if (gKeysPressed & (KEY_A | KEY_START))
       break;
     WaitFrames(1);
@@ -681,8 +673,7 @@ void PaletteFade_Update(void) {
     for (remaining = 0; remaining <= 0x5ff; remaining++)
       *currentComponents++ += *componentSteps++;
   } else {
-    Dma_Set(work->target, work->current, (DMA_ENABLE | DMA_32BIT) << 16 | 0x300,
-            REG_DMA3);
+    Dma_Set(work->target, work->current, DMA_COPY_WORDS(0x300), REG_DMA3);
     work->duration = 0;
   }
   packedColors = work->packed[work->page ^ 1];
@@ -701,10 +692,10 @@ void PaletteFade_Update(void) {
     u16 *backgroundColors = paletteBank;
 
     IO_WRITE_QUEUE_PUSH((u32)BG_PLTT, (u32)backgroundColors,
-                        (DMA_ENABLE | DMA_32BIT) << 16 | 0x80);
+                        DMA_COPY_WORDS(0x80));
   }
   IO_WRITE_QUEUE_PUSH((u32)OBJ_PLTT, (u32)(paletteBank + 256),
-                      (DMA_ENABLE | DMA_32BIT) << 16 | 0x80);
+                      DMA_COPY_WORDS(0x80));
 }
 
 /// Transforms 512 source colours into destination components (three
@@ -964,7 +955,7 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
     if (paletteHalf == 2)
       mode += 0x600;
     Dma_Set((const void *)mode, destination,
-            (DMA_ENABLE | DMA_32BIT) << 16 | ((colorCount * 6) >> 2), REG_DMA3);
+            DMA_COPY_WORDS((colorCount * 6) >> 2), REG_DMA3);
   }
 }
 
@@ -976,10 +967,9 @@ void PaletteFade_Init(void) {
 
   buffer = Runtime_AllocateBlock(32, sizeof(*buffer));
   Dma_Fill32(0, buffer, sizeof(*buffer));
-  Dma_Set((void *)BG_PLTT, buffer, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
+  Dma_Set((void *)BG_PLTT, buffer, DMA_COPY_WORDS(0x80), REG_DMA3);
+  Dma_Set((void *)OBJ_PLTT, &buffer->palette[256], DMA_COPY_WORDS(0x80),
           REG_DMA3);
-  Dma_Set((void *)OBJ_PLTT, &buffer->palette[256],
-          (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
   Palette_Transform(PALETTE_TRANSFORM_PLAIN, buffer->palette, buffer->target,
                     0);
   callbackPriority = 3200;

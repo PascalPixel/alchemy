@@ -1,5 +1,5 @@
-#ifndef GUARD_SERIAL_RUNTIME_H
-#define GUARD_SERIAL_RUNTIME_H
+#ifndef ALCHEMY_SERIAL_RUNTIME_H
+#define ALCHEMY_SERIAL_RUNTIME_H
 
 /// @file
 /// The link cable's runtime: serial packets, registers and transfer state.
@@ -9,6 +9,7 @@
 #include "static_assert.h"
 #include "system.h"
 #include "io_reg.h"
+#include "dma.h"
 #include "irq.h"
 #include "dma.h"
 
@@ -112,7 +113,6 @@ STATIC_ASSERT(offsetof(struct SerialTransferState, peerFlags) == 3);
 STATIC_ASSERT(offsetof(struct SerialTransferState, payload) == 4);
 
 #define SERIAL_RUNTIME (&gSerialRuntime)
-#define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
 
 #define START_DMA(source_, destination_, control_)                             \
   do {                                                                         \

@@ -46,6 +46,15 @@ void CgbChannel_Mute(u8 channel);
 
 extern const u8 gSound_Cgb3LevelCodes[];
 
+/// The PCM buffer's size in samples, a multiple of every frame length: the DMA
+/// plays it round and round.
+#define SOUND_PCM_BUFFER_SIZE 0x630
+/// The display's frame rate in ten-thousandths of a hertz: 59.7275 frames a
+/// second.
+#define SOUND_FRAME_RATE_E4 597275
+/// CPU cycles in a frame: 228 lines of 1232 cycles.
+#define SOUND_CYCLES_PER_FRAME (228 * 1232)
+
 /// Resets the sound hardware, clears mixer state and installs the default PCM
 /// driver.
 void AudioEngine_Initialize(struct SoundWork *work) {
@@ -97,19 +106,23 @@ void AudioEngine_SetPcmRate(u32 mode) {
   work->rate = mode;
   frameSamples = gSound_FrameLengths[mode - 1];
   work->frameSamples = frameSamples;
-  work->transferPeriod = __divsi3(0x630, frameSamples);
-  work->outputRate = __divsi3(0x91D1B * frameSamples + 5000, 10000);
+  // Frames the DMA plays before the buffer wraps, and the sample rate in hertz
+  // (rounded), and half its reciprocal in 24-bit fixed point
+  work->transferPeriod = __divsi3(SOUND_PCM_BUFFER_SIZE, frameSamples);
+  work->outputRate = __divsi3(SOUND_FRAME_RATE_E4 * frameSamples + 5000, 10000);
   work->rateStep = (__divsi3(0x1000000, work->outputRate) + 1) >> 1;
-  // Arm Timer 0 at scanline 159 after restarting the FIFO transfers.
+  // Timer 0 counts the CPU cycles of one sample: it overflows, and the FIFOs
+  // take their next sample, frameSamples times a frame. It starts at scanline
+  // 159 after the FIFO transfers restart.
   REG_TM0CNT_H = 0;
   timer = &REG_TM0CNT_L;
-  *timer = -__divsi3(0x44940, frameSamples);
+  *timer = -__divsi3(SOUND_CYCLES_PER_FRAME, frameSamples);
   AudioEngine_ResumeDirectSound();
   while (*(volatile u8 *)&REG_VCOUNT == 159)
     ;
   while (*(volatile u8 *)&REG_VCOUNT != 159)
     ;
-  REG_TM0CNT_H = 0x80;
+  REG_TM0CNT_H = TIMER_ENABLE;
 }
 
 /// Applies the supplied reverb, channel-count, volume, bias and sample-rate

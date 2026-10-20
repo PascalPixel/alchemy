@@ -8,7 +8,7 @@
 // 0x10000): [0] to [8] a 3x3 rotation, [9] to [11] a translation.
 // Iwram_TransformMatrix multiplies the matrix it is given into gTransform.
 
-#define TRANSFORM_DMA ((DMA_ENABLE | DMA_32BIT) << 16 | 12) ///< one matrix
+#define TRANSFORM_DMA (DMA_COPY_WORDS(12)) ///< one matrix
 
 typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 
@@ -240,8 +240,7 @@ void Transform_BuildLookAt(s32 *eye, s32 *target, s32 *out) {
 
   // Copy the dot product routine to the stack and call it there
   dot = (Dot3Fn)code;
-  Dma_Set(RelocatedQ16DotProduct, code, (DMA_ENABLE | DMA_32BIT) << 16 | 7,
-          REG_DMA3);
+  Dma_Set(RelocatedQ16DotProduct, code, DMA_COPY_WORDS(7), REG_DMA3);
 
   // The view axis d, pointing from the target back to the eye, normalized
   dx = target[0] - eye[0];

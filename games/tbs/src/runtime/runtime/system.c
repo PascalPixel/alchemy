@@ -126,7 +126,7 @@ void System_CopyBuildStamp(void) {
 
   stamp = Resource_GetTableEntry((u32)&ResourceId_BuildStamp);
   copy = (struct BuildStampCopy *)&gIwramHi_Data1;
-  Dma_Set(stamp, copy, (DMA_ENABLE | DMA_32BIT) << 16 | 3, REG_DMA3);
+  Dma_Set(stamp, copy, DMA_COPY_WORDS(3), REG_DMA3);
   copy->terminator = 0;
 }
 
@@ -233,15 +233,14 @@ void Runtime_InstallIwramAndIrqs(void) {
   // Keep interrupts masked while replacing both the dispatcher and its table.
   Io_Write16(0, &REG_IME);
   iwram = IwramIrqMain;
-  Dma_Set(IwramRuntime_Rom, iwram, (DMA_ENABLE | DMA_32BIT) << 16 | 0x500,
-          REG_DMA3);
+  // 0x1400 bytes of resident code and data
+  Dma_Set(IwramRuntime_Rom, iwram, DMA_COPY_WORDS(0x500), REG_DMA3);
   gIrqVector = iwram;
-  Dma_Set(gRuntime_IrqHandlers, gIrqHandlers,
-          (DMA_ENABLE | DMA_32BIT) << 16 | IRQ_COUNT, REG_DMA3);
+  Dma_Set(gRuntime_IrqHandlers, gIrqHandlers, DMA_COPY_WORDS(IRQ_COUNT),
+          REG_DMA3);
   Io_Write16(0, &REG_DISPSTAT);
-  // Keypad interrupt only when all ten keys are down: in effect off until
-  // System_Initialize arms the soft-reset combination.
-  Io_Write16(0xc3ff, &REG_KEYCNT);
+  // Disarmed until System_Initialize arms the soft-reset keys
+  Io_Write16(KEYCNT_DISARMED, &REG_KEYCNT);
 #if defined(SYSTEM_HALT_ON_GAMEPAK_IRQ)
   Io_Write16(INTR_FLAG_VBLANK | INTR_FLAG_KEYPAD | INTR_FLAG_GAMEPAK, &REG_IE);
 #else

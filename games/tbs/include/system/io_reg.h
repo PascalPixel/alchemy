@@ -1,5 +1,5 @@
-#ifndef GUARD_IO_REG_H
-#define GUARD_IO_REG_H
+#ifndef ALCHEMY_IO_REG_H
+#define ALCHEMY_IO_REG_H
 
 /// @file
 /// The hardware's I/O registers and their bits, as pret names them.
@@ -8,6 +8,14 @@
 
 #define REG_DISPCNT (*(volatile u16 *)0x04000000)
 #define REG_DISPSTAT (*(volatile u16 *)0x04000004)
+// DISPSTAT's interrupt enables, as pret names them; each is
+// DISPSTAT_VBLANK_INTR shifted by its IRQ_ number.
+#define DISPSTAT_VBLANK_INTR 0x0008
+#define DISPSTAT_HBLANK_INTR 0x0010
+#define DISPSTAT_VCOUNT_INTR 0x0020
+/// DISPSTAT's high byte: the line the VCount interrupt fires on (the LYC
+/// compare).
+#define DISPSTAT_VCOUNT_LINE(line) ((line) << 8)
 #define REG_VCOUNT (*(volatile u16 *)0x04000006)
 #define REG_BG1CNT (*(volatile u16 *)0x0400000a)
 #define REG_BG2CNT (*(volatile u16 *)0x0400000c)
@@ -228,6 +236,8 @@ enum DisplayControl {
 #define CPU_SET_32BIT 0x04000000
 
 #define OAM ((void *)0x07000000)
+/// OAM's size in bytes: 128 sprites of 8 bytes.
+#define OAM_SIZE 0x400
 enum KeyMask {
   KEY_A = 0x001,
   KEY_B = 0x002,
@@ -296,8 +306,11 @@ enum KeyMask {
 #define REG_WAITCNT (*(volatile u16 *)0x04000204)
 #define REG_IME (*(volatile u16 *)0x04000208)
 
-#define KEYCNT_SOFT_RESET 0xc00f
-#define KEYCNT_SHOULDERS_WAKE 0xc300
+// KEYCNT values: the interrupt fires when all the listed keys are held at once.
+#define KEYCNT_SOFT_RESET 0xc00f ///< A, B, Select and Start.
+/// All ten keys, which no player presses: the soft reset's interrupt disarmed.
+#define KEYCNT_DISARMED 0xc3ff
+#define KEYCNT_SHOULDERS_WAKE 0xc300 ///< L and R, which wake the sleep.
 #define KEYCNT_SLEEP_WAKE 0xc304
 
 #define WAITCNT_GAME 0x4014

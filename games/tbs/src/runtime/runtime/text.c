@@ -172,7 +172,7 @@ void DebugText_Clear(void) {
 /// palettes.
 void Ui_LoadWindowGraphics(void) {
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
-          BG_CHAR_BLOCK(0), (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
+          BG_CHAR_BLOCK(0), DMA_COPY_WORDS(0x800), REG_DMA3);
   Dma_Set(gUi_WindowPalette, (void *)&BG_PLTT_COLOR(15, 0),
           DMA_ENABLE << 16 | 0x10, REG_DMA3);
   Io_Write16(0, &PLTT_BACKDROP);

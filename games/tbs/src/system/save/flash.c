@@ -107,7 +107,8 @@ s32 SetFlashTimerIntr(u8 timerIndex, void (**callback)(void)) {
   if (timerIndex > 3)
     return 1;
   gFlashTimerNum = timerIndex;
-  gFlashTimerReg = (u16 *)(0x04000100 + gFlashTimerNum * 4);
+  // Each timer's counter, REG_TMnCNT_L, is 4 bytes after the one before
+  gFlashTimerReg = (u16 *)((u32)&REG_TM0CNT_L + gFlashTimerNum * 4);
   *callback = FlashTimerIntr;
   return 0;
 }

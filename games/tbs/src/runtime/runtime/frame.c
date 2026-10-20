@@ -44,13 +44,14 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler) {
       ie |= bit;
     REG_IE = ie;
     if (irq <= IRQ_VCOUNT) {
-      // DISPSTAT bits 3 to 5 enable the VBlank, HBlank and VCount interrupts
-      u32 enable = 8 << irq;
+      // The display interrupts also need their DISPSTAT enable
+      u32 enable = DISPSTAT_VBLANK_INTR << irq;
       u32 keep = ~enable;
       u32 stat;
 
       if (irq == IRQ_VCOUNT) {
-        enable |= vcount << 8;
+        enable |= DISPSTAT_VCOUNT_LINE(vcount);
+        // Keep only the low byte, so the old line goes too
         keep &= 0xff;
       }
       stat = REG_DISPSTAT & keep;
@@ -103,8 +104,7 @@ void WaitFrames(s32 frames) {
     u8 *top = Ram_FrameWaitStackTop;
 
     gSavedStackSize = top - base;
-    Dma_Set(base, gSavedStack,
-            (DMA_ENABLE | DMA_32BIT) << 16 | (gSavedStackSize >> 2), REG_DMA3);
+    Dma_Set(base, gSavedStack, DMA_COPY_WORDS(gSavedStackSize >> 2), REG_DMA3);
     CAMELOT_ASM("the stack switch, a write to sp no C can express")
     __asm__ volatile("mov sp, %0" : : "r"(top) : "sp", "memory");
   }
@@ -264,8 +264,7 @@ void WaitFrames(s32 frames) {
           nextSize = &gSavedStackSize;
         if (!sp)
           nextSize = &gSavedStackSize;
-        Dma_Set(gSavedStack, base,
-                (DMA_ENABLE | DMA_32BIT) << 16 | (*nextSize >> 2), REG_DMA3);
+        Dma_Set(gSavedStack, base, DMA_COPY_WORDS(*nextSize >> 2), REG_DMA3);
       }
       while (DMA3->control & (DMA_ENABLE << 16))
         ;
@@ -384,9 +383,8 @@ void System_VBlankHandler(void) {
   if (gFrameRenderPending != 0) {
     if (gOamCopyEnabled != 0)
       Dma_Set(((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_FRAME_SCRATCH],
-              OAM, (DMA_ENABLE | DMA_32BIT) << 16 | 0x100, REG_DMA3);
-    Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4,
-            REG_DMA3);
+              OAM, DMA_COPY_WORDS(OAM_SIZE / 4), REG_DMA3);
+    Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
     IoWriteQueue_FlushPending();
     gFrameRenderPending = 0;
   }
@@ -434,7 +432,7 @@ s32 Sound_LoadPresetParameters(s32 preset) {
     index = 0;
   }
   Dma_Set(IwramCodeRecords + index * SOUND_PRESET_SIZE, IwramSoundPresetCode,
-          (DMA_ENABLE | DMA_32BIT) << 16 | (SOUND_PRESET_SIZE / 4), REG_DMA3);
+          DMA_COPY_WORDS(SOUND_PRESET_SIZE / 4), REG_DMA3);
   return 0;
 }
 
@@ -449,7 +447,7 @@ UNUSED void Sound_ReservedNoOpB(void) {}
 /// only wakes the CPU.
 void Input_HandleKeyInterrupt(void) {
   if (gSleepActive == 0) {
-    Io_Write16(0xc3ff, &REG_KEYCNT);
+    Io_Write16(KEYCNT_DISARMED, &REG_KEYCNT);
     gResetRequested = 1;
   }
 }

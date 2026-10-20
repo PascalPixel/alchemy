@@ -1,6 +1,7 @@
 #include "types.h"
 #include "audio_engine.h"
 #include "ram_buffer.h"
+#include "../../include/system/io_reg.h"
 
 u32 Audio_UmulHigh32(u32 left, u32 right);
 extern u8 gSound_PcmPitchCodes[];
@@ -106,12 +107,17 @@ void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed) {
   MusicPlayer_SetFadeParameters(player, speed, SOUND_FADE_FULL_VOLUME);
 }
 
+/// The bytes of mixer code Audio_Initialize copies to IWRAM.
+#define SOUND_MIXER_CODE_SIZE 0x400
+
 /// Copies the RAM mixer, initializes both audio paths and configures every
 /// player.
 void Audio_Initialize(void) {
   s32 playerIndex;
 
-  Bios_CpuSet((void *)((u32)Sound_Mixer & ~1), Ram_SoundMixer, 0x04000100);
+  // Sound_Mixer is a Thumb symbol: its address has bit 0 set
+  Bios_CpuSet((void *)((u32)Sound_Mixer & ~1), Ram_SoundMixer,
+              CPU_SET_32BIT | (SOUND_MIXER_CODE_SIZE / 4));
   AudioEngine_Initialize(&gSound_Work);
   CgbAudio_Initialize(gSound_CgbNotes);
   AudioEngine_SetMode(AUDIO_INITIAL_MODE);

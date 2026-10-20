@@ -71,7 +71,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   s32 agilityDelta;
   s32 helpValue;
   s32 groupPosition;
-  struct MenuCell *navigation;
+  struct BattleMenuWork *navigation;
   s32 iconX;
 
   render = UI_WORK;
@@ -81,11 +81,11 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   statusCount = 0;
   hasDjinn = Party_SumDjinnCountsFar(-1);
 
-  navigation = ((struct MenuCell *)gWindowWork[42]);
-  navigation->busy = 1;
-  if (navigation->work != NULL) {
-    UiWork_Finalize(navigation->work, 1);
-    navigation->work = NULL;
+  navigation = ((struct BattleMenuWork *)gWindowWork[42]);
+  navigation->timerHidden = 1;
+  if (navigation->timerWindow != 0) {
+    UiWork_Finalize((struct UiWindow *)navigation->timerWindow, 1);
+    navigation->timerWindow = 0;
   }
   AudioCommand_PlayFar(SE_MENU_CONFIRM);
 
@@ -679,7 +679,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
       }
     }
 
-    if (gLinkCountdownWork->active == 0) {
+    if (gLinkCountdownWork->timer == 0) {
       break;
     }
     if ((gKeysPressed & KEY_B) != 0) {
@@ -728,10 +728,11 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   // The named slot changes native instructions at the same 0xcf8-byte EN
   // extent; using gWorkSlot instead adds eight bytes.
 #ifdef UBFIX
-  gLinkCountdownWork->busy = 0;
+  gLinkCountdownWork->timerHidden = 0;
 #else
-  ((struct MenuCell **)&gBattleWork)[HEAP_SLOT_WINDOW + 42 - HEAP_SLOT_BATTLE]
-      ->busy = 0;
+  ((struct BattleMenuWork **)&gBattleWork)[HEAP_SLOT_WINDOW + 42 -
+                                           HEAP_SLOT_BATTLE]
+      ->timerHidden = 0;
 #endif
   WaitFrames(1);
   return 0;

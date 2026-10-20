@@ -5,7 +5,9 @@
 #include "../game_internal.h"
 
 /// Returns the multiplier (256 = 1x) for an element difference `input`, read
-/// from a five-point line; with `halve` the effect of the difference is half.
+/// from a five-point line (gElement_PowerResistCurve); with `halve` the effect
+/// of the difference is half. Called by the damage and recovery formulas
+/// below.
 s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
   s32 minimumDifference;
   s32 maximumDifference;
@@ -48,7 +50,9 @@ s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
 }
 
 /// The battle's random number generator, the same linear congruential one as
-/// Random16 with its own seed. Returns bits 8 to 23 of the new seed.
+/// Random16 with its own seed. Returns bits 8 to 23 of the new seed and writes
+/// gBattleRandomSeed. Every random roll in battle goes through it, so that a
+/// link battle's two consoles roll alike.
 s32 BattleRandom(void) {
   u32 seed;
 
@@ -63,6 +67,8 @@ u32 BattleRandomPercent(void) { return ((u32)BattleRandom() * 100) >> 16; }
 /// Scales max(attack - defense, 0) + twice the action's added power by the
 /// elemental multiplier, then halves it. elementDifference is power minus
 /// resistance; its effect here is half Psynergy's (128..384 with 256 = 1x).
+/// Reached through GAME.S as BattleAtkCalc, which BattleTargetExec calls for
+/// attacks and physical abilities.
 s32 Battle_CalcAttackDamage(s32 attack, s32 defense, s32 addedPower,
                             s32 elementDifference) {
   s32 damage;
@@ -84,7 +90,8 @@ s32 Battle_CalcAttackDamage(s32 attack, s32 defense, s32 addedPower,
 
 /// Returns the power of Psynergy: `power` times the multiplier for the element
 /// difference (power minus resistance, 0..512 with 256 = 1x) and the supplied
-/// powerMultiplier (also 256 = 1x).
+/// powerMultiplier (also 256 = 1x). Reached through GAME.S as BattlePowerCalc,
+/// which BattleTargetExec calls for Psynergy damage.
 s32 Battle_CalcPsynergyPower(s32 power, s32 elementDifference,
                              s32 powerMultiplier) {
   s32 scaledPower;
@@ -99,6 +106,8 @@ s32 Battle_CalcPsynergyPower(s32 power, s32 elementDifference,
 /// Returns the amount healed: `power` and `powerMultiplier` (256 is 1x) times
 /// the multiplier for twice the healer's element power above 100.
 ///   elementPower : the healer's power in the element (100 is 1x)
+/// Reached through GAME.S as BattleRecoveryCalc, which the battle and the
+/// menu's healing use.
 s32 Battle_CalcRecovery(s32 power, s32 elementPower, s32 powerMultiplier) {
   s32 signedProduct;
   u32 scaledRecovery;
@@ -112,8 +121,9 @@ s32 Battle_CalcRecovery(s32 power, s32 elementPower, s32 powerMultiplier) {
   return signedProduct >> 16;
 }
 
-/// Returns the element the unit attacks with (4 for none): an enemy's comes
-/// from its kind, a character's from its equipped weapon.
+/// Returns the element the unit attacks with (ELEMENT_NONE for none): an
+/// enemy's comes from its kind, a character's from its equipped weapon.
+/// Called by the battle plan for an attack's element.
 s32 Item_GetEquippedElement(s32 owner) {
   struct ItemDefinition *item;
   struct BattleUnit *unit;
@@ -121,14 +131,15 @@ s32 Item_GetEquippedElement(s32 owner) {
   unit = UnitGet(owner);
   if (unit->classIndex == 0)
     return Enemy_GetAttackElement(unit);
-  item = Inventory_GetEquippedDefinition(unit, 1); // 1: weapon
+  item = Inventory_GetEquippedDefinition(unit, ITEM_TYPE_WEAPON);
   if (item != NULL)
     return item->element;
-  return 4;
+  return ELEMENT_NONE;
 }
 
 /// Returns the unleash chance, in percent, that a unit's equipment adds
-/// (equipment effect 23).
+/// (ITEM_EFFECT_ADD_UNLEASH_CHANCE). Called by RollWeaponUnleash and the
+/// battle plan.
 s32 Equipment_GetUnleashRateBonus(struct BattleUnit *unit) {
   s32 chanceBonus;
   s32 inventorySlot;
@@ -150,8 +161,10 @@ s32 Equipment_GetUnleashRateBonus(struct BattleUnit *unit) {
   return chanceBonus;
 }
 
-/// Rolls whether a character's weapon unleashes. Returns the unleash action,
-/// or 1 for a plain attack.
+/// Rolls whether a character's weapon unleashes: its chance is the weapon's
+/// unleashChance times 5 percent plus what the equipment adds. Returns the
+/// unleash action, or 1 for a plain attack. Called by the battle plan for
+/// each Attack command.
 s32 RollWeaponUnleash(struct BattleUnit *owner) {
   struct ItemDefinition *item;
   s32 rate;
@@ -159,7 +172,7 @@ s32 RollWeaponUnleash(struct BattleUnit *owner) {
   if (owner->classIndex == 0) {
     return 1;
   }
-  item = Inventory_GetEquippedDefinition(owner, 1);
+  item = Inventory_GetEquippedDefinition(owner, ITEM_TYPE_WEAPON);
   if (item == NULL) {
     return 1;
   }
@@ -176,51 +189,53 @@ s32 RollWeaponUnleash(struct BattleUnit *owner) {
 }
 
 /// Returns the base chance, in percent, of effect `effectId`. A negative
-/// value is a fixed chance that elements and luck do not change.
+/// value is a fixed chance that elements and luck do not change; effects not
+/// listed always work (-100). Called by BattleFx_RollSuccess.
 s32 BattleFx_GetBaseSuccessRate(s32 effectId) {
   s32 fixedChance;
   u32 effectIndex;
 
+  // The switch is on the effect less 8, as the ROM's jump table is.
   effectIndex = effectId - 8;
   switch (effectIndex) {
-  case 4:
-  case 5:
+  case ABILITY_EFFECT_DEFENSE_DOWN_2 - 8:
+  case ABILITY_EFFECT_DEFENSE_DOWN - 8:
     return 70;
-  case 8:
-  case 9:
+  case ABILITY_EFFECT_RESISTANCE_DOWN_2 - 8:
+  case ABILITY_EFFECT_RESISTANCE_DOWN - 8:
     return 75;
-  case 14:
+  case ABILITY_EFFECT_CHARM - 8:
     return 30;
-  case 15:
+  case ABILITY_EFFECT_STUN - 8:
     return 40;
-  case 16:
+  case ABILITY_EFFECT_SLEEP - 8:
     return 45;
-  case 10:
-  case 11:
-  case 17:
+  case ABILITY_EFFECT_POISON - 8:
+  case ABILITY_EFFECT_DEADLY_POISON - 8:
+  case ABILITY_EFFECT_SEAL - 8:
     return 55;
-  case 18:
+  case ABILITY_EFFECT_HAUNT - 8:
     return 25;
-  case 19:
+  case ABILITY_EFFECT_INSTANT_DEATH - 8:
     return 20;
-  case 12:
-  case 23:
+  case ABILITY_EFFECT_DELUSION - 8:
+  case ABILITY_EFFECT_DRAIN_HP - 8:
     return 65;
-  case 13:
-  case 26:
+  case ABILITY_EFFECT_CONFUSION - 8:
+  case ABILITY_EFFECT_LEAVE_ONE_HP - 8:
     return 35;
-  case 27:
+  case ABILITY_EFFECT_HALVE_DEFENSE - 8:
     return 50;
-  case 48:
+  case ABILITY_EFFECT_REVIVE_HALF - 8:
     fixedChance = 60;
     break;
-  case 49:
+  case ABILITY_EFFECT_REVIVE_80 - 8:
     fixedChance = 90;
     break;
-  case 0:
-  case 1:
-  case 20:
-  case 24:
+  case ABILITY_EFFECT_ATTACK_DOWN_2 - 8:
+  case ABILITY_EFFECT_ATTACK_DOWN - 8:
+  case ABILITY_EFFECT_CURSE - 8:
+  case ABILITY_EFFECT_DRAIN_PP - 8:
     return 60;
   default:
     fixedChance = 100;
@@ -230,7 +245,8 @@ s32 BattleFx_GetBaseSuccessRate(s32 effectId) {
 }
 
 /// Returns 1 when the unit is weak to effect `effectId`: one of three listed
-/// for its enemy kind or class.
+/// for its enemy kind (EnemyDefinition.unk48) or class
+/// (ClassDefinition.unk50). Called by BattleFx_RollSuccess.
 s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId) {
   const u8 *weakEffects;
   s32 weaknessIndex;
@@ -252,9 +268,13 @@ s32 BattleTarget_IsWeakToEffect(const struct BattleUnit *target, s32 effectId) {
   return 0;
 }
 
-/// Returns 1 for the revive effects, which only work on a downed unit.
+/// Returns 1 for the revive effects (Revive, Quartz, Dew), which only work on
+/// a downed unit. Called by the battle's targeting, which lets them aim at
+/// downed members, and by BattleFx_RollSuccess.
 s32 Battle_IsReviveEffect(s32 effectId) {
-  if ((effectId == 5) || (effectId == 0x38) || (effectId == 0x39)) {
+  if ((effectId == ABILITY_EFFECT_REVIVE) ||
+      (effectId == ABILITY_EFFECT_REVIVE_HALF) ||
+      (effectId == ABILITY_EFFECT_REVIVE_80)) {
     return 1;
   }
   return 0;
@@ -264,7 +284,9 @@ s32 Battle_IsReviveEffect(s32 effectId) {
 /// when there is nothing for it to do. The chance is the base rate, plus three
 /// times the caster's lead over the target in the element, less half the
 /// target's luck, plus 25 against a weakness, times `successScale` percent.
-/// Some effects get three tries.
+/// Luff gets three tries. Reached through GAME.S as BattleHitCheck, which
+/// BattleTargetExec and the battle plan call for each target of an ability
+/// with an effect.
 s32 BattleFx_RollSuccess(s32 caster, s32 target, s32 resistanceCategory,
                          s32 effectId, s32 successScale) {
   /* FAKEMATCH: the psySeal, confusion and haunt reads go through state[offset]
@@ -286,10 +308,12 @@ s32 BattleFx_RollSuccess(s32 caster, s32 target, s32 resistanceCategory,
     return 0;
   }
 
-  if (effectId == 3 && unit->poison == 0) {
+  if (effectId == ABILITY_EFFECT_CURE_POISON && unit->poison == 0) {
     return 0;
   }
 
+  // Restore needs a delusion, confusion or charm, or failing those a stun,
+  // sleep, seal or curse; the order of these tests is the ROM's.
   goto action4_check;
 action4_tail:
   if (unit->stun == 0 && unit->sleep == 0 &&
@@ -299,7 +323,7 @@ action4_tail:
   }
   goto action4_done;
 action4_check:
-  if (effectId == 4) {
+  if (effectId == ABILITY_EFFECT_RESTORE) {
     if (unit->delusion == 0 &&
         state[(u32)&((struct BattleUnit *)0)->confusion] == 0 &&
         unit->charm == 0) {
@@ -314,17 +338,19 @@ action4_done:
   charm = &unit->charm;
   stun = &unit->stun;
   sleep = &unit->sleep;
-  if (effectId == 0x40 && *poison == 0 && *delusion == 0 && *confusion == 0 &&
-      *charm == 0 && *stun == 0 && *sleep == 0 && unit->psySeal == 0 &&
-      unit->grimReaper == 0 &&
+  if (effectId == ABILITY_EFFECT_CURE_ALL && *poison == 0 && *delusion == 0 &&
+      *confusion == 0 && *charm == 0 && *stun == 0 && *sleep == 0 &&
+      unit->psySeal == 0 && unit->grimReaper == 0 &&
       state[(u32)&((struct BattleUnit *)0)->haunt] == 0) {
     return 0;
   }
 
-  if (effectId == 0x1C && unit->grimReaper == 1) {
+  if (effectId == ABILITY_EFFECT_CURSE && unit->grimReaper == 1) {
     return 0;
   }
 
+  // A positive base rate is adjusted by the element levels, the target's luck
+  // and its weaknesses; a negative one is a fixed chance.
   score = BattleFx_GetBaseSuccessRate(effectId);
   if (score > 0) {
     s32 difference = Unit_GetElementLevel(caster, resistanceCategory) -
@@ -338,7 +364,7 @@ action4_done:
     score = -score;
   }
 
-  if (effectId == 0x43) {
+  if (effectId == ABILITY_EFFECT_SEAL_2_TURNS) {
     attempts = 3;
   }
 

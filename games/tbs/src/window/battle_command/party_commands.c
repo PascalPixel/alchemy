@@ -38,7 +38,7 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
 /// exchange completion signatures before releasing the command UI.
 s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
                                 u16 *actors, s32 commandCount) {
-  struct LinkRoundState *state;
+  struct BattleMenuWork *state;
   struct BattleWork *battle;
   struct BattleWork *linkBattle;
   u16 *peerSignature;
@@ -76,27 +76,27 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
   smallIconSlot = VramCache_AllocEntry(512);
   state = Runtime_AllocateBlock(57, 260);
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
-  Graphics_ExpandVramTilesByColorTable(0x06006000);
+  Graphics_ExpandVramTilesByColorTable((u16 *)0x06006000);
   Link_DrawShiftedTilePair(0x06006680);
   Menu_BuildLocalizedPatternTiles();
   battle = gBattleWork;
   for (k = 0; k < 8; k++) {
-    state->selected[k] = 0x80000000;
+    state->chosenDjinn[k] = 0x80000000;
   }
   for (k = 0; k < 3; k++) {
-    state->entryActive[k] = 0;
+    state->iconShown[k] = 0;
   }
-  state->targetOffset = 0;
-  state->currentOffset = 0;
+  state->targetSceneOffset = 0;
+  state->sceneOffset = 0;
   state->timer = -1;
-  state->unk3c = 0;
-  state->unk40 = 0;
-  state->enabled = 0;
-  state->secondaryHandle = 0;
-  state->displayHandle = 0;
+  state->commandSelection[0] = 0;
+  state->commandSelection[1] = 0;
+  state->linkTimer = 0;
+  state->timerHidden = 0;
+  state->timerWindow = 0;
   // Both peers announce the command-entry phase before accepting commands.
   if (battle->twoSided != 0) {
-    state->enabled = 1;
+    state->linkTimer = 1;
     transferWords = (u16 *)gSerialTransfer.payload;
     transferWords[4] = 'V';
     transferWords[5] = 'S';
@@ -107,13 +107,13 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       peerSignature = (u16 *)&gLinkPeerSignatures[battle->linkSide ^ 1];
       if (battle->linkPaused != 0) {
         commandCount = -1;
-        state->enabled = 0;
+        state->linkTimer = 0;
         break;
       }
       if ((gLinkStatus & 3) != 3) {
         if (++missedLinkFrames > 24) {
           commandCount = -1;
-          state->enabled = 0;
+          state->linkTimer = 0;
           break;
         }
       } else {
@@ -129,7 +129,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         if (!(peerSignature[0] == 'E' && peerSignature[1] == 'X' &&
               peerSignature[2] == 'E' && peerSignature[3] == 'C')) {
           commandCount = -1;
-          state->enabled = 0;
+          state->linkTimer = 0;
           break;
         }
       }
@@ -140,12 +140,12 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
 
   while (1) {
     BattleMenu_ClearPartyHighlights();
-    state->entryActive[2] = 0;
-    state->actorId = -1;
-    state->hintCount = 0;
+    state->iconShown[2] = 0;
+    state->commandActor = -1;
+    state->tutorialStep = 0;
     if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) != 0) {
-      state->hintCount = 1;
-      state->hintTimer = 60;
+      state->tutorialStep = 1;
+      state->tutorialDelay = 60;
     }
     if (commandCount > 0) {
       mode = Menu_RunCommandRow(0);
@@ -193,12 +193,13 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
 
     for (;;) {
       if (commandIndex == 0) {
-        BattleParty_CountStandbyDjinnFar(0, state->cost[0]);
+        BattleParty_CountStandbyDjinnFar(0, state->standbyDjinn[0]);
       } else {
         s32 k;
 
         for (k = 0; k < 4; k++) {
-          state->cost[commandIndex][k] = state->cost[commandIndex - 1][k];
+          state->standbyDjinn[commandIndex][k] =
+              state->standbyDjinn[commandIndex - 1][k];
         }
       }
 
@@ -213,9 +214,9 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
        * prototype, 2 instructions differ in tbs-en. */
       unit = (struct BattleUnit *)(s32)((s64 (*)(s32))UnitGetFar)(actorId);
 #endif
-      COUNTDOWN->actorId = actorId;
-      COUNTDOWN->unk40 = 0;
-      iconSprite = &COUNTDOWN->entries[2];
+      gLinkCountdownWork->commandActor = actorId;
+      gLinkCountdownWork->commandSelection[1] = 0;
+      iconSprite = &gLinkCountdownWork->icons[2];
       iconSprite->oam.word.attr01 = 0x80000400;
       iconSprite->oam.word.attr23 = 0;
       iconSprite->oam.f.tile =
@@ -223,12 +224,12 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       iconSprite->oam.f.x = BATTLE_CLASS_ICON_X;
       iconSprite->oam.f.y = 0x80;
       iconSprite->oam.f.palette = 14;
-      state->entryActive[2] = 1;
+      state->iconShown[2] = 1;
 
     mark_visible:
       UiWindow_MarkVisibleTileAttributes();
-      COUNTDOWN->entryActive[0] = 0;
-      COUNTDOWN->selected[commandIndex] = 0x80000000;
+      gLinkCountdownWork->iconShown[0] = 0;
+      gLinkCountdownWork->chosenDjinn[commandIndex] = 0x80000000;
       /* FAKEMATCH(dead): twelve dead stores restore the native frame's spill
        * slots at sp+24 to sp+32; without them, 26 of 1727 instructions differ
        * in tbs-en. */
@@ -257,10 +258,10 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
 
         block = MemAlloc(12);
         handle = BattleParty_ListActorIdsFar(1, block);
-        state->entryActive[2] = 0;
+        state->iconShown[2] = 0;
         WaitFrames(1);
         Ui_RunOwnerStatusScreen(block, handle, actorId);
-        state->entryActive[2] = 1;
+        state->iconShown[2] = 1;
         MemFree(block);
         continue;
       }
@@ -273,10 +274,10 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         continue;
       }
 
-      if (COUNTDOWN->timer == 0) {
+      if (gLinkCountdownWork->timer == 0) {
         mode = 3;
       }
-      iconSprite = &COUNTDOWN->entries[0];
+      iconSprite = &gLinkCountdownWork->icons[0];
       iconSprite->oam.word.attr23 = 0;
       iconSprite->oam.word.attr01 = 0x80002400;
       iconSprite->oam.f.tile =
@@ -287,13 +288,13 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         iconSprite->oam.f.x = 96;
       }
       iconSprite->oam.f.y = 136;
-      state->entryActive[0] = 1;
+      state->iconShown[0] = 1;
       switch (mode) {
       case 0:
         commandWindow = UiWindow_Create(11, 17, 11, 3, 6);
         UiText_DrawCharacterAtOffset(MsgCommandName, commandWindow,
                                      BATTLE_COMMAND_NAME_X, 0);
-        state->entries[0].oam.f.x = 64;
+        state->icons[0].oam.f.x = 64;
         AudioCommand_PlayFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(actorId, 1, 1, 0);
         UiWork_Finalize(commandWindow, 1);
@@ -319,11 +320,11 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
 
         AudioCommand_PlayFar(SE_MENU_CONFIRM);
         mode = 0;
-        MenuCell_SetCursor(mode, mode, mode);
+        BATTLE_MENU_SET_CURSOR(mode, mode, mode);
       psynergy_menu:
-        list = state->list;
-        pick = state->pick;
-        state->entries[0].oam.f.x = 48;
+        list = state->listAbilities;
+        pick = state->listSlots;
+        state->icons[0].oam.f.x = 48;
         cnt = 0;
         k = 0;
         entryValue = unit->actionSlots[k].encodedAction & ACTION_ID_MASK;
@@ -351,11 +352,11 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
             unit->actionSlots[pick[mode]].encodedAction & ACTION_ID_MASK;
         ability = BattleActGet(parameter);
         cost = ability->range;
-        iconSprite = &state->entries[1];
+        iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);
         ui = UI_WORK;
         commandWindow = UiWindow_Create(8, 17, 18, 3, 6);
-        state->entries[0].oam.f.x = 40;
+        state->icons[0].oam.f.x = 40;
         iconSprite->oam.word.attr01 = 0x40000400;
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.f.x = commandWindow->x * 8 + 8;
@@ -366,7 +367,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         __asm__ volatile("");
         iconSprite->oam.f.tile =
             Resource_LoadIndexedEntryToBuffer(parameter, handle);
-        state->entryActive[1] = 1;
+        state->iconShown[1] = 1;
         ui->level = 5;
         if ((s32)ability->ppCost > (s32)unit->pp) {
           UiWork_SetParamNibble(2);
@@ -390,7 +391,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         mode = BattleTarget_RunSelection(
             actorId, ability->targetMode, cost,
             Battle_ClassifyEntryKind((const struct BattleAct *)ability));
-        state->entryActive[1] = 0;
+        state->iconShown[1] = 0;
         Resource_ResetEntry(handle);
         UiWork_Finalize(commandWindow, 1);
         if (mode == -1) {
@@ -411,11 +412,11 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         s32 n;
 
         AudioCommand_PlayFar(SE_MENU_CONFIRM);
-        MenuCell_SetCursor(0, 0, 0);
+        BATTLE_MENU_SET_CURSOR(0, 0, 0);
       djinn_menu:
-        state->entries[0].oam.f.x = BATTLE_SUMMON_ICON_X;
+        state->icons[0].oam.f.x = BATTLE_SUMMON_ICON_X;
         BattleLayout_HighlightPartyPanels(signatureHeader);
-        mode = SummonMenu_SelectSummon(0, 0, state->cost[commandIndex]);
+        mode = SummonMenu_SelectSummon(0, 0, state->standbyDjinn[commandIndex]);
         BattleLayout_HighlightPartyPanels(signatureHeader);
         if (mode == -1) {
           goto mark_visible;
@@ -423,7 +424,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         commandKind = 6;
         parameter = mode;
         WaitFrames(1);
-        iconSprite = &state->entries[1];
+        iconSprite = &state->icons[1];
         summon = SummonDefinition_Get(mode);
         ability = BattleActGet(summon->nameMessageId);
         handle = VramCache_AllocEntry(128);
@@ -431,12 +432,12 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
             UiWindow_Create(10, 17, BATTLE_SUMMON_WINDOW_WIDTH, 3, 6);
         n = 0;
         for (j = 0; j <= 3; j++) {
-          if (summon->djinnRequired[j] > state->cost[commandIndex][j]) {
+          if (summon->djinnRequired[j] > state->standbyDjinn[commandIndex][j]) {
             break;
           }
         }
         ok = (j == 4);
-        state->entries[0].oam.f.x = 56;
+        state->icons[0].oam.f.x = 56;
         iconSprite->oam.word.attr01 = 0x40000400;
         iconSprite->oam.word.attr23 = 0;
         /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
@@ -447,7 +448,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile = Resource_LoadIndexedEntryToBuffer(
             summon->nameMessageId & 0x3fff, handle);
-        state->entryActive[1] = 1;
+        state->iconShown[1] = 1;
         if (ok == 0) {
           UiWork_SetParamNibble(2);
         }
@@ -473,18 +474,18 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
             actorId, ability->targetMode, ability->range,
             Battle_ClassifyEntryKind((const struct BattleAct *)ability));
         command->range = ability->range;
-        state->entryActive[1] = 0;
+        state->iconShown[1] = 0;
         Resource_ResetEntry(handle);
         UiWork_Finalize(commandWindow, 1);
         if (mode == -1) {
           goto djinn_menu;
         }
         for (j = 0; j <= 3; j++) {
-          if (summon->djinnRequired[j] > state->cost[commandIndex][j]) {
-            state->cost[commandIndex][j] = 0;
+          if (summon->djinnRequired[j] > state->standbyDjinn[commandIndex][j]) {
+            state->standbyDjinn[commandIndex][j] = 0;
             break;
           }
-          state->cost[commandIndex][j] -= summon->djinnRequired[j];
+          state->standbyDjinn[commandIndex][j] -= summon->djinnRequired[j];
         }
         target = mode;
         break;
@@ -498,10 +499,10 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         s32 index;
 
         AudioCommand_PlayFar(SE_MENU_CONFIRM);
-        MenuCell_SetCursor(0, 0, 0);
+        BATTLE_MENU_SET_CURSOR(0, 0, 0);
       summon_menu:
-        state->entries[0].oam.f.x = 144;
-        COUNTDOWN->selected[commandIndex] = 0x80000000;
+        state->icons[0].oam.f.x = 144;
+        gLinkCountdownWork->chosenDjinn[commandIndex] = 0x80000000;
         mode = Battle_SelectAbility(actorId, 1);
         command->range = 0;
         if (mode == -1) {
@@ -509,14 +510,14 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         }
         commandKind = 5;
         parameter = mode;
-        COUNTDOWN->selected[commandIndex] = mode;
+        gLinkCountdownWork->chosenDjinn[commandIndex] = mode;
         element = (parameter >> 8) & 15;
         index = parameter & 255;
         if (Djinn_IsActiveFar(actorId, element, index) != 0) {
           ability = BattleActGet(Djinn_GetAbilityIdFar(element, index));
           cost = ability->range;
           commandWindow = UiWindow_Create(11, 17, 10, 3, 6);
-          state->entries[0].oam.f.x = 64;
+          state->icons[0].oam.f.x = 64;
           UiWindow_SetTilemapEntry(commandWindow, element + 20481, 0, 0, 0);
           UiText_DrawCharacterAtOffset(element * 20 + index + MsgDjinnName,
                                        commandWindow, 16, 0);
@@ -526,15 +527,15 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
           mode = BattleTarget_RunSelection(
               actorId, ability->targetMode, cost,
               Battle_ClassifyEntryKind((const struct BattleAct *)ability));
-          if (state->hintCount != 0) {
+          if (state->tutorialStep != 0) {
             hint =
                 UiText_ShowMessageAndWaitComplete(MsgDjinnUnleashHint, 15, 8);
             while (UiWork_IsComplete() == 0) {
               WaitFrames(1);
             }
             UiWork_Finalize(hint, 1);
-            state->hintCount++;
-            state->hintTimer = 45;
+            state->tutorialStep++;
+            state->tutorialDelay = 45;
           }
           UiWork_Finalize(commandWindow, 1);
           if (mode == -1) {
@@ -544,7 +545,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
           break;
         }
         commandWindow = UiWindow_Create(11, 17, 10, 3, 6);
-        state->entries[0].oam.f.x = 64;
+        state->icons[0].oam.f.x = 64;
         UiWork_SetParamNibble(2);
         UiWindow_SetTilemapEntry(commandWindow, element + 20481, 0, 0, 0);
         UiText_DrawCharacterAtOffset(element * 20 + index + MsgDjinnName,
@@ -576,11 +577,11 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
 
         AudioCommand_PlayFar(SE_MENU_CONFIRM);
         mode = 0;
-        MenuCell_SetCursor(mode, mode, mode);
+        BATTLE_MENU_SET_CURSOR(mode, mode, mode);
       item_menu:
-        state->entries[0].oam.f.x = 96;
-        pick = state->pick;
-        list = state->list;
+        state->icons[0].oam.f.x = 96;
+        pick = state->listSlots;
+        list = state->listAbilities;
         cnt = 0;
         k = 0;
         entryValue = unit->inventory[k];
@@ -624,10 +625,10 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         ability = BattleActGet(
             Item_GetDirectFar(unit->inventory[selection])->actionId);
         cost = ability->range;
-        iconSprite = &state->entries[1];
+        iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);
         commandWindow = UiWindow_Create(9, 17, BATTLE_ITEM_WINDOW_WIDTH, 3, 6);
-        state->entries[0].oam.f.x = 48;
+        state->icons[0].oam.f.x = 48;
         iconSprite->oam.word.attr01 = 0x40000400;
         iconSprite->oam.word.attr23 = 0;
         /* FAKEMATCH(barrier): counted as 4 bytes, the empty asm puts the pool
@@ -638,7 +639,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         iconSprite->oam.f.y = commandWindow->y * 8 + 4;
         iconSprite->oam.f.tile =
             ItemIcon_LoadIntoSlot(unit->inventory[selection], handle);
-        state->entryActive[1] = 1;
+        state->iconShown[1] = 1;
         UiText_DrawCharacterAtOffset((unit->inventory[selection] & 0x1ff) +
                                          MsgItemName,
                                      commandWindow, 24, 0);
@@ -647,7 +648,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         mode = BattleTarget_RunSelection(
             actorId, ability->targetMode, cost,
             Battle_ClassifyEntryKind((const struct BattleAct *)ability));
-        state->entryActive[1] = 0;
+        state->iconShown[1] = 0;
         Resource_ResetEntry(handle);
         UiWork_Finalize(commandWindow, 1);
         if (mode == -1) {
@@ -695,37 +696,40 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
   }
 
   // Publish completion, then wait for the peer to finish or disconnect.
-  if (state->enabled != 0) {
+  if (state->linkTimer != 0) {
     transferWords = (u16 *)gSerialTransfer.payload;
     transferWords[4] = 'E';
     transferWords[5] = 'D';
     transferWords[6] = 'V';
     transferWords[7] = 'S';
   }
-  if (state->displayHandle != 0) {
-    UiWork_Finalize((struct UiWindow *)state->displayHandle, 1);
+  if (state->timerWindow != 0) {
+    UiWork_Finalize((struct UiWindow *)state->timerWindow, 1);
   }
   Resource_ResetEntry(smallIconSlot);
   Resource_ResetEntry(largeIconSlot);
   Scheduler_RemoveCallback(UpdateLinkSessionCountdown);
-  if (state->enabled != 0) {
+  if (state->linkTimer != 0) {
     // Keep the completion wait visible while the peer finishes its commands.
     s32 Link_DrawWaitingForOpponent(void) {
       u16 data[64];
       BATTLE_MENU_MESSAGE_COPY(MsgWaitingForOpponent, data,
                                BATTLE_MENU_MESSAGE_CAPACITY);
       UiText_RenderWideStringAtOffset(
-          data, (struct UiWindow *)state->displayHandle, 0, 4);
+          data, (struct UiWindow *)state->timerWindow, 0, 4);
+#ifdef UBFIX
+      return 0;
+#endif
     }
 
     linkBattle = gBattleWork;
     mode = 0;
-    if (state->displayHandle == 0 && linkBattle->linkPaused == 0) {
-      state->displayHandle = (s32)UiWindow_Create(0, 16, 30, 4, 42);
+    if (state->timerWindow == 0 && linkBattle->linkPaused == 0) {
+      state->timerWindow = (s32)UiWindow_Create(0, 16, 30, 4, 42);
       Ui_FillVramBlockPattern();
       Link_DrawWaitingForOpponent();
     } else {
-      state->displayHandle = 0;
+      state->timerWindow = 0;
     }
     for (;;) {
       peerSignature = (u16 *)&gLinkPeerSignatures[linkBattle->linkSide ^ 1];
@@ -752,8 +756,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       }
       WaitFrames(1);
     }
-    if (state->displayHandle != 0) {
-      UiWork_Finalize((struct UiWindow *)state->displayHandle, 1);
+    if (state->timerWindow != 0) {
+      UiWork_Finalize((struct UiWindow *)state->timerWindow, 1);
     }
   }
   Camera_ConfigureSceneFar(0);

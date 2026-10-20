@@ -42,6 +42,9 @@ s32 Scheduler_DisableOverlayCallbacksWithFlags(void) {
   GameFlag_ClearBitFar(0x166);
   // Flag 0x152, while set, stops BattlePalette_UpdateBlend.
   GameFlag_ClearBitFar(0x152);
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 /// Undoes Scheduler_DisableOverlayCallbacksWithFlags when the menu closes:

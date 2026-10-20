@@ -175,7 +175,9 @@ static void Title_UpdateSpriteReveal(void) {
   s32 column;
   s32 revealAge;
   s32 screenY;
+#if (LANGUAGE == LANGUAGE_JAPANESE) || (LANGUAGE == LANGUAGE_ENGLISH)
   s32 screenX;
+#endif
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
   s32 row;

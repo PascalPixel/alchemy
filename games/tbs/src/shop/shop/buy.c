@@ -4,8 +4,18 @@
 
 #include "../shop_internal.h"
 
-/// Browses stock, selects a recipient, checks capacity and funds, then
-/// purchases the chosen quantity.
+// Shop_DrawUnitItem reads the unit and writes its icons as bytes; these are
+// the offsets of the unit's inventory and the icon's depth.
+#define SHOP_INVENTORY_OFFSET ((s32)offsetof(struct BattleUnit, inventory))
+#define SHOP_ICON_DEPTH_OFFSET ((s32)offsetof(struct RenderOutput, sentinel))
+
+#define SHOP_STACK_LIMIT 30 ///< maximum quantity accepted by Inventory_AddItem
+
+/// Runs the Buy and Artifacts counters: the player browses the stock seven
+/// items a page, picks one, chooses who gets it and how many, and pays. Checks
+/// room in the bag and coins first, and warns when the member cannot equip
+/// it. An artifact bought takes its stock counter down, and the list is
+/// rebuilt. Repeats until B. Called by Shop_Run.
 s32 Shop_SelectBuy(void) {
   struct ShopRuntime *shop = gMenuWork;
   struct UiWindow *priceWindow = 0;
@@ -225,8 +235,9 @@ close:
   return 0;
 }
 
-/// Draws a seven-item stock page, selection highlight, page arrows and price
-/// sprites.
+/// Draws a page of seven stock items with their prices, the page arrows, and
+/// the chosen item lifted and pulsing. Called by Shop_SelectBuy each time the
+/// cursor moves.
 void Shop_DrawStock(struct UiWindow *window, s32 selected) {
 
   struct ShopRuntime *shop;
@@ -289,7 +300,8 @@ void Shop_DrawStock(struct UiWindow *window, s32 selected) {
   }
 }
 
-/// Draws the party's coins using the edition's layout and currency grammar.
+/// Draws the party's coins in the coins window, in the edition's layout.
+/// Called when a counter opens and after each purchase, sale or repair.
 void Shop_DrawMoney(void) {
   struct ShopRuntime *shop;
   struct UiWindow *window;
@@ -310,7 +322,9 @@ void Shop_DrawMoney(void) {
   }
 }
 
-/// Draws the item name and price, or its cannot-buy or not-broken note.
+/// Draws the item's name and below it its price. With a price of 0 it says
+/// instead that the shop does not buy it (`priceKind` 1) or that it is not
+/// broken (2). Called by the buy, sell and repair lists.
 void Shop_DrawItemPrice(struct UiWindow *window, s32 itemId, s32 price,
                         s32 priceKind) {
   // A structured switch with early returns reduced the English native extent
@@ -348,8 +362,8 @@ draw:
   return;
 }
 
-/// Clears or restores the message window, then draws its text; a null window
-/// is ignored.
+/// Shows `message`, an item's description, in the help window; a NULL window
+/// is ignored. Called by the counters' lists each time the cursor moves.
 void Shop_DrawMsg(struct UiWindow *window, s32 message) {
   if (window != 0) {
 #if TBS_PATCH_1
@@ -362,8 +376,9 @@ void Shop_DrawMsg(struct UiWindow *window, s32 message) {
   }
 }
 
-/// Highlights the selected party icon and dims members who cannot equip the
-/// candidate item.
+/// Shows the chosen member walking and the others standing, and draws at four
+/// fifths of their size the members who cannot equip `itemId`. Called by
+/// every counter's member choice.
 void Shop_DrawParty(struct UiWindow *window, s32 selected, s32 itemId) {
   struct ShopRuntime *shop = gMenuWork;
   s32 memberIndex;
@@ -384,8 +399,11 @@ void Shop_DrawParty(struct UiWindow *window, s32 selected, s32 itemId) {
   }
 }
 
-/// Temporarily equips the candidate, recalculates stats, restores the slot and
-/// draws the comparison.
+/// Shows how Attack, Defense and Agility would change if the member wore the
+/// item: equips it in place of what it would replace, recomputes, puts the
+/// slot back and recomputes again, then draws both values with an arrow and
+/// the name of the item it would replace. Called by Shop_SelectBuy for
+/// weapons and armor.
 void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 itemId) {
   struct ShopRuntime *shop = gMenuWork;
   struct BattleUnit *unit = UnitGetFar(unitId);
@@ -405,6 +423,8 @@ void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 itemId) {
     return;
   }
   previewSlot = Inventory_FindEquippedFar(unitId, item->type);
+  // With nothing of the type equipped, borrow the first slot that is not
+  // equipped, else the first Psynergy item's, else slot 0.
   if (previewSlot == -1) {
     for (index = 0; index < INVENTORY_SLOTS; index++) {
       if (!(unit->inventory[index] & INVENTORY_EQUIPPED))
@@ -423,7 +443,8 @@ void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 itemId) {
   } else {
     replacedItemId = unit->inventory[previewSlot] & ITEM_ID_MASK;
   }
-  // Recalculate a real temporary equipment change, then restore it exactly.
+  // Borrow a live slot so UnitCalc includes every equipment effect; restore
+  // both the slot and the stats before returning to the counter.
   savedEntry = unit->inventory[previewSlot];
   unit->inventory[previewSlot] = itemId | INVENTORY_EQUIPPED;
   UnitCalcFar(unitId);
@@ -458,8 +479,8 @@ void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 itemId) {
     UiText_DrawCharacterAtOffsetFar(replacedItemId + MsgItemName, window, 0,
                                     48);
 }
-/// Shows the quantity already carried and draws the member's existing inventory
-/// icons.
+/// Shows the quantity already carried and the member's inventory icons.
+/// Called by Shop_SelectBuy for items that are not equipment.
 void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
   // A typed RenderOutput icon store kept the English text extent but changed 76
   // text bytes; retain the existing byte view of the sprite.
@@ -482,7 +503,7 @@ void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
     RenderOutput_PrepareForRedrawFar(window);
     slot = Inventory_FindFar(unitId, itemId);
     if (slot != -1) {
-      quantityOffset = slot * 2 + 216;
+      quantityOffset = slot * 2 + SHOP_INVENTORY_OFFSET;
       UiWork_PushValueSlotFar(
           (*(u16 *)(unitBytes + quantityOffset) >> INVENTORY_QUANTITY_SHIFT) +
               1,
@@ -492,13 +513,13 @@ void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
       UiText_DrawCharacterAtOffsetFar(MsgShopNoneInStock, window, 0, 0);
     }
     itemIndex = 0;
-    firstOffset = 216;
+    firstOffset = SHOP_INVENTORY_OFFSET;
     if (*(u16 *)(unitBytes + firstOffset) != 0) {
       for (;;) {
-        itemOffset = itemIndex * 2 + 216;
+        itemOffset = itemIndex * 2 + SHOP_INVENTORY_OFFSET;
         icon = (u8 *)RenderOutput_CreateLoadedFar(
             *(u16 *)(unitBytes + itemOffset), 27, window, x, y);
-        icon[15] = 252;
+        icon[SHOP_ICON_DEPTH_OFFSET] = 252;
         x += 16;
         if (itemIndex == 4) {
           x = 8;
@@ -511,7 +532,7 @@ void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
         itemIndex++;
         if (itemIndex > 14)
           break;
-        nextOffset = itemIndex * 2 + 216;
+        nextOffset = itemIndex * 2 + SHOP_INVENTORY_OFFSET;
         if (*(u16 *)(unitBytes + nextOffset) == 0)
           break;
       }
@@ -519,8 +540,10 @@ void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
   }
 }
 
-/// Limits the purchase by stack space, available coins and artifact stock
-/// before asking its quantity.
+/// Asks how many to buy when the item stacks, limited by what the coins
+/// buy, the artifact's stock and a stack of 30 less what the member carries.
+/// Returns the count (1 for other items), or -1 when cancelled. Called by
+/// Shop_SelectBuy.
 s32 Shop_SelectBuyNum(s32 unitId, s32 itemId) {
   struct ShopRuntime *shop;
   struct BattleUnit *unit;
@@ -544,7 +567,7 @@ s32 Shop_SelectBuyNum(s32 unitId, s32 itemId) {
       carriedQuantity = 0;
     }
 
-    quantityLimit = 30;
+    quantityLimit = SHOP_STACK_LIMIT;
     if (item->price != 0)
       quantityLimit = (u32)gGameState.coins / item->price;
 
@@ -558,8 +581,8 @@ s32 Shop_SelectBuyNum(s32 unitId, s32 itemId) {
     }
 
     quantityLimit += carriedQuantity;
-    if (quantityLimit > 30)
-      quantityLimit = 30;
+    if (quantityLimit > SHOP_STACK_LIMIT)
+      quantityLimit = SHOP_STACK_LIMIT;
 
     shop->mode = 12;
     Shop_PlaceCursor(0, SHOP_QUANTITY_CURSOR_X, 0x30);
@@ -580,8 +603,11 @@ s32 Shop_SelectBuyNum(s32 unitId, s32 itemId) {
 #define SHOP_QUANTITY_COIN_LABEL_X 136
 #endif
 
-/// Polls a wrapped quantity selector, redraws its amount and price, and returns
-/// the count or -1.
+/// Chooses how many items to buy or sell, returning the quantity above
+/// `minimum` or -1 when cancelled. The bar's fixed prefix is `minimum`
+/// (items already carried when buying); `maximum` must exceed it so at least
+/// one can be chosen. Holds heap slot 14 for the bar's tiles. Called by the
+/// buy and sell quantity pickers.
 s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   void *tileBuffer;
   struct UiWindow *window;
@@ -634,7 +660,9 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
           quantityIndex = (quantityIndex + maximum) % maximum;
           Dma_Set(gShop_QuantityTiles, tileBuffer,
                   (DMA_ENABLE | DMA_32BIT) << 16 | 0x40, REG_DMA3);
-          Shop_FillSelector(30, 14, tileBuffer);
+          // Paint capacity, available stock, selection and carried items in
+          // that order; each shorter prefix overwrites the previous colour.
+          Shop_FillSelector(SHOP_STACK_LIMIT, 14, tileBuffer);
           Shop_FillSelector(minimum + maximum, 0, tileBuffer);
           Shop_FillSelector(minimum + quantityIndex + 1, 10, tileBuffer);
           Shop_FillSelector(minimum, 2, tileBuffer);
@@ -666,8 +694,9 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   return selectedQuantity;
 }
 
-/// Adds each purchased item, charges coins and earns credit before offering to
-/// equip it.
+/// Adds each item bought to the member, charging its price and adding it to
+/// the shop credit one at a time, then offers to equip it and, if equipped,
+/// to sell what it replaced. Called by Shop_SelectBuy.
 void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   s32 replacedSlot;
   s32 remainingQuantity;
@@ -696,8 +725,10 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   }
 }
 
-/// Checks equipment restrictions, asks permission and equips the item,
-/// including its curse warning.
+/// Offers to equip the item just bought, unless it is equipped already, the
+/// member cannot equip it, or what it would replace is cursed on. Equips it
+/// on Yes, redraws the grid and warns of a curse. Returns 1 when it was
+/// equipped. Called by Shop_BuyDone.
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = gMenuWork;
   struct BattleUnit *unit = UnitGetFar(unitId);
@@ -744,8 +775,9 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   return 1;
 }
 
-/// Offers to sell one replaced equipment item unless its type or flags prohibit
-/// it.
+/// Offers to sell the item the new one replaced, unless there is none or it
+/// is a Psynergy item or indispensable. Returns 1 when it offered. Called by
+/// Shop_BuyDone.
 s32 Shop_SellOld(s32 unitId, s32 slot) {
   struct BattleUnit *unit;
   s32 itemId;
@@ -765,8 +797,9 @@ s32 Shop_SellOld(s32 unitId, s32 slot) {
   return 1;
 }
 
-/// Returns zero for indispensable items, half price for broken ones or three
-/// quarters otherwise.
+/// Returns what the shops pay for an inventory entry: nothing for an
+/// indispensable item, half the price for a broken one, three quarters
+/// otherwise.
 s32 Shop_SalePrice(s32 inventoryEntry) {
   s32 salePrice;
 
@@ -784,3 +817,6 @@ s32 Shop_SalePrice(s32 inventoryEntry) {
 
 #undef SHOP_QUANTITY_NUMBER_X
 #undef SHOP_QUANTITY_COIN_LABEL_X
+#undef SHOP_INVENTORY_OFFSET
+#undef SHOP_ICON_DEPTH_OFFSET
+#undef SHOP_STACK_LIMIT

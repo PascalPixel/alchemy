@@ -93,6 +93,22 @@
 #include "unit/object/psynergy_effects.h"
 #include "unit/window/scales.h"
 
+#ifdef MODERN
+// The menu object calls these window functions with no prototype in scope, as
+// its bytes need (unit/window/window.h says why for each); a current GCC gets
+// them here.
+void RenderOutput_AppendToList(struct RenderOutputList *list,
+                               struct RenderOutput *node);
+struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window,
+                                                s32 entry, s32 x, s32 y,
+                                                u16 *spacing, s32 flags);
+void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
+                                     s32 y);
+void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode);
+void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
+                                       s32 offsetX, s32 offsetY, s32 variant);
+#endif
+
 // Edition-specific text and window layout values.
 #if !TBS_PATCH_1
 #define DJINN_PREVIEW_VITALS_X 4
@@ -254,36 +270,6 @@
 #define PORTRAIT_SLOT_COUNT 2
 #define PORTRAIT_PALETTE 14
 #define PORTRAIT_SLOT_EMPTY 999
-
-/// Entire gLinkCountdownWork block; MenuCell in menu_list.h reads
-/// the region from 0x28 through 0xe4.
-struct LinkRoundState {
-  struct MenuSprite entries[3];
-  u8 entryActive[3];
-  u8 unk27;
-  s32 targetOffset;
-  s32 currentOffset;
-  s32 unk30;
-  s32 unk34;
-  s32 unk38;
-  s32 unk3c;
-  s32 unk40;
-  // A pointer field swaps two native initialization stores; keep its encoded
-  // handle and convert at the window API boundaries.
-  s32 displayHandle;
-  s32 secondaryHandle;
-  s32 timer;
-  s32 enabled;
-  u8 cost[8][4];
-  u8 pick[34];
-  u16 list[33];
-  s32 hintCount;
-  s32 hintTimer;
-  s32 actorId;
-  u32 selected[8];
-};
-
-#define COUNTDOWN ((struct LinkRoundState *)gLinkCountdownWork)
 
 // The battle menus' message buffers, in halfwords, and the copier that fills
 // them.

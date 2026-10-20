@@ -1,11 +1,16 @@
 /// @file
-/// The item picker scenes and Psynergy use to choose a member's item.
+/// The item picker: which member's item to drop when every bag is full.
 /// Part of shop.c, the shop object, compiled only through it.
 
 #include "../shop_internal.h"
 
-/// Returns the selected party member and inventory slot, or -1 for both when
-/// cancelled.
+/// Lets the player choose a party member, then one of its items that may be
+/// dropped. Writes the member and inventory slot to `selectedUnit` and
+/// `selectedSlot` and returns 0, or writes -1 to both and returns -1 when
+/// cancelled. Holds the shop's work block while it runs. Reached through
+/// SHOP.S when an item is found with every bag full ("What will you drop?",
+/// PartyInventory_GiveItem), by the Elemental Star room's Mythril Bags and by
+/// the debug menu.
 s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
   struct ShopRuntime *shop;
   struct RenderOutput *cursorAnchor;
@@ -89,6 +94,9 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
   Shop_ReleaseCursorWork();
   return result;
 }
+
+// The sale value line's label, number and coin word, placed for each
+// language's words; Japanese names its coins with a different message.
 #if LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_ITALIAN
 #define SHOP_USE_PRICE_LABEL_X 8
 #define SHOP_USE_PRICE_NUMBER_X 40
@@ -116,8 +124,9 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
 #define SHOP_USE_COIN_MESSAGE_OFFSET 1
 #endif
 
-/// Selects a discardable inventory slot, showing the original restriction
-/// messages on rejection.
+/// Lets the player choose one of the member's items to drop, refusing an
+/// indispensable or cursed equipped one with a message. Returns the slot, or
+/// -1 when cancelled. Called by Shop_PickUnitItem.
 s32 Shop_SelectUse(s32 unitId) {
   struct ShopRuntime *shop = gMenuWork;
 
@@ -229,8 +238,9 @@ s32 Shop_SelectUse(s32 unitId) {
   return selectionResult;
 }
 
-/// Draws the selected slot's item, discard restriction or whole-stack sale
-/// value.
+/// Draws the slot's item name and, below it, why it cannot be dropped or what
+/// the whole stack would sell for. Called by Shop_SelectUse each time the
+/// cursor moves.
 void Shop_DrawUseItem(struct UiWindow *window, s32 unitId, s32 slot) {
   struct BattleUnit *unit = UnitGetFar(unitId);
   s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;

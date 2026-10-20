@@ -177,6 +177,9 @@ s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative) {
 
 s32 FourObjectMotion_SetSlotPhase(s32 index, s32 phase) {
   ((struct FourObjectMotionState *)gMenuWork)->phases[index] = phase;
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 /// Replaces one displayed object and selects its animation.

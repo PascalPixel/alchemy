@@ -4,7 +4,10 @@
 
 #include "../shop_internal.h"
 
-/// Lists the current shop's artifacts whose shared stock counters are nonzero.
+/// Lists the current shop's artifacts: every item of the shop's type whose
+/// shared stock counter is above zero. Writes them to the work block's stock
+/// list and returns how many. Called by Shop_Run when the player picks
+/// Artifacts, and by Shop_SelectBuy to refresh the list after a purchase.
 s32 Shop_ListAvailableArtifacts(void) {
   struct ShopRuntime *shop;
   s16 *stockItems;
@@ -25,26 +28,29 @@ s32 Shop_ListAvailableArtifacts(void) {
       stockItems++;
     }
     itemId++;
-  } while (itemId <= 0x1ff);
+  } while (itemId <= ITEM_ID_MASK);
   shop->stockItemIds[count] = 0;
   shop->stockCount = count;
   return count;
 }
 
-/// Advances the cursor in the shared menu state once per scheduled update.
+/// Advances the hand cursor one frame. Runs every frame as a scheduler task
+/// while a counter is open.
 void Shop_StepCursor(void) {
   ShopCursor_Advance(&((struct ShopRuntime *)gMenuWork)->cursor);
 }
 
-/// Allocates the shared menu state, lists the party, loads six cursor icons and
-/// starts its task.
+/// Allocates and clears the work block in the menu's heap slot, lists the
+/// party, loads the six cursor icons into the VRAM cache and starts the
+/// cursor's task. Every counter opens with it: Shop_Run, the inn, the
+/// sanctum and the item picker.
 void Shop_InitializeCursorWork(void) {
   struct ShopRuntime *shop;
   s32 resourceSlot;
 
-  shop = Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, 0xa70);
+  shop = Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, sizeof(struct ShopRuntime));
   Battle_ResetEffectCounterFar();
-  Dma_Fill32(0, shop, 0x29c * 4);
+  Dma_Fill32(0, shop, sizeof(struct ShopRuntime));
   shop->mode = 12;
   shop->partyMemberCount = Party_ListActiveOwnersFar(shop->partyMemberIds);
   resourceSlot = Resource_FindFreeEntry();
@@ -65,11 +71,11 @@ void Shop_InitializeCursorWork(void) {
   resourceSlot = Resource_FindFreeEntry();
   shop->statUpIcon = resourceSlot;
   VramCache_Load(resourceSlot, 128, gShop_SmallUpArrowTiles);
-  Scheduler_AddOrUpdateCallback(Shop_StepCursor, 0xc80);
+  Scheduler_AddOrUpdateCallback(Shop_StepCursor, SCHEDULER_KEY_MAIN_LOOP);
 }
 
-/// Stops the shared cursor task and releases the shop, sanctum or inn menu
-/// resources.
+/// Stops the cursor task, frees the six cursor icons and the work block.
+/// Every counter closes with it.
 void Shop_ReleaseCursorWork(void) {
   struct ShopRuntime *state;
 
@@ -85,8 +91,12 @@ void Shop_ReleaseCursorWork(void) {
   Runtime_ReleaseHeapBlock(HEAP_SLOT_MENU);
 }
 
-/// Runs the shop's buy, sell, artifacts and repair menu with the selected
-/// shopkeeper.
+/// Runs a shop: the shopkeeper's welcome, then buy, sell, artifacts and repair
+/// until the player leaves. `stockRow` picks the row of sStockTable (0 for a
+/// row out of range) and `keeperId` the object whose portrait the messages
+/// show. Seeds the row's artifacts on the first visit and holds the work block
+/// while it runs. Called by the town scenes' shopkeepers through SHOP.S, and
+/// by the debug shop.
 s32 Shop_Run(s32 stockRow, s32 keeperId) {
   struct ShopRuntime *shop;
   struct RenderOutput *anchor;
@@ -100,6 +110,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   Shop_InitializeCursorWork();
   shop = gMenuWork;
   shop->shopType = EventTable_GetRowType(stockRow);
+  // Stock rows 16 to 18 are the warriors' shops, which greet differently.
   if (stockRow == 16)
     shop->warriorShop = 1;
   if (stockRow == 17)
@@ -112,6 +123,8 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
            ->animation)
           ->entries[0]
           ->animId;
+  // The shopkeeper's portrait window, or an empty one off the left edge when
+  // there is no portrait.
   window = UiWindow_CreateWithSideObjectFar(shop->keeperResource, 0, 0, 0);
   if (window == 0)
     window = UiWindow_CreateFar(-5, 0, 5, 5, 2);
@@ -160,13 +173,17 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
 #define SHOP_DEBUG_STOCK_ROW 2
 #endif
 
-/// Sets up the original debug shop scenario with money, equipment and party
-/// ailments.
+/// Opens the debug shop with 200000 coins, the ticket counter at its cap,
+/// broken equipment for repairs and poisoned or haunted members for the
+/// sanctum. Called by DebugMenu_RunPresetShop.
 s32 Battle_ApplyPresetItemsAndFlags(s32 unused) {
-  gGameState.coins = 0x30d40;
-  gGameState.shopGifts = 0x1c;
-  Inventory_EquipFar(GARET, Inventory_AddItemFar(GARET, 0x48d));
-  Inventory_EquipFar(ISAAC, Inventory_AddItemFar(ISAAC, 0x40b));
+  gGameState.coins = 200000;
+  gGameState.shopGifts = 28;
+  Inventory_EquipFar(
+      GARET,
+      Inventory_AddItemFar(GARET, INVENTORY_BROKEN | ITEM_VIRTUOUS_ARMLET));
+  Inventory_EquipFar(
+      ISAAC, Inventory_AddItemFar(ISAAC, INVENTORY_BROKEN | ITEM_MURAMASA));
   Inventory_AddItemFar(IVAN, ITEM_BONE);
   UnitGetFar(MIA)->poison = 1;
   UnitGetFar(JENNA)->poison = 1;
@@ -175,20 +192,25 @@ s32 Battle_ApplyPresetItemsAndFlags(s32 unused) {
   return 0;
 }
 
-/// Waits one frame at a time until the audio command completes.
+/// Waits one frame at a time until the sound driver has finished the last
+/// command. Called by the inn's sleep, the sanctum and two scenes that wait
+/// for a fanfare.
 void AudioCommand_WaitForStateByteClear(void) {
   while (AudioCommand_GetStateByteFar() != 0) {
     WaitFrames(1);
   }
 }
 
+/// Byte view of the six colour writes in a quantity-bar segment.
 struct SelectorRecord {
-  u8 filler0[4];
-  u8 values[21];
+  u8 filler0[4]; ///< bytes before the first coloured pixel
+  u8 values[21]; ///< palette bytes at indices 0, 4, 8, 12, 16 and 20
 };
 
-/// Resolves shop dialogue and waits for its window to finish, including the
-/// final frame.
+/// Shows a shopkeeper's line and waits for its window to finish, one more
+/// frame included. `messageId` is the weapon shop's line; the armor, item and
+/// warriors' shops say theirs, at the same distance from their own welcome.
+/// Called by every counter.
 void UiMessage_ShowAndWait(s32 messageId) {
   // A shared message-resolution inline added four bytes to each dialogue caller
   // in the English native build; both callers retain their direct resolution.
@@ -212,8 +234,8 @@ void UiMessage_ShowAndWait(s32 messageId) {
   WaitFrames(1);
 }
 
-/// Resolves shop dialogue, hides the cursor while it is shown and restores the
-/// saved cursor mode.
+/// Shows a shopkeeper's line as UiMessage_ShowAndWait does, hiding the hand
+/// cursor while it shows and putting back its motion after.
 void UiMessage_ShowAndRestoreState(s32 messageId) {
   s32 portraitResource;
   s32 resolvedMessage;
@@ -250,8 +272,9 @@ void UiMessage_ShowAndRestoreState(s32 messageId) {
   shop->cursor.anchor->active = savedCursorMode;
 }
 
-/// Prepares the localized confirmation menu and restores the cursor's saved
-/// mode.
+/// Runs the Yes or No choice beside the shopkeeper's line and returns it,
+/// keeping the hand cursor's motion. Called by the counters before they buy,
+/// sell, equip or repair, and by the inn.
 s32 UiMessage_ShowChoice(s32 choice) {
   struct RenderOutput **cursorSlot =
       &((struct ShopRuntime *)gMenuWork)->cursor.anchor;
@@ -262,8 +285,9 @@ s32 UiMessage_ShowChoice(s32 choice) {
   return choice;
 }
 
-/// Runs the sanctum-position confirmation menu and restores the cursor's saved
-/// mode.
+/// Runs the Yes or No choice at the sanctum's place on the screen and
+/// returns it, keeping the hand cursor's motion. Called by
+/// Sanctum_RunPartyService.
 s32 UiMessage_ShowChoiceVariant(s32 choice) {
   struct RenderOutput **cursorSlot =
       &((struct ShopRuntime *)gMenuWork)->cursor.anchor;

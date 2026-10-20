@@ -4,7 +4,7 @@
 
 #include "../shop_internal.h"
 
-/// Selection frame tile positions
+/// Where each of the quantity bar's 30 segments starts in its tile buffer.
 // clang-format off
 static const u16 sSelectorTileOffsets[30] = {
     0x00, 0x01, 0x02, 0x03,
@@ -18,8 +18,10 @@ static const u16 sSelectorTileOffsets[30] = {
 };
 // clang-format on
 
-/// Fills six selector bytes at each requested offset in the quantity tile
-/// buffer.
+/// Colours the first `itemCount` segments of the quantity bar with palette
+/// `paletteSelector`, writing six pixels a segment in `tileBuffer`. Called by
+/// the shop's quantity choice and, through SHOP.S, by the item menu's
+/// quantity bar, which draws its bar in four colours this way.
 void Shop_FillSelector(s32 itemCount, s32 paletteSelector, u8 *tileBuffer) {
   const u16 *tileOffset;
 
@@ -41,15 +43,15 @@ void Shop_FillSelector(s32 itemCount, s32 paletteSelector, u8 *tileBuffer) {
   }
 }
 
-/// Number transfer destinations
+/// Where each of a price's five digits starts in its tile buffer, ones first.
 // clang-format off
 static const u16 sPriceDigitTileOffsets[5] = {
     0xc0, 0x90, 0x80, 0x50, 0x40,
 };
 // clang-format on
 
-/// Copies one decimal glyph into its price-tile position, stopping at zero
-/// source bytes.
+/// Copies decimal glyph `digit` into its price-tile position, stopping at
+/// zero source bytes. Called by Shop_CreatePriceSprite.
 void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
   u8 *src = gShop_GlyphBytes + (digit << 5);
   u8 *dst = tileBuffer + sPriceDigitTileOffsets[digitPosition] + 2;
@@ -72,8 +74,10 @@ void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
   } while (count >= 0);
 }
 
-/// Builds up to five decimal digits in scratch tiles, creates their sprite and
-/// frees the scratch block.
+/// Builds a price of up to five digits in scratch tiles (heap slot 14), loads
+/// them into a free VRAM cache slot and attaches them to `window` as one
+/// sprite at (x, y). Returns the sprite, or NULL with no free slot. Called by
+/// Shop_DrawStock for each item on sale.
 struct RenderOutput *Shop_CreatePriceSprite(s32 value, struct UiWindow *window,
                                             s32 x, s32 y) {
   u8 *tileBuffer;
@@ -112,7 +116,9 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, struct UiWindow *window,
   return priceSprite;
 }
 
-/// Restores the saved field color buffers and starts their interpolation.
+/// Saves the field colours in event work and fades to `layer` over 16 frames.
+/// Called before sanctum and Djinn capture effects and Altmiller's wall burst;
+/// Shop_InitEffect restores the saved colours afterward.
 void Shop_RestoreSceneTiles(s32 layer) {
   // UB: slot 32 lies past scalar gEventWork. Its named load adds eight
   // bytes in the native EN trial (0x54 to 0x5c).
@@ -135,14 +141,17 @@ void Shop_RestoreSceneTiles(s32 layer) {
   BattleFx_StartBufferInterpolationFar(16);
 }
 
-/// Starts restoring the field color buffer after the menu effect.
+/// Fades back to the colours Shop_RestoreSceneTiles saved, over 16 frames.
+/// Called when the sanctum, Djinn capture or Altmiller wall effect ends.
 void Shop_InitEffect(void) {
   BattleFx_ApplyColorToTargetBufferFar((s32)gEventWork + 0x236, 1);
   BattleFx_StartBufferInterpolationFar(0x10);
 }
 
-/// Interpolates the cursor from its saved position to its target over the
-/// requested duration.
+/// Moves the cursor from its saved position toward its target, in a straight
+/// line over `kind` frames, one frame a call; `active` counts the frames and
+/// both go back to 0 on arrival. Runs every frame from Shop_StepCursor, and
+/// from the option, name entry and save menus' cursor tasks.
 void ShopCursor_Advance(struct ShopCursor *cursor) {
   struct RenderOutput *sprite;
   s32 durationFrames;
@@ -172,7 +181,7 @@ void ShopCursor_Advance(struct ShopCursor *cursor) {
 }
 
 /// Moves each cursor axis one quarter of the remaining distance, with a minimum
-/// one-pixel step.
+/// one-pixel step. Called each frame by the option menu and name entry.
 void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor) {
   struct RenderOutput *sprite;
   s32 delta;
@@ -218,8 +227,9 @@ void ShopCursor_MoveTowardTarget(struct ShopCursor *cursor) {
   }
 }
 
-/// Saves the cursor's current position, assigns its target and duration, and
-/// resets progress.
+/// Starts a glide of the cursor from where it is to (targetX, targetY) over
+/// `kind` frames, for ShopCursor_Advance to run. Called by Shop_PlaceCursor
+/// and, through SHOP.S, by name entry and the Colosso choice.
 void Shop_SetCursor(struct ShopCursor *cursor, s32 targetX, s32 targetY,
                     s32 kind) {
   struct RenderOutput *anchor = cursor->anchor;
@@ -232,8 +242,9 @@ void Shop_SetCursor(struct ShopCursor *cursor, s32 targetX, s32 targetY,
   cursor->active = 0;
 }
 
-/// Places the cursor and its OAM coordinates immediately, preserving the
-/// one-frame state.
+/// Places the cursor and its sprite at (x, y) at once, with a one-frame glide
+/// that has already arrived. Called when a counter, the option and system
+/// menus or name entry opens.
 void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y) {
 
   {
@@ -255,7 +266,9 @@ void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y) {
   }
 }
 
-/// Converts window-relative pixel coordinates to the cursor's absolute target.
+/// Starts the hand cursor's glide to (x, y) pixels inside `window` (the
+/// screen when it is NULL), over the frames shop->mode holds. Called by every
+/// counter's lists.
 void Shop_PlaceCursor(struct UiWindow *window, s32 x, s32 y) {
   s32 cursorX;
   s32 cursorY;

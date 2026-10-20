@@ -167,7 +167,7 @@ u32 SaveState_BuildSummaryHeader(void) {
   u32 sum = 0;
 
   // The summary's 16-byte header comes before the save buffer.
-  summary = (struct SaveSummary *)(gSaveBuffer - 16);
+  summary = (struct SaveSummary *)((u32)gSaveBuffer - 16);
   gGameState.buildStamp = Runtime_GetBuildStampTimeFar(0);
   gGameState.playTime = gPlayTimeFrames;
   {

@@ -42,7 +42,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
   s32 redraw;
   s32 alreadySelected;
   s32 previewPages;
-  struct MenuCell *navigation;
+  struct BattleMenuWork *navigation;
   struct BattleUnit *unit;
   struct DjinnRecoveryList *recovery;
   struct UiWindow *listWindow;
@@ -82,7 +82,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
   messageWindow = UiWindow_Create(0, 4, 30, 4, 42);
   UiWork_SetAltFlagAndClearTable(1);
   listWindow = UiWindow_Create(21, 9, 9, 11, 6);
-  MenuCell_GetCursor(firstEntry, selectedRow, preferredRow);
+  BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   unit = UnitGetFar(owner);
 
   // Pack Djinn state and recovery turns before paging the selection list.
@@ -148,7 +148,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         /* FAKEMATCH(one-pass): a loop that runs once keeps the redraw reload
          * after the selected-entry load, and none of its instructions
          * survive; as k = redraw, 3 of 1201 instructions differ in tbs-en. */
-        selected = COUNTDOWN->selected[redraw];
+        selected = gLinkCountdownWork->chosenDjinn[redraw];
         for (k = redraw; k == redraw;) {
           k = redraw;
           break;
@@ -163,7 +163,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
             k += 1 - alreadySelected;
             if (k > 7)
               break;
-            if ((u32)COUNTDOWN->selected[k] == selectedDjinn) {
+            if ((u32)gLinkCountdownWork->chosenDjinn[k] == selectedDjinn) {
               alreadySelected = 1;
               break;
             }
@@ -306,20 +306,20 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
     repeated = gKeysRepeat;
     held = gKeysHeld;
     navigation = gLinkCountdownWork;
-    if (navigation->autoEnabled != 0) {
+    if (navigation->tutorialStep != 0) {
       repeated = 0;
       pressed = 0;
       held = 0;
-      if (navigation->autoDelay == 0) {
-        navigation->autoDelay = 60;
+      if (navigation->tutorialDelay == 0) {
+        navigation->tutorialDelay = 60;
         repeated = 1;
         pressed = 1;
       } else {
-        navigation->autoDelay--;
+        navigation->tutorialDelay--;
       }
     }
     navigation = gLinkCountdownWork;
-    if (navigation->active == 0 || (pressed & KEY_B)) {
+    if (navigation->timer == 0 || (pressed & KEY_B)) {
       AudioCommand_PlayFar(SE_MENU_CANCEL);
       encodedDjinn = -1;
       break;

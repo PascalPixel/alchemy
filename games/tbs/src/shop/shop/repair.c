@@ -4,8 +4,9 @@
 
 #include "../shop_internal.h"
 
-/// Returns one quarter of the base price for broken items, or zero for intact
-/// items.
+/// Returns what a repair costs: a quarter of the price for a broken item,
+/// nothing for one that is not broken. Called by the repair list and
+/// Shop_RepairItem.
 s32 Shop_RepairPrice(s32 inventoryEntry) {
   s32 repairCost = Item_GetDirectFar(inventoryEntry)->price / 4;
 
@@ -15,14 +16,17 @@ s32 Shop_RepairPrice(s32 inventoryEntry) {
   return repairCost;
 }
 
-/// Preserves the original repair-owner wrapper and its zero result.
+/// Runs the repair counter's member choice; always returns 0. Called by
+/// Shop_Run for Repair.
 s32 Shop_SelectUnit(void) {
   Shop_PickUnit();
   return 0;
 }
 
-/// Selects an inventory slot for repair and repeats until cancelled or the
-/// inventory is empty.
+/// Lets the player choose items to repair from the member's grid, one at a
+/// time, with each one's repair price, until B or the inventory is empty.
+/// Returns -1 when cancelled, 0 when the inventory ran out. Called by
+/// Shop_PickUnit.
 s32 Shop_SelectRepair(s32 unitId) {
   struct ShopRuntime *shop;
   s32 inventoryCount;
@@ -124,8 +128,11 @@ s32 Shop_SelectRepair(s32 unitId) {
   return result;
 }
 
-/// Checks the repair, hides the item during the work sequence, restores it and
-/// charges the fee.
+/// Repairs the item in `slot`: refuses one that cannot break, is not broken
+/// or is equipped and cursed on, or that the coins do not cover; asks, then
+/// takes the item away for the smith's three hammer blows, gives it back
+/// mended, charges the price and offers to equip it. Called by
+/// Shop_SelectRepair.
 void Shop_RepairItem(s32 unitId, s32 slot) {
   struct ShopRuntime *shop = gMenuWork;
   struct BattleUnit *unit = UnitGetFar(unitId);
@@ -138,7 +145,7 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   u32 savedEntry;
 
   useType = item->useType;
-  if (useType != 2) {
+  if (useType != ITEM_USE_MAY_BREAK) {
     UiWork_PushValueSlotFar(itemId, 2);
     UiMessage_ShowAndRestoreState(MsgCannotRepairKind);
     return;
@@ -148,6 +155,7 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
     UiMessage_ShowAndRestoreState(MsgNotDamaged);
     return;
   }
+  // useType is ITEM_USE_MAY_BREAK here, so this tests ITEM_CANNOT_UNEQUIP.
   if ((unit->inventory[slot] & INVENTORY_EQUIPPED) && (useType & item->flags)) {
     UiWork_PushValueSlotFar(itemId, 2);
     UiMessage_ShowAndRestoreState(MsgCursedWontComeOff);
@@ -172,6 +180,7 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   UiWork_PushValueSlotFar(itemId, 2);
   UiMessage_ShowAndRestoreState(messageBase + 2);
   UiWork_FinalizePendingCoreFar();
+  // The hammer blows are 110 frames apart; the item stays hidden throughout.
   WaitFrames(10);
   AudioCommand_PlayFar(SE_100);
   WaitFrames(110);

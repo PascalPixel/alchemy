@@ -90,14 +90,14 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   // add 12 bytes here in EN; using gWorkSlot adds 16 bytes.
 #ifdef UBFIX
   if (mode == 2 || mode == 4)
-    gLinkCountdownWork->slideOffset = -2;
+    gLinkCountdownWork->targetSceneOffset = -2;
   else
-    gLinkCountdownWork->slideOffset = 16;
+    gLinkCountdownWork->targetSceneOffset = 16;
 #else
   if (mode == 2 || mode == 4)
-    ((struct MenuCell **)&gBattleWork)[48]->slideOffset = -2;
+    ((struct BattleMenuWork **)&gBattleWork)[48]->targetSceneOffset = -2;
   else
-    ((struct MenuCell **)&gBattleWork)[48]->slideOffset = 16;
+    ((struct BattleMenuWork **)&gBattleWork)[48]->targetSceneOffset = 16;
 #endif
   for (i = 0; i < 6; i++)
     cursorTracks[i].flags = 0;
@@ -676,15 +676,15 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     }
     pressed = gKeysPressed;
     repeated = gKeysRepeat;
-    if (gLinkCountdownWork->autoEnabled) {
+    if (gLinkCountdownWork->tutorialStep) {
       repeated = 0;
       pressed = 0;
-      if (gLinkCountdownWork->autoDelay == 0) {
-        gLinkCountdownWork->autoDelay = 60;
+      if (gLinkCountdownWork->tutorialDelay == 0) {
+        gLinkCountdownWork->tutorialDelay = 60;
         repeated = 1;
         pressed = 1;
       } else {
-        gLinkCountdownWork->autoDelay--;
+        gLinkCountdownWork->tutorialDelay--;
       }
     }
     if (pressed & KEY_A) {
@@ -727,7 +727,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         redraw |= 1;
       }
     }
-    if (gLinkCountdownWork->active == 0 || (pressed & KEY_B)) {
+    if (gLinkCountdownWork->timer == 0 || (pressed & KEY_B)) {
       AudioCommand_PlayFar(SE_MENU_CANCEL);
       targetIndex = -1;
       break;
@@ -742,7 +742,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     UiWork_Finalize(conditionWindow, 1);
   UiWork_Finalize(window, 1);
   BattlePres_SetActorModesFar(candidateIds, 0);
-  gLinkCountdownWork->slideOffset = 0;
+  gLinkCountdownWork->targetSceneOffset = 0;
   WaitFrames(1);
   return targetIndex;
 }

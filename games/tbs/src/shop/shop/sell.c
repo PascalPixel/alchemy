@@ -4,8 +4,10 @@
 
 #include "../shop_internal.h"
 
-/// Selects whose inventory to sell or repair, returning to the party list after
-/// each operation.
+/// Lets the player choose whose items to sell or repair, with the coins
+/// window and the member's item grid, and runs Shop_SelectSell or
+/// Shop_SelectRepair for each member chosen until B. Called by Shop_Run for
+/// Sell and Repair.
 s32 Shop_PickUnit(void) {
   struct ShopRuntime *shop = gMenuWork;
   struct UiWindow *listWindow;
@@ -74,8 +76,10 @@ s32 Shop_PickUnit(void) {
   }
 }
 
-/// Selects an inventory slot and quantity to sell, repeating until cancelled or
-/// the inventory is empty.
+/// Lets the player choose items to sell from the member's grid, one at a
+/// time, with each one's price and description, until B or the inventory is
+/// empty. Returns -1 when cancelled, 0 when the inventory ran out. Called by
+/// Shop_PickUnit.
 s32 Shop_SelectSell(s32 unitId) {
   // Shared previous/next-row inlines added four bytes to each sell, repair and
   // use picker in the English native build; the direct row arithmetic remains.
@@ -180,8 +184,9 @@ s32 Shop_SelectSell(s32 unitId) {
   return result;
 }
 
-/// Draws all fifteen inventory slots in five columns, including any empty
-/// positions.
+/// Draws the member's items as icons in rows of five, or a line saying it has
+/// none. Called by the sell, repair and drop screens each time the
+/// member changes, and after a sale.
 void Shop_DrawUnitGrid(struct UiWindow *window, s32 unitId) {
   struct BattleUnit *unit;
   s32 x;
@@ -220,8 +225,9 @@ void Shop_DrawUnitGrid(struct UiWindow *window, s32 unitId) {
   }
 }
 
-/// Asks how many to sell only for stacks larger than one, restoring the cursor
-/// afterward.
+/// Asks how many to sell when the item is a stack of more than one, and
+/// returns the count (1 otherwise, -1 when cancelled), putting the cursor
+/// back after. Called by Shop_SelectSell.
 s32 Shop_SelectSellNum(s32 unitId, s32 slot) {
   s32 result;
   s16 savedX;
@@ -255,14 +261,17 @@ s32 Shop_SelectSellNum(s32 unitId, s32 slot) {
   return result;
 }
 
-/// Checks the offer and restrictions, discards the chosen count, then credits
-/// coins and redraws.
+/// Sells `count` of the item in `slot`: refuses an item the shop does not buy
+/// or one equipped and cursed on, asks with the offer that fits (an old item
+/// the player just replaced, a broken one, a stack, a rare one), then
+/// discards them, pays the coins and redraws. `count` -1 is the old
+/// equipment the equip prompt offers to sell (Shop_SellOld).
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   struct ShopRuntime *shop = gMenuWork;
   struct BattleUnit *unit = UnitGetFar(unitId);
   s32 itemId = unit->inventory[slot] & ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
-  u8 rare = item->flags & 4;
+  u8 rare = item->flags & ITEM_RARE;
   s32 sellingReplacedItem = 0;
   s32 total;
   s32 message;

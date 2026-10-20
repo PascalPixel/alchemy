@@ -28,7 +28,7 @@ static __inline__ void UiText_SetCanvasPixel(u32 windowHeight, u32 x, u32 tileY,
   u32 pixelMask;
 
   pixelHalfword =
-      (u16 *)((u32)canvas + (((x >> 3) * (windowHeight - 2) + tileY) << 5) |
+      (u16 *)(((u32)canvas + (((x >> 3) * (windowHeight - 2) + tileY) << 5)) |
               ((doubledPixelRow | ((x & 7) >> 2)) << 1));
   pixelMask = 15 << ((x & 3) << 2);
   *pixelHalfword = (*pixelHalfword & ~pixelMask) | (pixelMask & repeatedColor);
@@ -65,7 +65,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
   /* FAKEMATCH: these records reserve the native frame's 64-byte unused area.
    * Without them 6 of 193 differ in tbs-ja (sub sp, #36 for #100, and the
    * stacked argument's offset). */
-  struct RenderInput unusedFrame[4];
+  UNUSED struct RenderInput unusedFrame[4];
 #endif
 
 #if (LANGUAGE == LANGUAGE_ENGLISH)
@@ -87,7 +87,12 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
     if (font != NULL) {
       const u8 *source;
       u32 color;
+#ifdef MODERN
+      // A current GCC cannot see that the first column loads it.
+      u32 bits = 0;
+#else
       u32 bits;
+#endif
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
       u32 fontWidth;

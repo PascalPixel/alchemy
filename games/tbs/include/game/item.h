@@ -26,15 +26,32 @@ enum InventoryEncoding {
 enum ItemFlags {
   ITEM_CURSED = 1,
   ITEM_CANNOT_UNEQUIP = 2,
+  ITEM_RARE = 4, ///< selects the shop's rare item offers
   ITEM_INDISPENSABLE = 8,
   ITEM_STACKABLE = 0x10
 };
 
-/// An item's type (struct ItemDefinition's type), where it is known.
+/// What using an item costs (struct ItemDefinition's useType).
+#define ITEM_USE_CONSUMED 1  ///< one is used up
+#define ITEM_USE_MAY_BREAK 2 ///< breaks one time in eight
+/// Not used up: equipped, it teaches its actionId as Psynergy.
+#define ITEM_USE_TEACHES 3
+#define ITEM_USE_EMPTIES 4 ///< Hermes' Water leaves an Empty Bottle
+
+/// An item's type (struct ItemDefinition's type, items.tsv's type column).
+/// A unit equips one item of each type, except Psynergy items.
 enum ItemType {
-  ITEM_TYPE_WEAPON = 1,
+  ITEM_TYPE_NONE =
+      0, ///< not equipment: Herb, Game Ticket, the keys, unused rows
+  ITEM_TYPE_WEAPON = 1, ///< swords, axes, maces, rods and staffs
+  ITEM_TYPE_ARMOR = 2,  ///< armor, clothes and robes
+  ITEM_TYPE_SHIELD = 3, ///< shields, gloves and armlets
+  ITEM_TYPE_HELM = 4,   ///< helms, caps, crowns and circlets
+  ITEM_TYPE_BOOTS = 5,  ///< Hyper Boots to Turtle Boots
   /// The items that teach Psynergy while held: Orb of Force to Catch Beads.
-  ITEM_TYPE_PSYNERGY = 6
+  ITEM_TYPE_PSYNERGY = 6,
+  ITEM_TYPE_RING = 8, ///< Adept Ring to Cleric's Ring
+  ITEM_TYPE_SHIRT = 9 ///< Mythril Shirt, Silk Shirt, Running Shirt
 };
 
 enum ItemEffectKind {
@@ -93,9 +110,7 @@ struct ItemDefinition {
   s16 primaryBonus;  ///< Attack added while equipped
   s8 secondaryBonus; ///< Defense added while equipped
   u8 unleashChance;  ///< in steps of 5 percent
-  /// What using it costs (ITEM_USE_): 1 one is used up, 2 it may break, 4 it
-  /// leaves an Empty Bottle; 3 teaches actionId as Psynergy while equipped.
-  u8 useType;
+  u8 useType;        ///< what using it costs (ITEM_USE_), or 0 for nothing
   u8 reserved0d;     ///< not named by TBS code
   u16 unleashAction; ///< the action a weapon unleashes, or 0
 

@@ -224,7 +224,9 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   s32 amount;
   s32 transferFailed;
   s32 removedCount;
+#if TBS_PATCH_1
   s32 giveTarget;
+#endif
   u8 sourceQuantity;
   u8 targetQuantity;
   s8 stackSize;
@@ -1639,8 +1641,10 @@ s32 ItemMenu_ChooseCommand(void) {
   s32 commandIndex;
   s32 redraw;
   s8 *commandStates;
+#if TBS_PATCH_1
   s32 cursorX;
   s32 cursorY;
+#endif
 
   commandIndex = 0;
   column = 0;

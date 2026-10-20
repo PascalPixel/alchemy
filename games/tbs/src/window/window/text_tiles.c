@@ -82,7 +82,7 @@ UNUSED void UiWindow_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
 s32 UiText_RenderStringTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   /* FAKEMATCH: needed to match: an unread 32-byte reserve, the native frame's
    * extra bytes (the frame is 36 bytes without it). */
-  u32 reserve[8];
+  UNUSED u32 reserve[8];
   u8 pens[16];
   struct UiRenderWork *work;
   u8 *canvas;
@@ -142,7 +142,8 @@ s32 UiText_RenderStringTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         case 15:
         case 28:
           text++;
-          // Fall through: skip the second operand too.
+          // Skip the second operand too.
+          // Fall through.
         case 11:
         case 12:
         case 17:

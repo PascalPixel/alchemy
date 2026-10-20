@@ -101,7 +101,7 @@ void Debug_SelectAbilityPair(void) {
   u32 first;
   u32 second;
   u32 count;
-  s32 done = 0;
+  UNUSED s32 done = 0;
   s32 row = 0;
   s32 redraw;
   s32 slot;

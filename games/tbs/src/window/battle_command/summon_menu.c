@@ -33,7 +33,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
   s32 mask, preferredRow;
   struct MenuPoint cursorPosition;
   const struct SummonDefinition *summon;
-  struct MenuCell *navigation;
+  struct BattleMenuWork *navigation;
   struct MenuSprite *sprite;
   struct CursorSprite *cur;
   s32 orderedCount;
@@ -49,7 +49,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
   description = UiWindow_Create(0, 4, 30, 4, 42);
   counts = UiWindow_Create(20, 8, 10, 3, 6);
   mask = 0;
-  MenuCell_GetCursor(firstEntry, selectedRow, preferredRow);
+  BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   window =
       UiWindow_Create(SUMMON_MENU_WINDOW_X, 11, SUMMON_MENU_WINDOW_WIDTH, 9, 6);
 
@@ -266,28 +266,28 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
     //------------------------------------------------------------------
     // Input
     //------------------------------------------------------------------
-    MenuCell_SetCursor(firstEntry, selectedRow, preferredRow);
+    BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
     navigation = gLinkCountdownWork;
     pressed = gKeysPressed;
     repeated = gKeysRepeat;
 
     // Automatic input confirms every 120 frames.
-    if (navigation->autoEnabled != 0) {
+    if (navigation->tutorialStep != 0) {
       repeated = 0;
       pressed = 0;
-      if (navigation->autoDelay == 0) {
-        navigation->autoDelay = 120;
+      if (navigation->tutorialDelay == 0) {
+        navigation->tutorialDelay = 120;
         repeated = KEY_A;
         pressed = KEY_A;
       } else {
-        navigation->autoDelay--;
+        navigation->tutorialDelay--;
       }
     }
     if (pressed & KEY_A) {
       result = orderedSummons[firstEntry + selectedRow];
       break;
     }
-    if (gLinkCountdownWork->active == 0 || (pressed & KEY_B)) {
+    if (gLinkCountdownWork->timer == 0 || (pressed & KEY_B)) {
       AudioCommand_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;

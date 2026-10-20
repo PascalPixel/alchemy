@@ -260,7 +260,9 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
   u8 *base;
   struct UiRenderWork *work;
   u32 code;
+#if (LANGUAGE != LANGUAGE_JAPANESE)
   u32 nextCode;
+#endif
   s16 lineStartX;
 
   base = gWindowWork[0];
@@ -310,7 +312,8 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x,
       case 15:
       case 28:
         text++;
-        // Fall through: skip the second operand too.
+        // Skip the second operand too.
+        // Fall through.
       case 11:
       case 12:
       case 17:
@@ -429,7 +432,8 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
         case 15:
         case 28:
           text++;
-          // Fall through: skip the second operand too.
+          // Skip the second operand too.
+          // Fall through.
         case 7:
         case 8:
         case 9:

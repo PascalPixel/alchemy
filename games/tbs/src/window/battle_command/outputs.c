@@ -28,10 +28,24 @@ struct RenderOutput *RenderOutput_Create(s32 slot, s32 oamFlags,
   y = offsetY + (window->y * 8) + 8;
   x &= 0x1ff;
   y &= 0xff;
+  // UB: attributes 0 and 1, then attribute 2, are written as words through
+  // the bitfields; UBFIX copies the words.
+#ifdef UBFIX
+  {
+    u32 words[2];
+
+    words[0] = (x << 16) | y | oamFlags;
+    // Attribute 2: the first tile of the slot's VRAM block (32 bytes a tile).
+    words[1] =
+        ((struct VramBlockCacheEntry *)Ram_VramBlockCache)[slot].offset >> 5;
+    __builtin_memcpy(&output->oam, words, sizeof(words));
+  }
+#else
   *(u32 *)&output->oam = (x << 16) | y | oamFlags;
   // Attribute 2: the first tile of the slot's VRAM block (32 bytes a tile).
   ((u32 *)&output->oam)[1] =
       ((struct VramBlockCacheEntry *)Ram_VramBlockCache)[slot].offset >> 5;
+#endif
   output->sentinel = 0xff;
   output->next = NULL;
   output->x = x;
@@ -39,7 +53,7 @@ struct RenderOutput *RenderOutput_Create(s32 slot, s32 oamFlags,
   output->index = slot;
   output->kind = 1;
   output->active = 1;
-  RenderOutput_AppendToList(window, output);
+  RenderOutput_AppendToList(&window->output, output);
   return output;
 }
 

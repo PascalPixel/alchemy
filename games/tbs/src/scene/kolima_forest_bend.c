@@ -51,7 +51,6 @@ enum {
   SIGN = 10 ///< reads a warning. "Do not touch Floodgate Switch!"
 };
 
-struct BendLog;
 static void KolimaForestBend_MarkShortLogCells(void);
 static void KolimaForestBend_CreateLogs(struct BendLog *log);
 static void KolimaForestBend_RollLog(struct BendLog *logs);
@@ -81,23 +80,12 @@ const struct SceneEvent *KolimaForestBend_GetEvents(void) {
 static void KolimaForestBend_PushLog(void) {
   KolimaForestBend_RollLog(gKolimaForestBendRecords);
   Map_CopyCellAttributes(0, 0x40, 0x20, 0x20, 0, 0);
-  State_StampRecordCells((s32)gKolimaForestBendRecords, 0xff);
+  State_StampRecordCells(gKolimaForestBendRecords, 0xff);
   KolimaForestBend_MarkShortLogCells();
 }
 
 /// Walking south into the gap: the leader jumps across.
 static void KolimaForestBend_JumpSouth(void) { Field_TryJumpForward(); }
-
-/// A log's record in gSceneState, from gKolimaForestBend_DefaultRecords: its
-/// sprite, its first cell and whether it runs north to south (vertical) or
-/// west to east, then its actor once it is made. A sprite of -1 ends the list.
-struct BendLog {
-  s16 sprite;
-  s16 x;
-  s16 z;
-  s16 vertical;
-  struct FieldActor *actor;
-};
 
 #include "common/map_panel.h"
 
@@ -116,7 +104,7 @@ static void KolimaForestBend_MarkShortLogCells(void) {
 /// riverbed.
 static void KolimaForestBend_DrawWaterLevel(void) {
   struct FieldActor *piece;
-  s16 *record = gKolimaForestBendRecords;
+  struct BendLog *record = gKolimaForestBendRecords;
 
   if (*gKolimaForestBendLayout != 0) {
     Map_CopyCells(65, 53, 2, 1, 79, 29);
@@ -136,8 +124,8 @@ static void KolimaForestBend_DrawWaterLevel(void) {
   }
 
   // Each log floats or rests, and on high water its four cells are drawn.
-  while (record[0] != -1) {
-    piece = *(struct FieldActor **)(record + 4);
+  while (record->sprite != -1) {
+    piece = record->actor;
 
     if (*gKolimaForestBendLayout == 1) {
       Object_SetMode(piece, 4);
@@ -145,10 +133,10 @@ static void KolimaForestBend_DrawWaterLevel(void) {
       piece->motionFlags = 0;
       piece->y.fixed = PIXELS(26);
 
-      if (record[3] != 0) {
-        Map_CopyCells(68, 40, 1, 4, record[1] + 32, record[2]);
+      if (record->vertical != 0) {
+        Map_CopyCells(68, 40, 1, 4, record->x + 32, record->z);
       } else {
-        Map_CopyCells(70, 40, 4, 1, record[1] + 32, record[2]);
+        Map_CopyCells(70, 40, 4, 1, record->x + 32, record->z);
       }
     } else {
       Object_SetMode(piece, 1);
@@ -156,7 +144,7 @@ static void KolimaForestBend_DrawWaterLevel(void) {
       piece->motionFlags = 2;
       piece->y.fixed = 0;
     }
-    record += 6;
+    record++;
   }
 
   Map_CopyCells(70, 42, 1, 1, 10, 50);
@@ -374,7 +362,8 @@ s32 KolimaForestBend_Initialize(void) {
 
   gKolimaForestBendReturned = (u16 *)gSceneState;
   (*(u16 **)&gKolimaForestBendLayout) = (u16 *)gSceneState + 1;
-  gKolimaForestBendRecords = (s16 *)gSceneState + 2;
+  // The return flag and water level occupy the first two halfwords.
+  gKolimaForestBendRecords = (struct BendLog *)(gSceneState + 2 * sizeof(u16));
   Map_CopyCells(32, 0, 64, 32, 0, 64);
   Map_CopyCellAttributes(0, 0, 32, 32, 0, 64);
   Map_CopyCellAttributes(32, 0, 32, 32, 0, 32);
@@ -433,15 +422,15 @@ static void KolimaForestBend_CreateLogs(struct BendLog *entry) {
 }
 
 /// Writes a collision code into the four cells of each log.
-void State_StampRecordCells(s16 *records, s32 value) {
+void State_StampRecordCells(const struct BendLog *records, s32 value) {
 
-  s16 *record = records;
-  if (record[0] == -1)
+  const struct BendLog *record = records;
+  if (record->sprite == -1)
     return;
   do {
-    s32 column = record[1];
-    s32 row = record[2];
-    s32 along = record[3];
+    s32 column = record->x;
+    s32 row = record->z;
+    s32 along = record->vertical;
     s32 i;
     for (i = 3; i >= 0; i--) {
       u8 *cell;
@@ -452,17 +441,17 @@ void State_StampRecordCells(s16 *records, s32 value) {
       else
         row++;
     }
-    record += 6;
-  } while (record[0] != -1);
+    record++;
+  } while (record->sprite != -1);
 }
 
 /// The log lying across the cell, or none.
-static const struct TileRun *
-KolimaForestBend_FindLogAt(const struct TileRun *run, s32 x, s32 y) {
-  while (run->id != -1) {
+static struct BendLog *KolimaForestBend_FindLogAt(struct BendLog *run, s32 x,
+                                                  s32 y) {
+  while (run->sprite != -1) {
     s32 x0 = run->x;
     s32 x1 = x0;
-    s32 y0 = run->y;
+    s32 y0 = run->z;
     s32 y1 = y0;
 
     if (run->vertical == 0)
@@ -576,10 +565,13 @@ static void KolimaForestBend_RollLog(struct BendLog *runs) {
 /// The logs on a first visit, as struct BendLog: sprite 0xcd runs north to
 /// south and 0xcf west to east.
 // clang-format off
-u32 gKolimaForestBend_DefaultRecords[] = {
-    0xb00cd, 0x10009, 0, 0xc00cf, 12, 0, 0x1100cf, 12,
-    0, 0xd00cd, 0x1000d, 0, 0xa00cf, 18, 0, 0xffff,
-    0, 0,
+struct BendLog gKolimaForestBend_DefaultRecords[] = {
+    {0xcd, 11, 9, 1, NULL},
+    {0xcf, 12, 12, 0, NULL},
+    {0xcf, 17, 12, 0, NULL},
+    {0xcd, 13, 13, 1, NULL},
+    {0xcf, 10, 18, 0, NULL},
+    {-1},
 };
 
 u8 gKolimaForestBend_PushAnimations[] = {2, 2, 3, 3};

@@ -123,7 +123,8 @@ extern const u8 gFieldFx_MoteTiles[];
 extern s32 gFourObjectMotion_ResourceIds[];
 extern s32 gTolbiShipInteriors_ShakeTimer;
 extern s16 *gKolimaForestBendLayout;
-extern s16 *gKolimaForestBendRecords;
+struct BendLog;
+extern struct BendLog *gKolimaForestBendRecords;
 extern u16 *gKolimaForestBendReturned;
 #ifndef OWN_gObjectSlots
 extern struct ObjectRuntime *gObjectSlots;

@@ -42,8 +42,13 @@ const u32 *Scene_GetExits(void);
 const struct ScenePlacement *Scene_GetPlacements(void);
 const struct SceneEvent *Scene_GetEvents(void);
 s32 ColossoWall_Initialize(void);
-// FieldScene_BuildDescriptorAndInstallTask is called before its definition
-// with no prototype in scope.
+// The native call precedes this definition; see MATCHING.md.
+#ifdef UBFIX
+void FieldScene_BuildDescriptorAndInstallTask(s32 leaderId, s32 rivalId,
+                                              s32 raceMode, s32 finishX,
+                                              s32 finishZ, s32 firstItem,
+                                              s32 secondItem);
+#endif
 extern const u8 gColossoWall_RollLogScript[];
 extern const u8 gColosso_LetteringPaletteOffsets[];
 extern const s16 gColossoWall_ModeRecordTwo[];

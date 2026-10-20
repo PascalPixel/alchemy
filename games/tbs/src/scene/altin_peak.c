@@ -32,7 +32,6 @@
 #include "io_reg.h"
 #include "text/msg_ids.h"
 #include "field_service.h"
-#include "altin_peak_motion.h"
 #include "call.h"
 #include "field_effect.h"
 #include "iwram_call.h"
@@ -254,10 +253,10 @@ const struct SceneRegion *Scene_GetRegions(void) {
   s16 scene = gGameState.scene;
 
   if (scene == SCENE_MINE_ROOM(9)) {
-    return (const struct SceneRegion *)gAltinPeak_Regions9;
+    return gAltinPeak_Regions9;
   }
   if (scene == SCENE_MINE_ROOM(10)) {
-    return (const struct SceneRegion *)gAltinPeak_Regions10;
+    return gAltinPeak_Regions10;
   }
   return 0;
 }
@@ -804,12 +803,6 @@ static void AltinPeak_ForceRockOver(void) {
   Event_End();
 }
 
-/// An actor read either as a field actor or as the water beast's hop motion.
-union AltinPeakHoppingActor {
-  struct FieldActor actor;
-  struct AltinPeakHopMotion motion;
-};
-
 /// Room 9's rockfall. The party leader steps back and looks up as the slope
 /// rumbles; the rock lies toppled and a boulder drops onto the path. The
 /// leader flees down the winding path, and after boulderDelay frames the
@@ -1086,35 +1079,39 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// Update callback of the hopping water beast: once a second it leaps up and
 /// lands with a splash (SE_229) that shakes the screen briefly.
 static void AltinPeak_UpdateBeastHops(union FieldObject *object) {
-  struct AltinPeakHopMotion *motion = (struct AltinPeakHopMotion *)object;
-  if (motion->shakeDelay != 0) {
-    if (--motion->shakeDelay == 1)
+  struct FieldActor *beast = &object->actor;
+  s16 *shakeDelay = (s16 *)&beast->work;
+
+  // The route owns timer (hop phase), work (shake delay) and the effect's
+  // countdown (landing-sound latch) until it removes this hook.
+  if (*shakeDelay != 0) {
+    if (--*shakeDelay == 1)
       Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   }
-  if (motion->velocityY == 0) {
+  if (beast->velocityY == 0) {
     Object_SetMode(&object->actor, 1);
-    motion->height -= PIXELS(3) / 2;
-    if (motion->height < motion->terrainHeight) {
-      if (motion->landingCuePending != 0) {
+    beast->y.fixed -= PIXELS(3) / 2;
+    if (beast->y.fixed < beast->terrainHeight) {
+      if (object->effect.countdown != 0) {
         Engine_AudioPlayCue(SE_229);
-        motion->landingCuePending = 0;
-        motion->shakeDelay = 4;
+        object->effect.countdown = 0;
+        beast->work = 4;
         Map_SetShake(PIXELS(1), 0, Q16_ONE);
       }
-      motion->height = motion->terrainHeight;
+      beast->y.fixed = beast->terrainHeight;
     }
-    motion->verticalStopped = 1;
+    beast->paused = 1;
   } else {
-    motion->verticalStopped = 0;
+    beast->paused = 0;
   }
-  if (motion->hopTimer == 0) {
+  if (beast->timer == 0) {
     Engine_AudioPlayCue(SE_JUMP);
-    motion->landingCuePending = 1;
+    object->effect.countdown = 1;
     Object_SetMode(&object->actor, 2);
-    motion->velocityY = PIXELS(3);
+    beast->velocityY = PIXELS(3);
   }
-  if (++motion->hopTimer == 60)
-    motion->hopTimer = 0;
+  if (++beast->timer == 60)
+    beast->timer = 0;
 }
 
 /// The beast lands with a splash, shaking the screen for holdFrames.
@@ -1130,12 +1127,12 @@ static __inline__ void AltinPeak_PlayLandingShake(s32 amplitude,
 /// cries out and hops away around the room, freezes the wide puddle with
 /// Frost and hops across it, then stops to watch the party leader.
 static void AltinPeak_ShowFirstBeastRoute(void) {
-  union AltinPeakHoppingActor *beast;
+  union FieldObject *beast;
   struct FieldActor *leader;
   struct FieldActor *actor;
   s32 jumpSpeed;
 
-  beast = (union AltinPeakHoppingActor *)Object_GetById(ACTOR_ROOM1_BEAST);
+  beast = (union FieldObject *)Object_GetById(ACTOR_ROOM1_BEAST);
   Engine_EventBegin();
   Engine_CameraSetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   Camera_MoveTo(PIXELS(298), -1, PIXELS(337), 1);
@@ -1146,16 +1143,16 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Engine_CameraMoveTo(PIXELS(295), PIXELS(32), PIXELS(212), 1);
   // Run the timed hopping callback while the beast moves along its route.
-  beast->motion.landingCuePending = 0;
-  beast->motion.hopTimer = 0;
-  beast->motion.shakeDelay = 0;
+  beast->effect.countdown = 0;
+  beast->actor.timer = 0;
+  beast->actor.work = 0;
   beast->actor.gravity = PIXELS(2) / 5;
   beast->actor.update = AltinPeak_UpdateBeastHops;
   Actor_SetSpeed(ACTOR_ROOM1_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_MoveToAndWait(ACTOR_ROOM1_BEAST, 308, 291);
   Engine_ActorMoveToAndWait(ACTOR_ROOM1_BEAST, 311, 215);
   beast->actor.update = 0;
-  beast->motion.verticalStopped = 0;
+  beast->actor.paused = 0;
   Engine_EventWait(16);
   Engine_ActorSetAnimation(ACTOR_ROOM1_BEAST, 1);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
@@ -1168,9 +1165,9 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Actor_FaceDirection(ACTOR_ROOM1_BEAST, FACING_SOUTH + FACING_STEP, 20);
   Actor_FaceDirection(ACTOR_ROOM1_BEAST, FACING_SOUTHEAST + FACING_STEP, 40);
   Camera_MoveTo(PIXELS(334), -1, PIXELS(244), 1);
-  beast->motion.landingCuePending = 0;
-  beast->motion.hopTimer = 0;
-  beast->motion.shakeDelay = 0;
+  beast->effect.countdown = 0;
+  beast->actor.timer = 0;
+  beast->actor.work = 0;
   beast->actor.update = AltinPeak_UpdateBeastHops;
   Actor_MoveToAndWait(ACTOR_ROOM1_BEAST, 320, 232);
   Actor_MoveToAndWait(ACTOR_ROOM1_BEAST, 340, 262);
@@ -1195,9 +1192,9 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Actor_FaceDirection(ACTOR_ROOM1_BEAST, FACING_NORTHWEST + FACING_STEP, 20);
   Actor_FaceDirection(ACTOR_ROOM1_BEAST, FACING_WEST, 40);
   Camera_MoveTo(PIXELS(304), -1, PIXELS(215), 1);
-  beast->motion.landingCuePending = 0;
-  beast->motion.hopTimer = 0;
-  beast->motion.shakeDelay = 0;
+  beast->effect.countdown = 0;
+  beast->actor.timer = 0;
+  beast->actor.work = 0;
   beast->actor.update = AltinPeak_UpdateBeastHops;
   Actor_MoveToAndWait(ACTOR_ROOM1_BEAST, 329, 219);
   beast->actor.update = 0;
@@ -1256,11 +1253,11 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
 /// Stepping near the beast again: it hops back over the ice and settles down,
 /// spitting water.
 static void AltinPeak_ShowSecondBeastRoute(void) {
-  union AltinPeakHoppingActor *actor;
+  union FieldObject *actor;
   struct FieldActor *movingActor;
   u32 waitedFrames;
 
-  actor = (union AltinPeakHoppingActor *)Object_GetById(ACTOR_ROOM1_BEAST);
+  actor = (union FieldObject *)Object_GetById(ACTOR_ROOM1_BEAST);
   Engine_EventBegin();
   ObjectMotion_EnableActionAndResetMotion(ACTOR_ROOM1_BEAST);
   Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
@@ -1274,16 +1271,16 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Actor_FaceDirection(ACTOR_ROOM1_BEAST, FACING_WEST, 40);
   Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Camera_MoveTo(PIXELS(128), PIXELS(64), PIXELS(202), 1);
-  actor->motion.landingCuePending = 0;
-  actor->motion.hopTimer = 0;
-  actor->motion.shakeDelay = 0;
+  actor->effect.countdown = 0;
+  actor->actor.timer = 0;
+  actor->actor.work = 0;
   actor->actor.gravity = PIXELS(2) / 5;
   actor->actor.update = AltinPeak_UpdateBeastHops;
   Actor_SetSpeed(ACTOR_ROOM1_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_MoveToAndWait(ACTOR_ROOM1_BEAST, 212, 200);
   Actor_MoveToAndWait(ACTOR_ROOM1_BEAST, 103, 200);
   actor->actor.update = NULL;
-  actor->motion.verticalStopped = 0;
+  actor->actor.paused = 0;
   Engine_EventWait(10);
   Engine_ActorSetAnimation(ACTOR_ROOM1_BEAST, 1);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
@@ -1307,14 +1304,14 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Object_GetById(ACTOR_ROOM1_BEAST)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_ROOM1_BEAST, FACING_SOUTHEAST + FACING_STEP, 20);
   Engine_ActorFaceDirection(ACTOR_ROOM1_BEAST, 0, 40);
-  actor->motion.landingCuePending = 0;
-  actor->motion.hopTimer = 0;
-  actor->motion.shakeDelay = 0;
+  actor->effect.countdown = 0;
+  actor->actor.timer = 0;
+  actor->actor.work = 0;
   actor->actor.update = AltinPeak_UpdateBeastHops;
   Actor_SetSpeed(ACTOR_ROOM1_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_MoveToAndWait(ACTOR_ROOM1_BEAST, 120, 215);
   actor->actor.update = NULL;
-  actor->motion.verticalStopped = 0;
+  actor->actor.paused = 0;
   Engine_ActorSetAnimation(ACTOR_ROOM1_BEAST, 1);
   Engine_EventWait(16);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
@@ -1331,7 +1328,7 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
        waitedFrames++) {
     Engine_EventWait(1);
   }
-  actor = (union AltinPeakHoppingActor *)Object_GetById(ACTOR_PARTY_LEADER);
+  actor = (union FieldObject *)Object_GetById(ACTOR_PARTY_LEADER);
   Camera_SetSpeed(PIXELS(24) / 5, PIXELS(3) / 5);
   Engine_CameraMoveTo(actor->actor.x.fixed, actor->actor.y.fixed,
                       actor->actor.z.fixed, 1);
@@ -1572,7 +1569,7 @@ static void AltinPeak_RestoreRoom7(void) {
   struct FieldActor *actor;
 
   actor = Actor_Get(ACTOR_ROOM7_PUDDLE);
-  Engine_ActorSetSpriteFlags((s32)actor, 0);
+  Engine_ActorSetSpriteFlags(actor, 0);
   AltinPeak_SettleRoom7Block();
   AltinPeak_MarkActorTerrainCell(ACTOR_ROOM7_PUDDLE);
   if (GameFlag_IsSet(FLAG_PUDDLE_FROZEN) != 0) {
@@ -1707,9 +1704,9 @@ static void AltinPeak_InitSpray(struct FieldActor *spray) {
   spray->scaleY = 3 * Q16_ONE / 10;
 }
 
-/// Update callback of a spray particle: it drifts away from the beast with a
-/// random wobble, rising and stretching for a few frames and then falling and
-/// growing, until its life runs out.
+/// Update callback of a spray particle: it grows while drifting away from the
+/// beast, then curls and flattens when its movement timer runs low. The timer
+/// can start another curl; the separate lifetime still ends after 20 updates.
 static void AltinPeak_DriftSpray(union FieldObject *object) {
   struct FieldActor *spray = &object->actor;
 
@@ -2355,7 +2352,9 @@ arrived:
 /// Scheduler task that cycles the water's palette colors through
 /// gAltinPeak_PaletteScript.
 static void AltinPeak_StepPaletteAnim(void) {
-  u16 *palette = gPaletteBufferWork;
+  // The palette cycle borrows RGB555 colours from the fade work's source
+  // palette; each step replaces BG colours 3 to 11.
+  u16 *palette = gPaletteBufferWork->palette;
 
   if (gAltinPeak_PaletteHold <= 0) {
     s32 frame;
@@ -2650,72 +2649,23 @@ struct SceneEntrance gAltinPeak_Entrances11[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gAltinPeak_Regions9[] = {
+struct SceneRegion gAltinPeak_Regions9[] = {
 #if !TBS_PATCH_3
-    790,
-    -106,
-    575,
-    794,
-    -102,
-    579,
-    -1,
-    6,
-    788,
-    -108,
-    579,
-    796,
-    -100,
-    587,
-    -1,
-    6,
+    {790, -106, 575, 794, -102, 579, CONDITION_ALWAYS, 6},
+    {788, -108, 579, 796, -100, 587, CONDITION_ALWAYS, 6},
 #else
-    784,
-    -116,
-    572,
-    800,
-    -100,
-    588,
-    -1,
-    6,
+    {784, -116, 572, 800, -100, 588, CONDITION_ALWAYS, 6},
 #endif
-    -1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    {SCENE_TABLE_END},
 };
 
-s16 gAltinPeak_Regions10[] = {
+struct SceneRegion gAltinPeak_Regions10[] = {
 #if !TBS_PATCH_3
-    84,
-    38,
-    420,
-    92,
-    46,
-    428,
-    -1,
-    1,
+    {84, 38, 420, 92, 46, 428, CONDITION_ALWAYS, 1},
 #else
-    80,
-    34,
-    416,
-    96,
-    50,
-    432,
-    -1,
-    1,
+    {80, 34, 416, 96, 50, 432, CONDITION_ALWAYS, 1},
 #endif
-    -1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    {SCENE_TABLE_END},
 };
 
 u32 gAltinPeak_Exits[] = {

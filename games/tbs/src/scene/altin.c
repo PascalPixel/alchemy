@@ -29,7 +29,7 @@
 #include "field_event.h"
 #include "engine_call.h"
 #include "field_scene.h"
-#include "altin.h"
+#include "field_effect.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "flags.h"
@@ -463,7 +463,7 @@ static void Village_EnterDoor(void) {
     if (doorIndex == DOOR_WITH_WINDOW) {
       Map_CopyCellsTo(33, 42, 8, 17, 1, 2);
     }
-    Map_AnimateCells(*(s32 *)(doorBytes + doorByteOffset), column, row);
+    Map_AnimateCells(gAltinVillage_Doors[doorIndex].steps, column, row);
   }
 
   // Walk the leader through.
@@ -507,30 +507,35 @@ static void Village_WalkThroughDoorway(void) {
 /// falls back with a splash that shakes the screen briefly, and stands while
 /// on the ground.
 static void Beast_Hop(union FieldObject *fieldObject) {
-  struct WaterActor *beast = (struct WaterActor *)fieldObject;
-  if (beast->shakeFrames != 0) {
-    if (--beast->shakeFrames == 1)
+  struct FieldActor *beast = &fieldObject->actor;
+  s16 *shakeFrames = (s16 *)&beast->work;
+
+  // While this hook owns the beast, timer is its hop phase, work counts down
+  // the landing shake, and the effect's countdown is a landing-sound latch.
+  // Read work through its corresponding signed type for the countdown test.
+  if (*shakeFrames != 0) {
+    if (--*shakeFrames == 1)
       Map_SetShake(-1, -1, 0xe666);
   }
   if (beast->velocityY == 0) {
     Object_SetMode(beast, 1);
-    beast->y += -0x18000;
-    if (beast->y < beast->ground) {
-      if (beast->counter != 0) {
+    beast->y.fixed += -0x18000;
+    if (beast->y.fixed < beast->terrainHeight) {
+      if (fieldObject->effect.countdown != 0) {
         Event_PlayCue(SE_229);
-        beast->counter = 0;
-        beast->shakeFrames = 4;
+        fieldObject->effect.countdown = 0;
+        beast->work = 4;
         Map_SetShake(0, 0x10000, 0x10000);
       }
-      beast->y = beast->ground;
+      beast->y.fixed = beast->terrainHeight;
     }
-    beast->onGround = 1;
+    beast->paused = 1;
   } else {
-    beast->onGround = 0;
+    beast->paused = 0;
   }
   if (beast->timer == 0) {
     Event_PlayCue(SE_JUMP);
-    beast->counter = 1;
+    fieldObject->effect.countdown = 1;
     Object_SetMode(beast, 2);
     beast->velocityY = 0x30000;
   }
@@ -540,12 +545,12 @@ static void Beast_Hop(union FieldObject *fieldObject) {
 
 /// The water beast hops away across the flood and dives in with a splash.
 static void Beast_HopAway(void) {
-  struct WaterActor *beast;
+  struct FieldActor *beast;
 
-  beast = (struct WaterActor *)Object_GetById(ACTOR_WATER_BEAST);
+  beast = Object_GetById(ACTOR_WATER_BEAST);
   beast->timer = 0;
-  beast->shakeFrames = 0;
-  ((struct FieldActor *)beast)->gravity = 0x6666;
+  beast->work = 0;
+  beast->gravity = 0x6666;
   beast->update = Beast_Hop;
   Actor_SetSpeed(ACTOR_WATER_BEAST, 0x13333, 0x9999);
   Actor_MoveToAndWait(ACTOR_WATER_BEAST, 28, 460);
@@ -711,28 +716,28 @@ static void Houses_PlaceSheltering(void) {
 
 /// Gives a new spray particle its look: standing still, drawn on sprite
 /// priority 1 and at 0.3 scale.
-static void Spray_Initialize(struct SprayActor *spray) {
+static void Spray_Initialize(struct FieldActor *spray) {
   spray->motionFlags = 0;
   spray->sprite->image.priority = 1;
   ObjectGroup_SetChildValue(spray, 3);
-  Engine_ActorSetSpriteFlags((struct FieldActor *)spray, 0);
+  Engine_ActorSetSpriteFlags(spray, 0);
   spray->scaleX = WATER_SPRAY_START_SCALE;
   spray->scaleY = WATER_SPRAY_START_SCALE;
 }
 
-/// Update callback of a spray particle: it drifts sideways with a random
-/// wobble, rising and stretching for a few frames and then falling and
-/// growing, sometimes changing frame, until its life runs out.
+/// Update callback of a spray particle: it drifts and grows with a random
+/// wobble, then curls upward and flattens as its movement timer runs down.
+/// The separate lifetime releases it after 20 updates.
 static void Spray_Drift(union FieldObject *fieldObject) {
-  struct WaterActor *spray = (struct WaterActor *)fieldObject;
-  spray->x += WATER_SPRAY_LATERAL_STEP(
+  struct FieldActor *spray = &fieldObject->actor;
+  spray->x.fixed += WATER_SPRAY_LATERAL_STEP(
       spray->timer, (s16)((s32)(((u32)Engine_RandomNext() * 2) >> 16) - 1));
   if (spray->timer <= 3) {
-    spray->z += -(((u32)Engine_RandomNext() * 0x8000) >> 16) - 0x10000;
+    spray->z.fixed += -(((u32)Engine_RandomNext() * 0x8000) >> 16) - 0x10000;
     spray->scaleX += 0x2666;
     spray->scaleY += -0xa3d;
   } else {
-    spray->z += 0x20000;
+    spray->z.fixed += 0x20000;
     spray->scaleX += 0x7ae;
     spray->scaleY += 0x7ae;
   }
@@ -742,7 +747,7 @@ static void Spray_Drift(union FieldObject *fieldObject) {
     spray->timer--;
   else
     spray->timer = (((u32)Engine_RandomNext() * 5) >> 16) * 2 + 2;
-  if (--spray->counter == 0) {
+  if (--fieldObject->effect.countdown == 0) {
     spray->update = 0;
     Engine_ObjectDispatchRelease(spray);
   }
@@ -751,17 +756,17 @@ static void Spray_Drift(union FieldObject *fieldObject) {
 /// Scheduler task while the water beast spits: every fourth frame a spray
 /// particle starts from its spout, living 20 frames.
 static void Beast_SpawnSpray(void) {
-  struct WaterActor *spray;
+  union FieldObject *spray;
   if ((gFrameCount & 3) == 0) {
-    spray = ((struct WaterActor *)Object_Create(SPRITE_SPRAY, PIXELS(64), 0,
+    spray = ((union FieldObject *)Object_Create(SPRITE_SPRAY, PIXELS(64), 0,
                                                 PIXELS(400)));
     if (spray != 0) {
-      spray->timer = WATER_SPRAY_LIFETIME;
-      spray->shakeFrames = 0;
-      spray->counter = WATER_SPRAY_LIFETIME;
-      Spray_Initialize(spray);
-      spray->update = Spray_Drift;
-      Object_SetMode(spray, 1);
+      spray->actor.timer = WATER_SPRAY_LIFETIME;
+      spray->actor.work = 0;
+      spray->effect.countdown = WATER_SPRAY_LIFETIME;
+      Spray_Initialize(&spray->actor);
+      spray->actor.update = Spray_Drift;
+      Object_SetMode(&spray->actor, 1);
     }
   }
 }

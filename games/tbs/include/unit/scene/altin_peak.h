@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "field_scene.h"
+#include "field_runtime.h"
 
 struct SceneEntrance;
 struct SceneEvent;
@@ -38,8 +39,8 @@ extern struct SceneEntrance gAltinPeak_Entrances8[];
 extern struct SceneEntrance gAltinPeak_Entrances9[];
 extern struct SceneEntrance gAltinPeak_Entrances10[];
 extern struct SceneEntrance gAltinPeak_Entrances11[];
-extern s16 gAltinPeak_Regions9[];
-extern s16 gAltinPeak_Regions10[];
+extern struct SceneRegion gAltinPeak_Regions9[];
+extern struct SceneRegion gAltinPeak_Regions10[];
 extern u32 gAltinPeak_Exits[];
 extern struct ScenePlacement gAltinPeak_PlacementsOther[];
 extern struct ScenePlacement gAltinPeak_Placements1[];

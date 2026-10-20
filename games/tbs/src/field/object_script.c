@@ -1,12 +1,13 @@
+/// @file
+/// Field object scripts: the ones the engine starts itself, and the command
+/// table.
+
 #include "unit/field/object_script.h"
 #include "unit/field/field.h"
 #include "object_dispatch.h"
 #include "field.h"
 #include "objcmd.h"
 #include "types.h"
-
-// Field object scripts: the ones the engine starts itself, and the command
-// table.
 
 /// The script FieldObject_Create gives every new object: it does nothing and
 /// returns to the idle script.

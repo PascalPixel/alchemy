@@ -1,12 +1,11 @@
+/// @file
+/// Effect tables: object scripts, curves and lookup tables of the object bank.
+
 #include "battle_effect_runtime.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
 #include "objcmd.h"
 #include "types.h"
-
-//--------------------------------------------------------------------------
-// Effect tables: object scripts, curves and lookup tables of the object bank.
-//--------------------------------------------------------------------------
 
 // Their readers declare them in battle.h, field.h, graphics.h, scroll.h and
 // object_effect_scripts.h, and object.c declares the colour curves. Some

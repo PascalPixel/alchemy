@@ -957,9 +957,8 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     s32 directionBias;
 
     driftMultiplier = (u32)Engine_RandomNext() % 10 + 5;
-    /* FAKEMATCH: reuse the coordinate local for the direction mask. With the
-     * literal 1, also as (flags ^ 1) << 2 or through a mask local of its own:
-     * differ 116. */
+    /* FAKEMATCH(temporary): the coordinate local x holds the direction mask;
+     * as the literal 1, 47 of 141 instructions differ in tbs-en. */
     x = 1;
     flags &= x;
     directionBias = flags ^ x;
@@ -985,9 +984,9 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     void (*update)(union FieldObject *) = Vault_UpdateDriftingEffect;
     u8 *spriteFlags;
 
-    /* FAKEMATCH: preserve the sprite-flags address scheduling boundary. As
-     * plain stores, sprite->flags = 0 after the update pointer or through the
-     * pointer local: differ 2; the flags stored first: differ 4. */
+    /* FAKEMATCH(one-pass): the block takes the flags address before the update
+     * store; as sprite->flags = 0 after it, 1 of 141 instructions differ in
+     * tbs-en. */
     do {
       spriteFlags = &sprite->flags;
     } while (0);

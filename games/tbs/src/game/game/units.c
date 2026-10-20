@@ -77,9 +77,9 @@ struct BattleUnit *UnitGet(u32 owner) {
   {
     void *caller = __builtin_return_address(0);
 
-    // The native copies the unused return address from lr into r3 at entry.
-    /* FAKEMATCH: a low-register use keeps mov r3, lr; without it, 1 of 28
-     * instructions differs in tbs-en. */
+    /* FAKEMATCH(barrier): an empty asm reading the return address in a low
+     * register, as the ROM's mov r3, lr at entry; as no asm, 1 of 28
+     * instructions differ in tbs-en. */
     asm("" : : "l"(caller));
   }
   states = gGameState.owners;
@@ -201,9 +201,9 @@ void UnitCalc(s32 owner) {
       stats->item = Item_GetDirect(unit->inventory[index]);
       if (stats->item->flags & ITEM_CURSED)
         unit->restraint |= 3;
-      /* FAKEMATCH: the one-pass block keeps the defense load after the
-       * item's second bonus load; as plain statements, 2 instructions differ
-       * in tbs-en. */
+      /* FAKEMATCH(one-pass): the Attack bonus in a once-only block keeps the
+       * Defense load after the item's second bonus; as plain statements, 1 of
+       * 864 instructions differ in tbs-en. */
       do {
         stats->atk += stats->item->primaryBonus;
       } while (0);

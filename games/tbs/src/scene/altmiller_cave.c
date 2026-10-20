@@ -1959,9 +1959,8 @@ s32 AltmillerCave_Initialize(void) {
   if (gGameState.scene == (s32)&SceneId_AltmillerCave6) {
     Engine_GameFlagClear(FLAG_DARK);
     AltmillerCave_RedrawObstacleFootprints();
-    /* FAKEMATCH: the three callbacks are stored as s32, so the entrance read
-     * after them stays below the last store; as stores through the update
-     * field, 2 of 403 instructions differ in tbs-en. */
+    // UB: the callbacks are stored through an s32 view of update, which keeps
+    // the entrance read below the last store.
 #ifdef UBFIX
     Object_GetById(ACTOR_FIRST_OBSTACLE)->update =
         AltmillerCave_MatchLeaderPriority;

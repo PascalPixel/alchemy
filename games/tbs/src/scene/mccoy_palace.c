@@ -66,16 +66,6 @@ static void Event_EscortHintsAtBarricade(void);
 static void Event_McCoyRewardsParty(void);
 static void Event_PresentRewardChests(void);
 
-/// gMcCoyPalacePlacements up to the rows the reward changes: rows 6 to 9 place
-/// actors 14 to 17.
-struct McCoyPalacePlacementRows {
-  struct ScenePlacement unk[6]; ///< rows 0 to 5; not changed by the reward
-  struct ScenePlacement startledResident;
-  struct ScenePlacement admirer;
-  struct ScenePlacement kolimaWatcher;
-  struct ScenePlacement rewardKeeper;
-};
-
 // The shared facing callback precedes the scene's entry points.
 #include "common/object_facing.h"
 
@@ -98,16 +88,11 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
     FieldScene_PrepareActors(placements);
 
     if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
-      /* FAKEMATCH: a struct of the table's rows keeps the native base+166
-       * addressing; as placements[6].talkFacing and on, it splits into
-       * base+144 and member+22. */
-      struct McCoyPalacePlacementRows *rows =
-          (struct McCoyPalacePlacementRows *)placements;
-
-      rows->startledResident.talkFacing = TALK_KEEP_FACING;
-      rows->admirer.talkFacing = TALK_FACE_PARTY;
-      rows->kolimaWatcher.talkFacing = 3;
-      rows->rewardKeeper.talkFacing = TALK_FACE_PARTY_AND_BACK;
+      // Rows 6 to 9 place actors 14 to 17.
+      gMcCoyPalacePlacements[6].talkFacing = TALK_KEEP_FACING;
+      gMcCoyPalacePlacements[7].talkFacing = TALK_FACE_PARTY;
+      gMcCoyPalacePlacements[8].talkFacing = 3;
+      gMcCoyPalacePlacements[9].talkFacing = TALK_FACE_PARTY_AND_BACK;
     }
 
     return placements;

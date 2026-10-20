@@ -1393,8 +1393,8 @@ static void TolbiShipDeck_MonstersBoard(void) {
     Engine_TaskWait(1);
   } while (Object_GetById(24)->timer == 0);
   TolbiShipDeck_OpenFirstDoor();
-  /* FAKEMATCH: the do/while sets r0 = 21 first, straight after the call; as a
-   * plain call, 2 instructions differ in tbs-en. */
+  /* FAKEMATCH(one-pass): the block sets r0 = 21 straight after the call above;
+   * as a plain call, 1 of 163 instructions differ in tbs-en. */
   do {
     Actor_WalkTo(21, 196, 612);
   } while (0);
@@ -1795,10 +1795,8 @@ static void TolbiShipDeck_SightLand(void) {
   Actor_SetPosition(21, PIXELS(184), PIXELS(632));
   record = Object_GetById(21);
   record->facing = 0xb000;
-  /* FAKEMATCH: the work pointer read as a word may alias the facing stores, so
-   * they stay ahead of its load; as gEventWork->startTransition, 2
-   * instructions differ in tbs-en. */
-  // UB: a u32 lvalue aliases the pointer; the defined build reads it directly.
+  // UB: a u32 lvalue aliases the pointer, which keeps the facing stores ahead
+  // of its load; the defined build reads it directly.
 #ifdef UBFIX
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
 #else

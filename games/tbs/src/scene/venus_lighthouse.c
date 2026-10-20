@@ -1775,9 +1775,9 @@ static void Event_CarryFloatingBlock(void) {
     }
     if (block->sprite->image.priority == 3 &&
         !GameFlag_IsSet(FLAG_SCENE_TEMP_00 + blockIndex)) {
-      /* FAKEMATCH: forced temporary: the search counter's zero, set before the
-       * priority call, puts movs r5, #0 after the call; as block->bounce = 0
-       * after the call, 6 instructions differ in tbs-en. */
+      /* FAKEMATCH(temporary): the zero in the search counter, set before the
+       * priority call; as block->bounce = 0 after the call, 2 of 272
+       * instructions differ in tbs-en. */
       earlierIndex = 0;
       Engine_ActorSetSpritePriority(blockIndex + 10, 1);
       block->bounce = earlierIndex;
@@ -2444,15 +2444,11 @@ s32 Scene_RunEntrySetup(void) {
       {
         s32 zero = 0;
 
-        /* FAKEMATCH: the empty asm gives the zero the refs that put it in r3
-         * ahead of the register address; as REG_BLDCNT = 0, 95 instructions
-         * differ in tbs-en. */
+        /* FAKEMATCH(barrier): the empty asm gives the zero the refs that put
+         * it in r3 and the address in r2; as Io_Write16(0, &REG_BLDCNT), 3 of
+         * 1431 instructions differ in tbs-en. */
         asm("" : "+l"(zero));
-        /* FAKEMATCH: needed to match: this CSE block keeps the blend
-         * store before the next call setup, at the same size and frame. */
-        do {
-          REG_BLDCNT = zero;
-        } while (0);
+        Io_Write16(zero, &REG_BLDCNT);
       }
       if (Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
         Map_CopyCellsTo(15, 96, 9, 96, 3, 3);
@@ -2507,9 +2503,9 @@ s32 Scene_RunEntrySetup(void) {
       break;
     case 4:
     case 5:
-      /* FAKEMATCH: a value-returning cast keeps this call from cross-jumping
-       * into the identical one before it; as a call by its void prototype, 42
-       * instructions differ in tbs-en. */
+      /* FAKEMATCH(wrapper): called through a cast to an s32 function, so it
+       * does not cross-jump with entrance 2's same call; as a call by its void
+       * prototype, 2 of 1431 instructions differ in tbs-en. */
       VENUS_LIGHTHOUSE_RUN_OPENING_SEQUENCE();
       BattleFx_SetQueuedSoundAndPlay(SE_170);
       break;

@@ -1585,13 +1585,16 @@ static void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode) {
 /// "Three years later... Isaac! Haven't you finished mending the roof yet?"
 static void Event_MendingTheRoof(void) {
   u32 i;
-  /* FAKEMATCH: repairActor's dead zero initializer and the stoppedMotionFlags
-   * temporary preserve register allocation throughout the scene; without the
-   * initializer, 170 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): repairActor's zero initializer, never read, keeps the
+   * scene's register allocation; without it, 59 of 1024 instructions differ
+   * in tbs-en. */
   struct FieldActor *repairActor = NULL;
   struct FieldActor *leader;
   struct FieldActor *dustEmitter;
   struct FieldActor *actor;
+  /* FAKEMATCH(temporary): one zero for the dust emitter's flags and update and
+   * the message call; as literal zeros, 7 of 1024 instructions differ in
+   * tbs-en. */
   s32 stoppedMotionFlags;
   s32 message;
 

@@ -359,9 +359,8 @@ static s32 CrossboneIslePillarRooms_LowerActorToLedge(s32 id, s32 far) {
         y = top << 20;
         kind = 253;
       }
-      /* FAKEMATCH: a one-pass block around the object and height issues the
-       * height arithmetic first; as no block, 2 instructions differ in
-       * tbs-en. */
+      /* FAKEMATCH(one-pass): the block keeps found's constant after the height
+       * arithmetic; as no block, 1 of 117 instructions differ in tbs-en. */
       do {
         temporaryActor = OverlayObject_PrepareObject(x, y, z, kind);
         height = actor->z.fixed - z + y;
@@ -985,10 +984,7 @@ static void Event_MovePillar(void) {
       if (GetMapCellCollision(2, actor->x.fixed, actor->z.fixed) == 50) {
         Engine_AudioPlayCue(SE_189);
         // Both u8 accesses are alias set 0, and the view is no struct reference
-        // (MEM_IN_STRUCT_P).
-        /* FAKEMATCH: the u8 view keeps these flag updates out of the record's
-         * alias set; as field stores, the loop is reallocated and 217
-         * instructions differ in tbs-en. */
+        // (MEM_IN_STRUCT_P); as field stores, the loop is reallocated.
         *(u8 *)&actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
         CrossboneIslePillarRooms_LowerActorToLedge(id, 1);
         *(u8 *)&actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;

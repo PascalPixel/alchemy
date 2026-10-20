@@ -1055,9 +1055,8 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   u32 glyphBits;
   u32 glyphMask;
 
-  /* FAKEMATCH: unused local; its 32 bytes are the native frame space no
-   * instruction touches. Without it differ 4 on tbs-ja, tbs-en and tbs-de: sub
-   * sp, #12 for #44 and the matching add. */
+  /* FAKEMATCH(dead): an unused array for the frame's 32 bytes no instruction
+   * touches; as no array, 2 of 277 instructions differ in tbs-en. */
   UNUSED u32 unused[8];
 
   if (text == NULL) {

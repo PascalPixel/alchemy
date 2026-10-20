@@ -307,9 +307,9 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
   s32 ticketPrice;
 
 #if !TBS_PATCH_1
-  /* FAKEMATCH: needed to match: one coin-label selector preserves its saved
-   * register; separate arguments shorten the Japanese callback by twelve bytes.
-   * Measured again: differ 72 in tbs-ja. */
+  /* FAKEMATCH(temporary): coinLabel keeps the first label in r5 and steps it
+   * to the second; as two MSGNO arguments, 24 of 152 instructions differ in
+   * tbs-ja. */
   s32 coinLabel;
 #endif
 

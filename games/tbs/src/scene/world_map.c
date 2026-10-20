@@ -1724,9 +1724,9 @@ static void Event_UseBlackOrb(void) {
     sprite->count = 0;
     sprite->image.fullColor = 0;
     sprite->image.palette = 0;
-    /* FAKEMATCH: a second clear through a byte pointer, removed after reload,
-     * keeps the zero in r1 and the address in r0, as native; as plain stores,
-     * 20 instructions differ in tbs-en. */
+    /* FAKEMATCH(dead): a second clear through a byte pointer, removed after
+     * reload, keeps the zero in r1 and the address in r0; without it, 11 of
+     * 363 instructions differ in tbs-en. */
     motion = &orb->motionFlags;
     *motion = 0;
     buffer = Heap_Allocate(17, 0x608);

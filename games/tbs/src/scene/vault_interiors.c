@@ -2981,9 +2981,9 @@ VaultInteriors_SnapToNearestStop(struct VaultInteriorsStop *node,
     angleDifference = (s16)(connectionFacing - *requestedFacing);
     if (angleDifference < 0)
       angleDifference = -angleDifference;
-    /* FAKEMATCH: the used-stop test reads the stopIndex through a volatile
-     * lvalue, so it is loaded again for the result; as a plain test, 9
-     * instructions differ in tbs-en. */
+    /* FAKEMATCH(volatile): the used-stop test reads stopIndex through a
+     * volatile lvalue, so the stopIndex assignment loads it again; as a plain
+     * test, 1 of 49 instructions differ in tbs-en. */
     if (*(volatile u8 *)&connection->stopIndex != 0xff &&
         angleDifference < nearestDifference) {
       nearestDifference = angleDifference;
@@ -3105,9 +3105,9 @@ static void VaultInteriors_UpdateActorStops(void) {
     if (work->blockedSteps > 0 && dx * dx + dz * dz <= 400 &&
         (facingDifference = (u16)facing - angle) > -0x1000 &&
         facingDifference < 0x1000) {
-      /* FAKEMATCH: a dead store keeps this empty branch through the first jump
-       * optimization (bge to the else, then b past it); as an empty branch, 4
-       * instructions differ in tbs-en. */
+      /* FAKEMATCH(dead): a dead store keeps this branch through jump
+       * optimization (bge to the else, then b past it); as an empty branch, 1
+       * of 269 instructions differ in tbs-en. */
       facingDifference = 0;
 #if TBS_PATCH_1
     } else if (dx * dx + dz * dz > 64) {

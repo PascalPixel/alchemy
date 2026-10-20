@@ -47,8 +47,9 @@ static void ColosseumEntrance_CelebrateBothWins(void);
 static void ColosseumEntrance_InitializeContestants(void);
 
 static inline void ColosseumEntrance_Turn(s32 actor, s32 facing) {
-  /* FAKEMATCH: forwarded inline for Event_CrowdRecognizesIsaac's one call;
-   * called directly, r2 and r3 swap and 7 instructions differ in tbs-en. */
+  /* FAKEMATCH(wrapper): Event_CrowdRecognizesIsaac's one turn goes through
+   * this helper; as a direct ColosseumEntrance_FaceDirection call, 7 of 643
+   * instructions of Event_CrowdRecognizesIsaac differ in tbs-en. */
   ColosseumEntrance_FaceDirection(actor, facing);
 }
 

@@ -435,8 +435,8 @@ static void ItemLevel_RunMotionTest(void) {
 /// Displays the three character-set caption rows in a debug window.
 static void ItemLevel_ShowGlyphCaptions(void) {
   struct UiWindow *window;
-  /* FAKEMATCH: an unread 32-byte text buffer, the native frame's 32 extra
-   * bytes. Without it: differ 4 (sp moves 4 for 36). */
+  /* FAKEMATCH(dead): an unread text buffer for the frame's 32 bytes; as no
+   * buffer, 2 of 29 instructions differ in tbs-en. */
   UNUSED u8 text[32];
 
   window = UiWindow_Create(0, 13, 30, 6, 2);

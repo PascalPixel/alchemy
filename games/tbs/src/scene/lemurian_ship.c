@@ -193,9 +193,9 @@ static void OrbGlow_Fade(void) {
 /// Run each frame from RaiseTheShip to the end of the game; each part runs
 /// while its flag (gOrbGlowActive, gSwellActive, gSprayActive) is set.
 static void Ship_UpdateSwell(void) {
-  /* FAKEMATCH: volatile restores the form the bytes prove: blend lives at sp+18
-   * and is loaded again with ldrh for the register write (a 20-byte frame for
-   * 16). Without it differ 24, 223 instructions for 225. */
+  /* FAKEMATCH(volatile): blend kept at sp+18 and loaded again with ldrh for
+   * the register write; as a plain u16, 5 of 225 instructions differ in
+   * tbs-en. */
   volatile u16 blend;
   struct FixedPointPosition place;
   struct FixedPointPosition *pos;
@@ -587,9 +587,9 @@ static void RaiseTheShip(void) {
   s32 white;
   s32 dark;
   s32 sunk;
-  /* FAKEMATCH: volatile restores the form the bytes prove: cnt lives at sp+6
-   * and each BGxCNT value is stored there with strh on its way to the register
-   * (an 8-byte frame for 4). Without it differ 26, 225 instructions for 231. */
+  /* FAKEMATCH(volatile): each BGxCNT value stored at sp+6 with strh on its
+   * way to the register; as a plain u16, 6 of 231 instructions differ in
+   * tbs-en. */
   volatile u16 cnt;
 
   map = gMapWork[0];
@@ -683,9 +683,8 @@ static void RaiseTheShip(void) {
 /// table does not list, first gives the leader the Black Orb.
 s32 LemurianShip_SetupScene(void) {
   struct MapScrollWork *map;
-  /* FAKEMATCH: volatile restores the form the bytes prove: cnt lives at sp+2
-   * and each step is stored there with strh; without it, 23 of 165
-   * instructions differ in tbs-en. */
+  /* FAKEMATCH(volatile): each step stored at sp+2 with strh; as a plain u16, 2
+   * of 165 instructions differ in tbs-en. */
   volatile u16 cnt;
 
   map = gMapWork[0];

@@ -146,9 +146,9 @@ const struct ScenePlacement *Imil_GetPlacements(void) {
     script = gImil_InteriorPlacements;
     FieldScene_PrepareActors(script);
     if (Engine_GameFlagIsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
-      /* FAKEMATCH: retain row 10's talk-facing byte access (10 * 24 + 22);
-       * as script[10].talkFacing, tbs-en is two bytes shorter. */
-      ((u8 *)script)[262] = 0;
+      // A byte view: as script[10].talkFacing, the row is addressed first.
+      ((u8 *)script)[10 * sizeof(struct ScenePlacement) +
+                     offsetof(struct ScenePlacement, talkFacing)] = 0;
       script[3].x = PIXELS(182);
       script[3].z = PIXELS(564);
       script[3].behavior = 2;
@@ -535,10 +535,10 @@ static void Imil_TalkToItemMerchant(void) {
       Engine_EventBegin();
       Engine_EventSetMessage(MsgMercuryMomsSickGetWhatever);
       Engine_EventShowMessage(ACTOR_ITEM_SHOP_CHILD, 0);
-      /* FAKEMATCH: called through a cast to the value-returning call the bytes
-       * show; as a call by its void prototype, the two argument moves swap and
-       * 2 instructions differ in tbs-en. */
-      IMIL_OPEN_SHOP(12, 14);
+      /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
+       * show, which loads r1 first; as a call by its void prototype, 1 of 70
+       * instructions differ in tbs-en. */
+      IMIL_OPEN_SHOP(12, ACTOR_ITEM_SHOP_CHILD);
       Engine_EventEnd();
     } else {
       Engine_ActorFaceActor(ACTOR_ITEM_SHOP_CHILD, 0, 10);
@@ -1288,12 +1288,10 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Object_GetById(ACTOR_SECOND_APPRENTICE)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_SECOND_APPRENTICE, 644, 166);
   Engine_EventWait(1);
-  // Restore the student's steering after the farewell walk.
-  /* FAKEMATCH: retain the byte access to steeringFlags; as the direct field,
-   * the next gGameState load and constant move swap and 2 instructions differ
-   * in tbs-en. */
-  *(u8 *)(((s32)Object_GetById(ACTOR_SECOND_APPRENTICE)) + 90) |=
-      ACTOR_FACES_MOTION;
+  // Restore the student's steering after the farewell walk. A byte view: as
+  // the field, the next gEventWork load moves after the constant.
+  *((u8 *)Object_GetById(ACTOR_SECOND_APPRENTICE) +
+    offsetof(struct FieldActor, steeringFlags)) |= ACTOR_FACES_MOTION;
   gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   GameFlag_Set(FLAG_IMIL_MIA_SAID_FAREWELL);
   GameFlag_Clear(FLAG_IMIL_APPRENTICE_OFFERED_HEALING);

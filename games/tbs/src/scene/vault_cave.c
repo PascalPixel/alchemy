@@ -151,7 +151,8 @@ static struct FieldActor *VaultCave_FindCollidableActorAtCell(s32 column,
          (u16)gVaultCave_DirectionSteps[(heading) * 2]))
 #else
 /// The step table read as one word per heading: the x step in pixels in the
-/// high halfword, the z step in the low.
+/// high halfword, the z step in the low. The struct's array reference keeps
+/// the native loads; an s32 pointer to the table does not.
 struct DirectionSteps {
   s32 xz[16];
 };
@@ -162,9 +163,6 @@ struct DirectionSteps {
 
 /// Pushes the faced block one cell unless another actor or terrain blocks it.
 static void VaultCave_PushBlockAhead(void) {
-  /* FAKEMATCH: DIRECTION_STEP reads the s16-pair table (x high, z low) as one
-   * word per heading through an array reference; as const s32 words indexed
-   * directly, 79 of 146 instructions differ in tbs-en. */
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   s32 direction = leader->facing >> 12;
   struct FieldActor *block;

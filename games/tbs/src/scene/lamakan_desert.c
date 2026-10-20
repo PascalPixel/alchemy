@@ -441,18 +441,11 @@ static void CollapseFromHeat(void) {
   s32 count;
   const s32 *points;
   s32 left;
-  // Ordinary offset with a generic input/output boundary after its
-  // increment, or an input after point calculation, differs 10 in EN
-  // (228 native/built, 223 common). Repeated input operands retain 10.
-  // Generic offset/count outputs after the increment leave 26; a count
-  // output with offset input or the reverse leaves 22 (228 built).
-  // Reusing offset as the later frame countdown leaves 144 (222 built).
-  // Global allocation ranks point (5 refs/12 insns, 0.83), count (13/56,
-  // 0.70) and offset (7/34, 0.41) and hands out r5, r6 and r7 in that
-  // order; the native needs offset between the other two (8 or 9 refs).
-  /* FAKEMATCH: pins the byte offset to r6, where the game keeps it with the
-   * countdown in r7; unpinned, the countdown takes r6 and 22 to 112
-   * instructions differ in tbs-en. */
+  // Global allocation ranks point (5 refs over 12 instructions), count (13
+  // over 56) and offset (7 over 34) and hands out r5, r6 and r7 in that order;
+  // the native needs offset between the other two (8 or 9 refs).
+  /* FAKEMATCH(pin): offset fixed in r6, which leaves r7 to count; as a plain
+   * s32 offset, 11 of 228 instructions differ in tbs-en. */
   register s32 offset asm("r6");
   const s32 *point;
   s32 nearest;

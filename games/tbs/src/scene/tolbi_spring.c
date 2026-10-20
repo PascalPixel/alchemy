@@ -567,13 +567,14 @@ prompt:
   }
   UiWork_Finalize(window, 2);
 #else
-  /* FAKEMATCH: keep message in r10 and label in r9; as whole marker ids, the
-   * two swap registers. */
+  /* FAKEMATCH(barrier): message kept in r10 and the coin label in r9; as a
+   * plain local, the two swap and 8 of 290 instructions differ in tbs-ja. */
   asm("" : "+r"(message));
   for (;;) {
     text = MsgTolbiCoins;
-    /* FAKEMATCH: keep the coin label in r9; otherwise the repeated marker takes
-     * fp and moves state into r9. */
+    /* FAKEMATCH(barrier): the coin label kept in r9 and the marker in the pool;
+     * as a plain local, the marker takes fp, state r9, and 10 of 290
+     * instructions differ in tbs-ja. */
     asm("" : "+r"(text));
     state = &gGameState;
     coins = state->coins;
@@ -705,15 +706,14 @@ prompt:
               ->prize[prizeIndex]);
 #endif
 
-#if TBS_PATCH_1
-      /* FAKEMATCH: the pointer pair recomputes the prize-weight base in r0
-       * after the call; without it, 42 rows differ in tbs-en. */
+      /* FAKEMATCH(dead): the pointer pair, so the prize-weight base is computed
+       * again after the call; without it, 6 of 280 instructions differ in
+       * tbs-en. */
       state++;
       state--;
       {
-
-        /* FAKEMATCH: keeps the slot in r1 and state + 1 in r0; as a plain
-         * struct field, 42 rows differ in tbs-en. */
+        /* FAKEMATCH(pin): the slot in r1, where the native keeps it; as a
+         * plain s32, 5 of 280 instructions differ in tbs-en. */
         register s32 slot asm("r1") = prizeIndex + 284;
         s8 *prizeWeight = (s8 *)state + 1;
 
@@ -721,20 +721,6 @@ prompt:
           prizeWeight[slot] /= 2;
         }
       }
-#else
-      {
-        /* FAKEMATCH: keeps state + 1 in r0 as the native does. */
-        register s8 *prizeWeight asm("r0");
-        s32 slot = prizeIndex + 284;
-
-        /* FAKEMATCH: the native recomputes state + 1 after the call. */
-        __asm__("" : "=r"(prizeWeight) : "0"(state));
-        prizeWeight++;
-        if (prizeWeight[slot] > 1) {
-          prizeWeight[slot] /= 2;
-        }
-      }
-#endif
     }
   }
 #if TBS_PATCH_1

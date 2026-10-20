@@ -1697,10 +1697,7 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   spark->linkedObject = beacon;
   spark->update = SceneEffect_UpdateArcPosition;
   spark->speed = (Engine_MathSin((height & 0xfffff) >> 4) * 24) >> 16;
-  /* FAKEMATCH: the byte view keeps this store ahead of the beacon's reload; the
-   * field store lets the reload schedule first (score 210). Field store:
-   * differ 2. */
-  *(u8 *)&sprite->flags = 0;
+  sprite->flags = 0;
   sprite->image.priority = beacon->sprite->image.priority;
 }
 

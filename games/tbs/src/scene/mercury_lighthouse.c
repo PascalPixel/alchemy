@@ -557,9 +557,9 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
     Map_CopyCellsTo(39, 51, sourceColumn, 32, 1, copyHeight);
     column = step + 106;
     stripHeight = 4;
-    /* FAKEMATCH: width and height in locals, so loop.c hoists copyWidth's 2
-     * into r9 as native; as the literals 2 and 4, 26 instructions differ in
-     * tbs-en. */
+    /* FAKEMATCH(temporary): the strip's width and height in locals, so loop.c
+     * hoists the 2 into r9; as the literals 2 and 4, 11 of 90 instructions
+     * differ in tbs-en. */
     Engine_MapCopyCellsTo(105, 51, column, 32, copyWidth, stripHeight);
     if (delayFrames != 0) {
       Map_SetShake(0x50000, 0x50000, 0x10000);
@@ -2470,9 +2470,10 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
     Engine_EventOpenMessage(MIA, 0);
     if (Engine_EventChooseYesNo(0, 0) == 1) {
       Engine_EventWait(20);
-      /* FAKEMATCH: called through an unprototyped cast, which loads r1 before
-       * r0; called by its prototype, 2 instructions differ in tbs-en. */
-      MERCURY_LIGHTHOUSE_ANIMATE_ACTOR_AND_WAIT(MIA, 4);
+      /* FAKEMATCH(wrapper): called through an unprototyped cast, which loads
+       * r1 before r0; called by its prototype, 1 of 222 instructions differ in
+       * tbs-en. */
+      MERCURY_LIGHTHOUSE_ANIMATE_ACTOR_AND_WAIT(MIA, ANIM_SHAKE_HEAD);
       Engine_EventWait(20);
       questionMessage = firstMessage + 5;
       for (;;) {
@@ -2482,10 +2483,10 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
           break;
         }
         Engine_EventWait(20);
-        /* FAKEMATCH: called through an unprototyped cast, which loads r1
-         * before r0; called by its prototype, 2 instructions differ in tbs-en.
-         */
-        MERCURY_LIGHTHOUSE_ANIMATE_ACTOR_AND_WAIT(MIA, 4);
+        /* FAKEMATCH(wrapper): called through an unprototyped cast, which
+         * loads r1 before r0; called by its prototype, 1 of 222 instructions
+         * differ in tbs-en. */
+        MERCURY_LIGHTHOUSE_ANIMATE_ACTOR_AND_WAIT(MIA, ANIM_SHAKE_HEAD);
         Engine_EventWait(20);
         questionMessage = MsgMercuryDontHideTruth;
       }

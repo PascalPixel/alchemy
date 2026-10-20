@@ -403,9 +403,9 @@ static void DebugMenu_GiveConsumableTestStock(void) {
 /// Runs the Japanese text-buffer benchmark, then grants and sets test Djinn.
 /// Ivan receives six Jupiter Djinn; the other heroes receive seven.
 static void DebugMenu_GivePartyDjinn(void) {
-  /* FAKEMATCH: the benchmark's buffer, unused outside Japanese, keeps the
-   * native's 256 untouched frame bytes; declared inside the benchmark's #if,
-   * 4 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): the Japanese benchmark's buffer, unread outside
+   * Japanese, for the frame's 256 bytes; as declared inside the #if, 2 of 232
+   * instructions differ in tbs-en. */
   UNUSED u8 benchmarkBuffer[256];
 #if !TBS_PATCH_1
   s32 pass;

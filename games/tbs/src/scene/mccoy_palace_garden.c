@@ -192,12 +192,11 @@ static void Event_TalkToEastGuard(void) {
       Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_NORTH, 10);
       Garden_OpenPalaceGate();
       Actor_WalkToAndWait(ACTOR_WEST_GUARD, 328, 246);
-      /* FAKEMATCH: a value-returning cast loads the actor id after the two
-         zeros; as Actor_SetPosition by its prototype, 2 instructions differ
-         in tbs-en. */
+      // UB: called as returning a value, which loads the actor id after the
+      // two zeros; UBFIX calls it as declared.
       MCCOY_GARDEN_SET_ACTOR_POSITION(ACTOR_WEST_GUARD, 0, 0);
-      /* FAKEMATCH: the one-pass block keeps r0 last among the call above's
-         arguments; as a plain call, 2 instructions differ in tbs-en. */
+      /* FAKEMATCH(one-pass): the block keeps r0 last among the call above's
+         arguments; as a plain call, 1 of 233 instructions differ in tbs-en. */
       do {
         Engine_GameFlagSet(FLAG_MCCOY_PALACE_ADMITTED);
       } while (0);

@@ -3102,14 +3102,13 @@ static void LunpaFortress_RestoreRescueRoomDoors(void) {
   }
 }
 
-/// The shared source and field.h declarations lack const, but these three
-/// tables occupy .rodata. Pixel steps pack X above Z in two halfwords.
-/// Unsigned packing also defines the entries with negative X steps.
+/// Pixel steps pack X above Z in two halfwords. Unsigned packing also defines
+/// the entries with negative X steps.
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((u32)(dz) & 0xffff))
 
-/* FAKEMATCH: the three section attributes below place non-const tables in
- * .rodata, where the ROM has them; without them, tbs-en differs, and const
- * conflicts with field.h */
+// The ROM keeps these three tables in .rodata, but the shared declarations in
+// field.h and object_staged_actor.h lack const, so a section attribute places
+// each one.
 s32 gStagedActor_DirectionSteps[] __attribute__((section(".rodata"))) = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),

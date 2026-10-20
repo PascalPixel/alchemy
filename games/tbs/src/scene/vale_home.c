@@ -80,20 +80,13 @@ static void ValeHome_UpdateActor17Psynergy(void);
 static void ValeHome_UpdateActor20Psynergy(void);
 static void ValeHome_SetProgressFlagsAndExit(void);
 
-static inline void ValeHome_TurnAndWait(s32 actor, s32 facing, s32 frames) {
-  /* FAKEMATCH: forwarding inline for Event_DepartForQuest's three calls;
-   * called directly, the function grows by 4 bytes in tbs-en and builds its
-   * stack arguments in other registers. */
-  ValeHome_FaceDirectionAndWait(actor, facing, frames);
-}
-
 #ifdef UBFIX
 #define VALE_HOME_TURN_AND_WAIT ValeHome_FaceDirectionAndWait
 #else
 static inline s32 ValeHome_TurnAndWaitValue(s32 actor, s32 facing, s32 frames) {
-  /* FAKEMATCH: forwarding inline called as returning a value, its result
-   * discarded; called directly, 30 instructions differ in tbs-en (r5 and r6
-   * swap). */
+  /* FAKEMATCH(wrapper): a forwarding inline that calls
+   * ValeHome_FaceDirectionAndWait as returning a value; as a direct call in
+   * Event_SentToAidElders, 15 of 455 instructions differ in tbs-en. */
   return ((s32 (*)())ValeHome_FaceDirectionAndWait)(actor, facing, frames);
 }
 #define VALE_HOME_TURN_AND_WAIT ValeHome_TurnAndWaitValue
@@ -1144,7 +1137,7 @@ static void Event_DepartForQuest(void) {
   Event_SayThenWait(12, 20);
   Actor_SetSpeed(11, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(11, 168, 618);
-  ValeHome_TurnAndWait(11, FACING_NORTHEAST + FACING_STEP, 10);
+  ValeHome_FaceDirectionAndWait(11, FACING_NORTHEAST + FACING_STEP, 10);
   Engine_ActorSetAnimation(11, ANIM_SHAKE_HEAD);
   Event_SayThenWait(11, 20);
   ValeHome_FaceDirectionAndWait(12, FACING_SOUTHWEST + FACING_STEP, 10);
@@ -1277,7 +1270,7 @@ static void Event_DepartForQuest(void) {
   // Garet protests he knows that, Sis; actor 17 says he will eat anything,
   // and Garet jumps.
   Actor_ShowEmote(1, EMOTE_IN_FRONT | 2, 40);
-  ValeHome_TurnAndWait(1, FACING_NORTHEAST + FACING_STEP, 10);
+  ValeHome_FaceDirectionAndWait(1, FACING_NORTHEAST + FACING_STEP, 10);
   Event_SayThenWait(1, 10);
   Engine_ActorSetAnimationAndWait(17, ANIM_SHAKE_HEAD);
   Event_SayThenWait(17, 10);
@@ -1318,7 +1311,7 @@ static void Event_DepartForQuest(void) {
   Actor_ShowEmote(0, EMOTE_IN_FRONT | 1, 60);
   Engine_ActorRunRepeatedMotion(16, 1);
   Event_SayThenWait(16, 10);
-  ValeHome_TurnAndWait(1, FACING_NORTHEAST + FACING_STEP, 10);
+  ValeHome_FaceDirectionAndWait(1, FACING_NORTHEAST + FACING_STEP, 10);
   Actor_ShowEmote(1, EMOTE_IN_FRONT | 1, 20);
   Engine_ActorSetAnimationAndWait(16, ANIM_SHAKE_HEAD);
   Event_SayThenWait(16, 10);

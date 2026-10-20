@@ -289,11 +289,10 @@ s32 Battle_IsReviveEffect(s32 effectId) {
 /// with an effect.
 s32 BattleFx_RollSuccess(s32 caster, s32 target, s32 resistanceCategory,
                          s32 effectId, s32 successScale) {
-  /* FAKEMATCH: the psySeal, confusion and haunt reads go through state[offset]
-   * so each builds its address afresh, as native; as unit fields, 120
-   * instructions differ in tbs-en. */
-  u8 *state = (u8 *)UnitGet(target);
-  struct BattleUnit *unit = (struct BattleUnit *)state;
+  // Restore's psySeal and confusion reads and Cure All's haunt read go
+  // through the byte view; as unit fields, each zero test merges with its
+  // neighbour's into one halfword or word load.
+  struct BattleUnit *unit = UnitGet(target);
   s32 attempts = 1;
   s32 score;
   s32 attempt;
@@ -316,16 +315,14 @@ s32 BattleFx_RollSuccess(s32 caster, s32 target, s32 resistanceCategory,
   // sleep, seal or curse; the order of these tests is the ROM's.
   goto action4_check;
 action4_tail:
-  if (unit->stun == 0 && unit->sleep == 0 &&
-      state[(u32)&((struct BattleUnit *)0)->psySeal] == 0 &&
+  if (unit->stun == 0 && unit->sleep == 0 && *(u8 *)&unit->psySeal == 0 &&
       unit->grimReaper == 0) {
     return 0;
   }
   goto action4_done;
 action4_check:
   if (effectId == ABILITY_EFFECT_RESTORE) {
-    if (unit->delusion == 0 &&
-        state[(u32)&((struct BattleUnit *)0)->confusion] == 0 &&
+    if (unit->delusion == 0 && *(u8 *)&unit->confusion == 0 &&
         unit->charm == 0) {
       goto action4_tail;
     }
@@ -340,8 +337,7 @@ action4_done:
   sleep = &unit->sleep;
   if (effectId == ABILITY_EFFECT_CURE_ALL && *poison == 0 && *delusion == 0 &&
       *confusion == 0 && *charm == 0 && *stun == 0 && *sleep == 0 &&
-      unit->psySeal == 0 && unit->grimReaper == 0 &&
-      state[(u32)&((struct BattleUnit *)0)->haunt] == 0) {
+      unit->psySeal == 0 && unit->grimReaper == 0 && *(u8 *)&unit->haunt == 0) {
     return 0;
   }
 

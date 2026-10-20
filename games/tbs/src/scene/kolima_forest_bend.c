@@ -414,9 +414,8 @@ static void KolimaForestBend_CreateLogs(struct BendLog *entry) {
     actor->radius = 32;
     height = Map_GetTerrainHeight(0, actor->x.part.pixel, actor->z.part.pixel)
              << 16;
-    /* FAKEMATCH: y is updated through an s32 lvalue, since the union's s16
-     * member would order the next entry load after this store; held as union
-     * FieldObject, 4 instructions differ in tbs-en. */
+    // Through an s32 view of y, not y.fixed, the step to the next entry is
+    // scheduled before this store.
     *(s32 *)&actor->y += height;
     actor->terrainHeight = height;
   }

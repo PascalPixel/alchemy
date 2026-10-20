@@ -202,12 +202,12 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   }
 
   if (found < 0) {
-    /* FAKEMATCH: the slot offset index * 4 + 88 is recomputed each pass as the
-     * bytes do; as state->actionSlots[index].encodedAction, 22 instructions
-     * differ in tbs-en. */
     for (index = 0; index <= 30; index++) {
+      /* FAKEMATCH(temporary): the slot's byte offset in a local, recomputed
+       * each pass; as state->actionSlots[index].encodedAction, 5 of 77
+       * instructions differ in tbs-en. */
       s32 offset = index * sizeof(state->actionSlots[0]) +
-                   (s32)&((struct BattleUnit *)0)->actionSlots;
+                   offsetof(struct BattleUnit, actionSlots);
 
       if (*(u16 *)((u8 *)state + offset) == 0) {
         *(u16 *)((u8 *)state + offset) = key;

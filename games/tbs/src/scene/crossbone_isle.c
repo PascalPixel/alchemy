@@ -289,10 +289,9 @@ static void CrossboneIsle_RestoreMovedRoomBlock(void) {
 /// Move on a guarded room's block, and after each push: once it reaches column
 /// 40 it sinks into the floor in a ring of dust, and the way on is open.
 static void Event_MoveBlock(void) {
-  /* FAKEMATCH: retain the scalar scene-slot address calculation; direct
-   * &gGameState.scene folds the address and removes eight bytes in tbs-en. */
   struct FieldActor *block;
   s16 *sceneNumber;
+  struct GameState *state;
   s32 column;
 
   block = Object_GetById(8);
@@ -302,10 +301,10 @@ static void Event_MoveBlock(void) {
   }
 
 #if TBS_PATCH_1
-  {
-    s32 sceneOffset = offsetof(struct GameState, scene);
-    sceneNumber = (s16 *)((u8 *)&gGameState + sceneOffset);
-  }
+  // Through state, the scene's address is built as the game state's plus an
+  // offset, as the bytes have it; &gGameState.scene folds into one literal.
+  state = &gGameState;
+  sceneNumber = &state->scene;
   if (Engine_GameFlagIsSet(*sceneNumber +
                            (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
                             (s32)&SceneId_CrossboneIsle6)) != 0) {
@@ -331,10 +330,8 @@ static void Event_MoveBlock(void) {
   Map_CopyCellAttributes(42, 10, 1, 1, column, 10);
 
 #if !TBS_PATCH_1
-  {
-    s32 sceneOffset = offsetof(struct GameState, scene);
-    sceneNumber = (s16 *)((u8 *)&gGameState + sceneOffset);
-  }
+  state = &gGameState;
+  sceneNumber = &state->scene;
 #endif
   Engine_GameFlagSet(*sceneNumber + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
                                      (s32)&SceneId_CrossboneIsle6));

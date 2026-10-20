@@ -1083,12 +1083,13 @@ KolimaForestBridge_BurstOnBarrier(struct ScriptInterpreter *interpreter) {
     return 0;
   }
   Engine_AudioPlayCue(SE_106);
+  // UB: this routine returns void; call it through its declared type.
 #ifdef UBFIX
   Engine_ObjectSetScript(arg0, gKolimaForestBridge_SparkleBurstScript);
 #else
-  /* FAKEMATCH: called through a cast to the call type the bytes show; called by
-   * its prototype or through Object_SetScript, r0 is set before the script
-   * literal loads (2 differ) */
+  /* FAKEMATCH(wrapper): called through a cast to the unprototyped call the
+   * bytes show, which loads the script before r0; as a call by its prototype,
+   * 1 of 79 instructions differ in tbs-en. */
   ((s32 (*)())Engine_ObjectSetScript)(
       (s32)arg0, (s32)gKolimaForestBridge_SparkleBurstScript);
 #endif

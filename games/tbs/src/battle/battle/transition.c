@@ -72,7 +72,8 @@ s32 BattlePres_RunMosaicFadeOut(void) {
 /// scanline BG2CNT values (BattleCamera_SetRange) read from character blocks 2
 /// and 3. Called with screen block 7 by BattleBackground_Load and
 /// BattlePresentation_ConfigurePaletteFade.
-void Graphics_BuildSequentialTileTable(s32 *destination) {
+void Graphics_BuildSequentialTileTable(void *tilemap) {
+  s32 *destination = tilemap;
   u32 packedIndices;
   s32 wordIndex;
 
@@ -102,7 +103,8 @@ void Graphics_BuildSequentialTileTable(s32 *destination) {
 /// where BattleBackground_Load decodes the picture. Called with screen block
 /// 31 (BATTLE_BG1CNT) by BattleBackground_Load and
 /// BattlePresentation_ConfigurePaletteFade.
-void BattlePresentation_BuildTilemap(s32 *destination) {
+void BattlePresentation_BuildTilemap(void *tilemap) {
+  s32 *destination = tilemap;
   s32 entry;
   u32 index;
 

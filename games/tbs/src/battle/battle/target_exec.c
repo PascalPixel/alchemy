@@ -126,9 +126,11 @@ s32 BattleEffectDeadCheck(s32 effect) {
 ///        multiplier, critical hit and any hit roll made in advance.
 /// slot : which of the plan's targets (0 to plan->targetCount - 1).
 ///
-/// Declared to return s32, as the bytes require (the epilogue keeps r0), but
-/// it returns nothing and its callers ignore the result.
+#ifdef UBFIX
+void BattleTargetExec(struct BattlePlan *plan, s32 slot) {
+#else
 s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
+#endif
   s32 distance; // steps from the aimed position, 0 to 5
   struct BattleAct *ability;
   struct BattleUnit *actor;
@@ -597,6 +599,13 @@ s32 BattleTargetExec(struct BattlePlan *plan, s32 slot) {
           case ABILITY_THOR:
             maxHpPercent = 12;
             break;
+            // BUG: another id with summon-kind data leaves this uninitialized.
+            // It has no known summon bonus, so use its base power alone.
+#ifdef UBFIX
+          default:
+            maxHpPercent = 0;
+            break;
+#endif
           }
           power += target->maxHp * maxHpPercent / 100;
         }

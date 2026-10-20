@@ -111,12 +111,17 @@ the effect is still drawing, and only once its turn in the queue comes.
 
 ### Functions that return a value no caller reads
 
-Some helpers are declared to return `s32` (or a pointer) and end without a
-`return`, or with a bare one; their callers use them for their side effects.
+Some native helpers are declared to return an integer or pointer and end
+without a `return`, or with a bare one; their callers use their side effects.
+Falling off the end is undefined only when a caller uses the missing result.
+The three helpers that formerly forwarded such a result now just call the
+helper, so none reads a value that was never produced.
+
 Changing the return type can change the return-address register: agscc's
 `pop {r1}; bx r1` preserves r0, while `pop {r0}; bx r0` does not. Matching
-keeps the existing type where the `void` form changes those instructions.
-These missing results still cause warnings in `make modern`.
+keeps the existing type only where the `void` form changes the assembly;
+`BattleEventRuntime_Reset` is `void` in every build. `UBFIX`, enabled by the
+modern build, gives the remaining side-effect helpers `void` contracts.
 
 ### One object, seen through several structs
 

@@ -342,7 +342,11 @@ s32 EnemySlotGet(void) {
 /// Lays the enemies out again and moves each one's object anchor to its new
 /// place. Called by BattleTargetExec after an enemy joins. Writes the
 /// anchorX and anchorZ of every enemy's battle object.
+#ifdef UBFIX
+void EnemyUpdate(void) {
+#else
 s32 EnemyUpdate(void) {
+#endif
   struct BattleWork *battle = gBattleWork;
   u16 unitIds[14];
   s32 xPositions[6];

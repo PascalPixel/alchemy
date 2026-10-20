@@ -149,7 +149,11 @@ void BattleActor_UpdateSpritePriorities(void) {
 /// wherever a unit's statuses may have changed: BattleEv_DispatchQueued,
 /// BattleEvent_Playback, Battle_ProcessRoundEnd, BattleActor_ResetRuntimeFields
 /// and BattleActor_SpawnObjectsForList.
+#ifdef UBFIX
+void BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject) {
+#else
 s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject) {
+#endif
   struct BattleUnit *unit = UnitGetFar(unitId);
   s8 poison = unit->poison;
   u32 flags = 0;
@@ -194,7 +198,11 @@ s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject) {
 /// unit by BattleActor_UpdateSpritePriorities. Changes the battle object's
 /// cycleTimer, selectedCondition, animation and animationEntry, and
 /// registers or unregisters the icon on its first sprite.
+#ifdef UBFIX
+void BattleStatusIcon_Cycle(struct BattleObj *battleObject) {
+#else
 s32 BattleStatusIcon_Cycle(struct BattleObj *battleObject) {
+#endif
   struct AnimationEntry *shownIcon;
   struct AnimationEntry *icon;
   struct AnimationObject *record;
@@ -280,7 +288,11 @@ s32 BattleStatusIcon_Cycle(struct BattleObj *battleObject) {
 /// to move) or down, else standing; then gives its sprites their palette
 /// row, 14 to 17 by unit. Called by BattleActor_SpawnObjectsForList,
 /// BattleEv_DispatchQueued, BattleEvent_Playback and Battle_ProcessRoundEnd.
+#ifdef UBFIX
+void BattlePres_SetActorModeAndAction(s32 unitId) {
+#else
 s32 BattlePres_SetActorModeAndAction(s32 unitId) {
+#endif
   struct BattleUnit *unit;
   s32 pose;
 
@@ -539,8 +551,11 @@ s32 BattleObj_MarkForRelease(s32 unitId) {
 /// Releases the object of every unit marked by BattleObj_MarkForRelease,
 /// leaving its battle object with no object. Called by Battle_RunEncounter
 /// at the end of each round and by BattlePresentation_DispatchAction.
-/// Declared to return a pointer, but it returns nothing (README.md, Design).
+#ifdef UBFIX
+void BattleMotion_DestroyAllSlotObjects(void) {
+#else
 void *BattleMotion_DestroyAllSlotObjects(void) {
+#endif
   s32 unitId;
   s32 placementIndex;
   struct BattleObj *battleObject;
@@ -576,7 +591,11 @@ s32 Battle_GetWorkEntryPair(s32 place, struct FixedPointPosition *position) {
 /// gCamera_FlagTransformWork first. Called by the three projections,
 /// BattleMotion_ProjectPosition, BattleMotion_ProjectScaledPosition and
 /// BattleMotion_ProjectConditionalPosition. Replaces the transform state.
+#ifdef UBFIX
+void Camera_ApplyTransformByFlag(void) {
+#else
 s32 Camera_ApplyTransformByFlag(void) {
+#endif
   struct BattleCamera *camera = gCameraWork;
   Render_ResetTransformState();
   if (GameFlag_TestFar(FLAG_CHOOSING_COMMANDS) != 0) {

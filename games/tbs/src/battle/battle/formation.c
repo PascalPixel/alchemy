@@ -196,7 +196,11 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
 /// 999 and power at 200. Changes the unit's base stats and level and works
 /// out its stats again (UnitCalc). Called by BattleFormation_BuildEnemyList
 /// for each enemy of a monster battle.
+#ifdef UBFIX
+void BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
+#else
 s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
+#endif
   struct BattleBaseStats *base;
   struct BattleUnit *unit;
   s32 value;
@@ -310,7 +314,11 @@ s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
 /// Does nothing for a unit that is not an enemy, a class not listed or one
 /// with no letters given. Clears the letter's bit in BattleWork.summonMasks.
 /// Called by BattleActor_RemoveFromLists.
+#ifdef UBFIX
+void BattleEnemy_ReleaseNameLetter(s32 actorId) {
+#else
 s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
+#endif
   struct BattleWork *battle = gBattleWork;
   struct BattleUnit *unit;
   s32 count = battle->summonCount;
@@ -348,7 +356,11 @@ s32 BattleEnemy_ReleaseNameLetter(s32 actorId) {
 /// appended to its name, once a second of its class arrives.
 /// Called by BattleFormation_BuildEnemyList and BattleTargetExec when
 /// BattleEnemy_ClaimNameLetter returns bit 15. Writes BattleUnit.name.
+#ifdef UBFIX
+void BattleEnemy_LetterFirstOfClass(s32 classId) {
+#else
 s32 BattleEnemy_LetterFirstOfClass(s32 classId) {
+#endif
   struct BattleUnit *unit;
   s32 enemyIndex;
   s32 nameIndex;

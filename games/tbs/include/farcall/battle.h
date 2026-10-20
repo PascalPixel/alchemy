@@ -35,5 +35,9 @@ s32 DjinnRecovery_TickTwentyFar(void);
 s32 DebugParty_LoadPresetFar(s32 preset);
 /// Far call to BattleObjPut.
 void BattleActor_CommitPlacementFar(void);
+#ifdef UBFIX
+void BattlePresentation_WaitForPromptAtFar(s32 x, s32 y);
+#else
 s32 BattlePresentation_WaitForPromptAtFar(s32 x, s32 y);
+#endif
 s32 BattleParty_CountStandbyDjinnFar(u32 unitId, u8 *counts);

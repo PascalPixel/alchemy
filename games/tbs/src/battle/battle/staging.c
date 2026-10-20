@@ -121,10 +121,14 @@ finish:
 /// Called by each staging runner before its effect plays: RunUnitTransition,
 /// RunAttack, RunPlainAttack, RunItem and RunPsynergyCast. Writes effect's
 /// prelude (0), kind, variant, actor, actors, firstTarget, count and range
-/// (1); the caller sets its side. Declared to return s32, but returns
-/// nothing.
+/// (1); the caller sets its side.
+#ifdef UBFIX
+void BattlePres_BuildTargetList(struct BattlePlan *plan,
+                                struct BattleEffectArgument *effect) {
+#else
 s32 BattlePres_BuildTargetList(struct BattlePlan *plan,
                                struct BattleEffectArgument *effect) {
+#endif
   s16 *outputTarget;
   u32 flags;
   s32 livingTargets;
@@ -416,10 +420,13 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
 /// plays its events; with no target, only waits for the player.
 /// Called by BattlePresentation_DispatchAction for PLAN_SHOW_MESSAGES, an
 /// action with no animation: each target's BattleTargetExec is played at
-/// once by BattleEv_DispatchQueued. Declared to return s32, but returns
-/// nothing.
+/// once by BattleEv_DispatchQueued.
 /// plan : the action and its targets
+#ifdef UBFIX
+void BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused) {
+#else
 s32 BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused) {
+#endif
   s32 targetIndex;
 
   BattlePres_SetActorModes(0, 0);
@@ -815,9 +822,14 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
 /// and every layer's frame set to 255 (none) so that it is drawn again.
 /// Called by BattleMotion_FlashHit and BattleEvent_Playback (a hit's flashes
 /// and a unit's redraw), with the flash's colour or the unit's own
-/// (BattleMotion_GetSlotPalette). Declared to return s32, but returns nothing.
+/// (BattleMotion_GetSlotPalette).
+#ifdef UBFIX
+void BattleMotion_SetRecordChildValues(struct MotionObject *object,
+                                       s32 colorMode) {
+#else
 s32 BattleMotion_SetRecordChildValues(struct MotionObject *object,
                                       s32 colorMode) {
+#endif
   s32 recordIndex = 0;
   s32 childIndex;
   s32 entryCount;

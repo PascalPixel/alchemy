@@ -135,7 +135,11 @@ s32 SummonSlot_RegisterActorSprites(s32 unitId) {
 
 /// Frees every enemy sprite slot unit unitId holds, unloading its sprite.
 /// Called by BattleObj_MarkForRelease. Clears those gBattleWork->spriteSlots.
+#ifdef UBFIX
+void BattleMotion_ReleaseObjectSlotByValue(s32 unitId) {
+#else
 s32 BattleMotion_ReleaseObjectSlotByValue(s32 unitId) {
+#endif
   struct BattleWork *battle = gBattleWork;
   s32 spriteSlot;
 

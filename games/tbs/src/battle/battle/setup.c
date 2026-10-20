@@ -191,7 +191,11 @@ void Party_ReservedNoOp5B14(s32 unused) {}
 /// their turns, statuses, Djinn element boosts, the countdowns) and
 /// recalculates their stats, as a battle ends. Called by Battle_RunEncounter
 /// on every way out of the battle.
+#ifdef UBFIX
+void BattleParty_ResetActiveRuntimeFields(void) {
+#else
 s32 BattleParty_ResetActiveRuntimeFields(void) {
+#endif
   u16 owners[10];
   s32 count;
   s32 i;
@@ -250,7 +254,11 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
 /// owner has no battle object is Set again and leaves the list. Called by
 /// Battle_RunEncounter once the unit lists and battle objects are in place.
 /// Changes the party's and the opponent's recovery lists and Djinn states.
+#ifdef UBFIX
+void BattleParty_ReconcileDjinnRecovery(void) {
+#else
 s32 BattleParty_ReconcileDjinnRecovery(void) {
+#endif
   u16 owners[10];
   s32 count;
   s32 i;

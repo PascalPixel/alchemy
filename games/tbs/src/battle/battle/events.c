@@ -12,9 +12,12 @@
 /// and BattleEvent_Playback. Clears the unit's element levels, poison, stat
 /// stages and their turns, every status, its equipment bonuses, ready,
 /// immobile and challenge; UnitCalcFar then recomputes its stats, and
-/// BattleUnit_BuildStatusFlags its battle object's status flags, whose result
-/// it returns.
+/// BattleUnit_BuildStatusFlags its battle object's status flags.
+#ifdef UBFIX
+void BattleActor_ResetRuntimeFields(s32 unitId) {
+#else
 s32 BattleActor_ResetRuntimeFields(s32 unitId) {
+#endif
   struct BattleUnit *unit;
   s32 element;
 
@@ -48,7 +51,7 @@ s32 BattleActor_ResetRuntimeFields(s32 unitId) {
   unit->challenge = 0;
 
   UnitCalcFar(unitId);
-  return BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
+  BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
 }
 
 /// One OAM entry for Runtime_PushSlotEntry.
@@ -56,10 +59,16 @@ s32 BattleActor_ResetRuntimeFields(s32 unitId) {
 /// bit-fields change BattlePresentation_WaitForAdvance (differ 50).
 struct AdvanceSprite {
   struct AdvanceSprite *next; ///< never set here
-  u16 attr0;                  ///< OAM attribute 0: y in the low byte
-  u16 attr1;                  ///< OAM attribute 1: x in the low nine bits
-  u16 attr2;                  ///< OAM attribute 2: tile in the low ten bits
-  u16 attr3;                  ///< cleared with attr2 each frame
+  union {
+    struct {
+      u16 attr0; ///< OAM attribute 0: y in the low byte
+      u16 attr1; ///< OAM attribute 1: x in the low nine bits
+      u16 attr2; ///< OAM attribute 2: tile in the low ten bits
+      u16 attr3; ///< cleared with attr2 each frame
+    } fields;
+    u32 words[2]; ///< paired attributes, initialized together
+    u8 bytes[8];  ///< the y byte can change without replacing attribute 0
+  } attributes;
 };
 
 /// The advance arrow's attribute 0: a 256-colour, semi-transparent tall
@@ -75,7 +84,11 @@ struct AdvanceSprite {
 /// message window first. Takes a 128-byte VRAM cache entry for the arrow's
 /// tiles and frees it; each frame queues the WINOUT writes, sets REG_BLDALPHA
 /// and pushes the arrow sprite.
+#ifdef UBFIX
+void BattlePresentation_WaitForAdvance(void) {
+#else
 s32 BattlePresentation_WaitForAdvance(void) {
+#endif
   struct AdvanceSprite *prompt;
   struct AdvanceSprite promptStorage;
   s32 frame;
@@ -101,18 +114,18 @@ s32 BattlePresentation_WaitForAdvance(void) {
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
     Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
-    *(u32 *)&prompt->attr0 = ADVANCE_ARROW_ATTR0;
-    *(u32 *)&prompt->attr2 = 0;
+    prompt->attributes.words[0] = ADVANCE_ARROW_ATTR0;
+    prompt->attributes.words[1] = 0;
     tile = VramCache_Reload(tileSlot, frameTiles) & 0x3ff;
-    attr2 = prompt->attr2;
-    prompt->attr2 = (attr2 & ~0x3ff) | tile;
+    attr2 = prompt->attributes.fields.attr2;
+    prompt->attributes.fields.attr2 = (attr2 & ~0x3ff) | tile;
     // The window is placed in tiles, its offset in 1/256 pixels.
     x = (u16)((window->x * 8 + (offset->x >> 8) + 4) & 0x1ff);
-    attr1 = prompt->attr1;
-    prompt->attr1 = (attr1 & ~0x1ff) | x;
+    attr1 = prompt->attributes.fields.attr1;
+    prompt->attributes.fields.attr1 = (attr1 & ~0x1ff) | x;
     // Bob up and down by up to 2 pixels.
-    *(u8 *)&prompt->attr0 = Trig_Sin(gFrameCount << 12) / 32768 +
-                            window->y * 8 + (offset->y >> 8) + 6;
+    prompt->attributes.bytes[0] = Trig_Sin(gFrameCount << 12) / 32768 +
+                                  window->y * 8 + (offset->y >> 8) + 6;
     Runtime_PushSlotEntry(prompt, 240);
     // A held advance key counts only after 16 frames, so one still held from
     // the previous message does not skip this one; B held goes on at once.
@@ -133,7 +146,11 @@ s32 BattlePresentation_WaitForAdvance(void) {
 /// the cursor's tiles and frees it, and each frame queues the WINOUT writes,
 /// sets REG_BLDALPHA and pushes the cursor sprite.
 /// x, y : in pixels
+#ifdef UBFIX
+void BattlePresentation_WaitForPromptAt(s32 x, s32 y) {
+#else
 s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y) {
+#endif
   struct MenuPoint position;
   s32 frameTiles;
   struct CursorSprite promptStorage;
@@ -177,8 +194,11 @@ void BattleEv_MarkDisplay(void) { gBattleDisplayWork->marked = 1; }
 /// queues for a self-destructing actor, from BattleEv_DispatchQueued and
 /// BattleEvent_Playback. A party unit is left as it is. Clears the battle
 /// object's object and active and releases its dispatch object.
-/// Declared to return s32, but returns nothing.
+#ifdef UBFIX
+void BattleActor_DestroyTemporaryObject(s32 unitId) {
+#else
 s32 BattleActor_DestroyTemporaryObject(s32 unitId) {
+#endif
   struct BattleUnit *enemy;
   struct BattleObj *slot;
 
@@ -214,8 +234,12 @@ void BattleEv_GrantDjinnBonus(struct BattleEventState *runtime, u32 operand) {
 /// (a blocked cast, a dodge, a broken item, a plan's targets one by one),
 /// BattleCommand_BuildPlan's debug defeat, and the turn's end (turn_end.c).
 /// Each message, flash and fall waits its frames here. Ends with
-/// BattleEventRuntime_Reset, whose result it returns.
+/// BattleEventRuntime_Reset.
+#ifdef UBFIX
+void BattleEv_DispatchQueued(void) {
+#else
 u32 BattleEv_DispatchQueued(void) {
+#endif
   struct BattleEventState *runtime = &gBattleWork->events;
   struct BattleEventQueue *queue = &runtime->queue;
   s32 eventIndex;
@@ -286,7 +310,7 @@ u32 BattleEv_DispatchQueued(void) {
         break;
       }
   }
-  return BattleEventRuntime_Reset();
+  BattleEventRuntime_Reset();
 }
 
 /// Queues one battle event (enum BattleEventOpcode) with its operand, and

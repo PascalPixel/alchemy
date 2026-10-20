@@ -292,7 +292,11 @@ struct BattleGroupOrder {
 /// Called by Battle_RunEncounter once every unit has acted. Changes HP, PP,
 /// BattleUnit.ready, the Djinn recovery lists and the counters the Tick
 /// functions clear, and puts the background back in its perspective mode (2).
+#ifdef UBFIX
+void Battle_ProcessRoundEnd(void) {
+#else
 s32 Battle_ProcessRoundEnd(void) {
+#endif
   struct BattleWork *battle;
   s32 side;
   s32 sideCount;
@@ -518,7 +522,11 @@ s32 Battle_ProcessRoundEnd(void) {
 /// action's plan. Changes the side's Djinn recovery list, the actor's
 /// elementLevels, HP and grimReaper, and works out its stats again (UnitCalc);
 /// the messages are queued and played at once (BattleEv_DispatchQueued).
+#ifdef UBFIX
+void BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
+#else
 s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
+#endif
   s32 unitId;
   struct BattleUnit *unit;
   s32 battleContinues;

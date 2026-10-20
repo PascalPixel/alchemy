@@ -26,8 +26,13 @@ struct BattleAutomaticState {
 /// BattleUnit.rewards. Returns nothing.
 /// retry : 0 when the round is built: only a guard is settled now (it must
 ///         raise before anyone acts); 1 at the enemy's turn: the rest.
+#ifdef UBFIX
+void BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
+                                   s32 retry) {
+#else
 s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
                                   s32 retry) {
+#endif
   u32 selection;
   struct BattleAutomaticState *selectionMemory;
   struct EnemyDefinition *enemy;

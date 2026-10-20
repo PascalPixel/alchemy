@@ -96,7 +96,11 @@ s32 LinkBattle_ReceiveParty(void) {
 /// owner given the unit id the opponent knows them by. Records that id of
 /// each member in gBattleWork->ownerSlots (0xff for none). Nothing in the
 /// source calls it.
+#ifdef UBFIX
+void LinkBattle_SendParty(void) {
+#else
 s32 LinkBattle_SendParty(void) {
+#endif
   u8 *buffer;
   struct BattleWork *work;
   s32 j;
@@ -157,15 +161,21 @@ s32 LinkBattle_SendParty(void) {
   MemFree(buffer);
 }
 
-/// Copies the first four characters of a name and a terminator (five
-/// bytes) into a buffer on its own stack, an underscore for each one that is
-/// missing, and returns a pointer to the terminator in that buffer, which no
-/// longer exists once it returns. Its first two arguments are ignored.
+/// Copies four characters of a name and a terminator, an underscore for each
+/// missing character, and returns a pointer to the terminator.
+/// UBFIX keeps the private scratch buffer valid until the next call; the
+/// original returns a pointer to expired stack storage. The first two
+/// arguments are ignored.
 /// Nothing calls it.
 UNUSED u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1,
                                                u16 *source) {
+#ifdef UBFIX
+  static u8 sBuffer[5];
+  u8 *base = sBuffer;
+#else
   u8 buffer[5];
   u8 *base = buffer;
+#endif
   u32 fill = '_';
   u8 *current = base;
   u8 *dst = current;
@@ -183,7 +193,8 @@ UNUSED u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1,
     count--;
   } while (count >= 0);
   base[4] = 0;
-  // BUG: buffer is this function's own stack, gone once it returns.
+  // BUG: the original buffer is on the stack, gone once this returns.
+  // UBFIX keeps the result until the next call in private scratch storage.
   return dst;
 }
 
@@ -354,7 +365,11 @@ s32 BattlePres_SyncTurn(void) {
 /// by (FIRST_ENEMY_UNIT plus their place in the party), in
 /// gBattleWork->ownerSlots. Called by Battle_RunEncounter as a link battle
 /// is set up.
+#ifdef UBFIX
+void BattleParty_AssignMemberSlots(void) {
+#else
 s32 BattleParty_AssignMemberSlots(void) {
+#endif
   u16 activeMembers[8];
   struct BattleWork *battleState = gBattleWork;
   s32 partySize = BattleParty_PrepareActiveOwners(activeMembers);

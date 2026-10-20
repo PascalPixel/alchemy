@@ -433,9 +433,8 @@ void BattleEvent_Playback(void) {
 /// before playback is scheduled (BattleCommand_BuildPlan, turn_end.c). Sets
 /// gBattleWork->events' phase to BATTLE_PLAYBACK_IDLE, clears the queue, the
 /// event index, the timer, the target index and the flags (the Djinn bonus),
-/// and sets the hit sound back to SE_HEAVY_IMPACT. Declared to return u32,
-/// but returns nothing.
-u32 BattleEventRuntime_Reset(void) {
+/// and sets the hit sound back to SE_HEAVY_IMPACT.
+void BattleEventRuntime_Reset(void) {
   struct BattleEventState *events;
 
   events = &gBattleWork->events;
@@ -452,9 +451,12 @@ u32 BattleEventRuntime_Reset(void) {
 /// target, then removes the callback and resets the events.
 /// Called after the effect by the staging runners in staging.c, and after a
 /// Djinn's effect by BattleCommand_BuildPlan and turn_end.c. Playback still
-/// idle (the effect never called EFFECT_SHOW_DAMAGE) is started here. Returns
-/// BattleEventRuntime_Reset's result.
+/// idle (the effect never called EFFECT_SHOW_DAMAGE) is started here.
+#ifdef UBFIX
+void BattleEventRuntime_WaitForReady(void) {
+#else
 s32 BattleEventRuntime_WaitForReady(void) {
+#endif
   s32 state;
   struct BattleEventState *events;
 
@@ -470,7 +472,7 @@ s32 BattleEventRuntime_WaitForReady(void) {
     } while (events->phase != BATTLE_PLAYBACK_READY);
   }
   Scheduler_RemoveCallback(BattleEvent_Playback);
-  return BattleEventRuntime_Reset();
+  BattleEventRuntime_Reset();
 }
 
 #undef FELLED_FLASH_FRAMES

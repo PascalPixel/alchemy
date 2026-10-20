@@ -292,14 +292,22 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
 
 /// Sets the camera's eye at its stored distance without taking a zoom;
 /// nothing in the source calls it.
-/// Its zoom is an uninitialized local (see the BUG below).
+/// The original zoom is an uninitialized local; UBFIX makes it an explicit
+/// percentage argument, as in BattlePres_SetupTransitionScene.
+#ifdef UBFIX
+UNUSED void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y,
+                                                   s32 zoom) {
+#else
 UNUSED void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y) {
+#endif
   s32 span = 0x01fe0000;
   // BUG: zoom is uninitialized; reads entry r4 directly (lsls r0, r4, #16).
-  s32 uninitializedZoom;
+#ifndef UBFIX
+  s32 zoom;
+#endif
   struct BattleCamera *camera = gCameraWork;
   s32 *focus = camera->pos;
-  s32 scale = (uninitializedZoom << 16) / 100;
+  s32 scale = (zoom << 16) / 100;
   s32 renderBounds[3];
   s32 measuredBounds[3];
   s32 sourceBounds[3];

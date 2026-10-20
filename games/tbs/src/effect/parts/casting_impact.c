@@ -46,20 +46,21 @@ void BattleFx_StepPaletteToResource(s32 resourceId) {
   Iwram_CopyWords((u16 *)BG_PLTT, target, 128);
 }
 
-/// Loads one of the impact's pictures (Resource_LoadAndDecompress).
+/// Loads the impact orb's picture (Resource_LoadAndDecompress).
 static inline void CastingImpact_LoadResource(const void *id, void *dest,
                                               s32 skip, s32 copy) {
-  /* FAKEMATCH: inline scope keeps each resource call's arguments local for
-   * BattleFx_RunCastingImpact; with its 24 loads called directly, it differs
-   * throughout in tbs-en. */
+  /* FAKEMATCH(wrapper): the orb's load through this helper, so the packing
+   * loads Ram_MapCellBuffer again; as a direct call in
+   * BattleFx_RunCastingImpact, 75 of 3070 instructions differ in tbs-en. */
   Resource_LoadAndDecompress((s32)id, dest, skip, copy);
 }
 
 /// Packs a casting impact's picture rows (Graphics_PackTileRows).
 static inline void CastingImpact_PackRows(void *src, void *dest, s32 width,
                                           s32 height) {
-  /* FAKEMATCH: keep packing arguments within their own inline scope;
-   * called directly, 202 instructions differ in tbs-en. */
+  /* FAKEMATCH(wrapper): the orb's packing through this helper, which loads
+   * the buffer's address last; as a direct call in BattleFx_RunCastingImpact,
+   * 72 of 3070 instructions differ in tbs-en. */
   Graphics_PackTileRows(src, dest, width, height);
 }
 
@@ -67,8 +68,9 @@ static inline void CastingImpact_PackRows(void *src, void *dest, s32 width,
 static inline void CastingImpact_DrawImage(void *canvas, const void *pixels,
                                            s32 x, s32 y, s32 width, s32 height,
                                            DrawRectangle *draw) {
-  /* FAKEMATCH: inline scope reloads each image address at its drawing
-   * call; called directly, 938 instructions differ in tbs-en. */
+  /* FAKEMATCH(wrapper): four draws through this helper, which keeps the
+   * frame at 184 bytes and loads the image's address late; as direct calls in
+   * BattleFx_RunCastingImpact, 468 of 3070 instructions differ in tbs-en. */
   (*draw)(canvas, pixels, x, y, width, height);
 }
 
@@ -76,8 +78,9 @@ static inline void CastingImpact_DrawImage(void *canvas, const void *pixels,
 static inline void CastingImpact_DrawTallImage(void *canvas, const void *pixels,
                                                s32 x, s32 y, s32 width,
                                                DrawRectangle *draw) {
-  /* FAKEMATCH: derive height inside the inline scope so the dimension stores
-   * reuse one register; called directly, 128 instructions differ in tbs-en. */
+  /* FAKEMATCH(wrapper): the flame's draw through this helper, a call of its
+   * own; as a direct call with 64 in BattleFx_RunCastingImpact, merged into
+   * another draw's call, 61 of 3070 instructions differ in tbs-en. */
   (*draw)(canvas, pixels, x, y, width, width * 2);
 }
 
@@ -87,8 +90,9 @@ static inline void CastingImpact_DrawScrolledImage(void *canvas,
                                                    s32 y, s32 width, s32 height,
                                                    s32 scroll,
                                                    DrawRectangle *draw) {
-  /* FAKEMATCH: subtract the scrolled part inside the drawing scope;
-   * called directly, 60 instructions differ in tbs-en. */
+  /* FAKEMATCH(wrapper): the column's lower tile through this helper, which
+   * subtracts the scroll inside it; as a direct call in
+   * BattleFx_RunCastingImpact, 29 of 3070 instructions differ in tbs-en. */
   (*draw)(canvas, pixels, x, y, width, height - scroll);
 }
 
@@ -97,8 +101,9 @@ static inline void CastingImpact_DrawCroppedImage(void *canvas,
                                                   const void *pixels, s32 x,
                                                   s32 y, s32 width,
                                                   DrawRectangle *draw) {
-  /* FAKEMATCH: forwarding inline; the cropped height stays inside its scope.
-   * As direct blitter calls with 91, 16 instructions differ in tbs-en. */
+  /* FAKEMATCH(wrapper): two draws through this helper, which loads the
+   * image's address last; as direct blitter calls with 91 in
+   * BattleFx_RunCastingImpact, 8 of 3070 instructions differ in tbs-en. */
   (*draw)(canvas, pixels, x, y, width, 91);
 }
 
@@ -265,12 +270,13 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   //   Ram_MapCellBuffer + CASTING_IMPACT_DJINNI_CELLS: the element's Djinni
   // The orb is decoded into the map buffer first and packed from there,
   // before the impact's own pictures replace it.
-  CastingImpact_LoadResource(&ResourceId_ParticleSpritesA, sprites, 0, 0);
-  CastingImpact_LoadResource(&ResourceId_FireStreakSheet, work, 1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work, 1, 0);
   CastingImpact_LoadResource(&ResourceId_YellowOrbSheet, Ram_MapCellBuffer, 1,
                              0);
-  /* FAKEMATCH: local dimensions preserve the packing argument order; as
-   * literal 40 and 288, 4 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): the orb's dimensions named, which orders the
+   * packing's argument setup; as literal 40 and 288, 2 of 3070 instructions
+   * differ in tbs-en. */
   {
     s32 width = 40;
     s32 height = 288;
@@ -280,40 +286,43 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   }
   if (mode == CASTING_IMPACT_IMPACT_SCORCH ||
       mode == CASTING_IMPACT_IMPACT_BARRAGE) {
-    CastingImpact_LoadResource(&ResourceId_FlashBurstSheet, Ram_MapCellBuffer,
-                               1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
+                               Ram_MapCellBuffer, 1, 0);
   } else if (mode == CASTING_IMPACT_IMPACT_BAD_OMEN) {
-    CastingImpact_LoadResource(&ResourceId_SkullSheet, Ram_MapCellBuffer, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SkullSheet, Ram_MapCellBuffer,
+                               1, 0);
   } else if (mode == CASTING_IMPACT_IMPACT_SQUALL ||
              mode == CASTING_IMPACT_IMPACT_STUN_VOLTAGE) {
-    CastingImpact_LoadResource(&ResourceId_TornadoSheet, Ram_MapCellBuffer, 1,
-                               0);
-    CastingImpact_LoadResource(&ResourceId_LightningBoltSheet,
+    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer,
+                               1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                                Ram_MapCellBuffer + 0xc56, 1, 0);
   } else if (mode == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
-    CastingImpact_LoadResource(&ResourceId_RuneSheet, Ram_MapCellBuffer, 1, 1);
-  } else if (mode == CASTING_IMPACT_IMPACT_TERRA_STRIKE) {
-    CastingImpact_LoadResource(&ResourceId_RockSpireSheet, Ram_MapCellBuffer, 1,
+    Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, Ram_MapCellBuffer, 1,
                                1);
+  } else if (mode == CASTING_IMPACT_IMPACT_TERRA_STRIKE) {
+    Resource_LoadAndDecompress((s32)&ResourceId_RockSpireSheet,
+                               Ram_MapCellBuffer, 1, 1);
   } else if (mode == CASTING_IMPACT_IMPACT_AQUA_SOCK) {
-    CastingImpact_LoadResource(&ResourceId_BlueFlameSheet, Ram_MapCellBuffer, 1,
-                               0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet,
+                               Ram_MapCellBuffer, 1, 0);
   } else if (mode == CASTING_IMPACT_IMPACT_CYCLONE_SLASH) {
-    CastingImpact_LoadResource(&ResourceId_TornadoSheet, Ram_MapCellBuffer, 1,
-                               0);
-  } else if (mode == CASTING_IMPACT_IMPACT_FROST_BITE) {
-    CastingImpact_LoadResource(&ResourceId_IceChipSheet, Ram_MapCellBuffer, 1,
-                               0);
-  } else if (mode == CASTING_IMPACT_IMPACT_BROIL) {
-    CastingImpact_LoadResource(&ResourceId_EmberStreakSheet, Ram_MapCellBuffer,
+    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer,
                                1, 0);
+  } else if (mode == CASTING_IMPACT_IMPACT_FROST_BITE) {
+    Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, Ram_MapCellBuffer,
+                               1, 0);
+  } else if (mode == CASTING_IMPACT_IMPACT_BROIL) {
+    Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
+                               Ram_MapCellBuffer, 1, 0);
   } else if (mode == CASTING_IMPACT_IMPACT_FORCIBLE_ARM ||
              mode == CASTING_IMPACT_IMPACT_TRUNCHEON_FIST) {
-    CastingImpact_LoadResource(&ResourceId_FlameSheetA, Ram_MapCellBuffer, 1,
-                               0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetA, Ram_MapCellBuffer,
+                               1, 0);
   } else if (mode != CASTING_IMPACT_IMPACT_MORTAL_DANGER &&
              mode != CASTING_IMPACT_IMPACT_ASURA) {
-    CastingImpact_LoadResource(&ResourceId_SmokeSheet, Ram_MapCellBuffer, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, Ram_MapCellBuffer,
+                               1, 0);
   }
   // The Djinni of the impact's element.
   switch (mode) {
@@ -327,7 +336,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   case CASTING_IMPACT_IMPACT_BAD_OMEN:
   case CASTING_IMPACT_IMPACT_LIFE_NOURISH:
   case CASTING_IMPACT_IMPACT_FORCIBLE_ARM:
-    CastingImpact_LoadResource(&ResourceId_VenusDjinnSmallSheet,
+    Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                                Ram_MapCellBuffer + CASTING_IMPACT_DJINNI_CELLS,
                                1, 1);
     break;
@@ -338,7 +347,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   case CASTING_IMPACT_IMPACT_17:
   case CASTING_IMPACT_IMPACT_LIFE_LEECH:
   case CASTING_IMPACT_IMPACT_PSY_LEECH:
-    CastingImpact_LoadResource(&ResourceId_MercuryDjinnSmallSheet,
+    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                                Ram_MapCellBuffer + CASTING_IMPACT_DJINNI_CELLS,
                                1, 1);
     break;
@@ -352,7 +361,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   case CASTING_IMPACT_IMPACT_ACID_BATH:
   case CASTING_IMPACT_IMPACT_TRUNCHEON_FIST:
   case CASTING_IMPACT_IMPACT_SEVERE_BLOW:
-    CastingImpact_LoadResource(&ResourceId_MarsDjinnSmallSheet,
+    Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
                                Ram_MapCellBuffer + CASTING_IMPACT_DJINNI_CELLS,
                                1, 1);
     break;
@@ -365,12 +374,12 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   case CASTING_IMPACT_IMPACT_CYCLONE_SLASH:
   case CASTING_IMPACT_IMPACT_PSYPHON_SEAL:
   case CASTING_IMPACT_IMPACT_ASURA:
-    CastingImpact_LoadResource(&ResourceId_JupiterDjinnSmallSheet,
+    Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
                                Ram_MapCellBuffer + CASTING_IMPACT_DJINNI_CELLS,
                                1, 1);
     break;
   case 100:
-    CastingImpact_LoadResource(&ResourceId_MercuryDjinnSmallSheet,
+    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                                Ram_MapCellBuffer + CASTING_IMPACT_DJINNI_CELLS,
                                1, 1);
     break;
@@ -385,9 +394,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   }
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
-  /* FAKEMATCH: retain each output pointer while preparing its call; as
-   * pointers set in statements before the calls, 38 instructions differ in
-   * tbs-en. */
+  /* FAKEMATCH(temporary): the results named by pointers set inside their
+   * calls; as &targetPos, &casterPos and blitters used directly, 69 of 3070
+   * instructions differ in tbs-en. */
   EffectPosition_ProjectScaledBattler(work->effect->actors[0],
                                       targetScreen = &targetPos);
   EffectPosition_ProjectScaledBattler(work->effect->actor,
@@ -479,9 +488,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
     EFFECT_PRESENT_FRAME(work);
     frame++;
   } while (frame != CASTING_IMPACT_GATHER_FRAMES);
-  /* FAKEMATCH: restart the pointer's lifetime after gathering so the
-   * projection above uses the stack position directly; without it, 114
-   * instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): position set again to the &djinnPos it holds, so the
+   * gathering's projection takes the address from sp, not a spill; as one
+   * assignment, 53 of 3070 instructions differ in tbs-en. */
   position = &djinnPos;
 
   // Phase 2: place BG2 for the impacts that need it, at its unstretched
@@ -590,16 +599,16 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   // Mortal Danger and Asura replace the caster's overlay and the impact's
   // pictures.
   if (mode == CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
-    CastingImpact_LoadResource(&ResourceId_CounterRevealSheet, work, 1, 1);
-    CastingImpact_LoadResource(&ResourceId_RedCrescentSheetA, Ram_MapCellBuffer,
-                               1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_CounterRevealSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetA,
+                               Ram_MapCellBuffer, 1, 0);
     REG_BLDALPHA = BLEND_ALPHA(16, 14);
   }
   if (mode == CASTING_IMPACT_IMPACT_ASURA) {
-    CastingImpact_LoadResource(&ResourceId_BlueBeastSheet, work->imageStorage,
-                               1, 1);
-    CastingImpact_LoadResource(&ResourceId_RedCrescentSheetB, Ram_MapCellBuffer,
-                               1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueBeastSheet,
+                               work->imageStorage, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetB,
+                               Ram_MapCellBuffer, 1, 0);
     REG_BLDALPHA = BLEND_ALPHA(16, 14);
   }
   // The 64 particles of the impact's own animation start at the target, 20
@@ -1197,9 +1206,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
       {
         struct EffectStep *step = CASTING_IMPACT_IMPACT_PARTICLES;
         struct EffectPosition *origin;
-        /* FAKEMATCH: a zero offset known only after gcse keeps the origin copy
-         * after the projection address; as origin = targetScreen, 64
-         * instructions differ in tbs-en. */
+        /* FAKEMATCH(dead): origin offset by a zero gcse finds late, keeping
+         * targetScreen in a register for the loop; as targetScreen read
+         * directly, 8 of 3070 instructions differ in tbs-en. */
         s32 bias = 0;
         for (i = 0; i != CASTING_IMPACT_IMPACT_PARTICLE_COUNT; i++, step++) {
           if (step->x >= 0 && frame >= i / 2) {
@@ -1208,7 +1217,6 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
             SceneTransform_ApplyPitch(step->velocityX);
             SceneTransform_ApplyYaw(step->velocityY);
             EffectPosition_ProjectPoint(step, &projected);
-            /* FAKEMATCH: the zero bias above; see there. */
             origin = (struct EffectPosition *)((u8 *)targetScreen + bias);
             projected.x = projected.x / 2 + origin->x / 2;
             projected.y += origin->y + 32;
@@ -1247,9 +1255,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
       s32 imageX;
       s32 imageY;
       if (frame <= 5) {
-        /* FAKEMATCH: calculate each center before the shared centered draw;
-         * as targetScreen->x / 2 in each arm, 147 instructions differ in
-         * tbs-en. */
+        // targetScreen->x / 2 is written out, so that its last shift can
+        // follow the offset.
         if (work->effect->side == 0) {
           imageX = targetScreen->x;
           imageX += (u32)imageX >> 31;

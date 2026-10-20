@@ -101,9 +101,6 @@ void BattleFx_RunTitanBlade(struct BattleEffectArgument *effect) {
     s32 mag;
     s32 ang;
 
-    /* FAKEMATCH: the mask is loaded into the magnitude before the random word
-     * (ldr r6, =0x1ff; ands r6, r0); as Random16() & 0x1FF, 41 of 779
-     * instructions differ in tbs-en. */
     mag = 0x1FF;
     mag &= Random16();
     ang = Random16() & 0xFFFF;

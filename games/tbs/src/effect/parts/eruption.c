@@ -48,9 +48,9 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
-  /* FAKEMATCH: only draw[0] is used; the unused second word fills four bytes
-   * of the frame; as one DrawRectangle, 20 instructions differ in tbs-en, each
-   * a frame offset. */
+  /* FAKEMATCH(dead): draw as a BlitterPair whose second word nothing uses,
+   * for 4 bytes of frame; as one DrawRectangle, 10 of 470 instructions differ
+   * in tbs-en. */
   BlitterPair draw;
   s32 variant;
   struct EffectPosition screen;

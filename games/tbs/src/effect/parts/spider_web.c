@@ -41,8 +41,9 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   void *canvas;
   struct MotionObject *object;
   struct EffectPosition position;
-  /* FAKEMATCH: only draw[0] is used: the second word fills
-   * four bytes of the frame */
+  /* FAKEMATCH(dead): the blitter kept in a pair, whose unused second word
+   * fills the frame; as one DrawRectangle, 50 of 256 instructions differ in
+   * tbs-en. */
   BlitterPair draw;
   s32 frames;
   s32 frame;
@@ -152,14 +153,14 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
 
   // Plain, the counter's priority (20 refs over 232 insns) ties size and
   // outranks transparent (13 over 240).
-  /* FAKEMATCH: pins the frame counter to r9, as native; plain, it takes sl and
-   * transparent r9, and 30 instructions differ in tbs-en. */
+  /* FAKEMATCH(pin): frame fixed to r9, as native; as a plain local it takes sl
+   * and transparent r9, and 15 of 233 instructions differ in tbs-en. */
   register s32 frame __asm__("r9");
   s32 i;
 
-  /* FAKEMATCH: size and transparent first hold the slot table and blend
-   * register addresses, sharing their registers; as plain slot reads and
-   * REG_BLDALPHA, 56 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): size and transparent first hold the slot table's
+   * and REG_BLDALPHA's addresses; as plain slot reads and REG_BLDALPHA, 19 of
+   * 233 instructions differ in tbs-en. */
   size = (s32)&Ram_WorkSlot[HEAP_SLOT_BATTLE_CANVAS];
   canvas = *(void **)size;
   work = *(struct BattleEffectWork **)(size - 4);

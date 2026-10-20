@@ -200,9 +200,9 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 16);
             EFFECT_SHOW_DAMAGE(SE_133);
           }
-          /* FAKEMATCH: restores the CSE block boundary after the hit block, so
-           * k << 3 is recomputed; without it, 449 instructions differ in
-           * tbs-en. */
+          /* FAKEMATCH(one-pass): an empty one-pass block ends the CSE block
+           * after the hit, so k * 8 is recomputed; without it, 200 of 670
+           * instructions differ in tbs-en. */
           do {
           } while (0);
           if (shot->variant >= 0) {
@@ -232,9 +232,9 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
 
               shot->y = 0;
               shot->variant = 1;
-              /* FAKEMATCH: the table address loads before the row; as
-               * gLobbedShells_Records[mode * 2] in the test, 135
-               * instructions differ in tbs-en. */
+              /* FAKEMATCH(temporary): the table's address held in records
+               * loads before the row; as LOBBED_SHELLS_SHATTER(mode) in the
+               * test, 60 of 670 instructions differ in tbs-en. */
               row = mode * 2;
               if (records[row] == 0)
                 count = 4;
@@ -244,9 +244,9 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
                 struct EffectStep *burst;
                 s32 group = k * 4;
 
-                /* FAKEMATCH: restores the CSE block boundary between group's
-                 * set and group * 8; without it, 171 instructions differ in
-                 * tbs-en. */
+                /* FAKEMATCH(one-pass): an empty one-pass block ends the CSE
+                 * block between group's set and group * 8; without it, 48 of
+                 * 670 instructions differ in tbs-en. */
                 do {
                 } while (0);
                 burst = &LOBBED_SHELLS_BURSTS[group * 8 + i];

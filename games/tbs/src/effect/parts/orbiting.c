@@ -127,8 +127,9 @@ UNUSED void BattleFx_RunOrbitingSkulls(void) {
   struct EffectPosition center;
   struct EffectPosition screen;
   s32 frame;
-  /* FAKEMATCH: only draw[0] is used: the second word fills
-   * four bytes of the frame */
+  /* FAKEMATCH(dead): the blitter kept in a pair, whose unused second word
+   * fills the frame; as one DrawRectangle, 11 of 265 instructions differ in
+   * tbs-en. */
   BlitterPair draw;
   s32 member;
   struct BattleCamera *camera;
@@ -156,8 +157,9 @@ UNUSED void BattleFx_RunOrbitingSkulls(void) {
     xOffset = 0;
   else
     xOffset = -112;
-  /* FAKEMATCH: a one-pass block sets the seed counter before its pointer; as
-   * a plain store, 2 instructions differ in tbs-en. */
+  /* FAKEMATCH(one-pass): the store in a one-pass block, so the loop's i = 0
+   * comes before the particles' address; as a plain store, 1 of 265
+   * instructions differ in tbs-en. */
   do {
     REG_BG2X = xOffset << 8;
   } while (0);
@@ -183,9 +185,9 @@ UNUSED void BattleFx_RunOrbitingSkulls(void) {
       screen.x += xOffset;
       // Unsigned, so the frames before this target's turn are skipped too.
       if (memberFrame < 64) {
-        /* FAKEMATCH: pins rec to r0 so loop.c cannot hoist the point's address
-         * into fp; as an ordinary pointer, 118 of 265 instructions differ in
-         * tbs-en. */
+        /* FAKEMATCH(pin): rec fixed to r0, so loop.c cannot hoist the point's
+         * address into fp; as an ordinary pointer, 51 of 265 instructions
+         * differ in tbs-en. */
         register s32 *rec asm("r0");
 
         // The object's projection is computed, but nothing reads it.
@@ -193,8 +195,8 @@ UNUSED void BattleFx_RunOrbitingSkulls(void) {
         rec = point;
         SET_VECTOR(rec, object->x, object->y, object->z);
         EffectPosition_ProjectPoint(rec, &center);
-        /* FAKEMATCH: a one-pass block puts this store before the spark
-         * counter's movs r4, #0; as a plain store, 2 instructions differ in
+        /* FAKEMATCH(one-pass): the store in a one-pass block, before the spark
+         * loop's i = 0; as a plain store, 1 of 265 instructions differ in
          * tbs-en. */
         do {
           center.x += xOffset;

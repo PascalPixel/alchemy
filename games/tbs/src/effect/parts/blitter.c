@@ -319,15 +319,12 @@ s32 BattleFx_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
 #undef MARK
 #undef PATCH
 
-  /* FAKEMATCH: one-pass blocks keep each writing step together and in list
-   * order while allowing scheduling within it; written as plain statements,
-   * PUT differs 38 in all six editions. */
+  // Each macro has the shape all its uses match with: PUT, COPY and PATCH as
+  // do-while statements, the others as plain statements or a block.
 #define PUT(word)                                                              \
   do {                                                                         \
     *codeWords++ = (word);                                                     \
   } while (0)
-  /* FAKEMATCH: a one-pass block, as PUT's tag explains; written as plain
-   * statements, COPY differs 12 in all six editions. */
 #define COPY(n)                                                                \
   do {                                                                         \
     Dma_Set(templateWords, codeWords, DMA_COPY_WORDS(n), REG_DMA3);            \
@@ -349,8 +346,6 @@ s32 BattleFx_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift, s32 flags,
   *codeWords = *templateWords++ + BRANCH_FIELD(codeWords, target);             \
   codeWords++
 #define MARK(site) site = codeWords
-  /* FAKEMATCH: a one-pass block, as PUT's tag explains; written as a plain
-   * statement, PATCH differs 2 in all six editions. */
 #define PATCH(site)                                                            \
   do {                                                                         \
     *(site) |= BRANCH_FIELD(site, codeWords);                                  \

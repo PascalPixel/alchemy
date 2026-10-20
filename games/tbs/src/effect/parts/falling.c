@@ -116,11 +116,7 @@ void BattleFx_RunIce(struct BattleEffectArgument *effect) {
                         COMPOSITE_ADDITIVE);
   }
   draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  /* FAKEMATCH: the slot read through union HeapState keeps its load and
-   * spill before the next two instructions; as gWorkSlot[n] both move two
-   * later (4 lines of tbs-en effect.s). */
-  draw[1] = (DrawRectangle)((union HeapState *)gWorkSlot)
-                ->slots[HEAP_SLOT_BLITTER_ALTERNATE];
+  draw[1] = EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE];
 
   // Window 0's edges, one per scanline: a 128-pixel band slanting one pixel
   // a line the way the shards fall (on line 8 from x 104 against the

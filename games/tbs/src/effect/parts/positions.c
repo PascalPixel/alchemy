@@ -116,8 +116,8 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   struct MotionObject *object;
   struct AnimationObject *info;
   s32 scale;
-  /* FAKEMATCH: the unused 12-byte vector preserves both stack
-   * adjustments and camera-load order. */
+  /* FAKEMATCH(dead): an unused vector for the frame's 12 bytes; without it, 1
+   * of 52 instructions differ in tbs-en. */
   UNUSED s32 unused[3];
 
   camera = gCameraWork;

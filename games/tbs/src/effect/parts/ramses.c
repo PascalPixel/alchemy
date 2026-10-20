@@ -266,8 +266,6 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
         s32 speed;
         s32 angle;
 
-        /* FAKEMATCH: the mask set before the Random16() call it masks; as
-         * Random16() & 0x3ff, 5 instructions differ in tbs-en. */
         speed = 0x3ff;
         speed &= Random16();
         angle = Random16() & 0xffff;

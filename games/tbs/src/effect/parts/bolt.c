@@ -44,8 +44,9 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   void *canvas;
   s32 i;
   s32 frame;
-  /* FAKEMATCH: frame local: the unused second blitter word fills four bytes of
-   * the frame; as one DrawRectangle, 66 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): a pair whose second blitter, never used, fills four
+   * bytes of the frame; as one DrawRectangle, 33 of 555 instructions differ
+   * in tbs-en. */
   BlitterPair draw;
   u8 *sprites;
   struct EffectPosition screen;

@@ -37,8 +37,9 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
   void **cursor;
   struct BattleEffectWork *work;
   void *canvas;
-  /* FAKEMATCH: frame local: an unused second blitter word fills the frame's
-   * 8-byte draw slot; with draw[1], 14 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): draw as a BlitterPair whose second word nothing uses,
+   * for 4 bytes of frame; as one DrawRectangle, 7 of 363 instructions differ
+   * in tbs-en. */
   BlitterPair draw;
   struct BattleObj *first;
   struct BattleObj *second;
@@ -407,8 +408,8 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
     PARTICLES[i].z = (Random16() & 0x1ff) + i * 2;
     PARTICLES[i].variant = -i;
   }
-  /* FAKEMATCH: the cancelling pointer updates retain work's allocation
-   * priority; without them, 50 of 420 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): two updates of work that cancel, raising its priority in
+   * allocation; without them, 25 of 420 instructions differ in tbs-en. */
   work++;
   work--;
   // Trails keep 3/4 a frame.
@@ -501,8 +502,8 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
-  /* FAKEMATCH: cancelling frame updates preserve the allocation lifetimes;
-   * without them, 18 of 420 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): two updates of frame that cancel, which order two stack
+   * slots; without them, 9 of 420 instructions differ in tbs-en. */
   frame ^= 1;
   frame ^= 1;
 }
@@ -545,9 +546,8 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
 ///
 /// effect : only effect->actors[0], the unit that flashes, is read.
 void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
-  /* FAKEMATCH: never read: the native frame keeps 12 unused bytes at
-   * sp+44..55, this struct's size; without it, 4 instructions differ in
-   * tbs-en. */
+  /* FAKEMATCH(dead): an unused position for the frame's 12 bytes at sp+44;
+   * without it, 2 of 1051 instructions differ in tbs-en. */
   UNUSED struct EffectPosition position;
   struct BattleEffectWork *work;
   void *canvas;

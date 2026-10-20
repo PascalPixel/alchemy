@@ -194,9 +194,9 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
               EffectPosition_ProjectPoint(spark, &view);
               view.x >>= 1;
               CLAMP(view.depth, 314, 634);
-              /* FAKEMATCH: the size series A draws its sparks
-               * at, kept from that effect and never used here. Without the dead
-               * store: differ 479. */
+              /* FAKEMATCH(dead): BattleFx_RunHealingMotes' size by depth, a
+               * store nothing reads; without it, 219 of 747 instructions
+               * differ in tbs-en. */
               cellIndex = 3 - (view.depth - 314) / 128;
               cellIndex = (i * 4 + frame) % 9;
               {

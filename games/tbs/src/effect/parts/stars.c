@@ -31,8 +31,9 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  /* FAKEMATCH: only draw[0] is used; the unused second word fills four bytes
-     of the frame; as one DrawRectangle, 48 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): a blitter pair of which only draw[0] is used, the second
+   * word filling four bytes of the frame; as one DrawRectangle, 24 of 490
+   * instructions differ in tbs-en. */
   BlitterPair draw;
   s32 i;
   u8 *graphics;
@@ -213,8 +214,9 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  /* FAKEMATCH: only draw[0] is used; the unused second word fills four bytes
-     of the frame; as one DrawRectangle, 40 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): a blitter pair of which only draw[0] is used, the second
+   * word filling four bytes of the frame; as one DrawRectangle, 20 of 415
+   * instructions differ in tbs-en. */
   BlitterPair draw;
   s32 i;
   u8 *graphics;

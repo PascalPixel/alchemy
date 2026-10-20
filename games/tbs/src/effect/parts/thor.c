@@ -34,8 +34,9 @@
     for (index = 0, spark = THOR_PARTICLES; index != THOR_PARTICLE_COUNT;      \
          index++, spark++) {                                                   \
       if (spark->variant == 0) {                                               \
-        /* FAKEMATCH: the mask set before the Random16() call it masks; as     \
-         * Random16() & 0x3ff, 14 lines of tbs-en effect.s differ. */          \
+        /* FAKEMATCH(temporary): the mask set before the Random16() call it    \
+         * masks; as Random16() & 0x3ff, 7 of 1640 instructions differ in      \
+         * tbs-en. */                                                          \
         s32 speed = 0x3ff;                                                     \
         s32 angle;                                                             \
         speed &= Random16();                                                   \
@@ -80,8 +81,9 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
   void *canvas;
   u8 *sprites;
   s32 frame;
-  /* FAKEMATCH: frame local: the unused second blitter word fills four bytes of
-   * the frame; as one DrawRectangle, 202 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): the blitter kept in a pair, whose unused second word
+   * fills the frame; as one DrawRectangle, 101 of 1640 instructions differ in
+   * tbs-en. */
   BlitterPair blit;
   s32 size;
   s32 count;
@@ -333,9 +335,9 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
         // the frame loop, where it loses its register and later reloads rotate:
         // after an earlier move its threshold is 12, and savings 2 x life 19 x
         // 12 = 456 reaches the loop's 448 insns.
-        /* FAKEMATCH: the barrier keeps fullWidth's 32 in this loop's
-         * preheader, as native, and lengthens i's life so that dotCount ranks
-         * before i and takes r9. */
+        /* FAKEMATCH(barrier): fullWidth's 32 kept in this loop's preheader, and
+         * i's life lengthened so dotCount takes r9; without the asm, 330 of
+         * 1640 instructions differ in tbs-en. */
         asm("" : "+r"(fullWidth));
         blit[0](canvas, ramp + inset, inset + 48, i + 16, fullWidth - inset * 2,
                 1);

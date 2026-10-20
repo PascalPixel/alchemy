@@ -156,8 +156,9 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   // is 1 when the mode 1 user stands on side 1, otherwise -1.
   work->effect = effect;
   EFFECT_BEGIN_NARROW_CANVAS(0x2000);
-  /* FAKEMATCH: test through direction so CSE retains the mode reload in this
-   * arm; testing mode directly, 2 of 1532 instructions differ in tbs-en. */
+  /* FAKEMATCH(temporary): mode tested through direction, so the arm reloads
+   * mode where CSE would put 1; as if (mode == 1), 1 of 1532 instructions
+   * differ in tbs-en. */
   direction = mode;
   if (direction == 1) {
     struct MotionObject *object =
@@ -299,12 +300,11 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     frame = 0;
     do {
       s32 angle = frame << 8;
-      /* FAKEMATCH: count fixed in r2 keeps the division temp canonical in cse
-       * for the compare and +3, as in the reference; unpinned, 10 instructions
-       * differ in tbs-en. */
+      /* FAKEMATCH(pin): count in r2, so the division's +3 works on its copy in
+       * r3; as a plain local, 5 of 1532 instructions differ in tbs-en. */
       register s32 count asm("r2") = work->frame;
-      /* FAKEMATCH: work's copy in r0; else it and the 0x778c reload swap r0/r1.
-       * As an ordinary base, 8 of 1532 instructions differ in tbs-en. */
+      /* FAKEMATCH(pin): work's copy in r0, leaving r1 to the 0x778c offset; as
+       * a plain local, 4 of 1532 instructions differ in tbs-en. */
       register u8 *base asm("r0") = (u8 *)work;
       s32 heat = count / 4;
       u16 *line;
@@ -312,9 +312,9 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       s32 x;
       s32 y;
 
-      /* FAKEMATCH: count read and base passed through keep count's load apart
-       * from the division temp, with no sched2 barrier, so the mode reload
-       * lands after movs r2, #252 as in the reference. */
+      /* FAKEMATCH(barrier): count and base through an empty asm, which loads
+       * count into r2 and copies it to r3; without it, 1 of 1532
+       * instructions differ in tbs-en. */
       asm("" : "=r"(base) : "0"(base), "r"(count));
       line = (u16 *)(base + 0x1f80);
       if (mode == 1) {
@@ -327,15 +327,18 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       {
         s32 hold;
 
-        /* FAKEMATCH: hold takes r7 across the call, so heat takes r4 and its
-         * sp+8 caller-save as in the reference; as a plain call, 354
+        /* FAKEMATCH(barrier): hold set by an empty asm takes r7 across the
+         * call, so heat takes r4 and its sp+8 save; without hold, 168 of 1532
          * instructions differ in tbs-en. */
         asm("" : "=r"(hold));
-        /* FAKEMATCH: r6 is clobbered across the call. */
+        /* FAKEMATCH(barrier): an empty asm that clobbers r6 before the call;
+         * without it, 175 of 1532 instructions differ in tbs-en. */
         asm("" : : : "r6");
         if (frame == 0)
           AudioCommand_PlayFar(SE_141);
-        /* FAKEMATCH: hold's use after the call. */
+        /* FAKEMATCH(barrier): hold's use in an empty asm, which keeps it live
+         * across the call; without it, 168 of 1532 instructions differ in
+         * tbs-en. */
         asm("" : : "r"(hold));
       }
       // The heat lines, the 160 backdrop colours that
@@ -346,11 +349,11 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
         *line++ = 0;
       for (; i != 135; i++) {
         s32 green = i - 16;
-        /* FAKEMATCH: reuse blue for the biased signed quotient. A
-         * separate quotient coalesces with level; the explicit bias
-         * keeps the native r3 copy and shift (four register rows). */
+        /* FAKEMATCH(temporary): blue holds the biased dividend and quotient,
+         * keeping the r3 copy and shift; as level = green / 4 + heat, 5 of
+         * 1532 instructions differ in tbs-en. */
         s32 blue = green;
-        /* FAKEMATCH: level in r2; as an ordinary local, 42 of 1532
+        /* FAKEMATCH(pin): level in r2; as a plain local, 21 of 1532
          * instructions differ in tbs-en. */
         register s32 level asm("r2");
 

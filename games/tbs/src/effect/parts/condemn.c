@@ -35,8 +35,8 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
   void *cells;
   BlitterPair draw;
   struct MotionObject *target;
-  /* FAKEMATCH: the unused second position gives the frame its native 76
-   * bytes; as a single position, 4 instructions differ in tbs-en. */
+  /* FAKEMATCH(dead): a second position nothing uses gives the frame its 76
+   * bytes; as one position, 2 of 580 instructions differ in tbs-en. */
   struct EffectPosition pos[2];
   s32 swing[2];
   s32 drawPanel;
@@ -46,8 +46,8 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
   s32 frame;
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  /* FAKEMATCH: the zero is held in sl through the setup calls.
-   * Storing the literal 0 without the local: differ 66. */
+  /* FAKEMATCH(temporary): zero holds the transfer value in sl through the
+   * setup calls; as the literal 0, 31 of 580 instructions differ in tbs-en. */
   zero = 0;
   work->effect = effect;
   BattleFx_BeginTiledCanvas(0);
@@ -167,8 +167,9 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
         panelRow = 0;
       } else {
         panelColumn = 1;
-        /* FAKEMATCH: i is 160 here, so this is 0: a literal 0
-         * drops a stack slot and shrinks the frame (differ 452). */
+        /* FAKEMATCH(dead): i is 160 here, so i >> 31 folds to 0 and only
+         * changes allocation; as panelRow = 0, 200 of 580 instructions differ
+         * in tbs-en. */
         panelRow = i >> 31;
       }
       // The panel until frame 91; from frame 88 the burst: a white flash

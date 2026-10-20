@@ -117,10 +117,10 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
+  /* FAKEMATCH(temporary): secondSlot and draw, a second pointer to the pair,
+   * order the frame's spill slots; as rectangle[1] = gWorkSlot[n] and
+   * rectangle[side], 11 of 503 instructions differ in tbs-en. */
   secondSlot = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
-  /* FAKEMATCH: the columns draw through a second pointer to the pair, whose
-   * address the frame keeps in a stack slot; as rectangle[side], 22
-   * instructions differ in tbs-en. */
   draw = rectangle;
   draw[1] = secondSlot;
 
@@ -246,8 +246,9 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
             // On frames 4 and 8, put the first free puff of dust near the
             // root: x within 8 pixels of it, y on rows 80 to 95.
             if ((frame == reactFrame) || (frame == (start + 8))) {
-              /* FAKEMATCH: the scan reuses length as its puff pointer; as a
-               * block pointer of its own, 48 instructions differ in tbs-en. */
+              /* FAKEMATCH(temporary): the scan reuses length as its puff
+               * pointer; as a pointer of its own, 25 of 503 instructions
+               * differ in tbs-en. */
               length = (u32)PARTICLES;
               n = 0;
               while (n != 512) {

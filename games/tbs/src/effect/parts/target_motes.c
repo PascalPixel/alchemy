@@ -472,8 +472,9 @@ void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
   void **slot;
   struct BattleEffectWork *work;
   void *canvas;
-  /* FAKEMATCH: the family's blitter pair: this effect loads
-   * only one. A single blitter, as draw[1] or a plain pointer: differ 202. */
+  /* FAKEMATCH(dead): a blitter pair of which only draw[0] is used, the second
+   * word filling four bytes of the frame; as one DrawRectangle, 92 of 220
+   * instructions differ in tbs-en. */
   BlitterPair draw;
   struct EffectStep *marker;
   s32 i;

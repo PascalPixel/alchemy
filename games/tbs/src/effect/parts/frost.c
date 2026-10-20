@@ -56,9 +56,9 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
   EFFECT_BEGIN_NARROW_CANVAS(1);
   Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, puffSheet, 0, 0);
-  /* FAKEMATCH: the motes, columns, chips and puffs draw through a pointer
-   * to the pair, the columns' second picture through the pair itself; with
-   * pair[1] everywhere, 72 lines of tbs-en effect.s differ. */
+  /* FAKEMATCH(temporary): the motes, columns, chips and puffs draw through a
+   * pointer to the pair, the columns' second picture through the pair itself;
+   * as pair[1] everywhere, 36 of 782 instructions differ in tbs-en. */
   BattleFx_FetchRectangleBlitters(0, draw = pair);
 
   // Motes: x holds the angle, z the radius (56 to 119), y the height (-64

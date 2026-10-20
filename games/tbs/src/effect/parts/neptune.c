@@ -523,8 +523,6 @@ void BattleFx_RunNeptune(struct BattleEffectArgument *effect) {
           }
           for (j = 0; j != NEPTUNE_PARTICLES; j++) {
             if (PARTICLES[j].variant == 0) {
-              /* FAKEMATCH: the mask set before the call that it masks; as
-               * Random16() & 0x3ff, 5 instructions differ in tbs-en. */
               s32 r = 0x3ff;
               s32 a;
               r &= Random16();

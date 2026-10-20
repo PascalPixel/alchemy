@@ -352,9 +352,9 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 mode) {
       else
         camera->scroll -= 256;
     }
-    /* FAKEMATCH: this fill calls the fixed entry itself;
-     * through Iwram_FillWords a spilled invariant ahead of the frame loop is
-     * built in r2 where the ROM uses r1 (3 of 776 instructions differ). */
+    /* FAKEMATCH(wrapper): this fill calls the fixed entry itself, past the
+     * IWRAM call layer; as Iwram_FillWords, 3 of 776 instructions differ in
+     * tbs-en. */
     if (work->effect->variant == 3 && frame == 4)
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES, 0x3f3f3f3f);
     if (mode == 1 || mode == 2) {

@@ -69,7 +69,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   s32 column;
 
   // The slots are read from the background's: the effect work, the canvas
-  // and the sheet come before it, the blitters after it.
+  // and the sheet come before it.
   slots = &gWorkSlot[HEAP_SLOT_BATTLE_BACKGROUND];
   view = slots[0];
   canvas = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE_BACKGROUND];
@@ -98,12 +98,8 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_BACKGROUND];
-  /* FAKEMATCH: the one-pass block keeps the table address after the second
-   * read; as no block, 2 instructions differ in tbs-en. */
-  do {
-    draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_BACKGROUND];
-  } while (0);
+  draw[0] = EFFECT_BLITTERS[HEAP_SLOT_BLITTER];
+  draw[1] = EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE];
   // The projection centre moves down to line 240 for the gathering;
   // BattleFx_SetupBlendedDisplay puts it back at 120 between the parts.
   gProjection.centerY = 240;
@@ -251,9 +247,9 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
               // the later releases move them 16 pixels down.
 #if !TBS_PATCH_1
               {
-                /* FAKEMATCH: the named result pointer gives the 124-byte frame
-                 * and j in a stack slot, as native; as the plain &screen
-                 * argument, 372 instructions differ in tbs-ja. */
+                /* FAKEMATCH(temporary): the result pointer named, which gives
+                 * the 124-byte frame and j a stack slot; as &screen, 166 of
+                 * 958 instructions differ in tbs-ja. */
                 struct EffectPosition *out = &screen;
 
                 EffectPosition_ProjectPoint(point, out);

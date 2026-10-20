@@ -704,9 +704,9 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
               x = shot->x;
               if (target->x < 0) {
                 hit = x < 0;
-                /* FAKEMATCH: cancelling updates under if (target) end CSE
-                 * before the hit test and emit nothing; without them, 77
-                 * instructions differ in tbs-en. */
+                /* FAKEMATCH(dead): two updates that cancel, under a test that
+                 * emits nothing, make hit a 0 or 1 value before it is tested;
+                 * without them, 6 of 1605 instructions differ in tbs-en. */
                 if (target) {
                   hit ^= x;
                   hit ^= x;
@@ -715,9 +715,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                   goto drawShot;
               } else {
                 hit = x >= 0;
-                /* FAKEMATCH: the same CSE block end keeps the opposite sign
-                 * result before its side check; without this second pair, 14
-                 * instructions differ in tbs-en. */
+                /* FAKEMATCH(dead): the same pair for the other side; without
+                 * it, 6 of 1605 instructions differ in tbs-en. */
                 if (target) {
                   hit ^= x;
                   hit ^= x;

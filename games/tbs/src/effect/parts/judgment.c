@@ -168,11 +168,12 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     // Sparks on a ring, 32 to 95 pixels up; only the dead stage in the frame
     // loop reads them, but their random numbers still count.
     s32 angle = Random16() & 0xffff;
-    /* FAKEMATCH: the amplitude is a value the native hoists into sl; as 255
-     * at both multiplies, 142 of 2455 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): amp holds 255, which the native hoists into sl;
+     * as 255 at both multiplies, 59 of 2455 instructions differ in tbs-en. */
     s32 amp = 255;
-    /* FAKEMATCH: the velocities' zero is a value loop.c hoists into r8; as 0
-     * stored directly, 138 of 2455 instructions differ in tbs-en. */
+    /* FAKEMATCH(temporary): speed holds the velocities' 0, which loop.c
+     * hoists into r8; as 0 stored directly, 57 of 2455 instructions differ in
+     * tbs-en. */
     s32 speed = 0;
     JUDGMENT_SPARKS[i].x = (Trig_Sin(angle) * amp) >> 2;
     JUDGMENT_SPARKS[i].z = (Trig_Cos(angle) * amp) >> 2;
@@ -191,9 +192,9 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != JUDGMENT_GATHER_FRAMES &&
                   (frame <= 4 || !(gKeysRepeat & (KEY_A | KEY_B)));
        frame++) {
-    /* FAKEMATCH: the frame > 143 block calls through a pointer to the slot
-     * table, set each frame; as the table named at the uses, 581 instructions
-     * differ in tbs-en. */
+    /* FAKEMATCH(temporary): slots, set each frame, points the frame > 143
+     * draws at the slot table; as the table named at the uses, 285 of 2455
+     * instructions differ in tbs-en. */
     slots = (DrawRectangle *)gWorkSlot;
     if (frame == 143) {
       Iwram_FillWords(canvas, CANVAS_BYTES, 0x2a2a2a2a);
@@ -395,9 +396,9 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
         // The 8x16 mote of dimmed copy n in JudgmentWork's ramp.
         s32 cell =
             n * MOTE_SET_BYTES + gBattleFx_MoteCells[7] + JUDGMENT_SHEET_BYTES;
-        /* FAKEMATCH: the height is a value, so high / 2 is hoisted into fp; as
-         * the literals 4, 8 and 16, 690 of 2455 instructions differ in
-         * tbs-en. */
+        /* FAKEMATCH(temporary): high holds the mote's height 8, so high / 2
+         * is hoisted into fp; as the literals 4, 8 and 16, 331 of 2455
+         * instructions differ in tbs-en. */
         s32 high = 8;
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_MAX);
@@ -616,10 +617,9 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     // From frame 280 the canvas's palette ramp, background colours 1 to 63,
     // brightens one step a channel each frame, reaching white by frame 311.
     if (frame > 279) {
-      /* FAKEMATCH: palette RAM through a volatile pointer: the native keeps
-         red's mask 31 in the loop rather than hoisting it; a plain pointer
-         differs in 52 of 2455 rows. */
-      volatile u16 *pal = (volatile u16 *)0x05000002;
+      // Through palette RAM's own volatile type, which keeps red's mask 31 in
+      // the loop; a plain pointer hoists it.
+      volatile u16 *pal = &BG_PLTT_COLOR(0, 1);
       for (i = 0; i != 63; i++, pal++) {
         s32 c = *pal;
         s32 b = ((u16)c >> 10) & 31;
@@ -720,8 +720,8 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
     // Frames 72 to 75: a ring of 256 motes grows around (60, 50).
     if (frame >= 72 && frame < 76) {
       s32 r2 = (frame << 4) - 1136;
-      /* FAKEMATCH: the size is a value, so 5 and 20 are hoisted into fp and sl;
-       * as the literals, 100 of 2455 instructions differ in tbs-en. */
+      /* FAKEMATCH(temporary): size holds 10, so 5 and 20 are hoisted into fp
+       * and sl; as the literals, 33 of 2455 instructions differ in tbs-en. */
       s32 size = 10;
       for (i = 0; i != 256; i++) {
         s32 angle = i << 8;
@@ -756,9 +756,9 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
             half = radius / 2;
             dx = (half * sx) / 8;
             right = cx + dx;
-            /* FAKEMATCH: a dead branch restores the label CSE and reload saw
-             * between the edges; without it, 67 of 2455 instructions differ
-             * in tbs-en. */
+            /* FAKEMATCH(dead): a branch whose store the next line overwrites
+             * restores the label CSE and reload saw between the edges; without
+             * it, 16 of 2455 instructions differ in tbs-en. */
             if (dx > cx) {
               left = 0;
             }
@@ -797,9 +797,9 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
             halfSlope = slope / 2;
             dx = (halfSlope * sx) / 8;
             right = cx + dx;
-            /* FAKEMATCH: a dead branch restores the label CSE and reload saw
-             * between the edges; without it, 1954 of 2455 instructions differ
-             * in tbs-en. */
+            /* FAKEMATCH(dead): a branch whose store the next line overwrites
+             * restores the label CSE and reload saw between the edges; without
+             * it, 867 of 2455 instructions differ in tbs-en. */
             if (dx > cx) {
               left = 0;
             }
@@ -969,9 +969,9 @@ void BattleFx_RunJudgment(struct BattleEffectArgument *effect) {
 
     // From frame 64 the backdrop shakes up and down.
     if (frame > 63) {
-      /* FAKEMATCH: forced temporary: the shake value through an s32 keeps the
-       * AND constant an immediate; as a direct store to gBgScroll[1].y, 17 of
-       * 2455 instructions differ in tbs-en. */
+      /* FAKEMATCH(temporary): the shake value through an s32 keeps the AND
+       * constant an immediate; as a direct store to gBgScroll[1].y, 9 of 2455
+       * instructions differ in tbs-en. */
       s32 shake = (Random16() & 3) + 30;
 
       gBgScroll[1].y = shake;

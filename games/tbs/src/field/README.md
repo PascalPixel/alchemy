@@ -17,7 +17,7 @@ this engine; [Scenes](../scene/README.md), which drive it; and
 | `field.c` | the guide; it includes `field_internal.h`, then the parts under `field/` in ROM order |
 | `field_internal.h` | the includes and the few names more than one part uses; it places no bytes |
 | `field/*.c` | the field object's code in 14 parts; never compiled on their own |
-| `update.c` | `Object_UpdateAll`, the ARM update of the eight script objects, run from RAM |
+| `update.c` | `Object_UpdateAll`, an ARM update of the first eight objects, made to run from RAM; only the unused `Object_RunUpdateAllFromHeap` runs it |
 | `vertices.c` | `Transform_UpdateVertices`, the ARM routine that turns the world map's ground plane into BG2's per-scanline affine values |
 | `object_script.c`, `operand.c` | the object scripts the engine starts itself, the command table, and the work value handlers |
 | `facing.c` | the facing tables, then the parts' small constant tables: the tile dissolve order, the fixed camera's matrix, the float wave, the idle script, the world map's pad headings, footprint scripts and turn rates |
@@ -120,11 +120,13 @@ by offsets, so a script needs no assembler to fix up its branches.
 re-running that one command each frame until something gives it a new
 script. `SC_FREE` frees it.
 
-There are two loops that run scripts. `Object_UpdateAll` (`update.c`) is ARM
-code, copied to RAM to run, for the eight script objects; `Object_UpdateAllThumb`
-(`field/object_motion.c`) does the same for all 64 objects in Thumb, with the
-field's extras (free flight, terrain, floating and solid objects). Both
-follow the protocol above.
+The loop that runs scripts is `Object_UpdateAllThumb`
+(`field/object_motion.c`), for all 64 objects, with the field's extras (free
+flight, terrain, floating and solid objects). `Object_UpdateAll` (`update.c`)
+is an ARM copy of the same protocol for the first eight objects, written to
+be copied to RAM; the only routine that copies and runs it,
+`Object_RunUpdateAllFromHeap`, is called by nothing, so the ROM keeps it
+unused.
 
 ### One block, five views
 
@@ -137,10 +139,15 @@ each names only the fields that code uses. They agree on most of the block
 (the script at 0, the position at 8, the velocity at 0x24, the target at
 0x38) and disagree where their readers do:
 
-- the halfword at 0x5e is `wait` to the motion loop, `lookupResult` to the
-  command handlers (`SC_WAIT` writes its count there) and `unk5e` elsewhere;
-- the per-frame routine is `callback` at 0x60 in `ObjectRuntime`, but `hook`
-  and `update` at 0x6c in `ScriptMotionObject` and `FieldActor`;
+- the halfword at 0x5e is `wait` to the motion loop and the command
+  handlers (`SC_WAIT` writes its count there) and `unk5e` in the other
+  views;
+- the per-frame routine is the word at 0x6c (`hook` in
+  `ScriptMotionObject`, `update` in `FieldActor`, `unk6c` in
+  `ObjectRuntime`): both update loops call it, and the work value `SW_HOOK`
+  addresses it. `ObjectRuntime` calls the word at 0x60 `callback`, but no
+  code calls through it: its bytes are the refused count and the frozen flag
+  (`ScriptMotionObject`) and two bytes only scene code uses;
 - 0x18 is a scale pair in `FieldActor` and unknown bytes in `ObjectRuntime`;
   0x44 is the bounce in two views and unknown in a third.
 
@@ -200,8 +207,6 @@ Still unknown:
 
 - XXX: the update accepts command words up to 63, but the table has 47
   entries; a word from 47 to 63 would call through whatever follows the table.
-- XXX: which of 0x60 and 0x6c is the object's per-frame routine in each use,
-  and what the other holds.
 - XXX: why placeholder blocks (0xfff) are given numbers of their own as the
   map is converted (`Tile_ConvertMap`, and the unused
   `Tilemap_NumberPlaceholderBlocks` that does the same in C).

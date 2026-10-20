@@ -88,7 +88,6 @@ static void WorldMap_PlayLighthouseTransition(s32 palette);
 enum {
   CONTACT_LAST_ACTOR = 65,
   CONTACT_TRIGGER_BASE = 100,
-  FLAG_CONTACT_PAUSED = 0x163,
   FLAG_CONTACT_BLOCKED = 0x104
 };
 
@@ -110,6 +109,8 @@ enum {
 
 /// Walking near Vine, or talking to him: once a battle is nearly due, half the
 /// time Vine fights; otherwise the next step brings an ordinary battle.
+/// Reached by talking to actor 8, or by walking onto cell code 92 until Vine is
+/// caught.
 static void Event_MeetVine(void) {
   struct EventWork *work = gEventWork;
 
@@ -126,6 +127,8 @@ static void Event_MeetVine(void) {
 
 /// Walking near Corona, or talking to him: once a battle is nearly due, Corona
 /// fights.
+/// Reached by talking to actor 9, or by walking onto cell code 91 until Corona
+/// is caught.
 static void Event_MeetCorona(void) {
   struct GameState *state = &gGameState;
   s32 *steps = &state->encounterSteps;
@@ -139,6 +142,8 @@ static void Event_MeetCorona(void) {
 
 /// Walking near Hail, or talking to him: once a battle is nearly due, Hail
 /// fights.
+/// Reached by talking to actor 10, or by walking onto cell code 93 until Hail
+/// is caught.
 static void Event_MeetHail(void) {
   struct GameState *state = &gGameState;
   s32 *steps = &state->encounterSteps;
@@ -273,6 +278,9 @@ WorldMap_ApplyMapRotationAndCollision(struct ScriptInterpreter *interpreter) {
 }
 
 /// Resets the map marker after the corresponding story progress.
+/// Called by its object script as the travel marker is placed. Once the Tolbi
+/// ship lies at anchor off the island (FLAG_TOLBI_SHIP_AT_ISLAND), sets
+/// FLAG_SCENE_TEMP_F1 and puts the marker away at the map's origin.
 static s32
 WorldMap_InitializeProgressMarker(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -369,26 +377,31 @@ static void WorldMap_SelectExitByZ(s32 trigger, s32 exitBefore, s32 exitAfter) {
 
 /// Walking into a passage: the side the party comes from decides which exit
 /// takes it through to the other side.
+/// Reached by walking onto cell code 130.
 static void Event_PassThroughWestEastPassage(void) {
   WorldMap_SelectExitByX(0x82, 6, 0x2F);
 }
 
 /// As Event_PassThroughWestEastPassage, for a passage crossed north to south.
+/// Reached by walking onto cell code 150.
 static void Event_PassThroughFirstNorthSouthPassage(void) {
   WorldMap_SelectExitByZ(0x96, 0x2E, 0x0B);
 }
 
 /// As Event_PassThroughFirstNorthSouthPassage.
+/// Reached by walking onto cell code 116.
 static void Event_PassThroughSecondNorthSouthPassage(void) {
   WorldMap_SelectExitByZ(0x74, 0x38, 0x15);
 }
 
 /// As Event_PassThroughFirstNorthSouthPassage.
+/// Reached by walking onto cell code 151.
 static void Event_PassThroughThirdNorthSouthPassage(void) {
   WorldMap_SelectExitByZ(0x97, 0x19, 0x36);
 }
 
 /// As Event_PassThroughFirstNorthSouthPassage.
+/// Reached by walking onto cell code 125.
 static void Event_PassThroughFourthNorthSouthPassage(void) {
 
   WorldMap_SelectExitByZ(0x7D, 0x3B, 0x1E);
@@ -397,6 +410,7 @@ static void Event_PassThroughFourthNorthSouthPassage(void) {
 struct SceneEvent *WorldMap_GetEvents(void) { return gWorldMapEvents; }
 
 /// Culls distant location sprites and detects the leader touching nearby ones.
+/// Run each frame on the world map; WorldMap_Initialize adds it.
 static void WorldMap_UpdateLocationContacts(void) {
   struct FieldActor *leader;
   struct EventWork *work;
@@ -435,7 +449,7 @@ static void WorldMap_UpdateLocationContacts(void) {
       continue;
     }
     actor->spriteStorageKind = 1;
-    if (gDebugMode != 0 && Engine_GameFlagIsSet(FLAG_CONTACT_PAUSED) != 0) {
+    if (gDebugMode != 0 && Engine_GameFlagIsSet(FLAG_DEBUG_STEPS_OFF) != 0) {
       continue;
     }
     scale = actor->sprite->scale;
@@ -456,6 +470,7 @@ static void WorldMap_UpdateLocationContacts(void) {
 
 /// Walking onto this spot: the first time the travel scene plays, later it is
 /// an ordinary entrance.
+/// Reached by walking onto cell code 112.
 static void Event_EnterTransferRoute(void) {
   if (Engine_GameFlagIsSet(FLAG_GUARDS_SUSPECT_KALAY) == 0) {
     Engine_EventRequestExit(101);
@@ -466,21 +481,34 @@ static void Event_EnterTransferRoute(void) {
 }
 
 /// Walking east off this edge of the map, once allowed.
+/// Reached by walking east into cell code 74 once the Tolbi ship lies at
+/// anchor off the island (FLAG_TOLBI_SHIP_AT_ISLAND).
 static void Event_LeaveEastward(void) {
 
   Engine_EventBegin();
   Engine_EventRequestExit(74);
 }
 
-/// Restores map state and runs the scene selected by the arrival entrance.
+/// Restores the map's state and runs the sequence its arrival entrance
+/// selects: 90 and 91 carry the party from a lighthouse's beam up to its
+/// aerie, 1 marks the first time the party leaves Vale, 33 the Black Orb, 49
+/// Bunza's wagon, 64 the travellers' departure, 65 to 70 the Tolbi ship's
+/// crossing, 71 the carriage, 78 a discarded item,
+/// 72 and 73 the transitions, 75 the travelling actor, 80 the ending, and 74,
+/// 76 and 77 resume airborne travel.
+/// The scene's initialization. Sets FLAG_RETREAT_BLOCKED on the map; entrance
+/// 99, a debug start, sets FLAG_NO_ENCOUNTERS, FLAG_DEBUG_STEPS_OFF and flag
+/// 0x161. Entrance 1 sets FLAG_PARTY_LEFT_VALE and flag 0x85c the first time.
+/// XXX: flags 0x161 and 0x85c are read by no code of this game; a reader would
+/// say what they record.
 s32 WorldMap_Initialize(void) {
   struct GameState *state = &gGameState;
   s16 *entrance = &state->entrance;
 
   if (*entrance == 99) {
-    Engine_GameFlagSet(0x160);
+    Engine_GameFlagSet(FLAG_NO_ENCOUNTERS);
     Engine_GameFlagSet(0x161);
-    Engine_GameFlagSet(0x163);
+    Engine_GameFlagSet(FLAG_DEBUG_STEPS_OFF);
   }
   if (*entrance == 90) {
     WorldMap_PlayLighthouseTransition(0);
@@ -506,8 +534,8 @@ s32 WorldMap_Initialize(void) {
     // Each special entrance resumes its travel or story sequence.
     switch (*entrance) {
     case 1:
-      if (GameFlag_IsSet(0x815) == 0) {
-        Engine_GameFlagSet(0x815);
+      if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) == 0) {
+        Engine_GameFlagSet(FLAG_PARTY_LEFT_VALE);
         Engine_GameFlagSet(0x85c);
       }
       break;
@@ -594,6 +622,9 @@ enum { ACTOR_WAGON = 8, ACTOR_BUNZA = 11, ACTOR_HAMMET = 12 };
 
 /// Out of West Lunpa Cave by wagon: Bunza and Hammet nod to each other and
 /// climb aboard with the hero, and the wagon rolls off.
+/// Called by WorldMap_Initialize at entrance 49, after the trade reopens
+/// (FLAG_LUNPA_TRADE_REOPENED) and until the wagon has left; sets
+/// FLAG_BUNZAS_WAGON_LEFT.
 static void WorldMap_BoardBunzasWagon(void) {
   struct FieldActor *record;
 
@@ -657,6 +688,8 @@ static void WorldMap_BoardBunzasWagon(void) {
 }
 
 /// Stages the travelers' departure and their transfer to the next scene.
+/// Called by WorldMap_Initialize at entrance 64 until FLAG_GUARDS_SUSPECT_KALAY
+/// is set; sets it.
 static void WorldMap_DepartWithTravelers(void) {
   struct FieldActor *actor;
   struct FieldActor *spriteActor;
@@ -961,6 +994,8 @@ static void WorldMap_ShakeTransferLandingCamera(void) {
 }
 
 /// Keeps the transferred actor above the guide and triggers its landing once.
+/// Run each frame while WorldMap_DepartWithTravelers carries an actor; sets
+/// FLAG_SCENE_TEMP_00 as it lands.
 static void WorldMap_UpdateTransferredActorLanding(void) {
   struct FieldActor *actor;
   struct FieldActor *guide;
@@ -981,6 +1016,7 @@ static void WorldMap_UpdateTransferredActorLanding(void) {
 }
 
 /// Stages the next leg of travel and leaves through exit 102.
+/// Called by WorldMap_Initialize at entrance 65; sets FLAG_TOLBI_SHIP_ROWING.
 static void WorldMap_TransferToExit102(void) {
   struct FieldActor *actor;
 
@@ -1003,6 +1039,7 @@ static void WorldMap_TransferToExit102(void) {
 }
 
 /// Stages the next leg of travel and leaves through exit 103.
+/// Called by WorldMap_Initialize at entrance 66; sets FLAG_TOLBI_SHIP_ROWING.
 static void WorldMap_TransferToExit103(void) {
   struct FieldActor *actor;
 
@@ -1031,6 +1068,7 @@ static void WorldMap_TransferToExit103(void) {
 }
 
 /// Stages the next leg of travel and leaves through exit 104.
+/// Called by WorldMap_Initialize at entrance 67; sets FLAG_TOLBI_SHIP_ROWING.
 static void WorldMap_TransferToExit104(void) {
   struct FieldActor *actor;
 
@@ -1059,6 +1097,7 @@ static void WorldMap_TransferToExit104(void) {
 }
 
 /// Stages the travelers' arrival in the ship interior.
+/// Called by WorldMap_Initialize at entrance 68; sets FLAG_TOLBI_SHIP_ROWING.
 static void WorldMap_TransferToTolbiShipInteriors(void) {
   struct FieldActor *actor;
 
@@ -1087,6 +1126,7 @@ static void WorldMap_TransferToTolbiShipInteriors(void) {
 }
 
 /// Stages the next leg of travel and leaves through exit 106.
+/// Called by WorldMap_Initialize at entrance 69; sets FLAG_TOLBI_SHIP_ROWING.
 static void WorldMap_TransferToExit106(void) {
   struct FieldActor *actor;
 
@@ -1119,6 +1159,8 @@ static void WorldMap_TransferToExit106(void) {
 }
 
 /// Finishes the journey and restores the leader's movement.
+/// Called by WorldMap_Initialize at entrance 70; sets
+/// FLAG_TOLBI_SHIP_REACHED_TOLBI and clears FLAG_TOLBI_SHIP_ROWING.
 static void WorldMap_CompleteTransfer(void) {
   struct FieldActor *actor;
 
@@ -1144,6 +1186,8 @@ static void WorldMap_CompleteTransfer(void) {
 }
 
 /// Demonstrates setting a Djinni and placing it on standby.
+/// Called by Event_MeetFlint; sets and clears FLAG_DJINN_TUTORIAL_PART_A and
+/// _PART_B to choose the menu's two lessons.
 static void WorldMap_ShowDjinnTutorial(void) {
   Battle_ClearObjectFlag5bWhenMode3();
   BattleFx_ScheduleRatioTransition(Q16_ONE, 6);
@@ -1155,14 +1199,14 @@ static void WorldMap_ShowDjinnTutorial(void) {
   Engine_EventWait(30);
   Event_PlayCue(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
-  GameFlag_Clear(0x16f);
-  GameFlag_Clear(0x171);
+  GameFlag_Clear(FLAG_DJINN_TUTORIAL_PART_A);
+  GameFlag_Clear(FLAG_DJINN_TUTORIAL_PART_B);
   DjinnMenu_Open();
   Engine_ActorJump(ACTOR_VENUS_DJINNI, 4, 30);
   Engine_EventSetMessage(MsgWorldMapNextIllShowHowCan);
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-  GameFlag_Clear(0x16f);
-  GameFlag_Set(0x171);
+  GameFlag_Clear(FLAG_DJINN_TUTORIAL_PART_A);
+  GameFlag_Set(FLAG_DJINN_TUTORIAL_PART_B);
   DjinnMenu_Open();
   Engine_EventWait(30);
   Field_RequestBattleFromEncounterTable(12, 6);
@@ -1170,6 +1214,9 @@ static void WorldMap_ShowDjinnTutorial(void) {
 
 /// Walking up to Flint: he joins the party and shows how Djinn are set and put
 /// on standby; then comes the tutorial battle.
+/// Reached by walking onto cell code 90 until Flint (Djinni 0) is caught. Sets
+/// FLAG_DJINN_TUTORIAL and its two part flags for each lesson, and clears them
+/// all after the battle.
 static void Event_MeetFlint(void) {
   struct FieldActor *djinni;
   struct FieldActor *leader;
@@ -1334,8 +1381,8 @@ static void Event_MeetFlint(void) {
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   Event_PlayCue(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
-  GameFlag_Set(0x16f);
-  GameFlag_Clear(0x171);
+  GameFlag_Set(FLAG_DJINN_TUTORIAL_PART_A);
+  GameFlag_Clear(FLAG_DJINN_TUTORIAL_PART_B);
   DjinnMenu_Open();
   Event_SetMessage(MsgWorldMapGoSetStandby);
   FieldObject_SetPosition(djinni, PIXELS(5584), 0, PIXELS(1328));
@@ -1364,8 +1411,8 @@ static void Event_MeetFlint(void) {
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_ShowEmote(ACTOR_VENUS_DJINNI, EMOTE_IN_FRONT, 30);
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-  GameFlag_Set(0x16f);
-  GameFlag_Set(0x171);
+  GameFlag_Set(FLAG_DJINN_TUTORIAL_PART_A);
+  GameFlag_Set(FLAG_DJINN_TUTORIAL_PART_B);
   DjinnMenu_Open();
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
   Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
@@ -1374,13 +1421,14 @@ static void Event_MeetFlint(void) {
   Event_PlayCue(MUS_042);
   Event_End();
   GameFlag_Clear(FLAG_DJINN_TUTORIAL);
-  GameFlag_Clear(0x16f);
-  GameFlag_Clear(0x171);
+  GameFlag_Clear(FLAG_DJINN_TUTORIAL_PART_A);
+  GameFlag_Clear(FLAG_DJINN_TUTORIAL_PART_B);
 }
 
 s32 gWorldMapTriggerActor;
 
 /// Brings the carriage to a stop and lets Isaac disembark.
+/// Called by WorldMap_Initialize at entrance 71.
 static void WorldMap_DisembarkCarriage(void) {
   struct FieldActor *actor;
 
@@ -1440,6 +1488,11 @@ static void WorldMap_DisembarkCarriage(void) {
 }
 
 /// Introduces the Black Orb and prompts Isaac to use it on the ship.
+/// Called by WorldMap_Initialize at entrance 33 until the Black Orb is handed
+/// back and before the wounded soldiers are seen in Lalivero
+/// (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN). Sets FLAG_SCENE_TEMP_34 and
+/// FLAG_SAW_SHIP_FROM_VENUS_LIGHTHOUSE, and turns the exit at cell code 138
+/// into Event_StopLeavingShip.
 static void WorldMap_RunBlackOrbScene(void) {
   struct FieldActor *leader;
 
@@ -1519,7 +1572,11 @@ static void WorldMap_RunBlackOrbScene(void) {
   Engine_EventEnd();
 }
 
-/// Enables the site actor and its world-map entrance trigger.
+/// Turns the exit at cell code 138 into a touch event that runs
+/// Event_StopLeavingShip, and places the Black Orb's giver (sprite 57) at
+/// pixel (6036, 3400).
+/// Called by WorldMap_RunBlackOrbScene, and by WorldMap_Initialize when the
+/// party returns to entrance 33 with the orb still to use.
 static void WorldMap_ActivateSite138(s32 actor) {
   s32 i;
 
@@ -1544,7 +1601,8 @@ static void WorldMap_ActivateSite138(s32 actor) {
   }
 }
 
-/// Restores the exit trigger after the ship event.
+/// Makes cell code 138 an exit again, to exit 33.
+/// Called by Event_UseBlackOrb once the orb is handed back.
 static void WorldMap_RestoreExitTrigger(void) {
   s32 i;
 
@@ -1564,6 +1622,7 @@ static void WorldMap_RestoreExitTrigger(void) {
 
 /// Talking to the one who gave the Black Orb (or reading his mind): he urges
 /// its use. "Now use it... on the ship."
+/// Reached by talking to actor 55, or by Mind Read on it.
 static void Event_TalkAboutBlackOrb(void) {
   Engine_EventBegin();
   Actor_FaceActor(55, ACTOR_PARTY_LEADER, 0);
@@ -1575,6 +1634,8 @@ static void Event_TalkAboutBlackOrb(void) {
 
 /// Walking away from the shipwreck with the Black Orb: the hero walks back.
 /// "(Hero), where you going? I said to use the Orb on Babi's ship!"
+/// Reached by walking onto cell code 138 while WorldMap_ActivateSite138 has
+/// made it a touch event.
 static void Event_StopLeavingShip(void) {
   Engine_EventBegin();
   Battle_SetObjectFlag5bWhenMode3();
@@ -1587,6 +1648,7 @@ static void Event_StopLeavingShip(void) {
 }
 
 /// Searching the shipwreck. "The wreckage of a ship scuttled off the coast."
+/// Reached by searching cell code 96.
 static void Event_SearchShipwreck(void) {
 
   Engine_EventBegin();
@@ -1607,6 +1669,8 @@ static void Event_SearchShipwreck(void) {
 
 /// Using the Black Orb on the shipwreck: nothing happens, the orb is taken back
 /// and the party is to press on to Babi Lighthouse.
+/// Reached by using the Black Orb on cell code 96 until it is handed back.
+/// Clears FLAG_SCENE_TEMP_34 and sets FLAG_BLACK_ORB_RETURNED.
 static void Event_UseBlackOrb(void) {
   struct FieldActor *site;
   struct FieldActor *orb;
@@ -1756,6 +1820,7 @@ u16 gWorldMapBlend;
   IO_WRITE_QUEUE_PUSH(0x06002000, (u32)((buffer) + (offset)), 0x84000140)
 
 /// Shows Jenna and Kraden's closing scene before returning to the title.
+/// Called by WorldMap_Initialize at entrance 80.
 static void WorldMap_ShowEndingScene(void) {
   PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
   Engine_EventBegin();
@@ -1871,6 +1936,7 @@ static void WorldMap_ShowEndingScene(void) {
 }
 
 /// Starts the sparkling travel transition and fades out to its destination.
+/// Called by WorldMap_Initialize at entrance 73; sets FLAG_KEEP_MUSIC.
 static void WorldMap_StartTransitionEffect(void) {
   Engine_EventBegin();
   Engine_AudioPlayCue(SE_141);
@@ -1943,6 +2009,7 @@ static void WorldMap_UpdateTransitionEffect(void) {
 }
 
 /// Moves the arrival actor along the staged route to its exit.
+/// Called by WorldMap_Initialize at entrance 75.
 static void WorldMap_MoveActorEightToExit(void) {
 
   struct FieldActor *actor;
@@ -2056,6 +2123,7 @@ static void WorldMap_SpawnActorEightPuff(void) {
 }
 
 /// Stages the rising actor and its trailing puffs before the next arrival.
+/// Called by WorldMap_Initialize at entrance 72.
 static void WorldMap_RunOpeningRise(void) {
   struct FieldActor *actor;
   struct FieldActor *spriteActor;
@@ -2092,6 +2160,8 @@ static void WorldMap_RunOpeningRise(void) {
 }
 
 /// Rotates the traveler and counts down to the raised travel event.
+/// Run each frame while the party is in the air; stores the frames left in the
+/// byte at FLAG_SCENE_TEMP_F8.
 static void WorldMap_UpdateAirborneTravelTimer(void) {
 
   struct FieldActor *actor;
@@ -2114,6 +2184,8 @@ static void WorldMap_UpdateAirborneTravelTimer(void) {
 }
 
 /// Moves the selected actor toward the travel marker and starts its timer.
+/// Called by Event_EnterAirborneTravel. Sets FLAG_SCENE_TEMP_F0 and gives the
+/// party 180 frames in the air (FLAG_SCENE_TEMP_F8).
 static void WorldMap_StartAirborneTravel(s32 targetActor) {
   s32 alreadyTraveling;
   struct FieldActor *actor;
@@ -2149,16 +2221,22 @@ static void WorldMap_StartAirborneTravel(s32 targetActor) {
 }
 
 /// Walking onto the marker: the party is lifted up into the air.
+/// Reached by walking onto cell code 95 until the airborne journey is over
+/// (FLAG_SCENE_TEMP_F1).
 static void Event_EnterAirborneTravel(void) {
   WorldMap_StartAirborneTravel(54);
 }
 
 /// Starting to cast Douse on the marker.
+/// Reached by the first phase of Douse on the marker (actor 54) while the party
+/// is in the air (FLAG_SCENE_TEMP_F0).
 static void Event_StartDousingTravelMarker(void) {
   ((struct BattleFxScene *)gEffectWork)->childOption = 1;
 }
 
 /// Douse on the marker: the party comes down and a battle begins.
+/// Reached by Douse on the marker (actor 54) while the party is in the air.
+/// Clears FLAG_SCENE_TEMP_F0, sets FLAG_SCENE_TEMP_F1 and empties the timer.
 static void Event_DouseTravelMarker(void) {
   struct FieldActor *selectedActor;
 
@@ -2177,6 +2255,8 @@ static void Event_DouseTravelMarker(void) {
 
 /// When the time in the air runs out: the party and the marker fly off, and
 /// the map reopens elsewhere.
+/// Reached by the scene raising 99 as the timer runs out. Sets
+/// FLAG_ARRIVE_FALLING and sends the party to the world map's entrance 27.
 static void Event_FinishAirborneTravel(void) {
   struct FieldActor *actor = Actor_Get(gGameState.selectedActor);
   struct FieldActor *other = Actor_Get(54);
@@ -2199,7 +2279,7 @@ static void Event_FinishAirborneTravel(void) {
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   Engine_EventEnd();
-  GameFlag_Set(0x122);
+  GameFlag_Set(FLAG_ARRIVE_FALLING);
   Event_SetDestination((s32)&SceneId_WorldMap, 27);
 }
 
@@ -2253,6 +2333,9 @@ static inline void WorldMap_ShowTransitionFrame(u8 *buffer, s32 offset,
 }
 
 /// Animates the lighthouse transition frames, palette, and camera.
+/// Called by WorldMap_Initialize at entrances 90 (Mercury Lighthouse) and 91
+/// (Venus Lighthouse). Clears FLAG_KEEP_PARTY_POSITION and sets
+/// FLAG_SKIP_SCENE_CHANGE_SOUND.
 static void WorldMap_PlayLighthouseTransition(s32 palette) {
   u8 *buffer = Runtime_BumpAllocateAlternatePool(0x4000);
 
@@ -2314,7 +2397,7 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   MemFree(buffer);
-  Engine_GameFlagSet(0x101);
+  Engine_GameFlagSet(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 
 /// Blinks an unused actor and periodically creates its linked effects.
@@ -2983,7 +3066,7 @@ struct SceneEvent gWorldMapEvents[] = {
     { EVENT_TOUCH, 93, FLAG_DJINNI_0 + DJINNI_HAIL, EVENT_SCRIPT(Event_MeetHail) },
     { SEARCH(SEARCH_UNNAMED), 96, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchShipwreck) },
     { USE_ITEM(ITEM_BLACK_ORB), 96, FLAG_BLACK_ORB_RETURNED, EVENT_SCRIPT(Event_UseBlackOrb) },
-    { SEARCH(SEARCH_GROUND), 100, 0xfcf, FIND_ITEM(ITEM_TURTLE_BOOTS) },
+    { SEARCH(SEARCH_GROUND), 100, FLAG_WORLD_MAP_TURTLE_BOOTS, FIND_ITEM(ITEM_TURTLE_BOOTS) },
     { EVENT_TALK, 55, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutBlackOrb) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x437, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutBlackOrb) },
     { EVENT_EXIT, 13, CONDITION_ALWAYS, 13 },

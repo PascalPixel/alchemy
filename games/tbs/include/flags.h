@@ -9,6 +9,10 @@
 #define FLAG_IN_PARTY(character) (character)
 #define FLAG_CHILDHOOD 0x20 ///< the prologue: Isaac and Garet are children
 #define FLAG_DJINNI_0 48    ///< the flag of Djinni 0, set once it is caught
+/// The next scene change is silent: the scene loader clears it in place of
+/// playing SE_288, once. The world map sets it after its lighthouse
+/// transition.
+#define FLAG_SKIP_SCENE_CHANGE_SOUND 0x101
 /// Set as a battle starts, cleared as a field scene starts.
 #define FLAG_IN_BATTLE 0x103
 /// Set while the field menu is open; scenes hold their moving actors still.
@@ -23,6 +27,17 @@
 #define FLAG_KEEP_MUSIC 0x11a
 #define FLAG_KEEP_MUSIC_HELD 0x11b
 #define FLAG_NOT_ON_MAP 0x11c ///< the current place is not on the world map
+/// The leader left through an exit of kind 0x20 (SE_128, animation 26); the
+/// next scene plays the leader's arrival, animation 24
+/// (ObjectEffect_RunPendingFlagEvent), unless its setup clears this first.
+#define FLAG_EXIT_ARRIVAL_PENDING 0x120
+/// The leader falls into the next scene from 160 pixels above
+/// (ObjectEffect_RunPendingFlagEvent), as when the world map's airborne
+/// travel ends.
+#define FLAG_ARRIVE_FALLING 0x122
+/// The current scene's record has variant 2; the scene loader sets and clears
+/// it.
+#define FLAG_SCENE_VARIANT_2 0x123
 /// Set before an action on the field; still set afterwards, nothing came of it
 /// and the game says so. "But nothing happens." An event that acts clears it.
 #define FLAG_NOTHING_HAPPENS 0x142
@@ -30,14 +45,25 @@
 /// Retreat is blocked, from Psynergy or an item. It "does not work here".
 /// Cleared on every scene entrance; the scenes that forbid Retreat set it.
 #define FLAG_RETREAT_BLOCKED 0x144
-#define FLAG_ITEM_USE 0x145     ///< the Psynergy comes from an item
+#define FLAG_ITEM_USE 0x145 ///< the Psynergy comes from an item
+/// No random encounters while set (Encounter_SelectEnemyGroup), unless flag
+/// 0x15f is set; debug entrances set it.
+#define FLAG_NO_ENCOUNTERS 0x160
 #define FLAG_DEBUG_BATTLE 0x162 ///< set before every debug battle
+/// In debug mode, steps on the field are not processed (Field_RunScene) and
+/// the world map's places do not react to the leader; debug entrances set it.
+#define FLAG_DEBUG_STEPS_OFF 0x163
 /// Set while the Lure Cap is worn: random encounters come twice as fast.
 #define FLAG_LURE_CAP 0x167
 #define FLAG_AUTO_BATTLE 0x16a
 #define FLAG_CHOOSING_COMMANDS 0x16b ///< set while the commands are chosen
 #define FLAG_LINK_BATTLE 0x16c
 #define FLAG_DJINN_TUTORIAL 0x16e
+/// With FLAG_DJINN_TUTORIAL set, these two choose the part of the tutorial the
+/// Djinn menu plays: neither, step 1; only the second, step 14; only the first,
+/// step 27; both, step 28 (DjinnMenu_Open).
+#define FLAG_DJINN_TUTORIAL_PART_A 0x16f
+#define FLAG_DJINN_TUTORIAL_PART_B 0x171
 /// The link lobby's battle against a monster when no opponent is linked:
 /// formations matched to the party's level, and no spoils.
 #define FLAG_MONSTER_BATTLE 0x173
@@ -641,6 +667,7 @@
 // World map
 /// The Black Orb did nothing on Babi's ship and was handed back.
 #define FLAG_BLACK_ORB_RETURNED 0x85d
+#define FLAG_WORLD_MAP_TURTLE_BOOTS 0xfcf ///< buried, found by searching
 
 // Scene flags, 0x200 to 0x2ff: Scene_ResetFlagsOnEnter clears them on every
 // ordinary entrance, and each scene keeps its own puzzle and event states in

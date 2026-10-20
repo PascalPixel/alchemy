@@ -38,30 +38,7 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 }
 
 // Djinni attacks, reveal particles and camera shake.
-//
-// Each attack draws one of the small Djinn on the effect canvas and throws its
-// element at the targets:
-//
-// - The Mercury Djinni spirals through the centre of the field and fires five
-//   blue flames to the left, each shattering into motes.
-// - The Jupiter Djinni spirals the other way while eight flameballs fall from
-//   the top right and shatter on the ground.
-// - The Venus Djinni sways while ten flame columns rise from the ground, each
-//   throwing motes upwards.
-// - The Mars Djinni flares from a glowing orb, dives to the ground and sets
-//   nine flames erupting in an arc while embers rise.
-//
-// Every attack sets up the canvas, its blitters and its particles, then runs
-// a fixed number of frames, each a list of steps run in a fixed order and
-// ending with a canvas present, which waits for the next frame. The order
-// matters: later steps draw over earlier ones and several consume random
-// numbers.
-//
-// The motes the flames shatter into live in PARTICLES, 32 slots per flame;
-// the flames, rocks and chips themselves live in work->particles. The
-// appearance prelude leaves the canvas ready for the calling attack; each
-// attack removes its callbacks before returning. Sheet cell layouts select
-// the images.
+// The folder README describes them under "Effect families".
 
 #define MERCURY_FRAMES 96
 // The blue flame sheet holds a 17x104 flame, then a 34x65 one; Mercury

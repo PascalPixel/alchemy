@@ -4,33 +4,8 @@
 
 #include "../effect_internal.h"
 
-// The shockwave scene (Judgment): a gathering formation, its burst, and a
-// sweep of debris across three backdrops.
-//
-// The scene runs in two parts, each with its own frame clock.
-//
-// - The gathering, on the violet sky backdrop: a projected formation of
-//   sixteen objects moves forward while rotating motes shrink in on its
-//   centre. A burst then grows there, shards fly from it, and a ring of
-//   dimming motes spreads outward. It runs JUDGMENT_GATHER_FRAMES frames.
-// - The sweep, JUDGMENT_SWEEP_FRAMES frames: the formation gives way to
-//   debris objects and the scene cuts to an aerial backdrop, then to beach
-//   and forest ones, swapping palettes, backdrop and debris on set frames.
-//   Meanwhile expanding elliptical rings are drawn into a wave picture that
-//   persists in work, explosion cells fan out from the impact, and the
-//   debris objects rise and are recycled behind a scrolling explosion front.
-//
-// Both parts skip ahead on A or B, by different rules: the gathering simply
-// ends after frame 4, while the sweep jumps to its next transition frame
-// (150, 214 or 280).
-//
-// Particle slots: the gathering's motes use PARTICLES 0 to 127 and its
-// sparks 128 to 255 (JUDGMENT_SPARKS). The sweep's debris use particles 0
-// to 15, one for each debris object.
-//
-// The work block is laid out as JudgmentWork: the sheet's pixels first (the
-// sweep's wave picture is its first 120x120 bytes), then eight dimmed copies
-// of the mote sheet.
+// The shockwave scene (Judgment).
+// The folder README describes them under "Effect families".
 
 /// Judgment's work block: the sheet's pixels, then eight dimmed copies of the
 /// mote sheet.

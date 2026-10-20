@@ -5,28 +5,7 @@
 #include "../effect_internal.h"
 
 // Target strikes: repeated slashes or columns of light on the first target.
-//
-// One runner, BattleFx_RunTargetStrike, plays all twelve strike styles. Each
-// style's row gives its kind (0 for a sideways slash, 1 for a column of
-// light), its number of hits, its extras (smoke, an absorbing drain, glints,
-// sparks or one heavy hit), its palette, the frames each picture is held, the
-// column's composite mode and the scene's duration. The wrappers above it
-// name the style of each effect.
-//
-// The scene runs in three phases:
-//
-// - Setup loads the pictures and the style's palette, then parks every
-//   particle, idle, where it will start: 64 smoke puffs at the target's feet,
-//   128 motes and 512 sparks 20 pixels up its body, each with a random
-//   velocity. A particle is idle while its variant is -1.
-// - Each frame first draws the strike (a slash sweep or a column) and, on a
-//   hit frame, shakes and flashes the target and lights the next group of
-//   particles. Glints are then scattered around the target, and the lit
-//   smoke, motes and sparks are drawn and moved.
-// - The finish releases the canvas layer.
-//
-// Several steps consume random numbers, so their order within a frame is part
-// of the effect.
+// The folder README describes them under "Effect families".
 
 /// The strike sparks live after the motes in PARTICLES.
 #define TARGET_STRIKE_SPARKS ((struct EffectStep *)(Ram_MapCellBuffer + 0x3800))

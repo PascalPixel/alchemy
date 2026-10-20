@@ -4,54 +4,8 @@
 
 #include "../effect_internal.h"
 
-// Build specialized canvas blitters from the resident ARM kernels.
-//
-// Effects draw sprite cells onto a 128x128 canvas with small ARM routines
-// built at run time for one cell size, one mirroring and one way of combining
-// pixels. A general routine that tested all of these for every pixel would be
-// far too slow, so each routine is spliced together from a template and the
-// pixel fragments of its mode. Some template words are taken as they are,
-// some are chosen by the flags, and some have an immediate or a branch
-// displacement added before they are written.
-//
-// The generated routine has these blocks, in order:
-//
-// 1. Prologue: three entry words, the three-word additive mask for additive
-//    compositing, then one of four alternatives that set up the walk for the
-//    mirroring asked for (X only: 3 words, Y only: 4, both: 3, neither: 1).
-// 2. Vertical clip, for vertically clipped cells only: eight words, the third
-//    chosen by vertical mirroring and the last two carrying the cell height.
-// 3. Columns: a test and a forward branch that skips the whole routine when
-//    no rows remain, then either a width mask (unclipped) or twelve clip
-//    words whose shifts carry the cell width as an ARM rotated immediate
-//    (gBattleFx_BitOperands). A second test and forward branch skip
-//    everything when no columns remain. Six words, then one or two, then
-//    five more finish the set-up.
-// 4. Row loop: four loop-head words carrying the row count and the width's
-//    shift, and a fifth when unclipped; then for each row
-//    a. a leading partial run, pixel by pixel up to the first 8-pixel
-//       boundary, skipped by a forward branch when empty;
-//    b. the full-cell loop, eight pixels per pass, from the mode's 8-pixel
-//       fragment, skipped when there are no full cells;
-//    c. a trailing partial run like (a).
-//    Three words then advance to the next row and a fourth branches back to
-//    the loop head.
-// 5. Exit: the two skip branches of block 3 land here, on two final words.
-//
-// Where the template offers alternatives, the cursor always moves past all of
-// them, whichever is written; so the walk ends at the template's last word
-// for every combination, and BattleFx_BuildBlitter checks that it does. In each
-// partial run and the full-cell loop the template keeps four words where the
-// generated routine has its mode's fragment; those four are skipped too.
-//
-// Forward branches are written with a zero displacement, their word index
-// remembered, and patched when the target is reached. Backward branches are
-// computed at once. ARM branch displacements count words from the branch
-// plus two, as the processor reads two words ahead.
-//
-// The same walk runs twice: first without an output buffer, to count the
-// words, then into a heap block of exactly that size. Branch locations are
-// word indices, so the counting pass needs no buffer.
+// Builds canvas blitters from the resident ARM kernels.
+// The folder README describes the routine, block by block, under "Blitters".
 
 // The fragments' registers and modes are described at the top of
 // battle_effect_composite.s.

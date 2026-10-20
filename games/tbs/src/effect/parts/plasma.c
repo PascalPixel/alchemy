@@ -184,23 +184,7 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
 }
 
 // Spark bursts.
-//
-// A spark burst is a large flash, a ring of small flashes that fade, and a
-// spray of sparks that fall and bounce on the ground. The spark groups scene
-// strikes one to three such bursts, 8 frames apart, and the sword effects
-// build their strikes from the same parts:
-//
-// - A flash is an EffectStep whose x and y are an offset from its burst's
-//   centre and whose variant counts down its life. It is drawn only for its
-//   last 18 frames, from a 32x64 flash picture chosen by its age.
-// - A spark moves in 16.16 fixed point under its own gravity, and its variant
-//   is its remaining life. Below the floor it bounces back at half speed
-//   instead of being drawn; it shrinks as its life runs out.
-// - A strike makes every target flash and recoil at once.
-//
-// The spark groups scene keeps its flashes in work->particles, sixteen per
-// burst (only the first twelve are drawn), and its sparks in PARTICLES,
-// one run per burst.
+// The folder README describes them under "Effect families".
 
 /// Bursts at (60, 48), the canvas behind the battle's first layer (priority 1).
 ///

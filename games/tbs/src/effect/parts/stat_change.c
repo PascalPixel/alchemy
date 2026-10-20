@@ -360,35 +360,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
 }
 
 // Stat-reduction shards, flame arcs, rock pillars and erupting particles.
-// Named table fields describe the counts and timing values used by each
-// family's variant rows.
-//
-// A stat reduction shows the dagger or the shield over each target, 4 frames
-// apart, and breaks it into 24 shards that fly off and darken through seven
-// dimmed copies of the shard picture. Its shards live in PARTICLES, 64 for
-// each target, and are drawn with trails: each transfer of the canvas fades
-// or darkens what is already there.
-//
-// The scenes after it each throw a pattern of particles and play it out over
-// a fixed number of frames:
-//
-// - Flare raises nine flames one after another along a half circle,
-//   optionally stacked two or three high.
-// - Quake raises three rock pillars that throw the targets into the air.
-// - Fire's homing embers fly out of the user, hang, and then home in on the
-//   targets, striking with a flare where they reach the ground.
-// - Frost's rising motes spiral up around the target while ice columns spring
-//   up, then burst: the motes spread and fall, chips fly and smoke rises over
-//   the heights they span.
-// - The blast (Blast, Smoke Bomb) bursts a fountain of motes and puffs of
-//   smoke up beside the targets, which fall back under gravity.
-//
-// Each scene takes over the canvas layer, loads its sheet, seeds its
-// particles and then runs its frames, each ending with a canvas present. A
-// free or waiting particle is usually marked by a negative variant, which
-// otherwise counts the frames of its animation. effect->variant picks each
-// scene's counts from its timing table. Several steps consume random numbers,
-// so their order within a frame is part of the effect.
+// The folder README describes them under "Effect families".
 
 /// Breaks the dagger picture into shards that fade through darker copies.
 ///

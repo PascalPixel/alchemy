@@ -240,33 +240,7 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
 }
 
 // Projectile volleys and rushing strikes.
-//
-// A projectile volley fires a row of shots from the user at each target. The
-// mode (0 to 11) picks the shot picture, how the shots are aimed and which
-// sounds play; the mode's row gives its number of shots per target, their
-// flight time and the stagger between shots and targets. Mode entries retain
-// their table indices; the wrappers name the mode of each ability.
-//
-// The volley runs in four parts every frame:
-//
-//   flight:     each launched shot moves one step along its aim and is drawn
-//               on the half-width canvas;
-//   collision:  a shot that passes its target's x on the target's side of the
-//               field hits once: it starts a hit flash, throws sparks, shakes
-//               the camera and makes the target reel;
-//   flashes:    comet volleys draw each hit flash for 12 frames, as half a
-//               picture drawn again flipped for the other half;
-//   sparks and trails: the particles thrown by hits fall and bounce, and
-//               those left behind fireballs rise.
-//
-// All particles share PARTICLES: hit flashes from 0, sparks from 100 and
-// fireball trails from 512. A particle's variant is its frames left (0 when
-// free); a flash's z counts the frames it has shown. The shots themselves
-// live in work->particles, one per target and shot, whose variant is set once
-// the shot has hit.
-//
-// The rushing strike sends the user at the first target; on frame 10 it
-// strikes, a ring flares and 64 sparks scatter, over 60 frames in all.
+// The folder README describes them under "Effect families".
 
 /// Actor animation steps while firing and after the volley finishes.
 #define PROJECTILE_VOLLEY_ANIMATION_STEP_FAST 0x30

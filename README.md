@@ -6,7 +6,7 @@ Alchemy is a decompilation of the Game Boy Advance games ☀️ **Golden Sun: Th
 
 Camelot wrote Golden Sun as source code and compiled it into the `0`s and `1`s on a game cartridge. That source was never released, so Alchemy writes it again: C code that compiles back into exactly the same `0`s and `1`s.
 
-It’s like working out a cake’s exact recipe by baking new cakes until one tastes identical. It’s mad. And it’s working.
+It’s like working out a cake’s exact recipe by baking new cakes until one tastes identical. It’s mad, but it works!
 
 With the source you can read exactly how Golden Sun works, from the damage formulas to every cutscene, and change it: rebalance it, translate it, add scenes, or build editors and ports on top of it.
 

@@ -2673,8 +2673,10 @@ static void ValeStorm_CycleBoulderPalette(void) {
 /// Keeps Garet and actor 8 at the leader sprite priority.
 static void ValeStorm_CopyLeaderSpritePriority(void) {
   struct AnimationObject *sourceSprite;
+#if !TBS_PATCH_3
   struct AnimationObject *targetSprite;
   struct AnimationObject *secondTargetSprite;
+#endif
 
   sourceSprite = Object_GetById(ACTOR_PARTY_LEADER)->sprite;
 #if TBS_PATCH_3

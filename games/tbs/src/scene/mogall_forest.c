@@ -1285,7 +1285,9 @@ s32 MogallForest_Initialize(void) {
       if (Engine_GameFlagIsSet(FLAG_SECOND_AREA_LOG_ROLLED) == 0) {
         FieldScene_RedrawActorFootprint(ACTOR_SECOND_AREA_RIVER_LOG);
       } else {
+#if TBS_PATCH_1
         s32 attr = 0;
+#endif
 
         Engine_TaskWait(1);
         Actor_SetPosition(ACTOR_SECOND_AREA_RIVER_LOG, PIXELS(552),

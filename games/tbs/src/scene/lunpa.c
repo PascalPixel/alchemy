@@ -640,10 +640,14 @@ static void Lunpa_ReopenGateway(void) { Lunpa_CopyGatewayCollision(7, 12); }
 
 /// Cloak fades: if the leader is still among the guards, they are caught.
 static void Event_CloakFades(void) {
+#if TBS_PATCH_1
   struct FieldWork *fieldWork;
+#endif
   struct FieldActor *leader;
 
+#if TBS_PATCH_1
   fieldWork = (struct FieldWork *)gEventWork;
+#endif
   Engine_GameFlagClear(FLAG_SCENE_TEMP_41);
   Engine_GameFlagClear(FLAG_SCENE_TEMP_40);
   leader = Object_GetById(ACTOR_PARTY_LEADER);

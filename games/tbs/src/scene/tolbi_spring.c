@@ -836,7 +836,8 @@ static struct SpringTossMotion sToss;
 
 static s32 sTossKind;
 
-static s32 sTossUnknown[3];
+/// Unreferenced toss storage; removing it shifts the obstacle state.
+static s32 sTossUnknown[3] UNUSED;
 
 static struct SpringObstacle sObstacles[4];
 
@@ -858,9 +859,9 @@ static void TolbiSpring_UpdateTossSimulation(void) {
   s32 maxX;
   s32 minZ;
   s32 maxZ;
-  /* FAKEMATCH: never used; the reference's frame keeps twelve bytes that no
-   * instruction touches. */
-  struct Vector3 spare;
+  /* FAKEMATCH(dead): the unused vector keeps twelve frame bytes; without it,
+   * 2 of 947 instructions differ in tbs-en. */
+  UNUSED struct Vector3 spare;
 
   toss = &sToss;
   // Retain the previous three positions for the visible toss trail.

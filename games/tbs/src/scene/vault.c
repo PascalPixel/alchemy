@@ -860,7 +860,7 @@ s32 Scene_Initialize(void) {
           if (actor != 0) {
             Engine_ActorSetPosition(IVAN, actor->x.fixed, actor->z.fixed);
           }
-          if (gGameState.entrance == 1) {
+          if (gGameState.entrance == VAULT_FROM_WORLD_MAP_SOUTH) {
             Actor_SetPosition(IVAN, PIXELS(400), PIXELS(448));
           } else {
             Actor_SetPosition(IVAN, PIXELS(224), PIXELS(162));
@@ -1198,7 +1198,8 @@ s32 gVault_Actor1[] = {
 
 struct SceneEntrance gVault_Entrances[] = {
     {0, CONDITION_ALWAYS, 223, 0, 135, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 400, 0, 472, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {VAULT_FROM_WORLD_MAP_SOUTH, CONDITION_ALWAYS, 400, 0, 472, FACING_NORTH, 0,
+     -1, -1, -1, -1, 0},
     {2, CONDITION_ALWAYS, 224, 0, 138, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {5, CONDITION_ALWAYS, 408, 0, 344, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {6, CONDITION_ALWAYS, 312, 0, 328, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
@@ -1206,7 +1207,8 @@ struct SceneEntrance gVault_Entrances[] = {
     {8, CONDITION_ALWAYS, 376, 0, 248, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {9, CONDITION_ALWAYS, 296, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {10, CONDITION_ALWAYS, 120, 0, 168, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {11, CONDITION_ALWAYS, 64, 0, 294, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {VAULT_FROM_SANCTUM, CONDITION_ALWAYS, 64, 0, 294, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
     {12, CONDITION_ALWAYS, 70, 0, 183, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {13, CONDITION_ALWAYS, 152, 0, 272, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},

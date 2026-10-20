@@ -552,7 +552,7 @@ static void Event_EnterVault(void) {
     Engine_EventRequestExit(101);
   } else {
     Engine_AudioPlayCue(SE_MAP_EXIT);
-    Engine_EventRequestExit(3);
+    Engine_EventRequestExit(WORLD_MAP_TO_VAULT_SOUTH);
   }
 }
 
@@ -1035,7 +1035,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Engine_EventCloseScreen();
   Engine_EventWaitForScreen();
   GameFlag_Set(FLAG_GUARDS_SUSPECT_KALAY);
-  Engine_EventRequestExit(3);
+  Engine_EventRequestExit(WORLD_MAP_TO_VAULT_SOUTH);
   Engine_EventEnd();
 }
 
@@ -2942,7 +2942,7 @@ u32 gWorldMapExits[] = {
     SCENE_EXITS(WorldMap),
     SCENE_EXIT(WORLD_MAP_TO_VALE_HOME, ValeHome, VALE_HOME_FROM_WORLD_MAP),
     SCENE_EXIT(2, WorldMap, WORLD_MAP_FROM_TITLE),
-    SCENE_EXIT(3, Vault, 1),
+    SCENE_EXIT(WORLD_MAP_TO_VAULT_SOUTH, Vault, VAULT_FROM_WORLD_MAP_SOUTH),
     SCENE_EXIT(WORLD_MAP_TO_GOMA_CAVE_ENTRANCE, GomaCaveEntrance,
                GOMA_CAVE_ENTRANCE_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_BILIBIN, Bilibin, BILIBIN_FROM_WORLD_MAP),
@@ -2961,7 +2961,7 @@ u32 gWorldMapExits[] = {
     SCENE_EXIT(WORLD_MAP_TO_MOGALL_FOREST_1, MogallForest1,
                MOGALL_FOREST_1_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_XIAN, Xian, XIAN_FROM_HOUSE),
-    SCENE_EXIT(15, AlpineCrossing, 1),
+    SCENE_EXIT(15, AlpineCrossing, ALPINE_CROSSING_FROM_WORLD_MAP_EAST),
     SCENE_EXIT(WORLD_MAP_TO_ALTIN, Altin, ALTIN_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_LAMA_TEMPLE, LamaTemple,
                LAMA_TEMPLE_FROM_WORLD_MAP),
@@ -2999,7 +2999,7 @@ u32 gWorldMapExits[] = {
                SUHALLA_GATE_1_FROM_WORLD_MAP_EAST),
     SCENE_EXIT(WORLD_MAP_TO_MOGALL_FOREST_3, MogallForest3,
                MOGALL_FOREST_3_FROM_WORLD_MAP),
-    SCENE_EXIT(44, Vault, 3),
+    SCENE_EXIT(WORLD_MAP_TO_VAULT_NORTH, Vault, VAULT_FROM_WORLD_MAP_NORTH),
     SCENE_EXIT(45, BilibinCaveEntrance, BILIBIN_CAVE_ENTRANCE_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_KOLIMA_BRIDGE_WEST, KolimaBridge,
                KOLIMA_BRIDGE_FROM_WORLD_MAP_NORTH),
@@ -3009,8 +3009,8 @@ u32 gWorldMapExits[] = {
                BILIBIN_CAVE_1_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_WEST_LUNPA_CAVE, WestLunpaCave,
                WEST_LUNPA_CAVE_FROM_WORLD_MAP),
-    SCENE_EXIT(50, AlpineCrossing, 2),
-    SCENE_EXIT(51, AlpineCrossing, 3),
+    SCENE_EXIT(50, AlpineCrossing, ALPINE_CROSSING_FROM_WORLD_MAP_NORTH),
+    SCENE_EXIT(51, AlpineCrossing, ALPINE_CROSSING_FROM_WORLD_MAP_WEST),
     SCENE_EXIT(WORLD_MAP_TO_ALTIN_PEAK_11, AltinPeak11,
                ALTIN_PEAK_11_FROM_WORLD_MAP),
     SCENE_EXIT(WORLD_MAP_TO_LAMAKAN_DESERT_4, LamakanDesert4,

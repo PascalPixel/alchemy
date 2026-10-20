@@ -47,8 +47,8 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
   EFFECT_VIEW_FROM_CAMERA(camera);
 
   // Setup: scatter the shards around the middle of each body, a narrow
-  // ellipse taller than it is wide; each moves up to 1 pixel a frame
-  // sideways and jumps up at 2 to 4.
+  // ellipse up to 2 pixels across the half-width canvas and 32 up and down;
+  // each moves up to 1 pixel a frame sideways and jumps up at 2 to 6.
   EFFECT_FOR_EACH_TARGET(member, work->effect) {
     struct MotionObject *object;
     s32 offset;
@@ -82,7 +82,8 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
   // Target n starts on frame n * 20 with a sound and a 20-frame tint; the
-  // last target's shards get 56 frames to fall.
+  // last target's shards get 56 frames to fall. The battle shows the damage
+  // on frame 32, whatever the number of targets.
   for (frame = 0; frame != work->effect->count * 20 + 56; frame++) {
     if (frame == 32)
       EFFECT_SHOW_DAMAGE(0);
@@ -138,8 +139,8 @@ void BattleFx_RunBreak(struct BattleEffectArgument *effect) {
 /// first 32 of each 128 are moved and drawn. A negative variant marks a mote
 /// that has gone out.
 ///
-/// effect: the targets; variant 0 takes the ice block palette, any other
-///         the blast palette.
+/// effect: the targets; variant 0 (Drain) takes the ice block palette, any
+///         other (Psy Drain's 1) the blast palette.
 void BattleFx_RunDrain(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;

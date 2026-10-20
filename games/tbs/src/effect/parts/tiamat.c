@@ -33,11 +33,12 @@ void BattleFx_RunTiamat(struct BattleEffectArgument *effect) {
 /// during frames 49 to 159 skips to frame 160. The targets reel on frame
 /// 138, the screen flares white over frames 160 to 175 and fades out after,
 /// and the battle shows the damage on frame 178.
-/// mode : 0 also brings in a formation of eight objects that sweeps in and,
-///          at the end, explodes with BattleFx_RunImpactBurst;
-///        1 throws the sparks and flashes from the user's side
-///          (effect->side), in the LightningBolt colours.
-/// Four kinds of particle, in canvas coordinates with y growing downwards:
+///
+/// Called by BattleFx_RunTiamat (mode 0) and BattleFx_RunDragonDriver
+/// (mode 1).
+///
+/// Four kinds of particle, in canvas coordinates with y growing downwards,
+/// 16.16 except the streaks, which are whole pixels:
 ///   PARTICLES[0..511]  embers: rise from y 112, speeding up; one a frame
 ///                      over frames 33 to 103, eight a frame over 104 to 175
 ///   particles[40..63]  sparks: one on each odd frame from 41 to 127,
@@ -46,15 +47,19 @@ void BattleFx_RunTiamat(struct BattleEffectArgument *effect) {
 ///   particles[24..39]  streaks: fall at a slant from the top and, below
 ///                      y 55, play their images over and over
 /// An idle particle's variant is -1; a live one's counts its age up until it
-/// goes out (a streak's counts down its wait first).
+/// goes out. A streak is never idle: its variant starts at minus its wait (0
+/// to 31 frames) and counts up to 0, when it starts to fall.
 ///
-/// Called by BattleFx_RunTiamat (mode 0) and BattleFx_RunDragonDriver
-/// (mode 1). Sets REG_BLDALPHA and REG_BG2CNT (the canvas in front, priority
-/// 0), loads the flash and later the streak palette (or the lightning bolt's)
-/// into the first 64 background colours and brightens them over frames 160
-/// to 175, sets work->shakeFrames, and tints and shakes the targets. Mode 0
-/// spawns the eight formation objects and releases them after the impact
-/// burst.
+/// Sets REG_BLDALPHA and REG_BG2CNT (the canvas in front, priority 0), loads
+/// the flash and later the streak palette (or the lightning bolt's) into the
+/// first 64 background colours and brightens them over frames 160 to 175,
+/// sets work->shakeFrames, and tints and shakes the targets. Mode 0 spawns the
+/// eight formation objects and releases them after the impact burst.
+///
+/// mode : 0 also brings in a formation of eight objects that sweeps in and,
+///          at the end, explodes with BattleFx_RunImpactBurst;
+///        1 throws the sparks and flashes from the user's side
+///          (effect->side), in the LightningBolt colours.
 void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
                                   s32 mode) {
   struct EffectPosition origin;
@@ -123,7 +128,8 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
       origin.x = 44;
   }
 
-  // The formation's centre starts at (212, -60).
+  // The formation's corner starts at (212, -60) and comes to rest at
+  // (148, 68) after the sweep of frames 40 to 47.
   focus.x = 212 << 16;
   focus.y = -(60 << 16);
   EFFECT_FREE_PARTICLES(i, work->particles, 64);
@@ -131,6 +137,8 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
     struct EffectStep *streak =
         &work->particles[PALETTE_PARTICLES_FIRST_STREAK + i];
 
+    // Off the canvas at the top, x 128 to 255 (mirrored, -128 to -1), 65
+    // to 72 lines above it.
     if (dir == 1)
       streak->x = (Random16() & 127) + 128;
     else
@@ -149,7 +157,9 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
   for (frame = 0; frame != PALETTE_PARTICLES_FRAMES; frame++) {
     // A or B skips to frame 160.
     if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 48 && frame <= 159) {
-      // What frames 128 and 138 would have done.
+      // The animations of frame 128 and the targets' reel of frame 138;
+      // when the skip comes before frame 128, that frame's sound, shake and
+      // shorter trails are skipped with it.
       if (mode == 0) {
         AnimationObjects_SelectAnimationFar(work->objects[0], 8);
         AnimationObjects_SelectAnimationFar(work->objects[1], 9);
@@ -168,8 +178,9 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
     // From frame 128 the trails keep only half; over frames 160 to 175 the
-    // canvas is filled each frame and the palette brightens; from 176 the
-    // pixels fade 2 a frame.
+    // canvas is filled each frame, with level 16 and on the last two frames
+    // level 63, while the palette brightens; from 176 the pixels fade 2
+    // levels a frame.
     if (frame == 128)
       work->transferValue = 50;
     if (frame == 176) {
@@ -185,8 +196,10 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
 
     // Start new particles.
 
-    // Embers: from y 112, moving up; their speeds take a base from
-    // gTiamat_DropSpeeds by index.
+    // Embers: from y 112 at x -32 to 223, moving up; a random 0 to 127 plus
+    // a base from gTiamat_DropSpeeds by index gives the speed, in 128ths of
+    // a pixel a frame across and 32nds up, so they climb four times as fast
+    // as they drift.
     if (frame >= 33 && frame <= 175) {
       s32 spawned = 0;
       s32 limit = 1;
@@ -210,7 +223,9 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
         }
       }
     }
-    // Sparks: one on each odd frame, thrown up at a slant.
+    // Sparks: one on each odd frame, thrown up and to the right (mirrored
+    // by dir), 110 to 155 degrees round from straight down, at 1/4 to 3/4
+    // pixel a frame.
     if (frame >= 41 && frame <= 127) {
       s32 spawned = 0;
 
@@ -244,7 +259,8 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
       AudioCommand_PlayFar(SE_141);
     if (frame == 128)
       AudioCommand_PlayFar(SE_145);
-    // Flashes: one a frame, thrown across.
+    // Flashes: one a frame, thrown to the left (mirrored by dir), 65 to 110
+    // degrees round from straight down, at 2 to 6 pixels a frame.
     if (frame >= 129 && frame <= 175) {
       s32 spawned = 0;
 
@@ -310,9 +326,10 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
       }
     }
 
-    // Embers: speed upwards until frame 128, then keep their climb and curve
-    // away to the left (to the right when dir is -1), the odd ones harder;
-    // gone after 256 frames.
+    // Embers: speed upwards by 1/64 pixel a frame each frame until frame 128,
+    // then keep their climb and curve away to the left (to the right when
+    // dir is -1), the odd ones by 1/2 pixel a frame each frame and the even
+    // by 1/8; gone after 256 frames.
     if (frame <= 175) {
       for (i = 0; i != PALETTE_PARTICLES_EMBERS; i++) {
         struct EffectStep *grain = &PARTICLES[i];

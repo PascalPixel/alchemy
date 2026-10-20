@@ -18,8 +18,12 @@
 ///
 /// Abilities: Spire, Clay Spire, Stone Spire (kind 2).
 ///
+/// The boulders are work->particles, of which only y and its speed move; their
+/// shards are PARTICLES, SPIRE_SHARDS for each boulder. Each transfer clears
+/// the canvas, so everything is redrawn every frame.
+///
 /// effect: the targets; its variant picks the number of boulders
-///         (gSpire_RockCounts).
+///         (gSpire_RockCounts: 1, 3 or 5).
 void BattleFx_RunSpire(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -93,7 +97,9 @@ void BattleFx_RunSpire(struct BattleEffectArgument *effect) {
         for (j = 0; j != SPIRE_SHARDS; j++) {
           shard = &PARTICLES[i * SPIRE_SHARDS + j];
           // Five shard shapes, each tumbling through three pictures; z is the
-          // tumbling speed, slowing by one every other frame down to 1.
+          // tumbling speed, slowing by one every other frame down to 1. The
+          // shards gain 1/4 pixel a frame of downward speed each frame,
+          // undamped.
           cell = (j % 5) * 3 + shard->variant / 96 % 3;
           // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX

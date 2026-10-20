@@ -5,25 +5,26 @@
 #include "../effect_internal.h"
 
 /// The trail particles' random rotations, 48 bytes each, after the 384
-/// particles in PARTICLES.
+/// particles in PARTICLES (28 bytes each, so they end at 0x2a00).
 #define ATALANTA_MATRICES (Ram_MapCellBuffer + 0x3800)
 
 /// The pictures in the slash sheet: five flash frames, then the slash in
-/// three parts.
+/// three parts. Each starts where the one before ends; the notes give the
+/// sizes the draws use.
 enum SlashSheetCell {
-  ATALANTA_SLASH_FLASH_1 = 0x0000,
-  ATALANTA_SLASH_FLASH_2 = 0x0188,
-  ATALANTA_SLASH_FLASH_3_TOP = 0x057c,
-  ATALANTA_SLASH_FLASH_3_BOTTOM = 0x07d4,
-  ATALANTA_SLASH_FLASH_4_TOP = 0x0aaa,
-  ATALANTA_SLASH_FLASH_4_MIDDLE = 0x0c90,
-  ATALANTA_SLASH_FLASH_4_BOTTOM = 0x0e74,
-  ATALANTA_SLASH_FLASH_5_TOP = 0x1088,
-  ATALANTA_SLASH_FLASH_5_MIDDLE = 0x11f8,
-  ATALANTA_SLASH_FLASH_5_BOTTOM = 0x147c,
-  ATALANTA_SLASH_TOP = 0x16ac,
-  ATALANTA_SLASH_MIDDLE = 0x17fc,
-  ATALANTA_SLASH_BOTTOM = 0x1bf3
+  ATALANTA_SLASH_FLASH_1 = 0x0000,        ///< 14x28
+  ATALANTA_SLASH_FLASH_2 = 0x0188,        ///< 23x44
+  ATALANTA_SLASH_FLASH_3_TOP = 0x057c,    ///< 20x30
+  ATALANTA_SLASH_FLASH_3_BOTTOM = 0x07d4, ///< 22x33
+  ATALANTA_SLASH_FLASH_4_TOP = 0x0aaa,    ///< 18x27
+  ATALANTA_SLASH_FLASH_4_MIDDLE = 0x0c90, ///< 22x22
+  ATALANTA_SLASH_FLASH_4_BOTTOM = 0x0e74, ///< 19x28
+  ATALANTA_SLASH_FLASH_5_TOP = 0x1088,    ///< 16x23
+  ATALANTA_SLASH_FLASH_5_MIDDLE = 0x11f8, ///< 23x28
+  ATALANTA_SLASH_FLASH_5_BOTTOM = 0x147c, ///< 20x28
+  ATALANTA_SLASH_TOP = 0x16ac,            ///< 16x21
+  ATALANTA_SLASH_MIDDLE = 0x17fc,         ///< 29x35
+  ATALANTA_SLASH_BOTTOM = 0x1bf3          ///< 21x24
 };
 
 /// Rain of blades: under a violet sky, a 3x3 formation of objects flies along a
@@ -117,8 +118,9 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   EFFECT_SHOW_WIDE_CANVAS(16);
   pathX = 0;
   pathY = 0;
-  // Each blade starts at a random spot with 24 trail particles, each on a
-  // random rotation kept in ATALANTA_MATRICES.
+  // Each blade starts at a random spot on the canvas, x 12 to 107 and y 32
+  // to 95, with 24 trail particles, each on a random rotation kept in
+  // ATALANTA_MATRICES.
   for (i = 0; i != 16; i++) {
     struct EffectStep *slash = &work->particles[i];
 
@@ -136,6 +138,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
       Transform_Store(ATALANTA_MATRICES + (i * 24 + j) * 48);
     }
   }
+  // Trails: each transfer keeps half of every canvas level.
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);

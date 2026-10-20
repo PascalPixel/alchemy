@@ -16,6 +16,10 @@
 /// Djinni's entrance over the user, fades in over the first 9 frames, ripples
 /// throughout as BG2's x reference is fed line by line
 /// (BattleFx_ArmBg2AffineHBlankDma), and fades out over the last 7.
+///
+/// Opens the canvas layer for the entrance and closes it at the end. Writes
+/// background colours 1 to 63 and keeps their working copy in the first 128
+/// bytes of Ram_MapCellBuffer; schedules and removes the HBlank DMA callback.
 void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   void **slots;
   struct BattleEffectWork *work;
@@ -45,11 +49,13 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   EFFECT_GET_WORK_AND_CANVAS(slots, work, canvas);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(BGCNT_WRAP);
-  // The Mars Djinni's long entrance (mode 6), over the user (anchor 2).
+  // The Mars Djinni's long entrance (mode 6, 84 frames), over the user
+  // (anchor 2).
   BattleFx_RunDjinniEntrance(effect, 6, work->effect->side, 2, &screenX,
                              &screenY);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
+  // Invisible until the fade-in; the canvas is shown 1.5 times its width.
   REG_BLDALPHA = BLEND_ALPHA(0, 16);
   REG_BG2PA = Q_8_8(1.0 / 1.5);
   BattleFx_FetchRectangleBlitters(work->effect->side, draw);
@@ -77,8 +83,9 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
     }
   }
 
-  // Colours 1 to 63: a fiery ramp that brightens to colour 31 and darkens
-  // again, written to the background palette and to a copy in
+  // Colours 1 to 63: a fiery ramp that brightens to colour 32 and darkens
+  // again, red first, then green and blue (t is the distance from either
+  // end), written to the background palette and to a copy in
   // Ram_MapCellBuffer that the frame loop rotates.
   pal = (u16 *)Ram_MapCellBuffer;
   for (i = 1; i != 64; i++) {
@@ -125,8 +132,10 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
     if (frame > 88)
       REG_BLDALPHA = BLEND_ALPHA(0xc0 - frame * 2, 16);
 
-    // BG2's x reference for each of the 160 scanlines: a sine wave whose
-    // phase advances with wave, which the HBlank DMA applies.
+    // BG2's x reference for each of the 160 scanlines, in 20.8 texels: line
+    // i starts i + 1 texels in, slanting the picture a texel a line, swayed
+    // up to 32 texels either way by a sine of one turn every 128 lines whose
+    // phase moves 1/64 turn a frame. The HBlank DMA applies it.
     line = work->bg2xLines;
     for (i = 0, angle = -(wave << 9); i != 160; i++) {
       *line++ = ((i << 18) - ((Trig_Sin(angle) * 128)) + 0x40000) >> 10;
@@ -152,8 +161,10 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Shows the extended Jupiter Djinni prelude over the first target, mirrored
-/// from the usual side; the Djinni's entrance is the whole effect.
+/// Shows the extended Jupiter Djinni prelude (mode 7 of
+/// BattleFx_RunDjinniEntrance, 84 frames instead of 64) over the first
+/// target, mirrored from the usual side; the Djinni's entrance is the whole
+/// effect.
 ///
 /// Abilities: Kite (kind 217).
 void BattleFx_RunKite(struct BattleEffectArgument *effect) {

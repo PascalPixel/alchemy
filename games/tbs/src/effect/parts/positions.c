@@ -58,7 +58,13 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping,
 /// The common way an effect places a 3D particle: 35 parts call it each
 /// frame once it has set the view, the casting impacts, beams, Judgment,
 /// Procne and the stat changes most often. Only Astral Blast (stars.c) reads
-/// the scale, to size its stars by depth.
+/// the scale, to skip a ring whose nearest point comes too close to the
+/// camera.
+///
+/// Returns the scale in 16.16, with position's x and y in screen pixels and
+/// its depth in whole units. A point outside gProjection's depth range
+/// returns 0 and leaves the transformed point in position, still in 16.16
+/// (Render_ProjectPoint); the 16 is taken off its y all the same.
 ///
 /// point: three s32s in 16.16, x, y and z (an EffectStep's position).
 s32 EffectPosition_ProjectPoint(const void *point,

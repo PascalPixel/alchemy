@@ -29,7 +29,8 @@
 /// The battle shows the damage on frame 16. Variant 0 is red, 2 orange; variant
 /// 2 also swings the camera round over the first 64 frames.
 ///
-/// work->particles 0 to 3 are the pillars' feet, battle positions in 16.16.
+/// work->particles 0 to 3 are the pillars' feet, battle positions in 16.16;
+/// only gVolcano_Counts' first one, two or four are drawn.
 /// Sets REG_BLDALPHA, loads the red or orange palette into the first 64
 /// background colours (variant 1 keeps the fire pillar sheet's), turns the
 /// camera's yaw (variant 2) and sets work->shakeFrames at each eruption.
@@ -133,7 +134,8 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
         }
         // Sparks: 200 at the start, living 48 to 55 frames, then 4 a frame
         // from 16 frames on, living 24 to 31; anywhere in the upper half
-        // circle, twice as hard up as across.
+        // circle, twice as hard up as across: up to about 8 pixels a frame
+        // across and 16 up. They start 16 pixels below the column's foot.
         if (frame == gVolcano_StartFrames[pillar] ||
             frame >= gVolcano_StartFrames[pillar] + 16) {
           s32 spawned = 0;

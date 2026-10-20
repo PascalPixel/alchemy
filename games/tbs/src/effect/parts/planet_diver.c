@@ -44,11 +44,14 @@ struct ImpactChip {
 ///
 /// Abilities: Planet Diver (kind 60).
 ///
-/// 88 frames. effect->side says which way the ball falls; actors[0] is where it
-/// lands.
+/// The ball falls towards the middle of the field, from whichever side the
+/// user stands on; actors[0] is where it lands, and effect->side picks the
+/// ball's facing.
 ///
 /// Moves the user's object: it leaps on frame 4 and falls from frame 18. The
-/// flash's sheet and palette are replaced by the fireball's on frame 16.
+/// flash's sheet and palette are replaced by the fireball's on frame 16. The
+/// sheet slot holds the mote sprites the chips are drawn from, and the chips
+/// themselves live in Ram_MapCellBuffer.
 void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   BlitterPair draw;
@@ -120,7 +123,10 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
                 32, 64);
       }
     }
-    // Frame 4: the user leaps, heading out past its own position.
+    // Frame 4: the user leaps, heading out past its own position: 20 pixels
+    // a frame upwards against a gravity of 0xab85 (about 0.67 pixels a frame
+    // lost each frame), and outwards at up to 3 pixels a frame towards three
+    // times its x, away from the middle (x 0).
     if (frame == 4) {
       actor->velocityY = 20 << 16;
       actor->acceleration = 1 << 16;
@@ -172,6 +178,9 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
       }
       if (actor->y < 0) {
         actor->y = 0;
+        // Each chip flies off 24 pixels above the landing at a random angle
+        // and a speed of 0.5 to 16.5 pixels a frame (speed / 64), doubled
+        // vertically, and lives 32 to 39 frames.
         for (i = 0; i != PLANET_DIVER_CHIPS; i++) {
           struct ImpactChip *chip = &PLANET_DIVER_IMPACT_CHIPS[i];
           s32 speed;
@@ -227,9 +236,11 @@ void BattleFx_RunPlanetDiver(struct BattleEffectArgument *effect) {
 
 // Closing skulls.
 
-#define HAUNT_SCATTERED 512 ///< skull slots scattered at the start
-#define HAUNT_SKULLS 8      ///< skulls drawn around each target
-#define HAUNT_SLOTS 64      ///< particles reserved for each target
+/// Skull slots scattered at the start: HAUNT_SLOTS for each of up to eight
+/// targets.
+#define HAUNT_SCATTERED 512
+#define HAUNT_SKULLS 8 ///< skulls drawn around each target
+#define HAUNT_SLOTS 64 ///< particles reserved for each target
 
 /// Skulls close in on each target in turn.
 ///
@@ -298,7 +309,8 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
 
     // Ripple the canvas sideways, line by line: a 16.16 value >> 10 is a
     // quarter of it in BG2X's 20.8, so the sine swings 1.5 texels either
-    // way, about a 1.5-texel offset against the enemies.
+    // way, about a 1.5-texel offset against the enemies. The wave is 32 lines
+    // long (1/32 turn a line) and moves up a line each frame.
     row = work->bg2xLines;
     if (work->effect->side == 0) {
       for (i = 0; i != 160; i++)
@@ -313,8 +325,9 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
           GetBattleObjectSlotFar(work->effect->actors[k])->object;
 
       // Centre on the point 20 pixels above the target and spin the group
-      // about it; target k's turn starts on frame 32k, its skull i on frame
-      // 4 * (8k + i), and it flashes 32 frames into its turn.
+      // about it, a full turn every 128 frames; target k's turn starts on
+      // frame 32k, its skull i on frame 4 * (8k + i), and it flashes 32
+      // frames into its turn.
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, target->x, 20 << 16, target->z);
       SceneTransform_ApplyPosition(point);
@@ -325,8 +338,8 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
                                     POSE_DAMAGE, k, 32);
 
         // Each skull steps one pixel nearer the centre a frame (its
-        // position less itself over its distance in pixels); skulls take
-        // one of three 24x24 images in turn. variant counts its steps but is
+        // position less itself over its distance in pixels); skull i takes
+        // image i % 3 of three 24x24 images. variant counts its steps but is
         // never read.
         for (i = 0; i != HAUNT_SKULLS; i++) {
           struct EffectStep *skull = &PARTICLES[k * HAUNT_SLOTS + i];
@@ -361,11 +374,13 @@ void BattleFx_RunHaunt(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-#define ORBITING_SPIRALS_LIFE 60 ///< frames each target's spirals turn
+/// Frames from the start of a target's turn to its end; its spirals show on
+/// the 59 frames between.
+#define ORBITING_SPIRALS_LIFE 60
 
 /// Four spirals circle 40 pixels above each target in turn, 16 frames apart,
-/// for 60 frames each, 16 pixels out from the centre; each target takes its
-/// damage pose halfway through.
+/// for 59 frames each, 16 pixels out from the centre; each target takes its
+/// damage pose 32 frames into its turn.
 ///
 /// Abilities: none (kind 34).
 ///
@@ -418,7 +433,8 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
 
     // Frame loop. Ripple the canvas sideways, line by line, 2 texels either
     // way (16.16 >> 10 is a quarter in BG2X's 20.8; the products keep the
-    // signed sine out of a left shift).
+    // signed sine out of a left shift). The wave is 64 lines long (1/64 turn
+    // a line) and moves up a line each frame.
     camera = gCameraWork;
     row = work->bg2xLines;
     if (work->effect->side == 0) {
@@ -457,8 +473,10 @@ void BattleFx_RunOrbitingSpirals(struct BattleEffectArgument *effect) {
           SET_VECTOR(point, obj->x, 40 << 16, obj->z);
           EffectPosition_ProjectPoint(point, &screen);
 
-          // The spirals (32x32) a quarter turn apart, through four images,
-          // turned upside down every other 16 frames.
+          // The spirals (32x32) a quarter turn apart, circling once every 128
+          // frames; each shows its four 1 KB images for 4 frames apiece, and
+          // every other 16 frames draws them mirrored both ways, turned half
+          // a turn.
           for (i = 0; i != 4; i++) {
             s32 x;
             s32 y;

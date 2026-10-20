@@ -94,7 +94,8 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   user = GetBattleObjectSlotFar(work->effect->actor)->object;
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
-  // Sparks spread out flat from the centre, 20 to 51 pixels up.
+  // Sparks spread out flat from the centre, 20 to 51 pixels up, at 4 to 12
+  // pixels a frame (speed / 32).
   for (i = 0; i != 64; i++) {
     struct EffectStep *spark = &PARTICLES[i];
     s32 angle = Random16() & 0xffff;
@@ -109,8 +110,8 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
   // The centre moves from the user to the goal, 60 pixels up, over frames
   // 6 to 45.
   SET_VECTOR(center, user->x, 0, user->z);
-  // Every caller passes a literal anchor: 0, 1, 2 or 4 (Vine), never table
-  // data. The goal is therefore set before the interpolation starts.
+  // Every caller passes a literal anchor, 0, 1, 2 or 4 (Vine), so goal is
+  // always set before the interpolation starts; no caller passes 3.
   switch (anchor) {
   case 0:
     SET_VECTOR(goal, target->x, 0x3c0000, target->z);
@@ -153,9 +154,12 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
     if (frame == 24)
       ObjectGroup_UpdateMembers(work->effect->actor, 0, -1, -1, 0);
     // Only the first 32 sparks are drawn. Spark i appears on frame i / 8 and
-    // spins about the centre on one of four axes, drawn larger the nearer it
-    // is; from 24 frames after appearing it is pulled in, and goes out once
-    // it nears the centre.
+    // spins about the centre on one of four axes, (256 + 32i) / 65536 turn a
+    // frame, drawn larger the nearer it is. From 24 frames after appearing
+    // its speed gains 1/128 of its offset towards the centre each frame, then
+    // keeps 62/64 of itself (on top of the step's own 60/64), and it goes out
+    // once it is within 4 pixels of the centre across and in depth (height
+    // is not tested).
     for (i = 0; i != 32; i++) {
       struct EffectStep *spark = &PARTICLES[i];
 
@@ -212,8 +216,9 @@ void BattleFx_RunDjinniEntrance(struct BattleEffectArgument *effect, s32 mode,
       draw[0](canvas, work->sheet, position.x - 10, position.y - 20, 20, 40);
     }
     // On frame 64 (long version only), 64 motes burst from the Djinni, each
-    // lasting 9 to 24 frames; its x is a screen position, and the canvas is
-    // half as wide.
+    // lasting 9 to 24 frames, thrown in a random direction at 2 to 6 pixels a
+    // frame (speed / 64) with the vertical part doubled. The Djinni's x is a
+    // screen position, halved for the canvas.
     if (frame == 64) {
       for (i = 0; i != 64; i++) {
         struct EffectStep *mote = &work->particles[i];
@@ -378,7 +383,7 @@ enum VolleyField {
 /// (18x13), then the large one.
 #define PROJECTILE_VOLLEY_MEDIUM_SPARK_CELLS (12 * 8)
 #define PROJECTILE_VOLLEY_LARGE_SPARK_CELLS (12 * 8 + 18 * 13)
-#define PROJECTILE_VOLLEY_DJINNI_CELLS 0x65c0 ///< the small Mercury djinni
+#define PROJECTILE_VOLLEY_DJINNI_CELLS 0x65c0 ///< the small Mercury Djinni
 #define PROJECTILE_VOLLEY_FIRST_SPARK 100     ///< the first spark in PARTICLES
 #define PROJECTILE_VOLLEY_FIRST_TRAIL 512     ///< the first trail in PARTICLES
 
@@ -544,6 +549,15 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
     // Each shot starts at the user, at a height its mode picks, and is aimed
     // to reach its target in `steps` frames: straight across for sparks and
     // Cutting Edge, at a random height near the target for the others.
+    //
+    // Heights above the feet, in pixels, h being the battler's table height
+    // (BattleUnit_GetEffectHeightFar): a shot starts at 58 to 73 for Sleet
+    // (mode 7), h / 2 for modes 5, 6 and 10, h / 2 - 15 to h / 2 + 16 for
+    // modes 3, 4 and 9, h / 2 - 31 to h / 2 + 32 for mode 11, and h for the
+    // rest. It aims at -12 to 51 above the target for Sleet, 22 to 29 for
+    // mode 8, 1 to 64 for Blizzard (mode 9), 4 to 35 for Ice Blessing
+    // (mode 10), h / 2 to h / 2 + 15 for Heat Wave (mode 6) and h - 15 to h
+    // for modes 0 to 2.
 
     EFFECT_FOR_EACH_TARGET(i, work->effect) {
       struct MotionObject *target =
@@ -634,9 +648,10 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
           EFFECT_SHOW_DAMAGE(SE_133);
       }
 
-      // Prelude: the small Djinni circles, and from frame 70 rises away; it
-      // is drawn twice on the first four frames. Its blitter is built and
-      // freed each frame.
+      // Prelude: the small Djinni circles, 4 pixels across and 2 up and down
+      // every 32 frames, and from frame 70 rises away 2 pixels a frame; it is
+      // drawn twice on the first four frames. Its blitter is built and freed
+      // each frame.
       if (work->effect->prelude == 1) {
         s32 x = ((-Trig_Sin(frame << 11) * 4) >> 16) + screenX / 2 - 10;
         s32 y = ((Trig_Cos(frame << 11) * 2) >> 16) + screenY - 24;
@@ -680,7 +695,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
             shot->y += shot->velocityY;
             shot->z += shot->velocityZ;
             if (mode == 6) {
-              // Leave two trail particles behind the fireball.
+              // Leave two trail particles behind the fireball, drifting up to
+              // 4 pixels a frame each way and living 32 to 39 frames.
               trailsOrShift = 0;
               for (k = PROJECTILE_VOLLEY_FIRST_TRAIL;
                    k != PROJECTILE_VOLLEY_PARTICLE_COUNT; k++) {
@@ -739,7 +755,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                 // screen shakes (but for Sleet), the target flashes and,
                 // but for the ice chips, recoils.
                 if (mode == 2) {
-                  // Pellets bounce back, up or down at random.
+                  // Pellets bounce back, up or down at random, gaining 2 to 4
+                  // pixels a frame of vertical speed.
                   s32 kick = ((Random16() & 31) + 32) << 12;
 
                   if (Random16() & 1)
@@ -764,7 +781,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
                                                        5);
                 }
                 // Sparks: the mode's count, in the first free slots from 100,
-                // living 16 to 23 frames; Cutting Edge's fly twice as fast.
+                // living 16 to 23 frames, at up to 4 pixels a frame each way;
+                // Cutting Edge's fly twice as fast.
                 trailsOrShift = mode == 5 ? 12 : 11;
                 for (k = PROJECTILE_VOLLEY_FIRST_SPARK;
                      k != PROJECTILE_VOLLEY_FIRST_TRAIL; k++) {
@@ -911,7 +929,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
       }
 
       // Sparks fall and bounce off the bottom (y 112) at half speed,
-      // shrinking as their frames run out.
+      // shrinking as their frames run out: a gravity of 1/16 pixel a frame
+      // each frame, keeping 60/64 of their speed.
       for (i = PROJECTILE_VOLLEY_FIRST_SPARK;
            i != PROJECTILE_VOLLEY_FIRST_TRAIL; i++) {
         struct EffectStep *particle = &PARTICLES[i];
@@ -928,7 +947,8 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
         }
       }
 
-      // Fireball trails rise and shrink as they fade.
+      // Fireball trails rise, gaining 1/4 pixel a frame of upward speed each
+      // frame, and shrink as they fade.
       for (i = PROJECTILE_VOLLEY_FIRST_TRAIL;
            i != PROJECTILE_VOLLEY_PARTICLE_COUNT; i++) {
         struct EffectStep *particle = &PARTICLES[i];

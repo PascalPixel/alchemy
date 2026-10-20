@@ -20,8 +20,9 @@
 ///
 /// work->particles 0 to 2 are the rings, battle positions in 16.16. Loads the
 /// rune palette into the first 64 background colours, sets the user's
-/// animation (2, at speed 48), turns the camera's yaw, sends the target
-/// back with its motion fields and sets work->shakeFrames.
+/// animation (2, at speed 48, three times the usual, and does not set it
+/// back), turns the camera's yaw, sends the target back with its motion
+/// fields and sets work->shakeFrames.
 void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
 #ifndef UBFIX
@@ -89,7 +90,8 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
 
   trails = PARTICLES;
   for (frame = 0; frame != 60; frame++) {
-    // Swing the camera round, slowing over frames 40 to 47.
+    // Swing the camera round, slowing over frames 40 to 47: 128/65536 turn a
+    // frame, 5696/65536 in all, about a twelfth of a turn.
     if (frame <= 47) {
       struct BattleCamera *view = WORK_SLOT(HEAP_SLOT_CAMERA);
       s32 speed;
@@ -113,7 +115,9 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
         EFFECT_VIEW_FROM_CAMERA(camera);
         SceneTransform_ApplyPosition(EffectStep_Coordinates(step));
         // The ring's ten points, alternately near and far from its centre,
-        // projected onto the canvas; peak is the farthest depth.
+        // projected onto the canvas; peak is the largest projection scale
+        // (16.16), that of the point nearest the camera. The ring spins 1/64
+        // turn a frame and grows from 1/16 of its size to full by 15 frames.
         peak = 0;
         for (j = 0; j != 10; j++) {
           s32 depth;
@@ -143,8 +147,8 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
           trails[i * 10 + j].velocityY = screenPosition.y;
           Transform_Pop();
         }
-        // Join the points with 16 motes each, unless the ring is too far
-        // away.
+        // Join the points with 16 motes each, unless a point projects at a
+        // scale over 399999 (about 6.1), very near the camera.
         if (peak <= 399999) {
           for (j = 0; j != 10; j++) {
             struct EffectStep *from =
@@ -168,6 +172,8 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
         // Ring i hits 10 + i frames after its launch: knock the target 40
         // pixels back, away from the middle, and shake the screen. The third
         // ring lets the battle show the damage; the others flash the target.
+        // The target hops at 5 pixels a frame under the usual gravity and
+        // slides at up to 8 pixels a frame.
         if (frame == start + i + 10) {
           target->acceleration = 0x20000;
           target->speedLimit = 0x80000;
@@ -282,7 +288,8 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
         EffectPosition_ProjectPoint(step, &screenPosition);
         screenPosition.x >>= 1;
         // On the canvas, draw the star: ten points, alternately near and
-        // far, turning as it falls, joined by 12 motes each.
+        // far, turning 1/32 turn a frame as it falls, joined by 12 motes
+        // each; x is halved for the canvas.
         if (screenPosition.x >= -8 && screenPosition.x <= 127) {
           if (screenPosition.y <= 127) {
             if (screenPosition.y >= -8) {
@@ -315,7 +322,8 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
             }
           }
         }
-        // Bounce below 30 pixels up, losing half the speed across.
+        // Bounce below 30 pixels up, losing half the speed across. There is
+        // no gravity: after a bounce a star rises as fast as it fell.
         if (step->y <= 0x1dffff) {
           step->velocityY = -step->velocityY;
           step->velocityX /= 2;

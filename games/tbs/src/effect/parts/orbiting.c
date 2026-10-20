@@ -92,8 +92,9 @@ UNUSED void BattleFx_RunSwirlingStars(struct BattleEffectArgument *effect) {
                     ((i & 3) * MOTE_SET_BYTES + gBattleFx_MoteCells[size - 1]),
                 screen.x - size / 2, screen.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(star, 60, 0);
-        // From 30 frames after it appears, pull it towards the centre by
-        // 1/256 of its distance a frame.
+        // From 30 frames after it appears, it accelerates towards the centre
+        // by 1/256 of its distance a frame, a spring that the 60/64 damping
+        // above slows.
         if (frame > i / 4 + 30) {
           s32 dx = -star->x >> 8;
           s32 dy = -star->y >> 8;
@@ -152,7 +153,9 @@ UNUSED void BattleFx_RunOrbitingSkulls(void) {
   draw[0] = (DrawRectangle)WORK_SLOT(HEAP_SLOT_BLITTER);
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
-  // Put the canvas on the targets' side of the screen.
+  // Put the canvas on the targets' side of the screen: at one texel a pixel
+  // it covers screen x 0 to 127 for enemy targets and 112 to 239 for the
+  // party.
   if (work->effect->side == 0)
     xOffset = 0;
   else
@@ -202,7 +205,8 @@ UNUSED void BattleFx_RunOrbitingSkulls(void) {
           center.x += xOffset;
         } while (0);
         // Three skulls a third of a turn apart, each turning 1/128 of a turn
-        // a frame; skull i is the i-th 24x24 picture.
+        // a frame; skull i is the i-th 24x24 picture, drawn with its bottom
+        // 4 pixels above its point on the circle.
         for (i = 0; i != 3; i++) {
           struct EffectStep *spark = &work->particles[member * 3 + i];
           s32 x;
@@ -263,9 +267,9 @@ UNUSED void BattleFx_RunTargetBursts(struct BattleEffectArgument *effect) {
                       COMPOSITE_MAX);
   drawSmoke = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
 
-  // Six puffs for each target: five scatter at random, the sixth (the
-  // burst) stays in the middle. The burst draws its two random numbers
-  // too, unused.
+  // Six puffs for each target: five scatter at random, up to 2 pixels a
+  // frame across and half a pixel vertically, and the sixth (the burst)
+  // stays in the middle. The burst draws its two random numbers too, unused.
   for (i = 0; i != 64; i++) {
     s32 angle;
     s32 speed;

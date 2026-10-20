@@ -91,9 +91,9 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE];
   WaitFrames(1);
   // The picture: kind 4 the wave, 3 the beam image, 0, 1 and 5 blue arc A,
-  // 2 blue arc B. Users numbered above 7 take the small Mars Djinni's
-  // palette, the others the crescent's. The sparks and the yellow orb
-  // follow.
+  // 2 blue arc B. An enemy user (unit id above 7) takes the small Mars
+  // Djinni's palette, a party member the crescent's. The sparks and the
+  // yellow orb follow.
   if (kind == 4) {
     Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, work->sheet, 1, 1);
   } else if (kind == 3) {
@@ -127,8 +127,9 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
-  // Scroll BG1 so the first target is on screen: the scroll is held between
-  // -128 and 0, and anchor becomes the target's scrolled position.
+  // Scroll BG1 so the first target falls at canvas x 96 on side 0 and 32 on
+  // side 1, as far as a scroll held between -128 and 0 allows; anchor
+  // becomes the target's position on the canvas.
   EffectPosition_ProjectSprite(work->effect->actors[0], &anchor);
   if (work->effect->side == 0)
     scrollX = 96 - anchor.x;
@@ -143,8 +144,9 @@ void BattleFx_RunBeamSequence(struct BattleEffectArgument *effect) {
   gBgScroll[1].y = 80;
   WaitFrames(1);
   // 64 sparks start at the first target's middle and fly away from the
-  // centre of the field at random speeds; variant is a spark's life, 16 to
-  // 79 frames, so the later sparks are larger and last longer.
+  // centre of the field at random speeds, mostly rising; variant is a
+  // spark's life in moves, 16 to 79, so the later sparks are larger and last
+  // longer. Only the first 32 fly (see the frame loop).
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
   half = BattleUnit_GetEffectHeightFar(work->effect->actors[0]) / 2;
   for (i = 0; i != 64; i++) {
@@ -303,6 +305,8 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
   camera = EFFECT_SLOT(heapCache, HEAP_SLOT_CAMERA);
+  // DEAD: the test is never true, as only kinds 200 and up reach this
+  // runner (BattleFx_DispatchByIdRange), so big stays 1; the ROM keeps it.
   big = 1;
   if (effect->kind <= 199)
     big = 0;
@@ -310,8 +314,8 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   // Load the blitters and pictures a step a frame, keeping the transition
   // centred between the user and the first target meanwhile. The star
   // burst goes to the image storage and the crescent to the map cell
-  // buffer; users numbered above 7 also take the small Mars Djinni's
-  // palette.
+  // buffer; an enemy user (unit id above 7) also takes the small Mars
+  // Djinni's palette.
   BattlePres_SetupTransitionAtPairMidpointFar(effect->actor,
                                               effect->firstTarget, 130);
   WaitFrames(1);
@@ -380,6 +384,8 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     object->acceleration = 0;
     object->verticalMotionStrength = 0;
     EffectPosition_ProjectScaledBattler(work->effect->actor, &screenPosition);
+    // BG1 scrolls so the user stands at canvas x 64, where the motes are
+    // centred.
     scrollX = 64 - screenPosition.x;
     gBgScroll[1].x = scrollX;
     gBgScroll[1].y = 80;
@@ -404,6 +410,8 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
           EffectPosition_ProjectPoint(&mote->x, &point);
           point.x += 64;
           point.y = point.y + screenPosition.y + 24;
+          // DEAD: the depth is clamped to -60..60 and moved to 0..120 but
+          // never read; the ROM keeps the clamp.
           CLAMP(point.depth, -60, 60);
           point.depth += 60;
           EFFECT_DRAW_FLARE(draw[0], canvas, sheet, point.x, point.y, size);
@@ -420,8 +428,9 @@ void BattleFx_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   }
 
   // The strike: clear the canvas, scroll BG1 so the first target is on
-  // screen, and start 64 sparks at its middle, rising and flying away from
-  // the centre of the field.
+  // screen, and start 64 sparks at its middle, rising and flying towards the
+  // centre of the field (unlike the beam sequence's, whose x speed is
+  // turned around once more).
   Iwram_ClearWords(canvas, canvasBytes);
   Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), canvasBytes);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);

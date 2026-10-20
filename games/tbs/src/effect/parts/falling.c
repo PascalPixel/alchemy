@@ -46,10 +46,10 @@ enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 ///
 /// The canvas shows only inside a slanted band of window 0, so the shards
 /// stream out of the sky above the targets. effect->variant picks the size of
-/// the volley from gFalling_IceCounts (shards and frames: 16 for 46 frames, 20
-/// for 52, 32 for 80); variant 1 leaves longer trails and variant 2 draws
-/// additively. effect->side is 1 when the targets are the party, 0 when they
-/// are enemies.
+/// the volley from gFalling_IceCounts (shards and frames: 16 for 46 frames
+/// for Ice, 20 for 52 for Ice Horn, 32 for 80 for Ice Missile); variant 1
+/// leaves longer trails and variant 2 draws additively. effect->side is 1
+/// when the targets are the party, 0 when they are enemies.
 void BattleFx_RunIce(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -270,9 +270,10 @@ struct BoltSparkBuffer {
 ///
 /// Like the falling shards, the canvas shows only inside a slanted band of
 /// window 0. effect->variant picks the volley from gFalling_Counts: 6 bolts of
-/// 8 sparks, 8 of 16 or 32 of 4, spaced 32, 24 or 8 pixels apart, over 80
-/// frames; it also picks how the canvas fades (see below). effect->side is 1
-/// when the targets are the party, 0 when they are enemies.
+/// 8 sparks (Douse), 8 of 16 (Drench) or 32 of 4 (Deluge), spaced 32, 24 or 8
+/// pixels apart, over 80 frames; it also picks how the canvas fades (see
+/// below). effect->side is 1 when the targets are the party, 0 when they are
+/// enemies.
 void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -345,7 +346,8 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
 
   Scheduler_AddOrUpdateCallback(BattleFx_ArmWin0HBlankDma,
                                 EFFECT_CALLBACK_ORDER);
-  // Variant 0 clears the canvas every frame; the others leave trails.
+  // Douse clears the canvas every frame; Drench keeps half of each pixel and
+  // Deluge three quarters, for trails.
   if (work->effect->variant == 0) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   } else if (work->effect->variant == 1) {
@@ -385,9 +387,10 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
             bolt->x += 32;
           bolt->y += 64;
         } else {
-          // Landed: throw this bolt's sparks out from its tip, mostly
-          // upwards (variant 2's can also fall), each living 16 to 31
-          // frames. Bolt i owns its own run of sparks.
+          // Landed: throw this bolt's sparks out from its tip, up to 1
+          // pixel a frame sideways and up at 0 to 4 (Deluge's from 6 up to 2
+          // down, so some fall), each living 16 to 31 frames. Bolt i owns its
+          // own run of sparks.
           bolt->variant = 0;
           for (k = 0; k != gFalling_Counts[work->effect->variant]
                                           [FALLING_BOLT_SPARKS_PER_BOLT];
@@ -423,8 +426,9 @@ void BattleFx_RunDouse(struct BattleEffectArgument *effect) {
           bolt->variant++;
       }
     }
-    // Sparks: a dot that shrinks as its life runs out, falling under
-    // gravity.
+    // Sparks: a dot that shrinks as its life runs out (size 6 down to 1),
+    // falling under a gravity of 1/8 pixel a frame per frame, its speed
+    // damped to 60/64.
     for (i = 0; i != FALLING_BOLT_SPARK_COUNT; i++) {
       spark = &FALLING_BOLT_SPARKS->sparks[i];
       if (spark->variant != -1) {

@@ -22,7 +22,9 @@
 /// Its centre is at canvas x 64 + wallX. The rocks are 11 animation objects,
 /// moved by particles[10] to particles[20].
 ///
-/// effect: the targets; variant 0 to 2 widens the wall.
+/// effect: the targets; variant 0 to 2 widens the wall: 0 for Gaia and
+///         Rockfall, 1 for Mother Gaia and Rockslide, 2 for Grand Gaia and
+///         Avalanche.
 void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
   void **slots;
@@ -97,7 +99,8 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   }
 
   // Rebuild the pictures in work->sheet:
-  //   the growing wall: nine one-line rows, each stretched to 32 lines;
+  //   the growing wall: nine one-line rows, each stretched to 32 lines (the
+  //   frame loop draws only the first eight);
   //   the top of the wall (GAIA_WALL_TOP_CELLS): 48x32 stretched to 48x96;
   //   the foot of the wall (GAIA_WALL_FOOT_CELLS): 48x21;
   //   the swelling ground: three frames.
@@ -148,8 +151,11 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
   // Trails: each transfer keeps 3/4 of every canvas level.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
-  // Rocks: x is the column, y counts down from 128 by z, velocityX cycles
-  // through 1 to 12, and variant is the wait before the rock appears.
+  // Rocks: x is the column, y counts down from 128 by z pixels a frame (2
+  // to 17, and 8 to 15 for a rock restarted from frame 88), velocityX
+  // cycles through 1 to 12 but nothing else reads it, and variant is the
+  // wait before the rock appears (44 frames for the first, 4 fewer for each
+  // after).
   for (i = 0; i != GAIA_ROCKS; i++) {
     struct EffectStep *rock = &work->particles[10 + i];
 
@@ -158,12 +164,14 @@ void BattleFx_RunGaia(struct BattleEffectArgument *effect) {
     rock->variant = 44 - i * 4;
   }
   // Then particles[16] to particles[21] take the fixed columns of
-  // gGaia_LateRockColumns.
+  // gGaia_LateRockColumns: the five rocks that join on frame 72, and
+  // particles[21], which no rock uses.
   for (i = 0; i != 6; i++)
     work->particles[16 + i].x = gGaia_LateRockColumns[i];
 
-  // Dust rises from the foot of the wall, half a pixel to 1.5 pixels a
-  // frame, each mote after a random wait of up to 31 frames (its variant).
+  // Dust rises from the foot of the wall, across its middle 64 pixels, at 4
+  // to 12 pixels a frame, each mote after a random wait of up to 31 frames
+  // (its variant). 256 are placed; the frame loop draws 64.
   for (i = 0; i != 256; i++) {
     struct EffectStep *dust = &PARTICLES[i];
 

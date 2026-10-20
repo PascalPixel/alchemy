@@ -68,12 +68,14 @@ void BattleFx_RunFlyingAttack(struct BattleEffectArgument *effect) {
 enum BurstField {
   BURST_SCENE_ARC_SHEET, ///< 0: blue arc A, else B; 1 also draws every strike
                          ///< as an arc
-  BURST_SCENE_PALETTE,   ///< the palette's resource (0 to 3)
+  BURST_SCENE_PALETTE,   ///< whose palette: 0 the Mars Djinni sheet's, 1 lime,
+                         ///< 2 blue arc B's, 3 the ember streak sheet's
   BURST_SCENE_STRIKES,   ///< the strikes
-  BURST_SCENE_MOTES,     ///< motes thrown by each strike
+  BURST_SCENE_MOTES,     ///< motes thrown by each strike, at most the 32 of
+                         ///< its run of PARTICLES
   BURST_SCENE_INTERVAL,  ///< frames between strikes
   BURST_SCENE_FRAMES,    ///< frames in the whole effect
-  BURST_SCENE_FLASH      ///< 1 fills the canvas on each hit
+  BURST_SCENE_FLASH      ///< 1 fills the canvas with level 47 on each hit
 };
 
 /// The flash pictures, packed to half width after the arcs.
@@ -85,17 +87,20 @@ enum BurstField {
 /// again; each strike shows an arc (or, in rows with arc sheet 0, a wave
 /// for the third and fourth of every four), flashes and throws motes. A
 /// strike lands 2 frames after it starts: an odd one jolts the target, and
-/// the last knocks it back, shakes the screen harder and ends the attack.
+/// the last knocks it back, shakes the screen for longer (8 frames against
+/// 4) and ends the attack.
 /// The motes wait above the target until their strike releases them, then
 /// bounce off the ground and die out.
 ///
 /// Called by the six wrappers above it, with the mode their ability needs.
 /// Uses PARTICLES 0 to 767 for the motes, 32 a strike, and both blitter
 /// slots, rebuilt twice a frame; loads palette colours 0 to 63 from the
-/// row's palette resource.
+/// row's palette resource. Sets work->shakeFrames on each hit, and ends with
+/// the transfer callback removed and the canvas layer closed.
 ///
-/// effect: the user and the targets; prelude 1 brings in a Jupiter Djinni
-///         first.
+/// effect: the user and the targets; prelude 1 first brings in a Jupiter
+///         Djinni over the user, the 84-frame entrance (mode 7 of
+///         BattleFx_RunDjinniEntrance).
 /// mode   : the row of gBurstScene_Records.
 void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition actorPos;
@@ -246,6 +251,9 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
           Iwram_FillWords(canvas, CANVAS_BYTES, 0x2f2f2f2f);
         ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, 0, 4);
+        // Motion 4 is the fastest knockback; motion 7 a hop, up at 5.5
+        // pixels a frame, back to the target's own place
+        // (gBattleMotion_Variant*).
         if (i == bursts - 1) {
           BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
           work->shakeFrames = 8;
@@ -269,8 +277,9 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
     EFFECT_RELEASE_BLITTERS();
 
     // Motes: a released mote's variant is its life, 15 to 22 frames, and
-    // it shrinks from a 3- to a 1-pixel mote as the life runs out. It
-    // bounces at half speed when it falls below 8 pixels over the ground.
+    // it shrinks from mote size 3 (or 2) to 1 as the life runs out. It falls
+    // at 1/64 pixel a frame per frame and bounces at half speed when it
+    // drops below 8 pixels over the ground.
     // Only the first 512 are drawn; strikes never reach past 288.
     EFFECT_VIEW_FROM_CAMERA(camera);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,

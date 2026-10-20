@@ -119,13 +119,20 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// How BattleFx_ProcessPendingGraphicsTransfer moves the effect's
 /// 128x128 canvas into VRAM once a frame (work->transferMode); the canvas
 /// pixels are indices into a palette ramp, so scaling them fades a trail.
+/// For the clear, darken and brighten modes transferValue is a word, a fill or
+/// a step repeated in each of its four bytes (one per pixel); the fade mode
+/// only compares it with 50.
 enum CanvasTransferMode {
   CANVAS_COPY,             ///< copy as drawn
-  CANVAS_COPY_AND_CLEAR,   ///< copy, then fill the canvas with transferValue
-  CANVAS_COPY_AND_FADE,    ///< copy, keeping 50% or 75% (transferValue) of each
-                           ///< pixel in the canvas for the next frame
-  CANVAS_COPY_AND_DARKEN,  ///< copy, then darken the canvas by transferValue
-  CANVAS_COPY_AND_BRIGHTEN ///< copy, then brighten the canvas by transferValue
+  CANVAS_COPY_AND_CLEAR,   ///< copy, then fill the canvas with transferValue (0
+                           ///< clears it; 0x10101010 is level 16 everywhere)
+  CANVAS_COPY_AND_FADE,    ///< copy, keeping half of each pixel's level for the
+                           ///< next frame when transferValue is 50, and three
+                           ///< quarters for any other value (75 by convention)
+  CANVAS_COPY_AND_DARKEN,  ///< copy, then lower each level by a byte of
+                           ///< transferValue, stopping at 0
+  CANVAS_COPY_AND_BRIGHTEN ///< copy, then raise each level by a byte of
+                           ///< transferValue, stopping at 63
 };
 
 /// The work block and canvas occupy adjacent slots, starting at
@@ -133,8 +140,9 @@ enum CanvasTransferMode {
 #define EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas)                       \
   ((work) = *(cursor)++, (canvas) = *(cursor))
 
-/// Starts at the effect's entry in the whole work-slot array. Earlier slots,
-/// such as the camera, then stay within that array while cursor walks ahead.
+/// Lets EFFECT_SLOT(slots, s) reach any slot: an earlier one such as the
+/// camera (slot 12, against the effect's 39) sits at a negative index that is
+/// still inside gWorkSlot.
 #define EFFECT_GET_SLOTS(slots, cursor, work, canvas)                          \
   ((slots) = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT], (cursor) = (slots),          \
    EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas))
@@ -153,8 +161,11 @@ enum CanvasTransferMode {
    Transform_SetLookAt((camera)->eye, (camera)->pos))
 
 /// Strikes target `i`: it flashes white in its damage pose for `frames`
-/// frames and plays battle motion `motion`
-/// (BattleMotion_ApplyVariantMotionFar).
+/// frames, counted by actor timer `i`, and is knocked back by battle motion
+/// variant `motion` (BattleMotion_ApplyVariantMotionFar). The variants are
+/// the columns of gBattleMotion_Variant* (battle/battle_vars.s); 4, the
+/// hardest, drives the target out to twice its anchor x at up to 20 pixels a
+/// frame.
 #define EFFECT_STRIKE_TARGET(effect, i, frames, motion)                        \
   (ObjectGroup_UpdateMembers((effect)->actors[i], SPRITE_COLOR_WHITE,          \
                              POSE_DAMAGE, i, frames),                          \
@@ -167,6 +178,8 @@ enum CanvasTransferMode {
 
 /// Lets the battle show the damage: resumes its paused playback, which plays
 /// hitSound (an SE_ id; 0 keeps the one already queued) as the targets react.
+/// It acts only while the playback is idle (BattleEventRuntime_BeginPhase),
+/// so a second use while the damage is showing changes nothing.
 #define EFFECT_SHOW_DAMAGE(hitSound) BattleEventRuntime_BeginPhaseFar(hitSound)
 
 /// The canvas: 128x128 pixels, one byte each, in its heap slot and in VRAM at
@@ -226,7 +239,7 @@ enum CanvasTransferMode {
 /// Particle sheets hold ten mote cells, 1x2 to 10x20 pixels. Draws mote cell
 /// `size` (size pixels wide, twice that tall) of `sheet` through blitter
 /// `draw`, centred across x and standing on y: the motes, sparks and dust of
-/// 32 effects, from the mote fountain to the summons.
+/// 29 parts, from the mote fountain to the summons. `size` is 1 to 10.
 #define EFFECT_DRAW_MOTE(draw, canvas, sheet, x, y, size)                      \
   (draw)(canvas, (sheet) + gBattleFx_MoteCells[(size) - 1], (x) - (size) / 2,  \
          (y) - (size), size, (size) * 2)
@@ -259,8 +272,9 @@ enum CanvasTransferMode {
 /// the element streaks take.
 #define EFFECT_PLAYBACK_ORDER 0xc80
 
-/// The full-screen picture Graphics_ConvertBackgroundToBlueRamp (bind.c)
-/// works on, which Condemn draws too.
+/// Ram_MapCellBuffer as the unused Graphics_ConvertBackgroundToBlueRamp
+/// (bind.c) uses it: a working copy of the backdrop's picture, the 0x7800
+/// bytes of BG character block 2.
 #define BLUE_RAMP_PIXELS Ram_MapCellBuffer
 
 /// Caps a colour level at cap, and at 0 from below. Fades draw from darker

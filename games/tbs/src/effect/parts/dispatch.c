@@ -23,8 +23,10 @@ void BattleFx_CallDoNothing(s32 count) {
 
 // Two of the battle's three entry points, BattleFx_RunSceneEffect and
 // BattleFx_RunTableEffect; README.md describes all three and the heap blocks
-// they lend an effect. The shared helpers after them manage the scanline
-// window and the targets' animation objects.
+// they lend an effect. Both size the sheet slot for one set of the ten mote
+// cells (MOTE_SET_BYTES), where most effects decode ParticleSpritesA; an
+// effect's own pictures go in work->sheet. The shared helpers after them
+// manage the scanline window and the targets' animation objects.
 
 /// Runs one of the large battle effects, the ones whose presentation flags
 /// have bit 15 set: takes the effect's sheet, work and canvas, runs the
@@ -143,8 +145,10 @@ void BattleFx_RunTableEffect(struct BattleEffectArgument *effect) {
 /// Ram_MapCellBuffer + 2    : how far each of lines 8 to 135 pulls the edge in
 ///                            (u8 x 128)
 /// Ram_MapCellBuffer + 0x82 : the WIN0H table built here (u16 x 160)
-/// Lines outside 8 to 135 get 0xfff1, a left edge past the right, so nothing
-/// of them is in the window. Edges are clamped to 0 to 240.
+/// Lines outside 8 to 135 get 0xfff1, a left edge (255) past the right (241);
+/// window 0's vertical range, lines 16 to 135 since
+/// BattleFx_ConfigureEffectDisplay, leaves them out anyway. Edges are clamped
+/// to 0 to 240.
 void BattleFx_BuildWindowEdgeTable(void) {
   u16 *baseRightEdge;
   u16 *scanlineEdges;
@@ -205,15 +209,16 @@ void BattleFx_SelectLivingTargets(struct BattleEffectArgument *effect) {
 }
 
 /// Shows the BG1 battle background behind a cleared canvas: clears the canvas
-/// buffer and the 16 KiB of VRAM it is copied to, then blends BG2 over the
-/// rest at 14/16 and moves the projection centre down to line 120.
+/// buffer and the 16 KiB of VRAM it is copied to, then adds 14/16 of BG1 and
+/// BG2 to all of what lies below them and moves the projection centre down to
+/// line 120.
 ///
 /// Called by the summon scenes (Ramses, Kirin, Atalanta, Neptune, Procne,
 /// Judgment, Boreas, Thor) and the particle streams as they close, to give
 /// the battle back its own background. Sets gBgScroll[1].y to 32, reloads
-/// BG1 with the battle's background, waits one frame with the display off
-/// but for mode 1, then writes REG_BLDALPHA, REG_BLDCNT and REG_DISPCNT and
-/// gProjection.centerY.
+/// BG1 with the battle's background darkened to level 24, waits one frame
+/// with every layer off, then writes REG_BLDALPHA, REG_BLDCNT and
+/// REG_DISPCNT and gProjection.centerY.
 void BattleFx_SetupBlendedDisplay(void) {
   void **slots = &gWorkSlot[HEAP_SLOT_BATTLE];
   u8 *canvas = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE];
@@ -222,6 +227,8 @@ void BattleFx_SetupBlendedDisplay(void) {
 
   REG_DISPCNT = DISPCNT_MODE_1;
   gBgScroll[1].y = 32;
+  // Level 24 is 60% brightness: each level takes 1092 from the 16.16
+  // brightness (BattleBackground_Load).
   BattleBackground_LoadFar(1, battle->background, 24);
   Dma_Fill32Cell(fill, 0, canvas, CANVAS_BYTES);
   Dma_Fill32Cell(fill, 0, BG_CHAR_BLOCK(1), CANVAS_BYTES);

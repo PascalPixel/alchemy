@@ -8,11 +8,11 @@
 #define DJINN_HEAL_SWIRL_MOTES 32  ///< motes swirled in
 
 /// A small Mercury Djinni healing the party: the user glows while motes
-/// swirl round a point that rises from the user up to above the first
-/// target (frames 30 to 69); the Djinni appears there on frame 83. Then,
-/// for each target in turn, 8 frames apart, sparkles spiral in on it with
-/// the recovery sound and a glow, while the Djinni sways and finally flies
-/// off. No effect table entry points here, and nothing calls it.
+/// swirl round a point that rises from the user to 90 pixels up over the
+/// first target's x (frames 30 to 69); the Djinni appears there on frame 83.
+/// Then, for each target in turn, 8 frames apart, sparkles spiral in on it
+/// with the recovery sound and a glow, while the Djinni sways and finally
+/// flies off. No effect table entry points here, and nothing calls it.
 ///
 /// PARTICLES 0 to 63 hold the swirl's motes (the first 32 drawn), then 0 to
 /// 511 the healing sparkles, 64 for each target; both are offsets from the
@@ -49,6 +49,8 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
   BattleFx_FetchRectangleBlitters(work->effect->side ^ 1, draw = callbacks);
   actor = GetBattleObjectSlotFar(work->effect->actor)->object;
   goal = GetBattleObjectSlotFar(work->effect->actors[0])->object;
+  // The swirl's motes start 20 to 51 pixels up and fly out level at 4 to 12
+  // pixels a frame.
   for (i = 0; i != 64; i++) {
     struct EffectStep *spark = &PARTICLES[i];
     s32 heading = Random16() & 0xffff;
@@ -62,10 +64,10 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
   // Trails keep 75% of each pixel a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
-  // The swirl: frame 8 plays its sound, frames 30 to 69 carry it from the
-  // user's feet to 90 pixels above the first target, frame 80 plays the
-  // Djinni's sound and frame 83 shows it. target keeps that point for the
-  // healing.
+  // The swirl: frame 8 plays its sound, frames 30 to 69 carry it in 40
+  // equal steps from the user's feet to 90 pixels up at the first target's
+  // x and depth 0, frame 80 plays the Djinni's sound and frame 83 shows it.
+  // target keeps that point for the healing.
   SET_VECTOR(position, actor->x, 0, actor->z);
   SET_VECTOR(target, goal->x, 180 << 15, 0);
   SET_VECTOR(delta, (target[0] - position[0]) / 40,
@@ -90,8 +92,10 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
     if (frame == 24)
       ObjectGroup_UpdateMembers(work->effect->actor, 0, -1, -1, 0);
     // The swirl: 32 motes, mote i from frame i + 1, each turning about its
-    // own axis and, from 30 frames after it appears, pulled back into the
-    // centre. Their size runs 9 to 3 over depths 250 to 634.
+    // own axis (by i & 3: yaw, pitch, roll, or pitch and roll), its speed
+    // damped to 60/64 each frame and, from 30 frames after it appears,
+    // pulled back towards the centre by 1/256 of its offset a frame. Their
+    // size runs 9 to 3 over depths 250 to 634.
     for (i = 0; i != DJINN_HEAL_SWIRL_MOTES; i++) {
       struct EffectStep *spark = &PARTICLES[i];
       if (frame > i && spark->variant == 0) {
@@ -130,7 +134,8 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
         }
       }
     }
-    // The Djinni appears at the swirl's centre, bobbing.
+    // The Djinni appears at the swirl's centre, bobbing 4 pixels up and down
+    // every 64 frames.
     if (frame > 82) {
       SET_VECTOR(djinniPoint, 0, (Trig_Sin(frame << 10) * 4), 0);
       EffectPosition_ProjectPoint(djinniPoint, &screen);
@@ -153,7 +158,8 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != work->effect->count * 8 + 72; frame++) {
     struct BattleCamera *camera = gCameraWork;
     EFFECT_VIEW_FROM_CAMERA(camera);
-    // The Djinni sways, and flies up and away for the last 32 frames.
+    // The Djinni sways 40 pixels either way in depth every 32 frames, and
+    // flies up 4 pixels a frame for the last 32.
     if (frame >= work->effect->count * 8 + 40)
       target[1] += 0x40000;
     SET_VECTOR(point, target[0], target[1],
@@ -170,7 +176,9 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
       SceneTransform_ApplyPosition(position);
       // 30 frames into its turn the target hears the recovery sound, and
       // it glows from 40 to 64; its 64 sparkles spiral in, sparkle i from
-      // frame i / 2 + 1 of the turn, centred 40 pixels above it.
+      // frame i / 2 + 1 of the turn, centred 40 pixels above it. The view
+      // turns 1/128 of a circle a frame, and each sparkle steps 2 pixels
+      // towards the centre (distance counts 2-pixel steps) until within 2.
       if (frame == start + 30)
         AudioCommand_PlayFar(SE_RECOVERY);
       if (frame == start + 40)
@@ -219,14 +227,19 @@ UNUSED void BattleFx_RunDjinnHeal(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Turns the battle camera by cameraDelta. The effect sets cameraPhase to 1
-/// after each of its frames; the callback then turns the whole delta once,
-/// and half of it on the frames in between, so the turn stays smooth whatever
-/// the effect's frame rate.
+/// Turns the battle camera's yaw by work->cameraDelta, or by half of it on a
+/// frame the effect has not marked.
 ///
 /// Runs each frame as a scheduler callback added by BattleFx_RunFire
 /// (fire.c) and BattleFx_RunFroth (vortices.c), which remove it before they
-/// return. Changes the camera slot's yaw and work->cameraPhase.
+/// return. Each of them moves cameraPhase from 0 to 1 at the end of its own
+/// frame. On phase 1 the callback turns the whole delta and clears the phase;
+/// otherwise it turns half the delta and moves the phase from 0 to 2 or from
+/// 2 back to 0, and a phase of 2 is one the effects leave unmarked. Changes
+/// the camera slot's yaw and work->cameraPhase.
+/// XXX: likely to keep the turn smooth when an effect frame runs long,
+/// because every frame still turns at least half the delta; a run with a
+/// slow effect frame would settle it.
 void Camera_ApplyPhasedDelta(void) {
   // Both come from the one slot table; a separate camera base compiles 4
   // bytes longer.

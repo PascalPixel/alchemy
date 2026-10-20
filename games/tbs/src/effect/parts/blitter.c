@@ -56,6 +56,7 @@
 /// and the branch sites emptyRowsBranch, emptyColumnsBranch, rowLoop,
 /// skipBranch, partialRun and fullCellLoop.
 #define BLITTER_WALK()                                                         \
+  /* Block 1, the prologue (README, "Blitters"). */                            \
   COPY(3);                                                                     \
   if (mode == COMPOSITE_ADDITIVE) {                                            \
     COPY_FROM(BattleFx_Mask, 3);                                               \
@@ -78,6 +79,7 @@
   }                                                                            \
   templateWords += 1;                                                          \
                                                                                \
+  /* Block 2, the vertical clip: the height enters the last two words. */      \
   if ((flags & COMPOSITE_CLIP_Y) != 0) {                                       \
     PUT(templateWords[0]);                                                     \
     PUT(templateWords[1]);                                                     \
@@ -93,6 +95,8 @@
   }                                                                            \
   templateWords += 8;                                                          \
                                                                                \
+  /* Block 3, the columns: the empty-rows skip, the width mask or the twelve   \
+   * clip words, the empty-columns skip, then the rest of the set-up. */       \
   PUT(*templateWords++);                                                       \
   MARK(emptyRowsBranch);                                                       \
   PUT(*templateWords++);                                                       \
@@ -137,6 +141,8 @@
                                                                                \
   COPY(5);                                                                     \
                                                                                \
+  /* Block 4, the row loop: its head, the leading partial run, the full-cell   \
+   * loop, the trailing partial run and the step back to the head. */          \
   MARK(rowLoop);                                                               \
   PUT(templateWords[0]);                                                       \
   PUT(templateWords[1] + (1 << (heightShift - 3)) - 1);                        \
@@ -253,6 +259,7 @@
   PATCH(emptyRowsBranch);                                                      \
   PATCH(emptyColumnsBranch);                                                   \
                                                                                \
+  /* Block 5, the exit, where both skips of block 3 land. */                   \
   PUT(*templateWords++);                                                       \
   PUT(*templateWords++)
 

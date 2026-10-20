@@ -47,7 +47,7 @@ enum StatBoostSheet {
   STAT_BOOST_FLARES = 0x0000,  ///< flares (ParticleSpritesD)
   STAT_BOOST_BURST = 0x060e,   ///< six 40x40 bursts of light (GlowOrb)
   STAT_BOOST_PICTURE = 0x2b8e, ///< the picture the mode picks
-  STAT_BOOST_DJINNI = 0x65c0   ///< the 40x40 djinni
+  STAT_BOOST_DJINNI = 0x65c0   ///< the 40x40 Djinni
 };
 
 #define STAT_BOOST_SCATTERED 512 ///< flares scattered at the start
@@ -69,8 +69,8 @@ enum StatBoostSheet {
 /// effect: the targets. With prelude 1, a Djinni appears first, sways and
 ///         rises.
 /// mode: the picture: 0 a dagger, 1 and 2 a shield, 3 and 5 a violet
-///       streak, 4 a wisp. The palette comes from the Venus djinni in mode
-///       3, the Jupiter djinni in mode 2, the Mars djinni in modes 0, 1 and
+///       streak, 4 a wisp. The palette comes from the Venus Djinni in mode
+///       3, the Jupiter Djinni in mode 2, the Mars Djinni in modes 0, 1 and
 ///       5; mode 4 keeps the palette. The Djinni is Venus in mode 3,
 ///       Jupiter in modes 2 and 4, Mars otherwise.
 void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
@@ -243,10 +243,11 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
         ObjectGroup_UpdateMembers(work->effect->actors[member],
                                   SPRITE_COLOR_WHITE, -1, member, 16);
 
-      // Turn the flares and move them 2 pixels a frame towards the centre;
-      // flare i appears i frames after the target's turn starts. Mode 0
-      // turns them by pitch, mode 1 not at all, mode 2 by yaw, the others
-      // by yaw and roll.
+      // Turn the flares and move them 2 pixels a frame towards the centre
+      // (distance is half the distance in pixels, the root's 8.8 >> 9); flare
+      // i appears i frames after the target's turn starts. Mode 0 turns them
+      // by pitch, mode 1 not at all, mode 2 by yaw, the others by yaw and
+      // roll, 1/64 turn a frame.
       if (frame > member * 8) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, drawFlags, COMPOSITE_MAX);
         draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
@@ -365,8 +366,10 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   BattleFx_EndCanvasLayer();
 }
 
-// Stat-reduction shards, flame arcs, rock pillars and erupting particles.
-// The folder README describes them under "Effect families".
+// Stat-reduction shards. The scenes the folder README groups with them under
+// "Effect families" follow in their own parts: Flare (flare.c), Quake
+// (quake.c), Fire (fire.c), Frost (frost.c) and, after ray.c, Smoke Bomb and
+// Blast (eruption.c).
 
 /// Breaks the dagger picture into shards that fade through darker copies.
 ///
@@ -395,8 +398,8 @@ UNUSED void
 BattleFx_RunStatReductionMode3(struct BattleEffectArgument *effect) {
   BattleFx_RunStatReduction(effect, 3);
 }
-// The shard picture in the sheet, followed by seven copies of it, each
-// with its colour levels capped 7 lower than the one before.
+/// The shard picture in the sheet, followed by seven copies of it, each
+/// with its colour levels capped 7 lower than the one before.
 #define STAT_REDUCTION_SHARD_CELLS 0x2580
 #define STAT_REDUCTION_SHARD_BYTES 696 ///< bytes in each copy
 #define STAT_REDUCTION_SHARDS 24       ///< shards drawn for each target
@@ -474,7 +477,8 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
   // The shards start in a grid of eight rows and four columns and fly
   // away from the user's side, scattering in a random direction; variant
   // is a random start in their turning. All 512 are placed, enough for 16
-  // targets of 32 slots.
+  // targets of 32 slots. Each flies 2 pixels a frame across, up to 3 either
+  // way in depth and -2 to 4 up, keeping 60/64 of its speed each frame.
   for (i = 0; i != 512; i++) {
     struct EffectStep *shard = &PARTICLES[i];
     s32 radius = 192;

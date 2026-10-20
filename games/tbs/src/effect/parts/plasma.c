@@ -11,10 +11,11 @@
 // in their fixed point, bounds and how fast they shrink, so they keep their
 // own loops.
 
-#define PLASMA_SPARK_COUNT 1024 ///< sparks
+#define PLASMA_SPARK_COUNT 1024 ///< sparks in PARTICLES, shared by every pillar
 
-#define PLASMA_SPACING 8           ///< frames between pillars
-#define PLASMA_SECOND_IMAGE 0x1500 ///< the second picture in the sheet
+#define PLASMA_SPACING 8 ///< frames between pillars
+/// The second picture in the sheet, after the first 48x112 one.
+#define PLASMA_SECOND_IMAGE 0x1500
 
 /// gPlasma_Columns has seven pillars for each side.
 #define PLASMA_COLUMN_X(side, pillar) gPlasma_Columns[(side)][(pillar)]
@@ -86,7 +87,9 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
   // The last pillar strikes on frame (count - 1) * 8; the effect runs on
   // until frame count * 7 + 48, so a large volley's tail is shorter.
   for (frame = 0; frame != count * 8 - count + 48; frame++) {
-    // Variant 2 swings the camera round for the first 64 frames.
+    // Variant 2 swings the camera round for the first 64 frames: its yaw
+    // turns 1/256 turn a frame, easing off over the last seven, 16160/65536
+    // in all, nearly a quarter turn.
     if (work->effect->variant == 2 && frame <= 63) {
       struct CameraWork *camera = (struct CameraWork *)gCameraWork;
       s32 speed;
@@ -122,7 +125,9 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
 
         // Throw sparks from the pillar's foot (y 104), anywhere in the
         // upper half circle, twice as hard up as across, living 32 to 39
-        // frames, and shake the screen.
+        // frames, and shake the screen. A spark's speed is 0.25 to 8.2
+        // pixels a frame (speed / 128), doubled vertically. Sparks go only
+        // into idle slots, so when the pool is full a pillar throws fewer.
         if (frame == start + 2) {
           s32 spawned = 0;
 
@@ -160,8 +165,9 @@ void BattleFx_RunPlasma(struct BattleEffectArgument *effect) {
       }
     }
 
-    // Sparks: bounce off the ground at half speed, and shrink as their lives
-    // run out; only those on the canvas are drawn.
+    // Sparks gain 1/16 pixel a frame of downward speed each frame, keep 60/64
+    // of their speed, bounce off the ground at half speed, and shrink as
+    // their lives run out; only those on the canvas are drawn.
     for (k = 0; k != PLASMA_SPARK_COUNT; k++) {
       spark = &sparks[k];
       if (spark->variant > 0) {
@@ -213,8 +219,9 @@ void BattleFx_RunDynamite(struct BattleEffectArgument *effect) {
 /// twelve smaller flashes that fade, and throws out sparks that bounce on
 /// the ground; every burst knocks the targets back.
 /// effect->variant picks the shape from gPlasma_Shapes: sparks per
-/// burst, how many bursts, and each burst's offset across. Variant 2 also
-/// scrolls the camera, and variant 3 flashes the whole canvas on frame 4.
+/// burst, how many bursts (three for variant 2, one for the others), and each
+/// burst's offset across. Variant 2 also scrolls the camera, and variant 3
+/// flashes the whole canvas on frame 4.
 /// mode : 0 at (60, 48), the battle shows the damage on frame 24;
 ///        1 at (60, 64), orange; the damage shows on frame 2;
 ///        2 below the user, in the LightningBolt colours, with the sparks
@@ -289,10 +296,11 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 mode) {
   sparks = PARTICLES;
 
   // For each burst: sixteen ring flashes (the first twelve are drawn) at
-  // random angles, each lying further out (index * 2) and waiting longer
-  // before it shows (life index / 2 + 25) the later it comes; and its
-  // sparks, thrown in every direction, twice as hard up and down as across,
-  // at speeds of 32 to 1055, living 32 to 39 frames.
+  // random angles, each lying further out (index * 2 pixels, in 16.16) and
+  // waiting longer before it shows (life index / 2 + 25) the later it comes;
+  // and its sparks, thrown in every direction, twice as hard up and down as
+  // across, at speeds of 0.5 to 16.5 pixels a frame (speed / 64), living 32
+  // to 39 frames.
   for (i = 0; i != gPlasma_Shapes[work->effect->variant][SPARK_GROUPS_BURSTS];
        i++) {
     for (j = 0; j != SPARK_GROUPS_FLASHES; j++) {
@@ -346,12 +354,15 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 mode) {
     struct CameraWork *camera =
         *(struct CameraWork **)(gWorkSlot + HEAP_SLOT_CAMERA);
 
+    // Variant 2 turns the camera's yaw 1/256 turn a frame for 52 frames,
+    // about a fifth of a turn.
     if (work->effect->variant == 2 && frame <= 51) {
       if (work->effect->side == 0)
         camera->scroll += 256;
       else
         camera->scroll -= 256;
     }
+    // Variant 3's flash: the whole canvas at level 63, the top of the ramp.
     /* FAKEMATCH(wrapper): this fill calls the fixed entry itself, past the
      * IWRAM call layer; as Iwram_FillWords, 3 of 776 instructions differ in
      * tbs-en. */
@@ -421,9 +432,11 @@ void BattleFx_RunSparkGroups(struct BattleEffectArgument *effect, s32 mode) {
             point->variant = -1;
         }
       }
-      // The sparks fly (rising for mode 2). Below y 108 a spark bounces back
-      // at half speed instead of being drawn; otherwise it is drawn while on
-      // the canvas, shrinking with its life, alternate sparks additively.
+      // The sparks fly under a gravity of 1/16 pixel a frame each frame
+      // (rising for mode 2), keeping 60/64 of their speed. Below y 108 a
+      // spark bounces back at half speed instead of being drawn; otherwise it
+      // is drawn while on the canvas, shrinking with its life, alternate
+      // sparks additively.
       if (frame > start + 5) {
         s32 gravity;
 

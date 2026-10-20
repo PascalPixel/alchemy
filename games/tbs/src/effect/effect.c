@@ -28,6 +28,14 @@
 ///   Targets         dispatch.c: BattleFx_SelectLivingTargets;
 ///                   helm_splitter.c: BattleFx_PlaceFormationObjects
 ///
+/// Who owns what while an effect plays: the three entry points allocate the
+/// sheet (HEAP_SLOT_BATTLE_SHEET), the work block (HEAP_SLOT_BATTLE_EFFECT)
+/// and the canvas (HEAP_SLOT_BATTLE_CANVAS) before the handler runs and
+/// release them after it returns, so a handler removes every callback that
+/// reads them before it returns. The two blitter slots and gMapCellBuffer
+/// (PARTICLES) belong to the handler for as long as it runs; it frees the
+/// blitters itself before it returns.
+///
 /// README.md in this folder explains the ideas: the canvas, blitters, the
 /// frame loop, particles, pictures and how to change an effect.
 

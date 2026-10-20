@@ -20,7 +20,14 @@
 /// follows. In the rise (96 frames) the row slides across the targets; each
 /// target the row passes throws a burst of 32 motes and plays its hit
 /// reaction, and the fire sheet slides off behind it. The battle shows the
-/// damage at the end. The scene leaves gProjection.centerY at 240.
+/// damage at the end.
+///
+/// Reached through BattleFx_RunSceneEffect, whose sheet slot holds the mote
+/// sheet here. The sweep projects with gProjection.centerY at 240 and holds
+/// BG1's scroll from the battle camera; the rise gives BG1's x back and
+/// BattleFx_SetupBlendedDisplay puts the centre back at 120, which the rise's
+/// Camera_ApplyShake then moves while the screen shakes. The nine objects are
+/// released before the scene returns.
 ///
 /// Particles: work->particles 0 to 47 are the fire trail (x in pixels, y
 /// 16.16, variant the frames before it starts); PARTICLES 32i to 32i + 31
@@ -56,13 +63,17 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   BattleFx_ConfigureEffectDisplay();
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
+  // The backdrop and colour 1, which the first wipe fills the canvas with,
+  // are black.
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
-  // Setup: wipe the battle away, swap in the forest backdrop behind a window
-  // 202 pixels wide, and wipe back.
+  // Setup: wipe the battle away from left to right, swap in the forest
+  // backdrop and wipe back. Window 0 narrows to x 0 to 201; right of it only
+  // window 1 applies, which shows no sprites, so the row rides in from
+  // behind that edge until the rise opens window 0 again.
   BattleFx_WipeCanvas(1, 0);
   BattleFx_SpawnObjects(KIRIN_OBJECTS, 0x175, 1);
   gProjection.centerY = 240;
@@ -82,6 +93,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   savedX = gBgScroll[1].x;
   control = cursor[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE_CANVAS];
   shift = 0;
+  // Each copy clears the canvas to 0, baseX's value here.
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, baseX);
   // The scene owns BG1's scroll until the rise stage.
   control->busy = 1;
@@ -90,8 +102,12 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   do {
     struct EffectStep *fire = &work->particles[i];
 
-    // 64 fire particles start at random places, speeds and delays; only the
-    // first 48 are ever drawn.
+    // 64 fire particles get a delay of 2 to 49 frames; only the first 48 are
+    // ever drawn. The places and speeds set here are never used, though their
+    // random numbers still count: the frame loop places each particle again
+    // behind the row a frame before its delay runs out, with a vertical
+    // speed of up to 8 pixels a frame either way that loses a quarter each
+    // frame it moves.
     fire->x = (Random16() & 31) + 16;
     fire->y = ((Random16() & 31) + 48) << 16;
     fire->velocityY = ((Random16() & 31) - 16) << 16;
@@ -143,8 +159,9 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
     }
 
     // From frame 8 the row bobs on a sine wave (32 pixels high, 96 after
-    // frame 104) and shakes the screen every 32 frames; after frame 103 it
-    // lifts away to the left.
+    // frame 104) and shakes the screen on frames 8, 40, 72 and 104, the last
+    // three with the cast sound; after frame 103 it lifts away to the left,
+    // 16 pixels a frame.
     // DEAD: always true, as the loop ends at frame 120; the ROM keeps the test.
     if (frame <= 149) {
       struct SpriteScale pair = sweepScale;
@@ -216,8 +233,11 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
                    BGCNT_SCREEN_BASE(7);
     }
 
-    // From frame 18 the 48 fire particles trail the row; each waits out its
-    // delay first, and one that leaves the canvas restarts behind the row.
+    // From frame 18 the 48 fire particles trail the row, moving 2 pixels
+    // right a frame; each waits out its delay first, and one that leaves the
+    // canvas restarts behind the row. Variant 1, a frame before the delay
+    // ends, places it there too, so each particle starts behind the row as it
+    // is then.
     if (frame > 17) {
       i = 0;
       do {
@@ -243,8 +263,8 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
       } while (i != 48);
     }
 
-    // From frame 32 a column of six random fire blobs slides up to 40
-    // pixels left.
+    // From frame 32 a column of six random fire blobs, 18 pixels apart,
+    // slides up to 40 pixels left, a pixel every 2 frames.
     if (frame > 31) {
       s32 rise = (frame - 32) / 2;
       s32 y;
@@ -369,7 +389,9 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
         // A target the row passes for the first time throws a burst of 32
         // motes from 16 pixels above its projected point (x halved for the wide
         // canvas), each already four frames along its path, and plays its hit
-        // reaction.
+        // reaction. A mote flies up to 2 pixels a frame across and from 6 up
+        // to 2 down, for 8 to 23 frames; motion 1 is a hop of 6 pixels a frame
+        // and a knock back to 1.4 times its spot's x (gBattleMotion_Variant*).
         if (hit[i] == 0) {
           EffectPosition_ProjectBattler(work->effect->actors[i], &unit);
           if (unit.x > rowX) {
@@ -419,7 +441,8 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
       }
       // From frame 41 the fire sheet, 16 jittered rows, slides off to the
       // left 12 pixels a frame over a canvas that keeps everything; from
-      // frame 65 the canvas fades again and the smear dies away.
+      // frame 65 the canvas fades again, keeping the 75% set here, and the
+      // smear dies away.
       if (frame > 40) {
         s32 slide = (frame - 40) * 12;
         s32 y;

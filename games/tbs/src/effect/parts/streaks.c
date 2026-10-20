@@ -21,11 +21,11 @@
 
 /// The streak volley's styles: its colour and its row of gStreaks_Records.
 enum StreakStyle {
-  STREAKS_STYLE_EMBER,
-  STREAKS_STYLE_LIME,
-  STREAKS_STYLE_VIOLET,
-  STREAKS_STYLE_RED,
-  STREAKS_STYLE_CYAN
+  STREAKS_STYLE_EMBER,  ///< Sonic Wave
+  STREAKS_STYLE_LIME,   ///< Shriek, and the unused BattleFx_RunLimeStreaks
+  STREAKS_STYLE_VIOLET, ///< Banshee Howl
+  STREAKS_STYLE_RED,    ///< Wicked Howl
+  STREAKS_STYLE_CYAN    ///< War Cry
 };
 
 /// Ember streaks.
@@ -168,7 +168,8 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
     // XXX: the length counts 6 frames for every streak although targets are
     // 32 frames apart, so with four targets the fourth's hit (frame 120)
     // falls on the frame the loop stops at and never plays; the abilities'
-    // target ranges would settle whether four targets can occur.
+    // target ranges would settle whether four targets can occur. With three,
+    // the loop stops at 102, before the third target's second flash (104).
     s32 totalFrames = streaks * work->effect->count * STREAKS_SPACING + 48;
 
     // Every streak starts 20 pixels above the user and moves in a straight
@@ -235,7 +236,9 @@ void BattleFx_RunStreakVolley(struct BattleEffectArgument *effect, s32 mode) {
           }
 
           // From 6 frames after the first streak hits, for 32 frames, the
-          // target trembles from side to side.
+          // target trembles from side to side. The tremble sums to nothing
+          // over its 8 frames, but each frame also moves the target half a
+          // pixel further from the middle (x 0), 16 pixels in all.
           if (STREAKS_VALUE(mode, STREAKS_SHAKE) &&
               frame >= k * STREAKS_TARGET_DELAY + 30 &&
               frame < k * STREAKS_TARGET_DELAY + 62) {
@@ -366,7 +369,8 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
 
   // Every mote starts 5 pixels above the user with a random direction and
   // speed, mostly upwards, and a life of 48 to 79 frames; the healing mode
-  // halves the spread across the ground.
+  // halves the spread across the ground. In pixels a frame: up to 4 across,
+  // up to 8 in depth, and -0.25 to 1.75 up.
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   for (i = 0; i != MOTE_FOUNTAIN_INITIALIZED_COUNT; i++) {
     s32 speed;
@@ -396,9 +400,9 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
       if (frame >= i / 32 * 8 && mote->variant >= 0) {
         s32 size;
 
-        // Wobble sideways, project onto the half-width canvas and draw a
-        // 1x2 to 6x12 mote, larger the nearer it is to the camera: depths
-        // are held to 314 to 634, one size a 64 of depth.
+        // Wobble up to 16 pixels sideways, project onto the half-width canvas
+        // and draw a 1x2 to 6x12 mote, larger the nearer it is to the camera:
+        // depths are held to 314 to 634, one size a 64 of depth.
         SET_VECTOR(worldPoint,
                    mote->x + Trig_Sin((i * 4 + mote->variant) << 10) * 16,
                    mote->y, mote->z);
@@ -410,9 +414,11 @@ void BattleFx_RunMoteFountain(struct BattleEffectArgument *effect, s32 mode) {
           position.depth = 634;
         size = 6 - (position.depth - 314) / 64;
         EFFECT_DRAW_MOTE(draw[0], canvas, sheet, position.x, position.y, size);
-        // Damped by 62/64 a frame, with a slight lift (y grows upwards).
+        // Damped by 62/64 a frame, with a slight lift (y grows upwards) of
+        // 1/64 pixel a frame each frame.
         EffectStep_AdvanceWithGravity3D(mote, 62, 0x400);
-        // Mode 1 pushes every mote towards the other side of the field.
+        // Mode 1 pushes every mote towards the other side of the field, 1/8
+        // pixel a frame faster each frame.
         if (mode == MOTE_FOUNTAIN_DRIFTING) {
           if (source->x < 0)
             mote->velocityX += 0x2000;

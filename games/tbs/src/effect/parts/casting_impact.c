@@ -177,7 +177,7 @@ enum CastingImpact {
 
 /// The impact orb, 20x48 pictures packed at half width.
 #define CASTING_IMPACT_ORB_CELLS 0x5100
-/// The Djinni pictures, 20x40, in Ram_MapCellBuffer after the impact's own.
+/// The Djinni's 20x40 picture, in Ram_MapCellBuffer after the impact's own.
 #define CASTING_IMPACT_DJINNI_CELLS 0x3c56
 #define CASTING_IMPACT_GATHER_FRAMES 32 ///< frames the sparks gather
 #define CASTING_IMPACT_SPARKS 64        ///< sparks in work->particles
@@ -463,7 +463,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
               sparkScreen.y = sparkScreen.y + casterScreen->y + 44;
             else
               sparkScreen.y = sparkScreen.y + casterScreen->y + 12;
-            // The depth is clamped to 0 to 120 here but not read.
+            // DEAD: the depth is clamped to -60..60 and moved to 0..120 but
+            // never read; the ROM keeps the clamp.
             CLAMP(sparkScreen.depth, -60, 60);
             sparkScreen.depth += 60;
             EFFECT_DRAW_MOTE(blitters[1], canvas, sprites, sparkScreen.x,
@@ -494,7 +495,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   position = &djinnPos;
 
   // Phase 2: place BG2 for the impacts that need it, at its unstretched
-  // scale with the impact over the target.
+  // scale with the impact over the target: canvas x 32 (96 on side 1), or
+  // 64 for Terra Strike, falls on the target's screen x. Asura's BG2X
+  // starts at -128 (8 on side 1) instead and starts scrolling 12 pixels a
+  // frame, slowing from frame 7.
   if (mode == CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
     REG_BG2PA = Q_8_8(1);
     if (work->effect->side == 0) {
@@ -534,9 +538,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
       REG_BG2X = (96 - targetScreen->x) << 8;
     }
   }
-  // Kinds 15, 17, 24 and 26 clear the canvas and hand off to another effect
-  // without giving the caster its motion back: 15 to projectile volley 9,
-  // 24 to Mystic Flame's orbs and 26 to projectile volley 8; 17 ends here.
+  // Impacts 15, 17, 24 and 26 clear the canvas and hand off to another
+  // effect without giving the caster its motion back: 15 to projectile
+  // volley 9, 24 to Mystic Flame's orbs and 26 to projectile volley 8; 17
+  // ends here.
   if (mode == CASTING_IMPACT_IMPACT_15 || mode == CASTING_IMPACT_IMPACT_17 ||
       mode == CASTING_IMPACT_IMPACT_24 || mode == CASTING_IMPACT_IMPACT_26) {
     CastingImpact_EndPrelude(work, canvas);
@@ -557,8 +562,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   SET_VELOCITY(casterActor, savedVelocityX, savedVelocityY, savedVelocityZ);
   casterActor->acceleration = savedAcceleration;
   casterActor->verticalMotionStrength = savedVerticalStrength;
-  // Kind 35 (Severe Blow), with the caster's motion back, clears the canvas
-  // and hands off to BattleFx_RunSparkGroups, mode 2, with variant 3.
+  // Impact 35 (Severe Blow), with the caster's motion back, clears the
+  // canvas and hands off to BattleFx_RunSparkGroups, mode 2, with variant 3.
   if (mode == CASTING_IMPACT_IMPACT_SEVERE_BLOW) {
     CastingImpact_EndPrelude(work, canvas);
     effect->variant = 3;
@@ -577,8 +582,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
     particle = &work->particles[i];
     particle->variant = 0;
   }
-  // 32 sparks scatter from half the target's height, variant their lifetime;
-  // Aqua Sock throws its own later, and Psyphon Seal's rise more slowly.
+  // 32 sparks scatter from half the target's height, mostly upwards; variant
+  // is a spark's life in visits, 32 to 47, two visits a frame (below). Aqua
+  // Sock throws its own later, and Psyphon Seal's rise more slowly.
   if (mode != CASTING_IMPACT_IMPACT_AQUA_SOCK) {
     s32 height = BattleUnit_GetEffectHeightFar(work->effect->actors[0]) / 2;
     for (i = 0; i != 32; i++) {
@@ -692,7 +698,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
   // for the target.
   frame = 0;
   while (frame != duration) {
-    // BG2 wave table: BG2X for each scanline.
+    // BG2 wave table: BG2X for each scanline. It is built for every impact
+    // but Mortal Danger and Asura, and shows only for the six waving impacts,
+    // for which BattleFx_ArmBg2AffineHBlankDma was added above.
     if (mode != CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
       if (mode != CASTING_IMPACT_IMPACT_ASURA) {
         s32 base;
@@ -701,7 +709,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
         base = 0x40000;
         phase = frame << 12;
         for (; i != 160; i++) {
-          // 1 - sin pixels, in BG2X's 20.8 format.
+          // 1 - sin pixels (0 to 2), in BG2X's 20.8 format: a wave 32 lines
+          // long that moves up two lines a frame.
           s32 offset = (base - ((Trig_Sin(phase) * 4))) >> 10;
           *scanline++ = offset;
           phase += 0x800;
@@ -782,7 +791,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
       BattleFx_StepPaletteToResource((s32)&ResourceId_FlashBurstSheet);
       break;
     }
-    // The orb on frames 4 to 15, and the 32 scattering sparks from frame 4.
+    // The orb on frames 4 to 15, at the target's x but the caster's height
+    // (casterScreen->y), and the 32 scattering sparks from frame 4.
     if (mode != CASTING_IMPACT_IMPACT_MORTAL_DANGER &&
         mode != CASTING_IMPACT_IMPACT_TERRA_STRIKE &&
         mode != CASTING_IMPACT_IMPACT_ASURA) {
@@ -821,8 +831,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
       // Motes burst from the target on frame 12 and fly back into the caster,
       // who glows white from frame 50 to 79. Mote i steers towards the
       // caster's middle from frame i + 23, by a 256th of the distance more
-      // each frame, and goes out once over the caster; only the first 32 are
-      // drawn.
+      // each frame, and goes out once it is within 16 pixels of the caster
+      // across and in depth (a 256th of the distance under 0x1000); only the
+      // first 32 are drawn.
       if (frame == 50) {
         ObjectGroup_UpdateMembers(work->effect->actor, SPRITE_COLOR_WHITE, -1,
                                   -1, 0);
@@ -923,9 +934,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
     } else if (mode == CASTING_IMPACT_IMPACT_AQUA_SOCK) {
       // Over the first 24 frames a flame column falls onto the target: a
       // 17x104 picture tiled down the screen, scrolling 16 pixels a frame,
-      // its head falling 32 pixels a frame until it lands, and the 34x65 flame
-      // at its foot. The screen shakes from frame 8, and from frame 2 up to
-      // four more sparks a frame rise from the target into free slots.
+      // its head falling 32 pixels a frame until it lands on frame 8, and the
+      // 34x65 flame at its foot. The landing shakes the screen for 8 frames,
+      // and from frame 2 up to four more sparks a frame rise from the target
+      // into free slots.
       s32 fall;
       s32 scroll;
       EFFECT_RELEASE_BLITTERS();
@@ -1008,7 +1020,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
     } else if (mode == CASTING_IMPACT_IMPACT_CYCLONE_SLASH) {
       // From frame 6 a tornado of three stacked 40x32 strips stands over the
       // target, cycling three pictures of two frames each; from frame 16 it
-      // fades.
+      // fades. After the sheet's six glints (0xc56 bytes) come each
+      // picture's top and bottom strips in pairs, then the three middles.
       s32 image;
       if (frame > 15) {
         REG_BLDALPHA = BLEND_ALPHA(32 - frame, 16);
@@ -1057,6 +1070,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
       sway = Trig_Cos(frame << 9);
       sway <<= 2;
       sway >>= 16;
+      // targetScreen->y is in whole pixels, so the shift leaves 0 for any
+      // target on the screen: the pictures stand at a fixed height.
       imageY = (targetScreen->y >> 16) + sway + 16;
       if (frame <= 3) {
         blitters[0](canvas, work->sheet,
@@ -1201,6 +1216,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
           SET_VELOCITY(particle, Random16() & 0xffff, Random16() & 0xffff,
                        Random16() & 0xffff);
         }
+        // Chip 63's y, not its radius, is set to 159, which sets it up to 159
+        // pixels off its line. XXX: likely meant as its radius, because 159
+        // is the largest the others draw (32 + 127) and chip 63 gives the
+        // last flinch.
         CASTING_IMPACT_IMPACT_PARTICLES[63].y = 159;
       }
       {
@@ -1315,7 +1334,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
     }
-    // Djinni kinds 0-7: fly to the target in six frames.
+    // Djinni impacts 0 to 7: fly to the target in six frames.
     if (mode <= 7) {
       if (frame <= 5) {
         EffectPosition_ProjectPoint(position, &projected);
@@ -1331,7 +1350,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *effect, s32 mode) {
     // The cues: the damage shows on frame 3 with no sound of its own (a cue
     // of -1 is never played), the heavy impact sounds on frame 4, frame 6
     // gives some impacts a reaction and a shake, and the target flashes on
-    // frames 6 and 14.
+    // frames 6 and 14. Of the reactions (gBattleMotion_Variant*), motion 4
+    // is the fastest knockback, 3 the highest hop and 1 a short knockback.
     if (frame == 3) {
       EFFECT_SHOW_DAMAGE(-1);
     }

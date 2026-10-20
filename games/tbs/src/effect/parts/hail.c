@@ -44,6 +44,7 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
+  // A Mercury Djinni (mode 1) appears over the user (anchor 2).
   BattleFx_RunDjinniEntrance(effect, 1, work->effect->side, 2, &screenX,
                              &screenY);
   BattleFx_FetchRectangleBlitters(work->effect->side, draw);
@@ -52,9 +53,12 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   EffectPosition_ProjectBattler(work->effect->actors[0], &origin);
 
-  // The chips burst up from the first target, in the upper half turn of
-  // directions, eight times as fast up as across; z picks each chip's
-  // picture and velocityZ turns it. variant is set but never read.
+  // The chips burst up from 8 pixels above the first target's projected
+  // position (8 below the point EffectPosition_ProjectBattler gives), within
+  // 8 pixels of its x, in the upper half turn of directions, eight times as
+  // fast up as across (up to 10 pixels a frame up, 1.25 across); z picks
+  // each chip's picture, a new one every 128, and velocityZ turns it.
+  // variant is set but never read.
   for (i = 0; i != HAIL_CHIP_COUNT; i++) {
     s32 angle;
     s32 speed;
@@ -101,7 +105,8 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
     }
 
     // The chips, four more each frame from frame 4, odd ones mirrored; they
-    // fall under gravity and are never retired.
+    // fall under a gravity of 1/16 pixel a frame per frame, damped to 63/64,
+    // and are never retired.
     for (i = 0, chip = PARTICLES; i != HAIL_CHIP_COUNT; i++, chip++) {
       if (frame >= i / 4 + 4) {
         s32 cell;
@@ -203,6 +208,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
   camera = WORK_SLOT(HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
+  // A Venus Djinni (mode 0) appears over the user (anchor 2).
   BattleFx_RunDjinniEntrance(effect, 0, work->effect->side, 2, &screenX,
                              &screenY);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -219,8 +225,8 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
   user = GetBattleObjectSlotFar(work->effect->actor)->object;
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
   // The rocks leave the user 66 pixels up, fanning out towards the middle
-  // of the field, rock i at 2.5 i pixels a frame across. Eight are launched,
-  // the first six drawn.
+  // of the field, rock i at 2.5 i pixels a frame across, up to 1 up or down
+  // and up to 4 in depth. Eight are launched, the first six drawn.
   for (i = 0; i != GROUND_LAUNCHED; i++) {
     struct EffectStep *rock = &work->particles[i];
 

@@ -119,11 +119,10 @@ void BattleFx_RunFroth(struct BattleEffectArgument *effect) {
         point->y += point->velocityY;
         point->z += point->velocityZ;
       }
-      // Mote i appears on frame 2i; 48 frames later it starts to home in on
-      // its target, damped until frame 2i + 85, and strikes on reaching
-      // the ground.
-      // Mote i goes to target i modulo the target count; seats are on the
-      // ground (y 0), so a mote strikes when it falls below it.
+      // Mote i appears after frame 2i; 48 frames later it starts to home in
+      // on target i modulo the target count, gaining 1/512 of the distance
+      // to it a frame and damped to 60/64 until frame 2i + 85. Seats are on
+      // the ground (y 0), so a mote strikes when it falls below it.
       if (frame > i * 2 + 48 && flags[i] == 0) {
         target = &work->particles[FROTH_FIRST_TARGET + i % work->effect->count];
         point->velocityX += (target->x - point->x) >> 9;
@@ -242,8 +241,9 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
       if (frame == i * 8 + 16)
         Iwram_FillWords(canvas, CANVAS_BYTES, 0x08080808);
     }
-    // The sweep sways 16 pixels each way about a point 32 pixels right of
-    // the canvas's x 40 when the targets are the party, left otherwise.
+    // The sweep sways 16 pixels each way, once every 64 frames, about a
+    // point 32 pixels right of the canvas's x 40 when the targets are the
+    // party, left otherwise.
     if (work->effect->side == 1)
       wave += 0x200000;
     else
@@ -253,8 +253,10 @@ void BattleFx_RunWhirlwind(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = BLEND_ALPHA(frame, 16);
     if (frame > 63)
       REG_BLDALPHA = BLEND_ALPHA(0x4f - frame, 16);
-    // Each tornado: three sections stacked, swaying about the sweep, a
-    // quarter turn apart, with four glints.
+    // Each tornado: three sections stacked, swaying about the sweep by its
+    // row's WHIRLWIND_SWAY pixels once every 32 frames, a quarter turn apart
+    // and bobbing 2 pixels, with four glints; the sections change picture
+    // every 2 frames.
     for (i = 0;
          i != gVortices_Shapes[work->effect->variant][WHIRLWIND_TORNADOES];
          i++) {

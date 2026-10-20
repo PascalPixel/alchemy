@@ -58,7 +58,9 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 // throws its motes into its own DJINN_ATTACKS_MOTES_PER_FLAME slots of
 // PARTICLES (Venus's columns fill 16 of them), and the motes move through all
 // DJINN_ATTACKS_MOTE_SLOTS. A mote's variant is its life left, -1 when free;
-// at life 0 it still draws once before its slot is freed.
+// at life 0 it still draws once before its slot is freed. Each frame a mote
+// falls under a gravity of 1/8 pixel a frame per frame (0x2000), its speed
+// damped to 62/64, and it shrinks a size every 16 frames of life it loses.
 #define DJINN_ATTACKS_MOTES_PER_FLAME 32 ///< slots for each flame's motes
 #define DJINN_ATTACKS_MOTE_SLOTS 512
 
@@ -129,8 +131,8 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
         if (flame->variant == 5) {
           AudioCommand_PlayFar(SE_133);
           work->shakeFrames = 4;
-          // Each mote flies off in a random direction at a speed of 256 to
-          // 767; its vertical speed is doubled, so the burst is twice as tall
+          // Each mote flies off in a random direction at 1 to 3 pixels a
+          // frame, the vertical part doubled, so the burst is twice as tall
           // as it is wide.
           for (j = 0; j != DJINN_ATTACKS_MOTES_PER_FLAME; j++) {
             s32 angle;
@@ -181,7 +183,7 @@ void BattleFx_RunMercury(struct BattleEffectArgument *effect) {
       }
     }
 
-    // Motes shrink as they age and slow as they fall.
+    // The motes, sizes 2 to 4 (see DJINN_ATTACKS_MOTE_SLOTS).
     for (i = 0; i != MERCURY_MOTE_SLOTS; i++) {
       mote = &PARTICLES[i];
       if (mote->variant != -1) {
@@ -273,8 +275,8 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
     }
 
     // Flameballs: one every 4 frames from frame 8, moving 6 pixels left and
-    // 12 down a frame. Landing throws its motes twice as fast up and down
-    // as across, and hits every target.
+    // 12 down a frame. Landing throws its motes in random directions at 2 to
+    // 6 pixels a frame, the vertical part doubled, and hits every target.
     for (i = 0; i != JUPITER_FLAMEBALLS; i++) {
       ball = &work->particles[i];
       if (frame >= i * 4 + 8 && ball->y <= JUPITER_GROUND_Y) {
@@ -305,7 +307,7 @@ void BattleFx_RunJupiter(struct BattleEffectArgument *effect) {
       }
     }
 
-    // Motes shrink as they age and slow as they fall.
+    // The motes, sizes 1 to 3 (see DJINN_ATTACKS_MOTE_SLOTS).
     for (i = 0; i != DJINN_ATTACKS_MOTE_SLOTS; i++) {
       mote = &PARTICLES[i];
       if (mote->variant != -1) {
@@ -418,8 +420,9 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
     if (frame == 56)
       EFFECT_SHOW_DAMAGE(SE_133);
     // Ten flame columns rise 12 pixels a frame, one every 4 frames from
-    // frame 16; each throws 16 motes upwards (directions in the upper half
-    // turn) and hits every target as it appears, with a sound for odd ones.
+    // frame 16; each throws 16 motes upwards (in the upper half turn of
+    // directions at 2 to 6 pixels a frame, the vertical part doubled) and
+    // hits every target as it appears, with a sound for odd ones.
     for (i = 0; i != VENUS_COLUMNS; i++) {
       column = &work->particles[i];
       if (frame >= i * 4 + 16) {
@@ -449,7 +452,7 @@ void BattleFx_RunVenus(struct BattleEffectArgument *effect) {
         column->y -= 12;
       }
     }
-    // Motes shrink as they age and slow as they fall.
+    // The motes, sizes 2 to 4 (see DJINN_ATTACKS_MOTE_SLOTS).
     for (i = 0; i != DJINN_ATTACKS_MOTE_SLOTS; i++) {
       mote = &PARTICLES[i];
       if (mote->variant != -1) {
@@ -524,8 +527,12 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
                              work->sheet + MARS_ORB_CELLS, 1, 1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
-  // Nine flames along a flattened arc, 2 frames apart, each with 16
-  // embers that rise wobbling from the ground beneath it.
+  // Nine flames spread out from x 32 alternately left and right (odd flames
+  // left), 2 frames apart: flame i stands sin(i * 11.25 degrees) * 24 pixels
+  // out (0, 4, 9, 13, 16, 19, 22, 23, 24), on a flattened arc from y 56 at the
+  // middle to 52 at the ends. Each has 16 embers that rise wobbling from rows
+  // 96 to 103 beneath it, at up to 2 pixels a frame across and 1 up or down;
+  // their z is a sway phase, and nothing here reads velocityZ.
   index = 0;
   step = work->particles;
   do {
@@ -559,7 +566,8 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
       EFFECT_SHOW_DAMAGE(SE_133);
     // A glowing orb flares, six pictures of 4 frames, then the Djinni shows
     // beside it and from frame 24 dives down to the left, 4 pixels across
-    // and 8 down a frame.
+    // and 8 down a frame. diveY is -172 + 8 * frame, so the dive starts where
+    // the Djinni stood, (50, 20).
     if (frame <= 23)
       blitters[0](canvas,
                   work->sheet + MARS_ORB_CELLS + (frame / 4) * (40 * 40), 40,
@@ -618,7 +626,7 @@ void BattleFx_RunMars(struct BattleEffectArgument *effect) {
     // The embers rise from frame 40, each flame's 16 two frames after the
     // last's, swaying 4 pixels either way; an ember's z is its sway phase,
     // stepped 1/32 of a turn a frame. Embers never die; they rise off the
-    // canvas.
+    // canvas, pulled up at 1/8 pixel a frame per frame.
     step = PARTICLES;
     index = 0;
     do {

@@ -134,7 +134,10 @@ u8 gTargetStrike_Widths[] = SLASH_CELL_WIDTHS;
 u8 gTargetStrike_Heights[] = SLASH_CELL_HEIGHTS;
 u16 gTargetStrike_Offsets[] = {3200, 3466, 3952, 4733, 5695, 6696};
 u8 gTargetStrike_Reach[] = SLASH_CELL_REACH;
-/// The column stage shown by each picture of a rise.
+/// The column stage shown by each picture of a rise, four pictures to a hit:
+/// the first hit grows through stages 0 to 3, and each later hit reads
+/// entries 4, 1, 2 and 3 (pictures above 4 wrap back by 4), sinking to 2 and
+/// 1 and growing back to 3. The hit lands on stage 3.
 u8 gTargetStrike_ColumnStages[] = {0, 1, 2, 3, 2};
 /// The flips a glint may be drawn in.
 u8 gTargetStrike_GlintDrawFlags[] = GLINT_FLIPS;
@@ -268,11 +271,13 @@ u16 gProcne_Cells[] = {13824, 14020, 14476};
 
 // tiamat.c and nereid.c: Palette particle and ember column layouts.
 
-/// Ember speeds, by ember index & 3.
+/// Ember speeds, by ember index & 3: added to a random 0 to 127, in 128ths
+/// of a pixel a frame across and 32nds up.
 u8 gTiamat_DropSpeeds[] = {0, 8, 12, 16};
-/// A spark's 1x2 picture.
+/// A spark's 1x2 picture, drawn additively, so a spark adds 32 of the ramp's
+/// 63 levels to what it covers.
 u8 gTiamat_SparkPixels[] = {32, 32};
-/// Ember sizes, by ember index & 3.
+/// Ember sizes, by ember index & 3: mote cells 1x2, 1x2, 2x4 and 3x6.
 u8 gTiamat_DropSizes[] = {1, 1, 2, 3};
 // The six streak pictures: size, drop below the streak and sheet offset.
 u8 gTiamat_StreakWidths[] = FLAME_PUFF_CELL_WIDTHS;
@@ -287,7 +292,8 @@ u8 gNereid_Columns[][2] = {
     {48, 104},
     {64, 104},
 };
-/// Ember gravity while falling, by ember index & 3.
+/// Ember gravity while falling, by ember index & 3, in 16.16 pixels a frame
+/// each frame: 1/2, 1/4, 1/4 and 1/8.
 s32 gNereid_Gravity[] = {0x8000, 0x4000, 0x4000, 0x2000};
 
 // vortices.c: Vortex mote counts and tornado shapes.
@@ -299,7 +305,9 @@ u8 gVortices_Counts[][2] = {
     {12, 160}, // variant 1
     {30, 200}, // variant 2
 };
-/// Whirlwind, by variant: the WHIRLWIND_ columns.
+/// Whirlwind, by variant: the WHIRLWIND_ columns. The sway is in pixels each
+/// way; the shake is Camera_ApplyShake's horizontal range, the vertical
+/// twice that.
 u8 gVortices_Shapes[][3] = {
     // tornadoes, sway, screen shake
     {1, 16, 2}, // variant 0
@@ -363,9 +371,10 @@ u8 gPlasma_FlashCells[] = FLASH_FADE_CELLS;
 
 /// How many pillars stand, by variant.
 u8 gVolcano_Counts[] = {1, 2, 4};
-/// Each pillar's depth, by variant.
+/// Each pillar's depth in pixels, by variant.
 s8 gVolcano_Depths[][4] = {{0, 0, 0, 0}, {24, -24, 0, 0}, {-20, 20, -60, 60}};
-/// The frame each pillar starts.
+/// The frame each pillar starts. At most four pillars stand, so the fifth
+/// entry is never read.
 u8 gVolcano_StartFrames[] = {8, 18, 24, 30, 34};
 
 // target_motes.c: Target mote glint orientations.
@@ -374,7 +383,8 @@ u8 gVolcano_StartFrames[] = {8, 18, 24, 30, 34};
 u8 gTargetMotes_GlintFlips[] = GLINT_FLIPS;
 
 /// The effect handlers, indexed by effect kind minus one, which
-/// BattleFx_RunTableEffect calls; kind zero is handled by the dispatcher.
+/// BattleFx_RunTableEffect calls; kind 0 is no effect, for which it only
+/// clears effect->variant.
 ///
 /// Each handler is named for the first ability, by ability id, whose entry in
 /// gBattle_ActionFlags (battle/actflags.tsv) selects its kind, with that
@@ -684,7 +694,8 @@ u8 gBoreas_BoulderHeights[] = {48, 38, 26};
 u8 gBoreas_FallWidths[] = {24, 24, 20};
 u8 gBoreas_FallHeights[] = {48, 38, 26};
 u16 gBoreas_FallCells[] = {0, 1152, 2064};
-/// Ice shards: shard i falls with gravity i & 3.
+/// Ice shards: shard i falls with gravity i & 3, in 16.16 pixels a frame
+/// each frame: 1/4, 1/8, 1/4 and 1/2.
 s32 gDrain_Gravities[] = {0x4000, 0x2000, 0x4000, 0x8000};
 
 // stat_change.c: Stat-reduction shard geometry.
@@ -804,6 +815,8 @@ u8 gBolt_Counts[][4] = {
 };
 // The flips a glint may be drawn in, and its blend by variant.
 u8 gBolt_GlintFlips[] = GLINT_FLIPS;
+/// The glints' blend mode by variant: the brighter pixel wins for variants 0
+/// and 1, and variant 2 adds the glint to the canvas.
 u8 gBolt_GlintModes[] = {2, 2, 3};
 
 // projectiles.c: Projectile volley modes and picture cells.
@@ -847,7 +860,8 @@ u8 gDjinnAttacks_LaunchFrames[] = {4, 7, 10, 21, 34};
 u8 gHail_CellWidths[] = {8, 8, 8, 8};
 u8 gHail_CellHeights[] = {8, 8, 8, 8};
 u16 gHail_Cells[] = {2308, 2372, 2436, 2500};
-/// The composite flips a chip may take.
+/// The blitter flags a chip may take, chosen at random: clipped at the canvas
+/// edges, and drawn as is, mirrored across, mirrored down or both.
 u8 gHail_ChipFlips[] = {3, 7, 11, 15};
 // The rock (cell 0) and its chips in the portal sheet: size, where each begins
 // in the sheet, and its offset from the rock's corner.
@@ -859,8 +873,9 @@ u8 gHail_ChipY[] = {0, 18, 18, 0, 24, 20, 5, 22, 26};
 
 // spire.c and thor.c: Storm scene colours and shattering rocks.
 
-/// The colours a target flashes when a bolt strikes it, chosen at random:
-/// white, black, red, or with its colour channels rotated.
+/// The colours a target flashes when a bolt strikes it, chosen at random, as
+/// SPRITE_COLOR_ values: white, black, red raised to full, or its colour
+/// channels rotated.
 u8 gThor_TargetPalettes[] = {7, 14, 10, 4};
 /// Flip flags for the smoke puffs, chosen at random.
 u8 gThor_SmokeFlips[] = GLINT_FLIPS;
@@ -908,7 +923,8 @@ u8 gGaia_RowWidths[] = {5, 6, 9, 12, 15, 18, 21, 32, 40};
 u16 gGaia_MoundCells[] = {10672, 11505, 12550};
 u8 gGaia_MoundWidths[] = EARTH_WALL_CELL_WIDTHS;
 u8 gGaia_MoundHeights[] = EARTH_WALL_CELL_HEIGHTS;
-/// BG2's x shift, by side and variant.
+/// BG2's x shift, by side and variant, in canvas pixels written to BG2X: a
+/// positive shift moves the canvas left on the screen.
 s8 gGaia_Bg2Shifts[][3] = {{-8, 0, 12}, {-72, -40, -16}};
 /// The columns rock particles[16] to particles[21] take.
 u8 gGaia_LateRockColumns[] = {136, 40, 120, 56, 104, 72};
@@ -999,7 +1015,7 @@ u8 gRagnarok_FlashCells[] = FLASH_FADE_CELLS;
 
 /// The flash picture for each three frames at the end of a flash's life.
 u8 gTitanBlade_FlashCells[] = FLASH_FADE_CELLS;
-/// Dust gravity, by particle index & 3.
+/// Dust gravity, by particle index & 3, in gNereid_Gravity's steps.
 s32 gTitanBlade_DustGravity[] = {0x8000, 0x4000, 0x4000, 0x2000};
 // Judgment's burst: seven quarter pictures, each half as wide as it is
 // tall, from JUDGMENT_SHEET_BURST.
@@ -1021,7 +1037,7 @@ u8 gKirin_Rows[] = {0, 0, 0, 24, 32, 32, 32, 56, 64};
 // The formation's eight objects: pixel offsets, scaled by 1.5 as placed.
 u8 gNeptune_ObjectX[] = {0, 32, 64, 0, 32, 64, 96, 96};
 u8 gNeptune_ObjectY[] = {0, 0, 0, 32, 32, 32, 0, 32};
-/// Spray gravity, by particle index & 3.
+/// Spray gravity, by particle index & 3, in gNereid_Gravity's steps.
 s32 gNeptune_Gravity[] = {0x8000, 0x4000, 0x4000, 0x2000};
 
 // undead_sword.c: Rising burst spark cells.

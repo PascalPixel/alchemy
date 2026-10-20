@@ -29,8 +29,9 @@
 /// Abilities: Dragon Cloud (kind 49).
 ///
 /// The trail's last nine copies are darker versions of the trail picture, each
-/// DRAGON_CLOUD_TRAIL_CELL_BYTES long. The camera turns over the first 64 of
-/// the DRAGON_CLOUD_FRAMES frames:
+/// DRAGON_CLOUD_TRAIL_CELL_BYTES long. The camera turns a quarter turn about
+/// the field's centre over the first 64 of the DRAGON_CLOUD_FRAMES frames,
+/// one way or the other by effect->side:
 ///
 ///   0 to 17    a pair of puffs, one mirrored, bursts in front of the user
 ///   18 to 58   the flame follows its stored path
@@ -91,7 +92,10 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
 
   // Seed the embers (particles 8 to 47) and flashes (48 to 63) thrown at the
   // strike, and the eight puffs (0 to 7) on an arc, each starting two frames
-  // after the last.
+  // after the last. Embers and flashes burst from a fixed point of the
+  // field, x -56 (56 on side 1) at depth 0, the flashes 20 pixels up: up to
+  // 8 pixels a frame across and in depth, and up at up to 8 (embers) or 4
+  // (flashes).
   for (j = 0; j != DRAGON_CLOUD_EMBERS; j++) {
     struct EffectStep *ember = &work->particles[DRAGON_CLOUD_FIRST_EMBER + j];
 
@@ -138,6 +142,8 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
       AudioCommand_PlayFar(SE_136);
     if (frame == 50)
       AudioCommand_PlayFar(SE_136);
+    // 1/256 of a turn a frame, then re-aim the turned camera at the field's
+    // centre at 100% zoom, which also moves the backdrop's plane.
     if (work->effect->side == 0) {
       if (frame <= 63)
         camera->yaw -= 0x100;
@@ -226,8 +232,9 @@ void BattleFx_RunDragonCloud(struct BattleEffectArgument *effect) {
                                 POSE_DAMAGE, 0, 8);
       BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 1);
     }
-    // After the strike the embers rise and fall back, 0x2000 a frame, until
-    // they drop below the ground.
+    // After the strike the embers rise and fall back under a gravity of 1/8
+    // pixel a frame per frame (0x2000), undamped, until they drop below the
+    // ground.
     if (frame > DRAGON_CLOUD_STRIKE_FRAME) {
       // Embers are motes sized by depth. Only records 56 to 63 play the
       // six flash pictures, two frames each; the first eight flashes, at 48

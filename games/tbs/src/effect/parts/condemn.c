@@ -153,7 +153,8 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
     }
 
     // Every line's BG2X carries the sway, so the panel moves by scrolling
-    // the canvas rather than by where it is drawn.
+    // the canvas rather than by where it is drawn. The ripple is a wave 32
+    // lines long that moves up a line a frame.
     i = 0;
     lineOffset = (6 - screenX) << 8;
     angle = frame << 11;
@@ -238,6 +239,9 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
       ObjectGroup_UpdateMembers(work->effect->actors[0], -1, POSE_DAMAGE, -1,
                                 0);
     }
+    // Frame 120: the target, sent up at a pixel a frame with no gravity on
+    // frame 88, gets the battle units' usual gravity back (0xab85, as
+    // battle/motion.c sets).
     if (frame == CONDEMN_BOUNCE_FRAME) {
       GetBattleObjectSlotFar(work->effect->actors[0])
           ->object->verticalMotionStrength = 0xAB85;

@@ -7,8 +7,9 @@
 // Target strikes: repeated slashes or columns of light on the first target.
 // The folder README describes them under "Effect families".
 
-/// The strike sparks, 512 of them, live after the motes in PARTICLES. Only
-/// the first 128 are drawn; a heavy hit lights all 512.
+/// The strike sparks, 512 of them, from PARTICLES[512] (0x3800 bytes in);
+/// the motes use PARTICLES 0 to 127. Only the first 128 sparks are drawn,
+/// though a heavy hit lights all 512.
 #define TARGET_STRIKE_SPARKS ((struct EffectStep *)(Ram_MapCellBuffer + 0x3800))
 
 /// The smoke pictures in the sheet: six 24x48 puffs.
@@ -162,6 +163,7 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
     BattleFx_BeginCanvasLayer(0);
   else
     BattleFx_BeginCanvasLayer(1);
+  // The canvas adds its full colour to everything under it.
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // Setup. The images: glints at the start of the sheet, the slashes or the
@@ -207,6 +209,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
   // DEAD: runs once, for the first target only; the ROM keeps the loop.
   for (k = 0; k != 1; k++) {
     target = GetBattleObjectSlotFar(work->effect->actors[k])->object;
+    // Smoke works on the canvas: x under the target, line 80, drifting up
+    // to 1 pixel a frame each way.
     for (i = 0; i != 64; i++) {
       struct EffectStep *step = &work->particles[i];
 
@@ -216,6 +220,10 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
                    ((Random16() & 255) - 128) << 9, 0);
       step->variant = -1;
     }
+    // Motes and sparks work in battle space, projected each frame, from 20
+    // up at the target. Motes and a column's sparks fly up to 4 a frame
+    // along each axis; a slash's sparks up to 8 across, towards the middle,
+    // and the heavy slash's twice as fast as that.
     for (i = 0; i != 128; i++) {
       struct EffectStep *step = &PARTICLES[k * 128 + i];
 
@@ -280,6 +288,10 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
         s32 picture =
             frame / TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) % 6;
 
+        // The picture's left edge stands Reach / 2 - 8 pixels right of the
+        // target's centre, 21 for the first picture down to -8 for the last,
+        // so the sweep crosses the centre; mirrored when the targets are the
+        // party, its right edge stands as far to the left.
         if (work->effect->side == 1) {
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
@@ -361,6 +373,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
         s32 picture =
             frame / TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES);
 
+        // Pictures above 4 wrap back by 4, so each later hit reads pictures
+        // 4, 1, 2 and 3 (gTargetStrike_ColumnStages).
         while (picture > 4)
           picture -= 4;
         stage = gTargetStrike_ColumnStages[picture];
@@ -432,7 +446,10 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
     }
 
     // Glints: three a frame, scattered at random around the target in
-    // random flips.
+    // random flips; a blitter is built for one flip, so each glint builds
+    // its own. radius + 4 is 4 to 35 and the >> 17 halves it, so a
+    // glint lands 2 to 17 canvas pixels from the strike point each way,
+    // twice that across on the wide screen.
     if ((TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_GLINTS) &&
         glint) {
       for (i = 0; i != 3; i++) {
@@ -467,7 +484,8 @@ void BattleFx_RunTargetStrike(struct BattleEffectArgument *effect, s32 mode) {
     // DEAD: runs once, for the user only; the ROM keeps the loop.
     for (k = 0; k != 1; k++) {
       source = GetBattleObjectSlotFar(work->effect->actor)->object;
-      // Smoke puffs rise and spread through six images over 24 frames.
+      // Smoke puffs rise and spread through six images over 24 frames,
+      // pulled up by 1/64 pixel a frame each frame and slowed to 62/64.
       if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_SMOKE) {
         for (i = 0; i != 64; i++) {
           struct EffectStep *step = &work->particles[i];

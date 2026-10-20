@@ -9,7 +9,7 @@
 /// Builds the two usual routines that draw onto the 128x128 canvas, both
 /// clipped on both axes.
 ///
-/// Called during setup by about twenty effect parts, from the gathering
+/// Called during setup by twenty effect parts, from the gathering
 /// lights and the Djinn beams to the casting impacts and Ragnarok, usually
 /// with effect->side as `flip` so pictures face the targets. Builds the
 /// blitters in heap slots HEAP_SLOT_BLITTER and HEAP_SLOT_BLITTER_ALTERNATE,
@@ -56,14 +56,16 @@ void BattleFx_RunRecovery(struct BattleEffectArgument *effect) {
 /// Raises a symmetrical wall (the EarthWall images) at the first target's
 /// feet for 48 frames; the target glows and the battle shows the result on
 /// frame 24.
-/// mode : 0 actual size, a gentle shake for 32 frames
-///        1 1.25 times as wide, a hard shake for 8 frames
-///        2 1.25 times as wide, no shake, in the Fireball colours
 ///
 /// Called by BattleFx_RunBerserk, BattleFx_RunSpasm and
 /// BattleFx_RunRecovery. Loads its colours over the first 64 of the
 /// background palette, sets BG2PA and BG2X so the wall stands on the target,
-/// and sets work->shakeFrames.
+/// and sets work->shakeFrames. Frees its blitters and closes the canvas
+/// layer before it returns.
+///
+/// mode : 0 actual size, a gentle shake for 32 frames
+///        1 1.25 times as wide, a hard shake for 8 frames
+///        2 1.25 times as wide, no shake, in the Fireball colours
 void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
@@ -146,9 +148,10 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == 8 && mode == 0)
       AudioCommand_PlayFar(SE_RECOVERY);
 
-    // Images 0, 1 and 2, four frames each, then 1 and 2 by turns, up to
-    // frame 27, standing 8 pixels below the target's feet; the trail fades
-    // after that. The left half is drawn as is, the right mirrored.
+    // Images 0, 1 and 2, four frames each, then 2, 1, 2 and 1, up to frame
+    // 27, standing 8 pixels below the target's feet; the trail fades after
+    // that. The left half is drawn as is, the right mirrored, meeting at the
+    // canvas's x 64.
     if (frame <= 31) {
       cell = frame / 4;
       if (cell > 2)

@@ -54,8 +54,9 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
   EffectPosition_ProjectBattler(work->effect->actors[0], &screenPosition);
   REG_BG2X = (64 - screenPosition.x) << 8;
 
-  // Scatter sparks in all directions from (64, 112), then drift upward; each
-  // starts 0 to 7 frames old, so they die at different times.
+  // Scatter sparks in all directions from (64, 112), at 1/2 to 2.5 pixels a
+  // frame across and half that up or down, then drift upward; each starts 0
+  // to 7 frames old, so they die at different times.
   for (i = 0, spark = work->particles; i != 16; i++) {
     speed = (Random16() & 0x1ff) + 128;
     angle = Random16() & 0xffff;
@@ -79,8 +80,10 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
 
     // The columns grow 12 pixels a frame from frame 8 and shrink 6 a frame
     // after frame 31, held at 80 pixels between. Held, they are drawn
-    // brightest-wins, otherwise additive; each half builds its own blitter
-    // and releases it at once.
+    // brightest-wins, otherwise additive. The two 14-pixel halves stand on
+    // line 112 at x 50 and 64, the second mirrored, so the light is one
+    // 28-pixel column about x 64; each half builds its own blitter and
+    // releases it at once.
     if (frame > 7) {
       if (frame <= 31)
         height = frame * 12 - 96;
@@ -108,9 +111,10 @@ void BattleFx_RunUndeadSword(struct BattleEffectArgument *effect) {
     }
 
     // Two more sparks start each frame from frame 8; each advances to the
-    // next of seven pictures every three frames and drifts upward until it is
-    // 29 frames old. The blitters are fetched and released each frame, as the
-    // columns took the slot.
+    // next of seven pictures every three frames and drifts upward, pulled by
+    // 1/8 pixel a frame each frame and slowed to 62/64, until it is 29 frames
+    // old. The blitters are fetched and released each frame, as the columns
+    // took the slot.
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
     for (i = 0, particle = work->particles; i != 16; i++) {
       if (frame >= i / 2 + 8 && particle->variant <= 28) {

@@ -6,14 +6,14 @@
 
 /// One row of gFrost_Timings, for each variant.
 enum {
-  FROST_MOTES,   ///< the rising motes
-  FROST_COLUMNS, ///< the ice columns
+  FROST_MOTES,   ///< how many motes spiral down
+  FROST_COLUMNS, ///< how many ice columns spring up
   FROST_FRAME    ///< the frame the motes burst
 };
 
-/// Rising motes: motes spiral upwards while ice columns spring up one every 3
-/// frames from frame 36; at the burst frame the motes spread and fall, chips
-/// fly and smoke rises over the heights they span.
+/// Motes spiral down and inwards while ice columns spring up one every 3
+/// frames from frame 36; at the burst frame the motes spread and rise, chips
+/// fly up and smoke rises over the heights they span.
 ///
 /// Abilities: Frost, Tundra, Glacier (kind 6).
 ///
@@ -29,7 +29,9 @@ enum {
 /// layer closed.
 ///
 /// effect: the targets; variant picks the number of motes and columns and
-///         the burst frame (gFrost_Timings).
+///         the burst frame (gFrost_Timings): 32 motes, 8 columns and frame
+///         85 for Frost, 48, 12 and 97 for Tundra, 64, 19 and 109 for
+///         Glacier.
 void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -61,8 +63,8 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
    * as pair[1] everywhere, 36 of 782 instructions differ in tbs-en. */
   BattleFx_FetchRectangleBlitters(0, draw = pair);
 
-  // Motes: x holds the angle, z the radius (56 to 119), y the height (-64
-  // to -33 pixels).
+  // Motes: x holds the angle, z the radius (56 to 119), y the vertical
+  // offset (-64 to -33 pixels, positive downwards on the canvas).
   for (i = 0; i != 64; i++) {
     struct EffectStep *seed = &work->particles[i];
 
@@ -85,8 +87,8 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
     highest = 0;
     if (frame == gFrost_Timings[work->effect->variant][FROST_FRAME] + 11)
       EFFECT_SHOW_DAMAGE(SE_132);
-    // The motes turn about a point 512 pixels in front of the eye, not about
-    // a target.
+    // The motes turn about (0, 0, 512), not about a target. That point is
+    // behind the eye, so they are never projected (see the motes below).
     SET_VECTOR(point, 0, 0, 512 << 16);
     Render_ResetTransformState();
     SceneTransform_ApplyPosition(point);
@@ -103,13 +105,18 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
                                   SPRITE_COLOR_BLUE_TINT, POSE_DAMAGE, -1, 0);
     }
 
-    // Motes: mote i appears at frame i and, from 16 frames later, turns,
-    // closing in and rising 5 pixels a frame up to 48 pixels. After the
-    // burst only the first 16 remain, spreading out and falling, and the
-    // range of their heights is kept; none is drawn from 35 frames after it.
-    // A mote is drawn only between -48 pixels and a ceiling that falls half a
-    // pixel with each index, so they stop at staggered heights. The screen
-    // position is halved for the narrow canvas and centred on (64, 60).
+    // Motes: mote i appears at frame i and, from 16 frames later, turns a
+    // 128th of a circle a frame, closing in 2 pixels a frame and sinking 5
+    // until y reaches 48. After the burst only the first 16 remain,
+    // spreading out 8 pixels a frame and rising 2 to 6, and the range of
+    // their heights is kept; none is drawn from 35 frames after it. A mote
+    // is drawn only while y is between -48 and 48 - i / 2, so they go out at
+    // staggered rows as they sink. The point lies behind the eye
+    // (Render_ProjectPoint looks down -z), so the projection is skipped and
+    // position keeps the translated point in 16.16, with no perspective: y
+    // grows down the canvas, and x is halved (>> 17) as on the wide canvas,
+    // though this canvas is shown at its own width, so the spiral's
+    // half-width is half its radius. It is centred on canvas (64, 60).
     if (frame < gFrost_Timings[work->effect->variant][FROST_FRAME])
       count = gFrost_Timings[work->effect->variant][FROST_MOTES];
     else
@@ -169,8 +176,9 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
     highest += 64 << 16;
 
     // Columns (32 wide), standing at gFrost_ColumnSpots: one more every 3
-    // frames from frame 36; over the last 7 frames before the burst they use
-    // the second blitter, a flash before they break.
+    // frames from frame 36; over the last 7 frames before the burst they are
+    // drawn additively (the pair's second blitter), a flash before they
+    // break.
     if (frame < gFrost_Timings[work->effect->variant][FROST_FRAME]) {
       for (i = 0; i != gFrost_Timings[work->effect->variant][FROST_COLUMNS];
            i++) {
@@ -211,8 +219,11 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
       }
     }
 
-    // Chips: at the burst, 32 fly up from canvas rows 80 to 95 for 16 to 31
-    // frames each (24 of them are drawn).
+    // Chips: at the burst, 32 fly up from canvas rows 80 to 95 at 1/8 to 2
+    // pixels a frame, for 16 to 31 frames each (24 of them are drawn).
+    // XXX: velocityX is never set here, so a chip drifts by whatever its
+    // PARTICLES slot last held; whether that is ever nonzero in play needs a
+    // run after another effect.
     if (frame == gFrost_Timings[work->effect->variant][FROST_FRAME]) {
       for (i = 0; i != 32; i++) {
         struct EffectStep *chip = &PARTICLES[i];
@@ -269,7 +280,9 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
     }
     if (frame >= gFrost_Timings[work->effect->variant][FROST_FRAME]) {
       // Each puff plays nine pictures, 2 frames each, and until 35 frames
-      // after the burst starts again at a random spot when it goes out.
+      // after the burst starts again at a random spot when it goes out. The
+      // spot chosen at the burst is replaced too, as the wait counts down to
+      // 17, so every run of pictures starts at a fresh spot.
       s32 rise =
           (frame - gFrost_Timings[work->effect->variant][FROST_FRAME]) / 2;
 

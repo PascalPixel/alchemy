@@ -6,8 +6,8 @@
 
 #define FLARE_ARC_COUNT 9 ///< flames on the arc
 
-/// Flame arc: nine flames rise one after another, 4 frames apart, along a half
-/// circle, over 80 frames.
+/// Flame arc: nine flames rise one after another, 4 frames apart, along half
+/// an ellipse, over 80 frames.
 ///
 /// Abilities: Flare, Flare Wall, Flare Storm (kind 11).
 ///
@@ -15,8 +15,9 @@
 /// REG_BLDCNT and REG_BLDALPHA, and ends with the blitter freed, the transfer
 /// callback removed and the canvas layer closed.
 ///
-/// effect: the targets. variant 1 adds a second flame 16 pixels above each
-///         one, variant 2 a third 32 pixels above (and longer trails).
+/// effect: the targets. variant 1 (Flare Wall) adds a second flame 16 pixels
+///         above each one, variant 2 (Flare Storm) a third 32 pixels above
+///         (and longer trails).
 void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
   u32 *slots;
   u32 *cursor;
@@ -50,9 +51,11 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
                       COMPOSITE_ADDITIVE);
   draw = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
 
-  // The arc: from -90 degrees in steps of 22.5, 32 pixels across and 16
-  // high. Against enemies (ids from 128) it runs from the left, otherwise
-  // from the right.
+  // The arc: from -90 to 90 degrees in steps of 22.5, half an ellipse with
+  // radii of 32 pixels across and 16 up and down, centred on x 20 (84 on the
+  // party's side) and dipping from y 40 at its ends to 56 at its middle.
+  // Against enemies (ids from 128) it runs from the left, otherwise from
+  // the right.
   if (work->effect->actors[0] > 127) {
     originX = 0;
     direction = 1;
@@ -166,7 +169,7 @@ void BattleFx_RunFlare(struct BattleEffectArgument *effect) {
   BattleFx_EndCanvasLayer();
 }
 
-/// List the indices within indexRadius of where currentValue sits in values,
+/// Lists the indices within indexRadius of where currentValue sits in values,
 /// keeping only those from 0 to entryLimit - 1. Writes the indices to output
 /// and returns how many there are.
 ///

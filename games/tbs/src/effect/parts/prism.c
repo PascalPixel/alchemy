@@ -53,7 +53,8 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
 
   // Line the crystals up above the screen, each starting 8 frames after
   // the last and drifting towards the middle as it falls: each starts 18
-  // frames' drift short of its random x.
+  // frames' drift short of its random x. They start at y -64, a crystal's
+  // height above the canvas, drifting up to 4 pixels a frame across.
   for (j = 0; j != gPrism_Counts[work->effect->variant][PRISM_CRYSTAL_COUNT];
        j++) {
     seed = &work->particles[j];
@@ -76,7 +77,8 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != gPrism_Counts[work->effect->variant][PRISM_FRAMES];
        frame++) {
     if (work->effect->variant == 2 && frame <= 103) {
-      // Swing the camera round, slowing from frame 96.
+      // Swing the camera round, slowing from frame 96: 192/65536 turn a
+      // frame, 19296/65536 in all, under a third of a turn.
       struct BattleCamera *camera = gCameraWork;
       s32 speed;
 
@@ -92,7 +94,7 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
     if (frame == gPrism_Counts[work->effect->variant][PRISM_FRAMES] - 80)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == gPrism_Counts[work->effect->variant][PRISM_FRAMES] - 8) {
-      // Darken the canvas away over the last 8 frames.
+      // Darken the canvas away over the last 8 frames, 6 levels a frame.
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x06060606);
     }
     if (frame <= gPrism_Counts[work->effect->variant][PRISM_FRAMES] - 8) {
@@ -117,13 +119,17 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
                 Q_16_16_TO_INT(shard->x) - gPrism_ShardWidths[cell] / 2,
                 Q_16_16_TO_INT(shard->y) - gPrism_ShardHeights[cell] / 2,
                 gPrism_ShardWidths[cell], gPrism_ShardHeights[cell]);
+            // Shards gain 1/8 pixel a frame of downward speed each frame.
+            // Their spin starts at 32 and slows by 1 every other frame, down
+            // to 1.
             EffectStep_AdvanceWithGravity2D(shard, 64, 0x2000);
             shard->variant += shard->z;
             if (shard->z > 1 && (frame & 1))
               shard->z--;
           }
         } else if (frame >= crystal->variant) {
-          // A falling crystal (32x64), odd ones additive.
+          // A falling crystal (32x64), odd ones additive, gaining a pixel a
+          // frame of downward speed each frame.
           draw[i & 1](canvas, work->sheet, Q_16_16_TO_INT(crystal->x) - 16,
                       Q_16_16_TO_INT(crystal->y), 32, 64);
           EffectStep_AdvanceWithGravity2D(crystal, 64, 0x10000);
@@ -137,6 +143,7 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
                   ((gPrism_ShardStarts[j][PRISM_SHARD_START_X] - 40) << 16) +
                   crystal->x;
               shard->y = gPrism_ShardStarts[j][PRISM_SHARD_START_Y] << 16;
+              // Up to 2 pixels a frame either way across, and up to 4 up.
               shard->velocityX = ((Random16() & 127) - 64) << 11;
               shard->velocityY = -(Random16() & 127) << 11;
               // Odd crystals' shards fly twice as fast.
@@ -156,6 +163,9 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
         }
       }
     }
+    // Shake ranges 4 by 8, 6 by 12 and 8 by 16 pixels by variant. Variant 1's
+    // are not powers of two, so Camera_ApplyShake's masks (range - 1) leave
+    // gaps in its offsets.
     Camera_ApplyShake(work->effect->variant * 2 + 4,
                       work->effect->variant * 4 + 8);
     EFFECT_END_FRAME(work);
@@ -170,8 +180,10 @@ void BattleFx_RunPrism(struct BattleEffectArgument *effect) {
 ///
 /// Called each frame by BattleFx_RunBind and BattleFx_RunTriangleStrike
 /// (bind.c), BattleFx_RunShiningStar (stars.c) and BattleFx_RunThor
-/// (thor.c). Level n's channel is (n + sway) / 2, the sway up to 32 levels
-/// either way, clamped to 0 to 31.
+/// (thor.c), which all pass phases a third of a turn apart (0xaaab, 0x5555
+/// and 0); Thor passes twice its frame, for a faster shimmer. Level n's
+/// channel is (n + sway) / 2, the sway up to 32 levels either way, clamped to
+/// 0 to 31. Rewrites background colours 1 to 64.
 ///
 /// XXX: the 64 entries, black first, are copied to colours 1 to 64, so each
 /// level shows in the colour one above it and colour 64, the first of

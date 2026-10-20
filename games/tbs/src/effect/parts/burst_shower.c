@@ -4,7 +4,8 @@
 
 #include "../effect_internal.h"
 
-// The burst shower's second picture in the sheet, after the tornado.
+/// Where the burst, lightning or face pictures start in the sheet: after the
+/// six glints that open the tornado sheet, over its tornado strips.
 #define BURST_SHOWER_CELLS 0xC56
 #define BURST_SHOWER_BURSTS 48     ///< one fired a frame from frame 0
 #define BURST_SHOWER_BURST_LIFE 24 ///< frames each burst lives
@@ -14,8 +15,8 @@ enum BurstShowerMode {
   BURST_SHOWER_MODE_FLASH,     ///< flash bursts
   BURST_SHOWER_MODE_ICE,       ///< in the ice block palette
   BURST_SHOWER_MODE_SPRAY,     ///< in the water spray palette
-  BURST_SHOWER_MODE_PINK,      ///< pink, fired from 16 pixels lower
-  BURST_SHOWER_MODE_DJINNI,    ///< Mars djinni palette, 28 pixels in front
+  BURST_SHOWER_MODE_PINK,      ///< pink, fired from 16 pixels higher
+  BURST_SHOWER_MODE_DJINNI,    ///< Mars Djinni palette, 28 pixels in front
   BURST_SHOWER_MODE_LIGHTNING, ///< no bursts: a violet lightning bolt
   BURST_SHOWER_MODE_GREY,      ///< grey; the targets stay solid black
   BURST_SHOWER_MODE_FACES,     ///< demon faces from 16 pixels in front
@@ -56,7 +57,7 @@ void BattleFx_RunWaterBlessing(struct BattleEffectArgument *effect) {
 void BattleFx_RunDarkBlessing(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstShower(effect, BURST_SHOWER_MODE_GREY);
 }
-/// Fires pink bursts from 16 pixels below the normal origin.
+/// Fires pink bursts from 16 pixels above the normal origin.
 ///
 /// Abilities: Dark Blessing, Acid Blessing (kind 404).
 void BattleFx_RunAcidBlessing(struct BattleEffectArgument *effect) {
@@ -91,17 +92,17 @@ void BattleFx_RunDeadlyGas(struct BattleEffectArgument *effect) {
 /// hit every 8 frames. Each burst lives 24 frames. A sound plays on frame 4
 /// and the battle shows the damage on frame 24 (frame 60 in the grey mode).
 ///
-/// Called by the seven blessing wrappers above. Each burst is one of
-/// work->particles, its variant counting the frames it has lived (-1 when
-/// free). Writes REG_BLDALPHA, the first 64 BG colours (all but modes 5 and
-/// 7), REG_BLDCNT in the grey mode and REG_BG2PA in the lightning mode; sets
-/// work->shakeFrames on each hit. Ends with the transfer callback removed,
-/// the blitters freed and the canvas layer closed.
+/// Called by the seven wrappers above, six blessings and Deadly Gas. Each
+/// burst is one of work->particles, its variant counting the frames it has
+/// lived (-1 when free). Writes REG_BLDALPHA, the first 64 BG colours (all but
+/// modes 5 and 7), REG_BLDCNT in the grey mode and REG_BG2PA in the lightning
+/// mode; sets work->shakeFrames on each hit. Ends with the transfer callback
+/// removed, the blitters freed and the canvas layer closed.
 ///
 /// effect: the user and the targets.
 /// mode: the burst and its palette: 0 flash bursts, 1 in the ice block
 ///       palette, 2 in the water spray palette, 3 pink and fired from 16
-///       pixels lower, 4 in the Mars djinni palette from 28 pixels in
+///       pixels higher, 4 in the Mars Djinni's palette from 28 pixels in
 ///       front, 6 grey (the targets turn solid black and stay so), 7 demon
 ///       faces from 16 pixels in front. Mode 5 fires no bursts: a violet
 ///       lightning bolt stands between the user and the targets, on a
@@ -146,8 +147,9 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
   }
 
-  // The pictures and the palette. The tornado is loaded first in every mode
-  // but never drawn here; its size fixes where the burst pictures start.
+  // The pictures and the palette. The tornado sheet is loaded first in every
+  // mode, but nothing here draws from it: the burst pictures are loaded over
+  // its tornado strips, after the six glints that open it.
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   if (mode == BURST_SHOWER_MODE_LIGHTNING) {
     Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetA,
@@ -160,8 +162,8 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
                                (work->sheet + BURST_SHOWER_CELLS), 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0,
                                0);
-    // The grey mode: a ramp of 16 greys, four entries each, with blending
-    // off.
+    // The grey mode: a ramp of 16 greys, four entries each, up to level 15
+    // of 31, about half brightness, with blending off.
     if (mode == BURST_SHOWER_MODE_GREY) {
       for (i = 0, color = (u16 *)BG_PLTT; i != 64; i++) {
         level = i / 4;
@@ -274,8 +276,11 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
       aim[0] = (targetSpots[target].x + (Random16() & 31)) - 16;
       aim[1] = (targetSpots[target].y + (Random16() & 63)) - 16;
       if (frame <= BURST_SHOWER_BURSTS - 1) {
-        // The canvas is half the screen's width, so x is halved. The burst
-        // reaches its point in 32 frames.
+        // The canvas is half the screen's width, so x is halved, but the
+        // velocity is not: each frame the burst moves 1/32 of the way in
+        // screen pixels, so it covers its x distance on the canvas in 16
+        // frames, when the hits start, and only three quarters of its y
+        // distance in its 24 frames.
         work->particles[frame].x = origin.x << 15;
         work->particles[frame].y = origin.y << 16;
         work->particles[frame].velocityX = (aim[0] - origin.x) << 11;
@@ -293,7 +298,7 @@ void BattleFx_RunBurstShower(struct BattleEffectArgument *effect, s32 mode) {
     do {
       struct EffectStep *spark = &work->particles[i];
       // A burst shows from its third frame, or its seventh for the faces
-      // and the djinni.
+      // and the Mars Djinni's bursts.
       if (spark->variant >= 0) {
         if (mode == BURST_SHOWER_MODE_FACES) {
           if (spark->variant > 5) {

@@ -82,15 +82,19 @@ void BattleFx_RunOuterSpace(struct BattleEffectArgument *effect) {
 ///
 /// Particle slots: the burst's flashes use PARTICLES 0 to 127 and its embers
 /// the 512 after them (PARTICLE_STREAMS_EMBERS); work->particles holds the
-/// rising motes (0 to 31) and the flames (32 to 47).
+/// rise's motes (0 to 31) and flames (32 to 47), then the burst's screen motes
+/// (0 to 63), in whole pixels.
 ///
 /// Called by BattleFx_RunMeteor (mode 0) and BattleFx_RunOuterSpace (mode 1).
 /// The rise shows Ram_MapCellBuffer on BG1 through
 /// BattleFx_FlushPendingGraphicsTransfer, scrolls BG2 with
 /// BattleFx_AdvanceBg2OnInterval and colours the backdrop with
-/// BattleFx_ArmPaletteHBlankDma, and removes all three after; it also moves
-/// the projection centre down to line 240 and sets the background view's
-/// active flag while it runs. The burst sets BG2 back to the half-scale
+/// BattleFx_ArmPaletteHBlankDma, and removes all three after; it sets the
+/// background view's active flag while it runs. The projection centre moves
+/// down to line 240 from the dissolve on, until the burst's
+/// BattleFx_SetupBlendedDisplay puts it back at line 120; the burst's shake
+/// then keeps it within 4 pixels of (120, 120) until BattleFx_EndCanvasLayer
+/// puts it back there at the end. The burst sets BG2 back to the half-scale
 /// canvas and ends the canvas layer. Releases the formation objects it
 /// spawned (mode 1's on frame 48 of the burst).
 void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
@@ -164,6 +168,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     struct MotionObject *object =
         GetBattleObjectSlotFar(work->effect->actor)->object;
 
+    // The leap: 10 pixels a frame upwards, against a gravity of 0x91eb, about
+    // 0.57 pixels a frame lost each frame.
     object->velocityY = 0xa0000;
     object->verticalMotionStrength = 0x91eb;
     ObjectGroup_UpdateMembers(work->effect->actor, -1, 2, -1, 0);
@@ -173,6 +179,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     direction = -1;
   }
   BattleFx_ConfigureEffectDisplay();
+  // The backdrop and colour 1 go black: BattleFx_WipeCanvas(0, 0) below
+  // sweeps the canvas to colour 1, top to bottom.
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
@@ -205,6 +213,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     Iwram_CopyWords(colors,
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
                     128);
+  // The map picture, 32x16 tiles of 8x8 pixels (256x128, 0x2000 words), all
+  // colour 1; its first 0x7800 bytes, 256x120 pixels, are what BG1 shows.
   fill = 0x01010101;
   Dma_Set((void *)&fill, Ram_MapCellBuffer, DMA_FILL_WORDS(0x2000), REG_DMA3);
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapCellBuffer, 0x7800);
@@ -229,6 +239,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     s32 y = Random16() & 127;
     s32 shade = (Random16() & 63) + 64;
 
+    // The tiled canvas byte for (x, y), as BattleFx_WipeCanvas gives it.
     ((u8 *)canvas)[((y / 8 * 16 + x / 8) * 8 + (y & 7)) * 8 + (x & 7)] = shade;
   }
   Iwram_CopyWords((void *)BG_CHAR_BLOCK(1), canvas, CANVAS_BYTES);
@@ -237,6 +248,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   // rows. The erased band grows faster every frame until it passes row 191.
   gProjection.centerY = 240;
   BattleFx_SelectLivingTargets(work->effect);
+  // Every second frame BG2's reference point (20.8 fixed point) moves half a
+  // pixel across, the way direction says, and one pixel down.
   work->bg2x = 0;
   work->bg2y = 0;
   work->scrollTimer = 0;
@@ -253,6 +266,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     s32 step = 1;
     s32 row = 0;
 
+    // The band erases 0, 2, 4, 6 and so on more rows each frame. A column
+    // lagging the full 63 rows erases its last row, 127, at row 190.
     do {
       limit += step / 2;
       step += 4;
@@ -262,6 +277,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
         for (x = 0; x != 256; x++) {
           s32 y = row - offsets[x & 127];
 
+          // Columns x and x + 128 share a lag. The map is tiled like the
+          // canvas, but 32 tiles a row.
           if (y >= 0)
             if (y <= 127)
               Ram_MapCellBuffer[((y / 8 * 32 + x / 8) * 8 + (y & 7)) * 8 +
@@ -281,7 +298,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   {
     s32 savedX = gBgScroll[1].x;
     s32 savedY = gBgScroll[1].y;
-    // Two independent absolute slot reads grow native EN from 0xe38 to 0xe48.
+    // One pointer serves both slot reads: two separate reads of gWorkSlot
+    // make the function 0xe48 bytes long, where tbs-en's is 0xe38.
     void **slots = &gWorkSlot[HEAP_SLOT_BATTLE_BACKGROUND];
     struct BattlePresentationTransition *presentation = slots[0];
 
@@ -344,7 +362,9 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       // The heat lines, the 160 backdrop colours that
       // BattleFx_ArmPaletteHBlankDma streams in one per scanline: black on
       // lines 0 to 14 and 135 to 159, and between them a ramp, blue first
-      // and then green, that brightens as the rise goes on.
+      // and then green, that brightens as the rise goes on: a line's level
+      // is (line - 16) / 4 plus a level every 4 frames, its blue that less
+      // 32, its green that less 80 and its red half the green.
       for (i = 0; i != 15; i++)
         *line++ = 0;
       for (; i != 135; i++) {
@@ -376,7 +396,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
         x = 64 - frame / 4;
       y = 96 - frame;
       // Place the formation (both objects in mode 1), drifting with the
-      // stream and growing each frame.
+      // stream and growing each frame: its 16.16 scale starts at 0.625 in
+      // mode 1 and 1 otherwise, and gains 1/256 a frame.
       position.groundHeight = 0;
       position.height = 0xff0000;
       if (mode == 1) {
@@ -413,7 +434,12 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
         }
       }
       // The seven orbit sparks, 8x8, turning with the frame and lifting
-      // with it.
+      // with it. Angles are in 1/65536 turns: the orbit is tilted 1/32 turn
+      // and turns once every 256 frames.
+      // XXX: likely the sparks lie outside the projection's depth range,
+      // because each result is read back as a 16.16 point and centred by hand;
+      // Render_ProjectPoint leaves the transformed point when it cannot
+      // project.
       point.x = 0;
       point.y = 0;
       point.depth = 0x2000000;
@@ -451,8 +477,9 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
       for (i = 0; i != 32; i++) {
         struct EffectStep *mote = &work->particles[i];
 
-        // A rising mote shows six 32x32 cells, moving up and against the
-        // stream, then frees its slot.
+        // A rising mote shows six 32x32 cells, 1 KB each from the start of
+        // the sheet, one a frame, moving 5 pixels up and 1.25 against the
+        // stream each frame, then frees its slot.
         if (mote->variant >= 0) {
           draw(Ram_MapCellBuffer, work->sheet + (mote->variant << 10),
                Q_16_16_TO_INT(mote->x) - 16, Q_16_16_TO_INT(mote->y) - 16, 32,
@@ -491,12 +518,16 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw = gWorkSlot[HEAP_SLOT_BLITTER];
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
+  // Screen motes keep whole canvas pixels, not 16.16: x 0 to 127 and y 127
+  // to 254, from the canvas's last row down, from where they rise.
   for (i = 0; i != 32; i++) {
     struct EffectStep *mote = &work->particles[i];
 
     mote->x = Random16() & 127;
     mote->y = (Random16() & 127) + 127;
   }
+  // Velocities in 16.16 pixels a frame: a flash up to 8 each way across and 8
+  // up, an ember up to 16 each way across and 8 up.
   for (i = 0; i != 128; i++) {
     struct EffectStep *flash = &PARTICLES[i];
 
@@ -513,6 +544,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
                  (Random16() & 255) << 11, ((Random16() & 255) - 128) << 13);
     ember->variant = 0;
   }
+  // Each copy refills the canvas with level 16.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0x10101010);
 
   // The burst shakes while the formation keeps climbing and growing. The
@@ -556,6 +588,11 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
           point.depth = 160;
         if (point.depth > 799)
           point.depth = 799;
+        // Mote size 9 at depth 160, one smaller every 64 units further.
+        // UB: from depth 736 the size is 0, a picture 0 pixels wide, and its
+        // cell is read from gBattleFx_MoteCells[-1], the last halfword of the
+        // blitter template, which ends at the table (BattleFx_BuildBlitter).
+        // No UBFIX form yet.
         size = 9 - (point.depth - 160) / 64;
         draw(canvas,
              work->sheet +
@@ -575,7 +612,9 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     for (i = 0; i != 64; i++) {
       struct EffectStep *mote = &work->particles[i];
       // 64 screen motes rise 8 pixels a frame plus their index's low three
-      // bits, wrapping back to row 128 above the top.
+      // bits, wrapping back to row 128 above the top. Only 0 to 31 were
+      // seeded; 32 to 63 keep what the slots held, such as a flame's 16.16
+      // position, far off the canvas.
       u32 rise = i & 7;
       s32 size = rise + 3;
 
@@ -614,6 +653,7 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
           SET_VELOCITY(flash, 0, (Random16() & 255) << 11, 0);
           flash->variant = 0;
         } else {
+          // A gravity of 1, 1/65536 pixel a frame: a flash keeps its speed.
           EffectStep_AdvanceWithGravity3D(flash, 64, 1);
         }
       }
@@ -623,6 +663,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     else
       x = 56 - frame / 2;
     y = 64 - frame * 2;
+    // The formation keeps growing by 1/256 a frame, from a 16.16 scale of
+    // about 1.81 in mode 1 (size) and 2 otherwise (grow).
     grow = (frame << 8) + 0x20000;
     position.groundHeight = 0;
     position.height = 0xff0000;

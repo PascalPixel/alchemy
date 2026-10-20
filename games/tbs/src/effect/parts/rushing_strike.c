@@ -7,8 +7,9 @@
 /// Packs 288 rows of 40 bytes to half width, keeping every second byte
 /// (the bytes of the odd columns win).
 ///
-/// Called by BattleFx_RunRushingStrike and twice by the casting impacts, to
-/// squeeze a 40-pixel-wide sheet into 20-pixel pictures. Writes only dst.
+/// Called by BattleFx_RunRushingStrike and once by BattleFx_RunCastingImpact
+/// (through CastingImpact_PackRows), both to squeeze the yellow orb's
+/// 40-pixel-wide sheet into six 20x48 pictures. Writes only dst.
 ///
 /// src: the rows to pack.
 /// dst: receives the packed rows, half the stride apart.
@@ -146,7 +147,8 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect, s32 mode) {
 
   // Send the user in, 80% of the way over 10 frames, and ready the sparks
   // at the target (they fly towards the middle of the field). Spark i lives
-  // 16 + i / 2 frames.
+  // 16 + i / 2 frames. In 16.16 pixels a frame: 0 to 16 across, -2 to 6 up
+  // and up to 4 either way in depth.
   BattleFx_SetApproachMotion(work->effect->actor, work->effect->actors[0], 10);
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
   for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {
@@ -187,7 +189,8 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect, s32 mode) {
               origin.x / 2 - 16, screen.y - 40, 20, 48);
     }
     // From frame 8 the sparks fly, shrinking as their lives run out and
-    // sinking slightly.
+    // sinking slightly: a gravity of 1/128 pixel a frame each frame, keeping
+    // 60/64 of their speed.
     if (ringFrame >= 0 && ringFrame <= 55) {
       EFFECT_VIEW_FROM_CAMERA(camera);
       for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {

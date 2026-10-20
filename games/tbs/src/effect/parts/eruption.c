@@ -43,7 +43,10 @@ enum {
 /// effect: the targets.
 /// mode: 0 burns (the fire streak palette, the effect's variant picks the
 ///       counts, and the targets recoil); 1 is grey (a ramp of greys,
-///       variant 1's counts).
+///       variant 1's counts). The rows of gEruption_Counts give 16 motes, 8
+///       puffs and 72 frames (Blast), 32, 16 and 80 (Mad Blast, and Smoke
+///       Bomb and Sleep Bomb through mode 1) and 128, 32 and 88 (Fiery
+///       Blast).
 void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
@@ -78,9 +81,10 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     variant = work->effect->variant;
   }
 
-  // The puffs and the motes start 50 pixels to the side and scatter up;
-  // the motes leave at up to twice the puffs' speed. All 32 puffs and 1024
-  // motes are placed, more than any row of gEruption_Counts uses.
+  // The puffs and the motes start 50 pixels to the side (x -50, or 50 when
+  // the targets are the party) and scatter up, both at up to 4 pixels a
+  // frame across and in depth and 1 to 5 upwards. All 32 puffs (Fiery
+  // Blast's count) and 1024 motes (eight times its 128) are placed.
   for (i = 0; i != 32; i++) {
     struct EffectStep *puff = &work->particles[i];
 
@@ -124,9 +128,12 @@ void BattleFx_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     if (frame == gEruption_Counts[variant][ERUPTION_FIELD_FRAMES] - 48)
       EFFECT_SHOW_DAMAGE(SE_133);
 
-    // The motes still above the ground, sized 9 down to 1 over depths 160
-    // to 799, alternating the two mote sets. The half-width x is shifted 16
-    // pixels left, or right on side 1.
+    // The motes still above the ground, alternating the two mote sets,
+    // falling under a gravity of 1/8 pixel a frame per frame. The half-width
+    // x is shifted 16 pixels left, or right on side 1. A mote is size 9 at
+    // depth 160 or nearer and one smaller for each 64 deeper; from depth 736
+    // the size is 0, which would read gBattleFx_MoteCells[-1].
+    // XXX: whether a mote ever gets that deep needs a run of the effect.
     for (i = 0; i != gEruption_Counts[variant][ERUPTION_FIELD_MOTES]; i++) {
       struct EffectStep *mote = &PARTICLES[i];
 

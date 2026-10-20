@@ -66,8 +66,9 @@ void BattleFx_RunDeathPlunge(struct BattleEffectArgument *effect) {
   draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
-  // The run: the user moves to 90% of the way to the target, accelerating
-  // to 8 pixels a frame, and the effect waits 20 frames for it.
+  // The run: the user moves to 90% of the way to the target, with an
+  // acceleration of 2 pixels a frame per frame and a top speed of 8 pixels a
+  // frame, and the effect waits 20 frames for it.
   first = GetBattleObjectSlotFar(work->effect->actor);
   second = GetBattleObjectSlotFar(work->effect->actors[0]);
   user = first->object;
@@ -221,9 +222,12 @@ UNUSED void BattleFx_RunBladeRain(struct BattleEffectArgument *effect) {
   EffectPosition_ProjectScaledBattler(work->effect->actors[0], &screenPosition);
   REG_BG2X = (64 - screenPosition.x) << 8;
 
-  // Each sword starts at a random x from 16 to 111, above the canvas, and
-  // drifts towards the middle faster (in steps of 2 pixels a frame) the
-  // further out it starts.
+  // Each sword waits at a random x from 16 to 111 near the top of the
+  // canvas (sword i centred 24 - i / 4 pixels down, so the 16 drawn sit at
+  // rows 24 to 21, each run of four a pixel higher than the last), drawn
+  // there until its turn to fall, and drifts towards
+  // the middle faster (in steps of 2 pixels a frame) the further out it
+  // starts. The drift's size, 0 to 3 steps, also picks the sword's picture.
   for (i = 0; i != 64; i++) {
     s32 column;
 
@@ -368,6 +372,9 @@ void BattleFx_RunElementPillar(struct BattleEffectArgument *effect) {
   void *palette;
   s32 i;
 
+  // The sheet slot takes ParticleSpritesD's flare cells, which
+  // EFFECT_DRAW_FLARE reads: the ten squares of 2x2 to 20x20 are 1540 of its
+  // 0x60e (1550) bytes.
   work = (struct BattleEffectWork *)Runtime_AllocateHeapBlock(
       HEAP_SLOT_BATTLE_EFFECT, sizeof *work);
   canvas =
@@ -596,6 +603,8 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
   BattlePresentation_ConfigurePaletteFadeFar(1, battle->background, 0);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
+  // Aim the camera at the field's centre at 100% zoom, lining the backdrop's
+  // perspective plane up with it.
   BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
   view->secondMode = 0;
   EFFECT_SET_CANVAS_AFFINE();
@@ -686,7 +695,9 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
       AudioCommand_PlayFar(SE_149);
     if (frame == 5)
       AudioCommand_PlayFar(SE_145);
-    // Frame 5: bring the battle backdrop back on BG1.
+    // Frame 5: bring the battle backdrop back on BG1. Level -1 leaves
+    // palettes 6 to 13 white for the fade below, which steps them towards
+    // battle->palette, the colours the load fills.
     if (frame == 5) {
       gBgScroll[1].x = work->savedBg1X;
       BattleBackground_LoadFar(1, battle->background, -1);
@@ -827,7 +838,9 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
 
     // Frame 51: load the flash images and a violet ramp into colours 1 to
     // 63, turn blending on, and place 32 flashes at random in x 32 to 63, y
-    // 80 to 111, reusing the pieces' particles.
+    // 80 to 111, reusing the pieces' particles. Each is thrown sideways at up
+    // to 16 pixels a frame either way, which the 60/64 damping below soon
+    // slows.
     if (frame == 51) {
       Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet,
                                  1, 0);
@@ -853,8 +866,9 @@ void BattleFx_RunShatteringOpening(struct BattleEffectArgument *effect) {
       work->transferValue = 50;
     }
 
-    // Flashes: flash i appears at frame 52 + i / 4 and rises, changing
-    // image every 4 frames, for 40 frames.
+    // Flashes: flashes 0 to 7 appear on frame 53 and four more each frame
+    // after, and each floats up (a gravity of -1/16 pixel a frame per frame)
+    // for 40 frames, through six images of 4 frames, holding the last.
     if (frame > 52) {
       for (i = 0; i != SHATTERING_OPENING_FLASHES; i++) {
         piece = &work->particles[i];

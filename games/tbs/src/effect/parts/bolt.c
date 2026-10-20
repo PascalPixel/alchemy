@@ -11,13 +11,15 @@
 
 /// The columns of a gBolt_Counts row.
 enum {
-  BOLT_SPARKS,       ///< sparks thrown from each bolt's foot
+  BOLT_SPARKS,       ///< sparks thrown from each bolt's foot, at most the
+                     ///< 128 of its target's run of PARTICLES
   BOLT_GLINTS,       ///< glints a frame around each target
-  BOLT_GLINT_SPREAD, ///< how high and wide the glints spread
+  BOLT_GLINT_SPREAD, ///< how high and wide the glints spread, in pixels
   BOLT_STRIKES       ///< bolts drawn over each other
 };
 
-/// The bolt pictures in the sheet, after the tornado.
+/// Where the bolt pictures start in the sheet: after the six glints that open
+/// the tornado sheet (gBattleFx_GlintCells), over its tornado strips.
 #define BOLT_CELLS 0xc56
 
 /// A bolt of lightning strikes each target in turn, 8 frames apart.
@@ -58,6 +60,7 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   BattleFx_BeginCanvasLayer(1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
+  // The tornado sheet only for its glints.
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                              work->sheet + BOLT_CELLS, 1, 1);
@@ -109,7 +112,10 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
                   screen.x - 12, 0, 24, height);
         }
 
-        // Throw sparks upwards, within 90 degrees, from the foot (y = 104).
+        // Throw sparks up from the foot (y = 104), within a quarter turn
+        // either side of straight up. With speed 64 to 575, a spark starts at
+        // sin * speed / 32 pixels a frame across and cos * speed / 64 up (at
+        // most 18 and 9), and lives 32 to 39 frames.
         if (frame == start + 2) {
           for (j = 0; j != gBolt_Counts[work->effect->variant][BOLT_SPARKS];
                j++) {
@@ -127,8 +133,9 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
       }
 
       // Glints for 22 frames: at random spots above the foot, flipped at
-      // random, in the variant's blend; the higher a glint, the narrower
-      // the band it may fall in across.
+      // random, in the variant's blend (gBolt_GlintModes: brightest-wins,
+      // or additive at variant 2); the higher a glint, the narrower the band
+      // it may fall in across.
       if (frame >= start + 2 && frame < start + 24) {
         for (j = 0; j != gBolt_Counts[work->effect->variant][BOLT_GLINTS];
              j++) {
@@ -157,7 +164,8 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
       }
     }
 
-    // Sparks bounce off the ground at half speed and shrink as they die out.
+    // Sparks fall at 1/16 pixel a frame per frame, bounce off the ground at
+    // half speed and shrink from mote size 3 to 1 as they die out.
     for (j = 0; j != 1024; j++) {
       struct EffectStep *spark = &PARTICLES[j];
 

@@ -44,6 +44,7 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
   BattleFx_BeginTiledCanvas(1);
   // Destruct Ray stretches the canvas across the screen; the others show it
   // at its own width over the targets' half (on side 1, moved 128 pixels).
+  // BG2X is 20.8: Destruct Ray's canvas moves 16 texels towards the targets.
   if (work->effect->variant == 2)
     REG_BG2PA = Q_8_8(0.5);
   else
@@ -67,8 +68,10 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
       REG_BG2X = -0x8000;
   }
 
-  // Every spark starts free (variant 0); its place and velocity here are
-  // overwritten when a bolt throws it.
+  // Every spark starts free (variant 0). A bolt that throws it overwrites x,
+  // y and their velocities; z and velocityZ, set only here, are never read,
+  // but the two random numbers each spark takes here still advance the
+  // sequence.
   for (i = 0; i != RAY_SPARK_COUNT; i++) {
     struct EffectStep *spark = &PARTICLES[i];
     s32 speed;
@@ -118,8 +121,9 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
                          x + (Random16() & 7) - 16, y, 24, 120);
 
         // Throw sparks from the bolt's root, 112 pixels down its 120-pixel
-        // picture: the first free ones, up to the variant's count, each
-        // living 32 to 39 frames.
+        // picture: the first free ones, up to the variant's count (4, 6 or
+        // 8), each living 32 to 39 frames. They leave upwards, in the upper
+        // half circle, at up to 1.25 pixels a frame across and 10 up.
         for (i = 0; i != RAY_SPARK_COUNT; i++) {
           struct EffectStep *spark = &PARTICLES[i];
 
@@ -144,7 +148,9 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
     }
 
     // Move the sparks, bouncing them off the bottom (y 120) at half speed;
-    // a spark is drawn only inside the canvas, and shrinks as it ages.
+    // a spark is drawn only inside the canvas, and shrinks as it ages. The
+    // gravity is negative, 1/32 pixel a frame upwards each frame, so the
+    // sparks keep rising, and they keep 60/64 of their speed.
     for (i = 0; i != RAY_SPARK_COUNT; i++) {
       struct EffectStep *spark = &PARTICLES[i];
 

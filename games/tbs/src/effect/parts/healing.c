@@ -44,6 +44,9 @@ void BattleFx_RunCure(struct BattleEffectArgument *effect) {
 /// out one by one instead of closing in.
 ///
 /// Abilities: Cure Poison, Restore, Antidote, Elixir (kind 24).
+///
+/// Cure Poison and Antidote (variant 0) play mode 3; Restore and Elixir
+/// (variant 1) play mode 4, whose sparkles also turn on a second axis.
 void BattleFx_RunCurePoison(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
     BattleFx_RunHealingMotes(effect, 3);
@@ -52,9 +55,9 @@ void BattleFx_RunCurePoison(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 4);
 }
 
-/// Healing sparkles with scattering style 4, sent out from each target, as
-/// Cure Poison plays them for variants other than 0. No effect table entry
-/// reaches this one.
+/// Healing sparkles with scattering style 4, as Cure Poison plays them for
+/// variants other than 0 (Restore, Elixir). No effect table entry reaches
+/// this one.
 UNUSED void BattleFx_RunHealingMotesMode4(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 4);
 }
@@ -132,8 +135,10 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
 
-  // Bring out the djinni; origin receives where it appears. Modes 0 and 6
-  // pass 0 as the entrance's fourth argument, the others 1.
+  // Bring out the djinni, Mars (entrance mode 2) for mode 6 and Mercury (1)
+  // otherwise; origin receives where it ends. Modes 0 and 6 place it over
+  // the first target (anchor 0), the others at the first target's x at
+  // depth 0 (anchor 1).
   if (work->effect->prelude == 1) {
     s32 kind = mode == 6 ? 2 : 1;
 
@@ -218,7 +223,8 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
     }
     frameCount = work->effect->count * HEALING_STAGGER + 88;
   } else if (mode == 2) {
-    // A ring of radius 32 to 95 pixels, 50 pixels down.
+    // A ring of radius 32 to 95 pixels, 50 pixels down. velocityY is set,
+    // but the frame loop moves the motes only along the line to the centre.
     for (i = 0; i != HEALING_MOTES; i++) {
       struct EffectStep *spark = &PARTICLES[i];
       s32 heading = Random16() & 0xffff;

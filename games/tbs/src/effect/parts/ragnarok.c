@@ -30,6 +30,9 @@
 /// damage on frame 40. Column x comes from gRagnarok_StrikeColumns: first two
 /// of three per side. work->particles holds 16 flashes a column and PARTICLES
 /// 340 sparks a column.
+///
+/// Leaves effect->variant at 1, and the user in its action pose with its
+/// animation back at the usual speed.
 void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -53,7 +56,8 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   BattleFx_FetchRectangleBlitters(work->effect->side, blit);
-  // The user takes its action pose and animates fast until the end.
+  // The user takes its action pose and animates fast until the end: an
+  // animation step of 48, three times the usual 16.
   ObjectDispatch_SelectAnimationFar(user, 2);
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)user, 48);
 
@@ -81,7 +85,8 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
       i++;
     } while (i != RAGNAROK_FLASHES);
 
-    // Sparks: random direction and speed from column y = 88, lifetime 32-39.
+    // Sparks: random direction and speed from column y = 88, lifetime 32-39;
+    // speeds of 0.5 to 8.5 pixels a frame (speed / 64), doubled vertically.
     i = 0;
     do {
       struct EffectStep *spark = &PARTICLES[col * RAGNAROK_SPARKS + i];
@@ -176,7 +181,11 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
         work->shakeFrames = 12;
       }
       if (frame >= start) {
-        // Large flash for the first two frames, then 12 small flashes.
+        // Large flash (picture 0) for the first two frames, then 12 small
+        // flashes. Each small one shows for the last 18 frames of its life,
+        // stepping through gRagnarok_FlashCells' six entries three frames
+        // apiece: pictures 1 to 4, then 5 for six frames. Each picture is
+        // 32x64 (2 KB).
         if (frame < start + 2) {
           blit[0](canvas, work->sheet + RAGNAROK_FLASH_CELLS,
                   RAGNAROK_COLUMN_X(work->effect->side, col) - 16, 56, 32, 64);
@@ -206,7 +215,9 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
         } while (i != RAGNAROK_RING);
       }
 
-      // Sparks bounce below y = 108 at half speed; draw only within x = 0-126.
+      // Sparks gain 1/16 pixel a frame of downward speed each frame,
+      // undamped, and bounce below y = 108 at half speed; draw only within
+      // x = 0-126.
       if (frame > start + 5) {
         i = 0;
         do {

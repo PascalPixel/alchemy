@@ -22,7 +22,7 @@
 /// freed and the canvas layer closed.
 ///
 /// effect: the targets; variant picks the number of embers
-///         (gFire_Counts).
+///         (gFire_Counts): 16 for Fire, 32 for Fireball, 64 for Inferno.
 void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -59,8 +59,9 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
-  // The embers leave the top of the user's body in a random direction and
-  // speed, rising at -16 to 111 sixty-fourths of a pixel a frame.
+  // The embers leave the top of the user's body in a random direction,
+  // outwards at 2 to 4 pixels a frame and rising at -1/4 to 1.73 pixels a
+  // frame.
   user = GetBattleObjectSlotFar(work->effect->actor)->object;
   bodyTop = user->y + BattleUnit_GetEffectHeightFar(work->effect->actor);
   for (i = 0; i != FIRE_EMBERS; i++) {
@@ -88,7 +89,9 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   // past that.
   for (frame = 0; frame != (gFire_Counts[work->effect->variant] >> 1) + 132;
        frame++) {
-    // The camera turns 0x100 of yaw a frame over frames 17 to 79.
+    // The camera turns 0x100 of yaw (1/256 of a turn) a frame over frames
+    // 17 to 79, about a quarter turn in all while each effect frame takes
+    // one display frame (Camera_ApplyPhasedDelta).
     if (frame > 16 && frame < 80)
       work->cameraDelta = 0x100;
     else

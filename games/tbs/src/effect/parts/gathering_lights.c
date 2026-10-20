@@ -46,7 +46,9 @@ void BattleFx_RunHaunting(struct BattleEffectArgument *effect) {
 /// both its callbacks before it returns.
 ///
 /// mode : the colours (0 pink, 1 Mars Djinn, 2 Mercury Djinn) and the row of
-///        gGatheringLights_Counts: lights per target and frames.
+///        gGatheringLights_Counts: lights per target and frames, 16 and 88,
+///        8 and 72, or 12 and 80, the effect running 20 frames more for
+///        each target.
 void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
                                  s32 mode) {
   struct EffectPosition screenPosition;
@@ -120,7 +122,8 @@ void BattleFx_RunGatheringLights(struct BattleEffectArgument *effect,
     EFFECT_VIEW_FROM_CAMERA(camera);
 
     // Ripple the canvas sideways, line by line: 4 texels either way about a
-    // 4-texel offset (16.16 >> 10 is a quarter in BG2X's 20.8).
+    // 4-texel offset (16.16 >> 10 is a quarter in BG2X's 20.8), in a wave 64
+    // lines long that moves up a line each frame.
     row = work->bg2xLines;
     for (i = 0; i != 160; i++)
       *row++ = (0x100000 - Trig_Sin((frame + i) << 10) * 16) >> 10;

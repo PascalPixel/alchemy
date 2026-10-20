@@ -107,7 +107,8 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
   drift.y = 0;
 
   // Remember each target's place, and its heading and distance from the
-  // middle of the field for the whirlwind to turn.
+  // middle of the field for the whirlwind to turn. The distance is in half
+  // pixels: the root of the 8.8 squares is 8.8, and >> 7 keeps one more bit.
   EFFECT_FOR_EACH_TARGET(index, work->effect) {
     battleObject = GetBattleObjectSlotFar(work->effect->actors[index]);
     object = battleObject->object;
@@ -176,6 +177,9 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
         object->x = (radius[index] * Trig_Sin(heading[index])) >> 1;
         object->z = (radius[index] * Trig_Cos(heading[index])) >> 1;
 
+        // The spin gains 48/65536 turn a frame each frame. Within 16 pixels
+        // of the middle a target rises 6 pixels a frame, else half a pixel,
+        // up to y 124.
         if (frame <= 159) {
           if (frame > index * 16 + 16)
             spin[index] += 48;
@@ -208,14 +212,17 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
           slot++;
         } while (slot != 4);
 
+        // Closes in a pixel a frame, to 8 pixels from the middle.
         if (radius[index] > 16)
           radius[index] -= 2;
       }
     }
 
-    // The whirlwind: three 48x64 images in turn, growing up from the ground
-    // over frames 16 to 159 (its bottom rows first), a second section above
-    // it from frame 48, and both at full height from frame 160 to 399.
+    // The whirlwind: three 48x64 images in turn, a new one every 4 frames.
+    // Its lower section grows two rows a frame from frame 16, to its full 48
+    // by frame 40; a second section above it grows the same way from frame
+    // 48, to 64 rows by frame 80; both are drawn to frame 159, and from frame
+    // 160 to 399 two full images stand further left.
     if ((u32)(frame - 16) <= 143) {
       size = frame * 2 - 32;
       if (size > 48)
@@ -252,6 +259,8 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
           world.z = point[index].z * Trig_Cos(point[index].velocityY);
           EffectPosition_ProjectPoint(&world.x, &screen);
           screen.x >>= 1;
+          // Always true: a mote restarts once past 48 pixels up, and climbs
+          // little more than 2 pixels a frame.
           if (point[index].y <= 0x3fffff) {
             draw[0](canvas, work->sheet + PROCNE_DUST_CELLS, screen.x - 12,
                     screen.y - 12, 16, 16);
@@ -280,7 +289,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
     }
 
     // Frame 160: the violet sky, the nine objects and the comet images; the
-    // sparks are cleared, the targets hang at random heights, the 32 motes
+    // sparks are cleared, the targets hang 8 to 23 pixels up, the 32 motes
     // that will gather are scattered round the block, and the targets
     // settle into a tight, fast orbit.
     if (frame == 160) {
@@ -314,6 +323,9 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
       // screen's.
       gProjection.centerX = 72;
 
+      // Each mote starts up to 127 pixels out across and up, in a random
+      // direction from 225 degrees round to 45 (the angle wraps), and up to
+      // 100 pixels nearer or further.
       index = 0;
       do {
         speed = Random16() & 127;
@@ -325,6 +337,8 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
         index++;
       } while (index != 32);
 
+      // 8 pixels out, turning 6000/65536 turn a frame, about a full turn
+      // every 11 frames.
       EFFECT_FOR_EACH_TARGET(index, work->effect) {
         radius[index] = 16;
         spin[index] = 6000;
@@ -332,7 +346,10 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
     }
 
     // From frame 160: sway the block of objects, faster for its first 64
-    // frames, plus what is left of each comet's push.
+    // frames, plus what is left of each comet's push. Each frame it moves up
+    // to half a pixel across, on a 512-frame swing, and half a pixel (a
+    // quarter after the first 64 frames) up and down, on a 128-frame swing;
+    // a push halves every frame.
     if (frame > 159) {
       scale = unitScale;
       size = 16;
@@ -349,6 +366,10 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
       scale.x = 0x10000;
       scale.y = 0x10000;
       place.groundHeight = 0;
+      // Object i is placed 64i pixels lower and raised 64i pixels higher,
+      // which cancel on the screen but give it a draw slot 32i later
+      // (Render_ApplyProjectedPlacement takes the slot from y / 2, and
+      // Runtime_PushSlotEntry stops at 255).
       index = 0;
       do {
         place.x = (gProcne_GridX[index] << 16) + wave.x + 0x280000;
@@ -361,6 +382,11 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
 
       // From frame 256 the motes, sparks and comets are drawn 256 pixels
       // into the scene.
+      // XXX: likely none of these points projects, because each result is
+      // read back as a 16.16 point (x >> 17 for the canvas, y and depth
+      // >> 16): Render_ProjectPoint leaves the transformed point for a depth
+      // outside gProjection's range, and from the reset transform these
+      // points lie at depths near -256, below the battle's near depth.
       if (frame > 255) {
         s32 threshold;
 
@@ -372,7 +398,9 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
         SceneTransform_ApplyPosition(Vector3_Coordinates(&depthOffset));
 
         // Frames 256 to 329: the motes close in on the middle of the
-        // block a pixel a frame; those that arrive swell one mote there.
+        // block two pixels a frame (dist is half the distance in pixels, the
+        // root's 8.8 >> 9); those that arrive swell one mote there, a size
+        // larger for every ten, and each is drawn smaller the deeper it lies.
         if (frame <= 329) {
           index = 0;
           do {
@@ -428,8 +456,9 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
               spark = &PARTICLES[slot * 128 + index];
               spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
               spark->velocityY = -(Trig_Cos(angle) * speed) >> 6;
-              // Each spark lives 64 to 79 frames in its comet's 128 map
-              // particles; the speed just set is overwritten at once.
+              // Each spark lives 64 to 79 steps, 16 to 20 frames at the four
+              // steps a frame below, in its comet's 128 map particles; the
+              // speed just set is overwritten at once.
               spark->velocityY = ((Random16() & 255) - 128) << 10;
               SET_POSITION(spark, 0, 0, 0);
               spark->variant = (Random16() & 15) + 64;
@@ -507,6 +536,7 @@ void BattleFx_RunProcne(struct BattleEffectArgument *effect) {
               // The ring is work->particles 32 to 59, each variant its radius,
               // growing 2 a frame round where the comet left the block (kept
               // in its mark's velocity); each comet turns the view further.
+              // Its 28 motes lie 2340/65536 turn apart, a full circle.
               SceneTransform_ApplyRoll(-2048);
               SceneTransform_ApplyYaw(-4096);
 

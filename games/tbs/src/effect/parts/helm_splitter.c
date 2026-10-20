@@ -63,8 +63,10 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
   }
   sparks = PARTICLES;
 
-  // The user leaps 80% of the way to the first target over 20 frames. The
-  // distance is taken in 1/256 pixels so the squares fit in 32 bits.
+  // The user leaps 80% of the way to the first target over 20 frames,
+  // jumping at 7 pixels a frame. The distance is taken in 1/256 pixels so
+  // the squares fit in 32 bits, and a twentieth of it is both the
+  // acceleration and the top speed.
   {
     struct MotionObject *object =
         GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -126,7 +128,8 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
     }
     // The strike: the battle shows the damage, the target flashes and
     // reels, the camera shakes and 16 sparks fly from (64, 80), each living
-    // 16 to 31 frames.
+    // 16 to 31 frames, in random directions at 2 to 2.5 pixels a frame, the
+    // vertical part doubled.
     if (frame == HELM_SPLITTER_STRIKE_FRAME) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
@@ -145,9 +148,10 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
         spark->variant = (Random16() & 15) + 16;
       }
     }
-    // A spark below row 104 bounces up at half its speed instead of being
-    // drawn; one on the canvas is drawn with the pink star animation, each
-    // spark at its own point of the six-picture cycle.
+    // Sparks fly straight, with no gravity, their speed damped to 60/64. A
+    // spark below row 104 has its vertical speed reversed and halved
+    // instead of being drawn; one on the canvas is drawn with the pink star
+    // animation, each spark at its own point of the six-picture cycle.
     for (i = 0; i != HELM_SPLITTER_SPARK_SLOTS; i++) {
       spark = &sparks[i];
       if (spark->variant > 0) {
@@ -297,7 +301,9 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
                              work->sheet + IMPACT_BURST_SHARD_CELLS, 0, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
-  // Large sparks: speed 256-511, lifetime 16-31 frames; use the first 30.
+  // Large sparks fly in random directions at 2 to 4 pixels a frame, the
+  // vertical part doubled, and live 16 to 31 frames; only the first 30 are
+  // drawn.
   for (i = 0; i != IMPACT_BURST_LARGE_SPARKS; i++) {
     s32 speed = (Random16() & 255) + 256;
     s32 angle = Random16() & 0xffff;
@@ -309,7 +315,9 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
     work->particles[i].variant = (Random16() & 15) + 16;
   }
 
-  // Three fragments, 120 degrees apart.
+  // Three fragments, 120 degrees apart on an ellipse half a pixel a frame
+  // across and one up and down: the first straight up at 1 a frame, the
+  // others about 0.43 across, one each way, and 0.5 down.
   for (i = 0; i != IMPACT_BURST_FRAGMENTS; i++) {
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].x = x;
     work->particles[IMPACT_BURST_FIRST_FRAGMENT + i].y = y;
@@ -319,7 +327,8 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
         -((Trig_Cos(i * 0x5555) * 32) >> 5);
   }
 
-  // Small sparks: speed 32-287, lifetime 20-35 frames.
+  // Small sparks fly in random directions at half a pixel to 4.5 a frame,
+  // the vertical part doubled, and live 20 to 35 frames.
   for (i = 0; i != IMPACT_BURST_SMALL_SPARKS; i++) {
     s32 speed = (Random16() & 255) + 32;
     s32 angle = Random16() & 0xffff;
@@ -366,8 +375,8 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
 #endif
     }
 
-    // Large sparks: the first 30 join two every other frame, their motes
-    // shrinking with the life they have left.
+    // Large sparks: the first 30 join two each frame, their motes shrinking
+    // with the life they have left (size 4, then 3 below 16 frames).
     for (i = 0, particle = work->particles; i != IMPACT_BURST_DRAWN_LARGE;
          i++, particle++) {
       if (frame > i / 2 && particle->variant > 0) {

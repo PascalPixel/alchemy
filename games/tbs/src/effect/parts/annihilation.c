@@ -18,6 +18,11 @@
 ///   8          the target is struck; the canvas is filled
 ///   16 to 47   a fire burst grows over the target in three steps
 ///
+/// work->particles 0 to 63 hold the shards and Ram_MapCellBuffer the burst's
+/// pictures. Each drawing builds the blitters it needs and frees them the same
+/// frame; the effect ends with the transfer callback removed and the canvas
+/// layer closed.
+///
 /// effect: the user and the target; a nonzero variant gives the burst its
 /// second picture and a sound.
 void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
@@ -134,8 +139,9 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
       Dma_Fill32(0x3f3f3f3f, canvas, CANVAS_BYTES);
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
-    // Shards shrink as their lives run down; pairs of shards alternate
-    // between the normal and mirrored blitters.
+    // Shards shrink as their lives run down, from mote size 7 to 2, and fall
+    // at 1/64 pixel a frame per frame. Pairs of shards alternate between the
+    // brightest-wins and the additive blitter, both mirrored on side 1.
     if (frame > 3) {
       BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
       for (i = 0; i != 64; i++) {
@@ -156,6 +162,8 @@ void BattleFx_RunAnnihilation(struct BattleEffectArgument *effect) {
       }
       EFFECT_RELEASE_BLITTERS();
     }
+    // The strike throws the target back with motion 4, the fastest of the
+    // knockbacks (gBattleMotion_Variant*), and shakes the screen 4 frames.
     if (frame == 8) {
       BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
       work->shakeFrames = 4;

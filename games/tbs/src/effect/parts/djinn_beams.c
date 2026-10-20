@@ -64,6 +64,8 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
     BattleFx_RunDjinniEntrance(effect, mode,
                                work->effect->side ^ work->effect->prelude, 0,
                                &djinnX, &djinnY);
+  // work->sheet: the column's strip and the glow pictures (EarthWallSheet)
+  // from 0, then the motes and the Djinni.
   palette = Resource_GetTableEntry((s32)&ResourceId_EarthWallSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
@@ -90,7 +92,9 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   // With one target, scroll BG2 so the target is at the canvas's x 64;
-  // with several, the canvas covers the targets' side of the field.
+  // with several, the canvas covers the targets' side of the field: from
+  // screen x 112 for the party (side 1), from x 0 for enemies. offsetX is
+  // added to every screen x drawn, turning it into a canvas x.
   REG_BG2PA = Q_8_8(1);
   if (work->effect->count == 1) {
     EffectPosition_ProjectScaledBattler(work->effect->actors[0], &one);
@@ -108,8 +112,11 @@ void BattleFx_RunDjinnBeams(struct BattleEffectArgument *effect, s32 mode) {
   for (frame = 0; frame != work->effect->count * 16 + 116; frame++) {
     struct BattleCamera *camera = gCameraWork;
 
-    // Frame loop. The sound on 64 and the damage on 80 come at fixed
-    // frames, whatever the number of targets.
+    // Frame loop. The last target's column is gone by frame count * 16 +
+    // 88, and the loop runs 28 frames past that, while that target's last
+    // motes sink out (the eighth at count * 16 + 112) and the trails fade.
+    // The sound on 64 and the damage on 80 come at fixed frames, whatever
+    // the number of targets.
     if (frame == 64)
       AudioCommand_PlayFar(SE_212);
     if (frame == 80)

@@ -8,9 +8,10 @@
 /// from and ends with: no blending, window 0 and window 1 both covering the
 /// battle view (lines 16 to 135), and the effect display mode queued.
 ///
-/// Called at the start and end of the handlers that change the display
-/// themselves: Ice and Douse (falling.c), the beam sequence, and the summons
-/// and scenes from Boreas to Judgment. Writes BLDCNT, BLDALPHA, the window
+/// Called by the handlers that change the display themselves: at the start of
+/// the beam sequence (beams.c), the particle streams and the summon scenes
+/// Ramses, Kirin, Atalanta, Neptune, Boreas, Thor and Judgment, and at both
+/// ends of Ice and Douse (falling.c). Writes BLDCNT, BLDALPHA, the window
 /// registers and WININ and WINOUT, queues DISPCNT for two frames later and
 /// waits one frame.
 void BattleFx_ConfigureEffectDisplay(void) {

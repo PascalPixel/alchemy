@@ -11,9 +11,13 @@ enum {
   QUAKE_TIMING_SHAKE        ///< how far the screen shakes
 };
 
-/// The heights of Quake's rock pillars.
+/// The peak heights of Quake's rock pillars: BattleFx_RunQuake copies its
+/// static table into a local of this type before the frame loop, and only
+/// the first three columns are drawn.
 struct RockWallHeights {
-  s32 column[4]; ///< each pillar's height in pixels
+  /// Each pillar's peak height in pixels, -32: negative, but only its
+  /// absolute value counts.
+  s32 column[4];
 };
 
 #define QUAKE_PILLAR_WIDTH 40 ///< a pillar's width in pixels
@@ -101,8 +105,8 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
     work->particles[member].variant = 0;
   // Each transfer clears the canvas: the pillars are redrawn every frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  // The heights are negative; the sine below is taken as its size, so each
-  // pillar still rises up to 32 pixels.
+  // The heights are negative; the sine below is taken as its absolute value,
+  // so each pillar still rises up to 32 pixels.
   heights = (*(const struct RockWallHeights *)&wallHeights);
   // The screen shakes for 128 frames: all of Quake (80) and Earthquake (112),
   // and all but the last 16 of Quake Sphere (144).
@@ -131,7 +135,10 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
         s32 height;
         s32 top;
 
-        // The height rises and falls along a sine, 1/64 of a turn a frame.
+        // The height rises and falls along a sine, 1/64 of a turn a frame,
+        // its absolute value taken: a pillar rises and sinks every 32 frames,
+        // once for Quake, twice for Earthquake and three times for Quake
+        // Sphere (it stands 32, 64 or 96 frames).
         height =
             (heights.column[column] * Trig_Sin((frame - riseFrame) << 10)) >>
             16;
@@ -143,7 +150,10 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
         draw(canvas, work->sheet, column * QUAKE_PILLAR_WIDTH + 8, 96 - height,
              QUAKE_PILLAR_WIDTH, 16);
 
-        // Throw up the targets standing on the pillar.
+        // Throw up the targets standing on the pillar: those whose projected
+        // point, 16 pixels above the feet, lies in its 41 columns (both edges
+        // count) and at or below its top. A target below the ground takes its
+        // damage pose.
         EFFECT_FOR_EACH_TARGET(member, work->effect) {
           struct MotionObject *object;
 
@@ -180,6 +190,7 @@ void BattleFx_RunQuake(struct BattleEffectArgument *effect) {
                                   SPRITE_COLOR_WHITE, POSE_DAMAGE, member, 5);
       }
     }
+    // Shake ranges of 2, 4 or 8 pixels, by variant, centred on the view.
     Camera_ApplyShake(
         gQuake_Timings[work->effect->variant][QUAKE_TIMING_SHAKE],
         gQuake_Timings[work->effect->variant][QUAKE_TIMING_SHAKE]);

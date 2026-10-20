@@ -124,6 +124,9 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != RAMSES_FRAMES && !(gKeysRepeat & (KEY_A | KEY_B));
        frame++) {
+    // A sound with each of the orb's drops: the first as it lands (frame 94,
+    // its drop starting on 91), the second and third 2 and 4 frames after
+    // theirs land (134 and 174).
     if (frame == 94)
       AudioCommand_PlayFar(SE_156);
     if (frame == 136)
@@ -153,7 +156,8 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
       orb.y = Trig_Cos(frame << 9) * 16 + 0x5c0000;
     }
     // Then it drops 32 pixels three times, 40 frames apart, throwing four
-    // puffs as it lands and rising back over 16 frames.
+    // puffs as it lands and rising back over 16 frames. The puffs start at
+    // canvas (64, 96), drifting up to 2 pixels a frame each way.
     if (frame <= 196) {
       s32 start;
 
@@ -181,7 +185,10 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
       orb.x -= 0x10000;
     if (frame >= 252 && frame <= 275)
       orb.x -= (frame - 250) << 16;
-    // The orb's two objects, 32 pixels apart, high above the field.
+    // The orb's two objects, 32 pixels apart, drawn at the orb: a height of
+    // -256 pixels, 100 or more below the ground, puts them in draw slot 1
+    // (Render_ApplyProjectedPlacement), and y moves up as far, so the two
+    // cancel on the screen.
     if (frame <= 259) {
       position.x = orb.x;
       position.height = -0x1000000;
@@ -191,10 +198,11 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
       Object_ApplyProjectedPlacementFar(work->objects[8], &position, &scale, 0);
     }
     position.height = 0;
-    // The rocks fall after frame 96. Past row 120 a rock bounces back at
-    // half speed, throwing two puffs; on its next landing it starts again
-    // from the top until frame 199, and after that it is left where it
-    // lands.
+    // The rocks fall after frame 96, gaining 1/4 pixel a frame of speed each
+    // frame. Past row 120 a rock bounces back at half speed, throwing two
+    // puffs; on its next landing it starts again from the top until frame
+    // 199, and after that it is left where it lands. Rocks are placed in
+    // screen pixels; their puffs halve x for the canvas.
     for (i = 0; i != RAMSES_ROCKS; i++) {
       struct EffectStep *rock = &work->particles[i];
 
@@ -230,7 +238,8 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
       }
     }
     // Puffs show the last four puff cells, six frames each, as they drift
-    // upward; each starts at a random point of its first 16 frames.
+    // upward (1/4 pixel a frame faster each frame, keeping 60/64 of their
+    // speed); each starts at a random point of its first 16 frames.
     for (i = 0; i != 56; i++) {
       struct EffectStep *puff = &work->particles[RAMSES_FIRST_PUFF + i];
 
@@ -260,7 +269,8 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
     // The ROM tests the strike frame again here.
     if (frame == RAMSES_STRIKE_FRAME) {
       // Throw the sparks from (32, 92) at random angles and speeds, twice as
-      // hard up and down as across, each living 32 to 47 frames.
+      // hard up and down as across, each living 32 to 47 frames, at speeds
+      // of 0.25 to 8.2 pixels a frame ((speed + 32) / 128).
       for (i = 0; i != RAMSES_SPARKS; i++) {
         struct EffectStep *spark = &PARTICLES[i];
         s32 speed;
@@ -277,7 +287,8 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
       }
     }
     // Sparks shrink as their lives run down; alternate sparks are drawn
-    // additively, the others brightest-wins.
+    // additively, the others brightest-wins. They gain 1/16 pixel a frame of
+    // downward speed each frame, keeping 62/64 of their speed.
     for (i = 0; i != RAMSES_SPARKS; i++) {
       struct EffectStep *spark = &PARTICLES[i];
 

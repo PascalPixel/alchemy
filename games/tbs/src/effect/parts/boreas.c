@@ -4,7 +4,8 @@
 
 #include "../effect_internal.h"
 
-// The smoke trails behind the spray, after the 128 particles in PARTICLES.
+/// The smoke trails behind the spray, after the 128 spray particles in
+/// PARTICLES (28 bytes each, 0xe00 in all).
 #define BOREAS_ICE_BLOCK_TRAILS                                                \
   ((struct EffectStep *)(Ram_MapCellBuffer + 0xe00))
 #define BOREAS_BIG_BLOCK_CELLS 0xc46      ///< the dropping 24x48 ice block
@@ -43,8 +44,11 @@
 /// gProjection.centerY and work->shakeFrames; it releases the nine objects
 /// before the second half and its callbacks and blitters at the end.
 void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
+  // One to one; the frame loop copies it and then sets both factors to 1.0
+  // again.
   static struct SpriteScale unitScale = {{{0x10000, 0x10000}}};
-  // A copy of gBoreas_Points that nothing reads.
+  // A copy of gBoreas_Points that nothing reads. It takes 32 rows from a
+  // table of 16, so rows 16 to 31 come from the 32 bytes after the table.
   UNUSED s32 rockPoints[32][2];
   struct SpritePlacement position;
   void *canvas;
@@ -94,12 +98,17 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
   BattleFx_SelectLivingTargets(work->effect);
   WaitFrames(1);
   BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
+  // The formation: nine objects from resource object 372, sprite priority 1.
   BattleFx_SpawnObjects(9, 0x174, 1);
   EFFECT_SHOW_WIDE_CANVAS(16);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
   // Mark the chips unthrown. Their positions here are never drawn: each chip
-  // gets a new one when its wave throws it.
+  // gets a new one when its wave throws it. The window's edge (from frame 0),
+  // its insets and its table (frames 1 to 15, BattleFx_BuildWindowEdgeTable)
+  // are written over chips 0 to 16, the first 0x1c2 bytes of the buffer; the
+  // first wave throws chips 0 to 31 anew on frame 32, before any chip is
+  // drawn.
   for (i = 0; i != 64; i++) {
     PARTICLES[i].x = (Random16() & 63) + 32;
     PARTICLES[i].y = (Random16() & 31) + 120;
@@ -247,7 +256,8 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
 
     // Each time rocks crumble, throw up 32 chips: the first and third waves
     // reuse chips 0 to 31, the second takes 32 to 63, and all fall at 1/8
-    // pixel a frame per frame.
+    // pixel a frame per frame. The first wave's chips start at up to 2
+    // pixels a frame either way; the later waves' rise at up to 4.
     if (frame == 32) {
       for (i = 0; i != 32; i++) {
         PARTICLES[i].x = ((Random16() & 31) + 68) << 16;
@@ -328,6 +338,8 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
             PARTICLES[i].x = 72 << 16;
             PARTICLES[i].y = 56 << 16;
           }
+          // DEAD: a drop's variant, random from frame 224, is never read (the
+          // second half sets 0 to 63 anew); the ROM keeps the count.
           PARTICLES[i].variant++;
         }
       }
@@ -397,7 +409,7 @@ void BattleFx_RunBoreas(struct BattleEffectArgument *effect) {
       work->shakeFrames = 32;
     }
     // Raise one boulder every 2 frames from frame 18, up to 16; frame 16
-    // starts a 32-frame shake and frames 9 to 71 play a thud every 4.
+    // starts a 32-frame shake, and a thud plays every 4 frames from 12 to 68.
     if (frame > 16) {
       count = (frame - 16) / 2;
       if (count > 16) {

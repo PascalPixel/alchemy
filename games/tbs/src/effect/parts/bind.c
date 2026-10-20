@@ -10,15 +10,15 @@
 // outlines: its corners are projected onto the canvas and stored in the
 // velocity fields of EffectStep records, then each edge is sampled at evenly
 // spaced points and a flare is stamped at each. Both runners write the same
-// frame loop; only the prelude, the step towards the target and the vertex
-// table differ. The blue-ramp helper here, which nothing calls, converts a
-// full-screen tiled picture in place.
+// frame loop; only the prelude, the step towards the target, the canvas's
+// priority and the vertex table differ. The blue-ramp helper here, which
+// nothing calls, converts a full-screen tiled picture in place.
 
 /// Turns the screen into shades of blue, top down, with a ragged edge. Works
 /// on a copy of the screen in Ram_MapCellBuffer. Each column starts up to 63
-/// lines late, and the edge speeds up a little every frame; after at most 27
-/// frames the picture moves onto a second blue ramp at colours 96 to 127.
-/// Takes 256 random numbers, one a column.
+/// lines late, and the edge speeds up a little every frame; after 27 frames
+/// the picture moves onto a second blue ramp at colours 96 to 127. Takes 256
+/// random numbers, one a column.
 ///
 /// Nothing calls it or takes its address. Writes background colours 32 to 63
 /// and then 96 to 127, the 0x7800 bytes of BG character block 2 (the
@@ -84,7 +84,9 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
     }
     Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS, 0x7800);
     WaitFrames(1);
-    // Past line 248 every column (120 lines, lagging at most 63) is done.
+    // DEAD: never true, as the edge reaches only line 186 by the 27th frame;
+    // the ROM keeps the test. Every column (120 lines, at most 63 late) is
+    // done once the edge passes line 182.
     if (end > 248)
       break;
     i++;
@@ -112,8 +114,9 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
 ///
 /// Abilities: Bind (kind 38); Luff (kind 218).
 ///
-/// When effect->prelude is 1 a Jupiter Djinni appears first, sways and rises
-/// away. The canvas darkens a little faster every 16 frames.
+/// When effect->prelude is 1 a Jupiter Djinni first appears over the first
+/// target, sways and rises away. The canvas darkens a little faster every 16
+/// frames.
 ///
 /// Runs BattleFx_RunDjinniEntrance first when effect->prelude is 1. Moves
 /// BG2X so the canvas's x 64 is on the first target, cycles the palette
@@ -190,8 +193,9 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
     // Red, green and blue sway a third of a turn apart.
     Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
 
-    // The Djinni sways 20 pixels either way and from frame 32 rises 2
-    // pixels a frame.
+    // The Djinni sways 20 pixels either way, once every 32 frames, and from
+    // frame 33 rises 2 pixels a frame. For its first four frames it is drawn
+    // a second time, additively, so it flashes in.
     if (work->effect->prelude == 1) {
       s32 x;
       s32 y;
@@ -234,7 +238,7 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
         // shrinking as they spin, are projected into the particles' velocity
         // fields; each side is 24 flares. Over 64 frames the scale falls from
         // 2.625 by 3/128 a frame while its roll and yaw turn steadily back
-        // to 0; frames 64 to 67 hold it still.
+        // from half a turn to 0; frames 64 to 67 hold it still.
         if (tick <= 67) {
           for (j = 0; j != 3; j++) {
             point = &work->particles[member * 32 + j];
@@ -291,9 +295,10 @@ void BattleFx_RunBind(struct BattleEffectArgument *effect) {
 ///
 /// Abilities: none (kind 67).
 ///
-/// Its own vertex, gBind_TriangleStrikeVertex, sets the triangle's size.
-/// Changes the same state as BattleFx_RunBind, on the narrow canvas, and
-/// starts the user's approach through BattleMotion_ApproachTargetFar.
+/// It reads its own copy of the vertex, gBind_TriangleStrikeVertex, which
+/// holds the same point as Bind's (gBind_Vertex). Changes the same state as
+/// BattleFx_RunBind, on the narrow canvas at priority 0, and starts the
+/// user's approach through BattleMotion_ApproachTargetFar.
 void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
   struct EffectPosition anchor;
   // World input and projected vertices reuse one coordinate workspace.
@@ -349,6 +354,8 @@ void BattleFx_RunTriangleStrike(struct BattleEffectArgument *effect) {
     // Frame loop, as in BattleFx_RunBind.
     if (frame == 64)
       EFFECT_SHOW_DAMAGE(0);
+    // The user sets off three quarters of the way to the target, arriving
+    // in 16 steps.
     if (frame == 46)
       BattleMotion_ApproachTargetFar(work->effect->actor,
                                      work->effect->actors[0], 16, 0);

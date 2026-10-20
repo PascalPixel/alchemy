@@ -25,9 +25,10 @@
 
 /// Launches up to max sparks from (px, py), 16.16, into the free slots
 /// (variant 0) of THOR_PARTICLES, walking them with spark and counting with
-/// index. Each flies at angle at a random speed of 32 to 1054 (128ths of a
-/// pixel a frame) and lives 32 to 39 frames. Used for the pillar's 512
-/// sparks and each bolt's 16; the mote's sparks are launched inline.
+/// index. Each flies at angle (0 straight up, a full turn 0x10000) at a
+/// random speed of 32 to 1055 128ths of a pixel a frame across, twice that
+/// up and down, and lives 32 to 39 frames. Used for the pillar's 512 sparks
+/// and each bolt's 16; the mote's sparks are launched inline.
 #define THOR_LAUNCH_SPARKS(spark, index, px, py, angleExpr, max)               \
   {                                                                            \
     s32 spawned = 0;                                                           \
@@ -66,7 +67,16 @@
 /// mote sways above, and the formation is pushed back in smoke until an impact
 /// burst ends the effect. The sparks live in THOR_PARTICLES; a spark whose
 /// variant is 0 is free, and a positive variant counts the frames it has left.
+///
+/// Loads the dusk clouds as the battle backdrop (BattleBackground_LoadFar),
+/// and for the dusk part sets view->busy and moves gProjection.centerY to
+/// 240 (BattleFx_SetupBlendedDisplay puts the centre back). Spawns the nine
+/// formation objects and releases them at the end; the closing
+/// BattleFx_RunImpactBurst builds and frees its own blitters and transfer and
+/// overwrites work->particles and PARTICLES 0 to 63. Closes the canvas layer.
 void BattleFx_RunThor(struct BattleEffectArgument *effect) {
+  // The three lines' end points, in pairs: x and z on a plane, 96 being its
+  // centre. One line runs across at z 135 and two meet at (96, 32).
   static s16 points[6][2] = {
       {8, 135}, {184, 135}, {128, 135}, {96, 32}, {96, 32}, {64, 135},
   };
@@ -192,7 +202,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
     // Red, green and blue sway a third of a turn apart, so the canvas
     // colours cycle through the hues.
     Graphics_UpdatePhasePalette(frame * 2, 0xaaab, 0x5555, 0);
-    // The frame before the beam clears the canvas instead of fading it.
+    // The frame before the beam fills the canvas with level 26 (0x1a in each
+    // byte) instead of fading it.
     if (frame == 150) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0x1a1a1a1a);
     } else {
@@ -236,7 +247,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
 
     // The three lines, drawn dot by dot between pairs of points: line i
     // appears from frame 64 + 12 * i and grows 4 dots a frame, up to 48.
-    // Each point is projected and halved in x for the double-width canvas.
+    // Each point is projected and halved in x for the double-width canvas,
+    // and dot j sits j/48 of the way along (0x555 is 1/48 in 16.16).
     if (frame <= 149) {
       for (i = 0; i != 6; i++) {
         SET_VECTOR(point, (points[i][0] - 96) << 16, 0,
@@ -401,6 +413,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
     }
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
     AudioCommand_PlayFar(SE_145);
+    // The pillar is 48 pixels wide at canvas x 36 and reaches from the top
+    // down to line 112; its sparks start at its foot, x 60.
     pillarX = 60;
     pillarY = 112;
 
@@ -410,6 +424,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
         Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetB,
                                    work->sheet, 1, 0);
       }
+      // A heavy impact sound every 8 frames from frame 80 to 136, under
+      // the bolts.
       stormFrame = frame - 80;
       if ((u32)stormFrame <= 59 && !(frame & 7)) {
         AudioCommand_PlayFar(SE_HEAVY_IMPACT);
@@ -518,6 +534,9 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
         EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE](
             canvas, work->sheet + THOR_MOTE_CELLS, mirrorX, moteY, 12, 24);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+        // Four sparks a frame from the right-hand copies, in any direction,
+        // at 64 to 127 128ths of a pixel a frame (twice that up and down),
+        // living 16 to 23 frames.
         j = 0;
         for (i = 0, spark = THOR_PARTICLES; i != THOR_PARTICLE_COUNT;
              i++, spark++) {
@@ -544,9 +563,10 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_MAX);
       {
-        // Live sparks fall under gravity and bounce at half speed off the
-        // ground (y 120); those on the canvas shrink as their life runs
-        // out.
+        // Live sparks keep their line, slowing to 60/64 a frame with no
+        // gravity, and one past the ground (y 120) bounces back at half
+        // speed instead of being drawn; those on the canvas shrink from 3
+        // pixels wide to 1 as their life runs out.
         DrawRectangle draw = EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE];
         struct EffectStep *spark;
         for (i = 0, spark = THOR_PARTICLES; i != THOR_PARTICLE_COUNT;
@@ -567,8 +587,9 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
       }
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
 
-      // The formation is placed from frame 16 and pushed back from frame
-      // 32, the push slowing by 1/16 each frame.
+      // The formation is placed from frame 16, its corner at (80, 64), and
+      // pushed back from frame 32: right 4 pixels a frame and up 1/4, the
+      // push slowing by 1/16 each frame.
       if (frame > 15) {
         if (frame == 32) {
           formationSpeedX = 0x40000;
@@ -584,7 +605,8 @@ void BattleFx_RunThor(struct BattleEffectArgument *effect) {
       }
       // Frames 16 to 143: three puffs of smoke a frame around the
       // formation, from the first three glint cells, placed and flipped at
-      // random.
+      // random, up to 8 pixels across and 40 up or down from canvas line
+      // 56, clipped at the canvas edges and drawn where brighter.
       if ((u32)(frame - 16) <= 127) {
         s32 formationScreenX;
         for (i = 0, formationScreenX = formationX >> 17; i != 3; i++) {

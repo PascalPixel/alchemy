@@ -8,7 +8,9 @@
 // - 0 to 15: vines (only the first ten are drawn).
 // - 32 to 47: thorns, until frame 127.
 // - 16 to 63: chips, thrown on frame 128 (only 32 to 63 are drawn); from
-//   frame 128 the sparks, six per target from 16 on, share these slots.
+//   frame 128 the sparks, six per target from 16 on, share these slots; from
+//   the third target's last two (slots 32 and 33) on, they share them with
+//   drawn chips.
 // - 0 on: embers, ten per target, from frame 302.
 #define CYBELE_FRAMES 366
 #define CYBELE_CHIP_COUNT 48      ///< chips thrown by the thorns
@@ -98,10 +100,12 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
                       COMPOSITE_TRANSPARENT);
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  REG_BG2X = -0x2000; // 32 pixels left (20.8 fixed point)
+  REG_BG2X = -0x2000; // -32 in 20.8: the canvas shows 32 pixels right
 
   // Vines (0 to 15): x, the y of the root, the growth speed and the frames
-  // before the vine starts to grow.
+  // before the vine starts to grow. Vines 0 to 4 stand 20 pixels apart from
+  // x 0, rooted at y 104 to 111; the rest sit 10 pixels further right and 4
+  // lower, so the ten drawn make two staggered rows.
   for (i = 0; i != 16; i++) {
     struct EffectStep *vine = &work->particles[i];
 
@@ -246,7 +250,7 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
           top = (rise - vine->variant) * vine->velocityY;
           for (wrap = top; wrap > 184; wrap -= 64)
             ;
-          // The tip (24x8).
+          // The tip (24x8), until it has passed the top of the canvas.
           if (wrap <= 119)
             draw[i & 1](canvas, sheet, vine->x, vine->y - wrap - 8, 24, 8);
           // The stem: three 24x64 pieces, clipped at the top of the screen and
@@ -398,7 +402,8 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
       }
     }
 
-    // Lift the targets to a height of 128 pixels, 8 frames apart.
+    // Lift the targets to a height of 128 pixels, 8 frames apart, without
+    // gravity, every sprite of each in its damage pose.
     if (frame >= 161 && frame <= 223) {
       EFFECT_FOR_EACH_TARGET(i, work->effect) {
         if (frame > i * 8 + 160) {
@@ -439,7 +444,8 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
 
     // Frame 302: switch to the blast sheet, brightest-wins blitters and a
     // canvas that keeps 75% of each frame, and give each target ten
-    // embers, 72 degrees apart (two rings of five).
+    // embers, 72 degrees apart (two rings of five), of which only the first
+    // ring is drawn.
     if (frame == 302) {
       EFFECT_RELEASE_BLITTERS();
       Resource_LoadAndDecompress((s32)&ResourceId_YellowRingSheet, work->sheet,
@@ -473,7 +479,9 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
     }
     // Target i's blast plays from frame 302 + 4i: six 40x24 pictures, two
     // frames each, drawn as two mirrored halves. Six frames in, the first
-    // five of its embers fly out and fall for 27 frames. The canvas is now
+    // five of its embers show for 27 frames. The 2D step leaves z alone, so
+    // they spread only across, and rise: their speed up and the 1/16 pixel
+    // added each frame both point up in the projection. The canvas is now
     // shown at twice its width, so x positions are halved.
     if (frame > 301) {
       EFFECT_FOR_EACH_TARGET(i, work->effect) {

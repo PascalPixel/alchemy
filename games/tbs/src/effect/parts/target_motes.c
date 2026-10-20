@@ -88,21 +88,23 @@ enum { TARGET_MOTES_GLINT_CELLS = 0x2580 };
 /// turn about a point 20 pixels up, either closing in on it or rising, and
 /// the target flashes until the end; the battle shows the damage 32 frames
 /// before the end. The effect layer ripples, except in modes 0, 1 and 3.
-/// mode : 0 lime smoke, 1 pink smoke, 2 cyan smoke, 3 smoke with glints,
-///        4 hearts, 5 glowing orbs, 6 vortex motes, 7 orbs in Mars Djinn
-///        colours, with the user stepping up to strike the first target.
 ///
 /// Called by the wrappers above: BattleFx_RunTaint (mode 0 or 1),
 /// BattleFx_RunDelude (2), BattleFx_RunParalyze (3), BattleFx_RunHeartrender
 /// (4), BattleFx_RunMysticFlame (5), BattleFx_RunDrown (6) and
 /// BattleFx_RunDemonFire (7).
 ///
-/// Overwrites PARTICLES 0 to 511, loads the mode's palette into the first 64
-/// background colours, and in the rippling modes writes work->bg2xLines each
-/// frame for BattleFx_ArmBg2AffineHBlankDma, which it schedules and removes.
-/// It builds both blitters afresh for each target every frame and releases
-/// them again, mode 3 a mirrored one for each glint too, so it ends with
-/// none held. Mode 7 sets work->shakeFrames.
+/// Lasts 8 frames a target plus 64 (the wide styles) or 32. Overwrites
+/// PARTICLES 0 to 511, loads the mode's palette into the first 64 background
+/// colours, and in the rippling modes writes work->bg2xLines each frame for
+/// BattleFx_ArmBg2AffineHBlankDma, which it schedules and removes. It builds
+/// both blitters afresh for each target every frame and releases them again,
+/// mode 3 a mirrored one for each glint too, so it ends with none held. Mode
+/// 7 sets work->shakeFrames.
+///
+/// mode : 0 lime smoke, 1 pink smoke, 2 cyan smoke, 3 smoke with glints,
+///        4 hearts, 5 glowing orbs, 6 vortex motes, 7 orbs in Mars Djinn
+///        colours, with the user stepping up to strike the first target.
 void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
@@ -121,6 +123,7 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
 
   cursor = gBattleFxWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  // Motes drawn for each target: 16, but 24 in mode 7 and 32 in mode 6.
   count = 16;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
@@ -270,6 +273,8 @@ void BattleFx_RunTargetMotes(struct BattleEffectArgument *effect, u32 mode) {
             s32 yy = (mote->y >> 8) * (mote->y >> 8);
             s32 zz = (mote->z >> 8) * (mote->z >> 8);
 
+            // The distance from the centre in 2-pixel units: the root is in
+            // 256ths of a pixel, and >> 9 divides by 512.
             distance = Iwram_Sqrt(xx + yy + zz) >> 9;
             if (distance != 0 && mote->variant <= 23) {
               s32 cell = mote->variant / 4;
@@ -382,9 +387,11 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
                       COMPOSITE_TRANSPARENT);
   drawFlipped = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
 
-  // Seed SLEEP_SEEDED sheep, of which SLEEP_SHEEP fall. Each starts above
-  // the canvas at a random x, with a random tumble speed (z) and starting
-  // image; the fall speed draws a random number but always starts at 0.
+  // Seed SLEEP_SEEDED sheep, of which SLEEP_SHEEP fall. Each starts 32
+  // pixels above the canvas at a random x from 32 to 95, with a random
+  // tumble speed (z, 0 to 3) and starting image; the fall speed draws a
+  // random number but always starts at 0, and gravity adds 1/8 pixel a frame
+  // each frame.
   for (particleIndex = 0; particleIndex != SLEEP_SEEDED; particleIndex++) {
     current = &sheep[particleIndex];
     current->x = ((Random16() & 63) + 32) << 16;
@@ -458,16 +465,17 @@ void BattleFx_RunSleep(struct BattleEffectArgument *effect) {
 
 #define CURSE_MARKER_CELLS 1728 ///< the marker picture in the sheet
 
-/// A small flame burns above each target in turn, 16 frames apart, for 72
-/// frames each, over a marker at its feet; the battle shows the result on frame
-/// 32.
+/// A small flame burns above each target in turn, 16 frames apart, for up to
+/// 72 frames each, over a marker at its feet; the battle shows the result on
+/// frame 32.
 ///
 /// Abilities: Curse (kind 41); Lucid Prophecy (kind 354).
 ///
-/// work->particles' variants give each flame its starting point in its
-/// animation. Loads the flame column palette into the first 64 background
-/// colours and sets REG_BLDCNT and BG2's affine registers (the narrow canvas,
-/// moved over the party's side when side is 1).
+/// Lasts 32 frames a target plus 32, so with one target the flame is cut off
+/// after 64 frames. work->particles' variants, 0 to 63, give each flame its
+/// starting point in its animation. Loads the flame column palette into the
+/// first 64 background colours and sets REG_BLDCNT and BG2's affine registers
+/// (the narrow canvas, moved over the party's side when side is 1).
 void BattleFx_RunCurse(struct BattleEffectArgument *effect) {
   void **slot;
   struct BattleEffectWork *work;

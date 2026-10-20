@@ -11,8 +11,10 @@
 
 #define NEREID_FRAMES 124
 
-#define NEREID_OBJECTS 12         ///< objects in the sweeping formation
-#define NEREID_COLUMNS 3          ///< wrapping columns of fire
+#define NEREID_OBJECTS 12 ///< objects in the sweeping formation
+/// Wrapping columns of fire; gNereid_Columns has a fourth row that nothing
+/// draws.
+#define NEREID_COLUMNS 3
 #define NEREID_EMBERS 1024        ///< embers in PARTICLES
 #define NEREID_COLUMN_IMAGE 0x6e4 ///< the column of fire in the sheet
 
@@ -21,19 +23,21 @@
 ///
 /// Abilities: Nereid (scene kind 2).
 ///
-/// 124 frames; pressing A
-/// or B during frames 33 to 97 skips to frame 98. A formation of twelve
-/// objects sweeps in from the right; embers burst up on frame 28 and over
-/// frames 32 to 79, fall back under gravity and from frame 80 rise away,
-/// while three columns of fire stream upwards over frames 32 to 79 and the
-/// targets bounce. At the end the formation explodes with
+/// 124 frames; pressing A or B during frames 33 to 97 skips to frame 98. A
+/// formation of twelve objects sweeps in from the right; embers burst up on
+/// frame 28 and over frames 32 to 79, fall back under gravity and from frame
+/// 80 rise away, while three columns of fire stream upwards over frames 32 to
+/// 79 and the targets bounce. At the end the formation explodes with
 /// BattleFx_RunImpactBurst; the battle shows the damage on frame 120.
 ///
-/// The embers are PARTICLES 0 to 1023, canvas pixels in 16.16, a variant of
-/// -1 marking an idle one. Loads the water spray palette into the first 64
-/// background colours, sets REG_BLDALPHA, spawns the twelve formation objects
-/// (released at the end) and gives the targets an upward speed and the usual
-/// battle gravity at each bounce.
+/// Reached through BattleFx_RunSceneEffect, whose sheet slot holds the mote
+/// sheet here. The embers are PARTICLES 0 to 1023, canvas pixels in 16.16, a
+/// variant of -1 marking an idle one. Loads the water spray palette into the
+/// first 64 background colours, sets REG_BLDALPHA, spawns the twelve
+/// formation objects (released at the end) and gives the targets an upward
+/// speed and the usual battle gravity at each bounce. Before the impact burst
+/// it removes its transfer callback and frees its blitters, which the burst
+/// builds again, and it closes the canvas layer last.
 void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   void **cursor;
@@ -52,7 +56,8 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
   BattleFx_FetchRectangleBlitters(0, draw);
 
   // The band along the bottom from WaterSpray, the columns from FirePillarA
-  // (at sheet + 0x6e4).
+  // (at sheet + 0x6e4). FirePillarA's own palette is skipped, so both are
+  // drawn in the water spray's colours.
   palette = Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
@@ -75,7 +80,8 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
     struct EffectStep *sparks;
     s32 *life;
 
-    // The formation comes in from (256, 88), heading left.
+    // The formation comes in from (256, 88), heading left at 16 pixels a
+    // frame and up at 4.
     rise = 0;
     focus.x = 256 << 16;
     focus.y = 88 << 16;
@@ -109,8 +115,8 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
       if (frame <= 15)
         rise += 2;
 
-      // The formation slows to 58/64 of its speed across and 56/64 down
-      // each frame, and is pushed back right when left of x 120.
+      // The formation keeps 58/64 of its speed across and 56/64 of its speed
+      // up each frame, and is pushed back right when left of x 120.
       if (frame <= 99) {
         focus.x += velocity.x;
         focus.y += velocity.y;
@@ -121,9 +127,11 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
       }
       BattleFx_PlaceFormationObjects(1, focus.x, focus.y);
 
-      // Embers burst up from an oval around (32, 96), twice as tall as wide,
-      // with a random spread: every idle one of the first 256 on frame 28,
-      // then up to 16 a frame over frames 32 to 79.
+      // Embers burst up from an oval around (32, 96), twice as tall as wide
+      // on the canvas and so round on the doubled-width screen, with a random
+      // spread: every idle one of the first 256 on frame 28, then up to 16 a
+      // frame over frames 32 to 79. Each moves up to 8 pixels a frame either
+      // way across and 1 to 9 up.
       if (frame == 28) {
         for (k = 0; k != 256; k++) {
           spark = &sparks[k];
@@ -191,9 +199,10 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
 
       // Embers: 2 to 4 pixels by index, 2 more while falling, swelling to 10
       // over frames 69 to 77 as they clear; those falling are drawn
-      // additively. Until frame 80 they fall under gNereid_Gravity, then
-      // speed upwards; they slow to 62/64 a frame, and go out when they fall
-      // below y 104.
+      // additively. Until frame 80 they fall under gNereid_Gravity (1/2, 1/4,
+      // 1/4 or 1/8 pixel a frame each frame, by index), then speed upwards by
+      // half a pixel each frame; they slow to 62/64 a frame, and go out when
+      // they fall below y 104.
       for (k = 0; k != NEREID_EMBERS; k++) {
         spark = &sparks[k];
         if (spark->variant >= 0) {
@@ -229,7 +238,9 @@ void BattleFx_RunNereid(struct BattleEffectArgument *effect) {
       }
 
       // The targets bounce and flash white on frames 36, 48, 60 and 72,
-      // getting their colours back 6 frames later.
+      // getting their colours back 6 frames later. Each bounce starts at 4.5
+      // pixels a frame up under the gravity ObjMotRst also gives a unit
+      // (0xab85, about 0.67 pixel a frame each frame).
       if (frame <= 79) {
         EFFECT_FOR_EACH_TARGET(k, work->effect) {
           if (frame > 29) {

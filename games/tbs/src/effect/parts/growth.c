@@ -39,6 +39,9 @@ void BattleFx_RunGrowth(struct BattleEffectArgument *effect) {
 /// Grows green pillars from the ground, scattering dust from each root.
 ///
 /// Abilities: Punji, Punji Trap, Punji Strike (kind 56).
+///
+/// Punji Strike's row of actflags.tsv gives variant 1, as Punji Trap's does,
+/// so no ability plays this kind's variant 2.
 void BattleFx_RunPunji(struct BattleEffectArgument *effect) {
   BattleFx_RunGrowingColumns(effect, 1);
 }
@@ -59,7 +62,9 @@ void BattleFx_RunPunji(struct BattleEffectArgument *effect) {
 /// transfer callback removed, the blitters freed and the canvas layer closed.
 ///
 /// effect: the targets; variant picks the number of columns
-///         (gGrowth_ColumnCounts).
+///         (gGrowth_ColumnCounts): 4 for Growth and Punji, 8 for Mad Growth,
+///         Punji Trap and Punji Strike, 12 for Wild Growth. The scene runs 4
+///         frames a column and 56 more.
 void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
   void **slots;
   void **cursor;
@@ -422,7 +427,8 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
 /// the end, and the scene fades out over its last 16 frames.
 ///
 /// effect: the targets; variant picks the number of thorns
-///         (gGrowth_Counts). gGrowth_Kinds gives each
+///         (gGrowth_Counts): 3 for Thorn, 5 for Briar, 8 for Nettle; the
+///         scene runs 8 frames a thorn and 56 more. gGrowth_Kinds gives each
 ///         thorn's size and direction.
 ///
 /// PARTICLES holds the dust, 64 puffs. Writes REG_BG2PA, REG_BLDCNT,

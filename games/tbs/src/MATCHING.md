@@ -93,6 +93,9 @@ are one idea each, and can compile differently.
 
 ### Runtime
 
+- `Vector_AddPolarOffset` walks positions with a byte cursor so both struct
+  and array positions are valid. Its two one-coordinate steps retain the
+  native writeback; combining them changes register allocation and stores.
 - A register write as `Io_Write16(value, &REG_X)`, which builds the value in a
   word first and keeps the store where it is written, or as `REG_X = value`.
 - Code copied to RAM is called through a cast function pointer, or through
@@ -154,6 +157,13 @@ Measured:
   struct members (`Colosso_RestoreCompetitor` and
   `TolbiShipInteriors_SelectPlacements`). These valid byte views keep the
   native address bases and registers.
+- The same byte view for `Xian_SpawnTrainingParticles` keeps the actor's Z
+  load ahead of the options-script store. Direct members move it after the
+  store and the following constant load in the English build.
+- The Goma stump turns read `AnimationObject.rotation` through its
+  corresponding signed halfword type, keeping the negative literal. Their
+  update-hook clears retain the native integer alias outside `UBFIX`; the
+  defined pointer store swaps with the sprite-pointer load.
 - The native `u32` view of `gMapWork[0]` (`SceneActor_MoveAndRedraw`). It
   aliases a pointer field; `UBFIX` reads the pointer directly.
 - A command of `event.h` and the service it names; each site keeps the one it

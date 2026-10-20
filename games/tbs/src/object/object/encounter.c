@@ -376,7 +376,9 @@ void Battle_SelectSceneBackdrop(void) {
   s32 target = gGameState.scene;
   s32 *table = gBattle_BackdropScenes;
   s32 entry = *table++;
-  s32 backdrop; // unset only for a table that starts with the scene
+  // The first scene_rules.s word is a backdrop marker. It cannot match the
+  // halfword scene id, so the loop sets this before testing any scene.
+  s32 backdrop;
 
   if (entry != 0 && entry != target) {
     do {

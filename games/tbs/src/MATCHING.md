@@ -140,6 +140,14 @@ Measured:
 
 ### Scenes
 
+- `FixedPoint_Distance` keeps its coordinate-address interface with byte
+  views derived from whole actors. Its byte cursor reaches the actual
+  signed coordinate members without crossing scalar bounds or copying
+  them into temporary arrays.
+- Altin's hop countdowns read and decrement `FieldActor.work` through its
+  corresponding signed halfword type, then reset it through the declared
+  unsigned member. Changing either spelling changes native instructions;
+  both views are valid aliases.
 - Calling a helper before its declaration, or with its exact `void`
   prototype in scope. In the affected Colosso and Kolima Forest bend helpers,
   adding the prototype changes the argument setup order. Their unit headers

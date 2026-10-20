@@ -112,10 +112,6 @@
 #define FLAG_ALTIN_NUT 0xf73              ///< a barrel in the houses
 #define FLAG_ALTIN_COINS 0xf74            ///< a barrel in the houses
 #define FLAG_ALTIN_SLEEP_BOMB 0xf75       ///< a bed in the houses
-/// Scene flags: Altin keeps its water level in them, set on entry.
-#define FLAG_SCENE_TEMP_40 0x240
-#define FLAG_SCENE_TEMP_41 0x241
-#define FLAG_SCENE_TEMP_42 0x242
 
 // Altin Peak, numbered by its rooms (SceneId_AltinPeak1 to 11)
 /// Room 1's water beast has been seen hopping along its first and its second
@@ -527,56 +523,6 @@
 #define FLAG_XIAN_INTERIORS_ELIXIR_BARREL 0xf6f
 #define FLAG_XIAN_INTERIORS_SLEEP_BOMB_JAR 0xf70
 
-// Flags from 0x200 belong to the current scene: each scene keeps its puzzle
-// and event states in the same numbers, and names the ones it uses.
-#define FLAG_SCENE_TEMP_00 0x200
-#define FLAG_SCENE_TEMP_01 0x201
-#define FLAG_SCENE_TEMP_02 0x202
-#define FLAG_SCENE_TEMP_03 0x203
-#define FLAG_SCENE_TEMP_04 0x204
-#define FLAG_SCENE_TEMP_05 0x205
-#define FLAG_SCENE_TEMP_06 0x206
-#define FLAG_SCENE_TEMP_07 0x207
-#define FLAG_SCENE_TEMP_08 0x208
-#define FLAG_SCENE_TEMP_09 0x209
-#define FLAG_SCENE_TEMP_0A 0x20a
-#define FLAG_SCENE_TEMP_0B 0x20b
-#define FLAG_SCENE_TEMP_0C 0x20c
-#define FLAG_SCENE_TEMP_0D 0x20d
-#define FLAG_SCENE_TEMP_0E 0x20e
-#define FLAG_SCENE_TEMP_0F 0x20f
-
-#define FLAG_SCENE_TEMP_10 0x210 ///< Tret: lower middle east landing
-#define FLAG_SCENE_TEMP_11 0x211 ///< Tret: second floor to west landing
-#define FLAG_SCENE_TEMP_12 0x212 ///< Tret: lower middle southwest landing
-#define FLAG_SCENE_TEMP_13 0x213 ///< Tret: lower middle south landing
-#define FLAG_SCENE_TEMP_14 0x214 ///< Tret: lower middle southeast landing
-/// Colosso log course: the second rock settled
-#define FLAG_SCENE_TEMP_15 0x215
-#define FLAG_SCENE_TEMP_16 0x216 ///< Colosso log course: the third rock settled
-/// Colosseum waiting room: stepped to the line
-#define FLAG_SCENE_TEMP_34 0x234
-#define FLAG_SCENE_TEMP_35 0x235 ///< Colosseum waiting room: asked at the line
-// Also FLAG_SCENE_TEMP_15: Lunpa Fortress, set with FLAG_SCENE_TEMP_14.
-#define FLAG_SCENE_TEMP_17 0x217 ///< Lunpa Fortress: the first switch is hidden
-/// Lunpa Fortress: the second switch is hidden
-#define FLAG_SCENE_TEMP_18 0x218
-#define FLAG_SCENE_TEMP_24 0x224 ///< Lunpa Fortress: thrown out at the entrance
-#define FLAG_SCENE_TEMP_25 0x225 ///< Lunpa Fortress: the sentries saw the party
-#define FLAG_SCENE_TEMP_26 0x226 ///< Lunpa Fortress: the resident keeps quiet
-#define FLAG_SCENE_TEMP_27 0x227 ///< Lunpa Fortress: the resident was startled
-// Also FLAG_SCENE_TEMP_40: Lunpa gate, the guards block the gateway.
-// Also FLAG_SCENE_TEMP_41: Lunpa gate, Cloak is cast.
-// Also FLAG_SCENE_TEMP_42: Lunpa gate, the party enters the fortress.
-#define FLAG_SCENE_TEMP_43 0x243 ///< Lunpa gate: Garet turns the leader back
-#define FLAG_SCENE_TEMP_44 0x244 ///< Lunpa gate: the guards caught the party
-/// Also FLAG_SCENE_TEMP_18: Suhalla Desert, the storm holds the party.
-/// Also FLAG_SCENE_TEMP_41: Vale, the plaza's watching villager paused.
-/// Also FLAG_SCENE_TEMP_42: Vale, Kraden's gate stands open.
-/// Vault interiors: the leader is beside the Bone
-#define FLAG_SCENE_TEMP_50 0x250
-#define FLAG_SCENE_TEMP_70 0x270 ///< Lunpa Fortress: Hammet's rescue has begun
-
 // Goma Cave
 #define FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED 0x860
 #define FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP 0x861
@@ -623,12 +569,6 @@
 #define FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED 0x8d2
 #define FLAG_CROSSBONE_ISLE_FINAL_GUARDS_DEFEATED 0x8d1
 /// Crossbone Isle's pursuer room: a pursuer is after the leader.
-#define FLAG_SCENE_TEMP_20 0x220
-// Crossbone Isle's first room: its four plants have grown.
-// Also uses FLAG_SCENE_TEMP_40.
-// Also uses FLAG_SCENE_TEMP_41.
-// Also uses FLAG_SCENE_TEMP_42.
-// Also uses FLAG_SCENE_TEMP_43.
 
 // Sol Sanctum
 /// Kraden has found the hall of statues. "This is it! We've found it!"
@@ -680,17 +620,10 @@
 #define FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND 0xf01
 #define FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND 0xf02
 #define FLAG_SOL_SANCTUM_HERB_FOUND 0xf40
-/// The entrance hall: the party has entered the inner block room, and the
-/// outer blocks no longer move.
-/// Also uses FLAG_SCENE_TEMP_34.
-/// The eruption: Saturos's group has gone, and the embers fall silently.
-#define FLAG_SCENE_TEMP_46 0x246
 
 // Sanctum
 /// Isaac accepted the Great Healer's request to go to Sol Sanctum.
 #define FLAG_SANCTUM_QUEST_ACCEPTED 0x9f0
-#define FLAG_SCENE_TEMP_71 0x271 ///< Tolbi ship deck: the first door is open
-#define FLAG_SCENE_TEMP_72 0x272 ///< Tolbi ship deck: the second door is open
 
 // Venus Lighthouse
 /// The man at the entrance has told of the attack and is gone.
@@ -703,17 +636,268 @@
 /// Carry has set that block down beyond the wall.
 #define FLAG_VENUS_LIGHTHOUSE_BLOCK_CARRIED 0x987
 
-// Venus Lighthouse aerie
-/// Also uses FLAG_SCENE_TEMP_34.
-/// Also uses FLAG_SCENE_TEMP_35.
-#define FLAG_SCENE_TEMP_36 0x236
-#define FLAG_SCENE_TEMP_37 0x237
-
 // World map
 /// The Black Orb did nothing on Babi's ship and was handed back.
 #define FLAG_BLACK_ORB_RETURNED 0x85d
+
+// Scene flags, 0x200 to 0x2ff: Scene_ResetFlagsOnEnter clears them on every
+// ordinary entrance, and each scene keeps its own puzzle and event states in
+// them. A scene says beside its uses what each one holds there.
+#define FLAG_SCENE_TEMP_00 0x200
+#define FLAG_SCENE_TEMP_01 0x201
+#define FLAG_SCENE_TEMP_02 0x202
+#define FLAG_SCENE_TEMP_03 0x203
+#define FLAG_SCENE_TEMP_04 0x204
+#define FLAG_SCENE_TEMP_05 0x205
+#define FLAG_SCENE_TEMP_06 0x206
+#define FLAG_SCENE_TEMP_07 0x207
+#define FLAG_SCENE_TEMP_08 0x208
+#define FLAG_SCENE_TEMP_09 0x209
+#define FLAG_SCENE_TEMP_0A 0x20a
+#define FLAG_SCENE_TEMP_0B 0x20b
+#define FLAG_SCENE_TEMP_0C 0x20c
+#define FLAG_SCENE_TEMP_0D 0x20d
+#define FLAG_SCENE_TEMP_0E 0x20e
+#define FLAG_SCENE_TEMP_0F 0x20f
+#define FLAG_SCENE_TEMP_10 0x210
+#define FLAG_SCENE_TEMP_11 0x211
+#define FLAG_SCENE_TEMP_12 0x212
+#define FLAG_SCENE_TEMP_13 0x213
+#define FLAG_SCENE_TEMP_14 0x214
+#define FLAG_SCENE_TEMP_15 0x215
+#define FLAG_SCENE_TEMP_16 0x216
+#define FLAG_SCENE_TEMP_17 0x217
+#define FLAG_SCENE_TEMP_18 0x218
+#define FLAG_SCENE_TEMP_19 0x219
+#define FLAG_SCENE_TEMP_1A 0x21a
+#define FLAG_SCENE_TEMP_1B 0x21b
+#define FLAG_SCENE_TEMP_1C 0x21c
+#define FLAG_SCENE_TEMP_1D 0x21d
+#define FLAG_SCENE_TEMP_1E 0x21e
+#define FLAG_SCENE_TEMP_1F 0x21f
+#define FLAG_SCENE_TEMP_20 0x220
+#define FLAG_SCENE_TEMP_21 0x221
+#define FLAG_SCENE_TEMP_22 0x222
+#define FLAG_SCENE_TEMP_23 0x223
+#define FLAG_SCENE_TEMP_24 0x224
+#define FLAG_SCENE_TEMP_25 0x225
+#define FLAG_SCENE_TEMP_26 0x226
+#define FLAG_SCENE_TEMP_27 0x227
+#define FLAG_SCENE_TEMP_28 0x228
+#define FLAG_SCENE_TEMP_29 0x229
+#define FLAG_SCENE_TEMP_2A 0x22a
+#define FLAG_SCENE_TEMP_2B 0x22b
+#define FLAG_SCENE_TEMP_2C 0x22c
+#define FLAG_SCENE_TEMP_2D 0x22d
+#define FLAG_SCENE_TEMP_2E 0x22e
+#define FLAG_SCENE_TEMP_2F 0x22f
+#define FLAG_SCENE_TEMP_30 0x230
+#define FLAG_SCENE_TEMP_31 0x231
+#define FLAG_SCENE_TEMP_32 0x232
+#define FLAG_SCENE_TEMP_33 0x233
+#define FLAG_SCENE_TEMP_34 0x234
+#define FLAG_SCENE_TEMP_35 0x235
+#define FLAG_SCENE_TEMP_36 0x236
+#define FLAG_SCENE_TEMP_37 0x237
+#define FLAG_SCENE_TEMP_38 0x238
+#define FLAG_SCENE_TEMP_39 0x239
+#define FLAG_SCENE_TEMP_3A 0x23a
+#define FLAG_SCENE_TEMP_3B 0x23b
+#define FLAG_SCENE_TEMP_3C 0x23c
+#define FLAG_SCENE_TEMP_3D 0x23d
+#define FLAG_SCENE_TEMP_3E 0x23e
+#define FLAG_SCENE_TEMP_3F 0x23f
+#define FLAG_SCENE_TEMP_40 0x240
+#define FLAG_SCENE_TEMP_41 0x241
+#define FLAG_SCENE_TEMP_42 0x242
+#define FLAG_SCENE_TEMP_43 0x243
+#define FLAG_SCENE_TEMP_44 0x244
+#define FLAG_SCENE_TEMP_45 0x245
+#define FLAG_SCENE_TEMP_46 0x246
+#define FLAG_SCENE_TEMP_47 0x247
+#define FLAG_SCENE_TEMP_48 0x248
+#define FLAG_SCENE_TEMP_49 0x249
+#define FLAG_SCENE_TEMP_4A 0x24a
+#define FLAG_SCENE_TEMP_4B 0x24b
+#define FLAG_SCENE_TEMP_4C 0x24c
+#define FLAG_SCENE_TEMP_4D 0x24d
+#define FLAG_SCENE_TEMP_4E 0x24e
+#define FLAG_SCENE_TEMP_4F 0x24f
+#define FLAG_SCENE_TEMP_50 0x250
+#define FLAG_SCENE_TEMP_51 0x251
+#define FLAG_SCENE_TEMP_52 0x252
+#define FLAG_SCENE_TEMP_53 0x253
+#define FLAG_SCENE_TEMP_54 0x254
+#define FLAG_SCENE_TEMP_55 0x255
+#define FLAG_SCENE_TEMP_56 0x256
+#define FLAG_SCENE_TEMP_57 0x257
+#define FLAG_SCENE_TEMP_58 0x258
+#define FLAG_SCENE_TEMP_59 0x259
+#define FLAG_SCENE_TEMP_5A 0x25a
+#define FLAG_SCENE_TEMP_5B 0x25b
+#define FLAG_SCENE_TEMP_5C 0x25c
+#define FLAG_SCENE_TEMP_5D 0x25d
+#define FLAG_SCENE_TEMP_5E 0x25e
+#define FLAG_SCENE_TEMP_5F 0x25f
+#define FLAG_SCENE_TEMP_60 0x260
+#define FLAG_SCENE_TEMP_61 0x261
+#define FLAG_SCENE_TEMP_62 0x262
+#define FLAG_SCENE_TEMP_63 0x263
+#define FLAG_SCENE_TEMP_64 0x264
+#define FLAG_SCENE_TEMP_65 0x265
+#define FLAG_SCENE_TEMP_66 0x266
+#define FLAG_SCENE_TEMP_67 0x267
+#define FLAG_SCENE_TEMP_68 0x268
+#define FLAG_SCENE_TEMP_69 0x269
+#define FLAG_SCENE_TEMP_6A 0x26a
+#define FLAG_SCENE_TEMP_6B 0x26b
+#define FLAG_SCENE_TEMP_6C 0x26c
+#define FLAG_SCENE_TEMP_6D 0x26d
+#define FLAG_SCENE_TEMP_6E 0x26e
+#define FLAG_SCENE_TEMP_6F 0x26f
+#define FLAG_SCENE_TEMP_70 0x270
+#define FLAG_SCENE_TEMP_71 0x271
+#define FLAG_SCENE_TEMP_72 0x272
+#define FLAG_SCENE_TEMP_73 0x273
+#define FLAG_SCENE_TEMP_74 0x274
+#define FLAG_SCENE_TEMP_75 0x275
+#define FLAG_SCENE_TEMP_76 0x276
+#define FLAG_SCENE_TEMP_77 0x277
+#define FLAG_SCENE_TEMP_78 0x278
+#define FLAG_SCENE_TEMP_79 0x279
+#define FLAG_SCENE_TEMP_7A 0x27a
+#define FLAG_SCENE_TEMP_7B 0x27b
+#define FLAG_SCENE_TEMP_7C 0x27c
+#define FLAG_SCENE_TEMP_7D 0x27d
+#define FLAG_SCENE_TEMP_7E 0x27e
+#define FLAG_SCENE_TEMP_7F 0x27f
+#define FLAG_SCENE_TEMP_80 0x280
+#define FLAG_SCENE_TEMP_81 0x281
+#define FLAG_SCENE_TEMP_82 0x282
+#define FLAG_SCENE_TEMP_83 0x283
+#define FLAG_SCENE_TEMP_84 0x284
+#define FLAG_SCENE_TEMP_85 0x285
+#define FLAG_SCENE_TEMP_86 0x286
+#define FLAG_SCENE_TEMP_87 0x287
+#define FLAG_SCENE_TEMP_88 0x288
+#define FLAG_SCENE_TEMP_89 0x289
+#define FLAG_SCENE_TEMP_8A 0x28a
+#define FLAG_SCENE_TEMP_8B 0x28b
+#define FLAG_SCENE_TEMP_8C 0x28c
+#define FLAG_SCENE_TEMP_8D 0x28d
+#define FLAG_SCENE_TEMP_8E 0x28e
+#define FLAG_SCENE_TEMP_8F 0x28f
+#define FLAG_SCENE_TEMP_90 0x290
+#define FLAG_SCENE_TEMP_91 0x291
+#define FLAG_SCENE_TEMP_92 0x292
+#define FLAG_SCENE_TEMP_93 0x293
+#define FLAG_SCENE_TEMP_94 0x294
+#define FLAG_SCENE_TEMP_95 0x295
+#define FLAG_SCENE_TEMP_96 0x296
+#define FLAG_SCENE_TEMP_97 0x297
+#define FLAG_SCENE_TEMP_98 0x298
+#define FLAG_SCENE_TEMP_99 0x299
+#define FLAG_SCENE_TEMP_9A 0x29a
+#define FLAG_SCENE_TEMP_9B 0x29b
+#define FLAG_SCENE_TEMP_9C 0x29c
+#define FLAG_SCENE_TEMP_9D 0x29d
+#define FLAG_SCENE_TEMP_9E 0x29e
+#define FLAG_SCENE_TEMP_9F 0x29f
+#define FLAG_SCENE_TEMP_A0 0x2a0
+#define FLAG_SCENE_TEMP_A1 0x2a1
+#define FLAG_SCENE_TEMP_A2 0x2a2
+#define FLAG_SCENE_TEMP_A3 0x2a3
+#define FLAG_SCENE_TEMP_A4 0x2a4
+#define FLAG_SCENE_TEMP_A5 0x2a5
+#define FLAG_SCENE_TEMP_A6 0x2a6
+#define FLAG_SCENE_TEMP_A7 0x2a7
+#define FLAG_SCENE_TEMP_A8 0x2a8
+#define FLAG_SCENE_TEMP_A9 0x2a9
+#define FLAG_SCENE_TEMP_AA 0x2aa
+#define FLAG_SCENE_TEMP_AB 0x2ab
+#define FLAG_SCENE_TEMP_AC 0x2ac
+#define FLAG_SCENE_TEMP_AD 0x2ad
+#define FLAG_SCENE_TEMP_AE 0x2ae
+#define FLAG_SCENE_TEMP_AF 0x2af
+#define FLAG_SCENE_TEMP_B0 0x2b0
+#define FLAG_SCENE_TEMP_B1 0x2b1
+#define FLAG_SCENE_TEMP_B2 0x2b2
+#define FLAG_SCENE_TEMP_B3 0x2b3
+#define FLAG_SCENE_TEMP_B4 0x2b4
+#define FLAG_SCENE_TEMP_B5 0x2b5
+#define FLAG_SCENE_TEMP_B6 0x2b6
+#define FLAG_SCENE_TEMP_B7 0x2b7
+#define FLAG_SCENE_TEMP_B8 0x2b8
+#define FLAG_SCENE_TEMP_B9 0x2b9
+#define FLAG_SCENE_TEMP_BA 0x2ba
+#define FLAG_SCENE_TEMP_BB 0x2bb
+#define FLAG_SCENE_TEMP_BC 0x2bc
+#define FLAG_SCENE_TEMP_BD 0x2bd
+#define FLAG_SCENE_TEMP_BE 0x2be
+#define FLAG_SCENE_TEMP_BF 0x2bf
+#define FLAG_SCENE_TEMP_C0 0x2c0
+#define FLAG_SCENE_TEMP_C1 0x2c1
+#define FLAG_SCENE_TEMP_C2 0x2c2
+#define FLAG_SCENE_TEMP_C3 0x2c3
+#define FLAG_SCENE_TEMP_C4 0x2c4
+#define FLAG_SCENE_TEMP_C5 0x2c5
+#define FLAG_SCENE_TEMP_C6 0x2c6
+#define FLAG_SCENE_TEMP_C7 0x2c7
+#define FLAG_SCENE_TEMP_C8 0x2c8
+#define FLAG_SCENE_TEMP_C9 0x2c9
+#define FLAG_SCENE_TEMP_CA 0x2ca
+#define FLAG_SCENE_TEMP_CB 0x2cb
+#define FLAG_SCENE_TEMP_CC 0x2cc
+#define FLAG_SCENE_TEMP_CD 0x2cd
+#define FLAG_SCENE_TEMP_CE 0x2ce
+#define FLAG_SCENE_TEMP_CF 0x2cf
+#define FLAG_SCENE_TEMP_D0 0x2d0
+#define FLAG_SCENE_TEMP_D1 0x2d1
+#define FLAG_SCENE_TEMP_D2 0x2d2
+#define FLAG_SCENE_TEMP_D3 0x2d3
+#define FLAG_SCENE_TEMP_D4 0x2d4
+#define FLAG_SCENE_TEMP_D5 0x2d5
+#define FLAG_SCENE_TEMP_D6 0x2d6
+#define FLAG_SCENE_TEMP_D7 0x2d7
+#define FLAG_SCENE_TEMP_D8 0x2d8
+#define FLAG_SCENE_TEMP_D9 0x2d9
+#define FLAG_SCENE_TEMP_DA 0x2da
+#define FLAG_SCENE_TEMP_DB 0x2db
+#define FLAG_SCENE_TEMP_DC 0x2dc
+#define FLAG_SCENE_TEMP_DD 0x2dd
+#define FLAG_SCENE_TEMP_DE 0x2de
+#define FLAG_SCENE_TEMP_DF 0x2df
+#define FLAG_SCENE_TEMP_E0 0x2e0
+#define FLAG_SCENE_TEMP_E1 0x2e1
+#define FLAG_SCENE_TEMP_E2 0x2e2
+#define FLAG_SCENE_TEMP_E3 0x2e3
+#define FLAG_SCENE_TEMP_E4 0x2e4
+#define FLAG_SCENE_TEMP_E5 0x2e5
+#define FLAG_SCENE_TEMP_E6 0x2e6
+#define FLAG_SCENE_TEMP_E7 0x2e7
+#define FLAG_SCENE_TEMP_E8 0x2e8
+#define FLAG_SCENE_TEMP_E9 0x2e9
+#define FLAG_SCENE_TEMP_EA 0x2ea
+#define FLAG_SCENE_TEMP_EB 0x2eb
+#define FLAG_SCENE_TEMP_EC 0x2ec
+#define FLAG_SCENE_TEMP_ED 0x2ed
+#define FLAG_SCENE_TEMP_EE 0x2ee
+#define FLAG_SCENE_TEMP_EF 0x2ef
 #define FLAG_SCENE_TEMP_F0 0x2f0
 #define FLAG_SCENE_TEMP_F1 0x2f1
-#define FLAG_SCENE_TEMP_F8 0x2f8 ///< a byte flag
+#define FLAG_SCENE_TEMP_F2 0x2f2
+#define FLAG_SCENE_TEMP_F3 0x2f3
+#define FLAG_SCENE_TEMP_F4 0x2f4
+#define FLAG_SCENE_TEMP_F5 0x2f5
+#define FLAG_SCENE_TEMP_F6 0x2f6
+#define FLAG_SCENE_TEMP_F7 0x2f7
+#define FLAG_SCENE_TEMP_F8 0x2f8
+#define FLAG_SCENE_TEMP_F9 0x2f9
+#define FLAG_SCENE_TEMP_FA 0x2fa
+#define FLAG_SCENE_TEMP_FB 0x2fb
+#define FLAG_SCENE_TEMP_FC 0x2fc
+#define FLAG_SCENE_TEMP_FD 0x2fd
+#define FLAG_SCENE_TEMP_FE 0x2fe
+#define FLAG_SCENE_TEMP_FF 0x2ff
 
 #endif

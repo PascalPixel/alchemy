@@ -6,7 +6,8 @@
 // between two actors.
 
 /// The distance in whole pixels between two 16.16 positions of x, y and z.
-static s32 FixedPoint_Distance(s32 *first_position, s32 *second_position) {
+UNUSED static s32 FixedPoint_Distance(s32 *first_position,
+                                      s32 *second_position) {
   s32 delta_x = (*first_position++ - *second_position++) >> 16;
   s32 delta_y = (*first_position++ - *second_position++) >> 16;
   s32 delta_z = (*first_position - *second_position) >> 16;

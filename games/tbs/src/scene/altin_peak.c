@@ -1802,7 +1802,7 @@ static void AltinPeak_SpawnDebris(void) {
       debris->gravity = PIXELS(2) / 5;
       debris->scaleY = scale;
       debris->scaleX = scale;
-      debris->unk61 = 1;
+      debris->frozen = 1;
       Engine_ActorSetSpriteFlags(debris, 0);
       debris->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       debris->sprite->image.priority = 1;

@@ -708,8 +708,8 @@ void WorldMap_BeginStillView(void) {
   Dma_Set(BG_CHAR_BLOCK(1), gDecodeBuffer,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
   WaitFrames(1);
-  TileMap_DrawRowsFromRam((s32)frameWork->pages[gFrameCount & one],
-                          (s32)gMapCellBuffer);
+  TileMap_DrawRowsFromRam(frameWork->pages[gFrameCount & one],
+                          (u8 *)gMapCellBuffer);
   perspective->windowTop = 200;
   perspective->windowBottom = 255;
   gVBlankHook = MapAnimation_PresentFrame;

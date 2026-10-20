@@ -58,11 +58,11 @@ typedef struct OrbitingSceneObject {
   u8 mode;  ///< FieldActor's motionFlags; the Nut's scenes zero it
   u8 state; ///< FieldActor's first unk56 byte; Scene_FloatNut zeroes it
   u8 padding57[5];
-  /// FieldActor's unk5c, which keeps the sprite's VRAM cache entry; the Nut's
-  /// scenes set it.
+  /// FieldActor.retainSpriteCache: the Nut's scenes keep its sprite's VRAM
+  /// cache entry.
   u8 active;
   u8 padding5d[4];
-  /// FieldActor's unk61, which skips steering, terrain, gravity and floating;
+  /// FieldActor's frozen, which skips steering, terrain, gravity and floating;
   /// the Nut's scenes set it.
   u8 visible;
   u8 padding62[10];

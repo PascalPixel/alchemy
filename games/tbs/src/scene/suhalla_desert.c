@@ -544,8 +544,8 @@ static void Event_StormCarriesPartyAway(void) {
   storm->motionFlags = 0;
   selectedActor->motionFlags = 0;
   selectedActor->velocityY = 0;
-  selectedActor->unk61 = 1;
-  storm->unk61 = 1;
+  selectedActor->frozen = 1;
+  storm->frozen = 1;
   // Both rise faster and faster for a second.
   for (frame = 0; frame < 60; frame++) {
     selectedActor->velocityY += 0x3333;

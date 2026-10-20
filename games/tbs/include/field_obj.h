@@ -93,15 +93,15 @@ struct FieldActor {
   u8 paused;        ///< nonzero skips its script and motion, not its update
   /// Nonzero keeps its sprite's VRAM cache entry while sprites are suspended
   /// or it is off screen (ObjectSystem_UpdateCamera).
-  u8 unk5c;
-  u8 unk5d;  ///< the object script's SC_LOOP count (ScriptInterpreter)
-  u16 unk5e; ///< the object script's wait, in frames (ScriptMotionObject)
+  u8 retainSpriteCache;
+  u8 repeatCount; ///< the object script's SC_LOOP count (ScriptInterpreter)
+  u16 wait;       ///< the object script's wait, in frames (ScriptMotionObject)
   /// Frames a solid object has refused its move (ScriptMotionObject's
   /// refused); SC_SYNC stops waiting after 60.
-  u8 unk60;
+  u8 refused;
   /// Nonzero skips steering, terrain, gravity and floating; its velocity
   /// still moves it (ScriptMotionObject.frozen).
-  u8 unk61;
+  u8 frozen;
   u8 riseCounter; ///< not read by the engine; scene code's own counter
   u8 riseEnabled; ///< not read by the engine; scene code's own state
   /// The parameter its action script reads (a follow distance or an angle to
@@ -126,7 +126,11 @@ STATIC_ASSERT(offsetof(struct FieldActor, motionFlags) == 0x55);
 STATIC_ASSERT(offsetof(struct FieldActor, collisionFlags) == 0x59);
 STATIC_ASSERT(offsetof(struct FieldActor, steeringFlags) == 0x5a);
 STATIC_ASSERT(offsetof(struct FieldActor, paused) == 0x5b);
-STATIC_ASSERT(offsetof(struct FieldActor, unk5e) == 0x5e);
+STATIC_ASSERT(offsetof(struct FieldActor, retainSpriteCache) == 0x5c);
+STATIC_ASSERT(offsetof(struct FieldActor, repeatCount) == 0x5d);
+STATIC_ASSERT(offsetof(struct FieldActor, wait) == 0x5e);
+STATIC_ASSERT(offsetof(struct FieldActor, refused) == 0x60);
+STATIC_ASSERT(offsetof(struct FieldActor, frozen) == 0x61);
 STATIC_ASSERT(offsetof(struct FieldActor, riseEnabled) == 0x63);
 STATIC_ASSERT(offsetof(struct FieldActor, bounce) == 0x44);
 STATIC_ASSERT(offsetof(struct FieldActor, gravity) == 0x48);

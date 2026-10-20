@@ -139,9 +139,10 @@ each names only the fields that code uses. They agree on most of the block
 (the script at 0, the position at 8, the velocity at 0x24, the target at
 0x38) and disagree where their readers do:
 
-- the halfword at 0x5e is `wait` to the motion loop and the command
-  handlers (`SC_WAIT` writes its count there) and `unk5e` in the other
-  views;
+- the halfword at 0x5e is `wait` in the actor, runtime, interpreter and motion
+  views; the dispatcher keeps it among its padding bytes. The interpreter and
+  motion views read it signed, the actor and runtime views unsigned. `SC_WAIT`
+  writes the frame count less one, and both update loops count it down;
 - the per-frame routine is the word at 0x6c (`hook` in
   `ScriptMotionObject`, `update` in `FieldActor`, `unk6c` in
   `ObjectRuntime`): both update loops call it, and the work value `SW_HOOK`

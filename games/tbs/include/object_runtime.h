@@ -23,7 +23,7 @@ struct ObjectRuntime {
   u16 radius;        ///< collision radius in pixels
   u8 terrainId;      ///< the map layer its ground height is read from
   /// FieldActor.priorityFlags: 1 for placed actors, 2 for footprints.
-  u8 unk23;
+  u8 priorityFlags;
   s32 velocityX;  ///< 16.16 fixed-point pixels per frame
   s32 velocityY;  ///< 16.16 fixed-point pixels per frame
   s32 velocityZ;  ///< 16.16 fixed-point pixels per frame
@@ -42,19 +42,19 @@ struct ObjectRuntime {
   /// FieldActor.motionFlags: 3 when created, 4 for a placed actor above the
   /// ground; zero is free flight in 3D.
   u8 flags;
-  u8 arrivalAxis;  ///< the ARRIVAL_AXIS_* that decides arrival
-  u8 unk57;        ///< the object script's last flag test
-  u8 snapToTarget; ///< nonzero lands it exactly on its target
+  u8 arrivalAxis;     ///< the ARRIVAL_AXIS_* that decides arrival
+  u8 conditionResult; ///< the object script's last flag test
+  u8 snapToTarget;    ///< nonzero lands it exactly on its target
   /// FieldActor.collisionFlags: bit 0 solid, bit 1 the player pushes it,
   /// bits 2 to 4 for talk and Psynergy targets; placed actors take 1.
-  u8 unk59;
+  u8 collisionFlags;
   u8 actionFlags;   ///< FieldActor.steeringFlags: bit 0 faces its motion
   u8 movementState; ///< nonzero skips its script and motion (paused)
   /// Byte 0, when nonzero, keeps its sprite's VRAM cache entry while sprites
   /// are suspended or it is off screen; byte 1 is the object script's
   /// SC_LOOP count.
   u8 unk5c[0x02];
-  u16 unk5e; ///< the object script's wait, in frames
+  u16 wait; ///< the object script's wait, in frames
   /// Not named by TBS code through this struct. Its bytes are the frames a
   /// solid object has refused the object's move and the frozen flag
   /// (ScriptMotionObject's refused and frozen), then two bytes scene code
@@ -63,7 +63,8 @@ struct ObjectRuntime {
   /// The parameter its action script reads (a follow distance or an angle),
   /// or the player's frames to its next footprint.
   s16 action;
-  s16 unk66; ///< the side of the player's next footprint (2 after a stop)
+  s16 footprintSide; ///< the side of the player's next footprint (2 after a
+                     ///< stop)
   /// The object its action script follows or faces.
   struct ObjectRuntime *linkedObject;
   /// The update hook (FieldActor.update), which the unused
@@ -72,8 +73,13 @@ struct ObjectRuntime {
 };
 
 STATIC_ASSERT(sizeof(struct ObjectRuntime) == 0x70);
+STATIC_ASSERT(offsetof(struct ObjectRuntime, priorityFlags) == 0x23);
 STATIC_ASSERT(offsetof(struct ObjectRuntime, arrivalAxis) == 0x56);
+STATIC_ASSERT(offsetof(struct ObjectRuntime, conditionResult) == 0x57);
 STATIC_ASSERT(offsetof(struct ObjectRuntime, snapToTarget) == 0x58);
+STATIC_ASSERT(offsetof(struct ObjectRuntime, collisionFlags) == 0x59);
+STATIC_ASSERT(offsetof(struct ObjectRuntime, wait) == 0x5e);
+STATIC_ASSERT(offsetof(struct ObjectRuntime, footprintSide) == 0x66);
 
 enum { OBJECT_SNAPSHOT_CAPACITY = 32, OBJECT_SNAPSHOT_EMPTY = 255 };
 

@@ -1400,7 +1400,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
     sprite->image.priority = 0;
     star->actor.priorityFlags &= ~1;
     star->actor.motionFlags = 0;
-    star->actor.unk5c = 1;
+    star->actor.retainSpriteCache = 1;
     star->actor.speed = PIXELS(8) / 5;
     star->actor.acceleration = 0xcccc;
     iconPixels = Heap_Allocate(17, 0x608);

@@ -246,8 +246,8 @@ s32 Script_PlaySound(struct ScriptInterpreter *interpreter) {
 }
 
 /// Returns -1 when an object at position values would overlap a solid
-/// object (bit 0 of unk59), each radius less 2 pixels; otherwise 0. The
-/// object itself is skipped. Called by SC_WANDER and SC_WANDER_HOME, the
+/// object (bit 0 of collisionFlags), each radius less 2 pixels; otherwise 0.
+/// The object itself is skipped. Called by SC_WANDER and SC_WANDER_HOME, the
 /// player's control (player_control.c), the motion loop's solid test
 /// (object_motion.c), and the carry and Force effects through
 /// ScriptObject_CheckOverlapFar.
@@ -256,7 +256,7 @@ s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values) {
   u8 *collisionFlags;
   struct ObjectRuntime *candidate = gObjectSlots;
 
-  collisionFlags = &candidate->unk59;
+  collisionFlags = &candidate->collisionFlags;
   for (objectIndex = 0; objectIndex < FIELD_OBJECT_COUNT;
        objectIndex++, candidate++, collisionFlags += sizeof(*candidate)) {
     if (candidate->script != NULL && (1 & *collisionFlags) &&
@@ -280,7 +280,7 @@ ScriptObject_FindOverlappingEntry(struct ScriptObjectEntry *object,
   u8 *collisionFlags;
   struct ObjectRuntime *candidate = gObjectSlots;
 
-  collisionFlags = &candidate->unk59;
+  collisionFlags = &candidate->collisionFlags;
   for (objectIndex = 0; objectIndex < FIELD_OBJECT_COUNT;
        objectIndex++, candidate++, collisionFlags += sizeof(*candidate)) {
     if (candidate->script != NULL && (1 & *collisionFlags) &&

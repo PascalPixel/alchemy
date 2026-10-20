@@ -9,6 +9,7 @@ struct AnimationEntry;
 struct AnimationObject;
 struct DispatchObject;
 struct FieldPosition;
+struct MapAffinePair;
 struct MapScanline;
 struct ObjectRuntime;
 struct ScriptInterpreter;
@@ -323,7 +324,7 @@ s32 GetWorldMapTerrainBehavior(struct WorldPosition *position,
                                s32 *terrainKind);
 void Map_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay);
 void Map_WaitForShakeToSettle(void);
-void TileMap_DrawRowsFromRam(s32 lines, s32 pixels);
+void TileMap_DrawRowsFromRam(const struct MapAffinePair *lines, u8 *pixels);
 void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
                                  struct MapScanline *scanline);
 

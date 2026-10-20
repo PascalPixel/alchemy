@@ -737,7 +737,7 @@ static void VaultCave_SpawnPuffs(struct FieldActor *source) {
     puff->collisionFlags = 1;
     VaultCave_OffsetActorRadially(puff, 0x200000, Engine_RandomNext());
     {
-      u16 *timer = &puff->unk5e;
+      u16 *timer = &puff->wait;
       s32 frames = 8;
 
       *timer = frames;

@@ -810,7 +810,7 @@ void Object_SetTargetAndCallback(u32 objectId, s32 targetId,
       follower->action = 40;
       follower->acceleration = target->acceleration * 2;
       follower->speedLimit = target->speedLimit;
-      follower->unk59 = 0;
+      follower->collisionFlags = 0;
     }
     ObjectDispatch_InitializeFar((struct DispatchObject *)follower, script);
   }
@@ -882,7 +882,7 @@ void ObjectMotion_SetActionVariant(s32 objectId, s32 priority) {
 
     sprite->image.priority = priority;
     sprite->shadow.priority = priority;
-    object->unk23 &= ~ACTOR_PRIORITY_AUTOMATIC;
+    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   }
 }
 

@@ -1212,7 +1212,7 @@ s32 BabiLighthouse_SetupScene(void) {
     placedActor = Object_GetById(ACTOR_FIRST_FALLEN_MAN);
     placedActor->collisionFlags = 0;
     placedActor->priorityFlags = 0;
-    placedActor->unk5e = 0;
+    placedActor->wait = 0;
     placedActor->sprite->image.priority = 3;
     zero = 0;
     placedActor->sprite->flags = zero;
@@ -1221,7 +1221,7 @@ s32 BabiLighthouse_SetupScene(void) {
     placedActor = Object_GetById(ACTOR_FIRST_FALLEN_MAN + 1);
     placedActor->collisionFlags = zero;
     placedActor->priorityFlags = zero;
-    placedActor->unk5e = 30;
+    placedActor->wait = 30;
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = 0x4000;
@@ -1229,7 +1229,7 @@ s32 BabiLighthouse_SetupScene(void) {
     placedActor = Object_GetById(ACTOR_FIRST_FALLEN_MAN + 2);
     placedActor->collisionFlags = zero;
     placedActor->priorityFlags = zero;
-    placedActor->unk5e = 60;
+    placedActor->wait = 60;
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = 0x8000;
@@ -1237,7 +1237,7 @@ s32 BabiLighthouse_SetupScene(void) {
     placedActor = Object_GetById(ACTOR_FIRST_FALLEN_MAN + 3);
     placedActor->collisionFlags = zero;
     placedActor->priorityFlags = zero;
-    placedActor->unk5e = 90;
+    placedActor->wait = 90;
     placedActor->sprite->image.priority = 3;
     placedActor->sprite->flags = zero;
     placedActor->sprite->rotation = 0x8000;

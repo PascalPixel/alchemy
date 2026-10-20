@@ -26,8 +26,8 @@ s32 Field_GetPsynergyTargetRange(s32 kind) {
 
 /// Returns the actor nearest to actor id that it could talk to, or -1: within
 /// 48 pixels of height and 32 pixels of distance and, beyond 11 pixels, within
-/// 0x2fff of the direction it faces. Actors with flag 8 are skipped, and those
-/// with flag 4 count as 10/13 as far. The flags are unk59, the collision flags.
+/// 0x2fff of the direction it faces. Actors with collision flag 8 are skipped,
+/// and those with flag 4 count as 10/13 as far.
 /// Called with the leader by Field_RunScene for the A button, and by the item
 /// code (items.c) to find whom an item is used on.
 s32 Field_FindNearbyTalkTarget(s32 id) {
@@ -55,7 +55,7 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
         continue;
 
       candidate = ObjectTable_Get(actorIndex);
-      if (candidate == 0 || (candidate->unk59 & 8) != 0)
+      if (candidate == 0 || (candidate->collisionFlags & 8) != 0)
         continue;
 
       // y is height: an actor more than 48 pixels above or below is out of
@@ -77,7 +77,7 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
       squaredZ = dz * dz;
       squaredDistance = squaredX + squaredY + squaredZ;
       distance = Iwram_Sqrt(squaredDistance);
-      if ((candidate->unk59 & 4) != 0)
+      if ((candidate->collisionFlags & 4) != 0)
         distance = distance * 10 / 13;
       if (distance >= nearestDistance)
         continue;
@@ -135,7 +135,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
       continue;
 
     candidate = (struct ObjectRuntime *)ObjectTable_Get(actorIndex);
-    if (candidate == 0 || (candidate->unk59 & 8) != 0)
+    if (candidate == 0 || (candidate->collisionFlags & 8) != 0)
       continue;
 
     // The height allowed: 8 pixels, or 48 for Catch, 64 for Douse, 16 for
@@ -170,7 +170,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
     pixelZ = dz >> 16;
 
     distance = Iwram_Sqrt(dx * dx + pixelZ * pixelZ);
-    if ((candidate->unk59 & 0x10) != 0)
+    if ((candidate->collisionFlags & 0x10) != 0)
       distance = distance * 2 / 3;
     if (distance >= nearestDistance)
       continue;

@@ -2798,7 +2798,7 @@ static struct FieldActor *TolbiShipInteriors_PlaceAnchorCharm(void) {
   }
   object = Engine_ObjectCreate(22, 0x1c70000, 0x40000, 0x2200000);
   object->motionFlags = set;
-  object->unk5c = 1;
+  object->retainSpriteCache = 1;
   sprite = object->sprite;
   sprite->count = set;
   sprite->image.fullColor = 0;

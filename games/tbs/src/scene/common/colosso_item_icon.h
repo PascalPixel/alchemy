@@ -42,7 +42,7 @@ void Colosso_ShowItemIcon(s32 id, s32 item) {
       ItemIcon_LoadTilesFar(item);
       tile = Engine_VramLoad(spr->slot, 128, (const void *)base);
       Runtime_ReleaseHeapBlock(17);
-      obj->unk5c = one;
+      obj->retainSpriteCache = one;
       ResourceMetadata_ClearRecord(spr->entries[0]);
       spr->entries[0] = (void *)none;
       spr->count = none;

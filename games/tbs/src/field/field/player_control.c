@@ -318,9 +318,9 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
       collision |= 1;
 
     push_objects:
-      // Push the movable objects (unk59 bit 1) just ahead 4 pixels further,
-      // when they have room; any other solid object there blocks the step
-      // (bit 1 of collision). Pushing slows the player down.
+      // Push the movable objects (collisionFlags bit 1) just ahead 4 pixels
+      // further, when they have room; any other solid object there blocks the
+      // step (bit 1 of collision). Pushing slows the player down.
       contact.x = object->x;
       contact.y = object->y;
       contact.z = object->z;
@@ -332,7 +332,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
         radius = object->radius - 2;
         if (pushedObject->script == 0)
           continue;
-        if ((pushedObject->unk59 & 1) == 0)
+        if ((pushedObject->collisionFlags & 1) == 0)
           continue;
         if (pushedObject == object)
           continue;
@@ -342,7 +342,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
         // A movable object that is not paused slides a quarter pixel away from
         // the player, if no solid object is there and the ground 10 pixels on,
         // straight and 22.5 degrees either side, is clear.
-        if ((pushedObject->unk59 & 2) != 0 &&
+        if ((pushedObject->collisionFlags & 2) != 0 &&
             pushedObject->movementState == 0) {
           direction =
               ArcTan2(pushedObject->z - object->z, pushedObject->x - object->x);
@@ -417,7 +417,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
 
   // Blocked: stop and turn towards the pad, at most 22.5 degrees a frame.
   // Otherwise move to the step, keeping the speed but along the heading.
-  // unk66 = 2 marks a stop; the next footprint then takes animation 2.
+  // footprintSide = 2 marks a stop; the next footprint then takes animation 2.
   if (collision != 0) {
     object->targetX = TARGET_UNSET;
     object->targetY = TARGET_UNSET;
@@ -436,7 +436,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
       object->angle += difference;
     }
     object->action = 0;
-    object->unk66 = 2;
+    object->footprintSide = 2;
   } else {
     s32 speed;
 
@@ -467,7 +467,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
       animation = effect->animation;
       ObjectDispatch_Initialize((struct DispatchObject *)effect,
                                 gWorldMap_FootprintActions);
-      effect->unk23 = 2;
+      effect->priorityFlags = 2;
       effect->flags = collision;
       if (animation != 0) {
         AnimationObjects_SelectAnimation(animation, 1);
@@ -475,17 +475,17 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
         animation->rotation = footprintAngle + 0x4000;
         animation->image.priority = 3;
       }
-      if (object->unk66 == 2) {
+      if (object->footprintSide == 2) {
         AnimationObjects_SelectAnimation(animation, 2);
-        object->unk66 = collision;
+        object->footprintSide = collision;
       }
-      if (object->unk66 != 0)
+      if (object->footprintSide != 0)
         effect->angle = 0x8000;
       if (movementAnimation == 5)
         object->action = 12;
       else
         object->action = 18;
-      object->unk66 ^= 1;
+      object->footprintSide ^= 1;
     }
   }
   Field_CheckConfiguredKeys();
@@ -738,7 +738,7 @@ update_object:
       object->angle += difference;
     }
     object->action = 0;
-    object->unk66 = 2;
+    object->footprintSide = 2;
   } else {
     Object_SetMoveTarget(object, position.x, position.y, position.z);
     speed = FixedSqrt(Iwram_MulQ16(object->velocityX, object->velocityX) +

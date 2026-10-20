@@ -2271,8 +2271,8 @@ static void Event_FinishAirborneTravel(void) {
   other->motionFlags = 0;
   actor->motionFlags = 0;
   actor->velocityY = 0;
-  actor->unk61 = 1;
-  other->unk61 = 1;
+  actor->frozen = 1;
+  other->frozen = 1;
   for (frames = 59; frames >= 0; --frames) {
     actor->velocityY += PIXELS(1) / 5;
     other->velocityY += PIXELS(1) / 5;

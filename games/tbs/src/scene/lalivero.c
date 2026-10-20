@@ -747,7 +747,7 @@ s32 Lalivero_Initialize(void) {
   // The Black Orb Iodem hands over is drawn from its item icon, floating
   // 10 pixels up.
   object = (union FieldObject *)Actor_Get(ACTOR_BLACK_ORB);
-  object->actor.unk5c = 1;
+  object->actor.retainSpriteCache = 1;
   object->actor.motionFlags = 0;
   sprite = object->actor.sprite;
   object->actor.y.fixed = PIXELS(10);

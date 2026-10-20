@@ -144,7 +144,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
       if (object->animationKind == 1 && (sprite = object->animation) != 0)
         sprite->lastNo = ((u32)(Random16()) % (u32)30);
       object->angle = entry->facing;
-      object->unk59 = 1;
+      object->collisionFlags = 1;
       ObjectMotion_SetActionCallback(object, entry->behavior);
       ObjectDispatch_SelectAnimationFar(object, 1);
       ((struct ScriptObjectRuntime *)object)->homeX = object->x / 0x10000;
@@ -175,7 +175,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
             Map_GetTerrainHeightFar(0, object->x, object->z);
         object->y += object->terrainHeight;
       }
-      object->unk23 = 1;
+      object->priorityFlags = 1;
     }
     work->actors[actorIndex] = (struct FieldActor *)object;
   }

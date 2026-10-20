@@ -4,11 +4,14 @@
 
 #include "../field_internal.h"
 
-/// Shakes the screen: sets the map's x and y shake amplitude and its decay
-/// (16.16), leaving any negative value unchanged. Writes shakeX, shakeY and
-/// shakeDecay in the map work. Scenes reach it through Map_SetShake
-/// (field_event.h) and the far alias Map_SetScreenShakeFar; about 35 scenes
-/// shake the screen.
+#define MAP_SHAKE_SETTLE_FRAMES 300
+#define MAP_SHAKE_SETTLE_MAX_AMPLITUDE (Q16_ONE / 256 - 1)
+#define TILEMAP_TILE_BANK_BYTES (256 * (8 * 8))
+#define TILEMAP_MAP_BANK_BYTES (64 * 64)
+
+/// Changes the shake without restarting an axis whose argument is negative.
+/// Amplitudes are 16.16 pixels and decay is a 16.16 multiplier per frame.
+/// Scene commands reach it through Map_SetShake and Map_SetScreenShakeFar.
 void Map_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay) {
   struct MapScrollWork *work;
 
@@ -27,10 +30,9 @@ void Map_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay) {
   }
 }
 
-/// Waits until the screen shake has died down (both amplitudes under 1/256
-/// pixel), at most 300 frames, then stops it by clearing shakeDecay. Scenes
-/// import it through Map_WaitForShakeToSettleFar under three local names
-/// (overlay.inc); about 20 scenes wait on a shake.
+/// Waits until both shake amplitudes are below 1/256 pixel, with a 300-frame
+/// limit for a shake whose decay never settles. Scene imports reach it as
+/// Map_WaitForShakeToSettleFar; it stops further shake after the wait.
 void Map_WaitForShakeToSettle(void) {
   struct MapScrollWork *work;
   s32 waitedFrames;
@@ -39,7 +41,9 @@ void Map_WaitForShakeToSettle(void) {
   waitedFrames = 0;
   // 300 frames is five seconds; 255 in 16.16 is just under 1/256 pixel.
   // A decay of 1.0 or more never settles, so the limit ends the wait.
-  while (waitedFrames < 300 && (work->shakeX > 255 || work->shakeY > 255)) {
+  while (waitedFrames < MAP_SHAKE_SETTLE_FRAMES &&
+         (work->shakeX > MAP_SHAKE_SETTLE_MAX_AMPLITUDE ||
+          work->shakeY > MAP_SHAKE_SETTLE_MAX_AMPLITUDE)) {
     WaitFrames(1);
     waitedFrames++;
   }
@@ -47,36 +51,41 @@ void Map_WaitForShakeToSettle(void) {
   work->shakeDecay = 0;
 }
 
-/// Copies TileMap_DrawRows (ARM code) to the heap and runs it once: it draws
-/// the rows that lines describes (32 bytes a row) into pixels, from the tiles
-/// in the BG tile buffer's second half and the map in the decode buffer.
-/// Called by WorldMap_BeginStillView to draw the world map's still view;
-/// the heap slot (49) is freed again before it returns.
-void TileMap_DrawRowsFromRam(s32 lines, s32 pixels) {
-  u8 *base;
+/// The copied ARM kernel reads the BG2 affine row from each 32-byte pair and
+/// writes 240 by 160 pixels as 256-colour tiles.
+typedef void (*TileMapRowDrawer)(const struct MapAffinePair *lines, u8 *pixels,
+                                 const u8 *tiles, const u8 *map);
 
-  // The tiles at gBgTileBuffer + 0x4000 are the copy of char block 3, BG2's
-  // tiles on the world map.
+/// Draws the current affine page into the world map's still-view pixels.
+/// WorldMap_BeginStillView supplies 160 pairs and a 240 by 160 byte output.
+/// The ARM kernel borrows HEAP_SLOT_TEMP_RENDERER for this synchronous call;
+/// it is released before returning, while both graphics buffers stay owned
+/// by the world map.
+void TileMap_DrawRowsFromRam(const struct MapAffinePair *lines, u8 *pixels) {
+  const u8 *base;
+
+  // The second tile and map banks are BG2. The kernel falls back to BG3's
+  // preceding banks when a BG2 pixel is transparent.
   base = gDecodeBuffer;
-  RamCode_LoadSlot(49, TileMap_DrawRows, TileMap_DrawRowsCodeSize);
+  RamCode_LoadSlot(HEAP_SLOT_TEMP_RENDERER, TileMap_DrawRows,
+                   TileMap_DrawRowsCodeSize);
   /* FAKEMATCH(one-pass): its loop notes keep gBgTileBuffer's address load ahead
    * of lines' move into r0, as native; as the bare call, 1 of 39 instructions
    * differs in tbs-en. */
   do {
-    ((void (*)(s32, s32, void *, void *))gWorkSlot[49])(
-        lines, pixels, gBgTileBuffer + 0x4000, base + 0x1000);
+    ((TileMapRowDrawer)gWorkSlot[HEAP_SLOT_TEMP_RENDERER])(
+        lines, pixels, gBgTileBuffer + TILEMAP_TILE_BANK_BYTES,
+        base + TILEMAP_MAP_BANK_BYTES);
   } while (0);
-  Runtime_ReleaseHeapBlock(49);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_TEMP_RENDERER);
 }
 
-/// Builds the world map ground plane's per-scanline terms for the camera's
-/// pitch (depth is its cotangent): for each of the 160 lines, where its ray
-/// meets the ground, the line's width scale and its distance, or zeros above
-/// the horizon. Transform_UpdateVertices turns these into the affine
-/// parameters each frame. Called by Map_InitializePerspectiveScene and by
-/// WorldMap_UpdateView when the pitch changes; it writes all 160 entries of
-/// scanline.
-void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
+/// Rebuilds the ground plane's scanline terms when the world map pitch changes.
+/// Map_InitializePerspectiveScene and WorldMap_UpdateView supply the pitch's
+/// sine/cosine ratio and the followed position, both in 16.16. Each screen line
+/// gets a width scale and signed ground distance, or zeros above the horizon;
+/// Transform_UpdateVertices reads them to build the frame's affine page.
+void WorldMap_BuildScanlineTable(s32 pitchSlope, s32 *position,
                                  struct MapScanline *scanline) {
   s32 groundPoint[3];
   s32 cameraPoint[3];
@@ -95,20 +104,21 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
   s32 horizontal;
 
   // The followed point on the ground (height 0), in camera space; horizon is
-  // its height less its depth times the pitch's cotangent.
+  // its height less its depth times the pitch slope.
   zero = 0;
   SET_VECTOR(groundPoint, position[0], zero, position[2]);
   Iwram_TransformVector(groundPoint, cameraPoint);
   cameraCoordinates = cameraPoint;
-  horizon = cameraCoordinates[1] - Iwram_MulQ16(cameraCoordinates[2], depth);
+  horizon =
+      cameraCoordinates[1] - Iwram_MulQ16(cameraCoordinates[2], pitchSlope);
   focus = -gProjection.focal;
-  for (line = 0; line < 160; line++) {
+  for (line = 0; line < FIELD_VIEW_HEIGHT / Q16_ONE; line++) {
     // The line's ray slope: its offset from the projection's centre line
     // over the focal length. Lines below the screen centre have a negative
     // displacement.
-    distance = Iwram_RatioMulQ14(focus, (gProjection.centerY - line) * 65536);
+    distance = Iwram_RatioMulQ14(focus, (gProjection.centerY - line) * Q16_ONE);
     // A ray parallel to the ground would divide by zero.
-    difference = distance - depth;
+    difference = distance - pitchSlope;
     if (difference == 0)
       difference = 1;
     scale = Iwram_RatioMulQ14(difference, horizon);
@@ -117,7 +127,7 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
     if (scale < 0) {
       // MulQ16 by 0x8000 halves: the width scale is half the line's scale
       // over the focal length, and the distance below is stored halved.
-      diagonal = Iwram_MulQ16(-scale, 0x8000);
+      diagonal = Iwram_MulQ16(-scale, Q16_ONE / 2);
       scanline->scale = Iwram_RatioMulQ14(gProjection.focal, diagonal);
       diagonal = Iwram_MulQ16(scale, distance);
       // The distance is the root of the two squared terms. Both are taken
@@ -131,7 +141,7 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
       // The ground distance takes the sign of the vertical term.
       if (vertical < 0)
         verticalSquared = -verticalSquared;
-      scanline->depth = Iwram_MulQ16(verticalSquared, 0x8000);
+      scanline->depth = Iwram_MulQ16(verticalSquared, Q16_ONE / 2);
     } else {
       scanline->scale = 0;
       scanline->depth = 0;
@@ -141,3 +151,8 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
     scanline++;
   }
 }
+
+#undef MAP_SHAKE_SETTLE_FRAMES
+#undef MAP_SHAKE_SETTLE_MAX_AMPLITUDE
+#undef TILEMAP_TILE_BANK_BYTES
+#undef TILEMAP_MAP_BANK_BYTES

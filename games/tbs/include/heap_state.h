@@ -45,6 +45,8 @@ enum HeapSlot {
   HEAP_SLOT_BATTLE_BACKGROUND = 44,
   HEAP_SLOT_BLITTER = 46,
   HEAP_SLOT_BLITTER_ALTERNATE = 47,
+  /// Copied field row drawer or window tile decoder, released after each call.
+  HEAP_SLOT_TEMP_RENDERER = 49,
   HEAP_SLOT_SAVE = 51,
   /// Lives for one frame: WaitFrames builds the OAM list in it, and the field
   /// sprite decoder keeps its code there between its own uses.

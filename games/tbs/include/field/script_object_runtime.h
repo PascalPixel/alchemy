@@ -52,7 +52,7 @@ struct ScriptObjectRuntime {
   /// frozen flag and two bytes scene code uses.
   void *callback;
   /// Its home, in pixels: where it was created or placed. The bytes are
-  /// ObjectRuntime's action and unk66 too.
+  /// ObjectRuntime's action and footprintSide too.
   ///@{
   s16 homeX;
   s16 homeZ;

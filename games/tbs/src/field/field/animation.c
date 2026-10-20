@@ -4,6 +4,14 @@
 
 #include "../field_internal.h"
 
+enum {
+  ANIMATION_SHADOW_CACHE_ENTRY = 93,
+  ANIMATION_SHADOW_TILE_BYTES = 16 * 8, ///< 16x8 pixels, 256 colours
+  ANIMATION_OAM_FULL_COLOR = 1 << 13,
+  ANIMATION_OAM_PRIORITY_2 = 2 << 10,
+  ANIMATION_OAM_WIDE = 1 << 14
+};
+
 /// A row of gResourceSlot_NumberTable: the packed resource that holds an
 /// animation number's frames, ending at number 0.
 struct ResourceSlotNumber {
@@ -425,7 +433,8 @@ void ObjectSystem_Configure(s32 mode) {
                  ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
   Dma_Fill32Cell(zero, 0, layers,
                  ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
-  VramCache_Load(93, 128, gObject_ShadowTiles);
+  VramCache_Load(ANIMATION_SHADOW_CACHE_ENTRY, ANIMATION_SHADOW_TILE_BYTES,
+                 gObject_ShadowTiles);
   RamCode_LoadSlot(HEAP_SLOT_FRAME_UPLOADER, Tile_CopyStrided,
                    Tile_CopyStridedCodeSize);
 }
@@ -504,7 +513,11 @@ struct AnimationObject *ResourceObject_Create(s32 id) {
   struct AnimationMetadata *metadata;
   struct AnimationObject *sprite;
   struct AnimationObject *freeSprite;
+#ifdef UBFIX
+  u32 attributes[2 * sizeof(struct AnimationSpritePart) / sizeof(u32)];
+#else
   u32 *attribute;
+#endif
   s32 slot;
   s32 tile;
   s32 i;
@@ -573,14 +586,28 @@ struct AnimationObject *ResourceObject_Create(s32 id) {
   }
 
   // Part 0 is the image: 256 colours, priority 2. Part 1 is its shadow: a
-  // 16x8, 256-colour sprite of the shadow tiles (VRAM cache 93), priority 2.
+  // 16x8, 256-colour sprite of the shared shadow tiles, priority 2.
+  // UB: the native word cursor aliases the sprite and crosses its members.
+  // UBFIX copies the same representation from an actual word array.
+#ifdef UBFIX
+  attributes[0] = 0;
+  attributes[1] = shape | ANIMATION_OAM_FULL_COLOR;
+  attributes[2] = tile | ANIMATION_OAM_PRIORITY_2;
+  attributes[3] = 0;
+  attributes[4] = ANIMATION_OAM_FULL_COLOR | ANIMATION_OAM_WIDE;
+  attributes[5] = (gVramBlockCache[ANIMATION_SHADOW_CACHE_ENTRY].offset >> 5) |
+                  ANIMATION_OAM_PRIORITY_2;
+  memcpy(freeSprite, attributes, sizeof(attributes));
+#else
   attribute = (u32 *)freeSprite;
   *attribute++ = 0;
-  *attribute++ = shape | 0x2000;
-  *attribute++ = tile | 0x800;
+  *attribute++ = shape | ANIMATION_OAM_FULL_COLOR;
+  *attribute++ = tile | ANIMATION_OAM_PRIORITY_2;
   *attribute++ = 0;
-  *attribute++ = 0x6000;
-  *attribute = (gVramBlockCache[93].offset >> 5) | 0x800;
+  *attribute++ = ANIMATION_OAM_FULL_COLOR | ANIMATION_OAM_WIDE;
+  *attribute = (gVramBlockCache[ANIMATION_SHADOW_CACHE_ENTRY].offset >> 5) |
+               ANIMATION_OAM_PRIORITY_2;
+#endif
   if (ResourceMetadata_Register(sprite, id) == -1) {
     /* FAKEMATCH(dead): a store of the byte it reloads keeps the -1 the native
      * builds after the call and never uses; with the call alone, 2 of 152

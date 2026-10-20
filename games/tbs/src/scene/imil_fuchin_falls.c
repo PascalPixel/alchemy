@@ -1246,7 +1246,7 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
     sprite->image.fullColor = 0;
     sprite->image.palette = 0;
     actor->motionFlags = clear;
-    actor->unk5c = 1;
+    actor->retainSpriteCache = 1;
     glyph = Engine_HeapAllocate(17, sizeof(*glyph));
     Engine_ItemLoadIcon(ITEM_DRAGONS_EYE);
     Engine_VramLoad(sprite->slot, 128, glyph->tiles);

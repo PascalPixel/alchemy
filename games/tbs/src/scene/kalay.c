@@ -2041,7 +2041,7 @@ static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
       u16 shown = 20;
 
       *target = shown;
-      particle->unk61 = 1;
+      particle->frozen = 1;
     }
     Object_SetMode(particle, 1);
     Engine_ObjectSetScript(particle, gKalay_TunnelParticleScript);

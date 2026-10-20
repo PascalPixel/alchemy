@@ -2316,7 +2316,7 @@ s32 BabiPalace_ApplyEntryState(void) {
         Actor_SetPosition(ACTOR_CLOAK_BALL, 0, 0);
       } else {
         actor = Actor_Get(ACTOR_CLOAK_BALL);
-        actor->unk5c = 1;
+        actor->retainSpriteCache = 1;
         actor->motionFlags = set;
         sprite = actor->sprite;
         actor->y.fixed = 0x40000;

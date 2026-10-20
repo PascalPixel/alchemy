@@ -304,7 +304,7 @@ struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
     object->flags = 3;
     motion->gravity = 0x10000;
     motion->vertical.bounce = 0x4000;
-    object->unk59 = 0;
+    object->collisionFlags = 0;
     object->actionFlags = 1;
     actor->riseBaseY = 0;
     object->angle = 0x4000;

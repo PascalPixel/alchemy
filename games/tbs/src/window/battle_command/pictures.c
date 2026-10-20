@@ -374,10 +374,11 @@ s32 Ui_GetTableWordZero(s32 no) {
 /// the stream through r0 and writes bytes through r1, as UiIcon_Decode does.
 /// Nothing calls it.
 UNUSED void UiIcon_Decompress(GlyphTransfer *work) {
-  RamCode_LoadSlot(49, Tile_Decompress4bpp, Tile_Decompress4bppCodeSize);
-  ((void (*)(const void *, u8 *))((union HeapState *)gWorkSlot)->slots[49])(
-      work->encoded, work->input);
-  Runtime_ReleaseHeapBlock(49);
+  RamCode_LoadSlot(HEAP_SLOT_TEMP_RENDERER, Tile_Decompress4bpp,
+                   Tile_Decompress4bppCodeSize);
+  ((void (*)(const void *, u8 *))((union HeapState *)gWorkSlot)
+       ->slots[HEAP_SLOT_TEMP_RENDERER])(work->encoded, work->input);
+  Runtime_ReleaseHeapBlock(HEAP_SLOT_TEMP_RENDERER);
 }
 
 // Open a 6x4 window at the upper left, write its heading and return it.

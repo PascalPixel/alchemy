@@ -381,7 +381,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
     object->terrainHeight =
         ((struct ObjectRuntime *)work->mainObject)->terrainHeight;
     object->flags = 4;
-    object->unk23 = 4;
+    object->priorityFlags = 4;
     ((struct AnimationObject *)object->animation)->image.priority = 0;
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
     ObjectDispatch_SelectAnimationFar(object, 1);

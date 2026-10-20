@@ -188,7 +188,7 @@ s32 SpawnHeavyImpactEffect(struct ScriptInterpreter *interpreter) {
   impact = Object_Spawn(0x11b, pos.x, pos.y - (32 << 16), pos.z);
   if (impact != NULL) {
     impact->flags = 0;
-    impact->unk5e = 20;
+    impact->wait = 20;
     ObjectDispatch_InitializeFar((struct DispatchObject *)impact,
                                  gBattleFx_CommonParticleScript);
   }

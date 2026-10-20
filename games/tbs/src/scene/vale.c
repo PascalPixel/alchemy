@@ -2649,7 +2649,7 @@ static void Effect_ConfigureSpawnedParticle(union FieldObject *fieldObject) {
   if (particle != 0) {
     particle->motionFlags = 2;
     particle->gravity = 0x1999;
-    particle->unk5e = 12;
+    particle->wait = 12;
     Engine_ActorSetSpriteFlags(particle, 0);
     Object_SetMode(particle, 0);
     Engine_ObjectSetScript(particle, gDustBurstScript);

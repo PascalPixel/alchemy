@@ -17,7 +17,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
   s32 iconCount;
   s32 preferredRow;
   struct MenuPoint cursorPosition;
-  struct MenuCell *navigation;
+  struct BattleMenuWork *navigation;
   struct UiWindow *window;
   s32 selectedRow;
   s32 encodedAction;
@@ -40,7 +40,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
   unit = UnitGetFar(unitId);
   messageWindow = UiWindow_Create(0, 5, 30, 4, 42);
   iconCount = BATTLE_LIST_ROWS;
-  MenuCell_GetCursor(firstEntry, selectedRow, preferredRow);
+  BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
   window = UiWindow_Create(9, 9, 21, BATTLE_LIST_ROWS * 2 + 1, 6);
 
   for (i = 0; i < BATTLE_LIST_ROWS; i++) {
@@ -186,7 +186,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
       Runtime_PushSlotEntry(iconSprite, 242);
     }
 
-    MenuCell_SetCursor(firstEntry, selectedRow, preferredRow);
+    BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
     navigation = gLinkCountdownWork;
 
     if ((gKeysPressed & KEY_A) != 0) {
@@ -204,7 +204,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
         result = -1;
         break;
       }
-    } else if (navigation->active == 0 || (gKeysPressed & KEY_B) != 0) {
+    } else if (navigation->timer == 0 || (gKeysPressed & KEY_B) != 0) {
       AudioCommand_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;

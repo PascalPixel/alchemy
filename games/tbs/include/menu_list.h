@@ -99,57 +99,80 @@ struct MenuPoint {
   s32 y; ///< screen pixels
 };
 
-/// The menu work that remembers the cursor between menus (page, row and
-/// commands chosen) and drives the Djinn tutorial's key presses.
-struct MenuCell {
-  u8 unk00[0x28]; ///< LinkRoundState's sprites and their flags
-  /// LinkRoundState.targetOffset: -2 or 16 by the target menu's mode, 0 after.
-  s32 slideOffset;
-  u8 unk2c[4];      ///< LinkRoundState.currentOffset; not named through here
+/// The battle command menus' work, heap slot 57 (0x104 bytes), reached as
+/// gLinkCountdownWork. Battle_CollectPartyCommands allocates it each round; it
+/// holds the icons beside the command window, the camera slide, the cursor
+/// each list remembers, the link battle's timer, the Djinn tutorial's
+/// key presses and what each command has spent.
+struct BattleMenuWork {
+  /// The sprites UpdateLinkSessionCountdown draws each frame: the chosen
+  /// command's icon, the chosen ability's icon and the member's portrait.
+  struct MenuSprite icons[3];
+  u8 iconShown[3]; ///< whether each of icons is drawn
+  u8 unk27;
+  /// Where the battle scene slides to (Camera_ConfigureScene's vertical
+  /// offset): -2 or 16 by the target menu's mode, 0 otherwise.
+  s32 targetSceneOffset;
+  s32 sceneOffset;  ///< where the slide has reached; a third of the way a frame
   s32 row;          ///< the list row chosen last
   s32 page;         ///< the list page chosen last
   s32 preferredRow; ///< the row to return to
-  /// The command row's choice: 0 in its first mode, 1 in the other.
+  /// The command row's choice: [0] for the party's row (fight, flee,
+  /// status), [1] for a member's commands.
   s32 commandSelection[2];
-  void *work; ///< LinkRoundState.displayHandle; not named through here
-  s32 busy;   ///< LinkRoundState.secondaryHandle; cleared by the status screen
-  /// LinkRoundState.timer, the link battle's countdown: at 0 a menu ends as
-  /// if cancelled, or takes the first command; -1 outside link battles.
-  s32 active;
-  u8 unk50[0x88]; ///< LinkRoundState's enabled flag and lists
-  /// Set in the Djinn tutorial (LinkRoundState.hintCount): the target menu
-  /// then presses a button for the player every autoDelay frames.
-  s32 autoEnabled;
-  s32 autoDelay; ///< frames
-  s32 autoMode;  ///< LinkRoundState.actorId; not read through here
+  /// The window that shows the link battle's seconds left, a struct UiWindow
+  /// pointer kept as a word (as a pointer, two of the round's first stores
+  /// swap), or 0.
+  s32 timerWindow;
+  /// Set while the status screen is open, so the timer opens no window.
+  s32 timerHidden;
+  /// Frames left to choose commands in a link battle; -1 outside link battles.
+  /// At 0 a menu ends as if cancelled, or takes the first command.
+  s32 timer;
+  s32 linkTimer; ///< 1 while the link battle's timer runs
+  /// The party's standby Djinn by element before each command: what the
+  /// summons chosen by the earlier commands leave.
+  u8 standbyDjinn[8][4];
+  u8 listSlots[34];      ///< the Psynergy list's action slots, ended by 0
+  u16 listAbilities[33]; ///< the Psynergy list's ability ids, ended by 0
+  /// The Djinn tutorial's step: 0 off, 1 from the start of each round while
+  /// FLAG_DJINN_TUTORIAL is set, then one more for each hint shown. While it
+  /// is not 0 the menus press keys for the player.
+  s32 tutorialStep;
+  s32 tutorialDelay; ///< frames until the tutorial's next key press
+  /// The member whose commands are being chosen; -1 between members.
+  s32 commandActor;
+  /// The Djinni each command has chosen, element << 8 | index, or 0x80000000.
+  u32 chosenDjinn[8];
 };
 
-STATIC_ASSERT(offsetof(struct MenuCell, slideOffset) == 0x28);
-STATIC_ASSERT(offsetof(struct MenuCell, row) == 0x30);
-STATIC_ASSERT(offsetof(struct MenuCell, commandSelection) == 0x3c);
-STATIC_ASSERT(offsetof(struct MenuCell, work) == 0x44);
-STATIC_ASSERT(offsetof(struct MenuCell, busy) == 0x48);
-STATIC_ASSERT(offsetof(struct MenuCell, active) == 0x4c);
-STATIC_ASSERT(offsetof(struct MenuCell, autoEnabled) == 0xd8);
-STATIC_ASSERT(offsetof(struct MenuCell, autoDelay) == 0xdc);
-STATIC_ASSERT(offsetof(struct MenuCell, autoMode) == 0xe0);
+STATIC_ASSERT(sizeof(struct BattleMenuWork) == 0x104);
+STATIC_ASSERT(offsetof(struct BattleMenuWork, targetSceneOffset) == 0x28);
+STATIC_ASSERT(offsetof(struct BattleMenuWork, row) == 0x30);
+STATIC_ASSERT(offsetof(struct BattleMenuWork, commandSelection) == 0x3c);
+STATIC_ASSERT(offsetof(struct BattleMenuWork, timerWindow) == 0x44);
+STATIC_ASSERT(offsetof(struct BattleMenuWork, timer) == 0x4c);
+STATIC_ASSERT(offsetof(struct BattleMenuWork, standbyDjinn) == 0x54);
+STATIC_ASSERT(offsetof(struct BattleMenuWork, tutorialStep) == 0xd8);
+STATIC_ASSERT(offsetof(struct BattleMenuWork, commandActor) == 0xe0);
+STATIC_ASSERT(offsetof(struct BattleMenuWork, chosenDjinn) == 0xe4);
 
 /// Restores the previous selection: page, row and return row.
 // A statement macro (S2: a layer, 4 sites): the three cursor reads stay
 // together at every use; as a plain block, tbs-en differs.
-#define MenuCell_GetCursor(page_, row_, preferred_)                            \
+#define BATTLE_MENU_GET_CURSOR(page_, row_, preferred_)                        \
   do {                                                                         \
-    (page_) = ((struct MenuCell *)gWindowWork[42])->page;                      \
-    (row_) = ((struct MenuCell *)gWindowWork[42])->row;                        \
-    (preferred_) = ((struct MenuCell *)gWindowWork[42])->preferredRow;         \
+    (page_) = ((struct BattleMenuWork *)gWindowWork[42])->page;                \
+    (row_) = ((struct BattleMenuWork *)gWindowWork[42])->row;                  \
+    (preferred_) = ((struct BattleMenuWork *)gWindowWork[42])->preferredRow;   \
   } while (0)
 
 /// Saves the selection: page, row and return row.
-/* FAKEMATCH: the do { } while (0) wrapper steers, so this is a device at each
- * of its 7 sites, not a layer (S2: not every use matches through it).
+/* FAKEMATCH(one-pass): the do { } while (0) wrapper steers, so this is a device
+ * at each of its 7 sites, not a layer (S2: not every use matches through it).
  * Battle_SelectAbility writes the same three stores plainly through its already
- * loaded menu pointer, and through this macro it differs 2 in all six editions
- * (measured 2026-10-13). At the 7 sites the work-cell pointer it loads stays
+ * loaded menu pointer, and through this macro it differs 2 in all six editions.
+ * At the 7 sites the work-cell pointer it loads stays
  * apart from the reload after it, and the three stores finish before the keys
  * are read; written as three plain stores, with the dead-store pads gone,
  * SummonMenu_SelectSummon differs 84 (stores through its nav pointer; through
@@ -157,14 +180,14 @@ STATIC_ASSERT(offsetof(struct MenuCell, autoMode) == 0xe0);
  * ItemList_SelectEntry 46 and BattleMenu_RunActionSelection 42 in tbs-en, and
  * elsewhere the row store goes first (differ 4) or the base is loaded before
  * mode = 0 (differ 2 to 4). */
-#define MenuCell_SetCursor(page_, row_, preferred_)                            \
+#define BATTLE_MENU_SET_CURSOR(page_, row_, preferred_)                        \
   do {                                                                         \
     gLinkCountdownWork->page = (page_);                                        \
     gLinkCountdownWork->row = (row_);                                          \
     gLinkCountdownWork->preferredRow = (preferred_);                           \
   } while (0)
 
-extern struct MenuCell *gLinkCountdownWork;
+extern struct BattleMenuWork *gLinkCountdownWork;
 extern u8 gResource_FixedBlockBTiles[];
 extern const u8 gMenu_AnimatedCursorTiles[];
 

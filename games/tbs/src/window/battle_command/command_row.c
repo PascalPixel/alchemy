@@ -29,7 +29,7 @@ s32 Menu_RunCommandRow(s32 mode) {
   u8 party[4];
   struct UiRenderWork *render;
   struct SelectionWork *selectionUi;
-  struct MenuCell *navigation;
+  struct BattleMenuWork *navigation;
   s32 stripDirty, tradeCount, pulseScale, command;
   s32 entryIndex;
   s32 keys, repeat;
@@ -215,19 +215,19 @@ s32 Menu_RunCommandRow(s32 mode) {
     keys = gKeysPressed;
     repeat = gKeysRepeat;
     navigation = gLinkCountdownWork;
-    if (navigation->autoEnabled != 0) {
+    if (navigation->tutorialStep != 0) {
       keys = repeat = 0;
-      if (navigation->autoDelay == 0) {
-        if (navigation->autoMode == 1) {
+      if (navigation->tutorialDelay == 0) {
+        if (navigation->commandActor == 1) {
           if (selectionUi->commandKinds[selectionUi->selectedIndex] == 3)
             keys = repeat = 1;
           else
             keys = repeat = 32;
-          navigation->autoDelay = 30;
-        } else if (navigation->autoMode == 0) {
+          navigation->tutorialDelay = 30;
+        } else if (navigation->commandActor == 0) {
           s32 kind = selectionUi->commandKinds[selectionUi->selectedIndex];
           if (kind == 16 || (tradeCount == 0 && kind == 15)) {
-            if (navigation->autoEnabled == 1) {
+            if (navigation->tutorialStep == 1) {
               struct UiWindow *message;
               if (kind == 15)
                 message = UiText_ShowMessageAndWaitComplete(
@@ -237,22 +237,22 @@ s32 Menu_RunCommandRow(s32 mode) {
                     MsgDjinnTutorialSummon, 15, 8);
               BattlePresentation_WaitForPromptAtFar(102, 155);
               UiWork_Finalize(message, 1);
-              navigation->autoEnabled++;
-              navigation->autoDelay = 45;
+              navigation->tutorialStep++;
+              navigation->tutorialDelay = 45;
             } else {
               keys = repeat = 1;
-              navigation->autoDelay = 200;
+              navigation->tutorialDelay = 200;
             }
           } else {
             keys = repeat = 16;
-            navigation->autoDelay = 40;
+            navigation->tutorialDelay = 40;
           }
         } else {
-          navigation->autoDelay = 60;
+          navigation->tutorialDelay = 60;
           keys = repeat = 1;
         }
       } else {
-        navigation->autoDelay--;
+        navigation->tutorialDelay--;
       }
     }
     if ((keys & KEYS_SHOULDERS) && mode != 0) {
@@ -277,7 +277,7 @@ s32 Menu_RunCommandRow(s32 mode) {
       selectionUi->selectedIndex =
           (selectionUi->selectedIndex + selectionUi->iconCount - 1) %
           selectionUi->iconCount;
-    } else if (gLinkCountdownWork->active == 0) {
+    } else if (gLinkCountdownWork->timer == 0) {
       command = selectionUi->commandKinds[0];
       break;
     }

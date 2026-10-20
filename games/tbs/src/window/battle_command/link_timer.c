@@ -21,7 +21,7 @@ struct LinkSignature {
 /// Advances the link command-entry timer, slides the battle panels, and redraws
 /// the remaining seconds. Pause flags and peer signatures stop the timer.
 void UpdateLinkSessionCountdown(void) {
-  struct LinkRoundState *state = COUNTDOWN;
+  struct BattleMenuWork *state = gLinkCountdownWork;
   struct BattleWork *runtime;
   struct MenuSprite *entry;
   u8 *active;
@@ -37,8 +37,8 @@ void UpdateLinkSessionCountdown(void) {
   s32 i;
 
   if (state != 0) {
-    target = state->targetOffset;
-    current = state->currentOffset;
+    target = state->targetSceneOffset;
+    current = state->sceneOffset;
     if (target != current) {
       difference = target - current;
       step = difference / 3;
@@ -48,12 +48,12 @@ void UpdateLinkSessionCountdown(void) {
           step = 1;
       }
       newOffset = current + step;
-      state->currentOffset = newOffset;
+      state->sceneOffset = newOffset;
       Camera_ConfigureSceneFar(newOffset);
     }
 
-    entry = state->entries;
-    active = state->entryActive;
+    entry = state->icons;
+    active = state->iconShown;
     i = 2;
     do {
       if (*active++ != 0)
@@ -64,7 +64,7 @@ void UpdateLinkSessionCountdown(void) {
     Link_DrawShiftedTilePair(0x06006680);
 
     // Local battles still animate the UI, but do not run the link timer.
-    if (state->enabled == 0)
+    if (state->linkTimer == 0)
       return;
 
     runtime = gBattleWork;
@@ -98,8 +98,8 @@ void UpdateLinkSessionCountdown(void) {
       return;
 
   timer_ready:
-    if (state->displayHandle == 0 && state->secondaryHandle == 0) {
-      state->displayHandle = (s32)Link_CreateCountdownLabelWindow();
+    if (state->timerWindow == 0 && state->timerHidden == 0) {
+      state->timerWindow = (s32)Link_CreateCountdownLabelWindow();
       timer = state->timer;
     }
 
@@ -116,9 +116,9 @@ void UpdateLinkSessionCountdown(void) {
     if (seconds != 0 && seconds * FRAMES_PER_SECOND == timer)
       AudioCommand_PlayFar(SE_TRIPLE_TONE_LOW);
 
-    if (state->displayHandle != 0)
+    if (state->timerWindow != 0)
       UiText_DrawNumberInWindow(seconds, 2,
-                                (struct UiWindow *)state->displayHandle, 16, 8);
+                                (struct UiWindow *)state->timerWindow, 16, 8);
   }
 }
 
@@ -149,7 +149,8 @@ s32 UiText_ShowLocalizedMessageAndWait(void) {
     UiText_RenderWideStringAtOffset(buffer, work, 0, 4);
     do {
       WaitFrames(1);
-    } while ((gKeysPressed & (KEY_A | KEY_B)) == 0 && COUNTDOWN->timer != 0);
+    } while ((gKeysPressed & (KEY_A | KEY_B)) == 0 &&
+             gLinkCountdownWork->timer != 0);
     UiWork_Finalize(work, 1);
   }
   return result;

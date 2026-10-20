@@ -271,36 +271,6 @@ void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
 #define PORTRAIT_PALETTE 14
 #define PORTRAIT_SLOT_EMPTY 999
 
-/// Entire gLinkCountdownWork block; MenuCell in menu_list.h reads
-/// the region from 0x28 through 0xe4.
-struct LinkRoundState {
-  struct MenuSprite entries[3];
-  u8 entryActive[3];
-  u8 unk27;
-  s32 targetOffset;
-  s32 currentOffset;
-  s32 unk30;
-  s32 unk34;
-  s32 unk38;
-  s32 unk3c;
-  s32 unk40;
-  // A pointer field swaps two native initialization stores; keep its encoded
-  // handle and convert at the window API boundaries.
-  s32 displayHandle;
-  s32 secondaryHandle;
-  s32 timer;
-  s32 enabled;
-  u8 cost[8][4];
-  u8 pick[34];
-  u16 list[33];
-  s32 hintCount;
-  s32 hintTimer;
-  s32 actorId;
-  u32 selected[8];
-};
-
-#define COUNTDOWN ((struct LinkRoundState *)gLinkCountdownWork)
-
 // The battle menus' message buffers, in halfwords, and the copier that fills
 // them.
 #if TBS_PATCH_1

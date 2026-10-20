@@ -4,6 +4,8 @@
 
 #include "../object_internal.h"
 
+/// Sets an actor's y and terrainHeight to the map's height at its x and z.
+/// Called by Field_PlaceMapMarkers for each marker it places.
 void ObjectMotion_SnapToTerrain(void *object) {
   struct ObjectRuntime *actor = object;
   s32 terrainHeight;
@@ -23,6 +25,8 @@ struct MarkerMap {
 /// scene has an event for, up to ten: a chest (actor 20) for a chest event,
 /// shown open once its flag is set and gone once its mimic was beaten, and a
 /// Psynergy stone (actor 28) for a search event giving one, until it is taken.
+/// A marker with no such event takes no slot. Called by Field_RunScene on
+/// scene load; clears and fills work->markers.
 void Field_PlaceMapMarkers(void) {
   u32 id;
   struct MarkerMap *map = gMapWork[0];
@@ -42,7 +46,7 @@ void Field_PlaceMapMarkers(void) {
   u32 row;
 
   Dma_Fill32(0, slot, sizeof(struct MarkerSlot) * MARKER_MAX);
-  // A marker without an eligible scene event consumes no slot.
+  // A map without a marker list places nothing.
   if (list == NULL)
     return;
 
@@ -51,12 +55,17 @@ void Field_PlaceMapMarkers(void) {
   while (column != 255 || row != 255) {
     id = *list++;
     if (id >= 100 && id <= 239) {
+      // The first event with this trigger that places something wins; the
+      // event's value says what the search gives (bits 31..20: 0x2 coins,
+      // 0x3 a Psynergy stone, 0x5 a mimic, as Field_SearchTile reads them).
       event = gOverlayArea.events();
       for (; event->control != -1; event++) {
         if (event->trigger != id)
           continue;
+        // 19 is SEARCH(SEARCH_CHEST).
         if ((event->control & 0x1ff) == 19) {
-          // A chest, at the centre of its cell.
+          // A chest, at the centre of its cell (cells are 16 pixels, and
+          // positions 16.16).
           markerActor = (struct ScriptObjectRuntime *)Object_CreateFar(
               20, (column << 20) + 0x80000, 0, (row << 20) + 0x80000);
           if (markerActor == NULL)
@@ -64,6 +73,8 @@ void Field_PlaceMapMarkers(void) {
           ObjectMotion_SnapToTerrain(markerActor);
           ObjectDispatch_SetSingleChildFlagsFar(
               (struct DispatchObject *)markerActor, 0);
+          // An opened chest shows open (animation 2); an opened mimic's chest
+          // is not placed at all.
           if (GameFlag_TestFar(event->condition)) {
             if ((event->value & 0xfff00000) == 0x500000) {
               ObjectDispatch_ReleaseFar((struct DispatchObject *)markerActor);
@@ -122,7 +133,8 @@ void Field_PlaceMapMarkers(void) {
   }
 }
 
-/// Returns the marker slot (0 to 9) whose event trigger is id, or -1.
+/// Returns the marker slot (0 to 9) whose event trigger is id, or -1. Called
+/// by the Marker_ functions below.
 s32 Marker_FindSlot(s32 id) {
   s32 slotIndex;
   s32 matchingSlot;
@@ -159,12 +171,15 @@ static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
   }
 }
 
-/// Closes the chest of marker id again (its item could not be carried).
+/// Closes the chest of marker id again (its item could not be carried), with
+/// SE_125. Called by Field_SearchTile.
 void Marker_CloseChest(s32 id) {
   SetMarkerAnimationAndPlaySound(id, 5, SE_125);
 }
 
-/// Makes the chest of marker id jump up as a mimic.
+/// Makes the chest of marker id jump up as a mimic: after 18 frames it takes
+/// animation 7, plays SE_146 and gets an upward velocityY of 8 << 16.
+/// Called by Field_SearchTile before the mimic's battle.
 void Marker_LaunchMimic(s32 id) {
   s32 slotIndex;
   struct MarkerSlot *marker;
@@ -185,8 +200,12 @@ void Marker_LaunchMimic(s32 id) {
   }
 }
 
+/// Opens the chest of marker id (animation 4) with SE_124, and waits 12
+/// frames. Called by Field_SearchTile when a chest is searched.
 void Marker_OpenChest(s32 id) { SetMarkerAnimationAndPlaySound(id, 4, SE_124); }
 
+/// Shows the chest of marker id open (animation 2), with no sound. Called by
+/// Field_SearchTile once a chest's contents are taken.
 void Marker_ShowOpened(s32 id) {
   s32 slotIndex;
   struct MarkerSlot *marker;
@@ -201,6 +220,9 @@ void Marker_ShowOpened(s32 id) {
   }
 }
 
+/// Returns the actor of marker id, or NULL when no slot has it. Called by
+/// Field_SearchTile, and by the world map markers (field_fx.c) to skip a
+/// marker already placed.
 struct ObjectRuntime *Marker_GetActor(s32 id) {
   s32 slotIndex = Marker_FindSlot(id);
   struct MarkerSlot *marker;
@@ -211,6 +233,8 @@ struct ObjectRuntime *Marker_GetActor(s32 id) {
   return marker->object;
 }
 
+/// Hides the actor of marker id by clearing its animationKind. Called by
+/// Field_SearchTile once a Psynergy stone is taken.
 void Marker_Hide(s32 id) {
   s32 slotIndex;
   struct MarkerSlot *marker;
@@ -226,7 +250,8 @@ void Marker_Hide(s32 id) {
 }
 
 /// Moves the actor of marker id to (x, z) on the ground; -1 keeps the centre
-/// of its cell on that axis.
+/// of its cell on that axis. Positions are 16.16. Scene overlays call it as
+/// Engine_MapObjectSetPosition.
 void Marker_SetActorPosition(s32 id, s32 x, s32 z) {
   s32 slotIndex;
   s32 terrainHeight;

@@ -9,8 +9,11 @@
 /// paying PP. Checks it can be used here (Reveal not on the world map, Retreat
 /// where it is not blocked, after asking), pays its PP, then plays its effect
 /// between the scene's Psynergy events for what the leader faces: phase 1
-/// before, phase 0 after and phase 5 while it plays. An event whose trigger
-/// has flag 0x400 plays the effect itself.
+/// before and phase 0 after. A phase 5 event is not run here; it only makes
+/// the effect aim at the actor ahead, and the effects that act on it (Force,
+/// Frost, Reveal) find it themselves. An after event whose trigger has flag
+/// 0x400 plays the effect itself. Called by Field_RunScene for the Psynergy
+/// request (work->command); sets work->resolvingAction while the effect plays.
 s32 Field_UsePsynergy(u32 code) {
   s32 abilityId = ABILITY_ID(code);
   struct FieldWork *work = (struct FieldWork *)gEventWork;
@@ -26,6 +29,7 @@ s32 Field_UsePsynergy(u32 code) {
 
   abilityGroup = BattleActGet(abilityId)->type0c;
   userId = ACT_UNIT(code);
+  // The leader is looked up and the result is not used.
   ObjectTable_Get(gGameState.selectedActor);
   retreat = 0;
   Leader_StopMoving();
@@ -66,6 +70,7 @@ s32 Field_UsePsynergy(u32 code) {
     work->exit = EXIT_RETREAT;
     retreat = 1;
   }
+  // A use that pays no PP only runs the scene's events (phases 3 and 2).
   if (code & ACT_PACKED)
     return Field_RunPsynergyEvents(code);
 
@@ -74,6 +79,8 @@ s32 Field_UsePsynergy(u32 code) {
     ppCost = BattleActGet(abilityId)->ppCost;
     if (UnitGetFar(userId)->pp < ppCost) {
       PSYNERGY_MESSAGE(userId, abilityId, MsgNotEnoughPp);
+      // Retreat was already accepted: take its exit back (the scene and
+      // entrance it chose stay in the game state).
       if (retreat)
         work->exit = 0;
       return 0;
@@ -81,7 +88,8 @@ s32 Field_UsePsynergy(u32 code) {
     Unit_AddPpFar(userId, -ppCost);
   }
 
-  // Find the scene's events, and choose how the effect plays.
+  // Find the scene's events, and choose how the effect plays. The before
+  // event runs before the two flags are read, so its script can change them.
   before = BattleFx_FindMatchingEvent(PSYNERGY_EV(1), abilityGroup, &target);
   after = BattleFx_FindMatchingEvent(PSYNERGY_EV(0), abilityGroup, &target);
   during = BattleFx_FindMatchingEvent(PSYNERGY_EV(5), abilityGroup, &target);
@@ -128,7 +136,8 @@ s32 Field_UsePsynergy(u32 code) {
 }
 
 /// Returns whether the scene has a Psynergy event, in any phase, for
-/// Psynergy of group and what the leader faces.
+/// Psynergy of group and what the leader faces. Exported as
+/// BattleFx_HasMatchingEvent5Far, which no ☀️ code names.
 s32 BattleFx_HasMatchingEvent5(s32 group) {
   s32 target;
   s32 eventAddress =
@@ -137,6 +146,8 @@ s32 BattleFx_HasMatchingEvent5(s32 group) {
 }
 
 /// Returns whether the scene has an event for item and what the leader faces.
+/// Called by the item menu (menu/item.c) through BattleFx_HasTriggerFar: such
+/// an item closes the menu and is used on the field.
 u32 BattleFx_HasTrigger(u16 item) {
   s32 eventAddress;
 

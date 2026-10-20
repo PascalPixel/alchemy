@@ -14,7 +14,10 @@
 /// 1 to 15 of a palette with their red, green and blue values in hex. Left and
 /// right choose the colour, up and down the channel, L and R the palette (0 to
 /// 13); A raises the channel and B lowers it, Start makes the colour blink
-/// while held, and Select leaves.
+/// while held, and Select leaves. Called by Field_RunScene for the pause
+/// request when L is held in debug mode. Writes the edited colours straight to
+/// BG palette RAM and draws over screen block 4; on leaving it reloads the
+/// window graphics and clears the debug text.
 void Debug_RunPaletteEditor(void) {
   s32 palette = 0;
   s32 channel = 1;
@@ -29,10 +32,13 @@ void Debug_RunPaletteEditor(void) {
   u32 blue;
   u32 i;
 
+  // The swatch tiles go to tile 0xd0 of character block 0; colour n is drawn
+  // with tile 0xd0 + n.
   Resource_DecompressHalfwords(gDebug_PaletteSwatchTiles, (void *)0x06001a00);
 redraw:
   // Column 0 shows the palette number and R, G, B; columns 1 to 15 show each
-  // colour's swatch and its three channels.
+  // colour's swatch, drawn in the palette being edited, and its three
+  // channels. The letters are tiles at their ASCII codes in BG palette 15.
   tile = (palette << 12) + 0xd1;
   paletteColor = &EDITOR_PALETTE[palette * 16 + 1];
   swatchColumn = EDITOR_MAP;

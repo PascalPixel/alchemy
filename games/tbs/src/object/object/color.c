@@ -11,7 +11,9 @@
 #define COLOR_CHANNEL_COUNT (COLOR_MAX * 3)
 
 /// Sets each of the 1344 colour channels of step to the amount to add each
-/// frame for source to reach target in frames frames.
+/// frame for source to reach target in frames frames; with frames 0 or less
+/// step is left as it was. Called by BattleFx_StartBufferInterpolation and by
+/// the weather effects (psynergy_effects/weather.c).
 void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
                                  s32 frames) {
   s32 remainingChannels;
@@ -34,7 +36,10 @@ void BattleFx_InterpolateBuffers(s16 *source, s16 *target, s16 *step,
 
 /// Each frame (unless flag 0x152 is set): moves the colour buffer one step
 /// toward its target, packs it into RGB555 and queues it for the BG and OBJ
-/// palettes.
+/// palettes. The packed colours are double-buffered: work->page names the
+/// page the queued DMA reads, and the other is written. Registered by
+/// BattleEffect_InitializeBuffers as a scheduler callback; the menus clear
+/// and set flag 0x152 around it (menu/common.c).
 void BattlePalette_UpdateBlend(void) {
   struct BattleEffectBuffers *work = gPaletteBufferWork;
   u16 *channelDelta = work->delta;
@@ -46,7 +51,8 @@ void BattlePalette_UpdateBlend(void) {
   if (work->duration == 0) {
     return;
   }
-  // Accumulate modular 16-bit channel steps, snapping to the exact target.
+  // Accumulate modular 16-bit channel steps; on the last frame copy the
+  // target itself, so rounding in the steps never leaves the colours short.
   if (++work->step < work->duration) {
     u16 *currentChannel = work->current;
     for (i = 0; i < COLOR_CHANNEL_COUNT; i++) {
@@ -58,7 +64,8 @@ void BattlePalette_UpdateBlend(void) {
   }
 
   {
-    // Pack B, G, R fixed-point channels into the hidden RGB555 page.
+    // Pack B, G, R fixed-point channels into the hidden RGB555 page: each
+    // channel's top 5 bits (bits 14..10) become its RGB555 field.
     u16 *packed = work->packed[1 ^ work->page];
     s32 blueMask = 0x7c00;
     u16 *current;
@@ -72,6 +79,8 @@ void BattlePalette_UpdateBlend(void) {
     }
   }
 
+  // Show the page just written: queue its BG half and OBJ half (224 colours,
+  // 112 words each) for the palettes.
   work->page ^= 1;
   {
     u16 *packed = work->packed[work->page];
@@ -93,7 +102,9 @@ extern u16 gBattlePalette_ChannelCurveContrast[];
 /// 0x8000 is one colour for all; PALETTE_TRANSFORM_FROM_SOURCE the backdrop
 /// colour; the other PALETTE_TRANSFORM_* values transform each colour; any
 /// other value is the address of a ready buffer to copy. half: 0 for all 448
-/// colours, 1 for the BG's 224, 2 for the OBJ's 224.
+/// colours, 1 for the BG's 224, 2 for the OBJ's 224. Called by the
+/// ApplyColorTo functions below, BattleEffect_InitializeBuffers and the
+/// weather effects (psynergy_effects/weather.c).
 void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
   u32 i;
   u32 colorCount = COLOR_MAX;
@@ -112,7 +123,8 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
     colorCount = COLOR_HALF;
   }
 
-  // One colour: write it once, then let DMA copy it over the rest.
+  // One colour: write it once, then let DMA copy it over the rest. The copy
+  // reads three halfwords behind where it writes, so the colour repeats.
   if (mode < PALETTE_TRANSFORM_FROM_SOURCE) {
     *dst++ = mode & 0x7c00;
     *dst++ = (mode & 0x03e0) << 5;
@@ -337,6 +349,7 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
       *dst++ = gBattlePalette_ChannelCurve[blendedRed];
     }
   } else if (mode & PALETTE_TRANSFORM_SPLIT) {
+    // The colours unchanged, as the default transform writes them.
     for (i = 0; i < colorCount; i++) {
       color = *src++;
       dst[i * 3 + 0] = color & 0x7c00;
@@ -344,7 +357,8 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
       dst[i * 3 + 2] = (color & 0x001f) << 10;
     }
   } else {
-    // Copy a ready buffer.
+    // Copy a ready buffer: mode is its address, and the OBJ half starts 224
+    // colours of three halfwords in.
     if (half == 2)
       mode += COLOR_HALF * 3 * sizeof(u16);
     Dma_Set((const void *)mode, dst,
@@ -353,7 +367,9 @@ void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 half) {
 }
 
 /// Sets up the colour buffer (heap block 32) from the BG and OBJ palettes and
-/// starts updating the palettes from it each frame.
+/// starts updating the palettes from it each frame. Called by Field_RunScene
+/// on scene load; allocates heap slot 32 (gPaletteBufferWork) and registers
+/// BattlePalette_UpdateBlend at priority 0xc8f.
 void BattleEffect_InitializeBuffers(void) {
   struct BattleEffectBuffers *work;
 
@@ -367,13 +383,18 @@ void BattleEffect_InitializeBuffers(void) {
   Scheduler_AddOrUpdateCallback(BattlePalette_UpdateBlend, 0xc8f);
 }
 
-/// Stops the colour buffer and frees it.
+/// Stops the colour buffer and frees it: removes BattlePalette_UpdateBlend and
+/// releases heap slot 32. Reached only through a bare far-call veneer; no ☀️
+/// code names it.
 void BattlePalette_StopBlendAndReleaseBuffer(void) {
   Scheduler_RemoveCallback(&BattlePalette_UpdateBlend);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_PALBUF);
 }
 
-/// Sets the colours the buffer moves toward (see BattleFx_BuildBuffer).
+/// Sets the colours the buffer moves toward (see BattleFx_BuildBuffer); does
+/// nothing without a colour buffer. Called by the field Psynergy effects,
+/// the scene transitions, the shop cursor, and scene overlays as
+/// Engine_ColorBufferApplyTarget.
 void BattleFx_ApplyColorToTargetBuffer(s32 mode, s32 half) {
   struct BattleEffectBuffers *work = gPaletteBufferWork;
 
@@ -382,7 +403,9 @@ void BattleFx_ApplyColorToTargetBuffer(s32 mode, s32 half) {
   }
 }
 
-/// Sets the colours the buffer shows now (see BattleFx_BuildBuffer).
+/// Sets the colours the buffer shows now (see BattleFx_BuildBuffer). Called by
+/// Reveal, the leader's steps (step.c), the transitions, and scene overlays
+/// as Engine_ColorBufferApplySource.
 void BattleFx_ApplyColorToSourceBuffer(s32 mode, s32 half) {
   struct BattleEffectBuffers *work = gPaletteBufferWork;
 
@@ -391,7 +414,8 @@ void BattleFx_ApplyColorToSourceBuffer(s32 mode, s32 half) {
   }
 }
 
-/// Sets the buffer's source backdrop colour.
+/// Sets the buffer's source backdrop colour (BG colour 0 of its palette
+/// copy). Called by the transitions (transition.c).
 void BattleFx_SetPrimaryBufferValue(u32 color) {
   struct BattleEffectBuffers *work = gPaletteBufferWork;
 
@@ -400,7 +424,10 @@ void BattleFx_SetPrimaryBufferValue(u32 color) {
   }
 }
 
-/// Starts moving the shown colours to the target colours over frames frames.
+/// Starts moving the shown colours to the target colours over frames frames:
+/// sets work->duration, clears work->step and fills work->delta. Called after
+/// BattleFx_ApplyColorToTargetBuffer by the same callers, and by scene
+/// overlays as Engine_ColorBufferInterpolate.
 void BattleFx_StartBufferInterpolation(s32 frames) {
   struct BattleEffectBuffers *work = gPaletteBufferWork;
 
@@ -423,6 +450,7 @@ s32 BattleFx_ClampRgb555Channel(s32 value) {
 
 /// Clamps a colour channel shifted up 10 bits to at most 31 << 10.
 s32 BattleFx_ClampRgb555Component(s32 value) {
+  // 31744 is 31 << 10.
   if (value > 31744)
     value = 31744;
   return value;

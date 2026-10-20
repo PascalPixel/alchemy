@@ -5,7 +5,9 @@
 #include "../psynergy_effects_internal.h"
 
 /// An object appears 32 pixels to either side, each moves 14 pixels in, and
-/// they lift the target 32 pixels with them.
+/// they lift the target 32 pixels with them. Called by
+/// BattleFx_DispatchRequestKind; leaves the target raised, with its update set
+/// to ObjectGroup_ApplyRandomChildValues.
 ///
 /// Abilities: Lift (field kind 7), cast on a target.
 void FieldFx_RunLiftOnTarget(s32 unused) {
@@ -25,6 +27,8 @@ void FieldFx_RunLiftOnTarget(s32 unused) {
     return;
 
   BattleEffect_InitializeSharedScene();
+  // The caster's script starts 3 words into the common particle script, with
+  // the target as its argument.
   caster->argument = (s32)target;
   ObjectDispatch_InitializeFar(caster, gBattleFx_CommonParticleScript + 3);
 
@@ -37,6 +41,8 @@ void FieldFx_RunLiftOnTarget(s32 unused) {
   pair[0] = BattleFx_SpawnItemBreakMode3(x + 0x200000, y, z, 0x8000);
   pair[1] = BattleFx_SpawnItemBreakMode3(pos[0] - 0x200000, pos[1], pos[2], 0);
 
+  // Each hand faces the target (angle 0x8000 on the right, 0 on the left) and
+  // moves 14 pixels that way.
   WaitFrames(15);
   for (handIndex = 0; handIndex < 2; handIndex++) {
     struct MotionObject *hand = pair[handIndex];
@@ -61,6 +67,7 @@ void FieldFx_RunLiftOnTarget(s32 unused) {
     } while (target->y.fixed <= startY + 0x200000);
   }
 
+  // The hands burst into particles; the target stays up.
   UpdateRisingParticleBurst(pair[0]);
   UpdateRisingParticleBurst(pair[1]);
   BattleFx_PrepareBufferInterpolation();
@@ -69,11 +76,14 @@ void FieldFx_RunLiftOnTarget(s32 unused) {
 /// Lift cast with no target: objects appear above the caster and to either
 /// side, move apart and scatter into shards.
 ///
-/// Abilities: Lift (field kind 7), cast with no target.
+/// Abilities: Lift (field kind 7), cast with no target. Called by
+/// BattleFx_Run.
 DEFINE_ITEM_BREAK_EFFECT(FieldFx_RunLift, BattleFx_SpawnItemBreakMode3)
 
 /// Spawns object 215 and grows it, spinning, from a quarter to full size over
-/// 24 frames; angle is the way it faces once grown.
+/// 24 frames; angle is the way it faces once grown. Makes Lift's two hands,
+/// for FieldFx_RunLiftOnTarget and FieldFx_RunLift; returns NULL when no object
+/// could be spawned.
 struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
                                                   s32 angle) {
   struct MotionObject *fragment;
@@ -104,6 +114,7 @@ struct MotionObject *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
 
 /// Effect slot callback of a particle that scatters 25 pixels from its origin
 /// in a random direction, then gathers beside the main object and is freed.
+/// Set on Force's 12 flashes by FieldFx_RunForceOnTarget in force.c.
 void BattleFx_UpdateRadialBurst(struct EffectSlot *slot) {
   // A for/continue retry keeps the same states but grows the native English
   // callback from 0xf8 to 0xfc bytes. State 1 must enter state 2 immediately.
@@ -160,7 +171,9 @@ again:
 }
 
 /// A heavy impact: places object 0x11b 32 pixels below the source and scatters
-/// 12 shards from it.
+/// 12 shards from it. Reached through SC_CALL in gBattleFx_HeavyImpactScript
+/// (fxdata.c), where the interpreter is the object running the script.
+/// Returns 0.
 s32 SpawnHeavyImpactEffect(struct ScriptInterpreter *interpreter) {
   struct MotionObject *source = (struct MotionObject *)interpreter;
   struct EffectVector pos;

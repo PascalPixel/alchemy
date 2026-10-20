@@ -10,7 +10,9 @@ typedef s32 (*BattleItemCallback)(s32 item, s32 actor, s32 slot);
 /// Returns the scene's item event (kind 4) for item that applies to what the
 /// leader faces, or 0 (item 0 matches any item). The event's trigger names an
 /// actor (control flag 0x10) or a tile code, and may also require the leader
-/// to face within 0x17ff of a direction.
+/// to face within 0x17ff of a direction. Called by Field_UseItem, and by
+/// BattleFx_HasTrigger (psynergy.c) to test whether an item would do anything
+/// here.
 s32 Field_FindItemEvent(s32 item) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   const struct SceneEvent *event = work->events;
@@ -23,6 +25,8 @@ s32 Field_FindItemEvent(s32 item) {
   // Query both target forms once; matching events choose actor or tile below.
   tileAhead = Field_GetCollisionAheadOfLeader();
 
+  // trigger bits: 15..12 facing | 11 facing required | 7..0 actor or tile
+  // code; control bits: 15..8 item | 4 on an actor | 3..0 kind.
   while (event->control != -1) {
     s32 eventFacing = event->trigger & 0xf000;
     s16 requiresFacing = event->trigger & 0x0800;
@@ -55,6 +59,9 @@ s32 Field_FindItemEvent(s32 item) {
 /// faces runs if there is one; otherwise an item with a field action uses it
 /// (Retreat asks first and leaves the scene). FLAG_NOTHING_HAPPENS still set
 /// afterwards says "But nothing happens."; FLAG_ITEM_USED_UP removes the item.
+/// Called by Field_RunScene for the item request (work->item and
+/// work->itemArgument). Retreat sets gGameState.scene and .entrance to the
+/// Retreat point and raises work->exit.
 s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
   s32 itemId;
@@ -71,6 +78,9 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   result = -1;
   itemId = packedItem & 0x3ff;
   actor = (packedItem >> 10) & 0xf;
+  // Count the user's slots holding the item; with no user given, the user is
+  // whoever holds it in the most slots, the earlier on a tie. Nobody holding
+  // it ends the use at once.
   {
     mostMatchingSlots = 0;
     partyCount = Party_CountActiveOwnersFar();
@@ -106,7 +116,9 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
   event = (const struct SceneEvent *)Field_FindItemEvent(itemId);
   if (event != 0 && event->value != 0) {
-    // The scene's event: a message, or a function.
+    // The scene's event: a message, or a function. A value below 0x10000 is
+    // a message number; anything else is a code address. Trigger bit 0x400
+    // skips the "uses the item" message.
     GameFlag_ClearBitFar(FLAG_ITEM_USED_UP);
     GameFlag_ClearBitFar(FLAG_NOTHING_HAPPENS);
     if (!(event->trigger & 0x400)) {
@@ -125,7 +137,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     }
     result = 0;
   } else {
-    // The item's own field action, if it has one.
+    // The item's own field action, if it has one: the ability actionId names
+    // plays as if cast. Items with useType bit 0 are used up.
     s32 actionId;
 
     GameFlag_ClearBitFar(FLAG_ITEM_USED_UP);
@@ -187,7 +200,9 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 /// group that applies to what the leader faces, or NULL; stores the actor the
 /// Psynergy would target in *target. eventFlags gives the event's phase and
 /// kind (0x70000005 for any phase). The event may apply to any target
-/// (control flag 0x80), to an actor (0x10) or to a tile code.
+/// (control flag 0x80), to an actor (0x10) or to a tile code. Called by
+/// Field_UsePsynergy for each phase, by Field_RunPsynergyEvents, and by the
+/// Force, Frost and Reveal effects (psynergy_effects/) for their own phases.
 void *BattleFx_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   const struct SceneEvent *event = work->events;
@@ -215,6 +230,7 @@ void *BattleFx_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
          (u16)(eventFacing - facing + 0x17ff) <= 0x2ffe) &&
         BattleActGet(((const u8 *)&event->control)[1])->type0c == group &&
         (anyPhase || (event->control & 0x7000000f) == eventFlags)) {
+      // Any Psynergy of the same field kind (type0c) as the event's matches.
       if ((event->control & 0x80) != 0)
         return (void *)event;
       if ((event->control & 0x10) != 0) {
@@ -232,7 +248,8 @@ void *BattleFx_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
 /// Runs the scene's events for Psynergy without paying its PP or showing its
 /// usual effect (phases 3 and 2, around the event's own effect), as for a
 /// Psynergy that ends by itself: packed holds the Psynergy (bits 0 to 9) and
-/// its user (bits 10 to 13).
+/// its user (bits 10 to 13). Called by Field_UsePsynergy for a use with
+/// ACT_PACKED, and by Battle_ResetEffectCounter to end Reveal.
 s32 Field_RunPsynergyEvents(s32 packed) {
   s32 target;
   s32 abilityId;

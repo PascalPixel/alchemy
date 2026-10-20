@@ -6,7 +6,9 @@
 
 /// Finds where an actor is on screen: position[0] and position[1] receive its
 /// x and y in pixels, y at the top of its sprite. Returns 0, or -1 if there is
-/// no such actor.
+/// no such actor. Called by the message window code in messages.c to place a
+/// speaker's bubble, and through Object_GetScreenPositionFar by the window
+/// frames to open a message window above or below the leader.
 s32 Object_GetScreenPosition(s32 objectId, s32 *position) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
   s32 *camera;
@@ -41,7 +43,8 @@ UNUSED void ObjectEffect_ReservedNoOp941DC(void) {}
 // changes.
 /// Starts the transition into a random battle: plays the scene's battle cue
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
-/// fading it to black over 16 frames.
+/// fading it to black over 16 frames. Called by Field_RunScene when it handles
+/// work->battle; clears work->transitionActive once the screen is closed.
 #ifdef UBFIX
 void Field_StartEncounterTransition(s32 unused) {
 #else
@@ -56,10 +59,12 @@ s32 Field_StartEncounterTransition(s32 unused) {
   AudioCommand_PlayFar(SE_147);
   if (work->mode == MODE_WORLD_MAP) {
     // On the world map the flash colours BG palette colour 243 instead.
+    // The world map closes with transition 0x401, a field scene with 0x207.
     Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
     DisplayTransition_Finish(0x401, 16);
     work->transitionActive = 0;
     WaitFrames(16);
+    // Step the white down by 2 a frame: 30 to 0 in 16 frames.
     for (i = 0; i < 16; i++) {
       level = 30 - i * 2;
       Io_Write16(RGB(level, level, level), (u16 *)&BG_PLTT_COLOR(15, 3));
@@ -81,6 +86,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
 /// Starts the leader's animation for leaving through an exit: centres it on
 /// its tile, at the tile's south edge, stops it and plays animation over 18
 /// frames. The leader's sprite gains a second part (metadata 27) for it.
+/// Called by the two ObjectEffect_BeginContextEffect functions below.
 void ObjectEffect_PrepareContextEffect(s32 animation) {
   u32 zero;
   u8 param;
@@ -96,6 +102,8 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
 
   context->flags = zero;
   effect->param = param;
+  // Positions are 16.16 fixed point and tiles 16 pixels: keep the tile and
+  // put the leader at its middle in x (8 pixels) and its south edge in z.
   object->x = (object->x & 0xFFF00000) + 0x80000;
   object->z = (object->z & 0xFFF00000) + 0x100000;
   object->velocityX = zero;
@@ -108,12 +116,14 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
 
 /// Leaves through an exit of kind 0x20 (animation 26); flag 0x120 makes the
 /// next scene play the matching arrival (ObjectEffect_RunPendingFlagEvent).
+/// Called by the exit handling in events.c, after it plays SE_128.
 void ObjectEffect_BeginContextEffect26(void) {
   ObjectEffect_PrepareContextEffect(0x1A);
   GameFlag_SetBitFar(0x120);
 }
 
 /// Leaves through an exit of kind 0x30 (animation 25), recorded in flag 0x121.
+/// Called by the exit handling in events.c, after it plays SE_129.
 void ObjectEffect_BeginContextEffect25(void) {
   ObjectEffect_PrepareContextEffect(0x19);
   GameFlag_SetBitFar(0x121);
@@ -121,7 +131,9 @@ void ObjectEffect_BeginContextEffect25(void) {
 
 /// Plays the leader's arrival animation through an exit: centred on its tile
 /// at the tile's north edge, the leader plays animation for 30 frames, loses
-/// the extra sprite part and walks 8 pixels south.
+/// the extra sprite part and walks 8 pixels south. Called by
+/// ObjectEffect_RunPendingFlagEvent; frees the sprite part
+/// ObjectEffect_PrepareContextEffect registered.
 void ObjectEffect_EndContextEffect(s32 animation) {
   s32 zero;
   s32 mask;
@@ -152,7 +164,9 @@ void ObjectEffect_EndContextEffect(s32 animation) {
 /// Plays the leader's arrival for the way the last scene was left: through an
 /// exit of kind 0x20 (flag 0x120, animation 24, returns 1) or 0x30 (flag
 /// 0x121, animation 23, returns 2), or falling in from 160 pixels above
-/// (flag 0x122, returns 3). Returns 0 when there is nothing to play.
+/// (flag 0x122, returns 3). Returns 0 when there is nothing to play. Called by
+/// Field_RunScene as the scene fades in, which waits out the fade itself only
+/// when this returns 0. Clears the flag it acts on.
 s32 ObjectEffect_RunPendingFlagEvent(void) {
   s32 result = 0;
   s32 flag = 0x120;
@@ -176,6 +190,9 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         GameFlag_ClearBitFar(flag);
         leaderId = gGameState.selectedActor;
         leader = ObjectTable_Get(leaderId);
+        // Flag 0x122 is set by scenes the party drops out of (the Suhalla
+        // storm, a floor giving way in the Tret tree): start 160 pixels up
+        // and let gravity bring the leader down to the ground.
         leader->y += 0x00a00000;
         Camera_MoveWithinMapBounds(-1, -1, -1, 0);
         while (leader->y + leader->velocityY > leader->terrainHeight) {

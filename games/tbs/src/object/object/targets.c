@@ -6,7 +6,7 @@
 
 /// Returns how far, in pixels, a field Psynergy of the given kind reaches:
 /// gBattleFx_TargetRangeByMode pairs kinds with ranges, ended by -1, and a kind
-/// not listed reaches 16 pixels.
+/// not listed reaches 16 pixels. Called by Field_FindNearbyPsynergyTarget.
 s32 Field_GetPsynergyTargetRange(s32 kind) {
   s16 *rangeEntry = gBattleFx_TargetRangeByMode;
   s32 range = 16;
@@ -27,7 +27,9 @@ s32 Field_GetPsynergyTargetRange(s32 kind) {
 /// Returns the actor nearest to actor id that it could talk to, or -1: within
 /// 48 pixels of height and 32 pixels of distance and, beyond 11 pixels, within
 /// 0x2fff of the direction it faces. Actors with flag 8 are skipped, and those
-/// with flag 4 count as 10/13 as far.
+/// with flag 4 count as 10/13 as far. The flags are unk59, the collision flags.
+/// Called with the leader by Field_RunScene for the A button, and by the item
+/// code (items.c) to find whom an item is used on.
 s32 Field_FindNearbyTalkTarget(s32 id) {
   struct ObjectRuntime *source;
   struct ObjectRuntime *candidate;
@@ -56,6 +58,8 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
       if (candidate == 0 || (candidate->unk59 & 8) != 0)
         continue;
 
+      // y is height: an actor more than 48 pixels above or below is out of
+      // reach.
       if (candidate->y - source->y >= 0) {
         if (candidate->y - source->y >= 48 << 16)
           continue;
@@ -78,6 +82,8 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
       if (distance >= nearestDistance)
         continue;
 
+      // Close actors count from any side; further ones must be within 0x2fff
+      // (about 67 degrees) of where the actor faces.
       angle = (u16)ArcTan2(candidate->z - source->z, candidate->x - source->x);
       if (distance > 11) {
         s32 angleDifference = (s16)(angle - source->angle);
@@ -98,7 +104,9 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
 /// Returns the actor nearest in front of actor id that a field Psynergy of the
 /// given kind can reach, or -1. The direction is rounded to a quarter turn and
 /// the distance measured on the ground; kind sets the range, the height
-/// allowed and the width of the cone.
+/// allowed and the width of the cone. Actors with collision flag 0x10 count as
+/// 2/3 as far. Called with the leader by Field_UsePsynergy, by the item code
+/// (items.c) and by the Psynergy dispatch (psynergy_effects/dispatch.c).
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   struct ObjectRuntime *source;
   struct ObjectRuntime *candidate;
@@ -120,6 +128,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   if (source == 0)
     return nearestActor;
 
+  // The facing rounded to the nearest of the four quarter turns.
   facingQuadrant = (source->angle + 0x2000) & 0xc000;
   for (actorIndex = 0; actorIndex <= OBJ_LAST; actorIndex++) {
     if (actorIndex == id)
@@ -190,9 +199,11 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   return nearestActor;
 }
 
-/// If actor target exists, plays sound 124, gives it animation 4 and, 12 frames
+/// If actor target exists, plays SE_124, gives it animation 4 and, 12 frames
 /// later, shows itemId in front of actor with sparkles. Returns the picture's
-/// encoded actor pointer, or 0 when the target or picture is absent.
+/// encoded actor pointer, or 0 when the target or picture is absent. Called by
+/// two scene overlays: McCoy's palace, when a reward chest opens, and Vault's
+/// interiors, when Ivan finds the Shaman's Rod.
 s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 actor, s32 target, s32 itemId) {
   void *targetActor;
   s32 emitter;
@@ -210,7 +221,9 @@ s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32 actor, s32 target, s32 itemId) {
 
 /// Gives every part of a motion object's sprite (but those at palette 15)
 /// palette - 1, or for palette 0 the next palette of a cycle that changes every
-/// 2 frames.
+/// 2 frames. Sets the sprite's dirty flag so it is drawn again. Called by
+/// Mind Read's wave effect (psynergy_effects/mind_read.c) on the caster: each
+/// frame with 0 to cycle its colours, and with 1 (palette 0) when it ends.
 void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette) {
   struct AnimationObject *sprite;
   struct AnimationEntry **entrySlot;
@@ -242,7 +255,9 @@ void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette) {
 }
 
 /// Clears the field's busy flag and, while Reveal is active, ends it: Reveal
-/// used with ACT_PACKED runs its ending events.
+/// used with ACT_PACKED runs its ending events. Called by FieldEvent_Begin when
+/// an event starts while the field is busy, by Field_RunScene before the pause
+/// menu, and by 30 scene overlays.
 void Battle_ResetEffectCounter(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
 

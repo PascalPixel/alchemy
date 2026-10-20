@@ -5,7 +5,8 @@
 #include "../psynergy_effects_internal.h"
 
 /// Per-frame update: sways 4 pixels either side of anchorX, once every 128
-/// frames.
+/// frames. The update of each spark BattleFx_RunSparkEmitter sheds; it writes
+/// the spark's x and advances its phase.
 void BattleFx_SwayParticle(union FieldObject *fieldObject) {
   struct SparkObject *obj = (struct SparkObject *)fieldObject;
   s16 *phase;
@@ -18,7 +19,8 @@ void BattleFx_SwayParticle(union FieldObject *fieldObject) {
 
 /// Per-frame update: spirals in on a point 10 pixels above the effect's
 /// position, at a radius of as many pixels as frames are left; released when
-/// timer reaches 0.
+/// timer reaches 0. The update of FieldFx_RunPly's eight spiralling particles;
+/// each one's work holds its starting angle.
 void BattleFx_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
   struct FieldActor *particle = (struct FieldActor *)fieldObject;
   struct BattleFxScene *scene = gEffectWork;
@@ -31,6 +33,7 @@ void BattleFx_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
     particle->timer = decrementedTimer;
     remainingFrames = decrementedTimer;
     if (remainingFrames != 0) {
+      // The angle turns 1/32 of a circle (0x800) each frame left.
       pos.x = scene->x;
       pos.y = scene->y + (10 << 16);
       pos.z = scene->z;
@@ -49,7 +52,9 @@ void BattleFx_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
 
 /// Per-frame update: sways 6 pixels either side (a 64-frame cycle) 16 pixels
 /// above the effect's position, and every 3 frames sheds a spark that sways
-/// as it slowly falls. With phase -1 it stays where it is.
+/// as it slowly falls. With phase -1 it stays where it is. The update
+/// FieldFx_RunPly gives the centre particle; spawns object 0x11d for each
+/// spark.
 void BattleFx_RunSparkEmitter(union FieldObject *fieldObject) {
   struct SparkObject *emitter = (struct SparkObject *)fieldObject;
   struct BattleFxScene *scene;
@@ -86,7 +91,8 @@ void BattleFx_RunSparkEmitter(union FieldObject *fieldObject) {
   }
 }
 
-/// Runs FieldFx_RunPly, then stops the caster's hook.
+/// Runs FieldFx_RunPly, then stops the caster's hook. Called by
+/// BattleFx_DispatchRequestKind.
 ///
 /// Abilities: Ply, Ply Well, Pure Ply (field kind 3), cast on a target.
 void FieldFx_RunPlyOnTarget(s32 unused) {
@@ -95,7 +101,9 @@ void FieldFx_RunPlyOnTarget(s32 unused) {
 }
 
 /// Eight particles spiral into the centre, where one appears, sheds sparks and
-/// flies far away.
+/// flies far away. Called by BattleFx_Run and FieldFx_RunPlyOnTarget; frees
+/// the particles' shared sprite resource slot at the end and runs the effect
+/// scene's finishCallback.
 ///
 /// Abilities: Ply, Ply Well, Pure Ply (field kind 3).
 void FieldFx_RunPly(void) {
@@ -125,8 +133,13 @@ void FieldFx_RunPly(void) {
     WaitFrames(1);
   }
 
+  // The particles share one sprite cache; keep its slot to free at the end.
+  // XXX: last is read with no check that any particle spawned; a scene with
+  // no free object slots would show whether this can be 0.
   resourceSlot = last->slot;
   AudioCommand_PlayFar(SE_130);
+  // The last particle spawned 7 frames ago with 120 frames to live: wait
+  // until the spiral is nearly closed.
   WaitFrames(110);
 
   // The one in the centre.
@@ -165,13 +178,15 @@ void FieldFx_RunPly(void) {
   if (object != 0) {
     target->update = BattleFx_RunSparkEmitter;
     target->timer = 0;
+    // Cast on a target (enabled cleared by BattleFx_DispatchRequestKind), the
+    // sparks fall for 192 frames instead of 128.
     if (scene->enabled != 0)
       WaitFrames(128);
     else
       WaitFrames(192);
   }
 
-  // Fly away.
+  // Fly away: 192 pixels at angle 0xe800, and release it once it arrives.
   if (target != 0) {
     target->timer = -1;
     target->speed = 0x50000;
@@ -182,6 +197,8 @@ void FieldFx_RunPly(void) {
     FieldObject_WaitForMoveFar(target);
     ObjectDispatch_ReleaseFar((struct DispatchObject *)target);
   }
+  // 0x60 is the VRAM cache's entry count, the value Resource_FindFreeEntry
+  // returns for no entry.
   if (resourceSlot != 0x60)
     Resource_ResetEntry(resourceSlot);
   if (scene->finishCallback != 0)

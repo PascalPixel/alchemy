@@ -7,7 +7,8 @@
 /// Effect slot callback: state 0 heads for a point 40 to 70 pixels from where
 /// the particle appeared; state 1 waits to arrive, then goes on to 2; state 2
 /// heads for a point 4 pixels round 8 pixels above the effect's position on
-/// screen; state 3 frees the slot on arrival.
+/// screen; state 3 frees the slot on arrival. Set on the 16 particles of
+/// BattleEffect_RunFallbackObjectTransition.
 void BattleFx_UpdateRadialCamera(struct EffectSlot *effect) {
   // A for/continue retry grows the native English callback 0x100 -> 0x104.
   // Retain the immediate state-1-to-state-2 transition on arrival.
@@ -58,7 +59,9 @@ top:
 }
 
 /// Pauses the target (scene->child) and runs
-/// BattleEffect_RunFallbackObjectTransition.
+/// BattleEffect_RunFallbackObjectTransition. Called by BattleFx_Run and
+/// BattleFx_DispatchRequestKind for Halt on a target; sets the target's
+/// paused field.
 void BattleFx_MarkChildAndRunFallbackTransition(s32 unused) {
   struct FieldActor *target = ((struct BattleFxScene *)gEffectWork)->child;
 
@@ -67,7 +70,10 @@ void BattleFx_MarkChildAndRunFallbackTransition(s32 unused) {
 }
 
 /// Throws an object from the caster to the effect's position over 10 frames
-/// and scatters it into 16 particles.
+/// and scatters it into 16 particles. Halt's visible effect: called by
+/// BattleFx_Run when no target with a talk event is near, and through
+/// BattleFx_MarkChildAndRunFallbackTransition otherwise. Fills effect slots 0
+/// to 15 and sets scene->y to the caster's height.
 void BattleEffect_RunFallbackObjectTransition(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct MotionObject *caster = scene->mainObject;
@@ -94,6 +100,7 @@ void BattleEffect_RunFallbackObjectTransition(void) {
   to.x = scene->x;
   to.y = scene->y + (8 << 16);
   to.z = scene->z;
+  // Steps 0 to 10: the orb arrives on the 11th frame, grown to full size.
   for (;;) {
     s32 steps = 11;
     s32 scale;
@@ -110,6 +117,8 @@ void BattleEffect_RunFallbackObjectTransition(void) {
       break;
   }
 
+  // Three low tones and a high one, 10 frames apart, as the orb changes to
+  // its second animation.
   WaitFrames(5);
   ObjectDispatch_SelectAnimationFar(orb, 1);
   AudioCommand_PlayFar(SE_TRIPLE_TONE_LOW);
@@ -146,7 +155,8 @@ void BattleEffect_RunFallbackObjectTransition(void) {
 }
 
 /// Per-frame update of a paused object: gives its sprite one of the table's
-/// eight params at random.
+/// eight params at random. BattleEffect_PauseObject sets it, and
+/// BattleFx_ResumeObject looks for it to know the object was paused this way.
 void BattleEffect_SetRandomTableValueOnObject(union FieldObject *fieldObject) {
   void *object = (void *)fieldObject;
   s8 *table = gBattleFx_RandomChildValues;
@@ -155,7 +165,11 @@ void BattleEffect_SetRandomTableValueOnObject(union FieldObject *fieldObject) {
 }
 
 /// Pauses object id, keeping its per-frame update and, if it is animated, its
-/// first animation's param in gGameState.
+/// first animation's param in gGameState. Called by BattleFx_Run and
+/// BattleFx_DispatchRequestKind for Halt, which then record the id in
+/// gGameState.pausedObject, and by the Colosso scenes to stop their operators.
+/// Sets gGameState.pausedUpdate and pausedPose, the object's update and paused
+/// fields, and stops its animation.
 void BattleEffect_PauseObject(s32 actorId) {
   struct FieldActor *object;
   struct AnimationEntry *entry;
@@ -177,7 +191,11 @@ void BattleEffect_PauseObject(s32 actorId) {
 }
 
 /// Resumes object id with the update and param kept by
-/// BattleEffect_PauseObject.
+/// BattleEffect_PauseObject. Called for gGameState.pausedObject by BattleFx_Run
+/// and BattleFx_DispatchRequestKind before Halt stops another object, and by
+/// Scene_TalkToActor after talking to the paused actor. Clears
+/// gGameState.pausedUpdate and the object's paused field, and restarts its
+/// animation at speed 16.
 void BattleFx_ResumeObject(s32 actorId) {
   struct FieldActor *object = ObjectTable_Get(actorId);
   if (object != 0) {
@@ -194,7 +212,7 @@ void BattleFx_ResumeObject(s32 actorId) {
 }
 
 /// Returns id, or -1 (no target) when the current effect's definition has
-/// flags 0xff.
+/// flags 0xff. Called by BattleFx_Run on the nearest Halt target.
 s32 BattleFx_FilterObjectIdByFlags(s32 id) {
   if (BattleFx_GetFlags(id) == 0xff)
     return -1;

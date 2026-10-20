@@ -7,6 +7,10 @@
 /// Returns the placement of actor id in the scene's placement tables, or NULL:
 /// for a party character (0 to 7) the row with its sprite, and for a placed
 /// actor (8 on) the row it was created from, counting the placed rows in order.
+///
+/// Called by Scene_TalkToActor for the talk facing, and by the field Psynergy
+/// effects that read an actor's placement (Mind Read, the Djinni effect, the
+/// event messages and the view).
 struct ScenePlacement *Scene_FindActorPlacement(s32 id) {
   struct ScenePlacement *placement;
   s32 tableIndex;
@@ -54,6 +58,10 @@ found:
 
 /// Returns whether an event condition holds: -1 always holds; a condition with
 /// bit 0x1000 holds while that flag is set, any other while its flag is clear.
+///
+/// Used for every condition column of a scene's tables: events
+/// (Scene_FindEvent, Field_SearchTile), placements (Event_SpawnObjectTable),
+/// exit regions (Field_CheckExitRegions) and item events.
 s32 GameFlag_IsConditionActive(s32 condition) {
   s32 flagSet;
 
@@ -70,6 +78,11 @@ s32 GameFlag_IsConditionActive(s32 condition) {
 /// Returns 1 for a search event (kind 3) that holds whatever its condition: one
 /// with more flags than its kind, unless its result is a mimic battle (type
 /// 0x005 in its top 12 bits).
+///
+/// Called by Scene_FindEvent. Field_SearchTile tests such an event's condition
+/// itself (a chest's flag is set once it is opened), so the event is found
+/// either way and the leader still checks the spot; a mimic is found only
+/// while its condition holds.
 u32 Event_SearchIgnoresCondition(s32 flags, s32 result) {
   u32 mimicDifference;
   s32 searchFlags;
@@ -92,6 +105,9 @@ u32 Event_SearchIgnoresCondition(s32 flags, s32 result) {
 /// holds, or NULL. Flag 0x200 also needs the leader to have pushed against it
 /// for more than 12 frames (2 with flag 0x800); flag 0x400 needs the leader to
 /// face within an eighth of a turn of the direction in the top four bits.
+///
+/// Called by every lookup of a scene's events in this part and by
+/// Object_GetTriggerTileAheadOfCurrent. Changes nothing.
 struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 target) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   struct EffectDescriptor *event = (struct EffectDescriptor *)work->events;
@@ -124,6 +140,8 @@ struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 target) {
         }
         break;
       case EVENT_TOUCH_FACING:
+        // Bits 15 to 12 are a facing in sixteenths of a turn; the leader's
+        // facing must be within 0x1fff (an eighth of a turn) of it.
         flags &= 0xf000;
         matches = (u16)((flags - facing) + 0x1fff) <= 0x3ffe;
         break;
@@ -151,6 +169,9 @@ UNUSED void Runtime_CallWorkBlockEntry(void) { gOverlayArea.initialize(); }
 
 /// Returns the talk event of actor id: for the actor the party has stopped, its
 /// kind 7 event if it has one.
+///
+/// Called by Field_RunScene for the A button, to choose between talking and
+/// searching, and by the field Psynergy dispatch.
 s32 Scene_FindActorTalkEvent(s32 id) {
   struct EffectDescriptor *talkEvent = Scene_FindEvent(EVENT_TALK, id);
   s32 pausedActor = gGameState.pausedObject;
@@ -170,6 +191,9 @@ s32 Scene_FindActorTalkEvent(s32 id) {
 /// party has stopped, its kind 7 event comes first; without one, a talk event
 /// that is a function gives a random line from MsgPonderEllipsis ("...")
 /// instead. Returns 0 when an event ran, -1 when there was none.
+///
+/// Called by Field_RunScene for its talk request (work->descriptor). Resumes
+/// the stopped actor and sets gGameState.pausedObject back to -1 afterwards.
 s32 Scene_TalkToActor(s32 id) {
   struct ScenePlacement *placement = Scene_FindActorPlacement(id);
   s32 result = -1;
@@ -189,6 +213,8 @@ s32 Scene_TalkToActor(s32 id) {
       if (event == 0) {
         return -1;
       }
+      // A function talk event is not run for a stopped actor: it says one of
+      // two lines picked at random from the pair its definition flags choose.
       if (event->result >= 0x10000) {
         s32 definitionFlags = BattleFx_GetFlags(id);
         u32 random = Random16();
@@ -270,6 +296,8 @@ finish:
 
 /// Runs the scene's raised event (kind 6) for value: its message or its
 /// function. Returns 0 when an event ran, -1 when there was none.
+///
+/// Called by Field_RunScene for a positive event request (work->event).
 s32 Scene_RunRaisedEvent(s32 value) {
   s32 result;
   s32 handled;
@@ -298,6 +326,10 @@ s32 Scene_RunRaisedEvent(s32 value) {
 /// Runs the touch event (kind 2) of what the leader touched, or else takes its
 /// exit (kind 1): plays the exit's sound (and effect) and records where it
 /// leads. Returns 0 when something ran, -1 when there was nothing.
+///
+/// Called by Field_RunScene for its step request (work->action), which
+/// Field_ProcessStep raises for collision codes 1 to 239. Sets work->exit for
+/// an exit, and clears work->blockedSteps after a touch that needs pushing.
 s32 Scene_RunTouchOrExit(s32 value) {
   struct EffectDescriptor *touch;
   struct EffectDescriptor *exit;
@@ -325,6 +357,8 @@ s32 Scene_RunTouchOrExit(s32 value) {
   } else {
     exit = Scene_FindEvent(EVENT_EXIT, value);
     if (exit != 0) {
+      // Bits 5 and 4 choose the exit's sound: 0 the usual one, 32 and 48
+      // their own sound and context effect, 16 none.
       exitKind = exit->flags & 0x30;
       switch (exitKind) {
       case 0:
@@ -348,12 +382,16 @@ s32 Scene_RunTouchOrExit(s32 value) {
 
 /// Runs the event of a tile the leader pushes against (codes 0xf9 and 0xfc to
 /// 0xfe), once it has pushed for more than 12 frames; the count then restarts.
+///
+/// Called by Field_RunScene for its push request (work->input), which
+/// Field_ProcessStep raises for codes 252 to 254; nothing raises 0xf9 there.
+/// Clears work->blockedSteps when it acts.
 s32 Field_RunPushTileEvent(s32 collisionCode) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   s32 leader = gGameState.selectedActor;
 
   switch (collisionCode) {
-  case 0xfc: // with Down held
+  case 0xfc: // a ledge, jumped down with Down held
     if (work->blockedSteps > 12 && (gKeysHeld & KEY_DOWN)) {
       Actor_JumpDownLedge(leader, 6, 0);
       work->blockedSteps = 0;
@@ -366,7 +404,7 @@ s32 Field_RunPushTileEvent(s32 collisionCode) {
       work->blockedSteps = 0;
     }
     break;
-  case 0xfd: // one thing with Down held, another with Up
+  case 0xfd: // a climbing spot: Down climbs down, Up climbs up
     if (work->blockedSteps > 12) {
       if (gKeysHeld & KEY_DOWN) {
         Field_ClimbDown();
@@ -384,6 +422,10 @@ s32 Field_RunPushTileEvent(s32 collisionCode) {
 /// their two messages. Otherwise the scene's search event for the tile runs: a
 /// function, a message, or a chest holding a Psynergy stone, a mimic, coins or
 /// an item; with no event, "checked the ground" and "found nothing".
+///
+/// Called by Field_RunScene for its search request (work->tile). Opening a
+/// chest sets its condition flag, and it may raise a mimic battle
+/// (work->battle), give coins or an item, or restore all PP.
 s32 Field_SearchTile(s32 tile) {
   const struct SceneEvent *event;
   s32 leader;
@@ -394,6 +436,9 @@ s32 Field_SearchTile(s32 tile) {
   s32 canOpen;
 
   leader = gGameState.selectedActor;
+  // Codes 242 to 247 are fixed kinds of spot, each with its own pair of lines
+  // chosen through gField_TileMessageOffsets; the unsigned compare also
+  // rejects codes below 242.
   messageOffset = tile - 242;
   if (messageOffset <= 5) {
     Leader_StopMoving();
@@ -417,6 +462,9 @@ s32 Field_SearchTile(s32 tile) {
       } else {
         GameFlag_ClearBitFar(FLAG_NOTHING_HAPPENS);
       }
+      // The value is a function address (bits 27 to 24 set) or a FIND_ value
+      // whose top 12 bits give its type: 1 an item, 2 coins, 3 a Psynergy
+      // stone, 4 a message, 5 a mimic.
       searchResult = event->value;
       if ((searchResult & 0x0f000000) != 0 ||
           (searchResult & 0xfff00000) == 0x400000) {
@@ -438,11 +486,14 @@ s32 Field_SearchTile(s32 tile) {
         // A chest; its condition flag is set once it has been opened.
         FieldEvent_Begin();
         if (GameFlag_IsConditionActive(condition) != 0) {
+          // Bit 16 of the value marks a chest the party's own characters
+          // cannot open ("Can't open it").
           searchResult = event->value;
           canOpen = 1;
           if ((searchResult & 0xf0000) == 0x10000 && leader <= 7)
             canOpen = 0;
           if (canOpen != 0) {
+            // Control 19, SEARCH(1), is a chest the map shows as a marker.
             if ((event->control & 0x1ff) == 19)
               Marker_OpenChest(tile);
             rewardType = event->value & 0xfff00000;
@@ -477,6 +528,9 @@ s32 Field_SearchTile(s32 tile) {
 
               if ((event->control & 0x1ff) == 19)
                 Marker_LaunchMimic(tile);
+              // The chest's flag (with 0x1000) waits in pendingDjinnEvent,
+              // which Field_RunScene resolves when the scene is entered again
+              // after the battle.
               if (condition != -1) {
                 condition = gGameState.pendingDjinnEvent = condition | 0x1000;
               }
@@ -512,6 +566,7 @@ s32 Field_SearchTile(s32 tile) {
                   gGameState.selectedActor, event->value & 0xfff);
               WaitFrames(30);
               recipient = PartyInventory_AddFar((u16)event->value);
+              // messageOffset is reused here as the item id's 0xffff mask.
               messageOffset = 0xffff;
               if (recipient == -1) {
                 UiWork_PushValueSlotFar(event->value & 0xfff, 2);
@@ -543,6 +598,7 @@ s32 Field_SearchTile(s32 tile) {
             UiText_ShowPositionedMessageAndWaitFar(MsgCantOpenIt, 1);
           }
         } else {
+          // Already opened: the result line for the check message.
           UiText_ShowPositionedMessageAndWaitFar(MsgTileResult + messageOffset,
                                                  1);
         }

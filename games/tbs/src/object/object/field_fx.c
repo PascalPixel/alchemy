@@ -38,7 +38,8 @@ STATIC_ASSERT(offsetof(struct EffectObj, updateHook) == 0x6c);
 
 /// Keeps the party leader off the markers: a leader within 16 pixels of a
 /// marker cell's centre is moved 20 pixels from that centre, in the direction
-/// it stood, and loses its move target.
+/// it stood, and loses its move target. Only the first marker it stands on
+/// moves it. Called by two scene overlays (Suhalla Desert, Lamakan Desert).
 void Marker_MoveLeaderAway(void) {
   struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);
   struct MarkerSlot *marker = ((struct FieldWork *)gEventWork)->markers;
@@ -50,6 +51,7 @@ void Marker_MoveLeaderAway(void) {
   s32 dx;
   s32 dz;
 
+  // The slots are filled in order, so the first with id 0 ends the list.
   if (marker->id != 0) {
     x = leader->x;
     z = leader->z;
@@ -83,7 +85,6 @@ static inline void Object_InitializeSparkle(struct ObjectRuntime *obj) {
   // Sharing the offset and spawn as well changes literal/argument load order in
   // both emitters, without changing their sizes.
   if (obj != 0) {
-    // Draw the sparkle at priority 1.
     ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
                                  gBattleFx_ParticleScript);
     ObjectDispatch_SelectAnimationFar(obj, 0);
@@ -92,13 +93,18 @@ static inline void Object_InitializeSparkle(struct ObjectRuntime *obj) {
 }
 
 /// Each frame of a found item's picture: one time in ten, a sparkle appears
-/// within 16 pixels of it.
+/// within 16 pixels of it. Installed as the picture's updateHook by
+/// BattleFx_StartRandomParticleEmitter, EffectRuntime_RunRisingObjectSequence
+/// and BattleFx_StartEffectObject22.
 void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
   struct ObjectRuntime *emitter = (struct ObjectRuntime *)fieldObject;
   union PolarOffsetPosition position;
   struct ObjectRuntime *obj;
   u32 randomRadius;
 
+  // Clear the flags once the picture's rise has all but stopped.
+  // XXX: what the flags at 0x55 hold here is unknown; the object system's
+  // readers of ObjectRuntime.flags would settle it.
   if (emitter->velocityY >= -255 && emitter->velocityY <= 255)
     emitter->flags = 0;
 
@@ -119,6 +125,10 @@ void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
 /// Shows the picture of item (0 for none) at the centre of the cell 16 pixels
 /// in front of character actor, 16 pixels up, with sparkles. While Reveal is
 /// active, its sparkles are cleared first. Returns the picture's actor, or 0.
+/// The picture is object 22, thrown up (velocityY 2 << 16, gravity 0x4000),
+/// its icon drawn through heap block 17 and loaded into VRAM. Called by
+/// Field_SearchTile for coins and items found, and by
+/// BattleFx_PlayCueAndStartEmitterOnTarget.
 struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
   struct EffectObj *picture;
 
@@ -183,7 +193,7 @@ struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
     picture->gravity = 0x4000;
 
     // Draw the item's icon into heap block 17, then send it to the sprite's
-    // tiles.
+    // tiles: 128 bytes from offset 0x400 of the block.
     iconBuffer = Runtime_AllocateHeapBlock(17, 0x608);
     Ui_PrepareTransferForItemFar(item);
 
@@ -197,13 +207,17 @@ struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
   return picture;
 }
 
+/// Releases object unless it is NULL. Called by Field_SearchTile to drop the
+/// picture of an item nobody could carry.
 void Object_DestroyIfPresent(void *object) {
   if (object != 0)
     ObjectDispatch_ReleaseFar(object);
 }
 
 /// Raises a found item's picture to 36 pixels above the party leader, who
-/// holds it up (animation 28) facing the screen.
+/// holds it up (animation 28) facing the screen. Called by Field_SearchTile for
+/// what a search finds, by EffectRuntime_RunRisingObjectSequence and by
+/// BattleFx_StartEffectObject22.
 void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object) {
   struct ObjectRuntime *leader;
 
@@ -219,12 +233,14 @@ void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object) {
   ObjectDispatch_SelectAnimationFar(leader, 28);
   ObjectDispatch_InitializeFar((struct DispatchObject *)object,
                                gBattleFx_RisingPulseScript);
+  // Angle 0x4000, a quarter turn, faces the screen.
   leader->angle = 0x4000;
 }
 
 /// Shows a found item's picture: flags bit 0 adds sparkles and bit 1 raises it
 /// above the leader, with waits of 60 and 80 frames around that when both are
-/// set. The leader then returns to animation 1.
+/// set. The leader then returns to animation 1. Scene overlays call it as
+/// Engine_RunRisingObjectSequence (six of them).
 void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags) {
   void *leader;
 
@@ -251,7 +267,9 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags) {
 }
 
 /// Shows the picture of item 36 pixels above the party leader for 80 frames;
-/// flags bit 0 adds sparkles and bit 1 raises it as a found item.
+/// flags bit 0 adds sparkles and bit 1 raises it as a found item. Then it
+/// releases the picture and the leader returns to animation 1. Scene overlays
+/// call it as Engine_ItemShowFound (41 of them).
 void BattleFx_StartEffectObject22(s32 item, s32 flags) {
   struct FieldActor *leader = ObjectTable_Get(gGameState.selectedActor);
   void *iconBuffer = Runtime_AllocateHeapBlock(17, 0x608);
@@ -292,7 +310,8 @@ void BattleFx_StartEffectObject22(s32 item, s32 flags) {
 #if defined(PARTICLES_PAUSE_FOR_MENU)
 #define MENU_OPEN_OFFSET 0xcca ///< in gEventWork: non-zero while a menu is open
 
-/// While Reveal is active, destroys all its sparkles.
+/// While Reveal is active, destroys all its sparkles. Called by the pause
+/// menu (window/selection.c) when it opens over Reveal.
 void BattleFx_ClearRandomParticles(void) {
   if (((struct FieldWork *)gEventWork)->revealActive != 0) {
     struct EffectObj *effect = EFFECT_OBJECT_POOL;
@@ -312,7 +331,8 @@ void BattleFx_ClearRandomParticles(void) {
 #endif
 
 /// Each frame of a Reveal marker: one time in ten, a sparkle appears within 16
-/// pixels of it.
+/// pixels of it. Installed as the marker's updateHook by
+/// FieldEffect_SpawnNearbyMarkers.
 void RevealMarker_EmitSparkles(union FieldObject *fieldObject) {
   const struct FieldActor *source = (const struct FieldActor *)fieldObject;
   union PolarOffsetPosition position;
@@ -336,7 +356,8 @@ void RevealMarker_EmitSparkles(union FieldObject *fieldObject) {
   Object_InitializeSparkle(obj);
 }
 
-/// Returns 1 while Reveal is active, else 0.
+/// Returns 1 while Reveal is active, else 0. Run by a Reveal marker's object
+/// script (gBattleFx_MarkerParticleScript) through SC_CALL.
 s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
   s16 revealState;
   u32 isActive = 0;
@@ -350,10 +371,12 @@ s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
   return isActive;
 }
 
-/// Reveal: marks with sparkles the hidden things within 8 cells across and 5
-/// down of the leader: map places 100 to 239 with no marker actor, whose search
-/// event (kind 3) gives an item, coins, a Psynergy stone or a mimic (types 0
-/// to 3 and 5) and has not been found yet.
+/// Reveal: marks with sparkles the hidden things within 8 cells left or right
+/// and 5 up or down of the leader: map places 100 to 239 with no marker actor,
+/// whose search event (kind 3) gives an item, coins, a Psynergy stone or a
+/// mimic (types 0 to 3 and 5) and whose flag is not yet set. Each mark is an
+/// object 22 running gBattleFx_MarkerParticleScript. Called by Reveal's effect
+/// (psynergy_effects/reveal.c).
 void FieldEffect_SpawnNearbyMarkers(void) {
   u8 *markerData;
   struct ObjectRuntime *actor;
@@ -364,7 +387,8 @@ void FieldEffect_SpawnNearbyMarkers(void) {
   s32 row;
   s32 id;
 
-  // The map's places: (x, z, id) triples, ended by x and z 0xff.
+  // The map's places: (column, row, id) triples, ended by 0xff, 0xff; the
+  // same list as MarkerMap's markers in markers.c.
   markerData = *(u8 **)(((u8 *)gMapWork[0]) + 16);
   actor = ObjectTable_Get(gGameState.selectedActor);
   leaderColumn = actor->x >> 20;

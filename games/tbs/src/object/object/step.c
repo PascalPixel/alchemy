@@ -22,11 +22,14 @@ enum StepTileEvent {
   STEP_TERRAIN_FIRST = 240, ///< 240 and 241: ground with its own encounters
   STEP_TERRAIN_LAST = 241,
   STEP_EVENT_HAZARD = 250, ///< ground that hurts the party over time
-  STEP_WARP_FIRST = 252,   ///< 252 to 254: warps
+  STEP_WARP_FIRST = 252,   ///< 252 to 254: ledges and climbing spots the
+                           ///< leader pushes against (Field_RunPushTileEvent)
   STEP_WARP_LAST = 254
 };
 
 /// Clears the field's twelve pending requests (see struct FieldWork).
+///
+/// Called by Field_RunScene while it sets a scene up.
 void Field_ClearRequests(void) {
   s16 noRequest;
   struct FieldWork *work;
@@ -48,6 +51,8 @@ void Field_ClearRequests(void) {
 
 /// Returns the sum of the field's twelve pending requests (counting the actor
 /// event request twice): non-zero while any request is pending.
+///
+/// Field_RunScene tests it to stop walking and to leave its request loop.
 s32 Field_CountRequests(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
 
@@ -59,6 +64,8 @@ s32 Field_CountRequests(void) {
 
 /// Returns the collision code of the map cell 16 pixels ahead of the party
 /// leader (a world map block on the world map), or 0 without a leader.
+///
+/// Called from items.c, where using an item looks at what the leader faces.
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *work;
   struct ObjectRuntime *leader;
@@ -86,6 +93,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
     u32 tileX;
     u32 tileY;
 
+    // Rounding toward zero, as a signed division by 0x200000 would.
     fixedX = position.vector.x;
     if (fixedX < 0)
       fixedX += 0x1fffff;
@@ -121,6 +129,9 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 /// Takes the exit of the first of the scene's exit regions that contains the
 /// position (x, y, z) and whose condition holds: records the region's exit
 /// value for Field_RunScene, plays the exit sound and starts leaving the scene.
+///
+/// Called by Field_ProcessStep when the leader steps on a cell with a non-zero
+/// collision code. Sets work->exit and stops the leader.
 void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   // A do/while or while scan changes register allocation (51 text bytes in
   // tbs-en); keep the sentinel backedge until that form matches.
@@ -170,10 +181,15 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
 }
 
 /// Handles one step of the party leader onto the cell at (x, y, z) of map
-/// layer: records step events and warps, takes exits, and while walking
+/// layer: records step events and push tiles, takes exits, and while walking
 /// advances the encounter counter, regenerates PP, hurts the party with poison
 /// and hazardous ground, and wears Avoid off. When this hurts the party, the
 /// leader flinches and characters who fall are listed in the field work.
+///
+/// Called by Field_RunScene each frame while the party walks (in debug mode,
+/// flag 0x163 skips it). Sets work->action, input, battle, command and event
+/// (-1 when someone fell), work->currentTile and previousTile, walkingDistance,
+/// fallenOwners and survivorCount, and gGameState's hazard and Avoid counts.
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): the party read through struct StepOwner, whose alias
    * set keeps the load order and the 44-byte frame; as struct BattleUnit, 2
@@ -185,9 +201,9 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   s16 previousHp[8];
   struct MapCell *tile;
 #ifdef UBFIX
-  // UnitGet returns the real BattleUnit; the native prefix aliases that owner
-  // through an unrelated struct type. The plain owner keeps 0x41c bytes but
-  // changes allocation from .text+0x1c90 in English.
+  // The defined form reads the struct BattleUnit UnitGetFar returns, rather
+  // than through the unrelated struct StepOwner; it compiles to the same size
+  // with a different register allocation (see the tag above).
   struct BattleUnit *unitVitals;
 #else
   struct StepOwner *unitVitals;
@@ -224,6 +240,8 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   event = tile->collisionCode;
   work->previousTile = work->currentTile;
   work->currentTile = tile;
+  // Exit regions are checked on any marked cell; the code then picks the
+  // request it raises.
   if (event != 0)
     Field_CheckExitRegions(x, y, z);
   if (event >= STEP_EVENT_FIRST && event <= STEP_EVENT_LAST)
@@ -231,10 +249,12 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   if (event >= STEP_WARP_FIRST && event <= STEP_WARP_LAST)
     work->input = event;
 
+  // Only while walking (not climbing) towards a target.
   if (gGameState.movementMode == 0 && leader != NULL &&
       leader->targetX != ACTOR_NO_TARGET) {
     // Encounters: the zone comes from the world map terrain, or from the
-    // ground the leader stands on.
+    // ground the leader stands on. FLAG_LURE_CAP doubles the speed the roll
+    // counts.
     encounterSpeed = leader->speedLimit;
     if (GameFlag_TestFar(FLAG_LURE_CAP))
       encounterSpeed <<= 1;
@@ -251,8 +271,9 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
       work->battle = Encounter_RollTerrain(0, encounterSpeed);
     }
 
-    // Every 0x10000 of distance walked (half as fast where full is 0), the
-    // party regains PP and takes poison damage.
+    // Every 0x10000 of distance walked (counted at half speed on ground whose
+    // encounter zone is 0; fullEncounterRate holds that zone, 1 on the world
+    // map), the party regains PP, Djinn recover, and poison hurts.
     stepDistance = Iwram_MulQ16(work->walkingDistanceScale, leader->speedLimit);
     if (!fullEncounterRate)
       stepDistance /= 2;
@@ -281,14 +302,17 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
       gGameState.avoidDistance -= leader->speedLimit;
       if (gGameState.avoidDistance <= 0) {
         gGameState.avoidDistance = 1;
+        // Raise Avoid as a Psynergy request that pays no PP (ACT_PACKED |
+        // ABILITY_AVOID); Avoid's end handler says it wore off.
         if (work->command == 0)
           work->command = 0x2096;
       }
     }
   }
 
-  // In hazard mode 1 the count rises each step, with warnings half way and at
-  // the limit; at the limit the party takes the hazard's damage.
+  // In hazard mode 1 the count rises each step. Half way, object 209 is
+  // attached to the leader until removed (0x101, at sprite priority 1); at
+  // the limit it is removed (0x100) and the party takes the hazard's damage.
   if (gGameState.hazardMode == 1) {
     gGameState.hazardSteps++;
     if (gGameState.hazardSteps == gGameState.hazardLimit / 2)
@@ -297,12 +321,16 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
       BattleFx_ConfigureLinkedObject(leaderId, 0x100);
   }
   if (gGameState.hazardSteps >= gGameState.hazardLimit) {
+    // hazardDamage: bits 7 to 0 the amount, bit 8 a percentage of maximum HP.
     amount = gGameState.hazardDamage;
     gGameState.hazardSteps = 0;
     BattleParty_ApplyHealthDelta(-(amount & 255), amount & 0x100);
     partyHurt++;
   }
 
+  // The leader flinches (velocityY) and shows a one-off object 209 (0x102);
+  // each character whose HP reached 0 on this step is listed, loses its
+  // poison and raises event -1, which Field_RunScene handles.
   if (partyHurt) {
     work->fallenCount = 0;
     work->survivorCount = 0;
@@ -327,6 +355,10 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
 
 /// Gives each character in the party amount PP (PP regenerates as the party
 /// walks).
+///
+/// Called by Field_ProcessStep as the party walks, by Field_SearchTile for a
+/// Psynergy stone (999, all PP), and by the Vale home scene through
+/// BattleParty_ApplyDrainFar.
 void BattleParty_ApplyDrain(s32 amount, s32 unused) {
   s32 partyCount = Party_CountActiveOwnersFar();
   s32 partyIndex;
@@ -339,12 +371,15 @@ void BattleParty_ApplyDrain(s32 amount, s32 unused) {
 /// HP when percent is set. A percentage that truncates to zero falls back to
 /// the positive magnitude of amount. Damage flashes and plays an impact sound;
 /// healing plays the recovery sound.
+///
+/// Called by Field_ProcessStep for hazardous ground.
 void BattleParty_ApplyHealthDelta(s32 amount, s32 percent) {
   s32 partyCount;
   s32 partyIndex;
   s32 hpDelta;
   struct BattleUnit *unit;
 
+  // Damage of more than 10 plays the heavier impact sound.
   if (amount < 0) {
     BattleFx_ApplyColorToSourceBuffer(0x1ff, 0);
     BattleFx_StartBufferInterpolation(4);
@@ -376,6 +411,8 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 percent) {
 /// Hurts each poisoned character in the party: poison takes a twentieth of
 /// their maximum HP and venom a tenth (at least 1). Returns 0 when nobody was
 /// hurt, else the worst status found (1 poison, 2 venom), after a flash.
+///
+/// Called by Field_ProcessStep at each tick of the distance walked.
 s32 BattleParty_ApplyStatusDamage(void) {
   s32 worstPoison = 0;
   s32 partyCount = Party_CountActiveOwnersFar();
@@ -419,6 +456,11 @@ s32 BattleParty_ApplyStatusDamage(void) {
 /// Starts an event or menu on the world map: ends any colour ratio transition
 /// in progress, sets the camera's movement state to 1 and resumes the map's
 /// animation. Elsewhere it does nothing.
+///
+/// Called by Field_RunScene around the handling of most requests, by the
+/// Djinni effect and by the world map scene; each call is paired with
+/// Battle_ClearObjectFlag5bWhenMode3. Changes the display transition state in
+/// heap slot 31 (0x1F, HEAP_SLOT_TRANSITION) only when it is running.
 void Battle_SetObjectFlag5bWhenMode3(void) {
   struct FieldWork *work;
   struct DisplayTransitionState *transition;

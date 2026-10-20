@@ -7,6 +7,14 @@
 /// Returns the sprite of character, which is the character itself except that
 /// FLAG_CHILDHOOD gives characters 0 and 1 sprites 0x12 and 0x13, and flag 0x21
 /// gives character 0 sprite 0x11.
+///
+/// Called by Event_SpawnObjectTable for every placement, and by
+/// PsynergyMenu_InitializeEntryObjects (through
+/// Party_RemapCharacterIdByFlagsFar) for the party's figures.
+///
+/// XXX: what flag 0x21 marks; Party_EndChildhood clears it with
+/// FLAG_CHILDHOOD, so it belongs to the prologue, and the scene that sets it
+/// would settle its name.
 s32 Party_RemapCharacterIdByFlags(s32 character) {
   s32 sprite;
 
@@ -28,6 +36,10 @@ s32 Party_RemapCharacterIdByFlags(s32 character) {
 
 /// Returns the sprite of character as Party_RemapCharacterIdByFlags would with
 /// FLAG_CHILDHOOD set to childhood (as recorded in a save file's summary).
+///
+/// Called by SaveMenu_ShowPartySprites through
+/// Party_RemapCharacterIdIfEnabledFar. It has no counterpart of flag 0x21, so
+/// it never gives sprite 0x11.
 s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
   s32 sprite;
 
@@ -55,6 +67,10 @@ extern const struct ScenePlacement gField_DefaultPlacements[2];
 /// condition from 48 to 127 whose condition + 80 does not hold. An actor that
 /// already exists is only moved back to its place, unless the party keeps its
 /// position.
+///
+/// Called by ObjectTable_ResetForObject (the leader, then the scene's table),
+/// BattleEffect_ClearAllObjects and Event_CallWithLastActiveObjectId. Records
+/// the table in work->tables and each actor in work->actors.
 void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
   struct FieldWork *work;
   struct ObjectRuntime *object;
@@ -80,6 +96,9 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
   for (placementSprite = entry->sprite;
        (s16)placementSprite != -1 && slot <= 65;
        entry++, placementSprite = entry->sprite) {
+    // XXX: what a sprite above 0x2705 means; such a row takes no slot and
+    // reuses the previous row's actorIndex (none for a first row). A
+    // placement table with one would settle it.
     if (entry->sprite <= 7)
       actorIndex = entry->sprite;
     else if (entry->sprite <= 0x2705)
@@ -87,6 +106,9 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
     condition = entry->condition;
     if (!GameFlag_IsConditionActive(condition))
       continue;
+    // XXX: why conditions 48 to 127 also test the flag 80 above them (128 to
+    // 207) outside the world map; what those flag ranges hold would settle
+    // it.
     if ((u32)(condition - 48) <= 79 && work->mode != MODE_WORLD_MAP &&
         !GameFlag_IsConditionActive(condition + 80))
       continue;
@@ -107,6 +129,8 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
           sprite->slot = spriteSlot;
         }
       }
+      // The young Isaac and Garet (sprites 0x12 and 0x13) take metadata 226
+      // under flag 0x21.
       if (GameFlag_TestFar(0x21) && (u32)(spriteId - 0x12) <= 1)
         ObjectDispatch_RegisterChildMetadataFar((struct DispatchObject *)object,
                                                 226);
@@ -125,12 +149,16 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
       ObjectDispatch_SelectAnimationFar(object, 1);
       ((struct ScriptObjectRuntime *)object)->homeX = object->x / 0x10000;
       ((struct ScriptObjectRuntime *)object)->homeZ = object->z / 0x10000;
+      // A placement with a height is lifted half a pixel more and takes flags
+      // 4; outside the world map every height is then counted from the
+      // terrain below.
       if (object->y != 0) {
         object->flags = 4;
         object->y += 0x8000;
       }
       if (work->mode == MODE_WORLD_MAP) {
-        // On the world map actors are drawn at three quarters size.
+        // On the world map actors are drawn at three quarters size, except
+        // under flag 0x21.
         object->flags &= 0xfe;
         if (!GameFlag_TestFar(0x21))
           sprite->scale = Iwram_MulQ16(sprite->scale, 0xc000);
@@ -145,6 +173,8 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
   }
 }
 
+/// Destroys the actor in slot actorIndex, if there is one, and empties the
+/// slot. No caller names it; its far-call veneer has no exported name.
 void ObjectTable_DestroyAtIndex(s32 actorIndex) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   void *object = ObjectTable_Get(actorIndex);
@@ -168,9 +198,14 @@ void ObjectTable_DestroyAtIndex(s32 actorIndex) {
 /// Creates a scene's actors on entering it: the party leader where the game
 /// state puts it, then the scene's placement table from actor slot 8, and the
 /// camera that follows the leader. A leader entering above ground where its
-/// cell and the cell north of it have collision code 0xfd is raised by the
-/// ground height of the cell north of it less 32 pixels, and takes movement
-/// mode 1.
+/// cell and the cell north of it are climbing spots (collision code 0xfd) is
+/// raised by the ground height of the cell north of it less 32 pixels, and
+/// starts climbing (movement mode 1).
+///
+/// Called by Field_RunScene on entering a scene, and by
+/// Event_RunObjectHookAndWait.
+/// Empties every actor slot and table first; sets work->camera, the map's
+/// origin and gGameState.movementMode.
 void ObjectTable_ResetForObject(struct ScenePlacement *table) {
   struct FieldWork *work;
   struct ScenePlacement *entry;
@@ -218,7 +253,8 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
     gGameState.movementMode = 0;
   }
 
-  // The camera follows this leader and starts at its resolved ground height.
+  // The camera follows this leader and starts at its resolved ground height;
+  // the map scrolls by the camera's position.
   camera = Object_CreateFar(0x8000, object->x, object->y, object->z);
   camera->terrainHeight = object->terrainHeight;
   ObjectDispatch_StartCameraFar((struct DispatchObject *)camera, (s32)object);
@@ -235,6 +271,9 @@ void ObjectTable_ResetForObject(struct ScenePlacement *table) {
 
 /// Returns the slot after the last placed actor (8 when there is none), or -1
 /// when slot 65 is occupied. Earlier holes are not reused by this append scan.
+///
+/// Called by BattleEffect_ClearAllObjects and Event_CallWithLastActiveObjectId
+/// to choose where Event_SpawnObjectTable starts.
 s32 ObjectTable_FindLastActiveId(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   s32 lastActorIndex = ACTOR_FIRST_PLACED - 1;
@@ -271,6 +310,10 @@ UNUSED void *ObjectTable_GetSlotAddress(u32 actorIndex) {
 
 /// Gives each placement with condition 0 a condition saying whether it lies
 /// within the map's view bounds, so that only those inside appear.
+///
+/// Called by scene overlays through Scene_AssignViewFlagsFar, which they import
+/// under four local names (FieldScene_PrepareActors the most used). Writes the
+/// placements' condition, and clears FLAG_IN_VIEW and sets FLAG_OUT_OF_VIEW.
 void Scene_AssignViewFlags(struct ScenePlacement *entry) {
   struct MapScrollWork *view = gMapWork[0];
 
@@ -299,6 +342,10 @@ void Scene_AssignViewFlags(struct ScenePlacement *entry) {
 
 /// Destroys the placed actors far from the view's centre: more than 160 pixels
 /// to either side, 200 pixels north or 100 pixels south. Actors at (0, 0) stay.
+///
+/// Called on the world map before an effect plays, by Field_UsePsynergy and
+/// Djinn_JoinParty; empties the slots it frees. BattleEffect_ClearAllObjects
+/// brings the actors back afterwards.
 void BattleEffect_ClearOutOfBoundsObjects(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   struct ObjectRuntime *camera;
@@ -355,6 +402,10 @@ void BattleEffect_ClearOutOfBoundsObjects(void) {
 
 /// Destroys every placed actor and places the scene's actors again from its
 /// first placement table after the leader's.
+///
+/// Called on the world map after an effect, by Field_UsePsynergy and
+/// Djinn_JoinParty. Clears work->tables 1 to 3 before the table is spawned
+/// again.
 void BattleEffect_ClearAllObjects(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   struct ScenePlacement *placements;
@@ -379,6 +430,8 @@ void BattleEffect_ClearAllObjects(void) {
 }
 
 /// Empties all 66 actor slots, without destroying the actors.
+///
+/// Called by ObjectTable_ResetForObject.
 void ObjectTable_ClearAll(void) {
   struct FieldWork *work;
   struct FieldActor *emptyActor;
@@ -395,6 +448,9 @@ void ObjectTable_ClearAll(void) {
 
 /// Returns the actor in slot index (0 to 65), or NULL. Indices up to 191 read
 /// past the actor slots into the rest of the event work; larger ones give NULL.
+///
+/// The field's actor lookup: called across the object folder and, through
+/// ObjectTable_GetFar (Engine_ActorLookup), by scene overlays.
 void *ObjectTable_Get(u32 actorIndex) {
   u8 *workBytes = (u8 *)gEventWork;
   u32 slotOffset;
@@ -418,6 +474,10 @@ void *ObjectTable_Get(u32 actorIndex) {
 /// gObjectSnapshots, with each one's animation, sprite flags and priority, so
 /// that ObjectTable_Restore can put them back. The 32 bytes before
 /// gObjectSnapshots list the saved slots, ended by 255.
+///
+/// Called by Field_RunScene before a random battle, by the save menu through
+/// SaveState_CaptureObjectTableFar, and by two scenes (Tolbi's spring and the
+/// Venus Lighthouse aerie).
 void ObjectTable_Snapshot(void) {
   struct ObjectRuntime *snapshot = gObjectSnapshots;
   u8 *animations = (u8 *)&gObjectSnapshots[32];
@@ -467,6 +527,11 @@ void ObjectTable_Snapshot(void) {
 
 /// Puts back the actors ObjectTable_Snapshot saved, and moves the camera to the
 /// party leader's height.
+///
+/// Called by Field_RunScene when the party keeps its position
+/// (FLAG_KEEP_PARTY_POSITION), and by the Venus Lighthouse aerie scene through
+/// ObjectTable_RestoreFar. Only actors whose slots are filled again are
+/// restored; the leader is set idle.
 void ObjectTable_Restore(void) {
   struct ObjectRuntime *snapshot = gObjectSnapshots;
   u8 *indices = (u8 *)gObjectSnapshots - 32;

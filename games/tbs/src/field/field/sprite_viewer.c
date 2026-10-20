@@ -20,8 +20,9 @@ struct UiIconColumn {
 /// number (ten at a time with Start), 2 the priority, 3 the draw parameter,
 /// changed with L and R. A restarts the animation, or in the other modes
 /// turns a layer on or off. Pressing Start toggles the shadows; B turns the
-/// ring when it is rebuilt with Start held. Select reloads the far-call
-/// resources (the alternate set unless B is held) and starts over.
+/// ring when it is rebuilt with Start held. Select starts over; it passes
+/// a far-call resource set (the alternate one unless B is held) to
+/// RuntimeDispatch_ReturnZero, a stub that ignores it.
 ///
 /// It has a bare veneer in the field far-call table, and no caller names it.
 /// Takes heap slot 9 for the ring of ten positions and runs
@@ -62,9 +63,12 @@ void Ui_RunIconMonitor(void) {
   ring = Runtime_AllocateBlock(9, 10 * sizeof(*ring));
   gDecodeFillByte = 3;
 
+  // Only the ring's first word is cleared; Map_BuildProbeRing fills it.
   Dma_Fill32Cell(fillWord, 0, ring, 4);
   Dma_Fill32Cell(fillWord, 0, layers, sizeof(layers));
 
+  // All four layers start on the first sprite with an image, animation 1,
+  // priority 1; only layer 0 is shown.
   spriteId = Ui_FindNextSpriteWithImage(-1, 1);
   for (i = 0; i <= 3; i++) {
     layers[i].animation = 1;
@@ -73,20 +77,24 @@ void Ui_RunIconMonitor(void) {
   }
   layers[0].on = 1;
   gDebugMode = 2;
+  // Only BG0 and the sprites are shown.
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   // A green backdrop (BGR555 green 15).
   PLTT_BACKDROP = 0x01E0;
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_OBJ_ON;
   Fade_FromBlack(1);
 
-  // Rebuilt from here whenever layer 0's sprite changes or Select reloads
-  // the resources.
+  // Rebuilt from here whenever layer 0's sprite changes or Select is
+  // pressed: a fresh heap, task table and VRAM cache each time.
 restart:
   Runtime_InitializeHeap();
   Scheduler_ResetTaskTable();
   ring = Runtime_AllocateBlock(9, 10 * sizeof(*ring));
   VramCache_Reset();
   ObjectSystem_Initialize(2);
+  // With no map loaded, the map cell buffer holds layer 0's frames; a
+  // two-part sprite (draw kind 20) puts its second part in the actor
+  // sprite buffer, as resource slot 1.
   ResourceSlot_Load(0, (u32 *)Ram_MapCellBuffer, layers[0].number, 0);
   spriteMetadata = Resource_GetMetadataRecordFar(layers[0].number);
   if (spriteMetadata->drawKind == 20) {
@@ -104,6 +112,8 @@ restart:
     spriteWork.sprite =
         ResourceObject_Create(layers[0].number + spriteWork.resourceOffset +
                               (spriteWork.resourceOffset << 12));
+    // Layers 1 to 3 are added to every copy whether shown or not; a hidden
+    // layer is kept out of the drawing by its priority below.
     ResourceMetadata_Register(spriteWork.sprite, layers[1].number);
     ResourceMetadata_Register(spriteWork.sprite, layers[2].number);
     ResourceMetadata_Register(spriteWork.sprite, layers[3].number);
@@ -114,6 +124,8 @@ restart:
     *spriteWork.flags = shadowsEnabled;
   }
 
+  // Priority 8 hides a layer: Sprite_ComposeAnimationFrame draws only
+  // priorities 0 to 3.
   for (i = 0; i <= 3; i++) {
     if (layers[i].on != 0) {
       Ui_SetGridColumnPriority(i, layers[i].priority);
@@ -123,6 +135,8 @@ restart:
     Ui_SetGridColumnParameter(i, layers[i].param);
     Ui_FillGridColumnFromMetadata(i, layers[i].animation);
   }
+  // The copies are drawn each frame by the task below, from the ring's
+  // positions.
 
   Map_BuildProbeRing(x, y, ring);
   // Order 3200 (0xc80), where the field camera runs.
@@ -133,6 +147,9 @@ next:
   heldKeys = &gKeysHeld;
   repeatedKeys = &gKeysRepeat;
   for (;;) {
+    // Start held: the direction pad moves the ring a pixel a frame.
+    // Otherwise up and down pick the layer and left and right the mode,
+    // both wrapping at four.
 
     if ((*heldKeys & KEY_START) != 0) {
       if ((*heldKeys & KEY_LEFT) != 0) {
@@ -165,6 +182,8 @@ next:
       }
     }
 
+    // A press of Start also toggles the shadows (sprite flag bit 0) of the
+    // ten copies.
     if ((gKeysPressed & KEY_START) != 0) {
       sprites = gSpriteObjects;
       shadowsEnabled ^= 1;
@@ -203,6 +222,8 @@ next:
       }
       goto next;
 
+    // Mode 1, the sprite number: one sprite with an image at a time, or ten
+    // with Start held.
     case 1:
       changed = 0;
       spriteSteps = 1;
@@ -230,6 +251,7 @@ next:
       if (selectedLayer == 0) {
         goto restart;
       }
+      // A hidden layer only remembers the number until it is shown again.
       if (layers[selectedLayer].on != 0) {
         Ui_SetGridColumnNumber(selectedLayer, layers[selectedLayer].number);
         Ui_SetGridColumnPriority(selectedLayer, layers[selectedLayer].priority);
@@ -239,6 +261,7 @@ next:
       }
       goto next;
 
+    // Mode 2, the layer's draw priority, 0 to 3 and wrapping.
     case 2:
       changed = 0;
       if ((*repeatedKeys & KEY_L) != 0) {
@@ -263,6 +286,8 @@ next:
       }
       goto next;
 
+    // Mode 3, the draw parameter, 0 to 15 and wrapping; 15 is the value
+    // ObjectGroup_SetChildValueUnlessFifteen leaves alone.
     case 3:
       changed = 0;
       if ((*repeatedKeys & KEY_L) != 0) {
@@ -291,6 +316,9 @@ next:
       break;
     }
 
+    // A, in mode 0: restart the selected layer's animation (layer 0 also
+    // restarts layer 1, which follows it). In the other modes: show or hide
+    // the layer; layer 0 is always shown.
     if ((*repeatedKeys & KEY_A) != 0) {
       if (editMode == 0) {
         if (selectedLayer != 1) {
@@ -312,6 +340,8 @@ next:
       }
     }
 
+    // RuntimeDispatch_ReturnZero ignores its arguments, so the resource set
+    // chosen here changes nothing in this build.
     if ((*repeatedKeys & KEY_SELECT) != 0) {
       Scheduler_ResetTaskTable();
       if ((*heldKeys & KEY_B) != 0) {
@@ -333,6 +363,8 @@ next:
 s32 Ui_FindNextSpriteWithImage(s32 spriteId, s32 direction) {
   for (;;) {
     spriteId += direction;
+    // Past either end, jump to just beyond the other, so the next step
+    // lands on 511 or 0.
     if (spriteId < 0) {
       spriteId = 0x200;
       continue;
@@ -368,6 +400,8 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
   angle = 0;
   // Select the viewer sprite's formation; headings wrap as 16-bit turns.
   facingKind = gSpriteObjects->entries[0]->kind;
+  // With B held the ring starts at an angle that turns with the frame
+  // counter, a full turn every 256 frames.
   if ((gKeysHeld & KEY_B) != 0)
     angle = (s16)(gFrameTick << 8);
   // 0x2aaa, 0x2000, 0x1999 and 0x4000 are a sixth, an eighth, a tenth and
@@ -421,6 +455,8 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
       angle = (s16)(angle + 0x1999);
     }
     break;
+  // Draw kind 20: two places 40 pixels out, a quarter turn round and then
+  // opposite it, each holding both of the sprite's parts.
   case 20:
     initialHeading = angle;
     angle = (s16)(initialHeading + 0x4000);
@@ -447,6 +483,7 @@ void Map_BuildProbeRing(s32 centerX, s32 centerY,
       angle >>= 16;
     }
     break;
+  // Any other kind: four places, starting an eighth of a turn round.
   default:
     angle = (s32)(((u32)angle << 16) + 0x20000000) >> 16;
     for (facingIndex = 0; facingIndex < 4; facingIndex++) {
@@ -503,6 +540,8 @@ void Ui_FillGridColumnFromMetadata(s32 layerIndex, s32 animationIndex) {
     if (entry->scripts != 0) {
       metadata = Resource_GetMetadataRecordFar(entry->animId);
       if (animationIndex < metadata->animationCount) {
+        // Copy n starts n frames (16 timer units each) late, at normal
+        // speed, with no frame drawn yet.
         entry->kind = metadata->drawKind;
         entry->script = entry->scripts[animationIndex];
         entry->timer = spriteIndex * 0x10;
@@ -577,12 +616,15 @@ void Battle_PlaceActorsByFormationKind(void) {
     step = 0x1999;
     count = 10;
     break;
+  // The two parts at each place face the same way; the second place faces
+  // half a turn from the first.
   case 20:
     angle = 0;
     step = 0;
     pairedFacingStep = 0x8000;
     count = 4;
     break;
+  // The eighth-turn start matches Map_BuildProbeRing's default ring.
   default:
     angle = 0x2000;
     step = 0x4000;
@@ -590,6 +632,7 @@ void Battle_PlaceActorsByFormationKind(void) {
     break;
   }
 
+  // Copy n faces n steps round, the way its ring position lies.
   for (spriteIndex = 0; spriteIndex < count; spriteIndex++) {
     Render_ApplyProjectedPlacement(sprite, &facingPositions[spriteIndex],
                                    &scale, angle);

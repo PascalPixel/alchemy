@@ -5,6 +5,8 @@
 #include "../psynergy_effects_internal.h"
 
 /// Abilities: Catch (field kind 13), cast on a target.
+///
+/// Called by BattleFx_DispatchRequestKind; the target is ignored.
 void FieldFx_RunCatchOnTarget(s32 unused) { FieldFx_RunCatch(); }
 
 /// Carries object 215 from 16 pixels above the caster to the goal in 10 steps,
@@ -14,7 +16,9 @@ void FieldFx_RunCatchOnTarget(s32 unused) { FieldFx_RunCatch(); }
 /// Abilities: Catch (field kind 13).
 ///
 /// The goal is 32 pixels in front of the caster with scene->enabled, otherwise
-/// the effect's position, 32 pixels up in both cases.
+/// the effect's position, 32 pixels up in both cases. Called by BattleFx_Run
+/// and FieldFx_RunCatchOnTarget. Moves the effect scene's child to (-9, -9)
+/// when there is one, and releases object 215 at the end.
 void FieldFx_RunCatch(void) {
   struct BattleFxScene *scene = gEffectWork;
   struct MotionObject *actor = scene->mainObject;
@@ -54,7 +58,8 @@ void FieldFx_RunCatch(void) {
   ObjectDispatch_SelectAnimationFar(object, 5);
   Animation_ApplyChildValuesFar((struct DispatchObject *)object, 1);
 
-  // Reach out to the goal.
+  // Reach out to the goal: steps 0 to 10 of an 11-step loop, a tenth of the
+  // way each frame.
   step = 0;
   do {
     s32 scale;
@@ -79,6 +84,8 @@ void FieldFx_RunCatch(void) {
   }
   ObjectDispatch_SelectAnimationFar(object, 5);
   AudioCommand_PlayFar(SE_132);
+  // XXX: why the caught object goes to (-9, -9) pixels, just off the map's
+  // corner; the scene code that reads it after Catch would settle it.
   if (child != 0)
     Object_SetPositionAndResetMotionFar((struct ObjectRuntime *)child,
                                         -(9 << 16), child->y, -(9 << 16));

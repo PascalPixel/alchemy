@@ -8,7 +8,9 @@
 /// spins ever faster and shrinks away in a fountain of 24 sparks
 /// (BattleEffect_UpdatePhasedRadialParticle). The leader turns to the camera
 /// and plays animation 28, the sparks swarm the leader, who pulses for 100
-/// frames, and the sparks vanish.
+/// frames, and the sparks vanish. Called by Djinn_JoinParty for a Mars Djinni,
+/// which then clears the Djinni's actor slot. Uses all 24 effect slots, tints
+/// the field palette red and fades it back at the end.
 void Djinn_RunMarsJoinEffect(s32 djinniId) {
   struct EffectVector position;
   s32 scale;
@@ -26,8 +28,12 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   BattleFx_InitializeSlots();
   effectScene = gEffectWork;
+  // Tint the screen red: PALETTE_TRANSFORM_TINT | RGB(16, 4, 4), the form
+  // mercury.c spells out for its blue.
   Shop_RestoreSceneTilesFar(0x201090);
   WaitFrames(30);
+  // Turn to face the camera (angle 0x4000), then bounce three times, a rising
+  // note on each.
   ObjectMotion_ArmCallback(djinniId, 0x4000, 0);
   WaitFrames(20);
   AudioCommand_PlayFar(SE_173);
@@ -36,6 +42,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   Motion_SetVarCbAndRefresh(djinniId, 1);
   AudioCommand_PlayFar(SE_175);
   Motion_SetVarCbAndRefresh(djinniId, 1);
+  // Spin up for 80 frames, then spin and shrink away.
   WaitFrames(20);
   AudioCommand_PlayFar(SE_140);
   djinni->update = BattleFx_AdvanceAngleWithRamp;
@@ -50,6 +57,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   position.z = djinni->z.fixed;
   Camera_WorldToScreen(&position);
 
+  // One spark a frame into each of the 24 effect slots.
   slot = effectScene->slots;
   remaining = 23;
   do {
@@ -88,6 +96,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     } while (remaining >= 0);
   }
 
+  // The leader pulses while the sparks swarm it.
   WaitFrames(60);
   leader->update = BattleFx_SetObjectAlternatingWords;
   WaitFrames(100);
@@ -118,6 +127,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   leader->update = (void *)slot;
   leader->scaleX = 0x10000;
   leader->scaleY = 0x10000;
+  // Fade the palette back from the tint and free the effect slots.
   WaitFrames(30);
   Shop_InitEffectFar();
   BattleFx_ClearActiveSlotsAndScheduleUpdates();
@@ -128,7 +138,8 @@ DEFINE_SHRINK_AND_DESTROY(BattleFx_ShrinkObjectAndDestroyFast, 0xFFFFFC00)
 
 /// Per-frame update of a Venus Djinni's falling motes: each circles the
 /// leader on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a
-/// pixel a frame, and is released 20 pixels above the leader's feet.
+/// pixel a frame, and is released 20 pixels above the leader's feet. Set by
+/// BattleFx_RunVenusDjinnCapture in venus.c.
 void BattleFx_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
   struct DescendingOrbitObject *mote =
       (struct DescendingOrbitObject *)fieldObject;
@@ -158,7 +169,8 @@ void BattleFx_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
 /// Effect slot callback of a Venus Djinni's particles: each starts on screen
 /// at a random point 10 to 20 pixels round the leader and flies 120 pixels up
 /// the screen, over and over (states 0 and 1); set to 2, it is freed once it
-/// arrives.
+/// arrives. Set by BattleFx_RunVenusDjinnCapture in venus.c; a particle
+/// that starts on an odd frame plays SE_144.
 void BattleFx_UpdateRadialSpread(struct EffectSlot *effect) {
   struct EffectVector position;
   struct ObjectRuntime *source;

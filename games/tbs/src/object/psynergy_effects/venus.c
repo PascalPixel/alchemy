@@ -9,6 +9,9 @@
 /// 24 particles rise round it (BattleFx_UpdateRadialSpread). Then 24 motes
 /// spiral down onto the leader from 120 pixels above
 /// (BattleFx_UpdateDescendingOrbitObject) and 8 sparks burst from the leader.
+/// Called by Djinn_JoinParty for a Venus Djinni, which then clears the
+/// Djinni's actor slot. Uses all 24 effect slots, tints the field palette green
+/// and fades it back at the end.
 void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   struct CaptureObject *leader;
   struct CaptureObject *djinni;
@@ -26,6 +29,8 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
 
   BattleFx_InitializeSlots();
   effectScene = gEffectWork;
+  // Tint the screen green: PALETTE_TRANSFORM_TINT | RGB(4, 16, 4), the form
+  // mercury.c spells out for its blue.
   Shop_RestoreSceneTilesFar(0x201204);
   WaitFrames(30);
   djinni->visible = 0;
@@ -33,6 +38,7 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   ObjectMotion_Launch(djinniId, 4, 15);
   AudioCommand_PlayFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 4, 15);
+  // Spin and leap, then shrink away while the screen shakes (1.3 pixels).
   WaitFrames(30);
   djinni->callback = BattleFx_AdvanceSpinAngle;
   AudioCommand_PlayFar(SE_HIGH_JUMP);
@@ -41,6 +47,7 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   Map_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
   djinni->callback = BattleFx_ShrinkObjectAndDestroyFast;
   ObjectDispatch_SelectAnimationFar(djinni, 3);
+  // The leader turns to face the camera (angle 0x4000).
   WaitFrames(90);
   ObjectMotion_ArmCallback(gGameState.selectedActor, 0x4000, 0);
   WaitFrames(20);
@@ -54,6 +61,7 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   position.z = djinni->z;
   Camera_WorldToScreen(&position);
 
+  // One rising particle a frame into each of the 24 effect slots.
   slot = effectScene->slots;
   remaining = 23;
   do {
@@ -68,6 +76,7 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
     slot++;
   } while (remaining >= 0);
 
+  // After 140 frames every particle still in use stops rising (state 2).
   WaitFrames(140);
   // Walking whole slots instead of their state bytes grows native English
   // from 0x2dc to 0x2e0 bytes.
@@ -87,10 +96,12 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
     } while (remaining >= 0);
   }
 
+  // A shake of 1/65536 pixel: in effect the shake stops.
   WaitFrames(20);
   Map_SetScreenShakeFar(1, 1, 1);
   WaitFrames(30);
 
+  // 24 motes, evenly spread round a circle, 120 pixels above the leader.
   for (remaining = 0; remaining <= 23; remaining++) {
     position.x = leader->x;
     position.y = leader->y + 0x780000;
@@ -117,6 +128,8 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
   position.x = leader->x;
   position.y = leader->y + 0x120000;
   position.z = leader->z;
+  // 8 sparks from 18 pixels above the leader, each thrown 32 pixels in a
+  // random direction; stop at the first that cannot be spawned.
   for (remaining = 0; remaining <= 7; remaining++) {
     djinni = (struct CaptureObject *)Object_Spawn(284, position.x, position.y,
                                                   position.z);
@@ -142,9 +155,11 @@ void BattleFx_RunVenusDjinnCapture(s32 djinniId) {
 }
 
 /// Effect slot callback of a Mercury Djinni's droplets: each falls from 100
-/// pixels above to a random point near the leader (state 0), then darts
-/// between random points 12 pixels apart (states 1 and 2, a sound each time)
-/// until the sequence sets state 3, which frees it.
+/// pixels above to a random point near the leader (state 0), and where it
+/// lands splashes 12 pixels in a random direction with SE_143. In state 1 it
+/// then falls again 6 frames later (back to state 0); once
+/// BattleFx_RunMercuryDjinnCapture sets state 2, its next splash is its last
+/// (state 3, which frees it).
 void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect) {
   struct ObjectRuntime *source;
   struct EffectVector position;
@@ -200,7 +215,8 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect) {
 }
 
 /// Per-frame update of an afterimage: closes half the distance to the object
-/// it is linked to.
+/// it is linked to. Set on the Mercury Djinni's afterimages by
+/// BattleFx_RunMercuryDjinnCapture.
 void BattleFx_HalveDistanceToTarget(union FieldObject *fieldObject) {
   BattleFx_MoveAfterimageHalfway(fieldObject);
 }

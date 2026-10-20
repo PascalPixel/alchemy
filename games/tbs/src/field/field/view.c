@@ -12,6 +12,9 @@
 void Map_SetScreenShake(s32 shakeX, s32 shakeY, s32 shakeDecay) {
   struct MapScrollWork *work;
 
+  // A negative argument leaves that value alone, so a scene can change the
+  // decay without restarting the shake, or start one axis only. The view
+  // updates read the same three words on the world map (PerspectiveWork).
   work = gMapWork[0];
   if (shakeX >= 0) {
     work->shakeX = shakeX;
@@ -34,22 +37,26 @@ void Map_WaitForShakeToSettle(void) {
 
   work = gMapWork[0];
   waitedFrames = 0;
-  // 300 frames is five seconds.
+  // 300 frames is five seconds; 255 in 16.16 is just under 1/256 pixel.
+  // A decay of 1.0 or more never settles, so the limit ends the wait.
   while (waitedFrames < 300 && (work->shakeX > 255 || work->shakeY > 255)) {
     WaitFrames(1);
     waitedFrames++;
   }
+  // A zero decay makes the next view update's shake its last.
   work->shakeDecay = 0;
 }
 
 /// Copies TileMap_DrawRows (ARM code) to the heap and runs it once: it draws
 /// the rows that lines describes (32 bytes a row) into pixels, from the tiles
 /// in the BG tile buffer's second half and the map in the decode buffer.
-/// Called by MapAnimation_Start for the first frame of a world map animation;
+/// Called by MapAnimation_Start to draw the world map's still view;
 /// the heap slot (49) is freed again before it returns.
 void TileMap_DrawRowsFromRam(s32 lines, s32 pixels) {
   u8 *base;
 
+  // The tiles at gBgTileBuffer + 0x4000 are the copy of char block 3, BG2's
+  // tiles on the world map.
   base = gDecodeBuffer;
   RamCode_LoadSlot(49, TileMap_DrawRows, TileMap_DrawRowsCodeSize);
   /* FAKEMATCH(one-pass): its loop notes keep gBgTileBuffer's address load ahead
@@ -87,6 +94,8 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
   s32 zero;
   s32 horizontal;
 
+  // The followed point on the ground (height 0), in camera space; horizon is
+  // its height less its depth times the pitch's cotangent.
   zero = 0;
   SET_VECTOR(groundPoint, position[0], zero, position[2]);
   Iwram_TransformVector(groundPoint, cameraPoint);
@@ -94,8 +103,11 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
   horizon = cameraCoordinates[1] - Iwram_MulQ16(cameraCoordinates[2], depth);
   focus = -gProjection.focal;
   for (line = 0; line < 160; line++) {
-    // Lines below the screen centre have a negative displacement.
+    // The line's ray slope: its offset from the projection's centre line
+    // over the focal length. Lines below the screen centre have a negative
+    // displacement.
     distance = Iwram_RatioMulQ14(focus, (gProjection.centerY - line) * 65536);
+    // A ray parallel to the ground would divide by zero.
     difference = distance - depth;
     if (difference == 0)
       difference = 1;
@@ -103,9 +115,14 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
     // A negative scale is a line below the horizon, whose ray meets the
     // ground; the lines above it are sky and get zeros.
     if (scale < 0) {
+      // MulQ16 by 0x8000 halves: the width scale is half the line's scale
+      // over the focal length, and the distance below is stored halved.
       diagonal = Iwram_MulQ16(-scale, 0x8000);
       scanline->scale = Iwram_RatioMulQ14(gProjection.focal, diagonal);
       diagonal = Iwram_MulQ16(scale, distance);
+      // The distance is the root of the two squared terms. Both are taken
+      // >> 4 first so the squares stay in range, which leaves the root
+      // >> 12; << 12 puts it back in 16.16.
       horizontal = (cameraCoordinates[2] - scale) >> 4;
       vertical = (diagonal - cameraCoordinates[1]) >> 4;
       horizontalSquared = Iwram_MulQ16(horizontal, horizontal);

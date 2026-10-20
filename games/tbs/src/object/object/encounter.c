@@ -43,7 +43,9 @@ struct EncounterZone {
 /// and entrance. Ground 0 has none, and grounds 1 to 7 take consecutive zones
 /// from the rule's first one. With useRules 0, or no matching rule, no ground
 /// has encounters. Also resets the encounter counters and chooses the battle
-/// backdrop.
+/// backdrop. Called by Field_RunScene on scene load, with useRules 0 on the
+/// world map and 1 in a field scene; writes work->encounterGroups,
+/// encounterBias and encounterThreshold, and gGameState.special.
 void Encounter_SelectSceneZones(s32 useRules) {
   struct FieldWork *work;
   s32 scene;
@@ -87,12 +89,17 @@ void Encounter_SelectSceneZones(s32 useRules) {
     work->encounterGroups[1] = 0;
   }
   work->encounterBias = 0;
+  // 16 in 16.16: Encounter_SelectEnemyGroup starts a battle once
+  // gGameState.encounterSteps reaches it.
   work->encounterThreshold = 0x100000;
   Battle_SelectSceneBackdrop();
 }
 
 /// Returns the world map encounter zone for the terrain at pos (0 for none),
-/// and chooses the battle backdrop for that terrain.
+/// and chooses the battle backdrop for that terrain (gGameState.special).
+/// Called by Encounter_RollWorldMap on each step, and by
+/// Field_RequestBattleFromEncounterTable and Field_RequestDjinnBattle on the
+/// world map, which use only the backdrop.
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
   s32 kind;
   TerrainRule *rule = (TerrainRule *)gWorldMap_EncounterRules;
@@ -117,6 +124,9 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
 /// a battle starts once it reaches encounterThreshold. Flags 352 and 353 and
 /// gGameState.cloaked prevent battles. Flag 351 skips the checks and the
 /// counting and draws a group at once, from an entry this function never sets.
+/// Called by Encounter_RollTerrain and Encounter_RollWorldMap; adds to
+/// gGameState.encounterSteps, sets or clears work->encounterBias, and on a
+/// battle sets gGameState.sceneCue.
 s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   struct FieldWork *work;
   struct EncounterZone *entry;
@@ -168,6 +178,8 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
       bias = (a - b + c - (s32)Random16()) / 2;
       work->encounterBias = bias;
     }
+    // The step grows with the rate and the bias. The counter is not cleared
+    // here: Field_RunScene clears it when it starts the battle.
     step =
         Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 0x100000);
     total = gGameState.encounterSteps += Iwram_MulQ16(step, steps);
@@ -202,6 +214,8 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
 /// terrain: the terrain number, 0 for ordinary ground.
 /// steps: the step weight, passed on to Encounter_SelectEnemyGroup.
 /// Returns the enemy group to fight, or 0 for no battle.
+/// Called by Field_ProcessStep in a field scene, which stores the result in
+/// work->battle; steps is the leader's speed limit, doubled with FLAG_LURE_CAP.
 s32 Encounter_RollTerrain(u32 terrain, s32 steps) {
   u8 *zone;
 
@@ -210,19 +224,23 @@ s32 Encounter_RollTerrain(u32 terrain, s32 steps) {
 }
 
 /// Rolls a random battle on the world map, taking the zone from the tile at
-/// pos. Returns the enemy group to fight, or 0 for no battle.
+/// pos. Returns the enemy group to fight, or 0 for no battle. Called by
+/// Field_ProcessStep on the world map.
 s32 Encounter_RollWorldMap(s32 pos, s32 steps) {
   return Encounter_SelectEnemyGroup(
       Encounter_ResolveWorldMapZoneAndBackdrop((void *)pos), steps);
 }
 
 /// Returns the enemy group in slot (0 to 7) of zone; 14 halfwords make a zone.
+/// Called by Field_RequestBattleFromEncounterTable,
+/// Encounter_GetDjinnEnemyGroup and the scene event runner (events.c, zone 99).
 u16 Encounter_GetEnemyGroupAtSlot(s32 zone, s32 slot) {
+  // A zone's halfwords are rate, level, then the eight groups.
   return gEncounter_EnemyGroupTable[zone * 14 + slot + 2];
 }
 
 /// Returns the enemy group of Djinni battle djinni, which the table gives as
-/// a zone and slot.
+/// a zone and slot. Called by Field_RequestDjinnBattle.
 s16 Encounter_GetDjinnEnemyGroup(s32 djinni) {
   u16 *zoneAndSlot;
 
@@ -249,6 +267,8 @@ extern const struct SceneInteractionEntry gScene_InteractionRuleTable[];
 
 /// Chooses the current scene's field music (gGameState.cue) from the first rule
 /// matching the scene or its group and the entrance; MUS_018 when none does.
+/// Called by Game_ResetForNewGame on entering each field scene, before
+/// Audio_PlayCueFromEventWork plays it.
 void Scene_ResolveInteractionResult(void) {
   s16 music = MUS_018;
   s16 scene = gGameState.scene;
@@ -292,7 +312,10 @@ struct SceneAreaNameRule {
 extern const struct SceneAreaNameRule gScene_AreaNameRules[];
 
 /// Returns the place name of scene and entrance, from the first rule matching
-/// the scene or its group; 0 when none does.
+/// the scene or its group; 0 when none does. Called by the save, debug and
+/// location windows through Scene_GetAreaNameIndexFar, and by
+/// Map_UpdateWorldMapMarkers; most add it to MsgDebugEntryName for the
+/// message. The save stores it as its area (save_state.h).
 s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance) {
   const struct SceneAreaNameRule *rule = gScene_AreaNameRules;
   s32 name = 0;
@@ -323,7 +346,7 @@ s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance) {
 /// and savedEntrance), from the first rule of gParty_PairResolveRules that
 /// matches the current scene and entrance: {scene, entrance (-1 for any),
 /// return scene, return entrance}, ended by scene -1. Without a match the
-/// return point stays as it was.
+/// return point stays as it was. Called by Field_RunScene on scene load.
 void Scene_SetDefeatReturnPoint(void) {
   s16 scene = gGameState.scene;
   s16 entrance = gGameState.entrance;
@@ -339,13 +362,16 @@ void Scene_SetDefeatReturnPoint(void) {
   }
 }
 
-/// Returns the battle backdrop chosen for the current scene.
+/// Returns the battle backdrop chosen for the current scene. The battle setup
+/// (battle/encounter.c) reads it through Event_GetSpecialValueFar as the
+/// battle's background.
 s16 Event_GetSpecialValue(void) { return gGameState.special; }
 
 /// Chooses the battle backdrop for the current scene. gBattle_BackdropScenes
 /// lists each backdrop (a word with bit 31 set) followed by the scenes that
 /// use it, ended by 0; a scene takes the backdrop listed last before it, and a
-/// scene not listed takes the last backdrop.
+/// scene not listed takes the last backdrop. Called by
+/// Encounter_SelectSceneZones; sets gGameState.special.
 void Battle_SelectSceneBackdrop(void) {
   s32 target = gGameState.scene;
   s32 *table = gBattle_BackdropScenes;
@@ -363,7 +389,9 @@ void Battle_SelectSceneBackdrop(void) {
   gGameState.special = backdrop;
 }
 
-/// Chooses the battle backdrop for a world map terrain behavior.
+/// Chooses the battle backdrop for a world map terrain behavior (1 to 7; any
+/// other gives Sol Sanctum's) and sets gGameState.special. Called by
+/// Encounter_ResolveWorldMapZoneAndBackdrop.
 void Battle_SelectTerrainBackdrop(s32 behavior) {
   u16 backdrop;
 
@@ -395,7 +423,10 @@ void Battle_SelectTerrainBackdrop(s32 behavior) {
 /// Chooses the battle music for slot of zone (gGameState.sceneCue).
 /// gEncounter_BattleMusic lists each song (with bit 15 set) followed by the
 /// (zone << 4) + slot keys that use it, ended by 0; a key takes the song listed
-/// last before it. Link battles always use MUS_018.
+/// last before it. Link battles always use MUS_018. Called by
+/// Encounter_SelectEnemyGroup for a random battle, by the battle requests
+/// (Field_RequestBattleFromEncounterTable, Field_RequestDjinnBattle with
+/// zone 0) and by the scene event runner (events.c).
 void BattleFx_SelectBattleCue(s32 zone, s32 slot) {
   u16 key = (zone << 4) + slot;
   const u16 *table = gEncounter_BattleMusic;

@@ -17,6 +17,12 @@ struct MenuCtrl {
 /// return points), runs its initialization, fades it in, then runs the field
 /// loop: the party walks (Field_ProcessStep each frame) until a request is
 /// made, and then the requests are handled until none is left.
+///
+/// Called from Game_ResetForNewGame's main loop for every field scene, which
+/// passes the result to Scene_TakeExit. Allocates the field work in heap slot
+/// 27 (HEAP_SLOT_EVENT) and frees it on the way out, sets gGameState's default,
+/// next and defeat destinations, and clears FLAG_IN_BATTLE and, once the scene
+/// has started, FLAG_KEEP_PARTY_POSITION.
 s32 Field_RunScene(s32 entrance) {
   struct FieldWork *work;
   struct FieldActor *actor;
@@ -67,9 +73,16 @@ s32 Field_RunScene(s32 entrance) {
   Field_PlaceMapMarkers();
   BattleEffect_InitializeBuffers();
   BattleFx_ApplyColorToTargetBuffer(0x10000, 0);
+  // The default fade is from the backdrop colour over 16 frames
+  // (SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0)); the scene's initialization
+  // may choose another.
   work->transition = 0x100;
   work->transitionFrames = 16;
   work->transitionActive = 0;
+  // Field_ProcessStep scales the leader's speed by this (16.16) into the
+  // distance counted towards PP and poison ticks: 0x10000 / 0x199 makes a
+  // tick about every 160 pixels walked. Scenes of variant 2 turn it off and
+  // block Retreat.
   work->walkingDistanceScale = 0x199;
   work->walkingDistance = 0;
   if (gGameState.sceneVariant == 2) {
@@ -77,6 +90,8 @@ s32 Field_RunScene(s32 entrance) {
     GameFlag_SetBitFar(FLAG_RETREAT_BLOCKED);
   }
   work->previousTile = (struct MapCell *)Ram_MapCellBuffer;
+  // A fresh entry (not a return from battle) resets the hazard count to its
+  // defaults (damage 1 every 16 steps), the stopped actor and Cloak.
   if (GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION) == 0) {
     Scene_SetDefeatReturnPoint();
     gGameState.hazardLimit = 16;
@@ -123,7 +138,9 @@ s32 Field_RunScene(s32 entrance) {
     }
 
     for (;;) {
-      // Note where the leader is, for the requests to use.
+      // Flag 0x104 stays set while requests are handled and is cleared while
+      // the party walks (the Colosso wall scene tests it). Note where the
+      // leader is, for the requests to use.
       GameFlag_SetBitFar(0x104);
       actor = work->actors[gGameState.selectedActor];
       ObjectDispatch_StartIdleFar((struct DispatchObject *)actor);
@@ -247,6 +264,8 @@ s32 Field_RunScene(s32 entrance) {
               (gKeysHeld & KEY_SELECT) != 0) {
             Menu_RunSelectionWithCursorObjectFar();
           } else if (GameFlag_TestFar(0x107) != 0) {
+            // While flag 0x107 is set (Vault's chase sets it), the menu raises
+            // the scene's event 250 instead of opening.
             work->event = 250;
           } else {
             work->effectTimerRunning = 0;
@@ -295,6 +314,7 @@ s32 Field_RunScene(s32 entrance) {
                    (gKeysHeld & KEY_L) != 0) {
             Debug_RunPaletteEditor();
           } else if (GameFlag_TestFar(0x107) != 0) {
+            // As for the main menu above.
             work->event = 250;
           } else {
             Battle_ResetEffectCounter();
@@ -380,6 +400,10 @@ struct Object {
 /// leader when there is something to search there: a tile code from 242 to 247
 /// whose ground is no more than 64 pixels above the leader, or a code the
 /// scene has a search event for. Returns 0 otherwise.
+///
+/// Called by Field_RunScene for the A button (a non-zero result becomes
+/// work->tile, for Field_SearchTile), and by Menu_RunTopSelection's search
+/// entry through Object_GetTriggerTileAheadOfCurrentFar. Changes nothing.
 s32 Object_GetTriggerTileAheadOfCurrent(void) {
   u8 *workBytes;
   u8 *mapBytes;
@@ -400,6 +424,8 @@ s32 Object_GetTriggerTileAheadOfCurrent(void) {
     probePosition.vector.y = leader->pos.y;
     probePosition.vector.z = leader->pos.z;
     Vector_AddPolarOffset(0x100000, leader->angle, probePosition.coordinates);
+    // World map blocks are 32 pixels square, 32 to a row; map cells 16
+    // pixels square, 128 to a row, four bytes each.
     if (((struct FieldWork *)workBytes)->mode == MODE_WORLD_MAP) {
       cell =
           Ram_MapBlocks + ((((probePosition.vector.x / 0x200000) & 31) +
@@ -429,6 +455,9 @@ s32 Object_GetTriggerTileAheadOfCurrent(void) {
 /// Places the party at the entrance it came in by (the first matching entry, or
 /// the scene's first one) unless it keeps its position, and sets the map's
 /// scroll bounds, at least a screen (240 x 160 pixels) wide and tall.
+///
+/// Called by Field_RunScene once the scene's events are set. Writes
+/// gGameState's position, heading and turn, and the map's minX to maxY.
 void Scene_ApplyEntrance(void) {
   struct MapScrollWork *map = gMapWork[0];
   s32 entrance = gGameState.entrance;

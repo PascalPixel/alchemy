@@ -16,7 +16,9 @@ struct FadeView {
 /// Each frame of the fade overlay: on each of the two cells beside the actor
 /// (left and right of it), where the ground one or two cells south rises above
 /// the actor's floor, draws a semi-transparent 16-pixel-wide sprite of colour 1
-/// at the height of that ground.
+/// at the height of that ground. Registered as a scheduler callback by
+/// BattleFx_StartFadeOverlay; reads the work in heap slot 36 and queues the
+/// marks with Runtime_PushSlotEntry.
 void FadeOverlay_DrawMarks(void) {
   struct FadeOverlayWork *work = WORK_SLOT(36);
 #ifdef UBFIX
@@ -52,9 +54,12 @@ void FadeOverlay_DrawMarks(void) {
   z = actor->z.fixed;
   terrainFloor = actor->terrainHeight >> 16;
   terrainLayer = actor->terrainId;
+  // The first tile of the solid block BattleFx_StartFadeOverlay loaded (VRAM
+  // cache block 94; tiles are 32 bytes).
   tile = gVramBlockCache[94].offset >> 5;
-  // Probe the left-hand cell first, preserving the two terrain queries per
-  // side.
+  // The left cell, 8 pixels left of the actor. The ground is read one and two
+  // cells (16 and 32 pixels) south, the further one counting 16 pixels lower,
+  // and the higher of the two is used.
   x -= 0x80000;
   height = Map_GetTerrainHeightFar(terrainLayer, x, z + 0x100000) >> 16;
   secondHeight =
@@ -62,17 +67,22 @@ void FadeOverlay_DrawMarks(void) {
   if (secondHeight > height)
     height = secondHeight;
   if (height > 0 && height > terrainFloor) {
+    // Attributes 0 and 1 give a 16 by 16 square (size 1); the object mode
+    // and priority set next replace what the two words put there, so the
+    // left and right marks end up alike although their third words differ.
     ((u32 *)mark)[1] = 0x40000800;
     ((u32 *)mark)[2] = 0x400;
     mark->priority = 0;
     mark->tile = tile;
     mark->objectMode = 1;
+    // Snapped to the cell's 16-pixel grid, then moved up by the ground's
+    // height.
     mark->x = ((u32)(x >> 16) & 0xfff0) - cameraX;
     screenRow = (z >> 16) & 0xf0;
     mark->y = screenRow - cameraZ - height + 16;
     Runtime_PushSlotEntry(mark, 0);
   }
-  // The right-hand mark uses its own OAM initializer and terrain probes.
+  // The right cell, 8 pixels right of the actor, read the same way.
   x += 0x100000;
   height = Map_GetTerrainHeightFar(terrainLayer, x, z + 0x100000) >> 16;
   mark = &work->marks[1];
@@ -94,7 +104,12 @@ void FadeOverlay_DrawMarks(void) {
 }
 
 /// Starts the fade overlay on object (the party leader when NULL): loads its
-/// solid tiles, sets the blending and draws it each frame.
+/// solid tiles, sets the blending and draws it each frame. Allocates heap slot
+/// 36 for its work, borrows heap block 14 for the tiles (0x200 bytes of colour
+/// 1, VRAM cache block 94) and registers FadeOverlay_DrawMarks. Called by
+/// seven scene overlays (Venus and Mercury Lighthouses, Kalay, the tunnel
+/// ruins, Crossbone Isle, the ice room by Imil and Fuchin Falls); Crossbone
+/// Isle then switches it on and off by setting the work's actor.
 void BattleFx_StartFadeOverlay(void *object) {
   struct FadeOverlayWork *work;
   u8 *tiles;
@@ -111,6 +126,7 @@ void BattleFx_StartFadeOverlay(void *object) {
                  BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
              &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
+  // 31 is above the register's useful maximum of 16, which it acts as.
   Io_Write16(31, &REG_BLDY);
   Dma_Fill32Cell(fill, 0, work, sizeof(*work));
   if (object == NULL)
@@ -118,8 +134,12 @@ void BattleFx_StartFadeOverlay(void *object) {
   work->actor = object;
 }
 
+/// Stops drawing the fade overlay, keeping its work. Reached only through a
+/// bare far-call veneer; no ☀️ code names it.
 void FadeOverlay_Suspend(void) {
   Scheduler_SuspendTasks(FadeOverlay_DrawMarks);
 }
 
+/// Draws the fade overlay again after FadeOverlay_Suspend. Reached only
+/// through a bare far-call veneer.
 void FadeOverlay_Resume(void) { Scheduler_ResumeTasks(FadeOverlay_DrawMarks); }

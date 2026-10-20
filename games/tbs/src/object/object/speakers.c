@@ -5,7 +5,8 @@
 #include "../object_internal.h"
 
 /// Returns the speaker definition of sprite id from gBattleFx_DefinitionTable,
-/// or its last entry when there is none.
+/// or its last entry when there is none. The search stops after 0x82 entries,
+/// all but the table's last of its 131.
 struct BattleEffectEntry *BattleFx_FindDefinition(u32 id) {
   struct BattleEffectEntry *entry = gBattleFx_DefinitionTable;
   u32 definitionIndex = 0;

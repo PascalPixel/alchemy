@@ -5,7 +5,8 @@
 #include "../psynergy_effects_internal.h"
 
 /// End of the effect: switches the caster's display flags between 3 and 1 on
-/// a 5-frame cycle.
+/// a 5-frame cycle. FieldFx_RunAvoid schedules it (order 0xc80) for its last
+/// 70 frames and removes it again.
 void FieldFx_BlinkAvoidCaster(void) {
   struct ArcEffectObject *caster;
   struct AnimationObject *rec;
@@ -27,7 +28,8 @@ void FieldFx_BlinkAvoidCaster(void) {
 }
 
 /// The caster during the effect: sheds a pair of falling arcs every 5 frames
-/// (7 on the world map), and spins in phase 1.
+/// (7 on the world map), and spins in phase 1. FieldFx_RunAvoid makes it the
+/// caster's callback; it counts the caster's step and turns its angle.
 void BattleFx_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
   struct ArcEffectObject *caster = (struct ArcEffectObject *)fieldObject;
   s16 phase;
@@ -49,6 +51,10 @@ void BattleFx_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
 
 /// Avoid (or the Sacred Feather) has worn off, and the game says so.
 /// "Avoid's effects wore off." (or "Sacred Feather's ...").
+///
+/// Clears gGameState.avoidDistance. Reached through FieldEvent_RunTypeHandler
+/// when the Psynergy request the leader's steps raise as Avoid runs out
+/// (object/step.c) is handled.
 void FieldEvent_ShowStatusMessage(void) {
   gGameState.avoidDistance = 0;
   if (gGameState.avoidByItem == 0) {
@@ -69,6 +75,10 @@ void FieldEvent_ShowStatusMessage(void) {
 /// 55 frames; encounters are kept away (avoidDistance 0x9600000) until it wears
 /// off, and the game says "Monsters won't attack so often now.". FLAG_ITEM_USE
 /// marks it as cast from the Sacred Feather.
+///
+/// Called by BattleFx_Run and BattleFx_DispatchRequestKind. Sets
+/// gGameState.avoidDistance and avoidByItem; the leader's steps count the
+/// distance down by their speed (object/step.c), 2,400 pixels in all.
 void FieldFx_RunAvoid(void) {
   struct BattleFxScene *scene;
   struct ArcEffectObject *object;
@@ -101,6 +111,7 @@ void FieldFx_RunAvoid(void) {
   WaitFrames(15);
   object->phase = 1;
   WaitFrames(10);
+  // Flash white for 2 frames in every 5.
   for (count = 0; count < 20; count++) {
     entry->param = SPRITE_COLOR_WHITE;
     group->dirty = 1;
@@ -117,6 +128,7 @@ void FieldFx_RunAvoid(void) {
   AudioCommand_PlayFar(SE_174);
   WaitFrames(55);
   Scheduler_RemoveCallback(FieldFx_BlinkAvoidCaster);
+  // Back to the caster's own look: flags 2 while Cloak is on, else 1.
   if (gGameState.cloaked != 0)
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 2);
   else

@@ -8,7 +8,8 @@
 /// groups of four halfwords (source tile, count, destination tile, frames to
 /// wait) that copy tiles into VRAM; 0xfeNN jumps to halfword offset NN * 2,
 /// 0xfeff stops, and 0xffff loops to the start. MapAnimation_StartChannels
-/// schedules it (order 0xc80); a BG1 animation on the world map suspends it.
+/// schedules it (order 0xc80); the world map's still view (MapAnimation_Start)
+/// suspends it.
 /// Moves each channel's cursor and timer in the map work.
 /// The retries stay gotos: as an inner for (;;) loop with continue and break,
 /// loop.c reshapes the channel loop.
@@ -25,9 +26,12 @@ void MapAnimation_Update(void) {
     u32 tileCount;
     u32 destinationTile;
 
+    // A channel with no script, or paused by a scene, keeps its place.
     if ((mapState->anim + channelIndex)->start == NULL ||
         (mapState->anim + channelIndex)->paused != 0)
       continue;
+    // While the wait lasts the channel only counts down; when it is over,
+    // commands run in this same frame until one sets a new wait or stops.
   next:
     if ((mapState->anim + channelIndex)->timer == 0) {
       commands = (mapState->anim + channelIndex)->cursor;
@@ -37,6 +41,9 @@ void MapAnimation_Update(void) {
             (mapState->anim + channelIndex)->start;
         goto next;
       }
+      // 0xfeff leaves the cursor on itself, so the channel stays stopped
+      // until it is started again; 0xfeNN jumps to halfword NN * 2 of the
+      // channel's script.
       if ((sourceTileOrOpcode & 0xff00) == 0xfe00) {
         if ((sourceTileOrOpcode & 0xff) == 0xff)
           continue;
@@ -70,6 +77,7 @@ void MapAnimation_Update(void) {
                   BG_CHAR_BLOCK(2) + destinationTile * 64,
                   (DMA_ENABLE | DMA_32BIT) << 16 | tileCount * 16, REG_DMA3);
       }
+      // A copy with a wait of 0 lets the next command run at once.
       (mapState->anim + channelIndex)->cursor += 4;
       goto next;
     } else {
@@ -111,6 +119,10 @@ void MapAnimation_StartChannels(const u16 *script) {
   mapState = gMapWork[0];
   channelsStarted = 0;
   Dma_Fill32(0, mapState->anim, sizeof(mapState->anim));
+  // Each channel's script starts just after its marker and runs on through
+  // the rest of the stream; the scan steps over the halfwords between
+  // markers. Only the low four bits pick the channel, so a marker for 16 or
+  // more reuses one of the 16.
   marker = *script++;
   while (marker != 0xffff) {
     if ((marker & 0xff00) == 0xfd00) {
@@ -128,11 +140,12 @@ void MapAnimation_StartChannels(const u16 *script) {
     }
     marker = *script++;
   }
+  // A map with no channels never schedules the update.
   if (channelsStarted != 0)
     Scheduler_AddOrUpdateCallback(MapAnimation_Update, 0xc80);
 }
 
-/// Suspends the tile animations, unless a BG1 animation is running.
+/// Suspends the tile animations, unless the world map's still view is shown.
 /// Scheduler_EnableOverlayCallbacksWithFlags (menu/menu/common.c) calls it
 /// through Map_EnableUpdateCallbackFar. Its name says the opposite of what it
 /// does.
@@ -141,7 +154,7 @@ void Map_EnableUpdateCallback(void) {
     Scheduler_SuspendTasks(MapAnimation_Update);
 }
 
-/// Resumes the tile animations, unless a BG1 animation is running.
+/// Resumes the tile animations, unless the world map's still view is shown.
 /// Scheduler_DisableOverlayCallbacksWithFlags (menu/menu/common.c) calls it
 /// through Map_DisableUpdateCallbackFar. Its name says the opposite of what it
 /// does.
@@ -172,6 +185,8 @@ void DisplayBlend_RunScript(void) {
   if (blend->paused != 0)
     return;
 
+  // As with the tile channels, commands run in one frame until a level sets
+  // a wait; a BLDCNT command and the jumps take no time.
 again:
   delayOrJumpIndex = blend->delay;
   delay16 = delayOrJumpIndex;
@@ -192,6 +207,9 @@ again:
       goto again;
     }
 
+    // A BLDCNT value is told apart by its top four bits being 3, its second
+    // target's sprite and backdrop bits. A level cannot reach 0x3000: the
+    // BLDALPHA coefficients and BLDY go to 16 at most.
     if ((instruction & 0xf000) == 0x3000) {
       REG_BLDCNT = instruction;
       mapState->blendControl = instruction;
@@ -221,6 +239,8 @@ void DisplayBlend_StartScript(u16 *script) {
   s32 hasScript;
   volatile u32 zero;
 
+  // A fixed-source DMA of the zero word clears script, cursor, delay and
+  // paused; a script that is only its end marker leaves the blend unset.
   hasScript = 0;
   zero = 0;
   blend = &((struct MapState *)gMapWork[0])->blend;
@@ -260,6 +280,7 @@ UNUSED void PaletteQueue_Initialize(void) {
 
   paletteCycles = Runtime_AllocateBlock(28, sizeof(struct PaletteSnapshotWork));
   cycle = paletteCycles->entries;
+  // Four cycles of up to 16 saved colours each.
   for (cycleIndex = 0; cycleIndex != 4; cycleIndex++) {
     cycle->source = 0;
     cycle->position = 0;
@@ -290,6 +311,8 @@ UNUSED s32 PaletteQueue_Add(s16 paletteBank, s16 firstColor, s16 delay,
   cycleIndex = paletteQueue->count;
   if (cycleIndex > 3)
     return -1;
+  // 16 colours to a palette bank; the cycle saves the colours as they are
+  // now, one halfword each.
   cycle = &paletteQueue->entries[cycleIndex];
   paletteColors = (u16 *)BG_PLTT + (((u16)paletteBank << 4) + (u16)firstColor);
   colorCount16 = colorCount;
@@ -345,6 +368,8 @@ void PaletteQueue_StepCycles(void) {
         rotatedColors[colorIndex] = *savedColors++;
       Dma_Set(rotatedColors, paletteColors, DMA_ENABLE << 16 | colorCount,
               REG_DMA3);
+      // The next step rotates one place further, back to none after a full
+      // turn, and waits delay frames.
       rotationOffset++;
       if (rotationOffset >= colorCount)
         rotationOffset = 0;

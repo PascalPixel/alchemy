@@ -32,6 +32,7 @@ s32 Curve_LerpTwoSamples(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 
   startHeight = CURVE_HEIGHT_FIXED(samples[0]);
   heightDelta = (CURVE_HEIGHT_FIXED(samples[1]) - startHeight) * pixelX;
+  // Round towards zero, as dividing by 16 would.
   if (heightDelta < 0) {
     heightDelta += CURVE_FULL_STEPS - 1;
   }
@@ -47,6 +48,7 @@ s32 Curve_LerpTwoSamplesB(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 
   startHeight = CURVE_HEIGHT_FIXED(samples[0]);
   heightDelta = (CURVE_HEIGHT_FIXED(samples[1]) - startHeight) * pixelY;
+  // Round towards zero, as dividing by 16 would.
   if (heightDelta < 0) {
     heightDelta += CURVE_FULL_STEPS - 1;
   }
@@ -69,6 +71,7 @@ s32 Curve_StepAtSummedPosition(const u8 *heightBytes, s32 x, s32 y) {
   if (secondHeight > firstHeight) {
     higherHeight = secondHeight;
   }
+  // x + y runs from 0 to 30; 15 is the diagonal.
   summedPixel = x + y;
   if (summedPixel == CURVE_FULL_STEPS - 1) {
     return higherHeight;
@@ -96,6 +99,8 @@ s32 Curve_StepAtDifferencePosition(const u8 *heightBytes, s32 x, s32 y) {
   if (secondHeight > firstHeight) {
     higherHeight = secondHeight;
   }
+  // y - x biased by 15 runs from 0 to 30, so the diagonal is 15 and one
+  // unsigned compare tells the sides apart, as in kind 3.
   pixelDifference = y - biasedDifference;
   biasedDifference = pixelDifference + CURVE_FULL_STEPS - 1;
   if (biasedDifference == CURVE_FULL_STEPS - 1) {
@@ -120,6 +125,9 @@ s32 Curve_LerpThreeSamplesByRatio(const u8 *heightBytes, s32 x, s32 y) {
   firstHeight = CURVE_HEIGHT_FIXED(*samples++);
   middleHeight = CURVE_HEIGHT_FIXED(*samples);
   lastHeight = CURVE_HEIGHT_FIXED(samples[1]);
+  // x + y from 0 to 30: 15 is the diagonal, below it the first half and
+  // above it the second. Each half divides by 15, so it reaches its end
+  // sample.
   x += y;
   if (x == CURVE_FULL_STEPS - 1) {
     height = middleHeight;
@@ -149,6 +157,7 @@ s32 Curve_LerpThreeSamplesAtDifference(const u8 *heightBytes, s32 x, s32 y) {
   firstHeight = CURVE_HEIGHT_FIXED(*samples++);
   middleHeight = CURVE_HEIGHT_FIXED(samples[0]);
   lastHeight = samples[1];
+  // As kind 5, on y - x biased by 15.
   pixelDifference = y - x;
   x = pixelDifference + CURVE_FULL_STEPS - 1;
   lastHeight = CURVE_HEIGHT_FIXED(lastHeight);
@@ -160,10 +169,12 @@ s32 Curve_LerpThreeSamplesAtDifference(const u8 *heightBytes, s32 x, s32 y) {
     heightDelta = middleHeight - firstHeight;
     pixelDifference = heightDelta * x;
     if (pixelDifference < 0)
+      // Round towards zero, as dividing by 16 would.
       pixelDifference += CURVE_FULL_STEPS - 1;
     pixelDifference >>= 4;
     return firstHeight + pixelDifference;
   }
+  // The second half measures from the diagonal by y - x itself, 1 to 15.
   pixelDifference *= lastHeight - middleHeight;
   if (pixelDifference < 0)
     pixelDifference += CURVE_FULL_STEPS - 1;
@@ -179,6 +190,8 @@ s32 Curve_LerpTwoSamplesByTable(const u8 *heightBytes, s32 x, s32 y) {
   s32 startHeight;
 
   startHeight = CURVE_HEIGHT_FIXED(samples[0]);
+  // The weight is 0 or 1, so the result is one sample or the other, never
+  // between.
   return startHeight + ((CURVE_HEIGHT_FIXED(samples[1]) - startHeight) *
                         gCurve_LerpWeightTable[x + (y * CURVE_FULL_STEPS)]);
 }
@@ -222,6 +235,8 @@ s32 Curve_LerpThreeSamplesAtHalf(const u8 *heightBytes, s32 pixelX,
 
   endpointHeight = CURVE_HEIGHT_FIXED(*samples++);
   middleHeight = CURVE_HEIGHT_FIXED(*samples++);
+  // Each half is 8 pixels: the shift by 3 divides by 8, and the bias of 7
+  // rounds towards zero.
   if (cellX < CURVE_HALF_STEPS) {
     heightDelta = (middleHeight - endpointHeight) * cellX;
     if (heightDelta < 0) {
@@ -260,6 +275,7 @@ s32 Curve_LerpThreeSamplesAtHalfB(const u8 *heightBytes, s32 pixelX,
 
   endpointHeight = CURVE_HEIGHT_FIXED(*samples++);
   middleHeight = CURVE_HEIGHT_FIXED(*samples++);
+  // As kind 10: halves of 8 pixels, rounded towards zero.
   if (cellY < CURVE_HALF_STEPS) {
     heightDelta = (middleHeight - endpointHeight) * cellY;
     if (heightDelta < 0) {
@@ -285,6 +301,7 @@ s32 Curve_LookupSampleByTable(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
   const s8 *samples = (const s8 *)heightBytes;
   u32 cellX = pixelX;
   u32 cellY = pixelY;
+  // The table holds a byte per pixel of the cell, row by row.
   return CURVE_HEIGHT_FIXED(
       samples[gCurve_SampleIndexTable[cellX + (cellY << 4)]]);
 }
@@ -296,6 +313,7 @@ s32 Curve_LookupSampleByTableReversed(const u8 *heightBytes, s32 pixelX,
   const s8 *samples = (const s8 *)heightBytes;
   u32 cellX = pixelX;
   u32 cellY = pixelY;
+  // Row y read from its right end: (y << 4) + 15 - x.
   return CURVE_HEIGHT_FIXED(
       samples[gCurve_SampleIndexTable[((cellY << 4) - cellX) +
                                       CURVE_FULL_STEPS - 1]]);
@@ -329,6 +347,7 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y) {
 
   x >>= 16;
   y >>= 16;
+  // Before the map work exists, the grid is read from its start.
   cell = (struct MapCell *)Ram_MapCellBuffer;
   if (work != NULL) {
     cell = work->layers[layer & 3].cells;
@@ -370,6 +389,7 @@ s32 Map_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
   cellX = x / 16;
   cellY = y / 16;
   cells += cellX + (cellY << 7);
+  // The kind byte of the cell's four-byte collision record.
   heightAttributeIndex = cells->attributeB;
   return *(Ram_MapCollision + heightAttributeIndex * 4) & 15;
 }
@@ -385,6 +405,7 @@ s32 GetMapCellCollision(s32 layer, s32 x, s32 y) {
   state = gMapWork[0];
   x >>= 20;
   y >>= 20;
+  // Before the map work exists, the grid is read from its start.
   cell = (struct MapCell *)gMapCellBuffer;
   if (state != NULL) {
     cell = state->layers[layer & 3].cells;
@@ -403,6 +424,7 @@ void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collisionCode) {
 
   x >>= 20;
   y >>= 20;
+  // Without the map work there is no layer to write to.
   if (state != NULL) {
     struct MapCell *cell = state->layers[layer & 3].cells;
 
@@ -418,6 +440,7 @@ UNUSED s32 Map_GetCellHighFlags(s32 x, s32 y) {
   struct MapCell *mapCell =
       (struct MapCell *)gMapCellBuffer + (cellX + cellY * 128);
 
+  // The high byte of the block word; its top two bits are flags.
   return ((u8 *)&mapCell->metatileAndFlags)[1] >> 6;
 }
 
@@ -443,11 +466,14 @@ s32 Map_CheckObjectStep(struct ObjectRuntime *object,
   mapState = gMapWork[0];
   if (mapState == NULL)
     return 0;
+  // Layers 0 to 2 have their windows into the grid; any other terrainId
+  // reads the grid from its start.
   if (object->terrainId <= 2)
     cell = mapState->layers[object->terrainId].cells;
   else
     cell = (struct MapCell *)Ram_MapCellBuffer;
   cell += pixelX / 16 + (pixelZ / 16 << 7);
+  // A wall blocks whatever the heights.
   if (cell->collisionCode == 0xff)
     return 2;
   heightBytes = Ram_MapCollision + cell->attributeB * 4;
@@ -463,6 +489,7 @@ s32 Map_CheckObjectStep(struct ObjectRuntime *object,
   targetGround = gMap_TerrainHeightFunctions[*heightBytes++ & 15](
       heightBytes, pixelX & 15, pixelZ & 15);
 #endif
+  // Up to 8 pixels up or 12 down is a step the object can take.
   stepHeight = targetGround - object->terrainHeight;
   if (stepHeight > 0x80000)
     return 1;
@@ -485,14 +512,17 @@ s32 CheckMapPositionCellOccupied(struct WorldPosition *position) {
   struct MapCell *cell;
 
   pixelX = position->x / 65536;
+  // The point on the ground below the position.
   pixelY = (position->y - position->height) / 65536;
   mapState = gMapWork[0];
   if (mapState == NULL)
     return 0;
+  // Always layer 2, the one on BG1.
   cell = mapState->layers[2].cells;
   cellX = pixelX / 16;
   cellY = pixelY / 16;
   cell += cellX + cellY * 128;
+  // 1 - 1 for open ground, 0 - 1 for a wall: 0 means walled.
   return (cell->collisionCode != 0xff) - 1;
 }
 
@@ -544,6 +574,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position) {
       return result;
   }
 
+  // Neither layer has a value: the default, 7, inside the walkable range.
   return 7;
 }
 
@@ -553,6 +584,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position) {
 /// Called by the player control as it probes the steps around the object it
 /// moves.
 s32 CheckWorldMapWalkable(s32 unused, struct WorldPosition *position) {
+  // One unsigned compare tests 5 to 12.
   if ((GetWorldMapCollision(position) - 5) <= 7U) {
     return 0;
   }
@@ -585,6 +617,8 @@ s32 GetWorldMapTerrainBehavior(struct WorldPosition *position,
 
   index = blockX + (((y >> 21) & 31) << 5);
   blockWord = gMapBlocks + index;
+  // Bit 31 of the block word selects the second bank of 16; terrain kind
+  // 21 the third, whatever bit 31 says.
   if (((u8 *)blockWord)[3] & 0x80)
     behaviorBank = 0x10;
 

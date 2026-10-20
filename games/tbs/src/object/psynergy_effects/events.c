@@ -49,7 +49,9 @@ void Event_UpdateDebugSkip(void) {
 }
 
 /// The event command "wait": waits the requested frames, unless debug fast
-/// forward (Event_UpdateDebugSkip) is on.
+/// forward (Event_UpdateDebugSkip) is on. Scene scripts reach it as
+/// Engine_EventWait (the WAIT command); this object's actor, message, camera
+/// and climbing commands wait through it too.
 void FieldEvent_WaitFrames(s32 frames) {
   if (((struct FieldWork *)gEventWork)->fastForward == 0 && frames != 0) {
     WaitFrames(frames);
@@ -58,7 +60,10 @@ void FieldEvent_WaitFrames(s32 frames) {
 
 /// Stops the leader where it stands: no horizontal velocity, the normal walking
 /// speed (1.0) and acceleration (0.5), no destination, and the standing pose,
-/// or the climbing pose (12) while the leader is on a climbable wall.
+/// or the climbing pose (12) while the leader is on a climbable wall. Called by
+/// FieldEvent_Begin, by Field_RunScene before it handles several requests, by
+/// Field_UsePsynergy, Scene_TalkToActor, Field_CheckExitRegions and the world
+/// map's zoom (BattleFx_RunVisibilityTransition).
 void Leader_StopMoving(void) {
   struct ObjectRuntime *object;
 
@@ -78,7 +83,11 @@ void Leader_StopMoving(void) {
 
 /// The event command "begin event": closes any timed notice, stops the leader,
 /// resets the message and timing state, and starts the debug fast-forward
-/// callback with the leader as the message speaker.
+/// callback with the leader as the message speaker. Scene scripts reach it as
+/// Engine_EventBegin (EV_BEGIN); the field's item, Psynergy, Djinni, Retreat
+/// and climbing events open with it too. Clears the field work's name window,
+/// fastForward and messageWindow, sets transitionFrames to 16 and the speaker
+/// to the leader.
 void FieldEvent_Begin(void) {
   struct FieldWork *runtime = (struct FieldWork *)gEventWork;
 
@@ -88,6 +97,7 @@ void FieldEvent_Begin(void) {
   if ((s16)runtime->busy != 0) {
     Battle_ResetEffectCounter();
   }
+  // Every event starts with no name window and normal waits.
   runtime->nameMessage = 0;
   runtime->nameWidth = 0;
   runtime->transitionFrames = 0x10;
@@ -96,13 +106,17 @@ void FieldEvent_Begin(void) {
   runtime->unk1dc = -1;
   runtime->unk1de = -1;
   Scheduler_AddOrUpdateCallback(Event_UpdateDebugSkip, 0xC80);
+  // XXX: flag 0x132 is cleared at every event and nothing in ☀️ names it; the
+  // scene scripts or overlays that set or test 0x132 would settle its meaning.
   GameFlag_ClearBitFar(0x132);
   runtime->speaker = gGameState.selectedActor;
   runtime->messageWindow = 0;
 }
 
 /// Ends an event: stops the debug fast-forward callback, gives the camera back
-/// to the leader and refreshes the lure cap.
+/// to the leader and refreshes FLAG_LURE_CAP (GameFlag_RefreshLureCap). Scene
+/// scripts reach it as Engine_EventEnd (EV_END), and every event that opens
+/// with FieldEvent_Begin closes with it.
 void FieldEvent_End(void) {
   Scheduler_RemoveCallback(Event_UpdateDebugSkip);
   Camera_FollowActor(gGameState.selectedActor, 1);
@@ -112,24 +126,32 @@ void FieldEvent_End(void) {
 /// Nothing calls it.
 UNUSED void Event_NoOpHookA(void) {}
 
-/// An empty hook the event layer calls; it does nothing in the released game.
+/// An empty hook; it does nothing in the released game. Only
+/// Event_RunObjectHookAndWait calls it.
 void Event_NoOpHook(void) {}
 
 /// Respawns the scene's actors from a placement table and waits one frame for
-/// them to appear.
+/// them to appear. Reached only through an unnamed veneer in the object bank's
+/// far-call table; nothing in ☀️ names it.
 void Event_RunObjectHookAndWait(struct ScenePlacement *table) {
   Event_NoOpHook();
   ObjectTable_ResetForObject(table);
   WaitFrames(1);
+  // XXX: the leader's object is fetched and not used; a caller in an overlay
+  // that reads the result would show whether this returned it once.
   ObjectTable_Get(gGameState.selectedActor);
 }
 
-/// Spawns the actors of a placement table after the last actor in use.
+/// Spawns the actors of a placement table after the last actor in use. Called
+/// by the Kolima, Kalay and Tolbi ship scene scripts to bring actors in during
+/// a scene.
 void Event_CallWithLastActiveObjectId(struct ScenePlacement *table) {
   Event_SpawnObjectTable(table, ObjectTable_FindLastActiveId());
 }
 
-/// Sets the scene's event table, which the field checks as the leader moves.
+/// Sets the scene's event table, which the field checks as the leader moves:
+/// writes work->events. Altin Peak's scene script calls it as
+/// Event_LoadAreaScript.
 void Event_SetSceneEvents(const struct SceneEvent *events) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
 
@@ -138,7 +160,8 @@ void Event_SetSceneEvents(const struct SceneEvent *events) {
 
 /// Adds unit to the party. With announce nonzero it also shows
 /// `<name> joined your party.` (Party_ShowJoinedMessage, which receives
-/// announce too).
+/// announce too). Called by six scene scripts as a character joins (Vale,
+/// the Vault, Goma Cave and Mercury Lighthouse among them).
 void Event_PrepareObjectAndApplyValue(s32 unit, s32 announce) {
   UnitGetFar(unit);
   Party_AddActiveOwnerFar(unit);
@@ -147,7 +170,8 @@ void Event_PrepareObjectAndApplyValue(s32 unit, s32 announce) {
   }
 }
 
-/// Adds two units to the party and announces them together.
+/// Adds two units to the party and announces them together. Vale's scene
+/// script calls it twice, as Engine_PartyAddMembers.
 void Event_PrepareTwoObjectsAndApply(s32 first, s32 second) {
   Party_AddActiveOwnerFar(first);
   Party_AddActiveOwnerFar(second);
@@ -157,7 +181,8 @@ void Event_PrepareTwoObjectsAndApply(s32 first, s32 second) {
 /// Checks an L or R button shortcut, packed as the member in bits 10 to 13 and
 /// the Psynergy in bits 0 to 9. Returns 0 if it can still be cast, -1 for no
 /// such party member, -2 when that member is not in the party and -3 when the
-/// member no longer knows the Psynergy.
+/// member no longer knows the Psynergy. Only Event_ClearInvalidPackedValues
+/// calls it.
 s32 Event_ValidatePackedId(u32 shortcut) {
   s32 member = (shortcut >> 10) & 0xf;
   s32 ability = shortcut & 0x3ff;
@@ -171,7 +196,10 @@ s32 Event_ValidatePackedId(u32 shortcut) {
   return 0;
 }
 
-/// Clears each button shortcut whose Psynergy can no longer be cast.
+/// Clears each button shortcut whose Psynergy can no longer be cast: zeroes
+/// gGameState.firstShortcut or secondShortcut. Called whenever the party or
+/// what it knows may have changed: by Party_RemoveOwnerRestored,
+/// Inventory_Discard, and the field menu's item, Psynergy and Djinn screens.
 void Event_ClearInvalidPackedValues(void) {
   if (Event_ValidatePackedId(gGameState.firstShortcut) != 0)
     gGameState.firstShortcut = 0;
@@ -181,7 +209,8 @@ void Event_ClearInvalidPackedValues(void) {
 
 /// Takes unit out of the party, fully restoring its HP and PP and curing its
 /// poison. If no member left standing has HP, the leader is given 1 HP so the
-/// party is never left all down.
+/// party is never left all down. Called by the scene scripts where a member
+/// leaves: Vale in the storm, the Vault, and Sol Sanctum.
 void Party_RemoveOwnerRestored(s32 unit) {
   struct BattleUnit *vitals;
   s32 partyIndex;
@@ -195,6 +224,7 @@ void Party_RemoveOwnerRestored(s32 unit) {
   vitals->pp = vitals->maxPp;
   Unit_UpdateGauges(vitals);
   vitals->poison = 0;
+  // Count the members who remain and still have HP.
   survivingMembers = 0;
   partyCount = Party_CountActiveOwnersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
@@ -213,7 +243,8 @@ void Party_RemoveOwnerRestored(s32 unit) {
 /// most 30 of one item. When they are all full, says
 /// `Isaac's party cannot carry any more <item>s...` and
 /// `Isaac threw the <item> as far away as possible.` and returns -1; otherwise
-/// returns 0.
+/// returns 0. Field_RunScene calls it before it gives gGameState.pendingItem
+/// with PartyInventory_GiveItem.
 s32 Party_CheckItemLimit(s32 item) {
   s32 partyCount;
   s32 heldQuantity = 0;
@@ -238,7 +269,9 @@ s32 Party_CheckItemLimit(s32 item) {
 /// room for it and says so. When every bag is full, the player picks an item
 /// to drop to make room, or drops the new item instead (not allowed for an
 /// indispensable one). Returns the member who received the item, or -1 when
-/// it was left behind.
+/// it was left behind. Scene scripts reach it as Engine_PartyGiveItem (about
+/// 24 of them); Field_RunScene gives the pending item and the debug test menu
+/// gives items through it. The field work's message is restored afterwards.
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   // A for/continue retry loop shrinks native English 0x1c4 -> 0x1a8;
   // retain the original backedges until a plain form matches.
@@ -252,6 +285,8 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   s32 slot;
 
   work = (struct FieldWork *)gEventWork;
+  // The messages below move the event's message on; every return puts it
+  // back, so the scene script continues where it was.
   savedMessage = work->message;
   owner = PartyInventory_AddFar(item);
   if (owner == -1) {
@@ -294,6 +329,9 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
 
         discardQuantity = Shop_GetSelectionState(member, selectedSlot);
       }
+      // A member who already carries 30 of the new item (the cap
+      // Party_CheckItemLimit counts) cannot take it: say so and ask again.
+      // Editions at TBS_PATCH_1 alone skip the check.
 #if !(TBS_PATCH_1 && !TBS_PATCH_2)
       if (Inventory_CountItemFar(member, item) > 29) {
         UiWork_PushValueSlotFar(member, 1);
@@ -333,18 +371,24 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
 }
 
 /// Gives item to one party member. Returns unit, or -1 if its bag is full.
+/// Reached only through an unnamed veneer in the object bank's far-call
+/// table; nothing in ☀️ names it.
 s32 Inventory_TryAddAndReturnOwner(s32 item, s32 unused, s32 unit) {
   if (Inventory_AddItemFar(unit, item) >= 0)
     return unit;
   return -1;
 }
 
+/// An empty function; nothing in ☀️ calls it.
 void Inventory_NoOpCallback(void) {}
 
+/// An empty function; nothing in ☀️ calls it.
 void Inventory_ReservedNoOp(void) {}
 
 /// Waits, at most 90 frames, for an actor's animation to stop being animation:
-/// the actor has finished a one-off animation such as a nod.
+/// the actor has finished a one-off animation such as a nod. Only actors drawn
+/// as an animation object (animationKind 1) are waited for. Called by
+/// Event_AskYesNoWithActorAnimation.
 void Actor_WaitForAnimationEnd(s32 actor, s32 animation) {
   struct ObjectRuntime *actorObject = ObjectTable_Get(actor);
 
@@ -367,6 +411,8 @@ void Actor_WaitForAnimationEnd(s32 actor, s32 animation) {
 /// read, asks yes or no below it, or above it when the message windows reach
 /// past row 15 or forceBottom is set. The speaker nods (animation 3) at yes
 /// and shakes its head (animation 4) at no. Returns 0 for yes, 1 for no.
+/// Scene scripts reach it as Engine_EventChooseYesNo (about 54 of them); the
+/// link lobby and FieldEvent_AskYesNoAndShowResponse call it too.
 s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   s32 sprite = Scene_FindActorPlacement(work->speaker)->sprite;
@@ -384,6 +430,8 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
 
   WaitFrames(3);
 
+  // The question goes above the message windows when they reach past row 15,
+  // so it does not cover them.
   if (forceBottom == 0) {
     s32 bottom = window->y + window->height;
 
@@ -415,13 +463,15 @@ s32 Event_AskYesNoWithActorAnimation(s32 actor, s32 forceBottom) {
 }
 
 /// Asks yes or no at the top of the screen, or at the bottom with atBottom
-/// set. Returns 0 for yes, 1 for no.
+/// set. Returns 0 for yes, 1 for no. Called by PartyInventory_GiveItem,
+/// Field_UseItem, Field_UsePsynergy and the cleared game's menu.
 s32 Menu_AskYesNo(s32 atBottom) {
   return Menu_RunConfirmSelectionFar(atBottom, 0, 0, 0);
 }
 
 /// Teaches unit the Psynergy ability and says so with its jingle, waiting for
-/// the player to read it. The message is `<unit> learned <ability>.`
+/// the player to read it. The message is `<unit> learned <ability>.` Fuchin
+/// Temple's scene script calls it.
 void Party_LearnAbility(s32 unit, s32 ability) {
   // Declared without parameters: unit and ability pass through in r0 and r1.
   Unit_LearnPsynergyFar();
@@ -431,7 +481,10 @@ void Party_LearnAbility(s32 unit, s32 ability) {
   UiText_ShowPositionedMessageAndWaitFar(MsgAbilityLearned, 3);
 }
 
-/// The event command "open screen": starts the event's screen transition.
+/// The event command "open screen": starts the event's screen transition and
+/// sets work->transitionActive. Scene scripts reach it as
+/// Engine_EventOpenScreen; the inn, the title, cleared-game and link lobby
+/// menus and Map_ShowWorldMap call it too.
 void Event_StartScreenTransition(void) {
   struct FieldWork *runtime = (struct FieldWork *)gEventWork;
 
@@ -439,7 +492,10 @@ void Event_StartScreenTransition(void) {
   runtime->transitionActive = 1;
 }
 
-/// The event command "close screen": finishes the event's screen transition.
+/// The event command "close screen": finishes the event's screen transition
+/// and clears work->transitionActive. Scene scripts reach it as
+/// Engine_EventCloseScreen; the inn, the cleared-game menu and
+/// Map_ShowWorldMap call it too.
 void Event_FinishScreenTransition(void) {
   struct FieldWork *runtime = (struct FieldWork *)gEventWork;
 
@@ -447,12 +503,17 @@ void Event_FinishScreenTransition(void) {
   runtime->transitionActive = 0;
 }
 
-/// The event command "wait for screen": waits as long as the transition runs.
+/// The event command "wait for screen": waits as long as the transition runs
+/// (work->transitionFrames). Scene scripts reach it as
+/// Engine_EventWaitForScreen.
 void Event_WaitTransitionFrames(void) {
   WaitFrames(((struct FieldWork *)gEventWork)->transitionFrames);
 }
 
-/// Makes the event leave for the given entrance of the given scene.
+/// Makes the event leave for the given entrance of the given scene: raises the
+/// exit request 999 and writes gGameState.scene and entrance. Called by the
+/// title, cleared-game and link lobby menus, the debug battle command and five
+/// scene scripts (the Lemurian ship and the world map among them).
 void Event_SetDestination(s32 scene, s32 entrance) {
   ((struct FieldWork *)gEventWork)->exit = 999;
   gGameState.scene = scene;
@@ -460,7 +521,8 @@ void Event_SetDestination(s32 scene, s32 entrance) {
 }
 
 /// Makes the event leave and records scene and entrance as the saved
-/// destination.
+/// destination. Reached only through an unnamed veneer in the object bank's
+/// far-call table; nothing in ☀️ names it.
 void Event_SetSavedDestination(u16 scene, u16 entrance) {
   struct FieldWork *state = (struct FieldWork *)gEventWork;
   state->exit = 999;
@@ -469,7 +531,8 @@ void Event_SetSavedDestination(u16 scene, u16 entrance) {
 }
 
 /// The event command "request exit": sets the field's exit request (999 leaves
-/// for gGameState's scene and entrance).
+/// for gGameState's scene and entrance). Scene scripts reach it as
+/// Engine_EventRequestExit (about 61 of them).
 void Event_SetExitRequest(u16 request) {
   struct FieldWork *state = (struct FieldWork *)gEventWork;
   state->exit = request;

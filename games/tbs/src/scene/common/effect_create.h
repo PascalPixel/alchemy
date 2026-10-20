@@ -5,12 +5,12 @@
 // ways to place a still effect object of a given type at a 16.16 position.
 
 /// Sets the actor's sprite priority (0 in front of the backgrounds, 3 behind).
-static void SetEffectRecordMode(struct FieldActor *work, s32 mode) {
+UNUSED static void SetEffectRecordMode(struct FieldActor *work, s32 mode) {
   work->sprite->image.priority = mode;
 }
 
 /// A still, translucent effect in palette 14, at sprite priority 0.
-static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
+UNUSED static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
   struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
   if (object != 0) {
@@ -26,8 +26,8 @@ static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
 }
 
 /// A still effect in palette 15, at sprite priority 1, drawn under the actors.
-static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z,
-                                                  s32 type) {
+UNUSED static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z,
+                                                         s32 type) {
   struct FieldActor *object = Engine_ObjectCreate(type, x, y, z);
 
   if (object != 0) {

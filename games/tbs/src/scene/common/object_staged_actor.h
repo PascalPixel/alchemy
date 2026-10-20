@@ -64,7 +64,7 @@ static struct StagedActor *StagedActor_FindAtTile(s32 *position,
 /// solid is beyond it or on top of it, the ground beyond refuses it or it is
 /// still moving: after a quarter second's push (mode 8) the block and the
 /// leader slide one cell together, with SE_185.
-static void StagedActor_AdvancePair(void) {
+UNUSED static void StagedActor_AdvancePair(void) {
   s32 dst[3];
   struct StagedActor *lead;
   struct StagedActor *next;
@@ -272,7 +272,8 @@ static u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot,
 /// meets something (a collision result of 2). Fills probe with the thing, its
 /// footprint and that position; returns 0 when there is no thing or it cannot
 /// move.
-static s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe) {
+UNUSED static s32
+StagedActor_FindClearPosition(struct StagedActorProbe *probe) {
   s32 direction;
   s32 position[3];
   struct StagedActor *actor;
@@ -366,7 +367,7 @@ found:
 /// while the leader follows half a cell, and it stops with SE_288 and SE_213.
 /// Its cells are blocked (collision 255) at its new place, through the map's
 /// layer 1 offset, and its old place is given back what was under it.
-static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
+UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
   // gMapWork[0] is read as a u32, the plain-C form this site matches with
   // (scene/README.md): a u32 may alias the probe's s32 fields, so the load
   // stays after the probe's four stores; read as the void * it is, it is
@@ -527,7 +528,7 @@ static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
 
 /// Block large thing id's cells (collision 255) where it stands, through the
 /// map's layer 1 offset; returns 0 when its sprite is no large thing.
-static s32 FieldScene_RedrawActorFootprint(s32 id) {
+UNUSED static s32 FieldScene_RedrawActorFootprint(s32 id) {
   struct MapScrollWork *work = gMapWork[0];
   struct StagedActor *actor = (struct StagedActor *)Object_GetById(id);
   struct StagedActorProbe probe;

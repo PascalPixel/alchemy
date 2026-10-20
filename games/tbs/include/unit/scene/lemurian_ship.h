@@ -14,7 +14,7 @@ const struct SceneEvent *LemurianShip_GetEvents(void);
 s32 LemurianShip_SetupScene(void);
 void DisplayScroll_ArmHBlankDma(void);
 void DisplayScroll_BuildAndSwapHBlankPage(void);
-extern struct SceneEvent gShipGlowPalettes[];
+extern u16 gShipGlowPalettes[];
 extern s32 gSprayFallScript[];
 extern s16 gRippleSine[256];
 extern struct SceneEntrance gLemurianShipEntrances[];

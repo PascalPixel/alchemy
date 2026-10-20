@@ -35,8 +35,13 @@
 // enters another place group, and other places use the numbers for their own.
 #define FLAG_SOL_SANCTUM_FLOATING_EYE_SEEN 0x309
 
-// Scene temporary flags 00, 01 and 02 select the plain, first-tint and
-// second-tint palettes, respectively.
+// Scene flags, cleared on every ordinary entrance; one of the three is set at
+// a time, for the colours the rooms show:
+// - FLAG_SCENE_TEMP_00: the plain colours (PALETTE_TRANSFORM_PLAIN);
+// - FLAG_SCENE_TEMP_01: the first tint (colour target 0x2051cc), from cell
+// codes
+//   13 and 14;
+// - FLAG_SCENE_TEMP_02: the second tint (0x202db1), from cell code 12.
 
 static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void);
 static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void);
@@ -47,13 +52,15 @@ static void SolSanctumLunaSolRooms_ShowFloatingEye(void);
 
 void InitializeSceneRecordBuffer(void);
 
-/// The work slot pointers from the event work onward, reaching the palette
-/// buffer work in slot 32.
+/// The work slot pointers from the event work (slot 27) onward, reaching the
+/// palette buffer work in slot 32.
 struct EventGlobals {
-  struct EventWork *event;
-  u8 unk04[0x10];
-  u8 *field;
+  struct EventWork *event; ///< slot 27, gEventWork
+  void *slots28To31[4];    ///< not read here
+  u8 *paletteBufferWork;   ///< slot 32, gPaletteBufferWork
 };
+
+STATIC_ASSERT(offsetof(struct EventGlobals, paletteBufferWork) == 0x14);
 
 const struct SceneEntrance *SolSanctumLunaSolRooms_GetEntrances(void) {
   return gSolSanctumLunaSolRoomsEntrances;
@@ -65,19 +72,24 @@ const u32 *SolSanctumLunaSolRooms_GetExits(void) {
   return gSolSanctumLunaSolRoomsExits;
 }
 
-/// Returns the statues and party actors used by these rooms.
+/// Returns the eight statues (actors 8 to 15), Kraden (actor 16), Jenna and
+/// Garet, all of them always placed.
 const struct ScenePlacement *SolSanctumLunaSolRooms_GetPlacements(void) {
   return gSolSanctumLunaSolRoomsPlacements;
 }
 
-/// Returns the room triggers, statue interactions and Kraden's dialogue.
+/// Returns the floor's cell codes that tint the rooms, Kraden's talk and
+/// cutscenes, the floor symbol and the Herb's chest.
 const struct SceneEvent *SolSanctumLunaSolRooms_GetEvents(void) {
   return gSolSanctumLunaSolRoomsEvents;
 }
 
-/// Crossing trigger 13: the room fades to the tint that matches the seals'
+/// Crossing cell code 13: the room fades to the tint that matches the seals'
 /// lights. The first time, Kraden sees the Luna and Sol rooms; with all four
-/// seals open, he also sees the floor symbol change.
+/// seals open, he also sees the floor symbol change. Also called by
+/// Event_KradenFindsHall after the eruption. Sets one of FLAG_SCENE_TEMP_00
+/// and _01 and clears the other two tint flags; Kraden's cutscenes set
+/// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN and FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN.
 static void Event_UpdateRoomTint(void) {
   s32 paletteActive;
 
@@ -114,7 +126,9 @@ static void Event_UpdateRoomTint(void) {
   }
 }
 
-/// Crossing trigger 15: the room fades back to its plain colours.
+/// Crossing cell code 15: the room fades back to its plain colours. Also
+/// called by Event_KradenStopsPartyLeaving after the eruption. Sets
+/// FLAG_SCENE_TEMP_00 and clears _01 and _02.
 static void Event_RestorePlainTint(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_00) == 0) {
     Engine_EventBegin();
@@ -127,7 +141,9 @@ static void Event_RestorePlainTint(void) {
   }
 }
 
-/// Crossing trigger 14: as trigger 13, with the tints the other way round.
+/// Crossing cell code 14: as code 13, with the tints the other way round.
+/// Sets one of FLAG_SCENE_TEMP_00 and _01 and clears the other two; the first
+/// time, Kraden sees the Luna and Sol rooms.
 static void Event_UpdateRoomTintInverse(void) {
   s32 paletteActive;
 
@@ -158,7 +174,8 @@ static void Event_UpdateRoomTintInverse(void) {
   }
 }
 
-/// Crossing trigger 12: the room fades to its second tint.
+/// Crossing cell code 12: the room fades to its second tint. Sets
+/// FLAG_SCENE_TEMP_02 and clears _00 and _01.
 static void Event_ApplySecondRoomTint(void) {
   if (GameFlag_IsSet(FLAG_SCENE_TEMP_02) == 0) {
     ColorBuffer_ApplyTarget(0x202db1, 1);
@@ -169,7 +186,7 @@ static void Event_ApplySecondRoomTint(void) {
   }
 }
 
-/// Crossing trigger 19: the backdrop turns black.
+/// Crossing cell code 19: the backdrop turns black.
 static void Event_ClearBackdropColor(void) {
   s32 black = 0;
   u16 *backdropColor = (u16 *)&PLTT_BACKDROP;
@@ -234,8 +251,11 @@ static inline void SolSanctumLunaSolRooms_FlashSavedStatueLights(s32 frames) {
   Engine_EventWait(frames);
 }
 
-/// Walking into the hall (trigger 11) the first time: Kraden studies the
-/// symbols and asks the party to keep exploring. "This is it! We've found it!"
+/// Walking into the hall the first time: Kraden studies the symbols and asks
+/// the party to keep exploring. "This is it! We've found it!" Reached by
+/// stepping on cell code 11; plays until FLAG_SOL_SANCTUM_FOUND is set, and
+/// after the eruption tints the room as cell code 13 does. Sets
+/// FLAG_SOL_SANCTUM_FOUND and FLAG_RETREAT_BLOCKED.
 static void Event_KradenFindsHall(void) {
   struct FieldActor *leader;
 
@@ -244,7 +264,7 @@ static void Event_KradenFindsHall(void) {
   }
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FOUND) == 0) {
     Engine_EventBegin();
-    // Bring the party into the chamber while Kraden surveys its symbols.
+    // The leader walks into the hall as the music changes.
     Engine_EventSetMessage(MsgSolSanctumFound);
     Engine_AudioPlayCue(MUS_017);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -253,6 +273,7 @@ static void Event_KradenFindsHall(void) {
     Engine_EventWait(20);
     Engine_AudioPlayCue(MUS_021);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+    // Kraden hurries out of the leader to the symbol on the floor.
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Engine_ActorSetPosition(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
@@ -262,7 +283,9 @@ static void Event_KradenFindsHall(void) {
     Engine_EventWait(40);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT, 0);
     Engine_ActorJump(ACTOR_KRADEN, 4, 60);
+    // Kraden: "This is it! We've found it!"
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 20);
+    // Garet and Jenna step out behind the leader.
     leader = Object_GetById(ACTOR_PARTY_LEADER);
     if (leader != 0) {
       Engine_ActorSetPosition(GARET, leader->x.fixed, leader->z.fixed);
@@ -284,6 +307,8 @@ static void Event_KradenFindsHall(void) {
     Engine_ActorWalkToAndWait(ACTOR_KRADEN, 288, 176);
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
+    // Kraden: the mark of the sun, the heart of Sol Sanctum; so those two told
+    // the truth.
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 60);
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 20);
@@ -295,6 +320,7 @@ static void Event_KradenFindsHall(void) {
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(JENNA, 2);
     Actor_FaceDirection(JENNA, FACING_WEST + FACING_STEP, 10);
+    // Jenna: then they must have been... Garet: "They were thieves!"
     SolSanctumLunaSolRooms_ShowMessageAndWait(JENNA, 10);
     Engine_ActorRunRepeatedMotion(GARET, 2);
     Actor_FaceDirection(GARET, FACING_NORTHEAST + FACING_STEP, 10);
@@ -302,6 +328,7 @@ static void Event_KradenFindsHall(void) {
     Actor_SetAttachedEffect(JENNA, 0x102);
     Engine_EventWait(40);
     Actor_FaceDirection(JENNA, FACING_NORTHWEST, 10);
+    // Jenna: "Let's hurry back to the village and tell everybody!"
     SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | JENNA,
                                               10);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -314,6 +341,8 @@ static void Event_KradenFindsHall(void) {
     Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
     Actor_FaceDirection(JENNA, FACING_NORTHWEST, 40);
     Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 1, 20);
+    // Garet: "Kraden? What's the matter?" Kraden: "We're so close..." The
+    // three wonder at turning back from the heart of the sanctum.
     Engine_EventShowMessage(1, 0);
     Engine_EventWait(60);
     Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
@@ -342,6 +371,8 @@ static void Event_KradenFindsHall(void) {
     Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 10);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 3);
     Engine_EventWait(6);
+    // Kraden: "Shall we go a little farther?" Yes: "Thank you!" No: then go
+    // back without him.
     Engine_EventOpenMessage(ACTOR_KRADEN, 0);
     if (Engine_EventChooseYesNo(0, 0) == 0) {
       Engine_EventSetMessage(MsgSolSanctumThank);
@@ -354,6 +385,8 @@ static void Event_KradenFindsHall(void) {
     Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
     Actor_FaceDirection(JENNA, FACING_NORTHWEST, 0);
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
+    // Either way Jenna gives in and Garet sides with Kraden, who is
+    // delighted: "Good! It's decided. Let's move ahead!"
     Engine_EventSetMessage(MsgSolSanctumPutWayDont);
     Engine_EventWait(30);
     Engine_ActorSetAnimationAndWait(JENNA, 4);
@@ -405,12 +438,17 @@ static void Event_KradenFindsHall(void) {
   }
 }
 
-/// Introduces the linked Sol and Luna rooms and Kraden's search request.
+/// Kraden finds the room of Luna beside the room of Sol, and asks Isaac to look
+/// farther up the passage. Called by Event_UpdateRoomTint and
+/// Event_UpdateRoomTintInverse until FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN is
+/// set, which it sets; Isaac agreeing sets
+/// FLAG_SOL_SANCTUM_ISAAC_SEARCHING_FOR_KRADEN. Leaves Kraden standing by the
+/// northern wall.
 static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   struct FieldActor *leader;
   s32 request;
 
-  // Stage Kraden beside Isaac, then show the adjoining room.
+  // Kraden steps out beside Isaac: "What is this room?"
   Engine_EventSetMessage(MsgSolSanctumWhRoom);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 488, 176);
@@ -440,6 +478,7 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 60);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
+  // Kraden: "These rooms must be connected somehow, don't you think?"
   Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventSetMessage(MsgSolSanctumLunaSolRooms);
@@ -449,7 +488,8 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 10);
   SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN,
                                             10);
-  // Ask Isaac to search ahead while Kraden examines the room.
+  // Kraden: would Isaac look farther up the passage? Yes: "Let me know what
+  // you find." No: "Then just wait there."
   request = MsgSolSanctumMeanLookFarther;
   Engine_EventSetMessage(request);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 40);
@@ -475,9 +515,11 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN);
 }
 
-/// Heading out of the hall (trigger 9) before the passage is found: Kraden
-/// hurries over. "That way leads out of the sanctum." After the eruption the
-/// room only fades back to its plain colours.
+/// Heading out of the hall before the passage is found: Kraden hurries over.
+/// "That way leads out of the sanctum." Reached by stepping on cell code 9
+/// once FLAG_SOL_SANCTUM_FOUND is set and until
+/// FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN is; after the eruption the room
+/// only fades back to its plain colours (Event_RestorePlainTint).
 static void Event_KradenStopsPartyLeaving(void) {
   struct FieldActor *kraden;
   struct FieldActor *leader;
@@ -540,7 +582,9 @@ static void Event_KradenStopsPartyLeaving(void) {
   Engine_EventEnd();
 }
 
-/// Animates the first falling light and manages the shared shake pulse.
+/// Animates the first falling light and manages the shared shake pulse. Run
+/// each frame as a callback that SolSanctumLunaSolRooms_RunStatueLightSequence
+/// adds and removes.
 static void SolSanctumLunaSolRooms_UpdateFirstStatueLight(void) {
   if ((Random_Next() & 3) != 0) {
     switch (gSolSanctumLunaSolRooms_Light1Timer) {
@@ -585,7 +629,8 @@ static void SolSanctumLunaSolRooms_UpdateFirstStatueLight(void) {
   }
 }
 
-/// Animates the second falling light with its own random restart delay.
+/// Animates the second falling light with its own random restart delay, as
+/// the first.
 static void SolSanctumLunaSolRooms_UpdateSecondStatueLight(void) {
   if ((Engine_RandomNext() & 3) != 0) {
     switch (gSolSanctumLunaSolRooms_Light2Timer) {
@@ -622,7 +667,8 @@ static void SolSanctumLunaSolRooms_UpdateSecondStatueLight(void) {
   }
 }
 
-/// Animates the third falling light with its own random restart delay.
+/// Animates the third falling light with its own random restart delay, as the
+/// first.
 static void SolSanctumLunaSolRooms_UpdateThirdStatueLight(void) {
   if ((Engine_RandomNext() & 3) != 0) {
     switch (gSolSanctumLunaSolRooms_Light3Timer) {
@@ -659,7 +705,8 @@ static void SolSanctumLunaSolRooms_UpdateThirdStatueLight(void) {
   }
 }
 
-/// Animates the fourth falling light with its own random restart delay.
+/// Animates the fourth falling light with its own random restart delay, as
+/// the first.
 static void SolSanctumLunaSolRooms_UpdateFourthStatueLight(void) {
   if ((Engine_RandomNext() & 3) != 0) {
     switch (gSolSanctumLunaSolRooms_Light4Timer) {
@@ -696,7 +743,9 @@ static void SolSanctumLunaSolRooms_UpdateFourthStatueLight(void) {
   }
 }
 
-/// Prepares the statue-room tiles, camera and opening palette flash.
+/// Opens on Kraden in the room of Luna with its first tint, as a flash
+/// crosses it. Shared by the three cutscenes that play on arriving from the
+/// statue room. Sets FLAG_SCENE_TEMP_01 and clears _00 and _02.
 static void SolSanctumLunaSolRooms_PrepareStatueTransition(void) {
   Camera_MoveTo(-1, -1, -1, 0);
   Map_CopyCellsTo(30, 43, 32, 40, 8, 3);
@@ -726,7 +775,11 @@ static void SolSanctumLunaSolRooms_PrepareStatueTransition(void) {
   Engine_ColorBufferInterpolate(24);
 }
 
-/// Accelerates the statue lights, then lets Kraden retreat from the trap.
+/// The seals' lights flash ever faster around Kraden, who hurries back to
+/// Isaac. "What's happening?" Called by SolSanctumLunaSolRooms_Initialize at
+/// entrance 4 until FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG is set. Sets
+/// FLAG_SOL_SANCTUM_STATUE_TRAP_SPRUNG and takes exit 3, back to the statue
+/// room (scene 12, entrance 3).
 static void SolSanctumLunaSolRooms_SpringStatueTrap(void) {
   s32 twelveFrameFlashes;
   s32 eightFrameFlashes;
@@ -736,6 +789,7 @@ static void SolSanctumLunaSolRooms_SpringStatueTrap(void) {
 
   Engine_EventBegin();
   SolSanctumLunaSolRooms_PrepareStatueTransition();
+  // Kraden turns, startled: "What's happening?"
   Engine_EventSetMessage(MsgSolSanctumWhatsHappeningAtTheTrap);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 20);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT, 0);
@@ -763,6 +817,7 @@ static void SolSanctumLunaSolRooms_SpringStatueTrap(void) {
   }
   SolSanctumLunaSolRooms_DrawCurrentStatueLights();
   Engine_EventWait(6);
+  // Kraden: "Isaac must have found something!" He runs off south.
   SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN,
                                             6);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(2), PIXELS(1));
@@ -775,7 +830,11 @@ static void SolSanctumLunaSolRooms_SpringStatueTrap(void) {
   Engine_EventRequestExit(3);
 }
 
-/// Runs the falling lights while Kraden retreats from the changed room.
+/// The seals' lights flash and lights fall through the room of Luna while
+/// Kraden calls on Isaac to stop. Called by SolSanctumLunaSolRooms_Initialize
+/// at entrance 5 until FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN is set; the caller
+/// then sets it and closes all four seals. Takes exit 4, back to the statue
+/// room (scene 12, entrance 4).
 static void SolSanctumLunaSolRooms_RunStatueLightSequence(void) {
   s32 flash;
   Engine_EventBegin();
@@ -784,6 +843,7 @@ static void SolSanctumLunaSolRooms_RunStatueLightSequence(void) {
   gSolSanctumLunaSolRooms_Light2Timer = 0;
   gSolSanctumLunaSolRooms_Light3Timer = 0;
   gSolSanctumLunaSolRooms_Light4Timer = 0;
+  // Kraden turns, startled: "What's happening?" The lights flash four times.
   Engine_EventSetMessage(MsgSolSanctumWhatsHappening);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 20);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT, 0);
@@ -796,8 +856,10 @@ static void SolSanctumLunaSolRooms_RunStatueLightSequence(void) {
   for (flash = 0; flash != 4; flash++) {
     SolSanctumLunaSolRooms_FlashCurrentStatueLights(12);
   }
+  // Kraden: "Isaac must have found something!"
   SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN,
                                             6);
+  // Each light starts falling after 20 to 79 frames.
   gSolSanctumLunaSolRooms_Light1Timer =
       (((u32)Engine_RandomNext() * 60) >> 16) + 20;
   gSolSanctumLunaSolRooms_Light2Timer =
@@ -827,6 +889,7 @@ static void SolSanctumLunaSolRooms_RunStatueLightSequence(void) {
   }
   Map_CopyCellsTo(45, 30, 34, 10, 4, 2);
   Engine_ActorJump(ACTOR_KRADEN, 6, 40);
+  // Kraden: "Stop!!! You're about to make a big mistake!" He runs south.
   SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_KRADEN,
                                             6);
   Actor_SetSpeed(ACTOR_KRADEN, PIXELS(2), PIXELS(1));
@@ -843,7 +906,13 @@ static void SolSanctumLunaSolRooms_RunStatueLightSequence(void) {
   Engine_EventRequestExit(4);
 }
 
-/// Reconciles the saved light flags and replays their accelerating flashes.
+/// The lights of the seals Isaac has opened since flash ever faster in the
+/// room of Luna. "You found it, Isaac." Called by
+/// SolSanctumLunaSolRooms_Initialize at entrance 6 once
+/// FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN is set. Toggles each open seal's
+/// FLAG_SOL_SANCTUM_*_LIGHT_SHOWN; Kraden speaks until the caller sets
+/// FLAG_SOL_SANCTUM_KRADEN_SAID_YOU_FOUND_IT. Takes exit 5, back to the
+/// statue room (scene 12, entrance 5).
 static void SolSanctumLunaSolRooms_AnimateSavedStatueLights(void) {
   s32 speaker;
   s32 twelveFrameFlashes;
@@ -910,6 +979,8 @@ static void SolSanctumLunaSolRooms_AnimateSavedStatueLights(void) {
   Event_PlayCue(SE_246);
   SolSanctumLunaSolRooms_DrawSavedStatueLights();
   Engine_EventWait(6);
+  // Kraden, once: "You found it, Isaac." and "Keep doing that until the light
+  // bathes all the remaining quarters."
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_KRADEN_SAID_YOU_FOUND_IT) == 0) {
     speaker = SPEAKER_WINDOW_BELOW | ACTOR_KRADEN;
     Engine_EventSetMessage(MsgSolSanctumYouFoundIt);
@@ -924,8 +995,10 @@ static void SolSanctumLunaSolRooms_AnimateSavedStatueLights(void) {
   Engine_EventRequestExit(5);
 }
 
-/// Walking up to Kraden (trigger 8) once all four seals are open: the picture
-/// of Luna has changed to Sol. "Look, Isaac! The picture of Luna..."
+/// Walking up to Kraden once all four seals are open: the picture of Luna has
+/// changed to Sol. "Look, Isaac! The picture of Luna..." Reached by stepping
+/// on cell code 8, until FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED is set, which
+/// it sets.
 static void Event_KradenSeesLunaPictureChange(void) {
   struct FieldActor *leader;
 
@@ -937,7 +1010,8 @@ static void Event_KradenSeesLunaPictureChange(void) {
       Actor_SetPosition(ACTOR_KRADEN, PIXELS(577), PIXELS(147));
       Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 1);
       Camera_MoveTo(PIXELS(574), -1, PIXELS(184), 1);
-      // Reunite Isaac and Kraden to discuss the changed Luna picture.
+      // Isaac walks up to Kraden, who hops: "The picture of Luna changed to
+      // Sol!"
       Engine_EventSetMessage(MsgSolSanctumThePictureOfLunaChanged);
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 576, 232);
       Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
@@ -951,17 +1025,21 @@ static void Event_KradenSeesLunaPictureChange(void) {
       Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
       Engine_EventWait(2);
       Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 4);
+      // Kraden: "But other than that, nothing looks different..."
       SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
       Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
       Engine_EventWait(40);
       Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
       Engine_EventWait(30);
+      // Kraden: a trap here, and this is all that happens?
       SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
       Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
       Actor_WalkToAndWait(ACTOR_KRADEN, 576, 184);
       Engine_EventWait(6);
       Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
       Engine_EventWait(40);
+      // Kraden: "Somewhere, something else must have changed." He walks back
+      // into the leader.
       SolSanctumLunaSolRooms_ShowMessageAndWait(
           SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 6);
       Actor_WalkToAndWait(ACTOR_KRADEN, 576, 208);
@@ -983,7 +1061,10 @@ static void Event_KradenSeesLunaPictureChange(void) {
   }
 }
 
-/// Shows Kraden noticing that the floor symbol changed to Luna.
+/// Kraden notices that the symbol on the floor has changed from Sol to Luna.
+/// Called by Event_UpdateRoomTint once all four seals are open, until
+/// FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN is set, which it sets. Leaves Kraden off
+/// the map.
 static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void) {
   Engine_AudioPlayCue(MUS_021);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 184);
@@ -1006,8 +1087,12 @@ static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void) {
   Engine_GameFlagSet(FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN);
 }
 
-/// Searching the floor symbol (trigger 20) after Kraden has seen it change:
-/// the floor opens, and Isaac then Kraden rise into the Elemental Star room.
+/// Searching the floor symbol after Kraden has seen it change: the floor opens,
+/// and Isaac then Kraden rise into the Elemental Star room. Reached by
+/// searching cell code 20; does nothing until
+/// FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN is set. Sets
+/// FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN the first time and takes exit 7,
+/// into the Elemental Star room (scene 17, entrance 10).
 static void Event_RiseToElementalStarRoom(void) {
   struct FieldActor *actor;
   s32 frame;
@@ -1016,6 +1101,7 @@ static void Event_RiseToElementalStarRoom(void) {
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN) == 0) {
   } else {
     Engine_EventBegin();
+    // Isaac steps onto the symbol and Kraden comes out beside him.
     Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
     Camera_MoveTo(PIXELS(287), -1, PIXELS(148), 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 288, 120);
@@ -1067,6 +1153,7 @@ static void Event_RiseToElementalStarRoom(void) {
     Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Engine_ActorSetAnimation(ACTOR_KRADEN, 1);
     Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
+    // Kraden: "Ah ha! This has to be it." and "Let's go, Isaac!"
     Engine_EventSetMessage(MsgSolSanctumHa);
     SolSanctumLunaSolRooms_ShowMessageAndWait(
         SPEAKER_WINDOW_BELOW | ACTOR_KRADEN, 6);
@@ -1109,6 +1196,7 @@ static void Event_RiseToElementalStarRoom(void) {
     } while (frame != 60);
     Engine_ActorSetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Engine_ActorJump(ACTOR_KRADEN, 4, 20);
+    // Kraden: "Wait for me, Isaac... I'm on my way!"
     SolSanctumLunaSolRooms_ShowMessageAndWait(ACTOR_KRADEN, 6);
     Actor_WalkToAndWait(ACTOR_KRADEN, 288, 120);
     Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -1159,7 +1247,14 @@ static void Event_RiseToElementalStarRoom(void) {
   }
 }
 
-/// Restores puzzle tiles and selects the scene associated with this entrance.
+/// Restores puzzle tiles and plays the cutscene this entrance calls for.
+/// Called by Field_RunScene once the actors exist. Blocks Retreat
+/// (FLAG_RETREAT_BLOCKED) between finding the hall and opening the passage
+/// before the eruption; sets FLAG_SCENE_TEMP_00 on an ordinary entrance;
+/// copies each open seal into its FLAG_SOL_SANCTUM_*_LIGHT_SHOWN; plays the
+/// trap at entrance 4, the falling lights at entrance 5 (then closing the four
+/// seals), the saved lights at entrance 6, and the floating eye at entrance 8
+/// until FLAG_SOL_SANCTUM_FLOATING_EYE_SEEN is set.
 s32 SolSanctumLunaSolRooms_Initialize(void) {
   s32 playedEntrySequence;
   s32 anyLightLit;
@@ -1302,6 +1397,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
   return 0;
 }
 
+/// Returns 1 when all four seals are open.
 static s32 SolSanctumLunaSolRooms_AreAllStatueLightsLit(void) {
   s32 allLit = 1;
 
@@ -1324,13 +1420,17 @@ static void SolSanctumLunaSolRooms_ShowMessageAndWait(s32 speaker,
   Engine_EventWait(waitFrames);
 }
 
-/// Entering after the eruption (entrance 8) the first time: in a white flash a
-/// floating eye shows itself to Isaac and Garet, and the hall shakes.
+/// Entering after the eruption the first time: in a white flash a floating eye
+/// shows itself to Isaac and Garet, and the hall shakes. Called by
+/// SolSanctumLunaSolRooms_Initialize at entrance 8 until
+/// FLAG_SOL_SANCTUM_FLOATING_EYE_SEEN is set; the caller sets it. Sets
+/// FLAG_SCENE_TEMP_01 and clears _00 and _02.
 static void SolSanctumLunaSolRooms_ShowFloatingEye(void) {
   struct FieldActor *leader;
   struct BattleEffectBuffers *palette;
 
   Engine_EventBegin();
+  // The screen opens all white on Isaac and Garet, then fades to the tint.
   Camera_MoveTo(PIXELS(286), -1, PIXELS(134), 0);
   Engine_MapRedraw();
   Engine_TaskWait(1);
@@ -1352,6 +1452,7 @@ static void SolSanctumLunaSolRooms_ShowFloatingEye(void) {
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 2);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(100);
+  // Both look around, bewildered, as the hall gives a jolt.
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
   Engine_ActorSetAttachedEffect(GARET, 0x102);
   Engine_EventWait(60);
@@ -1368,7 +1469,8 @@ static void SolSanctumLunaSolRooms_ShowFloatingEye(void) {
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_EventWait(20);
   Engine_ActorRunRepeatedMotion(GARET, 2);
-  // Let Isaac and Garet react to the eye before the stronger tremor.
+  // Garet: "Did that floating eye thing save us?" A stronger tremor throws
+  // them both aside.
   Engine_EventSetMessage(MsgSolSanctumFloatingEyeThing);
   Engine_EventOpenMessage(1, 0);
   Engine_EventChooseYesNo(0, 0);
@@ -1393,6 +1495,7 @@ static void SolSanctumLunaSolRooms_ShowFloatingEye(void) {
   Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(GARET, 2);
+  // Garet: "Yeah, right! Let's get out of here..."
   SolSanctumLunaSolRooms_ShowMessageAndWait(GARET, 10);
   Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
@@ -1409,8 +1512,8 @@ static void SolSanctumLunaSolRooms_ShowFloatingEye(void) {
 #ifdef UBFIX
   palette = gPaletteBufferWork;
 #else
-  palette =
-      (struct BattleEffectBuffers *)((struct EventGlobals *)&gEventWork)->field;
+  palette = (struct BattleEffectBuffers *)((struct EventGlobals *)&gEventWork)
+                ->paletteBufferWork;
 #endif
   palette->target[0] = 0;
   palette->target[1] = 0;
@@ -1427,7 +1530,7 @@ static void SolSanctumLunaSolRooms_ShowFloatingEye(void) {
 
 /// Talking to Kraden: his answer depends on whether Isaac agreed to search.
 /// "Let me know what you find" once Isaac agreed, otherwise "Just wait over
-/// there."
+/// there." Reached by talking to Kraden (actor 16).
 static void Event_TalkToKraden(void) {
   Engine_EventBegin();
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ISAAC_SEARCHING_FOR_KRADEN) != 0) {

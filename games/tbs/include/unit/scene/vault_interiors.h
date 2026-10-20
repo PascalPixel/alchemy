@@ -10,8 +10,8 @@ struct ScenePlacement;
 
 /// Each stop links to up to three others, with a heading for each connection.
 struct VaultInteriorsStopConnection {
-  u8 stopIndex;
-  u8 facing;
+  u8 stopIndex; ///< the stop it leads to; 0xff for no connection
+  u8 facing;    ///< the heading toward it, a facing's high byte
   u8 padding[2];
 };
 
@@ -34,8 +34,8 @@ const struct SceneEvent *Scene_GetEvents(void);
 s32 Scene_Initialize(void);
 extern struct VaultInteriorsStop gVaultInteriors_Stops[];
 extern s32 gVaultInteriors_ActionTable[];
-extern s32 gVaultInteriors_Villager11ExitScript[];
-extern s32 gVaultInteriors_Villager12ExitScript[];
+extern s32 gVaultInteriors_FirstThiefEntryScript[];
+extern s32 gVaultInteriors_SecondThiefEntryScript[];
 extern s32 gVaultInteriors_VaultScriptA[];
 extern s32 gVaultInteriors_VaultScriptB[];
 extern s32 gVaultInteriors_VaultScriptC[];

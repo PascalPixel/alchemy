@@ -41,6 +41,7 @@
 #include "flags.h"
 #include "songs.h"
 #include "item_ids.h"
+#include "fx_scene.h"
 
 static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId);
 static void SolSanctumEruption_ThrowEruptionRing(void);
@@ -66,6 +67,10 @@ static void SolSanctumEruption_UpdateWiseOnePalette(void);
 
 s32 Math_RemainderUnsigned(s32 value, s32 modulus);
 
+// Scene flags, cleared on every ordinary entrance:
+// - FLAG_SCENE_TEMP_46: set as Saturos's group starts to leave; from then on
+//   the embers fall without their sound (SE_246).
+
 enum { ACTOR_WISE_ONE = 15, ACTOR_FIRST_ROCK = 16, ROCK_COUNT = 16 };
 
 enum { OBJECT_ELEMENTAL_STAR = 22 };
@@ -73,13 +78,6 @@ enum { OBJECT_ELEMENTAL_STAR = 22 };
 #define ELEMENTAL_ARC_SCALE_X_DECREASE 7372
 #define EMBER_EMISSION_DISABLED 999
 #define ARC_SCAN_STILL_ACTIVE 888
-
-/// The effect work in slot 56, seen for the VRAM block the paired effects
-/// share.
-struct PairWork {
-  u8 unk00[70];
-  u16 vramBlock;
-};
 
 struct SceneEntrance *SolSanctumEruption_GetEntrances(void) {
   return gSolSanctumEruption_Entrances;
@@ -89,12 +87,15 @@ struct SceneRegion *SolSanctumEruption_GetRegions(void) { return NULL; }
 
 u32 *SolSanctumEruption_GetExits(void) { return gSolSanctumEruption_Exits; }
 
-/// Returns the hostages, antagonists and eruption effects.
+/// Returns Garet and Jenna, then the departure glow (actor 8), Kraden,
+/// Saturos, Menardi, Felix masked and unmasked, Alex, the Wise One (15) and
+/// sixteen rocks (16 to 31), all placed off the map until the cutscene moves
+/// them.
 struct ScenePlacement *SolSanctumEruption_GetPlacements(void) {
   return gSolSanctumEruption_Placements;
 }
 
-/// The event table has no scripted interactions.
+/// Returns the empty event table: the scene is one cutscene.
 struct SceneEvent *SolSanctumEruption_GetEvents(void) {
   return gSolSanctumEruption_Events;
 }
@@ -109,8 +110,11 @@ static inline void SolSanctumEruption_PlaceHostageGroup(void) {
   Actor_SetPosition(ACTOR_ALEX, PIXELS(479), PIXELS(362));
 }
 
-/// Plays Saturos taking the hostages before the Wise One rescues Isaac and
-/// Garet.
+/// Saturos's group argues over the Mars Star and leaves with Jenna and Kraden
+/// as hostages, before the Wise One rescues Isaac and Garet. Called by
+/// SolSanctumEruption_Initialize at entrance 10, the arrival from the
+/// Elemental Star room. Sets FLAG_SCENE_TEMP_46, plays
+/// SolSanctumEruption_PlayWiseOneRescue and then removes Jenna from the party.
 static void SolSanctumEruption_PlayHostageScene(void) {
   void Actor_ShowEmote();
   void ColorBuffer_ApplyTarget();
@@ -178,7 +182,9 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_EventWait(48);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
   Engine_ActorJump(GARET, 6, 20);
-  // Jenna and the others react to the shaking before noticing the Wise One.
+  // Off screen, Menardi: "What happened?" Saturos: "Not again!" Jenna: the
+  // water's gone. Alex: without the Elemental Stars the chamber is
+  // collapsing. Kraden: is this the "terrible retribution"?
   SolSanctumEruption_SetMaterializationTint(1, 20, 20);
   SolSanctumEruption_SetMaterializationTint(0, 20, 40);
   Engine_EventSetMessage(MsgSolSanctumJennaWhatHappened);
@@ -201,6 +207,8 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventWait(20);
   SolSanctumEruption_SetMaterializationTint(0, 20, 20);
+  // The Wise One, a floating rock, appears over the chamber and the quake
+  // stops.
   actor = Object_GetById(ACTOR_WISE_ONE);
   Engine_ActorSetSpriteFlags(actor, 0);
   Actor_SetPosition(ACTOR_WISE_ONE, PIXELS(325), PIXELS(302));
@@ -211,7 +219,8 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
   Engine_EventWait(150);
-  // Turn from Isaac and Garet toward the hostages and the Wise One.
+  // Menardi: "It's over... But what was it?" Jenna: "What is that?!?"
+  // Saturos: "No!" The camera pans to the Wise One.
   Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
   Event_ShowMessage(JENNA, 0);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
@@ -229,6 +238,9 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 2);
   Engine_ColorBufferInterpolate(20);
   Engine_EventWait(200);
+  // Garet: "That rock... It's floating... Do you know what it is?" Yes:
+  // "Yeah, I know it's a rock, stupid!" No: someone is lifting it with
+  // Psynergy. Kraden: "Could that be... the Wise One?!?"
   Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | GARET, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventSetMessage(MsgSolSanctumIKnowItsARock);
@@ -248,6 +260,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapRenderWaitForValues();
   SolSanctumEruption_SetMaterializationTint(0, 20, 60);
+  // Alex: "Such power... Incredible!" Garet: "!!!" Jenna: "Wow..."
   Event_ShowMessageAndWait(ACTOR_ALEX, 0, 30);
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_NORTHWEST, 40);
   SolSanctumEruption_SetMaterializationTint(1, 20, 20);
@@ -257,10 +270,13 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   SolSanctumEruption_SetMaterializationTint(1, 20, 20);
   SolSanctumEruption_SetMaterializationTint(0, 20, 20);
   Event_ShowMessageAndWait(JENNA, 0, 30);
+  // Embers start to rain from the Wise One.
   SolSanctumEruption_ResetEmberEmission();
   Task_AddCallback(SolSanctumEruption_StepEmbers, 0xc80);
   Task_AddCallback(SolSanctumEruption_UpdateEmberFrequency, 0xc80);
   Engine_EventWait(240);
+  // Saturos: "It must be the guardian of the Elemental Stars!" The camera
+  // moves to his group, all facing west.
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 30);
   SolSanctumEruption_PlaceHostageGroup();
   Actor_FaceDirection(JENNA, FACING_WEST, 0);
@@ -276,6 +292,8 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 2);
   Engine_EventWait(20);
+  // Felix: they should escape while they can. Menardi: not without the Mars
+  // Star. Alex sides with Felix, and Saturos agrees to leave it.
   Event_ShowMessage(ACTOR_FELIX, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 2);
   Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 10);
@@ -284,6 +302,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_ActorFaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 40);
   Engine_ActorSetAnimation(ACTOR_SATUROS, 4);
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
+  // Jenna: "What about Isaac and Garet? You can't just leave them here!"
   Actor_ShowEmote(JENNA, EMOTE_IN_FRONT, 0);
   Actor_FaceDirection(JENNA, FACING_SOUTHEAST + FACING_STEP, 40);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | JENNA, 0, 10);
@@ -292,6 +311,9 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_ActorFaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 40);
   Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | 5, 40);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 10);
+  // Saturos: "Forget about them." Menardi: they might survive. Saturos: "So
+  // what do you suggest we do?" Alex: take Jenna, and they will bring the
+  // Star to get her back.
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 10);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_WEST, 10);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 2);
@@ -307,10 +329,13 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Actor_FaceDirection(ACTOR_MENARDI, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 20);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH + FACING_STEP, 20);
+  // Alex: "Regardless, Kraden must come with us."
   Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
   Event_ShowMessageAndWait(ACTOR_ALEX, 0, 10);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 0);
-  // Felix steps forward while Alex and Kraden join the argument.
+  // Felix steps forward: Alex is breaking their promise. Alex: conditions
+  // have changed. Felix will not let them hurt Jenna; Kraden offers himself
+  // in her place.
   Actor_SetSpeed(ACTOR_FELIX, PIXELS(1), PIXELS(1) / 2);
   Actor_WalkToAndWait(ACTOR_FELIX, 471, 314);
   Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 3);
@@ -323,6 +348,8 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 20);
+  // Saturos: "you cannot help Jenna now." Menardi: if they leave her, she
+  // will die; is that what Felix wants?
   Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 30);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 20);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 2);
@@ -351,6 +378,8 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_EventWait(60);
   Actor_FaceDirection(ACTOR_ALEX, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_EventWait(30);
+  // Alex: "Perhaps we ought to continue this elsewhere, Felix." Jenna:
+  // "Felix..." Alex: "Please...can we go now?"
   Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 30);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
@@ -383,11 +412,11 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 10);
+  // Menardi: "Let's make haste!" She shoves Jenna, who stumbles away.
   Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | 3, 0);
   Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 2);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_MENARDI, 0);
   Actor_SetSpeed(ACTOR_MENARDI, PIXELS(8) / 5, PIXELS(4) / 5);
-  // Stage Menardi and Jenna for the hostage exchange.
   Actor_SetSpeed(JENNA, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_WalkToAndWait(ACTOR_MENARDI, 475, 338);
   actor = Object_GetById(ACTOR_MENARDI);
@@ -397,6 +426,8 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_ActorJump(JENNA, 4, 0);
   Actor_WalkToAndWait(JENNA, 459, 316);
   Actor_SetSpeed(JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
+  // Felix: "Hey, don't push my sister!" Menardi: "You owe us your life!"
+  // Saturos: "Menardi!"
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | 3, 0);
   Engine_ActorStartRepeatedMotion(ACTOR_FELIX, 3);
   Event_ShowMessageAndWait(ACTOR_FELIX, 0, 30);
@@ -424,6 +455,8 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_ActorSetAnimation(JENNA, 1);
   Actor_FaceDirection(JENNA, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 20);
+  // Felix leads Jenna aside. Saturos: "Master Kraden, you will be joining us,
+  // of course!" All gather under the departure point.
   Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH + FACING_STEP, 20);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_SATUROS, 0, 40);
@@ -452,32 +485,34 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_CameraWaitForMove();
   Engine_EventWait(40);
   GameFlag_Set(FLAG_SCENE_TEMP_46);
-  // Raise and remove the departing group, leaving Isaac and Garet behind.
+  // One by one they rise out of the chamber: Saturos, Kraden, Menardi, then
+  // Jenna ("Isaac, Garet! Don't die!") and Felix, and last Alex, who regrets
+  // leaving the Mars Star.
   Actor_SetSpeed(ACTOR_SATUROS, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetSpeed(ACTOR_MENARDI, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_SetSpeed(ACTOR_ALEX, PIXELS(1) / 2, PIXELS(1) / 4);
   Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
-  SolSanctumEruption_RaiseAndShrinkActor(10);
+  SolSanctumEruption_RaiseAndShrinkActor(ACTOR_SATUROS);
   Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-  SolSanctumEruption_RaiseAndShrinkActor(9);
+  SolSanctumEruption_RaiseAndShrinkActor(ACTOR_KRADEN);
   Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
-  SolSanctumEruption_RaiseAndShrinkActor(11);
+  SolSanctumEruption_RaiseAndShrinkActor(ACTOR_MENARDI);
   Actor_FaceDirection(JENNA, FACING_WEST + FACING_STEP, 40);
   Engine_ActorStartRepeatedMotion(JENNA, 2);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | JENNA, 0, 40);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
   Actor_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 30);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
-  SolSanctumEruption_RaiseAndShrinkActor(5);
-  SolSanctumEruption_RaiseAndShrinkActor(13);
+  SolSanctumEruption_RaiseAndShrinkActor(JENNA);
+  SolSanctumEruption_RaiseAndShrinkActor(ACTOR_FELIX);
   Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHWEST + FACING_STEP, 40);
   Event_ShowMessageAndWait(ACTOR_ALEX, 0, 30);
   Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
   Engine_EventWait(20);
   Event_ShowMessageAndWait(ACTOR_ALEX, 0, 30);
-  SolSanctumEruption_RaiseAndShrinkActor(14);
+  SolSanctumEruption_RaiseAndShrinkActor(ACTOR_ALEX);
   SolSanctumEruption_PlayWiseOneRescue();
-  Party_RemoveOwnerRestored(5);
+  Party_RemoveOwnerRestored(JENNA);
 }
 
 /// Lifts one departing actor and shrinks it together with the paired effect.
@@ -526,7 +561,8 @@ UNUSED static void SolSanctumEruption_UnusedCallbackA(void) {}
 
 UNUSED static void SolSanctumEruption_UnusedCallbackB(void) {}
 
-/// Starts the hostage scene only for arrival ten.
+/// Plays the eruption at entrance 10, the arrival from the Elemental Star
+/// room. Called by Field_RunScene once the actors exist.
 s32 SolSanctumEruption_Initialize(void) {
   if (gGameState.entrance == 10) {
     FieldEffect_InitSparkles();
@@ -535,7 +571,8 @@ s32 SolSanctumEruption_Initialize(void) {
   return 0;
 }
 
-/// Keeps a flying ember sprite rotated a quarter-turn from its facing.
+/// Keeps a flying ember sprite rotated a quarter-turn from its facing. Run by
+/// each ember's object script, gEruption_EmberScript.
 static s32
 SolSanctumEruption_AlignEmberToHeading(struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;
@@ -612,7 +649,9 @@ static void SolSanctumEruption_ResetEmberEmission(void) {
 }
 
 /// Retires landed embers and launches the next free one at the current
-/// frequency.
+/// frequency, shaking the map after each. Run each frame as a callback that
+/// SolSanctumEruption_PlayHostageScene adds and
+/// SolSanctumEruption_PlayWiseOneRescue removes.
 static void SolSanctumEruption_StepEmbers(void) {
   struct GroundParticleWork *sparkles;
   s32 shakePixels;
@@ -702,7 +741,8 @@ static void SolSanctumEruption_StepEmbers(void) {
   }
 }
 
-/// Varies the ember emission interval and its duration.
+/// Varies the ember emission interval and its duration. Run each frame as a
+/// callback beside SolSanctumEruption_StepEmbers.
 static void SolSanctumEruption_UpdateEmberFrequency(void) {
   u32 emissionLevel;
 
@@ -744,7 +784,11 @@ static inline void SolSanctumEruption_FinishMaterialization(void) {
   Actor_SetChildValue(ACTOR_WISE_ONE, 0);
 }
 
-/// Shows the collapsing chamber, the remaining star and the Wise One rescue.
+/// Left behind, Isaac and Garet face the Wise One, who makes the Mars Star
+/// glow, warns them of Alchemy's threat and sends them out as the volcano
+/// erupts. Isaac keeps the Star. Called by SolSanctumEruption_PlayHostageScene.
+/// Sets FLAG_SOL_SANCTUM_ERUPTED and FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED and
+/// takes exit 5, to the Luna and Sol rooms (scene 11, entrance 8).
 static void SolSanctumEruption_PlayWiseOneRescue(void) {
   struct GroundParticleWork *sparkles;
   struct FieldActor *wiseOne;
@@ -841,9 +885,10 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_FaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
   Engine_EventWait(60);
 
+  // Garet: "Well, this turned out badly, wouldn't you say?" Yes: "It's a
+  // miracle we survived." No: "How can you be so calm?"
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventSetMessage(MsgSolSanctumWellTurnedBadly);
-  // Let the survivors discuss their missing friends and survey the damage.
   Event_OpenMessage(GARET, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_ActorSetAnimationAndWait(GARET, ANIM_NOD);
@@ -858,6 +903,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_ActorJump(GARET, 2, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
   Engine_EventWait(40);
+  // Garet: "Jenna and Kraden are gone!"
   Engine_EventSetMessage(MsgSolSanctumFriendsGone);
   Event_ShowMessageAndWait(GARET, 0, 10);
   Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
@@ -869,6 +915,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_FaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(GARET, 2);
+  // Garet: "You don't think they'll hurt Jenna and Kraden, do you?" Either
+  // way, he trusts Felix to look after them.
   Event_OpenMessage(GARET, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Engine_EventWait(10);
@@ -925,6 +973,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Camera_MoveTo(PIXELS(273), -1, PIXELS(145), 1);
   Engine_CameraWaitForMove();
   Engine_EventWait(20);
+  // Garet: "This really is terrible..." and they have a long way to go.
   Engine_ActorRunRepeatedMotion(GARET, 2);
   Engine_EventSetMessage(MsgSolSanctumThisIsTerrible);
   Event_ShowMessageAndWait(GARET, 0, 20);
@@ -942,6 +991,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   Engine_EventWait(10);
 
+  // A violent tremor throws them aside.
   Event_PlayCue(MUS_023);
   SolSanctumEruption_SetMaterializationTint(1, 4, 0);
   sparkles->stopped = 0;
@@ -974,6 +1024,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_EventWait(10);
   Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 0);
   Engine_EventWait(40);
+  // Garet: "We're in big trouble..." Yes: "Let's get out of here..." No:
+  // "Quit acting so tough!"
   Event_OpenMessage(GARET, 0);
   if (Engine_EventChooseYesNo(0, 0) == 0) {
     Actor_FaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
@@ -988,8 +1040,9 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_EventWait(20);
   Event_ShowMessage(GARET, 0);
 
+  // The Wise One drifts in from the west, unseen by Isaac; Garet walks off
+  // and calls him: "I'm over here. Come on, we've gotta go."
   Actor_SetPosition(ACTOR_WISE_ONE, PIXELS(110), PIXELS(152));
-  // The Wise One returns and draws the party toward the remaining star.
   Engine_TaskWait(1);
   Actor_SetSpeed(ACTOR_WISE_ONE, PIXELS(6) / 5, PIXELS(3) / 5);
   Actor_SetDestination(ACTOR_WISE_ONE, 171, 152);
@@ -1039,6 +1092,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   sparkles->stopped = 1;
   Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_EventWait(120);
+  // The Wise One: "Why are you standing there?" and "This place has become
+  // dangerous..." A jolt; Garet: "You're the dangerous one!"
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Engine_EventWait(20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
@@ -1079,11 +1134,12 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_EventWait(10);
 
+  // The floor by the Wise One starts to break up; the Wise One glows and
+  // holds it together with Psynergy.
   Event_PlayCue(SE_107);
   FieldScheduler_AddCallback(SolSanctumEruption_FlickerFirstCollapseTiles,
                              TASK_PRIORITY_SCENE);
   Engine_EventWait(10);
-  // Alternate the damaged tiles while the Wise One materializes beside them.
   Actor_ShowEmote(ACTOR_WISE_ONE, EMOTE_IN_FRONT, 0);
   Engine_EventWait(40);
   Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
@@ -1124,6 +1180,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_MapRenderWaitForValues();
   SolSanctumEruption_FinishMaterialization();
   Engine_EventWait(60);
+  // The Wise One: "The volcano will soon erupt... I cannot hold it long."
+  // and, after drifting closer, "You must leave this place."
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Engine_EventWait(40);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
@@ -1148,6 +1206,9 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
   Camera_MoveTo(PIXELS(224), -1, PIXELS(158), 1);
   Engine_CameraWaitForMove();
+  // Lights rise at the chamber's first corner. The Wise One: the Elemental
+  // Djinn have returned; "Take out the Elemental Star..." Refusing, "Isaac
+  // cannot resist."
   SolSanctumEruption_RaiseElementalArcs(0);
   Engine_ActorRunRepeatedMotion(ACTOR_WISE_ONE, 2);
   Engine_EventWait(20);
@@ -1197,6 +1258,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   }
   Actor_SetChildValue(ACTOR_WISE_ONE, 0);
   SolSanctumEruption_SetMaterializationTint(0, 20, 0);
+  // The Wise One: "Return it to its bag." and the Elemental Stars are moving
+  // away from here.
   Engine_EventSetMessage(MsgSolSanctumReturnStarToBag);
   Event_ShowMessageAndWait(ACTOR_WISE_ONE, 0, 20);
   if (star != NULL) {
@@ -1209,9 +1272,12 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Engine_EventWait(40);
 
+  // The camera visits the other three corners as lights rise there. The Wise
+  // One: the magma flows freely, there will be no chamber for the Stars to
+  // return to, and the world is exposed to Alchemy. Garet: "Alchemy? A
+  // threat?"
   Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTH, 0);
   Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
-  // Show the other three chamber positions and their rising arc effects.
   SolSanctumEruption_FadeCameraTo(232, 464);
   SolSanctumEruption_RaiseElementalArcs(1);
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
@@ -1228,6 +1294,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_SetPosition(GARET, PIXELS(231), PIXELS(180));
   Actor_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_TaskWait(20);
+  // Back with the party, the Wise One: misused, Alchemy is dangerous; its
+  // power is released if the Stars light the four lighthouses.
   SolSanctumEruption_FadeCameraTo(219, 171);
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Engine_EventWait(10);
@@ -1243,8 +1311,9 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ColorBuffer_ApplyTarget(0x20119e, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_EventWait(20);
+  // The floor breaks up again in two places; the Wise One floats to each and
+  // holds it together.
   Event_PlayCue(SE_107);
-  // Repeat the collapsing tile effects as the Wise One moves across the room.
   FieldScheduler_AddCallback(SolSanctumEruption_FlickerSecondCollapseTiles,
                              TASK_PRIORITY_SCENE);
   Engine_EventWait(20);
@@ -1342,6 +1411,8 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 0);
   Actor_ShowEmote(GARET, EMOTE_IN_FRONT | 2, 0);
   Engine_EventWait(60);
+  // The Wise One: "It's erupting... Flee, now!" Garet: "But how..." The Wise
+  // One: "I will help you..." It glows and the chamber fades to white.
   Event_ShowMessage(ACTOR_WISE_ONE, 0);
   Engine_ActorRunRepeatedMotion(GARET, 3);
   Event_ShowMessage(GARET, 0);
@@ -1373,10 +1444,13 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTED);
   GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED);
   Engine_EventRequestExit(5);
+  // XXX: flag 0x100 is set nowhere else, and nothing in the repository reads
+  // it by number; a read of its byte or range would say what it marks.
   GameFlag_Set(0x100);
 }
 
-/// Places an actor before the star and draws it above the chamber floor.
+/// Places an actor before the star, facing south, and draws it above the
+/// chamber floor.
 static void SolSanctumEruption_PlaceBeforeStar(s32 actor) {
   struct FieldActor *object;
 
@@ -1421,7 +1495,8 @@ static void SolSanctumEruption_DrawSecondCollapseTiles(s32 alternate) {
   Engine_MapRedraw();
 }
 
-/// Randomly alternates the first tile patch on even frames.
+/// Randomly alternates the first tile patch on even frames. Run each frame as
+/// a callback while the floor breaks up, until the Wise One holds it.
 static void SolSanctumEruption_FlickerFirstCollapseTiles(void) {
   if ((gFrameCount & 1) == 0) {
     if ((u32)Math_RemainderUnsigned(Engine_RandomNext(), 100) > 50) {
@@ -1432,7 +1507,7 @@ static void SolSanctumEruption_FlickerFirstCollapseTiles(void) {
   }
 }
 
-/// Randomly alternates the second tile patch on even frames.
+/// Randomly alternates the second tile patch on even frames, as the first.
 static void SolSanctumEruption_FlickerSecondCollapseTiles(void) {
   if ((gFrameCount & 1) == 0) {
     if ((u32)Math_RemainderUnsigned(Engine_RandomNext(), 100) > 50) {
@@ -1552,7 +1627,8 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 mode) {
   Engine_ColorBufferInterpolate(40);
 }
 
-/// Stretches each active arc for eight frames, then lifts it out of view.
+/// Stretches each active arc for eight frames, then lifts it out of view. Run
+/// each frame as a callback while SolSanctumEruption_RaiseElementalArcs runs.
 static void SolSanctumEruption_UpdateElementalArcs(void) {
 
   u32 arcIndex;
@@ -1666,7 +1742,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct FieldActor *parent) {
   struct FieldActor *pair[2];
   struct FieldActor *child;
   struct AnimationObject *sprite;
-  struct PairWork *work = gEffectWork;
+  struct BattleFxScene *work = gEffectWork;
   s32 effectIndex;
 
   Engine_AudioPlayCue(SE_292);
@@ -1684,7 +1760,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct FieldActor *parent) {
         AnimationObjects_SelectAnimation(sprite, 0);
         sprite->flags = 0;
         Resource_ResetEntry(sprite->slot);
-        sprite->slot = work->vramBlock;
+        sprite->slot = work->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
             (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;
@@ -1710,6 +1786,9 @@ static void SolSanctumEruption_SpawnEffectPair(struct FieldActor *parent) {
 
 #include "common/effect_psynergy.h"
 
+/// Cycles the Wise One's palette while it glows. Run each frame as a callback
+/// that SolSanctumEruption_PlayWiseOneRescue adds and
+/// SolSanctumEruption_FinishMaterialization removes.
 static void SolSanctumEruption_UpdateWiseOnePalette(void) {
   SolSanctumEruption_CycleActorPalette(Object_GetById(ACTOR_WISE_ONE));
 }

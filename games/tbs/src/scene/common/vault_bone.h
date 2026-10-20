@@ -6,8 +6,10 @@
 #include "field_obj.h"
 #include "field_event.h"
 
-/// Search spot 41: take the Bone, or, with no room for it, actor 18 shakes
-/// their head. "Wow, you have so many things. Aren't you a greedy lad!"
+/// Searching cell code 41 beside the bone giver takes a Bone after the
+/// thieves are jailed. The floor Bone remains, so the party can take more.
+/// With no room for it, actor 18 (the bone giver in both scenes) shakes
+/// their head: "Aren't you a greedy lad!"
 static void Vault_FindBone(void) {
   Engine_EventBegin();
   if (PartyInventory_HasSpace() == 0) {

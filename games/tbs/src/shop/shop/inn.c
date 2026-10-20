@@ -4,6 +4,7 @@
 
 #include "../shop_internal.h"
 
+/// The innkeeper's lines, in message order from MsgInnWelcome.
 enum InnMessageId {
   INN_MESSAGE_WELCOME = 0xd1c,
   INN_MESSAGE_STAY_COMPLETE,
@@ -12,14 +13,16 @@ enum InnMessageId {
   INN_MESSAGE_REST_COMPLETE,
 };
 
-/// Inn price multiplier
+/// The coins a night costs each living guest, by inn: Vale, Vault, Bilibin,
+/// Kolima, Imil, Xian, Altin, Kalay, Lunpa, 9 (no inn), Suhalla, Lalivero.
 // clang-format off
 static const s8 sInnPricesPerGuest[12] = {
     2, 4, 7, 8, 8, 10, 12, 15, 20, 0, 18, 25,
 };
 // clang-format on
 
-/// Multiplies the inn's price per guest by the number of living party members.
+/// Returns the night's price: the inn's price per guest times the party
+/// members still standing. Called by Inn_CheckIn.
 s32 Inn_RoomPrice(s32 innId) {
   struct ShopRuntime *shop = gMenuWork;
   s32 guestCount = 0;
@@ -33,8 +36,10 @@ s32 Inn_RoomPrice(s32 innId) {
   return pricePerGuest * guestCount;
 }
 
-/// Offers an inn stay, checks the fee and restores the innkeeper window after
-/// resting.
+/// Runs an inn's counter: the innkeeper names the price, and on Yes, with the
+/// coins, the party sleeps (Inn_PlaySleep) and the innkeeper speaks again.
+/// Holds the shop's work block while it runs. Called by the town scenes'
+/// innkeepers through SHOP.S (Engine_InnOpen).
 s32 Inn_CheckIn(s32 innId, s32 objectId) {
   struct InnRuntimeState *state;
   struct FieldActor *innkeeper;
@@ -45,6 +50,8 @@ s32 Inn_CheckIn(s32 innId, s32 objectId) {
   Shop_InitializeCursorWork();
   state = gMenuWork;
   state->active = 1;
+  // Xian's inn has lines of its own, as far past the other inns' as the
+  // warriors' shops' are past the weapon shop's (warriorShop).
   if (innId == 5)
     state->specialActive = 1;
 
@@ -90,8 +97,9 @@ s32 Inn_CheckIn(s32 innId, s32 objectId) {
   return 0;
 }
 
-/// Charges for the stay, restores living members' HP and PP, then plays the
-/// rest transition.
+/// Charges `roomPrice`, restores the HP and PP of each member still standing,
+/// and plays the night: a fade to black, the inn's music and a fade back.
+/// Called by Inn_CheckIn.
 void Inn_PlaySleep(s32 roomPrice) {
   s16 partyMemberIds[8];
   s32 memberCount;

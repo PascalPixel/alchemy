@@ -2,8 +2,8 @@
 
 This folder holds The Broken Seal's counters: shops that buy, sell and repair,
 the artifact counter and the Game Ticket gifts, the sanctum's healing
-services, the inn, and the item picker that scenes and Psynergy use to choose
-a party member's item.
+services, the inn, and the item picker that asks which item to drop when an
+item is found with every bag full.
 
 See also: [Windows](../window/README.md), the windows and messages the
 counters are made of; [Menus](../menu/README.md), which share their work
@@ -47,9 +47,9 @@ crosses folders.
   or repair (`enum ShopAction`). **service**: what the sanctum does for one
   party member: revive, cure poison, exorcise or remove a curse (`enum
   SanctumService`).
-- **mode**: `shop->mode`, a number the counters set as they change screens,
-  which `Shop_PlaceCursor` passes on as the hand cursor's kind; its values are
-  not named yet.
+- **cursor duration**: `shop->mode`, the number of frames for the next hand
+  cursor glide. `Shop_PlaceCursor` passes it to `Shop_SetCursor`, and
+  `ShopCursor_Advance` interpolates until that many frames have elapsed.
 - **party row**: the party members' icons across the window, which the
   counters select and animate (`partyMemberIcons`, `Shop_PickUnit`).
 - `unk<offset>`: a field whose meaning is not known yet.
@@ -125,8 +125,6 @@ release.
 
 Still unknown:
 
-- XXX: the values of `shop->mode`, which the counters set as they change
-  screens and which picks the hand cursor's kind.
 - XXX: why rows 16, 17 and 18 are the warrior's shops (`shop->warriorShop`,
   `shop/run.c`) by number rather than by a column of the row.
 - XXX: `EventTable_ApplyRowAbilities` and the other `EventTable_` names say

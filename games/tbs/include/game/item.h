@@ -26,6 +26,7 @@ enum InventoryEncoding {
 enum ItemFlags {
   ITEM_CURSED = 1,
   ITEM_CANNOT_UNEQUIP = 2,
+  ITEM_RARE = 4, ///< selects the shop's rare item offers
   ITEM_INDISPENSABLE = 8,
   ITEM_STACKABLE = 0x10
 };

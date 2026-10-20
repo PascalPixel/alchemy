@@ -4,7 +4,8 @@
 
 #include "../shop_internal.h"
 
-/// Gift prices
+/// The shop credit each Game Ticket costs, by how many have been given: five
+/// at each price: 300, then 500 doubling to 8000.
 // clang-format off
 static const s16 sGameTicketCreditCosts[30] = {
     300, 300, 300, 300, 300,
@@ -15,15 +16,19 @@ static const s16 sGameTicketCreditCosts[30] = {
     8000, 8000, 8000, 8000, 8000,
 };
 
-/// Gift items, terminated by 0; no function reads this table.
+/// Gift items, terminated by 0; no function reads this table. They are the
+/// Long Sword to the Muramasa, the Short Sword, Mint, the Demon Axe, Asura's
+/// Armor, the Cotton Shirt, the Travel Vest, Herb, Nut and an unused row.
 const s16 gShop_GiftItemIds[21] = {
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
     16, 195, 38, 84, 89, 90, 180, 181, 190, 0,
 };
 // clang-format on
 
-/// Offers a Game Ticket for accumulated shop credit and lets the player choose
-/// its recipient.
+/// Gives a Game Ticket once the party's shop credit (what it has spent in
+/// shops) reaches the next ticket's cost, and lets the player choose who
+/// takes it. Spends the credit and counts the gift, not coins. Called by
+/// Shop_SelectBuy after each purchase.
 void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
   struct ShopRuntime *shop = gMenuWork;
   s32 creditCost;
@@ -62,6 +67,8 @@ void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
       Shop_DrawUnitItem(itemWindow, unitId, shop->selectedItem);
     }
     if ((gKeysPressed & KEY_A) != 0) {
+      // Probe capacity before the keeper's confirmation; the gift is committed
+      // only after that line finishes.
       slot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (slot < 0) {
         AudioCommand_PlayFar(SE_MENU_CANCEL);
@@ -293,10 +300,12 @@ static const s16 sStockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS] = {
 };
 // clang-format on
 
+/// Returns how many stock rows there are; Shop_Run refuses a row past them.
 s32 EventTable_GetRowLimit(void) { return SHOP_STOCK_ROWS; }
 
-/// Adds a location's initial artifacts to shared stock once, before its first
-/// shop visit.
+/// Adds a shop's artifacts to the shared stock counters once, on its first
+/// visit, and sets the shop's flag (FLAG_SHOP_ARTIFACTS_STOCKED + row) to
+/// remember it. Called by Shop_Run as a shop opens.
 void EventTable_ApplyRowAbilities(s32 stockRow) {
   const s16 *stockEntries;
   const s16 *artifactCursor;
@@ -324,7 +333,8 @@ void EventTable_ApplyRowAbilities(s32 stockRow) {
   }
 }
 
-/// Copies up to 24 ordinary stock items and appends a zero terminator.
+/// Copies the shop's ordinary stock, up to 24 items, to `output` with a 0
+/// after, and returns how many. Called by Shop_Run for Buy.
 s32 EventTable_CopyRowHeader(s32 stockRow, s16 *output) {
   const s16 *src;
   s16 *dst;
@@ -350,7 +360,9 @@ s32 EventTable_CopyRowHeader(s32 stockRow, s16 *output) {
   return count;
 }
 
-/// Reads the shop type from the last word of its stock row.
+/// Returns the shop's type from the last column of its stock row: 0 items,
+/// 1 weapons, 2 armor, as Item_GetEquipmentGroup sorts items. Called by
+/// Shop_Run.
 s32 EventTable_GetRowType(s32 stockRow) {
   return sStockTable[stockRow][SHOP_STOCK_TYPE];
 }

@@ -254,7 +254,11 @@ void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
 void Map_SetShownLayers(u32 layerFlags);
 
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
+#ifdef UBFIX
+void Map_InitializePerspectiveScene(void);
+#else
 s32 Map_InitializePerspectiveScene(void);
+#endif
 void Map_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py);
 void WorldMap_LoadGraphics(s32 x, s32 z);
 void MapAnimation_ApplyAffineFrame(void);

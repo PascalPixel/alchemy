@@ -391,8 +391,8 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
   s32 slot;
   /* FAKEMATCH(dead): two unused arrays for 24 bytes of the native 68-byte
    * frame; without them, 2 of 250 instructions differ in tbs-en. */
-  s32 ground[3];
-  s32 screen[3];
+  UNUSED s32 ground[3];
+  UNUSED s32 screen[3];
   struct AffineTransform effect;
   s32 flip;
   s32 x;

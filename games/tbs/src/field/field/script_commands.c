@@ -1,11 +1,17 @@
 /// @file
 /// Object script commands: waits, jumps, flags, moves and work values.
 /// Part of field.c, the field object, compiled only through it.
+///
+/// Each `SC_` handler here is reached through gScriptObject_CommandTable
+/// (object_script.c), which Object_UpdateAll and Object_UpdateAllThumb call
+/// for each live object; each returns 1 to run on and 0 to end the object's
+/// frame (the protocol is in this folder's README).
 
 #include "../field_internal.h"
 
-/// SC_WAIT(n): waits n frames; this frame counts as the first. Returns 0 to
-/// end the object's commands for this frame.
+/// SC_WAIT(n): waits n frames; this frame counts as the first. Sets
+/// interpreter->wait to n - 1, which the update loops count down, and moves
+/// past its operand. Returns 0 to end the object's commands for this frame.
 s32 Script_Wait(struct ScriptInterpreter *interpreter) {
   s16 commandCursor = interpreter->cursor;
 
@@ -15,8 +21,9 @@ s32 Script_Wait(struct ScriptInterpreter *interpreter) {
 }
 
 /// SC_SYNC: waits until the object arrives at its target, or until a solid
-/// object has blocked it for 60 frames (delay is the blocked count, which
-/// the update raises). Returns 1 (run on) once it has, 0 (wait) until then.
+/// object has blocked it for 60 frames (refused is the blocked count, which
+/// Object_UpdateAllThumb raises). Returns 1 (run on) once it has, clearing
+/// refused when it gave up, and 0 (wait) until then.
 s32 Script_WaitForArrival(struct ScriptInterpreter *interpreter) {
   if (interpreter->refused > 0x3B) {
     interpreter->refused = 0;
@@ -32,7 +39,8 @@ s32 Script_WaitForArrival(struct ScriptInterpreter *interpreter) {
 
 /// SC_CALL(fn): calls fn with the object. A non-zero result waits and calls
 /// it again next frame; zero moves on, past the command unless fn moved the
-/// cursor itself.
+/// cursor itself. Scene scripts and the field effect scripts of fxdata.c use
+/// it to run their own per-object steps.
 s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter) {
   s16 initialCursor = interpreter->cursor;
   ScriptCommand callback =
@@ -48,6 +56,7 @@ s32 Script_InvokeCallback(struct ScriptInterpreter *interpreter) {
 /// Returns the cursor just past the script's label key (SC_LABEL or SC_TO,
 /// matched without the bit that tells them apart), searching its first 1024
 /// words, or 0 (the start) when key is 0 or not found. Clears the wait.
+/// Called by the jumps: SC_JUMP, SC_LOOP, SC_IF and SC_IFNOT.
 s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 labelKey) {
   u32 *scriptWords;
   s32 wordIndex;
@@ -59,6 +68,7 @@ s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 labelKey) {
     return 0;
   }
 
+  // Clear bit 30, which marks SC_TO, so the jump's own operand never matches.
   labelKey &= 0xBFFFFFFF;
   scriptWords = (u32 *)interpreter->script;
   wordIndex = 0;
@@ -72,7 +82,10 @@ s32 Script_FindLabel(struct ScriptInterpreter *interpreter, u32 labelKey) {
 }
 
 /// SC_LOOP(n, to): jumps to label to until it has done so n - 1 times, then
-/// moves on; with n = SC_FOREVER it always jumps.
+/// moves on; with n = SC_FOREVER it always jumps. Counts in
+/// interpreter->repeatCount and clears it when the loop ends, so loops do not
+/// nest. The engine's own scripts (object_script.c) end with
+/// SC_LOOP(SC_FOREVER, SC_TOP).
 s32 Script_RepeatOrJump(struct ScriptInterpreter *interpreter) {
   const s32 *arguments;
   s32 repeatLimit;
@@ -134,7 +147,9 @@ s32 Script_JumpIfFalse(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// SC_END: hands the object back to the idle script. Returns 0.
+/// SC_END: hands the object back to the idle script, gScript_MainScript,
+/// whose lone SC_END runs again each frame. Returns 0. The table's unused
+/// command numbers from 0x24 also point here.
 s32 Script_End(struct ScriptInterpreter *interpreter) {
   s32 result;
 
@@ -176,6 +191,7 @@ s32 Script_ToggleFlagAndTest(struct ScriptInterpreter *interpreter) {
   flagId = interpreter->script[interpreter->cursor + 1];
   previousFlagValue = GameFlag_TestFar(flagId);
   interpreter->conditionResult = previousFlagValue;
+  // The test's low byte is 1 when the flag was set.
   if ((previousFlagValue << 0x18) == 0x01000000) {
     GameFlag_ClearBitFar(flagId);
   } else {
@@ -193,7 +209,8 @@ s32 Script_SetAnimation(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// SC_FREE: releases the object. Returns 0.
+/// SC_FREE: releases the object through ObjectDispatch_Release, which
+/// releases its sprites and zeroes its slot. Returns 0.
 s32 Script_FreeObject(struct ScriptInterpreter *interpreter) {
   ObjectDispatch_Release((struct DispatchObject *)interpreter);
   return 0;
@@ -213,7 +230,11 @@ s32 Script_PlaySound(struct ScriptInterpreter *interpreter) {
 }
 
 /// Returns -1 when an object at position values would overlap a solid
-/// object (bit 0 of unk59), each radius less 2 pixels; otherwise 0.
+/// object (bit 0 of unk59), each radius less 2 pixels; otherwise 0. The
+/// object itself is skipped. Called by SC_WANDER and SC_WANDER_HOME, the
+/// player's control (player_control.c), the motion loop's solid test
+/// (object_motion.c), and the carry and Force effects through
+/// ScriptObject_CheckOverlapFar.
 s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values) {
   s32 objectIndex;
   u8 *collisionFlags;
@@ -234,7 +255,8 @@ s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values) {
 }
 
 /// Returns the first solid object that an object at position values would
-/// overlap, as ScriptObject_CheckOverlap tests, or NULL.
+/// overlap, as ScriptObject_CheckOverlap tests, or NULL. Called by the Move
+/// effect (move.c) through ScriptObject_FindOverlappingEntryFar.
 struct ScriptObjectEntry *
 ScriptObject_FindOverlappingEntry(struct ScriptObjectEntry *object,
                                   s32 *values) {
@@ -273,7 +295,6 @@ static __inline__ s32 Script_ApplyPositionCommand(
   coordinates++;
   z = *coordinates;
   applyPosition((struct ObjectRuntime *)interpreter, x, y, z);
-  // The command and its three coordinates occupy four script words.
   interpreter->cursor += 4;
   return 1;
 }
@@ -307,7 +328,7 @@ s32 Script_ApplyRelativePosition(struct ScriptInterpreter *interpreter) {
 }
 
 /// SC_FACE_LINK: stores the angle from the object to its linked object in
-/// scriptValue.
+/// scriptValue, measured on the ground plane (x and z).
 s32 Script_StoreAngleToLinkedObject(struct ScriptInterpreter *interpreter) {
   struct ScriptObjectRuntime *object =
       (struct ScriptObjectRuntime *)interpreter;
@@ -356,10 +377,13 @@ s32 Script_ApplyLocalOffsetPosition(struct ScriptInterpreter *interpreter) {
 }
 
 /// SC_CAMERA: keeps the camera object on its leader (linkedObject), clamped
-/// to 120 pixels inside the map's left and right edges and a band above and
-/// below the leader. It closes an eighth of the distance a frame, at most
-/// its speed limit, and a quarter of a large height difference; when action
-/// is set it jumps there at once.
+/// so the view stays on the map. It closes an eighth of the distance a frame,
+/// at most its speed limit, and a quarter of a large height difference; when
+/// action is set it jumps there at once.
+///
+/// Run each frame by gObjectDispatch_CameraScript, which
+/// ObjectDispatch_StartCamera starts. Clears the camera's flags and target,
+/// moves its position, and counts its step.
 s32 Camera_FollowLeaderInBounds(struct ScriptInterpreter *interpreter) {
   struct ObjectRuntime *cameraObject = (struct ObjectRuntime *)interpreter;
 
@@ -378,6 +402,10 @@ s32 Camera_FollowLeaderInBounds(struct ScriptInterpreter *interpreter) {
   s32 distance;
   s32 moveStep;
 
+  // The bounds Map_UpdateLayerScroll keeps the view in, turned into bounds
+  // on the followed point: the view's top left is 120 pixels left of the
+  // point and 96 above it, the point drawn at z less its height, and the
+  // screen is 240 by 160 pixels.
   bounds = gMapWork[0];
   leader = cameraObject->linkedObject;
   minX = bounds->minX + 0x780000;
@@ -415,10 +443,13 @@ s32 Camera_FollowLeaderInBounds(struct ScriptInterpreter *interpreter) {
       dx = x - cameraObject->x;
       dy = y - cameraObject->y;
       dz = z - cameraObject->z;
+      // The whole-pixel root is coarse; under 64 pixels the distance is
+      // measured again in 16.16 for a finer result.
       if (distance < 0x400000)
         distance = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
       if ((moveStep = distance / 8) > cameraObject->speedLimit)
         moveStep = cameraObject->speedLimit;
+      // Within a quarter pixel the camera snaps to the point.
       if (distance < 0x4000) {
         cameraObject->x = x;
         cameraObject->z = z;
@@ -430,6 +461,7 @@ s32 Camera_FollowLeaderInBounds(struct ScriptInterpreter *interpreter) {
         cameraObject->x += dx;
         cameraObject->z += dz;
       }
+      // Height follows at once within half a pixel, else a quarter a frame.
       if ((dy < 0 ? -dy : dy) > 0x8000)
         dy /= 4;
       cameraObject->y += dy;
@@ -445,6 +477,10 @@ s32 _call_via_r3(s32, s32, s32, s32);
 /// SC_APPROACH_LINK: follows the linked object at its speed. More than 16
 /// pixels away it walks to 16 pixels short of it (animation 2) and runs on;
 /// within 16 it stands (animation 1) and waits for the next frame.
+///
+/// Run each frame by gObjectDispatch_ApproachLinkScript, which
+/// ObjectDispatch_StartApproachLink starts. Copies the linked object's speed
+/// limit and acceleration, and sets the move target.
 s32 Object_ApproachLinkedObject(struct ScriptInterpreter *interpreter) {
   struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
 
@@ -466,6 +502,10 @@ s32 Object_ApproachLinkedObject(struct ScriptInterpreter *interpreter) {
   dz = linkedObject->z - object->z;
   deltaXPixels = dx >> 0x10;
   deltaZPixels = dz >> 0x10;
+  // The IWRAM square root, called by address through r3; it reads only the
+  // first argument, and dx and deltaZPixels fill r1 and r2.
+  // XXX: why r1 and r2 carry dx and deltaZPixels; whether the routine is
+  // known to take more than one argument would settle it.
   distancePixels = _call_via_r3((deltaXPixels * deltaXPixels) +
                                     (deltaZPixels * deltaZPixels),
                                 dx, deltaZPixels, (u32)IwramSqrt);
@@ -489,6 +529,7 @@ s32 Object_ApproachLinkedObject(struct ScriptInterpreter *interpreter) {
 /// that no solid object or wall blocks, with clear ground 8 pixels further at
 /// 45 degrees either side, and within limit pixels of home. After seven
 /// failed tries it turns around (turnedBack) and waits for the next frame.
+/// No script in games/tbs names SC_WANDER; scenes use SC_WANDER_HOME.
 s32 Object_Wander(struct ScriptInterpreter *interpreter) {
   struct ScriptObjectRuntime *object =
       (struct ScriptObjectRuntime *)interpreter;
@@ -508,6 +549,8 @@ s32 Object_Wander(struct ScriptInterpreter *interpreter) {
   s32 aheadBlocked;
 #endif
 
+  // base and range are 16.16 pixels; limit is compared in whole pixels,
+  // against homeX and homeZ.
   operands = &object->script[(s16)object->scriptCursor + 1];
   minimumDistance = *operands++;
   distanceRange = *operands++;
@@ -520,6 +563,7 @@ retry:
     candidatePosition.x = object->x;
     candidatePosition.y = object->y;
     candidatePosition.z = object->z;
+    // Two quarter-turn rolls give a heading within 90 degrees either side.
     travelDistance = minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
     heading = object->scriptValue + (Random16() >> 2) - (Random16() >> 2);
     Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
@@ -528,6 +572,8 @@ retry:
         Map_CheckObjectStep((struct ObjectRuntime *)object,
                             &candidatePosition) != 0)
       goto retry;
+    // Probes 8 pixels past the point, ahead and at 45 degrees (0x2000)
+    // either side.
     travelDistance += 0x80000;
     probePosition.x = object->x;
     probePosition.y = object->y;
@@ -570,6 +616,8 @@ retry:
     if (dx * dx + dz * dz > homeRadiusSquared)
       goto retry;
   } else {
+    // Out of tries: face the other way (half a turn) and stay on this
+    // command, to try again next frame.
     object->scriptValue += 0x8000;
     object->turnedBack = 1;
     return 0;
@@ -583,6 +631,10 @@ retry:
 /// SC_WANDER_HOME(base, range, limit): wanders as SC_WANDER does, testing
 /// more ground around the point, while it is within limit pixels of home;
 /// outside that, or when no point works, it heads back towards home.
+///
+/// Used by scripts in Vault and Vale (vault.c, vale_home.c). Sets bit 1 of
+/// flags59 while it roams and clears it on the way home, sets the move
+/// target, and always moves on to the next command.
 s32 ScriptObject_WanderNearHome(struct ScriptInterpreter *interpreter) {
   struct ScriptObjectRuntime *object =
       (struct ScriptObjectRuntime *)interpreter;
@@ -619,6 +671,9 @@ s32 ScriptObject_WanderNearHome(struct ScriptInterpreter *interpreter) {
       candidatePosition.x = object->x;
       candidatePosition.y = object->y;
       candidatePosition.z = object->z;
+      // First no solid object 8 pixels along the heading, then the point
+      // itself, then clear ground 8 pixels past it ahead, at 45 degrees and
+      // at 90 degrees either side.
       Vector_AddPolarOffset(0x80000, heading, &candidatePosition);
       if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object,
                                     (s32 *)&candidatePosition) != 0)
@@ -676,6 +731,10 @@ s32 ScriptObject_WanderNearHome(struct ScriptInterpreter *interpreter) {
       goto done;
     }
   }
+  // Head back: aim opposite the angle from home to the object (dx and dz
+  // as measured at the start, or at the last point found too far from home),
+  // with the same spread, testing only the near and far points. After seven
+  // more failures the object stays put this time.
   attempts = 0;
   angle = (u16)ArcTan2(dz, dx) + 0x8000;
 back:

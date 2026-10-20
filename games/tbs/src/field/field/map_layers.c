@@ -4,7 +4,9 @@
 
 #include "../field_internal.h"
 
-/// Remaps byteCount bytes in place through gRuntime_ByteRemapTable.
+/// Remaps byteCount bytes in place through gRuntime_ByteRemapTable. Called
+/// through Runtime_RemapBytesByTableFar by RenderResource_LoadFrame, which
+/// remaps the colours of a command icon's first 768 bytes.
 void Runtime_RemapBytesByTable(u8 *bytes, s32 byteCount) {
   s32 remaining;
   u8 *cursor;
@@ -30,6 +32,10 @@ void Runtime_RemapBytesByTable(u8 *bytes, s32 byteCount) {
 ///   1: all the high bytes, then all the low bytes; each value is XORed with
 ///      the one before
 ///   2: each value is XORed with the one before
+///
+/// Called by Map_LoadLayeredScene with the size Resource_DecodeType01
+/// returns; the packed stream is decoded to Ram_MapCellBuffer + 1 so that
+/// its method byte lands at byte 1 and the halfwords at byte 2 are aligned.
 void Tilemap_DecodeStagedBuffer(s32 size) {
   u16 *destinationWords;
   u16 *sourceWords;
@@ -97,7 +103,10 @@ UNUSED void Tilemap_NumberPlaceholderBlocks(void) {
 }
 
 /// Converts the map's cells in place with Tile_ConvertMap, run from RAM, from
-/// a saved copy of the staged buffer.
+/// a saved copy of the staged buffer. Called by Map_LoadLayeredScene once the
+/// cell planes are decoded. Copies the first 32 KB of Ram_MapCellBuffer to a
+/// block from the alternate pool and loads the routine into RAM; frees both
+/// when done.
 void Tilemap_ConvertBuffer(void) {
   u8 *savedCells;
   TilemapConvertFn convertMap;
@@ -173,7 +182,7 @@ struct LayeredSceneLayer {
 
 /// A layered map's header: the camera's bounds, the layers' priorities, tile
 /// bases and setup, and the offsets of its packed tiles, collision, tilemap,
-/// tile animation, blend script and event script.
+/// tile animation, blend script and marker list.
 struct LayeredSceneHeader {
   u8 origin[4]; ///< 8-pixel tiles
   u8 priority[3];
@@ -185,14 +194,20 @@ struct LayeredSceneHeader {
   s32 tilemap;
   s32 animation;
   s32 blend;
-  s32 script;
+  s32 markers; ///< the chests and Psynergy stones (Field_PlaceMapMarkers)
 };
 
 /// Loads layered scene index from gMap_LayeredScenes: its blocks, collision,
-/// cells, tile animations, blend script and event script; sets up the three
+/// cells, tile animations, blend script and marker list; sets up the three
 /// background layers' origins, parallax and wrap from the scene header; loads
 /// the palette and tile graphics unless FLAG_KEEP_LAYER_GRAPHICS says they are
 /// loaded; and starts the layer scrolling. Returns 2.
+///
+/// Called through Map_LoadLayeredSceneFar when a scene with a layered map
+/// starts (index is gGameState.map). Allocates and clears the map work in
+/// HEAP_SLOT_MAP; writes the BG palette (keeping the backdrop colour), char
+/// blocks 1 to 3, gMapLayerData, BG1CNT to BG3CNT, REG_MOSAIC, REG_BLDCNT and
+/// REG_DISPCNT; and registers Map_UpdateLayerScroll with the scheduler.
 s32 Map_LoadLayeredScene(s32 index) {
   struct LayeredSceneEntry *sceneResources;
   struct MapScrollWork *work;
@@ -207,6 +222,7 @@ s32 Map_LoadLayeredScene(s32 index) {
   u8 *encodedData;
   s32 displayFlags;
 
+  // Hide the map layers and sprites while their memory is replaced.
   REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
   Fade_FromBlack(0);
@@ -215,6 +231,8 @@ s32 Map_LoadLayeredScene(s32 index) {
   Iwram_ClearWords(work, sizeof(struct MapScrollWork));
   sceneHeader = (struct LayeredSceneHeader *)Resource_GetTableEntry(
       sceneResources->resources[0] + (u32)&ResourceId_Map001);
+  // The header's offsets count from the header itself. The blocks are
+  // staged in the cell buffer, which the cell planes then overwrite.
   encodedData = (u8 *)sceneHeader + sceneHeader->tiles;
   Tilemap_DecodeStagedBuffer(
       Resource_DecodeType01(encodedData, Ram_MapCellBuffer + 1));
@@ -223,7 +241,8 @@ s32 Map_LoadLayeredScene(s32 index) {
   encodedData = (u8 *)sceneHeader + sceneHeader->tilemap;
   Resource_DecodeType01(encodedData, Ram_MapCellBuffer);
   Tilemap_ConvertBuffer();
-  // Optional scripts share the decoded scene's collision-work allocation.
+  // The tile animation and blend scripts are optional (offset 0), and decode
+  // into the space after the shapes in Ram_MapCollision.
   if (sceneHeader->animation != 0) {
     encodedData = (u8 *)sceneHeader + sceneHeader->animation;
     Resource_DecodeType01(encodedData, Ram_MapCollision + 0x1000);
@@ -234,8 +253,11 @@ s32 Map_LoadLayeredScene(s32 index) {
     Resource_DecodeType01(encodedData, Ram_MapCollision + 0x1e00);
     DisplayBlend_StartScript((u16 *)(Ram_MapCollision + 0x1e00));
   }
-  // Publish camera bounds before deriving the three layers' parallax origins.
-  work->script = (u8 *)sceneHeader + sceneHeader->script;
+  // The marker list is not decoded: Field_PlaceMapMarkers reads it in place
+  // through this pointer (MarkerMap.markers).
+  work->script = (u8 *)sceneHeader + sceneHeader->markers;
+  // The header's bounds and origins are in 8-pixel tiles; << 19 makes them
+  // 16.16 pixels. The view starts at (0, 0) until the camera is centred.
   work->minX = sceneHeader->origin[0] << 19;
   work->minY = sceneHeader->origin[1] << 19;
   work->maxX = sceneHeader->origin[2] << 19;
@@ -259,8 +281,7 @@ s32 Map_LoadLayeredScene(s32 index) {
 
     mapLayer->offsetX = baseX = x << 19;
     mapLayer->offsetY = baseY = y << 19;
-    // Signed byte parallax and velocity use twelve fractional bits.
-    // Multiplication also handles negative coefficients without a signed shift.
+    // Parallax and drift are signed sixteenths; * 4096 makes them 16.16.
     scrollX = layerSource->scrollX * 4096;
     scrollY = layerSource->scrollY * 4096;
     mapLayer->scaleX = scrollX;
@@ -271,6 +292,8 @@ s32 Map_LoadLayeredScene(s32 index) {
     mapLayer->maskY = layerSource->periodY;
     mapLayer->phaseX = 0;
     mapLayer->phaseY = 0;
+    // The layer's window starts at the cell under its origin tile (a cell is
+    // 2x2 tiles, 128 cells to a row).
     mapLayer->cells =
         (struct MapCell *)Ram_MapCellBuffer + (y >> 1) * 128 + (x >> 1);
     mapLayer->x = Iwram_MulQ16(*viewX, scrollX) + baseX;
@@ -278,7 +301,9 @@ s32 Map_LoadLayeredScene(s32 index) {
     layerSource++;
     mapLayer++;
   }
-  // Match each enabled layer to BG3, BG2, then BG1.
+  // Layers 0 to 2 show on BG3, BG2 and BG1, a layer only where its priority
+  // is not zero. Each BGCNT takes the priority as it is, its char block from
+  // the header and screen blocks 5, 6 and 7.
   work->flags = DISPCNT_OBJ_ON;
   if (work->enabled[0] != 0)
     work->flags = DISPCNT_OBJ_ON | DISPCNT_BG3_ON;
@@ -295,11 +320,18 @@ s32 Map_LoadLayeredScene(s32 index) {
   Io_Write16(work->enabled[2] | BGCNT_CHAR_BASE(sceneHeader->charBase[2]) |
                  BGCNT_SCREEN_BASE(7),
              &REG_BG1CNT);
+  // A set FLAG_KEEP_LAYER_GRAPHICS skips loading the graphics once, and is
+  // cleared.
   if (GameFlag_TestFar(FLAG_KEEP_LAYER_GRAPHICS) != 0) {
     GameFlag_ClearBitFar(FLAG_KEEP_LAYER_GRAPHICS);
   } else {
+    // One 16 KB buffer takes each resource in turn: the palette (0x1c0
+    // bytes, 14 of the 16 BG palettes), the three 16 KB tile sheets, and
+    // last the layer data, which decodes straight to gMapLayerData. Without
+    // the memory, nothing is loaded.
     graphicsBuffer = MemAlloc(0x4000);
     if (graphicsBuffer != NULL) {
+      // Colour 0 of BG palette 0 is the backdrop; it survives the new palette.
       backdrop = *(s16 *)BG_PLTT;
       Resource_DecodeType01(
           Resource_GetTableEntry(sceneResources->resources[1] +
@@ -328,6 +360,8 @@ s32 Map_LoadLayeredScene(s32 index) {
       MemFree(graphicsBuffer);
     }
   }
+  // Only BG0, the windows, is shown here; DisplayTransition_Start ORs
+  // work->flags into REG_DISPCNT when the scene fades in.
   displayFlags = 0;
   REG_MOSAIC = displayFlags;
   REG_BLDCNT = displayFlags;
@@ -346,7 +380,10 @@ s32 Map_LoadLayeredScene(s32 index) {
 }
 
 /// Centres the camera on the point the map follows (origin: x, height, z),
-/// or on (0, 0) when there is none, and scrolls the layers there.
+/// or on (0, 0) when there is none, and scrolls the layers there. Called
+/// through Map_CenterOnFollowedPointFar when a layered scene starts, by the
+/// camera event commands after they move the camera, and by about 35 scene
+/// scripts through Engine_MapRedraw.
 void Map_CenterOnFollowedPoint(void) {
   struct MapScrollWork *work = gMapWork[0];
   s32 x;
@@ -369,7 +406,8 @@ void Map_CenterOnFollowedPoint(void) {
 
 /// Draws a row of 16 blocks (32 tiles) of a layer's cells into its BG map
 /// (screen block 5 + layer), starting at tile (tileX, tileY); the BG map
-/// wraps every 32 tiles.
+/// wraps every 32 tiles. Called by Map_UpdateLayerScroll when a layer
+/// scrolls onto a new row of blocks.
 void Map_RenderMetatileRow(u32 layer, s32 tileX, s32 tileY) {
   u8 *screenMap = BG_SCREEN_BLOCK(5) + (layer << 11);
   u32 sourceRow = ((tileY / 2) & 0x7F) << 7;
@@ -399,7 +437,9 @@ void Map_RenderMetatileRow(u32 layer, s32 tileX, s32 tileY) {
 }
 
 /// Draws a column of 11 blocks of a layer's cells, one tile wide, into its BG
-/// map, starting at tile (tileX, tileY).
+/// map, starting at tile (tileX, tileY). Called by Map_UpdateLayerScroll when
+/// a layer scrolls onto a new column of tiles; tileX's low bit picks the
+/// block's left or right half.
 void Map_RenderMetatileColumn(u32 layer, s32 tileX, s32 tileY) {
   u8 *screenMap = BG_SCREEN_BLOCK(5) + (layer << 11);
   u32 sourceRow = ((tileY / 2) & 0x7F) << 7;
@@ -426,6 +466,11 @@ void Map_RenderMetatileColumn(u32 layer, s32 tileX, s32 tileY) {
 /// shake; then scrolls each of the three layers by its parallax scale and
 /// automatic scroll (wrapping at its period), draws the block column or row
 /// that scrolls into view, and sets its BG scroll.
+///
+/// Registered with the scheduler by Map_LoadLayeredScene (priority 0xc85),
+/// and called by Map_CenterOnFollowedPoint. Sets work->viewX and viewY,
+/// decays work->shakeX and shakeY, advances each drifting layer's phase, and
+/// writes each layer's position and gBgScroll entry.
 void Map_UpdateLayerScroll(void) {
   struct MapScrollWork *work;
   struct MapLayerScroll *layer;
@@ -441,11 +486,16 @@ void Map_UpdateLayerScroll(void) {
   if (origin == 0)
     return;
 
+  // The view's top left puts the followed point 120 pixels from the left
+  // and 96 from the top; its height counts up the screen.
   baseX = *origin++ - 0x780000;
   {
     s32 height = *origin++;
     baseY = *origin - height - 0x600000;
   }
+  // The bounds shrink by the shake so a shaken view stays on the map; the
+  // right and bottom bounds lose the 240x160 screen. A map smaller than
+  // that keeps its top left in view.
   minX = work->minX + work->shakeX;
   maxX = work->maxX - work->shakeX - 0xf00000;
   minY = work->minY + work->shakeY;
@@ -457,6 +507,9 @@ void Map_UpdateLayerScroll(void) {
   CLAMP(baseX, minX, maxX);
   CLAMP(baseY, minY, maxY);
 
+  // A shake offsets the view by the amplitude times the difference of two
+  // random fractions (between -1 and 1), then scales the amplitude by
+  // shakeDecay for the next frame.
   if (work->shakeX != 0) {
     s32 shakeRollA = Random16();
     s32 shakeRollB = Random16();
@@ -476,6 +529,8 @@ void Map_UpdateLayerScroll(void) {
   for (layerIndex = 0; layerIndex < 3; layerIndex++, layer++) {
     baseX = Iwram_MulQ16(work->viewX, layer->scaleX);
     baseY = Iwram_MulQ16(work->viewY, layer->scaleY);
+    // A drifting layer wraps at its period: maskX and maskY are in 8-pixel
+    // tiles, and the mask keeps the pixel and fraction bits below them.
     if (layer->speedX != 0) {
       layer->phaseX += layer->speedX;
       baseX = (baseX + layer->phaseX) & ((layer->maskX << 19) | 0x7ffff);
@@ -486,6 +541,9 @@ void Map_UpdateLayerScroll(void) {
     }
     baseX += layer->offsetX;
     baseY += layer->offsetY;
+    // x and y are in 8-pixel tiles. A new tile column (bit 19) or block row
+    // (bit 20, 16 pixels) has come into view: draw it at the leading edge,
+    // 30 tiles to the right or 20 below when scrolling that way.
     x = baseX / 0x80000;
     y = baseY / 0x80000;
     if ((layer->x ^ baseX) & 0x80000) {
@@ -500,6 +558,7 @@ void Map_UpdateLayerScroll(void) {
       else
         Map_RenderMetatileRow(layerIndex, x, y);
     }
+    // Layer 0 scrolls BG3, layer 2 BG1.
     gBgScroll[3 - layerIndex].x = baseX >> 16;
     gBgScroll[3 - layerIndex].y = baseY >> 16;
     layer->x = baseX;
@@ -508,7 +567,9 @@ void Map_UpdateLayerScroll(void) {
 }
 
 /// Centres the view on (x, y) in 16.16 pixels, clamped to the map's bounds,
-/// and redraws every enabled layer's BG map around it.
+/// and redraws every enabled layer's BG map around it. Called by
+/// Map_CenterOnFollowedPoint. Sets work->viewX and viewY, and advances each
+/// drifting layer's phase by one frame.
 void Map_SetCameraCenter(s32 x, s32 y) {
   u32 layerIndex;
   u8 *screenMap;
@@ -537,6 +598,10 @@ void Map_SetCameraCenter(s32 x, s32 y) {
       if (layer->speedY) {
         layer->phaseY += layer->speedY;
         y = (y + layer->phaseY) & ((layer->maskY << 19) | 0x7ffff);
+        // A layer drifting vertically gets its whole 32-row BG map, others
+        // the 22 rows (11 blocks) a 160-pixel screen can show.
+        // XXX: why only vertical drift fills the whole map; a scene with a
+        // vertically drifting layer and a look at its BG map would settle it.
         rows = 32;
       }
       x += layer->offsetX;
@@ -572,7 +637,11 @@ struct MapTilePos {
 
 /// Copies the block numbers of a rectangle of cells from (srcX, srcY) to
 /// (dstX, dstY), width by height cells, keeping each destination's
-/// attributes, and redraws the copied cells that are on screen.
+/// attributes, and redraws the copied cells that are on screen. It does what
+/// Map_CopyCellIndexRect does, with the destination before the size.
+///
+/// Called by Map_PlayMetatileCopySequence, and by about 40 scene scripts
+/// through Map_CopyMetatileIndicesRectFar (Engine_MapCopyCellsTo).
 void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
                                  u32 width, u32 height) {
   /* FAKEMATCH(temporary): the chains of temporaries set the registers and the
@@ -587,6 +656,7 @@ void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
   u32 y;
   u32 x;
 
+  // The three layers' visible areas: their scroll positions in cells.
   for (i = 2; i >= 0; i--) {
     visibleLayer->x = layer->x >> 20;
     visibleLayer->y = layer->y >> 20;
@@ -624,6 +694,9 @@ void Map_CopyMetatileIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
       tmp11 = tmp13;
       tmp6 = tmp11;
       offset = tmp6;
+      // The first layer whose visible area (16x12 cells) holds the cell has
+      // the block written to its BG map too; offset is the cell's place in
+      // a 32x32 BG map, 0x800 bytes per layer from screen block 5.
       for (; i < 3; i++) {
         if (visibleLayer->x <= (s32)x && 16 + visibleLayer->x > (s32)x &&
             visibleLayer->y <= (s32)y && visibleLayer->y + 12 > (s32)y) {
@@ -669,6 +742,10 @@ typedef char MapCopyCommandSize[(sizeof(struct MapCopyCommand) == 10) ? 1 : -1];
 /// source of 0xffff): copies each record's rectangle of block numbers to
 /// (destinationX, destinationY) and waits its delay in frames. Doors and
 /// other changing scenery are drawn this way.
+///
+/// Called by about 30 scene scripts through Map_PlayMetatileCopySequenceFar
+/// (Engine_MapAnimateCells); it returns only when the sequence ends, so it
+/// blocks the script that calls it.
 void Map_PlayMetatileCopySequence(u16 *sequence, s32 destinationX,
                                   u32 destinationY) {
   struct MapCopyCommand *copyCommand = (struct MapCopyCommand *)sequence;
@@ -722,7 +799,8 @@ void Map_PlayMetatileCopySequence(u16 *sequence, s32 destinationX,
 /// Copies a rectangle of cells (16x16 pixels each) as they are, from
 /// (srcX, srcY) to (dstX, dstY), width by height cells. Where a copied cell
 /// lies in a layer's visible area (16x12 cells), its block's 2x2 tiles go to
-/// that layer's BG map in VRAM too.
+/// that layer's BG map in VRAM too. Called by about 15 scene scripts through
+/// Map_CopyMetatileCellsRectFar (Engine_MapCopyCells).
 void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
   s32 y = dstY;
@@ -840,7 +918,9 @@ void Map_CopyMetatileCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
 
 /// Copies only the attributes of a rectangle of cells, from (srcX, srcY) to
 /// (dstX, dstY), width by height cells, keeping each destination cell's
-/// block number.
+/// block number. Nothing is redrawn: the attributes (flags, collision code and
+/// shape) do not show. Called by about 65 scene scripts through
+/// Map_CopyCellAttributeRectFar (Engine_MapCopyCellAttributes).
 void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
   u32 *destinationCells = MAP_CELLS;
@@ -865,7 +945,9 @@ void Map_CopyCellAttributeRect(s32 srcX, s32 srcY, s32 width, s32 height,
 
 /// Copies only the block numbers of a rectangle of cells, from (srcX, srcY)
 /// to (dstX, dstY), width by height cells, keeping each destination cell's
-/// attributes; cells in a visible area update the BG maps too.
+/// attributes; cells in a visible area update the BG maps too. Called by
+/// seven scene scripts through Map_CopyCellIndexRectFar
+/// (Engine_MapCopyCellsLayered).
 void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
                            s32 dstY) {
   /* FAKEMATCH(temporary): the word and index temporaries set the registers and
@@ -963,7 +1045,9 @@ void Map_CopyCellIndexRect(s32 srcX, s32 srcY, s32 width, s32 height, s32 dstX,
 }
 
 /// Sets which of BG1-BG3 the map shows (bits 9-11 of its display flags, as in
-/// REG_DISPCNT) from layerFlags, keeping its other flags.
+/// REG_DISPCNT) from layerFlags, keeping its other flags. Called by Lunpa
+/// Fortress's scene through Map_SetShownLayersFar
+/// (Engine_MapSetWorkFlagBits9To11).
 void Map_SetShownLayers(u32 layerFlags) {
   struct MapState *mapState = gMapWork[0];
   u32 mask = layerFlags & (DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON);

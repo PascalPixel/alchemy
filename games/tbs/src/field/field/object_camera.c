@@ -60,7 +60,7 @@ void ObjectSystem_UpdateCamera(void) {
   /* FAKEMATCH(dead): an unused local for the room the native frame keeps for
    * three points above the position; without it, 2 of 267 instructions differ
    * in tbs-en. */
-  struct ObjectCameraPoint unusedPoints[3];
+  UNUSED struct ObjectCameraPoint unusedPoints[3];
   s32 objectIndex;
   struct MapScrollWork *mapWork;
   s32 viewX;
@@ -221,7 +221,7 @@ void ObjectSystem_UpdateCameraFixed(void) {
   /* FAKEMATCH(dead): an unused local for the room the native frame keeps for
    * two points above the scales; without it, 2 of 181 instructions differ in
    * tbs-en. */
-  struct ObjectCameraPoint unusedPoints[2];
+  UNUSED struct ObjectCameraPoint unusedPoints[2];
 
   // UB: camera and system work are separate globals, beyond gObjectSlots.
   // Reading their named slots adds four bytes in the forced EN build.

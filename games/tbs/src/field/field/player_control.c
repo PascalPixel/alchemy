@@ -4,9 +4,9 @@
 
 #include "../field_internal.h"
 
-// What differs by edition. In mode 3, L and R raise their fixed triggers
-// while held in the Japanese release, and once for each press from the
-// English one on. The world map's probes for a step reach 8 pixels in
+// What differs by edition. On the world map (mode 3), L and R raise their
+// fixed events while held in the Japanese release, and once for each press
+// from the English one on. The world map's probes for a step reach 8 pixels in
 // Japan and 7 from the English release on.
 #if TBS_PATCH_1
 #define FIELD_SHORTCUT_KEYS gKeysPressed
@@ -16,10 +16,15 @@
 #define WORLD_MAP_PROBE_RADIUS 0x80000
 #endif
 
+/// Stores value in a halfword of the event work.
+/// XXX: why the stores go through a helper rather than plain assignment;
+/// whether the assignment form changes Field_RequestShortcut's bytes would
+/// settle it.
 static __inline__ void Field_StoreHalfword(s16 *address, s32 value) {
   *address = value;
 }
 
+/// Stores value as a word at the object's unk6c.
 UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
   struct ObjectRuntime *object = rawObject;
 
@@ -27,11 +32,15 @@ UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
     *(s32 *)object->unk6c = value;
 }
 
-/// Handles a shortcut key's assignment: its top two bits choose
-/// what it requests (0 Psynergy, 1 an item) and
-/// the low 14 bits which one. With flag 0x107 set, or in mode 3 (where L and
-/// R give 0xfc88 and 0xfc87), it raises a fixed trigger instead. Returns the
-/// request.
+/// Handles a shortcut key's assignment: its top two bits choose what it
+/// requests (0 Psynergy, 1 an item) and the low 14 bits which one. With flag
+/// 0x107 set it raises event 250 instead, as the menu key does then; on the
+/// world map (mode 3) R raises event -888 (0xfc88), the world map picture,
+/// and L -889 (0xfc87), the visibility transition. Returns the request.
+///
+/// Called by Field_CheckConfiguredKeys. Sets fieldWork->command,
+/// fieldWork->item or fieldWork->event, which the scene loop (run_scene.c)
+/// acts on.
 u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 assignmentKind = encodedAssignment >> 14;
   u32 requestId = 0x3FFF & encodedAssignment;
@@ -61,7 +70,11 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
 
 /// Checks the keys the player has configured: Select, A and Start set their
 /// flag in the event work and return 1; the two shortcut keys pass on their
-/// assignment (Field_RequestShortcut). Returns 0 when none is pressed.
+/// assignment (Field_RequestShortcut). Returns 0 when none is pressed. Only
+/// the first configured key pressed this frame counts, in that order.
+///
+/// Called each frame by the leader's control commands: SC_PLAYER, SC_WORLD
+/// and SC_KEY_COUNT. Sets fieldWork->menu, examine or start.
 s32 Field_CheckConfiguredKeys(void) {
   struct FieldWork *fieldWork = (struct FieldWork *)gEventWork;
   s32 result = 0;
@@ -86,7 +99,9 @@ s32 Field_CheckConfiguredKeys(void) {
 }
 
 /// Returns 0 when two spheres overlap: at positions a and b (16.16 pixels)
-/// with radii radiusA and radiusB (pixels); -1 otherwise.
+/// with radii radiusA and radiusB (pixels); -1 otherwise. Called by
+/// SC_PLAYER's push test, ScriptObject_CheckOverlap and
+/// ScriptObject_FindOverlappingEntry.
 s32 Runtime_CheckRadiusOverlap(s32 *firstPosition, s32 radiusA,
                                s32 *secondPosition, s32 radiusB) {
   const struct FieldPosition *firstPoint =
@@ -100,6 +115,10 @@ s32 Runtime_CheckRadiusOverlap(s32 *firstPosition, s32 radiusA,
   s32 dz = (*firstCoordinate - *secondCoordinate) >> 16;
   s32 radius = radiusA + radiusB;
 
+  // dx and dz are already whole pixels (at most 32768), so these tests
+  // always pass and only the distance decides.
+  // XXX: likely meant as a quick reject of points over 64 pixels apart,
+  // because 0x400000 is 64 pixels in 16.16, the units before the shift.
   if (!(dx > 0x400000) && !(dz > 0x400000) &&
       dx * dx + dy * dy + dz * dz < radius * radius)
     return 0;
@@ -110,6 +129,13 @@ s32 Runtime_CheckRadiusOverlap(s32 *firstPosition, s32 radiusA,
 /// running, sliding around walls, pushing movable objects, turning, playing
 /// the matching animation and leaving footprints. Also checks the configured
 /// keys. Returns 1.
+///
+/// Run each frame by gObjectDispatch_PlayerScript, which the scene loop
+/// (run_scene.c) starts on the leader through
+/// ObjectDispatch_StartPlayerControl when it hands control back on the field.
+/// Sets the leader's speed, target, velocity, angle and action, moves the
+/// objects it pushes, counts gEventWork->blockedSteps and creates the
+/// footprint objects.
 s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
   struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
 
@@ -147,6 +173,8 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
   /* FAKEMATCH(volatile): the volatile read puts gDebugMode's address in r5 here
    * and at the test before it, as native; as gDebugMode != 0, 9 of 808
    * instructions differ in tbs-en. */
+  // Debug: holding L spins through four empty loops (511, 96, 64 and 64
+  // passes), a short stall each frame.
   if (*(volatile u8 *)&gDebugMode != 0) {
     s32 delayKeyMask;
 
@@ -176,8 +204,8 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
         goto wait_d;
     }
   }
-  // Walk, or run with the dash keys (animation 5 instead of 2); flag 0x17f
-  // and B move much faster.
+  // Walk at 1 pixel a frame, or run at 1.5 with the dash keys (animation 5
+  // instead of 2); flag 0x17f and B move at 4.
   if (gKeysHeld & gGameState.dashKeys) {
     object->speedLimit = 0x18000;
     object->acceleration = 0x4000;
@@ -239,6 +267,9 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
           }
         }
       }
+      // The pad's way is blocked: try 22.5, 45 and 67.5 degrees off, nearest
+      // first, each needing the same three clear probes. The first that
+      // passes slides the player along the wall.
       direction = angle;
       headingCount = 0;
       angleOffsets[headingCount++] = direction + 0x1000;
@@ -280,6 +311,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
         if (Map_CheckObjectStep(object, &testPosition) == 0)
           goto push_objects;
       }
+      // Nothing passed: the step is the object's own position.
       position.x = object->x;
       position.y = object->y;
       position.z = object->z;
@@ -307,6 +339,9 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
         if (Runtime_CheckRadiusOverlap(&pushedObject->x, radius, &contact.x,
                                        pushedObject->radius - 2) < 0)
           continue;
+        // A movable object that is not paused slides a quarter pixel away from
+        // the player, if no solid object is there and the ground 10 pixels on,
+        // straight and 22.5 degrees either side, is clear.
         if ((pushedObject->unk59 & 2) != 0 &&
             pushedObject->movementState == 0) {
           direction =
@@ -328,6 +363,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
               testPosition.y = pushedObject->y;
               testPosition.z = pushedObject->z;
               Vector_AddPolarOffset(0xa0000, direction + 0x1000, &testPosition);
+              // The same probe is tested twice.
               if (Map_CheckObjectStep(pushedObject, &testPosition) == 0 &&
                   Map_CheckObjectStep(pushedObject, &testPosition) == 0) {
                 testPosition.x = pushedObject->x;
@@ -351,6 +387,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
         }
         collision |= 2;
       }
+      // Pushing: a quarter pixel a frame.
       if (collision == 0 && pushed != 0) {
         object->speedLimit = 0x4000;
         object->acceleration = 0x2000;
@@ -378,8 +415,9 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
     ObjectDispatch_SelectAnimation(object, movementAnimation);
   }
 
-  // Blocked: stop and turn towards the pad, at most 0x1000 a frame.
+  // Blocked: stop and turn towards the pad, at most 22.5 degrees a frame.
   // Otherwise move to the step, keeping the speed but along the heading.
+  // unk66 = 2 marks a stop; the next footprint then takes animation 2.
   if (collision != 0) {
     object->targetX = TARGET_UNSET;
     object->targetY = TARGET_UNSET;
@@ -414,7 +452,8 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
   }
 
   // Leave a footprint (object kind 25) every 18 walking or 12 running
-  // frames on maps that show them, alternating left and right.
+  // frames on maps that show them, alternating left and right; action
+  // counts down the frames to the next one.
   footprintAngle = (u16)angle;
   if (((struct MapScrollWork *)gMapWork[0])->footprints != 0 &&
       object->action == 0 && collision == 0) {
@@ -457,6 +496,12 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
 /// SC_WORLD: moves the player on the world map by the direction pad, as
 /// SC_PLAYER does on the field, and turns the world map camera with the pad.
 /// Shallow water (terrain 6) leaves a ripple and terrain 9 hides the shadow.
+///
+/// Run each frame by gObjectDispatch_WorldMapScript, which the scene loop
+/// (run_scene.c) starts on the leader through
+/// ObjectDispatch_StartWorldMapControl on the world map. Sets the leader's
+/// speed, target, velocity, angle and action, turns the perspective work's
+/// yaw, counts gEventWork->blockedSteps and creates the ripple objects.
 s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
   struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
 
@@ -490,6 +535,9 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
 #if !TBS_PATCH_1
   count = 0;
 #endif
+  // Walk at half a pixel a frame, or 1 with the dash keys. L, as it
+  // repeats, raises the limit to 4 pixels; unlike the field's fast walk, no
+  // debug test or flag guards it.
   if (gKeysHeld & gGameState.dashKeys) {
     object->speedLimit = 0x10000;
     object->acceleration = 0x14000;
@@ -511,6 +559,10 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
     position.y = object->y;
     position.z = object->z;
     Vector_AddPolarOffset(WORLD_MAP_PROBE_RADIUS, direction, &position);
+    // Debug L walks anywhere. Otherwise the English release on tests the
+    // step and 22.5 and 45 degrees either side, then headings up to 90
+    // degrees off; the Japanese one tests the step and 30 degrees (0x1555)
+    // either side, then headings up to 67.5 degrees off.
     if (gDebugMode == 0 || (gKeysHeld & KEY_L) == 0) {
 #if TBS_PATCH_1
       if (CheckWorldMapWalkable((s32)object,
@@ -699,6 +751,9 @@ update_object:
       object->action--;
   }
 
+  // Turn the camera towards the pad's yaw by an eighth of the difference a
+  // frame, at most 0x200 (about 2.8 degrees), finishing the turn once the
+  // step falls under 16.
   perspective = gMapWork[0];
   targetCameraYaw = gWorldMap_KeyYaws[(gKeysHeld >> 4) & 15];
   yawStep = (s16)(targetCameraYaw - perspective->yaw) / 8;
@@ -720,6 +775,8 @@ update_object:
       playerSprite->entries[1]->priority = 9;
       playerSprite->flags = 1;
     }
+    // In shallow water a ripple (object kind 24) follows every 10 frames of
+    // walking.
     if (terrainCollision == 6 && object->action == 0 && collision == 0) {
       ripple = FieldObject_Create(24, object->x, object->y, object->z);
       if (ripple != 0) {
@@ -744,7 +801,9 @@ update_object:
 }
 
 /// SC_KEY_COUNT: checks the configured keys (Field_CheckConfiguredKeys).
-/// Returns 1.
+/// Returns 1. Run each frame by gObjectDispatch_KeyCheckScript, which the
+/// scene loop starts on the leader in movement mode 2, where the pad does
+/// not move it.
 s32 Field_CheckConfiguredKeysAndCount(struct ScriptInterpreter *interpreter) {
   struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
 
@@ -757,6 +816,10 @@ s32 Field_CheckConfiguredKeysAndCount(struct ScriptInterpreter *interpreter) {
 /// and down changing its height (y) rather than its depth. Refuses steps
 /// into an occupied cell, across a change of collision code, or onto ground
 /// too high (up) or too low (down). Returns 1.
+///
+/// Run each frame by gObjectDispatch_KeysScript, which the scene loop starts
+/// on the leader in movement mode 1 (climbing). Sets the leader's speed,
+/// angle, target or velocity, and counts gEventWork->blockedSteps.
 s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
   struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
 
@@ -764,7 +827,7 @@ s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
   /* FAKEMATCH(dead): an unused local for the 68 bytes of native frame no
    * instruction touches, the size of Object_MoveOnWorldMap's probe locals;
    * without it, 4 of 213 instructions differ in tbs-en. */
-  u8 unusedProbeFrame[68];
+  UNUSED u8 unusedProbeFrame[68];
   struct MapCell *sourceCell;
   struct MapCell *destinationCell;
   u16 angle;
@@ -780,6 +843,8 @@ s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
   if (angle == 0xffff) {
     collisionFlags = 4;
   } else {
+    // The animation by the pad's heading: 14 for headings below 0x1000, 15
+    // for 0x8000 to 0x8fff, 10 for the rest.
     animation = 14;
     if ((angle & 0xf000) != 0) {
       animation = 15;
@@ -791,6 +856,8 @@ s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
     position.y = 0;
     position.z = 0;
     Vector_AddPolarOffset(0x80000, angle, &position);
+    // The step's depth becomes height: pad up climbs, pad down descends, and
+    // the object's angle becomes 0xc000 going up the map and 0x4000 going down.
     position.x += object->x;
     deltaZ = position.z;
     if (deltaZ < 0)
@@ -799,6 +866,8 @@ s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
       object->angle = 0x4000;
     position.y = object->y - position.z;
     position.z = object->z;
+    // The cells (16 pixels, 0x100000) under the object and the step; a step
+    // into a cell with another collision code is refused.
     sourceCell =
         &((struct MapCell *)Ram_MapCellBuffer)[object->x / 0x100000 +
                                                (position.z / 0x100000) * 128];
@@ -810,6 +879,9 @@ s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
       collisionFlags = 4;
       animation = 12;
     } else if (gKeysHeld & KEY_UP) {
+      // Climbing needs the ground a cell further up to stand at least 16
+      // pixels above the object; descending needs the ground at the step
+      // at least 8 pixels below it.
       terrainHeight = Map_GetTerrainHeight(object->terrainId, position.x,
                                            position.z - 0x100000);
       if (terrainHeight - object->y < 0x100000)
@@ -830,7 +902,6 @@ s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
     else
       gEventWork->blockedSteps = 0;
   }
-  // Commit the chosen animation before either stopping or setting the target.
   ObjectDispatch_SelectAnimation(object, animation);
   if (collisionFlags != 0) {
     object->targetX = TARGET_UNSET;

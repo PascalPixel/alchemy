@@ -163,16 +163,15 @@ file, and a map that uses another map's table names that map's file (many
 The names `metatiles`, `shapes`, `grid` and `markers` come from what the
 loader and the code that reads each block do with it: the blocks become BG map
 entries, the shapes feed the height functions, the markers place chests and
-Psynergy stones (`Field_PlaceMapMarkers`). The map numbers are the
-directory's.
+Psynergy stones (`Field_PlaceMapMarkers`). The sixth offset is the
+marker list: the loader stores a pointer to it, undecoded, in the map work
+(`LayeredSceneHeader.markers`), and the only code that reads that pointer is
+`Field_PlaceMapMarkers`, which reads (column, row, id) triples from it;
+`MapScrollWork` (`include/map_scroll.h`) still calls the field `script`. The
+map numbers are the directory's.
 
 Still unknown:
 
-- XXX: the loader names the sixth offset `script` (`struct
-  LayeredSceneHeader`, `MapScrollWork.script`), while the marker code reads
-  the same pointer as `markers` (`struct MarkerMap`) and the data is a marker
-  list of x, z and an event id. The loader's names cross folders, so they
-  wait for a rename of their own.
 - XXX: what the placeholder blocks are filled with.
 - XXX: what the header's last two bytes (`pad0`, `pad1`; `unk0a` in the
   loader) mean; every map has them 0.

@@ -259,7 +259,7 @@ void LuckyDice_Run(void) {
   /* FAKEMATCH(dead): an unused local for the 32 bytes the native frame keeps
    * at sp+168..200, between screen and the affine halfwords; without it, 21
    * of 2046 instructions differ in tbs-en. */
-  s32 unused[8];
+  UNUSED s32 unused[8];
   /* FAKEMATCH(volatile): four halfwords stored to sp+166..160 and each
    * reloaded with ldrh, the form the bytes prove; as plain u16 locals, 463 of
    * 2046 instructions differ in tbs-en. */
@@ -274,9 +274,9 @@ void LuckyDice_Run(void) {
 // UB: three equal numbers produce three pairs, so the unused result list
 // needs a third slot. Keep the original frame layout in the matching build.
 #ifdef UBFIX
-  s32 matchedNumbers[3]; // written, never read
+  UNUSED s32 matchedNumbers[3]; // written, never read
 #else
-  s32 matchedNumbers[2]; // written, never read
+  UNUSED s32 matchedNumbers[2]; // written, never read
 #endif
   u16 *spritePalette;
   struct BattleEffectWork *diceWork;

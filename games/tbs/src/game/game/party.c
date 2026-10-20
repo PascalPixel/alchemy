@@ -7,19 +7,20 @@
 // The letter that tells apart enemies of one kind: digits from 1 abroad, the
 // alphabet in Japan.
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-#define ENEMY_SUFFIX_FIRST '1'
-#define ENEMY_SUFFIX_LAST 8
+#define ENEMY_SUFFIX_FIRST '1' ///< suffix 0's character
+#define ENEMY_SUFFIX_LAST 8    ///< the last suffix shown, '9'
 #else
-#define ENEMY_SUFFIX_FIRST 'A'
-#define ENEMY_SUFFIX_LAST 25
+#define ENEMY_SUFFIX_FIRST 'A' ///< suffix 0's character
+#define ENEMY_SUFFIX_LAST 25   ///< the last suffix shown, 'Z'
 #endif
 
 /// Fills battle unit `unitId` (0x80 to 0x86) with enemy `enemyId`: stats,
 /// name with its suffix letter, the items it carries, rewards and elements.
 /// Enemies 158 to 171 fight on the party's side. Returns 0 for an id out of
-/// range. Called by the battle set-up (Battle_RunEncounter,
-/// BattleFormation_BuildEnemyList) and by BattleTargetExec when an enemy calls
-/// for help.
+/// range, 1 otherwise; enemy ids 173 to 250, past the table's 165 rows but
+/// within the check, are filled from row 0. Called by the battle set-up
+/// (Battle_RunEncounter, BattleFormation_BuildEnemyList) and by
+/// BattleTargetExec when an enemy calls for help.
 /// XXX: which enemies 158 to 171 are, and when they join the party's side, is
 /// unknown; the encounter tables that place them would say.
 s32 BattleUnitSet(s32 unitId, s32 enemyId, s32 suffix) {
@@ -215,6 +216,8 @@ s32 Party_AdjustCoins(s32 amount) {
 /// The party's Djinn recovery table as the summon list reads it: a mask of
 /// summons, bit n for summon n.
 struct TradeFlags {
+  /// Bit n set: the party's Djinn meet summon n's requirement, as
+  /// BattleSummon_UpdateAvailability last worked it out.
   u32 flags;
 };
 
@@ -243,6 +246,9 @@ PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, shopGifts, 28)
 /// Writes the summons whose bit is set in the first word of the party's Djinn
 /// table to `output`, in menu order, ending with 32. Returns how many.
 /// Called by SummonMenu_SelectSummon to list the battle's Summon command.
+/// The bits are those BattleSummon_UpdateAvailability sets at the battle's
+/// start and each round. `output` needs room for 17 bytes: up to 16 summons
+/// and the 32.
 s32 Summon_ListLearned(u8 *output) {
   u8 *source = gSummon_OrderList;
   u8 *end = gSummon_OrderList + 15;

@@ -172,7 +172,8 @@ s32 Unit_RefreshPsynergy(s32 owner) {
   return 0;
 }
 
-/// Scratch for Owner_LevelUp, in the alternate pool.
+/// Scratch for Owner_LevelUp, which takes it from EWRAM first
+/// (Runtime_BumpAllocateAlternatePool) and frees it before returning.
 struct LevelUpWork {
   s32 classIndex; ///< the unit's class, written and not read again
   s32 level;      ///< the level before this one
@@ -370,7 +371,10 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *gains) {
     }
     // Each twenty-level band interpolates between adjacent growth points.
     // Keep one RNG draw per stat, in HP, PP, attack, defense, agility, luck
-    // order.
+    // order. Random16() * 20 >> 16 is 0 to 19, so a rising step of d gives
+    // d / 20 rounded up with a chance of about (d % 20) / 20: on average a
+    // twentieth of the step a level, the whole step over a 20-level band
+    // (band 0, levels 1 to 19, gains nineteen twentieths).
     growthBand = gains->level / 20;
     CLAMP(growthBand, 0, 4);
     growthDifference =
@@ -398,6 +402,9 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *gains) {
     unit->baseDefense += gains->def;
     unit->baseAgility += gains->agi;
     unit->baseLuck += gains->luck;
+    // A character's base is always one action a round and no regeneration;
+    // UnitCalc adds equipment's actions and regeneration, Kite's extra action
+    // and 4 PP a round once the character's lighthouse is lit
     unit->baseActionCount = 1;
     unit->baseHpRegen = 0;
     unit->basePpRegen = 0;
@@ -410,7 +417,8 @@ struct LevelUpResult *Owner_LevelUp(s32 owner, struct LevelUpResult *gains) {
 
 /// Levels the character up once if its experience reaches the next level.
 /// Returns `gains` filled with the gains, or NULL. Called after a battle by
-/// Battle_AwardSpoils, once for each level a member reaches.
+/// Battle_AwardSpoils, once for each level a member reaches. At level 99 the
+/// next level needs -1 (0xffffffff) experience, which none reaches.
 struct LevelUpResult *Unit_TryLevelUp(s32 owner, struct LevelUpResult *gains) {
   struct BattleUnit *unit;
 

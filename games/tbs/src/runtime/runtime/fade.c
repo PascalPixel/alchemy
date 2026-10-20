@@ -16,7 +16,9 @@ enum {
 /// Steps the screen fade once a frame, called by System_VBlankHandler: sets
 /// BLDCNT to brighten or darken the chosen layers, moves BLDY one step from
 /// the start level to the target level and counts gBlendFramesLeft down; at
-/// the end it clears gBlendDuration.
+/// the end it clears gBlendDuration, which Fade_Wait waits on. While
+/// gBlendDuration is 0 it writes nothing, leaving BLDCNT and BLDY as they were
+/// last written.
 void Fade_Update(void) {
   if (gBlendDuration != 0) {
     {
@@ -38,6 +40,8 @@ void Fade_Update(void) {
       s32 level;
       s32 step;
 
+      // level = target + (start - target) * remaining / duration: BLDY moves
+      // in a straight line and reaches the target as remaining reaches 0
       (*remaining)--;
       level = gBlendTargetLevel;
       delta = gBlendStartLevel - gBlendTargetLevel;
@@ -90,7 +94,8 @@ FADE_DEFINE_BLEND(Fade_FromWhite, 1, 0)
 ///   layer  : the BLDCNT layers to fade (low six bits)
 ///   start  : the starting brightness; above 16, the current target
 ///   target : the brightness to end at
-///   frames : how long the fade takes
+///   frames : how long the fade takes; with 0 nothing is written, but
+///            `target` still becomes the current target
 void Fade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 frames) {
   gBlendBrighten = bright;
   gBlendLayers = layer & FADE_LAYER_MASK;

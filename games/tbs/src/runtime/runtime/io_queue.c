@@ -9,7 +9,8 @@ typedef void (*QueueFlushRoutine)(struct IoWriteQueue *queue, u32 count);
 /// The queued register writers: each adds a write of `value` to `address`
 /// that the VBlank handler carries out once the frame loop has finished the
 /// frame. The control word gives the width and whether the value is stored,
-/// ORed in or cleared.
+/// ORed in or cleared. The queue holds 32 entries; a write to a full queue is
+/// dropped, and a frame that is not finished keeps its writes for the next.
 #define IO_QUEUE_DEFINE_WRITE(name, control)                                   \
   void name(u32 address, u32 value) {                                          \
     IO_WRITE_QUEUE_PUSH(address, value, control);                              \
@@ -48,6 +49,7 @@ void IoWriteQueue_FlushPending(void) {
     u32 size = (u32)TransferCommandExecutor_Size;
     u32 wordCount = size >> 2;
     u32 zero = 0;
+    // (DMA_ENABLE | DMA_32BIT) << 16: copy the routine a word at a time
     u32 control = 0x84;
 
     control <<= 24;

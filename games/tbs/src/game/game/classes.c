@@ -4,7 +4,9 @@
 
 #include "../game_internal.h"
 
-/// The elemental power and resistance of one element level.
+/// The elemental power and resistance of one element level, in
+/// gElement_PowerResistByLevel, which Unit_CalcBaseElements reads by whole
+/// level, 0 to 15.
 struct ElementLevelBonus {
   u16 power; ///< base power, before the tenths of a level
   u16 res;   ///< base resistance, likewise
@@ -90,16 +92,19 @@ s32 Enemy_GetAttackElement(struct BattleUnit *unit) {
 }
 
 // Writes a unit's base power and resistance in each element: an enemy's come
-// from its preset, a character's from its element levels.
-// Both callers ignore the result. The matching return type preserves r0;
-// plain void changes the two return instructions (tbs-en: differ 4).
-// Its array view keeps the table-address addition after the first store;
-// using the typed fields in that build differs 2 in tbs-en.
+// from its preset, a character's from its element levels, as the value of
+// gElement_PowerResistByLevel for the whole level (0 to 15) plus the level's
+// tenths (Unit_GetElementLevels counts in tenths). Called by BattleUnitSet
+// and Unit_UpdateClass, which both ignore the result.
 #ifdef UBFIX
 void Unit_CalcBaseElements(s32 owner, struct BattleElementStats *destination) {
 #else
 u32 Unit_CalcBaseElements(s32 owner, s16 destination[4][2]) {
 #endif
+  // Without UBFIX the return type is u32, which keeps r0 as the ROM does
+  // (as void, the two return instructions differ: 4 in tbs-en), and the
+  // destination is the array view, which keeps the table address added
+  // after the first store (the typed fields differ by 2 in tbs-en).
   struct BattleUnit *state = UnitGet(owner);
   u32 index;
   s32 values[4];
@@ -157,7 +162,9 @@ u32 Unit_CalcBaseElements(s32 owner, s16 destination[4][2]) {
 /// Returns the class a character has with `djinn` set: the series is chosen by
 /// its two strongest elements, and the class is the last of the series whose
 /// element requirements it meets. Isaac and Garet as children and Jenna have
-/// fixed classes. Called by Unit_UpdateClass.
+/// fixed classes (200, 201 and 202). Called by Unit_UpdateClass. Returns 0
+/// for a unit past the eight characters, and for a character that reaches
+/// no class of its series; 0 is also the class that marks an enemy.
 s32 Class_Determine(s32 character, const u8 *djinn) {
   s32 levels[4];
   s32 primary;
@@ -198,7 +205,8 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
     }
   }
   // A second element below level 1 does not count: the series is then the
-  // primary element's alone.
+  // primary element's alone. Ties go to the lower element number, as each
+  // search keeps the first strictly greater level.
   series = Class_GetSeries(primary, levels[j] > 9 ? j : primary);
   // The last class of the series that the element levels reach.
   for (i = 202; i >= 0; i--) {

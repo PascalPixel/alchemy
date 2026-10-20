@@ -6,7 +6,10 @@
 
 // The game flags: 4096 bits in gGameFlagBytes. A flag number's low three bits
 // pick the bit and the next nine the byte; byte and nibble flags use the same
-// numbering.
+// numbering. Bits above the twelfth are dropped (GAME_FLAG_BYTE), so a number
+// past 4095 wraps onto a flag below it rather than reaching other memory. The
+// byte and nibble readers that write the shift out (`<< 20 >> 23`) compute
+// the same byte.
 
 /// Returns 1 when `flag` is set. Every bank tests flags through it, as
 /// GameFlag_TestFar, and the scenes through the event layer.
@@ -107,8 +110,9 @@ u8 GameFlag_DecrementByte(s32 flag) {
   return flagBytes[flag];
 }
 
-/// Returns the four bits `flag` is in (bit 2 of the number picks the half).
-/// Only GAME.S's bare veneer reaches it; nothing calls it by name.
+/// Returns the four bits `flag` is in, 0 to 15 (bit 2 of the number picks the
+/// half: flags n to n + 3, with n a multiple of 4, are one nibble). Only
+/// GAME.S's bare veneer reaches it; nothing calls it by name.
 s32 GameFlag_GetNibble(u32 flag) {
   u32 shifted = (u32)flag << 20;
   u32 shift;

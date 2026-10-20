@@ -84,8 +84,10 @@ void NumberText_FormatDecimal(s32 number) {
   output[1] = 0;
 }
 
-/// Writes `count` blank characters at the debug text cursor and moves it on.
-/// Reached through the far-call table.
+/// Writes `count` blank characters (tile 0 in palette 15) at the debug text
+/// cursor and moves it on. Unlike DebugText_Print it writes even while debug
+/// text is off, and does not wrap at the end of the screen. Reached through
+/// the far-call table.
 void DebugText_PrintBlanks(u32 count) {
   u16 *dst = gDebugTextCursor;
   u32 index;
@@ -122,6 +124,8 @@ void DebugText_Print(const u8 *src) {
     src++;
 
     if (c != 0) {
+      // 0xf000 selects palette 15 in each screen entry; the end of the
+      // 32x20-entry screen (0x500 bytes) wraps to its start
       u32 mask = 0xf000;
       addr = (u32)(BG_SCREEN_BLOCK(4) + 0x500);
       do {
@@ -153,7 +157,9 @@ void DebugText_PrintHex(u32 value, s32 digits) {
 }
 
 /// Prints the last `digits` characters of `value` in signed decimal (1 to 10;
-/// anything else prints 10). Reached through the far-call table.
+/// anything else prints 10). The sign stands just before the first digit, so
+/// a '-' shows only when `digits` is more than the number's digit count.
+/// Reached through the far-call table.
 void DebugText_PrintDecimal(s32 value, s32 digits) {
   s32 n;
 
@@ -178,6 +184,7 @@ void DebugText_Clear(void) {
 /// palettes. Called by System_Initialize and by the modes that replace those
 /// graphics and must put them back (the debug battle, the palette editor).
 void Ui_LoadWindowGraphics(void) {
+  // 0x800 words: 8 KB, 256 tiles of 4 bits a pixel
   Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles),
           BG_CHAR_BLOCK(0), DMA_COPY_WORDS(0x800), REG_DMA3);
   Dma_Set(gUi_WindowPalette, (void *)&BG_PLTT_COLOR(15, 0),
@@ -190,6 +197,7 @@ void Ui_LoadWindowGraphics(void) {
   Io_Write16(RGB(0, 13, 18), &BG_PLTT_COLOR(15, 8));
   Io_Write16(RGB(0, 14, 20), &BG_PLTT_COLOR(15, 9));
   Io_Write16(RGB(0, 15, 22), &BG_PLTT_COLOR(15, 10));
+  // 0xe0 halfwords: 224 colours, sprite palettes 0 to 13
   Dma_Set(gSystem_BasicColorPalette, (void *)OBJ_PLTT, DMA_ENABLE << 16 | 0xe0,
           REG_DMA3);
 }

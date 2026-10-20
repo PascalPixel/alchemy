@@ -11,13 +11,18 @@ extern u8 IwramClearWords[];
 /// VBlank.
 void Render_ResetFrame(void) {
   gObjAffineCount = 0;
+  // IwramClearWords(destination, bytes): 0x400 bytes are the 256 slot heads.
+  // It zeroes r2 itself, so the third argument is never read.
   _call_via_r3(((u32)&gRenderSlotHeads), 0x400, ((u32)&gObjAffineCount),
                (u32)IwramClearWords);
 }
 
 typedef void (*OamBuildRoutine)(void *work);
 
-enum { OBJ_AFFINE_MATRIX_COUNT = 32, RENDER_DEPTH_SLOT_COUNT = 256 };
+enum {
+  OBJ_AFFINE_MATRIX_COUNT = 32, ///< the OAM's rotation-scaling matrices
+  RENDER_DEPTH_SLOT_COUNT = 256 ///< depth slots a sprite is linked into
+};
 
 /// Hands out the next OAM affine matrix for a sprite drawn with `source`'s
 /// scale and rotation and fills it in. Called by the field sprites and the
@@ -42,7 +47,8 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source) {
   matrix = &gObjAffineMatrices[index];
   coefficient = matrix->coefficients;
   if ((xScale == yScale || -xScale == yScale) && angle == 0) {
-    // Unrotated and evenly scaled (or mirrored): only the diagonal is set
+    // Unrotated and evenly scaled (or mirrored): only the diagonal is set.
+    // 0x10000 / scale is the 8.8 inverse of an 8.8 scale.
     s32 reciprocal;
     s32 xReciprocal;
 
@@ -54,7 +60,8 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source) {
     matrix->rows[0] = (u16)xReciprocal;
     matrix->rows[1] = (u32)reciprocal << 16;
   } else {
-    // The inverse of rotate-then-scale
+    // The inverse of rotate-then-scale: a 16.16 sine over an 8.8 scale is
+    // an 8.8 coefficient
     s32 sine;
     s32 cosine;
 

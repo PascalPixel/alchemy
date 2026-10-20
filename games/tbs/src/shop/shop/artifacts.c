@@ -5,7 +5,9 @@
 #include "../shop_internal.h"
 
 /// The shop credit each Game Ticket costs, by how many have been given: five
-/// at each price: 300, then 500 doubling to 8000.
+/// at each price: 300, then 500 doubling to 8000. The gift count stops at 28
+/// (Party_AdjustShopGifts), so every ticket from the 29th costs entry 28's
+/// 8000 and entry 29 is never read.
 // clang-format off
 static const s16 sGameTicketCreditCosts[30] = {
     300, 300, 300, 300, 300,
@@ -111,12 +113,15 @@ void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
 /// The shops' stock, one row per shop: up to 24 items, then up to 8 artifacts
 /// (each list ending with 0 when shorter), then the shop's type.
 enum {
-  SHOP_STOCK_ITEMS = 0,
-  SHOP_STOCK_ITEM_COUNT = 24,
-  SHOP_STOCK_ARTIFACTS = 24,
-  SHOP_STOCK_ARTIFACT_COUNT = 8,
+  SHOP_STOCK_ITEMS = 0,          ///< the first ordinary item's column
+  SHOP_STOCK_ITEM_COUNT = 24,    ///< ordinary items a row holds
+  SHOP_STOCK_ARTIFACTS = 24,     ///< the first artifact's column
+  SHOP_STOCK_ARTIFACT_COUNT = 8, ///< artifacts a row holds
+  /// The shop's type: 0 items, 1 weapons, 2 armor (Item_GetEquipmentGroup).
   SHOP_STOCK_TYPE = 32,
   SHOP_STOCK_COLUMNS = 33,
+  /// Rows, by the stock row a scene passes to Shop_Run; row 0 is empty and
+  /// stands in for a row out of range.
   SHOP_STOCK_ROWS = 35
 };
 
@@ -305,7 +310,9 @@ s32 EventTable_GetRowLimit(void) { return SHOP_STOCK_ROWS; }
 
 /// Adds a shop's artifacts to the shared stock counters once, on its first
 /// visit, and sets the shop's flag (FLAG_SHOP_ARTIFACTS_STOCKED + row) to
-/// remember it. Called by Shop_Run as a shop opens.
+/// remember it. Called by Shop_Run as a shop opens. Each artifact adds one,
+/// so an item listed by two shops can be bought twice once both are
+/// visited.
 void EventTable_ApplyRowAbilities(s32 stockRow) {
   const s16 *stockEntries;
   const s16 *artifactCursor;

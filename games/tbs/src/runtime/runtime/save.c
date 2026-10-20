@@ -11,12 +11,16 @@
 // and the highest sequence number of a record id is its current copy.
 
 enum {
-  SAVE_FLASH_TIMER = 2,
-  SAVE_FLASH_IDENTIFY_ATTEMPTS = 8,
+  SAVE_FLASH_TIMER = 2, ///< the hardware timer handed to the flash library
+  SAVE_FLASH_IDENTIFY_ATTEMPTS = 8, ///< tries, a frame apart
+  /// Sectors scanned; as a sector number, "none" in the functions below.
   SAVE_SECTOR_COUNT = 16,
-  SAVE_RECORD_NONE = 16,
-  SAVE_FILE_COUNT = 3,
+  SAVE_RECORD_NONE = 16, ///< the record id of a free or invalidated sector
+  SAVE_FILE_COUNT = 3,   ///< save files; file n is records n and n + 3
+  /// The highest sequence number a write keeps; a copy written past it is
+  /// rewritten as 1.
   SAVE_SEQUENCE_LIMIT = 65000,
+  /// Payload bytes summed into the checksum: all 0xff0 but the last eight.
   SAVE_CHECKSUM_BYTES = 0xfe8
 };
 
@@ -28,6 +32,10 @@ enum {
 /// taken. Returns 1 when no flash chip answers, 0 otherwise; either way the
 /// caller ends with SaveState_ReleaseWorkspace. Called by the save screens
 /// (window/battle_command/save.c) before every save, load, copy or delete.
+/// The workspace is EWRAM first (Runtime_AllocateBlock) and not cleared by
+/// the allocator, so it is cleared here; the record and sector-table
+/// functions in this file read it through gSaveWorkspace, the slot's word in
+/// gWorkSlot, and need it allocated.
 s32 SaveState_InitializeWorkspace(void) {
   struct SaveWorkspace *work;
   struct SaveSlotHeader header;
@@ -141,6 +149,8 @@ u32 SaveState_WriteWorkspaceSlot(s32 sector) {
 
   work = gSaveWorkspace;
   value = (u16)sector;
+  // The chip's program routine, from gFlash_Handler0, reports an error in
+  // its result's low halfword
   if ((_call_via_r3(value, (s32)&work->slot, (s32)param, *param) << 0x10) !=
       0) {
     return 1U;
@@ -151,7 +161,8 @@ u32 SaveState_WriteWorkspaceSlot(s32 sector) {
 
 /// Reads flash sector `index` into the workspace's sector buffer. Called by
 /// SaveState_InitializeWorkspace and SaveState_ReadRecordPayload. Returns 0
-/// when the payload matches the header's checksum.
+/// when the payload matches the header's checksum, and the difference of the
+/// two checksums otherwise.
 s32 SaveState_ReadSlotAndCheckChecksum(s32 index) {
   struct SaveWorkspace *work;
   struct SaveSlotHeader header;
@@ -230,9 +241,11 @@ s32 SaveState_WriteRecord(s32 recordId, void *source) {
   return 0;
 }
 
-/// Loads the current copy of record `recordId` into `destination`. Called by
-/// the save screens to load or copy a file. Returns 1 when there is none and
-/// 0 otherwise.
+/// Loads the current copy of record `recordId` (0xff0 bytes) into
+/// `destination`. Called by the save screens to load or copy a file. Returns
+/// 1 when there is none and 0 otherwise. The checksum result of the read is
+/// ignored: a sector counts as occupied only after the scan's checksum or a
+/// verified write.
 u32 SaveState_ReadRecordPayload(s32 recordId, void *destination) {
   struct SaveWorkspace *work;
   u32 index;
@@ -369,10 +382,12 @@ u32 SaveState_GetLatestSequence(s32 recordId) {
   return latestSequence;
 }
 
-/// Reads the summary at the start of each of the three save files into
-/// `summary` for the file select screen, and four bytes from offset 0x110 of
-/// each file's second record (zero when it has none). Called by the save
-/// screens. Returns how many save files exist.
+/// Reads the summary at the start of each of the three save files into the
+/// workspace's summary table for the file select screen, and four bytes from
+/// offset 0x110 of each file's second record into its unk38 (zero when it
+/// has none). A file with no first record keeps a cleared summary, so its
+/// level reads 0. Called by the save screens. Returns how many save files
+/// exist.
 s32 SaveState_LoadSummaryRecords(void) {
   struct SaveWorkspace *work;
   struct SaveSummary *summary;
@@ -403,9 +418,10 @@ s32 SaveState_LoadSummaryRecords(void) {
   return count;
 }
 
-/// Removes the flash timer handler and frees the save workspace's heap slot.
-/// Called by the save screens after every save operation. Declared as
-/// returning a value, it returns none (pop {r1}; bx r1).
+/// Removes the flash timer handler and frees the save workspace's heap slot,
+/// with every block allocated after it in the same pool. Called by the save
+/// screens after every save operation. It returns no value, whatever its
+/// declaration says; no caller reads one.
 u32 SaveState_ReleaseWorkspace(void) {
   Runtime_SetIrqHandler(IRQ_TIMER2, 0, NULL);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_SAVE);

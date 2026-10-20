@@ -347,9 +347,10 @@ s32 Inventory_GetEquippedItem(struct BattleUnit *unit, s32 type) {
 
 /// Takes one item out of `slot`: a stack shrinks by one (returns 1), a last
 /// item empties the slot and the inventory closes up (returns 2). Returns -1
-/// for an empty slot. The unit's stats are recomputed either way. Called by
-/// using an item in the field or in battle, by the shops and by
-/// Inventory_Discard.
+/// for an empty slot. The unit's stats are recomputed either way; its Psynergy
+/// list is not rebuilt here (Unit_RefreshPsynergy), so a removed item's
+/// Psynergy stays listed until something rebuilds it. Called by using an item
+/// in the field or in battle, by the shops and by Inventory_Discard.
 s32 Inventory_Remove(s32 owner, s32 slot) {
   struct BattleUnit *unit = UnitGet(owner);
   u16 item = unit->inventory[slot];
@@ -490,6 +491,8 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
   u8 counter;
   s32 result = 0;
 
+  // The table holds a rare item's counter number plus one, and 0 for an
+  // ordinary item
   counter = gItem_ArtifactSlotTable[itemId & itemIdMask];
   if (counter != 0) {
     result = ItemCounter_Adjust(counter - 1, delta);

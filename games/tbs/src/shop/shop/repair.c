@@ -180,7 +180,8 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   UiWork_PushValueSlotFar(itemId, 2);
   UiMessage_ShowAndRestoreState(messageBase + 2);
   UiWork_FinalizePendingCoreFar();
-  // The hammer blows are 110 frames apart; the item stays hidden throughout.
+  // The hammer blows are 110 frames apart; the item stays hidden throughout,
+  // 360 frames (six seconds) from the first wait to the last.
   WaitFrames(10);
   AudioCommand_PlayFar(SE_100);
   WaitFrames(110);

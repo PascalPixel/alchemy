@@ -5,8 +5,8 @@
 #include "../runtime_internal.h"
 
 /// Advances the game's random number generator (the C library's classic
-/// linear congruential one), stores the new seed and returns 16 bits of it.
-/// Called throughout the game.
+/// linear congruential one), stores the new seed and returns its bits 8 to
+/// 23, 0 to 0xffff. Called throughout the game.
 u32 Random16(void) {
   enum { MULTIPLIER = 0x41c64e6d, INCREMENT = 0x3039 };
   u32 value = gRandomSeed * MULTIPLIER + INCREMENT;
@@ -30,9 +30,9 @@ void Vector_AddPolarOffset(s32 radius, s32 angle, void *position) {
   *(s32 *)coordinate += Iwram_MulQ16(radius, Trig_Sin(angle));
 }
 
-/// Returns the angle of the vector (x, y), in 1/65536 turns, measured from
-/// the y axis: 0 along +y, 0x4000 along +x. It binary-searches the tangent
-/// table to 1/256 of a quarter turn.
+/// Returns the angle of the vector (x, y), in 1/65536 turns from 0 to 0xffff,
+/// measured from the y axis: 0 along +y, 0x4000 along +x. It binary-searches
+/// the tangent table to 1/256 of a quarter turn. (0, 0) gives 0.
 s32 ArcTan2(s32 x, s32 y) {
   const u16 *table;
   s32 value;
@@ -121,8 +121,8 @@ s32 ArcTan2(s32 x, s32 y) {
   return (u16)result;
 }
 
-/// Returns the integer square root of `value`, a bit at a time. Reached
-/// through the far-call table.
+/// Returns the integer square root of `value`, rounded down, a bit at a time;
+/// a negative `value` gives 0. Reached through the far-call table.
 s32 Math_IntegerSqrt(s32 value) {
   s32 trial;
   s32 remainder;
@@ -145,7 +145,12 @@ s32 Math_IntegerSqrt(s32 value) {
   return result;
 }
 
-/// Square root of a 16.16 fixed-point value, in 16.16.
+/// Square root of a 16.16 fixed-point value, in 16.16. The square root of
+/// the raw value is the result in 8.8, so the low eight bits are always 0.
 s32 FixedSqrt(s32 value) { return Iwram_Sqrt(value) << 8; }
 
+/// Returns the address of the basic sprite palettes (gSystem_BasicColorPalette)
+/// as a number. Called by the Djinn menu and the battle party status, which
+/// copy its first 16 colours into a background palette themselves (BG palette
+/// 5 and 14).
 s32 Palette_GetBasicObjColors(void) { return (s32)gSystem_BasicColorPalette; }

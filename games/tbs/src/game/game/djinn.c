@@ -20,7 +20,8 @@ const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index) {
 /// Gives a newly found Djinni to the party member holding the fewest Djinn who
 /// has room in that element, puts it on standby and sets its found flag.
 /// Returns who got it, -1 if it was found before or -2 when nobody has room.
-/// Called by Djinn_JoinParty when a Djinni joins in the field.
+/// Called by Djinn_JoinParty when a Djinni joins in the field. Of members
+/// holding equally few, the earliest in the party order gets it.
 s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn) {
   s32 flag = djinn + element * 20 + FLAG_DJINNI_0;
   s32 leastLoadedOwner = 0;
@@ -179,9 +180,10 @@ s32 DjinnRecovery_Remove(s32 owner, s32 element, s32 djinnIndex) {
 }
 
 /// Puts the owner's Djinni at the end of its side's list on standby (turns
-/// -1), moving it there if it was already listed. Returns the list's count.
-/// Called when a Djinni joins, by the Djinn menu's standby command, by
-/// battle and by the scene where Flint joins.
+/// -1), moving it there if it was already listed. Returns a pointer to the
+/// list's count. Nothing checks the list's 64-entry capacity. Called when a
+/// Djinni joins, by the Djinn menu's standby command, by battle and by the
+/// scene where Flint joins.
 u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinnIndex) {
   struct DjinnRecoveryList *recoveryList;
   s32 entryIndex;
@@ -199,8 +201,9 @@ u32 *DjinnRecovery_AddStandby(u32 owner, u32 element, u32 djinnIndex) {
 }
 
 /// Moves a Djinni from one unit to another, keeping it set or on standby.
-/// Returns -1 when the source lacks it or the target has no room. Called by
-/// the Djinn menu's Give and Trade.
+/// Returns 0 when it moved, and -1 when the source lacks it or the target
+/// has no room or holds it already. Both units' classes are worked out
+/// again when it was set. Called by the Djinn menu's Give and Trade.
 s32 Djinn_Transfer(s32 source, s32 element, s32 djinnIndex, s32 target) {
   struct BattleUnit *sourceUnit = UnitGet(source);
   u32 wasActive;

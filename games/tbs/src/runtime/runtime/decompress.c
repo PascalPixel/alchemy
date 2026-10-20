@@ -14,7 +14,9 @@ void Resource_DecompressHalfwords(const void *source, void *destination) {
 }
 
 /// Each decoder copies its ARM routine `code` to RAM, runs it and frees the
-/// copy, and returns the number of bytes it decoded.
+/// copy, and returns the number of bytes it decoded. The copy is a MemAlloc
+/// block, IWRAM when it fits, and MemFree puts the pool's next address back
+/// where it was.
 #define RESOURCE_DEFINE_DECODE(name, code, bytes)                              \
   s32 name(const void *source, void *destination) {                            \
     s32 (*routine)(const void *, void *);                                      \

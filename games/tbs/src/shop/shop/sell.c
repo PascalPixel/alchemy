@@ -146,6 +146,9 @@ s32 Shop_SelectSell(s32 unitId) {
         slot = (slot + inventoryCount) % inventoryCount;
         redraw = 1;
       }
+      // Up from the top row wraps to the bottom row of the 15-slot grid, then
+      // steps up a row at a time onto a filled slot; down onto an empty slot
+      // wraps to the same column's top row, which may be where it started
       if ((gKeysRepeat & KEY_UP) != 0) {
         slot -= SHOP_INVENTORY_COLUMNS;
         if (slot < 0)
@@ -244,6 +247,7 @@ s32 Shop_SelectSellNum(s32 unitId, s32 slot) {
   item = Item_GetDirectFar(unit->inventory[slot]);
   result = 1;
   unitSalePrice = Shop_SalePrice(unit->inventory[slot]);
+  // Shop_GetSelectionState is GAME.S's name for Inventory_GetQuantity
   stackQuantity = Shop_GetSelectionState(unitId, slot);
   quantityLimit = stackQuantity;
   if ((item->flags & ITEM_STACKABLE) && stackQuantity > 1) {
@@ -265,7 +269,10 @@ s32 Shop_SelectSellNum(s32 unitId, s32 slot) {
 /// or one equipped and cursed on, asks with the offer that fits (an old item
 /// the player just replaced, a broken one, a stack, a rare one), then
 /// discards them, pays the coins and redraws. `count` -1 is the old
-/// equipment the equip prompt offers to sell (Shop_SellOld).
+/// equipment the equip prompt offers to sell (Shop_SellOld). Called by
+/// Shop_SelectSell and Shop_SellOld. Each item goes through
+/// Inventory_Discard, so one with a stock counter (an artifact) goes back on
+/// it, and the shops of its type may sell it again.
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
   struct ShopRuntime *shop = gMenuWork;
   struct BattleUnit *unit = UnitGetFar(unitId);

@@ -4,27 +4,29 @@
 
 #include "../game_internal.h"
 
-/// The running totals UnitCalc builds a unit's stats in, in a block of the
-/// alternate pool that it frees at the end.
+/// The running totals UnitCalc builds a unit's stats in. Each call takes a
+/// block from EWRAM first (Runtime_BumpAllocateAlternatePool) and frees it
+/// with MemFree before returning; only UnitCalc reads it.
 struct StatWork {
-  s32 hp;    ///< maximum HP
-  s32 pp;    ///< maximum PP
-  s32 atk;   ///< Attack
-  s32 def;   ///< Defense
-  s32 agi;   ///< Agility
-  s32 unk14; ///< never written; a gap between Agility and Luck
-  s32 luck;
-  s32 turns;                   ///< actions a round, 0 to 2
-  s32 hpRegen;                 ///< HP regained each round
-  s32 ppRegen;                 ///< PP regained each round
-  s32 element[4][2];           ///< [element][0] power and [1] resistance
-  s32 kind;                    ///< the item effect being applied
-  s32 unk4c[2];                ///< never written
-  s32 amount;                  ///< the amount of the item effect being applied
+  s32 hp;            ///< maximum HP
+  s32 pp;            ///< maximum PP
+  s32 atk;           ///< Attack, 0 to 999 once clamped
+  s32 def;           ///< Defense, 0 to 999 once clamped
+  s32 agi;           ///< Agility, 0 to 999 once clamped
+  s32 unk14;         ///< never written; a gap between Agility and Luck
+  s32 luck;          ///< Luck, 0 to 99 once clamped
+  s32 turns;         ///< actions a round, 0 to 2
+  s32 hpRegen;       ///< HP regained each round
+  s32 ppRegen;       ///< PP regained each round
+  s32 element[4][2]; ///< [element][0] power and [1] resistance
+  s32 kind;          ///< the item effect being applied
+  s32 unk4c[2];      ///< never written
+  s32 amount;        ///< the amount of the item effect being applied
   struct ItemDefinition *item; ///< the equipped item being applied
   s32 unk5c;                   ///< never written
 };
 
+/// The distance between `a` and `b`, |a - b|.
 #define UNIT_STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
 /// Starts a new game: clears the game state and restarts at the opening.
@@ -174,7 +176,10 @@ void UnitCalc(s32 owner) {
     stats->element[index][1] = unit->baseElement[index].resistance;
   }
 
-  // Repair stale gauges before preserving their fractions of the new maxima.
+  // A gauge is HP or PP as a fraction of its maximum, 0x4000 full. When
+  // either no longer gives its stat to within 1 (the stat was written
+  // without UnitRatio), both gauges are reset to full and the unit's HP and
+  // PP refilled, before the fractions carry over to the new maxima.
   if (UNIT_STAT_DIFF(unit->maxHp * unit->hpGauge / 0x4000, unit->hp) > 1 ||
       UNIT_STAT_DIFF(unit->maxPp * unit->ppGauge / 0x4000, unit->pp) > 1) {
     unit->hpGauge = 0x4000;
@@ -194,6 +199,7 @@ void UnitCalc(s32 owner) {
   unit->equipBonus[1] = 0;
 
   // Apply additive equipment and set-Djinn bonuses before class scaling.
+  // An enemy (class 0) skips equipment, Djinn and class entirely.
   if (unit->classIndex) {
     for (index = 0; index < INVENTORY_SLOTS; index++) {
       if (!(unit->inventory[index] & INVENTORY_EQUIPPED))
@@ -295,6 +301,7 @@ void UnitCalc(s32 owner) {
       }
     }
 
+    // The class's multipliers are in tenths: 10 keeps a stat as it is
     {
       struct ClassDefinition *classDefinition =
           Class_GetDefinition(unit->classIndex);
@@ -307,6 +314,8 @@ void UnitCalc(s32 owner) {
       stats->luck = stats->luck * classDefinition->luck / 10;
     }
 
+    // Then the equipment's multiplying effects, ITEM_EFFECT_SCALE_HP to
+    // ITEM_EFFECT_SCALE_LUCK, also in tenths, applied after the class
     for (index = 0; index < INVENTORY_SLOTS; index++) {
       if (!(unit->inventory[index] & INVENTORY_EQUIPPED))
         continue;
@@ -522,22 +531,32 @@ u32 Runtime_GetBuildStampTime(void) {
   return (u16)result;
 }
 
-/// The end of the scene state that a new game sets up.
+/// A view of EWRAM from gSceneState on, which GameState_InitDefaults writes
+/// one byte through. gSceneState's 0x78 bytes and gInventorySnapshot's 0x8c
+/// come first, so unk104 is the first byte of gObjectSnapshots.
 struct SceneStateTail {
-  u8 unk000[0x100];
+  u8 unk000[0x100]; ///< gSceneState, then most of gInventorySnapshot
+  /// gInventorySnapshot's last word, past the 65 halfwords the snapshot
+  /// uses; nothing reads or writes it through this view.
   u32 playTime;
+  /// gObjectSnapshots.slots[0]: set to 0xff, OBJECT_SNAPSHOT_EMPTY, so a
+  /// new game holds no saved actors.
   u8 unk104;
 };
 
-/// Clears the game-state header, scene state, flags and save stamp; sets a new
-/// game's defaults: Isaac alone in the party, the standard button layout,
-/// the message speed, the play time clock and the slot machine prize odds.
-/// Called by the file select screen's new game, by Game_Restart and
-/// Game_ResetForNewGame, and by the debug battle menu.
+/// Clears the game-state header, the scene state with the Colosso's inventory
+/// snapshot and the actor snapshot after it, the flags and most of the save
+/// stamp; sets a new game's defaults: Isaac alone in the party, the standard
+/// button layout, the message speed, the play time clock and the slot
+/// machine prize odds. Called by the file select screen's new game, by
+/// Game_Restart and Game_ResetForNewGame, and by the debug battle menu.
 void GameState_InitDefaults(void) {
   volatile s32 zero;
 
-  // Clear the state header, scene work, flags and save metadata in DMA order.
+  // Clear the state header, scene work, flags and save metadata in DMA order:
+  // 0xb0 words are gGameState up to the characters (owners, which
+  // Party_InitCharacters sets up); 0x3e1 words run from gSceneState through
+  // gInventorySnapshot and gObjectSnapshots; 0x80 words are all 4096 flags.
   zero = 0;
   START_DMA(&zero, &gGameState,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0xb0);

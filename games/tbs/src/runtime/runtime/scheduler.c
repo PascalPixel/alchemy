@@ -97,7 +97,10 @@ UNUSED s32 Scheduler_FindCallback(SchedulerCallback callback) {
 /// flags (cleared for a new task) with interrupts disabled. Returns the task's
 /// index, or -1 when all 20 slots are taken. Called throughout the game to
 /// start per-frame and VBlank work; `order` is SCHEDULER_KEY_MAIN_LOOP or
-/// SCHEDULER_KEY_VBLANK's high byte with a priority in the low byte.
+/// SCHEDULER_KEY_VBLANK's high byte with a priority in the low byte. The
+/// index is the slot written before this call's own sort, which may already
+/// have moved the task; a few callers return it, but nothing in ☀️ tests it.
+/// A task stays until Scheduler_RemoveCallback or Scheduler_ResetTaskTable.
 s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order) {
   u32 savedInterruptState;
   s32 index;
@@ -106,6 +109,7 @@ s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order) {
 
   index = -1;
   task = gSchedulerTaskTable;
+  // DEAD: nothing uses the status read here; its load is in the ROM.
   (void)gSchedulerStatus;
   IRQ_LOCK(savedInterruptState);
   // Update an existing callback before looking for an unused task slot.
@@ -203,6 +207,8 @@ s32 Scheduler_SuspendOverlayTasks(void) {
   task = gSchedulerTaskTable;
   IRQ_LOCK(savedInterruptMaster);
   for (i = 0; i < SCHEDULER_TBS_TASK_COUNT; i++, task++) {
+    // Overlays run from EWRAM, so a routine at 0x02xxxxxx is an overlay's.
+    // An empty slot (routine 0) never matches.
     if ((task->callback >> 24) == 2 && (task->mask & 1) == 0) {
       TASK_STATE_HIGH(task) |= 1;
       result = i;
@@ -289,6 +295,9 @@ void Scheduler_RunPass(s32 key) {
   struct SchedulerTask *task = gSchedulerTaskTable;
   s32 remaining;
 
+  // A pass matches the high byte only; the low byte has already ranked the
+  // tasks through the sort, and a suspended task's odd high byte matches no
+  // pass
   key >>= 8;
   if (gSchedulerReady == 1) {
     remaining = SCHEDULER_TBS_TASK_COUNT + 1;

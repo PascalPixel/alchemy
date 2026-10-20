@@ -7,7 +7,9 @@
 /// Returns the multiplier (256 = 1x) for an element difference `input`, read
 /// from a five-point line (gElement_PowerResistCurve); with `halve` the effect
 /// of the difference is half. Called by the damage and recovery formulas
-/// below.
+/// below. The curve's points lie on one straight line, so the result is 256
+/// plus 1.28 for each point of difference, with the difference held to -200
+/// to 200: 0 to 512, or 128 to 384 halved.
 s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
   s32 minimumDifference;
   s32 maximumDifference;
@@ -282,11 +284,14 @@ s32 Battle_IsReviveEffect(s32 effectId) {
 
 /// Rolls whether effect `effectId` takes hold on `target`: it fails at once
 /// when there is nothing for it to do. The chance is the base rate, plus three
-/// times the caster's lead over the target in the element, less half the
-/// target's luck, plus 25 against a weakness, times `successScale` percent.
-/// Luff gets three tries. Reached through GAME.S as BattleHitCheck, which
-/// BattleTargetExec and the battle plan call for each target of an ability
-/// with an effect.
+/// times the caster's lead over the target in the element's level less half
+/// the target's luck (so every two points of luck take off three), plus
+/// 25 against a weakness, times `successScale` percent. A base rate of 0 or
+/// less counts as its magnitude, still scaled but skipping the levels, luck
+/// and weakness; 0 still succeeds when BattleRandomPercent gives 0, about 1
+/// time in 100. Luff gets three tries.
+/// Reached through GAME.S as BattleHitCheck, which BattleTargetExec and the
+/// battle plan call for each target of an ability with an effect.
 s32 BattleFx_RollSuccess(s32 caster, s32 target, s32 resistanceCategory,
                          s32 effectId, s32 successScale) {
   // Restore's psySeal and confusion reads and Cure All's haunt read go
@@ -346,7 +351,7 @@ action4_done:
   }
 
   // A positive base rate is adjusted by the element levels, the target's luck
-  // and its weaknesses; a negative one is a fixed chance.
+  // and its weaknesses; 0 or a negative one is a fixed chance.
   score = BattleFx_GetBaseSuccessRate(effectId);
   if (score > 0) {
     s32 difference = Unit_GetElementLevel(caster, resistanceCategory) -

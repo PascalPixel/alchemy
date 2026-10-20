@@ -52,7 +52,8 @@
 #include "heap_state.h"
 #include "flags.h"
 
-/// English menu entries 48..51 establish the four shop actions.
+/// What the player chose at a shop's counter, in the order of its menu
+/// (messages 48 to 51), held in shop->partyAction while it runs.
 enum ShopAction {
   SHOP_ACTION_BUY,
   SHOP_ACTION_SELL,
@@ -60,15 +61,21 @@ enum ShopAction {
   SHOP_ACTION_REPAIR
 };
 
-/// These service kinds select the existing condition, fee and cure branches.
+/// What the sanctum does for one party member; each kind picks the member's
+/// condition it needs, its fee and its cure (sanctum.c).
 enum SanctumService {
-  SANCTUM_SERVICE_REVIVE,
-  SANCTUM_SERVICE_CURE_POISON,
-  SANCTUM_SERVICE_EXORCISE,
-  SANCTUM_SERVICE_REMOVE_CURSE
+  SANCTUM_SERVICE_REVIVE,      ///< for a downed member (HP 0)
+  SANCTUM_SERVICE_CURE_POISON, ///< for poison or deadly poison
+  SANCTUM_SERVICE_EXORCISE,    ///< for a haunted member
+  SANCTUM_SERVICE_REMOVE_CURSE ///< for any restraint bit set
 };
 
-enum { SHOP_INVENTORY_COLUMNS = 5, SHOP_STOCK_PAGE_ITEMS = 7 };
+enum {
+  /// Icons a row in a member's 15-slot inventory grid, 16 pixels apart.
+  SHOP_INVENTORY_COLUMNS = 5,
+  /// Stock items a page of the buy screen, 32 pixels apart.
+  SHOP_STOCK_PAGE_ITEMS = 7
+};
 
 // BUG: the original item picker tests its selection result rather than the
 // discard error, so it never shows the cannot-remove message for error -3.
@@ -80,13 +87,19 @@ enum { SHOP_INVENTORY_COLUMNS = 5, SHOP_STOCK_PAGE_ITEMS = 7 };
   (selectionResult)
 #endif
 
-// Edition-specific text and window layout values.
+// Edition-specific text and window layout values. Window positions and sizes
+// are in tiles, text positions in pixels.
+
+// The shop's Yes/No menu (run.c): one column further left in German.
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define SHOP_CONFIRM_MENU_X 6
 #else
 #define SHOP_CONFIRM_MENU_X 7
 #endif
 
+// An item's price and the word after it in the price window that the buy,
+// sell and repair lists share (Shop_DrawItemPrice, buy.c), in pixels: French
+// moves both 8 left, Spanish the word 8 right.
 #if (LANGUAGE == LANGUAGE_FRENCH)
 #define SHOP_PRICE_NUMBER_X 0x18
 #define SHOP_PRICE_LABEL_X 0x40
@@ -98,6 +111,9 @@ enum { SHOP_INVENTORY_COLUMNS = 5, SHOP_STOCK_PAGE_ITEMS = 7 };
 #define SHOP_PRICE_LABEL_X 0x48
 #endif
 
+// Where the item grid (Shop_DrawUnitGrid, sell.c), shared by the sell, repair
+// and drop screens and the equip prompt, writes MsgNoItems for a member with
+// no items, in pixels.
 #if (LANGUAGE == LANGUAGE_ITALIAN)
 #define SHOP_EMPTY_GRID_X 20
 #define SHOP_EMPTY_GRID_Y 12
@@ -106,6 +122,9 @@ enum { SHOP_INVENTORY_COLUMNS = 5, SHOP_STOCK_PAGE_ITEMS = 7 };
 #define SHOP_EMPTY_GRID_Y 20
 #endif
 
+// Outside Japan the coins window is a tile wider, and every counter's item
+// description (Shop_DrawMsg, buy.c) is drawn as tiles
+// (UiText_DrawCharacterAtOffsetFar) rather than into a text canvas.
 #if TBS_PATCH_1
 #define SHOP_MONEY_WINDOW_WIDTH 12
 #define SHOP_DRAW_MESSAGE UiText_DrawCharacterAtOffsetFar
@@ -114,6 +133,7 @@ enum { SHOP_INVENTORY_COLUMNS = 5, SHOP_STOCK_PAGE_ITEMS = 7 };
 #define SHOP_DRAW_MESSAGE UiText_DrawResourceFar
 #endif
 
+// The sanctum's fee window (sanctum.c), wider for the German and French text.
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define SANCTUM_PRICE_WINDOW_X 0
 #define SANCTUM_PRICE_WINDOW_WIDTH 30
@@ -125,6 +145,8 @@ enum { SHOP_INVENTORY_COLUMNS = 5, SHOP_STOCK_PAGE_ITEMS = 7 };
 #define SANCTUM_PRICE_WINDOW_WIDTH 23
 #endif
 
+// The item picker's small window (item_picker.c): two tiles wider, and two
+// further left, outside Japan.
 #if TBS_PATCH_1
 #define SHOP_USE_WINDOW_X 14
 #define SHOP_USE_WINDOW_WIDTH 16

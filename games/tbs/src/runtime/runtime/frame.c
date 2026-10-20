@@ -71,11 +71,11 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler) {
 
 /// Frame counts used by the sleep transitions and the CPU-load peak display.
 enum {
-  SLEEP_IDLE_FRAMES = 3 * 60 * 60,
-  SLEEP_COMBO_FRAMES = 3 * 60,
-  SLEEP_WHITE_FRAMES = 60,
-  SLEEP_WAKE_FRAMES = 10,
-  CPU_LOAD_PEAK_FRAMES = 30
+  SLEEP_IDLE_FRAMES = 3 * 60 * 60, ///< three minutes with no key held
+  SLEEP_COMBO_FRAMES = 3 * 60,     ///< three seconds holding only L and R
+  SLEEP_WHITE_FRAMES = 60,         ///< the white screen shown before the Stop
+  SLEEP_WAKE_FRAMES = 10,          ///< waited after waking, screen restored
+  CPU_LOAD_PEAK_FRAMES = 30        ///< how long the debug display holds a peak
 };
 
 /// The game's frame loop: runs `frames` frames and returns. Each frame runs the
@@ -360,8 +360,8 @@ void Input_UpdateKeyRepeatAndDirection(void) {
   gKeysHeldLast = gKeysHeld;
 }
 
-#define SOUND_PRESET_COUNT 5
-#define SOUND_PRESET_SIZE 152
+#define SOUND_PRESET_COUNT 5  ///< records in IwramCodeRecords
+#define SOUND_PRESET_SIZE 152 ///< bytes in each record
 
 /// The VBlank interrupt handler, installed by System_Initialize. It trades the
 /// link cable payloads, steps the music fades and the screen fade, and when

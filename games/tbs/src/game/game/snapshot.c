@@ -21,8 +21,10 @@ void Inventory_AddAndEquip(s32 owner, s32 itemId) {
   } while (slot < INVENTORY_SLOTS);
 }
 
-/// The party's equipment, put aside while the Colosso takes it away; the
-/// sentinel marks the snapshot as taken.
+/// The first halfword of gInventorySnapshot while it holds the party's
+/// equipment, put aside while the Colosso takes it away. After it come four
+/// inventories of 15 slots, the two shortcuts and the four party order
+/// bytes: 65 halfwords of the 70 that gInventorySnapshot reserves.
 #define INVENTORY_SNAPSHOT_SENTINEL 0x6774
 
 /// Saves the first four characters' inventories, shortcuts and party order,

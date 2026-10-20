@@ -125,8 +125,10 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
 #endif
 
 /// Lets the player choose one of the member's items to drop, refusing an
-/// indispensable or cursed equipped one with a message. Returns the slot, or
-/// -1 when cancelled. Called by Shop_PickUnitItem.
+/// indispensable one with a message and an equipped cursed one with only the
+/// cancel sound (the game's bug; BUGFIX shows its message, see
+/// SHOP_CANNOT_REMOVE_STATUS). Returns the slot, or -1 when cancelled. Called
+/// by Shop_PickUnitItem.
 s32 Shop_SelectUse(s32 unitId) {
   struct ShopRuntime *shop = gMenuWork;
 

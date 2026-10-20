@@ -44,6 +44,12 @@ s32 Runtime_GetRemainingEwram(void) {
 /// frees it. Returns NULL when neither pool has room. Called throughout the
 /// game for long-lived work blocks, and by WaitFrames for each frame's OAM
 /// list.
+///
+/// A slot that already has a block returns it whatever `size` asks for, so a
+/// caller that allocates also gets an earlier caller's block. The block is
+/// not cleared. It lives until Runtime_ReleaseHeapBlock(kind), which also
+/// releases every block taken after it from the same pool, or until
+/// Runtime_InitializeHeap.
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size) {
   union HeapState *work;
   s32 alignedSize;
@@ -58,6 +64,7 @@ void *Runtime_AllocateHeapBlock(s32 kind, s32 size) {
     cachedAddress = (u32)work->heap.nextIwram;
     alignedSize = (((u32)size + 3) >> 2) * 4;
     next = cachedAddress + alignedSize;
+    // A block ending exactly at the pool's end is refused too
     if (next >= (u32)Ram_IwramHeapEnd) {
       address = (u32)work->heap.nextEwram;
       nextAddress = address + alignedSize;
@@ -111,7 +118,9 @@ void *Runtime_AllocateBlock(s32 kind, s32 size) {
 /// Allocates `size` bytes (rounded up to words) with no slot, from IWRAM when
 /// they fit and EWRAM otherwise, and advances that pool's next address.
 /// Returns NULL when neither has room. Called for short-lived buffers (decode
-/// buffers, RAM copies of code), which MemFree rewinds the pool over.
+/// buffers, RAM copies of code). The buffer is not cleared. MemFree(p) sets
+/// its pool's next address back to `p`, which also frees everything
+/// allocated after it there, so buffers are freed newest first.
 void *MemAlloc(s32 size) {
   union HeapState *work = (union HeapState *)gWorkSlot;
   u32 nextAddress;
@@ -160,5 +169,6 @@ void *Runtime_BumpAllocateAlternatePool(s32 size) {
   return (void *)allocationAddress;
 }
 
-/// Reserved empty memory export; its historical purpose is not established.
+/// Reserved empty memory export; nothing calls it. XXX: what it was for is
+/// not known; a caller of the same export in ⚓️ would settle it.
 UNUSED void RuntimeMemory_ReservedNoOp(void) {}

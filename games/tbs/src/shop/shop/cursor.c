@@ -4,7 +4,9 @@
 
 #include "../shop_internal.h"
 
-/// Where each of the quantity bar's 30 segments starts in its tile buffer.
+/// Where each of the quantity bar's 30 segments starts in its tile buffer: a
+/// byte column of a 4-bit tile, so four segments to a tile and the next tile
+/// 0x20 bytes on, eight tiles in all.
 // clang-format off
 static const u16 sSelectorTileOffsets[30] = {
     0x00, 0x01, 0x02, 0x03,
@@ -18,13 +20,16 @@ static const u16 sSelectorTileOffsets[30] = {
 };
 // clang-format on
 
-/// Colours the first `itemCount` segments of the quantity bar with palette
-/// `paletteSelector`, writing six pixels a segment in `tileBuffer`. Called by
-/// the shop's quantity choice and, through SHOP.S, by the item menu's
-/// quantity bar, which draws its bar in four colours this way.
+/// Colours the first `itemCount` segments of the quantity bar in
+/// `tileBuffer`: each segment is two pixels wide on rows 1 to 6 of its tile,
+/// the left pixel colour 1 and the right one colour `paletteSelector` (a
+/// colour number, not a palette). Called by the shop's quantity choice and,
+/// through SHOP.S, by the item menu's quantity bar, which draws its bar in
+/// four colours this way.
 void Shop_FillSelector(s32 itemCount, s32 paletteSelector, u8 *tileBuffer) {
   const u16 *tileOffset;
 
+  // One byte holds two 4-bit pixels, the left one in the low nibble
   paletteSelector = (paletteSelector << 4) + 1;
 
   if (itemCount > 0) {
@@ -77,7 +82,9 @@ void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
 /// Builds a price of up to five digits in scratch tiles (heap slot 14), loads
 /// them into a free VRAM cache slot and attaches them to `window` as one
 /// sprite at (x, y). Returns the sprite, or NULL with no free slot. Called by
-/// Shop_DrawStock for each item on sale.
+/// Shop_DrawStock for each item on sale. A price of 100000 or more shows its
+/// last five digits. The scratch block is released before returning; the
+/// cache entry is not freed here.
 struct RenderOutput *Shop_CreatePriceSprite(s32 value, struct UiWindow *window,
                                             s32 x, s32 y) {
   u8 *tileBuffer;
@@ -86,6 +93,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, struct UiWindow *window,
 
   tileBuffer = Runtime_AllocateBlock(14, 0x400);
   priceSprite = 0;
+  // 0x40 words: the blank price's eight tiles, 0x100 bytes of the block
   Dma_Set(gShop_PriceTiles, tileBuffer, (DMA_ENABLE | DMA_32BIT) << 16 | 0x40,
           REG_DMA3);
   Shop_CopyGlyphs(value % 10, tileBuffer, 0);
@@ -278,6 +286,8 @@ void Shop_PlaceCursor(struct UiWindow *window, s32 x, s32 y) {
   cursorX = x;
   cursorY = y;
   shop = gMenuWork;
+  // A window's position is in tiles, and its interior starts one tile (its
+  // frame) in
   if (window != NULL) {
     cursorX = cursorX + (window->x * 8) + 8;
     cursorY = cursorY + (window->y * 8) + 8;

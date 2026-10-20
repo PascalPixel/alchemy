@@ -19,6 +19,9 @@ s32 Shop_ListAvailableArtifacts(void) {
   count = 0;
   itemId = 0;
   stockItems = shop->stockItemIds;
+  // The shop's type is the equipment group it sells (Item_GetEquipmentGroup:
+  // 0 items, 1 weapons, 2 armor). Every 9-bit id is tried, past the 324 rows
+  // of items.tsv too.
   do {
     equipmentGroup = shop->shopType;
     if (equipmentGroup == Item_GetEquipmentGroupFar(itemId) &&
@@ -43,7 +46,9 @@ void Shop_StepCursor(void) {
 /// Allocates and clears the work block in the menu's heap slot, lists the
 /// party, loads the six cursor icons into the VRAM cache and starts the
 /// cursor's task. Every counter opens with it: Shop_Run, the inn, the
-/// sanctum and the item picker.
+/// sanctum and the item picker. The block, the icons' cache entries and the
+/// task last until Shop_ReleaseCursorWork; as HEAP_SLOT_MENU is the field
+/// menu's slot too, a counter and the field menu cannot be open together.
 void Shop_InitializeCursorWork(void) {
   struct ShopRuntime *shop;
   s32 resourceSlot;
@@ -51,8 +56,10 @@ void Shop_InitializeCursorWork(void) {
   shop = Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, sizeof(struct ShopRuntime));
   Battle_ResetEffectCounterFar();
   Dma_Fill32(0, shop, sizeof(struct ShopRuntime));
+  // The hand cursor's glides take 12 frames until a screen changes it
   shop->mode = 12;
   shop->partyMemberCount = Party_ListActiveOwnersFar(shop->partyMemberIds);
+  // Each icon is 128 bytes: four tiles of 4 bits a pixel, a 16x16 sprite
   resourceSlot = Resource_FindFreeEntry();
   shop->cursorIcon = resourceSlot;
   VramCache_Load(resourceSlot, 128, gShop_HandTiles);
@@ -96,7 +103,7 @@ void Shop_ReleaseCursorWork(void) {
 /// row out of range) and `keeperId` the object whose portrait the messages
 /// show. Seeds the row's artifacts on the first visit and holds the work block
 /// while it runs. Called by the town scenes' shopkeepers through SHOP.S, and
-/// by the debug shop.
+/// by the debug shop. Returns 0.
 s32 Shop_Run(s32 stockRow, s32 keeperId) {
   struct ShopRuntime *shop;
   struct RenderOutput *anchor;
@@ -131,6 +138,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   anchor = RenderOutput_CreateFar(shop->cursorIcon, 0x40000000, window, 0, 0);
   anchor->active = 1;
   anchor->kind = 0;
+  // The hand waits off the left edge until a screen places it
   ShopCursor_SetPositionImmediate(&shop->cursor, -32, 112);
   shop->cursor.anchor = anchor;
   UiMessage_ShowAndWait(MsgWeaponShopWelcome);
@@ -167,6 +175,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   return 0;
 }
 
+// The debug shop sells stock row 1 outside Japan and row 2 in Japan.
 #if TBS_PATCH_1
 #define SHOP_DEBUG_STOCK_ROW 1
 #else
@@ -201,10 +210,12 @@ void AudioCommand_WaitForStateByteClear(void) {
   }
 }
 
-/// Byte view of the six colour writes in a quantity-bar segment.
+/// Byte view of the six colour writes in a quantity-bar segment, laid over a
+/// 4-bit tile at the segment's byte column (Shop_FillSelector, cursor.c).
 struct SelectorRecord {
-  u8 filler0[4]; ///< bytes before the first coloured pixel
-  u8 values[21]; ///< palette bytes at indices 0, 4, 8, 12, 16 and 20
+  u8 filler0[4]; ///< the 4 bytes before the segment's byte in row 1, untouched
+  /// Rows 1 to 6: index 4n is the segment's byte in row n + 1.
+  u8 values[21];
 };
 
 /// Shows a shopkeeper's line and waits for its window to finish, one more
@@ -225,6 +236,7 @@ void UiMessage_ShowAndWait(s32 messageId) {
     resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;
   if (shopType == 0)
     resolvedMessage += MsgItemShopWelcome - MsgWeaponShopWelcome;
+  // A warriors' shop adds its distance on top of its type's
   if ((s8)shop->warriorShop != 0)
     resolvedMessage += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
   UiText_OpenMessageWindowFar(resolvedMessage, 5, 0,
@@ -272,9 +284,10 @@ void UiMessage_ShowAndRestoreState(s32 messageId) {
   shop->cursor.anchor->active = savedCursorMode;
 }
 
-/// Runs the Yes or No choice beside the shopkeeper's line and returns it,
-/// keeping the hand cursor's motion. Called by the counters before they buy,
-/// sell, equip or repair, and by the inn.
+/// Runs the Yes or No choice beside the shopkeeper's line and returns it: 0
+/// for Yes, 1 for No or B. `choice` is where the cursor starts. Keeps the
+/// hand cursor's motion. Called by the counters before they buy, sell, equip
+/// or repair, and by the inn.
 s32 UiMessage_ShowChoice(s32 choice) {
   struct RenderOutput **cursorSlot =
       &((struct ShopRuntime *)gMenuWork)->cursor.anchor;
@@ -298,7 +311,8 @@ s32 UiMessage_ShowChoiceVariant(s32 choice) {
   return choice;
 }
 
-/// Unused original list walker: follows the requested number of next links.
+/// Returns the node `state->count` next links on from `state->node`. Nothing
+/// calls it.
 UNUSED struct NodeChainNode *
 NodeChain_GetNodeAtIndex(struct NodeChainState *state) {
   struct NodeChainNode *node = state->node;

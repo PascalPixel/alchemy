@@ -4,8 +4,9 @@
 
 #include "../shop_internal.h"
 
-/// Calculates the existing fee for reviving, curing poison, exorcising or
-/// removing a curse.
+/// Returns the sanctum's fee, in coins, for `serviceKind` on member `unitId`:
+/// 20 a level to revive, 10 to cure poison, 50 to exorcise and 10 a level to
+/// remove a curse. Called by the member choice and its fee line.
 s32 Shop_ServicePrice(s32 unitId, s32 serviceKind) {
   u8 level = UnitGetFar(unitId)->level;
   s32 donation = 0;
@@ -22,7 +23,10 @@ s32 Shop_ServicePrice(s32 unitId, s32 serviceKind) {
   return donation;
 }
 
-/// Checks whether a member needs the selected sanctum service.
+/// Returns 1 when member `unitId` needs `serviceKind`: down (HP 0) for a
+/// revive, poisoned for a cure, haunted for an exorcism, any restraint bit set
+/// for removing a curse. Called by the member choice, its count, its highlight
+/// and its fee line.
 s32 Shop_CanServe(s32 unitId, s32 serviceKind) {
   struct BattleUnit *unit = UnitGetFar(unitId);
   s32 eligible = 0;
@@ -36,7 +40,9 @@ s32 Shop_CanServe(s32 unitId, s32 serviceKind) {
   return eligible;
 }
 
-/// Counts party members who need the currently selected sanctum service.
+/// Counts party members who need the service in shop->partyAction. Called by
+/// Shop_ConfirmAct, which says nobody needs it when the count is 0, and by
+/// Sanctum_RunPartyService, which offers another member while any remain.
 s32 Shop_CountUnits(void) {
   struct ShopRuntime *shop = gMenuWork;
   s32 eligibleCount = 0;
@@ -50,8 +56,10 @@ s32 Shop_CountUnits(void) {
   return eligibleCount;
 }
 
-/// Selects the matching poison, exorcism or curse-service message from a revive
-/// message base.
+/// Returns the line of the service in shop->partyAction that stands where
+/// `messageId` stands among the revive service's lines. Each service's lines
+/// are a run in the same order, from MsgReviveService, MsgCurePoisonService,
+/// MsgExorcismService and MsgRemoveCurseService.
 s32 Shop_MsgByMode(s32 messageId) {
   s8 serviceKind = ((struct ShopRuntime *)gMenuWork)->partyAction;
 
@@ -67,8 +75,9 @@ s32 Shop_MsgByMode(s32 messageId) {
   return messageId;
 }
 
-/// Resolves service dialogue and waits for completion, including the final
-/// frame.
+/// Shows the keeper's line `messageId`, moved to the current service's
+/// (Shop_MsgByMode), and waits for its window, one more frame included: the
+/// sanctum's UiMessage_ShowAndWait.
 void UiMessage_ShowResolvedAndWait(s32 messageId) {
   s32 portraitResource;
 
@@ -84,8 +93,9 @@ void UiMessage_ShowResolvedAndWait(s32 messageId) {
   WaitFrames(1U);
 }
 
-/// Resolves service dialogue, waits for it and restores the cursor's saved
-/// mode.
+/// As UiMessage_ShowResolvedAndWait, hiding the hand cursor while the line
+/// shows and putting back its motion after: the sanctum's
+/// UiMessage_ShowAndRestoreState.
 void UiMessage_ShowResolvedAndRestoreState(s32 messageId) {
   struct ShopRuntime *shop;
   struct RenderOutput **cursorSlot;
@@ -106,8 +116,11 @@ void UiMessage_ShowResolvedAndRestoreState(s32 messageId) {
   shop->cursor.anchor->active = savedCursorMode;
 }
 
-/// Runs the sanctum service menu using the shared shop cursor and window
-/// resources.
+/// Runs a sanctum: the keeper's welcome, then the service menu (revive, cure
+/// poison, exorcise, remove a curse) until B, and the farewell. `unitId` is
+/// the keeper's object, whose portrait the lines show. Holds the shop work
+/// block while it runs; returns 0. Called through Engine_SanctumOpen by the
+/// scenes' sanctum keepers and the link lobby, and by the debug test.
 s32 Shop_ConfirmAct(s32 unitId) {
   s32 serviceSelection = 0;
   struct UiWindow *listWindow = 0;
@@ -128,6 +141,8 @@ s32 Shop_ConfirmAct(s32 unitId) {
     shop->keeperResource = keeperAnimationId;
   }
 
+  // The keeper's portrait window; failing that an empty one off the left
+  // edge, and failing that one on screen with side object 2
   listWindow = UiWindow_CreateWithSideObjectFar(shop->keeperResource, 0, 0, 0);
   if (listWindow == 0) {
     listWindow = UiWindow_CreateFar(-5, 0, 5, 5, 2);
@@ -178,8 +193,11 @@ s32 Shop_ConfirmAct(s32 unitId) {
   return 0;
 }
 
-/// Selects an eligible member, confirms the donation and applies the chosen
-/// service.
+/// Lets the player pick a member for the service in shop->partyAction,
+/// starting on the first who needs it, asks for the donation, then applies
+/// the service with its burst and takes the coins; offers another member
+/// while any still need it, until B. A member who needs nothing can be
+/// pointed at, but A only buzzes. Called by Shop_ConfirmAct; returns 0.
 s32 Sanctum_RunPartyService(void) {
   struct ShopRuntime *shop = gMenuWork;
   struct UiWindow *priceWindow;
@@ -199,6 +217,7 @@ s32 Sanctum_RunPartyService(void) {
 
   listWindow = UiWindow_CreateFar(1, 12, 13, 3, 2);
   shop->cursor.anchor->active = 4;
+  // redraw is 1 here: the hand's first move to a member takes one frame
   shop->mode = redraw;
   PsynergyMenu_InitializeEntryObjectsFar(listWindow, 2, 0, 8, 0);
   priceWindow = UiWindow_CreateFar(SANCTUM_PRICE_WINDOW_X, 16,
@@ -303,8 +322,11 @@ s32 Sanctum_RunPartyService(void) {
   return 0;
 }
 
-/// Revives, cures poison, removes a haunting or unequips cursed items for a
-/// sanctum service.
+/// Applies sanctum service `serviceKind` to member `unitId`: full HP for a
+/// revive, poison or the haunting cleared, or every cursed item taken off
+/// (UnitCalc then rebuilds the curse bits from what is still equipped). With
+/// no cursed item equipped, removing a curse changes nothing, whatever
+/// restraint bits Shop_CanServe saw. Called by Sanctum_RunPartyService.
 void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind) {
   struct BattleUnit *unit;
 
@@ -331,8 +353,9 @@ void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind) {
   }
 }
 
-/// Highlights the selected party icon and dims members who do not need the
-/// sanctum service.
+/// Shows the chosen member walking and the others standing, and draws at
+/// seven tenths of their size (0xb333 in 16.16) the members who do not need
+/// the service. The sanctum's Shop_DrawParty.
 void Shop_HiliteUnit(struct UiWindow *window, s32 selected) {
   struct ShopRuntime *shop = gMenuWork;
   s32 memberIndex;
@@ -353,8 +376,9 @@ void Shop_HiliteUnit(struct UiWindow *window, s32 selected) {
   }
 }
 
-/// Shows the selected member's service price or the message that no treatment
-/// is needed.
+/// Draws in `target` the member's fee for the current service (its cost line
+/// with the donation filled in), or the line that the member needs no
+/// treatment. Called by Sanctum_RunPartyService each time the cursor moves.
 void Shop_DrawSelectMsg(struct UiWindow *target, s32 unitId) {
   s32 serviceOrMessage;
   s32 donation;
@@ -374,8 +398,12 @@ void Shop_DrawSelectMsg(struct UiWindow *target, s32 unitId) {
   }
 }
 
-/// Picks random particle positions, moves toward the target and releases
-/// finished particles.
+/// Steps one sparkle of the sanctum's burst, its slot's callback. State 0
+/// places it at a random point 40 pixels from the burst's centre and aims it
+/// at a random point 4 pixels from it; state 1 waits for it to arrive and
+/// goes back to 0, so it flies in again; state 2, which
+/// Shop_RunPartyMemberIconBurst sets as the burst ends, frees the slot on
+/// arrival.
 void BattleFx_UpdateRadialMotion(struct EffectSlot *effect) {
   struct FixedPointPosition position;
   s8 *statePointer;
@@ -394,6 +422,7 @@ void BattleFx_UpdateRadialMotion(struct EffectSlot *effect) {
     Vector_AddPolarOffset(0x40000, Random16(), &position);
     effect->targetX = position.x;
     effect->targetZ = position.z;
+    // 16.16 pixels: at most 2 a frame, gaining 0.4 a frame
     effect->maxSpeed = 0x20000;
     effect->acceleration = 0x6666;
     effect->limitTurnStep = state;
@@ -408,7 +437,11 @@ void BattleFx_UpdateRadialMotion(struct EffectSlot *effect) {
   }
 }
 
-/// Updates all 24 service particles, then randomizes the active member's pose.
+/// The burst's main-loop task while Shop_RunPartyMemberIconBurst plays: steps
+/// all 24 sparkle slots, then, from the sixth sparkle until 20 frames after
+/// the tune ends (while burstMember is not -1), gives the member's icon a
+/// random colour mode each frame: SpriteColorMode 0 to 6, normal, the channel
+/// swaps or grey.
 void Shop_ResetEffects(void) {
   struct ShopRuntime *shop = gMenuWork;
   struct EffectSlot *effect = shop->effects;
@@ -426,16 +459,23 @@ void Shop_ResetEffects(void) {
         shop->partyMemberIcons[burstMember], (Random16() * 7) >> 16);
 }
 
-/// Sound effects for each party member action
+/// The tune each service's burst plays, by enum SanctumService; the burst
+/// waits for the sound driver (AudioCommand_WaitForStateByteClear) before
+/// freeing its sparkles.
 static const s8 sSanctumServiceCues[4] = {
-    0x52,
-    0x54,
-    0x58,
-    0x57,
+    0x52, // revive: MUS_082
+    0x54, // cure poison: MUS_084
+    0x58, // exorcise: MUS_088
+    0x57, // remove a curse: MUS_087
 };
 
-/// Animates the selected member and service particles, then restores the menu
-/// and cursor.
+/// Plays the service's burst on party member `member` (an index into the
+/// party row): the service's tune, the field's colours tinted, 18 sparkles
+/// in random colour modes flying in from a ring around the member's icon
+/// three frames apart, the icon cycling through colour modes, then, once the
+/// sound driver is done, the sparkles freed and the colours faded back. The
+/// hand cursor is hidden throughout. Called by Sanctum_RunPartyService once
+/// the member is cured.
 void Shop_RunPartyMemberIconBurst(s32 member) {
 
   struct ShopRuntime *shop;
@@ -453,9 +493,11 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
   Shop_SaveAndTintFieldPalette(0x00202108);
   AnimationObjects_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
+  // 0xc80 is SCHEDULER_KEY_MAIN_LOOP
   callbackPriority = 0xc80;
   Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callbackPriority);
 
+  // The burst's centre, in 16.16 pixels: 12 above the member's icon
   position.x = shop->partyMemberX[member] << 16;
   position.z = (shop->partyMemberY[member] << 16) + 0xfff40000;
 

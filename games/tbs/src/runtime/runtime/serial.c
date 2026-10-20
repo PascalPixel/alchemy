@@ -10,12 +10,15 @@
 // BeginTransfer functions and SerialRuntime_StepBlockTransfer).
 
 enum {
+  /// A packet: sequence, missing mask, checksum and the 24-byte payload.
   SERIAL_PACKET_HALFWORDS = 14,
-  SERIAL_PAYLOAD_BYTES = 24,
-  SERIAL_BLOCK_BYTES = 20,
+  SERIAL_PAYLOAD_BYTES = 24, ///< one console's payload each frame
+  SERIAL_BLOCK_BYTES = 20,   ///< bulk data carried in each payload
+  /// About 10,000 seconds, nearly three hours.
   SERIAL_TRANSFER_TIMEOUT_FRAMES = 600000,
-  SERIAL_IDLE_HALFWORD = 0xfefe,
-  /// Timer 3's reload: 13981 cycles from one halfword transfer to the next.
+  SERIAL_IDLE_HALFWORD = 0xfefe, ///< sent and seen between packets
+  /// Timer 3's reload: 13981 cycles from one halfword transfer to the next,
+  /// about 20 a frame.
   SERIAL_TIMER_RELOAD = 0xc963
 };
 
@@ -102,10 +105,11 @@ void SerialRuntime_DisableTransfer(void) {
 }
 
 /// Looks for the link partner and, once connected, does one exchange (as
-/// SerialRuntime_ExchangePayloads). When this console is the parent (SIOCNT
-/// reports multiplayer mode with no error) it arms timer 3 to clock the
-/// transfers. Called by the Tret tree branch scene for its own exchange.
-/// Returns the link status (see SerialRuntime_ExchangePayloads).
+/// SerialRuntime_ExchangePayloads). When SIOCNT shows multiplayer id 0 with
+/// bit 3 set and bits 2 and 7 clear, and no packet is being sent, this
+/// console arms timer 3 to clock the transfers and so acts as the parent.
+/// Called by the Tret tree branch scene for its own exchange. Returns the
+/// link status (see SerialRuntime_ExchangePayloads).
 s32 SerialRuntime_PollAndTransfer(void *send, void *receive) {
   volatile u32 *siocnt;
   u32 control;
@@ -119,6 +123,8 @@ s32 SerialRuntime_PollAndTransfer(void *send, void *receive) {
     u8 mask30 = control & 0x30;
     u8 mode;
 
+    // Bits 4 and 5 are the multiplayer id. Id 0 waits here until bit 3 is
+    // set with bit 7 clear; any other id is a child and connects at once.
     if (mask30 == 0 && (mode = control & 0x88) == 8) {
       u8 serialError = control & 4;
 
@@ -207,10 +213,14 @@ s32 SerialRuntime_PollStatus(void) {
 /// builds the next packet from `send`. Called by the VBlank handler while
 /// gSerialExchangeActive is set, which stores the result in gLinkStatus.
 /// Returns the link status:
-///   bits 0 to 7  : the consoles heard from this frame (bit 7 also when parent)
-///   bits 8 to 15 : the consoles heard from since the link began
-///   0x1000       : this console is the parent
+///   bits 0 and 1 : consoles 0 and 1 heard from this frame
+///   0x80         : this console clocks the transfers (mode 8)
+///   bits 8 and 9 : consoles 0 and 1 heard from since the link began
+///   0x1000       : SIOCNT's bit 6 was set at the last transfer interrupt
+///                  (isParent)
 ///   0x2000       : SIOCNT's multiplayer id is 2 or more
+/// So 3, both consoles heard this frame, is what the block transfer and
+/// SerialRuntime_WaitForStatusMask(3) wait for.
 s32 SerialRuntime_ExchangePayloads(void *send, void *receive) {
   volatile u32 *siocnt;
   u32 control;
@@ -320,12 +330,17 @@ u8 SerialRuntime_CollectReceivedPayloads(void *payload) {
     sum = 0;
     for (k = 0; k < SERIAL_PACKET_HALFWORDS; k++)
       sum += packet[k];
+    // A good packet's halfwords, its complemented checksum included, sum to
+    // 0xffff. Its payload is taken only when the packet completed since the
+    // last frame with flag bit 1 (isParent at a transfer) never set.
     if (flags[i] == 1 && (s16)sum == -1) {
       Dma_Set(gSerialRuntime.pendingBuffer[i] + 2,
               (u8 *)payload + i * SERIAL_PAYLOAD_BYTES, DMA_COPY_WORDS(6),
               REG_DMA3);
       gSerialRuntime.currentMask |= 1 << i;
     }
+    // Complementing a halfword spoils the sum, so a buffer that comes round
+    // again unchanged is never taken twice
     if ((s16)sum == -1)
       gSerialRuntime.pendingBuffer[i][1] = ~gSerialRuntime.pendingBuffer[i][1];
   }
@@ -363,6 +378,9 @@ void SerialRuntime_HandleTransferInterrupt(void) {
 #endif
   sioControl = &REG_SIOCNT;
   sendState = &gSerialRuntime;
+  // SIOCNT's bit 6. XXX: likely the multiplayer error flag, which public
+  // hardware documentation puts at bit 6, rather than parent, because a
+  // packet received while it is set is refused (flag bit 1, below)
   sendState->isParent = (*sioControl << 25) >> 31;
 
   if (sendState->sendIndex == -1) {
@@ -414,6 +432,8 @@ receive_loop:
   if (channel <= 1)
     goto receive_loop;
 
+  // The console that clocks the transfers starts the next one, and restarts
+  // timer 3 so its count reloads
   if (tailState->mode == 8) {
     REG_TM3CNT_H = 0;
     REG_SIOCNT16 |= SIO_START;
@@ -447,6 +467,11 @@ u32 SerialRuntime_WaitForStatusMask(s32 mask) {
 /// SerialRuntime_StepBlockTransfer works from. Called by the link battle,
 /// the link lobby and the save menu's transfer. Returns -1 when a send is
 /// already running, 0 otherwise.
+///
+/// `size` must be a multiple of 20: it falls by 20 a block, and the send ends
+/// only when it reaches exactly 0. `source` is read a block each VBlank, and
+/// may be resent from after a rewind, so it must stay unchanged until
+/// gSerialSendSource is 0 again.
 s32 SerialRuntime_BeginSend(void *source, s32 size) {
   struct SerialTransferState *state = &gSerialTransfer;
   u32 savedInterruptMaster;
@@ -466,7 +491,9 @@ s32 SerialRuntime_BeginSend(void *source, s32 size) {
 /// Starts receiving the partner's blocks into `destination`: sets the receive
 /// destination and clears the received size. Called by the same code as
 /// SerialRuntime_BeginSend. Returns -1 when a receive is already running, 0
-/// otherwise.
+/// otherwise. Each block is stored whole, so `destination` needs room for
+/// the partner's whole send; the receive ends at the partner's last block,
+/// whatever the room.
 s32 SerialRuntime_BeginReceive(void *destination) {
   struct SerialTransferState *state = &gSerialTransfer;
   u32 savedInterruptMaster;
@@ -554,6 +581,7 @@ void SerialRuntime_StepBlockTransfer(void) {
    * instructions differ in tbs-en. */
   struct OneCell one;
 
+  // The partner's payload: of multiplayer ids 0 and 1, the one not ours
   id = ~((REG_SIOCNT << 26) >> 30) & 1;
   one.v = 1;
   own = &gSerialTransfer;
@@ -676,6 +704,8 @@ void SerialTest_Run(void) {
 
   AudioCommand_PlayFar(MUS_003);
   SerialRuntime_Initialize();
+  // Row 16, columns 0 to 19: tiles 0x80 to 0x93 in palette 15, the 20 tiles
+  // at 0x06001000 that the received 640 bytes are copied to
   n = 19;
   tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * 32 + 19;
   value = (s16)0xf093;
@@ -690,6 +720,7 @@ void SerialTest_Run(void) {
 restart:
   SerialRuntime_BeginReceive(gMapCellBuffer);
   for (;;) {
+    // 0x280 bytes: 32 blocks, 20 tiles
     if (gKeysHeld & KEY_A)
       SerialRuntime_BeginSend((void *)Cart_Restart, 0x280);
     if (gKeysHeld & KEY_B)

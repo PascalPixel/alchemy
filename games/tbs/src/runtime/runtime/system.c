@@ -4,6 +4,8 @@
 
 #include "../runtime_internal.h"
 
+// The German, French, Spanish and Italian editions also take the
+// cartridge-removed interrupt, whose handler is IwramHalt.
 #if TBS_PATCH_2
 #define SYSTEM_HALT_ON_GAMEPAK_IRQ 1
 #endif
@@ -79,8 +81,9 @@ enum CartridgeLanguage {
 };
 
 /// Returns the language of this cartridge from the header's game code letter:
-/// 0 English, 1 German, 2 French, 3 Spanish, 4 Italian. Called by the battle
-/// target selection and the status screen, which lay text out by language.
+/// 0 English, 1 German, 2 French, 3 Spanish, 4 Italian. Only the Spanish and
+/// Italian editions have it. Called by the battle target selection and the
+/// status screen, which lay text out by language.
 s32 System_GetLanguage(void) {
   s32 language;
 
@@ -120,7 +123,9 @@ UNUSED void RuntimeDispatch_ReservedNoOpD(void) {}
 /// Reserved empty export E in the runtime far-call table; no source caller.
 UNUSED void RuntimeDispatch_ReservedNoOpE(void) {}
 
-/// An exported stub that ignores its arguments and reports 0.
+/// An exported stub that ignores its arguments and reports 0. The sprite
+/// viewer calls it with a resource id and a far-call table, so its choice of
+/// resource set changes nothing.
 s32 RuntimeDispatch_ReturnZero(s32 unused0, const u8 *unused1) { return 0; }
 
 /// The build stamp's twelve digit characters copied to IWRAM, and a zero word
@@ -142,7 +147,9 @@ void System_CopyBuildStamp(void) {
   copy->terminator = 0;
 }
 
-/// An exported stub that does nothing with its argument.
+/// An exported stub that does nothing with its argument. The title screen,
+/// Lucky Dice and the slot machine (ReelGame_Run) call it with a far-call
+/// resource id.
 void RuntimeDispatch_NoOpHook(s32 unused) {}
 
 /// Returns the ROM address of resource `index` from the resource directory.
@@ -241,9 +248,10 @@ void Runtime_IgnoreInterrupt(void) {}
 
 /// Copies the resident code to IWRAM, points the BIOS interrupt vector
 /// (gIrqVector) at its dispatcher, installs the default handler table and
-/// enables the VBlank and keypad interrupts (and, outside Japan and England,
-/// the cartridge-removed interrupt, which halts the game). Called by
-/// System_Initialize with IME cleared; it sets IME again at the end.
+/// enables the VBlank and keypad interrupts (and, in the German, French,
+/// Spanish and Italian editions, the cartridge-removed interrupt, which halts
+/// the game). Called by System_Initialize; it clears IME first and sets it
+/// again at the end.
 void Runtime_InstallIwramAndIrqs(void) {
   u8 *iwram;
 

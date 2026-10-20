@@ -2,7 +2,10 @@
 #include "types.h"
 #include "system.h"
 
-/// A quarter-wave sine table, scaled by 65536.
+/// A quarter-wave sine table, scaled by 65536: entry i is the sine of i/1024
+/// of a turn. The same values as Trig_SineTable, the copy Trig_Sin reads
+/// (Trig_SinOnAxis gives the axes, whose 1.0 would not fit a u16); nothing in
+/// ☀️ reads this one by name.
 // clang-format off
 const u16 gMath_SinQuarter[256] = {
     0, 402, 804, 1206, 1608, 2010, 2412, 2814,

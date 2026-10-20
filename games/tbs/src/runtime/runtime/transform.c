@@ -328,10 +328,11 @@ void Transform_ApplyLookAt(s32 *eye, s32 *target) {
   Iwram_TransformMatrix(work);
 }
 
-/// Sets gProjection from a vertical field of view: the focal length is 80
-/// (half the screen height) over the tangent of half the angle. Points nearer
-/// than `nearDepth` or farther than `farDepth` are not drawn. Reached through
-/// the far-call table.
+/// Sets gProjection from a vertical field of view (1/65536 turns): the focal
+/// length, in 16.16 pixels, is 80 (half the screen height) over the tangent
+/// of half the angle. Points nearer than `nearDepth` or farther than
+/// `farDepth` (16.16, along the view axis) are not drawn. Reached through the
+/// far-call table.
 void Projection_SetFieldOfView(u32 fieldOfView, s32 nearDepth, s32 farDepth) {
   s32 halfAngle;
   s32 sine;
@@ -339,6 +340,7 @@ void Projection_SetFieldOfView(u32 fieldOfView, s32 nearDepth, s32 farDepth) {
 
   halfAngle = (s32)(fieldOfView + (fieldOfView >> 31)) >> 1;
   sine = Trig_Sin(halfAngle);
+  // Iwram_RatioMulQ14(d, v) is v * 0x10000 / d: here 80 * cos / sin
   focal = Iwram_RatioMulQ14(sine, Trig_Cos(halfAngle) * 80);
   gProjection.near = nearDepth;
   gProjection.focal = focal;
@@ -369,6 +371,7 @@ s32 Render_ProjectPoint(const void *point, s32 *screen) {
 
   Iwram_TransformVector(point, screen);
   projection = &gProjection;
+  // The camera looks down -z, so a point in front of it has a negative z
   depth = -screen[2];
   result = 0;
   if (depth >= projection->near && depth <= projection->far) {
@@ -376,6 +379,8 @@ s32 Render_ProjectPoint(const void *point, s32 *screen) {
     if (projection->focal != 0) {
       u32 shifted = (u32)depth >> 11;
 
+      // (focal << 5) / (depth >> 11) is focal * 0x10000 / depth, focal over
+      // depth in 16.16, without the low 11 bits of the depth
       scale = Iwram_UnsignedDivide(projection->focal << 5, shifted);
     } else {
       scale = 0x151eb; // about 1.32

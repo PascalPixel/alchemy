@@ -12,7 +12,8 @@
 /// Finds the first run of free blocks that holds `size` bytes and gives it to
 /// entry `id`, writing `id` into gResourceBlockOwners for each block. Called by
 /// VramCache_Load. Returns its byte offset in sprite VRAM, or -1 when no run
-/// is long enough.
+/// is long enough. The run is `size` / 64 blocks, rounded down, so a size
+/// that is not a multiple of 64 gets less than it asked for.
 s32 VramCache_AllocateBlocks(u32 id, u32 size) {
   u32 blocks;
   s32 ret;
@@ -45,7 +46,8 @@ s32 VramCache_AllocateBlocks(u32 id, u32 size) {
       break;
     }
   occupied:
-    // Skip an owned block by its owner's whole size
+    // Skip an owned block by its owner's whole size. This assumes the owner's
+    // run starts here, which holds while runs are only ever taken whole.
     pos += gVramBlockCache[gResourceBlockOwners[pos]].size / VRAM_BLOCK_BYTES;
   }
   ret *= VRAM_BLOCK_BYTES;
@@ -139,7 +141,9 @@ s32 VramCache_ReleaseVram(u32 no) {
 /// copies nothing and (void *)-1 clears the memory. Writes the entry's offset
 /// and size into gVramBlockCache. Called throughout the game to load sprite
 /// pictures. Returns the first sprite tile number (32-byte units), or 0 when
-/// there was no room.
+/// there was no room; a run at offset 0 also returns 0, so a caller cannot
+/// tell the two apart from the result. The entry keeps its VRAM until
+/// Resource_ResetEntry, VramCache_ReleaseVram or VramCache_Reset.
 s32 VramCache_Load(u32 no, u32 size, const void *src) {
   struct VramBlockCacheEntry *entry;
   s32 offset;
@@ -148,9 +152,11 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
   entry = &gVramBlockCache[no];
   if (no >= VRAM_CACHE_ENTRY_COUNT)
     return 0;
+  // 8 KB, 128 blocks, is a quarter of sprite VRAM and the most one entry holds
   if (size > 8192)
     return 0;
-  // A same-size upload keeps its existing VRAM run.
+  // A same-size upload keeps its existing VRAM run. Sizes of 16 or less mark
+  // an entry that holds no VRAM (VramCache_ReleaseVram leaves 1).
   if (entry->size > 16) {
     if (entry->size != size) {
       Resource_ResetEntry(no);
@@ -224,6 +230,8 @@ s32 Resource_FindFreeEntry(void) {
 
 /// Takes a free cache entry, gives it `size` bytes of sprite VRAM and returns
 /// its number. Called by the battle prompts and the menus' command rows.
+/// When every entry is taken it returns VRAM_CACHE_ENTRY_COUNT, and when no
+/// run of blocks is long enough the entry it returns stays free.
 s32 VramCache_AllocEntry(s32 size) {
   s32 no;
 

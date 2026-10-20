@@ -156,7 +156,8 @@ next_page:
         Shop_DrawEquipComparison(itemWindow, unitId, shop->selectedItem);
     }
     if ((gKeysPressed & KEY_A) != 0) {
-      // Probe capacity with the original add/remove before checking funds.
+      // Test for room by adding one and taking it out again, before the
+      // coins are checked; a full bag and a full stack get different lines
       capacitySlot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (capacitySlot < 0) {
         AudioCommand_PlayFar(SE_MENU_CANCEL);
@@ -284,6 +285,7 @@ void Shop_DrawStock(struct UiWindow *window, s32 selected) {
            priceX += 32, pageSlot++, stockCursor++, stockIndex++) {
         itemId = *stockCursor;
         definition = Item_GetDirectFar(itemId);
+        // Depth slots: the items 252, the chosen one 253, the prices 251
         icon =
             RenderOutput_CreateLoadedFar(itemId, 1, window, pageSlot * 32, 0);
         icon->sentinel = 252;
@@ -592,6 +594,8 @@ s32 Shop_SelectBuyNum(s32 unitId, s32 itemId) {
   return selectedQuantity;
 }
 
+// The quantity window's count and the coins word after its total, in pixels:
+// German and French move both 8 left, Spanish the coins word 8 right.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH)
 #define SHOP_QUANTITY_NUMBER_X 64
 #define SHOP_QUANTITY_COIN_LABEL_X 128
@@ -629,6 +633,8 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   if (window != 0) {
     resourceSlot = Resource_FindFreeEntry();
     if (resourceSlot != VRAM_CACHE_ENTRY_COUNT) {
+      // The bar is one 8-tile entry shown as two 32x8 sprites (shape and size
+      // bits 0x40004000); the second starts at the entry's tile 4
       VramCache_Load(resourceSlot, 0x100, 0);
       RenderOutput_CreateFar(resourceSlot, 0x40004000, window, 0, 0);
       quantitySprite =
@@ -696,7 +702,9 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
 
 /// Adds each item bought to the member, charging its price and adding it to
 /// the shop credit one at a time, then offers to equip it and, if equipped,
-/// to sell what it replaced. Called by Shop_SelectBuy.
+/// to sell what it replaced. Called by Shop_SelectBuy, which has already
+/// checked the room and the coins. The artifact counters are not touched
+/// here: Shop_SelectBuy takes them down after.
 void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   s32 replacedSlot;
   s32 remainingQuantity;

@@ -325,10 +325,15 @@ void FieldEffect_UpdateSparkles(void) {
         sparkle->x = sx;
         sparkle->shape = 0;
         sparkle->size = 1;
-        /* FAKEMATCH(volatile): gFrameCount read through a cast that drops its
-         * volatile, which keeps the size and flip stores together; as
-         * gFrameCount, 3 of 235 instructions differ in tbs-en. */
+#ifdef UBFIX
+        frames = gFrameCount;
+#else
+        // UB: this drops volatile and reads a u32 as unsigned long.
+        /* FAKEMATCH(volatile): the unsigned long alias combines the size
+         * and flip stores; as gFrameCount or a u32 alias, 3 of 235
+         * instructions differ in tbs-en. UBFIX reads the declared type. */
         frames = *(unsigned long *)&gFrameCount;
+#endif
         sparkle->y = sy;
         sparkle->affineIndex = ((frames >> 1) & 1) << 3;
         Runtime_PushSlotEntry(sparkle, 240);

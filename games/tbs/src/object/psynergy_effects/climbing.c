@@ -10,16 +10,21 @@
 #define TILE_CELLS_SOUTH ((struct MapCell *)(Ram_MapCellBuffer + 0x200))
 #define TILE_CELLS_NORTH ((struct MapCell *)(Ram_MapCellBuffer - 0x200))
 
-/// The event command "leader check ahead": makes the leader jump two tiles
-/// forward, over the tile in front, when the map allows it
-/// (Map_CheckObjectStep). On a platform object (sprite 207 or 205) the platform
-/// plays its animation 7 and the leader bobs down 2 pixels and back. Each jump
-/// advances walking distance for PP/status progress, and the leader keeps
-/// jumping while it lands on another jump spot (collision 0xf9). Returns 0
-/// after a jump, -1 when the leader cannot jump.
+/// Makes the leader jump two tiles forward, over the tile in front, when the
+/// map allows it (Map_CheckObjectStep). On a platform object (sprite 207 or
+/// 205) the platform plays its animation 7 and the leader bobs down 2 pixels
+/// and back. Each jump adds two tiles to work->walkingDistance, as walking
+/// them would, and the leader keeps jumping while it lands on another jump
+/// spot (collision 0xf9). Returns 0 after a jump, -1 when the leader cannot
+/// jump.
+///
+/// Called by Field_RunPushTileEvent when the leader has pushed against a jump
+/// spot (0xf9 or 0xfe) for more than 12 frames, and by the gap jumps of Goma
+/// Cave's pillar and Kolima Forest's bend, which import it. Moves the leader,
+/// and takes the field over between FieldEvent_Begin and FieldEvent_End.
 s32 Field_TryJumpForward(void) {
-  // An ordinary chained-attempt loop grows native English 0x228 -> 0x230.
-  // Keep the landing retry, including its existing failure return behavior.
+  // A chained jump repeats both the gap and landing probes, including their
+  // failure returns, before taking control of the field again.
   struct ObjectRuntime *leader =
       (struct ObjectRuntime *)Object_GetById(gGameState.selectedActor);
   s32 result = -1;
@@ -44,7 +49,8 @@ again:
                (leader->z & 0xfff00000) + 0x80000);
   Vector_AddPolarOffset(0x200000, angle, pos);
   if (Map_CheckObjectStepFar(leader, pos) == 0) {
-    // Crouch, then jump there.
+    // Suspend terrain following while airborne. Restore the original motion
+    // and sprite flags after landing, before returning field control.
     if (leader->animationKind == 1)
       spriteFlags = ((struct AnimationObject *)leader->animation)->flags;
     FieldEvent_Begin();
@@ -89,6 +95,7 @@ again:
     if (work != NULL)
       work->walkingDistance +=
           Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
+    // Landed on another jump spot: stand, then jump again.
     if (GetMapCellCollisionFar(leader->terrainId, pos->x, pos->z) == 0xf9) {
       ObjectDispatch_SelectAnimationFar(leader, 1);
       WaitFrames(6);
@@ -104,6 +111,11 @@ again:
 /// turns round, grabs the wall and climbs down onto it (climbing pose 13).
 /// While climbing, the leader lets go and drops to the ground. Returns 0, or -1
 /// when there is nothing to climb or the way is blocked.
+///
+/// Called by Field_RunPushTileEvent for a climbing spot (0xfd) with Down held,
+/// and imported by the scenes with ladders and climbable walls (Babi's
+/// Lighthouse, Crossbone Isle, Tolbi's ship and others). Sets
+/// gGameState.movementMode: 1 while the leader is on the wall, 0 off it.
 s32 Field_ClimbDown(void) {
   struct ObjectRuntime *object =
       (struct ObjectRuntime *)Object_GetById(gGameState.selectedActor);
@@ -118,6 +130,7 @@ s32 Field_ClimbDown(void) {
   if (gGameState.movementMode == 0) {
     s32 index = gridX / 16 + (gridZ / 16) * 128;
 
+    // A wall goes down only where the cell below is the same climbing code.
     if (TILE_CELLS[index].collisionCode ==
         TILE_CELLS_SOUTH[index].collisionCode) {
       /* FAKEMATCH(dead): a six-word probe, though only its first three words
@@ -126,6 +139,7 @@ s32 Field_ClimbDown(void) {
       s32 vector[6];
       struct FieldPosition *position = (struct FieldPosition *)vector;
 
+      // Nothing may stand on the wall 16 pixels below.
       SET_POSITION(position, object->x, object->y - 0x100000, object->z);
       result =
           CheckMapPositionCellOccupiedFar((struct WorldPosition *)position);
@@ -174,6 +188,11 @@ failure:
 /// onto the wall and holds on (climbing pose 12). While climbing, the leader
 /// climbs over the top onto the ground. Returns 0, or -1 when there is nothing
 /// to climb or the way is blocked.
+///
+/// Called by Field_RunPushTileEvent for a climbing spot (0xfd) with Up held,
+/// and imported by the scenes with ladders and climbable walls (Babi's
+/// Lighthouse, Colosso, Crossbone Isle and others). Sets
+/// gGameState.movementMode as Field_ClimbDown does.
 s32 Field_ClimbUp(void) {
   struct ObjectRuntime *object =
       (struct ObjectRuntime *)Object_GetById(gGameState.selectedActor);

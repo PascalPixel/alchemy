@@ -53,7 +53,7 @@ void Palette_UpdatePulseBrightness(void) {
 }
 
 /// Sets the camera up for a scene drawn over the battle (the summons'):
-/// a fixed view raised by pos pixels, with its projection and the
+/// a fixed view raised by verticalOffset pixels, with its projection and the
 /// background's perspective to match.
 void Camera_ConfigureScene(s32 verticalOffset) {
   // UB: indexing past scalar gCameraWork reaches another work slot. Named
@@ -636,7 +636,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
   }
 
   // Sort by priority, and raise the guards of Defend and Total Defense at
-  // once, before anyone actions.
+  // once, before anyone acts.
   BattleQueue_SortByPriority(actions, count);
   if (count > 0) {
     struct BattleActionRecord *action = actions;

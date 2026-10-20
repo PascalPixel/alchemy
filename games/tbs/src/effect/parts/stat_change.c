@@ -9,14 +9,10 @@
 // each target in turn, 8 frames apart, and a burst of light and the mode's
 // picture (a dagger, a shield, a streak or a wisp) play over it.
 
-/// Stat boosts, in six modes: light gathers on each target and bursts, and a
-/// picture (a dagger, a shield, a streak or a wisp) plays over it.
+/// Gathers stat-boost light and displays a dagger in Mars colours.
 ///
 /// Abilities: Impact, High Impact, Demon Spear, Angel Spear (kind 26); Forge
 /// (kind 210); kind 46 is used by no ability.
-///
-/// PARTICLES holds the gathering flares, 64 for each target. One entry for each
-/// mode.
 void BattleFx_RunImpact(struct BattleEffectArgument *effect) {
   BattleFx_RunStatBoost(effect, 0);
 }
@@ -68,6 +64,7 @@ enum StatBoostSheet {
 /// from frame 8n + 1; it glows white on 8n + 48, the burst plays from
 /// 8n + 52 and the picture, with a sound, from 8n + 80. The canvas is shown
 /// at 1.25 times its width (canvas x is 4/5 of screen x).
+/// PARTICLES holds the gathering flares, 64 for each target.
 ///
 /// effect: the targets. With prelude 1, a djinni appears first, sways and
 ///         rises.

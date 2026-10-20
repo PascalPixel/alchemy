@@ -61,7 +61,7 @@ s32 BattleRandom(void) {
 u32 BattleRandomPercent(void) { return ((u32)BattleRandom() * 100) >> 16; }
 
 /// Scales max(attack - defense, 0) + twice the action's added power by the
-/// elemental multiplier, then halves it. ElementDifference is power minus
+/// elemental multiplier, then halves it. elementDifference is power minus
 /// resistance; its effect here is half Psynergy's (128..384 with 256 = 1x).
 s32 Battle_CalcAttackDamage(s32 attack, s32 defense, s32 addedPower,
                             s32 elementDifference) {
@@ -82,7 +82,7 @@ s32 Battle_CalcAttackDamage(s32 attack, s32 defense, s32 addedPower,
   return damage;
 }
 
-/// The power of Psynergy: `power` times the multiplier for the element
+/// Returns the power of Psynergy: `power` times the multiplier for the element
 /// difference (power minus resistance, 0..512 with 256 = 1x) and the supplied
 /// powerMultiplier (also 256 = 1x).
 s32 Battle_CalcPsynergyPower(s32 power, s32 elementDifference,
@@ -96,9 +96,9 @@ s32 Battle_CalcPsynergyPower(s32 power, s32 elementDifference,
   return scaledPower >> 16;
 }
 
-/// The amount healed: `power` and `rate` (256 is 1x) times the multiplier for
-/// twice the healer's element power above 100.
-///   element : the healer's power in the element (100 is 1x)
+/// Returns the amount healed: `power` and `powerMultiplier` (256 is 1x) times
+/// the multiplier for twice the healer's element power above 100.
+///   elementPower : the healer's power in the element (100 is 1x)
 s32 Battle_CalcRecovery(s32 power, s32 elementPower, s32 powerMultiplier) {
   s32 signedProduct;
   u32 scaledRecovery;

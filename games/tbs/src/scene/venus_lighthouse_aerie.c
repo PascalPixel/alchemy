@@ -384,7 +384,7 @@ static void VenusLighthouseAerie_FaceActor(s32 actor, s32 facing) {
   Engine_ActorFaceDirection(actor, facing, 10);
 }
 
-/// Brings the party onto the aerie and reveal the argument over Sheba.
+/// Brings the party onto the aerie and reveals the argument over Sheba.
 static void VenusLighthouseAerie_EnterAndConfrontAntagonists(void) {
   struct FieldActor *arrivalPlatform;
   struct FieldActor *leader;
@@ -2989,7 +2989,7 @@ static void VenusLighthouseAerie_AdvanceActorRise(struct FieldActor *actor) {
   }
 }
 
-/// Emits particles beside the lower beam and link each to its source actor.
+/// Emits particles beside the lower beam and links each to its source actor.
 static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   union FieldObject *center;
   struct FieldActor *effect;

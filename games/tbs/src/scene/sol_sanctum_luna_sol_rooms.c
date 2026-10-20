@@ -540,7 +540,7 @@ static void Event_KradenStopsPartyLeaving(void) {
   Engine_EventEnd();
 }
 
-/// Animates the first falling light and manage the shared shake pulse.
+/// Animates the first falling light and manages the shared shake pulse.
 static void SolSanctumLunaSolRooms_UpdateFirstStatueLight(void) {
   if ((Random_Next() & 3) != 0) {
     switch (gSolSanctumLunaSolRooms_Light1Timer) {
@@ -843,7 +843,7 @@ static void SolSanctumLunaSolRooms_RunStatueLightSequence(void) {
   Engine_EventRequestExit(4);
 }
 
-/// Reconciles the saved light flags and replay their accelerating flashes.
+/// Reconciles the saved light flags and replays their accelerating flashes.
 static void SolSanctumLunaSolRooms_AnimateSavedStatueLights(void) {
   s32 speaker;
   s32 twelveFrameFlashes;

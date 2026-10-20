@@ -191,7 +191,8 @@ struct LeaderEffectWork {
   struct FieldActor *target;
 };
 
-/// Suppress the leader's effect target while crossing the patched floor region.
+/// Suppresses the leader's effect target while crossing the patched floor
+/// region.
 static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
   struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
   struct LeaderEffectWork *effectWork =
@@ -1182,8 +1183,9 @@ static void MercuryLighthouse_OpenMovedBlockCrossing(void) {
   Engine_EventEnd();
 }
 
-/// Rotates the selected palette range once every eight frames. Write the saved
-/// first color at the end before shifting, preserving the palette access order.
+/// Rotates the selected palette range once every eight frames. It writes the
+/// saved first color at the end before shifting, preserving the palette access
+/// order.
 static inline void MercuryLighthouse_RotatePaletteRange(u16 *colors,
                                                         u32 colorCount) {
   u32 colorIndex;
@@ -1861,7 +1863,7 @@ static void MercuryLighthouse_EnterRisingPassage(void) {
 
 #include "common/mercury_lighthouse_arrive.h"
 
-/// Reveal the stair's map rows with particles along their edges.
+/// Reveals the stair's map rows with particles along their edges.
 static void SceneEffect_SpawnParticleRowsAndDrawTiles(void) {
   struct EffectOptions options;
   u32 particleIndex, row;

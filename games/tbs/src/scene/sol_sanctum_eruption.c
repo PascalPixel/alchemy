@@ -1421,7 +1421,7 @@ static void SolSanctumEruption_DrawSecondCollapseTiles(s32 alternate) {
   Engine_MapRedraw();
 }
 
-/// Randomly alternate the first tile patch on even frames.
+/// Randomly alternates the first tile patch on even frames.
 static void SolSanctumEruption_FlickerFirstCollapseTiles(void) {
   if ((gFrameCount & 1) == 0) {
     if ((u32)Math_RemainderUnsigned(Engine_RandomNext(), 100) > 50) {
@@ -1432,7 +1432,7 @@ static void SolSanctumEruption_FlickerFirstCollapseTiles(void) {
   }
 }
 
-/// Randomly alternate the second tile patch on even frames.
+/// Randomly alternates the second tile patch on even frames.
 static void SolSanctumEruption_FlickerSecondCollapseTiles(void) {
   if ((gFrameCount & 1) == 0) {
     if ((u32)Math_RemainderUnsigned(Engine_RandomNext(), 100) > 50) {

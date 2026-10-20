@@ -847,7 +847,7 @@ static void Party_StaysBehind(void) {
   GameFlag_Set(FLAG_BUNZAS_WAGON_LEFT);
 }
 
-/// Leads everyone down the passage and request the wagon departure exit.
+/// Leads everyone down the passage and requests the wagon departure exit.
 static void Party_RidesWagon(void) {
   struct FieldActor *leader;
   s32 departure;

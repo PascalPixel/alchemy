@@ -13,7 +13,7 @@
 
 // What the save functions return when they fail, after showing the message.
 #define SAVE_ERROR_READ -2 ///< a record could not be read
-// Writing failed. "Failed to save." (or "Failed to erase.")
+/// Writing failed. "Failed to save." (or "Failed to erase.")
 #define SAVE_ERROR_WRITE -3
 #define SAVE_ERROR_ERASE -4   ///< erasing failed. "Failed to erase."
 #define SAVE_ERROR_NO_FILE -5 ///< no empty file to copy into
@@ -1169,9 +1169,8 @@ done:
 /// The Save command: lets the player choose a file (the current one first),
 /// asks whether to save over it when it has data, then saves the game to it,
 /// object table included, and makes it the current file. The question is "OK
-/// to save over this file?" Returns 0 (also
-/// when the player answers No), -1 when cancelled, or a SAVE_ERROR_* after
-/// showing its message.
+/// to save over this file?" Returns 0 (also when the player answers No), -1
+/// when cancelled, or a SAVE_ERROR_* after showing its message.
 s32 Save_WriteSelectedSlot(void) {
   s32 result;
   s32 file;

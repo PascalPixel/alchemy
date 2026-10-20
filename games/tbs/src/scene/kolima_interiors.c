@@ -81,7 +81,7 @@ const struct ScenePlacement *KolimaInteriors_GetPlacements(void) {
   return placements;
 }
 
-/// Offers weapons at the counter or discuss Fuchin Temple.
+/// Offers weapons at the counter or discusses Fuchin Temple.
 static void KolimaInteriors_TalkToWeaponMerchant(void) {
   u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
@@ -95,7 +95,7 @@ static void KolimaInteriors_TalkToWeaponMerchant(void) {
   Engine_EventEnd();
 }
 
-/// Offers armor at the counter or discuss the bridge.
+/// Offers armor at the counter or discusses the bridge.
 static void KolimaInteriors_TalkToArmorMerchant(void) {
   u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
@@ -109,7 +109,7 @@ static void KolimaInteriors_TalkToArmorMerchant(void) {
   Engine_EventEnd();
 }
 
-/// Offers items at the counter or discuss life after the curse.
+/// Offers items at the counter or discusses life after the curse.
 static void KolimaInteriors_TalkToItemMerchant(void) {
   u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 
@@ -123,7 +123,7 @@ static void KolimaInteriors_TalkToItemMerchant(void) {
   Engine_EventEnd();
 }
 
-/// Offers a room at the counter or discuss McCoy's construction.
+/// Offers a room at the counter or discusses McCoy's construction.
 static void KolimaInteriors_TalkToInnkeeper(void) {
   u32 facing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
 

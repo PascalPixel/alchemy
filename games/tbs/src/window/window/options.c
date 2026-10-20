@@ -104,7 +104,6 @@ UNUSED void WindowColor_WritePalette(struct WorkspaceWork *work) {
 
 /// Returns the window tint with each channel scaled (16.16 fixed point) and
 /// clamped to 0 to 31, as a BGR555 colour.
-/// Multipliers use 16.16 fixed point; clamped components pack into BGR555.
 u16 WindowColor_ScaleTint(struct WorkspaceWork *work, s32 redScale,
                           s32 greenScale, s32 blueScale) {
   s32 red;
@@ -277,7 +276,7 @@ void OptionMenu_AnimateCursors(void) {
 
 /// Allocates the option screen's work block, copies the settings into it with
 /// how many values each takes, and starts its per-frame callback.
-/// Copy settings into scratch so cancelling can discard the edits.
+/// The copy lets cancelling discard the edits.
 void OptionMenu_InitializeWork(void) {
   struct WorkspaceWork *work;
 
@@ -297,7 +296,7 @@ void OptionMenu_InitializeWork(void) {
 }
 
 /// Stops the option screen's per-frame callback and frees its work block.
-/// Remove the frame callback before releasing the workspace it reads.
+/// The callback goes first, since it reads the work block.
 void OptionMenu_Release(void) {
   Scheduler_RemoveCallback(OptionMenu_AnimateCursors);
   Runtime_ReleaseHeapBlock(0x14);
@@ -613,7 +612,7 @@ void SystemMenu_Initialize(void) {
 }
 
 /// Stops the system menu's per-frame callback and frees its work block.
-/// Remove the frame callback before releasing its workspace.
+/// The callback goes first, since it reads the work block.
 void SystemMenu_Release(void) {
   Scheduler_RemoveCallback(&SystemMenu_AnimateCursor);
   Runtime_ReleaseHeapBlock(0x14);
@@ -696,7 +695,8 @@ struct UiWindow *SystemMenu_Open(void) {
 
 /// Runs the system menu until the player picks an entry (its number, counting
 /// Save your quest as 0) or cancels with B or START (-1).
-/// Adjust the result to the full entry table when only settings is visible.
+/// The result counts in the full entry table even when only Change settings is
+/// shown.
 s32 Menu_RunWorkspaceSelectionLoop(void) {
   struct UiWindow *window;
   s32 redraw;

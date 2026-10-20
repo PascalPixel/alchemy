@@ -283,7 +283,7 @@ static void Houses_AskAboutWayWest(void) {
   Engine_EventEnd();
 }
 
-/// A grateful villager thanks the party with a kiss.
+/// The grateful villager asks whether the party defeated the monsters.
 static void Houses_AskAboutMonsters(void) {
 
   Engine_EventBegin();

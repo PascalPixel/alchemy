@@ -259,7 +259,7 @@ s32 ValeInteriors_Initialize(void) {
   return 0;
 }
 
-/// Opens the weapon shop from the counter or speak to its owner.
+/// Opens the weapon shop from the counter or speaks to its owner.
 static void Event_TalkToWeaponShopkeeper(void) {
   struct FieldActor *leader;
 
@@ -285,7 +285,7 @@ static void Event_TalkToWeaponShopkeeper(void) {
   Engine_EventEnd();
 }
 
-/// Opens the armor shop from the counter or speak to its owner.
+/// Opens the armor shop from the counter or speaks to its owner.
 static void Event_TalkToArmorShopkeeper(void) {
   struct FieldActor *actor;
 
@@ -308,7 +308,7 @@ static void Event_TalkToArmorShopkeeper(void) {
   }
 }
 
-/// Opens the item shop or speak to its owner about the party's departure.
+/// Opens the item shop or speaks to its owner about the party's departure.
 static void Event_TalkToItemShopkeeper(void) {
   struct FieldActor *actor;
 

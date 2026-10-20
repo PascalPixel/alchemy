@@ -73,7 +73,7 @@ static inline u32 XianInteriors_GetLeaderFacing(void) {
   return leader->facing;
 }
 
-/// Opens the weapon shop from its counter side, or discuss martial arts.
+/// Opens the weapon shop from its counter side, or discusses martial arts.
 static void XianInteriors_TalkToWeaponMerchant(void) {
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
@@ -92,7 +92,7 @@ static void XianInteriors_TalkToWeaponMerchant(void) {
   Engine_EventEnd();
 }
 
-/// Opens the armor shop from its counter side, or discuss armor and kung fu.
+/// Opens the armor shop from its counter side, or discusses armor and kung fu.
 static void XianInteriors_TalkToArmorMerchant(void) {
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
@@ -130,7 +130,7 @@ static void XianInteriors_TalkToItemMerchant(void) {
   Engine_EventEnd();
 }
 
-/// Offers a room from the counter side, or discuss travel through Xian.
+/// Offers a room from the counter side, or discusses travel through Xian.
 static void XianInteriors_TalkToInnkeeper(void) {
 
   u32 leaderFacing = XianInteriors_GetLeaderFacing();

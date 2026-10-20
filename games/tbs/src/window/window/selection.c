@@ -82,7 +82,7 @@ void Resource_ClearOwnerListAndCounters(void) {
 }
 
 /// Adds an entry (kind and id) to the selection screen's list, up to 16.
-/// The constructor and clear routine establish the count's 0-to-16 invariant.
+/// The count starts at 0 when the screen is created or cleared.
 void Resource_PushPendingPair(u32 kind, u32 base) {
   struct SelectionScreen *state = gResQueueWork;
   u16 entryCount = state->count;
@@ -96,7 +96,7 @@ void Resource_PushPendingPair(u32 kind, u32 base) {
 
 /// Creates icons for the first five listed entries in a row along the bottom of
 /// the screen.
-/// Build the linked row before placing the visible icons and loading the
+/// Builds the linked row before placing the visible icons and loading the
 /// preview.
 void MenuSelection_BuildEntries(u32 unused) {
   struct SelectionScreen *screen = gResQueueWork;
@@ -854,7 +854,7 @@ void Menu_StepLeft(struct SelectionScreen *state) {
   WaitFrames(1);
 }
 
-/// Redraws the command icon at row place index in its plain state.
+/// Redraws the command icon at row place rowIndex in its plain state.
 void SelectionScreen_RedrawIcon(struct SelectionScreen *state, u32 rowIndex) {
   struct SelectionNode *node = state->head;
   u32 tile;
@@ -872,7 +872,7 @@ void SelectionScreen_RedrawIcon(struct SelectionScreen *state, u32 rowIndex) {
   }
 }
 
-/// Redraws the command icon at row place index and loads its large icon.
+/// Redraws the command icon at row place rowIndex and loads its large icon.
 void SelectionScreen_HighlightIcon(struct SelectionScreen *state,
                                    u32 rowIndex) {
   struct SelectionNode *node = state->head;
@@ -908,7 +908,7 @@ void Menu_SendNodeCountList(struct SelectionScreen *screen) {
 
 /// Scrolls the row one entry: forward brings an icon in from the right as the
 /// leftmost shrinks away, and back the reverse; waits until it has moved.
-/// Release the departing cache slot only after its shrinking animation
+/// Releases the departing cache slot only after its shrinking animation
 /// finishes.
 void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward) {
   struct SelectionNode *node;
@@ -1396,10 +1396,9 @@ UNUSED void SelectionScreen_CreateEmpty(void) {
   WaitFrames(1);
 }
 
-/// Runs a selection row with the cursor on entry value, cancellable, and
-/// returns the entry chosen or -1.
-/// The parameter is an initial row index; cancellation returns -1 encoded as
-/// u32.
+/// Runs a selection row with the cursor on entry initialIndex, cancellable,
+/// and returns the entry chosen or -1.
+/// initialIndex is a row index; cancellation returns -1 encoded as u32.
 u32 Menu_RunSelectionForValue(u32 initialIndex) {
   struct SelectionScreen *screen = gResQueueWork;
   u32 result;

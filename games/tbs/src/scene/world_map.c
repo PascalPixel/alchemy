@@ -1439,7 +1439,7 @@ static void WorldMap_DisembarkCarriage(void) {
   Engine_EventEnd();
 }
 
-/// Introduces the Black Orb and prompt Isaac to use it on the ship.
+/// Introduces the Black Orb and prompts Isaac to use it on the ship.
 static void WorldMap_RunBlackOrbScene(void) {
   struct FieldActor *leader;
 
@@ -2317,7 +2317,7 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   Engine_GameFlagSet(0x101);
 }
 
-/// Blinks an unused actor and periodically create its linked effects.
+/// Blinks an unused actor and periodically creates its linked effects.
 UNUSED static void
 WorldMap_UpdateBlinkingLinkedEffects(struct FieldActor *actor) {
   if ((gFrameCount & 2) != 0) {
@@ -2330,7 +2330,7 @@ WorldMap_UpdateBlinkingLinkedEffects(struct FieldActor *actor) {
   }
 }
 
-/// Cycles an unused actor's palettes and periodically create linked effects.
+/// Cycles an unused actor's palettes and periodically creates linked effects.
 UNUSED static void
 WorldMap_UpdateCyclingLinkedEffects(struct FieldActor *actor) {
   if ((gFrameCount & 1) != 0) {

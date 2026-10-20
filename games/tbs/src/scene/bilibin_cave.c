@@ -56,7 +56,7 @@ enum {
   FROST_TARGET_C = 17 ///< changes as a pushed actor reaches cell (35, 23)
 };
 
-/// Clears the scripted actor's sprite flags and complete this script command.
+/// Clears the scripted actor's sprite flags and completes this script command.
 static s32 BilibinCave_ClearScriptedActorSpriteFlags(
     struct ScriptInterpreter *interpreter) {
   struct FieldActor *actor = (struct FieldActor *)interpreter;

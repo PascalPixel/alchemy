@@ -452,7 +452,7 @@ void Event_WaitTransitionFrames(void) {
   WaitFrames(((struct FieldWork *)gEventWork)->transitionFrames);
 }
 
-/// Makes the event leave for entrance entrance of scene scene.
+/// Makes the event leave for the given entrance of the given scene.
 void Event_SetDestination(s32 scene, s32 entrance) {
   ((struct FieldWork *)gEventWork)->exit = 999;
   gGameState.scene = scene;

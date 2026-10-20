@@ -2125,7 +2125,7 @@ static void VaultInteriors_DefeatThieves(void) {
   Engine_EventEnd();
 }
 
-/// Returns the stolen goods and rod, thank the party, and clears the attic.
+/// Returns the stolen goods and rod, thanks the party, and clears the attic.
 static void VaultInteriors_ReturnStolenGoods(void) {
   struct FieldActor *temporaryActor;
   struct FieldActor *actor;
@@ -2852,7 +2852,7 @@ static void VaultInteriors_UpdateActorStops(void) {
   }
 }
 
-/// Arranges the chase, constrain its camera, and starts the route callback.
+/// Arranges the chase, constrains its camera, and starts the route callback.
 static void VaultInteriors_StartActorStops(void) {
   Engine_EventBegin();
   Camera_MoveTo(PIXELS(168), -1, PIXELS(656), 1);

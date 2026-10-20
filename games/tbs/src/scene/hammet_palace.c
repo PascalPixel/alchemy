@@ -686,7 +686,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   EV_END();
 }
 
-/// Turns the party outward from the group, then optionally wait.
+/// Turns the party outward from the group, then optionally waits.
 static void HammetPalace_FacePartyOutward(s32 waitFrames) {
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   OBJ_DIR(GARET, FACING_NORTHEAST, 0);
@@ -697,7 +697,7 @@ static void HammetPalace_FacePartyOutward(s32 waitFrames) {
   }
 }
 
-/// Turns all four party members north toward Layana, then optionally wait.
+/// Turns all four party members north toward Layana, then optionally waits.
 static void HammetPalace_FacePartyNorth(s32 waitFrames) {
   OBJ_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   OBJ_DIR(GARET, FACING_NORTH, 0);

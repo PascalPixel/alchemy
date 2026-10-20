@@ -540,7 +540,8 @@ static UNUSED void ColossoWall_RollCenterLogSouth(void) {
   ColossoWall_UpdateRollingLogCollision();
 }
 
-/// Carry the selected actor on the moving platforms and alternate their routes.
+/// Carries the selected actor on the moving platforms and alternates their
+/// routes.
 static void ColossoWall_UpdateMovingPlatforms(void) {
   s32 platformId;
   struct FieldActor *rider;
@@ -1469,7 +1470,7 @@ static void ColossoWall_WaitForRivalFinish(void) {
   }
 }
 
-/// Occasionally spawn a falling particle around the linked finish effect.
+/// Occasionally spawns a falling particle around the linked finish effect.
 static void ColossoWall_SpawnRandomSceneEffect(union FieldObject *fieldObject) {
   SparkSource *source = (SparkSource *)fieldObject;
   s32 position[3];
@@ -1590,7 +1591,7 @@ static s32 ColossoWall_ApproachFinishAndTakeItem(s32 firstItem,
 
 #include "common/colosso_path_rival.h"
 
-/// Allocates the race work, record both competitors and installs the gauge
+/// Allocates the race work, records both competitors and installs the gauge
 /// task.
 void FieldScene_BuildDescriptorAndInstallTask(s32 leaderId, s32 rivalId,
                                               s32 raceMode, s32 finishX,

@@ -571,7 +571,7 @@ static void GomaCaveEntrance_LeapStump(s32 id) {
 // Shared inventory equipment code stays at its native overlay position.
 #include "common/item_equip.h"
 
-/// Gives Ivan the Shaman's Rod and equip it. With his items full, he drops
+/// Gives Ivan the Shaman's Rod and equips it. With his items full, he drops
 /// another to make room; later patches stop dropping items whose byte 3 is 8.
 static void GomaCaveEntrance_GiveShamansRod(void) {
   struct Member_387 *member;

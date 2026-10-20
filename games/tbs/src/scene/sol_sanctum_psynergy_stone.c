@@ -38,7 +38,7 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gSolSanctumPsynergyStonePlacements;
 }
 
-/// The exit and the psynergy stone.
+/// The exit and the Psynergy Stone.
 const struct SceneEvent *Scene_GetEvents(void) {
   return gSolSanctumPsynergyStoneEvents;
 }

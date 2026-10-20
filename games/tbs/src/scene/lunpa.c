@@ -154,7 +154,7 @@ static inline void Lunpa_DrawHiddenPassageFrame(s32 sourceColumn,
   Map_CopyCells(sourceColumn + 6, sourceRow, 3, 4, 1, 46);
 }
 
-/// Reveal: the psynergy stone's spot, the hidden switch's glint, the
+/// Reveal: the Psynergy Stone's spot, the hidden switch's glint, the
 /// puddle and, once opened, the passage show.
 static void Event_RevealSecrets(void) {
   struct FieldActor *actor;

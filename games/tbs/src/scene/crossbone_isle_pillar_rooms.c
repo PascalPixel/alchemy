@@ -605,7 +605,7 @@ static s32 sProbePosition[3];
 static u8 sShakenScroll[12];
 static s32 sShakeChance;
 
-/// Randomly substitute the shifted background scroll during the water
+/// Randomly substitutes the shifted background scroll during the water
 /// transition.
 static void CrossboneIslePillarRooms_JitterBackgroundScroll(void) {
   u32 line = REG_VCOUNT;
@@ -649,7 +649,7 @@ static void CrossboneIslePillarRooms_PrepareWaterScroll(void) {
   coordinates[5] += 0xc0;
 }
 
-/// Reveal the alternate water tiles through a gradually randomized scroll
+/// Reveals the alternate water tiles through a gradually randomized scroll
 /// transition.
 static void CrossboneIslePillarRooms_AnimateWaterLevel(void) {
   s32 waterRaised;
@@ -1370,7 +1370,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gCrossboneIslePillarRoomsEventsOther;
 }
 
-/// Prepares the lowered actor's collision and draws priority below the leader.
+/// Prepares the lowered actor's collision and draw priority below the leader.
 static void CrossboneIslePillarRooms_PrepLoweredActor(s32 id) {
   struct FieldActor *actor = Object_GetById(id);
 

@@ -1303,7 +1303,7 @@ struct SceneEvent gSolSanctumEntranceEvents1Entrances14To16[] = {
 };
 // clang-format on
 
-/// Pushes step by direction: X in the upper halfword, Z in the lower (pixels).
+/// Packs a push step: X in the upper halfword, Z in the lower (pixels).
 #define PUSH_STEP(x, z) (((x) << 16) | ((z) & 0xffff))
 
 s32 gSolSanctumPushSteps[] = {

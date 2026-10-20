@@ -275,7 +275,7 @@ static void Event_ClearPathCellOverride(void) {
   Map_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
-/// Opens the sanctum door, walk inside and takes its scene exit.
+/// Opens the sanctum door, walks inside and takes its scene exit.
 static void Event_EnterSanctum(void) {
   Event_PlayCue(SE_188);
   Map_AnimateCells(gValeCellAnimC, 45, 11);
@@ -2524,12 +2524,12 @@ static void Event_RoofMended(void) {
 
 #include "common/effect_psynergy.h"
 
-/// Cycles palettes on Garet and periodically spawn attached effects.
+/// Cycles palettes on Garet and periodically spawns attached effects.
 static void Vale_UpdateGaretPaletteAndEffects(void) {
   Vale_CycleActorPaletteAndSpawnEffects(Object_GetById(GARET));
 }
 
-/// Cycles the leader palette and periodically spawn attached effects.
+/// Cycles the leader palette and periodically spawns attached effects.
 static void Vale_UpdateLeaderPaletteAndEffects(void) {
   Vale_CycleActorPaletteAndSpawnEffects(Object_GetById(ACTOR_PARTY_LEADER));
 }
@@ -2664,7 +2664,7 @@ static void Effect_ConfigureSpawnedParticle(union FieldObject *fieldObject) {
   Engine_AudioPlayCue(SE_ITEM_BREAK);
 }
 
-/// Shrinks and raises the emitter, scatter dust, then clears its motion
+/// Shrinks and raises the emitter, scatters dust, then clears its motion
 /// targets.
 static void Effect_SpawnRisingDustBurst(struct FieldActor *emitter) {
   s32 frameCountdown;

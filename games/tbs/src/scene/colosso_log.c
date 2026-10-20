@@ -123,8 +123,6 @@ static inline void InitializeSelectedActor(s32 actorId) {
 
 extern s32 gColossoParticleCount;
 
-// Shared Colosso routines (scene/common/colosso_*.c).
-
 struct SceneEntrance *ColossoLog_GetEntrances(void) {
   return gColossoLogEntrances;
 }
@@ -1573,7 +1571,7 @@ static void ColossoLogRollingStage_PositionActor(s32 selector, s32 x, s32 z) {
   }
 }
 
-/// Moves to a scripted pixel destination, wait, then restores the idle mode.
+/// Moves to a scripted pixel destination, waits, then restores the idle mode.
 static void ColossoLogRollingStage_PositionAndActivateActor(s32 selector, s32 x,
                                                             s32 z) {
   struct FieldActor *actor;
@@ -1859,7 +1857,7 @@ static void ColossoLog_WaitForRivalToFinish(void) {
   }
 }
 
-/// Occasionally scatter an effect around a moving source actor.
+/// Occasionally scatters an effect around a moving source actor.
 static void
 ColossoLogRollingStage_SpawnRandomSceneEffect(union FieldObject *fieldObject) {
   StageEffect *source = (StageEffect *)fieldObject;
@@ -1913,7 +1911,7 @@ static s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(
   return 0;
 }
 
-/// Moves to the available finish item, equip it and announces it.
+/// Moves to the available finish item, equips it and announces it.
 static s32 ColossoLog_CollectFinishEquipment(s32 firstItem, s32 secondItem) {
   struct ColossoGaugeWork *work = (struct ColossoGaugeWork *)gColossoWork;
   struct FieldActor *actor;

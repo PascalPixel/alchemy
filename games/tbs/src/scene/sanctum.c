@@ -453,7 +453,7 @@ static inline void Sanctum_ShowCeremonyGroupEmotes(void) {
   Actor_ShowEmote(10, EMOTE_IN_FRONT | 2, 0);
 }
 
-/// Discuss Sol Sanctum and ask Isaac to accept the quest.
+/// Discusses Sol Sanctum and asks Isaac to accept the quest.
 static void Sanctum_RequestQuestAcceptance(void) {
   u32 effectIndex;
 

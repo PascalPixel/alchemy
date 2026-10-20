@@ -154,10 +154,10 @@ s32 LinkBattle_SendParty(void) {
   MemFree(buffer);
 }
 
-/// Unused. Copies the first four characters of a name into a buffer on its
-/// own stack, an underscore for each one that is missing, and returns a
-/// pointer past them into that buffer, which no longer exists once it
-/// returns. Its first two arguments are ignored.
+/// Unused. Copies the first four characters of a name and a terminator (five
+/// bytes) into a buffer on its own stack, an underscore for each one that is
+/// missing, and returns a pointer to the terminator in that buffer, which no
+/// longer exists once it returns. Its first two arguments are ignored.
 u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unused0, u32 unused1, u16 *source) {
   u8 buffer[5];
   u8 *base = buffer;

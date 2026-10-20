@@ -78,8 +78,8 @@ struct CaveEffectScripts {
   const s32 *script[3];
 };
 
-/// EffectOptions cut after its scales: the caller's frame holds these 24 bytes
-/// only
+/// EffectOptions cut after its scales: the caller's frame holds only these 24
+/// bytes.
 struct CaveDustOptions {
   s32 priority;
   s32 palette;
@@ -1227,7 +1227,7 @@ static void ImilFuchinFalls_HopBy(s32 dx, s32 dz) {
   Engine_EventEnd();
 }
 
-/// Creates the collectible eye and upload its item icon.
+/// Creates the collectible eye and uploads its item icon.
 static void ImilFuchinFalls_PlaceDragonsEye(void) {
   struct FieldActor *actor;
   struct AnimationObject *sprite;
@@ -1365,7 +1365,7 @@ static void ImilFuchinFalls_BlowCaveMouthDust(void) {
       (const struct EffectOptions *)&options);
 }
 
-/// Inserts the eye, light the dragon room and reveal its hidden path.
+/// Inserts the eye, lights the dragon room and reveals its hidden path.
 static void Fuchin_LightDragonWithEye(void) {
   u32 pass;
 

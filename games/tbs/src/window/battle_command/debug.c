@@ -88,7 +88,7 @@ s16 Menu_RunSelection(void) {
 }
 
 /// Edits the debug scene or entrance, returning -1 to warp and -2 to cancel.
-/// Shoulder buttons step by ten; keep the original 99-step entrance wrap.
+/// Shoulder buttons step by ten; it keeps the original 99-step entrance wrap.
 s32 Menu_HandleSelectionRowInput(struct UiWindow *window, s16 scene,
                                  s16 *entrance, s16 *selectedField) {
   if (gKeysRepeat & KEY_A)
@@ -150,7 +150,7 @@ s32 Menu_HandleSelectionRowInput(struct UiWindow *window, s16 scene,
 }
 
 /// Shows a 16x16 flag grid per page and processes input until closed.
-/// Start on page 8; always return 0.
+/// Starts on page 8 and always returns 0.
 s32 Menu_RunSelectionWithCursorObject(void) {
   struct MenuSprite cursorSprite; // Cursor object
   s32 cursor[2];                  // Cursor column and row
@@ -183,7 +183,7 @@ s32 Menu_RunSelectionWithCursorObject(void) {
 }
 
 /// Writes the lowest count digits of value, up to five, most significant first
-/// as uppercase hexadecimal in out; do not append a null terminator.
+/// as uppercase hexadecimal in out, without a null terminator.
 void Text_FormatHex(u32 value, u32 count, u8 *out) {
   u8 digits[8];
   u32 i;
@@ -238,8 +238,8 @@ void Menu_DrawFlagBitTable(struct UiWindow *window, s32 page) {
   }
 }
 
-/// Moves within the flag grid, change pages, or toggles the selected flag.
-/// Return 1 when flags/page need redrawing, -1 to close, and 0 otherwise.
+/// Moves within the flag grid, changes pages, or toggles the selected flag.
+/// Returns 1 when flags/page need redrawing, -1 to close, and 0 otherwise.
 s32 Menu_HandleFlagGridInput(struct UiWindow *window, s32 *page, s32 *cursor) {
   s32 *row = &cursor[1];
 
@@ -322,8 +322,8 @@ s32 Menu_RunWorkspaceResultLoop(void) {
   return 0;
 }
 
-/// Browses pages of item, Psynergy and status-pattern icons. Suspend the menu
-/// controller while the browser owns its window and cache entries.
+/// Browses pages of item, Psynergy and status-pattern icons, suspending the
+/// menu controller while the browser owns its window and cache entries.
 s32 DebugMenu_BrowseIcons(void) {
   s32 redraw;
   s32 tile;
@@ -416,8 +416,8 @@ s32 DebugMenu_BrowseIcons(void) {
 #define DEBUG_GLYPH_NAME MsgDebugSecondForm
 #endif
 
-/// Browses the character and sprite portrait maps as one circular list. Show
-/// each entry's glyph and label, then release both windows on A or B.
+/// Browses the character and sprite portrait maps as one circular list. Shows
+/// each entry's glyph and label, then releases both windows on A or B.
 s32 DebugMenu_BrowseEntryGlyphs(void) {
   struct UiRenderWork *work;
   struct UiWindow *portrait;

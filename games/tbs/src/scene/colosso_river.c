@@ -109,8 +109,6 @@ enum {
   PRIZE_B = 25
 };
 
-// Shared Colosso routines (scene/common/colosso_*.c).
-
 struct SceneEntrance *ColossoRiver_GetEntrances(void) {
   return gColossoRiver_Entrances;
 }
@@ -1215,7 +1213,7 @@ static void ColossoRiver_WaitForStageReady(void) {
   }
 }
 
-/// Occasionally spawn an animated effect around the finish item.
+/// Occasionally spawns an animated effect around the finish item.
 static void ColossoRiver_SpawnRandomEffect(union FieldObject *fieldObject) {
   struct FieldActor *actor = (struct FieldActor *)fieldObject;
   s32 position[3];
@@ -1251,7 +1249,7 @@ static void ColossoRiver_SpawnRandomEffect(union FieldObject *fieldObject) {
   }
 }
 
-/// Presents the collected item above its collector and signal completion.
+/// Presents the collected item above its collector and signals completion.
 static s32
 ColossoRiver_PlaceFinishItemAboveActor(struct ScriptInterpreter *interpreter) {
   struct FieldActor *collector = (struct FieldActor *)interpreter;

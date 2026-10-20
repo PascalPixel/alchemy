@@ -11,8 +11,9 @@
 // plays seven pictures, drawn mirrored about its x. Both scenes fade out over
 // their last 16 frames.
 
-/// Growing columns: vines or pillars spring from the ground one after
-/// another, throwing up dust. PARTICLES holds the dust.
+// Growing columns: vines or pillars spring from the ground one after
+// another, throwing up dust. PARTICLES holds the dust.
+
 /// One growing column, laid over a struct EffectStep.
 struct DualColumn {
   s32 x; ///< the root, in canvas pixels

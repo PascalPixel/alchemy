@@ -197,7 +197,7 @@ struct SceneEvent *Scene_GetEvents(void) {
   return gVault_Events;
 }
 
-/// Asks the current question and selects its ordinary or alternates reply.
+/// Asks the current question and selects its ordinary or alternate reply.
 static inline void Vault_AskYesNoAndShowReply(s32 speaker) {
   Engine_EventOpenMessage(speaker, 0);
   if (Engine_EventChooseYesNo(0, 0) != 0) {
@@ -574,7 +574,7 @@ static void Event_ReadMindOnRoofer(void) {
 
 #include "common/vault_toggle.h"
 
-/// Walks to the exit threshold and request the room's transition.
+/// Walks to the exit threshold and requests the room's transition.
 static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   Actor_WalkTo(ACTOR_PARTY_LEADER, x, y);
@@ -870,7 +870,7 @@ static void Vault_FaceActorAndWait(s32 actor, s32 cue, s32 delay) {
   Engine_EventWait(delay);
 }
 
-/// Applies drift and gradually damp both rates toward zero.
+/// Applies drift and gradually damps both rates toward zero.
 /// This custom update uses speed/acceleration as its two drift rates and
 /// mirrors the resulting position into the actor's target coordinates.
 static void Vault_UpdateDriftingEffect(union FieldObject *fieldObject) {

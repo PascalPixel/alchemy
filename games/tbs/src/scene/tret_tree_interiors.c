@@ -544,7 +544,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   EV_END();
 }
 
-/// Restores the post-battle map and optionally play its conversation.
+/// Restores the post-battle map and optionally plays its conversation.
 static void TretTreeInteriors_ApplyPostBattleState(s32 playRecoveryScene) {
   if (playRecoveryScene != 0 && FLAG_CHECK(FLAG_KEEP_PARTY_POSITION) == 0)
     TretTreeInteriors_PlayPostBattleConversation();

@@ -2209,7 +2209,7 @@ const struct SceneEvent *Scene_GetEvents(void) {
   return gVenusLighthouseEvents2;
 }
 
-/// Prepares a stationary actor with the room's initial collision and draws
+/// Prepares a stationary actor with the room's initial collision and draw
 /// state.
 static void VenusLighthouse_PrepareStandingActor(s32 actorId) {
   struct FieldActor *actor;

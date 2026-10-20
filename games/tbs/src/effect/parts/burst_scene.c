@@ -46,7 +46,7 @@ void BattleFx_RunFlyingAttack(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 5);
 }
 
-// Flurries of strikes, and the rising rock wall.
+// Flurries of strikes.
 /// The bytes of a gBurstScene_Records row.
 enum BurstField {
   BURST_SCENE_ARC_SHEET, ///< 0: blue arc A, else B; 1 also draws every strike

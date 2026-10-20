@@ -114,8 +114,8 @@ enum StatueHallActor {
   ACTOR_MOVED_CENTER_STATUE
 };
 
-/// bss in this order: as commons of one object the linker would sort them
-/// itself
+/// The scene's bss, in this order; as commons of one object the linker would
+/// sort them itself.
 static struct SealScene sSealScene;
 /// Initialization writes each three-word OAM packet; drawing updates its
 /// fields.
@@ -1349,7 +1349,7 @@ static void SolSanctumStatue_OpenSoutheastSeal(void) {
   Map_CopyCellsTo((copy).srcX, (copy).srcY, (copy).destX, (copy).destY,        \
                   (copy).width, (copy).height)
 
-/// Animates the seal and either advance the story or resets its statue.
+/// Animates the seal and either advances the story or resets its statue.
 static void SolSanctumStatue_OpenSeal(void) {
   struct SealScene *scene;
   s32 exitResult;

@@ -320,7 +320,7 @@ static void Event_BagJupiterStarAndMeetSaturos(void) {
   SolSanctumElementalStarRoom_LineUpFollowers();
 }
 
-/// Reveal the Jupiter crossings and place the star in a mythril bag.
+/// Reveals the Jupiter crossings and places the star in a mythril bag.
 static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   u32 i;
   s32 itemOwner;
@@ -450,7 +450,7 @@ static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void) {
   Engine_EventWait(40);
 }
 
-/// Reveal the masked intruder while the captors demand the stars.
+/// Reveals the masked intruder while the captors demand the stars.
 static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   u8 *motionFlags;
   u8 *spriteFlags;
@@ -713,7 +713,7 @@ static void SolSanctumElementalStarRoom_OfferHostageGuarantee(void) {
   Actor_FaceDirection(ACTOR_FELIX_MASKED, FACING_NORTHWEST + FACING_STEP, 40);
 }
 
-/// Reveal Felix's identity and let Isaac decide how to hand over the stars.
+/// Reveals Felix's identity and lets Isaac decide how to hand over the stars.
 static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   struct FieldActor *actor;
   struct FieldActor *other;

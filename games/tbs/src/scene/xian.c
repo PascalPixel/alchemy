@@ -111,7 +111,7 @@ static void Xian_UpdateFrozenPuddleLayer(void) {
   }
 }
 
-/// Rotates the log during the student's strike and Force animation.
+/// Rotates the training tree during the student's strike and Force animation.
 static void Xian_RotateTrainingTree(void) {
   struct FieldActor *tree = Object_GetById(ACTOR_TRAINING_TREE);
   struct AnimationObject *sprite = tree->sprite;

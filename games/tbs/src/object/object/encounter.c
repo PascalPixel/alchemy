@@ -25,7 +25,7 @@ typedef struct TerrainRule {
   s16 zone;
 } TerrainRule;
 
-/// An encounter zone (encounter.tsv).
+/// The number of enemy groups an encounter zone can hold.
 enum { ENCOUNTER_GROUP_COUNT = 8 };
 
 /// An encounter zone, a row of encounter.tsv: its rate, the level it is made

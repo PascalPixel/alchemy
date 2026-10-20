@@ -97,7 +97,7 @@ const struct SceneEvent *KolimaForestTree_GetEvents(void) {
   return gKolimaForestTreeEvents;
 }
 
-/// Introduces Laurel or hear her warning while Tret is still dying.
+/// Introduces Laurel or hears her warning while Tret is still dying.
 static void KolimaForestTree_TalkToLaurel(void) {
   Engine_EventBegin();
   KolimaForestTree_PlayGesture(ACTOR_LAUREL_AUXILIARY, 1);
@@ -288,7 +288,7 @@ static __inline__ void KolimaForestTree_FaceParty(s32 facing, s32 waitFrames) {
   Actor_FaceDirection(IVAN, facing, waitFrames);
 }
 
-/// Heals Tret, lift Kolima's curse and hear the trees' warning.
+/// Heals Tret, lifts Kolima's curse and hears the trees' warning.
 static void KolimaForestTree_RestoreTret(void) {
   s32 includeMia;
   struct FieldActor *leader;

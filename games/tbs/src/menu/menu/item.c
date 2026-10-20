@@ -2764,9 +2764,10 @@ s32 ItemMenu_DrawNamePage(struct UiWindow *window, s32 unused,
   return 1;
 }
 
-/// Nothing calls them.
+/// Nothing calls it.
 UNUSED s32 InventoryMenu_ItemNamePageReturnTrue(void) { return 1; }
 
+/// Nothing calls it.
 UNUSED void InventoryMenu_ItemNamePageNoOp(void) {}
 
 /// The item list of the member in paneIndex (0: the owner, 1: the receiver of a

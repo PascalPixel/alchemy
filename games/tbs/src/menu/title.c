@@ -132,7 +132,7 @@ s32 Title_Run(void) {
   return 0;
 }
 
-/// Decodes the language-specific title sprites and upload their palette and
+/// Decodes the language-specific title sprites and uploads their palette and
 /// tiles.
 static void Title_LoadSprites(s32 unused) {
   u8 *decodedSprites;
@@ -167,7 +167,7 @@ static void Title_LoadSprites(s32 unused) {
   MemFree(decodedSprites);
 }
 
-/// Reveal successive sprite columns, flickering each newly reached column.
+/// Reveals successive sprite columns, flickering each newly reached column.
 static void Title_UpdateSpriteReveal(void) {
   u32 *attributes;
   struct TitleSprite *sprite;

@@ -68,7 +68,7 @@ static void FuchinTemple_AnimateRevealLesson(void);
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-/// Clears the scripted actor's sprite flags and complete the script command.
+/// Clears the scripted actor's sprite flags and completes the script command.
 static s32 FuchinTemple_ClearScriptedActorSpriteFlags(
     struct ScriptInterpreter *interpreter) {
   Engine_ActorSetSpriteFlags((struct FieldActor *)interpreter, 0);
@@ -471,7 +471,7 @@ static void FuchinTemple_ToppleTreeWest(void) {
                0xffff0000, 0x3333, 0, 0, 0);
 }
 
-/// Rotates the training tree through the opposite arc and reverse its
+/// Rotates the training tree through the opposite arc and reverses its
 /// horizontal scale.
 static void FuchinTemple_ToppleTreeEast(void) {
   struct FieldActor *tree;

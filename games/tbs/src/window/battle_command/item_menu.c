@@ -33,7 +33,7 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 item) {
   return 0;
 }
 
-/// Copies one 4bpp VRAM tile, ignoring the palette and flips bits of each
+/// Copies one 4bpp VRAM tile, ignoring the palette and flip bits of each
 /// entry.
 void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
   Dma_Set(BG_CHAR_BLOCK(0) + (sourceTile & 0x3ff) * TILE_SIZE_4BPP,
@@ -41,8 +41,8 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
           DMA_COPY32(8), REG_DMA3);
 }
 
-/// Chooses an inventory-list position for battle use, or -1 on cancel. Keep
-/// unavailable items visible with their help text, but reject confirmation.
+/// Chooses an inventory-list position for battle use, or -1 on cancel. Keeps
+/// unavailable items visible with their help text, but rejects confirmation.
 s32 ItemList_SelectEntry(s32 owner, u16 *entries, s32 count) {
   struct UiRenderWork *render;
   s32 drawnFirstEntry;

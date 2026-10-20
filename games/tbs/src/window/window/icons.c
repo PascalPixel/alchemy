@@ -12,9 +12,9 @@ s32 UiIcon_CountPsynergyIcons(void) {
   return gUiIcon_PsynergyIconPointersEnd - gUiIcon_PsynergyIconPointers;
 }
 
-/// Builds a command icon (overlay no0 over frame no1) and loads it into a
-/// sprite tile slot: *slot, or a free one when flag is 0. Returns the tile in
-/// *ret.
+/// Builds a command icon (overlay overlayIcon over frame frameIcon) and loads
+/// it into a sprite tile slot: *slot, or a free one when reuse is 0. Returns
+/// the tile in *tileOut.
 /// Frame decode is opaque; the command layer is then composited with
 /// transparency.
 void Ui_BuildPairedPatternsToSlot(s32 overlayIcon, s32 frameIcon, s32 *slot,
@@ -45,9 +45,9 @@ void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
                             tile, reuse);
 }
 
-/// Builds item icon glyph, over the icon frame when withBase is set, and loads
-/// it into *cacheSlot (a free slot unless reuse is set). Returns the tile in
-/// *tileOut.
+/// Builds the item icon glyph, over the icon frame when withBase is set, and
+/// loads it into *cacheSlot (a free slot unless reuse is set). Returns the tile
+/// in *tileOut.
 /// The optional frame is decoded first and selects masked icon expansion.
 void UiIcon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
                                s32 *tileOut, s32 reuse) {
@@ -173,7 +173,7 @@ s32 UiIcon_CopyResourceToSlot(s32 inventoryCode, s32 layers, s32 cacheSlot) {
   return 1;
 }
 
-/// Builds one of the other icons and loads it into sprite tile slot slot.
+/// Builds one of the other icons and loads it into sprite tile slot cacheSlot.
 s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 cacheSlot) {
   GlyphTransfer *work;
 
@@ -185,7 +185,8 @@ s32 Ui_BuildPatternToSlot(s32 icon, s32 unused, s32 cacheSlot) {
 }
 extern const u8 *gRenderResource_PairSourceTable[];
 
-/// Loads one of four small fixed images into sprite tile slot slot.
+/// Loads one of four small fixed images into the sprite tile slot named by
+/// slot.
 s32 RenderResource_LoadTableEntry(u32 value, s32 unused, u32 slot) {
   /* FAKEMATCH: three more names of the one table keep each case's own literal
    * slot; with the one name in every case the switch folds away, differ 21 on
@@ -238,8 +239,8 @@ void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
 
 #define ROUTINE_BLOCK 49
 
-/// Builds Psynergy icon glyph, over the icon frame when withBase is set, and
-/// loads it into *cacheSlot (a free slot unless reuse is set).
+/// Builds the Psynergy icon glyph, over the icon frame when withBase is set,
+/// and loads it into *cacheSlot (a free slot unless reuse is set).
 /// Returns the tile in *tileOut.
 /// The optional frame is decoded first and selects masked icon expansion.
 void UiIcon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
@@ -284,8 +285,8 @@ void Ui_PrepareTransferFromTableEntry(u32 iconIndex) {
 }
 
 /// Loads a 32x32 icon from the icon resource into sprite tile slot *slot (a
-/// free slot unless reuse is set) and its colours into sprite palette palette.
-/// Returns the tile in *tile.
+/// free slot unless reuse is set) and its colours into the sprite palette
+/// named by palette. Returns the tile in *tile.
 /// This resource stores its palette before the encoded tile payload.
 void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                                   s32 palette, s32 reuse) {
@@ -316,9 +317,9 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
 void UiGlyph_ReservedNoOp(void) {}
 
 /// Decodes a compressed icon into the glyph buffer and expands it to tiles,
-/// opaque for the first layer or masked over what is there when overlay is set.
-/// Release each copied decoder before loading the next routine into the same
-/// slot.
+/// opaque for the first layer or masked over what is there when outlined is
+/// set. Releases each copied decoder before loading the next routine into the
+/// same slot.
 void UiIcon_Decode(GlyphTransfer *glyph, s32 outlined) {
   RamCode_LoadSlot(ROUTINE_BLOCK, Tile_Decompress4bpp,
                    Tile_Decompress4bppCodeSize);

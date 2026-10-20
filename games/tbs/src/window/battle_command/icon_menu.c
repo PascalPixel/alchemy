@@ -256,7 +256,7 @@ void Menu_EndResourceSelection(void) {
 }
 
 /// Selects an icon position with wrapped directional input. A returns the
-/// position; B or Start returns -1. Redraw the label only after a move.
+/// position; B or Start returns -1. Redraws the label only after a move.
 s32 Menu_RunResourceSelectionLoop(s32 initial) {
   struct ResourceMenuWork *work = gMenuSelectWork;
   s32 resource;
@@ -306,8 +306,8 @@ static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs) {
   return rhs - lhs;
 }
 
-/// Animates a cursor from start to goal with table-driven delays. Draw each
-/// intervening label, pause at the destination, and return its position.
+/// Animates a cursor from start to goal with table-driven delays. Draws each
+/// intervening label, pauses at the destination, and returns its position.
 s32 Menu_SelectResource(s32 start, s32 goal) {
   s16 resourceBase;
   s16 selection;
@@ -395,7 +395,7 @@ void Menu_AppendResourceEntry(s32 icon) {
 }
 
 /// Centers the icons and their label window together on the given tile row.
-/// A nonzero resourceBase supplies labels; otherwise use command-name IDs.
+/// A nonzero resourceBase supplies labels; otherwise command-name IDs do.
 void Menu_CenterResourceEntries(s32 row, s32 width, s32 resourceBase) {
   struct ResourceMenuWork *menu = gMenuSelectWork;
   s32 x;
@@ -442,8 +442,9 @@ static __inline__ s32 ResourceMenu_ReadCommandPosition(s8 *table, s32 index) {
   return table[index];
 }
 
-/// Builds the field command menu, omitting Djinn when none are owned. Translate
-/// between command IDs and visible icon positions using the two lookup rows.
+/// Builds the field command menu, omitting Djinn when none are owned.
+/// Translates between command IDs and visible icon positions using the two
+/// lookup rows.
 s32 Menu_SelectTopEntry(s32 selection) {
   s32 group = 0;
   s32 offset;
@@ -490,7 +491,7 @@ s32 Menu_SelectTopEntry(s32 selection) {
 #endif
 
 /// Opens the field command menu and animates from start to the command's icon.
-/// Return the final icon position after closing the menu.
+/// Returns the final icon position after closing the menu.
 s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   UiWindow_OpenMode1AndWaitFrame();
   AffineEffect_InitializeWork();
@@ -506,7 +507,7 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
 }
 
 /// Builds the title menu from the save summaries and optional send flags.
-/// Translate the chosen visible position back to its save-action code.
+/// Translates the chosen visible position back to its save-action code.
 s32 Menu_SelectSaveSlotAction(void) {
   s32 fileState;
   s32 result;
@@ -668,8 +669,8 @@ void Menu_DrawModeIndicator(void) {
 }
 #endif
 
-/// Selects either the transfer method (mode 0) or password level. Schedule the
-/// appropriate help redraw while the icon menu is active, then close both
+/// Selects either the transfer method (mode 0) or password level. Schedules the
+/// appropriate help redraw while the icon menu is active, then closes both
 /// help windows and the icon menu.
 s32 Menu_SelectResourceLayout(s32 mode) {
   struct ResourceMenuWork *work;
@@ -755,7 +756,7 @@ s32 Menu_SelectResourceLayout(s32 mode) {
 
 /// Selects a shop command, icons 0x11-0x14 (Buy, Sell, Artifacts, Repair),
 /// centered on row 17.
-/// selection: initial position; return the selected position.
+/// selection: initial position; returns the selected position.
 s32 Menu_SelectShopCommand(s32 selection) {
   s32 result;
 
@@ -786,10 +787,10 @@ s32 Menu_SelectSanctumService(s32 selection) {
   return result;
 }
 
-/// Selects Yes/No (icons 5/6); cancels returns 1 (No).
-/// low: 0 places the menu on row 0; otherwise row 17.
+/// Selects Yes/No (icons 5/6); canceling returns 1 (No).
+/// bottom: 0 places the menu on row 0; otherwise row 17.
 /// message: first name message, or 0 for command names.
-/// w: name window width, or 0 for width 3.
+/// labelWidth: name window width, or 0 for width 3.
 /// selection: initial position
 s32 Menu_RunConfirmSelection(s32 bottom, s32 message, s32 labelWidth,
                              s32 selection) {
@@ -818,7 +819,7 @@ s32 Menu_RunConfirmSelection(s32 bottom, s32 message, s32 labelWidth,
   return selection;
 }
 
-/// Selects Yes/No at (x, y); cancels returns 1 (No).
+/// Selects Yes/No at (x, y); canceling returns 1 (No).
 s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
   s32 message = MsgCommandYes;
 
@@ -844,7 +845,7 @@ s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
 #endif
 
 /// Selects icons 0x20 and 0x21 (Coins, Lucky Medals) centered on row 17.
-/// selection: initial position; return the selected position.
+/// selection: initial position; returns the selected position.
 s32 Menu_SelectCoinsOrMedals(s32 selection) {
   s32 result;
 

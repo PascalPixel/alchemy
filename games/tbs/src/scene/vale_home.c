@@ -156,7 +156,7 @@ static void Event_AskAboutMeditation(void) {
   Engine_EventEnd();
 }
 
-/// Discuss the difficult events of three years ago.
+/// Discusses the difficult events of three years ago.
 static void Event_RecallThreeYearsAgo(void) {
   Engine_EventBegin();
   Engine_EventSetMessage(MsgValeADifficultTimeThreeYears);
@@ -330,7 +330,7 @@ static void Event_DemonstrateLevitation(void) {
   Engine_EventEnd();
 }
 
-/// Discuss whom the party should follow and help after the storm.
+/// Discusses whom the party should follow and help after the storm.
 static void Event_TalkAboutHelping(void) {
   Engine_EventBegin();
   Engine_ActorFaceEachOther(16, ACTOR_PARTY_LEADER, 10);
@@ -1409,8 +1409,8 @@ static void ValeHome_UpdateActor20Psynergy(void) {
   ValeHome_CyclePsynergyPalette(Object_GetById(20));
 }
 
-/// Arriving by entrance 99, a debug entrance: set a preset of story flags,
-/// which differs by edition, and leave by exit 40.
+/// Arriving by entrance 99, a debug entrance: sets a preset of story flags,
+/// which differs by edition, and leaves by exit 40.
 static void ValeHome_SetProgressFlagsAndExit(void) {
   Engine_GameFlagSet(352);
   Engine_GameFlagSet(0x16d);

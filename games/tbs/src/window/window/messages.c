@@ -4,12 +4,12 @@
 
 #include "../window_internal.h"
 
-/// Decodes message into buf (a u16 string) with no length limit.
+/// Decodes message into text (a u16 string) with no length limit.
 void Ui_AdjustValueWithoutLimit(s32 message, u16 *text) {
   UiText_DecodeMessage(message, text, 0x7fffffff);
 }
 
-/// Decodes message key into destination as a zero-terminated string of at most
+/// Decodes message into destination as a zero-terminated string of at most
 /// capacity entries, and returns its length.
 /// capacity counts halfwords including the terminator and must be at least 1.
 s32 UiText_CopyMessageString(s32 message, u16 *destination, u32 capacity) {

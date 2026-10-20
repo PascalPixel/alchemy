@@ -97,7 +97,7 @@ Kolima_InitializeCursedVillagers(struct ScenePlacement *placements) {
   }
 }
 
-/// Move, enlarge and release one bridge fragment after its lifetime.
+/// Moves, enlarges and releases one bridge fragment after its lifetime.
 static s32 Kolima_UpdateFallingDebris(struct ScriptInterpreter *interpreter) {
   struct FieldActor *debris = (struct FieldActor *)interpreter;
   debris->x.fixed += debris->velocityX;
@@ -157,7 +157,7 @@ const struct ScenePlacement *Kolima_GetPlacements(void) {
   return gKolimaPlacements;
 }
 
-/// Offers sanctum services to a north-facing leader, or discuss the trees.
+/// Offers sanctum services to a north-facing leader, or discusses the trees.
 static void Kolima_TalkToHealer(void) {
   struct FieldActor *leader = Object_GetById(0);
   s32 facing = leader->facing;
@@ -1038,7 +1038,7 @@ static void Kolima_WitnessForestCurse(void) {
   do {
     Engine_TaskWait(1);
   } while (gFallingEffectState != 0);
-  // Hear the trees debate the party\'s immunity to Tret\'s glamour.
+  // Hear the trees debate the party's immunity to Tret's glamour.
   Kolima_ShowMessageAndWait(17, 80);
   Kolima_ShowMessageAndWait(18, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 1, 0);
@@ -1120,7 +1120,7 @@ static void Kolima_WitnessForestCurse(void) {
   Kolima_ShowMessageAndWait(18, 10);
   Kolima_NodTogether();
   Engine_EventWait(60);
-  // End the forest\'s appeal and let the party decide whether to help.
+  // End the forest's appeal and let the party decide whether to help.
   Event_ShowMessage(18, 0);
   Event_ShowMessage(17, 0);
   Engine_TaskRemoveCallback(Kolima_UpdateCurseDust);

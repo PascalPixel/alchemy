@@ -90,7 +90,7 @@ static void Imil_ShowFirstArrival(void);
 static void Imil_MiaSaysFarewellToApprentices(void);
 static void Imil_RunIceSlide(void);
 
-/// View the table as signed halfwords.
+/// The position (x, y, z) the unused arc and sway effects move around.
 extern s32 gImil_ArcOrigin[];
 
 /// A sick person shivers: a quick squash, then a pause, longer for the old man.
@@ -777,7 +777,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Actor_SetAttachedEffect(MIA, EMOTE_IN_FRONT | 2);
   Engine_EventWait(40);
   Engine_ActorRunRepeatedMotion(MIA, 1);
-  // Mia checks on the oldMan while the party enters the house.
+  // Mia checks on the old man while the party enters the house.
   Engine_EventSetMessage(MSGNO(MsgImilHowFeeling));
   Event_ShowMessageAndWait(MIA, 0, 20);
   Actor_SetActionScript(ACTOR_OLD_MAN, table);
@@ -793,7 +793,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Event_ShowMessageAndWait(MIA, 0, 10);
   Actor_SetActionScript(ACTOR_OLD_MAN, table);
 
-  // Play the healing effect, then let the oldMan respond.
+  // Play the healing effect, then let the old man respond.
   Imil_MiaCastsPlyOnOldMan();
   Actor_ShowEmote(MIA, EMOTE_IN_FRONT | 1, 60);
   Event_ShowMessageAndWait(MIA, 0, 40);
@@ -929,7 +929,7 @@ UNUSED static void Imil_UpdateCountdownArc(struct FieldActor *actor) {
   }
 }
 
-/// Sway an unused actor and occasionally emit a rising spark.
+/// Sways an unused actor and occasionally emits a rising spark.
 UNUSED static void Imil_SwayAndSpark(struct FieldActor *actor) {
   s32 pos[3];
   struct FieldActor *spark;
@@ -995,7 +995,7 @@ static void Imil_InitializeRisingEffect(struct FieldActor *work) {
   work->scaleY = Q16_ONE / 2;
 }
 
-/// Moves and enlarge an ambient effect, then releases it when its timer
+/// Moves and enlarges an ambient effect, then releases it when its timer
 /// expires.
 static void Imil_UpdateRisingEffect(union FieldObject *object) {
   object->effect.x += (s16)object->effect.spin << 8;

@@ -1754,7 +1754,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   GameFlag_Set(FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL);
 }
 
-/// Returns the captain's lucky anchor and agree to protect the ship.
+/// Returns the captain's lucky anchor and agrees to protect the ship.
 static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   struct FieldActor *actor;
   s32 requestA;
@@ -2906,7 +2906,7 @@ static void TolbiShipInteriors_PlaceActor(s32 actorId, s32 x, s32 z,
   Object_GetById(actorId)->facing = facing;
 }
 
-/// Moves the camera, optionally wait or redraws, then honor the packed delay.
+/// Moves the camera, optionally waits or redraws, then honors the packed delay.
 static void TolbiShipInteriors_MoveCameraAndWait(s32 x, s32 y, s32 z,
                                                  u32 flags) {
   u32 selected;

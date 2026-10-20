@@ -146,7 +146,7 @@ static void TolbiSpring_AskAboutFirstDiceGame(s32 actorId) {
   Engine_EventShowMessage(actorId, 0);
 }
 
-/// Reveal the spring once, then position the leader to toss into it.
+/// Reveals the spring once, then positions the leader to toss into it.
 static void TolbiSpring_TossCoinOrMedal(void) {
   s32 leader = gGameState.selectedActor;
 
@@ -189,7 +189,7 @@ const struct SceneEvent *TolbiSpring_GetEvents(void) {
   return gTolbiSpringEventsOther;
 }
 
-/// Prepares the spring or settle rewards from the nearby games.
+/// Prepares the spring or settles rewards from the nearby games.
 s32 TolbiSpring_Initialize(void) {
   s32 coinChange;
   s8 *wonPrizes;
@@ -821,7 +821,7 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
   }
 }
 
-/// Set whether the specified actor draws its sprite.
+/// Sets whether the specified actor draws its sprite.
 static void TolbiSpring_SetSpriteStorageKind(s32 actorId, s32 storageKind) {
   struct FieldActor *actor = Object_GetById(actorId);
 

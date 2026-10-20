@@ -6,7 +6,10 @@
 #include "../menu_internal.h"
 
 /// Replaces the four displayed objects and starts their projected-position
-/// task.
+/// task: one Djinni figure of each element (gFourObjectMotion_ResourceIds) in
+/// animation 2, at (16, 32) until the screen moves them, placed each frame by
+/// FourObjectMotion_UpdateAllPositions. The Status menu calls it when the
+/// party has Djinn; FourObjectMotion_ClearSlotsAndSchedule releases them.
 void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1) {
   struct FourObjectMotionState *state = gMenuWork;
   s32 index;
@@ -34,7 +37,10 @@ void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1) {
   Scheduler_AddOrUpdateCallback(FourObjectMotion_UpdateAllPositions, 0xc80);
 }
 
-/// Releases the four objects and removes their scheduler callback.
+/// Releases the four objects and removes their scheduler callback. It defines
+/// FourObjectMotion_ClearSlotsAndSchedule (the Status menu's row) and
+/// FourObjectMotion_ClearSlotsAndScheduleAlt (the Djinn menu's), which
+/// schedule nothing despite their names.
 #define FOUR_OBJECT_MOTION_DEFINE_RELEASE(name, update)                        \
   void name(void) {                                                            \
     struct FourObjectMotionState *state = gMenuWork;                           \
@@ -56,11 +62,16 @@ FOUR_OBJECT_MOTION_DEFINE_RELEASE(FourObjectMotion_ClearSlotsAndSchedule,
                                   FourObjectMotion_UpdateAllPositions)
 
 /// Full size, 1.0 in 16.16, and the height the figures are placed from: 482
-/// pixels, in 16.16.
+/// pixels, in 16.16. As for the party figures
+/// (Menu_UpdateEntryObjectTransforms), the height is 482 less the origin and
+/// the ground lies that far below the row, so the image stands at its row.
 #define FOUR_OBJECT_MOTION_FULL_SCALE 0x10000u
 #define FOUR_OBJECT_MOTION_ORIGIN_Y 0x01e20000u
 
 /// Projects the four objects at full scale from their saved row positions.
+/// Scheduler callback, each frame from FourObjectMotion_InitializeTopRow. The
+/// image stands at (positionsX, positionsY); verticalOrigins, which is the
+/// party figures' ownerY, only moves the depth slot.
 void FourObjectMotion_UpdateAllPositions(void) {
   struct FourObjectMotionState *state = gMenuWork;
   s32 index;
@@ -90,6 +101,10 @@ void FourObjectMotion_UpdateAllPositions(void) {
 }
 
 /// Projects the bottom row using its saved scale or easing toward full size.
+/// Scheduler callback, each frame from FourObjectMotion_InitializeBottomRow
+/// (the Djinn menu); it also animates the page arrows. A figure whose y has
+/// FourObjectMotion_SetSlotPosition's negative mark (a recovering Djinni)
+/// faces 0x8000 instead of 0x4000.
 void FourObjectMotion_UpdateBottomRow(void) {
   struct FourObjectMotionState *menu = gMenuWork;
   s32 objectIndex;
@@ -112,6 +127,8 @@ void FourObjectMotion_UpdateBottomRow(void) {
       register s32 rowY asm("r2");
 
       object->image.priority = 0;
+      // A negative phase is a fixed scale of -phase; otherwise the scale
+      // closes a third of its gap to full size (0x10000) each frame.
       phase = menu->phases[objectIndex];
       if (phase < 0) {
         scale.x = -phase;
@@ -136,7 +153,10 @@ void FourObjectMotion_UpdateBottomRow(void) {
   } while (objectIndex <= 3);
 }
 
-/// Replaces the bottom row's four objects and starts its easing task.
+/// Replaces the bottom row's four objects and starts its easing task: one
+/// Djinni figure of each element in animation 2, at full size, at (16, 200)
+/// below the screen until the Djinn menu moves one. DjinnMenu_Run calls it
+/// and FourObjectMotion_ClearSlotsAndScheduleAlt releases them.
 void FourObjectMotion_InitializeBottomRow(s32 unused0, s32 unused1) {
   struct FourObjectMotionState *state = gMenuWork;
   s32 index;
@@ -163,7 +183,10 @@ void FourObjectMotion_InitializeBottomRow(s32 unused0, s32 unused1) {
   Scheduler_AddOrUpdateCallback(FourObjectMotion_UpdateBottomRow, 0xc80);
 }
 
-/// Updates one object's saved position and its signed y marker.
+/// Updates one object's saved position and its signed y marker: with negative
+/// set, y keeps its low bits but gets bit 15, which makes it negative. Does
+/// nothing to an empty slot. Returns the work offset of positionsY[index]
+/// (0x23c + 2 * index), or index for an empty slot; callers ignore it.
 s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative) {
   struct FourObjectMotionState *state = gMenuWork;
 
@@ -175,6 +198,9 @@ s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative) {
   return index;
 }
 
+/// Sets figure index's scale phase (16.16): negative for a fixed scale of
+/// -phase, otherwise the scale it grows from toward full size. The Djinn
+/// chooser sets 0 after each cursor move, so the figure grows in again.
 s32 FourObjectMotion_SetSlotPhase(s32 index, s32 phase) {
   ((struct FourObjectMotionState *)gMenuWork)->phases[index] = phase;
 #ifdef UBFIX
@@ -182,7 +208,9 @@ s32 FourObjectMotion_SetSlotPhase(s32 index, s32 phase) {
 #endif
 }
 
-/// Replaces one displayed object and selects its animation.
+/// Replaces one displayed object and selects its animation: figure index
+/// becomes the Djinni figure of element resourceKind
+/// (gFourObjectMotion_ResourceIds) in animation value. Returns 1.
 s32 FourObjectMotion_ReplaceSlot(s32 index, s32 resourceKind, s32 value) {
   struct FourObjectMotionState *state = gMenuWork;
 

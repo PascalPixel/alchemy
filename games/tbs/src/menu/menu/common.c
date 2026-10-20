@@ -8,7 +8,7 @@
 
 // The status panel's name and ailment column starts further left in the
 // international editions, whose ailment labels are longer, and so does
-// "Cannot equip".
+// "Can't equip" (MsgCannotEquip).
 #if TBS_PATCH_1
 #define STATUS_PANEL_TEXT_X 32
 #define STATUS_PANEL_CANNOT_EQUIP_X 0
@@ -33,12 +33,15 @@
 #define WINDOW_STYLE_MASK 0xff
 
 /// Resumes the overlay tasks and tile animations when a menu closes, and
-/// clears game flags 0x166 and 0x152.
+/// clears game flags 0x166 and 0x152: undoes Menu_SuspendFieldTasks. Called
+/// as DjinnMenu_Run and StatusMenu_Run close, and as ItemMenu_Run
+/// (TBS_PATCH_1) and PsynergyMenu_Run (TBS_PATCH_2) close.
 /// Returns nothing useful; callers ignore the value.
 s32 Menu_ResumeFieldTasks(void) {
   Scheduler_ResumeOverlayTasks();
   MapAnimation_ResumeFar();
-  // Flag 0x166: its meaning is not known yet.
+  // Flag 0x166, while set, freezes the field weather: its particles hold
+  // their frame and the storm's lightning waits (psynergy_effects/weather.c).
   GameFlag_ClearBitFar(0x166);
   // Flag 0x152, while set, stops BattlePalette_UpdateBlend.
   GameFlag_ClearBitFar(0x152);
@@ -48,7 +51,10 @@ s32 Menu_ResumeFieldTasks(void) {
 }
 
 /// Suspends the overlay tasks and tile animations while a menu is open, and
-/// sets flags 0x152 and 0x166. Returns the scheduler's result.
+/// sets flags 0x152 and 0x166, so that the field's palette blend and weather
+/// stand still behind it (see Menu_ResumeFieldTasks, which undoes it). Returns
+/// Scheduler_SuspendOverlayTasks' result, the last task index changed or -1;
+/// callers ignore it.
 s32 Menu_SuspendFieldTasks(void) {
   GameFlag_SetBitFar(0x152);
   GameFlag_SetBitFar(0x166);
@@ -57,7 +63,9 @@ s32 Menu_SuspendFieldTasks(void) {
 }
 
 /// Clears the whole menu work and sets its defaults: no pane selected, one
-/// entry in each pane, and a 1x1 cursor grid.
+/// entry in each pane, and a 1x1 cursor grid. Each screen's run function calls
+/// it once the menu work's heap block is allocated, so every window handle and
+/// icon pointer in the work starts as NULL.
 void UiWindow_InitializeWork(s32 unused) {
   struct InventoryMenuState *work = gMenuWork;
 
@@ -108,12 +116,17 @@ static inline void Owner_Copy(struct BattleUnit *destination,
   _call_via_r3(destination, source, sizeof(struct BattleUnit), IwramCopyWords);
 }
 
-/// Draws the item menu's status panel for the party member owner (window at
-/// tile 0,5, 13 by 12): the name, up to two ailments or the level, and below
-/// them what mode's panel kind asks for. slot is the inventory slot of the
-/// item the panel is about, for the equipment and Psynergy item panels. The
-/// first parameter, the status window, is not used: the window is the menu
-/// work's.
+/// Draws the status panel of the Item and Psynergy screens for the party
+/// member owner (window at tile 0,5, 13 by 12): the name, up to two ailments
+/// or the level, the member's portrait, and below them what mode's panel kind
+/// asks for. slot is the inventory slot of the item the panel is about, for
+/// the equipment and Psynergy item panels. The first parameter, the status
+/// window, is not used: the window is the menu work's.
+///
+/// Opens the window on first use and keeps it in the work's statusWindow;
+/// unless mode has STATUS_PANEL_LOWER_ONLY, the portrait it creates replaces
+/// the work's cursor. The equipment panel equips the item on the real unit for
+/// a moment and puts the unit back from a heap copy it frees before returning.
 void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
                                s32 mode) {
   s32 created;
@@ -139,6 +152,8 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
   // The name, then each ailment the member has, one row each; the level
   // takes the third row when no more than one ailment is shown.
   if (!(mode & STATUS_PANEL_LOWER_ONLY)) {
+    // A window that already existed still shows the last member: clear its
+    // top 88 by 32 pixels a frame later. A new window is blank.
     if (!created) {
       WaitFrames(1);
       UiWindow_ClearInteriorTilesFar(state->statusWindow, 0, 0, 88, 32);
@@ -225,6 +240,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
     s32 known = 0;
     s32 i;
 
+    // Whether the member already knows it, from any of the 32 action slots.
     for (i = 0; i < 32; i++) {
       if ((unit->actionSlots[i].encodedAction & OWNER_ACTION_ID_MASK) ==
           psynergy) {
@@ -430,7 +446,8 @@ void UiText_DrawStatComparison(const struct BattleUnit *after,
 #define ICON_TILE_BYTES 0x80
 
 /// Creates a hand cursor sprite in window at (x, y), loading the hand's tiles
-/// into a free VRAM block. Returns the sprite, or 0 when no block is free.
+/// into a free VRAM block. Returns the sprite, or 0 when the free block found
+/// is block 0 (see UiIcon_CreateWithResourceVariant).
 /// Nothing calls it; UiIcon_CreateWithResourceVariant is the one in use.
 UNUSED s32 UiIcon_CreateWithResource(struct UiWindow *window, s32 unused, s32 x,
                                      s32 y) {
@@ -446,14 +463,20 @@ UNUSED s32 UiIcon_CreateWithResource(struct UiWindow *window, s32 unused, s32 x,
 }
 
 /// Creates the menu's hand cursor sprite in window at (x, y), loading the
-/// hand's tiles into a free VRAM block. Returns the sprite, or 0 when no
-/// block is free.
+/// hand's tiles into a free VRAM block. Returns the sprite, or 0 when the free
+/// block found is block 0. Reached from UiMenu_CreateCursor, from
+/// PsynergyMenu_CreateEntryGrid, which nothing calls, and through an overlay
+/// veneer in MENU.S.
 s32 UiIcon_CreateWithResourceVariant(struct UiWindow *window, s32 x, s32 y) {
   s32 block;
   s32 icon;
 
   icon = 0;
   block = Resource_FindFreeEntry();
+  // XXX: likely meant as the no-free-block test, because 0 is a valid block:
+  // Resource_FindFreeEntry returns VRAM_CACHE_ENTRY_COUNT (96) when none is
+  // free, which ItemMenu_SelectGiveQuantity tests. With none free, the sprite
+  // is created on block 96, which VramCache_Load refuses.
   if (block != 0) {
     VramCache_Load(block, ICON_TILE_BYTES, gUiIcon_ResourceTiles);
     icon = (s32)RenderOutput_CreateFar(block, ICON_SPRITE_16X16, window, x, y);
@@ -479,7 +502,12 @@ void PsynergyMenu_CallIconRoutineWithValue(const void *unused, s32 unit) {
 }
 
 /// Opens the menu's top-left window (13 by 5 tiles) and puts the hand cursor
-/// in it, hidden for now. Selects no tab yet. Returns the window.
+/// in it, hidden for now, as paneIcon[0]. Selects no tab yet (the s8
+/// tabIndex[0] = 255 reads as -1). Returns the window, which
+/// ItemMenu_Initialize (the Item, Psynergy and Djinn screens) and
+/// Menu_InitSelectorCursorAndEntries (the Status screen and the member
+/// chooser) pass on to PsynergyMenu_InitializeEntryObjects for the party
+/// figures.
 struct UiWindow *UiMenu_CreateCursor(void *source) {
   struct PsynergyMenuState *work = source;
   struct UiWindow *window;
@@ -496,9 +524,14 @@ struct UiWindow *UiMenu_CreateCursor(void *source) {
   work->tabIndex[0] = 255;
   work->tabIndex[1] = zero;
   work->paneIcon[0] = cursor;
+  // sentinel is the depth slot an icon is drawn at: the hand at 254, with
+  // the glyphs.
   sentinel = 254;
   cursor->sentinel = sentinel;
   sentinel -= 255;
+  // paneIcon[1] gets slot 255. Nothing in TBS stores paneIcon[1], so it is
+  // still NULL from UiWindow_InitializeWork and this byte goes to address 0xf,
+  // in the BIOS, which ignores writes.
   work->paneIcon[1]->sentinel = sentinel; // -1
   return window;
 }
@@ -507,7 +540,9 @@ struct UiWindow *UiMenu_CreateCursor(void *source) {
 /// the window source: origin (originX, originY) in tiles from the window's
 /// corner, each figure 16 + spacing pixels after the last, at full scale.
 /// Clears the unused figure slots and starts the callback that places them
-/// every frame.
+/// every frame. Every screen of the field menu calls it as it opens, and the
+/// shops through PsynergyMenu_InitializeEntryObjectsFar;
+/// Menu_ReleaseEntryObjects frees the figures.
 void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
                                          s32 spacing, s32 unused) {
   u16 ownerIds[14];
@@ -543,6 +578,8 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
   for (; i < 8; i++) {
     menu->tabObjects[i] = 0;
   }
+  // 200 << 4 is 0xc80, SCHEDULER_KEY_MAIN_LOOP: once a frame in the main
+  // loop, rank 0x80.
   {
     s32 priority = 200;
     priority <<= 4;
@@ -587,7 +624,10 @@ void Menu_UpdateEntryObjectTransforms(void) {
   count = (u16)Party_CountActiveOwnersFar();
   for (i = 0; i < count; i++) {
     struct AnimationObject *figure = menu->tabObjects[i];
-    // 482 less the row's screen y, in 16.16.
+    // 482 less the row's screen y, in 16.16. The ground y is always 482,
+    // which puts every figure in the same depth slot ((482 >> 1) + 10 = 251,
+    // Render_ApplyProjectedPlacement), and raising the image by this height
+    // brings it back up to its row.
     s32 placeY = 0x01e20000 - (menu->rowPositions[i] << 16);
 
     if (figure != 0) {
@@ -649,6 +689,10 @@ void UiMenu_SlideCursor(s32 x, s32 y) {
   }
   x += 64;
   y += 64;
+  // Take the 8-pixel window border off the start, which is in screen pixels,
+  // so that it compares with the target inside the window. The window's own
+  // place is not taken off: right for the top-left window at tile 0,0 that
+  // UiMenu_CreateCursor opens.
   if (cursor->x - 8 > 0)
     cursor->x -= 8;
   fineY = cursor->y;
@@ -960,6 +1004,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
     AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
     if (--*page < 0)
       *page = pages - 1;
+    // Past the end of a shorter last page: onto its last entry.
     if (*cursor + *page * pageSize > count - 1) {
       *cursor = count - *page * pageSize - 1;
       if (*cursor > pageSize - 1)
@@ -984,6 +1029,9 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   }
   if (previous) {
     AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+    // Back past the first row wraps to the page's last entry: its last row,
+    // or the list's last entry on a shorter last page. The first store is
+    // overwritten at once.
     if (--*cursor < 0) {
       *cursor = pageSize - 1;
       *cursor = count - *page * pageSize - 1;
@@ -995,6 +1043,8 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   result = -1;
   if (next == 0)
     return result;
+  // Forward past the list's last entry or the page's last row wraps to the
+  // first row.
   {
     AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
     result = 0;
@@ -1008,17 +1058,22 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
 
 /// Copies the last background palette (15) into background palette bank and
 /// lightens its colour 4 by 9 steps in each channel: the highlight colour of
-/// the menu's selected rows.
+/// the menu's selected rows. Each screen sets up bank 14 as it opens, and again
+/// after the Details window has borrowed it (Menu_SelectQuantity); only
+/// Item_PrepareUsePalette, which nothing calls, uses bank 13.
 void Palette_LightenBankHighlight(s32 bank) {
   u16 *palette = (u16 *)&BG_PLTT_COLOR(bank, 0);
   u32 red;
   u32 green;
   u32 blue;
 
+  // Both transfers copy the same 32 bytes, first as 16 halfwords and then as
+  // 8 words.
   Dma_Set((const void *)&BG_PLTT_COLOR(15, 0), palette, DMA_ENABLE << 16 | 16,
           REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(15, 0), palette,
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
+  // BGR555: five bits a channel, 0 to 31, red lowest.
   blue = palette[4] >> 10;
   green = (palette[4] >> 5) & 31;
   red = palette[4] & 31;
@@ -1071,7 +1126,10 @@ void Menu_DrawPageIndicator(struct UiWindow *window, s32 itemCount,
 /// (the highlight made by Palette_LightenBankHighlight): palette is the new
 /// palette number. Only bit 12 of each map entry is cleared before it is set,
 /// so this works between those two palettes. (x, y) and the size are in tiles
-/// inside the window's border; the rectangle is clipped to the screen.
+/// inside the window's border; the rectangle is clipped to the screen's 30
+/// columns, and to its 20 rows only when it reaches row 29 (see the body).
+/// Used for the highlighted rows of the item, Psynergy and Status lists.
+/// Marks the whole tilemap for upload.
 void Render_SetTilemapFlagRect(const struct UiWindow *window, s32 x, s32 y,
                                s32 width, s32 height, u32 palette) {
   struct UiRenderWork *work = (struct UiRenderWork *)gWindowWork[0];
@@ -1091,6 +1149,11 @@ void Render_SetTilemapFlagRect(const struct UiWindow *window, s32 x, s32 y,
     height += y;
     y = 0;
   }
+  // The test is the columns' (past 29) but the clip is to the screen's 20
+  // rows, so a rectangle ending in rows 20 to 28 would be kept whole and
+  // write past the 32 by 20 tilemap into the windows after it. No caller
+  // reaches row 20: the lowest is row 18, in the Status menu's equipment
+  // window.
   if (y + height > 29) {
     height = 20 - y;
   }
@@ -1117,7 +1180,12 @@ void Render_SetTilemapFlagRect(const struct UiWindow *window, s32 x, s32 y,
 }
 
 /// Copies the first sprite palette into background palette 14, then colour 4
-/// of background palette 15 over its colour 14.
+/// of background palette 15, the window's row colour, over its colour 14 (as
+/// StatusMenu_Run does for palettes 0 and 1). The Details window draws its
+/// element icons (window tiles 1 to 4) in palette 14, so Menu_SelectQuantity
+/// calls this first, as do ItemMenu_OpenDetail and Item_PrepareUsePalette,
+/// which nothing calls. It replaces the row highlight until
+/// Palette_LightenBankHighlight(14) makes it again.
 void Palette_CopyObjectBankToBackground14(void) {
   Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(14, 0),
           DMA_ENABLE << 16 | 16, REG_DMA3);
@@ -1125,9 +1193,10 @@ void Palette_CopyObjectBankToBackground14(void) {
           DMA_ENABLE << 16 | 1, REG_DMA3);
 }
 
-/// Shows the item icons of one page of the item list: entries first to
-/// first + pageSize - 1, one row of 16 pixels each from (x, y). Hides all the
-/// others.
+/// Shows the icons of one page of a list, one row of 16 pixels each from
+/// (x, y): entries first to first + pageSize - 1, stopping early at an empty
+/// icon slot or the work's itemCount. Hides all the others. Used by the item
+/// and Psynergy lists and the Status screen's lists.
 void Menu_SetPageIcons(s32 pageSize, s32 first, struct UiWindow *window, s32 x,
                        s32 y) {
   struct InventoryMenuState *menu = gMenuWork;
@@ -1150,10 +1219,12 @@ void Menu_SetPageIcons(s32 pageSize, s32 first, struct UiWindow *window, s32 x,
   }
 }
 
-/// Writes the party's coins and the "Coins" label into window.
+/// Writes the party's coins and the "Coins" label into window: the info
+/// window of the Item and Psynergy screens' member choice.
 void UiText_DrawWorkValueWithLabel(struct UiWindow *window) {
   UiText_DrawNumberAtOffsetFar(gGameState.coins, 7, window, 8, 0);
   UiText_DrawCharacterAtOffsetFar(MsgCoinsLabel, window, 64, 0);
+  // Only the Japanese editions draw a vertical divider at tile column 12.
 #if !TBS_PATCH_1
   UiWindow_DrawDividerLineFar(window, 12, 0, 12, 2);
 #endif
@@ -1170,15 +1241,21 @@ void UiWindow_SetBounds(struct UiWindow *window, s32 x, s32 y, s32 width,
   }
 }
 
+/// Holds back the window tilemap's upload (menuBusy), so that what a menu
+/// draws meanwhile appears at once when UiWork_ClearMenuBusy lets it go.
+/// Nothing calls it: the screens set menuBusy themselves.
 void UiWork_SetMenuBusy(void) {
   ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 1;
 }
 
-/// Lets the window renderer resume drawing after a menu update.
+/// Lets the window tilemap be uploaded again after UiWork_SetMenuBusy.
+/// Nothing calls it.
 void UiWork_ClearMenuBusy(void) {
   ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 0;
 }
 
+/// Plays cue (a sound or a song) and returns 1. Called by
+/// Ability_PlayUseAnimation, which ignores the value.
 s32 Audio_PlayCueReturnOne(s32 cue) {
   AudioCommand_PlayFar(cue);
   return 1;
@@ -1195,9 +1272,11 @@ void Menu_CancelSoundTick(void) {
 }
 
 /// Starts watching for Start: clears FLAG_MENU_START_PRESSED and adds
-/// Menu_CancelSoundTick.
+/// Menu_CancelSoundTick. ItemMenu_Run, PsynergyMenu_Run and StatusMenu_Run
+/// call it before their command loops and Menu_EnsureCancelSound after them.
 void Menu_CancelSoundReset(void) {
   GameFlag_ClearBitFar(FLAG_MENU_START_PRESSED);
+  // SCHEDULER_KEY_MAIN_LOOP: once a frame in the main loop.
   Scheduler_AddOrUpdateCallback(Menu_CancelSoundTick, 0xC80);
 }
 
@@ -1208,11 +1287,15 @@ void Menu_EnsureCancelSound(void) {
   }
 }
 
-/// Sets the window text colour: normal (15), no HP (2) and low HP (4).
+/// Makes the text drawn after it colour 15 (TEXT_COLOR_NORMAL). Nothing calls
+/// it or the two after it; the status panel sets its colours with
+/// UiWork_SetParamNibbleFar.
 void UiPalette_SetColor15(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL); }
 
+/// Makes the text drawn after it colour 2 (TEXT_COLOR_NO_HP).
 void UiPalette_SetColor2(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_NO_HP); }
 
+/// Makes the text drawn after it colour 4 (TEXT_COLOR_LOW_HP).
 void UiPalette_SetColor4(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_LOW_HP); }
 
 #undef STATUS_PANEL_TEXT_X

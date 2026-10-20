@@ -75,20 +75,31 @@ extern u8 IwramCopyWords[];
 s32 _call_via_r3(void *, void *, s32, void *);
 
 /// BattleAct.flags: where an ability or item can be used, as the Psynergy
-/// list says ("Usable in the field", "Usable in battle").
+/// list says ("Usable in the field", "Usable in battle"). The same values as
+/// enum BattleActionUse (battle_unit.h), which these macros shadow here.
 #define ACTION_USABLE_IN_FIELD 0x40
 #define ACTION_USABLE_IN_BATTLE 0x80
 
 /// Game flags of the menus. Start was pressed: every menu screen unwinds and
-/// the whole menu closes.
+/// the whole menu closes. Menu_CancelSoundReset clears it and
+/// Menu_CancelSoundTick sets it.
 #define FLAG_MENU_START_PRESSED 0x150
 /// The info window holds a message the next selection must not draw over.
+/// InventoryMenu_ShowModalMessage sets it; the next chooser that would draw
+/// into the info window clears it instead (see the BUG in
+/// PsynergyMenu_DrawDetailPage).
 #define FLAG_MENU_INFO_KEPT 0x151
 
-/// The target id of Psynergy or an item used on the whole party.
+/// The target id the Psynergy screen passes for an action whose range is
+/// ABILITY_RANGE_ALL. It is no unit's id: BattleEffect_ApplyToTargets starts
+/// from unit 0 in its place, and visits every member because of the range, not
+/// this id. The Item screen never passes it: a whole-party item is used with
+/// the work's paneOwner[1] as it stands (ItemMenu_Use), and its range alone
+/// reaches every member.
 #define MENU_TARGET_WHOLE_PARTY 9
 
-/// The bytes of the menu work, heap block HEAP_SLOT_MENU.
+/// The bytes of the menu work, heap block HEAP_SLOT_MENU. Each screen's run
+/// function takes the block as it opens and releases it as it closes.
 #define MENU_WORK_SIZE 0xa70
 
 /// Inventory icons occupy five columns in the fifteen-slot list.
@@ -98,11 +109,15 @@ s32 _call_via_r3(void *, void *, s32, void *);
 /// byte of its mode.
 enum StatusPanelKind {
   STATUS_PANEL_EXPERIENCE = 0, ///< class, HP, PP and experience
-  STATUS_PANEL_EQUIP = 2,      ///< stats if the item were equipped
-  STATUS_PANEL_LEARN = 4,      ///< the Psynergy a Psynergy item teaches
-  STATUS_PANEL_CLASS = 6,      ///< class, HP and PP
-  STATUS_PANEL_STATS = 8,      ///< Attack, Defense, Agility and Luck
+  /// Stats if the item were equipped, or removed when equipPreview is set.
+  /// Kind 3 draws the same.
+  STATUS_PANEL_EQUIP = 2,
+  STATUS_PANEL_LEARN = 4, ///< the Psynergy a Psynergy item teaches
+  STATUS_PANEL_CLASS = 6, ///< class, HP and PP
+  STATUS_PANEL_STATS = 8, ///< Attack, Defense, Agility and Luck
 };
+/// The panel kind in Menu_DrawOwnerStatusPanel's mode; the bits above it are
+/// STATUS_PANEL_LOWER_ONLY.
 #define STATUS_PANEL_KIND_MASK 0xff
 /// Keeps the open window, the name and the ailments, and redraws only the
 /// part below them.
@@ -125,18 +140,22 @@ enum StatusPanelKind {
 #endif
 
 // Text colours of the status panel's numbers.
-#define TEXT_COLOR_LOW_HP 4 ///< HP under a quarter of the maximum
-#define TEXT_COLOR_NO_HP 2  ///< HP 0
-#define TEXT_COLOR_NORMAL 15
+#define TEXT_COLOR_LOW_HP 4  ///< HP under a quarter of the maximum
+#define TEXT_COLOR_NO_HP 2   ///< HP 0
+#define TEXT_COLOR_NORMAL 15 ///< the window text's default colour
 
 /// RenderOutput.active as the menu sets it: shown, or hidden but kept.
-#define ICON_SHOWN 1
-#define ICON_HIDDEN 13
+#define ICON_SHOWN 1   ///< UI_SPRITE_STILL
+#define ICON_HIDDEN 13 ///< UI_SPRITE_HIDDEN
 
-/// RenderOutput_CreateFar's sprite attributes for the menu's 16x16 icons.
+/// RenderOutput_CreateFar's sprite attributes for the menu's 16x16 icons:
+/// OAM attribute 0 in the low half (shape square) and attribute 1 in the high
+/// half (size 1).
 #define ICON_SPRITE_16X16 0x40000000
 
-/// The preview loop's four operations, as its confirmation text describes them.
+/// The preview loop's four operations, as its confirmation text describes them
+/// (OwnerAction_RunCompareLoop's mode). Trade and Give, the first two, have
+/// two members and the paged previews; Standby and Set one member.
 enum DjinnCompareOperation {
   DJINN_COMPARE_TRADE = 0,
   DJINN_COMPARE_GIVE = 1,

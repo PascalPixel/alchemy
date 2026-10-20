@@ -7,6 +7,15 @@
 
 /// Previews a give, trade, set or standby change without committing it.
 /// It saves and restores the unit records before polling for confirmation.
+///
+/// mode is a DjinnCompareOperation. Two 15 by 15 windows show the change and
+/// the top window asks "Is this OK?". For a give or trade R cycles three
+/// pages: both members' stats (the first), then the giver's and then the
+/// receiver's stats beside their Psynergy list; Left and Right turn the
+/// Psynergy list's pages. A set or standby shows the member's stats and
+/// Psynergy. Returns 1 for A, -1 for B and -2 for Start; the caller makes the
+/// change. The page counts are measured on the real units, which are put back
+/// from a copy at once.
 s32 OwnerAction_RunCompareLoop(u32 mode) {
   struct DjinnMenuWork *menu;
   struct DjinnMenuBackdrop *backdrop;
@@ -37,6 +46,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
   menu->cursor->active = ICON_HIDDEN;
   selectedPages[1] = 0;
 
+  // The party figures go below the screen (y 200), except the two members
+  // concerned: the first over the left window, the second over the right.
   for (ownerIndex = 3; ownerIndex >= 0; ownerIndex--) {
     menu->ownerY[ownerIndex] = 0xc8;
   }
@@ -149,6 +160,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     MemFree(diffWork);
   }
 
+  // Psynergy entries to pages of five.
   pageCounts[0] = ((pageCounts[0] - 1) / 5) + 1;
   if (pageCounts[0] == 0) {
     pageCounts[0] = 1;
@@ -185,6 +197,10 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
                                     128, 8);
   }
 
+  // The Djinni concerned, after its element icon (palette 5): in colour 2
+  // when it is not set. A trade adds the other Djinni below it; a set or
+  // standby shows the same Djinni again below in its new colour, with tile
+  // 0x296 of palette 15 between the two.
   row = (mode == DJINN_COMPARE_GIVE);
   if ((menu->pairEntries[0] & DJINN_ENTRY_IS_SET) == 0) {
     UiWork_SetParamNibbleFar(2);
@@ -234,6 +250,9 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     pressedKeys = gKeysPressed;
     repeatedKeys = gKeysRepeat;
 
+    // The tutorial presses A (1) for the player after 100 frames, or shows
+    // its messages; around each message the first 0x200 bytes of the window
+    // work (the tilemap's top eight rows) are saved and put back.
     if (backdrop->tutorialStep != 0) {
       s16 *saved;
       s32 size;
@@ -328,6 +347,9 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
       MemFree(saved);
     }
 
+    // The pages: 2 both members' stats, 0 the giver's stats and Psynergy, 1
+    // the receiver's. The help names what R shows next: "R: <giver>'s Psy"
+    // on page 2, the receiver's on page 0, "R: Status" on page 1.
     if (redraw != 0) {
       addPairSlot = 1;
       if (mode <= DJINN_COMPARE_GIVE) {
@@ -387,6 +409,9 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
       render->menuBusy = 0;
     }
 
+    // The Psynergy list's page numbers on the right window's top border:
+    // 0xf031 + n is the window font's digit n + 1 in palette 15 ('0' past the
+    // tenth page); less 0x1000, palette 14 for the page shown.
     if (page <= 1) {
       list = menu->secondWindow;
       if (pageCounts[page] > 1) {
@@ -414,6 +439,11 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
       }
     }
 
+    // The Djinni figures, at a fixed 3/4 size (phase -0xc000), move once a
+    // second: step runs 0 to 29 over frames 5 to 34 of each 60 and holds.
+    // A given Djinni slides right 2 pixels a step from x 34 while hopping up
+    // to 6 pixels (half a sine turn over the 30 steps); in a trade the other
+    // slides left from x 99 the same way, mirrored.
     frame++;
     step = (frame % 60) - 5;
     if (step < 0) {
@@ -445,12 +475,17 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
       FourObjectMotion_SetSlotPosition(0, 32, 30, 0);
     }
 
+    // No key moves confirmationChoice: the cursor stays on the first answer,
+    // so A always confirms and B cancels.
     if (redraw != 0) {
       redraw = 0;
       confirmationChoice = Menu_WrapIndex(confirmationChoice, 2);
     }
     UiMenu_PositionCursor(confirmationChoice * 56 + 80, 16);
 
+    // Blink the backdrop's frame tile: 0x060052c0 is tile 150 of BG character
+    // block 1 (DJINN_BACKDROP_FRAME_TILE), drawn and filled with colour 4 in
+    // turn every 4 frames.
     if ((frame & 3) == 0) {
       void *tile;
       u32 fill;
@@ -509,7 +544,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     WaitFrames(1);
   }
 
-  // Restore the ordinary list drawing tasks and close the preview panes.
+  // Restore the ordinary list drawing tasks and close the preview panes; the
+  // figures grow in again from phase 0.
   FourObjectMotion_SetSlotPhase(0, 0);
   FourObjectMotion_SetSlotPhase(1, 0);
   Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
@@ -529,6 +565,9 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
 }
 
 /// Shows the chosen owner's current stats and paged Psynergy list.
+/// Opened by L on the Djinn list ("Char. Status"): the member's stats on the
+/// left, their Psynergy six to a page on the right, which Left and Right turn.
+/// Returns -1 for A, B, L or R, and -2 for Start, which closes the Djinn menu.
 s32 DjinnMenu_ShowOwnerStatus(void) {
   s32 selectedPages[2];
   s32 pageCounts[2];
@@ -565,6 +604,8 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
     menu->ownerY[side] = 200;
   RenderOutput_ClearListFar(menu->listWindow);
   WaitFrames(1);
+  // Count the member's Psynergy by diffing their list with itself; saved is
+  // taken and given back unused.
   counts = pageCounts;
   counts[1] = counts[0] = 1;
   listedActions = Runtime_BumpAllocateAlternatePool(96);
@@ -621,6 +662,8 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
                                   window->width - 2, -1, 0);
       UiRender_MarkRow(render, window->y);
     }
+    // blink is worked out as the preview's step is, and not used; the Djinni
+    // figure stays below the screen.
     frame++;
     blink = frame % 60 - 5;
     CLAMP(blink, 0, 29);
@@ -677,6 +720,11 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
 
 /// Marks recipients that would leave unequal Djinn totals after a direct give.
 /// Returns how many recipients would need a trade instead.
+///
+/// requiresTrade[i] becomes 1 for each other member i who cannot take one of
+/// sourceOwnerColumn's Djinn without two members' totals differing by more
+/// than one (Djinn_CheckTurnBalance), else 0. The second Djinn chooser offers
+/// such a member only Trade.
 s32 Djinn_MarkBalancedEntries(s8 *requiresTrade, s32 sourceOwnerColumn) {
   s32 tradeCount;
   s32 ownerColumn;
@@ -704,7 +752,9 @@ s32 Djinn_MarkBalancedEntries(s8 *requiresTrade, s32 sourceOwnerColumn) {
 }
 
 /// Tests whether a hypothetical give leaves every pair of owners within one
-/// Djinn.
+/// Djinn. Returns 1 when, with one Djinni moved from sourceOwnerColumn to
+/// targetOwnerColumn, no two members' totals (Djinn_CountTurns) differ by
+/// more than one; 0 otherwise.
 s32 Djinn_CheckTurnBalance(s32 sourceOwnerColumn, s32 targetOwnerColumn) {
   struct DjinnMenuWork *menu;
   s8 ownedCounts[16];
@@ -736,7 +786,8 @@ s32 Djinn_CheckTurnBalance(s32 sourceOwnerColumn, s32 targetOwnerColumn) {
   return balanced;
 }
 
-/// Counts each owner's Djinn across its set and available bitmasks.
+/// Counts each owner's Djinn across its set and available bitmasks: writes
+/// every party member's total, set or not, into ownedCounts by list column.
 void Djinn_CountTurns(u8 *ownedCounts) {
   struct DjinnMenuWork *menu;
   struct BattleUnit *unit;

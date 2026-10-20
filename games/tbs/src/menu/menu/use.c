@@ -5,16 +5,24 @@
 
 #include "../menu_internal.h"
 
-/// Copies and lightens the palette used by the item-use animation.
+/// Copies the first sprite palette into background palette 14 and makes a
+/// highlight palette in bank 13. Nothing calls it.
 void Item_PrepareUsePalette(void) {
   Palette_CopyObjectBankToBackground14();
   Palette_LightenBankHighlight(13);
 }
 
-/// Reserved empty callback during an item's menu animation.
+/// Nothing calls it.
 void Item_UseNoOpCallback(void) {}
 
-/// Applies the slot's action, then consumes or transforms the item on success.
+/// Uses the item in ownerId's inventory slot on targetId, or on every member
+/// when its action's range is ABILITY_RANGE_ALL: applies its action at its
+/// plain power (BattleEffect_ApplyToTargets with fixedScale 1). When the action
+/// changed something, an item that is used up (ITEM_USE_CONSUMED) loses one
+/// from its stack and the menu's list is rebuilt, and Hermes' Water
+/// (ITEM_USE_EMPTIES, item 0xb8) becomes an Empty Bottle (0xb9). Returns 0, or
+/// -1 when nothing changed; the result message is left in the work's
+/// messageOffset. Called by ItemMenu_Use.
 s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
   struct InventoryMenuState *menu;
   s32 useResult;
@@ -44,10 +52,17 @@ s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
   return useResult;
 }
 
+/// Nothing calls it.
 s32 Item_ReturnOne(void) { return 1; }
 
-/// Applies healing or permanent-stat effects to one member or the whole party.
-/// The result message is kept in menu work; -1 reports that nothing changed.
+/// Applies the healing, curing, revival or lasting stat rise of action
+/// effectId, used by member sourceId, to targetId, or to every member when the
+/// action's range is ABILITY_RANGE_ALL. Item_Use passes fixedScale 1, the
+/// action's plain power; the Psynergy screen 0, which scales HP healing by the
+/// user's Power in the action's element (BattleRecoveryCalc). Leaves the result
+/// message in the work's messageOffset, counted from MsgItemUseResult ("You
+/// recovered all HP!"). Returns 0 after recalculating every member, or -1 when
+/// nothing changed.
 s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
                                 s32 fixedScale) {
   struct BattleAct *effect;
@@ -87,6 +102,11 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       target = UnitGetFar(targetId);
     }
 
+    // The ability's kind (flags bits 3..0). The result messages, counted from
+    // MsgItemUseResult: 0 all HP recovered, 1 some, 2 none, 3 everyone's, 4 HP
+    // already full; 5 all PP recovered, 6 some, 7 PP already full, 8
+    // everyone's; 10 and 11 poison purged or none; 12 and 13 revived or not
+    // down; 16 to 21 a stat raised.
     amount = effect->power;
     switch (effect->flags & 0xf) {
     case BATTLE_DAMAGE_HP_HEAL:
@@ -129,6 +149,9 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       }
       break;
 
+    // Kind 9: the stat items. The stat rises by power, less one a quarter of
+    // the time and plus one a quarter of the time (a roll of 0 to 3: 0 gives
+    // -1, 1 gives +1, 2 and 3 give 0); Luck rises by power alone.
     case 9:
       randomAdjust = (Random16() * 4) >> 16;
       if (randomAdjust == 0) {
@@ -140,33 +163,33 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       }
 
       switch (effectId & OWNER_ACTION_ID_MASK) {
-      case 0x104:
+      case 0x104: // Power Bread
         target->baseHp += amount + randomAdjust;
         messageOffset = 0x10;
         changed = 1;
         break;
-      case 0x105:
+      case 0x105: // Cookie
         target->basePp += amount + randomAdjust;
         messageOffset = 0x11;
         changed = 1;
         break;
-      case 0x108:
+      case 0x108: // Mint
         target->baseAgility += amount + randomAdjust;
         messageOffset = 0x12;
         changed = 1;
         break;
-      case 0x109:
+      case 0x109: // Lucky Pepper
         target->baseLuck += amount;
         messageOffset = 0x13;
         changed = 1;
         break;
-      case 0x106:
+      case 0x106: // Apple
         target->baseAttack += amount + randomAdjust;
         UiWork_PushValueSlotFar(3, 5);
         messageOffset = 0x14;
         changed = 1;
         break;
-      case 0x107:
+      case 0x107: // Hard Nut
         target->baseDefense += amount + randomAdjust;
         UiWork_PushValueSlotFar(4, 5);
         messageOffset = 0x15;
@@ -209,6 +232,7 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       break;
     }
 
+    // Then the ability's effect (enum AbilityEffect).
     switch (effect->effect) {
     case 1:
       if (target->hp <= 0 || target->hp == target->maxHp) {
@@ -258,6 +282,9 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       }
       break;
 
+    // Quartz's and Dew's revivals set no change, so they would report -1
+    // after reviving; no item has either action (items.tsv), and no Djinni is
+    // used from the menus. Dew gives 7/10 of maximum HP here.
     case ABILITY_EFFECT_REVIVE_HALF:
       if (target->hp == 0) {
         target->hp = target->maxHp / 2;
@@ -307,13 +334,19 @@ s32 BattleEffect_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   return 0;
 }
 
-/// Runs the animation selected by the item's action definition.
+/// Plays the use sound of item's action (Ability_PlayUseAnimation). Called by
+/// ItemMenu_Use after a use that changed something.
 void Item_PlayUseAnimation(u32 item) {
   Ability_PlayUseAnimation(Item_GetDirectFar(item)->actionId &
                            OWNER_ACTION_ID_MASK);
 }
 
-/// Starts the action's menu animation and waits for its completion.
+/// Plays the sound of action used from the menu, and returns at once: no
+/// animation is drawn and nothing waits. HP and PP healing (kinds 1 and 11)
+/// play SE_RECOVERY, kind 1 twice; otherwise Revive's effect plays MUS_082,
+/// Cure Poison's MUS_084, effects 1, 2, 31 and 32 nothing, and every other
+/// effect, the stat items' 0 among them, MUS_091. Called after a successful
+/// use by Item_PlayUseAnimation (for ItemMenu_Use) and by the Psynergy screen.
 void Ability_PlayUseAnimation(s32 action) {
   s32 animationType;
   u32 targetType;
@@ -332,6 +365,8 @@ void Ability_PlayUseAnimation(s32 action) {
     Audio_PlayCueReturnOne(SE_RECOVERY);
     return;
   default:
+    // The effect less one: effect 0 wraps to the u32 maximum, which takes
+    // the default case.
     targetType = actionDefinition->effect - 1;
     switch (targetType) {
     case 4:
@@ -379,4 +414,5 @@ void Ability_PlayUseAnimation(s32 action) {
   }
 }
 
+/// Nothing calls it.
 s32 Menu_ReservedStatusZero(void) { return 0; }

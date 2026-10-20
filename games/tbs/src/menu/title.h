@@ -3,12 +3,19 @@
 
 #include "types.h"
 
-/// The title overlay's sprite records, three OAM words each.
+/// One sprite of the logo's lettering, as Runtime_PushSlotEntry queues it.
+/// Title_UpdateSpriteReveal rewrites every record each frame.
 struct TitleSprite {
+  /// [0] the queue link Runtime_PushSlotEntry writes; [1] OAM attribute 0
+  /// (y, mode and shape) in the low half and attribute 1 (x) in the high
+  /// half; [2] attribute 2 (the tile, and the palette).
   u32 attr[3];
 };
 
+/// Frames since the lettering's reveal began; a column appears every two.
 extern s16 gTitleRevealFrame;
+/// The lettering's sprites, in the overlay's BSS (ovl_36f.s): 18 in the
+/// English and Japanese editions, 120 in the others.
 extern struct TitleSprite gTitleSprites[];
 
 // The Golden Sun logo the title and clear screens show: an 8-bit background

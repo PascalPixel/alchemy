@@ -50,6 +50,11 @@
 #include "title.h"
 
 // Edition-specific text and window layout values.
+// The password buffer: a Gold password is 260 symbols (Clear_EncodePassword),
+// which the Japanese buffer holds exactly. XXX: why the other editions
+// reserve 320 is unknown: nothing in this file writes or reads past 260 in
+// them. ⚓️'s Password Entry buffer, which takes these passwords, is the
+// place to compare.
 #if TBS_PATCH_1
 #define CLEAR_PASSWORD_BUFFER_SIZE 320
 #else
@@ -65,6 +70,8 @@
 #define CLEAR_LINK_WINDOW_WIDTH 18
 #endif
 
+// The first letter of the greeting a cable transfer waits for, before V, T
+// and S (SaveMenu_Run).
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define CLEAR_LINK_LANGUAGE_TAG 'E'
 #elif (LANGUAGE == LANGUAGE_FRENCH)
@@ -115,8 +122,8 @@
 #define CLEAR_MESSAGE_WINDOW_WIDTH 28
 #endif
 
-#define PASSWORD_SYMBOLS_PER_PAGE 50
-#define PASSWORD_SYMBOL_MASK 0x3f
+#define PASSWORD_SYMBOLS_PER_PAGE 50 ///< five rows of ten
+#define PASSWORD_SYMBOL_MASK 0x3f    ///< six bits: 64 symbols
 
 /// Whether a key of the extra code is still held. UB: the flag is a word the
 /// code reads and writes as its low halfword; UBFIX uses the word.
@@ -134,6 +141,7 @@ static u16 Clear_ComputePasswordCrc16(u32 byteCount, u8 *data);
 /// the exit, and no placements or events.
 u8 *Clear_GetEntrances(void) { return (u8 *)gClear_Entrances; }
 
+/// The regions entry: the file select screen has no exit boxes.
 s32 SceneData_ReturnZero(void) { return 0; }
 
 u8 *Clear_GetExits(void) { return (u8 *)gClear_Exits; }
@@ -142,7 +150,8 @@ u8 *Clear_GetPlacements(void) { return (u8 *)gClear_Placements; }
 
 u8 *Clear_GetEvents(void) { return (u8 *)gClear_Events; }
 
-/// Loads the Golden Sun logo, maps its tiles and resets background scroll.
+/// Loads the Golden Sun logo onto BG2 as Title_LoadBackground (title.c) does,
+/// and stops the leader's motion. SaveMenu_Run calls it first.
 static void Clear_LoadBackground(void) {
   u8 *resource;
   s32 resourceId;
@@ -191,7 +200,10 @@ static void Clear_LoadBackground(void) {
   }
 }
 
-/// Advances the logo blend every two frames and removes itself at completion.
+/// The scheduler callback that fades BG0 and the sprites in over the logo:
+/// their weight rises by a sixteenth every two frames, and the callback
+/// removes itself at full weight, 32 frames on. SaveMenu_Run schedules it
+/// once, when there is no save file to choose.
 static void Clear_UpdateBlend(void) {
   s32 frame;
   s32 level;
@@ -212,12 +224,16 @@ static void Clear_UpdateBlend(void) {
     Engine_TaskRemoveCallback(Clear_UpdateBlend);
 }
 
-/// Hidden command: sequence of pressed keys, terminated by 0.
 // clang-format off
+/// The first hidden code, entered on the file select screen and ended by 0:
+/// Select three times. With it a new game names Garet, Ivan and Mia as well
+/// as Isaac (SaveMenu_Run).
 const u16 gClear_CodeSequence[] = {
     KEY_SELECT, KEY_SELECT, KEY_SELECT, 0,
 };
 
+/// The second, longer code: with it a new game also names Felix, Jenna and
+/// Sheba.
 const u16 gClear_ExtraCodeSequence[] = {
     KEY_UP, KEY_DOWN, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_LEFT, KEY_RIGHT,
     KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT, KEY_UP, KEY_SELECT, 0,
@@ -234,7 +250,10 @@ const u16 gClear_ExtraCodeSequence[] = {
   (((struct { u16 key[1]; } *)(sequence))->key)
 #endif
 
-/// Tracks two hidden key sequences, requiring a full release after each key.
+/// The scheduler callback that follows the two hidden codes each frame while
+/// the file select screen runs. Each key must be held alone and then every
+/// key released; any other key starts that code over. A finished code sets
+/// its unlocked flag, which stays set, and plays SE_110.
 static void Clear_CheckButtonCodes(void) {
   if (gClear_CodeUnlocked == 0) {
     if (gClear_CodeHeld != 0) {
@@ -280,6 +299,12 @@ static void Clear_CheckButtonCodes(void) {
 #undef CLEAR_SEQUENCE_KEYS
 
 /// Converts a six-bit password symbol to the edition's one- or two-byte glyph.
+/// Writes the glyph, a second byte (Japanese's voiced mark, else 0) and a
+/// terminator into text. Outside Japanese the 64 symbols are A to Z without
+/// I and O, 2 to 9, a to z without l and o, and ! ? # & $ % + =; Japanese
+/// uses hiragana, the last 18 with the voiced mark. XXX: likely to keep
+/// look-alikes apart, because each character left out resembles another (I,
+/// l and 1; O, o and 0).
 static void Clear_NameEntryCharacter(s32 cell, u8 *text) {
   text[1] = 0;
   text[2] = 0;
@@ -337,7 +362,10 @@ static void Clear_NameEntryCharacter(s32 cell, u8 *text) {
 #endif
 }
 
-/// Returns -1 when the flagged saved scene blocks recovery, otherwise zero.
+/// Returns -1 when the loaded game may not restart at its last Sanctum, 0
+/// otherwise. It may not when it was saved where a scene's script blocked
+/// Retreat (FLAG_RETREAT_BLOCKED), except in scenes of variant 2, which block
+/// it by themselves, and on the world map.
 static s32 Clear_GetSaveRecoveryBlockMask(void) {
   s32 sceneDifference;
 
@@ -347,6 +375,8 @@ static s32 Clear_GetSaveRecoveryBlockMask(void) {
   if (gGameState.sceneVariant == 2) {
     return 0;
   }
+  // -1 unless the scene is the world map: -d | d has its top bit set for any
+  // d but 0.
   sceneDifference = gGameState.scene ^ (s32)&SceneId_WorldMap;
   return -((u32)(-sceneDifference | sceneDifference) >> 31);
 }
@@ -354,21 +384,31 @@ static s32 Clear_GetSaveRecoveryBlockMask(void) {
 /// A view of the scene state that names its copy of the play time, checked
 /// against the loaded game's.
 struct SaveMenuSceneState {
-  u8 unk000[0x100];
-  s32 word100; ///< frames
+  u8 unk000[0x100]; ///< not read here
+  /// The play time in frames, which SaveState_BuildSummaryHeader copies here
+  /// when saving.
+  s32 word100;
 };
 
-/// A linked console's signature: four letters naming its language and game.
+/// A console's link payload as the cable transfer reads it from
+/// gLinkPeerSignatures.
 struct SaveLinkGreeting {
+  /// The greeting SaveMenu_Run waits for: CLEAR_LINK_LANGUAGE_TAG, then V, T
+  /// and S. SaveMenu_Run sets every console's to "0000" before it waits.
   u16 code[4];
-  u8 reserved[16];
+  u8 reserved[16]; ///< the rest of the 24 bytes; not read
 };
 
+/// The compiler library's signed division, which SaveMenu_Run calls by name
+/// at one site (its FAKEMATCH tag).
 s32 __divsi3(s32, s32);
 
-/// Runs new/continue/copy/delete, arena entry and save-data transfer/password
-/// menus. Returns zero after choosing a destination; cancellation returns to
-/// selection.
+/// The overlay's initialize entry: the file select screen. At entrance 2,
+/// after the credits, it offers to save the cleared game and goes on to the
+/// world map. Otherwise it loops on the start menu until the player starts a
+/// new game, continues a file or enters the Battle Arena; copying, erasing
+/// and sending a cleared file's data, by cable or as a password, come back to
+/// the menu. Returns 0 once a destination is set.
 s32 SaveMenu_Run(void) {
   s32 pageCount;
   s32 encodedSize;
@@ -406,7 +446,8 @@ s32 SaveMenu_Run(void) {
   gEventWork->startTransition = blendStarted;
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
-  // The end-of-game entry saves before returning to the world map.
+  // Entrance 2, after the credits (Title_Run): save the cleared game, then
+  // the world map's entrance 72. Cancelling the file choice asks again.
   if (gGameState.entrance == 2) {
   L_ask:
     UiText_ShowPositionedMessageAndWait(MsgSaveAdventureQuestion, 5);
@@ -414,6 +455,8 @@ s32 SaveMenu_Run(void) {
     UiWork_FinalizePendingCore();
     if (v7 == 0) {
       UiText_ShowPositionedMessageAndWait(MsgSaveAdventureQuestion + 1, 1);
+      // Marks the file cleared (SaveSummary's sendFlag): its data can be
+      // sent, and the message says it cannot be continued.
       gGameState.unk20f = 1;
       v7 = Save_WriteSelectedSlot();
       if (v7 == -1) {
@@ -431,6 +474,7 @@ s32 SaveMenu_Run(void) {
 // Choose a new game, existing save, arena entry, or data transfer.
 menu_top:;
   v6 = SaveState_ScanRecordFlags();
+  // No backup memory: in debug mode, say so and turn idle sleep on.
   if (v6 < 0) {
     if (gDebugMode != 0) {
       gGameState.idleSleepEnabled = 1;
@@ -438,6 +482,7 @@ menu_top:;
       UiText_ShowCenteredMessage(MsgNoBackupMemory, 1, 8);
     }
   }
+  // No save file: fade the menu layers in, once, and start a new game.
   if (v6 == 0) {
     if (blendStarted == 0) {
       Engine_TaskWait(30);
@@ -446,13 +491,18 @@ menu_top:;
       blendStarted = 1;
     }
   }
+  // The start menu's choices (gMenu_SaveSlotActionByPosition): 0 New Game,
+  // 1 Continue, 2 Copy, 3 Erase, 4 Battle and 5 Send; any other shows the
+  // menu again.
   if (v6 > 0) {
     v6 = Menu_SelectSaveSlotAction();
   } else {
     v6 = 0;
   }
   if (v6 == 0) {
-    // Hidden button codes expand the list of names offered for a new game.
+    // Hidden button codes expand the list of names offered for a new game:
+    // Isaac alone, with the first code to Mia, with the second to Sheba. B on
+    // the first name goes back to the menu.
     GameState_InitDefaults();
     PaletteGlow_Update(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
     v5 = 1;
@@ -482,7 +532,12 @@ menu_top:;
     gGameState.entrance = 20;
     goto leave;
   }
-  // Continue from a save, checking relocation/recovery conditions first.
+  // Continue a file where it was saved, except: a file from another build of
+  // the game, or one loaded with L and Start held, restarts at its last
+  // Sanctum (savedScene); a file whose two play times differ is reported
+  // corrupted, with the offer to restart there. Flags 0x13e and 0x13f mark
+  // the two chosen restarts. XXX: their reader is unknown; it would test them
+  // by number in a scene's event table or script, or read flag byte 39 whole.
   if (v6 == 1) {
     struct GameState *state;
 
@@ -538,6 +593,9 @@ menu_top:;
     SaveState_DeleteSelectedSlot();
     goto menu_top;
   }
+  // Battle: go to the Battle Arena with a file. One saved while the Colosso
+  // held the party's equipment gets it back, and its party is reset to Isaac,
+  // Garet, Ivan and Mia, in order.
   if (v6 == 4) {
     v6 = SaveState_LoadRecordIntoWork(4);
     if (v6 == -1) {
@@ -566,6 +624,7 @@ menu_top:;
     if (v6 != 5) {
       goto menu_top;
     }
+    // Send: choose a cleared file, then Password (0) or Cable (1).
   link_load:;
     v6 = SaveState_LoadRecordIntoWork(5);
     if (v6 == -1) {
@@ -577,7 +636,8 @@ menu_top:;
     if (v6 == -1) {
       goto link_load;
     }
-    // Link transfer waits for the other game's edition-specific greeting.
+    // Link transfer waits for the other game's edition-specific greeting in
+    // the partner's payload (struct SaveLinkGreeting); B gives up.
     if (v6 == 1) {
       v6 = (s32)UiWindow_Create(CLEAR_LINK_WINDOW_X, 5, CLEAR_LINK_WINDOW_WIDTH,
                                 8, 2);
@@ -642,6 +702,8 @@ menu_top:;
       Engine_TaskWait(10);
       SerialRuntime_BeginSend(gSaveBuffer, 0x1004);
       Engine_TaskWait(10);
+      // Wait for the send to finish, at most 600000 frames (about 2.8
+      // hours); ten frames in a row without both consoles is an error.
       v5 = 0;
       requiredLinkMask = 3;
       linkConnectionOk = 1;
@@ -663,6 +725,7 @@ menu_top:;
         RenderOutput_PrepareForRedraw((struct UiWindow *)v6);
         UiText_DrawResource(MsgClearCommunicationError, (struct UiWindow *)v6,
                             0, 4);
+        // Wait for A: v5 is KEY_A here.
         v5 = 1;
         do {
           Engine_TaskWait(1);
@@ -682,6 +745,8 @@ menu_top:;
     }
     if (v6 == 0) {
     // Password output packs save data, appends CRC bytes, then groups glyphs.
+    // The level is Gold (0), Silver (1) or Bronze (2): 260, 61 or 16
+    // symbols, shown 50 to a page.
     page_select:;
       v6 = Menu_SelectResourceLayout(1);
 
@@ -710,6 +775,8 @@ menu_top:;
       headingWindow = (struct UiWindow *)windowHandle;
       UiText_DrawResource(passwordHeadingMessage, headingWindow, 6, 4);
       v7 = 1;
+      // The help line below: B alone for one page, with Left and Right for
+      // more (the two messages before MsgClearPasswordLabel).
       if (pageCount == 1) {
         windowHandle = (s32)UiWindow_Create(5, 16, 20, 3, v6);
         helpWindow = (struct UiWindow *)windowHandle;
@@ -722,8 +789,13 @@ menu_top:;
         UiText_DrawCharacterAtOffset(passwordHeadingMessage - 1, helpWindow, 0,
                                      0);
       }
+      // Copy the font's ten digit tiles to tiles 0x300 to 0x313 in two
+      // colourings, for the page numbers.
       Graphics_ExpandVramTilesByColorTable((u16 *)0x06006000);
       RenderOutput_PrepareForRedraw(pageWindow);
+      // A turns the page, and on the last returns to the menu; Left and Right
+      // turn back and forth, wrapping round; B goes back to the level choice.
+      // v7 is 1 when the page must be drawn again.
       for (;;) {
         Link_DrawShiftedTilePair(UI_PAGE_ARROW_VRAM);
         if ((gKeysPressed & KEY_B) != 0) {
@@ -775,6 +847,9 @@ menu_top:;
             v5 = (v5 + 2);
             v7 = (v7 + 1);
           } while (v7 != 4);
+          // The page numbers beside the arrows, on palette 15: tile 0x301 + n
+          // is the digit n + 1, and 0x30b + n the same digit in the second
+          // colouring, for the page shown.
           if (pageCount > 1) {
             v7 = 0;
             if (pageCount != 0) {
@@ -798,6 +873,8 @@ menu_top:;
                              ((struct UiWindow *)pageWindow)->y);
           }
           // Each page holds 50 symbols in five rows, split into two groups.
+          // Rows are 16 pixels apart; the second five of a row sit 10 pixels
+          // further right.
           v6 =
               pageIndex * PASSWORD_SYMBOLS_PER_PAGE + PASSWORD_SYMBOLS_PER_PAGE;
           if (v6 > encodedSize) {
@@ -917,32 +994,45 @@ UNUSED static void SaveMenu_FillTileBlock(const struct UiWindow *window) {
   Runtime_BumpFree(buffer);
 }
 
-/// A party member's base stats, which the password clamps and packs.
+/// A party member's base stats, which the password clamps and packs: struct
+/// BattleUnit's from baseHp to baseLuck, at the same offsets.
 struct PasswordStats {
-  s16 baseHp;
-  s16 basePp;
-  u8 unk14[4];
-  u16 baseAttack;
-  u16 baseDefense;
-  u16 baseAgility;
-  u8 baseLuck;
+  s16 baseHp;      ///< clamped to 0 to 1999; 11 bits in the password
+  s16 basePp;      ///< clamped to 0 to 1999; 11 bits
+  u8 unk14[4];     ///< BattleUnit's hpGauge and ppGauge
+  u16 baseAttack;  ///< clamped to 999; 10 bits
+  u16 baseDefense; ///< clamped to 999; 10 bits
+  u16 baseAgility; ///< clamped to 999; 10 bits
+  u8 baseLuck;     ///< clamped to 99; 8 bits, the top one always 0
 };
 
 /// A party member as the password reads them: their level, base stats,
-/// inventory and Djinn.
+/// inventory and Djinn. A view of struct BattleUnit at its offsets;
+/// Clear_PackPasswordData's opening note says why it is kept.
 struct PasswordOwner {
-  u8 unk00[0x0f];
-  u8 level;
+  u8 unk00[0x0f]; ///< BattleUnit's name
+  u8 level;       ///< clamped to 1 to 99; 7 bits
   struct PasswordStats stats;
-  u8 unk20[0xb8];
+  u8 unk20[0xb8]; ///< BattleUnit's baseHpRegen to actionSlots
+  /// bits: 15..11 quantity | 10 broken | 9 equipped | 8..0 item
   u16 inventory[15];
-  u8 unkf6[2];
-  u32 djinnAvailable[4];
+  u8 unkf6[2];           ///< BattleUnit's unk0f6
+  u32 djinnAvailable[4]; ///< the Djinn held, a bit per Djinni, by element
 };
 
-/// Packs selected flags, levels, Djinn and optional stats/inventories/coins.
-/// Clamps the source base stats and levels in place; returns the raw byte
-/// count.
+/// Packs the four heroes' data for a password of level mode: 0 Gold (173
+/// bytes), 1 Silver (39) or 2 Bronze (9); any other mode clears 11. Clamps
+/// each member's base stats and level in place first, and returns the byte
+/// count. Bytes 0 to 2 and the high half of 3 hold the four levels, 7 bits
+/// each from the lowest bit; the low half of 3 and bytes 4 to 6 the Djinn
+/// held, 7 bits an element; byte 7 the story flags of gClear_PasswordFlags.
+/// Silver and Bronze keep in byte 8 which Psynergy items the party carries.
+/// Gold and Silver add the base stats, 60 bits a member, high bits first,
+/// from byte 8 (Gold) or 9 (Silver). Gold alone adds the 60 inventory slots'
+/// items, 9 bits each from byte 39, with a spare bit after every seventh;
+/// from the low half of byte 107, the 5-bit quantity fields of the 23
+/// gClear_PasswordStackItems for each member; and the coins in bytes 165 to
+/// 167.
 static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   // A direct BattleUnit owner plus the real member table shrinks the native
   // function from 0x400 to 0x3f4. The private view remains pending owner
@@ -1036,6 +1126,8 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     for (j = 0; j != 4; j++) {
       djinnBits += owner->djinnAvailable[j] << (j * 7);
     }
+    // Which of the eight Psynergy items (gClear_PasswordKeyItems) any member
+    // carries.
     for (j = 0; j != 15; j++) {
       u16 item = owner->inventory[j] & 0x1ff;
 
@@ -1058,6 +1150,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
       for (n = 0; n != 15; n++) {
         u16 item;
 
+        // Item_Get only looks the definition up; its result is not used.
         Item_Get(owner->inventory[n]);
         item = owner->inventory[n] & 0x1ff;
         out[outputIndex] += item >> (bitOffset + 1);
@@ -1110,7 +1203,9 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     out[167] = gGameState.coins;
   }
 
-  // The two larger forms include the packed base-stat rows.
+  // The two larger forms include the packed base-stat rows. Each pass packs
+  // two members in 15 bytes: each one's first word and the top 28 bits of
+  // its second, whose low four bits are always 0.
   if (mode != 2) {
     s32 statsOffset = 8 + (mode != 0);
 
@@ -1150,8 +1245,11 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   return length;
 }
 
-/// Obscures the packed bytes and emits position-adjusted six-bit password
-/// symbols.
+/// Encodes size bytes of data as password symbols in out and returns how
+/// many there are. XORs every byte but the last with the last (in place),
+/// cuts the bits into six-bit symbols, high bits first, adds a check symbol
+/// after every nine (their sum, mod 64; a shorter last group gets none), and
+/// then adds each symbol's position, mod 64.
 static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out) {
   s32 xorKey;
   s32 symbolCount;
@@ -1203,7 +1301,9 @@ static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out) {
 }
 
 /// Runs the original shift/subtract checksum, initially 0xffff, and returns
-/// its complemented low 16 bits.
+/// its complemented low 16 bits. 0xFFFFEFDF is -0x1021, CRC-16-CCITT's
+/// polynomial, subtracted where that CRC XORs it; bits above 15 never reach
+/// the result, since carries and borrows only move up.
 static u16 Clear_ComputePasswordCrc16(u32 byteCount, u8 *data) {
   u32 crc;
   u32 byteIndex;
@@ -1247,33 +1347,52 @@ struct SceneEvent gClear_Events[] = {
     {SCENE_EVENTS_END},
 };
 
+/// Frames since Clear_UpdateBlend began; the blend level is half of it.
 s16 gClear_BlendFrame = 0;
 
+/// Set once gClear_CodeSequence has been entered; nothing here clears it.
 s16 gClear_CodeUnlocked = 0;
 
+/// Set once gClear_ExtraCodeSequence has been entered.
 s16 gClear_ExtraCodeUnlocked = 0;
 
+/// The index in gClear_CodeSequence of the key to press next.
 s16 gClear_CodeProgress = 0;
 
+/// The index in gClear_ExtraCodeSequence of the key to press next.
 s16 gClear_ExtraCodeProgress = 0;
 
+/// Set while the first code's last correct key is still held.
 s16 gClear_CodeHeld = 0;
 
+/// The same for the second code, read through CLEAR_EXTRA_CODE_HELD.
 s32 gClear_ExtraCodeHeld = 0;
 
 // clang-format off
+/// The members the password packs: Isaac, Garet, Ivan and Mia.
 u32 gClear_PasswordMembers[] = {
     0, 1, 2, 3,
 };
 
+/// The six story flags of the password's byte 7, as halfwords in pairs, bits
+/// 0 to 5: FLAG_LUNPA_TRADE_REOPENED, FLAG_WON_COLOSSO,
+/// FLAG_HSU_RESCUED_WITHOUT_PARTY, FLAG_CROSSBONE_ISLE_FINAL_GUARDS_DEFEATED,
+/// FLAG_VISITED_SICK_DORA and FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES.
 u32 gClear_PasswordFlags[] = {
     0x9510941, 0x8d108b3, 0x868081e,
 };
 
+/// The eight Psynergy items, Orb of Force to Catch Beads (items 200 to 207,
+/// as halfwords in pairs), which Silver and Bronze record in byte 8.
 u32 gClear_PasswordKeyItems[] = {
     0xc900c8, 0xcb00ca, 0xcd00cc, 0xcf00ce,
 };
 
+/// The 23 items whose quantity a Gold password keeps for each member: Herb,
+/// Nut, Vial, Potion, Psy Crystal, Antidote, Elixir, Water of Life, Power
+/// Bread, Cookie, Apple, Hard Nut, Mint, Lucky Pepper, Smoke Bomb, Sleep
+/// Bomb, Game Ticket, Lucky Medal, Sacred Feather, Oil Drop, Weasel's Claw,
+/// Bramble Seed and Crystal Powder.
 u16 gClear_PasswordStackItems[] = {
     180, 181, 182, 183, 186, 187, 188, 189,
     191, 192, 193, 194, 195, 196, 226, 227,

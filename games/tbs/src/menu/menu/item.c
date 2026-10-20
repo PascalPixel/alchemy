@@ -1,5 +1,5 @@
 /// @file
-/// The item menu: the item picker events open, the command loop, the member
+/// The item menu: the field menu's Item screen, the command loop, the member
 /// and item lists, and Use, Equip, Give, Drop, Remove and Details.
 /// Part of menu.c, the menu object, compiled only through it.
 
@@ -75,18 +75,25 @@
 #define ITEM_LIST_NAME_X 32
 #endif
 
-/// The event work as the item picker sees it: what the player chose, for the
-/// event script. The shared header has no names for these two fields yet.
+/// The field's work (heap slot HEAP_SLOT_EVENT) as the Item screen writes it:
+/// the item request that the field loop hands to Field_UseItem once the menu
+/// has closed. struct FieldWork (field_runtime.h) names these fields item and
+/// itemArgument.
 struct ItemPickerResult {
-  s32 unk000[0x60];
-  u16 chosenItem; ///< owner << 10 | item id
-  u8 unk182[0x18];
-  u16 chosenSlot; ///< the owner's inventory slot
+  s32 unk000[0x60]; ///< FieldWork up to its item request
+  u16 chosenItem;   ///< FieldWork.item: owner << 10 | item id
+  u8 unk182[0x18];  ///< FieldWork's raised event and fallen characters
+  u16 chosenSlot;   ///< FieldWork.itemArgument: the owner's inventory slot
 };
 
-/// The item picker an event script opens (window command 3): the item menu,
-/// in which the player chooses one party member's item. Records the choice in
-/// the event work and returns 1 if one was made.
+/// The field menu's Item screen (Menu_RunTopSelection, icon 3): choose a
+/// party member, one of their items and a command. Items used here take
+/// effect at once; an item to be used on the field is written as the field's
+/// item request (struct ItemPickerResult), run when the field menu has closed.
+/// Owns the menu work (HEAP_SLOT_MENU) while it runs and frees it before
+/// returning. Returns ItemMenu_RunCommands' result: 1 when an item is to be
+/// used on the field, -1 when the player backed out or pressed Start (the
+/// field menu then opens again).
 s32 ItemMenu_Run(void) {
 #if TBS_PATCH_1
   void *backup;
@@ -102,7 +109,9 @@ s32 ItemMenu_Run(void) {
   void **process;
   void **cache;
 
-  // Open the menu over the field, which stops moving.
+  // Open the menu over the field, which stops moving. The international
+  // editions keep 8 KB of the field's window tiles aside while the menu is up
+  // and free the copy after putting the tiles back.
 #if TBS_PATCH_1
   size = 0x2000;
   backup = Runtime_BumpAllocateAlternatePool(size);
@@ -120,7 +129,8 @@ s32 ItemMenu_Run(void) {
   Link_DrawShiftedTilePairFar(UI_PAGE_ARROW_VRAM);
   screen->messageWindow = UiWindow_CreateFar(13, 0, 17, 3, 2);
 #if TBS_PATCH_1
-  // Save the window tiles the menu draws over, and fill them with colour 3.
+  // Save the window tiles the menu draws over, and fill them with colour 3
+  // (0x33333333: eight 4-bit pixels of colour 3 a word).
   Menu_SuspendFieldTasks();
   Iwram_CopyWords(backup, BG_CHAR_BLOCK(1), size);
   Iwram_FillWords(BG_CHAR_BLOCK(1), size, 0x33333333);
@@ -189,11 +199,11 @@ enum ItemMenuStep {
   ITEM_STEP_EQUIP = 3,
   ITEM_STEP_GIVE = 4,
   ITEM_STEP_DROP = 5,
-  ITEM_STEP_TARGET = 6,
-  ITEM_STEP_TRADE = 7,
-  ITEM_STEP_IDLE = 8, ///< nothing sets it
+  ITEM_STEP_TARGET = 6, ///< Give: choose whom to give it to
+  ITEM_STEP_TRADE = 7,  ///< the receiver is full: choose what they give back
+  ITEM_STEP_IDLE = 8,   ///< nothing sets it
   ITEM_STEP_COMMAND = 9,
-  ITEM_STEP_INSPECT = 10,
+  ITEM_STEP_INSPECT = 10, ///< Details (Menu_SelectQuantity)
   ITEM_STEP_REMOVE = 11,
   ITEM_STEP_QUANTITY = 12 ///< nothing sets it
 };
@@ -306,6 +316,10 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         if (BattleFx_HasTriggerFar(menu->selectedItems[0] & ITEM_ID_MASK) !=
             0) {
           done = 1;
+          // The international editions report target 0 (command is
+          // ITEM_COMMAND_USE here) and the bare item id; the Japanese ones the
+          // target chosen last and the list's whole inventory entry.
+          // ItemMenu_Run reads only the owner and the item id.
 #if TBS_PATCH_1
           *ownerOut = menu->paneOwner[0];
           *targetOut = command;
@@ -318,6 +332,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           menuResult = 1;
           break;
         }
+        // 1: choose a member to use it on; 2: use it on the whole party now;
+        // 0 or -1: close the menu and use it from the field.
         result =
             Item_ClassifyUseMode(menu->paneOwner[0], menu->selectedItems[0]);
         if (result == 1) {
@@ -454,6 +470,9 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       UiIcon_PrepareObject(menu->selectedItemIcon);
       UiWindow_ClearInteriorTilesFar((void *)menu->listWindow, 0, 72, 120, 96);
       RenderOutput_RedrawSavedRectFar(menu->messageWindow);
+      // Yes: take result + 1 of the stack out, one at a time. A dropped rare
+      // item goes back on the shops' counter (Item_AdjustCounterFar), so a
+      // shop may sell it again.
       if (ItemMenu_ConfirmDrop(selection) == 0) {
 #if TBS_PATCH_1
         command = menu->paneOwner[0];
@@ -495,6 +514,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       transferFailed = 0;
       item = Item_GetDirectFar(menu->selectedItems[0] & ITEM_ID_MASK);
       if ((item->flags & ITEM_STACKABLE) != 0) {
+        // A receiver with a full stack of it takes none; one with no free
+        // slot and none of it must trade.
         heldCount = InventoryMenu_GetItemQuantity(
             menu->paneOwner[1], menu->selectedItems[0] & ITEM_ID_MASK);
         if (heldCount == ITEM_STACK_MAX) {
@@ -521,6 +542,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
             state = ITEM_STEP_TARGET;
             break;
           }
+          // Move result + 1 one at a time; the broken bit goes with each,
+          // the equipped bit and the quantity do not.
           for (command = 0; command < result + 1; command++) {
             heldCount = Inventory_AddItemFar(
                 menu->paneOwner[1],
@@ -569,7 +592,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       ItemMenu_RefreshOwner(menu->paneOwner[1], 1);
       menu->paneIcons[0]->active = ICON_HIDDEN;
       WaitFrames(1);
-      // Commit recalculated stats only after every transfer has succeeded.
+      // Say how it went: the receiver's stack was full, the item was given,
+      // or it was given and equipped (ItemMenu_ConfirmEquip returned 0).
       if (transferFailed == 1) {
         RenderOutput_ClearListFar(menu->infoWindow);
         InventoryMenu_ShowModalMessage(MsgCannotHoldMore, 15, 14);
@@ -621,6 +645,9 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
                      BATTLE_UNIT_SIZE);
       Item_CopyWords(ITEM_IWRAM_COPY_WORDS, targetCopy, targetUnit,
                      BATTLE_UNIT_SIZE);
+      // Take both whole stacks out, one item at a time (at most a stack of
+      // 30): Inventory_RemoveFar returns 2 for the last one and -1 for an
+      // empty slot. Each count ends one short and is made up after its loop.
       sourceQuantity = 0;
       while (sourceQuantity <= 29) {
         result =
@@ -637,6 +664,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       sourceQuantity++;
       targetQuantity = 0;
       while (targetQuantity <= 29) {
+        // The receiver cannot trade away a worn item that will not come off.
         if ((menu->selectedItems[1] & INVENTORY_EQUIPPED) != 0) {
           item = Item_GetDirectFar(menu->selectedItems[1] & ITEM_ID_MASK);
           if ((item->flags & ITEM_CANNOT_UNEQUIP) != 0) {
@@ -655,6 +683,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         targetQuantity++;
       }
       targetQuantity++;
+      // Then give each the other's items.
       while (sourceQuantity != 0) {
         result = Inventory_AddItemFar(menu->paneOwner[1],
                                       menu->selectedItems[0] &
@@ -731,6 +760,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       state = ITEM_STEP_OWNER;
       break;
 
+    // Equip it. Inventory_EquipFar returns -1 when the member cannot equip it
+    // and -2 when the item it would replace is cursed on.
     case ITEM_STEP_EQUIP:
       result = Inventory_EquipFar(menu->paneOwner[0], menu->selectedSlots[0]);
       if (result == -1) {
@@ -778,6 +809,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           ItemMenu_CollectItems(UnitGetFar(menu->paneOwner[0]), menu->items, 0);
       ItemMenu_DrawIcons(menu->items, 0);
       WaitFrames(1);
+      // Show the stats as they are without it.
       menu->equipPreview = 1;
       ItemMenu_DrawEquipPreview(menu->paneOwner[0], menu->selectedSlots[0], 0,
                                 menu->paneOwner[0]);
@@ -856,12 +888,14 @@ s32 ItemMenu_Use(void) {
 
 /// Sets up the item menu's first screen: the cursor window with the party's
 /// figures, the info window along the bottom, and an 8 by 2 cursor grid. The
-/// parameters are not used.
+/// Psynergy and Djinn screens open with it too. The parameters are not used.
 void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
   struct InventoryMenuState *menu = gMenuWork;
   s32 ownerIndex;
 
   PsynergyMenu_InitializeEntryObjects(UiMenu_CreateCursor(menu), 2, 2, 8, 0);
+  // The four figures stand at screen y 30; the screens raise the member
+  // chosen to 26.
   for (ownerIndex = 3; ownerIndex >= 0; ownerIndex--)
     menu->ownerY[ownerIndex] = 30;
 
@@ -882,7 +916,9 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
 
 /// Creates the 32 item icon sprites in window, off screen until placed: slots 0
 /// to 7 at x 248, the rest at x 256, all at y 168, each showing item graphic
-/// slot of the same number.
+/// slot of the same number. The item, Psynergy and Status screens call it for
+/// the window that holds their icons; the sprites are that window's render
+/// outputs and go back to the pool when it closes.
 void Menu_SpawnIconEntries(struct InventoryMenuState *state,
                            struct UiWindow *window) {
   struct RenderOutput **firstIcons;
@@ -958,7 +994,9 @@ void ItemMenu_HidePageIcons(void) {
 #endif
 
 /// Closes the item menu: releases the party figures, hides the icons and the
-/// cursor, and closes every window the menu opened.
+/// status panel's portrait (the work's cursor), and closes every window the
+/// menu opened. Every screen's run function calls it before freeing the menu
+/// work.
 void ItemMenu_Close(void) {
   struct InventoryMenuState *menu;
   struct RenderOutput *cursor;
@@ -1172,7 +1210,10 @@ s32 ItemMenu_SelectTarget(s32 mode) {
       ownerIndex = (ownerIndex + ownerCount) % ownerCount;
       window = menu->itemWindow;
       UnitGetFar(menu->ownerIds[ownerIndex]);
-      // The marker over the chosen member.
+      // The marker over the chosen member, three tiles a member. Nothing in
+      // TBS stores paneIcons[1], so it is still NULL from
+      // UiWindow_InitializeWork: these writes go to the BIOS area at address
+      // 0, which ignores them, and no marker is drawn.
       targetMarker = menu->paneIcons[1];
       targetMarker->oam.x = targetMarker->x =
           ((menu->mainWindow->x + ownerIndex * 3) << 3) - 2;
@@ -1250,6 +1291,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
     }
     if (gKeysPressed & KEY_B) {
       AudioCommand_PlayFar(SE_MENU_CANCEL);
+      // The u8 255 is returned through (s8) as -1.
       result = 255;
       break;
     }
@@ -1264,6 +1306,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
       ownerIndex++;
     }
   }
+  // The marker is NULL here too (see above).
   targetMarker = menu->paneIcons[1];
   menu->paneIndex[1] = ownerIndex;
   UiIcon_PrepareObject(targetMarker);
@@ -1276,9 +1319,11 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   return (s8)result;
 }
 
-/// Scheduler callback while choosing a member to give an item to: every 32
-/// frames, sets each party figure's animation by whether that member can equip
-/// the item (3) or not (1).
+/// Scheduler callback while ItemMenu_SelectTarget chooses a member to use or
+/// give the item to, and while the command grid's cursor is on Give: every 32
+/// frames, sets each party figure's animation by whether that member can
+/// equip the item (3) or not (1). EquipmentMenu_StartCompatibilityIndicators
+/// removes it.
 void EquipmentMenu_UpdateCompatibilityIndicators(void) {
   struct InventoryMenuState *menu;
   s8 memberIndex;
@@ -1301,7 +1346,9 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
 }
 
 /// Ends EquipmentMenu_UpdateCompatibilityIndicators: puts every party figure
-/// back to animation 1 and removes the callback.
+/// back to animation 1 and removes the callback. Despite the name, it starts
+/// nothing; removing a callback that is not scheduled is harmless, so the
+/// command grid calls it at each cursor move.
 void EquipmentMenu_StartCompatibilityIndicators(void) {
   struct InventoryMenuState *menu;
   s8 memberIndex;
@@ -1340,7 +1387,8 @@ void ItemMenu_DrawMessage(s32 unused, s32 message) {
   UiText_DrawCharacterAtOffsetFar(message, menu->messageWindow, 0, 0);
 }
 
-/// Hides the icon of each of the 32 list entries whose item is 0.
+/// Hides the icon of each of the 32 list entries whose item is 0. Each of the
+/// 32 icon slots must hold a sprite (Menu_SpawnIconEntries).
 void Menu_HideEmptyEntryIcons(const u16 *items) {
   struct InventoryMenuState *menu = gMenuWork;
   s32 slot;
@@ -1476,9 +1524,10 @@ UNUSED void InventoryMenu_NoOp(void) {}
 /// Shows in the status panel what the item in owner's inventory slot would mean
 /// to member target: for a usable item, target's status; for equipment,
 /// target's stats with it equipped; for a Psynergy item, the Psynergy it
-/// teaches. When target is someone else, the item is put into a copy of
-/// target's inventory for the preview, making room first if it is full, and
-/// target is restored after. mode 1 redraws only the lower part of the panel.
+/// teaches. When target is someone else, the item is put into target's own
+/// inventory for the preview, making room first if it is full, and target is
+/// put back afterwards from a heap copy that is freed before returning. mode 1
+/// redraws only the lower part of the panel.
 void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   /* FAKEMATCH(temporary): the saved unit reuses owner (and buffer for
    * Psynergy items), keeping owner in r8 and panelStyle in r10; as a separate
@@ -1500,7 +1549,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   case 3: // shields, gloves and armlets
   case 4: // helmets
   case 5: // boots
-  case 7:
+  case 7: // no item has type 7 (items.tsv)
   case 8: // rings
   case 9: // shirts
     if (owner == target) {
@@ -1513,6 +1562,8 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
       size = BATTLE_UNIT_SIZE;
       owner = (s32)MemAlloc(size);
       Iwram_CopyWords((void *)owner, unit, size);
+      // With room made, add the item unequipped and preview it in its new
+      // slot; otherwise the panel shows target's status without a preview.
       previewSlot = Inventory_RemoveFirstUnflagged(target);
       if (previewSlot != 0) {
         inventoryEntry &= ~INVENTORY_EQUIPPED;
@@ -1600,14 +1651,19 @@ s32 Inventory_RemoveFirstUnflagged(s32 ownerId) {
 
 #if TBS_PATCH_1
 
-/// The x and y of the item command cursor on column and row of the command grid
-/// (three commands to a row).
+/// Returns the x of the item command cursor on column and row of the command
+/// grid (three commands to a row), or 0 when column or row is outside 0 to 2.
+/// The international editions take it from a table (86, 117 and 166), as their
+/// columns are not evenly spaced; the Japanese ones step 40 pixels a column.
+/// The grid has two rows, so row 2 never comes; it would read past the
+/// six-entry table.
 s32 ItemMenu_CommandCursorX(s32 column, s32 row) {
   if (column > 2 || row > 2 || column < 0 || row < 0)
     return 0;
   return gItemMenu_CommandColumnXTable[row * 3 + column];
 }
 
+/// Returns the y of the item command cursor: 30 on the top row, 38 below.
 s32 ItemMenu_CommandCursorY(s32 column, s32 row) {
   s32 y;
 
@@ -1673,7 +1729,9 @@ s32 ItemMenu_ChooseCommand(void) {
   }
   *redrawFlag = 0;
 
-  // Start on the command chosen last, or on the first one available.
+  // Start on the command chosen last, or on the first one available. listMode
+  // 0xff (none yet) reads as -1; the later tests win, so the order of
+  // preference is Use, Remove, Equip, Give, then Details.
   lastCommand = (s8)menu->listMode;
   if (lastCommand == -1) {
     if (commandStates[ITEM_COMMAND_INSPECT] == ITEM_COMMAND_STATE_AVAILABLE) {
@@ -1718,7 +1776,9 @@ s32 ItemMenu_ChooseCommand(void) {
       row = (row + 2) % 2;
       commandIndex = row * 3 + column;
       EquipmentMenu_StartCompatibilityIndicators();
-      // Preview the item in the status panel for the command under the cursor.
+      // Preview the item in the status panel for the command under the cursor:
+      // the bottom row (Give, Remove, Drop) without it, Equip and Details with
+      // it, Use the member's status.
       if (commandIndex > 2) {
         menu->equipPreview = 1;
         ItemMenu_DrawEquipPreview(menu->paneOwner[0], menu->selectedSlots[0], 0,
@@ -1803,11 +1863,13 @@ s32 ItemMenu_ChooseCommand(void) {
   return commandIndex;
 }
 
-/// Fills commandStates (indexed by ItemMenuCommand) for the selected item:
-/// Use for usable items the owner can use here and for field items, Equip for
-/// equipment the owner can wear and is not wearing, Remove for worn equipment
-/// that is not cursed, Give with someone to give to, Drop unless the item is
-/// indispensable, and neither for cursed equipment being worn.
+/// Fills commandStates (indexed by ItemMenuCommand) with
+/// ITEM_COMMAND_STATE_AVAILABLE or _DISABLED for the selected item: Use for
+/// items Item_ClassifyUseMode accepts and are not broken, and for field items,
+/// Equip for equipment the owner can wear and is not wearing, Remove for worn
+/// equipment that is not cursed, Give with someone to give to, Drop unless the
+/// item is indispensable, and neither for cursed equipment being worn. Details
+/// is always available. Each later test overrides the earlier ones.
 void ItemMenu_BuildCommands(s8 *commandStates) {
   struct InventoryMenuState *menu;
   struct ItemDefinition *item;
@@ -1865,7 +1927,7 @@ void ItemMenu_BuildCommands(s8 *commandStates) {
     commandStates[ITEM_COMMAND_DROP] = ITEM_COMMAND_STATE_DISABLED;
 }
 
-#define TEXT_COLOR_DISABLED 14
+#define TEXT_COLOR_DISABLED 14 ///< the grey of a command that refuses A
 
 /// Writes the six command names into window, the disabled ones in grey.
 void ItemMenu_DrawCommands(const s8 *commandStates, struct UiWindow *window) {
@@ -1964,13 +2026,14 @@ s32 Item_ClassifyUseMode(s32 ownerId, s32 inventoryEntry) {
   return result;
 }
 
-/// After the selected item is used: an item of use type 2 breaks one time in
-/// eight, with the break sound. "It broke!"
+/// After the selected item is used: an item of use type 2 (ITEM_USE_MAY_BREAK)
+/// breaks one time in eight, with the break sound and "It broke!" in the info
+/// window. Called only after a successful use on a chosen member.
 void ItemMenu_TryBreak(void) {
   struct InventoryMenuState *menu;
 
   menu = gMenuWork;
-  // One time in eight.
+  // One time in eight: 0x2000 of Random16's 0x10000 values.
   if ((Item_GetDirectFar(ITEM_ID_MASK & menu->selectedItems[0])->useType ==
        2) &&
       (Random16() < 0x2000U)) {
@@ -1984,7 +2047,9 @@ void ItemMenu_TryBreak(void) {
 }
 
 /// Opens the details window (top left, 13 by 10 tiles) and describes the item
-/// in pane itemIndex there. Returns 1.
+/// in pane itemIndex there. Returns 1. The window is kept in the work's
+/// equipWindow, which ItemMenu_Close closes. Nothing calls it: the Details
+/// command uses Menu_SelectQuantity.
 s32 ItemMenu_OpenDetail(s32 itemIndex) {
   struct InventoryMenuState *menu = gMenuWork;
 
@@ -1999,7 +2064,9 @@ s32 ItemMenu_OpenDetail(s32 itemIndex) {
 
 /// The item menu's Details screen: describes the item entry value in a large
 /// window (the whole top half after patch 1) and waits for A or B. Up and Down
-/// move an unused counter from 0 to 4. Returns the counter, or -1 after B.
+/// move an unused counter from 0 to 4. Returns the counter after A or Start,
+/// or -1 after B; ITEM_STEP_INSPECT ignores it. Borrows background palette 14
+/// for the element icons and makes the highlight again before returning.
 s32 Menu_SelectQuantity(s32 value) {
 #if TBS_PATCH_1
   s32 changed = 1;
@@ -2016,7 +2083,9 @@ s32 Menu_SelectQuantity(s32 value) {
   itemIcon->active = ICON_HIDDEN;
 #endif
   window = UiWindow_CreateFar(0, 0, ITEM_QUANTITY_WINDOW_WIDTH, 10, 2);
-  // Freeze the party figures and hide the cursor meanwhile.
+  // Hide the party figures (without their placement callback they are not
+  // drawn) and the status panel's portrait (the work's cursor), which the
+  // window covers, meanwhile.
   Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
 
   {
@@ -2060,12 +2129,17 @@ s32 Menu_SelectQuantity(s32 value) {
   UiWork_FinalizeFar((void *)window, 1);
   RenderOutput_RedrawSavedRectFar(menu->mainWindow);
   Palette_LightenBankHighlight(14);
+  // SCHEDULER_KEY_MAIN_LOOP, as PsynergyMenu_InitializeEntryObjects
+  // schedules it.
   {
     s32 priority = 0xc80;
 
     Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, priority);
   }
 
+  // The Japanese window, 13 tiles wide, leaves the command grid at tile 13
+  // up, so flags 1 tells ItemMenu_ChooseCommand not to draw it again; the
+  // international one, 30 wide, covers it, and the grid's frame is redrawn.
   {
     struct RenderOutput *cursor = menu->cursor;
 #if TBS_PATCH_1
@@ -2221,6 +2295,9 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
     bestowsPsynergy = 1;
     row++;
   }
+  // "Number of Uses" and what using it costs, except for items that cost
+  // nothing and Hermes' Water (ITEM_USE_EMPTIES); a Psynergy item has no
+  // heading and no line.
   if (def->useType != 4 && def->useType != 0) {
     if (!bestowsPsynergy) {
       UiText_DrawCharacterAtOffsetFar(MsgUsesHeading, window, 16, row * 8);
@@ -2236,6 +2313,8 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
     case 2: { // may break
       s32 m;
 
+      // Two lines each: "It's broken, so" / "it can't be used", or "It might
+      // break" / "if used in battle".
       if (inventoryEntry & INVENTORY_BROKEN) {
         m = MsgBrokenNotice;
         UiText_DrawCharacterAtOffsetFar(m, window, 0, row * 8);
@@ -2264,6 +2343,9 @@ void ItemMenu_DrawItemDetails(struct UiWindow *window, s32 inventoryEntry) {
     row++;
     amount =
         (inventoryEntry & INVENTORY_QUANTITY_MASK) / INVENTORY_QUANTITY_STEP;
+    // The quantity field holds the count less one. The international
+    // editions pass it as the argument of "I have <number>."; Japanese draws
+    // the number before its label.
 #if LANGUAGE != LANGUAGE_JAPANESE
     UiWork_PushValueSlotFar(amount + 1, 5);
     UiText_DrawCharacterAtOffsetFar(i + 1, window, 0, row * 8);
@@ -2377,6 +2459,8 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   s32 receiverCount;
   s32 ownerCount;
   struct InventoryMenuState *menu = gMenuWork;
+  // 1 KB of heap slot 14 to draw the dial's digits in, released before
+  // returning.
   void *tiles = Runtime_AllocateBlock(14, 0x400);
   struct UiWindow *window;
   struct RenderOutput *rightDial;
@@ -2394,7 +2478,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
       menu->paneOwner[0], menu->selectedItems[0] & ITEM_ID_MASK);
   // Two dial sprites, left and right of the number.
   block = Resource_FindFreeEntry();
-  if (block != 96) { // 96: no free VRAM block
+  if (block != 96) { // 96 (VRAM_CACHE_ENTRY_COUNT): no free VRAM block
     VramCache_Load(block, 256, 0);
     RenderOutput_CreateFar(block, 0x40004000, window, 48, 32);
     rightDial = RenderOutput_CreateFar(block, 0x40004000, window, 80, 32);
@@ -2840,7 +2924,9 @@ s32 ItemMenu_RunList(s32 paneIndex) {
                                   menu->paneOwner[paneIndex]);
         if (menu->items[state.selectedIndex] != 0) {
           icon = menu->entryIcons[state.selectedIndex];
-          // Animate the selected icon.
+          // Animate the selected icon: 9 is UI_SPRITE_SWELL, pulsing between
+          // 1 and 1.5 times its size, from its first step, in depth slot 250.
+          // UiIcon_PrepareObject stills it again when the cursor leaves.
           icon->active = 9;
           icon->animStep = 0;
           icon->sentinel = 250;

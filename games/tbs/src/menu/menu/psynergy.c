@@ -1,6 +1,6 @@
 /// @file
-/// The Psynergy menu: the screen events open, the member and Psynergy lists,
-/// targets, and the L and R shortcuts.
+/// The Psynergy menu: the field menu's Psynergy screen, the member and
+/// Psynergy lists, targets, and the L and R shortcuts.
 /// Part of menu.c, the menu object, compiled only through it.
 
 #include "../menu_internal.h"
@@ -34,11 +34,14 @@
 #define PSYNERGY_LIST_CURSOR_X 98
 #endif
 
-/// The Psynergy menu an event opens (window command 1): the field menu's
-/// Psynergy screen over the field, which stops meanwhile. When the player picks
-/// Psynergy to use on the field, it is recorded in the event work's
-/// psynergyRequest (owner << 10 | Psynergy) and 1 is returned; -1 when the
-/// player backs out.
+/// The field menu's Psynergy screen (Menu_RunTopSelection, icon 1), over the
+/// field, which stops meanwhile. Psynergy used on a member takes effect here.
+/// When the player picks Psynergy to use on the field, it is recorded as the
+/// field's Psynergy request (EventWork's psynergyRequest, owner << 10 |
+/// Psynergy), which Field_RunScene hands to Field_UsePsynergy once the menu has
+/// closed, and 1 is returned; -1 when the player backs out or presses Start
+/// (the field menu then opens again). Owns the menu work (HEAP_SLOT_MENU)
+/// while it runs and frees it before returning.
 s32 PsynergyMenu_Run(void) {
 #if TBS_PATCH_2
   void *saved = Runtime_BumpAllocateAlternatePool(PSYNERGY_PROMPT_TILES_SIZE);
@@ -73,6 +76,7 @@ s32 PsynergyMenu_Run(void) {
   if (result == 1) {
     struct EventWork *target = WORK_SLOT(HEAP_SLOT_EVENT);
     u16 request;
+    // The action looked up here is not used.
     BattleActGet(OWNER_ACTION_ID_MASK & state->paneAction[0]);
     request = psynergy | (owner << 10);
     target->psynergyRequest = request;
@@ -104,6 +108,7 @@ s32 PsynergyMenu_Run(void) {
 enum PsynergyMenuStep {
   PSYNERGY_STEP_OWNER,
   PSYNERGY_STEP_LIST,
+  /// how the Psynergy is used (PsynergyMenu_ClassifySelectedPsynergy)
   PSYNERGY_STEP_CLASSIFY,
   PSYNERGY_STEP_TARGET,
   PSYNERGY_STEP_APPLY,
@@ -301,8 +306,9 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
 }
 
 /// Says how the selected Psynergy is used from the menu: 0 on the field once
-/// the menu closes (its effect has a field event), 2 on the whole party (range
-/// 0xff), 1 on one chosen member when its target mode is 2, and 0 otherwise.
+/// the menu closes (the scene has an event for its field Psynergy, type0c,
+/// and what the leader faces), 2 on the whole party (range 0xff), 1 on one
+/// chosen member when its target mode is 2, and 0 otherwise.
 s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   struct BattleAct *action;
   s32 targetModeDifference;
@@ -516,14 +522,16 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 ownerId) {
   }
 }
 
-/// Nothing calls them.
+/// Nothing calls it.
 UNUSED s32 PsynergyMenu_ReturnTrue(void) { return 1; }
 
+/// Nothing calls it.
 UNUSED void PsynergyMenu_NoOp(void) {}
 
 /// Chooses the party member to use the selected Psynergy on. In mode 0 each
 /// member's status shows as the cursor passes, with the Psynergy's description
-/// once. Returns the chosen member's id, or -1 when the player backs out.
+/// once. Returns the chosen member's id, or -1 when the player backs out; also
+/// records the choice in the work's tabIndex[1] and ownerIds[1].
 s32 PsynergyMenu_SelectTarget(s32 targetMode) {
 
   struct PsynergyMenuState *menu;
@@ -547,6 +555,10 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
       redraw = 0;
       selection = (selection + count) % count;
       UnitGetFar(menu->ownerTable[selection]);
+      // The marker over the member, three tiles a member. Nothing in TBS
+      // stores paneIcon[1], so it is still NULL from UiWindow_InitializeWork:
+      // these writes go to the BIOS area at address 0, which ignores them,
+      // and no marker is drawn.
       marker = menu->paneIcon[1];
       marker->oam.x = marker->x =
           (((menu->auxiliaryWindow)->x + selection * 3) << 3) - 2;
@@ -590,6 +602,7 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
       redraw = 1;
     }
   }
+  // The marker is NULL here too (see above).
   marker = menu->paneIcon[1];
   menu->tabIndex[1] = selection;
   UiIcon_PrepareObject(marker);
@@ -621,8 +634,9 @@ s32 PsynergyMenu_SetShortcut(s32 ownerId, s32 actionId, s32 shortcutIndex) {
 
 // Writes the L and R Psynergy shortcuts into window: each one's Psynergy and
 // owner, or that it is empty, under a heading that says how to change them.
-// A name too wide for the line hides the owner (international) or drops the
-// colon after "L" and "R" (Japanese). Returns 1.
+// A name too wide for the line (measured as a window, over 10 tiles; 11 in
+// Japanese) hides the owner (international) or drops the colon after "L" and
+// "R" (Japanese). Returns 1.
 #if LANGUAGE != LANGUAGE_JAPANESE
 
 s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 ownerId) {
@@ -762,6 +776,8 @@ s32 PsynergyMenu_DrawShortcuts(struct UiWindow *window, s32 owner) {
 /// Sets up a Psynergy grid screen: the cursor window with the party's figures,
 /// a 30 by 15 window below with a hidden grid cursor and a portrait, and 16
 /// Psynergy icon sprites in two rows of eight from (96, 8), on an 8 by 2 grid.
+/// Nothing calls it or PsynergyMenu_CloseWindows: the Psynergy screen shows a
+/// paged list instead.
 void PsynergyMenu_CreateEntryGrid(void) {
   struct UiWindow *window;
   struct PsynergyMenuState *menu;
@@ -810,6 +826,7 @@ void PsynergyMenu_CreateEntryGrid(void) {
 }
 
 /// Releases the party figures and closes the Psynergy grid screen's windows.
+/// Nothing calls it.
 void PsynergyMenu_CloseWindows(void) {
   struct PsynergyMenuState *menu;
 
@@ -1139,7 +1156,8 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
         menu->cursorIcon->active = ICON_HIDDEN;
         if (menu->psynergies[state.selectedIndex] != 0) {
           icon = menu->entryIcons[state.selectedIndex];
-          // Animate the selected icon.
+          // Animate the selected icon: 9 is UI_SPRITE_SWELL, in depth slot
+          // 250, as in ItemMenu_RunList.
           icon->active = 9;
           icon->animStep = 0;
           icon->sentinel = 250;
@@ -1310,9 +1328,9 @@ s32 PsynergyMenu_RunList(s32 paneIndex) {
   return result;
 }
 
-/// Returns 1 when actionEntry cannot be used from the
-/// menu: it has no field effect and is not usable both in the field and in
-/// battle.
+/// Returns 1 when actionEntry cannot be used from the menu: it has no field
+/// effect and is not usable both in the field and in battle. The Psynergy list
+/// draws such Psynergy in the low-HP colour and refuses A on it.
 s32 PsynergyMenu_IsActionRestricted(s32 actionEntry) {
   // Mask the unsigned entry without overflowing a signed left shift.
   struct BattleAct *action = BattleActGet(((u32)actionEntry << 18) >> 18);

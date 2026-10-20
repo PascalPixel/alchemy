@@ -48,7 +48,8 @@ s32 Menu_WrapIndex(s32 value, s32 modulus) {
   return (value + modulus) % modulus;
 }
 
-/// Places the Djinn menu's first row at its normal height plus yOffset.
+/// Places the four party figures over their Djinn columns, 56 pixels apart
+/// from x 32, at screen y 61 plus yOffset. Returns that y.
 s32 Menu_SetFirstObjectRowCoordinates(s32 yOffset) {
   struct DjinnMenuWork *menu;
   s32 ownerX;
@@ -64,7 +65,15 @@ s32 Menu_SetFirstObjectRowCoordinates(s32 yOffset) {
   return yOffset;
 }
 
-/// Runs the Djinn menu, preserving field tiles and the message speed.
+/// Runs the Djinn menu over the field: the field menu's Djinn screen
+/// (Menu_RunTopSelection, icon 2), and the Djinn tutorial, which the world map
+/// opens as DjinnMenu_Open when Flint joins. Types messages at speed 2 while
+/// it runs (the tutorial's steps set speed 1 for their messages, and it stays
+/// 1 until the menu closes) and puts the player's speed back. Takes the menu
+/// work (HEAP_SLOT_MENU) and the backdrop (struct DjinnMenuBackdrop, from the
+/// alternate pool), and frees both before returning, after putting back the
+/// field tiles and palettes the backdrop saved. Returns 1, which makes the
+/// field menu open again.
 s32 DjinnMenu_Run(void) {
   struct DjinnMenuWork *menu;
   u32 savedMessageSpeed;
@@ -83,6 +92,8 @@ s32 DjinnMenu_Run(void) {
   menu->backdrop = backdrop;
   backdrop->tutorialTimer = 0;
   backdrop->tutorialStep = 0;
+  // The tutorial's first step: 0x16f and 0x171 are FLAG_DJINN_TUTORIAL_PART_A
+  // and _PART_B, which the world map sets for each lesson (flags.h).
   if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL)) {
     if (!GameFlag_TestFar(0x16f)) {
       if (!GameFlag_TestFar(0x171))
@@ -158,7 +169,7 @@ s32 DjinnMenu_Run(void) {
 /// The screen chooses an operation, optionally previews it, then commits it.
 enum DjinnMenuStep {
   DJINN_STEP_HANDLE_RESULT = 0,
-  DJINN_STEP_RESERVED = 1,
+  DJINN_STEP_RESERVED = 1, ///< nothing sets it
   DJINN_STEP_SELECT_DJINN = 2,
   DJINN_STEP_SELECT_ACTION = 3,
   DJINN_STEP_HANDLE_PAIR_RESULT = 4,
@@ -177,7 +188,9 @@ enum DjinnMenuStep {
 
 /// Chooses a Djinni, previews changes, then sets, stands by, gives or trades
 /// it. Confirmation states fall through to their matching commit states on
-/// success.
+/// success. Loops until the player leaves the first chooser (B or Start:
+/// returns -1) or presses Start further in (usually 0); DjinnMenu_Run ignores
+/// the result.
 s32 DjinnMenu_RunScreen(void) {
   struct DjinnMenuWork *menu;
   struct RenderOutput *cursor;
@@ -208,6 +221,7 @@ s32 DjinnMenu_RunScreen(void) {
       break;
     case DJINN_STEP_RESERVED:
       break;
+    // Choose a Djinni: 10 is Select (help), 7 is L (the member's status).
     case DJINN_STEP_SELECT_DJINN:
       Menu_SetFirstObjectRowCoordinates(0);
       FourObjectMotion_SetSlotPosition(1, 0, 200, 0);
@@ -250,6 +264,10 @@ s32 DjinnMenu_RunScreen(void) {
         break;
       step = DJINN_STEP_CONFIRM_TRADE;
       break;
+    // Choose what to do with it: 1 set, 2 standby, 3 give, 4 trade.
+    // DjinnMenu_SelectDjinn never returns 5, 6, 8 or 9, which would apply the
+    // same commands without their preview. The figures go up 8 pixels while
+    // this chooser runs.
     case DJINN_STEP_SELECT_ACTION:
       DjinnMenu_DrawElementList(&menu->backdrop->list);
       Menu_SetFirstObjectRowCoordinates(-8);
@@ -397,7 +415,9 @@ s32 DjinnMenu_RunScreen(void) {
 
 /// Writes copies of background palettes 15, 5 and 7, each brightnessDelta
 /// lighter in every channel (clamped to 0-31), into palettes 14, 4 and 6.
-/// Palette 7's copy is 12 darker instead.
+/// Palette 7's copy is 12 darker instead. Menu_OpenBackdropScreen calls it
+/// with 8: 14 becomes the row highlight, 4 the highlighted element icons and
+/// 6 the dimmed text behind the help (DjinnMenu_ShowHelp).
 void Graphics_AdjustPaletteBank(s32 brightnessDelta) {
   s32 bankIndex;
   s32 bank;
@@ -452,13 +472,21 @@ void Graphics_AdjustPaletteBank(s32 brightnessDelta) {
   } while (bankIndex <= 2);
 }
 
+/// The tile of BG character block 1 the backdrop's frame tile is copied to;
+/// the preview screens blink it.
 #define DJINN_BACKDROP_FRAME_TILE 150
 
+/// OwnerAction_DiffSlots' marks on an action id: Psynergy the change gives,
+/// drawn in colour 4, and Psynergy it takes away, in colour 2.
 #define DJINN_PREVIEW_GAINED 0x8000
 #define DJINN_PREVIEW_LOST 0x4000
 
 /// Draws the backdrop behind the Djinn menu's list: its window, tiles and
-/// palettes.
+/// palettes. First saves BG character block 1's first 8 KB and palettes 4 to 7
+/// in the backdrop, which DjinnMenu_Run puts back as the menu closes. Palette
+/// 5 gets the basic sprite colours, with the window background as colour 14,
+/// for the element icons (DJINN_ELEMENT_TILE); palette 7 a copy of 15; then
+/// Graphics_AdjustPaletteBank(8) makes 14, 4 and 6 from 15, 5 and 7.
 MenuBackdropResult Menu_OpenBackdropScreen(void) {
   // UB: the implicit int call conflicts with DrawElementList's void definition.
   // The sole caller ignores this wrapper's result. Plain void changes the
@@ -492,6 +520,10 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
 
 /// Lists the actions after a preview, marking gains, then appends the losses.
 /// The two output counts distinguish gained and lost actions.
+///
+/// Writes every action of after (up to 32), with DJINN_PREVIEW_GAINED on
+/// those before lacks, then each action of before that after lacks, with
+/// DJINN_PREVIEW_LOST. Returns the number written, up to 64.
 s32 OwnerAction_DiffSlots(struct OwnerActionSlot *before,
                           struct OwnerActionSlot *after, u16 *actionsOut,
                           s32 *gainedCountOut, s32 *lostCountOut) {
@@ -580,6 +612,9 @@ s32 DjinnMenu_BuildLists(void *table) {
 #define DJINN_ELEMENT_TILE 0x5001
 
 /// Draws each owner's Djinn column, including set and recovering entries.
+/// Rebuilds table's lists first. Each name follows its element's icon: in the
+/// normal colour when set, colour 2 on standby and colour 4 while recovering.
+/// Holds the tilemap upload (menuBusy) until the list is drawn.
 void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
   struct DjinnMenuWork *menu;
   s32 listIndex;
@@ -610,6 +645,8 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
       for (listIndex = 0; listIndex < table->counts[row]; listIndex++) {
         if (element != (entries[listIndex] & DJINN_ENTRY_ELEMENT) >> 5)
           continue;
+        // Colour 2 when not set; colour 4 over it when it is neither set nor
+        // ready to set, that is recovering (or held by a summon).
         if ((entries[listIndex] & DJINN_ENTRY_IS_SET) == 0)
           UiWork_SetParamNibbleFar(2);
         canChangeState = 0;
@@ -645,6 +682,8 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
 
 /// Sets the palette of a rectangle of window's interior, (x, y) and its size in
 /// tiles from the interior's corner, through UiWindow_SetPaletteBitRectFar.
+/// Only bit 12 of each map entry changes, so palette 15 and 14 swap (the row
+/// highlight) and so do 5 and 4 (the element icons).
 s32 UiWindow_SetInteriorPaletteBitRect(const struct UiWindow *window, s32 x,
                                        s32 y, s32 width, s32 height,
                                        s32 palette) {
@@ -655,8 +694,11 @@ s32 UiWindow_SetInteriorPaletteBitRect(const struct UiWindow *window, s32 x,
 #endif
 }
 
-/// Moves each tile of a screen rectangle (in tiles, clipped to the screen) that
-/// shows palette 15 to palette.
+/// Moves each tile of a screen rectangle (in tiles) that shows palette 15 to
+/// palette, and marks each row changed for upload. Clipped as
+/// Render_SetTilemapFlagRect clips: to the screen's columns, and to its rows
+/// only once the rectangle reaches row 29. The Djinn menu dims its windows
+/// with palette 6 behind the help and the second chooser.
 void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
   struct UiRenderWork *render;
   u16 *tileCursor;
@@ -706,7 +748,11 @@ void UiWindow_SetInteriorRectPalette(void *window, s32 x, s32 y, s32 width,
                           palette);
 }
 
-/// Runs the Djinn help choices and restores the list when the player leaves.
+/// The Djinn menu's help, opened by Select on the first chooser: a list of
+/// seven topics (Djinn, Set, Standby, Summon, Recovery, Class, Psynergy) with
+/// the chosen one's text typed beside it. The d-pad moves through the topics,
+/// and A moves on once the text has finished. Returns -1 for B or Select,
+/// back to the list, or -2 for Start, which closes the Djinn menu.
 s32 DjinnMenu_ShowHelp(void) {
   struct UiWindow *helpWindow;
   struct UiWindow *statusWindow;
@@ -733,6 +779,8 @@ s32 DjinnMenu_ShowHelp(void) {
   UiText_DrawCharacterAtOffsetFar(message, menu->helpWindow, 0, 0);
   message++;
   UiText_DrawCharacterAtOffsetFar(message, menu->helpWindow, 0, 16);
+  // Dim the party window and the Djinn list behind the help: palette 6 is
+  // palette 15's text 12 steps darker (Menu_OpenBackdropScreen).
   UiWindow_SetRectPalette(1, 1, 11, 3, 6);
   UiWindow_SetInteriorRectPalette((void *)menu->listWindow, 0, 0, 28, 10, 6);
   list = UiWindow_CreateFar(0, 9, 8, 10, 6);
@@ -786,6 +834,8 @@ s32 DjinnMenu_ShowHelp(void) {
         AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       }
     }
+    // Before the next topic: free the page arrow's VRAM slot the text took
+    // (99: none), and stop the text's channel typing.
     if (render->glyphResource != 99) {
       Resource_ResetEntry(render->glyphResource);
       render->glyphResource = 99;
@@ -819,14 +869,32 @@ s32 DjinnMenu_ShowHelp(void) {
   return result;
 }
 
+/// DJINN_ENTRY_IS_SET as a negative int, for entries built in s32.
 #define DJINN_ENTRY_SET (-0x8000)
 
+/// A Djinn list entry's owner, element and index (DJINN_ENTRY_OWNER,
+/// _ELEMENT and _INDEX), shifted down.
 #define DJINN_OWNER(v) (((v) & 0xf00) >> 8)
 #define DJINN_ELEMENT(v) (((v) & 0xe0) >> 5)
 #define DJINN_NUMBER(v) ((v) & 0x1f)
 
-/// Chooses an owner and Djinni, or a set, standby, give or trade action.
-/// The tutorial can replace the sampled input without changing the input order.
+/// The Djinn list's chooser. Mode 0 chooses a Djinni in any member's column;
+/// mode 1, for the Djinni chosen in mode 0, chooses what to do with it: its
+/// own column's header (Set or Standby), another member's header (Give), or a
+/// Djinni in another column to trade with. The help window says what R and
+/// Select do; the figures and the unleash text follow the cursor.
+///
+/// Mode 0 returns 1 for A, 7 for L (the member's status) and 10 for Select
+/// (help). R puts the Djinni on standby or sets it at once; holding R, Select
+/// sets every Djinni or puts every one on standby. Mode 1 returns 1 to set, 2
+/// for standby, 3 to give and 4 to trade (A or R). Both return -1 for B and -2
+/// for Start, and record the choice in the work's selectedColumn, selection,
+/// pairEntries, pairIndex, pairElement and pairOwner for mode.
+///
+/// During the tutorial (backdrop->tutorialStep) the sampled keys are replaced:
+/// each step waits a set number of frames, shows its messages (step 15 waiting
+/// for the player's A after each), or presses a key itself; step 28 waits for
+/// the player's A, then presses B.
 s32 DjinnMenu_SelectDjinn(s32 mode) {
   s8 columnFlags[8];
   u8 requiresTrade[16];
@@ -854,6 +922,11 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
   s32 tutorialStep;
   s8 *status;
 
+  // Each column's flags. bits: 2 no Djinni to choose | 1 its header can be
+  // chosen | 0 the cursor is on its header. In mode 0 an empty column
+  // is 4 and the cursor skips it; in mode 1 the chosen Djinni's own column is
+  // 7 (header only), a member it can be given to 3 (7 with no Djinn), and one
+  // that must trade 0.
   selectedRow = -1;
   status = columnFlags;
   for (i = 7; i >= 0; i--)
@@ -885,6 +958,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       }
     }
   }
+  // Mode 1: keep the first Djinni highlighted, dim the rest of its column
+  // (palette 6), and label each column's header with what choosing it does.
   if (mode == 1) {
     s32 fromX;
     s32 fromY;
@@ -913,6 +988,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
   }
   RenderOutput_RedrawSavedRectFar(menu->helpWindow);
   menu->cursor->active = ICON_SHOWN;
+  // redraw is 1 for a full redraw and 2 after a cursor move, which also makes
+  // the Djinni figure grow in again (FourObjectMotion_SetSlotPhase 0).
   for (;;) {
     if (redraw != 0) {
       refresh = redraw;
@@ -933,6 +1010,10 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (selectedRow != -1)
         djinn = backdrop->list.ids[ownerColumn][selectedRow];
       RenderOutput_RedrawSavedRectFar(menu->helpWindow);
+      // Mode 1's help: `<owner>'s`, the element icon and the Djinni's name,
+      // an ability name argument (its action, 300 + element * 20 + number),
+      // then "What will you do?". Spanish, French and Italian put the icon
+      // first and the name in the one message.
       if (mode == 1) {
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH ||             \
     LANGUAGE == LANGUAGE_ITALIAN
@@ -961,6 +1042,11 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         UiText_DrawCharacterAtOffsetFar(MsgDjinnOwnerLabel + 2,
                                         menu->helpWindow, 0, 8);
       }
+      // The Djinni's figure, its element's: animation 1 for one on standby or
+      // recovering, 2 for one that is set. A recovering one gets
+      // FourObjectMotion_SetSlotPosition's negative mark, which
+      // FourObjectMotion_UpdateBottomRow turns into facing 0x8000 rather than
+      // 0x4000. On a header the figure goes off screen (y 200).
       if (selectedRow == -1) {
         FourObjectMotion_SetSlotPosition(mode, 0, 200, 0);
       } else if (mode == 0) {
@@ -1065,6 +1151,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     else
       UiMenu_PositionCursor(ownerColumn * 56 - 8, djinnRow * 8 + 60);
     WaitFrames(1);
+    // Holding R after R on a Djinni keeps the group commands up; they
+    // end when R is let go or pressed again (0x100 is KEY_R in the latch,
+    // cleared when they began).
     if (!(gKeysHeld & KEY_R) || (gKeysPressedLatch & 0x100)) {
       if (groupMode)
         redraw = 1;
@@ -1073,6 +1162,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     }
     repeat = gKeysRepeat;
     pressed = gKeysPressed;
+    // The tutorial plays the menu itself: the steps' keys are A (1), B (2),
+    // Right (16) and Left (32), after waits counted in frames.
     tutorialStep = backdrop->tutorialStep;
     if (tutorialStep != 0) {
       pressed = 0;
@@ -1087,6 +1178,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         pressed = 2;
         repeat = 2;
         break;
+      // The recovery lesson: after its two messages, three recovery ticks
+      // and Flint (member 0's Venus Djinni 0) goes back on standby.
       case 27:
         if (backdrop->tutorialTimer == 60) {
           messageWindow =
@@ -1246,6 +1339,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         break;
       }
     }
+    // Mode 0's R: put the Djinni on standby or set it at once, unless it is
+    // recovering.
     if (mode == 0 && (pressed & KEY_R)) {
       if (selectedRow == -1) {
         AudioCommand_PlayFar(SE_MENU_ERROR);
@@ -1339,6 +1434,8 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       result = -1;
       break;
     }
+    // Select: with R held, set every Djinni that is not recovering, or, the
+    // next time, put every one on standby; otherwise open the help.
     if (mode == 0 && (pressed & KEY_SELECT)) {
       if (groupMode) {
         setAll ^= 1;
@@ -1497,12 +1594,17 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
      * 2058 instructions differ in tbs-en. */
     asm("" : "+r"(result) : "r"(entry));
   }
+  // The cursor, packed as column + row * 10.
   menu->selection[mode] = ownerColumn + djinnRow * 10;
   return result;
 }
 
 /// Lists owned Djinn by element and index, marking those that are set.
 /// For element -1, entries also encode their owner.
+///
+/// Writes one Djinn list entry (DJINN_ENTRY_) for each Djinni of element the
+/// unit holds, or of every element for -1, and returns how many. The Djinn
+/// menu passes a DjinnListTable row, which holds DJINN_LIST_ROWS (10).
 s32 Djinn_ListOwnerEntries(u16 *entriesOut, s32 ownerId, s32 element) {
   struct BattleUnit *unit = UnitGetFar(ownerId);
   s32 count = 0;
@@ -1534,7 +1636,10 @@ s32 Djinn_ListOwnerEntries(u16 *entriesOut, s32 ownerId, s32 element) {
   return count;
 }
 
-/// Draws both sides of the give or trade preview for the selected page.
+/// Draws both sides of the give or trade preview for the selected page: the
+/// receiver in the second window and the giver in the first. mode is a
+/// DjinnCompareOperation; only DJINN_COMPARE_TRADE differs, swapping the two
+/// Djinn. Returns 1.
 s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex) {
   struct DjinnMenuWork *menu;
 
@@ -1561,6 +1666,16 @@ static __inline__ void Unit_Copy(struct BattleUnit *destination,
 
 /// Saves the unit, applies a hypothetical Djinn change, draws its differences
 /// and restores the original unit before returning.
+///
+/// previewMode says the change, with the Djinn chosen in the work's panes
+/// removePairSlot and addPairSlot: 0 the other's Djinni is added and set, 1
+/// the chosen Djinni is unset, 2 a trade (the own one is unset if set, the
+/// other's is added, and set if it was), 4 the other's Djinni is added (set if
+/// it was), 3 no change, with maximum HP and PP shown too. Page 0 shows the
+/// stats, class and set Djinn counts, with an arrow beside each stat that
+/// changes; page n the nth page of the Psynergy list, new Psynergy in colour 4
+/// and lost Psynergy in colour 2. side is the portrait slot. The saved copy is
+/// a heap block freed before returning. Returns 1.
 s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
                               s32 ownerId, s32 removePairSlot, s32 addPairSlot,
                               s32 previewMode, s32 page, s32 side) {
@@ -1574,6 +1689,8 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
   s32 takeSet;
   s32 lost;
   s32 gained;
+  // OwnerAction_DiffSlots can write up to 64 entries here in the worst case
+  // (32 kept or gained and 32 lost).
   u16 actions[48];
   struct DjinnMenuWork *menu;
 
@@ -1685,6 +1802,8 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
       column = x;
       if (originalUnit->classIndex != unit->classIndex)
         column += 5;
+      // Each element's icon and its count of set Djinn: 0xf030 + n is the
+      // window font's digit n (character 0x30 + n) in palette 15.
       for (i = 0; i < 4; i++) {
         UiWindow_SetTilemapEntryFar(window, DJINN_ELEMENT_TILE + i,
                                     column + i * 2, y + 5, 0);
@@ -1757,6 +1876,9 @@ s32 DjinnMenu_DrawStatPreview(struct UiWindow *window, s32 x, s32 y,
     }
   }
 
+  // Pages 1 on: the Psynergy after the change, five to a page (six with no
+  // change), then the key below: "* Psynergy Gained" in colour 4, "* Psynergy
+  // Lost" in colour 2, or "* No change".
   if (page > 0) {
     s32 rows;
     s32 first;

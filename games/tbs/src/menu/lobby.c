@@ -47,27 +47,76 @@
 #include "songs.h"
 
 // Link transfers use three unit records followed by one recovery-table record.
+/// The bytes sent for each member: a BattleUnit (BATTLE_UNIT_SIZE, 0x14c)
+/// and the eight bytes after it. XXX: likely rounded up to whole 20-byte
+/// blocks, because the serial runtime stores each block whole and 0x154 is
+/// 17 of them.
 #define LOBBY_UNIT_RECORD_BYTES 0x154
+/// The bytes sent for the Djinn recovery table after the members: the table
+/// (struct DjinnRecoveryTable, 268 bytes) and the 52 bytes after it, 16
+/// blocks of 20, two more than the table needs.
 #define LOBBY_RECOVERY_RECORD_BYTES 0x140
+/// The members a linked battle takes; a smaller party sends absent records.
 #define LOBBY_UNIT_RECORD_COUNT 3
+/// gLinkStatus bits 0 and 1: both consoles were heard this frame, as the
+/// battle code's LINK_BOTH_CONNECTED.
 #define LOBBY_LINK_READY_MASK 3
+/// A record fails on the 25th frame it waits without a link or past the
+/// timeout.
 #define LOBBY_TRANSFER_RETRY_LIMIT 24
+/// Frames, about ten seconds, for the three member records, and again for
+/// the recovery table.
 #define LOBBY_SEND_TIMEOUT_FRAMES 600
+/// Frames, about fifteen seconds, for all four records received.
 #define LOBBY_RECEIVE_TIMEOUT_FRAMES 900
+/// Frames without a link (LinkLobby_PollPeerReady) or without the partner's
+/// request (LinkLobby_EnterBattle) before the lobby gives the partner up.
 #define LOBBY_PEER_WAIT_FRAMES 25
 
-// The lobby's temporary flags:
+// The lobby's flags, besides FLAG_MONSTER_BATTLE, FLAG_LINK_BATTLE and the two
+// byte flags flags.h names:
 // FLAG_SCENE_TEMP_00: the attendant has asked the player to take part; every
 //   300th call of LinkLobby_PromptToParticipate clears it, to ask again.
-// FLAG_SCENE_TEMP_01: a linked partner is there (its signatures match).
+// FLAG_SCENE_TEMP_01: the linked partner has asked for a battle: its
+//   signature matches, and its state is slot 1 (asked) or 2 (in the circle).
 // FLAG_SCENE_TEMP_02: the player has agreed to a battle.
 // FLAG_SCENE_TEMP_03: the party is on its way into the battle.
 // FLAG_SCENE_TEMP_04: the attendant's next explanation is the party order.
 // FLAG_SCENE_TEMP_05: the link was lost, and the attendant has yet to say so.
+// FLAG_SCENE_TEMP_F0 + n: character n is in the battle party, set on every
+//   arrival (LinkLobby_RunRoundResult).
+// 0x172: a linked battle has been arranged (with FLAG_LINK_BATTLE): only the
+//   first three members take part (LinkLobby_PartyContains).
+// The place flags (flags.h), by number:
+// 0x300: the attendant has explained once; talking again offers to apply.
+// 0x302: this console is the link's child (multiplayer id 1), which receives
+//   the parties first. LinkLobby_PeerSlotMatches sets 0x302 and 0x303.
+// 0x303: the link is up (LOBBY_LINK_READY_MASK).
+// 0x304: a linked battle has ended since the leader last walked south of z
+//   224; 0x305: it was won. The party's and visitors' lines read them.
+// 1000 (0x3e8): the last linked battle broke off (Battle_RunEncounter). In a
+//   monster series, byte flag 1000 (flags 1000 to 1007) instead counts the
+//   victories, 0 to 2, towards a stronger monster.
+//
+// gGameState.linkTallies, as this file keeps them: 0 monster battles won,
+// 1 monster battles lost, 2 the most monster battles won in a row, 3 those
+// won in the current series, 4 linked battles won, 5 linked battles lost,
+// 6 the most linked battles won in a row (the wall board), 7 those won in a
+// row now.
 
 #define PEER_TAG(a, b, c, d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
 
 // clang-format off
+/// The words the lobby publishes in its link payload, by slot; the partner
+/// compares them with its own (LinkLobby_PeerSlotMatches). Slot 0 is this
+/// game's signature, in column 0 (gLinkLobby_SlotColumns); slots 1 to 4 are
+/// its state, in column 1: 1 has asked for a battle, 2 is in the circle, 3 is
+/// unused and 4 is idle. Slot 5 replaces the signature when no partner
+/// answers the attendant and during a monster series. In English and French
+/// it equals slot 0; elsewhere it is slot 0's letters reversed, which the
+/// partner's slot 0 test does not match. XXX: likely meant to hide this
+/// console from partners meanwhile, because each return to linking writes
+/// slot 0 back.
 const s32 gLinkLobby_SlotValues[] = {
 #if (LANGUAGE == LANGUAGE_GERMAN)
     PEER_TAG('C', 'S', 'G', 'G'), PEER_TAG('3', '0', '1', '2'),
@@ -100,12 +149,15 @@ const s32 gLinkLobby_SlotValues[] = {
 
 #undef PEER_TAG
 
-/// The partner console's signature as the lobby reads it: a word for each
-/// slot column.
+/// A console's link payload as the lobby reads it from gLinkPeerSignatures:
+/// values[0] is its signature word and values[1] its state word
+/// (gLinkLobby_SlotValues, placed by gLinkLobby_SlotColumns).
 struct LinkPeer {
-  s32 values[6];
+  s32 values[6]; ///< the payload's words; only 0 and 1 are read here
 };
 
+/// Frames LinkLobby_PollPeerReady has gone without a link, 0 to 25; 0 while
+/// linked.
 static s32 sLinkLobbyWaitFrames;
 
 /// What a lobby handler's early exit returns. The ROM's s32 handlers return
@@ -117,12 +169,16 @@ static s32 sLinkLobbyWaitFrames;
 #define LOBBY_NO_RESULT
 #endif
 
+/// The lobby's entrances, which Field_RunScene reads through entry/lobby.s.
 u8 *LinkLobby_GetEntrances(void) { return (u8 *)gLinkLobbyEntrances; }
 
+/// The regions entry: the lobby has no exit boxes.
 s32 SceneData_ReturnZero(void) { return 0; }
 
-/// Reinitializes the serial runtime while interrupts are locked.
-/// The original s32 entry produces no defined result; its callers ignore it.
+/// Restarts the link with interrupts locked: removes the serial and timer 3
+/// handlers, then runs SerialRuntime_Initialize. Called when no partner
+/// answers the attendant and after a linked battle broke off. The original
+/// s32 entry produces no defined result; its callers ignore it.
 static s32 LinkLobby_InitializeSerial(void) {
   u32 savedIrqState;
 
@@ -140,7 +196,10 @@ static s32 LinkLobby_InitializeSerial(void) {
 
 u8 *LinkLobby_GetExits(void) { return (u8 *)gLinkLobbyExits; }
 
-/// Selects the post-link-battle placements for entrances nine and eleven.
+/// The placements entry. After a defeat (entrance 9 for a monster battle, 11
+/// for a linked one) the party members and four visitors roughly trade places
+/// (gLinkLobbyBattlePlacements): Garet, Ivan and Mia or Jenna take three of
+/// the visitors' spots, and the visitors stand around where the party stood.
 s32 LinkLobby_SelectPlacements(void) {
   s16 entrance = gGameState.entrance;
 
@@ -150,12 +209,15 @@ s32 LinkLobby_SelectPlacements(void) {
   return (s32)gLinkLobbyPlacements;
 }
 
-/// Checks one language-specific peer signature slot and updates link-side
-/// flags.
+/// Returns 1 when the partner's payload holds slot's word in slot's column,
+/// 0 when it does not or there is no link. Also sets or clears place flags
+/// 0x303 (the link is up) and 0x302 (this console is the child), and reads
+/// the other console's payload by them.
 static s32 LinkLobby_PeerSlotMatches(s32 slot) {
   s32 serialPlayerId = -1;
 
   if ((gLinkStatus & LOBBY_LINK_READY_MASK) == LOBBY_LINK_READY_MASK) {
+    // SIOCNT bits 4 and 5: 0 for the parent, 1 for the child.
     serialPlayerId = (REG_SIOCNT << 26) >> 30;
     Engine_GameFlagSet(0x303);
   } else {
@@ -183,7 +245,8 @@ static s32 LinkLobby_PeerSlotMatches(s32 slot) {
   return 0;
 }
 
-/// Publishes a protocol slot value in the outgoing signature payload.
+/// Publishes slot's word in its column of this console's link payload, where
+/// the partner's LinkLobby_PeerSlotMatches reads it.
 static void LinkLobby_WriteSlotValue(s32 slot) {
   s32 *dst = (s32 *)gSerialTransfer.payload;
   const s32 *src = &gLinkLobby_SlotValues[slot];
@@ -195,8 +258,12 @@ static void LinkLobby_WriteSlotValue(s32 slot) {
 // modern build uses the scheduler's actual callback type to avoid an
 // incompatible indirect call.
 #ifdef UBFIX
-/// Polls peer readiness, raises arrival/disconnect events and refreshes
-/// signatures.
+/// The scheduler callback that watches the partner each frame in the lobby.
+/// It forgets the partner after LOBBY_PEER_WAIT_FRAMES without a link, keeps
+/// FLAG_SCENE_TEMP_01 current, raises event 1 (LinkLobby_PromptToParticipate)
+/// once both sides agree and event 2 (LinkLobby_ReportDisconnection) when the
+/// link is lost while a battle is being arranged. LinkLobby_RunRoundResult
+/// schedules it on every arrival; LinkLobby_EnterBattle removes it.
 static void LinkLobby_PollPeerReady(void) {
 #else
 static s32 LinkLobby_PollPeerReady(void) {
@@ -207,12 +274,17 @@ static s32 LinkLobby_PollPeerReady(void) {
 
   work = gEventWork;
   result = 1;
+  // The leader is south of z 224 (16.16 pixels), towards the way out: the
+  // party stops talking about the last battle.
   if (Object_GetById(0)->z.fixed > 0xe00000) {
     Engine_GameFlagClear(0x304);
   }
+  // While raised event 2 (the lost link) waits, skip the partner tracking.
   if (work->raisedTrigger != 2) {
     LinkLobby_PeerSlotMatches(0);
     if (!Engine_GameFlagIsSet(0x303)) {
+      // Without a link for 26 frames, clear every console's received payload
+      // and go idle.
       if (++sLinkLobbyWaitFrames > LOBBY_PEER_WAIT_FRAMES) {
         for (i = 0; i < 4; i++) {
           Iwram_ClearWords(&gLinkPeerSignatures[i], 20);
@@ -223,6 +295,8 @@ static s32 LinkLobby_PollPeerReady(void) {
     } else {
       sLinkLobbyWaitFrames = 0;
     }
+    // While linked: has the partner asked for a battle, or stepped into the
+    // circle?
     if (sLinkLobbyWaitFrames == 0) {
       if (LinkLobby_PeerSlotMatches(0) &&
           (LinkLobby_PeerSlotMatches(1) || LinkLobby_PeerSlotMatches(2))) {
@@ -242,6 +316,8 @@ static s32 LinkLobby_PollPeerReady(void) {
       work->raisedTrigger = 1;
     }
   }
+  // The 25th frame without a link while a linked battle is being arranged:
+  // report the link lost.
   if ((GameFlag_IsSet(FLAG_SCENE_TEMP_01) ||
        GameFlag_IsSet(FLAG_SCENE_TEMP_02)) &&
       !GameFlag_IsSet(FLAG_MONSTER_BATTLE) && !LinkLobby_PeerSlotMatches(0) &&
@@ -262,10 +338,15 @@ static s32 LinkLobby_PollPeerReady(void) {
 #endif
 }
 
+/// Calls of LinkLobby_PromptToParticipate towards asking again, at 300;
+/// cleared on every arrival.
 u32 gLinkLobbyCallFrames;
 
-/// Prompts for participation unless entering battle or a prompt is still
-/// pending. Retains the original handler's missing result on the message path.
+/// Raised event 1: the attendant asks the player into the circle once both
+/// consoles agree, and again after 300 calls. The line is "If you want to
+/// participate, please step into the circle!". Returns the flag's value when
+/// FLAG_SCENE_TEMP_03 or _00 is set and nothing is shown; the path that
+/// shows the line returns nothing in the ROM (UB).
 static s32 LinkLobby_PromptToParticipate(void) {
   s32 set;
 
@@ -292,8 +373,9 @@ static s32 LinkLobby_PromptToParticipate(void) {
 #endif
 }
 
-/// Resets the disconnect trigger and displays the attendant's warning.
-/// The original handler has no defined return value.
+/// Raised event 2: the attendant says the link was disconnected. Publishes
+/// slot 4 (idle) and clears the raised trigger and FLAG_SCENE_TEMP_00, _03
+/// and _05. The original handler has no defined return value.
 static s32 LinkLobby_ReportDisconnection(void) {
   struct EventWork *work = gEventWork;
 
@@ -311,9 +393,14 @@ static s32 LinkLobby_ReportDisconnection(void) {
 #endif
 }
 
-/// Receives three unit records and a recovery table; returns the occupied count
-/// or the original transfer failure. All size checks observe fresh serial
-/// reads.
+/// Receives the partner's three member records into units 0x80 to 0x82 (the
+/// battle's enemies, by UnitGet) and its Djinn recovery table into the enemy
+/// side's (Djinn_GetRecoveryTable(1)). Each name gets the edition's
+/// MsgEnemyLabel ("Enemy" in English) in front, within the 14 letters a
+/// BattleUnit name holds. Returns how many records hold a member, or -1 when
+/// a transfer fails, overruns or runs out of time. The alternate-pool buffer
+/// it allocates and frees is never written: the records are received in
+/// place.
 static s32 LinkLobby_ReceivePartyRecords(void) {
   /* FAKEMATCH(volatile): gSerialReceivedSize is volatile (serial_runtime.h),
    * so every read here is a load of its own; without the qualifier, 24 of 190
@@ -357,10 +444,14 @@ test1:
     result = -1;
     goto done;
   }
+  // BattleUnit's side (0x12a): the sender marks a member 2 and a padding
+  // record 0.
   if (record[0x12a] != 0) {
     result++;
   }
   Engine_TaskWait(2);
+  // Put the prefix before the name, shifting it right and cutting it to the
+  // 14 letters and terminator a BattleUnit name holds.
   FieldUi_AdjustValueWithoutLimit(MsgEnemyLabel, namePrefix);
   nameIndex = 0;
   if (namePrefix[nameIndex] != 0) {
@@ -371,6 +462,7 @@ test1:
       }
     } while (namePrefix[nameIndex] != 0);
   }
+  // German, Spanish, French and Italian put a space after the prefix.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
   namePrefix[nameIndex] = ' ';
@@ -390,6 +482,7 @@ next:
   if (slot > 2) {
     goto second;
   }
+  // The partner's members become this battle's enemies 0x80 to 0x82.
   record = (u8 *)UnitGet(slot + 128);
   tries = 0;
   if ((transferResult = SerialRuntime_BeginReceive(record)) == -1) {
@@ -421,6 +514,7 @@ test2:
   }
   goto done;
 second:
+  // Then the recovery table, into the enemy side's (unit 0x83's record).
   Runtime_BumpFree(heap);
   size = LOBBY_RECOVERY_RECORD_BYTES;
   heap = Runtime_BumpAllocateAlternatePool(size);
@@ -436,8 +530,9 @@ done:
   return result;
 }
 
-/// Copies at most three active owner IDs, terminates with 0xff, and returns
-/// count. Passing a null destination only counts the entries.
+/// Copies the character ids of the party's first three members
+/// (gGameState.activeOwners), ends them with 0xff and returns how many. A
+/// null destination only counts them.
 static s32 LinkLobby_CopyPartyOwnerIds(u16 *ownerIds) {
   s32 ownerCount = Party_CountActiveOwners();
   if (ownerCount > LOBBY_UNIT_RECORD_COUNT)
@@ -472,8 +567,14 @@ static s32 LinkLobby_CopyPartyOwnerIds(u16 *ownerIds) {
   return ownerCount;
 }
 
-/// Sends up to three active owners, pads missing records, then sends recovery
-/// data. Returns zero on completion or the original serial failure.
+/// Sends the party's first three members' records, marked side 2
+/// (BATTLE_UNIT_PARTY), and for a smaller party absent records, copies of
+/// the last member marked side 0. Then sends this side's Djinn recovery
+/// table, rewritten for the partner: each entry's owner becomes the number
+/// the partner gives that member (0x80 plus its place), and the entries of
+/// members not sent are dropped. Returns 0, or -1 when a send fails or runs
+/// out of time. The copies go through an alternate-pool buffer freed before
+/// returning.
 static s32 LinkLobby_SendPartyRecords(void) {
   // Measured plain form: replacing only the final offer-transfer wait3/test3
   // polling region with while(active transfers) adds 8 bytes in tbs-en.
@@ -508,6 +609,8 @@ static s32 LinkLobby_SendPartyRecords(void) {
     do {
       Iwram_CopyWords(heap, UnitGet(ownerIds[i]), size);
       heap[0x12a] = 2;
+      // As a u8, i - 128 is 0x80 + i: this member's unit on the partner's
+      // side.
       slotMap[ownerIds[i]] = i - 128;
       transferResult = SerialRuntime_BeginSend(heap, size);
       tries = 0;
@@ -550,6 +653,7 @@ test:
   Engine_TaskWait(2);
   i++;
 next:
+  // Pad to three records with the last copy marked absent (side 0).
   if (i <= 2) {
     heap[0x12a] = tries = 0;
     if ((transferResult = SerialRuntime_BeginSend(heap, size)) != -1) {
@@ -574,6 +678,8 @@ next:
     recoveryList = &((struct DjinnRecoveryTable *)heap)->list;
     tries = 0;
     timeout = LOBBY_SEND_TIMEOUT_FRAMES;
+    // Give each Djinni on the list its owner's number on the partner's side,
+    // and drop those of members not sent (peerSlots 0).
     for (j = 0; j < recoveryList->count; j++) {
       recoveryList->entries[j].unitId =
           peerSlots[recoveryList->entries[j].unitId];
@@ -611,8 +717,10 @@ done:
   return result;
 }
 
-/// Orders send/receive by link side and records the received owner count.
-/// A failed exchange resets the transfer state.
+/// Exchanges the two parties: the parent sends first, the child (place flag
+/// 0x302) receives first. On success stores the partner's member count in
+/// FLAG_LINK_PARTY_COUNT and returns it; on failure resets the transfer
+/// state and returns a negative result.
 static s32 LinkLobby_ExchangePartyRecords(void) {
   s32 result;
   s32 receivedOwnerCount;
@@ -654,9 +762,16 @@ check:
   return result;
 }
 
-/// Waits for the opponent, exchanges parties and starts the arena battle.
-/// Disconnects restore the lobby callback and actor position; original returns
-/// have no defined status.
+/// Touch event 10, the circle: starts the battle. A monster battle starts at
+/// once. A linked one needs the attendant's call (FLAG_SCENE_TEMP_00) and no
+/// lost link waiting to be reported (FLAG_SCENE_TEMP_05); it publishes slot 2
+/// and waits for the partner to step in, giving up when the partner
+/// withdraws, the link is lost, or the partner neither asks nor stands in the
+/// circle for LOBBY_PEER_WAIT_FRAMES. The leader then walks in while the
+/// parties are exchanged; a failed exchange walks back, restarts the lobby's
+/// polling and raises event 2. Sets where the battle returns to (entrances 8
+/// and 9 for a monster battle, 10 and 11 for a linked one) and requests it. The
+/// original returns have no defined status.
 static s32 LinkLobby_EnterBattle(void) {
   struct EventWork *work;
   s32 failed;
@@ -715,8 +830,14 @@ static s32 LinkLobby_EnterBattle(void) {
   }
   // Suspend peer polling while transferring the party and entering battle.
   if (!failed) {
+    // Heap slot 54 is gBattleOwnerStates, the battle's enemy units
+    // (LINK_OWNER_STATES_SIZE, battle/battle/encounter.c). While it is
+    // allocated, the exchange below receives the partner's members and Djinn
+    // into units 0x80 to 0x83. The copy to gActorSpriteSlots (gMapCellBuffer
+    // + 0x8000) hands them to Battle_RunEncounter, which copies them back.
     savedWork = Runtime_AllocateBlock(54, 0x7c8);
     Engine_TaskRemoveCallback((SchedulerCallback)LinkLobby_PollPeerReady);
+    // Run the map's tile animation channel 5 for eight frames.
     Map_ClearLayerEntryFlag(5);
     Engine_TaskWait(8);
     Map_SetLayerEntryFlag(5);
@@ -731,11 +852,15 @@ static s32 LinkLobby_EnterBattle(void) {
       Engine_ActorWalkTo(0, 216, 168);
       Engine_ActorWaitForMove(0);
     } else {
+      // Speeds are 16.16 pixels a frame: one to (216, 200), a tenth while
+      // the parties are exchanged, then a half.
       Actor_SetSpeed(0, 0x10000, 0x8000);
       Engine_ActorWalkTo(0, 216, 200);
       Engine_ActorWaitForMove(0);
       Actor_SetSpeed(0, 0x1999, 0xccc);
       Engine_ActorWalkTo(0, 216, 168);
+      // A failed exchange: walk back out and return to the lobby, reporting
+      // the link lost (event 2).
       if (LinkLobby_ExchangePartyRecords() < 0) {
         Actor_SetSpeed(0, 0x10000, 0x8000);
         Engine_ActorWalkTo(0, 216, 200);
@@ -769,6 +894,8 @@ static s32 LinkLobby_EnterBattle(void) {
       Event_SetDefeatDestination((s32)&SceneId_LinkLobby, 11);
     }
     // Publish EXEC only after the battle and return destinations are ready.
+    // It fills the payload's first four halfwords, where the link battle's
+    // command entry looks for it in the partner's (party_commands.c).
     Battle_SetStart(4);
     Field_RequestBattleFromEncounterTable(1, 1);
     signature = (u16 *)gSerialTransfer.payload;
@@ -791,8 +918,12 @@ static s32 LinkLobby_EnterBattle(void) {
 #endif
 }
 
-/// Offers a linked challenge or a monster battle and publishes the response.
-/// Retains the original shared message tails and ignored return value.
+/// Talk event 8, the attendant: arranges a battle. With no partner, offers a
+/// monster battle. With one, calls off a monster battle in waiting, then asks
+/// the player to apply or to accept the partner's request; a yes is
+/// published as slot 1. Agreeing sets FLAG_SCENE_TEMP_02, and for a linked
+/// battle FLAG_LINK_BATTLE and flag 0x172. The original handler's return
+/// value is ignored.
 static s32 LinkLobby_ChooseBattleMode(void) {
   // Returns no value: r0 is whatever the last call left.
 
@@ -800,9 +931,14 @@ static s32 LinkLobby_ChooseBattleMode(void) {
   s32 messageBase;
   s32 messageId;
 
+  // The attendant's lines from MsgLobbyPleaseSpeakWhen: +1 asks the player to
+  // apply, +2 to accept the partner's request, +3 and +7 send the player to
+  // the circle, +4 says the request is made, +5 offers a monster battle and
+  // +6 asks the player to wait for an opponent.
   messageBase = MsgLobbyPleaseSpeakWhen;
   Engine_EventBegin();
   Engine_ActorFaceActor(8, gGameState.selectedActor, 0);
+  // Look for the partner's signature twice, a frame apart.
   if (LinkLobby_PeerSlotMatches(0) == 0) {
     Engine_TaskWait(1);
   }
@@ -813,6 +949,8 @@ static s32 LinkLobby_ChooseBattleMode(void) {
       Engine_EventSetMessage(messageBase + 5);
       Engine_EventOpenMessage(8, 0);
       answer = Engine_EventChooseYesNo(0, 0);
+      // Yes (0) starts a monster series: byte flag 1000 and the series'
+      // victories (tally 3) start at 0.
       if (answer == 0) {
         FieldGameFlag_SetByte(1000, 0);
         Engine_GameFlagSet(FLAG_MONSTER_BATTLE);
@@ -833,6 +971,7 @@ static s32 LinkLobby_ChooseBattleMode(void) {
       goto message;
     }
   } else {
+    // A partner arrived while a monster battle waited: call it off.
     if (GameFlag_IsSet(FLAG_MONSTER_BATTLE)) {
       LinkLobby_WriteSlotValue(0);
       Engine_EventSetMessage(MsgLobbyOpponentArrived);
@@ -865,6 +1004,7 @@ static s32 LinkLobby_ChooseBattleMode(void) {
       }
       Engine_EventOpenMessage(8, 0);
       if (Engine_EventChooseYesNo(0, 0) == 0) {
+        // Yes, and the partner is still there; else the link is lost.
         if (LinkLobby_PeerSlotMatches(0)) {
           Engine_GameFlagSet(FLAG_LINK_BATTLE);
           Engine_GameFlagSet(0x172);
@@ -891,8 +1031,10 @@ static s32 LinkLobby_ChooseBattleMode(void) {
 #endif
 }
 
-/// Reports total or consecutive linked wins according to the leader's facing.
-/// Retains the original handler's missing return and event-end behavior.
+/// Talk event 9: reports the linked battles won, the total when the leader
+/// faces north and those won in a row otherwise; before the first, the line
+/// says it will tell them later. Like the original handler, it never ends
+/// its event (no Engine_EventEnd) and returns nothing.
 static s32 LinkLobby_ReportWinTallies(s32 actor) {
   u32 facing = Object_GetById(0)->facing;
   u16 *tally;
@@ -900,6 +1042,8 @@ static s32 LinkLobby_ReportWinTallies(s32 actor) {
 
   Engine_EventBegin();
   Engine_ActorFaceActor(actor, gGameState.selectedActor, 0);
+  // FACING_IS_NORTH's test, written out: strictly between northwest and
+  // northeast.
   if ((facing - 0xa001) <= 0x3ffe) {
     messageBase = MsgLobbyLooksLikeFirst;
     tally = &gGameState.linkTallies[4];
@@ -929,8 +1073,10 @@ static s32 LinkLobby_ReportWinTallies(s32 actor) {
   return 0;
 #endif
 }
-/// Selects a debug party preset; A accepts and B cancels.
-/// The preset loader's nonzero result selects the unavailable-preset message.
+/// Talk event 15, a debug helper: Left and Right choose a preset number from
+/// 0 up, A loads it (DebugParty_LoadPreset) and B cancels. Actor 9 replies:
+/// one line for a cancel, one for a preset past the table's end (the loader's
+/// nonzero result), one for a loaded party.
 static s32 LinkLobby_ChooseDebugPartyPreset(s32 actorId) {
   struct UiWindow *window;
   s32 presetIndex;
@@ -989,7 +1135,7 @@ static s32 LinkLobby_ChooseDebugPartyPreset(s32 actorId) {
 #endif
 }
 
-/// Runs the sanctum service for this actor within an event.
+/// Talk event 10: the actor serves as a Sanctum's priest (Engine_SanctumOpen).
 static s32 LinkLobby_OpenSanctum(s32 actorId) {
   Engine_EventBegin();
   Engine_SanctumOpen(actorId);
@@ -999,7 +1145,9 @@ static s32 LinkLobby_OpenSanctum(s32 actorId) {
 #endif
 }
 
-/// Tests the first three linked-battle owners, or four outside linked finals.
+/// Returns 1 when character ownerId is among the party's first three members
+/// while a linked battle is arranged (flag 0x172), or its first four
+/// otherwise; 0 when not.
 static s32 LinkLobby_PartyContains(s32 ownerId) {
   s32 count;
   s32 ownerLimit;
@@ -1027,7 +1175,10 @@ static s32 LinkLobby_PartyContains(s32 ownerId) {
 /// UNUSED: the original empty lobby callback.
 UNUSED static void State_NoOp(void) {}
 
-/// Chooses each party member's dialogue from participation and round outcome.
+/// Talk events 1, 2, 3 and 5: Garet, Ivan, Mia or Jenna speaks of the last
+/// linked battle (place flags 0x304 and 0x305) and whether they fought in it,
+/// or else of whether Isaac and they are in the battle party. Each message
+/// family holds one line per character, at actor - 1; Felix's holds "?".
 static s32 LinkLobby_TalkByProgress(s32 actor) {
   s32 messageBase = MsgLobbyCantWaitLets;
   s32 isaacPresent = LinkLobby_PartyContains(0);
@@ -1037,6 +1188,8 @@ static s32 LinkLobby_TalkByProgress(s32 actor) {
   Engine_ActorFaceActor(actor, gGameState.selectedActor, 0);
   if (Engine_GameFlagIsSet(0x304)) {
 
+    // Isaac's flag is tested and the result dropped; messageBase first
+    // holds whether the speaker fought (FLAG_SCENE_TEMP_F0 + actor).
     GameFlag_IsSet(0x2f0);
     messageBase = Engine_GameFlagIsSet(actor + 0x2f0);
     if (Engine_GameFlagIsSet(0x305)) {
@@ -1064,8 +1217,8 @@ static s32 LinkLobby_TalkByProgress(s32 actor) {
 #endif
 }
 
-/// Removes the link IRQ handlers, restores sound parameters and leaves the
-/// arena.
+/// Touch event 1, the way out: stops the link, loads sound preset 2 and goes
+/// back to the file select screen (its entrance 1).
 static s32 LinkLobby_LeaveArena(void) {
   SerialRuntime_RemoveIrqHandlers();
   Sound_LoadPresetParameters(2);
@@ -1078,7 +1231,11 @@ static s32 LinkLobby_LeaveArena(void) {
 // The handlers below are s32 and return no value: r0 is whatever
 // Engine_EventEnd left.
 
-/// Selects the attendant's rules or post-battle line from the round outcome.
+/// Talk events 12 to 14, three visitors: a traveling warrior, one who
+/// explains the linked finals, and one who wonders whether this is the old
+/// man's Battle Arena. Each says their first line unless a linked battle has
+/// ended since the leader last walked south of z 224 (place flag 0x304), then
+/// their second after a win or their third after a loss (0x305).
 static s32 LinkLobby_TalkToAttendant(s32 actor) {
   s32 message;
   s32 step = 0;
@@ -1107,7 +1264,9 @@ static s32 LinkLobby_TalkToAttendant(s32 actor) {
 #endif
 }
 
-/// Alternates between the linked-party size and reorder instructions.
+/// Talk event 16: alternates, by FLAG_SCENE_TEMP_04, between the linked
+/// finals' limit of three allies (worded for the party's size) and how to
+/// change the party's order.
 static s32 LinkLobby_ExplainPartyOrder(s32 actor) {
   s32 message;
 
@@ -1131,7 +1290,8 @@ static s32 LinkLobby_ExplainPartyOrder(s32 actor) {
 #endif
 }
 
-/// Reports the stored consecutive-monster-battle record when nonzero.
+/// Talk event 22: reports the most monster battles won in a row (tally 2),
+/// or before any, that the speaker will count them.
 static s32 LinkLobby_ReportMonsterRecord(s32 actorId) {
   struct GameState *state;
 
@@ -1153,7 +1313,10 @@ static s32 LinkLobby_ReportMonsterRecord(s32 actorId) {
 
 u8 *LinkLobby_GetEvents(void) { return (u8 *)gLinkLobbyEvents; }
 
-/// Shows saving/saved messages around the linked battle results save.
+/// Saves the battle results between saving and saved messages, through
+/// SaveState_ProcessSelectedSlot, which writes the first 16 bytes of the save
+/// stamp (gSaveStamp) into the current file. LinkLobby_RunRoundResult calls it
+/// after each linked battle won or lost.
 static s32 LinkLobby_SaveBattleResults(void) {
   // A shared inline message-pair helper grows each save routine from 0x6c to
   // 0x70 in the native build, so retain the two sequences.
@@ -1175,7 +1338,8 @@ static s32 LinkLobby_SaveBattleResults(void) {
 #endif
 }
 
-/// Shows saving/saved messages around the monster battle record save.
+/// The same with the monster battle messages, after a monster series that set
+/// a new record.
 static s32 LinkLobby_SaveMonsterBattleResults(void) {
   // See LinkLobby_SaveBattleResults for the measured shared-helper trial.
   struct UiWindow *window;
@@ -1196,7 +1360,9 @@ static s32 LinkLobby_SaveMonsterBattleResults(void) {
 #endif
 }
 
-/// Draws a right-to-left three-digit value capped at 999, then redraws the map.
+/// Shows value, at most 999, on the wall board: three map cells at row 8,
+/// columns 14 to 16, each copied from column 27 at the row of its digit.
+/// LinkLobby_RunRoundResult shows the most linked battles won in a row.
 static s32 LinkLobby_DrawThreeDigitValue(s32 value) {
   s32 digit;
 
@@ -1212,8 +1378,13 @@ static s32 LinkLobby_DrawThreeDigitValue(s32 value) {
 #endif
 }
 
-/// Processes the entry's monster/link result and restores lobby polling.
-/// Returns zero after updating records, messages and party recovery.
+/// The overlay's initialize entry, run on every arrival: settles the battle
+/// that brought the party here and restarts the lobby's polling. Entrance 8
+/// is a monster battle won, 9 one lost, 10 a linked battle won (or broken
+/// off, flag 1000) and 11 one lost; any other entrance (the file select
+/// screen uses 1) restarts the link. Updates gGameState.linkTallies,
+/// saves after linked battles and new monster records, and restores the
+/// party's HP, PP and Djinn unless a monster series goes on. Returns 0.
 s32 LinkLobby_RunRoundResult(void) {
   s32 i;
   u32 score;
@@ -1230,6 +1401,8 @@ s32 LinkLobby_RunRoundResult(void) {
   Engine_TaskWait(1);
   Map_SetLayerEntryFlag(5);
 
+  // The payload's halfwords 4 to 7 hold the link battle's phase word
+  // ("VSST", "EDVS", "TUrn"); the lobby puts TALK there.
   {
     u16 *name = (u16 *)gSerialTransfer.payload;
 
@@ -1238,13 +1411,14 @@ s32 LinkLobby_RunRoundResult(void) {
     name[6] = 'L';
     name[7] = 'K';
   }
+  // Note who is in the battle party, for the members' lines.
   for (i = 0; i < 8; i++) {
     Engine_GameFlagClear(0x2f0 + i);
     if (LinkLobby_PartyContains(i)) {
       Engine_GameFlagSet(0x2f0 + i);
     }
   }
-  // Monster victories advance the challenge; defeats finish the streak.
+  // Entrance 8, a monster battle won: offer the next one.
   if (gGameState.entrance == 8) {
     s32 wins;
     s32 messageOffset;
@@ -1256,6 +1430,10 @@ s32 LinkLobby_RunRoundResult(void) {
     LinkLobby_WriteSlotValue(5);
     gGameState.linkTallies[0]++;
     gGameState.linkTallies[3]++;
+    // The offer has two lines a level (FLAG_MONSTER_BATTLE_WINS, -1 when a
+    // series starts), the even line capped at 14. Byte flag 1000 counts the
+    // victories 0 to 2; the third raises the level and takes the next, odd
+    // line (at most 15), which promises a stronger monster.
     wins = (s8)FieldGameFlag_GetByte(FLAG_MONSTER_BATTLE_WINS);
     messageOffset = wins * 2 + 2;
     if (messageOffset > 14) {
@@ -1278,6 +1456,7 @@ s32 LinkLobby_RunRoundResult(void) {
       }
       FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, wins);
     } else {
+      // No: the series ends, and a new record (tally 2) is saved.
       Engine_GameFlagClear(FLAG_MONSTER_BATTLE);
       FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
       UiText_DrawQuantity(gGameState.linkTallies[3], 5);
@@ -1294,6 +1473,8 @@ s32 LinkLobby_RunRoundResult(void) {
       LinkLobby_WriteSlotValue(0);
     }
     Engine_EventEnd();
+    // Entrance 9, a monster battle lost: the series ends, and a new record
+    // is saved.
   } else if (gGameState.entrance == 9) {
 
     gGameState.linkTallies[1]++;
@@ -1322,7 +1503,8 @@ s32 LinkLobby_RunRoundResult(void) {
     FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
     LinkLobby_WriteSlotValue(0);
     Engine_EventEnd();
-    // Linked battles update wins/losses and the consecutive-win record.
+    // Entrance 10, a linked battle won: count the win and the run; a longer
+    // run is the board's new record. Saved.
   } else if (gGameState.entrance == 10) {
     s32 v;
 
@@ -1331,6 +1513,8 @@ s32 LinkLobby_RunRoundResult(void) {
     Engine_EventWaitForScreen();
     LinkLobby_WriteSlotValue(0);
     LinkLobby_WriteSlotValue(4);
+    // The battle broke off instead (Battle_RunEncounter set flag 1000):
+    // report the link lost and restart it.
     if (GameFlag_IsSet(1000)) {
       eventWork = gEventWork;
       Engine_GameFlagClear(1000);
@@ -1357,6 +1541,8 @@ s32 LinkLobby_RunRoundResult(void) {
       Engine_GameFlagSet(0x305);
     }
     Engine_EventEnd();
+    // Entrance 11, a linked battle lost: count the loss and end the run.
+    // Saved.
   } else if (gGameState.entrance == 11) {
     s32 v;
 
@@ -1373,6 +1559,9 @@ s32 LinkLobby_RunRoundResult(void) {
     Engine_GameFlagSet(0x304);
     Engine_GameFlagClear(0x305);
     Engine_EventEnd();
+    // Arriving from the file select screen: start the link, clear flag 0x172
+    // and reset the monster level. Idle sleep is turned off here, with a note
+    // when it was on.
   } else {
     SerialRuntime_Initialize();
     Engine_GameFlagClear(0x172);
@@ -1403,10 +1592,15 @@ s32 LinkLobby_RunRoundResult(void) {
 }
 
 // clang-format off
+/// The payload word each slot of gLinkLobby_SlotValues goes in: 0 the
+/// signature, 1 the state. The last two entries have no slot.
 u8 gLinkLobby_SlotColumns[] = {
     0, 1, 1, 1, 1, 0, 0, 0,
 };
 
+/// Where the party appears: 1 from the file select screen, 8 and 9 after a
+/// monster battle won or lost, 10 and 11 after a linked one
+/// (LinkLobby_EnterBattle).
 struct SceneEntrance gLinkLobbyEntrances[] = {
     { 11, CONDITION_ALWAYS, 128, 0, 164, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
     { 10, CONDITION_ALWAYS, 352, 0, 148, FACING_NORTH, 0, 16, 0, 416, 310, 0 },

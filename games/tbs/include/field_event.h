@@ -128,6 +128,7 @@ s32 Engine_TaskRemoveCallback(void (*callback)(void));
 s32 Engine_RandomNext();
 s32 Engine_MathSin(s32 angle);
 s32 Engine_MathCos(s32 angle);
+u32 Math_RemainderUnsigned(u32 dividend, u32 divisor);
 s32 __divsi3(s32 dividend, s32 divisor);
 void *Engine_HeapAllocate(s32 slot, s32 size);
 void Engine_HeapRelease(s32 slot);

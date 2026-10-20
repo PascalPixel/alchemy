@@ -65,8 +65,6 @@ SolSanctumEruption_FlashMaterializingActor(struct FieldActor *actor);
 static void SolSanctumEruption_SpawnEffectPair(struct FieldActor *parent);
 static void SolSanctumEruption_UpdateWiseOnePalette(void);
 
-s32 Math_RemainderUnsigned(s32 value, s32 modulus);
-
 // Scene flags, cleared on every ordinary entrance:
 // - FLAG_SCENE_TEMP_46: set as Saturos's group starts to leave; from then on
 //   the embers fall without their sound (SE_246).

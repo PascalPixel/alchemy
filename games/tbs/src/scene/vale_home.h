@@ -17,6 +17,4 @@
 
 #include "global_cells.h"
 
-s32 Math_RemainderUnsigned();
-
 #endif

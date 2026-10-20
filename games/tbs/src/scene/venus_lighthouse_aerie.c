@@ -97,8 +97,6 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void);
 static void
 VenusLighthouseAerie_UpdateOrbitingEffect(union FieldObject *object);
 
-s32 Math_RemainderUnsigned(s32, s32);
-
 // The aerie's scene flags:
 // FLAG_SCENE_TEMP_34: Saturos and Menardi slide together as they fuse.
 // FLAG_SCENE_TEMP_35: they grow as they fuse.

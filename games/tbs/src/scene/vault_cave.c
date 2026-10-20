@@ -43,8 +43,6 @@ static void VaultCave_UseUnderfootFrostPriorities(void);
 static void VaultCave_UseAutomaticFrostPriorities(void);
 static void VaultCave_SpawnPuffs(struct FieldActor *source);
 
-s32 Math_RemainderUnsigned();
-
 #include "io_write_queue.h"
 
 #define TILE(position) ((position) / 0x100000)

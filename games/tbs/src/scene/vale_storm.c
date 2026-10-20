@@ -116,8 +116,6 @@ enum StormNightPlaceFlag {
 // - FLAG_SCENE_TEMP_10: the leader is on the upper path, whose collision cells
 //   are swapped until the leader steps off it.
 
-s32 Math_RemainderUnsigned(s32, s32);
-
 static s32 sShakeDone;
 static s32 sShakeShift;
 

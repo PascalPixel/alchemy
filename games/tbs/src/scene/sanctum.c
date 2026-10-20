@@ -1528,8 +1528,6 @@ static s32 Sanctum_ChooseRestartOption(void) {
   return choice;
 }
 
-s32 Math_RemainderUnsigned(s32 value, s32 modulus);
-
 /// Has Isaac and Garet act out the events at Sol Sanctum.
 static void Sanctum_ReenactSolSanctum(void) {
 

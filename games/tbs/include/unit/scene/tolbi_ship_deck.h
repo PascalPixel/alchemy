@@ -3,12 +3,13 @@
 
 #include "types.h"
 #include "field_scene.h"
+#include "field_runtime.h"
 
-u8 *TolbiShipDeck_GetEntrances(void);
-u8 *TolbiShipDeck_GetRegions(void);
-u8 *TolbiShipDeck_GetExits(void);
-u8 *TolbiShipDeck_GetPlacements(void);
-u8 *TolbiShipDeck_GetEvents(void);
+const struct SceneEntrance *TolbiShipDeck_GetEntrances(void);
+const struct SceneRegion *TolbiShipDeck_GetRegions(void);
+const u32 *TolbiShipDeck_GetExits(void);
+const struct ScenePlacement *TolbiShipDeck_GetPlacements(void);
+const struct SceneEvent *TolbiShipDeck_GetEvents(void);
 s32 TolbiShipDeck_Initialize(void);
 extern const s32 gTolbiShipDeck_PresentationActionsA[];
 extern const s32 gTolbiShipDeck_PresentationActionsB[];
@@ -29,10 +30,14 @@ extern const s32 gTolbiShipDeck_RosterActions[];
 extern const s32 gTolbiShipDeck_LeaveActions[];
 extern const s32 gTolbiShipDeck_LeadActionsC[];
 extern const struct SceneEntrance gTolbiShipDeckEntrances[];
-extern const s16 gTolbiShipDeckRegions[];
+extern const struct SceneRegion gTolbiShipDeckRegions[];
 extern const u32 gTolbiShipDeckExits[];
 extern const struct ScenePlacement gTolbiShipDeckPlacements[];
+#ifdef UBFIX
+extern struct ScenePlacement gTolbiShipDeckPlacementsWaiting[];
+#else
 extern const struct ScenePlacement gTolbiShipDeckPlacementsWaiting[];
+#endif
 extern const struct ScenePlacement gTolbiShipDeckPlacementsRowing[];
 extern const struct ScenePlacement gTolbiShipDeckPlacementsAtSea[];
 extern const struct ScenePlacement gTolbiShipDeck_CrewScript[];

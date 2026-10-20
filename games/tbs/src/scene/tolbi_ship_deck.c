@@ -37,6 +37,8 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "objcmd.h"
+#include "map_scroll.h"
+#include "heap_state.h"
 
 // Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another place group, and other places use the numbers for their own.
@@ -82,7 +84,9 @@ static void TolbiShipDeck_ArriveAtTolbi(void);
 static void TolbiShipDeck_ReturnFromIsland(void);
 static void TolbiShipDeck_PlaceLeaderOnDeck(void);
 
-s32 Math_RemainderUnsigned(s32, s16);
+// The append service registers these borrowed crew tables for later talk
+// lookups, but does not write them. Its mutable API therefore needs a cast
+// at each call; the tables themselves remain const.
 
 /// A speaker: the actor, and in the top four bits where the message window
 /// opens beside them (4, SPEAKER_WINDOW_ABOVE, is above).
@@ -112,44 +116,36 @@ static s32 TolbiShipDeck_ShowSprite(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-/// A diving monster keeps its state in spare words of its field actor.
-struct DivingMonster {
-  u8 fieldActor[0x4c];
-  s32 drift; ///< sideways drift per frame
-  u8 unknown50[0x12];
-  u8 step;      ///< 0 hovering, 1 to 8 diving and returning
-  u8 rightSide; ///< returns to the right-hand spot
-  s16 driftingLeft;
-  s16 sinking;
-};
-
-#define DIVER(obj) ((struct DivingMonster *)(obj))
+// The diving scripts own the actor's scratch fields: riseBaseY is sideways
+// drift in 16.16 pixels per frame, riseCounter the dive step (0 hovering),
+// riseEnabled the return side, timer the drift direction and work the bob
+// direction. Using the actor's fields keeps one layout for the whole slot.
 
 /// The update of a sea monster hovering by Ouranos's side of the deck while the
 /// monsters attack. It drifts and bobs at random; one frame in a hundred it
 /// dives at Ouranos, who turns and jumps (sometimes with an emote), then it
-/// returns to its side. DivingMonster.rightSide picks which side it returns to.
+/// returns to its side. riseEnabled picks which side it returns to.
 /// Returns 1 to keep running.
 static s32
 TolbiShipDeck_HoverAndDiveAtOuranos(struct ScriptInterpreter *interpreter) {
   struct FieldActor *obj = (struct FieldActor *)interpreter;
-  if (DIVER(obj)->step != 0) {
-    switch (DIVER(obj)->step) {
+  if (obj->riseCounter != 0) {
+    switch (obj->riseCounter) {
     case 1:
       obj->speed = 0x40000;
       obj->acceleration = 0x20000;
-      FieldObject_SetPosition((s32)obj, PIXELS(268), PIXELS(20), PIXELS(692));
-      DIVER(obj)->step++;
+      FieldObject_SetPosition(obj, PIXELS(268), PIXELS(20), PIXELS(692));
+      obj->riseCounter++;
       break;
     case 2:
-      DIVER(obj)->step++;
+      obj->riseCounter++;
       break;
     case 3:
       if (obj->targetX == ACTOR_NO_TARGET && obj->targetY == obj->targetX &&
           obj->targetZ == obj->targetY) {
-        DIVER(obj)->step++;
+        obj->riseCounter++;
         Event_PlayCue(SE_146);
-        if (DIVER(obj)->rightSide != 0)
+        if (obj->riseEnabled != 0)
           Actor_FaceDirection(SEA_OURANOS, 0xd000, 0);
         else
           Actor_FaceDirection(SEA_OURANOS, 0xb000, 0);
@@ -162,59 +158,59 @@ TolbiShipDeck_HoverAndDiveAtOuranos(struct ScriptInterpreter *interpreter) {
       }
       break;
     case 4:
-      DIVER(obj)->step++;
+      obj->riseCounter++;
       break;
     case 5:
-      if (DIVER(obj)->rightSide != 0)
-        FieldObject_SetPosition((s32)obj, PIXELS(282), 0, PIXELS(658));
+      if (obj->riseEnabled != 0)
+        FieldObject_SetPosition(obj, PIXELS(282), 0, PIXELS(658));
       else
-        FieldObject_SetPosition((s32)obj, PIXELS(254), 0, PIXELS(668));
-      DIVER(obj)->step++;
+        FieldObject_SetPosition(obj, PIXELS(254), 0, PIXELS(668));
+      obj->riseCounter++;
       break;
     case 6:
-      DIVER(obj)->step++;
+      obj->riseCounter++;
       break;
     case 7:
       if (obj->targetX == ACTOR_NO_TARGET && obj->targetY == obj->targetX &&
           obj->targetZ == obj->targetY) {
         obj->speed = 0x20000;
         obj->acceleration = 0x10000;
-        DIVER(obj)->driftingLeft = 0;
-        DIVER(obj)->sinking = 0;
-        DIVER(obj)->step++;
-        DIVER(obj)->drift = 0;
+        obj->timer = 0;
+        obj->work = 0;
+        obj->riseCounter++;
+        obj->riseBaseY = 0;
       }
       break;
     case 8:
-      DIVER(obj)->step = 0;
+      obj->riseCounter = 0;
       break;
     }
   } else {
-    if (DIVER(obj)->driftingLeft != 0) {
-      DIVER(obj)->drift -= ((u32)Engine_RandomNext() << 12) >> 16;
-      if (DIVER(obj)->drift < -0x4000)
-        DIVER(obj)->driftingLeft = 0;
+    if (obj->timer != 0) {
+      obj->riseBaseY -= ((u32)Engine_RandomNext() << 12) >> 16;
+      if (obj->riseBaseY < -0x4000)
+        obj->timer = 0;
     } else {
-      DIVER(obj)->drift += ((u32)Engine_RandomNext() << 12) >> 16;
-      if (DIVER(obj)->drift > 0x4000)
-        DIVER(obj)->driftingLeft = 1;
+      obj->riseBaseY += ((u32)Engine_RandomNext() << 12) >> 16;
+      if (obj->riseBaseY > 0x4000)
+        obj->timer = 1;
     }
     if (obj->x.fixed > 0xf80000 && obj->x.fixed < 0x1240000)
-      obj->x.fixed += DIVER(obj)->drift;
-    if (DIVER(obj)->sinking != 0) {
+      obj->x.fixed += obj->riseBaseY;
+    if ((s16)obj->work != 0) {
       obj->y.fixed =
           obj->y.fixed - (((u32)Engine_RandomNext() << 15) >> 16) - 0x8000;
       if (obj->y.fixed < 0)
-        DIVER(obj)->sinking = 0;
+        obj->work = 0;
     } else {
       obj->y.fixed =
           obj->y.fixed + (((u32)Engine_RandomNext() << 15) >> 16) + 0x8000;
       if (obj->y.fixed > 0x80000)
-        DIVER(obj)->sinking = 1;
+        obj->work = 1;
     }
   }
   if (((u32)Engine_RandomNext() * 100) >> 16 == 0)
-    DIVER(obj)->step = 1;
+    obj->riseCounter = 1;
   return 1;
 }
 
@@ -222,23 +218,23 @@ TolbiShipDeck_HoverAndDiveAtOuranos(struct ScriptInterpreter *interpreter) {
 static s32
 TolbiShipDeck_HoverAndDiveAtSean(struct ScriptInterpreter *interpreter) {
   struct FieldActor *obj = (struct FieldActor *)interpreter;
-  if (DIVER(obj)->step != 0) {
-    switch (DIVER(obj)->step) {
+  if (obj->riseCounter != 0) {
+    switch (obj->riseCounter) {
     case 1:
       obj->speed = 0x40000;
       obj->acceleration = 0x20000;
-      FieldObject_SetPosition((s32)obj, PIXELS(256), PIXELS(20), PIXELS(640));
-      DIVER(obj)->step++;
+      FieldObject_SetPosition(obj, PIXELS(256), PIXELS(20), PIXELS(640));
+      obj->riseCounter++;
       break;
     case 2:
-      DIVER(obj)->step++;
+      obj->riseCounter++;
       break;
     case 3:
       if (obj->targetX == ACTOR_NO_TARGET && obj->targetY == obj->targetX &&
           obj->targetZ == obj->targetY) {
-        DIVER(obj)->step++;
+        obj->riseCounter++;
         Event_PlayCue(SE_146);
-        if (DIVER(obj)->rightSide != 0)
+        if (obj->riseEnabled != 0)
           Actor_FaceDirection(SEA_SEAN, 0xd000, 0);
         else
           Actor_FaceDirection(SEA_SEAN, 0xb000, 0);
@@ -251,88 +247,73 @@ TolbiShipDeck_HoverAndDiveAtSean(struct ScriptInterpreter *interpreter) {
       }
       break;
     case 4:
-      DIVER(obj)->step++;
+      obj->riseCounter++;
       break;
     case 5:
-      if (DIVER(obj)->rightSide != 0)
-        FieldObject_SetPosition((s32)obj, PIXELS(264), 0, PIXELS(600));
+      if (obj->riseEnabled != 0)
+        FieldObject_SetPosition(obj, PIXELS(264), 0, PIXELS(600));
       else
-        FieldObject_SetPosition((s32)obj, PIXELS(242), 0, PIXELS(604));
-      DIVER(obj)->step++;
+        FieldObject_SetPosition(obj, PIXELS(242), 0, PIXELS(604));
+      obj->riseCounter++;
       break;
     case 6:
-      DIVER(obj)->step++;
+      obj->riseCounter++;
       break;
     case 7:
       if (obj->targetX == ACTOR_NO_TARGET && obj->targetY == obj->targetX &&
           obj->targetZ == obj->targetY) {
         obj->speed = 0x20000;
         obj->acceleration = 0x10000;
-        DIVER(obj)->driftingLeft = 0;
-        DIVER(obj)->sinking = 0;
-        DIVER(obj)->step++;
-        DIVER(obj)->drift = 0;
+        obj->timer = 0;
+        obj->work = 0;
+        obj->riseCounter++;
+        obj->riseBaseY = 0;
       }
       break;
     case 8:
-      DIVER(obj)->step = 0;
+      obj->riseCounter = 0;
       break;
     }
   } else {
-    if (DIVER(obj)->driftingLeft != 0) {
-      DIVER(obj)->drift -= ((u32)Engine_RandomNext() << 12) >> 16;
-      if (DIVER(obj)->drift < -0x4000)
-        DIVER(obj)->driftingLeft = 0;
+    if (obj->timer != 0) {
+      obj->riseBaseY -= ((u32)Engine_RandomNext() << 12) >> 16;
+      if (obj->riseBaseY < -0x4000)
+        obj->timer = 0;
     } else {
-      DIVER(obj)->drift += ((u32)Engine_RandomNext() << 12) >> 16;
-      if (DIVER(obj)->drift > 0x4000)
-        DIVER(obj)->driftingLeft = 1;
+      obj->riseBaseY += ((u32)Engine_RandomNext() << 12) >> 16;
+      if (obj->riseBaseY > 0x4000)
+        obj->timer = 1;
     }
     if (obj->x.fixed > 0xe80000 && obj->x.fixed < 0x1100000)
-      obj->x.fixed += DIVER(obj)->drift;
-    if (DIVER(obj)->sinking != 0) {
+      obj->x.fixed += obj->riseBaseY;
+    if ((s16)obj->work != 0) {
       obj->y.fixed =
           obj->y.fixed - (((u32)Engine_RandomNext() << 15) >> 16) - 0x8000;
       if (obj->y.fixed < 0)
-        DIVER(obj)->sinking = 0;
+        obj->work = 0;
     } else {
       obj->y.fixed =
           obj->y.fixed + (((u32)Engine_RandomNext() << 15) >> 16) + 0x8000;
       if (obj->y.fixed > 0x80000)
-        DIVER(obj)->sinking = 1;
+        obj->work = 1;
     }
   }
   if (((u32)Engine_RandomNext() * 100) >> 16 == 0)
-    DIVER(obj)->step = 1;
+    obj->riseCounter = 1;
   return 1;
 }
-
-/// One of the map's scrolling layers, seen for its scroll.
-struct MapLayer {
-  u8 unk00[8];
-  s32 x; ///< 16.16 fixed-point pixels
-  s32 y; ///< 16.16 fixed-point pixels
-  u8 unk10[32];
-};
-
-/// The map work, seen for its camera and scrolling layers.
-struct MapWork {
-  s32 *camera;
-  u8 unk04[16];
-  struct MapLayer layers[8];
-};
 
 static u16 sStrokePhase[4];
 
 static s32 sSwayAngleY;
-static s32 sUnused0; ///< never used; keeps the statics' layout
+UNUSED static s32 sUnused0; ///< never used; keeps the statics' layout
 
 static u16 sOarAngle[8];
 
 static s32 sSeaScroll[2];
 
 static s32 sSwayAngleX;
-static s32 sUnused1; ///< never used; keeps the statics' layout
+UNUSED static s32 sUnused1; ///< never used; keeps the statics' layout
 
 static s32 sSeaSpeed[2];
 
@@ -399,7 +380,7 @@ static s32 TolbiShipDeck_LeapAtOuranos(struct ScriptInterpreter *interpreter) {
     obj->velocityY = 0x40000;
     obj->speed = 0x40000;
     obj->acceleration = 0x20000;
-    FieldObject_SetPosition((s32)obj, PIXELS(264), 0, PIXELS(662));
+    FieldObject_SetPosition(obj, PIXELS(264), 0, PIXELS(662));
     obj->timer++;
     break;
   case 3:
@@ -432,9 +413,9 @@ static s32 TolbiShipDeck_LeapAtOuranos(struct ScriptInterpreter *interpreter) {
     obj->speed = 0x20000;
     obj->acceleration = 0x10000;
     if (obj->riseEnabled != 0) {
-      FieldObject_SetPosition((s32)obj, PIXELS(252), 0, PIXELS(646));
+      FieldObject_SetPosition(obj, PIXELS(252), 0, PIXELS(646));
     } else {
-      FieldObject_SetPosition((s32)obj, PIXELS(256), 0, PIXELS(686));
+      FieldObject_SetPosition(obj, PIXELS(256), 0, PIXELS(686));
     }
     break;
   case 7:
@@ -469,7 +450,7 @@ static s32 TolbiShipDeck_LeapAtSean(struct ScriptInterpreter *interpreter) {
     obj->velocityY = 0x40000;
     obj->speed = 0x40000;
     obj->acceleration = 0x20000;
-    FieldObject_SetPosition((s32)obj, PIXELS(176), 0, PIXELS(696));
+    FieldObject_SetPosition(obj, PIXELS(176), 0, PIXELS(696));
     obj->timer++;
     break;
   case 3:
@@ -502,9 +483,9 @@ static s32 TolbiShipDeck_LeapAtSean(struct ScriptInterpreter *interpreter) {
     obj->speed = 0x20000;
     obj->acceleration = 0x10000;
     if (obj->riseEnabled != 0) {
-      FieldObject_SetPosition((s32)obj, PIXELS(184), 0, PIXELS(672));
+      FieldObject_SetPosition(obj, PIXELS(184), 0, PIXELS(672));
     } else {
-      FieldObject_SetPosition((s32)obj, PIXELS(202), 0, PIXELS(692));
+      FieldObject_SetPosition(obj, PIXELS(202), 0, PIXELS(692));
     }
     break;
   case 7:
@@ -534,7 +515,8 @@ TolbiShipDeck_RandomlyStartActorHop(struct ScriptInterpreter *interpreter) {
 
 /// The update that shrinks an enlarged actor by 1/32 a frame until it is back
 /// to normal size.
-static void TolbiShipDeck_ShrinkToNormalSize(struct FieldActor *actor) {
+static void TolbiShipDeck_ShrinkToNormalSize(union FieldObject *object) {
+  struct FieldActor *actor = (struct FieldActor *)object;
   if (actor->scaleX > 0x10000) {
     actor->scaleX += 0xFFFFF800;
     actor->scaleY += 0xFFFFF800;
@@ -562,13 +544,17 @@ static s32 TolbiShipDeck_IdleTurn(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-u8 *TolbiShipDeck_GetEntrances(void) { return gTolbiShipDeckEntrances; }
+const struct SceneEntrance *TolbiShipDeck_GetEntrances(void) {
+  return gTolbiShipDeckEntrances;
+}
 
-u8 *TolbiShipDeck_GetRegions(void) { return gTolbiShipDeckRegions; }
+const struct SceneRegion *TolbiShipDeck_GetRegions(void) {
+  return gTolbiShipDeckRegions;
+}
 
-u8 *TolbiShipDeck_GetExits(void) { return gTolbiShipDeckExits; }
+const u32 *TolbiShipDeck_GetExits(void) { return gTolbiShipDeckExits; }
 
-u8 *TolbiShipDeck_GetPlacements(void) {
+const struct ScenePlacement *TolbiShipDeck_GetPlacements(void) {
   s32 afterFirstAttack;
 
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI))
@@ -594,7 +580,7 @@ u8 *TolbiShipDeck_GetPlacements(void) {
   return gTolbiShipDeckPlacements;
 }
 
-u8 *TolbiShipDeck_GetEvents(void) {
+const struct SceneEvent *TolbiShipDeck_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI))
     return gTolbiShipDeckEventsArrived;
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND))
@@ -871,10 +857,10 @@ static void TolbiShipDeck_CatchCrewmanFromEast(void) {
       Engine_EventWait(1);
       bits = 1;
       {
-        u8 *record = (s32)Object_GetById(KALAY_CREWMAN);
-        u8 value = record[90];
+        struct FieldActor *record = Object_GetById(KALAY_CREWMAN);
+        u8 value = record->steeringFlags;
 
-        record[90] = value | bits;
+        record->steeringFlags = value | bits;
       }
       Engine_EventWait(20);
       Engine_ActorStartRepeatedMotion(KALAY_CREWMAN, 2);
@@ -916,10 +902,10 @@ static void TolbiShipDeck_CatchCrewmanFromWest(void) {
       Engine_EventWait(1);
       bits = 1;
       {
-        u8 *record = (s32)Object_GetById(KALAY_CREWMAN);
-        u8 value = record[90];
+        struct FieldActor *record = Object_GetById(KALAY_CREWMAN);
+        u8 value = record->steeringFlags;
 
-        record[90] = value | bits;
+        record->steeringFlags = value | bits;
       }
       Engine_EventWait(20);
       Engine_ActorStartRepeatedMotion(KALAY_CREWMAN, 2);
@@ -971,16 +957,17 @@ static void TolbiShipDeck_ConfrontCrewman(void) {
   GameFlag_Set(FLAG_TOLBI_SHIP_CREWMAN_CONFRONTED);
 }
 
-/// Sets up the scene on entry: turns off flag 0x11c, sets the map's transition,
+/// Sets up the scene on entry: clears FLAG_NOT_ON_MAP, sets the transition,
 /// starts the deck's sway at a random angle and stops the sea's scroll, redraws
 /// the map and applies the voyage's state.
 s32 TolbiShipDeck_Initialize(void) {
-  u8 **base = ((u8 **)gMapWork);
-  u8 *map = base[0] + 0x104;
+  void **base = gMapWork;
+  struct MapLayerScroll *layer = &((struct MapScrollWork *)base[0])->layers[0];
 
   Engine_GameFlagClear(FLAG_NOT_ON_MAP);
-  *(s32 *)(base[19] + 0x1c0) = 0x209;
-  *(s32 *)(map + 0x1c) = 0;
+  ((struct EventWork *)base[HEAP_SLOT_EVENT - HEAP_SLOT_MAP])->startTransition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  layer->speedY = 0;
   sSwayAngleX = (u16)Engine_RandomNext();
   sSwayAngleY = (u16)Engine_RandomNext();
   sSeaScroll[0] = 0;
@@ -1072,7 +1059,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
     return;
   }
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
-    *(s32 *)(((u8 *)gMapWork[0]) + 236) = 0x410000;
+    ((struct MapScrollWork *)gMapWork[0])->minX = PIXELS(65);
   } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
     TolbiShipDeck_SetUpAtAnchor();
   } else if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
@@ -1151,7 +1138,8 @@ static void TolbiShipDeck_SetUpUnderSail(void) {
   u8 bits;
 
   Engine_EventBegin();
-  Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScript);
+  Event_CallWithLastActiveObjectId(
+      (struct ScenePlacement *)gTolbiShipDeck_CrewScript);
   Engine_TaskWait(1);
   Actor_SetPosition(20, 0, 0);
   Actor_SetPosition(23, PIXELS(238), PIXELS(626));
@@ -1186,7 +1174,8 @@ static void TolbiShipDeck_SetUpAfterKraken(void) {
   struct FieldActor *record;
 
   Engine_EventBegin();
-  Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScript);
+  Event_CallWithLastActiveObjectId(
+      (struct ScenePlacement *)gTolbiShipDeck_CrewScript);
   Engine_TaskWait(1);
   Actor_SetPosition(20, 0, 0);
   Actor_SetPosition(23, PIXELS(238), PIXELS(626));
@@ -1213,9 +1202,10 @@ static void TolbiShipDeck_SetUpAtAnchor(void) {
   struct FieldActor *record;
   s32 facing;
 
-  *(s32 *)((s32)gMapWork[0] + 236) = 0x410000;
+  ((struct MapScrollWork *)gMapWork[0])->minX = PIXELS(65);
   Engine_EventBegin();
-  Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScriptE);
+  Event_CallWithLastActiveObjectId(
+      (struct ScenePlacement *)gTolbiShipDeck_CrewScriptE);
   Engine_TaskWait(1);
   Engine_ActorDestroy(24);
   Actor_SetPosition(23, PIXELS(238), PIXELS(626));
@@ -1275,7 +1265,8 @@ static void TolbiShipDeck_DepartWithParty(void) {
   struct FieldActor *record;
 
   Engine_EventBegin();
-  Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScript);
+  Event_CallWithLastActiveObjectId(
+      (struct ScenePlacement *)gTolbiShipDeck_CrewScript);
   Engine_TaskWait(1);
   Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(232), PIXELS(636));
   Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
@@ -1332,7 +1323,8 @@ static void TolbiShipDeck_AnnouncePreparationsReady(s32 a0, s32 a1) {
 /// Entrance 11: sea monsters are sighted. "Aye, Captain! Sea monsters!"
 static void TolbiShipDeck_SightSeaMonsters(void) {
   Engine_EventBegin();
-  Event_CallWithLastActiveObjectId((s32)gTolbiShipDeck_CrewScript);
+  Event_CallWithLastActiveObjectId(
+      (struct ScenePlacement *)gTolbiShipDeck_CrewScript);
   Engine_TaskWait(1);
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
   Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
@@ -1359,9 +1351,11 @@ static void TolbiShipDeck_MonstersBoard(void) {
   const s32 *shared;
 
   Engine_EventBegin();
-  Event_CallWithLastActiveObjectId((s32)gTolbiShipDeck_CrewScript);
+  Event_CallWithLastActiveObjectId(
+      (struct ScenePlacement *)gTolbiShipDeck_CrewScript);
   Engine_TaskWait(1);
-  Event_CallWithLastActiveObjectId((s32)gTolbiShipDeck_CrewScriptB);
+  Event_CallWithLastActiveObjectId(
+      (struct ScenePlacement *)gTolbiShipDeck_CrewScriptB);
   Engine_TaskWait(1);
   Actor_SetPosition(21, PIXELS(248), PIXELS(728));
   Engine_ActorSetChildValue(0, 15);
@@ -1422,9 +1416,11 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   Engine_EventBegin();
   Engine_ActorSetChildValue(0, 15);
   Engine_ActorSetSpriteFlags(Object_GetById(0), 0);
-  Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScript);
+  Event_CallWithLastActiveObjectId(
+      (struct ScenePlacement *)gTolbiShipDeck_CrewScript);
   Engine_TaskWait(1);
-  Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScriptC);
+  Event_CallWithLastActiveObjectId(
+      (struct ScenePlacement *)gTolbiShipDeck_CrewScriptC);
   Engine_TaskWait(1);
   Engine_ActorSetAnimation(31, 0);
   Engine_ActorSetSpriteFlags(Object_GetById(24), 1);
@@ -1514,9 +1510,11 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   Engine_ActorSetChildValue(0, 15);
   record = Object_GetById(0);
   Engine_ActorSetSpriteFlags(record, 0);
-  Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScript);
+  Event_CallWithLastActiveObjectId(
+      (struct ScenePlacement *)gTolbiShipDeck_CrewScript);
   Engine_TaskWait(1);
-  Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScriptD);
+  Event_CallWithLastActiveObjectId(
+      (struct ScenePlacement *)gTolbiShipDeck_CrewScriptD);
   Engine_TaskWait(1);
   Engine_ActorSetPosition(22, PIXELS(176), PIXELS(696));
   record = Object_GetById(22);
@@ -1619,7 +1617,8 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   struct FieldActor *actor;
 
   Engine_EventBegin();
-  Event_CallWithLastActiveObjectId((s32)gTolbiShipDeck_CrewScriptE);
+  Event_CallWithLastActiveObjectId(
+      (struct ScenePlacement *)gTolbiShipDeck_CrewScriptE);
   Engine_TaskWait(1);
   Engine_CameraFollowActor(25, 1);
   Engine_TaskWait(1);
@@ -1659,8 +1658,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   actor->gravity = 0xb333;
   actor->scaleX = 0x1a000;
   actor->scaleY = 0x1a000;
-  actor->update =
-      (void (*)(union FieldObject *))TolbiShipDeck_ShrinkToNormalSize;
+  actor->update = TolbiShipDeck_ShrinkToNormalSize;
   actor->bounce = 0x8000;
   Actor_SetSpeed(22, 0x60000, 0x30000);
   Engine_ObjectMotionSetPositionAndCommit(22, 182, 0x26a);
@@ -1728,7 +1726,8 @@ static void TolbiShipDeck_ThankForKraken(void) {
   struct FieldActor *record;
 
   Engine_EventBegin();
-  Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScript);
+  Event_CallWithLastActiveObjectId(
+      (struct ScenePlacement *)gTolbiShipDeck_CrewScript);
   Engine_TaskWait(1);
   Actor_SetPosition(SEA_KAJA, PIXELS(182), PIXELS(618));
   Actor_SetPosition(23, PIXELS(238), PIXELS(626));
@@ -1783,7 +1782,8 @@ static void TolbiShipDeck_SightLand(void) {
   Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
   record = Object_GetById(0);
   Engine_ActorSetSpriteFlags(record, 0);
-  Event_CallWithLastActiveObjectId((u32)gTolbiShipDeck_CrewScript);
+  Event_CallWithLastActiveObjectId(
+      (struct ScenePlacement *)gTolbiShipDeck_CrewScript);
   Engine_TaskWait(1);
   Actor_SetPosition(20, PIXELS(196), PIXELS(502));
   record = Object_GetById(20);
@@ -1798,8 +1798,13 @@ static void TolbiShipDeck_SightLand(void) {
   /* FAKEMATCH: the work pointer read as a word may alias the facing stores, so
    * they stay ahead of its load; as gEventWork->startTransition, 2
    * instructions differ in tbs-en. */
+  // UB: a u32 lvalue aliases the pointer; the defined build reads it directly.
+#ifdef UBFIX
+  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+#else
   ((struct EventWork *)*(u32 *)&gEventWork)->startTransition =
       SCENE_TRANSITION(TRANSITION_WINDOW, 2);
+#endif
   Engine_EventOpenScreen();
   Engine_EventWaitForScreen();
   Engine_EventWait(20);
@@ -2063,14 +2068,17 @@ static s32 TolbiShipDeck_GetRowerAtSeat(u32 seat) {
   return 0;
 }
 
+#define TOLBI_SHIP_DECK_SEA_WRAP PIXELS(32)
+
 /// The callback that rocks the deck while under sail: sways the camera on two
-/// random-walking angles and scrolls the sea layer, wrapping at 512 pixels.
+/// random-walking angles and offsets the BG3 sea pattern, wrapping at 32
+/// pixels.
 static void TolbiShipDeck_RockDeck(void) {
-  struct MapWork *map = gMapWork[0];
-  s32 *camera = map->camera;
+  struct MapScrollWork *map = gMapWork[0];
+  s32 *camera = map->origin;
   s32 dx = Engine_MathCos(sSwayAngleX);
   s32 dy = Engine_MathSin(sSwayAngleY);
-  struct MapLayer *layer;
+  struct MapLayerScroll *layer;
 
   *camera++ += dx >> 1;
   *camera += dy;
@@ -2078,19 +2086,19 @@ static void TolbiShipDeck_RockDeck(void) {
   sSwayAngleY += (u32)(Engine_RandomNext() << 9) >> 16;
   sSwayAngleX &= 0xffff;
   sSwayAngleY &= 0xffff;
-  layer = &map->layers[5];
-  layer->x = sSeaScroll[0];
+  layer = &map->layers[0];
+  layer->offsetX = sSeaScroll[0];
   sSeaScroll[0] -= sSeaSpeed[0];
   if (sSeaScroll[0] < 0) {
-    sSeaScroll[0] += 0x200000;
+    sSeaScroll[0] += TOLBI_SHIP_DECK_SEA_WRAP;
   }
-  if (sSeaScroll[0] > 0x200000) {
-    sSeaScroll[0] -= 0x200000;
+  if (sSeaScroll[0] > TOLBI_SHIP_DECK_SEA_WRAP) {
+    sSeaScroll[0] -= TOLBI_SHIP_DECK_SEA_WRAP;
   }
-  layer->y = sSeaScroll[1];
+  layer->offsetY = sSeaScroll[1];
   sSeaScroll[1] -= sSeaSpeed[1];
   if (sSeaScroll[1] < 0) {
-    sSeaScroll[1] += 0x200000;
+    sSeaScroll[1] += TOLBI_SHIP_DECK_SEA_WRAP;
   }
 }
 
@@ -2403,7 +2411,8 @@ static void TolbiShipDeck_ArriveAtTolbi(void) {
   Engine_EventBegin();
   sSeaScroll[0] = 0x40000;
   sSeaSpeed[0] = -0x8000;
-  Event_CallWithLastActiveObjectId(gTolbiShipDeck_CrewScript);
+  Event_CallWithLastActiveObjectId(
+      (struct ScenePlacement *)gTolbiShipDeck_CrewScript);
   Engine_TaskWait(1);
   Actor_SetPosition(21, PIXELS(182), PIXELS(618));
   Actor_Get(21)->facing = FACING_NORTH;
@@ -2567,7 +2576,8 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
 /// thoroughly?"
 static void TolbiShipDeck_ReturnFromIsland(void) {
   Engine_EventBegin();
-  Event_CallWithLastActiveObjectId(gTolbiShipDeck_ClosingCrewScript);
+  Event_CallWithLastActiveObjectId(
+      (struct ScenePlacement *)gTolbiShipDeck_ClosingCrewScript);
   Engine_TaskWait(1);
   Engine_EventOpenScreen();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
@@ -2848,9 +2858,9 @@ const struct SceneEntrance gTolbiShipDeckEntrances[] = {
 };
 
 // clang-format off
-const s16 gTolbiShipDeckRegions[] = {
-    208, 24, 634, 224, 40, 650, -1, 5,
-    -1, 0, 0, 0, 0, 0, 0, 0,
+const struct SceneRegion gTolbiShipDeckRegions[] = {
+    {208, 24, 634, 224, 40, 650, CONDITION_ALWAYS, 5},
+    {SCENE_TABLE_END},
 };
 
 const u32 gTolbiShipDeckExits[] = {
@@ -2903,7 +2913,13 @@ const struct ScenePlacement gTolbiShipDeckPlacements[] = {
     { SCENE_TABLE_END },
 };
 
+// UB: the matching compiler places this writable overlay table with the
+// constants. The modern build gives its talkFacing stores a mutable object.
+#ifdef UBFIX
+struct ScenePlacement gTolbiShipDeckPlacementsWaiting[] = {
+#else
 const struct ScenePlacement gTolbiShipDeckPlacementsWaiting[] = {
+#endif
     { 0xe1, CONDITION_ALWAYS, ACTOR_STAND,
         PIXELS(132), 0, PIXELS(632), FACING_SOUTHEAST + FACING_STEP, TALK_KEEP_FACING, 0 },
     { 0xe1, CONDITION_ALWAYS, ACTOR_STAND,

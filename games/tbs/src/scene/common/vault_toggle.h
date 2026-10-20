@@ -2,14 +2,14 @@
 /// Vault, before and after the thieves are caught: touch triggers 1 and 2 swap
 /// the collision of the 4x2 cells at cell (23, 26) between two versions kept
 /// elsewhere in the map. FLAG_SCENE_TEMP_00 remembers the alternate version,
-/// which each scene's entry state copies in again.
+/// which each scene restores on a kept-position return, such as after battle.
 #include "types.h"
 #include "field_obj.h"
 #include "field_event.h"
 #include "flags.h"
 
 /// Cell code 1 selects the passage's alternate collision and sets
-/// FLAG_SCENE_TEMP_00, which restores that choice on entrance.
+/// FLAG_SCENE_TEMP_00, preserving that choice across a kept-position return.
 static void Vault_EnableAlternatePassageCells(void) {
   Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
   Map_CopyCellAttributes(55, 26, 4, 2, 23, 26);

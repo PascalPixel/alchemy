@@ -615,13 +615,12 @@ void Party_BeginChildhood(void) {
 /// Sword and equipped, Move and Retreat taught to Isaac, Move to Garet, Mind
 /// Read to Ivan, and 300 coins. Called by Title_Run when the title shown after
 /// the prologue hands over to Vale, three years later.
-/// XXX: flags 0x21 and 0x901 are cleared and set here with no name; what reads
-/// them would name them.
+/// XXX: flag 0x901 is set here with no name; its readers would name it.
 void Party_EndChildhood(void) {
   s32 owner;
 
   GameFlag_ClearBit(FLAG_CHILDHOOD);
-  GameFlag_ClearBit(0x21);
+  GameFlag_ClearBit(FLAG_ISAAC_WEARS_TUNIC);
   GameFlag_SetBit(0x901);
   Unit_UpdateClass(JENNA);
   UnitCalc(JENNA);

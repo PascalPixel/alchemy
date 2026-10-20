@@ -309,7 +309,7 @@ enum KeyMask {
 
 // KEYCNT values: the interrupt fires when all the listed keys are held at once.
 #define KEYCNT_SOFT_RESET 0xc00f ///< A, B, Select and Start.
-/// All ten keys, which no player presses: the soft reset's interrupt disarmed.
+/// Requires all ten keys together to prevent the reset chord retriggering it.
 #define KEYCNT_DISARMED 0xc3ff
 #define KEYCNT_SHOULDERS_WAKE 0xc300 ///< L and R, which wake the sleep.
 #define KEYCNT_SLEEP_WAKE 0xc304

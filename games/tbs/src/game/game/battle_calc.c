@@ -51,8 +51,8 @@ s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
 
 /// The battle's random number generator, the same linear congruential one as
 /// Random16 with its own seed. Returns bits 8 to 23 of the new seed and writes
-/// gBattleRandomSeed. Every random roll in battle goes through it, so that a
-/// link battle's two consoles roll alike.
+/// gBattleRandomSeed. Rolls that use it advance independently of Random16;
+/// link battles exchange this seed before resolving the round.
 s32 BattleRandom(void) {
   u32 seed;
 

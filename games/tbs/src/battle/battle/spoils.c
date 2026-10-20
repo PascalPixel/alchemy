@@ -5,8 +5,8 @@
 #include "../battle_internal.h"
 
 /// Ranks an item among the spoils, 0 for none: an indispensable item first,
-/// then one with flag 4, then the higher item id.
-/// The rank's bits: 10 ITEM_INDISPENSABLE | 9 flag 4 | 8..0 the item id.
+/// then a rare item, then the higher item id.
+/// The rank's bits: 10 ITEM_INDISPENSABLE | 9 ITEM_RARE | 8..0 the item id.
 /// Called by BattleEnemy_RecordDefeat, to keep the best four drops, and by
 /// Battle_AwardSpoils, to hand them out best first.
 u32 BattleSpoils_RankItem(u32 inventoryEntry) {
@@ -17,12 +17,10 @@ u32 BattleSpoils_RankItem(u32 inventoryEntry) {
   {
     u8 flags = Item_GetDirectFar(itemId)->flags;
 
-    // XXX: flag 4 has no name in enum ItemFlags; the items that set it in
-    // items.tsv would name it.
     if (flags & ITEM_INDISPENSABLE)
       priority = 1;
     priority <<= 1;
-    if (flags & 4)
+    if (flags & ITEM_RARE)
       priority++;
     priority <<= 9;
     priority += itemId;

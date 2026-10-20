@@ -4,65 +4,6 @@
 #include "types.h"
 #include "field_scene.h"
 
-/// A field object seen as one of the reunion particles after the battle: its
-/// position, scale and drifting velocity.
-typedef struct SceneParticle {
-  u8 filler00[8];    ///< FieldActor's script pointer, cursor and facing
-  s32 x;             ///< 16.16 fixed-point pixels
-  s32 y;             ///< 16.16 fixed-point pixels
-  s32 z;             ///< 16.16 fixed-point pixels
-  u8 filler14[4];    ///< FieldActor's terrainHeight; not named here
-  s32 scaleX;        ///< 16.16 fixed point, where Q16_ONE is full size
-  s32 scaleY;        ///< 16.16 fixed point, where Q16_ONE is full size
-  u8 filler20[0x1c]; ///< FieldActor's radius to targetX; not named here
-  /// FieldActor's targetY, in 16.16 fixed-point pixels: set to the height
-  /// the particle starts at.
-  s32 anchorY;
-  /// FieldActor's targetZ to spriteStorageKind; not named here.
-  u8 filler40[0x15];
-  u8 state; ///< FieldActor's motionFlags; zeroed when the particle is shown
-  u8 filler56[0xe]; ///< FieldActor's unk56 to riseEnabled; not named here
-  /// FieldActor's timer: 1/256 pixels per step, 25 at first and 5 more each
-  /// step.
-  s16 velocityX;
-  /// FieldActor's work: 1/256 pixels per step, 128 at first and 1 less each
-  /// step.
-  s16 velocityY;
-} SceneParticle;
-
-/// A field object seen as the moving source that scatters random effects
-/// around itself.
-typedef struct StageEffect {
-  s32 reserved00; ///< FieldActor's script pointer; not named here
-  s32 reserved04; ///< FieldActor's cursor and facing; not named here
-  s32 x;          ///< 16.16 fixed-point pixels
-  s32 y;          ///< 16.16 fixed-point pixels
-  s32 z;          ///< 16.16 fixed-point pixels
-  /// FieldActor's terrainHeight to velocityX; not named here.
-  u8 reserved14[20];
-  /// FieldActor's velocityY, in 16.16 fixed-point pixels per frame: within
-  /// 255 either way, state is cleared.
-  s32 verticalMotion;
-  /// FieldActor's velocityZ to spriteStorageKind; not named here.
-  u8 reserved2c[41];
-  u8 state; ///< FieldActor's motionFlags; zeroed on the source and effects
-} StageEffect;
-
-/// A field object linked to the item actor it raises, by that actor's slot.
-typedef struct LinkedStageEffect {
-  s32 reserved00; ///< FieldActor's script pointer; not named here
-  s32 reserved04; ///< FieldActor's cursor and facing; not named here
-  s32 x;          ///< 16.16 fixed-point pixels
-  s32 y;          ///< 16.16 fixed-point pixels
-  s32 z;          ///< 16.16 fixed-point pixels
-  /// FieldActor's terrainHeight to spriteStorageKind; not named here.
-  u8 reserved14[65];
-  u8 state;          ///< FieldActor's motionFlags; zeroed on the item raised
-  u8 reserved56[14]; ///< FieldActor's unk56 to riseEnabled; not named here
-  /// FieldActor's timer: the item actor's number, cleared once raised.
-  s16 linkedEffectSlot;
-} LinkedStageEffect;
-
 const struct SceneEntrance *ColossoLog_GetEntrances(void);
 const struct SceneRegion *ColossoLog_GetRegions(void);
 const u32 *ColossoLog_GetExits(void);

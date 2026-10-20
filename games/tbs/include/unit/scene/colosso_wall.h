@@ -9,33 +9,6 @@ struct SceneEvent;
 struct ScenePlacement;
 struct SceneRegion;
 
-/// A field object seen as the moving source that scatters sparks around
-/// itself.
-typedef struct SparkSource {
-  s32 f00;
-  s32 f04;
-  s32 f08; ///< x, 16.16 fixed-point pixels
-  s32 f0c; ///< y, 16.16 fixed-point pixels
-  s32 f10; ///< z, 16.16 fixed-point pixels
-  u8 f14[20];
-  s32 f28;
-  u8 f2c[41];
-  u8 f55;
-} SparkSource;
-
-/// A field object linked by slot to the finish effect it raises.
-typedef struct RaisedEffect {
-  s32 f00;
-  s32 f04;
-  s32 f08; ///< x, 16.16 fixed-point pixels
-  s32 f0c; ///< y, 16.16 fixed-point pixels
-  s32 f10; ///< z, 16.16 fixed-point pixels
-  u8 f14[65];
-  u8 f55;
-  u8 f56[14];
-  s16 f64;
-} RaisedEffect;
-
 const struct SceneEntrance *Scene_GetEntrances(void);
 const struct SceneRegion *Scene_GetRegions(void);
 const u32 *Scene_GetExits(void);

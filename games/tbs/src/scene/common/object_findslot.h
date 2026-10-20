@@ -1,21 +1,33 @@
 #include "types.h"
 #include "field_obj.h"
+#include "field_runtime.h"
 
 // Colosso Log, River and Wall, and Venus Lighthouse.
 
 /// Returns the placed actor (8 to 65) whose cell, and 16-pixel step of height,
 /// is that of the 16.16 position, or 0. self is not read.
-static void *SceneData_FindSlotAtPosition(void *position, void *self) {
-  s32 *pos = position;
-  struct FieldActor **slots = gEventWork->actors;
+static void *SceneData_FindSlotAtPosition(const struct FieldPosition *position,
+                                          void *self) {
+  const struct FieldPosition *pos = position;
+  // Field_RunScene owns all 66 slots. EventWork's actors view holds only the
+  // first eight; the placed actors follow in its separate placedActors array.
+  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldActor **slots = work->actors;
   u32 i;
 
-  for (i = 8; i <= 65; i++) {
+  for (i = ACTOR_FIRST_PLACED;
+       i < sizeof(work->actors) / sizeof(work->actors[0]); i++) {
     struct FieldActor *p = slots[i];
 
-    if ((pos[0] >> 20) == (p->x.fixed >> 20) &&
-        (pos[1] >> 20) == (p->y.fixed >> 20) &&
-        (pos[2] >> 20) == (p->z.fixed >> 20)) {
+    // UB: ObjectTable_ClearAll leaves unused slots null. Skipping them grows
+    // this helper from 0x48 to 0x4c bytes in the native English trial.
+#ifdef UBFIX
+    if (p == NULL)
+      continue;
+#endif
+    if ((pos->x >> 20) == (p->x.fixed >> 20) &&
+        (pos->y >> 20) == (p->y.fixed >> 20) &&
+        (pos->z >> 20) == (p->z.fixed >> 20)) {
       return p;
     }
   }

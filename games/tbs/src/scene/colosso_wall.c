@@ -52,6 +52,7 @@
 #include "field_obj.h"
 #include "global_cells.h"
 #include "heap_state.h"
+#include "field_runtime.h"
 #include "flags.h"
 #include "songs.h"
 #include "macros.h"
@@ -149,33 +150,6 @@ enum {
 };
 
 #define WORK_SLOT_STAGE 59
-
-/// A field object seen by the block push: the pusher or the block, with its
-/// position, push rates and collision flags.
-typedef struct ColossoWallSceneRecord {
-  u8 pad00[6];
-  u16 facing;
-  s32 x; ///< 16.16 fixed-point pixels
-  s32 y; ///< 16.16 fixed-point pixels
-  s32 z; ///< 16.16 fixed-point pixels
-  u8 pad14[14];
-  u8 state;
-  u8 pad23;
-  s32 motion24;
-  u8 pad28[4];
-  s32 motion2c;
-  s32 rateX;
-  s32 rateZ;
-  u8 pad38[33];
-  u8 flags;
-} ColossoWallSceneRecord;
-
-/// A world position, used to look for objects in the cells around a block.
-typedef struct Position3 {
-  s32 x; ///< 16.16 fixed-point pixels
-  s32 y; ///< 16.16 fixed-point pixels
-  s32 z; ///< 16.16 fixed-point pixels
-} Position3;
 
 /// The rival's recorded-path playback state, held in the scene state; status
 /// 9 marks the rival finished.
@@ -475,7 +449,9 @@ static void ColossoWall_RollLogToCell(s32 logId, s32 halfCellX, s32 halfCellZ) {
   Engine_ActorSetAnimation(pusher, 2);
   // Follow halfway behind the rolling log while its finish effect runs.
   ObjectDispatch_StartCamera(
-      *(struct DispatchObject **)((u8 *)Runtime_AllocateBlock(27, 0xccc) + 480),
+      (struct DispatchObject *)((struct EventWork *)Runtime_AllocateBlock(
+                                    HEAP_SLOT_EVENT, sizeof(struct FieldWork)))
+          ->viewCenter,
       (s32)log);
   Engine_ActorSetSpeed(pusher, 0x8000, 0x3333);
   Object_SetMode(pusherActor, 2);
@@ -889,7 +865,7 @@ s32 ColossoWall_Initialize(void) {
       actor->acceleration = 0x3333;
     }
     FieldScheduler_AddCallback(ColossoWall_UpdateMovingPlatforms, 0xc85);
-    Scheduler_SetTaskFlags((u32)ColossoWall_UpdateMovingPlatforms, 1);
+    Scheduler_SetTaskFlags(ColossoWall_UpdateMovingPlatforms, 1);
   }
   Engine_ActorSetAnimation(OPPONENT, 9);
   gGameState.movementMode = 0;
@@ -1472,20 +1448,20 @@ static void ColossoWall_WaitForRivalFinish(void) {
 
 /// Occasionally spawns a falling particle around the linked finish effect.
 static void ColossoWall_SpawnRandomSceneEffect(union FieldObject *fieldObject) {
-  SparkSource *source = (SparkSource *)fieldObject;
+  struct FieldActor *source = (struct FieldActor *)fieldObject;
   s32 position[3];
   u32 chance;
 
-  if (source->f28 >= -255 && source->f28 <= 255) {
-    source->f55 = 0;
+  if (source->velocityY >= -255 && source->velocityY <= 255) {
+    source->motionFlags = 0;
   }
   chance = Engine_RandomNext();
   if (chance * 100 >> 16 <= 9) {
-    SparkSource *particle;
+    struct FieldActor *particle;
     s32 radius;
     s32 angle;
 
-    SET_VECTOR(position, source->f08, source->f0c, source->f10);
+    SET_VECTOR(position, source->x.fixed, source->y.fixed, source->z.fixed);
     radius = Engine_RandomNext();
     angle = Engine_RandomNext();
     Vector_AddPolarOffset(radius << 4, angle, position);
@@ -1494,10 +1470,10 @@ static void ColossoWall_SpawnRandomSceneEffect(union FieldObject *fieldObject) {
       s32 y = position[1];
       s32 z = position[2];
 
-      particle = (SparkSource *)Engine_ObjectCreate(285, x, y, z);
+      particle = Engine_ObjectCreate(285, x, y, z);
     }
     if (particle != 0) {
-      particle->f55 = 0;
+      particle->motionFlags = 0;
       Engine_ActorSetSpriteFlags(particle, 0);
       Engine_ObjectSetScript(particle, gColossoWall_SparkScript);
       Object_SetMode(particle, 1);
@@ -1509,15 +1485,15 @@ static void ColossoWall_SpawnRandomSceneEffect(union FieldObject *fieldObject) {
 /// Raises the linked finish effect, starts its script and clears the link.
 static s32
 ColossoWall_RaiseLinkedSceneEffect(struct ScriptInterpreter *interpreter) {
-  RaisedEffect *source = (RaisedEffect *)interpreter;
-  RaisedEffect *effect = (RaisedEffect *)Object_GetById(source->f64);
+  struct FieldActor *source = (struct FieldActor *)interpreter;
+  struct FieldActor *effect = Object_GetById(source->timer);
 
-  Engine_ObjectSetPosition(effect, source->f08, source->f0c + 0x240000,
-                           source->f10);
-  effect->f55 = 0;
+  Engine_ObjectSetPosition(effect, source->x.fixed,
+                           source->y.fixed + PIXELS(36), source->z.fixed);
+  effect->motionFlags = 0;
   Engine_ObjectSetScript(effect, gColossoWall_RaiseScript);
   Engine_AudioPlayCue(MUS_TREASURE_FOUND);
-  source->f64 = 0;
+  source->timer = 0;
   return 0;
 }
 
@@ -1663,60 +1639,60 @@ static void ColossoWall_StartRivalPath(s32 pathResource) {
 /// clear.
 static void ColossoWall_PushAdjacentObstacle(void) {
 
-  ColossoWallSceneRecord *pusher;
-  ColossoWallSceneRecord *obstacle;
-  ColossoWallSceneRecord *blocker;
+  struct FieldActor *pusher;
+  struct FieldActor *obstacle;
+  struct FieldActor *blocker;
   u32 packedOffset;
   u32 direction;
-  Position3 destination;
+  struct FieldPosition destination;
   s32 zero;
   s32 actorId;
 
   actorId = gGameState.selectedActor;
-  pusher = (ColossoWallSceneRecord *)Object_GetById(actorId);
+  pusher = Object_GetById(actorId);
 
   direction = pusher->facing >> 12;
 
   packedOffset = gColossoWall_DirectionSteps[direction];
-  destination.x = pusher->x + (packedOffset & 0xffff0000);
-  destination.y = pusher->y;
+  destination.x = pusher->x.fixed + (packedOffset & 0xffff0000);
+  destination.y = pusher->y.fixed;
   packedOffset <<= 16;
-  destination.z = pusher->z + packedOffset;
+  destination.z = pusher->z.fixed + packedOffset;
 
-  obstacle = SceneData_FindSlotAtPosition((s32 *)&destination, pusher);
+  obstacle = SceneData_FindSlotAtPosition(&destination, pusher);
   if (obstacle == 0) {
     return;
   }
 
   // Require a free destination cell and free space immediately above the block.
   packedOffset = gColossoWall_DirectionSteps[direction];
-  destination.x = obstacle->x + (packedOffset & 0xffff0000);
-  destination.y = obstacle->y;
+  destination.x = obstacle->x.fixed + (packedOffset & 0xffff0000);
+  destination.y = obstacle->y.fixed;
   packedOffset <<= 16;
-  destination.z = obstacle->z + packedOffset;
+  destination.z = obstacle->z.fixed + packedOffset;
 
-  blocker = SceneData_FindSlotAtPosition((s32 *)&destination, obstacle);
-  if (blocker != 0 && (blocker->flags & 1) != 0) {
+  blocker = SceneData_FindSlotAtPosition(&destination, obstacle);
+  if (blocker != 0 && (blocker->collisionFlags & 1) != 0) {
     return;
   }
 
-  destination.x = obstacle->x;
-  destination.y = obstacle->y + 0x100000;
-  destination.z = obstacle->z;
+  destination.x = obstacle->x.fixed;
+  destination.y = obstacle->y.fixed + 0x100000;
+  destination.z = obstacle->z.fixed;
 
-  blocker = SceneData_FindSlotAtPosition((s32 *)&destination, obstacle);
-  if (blocker != 0 && (blocker->flags & 1) != 0) {
+  blocker = SceneData_FindSlotAtPosition(&destination, obstacle);
+  if (blocker != 0 && (blocker->collisionFlags & 1) != 0) {
     return;
   }
 
-  obstacle->state = 2;
+  obstacle->terrainId = 2;
   zero = 0;
 
   packedOffset = gColossoWall_DirectionSteps[direction];
-  destination.x = obstacle->x + (packedOffset & 0xffff0000);
-  destination.y = obstacle->y;
+  destination.x = obstacle->x.fixed + (packedOffset & 0xffff0000);
+  destination.y = obstacle->y.fixed;
   packedOffset <<= 16;
-  destination.z = obstacle->z + packedOffset;
+  destination.z = obstacle->z.fixed + packedOffset;
 
   if (FieldObject_CheckMovementCollision(obstacle, &destination) > 0) {
     return;
@@ -1726,23 +1702,23 @@ static void ColossoWall_PushAdjacentObstacle(void) {
   Object_SetMode(pusher, 8);
   Engine_TaskWait(15);
 
-  obstacle->rateX = 0x3333;
-  obstacle->rateZ = 0x3333;
+  obstacle->speed = 0x3333;
+  obstacle->acceleration = 0x3333;
   Engine_ObjectSetPosition(obstacle, destination.x, destination.y,
                            destination.z);
 
-  pusher->rateX = 0x3333;
-  pusher->rateZ = 0x3333;
+  pusher->speed = 0x3333;
+  pusher->acceleration = 0x3333;
   Engine_ObjectSetPosition(pusher, destination.x, destination.y, destination.z);
 
   Engine_AudioPlayCue(SE_238);
   FieldObject_WaitForMove(obstacle);
   Engine_AudioPlayCue(SE_288);
 
-  obstacle->x = destination.x;
-  obstacle->z = destination.z;
-  obstacle->motion24 = zero;
-  obstacle->motion2c = zero;
+  obstacle->x.fixed = destination.x;
+  obstacle->z.fixed = destination.z;
+  obstacle->velocityX = zero;
+  obstacle->velocityZ = zero;
 
   Object_SetMode(pusher, 1);
 }

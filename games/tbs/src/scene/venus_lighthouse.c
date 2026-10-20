@@ -185,7 +185,7 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 /// Pushes the adjacent block only when its destination and overhead space are
 /// clear.
 static void VenusLighthouse_PushAdjacentBlock(void) {
-  s32 targetPosition[3];
+  struct FieldPosition targetPosition;
   struct StagedActor *leader;
   struct StagedActor *block;
   struct StagedActor *blockingActor;
@@ -198,36 +198,37 @@ static void VenusLighthouse_PushAdjacentBlock(void) {
   directionIndex = leader->directionAndKind >> 12;
   // Look ahead for a block before testing its destination and overhead space.
   packedStep = gStagedActor_DirectionSteps[directionIndex];
-  targetPosition[0] = leader->x.value + (packedStep & 0xffff0000);
-  targetPosition[1] = leader->y;
+  targetPosition.x = leader->x.value + (packedStep & 0xffff0000);
+  targetPosition.y = leader->y;
   packedStep <<= 16;
-  targetPosition[2] = leader->z.value + packedStep;
-  block = SceneData_FindSlotAtPosition(targetPosition, leader);
+  targetPosition.z = leader->z.value + packedStep;
+  block = SceneData_FindSlotAtPosition(&targetPosition, leader);
   if (block == 0)
     return;
 
   packedStep = gStagedActor_DirectionSteps[directionIndex];
-  targetPosition[0] = block->x.value + (packedStep & 0xffff0000);
-  targetPosition[1] = block->y;
+  targetPosition.x = block->x.value + (packedStep & 0xffff0000);
+  targetPosition.y = block->y;
   packedStep <<= 16;
-  targetPosition[2] = block->z.value + packedStep;
-  blockingActor = SceneData_FindSlotAtPosition(targetPosition, block);
+  targetPosition.z = block->z.value + packedStep;
+  blockingActor = SceneData_FindSlotAtPosition(&targetPosition, block);
   if (blockingActor != 0 && (blockingActor->collisionFlags & 1) != 0)
     return;
 
-  SET_VECTOR(targetPosition, block->x.value, block->y + 0x100000,
-             block->z.value);
-  blockingActor = SceneData_FindSlotAtPosition(targetPosition, block);
+  targetPosition.x = block->x.value;
+  targetPosition.y = block->y + 0x100000;
+  targetPosition.z = block->z.value;
+  blockingActor = SceneData_FindSlotAtPosition(&targetPosition, block);
   if (blockingActor != 0 && (blockingActor->collisionFlags & 1) != 0)
     return;
 
   block->transitionMode = 2;
   packedStep = gStagedActor_DirectionSteps[directionIndex];
-  targetPosition[0] = block->x.value + (packedStep & 0xffff0000);
-  targetPosition[1] = block->y;
+  targetPosition.x = block->x.value + (packedStep & 0xffff0000);
+  targetPosition.y = block->y;
   packedStep <<= 16;
-  targetPosition[2] = block->z.value + packedStep;
-  if (FieldObject_CheckMovementCollision(block, targetPosition) > 0)
+  targetPosition.z = block->z.value + packedStep;
+  if (FieldObject_CheckMovementCollision(block, &targetPosition) > 0)
     return;
 
   transitionBusy = block->transitionBusy;
@@ -241,16 +242,16 @@ static void VenusLighthouse_PushAdjacentBlock(void) {
   Engine_AudioPlayCue(SE_185);
   block->moveRateX = moveRate;
   block->moveRateZ = moveRate;
-  Engine_ObjectSetPosition(block, targetPosition[0], targetPosition[1],
-                           targetPosition[2]);
+  Engine_ObjectSetPosition(block, targetPosition.x, targetPosition.y,
+                           targetPosition.z);
   leader->moveRateX = moveRate;
   leader->moveRateZ = moveRate;
-  Engine_ObjectSetPosition(leader, targetPosition[0], targetPosition[1],
-                           targetPosition[2]);
+  Engine_ObjectSetPosition(leader, targetPosition.x, targetPosition.y,
+                           targetPosition.z);
   FieldObject_WaitForMove(block);
   BattleFx_PlayQueuedSound();
-  block->x.value = targetPosition[0];
-  block->z.value = targetPosition[2];
+  block->x.value = targetPosition.x;
+  block->z.value = targetPosition.z;
   block->velocityX = transitionBusy;
   block->velocityZ = transitionBusy;
   leader->targetX = ACTOR_NO_TARGET;
@@ -3188,41 +3189,28 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   Engine_EventRequestExit(21);
 }
 
-/// An animation the support's sprite holds, seen for its id.
-struct TrackAnimation {
-  s16 id;
-};
-
-/// The animation object of the block a pushed block rests on, seen for its
-/// shape and animations.
-struct TrackSprite {
-  u8 unk00[0x24];
-  u8 shape;
-  u8 unk25[3];
-  struct TrackAnimation *animations[4];
-};
-
-/// Selects the block's push script from its direction, support shape and
+/// Selects the block's push script from its direction, support animation and
 /// socket.
 static s32
 VenusLighthouse_DispatchPushScript(struct ScriptInterpreter *interpreter) {
   struct FieldActor *block = (struct FieldActor *)interpreter;
-  s32 supportPosition[3];
+  struct FieldPosition supportPosition;
   struct FieldActor *support;
-  struct TrackSprite *sprite;
+  struct AnimationObject *sprite;
   const u8 *allowedShapes;
   u8 shapeId;
   u32 switchIndex;
   s32 shapeIndex;
   const u8 *shapeCursor;
 
-  SET_VECTOR(supportPosition, block->x.fixed, block->y.fixed - 0x100000,
-             block->z.fixed);
-  support = SceneData_FindSlotAtPosition(supportPosition, 0);
-  sprite = (struct TrackSprite *)support->sprite;
-  // Require a compatible support shape before selecting a socket-specific
-  // script.
-  if (sprite->animations[0]->id == 0x100) {
+  supportPosition.x = block->x.fixed;
+  supportPosition.y = block->y.fixed - 0x100000;
+  supportPosition.z = block->z.fixed;
+  support = SceneData_FindSlotAtPosition(&supportPosition, 0);
+  // XXX: Do the block placement and action-script tables guarantee a support
+  // with an animation entry every time this script runs?
+  sprite = support->sprite;
+  if (sprite->entries[0]->animId == 0x100) {
     s32 velocityX = block->velocityX;
     s32 speedX = velocityX < 0 ? -velocityX : velocityX;
     s32 velocityZ = block->velocityZ;
@@ -3242,7 +3230,7 @@ VenusLighthouse_DispatchPushScript(struct ScriptInterpreter *interpreter) {
       }
     }
     for (; *allowedShapes != 0; allowedShapes++) {
-      if (sprite->shape == *allowedShapes) {
+      if (sprite->lastNo == *allowedShapes) {
         break;
       }
     }
@@ -3265,7 +3253,7 @@ VenusLighthouse_DispatchPushScript(struct ScriptInterpreter *interpreter) {
           Engine_ObjectSetScript(block, gVenusRefusedPushScript);
           return 0;
         }
-        if (shapeId == ((struct TrackSprite *)support->sprite)->shape) {
+        if (shapeId == support->sprite->lastNo) {
           break;
         }
         gVenusSwitchShapes[switchIndex] = shapeCursor + 1;
@@ -3286,7 +3274,7 @@ VenusLighthouse_DispatchPushScript(struct ScriptInterpreter *interpreter) {
           Engine_ObjectSetScript(block, gVenusRefusedPushScript);
           return 0;
         }
-        if (shapeId == ((struct TrackSprite *)support->sprite)->shape) {
+        if (shapeId == support->sprite->lastNo) {
           break;
         }
         gVenusPillarShapes[switchIndex] = shapeCursor + 1;

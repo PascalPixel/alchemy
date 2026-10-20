@@ -53,6 +53,7 @@
 #include "objcmd.h"
 #include "field_obj.h"
 #include "heap_state.h"
+#include "field_runtime.h"
 #include "fixed_math.h"
 #include "colosso_gauge.h"
 #include "macros.h"
@@ -403,7 +404,9 @@ static void Event_PushPipeworksBlock(void) {
   Engine_EventWait(6);
   Engine_ActorSetAnimation(leaderId, 2);
   ObjectDispatch_StartCamera(
-      *(struct DispatchObject **)(Runtime_AllocateBlock(27, 0xccc) + 480),
+      (struct DispatchObject *)((struct EventWork *)Runtime_AllocateBlock(
+                                    HEAP_SLOT_EVENT, sizeof(struct FieldWork)))
+          ->viewCenter,
       (s32)actor);
   Actor_SetSpeed(leaderId, PIXELS(3) / 10, PIXELS(1) / 5);
   Engine_ObjectSetPosition(leader, leader->x.fixed - PIXELS(24), 0,
@@ -1342,7 +1345,7 @@ static void ColossoRiver_PushObjectAhead(void) {
   struct FieldActor *blocker;
   u32 packedStep;
   u32 direction;
-  Position3 position;
+  struct FieldPosition position;
   s32 zero;
   s32 actorId;
 

@@ -532,8 +532,9 @@ static void Event_RollLongLog(void) {
   Engine_ObjectSetPosition(log, x, 0, z);
   Engine_EventWait(6);
   Engine_ActorSetAnimation(actor, 2);
-  work = Runtime_AllocateBlock(27, 0xccc);
-  ObjectDispatch_StartCamera(work->viewCenter, log);
+  work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
+  ObjectDispatch_StartCamera((struct DispatchObject *)work->viewCenter,
+                             (s32)log);
   Actor_SetSpeed(actor, PIXELS(1) / 2, acceleration);
   Event_PlayCue(SE_239);
   Object_SetMode(rider, 2);
@@ -984,23 +985,23 @@ s32 ColossoLog_Initialize(void) {
   return 0;
 }
 
-/// Advances a reunion particle using its signed small-step velocity fields.
+/// Advances a reunion particle; timer and work hold signed 1/256-pixel steps.
 static s32 ColossoLogRollingStage_AdvanceParticleMotion(
     struct ScriptInterpreter *interpreter) {
-  SceneParticle *particle = (SceneParticle *)interpreter;
-  particle->x += particle->velocityX << 8;
-  particle->y += particle->velocityY << 8;
+  struct FieldActor *particle = (struct FieldActor *)interpreter;
+  particle->x.fixed += particle->timer * 256;
+  particle->y.fixed += (s16)particle->work * 256;
   particle->scaleX += Q16_ONE / 40;
   particle->scaleY += Q16_ONE / 40;
-  particle->velocityX += 5;
-  particle->velocityY -= 1;
+  particle->timer += 5;
+  particle->work = (s16)particle->work - 1;
   return 0;
 }
 
 /// Shows one of three reunion particles at its scheduled point in the cycle.
 static void ColossoLogRollingStage_SpawnPeriodicParticle(void) {
-  SceneParticle *particle;
-  SceneParticle *source;
+  struct FieldActor *particle;
+  struct FieldActor *source;
   s32 x;
   s32 y;
   s32 kind;
@@ -1009,8 +1010,8 @@ static void ColossoLogRollingStage_SpawnPeriodicParticle(void) {
   particle = Object_GetById(0);
   count = gColossoParticleCount + 1;
   kind = 41;
-  x = particle->x;
-  y = particle->y;
+  x = particle->x.fixed;
+  y = particle->y.fixed;
   gColossoParticleCount = count;
   switch (count % 180) {
   case 10:
@@ -1030,21 +1031,21 @@ static void ColossoLogRollingStage_SpawnPeriodicParticle(void) {
   }
   source = Object_GetById(0);
   if (source != 0) {
-    Engine_ActorSetPosition(kind, source->x, source->z);
+    Engine_ActorSetPosition(kind, source->x.fixed, source->z.fixed);
   }
   Engine_ActorSetSpriteFlags(Object_GetById(kind), 0);
-  particle->state = 0;
+  particle->motionFlags = 0;
   particle->scaleX = 2 * Q16_ONE / 5;
   particle->scaleY = 2 * Q16_ONE / 5;
   {
     s32 height = PIXELS(4);
-    particle->x = x + height;
+    particle->x.fixed = x + height;
     height += y;
-    particle->y = height;
-    particle->anchorY = height;
+    particle->y.fixed = height;
+    particle->targetY = height;
   }
-  particle->velocityX = 25;
-  particle->velocityY = 128;
+  particle->timer = 25;
+  particle->work = 128;
   Actor_SetActionScript(kind, gColossoParticleKinds);
 }
 
@@ -1561,13 +1562,15 @@ static void Event_TalkToFreeClimbAttendant(s32 guideId) {
   }
 }
 
+// DispatchObject is the engine's script-control view of these same actors.
+
 /// Starts a scripted pixel destination while preserving the actor height.
 static void ColossoLogRollingStage_PositionActor(s32 selector, s32 x, s32 z) {
   struct FieldActor *actor;
 
   actor = Engine_ActorLookup(selector);
   if (actor != 0) {
-    ObjectDispatch_StartIdle(actor);
+    ObjectDispatch_StartIdle((struct DispatchObject *)actor);
     Object_SetMode(actor, 5);
     Engine_ObjectSetPosition(actor, x << 16, actor->y.fixed, z << 16);
   }
@@ -1580,7 +1583,7 @@ static void ColossoLogRollingStage_PositionAndActivateActor(s32 selector, s32 x,
 
   actor = Engine_ActorLookup(selector);
   if (actor != 0) {
-    ObjectDispatch_StartIdle(actor);
+    ObjectDispatch_StartIdle((struct DispatchObject *)actor);
     Object_SetMode(actor, 5);
     Engine_ObjectSetPosition(actor, x << 16, actor->y.fixed, z << 16);
     FieldObject_WaitForMove(actor);
@@ -1862,21 +1865,21 @@ static void ColossoLog_WaitForRivalToFinish(void) {
 /// Occasionally scatters an effect around a moving source actor.
 static void
 ColossoLogRollingStage_SpawnRandomSceneEffect(union FieldObject *fieldObject) {
-  StageEffect *source = (StageEffect *)fieldObject;
+  struct FieldActor *source = (struct FieldActor *)fieldObject;
 
   s32 position[3];
   u32 randomValue;
 
-  if (source->verticalMotion >= -255 && source->verticalMotion <= 255) {
-    source->state = 0;
+  if (source->velocityY >= -255 && source->velocityY <= 255) {
+    source->motionFlags = 0;
   }
   randomValue = Engine_RandomNext();
   if (randomValue * 100 >> 16 <= 9) {
-    StageEffect *effect;
+    struct FieldActor *effect;
     s32 angle;
     s32 radius;
 
-    SET_VECTOR(position, source->x, source->y, source->z);
+    SET_VECTOR(position, source->x.fixed, source->y.fixed, source->z.fixed);
     angle = Engine_RandomNext();
     radius = Engine_RandomNext();
     Vector_AddPolarOffset(angle << 4, radius, position);
@@ -1888,7 +1891,7 @@ ColossoLogRollingStage_SpawnRandomSceneEffect(union FieldObject *fieldObject) {
       effect = Engine_ObjectCreate(285, x, y, z);
     }
     if (effect != 0) {
-      effect->state = 0;
+      effect->motionFlags = 0;
       Engine_ActorSetSpriteFlags(effect, 0);
       Engine_ObjectSetScript(effect, gColossoRandomEffect);
       Object_SetMode(effect, 1);
@@ -1900,16 +1903,16 @@ ColossoLogRollingStage_SpawnRandomSceneEffect(union FieldObject *fieldObject) {
 /// Raises the linked item actor and clears the source link.
 static s32 ColossoLogRollingStage_RaiseLinkedSceneEffect(
     struct ScriptInterpreter *interpreter) {
-  LinkedStageEffect *source = (LinkedStageEffect *)interpreter;
+  struct FieldActor *source = (struct FieldActor *)interpreter;
 
-  LinkedStageEffect *effect = Object_GetById(source->linkedEffectSlot);
+  struct FieldActor *effect = Object_GetById(source->timer);
 
-  Engine_ObjectSetPosition(effect, source->x, source->y + PIXELS(36),
-                           source->z);
-  effect->state = 0;
+  Engine_ObjectSetPosition(effect, source->x.fixed,
+                           source->y.fixed + PIXELS(36), source->z.fixed);
+  effect->motionFlags = 0;
   Engine_ObjectSetScript(effect, gColossoLinkedEffect);
   Engine_AudioPlayCue(MUS_TREASURE_FOUND);
-  source->linkedEffectSlot = 0;
+  source->timer = 0;
   return 0;
 }
 

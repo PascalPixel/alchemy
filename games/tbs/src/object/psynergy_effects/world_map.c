@@ -5,6 +5,35 @@
 #include "../psynergy_effects_internal.h"
 
 #define WORLD_MAP_MARKER_TILE_BYTES 0x80
+#define WORLD_MAP_SCREEN_WIDTH 240
+#define WORLD_MAP_SCREEN_HEIGHT 160
+#define WORLD_MAP_WORLD_SIZE 4096
+#define WORLD_MAP_X_ORIGIN PIXELS(4096)
+#define WORLD_MAP_FIRST_PLACE_ACTOR 11
+#define WORLD_MAP_MARKER_CAPACITY 66
+#define WORLD_MAP_CURSOR_PART WORLD_MAP_MARKER_CAPACITY
+#define WORLD_MAP_CURSOR_MIN_SPEED PIXELS(1)
+#define WORLD_MAP_CURSOR_MAX_SPEED PIXELS(6)
+#define WORLD_MAP_CURSOR_ACCELERATION (PIXELS(1) / 8)
+#define WORLD_MAP_MARKER_BLEND_STEPS 32
+#define WORLD_MAP_CURSOR_MIN_X 16
+#define WORLD_MAP_CURSOR_MAX_X (WORLD_MAP_SCREEN_WIDTH - 1)
+#define WORLD_MAP_CURSOR_MAX_Y 141
+
+/// The renderer's linked sprite entry and the three words that initialize it.
+union WorldMapMarkerPart {
+  struct AnimationSpritePart sprite;
+  u32 words[3];
+};
+
+#ifdef UBFIX
+#define WORLD_MAP_MARKER_VIEW(marker) ((marker)->sprite)
+#else
+#define WORLD_MAP_MARKER_VIEW(marker) (*(marker))
+#endif
+
+STATIC_ASSERT(sizeof(union WorldMapMarkerPart) ==
+              sizeof(struct AnimationSpritePart));
 
 // BUG: the original reserves 32 bytes but writes and uploads 128. The bump
 // allocator takes bytes, not words; reserve the whole tile buffer with BUGFIX.
@@ -14,25 +43,41 @@
 #define WORLD_MAP_MARKER_ALLOCATION_SIZE 32
 #endif
 
-/// The world map screen's work, kept in gMapCellBuffer.
+/// Scratch work while Map_ShowWorldMap owns gMapCellBuffer. Setup runs before
+/// the marker task; cleanup removes its window before map graphics reuse it.
 struct WorldMapWork {
-  u16 vramBlock;           ///< VRAM block of the markers' tiles
-  u16 windowSlot;          ///< a second VRAM block, returned at the end
-  union FieldCoordinate x; ///< the cursor, in pixels
-  union FieldCoordinate z;
-  u8 padding0c[6];
-  s16 shown; ///< the marker whose name is shown (-1: none)
-  u8 padding14[4];
-  s32 speed; ///< the cursor's speed
-  struct UiWindow *window;
-  struct AnimationSpritePart markers[67];
+  u16 markerVramBlock;           ///< owns the four generated marker tiles
+  u16 cursorVramBlock;           ///< owns the cursor picture's tiles
+  union FieldCoordinate cursorX; ///< screen column, 16.16 pixels
+  union FieldCoordinate cursorY; ///< screen row, 16.16 pixels
+  u8 padding0c[6];               ///< not read by this screen
+  s16 namedMarker; ///< actor whose name is drawn; -1 clears the name
+  u8 padding14[4]; ///< not read by this screen
+  s32 cursorSpeed; ///< 16.16 screen pixels per frame
+  struct UiWindow *nameWindow; ///< owned until this screen closes
+  // Packed visible places, then a nearest-place frame; the last is the cursor.
+#ifdef UBFIX
+  union WorldMapMarkerPart markers[WORLD_MAP_MARKER_CAPACITY + 1];
+#else
+  struct AnimationSpritePart markers[WORLD_MAP_MARKER_CAPACITY + 1];
+#endif
 };
+
+STATIC_ASSERT(offsetof(struct WorldMapWork, markers) == 0x20);
+STATIC_ASSERT(sizeof(struct WorldMapWork) == 0x344);
+STATIC_ASSERT(WORLD_MAP_MARKER_CAPACITY ==
+              sizeof(((struct FieldWork *)0)->actors) /
+                  sizeof(((struct FieldWork *)0)->actors[0]));
 
 /// Sets up the world map screen: the marker tiles and their OAM entries, the
 /// cursor where the leader is on the map (or mid-screen when the place is not
 /// on it), and the place-name window.
 void BattleFx_SetupResourcesAndWindow(void) {
+#ifdef UBFIX
+  union WorldMapMarkerPart *marker;
+#else
   u32 *oam;
+#endif
   u32 *markerTiles;
   struct WorldMapWork *work;
   struct FieldActor *object;
@@ -44,9 +89,15 @@ void BattleFx_SetupResourcesAndWindow(void) {
   markerTiles =
       Runtime_BumpAllocateAlternatePool(WORLD_MAP_MARKER_ALLOCATION_SIZE);
   work = (struct WorldMapWork *)gMapCellBuffer;
+#ifdef UBFIX
+  marker = work->markers;
+#else
+  // UB: the flat word view runs across sprite records. Typed word/sprite
+  // unions change tbs-en setup from 368 to 364 bytes.
   oam = (u32 *)work->markers;
+#endif
   object = Object_GetById(gGameState.selectedActor);
-  work->vramBlock = Resource_FindFreeEntry();
+  work->markerVramBlock = Resource_FindFreeEntry();
   Dma_Fill32(0, markerTiles, WORLD_MAP_MARKER_TILE_BYTES);
   markerTiles[0] = 255;
   markerTiles[1] = 0x1ff;
@@ -62,32 +113,52 @@ void BattleFx_SetupResourcesAndWindow(void) {
   markerTiles[26] = 0x1ffff;
   markerTiles[27] = 0x11ff0;
   markerTiles[28] = 0x1100;
-  tileAttributes = VramCache_Load(work->vramBlock, WORLD_MAP_MARKER_TILE_BYTES,
-                                  markerTiles) |
+  tileAttributes = VramCache_Load(work->markerVramBlock,
+                                  WORLD_MAP_MARKER_TILE_BYTES, markerTiles) |
                    0x400;
-  for (i = 0; i < 66; i++) {
+  for (i = 0; i < WORLD_MAP_MARKER_CAPACITY; i++) {
+#ifdef UBFIX
+    marker->words[0] = 0;
+    marker->words[1] = 0;
+    marker->words[2] = tileAttributes;
+    marker++;
+#else
     *oam++ = 0;
     *oam++ = 0;
     *oam++ = tileAttributes;
+#endif
   }
   MemFree(markerTiles);
   if (GameFlag_TestFar(FLAG_NOT_ON_MAP)) {
-    work->x.fixed = 240 << 15;
-    work->z.fixed = 160 << 15;
+    work->cursorX.fixed = WORLD_MAP_SCREEN_WIDTH << 15;
+    work->cursorY.fixed = WORLD_MAP_SCREEN_HEIGHT << 15;
   } else {
-    work->x.fixed = (((object->x.fixed - 0x10000000) >> 16) * 240 / 4096) << 16;
-    work->z.fixed = ((object->z.part.pixel * 160) / 4096) << 16;
+    work->cursorX.fixed = (((object->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
+                           WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE)
+                          << 16;
+    work->cursorY.fixed = ((object->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT) /
+                           WORLD_MAP_WORLD_SIZE)
+                          << 16;
   }
-  work->windowSlot = Resource_LoadFixedBlockBIntoFreeSlotFar();
-  tile = gVramBlockCache[work->windowSlot].offset;
-  work->window = UiWindow_CreateFar(0, 0, 0, 0, 2);
-  work->shown = -1;
-  work->speed = 0x10000;
+  work->cursorVramBlock = Resource_LoadFixedBlockBIntoFreeSlotFar();
+  tile = gVramBlockCache[work->cursorVramBlock].offset;
+  work->nameWindow = UiWindow_CreateFar(0, 0, 0, 0, 2);
+  work->namedMarker = -1;
+  work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
+#ifdef UBFIX
+  marker->words[0] = 0;
+  marker->words[1] = 0x40000000;
+#else
   *oam++ = 0;
   *oam++ = 0x40000000;
+#endif
   cursorAttributes = 0x400;
   cursorAttributes |= tile >> 5;
+#ifdef UBFIX
+  marker->words[2] = cursorAttributes;
+#else
   *oam = cursorAttributes;
+#endif
 }
 
 #if TBS_PATCH_2
@@ -106,9 +177,9 @@ void BattleFx_SetupResourcesAndWindow(void) {
 void BattleFx_CleanupResourcesAndWindow(void) {
   struct WorldMapWork *work = (struct WorldMapWork *)gMapCellBuffer;
 
-  Resource_ResetEntry(work->vramBlock);
-  Resource_ResetEntry(work->windowSlot);
-  UiWork_FinalizeFar(work->window, 2);
+  Resource_ResetEntry(work->markerVramBlock);
+  Resource_ResetEntry(work->cursorVramBlock);
+  UiWork_FinalizeFar(work->nameWindow, 2);
 }
 
 /// Scheduler callback of the world map screen: shows a marker at each place
@@ -128,7 +199,7 @@ void Map_UpdateWorldMapMarkers(void) {
   s32 nearestName;
   s32 height;
   s32 width;
-  s32 pos[3];
+  struct FieldPosition pos;
   struct WorldMapWork *work;
   struct FieldActor *placeActor;
   s32 cursorY;
@@ -136,7 +207,11 @@ void Map_UpdateWorldMapMarkers(void) {
   s32 mode;
   s32 flag;
   s32 markerIndex;
+#ifdef UBFIX
+  union WorldMapMarkerPart *marker;
+#else
   struct AnimationSpritePart *marker;
+#endif
   s32 x;
   s32 y;
   s32 angle;
@@ -146,60 +221,70 @@ void Map_UpdateWorldMapMarkers(void) {
   work = (struct WorldMapWork *)Ram_MapCellBuffer;
   marker = work->markers;
   place = gWorldMap_PlaceMarkers;
-  tileBase = gVramBlockCache[work->vramBlock].offset >> 5;
+  tileBase = gVramBlockCache[work->markerVramBlock].offset >> 5;
 #else
   work = (struct WorldMapWork *)Ram_MapCellBuffer;
   leader = gGameState.selectedActor;
   place = gWorldMap_PlaceMarkers;
-  tileBase = gVramBlockCache[work->vramBlock].offset >> 5;
+  tileBase = gVramBlockCache[work->markerVramBlock].offset >> 5;
   marker = work->markers;
 #endif
   nearestMarker = -1;
   nearestDistanceSquared = WORLD_MAP_NAME_RANGE;
-  blend = gWorldMap_MarkerBlendCycle[(gFrameCount >> 1) & 31];
+  blend = gWorldMap_MarkerBlendCycle[(gFrameCount >> 1) &
+                                     (WORLD_MAP_MARKER_BLEND_STEPS - 1)];
 
-  //------------------------------------------------------------------
-  // The cursor.
-  //------------------------------------------------------------------
+  // Field_RunScene creates the selected actor before event -888 opens this
+  // screen. No actor task removes it while the marker callback runs.
   if (!GameFlag_TestFar(FLAG_NOT_ON_MAP) && (gKeysHeld & KEYS_SHOULDERS)) {
     // L or R: the current place.
     placeActor = ObjectTable_Get(gGameState.selectedActor);
+#ifdef UBFIX
+    // The native null branch leaves this frame's cursor coordinates unset.
+    // A missing selected actor violates the screen's lifetime contract;
+    // skipping that frame changes tbs-en from 1088 to 1092 bytes.
+    if (placeActor == NULL)
+      return;
+#endif
     if (placeActor != NULL) {
-      cursorX = ((placeActor->x.fixed - 0x10000000) >> 16) * 240 / 4096;
-      cursorY = placeActor->z.part.pixel * 160 / 4096;
+      cursorX = ((placeActor->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
+                WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE;
+      cursorY = placeActor->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT /
+                WORLD_MAP_WORLD_SIZE;
     }
   } else {
     // The d-pad: faster the longer it is held.
     angle = gWorldMap_CursorDirectionAngles[(gKeysHeld >> 4) & 15];
     if (angle != 0xffff) {
-      SET_VECTOR(pos, work->x.fixed, 0, work->z.fixed);
-      Vector_AddPolarOffset(work->speed, angle, pos);
-      if (pos[0] < 0x100000) // x is 16 to 239 pixels
-        pos[0] = 0x100000;
-      if (pos[0] > 0xef0000)
-        pos[0] = 0xef0000;
-      if (pos[2] < 0) // y is 0 to 141 pixels
-        pos[2] = 0;
-      if (pos[2] > 0x8d0000)
-        pos[2] = 0x8d0000;
-      work->x.fixed = pos[0];
-      work->z.fixed = pos[2];
-      if (work->speed < 0x60000)
-        work->speed += 0x2000;
+      pos.x = work->cursorX.fixed;
+      pos.y = 0;
+      pos.z = work->cursorY.fixed;
+      Vector_AddPolarOffset(work->cursorSpeed, angle, &pos);
+      if (pos.x < PIXELS(WORLD_MAP_CURSOR_MIN_X))
+        pos.x = PIXELS(WORLD_MAP_CURSOR_MIN_X);
+      if (pos.x > PIXELS(WORLD_MAP_CURSOR_MAX_X))
+        pos.x = PIXELS(WORLD_MAP_CURSOR_MAX_X);
+      if (pos.z < 0)
+        pos.z = 0;
+      if (pos.z > PIXELS(WORLD_MAP_CURSOR_MAX_Y))
+        pos.z = PIXELS(WORLD_MAP_CURSOR_MAX_Y);
+      work->cursorX.fixed = pos.x;
+      work->cursorY.fixed = pos.z;
+      if (work->cursorSpeed < WORLD_MAP_CURSOR_MAX_SPEED)
+        work->cursorSpeed += WORLD_MAP_CURSOR_ACCELERATION;
     } else {
-      work->speed = 0x10000;
+      work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
     }
-    cursorX = work->x.part.pixel;
-    cursorY = work->z.part.pixel;
+    cursorX = work->cursorX.part.pixel;
+    cursorY = work->cursorY.part.pixel;
   }
 
-  //------------------------------------------------------------------
-  // Markers: 0 is the current place, 11 to 65 the places of
-  // gWorldMap_PlaceMarkers, (flag, name) pairs whose flag carries the marker's
-  // tile in its upper 16 bits.
-  //------------------------------------------------------------------
-  for (markerIndex = 0; markerIndex <= 65; markerIndex++) {
-    if (markerIndex != leader && markerIndex <= 10)
+  // Actor 0 consumes no place row. Ordinary rows begin at actor 11; a
+  // selected slot in 1..10 also consumes one. Zero rows reserve actors with
+  // no marker and -1 ends the table. A row is (tile << 16 | flag, scene id).
+  for (markerIndex = 0; markerIndex < WORLD_MAP_MARKER_CAPACITY;
+       markerIndex++) {
+    if (markerIndex != leader && markerIndex < WORLD_MAP_FIRST_PLACE_ACTOR)
       continue;
     if (markerIndex == 0) {
       if (GameFlag_TestFar(FLAG_NOT_ON_MAP))
@@ -230,74 +315,83 @@ void Map_UpdateWorldMapMarkers(void) {
     if (placeActor == NULL)
       continue;
 
-    // The world's 4096 pixels square shrunk to 240 by 160.
-    x = ((placeActor->x.fixed - 0x10000000) >> 16) * 240 / 4096;
-    y = placeActor->z.part.pixel * 160 / 4096;
-    marker->objectMode = mode;
-    marker->tile = tileBase + tile;
-    marker->x = x - 1;
-    marker->y = y - 1;
+    // Field x starts at 4096; the picture covers 4096 square world pixels.
+    x = ((placeActor->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
+        WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE;
+    y = placeActor->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT /
+        WORLD_MAP_WORLD_SIZE;
+    WORLD_MAP_MARKER_VIEW(marker).objectMode = mode;
+    WORLD_MAP_MARKER_VIEW(marker).tile = tileBase + tile;
+    WORLD_MAP_MARKER_VIEW(marker).x = x - 1;
+    WORLD_MAP_MARKER_VIEW(marker).y = y - 1;
     width = x - cursorX;
     height = y - cursorY;
     if (width * width + height * height < nearestDistanceSquared) {
-      nearestName = message;
+      // UB: marker 0 has no table message. Its unused native read keeps the
+      // 1088-byte tbs-en body; skip the read for that marker with UBFIX.
+#ifdef UBFIX
+      if (markerIndex != 0)
+#endif
+        nearestName = message;
+      // These coordinates and the name are valid only with nearestMarker set.
       nearestMarker = markerIndex;
       nearestDistanceSquared = width * width + height * height;
       nearestX = x;
       nearestY = y;
     }
-    if (markerIndex != 0 || (gFrameCount & 15) <= 7) // the current place blinks
-      Runtime_PushSlotEntry(marker++, y);
+    // Blink the current place for eight frames out of sixteen.
+    if (markerIndex != 0 || (gFrameCount & 15) <= 7)
+      Runtime_PushSlotEntry(&WORLD_MAP_MARKER_VIEW(marker++), y);
   }
 #if WORLD_MAP_CURSOR_SNAPS
   // With the d-pad released, the cursor moves onto the nearest marker.
   if (gKeysHeld == 0) {
     if (nearestMarker != -1) {
       if (nearestDistanceSquared <= 1) {
-        work->x.fixed = nearestX << 16;
-        work->z.fixed = nearestY << 16;
-        work->speed = 0x10000;
+        work->cursorX.fixed = nearestX << 16;
+        work->cursorY.fixed = nearestY << 16;
+        work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
       } else {
-        if (work->speed < 0x20000)
-          work->speed = 0x20000;
+        if (work->cursorSpeed < PIXELS(2))
+          work->cursorSpeed = PIXELS(2);
         angle = ArcTan2(nearestY - cursorY, nearestX - cursorX);
-        SET_VECTOR(pos, work->x.fixed, 0, work->z.fixed);
-        Vector_AddPolarOffset(work->speed, (u16)angle, pos);
-        work->x.fixed = pos[0];
-        work->z.fixed = pos[2];
-        if (work->speed < 0x60000)
-          work->speed += 0x2000;
+        pos.x = work->cursorX.fixed;
+        pos.y = 0;
+        pos.z = work->cursorY.fixed;
+        Vector_AddPolarOffset(work->cursorSpeed, (u16)angle, &pos);
+        work->cursorX.fixed = pos.x;
+        work->cursorY.fixed = pos.z;
+        if (work->cursorSpeed < WORLD_MAP_CURSOR_MAX_SPEED)
+          work->cursorSpeed += WORLD_MAP_CURSOR_ACCELERATION;
       }
-      cursorX = work->x.part.pixel;
-      cursorY = work->z.part.pixel;
+      cursorX = work->cursorX.part.pixel;
+      cursorY = work->cursorY.part.pixel;
     } else {
-      work->speed = 0x10000;
+      work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
     }
   }
 #endif
 
   // The blinking frame round the nearest marker.
   if (nearestMarker != -1 && (gFrameCount & 15) <= 7) {
-    marker->objectMode = 0;
-    marker->tile = tileBase + 3;
-    marker->x = nearestX - 2;
-    marker->y = nearestY - 2;
-    Runtime_PushSlotEntry(marker, nearestY);
+    WORLD_MAP_MARKER_VIEW(marker).objectMode = 0;
+    WORLD_MAP_MARKER_VIEW(marker).tile = tileBase + 3;
+    WORLD_MAP_MARKER_VIEW(marker).x = nearestX - 2;
+    WORLD_MAP_MARKER_VIEW(marker).y = nearestY - 2;
+    Runtime_PushSlotEntry(&WORLD_MAP_MARKER_VIEW(marker), nearestY);
   }
 
   // The cursor.
-  marker = &work->markers[66];
-  marker->affineIndex = 0;
-  marker->x = cursorX - 17;
-  marker->y = cursorY + 1;
-  Runtime_PushSlotEntry(marker, 246);
+  marker = &work->markers[WORLD_MAP_CURSOR_PART];
+  WORLD_MAP_MARKER_VIEW(marker).affineIndex = 0;
+  WORLD_MAP_MARKER_VIEW(marker).x = cursorX - 17;
+  WORLD_MAP_MARKER_VIEW(marker).y = cursorY + 1;
+  Runtime_PushSlotEntry(&WORLD_MAP_MARKER_VIEW(marker), 246);
 
-  //------------------------------------------------------------------
-  // The place-name window, redrawn only when the marker changes.
-  //------------------------------------------------------------------
-  if (work->shown != nearestMarker) {
-    work->shown = nearestMarker;
-    RenderOutput_PrepareForRedrawFar(work->window);
+  // Redraw only when the selected marker changes, including to no marker.
+  if (work->namedMarker != nearestMarker) {
+    work->namedMarker = nearestMarker;
+    RenderOutput_PrepareForRedrawFar(work->nameWindow);
     if (nearestMarker != -1) {
       if (nearestMarker == 0)
         nearestName = MsgPresentLocation;
@@ -309,26 +403,27 @@ void Map_UpdateWorldMapMarkers(void) {
       cursorY = nearestY;
       cursorX -= WORLD_MAP_NAME_LEFT;
       cursorY -= 11;
-      if (cursorX + width > 240) {
+      if (cursorX + width > WORLD_MAP_SCREEN_WIDTH) {
         // Past the right edge, it goes up and left of the marker.
-        cursorX = 232 - width;
+        cursorX = WORLD_MAP_SCREEN_WIDTH - 8 - width;
         cursorY = nearestY - 20;
       }
       if (cursorY < 0)
         cursorY = 0;
-      UiText_DrawResourceFar(nearestName, work->window, cursorX, cursorY);
+      UiText_DrawResourceFar(nearestName, work->nameWindow, cursorX, cursorY);
     }
   }
 
   // Pulse the markers' transparency.
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL, 0x20000);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL, IO_WRITE_16);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend,
+                      IO_WRITE_16);
 }
 
-/// Shows the world map screen from the world map (event mode 3): closes the
-/// screen, pauses the map's animations, draws the map picture on BG1 and runs
-/// Map_UpdateWorldMapMarkers until A or B, then puts everything back. Says
-/// "This place doesn't seem to be on the map..." when it is not.
+/// Borrows the map-cell buffer for the still map until A or B closes it.
+/// Field_RunScene reaches this for event -888 in world-map mode. The marker
+/// task stops before map graphics are restored, so neither uses the other's
+/// scratch storage. The picture argument is unused; the resource is fixed.
 void Map_ShowWorldMap(s32 picture) {
   struct MapState *map = WORK_SLOT(8);
   struct FieldWork *field =
@@ -336,7 +431,7 @@ void Map_ShowWorldMap(s32 picture) {
   struct ObjectSystemWork *menu = WORK_SLOT(HEAP_SLOT_MENU_CONTROL);
   s32 resource = (s32)&ResourceId_WorldMapPicture;
   struct MapAnimation *layer;
-  u8 savedFlags[16];
+  u8 savedFlags[sizeof(map->anim) / sizeof(map->anim[0])];
   s32 i;
   u8 *graphics;
   s32 savedStatus;
@@ -350,7 +445,7 @@ void Map_ShowWorldMap(s32 picture) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   layer = map->anim;
-  for (i = 0; i < 16; i++) {
+  for (i = 0; i < (s32)(sizeof(savedFlags) / sizeof(savedFlags[0])); i++) {
     savedFlags[i] = layer->paused;
     layer->paused = 1;
     layer++;
@@ -359,18 +454,21 @@ void Map_ShowWorldMap(s32 picture) {
   WaitFrames(1);
   blend = REG_BLDALPHA;
   graphics = Resource_GetTableEntry(resource);
-  Dma_Set(graphics, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | (448 / 4),
-          REG_DMA3);
+  Dma_Set(graphics, (void *)BG_PLTT,
+          (u32)(DMA_ENABLE | DMA_32BIT) << 16 | (448 / 4), REG_DMA3);
   BG_PLTT[0] = 0;
   Resource_DecodeType01(graphics + 448, gMapCellBuffer);
   Dma_Set(gMapCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00,
-          (DMA_ENABLE | DMA_32BIT) << 16 | (240 * 160 / 4), REG_DMA3);
+          (u32)(DMA_ENABLE | DMA_32BIT) << 16 |
+              (WORLD_MAP_SCREEN_WIDTH * WORLD_MAP_SCREEN_HEIGHT / 4),
+          REG_DMA3);
   Io_Write16(BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6) | 2, &REG_BG1CNT);
   Io_Write16(DISPCNT_OBJ_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
                  DISPCNT_OBJ_1D_MAP,
              &REG_DISPCNT);
   BattleFx_SetupResourcesAndWindow();
-  Scheduler_AddOrUpdateCallback(Map_UpdateWorldMapMarkers, 0xc80);
+  Scheduler_AddOrUpdateCallback(Map_UpdateWorldMapMarkers,
+                                SCHEDULER_KEY_MAIN_LOOP);
   if (GameFlag_TestFar(FLAG_NOT_ON_MAP))
     UiText_ShowPositionedMessageAndWaitFar(MsgNotOnMap, 1);
   do {
@@ -380,9 +478,9 @@ void Map_ShowWorldMap(s32 picture) {
   BattleFx_CleanupResourcesAndWindow();
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   Map_LoadAreaGraphicsFar();
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, (u16)blend, 0x20000);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, (u16)blend, IO_WRITE_16);
   layer = map->anim;
-  for (i = 0; i < 16; i++) {
+  for (i = 0; i < (s32)(sizeof(savedFlags) / sizeof(savedFlags[0])); i++) {
     layer->paused = savedFlags[i];
     layer++;
   }
@@ -405,7 +503,7 @@ void Field_UpdateObjectVisibilityBounds(void) {
   s32 bottom;
   u32 id;
 
-  // the selected actor is looked up and the result discarded, as the ROM does
+  // The selected actor lookup has no used result; the bounds follow the camera.
   Object_GetById(gGameState.selectedActor);
   object = ((struct FieldWork *)gEventWork)->camera;
   x = object->x;
@@ -415,7 +513,7 @@ void Field_UpdateObjectVisibilityBounds(void) {
   top = y - (600 << 16);
   bottom = y + (400 << 16);
 
-  id = 8;
+  id = ACTOR_FIRST_PLACED;
   do {
     object = ObjectTable_Get(id);
 
@@ -430,7 +528,7 @@ void Field_UpdateObjectVisibilityBounds(void) {
       }
     }
     id++;
-  } while (id <= 65);
+  } while (id < WORLD_MAP_MARKER_CAPACITY);
 }
 
 /// On the world map, zooms the view out (0x9d89) while L is held, then back.
@@ -454,6 +552,21 @@ void BattleFx_RunVisibilityTransition(void) {
 }
 
 #undef WORLD_MAP_MARKER_TILE_BYTES
+#undef WORLD_MAP_SCREEN_WIDTH
+#undef WORLD_MAP_SCREEN_HEIGHT
+#undef WORLD_MAP_WORLD_SIZE
+#undef WORLD_MAP_X_ORIGIN
+#undef WORLD_MAP_FIRST_PLACE_ACTOR
+#undef WORLD_MAP_MARKER_CAPACITY
+#undef WORLD_MAP_CURSOR_PART
+#undef WORLD_MAP_CURSOR_MIN_SPEED
+#undef WORLD_MAP_CURSOR_MAX_SPEED
+#undef WORLD_MAP_CURSOR_ACCELERATION
+#undef WORLD_MAP_MARKER_BLEND_STEPS
+#undef WORLD_MAP_CURSOR_MIN_X
+#undef WORLD_MAP_CURSOR_MAX_X
+#undef WORLD_MAP_CURSOR_MAX_Y
+#undef WORLD_MAP_MARKER_VIEW
 #undef WORLD_MAP_MARKER_ALLOCATION_SIZE
 #undef WORLD_MAP_CURSOR_SNAPS
 #undef WORLD_MAP_NAME_RANGE

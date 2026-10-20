@@ -124,6 +124,20 @@ the walking loop resumes only when every request is done. What must move
 during a cutscene runs as tasks and object scripts (see
 [Runtime](../runtime/README.md) and [Field](../field/README.md)).
 
+### The world map picture borrows the map scratch
+
+`Map_ShowWorldMap` copies the decoded picture into background VRAM before
+[`psynergy_effects/world_map.c`](psynergy_effects/world_map.c) uses
+`gMapCellBuffer` for its cursor, markers and place-name window. Its marker
+task owns that work until the screen removes the task and releases its
+window and tile-cache entries. `Map_LoadAreaGraphics` can then reuse the
+scratch to restore the field graphics.
+
+Visible markers are packed into the sprite list, independently of actor
+slots. The nearest-place frame follows them, while the cursor keeps the
+last entry. This lets hidden places consume no sprite entries without
+changing which actor each place-table row describes.
+
 ## How to find a field Psynergy
 
 `Field_UsePsynergy` ([`object/psynergy.c`](object/psynergy.c)) pays the PP,
@@ -185,3 +199,8 @@ Still unknown:
 - XXX: the `BattleFx_`, `BattleEffect_` and `RunBattleEffectNN` names on field
   Psynergy code are older than the `FieldFx_` prefix and wait for a rename
   across folders.
+- XXX: the retained `Event_ShowSpeakerMessage` and
+  `Event_ShowMessageAtPosition` entry points have no current scene callers.
+  Their position limits resemble pixels, but their window service takes
+  tiles; a caller establishing the intended position would settle the
+  conversion ([`psynergy_effects/messages.c`](psynergy_effects/messages.c)).

@@ -148,6 +148,13 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
       output->sentinel = 240;
       output->x = 120;
       output->y = 120;
+      // UB: the two stores below write the attribute and tile words through
+      // pointer types; UBFIX writes the unions' words.
+#ifdef UBFIX
+      entry->attributes.word = 0x40000400;
+      zero = 0;
+      entry->tile.value = zero;
+#else
       /* FAKEMATCH: typed like the window pointer, the word store waits for the
        * window load but not for the x and y stores, so sched2 places the entry
        * copy before them */
@@ -156,6 +163,7 @@ struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner,
       /* FAKEMATCH: a pointer-typed clear does not wait for the x and y stores
        * (sched2 order) */
       *(void **)&entry->tile = (void *)zero;
+#endif
       entry->attributes.bits.x = win->x * 8 + x;
       entry->attributes.bits.y = win->y * 8 + y;
       /* FAKEMATCH(dead): advancing and restoring the captured pointer keeps

@@ -206,7 +206,8 @@ void UiText_MeasureEntryDimensions(s32 entryIndex, u32 *outWidth,
     case 14:
     case 28:
       entryIndex = (entryIndex + 1) & RENDER_ENTRY_MASK;
-      // Fall through: skip the second operand too.
+      // Skip the second operand too.
+      // Fall through.
     case TEXT_COLOUR:
     case TEXT_LINE_SPACING:
     case TEXT_WINDOW_STATE:
@@ -403,7 +404,8 @@ void UiText_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     case 14:
     case 28:
       entryIndex = (entryIndex + 1) & RENDER_ENTRY_MASK;
-      // Fall through: skip the second operand too.
+      // Skip the second operand too.
+      // Fall through.
     case TEXT_COLOUR:
     case TEXT_LINE_SPACING:
     case TEXT_WINDOW_STATE:

@@ -93,6 +93,22 @@
 #include "unit/object/psynergy_effects.h"
 #include "unit/window/scales.h"
 
+#ifdef MODERN
+// The menu object calls these window functions with no prototype in scope, as
+// its bytes need (unit/window/window.h says why for each); a current GCC gets
+// them here.
+void RenderOutput_AppendToList(struct RenderOutputList *list,
+                               struct RenderOutput *node);
+struct UiChannelSlot *UiText_QueueRenderEntries(struct UiWindow *window,
+                                                s32 entry, s32 x, s32 y,
+                                                u16 *spacing, s32 flags);
+void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
+                                     s32 y);
+void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode);
+void UiText_DrawPrefixedNumberAtOffset(s32 value, const struct UiWindow *work,
+                                       s32 offsetX, s32 offsetY, s32 variant);
+#endif
+
 // Edition-specific text and window layout values.
 #if !TBS_PATCH_1
 #define DJINN_PREVIEW_VITALS_X 4

@@ -235,9 +235,8 @@ void UiText_MeasureAllPages(s32 start, u32 *out_width, u32 *out_height,
 s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
                      s32 mode);
 // UiWindow_PutGlyph is called from battle_command.c with no prototype in
-// scope, as in window.c above its definition: PartyStatusDraw,
-// SummonMenu_SelectSummon and Battle_CollectPartyCommands pass four of its
-// five arguments, and in one file, with its definition first, they would not
+// scope, as in window.c above its definition: PartyStatusDraw passes four of
+// its five arguments, and in one file, with its definition first, it would not
 // compile. Split evidence for window|battle_command.
 void UiWindow_SetTilemapEntry(struct UiWindow *window, s32 value, s32 x, s32 y,
                               u32 mode);

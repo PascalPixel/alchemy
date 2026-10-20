@@ -299,6 +299,8 @@ s32 DjinnMenu_RunScreen(void) {
       step = DJINN_STEP_SELECT_ACTION;
       if (result < 0)
         break;
+      // Confirmed: apply it at once.
+      // Fall through.
     case DJINN_STEP_APPLY_GIVE:
       AudioCommand_PlayFar(SE_RECOVERY);
       result = Djinn_TransferFar(menu->shownOwner[0], menu->pairElement[0],
@@ -319,6 +321,8 @@ s32 DjinnMenu_RunScreen(void) {
       step = DJINN_STEP_SELECT_ACTION;
       if (result < 0)
         break;
+      // Confirmed: apply it at once.
+      // Fall through.
     case DJINN_STEP_APPLY_STANDBY:
       AudioCommand_PlayFar(SE_175);
       Djinn_DeactivateFar(menu->shownOwner[0], menu->pairElement[0],
@@ -338,6 +342,8 @@ s32 DjinnMenu_RunScreen(void) {
       step = DJINN_STEP_SELECT_ACTION;
       if (result < 0)
         break;
+      // Confirmed: apply it at once.
+      // Fall through.
     case DJINN_STEP_APPLY_TRADE:
       AudioCommand_PlayFar(SE_RECOVERY);
       Djinn_TransferFar(menu->shownOwner[0], menu->pairElement[0],
@@ -367,6 +373,8 @@ s32 DjinnMenu_RunScreen(void) {
       step = DJINN_STEP_SELECT_ACTION;
       if (result < 0)
         break;
+      // Confirmed: apply it at once.
+      // Fall through.
     case DJINN_STEP_APPLY_SET:
       AudioCommand_PlayFar(SE_139);
       Djinn_ActivateFar(menu->shownOwner[0], menu->pairElement[0],
@@ -562,6 +570,9 @@ s32 DjinnMenu_BuildLists(void *table) {
       entries++;
     } while (ownerIndex < ownerCount);
   }
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 /// The window map entry of the first element icon, in palette 5; the four
@@ -639,6 +650,9 @@ s32 UiWindow_SetInteriorPaletteBitRect(const struct UiWindow *window, s32 x,
                                        s32 palette) {
   UiWindow_SetPaletteBitRectFar(window->x + x + 1, window->y + y + 1, width,
                                 height, palette);
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 /// Moves each tile of a screen rectangle (in tiles, clipped to the screen) that

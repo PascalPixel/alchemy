@@ -76,7 +76,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
   smallIconSlot = VramCache_AllocEntry(512);
   state = Runtime_AllocateBlock(57, 260);
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
-  Graphics_ExpandVramTilesByColorTable(0x06006000);
+  Graphics_ExpandVramTilesByColorTable((u16 *)0x06006000);
   Link_DrawShiftedTilePair(0x06006680);
   Menu_BuildLocalizedPatternTiles();
   battle = gBattleWork;
@@ -716,6 +716,9 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
                                BATTLE_MENU_MESSAGE_CAPACITY);
       UiText_RenderWideStringAtOffset(
           data, (struct UiWindow *)state->displayHandle, 0, 4);
+#ifdef UBFIX
+      return 0;
+#endif
     }
 
     linkBattle = gBattleWork;

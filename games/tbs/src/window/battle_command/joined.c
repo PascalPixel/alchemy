@@ -4,6 +4,17 @@
 
 #include "../battle_command_internal.h"
 
+// UB: the joined messages pass five of UiText_QueueRenderEntries' six
+// arguments, so its flags are whatever the stack slot of the sixth holds;
+// UBFIX passes 0, as the window object's own messages do.
+#ifdef UBFIX
+#define JOINED_QUEUE_TEXT(window, entry, x, y, spacing)                        \
+  UiText_QueueRenderEntries(window, entry, x, y, (u16 *)(spacing), 0)
+#else
+#define JOINED_QUEUE_TEXT(window, entry, x, y, spacing)                        \
+  UiText_QueueRenderEntries(window, entry, x, y, spacing)
+#endif
+
 #if (LANGUAGE == LANGUAGE_ENGLISH) || (LANGUAGE == LANGUAGE_GERMAN) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
 #define TALK_WINDOW_X 7
@@ -137,7 +148,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
 
     text = UiText_BuildRenderEntriesMode1(element + MsgVenusDjinnJoined);
 
-    UiText_QueueRenderEntries(window, text, 36, 2, zero);
+    JOINED_QUEUE_TEXT(window, text, 36, 2, zero);
 
     AudioCommand_PlayFar(MUS_081);
 
@@ -193,8 +204,8 @@ void Party_ShowJoinedMessage(s32 member) {
     work->speakerVoiceSound = 0;
     work->speakerVoiceCountdown = 0;
     UiWork_PushValueSlot(member, 1);
-    UiText_QueueRenderEntries(
-        window, UiText_BuildRenderEntriesMode1(MsgJoinedParty), 36, 2, 0);
+    JOINED_QUEUE_TEXT(window, UiText_BuildRenderEntriesMode1(MsgJoinedParty),
+                      36, 2, 0);
     AudioCommand_PlayFar(MUS_081);
     do {
       Runtime_PushSlotEntry(entry, 250);
@@ -258,9 +269,9 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     UiWork_PushValueSlot(first, 1);
     UiWork_PushValueSlot(second, 1);
 
-    UiText_QueueRenderEntries(
-        window, UiText_BuildRenderEntriesMode1(MsgPairJoinedParty), 68, 2,
-        zero);
+    JOINED_QUEUE_TEXT(window,
+                      UiText_BuildRenderEntriesMode1(MsgPairJoinedParty), 68, 2,
+                      zero);
 
     AudioCommand_PlayFar(MUS_081);
 
@@ -277,3 +288,5 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     Resource_ResetEntry(handle2);
   }
 }
+
+#undef JOINED_QUEUE_TEXT

@@ -118,6 +118,14 @@
 #define PASSWORD_SYMBOLS_PER_PAGE 50
 #define PASSWORD_SYMBOL_MASK 0x3f
 
+/// Whether a key of the extra code is still held. UB: the flag is a word the
+/// code reads and writes as its low halfword; UBFIX uses the word.
+#ifdef UBFIX
+#define CLEAR_EXTRA_CODE_HELD gClear_ExtraCodeHeld
+#else
+#define CLEAR_EXTRA_CODE_HELD (*(s16 *)&gClear_ExtraCodeHeld)
+#endif
+
 static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out);
 static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 Clear_ComputePasswordCrc16(u32 byteCount, u8 *data);
@@ -248,15 +256,15 @@ static void Clear_CheckButtonCodes(void) {
     }
   }
   if (gClear_ExtraCodeUnlocked == 0) {
-    if (*(s16 *)&gClear_ExtraCodeHeld != 0) {
+    if (CLEAR_EXTRA_CODE_HELD != 0) {
       if (gKeysHeld == 0)
-        *(s16 *)&gClear_ExtraCodeHeld = 0;
+        CLEAR_EXTRA_CODE_HELD = 0;
     } else if (gKeysHeld != 0) {
       if (gKeysHeld ==
           CLEAR_SEQUENCE_KEYS(
               gClear_ExtraCodeSequence)[gClear_ExtraCodeProgress]) {
         gClear_ExtraCodeProgress++;
-        *(s16 *)&gClear_ExtraCodeHeld = 1;
+        CLEAR_EXTRA_CODE_HELD = 1;
         if (CLEAR_SEQUENCE_KEYS(
                 gClear_ExtraCodeSequence)[gClear_ExtraCodeProgress] == 0) {
           gClear_ExtraCodeUnlocked = 1;
@@ -1071,7 +1079,7 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
       s32 m;
 
       for (m = 0; m != 23; m++) {
-        u16 quantity;
+        UNUSED u16 quantity;
 
         j = 0;
         for (n = 0; n != 15; n++) {

@@ -747,7 +747,8 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
 #if (LANGUAGE == LANGUAGE_ENGLISH)
             lineStart = 1;
 #endif
-            // Fall through: keep the break in the decoded text.
+            // Keep the break in the decoded text.
+            // Fall through.
           default:
             entry[writePosition] = (u16)code;
             writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;
@@ -1064,6 +1065,8 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
           case MSG_PAGE_BREAK:
           case MSG_LINE_BREAK:
             lineStart = 1;
+            // Keep the break in the decoded text.
+            // Fall through.
           default:
             entry[writePosition] = (u16)code;
             writePosition = (writePosition + 1) & RENDER_ENTRY_MASK;

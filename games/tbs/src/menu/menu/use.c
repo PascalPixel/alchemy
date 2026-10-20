@@ -323,8 +323,11 @@ void Ability_PlayUseAnimation(s32 action) {
   animationType = 0xf & actionDefinition->flags;
   switch (animationType) {
   case 1:
+    // XXX: with no break the recovery sound is started twice; whether that
+    // was meant would show only in the sound driver's handling of a cue
+    // started again in the same frame.
     Audio_PlayCueReturnOne(SE_RECOVERY);
-
+    // Fall through.
   case 11:
     Audio_PlayCueReturnOne(SE_RECOVERY);
     return;

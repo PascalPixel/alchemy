@@ -244,7 +244,7 @@ s32 Menu_HandleFlagGridInput(struct UiWindow *window, s32 *page, s32 *cursor) {
   s32 *row = &cursor[1];
 
   if (gKeysRepeat & KEY_A) {
-    s32 flag = ((*page << 4) + *row << 4) + cursor[0];
+    s32 flag = (((*page << 4) + *row) << 4) + cursor[0];
 
     if (GameFlag_TestFar(flag))
       GameFlag_ClearBitFar(flag);

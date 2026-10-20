@@ -108,6 +108,15 @@ struct LinkPeer {
 
 static s32 sLinkLobbyWaitFrames;
 
+/// What a lobby handler's early exit returns. The ROM's s32 handlers return
+/// nothing there, leaving whatever the last call put in r0 (UB); UBFIX
+/// returns 0, as the function ends that fall off do.
+#ifdef UBFIX
+#define LOBBY_NO_RESULT 0
+#else
+#define LOBBY_NO_RESULT
+#endif
+
 u8 *LinkLobby_GetEntrances(void) { return (u8 *)gLinkLobbyEntrances; }
 
 s32 SceneData_ReturnZero(void) { return 0; }
@@ -124,6 +133,9 @@ static s32 LinkLobby_InitializeSerial(void) {
   SerialRuntime_RemoveIrqHandlers();
   SerialRuntime_Initialize();
   IRQ_UNLOCK(savedIrqState);
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 u8 *LinkLobby_GetExits(void) { return (u8 *)gLinkLobbyExits; }
@@ -275,6 +287,9 @@ static s32 LinkLobby_PromptToParticipate(void) {
   Engine_TaskWait(5);
   Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
   Engine_EventEnd();
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 /// Resets the disconnect trigger and displays the attendant's warning.
@@ -291,6 +306,9 @@ static s32 LinkLobby_ReportDisconnection(void) {
   Engine_EventOpenMessage(8, 0);
   Engine_GameFlagClear(FLAG_SCENE_TEMP_05);
   Engine_EventEnd();
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 /// Receives three unit records and a recovery table; returns the occupied count
@@ -658,11 +676,10 @@ static s32 LinkLobby_EnterBattle(void) {
   if (Engine_GameFlagIsSet(FLAG_MONSTER_BATTLE)) {
     Engine_EventBegin();
   } else {
-    // These exits return no value from the s32 handler.
     if (!Engine_GameFlagIsSet(FLAG_SCENE_TEMP_00))
-      return;
+      return LOBBY_NO_RESULT;
     if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_05))
-      return;
+      return LOBBY_NO_RESULT;
     Engine_EventBegin();
     Engine_GameFlagSet(FLAG_SCENE_TEMP_03);
     LinkLobby_WriteSlotValue(2);
@@ -739,7 +756,7 @@ static s32 LinkLobby_EnterBattle(void) {
         Engine_GameFlagClear(FLAG_SCENE_TEMP_00);
         work->raisedTrigger = 2;
         Engine_EventEnd();
-        return;
+        return LOBBY_NO_RESULT;
       }
       Actor_SetSpeed(0, 0x8000, 0x4000);
       Engine_ActorWaitForMove(0);
@@ -755,10 +772,10 @@ static s32 LinkLobby_EnterBattle(void) {
     Battle_SetStart(4);
     Field_RequestBattleFromEncounterTable(1, 1);
     signature = (u16 *)gSerialTransfer.payload;
-    signature[0] = 0x45;
-    signature[1] = 0x58;
-    signature[2] = 0x45;
-    signature[3] = 0x43;
+    signature[0] = 'E';
+    signature[1] = 'X';
+    signature[2] = 'E';
+    signature[3] = 'C';
     i = 0;
     source = savedWork;
     destination = (u8 *)gMapCellBuffer + 0x8000;
@@ -769,6 +786,9 @@ static s32 LinkLobby_EnterBattle(void) {
     Runtime_ReleaseHeapBlock(54);
   }
   Engine_EventEnd();
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 /// Offers a linked challenge or a monster battle and publishes the response.
@@ -866,6 +886,9 @@ static s32 LinkLobby_ChooseBattleMode(void) {
     }
   }
   Engine_EventEnd();
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 /// Reports total or consecutive linked wins according to the leader's facing.
@@ -902,6 +925,9 @@ static s32 LinkLobby_ReportWinTallies(s32 actor) {
       Engine_EventShowMessage(actor, 0);
     }
   }
+#ifdef UBFIX
+  return 0;
+#endif
 }
 /// Selects a debug party preset; A accepts and B cancels.
 /// The preset loader's nonzero result selects the unavailable-preset message.
@@ -958,6 +984,9 @@ static s32 LinkLobby_ChooseDebugPartyPreset(s32 actorId) {
   }
   Engine_TaskWait(10);
   Engine_EventEnd();
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 /// Runs the sanctum service for this actor within an event.
@@ -965,6 +994,9 @@ static s32 LinkLobby_OpenSanctum(s32 actorId) {
   Engine_EventBegin();
   Engine_SanctumOpen(actorId);
   Engine_EventEnd();
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 /// Tests the first three linked-battle owners, or four outside linked finals.
@@ -1027,6 +1059,9 @@ static s32 LinkLobby_TalkByProgress(s32 actor) {
   Engine_EventSetMessage(messageBase + actor - 1);
   Engine_EventShowMessage(actor, 0);
   Engine_EventEnd();
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 /// Removes the link IRQ handlers, restores sound parameters and leaves the
@@ -1035,6 +1070,9 @@ static s32 LinkLobby_LeaveArena(void) {
   SerialRuntime_RemoveIrqHandlers();
   Sound_LoadPresetParameters(2);
   Event_SetDestination((s32)&SceneId_Clear, 1);
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 // The handlers below are s32 and return no value: r0 is whatever
@@ -1064,6 +1102,9 @@ static s32 LinkLobby_TalkToAttendant(s32 actor) {
   Engine_EventSetMessage(message + step);
   Engine_EventOpenMessage(actor, 0);
   Engine_EventEnd();
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 /// Alternates between the linked-party size and reorder instructions.
@@ -1085,6 +1126,9 @@ static s32 LinkLobby_ExplainPartyOrder(s32 actor) {
   Engine_EventSetMessage(message);
   Engine_EventOpenMessage(actor, 0);
   Engine_EventEnd();
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 /// Reports the stored consecutive-monster-battle record when nonzero.
@@ -1102,6 +1146,9 @@ static s32 LinkLobby_ReportMonsterRecord(s32 actorId) {
   }
   Engine_EventOpenMessage(actorId, 0);
   Engine_EventEnd();
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 u8 *LinkLobby_GetEvents(void) { return (u8 *)gLinkLobbyEvents; }
@@ -1123,6 +1170,9 @@ static s32 LinkLobby_SaveBattleResults(void) {
   while (UiWork_IsComplete() == 0)
     Engine_TaskWait(1);
   UiWork_Finalize(window, 1);
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 /// Shows saving/saved messages around the monster battle record save.
@@ -1141,6 +1191,9 @@ static s32 LinkLobby_SaveMonsterBattleResults(void) {
   while (UiWork_IsComplete() == 0)
     Engine_TaskWait(1);
   UiWork_Finalize(window, 1);
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 /// Draws a right-to-left three-digit value capped at 999, then redraws the map.
@@ -1154,6 +1207,9 @@ static s32 LinkLobby_DrawThreeDigitValue(s32 value) {
     value = value / 10;
   }
   Engine_MapRedraw();
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 /// Processes the entry's monster/link result and restores lobby polling.

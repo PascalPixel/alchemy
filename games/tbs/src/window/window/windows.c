@@ -120,7 +120,8 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
                                                       RENDER_WORK_SIZE);
 #if TBS_PATCH_1
   fill = 0;
-  Dma_Set(&fill, work, DMA_FILL32(RENDER_WORK_SIZE / 4), REG_DMA3);
+  Dma_Set((const void *)&fill, work, DMA_FILL32(RENDER_WORK_SIZE / 4),
+          REG_DMA3);
 #else
   Iwram_ClearWords(work, RENDER_WORK_SIZE);
 #endif
@@ -130,7 +131,8 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
   work->level = UI_TILEMAP_PALETTE;
 #if TBS_PATCH_1
   fill = UI_TILE_PAIR(UI_TILE_BLANK);
-  Dma_Set(&fill, work, DMA_FILL32(sizeof(work->tilemap) / 4), REG_DMA3);
+  Dma_Set((const void *)&fill, work, DMA_FILL32(sizeof(work->tilemap) / 4),
+          REG_DMA3);
 #else
   Iwram_FillWords(work, sizeof(work->tilemap), UI_TILE_PAIR(UI_TILE_BLANK));
 #endif

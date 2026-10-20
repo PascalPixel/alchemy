@@ -57,6 +57,9 @@ s32 UiIcon_CreateWithLoadedResource(struct UiWindow *window, s32 x, s32 y,
     UiIcon_LoadResourceIntoSlot(resourceId, slot);
     RenderOutput_CreateFar(slot, ICON_SPRITE_16X16, window, x, y);
   }
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 /// Creates a stat-change arrow from one of the two loaded resources.

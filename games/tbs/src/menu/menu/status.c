@@ -370,6 +370,9 @@ s32 DjinnMenu_ShowCurrentList(void) {
   AudioCommand_PlayFar(SE_MENU_CANCEL);
   // Returns no value: the bytes have the s32 epilogue (pop {r1}; bx r1) after
   // this void call.
+#ifdef UBFIX
+  return 0;
+#endif
 }
 
 struct InventoryMenuState;

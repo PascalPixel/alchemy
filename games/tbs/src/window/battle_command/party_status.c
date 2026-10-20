@@ -4,6 +4,17 @@
 
 #include "../battle_command_internal.h"
 
+// UB: the standby counts pass four of UiWindow_PutGlyph's five arguments, so
+// its mode is whatever the stack slot of the fifth holds; UBFIX passes 0, as
+// the summon lists do.
+#ifdef UBFIX
+#define PARTY_STATUS_PUT_DIGIT(window, glyph, x, y)                            \
+  UiWindow_PutGlyph(window, glyph, x, y, 0)
+#else
+#define PARTY_STATUS_PUT_DIGIT(window, glyph, x, y)                            \
+  UiWindow_PutGlyph(window, glyph, x, y)
+#endif
+
 // The party status window: one column of six tiles per party member (name,
 // HP and, when shown, PP with a bar under each), and in battle an optional
 // five-tile column of standby Djinn counts on its left. It sits at the top
@@ -347,21 +358,31 @@ void PartyStatusDraw(s32 flags) {
     if (flags & PARTY_STATUS_SHOW_PP)
       row++;
     BattleParty_CountStandbyDjinnFar(0, standbyDjinn);
-    UiWindow_SetTilemapEntry(window, 0x5001, 0, row, 0);
-    UiWindow_SetTilemapEntry(window, 0x5002, 2, row, 0);
-    UiWindow_SetTilemapEntry(window, 0x5003, 0, row + 1, 0);
-    UiWindow_SetTilemapEntry(window, 0x5004, 2, row + 1, 0);
-    UiWindow_PutGlyph(window, standbyDjinn[0] + '0', 1, row);
-    UiWindow_PutGlyph(window, standbyDjinn[1] + '0', 3, row);
-    UiWindow_PutGlyph(window, standbyDjinn[2] + '0', 1, row + 1);
-    UiWindow_PutGlyph(window, standbyDjinn[3] + '0', 3, row + 1);
+    UiWindow_SetTilemapEntry(window, SUMMON_ELEMENT_TILE + ELEMENT_VENUS, 0,
+                             row, 0);
+    UiWindow_SetTilemapEntry(window, SUMMON_ELEMENT_TILE + ELEMENT_MERCURY, 2,
+                             row, 0);
+    UiWindow_SetTilemapEntry(window, SUMMON_ELEMENT_TILE + ELEMENT_MARS, 0,
+                             row + 1, 0);
+    UiWindow_SetTilemapEntry(window, SUMMON_ELEMENT_TILE + ELEMENT_JUPITER, 2,
+                             row + 1, 0);
+    PARTY_STATUS_PUT_DIGIT(window, standbyDjinn[0] + '0', 1, row);
+    PARTY_STATUS_PUT_DIGIT(window, standbyDjinn[1] + '0', 3, row);
+    PARTY_STATUS_PUT_DIGIT(window, standbyDjinn[2] + '0', 1, row + 1);
+    PARTY_STATUS_PUT_DIGIT(window, standbyDjinn[3] + '0', 3, row + 1);
   }
   work->menuBusy = 0;
 }
 
 /// Closes the party status window and frees its heap block.
 void PartyStatus_Close(void) {
+  // UB: reads the work slot's pointer through an s32 pointer; UBFIX reads
+  // the window through the block's own struct.
+#ifdef UBFIX
+  UiWork_Finalize(((struct PartyStatusWindow *)gWindowWork[1])->window, 1);
+#else
   UiWork_Finalize((struct UiWindow *)**(s32 **)(u32)&gWindowWork[1], 1);
+#endif
   Runtime_ReleaseHeapBlock(PARTY_STATUS_BLOCK);
 }
 
@@ -413,3 +434,5 @@ void UiWindow_SetTileAttributeBitRect(const struct UiWindow *window, s32 x,
     work->dirty = 1;
   }
 }
+
+#undef PARTY_STATUS_PUT_DIGIT

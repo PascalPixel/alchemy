@@ -353,7 +353,7 @@ s32 UiText_OpenEntryMessage(struct UiWindow *window, s32 message) {
   /* FAKEMATCH: never read: the native frame keeps 8 bytes above the two
    * outgoing arguments, exactly these four slots; without them the frame is 8
    * bytes, not 16 (differ 4 in tbs-en). */
-  u16 frameReserve[4];
+  UNUSED u16 frameReserve[4];
 
   work->speakerVoiceSound = 0;
   work->speakerVoiceCountdown = 0;

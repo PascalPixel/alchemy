@@ -469,7 +469,7 @@ static void Event_PushObjectOverEdge(void) {
   if (StagedActor_FindClearPosition(&probe) != 0) {
     SceneActor_MoveAndRedraw(probe);
     // At the ledge's edge (column 17) the object slides west and drops.
-    if ((probe.positionX >> 20) == 17) {
+    if ((probe.position.x >> 20) == 17) {
       Engine_ActorSetAnimation(probe.actorSlot, 3);
       stationaryMotion = 0;
       Object_GetById(probe.actorSlot)->motionFlags = stationaryMotion;
@@ -491,11 +491,11 @@ static void Event_PushObjectOverEdge(void) {
       }
       // The cells it held on the ledge, and its landing, become open floor.
       clearedRows = 4;
-      StagedActor_FillGridAttributeRectangle(0, (probe.positionX >> 20),
-                                             ((probe.positionZ >> 20) - 2), 1,
+      StagedActor_FillGridAttributeRectangle(0, (probe.position.x >> 20),
+                                             ((probe.position.z >> 20) - 2), 1,
                                              clearedRows, stationaryMotion);
-      StagedActor_FillGridAttributeRectangle(2, (probe.positionX >> 20),
-                                             ((probe.positionZ >> 20) - 2), 1,
+      StagedActor_FillGridAttributeRectangle(2, (probe.position.x >> 20),
+                                             ((probe.position.z >> 20) - 2), 1,
                                              clearedRows, stationaryMotion);
       StagedActor_FillGridAttributeRectangle(2, 16, 18, 1, 2, stationaryMotion);
       StagedActor_FillGridAttributeRectangle(0, 16, 16, 1, clearedRows,
@@ -576,10 +576,10 @@ static void Event_PushObjectNorth(void) {
       s32 emptyAttributes = 0;
 
       slidingObject->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-      StagedActor_FillGridAttributeRectangle(0, 13, (probe.positionZ >> 20) - 1,
-                                             4, clearedRows, emptyAttributes);
+      StagedActor_FillGridAttributeRectangle(
+          0, 13, (probe.position.z >> 20) - 1, 4, clearedRows, emptyAttributes);
     }
-    if ((probe.positionZ >> 20) == 20) {
+    if ((probe.position.z >> 20) == 20) {
       Engine_GameFlagSet(FLAG_SCENE_TEMP_05);
     } else {
       Engine_GameFlagSet(FLAG_SCENE_TEMP_04);

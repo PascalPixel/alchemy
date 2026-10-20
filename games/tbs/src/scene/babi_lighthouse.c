@@ -979,23 +979,22 @@ static void BabiLighthouse_InspectTruthDoorSwitch(void) {
 
 /// Finds the staged actor one direction-table step ahead, including terrain
 /// height.
-static struct StagedActor *
-BabiLighthouse_FindActorAhead(struct StagedActor *actor) {
-  s32 position[3];
-  s32 *target = position;
-  s32 directionStep =
-      gStagedActor_DirectionSteps[actor->directionAndKind >> 12];
+static struct FieldActor *
+BabiLighthouse_FindActorAhead(struct FieldActor *actor) {
+  struct FieldPosition position;
+  struct FieldPosition *target = &position;
+  s32 directionStep = gStagedActor_DirectionSteps[actor->facing >> 12];
 
   {
-    s32 x = actor->x.value;
-    s32 z = actor->z.value;
+    s32 x = actor->x.fixed;
+    s32 z = actor->z.fixed;
 
     x += -0x10000 & directionStep;
     z += directionStep << 16;
-    target[0] = x;
-    target[2] = z;
+    target->x = x;
+    target->z = z;
   }
-  target[1] = Map_GetTerrainHeight(actor->transitionMode, target[0], target[2]);
+  target->y = Map_GetTerrainHeight(actor->terrainId, target->x, target->z);
   return StagedActor_FindAtTile(target, actor);
 }
 
@@ -1032,16 +1031,16 @@ static void BabiLighthouse_UpdateMovedBlock(void) {
 static void BabiLighthouse_AdvanceNearbyPair(void) {
   // Trial: inverting the empty success arm changes two branch instructions
   // (three text bytes in tbs-en); retain the existing branch order.
-  struct StagedActor *leader =
-      (struct StagedActor *)Object_GetById(ACTOR_PARTY_LEADER);
-  struct StagedActor *ahead = BabiLighthouse_FindActorAhead(leader);
+  struct FieldActor *leader =
+      (struct FieldActor *)Object_GetById(ACTOR_PARTY_LEADER);
+  struct FieldActor *ahead = BabiLighthouse_FindActorAhead(leader);
   s32 heightDifference;
 
   if (ahead == 0) {
     return;
   }
 
-  heightDifference = ahead->y - leader->y;
+  heightDifference = ahead->y.fixed - leader->y.fixed;
 
   if (heightDifference >= 0) {
 
@@ -1049,7 +1048,7 @@ static void BabiLighthouse_AdvanceNearbyPair(void) {
     } else {
       return;
     }
-  } else if (leader->y - ahead->y >= 0x80000) {
+  } else if (leader->y.fixed - ahead->y.fixed >= 0x80000) {
     return;
   }
 
@@ -1059,10 +1058,10 @@ static void BabiLighthouse_AdvanceNearbyPair(void) {
 /// Tries vertical climbing first, then advances the staged pair when
 /// appropriate.
 static void BabiLighthouse_ClimbOrAdvancePair(void) {
-  struct StagedActor *leader =
-      (struct StagedActor *)Object_GetById(ACTOR_PARTY_LEADER);
-  struct StagedActor *ahead = BabiLighthouse_FindActorAhead(leader);
-  s32 climbDirection = (leader->directionAndKind + 0x2000) & 0xc000;
+  struct FieldActor *leader =
+      (struct FieldActor *)Object_GetById(ACTOR_PARTY_LEADER);
+  struct FieldActor *ahead = BabiLighthouse_FindActorAhead(leader);
+  s32 climbDirection = (leader->facing + 0x2000) & 0xc000;
   s32 climbResult = -1;
 
   if (gGameState.movementMode == 1 || ahead == 0) {

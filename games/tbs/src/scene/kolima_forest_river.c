@@ -60,7 +60,7 @@ static void KolimaForestRiver_PushLog(void) {
   Engine_EventBegin();
   if (StagedActor_FindClearPosition(&result)) {
     SceneActor_MoveAndRedraw(result);
-    if (result.actorSlot == RIVER_LOG && (result.positionX >> 20) == 12) {
+    if (result.actorSlot == RIVER_LOG && (result.position.x >> 20) == 12) {
       struct FieldActor *actor;
       Engine_ActorSetAnimation(RIVER_LOG, 3);
       Engine_ActorSetDestinationOffset(RIVER_LOG, -18, 6);

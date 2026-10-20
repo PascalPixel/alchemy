@@ -347,7 +347,7 @@ static void MercuryLighthouse_MoveChannelBlocks(void) {
     // Each block controls one channel; restore the connected water tiles too.
     switch ((u32)probe.actorSlot) {
     case 9:
-      if (probe.positionZ >> 20 == 8) {
+      if (probe.position.z >> 20 == 8) {
         SceneActor_MoveAndRedraw(probe);
         Engine_EventWait(20);
         Map_CopyCellsTo(119, 9, 109, 11, 1, 1);
@@ -364,7 +364,7 @@ static void MercuryLighthouse_MoveChannelBlocks(void) {
       }
       break;
     case 10:
-      if (probe.positionZ >> 20 == 12) {
+      if (probe.position.z >> 20 == 12) {
         SceneActor_MoveAndRedraw(probe);
         Engine_EventWait(10);
         if (GameFlag_IsSet(FLAG_CHANNEL_1_OPEN)) {
@@ -385,7 +385,7 @@ static void MercuryLighthouse_MoveChannelBlocks(void) {
       }
       break;
     case 11:
-      column = probe.positionX;
+      column = probe.position.x;
       if (column >> 20 == 40) {
         SceneActor_MoveAndRedraw(probe);
         GameFlag_Set(FLAG_CHANNEL_3_OPEN);
@@ -703,7 +703,7 @@ static void MercuryLighthouse_MoveStairAndFountainBlocks(void) {
     blockId = probe.actorSlot;
     // The first block opens the stairs; the other starts or stops the fountain.
     if (blockId == 8) {
-      column = probe.positionX;
+      column = probe.position.x;
       if ((column >> 20) == 11) {
         SceneActor_MoveAndRedraw(probe);
         Engine_EventWait(30);
@@ -730,7 +730,7 @@ static void MercuryLighthouse_MoveStairAndFountainBlocks(void) {
         GameFlag_Clear(FLAG_STAIRS_RAISED);
       }
     } else if (blockId == 10) {
-      if ((probe.positionZ >> 20) == 40) {
+      if ((probe.position.z >> 20) == 40) {
         SceneActor_MoveAndRedraw(probe);
         if (GameFlag_IsSet(FLAG_FOUNTAIN_SHOWN) == 0) {
           Camera_SetSpeed(0x18000, 0x3000);
@@ -743,7 +743,7 @@ static void MercuryLighthouse_MoveStairAndFountainBlocks(void) {
           MercuryLighthouse_OpenFountainWithSpray(5);
         }
         GameFlag_Set(FLAG_FOUNTAIN_RUNNING);
-      } else if ((probe.positionZ >> 20) == 42) {
+      } else if ((probe.position.z >> 20) == 42) {
         probe.callback = MercuryLighthouse_StopFountainSpray;
         SceneActor_MoveAndRedraw(probe);
         MercuryLighthouse_RestoreFountainTiles(5);
@@ -1028,7 +1028,7 @@ static void MercuryLighthouse_MoveStoneDoorBlocks(void) {
     switch (probe.actorSlot) {
     case 10:
       SceneActor_MoveAndRedraw(probe);
-      if (probe.positionZ >> 20 == 38)
+      if (probe.position.z >> 20 == 38)
         Engine_GameFlagSet(FLAG_DOOR_ROOM_BLOCK_PUSHED);
       else
         Engine_GameFlagClear(FLAG_DOOR_ROOM_BLOCK_PUSHED);
@@ -1037,7 +1037,7 @@ static void MercuryLighthouse_MoveStoneDoorBlocks(void) {
       // Close the previous opening before revealing the new door edge.
       startColumn = Object_GetById(ACTOR_DOOR_SWITCH_BLOCK)->x.fixed >> 20;
       SceneActor_MoveAndRedraw(probe);
-      destinationColumn = probe.positionX >> 20;
+      destinationColumn = probe.position.x >> 20;
       if (destinationColumn == 47) {
         Engine_GameFlagSet(FLAG_DOOR_SWITCH_BLOCK_AT_47);
         Engine_GameFlagClear(FLAG_DOOR_SWITCH_BLOCK_AT_48);

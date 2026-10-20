@@ -11,12 +11,14 @@
 s32 Vault_StopIfFacingNear(struct FieldActor *actor, struct FieldActor *target,
                            s32 range, s32 force) {
   s32 result = 0;
-  s32 *targetPosition = &target->x.fixed;
-  s32 *actorPosition = &actor->x.fixed;
+  const u8 *targetPosition =
+      (const u8 *)target + offsetof(struct FieldActor, x);
+  const u8 *actorPosition = (const u8 *)actor + offsetof(struct FieldActor, x);
   if (FixedPoint_Distance(targetPosition, actorPosition) < range ||
       force != 0) {
     u32 angle = (u16)ArcTan2(target->z.fixed - actor->z.fixed,
-                             *targetPosition - *actorPosition);
+                             *(const s32 *)targetPosition -
+                                 *(const s32 *)actorPosition);
     u32 left = (angle - FACING_STEP) & 0xf000;
     u32 right = (angle + FACING_STEP) & 0xf000;
     u32 forward = angle & 0xf000;

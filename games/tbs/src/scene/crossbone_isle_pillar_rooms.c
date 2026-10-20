@@ -146,9 +146,9 @@ CrossboneIslePillarRooms_QueryFootprint(s32 id, u32 *width, u32 *depth,
     return 0;
   }
   // Bounds are pixel offsets; dimensions and origins below are 16-pixel cells.
-  probe->positionX = actor->x.fixed;
-  probe->positionY = actor->y.fixed;
-  probe->positionZ = actor->z.fixed;
+  probe->position.x = actor->x.fixed;
+  probe->position.y = actor->y.fixed;
+  probe->position.z = actor->z.fixed;
   coordinate = gStagedActor_FootprintBounds[probe->footprintIndex * 4 + 1];
   if (coordinate < 0) {
     coordinate = -coordinate;
@@ -168,18 +168,18 @@ CrossboneIslePillarRooms_QueryFootprint(s32 id, u32 *width, u32 *depth,
   }
   *width = (coordinate + farExtent) >> 4;
   // Move from the actor's center to the footprint's top-left cell.
-  probe->positionX +=
+  probe->position.x +=
       gStagedActor_FootprintBounds[probe->footprintIndex * 4] * PIXELS(1);
   {
     s32 offsetZ =
         gStagedActor_FootprintBounds[probe->footprintIndex * 4 + 1] * PIXELS(1);
 
-    coordinate = probe->positionZ;
+    coordinate = probe->position.z;
     coordinate += offsetZ;
     coordinate >>= 20;
-    probe->positionZ = coordinate;
+    probe->position.z = coordinate;
   }
-  probe->positionX >>= 20;
+  probe->position.x >>= 20;
   *layerOriginX = map->layers[1].offsetX >> 20;
   *layerOriginZ = map->layers[1].offsetY >> 20;
   return 1;
@@ -199,8 +199,8 @@ static s32 CrossboneIslePillarRooms_DrawRaisedFootprint(s32 actorId) {
     return 0;
   }
 
-  cellX = probe.positionX;
-  cellZ = probe.positionZ;
+  cellX = probe.position.x;
+  cellZ = probe.position.z;
   Map_CopyCellAttributes(2, 2, width, depth, cellX, cellZ);
 
   Object_SetMode(actor, 4);
@@ -208,10 +208,10 @@ static s32 CrossboneIslePillarRooms_DrawRaisedFootprint(s32 actorId) {
   actor->priorityFlags |= mask;
 
   if (width > depth) {
-    Map_CopyCellsTo(70, 40, probe.positionX + 32, probe.positionZ + 2, width,
+    Map_CopyCellsTo(70, 40, probe.position.x + 32, probe.position.z + 2, width,
                     depth);
   } else {
-    Map_CopyCellsTo(68, 40, probe.positionX + 32, probe.positionZ + 2, width,
+    Map_CopyCellsTo(68, 40, probe.position.x + 32, probe.position.z + 2, width,
                     depth);
   }
 
@@ -243,13 +243,13 @@ static s32 CrossboneIslePillarRooms_RestoreGroundFootprint(s32 actorId) {
   }
 
   {
-    s32 sourceCellX = layerOriginX + probe.positionX;
-    s32 sourceCellZ = layerOriginZ + probe.positionZ;
+    s32 sourceCellX = layerOriginX + probe.position.x;
+    s32 sourceCellZ = layerOriginZ + probe.position.z;
 
     Map_CopyCellAttributes(sourceCellX, sourceCellZ, width, depth,
-                           probe.positionX, probe.positionZ);
-    StagedActor_FillGridAttributeRectangle(0, probe.positionX, probe.positionZ,
-                                           width, depth, 255);
+                           probe.position.x, probe.position.z);
+    StagedActor_FillGridAttributeRectangle(0, probe.position.x,
+                                           probe.position.z, width, depth, 255);
   }
 
   Object_SetMode(actor, 1);
@@ -425,8 +425,8 @@ static s32 CrossboneIslePillarRooms_TryJumpAcrossPillar(void) {
 #if !TBS_PATCH_1
   s32 step;
 #endif
-  s32 *position;
-  s32 destination[3];
+  struct FieldPosition *position;
+  struct FieldPosition destination;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
   flags = &leader->motionFlags;
@@ -437,34 +437,36 @@ static s32 CrossboneIslePillarRooms_TryJumpAcrossPillar(void) {
   if (gGameState.movementMode != 0) {
     return 0;
   }
-  position = destination;
+  position = &destination;
 #if TBS_PATCH_1
-  SET_VECTOR(position, (leader->x.fixed & -0x100000) + PIXELS(8),
-             leader->y.fixed, (leader->z.fixed & -0x100000) + PIXELS(8));
+  position->x = (leader->x.fixed & -0x100000) + PIXELS(8);
+  position->y = leader->y.fixed;
+  position->z = (leader->z.fixed & -0x100000) + PIXELS(8);
   Vector_AddPolarOffset(PIXELS(16), jumpDirection, position);
 #else
   jumpDirection = leader->facing >> 12;
   step = gStagedActor_DirectionSteps[jumpDirection];
-  position[0] = leader->x.fixed + (step & 0xffff0000);
-  position[1] = leader->y.fixed;
+  position->x = leader->x.fixed + (step & 0xffff0000);
+  position->y = leader->y.fixed;
   step <<= 16;
-  position[2] = leader->z.fixed + step;
+  position->z = leader->z.fixed + step;
 #endif
   // Require a free intervening cell before testing the two-cell landing.
   if (FieldObject_CheckMovementCollision(leader, position) != 1 &&
-      StagedActor_FindAtTile(position, (struct StagedActor *)leader) == 0) {
+      StagedActor_FindAtTile(position, leader) == 0) {
 #if TBS_PATCH_1
-    SET_VECTOR(position, (leader->x.fixed & -0x100000) + PIXELS(8),
-               leader->y.fixed, (leader->z.fixed & -0x100000) + PIXELS(8));
+    position->x = (leader->x.fixed & -0x100000) + PIXELS(8);
+    position->y = leader->y.fixed;
+    position->z = (leader->z.fixed & -0x100000) + PIXELS(8);
     Vector_AddPolarOffset(PIXELS(32), jumpDirection, position);
 #else
     step = gStagedActor_DirectionSteps[jumpDirection];
-    position[0] = leader->x.fixed + ((step & 0xffff0000) * 2);
-    position[1] = leader->y.fixed;
+    position->x = leader->x.fixed + ((step & 0xffff0000) * 2);
+    position->y = leader->y.fixed;
     step <<= 17;
-    position[2] = leader->z.fixed + step;
+    position->z = leader->z.fixed + step;
 #endif
-    if (StagedActor_FindAtTile(position, (struct StagedActor *)leader) == 0 &&
+    if (StagedActor_FindAtTile(position, leader) == 0 &&
         FieldObject_CheckMovementCollision(leader, position) == 0) {
       EV_BEGIN();
       Object_SetMode(leader, 6);
@@ -476,8 +478,8 @@ static s32 CrossboneIslePillarRooms_TryJumpAcrossPillar(void) {
       leader->velocityY = PIXELS(4);
       *flags &= 126;
       Engine_ActorSetSpriteFlags(leader, 0);
-      Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, ((s16 *)position)[1],
-                                ((s16 *)position)[5]);
+      Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, position->x >> 16,
+                                position->z >> 16);
       Object_SetMode(leader, 6);
       Engine_ActorSetSpriteFlags(leader, 1);
       *flags = savedMotionFlags;
@@ -1041,12 +1043,12 @@ static void Event_ClimbUp(void) { Field_ClimbUp(); }
 /// down.
 static void Event_PushOrClimbDown(void) {
   struct FieldActor *leader = Object_GetById(0);
-  s32 pos[3];
-  s32 *p = pos;
+  struct FieldPosition pos;
+  struct FieldPosition *p = &pos;
 
-  p[0] = leader->x.fixed;
-  p[1] = leader->y.fixed;
-  p[2] = leader->z.fixed + PIXELS(16);
+  p->x = leader->x.fixed;
+  p->y = leader->y.fixed;
+  p->z = leader->z.fixed + PIXELS(16);
   if (StagedActor_FindAtTile(p, leader) != NULL) {
     Event_JumpOrPushRoom4Pillar();
   } else if (CrossboneIslePillarRooms_TryJumpAcrossPillar() == 0) {

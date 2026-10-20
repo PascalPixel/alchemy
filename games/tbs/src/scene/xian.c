@@ -130,7 +130,9 @@ static s32 Xian_UpdateCarrierTracking(struct FieldActor *actor,
     return 1;
   }
 
-  if (FixedPoint_Distance(&target->x.fixed, &actor->x.fixed) < distanceLimit ||
+  if (FixedPoint_Distance((const u8 *)target + offsetof(struct FieldActor, x),
+                          (const u8 *)actor + offsetof(struct FieldActor, x)) <
+          distanceLimit ||
       forceTracking != 0) {
     u16 angle = ArcTan2(target->z.fixed - actor->z.fixed,
                         target->x.fixed - actor->x.fixed);

@@ -186,52 +186,52 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 /// clear.
 static void VenusLighthouse_PushAdjacentBlock(void) {
   struct FieldPosition targetPosition;
-  struct StagedActor *leader;
-  struct StagedActor *block;
-  struct StagedActor *blockingActor;
+  struct FieldActor *leader;
+  struct FieldActor *block;
+  struct FieldActor *blockingActor;
   s32 directionIndex;
   u32 packedStep;
   s32 moveRate;
   s32 transitionBusy;
 
   leader = Object_GetById(ACTOR_PARTY_LEADER);
-  directionIndex = leader->directionAndKind >> 12;
+  directionIndex = leader->facing >> 12;
   // Look ahead for a block before testing its destination and overhead space.
   packedStep = gStagedActor_DirectionSteps[directionIndex];
-  targetPosition.x = leader->x.value + (packedStep & 0xffff0000);
-  targetPosition.y = leader->y;
+  targetPosition.x = leader->x.fixed + (packedStep & 0xffff0000);
+  targetPosition.y = leader->y.fixed;
   packedStep <<= 16;
-  targetPosition.z = leader->z.value + packedStep;
+  targetPosition.z = leader->z.fixed + packedStep;
   block = SceneData_FindSlotAtPosition(&targetPosition, leader);
   if (block == 0)
     return;
 
   packedStep = gStagedActor_DirectionSteps[directionIndex];
-  targetPosition.x = block->x.value + (packedStep & 0xffff0000);
-  targetPosition.y = block->y;
+  targetPosition.x = block->x.fixed + (packedStep & 0xffff0000);
+  targetPosition.y = block->y.fixed;
   packedStep <<= 16;
-  targetPosition.z = block->z.value + packedStep;
+  targetPosition.z = block->z.fixed + packedStep;
   blockingActor = SceneData_FindSlotAtPosition(&targetPosition, block);
   if (blockingActor != 0 && (blockingActor->collisionFlags & 1) != 0)
     return;
 
-  targetPosition.x = block->x.value;
-  targetPosition.y = block->y + 0x100000;
-  targetPosition.z = block->z.value;
+  targetPosition.x = block->x.fixed;
+  targetPosition.y = block->y.fixed + 0x100000;
+  targetPosition.z = block->z.fixed;
   blockingActor = SceneData_FindSlotAtPosition(&targetPosition, block);
   if (blockingActor != 0 && (blockingActor->collisionFlags & 1) != 0)
     return;
 
-  block->transitionMode = 2;
+  block->terrainId = 2;
   packedStep = gStagedActor_DirectionSteps[directionIndex];
-  targetPosition.x = block->x.value + (packedStep & 0xffff0000);
-  targetPosition.y = block->y;
+  targetPosition.x = block->x.fixed + (packedStep & 0xffff0000);
+  targetPosition.y = block->y.fixed;
   packedStep <<= 16;
-  targetPosition.z = block->z.value + packedStep;
+  targetPosition.z = block->z.fixed + packedStep;
   if (FieldObject_CheckMovementCollision(block, &targetPosition) > 0)
     return;
 
-  transitionBusy = block->transitionBusy;
+  transitionBusy = block->riseCounter;
   if (transitionBusy != 0)
     return;
 
@@ -240,26 +240,26 @@ static void VenusLighthouse_PushAdjacentBlock(void) {
   moveRate = 0x3333;
   Engine_TaskWait(15);
   Engine_AudioPlayCue(SE_185);
-  block->moveRateX = moveRate;
-  block->moveRateZ = moveRate;
+  block->speed = moveRate;
+  block->acceleration = moveRate;
   Engine_ObjectSetPosition(block, targetPosition.x, targetPosition.y,
                            targetPosition.z);
-  leader->moveRateX = moveRate;
-  leader->moveRateZ = moveRate;
+  leader->speed = moveRate;
+  leader->acceleration = moveRate;
   Engine_ObjectSetPosition(leader, targetPosition.x, targetPosition.y,
                            targetPosition.z);
   FieldObject_WaitForMove(block);
   BattleFx_PlayQueuedSound();
-  block->x.value = targetPosition.x;
-  block->z.value = targetPosition.z;
+  block->x.fixed = targetPosition.x;
+  block->z.fixed = targetPosition.z;
   block->velocityX = transitionBusy;
   block->velocityZ = transitionBusy;
   leader->targetX = ACTOR_NO_TARGET;
   leader->targetZ = ACTOR_NO_TARGET;
   leader->velocityX = transitionBusy;
   leader->velocityZ = transitionBusy;
-  leader->x.value = leader->x.parts.cell << 16;
-  leader->z.value = leader->z.parts.cell << 16;
+  leader->x.fixed = leader->x.part.pixel << 16;
+  leader->z.fixed = leader->z.part.pixel << 16;
   Object_SetMode(leader, 1);
 }
 

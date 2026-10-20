@@ -130,7 +130,7 @@ static void KolimaForestBridge_PushLog(void) {
 
   if (StagedActor_FindClearPosition(&res)) {
     SceneActor_MoveAndRedraw(res);
-    if (res.actorSlot == RIVER_LOG && (res.positionX >> 20) == 20) {
+    if (res.actorSlot == RIVER_LOG && (res.position.x >> 20) == 20) {
       struct FieldActor *actor;
 
       Engine_ActorSetAnimation(RIVER_LOG, 3);

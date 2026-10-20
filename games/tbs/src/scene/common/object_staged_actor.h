@@ -42,18 +42,26 @@ extern s32 gStagedActor_FootprintBounds[];
 
 /// Returns the placed actor on the cell of the 16.16 position and at its height
 /// (in whole pixels), or 0. origin is not read.
-static struct StagedActor *StagedActor_FindAtTile(s32 *position,
-                                                  struct StagedActor *origin) {
+static struct FieldActor *
+StagedActor_FindAtTile(const struct FieldPosition *position,
+                       const struct FieldActor *origin) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   struct FieldActor **slots = work->actors;
   u32 i;
 
-  for (i = 8; i <= 65; i++) {
-    struct StagedActor *actor = (struct StagedActor *)slots[i];
+  for (i = ACTOR_FIRST_PLACED;
+       i < sizeof(work->actors) / sizeof(work->actors[0]); i++) {
+    struct FieldActor *actor = (struct FieldActor *)slots[i];
 
-    if ((position[0] >> 20) == (actor->x.value >> 20) &&
-        (position[1] / 0x10000) == (actor->y / 0x10000) &&
-        (position[2] >> 20) == (actor->z.value >> 20)) {
+    // UB: ObjectTable_ClearAll leaves unfilled slots null. The guard grows
+    // this helper from 0x58 to 0x5c bytes in the native English trial.
+#ifdef UBFIX
+    if (actor == NULL)
+      continue;
+#endif
+    if ((position->x >> 20) == (actor->x.fixed >> 20) &&
+        (position->y / 0x10000) == (actor->y.fixed / 0x10000) &&
+        (position->z >> 20) == (actor->z.fixed >> 20)) {
       return actor;
     }
   }
@@ -65,77 +73,76 @@ static struct StagedActor *StagedActor_FindAtTile(s32 *position,
 /// still moving: after a quarter second's push (mode 8) the block and the
 /// leader slide one cell together, with SE_185.
 UNUSED static void StagedActor_AdvancePair(void) {
-  s32 dst[3];
-  struct StagedActor *lead;
-  struct StagedActor *next;
-  struct StagedActor *blocker;
+  struct FieldPosition dst;
+  struct FieldActor *lead;
+  struct FieldActor *next;
+  struct FieldActor *blocker;
   s32 dir;
   u32 step;
   s32 rate;
 
-  lead = (struct StagedActor *)Object_GetById(0);
-  dir = lead->directionAndKind >> 12;
+  lead = Object_GetById(0);
+  dir = lead->facing >> 12;
   step = gStagedActor_DirectionSteps[dir];
-  dst[0] = lead->x.value + (step & 0xffff0000);
-  dst[1] = lead->y;
+  dst.x = lead->x.fixed + (step & 0xffff0000);
+  dst.y = lead->y.fixed;
   step <<= 16;
-  dst[2] = lead->z.value + step;
-  next = StagedActor_FindAtTile(dst, lead);
+  dst.z = lead->z.fixed + step;
+  next = StagedActor_FindAtTile(&dst, lead);
   if (next == 0)
     return;
 
   step = gStagedActor_DirectionSteps[dir];
-  dst[0] = next->x.value + (step & 0xffff0000);
-  dst[1] = next->y;
+  dst.x = next->x.fixed + (step & 0xffff0000);
+  dst.y = next->y.fixed;
   step <<= 16;
-  dst[2] = next->z.value + step;
-  blocker = StagedActor_FindAtTile(dst, next);
+  dst.z = next->z.fixed + step;
+  blocker = StagedActor_FindAtTile(&dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
     return;
 
-  dst[0] = next->x.value;
-  dst[1] = next->y + 0x100000;
-  dst[2] = next->z.value;
-  blocker = StagedActor_FindAtTile(dst, next);
+  dst.x = next->x.fixed;
+  dst.y = next->y.fixed + 0x100000;
+  dst.z = next->z.fixed;
+  blocker = StagedActor_FindAtTile(&dst, next);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0)
     return;
 
-  next->transitionMode = 2;
+  next->terrainId = 2;
   step = gStagedActor_DirectionSteps[dir];
-  dst[0] = next->x.value + (step & 0xffff0000);
-  dst[1] = next->y;
+  dst.x = next->x.fixed + (step & 0xffff0000);
+  dst.y = next->y.fixed;
   step <<= 16;
-  dst[2] = next->z.value + step;
-  if (FieldObject_CheckMovementCollision((struct FieldActor *)next,
-                                         (struct FieldPosition *)dst) > 0)
+  dst.z = next->z.fixed + step;
+  if (FieldObject_CheckMovementCollision(next, &dst) > 0)
     return;
 
-  if (next->transitionBusy != 0)
+  if (next->riseCounter != 0)
     return;
 
-  Object_SetMode((struct FieldActor *)lead, 8);
+  Object_SetMode(lead, 8);
   rate = 0x3333;
   Engine_TaskWait(15);
   Engine_AudioPlayCue(SE_185);
-  next->moveRateX = rate;
-  next->moveRateZ = rate;
-  Engine_ObjectSetPosition((struct FieldActor *)next, dst[0], dst[1], dst[2]);
-  lead->moveRateX = rate;
-  lead->moveRateZ = rate;
-  Engine_ObjectSetPosition((struct FieldActor *)lead, dst[0], dst[1], dst[2]);
+  next->speed = rate;
+  next->acceleration = rate;
+  Engine_ObjectSetPosition(next, dst.x, dst.y, dst.z);
+  lead->speed = rate;
+  lead->acceleration = rate;
+  Engine_ObjectSetPosition(lead, dst.x, dst.y, dst.z);
   FieldObject_WaitForMove(next);
   BattleFx_PlayQueuedSound();
-  next->x.value = dst[0];
-  next->z.value = dst[2];
+  next->x.fixed = dst.x;
+  next->z.fixed = dst.z;
   next->velocityX = 0;
   next->velocityZ = 0;
   lead->targetX = 0x80000000;
   lead->targetZ = 0x80000000;
   lead->velocityX = 0;
   lead->velocityZ = 0;
-  lead->x.value = lead->x.parts.cell << 16;
-  lead->z.value = lead->z.parts.cell << 16;
-  Object_SetMode((struct FieldActor *)lead, 1);
+  lead->x.fixed = lead->x.part.pixel << 16;
+  lead->z.fixed = lead->z.part.pixel << 16;
+  Object_SetMode(lead, 1);
 }
 
 /// Sets the collision code of a width by height rectangle of cells, from cell
@@ -167,29 +174,43 @@ static s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
   return 0;
 }
 
+// UB: the native s32 callback is called through FieldActor's void hook. The
+// void form keeps 0xa4 bytes in Altmiller English but changes the return move.
+#ifdef UBFIX
 /// The leader's movement callback while pushing a large thing: stop the leader
 /// when another actor that is not a large thing, or a wall, is in the way.
-static s32 StagedActor_StopBlockedMotion(struct StagedActor *actor) {
-  struct StagedActorProbePoint probe;
+static void StagedActor_StopBlockedMotion(union FieldObject *object) {
+  struct FieldActor *actor = (struct FieldActor *)object;
+#else
+/// The leader's movement callback while pushing a large thing: stop the leader
+/// when another actor that is not a large thing, or a wall, is in the way.
+static s32 StagedActor_StopBlockedMotion(struct FieldActor *actor) {
+#endif
+  struct FieldPosition probe;
   u32 dir;
   s32 step;
-  struct StagedActor *target;
+  struct FieldActor *target;
 
-  dir = actor->directionAndKind >> 12;
+  dir = actor->facing >> 12;
   step = gStagedActor_DirectionSteps[dir];
-  probe.x = actor->x.value + (step & 0xffff0000);
-  probe.y = actor->y;
+  probe.x = actor->x.fixed + (step & 0xffff0000);
+  probe.y = actor->y.fixed;
   step <<= 16;
-  probe.z = actor->z.value + step;
-  target = StagedActor_FindAtTile((s32 *)&probe, actor);
+  probe.z = actor->z.fixed + step;
+  target = StagedActor_FindAtTile(&probe, actor);
   if (target != 0) {
     u32 i = 0;
-    s32 kind = target->animation->entries[0]->animId;
+    s32 kind = target->sprite->entries[0]->animId;
     s32 *kinds = gStagedActor_FootprintKinds;
 
     do {
-      if (kind == *kinds++)
+      if (kind == *kinds++) {
+#ifdef UBFIX
+        return;
+#else
         return 0;
+#endif
+      }
       i++;
     } while (i <= 5);
     actor->velocityX = 0;
@@ -198,67 +219,75 @@ static s32 StagedActor_StopBlockedMotion(struct StagedActor *actor) {
     actor->targetZ = 0x80000000;
   }
   step = gStagedActor_DirectionSteps[dir];
-  probe.x = actor->x.value + (step & 0xffff0000);
-  probe.y = actor->y;
+  probe.x = actor->x.fixed + (step & 0xffff0000);
+  probe.y = actor->y.fixed;
   step <<= 16;
-  probe.z = actor->z.value + step;
-  if (FieldObject_CheckMovementCollision((struct FieldActor *)actor,
-                                         (struct FieldPosition *)&probe) > 0) {
+  probe.z = actor->z.fixed + step;
+  if (FieldObject_CheckMovementCollision(actor, &probe) > 0) {
     actor->velocityX = 0;
     actor->velocityZ = 0;
     actor->targetX = 0x80000000;
     actor->targetZ = 0x80000000;
   }
+#ifndef UBFIX
   return 0;
+#endif
 }
 
 /// Returns the large thing whose footprint covers the cell ahead of the leader
 /// (the leader not standing in line with its first column or row), with the
 /// leader's direction, its actor number and its footprint; or NULL.
-static u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot,
-                                      s32 *footprint) {
+static struct FieldActor *FieldScene_FindActorRegion(s32 *direction, s32 *slot,
+                                                     s32 *footprint) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
-  struct StagedActor *player = (struct StagedActor *)Object_GetById(0);
+  struct FieldActor *player = Object_GetById(0);
   struct FieldActor **list;
   u32 i, j;
 
-  *direction = player->directionAndKind >> 12;
-  list = work->actors + 8;
-  for (i = 8; i <= 65; list++, i++) {
-    struct StagedActor *actor = (struct StagedActor *)*list;
+  *direction = player->facing >> 12;
+  list = work->actors + ACTOR_FIRST_PLACED;
+  for (i = ACTOR_FIRST_PLACED;
+       i < sizeof(work->actors) / sizeof(work->actors[0]); list++, i++) {
+    struct FieldActor *actor = (struct FieldActor *)*list;
     s32 kind;
     j = 0;
-    kind = actor->animation->entries[0]->animId;
+    // UB: the same empty slots are scanned here; the null guard grows the
+    // native English helper from 0x128 to 0x134 bytes.
+#ifdef UBFIX
+    if (actor == NULL)
+      continue;
+#endif
+    kind = actor->sprite->entries[0]->animId;
     for (j = 0; j < 6; j++) {
       if (kind == gStagedActor_FootprintKinds[j]) {
         s32 x, z, left, top, right, bottom;
         *footprint = j;
-        x = ((player->x.value >> 16) +
+        x = ((player->x.fixed >> 16) +
              (gStagedActor_DirectionSteps[*direction] >> 16)) >>
             4;
-        z = ((player->z.value >> 16) +
+        z = ((player->z.fixed >> 16) +
              (s16)gStagedActor_DirectionSteps[*direction]) >>
             4;
         left =
-            (actor->x.parts.cell + gStagedActor_FootprintBounds[j * 4 + 0]) >>
+            (actor->x.part.pixel + gStagedActor_FootprintBounds[j * 4 + 0]) >>
             4;
-        top = (actor->z.parts.cell + gStagedActor_FootprintBounds[j * 4 + 1]) >>
+        top = (actor->z.part.pixel + gStagedActor_FootprintBounds[j * 4 + 1]) >>
               4;
         right =
-            (actor->x.parts.cell + gStagedActor_FootprintBounds[j * 4 + 2]) >>
+            (actor->x.part.pixel + gStagedActor_FootprintBounds[j * 4 + 2]) >>
             4;
         bottom =
-            (actor->z.parts.cell + gStagedActor_FootprintBounds[j * 4 + 3]) >>
+            (actor->z.part.pixel + gStagedActor_FootprintBounds[j * 4 + 3]) >>
             4;
         if (left <= x && x < right && top <= z && z < bottom) {
           if (j & 1) {
-            if (left != (player->x.value >> 20)) {
+            if (left != (player->x.fixed >> 20)) {
               *slot = i;
-              return (u8 *)actor;
+              return actor;
             }
-          } else if (top != (player->z.value >> 20)) {
+          } else if (top != (player->z.fixed >> 20)) {
             *slot = i;
-            return (u8 *)actor;
+            return actor;
           }
         }
       }
@@ -275,8 +304,8 @@ static u8 *FieldScene_FindActorRegion(s32 *direction, s32 *slot,
 UNUSED static s32
 StagedActor_FindClearPosition(struct StagedActorProbe *probe) {
   s32 direction;
-  s32 position[3];
-  struct StagedActor *actor;
+  struct FieldPosition position;
+  struct FieldActor *actor;
   s32 steps;
   s32 width, height;
   u8 *mode;
@@ -285,12 +314,12 @@ StagedActor_FindClearPosition(struct StagedActorProbe *probe) {
   s32 offset;
 
   probe->callback = 0;
-  actor = (struct StagedActor *)FieldScene_FindActorRegion(
-      &direction, &probe->actorSlot, &probe->footprintIndex);
+  actor = FieldScene_FindActorRegion(&direction, &probe->actorSlot,
+                                     &probe->footprintIndex);
   if (actor == 0) {
     return 0;
   }
-  mode = &actor->transitionMode;
+  mode = &actor->terrainId;
   *mode = 2;
   {
     s32 footprint = probe->footprintIndex;
@@ -316,49 +345,47 @@ StagedActor_FindClearPosition(struct StagedActorProbe *probe) {
     }
     width = (nearEdge + farEdge) >> 4;
   }
-  position[0] =
-      actor->x.value + (gStagedActor_DirectionSteps[direction] & 0xffff0000);
+  position.x =
+      actor->x.fixed + (gStagedActor_DirectionSteps[direction] & 0xffff0000);
   {
-    s32 y = actor->y;
+    s32 y = actor->y.fixed;
 
-    position[1] = y;
-    position[2] =
-        actor->z.value + (gStagedActor_DirectionSteps[direction] << 16);
-    probe->positionY = y;
+    position.y = y;
+    position.z =
+        actor->z.fixed + (gStagedActor_DirectionSteps[direction] << 16);
+    probe->position.y = y;
   }
   for (;;) {
-    probe->positionZ =
-        position[2] +
+    probe->position.z =
+        position.z +
         (gStagedActor_FootprintBounds[probe->footprintIndex * 4 + 1] << 16);
     for (row = 0; row < height; row++) {
-      probe->positionX =
-          position[0] +
+      probe->position.x =
+          position.x +
           (gStagedActor_FootprintBounds[probe->footprintIndex * 4] << 16);
       for (column = 0; column < width; column++) {
-        if (FieldObject_CheckMovementCollision(
-                (struct FieldActor *)actor,
-                (struct FieldPosition *)&probe->positionX) == 2) {
+        if (FieldObject_CheckMovementCollision(actor, &probe->position) == 2) {
           goto found;
         }
-        probe->positionX += 0x100000;
+        probe->position.x += 0x100000;
       }
-      probe->positionZ += 0x100000;
+      probe->position.z += 0x100000;
     }
     steps++;
-    position[0] += gStagedActor_DirectionSteps[direction] & 0xffff0000;
-    position[2] += gStagedActor_DirectionSteps[direction] << 16;
+    position.x += gStagedActor_DirectionSteps[direction] & 0xffff0000;
+    position.z += gStagedActor_DirectionSteps[direction] << 16;
   }
 found:
   *mode = 0;
   if (steps == 0) {
     return 0;
   }
-  probe->positionX =
-      actor->x.value +
+  probe->position.x =
+      actor->x.fixed +
       (gStagedActor_DirectionSteps[direction] & 0xffff0000) * steps;
-  probe->positionY = actor->y;
-  probe->positionZ =
-      actor->z.value + (gStagedActor_DirectionSteps[direction] << 16) * steps;
+  probe->position.y = actor->y.fixed;
+  probe->position.z =
+      actor->z.fixed + (gStagedActor_DirectionSteps[direction] << 16) * steps;
   return 1;
 }
 
@@ -369,9 +396,9 @@ found:
 /// layer 1 offset, and its old place is given back what was under it.
 UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
   struct MapScrollWork *workspace;
-  struct StagedActor *actor;
-  struct StagedActorProbePosition originalPosition;
-  struct StagedActorProbePosition tilePosition;
+  struct FieldActor *actor;
+  struct FieldPosition originalPosition;
+  struct FieldPosition tilePosition;
   u8 *footprintTable;
   s32 direction;
   s32 horizontalExtent;
@@ -384,8 +411,8 @@ UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
 #else
   workspace = (struct MapScrollWork *)*(u32 *)gMapWork;
 #endif
-  direction = ((struct StagedActor *)Object_GetById(0))->directionAndKind >> 12;
-  actor = (struct StagedActor *)Object_GetById(probe.actorSlot);
+  direction = (Object_GetById(0))->facing >> 12;
+  actor = Object_GetById(probe.actorSlot);
   footprintTable = (u8 *)gStagedActor_FootprintBounds;
   {
     s32 extentA = gStagedActor_FootprintBounds[probe.footprintIndex * 4 + 1];
@@ -406,17 +433,17 @@ UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
     horizontalExtent = (extentA + extentB) >> 4;
   }
 
-  actor->moveRateX = 0x8000;
-  actor->moveRateZ = 0x1999;
-  originalPosition.x = actor->x.value;
-  originalPosition.z = actor->z.value;
+  actor->speed = 0x8000;
+  actor->acceleration = 0x1999;
+  originalPosition.x = actor->x.fixed;
+  originalPosition.z = actor->z.fixed;
   {
     s32 tableOffset = probe.footprintIndex << 4;
     tilePosition.x =
-        (actor->x.value + (*(s32 *)(footprintTable + tableOffset) << 16));
+        (actor->x.fixed + (*(s32 *)(footprintTable + tableOffset) << 16));
     tableOffset += 4;
     tilePosition.z =
-        (actor->z.value + (*(s32 *)(footprintTable + tableOffset) << 16));
+        (actor->z.fixed + (*(s32 *)(footprintTable + tableOffset) << 16));
     tilePosition.x >>= 20;
     tilePosition.z >>= 20;
   }
@@ -428,12 +455,12 @@ UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
   Engine_EventWait(15);
 
   {
-    s32 horizontalDelta = probe.positionX - originalPosition.x;
+    s32 horizontalDelta = probe.position.x - originalPosition.x;
     if (horizontalDelta < 0)
       horizontalDelta += 0x1ffff;
     horizontalDelta >>= 17;
     {
-      s32 verticalDelta = probe.positionZ - originalPosition.z;
+      s32 verticalDelta = probe.position.z - originalPosition.z;
       if (verticalDelta < 0)
         verticalDelta += 0x1ffff;
       verticalDelta >>= 17;
@@ -441,17 +468,21 @@ UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
     }
   }
 
-  ((struct StagedActor *)Object_GetById(0))->movementCallback =
-      (u32)StagedActor_StopBlockedMotion;
+#ifdef UBFIX
+  Object_GetById(0)->update = StagedActor_StopBlockedMotion;
+#else
+  Object_GetById(0)->update =
+      (void (*)(union FieldObject *))StagedActor_StopBlockedMotion;
+#endif
   Engine_EventWait(4);
   if ((u32)(direction - 6) <= 7)
-    Object_SetMode((struct FieldActor *)actor, 3);
+    Object_SetMode(actor, 3);
   else
-    Object_SetMode((struct FieldActor *)actor, 2);
+    Object_SetMode(actor, 2);
 
   Engine_AudioPlayCue(SE_239);
-  Engine_ObjectSetPosition((struct FieldActor *)actor, probe.positionX,
-                           probe.positionY, probe.positionZ);
+  Engine_ObjectSetPosition(actor, probe.position.x, probe.position.y,
+                           probe.position.z);
   Engine_ActorWaitForMove(0);
   Engine_ActorSetAnimation(0, 2);
   Actor_SetSpeed(0, 0x4ccc, 0x1999);
@@ -466,16 +497,16 @@ UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
 
   Engine_ActorWaitForMove(0);
   Engine_ActorSetAnimation(0, 1);
-  ((struct StagedActor *)Object_GetById(0))->movementCallback = 0;
+  Object_GetById(0)->update = NULL;
   FieldObject_WaitForMove(actor);
   Engine_AudioPlayCue(SE_288);
   Engine_AudioPlayCue(SE_213);
 
-  actor->x.value = probe.positionX;
-  actor->z.value = probe.positionZ;
+  actor->x.fixed = probe.position.x;
+  actor->z.fixed = probe.position.z;
   actor->velocityX = 0;
   actor->velocityZ = 0;
-  Object_SetMode((struct FieldActor *)actor, 1);
+  Object_SetMode(actor, 1);
 
   {
     u8 *table = (u8 *)gStagedActor_FootprintBounds;
@@ -484,26 +515,26 @@ UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
 
     {
       s32 tableOffset = probe.footprintIndex << 4;
-      probe.positionX =
-          (probe.positionX + (*(s32 *)(table + tableOffset) << 16));
+      probe.position.x =
+          (probe.position.x + (*(s32 *)(table + tableOffset) << 16));
       tableOffset += 4;
-      probe.positionZ =
-          (probe.positionZ + (*(s32 *)(table + tableOffset) << 16));
-      probe.positionX >>= 20;
-      probe.positionZ >>= 20;
+      probe.position.z =
+          (probe.position.z + (*(s32 *)(table + tableOffset) << 16));
+      probe.position.x >>= 20;
+      probe.position.z >>= 20;
     }
     horizontalOrigin = workspace->layers[1].offsetX >> 20;
     verticalOrigin = workspace->layers[1].offsetY >> 20;
 
-    Map_CopyCellAttributes(probe.positionX, probe.positionZ, horizontalExtent,
-                           verticalExtent, horizontalOrigin + probe.positionX,
-                           verticalOrigin + probe.positionZ);
-    StagedActor_FillGridAttributeRectangle(0, probe.positionX, probe.positionZ,
-                                           horizontalExtent, verticalExtent,
-                                           255);
-    StagedActor_FillGridAttributeRectangle(2, probe.positionX, probe.positionZ,
-                                           horizontalExtent, verticalExtent,
-                                           255);
+    Map_CopyCellAttributes(probe.position.x, probe.position.z, horizontalExtent,
+                           verticalExtent, horizontalOrigin + probe.position.x,
+                           verticalOrigin + probe.position.z);
+    StagedActor_FillGridAttributeRectangle(0, probe.position.x,
+                                           probe.position.z, horizontalExtent,
+                                           verticalExtent, 255);
+    StagedActor_FillGridAttributeRectangle(2, probe.position.x,
+                                           probe.position.z, horizontalExtent,
+                                           verticalExtent, 255);
 
     {
       s32 tableOffset = probe.footprintIndex << 4;
@@ -532,7 +563,7 @@ UNUSED static void SceneActor_MoveAndRedraw(struct StagedActorProbe probe) {
 /// map's layer 1 offset; returns 0 when its sprite is no large thing.
 UNUSED static s32 FieldScene_RedrawActorFootprint(s32 id) {
   struct MapScrollWork *work = gMapWork[0];
-  struct StagedActor *actor = (struct StagedActor *)Object_GetById(id);
+  struct FieldActor *actor = Object_GetById(id);
   struct StagedActorProbe probe;
   u32 idx = 0;
   s32 offset;
@@ -545,8 +576,7 @@ UNUSED static s32 FieldScene_RedrawActorFootprint(s32 id) {
   s32 dstZ;
 
   for (idx = 0; idx <= 5; idx++) {
-    if (actor->animation->entries[0]->animId ==
-        gStagedActor_FootprintKinds[idx]) {
+    if (actor->sprite->entries[0]->animId == gStagedActor_FootprintKinds[idx]) {
       probe.footprintIndex = idx;
       break;
     }
@@ -555,9 +585,9 @@ UNUSED static s32 FieldScene_RedrawActorFootprint(s32 id) {
 
   if ((u32)probe.footprintIndex > 6)
     return 0;
-  probe.positionX = actor->x.value;
-  probe.positionY = actor->y;
-  probe.positionZ = actor->z.value;
+  probe.position.x = actor->x.fixed;
+  probe.position.y = actor->y.fixed;
+  probe.position.z = actor->z.fixed;
   offset = probe.footprintIndex * 4;
   z0 = gStagedActor_FootprintBounds[offset + 1];
   if (z0 < 0)
@@ -573,17 +603,18 @@ UNUSED static s32 FieldScene_RedrawActorFootprint(s32 id) {
   if (x1 < 0)
     x1 = -x1;
   width = (x0 + x1) >> 4;
-  probe.positionX += gStagedActor_FootprintBounds[offset] << 16;
-  probe.positionZ += gStagedActor_FootprintBounds[offset + 1] << 16;
-  probe.positionX >>= 20;
-  probe.positionZ >>= 20;
+  probe.position.x += gStagedActor_FootprintBounds[offset] << 16;
+  probe.position.z += gStagedActor_FootprintBounds[offset + 1] << 16;
+  probe.position.x >>= 20;
+  probe.position.z >>= 20;
   idx = work->layers[1].offsetX >> 20;
   dstZ = work->layers[1].offsetY >> 20;
-  Engine_MapCopyCellAttributes(probe.positionX, probe.positionZ, width, height,
-                               idx + probe.positionX, dstZ + probe.positionZ);
-  StagedActor_FillGridAttributeRectangle(0, probe.positionX, probe.positionZ,
+  Engine_MapCopyCellAttributes(probe.position.x, probe.position.z, width,
+                               height, idx + probe.position.x,
+                               dstZ + probe.position.z);
+  StagedActor_FillGridAttributeRectangle(0, probe.position.x, probe.position.z,
                                          width, height, 255);
-  StagedActor_FillGridAttributeRectangle(2, probe.positionX, probe.positionZ,
+  StagedActor_FillGridAttributeRectangle(2, probe.position.x, probe.position.z,
                                          width, height, 255);
   return 1;
 }

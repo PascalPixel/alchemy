@@ -28,7 +28,9 @@ s32 SceneActor_FindNearestSlotOfKindF2(void) {
     struct FieldActor *actor = *slot++;
     if (actor != 0) {
       if (*((struct SpriteNumber *)actor->sprite)->number == 0xf2) {
-        s32 dist = FixedPoint_Distance(&origin->x.fixed, &actor->x.fixed);
+        s32 dist = FixedPoint_Distance(
+            (const u8 *)origin + offsetof(struct FieldActor, x),
+            (const u8 *)actor + offsetof(struct FieldActor, x));
         if (dist < minDist) {
           minDist = dist;
           nearestActor = actorId;

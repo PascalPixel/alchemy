@@ -6,14 +6,26 @@
 // between two actors.
 
 /// The distance in whole pixels between two 16.16 positions of x, y and z.
-UNUSED static s32 FixedPoint_Distance(s32 *first_position,
-                                      s32 *second_position) {
-  s32 delta_x = (*first_position++ - *second_position++) >> 16;
-  s32 delta_y = (*first_position++ - *second_position++) >> 16;
-  s32 delta_z = (*first_position - *second_position) >> 16;
-  s32 delta_x_squared = delta_x * delta_x;
-  s32 delta_y_squared = delta_y * delta_y;
-  s32 delta_z_squared = delta_z * delta_z;
+/// Callers take byte views of complete actors; their coordinate members do
+/// not form an array.
+UNUSED static s32 FixedPoint_Distance(const u8 *firstPosition,
+                                      const u8 *secondPosition) {
+  s32 deltaX =
+      (*(const s32 *)firstPosition - *(const s32 *)secondPosition) >> 16;
+  s32 deltaY;
+  s32 deltaZ;
+  s32 deltaXSquared;
+  s32 deltaYSquared;
+  s32 deltaZSquared;
 
-  return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
+  firstPosition += sizeof(s32);
+  secondPosition += sizeof(s32);
+  deltaY = (*(const s32 *)firstPosition - *(const s32 *)secondPosition) >> 16;
+  firstPosition += sizeof(s32);
+  secondPosition += sizeof(s32);
+  deltaZ = (*(const s32 *)firstPosition - *(const s32 *)secondPosition) >> 16;
+  deltaXSquared = deltaX * deltaX;
+  deltaYSquared = deltaY * deltaY;
+  deltaZSquared = deltaZ * deltaZ;
+  return Iwram_Sqrt(deltaXSquared + deltaYSquared + deltaZSquared);
 }

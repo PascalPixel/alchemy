@@ -315,7 +315,7 @@ static void MogallForest_FirstArea_PushLog(void) {
   if (StagedActor_FindClearPosition(&probe) != 0) {
     SceneActor_MoveAndRedraw(probe);
     if (probe.actorSlot == ACTOR_FIRST_AREA_RIVER_LOG &&
-        (probe.positionZ >> 20) == 26) {
+        (probe.position.z >> 20) == 26) {
       Engine_GameFlagSet(FLAG_FIRST_AREA_LOG_ROLLED);
       Engine_ActorSetAnimation(ACTOR_FIRST_AREA_RIVER_LOG, 3);
       Actor_SetSpeed(ACTOR_FIRST_AREA_RIVER_LOG, PIXELS(1) / 4, PIXELS(1) / 2);
@@ -532,12 +532,12 @@ static void MogallForest_SecondArea_PushLog(void) {
     SceneActor_MoveAndRedraw(probe);
 
     if (probe.actorSlot == ACTOR_SECOND_AREA_LOG &&
-        (probe.positionZ >> 20) == 23) {
+        (probe.position.z >> 20) == 23) {
       destinationColumn = 35;
       destinationRow = 68;
       Map_CopyCellAttributes(35, 67, 4, 1, destinationColumn, destinationRow);
     } else if (probe.actorSlot == ACTOR_SECOND_AREA_RIVER_LOG &&
-               (probe.positionX >> 20) == 35) {
+               (probe.position.x >> 20) == 35) {
 
       attributes = 0;
       Engine_GameFlagSet(FLAG_SECOND_AREA_LOG_ROLLED);
@@ -742,16 +742,16 @@ static void MogallForest_ThirdArea_PushLog(void) {
     if (probe.actorSlot == ACTOR_THIRD_AREA_RIVER_LOG_1 ||
         probe.actorSlot == ACTOR_THIRD_AREA_RIVER_LOG_2) {
       if (probe.actorSlot == ACTOR_THIRD_AREA_RIVER_LOG_1) {
-        Map_CopyCellAttributes(38, 68, 1, 4, probe.positionX >> 20, 68);
-        if (probe.positionX >> 20 == 42) {
-          Map_CopyCellAttributes(26, 20, 2, 4, probe.positionX >> 20, 23);
+        Map_CopyCellAttributes(38, 68, 1, 4, probe.position.x >> 20, 68);
+        if (probe.position.x >> 20 == 42) {
+          Map_CopyCellAttributes(26, 20, 2, 4, probe.position.x >> 20, 23);
           Engine_ActorSetSpritePriority(ACTOR_THIRD_AREA_RIVER_LOG_1, 1);
           landed = 1;
           GameFlag_Set(FLAG_THIRD_AREA_FIRST_LOG_ROLLED);
         }
       } else {
-        if (probe.positionX >> 20 == 40) {
-          Map_CopyCellAttributes(26, 20, 2, 4, probe.positionX >> 20, 32);
+        if (probe.position.x >> 20 == 40) {
+          Map_CopyCellAttributes(26, 20, 2, 4, probe.position.x >> 20, 32);
           Engine_ActorSetSpritePriority(ACTOR_THIRD_AREA_RIVER_LOG_2, 1);
           landed = 1;
           GameFlag_Set(FLAG_THIRD_AREA_SECOND_LOG_ROLLED);
@@ -769,7 +769,7 @@ static void MogallForest_ThirdArea_PushLog(void) {
       Actor_Get(probe.actorSlot)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     } else {
       if (probe.actorSlot == ACTOR_THIRD_AREA_LOG)
-        Map_CopyCellAttributes(42, 49, 1, 4, probe.positionX >> 20, 49);
+        Map_CopyCellAttributes(42, 49, 1, 4, probe.position.x >> 20, 49);
     }
   }
   Engine_EventEnd();

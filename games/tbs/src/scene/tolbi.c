@@ -50,20 +50,13 @@ static s32 Tolbi_KidStopForTarget(struct FieldActor *kid,
                                   struct FieldActor *target, s32 range,
                                   s32 force) {
   s32 stopped = 0;
-  // UB: the distance helper walks separate coordinates as an array. Real
-  // arrays add copies and a 36-byte English frame; UBFIX gives it those arrays.
-#ifdef UBFIX
-  s32 targetPos[3] = {target->x.fixed, target->y.fixed, target->z.fixed};
-  s32 kidPos[3] = {kid->x.fixed, kid->y.fixed, kid->z.fixed};
-#else
-  s32 *targetPos = &target->x.fixed;
-  s32 *kidPos = &kid->x.fixed;
-#endif
+  const u8 *targetPos = (const u8 *)target + offsetof(struct FieldActor, x);
+  const u8 *kidPos = (const u8 *)kid + offsetof(struct FieldActor, x);
 
   if (FixedPoint_Distance(targetPos, kidPos) < range || force != 0) {
     // The heading to the target, and the eight-way directions around it.
-    u32 heading =
-        (u16)ArcTan2(target->z.fixed - kid->z.fixed, *targetPos - *kidPos);
+    u32 heading = (u16)ArcTan2(target->z.fixed - kid->z.fixed,
+                               *(const s32 *)targetPos - *(const s32 *)kidPos);
     u32 farLeft = (heading - 2 * FACING_STEP) & 0xf000;
     u32 farRight = (heading + 2 * FACING_STEP) & 0xf000;
     u32 left = (heading - FACING_STEP) & 0xf000;

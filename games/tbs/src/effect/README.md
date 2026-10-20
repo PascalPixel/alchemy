@@ -353,9 +353,10 @@ by different rules: the gathering simply ends after frame 4, while the sweep
 jumps to its next transition frame (150, 214 or 280). The gathering's motes
 are `PARTICLES` 0 to 127 and its sparks 128 to 255 (`JUDGMENT_SPARKS`); the
 sweep's debris are particles 0 to 15, one for each debris object. The work
-block is laid out as `struct JudgmentWork`: the sheet's pixels first (the
-wave picture is its first 120x120 bytes), then eight dimmed copies of the
-mote sheet.
+block is laid out as `struct JudgmentWork`: the sheet's 10,000 bytes of pixels,
+then eight dimmed copies of the mote sheet. The sweep draws its 120x120 wave
+picture from the start of the sheet, so it runs on over the dimmed copies,
+which only the gathering needs.
 
 **Spark bursts** (`plasma.c`). A spark burst is a large flash, a ring of small
 flashes that fade, and a spray of sparks that fall and bounce on the ground.
@@ -482,12 +483,12 @@ column at an existing kind and variant.
 A handler's name comes from the abilities that reach its kind, read from
 `actflags.tsv` and named as the English release names them; the families'
 runners from what they draw; the blitter's words from the fragments it
-joins. Kinds that no ability uses (kinds 34 and 67, in `planet_diver.c` and
-`bind.c`) are named from what they draw.
+joins. Kinds that no ability uses (kinds 34, 67 and 387, in `planet_diver.c`,
+`bind.c` and `thrash.c`) are named from what they draw.
 
 Still unknown:
 
-- XXX: what reaches the two kinds that no ability uses.
+- XXX: what reaches the three kinds that no ability uses.
 - XXX: the `unk_` fields of the work block and the particles' spare words
   where an effect's use of them is not yet read.
 - XXX: why `work->sheet` may grow into the scanline table only for effects

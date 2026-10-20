@@ -8,6 +8,13 @@
 
 /// Builds the two usual routines that draw onto the 128x128 canvas, both
 /// clipped on both axes.
+///
+/// Called during setup by about twenty effect parts, from the gathering
+/// lights and the Djinn beams to the casting impacts and Ragnarok, usually
+/// with effect->side as `flip` so pictures face the targets. Builds the
+/// blitters in heap slots HEAP_SLOT_BLITTER and HEAP_SLOT_BLITTER_ALTERNATE,
+/// which the caller frees (EFFECT_RELEASE_BLITTERS).
+///
 /// flip : nonzero draws mirrored.
 /// out  : [0] keeps the higher colour index, [1] adds the colours (up to 63).
 void BattleFx_FetchRectangleBlitters(s32 flip, BlitterPair out) {
@@ -52,6 +59,11 @@ void BattleFx_RunRecovery(struct BattleEffectArgument *effect) {
 /// mode : 0 actual size, a gentle shake for 32 frames
 ///        1 1.25 times as wide, a hard shake for 8 frames
 ///        2 1.25 times as wide, no shake, in the Fireball colours
+///
+/// Called by BattleFx_RunBerserk, BattleFx_RunSpasm and
+/// BattleFx_RunRecovery. Loads its colours over the first 64 of the
+/// background palette, sets BG2PA and BG2X so the wall stands on the target,
+/// and sets work->shakeFrames.
 void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
   void **cursor;
   struct BattleEffectWork *work;
@@ -69,8 +81,8 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
 
-  // The EarthWall images, coloured with the Mars Djinn palette (the Fireball
-  // palette in mode 2).
+  // Setup. The EarthWall images, coloured with the Mars Djinn palette (the
+  // Fireball palette in mode 2), each palette replacing the one before.
   palette = Resource_GetTableEntry((s32)&ResourceId_EarthWallSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
@@ -82,14 +94,15 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
     Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   }
 
-  // Scroll BG2 so the canvas's x 64 is on the target.
+  // Scroll BG2 so the canvas's x 64 is on the target. Modes 1 and 2 show
+  // the canvas 1.25 times as wide, so the target's x is scaled by 4/5.
   EffectPosition_ProjectBattler(work->effect->actors[0], &screenPosition);
   if (mode == 0) {
     REG_BG2PA = Q_8_8(1);
     x = 64 - screenPosition.x;
     REG_BG2X = x << 8;
   } else {
-    REG_BG2PA = Q_8_8(0.8); // shown 1.25 times as wide
+    REG_BG2PA = Q_8_8(0.8);
     x = (-screenPosition.x * 4) / 5 + 64;
     REG_BG2X = x << 8;
   }
@@ -102,9 +115,11 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
   draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE];
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
-                        50); // trails keep half a frame
+  // Trails keep half a frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
+  // Mode 2 sets no shake but still applies Camera_ApplyShake's 16 below,
+  // which does nothing while shakeFrames is 0.
   if (mode == 2) {
     work->shakeFrames = 0;
     AudioCommand_PlayFar(SE_212);
@@ -116,6 +131,8 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   for (frame = 0; frame != 48; frame++) {
+    // Frame loop. The target glows for 32 frames from frame 0: white in
+    // mode 2, red otherwise.
     if (frame == 0) {
       if (mode == 2)
         ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
@@ -130,7 +147,8 @@ void BattleFx_RunMirroredWall(struct BattleEffectArgument *effect, s32 mode) {
       AudioCommand_PlayFar(SE_RECOVERY);
 
     // Images 0, 1 and 2, four frames each, then 1 and 2 by turns, up to
-    // frame 27, standing 8 pixels below the target's feet.
+    // frame 27, standing 8 pixels below the target's feet; the trail fades
+    // after that. The left half is drawn as is, the right mirrored.
     if (frame <= 31) {
       cell = frame / 4;
       if (cell > 2)

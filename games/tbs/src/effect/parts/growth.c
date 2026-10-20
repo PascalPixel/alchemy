@@ -7,22 +7,27 @@
 // Growing columns and thorns spring up one after another on a fixed schedule,
 // each shaking the screen as it appears, throwing up puffs of dust from its
 // root and making the targets react a few frames later. The dust is a pool
-// of EffectSteps in PARTICLES, a free one marked by variant -1; each puff
-// plays seven pictures, drawn mirrored about its x. Both scenes fade out over
-// their last 16 frames.
+// of EffectSteps in PARTICLES, a free one marked by variant -1, its x and y
+// in canvas pixels; each puff plays seven pictures, 2 frames each, drawn
+// mirrored about its x. Both scenes fade out over their last 16 frames.
 
-// Growing columns: vines or pillars spring from the ground one after
-// another, throwing up dust. PARTICLES holds the dust.
+/// The dust pictures in the vine sheet, after the vines.
+#define GROWING_COLUMNS_VINE_DUST_CELLS 0x1e59
+/// The dust pictures in the pillar sheet, after the pillars.
+#define GROWING_COLUMNS_PILLAR_DUST_CELLS 0xaff
+/// The small thorn in the thorn sheet, after the 48x80 big one.
+#define THORN_SMALL_CELLS (48 * 80)
 
-/// One growing column, laid over a struct EffectStep.
+/// One growing column, laid over a struct EffectStep in work->particles.
 struct DualColumn {
   s32 x; ///< the root, in canvas pixels
-  s32 y;
+  s32 y; ///< the root's row: 108 to 115, lower for later columns
   s32 z; ///< the EffectStep's z and velocityX, unused here
   s32 velocityX;
-  s32 height;    ///< the full length
+  s32 height;    ///< the full length, 55 to 118 capped by its shape
   s32 velocityZ; ///< the EffectStep's, unused here
-  s32 start;     ///< the frame it starts to grow
+  /// The frame it starts to grow; set, but the frame loop computes its own.
+  s32 start;
 };
 
 /// Grows vines from the ground, scattering dust from each root.
@@ -46,6 +51,12 @@ void BattleFx_RunPunji(struct BattleEffectArgument *effect) {
 /// columns with a sound), and on frames 4i + 12 and 4i + 16 the column throws
 /// up a puff of dust. The battle moves on to the results 64 frames before the
 /// end; the scene fades out over 16 frames, and nothing grows in its last 4.
+///
+/// Called by BattleFx_RunGrowth (mode 0) and BattleFx_RunPunji (mode 1).
+/// work->particles holds the 16 columns (struct DualColumn) and PARTICLES
+/// the dust. Writes REG_BG2PA, REG_BLDCNT, REG_BLDALPHA and, on side 1,
+/// REG_BG2X; sets work->shakeFrames as each column appears. Ends with the
+/// transfer callback removed, the blitters freed and the canvas layer closed.
 ///
 /// effect: the targets; variant picks the number of columns
 ///         (gGrowth_ColumnCounts).
@@ -115,7 +126,8 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
 
   duration = gGrowth_ColumnCounts[work->effect->variant] * 4 + 56;
 
-  // Mark all the dust free (variant -1).
+  // Mark the dust free (variant -1): 1024 records, though only the first 512
+  // are used.
   variantCursor = Ram_MapCellBuffer + offsetof(struct EffectStep, variant);
   i = 0;
   do {
@@ -124,7 +136,9 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
     variantCursor += sizeof(struct EffectStep);
   } while (i != 1024);
 
-  // The 16 columns' roots and lengths.
+  // The 16 columns' roots and lengths: each root up to 4 pixels either side
+  // of its gGrowth_ColumnX, each length random and capped by its shape. All
+  // 16 are placed, whatever the variant's count.
   i = 0;
   setup = (struct DualColumn *)work->particles;
   do {
@@ -143,8 +157,8 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
     setup++;
   } while (i != 16);
 
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
-                        0); // clear the canvas every frame
+  // Each transfer clears the canvas: everything is redrawn every frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
   frame = 0;
   if (duration != 0) {
@@ -156,10 +170,12 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
         EFFECT_SHOW_DAMAGE(SE_132);
       }
       if (frame >= fadeStart && frame < fadeEnd) {
-        // Fade out over the last 16 frames.
+        // Fade out over 16 frames, the canvas's share falling from 15/16 to
+        // nothing, which it stays at for the last 4.
         REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
         REG_BLDALPHA = BLEND_ALPHA((duration - frame) - 5, 16);
       }
+      // The columns, the targets' reactions and the dust they throw up.
       if (frame < fadeEnd) {
         i = 0;
         if (gGrowth_ColumnCounts[work->effect->variant] != 0) {
@@ -171,7 +187,9 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
               work->shakeFrames = 2;
             }
 
-            // Grow 8 pixels a frame (odd columns mirrored).
+            // Grow 8 pixels a frame (odd columns mirrored), standing on the
+            // root and centred across it. A pillar also stops at its
+            // gGrowth_PillarHeights entry.
             if (frame > start) {
               u32 shape = i % 3;
 
@@ -205,7 +223,8 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
               }
             }
 
-            // The targets react 4 frames after the column starts to grow.
+            // The targets react 4 frames after the column starts to grow,
+            // with a sound for even columns only.
             n = 0;
             if (work->effect->count != 0) {
               reactFrame = start + 4;
@@ -224,7 +243,8 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
               reactFrame = start + 4;
             }
 
-            // On frames 4 and 8, put a free puff of dust at the root.
+            // On frames 4 and 8, put the first free puff of dust near the
+            // root: x within 8 pixels of it, y on rows 80 to 95.
             if ((frame == reactFrame) || (frame == (start + 8))) {
               /* FAKEMATCH: the scan reuses length as its puff pointer; as a
                * block pointer of its own, 48 instructions differ in tbs-en. */
@@ -247,16 +267,17 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
         }
       }
 
-      // Dust: seven pictures, 2 frames each, drawn mirrored about the middle.
+      // Dust, after the columns so it is drawn over them; it keeps going
+      // through the last 4 frames.
       i = 0;
       puff = PARTICLES;
       do {
         puffAge = puff->variant;
         if (puffAge >= 0) {
           image = puffAge / 2;
-          puffCells = 0x1e59;
+          puffCells = GROWING_COLUMNS_VINE_DUST_CELLS;
           if (mode != 0) {
-            puffCells = 0xaff;
+            puffCells = GROWING_COLUMNS_PILLAR_DUST_CELLS;
           }
           ((DrawRectangle)rectangle[0])(
               canvas, work->sheet + (gGrowth_PuffCells[image] + puffCells),
@@ -296,6 +317,11 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
 /// cycling through five 32x32 pictures, then shrinks away from frame 2i + 32;
 /// odd vines are mirrored. Vine i shakes the screen on frame 4i + 5. On frame
 /// 32 the targets react together, with a sound.
+///
+/// A Djinni appears first (BattleFx_RunDjinniEntrance). work->particles holds
+/// the 16 vines' x. Writes REG_BG2PA, REG_BLDCNT and REG_BG2X, sets
+/// work->shakeFrames, and ends with the transfer callback removed, the
+/// blitters freed and the canvas layer closed.
 void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   u32 *slots, *cursor;
   struct BattleEffectWork *work;
@@ -340,10 +366,11 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
     column[i].x = gGrowth_ColumnOffsets[i] + 64;
     i++;
   } while (i != VINE_COLUMNS);
-  // Clear the canvas every frame.
+  // Each transfer clears the canvas: the vines are redrawn every frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   frame = 0;
   do {
+    // No EFFECT_SHOW_DAMAGE here: the targets only flash, on frame 32.
     if (frame == 32) {
       AudioCommand_PlayFar(SE_143);
       EFFECT_FOR_EACH_TARGET(i, work->effect)
@@ -356,10 +383,12 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
       if (frame == i * 4 + 5)
         work->shakeFrames = 2;
 
-      // Grow 4 pixels a frame up to 32, and shrink from frame i * 2 + 32.
+      // Grow 4 pixels a frame up to 32, and shrink from frame i * 2 + 32,
+      // gone by i * 2 + 40. Each vine stands on row 104 + (i & 7) and steps
+      // through the five 32x32 pictures every 4 frames from its own start.
       offset = i * 2;
       if (frame > offset + 4) {
-        cell = (frame / 4 + i) % 5; // five 32x32 pictures
+        cell = (frame / 4 + i) % 5;
         if (frame < offset + 32) {
           height = (frame - offset) * 4 - 16;
           if (height > 32)
@@ -394,6 +423,11 @@ void BattleFx_RunVine(struct BattleEffectArgument *effect) {
 /// effect: the targets; variant picks the number of thorns
 ///         (gGrowth_Counts). gGrowth_Kinds gives each
 ///         thorn's size and direction.
+///
+/// PARTICLES holds the dust, 64 puffs. Writes REG_BG2PA, REG_BLDCNT,
+/// REG_BLDALPHA and, on side 1, REG_BG2X; sets work->shakeFrames as each
+/// thorn appears. Ends with the transfer callback removed, the blitters freed
+/// and the canvas layer closed.
 void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
   void *canvas;
   s32 frame;
@@ -435,8 +469,9 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
                                 EFFECT_CALLBACK_ORDER);
   frameCount = gGrowth_Counts[work->effect->variant] * 8 + 56;
 
+  // Mark the dust free: 1024 records, though only the first 64 are used.
   for (i = 0; i != 1024; i++) {
-    PARTICLES[i].variant = -1; // free
+    PARTICLES[i].variant = -1;
   }
 
   for (frame = 0; frame != frameCount; frame++) {
@@ -444,7 +479,8 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
       EFFECT_SHOW_DAMAGE(SE_132);
     }
     if (frame >= frameCount - 16) {
-      // Fade out over the last 16 frames.
+      // Fade out over the last 16 frames, the canvas's share falling from
+      // 15/16 to nothing.
       REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
       REG_BLDALPHA = BLEND_ALPHA(frameCount - frame - 1, 16);
     }
@@ -457,7 +493,9 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
         s32 lean;
 
         // Kinds 0 and 1 are big thorns (48 wide), 2 and 3 small ones (32 wide);
-        // odd kinds are mirrored. A thorn leans sideways as it grows.
+        // odd kinds are mirrored. A thorn leans sideways as it grows: a big
+        // one 16 pixels up and 6 across a frame to 80 and 30, a small one 8
+        // up and 1 across to 64 and 8. Both stand on row 108.
         if (gGrowth_Kinds[i] < 2) {
           height = age * 16;
           lean = age * 6;
@@ -484,18 +522,20 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
             lean = 8;
           }
           if (gGrowth_Kinds[i] & 1) {
-            drawFlip(canvas, work->sheet + 0xf00, gGrowth_X[i] - lean,
-                     108 - height, 32, height);
+            drawFlip(canvas, work->sheet + THORN_SMALL_CELLS,
+                     gGrowth_X[i] - lean, 108 - height, 32, height);
           } else {
-            draw(canvas, work->sheet + 0xf00, gGrowth_X[i] + lean, 108 - height,
-                 32, height);
+            draw(canvas, work->sheet + THORN_SMALL_CELLS, gGrowth_X[i] + lean,
+                 108 - height, 32, height);
           }
         }
         if (frame == start + 1) {
           work->shakeFrames = 3;
         }
 
-        // For 2 frames after the thorn appears, add a puff of dust each frame.
+        // For 2 frames after the thorn appears, add a puff of dust each frame
+        // in the first free slot: 32 to 63 pixels right of the thorn's x, no
+        // further than 96, on rows 72 to 103.
         if (frame < start + 3) {
           s32 y = (Random16() & 31) + 72;
           struct EffectStep *puff;
@@ -522,7 +562,7 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
       }
     }
 
-    // Dust: seven pictures, 2 frames each, drawn mirrored about the middle.
+    // Dust, drawn over the thorns.
     for (i = 0; i != 64; i++) {
       if (PARTICLES[i].variant >= 0) {
         s32 cell = PARTICLES[i].variant / 2;
@@ -546,5 +586,8 @@ void BattleFx_RunThorn(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
+#undef GROWING_COLUMNS_VINE_DUST_CELLS
+#undef GROWING_COLUMNS_PILLAR_DUST_CELLS
+#undef THORN_SMALL_CELLS
 #undef VINE_COLUMNS
 #undef VINE_FRAMES

@@ -4,18 +4,14 @@
 
 #include "../effect_internal.h"
 
-// The rock toss (Ground): a Venus Djinni throws six rocks from the user,
-// shedding chips, which swirl and home in on the first target.
-
 #define HAIL_CHIP_COUNT 64 ///< ice chips
 
-/// Where the water burst's pictures sit in the sheet, after the waves.
-#define HAIL_CHIP_CELLS 0x400
-#define HAIL_DJINNI_CELLS 0x65c0
+#define HAIL_CHIP_CELLS 0x400    ///< the ice chips, after the 32x32 wave
+#define HAIL_DJINNI_CELLS 0x65c0 ///< the small Mercury Djinni
 
 #define HAIL_FRAMES 64
 
-/// Water burst: after a Mercury djinni enters, ice chips burst out of the first
+/// Water burst: after a Mercury Djinni enters, ice chips burst out of the first
 /// target and waves rise along the bottom of the screen; the canvas fades out
 /// over the last 16 of its 64 frames.
 ///
@@ -25,7 +21,12 @@
 /// alternately mirrored; the battle shows the damage on frame 8. The chips live
 /// in PARTICLES, since work holds the waves' sheet.
 ///
-/// effect: the user and the targets; prelude 1 keeps the djinni circling.
+/// The Djinni entrance plays whatever the prelude. Writes REG_BLDALPHA and
+/// the first 128 bytes of BG palette RAM (the water spray's, then the ice
+/// chips' on frame 1), sets work->shakeFrames on frame 8, and ends with the
+/// transfer callback removed, the blitters freed and the canvas layer closed.
+///
+/// effect: the user and the targets; prelude 1 keeps the Djinni circling.
 void BattleFx_RunHail(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -51,7 +52,9 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   EffectPosition_ProjectBattler(work->effect->actors[0], &origin);
 
-  // The chips burst up from the first target.
+  // The chips burst up from the first target, in the upper half turn of
+  // directions, eight times as fast up as across; z picks each chip's
+  // picture and velocityZ turns it. variant is set but never read.
   for (i = 0; i != HAIL_CHIP_COUNT; i++) {
     s32 angle;
     s32 speed;
@@ -71,6 +74,8 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
     // Fade out over the last 16 frames.
     if (frame > 47)
       REG_BLDALPHA = BLEND_ALPHA(64 - frame, 16);
+    // The chips and the Djinni load on frame 1, so on frame 0 the prelude
+    // draws whatever the sheet holds at HAIL_DJINNI_CELLS.
     if (frame == 1) {
       Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet,
                                  work->sheet + HAIL_CHIP_CELLS, 1, 1);
@@ -78,7 +83,7 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
                                  work->sheet + HAIL_DJINNI_CELLS, 1, 0);
     }
 
-    // Prelude: the small djinni circles.
+    // Prelude: the small Djinni circles, drawn twice on the first 4 frames.
     if (work->effect->prelude == 1) {
       s32 orbit;
       s32 x;
@@ -95,6 +100,8 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
         draw[1](canvas, work->sheet + HAIL_DJINNI_CELLS, x, y, 20, 40);
     }
 
+    // The chips, four more each frame from frame 4, odd ones mirrored; they
+    // fall under gravity and are never retired.
     for (i = 0, chip = PARTICLES; i != HAIL_CHIP_COUNT; i++, chip++) {
       if (frame >= i / 4 + 4) {
         s32 cell;
@@ -120,6 +127,8 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
       }
     }
 
+    // Frame 8: the first target is hit, and the screen shakes for 8 frames
+    // (shakeFrames takes the frame number).
     if (frame == 8) {
       work->shakeFrames = frame;
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -129,7 +138,8 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
     }
 
     // Waves rise along the bottom, 4 pixels a frame up to 32, drifting
-    // away from the user.
+    // away from the user a pixel every 4 frames: five 32-pixel waves, the
+    // row wrapping every 32 pixels.
     rise = frame * 4;
     if (rise > 32)
       rise = 32;
@@ -150,7 +160,7 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// The small Venus djinni in the rock toss's sheet.
+/// The small Venus Djinni in the rock toss's sheet.
 #define GROUND_DJINNI_CELLS 0x65c0
 
 #define GROUND_FRAMES 96
@@ -159,16 +169,21 @@ void BattleFx_RunHail(struct BattleEffectArgument *effect) {
 #define GROUND_ROCKS 6          ///< rocks thrown
 #define GROUND_CHIPS_PER_ROCK 4 ///< chips each rock sheds
 
-/// Venus djinni rock toss: after a Venus djinni enters, six rocks rise from the
+/// Venus Djinni rock toss: after a Venus Djinni enters, six rocks rise from the
 /// user shedding chips, swirl, and home in on the first target, each hitting it
 /// as it lands.
 ///
 /// Abilities: Ground (kind 203).
 ///
 /// A rock's variant is 1 while it flies and 0 once it has hit; the chips are
-/// particles 32 to 63, four for each rock.
+/// particles 32 to 63, four for each rock, each with its picture in velocityX
+/// and its blitter flags in velocityY. The Djinni entrance plays whatever the
+/// prelude. From frame 17 the BG palette steps towards the portal sheet's
+/// (BattleFx_StepPaletteToResource). Writes REG_BLDALPHA, sets
+/// work->shakeFrames on each hit, and ends with the transfer callback
+/// removed, the blitter freed and the canvas layer closed.
 ///
-/// effect: the user and the targets; prelude 1 keeps the djinni circling.
+/// effect: the user and the targets; prelude 1 keeps the Djinni circling.
 void BattleFx_RunGround(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -203,7 +218,9 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   user = GetBattleObjectSlotFar(work->effect->actor)->object;
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
-  // The rocks leave the user 66 pixels up, fanning out.
+  // The rocks leave the user 66 pixels up, fanning out towards the middle
+  // of the field, rock i at 2.5 i pixels a frame across. Eight are launched,
+  // the first six drawn.
   for (i = 0; i != GROUND_LAUNCHED; i++) {
     struct EffectStep *rock = &work->particles[i];
 
@@ -218,7 +235,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != GROUND_FRAMES; frame++) {
     if (frame > 16)
       BattleFx_StepPaletteToResource((s32)&ResourceId_PortalSheet);
-    // Prelude: the djinni circles above the user and from frame 17 rises 2
+    // Prelude: the Djinni circles above the user and from frame 17 rises 2
     // pixels a frame. For its first four frames it is drawn additively
     // first, so it flashes in.
     if (work->effect->prelude == 1) {
@@ -241,8 +258,8 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
       Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       draw[0](canvas, work->sheet + GROUND_DJINNI_CELLS, x, y, 20, 40);
     }
-    // Every 2 frames each chip takes a random picture (velocityX) and
-    // flip (velocityY).
+    // Every 2 frames each chip takes a random picture (velocityX, chips 3
+    // to 8) and flip (velocityY: gHail_ChipFlips, bit 2 across, bit 3 down).
     if ((frame & 1) == 0) {
       for (i = 0; i != GROUND_CHIPS; i++) {
         struct EffectStep *chip = &work->particles[32 + i];
@@ -252,6 +269,7 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
       }
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
+    // The rocks, one more every 2 frames.
     for (i = 0; i != GROUND_ROCKS; i++) {
       struct EffectStep *rock = &work->particles[i];
 
@@ -304,8 +322,9 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
           rock->y += rock->velocityY;
           rock->z += rock->velocityZ;
         }
-        // After 16 frames the rock homes in on the target, damped until
-        // frame 85, and hits it below 20 pixels.
+        // After 16 frames the rock homes in on a point 20 pixels above the
+        // target, 1/256 of the distance a frame, damped to 60/64 until 85
+        // frames after it launched; it hits once below that height.
         if (frame > i * 2 + 16) {
           rock->velocityX += (target->x - rock->x) >> 8;
           rock->velocityY += (0x140000 - rock->y) >> 8;
@@ -333,6 +352,11 @@ void BattleFx_RunGround(struct BattleEffectArgument *effect) {
 /// BG1 and the projection centre by a random offset; once the shake runs
 /// out, BG1 returns to its saved position and the centre to (120, 120). It
 /// takes two random numbers each shaking frame, x first.
+///
+/// Called once a frame by nearly every effect, before it presents the frame.
+/// Writes gBgScroll[1] and gProjection.centerX and centerY, and counts down
+/// work->shakeFrames. The x offset is centred on half of rangeY too, so with
+/// rangeX smaller (Hail's 4 and 8) the x offset is never positive.
 ///
 /// rangeX: the horizontal range, a power of two.
 /// rangeY: the vertical range, a power of two; both offsets are centred on

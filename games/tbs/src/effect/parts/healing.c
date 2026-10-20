@@ -4,13 +4,8 @@
 
 #include "../effect_internal.h"
 
-// Healing sparkles.
-//
-// Healing sparkles come in seven modes. Motes of light scattered around each
-// target swirl in towards it, one target every 8 frames, with the recovery
-// sound on each target's 20th frame and a tint on its 36th. The modes differ
-// in how the motes scatter and turn and in which resource they draw; the
-// wrappers name the mode of each effect.
+// Healing sparkles come in seven modes of one runner,
+// BattleFx_RunHealingMotes; the wrappers name the mode of each effect.
 //
 // PARTICLES holds the motes: 512 are scattered, and target n draws from the
 // 64 at n * 64 (32 of them, or 128 running into the next target's, by the
@@ -79,10 +74,26 @@ void BattleFx_RunPsyCrystal(struct BattleEffectArgument *effect) {
 }
 #define HEALING_MOTES 512 ///< motes in PARTICLES
 #define HEALING_SLOTS 64  ///< particles reserved for each target
+#define HEALING_STAGGER 8 ///< frames between one target's start and the next
+#define HEALING_SOUND_DELAY 20  ///< frames from a target's start to its sound
+#define HEALING_TINT_DELAY 36   ///< frames from a target's start to its tint
+#define HEALING_TINT_FRAMES 28  ///< frames a target stays tinted white
+#define HEALING_DAMAGE_FRAME 40 ///< the frame the battle shows the recovery
 
 /// Healing sparkles: motes of light scattered around each target swirl in
 /// towards it, one target every 8 frames, with the recovery sound on each
 /// target's 20th frame and a tint on its 36th.
+///
+/// Called by the wrappers above: BattleFx_RunPly (mode 0), BattleFx_RunWish
+/// (1), BattleFx_RunCure (2), BattleFx_RunCurePoison (3 or 4),
+/// BattleFx_RunTonic (5) and BattleFx_RunPsyCrystal (6).
+///
+/// Sets work->effect, overwrites PARTICLES 0 to 511 and the first 64 colours
+/// of the background palette, decodes into the battle sheet slot and
+/// work->sheet, and in mode 0 writes REG_BG2X and REG_BG2PA. After a djinni
+/// prelude it clears effect->variant, so the variant's mote count and
+/// resource fall back to variant 0's. The transfer callback it adds is
+/// removed again at the end, with the blitters and the canvas layer.
 ///
 /// effect: the targets. With prelude 1, a djinni (Mars in mode 6, Mercury
 ///         otherwise) appears first, sways and rises. variant picks the
@@ -121,7 +132,8 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
 
-  // Bring out the djinni; origin receives where it appears.
+  // Bring out the djinni; origin receives where it appears. Modes 0 and 6
+  // pass 0 as the entrance's fourth argument, the others 1.
   if (work->effect->prelude == 1) {
     s32 kind = mode == 6 ? 2 : 1;
 
@@ -146,7 +158,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
     doubleWidth = 1;
   }
 
-  // Pictures and resource.
+  // Pictures, and the resource whose first 128 bytes are the palette.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, work->sheet, 0, 0);
   if (mode <= 1 || mode == 3 || mode == 4 || mode == 5) {
@@ -180,7 +192,9 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
   BattleFx_FetchRectangleBlitters(work->effect->side,
                                   draw = blit); // [0] maximum, [1] additive
 
-  // Scatter the motes around the centre.
+  // Scatter the motes around the centre (16.16, relative to the point the
+  // frame loop centres on). Modes 3 to 5 end 16 frames sooner than the
+  // others, as their motes go out rather than travel in.
   if (mode == 0 || mode == 6) {
     // x and z within 64 pixels, y 32 to 95 pixels up.
     for (i = 0; i != HEALING_MOTES; i++) {
@@ -191,7 +205,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
                    ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
-    frameCount = work->effect->count * 8 + 88;
+    frameCount = work->effect->count * HEALING_STAGGER + 88;
   } else if (mode == 1) {
     // All three within 64 pixels.
     for (i = 0; i != HEALING_MOTES; i++) {
@@ -202,7 +216,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
                    ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
-    frameCount = work->effect->count * 8 + 88;
+    frameCount = work->effect->count * HEALING_STAGGER + 88;
   } else if (mode == 2) {
     // A ring of radius 32 to 95 pixels, 50 pixels down.
     for (i = 0; i != HEALING_MOTES; i++) {
@@ -215,7 +229,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
       spark->velocityY = ((Random16() & 31) + 32) << 13;
       spark->variant = 0;
     }
-    frameCount = work->effect->count * 8 + 88;
+    frameCount = work->effect->count * HEALING_STAGGER + 88;
   } else if (mode == 3) {
     // x and z within 64 pixels, y within 32.
     for (i = 0; i != HEALING_MOTES; i++) {
@@ -226,7 +240,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
                    ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
-    frameCount = work->effect->count * 8 + 72;
+    frameCount = work->effect->count * HEALING_STAGGER + 72;
   } else {
     // All three within 64 pixels.
     for (i = 0; i != HEALING_MOTES; i++) {
@@ -237,7 +251,7 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
                    ((Random16() & 0xff) - 127) << 15);
       spark->variant = 0;
     }
-    frameCount = work->effect->count * 8 + 72;
+    frameCount = work->effect->count * HEALING_STAGGER + 72;
   }
 
   // Motes for each target: 32 for variant 0, 128 for variant 2, else 64.
@@ -246,16 +260,17 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
     motesPerTarget = 32;
   else if (work->effect->variant == 2)
     motesPerTarget = 128;
-  work->transferMode =
-      CANVAS_COPY_AND_FADE; // each transfer fades the canvas to 3/4, for trails
-  work->transferValue = 75; // percent
+  // Each transfer keeps 75% of every canvas pixel, so the motes leave
+  // trails.
+  work->transferMode = CANVAS_COPY_AND_FADE;
+  work->transferValue = 75;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
 
   for (frame = 0; frame != frameCount; frame++) {
     struct BattleCamera *camera = gCameraWork;
 
-    if (frame == 40)
+    if (frame == HEALING_DAMAGE_FRAME)
       EFFECT_SHOW_DAMAGE(0);
 
     // The djinni sways from side to side and, after 32 frames, rises 2 pixels
@@ -286,30 +301,35 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
     EFFECT_FOR_EACH_TARGET(member, work->effect) {
       struct MotionObject *object =
           GetBattleObjectSlotFar(work->effect->actors[member])->object;
-      s32 start = member * 8;
+      s32 start = member * HEALING_STAGGER;
 
       // Centre on the point 40 pixels above the target.
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, object->x, 40 << 16, object->z);
       SceneTransform_ApplyPosition(point);
-      if (frame == start + 20)
+      if (frame == start + HEALING_SOUND_DELAY)
         AudioCommand_PlayFar(SE_RECOVERY);
-      if (frame == start + 36)
+      if (frame == start + HEALING_TINT_DELAY)
         ObjectGroup_UpdateMembers(work->effect->actors[member],
-                                  SPRITE_COLOR_WHITE, -1, member, 28);
+                                  SPRITE_COLOR_WHITE, -1, member,
+                                  HEALING_TINT_FRAMES);
+
+      // From the target's start, its frame of reference turns 1/128 of a
+      // circle a frame. Mode 2 offsets the yaw by 40 frames a target where
+      // the others offset it by their start, and mode 1 does not offset it.
       if (frame > start) {
         if (mode == 0 || mode == 6) {
-          SceneTransform_ApplyYaw((frame - member * 8) << 9);
+          SceneTransform_ApplyYaw((frame - member * HEALING_STAGGER) << 9);
         } else if (mode == 1) {
           SceneTransform_ApplyPitch(frame << 9);
           SceneTransform_ApplyRoll(frame << 9);
         } else if (mode == 2) {
           SceneTransform_ApplyYaw((frame - member * 40) << 9);
         } else if (mode == 3) {
-          SceneTransform_ApplyYaw((frame - member * 8) << 9);
+          SceneTransform_ApplyYaw((frame - member * HEALING_STAGGER) << 9);
         } else {
-          SceneTransform_ApplyYaw((frame - member * 8) << 9);
-          SceneTransform_ApplyPitch((frame - member * 8) << 9);
+          SceneTransform_ApplyYaw((frame - member * HEALING_STAGGER) << 9);
+          SceneTransform_ApplyPitch((frame - member * HEALING_STAGGER) << 9);
         }
 
         // Four motes appear each frame; in modes 3, 4 and 5 mote i goes out at
@@ -326,6 +346,8 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
             s32 xx = (spark->x >> 8) * (spark->x >> 8);
             s32 yy = (spark->y >> 8) * (spark->y >> 8);
             s32 zz = (spark->z >> 8) * (spark->z >> 8);
+            // The distance to the centre in steps of 2 pixels: dividing each
+            // axis by it moves the mote 2 pixels along the line.
             s32 distance = Iwram_Sqrt(xx + yy + zz) >> 9;
 
             if (distance != 0) {
@@ -356,7 +378,8 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
                                  size);
               }
 
-              // Move the mote 2 pixels a frame towards the centre.
+              // Modes 0 to 2 and 6 draw the mote in; 3 to 5 leave it where
+              // it is until it goes out.
               if (mode <= 2 || mode == 6) {
                 spark->x -= spark->x / distance;
                 spark->y -= spark->y / distance;
@@ -376,3 +399,8 @@ void BattleFx_RunHealingMotes(struct BattleEffectArgument *effect, u32 mode) {
 #undef HEALING_DJINNI_CELLS
 #undef HEALING_MOTES
 #undef HEALING_SLOTS
+#undef HEALING_STAGGER
+#undef HEALING_SOUND_DELAY
+#undef HEALING_TINT_DELAY
+#undef HEALING_TINT_FRAMES
+#undef HEALING_DAMAGE_FRAME

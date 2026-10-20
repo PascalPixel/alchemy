@@ -25,6 +25,13 @@ void BattleFx_RunSpinningBeat(struct BattleEffectArgument *effect) {
 /// A swirling swipe across the first target, six images four frames each,
 /// from the user's side: the first four from the swirl sheet, the last two
 /// from the tail sheet. The swipe lands on frame 8.
+///
+/// Called by BattleFx_RunPoisonBeat and BattleFx_RunSpinningBeat. Decodes
+/// the tail sheet into Ram_MapCellBuffer, moves BG2X so the swipe crosses
+/// the target, and sets work->shakeFrames on the hit; mode 0 loads its
+/// colours over the first 64 of the background palette, and mode 1 throws
+/// the target's object into the air.
+///
 /// mode 0 : lime colours; the battle shows the damage at once and the target
 ///          recoils. 48 frames.
 /// mode 1 : the target flashes, is thrown up on frame 13 and the battle shows
@@ -64,11 +71,12 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
     Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   }
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
-                        75); // trails keep 3/4 a frame
+  // Trails keep 3/4 a frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   object = GetBattleObjectSlotFar(work->effect->actors[0])->object;
   EffectPosition_ProjectScaledBattler(work->effect->actors[0], &position);
-  // Line the canvas up so the swipe crosses the target.
+  // Line the canvas up so the swipe crosses the target: the target's x
+  // lands at canvas x 16 against the enemies and 112 against the party.
   if (work->effect->side == 0)
     REG_BG2X = (16 - position.x) << 8;
   else
@@ -77,6 +85,8 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   if (mode != 1)
     frames = 48;
   for (frame = 0; frame != frames; frame++) {
+    // Frame loop. The swipe's six images, from x columns chosen by the
+    // side (six a side in gSpiderWeb_CellX); the trail fades after them.
     cell = frame / 4;
     if (cell <= 5) {
       if (cell <= 3)
@@ -101,6 +111,8 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
       }
       work->shakeFrames = 8;
     }
+    // Mode 1 throws the target up at 12 pixels a frame on frame 13, and
+    // shows the damage as it lands on frame 65.
     if (mode == 1) {
       if (frame == 13) {
         object->velocityY = 0xc0000;
@@ -127,6 +139,9 @@ void BattleFx_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
 ///
 /// It fades in over 8 frames; the targets flash on frame 10, the battle shows
 /// the damage on frame 32, and it fades out from frame 54.
+///
+/// Builds and frees its blitter four times a frame, one for each quarter's
+/// flip.
 void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   struct EffectPosition first;
   struct EffectPosition last;
@@ -156,7 +171,8 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   EffectPosition_ProjectScaledBattler(work->effect->actors[0], &first);
   EffectPosition_ProjectScaledBattler(
       work->effect->actors[work->effect->count - 1], &last);
-  first.x += (last.x - first.x) / 2; // centre the canvas between them
+  // Centre the canvas between the first and last target.
+  first.x += (last.x - first.x) / 2;
   REG_BG2X = (64 - first.x) << 8;
   Resource_LoadAndDecompress((s32)&ResourceId_SpiderWebSheet, work->sheet, 1,
                              1);
@@ -169,6 +185,8 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
   transparent = 1;
   size = 32;
   do {
+    // Frame loop. The quarters meet near (64, 72): top left, top right
+    // mirrored, bottom left flipped, bottom right both.
     if (frame <= 8)
       REG_BLDALPHA = BLEND_ALPHA(frame << 1, 16);
     if (frame > 53)
@@ -204,6 +222,7 @@ void BattleFx_RunSpiderWeb(struct BattleEffectArgument *effect) {
     WaitFrames(1);
     frame++;
   } while (frame != SPIDER_WEB_FRAMES);
+  // Finish: the blitter was freed each time it drew.
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }

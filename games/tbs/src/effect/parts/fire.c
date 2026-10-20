@@ -16,6 +16,11 @@
 /// The camera swings round over frames 17 to 79, and the battle shows the
 /// damage 24 frames before the end.
 ///
+/// Schedules Camera_ApplyPhasedDelta for the swing and drives it through
+/// work->cameraDelta and work->cameraPhase; sets work->shakeFrames on each hit
+/// and writes REG_BLDALPHA. Ends with both callbacks removed, the blitters
+/// freed and the canvas layer closed.
+///
 /// effect: the targets; variant picks the number of embers
 ///         (gFire_Counts).
 void BattleFx_RunFire(struct BattleEffectArgument *effect) {
@@ -36,6 +41,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   camera = ((struct BattleCamera *)WORK_SLOT(HEAP_SLOT_CAMERA));
+  // The motes are in the battle sheet's slot; work->sheet holds the flares.
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   if (effect->side == 1)
@@ -68,27 +74,32 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
                  (s32)(((Random16() & 127) - 16) << 16) >> 6,
                  (Trig_Cos(angle) * speed) >> 6);
     SET_POSITION(ember, user->x, bodyTop, user->z);
-    ember->variant = -1; // -1 in flight, then the frames of the impact flare
+    // -1 in flight, then the frames of the impact flare.
+    ember->variant = -1;
   }
 
   work->cameraDelta = 0;
   work->cameraPhase = 0;
   Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, EFFECT_CALLBACK_ORDER);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
-                        75); // each transfer fades the canvas to 3/4
+  // Each transfer keeps three quarters of every level, for long trails.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
+  // The last ember launches on frame count / 2; the effect runs 132 frames
+  // past that.
   for (frame = 0; frame != (gFire_Counts[work->effect->variant] >> 1) + 132;
        frame++) {
+    // The camera turns 0x100 of yaw a frame over frames 17 to 79.
     if (frame > 16 && frame < 80)
       work->cameraDelta = 0x100;
     else
       work->cameraDelta = 0;
     if (frame == (gFire_Counts[work->effect->variant] >> 1) + 108)
       EFFECT_SHOW_DAMAGE(SE_133);
+    // Re-centre the camera's focus at full zoom, then project from it.
     BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
     EFFECT_VIEW_FROM_CAMERA(camera);
 
-    // The embers in flight.
+    // The embers in flight: two launch each frame, ember i after frame i / 2.
     for (i = 0; i != gFire_Counts[work->effect->variant]; i++) {
       struct EffectStep *ember = &PARTICLES[i];
       s32 launchFrame;
@@ -111,7 +122,8 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
       }
 
       // Accelerate towards the target by 1/512 of the distance, damping the
-      // speed to 60/64 until 85 frames after the ember appeared.
+      // speed to 60/64 until 85 frames after the ember appeared. Embers are
+      // dealt to the targets in turn (i % count).
       if (frame > launchFrame + 48 && ember->variant == -1) {
         struct MotionObject *target;
         s32 vx;
@@ -128,9 +140,9 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
           SET_VELOCITY(ember, vx * 60 / 64, vy * 60 / 64, vz * 60 / 64);
         }
 
-        // Below the ground it hits: keep its screen position for the impact
-        // flare, tint the target red in its damage pose for 4 frames, and
-        // shake the screen for 2 frames.
+        // Below the ground it hits: keep its screen position (from this
+        // frame's drawing above) for the impact flare, tint the target red in
+        // its damage pose for 4 frames, and shake the screen for 2 frames.
         if (ember->y < 0) {
           ember->variant = 0;
           ember->x = screen.x;
@@ -144,7 +156,8 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
       }
     }
 
-    // The impact flares: six pictures, 2 frames each.
+    // The impact flares: six pictures, 2 frames each, drawn 56 pixels
+    // higher than where the ember hit.
     for (i = 0; i != gFire_Counts[work->effect->variant]; i++) {
       struct EffectStep *ember = &PARTICLES[i];
 
@@ -169,6 +182,7 @@ void BattleFx_RunFire(struct BattleEffectArgument *effect) {
       }
     }
 
+    // Tell Camera_ApplyPhasedDelta a frame has passed.
     if (work->cameraPhase == 0)
       work->cameraPhase = 1;
     Camera_ApplyShake(8, 8);

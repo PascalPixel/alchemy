@@ -21,6 +21,13 @@ enum {
 /// the damage 11 frames after the burst, and the effect ends 75 frames after
 /// it.
 ///
+/// work->particles holds the 64 motes (angle, height and radius in x, y and
+/// z); after the burst the first 32 also hold the smoke puffs, in their
+/// velocity and variant fields, while motes 0 to 15 keep moving in theirs.
+/// PARTICLES holds the 32 chips. Writes REG_BG2PA and, on side 1, REG_BG2X;
+/// ends with the blitters freed, the transfer callback removed and the canvas
+/// layer closed.
+///
 /// effect: the targets; variant picks the number of motes and columns and
 ///         the burst frame (gFrost_Timings).
 void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
@@ -65,21 +72,29 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
   }
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
+  // On side 1 the canvas moves 112 pixels right, over the party.
   if (work->effect->side == 1)
     REG_BG2X = -0x7000;
 
   for (frame = 0;
        frame != gFrost_Timings[work->effect->variant][FROST_FRAME] + 75;
        frame++) {
+    // The range of heights the smoke will rise over, in 16.16 pixels,
+    // gathered from the motes and chips below.
     lowest = 120 << 16;
     highest = 0;
     if (frame == gFrost_Timings[work->effect->variant][FROST_FRAME] + 11)
       EFFECT_SHOW_DAMAGE(SE_132);
+    // The motes turn about a point 512 pixels in front of the eye, not about
+    // a target.
     SET_VECTOR(point, 0, 0, 512 << 16);
     Render_ResetTransformState();
     SceneTransform_ApplyPosition(point);
+    // A chime every 4 frames while the columns spring up.
     if (frame >= 36 && frame < 64 && (frame & 3) == 0)
       AudioCommand_PlayFar(SE_115);
+    // Frame 85 is Frost's burst; Tundra and Glacier play this sound 12 and 24
+    // frames before theirs.
     if (frame == 85)
       AudioCommand_PlayFar(SE_136);
     EFFECT_FOR_EACH_TARGET(i, work->effect) {
@@ -92,6 +107,9 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
     // closing in and rising 5 pixels a frame up to 48 pixels. After the
     // burst only the first 16 remain, spreading out and falling, and the
     // range of their heights is kept; none is drawn from 35 frames after it.
+    // A mote is drawn only between -48 pixels and a ceiling that falls half a
+    // pixel with each index, so they stop at staggered heights. The screen
+    // position is halved for the narrow canvas and centred on (64, 60).
     if (frame < gFrost_Timings[work->effect->variant][FROST_FRAME])
       count = gFrost_Timings[work->effect->variant][FROST_MOTES];
     else
@@ -145,11 +163,14 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
         }
       }
     }
+    // Mote heights are relative to their centre: 64 rows down the canvas
+    // puts them beside the chips' canvas rows.
     lowest += 64 << 16;
     highest += 64 << 16;
 
-    // Columns (32 wide): one more every 3 frames from frame 36; over the
-    // last 7 frames before the burst they use the second blitter.
+    // Columns (32 wide), standing at gFrost_ColumnSpots: one more every 3
+    // frames from frame 36; over the last 7 frames before the burst they use
+    // the second blitter, a flash before they break.
     if (frame < gFrost_Timings[work->effect->variant][FROST_FRAME]) {
       for (i = 0; i != gFrost_Timings[work->effect->variant][FROST_COLUMNS];
            i++) {
@@ -190,7 +211,8 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
       }
     }
 
-    // Chips: at the burst, 32 fly up from low down (24 of them are drawn).
+    // Chips: at the burst, 32 fly up from canvas rows 80 to 95 for 16 to 31
+    // frames each (24 of them are drawn).
     if (frame == gFrost_Timings[work->effect->variant][FROST_FRAME]) {
       for (i = 0; i != 32; i++) {
         struct EffectStep *chip = &PARTICLES[i];
@@ -230,7 +252,9 @@ void BattleFx_RunFrost(struct BattleEffectArgument *effect) {
       highest = lowest + 1;
 
     // Smoke: puffs appear over the heights of the motes and chips and rise
-    // half a pixel a frame.
+    // half a pixel a frame. A puff keeps its x and y in velocityX and
+    // velocityY, since x, y and z still hold the first 16 motes, and waits
+    // 3 to 18 frames before its first picture (variant 20 to 35).
     if (frame == gFrost_Timings[work->effect->variant][FROST_FRAME]) {
       for (i = 0; i != 32; i++) {
         struct EffectStep *puff = &work->particles[i];

@@ -4,11 +4,7 @@
 
 #include "../effect_internal.h"
 
-// Bolt's sparks fall under gravity and bounce off the ground at half speed.
-
-/// Lightning bolts: a bolt strikes each target, with sparks and glints.
-/// PARTICLES holds the sparks, 128 for each target.
-/// The second blitter, made anew for each glint.
+/// The second blitter, made anew for each glint with its random flip.
 #define BOLT_GLINT_BLITTER                                                     \
   ((DrawRectangle *)                                                           \
        gBattleFxWork)[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT]
@@ -33,6 +29,11 @@ enum {
 /// the frame after; on frame 8i + 2 sparks fly up from its foot and glints
 /// flicker there for 22 frames; on frame 8i + 4 the target recoils. The
 /// battle moves on to the results on frame 24.
+///
+/// PARTICLES holds the sparks, 128 for each target. Sets work->shakeFrames on
+/// each strike, and ends with the transfer callback removed, the blitter
+/// freed and the canvas layer closed; the glints' blitter is built and freed
+/// for each glint.
 ///
 /// effect: the targets; variant picks the row of gBolt_Counts
 ///         and the glints' blend.
@@ -60,6 +61,8 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                              work->sheet + BOLT_CELLS, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+  // A spark's variant is its life left, 0 when free. work->particles is
+  // marked free too, though nothing here uses it.
   for (j = 0; j != 1024; j++)
     PARTICLES[j].variant = 0;
   EFFECT_FREE_PARTICLES(j, work->particles, 64);
@@ -68,10 +71,12 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != work->effect->count * 8 + 40; frame++) {
     if (frame == 24)
       EFFECT_SHOW_DAMAGE(SE_133);
+    // The flash at each turn's start: the whole canvas set to level 16.
     EFFECT_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 8)
         Iwram_FillWords(canvas, CANVAS_BYTES, 0x10101010);
     }
+    // Each target's turn, 8 frames after the one before.
     EFFECT_FOR_EACH_TARGET(i, work->effect) {
       s32 start = i * 8;
 
@@ -85,7 +90,10 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[i], 6);
       }
 
-      // The bolt (24 wide) grows 64 pixels a frame and stops at 104.
+      // The bolt (24 wide) grows 64 pixels a frame and stops at 104; it is
+      // drawn the variant's number of times over itself, each pass picking
+      // one of the four pictures by target, frame and pass, so the picture
+      // changes every 2 frames.
       if (frame >= start && frame < start + 16) {
         s32 height = (frame - start) << 6;
 
@@ -117,7 +125,9 @@ void BattleFx_RunBolt(struct BattleEffectArgument *effect) {
         }
       }
 
-      // Glints: at random spots above the foot, flipped at random.
+      // Glints for 22 frames: at random spots above the foot, flipped at
+      // random, in the variant's blend; the higher a glint, the narrower
+      // the band it may fall in across.
       if (frame >= start + 2 && frame < start + 24) {
         for (j = 0; j != gBolt_Counts[work->effect->variant][BOLT_GLINTS];
              j++) {

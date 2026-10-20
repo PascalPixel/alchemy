@@ -4,11 +4,6 @@
 
 #include "../effect_internal.h"
 
-// A stat boost brings out a Djinni, which sways from side to side and, after
-// 32 frames, rises 2 pixels a frame; then it swirls flares of light in to
-// each target in turn, 8 frames apart, and a burst of light and the mode's
-// picture (a dagger, a shield, a streak or a wisp) play over it.
-
 /// Gathers stat-boost light and displays a dagger in Mars colours.
 ///
 /// Abilities: Impact, High Impact, Demon Spear, Angel Spear (kind 26); Forge
@@ -66,12 +61,17 @@ enum StatBoostSheet {
 /// at 1.25 times its width (canvas x is 4/5 of screen x).
 /// PARTICLES holds the gathering flares, 64 for each target.
 ///
-/// effect: the targets. With prelude 1, a djinni appears first, sways and
+/// Reached through the six wrappers above, Impact to Zephyr. Copies the mode's
+/// palette over the first 128 bytes of BG palette RAM (all but Zephyr), writes
+/// REG_BG2PA and REG_BG2X, and ends with the transfer callback removed and the
+/// canvas layer closed; the blitters are built and freed within each frame.
+///
+/// effect: the targets. With prelude 1, a Djinni appears first, sways and
 ///         rises.
 /// mode: the picture: 0 a dagger, 1 and 2 a shield, 3 and 5 a violet
 ///       streak, 4 a wisp. The palette comes from the Venus djinni in mode
 ///       3, the Jupiter djinni in mode 2, the Mars djinni in modes 0, 1 and
-///       5; mode 4 keeps the palette. The djinni is Venus in mode 3,
+///       5; mode 4 keeps the palette. The Djinni is Venus in mode 3,
 ///       Jupiter in modes 2 and 4, Mars otherwise.
 void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   void **cursor;
@@ -95,8 +95,9 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
 
-  // Bring out the djinni (Venus is 0, Jupiter 3, Mars 2); origin receives
-  // where it appears.
+  // Bring out the Djinni (its element: Venus 0, Jupiter 3, Mars 2); origin
+  // receives where it appears, and x is scaled to the canvas, shown 1.25
+  // times as wide.
   if (work->effect->prelude == 1) {
     if (mode == 3)
       BattleFx_RunDjinniEntrance(effect, 0, work->effect->side ^ 1, 1, &originX,
@@ -111,7 +112,8 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   }
   REG_BG2PA = Q_8_8(0.8); // 1.25 times the width
 
-  // Pictures and palette.
+  // Pictures and palette: the flares, the burst, the mode's picture, then the
+  // Djinni, whose sheet also lends its palette in modes 0, 1, 2, 3 and 5.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD,
                              work->sheet + STAT_BOOST_FLARES, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_GlowOrbSheet,
@@ -160,7 +162,8 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
                                work->sheet + STAT_BOOST_DJINNI, 1, 0);
 
   // Scatter the flares around the centre: x and z within 25 pixels, y
-  // within 50.
+  // within 50. All 512 are placed, though each target draws only its first
+  // 32 of 64.
   for (i = 0; i != STAT_BOOST_SCATTERED; i++) {
     struct EffectStep *flare = &PARTICLES[i];
 
@@ -171,7 +174,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   }
 
   // With one target, shift the canvas so that target is at its centre
-  // (64).
+  // (64); with several, show the half of the screen on the targets' side.
   if (work->effect->count == 1) {
     EffectPosition_ProjectScaledBattler(work->effect->actors[0], &base);
     canvasShiftX = -base.x * 4 / 5 + 64;
@@ -182,9 +185,9 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       canvasShiftX = 0;
   }
   REG_BG2X = canvasShiftX << 8;
-  work->transferMode =
-      CANVAS_COPY_AND_FADE; // each transfer halves the canvas, for trails
-  work->transferValue = 50; // percent
+  // Each transfer keeps half of every level, so the flares leave trails.
+  work->transferMode = CANVAS_COPY_AND_FADE;
+  work->transferValue = 50;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
   if (work->effect->side == 1)
@@ -196,12 +199,14 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   for (frame = 0; frame != work->effect->count * 8 + 108; frame++) {
     struct BattleCamera *camera = WORK_SLOT(HEAP_SLOT_CAMERA);
 
+    // The battle plays its messages from frame 80, as the first target's
+    // picture appears.
     if (frame == 80)
       EFFECT_SHOW_DAMAGE(0);
 
-    // The djinni, facing the other way from the flares, sways from side to
-    // side and, after 32 frames, rises 2 pixels a frame. For the first 4
-    // frames it is also added on top.
+    // The Djinni, facing the other way from the flares, sways 20 pixels from
+    // side to side over 32 frames and, after frame 32, rises 2 pixels a frame.
+    // For the first 4 frames it is also added on top, a flash as it appears.
     if (work->effect->prelude == 1) {
       s32 x =
           ((Trig_Sin(frame << 11) * 20) >> 16) + originX + canvasShiftX - 20;
@@ -221,6 +226,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       EFFECT_RELEASE_BLITTERS();
     }
 
+    // Each target's own timeline, starting 8 frames after the one before.
     EFFECT_FOR_EACH_TARGET(member, work->effect) {
       struct MotionObject *object =
           GetBattleObjectSlotFar(work->effect->actors[member])->object;
@@ -284,7 +290,7 @@ void BattleFx_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
         EFFECT_RELEASE_BLITTERS();
       }
 
-      // The centre's position on screen.
+      // The burst and the picture are drawn at the centre's screen position.
       SET_VECTOR(center, 0, 0, 0);
       EffectPosition_ProjectPoint(center, &screen);
       screen.x = screen.x * 4 / 5 + canvasShiftX;
@@ -372,6 +378,7 @@ void BattleFx_RunDull(struct BattleEffectArgument *effect) {
 /// darker copies, in the glow orb's colours (style 1).
 ///
 /// Abilities: Impair, Debilitate (kind 29); kind 47 is used by no ability.
+/// Casting impact 21 (Meltdown) also ends by calling it.
 void BattleFx_RunImpair(struct BattleEffectArgument *effect) {
   BattleFx_RunStatReduction(effect, 1);
 }
@@ -400,6 +407,11 @@ BattleFx_RunStatReductionMode3(struct BattleEffectArgument *effect) {
 /// fade out through the darker copies. In each target's own frames the
 /// picture plays until about frame 24, then breaks with a sound; the shards
 /// darken from frame 29 and are gone after frame 60.
+///
+/// Reached through Dull, Impair, Weaken and the unused mode 3 wrapper above.
+/// Copies the mode's palette over the first 128 bytes of BG palette RAM,
+/// writes REG_BG2PA and REG_BG2X, and ends with the transfer callback
+/// removed, both blitters freed and the canvas layer closed.
 ///
 /// effect: the targets.
 /// mode: 0 the dagger and the pink burst palette, 1 the shield and the
@@ -460,7 +472,9 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
   }
 
   // The shards start in a grid of eight rows and four columns and fly
-  // away from the user's side, scattering in a random direction.
+  // away from the user's side, scattering in a random direction; variant
+  // is a random start in their turning. All 512 are placed, enough for 16
+  // targets of 32 slots.
   for (i = 0; i != 512; i++) {
     struct EffectStep *shard = &PARTICLES[i];
     s32 radius = 192;
@@ -489,6 +503,9 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
 
   for (frame = 0; frame != work->effect->count * 4 + 64; frame++) {
     camera = gCameraWork;
+    // XXX: the loop runs count * 4 + 64 frames, so frame 72 comes only with
+    // three or more targets; whether the battle shows the damage some other
+    // way for one or two would settle whether this is a bug.
     if (frame == 72)
       EFFECT_SHOW_DAMAGE(0);
     EFFECT_FOR_EACH_TARGET(j, work->effect) {
@@ -499,6 +516,7 @@ void BattleFx_RunStatReduction(struct BattleEffectArgument *effect, s32 mode) {
 
       targetFrame = frame - j * 4;
       object = GetBattleObjectSlotFar(work->effect->actors[j])->object;
+      // Each target's timeline starts 4 frames after the one before.
       if (targetFrame > 0) {
         EFFECT_VIEW_FROM_CAMERA(camera);
         // Centre on the point 20 pixels above the target; the view is set

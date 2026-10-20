@@ -4,30 +4,38 @@
 
 #include "../effect_internal.h"
 
-// The effects here: two hops that start a spark group, a four-frame
-// image revealed in front of the target, and two mirrored columns rising at
-// the target's feet.
+/// One 120x120 picture of a flashing strike; two fill work->imageStorage and
+/// two more Ram_MapCellBuffer.
+#define FLASHING_STRIKE_PICTURE_BYTES (120 * 120)
 
-/// Hops the acting unit toward the first target; triggers type 4 after 29
-/// frames.
+/// The user leaps high at the first target, then a burst of 32 sparks rises
+/// beneath it.
 ///
 /// Abilities: Thrash (kind 388).
+///
+/// The leap takes the user three quarters of the way in 24 steps, starting up
+/// at 12.2 pixels a frame (16.16); after 29 frames the spark group plays with
+/// effect->variant set to 4, overriding the ability's own.
 void BattleFx_RunThrash(struct BattleEffectArgument *effect) {
-  // Hop 3/4 of the distance at displacement / 24, initial vertical speed 12.2.
   BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 24, 0xc3333);
   WaitFrames(29);
   effect->variant = 4;
-  BattleFx_RunSparkGroups(effect, 2); // 2: from the acting unit's position
+  BattleFx_RunSparkGroups(effect, 2);
 }
 
-/// Hops the acting unit toward the first target; triggers type 3 after 12
-/// frames.
+/// The user leaps at the first target, then a burst of 340 sparks rises
+/// beneath it and the canvas flashes.
+///
+/// Abilities: none (kind 387).
+///
+/// A lower leap than Thrash's (7.2 pixels a frame up), and the spark group
+/// after 12 frames with effect->variant set to 3, overriding the ability's
+/// own.
 void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect) {
-  // Hop 3/4 of the distance at displacement / 24, initial vertical speed 7.2.
   BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 24, 0x73333);
   WaitFrames(12);
   effect->variant = 3;
-  BattleFx_RunSparkGroups(effect, 2); // 2: from the acting unit's position
+  BattleFx_RunSparkGroups(effect, 2);
 }
 
 /// The user leaps at the first target, four pictures flash across the effect
@@ -37,18 +45,29 @@ void BattleFx_RunSparkApproachVariant3(struct BattleEffectArgument *effect) {
 void BattleFx_RunQuickStrike(struct BattleEffectArgument *effect) {
   BattleFx_RunFlashingStrike(effect, 1);
 }
-/// Flashes the target using the first pair of reveal-mask resources.
+
+/// The user steps up to the first target, four pictures flash across the
+/// effect layer, then it fills with one colour as the target is struck.
 ///
 /// Abilities: Vorpal Slash (kind 65).
 void BattleFx_RunVorpalSlash(struct BattleEffectArgument *effect) {
   BattleFx_RunFlashingStrike(effect, 2);
 }
-/// Shared runner of Quick Strike (mode 1) and Vorpal Slash (mode 2); no kind
-/// uses mode 0. The user steps up to the first target over 16 frames, with a
-/// hop in mode 1. Then four 120x120 pictures, chosen by mode, show for four
-/// frames each (mirrored on side 1), the canvas fills with colour 0x3f on
-/// frames 16 to 19, the battle shows the damage on frame 18, and on frame 20
-/// the target reels and the screen shakes. 21 frames.
+
+/// Plays a flashing strike, the runner of BattleFx_RunQuickStrike (mode 1)
+/// and BattleFx_RunVorpalSlash (mode 2); nothing passes mode 0.
+///
+/// The user steps up to the first target over 16 frames. Then four 120x120
+/// pictures show for four frames each (mirrored when effect->side is 1), the
+/// canvas fills with colour 0x3f on frames 16 to 19, the battle shows the
+/// damage on frame 18, and on frame 20 the target reels and the screen
+/// shakes. 21 frames.
+///
+/// Opens and closes the canvas layer; the pictures take work->imageStorage
+/// and the start of Ram_MapCellBuffer.
+///
+/// mode: picks the pictures (RevealMaskE and F for 0, C and D for 1, A and B
+/// for 2); mode 1 also makes the step a hop.
 void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
   void **slots;
   struct BattleEffectWork *work;
@@ -62,8 +81,8 @@ void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_BeginCanvasLayer(0);
   REG_BLDCNT = 0;
 
-  // Each pair of 120x120 frames fills the image storage before the particles.
-  // Frames 1-2 use the work buffer; frames 3-4 use Ram_MapCellBuffer.
+  // Each resource holds two pictures: the first fills work->imageStorage, up
+  // to the particles, and the second the start of Ram_MapCellBuffer.
   if (mode == 0) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskE, work->imageStorage,
                                1, 0);
@@ -80,9 +99,10 @@ void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskB, Ram_MapCellBuffer,
                                1, 1);
   }
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
-                        0); // Clear to 0 each frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
+  // The step: three quarters of the way in 16 steps, a hop of 8 pixels a
+  // frame up for Quick Strike.
   if (mode == 1)
     BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16,
                                    0x80000);
@@ -101,14 +121,15 @@ void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
     if (frame <= 3)
       draw[0](canvas, work->imageStorage, 0, 0, 120, 120);
     else if (frame <= 7)
-      draw[0](canvas, work->imageStorage + 0x3840, 0, 0, 120, 120);
+      draw[0](canvas, work->imageStorage + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
+              120, 120);
     else if (frame <= 11)
       draw[0](canvas, Ram_MapCellBuffer, 0, 0, 120, 120);
     else if (frame <= 15)
-      draw[0](canvas, Ram_MapCellBuffer + 0x3840, 0, 0, 120, 120);
+      draw[0](canvas, Ram_MapCellBuffer + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
+              120, 120);
     if (frame >= 16 && frame <= 19)
-      Iwram_FillWords(canvas, CANVAS_BYTES,
-                      0x3f3f3f3f); // Fill the entire canvas with color 0x3f.
+      Iwram_FillWords(canvas, CANVAS_BYTES, 0x3f3f3f3f);
     if (frame == 18)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 20) {
@@ -118,7 +139,11 @@ void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
     Camera_ApplyShake(16, 16);
     EFFECT_END_FRAME(work);
   }
+  // Releases the blitter before stopping the transfer, the other way round
+  // from EFFECT_FINISH_CANVAS_ONE_BLITTER.
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   BattleFx_EndCanvasLayer();
 }
+
+#undef FLASHING_STRIKE_PICTURE_BYTES

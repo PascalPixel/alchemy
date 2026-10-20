@@ -4,11 +4,6 @@
 
 #include "../effect_internal.h"
 
-// Torch's rippling disc builds a radial picture by computing one quadrant
-// and mirroring it into the other three, then bends it line by line through
-// BG2's affine reference while the palette cycles. Each pixel holds its
-// distance from the middle, so rotating the palette makes rings run outward.
-
 #define TORCH_FRAMES 96
 
 /// A fiery disc fades in, its rings running outward while every scanline
@@ -17,9 +12,10 @@
 /// Abilities: Torch (kind 214).
 ///
 /// The disc is a mirrored radial picture whose pixels hold their distance from
-/// the middle, so rotating the palette moves the rings. The scene runs for 96
-/// frames: it fades in over the first 9, ripples throughout and fades out over
-/// the last 7.
+/// the middle, so rotating the palette moves the rings. It follows a Mars
+/// Djinni's entrance over the user, fades in over the first 9 frames, ripples
+/// throughout as BG2's x reference is fed line by line
+/// (BattleFx_ArmBg2AffineHBlankDma), and fades out over the last 7.
 void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   void **slots;
   struct BattleEffectWork *work;
@@ -49,6 +45,7 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   EFFECT_GET_WORK_AND_CANVAS(slots, work, canvas);
   work->effect = effect;
   BattleFx_BeginCanvasLayer(BGCNT_WRAP);
+  // The Mars Djinni's long entrance (mode 6), over the user (anchor 2).
   BattleFx_RunDjinniEntrance(effect, 6, work->effect->side, 2, &screenX,
                              &screenY);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -115,7 +112,8 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma,
                                 EFFECT_CALLBACK_ORDER);
 
-  // Fade the radial picture in, ripple each scanline, then fade it out.
+  // Fade the radial picture in (frames 0 to 8), ripple each scanline, then
+  // fade it out (frames 89 to 95, from 14 sixteenths down to 2).
   for (frame = 0; frame != TORCH_FRAMES; frame++) {
     if (frame <= 8) {
       level = frame * 2;
@@ -135,9 +133,11 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
       angle += 0x200;
     }
 
-    // Rotate colours 1 to 63 by one, so the rings run outward, and queue
-    // them for the background palette. The test against frame 127 never
-    // holds within the 96 frames.
+    // Rotate colours 2 to 63 up by one, so the rings run outward: colour 63
+    // goes to colour 1 first, and the backward 62-halfword copy then moves 1
+    // to 62 up to 2 to 63, leaving colour 1 equal to the new colour 2. Then
+    // queue colours 1 to 63 for the background palette. The test against
+    // frame 127 never holds within the 96 frames.
     if (frame > 127) {
       work->transferPending = 1;
     } else {
@@ -152,7 +152,8 @@ void BattleFx_RunTorch(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// Shows the extended Jupiter Djinni prelude on the side opposite the effect.
+/// Shows the extended Jupiter Djinni prelude over the first target, mirrored
+/// from the usual side; the Djinni's entrance is the whole effect.
 ///
 /// Abilities: Kite (kind 217).
 void BattleFx_RunKite(struct BattleEffectArgument *effect) {

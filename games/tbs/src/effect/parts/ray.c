@@ -4,18 +4,20 @@
 
 #include "../effect_internal.h"
 
-// Closing bolts: four lightning bolts that close in from around the
-// target, and the sparks they throw.
-
-#define RAY_SPARK_COUNT 1024
+#define RAY_SPARK_COUNT 1024 ///< sparks in PARTICLES
 
 #define RAY_CELLS 0x60e ///< the bolt pictures in the sheet
-#define RAY_COUNT 4
+#define RAY_COUNT 4     ///< bolts
 
-/// Four bolts turn in towards the centre for 16 frames, scattering sparks from
-/// their roots; the sparks fly on until frame 64.
+/// Closing bolts: four bolts turn in towards the centre for 16 frames,
+/// scattering sparks from their roots; the sparks fly on until frame 64.
 ///
 /// Abilities: Ray, Storm Ray, Destruct Ray (kind 17).
+///
+/// The targets flash white 4 frames apart from frame 4. Writes REG_BG2PA and
+/// REG_BG2X, sets work->shakeFrames over the first 16 frames, and ends with
+/// the transfer callback removed, the blitters freed and the canvas layer
+/// closed.
 ///
 /// effect: the targets. variant 2 shows the canvas at double width;
 ///         variant 0 draws every bolt with the maximum blend, the others
@@ -33,15 +35,17 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   s32 i;
 
-  // The work, the canvas, and BG2's scale and position.
   slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
+  // The motes for the sparks are in the battle sheet's slot.
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleFx_BeginTiledCanvas(1);
+  // Destruct Ray stretches the canvas across the screen; the others show it
+  // at its own width over the targets' half (on side 1, moved 128 pixels).
   if (work->effect->variant == 2)
-    REG_BG2PA = Q_8_8(0.5); // double width
+    REG_BG2PA = Q_8_8(0.5);
   else
     REG_BG2PA = Q_8_8(1);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
@@ -63,7 +67,8 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
       REG_BG2X = -0x8000;
   }
 
-  // Set up the sparks.
+  // Every spark starts free (variant 0); its place and velocity here are
+  // overwritten when a bolt throws it.
   for (i = 0; i != RAY_SPARK_COUNT; i++) {
     struct EffectStep *spark = &PARTICLES[i];
     s32 speed;
@@ -81,9 +86,10 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
 
   for (frame = 0; frame != 64; frame++) {
     if (frame == 20)
-      EFFECT_SHOW_DAMAGE(SE_133); // start playing the results
+      EFFECT_SHOW_DAMAGE(SE_133);
+    // The bolts, over the first 16 frames.
     if (frame < 16) {
-      // Clear the canvas every 5 frames.
+      // Fill the canvas with level 16, not 0, on frames 2, 7 and 12.
       if (frame % 5 == 2)
         Iwram_FillWords(canvas, CANVAS_BYTES, 0x10101010);
       for (bolt = 0; bolt != RAY_COUNT; bolt++) {
@@ -91,7 +97,10 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
         s32 x;
         s32 y;
 
-        // The radius across shrinks from 32 by a pixel a frame.
+        // The radius across shrinks from 32 by a pixel a frame; bolt n starts
+        // a quarter turn further round than bolt n - 1 and turns n times as
+        // fast. Each frame a bolt picks one of four pictures and jitters up
+        // to 7 pixels across.
         thrown = 0;
         angle = ((frame << 11) + 0x4000) * bolt;
         x = (((32 - frame) * Trig_Sin(angle)) >> 16) + 64;
@@ -108,7 +117,9 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
                              RAY_CELLS,
                          x + (Random16() & 7) - 16, y, 24, 120);
 
-        // Throw sparks from the bolt's root.
+        // Throw sparks from the bolt's root, 112 pixels down its 120-pixel
+        // picture: the first free ones, up to the variant's count, each
+        // living 32 to 39 frames.
         for (i = 0; i != RAY_SPARK_COUNT; i++) {
           struct EffectStep *spark = &PARTICLES[i];
 
@@ -132,7 +143,8 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
       work->shakeFrames = 1;
     }
 
-    // Move the sparks, bouncing them off the bottom (y 120).
+    // Move the sparks, bouncing them off the bottom (y 120) at half speed;
+    // a spark is drawn only inside the canvas, and shrinks as it ages.
     for (i = 0; i != RAY_SPARK_COUNT; i++) {
       struct EffectStep *spark = &PARTICLES[i];
 
@@ -151,7 +163,8 @@ void BattleFx_RunRay(struct BattleEffectArgument *effect) {
       }
     }
 
-    // The targets are hit 4 frames apart.
+    // The targets are hit 4 frames apart. The bound of 96 is past the last
+    // frame (63), so it never limits.
     if (frame >= 4 && frame < 96) {
       EFFECT_FOR_EACH_TARGET(i, work->effect) {
         if (frame == i * 4 + 4)

@@ -5,6 +5,10 @@
 #include "../effect_internal.h"
 
 /// Adds per-channel steps to background colours 1 to 63, capped at 31.
+///
+/// Called once a frame to whiten the colours over a few frames: by
+/// BattleFx_RunParticleStreams from frame 36 of its burst, and by Tiamat's
+/// BattleFx_RunPaletteParticles. Rewrites background palette RAM.
 void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
   u16 *color = (u16 *)&BG_PLTT[1];
   s32 i;
@@ -30,6 +34,11 @@ void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
 /// Arms DMA 0 to write one halfword of the table at work->sheet + 0x1f80 into
 /// background colour 0 at each horizontal blank, so the backdrop colour
 /// changes line by line.
+///
+/// Runs each frame as a scheduler callback (order 0x4fe) that
+/// BattleFx_RunParticleStreams adds for its rise and removes after it; the
+/// rise rewrites the 160 colours, its heat lines, every frame. Stops DMA 0
+/// and sets it up again, so the table is read from line 0.
 void BattleFx_ArmPaletteHBlankDma(void) {
   struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   volatile u16 *channel = REG_DMA0;
@@ -45,6 +54,7 @@ void BattleFx_ArmPaletteHBlankDma(void) {
 void BattleFx_RunMeteor(struct BattleEffectArgument *effect) {
   BattleFx_RunParticleStreams(effect, 0);
 }
+
 /// The user leaps up, and two objects rise out of a dissolving starfield and
 /// burst into embers and flashes: the particle stream in mode 1, in the
 /// lightning bolt's colours.
@@ -53,6 +63,8 @@ void BattleFx_RunMeteor(struct BattleEffectArgument *effect) {
 void BattleFx_RunOuterSpace(struct BattleEffectArgument *effect) {
   BattleFx_RunParticleStreams(effect, 1);
 }
+
+/// The burst's embers, 512 in PARTICLES after its 128 flashes.
 #define PARTICLE_STREAMS_EMBERS (&PARTICLES[128])
 
 #define PARTICLE_STREAMS_RISE_FRAMES 192 ///< frames, at most, of the rise
@@ -71,6 +83,16 @@ void BattleFx_RunOuterSpace(struct BattleEffectArgument *effect) {
 /// Particle slots: the burst's flashes use PARTICLES 0 to 127 and its embers
 /// the 512 after them (PARTICLE_STREAMS_EMBERS); work->particles holds the
 /// rising motes (0 to 31) and the flames (32 to 47).
+///
+/// Called by BattleFx_RunMeteor (mode 0) and BattleFx_RunOuterSpace (mode 1).
+/// The rise shows Ram_MapCellBuffer on BG1 through
+/// BattleFx_FlushPendingGraphicsTransfer, scrolls BG2 with
+/// BattleFx_AdvanceBg2OnInterval and colours the backdrop with
+/// BattleFx_ArmPaletteHBlankDma, and removes all three after; it also moves
+/// the projection centre down to line 240 and sets the background view's
+/// active flag while it runs. The burst sets BG2 back to the half-scale
+/// canvas and ends the canvas layer. Releases the formation objects it
+/// spawned (mode 1's on frame 48 of the burst).
 void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
                                  s32 mode) {
   volatile u32 fill;
@@ -82,7 +104,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
   struct BattleEffectWork *work;
   void *colors = (void *)BG_PLTT;
 
-  // Start a flame in the first free particle slot from 32 to 47.
+  /// Starts a flame in the first free particle slot from 32 to 47; called
+  /// for each drop that reaches rows 94 and 95. A flame is never drawn.
   void ParticleStreams_SpawnFlame(s32 x, s32 y, s32 velocityX) {
     s32 i;
 
@@ -99,7 +122,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     }
   }
 
-  // Start a mote in the first free particle slot from 0 to 31.
+  /// Starts a mote in the first free particle slot from 0 to 31. Nothing
+  /// calls it: the rise starts its motes inline.
   UNUSED void ParticleStreams_SpawnMote(s32 x, s32 y) {
     s32 i;
 
@@ -265,8 +289,9 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     BattleFx_BuildBlitter(HEAP_SLOT_BLITTER, 8, 7, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_MAX);
     draw = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_BACKGROUND];
-    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN,
-                        (s32)(Ram_MapBlocks + 0x202));
+    // Each copy darkens every pixel of the map by 2 levels (four bytes of 2
+    // in one word, as the other darkening effects write theirs).
+    EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x02020202);
     Scheduler_AddOrUpdateCallback(BattleFx_ArmPaletteHBlankDma, 0x4fe);
     EFFECT_FREE_PARTICLES(i, work->particles, 64);
     presentation->active = 1;
@@ -449,7 +474,8 @@ void BattleFx_RunParticleStreams(struct BattleEffectArgument *effect,
     gBgScroll[1].y = savedY;
   }
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  // The burst: switch to the blended half-scale display, load the blast
+  // The burst, PARTICLE_STREAMS_BURST_FRAMES frames: switch to the blended
+  // half-scale display, load the blast
   // sheet and seed 32 screen motes, 128 flashes and 512 embers, the flashes
   // and embers leaving the origin with random velocities.
   BattleFx_SetupBlendedDisplay();

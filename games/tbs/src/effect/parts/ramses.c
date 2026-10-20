@@ -56,6 +56,8 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
   work->effect = effect;
   BattleFx_BeginCanvasLayer(0);
   BattleFx_ConfigureEffectDisplay();
+  // A wipe to black (colour 1) hides the battle; the desert backdrop loads
+  // behind it, and a second wipe clears the canvas to show it.
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
@@ -63,8 +65,10 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
                                 EFFECT_CALLBACK_ORDER);
   BattleFx_WipeCanvas(1, 0);
   BattleFx_SelectLivingTargets(work->effect);
+  // Nine objects of resource 379, the formation (0 to 6) and the orb (7 and
+  // 8), then the six rocks from resource 390, each playing one of its three
+  // animations.
   BattleFx_SpawnObjects(9, 379, 2);
-  // Add the six falling rocks after creating the nine-object formation.
   for (i = 0; i != RAMSES_ROCKS; i++) {
     struct AnimationObject *object = ResourceObject_CreateFar(390);
 
@@ -108,10 +112,13 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
     rock->variant = 0;
   }
   // A puff's variant counts up and from 24 it is no longer drawn; every puff
-  // and spark starts finished.
+  // and spark starts finished. The puffs end at particle 41, but the clear
+  // runs to 63.
   for (i = 0; i != 58; i++)
     work->particles[RAMSES_FIRST_PUFF + i].variant = 24;
   EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
+  // Restart the background palette fade over 24 frames
+  // (Palette_StepFadeTransfer, added by BattleFx_BeginCanvasLayer).
   work->fadeFrames = 24;
   work->fadeStep = 0;
 
@@ -126,6 +133,8 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
     if (frame == RAMSES_STRIKE_FRAME)
       AudioCommand_PlayFar(SE_145);
     scale = unitScale;
+    // One frame of shake at a time, renewed each frame over frames 96 to 251
+    // and 260 to 263.
     if (frame >= 96 && frame <= 251)
       work->shakeFrames = 1;
     else if (frame >= RAMSES_STRIKE_FRAME && frame <= 263)
@@ -137,7 +146,8 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
       position.y = (gRamses_ObjectRows[i] << 16) + base.y - 0x200000;
       Object_ApplyProjectedPlacementFar(work->objects[i], &position, &scale, 0);
     }
-    // The orb circles until frame 90.
+    // The orb circles until frame 90, 16 pixels around (156, 92), a 128th
+    // of a turn a frame.
     if (frame <= 90) {
       orb.x = Trig_Sin(frame << 9) * 16 + 0x9c0000;
       orb.y = Trig_Cos(frame << 9) * 16 + 0x5c0000;
@@ -219,7 +229,8 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
         }
       }
     }
-    // Puffs show the last four puff cells, six frames each, as they drift.
+    // Puffs show the last four puff cells, six frames each, as they drift
+    // upward; each starts at a random point of its first 16 frames.
     for (i = 0; i != 56; i++) {
       struct EffectStep *puff = &work->particles[RAMSES_FIRST_PUFF + i];
 
@@ -285,6 +296,8 @@ void BattleFx_RunRamses(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
 
+  // The battle shows the damage once the scene is over, and gets its own
+  // background back.
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   BattleFx_SetupBlendedDisplay();
   for (i = 0; i != 15; i++)

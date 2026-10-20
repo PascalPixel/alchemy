@@ -8,8 +8,8 @@
 // a column of fire up with a flickering flame at its foot. Each erupts with a
 // fountain of 200 sparks and keeps spitting 4 a frame into one pool of 1024
 // in PARTICLES. The sparks move in 24.8 fixed point, with z holding the speed
-// across, and bounce off y = 120; a spark's variant is its remaining life, 0
-// when idle.
+// across, and drift upwards; a spark's variant is its remaining life, 0 when
+// idle.
 
 #define VOLCANO_FRAMES 96
 #define VOLCANO_ERUPTION 200            ///< sparks thrown as a pillar starts
@@ -27,7 +27,12 @@
 /// Storm (kind 13).
 ///
 /// The battle shows the damage on frame 16. Variant 0 is red, 2 orange; variant
-/// 2 also swings the camera round.
+/// 2 also swings the camera round over the first 64 frames.
+///
+/// work->particles 0 to 3 are the pillars' feet, battle positions in 16.16.
+/// Sets REG_BLDALPHA, loads the red or orange palette into the first 64
+/// background colours (variant 1 keeps the fire pillar sheet's), turns the
+/// camera's yaw (variant 2) and sets work->shakeFrames at each eruption.
 void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -82,8 +87,8 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
       base->x = -x;
   }
 
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
-                        50); // trails keep half a frame
+  // Trails keep half of each pixel a frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
   for (frame = 0; frame != VOLCANO_FRAMES; frame++) {
     camera = gCameraWork;
@@ -126,7 +131,9 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
                     screen.y - 24, 20, 37);
           }
         }
-        // Sparks: 200 at the start, then 4 a frame from 16 frames on.
+        // Sparks: 200 at the start, living 48 to 55 frames, then 4 a frame
+        // from 16 frames on, living 24 to 31; anywhere in the upper half
+        // circle, twice as hard up as across.
         if (frame == gVolcano_StartFrames[pillar] ||
             frame >= gVolcano_StartFrames[pillar] + 16) {
           s32 spawned = 0;
@@ -168,7 +175,9 @@ void BattleFx_RunVolcano(struct BattleEffectArgument *effect) {
     }
 
     // The sparks, in 24.8 fixed point (z holds the speed across): slow to
-    // 60/64 a frame, fall, and bounce off y 120 at half speed.
+    // 60/64 a frame while pulled up by 1/16 pixel a frame, so they settle
+    // at a rise of 1 pixel a frame; one below y 120 bounces back at half
+    // speed instead of being drawn. A spark shrinks with its life.
     for (i = 0; i != VOLCANO_SPARK_POOL; i++) {
       struct EffectStep *spark = &PARTICLES[i];
       s32 life = spark->variant;

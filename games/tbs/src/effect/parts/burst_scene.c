@@ -4,6 +4,9 @@
 
 #include "../effect_internal.h"
 
+/// Gust: the burst scene in mode 6, 7 or 8 as the variant grows, one to
+/// three strikes that each fill the canvas with light.
+///
 /// Abilities: Gust (kind 219); Rapid Smash, Sonic Smash, Slice (kind 310).
 void BattleFx_RunGust(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
@@ -17,22 +20,37 @@ void BattleFx_RunGust(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 8);
 }
 
+/// Bear Claw: five strikes, the burst scene in mode 0.
+///
 /// Abilities: Bear Claw (kind 317); Counterstrike (kind 342).
 void BattleFx_RunBearClaw(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 0);
 }
+
+/// Ransack: the same five strikes as Bear Claw (mode 0).
+///
 /// Abilities: Ransack (kind 321); Mad Dash (kind 343).
 void BattleFx_RunRansack(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 0);
 }
+
+/// Bacteria Rush: seven strikes in the lime palette (mode 1).
+///
 /// Abilities: Bacteria Rush (kind 328).
 void BattleFx_RunBacteriaRush(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 1);
 }
+
+/// Freebite Rush: nine strikes in the blue palette (mode 2).
+///
 /// Abilities: Freebite Rush (kind 334).
 void BattleFx_RunFreebiteRush(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 2);
 }
+
+/// Flying Attack: the burst scene in mode 3, 4 or 5 as the variant grows, one
+/// to three strikes.
+///
 /// Abilities: Flying Attack (kind 319); Swift Strike (kind 329).
 void BattleFx_RunFlyingAttack(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
@@ -46,8 +64,7 @@ void BattleFx_RunFlyingAttack(struct BattleEffectArgument *effect) {
   BattleFx_RunBurstScene(effect, 5);
 }
 
-// Flurries of strikes.
-/// The bytes of a gBurstScene_Records row.
+/// The bytes of a gBurstScene_Records row, one row a mode.
 enum BurstField {
   BURST_SCENE_ARC_SHEET, ///< 0: blue arc A, else B; 1 also draws every strike
                          ///< as an arc
@@ -59,8 +76,9 @@ enum BurstField {
   BURST_SCENE_FLASH      ///< 1 fills the canvas on each hit
 };
 
-/// The packed flash pictures and the waves.
+/// The flash pictures, packed to half width after the arcs.
 #define BURST_SCENE_FLASH_CELLS 0x5100
+/// The wave pictures, in the map buffer past the motes.
 #define BURST_SCENE_WAVE_CELLS (Ram_MapCellBuffer + 0x5e00)
 
 /// Flurry: the user closes on the first target and strikes it again and
@@ -71,7 +89,12 @@ enum BurstField {
 /// The motes wait above the target until their strike releases them, then
 /// bounce off the ground and die out.
 ///
-/// effect: the user and the targets; prelude 1 brings in a Jupiter djinni
+/// Called by the six wrappers above it, with the mode their ability needs.
+/// Uses PARTICLES 0 to 767 for the motes, 32 a strike, and both blitter
+/// slots, rebuilt twice a frame; loads palette colours 0 to 63 from the
+/// row's palette resource.
+///
+/// effect: the user and the targets; prelude 1 brings in a Jupiter Djinni
 ///         first.
 /// mode   : the row of gBurstScene_Records.
 void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
@@ -105,7 +128,6 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
     BattleFx_RunDjinniEntrance(effect, 7, work->effect->side, 2, &screenX,
                                &screenY);
 
-  // Pictures and palette.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
   // Pack the flash (40x288) to half width at BURST_SCENE_FLASH_CELLS, as the
@@ -147,11 +169,12 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
   WaitFrames(1);
 
   EffectPosition_ProjectScaledBattler(work->effect->actors[0], &targetPos);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
-                        75); // trails, fading to 3/4
+  // Trails: each transfer keeps 3/4 of every canvas level.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   // Motes wait 25 pixels above the target, set to fly towards the middle
-  // of the field.
+  // of the field at up to 16 pixels a frame. Strike i releases PARTICLES
+  // i * 32 onwards, as many as its row's BURST_SCENE_MOTES.
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
   for (i = 0; i != 768; i++) {
     struct EffectStep *mote = &PARTICLES[i];
@@ -167,6 +190,9 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
   BattleMotion_ApproachTargetFar(work->effect->actor, work->effect->actors[0],
                                  4, 0);
 
+  // Each frame draws the strikes in progress, then the motes. Strike i
+  // starts on frame i * interval: its arc or wave plays for 6 frames, it
+  // hits on its third frame, and its flash plays for the 12 after that.
   for (frame = 0; frame != gBurstScene_Records[mode][BURST_SCENE_FRAMES];
        frame++) {
     s32 bursts = gBurstScene_Records[mode][BURST_SCENE_STRIKES];
@@ -174,7 +200,8 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
     EffectPosition_ProjectScaledBattler(work->effect->actor, &actorPos);
     actorPos.x /= 2;
 
-    // Arcs and waves; odd strikes are drawn flipped.
+    // Arcs and waves; odd strikes are drawn flipped upside down, and on
+    // side 1 both are mirrored.
     if (work->effect->side == 0) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
@@ -214,6 +241,7 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
       }
       if (frame == start + 2) {
         // The hit; the last strike ends the attack.
+        // A flash row fills the canvas with level 47.
         if (gBurstScene_Records[mode][BURST_SCENE_FLASH] == 1)
           Iwram_FillWords(canvas, CANVAS_BYTES, 0x2f2f2f2f);
         ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
@@ -240,7 +268,10 @@ void BattleFx_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
     }
     EFFECT_RELEASE_BLITTERS();
 
-    // Motes: drawn until they die out, bouncing off the ground.
+    // Motes: a released mote's variant is its life, 15 to 22 frames, and
+    // it shrinks from a 3- to a 1-pixel mote as the life runs out. It
+    // bounces at half speed when it falls below 8 pixels over the ground.
+    // Only the first 512 are drawn; strikes never reach past 288.
     EFFECT_VIEW_FROM_CAMERA(camera);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);

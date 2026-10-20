@@ -17,18 +17,15 @@
 #define HELM_SPLITTER_STRIKE_FRAME 18 ///< the swirl strikes the target
 /// The pink star animation, after the swirl.
 #define HELM_SPLITTER_STAR_CELLS 0x3e80
-// map-buffer spark slots cleared first
-#define HELM_SPLITTER_CLEARED_SLOTS 1024
-#define HELM_SPLITTER_SPARKS 16       ///< sparks scattered by the strike
-#define HELM_SPLITTER_SPARK_SLOTS 128 ///< spark slots moved and drawn
+#define HELM_SPLITTER_CLEARED_SLOTS 1024 ///< PARTICLES slots freed first
+#define HELM_SPLITTER_SPARKS 16          ///< sparks scattered by the strike
+#define HELM_SPLITTER_SPARK_SLOTS 128    ///< spark slots moved and drawn
 
 /// The user leaps at the first target and strikes through a fire swirl; on
 /// frame 18 the target flashes and reels and 16 sparks scatter, bouncing off
 /// the ground.
 ///
 /// Abilities: Helm Splitter (kind 51).
-///
-/// 70 frames.
 void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -56,7 +53,9 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
   BattleFx_FetchRectangleBlitters(work->effect->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
-  // Clear the reusable spark pool before moving the user.
+  // Free the spark pool before moving the user: the pointer walks the
+  // variant word of each seven-word EffectStep. Only the first 16 sparks are
+  // ever launched, and the first 128 moved.
   particleLife = &PARTICLES->variant;
   for (i = 0; i != HELM_SPLITTER_CLEARED_SLOTS; i++) {
     *particleLife = 0;
@@ -99,7 +98,8 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
 
   // Play the swirl and impact, then let the sparks bounce and fade.
   for (frame = 0; frame != HELM_SPLITTER_FRAMES; frame++) {
-    // The canvas follows the user across the screen.
+    // The canvas follows the user across the screen: canvas column 80 is
+    // kept under the user.
     EffectPosition_ProjectBattler(work->effect->actor, &position);
     REG_BG2X = (80 - position.x) << 8;
     // Frames 8 to 23: the swirl plays its seven pictures, two frames each,
@@ -175,10 +175,18 @@ void BattleFx_RunHelmSplitter(struct BattleEffectArgument *effect) {
 
 /// Arranges work->objects in a formation; x and z are its origin in 16.16
 /// pixels.
-/// formation: 0 = nine in a 3x3 grid at 32-pixel spacing;
-///            1 = twelve in rows of 1, 3, 4 and 4, from 16 left and 32 up;
-///            2 = eight in rows of 3, 2 and 3, from 16 right;
-///            3 = eight drawn at 1.25 times their size.
+///
+/// Each summon that ends in an impact burst keeps its objects in its own
+/// formation, every frame while it plays and then through
+/// BattleFx_RunImpactBurst. Places the objects through
+/// Object_ApplyProjectedPlacementFar and changes nothing else.
+///
+/// formation: 0 = nine in a 3x3 grid at 32-pixel spacing (Thor);
+///            1 = twelve in rows of 1, 3, 4 and 4, from 16 left and 32 up
+///            (Nereid);
+///            2 = eight in rows of 3, 2 and 3, from 16 right (Cybele);
+///            3 = eight drawn at 1.25 times their size (Tiamat's
+///            BattleFx_RunPaletteParticles).
 /// Any other value places nothing.
 void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   static struct SpriteScale normalScale = {{{0x10000, 0x10000}}};
@@ -191,10 +199,13 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 
   pos.groundHeight = 0;
   pos.height = 255 << 16;
+  // XXX: what a height of 255 means to the placement; the field objects'
+  // use of SpritePlacement.height would settle it.
   switch (formation) {
+  // 1 << 21 is 32 pixels in 16.16.
   case 0:
     for (i = 0; i != 9; i++) {
-      pos.x = (i % 3 << 21) + x; // 32-pixel spacing
+      pos.x = (i % 3 << 21) + x;
       pos.y = (i / 3 << 21) + z;
       Object_ApplyProjectedPlacementFar(work->objects[i], &pos, &normal, 0);
     }
@@ -223,8 +234,10 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   }
 }
 
-/// Fragment graphics: four 12x24 images
+/// The fragment pictures in the sheet, four of 12x24, after the flash.
 #define IMPACT_BURST_SHARD_CELLS 0x59d8
+#define IMPACT_BURST_FRAGMENT_WIDTH 12  ///< each fragment picture's width
+#define IMPACT_BURST_FRAGMENT_HEIGHT 24 ///< and height
 
 #define IMPACT_BURST_FRAMES 72
 #define IMPACT_BURST_FRAGMENTS 3     ///< fragments, work->particles 61 to 63
@@ -235,10 +248,20 @@ void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
 /// the first fragment in work->particles
 #define IMPACT_BURST_FIRST_FRAGMENT 61
 
-/// Opens an impact flash and scatters sparks and fragments over 72 frames.
-/// Also rearrange the objects into formation during the first 36 frames.
-/// formation: layout used by BattleFx_PlaceFormationObjects
-/// x, y: impact position in 16.16 pixels
+/// Opens an impact flash and scatters sparks and fragments, keeping the
+/// effect's objects in formation for the first 36 frames.
+///
+/// The close of four summons: Thor, Nereid, Cybele and Tiamat's
+/// BattleFx_RunPaletteParticles call it once their own frames are over, each
+/// with its own formation. Builds and frees both blitters, starts and stops
+/// the canvas transfer, sets REG_BG2PA, REG_BG2X and REG_BLDCNT, loads
+/// pictures into the sheet slot and work->sheet and overwrites
+/// work->particles 0 to 63 and PARTICLES 0 to 63. It leaves the canvas's
+/// VRAM cleared; ending the canvas layer is left to the caller.
+///
+/// formation: the layout for BattleFx_PlaceFormationObjects.
+/// x, y: the formation's origin in 16.16 pixels; the burst is drawn 40 pixels
+/// right of x, halved for the wide canvas.
 void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
   void **slots;
   void **cursor;
@@ -252,13 +275,13 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
   s32 frame;
   s32 i;
 
-  // Set up work and canvas; double BG2 horizontally and blend BG1 and BG2
-  // over the layers below.
+  // BG2 shows the canvas at twice its width, and BG1 and BG2 blend over the
+  // layers below.
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
   orgX = x;
   x += 40 << 16;
-  x /= 2; // Canvas uses half the horizontal width.
+  x /= 2;
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   REG_BLDCNT =
@@ -308,13 +331,17 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
     PARTICLES[i].variant = (Random16() & 15) + 20;
   }
 
+  // Frames 0 to 47 show the flash, and the large sparks join from frame 1.
+  // From frame 36 the formation stays where it is, the small sparks fly and
+  // the fragments tumble until frame 63.
   for (frame = 0; frame != IMPACT_BURST_FRAMES; frame++) {
     if (frame == 4)
       AudioCommand_PlayFar(SE_CAST);
     if (frame == 32)
       AudioCommand_PlayFar(SE_212);
 
-    // Flash: advance the image every five frames starting at frame 8.
+    // The flash: its first picture until frame 12, then the next every five
+    // frames, eight in all.
     if (frame <= 47) {
       s32 cell = (frame - 8) / 5;
       u32 width;
@@ -388,8 +415,14 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
         cell = (frame - 36) / 7;
         px = Q_16_16_TO_INT(shard->x);
         py = Q_16_16_TO_INT(shard->y);
-        maxBlend(canvas, work->sheet + cell * 0x120 + IMPACT_BURST_SHARD_CELLS,
-                 px - 6, py - 12, 12, 24);
+        maxBlend(canvas,
+                 work->sheet +
+                     cell * (IMPACT_BURST_FRAGMENT_WIDTH *
+                             IMPACT_BURST_FRAGMENT_HEIGHT) +
+                     IMPACT_BURST_SHARD_CELLS,
+                 px - IMPACT_BURST_FRAGMENT_WIDTH / 2,
+                 py - IMPACT_BURST_FRAGMENT_HEIGHT / 2,
+                 IMPACT_BURST_FRAGMENT_WIDTH, IMPACT_BURST_FRAGMENT_HEIGHT);
       }
     }
 
@@ -398,7 +431,7 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
     EFFECT_PRESENT_FRAME(work);
   }
 
-  // Finish by clearing background character block 1.
+  // Clear the canvas in VRAM (character block 1), so nothing is left on BG2.
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   EFFECT_RELEASE_BLITTERS();
@@ -411,6 +444,8 @@ void BattleFx_RunImpactBurst(s32 formation, s32 x, s32 y) {
 #undef HELM_SPLITTER_SPARKS
 #undef HELM_SPLITTER_SPARK_SLOTS
 #undef IMPACT_BURST_SHARD_CELLS
+#undef IMPACT_BURST_FRAGMENT_WIDTH
+#undef IMPACT_BURST_FRAGMENT_HEIGHT
 #undef IMPACT_BURST_FRAMES
 #undef IMPACT_BURST_FRAGMENTS
 #undef IMPACT_BURST_DRAWN_LARGE

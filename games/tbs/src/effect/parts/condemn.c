@@ -20,6 +20,12 @@
 /// Abilities: Condemn (kind 40).
 ///
 /// The effect layer ripples throughout. 132 frames.
+///
+/// Opens the tiled canvas (BattleFx_BeginTiledCanvas) and adds
+/// BattleFx_ArmBg2AffineHBlankDma to feed work->bg2xLines to BG2X; decodes
+/// the burst's pieces into Ram_MapCellBuffer; moves the target's object; and
+/// reloads the battle backdrop on BG1 before it closes the layer. It never
+/// calls EFFECT_SHOW_DAMAGE, and leaves the flash timers alone.
 void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -48,7 +54,9 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
-  // The panel in work, the pieces of the burst in PARTICLES.
+  // Setup. The panel and the first two burst pictures in work->sheet, with
+  // their palette; the later pieces in PARTICLES (Ram_MapCellBuffer), whose
+  // own palette is skipped.
   sheet = Resource_GetTableEntry((s32)&ResourceId_CounterRevealSheet);
   Iwram_CopyWords((void *)BG_PLTT, sheet, 128);
   sheet = sheet + 128;
@@ -66,10 +74,10 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
   draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
   Scheduler_AddOrUpdateCallback(BattleFx_ArmBg2AffineHBlankDma,
                                 EFFECT_CALLBACK_ORDER);
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
-                        zero); // redraw from blank each frame
-  // curve is where the panel swings about, in 16.16 pixels: the first pass
-  // high up on the near side.
+  // Redraw from blank each frame.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, zero);
+  // swing is the point the panel sways about, in 16.16 pixels: the first
+  // pass high up on the near side.
   drawPanel = 1;
   if (work->effect->side == 1) {
     swing[0] = -0x500000;
@@ -87,6 +95,8 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
     s32 i;
     s32 *scanline;
 
+    // Frame loop. The panel sways 16 pixels across and 4 up and down about
+    // the swing point, a full turn every 128 frames.
     spin = frame << 9;
     screenX = (swing[0] >> 16) + (((Trig_Sin(spin) * 16)) >> 16) + 48;
     screenY = (swing[1] >> 16) + (((Trig_Cos(spin) * 4)) >> 16) + 16;
@@ -94,7 +104,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
       AudioCommand_PlayFar(SE_HEAVY_IMPACT);
     }
     // Frame 32: the second pass, lower and further across; the panel skips
-    // a frame while it moves.
+    // a frame while it moves, and comes back opaque on frame 33.
     if (frame == 32) {
       if (work->effect->side == 1) {
         swing[0] = -0x200000;
@@ -124,7 +134,7 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
       drawPanel = 1;
     }
     // The last 16 frames of each of the first two passes ripple harder and
-    // harder as the panel fades out.
+    // harder (up to 30/4 texels) as the panel fades out.
     scanline = work->bg2xLines;
     ripple = 0;
     if (frame <= 31) {
@@ -142,6 +152,8 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
       ripple = 0;
     }
 
+    // Every line's BG2X carries the sway, so the panel moves by scrolling
+    // the canvas rather than by where it is drawn.
     i = 0;
     lineOffset = (6 - screenX) << 8;
     angle = frame << 11;
@@ -160,7 +172,10 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
         panelRow = i >> 31;
       }
       // The panel until frame 91; from frame 88 the burst: a white flash
-      // over the whole canvas, then larger pieces two frames each.
+      // (level 63 over the whole canvas, covering what was drawn) on
+      // frames 88 and 89, then larger pieces two frames each. Stage n of
+      // gCondemn_PanelX and _PanelY places picture n; the row and column
+      // are the side's.
       if (frame <= 87) {
         draw[work->effect->side](
             canvas, work->sheet, CONDEMN_PANEL_X(panelColumn, 0),
@@ -207,7 +222,8 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
         }
       }
     }
-    // Frame 88: knock the target back, away from the middle of the field.
+    // Frame 88: knock the target back, away from the middle of the field,
+    // to twice its x at up to 2 pixels a frame.
     if (frame == CONDEMN_BREAK_FRAME) {
       target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
       target->velocityY = 0x10000;
@@ -227,6 +243,10 @@ void BattleFx_RunCondemn(struct BattleEffectArgument *effect) {
     }
     EFFECT_PRESENT_FRAME(work);
   }
+  // Finish: the callbacks, then the battle backdrop reloaded into
+  // character blocks 2 and 3, its palettes darkened to level 24.
+  // XXX: why it is reloaded, when nothing in this effect writes those
+  // blocks; a VRAM view after the panel breaks would show what it repairs.
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   Scheduler_RemoveCallback(BattleFx_ArmBg2AffineHBlankDma);
   BattleBackground_LoadFar(1, gBattleWork->background, 24);

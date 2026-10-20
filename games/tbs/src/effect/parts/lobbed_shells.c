@@ -52,22 +52,28 @@ void BattleFx_RunStickyPoison(struct BattleEffectArgument *effect) {
 void BattleFx_RunRottenBlood(struct BattleEffectArgument *effect) {
   BattleFx_RunLobbedShells(effect, 3);
 }
-// gLobbedShells_Records has two entries per style; the first is nonzero when
-// the shells burst into shards instead of smoke.
-
-// The bursts live after the shells in PARTICLES.
+/// The bursts live after the shells in PARTICLES: 32 slots a target, of
+/// which 4 smoke puffs or 16 shards are used.
 #define LOBBED_SHELLS_BURSTS ((struct EffectStep *)(Ram_MapCellBuffer + 0x1c00))
 #define LOBBED_SHELLS_SLOTS 16           ///< particles reserved for each target
 #define LOBBED_SHELLS_BURST_SLOTS 256    ///< burst particles after the shells
 #define LOBBED_SHELLS_SMOKE_CELLS 0x3e80 ///< the smoke pictures in the sheet
 
-/// Nonzero when the style's shells burst into shards instead of smoke.
+/// Nonzero when the style's shells burst into shards instead of smoke: the
+/// first of the style's two entries in gLobbedShells_Records; the second is
+/// never read.
 #define LOBBED_SHELLS_SHATTER(mode) gLobbedShells_Records[(mode) * 2]
 
 /// Lobs a shell from the user at each target in turn, 8 frames apart. Each
 /// tumbles through ten images as it flies and, when it lands, the target
 /// flashes and the battle shows the damage; the shell bursts into 4 smoke
 /// puffs that drift up or 16 shards that fly up and fall.
+///
+/// Called by the seven handlers above, from BattleFx_RunMadSpatter to
+/// BattleFx_RunRottenBlood. Loads three palettes over the first 64
+/// background colours in turn, the style's last; uses PARTICLES 0 to 1023
+/// for the shells and LOBBED_SHELLS_BURSTS for the bursts.
+///
 /// mode : the style, 0 to 6: the colours and the row of gLobbedShells_Records.
 void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
   struct EffectPosition position;
@@ -93,7 +99,8 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
   BattleFx_BeginCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
-  // The shell images, the smoke at 0x3e80 and the style's palette.
+  // Setup. The shell images, the smoke at LOBBED_SHELLS_SMOKE_CELLS and the
+  // style's palette; mode 5 shares mode 3's green.
   palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
@@ -119,7 +126,8 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
 
   // Each target's shells start 4 pixels up at the user, with a 16-frame
-  // flight to the target and an upward throw.
+  // flight to the target and an upward throw of 4 pixels a frame; only the
+  // first of each target's 16 is drawn.
   EFFECT_FREE_PARTICLES(i, PARTICLES, 1024);
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   height = 0x40000;
@@ -166,8 +174,8 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
       draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     }
   }
-  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE,
-                        75); // trails keep 3/4 a frame
+  // Trails keep 3/4 a frame. Smoke lingers 16 frames longer than shards.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   if (LOBBED_SHELLS_SHATTER(mode) == 0)
     total = work->effect->count * 8 + 72;
   else
@@ -178,8 +186,9 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
     struct EffectStep *burst;
 
     EFFECT_VIEW_FROM_CAMERA(camera);
-    // The shells: target k's shell flies from frame 8k, and the target is
-    // hit on frame 8k + 17.
+    // Frame loop. The shells: target k's shell flies from frame 8k, and the
+    // target is hit on frame 8k + 17, about when its shell lands; a shell's
+    // variant turns 1 when it does.
     k = 0;
     if (work->effect->count != 0) {
       do {
@@ -211,9 +220,11 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
             else
               draw[0](canvas, work->sheet + step * (24 * 32), position.x - 12,
                       position.y - 16, 24, 32);
+            // Half a pixel of gravity a frame while it flies.
             if (shot->variant == 0)
               EffectStep_AdvanceWithGravity3D(shot, 63, -0x8000);
-            // On the ground: the shell stops and bursts.
+            // On the ground: the shell stops, stays drawn where it lies, and
+            // bursts into target k's run of LOBBED_SHELLS_BURSTS.
             if (shot->y < 0) {
               s32 count;
               s8 *records = gLobbedShells_Records;
@@ -257,8 +268,10 @@ void BattleFx_RunLobbedShells(struct BattleEffectArgument *effect, s32 mode) {
         k++;
       } while (k != work->effect->count);
     }
-    // The bursts, for 45 frames: smoke through six images, or shards that
-    // tumble through nine images, half of them from a second set.
+    // The bursts, for 45 frames: smoke through six 24x48 images, eight
+    // frames each, drifting up; or shards that tumble through nine images,
+    // five frames each, the odd shards from a second set, and fall. A burst
+    // that sinks below the ground is no longer drawn or moved.
     for (i = 0, burst = LOBBED_SHELLS_BURSTS; i != LOBBED_SHELLS_BURST_SLOTS;
          burst++, i++) {
       if ((u32)burst->variant <= 44 && burst->y >= 0) {

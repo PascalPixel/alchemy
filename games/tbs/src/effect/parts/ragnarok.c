@@ -4,23 +4,15 @@
 
 #include "../effect_internal.h"
 
-// Ragnarok swings a 64x128 blade down over 10 frames, pauses until frame 20
-// and then creeps on until frame 39. Two columns of light strike at frames 16
-// and 24: each is a large flash, a ring of 12 small flashes and 256 sparks
-// that bounce on the ground. The targets recoil as each column's sparks fly.
-// Sounds, shakes, fades and reactions each happen on a fixed frame. The
-// flashes live in work->particles and the blade picture in the work sheet;
-// PARTICLES holds 340 sparks per column.
-
 /// Where the flash graphics start: after the 64x128 sword image.
 #define RAGNAROK_FLASH_CELLS (64 * 128)
 
 #define RAGNAROK_FRAMES 80
-#define RAGNAROK_COLUMNS 2        ///< columns that strike
-#define RAGNAROK_SEEDED 3         ///< columns given particles
-#define RAGNAROK_FLASHES 16       ///< flashes kept per column
-#define RAGNAROK_RING 12          ///< of which drawn as the ring
-#define RAGNAROK_SPARKS 340       ///< sparks kept per column
+#define RAGNAROK_COLUMNS 2  ///< columns that strike
+#define RAGNAROK_SEEDED 3   ///< columns given particles; the third is unused
+#define RAGNAROK_FLASHES 16 ///< flashes kept per column
+#define RAGNAROK_RING 12    ///< of which drawn as the ring
+#define RAGNAROK_SPARKS 340 ///< sparks kept per column
 #define RAGNAROK_DRAWN_SPARKS 256 ///< of which flown
 
 /// gRagnarok_StrikeColumns has three columns for each side.
@@ -36,7 +28,8 @@
 /// until frame 20, then creeps on. The columns flash at frames 16 and 24 and
 /// scatter sparks six frames later, as the targets recoil; the battle shows the
 /// damage on frame 40. Column x comes from gRagnarok_StrikeColumns: first two
-/// of three per side. PARTICLES holds 340 sparks per column.
+/// of three per side. work->particles holds 16 flashes a column and PARTICLES
+/// 340 sparks a column.
 void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
@@ -53,6 +46,8 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
 
   user = GetBattleObjectSlotFar(effect->actor)->object;
+  // XXX: why the variant is forced to 1, as nothing in the effect or the
+  // battle reads it afterwards; the Lost Age's Ragnarok may show.
   effect->variant = 1;
   work->effect = effect;
   BattleFx_BeginCanvasLayer(1);
@@ -68,9 +63,8 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
                              work->sheet + RAGNAROK_FLASH_CELLS, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 
-  //------------------------------------------------------------------
-  // Prepare 16 flashes and 340 sparks per column.
-  //------------------------------------------------------------------
+  // Prepare 16 flashes and 340 sparks a column, for three columns although
+  // only two strike: the third's random draws are still taken.
   col = 0;
   do {
     // Flashes: i * 2 pixels from the center, lifetime 25-32.
@@ -107,9 +101,8 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
     col++;
   } while (col != RAGNAROK_SEEDED);
 
-  EFFECT_START_TRANSFER(
-      work, CANVAS_COPY_AND_FADE,
-      75); // Reduce to 3/4 on each transfer for an afterimage.
+  // Each transfer keeps 3/4 of every canvas level, for an afterimage.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   frame = 0;
   do {
@@ -117,6 +110,7 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
     if (frame == 4) {
       AudioCommand_PlayFar(SE_212);
     }
+    // An 8-frame shake from frame 8.
     if (frame == 8) {
       work->shakeFrames = frame;
     }
@@ -127,10 +121,9 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
 
-    //------------------------------------------------------------------
-    // Swing down over 10 frames, pause until frame 20, then advance slowly.
-    // Do not draw below y = 104.
-    //------------------------------------------------------------------
+    // Frames 0 to 39, the blade: it swings down 16 pixels and 10 across a
+    // frame for 10 frames, pauses until frame 20, then creeps on, 2 pixels
+    // down and 1 across a frame. It is cut off at line 104.
     if (frame <= 39) {
       s32 height;
       s32 x;
@@ -173,9 +166,8 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
       BattleFx_StepPaletteToResource((s32)&ResourceId_BlastSheet);
     }
 
-    //------------------------------------------------------------------
-    // Two columns: flashes at start, sparks at start + 6.
-    //------------------------------------------------------------------
+    // The two columns, from frames 16 and 24: a 12-frame shake and the
+    // flashes at their start, the sparks from 6 frames later.
     col = 0;
     do {
       s32 start = col * 8 + 16;
@@ -238,8 +230,8 @@ void BattleFx_RunRagnarok(struct BattleEffectArgument *effect) {
                 s32 py = y >> 16;
                 s32 px = x >> 16;
 
-                // Size follows lifetime; alternate comparison and additive
-                // compositing.
+                // Size follows lifetime, 1 to 8 pixels; alternate sparks take
+                // the brighter pixel or add.
                 size = spark->variant / 5 + 1;
                 lane = i & 1;
                 cell = sheet + gBattleFx_MoteCells[size - 1];

@@ -41,7 +41,12 @@
 /// the battle shows the damage and an impact burst (BattleFx_RunImpactBurst)
 /// explodes at the formation.
 ///
-/// effect: the targets.
+/// Besides the canvas and work->particles (above), it writes the dissolve
+/// order into the first 1024 bytes of Ram_MapCellBuffer, greys the first 64
+/// background colours, lifts and drops the targets' objects (their y and
+/// gravity), and sets REG_BG2X, REG_BG2PA, REG_BLDCNT and work->shakeFrames.
+/// It spawns eight formation objects and releases them, the transfer callback
+/// and the blitters before it closes the canvas layer.
 void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
   void **cursor;
   struct BattleEffectWork *work;
@@ -63,7 +68,8 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
   work->effect = effect;
   BattleFx_SpawnObjects(8, 0x177, 1);
 
-  // The dissolve order: eight shuffled runs of the columns 0 to 127.
+  // Setup. The dissolve order: eight shuffled runs of the columns 0 to 127,
+  // each shuffled by 128 random swaps.
   order = Ram_MapCellBuffer;
   for (i = 0; i != 1024; i++)
     order[i] = i & 127;
@@ -232,8 +238,11 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
           s32 wrap;
           s32 k;
 
+          // The second picture follows the first's tip and stem.
           if (i > 5)
             sheet = work->sheet + 24 * (8 + 64);
+          // velocityY is the vine's growth in pixels a frame, variant its
+          // delay.
           top = (rise - vine->variant) * vine->velocityY;
           for (wrap = top; wrap > 184; wrap -= 64)
             ;
@@ -415,6 +424,8 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
         struct MotionObject *object =
             GetBattleObjectSlotFar(work->effect->actors[i])->object;
 
+        // 0xab85 is the battle units' usual gravity, which the lift
+        // cleared (battle/motion.c sets the same).
         object->y = 96 << 16;
         object->verticalMotionStrength = 0xab85;
       }
@@ -502,6 +513,8 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
       }
     }
 
+    // The camera shake, by phase: the formation and thorns, the vines and
+    // the dissolve, the blasts.
     if (frame <= 127)
       Camera_ApplyShake(4, 16);
     else if (frame <= 301)
@@ -511,6 +524,8 @@ void BattleFx_RunCybele(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
 
+  // The end: the impact burst builds its own blitters and starts its own
+  // transfer, so the scene's are released first.
   Scheduler_RemoveCallback(BattleFx_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);

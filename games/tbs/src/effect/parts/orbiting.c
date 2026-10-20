@@ -4,12 +4,10 @@
 
 #include "../effect_internal.h"
 
-// - The swirling stars spin 64 stars about a point above the field, each on
-//   its own axis, then pull them back to the centre.
-// - The orbiting skulls (BattleFx_RunOrbitingSkulls) circle each target in
-//   turn, three to a target, their angles kept in the particles' velocityX.
-// - The target bursts flare up on each target while five puffs of smoke
-//   scatter around each flare; six particle slots per target.
+// None of the three effects here is called, or held in any table: they are
+// in the ROM but unreachable. XXX: whether they are leftovers or reached by
+// some path not yet read; a pointer to one in data outside the effect
+// tables would settle it.
 
 #define SWIRLING_STARS_FRAMES 160
 #define SWIRLING_STARS_COUNT 64 ///< stars that swirl
@@ -20,7 +18,11 @@
 /// smaller the further away they are. The scene runs for 160 frames. All
 /// 256 stars of the pool are seeded, at rest in a cube 255 pixels across,
 /// though only 64 are drawn.
-void BattleFx_RunSwirlingStars(struct BattleEffectArgument *effect) {
+///
+/// Nothing calls it. Draws through the side's blitters mirrored (side ^ 1),
+/// and ends with the transfer callback removed, the blitters freed and the
+/// canvas layer closed.
+UNUSED void BattleFx_RunSwirlingStars(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -46,6 +48,7 @@ void BattleFx_RunSwirlingStars(struct BattleEffectArgument *effect) {
     star->variant = 0;
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
+  // The stars turn about a point 80 pixels up.
   SET_VECTOR(center, 0, 160 << 15, 0);
   for (frame = 0; frame != SWIRLING_STARS_FRAMES; frame++) {
     struct BattleCamera *camera;
@@ -54,6 +57,7 @@ void BattleFx_RunSwirlingStars(struct BattleEffectArgument *effect) {
     EFFECT_VIEW_FROM_CAMERA(camera);
     SceneTransform_ApplyPosition(center);
     star = PARTICLES;
+    // Star i appears after frame i / 4; variant stays 0, so none is retired.
     for (i = 0; i != SWIRLING_STARS_COUNT; i++, star++) {
       if (frame > i / 4 && star->variant == 0) {
         s32 size;
@@ -79,6 +83,8 @@ void BattleFx_RunSwirlingStars(struct BattleEffectArgument *effect) {
         EffectPosition_ProjectPoint(star, &screen);
         screen.x >>= 1;
         Transform_Pop();
+        // Size 9 to 3 over depths 250 to 634, from the star's own mote set
+        // (i & 3).
         CLAMP(screen.depth, 250, 0x27a);
         size = 9 - (screen.depth - 250) / 64;
         draw[0](canvas,
@@ -86,6 +92,8 @@ void BattleFx_RunSwirlingStars(struct BattleEffectArgument *effect) {
                     ((i & 3) * MOTE_SET_BYTES + gBattleFx_MoteCells[size - 1]),
                 screen.x - size / 2, screen.y - size, size, size * 2);
         EffectStep_AdvanceWithGravity3D(star, 60, 0);
+        // From 30 frames after it appears, pull it towards the centre by
+        // 1/256 of its distance a frame.
         if (frame > i / 4 + 30) {
           s32 dx = -star->x >> 8;
           s32 dy = -star->y >> 8;
@@ -106,7 +114,13 @@ void BattleFx_RunSwirlingStars(struct BattleEffectArgument *effect) {
 /// apart, for 64 frames each, a third of a turn apart on a circle of 8
 /// pixels around the target. Runs with the effect already in
 /// gBattleFxWork.
-void BattleFx_RunOrbitingSkulls(void) {
+///
+/// Nothing calls it. Copies the skull palette over the first 128 bytes of BG
+/// palette RAM; writes REG_BG2PA, REG_BG2X and REG_BLDALPHA; keeps each
+/// skull's angle in velocityX of work->particles, three to a target. Ends
+/// with the transfer callback removed, the blitter freed and the canvas
+/// layer closed.
+UNUSED void BattleFx_RunOrbitingSkulls(void) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 point[3];
@@ -147,7 +161,8 @@ void BattleFx_RunOrbitingSkulls(void) {
   do {
     REG_BG2X = xOffset << 8;
   } while (0);
-  // velocityX holds each skull's angle on its orbit.
+  // velocityX holds each skull's angle on its orbit; x, y and z are set but
+  // never read.
   for (i = 0; i != 64; i++) {
     struct EffectStep *step = &work->particles[i];
 
@@ -184,6 +199,8 @@ void BattleFx_RunOrbitingSkulls(void) {
         do {
           center.x += xOffset;
         } while (0);
+        // Three skulls a third of a turn apart, each turning 1/128 of a turn
+        // a frame; skull i is the i-th 24x24 picture.
         for (i = 0; i != 3; i++) {
           struct EffectStep *spark = &work->particles[member * 3 + i];
           s32 x;
@@ -211,7 +228,11 @@ void BattleFx_RunOrbitingSkulls(void) {
 /// Target bursts: on each target in turn, 8 frames apart, a burst flares up
 /// in the middle while five puffs of smoke scatter around it, for 40
 /// frames.
-void BattleFx_RunTargetBursts(struct BattleEffectArgument *effect) {
+///
+/// Nothing calls it. Copies the pink burst palette over the first 128 bytes
+/// of BG palette RAM, uses work->particles six to a target, and ends with the
+/// transfer callback removed, the blitters freed and the canvas layer closed.
+UNUSED void BattleFx_RunTargetBursts(struct BattleEffectArgument *effect) {
   void **slots;
   void **cursor;
   struct BattleEffectWork *work;
@@ -274,6 +295,7 @@ void BattleFx_RunTargetBursts(struct BattleEffectArgument *effect) {
 
       effect = GetBattleObjectSlotFar(work->effect->actors[member])->object;
       EFFECT_VIEW_FROM_CAMERA(camera);
+      // Centred 20 pixels above the target's feet.
       SET_VECTOR(point, effect->x, 160 << 13, effect->z);
       SceneTransform_ApplyPosition(point);
       if (frame >= member * 8 && frame < member * 8 + 40) {

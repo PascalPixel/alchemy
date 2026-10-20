@@ -4,12 +4,6 @@
 
 #include "../effect_internal.h"
 
-// Atalanta's staged slashes run in two parts. In the gathering part a 3x3
-// formation follows a stored path while sixteen blades draw their trail
-// particles in, flash and fly off; each trail particle's random rotation
-// matrix is stored after the particle records in the shared scratch buffer.
-// In the falling part 24 blades drop onto the targets and burst into flame.
-
 /// The trail particles' random rotations, 48 bytes each, after the 384
 /// particles in PARTICLES.
 #define ATALANTA_MATRICES (Ram_MapCellBuffer + 0x3800)
@@ -40,6 +34,17 @@ enum SlashSheetCell {
 ///
 /// Then 24 blades fall diagonally on the targets and burst into flame, hitting
 /// each target as they land.
+///
+/// The gathering lasts up to 220 frames and the fall 88. work->particles holds
+/// the 16 gathering blades and then the falling ones; PARTICLES holds 24 trail
+/// particles for each gathering blade, with their rotations in
+/// ATALANTA_MATRICES. The formation is nine objects in work->objects, released
+/// between the parts. Loads the violet sky into BG1 and scrolls it with
+/// BattleFx_AdvanceScrollOnInterval during the gathering, holding view->busy;
+/// restores gBgScroll[1].x and gives BG1 back with
+/// BattleFx_SetupBlendedDisplay between the parts. Leaves the ember sheet in
+/// Ram_MapCellBuffer, and ends with the transfer callback removed, the
+/// blitters freed and the canvas layer closed.
 ///
 /// effect: the targets.
 void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
@@ -72,7 +77,9 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_BACKGROUND];
   scrollX = gBgScroll[1].x;
   work->effect = effect;
-  EFFECT_BEGIN_NARROW_CANVAS(0x2000);
+  // Setup: the canvas, with colours 0 and 1 black, is wiped to colour 1 from
+  // the top, so the screen goes black before the formation is spawned.
+  EFFECT_BEGIN_NARROW_CANVAS(BGCNT_WRAP);
   BattleFx_ConfigureEffectDisplay();
   BG_PLTT[0] = 0;
   BG_PLTT[1] = 0;
@@ -81,6 +88,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
                                 EFFECT_CALLBACK_ORDER);
   BattleFx_WipeCanvas(0, 0);
   BattleFx_SelectLivingTargets(work->effect);
+  // The formation: nine objects from resource object 370, sprite priority 1.
   BattleFx_SpawnObjects(9, 370, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SlashSheet, work->sheet, 1, 1);
   Iwram_CopyWords((void *)BG_PLTT,
@@ -96,6 +104,8 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   do {
     draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_BACKGROUND];
   } while (0);
+  // The projection centre moves down to line 240 for the gathering;
+  // BattleFx_SetupBlendedDisplay puts it back at 120 between the parts.
   gProjection.centerY = 240;
   WaitFrames(1);
   // The violet sky scrolls one pixel left every four frames.
@@ -133,6 +143,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
+  // The gathering: 220 frames, or until A or B is pressed.
   for (frame = 0; frame != 220 && !(gKeysRepeat & (KEY_A | KEY_B)); frame++) {
     // The formation follows the path through frame 209: two 16-bit
     // coordinates, then a signed byte step for each axis every frame. Its
@@ -161,7 +172,8 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
     }
     point[1] = 0;
     point[2] = 0;
-    // From frame 48, a fade over 24 frames.
+    // From frame 48 the backdrop darkens over 24 frames
+    // (Palette_StepFadeTransfer, which the canvas layer scheduled).
     if (frame == 48) {
       work->fadeFrames = 24;
       work->fadeStep = 0;
@@ -191,6 +203,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
           draw[0](canvas, work->sheet + ATALANTA_SLASH_BOTTOM, x - 20, y + 16,
                   21, 24);
         } else if (frame >= i * 8 + 80) {
+          // The flash: five pictures, one a frame, the later ones in parts.
           switch (frame - start - 16) {
           case 0:
             draw[0](canvas, work->sheet + ATALANTA_SLASH_FLASH_1, x - 7, y - 14,
@@ -224,9 +237,10 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
             break;
           }
         } else {
-          // The trails: a particle's x is its distance from the blade; while
-          // it is positive the particle is drawn on its stored rotation and
-          // moves 4 closer.
+          // The trails: a particle's x is its distance from the blade (48 to
+          // 63, plain pixels, not 16.16); while it is positive the particle is
+          // drawn on its stored rotation and moves 4 closer, so all are in
+          // within the blade's 16 gathering frames.
           for (j = 0; j != 24; j++) {
             struct EffectStep *trail = &PARTICLES[i * 24 + j];
 
@@ -261,8 +275,9 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
     }
     EFFECT_PRESENT_FRAME(work);
   }
-  // Between the parts: stop the scroll, release the formation and load the
-  // ember streak sheet into the map cell buffer for the flames.
+  // Between the parts: stop the scroll, give BG1 back to the battle, release
+  // the formation and load the ember streak sheet into the map cell buffer
+  // for the flames.
   Scheduler_RemoveCallback(BattleFx_AdvanceScrollOnInterval);
   view->busy = 0;
   gBgScroll[1].x = scrollX;
@@ -275,7 +290,9 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
                              Ram_MapCellBuffer, 1, 0);
   // Second part: aim 32 blades above the field, in pixels, to fall
   // diagonally: blade i on target i % 6 where there is one, on a random
-  // column otherwise.
+  // column otherwise. Only the first 24 fall. The x start allows for the
+  // blade's fall of 6 across for every 12 down, to land on the target's
+  // half-width x.
   for (i = 0; i != 32; i++) {
     struct EffectStep *slash = &work->particles[i];
     s32 member = i % 6;
@@ -301,6 +318,8 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
       struct EffectStep *slash = &work->particles[i];
 
       if (frame >= i * 2 || frame > 40) {
+        // Landed (variant counts the frames since): the flame's six
+        // pictures, 4 frames each, the two blitters alternating by blade.
         if (slash->variant >= 0) {
           if (slash->variant <= 23) {
             s32 cell = slash->variant / 4;
@@ -333,6 +352,7 @@ void BattleFx_RunAtalanta(struct BattleEffectArgument *effect) {
         } else {
           s32 height = 24;
 
+          // Falling: the blade's lower part is cut off below row 96.
           if (slash->y > 56)
             height = height - slash->y + 56;
           draw[0](canvas, work->sheet + ATALANTA_SLASH_TOP, slash->x + 4,

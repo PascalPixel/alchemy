@@ -4,15 +4,9 @@
 
 #include "../effect_internal.h"
 
-// Kirin's object row runs in two stages. In the sweep stage nine objects
-// ride in on a sine wave while the backdrop scrolls, a ring of motes opens
-// around them and a trail of fire follows. In the rise stage the row slides
-// across the targets; each target the row passes throws a burst of 32 motes
-// and plays its hit reaction, and the fire sheet slides off behind it. The
-// objects are the effect's animation objects (work->objects, created by
-// BattleFx_SpawnObjects).
-
-#define KIRIN_OBJECTS 9 ///< objects in the rows
+#define KIRIN_OBJECTS 9 ///< objects in the row, work->objects[0] to [8]
+/// One 48x32 fire blob picture; the fire sheet holds four.
+#define KIRIN_BLOB_BYTES (48 * 32)
 
 /// Over a scrolling forest a row of objects rides in on a wave trailing fire,
 /// then sweeps across the targets, each throwing a burst of motes as the row
@@ -26,7 +20,11 @@
 /// follows. In the rise (96 frames) the row slides across the targets; each
 /// target the row passes throws a burst of 32 motes and plays its hit
 /// reaction, and the fire sheet slides off behind it. The battle shows the
-/// damage at the end.
+/// damage at the end. The scene leaves gProjection.centerY at 240.
+///
+/// Particles: work->particles 0 to 47 are the fire trail (x in pixels, y
+/// 16.16, variant the frames before it starts); PARTICLES 32i to 32i + 31
+/// are target i's burst motes, variant their frames left.
 void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   static struct SpriteScale sweepScale = {{{0x10000, 0x10000}}};
   static struct SpriteScale riseScale = {{{0x10000, 0x10000}}};
@@ -63,6 +61,8 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   work->transferMode = CANVAS_COPY;
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
                                 EFFECT_CALLBACK_ORDER);
+  // Setup: wipe the battle away, swap in the forest backdrop behind a window
+  // 202 pixels wide, and wipe back.
   BattleFx_WipeCanvas(1, 0);
   BattleFx_SpawnObjects(KIRIN_OBJECTS, 0x175, 1);
   gProjection.centerY = 240;
@@ -83,13 +83,15 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   control = cursor[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE_CANVAS];
   shift = 0;
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, baseX);
+  // The scene owns BG1's scroll until the rise stage.
   control->busy = 1;
 
   i = 0;
   do {
     struct EffectStep *fire = &work->particles[i];
 
-    // The 64 fire particles start at random places, speeds and delays.
+    // 64 fire particles start at random places, speeds and delays; only the
+    // first 48 are ever drawn.
     fire->x = (Random16() & 31) + 16;
     fire->y = ((Random16() & 31) + 48) << 16;
     fire->velocityY = ((Random16() & 31) - 16) << 16;
@@ -100,6 +102,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
   blit = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+  // The canvas sits behind the row until frame 28.
   REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
 
@@ -162,6 +165,8 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
         if (frame <= 104) {
           amp = 32;
         }
+        // Folding the angle into the first half turn keeps the sine
+        // positive: the row hops rather than sways.
         ang = (frame * 1024 - 0x2000) & 0xFFFF;
         if (ang > 0x8000) {
           ang -= 0x8000;
@@ -250,8 +255,8 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
       i = 0;
       y = 0;
       do {
-        blit(canvas, work->sheet + (Random16() & 3) * 0x600, 120 - rise, y, 48,
-             32);
+        blit(canvas, work->sheet + (Random16() & 3) * KIRIN_BLOB_BYTES,
+             120 - rise, y, 48, 32);
         i++;
         y += 18;
       } while (i != 6);
@@ -301,6 +306,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
       jitter[i] = Random16() & 31;
       i++;
     } while (i != 16);
+    // 320 burst motes are cleared, though only six targets' 192 are drawn.
     i = 0;
     do {
       PARTICLES[i].variant = 0;
@@ -347,6 +353,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
         } while (i != KIRIN_OBJECTS);
       }
 
+      // Frame 8: Camera_ApplyShake shakes the screen for 8 frames.
       if (frame == 8) {
         work->shakeFrames = frame;
         AudioCommand_PlayFar(SE_145);
@@ -360,7 +367,9 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
 
       EFFECT_FOR_EACH_TARGET(i, work->effect) {
         // A target the row passes for the first time throws a burst of 32
-        // motes and plays its hit reaction.
+        // motes from 16 pixels above its projected point (x halved for the wide
+        // canvas), each already four frames along its path, and plays its hit
+        // reaction.
         if (hit[i] == 0) {
           EffectPosition_ProjectBattler(work->effect->actors[i], &unit);
           if (unit.x > rowX) {
@@ -409,7 +418,8 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
         AudioCommand_PlayFar(SE_136);
       }
       // From frame 41 the fire sheet, 16 jittered rows, slides off to the
-      // left 12 pixels a frame.
+      // left 12 pixels a frame over a canvas that keeps everything; from
+      // frame 65 the canvas fades again and the smear dies away.
       if (frame > 40) {
         s32 slide = (frame - 40) * 12;
         s32 y;
@@ -418,7 +428,7 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
         i = 0;
         y = -8;
         do {
-          blit(canvas, work->sheet + (Random16() & 3) * 0x600,
+          blit(canvas, work->sheet + (Random16() & 3) * KIRIN_BLOB_BYTES,
                jitter[i] - slide + 120, y, 48, 32);
           i++;
           y += 8;
@@ -441,6 +451,8 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
     } while (frame != 96);
   }
 
+  // The finish: the battle shows the damage, then the objects and the
+  // canvas are released.
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   i = 0;
   do {
@@ -451,3 +463,4 @@ void BattleFx_RunKirin(struct BattleEffectArgument *effect) {
 }
 
 #undef KIRIN_OBJECTS
+#undef KIRIN_BLOB_BYTES

@@ -6,9 +6,10 @@
 
 // Astral Blast flies three ten-pointed rings at the target, knocking it back;
 // Shining Star drops eight ten-pointed stars that bounce near the target.
-// Each outline is drawn from a handful of corner points projected onto the
-// canvas and stored in the velocity fields of EffectStep records; each edge
-// is sampled at evenly spaced points and a mote or flare is stamped at each.
+// Each outline is drawn from ten corner points, a tenth of a turn (0x199a)
+// apart, projected onto the canvas and stored in the velocity fields of
+// PARTICLES, ten for each ring or star; each edge is sampled at evenly
+// spaced points and a mote is stamped at each.
 
 /// Three star-shaped rings of light fly from 40 pixels above the user at the
 /// first target, 12 frames apart, growing and spinning as they go, while the
@@ -16,6 +17,11 @@
 /// lets the battle show the damage.
 ///
 /// Abilities: Astral Blast (kind 68).
+///
+/// work->particles 0 to 2 are the rings, battle positions in 16.16. Loads the
+/// rune palette into the first 64 background colours, sets the user's
+/// animation (2, at speed 48), turns the camera's yaw, sends the target
+/// back with its motion fields and sets work->shakeFrames.
 void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
 #ifndef UBFIX
@@ -57,7 +63,8 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
   ObjectDispatch_SelectAnimationFar(caster, 2);
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)caster, 48);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep 3/4 a frame
+  // Trails keep 75% of each pixel a frame.
+  work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
   draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
@@ -198,7 +205,10 @@ void BattleFx_RunAstralBlast(struct BattleEffectArgument *effect) {
 ///
 /// Abilities: Shining Star (kind 62).
 ///
-/// 128 frames.
+/// 128 frames. work->particles 0 to 7 are the stars, battle positions in
+/// 16.16, each variant the frame it starts. Rebuilds the background ramp
+/// each frame (Graphics_UpdatePhasePalette, after loading the rune palette)
+/// and sets work->shakeFrames at each bounce.
 void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -230,7 +240,8 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
   Resource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  work->transferMode = CANVAS_COPY_AND_FADE; // trails keep half a frame
+  // Trails keep half of each pixel a frame.
+  work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 50;
   draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
   Scheduler_AddOrUpdateCallback(BattleFx_ProcessPendingGraphicsTransfer,
@@ -238,9 +249,10 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
 
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
-  // Each star aims at a random spot up to 64 pixels either side of the
-  // target, 20 pixels up, over 12 frames, and starts 8i to 8i + 15 frames
-  // in (its variant).
+  // Each star starts 120 pixels above the user, at half its x (towards the
+  // middle of the field), aims at a random spot up to 64 pixels either side
+  // of the target, 20 pixels up, over 12 frames, and starts 8i to 8i + 15
+  // frames in (its variant).
   for (i = 0, point = work->particles; i != 8; i++) {
     s32 delay = i * 8;
 
@@ -257,6 +269,7 @@ void BattleFx_RunShiningStar(struct BattleEffectArgument *effect) {
   size = 2;
   trails = PARTICLES;
   for (frame = 0; frame != 128; frame++) {
+    // The three channels sway a third of a turn apart.
     Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
     if (frame == 96)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);

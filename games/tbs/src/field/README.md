@@ -61,10 +61,9 @@ prints them all).
 
 ## Words you'll see
 
-A **field object** is one of the 64 slots of `gObjectSlots`, each 0x70 bytes
-long (112 in decimal; a number written with `0x` is hexadecimal). The
-party's characters, the people and things a scene places, the camera and the
-footprints the leader leaves are all field objects. An object's main struct
+A **field object** is one of the 64 slots of `gObjectSlots`, each 112 bytes
+long. The party's characters, the people and things a scene places, the
+camera and the footprints the leader leaves are all field objects. An object's main struct
 is `struct ObjectRuntime`, but the same memory is also read as a
 `DispatchObject`, `ScriptInterpreter`, `ScriptMotionObject`, `FieldActor`
 and more, each naming only the fields its code uses;
@@ -102,10 +101,10 @@ events are keyed on, and its fourth picks its ground shape. A layered map
 has three map **layers**, on BG3, BG2 and BG1, which have nothing to do with
 a sprite's layers.
 
-Positions are in 16.16 fixed-point pixels: the top 16 bits count whole
-pixels and the low 16 bits a fraction, so one pixel is 0x10000. x runs
-across the map, y up, and z down the map. Angles are 16-bit fractions of a
-turn, so 0x4000 is a quarter turn.
+Positions are fixed-point numbers of pixels: the upper half of each 32-bit
+value counts whole pixels and the lower half a fraction of one. x runs across
+the map, y up, and z down the map. Angles are 16-bit fractions of a turn, so a
+quarter turn is a quarter of their range.
 
 Reading the code, you'll meet the same few local names again and again.
 `object` and `interpreter` are the object a command is running on, `sprite`
@@ -228,14 +227,15 @@ on the world map, `SC_KEYS` (8-pixel steps by the direction pad) while
 climbing, or only `SC_KEY_COUNT`, a check of the configured keys, while the
 party is carried through the air.
 
-The speeds are set at the top of each control function, as a `speedLimit`
-and an `acceleration` in 16.16 pixels per frame. On a layered map,
-`FieldObject_UpdatePlayerControl` (`player_control.c`) walks the leader at 1
-pixel a frame (0x10000) and runs at 1.5 (0x18000) while a dash key is held,
-both with an acceleration of a quarter pixel (0x4000); with game flag 383
-(0x17f) set, holding B moves at 4. On the world map, `Object_MoveOnWorldMap` walks at
-half a pixel a frame and 1 with a dash key, and L raises the limit to 4
-pixels with no debug test or flag guarding it.
+Each control function sets the leader's top speed (`speedLimit`) and how
+quickly it gets there (`acceleration`), from the speeds named at the top of
+`player_control.c`. On a layered map, `FieldObject_UpdatePlayerControl` walks
+the leader at 1 pixel a frame (`FIELD_WALK_SPEED`) and runs at 1.5
+(`FIELD_RUN_SPEED`) while a dash key is held, speeding up by a quarter pixel
+each frame. With `FLAG_FAST_WALK` set, holding B moves at 4 pixels a frame;
+no code in the game sets that flag, so it's a leftover from development. On
+the world map, `Object_MoveOnWorldMap` walks at half a pixel a frame and 1
+with a dash key, and L raises the limit to 4 with nothing guarding it.
 
 ![Isaac walking right through Vale, then running back the other way](https://alchemy.pascalpixel.com/guides/field/walk-run.gif)
 
@@ -257,55 +257,47 @@ zooms the view out. They do it for as long as they're held in the
 Japanese release, and once per press from the English one on.
 
 Whether a step is allowed comes from the ground. `Map_CheckObjectStep`
-refuses a wall (collision code 0xff), ground more than 8 pixels higher than
+refuses a wall cell, ground more than 8 pixels higher than
 the object's and ground more than 12 pixels lower.
 
 ### One object, many views
 
-Every field object is the same 0x70-byte block of memory, but different
-families of code read it through different structs. The engine's code
-alone uses eight: `ObjectRuntime` (`include/object_runtime.h`), `DispatchObject`
+Every field object is the same block of 112 bytes, but different families of
+code read it through structs of their own. The engine's code alone uses eight:
+`ObjectRuntime` (`include/object_runtime.h`), `DispatchObject`
 (`include/object_dispatch.h`), `ScriptInterpreter` and `ScriptOperands`
-(`include/field/script.h`), `ScriptMotionObject`
-(`include/script_motion.h`), `ScriptObjectRuntime`
-(`include/field/script_object_runtime.h`), `ScriptObjectEntry`
-(`include/script_object_entry.h`) and `FieldActor` (`include/field_obj.h`).
-Other folders add their own, such as the battle's `MotionObject`, the field
-effects' `FieldEffect` and `EffectObj` in `object/object/field_fx.c`.
+(`include/field/script.h`), `ScriptMotionObject` (`include/script_motion.h`),
+`ScriptObjectRuntime` (`include/field/script_object_runtime.h`),
+`ScriptObjectEntry` (`include/script_object_entry.h`) and `FieldActor`
+(`include/field_obj.h`). Other folders add their own, such as the battle's
+`MotionObject`, the field effects' `FieldEffect` and `EffectObj` in
+`object/object/field_fx.c`.
 
 Each was written from the code that reads it and names only the fields that
-code uses; `ScriptInterpreter` covers only the first 0x64 bytes, which is
-all the commands read. They agree on most of the block (the script at offset
-0, the position at 8, the velocity at 0x24, the target at 0x38) and
-disagree where their readers do:
+code uses, so `ScriptInterpreter` stops short of the last 12 bytes, which no
+command reads. They agree on most of the block: the script comes first, then
+the position, the velocity and the target. Where their readers differ, so do
+they:
 
-- The halfword at 0x5e is `wait` in the actor, runtime, interpreter, motion
-  and operand views, and the dispatcher keeps it among its unnamed bytes.
-  The interpreter and motion views read it signed, the actor and runtime
-  views unsigned. `SC_WAIT` writes the frame count less one, and both update
-  loops count it down.
-- The word at 0x6c is the per-frame routine: `hook` in
-  `ScriptMotionObject`, `update` in `FieldActor`, `unk6c` in
-  `ObjectRuntime`. Both update loops call it, and the work value `SW_HOOK`
-  addresses it. `ObjectRuntime` calls the word at 0x60 `callback`, but no
-  code calls through it: its bytes are the refused count and the frozen flag
-  (`ScriptMotionObject`), then two bytes only scene code uses.
-- 0x18 is a scale pair in `FieldActor` and `ScriptOperands` and unknown
-  bytes in `ObjectRuntime`, and 0x44 is the bounce in `FieldActor`,
-  `ScriptMotionObject` and `ScriptOperands` but unknown in `ObjectRuntime`
-  and the dispatcher.
+| What the bytes hold | `FieldActor` | `ScriptMotionObject` | `ObjectRuntime` | The others |
+| --- | --- | --- | --- | --- |
+| the frames left to wait, which `SC_WAIT` sets and both update loops count down | `wait`, unsigned | `wait`, signed | `wait`, unsigned | `wait` in the interpreter and operand views; the dispatcher leaves it unnamed |
+| the routine run each frame, which both update loops call and `SW_HOOK` addresses | `update` | `hook` | `unk6c` | |
+| two counts after the wait: how long a solid object has refused the object, and whether it's frozen | | the refused count and the frozen flag | `callback`, though nothing calls through it | two more bytes only scene code uses |
+| a pair of scales | the scale pair | | unknown | the scale pair in `ScriptOperands` |
+| the bounce | the bounce | the bounce | unknown | the bounce in `ScriptOperands`; unknown to the dispatcher |
 
-They're kept apart, rather than merged into one struct, because the views
-are also what the code matches with. The compiler addresses a field
-differently depending on its declared type and on whether it's reached
-through a union (the `FieldActor` union of one sprite or a group of them
-moves a load, as [Matching](../MATCHING.md) records among the scene
-spellings), so one merged struct would change the bytes at sites each view
-now matches. Even `gObjectSlots` is declared as an `ObjectRuntime *` in
-`include/field/field.h` and as a `ScriptMotionObject *` in `update.c`. XXX:
-likely one struct in Camelot's source, because every view describes the
-same 0x70 bytes; merging them waits until every field has one name and one
-type that every site matches with.
+They're kept apart, rather than merged into one struct, because the views are
+also what the code matches with. The compiler addresses a field differently
+depending on its declared type and on whether it's reached through a union
+(the `FieldActor` union of one sprite or a group of them moves a load, as
+[Matching](../MATCHING.md) records among the scene spellings), so one merged
+struct would change the bytes at sites each view now matches. Even
+`gObjectSlots` is declared as an `ObjectRuntime *` in `include/field/field.h`
+and as a `ScriptMotionObject *` in `update.c`. XXX: likely one struct in
+Camelot's source, because every view describes the same 112 bytes; merging
+them waits until every field has one name and one type that every site
+matches with.
 
 ### The layered map
 
@@ -401,8 +393,8 @@ differs from this one.
 - 8 resource slots, 16 tile animation channels and 4 palette cycles. Only
   `PaletteQueue_Start` schedules the palette cycles, and nothing calls it,
   so no palette cycle runs in the game.
-- The script command table has 47 entries. The 36 from 0x00 to 0x23 are the
-  commands, and the 11 from 0x24 on all act as `SC_END`. A label must be
+- The script command table has 47 entries. The first 36 are the
+  commands, and the 11 after them all act as `SC_END`. A label must be
   within the first 1,024 words of its script.
 
 ## Evidence and open questions
@@ -417,6 +409,6 @@ Still unknown:
 - XXX: the update accepts command words up to 63, but the table has 47
   entries, so a word from 47 to 63 would call through whatever follows the
   table.
-- XXX: why placeholder blocks (0xfff) are given numbers of their own as the
+- XXX: why placeholder blocks are given numbers of their own as the
   map is converted (`Tile_ConvertMap`, and the unused
   `Tilemap_NumberPlaceholderBlocks` that does the same in C).

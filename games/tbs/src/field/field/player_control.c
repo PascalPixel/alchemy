@@ -16,6 +16,19 @@
 #define WORLD_MAP_PROBE_RADIUS 0x80000
 #endif
 
+// The leader's speeds and accelerations, in pixels a frame as 16.16 fixed
+// point: the top 16 bits are whole pixels, so 0x10000 is one pixel.
+#define FIELD_WALK_SPEED 0x10000      ///< 1 pixel a frame
+#define FIELD_RUN_SPEED 0x18000       ///< 1.5, with a dash key held
+#define FIELD_ACCELERATION 0x4000     ///< a quarter pixel faster each frame
+#define FIELD_FAST_WALK_SPEED 0x40000 ///< 4, B held with FLAG_FAST_WALK
+#define FIELD_FAST_WALK_ACCELERATION 0x10000
+#define WORLD_MAP_WALK_SPEED 0x8000 ///< half a pixel a frame
+#define WORLD_MAP_RUN_SPEED 0x10000 ///< 1, with a dash key held
+#define WORLD_MAP_RUN_ACCELERATION 0x14000
+#define WORLD_MAP_ACCELERATION 0x4000
+#define WORLD_MAP_FAST_SPEED 0x40000 ///< 4, while L repeats
+
 /// Stores value in a halfword of the event work.
 static __inline__ void Field_StoreHalfword(s16 *address, s32 value) {
   // XXX: why the stores go through a helper rather than plain assignment;
@@ -208,20 +221,20 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
         goto wait_d;
     }
   }
-  // Walk at 1 pixel a frame, or run at 1.5 with the dash keys (animation 5
-  // instead of 2); flag 0x17f and B move at 4.
+  // Walk, or run with the dash keys (animation 5 instead of 2); with
+  // FLAG_FAST_WALK, B moves faster still.
   if (gKeysHeld & gGameState.dashKeys) {
-    object->speedLimit = 0x18000;
-    object->acceleration = 0x4000;
+    object->speedLimit = FIELD_RUN_SPEED;
+    object->acceleration = FIELD_ACCELERATION;
     movementAnimation = 5;
   } else {
-    object->speedLimit = 0x10000;
-    object->acceleration = 0x4000;
+    object->speedLimit = FIELD_WALK_SPEED;
+    object->acceleration = FIELD_ACCELERATION;
     movementAnimation = 2;
   }
-  if (GameFlag_TestFar(0x17f) != 0 && (gKeysHeld & KEY_B)) {
-    object->speedLimit = 0x40000;
-    object->acceleration = 0x10000;
+  if (GameFlag_TestFar(FLAG_FAST_WALK) != 0 && (gKeysHeld & KEY_B)) {
+    object->speedLimit = FIELD_FAST_WALK_SPEED;
+    object->acceleration = FIELD_FAST_WALK_ACCELERATION;
     movementAnimation = 5;
   }
 
@@ -546,19 +559,18 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
 #if !TBS_PATCH_1
   count = 0;
 #endif
-  // Walk at half a pixel a frame, or 1 with the dash keys. L, as it
-  // repeats, raises the limit to 4 pixels; unlike the field's fast walk, no
-  // debug test or flag guards it.
+  // Walk, or run with the dash keys. L, as it repeats, raises the limit
+  // further; unlike the field's fast walk, no debug test or flag guards it.
   if (gKeysHeld & gGameState.dashKeys) {
-    object->speedLimit = 0x10000;
-    object->acceleration = 0x14000;
+    object->speedLimit = WORLD_MAP_RUN_SPEED;
+    object->acceleration = WORLD_MAP_RUN_ACCELERATION;
     movementAnimation = 5;
   } else {
-    object->speedLimit = 0x8000;
-    object->acceleration = 0x4000;
+    object->speedLimit = WORLD_MAP_WALK_SPEED;
+    object->acceleration = WORLD_MAP_ACCELERATION;
   }
   if ((gKeysRepeat & KEY_L) != 0)
-    object->speedLimit = 0x40000;
+    object->speedLimit = WORLD_MAP_FAST_SPEED;
 
   angle = gWorldMap_KeyHeadings[(gKeysHeld >> 4) & 15];
   direction = angle;
@@ -933,3 +945,13 @@ s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
 
 #undef FIELD_SHORTCUT_KEYS
 #undef WORLD_MAP_PROBE_RADIUS
+#undef FIELD_WALK_SPEED
+#undef FIELD_RUN_SPEED
+#undef FIELD_ACCELERATION
+#undef FIELD_FAST_WALK_SPEED
+#undef FIELD_FAST_WALK_ACCELERATION
+#undef WORLD_MAP_WALK_SPEED
+#undef WORLD_MAP_RUN_SPEED
+#undef WORLD_MAP_RUN_ACCELERATION
+#undef WORLD_MAP_ACCELERATION
+#undef WORLD_MAP_FAST_SPEED

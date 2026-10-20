@@ -89,6 +89,9 @@
 /// Set when the cleared game's menu goes to the link lobby: there Psynergy has
 /// no effect and the system menu offers only Change settings.
 #define FLAG_IN_LINK_LOBBY 0x17e
+/// With it set, holding B on the field walks the leader at 4 pixels a frame
+/// (FieldObject_UpdatePlayerControl). No ☀️ code sets it.
+#define FLAG_FAST_WALK 0x17f
 // Flags 0x300 to 0x3ff are place flags: Scene_ResetFlagsOnEnter clears them
 // when the party enters another place group, and each place uses the numbers
 // for its own, so the scenes name them. These two are the link lobby's.

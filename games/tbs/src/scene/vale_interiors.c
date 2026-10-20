@@ -68,12 +68,10 @@ ValeInteriors_AdvanceDriftingSprite(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-/// Returns the entrance positions and view bounds for the Vale interiors.
 struct SceneEntrance *ValeInteriors_GetEntrances(void) {
   return gValeInteriors_Entrances;
 }
 
-/// This overlay has no separate region table.
 struct SceneRegion *ValeInteriors_GetRegions(void) { return NULL; }
 
 /// On the stormy night, the doors lead out into the storm.
@@ -189,28 +187,20 @@ static void ValeInteriors_RequestWindowExit(s32 exitId) {
   Engine_EventRequestExit(exitId);
 }
 
-/// Leaves through the doorway connected to exit 1.
 static void Event_LeaveByDoor1(void) { ValeInteriors_RequestWindowExit(1); }
 
-/// Leaves through the doorway connected to exit 2.
 static void Event_LeaveByDoor2(void) { ValeInteriors_RequestWindowExit(2); }
 
-/// Leaves through the doorway connected to exit 3.
 static void Event_LeaveByDoor3(void) { ValeInteriors_RequestWindowExit(3); }
 
-/// Leaves through the doorway connected to exit 4.
 static void Event_LeaveByDoor4(void) { ValeInteriors_RequestWindowExit(4); }
 
-/// Leaves through the doorway connected to exit 5.
 static void Event_LeaveByDoor5(void) { ValeInteriors_RequestWindowExit(5); }
 
-/// Leaves through the doorway connected to exit 6.
 static void Event_LeaveByDoor6(void) { ValeInteriors_RequestWindowExit(6); }
 
-/// Leaves through the doorway connected to exit 7.
 static void Event_LeaveByDoor7(void) { ValeInteriors_RequestWindowExit(7); }
 
-/// Leaves through the doorway connected to exit 8.
 static void Event_LeaveByDoor8(void) { ValeInteriors_RequestWindowExit(8); }
 
 /// Arriving in a house: on the stormy night the residents are gone and

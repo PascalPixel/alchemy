@@ -1196,7 +1196,6 @@ s32 Menu_BuildPageResult(struct MenuResult *result, s32 index) {
   return 1;
 }
 
-/// Combines one pattern word with its row mask.
 static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 
 extern const struct TileMask gMenu_PatternRowMasks[];
@@ -1541,7 +1540,7 @@ s32 PsynergyMenu_SelectAction(void) {
   return result;
 }
 
-/// Returns the original page-callback success value.
+/// A page callback.
 s32 PsynergyMenu_ActionReturnTrue(void) { return 1; }
 
 /// Draws this owner's prepared Psynergy list in the shared entry sprites.
@@ -1875,7 +1874,6 @@ s32 Menu_MoveGridCursor(s32 *columnOut, s32 *rowOut, s32 direction) {
   return (row * 9) + column;
 }
 
-/// Returns the original reserved success value.
 s32 Menu_ReservedStatusOne(void) { return 1; }
 
 /// Shows the owner's equipped items and optionally its category icons.

@@ -362,7 +362,6 @@ struct BattleTransitionEntry {
   u32 fieldc;
 };
 
-/// Selects the battle overlay's blend targets.
 void Graphics_SetBlendControl(void) {
   REG_BLDCNT = BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN;
 }
@@ -378,7 +377,6 @@ void BattlePresentation_InitializeTransitionEntries(
   entries[0].sum = previous + entries[0].value;
 }
 
-/// Divides a signed value by sixteen, rounding toward zero.
 s32 BattlePres_DivideBy16(s32 value) { return value / 16; }
 
 /// While Start is held, edits the debug value with the d-pad and accepts it

@@ -243,7 +243,6 @@ s32 DjinnRecovery_TickTwenty(void) {
   return 0;
 }
 
-/// Reserved empty routine.
 void Battle_ReservedNoOpF674(void) {}
 
 /// The order the two sides' units take their turn-end effects in, as

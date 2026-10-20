@@ -4,7 +4,7 @@
 
 #include "../window_internal.h"
 
-/// Three empty functions; nothing calls them.
+/// Nothing calls them.
 UNUSED void GraphicsPalette_ReservedNoOpC9BC(void) {}
 UNUSED void GraphicsPalette_ReservedNoOpC9C0(void) {}
 UNUSED void GraphicsPalette_ReservedNoOpC9C4(void) {}
@@ -234,7 +234,6 @@ UNUSED void OptionMenu_RaiseSetting(struct WorkspaceWork *work) {
   }
 }
 
-/// Does nothing.
 void GraphicsPalette_SelectionNoOp(void) {}
 
 /// The option screen's per-frame callback: moves the cursor and the two slider

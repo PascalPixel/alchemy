@@ -29,17 +29,14 @@ void Transform_Push(void) {
   }
 }
 
-/// Copies the transform to `dst`.
 void Transform_Store(void *dst) {
   Dma_Set(gTransform, dst, TRANSFORM_DMA, REG_DMA3);
 }
 
-/// Makes the matrix at `src` the transform.
 void Transform_Load(const void *src) {
   Dma_Set(src, gTransform, TRANSFORM_DMA, REG_DMA3);
 }
 
-/// Restores the saved transform.
 void Transform_Pop(void) {
   if (gTransformStackDepth > 0) {
     --gTransformStackDepth;

@@ -40,7 +40,6 @@ const struct SceneEntrance *KolimaForestClearing_GetEntrances(void) {
   return gKolimaForestClearing_Entrances;
 }
 
-/// The clearing has no regions.
 const struct SceneRegion *KolimaForestClearing_GetRegions(void) { return 0; }
 
 /// The paths to the river and back to the bridge.

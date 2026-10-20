@@ -38,7 +38,6 @@
 // Scene temporary flags 00, 01 and 02 select the plain, first-tint and
 // second-tint palettes, respectively.
 
-// Forward declarations.
 static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void);
 static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void);
 static s32 SolSanctumLunaSolRooms_AreAllStatueLightsLit(void);
@@ -56,15 +55,12 @@ struct EventGlobals {
   u8 *field;
 };
 
-/// Returns the arrival positions for the Sol and Luna rooms.
 const struct SceneEntrance *SolSanctumLunaSolRooms_GetEntrances(void) {
   return gSolSanctumLunaSolRoomsEntrances;
 }
 
-/// The Sol and Luna rooms have no region table.
 const struct SceneRegion *SolSanctumLunaSolRooms_GetRegions(void) { return 0; }
 
-/// Returns the connections between the sanctum's puzzle rooms.
 const u32 *SolSanctumLunaSolRooms_GetExits(void) {
   return gSolSanctumLunaSolRoomsExits;
 }

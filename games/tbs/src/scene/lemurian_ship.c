@@ -84,15 +84,12 @@ enum { ENTRANCE_99 = 99 };
 
 s32 Math_DivideUnsigned();
 
-/// Where the party can enter the harbor.
 const struct SceneEntrance *LemurianShip_GetEntrances(void) {
   return gLemurianShipEntrances;
 }
 
-/// The harbor has no regions.
 const struct SceneRegion *LemurianShip_GetRegions(void) { return NULL; }
 
-/// Where its one exit leads.
 const u32 *LemurianShip_GetExits(void) { return gLemurianShipExits; }
 
 /// The ship's two pieces; the party's own actors fill the first three rows.

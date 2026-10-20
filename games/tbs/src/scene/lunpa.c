@@ -62,7 +62,6 @@ const s32 *gEffectScripts[] = {
     gLongEffectScript,
 };
 
-/// The town's entrances, or the gate's.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s32 scene = gGameState.scene;
 
@@ -75,10 +74,8 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLunpaEntrances;
 }
 
-/// Lunpa has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-/// Where each exit of the town or the gate leads.
 const u32 *Scene_GetExits(void) {
   s32 scene = gGameState.scene;
 
@@ -226,7 +223,6 @@ static void Event_HideSecrets(void) {
   GameFlag_Set(FLAG_SCENE_TEMP_01);
 }
 
-/// Searching the well.
 static void Event_SearchWell(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
@@ -280,7 +276,6 @@ static void Event_TalkToEastGuard(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read on the east guard.
 static void Event_ReadEastGuardsThoughts(void) {
   s32 thoughts;
 
@@ -403,7 +398,6 @@ static void Event_ReadLeftGuardsThoughts(void) {
   Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
 }
 
-/// Mind Read on the right guard.
 static void Event_ReadRightGuardsThoughts(void) {
   if (Engine_GameFlagIsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
     Engine_EventSetMessage(MsgLunpaRightGuardReopenedThoughts);
@@ -506,7 +500,6 @@ static void Event_EnterFortress(void) {
   Engine_EventEnd();
 }
 
-/// Unused original callback: the leader looks at what is ahead.
 static void UNUSED Lunpa_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
 /// Reveal's sound when it uncovers something.
@@ -574,7 +567,6 @@ static void Event_GuardsBlockGate(void) {
   }
 }
 
-/// Unused original callback that does nothing.
 static void UNUSED Lunpa_DoNothing(void) {}
 
 /// Cloak: the gateway closes behind the guards.
@@ -644,7 +636,6 @@ static void Event_GuardsCatchParty(void) {
   FieldScheduler_AddCallback(Lunpa_WatchForUncloakedParty, TASK_PRIORITY_SCENE);
 }
 
-/// The gateway opens again.
 static void Lunpa_ReopenGateway(void) { Lunpa_CopyGatewayCollision(7, 12); }
 
 /// Cloak fades: if the leader is still among the guards, they are caught.

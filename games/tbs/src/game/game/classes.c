@@ -12,7 +12,6 @@ struct ElementLevelBonus {
 
 extern struct ElementLevelBonus gElement_PowerResistByLevel[16];
 
-/// Returns the class series selected by the primary and secondary elements.
 s32 Class_GetSeries(s32 primaryElement, s32 secondaryElement) {
   return gOwner_FourColumnValues[(primaryElement * 4) + secondaryElement];
 }
@@ -208,7 +207,6 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
   return result;
 }
 
-/// Returns the definition of class `classId`.
 struct ClassDefinition *Class_GetDefinition(s32 classId) {
   return &gClass_DefinitionTable[classId];
 }

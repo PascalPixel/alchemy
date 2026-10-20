@@ -118,7 +118,6 @@
 #define PASSWORD_SYMBOLS_PER_PAGE 50
 #define PASSWORD_SYMBOL_MASK 0x3f
 
-// Forward declarations.
 static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out);
 static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 Clear_ComputePasswordCrc16(u32 byteCount, u8 *data);
@@ -127,7 +126,6 @@ static u16 Clear_ComputePasswordCrc16(u32 byteCount, u8 *data);
 /// the exit, and no placements or events.
 u8 *Clear_GetEntrances(void) { return (u8 *)gClear_Entrances; }
 
-/// Returns zero from this menu entry.
 s32 SceneData_ReturnZero(void) { return 0; }
 
 u8 *Clear_GetExits(void) { return (u8 *)gClear_Exits; }

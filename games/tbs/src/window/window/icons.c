@@ -4,12 +4,10 @@
 
 #include "../window_internal.h"
 
-/// Returns how many item icons there are.
 s32 UiIcon_CountItemIcons(void) {
   return gUiIcon_ItemIconPointersEnd - gUiIcon_ItemIconPointers;
 }
 
-/// Returns how many Psynergy icons there are.
 s32 UiIcon_CountPsynergyIcons(void) {
   return gUiIcon_PsynergyIconPointersEnd - gUiIcon_PsynergyIconPointers;
 }
@@ -315,7 +313,6 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
           REG_DMA3);
 }
 
-/// Does nothing.
 void UiGlyph_ReservedNoOp(void) {}
 
 /// Decodes a compressed icon into the glyph buffer and expands it to tiles,

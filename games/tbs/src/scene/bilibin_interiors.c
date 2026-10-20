@@ -45,15 +45,12 @@ enum {
   BILIBIN_DINER = 27
 };
 
-/// Returns the entrances for the rooms in this overlay.
 const struct SceneEntrance *BilibinInteriors_GetEntrances(void) {
   return gBilibinInteriorsEntrances;
 }
 
-/// These rooms have no exit-region table.
 const struct SceneRegion *BilibinInteriors_GetRegions(void) { return 0; }
 
-/// Returns the destination table used by the rooms' numbered exits.
 const u32 *BilibinInteriors_GetExits(void) { return gBilibinInteriorsExits; }
 
 /// Marks placements outside the current room's view before actors are spawned.

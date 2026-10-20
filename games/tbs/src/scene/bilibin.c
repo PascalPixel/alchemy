@@ -35,7 +35,6 @@
 #include "songs.h"
 #include "item_ids.h"
 
-// Forward declarations.
 static void Bilibin_RestoreVillageActors(void);
 static void Bilibin_UpdateVillageBlockCells(void);
 static void Bilibin_RestoreRiverActors(void);
@@ -74,7 +73,6 @@ struct SpawnCounter gBilibin_RiverEffectTimer;
 
 #include "common/object_facing.h"
 
-/// Selects the entrance positions for the current part of Bilibin.
 const struct SceneEntrance *Bilibin_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -128,7 +126,6 @@ static void Event_InspectWell(void) {
   Engine_EventEnd();
 }
 
-/// Selects the dialogue, searches and interactions for the current map.
 const struct SceneEvent *Bilibin_GetEvents(void) {
   s16 scene = gGameState.scene;
 

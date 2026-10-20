@@ -4,8 +4,6 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// Runs Catch cast on a target, through FieldFx_RunCatch.
-///
 /// Abilities: Catch (field kind 13), cast on a target.
 void FieldFx_RunCatchOnTarget(s32 unused) { FieldFx_RunCatch(); }
 

@@ -109,7 +109,7 @@ void FieldEvent_End(void) {
   GameFlag_RefreshLureCapFar();
 }
 
-/// Does nothing; nothing calls it.
+/// Nothing calls it.
 UNUSED void Event_NoOpHookA(void) {}
 
 /// An empty hook the event layer calls; it does nothing in the released game.
@@ -339,10 +339,8 @@ s32 Inventory_TryAddAndReturnOwner(s32 item, s32 unused, s32 unit) {
   return -1;
 }
 
-/// Does nothing.
 void Inventory_NoOpCallback(void) {}
 
-/// Does nothing.
 void Inventory_ReservedNoOp(void) {}
 
 /// Waits, at most 90 frames, for an actor's animation to stop being animation:

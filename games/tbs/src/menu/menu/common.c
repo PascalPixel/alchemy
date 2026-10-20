@@ -309,7 +309,6 @@ static inline s32 CountDigitsAtLeastTwo(s32 number) {
 /// before x.
 ///
 /// number: the value to draw, 0 or more
-/// window: the window to draw in
 /// x:      the field's right edge, in pixels within the window
 /// y:      the pixel row of the text, within the window
 void UiText_DrawNumberRightAligned(s32 number, struct UiWindow *window, s32 x,
@@ -329,9 +328,6 @@ void UiText_DrawNumberRightAligned(s32 number, struct UiWindow *window, s32 x,
 /// at pixel row 40 and "PP current/maximum" at row 48. Current HP is drawn in
 /// colour 4 when it is below a quarter of maximum HP and in colour 2 at 0;
 /// then the colour goes back to 15, the default text colour.
-///
-/// unit:   the character whose figures are drawn
-/// window: the window to draw in
 void Ui_DrawValuePairRows(struct BattleUnit *unit, struct UiWindow *window) {
   // Each figure in turn, as an s16. Read straight from unit, the figures
   // compile differently.
@@ -678,7 +674,7 @@ void UiMenu_SlideCursor(s32 x, s32 y) {
   } while (steps != 0);
 }
 
-/// Does nothing; nothing calls it.
+/// Nothing calls it.
 UNUSED void PsynergyMenu_ReservedNoOp(void) {}
 
 /// Lays the entry icons out eight to a row from (108, 40). Nothing calls it.
@@ -967,7 +963,6 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
       if (*cursor > pageSize - 1)
         *cursor = pageSize - 1;
     }
-    // Restart the key repeat delay.
     Input_ResetKeyRepeat();
     result = 1;
     return result;
@@ -1173,7 +1168,6 @@ void UiWindow_SetBounds(struct UiWindow *window, s32 x, s32 y, s32 width,
   }
 }
 
-/// Marks the window system busy with the menu, or no longer busy.
 void UiWork_SetMenuBusy(void) {
   ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 1;
 }
@@ -1183,7 +1177,6 @@ void UiWork_ClearMenuBusy(void) {
   ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 0;
 }
 
-/// Plays a sound and returns 1.
 s32 Audio_PlayCueReturnOne(s32 cue) {
   AudioCommand_PlayFar(cue);
   return 1;
@@ -1216,10 +1209,8 @@ void Menu_EnsureCancelSound(void) {
 /// Sets the window text colour: normal (15), no HP (2) and low HP (4).
 void UiPalette_SetColor15(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_NORMAL); }
 
-/// Selects text color 2 for the following drawing calls.
 void UiPalette_SetColor2(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_NO_HP); }
 
-/// Selects text color 4 for the following drawing calls.
 void UiPalette_SetColor4(void) { UiWork_SetParamNibbleFar(TEXT_COLOR_LOW_HP); }
 
 #undef STATUS_PANEL_TEXT_X

@@ -147,7 +147,6 @@ static s32 Leader_FaceFeizhi(union FieldObject *object) {
 #endif
 }
 
-/// Returns the entrance table of the scene being entered.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   if (gGameState.scene == SCENE_ALPINE_CROSSING) {
     return gAlpineCrossing_Entrances;
@@ -155,13 +154,11 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLamaTemple_Entrances;
 }
 
-/// Neither scene has regions.
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 /// Both scenes share one exit table.
 const u32 *Scene_GetExits(void) { return gAlpineCrossingLamaTemple_Exits; }
 
-/// Returns the actor placements of the scene being entered.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   if (gGameState.scene == SCENE_ALPINE_CROSSING) {
     return gAlpineCrossing_Placements;
@@ -796,7 +793,6 @@ static void AlpineCrossing_GrowSprout(void) {
   Engine_EventEnd();
 }
 
-/// Returns the event table of the scene being entered.
 const struct SceneEvent *Scene_GetEvents(void) {
   if (gGameState.scene == SCENE_ALPINE_CROSSING) {
     return gAlpineCrossing_Events;
@@ -805,7 +801,6 @@ const struct SceneEvent *Scene_GetEvents(void) {
 }
 
 /// Sets up whichever scene is being entered and runs its arrival events.
-/// Returns 0.
 s32 Scene_Initialize(void) {
   s32 entrance;
 

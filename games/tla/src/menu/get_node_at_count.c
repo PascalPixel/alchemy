@@ -4,7 +4,6 @@
 #include "types.h"
 #include "node_chain.h"
 
-/// Returns the node st->count steps along the chain from st->node.
 struct NodeChainNode *NodeChain_GetNodeAtCount(struct NodeChainState *st) {
   struct NodeChainNode *node = st->node;
   s32 i;

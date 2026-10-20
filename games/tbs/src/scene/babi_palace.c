@@ -95,7 +95,6 @@ static __inline__ void BabiPalace_RestorePartyAndInventory(void) {
   Engine_InventorySnapshotRestore();
 }
 
-/// Returns the entrance table of the scene being entered.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   if (gGameState.scene == (s32)&SceneId_BabiPalace2) {
     return gBabiPalace_Entrances2;

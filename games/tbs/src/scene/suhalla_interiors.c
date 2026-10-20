@@ -31,20 +31,16 @@ enum {
   SOLDIER_NORTH = 21
 };
 
-/// Shop and inn ids.
 enum { SHOP_SUHALLA = 31, INN_SUHALLA = 10 };
 
-/// Where the party can enter the houses.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSuhallaInteriorsEntrances;
 }
 
-/// The houses' two regions.
 const struct SceneRegion *Scene_GetRegions(void) {
   return (const struct SceneRegion *)gSuhallaInteriorsRegions;
 }
 
-/// Where each exit leads.
 const u32 *Scene_GetExits(void) { return gSuhallaInteriorsExits; }
 
 /// The townsfolk, joined after Babi's audience by Iodem, the wounded soldiers

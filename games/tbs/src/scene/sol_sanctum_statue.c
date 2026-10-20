@@ -54,7 +54,6 @@
 // Scene temporary flag 07 is set once both beams have opened the hole in the
 // hall's floor.
 
-// Forward declarations.
 static void SolSanctumStatue_InitializeScrollingSprites(void);
 static void Event_CenterStatueMoved(void);
 static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
@@ -125,15 +124,12 @@ static union {
   s32 words[3 * SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT * 3];
 } sScrollingSprites;
 
-/// Returns the statue hall arrival positions.
 struct SceneEntrance *SolSanctumStatue_GetEntrances(void) {
   return gSolSanctumStatue_Entrances;
 }
 
-/// The statue hall has no separate trigger-region table.
 struct SceneRegion *SolSanctumStatue_GetRegions(void) { return NULL; }
 
-/// Returns the statue hall scene destinations.
 u32 *SolSanctumStatue_GetExits(void) { return gSolSanctumStatue_Exits; }
 
 /// Returns the statues and companions placed in the hall.
@@ -1118,7 +1114,6 @@ static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
   Engine_EventEnd();
 }
 
-/// Tests an actor map column and row.
 static s32 SolSanctumStatue_IsActorAtCell(s32 actorId, s32 column, s32 row) {
   struct FieldActor *actor = Object_GetById(actorId);
   if (actor == NULL || (actor->x.fixed >> 20) != column) {
@@ -1350,7 +1345,6 @@ static void SolSanctumStatue_OpenSoutheastSeal(void) {
   SolSanctumStatue_OpenSeal();
 }
 
-/// Applies one configured source-to-destination tile region.
 #define COPY_CELLS(copy)                                                       \
   Map_CopyCellsTo((copy).srcX, (copy).srcY, (copy).destX, (copy).destY,        \
                   (copy).width, (copy).height)

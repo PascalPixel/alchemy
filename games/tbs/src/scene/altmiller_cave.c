@@ -166,18 +166,15 @@ static void AltmillerCave_StartDjinnBattle(void) {
   Field_RequestDjinnBattle(ACTOR_DJINNI, DJINNI_SQUALL);
 }
 
-/// Returns the entrance table, shared by the six rooms.
+/// The six rooms share one entrance table.
 struct SceneEntrance *AltmillerCave_GetEntrances(void) {
   return gAltmillerCave_Entrances;
 }
 
-/// The cave has no regions.
 struct SceneRegion *AltmillerCave_GetRegions(void) { return NULL; }
 
-/// Returns the connections between the cave chambers.
 u32 *AltmillerCave_GetExits(void) { return gAltmillerCave_Exits; }
 
-/// Returns the actor placements of the room being entered.
 const struct ScenePlacement *AltmillerCave_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -1109,7 +1106,6 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   // The soldiers greet Babi; he invites the party to the finals.
   Actor_SetSpeed(ACTOR_FIRST_GUARD, PIXELS(7) / 5, PIXELS(7) / 10);
   Actor_SetSpeed(ACTOR_SECOND_GUARD, PIXELS(7) / 5, PIXELS(7) / 10);
-  // Lead the guards through the chamber to Babi.
   Actor_SetActionScript(ACTOR_FIRST_GUARD, gAltmillerCave_GuardsArrivePath);
   Engine_EventWait(3);
   Actor_WalkByAndWait(ACTOR_SECOND_GUARD, -16, 0);
@@ -1850,7 +1846,6 @@ static void AltmillerCave_BabiCallsPartyBack(void) {
   Engine_EventEnd();
 }
 
-/// Returns the event table of the room being entered.
 const struct SceneEvent *AltmillerCave_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -2151,7 +2146,6 @@ s32 gStagedActor_FootprintBounds[] = {
     -8,  -32, 8,  32, -32, -8,  32, 8,  -8,  -32, 8,  32,
 };
 
-/// The ring of lights' state.
 struct LightWheel *gAltmillerCave_LightWheel = &gAltmillerCave_LightWheelState;
 
 struct SceneEntrance gAltmillerCave_Entrances[] = {

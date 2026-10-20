@@ -162,10 +162,8 @@ void ObjectSystem_Initialize(s32 controlMode) {
   objectSystem->fill = 0;
 }
 
-/// Does nothing.
 UNUSED void ResourceTable_ReservedNoOpC0C4(void) {}
 
-/// Does nothing.
 UNUSED void ResourceTable_ReservedNoOp2(void) {}
 
 /// Returns the first of the 64 objects not in use (with no script), or 0.
@@ -514,7 +512,6 @@ void ObjectDispatch_StopCallbacksAndHideLayers(void) {
       ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON);
 }
 
-/// Returns 1.
 UNUSED s32 ObjectDispatch_ReturnTrue(void) { return 1; }
 
 #undef OBJECT_DISPATCH_DEFINE_APPLY

@@ -438,10 +438,10 @@ s32 Sound_LoadPresetParameters(s32 preset) {
   return 0;
 }
 
-/// Reserved empty sound export A in the runtime bank; no source caller.
+/// Nothing calls it.
 UNUSED void Sound_ReservedNoOpA(void) {}
 
-/// Reserved empty sound export B in the runtime bank; no source caller.
+/// Nothing calls it.
 UNUSED void Sound_ReservedNoOpB(void) {}
 
 /// The keypad interrupt: A+B+Select+Start was pressed, so ask the frame loop

@@ -729,7 +729,6 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       state = ITEM_STEP_OWNER;
       break;
 
-    // Equip the item.
     case ITEM_STEP_EQUIP:
       result = Inventory_EquipFar(menu->paneOwner[0], menu->selectedSlots[0]);
       if (result == -1) {
@@ -1469,7 +1468,7 @@ void ItemMenu_RefreshOwner(s32 ownerId, s32 mode) {
     UiText_DrawCharacterAtOffsetFar(MsgItemMenuEmpty, menu->itemWindow, 8, 24);
 }
 
-/// Does nothing; nothing calls it.
+/// Nothing calls it.
 UNUSED void InventoryMenu_NoOp(void) {}
 
 /// Shows in the status panel what the item in owner's inventory slot would mean
@@ -2342,21 +2341,18 @@ void ItemMenu_SetMessageWindowHeight5(void) {
                      13, 0, 17, 5);
 }
 
-/// Makes the message window 6 rows tall.
 void ItemMenu_SetMessageWindowHeight6(void) {
   UiWindow_SetBounds((struct UiWindow *)((struct InventoryMenuState *)gMenuWork)
                          ->messageWindow,
                      13, 0, 17, 6);
 }
 
-/// Makes the message window 7 rows tall.
 void ItemMenu_SetMessageWindowHeight7(void) {
   UiWindow_SetBounds((struct UiWindow *)((struct InventoryMenuState *)gMenuWork)
                          ->messageWindow,
                      13, 0, 17, 7);
 }
 
-/// Makes the message window 3 rows tall.
 void ItemMenu_SetMessageWindowHeight3(void) {
   UiWindow_SetBounds((struct UiWindow *)((struct InventoryMenuState *)gMenuWork)
                          ->messageWindow,
@@ -2768,7 +2764,7 @@ s32 ItemMenu_DrawNamePage(struct UiWindow *window, s32 unused,
   return 1;
 }
 
-/// Returns 1, and do nothing; nothing calls them.
+/// Nothing calls them.
 UNUSED s32 InventoryMenu_ItemNamePageReturnTrue(void) { return 1; }
 
 UNUSED void InventoryMenu_ItemNamePageNoOp(void) {}

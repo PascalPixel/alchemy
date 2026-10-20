@@ -56,7 +56,6 @@
 #include "songs.h"
 #include "item_ids.h"
 
-// Forward declarations.
 static s32 WorldMap_ApplyMapRotation(struct ScriptInterpreter *interpreter);
 static void WorldMap_BoardBunzasWagon(void);
 static void WorldMap_DepartWithTravelers(void);
@@ -233,13 +232,10 @@ WorldMap_InitializeFirstDjinni(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-/// Returns the world-map entrances.
 struct SceneEntrance *WorldMap_GetEntrances(void) { return gWorldMapEntrances; }
 
-/// The world map has no additional region table.
 struct SceneRegion *WorldMap_GetRegions(void) { return NULL; }
 
-/// Returns the world-map exits.
 u32 *WorldMap_GetExits(void) { return gWorldMapExits; }
 
 /// Aligns the actor to the map and selects its flagged animation mode.
@@ -299,7 +295,6 @@ static s32 WorldMap_BlinkActorSprite(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Selects the actors required by the current arrival event.
 struct ScenePlacement *WorldMap_GetPlacements(void) {
   switch (gGameState.entrance) {
   case 49:
@@ -399,7 +394,6 @@ static void Event_PassThroughFourthNorthSouthPassage(void) {
   WorldMap_SelectExitByZ(0x7D, 0x3B, 0x1E);
 }
 
-/// Returns the world-map interaction table.
 struct SceneEvent *WorldMap_GetEvents(void) { return gWorldMapEvents; }
 
 /// Culls distant location sprites and detects the leader touching nearby ones.

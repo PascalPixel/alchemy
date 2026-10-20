@@ -518,7 +518,6 @@ static s32 CrossboneIslePillarRooms_SetChildValueFromTimer(
   return 0;
 }
 
-/// Selects the entrance table for the current pillar room.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -540,13 +539,11 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gCrossboneIslePillarRoomsEntrancesOther;
 }
 
-/// These rooms have no separate region table.
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 /// Returns the shared exits for the pillar rooms.
 const u32 *Scene_GetExits(void) { return gCrossboneIslePillarRoomsExits; }
 
-/// Selects the actor placements for the current pillar room.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -1352,7 +1349,6 @@ static void Event_PushSinkingPillar(void) {
   EV_END();
 }
 
-/// Selects the event table for the current pillar room.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 

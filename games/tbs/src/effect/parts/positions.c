@@ -77,9 +77,7 @@ void EffectPosition_ProjectBattler(s32 id, struct EffectPosition *position) {
 /// reset to the battle camera first, so the result does not depend on the
 /// transform an effect has left behind.
 ///
-/// unit: the battler.
 /// screen: receives x and y.
-/// Returns 0.
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   struct BattleCamera *camera;
   struct MotionObject *object;
@@ -112,8 +110,6 @@ void BattleFx_ProbeKeysForExtendedActor(void) {
 /// casting impacts (kind - 100), 136 to 199 the beam sequences, 200 and up
 /// the ring and spark scenes. Allocates the sheet, the work and the canvas
 /// for the effect and frees them after.
-///
-/// effect: the effect argument.
 void BattleFx_DispatchByIdRange(struct BattleEffectArgument *effect) {
   s32 kind;
   s32 value;

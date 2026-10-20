@@ -110,7 +110,6 @@ enum {
 // on the balance, FLAG_SCENE_TEMP_03 the pillar soaked by Douse and
 // FLAG_SCENE_TEMP_04 its puddle frozen.
 
-// Forward declarations.
 #ifdef UBFIX
 static void TunnelRuins_RideBlockBelow(union FieldObject *fieldObject);
 #else
@@ -404,7 +403,6 @@ static void Event_HopDownStep(void) {
 
 #include "common/effect_radial.h"
 
-/// Selects the entrance table for the current tunnel ruins scene.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gGameState.scene;
 
@@ -417,7 +415,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gTunnelRuinsEntrancesOther;
 }
 
-/// Returns the region table only for the second ruins scene.
 const struct SceneRegion *Scene_GetRegions(void) {
   if (gGameState.scene == (s32)&SceneId_TunnelRuins2) {
     return gTunnelRuinsRegions2;
@@ -425,7 +422,6 @@ const struct SceneRegion *Scene_GetRegions(void) {
   return 0;
 }
 
-/// Returns the tunnel ruins exit table.
 u32 *TunnelRuins_GetExits(void) { return gTunnelRuinsExits; }
 
 /// Selects the actor placements and prepares their scene state.
@@ -1206,7 +1202,6 @@ static void Event_SearchLockedDoor(void) {
   EV_END();
 }
 
-/// Selects the event bindings for the current tunnel ruins scene.
 s32 TunnelRuins_SelectEvents(void) {
   if (gGameState.scene == (s32)&SceneId_TunnelRuins1) {
     return (s32)gTunnelRuinsEvents1;
@@ -1933,7 +1928,6 @@ struct SceneEvent gTunnelRuinsEventsOther[] = {
     {EVENT_TOUCH | EVENT_TOUCH_WALKING, 41, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushLadyStatue)},
     {SEARCH(SEARCH_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchLockedDoor)},
     {SEARCH(SEARCH_UNNAMED), 42, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadSecondStatue)},
-    // Chests: item 0x71 is the Oracle's Robe, item 0x54 Asura's Armor.
     {SEARCH(SEARCH_CHEST), 100, 0xf32, FIND_ITEM(ITEM_ORACLES_ROBE)},
     {SEARCH(SEARCH_CHEST), 101, 0xf33, FIND_ITEM(ITEM_ASURAS_ARMOR)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOUSE_PILLAR, FLAG_SCENE_TEMP_04, EVENT_SCRIPT(Event_MoveDousePillar)},

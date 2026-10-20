@@ -141,8 +141,6 @@ void BattleFx_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject) {
   }
 }
 
-/// Runs Whirlwind cast on a target, through FieldFx_RunWhirlwind.
-///
 /// Abilities: Whirlwind, Gale (field kind 14), cast on a target.
 void FieldFx_RunWhirlwindOnTarget(s32 unused) { FieldFx_RunWhirlwind(); }
 

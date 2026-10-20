@@ -26,18 +26,14 @@
 // enters another place group, and other places use the numbers for their own.
 #define FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN 0x350
 
-/// Where the party can enter the room.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumPsynergyStoneEntrances;
 }
 
-/// The room has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-/// Where its one exit leads.
 const u32 *Scene_GetExits(void) { return gSolSanctumPsynergyStoneExits; }
 
-/// Nobody is placed here.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   return gSolSanctumPsynergyStonePlacements;
 }

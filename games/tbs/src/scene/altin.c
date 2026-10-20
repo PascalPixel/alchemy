@@ -140,7 +140,6 @@ static void Village_ApplyWaterLevel(void);
 static void Houses_PlaceSheltering(void);
 static void Beast_SpawnSpray(void);
 
-/// Returns the entrance table of the scene being entered.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -153,15 +152,13 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gAltinOther_Entrances;
 }
 
-/// Neither scene has regions.
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 /// Both scenes share one exit table.
 const u32 *Scene_GetExits(void) { return gAltin_Exits; }
 
-/// Returns the actor placements of the scene being entered. Some villagers
-/// only turn back after talking once the flood is over or their family has
-/// gone home.
+/// Some villagers only turn back after talking once the flood is over or
+/// their family has gone home.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s32 scene = gGameState.scene;
   if (scene == SCENE_ALTIN_VILLAGE) {
@@ -183,7 +180,6 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
   return gAltinOther_Placements;
 }
 
-/// Returns the event table of the scene being entered.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 

@@ -108,10 +108,8 @@ struct LinkPeer {
 
 static s32 sLinkLobbyWaitFrames;
 
-/// Returns the lobby entrance table through the scene entry ABI.
 u8 *LinkLobby_GetEntrances(void) { return (u8 *)gLinkLobbyEntrances; }
 
-/// Returns zero from this lobby scene entry.
 s32 SceneData_ReturnZero(void) { return 0; }
 
 /// Reinitializes the serial runtime while interrupts are locked.
@@ -128,7 +126,6 @@ static s32 LinkLobby_InitializeSerial(void) {
   IRQ_UNLOCK(savedIrqState);
 }
 
-/// Returns the lobby's packed exit table.
 u8 *LinkLobby_GetExits(void) { return (u8 *)gLinkLobbyExits; }
 
 /// Selects the post-link-battle placements for entrances nine and eleven.
@@ -1107,7 +1104,6 @@ static s32 LinkLobby_ReportMonsterRecord(s32 actorId) {
   Engine_EventEnd();
 }
 
-/// Returns the lobby event table through the scene entry ABI.
 u8 *LinkLobby_GetEvents(void) { return (u8 *)gLinkLobbyEvents; }
 
 /// Shows saving/saved messages around the linked battle results save.

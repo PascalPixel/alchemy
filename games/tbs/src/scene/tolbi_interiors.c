@@ -55,13 +55,10 @@ static inline void TolbiInteriors_AskYesNo(s32 question, s32 speaker) {
   Engine_EventShowMessage(speaker, 0);
 }
 
-/// The scene's entrances.
 u8 *TolbiInteriors_GetEntrances(void) { return gTolbiInteriorsEntrances; }
 
-/// The interiors have no regions.
 s32 TolbiInteriors_GetRegions(void) { return 0; }
 
-/// The scene's exits.
 u8 *TolbiInteriors_GetExits(void) { return gTolbiInteriorsExits; }
 
 /// After Colosso the rooms hold a different crowd.

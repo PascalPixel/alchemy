@@ -73,7 +73,6 @@ const u8 gTitle_PromptBlendLevels[60] = {
 };
 // clang-format on
 
-/// Entry `i` of the intro's OAM shadow
 #define INTRO_OBJ(i) (work->area.objects[i])
 
 /// Brings `v` into 0..255 by whole turns of 256

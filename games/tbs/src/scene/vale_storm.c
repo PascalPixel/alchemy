@@ -40,7 +40,6 @@
 #include "flags.h"
 #include "songs.h"
 
-// Forward declarations.
 static void Event_DoraSendsIsaacToThePlaza(void);
 static void ValeStorm_SetStormCellAttributes(void);
 static void ValeStorm_ApplyRock12Collision(void);
@@ -91,23 +90,18 @@ ValeStorm_RerollHeadingOnCountdown(struct ScriptInterpreter *interpreter) {
 
 #include "common/object_pulse.h"
 
-/// Returns the entrances to the paths outside on the stormy night.
 struct SceneEntrance *ValeStorm_GetEntrances(void) {
   return gValeStorm_Entrances;
 }
 
-/// The paths have no scene regions.
 struct SceneRegion *ValeStorm_GetRegions(void) { return NULL; }
 
-/// Returns the storm scene exit table.
 u32 *ValeStorm_GetExits(void) { return gValeStorm_Exits; }
 
-/// Returns the storm scene actor placements.
 struct ScenePlacement *ValeStorm_GetPlacements(void) {
   return gValeStorm_Placements;
 }
 
-/// Returns the storm scene event bindings.
 struct SceneEvent *ValeStorm_GetEvents(void) { return gValeStorm_Events; }
 
 /// Walking onto the upper path: its collision cells change, remembered in
@@ -2508,7 +2502,6 @@ static void ValeStorm_UpdateBoulderSceneEffects(void) {
   }
 }
 
-/// Cycles the boulder sprite palette.
 static void ValeStorm_CycleBoulderPalette(void) {
   ValeStorm_CycleObjectPalettes(Object_GetById(19));
 }
@@ -2538,7 +2531,6 @@ static void Event_SearchBrokenDoor(void) {
   Engine_EventEnd();
 }
 
-/// Searching the chest of valuables.
 static void Event_SearchValuablesChest(void) {
   Engine_EventBegin();
   Engine_MessageShowCentered(MsgValeSChestValuables, 1);

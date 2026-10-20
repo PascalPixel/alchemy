@@ -293,7 +293,6 @@ static const s16 sStockTable[SHOP_STOCK_ROWS][SHOP_STOCK_COLUMNS] = {
 };
 // clang-format on
 
-/// Returns the number of rows in the shop stock table.
 s32 EventTable_GetRowLimit(void) { return SHOP_STOCK_ROWS; }
 
 /// Adds a location's initial artifacts to shared stock once, before its first

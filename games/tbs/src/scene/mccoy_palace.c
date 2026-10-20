@@ -59,7 +59,6 @@ enum {
   ACTOR_WATER_OF_LIFE_CHEST = 24
 };
 
-// Forward declarations.
 static void McCoyPalace_ClaimReward(s32 chestActorId, s32 itemId,
                                     s32 chestFlag);
 static void Event_AudienceWithMcCoy(void);
@@ -82,15 +81,12 @@ struct PalacePlacementTalkFacingView {
 // The shared facing callback precedes the scene's entry points.
 #include "common/object_facing.h"
 
-/// Where the party can enter the palace.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gMcCoyPalaceEntrances;
 }
 
-/// The palace has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-/// Where each door and stair leads.
 const u32 *Scene_GetExits(void) { return gMcCoyPalaceExits; }
 
 /// The palace's people. Once the reward is taken, the startled resident,
@@ -211,7 +207,6 @@ static void Event_ReadAdmirersThoughts(void) {
   Engine_EventEnd();
 }
 
-/// Mind Read on the keeper of McCoy's treasures.
 static void Event_ReadRewardKeepersThoughts(void) {
   Engine_EventBegin();
 

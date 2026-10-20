@@ -448,7 +448,6 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
   s32 hit;
   s32 x;
 
-  // The work, the canvas and the camera.
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   camera = *(struct BattleCamera **)((u8 *)slots - (HEAP_SLOT_BATTLE_EFFECT -
                                                     HEAP_SLOT_CAMERA) *
@@ -950,8 +949,6 @@ void BattleFx_RunProjectileVolley(struct BattleEffectArgument *effect,
 }
 
 /// Sends a battler back to its place (its anchor) with a hop.
-///
-/// id: the battler.
 void BattleFx_InitializeRisingObject(s32 id) {
   struct BattleObj *slot = GetBattleObjectSlotFar(id);
   struct MotionObject *object = slot->object;
@@ -971,10 +968,6 @@ void BattleFx_InitializeRisingObject(s32 id) {
 /// Moves a battler 80% of the way to another one over a number of frames,
 /// in its action pose. The speed is that distance over the frames; the
 /// distance is taken in 1/256 pixels so its square fits in 32 bits.
-///
-/// id: the battler that moves.
-/// targetId: the battler it moves towards.
-/// frames: how long the move takes.
 void BattleFx_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   struct BattleObj *slot = GetBattleObjectSlotFar(id);
   struct BattleObj *targetSlot = GetBattleObjectSlotFar(targetId);

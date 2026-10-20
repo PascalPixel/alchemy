@@ -308,7 +308,6 @@ s32 FieldEvent_AskYesNoAndShowResponse(s32 actor, s32 flags) {
   return answer;
 }
 
-/// Does nothing.
 void BattleEventRuntime_EmptyCallback(void) {}
 
 /// Opens the event's current message for speaker, kept 32 pixels above or

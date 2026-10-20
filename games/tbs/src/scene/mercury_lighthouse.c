@@ -78,7 +78,6 @@
   ((s32 (*)())Engine_ActorSetAnimationAndWait)
 #endif
 
-// Forward declarations.
 static void MercuryLighthouse_OpenGateWithMovedBlock(void);
 static void MercuryLighthouse_OpenStairGateWithMovedBlock(void);
 static void MercuryLighthouse_SyncBlockFlags(void);
@@ -209,7 +208,6 @@ static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
 #include "common/mercury_lighthouse_sparks.h"
 #include "common/mercury_lighthouse_palette_cycle.h"
 
-/// Selects the entrance rows for the current lighthouse scene.
 const struct SceneEntrance *MercuryLighthouse_GetEntrances(void) {
   s16 selector = gGameState.scene;
 
@@ -225,7 +223,6 @@ const struct SceneEntrance *MercuryLighthouse_GetEntrances(void) {
   return gMercuryLighthouseEntrancesOther;
 }
 
-/// These lighthouse scenes have no placement-clipping regions.
 const struct SceneRegion *MercuryLighthouse_GetRegions(void) { return NULL; }
 
 /// Returns the packed exits shared by the lighthouse scenes.

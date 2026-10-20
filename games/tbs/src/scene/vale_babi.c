@@ -74,7 +74,6 @@ struct SceneEntrance *ValeBabi_GetEntrances(void) {
   return gValeBabi_Entrances;
 }
 
-/// This part of Vale has no scene regions.
 struct SceneRegion *ValeBabi_GetRegions(void) { return NULL; }
 
 /// On the stormy night the exits lead into the storm.
@@ -192,67 +191,56 @@ static void ValeBabi_CloseScreenAndExit(s32 exitId) {
   Engine_EventRequestExit(exitId);
 }
 
-/// Plays the exit cue before leaving through trigger 1.
 static void Event_ExitNorthwestArea(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(1);
 }
 
-/// Plays the exit cue before leaving through trigger 2.
 static void Event_ExitNorthArea(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(2);
 }
 
-/// Plays the exit cue before leaving through trigger 3.
 static void Event_ExitNortheastArea(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(3);
 }
 
-/// Plays the exit cue before leaving through trigger 4.
 static void Event_ExitWestAreaSouth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(4);
 }
 
-/// Plays the alternate exit cue before leaving through trigger 5.
 static void Event_ExitWestAreaNorth(void) {
   Engine_AudioPlayCue(SE_128);
   ValeBabi_CloseScreenAndExit(5);
 }
 
-/// Plays the exit cue before leaving through trigger 6.
 static void Event_ExitCenterAreaSouth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(6);
 }
 
-/// Plays the alternate exit cue before leaving through trigger 7.
 static void Event_ExitCenterAreaNorth(void) {
   Engine_AudioPlayCue(SE_128);
   ValeBabi_CloseScreenAndExit(7);
 }
 
-/// Plays the exit cue before leaving through trigger 8.
 static void Event_ExitSouthwestArea(void) {
   Engine_AudioPlayCue(SE_129);
   ValeBabi_CloseScreenAndExit(8);
 }
 
-/// Plays the exit cue before leaving through trigger 9.
 static void Event_ExitSouthAreaWest(void) {
   Engine_AudioPlayCue(SE_129);
   ValeBabi_CloseScreenAndExit(9);
 }
 
-/// Plays the exit cue before leaving through trigger 10.
 static void Event_ExitSouthAreaSouth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(10);
 }
 
-/// Plays the exit cue before leaving through trigger 11.
 static void Event_ExitSoutheastArea(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeBabi_CloseScreenAndExit(11);
@@ -479,7 +467,6 @@ static void Event_DoraWakesIsaac(void) {
 /// Selects the hardware blend targets for the storm sequence.
 static __inline__ void SetBlendTarget(u32 value) { REG_BLDCNT = value; }
 
-/// Sets the packed hardware alpha coefficients.
 static __inline__ void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
 
 /// The effect work in slot 56, seen for the VRAM block the paired effects
@@ -950,12 +937,10 @@ static void ValeBabi_SpawnEffectPair(union FieldObject *object) {
 // Shared Psynergy setup precedes the scene's effect wrappers.
 #include "common/effect_psynergy.h"
 
-/// Applies the cycling-palette update to actor 8.
 UNUSED static void ValeBabi_CyclePaletteWithParticles(void) {
   ValeBabi_CyclePaletteAndSpawnPair((union FieldObject *)Object_GetById(8));
 }
 
-/// Applies the cycling-palette update to actor 17.
 UNUSED static void ValeBabi_CyclePaletteWithoutParticles(void) {
   ValeBabi_CyclePaletteOnOddFrames((union FieldObject *)Object_GetById(17));
 }

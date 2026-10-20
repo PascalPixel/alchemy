@@ -41,7 +41,6 @@
 #include "songs.h"
 #include "item_ids.h"
 
-// Forward declarations.
 static void Kolima_WitnessForestCurse(void);
 static void Kolima_ShowMessageAndWait(s32 actorId, s32 waitFrames);
 static void Kolima_FaceActorAndWait(s32 actorId, s32 facing, s32 waitFrames);
@@ -1686,7 +1685,6 @@ struct SceneEvent gKolimaEvents[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS, MSGNO(MsgKolimaIfICantMoveThenMom) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS, MSGNO(MsgKolimaMaybeIfIMeditateHarderIll) },
     { SEARCH(SEARCH_JAR), 100, 0xf57, FIND_ITEM(ITEM_APPLE) },
-    // A Herb (item 0xb4).
     { SEARCH(SEARCH_JAR), 101, 0xf58, FIND_ITEM(ITEM_HERB) },
     { SCENE_EVENTS_END },
 };

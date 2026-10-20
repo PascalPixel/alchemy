@@ -60,12 +60,10 @@ KolimaInteriors_TurnVillagersIntoTrees(struct ScenePlacement *placement) {
   } while (villagerIndex < ACTOR_LAST_VILLAGER - ACTOR_FIRST_VILLAGER + 1);
 }
 
-/// Returns the entrances for Kolima's houses and shops.
 const struct SceneEntrance *KolimaInteriors_GetEntrances(void) {
   return gKolimaInteriors_Entrances;
 }
 
-/// Kolima's interiors have no scene regions.
 const struct SceneRegion *KolimaInteriors_GetRegions(void) { return NULL; }
 
 /// Returns the doors and stairs linking the interiors.

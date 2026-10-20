@@ -55,18 +55,14 @@ static void Event_TalkToBreeze(void) {
   Field_RequestDjinnBattle(ACTOR_BREEZE, DJINNI_BREEZE);
 }
 
-/// Returns the branch entrances from the adjoining Tret rooms.
 const struct SceneEntrance *TretTreeBranch_GetEntrances(void) {
   return gTretTreeBranch_Entrances;
 }
 
-/// Returns no region table for this overlay.
 const struct SceneRegion *TretTreeBranch_GetRegions(void) { return NULL; }
 
-/// Returns the packed exits to the adjoining Tret scenes.
 const u32 *TretTreeBranch_GetExits(void) { return gTretTreeBranch_Exits; }
 
-/// Returns the branch's actor placement table.
 const struct ScenePlacement *TretTreeBranch_GetPlacements(void) {
   return gTretTreeBranch_Placements;
 }
@@ -182,10 +178,8 @@ static void UNUSED TretTreeBranch_RunEmptyEvent(void) {
   EV_END();
 }
 
-/// Unused empty hook; its original role is not established.
 static void UNUSED TretTreeBranch_UnusedHookFirst(void) {}
 
-/// Another unused empty hook with no established role.
 static void UNUSED TretTreeBranch_UnusedHookSecond(void) {}
 
 /// Unused exchange callback: puts held/repeated keys in the transfer header.

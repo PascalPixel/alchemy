@@ -58,15 +58,12 @@ static void Garden_OpenPalaceGate(void);
 
 #include "common/object_facing.h"
 
-/// Where the party can enter the garden.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gMcCoyPalaceGardenEntrances;
 }
 
-/// The garden has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-/// Where each exit leads.
 const u32 *Scene_GetExits(void) { return gMcCoyPalaceGardenExits; }
 
 /// The garden's people. Once McCoy has turned the party away, the east guard

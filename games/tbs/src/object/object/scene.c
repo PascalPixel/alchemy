@@ -281,7 +281,6 @@ void Game_ResetForNewGame(s32 mode) {
   }
 }
 
-/// Loads the current scene's code into the overlay area.
 void Scene_LoadOverlay(s32 unused) {
   const struct SceneRecord *table;
 

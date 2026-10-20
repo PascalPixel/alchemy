@@ -65,7 +65,6 @@
 // ledge and keeps away from the party. Both last while the party stays in the
 // cave.
 
-// Forward declarations.
 static void ValeCave_CenterActorOnCell(s32 actorId, s32 column, s32 row);
 static void ValeCave_ApplyEntryState(void);
 
@@ -133,7 +132,6 @@ const struct SceneEntrance *ValeCave_GetEntrances(void) {
   return gValeCave_EntrancesOther;
 }
 
-/// The cave rooms have no additional region table.
 const struct SceneRegion *ValeCave_GetRegions(void) { return NULL; }
 
 /// Returns the shared packed exits for all cave rooms.

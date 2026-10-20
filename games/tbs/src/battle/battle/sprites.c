@@ -22,7 +22,6 @@ void BattleParty_ListAllUnitsAndSubmit(void) {
   BattleActor_SpawnObjectsForList(unitIds, 0);
 }
 
-/// Returns the palette of unit id's battle sprite.
 s32 BattleMotion_GetSlotPalette(s32 id) { return BattleObjGet(id)->palette; }
 
 /// The battle has six enemy sprite slots; a large enemy takes two side by

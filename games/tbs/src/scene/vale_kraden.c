@@ -48,15 +48,12 @@ enum ValeKradenActor {
 
 #include "common/object_facing.h"
 
-/// Returns the cottage area's entrance positions.
 const struct SceneEntrance *ValeKraden_GetEntrances(void) {
   return gValeKraden_Entrances;
 }
 
-/// This area has no scene regions.
 const struct SceneRegion *ValeKraden_GetRegions(void) { return NULL; }
 
-/// Returns the cottage area's exits.
 const u32 *ValeKraden_GetExits(void) { return gValeKraden_Exits; }
 
 /// Returns the cottage residents and story actors.

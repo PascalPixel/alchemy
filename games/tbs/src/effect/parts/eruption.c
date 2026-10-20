@@ -223,7 +223,6 @@ void BattleFx_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
   } while (entryIndex != entryCount);
 }
 
-/// An effect that does nothing.
 void BattleFx_DoNothing(void) {}
 
 #undef ERUPTION_FIELD_MOTE_CELLS

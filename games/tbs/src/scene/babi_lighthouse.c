@@ -193,7 +193,6 @@ static void BabiLighthouse_FallToExit(s32 exit) {
   Engine_EventEnd();
 }
 
-/// Returns the entrance table of the scene being entered.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -220,7 +219,6 @@ const struct SceneRegion *Scene_GetRegions(void) {
 /// The four scenes share one exit table.
 u8 *BabiLighthouse_GetExits(void) { return gBabiLighthouse_Exits; }
 
-/// Returns the actor placements of the scene being entered.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -1082,7 +1080,6 @@ static void BabiLighthouse_ClimbOrAdvancePair(void) {
   }
 }
 
-/// Returns the event table of the scene being entered.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 

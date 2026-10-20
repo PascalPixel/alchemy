@@ -83,7 +83,6 @@ void BattleFx_RunFlashingStrike(struct BattleEffectArgument *effect, s32 mode) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
                         0); // Clear to 0 each frame.
 
-  // Move the acting unit toward the target over 16 frames.
   if (mode == 1)
     BattleMotion_ApproachTargetFar(effect->actor, effect->actors[0], 16,
                                    0x80000);

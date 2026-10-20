@@ -35,7 +35,6 @@ s32 Object_GetScreenPosition(s32 objectId, s32 *position) {
   return 0;
 }
 
-/// Does nothing.
 UNUSED void ObjectEffect_ReservedNoOp941DC(void) {}
 
 /// Starts the transition into a random battle: plays the scene's battle cue

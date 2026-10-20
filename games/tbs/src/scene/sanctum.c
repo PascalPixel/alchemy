@@ -60,7 +60,6 @@ enum {
   ACTOR_HEALER_AFTERIMAGE
 };
 
-// Forward declarations.
 static void Sanctum_RequestQuestAcceptance(void);
 static void Sanctum_ReceiveWiseOnesMission(void);
 static void Sanctum_ShowHealerAfterimage(void);
@@ -98,10 +97,8 @@ static s32 Sanctum_FaceActorNamedByTimer(union FieldObject *fieldObject) {
 /// Returns the entrances shared by all Sanctum visits.
 struct SceneEntrance *Sanctum_GetEntrances(void) { return gSanctum_Entrances; }
 
-/// The Sanctum has no region table.
 struct SceneRegion *Sanctum_GetRegions(void) { return NULL; }
 
-/// Returns the Sanctum exit connections.
 u32 *Sanctum_GetExits(void) { return gSanctum_Exits; }
 
 /// Chooses the actors for the current entrance.
@@ -1389,7 +1386,6 @@ static void Sanctum_ShowHealerAfterimage(void) {
   sprite->image.priority = 2;
 }
 
-/// Hides the healer's afterimage actor.
 static void Sanctum_HideHealerAfterimage(void) {
   struct FieldActor *state = Object_GetById(ACTOR_HEALER_AFTERIMAGE);
   state->update = 0;
@@ -1876,7 +1872,6 @@ static void Sanctum_RestoreCeremonyFloor(void) {
   Engine_TaskWait(1);
 }
 
-/// Tests whether the leader is facing toward the healer.
 static s32 Sanctum_IsLeaderFacingHealer(void) {
   struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
 

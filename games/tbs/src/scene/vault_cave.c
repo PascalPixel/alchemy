@@ -63,7 +63,6 @@ enum {
   FLAG_WHIRLWIND_USED = FLAG_SCENE_TEMP_00 + 0x100
 };
 
-/// Selects the cave map's entrance positions and camera bounds.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -82,7 +81,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 /// Returns the region boxes used by the cave exits.
 const struct SceneRegion *Scene_GetRegions(void) { return gVaultCaveRegions; }
 
-/// Selects the current cave map's packed exit destinations.
 const u32 *Scene_GetExits(void) {
   s16 scene = gGameState.scene;
 
@@ -311,7 +309,6 @@ static void Event_MoveSouthernBlock(void) {
   }
 }
 
-/// Unused empty function retained from this overlay.
 static void UNUSED VaultCave_UnusedNoOp(void) {}
 
 /// Restores the map cells and attributes of the completed northern switch.
@@ -390,7 +387,6 @@ static void Event_FreezeWestUpperTarget(void) {
   Engine_GameFlagSet(FLAG_WEST_UPPER_FROZEN);
 }
 
-/// Frost on the lower western target.
 static void Event_FreezeWestLowerTarget(void) {
   struct FieldActor *target = Object_GetById(17);
 
@@ -405,7 +401,6 @@ static void Event_FreezeWestLowerTarget(void) {
   Engine_GameFlagSet(FLAG_WEST_LOWER_FROZEN);
 }
 
-/// Frost on the lower target just east of it.
 static void Event_FreezeInnerWestLowerTarget(void) {
   struct FieldActor *target = Object_GetById(18);
 
@@ -420,7 +415,6 @@ static void Event_FreezeInnerWestLowerTarget(void) {
   Engine_GameFlagSet(FLAG_INNER_WEST_LOWER_FROZEN);
 }
 
-/// Frost on the upper eastern target.
 static void Event_FreezeEastUpperTarget(void) {
   struct FieldActor *target = Object_GetById(19);
 
@@ -436,7 +430,6 @@ static void Event_FreezeEastUpperTarget(void) {
   Engine_GameFlagSet(FLAG_EAST_UPPER_FROZEN);
 }
 
-/// Frost on the lower eastern target.
 static void Event_FreezeEastLowerTarget(void) {
   struct FieldActor *target = Object_GetById(20);
 
@@ -452,7 +445,6 @@ static void Event_FreezeEastLowerTarget(void) {
   Engine_GameFlagSet(FLAG_EAST_LOWER_FROZEN);
 }
 
-/// Frost on the far eastern target.
 static void Event_FreezeFarEastTarget(void) {
   struct FieldActor *target = Object_GetById(21);
 

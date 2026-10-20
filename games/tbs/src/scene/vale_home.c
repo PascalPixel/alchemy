@@ -70,8 +70,6 @@ static void ValeHome_UpdateActor17Psynergy(void);
 static void ValeHome_UpdateActor20Psynergy(void);
 static void ValeHome_SetProgressFlagsAndExit(void);
 
-/// Turns and waits by calling ValeHome_FaceDirectionAndWait through this
-/// inline.
 static inline void ValeHome_TurnAndWait(s32 actor, s32 facing, s32 frames) {
   /* FAKEMATCH: forwarding inline for Event_DepartForQuest's three calls;
    * called directly, the function grows by 4 bytes in tbs-en and builds its
@@ -93,15 +91,12 @@ static inline s32 ValeHome_TurnAndWaitValue(s32 actor, s32 facing, s32 frames) {
 
 #include "common/object_facing.h"
 
-/// Returns the village's entrance positions.
 struct SceneEntrance *ValeHome_GetEntrances(void) {
   return gValeHome_Entrances;
 }
 
-/// The village has no scene regions.
 struct SceneRegion *ValeHome_GetRegions(void) { return NULL; }
 
-/// Selects the storm or ordinary village exits.
 u32 *ValeHome_GetExits(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     return gValeHome_StormExits;
@@ -109,7 +104,6 @@ u32 *ValeHome_GetExits(void) {
   return gValeHome_Exits;
 }
 
-/// Selects the villagers for the storm, farewell or return visit.
 struct ScenePlacement *ValeHome_GetPlacements(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     return gValeHome_StormPlacements;
@@ -136,7 +130,6 @@ static void Event_UsePsynergyStone(void) {
   Engine_EventEnd();
 }
 
-/// Selects the village's interactions for the current story state.
 struct SceneEvent *ValeHome_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_REACHED_KALAY) != 0) {
     return gValeHome_EventsAfterKalay;
@@ -399,7 +392,6 @@ static inline void Event_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ, s32 x,
   Actor_WalkTo(ACTOR_PARTY_LEADER, x, z);
 }
 
-/// Enters through the village's northwest door.
 static void Event_OpenNorthwestDoor(void) {
   Event_OpenDoorAndWalkThrough(44, 7, 248, 279);
   Vale_RequestBackdropExit(1);
@@ -430,25 +422,21 @@ static void Event_OpenCentralEastDoor(void) {
   Vale_RequestBackdropExit(4);
 }
 
-/// Enters through the southwestern door.
 static void Event_OpenSouthwestDoor(void) {
   Event_OpenDoorAndWalkThrough(41, 32, 200, 546);
   Vale_RequestBackdropExit(5);
 }
 
-/// Enters through the door at the village's western edge.
 static void Event_OpenWestEdgeDoor(void) {
   Event_OpenDoorAndWalkThrough(35, 36, 102, 611);
   Vale_RequestBackdropExit(6);
 }
 
-/// Enters through the southeastern door.
 static void Event_OpenSoutheastDoor(void) {
   Event_OpenDoorAndWalkThrough(51, 39, 358, 670);
   Vale_RequestBackdropExit(7);
 }
 
-/// Leaves through the village's western passage.
 static void Event_LeaveThroughWestPassage(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropExit(8);
@@ -1309,13 +1297,11 @@ static void Event_DepartForQuest(void) {
   Engine_EventEnd();
 }
 
-/// Shows the current message, then leaves a pause before the next scene action.
 static void Event_SayThenWait(s32 speaker, s32 frames) {
   Engine_EventShowMessage(speaker, 0);
   Engine_EventWait(frames);
 }
 
-/// Turns an actor immediately, then pauses the scene.
 static void ValeHome_FaceDirectionAndWait(s32 actorId, s32 facing, s32 frames) {
   Engine_ActorFaceDirection(actorId, facing, 0);
   Engine_EventWait(frames);

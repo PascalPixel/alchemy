@@ -75,7 +75,6 @@
   ((s32 (*)(s32, s32))Scene_GiveAndEquipItem)
 #endif
 
-// Forward declarations.
 static void ColossoRiver_ExplainFinalsRules(s32 guide);
 static void ColossoRiver_ShowRoundIntroduction(s32 round);
 static void ColossoRiver_ShowMatchResult(s32 result);
@@ -112,18 +111,14 @@ enum {
 
 // Shared Colosso routines (scene/common/colosso_*.c).
 
-/// Returns the course entrance table.
 struct SceneEntrance *ColossoRiver_GetEntrances(void) {
   return gColossoRiver_Entrances;
 }
 
-/// The course has no region table.
 const struct SceneRegion *ColossoRiver_GetRegions(void) { return 0; }
 
-/// Returns the course exit table.
 u32 *ColossoRiver_GetExits(void) { return gColossoRiver_Exits; }
 
-/// Returns the course actor placements.
 struct ScenePlacement *ColossoRiver_GetPlacements(void) {
   return gColossoRiver_Placements;
 }
@@ -459,7 +454,6 @@ static void Event_PushPipeworksBlock(void) {
   Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
 }
 
-/// Marks the course flag used by this unused event.
 UNUSED static void ColossoRiver_SetCourseFlag(void) { Engine_GameFlagSet(768); }
 
 /// Reaching the arena: the leader takes a prize (the Iron Shield if first, the
@@ -518,7 +512,6 @@ static void Event_PushRockOrCheckAhead(void) {
   }
 }
 
-/// Returns the course event table.
 struct SceneEvent *ColossoRiver_GetEvents(void) { return gColossoRiver_Events; }
 
 /// Back from the battle: the two warriors stand in the arena as the result is
@@ -1203,7 +1196,6 @@ UNUSED static void Text_WriteU32AsHex(u8 *buf, u32 value) {
   }
 }
 
-/// Provides the empty callback retained by the original event sequence.
 static void ColossoRiver_NoOp(void) {}
 
 /// Marks the shared stage state ready for the waiting event.

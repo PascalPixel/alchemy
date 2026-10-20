@@ -41,7 +41,6 @@ struct ObjectCameraPoint {
   s32 z; ///< 16.16 fixed-point pixels
 };
 
-/// The fixed camera.
 struct ObjectCameraFixed {
   struct ObjectCameraPoint eye;
   struct ObjectCameraPoint target;
@@ -178,7 +177,6 @@ void ObjectSystem_UpdateCamera(void) {
   Runtime_ReleaseHeapBlock(HEAP_SLOT_FRAME_SCRATCH);
 }
 
-/// Returns 1.
 UNUSED s32 ObjectCamera_ReturnTrue(void) { return 1; }
 
 /// Each frame, with the fixed camera: places every object's sprite, from the

@@ -158,7 +158,6 @@ void BattleFx_RunRushingStrike(struct BattleEffectArgument *effect, s32 mode) {
       draw[0](canvas, work->sheet, screen.x / 2 - 16, screen.y - 48, 40, 32);
       draw[1](canvas, work->sheet, screen.x / 2 - 16, screen.y - 16, 40, 32);
     }
-    // The strike.
     if (frame == RUSHING_STRIKE_FRAME) {
       ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                 POSE_DAMAGE, 0, 8);

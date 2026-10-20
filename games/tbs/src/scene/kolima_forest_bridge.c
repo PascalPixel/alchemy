@@ -108,7 +108,6 @@ const struct SceneEntrance *KolimaForestBridge_GetEntrances(void) {
   return gKolimaForestBridge_Entrances;
 }
 
-/// The bridge has no regions.
 const struct SceneRegion *KolimaForestBridge_GetRegions(void) { return 0; }
 
 /// The paths to the clearing and the world map.
@@ -1011,7 +1010,6 @@ static void KolimaForestBridge_WitnessForestCurse(void) {
   Engine_EventEnd();
 }
 
-/// Shows the next line, then leaves time for the next beat.
 static void KolimaForestBridge_ShowMessageAndWait(s32 speaker, s32 frames) {
   Engine_EventShowMessage(speaker, 0);
   Engine_EventWait(frames);

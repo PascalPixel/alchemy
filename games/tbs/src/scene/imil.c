@@ -81,7 +81,6 @@ enum ImilTownFlag {
 #define IMIL_OPEN_SHOP ((s32 (*)())Engine_ShopOpen)
 #endif
 
-// Forward declarations.
 static void Imil_MeetMiaAtOldCouplesHouse(void);
 static void Imil_MiaCastsPlyOnOldMan(void);
 static void Imil_SpawnAmbientEffects(void);
@@ -134,10 +133,8 @@ const struct SceneEntrance *Imil_GetEntrances(void) {
   return gImil_TownEntrances;
 }
 
-/// Imil has no scene regions.
 struct SceneRegion *Imil_GetRegions(void) { return NULL; }
 
-/// Returns Imil's exits.
 u32 *Imil_GetExits(void) { return gImil_Exits; }
 
 /// Once the epidemic is cured (flag 0x881), the townspeople are well again and
@@ -967,7 +964,6 @@ static void Imil_OldManBobsAndSpeaks(void) {
   Engine_EventShowMessage(ACTOR_OLD_MAN, 0);
 }
 
-/// Mia casts Ply on the old man.
 static void Imil_MiaCastsPlyOnOldMan(void) {
   u8 *work;
 

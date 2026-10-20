@@ -11,7 +11,6 @@ typedef s32 (*KeyCallbackFn)(void);
 // The task scheduler: up to 20 routines run each frame by WaitFrames or each
 // VBlank, kept sorted by their order value (see SCHEDULER_KEY_MAIN_LOOP).
 
-/// Empties the task table.
 void Scheduler_ResetTaskTable(void) {
   struct SchedulerTask *task = gSchedulerTaskTable;
   s32 remaining;
@@ -119,10 +118,8 @@ s32 Scheduler_AddOrUpdateCallback(SchedulerCallback callback, s32 order) {
   return index;
 }
 
-/// Empty scheduler callback; it leaves all runtime state unchanged.
 void Scheduler_Idle(void) {}
 
-/// Alternates empty scheduler callback with the same no-op behavior.
 void Scheduler_EmptyCallback(void) {}
 
 /// Unschedules the task running `callback`. Returns its old index, or -1.

@@ -144,7 +144,6 @@ const struct SceneEntrance *LamakanDesert_GetEntrances(void) {
   return gLamakanDesertEntrancesOther;
 }
 
-/// The desert has no regions.
 const struct SceneRegion *LamakanDesert_GetRegions(void) { return 0; }
 
 /// All four desert maps share the packed exit table.

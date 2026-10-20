@@ -133,5 +133,4 @@ s32 Math_IntegerSqrt(s32 value) {
 /// Square root of a 16.16 fixed-point value, in 16.16.
 s32 FixedSqrt(s32 value) { return Iwram_Sqrt(value) << 8; }
 
-/// Returns the address of the basic sprite palettes.
 s32 Palette_GetBasicObjColors(void) { return (s32)gSystem_BasicColorPalette; }

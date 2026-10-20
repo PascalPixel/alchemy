@@ -295,8 +295,6 @@ void BattleFx_RunGrowingColumns(struct BattleEffectArgument *effect, s32 mode) {
 /// cycling through five 32x32 pictures, then shrinks away from frame 2i + 32;
 /// odd vines are mirrored. Vine i shakes the screen on frame 4i + 5. On frame
 /// 32 the targets react together, with a sound.
-///
-/// effect: the targets.
 void BattleFx_RunVine(struct BattleEffectArgument *effect) {
   u32 *slots, *cursor;
   struct BattleEffectWork *work;

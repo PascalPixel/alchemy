@@ -210,7 +210,6 @@ static s32 AltinPeak_FlyDebris(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-/// Returns the entrance table of the room being entered.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -266,7 +265,6 @@ const struct SceneRegion *Scene_GetRegions(void) {
 /// All the rooms share one exit table.
 const u32 *Scene_GetExits(void) { return gAltinPeak_Exits; }
 
-/// Returns the actor placements of the room being entered.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -1049,8 +1047,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
   Engine_EventEnd();
 }
 
-/// Returns the event table of the room being entered; room 1 has its own
-/// once the first drain has lowered its water.
+/// Room 1 has its own events once the first drain has lowered its water.
 const struct SceneEvent *Scene_GetEvents(void) {
   const struct SceneEvent *table;
 
@@ -2167,7 +2164,6 @@ static void AltinPeak_StopLogAndJumpOff(struct FieldActor *object) {
   Engine_AudioPlayCue(SE_159);
 }
 
-/// Retains the unused empty scene entry.
 UNUSED static void AltinPeak_ReservedNoOp(void) {}
 
 /// The log turns a quarter turn right around the corner it reaches.

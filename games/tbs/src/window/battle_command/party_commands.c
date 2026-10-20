@@ -28,7 +28,6 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
     targetKind = 4;
   if (effect == ABILITY_EFFECT_CURE_ALL)
     targetKind = 6;
-  // Revive.
   if (Battle_IsReviveEffectFar(act->effect) != 0)
     targetKind = 5;
   return targetKind;

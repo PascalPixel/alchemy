@@ -137,7 +137,6 @@ enum {
 // The native paired patrol computes this layer offset in floating point.
 #define PAIRED_PATROL_LAYER_ORIGIN_X (136.0 * 65536)
 
-// Forward declarations.
 static s32 LunpaFortress_TryCollectDisplayedItem(s32 actorId, s32 itemId);
 static void LunpaFortress_CheckSecondEntranceSentry(void);
 static s32 LunpaFortress_CanGuardSeeLeader(s32 actorId);
@@ -158,7 +157,6 @@ static void LunpaFortress_RestoreRescueRoomDoors(void);
 
 #include "common/object_staged_actor.h"
 
-/// Where the party can enter each map.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gGameState.scene;
 
@@ -174,10 +172,8 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gLunpaFortressEntrancesOther;
 }
 
-/// The fortress has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-/// Where each exit leads, by map.
 const u32 *Scene_GetExits(void) {
   s16 sceneId = gGameState.scene;
 
@@ -465,7 +461,6 @@ static s32 LunpaFortress_TryCollectDisplayedItem(s32 actorId, s32 itemId) {
   return itemGiven;
 }
 
-/// Unused callbacks that do nothing.
 static void UNUSED LunpaFortress_DoNothingA(void) {}
 
 static void UNUSED LunpaFortress_DoNothingB(void) {}
@@ -1434,7 +1429,6 @@ static void Event_BlowAwaySecondSwitchCover(void) {
   Engine_ActorSetPosition(COLUMN_ROOM_SECOND_SWITCH_COVER, 0, 0);
 }
 
-/// Unused callback that does nothing.
 static void UNUSED LunpaFortress_DoNothingE(void) {}
 
 /// Garet, Ivan and Mia step out of the leader and gather around Hammet.
@@ -2776,7 +2770,6 @@ static void Event_ReadStartledResidentsThoughts(void) {
   }
 }
 
-/// Unused callback that does nothing.
 static void UNUSED LunpaFortress_DoNothingF(void) {}
 
 /// Dodonpa behind bars begs his father's forgiveness; with the Cell Key, a

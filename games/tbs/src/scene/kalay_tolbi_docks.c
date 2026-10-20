@@ -84,7 +84,6 @@ const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void) {
   return gKalayTolbiDocks_NoEntrances;
 }
 
-/// The docks have no scene regions.
 const struct SceneRegion *KalayTolbiDocks_GetRegions(void) { return NULL; }
 
 /// The docks list no numbered exits.

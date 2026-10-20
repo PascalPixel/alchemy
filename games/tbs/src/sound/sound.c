@@ -249,7 +249,6 @@ s32 AudioCommand_GetStateByte(void) { return gMusicRestoreDelay; }
 /// Stops every sound player while preserving its state for a later resume.
 void AudioCommand_StopAllPlayers(void) { Audio_StopAllPlayers(); }
 
-/// Resumes the sound players after AudioCommand_StopAllPlayers.
 void AudioCommand_ResumeAllPlayers(void) { Audio_ResumeAllPlayers(); }
 
 /// Replaces the audio command mask, or toggles its requested bits when flagged.

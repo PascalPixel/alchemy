@@ -271,7 +271,6 @@ static inline void MogallForest_ApePointsTheWay(s32 guideId) {
   Engine_EventWait(60);
 }
 
-/// The entrances of the current area.
 const struct SceneEntrance *MogallForest_GetEntrances(void) {
   s16 selector = gGameState.scene;
 
@@ -287,13 +286,11 @@ const struct SceneEntrance *MogallForest_GetEntrances(void) {
   return gMogallForestEntrancesOther;
 }
 
-/// The forest has no clipping regions.
 const struct SceneRegion *MogallForest_GetRegions(void) { return NULL; }
 
 /// The exits, shared by the three areas.
 const u32 *MogallForest_GetExits(void) { return gMogallForest_Exits; }
 
-/// The actors of the current area.
 const struct ScenePlacement *MogallForest_GetPlacements(void) {
   s16 selector = gGameState.scene;
 
@@ -1154,7 +1151,6 @@ static void MogallForest_KillerApeAttacks(void) {
   Engine_EventEnd();
 }
 
-/// The events of the current area.
 const struct SceneEvent *MogallForest_GetEvents(void) {
   s16 selector = gGameState.scene;
 

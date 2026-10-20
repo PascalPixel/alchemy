@@ -228,7 +228,6 @@ static s32 Xian_WatchWaterCarrierPath(union FieldObject *fieldObject) {
 
 const struct SceneEntrance *Xian_GetEntrances(void) { return gXian_Entrances; }
 
-/// Xian has no region table.
 const struct SceneRegion *Xian_GetRegions(void) { return NULL; }
 
 const u32 *Xian_GetExits(void) { return gXian_Exits; }

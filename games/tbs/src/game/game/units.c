@@ -689,7 +689,6 @@ void UnitRatio(s32 owner) {
   Unit_UpdateGauges(unit);
 }
 
-/// Restricts an HP or PP value to the unit's current maximum.
 static inline s32 Unit_ClampGaugeValue(s32 value, s32 maximum) {
   s32 result;
 

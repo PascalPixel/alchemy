@@ -197,12 +197,10 @@ static inline void InitializeSelectedActor(s32 actorId) {
   Engine_ActorSetSpeed(actorId, PIXELS(1), PIXELS(1) / 2);
 }
 
-/// Returns the entrance rows for the second Colosso finals course.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gColossoWallEntrances;
 }
 
-/// This course has no placement-clipping regions.
 const struct SceneRegion *Scene_GetRegions(void) { return 0; }
 
 /// Returns the packed course and battle-result exits.
@@ -365,7 +363,6 @@ static void Event_RunRisingSequence(void) {
   FieldBattleFx_RunRisingObjectSequence(gGameState.selectedActor, 6, 0);
 }
 
-/// Lets the field engine check the obstacle ahead of the leader.
 static void Event_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
 /// Moves a riding log and its pusher to aligned cell centers.
@@ -511,25 +508,21 @@ static void ColossoWall_UpdateRollingLogCollision(void) {
   Map_CopyCellAttributes(13, 28, 4, 1, 18, cell);
 }
 
-/// Rolls the western log toward its western stopping point.
 static void Event_RollWestLogWest(void) {
   ColossoWall_RollLogToCell(ROLLING_LOG_WEST, 29, 26);
   ColossoWall_UpdateRollingLogCollision();
 }
 
-/// Rolls the western log toward its eastern stopping point.
 static void Event_RollWestLogEast(void) {
   ColossoWall_RollLogToCell(ROLLING_LOG_WEST, 33, 26);
   ColossoWall_UpdateRollingLogCollision();
 }
 
-/// Rolls the eastern log toward its western stopping point.
 static void Event_RollEastLogWest(void) {
   ColossoWall_RollLogToCell(ROLLING_LOG_EAST, 45, 26);
   ColossoWall_UpdateRollingLogCollision();
 }
 
-/// Rolls the eastern log toward its eastern stopping point.
 static void Event_RollEastLogEast(void) {
   ColossoWall_RollLogToCell(ROLLING_LOG_EAST, 49, 26);
   ColossoWall_UpdateRollingLogCollision();
@@ -711,7 +704,6 @@ static void Event_ReachArena(void) {
   resultBase = 2;
   SceneState_EmptyHook();
   Engine_EventBegin();
-  // Collect the finish item and let the recorded rival finish its approach.
   rivalFinishedFirst = ColossoWall_ApproachFinishAndTakeItem(77, 89);
   ColossoWall_WaitForRivalFinish();
   refreshCount = 9;
@@ -1465,12 +1457,10 @@ static UNUSED void Text_WriteU32AsHex(u8 *destination, u32 value) {
 /// Retains the empty hook called before the finish sequence.
 static void SceneState_EmptyHook(void) {}
 
-/// Marks the rival's path state as finished.
 static UNUSED void ColossoWall_MarkRivalFinished(void) {
   ((struct StageControl *)gSceneState)->status = 9;
 }
 
-/// Waits until the rival's path state reaches its finish marker.
 static void ColossoWall_WaitForRivalFinish(void) {
   s16 *status = &((struct StageControl *)gSceneState)->status;
 

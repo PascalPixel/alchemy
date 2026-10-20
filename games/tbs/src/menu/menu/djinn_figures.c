@@ -175,7 +175,6 @@ s32 FourObjectMotion_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative) {
   return index;
 }
 
-/// Sets one displayed object's easing phase.
 s32 FourObjectMotion_SetSlotPhase(s32 index, s32 phase) {
   ((struct FourObjectMotionState *)gMenuWork)->phases[index] = phase;
 }

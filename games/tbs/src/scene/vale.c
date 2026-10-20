@@ -67,7 +67,6 @@
 #define VALE_SOUTH_VILLAGER_Z 889
 #endif
 
-// Forward declarations.
 static void Vale_HaveJennaStopTheAlephDetour(void);
 static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
                                          const s32 *villagerActions);
@@ -109,13 +108,10 @@ enum { ANIM_HAMMER = 11 };
 
 #include "common/object_staged_actor.h"
 
-/// Returns the plaza's entrances.
 struct SceneEntrance *Vale_GetEntrances(void) { return gVale_Entrances; }
 
-/// The plaza has no scene regions.
 struct SceneRegion *Vale_GetRegions(void) { return NULL; }
 
-/// Returns the plaza's exits.
 u32 *Vale_GetExits(void) { return gVale_Exits; }
 
 /// Places the villagers for the story so far, or for the roof repair (entrance
@@ -1753,7 +1749,6 @@ static void Event_MendingTheRoof(void) {
   Engine_EventWait(40);
   Actor_SetSpeed(9, PIXELS(3) / 20, PIXELS(3) / 40);
   Actor_SetSpeed(14, PIXELS(3) / 20, PIXELS(3) / 40);
-  // The return value is unused.
   Object_GetById(9);
   Engine_ObjectSetPosition(dustEmitter, PIXELS(392), PIXELS(208), PIXELS(584));
   Actor_MoveToAndWait(9, 378, 584);

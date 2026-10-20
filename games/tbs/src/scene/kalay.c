@@ -88,7 +88,6 @@ enum KalayTunnelFlag {
   FLAG_TUNNEL_SECOND_PASSAGE_OPEN = 0x303
 };
 
-// Forward declarations.
 static void Kalay_PrepareTown(void);
 static void Kalay_PreparePalaceGate(void);
 static void Kalay_PrepareCave(void);
@@ -149,8 +148,6 @@ static s32 Kalay_UpdateTouristFidget(struct ScriptInterpreter *interpreter) {
 // Shared source, included in link order.
 #include "common/object_heading.h"
 
-/// Kalay is six maps: the town, the palace gate, the cave by the palace's
-/// secret passage, two more maps and the tunnel with the two blocks.
 const struct SceneEntrance *Kalay_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -175,7 +172,6 @@ const struct SceneEntrance *Kalay_GetEntrances(void) {
   return gKalay_NoEntrances;
 }
 
-/// Kalay has no scene regions.
 const struct SceneRegion *Kalay_GetRegions(void) { return NULL; }
 
 /// The numbered exits of all six maps.

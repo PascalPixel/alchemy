@@ -40,7 +40,6 @@ struct SceneEntrance *ValeEruption_GetEntrances(void) {
   return gValeEruption_Entrances;
 }
 
-/// The square has no scene regions.
 struct SceneRegion *ValeEruption_GetRegions(void) { return NULL; }
 
 /// Returns the way back to Vale.

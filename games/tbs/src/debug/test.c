@@ -53,16 +53,12 @@ static __inline__ void DebugMenu_RecalculateParty(void) {
   UnitCalc(IVAN);
 }
 
-/// Returns the debug room entrance table through the scene entry ABI.
 u8 *MenuTest_GetEntrances(void) { return (u8 *)gMenuTest_Entrances; }
 
-/// Returns zero from this scene entry.
 s32 SceneData_ReturnZero(void) { return 0; }
 
-/// Returns the debug room's packed exit table.
 u8 *MenuTest_GetExits(void) { return (u8 *)gMenuTest_Exits; }
 
-/// Returns the debug actors and their fixed room positions.
 u8 *MenuTest_GetPlacements(void) { return (u8 *)gMenuTest_Placements; }
 
 #if TBS_PATCH_1
@@ -114,43 +110,36 @@ end:
   Engine_DebugFinalizeWindow(window, 2);
 }
 
-/// Browses the weapon shop message range.
 static void DebugMenu_BrowseWeaponShopMessages(void) {
   DebugMenu_BrowseMessageRange(MsgWeaponShopWelcome,
                                MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-/// Browses the armor shop message range.
 static void DebugMenu_BrowseArmorShopMessages(void) {
   DebugMenu_BrowseMessageRange(MsgArmorShopWelcome,
                                MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-/// Browses the item shop message range.
 static void DebugMenu_BrowseItemShopMessages(void) {
   DebugMenu_BrowseMessageRange(MsgItemShopWelcome,
                                MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-/// Browses the sanctum message range.
 static void DebugMenu_BrowseSanctumMessages(void) {
   DebugMenu_BrowseMessageRange(MsgSanctumWelcome,
                                MsgWarriorShopWelcome - MsgSanctumWelcome);
 }
 
-/// Browses the warrior shop message range.
 static void DebugMenu_BrowseWarriorShopMessages(void) {
   DebugMenu_BrowseMessageRange(MsgWarriorShopWelcome,
                                MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-/// Browses the warrior armor shop message range.
 static void DebugMenu_BrowseWarriorArmorShopMessages(void) {
   DebugMenu_BrowseMessageRange(MsgWarriorArmorShopWelcome,
                                MsgArmorShopWelcome - MsgWeaponShopWelcome);
 }
 
-/// Browses the warrior item shop message range.
 static void DebugMenu_BrowseWarriorItemShopMessages(void) {
   DebugMenu_BrowseMessageRange(MsgWarriorItemShopWelcome,
                                MsgArmorShopWelcome - MsgWeaponShopWelcome);
@@ -171,7 +160,6 @@ static void DebugMenu_RunPresetShop(void) {
   Battle_ApplyPresetItemsAndFlags(1);
 }
 
-/// UNUSED: the original empty debug callback.
 UNUSED static void DebugMenu_NoOp(void) {}
 
 /// Opens the shop inventory selector and discards its selected owner and slot.
@@ -181,13 +169,11 @@ static void DebugMenu_TestItemSelection(void) {
   Shop_PickUnitItem(&selectedOwner, &selectedSlot);
 }
 
-/// Opens Isaac's name editor.
 static void DebugMenu_EditIsaacName(void) { NameEntry_EditOwnerName(ISAAC); }
 
 /// Leaves the test actor unchanged when targeted by Psynergy.
 static void DebugMenu_IgnorePsynergy(void) {}
 
-/// Sets the effect work's child-mode byte to one.
 static void DebugMenu_EnableEffectChildMode(void) {
   ((struct BattleFxScene *)gEffectWork)->childMode = 1;
 }
@@ -199,7 +185,6 @@ static void DebugMenu_GiveItemToParty(void) {
 }
 #endif
 
-/// Returns the event table through the original encoded scene entry ABI.
 s32 MenuTest_GetEvents(void) { return (s32)gMenuTest_Events; }
 
 /// Levels the four heroes to the current debug target, then raises it by ten.
@@ -221,7 +206,6 @@ static void DebugMenu_GiveConsumableTestStock(void) {
   // A repeated-grant loop shrinks this native function from 0x626 to 0x12c;
   // retain the individual calls and their original insertion order.
   UiText_ShowPositionedMessageAndWait(MsgDebugGotItem, 1);
-  // Isaac's test inventory.
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
   Inventory_AddItem(ISAAC, ITEM_ANTIDOTE);
@@ -286,7 +270,6 @@ static void DebugMenu_GiveConsumableTestStock(void) {
   Inventory_AddItem(ISAAC, 183);
   Inventory_AddItem(ISAAC, 183);
   Inventory_AddItem(ISAAC, 183);
-  // Garet's test inventory.
   Inventory_AddItem(GARET, 186);
   Inventory_AddItem(GARET, 186);
   Inventory_AddItem(GARET, 186);
@@ -312,7 +295,6 @@ static void DebugMenu_GiveConsumableTestStock(void) {
   Inventory_AddItem(GARET, ITEM_ANTIDOTE);
   Inventory_AddItem(GARET, ITEM_ANTIDOTE);
   Inventory_AddItem(GARET, ITEM_ANTIDOTE);
-  // Ivan's test inventory.
   Inventory_AddItem(IVAN, ITEM_ELIXIR);
   Inventory_AddItem(IVAN, ITEM_ELIXIR);
   Inventory_AddItem(IVAN, ITEM_ELIXIR);
@@ -354,7 +336,6 @@ static void DebugMenu_GiveConsumableTestStock(void) {
   Inventory_AddItem(IVAN, 236);
   Inventory_AddItem(IVAN, 236);
   Inventory_AddItem(IVAN, 236);
-  // Mia's test inventory.
   Inventory_AddItem(MIA, ITEM_POWER_BREAD);
   Inventory_AddItem(MIA, ITEM_POWER_BREAD);
   Inventory_AddItem(MIA, ITEM_POWER_BREAD);
@@ -531,7 +512,6 @@ static void DebugMenu_DamageAndAfflictParty(void) {
 /// Adds the test equipment in each owner's original inventory order.
 static void DebugMenu_GiveEquipmentTestStock(void) {
   UiText_ShowPositionedMessageAndWait(MsgDebugGotSturdyEquipment, 1);
-  // Isaac's test inventory.
   Inventory_AddItem(ISAAC, 85);
   Inventory_AddItem(ISAAC, 84);
   Inventory_AddItem(ISAAC, 124);
@@ -540,7 +520,6 @@ static void DebugMenu_GiveEquipmentTestStock(void) {
   Inventory_AddItem(ISAAC, 11);
   Inventory_AddItem(ISAAC, 27);
   Inventory_AddItem(ISAAC, 26);
-  // Garet's test inventory.
   Inventory_AddItem(GARET, 38);
   Inventory_AddItem(GARET, 37);
   Inventory_AddItem(GARET, 50);
@@ -550,7 +529,6 @@ static void DebugMenu_GiveEquipmentTestStock(void) {
   Inventory_AddItem(GARET, 134);
   Inventory_AddItem(GARET, 133);
   Inventory_AddItem(GARET, 152);
-  // Ivan's test inventory.
   Inventory_AddItem(IVAN, 64);
   Inventory_AddItem(IVAN, 65);
   Inventory_AddItem(IVAN, 98);
@@ -559,7 +537,6 @@ static void DebugMenu_GiveEquipmentTestStock(void) {
   Inventory_AddItem(IVAN, 131);
   Inventory_AddItem(IVAN, 141);
   Inventory_AddItem(IVAN, 163);
-  // Mia's test inventory.
   Inventory_AddItem(MIA, 61);
   Inventory_AddItem(MIA, 63);
   Inventory_AddItem(MIA, 96);
@@ -665,7 +642,6 @@ static void DebugMenu_SelectItem(void) {
   Engine_DebugFinalizeWindow(details, 1);
 }
 
-/// Opens the debug item browser.
 static void DebugMenu_OpenItemBrowser(void) { DebugMenu_SelectItem(); }
 
 /// Adds the original treasure test stock, retaining duplicate tickets and
@@ -674,7 +650,6 @@ static void DebugMenu_GiveTreasureTestStock(void) {
   // Sharing the duplicate grants through a counted loop shrinks this function
   // from 0x194 to 0x120; retain the original calls.
   UiText_ShowPositionedMessageAndWait(MsgDebugGotTreasure, 1);
-  // Isaac's test inventory.
   Inventory_AddItem(ISAAC, ITEM_HERMES_WATER);
   Inventory_AddItem(ISAAC, 0xcc);
   Inventory_AddItem(ISAAC, 0xdc);
@@ -682,7 +657,6 @@ static void DebugMenu_GiveTreasureTestStock(void) {
   Inventory_AddItem(ISAAC, 0xde);
   Inventory_AddItem(ISAAC, 0xdf);
   Inventory_AddItem(ISAAC, 0xe0);
-  // Garet's test inventory.
   Inventory_AddItem(GARET, ITEM_SMOKE_BOMB);
   Inventory_AddItem(GARET, ITEM_SLEEP_BOMB);
   Inventory_AddItem(GARET, 0xe6);
@@ -708,13 +682,11 @@ static void DebugMenu_GiveTreasureTestStock(void) {
   Inventory_AddItem(GARET, ITEM_ANCHOR_CHARM);
   Inventory_AddItem(GARET, ITEM_BONE);
   Inventory_AddItem(GARET, 0xed);
-  // Ivan's test inventory.
   Inventory_AddItem(IVAN, ITEM_BLACK_ORB);
   Inventory_AddItem(IVAN, 0x102);
   Inventory_AddItem(IVAN, 0x10b);
   Inventory_AddItem(IVAN, 0x109);
   Inventory_AddItem(IVAN, 0xfc);
-  // Mia's test inventory.
   Inventory_AddItem(MIA, ITEM_WATER_OF_LIFE);
   Inventory_AddItem(MIA, 0xc8);
   Inventory_AddItem(MIA, 0xc9);

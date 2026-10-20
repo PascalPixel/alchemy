@@ -111,7 +111,6 @@ void MusicPlayer_BeginFadeOut(struct SoundPlayer *player, u16 speed) {
 void Audio_Initialize(void) {
   s32 playerIndex;
 
-  // Copy the mixer's executable block to its RAM buffer.
   Bios_CpuSet((void *)((u32)Sound_Mixer & ~1), Ram_SoundMixer, 0x04000100);
   AudioEngine_Initialize(&gSound_Work);
   CgbAudio_Initialize(gSound_CgbNotes);
@@ -127,7 +126,6 @@ void Audio_Initialize(void) {
   }
 }
 
-/// Runs one mixer frame through the driver entry point.
 void AudioEngine_RunMixer(void) { AudioEngine_RunMixerTick(); }
 
 /// Starts the song on the player selected by its song-table entry.
@@ -190,7 +188,6 @@ void Audio_ResumeSound(u16 songId) {
     Audio_ResumePlayer(player);
 }
 
-/// Stops every configured song player.
 void Audio_StopAllPlayers(void) {
   s32 playerIndex;
 
@@ -198,12 +195,10 @@ void Audio_StopAllPlayers(void) {
     MusicPlayer_Stop(gSound_PlayerSlots[playerIndex].player);
 }
 
-/// Resumes this player through the shared pause-state operation.
 void MusicPlayer_Resume(struct SoundPlayer *player) {
   Audio_ResumePlayer(player);
 }
 
-/// Resumes every configured song player.
 void Audio_ResumeAllPlayers(void) {
   s32 playerIndex;
 

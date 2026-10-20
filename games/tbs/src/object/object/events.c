@@ -146,7 +146,7 @@ struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 target) {
   return 0;
 }
 
-/// Runs the scene's initialization again. Nothing calls this.
+/// Nothing calls this.
 UNUSED void Runtime_CallWorkBlockEntry(void) { gOverlayArea.initialize(); }
 
 /// Returns the talk event of actor id: for the actor the party has stopped, its

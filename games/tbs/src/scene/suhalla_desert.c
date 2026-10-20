@@ -80,7 +80,6 @@ enum { STORM_CAPTURE_FRAMES = 180 };
 /// storm drops it elsewhere.
 enum { WORLD_MAP_STORM_DROP = 27, WORLD_MAP_STORM_DROP_FOURTH = 77 };
 
-// Forward declarations.
 static void SuhallaDesert_SetUpFirstSceneStorms(void);
 static void SuhallaDesert_SetUpSecondSceneStorms(void);
 
@@ -140,7 +139,6 @@ SuhallaDesert_ToggleActorActive(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Where the party can enter each of the three scenes.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 selector = gGameState.scene;
 
@@ -156,7 +154,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSuhallaDesertEntrancesOther;
 }
 
-/// The Suhalla Desert has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 /// Where each exit of the three scenes leads.

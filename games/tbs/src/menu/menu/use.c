@@ -44,7 +44,6 @@ s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
   return useResult;
 }
 
-/// Returns the original item callback's success value.
 s32 Item_ReturnOne(void) { return 1; }
 
 /// Applies healing or permanent-stat effects to one member or the whole party.
@@ -377,5 +376,4 @@ void Ability_PlayUseAnimation(s32 action) {
   }
 }
 
-/// Returns the original reserved zero value.
 s32 Menu_ReservedStatusZero(void) { return 0; }

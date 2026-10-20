@@ -145,7 +145,6 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
   }
 }
 
-/// Destroys the actor in slot index, if there is one.
 void ObjectTable_DestroyAtIndex(s32 actorIndex) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   void *object = ObjectTable_Get(actorIndex);

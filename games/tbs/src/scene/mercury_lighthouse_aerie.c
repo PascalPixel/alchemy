@@ -69,7 +69,6 @@ enum {
 
 enum { FLAG_PSYNERGY_STONE = 0x350 };
 
-// Forward declarations.
 static void MercuryLighthouseAerie_PartyArrives(void);
 static void MercuryLighthouseAerie_SettlePlatforms(void);
 static void MercuryLighthouseAerie_AlexAppears(void);
@@ -92,12 +91,10 @@ struct ActorTable {
 #include "common/effect_spawn.h"
 #include "objcmd.h"
 
-/// The entrance positions and camera bounds.
 const struct SceneEntrance *MercuryLighthouseAerie_GetEntrances(void) {
   return gMercuryLighthouseAerieEntrances;
 }
 
-/// The aerie has no clipping regions.
 const struct SceneRegion *MercuryLighthouseAerie_GetRegions(void) { return 0; }
 
 /// One exit: the lift down to the lighthouse's foot.
@@ -113,7 +110,6 @@ const struct ScenePlacement *MercuryLighthouseAerie_GetPlacements(void) {
   return gMercuryLighthouseAeriePlacements;
 }
 
-/// The touch and search events.
 const struct SceneEvent *MercuryLighthouseAerie_GetEvents(void) {
   return gMercuryLighthouseAerieEvents;
 }

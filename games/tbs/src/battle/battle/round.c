@@ -700,5 +700,5 @@ s32 Battle_FindTaggedSlotByValue(u32 unitId) {
 /// Turns the camera while L or R is held (a second copy).
 DEFINE_ADJUST_CAMERA(BattlePres_AdjustCameraByShoulderKeysAlt)
 
-/// Does nothing; Battle_RunEncounter calls it at the start of each round.
+/// Battle_RunEncounter calls it at the start of each round.
 void Battle_ReservedNoOp9B2C(void) {}

@@ -33,15 +33,12 @@ enum { ENTRANCE_90 = 90 };
 /// The sprout at 72, 144, the last of the placements.
 enum { SPROUT = 16 };
 
-/// Where the party can enter Suhalla.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSuhallaEntrances;
 }
 
-/// Suhalla has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-/// Where each exit leads.
 const u32 *Scene_GetExits(void) { return gSuhallaExits; }
 
 /// The townsfolk, who stand elsewhere after Babi's audience.

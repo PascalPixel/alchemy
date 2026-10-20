@@ -45,13 +45,10 @@
 static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);
 
-/// Exposes the title overlay entrance table to the scene loader.
 u8 *Title_GetEntrances(void) { return (u8 *)gTitleEntrances; }
 
-/// The title overlay needs no additional scene data.
 s32 SceneData_ReturnZero(void) { return 0; }
 
-/// Exposes the title overlay exit table to the scene loader.
 u8 *Title_GetExits(void) { return (u8 *)gTitleExits; }
 
 /// The title overlay has no placed field actors.

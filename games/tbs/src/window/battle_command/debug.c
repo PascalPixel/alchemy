@@ -288,7 +288,7 @@ s32 Menu_HandleFlagGridInput(struct UiWindow *window, s32 *page, s32 *cursor) {
   return 0;
 }
 
-/// Reserved menu entry; it intentionally performs no work.
+/// Reserved menu entry.
 void Menu_ReservedNoOp(void) {}
 
 /// Sets the Djinni's collected flag, then adds it to the specified owner.

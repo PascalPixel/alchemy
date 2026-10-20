@@ -367,7 +367,6 @@ void Motion_SetModeAndWaitAnimation(u32 objectId, s32 animation) {
   ObjectMotion_WaitForAnimationChange(objectId);
 }
 
-/// Does nothing.
 void ObjectMotion_NoOp(void) {}
 
 /// The event command "actor jump": throws the actor upward at speed pixels per
@@ -656,7 +655,6 @@ void ObjectTable_DestroyById(s32 index) {
   }
 }
 
-/// Does nothing.
 UNUSED void ObjectTable_DestroyNoOp(void) {}
 
 /// The event command "set actor sprite param": gives every sprite part of the
@@ -833,7 +831,6 @@ void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId) {
   sprite->image.tile = tile;
 }
 
-/// Does nothing.
 UNUSED void ObjectVisual_ReservedNoOp(void) {}
 
 /// The event command "set message": the number of the event's next message.

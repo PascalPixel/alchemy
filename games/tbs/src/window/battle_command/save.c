@@ -528,7 +528,6 @@ void PaletteGlow_Start(void) {
   Scheduler_AddOrUpdateCallback(PaletteGlow_UpdateSine, 0xC80);
 }
 
-/// Stops the palette glow.
 void PaletteGlow_Stop(void) {
   Scheduler_RemoveCallback(PaletteGlow_UpdateSine);
 }
@@ -1114,7 +1113,6 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
       AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       summaryDirty = 1;
       do {
-        // Step back to the previous file.
         selectedFile = (selectedFile + SAVE_FILE_COUNT - 1) % SAVE_FILE_COUNT;
         if (menuMode == SAVE_MENU_SAVE)
           break;
@@ -1129,7 +1127,6 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
       AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
       summaryDirty = 1;
       do {
-        // Step on to the next file.
         selectedFile = (selectedFile + SAVE_FILE_COUNT + 1) % SAVE_FILE_COUNT;
         if (menuMode == SAVE_MENU_SAVE)
           break;

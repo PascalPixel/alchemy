@@ -74,7 +74,6 @@
   ((s32 (*)())Scene_GiveAndEquipItem)
 #endif
 
-// Forward declarations.
 static void ColossoLog_PlayPostBattleReunion(s32 battleResult);
 static void ColossoLog_IntroduceFinalCourse(s32 guideId);
 static void ColossoLogRollingStage_RunScriptedTransition(s32 mode);
@@ -126,18 +125,14 @@ extern s32 gColossoParticleCount;
 
 // Shared Colosso routines (scene/common/colosso_*.c).
 
-/// Returns the course entrance placements.
 struct SceneEntrance *ColossoLog_GetEntrances(void) {
   return gColossoLogEntrances;
 }
 
-/// The course has no region table.
 const struct SceneRegion *ColossoLog_GetRegions(void) { return 0; }
 
-/// Returns the course exit connections.
 u32 *ColossoLog_GetExits(void) { return gColossoLogExits; }
 
-/// Returns the course actor placements.
 struct ScenePlacement *ColossoLog_GetPlacements(void) {
   return gColossoLogPlacements;
 }
@@ -677,7 +672,6 @@ static void Event_PassSouthWallOpening(void) {
   FieldBattleFx_RunRisingObjectSequence(*actorId, 6, 0);
 }
 
-/// Unused scene-event callback with no behavior.
 UNUSED static void ColossoLogRollingStage_NoopSceneEventHook(void) {}
 
 /// Offers to practise the course with a selected solo competitor.
@@ -772,7 +766,6 @@ static void Event_PushWeightOrCheckAhead(void) {
   }
 }
 
-/// Returns the course event table.
 struct SceneEvent *ColossoLog_GetEvents(void) { return gColossoLogEvents; }
 
 /// Restores obstacle progress, then enters practice, introduction or battle
@@ -1848,7 +1841,6 @@ UNUSED static void WriteU32AsHex(u8 *hexText, u32 value) {
   }
 }
 
-/// Scene hook with no behavior.
 static void ColossoLogRollingStage_NoopSceneHook(void) {}
 
 /// Marks the rival path recorder as finished.

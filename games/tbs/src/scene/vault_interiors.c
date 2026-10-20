@@ -83,7 +83,6 @@ enum {
   ACTOR_THIRD_CHEST = 17
 };
 
-// Forward declarations.
 static void VaultInteriors_IvanJoinsRodSearch(void);
 static void VaultInteriors_DiscussMindReading(void);
 static void VaultInteriors_AdvanceSuspectRoute(s32 actor, s32 expected,
@@ -106,18 +105,14 @@ static void VaultInteriors_EndMindRead(void);
 static void VaultInteriors_UpdateActorStops(void);
 static void VaultInteriors_StartActorStops(void);
 
-/// Returns the entrances for the Vault interiors overlay.
 struct SceneEntrance *Scene_GetEntrances(void) {
   return gVaultInteriors_Entrances;
 }
 
-/// Returns the trigger regions for the Vault interiors overlay.
 s16 *Scene_GetRegions(void) { return gVaultInteriors_Regions; }
 
-/// Returns the exits for the Vault interiors overlay.
 u32 *Scene_GetExits(void) { return gVaultInteriors_Exits; }
 
-/// Selects the attic placements for entrances 15–17 and prepares the actors.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   struct ScenePlacement *table;
 
@@ -2571,20 +2566,17 @@ static void VaultInteriors_OpenWindowTransition(void) {
   Engine_EventWait(1);
 }
 
-/// Shows the selected actor message, then pauses for the requested frames.
 static void VaultInteriors_ShowMessageAndWait(s32 actorId, s32 waitFrames) {
   Engine_EventShowMessage(actorId, 0);
   Engine_EventWait(waitFrames);
 }
 
-/// Faces one actor toward another, then pauses for the requested frames.
 static void VaultInteriors_FaceActorAndWait(s32 actorId, s32 targetId,
                                             s32 waitFrames) {
   Engine_ActorFaceActor(actorId, targetId, 0);
   Engine_EventWait(waitFrames);
 }
 
-/// Has two actors face each other, then pauses for the requested frames.
 static void VaultInteriors_FaceEachOtherAndWait(s32 firstId, s32 secondId,
                                                 s32 waitFrames) {
   Engine_ActorFaceEachOther(firstId, secondId, 0);

@@ -24,18 +24,14 @@
 #include "flags.h"
 #include "item_ids.h"
 
-/// Where the party can enter the maze.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumMazeEntrances;
 }
 
-/// This maze has no exit regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-/// Where each exit leads.
 const u32 *Scene_GetExits(void) { return gSolSanctumMazeExits; }
 
-/// Returns the empty placement table; this maze has no placed actors.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   return gSolSanctumMazePlacements;
 }

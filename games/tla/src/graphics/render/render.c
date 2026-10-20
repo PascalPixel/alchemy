@@ -33,7 +33,6 @@
 
 #include "ram_buffer.h"
 
-/// Does nothing.
 void Render_EmptyHook(void) {}
 
 /// Allocates the matrix-save storage and sets the current matrix to identity.
@@ -59,15 +58,12 @@ void Transform_Push(void) {
   }
 }
 
-/// Copies the current matrix into dst.
 void Transform_Store(void *dst) { Dma_Set(gTransform, dst, MTX_DMA, REG_DMA3); }
 
-/// Makes src the current matrix.
 void Transform_Load(const void *src) {
   Dma_Set(src, gTransform, MTX_DMA, REG_DMA3);
 }
 
-/// Restores the saved matrix.
 void Transform_Pop(void) {
   if (gTransformStackDepth > 0) {
     --gTransformStackDepth;
@@ -256,7 +252,6 @@ void Func_0801521c(s32 scale) {
   m[8] = scale;
   Iwram_TransformMatrix(m);
 }
-/// Applies rotation and translation together.
 void SceneTransform_ApplyRotationTranslation(s32 *ang, s32 *pos) {
   s32 sx, cx, sy, cy, sz, cz;
   s32 m[12];

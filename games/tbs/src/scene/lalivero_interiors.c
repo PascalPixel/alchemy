@@ -72,12 +72,10 @@ static s32 Maid_Sigh(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-/// Where the party can enter either map.
 const struct SceneEntrance *LaliveroInteriors_GetEntrances(void) {
   return gLaliveroEntrances;
 }
 
-/// The region list of each map.
 const s16 *LaliveroInteriors_GetRegions(void) {
   if (gGameState.scene == (s32)&SceneId_LaliveroInteriors1) {
     return gLaliveroSanctumRegions;
@@ -85,7 +83,6 @@ const s16 *LaliveroInteriors_GetRegions(void) {
   return gLaliveroRegions;
 }
 
-/// Where each exit leads.
 const u32 *LaliveroInteriors_GetExits(void) { return gLaliveroExits; }
 
 /// The people of each map; Faran's house fills up after Venus Lighthouse.

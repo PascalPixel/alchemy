@@ -42,7 +42,6 @@
 #include "songs.h"
 #include "item_ids.h"
 
-// Forward declarations.
 static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId);
 static void SolSanctumEruption_ThrowEruptionRing(void);
 static void SolSanctumEruption_ResetEmberEmission(void);
@@ -82,15 +81,12 @@ struct PairWork {
   u16 vramBlock;
 };
 
-/// Returns the arrival positions for the collapsing star chamber.
 struct SceneEntrance *SolSanctumEruption_GetEntrances(void) {
   return gSolSanctumEruption_Entrances;
 }
 
-/// This scene has no separate trigger-region table.
 struct SceneRegion *SolSanctumEruption_GetRegions(void) { return NULL; }
 
-/// Returns the scene destinations for the collapsing chamber.
 u32 *SolSanctumEruption_GetExits(void) { return gSolSanctumEruption_Exits; }
 
 /// Returns the hostages, antagonists and eruption effects.
@@ -98,7 +94,7 @@ struct ScenePlacement *SolSanctumEruption_GetPlacements(void) {
   return gSolSanctumEruption_Placements;
 }
 
-/// Returns the scene event table, which has no scripted interactions.
+/// The event table has no scripted interactions.
 struct SceneEvent *SolSanctumEruption_GetEvents(void) {
   return gSolSanctumEruption_Events;
 }
@@ -526,10 +522,8 @@ static void SolSanctumEruption_RaiseAndShrinkActor(s32 actorId) {
   Actor_SetPosition(ACTOR_TELEPORT_GLOW, 0, 0);
 }
 
-/// Unused empty callback.
 UNUSED static void SolSanctumEruption_UnusedCallbackA(void) {}
 
-/// Unused empty callback.
 UNUSED static void SolSanctumEruption_UnusedCallbackB(void) {}
 
 /// Starts the hostage scene only for arrival ten.
@@ -1716,7 +1710,6 @@ static void SolSanctumEruption_SpawnEffectPair(struct FieldActor *parent) {
 
 #include "common/effect_psynergy.h"
 
-/// Advances the Wise One palette cycle.
 static void SolSanctumEruption_UpdateWiseOnePalette(void) {
   SolSanctumEruption_CycleActorPalette(Object_GetById(ACTOR_WISE_ONE));
 }

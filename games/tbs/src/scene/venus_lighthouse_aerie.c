@@ -70,7 +70,6 @@
 /// handed over before the aerie's first battle; a defeat gives it back.
 #define FLAG_SHAMANS_ROD_OWNER 0x345
 
-// Forward declarations.
 static void Event_SteadyPillars(void);
 static void VenusLighthouseAerie_EnterAndConfrontAntagonists(void);
 static void VenusLighthouseAerie_ShowPartyMember(s32 actor, s32 shown);
@@ -179,15 +178,12 @@ VenusLighthouseAerie_StepSpriteRotation(union FieldObject *fieldObject) {
 
 #include "common/object_heading.h"
 
-/// Returns the aerie arrival positions.
 const struct SceneEntrance *VenusLighthouseAerie_GetEntrances(void) {
   return gVenusLighthouseAerieEntrances;
 }
 
-/// The aerie has no separate trigger-region table.
 const struct SceneRegion *VenusLighthouseAerie_GetRegions(void) { return 0; }
 
-/// Returns the aerie scene destinations.
 const u32 *VenusLighthouseAerie_GetExits(void) {
   return gVenusLighthouseAerieExits;
 }
@@ -378,7 +374,6 @@ s32 VenusLighthouseAerie_Initialize(void) {
   return clear;
 }
 
-/// Shows the selected speaker message, then pauses for ten frames.
 static void VenusLighthouseAerie_ShowMessage(s32 speaker) {
   Engine_EventShowMessage(speaker, 0);
   Engine_EventWait(10);
@@ -1184,7 +1179,6 @@ VenusLighthouseAerie_SpawnLinkedPairEffects(struct FieldActor *parent) {
 
 #include "common/effect_psynergy.h"
 
-/// Advances Sheba's palette cycle.
 static void VenusLighthouseAerie_UpdateShebaPalette(void) {
   VenusLighthouseAerie_CycleActorPalette(Object_GetById(SHEBA));
 }

@@ -28,7 +28,6 @@ struct DepthMap {
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 void Func_080eb01c(void *work);
 
-/// Returns the object's sprite priority when kind is 0xc000, else 0.
 s32 Func_080db9a8(struct ObjectRuntime *object, s32 kind) {
   if (kind == 0xc000)
     return ((struct DepthPart *)object->animation)->priority;

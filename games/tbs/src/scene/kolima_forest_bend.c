@@ -61,7 +61,6 @@ const struct SceneEntrance *KolimaForestBend_GetEntrances(void) {
   return gKolimaForestBendEntrances;
 }
 
-/// The bend has no regions.
 const struct SceneRegion *KolimaForestBend_GetRegions(void) { return 0; }
 
 /// The paths back to the river and on to Tret's tree.

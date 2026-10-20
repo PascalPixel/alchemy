@@ -118,10 +118,8 @@ void BattleFx_StartFadeOverlay(void *object) {
   work->actor = object;
 }
 
-/// Suspends the fade overlay.
 void FadeOverlay_Suspend(void) {
   Scheduler_SuspendTasks(FadeOverlay_DrawMarks);
 }
 
-/// Resumes the fade overlay.
 void FadeOverlay_Resume(void) { Scheduler_ResumeTasks(FadeOverlay_DrawMarks); }

@@ -50,15 +50,12 @@ enum { ACTOR_FEH = ACTOR_FIRST_PLACED, ACTOR_FEIZHI, ACTOR_HSU };
 #include "item_ids.h"
 #include "objcmd.h"
 
-/// Returns arrival positions for the homes, shops and recovery room.
 const struct SceneEntrance *XianInteriors_GetEntrances(void) {
   return gXianInteriors_Entrances;
 }
 
-/// These interiors have no region table.
 const struct SceneRegion *XianInteriors_GetRegions(void) { return NULL; }
 
-/// Returns the connections to Xian and the surrounding rooms.
 const u32 *XianInteriors_GetExits(void) { return gXianInteriors_Exits; }
 
 /// The room behind the school places only Master Feh, Feizhi and Hsu.

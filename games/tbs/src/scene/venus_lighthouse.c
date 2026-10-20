@@ -87,7 +87,6 @@
 #define VENUS_DESCENT_COLLISION_WIDTH 5
 #endif
 
-// Forward declarations.
 struct DirXZ;
 static void VenusLighthouse_StepActorWithDust(struct DirXZ *direction);
 static void VenusLighthouse_AnimatePairedTileWaves(void);
@@ -135,7 +134,6 @@ union VecView {
   s16 h[6];
 };
 
-/// Sets the requested bits without changing the other flags.
 static __inline__ void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
 
 /// Sets up a passage effect's motion, collision and child value.
@@ -704,7 +702,6 @@ static s32 Event_JumpAcrossGap(void) {
   return 0;
 }
 
-/// Selects the entrance rows for the current Venus Lighthouse scene.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -2952,12 +2949,10 @@ static void VenusLighthouse_SpawnRandomParticles(s32 x, s32 z) {
   }
 }
 
-/// Emits the western passage's scheduled particles.
 static void VenusLighthouse_EmitWestPassageParticles(void) {
   VenusLighthouse_SpawnRandomParticles(432, 32);
 }
 
-/// Emits the eastern passage's scheduled particles.
 static void VenusLighthouse_EmitEastPassageParticles(void) {
   VenusLighthouse_SpawnRandomParticles(0x230, 44);
 }

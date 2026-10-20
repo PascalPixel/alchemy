@@ -45,7 +45,6 @@
 #include "songs.h"
 #include "item_ids.h"
 
-// Forward declarations.
 static void SolSanctumElementalStarRoom_BagJupiterStar(void);
 static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void);
 static void SolSanctumElementalStarRoom_DemandElementalStars(void);
@@ -84,22 +83,18 @@ static __inline__ void SolSanctumElementalStarRoom_SkipMessages(s32 amount) {
 
 #include "common/object_facing.h"
 
-/// Returns the Elemental Star room entrances.
 struct SceneEntrance *SolSanctumElementalStarRoom_GetEntrances(void) {
   return gSolSanctumElementalStarRoom_Entrances;
 }
 
-/// This room has no additional scene regions.
 struct SceneRegion *SolSanctumElementalStarRoom_GetRegions(void) {
   return NULL;
 }
 
-/// Returns the room's exits.
 u32 *SolSanctumElementalStarRoom_GetExits(void) {
   return gSolSanctumElementalStarRoom_Exits;
 }
 
-/// Returns the room's actor placements.
 struct ScenePlacement *SolSanctumElementalStarRoom_GetPlacements(void) {
   return gSolSanctumElementalStarRoom_Placements;
 }
@@ -2030,7 +2025,6 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
   return 0;
 }
 
-/// Shows the current message and waits the requested number of frames.
 static void SolSanctumElementalStarRoom_ShowMessageAndWait(s32 speaker,
                                                            s32 frames) {
   Engine_EventShowMessage(speaker, 0);

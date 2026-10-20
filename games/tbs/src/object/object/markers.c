@@ -4,7 +4,6 @@
 
 #include "../object_internal.h"
 
-/// Puts an actor on the ground under it.
 void ObjectMotion_SnapToTerrain(void *object) {
   struct ObjectRuntime *actor = object;
   s32 terrainHeight;
@@ -138,7 +137,6 @@ s32 Marker_FindSlot(s32 id) {
   return matchingSlot;
 }
 
-/// Does nothing.
 UNUSED void EffectRuntime_ReservedNoOp(void) {}
 
 /// Gives the actor of marker id animation, plays sound and waits 12 frames.
@@ -185,10 +183,8 @@ void Marker_LaunchMimic(s32 id) {
   }
 }
 
-/// Opens the chest of marker id.
 void Marker_OpenChest(s32 id) { SetMarkerAnimationAndPlaySound(id, 4, SE_124); }
 
-/// Shows the chest of marker id open (animation 2).
 void Marker_ShowOpened(s32 id) {
   s32 slotIndex;
   struct MarkerSlot *marker;
@@ -203,7 +199,6 @@ void Marker_ShowOpened(s32 id) {
   }
 }
 
-/// Returns the actor of marker id, or NULL.
 struct ObjectRuntime *Marker_GetActor(s32 id) {
   s32 slotIndex = Marker_FindSlot(id);
   struct MarkerSlot *marker;
@@ -214,7 +209,6 @@ struct ObjectRuntime *Marker_GetActor(s32 id) {
   return marker->object;
 }
 
-/// Hides the actor of marker id.
 void Marker_Hide(s32 id) {
   s32 slotIndex;
   struct MarkerSlot *marker;

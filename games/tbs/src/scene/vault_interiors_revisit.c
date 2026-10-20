@@ -54,15 +54,12 @@ enum { FLAG_WELCOMED_BACK = FLAG_SCENE_TEMP_00 + 0x100 };
 // Shared scene routines stay in their linked order.
 #include "common/vault_spotflag.h"
 
-/// Returns the arrival positions for the revisited houses and shops.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gVaultInteriorsRevisit_Entrances;
 }
 
-/// This scene has no region table.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-/// Returns the exits to the surrounding Vault map.
 const u32 *Scene_GetExits(void) { return gVaultInteriorsRevisit_Exits; }
 
 /// Applies view conditions to the placements before the field spawns them.

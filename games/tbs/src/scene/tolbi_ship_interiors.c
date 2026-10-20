@@ -340,7 +340,6 @@ static s32 TolbiShipInteriors_LayFlat(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// The entrances of the room the scene shows.
 s32 TolbiShipInteriors_SelectEntrances(void) {
   if (gGameState.scene == (s32)&SceneId_TolbiShipInteriors) {
     return (s32)gTolbiShipInteriors_Entrances;
@@ -348,10 +347,8 @@ s32 TolbiShipInteriors_SelectEntrances(void) {
   return (s32)gTolbiShipInteriors_EntrancesOther;
 }
 
-/// The ship's interiors have no regions.
 s32 TolbiShipInteriors_GetRegions(void) { return 0; }
 
-/// The scene's exits.
 s32 TolbiShipInteriors_GetExits(void) {
   return (s32)&gTolbiShipInteriors_Exits;
 }
@@ -2892,7 +2889,6 @@ static void TolbiShipInteriors_PoseSceneActor(s32 id) {
   }
 }
 
-/// Shows the current message from a speaker and waits 10 frames.
 static void TolbiShipInteriors_Say(s32 speaker) {
   Engine_EventShowMessage(speaker, 0);
   Engine_EventWait(10);
@@ -4049,7 +4045,6 @@ struct SceneEntrance gTolbiShipInteriors_Entrances[] = {
     {SCENE_TABLE_END},
 };
 
-/// The rooms' exits.
 u32 gTolbiShipInteriors_Exits[] = {
     SCENE_EXITS(111),        SCENE_EXIT(1, 109, 1),   SCENE_EXIT(2, 111, 4),
     SCENE_EXIT(3, 109, 2),   SCENE_EXIT(4, 111, 2),   SCENE_EXIT(5, 109, 3),
@@ -4060,7 +4055,6 @@ u32 gTolbiShipInteriors_Exits[] = {
     SCENE_EXITS_END,
 };
 
-/// No actors.
 struct ScenePlacement gTolbiShipInteriors_PlacementsNone[] = {
     {SCENE_TABLE_END},
 };
@@ -4422,7 +4416,6 @@ struct SceneEvent gTolbiShipInteriors_CabinEventsArrived[] = {
     { SCENE_EVENTS_END },
 };
 
-/// The rowing deck.
 struct SceneEvent gTolbiShipInteriors_RowingDeckEvents[] = {
     { EVENT_EXIT, 4, CONDITION_ALWAYS, 4 },
     { EVENT_TALK, 8, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipInteriorsWeCanLeaveAsSoonAs) },

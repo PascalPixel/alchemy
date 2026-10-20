@@ -67,7 +67,6 @@ enum {
 #define TRET_TINT_CHANNEL_MAX 31
 #define TRET_TINT_END 99
 
-// Forward declarations.
 static void TretPalette_SaveSceneColors(void);
 static void TretPalette_UpdateSceneTint(void);
 static void TretTreeInteriors_PlayGesture(s32 gesture);
@@ -96,7 +95,6 @@ const struct SceneRegion *Scene_GetRegions(void) {
   return gTretTreeInteriorsRegions;
 }
 
-/// Returns the interior's packed exits.
 const u32 *Scene_GetExits(void) { return gTretTreeInteriorsExits; }
 
 /// Returns the staged party and Tret actors.
@@ -157,87 +155,70 @@ static void TretTreeInteriors_StepOnCrackedFloor(s32 floorFlag,
     FLAG_SET(0x122);
 }
 
-/// Cracked floor over the upper middle northwest landing.
 static void Event_FloorGivesWayToUpperMiddleNorthwest(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_00, 64, 35, 21);
 }
 
-/// Cracked floor over the upper middle northeast landing.
 static void Event_FloorGivesWayToUpperMiddleNortheast(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_01, 65, 35, 22);
 }
 
-/// Cracked floor over the upper middle west upper landing.
 static void Event_FloorGivesWayToUpperMiddleWestUpper(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_02, 66, 35, 23);
 }
 
-/// Cracked floor over the upper middle west lower landing.
 static void Event_FloorGivesWayToUpperMiddleWestLower(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_03, 67, 35, 24);
 }
 
-/// Cracked floor over the upper middle southwest upper landing.
 static void Event_FloorGivesWayToUpperMiddleSouthwestUpper(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_04, 68, 35, 25);
 }
 
-/// Cracked floor over the upper middle south upper landing.
 static void Event_FloorGivesWayToUpperMiddleSouthUpper(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_05, 69, 35, 26);
 }
 
-/// Cracked floor over the upper middle southwest lower landing.
 static void Event_FloorGivesWayToUpperMiddleSouthwestLower(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_06, 70, 35, 27);
 }
 
-/// Cracked floor over the upper middle south lower landing.
 static void Event_FloorGivesWayToUpperMiddleSouthLower(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_07, 71, 35, 28);
 }
 
-/// Cracked floor over the upper middle southeast lower landing.
 static void Event_FloorGivesWayToUpperMiddleSoutheastLower(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_08, 72, 35, 29);
 }
 
-/// Cracked floor over the upper right northwest landing.
 static void Event_FloorGivesWayToUpperRightNorthwest(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_09, 73, 35, 31);
 }
 
-/// Cracked floor over the upper right northeast landing.
 static void Event_FloorGivesWayToUpperRightNortheast(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_0A, 74, 35, 32);
 }
 
-/// Cracked floor over the lower middle center landing.
 static void Event_FloorGivesWayToLowerMiddleCenter(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_0B, 79, 35, 50);
 }
 
-/// Cracked floor over the lower middle northwest landing.
 static void Event_FloorGivesWayToLowerMiddleNorthwest(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_0C, 75, 35, 51);
 }
 
-/// Cracked floor over the lower middle north landing.
 static void Event_FloorGivesWayToLowerMiddleNorth(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_0D, 76, 35, 52);
 }
 
-/// Cracked floor over the lower middle northeast landing.
 static void Event_FloorGivesWayToLowerMiddleNortheast(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_0E, 77, 35, 53);
 }
 
-/// Cracked floor over the lower middle west landing.
 static void Event_FloorGivesWayToLowerMiddleWestA(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_0F, 78, 35, 54);
 }
 
-/// Cracked floor over the lower middle east landing.
 static void Event_FloorGivesWayToLowerMiddleEast(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_10, 80, 35, 55);
 }
@@ -247,17 +228,14 @@ static void Event_FloorGivesWayToLowerMiddleWestB(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_11, 81, 35, 56);
 }
 
-/// Cracked floor over the lower middle southwest landing.
 static void Event_FloorGivesWayToLowerMiddleSouthwest(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_12, 82, 35, 57);
 }
 
-/// Cracked floor over the lower middle south landing.
 static void Event_FloorGivesWayToLowerMiddleSouth(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_13, 83, 35, 58);
 }
 
-/// Cracked floor over the lower middle southeast landing.
 static void Event_FloorGivesWayToLowerMiddleSoutheast(void) {
   TretTreeInteriors_StepOnCrackedFloor(FLAG_SCENE_TEMP_14, 84, 35, 59);
 }
@@ -1346,7 +1324,6 @@ struct SceneEvent gTretTreeInteriorsEvents[] = {
     {EVENT_TOUCH, 40, FLAG_TRET_DEFEATED, EVENT_SCRIPT(Event_FightTret)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, 5), 0, CONDITION_ALWAYS,
      EVENT_SCRIPT(Event_CastReveal)},
-    // Item 0x109 is the Healing Ring.
     {SEARCH(SEARCH_CHEST), 100, 0xf5b, FIND_ITEM(ITEM_HEALING_RING)},
     {SEARCH(SEARCH_CHEST), 101, 0xf5c, FIND_ITEM(ITEM_NUT)},
     {SEARCH(SEARCH_UNNAMED), 102, 0x350, FIND_PSYNERGY_STONE},

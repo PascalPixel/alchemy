@@ -39,15 +39,12 @@ enum { RIVER_LOG = 10 };
 
 #include "common/object_staged_actor.h"
 
-/// Where the party enters from the clearing and the bend.
 const struct SceneEntrance *KolimaForestRiver_GetEntrances(void) {
   return gKolimaForestRiverEntrances;
 }
 
-/// The river has no regions.
 const struct SceneRegion *KolimaForestRiver_GetRegions(void) { return 0; }
 
-/// The paths to the bend and back to the clearing.
 const u32 *KolimaForestRiver_GetExits(void) { return gKolimaForestRiverExits; }
 
 /// The three logs.

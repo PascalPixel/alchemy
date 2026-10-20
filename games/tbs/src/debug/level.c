@@ -46,16 +46,12 @@
 #define BROWSER_ROW_STEP 10
 #define BROWSER_PAGE_STEP 30
 
-/// Returns the level-test room entrance table.
 u8 *ItemLevel_GetEntrances(void) { return (u8 *)gItemLevelEntrances; }
 
-/// Returns zero from this scene entry.
 s32 SceneData_ReturnZero(void) { return 0; }
 
-/// Returns the packed level-test exit table.
 u8 *ItemLevel_GetExits(void) { return (u8 *)gItemLevelExits; }
 
-/// Returns the level-test actor placements.
 u8 *ItemLevel_GetPlacements(void) { return (u8 *)gItemLevelPlacements; }
 
 #if TBS_PATCH_1
@@ -75,7 +71,6 @@ static void ItemLevel_ShowEmoteThenMessage(void) {
 }
 #endif
 
-/// Returns the room's event table through the scene entry ABI.
 u8 *ItemLevel_GetEvents(void) { return (u8 *)gItemLevelEvents; }
 
 /// Raises one owner's level by amount, then recalculates that unit.
@@ -451,7 +446,6 @@ static void ItemLevel_ShowGlyphCaptions(void) {
 }
 #endif
 
-/// Sets the effect work's child-mode byte to one.
 static void ItemLevel_EnableEffectChildMode(void) {
   struct BattleFxScene *effect = (struct BattleFxScene *)gEffectWork;
 

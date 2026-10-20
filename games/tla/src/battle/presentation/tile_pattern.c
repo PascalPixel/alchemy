@@ -14,12 +14,10 @@ s32 BattlePresentation_InitializeTilePattern(void) {
   return Iwram_ClearWords((void *)0x0600028c, 20);
 }
 
-/// Resets BG0's vertical scroll to 0.
 void BattlePresentation_ClearBg0VerticalOffset(void) {
   u32 zero = 0;
 
   REG_BG0VOFS = zero;
 }
 
-/// Does nothing.
 void Party_ReservedNoOp5B14(void) {}

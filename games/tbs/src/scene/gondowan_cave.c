@@ -57,7 +57,6 @@ static void GondowanCave_RunSpinningLeap(s32 actorId);
 #include "item_ids.h"
 #include "objcmd.h"
 
-/// Selects the entrance bounds for the current cave section.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -73,7 +72,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gGondowanCaveEntrancesOther;
 }
 
-/// This overlay has no clipping regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 /// All cave sections share the exit table.
@@ -308,7 +306,6 @@ static void Event_MoveSecondObject(void) {
   EV_END();
 }
 
-/// Unused empty actor callback retained with the overlay's routines.
 static UNUSED void GondowanCave_UnusedActorCallback(void) {}
 
 /// Rotates the sprite during the airborne part of the leap.
@@ -384,7 +381,6 @@ static void GondowanCave_RunSpinningLeap(s32 actorId) {
   OBJ_MODE(actorId, 2);
 }
 
-/// Unused empty scene callback retained with the overlay's routines.
 static UNUSED void GondowanCave_UnusedSceneCallback(void) {}
 
 /// Lift on the third room's actor 11 also takes away actor 12 beside it.

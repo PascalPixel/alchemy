@@ -27,8 +27,6 @@
 ///
 /// Abilities: Ply, Ply Well, Pure Ply, Herb, Nut, Vial, Potion, Soothing Water
 /// (kind 22); Fizz (kind 204).
-///
-/// Each entry below picks one mode of BattleFx_RunHealingMotes.
 void BattleFx_RunPly(struct BattleEffectArgument *effect) {
   BattleFx_RunHealingMotes(effect, 0);
 }
@@ -51,8 +49,6 @@ void BattleFx_RunCure(struct BattleEffectArgument *effect) {
 /// out one by one instead of closing in.
 ///
 /// Abilities: Cure Poison, Restore, Antidote, Elixir (kind 24).
-///
-/// Mode 3 when effect->variant is 0, mode 4 otherwise.
 void BattleFx_RunCurePoison(struct BattleEffectArgument *effect) {
   if (effect->variant == 0) {
     BattleFx_RunHealingMotes(effect, 3);

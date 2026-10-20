@@ -63,7 +63,6 @@ static void Event_FightDjinni(void) {
   Field_RequestDjinnBattle(DJINNI, DJINNI_DEW);
 }
 
-/// Where the party can enter each of the three scenes.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -76,10 +75,8 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSuhallaGateEntrancesOther;
 }
 
-/// Suhalla Gate has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-/// Where each exit of the three scenes leads.
 const u32 *Scene_GetExits(void) { return gSuhallaGateExits; }
 
 /// The guards, wounded after Babi's audience, and the Djinni.

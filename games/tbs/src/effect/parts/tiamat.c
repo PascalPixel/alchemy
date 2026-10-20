@@ -67,7 +67,6 @@ void BattleFx_RunPaletteParticles(struct BattleEffectArgument *effect,
   u8 *palette;
   s32 i;
 
-  // cursor points at WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS), the canvas.
   cursor = &gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
   canvas = cursor[0];
   camera = cursor[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_CANVAS];

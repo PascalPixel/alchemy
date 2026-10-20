@@ -39,7 +39,6 @@
 #include "songs.h"
 #include "event.h"
 
-// Forward declarations.
 static void CrossboneIsle_RestoreMovedRoomBlock(void);
 static void CrossboneIsle_LeaveClearedRoom(void);
 static void CrossboneIsle_RestoreIvy(void);
@@ -50,10 +49,8 @@ static void CrossboneIsle_DrawBlockPuzzleFootprints(void);
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-/// Unused callback with no effect.
 UNUSED static void CrossboneIsle_UnusedCallback(void) {}
 
-/// Selects the entrance list for the current island room.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -75,13 +72,10 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return &gCrossboneIsleEntrances5[2];
 }
 
-/// These rooms have no region table.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-/// Returns the connections between island rooms.
 const u32 *Scene_GetExits(void) { return gCrossboneIsleExits; }
 
-/// Chooses the actors for the current room.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -137,7 +131,6 @@ static void Event_FightFinalGuards(void) {
   EV_END();
 }
 
-/// Chooses the interactions for the current room.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 scene = gGameState.scene;
 

@@ -67,15 +67,12 @@ enum {
 #include "common/vault_range.h"
 #include "common/vault_nearby.h"
 
-/// Returns the revisited town's arrival positions.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gVaultRevisit_Entrances;
 }
 
-/// This overlay has no clipping regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-/// Returns the revisited town's packed exit routes.
 const u32 *Scene_GetExits(void) { return gVaultRevisit_Exits; }
 
 /// Returns the villagers, dog, and Djinni placements.
@@ -360,21 +357,18 @@ static void Vault_WalkThroughExit(s32 x, s32 z, s32 exitId) {
   Engine_EventRequestExit(exitId);
 }
 
-/// Opens and enters the southeast house.
 static void Event_EnterSoutheastHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_Scene5Cells, 56, 19);
   Vault_WalkThroughExit(408, 320, 5);
 }
 
-/// Opens and enters the central east house.
 static void Event_EnterCentralEastHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_Scene6Cells, 50, 18);
   Vault_WalkThroughExit(312, 304, 6);
 }
 
-/// Opens and enters the central house.
 static void Event_EnterCentralHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_Scene7Cells, 44, 17);
@@ -407,7 +401,6 @@ static void Event_EnterNorthHouse(void) {
   Vault_WalkThroughExit(296, 176, 9);
 }
 
-/// Opens and enters the northwest house.
 static void Event_EnterNorthwestHouse(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapAnimateCells(gVaultRevisit_Scene10Cells, 38, 6);

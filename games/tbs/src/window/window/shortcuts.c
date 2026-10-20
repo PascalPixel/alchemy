@@ -62,14 +62,11 @@ void UiTimedNotice_CloseIfActive(void) {
   }
 }
 
-/// Removes the item from the party's inventory and returns 0; the first
-/// argument is unused.
 s32 Item_RemoveFromInventory(s32 unused, s32 itemId) {
   PartyInventory_RemoveFar(itemId);
   return 0;
 }
 
-/// Returns 1.
 s32 Item_ReturnTrue(void) { return 1; }
 
 /// Steps the window hue one step: back when keys contains LEFT, on

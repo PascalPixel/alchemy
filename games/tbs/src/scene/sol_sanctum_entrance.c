@@ -53,7 +53,6 @@
 #define FLAG_SOL_SANCTUM_INNER_BLOCK_6_EAST 0x31a
 #define FLAG_SOL_SANCTUM_INNER_BLOCK_6_WEST 0x31b
 
-// Forward declarations.
 static void SolSanctumEntrance_ApplyEntryState(void);
 static void SolSanctumEntrance_RestoreInteriorState(void);
 static void SolSanctumEntrance_IntroduceSanctum(void);
@@ -66,7 +65,6 @@ s32 gSolSanctumEntrance_RumbleTimer __attribute__((section(".bss")));
 
 void InitializeSceneRecordBuffer();
 
-/// Selects the entrance table for the current sanctum map.
 const struct SceneEntrance *SolSanctumEntrance_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -79,10 +77,8 @@ const struct SceneEntrance *SolSanctumEntrance_GetEntrances(void) {
   return gSolSanctumEntranceEntrancesOther;
 }
 
-/// The sanctum entrance maps have no region table.
 const struct SceneRegion *SolSanctumEntrance_GetRegions(void) { return 0; }
 
-/// Returns the shared sanctum exit routes.
 const u32 *SolSanctumEntrance_GetExits(void) {
   return gSolSanctumEntrance_Exits;
 }

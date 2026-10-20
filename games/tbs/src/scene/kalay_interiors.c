@@ -48,10 +48,8 @@ const struct SceneEntrance *KalayInteriors_GetEntrances(void) {
   return gKalayInteriors_NoEntrances;
 }
 
-/// The rooms have no scene regions.
 const struct SceneRegion *KalayInteriors_GetRegions(void) { return NULL; }
 
-/// Returns the combined destinations of the rooms' numbered exits.
 u8 *KalayInteriors_GetExits(void) { return gKalayInteriors_Exits; }
 
 /// The inn rooms share a placement table, clipped to the current view.

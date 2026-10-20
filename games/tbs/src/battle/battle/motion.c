@@ -213,8 +213,7 @@ void BattleMotion_ResetSlotObjectMode2(s32 unitId) {
   ObjectDispatch_SelectAnimationFar(object, 2);
 }
 
-/// Does nothing; BattleMotion_ApplyPairMidpoint passes it a position and a
-/// distance.
+/// BattleMotion_ApplyPairMidpoint passes it a position and a distance.
 void BattleMotion_ReservedNoOp83B0() {}
 
 /// Works out the point halfway between two units, at their move targets

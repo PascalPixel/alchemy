@@ -10,7 +10,6 @@ struct GlyphCursor {
   u16 cursor;
 };
 
-/// Clears a selection record's cursor.
 static __inline__ void ResetCursor(struct GlyphCursor *cursor) {
   /* FAKEMATCH: the helper takes the node's base field, so each row store forms
    * base + 372 and stores at #2; as work->records[7].kind = 0, 6 instructions
@@ -155,7 +154,6 @@ void MenuSelection_BuildEntries(u32 unused) {
   SelectionScreen_LoadLargeIcon();
 }
 
-/// Does nothing.
 void UiWork_ReservedNoOp(void) {}
 
 /// Returns a free selection icon record: one of the seven row icons (kind 0) or

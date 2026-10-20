@@ -69,15 +69,12 @@ enum {
 /// Torch, Mars Djinni 6, joins the party.
 static void TalkToTorch(void) { Djinn_JoinParty(TORCH, 2, 6); }
 
-/// Where the party can enter Lalivero.
 const struct SceneEntrance *Lalivero_GetEntrances(void) {
   return gLaliveroEntrances;
 }
 
-/// Lalivero has no regions.
 const struct SceneRegion *Lalivero_GetRegions(void) { return NULL; }
 
-/// Where each exit leads.
 const u32 *Lalivero_GetExits(void) { return gLaliveroExits; }
 
 /// The townsfolk, who stand differently once the party is back from Venus

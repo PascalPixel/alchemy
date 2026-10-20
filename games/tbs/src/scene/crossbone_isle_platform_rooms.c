@@ -59,7 +59,6 @@
 #define CROSSBONE_LEADER_STEP_Z 16
 #endif
 
-// Forward declarations.
 static void Event_PushFirstBlock(void);
 static void CrossboneIslePlatformRooms_FollowSecondBlock(void);
 static void CrossboneIslePlatformRooms_PositionSecondBlockMapObject(void);
@@ -100,10 +99,8 @@ static void Event_BaneJoins(void) {
   Djinn_JoinParty(BANE, ELEMENT_VENUS, DJINNI_BANE);
 }
 
-/// Unused scene callback with no behavior.
 UNUSED static void CrossboneIslePlatformRooms_UnusedHook(void) {}
 
-/// Selects entrances for the current platform room.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 selector = gGameState.scene;
 
@@ -123,7 +120,6 @@ const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gCrossboneIslePlatformRoomsExits; }
 
-/// Selects actor placements for the current platform room.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   s16 selector = gGameState.scene;
 
@@ -334,7 +330,6 @@ static void Event_HaltBane(void) {
   EV_END();
 }
 
-/// Selects events for the current platform room.
 const struct SceneEvent *Scene_GetEvents(void) {
   s16 selector = gGameState.scene;
 
@@ -627,17 +622,14 @@ static void CrossboneIslePlatformRooms_TrackPursuerColumn(s32 pursuerIndex) {
   Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
 }
 
-/// Aligns the third actor with the leader column.
 static void Event_TrackThirdPursuerColumn(void) {
   CrossboneIslePlatformRooms_TrackPursuerColumn(0);
 }
 
-/// Aligns the fourth actor with the leader column.
 static void Event_TrackFourthPursuerColumn(void) {
   CrossboneIslePlatformRooms_TrackPursuerColumn(1);
 }
 
-/// Unused callback that aligns the fifth actor with the leader column.
 UNUSED static void CrossboneIslePlatformRooms_TrackFifthPursuerColumn(void) {
   CrossboneIslePlatformRooms_TrackPursuerColumn(2);
 }
@@ -796,7 +788,6 @@ static void Event_UseLadder(void) {
   }
 }
 
-/// Unused scene callback with no behavior.
 UNUSED static void CrossboneIslePlatformRooms_UnusedCallback(void) {}
 
 /// Frost on the puddle: it freezes into a pillar of ice the party can stand

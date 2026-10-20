@@ -156,17 +156,14 @@ static void MercuryLighthouseEntrance_RaiseTouchedPillar(void) {
   MercuryLighthouse_ChargeLights();
 }
 
-/// The entrance positions and camera bounds.
 const struct SceneEntrance *MercuryLighthouseEntrance_GetEntrances(void) {
   return gMercuryLighthouseEntrance_Entrances;
 }
 
-/// This overlay has no clipping regions.
 const struct SceneRegion *MercuryLighthouseEntrance_GetRegions(void) {
   return NULL;
 }
 
-/// The exit destinations.
 const u32 *MercuryLighthouseEntrance_GetExits(void) {
   return gMercuryLighthouseEntrance_Exits;
 }

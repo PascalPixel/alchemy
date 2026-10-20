@@ -132,16 +132,12 @@ static s32 Tolbi_UpdateKid(union FieldObject *fieldObject) {
 #endif
 }
 
-/// The scene's entrances.
 u8 *Tolbi_GetEntrances(void) { return (u8 *)gTolbiEntrances; }
 
-/// Tolbi has no regions.
 s32 Tolbi_GetRegions(void) { return 0; }
 
-/// The scene's exits.
 u8 *Tolbi_GetExits(void) { return (u8 *)gTolbiExits; }
 
-/// The scene's actor placements.
 u8 *Tolbi_GetPlacements(void) { return (u8 *)gTolbiPlacements; }
 
 /// Growth on the sprout: the grown plant no longer blocks the party, and its

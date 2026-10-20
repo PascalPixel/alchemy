@@ -355,7 +355,7 @@ void UiWork_SetAltFlagAndClearTable(s32 allowAlternateTiles) {
   } while (j >= 0);
 }
 
-/// Does nothing, and nothing calls it.
+/// Nothing calls it.
 UNUSED void UiRender_ReservedNoOp(void) {}
 
 /// Draws a straight divider line inside a window from tile (x1, y1) to

@@ -45,7 +45,6 @@
 #include "songs.h"
 #include "common/colosso_story_flags.h"
 
-// Forward declarations.
 static void TolbiSpring_RiseAndFadeIn(void);
 static void TolbiSpring_OfferLuckyWheels(s32 spoken);
 static s32 TolbiSpring_RunSpringGame(void);
@@ -99,21 +98,16 @@ struct SpringObstacle {
   u8 unk16[2];
 };
 
-/// Writes the spring scene's blend control register.
 static __inline__ void Io_SetBlendControl(s32 value) { REG_BLDCNT = value; }
 
-/// Writes the spring scene's blend coefficients.
 static __inline__ void Io_SetBlendAlpha(s32 value) { REG_BLDALPHA = value; }
 
-/// Returns the spring and game-room entrances.
 const struct SceneEntrance *TolbiSpring_GetEntrances(void) {
   return gTolbiSpring_Entrances;
 }
 
-/// These rooms have no region table.
 const struct SceneRegion *TolbiSpring_GetRegions(void) { return NULL; }
 
-/// Returns the spring and game-room exit connections.
 const u32 *TolbiSpring_GetExits(void) { return gTolbiSpring_Exits; }
 
 /// Selects the actors for the spring or its nearby games.
@@ -183,7 +177,6 @@ static void TolbiSpring_ReadLuckyWheelsPrizes(void) {
   Engine_EventEnd();
 }
 
-/// Starts the Lucky Wheels attendant's offer.
 static void TolbiSpring_TalkToWheelsAttendant(void) {
   TolbiSpring_OfferLuckyWheels(0);
 }

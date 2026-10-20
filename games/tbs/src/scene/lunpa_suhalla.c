@@ -243,15 +243,12 @@ const struct SceneEvent gSuhallaGateHouseEvents[] = {
     {SCENE_EVENTS_END},
 };
 
-/// Where the party can enter each building.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gInteriorEntrances;
 }
 
-/// The buildings have no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-/// Where each door leads.
 const u32 *Scene_GetExits(void) { return gInteriorExits; }
 
 /// The townsfolk, shopkeepers and the counters.

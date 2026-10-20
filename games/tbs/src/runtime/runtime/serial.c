@@ -460,9 +460,7 @@ s32 SerialRuntime_BeginReceive(void *destination) {
     }                                                                          \
   }
 
-/// Waits for the current send, up to the protocol's frame timeout.
 SERIAL_DEFINE_WAIT(SerialRuntime_WaitForSend, gSerialSendSource)
-/// Waits for the current receive, up to the protocol's frame timeout.
 SERIAL_DEFINE_WAIT(SerialRuntime_WaitForReceive, gSerialReceiveDest)
 
 /// Waits until both the send and the receive have finished, giving up after
@@ -493,10 +491,8 @@ s32 SerialRuntime_GetActiveTransfers(void) {
   return flags;
 }
 
-/// Clears the block transfer state.
 void BattleLink_ResetTransferState(void) { SerialRuntime_ResetTransferState(); }
 
-/// A record of one halfword.
 struct OneCell {
   u16 v;
 };

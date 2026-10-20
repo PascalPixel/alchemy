@@ -21,18 +21,14 @@
 
 #include "field_event.h"
 
-/// Where the party can enter the corridor.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gSolSanctumCorridorEntrances;
 }
 
-/// No regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-/// Where each exit leads.
 const u32 *Scene_GetExits(void) { return gSolSanctumCorridorExits; }
 
-/// Nobody is placed here.
 const struct ScenePlacement *Scene_GetPlacements(void) {
   return gSolSanctumCorridorPlacements;
 }

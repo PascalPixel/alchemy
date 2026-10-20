@@ -64,7 +64,6 @@ static s32 BilibinCave_ClearScriptedActorSpriteFlags(
   return 0;
 }
 
-/// Selects the entrance bounds for the current cave section.
 const struct SceneEntrance *BilibinCave_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -80,13 +79,10 @@ const struct SceneEntrance *BilibinCave_GetEntrances(void) {
   return gBilibinCaveEntrancesOther;
 }
 
-/// No clipping-region table is supplied by this overlay.
 const struct SceneRegion *BilibinCave_GetRegions(void) { return NULL; }
 
-/// Returns the packed exits connecting the three cave sections.
 const u32 *BilibinCave_GetExits(void) { return gBilibinCaveExits; }
 
-/// Each cave section has its own movable actors and obstacles.
 const struct ScenePlacement *BilibinCave_GetPlacements(void) {
   s16 scene = gGameState.scene;
 
@@ -102,7 +98,6 @@ const struct ScenePlacement *BilibinCave_GetPlacements(void) {
   return gBilibinCavePlacementsOther;
 }
 
-/// Pair the section's placements with their touch and Psynergy handlers.
 const struct SceneEvent *BilibinCave_GetEvents(void) {
   s16 scene = gGameState.scene;
 

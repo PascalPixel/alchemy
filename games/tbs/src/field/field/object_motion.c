@@ -62,7 +62,6 @@ s32 Object_IsTargetUnset(struct ObjectRuntime *object) {
   return 1;
 }
 
-/// value squared.
 static __inline__ s32 ObjectMotion_Square(s32 value) { return value * value; }
 
 /// Advances all 64 field objects by one frame, as Object_UpdateAll does for

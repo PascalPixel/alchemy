@@ -13,8 +13,7 @@
 /// 15, into a 16x16-pixel cell of four 4bpp tiles at out: in the text colour
 /// over a shadow, or with an outline when UiRenderWork.outline is 1. Returns
 /// the width of the text drawn in pixels.
-/// The caller supplies 32 words for four tiles; the returned width is in
-/// pixels.
+/// The caller supplies 32 words for four tiles.
 s32 UiText_RenderGlyphPair(s32 code, u32 *out) {
   u8 pixels[384];
   struct UiRenderWork *work;
@@ -93,8 +92,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out) {
 /// text colour over a shadow, or with an outline when UiRenderWork.outline is
 /// 1, with the kana mark in the code's top two bits above its top right.
 /// Codes from 256 are kanji. Returns the character's width in pixels.
-/// The caller supplies 32 words for four tiles; the returned width is in
-/// pixels.
+/// The caller supplies 32 words for four tiles.
 s32 UiText_RenderGlyphPair(u32 code, u32 *out) {
   u8 pixels[256];
   struct UiRenderWork *work;
@@ -465,7 +463,6 @@ void UiText_RenderWideStringInWindow(s16 *text, struct UiWindow *window, s32 x,
 /// text starts. With width 0 the number has no padding and a minus sign when
 /// negative; otherwise it is right-aligned in width characters (up to 12) and
 /// unsigned.
-/// The caller supplies at least 14 bytes; fixed-width output omits the sign.
 u8 *UiText_FormatNumber(u8 *buffer, s32 input, s32 width) {
   s32 offset;
   s32 value;

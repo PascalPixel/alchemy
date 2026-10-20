@@ -11,7 +11,6 @@
 #include "west_lunpa_cave.h"
 #include "text/msg_ids.h"
 
-// Forward declarations.
 static void Reunion_Converse(void);
 static void WagonChoice_Run(void);
 static u8 Leader_AnswersYes(void);
@@ -33,10 +32,8 @@ static void Party_RidesWagon(void);
 // FLAG_SCENE_TEMP_03: the north puddle is frozen into a pillar.
 // FLAG_SCENE_TEMP_04: the south puddle is frozen into a pillar.
 
-/// Entrances share the cave's camera bounds and arrival positions.
 const struct SceneEntrance *Scene_GetEntrances(void) { return gCaveEntrances; }
 
-/// This overlay has no additional region table.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
 /// Both passages and the wagon departure return through this exit table.

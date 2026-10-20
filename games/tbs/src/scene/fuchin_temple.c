@@ -56,7 +56,6 @@
 /// The second scene by entrance 3: Hama's room in Lama Temple.
 #define HAMA 8
 
-// Forward declarations.
 static void FuchinTemple_FeizhiLeavesForHsu(void);
 static void FuchinTemple_FehSeesChi(void);
 static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ);

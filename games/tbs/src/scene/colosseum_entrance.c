@@ -32,7 +32,6 @@
 #include "flags.h"
 #include "songs.h"
 
-// Forward declarations.
 static void ColosseumEntrance_ApplyArrivalState(void);
 static void ColosseumEntrance_ShowMessageAndPause(s32 speaker);
 static void ColosseumEntrance_FaceDirection(s32 actor, s32 facing);
@@ -47,8 +46,6 @@ static void ColosseumEntrance_WalkToWestExit(void);
 static void ColosseumEntrance_CelebrateBothWins(void);
 static void ColosseumEntrance_InitializeContestants(void);
 
-/// Turns over ten frames by calling ColosseumEntrance_FaceDirection
-/// through the inline helper.
 static inline void ColosseumEntrance_Turn(s32 actor, s32 facing) {
   /* FAKEMATCH: forwarded inline for Event_CrowdRecognizesIsaac's one call;
    * called directly, r2 and r3 swap and 7 instructions differ in tbs-en. */
@@ -71,7 +68,6 @@ enum {
   BUFORD = 18
 };
 
-/// Selects the entrance table for this colosseum area.
 const struct SceneEntrance *ColosseumEntrance_GetEntrances(void) {
   s16 scene = gGameState.scene;
 
@@ -84,7 +80,6 @@ const struct SceneEntrance *ColosseumEntrance_GetEntrances(void) {
   return gColosseumEntranceEntrancesOther;
 }
 
-/// This scene has no additional region table.
 const struct SceneRegion *ColosseumEntrance_GetRegions(void) { return 0; }
 
 /// Returns the shared colosseum exits.
@@ -137,7 +132,6 @@ const struct ScenePlacement *ColosseumEntrance_GetPlacements(void) {
   return table;
 }
 
-/// Selects interactions for this area and arrival.
 const struct SceneEvent *ColosseumEntrance_GetEvents(void) {
   s16 scene = gGameState.scene;
 
@@ -1088,7 +1082,6 @@ static void ColosseumEntrance_ApplyArrivalState(void) {
   }
 }
 
-/// Shows the current message and leaves a short pause.
 static void ColosseumEntrance_ShowMessageAndPause(s32 speaker) {
   Engine_EventShowMessage(speaker, 0);
   Engine_EventWait(10);

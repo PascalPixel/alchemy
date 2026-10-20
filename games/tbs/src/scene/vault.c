@@ -70,7 +70,6 @@ enum {
   VAULT_VENUS_DJINNI_INDEX = 4
 };
 
-// Forward declarations.
 static void Vault_ShowStandingActorMessage(s32 actor);
 static void Vault_ShowMessageAndWait(s32 actor, s32 delay);
 static void Vault_FaceActorAndWait(s32 actor, s32 cue, s32 delay);
@@ -117,16 +116,12 @@ static s32 Vault_UpdateRoofComplainerProximity(union FieldObject *fieldObject) {
 #endif
 }
 
-/// Returns the town's entrance positions.
 struct SceneEntrance *Scene_GetEntrances(void) { return gVault_Entrances; }
 
-/// The town has no regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-/// Returns the town's exits.
 u32 *Scene_GetExits(void) { return gVault_Exits; }
 
-/// Selects placements before or after the thieves are captured.
 struct ScenePlacement *Scene_GetPlacements(void) {
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0)
     return gVault_PlacementsAfterThieves;
@@ -196,7 +191,6 @@ static void Event_PeerIntoWell(void) {
   Engine_EventEnd();
 }
 
-/// Selects interactions before or after the thieves are captured.
 struct SceneEvent *Scene_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0)
     return gVault_EventsAfterThieves;
@@ -866,13 +860,11 @@ s32 Scene_Initialize(void) {
 #include "common/object_distance.h"
 #include "common/vault_range.h"
 
-/// Shows the current message and pauses before continuing the scene.
 static void Vault_ShowMessageAndWait(s32 actor, s32 delay) {
   Engine_EventShowMessage(actor, 0);
   Engine_EventWait(delay);
 }
 
-/// Faces another actor and pauses before continuing the conversation.
 static void Vault_FaceActorAndWait(s32 actor, s32 cue, s32 delay) {
   Engine_ActorFaceEachOther(actor, cue, 0);
   Engine_EventWait(delay);

@@ -21,7 +21,7 @@ s32 GameFlag_Test(s32 flag) {
   return (u32)((0 - flagValue) | flagValue) >> 0x1F;
 }
 
-/// Sets `flag`. Returns its byte number.
+/// Returns `flag`'s byte number.
 s32 GameFlag_SetBit(s32 flag) {
   s32 flagMask;
   u8 *flagBytes;
@@ -33,7 +33,6 @@ s32 GameFlag_SetBit(s32 flag) {
   return flag;
 }
 
-/// Clears `flag`.
 void GameFlag_ClearBit(s32 flag) {
   s32 flagMask;
   u8 *flagBytes;

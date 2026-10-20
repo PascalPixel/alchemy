@@ -109,7 +109,6 @@ s32 PartyInventory_HasSpace(void) {
   return 0;
 }
 
-/// Returns the number of free inventory slots across the party.
 s32 PartyInventory_CountFreeSlots(void) {
   s16 owners[10];
   s32 ownerCount = Party_ListActiveOwners(owners);
@@ -195,7 +194,6 @@ s32 PartyInventory_Add(s32 itemId) {
   return -1;
 }
 
-/// Returns the first slot holding `itemId`, or -1.
 s32 Inventory_Find(s32 owner, s32 itemId) {
   struct BattleUnit *inv = UnitGet(owner);
   s32 slot = 0;
@@ -273,7 +271,6 @@ s32 Inventory_Equip(s32 owner, s32 slot) {
   return 0;
 }
 
-/// Returns the slot of the equipped item of `type`, or -1.
 s32 Inventory_FindEquipped(s32 owner, s32 type) {
   struct BattleUnit *base = UnitGet(owner);
   s32 index;
@@ -291,7 +288,6 @@ s32 Inventory_FindEquipped(s32 owner, s32 type) {
   return index;
 }
 
-/// Returns the definition of the equipped item of `type`, or NULL.
 struct ItemDefinition *Inventory_GetEquippedDefinition(struct BattleUnit *unit,
                                                        s32 type) {
   s32 slot;
@@ -308,7 +304,6 @@ struct ItemDefinition *Inventory_GetEquippedDefinition(struct BattleUnit *unit,
   return 0;
 }
 
-/// Returns the id of the equipped item of `type`, or 0.
 s32 Inventory_GetEquippedItem(struct BattleUnit *unit, s32 type) {
   s32 slot;
 
@@ -379,7 +374,6 @@ s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
   return 0;
 }
 
-/// Removes one `itemId` from whoever in the party carries it.
 s32 PartyInventory_Remove(s32 itemId) {
   s32 owner = PartyInventory_FindOwner(itemId);
 
@@ -389,7 +383,6 @@ s32 PartyInventory_Remove(s32 itemId) {
   return 0;
 }
 
-/// Discards one `itemId` from whoever in the party carries it.
 s32 PartyInventory_Discard(s32 itemId) {
   s32 owner = PartyInventory_FindOwner(itemId);
 
@@ -399,7 +392,6 @@ s32 PartyInventory_Discard(s32 itemId) {
   return 0;
 }
 
-/// Marks the item in `slot` broken. Returns -1 for an empty slot.
 s32 Inventory_Break(s32 owner, s32 slot) {
   struct BattleUnit *inv = UnitGet(owner);
   if (inv->inventory[slot] == 0) {
@@ -409,7 +401,6 @@ s32 Inventory_Break(s32 owner, s32 slot) {
   return 0;
 }
 
-/// Repairs the item in `slot`. Returns -1 for an empty slot.
 s32 Inventory_Repair(s32 owner, s32 slot) {
   struct BattleUnit *inv = UnitGet(owner);
   if (inv->inventory[slot] == 0) {
@@ -486,7 +477,6 @@ s32 Inventory_CountItem(s32 owner, s32 itemId) {
   return count;
 }
 
-/// Returns how many of `itemId` the party carries.
 s32 PartyInventory_CountItem(s32 itemId) {
   u16 owners[16];
   s32 itemCount = 0;

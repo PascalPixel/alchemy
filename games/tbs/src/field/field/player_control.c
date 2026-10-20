@@ -16,12 +16,10 @@
 #define WORLD_MAP_PROBE_RADIUS 0x80000
 #endif
 
-/// Stores value as a halfword.
 static __inline__ void Field_StoreHalfword(s16 *address, s32 value) {
   *address = value;
 }
 
-/// Stores value in the word that the object's unk6c points at.
 UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
   struct ObjectRuntime *object = rawObject;
 

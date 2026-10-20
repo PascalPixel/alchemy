@@ -99,7 +99,6 @@ done:
   *text = 0;
 }
 
-/// Clears *p if it is set, and returns p.
 s32 *Runtime_ClearWordIfSet(s32 *p) {
   if (*p != 0) {
     *p = 0;
@@ -213,7 +212,7 @@ void UiWork_ClearValueNameTables(void) {
 
 /// Adds a message argument of kind (MSG_ARG_) with value to the first free
 /// place of the argument table; when all eight are in use it is dropped.
-/// Kind 0 denotes an empty slot; a full table drops the new value.
+/// Kind 0 denotes an empty slot.
 void UiWork_PushValueSlot(u32 value, u32 kind) {
   struct UiRenderWork *work = UI_WORK;
   u32 no = 0;

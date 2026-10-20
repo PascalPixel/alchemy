@@ -51,7 +51,6 @@ enum {
   ACTOR_TRETS_DARK_SIDE = 14
 };
 
-// Forward declarations.
 static void KolimaForestTree_RejectHermesWater(void);
 static void KolimaForestTree_RestoreTret(void);
 static void KolimaForestTree_SpawnRejectionSpark(void);
@@ -65,7 +64,6 @@ s32 gKolimaForestTreeSparkFrame __attribute__((section(".bss")));
 s32 gKolimaForestTreePlaySparkSound __attribute__((section(".bss")));
 s32 gKolimaForestTreePaletteFrame __attribute__((section(".bss")));
 
-/// Returns the clearing's entrances.
 const struct SceneEntrance *KolimaForestTree_GetEntrances(void) {
   return gKolimaForestTreeEntrances;
 }

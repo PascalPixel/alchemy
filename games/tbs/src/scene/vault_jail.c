@@ -67,10 +67,8 @@ enum { CELL_COLLISION_FLAGS = 0x14 };
 /// Returns the entrances from Vault, Lunpa and the revisited Vault.
 const struct SceneEntrance *Scene_GetEntrances(void) { return gJailEntrances; }
 
-/// This scene has no exit regions.
 const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
 
-/// Returns the exits back to the three surrounding scene states.
 const u32 *Scene_GetExits(void) { return gJailExits; }
 
 /// The revisit entrance replaces the thieves with the lone prisoner.

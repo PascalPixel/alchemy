@@ -28,7 +28,6 @@ u32 BattleRandomPercent(void) { return (BattleRandom() * 100) >> 16; }
 /// Returns attack damage (BattleAtkCalc): (atk - def + add * 2) / 2 times the
 /// elemental difference multiplier. 256 is unity; the difference has half
 /// BattlePowerCalc's effect (128-384).
-/// atk: attack.
 /// def: defense (clamp atk - def to zero).
 /// add: ability power.
 /// bonus: elemental difference (power - resistance).
@@ -51,7 +50,6 @@ s32 Battle_CalcAttackDamage(s32 atk, s32 def, s32 add, s32 bonus) {
 
 /// Returns Psynergy power (BattlePowerCalc): power times rate and the elemental
 /// multiplier (0-512, with 256 unity).
-/// power: power.
 /// bonus: elemental difference (power - resistance).
 /// rate: multiplier, with 256 unity.
 s32 Battle_CalcPsynergyPower(s32 power, s32 bonus, s32 rate) {

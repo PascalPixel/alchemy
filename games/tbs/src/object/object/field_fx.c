@@ -197,7 +197,6 @@ struct EffectObj *BattleFx_StartRandomParticleEmitter(s32 actor, s32 item) {
   return picture;
 }
 
-/// Destroys object if there is one.
 void Object_DestroyIfPresent(void *object) {
   if (object != 0)
     ObjectDispatch_ReleaseFar(object);

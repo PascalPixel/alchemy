@@ -12,15 +12,15 @@ With the source, anyone can read how Golden Sun really works, from the damage fo
 
 ## What’s in it?
 
-The source, not a game to download. Building it gives you back the games Camelot shipped, byte for byte, in all six languages. Every picture, song and line of dialogue is Camelot’s own, taken from the cartridge into files you can open and edit. Remakes, mods and ports can grow from it in projects of their own.
+The source, not a game to download. Building it gives you back the games exactly as Camelot shipped them, in Japanese, English, German, Spanish, French and Italian. Every picture, song and line of dialogue is Camelot’s own, taken from the cartridge into files you can open and edit. Remakes, mods and ports can grow from it in projects of their own.
 
 ## Who’s making it?
 
 Me! I’m Pascal Pixel, and I started Alchemy in July 2026 as a hobby, to enjoy making things again after a burnout. I build it with AI coding assistants. They propose C code, the build compares it with the cartridge, and only what matches stays. I decide what to tackle next, how the code is organized and named, and what counts as finished, and when something’s broken or stuck, that’s where I dig in.
 
-## How far along is it?
+## Progress tracker
 
-The Broken Seal is fully rebuilt: all six languages build from this repository alone, no cartridge needed. I’m still tidying up its code, naming things and writing the documentation. The Lost Age builds too and is well on its way, but the parts that aren’t rewritten yet still come from your own cartridge dump.
+The Broken Seal is fully rebuilt and builds from this repository alone, no cartridge needed. I’m still tidying up its code, naming things and writing the documentation. The Lost Age builds too and is well on its way, but the parts that aren’t rewritten yet still come from your own cartridge dump.
 
 <img src="https://alchemy.pascalpixel.com/PROGRESS_CHART.png" width="838" alt="How much of each game's code and data is rebuilt, day by day since 16 July 2026" />
 <img src="https://alchemy.pascalpixel.com/PROGRESS.png" width="838" alt="A map of the project's files by size" />
@@ -42,11 +42,11 @@ Yes! [INSTALL.md](INSTALL.md) has the few commands it takes on Linux, macOS or W
 
 [The documentation](https://alchemy.pascalpixel.com/) explains how the games work underneath, like what happens in a battle round or how a town’s people and events are set up. If you’d rather start in the code, the battle effects are a good first stop: [their guide](games/tbs/src/effect/README.md) explains how everything drawn during a battle, from Psynergy to summons, is put on screen.
 
-## Thank you
+## Acknowledgements
 
-To Camelot Software Planning, who made Golden Sun, its characters, music, art and original code, and to Nintendo, who published it. Alchemy is an unofficial fan project, and neither company is involved with it or endorses it.
+_Golden Sun_, its characters, music, art and original code were made by Camelot Software Planning and published by Nintendo. Alchemy is an unofficial fan project, and neither company is involved with it or endorses it.
 
-And to:
+Thank you to:
 
 - Everyone on [r/GoldenSun](https://www.reddit.com/r/GoldenSun/), for cheering Alchemy on and keeping the love for these games alive.
 - Tarpman and Karathan, who worked out the compiler and flags Camelot used.

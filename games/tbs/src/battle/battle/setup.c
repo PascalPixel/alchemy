@@ -11,8 +11,10 @@
 /// camera a sixteenth of the way toward a transition's yaw, places the camera
 /// at its position (or at the one it follows) with its yaw, pitch and
 /// distance, and, unless a transition owns the background, refreshes the
-/// background's perspective. Runs as a scheduler callback (priority 0xc7f)
-/// that Battle_RunEncounter adds. Changes work->linkMisses and linkPaused,
+/// background's perspective. Runs as a scheduler callback that
+/// Battle_RunEncounter adds with order 0xc7f: in the main-loop pass, after
+/// the tasks of order 0xc80 (the objects' camera, the sprite priorities and
+/// event playback). Changes work->linkMisses and linkPaused,
 /// the camera's yaw and the transition's frame count, the transform state,
 /// and through BattleCamera_SetRange the background's affine page.
 void BattlePresentation_UpdateCamera(void) {
@@ -85,8 +87,10 @@ void BattlePresentation_UpdateCamera(void) {
 
 /// Announces the enemies at the start of a battle, then whether the party
 /// strikes first or is caught by surprise. Each of the first enemyCount enemies
-/// gets `<enemy> appeared!`, the last one's message a different line. Called
-/// by BattlePres_RunEntryTransition. Rewrites the message argument tables.
+/// gets `<enemy> appeared!`; the last one's comes from a message of its own,
+/// MsgLastEnemyAppeared, whose text matches MsgEnemyAppeared's in every
+/// edition. Called by BattlePres_RunEntryTransition. Rewrites the message
+/// argument tables.
 void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   s16 enemies[8];
   struct BattleWork *battle;
@@ -329,11 +333,17 @@ s32 BattleParty_ReconcileDjinnRecovery(void) {
 #define NUM_SUMMONS 32
 
 /// Works out which summons the party can call: one whose Djinn requirement
-/// of every element is met by the party's Djinn of that element, all
-/// members together. Stores the mask of them (bit n for summon n) and
-/// returns the state that holds it. Called by Battle_RunEncounter as the
-/// battle is set up and at the start of each round. Writes the party
-/// recovery table's availableMask.
+/// of every element is met by the Djinn the party holds of that element
+/// (djinnOwnedCounts, set or not), all members together. Whether enough of
+/// them are on standby is checked as the summon is chosen
+/// (SummonMenu_SelectSummon, Battle_CollectPartyCommands) and again when it
+/// is planned (BattleCommand_BuildPlan). Stores the mask of them (bit n for
+/// summon n) and returns the state that holds it. Called by
+/// Battle_RunEncounter as the battle is set up and at the start of each
+/// round, which asks for the party status window's standby Djinn column
+/// (PARTY_STATUS_SUMMONS) while the mask is not 0; PartyStatusDraw shows it
+/// only while a Djinni is on standby. Writes the party recovery table's
+/// availableMask.
 struct BattleSummonState *BattleSummon_UpdateAvailability(void) {
   u8 totals[NUM_ELEMENTS];
   u16 partyMembers[10];

@@ -5,10 +5,12 @@
 #include "../battle_internal.h"
 
 /// Auto battle: gives every living unit a plain attack and sorts them into
-/// turn order. The party act at their Agility and target the first enemy;
-/// enemies act at half their Agility plus a random part of it and target a
-/// random party member. Returns how many actions there are. Called by
-/// Battle_RunEncounter each round under FLAG_AUTO_BATTLE; fills entries.
+/// turn order. The party act at their Agility and target the first enemy
+/// unit, 128; enemies act at half their Agility plus a random part of it and
+/// target unit id 0 to n - 1 for n living party members, which
+/// BattlePres_RunAction replaces if it is down. Returns how many actions
+/// there are. Called by Battle_RunEncounter each round under
+/// FLAG_AUTO_BATTLE; fills entries.
 s32 BattlePresentation_BuildSortedUnitEntries(
     struct BattleActionRecord *entries) {
   struct BattleActionRecord swap;
@@ -100,7 +102,8 @@ s32 BattlePres_RunAction(struct BattleActionRecord *action) {
 
   action->target = BattleTarget_ReplaceDefeated(action);
   transition = gTransitionWork;
-  // Here any unit id above 4 counts as an enemy.
+  // Here any unit id above 4 counts as an enemy, Jenna's 5 included
+  // (character_ids.h).
   if (action->unitId > 4)
     yaw = YAW_ENEMY_TURN;
   else
@@ -140,8 +143,8 @@ s32 BattlePres_RunAction(struct BattleActionRecord *action) {
   return 0;
 }
 
-/// Returns 0 for a party member's or an enemy's unit id, -1 for any other.
-/// Called by the auto battle's action players.
+/// Returns 0 for a party member's or an enemy's unit id (0 to 7, 128 to
+/// 133), -1 for any other. Called by the auto battle's action players.
 s32 BattleObject_IsValidId(u32 unitId) {
   if (unitId <= 7) {
     return 0;
@@ -245,7 +248,8 @@ s32 BattlePresentation_RunPairedUnitTransition(
   Random16();
   actorRecord = BattleObjGet(actorId)->object;
 
-  // The caster's side: its pose when the caster is among them.
+  // The caster's side, taken as the side the target is not on, and the
+  // caster's pose 3 when its id is among that side's first sideCount ids.
   if (targetId >= 0 && targetId <= 7) {
     sideCount = BattleParty_ListLivingUnits(BATTLE_SIDE_ENEMIES, visibleUnits);
     sideStart = FIRST_ENEMY_UNIT;
@@ -260,7 +264,9 @@ s32 BattlePresentation_RunPairedUnitTransition(
     }
   }
 
-  // Fade the caster's side out.
+  // Fade the caster's side out: its sprites semi-transparent (OBJ mode 1),
+  // their blend weight falling from 16 to 1 over 16 frames. Then the party
+  // status window is erased (PARTY_STATUS_CLOSED, 9).
   WaitFrames(30);
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++) {
@@ -411,6 +417,7 @@ s32 BattlePres_RunUnitAction(struct BattleActionRecord *action) {
   else
     work.effect.count =
         BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, work.effect.actors);
+  // The status window without its PP row (see PARTY_STATUS_SUMMONS).
   PartyStatusDrawFar(gBattleWork->partyStatus & ~1);
   // The actor raises its hand (pose 3); then only the first living unit of
   // the target's side takes the effect.
@@ -485,6 +492,7 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
   if (unit->hp < 0)
     unit->hp = 0;
 
+  // The damage pose, and the status window with names and HP only.
   battleObject = BattleObjGet(unitId);
   ObjectDispatch_SelectAnimationFar(battleObject->object, 5);
   PartyStatusDrawFar(0);
@@ -540,6 +548,8 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
 }
 
 /// BattleTarget_ReplaceDefeated's result when the target's side is all down.
+/// It does not come up: Battle_RunEncounter ends the battle as soon as a
+/// side is down, before the next action.
 #define TARGET_SIDE_DEFEATED 0x100
 
 /// Returns the action's target, or a random living unit of its side when

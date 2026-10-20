@@ -125,8 +125,9 @@
 #define VALUE_ABILITY_NAME 4
 #define VALUE_NUMBER 5
 
-/// Unit ids from 128 are the enemies'; in a link battle the opponent's party
-/// takes the first three.
+/// Unit ids from 128 are the enemies'. In a link battle each console sends
+/// LINK_PARTY_SIZE places, at most three members (LinkBattle_SendParty), and
+/// the opponent's take enemy ids 128 to 130.
 #define FIRST_ENEMY_UNIT 128
 #define LINK_PARTY_SIZE 3
 
@@ -158,7 +159,8 @@
 #define LINK_BOTH_CONNECTED 3
 
 /// The frames a link battle tolerates without a connection before it gives
-/// up.
+/// up: a count above it pauses the battle (BattleWork.linkPaused) or fails
+/// the sync or transfer under way (link.c, round.c).
 #define LINK_MAX_MISSED_FRAMES 24
 
 /// The Djinn recovery list's two tables (Djinn_GetRecoveryTableFar): the
@@ -166,9 +168,15 @@
 #define DJINN_RECOVERY_PARTY 0
 #define DJINN_RECOVERY_OPPONENT 1
 
-/// DjinnRecoveryEntry.turns of a Djinni waiting for the battle to end.
+/// DjinnRecoveryEntry.turns of a Djinni on standby. In battle it stays so
+/// until a Djinn command sets it again or a summon uses it (-2), both in
+/// BattleCommand_BuildPlan; an owner who does not fight has it set as the
+/// next battle starts, outside a link battle
+/// (BattleParty_ReconcileDjinnRecovery). DjinnRecovery_Tick counts down only
+/// positive turns.
 #define DJINN_RECOVERY_AFTER_BATTLE -1
 
+/// The Djinn of each element, numbered 0 to 19 (DjinnRecoveryEntry.index).
 #define DJINN_PER_ELEMENT 20
 
 /// BattleWork.battleType, from the enemy formation
@@ -177,10 +185,12 @@
 #define FORMATION_SHUFFLED 0
 #define FORMATION_INTERLEAVED 1
 
-/// The two battle sprites whose next sprite is loaded with them (into a
-/// second free place), the pass after them loading animation + 1.
-#define SPRITE_WITH_SECOND_PART_A 476
-#define SPRITE_WITH_SECOND_PART_B 483
+/// The two battle sprites drawn in two parts: the sprite after each is its
+/// second part, which SummonSlot_RegisterActorSprites loads into further
+/// enemy sprite slots and BattleActor_SpawnObjectsForList shows as the
+/// object's second record.
+#define SPRITE_WITH_SECOND_PART_A 476 ///< the Kraken's (class 121, sprites.tsv)
+#define SPRITE_WITH_SECOND_PART_B 483 ///< the Fusion Dragon's (class 148)
 
 /// The inventory's weapon slot, for Inventory_FindEquippedFar.
 #define EQUIP_WEAPON 1
@@ -199,7 +209,9 @@
 #define POISON_DEADLY 2
 
 /// BattleUnit.guardLevel: Defend and Granite halve the damage, Total Defense
-/// and Flash cut it to a tenth.
+/// and Flash cut it to a tenth (REDUCE_BY_GUARD, target_exec.c). It lasts
+/// the round: BattleUnit_ResetGuardLevels clears it as the next one's
+/// commands are gathered.
 #define GUARD_DEFEND 1
 #define GUARD_TOTAL_DEFENSE 2
 
@@ -245,13 +257,16 @@ enum BattlePlanStaging {
 #define TARGET_MODE_ALLIES 2
 #define TARGET_MODE_SELF 4
 
-/// BattleActionRecord.target of an action that needs none: a held unit's
-/// lost turn (the enemies' and the party's), and an enemy's attack in auto
-/// battle, which picks a party place.
+/// BattleActionRecord.target of a held unit's lost turn (CMD_NONE, from
+/// BattlePres_BuildOpponentEntries and BattlePres_BuildUnitEntries): as a
+/// place code, place 0 of the other side, 0x100 the party's for an enemy and
+/// 0x180 the enemies' for a party member (PLACE_PARTY, PLACE_ENEMY).
 #define TARGET_NONE_ENEMY 0x100
 #define TARGET_NONE_PARTY 0x180
 
-/// The camera's yaw while a party member acts, and while an enemy does.
+/// The camera's yaw while a party member acts, and while an enemy does, in
+/// 1/65536 turns: an eighth of a turn either side of 0. The camera callback
+/// eases toward it (BattlePresentation_UpdateCamera).
 #define YAW_PARTY_TURN 0x2000
 #define YAW_ENEMY_TURN -0x2000
 

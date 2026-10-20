@@ -41,7 +41,8 @@ s32 BattleClass_GetPalette(s32 index) {
 /// Returns 1 for a small class, which takes one enemy sprite slot instead of
 /// two and stands closer to its neighbours; 0 out of range.
 /// Called by the formation and placement code (BattleFormation_BuildEnemyList,
-/// Summon_LayoutPositions) and by motion.c.
+/// Summon_LayoutPositions), the sprite slots (EnemyCheck,
+/// SummonSlot_RegisterActorSprites) and motion.c.
 s32 BattleClass_IsSmall(s32 index) {
   s32 result;
 

@@ -4,10 +4,11 @@
 
 #include "../battle_internal.h"
 
-/// Returns one when the unit is in its side's formation.
+/// Returns 1 when the unit is in its side's list of units in the battle
+/// (BattleParty_ListActorIds), 0 otherwise.
 /// Called by BattleCommand_BuildPlan, for the owners of the standby Djinn a
 /// summon uses.
-/// unitId : 0 to 7 a party member, any other an enemy
+/// @param unitId 0 to 7 a party member, any other an enemy
 u32 BattleParty_IsUnitListed(u32 unitId) {
   u16 list[8];
   s32 side;
@@ -31,9 +32,10 @@ u32 BattleParty_IsUnitListed(u32 unitId) {
 /// side's Djinn recovery list.
 /// Called by BattleCommand_BuildPlan for a summon, and through
 /// BattleParty_CountStandbyDjinnFar by the command menu (Menu_RunCommandRow,
-/// Battle_CollectPartyCommands, PartyStatusDraw).
-/// unitId : 0 to 7 the party's side, any other the enemies'
-/// counts : if not null, receives the count for each of the four elements
+/// Battle_CollectPartyCommands, PartyStatusDraw). Returns the total.
+/// @param unitId 0 to 7 the party's side, any other the enemies'
+/// @param counts if not null, receives the count for each of the four
+/// elements
 s32 BattleParty_CountStandbyDjinn(u32 unitId, u8 *counts) {
   u16 unitIds[8];
   struct DjinnRecoveryList *recoveryList;
@@ -230,7 +232,11 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     return -2;
 
   // Debug: hold R to defeat all enemies, or R+Select to defeat the whole party.
-  // Only in debug mode, with flag 0x16d set; each unit loses 0x40000000 HP.
+  // Only in debug mode, with flag 0x16d set; each unit loses 0x40000000 HP,
+  // more than any unit has. Flag 0x16d is set by Vale's debug entrance 99
+  // (ValeHome_SetProgressFlagsAndExit) and by the Colosseum's escorts as Mia
+  // takes Jenna's place (colosseum_entrance.c). XXX: what the flag means; a
+  // reader that tests it outside this debug key would say.
   if (BATTLE_AUTO_MODE && GameFlag_TestFar(0x16d) && (BATTLE_OPTIONS & KEY_R)) {
     s32 enemy = 1;
     s32 index;
@@ -386,8 +392,9 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
     UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
     UiWork_PushValueSlotFar(actor->inventory[request->parameter],
                             VALUE_ITEM_NAME);
-    // An item that is kept: weapons, the Psynergy items and types 3, 7 and 8
-    // are raised ("raises"); anything else is used.
+    // An item that is kept: weapons, shields, gloves and armlets (type 3),
+    // the Psynergy items, rings (8) and type 7, which no row of items.tsv
+    // has, are raised ("raises"); anything else is used.
     if (item->useType == ITEM_USE_MAY_BREAK || item->useType == 0) {
       switch (item->type) {
       case ITEM_TYPE_WEAPON:

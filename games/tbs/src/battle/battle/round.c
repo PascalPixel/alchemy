@@ -104,7 +104,8 @@ void Camera_ConfigureScene(s32 verticalOffset) {
   Projection_Set(0, result, 0x07920000);
 
   // While active (the view's busy) is set, BattleCamera_SetRange leaves
-  // BG1's scroll alone. The range: centre x 120, scale 2.0.
+  // BG1's scroll alone. The range: centre (120, 118 less verticalOffset),
+  // offset 8 pixels in y (0x800 in 8.8), scale 2.0.
   gProjection.centerY = verticalOffset + 120;
   transition->active = 1;
   BattleCamera_SetRange(240 << 15, (0x76 - verticalOffset) << 16, 0, 128 << 4,
@@ -131,7 +132,13 @@ void BattleUnit_ResetGuardLevels(void) {
   }
 }
 
-/// gGameState.battleStart of a battle the party cannot run from.
+/// gGameState.battleStart of a battle the party cannot run from: a Mimic's
+/// (object/object/events.c) and the travelers' fight in Vale
+/// (ValeHome_FightTravelers, scene/vale_home.c). The command menu itself
+/// refuses to run, with MsgNoTimeToRun ("This is no time to be running
+/// away!"), in modes 3 and 4 (the battles a scene starts, and link
+/// battles) and once the party is challenged
+/// (UiText_ShowLocalizedMessageAndWait, window/battle_command/link_timer.c).
 #define BATTLE_START_NO_ESCAPE 2
 
 /// Rolls whether the party gets away. The chance, in hundredths of a
@@ -189,6 +196,9 @@ s32 BattleEscape_CheckSuccess(void) {
 /// Returns how many actions there are, or -1 if the menu gave up. Called by
 /// BattlePresentation_BuildActions. Fills entries.
 s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries) {
+  // Two lists, freed before the return; the allocator rounds them up to 20
+  // and 12 bytes: up to eight choosers and the up to four members with their
+  // end mark.
   u16 *choosingUnits = Runtime_BumpAllocateAlternatePool(17);
   u16 *unitIds = Runtime_BumpAllocateAlternatePool(9);
   s32 unitCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unitIds);
@@ -200,6 +210,8 @@ s32 BattlePres_BuildUnitEntries(struct BattleActionRecord *entries) {
     struct BattleUnit *unit = UnitGetFar(unitIds[unitIndex]);
     s32 copyIndex;
 
+    // Once for each of the member's actions this round (actionEntryCount):
+    // a member with two is listed twice and chooses twice.
     for (copyIndex = 0; copyIndex < unit->actionEntryCount; copyIndex++) {
       if (unit->sleep != 0 || unit->confusion != 0 || unit->charm != 0 ||
           unit->stun != 0) {
@@ -313,7 +325,8 @@ s32 BattlePres_BuildOpponentEntries(struct BattleActionRecord *entries) {
   return entryCount;
 }
 
-/// A Djinni whose effect is a guard or Ground acts before everyone else.
+/// A Djinni whose effect is a guard or Ground acts before everyone else: its
+/// priority is raised by this, past any Agility (999 at most).
 #define DJINN_FIRST_PRIORITY 10000
 
 /// Sorts the round's actions into turn order, fastest first, after moving
@@ -366,7 +379,11 @@ void BattleQueue_SortByPriority(struct BattleActionRecord *entries, s32 count) {
 
 /// The header a link battle sends before its actions: how many there are,
 /// the next random number to check the consoles agree, and the parent's
-/// random seed for the round.
+/// random seed for the round. BattlePresentation_AppendLinkedActions takes it
+/// from the alternate pool (40 bytes) for one exchange and frees it before
+/// returning. One header serves both ways: the parent's received header
+/// overwrites the one it sent, and the child receives first, then writes
+/// its count over the received header and sends it back.
 struct BattleLinkedActionState {
   s32 count; ///< actions that follow the header
   s32 check; ///< the parent's next BattleRandomFar; the child checks its own
@@ -378,7 +395,8 @@ struct BattleLinkedActionState {
 /// may take 300 frames.
 #define LINK_PACKET_BYTES 20
 #define LINK_TRANSFER_TIMEOUT 300
-/// The bytes of count actions, in whole packets.
+/// The bytes of count actions (16 each, a struct BattleActionRecord), in
+/// whole packets.
 #define LINK_ACTIONS_BYTES(count)                                              \
   ((u32)((count) * 16 + LINK_PACKET_BYTES - 1) / LINK_PACKET_BYTES *           \
    LINK_PACKET_BYTES)

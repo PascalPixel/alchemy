@@ -24,8 +24,8 @@ struct BattleAutomaticState {
 /// (BattlePresentation_DispatchAction). Writes request's command, parameter,
 /// target and range; strategies 3 and 4 advance the place remembered in
 /// BattleUnit.rewards. Returns nothing.
-/// retry : 0 when the round is built: only a guard is settled now (it must
-///         raise before anyone acts); 1 at the enemy's turn: the rest.
+/// @param retry 0 when the round is built: only a guard is settled now (it
+/// must raise before anyone acts); 1 at the enemy's turn: the rest
 #ifdef UBFIX
 void BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
                                    s32 retry) {
@@ -102,7 +102,9 @@ s32 BattleCommand_SelectAutomatic(struct BattleActionRecord *request,
 select_again:
   strategyKind = *actionStrategy;
   switch (strategyKind) {
-  // Strategies 0 to 2: one of the three weight tables.
+  // Strategies 0 to 2: one of the three weight tables, in 256ths
+  // (battle_data.s): 0 even, 32 each; 1 falling from 53 to 11; 2 favouring
+  // the first action, 113, down to 5 for the last.
   case 0:
     selection =
         BattleEnemy_SelectWeightedAction(gBattleCommand_SelectionWeights[0]);

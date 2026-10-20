@@ -9,11 +9,15 @@
 #define NO_MOVE_TARGET 0x80000000
 
 // The motion values below are 16.16 fixed point, in pixels and frames:
-// acceleration and speedLimit per frame, velocityY the hop's upward speed.
+// acceleration and speedLimit per frame, velocityY the hop's upward speed,
+// and verticalMotionStrength the gravity taken from it each frame (0xab85
+// about 0.67, 0x9999 0.6, 0x7851 about 0.47). The poses are the sprites'
+// animations: 1 POSE_STANDING, 2 the one every run up and leap here takes,
+// 5 POSE_DAMAGE.
 
-/// Sends unitId back to its spot, landing there, and turns it to face
-/// the centre. Called after an action by the staging code, the auto battle,
-/// BattleTargetExec and the Quake effect.
+/// Sends unitId back to its spot, landing exactly there (snapToTarget), and
+/// turns it to face the centre at once. Called after an action by the
+/// staging code, the auto battle, BattleTargetExec and the Quake effect.
 void ObjMotRst(s32 unitId) {
   s32 z;
   s32 stopped;
@@ -41,7 +45,7 @@ void ObjMotRst(s32 unitId) {
 }
 
 /// Sends unitId running off its side of the battlefield, three times
-/// as far out as its spot, with a hop, in pose 1. Called by
+/// as far out as its spot, with a hop, in pose 1 (POSE_STANDING). Called by
 /// BattleEscape_PlayRun and BattlePres_RunEscape.
 void BattleMotion_SetupEscapeObject(s32 unitId) {
   struct BattleObj *battleObject;
@@ -130,8 +134,8 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 unitId) {
 }
 
 /// Sends unit id leaping back to 1.3 times its spot's distance from the
-/// centre, in pose 5. Only an unnamed overlay veneer in BATTLE.S reaches
-/// it, and nothing in the source calls that.
+/// centre, in pose 5 (POSE_DAMAGE). Only an unnamed overlay veneer in
+/// BATTLE.S reaches it, and nothing in the source calls that.
 void BattleMotion_InitializeObject(s32 unitId) {
   struct BattleObj *battleObject = BattleObjGet(unitId);
   struct MotionObject *object = battleObject->object;
@@ -149,14 +153,20 @@ void BattleMotion_InitializeObject(s32 unitId) {
   ObjectDispatch_SelectAnimationFar(object, 5);
 }
 
-/// A class that never moves when hit (148, one of the two that never show
-/// the stun icon and stand nearer the party).
+/// A class that never moves when hit: 148, the Fusion Dragon, one of the two
+/// that never show the stun icon.
 #define CLASS_NO_KNOCKBACK 0x94
 
 /// Knocks unit id back, by the speed, hop and distance of motion variant
-/// (gBattleMotion_Variant*), and puts it in pose 5. One class only takes
-/// the pose. Reached through its far stub from the effects, by the
-/// EFFECT_STRIKE_TARGET macro of effect_internal.h and directly.
+/// (gBattleMotion_Variant*, 0 to 7), and puts it in pose 5 (POSE_DAMAGE).
+/// One class only takes the pose. Reached through its far stub from the
+/// effects, by the EFFECT_STRIKE_TARGET macro of effect_internal.h and
+/// directly.
+///
+/// By battle_vars.s, every variant but 4 accelerates by 1 pixel a frame to
+/// at most 4 and hops up at 2 to 10; variant 4 throws hardest, 8 a frame to
+/// at most 20, out to twice the spot's distance from the centre. The others
+/// reach 140 to 200 percent of it, variants 6 and 7 only the spot itself.
 void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant) {
   struct BattleObj *battleObject;
   struct MotionObject *object;
@@ -184,7 +194,8 @@ void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant) {
 }
 
 /// Sends unit actorId three quarters of the way to unit targetId, arriving
-/// in travelDivisor steps, leaping up at initialVelocityY, in pose 2.
+/// in travelDivisor frames at a steady speed, leaping up at initialVelocityY
+/// (16.16 pixels a frame), in pose 2.
 /// Called by BattlePres_RunAttack, BattlePres_RunPlainAttack and
 /// BattlePres_RunApproachAction, and through its far stub by the Bind,
 /// burst scene, Annihilation, target motes and Thrash effects.
@@ -215,6 +226,8 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   object->snapToTarget = 1;
 
   // Removing the repeated store shortens the matching EN function by 16 bytes.
+  // The test is for a floating unit (motionFlags bit 2); both paths store
+  // the same hop.
   if (object->motionFlags & 4)
     object->velocityY = initialVelocityY;
   object->velocityY = initialVelocityY;
@@ -279,6 +292,8 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   BattleMotion_ReservedNoOp83B0(&pos, 0x1000);
 }
 
+/// The hit flash's sprite layer, sprite 283: a star burst that grows and
+/// breaks apart over ten frames (graphics/sprite/spr_283.png).
 #define HIT_FLASH_ANIM 0x11b
 
 /// Plays the hit flash on unit id's sprite and waits ten frames. Only a
@@ -304,7 +319,7 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 unitId) {
 
 /// Projects the point above unit id where its effects play (its class's
 /// height, BattleUnit_GetEffectHeight) onto the screen, into projected; the
-/// height is scaled by the sprite's projected scale. Called by
+/// height is scaled by the sprite's projected scale. Returns 0. Called by
 /// BattleFx_PlayUnitElementEffect, and through its far stub by
 /// EffectPosition_ProjectScaledBattler and SelectionScreen_Draw.
 s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
@@ -326,8 +341,9 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
 }
 
 /// Projects the point above unit id onto the screen, into projected: 24
-/// pixels up for a small enemy, 48 for others, as drawn. Reached through its
-/// far stub from BattleTarget_RunSelection, to place the target cursor.
+/// pixels up for a small enemy, 48 for others, scaled as the sprite is drawn.
+/// Returns 0. Reached through its far stub from BattleTarget_RunSelection, to
+/// place the target cursor.
 s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
   struct MotionObject *object = BattleObjGet(unitId)->object;
   struct AnimationObject *record = GetMotionRecord(object, 0);

@@ -39,7 +39,10 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
     BattleCommand_SelectAutomatic(request, 1);
 
   // The view: the camera eases over 60 frames, the background at full
-  // brightness (1.0 in 16.16).
+  // brightness (1.0 in 16.16). The projection is the one
+  // BattlePres_SetupTransitionScene sets at 100 percent (focal length 510
+  // pixels), but with its far depth at 32767 pixels where that one stops at
+  // 1020.
   transition = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
   transition->frames = 60;
   battle = WORK_SLOT(HEAP_SLOT_BATTLE);
@@ -164,10 +167,13 @@ s32 BattlePres_BuildTargetList(struct BattlePlan *plan,
   effect->range = 1;
 }
 
-/// Plays a unit's attempt to run. The party gets away unless the enemies
-/// struck first ("But there's no escape!"), each member able to move running
-/// off in turn; an enemy gets away 7 times in 10 and leaves the battle.
-/// Returns 1 when the party got away.
+/// Plays a unit's attempt to run. The escape roll was made as the round's
+/// actions were gathered (BattleEscape_CheckSuccess); a failed one turns the
+/// round into the enemies' (BATTLE_ENCOUNTER_ENEMIES_FIRST), and that is
+/// what this tests. So the party gets away unless the roll failed ("But
+/// there's no escape!"), each member able to move running off in turn; an
+/// enemy gets away 7 times in 10 and leaves the battle. Returns 1 when the
+/// party got away.
 /// Called by BattlePresentation_DispatchAction for PLAN_SHOW_FLEE. Turns the
 /// camera to the party's view and holds gTransitionWork->active while it
 /// runs; an enemy that gets away is taken out of the lists and its object
@@ -248,7 +254,7 @@ s32 BattlePres_RunEscape(struct BattlePlan *plan) {
 /// and PLAN_SHOW_FULL_SCREEN (mode 0). Sets gTransitionWork's yaw (and its
 /// frames, for a scene), REG_BLDCNT and REG_BLDALPHA for the fades, and the
 /// units' record modes; schedules BattleEvent_Playback around the effect.
-/// mode : bit 0 hides the actor too (the summons)
+/// @param mode bit 0 hides the actor too (the summons)
 s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
   u16 units[14];
   struct BattlePresentationWork work;
@@ -421,7 +427,6 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
 /// Called by BattlePresentation_DispatchAction for PLAN_SHOW_MESSAGES, an
 /// action with no animation: each target's BattleTargetExec is played at
 /// once by BattleEv_DispatchQueued.
-/// plan : the action and its targets
 #ifdef UBFIX
 void BattlePres_RunActorEntries(struct BattlePlan *plan, s32 unused) {
 #else
@@ -505,6 +510,8 @@ s32 BattlePres_RunAttack(struct BattlePlan *plan, s32 mode) {
 
   BattlePres_SetActorModes(0, 0);
   BattlePres_BuildTargetList(plan, &work.effect);
+  // Effect 0x87 is Severe Blow's alone (ability 517, actflags.tsv): the
+  // status window without its PP row while it plays.
   if (work.effect.kind == 0x87)
     PartyStatusDrawFar(gBattleWork->partyStatus & ~1);
 
@@ -710,9 +717,10 @@ s32 BattlePres_RunItem(struct BattlePlan *plan, s32 unused,
 
   // The camera turns to the user's side; the user raises the item
   // (animation 3).
-  // XXX: the test is > 4 where the other runners test > 7, so unit ids 5 to
-  // 7 take the enemies' view; which party members those ids are in a battle
-  // of this game would settle whether it is ever seen.
+  // XXX: likely a slip, because the other runners test > 7: with > 4, unit
+  // ids 5 to 7 (Jenna, Sheba and Piers in character_ids.h) would take the
+  // enemies' view; whether any of them uses an item in a battle of this
+  // game would settle whether it is seen.
   if (plan->actorId > 4)
     targetYaw = YAW_ENEMY_TURN;
   else
@@ -865,9 +873,9 @@ s32 BattleMotion_SetRecordChildValues(struct MotionObject *object,
 /// return to their spots.
 /// Called by BattlePresentation_DispatchAction for PLAN_SHOW_CAST (mode 0),
 /// PLAN_SHOW_DJINNI (1) and PLAN_SHOW_ENEMY_CAST (2). Sets gTransitionWork's
-/// yaw (and its frames for a fixed view), redraws the party's status without
-/// bit 0, and schedules BattleEvent_Playback around the effect.
-/// mode : 1 a Djinni, 2 an enemy's cast, 0 any other
+/// yaw (and its frames for a fixed view), redraws the party status window
+/// without its PP row, and schedules BattleEvent_Playback around the effect.
+/// @param mode 1 a Djinni, 2 an enemy's cast, 0 any other
 s32 BattlePres_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   struct BattlePresentationWork work;
   struct BattlePresentationTransition *transition = gTransitionWork;

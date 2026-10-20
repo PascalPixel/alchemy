@@ -54,9 +54,16 @@ s32 BattleActor_ResetRuntimeFields(s32 unitId) {
   BattleUnit_BuildStatusFlags(unitId, BattleObjGet(unitId));
 }
 
-/// One OAM entry for Runtime_PushSlotEntry.
-/// A second view of struct BattlePromptSprite, kept: plain halfwords, where its
-/// bit-fields change BattlePresentation_WaitForAdvance (differ 50).
+// XXX: likely only a second spelling of struct BattlePromptSprite, because
+// BattlePresentation_WaitForAdvance written through that struct as
+// playback.c's PLAY_ADVANCE writes it (both words through a u32 cast, then
+// tile, x and y) shows no difference in an alchemy-devtools diff of any
+// edition; set field by field, 101 of 138 instructions differ in tbs-en. The
+// twelve-edition comparison would settle whether this view can go.
+
+/// The advance arrow's OAM entry, as plain halfwords: a second view of struct
+/// BattlePromptSprite. BattlePresentation_WaitForAdvance keeps it on its
+/// stack and rebuilds it each frame before Runtime_PushSlotEntry queues it.
 struct AdvanceSprite {
   struct AdvanceSprite *next; ///< never set here
   union {
@@ -111,6 +118,8 @@ s32 BattlePresentation_WaitForAdvance(void) {
         ((gFrameCount >> 2) & 7) * 128 + (s32)gBattlePres_AdvanceArrowTiles;
     window = gBattleDisplayWork->window;
     offset = gBattleDisplayWork->offset;
+    // Outside windows 0 and 1, sprites show (WINOUT bit 4) and BG2 does not
+    // (bit 2); the semi-transparent arrow blends at full weight.
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
     Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
@@ -123,7 +132,8 @@ s32 BattlePresentation_WaitForAdvance(void) {
     x = (u16)((window->x * 8 + (offset->x >> 8) + 4) & 0x1ff);
     attr1 = prompt->attributes.fields.attr1;
     prompt->attributes.fields.attr1 = (attr1 & ~0x1ff) | x;
-    // Bob up and down by up to 2 pixels.
+    // Bob up and down by up to 2 pixels, once every 16 frames (a sixteenth
+    // of a turn a frame).
     prompt->attributes.bytes[0] = Trig_Sin(gFrameCount << 12) / 32768 +
                                   window->y * 8 + (offset->y >> 8) + 6;
     Runtime_PushSlotEntry(prompt, 240);
@@ -139,13 +149,13 @@ s32 BattlePresentation_WaitForAdvance(void) {
   WaitFrames(1);
 }
 
-/// Shows the cursor bobbing at (x, y) and waits for one of KEY_ADVANCE.
-/// Called by Battle_RunEncounter under the Djinn tutorial's standby message,
-/// and by Menu_RunCommandRow through BattlePresentation_WaitForPromptAtFar.
-/// Waits for the message window first; takes a 128-byte VRAM cache entry for
-/// the cursor's tiles and frees it, and each frame queues the WINOUT writes,
-/// sets REG_BLDALPHA and pushes the cursor sprite.
-/// x, y : in pixels
+/// Shows the cursor bobbing at (x, y), in screen pixels, and waits for one of
+/// KEY_ADVANCE. Called by Battle_RunEncounter under the Djinn tutorial's
+/// standby message, and by Menu_RunCommandRow through
+/// BattlePresentation_WaitForPromptAtFar. Waits for the message window
+/// first; takes a 128-byte VRAM cache entry for the cursor's tiles and frees
+/// it, and each frame queues the WINOUT writes, sets REG_BLDALPHA and pushes
+/// the cursor sprite.
 #ifdef UBFIX
 void BattlePresentation_WaitForPromptAt(s32 x, s32 y) {
 #else
@@ -317,7 +327,11 @@ u32 BattleEv_DispatchQueued(void) {
 /// returns the opcode.
 /// Called, directly or through PUSH_MESSAGE, by BattleTargetExec for each
 /// step of an outcome, and by staging.c, plan.c and turn_end.c. Appends to
-/// gBattleWork->events.queue with no test against BATTLE_EVENT_CAPACITY.
+/// gBattleWork->events.queue with no test against BATTLE_EVENT_CAPACITY: a
+/// caller must keep one target's events, or one queue played at once, within
+/// it. The queue is emptied by BattleEventRuntime_Reset, by
+/// BattleEventRuntime_SchedulePhase and before each target
+/// BattleEvent_Playback resolves.
 u32 BattleEvPush(u32 opcode, u32 operand) {
   struct BattleEventQueue *queue = &gBattleWork->events.queue;
   u32 index = queue->count;

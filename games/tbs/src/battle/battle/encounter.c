@@ -4,8 +4,12 @@
 
 #include "../battle_internal.h"
 
-/// BattleWork.partyStatus: how the party status window draws, with the
-/// Summon command offered or not.
+/// BattleWork.partyStatus: the party status window's flags (PartyStatusDraw,
+/// window/battle_command/party_status.c). 1 adds the PP row to the names and
+/// HP; 3 also asks for the standby Djinn column. It is chosen while the
+/// party can summon (BattleSummon_UpdateAvailability) and drawn only while a
+/// Djinni is on standby. The staging draws partyStatus & ~1,
+/// which without the PP row drops the Djinn column too: names and HP only.
 #define PARTY_STATUS_NO_SUMMONS 1
 #define PARTY_STATUS_SUMMONS 3
 
@@ -15,12 +19,16 @@
 
 // BattleWork.defeatState: whether the last enemy fell alone, or with others
 // before it; 3 when a party member's action ended the battle with a single
-// defeat. The messages are "has been downed!" and "'s party goes down!".
+// defeat. The messages are "has been downed!" and "'s party goes down!",
+// MsgDowned plus the state; state 3 shows neither.
 #define DEFEAT_ONE 0
 #define DEFEAT_SEVERAL 1
 #define DEFEAT_BY_PARTY_MEMBER 3
 
-/// The size of the block a link battle copies its field state into.
+/// The six enemy units, BATTLE_UNIT_SIZE bytes each: heap slot 54,
+/// gBattleOwnerStates, which UnitGet reads for unit ids 128 to 133 while it
+/// is allocated (game/game/units.c). The link lobby passes the opponent's
+/// party to the battle in a copy of this block (menu/lobby.c).
 #define LINK_OWNER_STATES_SIZE 0x7c8
 
 /// Fights the battle against the enemy formation enemyGroup, from the
@@ -36,7 +44,7 @@
 /// Reached through its far stub from Game_ResetForNewGame's scene switch
 /// (SCENE_BATTLE, with the entrance as enemyGroup), and from
 /// DebugBattle_RunMenu. Allocates the battle's work slots (the camera,
-/// gBattleWork, the link copy, the background transition, the display and
+/// gBattleWork, the enemy units, the background transition, the display and
 /// others), sets FLAG_IN_BATTLE, and on its way out resets the party's
 /// battle state, sets gGameState.battleStart back to 0 and releases heap
 /// block 10. A broken link also sets flag 0x3e8, which the link lobby reads
@@ -62,8 +70,12 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   // The fill word Dma_Fill32Cell reads its zero from.
   volatile u32 fill;
 
-  // The battle's work areas. Slot 54 holds the link battle's copy of the
-  // field state; slot 37 the display work.
+  // The battle's work areas. Slot 54 holds the enemy units
+  // (gBattleOwnerStates) and slot 37 the display work (gBattleDisplayWork).
+  // Slots 4 and 3 below are the object system's sprite and layer pools,
+  // taken here from EWRAM first: ObjectSystem_InitializeFar's own requests
+  // for them then get these blocks, as an allocated slot is returned as it
+  // is (field/field/animation.c, runtime/runtime/heap.c).
   camera = Runtime_AllocateBlock(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
   battle = Runtime_AllocateBlock(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
   ownerStates = Runtime_AllocateBlock(54, LINK_OWNER_STATES_SIZE);
@@ -105,7 +117,9 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   else
     UiWork_InitializeFar(0);
 
-  // The camera's starting view, and the enemies.
+  // The camera's starting view, in 16.16 pixels and 1/65536 turns: the focus
+  // 64 pixels up, the eye at (0, 180, 64), a yaw of 0x2800 and a distance of
+  // 256 pixels. Then the enemies.
   SET_VECTOR(focus, 0, 0x400000, 0);
   SET_VECTOR(camera->eye, 0, 0xb40000, 0x400000);
   camera->yaw = 0x2800;
@@ -113,10 +127,11 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   camera->distance = 0x1000000;
   enemyCount = BattleFormation_BuildEnemyList(battle->enemyGroup);
 
-  // A link battle: wait for the connection, take this console's side, keep
-  // a copy of the field state, and fight as the formation's first type.
-  // Both consoles start from seed 0 so their rolls agree; the opponent's
-  // party size is the enemy count.
+  // A link battle: wait for the connection, take this console's side, put
+  // the opponent's party into the enemy units from the copy the link lobby
+  // left at gActorSpriteSlots (menu/lobby.c), and lay it out left to right
+  // (FORMATION_SHUFFLED). Both consoles start from seed 0 so their rolls
+  // agree; the opponent's party size is the enemy count.
   if (GameFlag_TestFar(FLAG_LINK_BATTLE) != 0) {
     battle->twoSided = 1;
     Battle_SetStart(4);
@@ -172,16 +187,24 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     battle->partyStatus = PARTY_STATUS_SUMMONS;
   else
     battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
+  // The party status window, opened with flags 9: laid out, but erased
+  // until it is drawn (window/battle_command/party_status.c).
   UiWindow_CreateWithLayoutBoundsFar(9);
   Camera_InitDefaultTransform();
   BattleObjPut();
   BattlePresentation_InitializeWorkAndResetState();
   BattleBackground_Load(1, battle->background, 0);
+  // The camera on the centre at 190 percent, until the opening sets its own
+  // zoom (BattlePres_RunEntryTransition). With the background in mode 1,
+  // BattleCamera_SetRange builds no plane page; it sets at most BG1's
+  // horizontal scroll from the camera's yaw.
   BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);
   BattlePres_SetupTransitionScene(0, 0, 0, 190);
   Party_ReservedNoOp5B14(1);
   REG_BLDCNT = 0;
   BattleSpoils_Clear();
+  // 128 bytes of VRAM cache for the advance arrow's tiles, which event
+  // playback shows after a message (PLAY_ADVANCE); taken again each round.
   battle->promptSlot = VramCache_AllocEntry(128);
 
   // A random encounter may open with a first strike (1 in 16) or a
@@ -212,7 +235,8 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
       battle->partyStatus = PARTY_STATUS_SUMMONS;
     else
       battle->partyStatus = PARTY_STATUS_NO_SUMMONS;
-    // The camera eases back to its starting yaw over 60 frames.
+    // The camera eases back to its starting yaw over 60 frames, and the
+    // party status window is drawn with or without its Djinn column.
     transition->targetYaw = 0x2800;
     transition->frames = 60;
     PartyStatusDrawFar(battle->partyStatus);
@@ -278,7 +302,9 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) == 0)
       continue;
 
-    // The Djinn tutorial explains unleashing and standby.
+    // The Djinn tutorial explains unleashing and standby: two windows that
+    // zoom open at tiles (0, 4) and (10, 4), the second closed by a key at
+    // the cursor, at pixel (92, 24).
     tutorialWindow = UiText_OpenMessageWindowFar(MsgTutorialUnleashed, 0, 4, 1);
     while (UiWork_IsCompleteFar() == 0)
       WaitFrames(1);
@@ -292,7 +318,9 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
 
 won:
   // Name the defeat ("X has been downed!" or "X's party goes down!") after
-  // the first enemy class to fall, then hand out the spoils.
+  // the first enemy class to fall, then hand out the spoils. Unit 128 is
+  // rewritten as that class to carry the name, bare: letter 26 is past every
+  // edition's last (BattleUnitSet). DEFEAT_BY_PARTY_MEMBER shows no line.
   Battle_ClearSerialTransferPayload();
   if (GameFlag_TestFar(FLAG_DJINN_TUTORIAL) == 0) {
     if (battle->twoSided != 0)

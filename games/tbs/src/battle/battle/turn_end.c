@@ -6,10 +6,10 @@
 #include "../battle_internal.h"
 
 /// Rolls whether a stat change or status with five turns or fewer left ends
-/// early.
+/// early, and returns 1 when it does.
 /// The chance is `luck * 3 - turns * 5 + bias` percent, so a lucky unit and a
-/// counter near its end recover sooner. Called by the turn-end Tick functions
-/// below, each with its own bias.
+/// counter near its end recover sooner; a chance above 100 always ends it.
+/// Called by the turn-end Tick functions below, each with its own bias.
 s32 BattleUnit_RollCounterEarlyEnd(s32 unitId, s32 turns, s32 bias) {
   struct BattleUnit *unit = UnitGetFar(unitId);
 
@@ -147,6 +147,7 @@ s32 Battle_AdvanceCounterAndCheckChance(s32 unitId) {
   sealCounter = unit->psySeal;
   turns = sealCounter & 0xFF;
   if (turns != 0) {
+    // In the byte, adding 0xf8 is -8 and adding 0xff is -1.
     if (turns > 7U) {
       turns += 0xF8;
       unit->psySeal = turns;
@@ -263,7 +264,7 @@ s32 DjinnRecovery_Tick(void) {
 }
 
 /// Runs DjinnRecovery_Tick twenty times, which sets every recovering Djinni
-/// of a party member with HP.
+/// of a party member with HP; those on standby stay so. Returns 0.
 /// Called by the link lobby when it restores the party, and by Vault's scene
 /// before Ivan hands back Isaac's Djinni.
 s32 DjinnRecovery_TickTwenty(void) {
@@ -282,7 +283,8 @@ s32 DjinnRecovery_TickTwenty(void) {
 void Battle_ReservedNoOpF674(void) {}
 
 /// The order the two sides' units take their round-end effects in, as
-/// gBattleParty_RoundEndGroupOrder gives it.
+/// gBattleParty_RoundEndGroupOrder gives it. Battle_ProcessRoundEnd copies it
+/// to its stack, and the link child swaps the copy's two sides.
 struct BattleGroupOrder {
   s32 group[2]; ///< enum BattleSideMask: the party (1), then the enemies (2)
 };
@@ -640,6 +642,8 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         ObjectDispatch_SelectAnimationFar(BattleObjGet(unitId)->object, 3);
         ObjectDispatch_SetAnimationSpeedFar(
             (struct DispatchObject *)BattleObjGet(unitId)->object, 32);
+        // The pillar of each element whose power rose, its strength the most
+        // Djinn of one element the summon used, less one.
         BattleFx_PlayUnitElementEffect(unitId, i, 2, mostOfOneElement - 1);
         BattleEventRuntime_WaitForReady();
       }

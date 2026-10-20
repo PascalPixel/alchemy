@@ -19,6 +19,7 @@
 /// darken the backgrounds, leaves REG_MOSAIC at its largest and REG_DISPCNT
 /// in mode 1 with every layer off; the four BGxCNT are put back as they were.
 /// It draws four random numbers a frame, which only advances the sequence.
+/// Returns 0.
 s32 BattlePres_RunMosaicFadeOut(void) {
   /* FAKEMATCH(volatile): the four saved BGxCNT values kept on the stack, each
    * stored and loaded again as in the ROM; without volatile, 28 of 90
@@ -126,9 +127,10 @@ void BattlePresentation_BuildTilemap(void *tilemap) {
 /// Shows the perspective plane's finished page each frame while the
 /// background is in mode 2: its first line's BG2CNT now, the rest by HBlank
 /// DMA 0, and its affine parameters into BG2PA to BG2Y.
-/// Runs each frame as a scheduler callback, added by BattleBackground_Load
-/// and BattlePresentation_ConfigurePaletteFade; BattleCamera_SetRange builds
-/// the pages.
+/// Runs each frame as a scheduler callback, in the VBlank pass at its highest
+/// rank (order 0x4ff), added by BattleBackground_Load and
+/// BattlePresentation_ConfigurePaletteFade; BattleCamera_SetRange builds the
+/// pages.
 void BattlePres_UpdateHBlankScroll(void) {
   struct BattleAffineHdma *scanlines;
   u16 *line;
@@ -358,6 +360,8 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
                                DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
       // The opening runs from the callbacks while the status window opens
       // and the encounter is announced.
+      // The timer in the main-loop pass (3200 is 0xc80), the rows in the
+      // VBlank pass (0x480).
       BattlePres_SetupTransitionScene(0, 0, 0, 180);
       *timer = start;
       Scheduler_AddOrUpdateCallback(BattlePres_AdvanceTransitionTimer, 3200);
@@ -367,6 +371,9 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       WaitFrames(1);
       UiWindow_CreateWithLayoutBoundsFar(gBattleWork->partyStatus);
       WaitFrames(20);
+      // BG0's priority bit 1 cleared again at the next VBlank, undoing
+      // BGCNT_PRIORITY(2) above; setting no bits queues a write that changes
+      // nothing.
       IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, 2);
       IoWriteQueue_SetBits16((u32)&REG_BG0CNT, 0);
       BattleIntro_AnnounceEncounter(enemyCount);
@@ -376,8 +383,8 @@ void BattlePres_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       Runtime_SetIrqHandler(IRQ_VCOUNT, 0, 0);
     }
   } else {
-    // The storm: every unit but class 148 drawn at 0.7 scale (16.16), the
-    // display blank but for the windows.
+    // The storm: every unit but class 148, the Fusion Dragon, drawn at 0.7
+    // scale (16.16), the display blank but for the windows.
     battle = WORK_SLOT(HEAP_SLOT_BATTLE);
     background->secondMode = 1;
     background->busy = 0;

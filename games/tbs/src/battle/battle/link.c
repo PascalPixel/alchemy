@@ -16,9 +16,11 @@
 #endif
 
 /// What a link battle sends of each party member, and of the Djinn recovery
-/// list.
+/// list, in bytes.
 enum LinkPartyPacketSize {
+  /// A struct BattleUnit (BATTLE_UNIT_SIZE, 332 bytes) and the 8 after it.
   LINK_PARTY_UNIT_BYTES = 340,
+  /// A struct DjinnRecoveryTable (268 bytes) and the 52 after it.
   LINK_PARTY_OFFER_BYTES = 320
 };
 
@@ -28,7 +30,8 @@ enum LinkPartyPacketSize {
 /// transfer cannot start. Returns how many of the received units are
 /// members (a unit sent with side 0 is an empty place). Nothing in the
 /// source calls it. Overwrites enemy units 128 to 130 and the opponent's
-/// recovery table.
+/// recovery table: each 340-byte packet runs 8 bytes into the next enemy
+/// unit, which the next packet rewrites, the third's into unit 131.
 s32 LinkBattle_ReceiveParty(void) {
   u16 label[24];
   void *buffer;
@@ -38,6 +41,10 @@ s32 LinkBattle_ReceiveParty(void) {
   s32 labelLength;
   s32 i;
 
+  // The block is only freed: each member is received straight into its
+  // enemy unit, as in the link lobby's twin of this function
+  // (LinkLobby_ReceivePartyRecords, menu/lobby.c). XXX: likely left from a
+  // receive into a buffer, because LinkBattle_SendParty does send from one.
   buffer = Runtime_BumpAllocateAlternatePool(LINK_PARTY_UNIT_BYTES);
   memberCount = 0;
   partySlot = 0;
@@ -161,8 +168,9 @@ s32 LinkBattle_SendParty(void) {
   MemFree(buffer);
 }
 
-/// Copies four characters of a name and a terminator, an underscore for each
-/// missing character, and returns a pointer to the terminator.
+/// Copies the low bytes of a name's first four characters and a terminator,
+/// an underscore in place of each zero, and returns a pointer to the
+/// terminator. The copy reads on past the name's end.
 /// UBFIX keeps the private scratch buffer valid until the next call; the
 /// original returns a pointer to expired stack storage. The first two
 /// arguments are ignored.
@@ -383,8 +391,9 @@ s32 BattleParty_AssignMemberSlots(void) {
   }
 }
 
-/// Clears the link transfer's payload, the signatures included. Called by
-/// Battle_RunEncounter on each way out of the battle but fleeing.
+/// Clears the first 16 bytes of the link transfer's payload, the eight
+/// signature halfwords BattlePres_WaitSync and BattlePres_SyncTurn write.
+/// Called by Battle_RunEncounter on each way out of the battle but fleeing.
 s32 Battle_ClearSerialTransferPayload(void) {
   return Iwram_ClearWords(gSerialTransfer.payload, 16);
 }

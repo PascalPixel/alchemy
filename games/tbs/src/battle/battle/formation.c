@@ -64,15 +64,17 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
 }
 
 /// A formation that may be chosen for the party's level: its record and its
-/// enemies' average level.
+/// enemies' average level. BattleFormation_SelectLevelMatchedCandidate keeps
+/// a pool of 32 in a 128-byte alternate-pool block, freed before it returns.
 struct FormationCandidate {
   s16 recordId; ///< the formation's row
   s16 score;    ///< its average level (BattleFormation_AverageLevel); -1 empty
 };
 
 /// A copy of a unit's base stats, from baseHp to its element stats, kept
-/// while its level is adjusted: BattleEnemy_AdjustLevel reads only the stats
-/// it changes, for their 70 percent floors.
+/// while its level is adjusted: BattleEnemy_AdjustLevel takes it from the
+/// alternate pool, reads only the stats it changes, for their 70 percent
+/// floors, and frees it before returning.
 struct BattleBaseStats {
   s16 baseHp;
   s16 basePp;
@@ -265,7 +267,10 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
 /// later ones take the next free letter, wrapping. Returns -1 when five classes
 /// are already listed. Called by BattleFormation_BuildEnemyList for each enemy
 /// and by BattleTargetExec for an enemy called into the battle. Changes
-/// BattleWork's enemyClasses, summonChannels, summonMasks and summonCount.
+/// BattleWork's enemyClasses, the up to five classes listed, and fields that
+/// despite their names hold the letters: summonChannels each class's last
+/// letter given (-1 for none yet), summonMasks its letters in use (bit n for
+/// letter n), and summonCount how many classes are listed.
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
   struct BattleWork *battle;
   s32 classCount;

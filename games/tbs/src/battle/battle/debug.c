@@ -23,10 +23,11 @@
 #define DEBUG_SECOND_FORM MsgDebugSecondForm
 #endif
 
-/// One row of the debug party presets (presets.tsv): a party member, the
-/// level to raise them to, the djinn of each element to give them, the items
-/// to equip and up to two abilities to teach. A row whose owner is -1 ends a
-/// preset.
+/// One row of the debug party presets (presets.tsv, built into the ROM's
+/// read-only data): a party member, the level to raise them to, the Djinn of
+/// each element to give them, the items to equip and up to two abilities to
+/// teach. A row whose owner is -1 ends a preset. Read only by
+/// DebugParty_LoadPreset.
 struct DebugPartyEntry {
   s8 owner;                     ///< the party member, or DEBUG_PRESET_END
   u8 level;                     ///< the level the member is raised to
@@ -93,7 +94,7 @@ s32 DebugParty_LoadPreset(s32 preset) {
     Party_AddActiveOwnerFar(owner);
     Unit_LevelUpToFar(owner, gDebug_PartyPresets[row].level);
 
-    // Start from no djinn and no abilities.
+    // Start from no Djinn and no abilities.
     member = (struct BattleUnit *)UnitGetFar(owner);
     for (i = 0; i < NUM_ELEMENTS; i++) {
       member->djinnOwnedCounts[i] = 0;
@@ -143,13 +144,13 @@ s32 DebugParty_LoadPreset(s32 preset) {
 /// "Ha hi fu he ho" (MsgDebugSampleName), fills the message arguments with
 /// sample values and shows one message at a time, counted from the Babi
 /// Lighthouse dialogue (MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely) or,
-/// in the second range, from DEBUG_SECOND_FORM. Right and Left step the
-/// index, R and L step it by ten, Up and Down pick the range, and B
-/// alternates between the ranges, moving on one message each time it leaves
-/// the first. A closes the window and shows the message again. Called by
-/// DebugBattle_RunMenu when Start is pressed. Renames party member 0, sets
-/// REG_DISPCNT and gGameState.messageSpeed, and clears the window work's
-/// message busy byte after each window.
+/// in the second range, from DEBUG_SECOND_FORM. Right steps the index on by
+/// one and Left back by two, R and L step it by ten, Up and Down pick the
+/// range, and B alternates between the ranges, moving on one message each
+/// time it leaves the first. A closes the window and shows the message again.
+/// Called by DebugBattle_RunMenu when Start is pressed. Renames party member
+/// 0, sets REG_DISPCNT and gGameState.messageSpeed, and clears the window
+/// work's message busy byte after each window.
 void DebugBattle_ViewMessages(void) {
   u16 text[64];
   s32 secondRange = 0;
@@ -177,6 +178,7 @@ void DebugBattle_ViewMessages(void) {
 
       REG_DISPCNT = control;
     }
+    // The fastest text speed (window/text_speed.c: 0 to 2, slowest first).
     gGameState.messageSpeed = 2;
     for (;;) {
       // Sample arguments for the message's placeholders.
@@ -186,6 +188,8 @@ void DebugBattle_ViewMessages(void) {
       UiWork_PushValueSlotFar(1, VALUE_UNIT_NAME);
       UiWork_PushValueSlotFar(1, VALUE_ITEM_NAME);
       UiWork_PushValueSlotFar(2, VALUE_ABILITY_NAME);
+      // The window at tile (2, 10) for the first range, (2, 2) for the
+      // second.
       if (secondRange == 0) {
         message = MsgBabiLighthouseTheyWereTerribleWeWereAbsolutely;
         messageWindow = UiText_OpenMessageWindowFar(index + message, 2, 10, 4);
@@ -236,7 +240,8 @@ void DebugBattle_ViewMessages(void) {
   }
 }
 
-/// The encounter the debug battle starts with, and the Djinn tutorial's.
+/// The encounter the debug battle starts with (two or three Kobolds), and
+/// the Djinn tutorial's: rows of formatn.tsv.
 #define DEBUG_FIRST_ENCOUNTER 257
 #define DJINN_TUTORIAL_ENCOUNTER 28
 
@@ -291,6 +296,9 @@ restart:
           DebugBattle_ViewMessages();
         if (gKeysRepeat & KEY_SELECT)
           Battle_ReservedNoOp2A08();
+        // No code tests start mode 5 by value: like any nonzero mode it only
+        // stops the opening's first-strike and surprise rolls
+        // (Battle_RunEncounter), and it still lets the party run.
         if ((gKeysRepeat & KEY_B) || startModeSet) {
           startModeSet = 1;
           Battle_SetStart(5);
@@ -302,7 +310,9 @@ restart:
         }
         WaitFrames(1);
       }
-      // A fights: Down still held makes it a link battle.
+      // A fights: Down still held makes it a link battle. The battle's
+      // background comes from gGameState.special (Event_GetSpecialValueFar
+      // in Battle_RunEncounter).
       if (gKeysHeld & KEY_DOWN)
         GameFlag_SetBitFar(FLAG_LINK_BATTLE);
       UnitCalcFar(0);

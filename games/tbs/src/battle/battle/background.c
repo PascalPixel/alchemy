@@ -37,8 +37,9 @@
 /// level (0 for none).
 /// Called by BattlePres_RestorePalette with 0, and by effects that dim the
 /// background (beams.c, canvas.c). Sets BattleWork.brightness when it
-/// darkens; interrupts are off while it writes, as IME_DISABLE turns them off
-/// by storing REG_IME's own address, whose bit 0 is clear.
+/// darkens. Interrupts are off while it writes: REG_IME is given its own
+/// address, whose bit 0 is clear, as irqlock.h's IME_DISABLE does, and is
+/// restored after.
 void BattlePresentation_SetPaletteLevel(s32 unused, s32 level) {
   struct BattleWork *battle = gBattleWork;
   u16 *palette = battle->palette;
@@ -81,7 +82,10 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level) {
 /// and with mode 2 by BattlePresentation_DispatchAction and
 /// Battle_ProcessRoundEnd. Sets BattleBackgroundView.mode, adds
 /// BattlePres_UpdateHBlankScroll when the mode was 0, and copies the first
-/// sprite palette to BG palette 5. unusedResource is not read.
+/// sprite palette to BG palette 5. unusedResource is not read. The modes
+/// are BattleBackgroundView's: 1 the flat picture on BG1 (BATTLE_BG1CNT),
+/// leaving BG2 to an effect, and 2 the perspective plane on BG2, which
+/// BattlePres_UpdateHBlankScroll shows only then.
 void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 unusedResource,
                                              s32 fade) {
   struct BattleBackgroundView *transition =
@@ -375,6 +379,8 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
   sourceBounds[1] = 0;
   sourceBounds[2] = 0;
 
+  // The unzoomed projection, focal length 510 pixels, and the eye 510
+  // pixels back from the focus along the camera's yaw and pitch.
   result = Iwram_RatioMulQ14(span, alpha);
   Projection_Set(span, result, span * 2);
   Render_ResetTransformState();
@@ -385,6 +391,8 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
   renderBounds[1] = 0;
   renderBounds[2] = span;
   Iwram_TransformVector(renderBounds, (s32 *)camera);
+  // Where the battlefield's origin falls about the screen point (120, 120)
+  // shifts the plane by as much, in 8.8 pixels.
   gProjection.centerX = 120;
   gProjection.centerY = 120;
   Render_ResetTransformState();
@@ -393,6 +401,8 @@ void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom) {
 
   BattleCamera_SetRange(0x780000, 0x780000, (120 - measuredBounds[0]) << 8,
                         (120 - measuredBounds[1]) << 8, scale);
+  // The zoom then scales the focal length (510 pixels at 100 percent) and
+  // the far depth, twice it.
   half = scale * 0xff;
   width = half * 2;
   result = Iwram_RatioMulQ14(width, alpha);
@@ -574,9 +584,10 @@ void BattlePres_ClearAllActorRecordModes(void) {
 /// Lightens the opaque sprites, the highlighted units, by the next step of
 /// gBattleFx_HighlightBlendRamp.
 /// The ramp's first sixteen steps play once, then its second sixteen over
-/// and over. Runs each frame as a scheduler callback added by
-/// BattlePres_SetActorModes while BattleWork.highlightMode is set; writes
-/// REG_BLDCNT, REG_BLDALPHA, REG_BLDY and BattleWork.highlightStep.
+/// and over. Runs each frame as a scheduler callback in the VBlank pass
+/// (order 0x480), added by BattlePres_SetActorModes while
+/// BattleWork.highlightMode is set; writes REG_BLDCNT, REG_BLDALPHA,
+/// REG_BLDY and BattleWork.highlightStep.
 void Graphics_AdvancePaletteCycle(void) {
   struct BattleWork *battle = gBattleWork;
   s8 *blendRamp;

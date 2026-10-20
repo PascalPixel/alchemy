@@ -4,14 +4,19 @@
 
 #include "../battle_internal.h"
 
-/// One of the star field's sparks, drawn inward to the centre.
+/// One of the star field's sparks, drawn inward to the centre. Sixteen live
+/// in SparkWork.sparks; a spent one starts again while the field is young.
 struct Spark {
   s32 pos[6]; ///< x, y, z, then their velocities, in 1/1024 canvas pixels
   s32 life;   ///< frames left
 };
 
 /// The star field's work: its sprite sheet, 16 sparks and 3 rings. It lives
-/// in the HEAP_SLOT_BATTLE_EFFECT work slot.
+/// in the HEAP_SLOT_BATTLE_EFFECT work slot from BattleFx_InitializeStarField
+/// to Graphics_ResetVramBlockAndReleaseHeapBlocks, the 45 frames of a cast's
+/// glow (BattleFx_PlayUnitElementEffect, mode 0). BattleFx_UpdateStarField
+/// draws from it, BattleFx_UploadStarField reads its ready flag, and
+/// BattleFx_PlayUnitElementEffect writes its canvas origin.
 struct SparkWork {
   /// The blue ring sheet's pictures, decoded: the sparks' sizes at
   /// gBattleFx_StarWorkOffsets, the rings' frames at
@@ -178,6 +183,8 @@ u32 BattleFx_UploadStarField(void) {
   }
 }
 
+// The two callbacks as the scheduler takes them: cast to SchedulerCallback
+// where the native types return a value.
 #ifdef UBFIX
 #define STAR_FIELD_UPDATE_CALLBACK BattleFx_UpdateStarField
 #define STAR_FIELD_UPLOAD_CALLBACK BattleFx_UploadStarField
@@ -194,7 +201,9 @@ u32 BattleFx_UploadStarField(void) {
 /// RAM, sets BG2's affine parameters to no zoom, loads both blitters and adds
 /// BattleFx_UpdateStarField and BattleFx_UploadStarField. Also sets
 /// BattleBackgroundView.mode to 1. Called by BattleFx_PlayUnitElementEffect;
-/// Graphics_ResetVramBlockAndReleaseHeapBlocks undoes it.
+/// Graphics_ResetVramBlockAndReleaseHeapBlocks undoes it. Returns the upload
+/// callback's task index (-1 when the task table is full), which the caller
+/// does not read.
 s32 BattleFx_InitializeStarField(s32 mode) {
   struct SparkWork *work;
   struct Spark *spark;
@@ -294,6 +303,8 @@ s32 BattleFx_InitializeStarField(s32 mode) {
 /// Ends a star field: clears BG2's tiles in character block 1, frees its
 /// blitters, canvas and work, turns BG2 off and removes both callbacks.
 /// Called by BattleFx_PlayUnitElementEffect once the field has played.
+/// Returns Scheduler_RemoveCallback's result, which the caller does not
+/// read.
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused) {
   Iwram_ClearWords(BG_CHAR_BLOCK(1), 0x4000);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);

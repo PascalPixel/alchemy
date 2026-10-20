@@ -22,8 +22,9 @@ void Dma_StopAllThenRunHook(void) {
 /// Reached as EFFECT_SHOW_DAMAGE(hitSound), through
 /// BattleEventRuntime_BeginPhaseFar, from the effects (see the folder README).
 /// Only while playback is idle: sets the phase to
-/// BATTLE_PLAYBACK_RESOLVE_TARGET, and a nonzero cue to pendingCue.
-/// cue : the hit's sound (an SE_ id); zero keeps the one set
+/// BATTLE_PLAYBACK_RESOLVE_TARGET, and a nonzero cue to pendingCue; a later
+/// call before the reset does nothing.
+/// @param cue the hit's sound (an SE_ id); zero keeps the one set
 void BattleEventRuntime_BeginPhase(s32 cue) {
   struct BattleEventState *events;
 
@@ -44,8 +45,9 @@ void BattleEventRuntime_BeginPhase(s32 cue) {
 /// BattleEventRuntime_WaitForReady. Sets the phase to BATTLE_PLAYBACK_DISPATCH
 /// and gBattleWork->plan's targetCount to 0, so playback goes to
 /// BATTLE_PLAYBACK_READY once the queue is played; adds BattleEvent_Playback as
-/// a scheduler callback and returns the scheduler's result. frames : the delay
-/// before the first event
+/// a scheduler callback and returns its task index (-1 when the task table
+/// is full), which no caller reads.
+/// @param frames the delay before the first event
 s32 BattleEventRuntime_SchedulePhase(s32 frames) {
   struct BattleEventState *events;
 
@@ -75,9 +77,9 @@ s32 BattleEventRuntime_SchedulePhase(s32 frames) {
 /// Plays the plan's targets one at a time: resolves the next target with
 /// BattleTargetExec, then plays the events it queued over the frames that
 /// follow, until every target is done.
-/// Runs each frame as a scheduler callback (priority 0xc80), added by the
-/// staging runners in staging.c and by BattleEventRuntime_SchedulePhase, and
-/// removed by BattleEventRuntime_WaitForReady. Idle until
+/// Runs each frame as a scheduler callback (main-loop order 0xc80), added by
+/// the staging runners in staging.c and by BattleEventRuntime_SchedulePhase,
+/// and removed by BattleEventRuntime_WaitForReady. Idle until
 /// BattleEventRuntime_BeginPhase or the wait starts it. Advances
 /// gBattleWork->events (phase, eventIndex, timer, queue.targetIndex, actorId,
 /// displaySource, displayEntry, flags); plays the sounds, message arguments,
@@ -259,8 +261,10 @@ void BattleEvent_Playback(void) {
       // Show the arrow, as BattlePresentation_WaitForAdvance does, and wait
       // for the player: B held or an advance key pressed goes on; after ten
       // ticks, a held advance key does too. The arrow is an 8 by 16,
-      // 256-colour sprite (attribute 0 0xa000) cycling eight frames of
-      // gBattlePres_AdvanceArrowTiles, one every four frames.
+      // 256-colour sprite (attribute 0 0xa000, which unlike that function's
+      // is not semi-transparent) cycling eight frames of
+      // gBattlePres_AdvanceArrowTiles, one every four frames, in the VRAM
+      // cache entry BattleWork.promptSlot.
       struct BattlePromptSprite *prompt = &events->displayEntry;
       u8 *arrowTiles = gBattlePres_AdvanceArrowTiles;
       s32 frameTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;

@@ -21,8 +21,8 @@ struct SlotArray {
 /// standing; otherwise any enemy place in use. Returns its place code, or 0
 /// when there is none.
 /// Called by BattleCommand_SelectAutomatic when BattleTarget_SelectForAction
-/// finds no one listed on the side (-2). Takes one Random16 roll when any
-/// position qualifies.
+/// finds no one listed on the side (-2), with requireLivingUnit set for a
+/// party actor. Takes one Random16 roll when any position qualifies.
 s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
 
   u16 positions[6];
@@ -164,7 +164,8 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
 /// to wear off), a cure or a heal the unit needs, an ailment it lacks, a
 /// revival of a downed unit (100). Failing its added effect, the ability's
 /// damage or healing must have something to work on. kindIndex receives the
-/// ability's kind less one.
+/// ability's kind less one (enum AbilityKind, which says what the unnamed
+/// kinds hold). No row of actions.tsv has effect 1 or 2.
 #define CHECK_EFFECT_TARGET(unit, action, applies, kindIndex)                  \
   {                                                                            \
     (applies) = 0;                                                             \
@@ -301,7 +302,11 @@ s32 BattleTarget_SelectRandomPosition(s32 requireLivingUnit) {
   }
 
 // EnemyDefinition.targetStrategy: a single-target attacker favours the
-// target with the most HP left, the most maximum HP, or no one.
+// target with the most HP left, the most maximum HP, or no one. The same
+// column steers BattleCommand_SelectAutomatic (enemy_ai.c): with any
+// strategy but 0 an enemy skips Psynergy it lacks the PP for, and at 2 any
+// Psynergy while sealed; at 0, an enemy that picks an item place with no
+// items left still commands CMD_ITEM.
 #define STRATEGY_MOST_HP 0
 #define STRATEGY_MOST_MAX_HP 1
 #define STRATEGY_RANDOM 2

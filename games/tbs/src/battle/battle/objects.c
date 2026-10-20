@@ -7,9 +7,10 @@
 
 #define UNIT_MAX 14 ///< the party's and the enemies' units together
 
-/// Runs each frame of a battle: advances every unit's status icon, lifts an
-/// airborne unit's effect sprite above the others, and draws whichever side is
-/// nearer the camera in front. Runs as a scheduler callback (priority 0xc80)
+/// Runs each frame of a battle: advances every unit's status icon, gives an
+/// airborne unit's effect layer (BATTLE_OBJ_NO_EFFECT, placement.c) priority
+/// 9 and a grounded one's 0, and draws whichever side is nearer the camera in
+/// front. Runs as a scheduler callback (main-loop order 0xc80)
 /// that Battle_RunEncounter adds after the entry transition and removes as
 /// the battle ends. Writes each battle object's icon state and its sprites'
 /// priorities.
@@ -17,7 +18,8 @@ void BattleActor_UpdateSpritePriorities(void) {
   // The two side walks stay separate: a shared priority helper changes EN
   // register allocation despite the same 0x1ac-byte extent.
   u16 unitIds[UNIT_MAX];
-  // The party's, then the enemies': 1 for the side in front, 2 behind.
+  // The party's, then the enemies': sprite priority 1 for the side in front,
+  // 2 behind (the lower number draws over the higher).
   s32 sidePriorities[2];
   s32 unitIndex;
   s32 recordIndex;
@@ -170,7 +172,7 @@ s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject) {
     flags |= ICON_STUN;
     classId = unit->classId;
     // Kraken and Fusion Dragon never show it; Summon_LayoutPositions also
-    // stands these two classes nearer the party (enemies.tsv rows 113, 140).
+    // tests these two classes (enemies.tsv rows 113, 140).
     if (classId == 121 || classId == 148)
       flags &= ~ICON_STUN;
   }
@@ -188,7 +190,9 @@ s32 BattleUnit_BuildStatusFlags(s32 unitId, struct BattleObj *battleObject) {
 /// The frames each status icon shows before the next one's turn.
 #define ICON_CYCLE_FRAMES 80
 
-/// The icons' first animations, for units 32 pixels wide and for the rest.
+/// The icons' first animations, for units 32 pixels wide and for the rest:
+/// each adds the icon's bit number (ICON_POISON's 0 up), so sprites 340 to
+/// 353 and 355 to 368.
 #define ICON_ANIM_NARROW 340
 #define ICON_ANIM_WIDE 355
 
@@ -285,9 +289,12 @@ s32 BattleStatusIcon_Cycle(struct BattleObj *battleObject) {
 }
 
 /// Sets unit id's pose to match its state: held (asleep, stunned or unable
-/// to move) or down, else standing; then gives its sprites their palette
-/// row, 14 to 17 by unit. Called by BattleActor_SpawnObjectsForList,
-/// BattleEv_DispatchQueued, BattleEvent_Playback and Battle_ProcessRoundEnd.
+/// to move) or down, else standing; then its sprites' animation speed, a
+/// timer step of 14 to 17 by the unit id's low two bits (16 is normal
+/// speed). XXX: likely so that units side by side do not animate in step,
+/// because the step follows nothing but the unit id. Called by
+/// BattleActor_SpawnObjectsForList, BattleEv_DispatchQueued,
+/// BattleEvent_Playback and Battle_ProcessRoundEnd.
 #ifdef UBFIX
 void BattlePres_SetActorModeAndAction(s32 unitId) {
 #else
@@ -341,7 +348,8 @@ void ReleaseBattleObjectRecords(s32 unitId) {
   }
 }
 
-/// The sprite unit 32 pixels wide use for an effect.
+/// The effect layer a body 32 pixels wide takes instead of
+/// BattleObj.effect's (see BATTLE_OBJ_NO_EFFECT, placement.c).
 #define NARROW_EFFECT_SPRITE 0x1ff
 
 /// Readies the sprites of the units in list: releases those of every place
@@ -397,8 +405,10 @@ void BattleActor_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
             SPRITE_WITH_SECOND_PART_A ||
         (battleObject->resource & SPRITE_ID_MASK) ==
             SPRITE_WITH_SECOND_PART_B) {
-      // A two-part enemy: a table of its two sprites, kept in the menu
-      // control work. Its height is half the first part's box.
+      // A two-part enemy: a table of its two sprites, in the object system's
+      // next sprite group table (gMenuCtrlWork is struct ObjectSystemWork;
+      // its count is not advanced here). Its height is half the first
+      // part's box.
       // BUG: a failed create leaves record null, and its flags are still
       // written.
       records = (struct AnimationObject **)gMenuCtrlWork->unk08 +
@@ -424,6 +434,8 @@ void BattleActor_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
     } else {
       // The body, then the weapon, the status icon and the effect on it.
       // Entry priorities: 0 the effect, 1 the body and weapon, 3 the icon.
+      // Adding the effect layer clears the sprite's flags, its own shadow
+      // (bit 0) among them, as the two-part enemies' are cleared above.
       record = ResourceObject_CreateFar(battleObject->resource);
       if (record != 0) {
         object->recordStorageKind = RECORDS_SINGLE;
@@ -536,8 +548,9 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object) {
 }
 
 /// Frees the enemy sprite slots unitId holds and marks its object
-/// for release at the end of the round (BattleMotion_DestroyAllSlotObjects),
-/// setting its active field. Called when a unit leaves the battle: by
+/// for release at the end of the action or round
+/// (BattleMotion_DestroyAllSlotObjects), setting its active field to 1.
+/// Returns 0. Called when a unit leaves the battle: by
 /// BattleEvent_Playback, BattlePres_RunEscape, BattleMotion_ShowDowned,
 /// BattleActor_DestroyTemporaryObject and the auto battle.
 s32 BattleObj_MarkForRelease(s32 unitId) {
@@ -577,7 +590,7 @@ void *BattleMotion_DestroyAllSlotObjects(void) {
 }
 
 /// Writes the battlefield spot of place (its anchor, on the ground) to
-/// position. Nothing in the source calls it.
+/// position, and returns 0. Nothing in the source calls it.
 s32 Battle_GetWorkEntryPair(s32 place, struct FixedPointPosition *position) {
   struct BattleWork *battle = gBattleWork;
 
@@ -606,8 +619,9 @@ s32 Camera_ApplyTransformByFlag(void) {
   }
 }
 
-/// Projects unit id's position onto the screen, into projected. Reached
-/// through its far stub from EffectPosition_ProjectBattler.
+/// Projects unit id's position onto the screen, into projected (its pixel x
+/// and y, then its depth; Render_ProjectPoint). Returns 0. Reached through
+/// its far stub from EffectPosition_ProjectBattler.
 s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected) {
   struct MotionObject *object = BattleObjGet(unitId)->object;
   struct AnimationObject *record = GetMotionRecord(object, 0);
@@ -645,7 +659,8 @@ void Camera_InitDefaultTransform(void) {
   struct BattleCamera *camera = gCameraWork;
   struct FixedPointPosition eyeOffset;
 
-  // Yaw 0x3000 (in 1/65536 turns), pitch 0xfe00, distance 0x1fe0000.
+  // Yaw 0x3000 (in 1/65536 turns), pitch 0xfe00, and 510 pixels away
+  // (0x1fe0000 in 16.16), the distance BattlePres_SetupTransitionScene uses.
   camera->yaw = 192 << 6;
   camera->pitch = 254 << 8;
   camera->distance = 255 << 17;

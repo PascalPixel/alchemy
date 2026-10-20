@@ -9,7 +9,7 @@
 /// just knocked its target out: the drains, which give the damage they dealt
 /// back to the actor.
 /// Called by BattleTargetExec before the added effect.
-/// effect : the ability's effect (enum AbilityEffect)
+/// @param effect the ability's effect (enum AbilityEffect)
 s32 BattleEffectDeadCheck(s32 effect) {
   switch (effect) {
   case ABILITY_EFFECT_DRAIN_HP:
@@ -121,11 +121,10 @@ s32 BattleEffectDeadCheck(s32 effect) {
 /// 7. Waking from damage, the recalculated stats, the redraw, and the evil
 ///    spirit's share for a haunted actor.
 ///
-/// plan : the action under way: the actor, the ability, its element and its
-///        targets, each with its distance from the aimed position, damage
-///        multiplier, critical hit and any hit roll made in advance.
-/// slot : which of the plan's targets (0 to plan->targetCount - 1).
-///
+/// @param plan the action under way: the actor, the ability, its element and
+/// its targets, each with its distance from the aimed position, damage
+/// multiplier, critical hit and any hit roll made in advance
+/// @param slot which of the plan's targets (0 to plan->targetCount - 1)
 #ifdef UBFIX
 void BattleTargetExec(struct BattlePlan *plan, s32 slot) {
 #else

@@ -4,8 +4,9 @@
 
 #include "../battle_internal.h"
 
-/// Ranks an item among the spoils, 0 for none: an indispensable item first,
-/// then a rare item, then the higher item id.
+/// Returns an item's rank among the spoils, higher for a better item and 0
+/// for none: an indispensable item first, then a rare item, then the higher
+/// item id.
 /// The rank's bits: 10 ITEM_INDISPENSABLE | 9 ITEM_RARE | 8..0 the item id.
 /// Called by BattleEnemy_RecordDefeat, to keep the best four drops, and by
 /// Battle_AwardSpoils, to hand them out best first.

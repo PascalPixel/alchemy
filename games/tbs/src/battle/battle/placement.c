@@ -11,7 +11,16 @@
 /// BattleObj.scale and MotionObject scales are 16.16 fixed point.
 #define SCALE_ONE 0x10000
 
-/// BattleObj.effect while no effect is attached.
+/// BattleObj.effect as a battle object is made: sprite 0x1fe, which
+/// BattleActor_SpawnObjectsForList adds as a layer of every one-part body
+/// (0x1ff on a body 32 pixels wide). Its 64 by 64 picture
+/// (graphics/sprite/spr_510.png) holds only a 32 by 6 ellipse along its
+/// bottom edge, 0x1ff's a 16 by 3 one.
+/// XXX: likely the unit's shadow on the ground rather than an effect, because
+/// of that picture, because adding it also clears the sprite's own shadow
+/// (AnimationObject.flags bit 0), and because
+/// BattleActor_UpdateSpritePriorities changes the layer's priority while the
+/// unit is off the ground.
 #define BATTLE_OBJ_NO_EFFECT 0x1fe
 
 /// Creates the battle object of unit at (x, y) on the battlefield, in
@@ -80,40 +89,41 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   // The enemy classes drawn larger or smaller than their sprites, in 16.16
   // (0x18000 is 1.5, 0xe666 0.9). Grouping equal scale cases shortens the
   // matching EN function by 148 bytes, so each case keeps its own store.
-  // Class ids are enemies.tsv rows plus ENEMY_CLASS_FIRST.
+  // Class ids are enemies.tsv rows plus ENEMY_CLASS_FIRST; each case names
+  // its row's enemy. Bandit and Orc Captain are set to 1.0 again.
   actor->scale = SCALE_ONE;
   switch (unit->classId) {
-  case 78:
+  case 78: // Killer Ape
     actor->scale = 0x19999;
     break;
-  case 89:
+  case 89: // Manticore
     actor->scale = 0x18ccc;
     break;
-  case 130:
+  case 130: // Living Statue
     actor->scale = 0x13333;
     break;
-  case 131:
+  case 131: // Hydros Statue
     actor->scale = 0x19999;
     break;
-  case 138:
+  case 138: // Ant Lion
     actor->scale = 0x18000;
     break;
-  case 147:
+  case 147: // Tret
     actor->scale = 0x1cccc;
     break;
-  case 149:
+  case 149: // Deadbeard
     actor->scale = 0x1cccc;
     break;
-  case 29:
+  case 29: // Bandit
     actor->scale = 0x10000;
     break;
-  case 121:
+  case 121: // Kraken
     actor->scale = 0x1b333;
     break;
-  case 148:
+  case 148: // Fusion Dragon
     actor->scale = 0x18000;
     break;
-  case 150:
+  case 150: // Mimic (eight rows, to 157)
     actor->scale = 0x18000;
     break;
   case 151:
@@ -137,72 +147,74 @@ void BattleObjMake(struct BattleObj *actor, s32 unitId, s32 x, s32 y) {
   case 157:
     actor->scale = 0x18000;
     break;
-  case 47:
+  case 47: // Troll
     actor->scale = 0x13333;
     break;
-  case 48:
+  case 48: // Cave Troll
     actor->scale = 0x13333;
     break;
-  case 49:
+  case 49: // Brutal Troll
     actor->scale = 0x16666;
     break;
-  case 84:
+  case 84: // Orc Captain
     actor->scale = 0x10000;
     break;
-  case 85:
+  case 85: // Orc Lord
     actor->scale = 0x14000;
     break;
-  case 128:
+  case 128: // Lizard Fighter
     actor->scale = 0x16666;
     break;
-  case 129:
+  case 129: // Lizard King
     actor->scale = 0x16666;
     break;
-  case 94:
+  case 94: // Hobgoblin
     actor->scale = 0x18000;
     break;
-  case 98:
+  case 98: // Gryphon
     actor->scale = 0x14ccc;
     break;
-  case 110:
+  case 110: // Chimera
     actor->scale = 0x13333;
     break;
-  case 132:
+  case 132: // Azart (two rows)
     actor->scale = 0x10ccc;
     break;
   case 133:
     actor->scale = 0x10ccc;
     break;
-  case 134:
+  case 134: // Satrage (two rows)
     actor->scale = 0x11999;
     break;
   case 135:
     actor->scale = 0x11999;
     break;
-  case 136:
+  case 136: // Navampa (two rows)
     actor->scale = 0x13333;
     break;
   case 137:
     actor->scale = 0x13333;
     break;
-  case 141:
+  case 141: // Toadonpa
     actor->scale = 0x18000;
     break;
-  case 144:
+  case 144: // Tornado Lizard
     actor->scale = 0x13333;
     break;
-  case 145:
+  case 145: // Storm Lizard
     actor->scale = 0x18000;
     break;
-  case 146:
+  case 146: // Tempest Lizard
     actor->scale = 0x18ccc;
     break;
-  case 52:
+  case 52: // Recluse
     actor->scale = 0x14000;
     break;
-  case 105:
+  case 105: // Cerebus
     actor->scale = 0x14000;
     break;
+  // Slime, Slime, Ooze, Slime Beast, Thief, Siren, Succubus, Nightmare,
+  // Kobold, Mystery Man, Saturos (two rows), Mystery Woman and Menardi.
   case 18:
   case 19:
   case 20:
@@ -282,11 +294,14 @@ void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
 #define IS_PLACEHOLDER_ID(id) ((u16)((id) - BATTLE_UNIT_REMOVED) <= 1)
 
 /// Lays out count enemies in a column 80 pixels left of the centre, spaced
-/// by their size (38 pixels around a large enemy, 27 around a small one, 25
-/// around an empty place, closer when there are more than four) and centred
-/// on the line. Two large classes stand nearer, 50 pixels left. Called by
-/// BattleUnit_RefreshPlacement and EnemyUpdate; writes only xPositions and
-/// zPositions.
+/// by their size: each takes 38 pixels of the line if large, 27 if small and
+/// 25 for an empty place, half before and half after it, none before the
+/// first. The column starts from an estimate of its length, 30 pixels an
+/// enemy (27 for more than four), so it sits only roughly centred. The
+/// Kraken and the Fusion Dragon would stand nearer, 50 pixels left, past the
+/// first place; each is fought alone (formatn.tsv rows 213 and 347), so
+/// neither does. Called by BattleUnit_RefreshPlacement and EnemyUpdate;
+/// writes only xPositions and zPositions, in pixels.
 void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
                             s32 *zPositions) {
   s32 totalSpacing = count <= 4 ? 30 : 27;
@@ -294,7 +309,7 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
   s32 index;
 
   // z starts half a line's estimated length up and steps down by half of
-  // each enemy's spacing before it and half after it.
+  // each enemy's spacing before it (none for the first) and half after it.
   for (index = 0; index != count; index++) {
     s32 spacing = 0;
 
@@ -306,6 +321,8 @@ void Summon_LayoutPositions(u16 *actorIds, s32 count, s32 *xPositions,
       if (!IS_PLACEHOLDER_ID(actorIds[index])) {
         actor = UnitGetFar(actorIds[index]);
         spacing = BattleClass_IsSmall(actor->classId) ? 27 : 38;
+        // The Fusion Dragon and the Kraken; the first place keeps -80
+        // whatever its class.
         if (actor->classId == 148 || actor->classId == 121) {
           xPositions[index] = -50;
         }
@@ -403,7 +420,8 @@ void BattleUnit_RefreshPlacement(void) {
        remainingPlaces--, placementValue--)
     *placementCursor-- = placementValue;
 
-  // The party, at its fixed spots.
+  // The party, at its fixed spots in pixels: x 80, z 48, 16, -16 and -48
+  // (gBattlePlacement_StepPairs, battle_data.s).
   for (unitIndex = 0; unitIndex < count; partyPlace++, unitIndex++) {
     s32 unitId = unitIds[unitIndex];
 

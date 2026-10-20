@@ -59,8 +59,10 @@ s32 EnemyCheck(s32 classId) {
 
 /// Loads an enemy unit's battle sprite into the first free enemy sprite
 /// slots (one for a small enemy, two side by side for a large one) and
-/// records the unit as their owner. Two sprites take a second part,
-/// loaded the same way into further slots. Returns the first slot and the
+/// records the unit as their owner. Two sprites, the Kraken's and the Fusion
+/// Dragon's, take a second part, loaded the same way into further slots.
+/// The slots stay the unit's until BattleMotion_ReleaseObjectSlotByValue
+/// frees them as it leaves the battle. Returns the first slot and the
 /// sprite as (slot << 12) | sprite, or 0 for a party member's unit or when
 /// a load fails. Called by BattleObjMake. Writes gBattleWork->spriteSlots
 /// and the slots' 16 KB sprite buffers at Ram_ActorSpriteSlots.
@@ -152,14 +154,20 @@ s32 BattleMotion_ReleaseObjectSlotByValue(s32 unitId) {
 }
 
 // gResource_SlotAssignments: each entry is a weapon's item id in the low nine
-// bits and its kind above them; the list ends with -1.
+// bits and its kind above them; the list ends with -1. By the rows of
+// items.tsv the kinds are 0 Long Sword to Muramasa (items 1 to 11), 1 Machete
+// to Bandit's Sword (15 to 27), 2 Battle Axe to Demon Axe (31 to 38), 3 Mace
+// to Wicked Mace (43 to 50), 4 Wooden Stick to Shaman's Rod (55 to 65 but 58
+// and 61), and 5 the Blessed Ankh and Angelic Ankh (58 and 61); each class's
+// table of weapon sprites has one entry a kind, then one for
+// WEAPON_KIND_NONE.
 #define WEAPON_ITEM_MASK 0x1ff
 #define WEAPON_KIND_SHIFT 9
 #define WEAPON_KIND_NONE 6
 
-/// Returns the kind of the weapon whose item id is itemId (0 to 5), which
-/// picks a party member's attack animation, or WEAPON_KIND_NONE for an item
-/// the list lacks. Called by BattleUnit_LookupWeaponValueByClass.
+/// Returns the kind (0 to 5) of the weapon whose item id is itemId, which
+/// picks a party member's weapon sprite, or WEAPON_KIND_NONE for an item the
+/// list lacks. Called by BattleUnit_LookupWeaponValueByClass.
 s32 BattleUnit_GetWeaponKind(s32 itemId) {
   /// gResource_SlotAssignments seen as volatile, for the FAKEMATCH below.
   struct SlotAssignmentView {
@@ -193,7 +201,8 @@ s32 BattleUnit_GetWeaponKind(s32 itemId) {
 /// Returns the weapon sprite a party member's attack shows for the kind of
 /// weapon they have equipped (gBattleUnit_WeaponAnimsClass*), or 0 for no
 /// weapon, for Felix, or for a unit that is no party member. Called by
-/// BattleObjMake.
+/// BattleObjMake, which keeps it in BattleObj.overlay for
+/// BattleActor_SpawnObjectsForList to add as a layer of the body sprite.
 s32 BattleUnit_LookupWeaponValueByClass(s32 unitId) {
   struct BattleUnit *unit;
   s32 slot;
